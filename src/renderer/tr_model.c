@@ -526,24 +526,6 @@ qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyz
 	return qtrue;
 }
 
-/*
-=================
-R_MDC_DecodeXyzCompressed
-=================
-*/
-#if 0   // unoptimized version, used for finding right settings
-void R_MDC_DecodeXyzCompressed(mdcXyzCompressed_t *xyzComp, vec3_t out, vec3_t normal)
-{
-	int i;
-
-	for (i = 0; i < 3; i++)
-	{
-		out[i] = ((float)((xyzComp->ofsVec >> (i * MDC_BITS_PER_AXIS)) & ((1 << MDC_BITS_PER_AXIS) - 1)) - MDC_MAX_OFS) * MDC_DIST_SCALE;
-	}
-	R_MDC_GetVec(( unsigned char )(xyzComp->ofsVec >> 24), normal);
-}
-#endif
-
 // rain - unused
 #if 0
 /*
@@ -1880,12 +1862,11 @@ void R_Modellist_f(void)
 	}
 	ri.Printf(PRINT_ALL, "%8i : Total models\n", total);
 
-#if 0       // not working right with new hunk
-	if (tr.world)
-	{
-		ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
-	}
-#endif
+	// not working right with new hunk
+	//if (tr.world)
+	//{
+	//	ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
+	//}
 }
 
 //=============================================================================

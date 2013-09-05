@@ -2481,10 +2481,8 @@ Sets shader->sortedIndex
 static void SortNewShader(void)
 {
 	int      i;
-	float    sort;
 	shader_t *newShader = tr.shaders[tr.numShaders - 1];
-
-	sort = newShader->sort;
+	float    sort       = newShader->sort;
 
 	for (i = tr.numShaders - 2 ; i >= 0 ; i--)
 	{
@@ -2496,7 +2494,7 @@ static void SortNewShader(void)
 		tr.sortedShaders[i + 1]->sortedIndex++;
 	}
 
-	// Arnout: fix rendercommandlist
+	// fix rendercommandlist
 	FixRenderCommandList(i + 1);
 
 	newShader->sortedIndex  = i + 1;

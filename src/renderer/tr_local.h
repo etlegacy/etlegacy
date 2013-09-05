@@ -1912,15 +1912,12 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
 
 #define MDC_MAX_DIST        (MDC_MAX_OFS * MDC_DIST_SCALE)
 
-#if 0
-void R_MDC_DecodeXyzCompressed(mdcXyzCompressed_t *xyzComp, vec3_t out, vec3_t normal);
-#else   // optimized version
+// optimized version
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
 	(out)[0] = ((float)((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	(out)[1] = ((float)((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	(out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
-#endif
 
 void R_AddMDCSurfaces(trRefEntity_t *ent);
 

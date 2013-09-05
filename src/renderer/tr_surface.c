@@ -1575,7 +1575,6 @@ void RB_SurfaceBad(surfaceType_t *surfType)
 }
 
 #if 0
-
 void RB_SurfaceFlare(srfFlare_t *surf)
 {
 	vec3_t left, up;
