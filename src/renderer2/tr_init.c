@@ -1904,7 +1904,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveCommand("skinlist");
 	ri.Cmd_RemoveCommand("gfxinfo");
 	ri.Cmd_RemoveCommand("modelist");
-	ri.Cmd_RemoveCommand("shaderstate");
 	ri.Cmd_RemoveCommand("animationlist");
 	ri.Cmd_RemoveCommand("fbolist");
 	ri.Cmd_RemoveCommand("vbolist");
