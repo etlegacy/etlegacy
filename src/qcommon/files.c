@@ -1932,7 +1932,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 		case FS_SEEK_SET:
 			unzSetOffset(fsh[f].handleFiles.file.z, fsh[f].zipFilePos);
 			unzOpenCurrentFile(fsh[f].handleFiles.file.z);
-		// fallthrough
+		// fall through
 		case FS_SEEK_CUR:
 			while (remainder > PK3_SEEK_BUFFER_SIZE)
 			{
@@ -1941,12 +1941,9 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 			}
 			FS_Read(buffer, remainder, f);
 			return offset;
-			break;
-
 		default:
 			Com_Error(ERR_FATAL, "FS_Seek: Bad zip origin");
 			return -1;
-			break;
 		}
 	}
 	else
@@ -2581,11 +2578,6 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 		}
 		else if (search->dir)     // scan for files in the filesystem
 		{
-			char *netpath;
-			int  numSysFiles;
-			char **sysFiles;
-			char *name;
-
 			// don't scan directories for files if we are pure or restricted
 			if (fs_numServerPaks && !allowNonPureFilesOnDisk)
 			{
@@ -2593,6 +2585,11 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 			}
 			else
 			{
+				char *netpath;
+				int  numSysFiles;
+				char **sysFiles;
+				char *name;
+
 				netpath  = FS_BuildOSPath(search->dir->path, search->dir->gamedir, path);
 				sysFiles = Sys_ListFiles(netpath, extension, filter, &numSysFiles, qfalse);
 				for (i = 0 ; i < numSysFiles ; i++)
@@ -2868,6 +2865,7 @@ int FS_GetModList(char *listbuf, int bufsize)
 				if (nDescLen > 0 && descHandle)
 				{
 					FILE *file;
+
 					file = FS_FileForHandle(descHandle);
 					Com_Memset(descPath, 0, sizeof(descPath));
 					nDescLen = fread(descPath, 1, 48, file);
@@ -3162,7 +3160,7 @@ void FS_Path_f(void)
 	}
 }
 
-/*
+/**
  * @brief Simulates the 'touch' unix command
  */
 void FS_TouchFile_f(void)
