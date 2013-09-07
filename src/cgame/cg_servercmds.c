@@ -1629,7 +1629,6 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat))
 	{
-		//
 		if (mode == SAY_TEAM || !cg_teamChatsOnly.integer)
 		{
 			bufferedVoiceChat_t vchat;
@@ -1654,8 +1653,25 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 			if (mode == SAY_TEAM)
 			{
-				Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
-				            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat)); // FIXME: CG_TranslateString doesn't make sense here
+				// show latched class for sayplayerclass cmd
+				if (cgs.clientinfo[clientNum].cls != cgs.clientinfo[clientNum].latchedcls)
+				{
+					if (!strcmp(cmd, "IamMedic") || !strcmp(cmd, "IamEngineer") || !strcmp(cmd, "IamFieldOps") || !strcmp(cmd, "IamCovertOps") || !strcmp(cmd, "IamSoldier"))
+					{
+						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s Next class: %s",
+						            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat), BG_ClassnameForNumber(cgs.clientinfo[clientNum].latchedcls)); // FIXME: CG_TranslateString doesn't make sense here
+					}
+					else // isn't sayplayerclass cmd
+					{
+						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
+						            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+					}
+				}
+				else
+				{
+					Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
+					            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+				}
 			}
 			else if (mode == SAY_BUDDY)
 			{
