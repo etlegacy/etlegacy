@@ -260,6 +260,7 @@ void R_ImageList_f(void)
 			break;
 		default:
 			ri.Printf(PRINT_ALL, "???? ");
+			break;
 		}
 
 		switch (image->wrapClampMode)
@@ -1935,6 +1936,12 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 		// parse the shader name
 		token = CommaParse(&text_p);
+
+		if (skin->numSurfaces >= MD3_MAX_SURFACES)
+		{
+			ri.Printf(PRINT_WARNING, "WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
+			break;
+		}
 
 		surf = skin->surfaces[skin->numSurfaces] = ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
 		Q_strncpyz(surf->name, surfName, sizeof(surf->name));
