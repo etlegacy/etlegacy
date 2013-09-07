@@ -2453,9 +2453,8 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 
 	if (item->type == ITEM_TYPE_TEXT)
 	{
-		rectDef_t r;
+		rectDef_t r = item->textRect;
 
-		r    = item->textRect;
 		r.y -= r.h;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
@@ -3486,6 +3485,7 @@ void Item_HandleTextFieldDeSelect(itemDef_t *item)
 	if (item && item->cvar)
 	{
 		char buff[1024];
+
 		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 		DC->setCVar(item->cvar, buff);
 	}
@@ -3544,6 +3544,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	if (item->cvar)
 	{
 		int len;
+
 		memset(buff, 0, sizeof(buff));
 		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 
@@ -3734,8 +3735,8 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 
 		return qtrue;
 	}
-	return qfalse;
 
+	return qfalse;
 }
 
 static void Scroll_ListBox_AutoFunc(void *p)
@@ -4079,7 +4080,6 @@ itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu)
 
 	while (menu->cursorItem > -1)
 	{
-
 		menu->cursorItem--;
 		if (menu->cursorItem < 0 && !wrapped)
 		{
@@ -4115,7 +4115,6 @@ itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu)
 	}
 
 	oldCursor = menu->cursorItem;
-
 
 	if (menu->cursorItem == -1)
 	{
@@ -4424,7 +4423,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			debugMode ^= 1;
 		}
 		break;
-
 	case K_F12:
 		if (DC->getCVarValue("developer"))
 		{
@@ -4435,7 +4433,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_UPARROW:
 		Menu_SetPrevCursorItem(menu);
 		break;
-
 	case K_ESCAPE:
 		if (!g_waitingForKey && menu->onESC)
 		{
@@ -4444,7 +4441,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			Item_RunScript(&it, NULL, menu->onESC);
 		}
 		break;
-
 	case K_ENTER:
 	case K_KP_ENTER:
 	case K_MOUSE3:
@@ -4460,7 +4456,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			}
 		}
 		break;
-
 	case K_TAB:
 		if (DC->keyIsDown(K_SHIFT))
 		{
@@ -4475,7 +4470,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_DOWNARROW:
 		Menu_SetNextCursorItem(menu);
 		break;
-
 	case K_MOUSE1:
 	case K_MOUSE2:
 		if (item)
@@ -4516,7 +4510,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			}
 		}
 		break;
-
 	case K_JOY1:
 	case K_JOY2:
 	case K_JOY3:
@@ -4612,13 +4605,14 @@ void Item_SetTextExtents(itemDef_t *item, int *width, int *height, const char *t
 
 void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 {
-	vec4_t    lowLight;
 	menuDef_t *parent = (menuDef_t *)item->parent;
 
 	Fade(&item->window.flags, &item->window.foreColor[3], parent->fadeClamp, &item->window.nextTime, parent->fadeCycle, qtrue, parent->fadeAmount);
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
+		vec4_t lowLight;
+
 		lowLight[0] = 0.8 * parent->focusColor[0];
 		lowLight[1] = 0.8 * parent->focusColor[1];
 		lowLight[2] = 0.8 * parent->focusColor[2];
@@ -4627,6 +4621,8 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 	}
 	else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime / BLINK_DIVISOR) & 1))
 	{
+		vec4_t lowLight;
+
 		lowLight[0] = 0.8 * item->window.foreColor[0];
 		lowLight[1] = 0.8 * item->window.foreColor[1];
 		lowLight[2] = 0.8 * item->window.foreColor[2];
@@ -5975,7 +5971,6 @@ void Item_Paint(itemDef_t *item)
 		return;
 	}
 
-	//if (item != NULL)
 	{
 		menuDef_t *parent = (menuDef_t *)item->parent;
 
@@ -6168,6 +6163,7 @@ void Item_Paint(itemDef_t *item)
 		{
 			vec4_t    color;
 			rectDef_t *r = Item_CorrectedTextRect(item);
+
 			color[1] = color[3] = 1;
 			color[0] = color[2] = 0;
 			DC->drawRect(r->x, r->y, r->w, r->h, 1, color);
