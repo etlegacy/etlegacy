@@ -126,7 +126,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 
 	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME))         // modified since slime is no longer deadly
 	{
-		waterScale = 0.10;
+		waterScale = 0.1f;
 	}
 
 	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
@@ -137,7 +137,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	AxisCopy(axisDefault, re->axis);
 	re->hModel = cgs.media.smallgunBrassModel;
 
-	le->bounceFactor = 0.4 * waterScale;
+	le->bounceFactor = 0.4f * waterScale;
 
 	le->angles.trType     = TR_LINEAR;
 	le->angles.trTime     = cg.time;
@@ -328,16 +328,12 @@ CG_PanzerFaustEjectBrass
 */
 static void CG_PanzerFaustEjectBrass(centity_t *cent)
 {
-	localEntity_t *le = CG_AllocLocalEntity();
-	refEntity_t   *re = &le->refEntity;
-	vec3_t        velocity, xvelocity;
-	vec3_t        offset, xoffset;
+	localEntity_t *le      = CG_AllocLocalEntity();
+	refEntity_t   *re      = &le->refEntity;
+	vec3_t        velocity = { 16, -200, 0 };
+	vec3_t        offset, xoffset, xvelocity;
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
-
-	velocity[0] = 16;
-	velocity[1] = -200;
-	velocity[2] = 0;
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -641,6 +637,7 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 
 		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
 		rnd = random();
+		// FIXME: do a switch
 		if (ent->currentState.eType == ET_FLAMEBARREL)
 		{
 			if ((rand() % 100) > 50)
@@ -966,7 +963,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			text_p = prev;  // unget the token
 			break;
 		}
-		Com_Printf("CG_ParseWeaponConfig: Unknown token in weapon cfg '%s' is %s\n", token, filename);
+		Com_Printf("CG_ParseWeaponConfig: Unknown token in weapon cfg '%s' in %s\n", token, filename);
 	}
 
 	for (i = 0 ; i < MAX_WP_ANIMATIONS  ; i++)
@@ -2651,7 +2648,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon", 0, NULL);
 	}
 
-
 	/*  playerScaled = (qboolean)(cgs.clientinfo[ cent->currentState.clientNum ].playermodelScale[0] != 0);
 	    if(!ps && playerScaled) {   // don't "un-scale" weap up in 1st person
 	        for(i=0;i<3;i++) {  // scale weapon back up so it doesn't pick up the adjusted scale of the character models.
@@ -3731,9 +3727,6 @@ getAltWeapon
 */
 static int getAltWeapon(int weapnum)
 {
-	/*  if(weapnum > MAX_WEAP_ALTS) seems unneeded
-	        return weapnum;*/
-
 	if (weapAlts[weapnum])
 	{
 		return weapAlts[weapnum];
@@ -4000,6 +3993,8 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 //          cg.weaponSelect = newweap;
 //      }
 //      break;
+	default:
+		break;
 	}
 
 	if (lastweap == WP_BINOCULARS && (cg.snap->ps.eFlags & EF_ZOOMING))
@@ -4226,6 +4221,8 @@ void CG_NextWeap(qboolean switchBanks)
 	case WP_MORTAR_SET:
 		curweap = num = WP_MORTAR;
 		break;
+	default:
+		break;
 	}
 
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
@@ -4328,9 +4325,9 @@ void CG_NextWeap(qboolean switchBanks)
 				continue;
 			}
 
-//          if(num == WP_BINOCULARS) {
-//              continue;
-//          }
+			//if(num == WP_BINOCULARS) {
+			//  continue;
+			//}
 
 			if (CG_WeaponSelectable(num))       // first entry in bank was selectable, no need to scan the bank
 			{
@@ -5717,17 +5714,16 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count)
 
 		le->bounceFactor = 0.5;
 
-//      if (!rand()%2)
-//          le->effectWidth = 0;    // no flame
-//      else
+		//if (!rand()%2)
+		//  le->effectWidth = 0;    // no flame
+		//else
 		le->effectWidth = 5 + random() * 5;
 
-//      if (rand()%3)
+		//if (rand()%3)
 		le->effectFlags |= 1;       // smoke trail
 
-
-//      le->leBounceSoundType = LEBS_BLOOD;
-//      le->leMarkType = LEMT_BLOOD;
+		//le->leBounceSoundType = LEBS_BLOOD;
+		//le->leMarkType = LEMT_BLOOD;
 	}
 }
 
@@ -5805,9 +5801,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 		// set mark duration
 		markDuration = cg_markTime.integer;
-
 		break;
-
 	case WP_LUGER:
 	case WP_SILENCER:
 	case WP_AKIMBO_LUGER:
@@ -5897,7 +5891,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			if (clientNum)
 			{
 				// mark and sound can potentially use the surface for override values
-
 				mark   = cgs.media.bulletMarkShader;    // default
 				radius = 1.0f + 0.5f * (rand() % 2);
 
@@ -5929,7 +5922,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			}
 		}
 		break;
-
 	case WP_MAPMORTAR:
 		sfx           = cgs.media.sfx_rockexp;
 		sfx2          = cgs.media.sfx_rockexpDist;
@@ -5980,7 +5972,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			CG_ParticleExplosion("explode1", sprOrg, sprVel, 1000, 20, 300, qtrue);
 		}
 		break;
-
 	case WP_DYNAMITE:
 		shader        = cgs.media.rocketExplosionShader;
 		sfx           = cgs.media.sfx_dynamiteexp;
@@ -6194,13 +6185,11 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			CG_AddDebris(origin, dir, 400 + random() * 200, rand() % 2000 + 1000, 5 + rand() % 5);
 		}
 		break;
-
 	default:
 	case WP_FLAMETHROWER:
 		return;
 		break;
 	}
-
 
 	if (sfx)
 	{
