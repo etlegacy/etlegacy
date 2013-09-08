@@ -3364,9 +3364,10 @@ void Field_Clear(field_t *edit)
 	edit->scroll = 0;
 }
 
-static const char *completionString;
-static char       shortestMatch[MAX_TOKEN_CHARS];
-static int        matchCount;
+static char completionString[MAX_TOKEN_CHARS];
+static char shortestMatch[MAX_TOKEN_CHARS];
+static int  matchCount;
+static int  matchIndex;
 // field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
 
@@ -3399,6 +3400,33 @@ static void FindMatches(const char *s)
 		}
 	}
 	shortestMatch[i] = 0;
+}
+
+/*
+===============
+FindIndexMatch
+
+===============
+*/
+static int findMatchIndex;
+static void FindIndexMatch(const char *s)
+{
+
+	//Com_Printf("S: %s CompletionString: %s\n",s,completionString);
+
+	if (Q_stricmpn(s, completionString, strlen(completionString)))
+	{
+		return;
+	}
+
+	//Com_Printf("FindMatchIndex: %i Matchindex: %i Shortestmatch: %s Current Check: %s\n",findMatchIndex,matchIndex,shortestMatch,s);
+
+	if (findMatchIndex == matchIndex)
+	{
+		Q_strncpyz(shortestMatch, s, sizeof(shortestMatch));
+	}
+
+	findMatchIndex++;
 }
 
 /*
@@ -3541,12 +3569,13 @@ void Field_CompleteCommand(char *cmd,
 	// If there is trailing whitespace on the cmd
 	if (*(cmd + strlen(cmd) - 1) == ' ')
 	{
-		completionString = "";
+		completionString[0] = 0;
 		completionArgument++;
 	}
 	else
 	{
-		completionString = Cmd_Argv(completionArgument - 1);
+		Q_strncpyz(completionString, Cmd_Argv(completionArgument - 1), sizeof(completionString));
+		//completionString = Cmd_Argv(completionArgument - 1);
 	}
 
 #if SLASH_COMMAND
@@ -3604,7 +3633,8 @@ void Field_CompleteCommand(char *cmd,
 #if SLASH_COMMAND
 		if (completionString[0] == '\\' || completionString[0] == '/')
 		{
-			completionString++;
+			memmove(completionString, completionString + 1, sizeof(completionString) - 1);
+			//completionString++;
 		}
 #endif
 
@@ -3648,13 +3678,91 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 	*hunkexpected = com_expectedhunkusage;
 }
 
+void Console_AutoCompelete(field_t *field, int *comletionlen)
+{
+	int completionOffset = 0;
+
+	if (!*comletionlen)
+	{
+		matchCount       = 0;
+		matchIndex       = 0;
+		shortestMatch[0] = 0;
+
+		Field_AutoComplete(field);
+
+		if (matchCount <= 1)
+		{
+			return;
+		}
+		//Multiple matches
+#if 1
+		{
+			//Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
+			int completionArgument = 0;
+			completionArgument = Cmd_Argc();
+
+			// If there is trailing whitespace on the cmd
+			if (*(field->buffer + strlen(field->buffer) - 1) == ' ')
+			{
+				completionArgument++;
+			}
+
+			//We will skip this hightlight method if theres more than one command given
+			if (completionArgument > 1)
+			{
+				return;
+			}
+		}
+#endif
+		//Com_sprintf( field->buffer, sizeof( field->buffer ), "\\%s", shortestMatch);
+		//*comletionlen = field->cursor = strlen( field->buffer );
+		completionOffset = strlen(field->buffer) - strlen(completionString);
+
+		Q_strncpyz(&field->buffer[completionOffset], shortestMatch,
+		           sizeof(field->buffer) - completionOffset);
+
+		*comletionlen = field->cursor = strlen(field->buffer);
+	}
+	else
+	{
+		if (matchCount != 1)
+		{
+			// get the next match and show instead
+			matchIndex++;
+			if (matchIndex == matchCount)
+			{
+				matchIndex = 0;
+			}
+			findMatchIndex = 0;
+
+#if SLASH_COMMAND
+			if (completionString[0] == '\\' || completionString[0] == '/')
+			{
+				memmove(completionString, completionString + 1, sizeof(completionString) - 1);
+			}
+#endif
+			Cmd_CommandCompletion(FindIndexMatch);
+			Cvar_CommandCompletion(FindIndexMatch);
+
+			Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
+			field->cursor = strlen(field->buffer);
+
+			/*
+			completionOffset = strlen(field->buffer) - strlen(completionString);
+			Q_strncpyz(&field->buffer[completionOffset], shortestMatch,
+			    sizeof(field->buffer) - completionOffset);
+			field->cursor = strlen( field->buffer );
+			*/
+		}
+	}
+}
+
 /**
  * @brief Perform Tab expansion
  */
 void Field_AutoComplete(field_t *field)
 {
 	completionField = field;
-
 	Field_CompleteCommand(completionField->buffer, qtrue, qtrue);
 }
 

@@ -716,7 +716,7 @@ void Console_Key(int key)
 
 	if (key == K_TAB)
 	{
-		Field_AutoComplete(&g_consoleField);
+		Console_AutoCompelete(&g_consoleField, &con.acLength);
 		return;
 	}
 

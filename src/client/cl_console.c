@@ -702,19 +702,13 @@ void Con_DrawNotify(void)
 
 void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrollBarY, int rows)
 {
-	vec4_t      color;
+	vec4_t      color          = { 0.2f, 0.2f, 0.2f, 0.75f };
 	const float scrollBarWidth = 3;
 
 	const float scrollHandleLength      = con.totallines ? scrollBarLength *MIN(1.0f, (float) rows / con.totallines) : 0;
 	const float scrollBarLengthPerLine  = (scrollBarLength - scrollHandleLength) / (con.totallines - rows);
 	const float relativeScrollLineIndex = con.current - con.totallines + MIN(rows, con.totallines);
 	const float scrollHandlePostition   = scrollBarLengthPerLine * (con.display - relativeScrollLineIndex);
-
-	//draw the scrollBar
-	color[0] = 0.2f;
-	color[1] = 0.2f;
-	color[2] = 0.2f;
-	color[3] = 0.75f;
 
 	SCR_FillRect(scrollBarX, scrollBarY, scrollBarWidth, scrollBarLength, color);
 
