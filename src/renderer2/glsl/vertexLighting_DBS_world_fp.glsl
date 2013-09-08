@@ -14,9 +14,6 @@ varying vec3		var_Position;
 varying vec4		var_TexDiffuseNormal;
 varying vec2		var_TexSpecular;
 varying vec4		var_LightColor;
-#if !defined(COMPAT_Q3A)
-varying vec3		var_LightDirection;
-#endif
 varying vec3		var_Tangent;
 varying vec3		var_Binormal;
 varying vec3		var_Normal;
@@ -116,13 +113,8 @@ void	main()
 	normalize(N);
 	#endif
 
-#if defined(COMPAT_Q3A)
 	// fake bump mapping
  	vec3 L = N;
-#else
-	// compute light direction in tangent space
-	vec3 L = normalize(objectToTangentMatrix * var_LightDirection);
-#endif
  
  	// compute half angle in tangent space
 	vec3 H = normalize(L + V);
@@ -153,7 +145,7 @@ void	main()
 #endif
 
 
-#elif defined(COMPAT_Q3A)
+#else
 
 	vec3 N;
 

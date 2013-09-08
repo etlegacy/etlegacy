@@ -225,8 +225,6 @@ static char *GLSL_GetMacroName(int macro)
 		return "USE_REFLECTIVE_SPECULAR";
 	case USE_SHADOWING:
 		return "USE_SHADOWING";
-	case TWOSIDED:
-		return "TWOSIDED";
 	case EYE_OUTSIDE:
 		return "EYE_OUTSIDE";
 	case BRIGHTPASS_FILTER:
@@ -314,9 +312,6 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 	case USE_VERTEX_SKINNING:
 		attr = ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS;
 		break;
-	case TWOSIDED:
-		attr = ATTR_NORMAL;
-		break;
 	case USE_DEFORM_VERTEXES:
 		attr = ATTR_NORMAL;
 		break;
@@ -348,12 +343,6 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 	float npotWidthScale, npotHeightScale;
 
 	Com_Memset(bufferExtra, 0, sizeof(bufferExtra));
-
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
-	Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_Q3A\n#define COMPAT_Q3A 1\n#endif\n");
-#endif
-
-	Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_ET\n#define COMPAT_ET 1\n#endif\n");
 
 	// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
 	Q_strcat(bufferExtra, sizeof(bufferExtra),

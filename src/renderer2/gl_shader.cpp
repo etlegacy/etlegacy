@@ -387,12 +387,6 @@ void GLShader::GetShaderExtraDefines(char **defines, int *size) const
 
 	Com_Memset(bufferExtra, 0, sizeof(bufferExtra));
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
-	Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_Q3A\n#define COMPAT_Q3A 1\n#endif\n");
-#endif
-
-	Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_ET\n#define COMPAT_ET 1\n#endif\n");
-
 	// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
 	Q_strcat(bufferExtra, sizeof(bufferExtra),
 	         va("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value));
