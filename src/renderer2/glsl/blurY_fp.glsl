@@ -1,9 +1,9 @@
 /* blurY_fp.glsl */
 
-uniform sampler2D	u_ColorMap;
-uniform float		u_DeformMagnitude;
+uniform sampler2D u_ColorMap;
+uniform float     u_DeformMagnitude;
 
-void	main()
+void    main()
 {
 	vec2 st = gl_FragCoord.st;
 
@@ -12,15 +12,15 @@ void	main()
 
 	// multiply with 4 because the FBO is only 1/4th of the screen resolution
 	st *= vec2(4.0, 4.0);
-	
+
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
-	
+
 #if 1
 	// set so a magnitude of 1 is approximately 1 pixel with 640x480
 	//vec2 deform = vec2(u_DeformMagnitude * 0.0016, u_DeformMagnitude * 0.00213333);
 	vec2 deform = u_DeformMagnitude * r_FBufScale;
-	
+
 	// these are the multipliers for the gaussian blur
 	float mu01 = 0.00261097;
 	float mu02 = 0.00522193;
@@ -31,25 +31,25 @@ void	main()
 	float mu07 = 0.16710183;
 	float mu08 = 0.33420366;
 	float mu09 = 0.66840732;
-	
+
 	// fragment offsets for blur samples
-	vec2 offset01 = vec2( 0.0, -8.0);
-	vec2 offset02 = vec2( 0.0, -7.0);
-	vec2 offset03 = vec2( 0.0, -6.0);
-	vec2 offset04 = vec2( 0.0, -5.0);
-	vec2 offset05 = vec2( 0.0, -4.0);
-	vec2 offset06 = vec2( 0.0, -3.0);
-	vec2 offset07 = vec2( 0.0, -2.0);
-	vec2 offset08 = vec2( 0.0, -1.0);
-	vec2 offset09 = vec2( 0.0,  1.0);
-	vec2 offset10 = vec2( 0.0,  2.0);
-	vec2 offset11 = vec2( 0.0,  3.0);
-	vec2 offset12 = vec2( 0.0,  4.0);
-	vec2 offset13 = vec2( 0.0,  5.0);
-	vec2 offset14 = vec2( 0.0,  6.0);
-	vec2 offset15 = vec2( 0.0,  7.0);
-	vec2 offset16 = vec2( 0.0,  8.0);
-	
+	vec2 offset01 = vec2(0.0, -8.0);
+	vec2 offset02 = vec2(0.0, -7.0);
+	vec2 offset03 = vec2(0.0, -6.0);
+	vec2 offset04 = vec2(0.0, -5.0);
+	vec2 offset05 = vec2(0.0, -4.0);
+	vec2 offset06 = vec2(0.0, -3.0);
+	vec2 offset07 = vec2(0.0, -2.0);
+	vec2 offset08 = vec2(0.0, -1.0);
+	vec2 offset09 = vec2(0.0, 1.0);
+	vec2 offset10 = vec2(0.0, 2.0);
+	vec2 offset11 = vec2(0.0, 3.0);
+	vec2 offset12 = vec2(0.0, 4.0);
+	vec2 offset13 = vec2(0.0, 5.0);
+	vec2 offset14 = vec2(0.0, 6.0);
+	vec2 offset15 = vec2(0.0, 7.0);
+	vec2 offset16 = vec2(0.0, 8.0);
+
 	// calculate our offset texture coordinates
 	vec2 st01 = st + offset01 * deform;
 	vec2 st02 = st + offset02 * deform;
@@ -67,7 +67,7 @@ void	main()
 	vec2 st14 = st + offset14 * deform;
 	vec2 st15 = st + offset15 * deform;
 	vec2 st16 = st + offset16 * deform;
-	
+
 	// base color
 	vec4 c00 = texture2D(u_ColorMap, st);
 
@@ -88,7 +88,7 @@ void	main()
 	vec4 c14 = texture2D(u_ColorMap, st14);
 	vec4 c15 = texture2D(u_ColorMap, st15);
 	vec4 c16 = texture2D(u_ColorMap, st16);
-	
+
 	vec4 color = c01 * mu01;
 	color += c02 * mu02;
 	color += c03 * mu03;
@@ -106,7 +106,7 @@ void	main()
 	color += c14 * mu03;
 	color += c15 * mu02;
 	color += c16 * mu01;
-	
+
 	gl_FragColor = color;
 #else
 
@@ -114,24 +114,24 @@ void	main()
 	float gaussFact[3] = float[3](1.0, 2.0, 1.0);
 	#elif 0
 	float gaussFact[5] = float[5](1.0, 4.0, 6.0, 4.0, 1.0);
-	float gaussSum = 16.0;
+	float gaussSum     = 16.0;
 	#elif 1
 	float gaussFact[7] = float[7](1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0);
-	float gaussSum = 64.0;
+	float gaussSum     = 64.0;
 	#endif
 
 	// do a full gaussian blur
 	vec4 sumColors = vec4(0.0);
 
 	int tap = 3;
-	for(int i = -tap; i < tap; i++)
-    {
-	    float weight = gaussFact[i + 2];
-		vec4 color = texture2D(u_ColorMap, st + vec2(0, i) * u_DeformMagnitude * r_FBufScale) * weight;
-			
+	for (int i = -tap; i < tap; i++)
+	{
+		float weight = gaussFact[i + 2];
+		vec4  color  = texture2D(u_ColorMap, st + vec2(0, i) * u_DeformMagnitude * r_FBufScale) * weight;
+
 		sumColors += color;
 	}
-	
+
 	gl_FragColor = sumColors / gaussSum;
 #endif
 }
