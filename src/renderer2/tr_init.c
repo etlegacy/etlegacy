@@ -1454,13 +1454,8 @@ void R_Register(void)
 	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_CHEAT | CVAR_LATCH);
-#else
-	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_CHEAT | CVAR_LATCH);
-	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "0", CVAR_CHEAT | CVAR_LATCH);
-#endif
 
 	AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // ydnar: limit to overbrightbits 1 (sorry 1337 players)
 	AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
@@ -2074,15 +2069,8 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.ClearScene          = RE_ClearScene;
 	re.AddRefEntityToScene = RE_AddRefEntityToScene;
 
-#if defined(COMPAT_ET)
 	re.AddPolyToScene  = RE_AddPolyToSceneET;
 	re.AddPolysToScene = RE_AddPolysToScene;
-#else
-	re.AddPolyToScene = RE_AddPolyToSceneQ3A;
-#endif
-#if !defined(COMPAT_ET)
-	re.LightForPoint = R_LightForPoint;
-#endif
 
 	re.AddLightToScene = RE_AddDynamicLightToSceneET;
 	//re.AddAdditiveLightToScene = RE_AddDynamicLightToSceneQ3A;
