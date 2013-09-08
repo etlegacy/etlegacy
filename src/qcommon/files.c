@@ -3929,7 +3929,6 @@ const char *FS_LoadedPakNames(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-	int          len;
 
 	info[0] = 0;
 
