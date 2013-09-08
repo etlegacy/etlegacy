@@ -358,7 +358,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 		else
 		{
 			oldstate = &cl.parseEntities[(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
-			oldnum = oldstate->number;
+			oldnum   = oldstate->number;
 		}
 	}
 

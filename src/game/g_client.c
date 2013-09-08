@@ -3157,7 +3157,7 @@ void ClientDisconnect(int clientNum)
 		{
 			StopFollowing(flag);
 		}
-		if (flag->client->ps.pm_flags & PMF_LIMBO
+		if ((flag->client->ps.pm_flags & PMF_LIMBO)
 		    && flag->client->sess.spectatorClient == clientNum)
 		{
 			Cmd_FollowCycle_f(flag, 1);

@@ -1433,8 +1433,6 @@ qboolean BG_IsAkimboWeapon(int weaponNum);
 qboolean BG_IsAkimboSideArm(int weaponNum, playerState_t *ps);
 int BG_AkimboSidearm(int weaponNum);
 
-qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon);
-
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
 
 // content masks
@@ -1456,7 +1454,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 typedef enum
 {
 	HINT_NONE = 0,      // reserved
-	HINT_FORCENONE, // reserved
+	HINT_FORCENONE,     // reserved
 	HINT_PLAYER,
 	HINT_ACTIVATE,
 	HINT_DOOR,

@@ -2387,20 +2387,16 @@ int BG_AkimboSidearm(int weaponNum)
 	{
 	case WP_AKIMBO_COLT:
 		return WP_COLT;
-		break;
 	case WP_AKIMBO_SILENCEDCOLT:
 		return WP_COLT;
-		break;
 	case WP_AKIMBO_LUGER:
 		return WP_LUGER;
-		break;
 	case WP_AKIMBO_SILENCEDLUGER:
 		return WP_LUGER;
-		break;
 	default:
-		return WP_NONE;
 		break;
 	}
+	return WP_NONE;
 }
 
 /*
@@ -2682,114 +2678,6 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 	return ammoAdded;
 }
 
-/*
-================
-BG_CanUseWeapon: can a player of the specified team and class use this weapon?
-extracted and adapted from Bot_GetWeaponForClassAndTeam.
-================
-*/
-qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
-{
-	switch (classNum)
-	{
-	case PC_ENGINEER:
-		if (weapon == WP_PLIERS
-		    || weapon == WP_DYNAMITE
-		    || weapon == WP_LANDMINE)
-		{
-			return qtrue;
-		}
-		else if (weapon == WP_MP40 || weapon == WP_KAR98)
-		{
-			return (teamNum == TEAM_AXIS);
-		}
-		else if (weapon == WP_THOMPSON || weapon == WP_CARBINE)
-		{
-			return (teamNum == TEAM_ALLIES);
-		}
-	case PC_FIELDOPS:
-		if (weapon == WP_STEN)
-		{
-			return qtrue;
-		}
-		else if (weapon == WP_MP40)
-		{
-			return (teamNum == TEAM_AXIS);
-		}
-		else if (weapon == WP_THOMPSON)
-		{
-			return (teamNum == TEAM_ALLIES);
-		}
-		break;
-	case PC_SOLDIER:
-		if (weapon == WP_STEN
-		    || weapon == WP_PANZERFAUST
-		    || weapon == WP_FLAMETHROWER
-		    // FIXME: shouldn't this only be for cvt ops?
-		    || weapon == WP_FG42
-		    || weapon == WP_MOBILE_MG42
-		    || weapon == WP_MOBILE_MG42_SET
-		    || weapon == WP_MORTAR
-		    || weapon == WP_MORTAR_SET)
-		{
-			return qtrue;
-		}
-		else if (weapon == WP_MP40)
-		{
-			return (teamNum == TEAM_AXIS);
-		}
-		else if (weapon == WP_THOMPSON)
-		{
-			return (teamNum == TEAM_ALLIES);
-		}
-		break;
-
-	case PC_MEDIC:
-		if (weapon == WP_MEDIC_SYRINGE || weapon == WP_MEDKIT)
-		{
-			return qtrue;
-		}
-		else if (weapon == WP_MP40)
-		{
-			return (teamNum == TEAM_AXIS);
-		}
-		else if (weapon == WP_THOMPSON)
-		{
-			return (teamNum == TEAM_ALLIES);
-		}
-		break;
-	case PC_COVERTOPS:
-		if (weapon == WP_STEN
-		    || weapon == WP_SMOKE_BOMB
-		    || weapon == WP_SATCHEL
-		    || weapon == WP_AMMO
-		    || weapon == WP_FG42)
-		{
-			return qtrue;
-		}
-		else if (weapon == WP_K43)
-		{
-			return (teamNum == TEAM_AXIS);
-		}
-		else if (weapon == WP_GARAND)
-		{
-			return (teamNum == TEAM_ALLIES);
-		}
-		break;
-	}
-
-	if (weapon == WP_NONE
-	    || weapon == WP_KNIFE
-	    || weapon == WP_LUGER
-	    || weapon == WP_COLT)
-	{
-		return qtrue;
-	}
-
-	// if not any of the above
-	return qfalse;
-}
-
 #define AMMOFORWEAP BG_FindAmmoForWeapon(item->giTag)
 
 /*
@@ -2893,7 +2781,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 
 	case IT_BAD:
 		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: IT_BAD");
-
+		break;
 	}
 	return qfalse;
 }
@@ -3717,8 +3605,6 @@ Handles the sequence numbers
 ===============
 */
 
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps)
 {
 
@@ -4362,7 +4248,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		break;
 	default:
 		return(GetAmmoTableData(weaponNum)->maxammo);
-		break;
 	}
 }
 
