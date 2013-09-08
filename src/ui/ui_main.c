@@ -5189,7 +5189,7 @@ void UI_RunMenuScript(char **args)
 			else
 			{
 				// exec default_left.cfg
-				trap_Cmd_ExecuteText(EXEC_APPEND, "exec default_left.cfg\n");
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("exec %s\n", CONFIG_NAME_DEFAULT_LEFT));
 				Controls_SetDefaults(qtrue);
 			}
 
@@ -5214,7 +5214,7 @@ void UI_RunMenuScript(char **args)
 			else
 			{
 				// exec default_left.cfg
-				trap_Cmd_ExecuteText(EXEC_APPEND, "exec default_left.cfg\n");
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("exec %s\n", CONFIG_NAME_DEFAULT_LEFT));
 				Controls_SetDefaults(qtrue);
 			}
 		}
