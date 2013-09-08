@@ -3610,7 +3610,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 
 				memset(clipbuff, 0, sizeof(clipbuff));
 				DC->getClipboardData(clipbuff, sizeof(clipbuff));
-				if (clipbuff && strlen(clipbuff))
+				if (strlen(clipbuff))
 				{
 					int i       = 0;
 					int cliplen = strlen(clipbuff);
