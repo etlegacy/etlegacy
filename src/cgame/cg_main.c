@@ -299,6 +299,8 @@ vmCvar_t cg_altHudFlags;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamLatchedClass;
 
+vmCvar_t cg_simpleItems;
+
 vmCvar_t cg_automapZoom;
 
 vmCvar_t cg_drawTime;
@@ -511,6 +513,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_altHudFlags,           "cg_altHudFlags",           "0",     CVAR_ARCHIVE                 }, // Hudstyles
 	{ &cg_tracers,               "cg_tracers",               "1",     CVAR_ARCHIVE                 }, // Draw tracers
 	{ &cg_fireteamLatchedClass,  "cg_fireteamLatchedClass",  "1",     CVAR_ARCHIVE                 }, // Draw fireteam members latched class
+	{ &cg_simpleItems,           "cg_simpleItems",           "0",     CVAR_ARCHIVE                 }, // Bugged atm
 	{ &cg_automapZoom,           "cg_automapZoom",           "5.159", CVAR_ARCHIVE                 },
 	{ &cg_drawTime,              "cg_drawTime",              "0",     CVAR_ARCHIVE                 },
 	{ &cg_popupTime,             "cg_popupTime",             "1000",  CVAR_ARCHIVE                 },
