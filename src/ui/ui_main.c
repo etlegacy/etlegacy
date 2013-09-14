@@ -110,47 +110,39 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case UI_KEY_EVENT:
 		_UI_KeyEvent(arg0, arg1);
 		return 0;
-
 	case UI_MOUSE_EVENT:
 		_UI_MouseEvent(arg0, arg1);
 		return 0;
-
 	case UI_REFRESH:
 		_UI_Refresh(arg0);
 		return 0;
-
 	case UI_IS_FULLSCREEN:
 		return _UI_IsFullscreen();
-
 	case UI_SET_ACTIVE_MENU:
 		_UI_SetActiveMenu(arg0);
 		return 0;
-
 	case UI_GET_ACTIVE_MENU:
 		return _UI_GetActiveMenu();
-
 	case UI_CONSOLE_COMMAND:
 		return UI_ConsoleCommand(arg0);
-
 	case UI_DRAW_CONNECT_SCREEN:
 		UI_DrawConnectScreen(arg0);
 		return 0;
-
 	case UI_CHECKEXECKEY:
 		return UI_CheckExecKey(arg0);
 	case UI_WANTSBINDKEYS:
 		return (g_waitingForKey && g_bindItem) ? qtrue : qfalse;
-
 	case UI_GETAPIVERSION:
 		return UI_API_VERSION;
-
 	case UI_INIT:
 		_UI_Init();
 		return 0;
-
 	case UI_SHUTDOWN:
 		_UI_Shutdown();
 		return 0;
+	default:
+		Com_Printf("Bad ui export type: %ld\n", (long int) command);
+		break;
 	}
 
 	return -1;
@@ -262,6 +254,7 @@ int Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 int Text_Width(const char *text, float scale, int limit)
 {
 	fontInfo_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+
 	return Text_Width_Ext(text, scale, limit, font);
 }
 
@@ -330,11 +323,10 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 
 int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	float       max;
+	float       max = 0;
 	glyphInfo_t *glyph;
 	const char  *s = text;
 
-	max = 0;
 	if (text)
 	{
 		int count = 0;
@@ -771,7 +763,7 @@ void _UI_Refresh(int realtime)
 	}
 
 	// draw cursor
-	UI_SetColor(NULL);
+	trap_R_SetColor(NULL);
 	if (Menu_Count() > 0)
 	{
 		uiClientState_t cstate;
@@ -2652,8 +2644,8 @@ static void UI_ParseGLConfig(void)
 
 	uiInfo.numGlInfoLines = 0;
 
-	eptr = uiInfo.uiDC.glconfig.extensions_string;
-
+	eptr = uiInfo.uiDC.glconfig.extensions_string; // NOTE: extension_strings of newer gfx cards might be greater than 4096
+	                                               // (engine side is fixed & glconfig.extensions_string is just kept for compatibility reasons)
 	while (*eptr)
 	{
 		while (*eptr && *eptr == ' ')
@@ -4480,6 +4472,7 @@ void UI_RunMenuScript(char **args)
 			if (String_Parse(args, &orders))
 			{
 				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
+
 				if (selectedPlayer == uiInfo.myTeamCount)
 				{
 					trap_Cmd_ExecuteText(EXEC_APPEND, orders);
@@ -4498,6 +4491,7 @@ void UI_RunMenuScript(char **args)
 			if (String_Parse(args, &orders))
 			{
 				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
+
 				if (selectedPlayer < uiInfo.myTeamCount)
 				{
 					strcpy(buff, orders);
@@ -4523,10 +4517,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "showSpecScores") == 0)
 		{
-			if (atoi(UI_Cvar_VariableString("ui_isSpectator")))
-			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, "+scores\n");
-			}
+			trap_Cmd_ExecuteText(EXEC_APPEND, "+scores\n");
 		}
 		else if (Q_stricmp(name, "rconGame") == 0)
 		{
@@ -5360,13 +5351,12 @@ UI_BinaryServerInsertion
 */
 static void UI_BinaryServerInsertion(int num)
 {
-	int mid, offset, res, len;
-
 	// use binary search to insert server
-	len    = uiInfo.serverStatus.numDisplayServers;
-	mid    = len;
-	offset = 0;
-	res    = 0;
+	int len    = uiInfo.serverStatus.numDisplayServers;
+	int mid    = len;
+	int offset = 0;
+	int res    = 0;
+
 	while (mid > 0)
 	{
 		mid = len >> 1;
@@ -5843,7 +5833,6 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 {
 	char      *p, *score, *ping, *name, *p_val = NULL, *p_name = NULL;
 	menuDef_t *menu, *menu2; // we use the URL buttons in several menus
-
 
 	if (!info)
 	{
@@ -6942,10 +6931,10 @@ static void UI_FeederSelection(float feederID, int index)
 	}
 	else if (feederID == FEEDER_CAMPAIGNS || feederID == FEEDER_ALLCAMPAIGNS)
 	{
-		int actual, campaign, campaignCount;
+		int actual;
+		int campaign      = (feederID == FEEDER_ALLCAMPAIGNS) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
+		int campaignCount = UI_CampaignCount(feederID == FEEDER_CAMPAIGNS);
 
-		campaign      = (feederID == FEEDER_ALLCAMPAIGNS) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
-		campaignCount = UI_CampaignCount(feederID == FEEDER_CAMPAIGNS);
 		if (uiInfo.campaignList[campaign].campaignCinematic >= 0)
 		{
 			trap_CIN_StopCinematic(uiInfo.campaignList[campaign].campaignCinematic);
@@ -7247,7 +7236,6 @@ static void UI_ParseGameInfo(const char *teamFile)
 
 		if (Q_stricmp(token, "gametypes") == 0)
 		{
-
 			if (GameType_Parse(&p, qfalse))
 			{
 				continue;
@@ -7365,7 +7353,7 @@ void _UI_Init(void)
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;
-	uiInfo.uiDC.setColor             = &UI_SetColor;
+	uiInfo.uiDC.setColor             = &trap_R_SetColor;
 	uiInfo.uiDC.drawHandlePic        = &UI_DrawHandlePic;
 	uiInfo.uiDC.drawStretchPic       = &trap_R_DrawStretchPic;
 	uiInfo.uiDC.drawText             = &Text_Paint;
@@ -7407,7 +7395,7 @@ void _UI_Init(void)
 	uiInfo.uiDC.fileText             = &UI_FileText;
 	uiInfo.uiDC.feederSelection      = &UI_FeederSelection;
 	uiInfo.uiDC.feederSelectionClick = &UI_FeederSelectionClick;
-	uiInfo.uiDC.feederAddItem        = &UI_FeederAddItem;
+	uiInfo.uiDC.feederAddItem        = &UI_FeederAddItem; // not implemented
 	uiInfo.uiDC.setBinding           = &trap_Key_SetBinding;
 	uiInfo.uiDC.getBindingBuf        = &trap_Key_GetBindingBuf;
 	uiInfo.uiDC.getKeysForBinding    = &trap_Key_KeysForBinding;
@@ -7906,8 +7894,6 @@ vmCvar_t ui_prevTeam;
 vmCvar_t ui_prevClass;
 vmCvar_t ui_prevWeapon;
 
-vmCvar_t ui_isSpectator;
-
 vmCvar_t ui_friendlyFire;
 
 vmCvar_t ui_userAlliedRespawnTime;
@@ -7989,8 +7975,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_prevTeam,                     "ui_prevTeam",                         "-1",                         0                              },
 	{ &ui_prevClass,                    "ui_prevClass",                        "-1",                         0                              },
 	{ &ui_prevWeapon,                   "ui_prevWeapon",                       "-1",                         0                              },
-
-	{ &ui_isSpectator,                  "ui_isSpectator",                      "1",                          0                              },
 
 	{ &g_gameType,                      "g_gameType",                          "4",                          CVAR_SERVERINFO | CVAR_LATCH   },
 	{ NULL,                             "cg_drawBuddies",                      "1",                          CVAR_ARCHIVE                   },
@@ -8189,6 +8173,7 @@ static void UI_DoServerRefresh(void)
 	{
 		return;
 	}
+
 	if (ui_netSource.integer != AS_FAVORITES)
 	{
 		if (ui_netSource.integer == AS_LOCAL)

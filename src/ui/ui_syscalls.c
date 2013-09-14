@@ -278,12 +278,12 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	return i;
 }
 
-void    trap_S_FadeBackgroundTrack(float targetvol, int time, int num)       // yes, i know.  fadebackground coming in, fadestreaming going out.  will have to see where functionality leads...
+void trap_S_FadeBackgroundTrack(float targetvol, int time, int num)       // yes, i know.  fadebackground coming in, fadestreaming going out.  will have to see where functionality leads...
 {
 	syscall(UI_S_FADESTREAMINGSOUND, PASSFLOAT(targetvol), time, num);     // 'num' is '0' if it's music, '1' if it's "all streaming sounds"
 }
 
-void    trap_S_FadeAllSound(float targetvol, int time, qboolean stopsound)
+void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsound)
 {
 	syscall(UI_S_FADEALLSOUNDS, PASSFLOAT(targetvol), time, stopsound);
 }

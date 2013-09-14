@@ -296,16 +296,6 @@ void UI_DrawRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
-void UI_SetColor(const float *rgba)
-{
-	trap_R_SetColor(rgba);
-}
-
-void UI_UpdateScreen(void)
-{
-	trap_UpdateScreen();
-}
-
 /**
  * @note Unused.
  */

@@ -82,8 +82,6 @@ extern vmCvar_t ui_browserMapFilterCheckBox;
 
 extern vmCvar_t ui_serverStatusTimeOut;
 
-extern vmCvar_t ui_isSpectator;
-
 extern vmCvar_t g_gameType;
 
 extern vmCvar_t cl_profile;
@@ -105,7 +103,6 @@ extern vmCvar_t cl_bypassMouseInput;
 extern vmCvar_t ui_autoredirect;
 
 // ui_qmenu.c
-
 #define RCOLUMN_OFFSET          (BIGCHAR_WIDTH)
 #define LCOLUMN_OFFSET          (-BIGCHAR_WIDTH)
 
@@ -256,19 +253,19 @@ extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
 
 // ui_main.c
-void            UI_Report(void);
-void            UI_Load(void);
-void            UI_LoadMenus(const char *menuFile, qboolean reset);
-void            _UI_SetActiveMenu(uiMenuCommand_t menu);
+void UI_Report(void);
+void UI_Load(void);
+void UI_LoadMenus(const char *menuFile, qboolean reset);
+void  _UI_SetActiveMenu(uiMenuCommand_t menu);
 uiMenuCommand_t _UI_GetActiveMenu(void);
-int             UI_AdjustTimeByGame(int time);
-void            UI_ShowPostGame(qboolean newHigh);
-void            UI_LoadArenas(void);
-void            UI_LoadCampaigns(void);
+int UI_AdjustTimeByGame(int time);
+void UI_ShowPostGame(qboolean newHigh);
+void UI_LoadArenas(void);
+void UI_LoadCampaigns(void);
 mapInfo *UI_FindMapInfoByMapname(const char *name);
-void            UI_ReadableSize(char *buf, int bufsize, int value);
-void            UI_PrintTime(char *buf, int bufsize, int time);
-void            Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font);
+void UI_ReadableSize(char *buf, int bufsize, int value);
+void UI_PrintTime(char *buf, int bufsize, int time);
+void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font);
 
 void UI_Campaign_f(void);
 void UI_ListCampaigns_f(void);
@@ -663,8 +660,6 @@ extern void UI_FillRect(float x, float y, float width, float height, const float
 extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawTopBottom(float x, float y, float w, float h);
 extern void UI_DrawSides(float x, float y, float w, float h);
-extern void UI_UpdateScreen(void);
-extern void UI_SetColor(const float *rgba);
 extern void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
 extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
 extern float UI_ProportionalSizeScale(int style);
