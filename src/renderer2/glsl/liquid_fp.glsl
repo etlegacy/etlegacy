@@ -155,7 +155,7 @@ void    main()
 	{
 		// reconstruct vertex position in world space
 		float depth = texture2D(u_DepthMap, texScreen).r;
-		vec4 P      = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
+		vec4  P     = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
 		P.xyz /= P.w;
 
 		// calculate fog distance

@@ -3714,14 +3714,18 @@ void Console_AutoCompelete(field_t *field, int *comletionlen)
 			}
 		}
 #endif
-		//Com_sprintf( field->buffer, sizeof( field->buffer ), "\\%s", shortestMatch);
-		//*comletionlen = field->cursor = strlen( field->buffer );
+		/*
 		completionOffset = strlen(field->buffer) - strlen(completionString);
 
 		Q_strncpyz(&field->buffer[completionOffset], shortestMatch,
 		           sizeof(field->buffer) - completionOffset);
 
 		*comletionlen = field->cursor = strlen(field->buffer);
+		*/
+
+		Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
+		completionOffset = strlen(field->buffer) - strlen(completionString);
+		*comletionlen    = field->cursor = strlen(field->buffer);
 	}
 	else
 	{

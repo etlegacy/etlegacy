@@ -683,20 +683,21 @@ static void CG_Item(centity_t *cent)
 
 	item = &bg_itemlist[es->modelindex];
 
-	if ( cg_simpleItems.integer && (item->giType == IT_WEAPON || item->giType == IT_HEALTH ||item->giType == IT_AMMO)) {
-		memset( &ent, 0, sizeof( ent ) );
+	if (cg_simpleItems.integer && (item->giType == IT_WEAPON || item->giType == IT_HEALTH || item->giType == IT_AMMO))
+	{
+		memset(&ent, 0, sizeof(ent));
 		ent.reType = RT_SPRITE;
-		VectorCopy( cent->lerpOrigin, ent.origin );
+		VectorCopy(cent->lerpOrigin, ent.origin);
 		ent.radius = 14;
 		//ent.origin[0] += 7;
 		//ent.origin[1] += 7;
 		ent.origin[2] += 7;
 		//ent.customShader = cg_items[es->modelindex].icons[0];
-		if(item->giType == IT_AMMO)
+		if (item->giType == IT_AMMO)
 		{
 			ent.customShader = cg_weapons[WP_AMMO].weaponIcon[1];
 		}
-		else if(item->giType == IT_HEALTH)
+		else if (item->giType == IT_HEALTH)
 		{
 			ent.customShader = cg_weapons[WP_MEDKIT].weaponIcon[1];
 		}
@@ -708,7 +709,7 @@ static void CG_Item(centity_t *cent)
 		ent.shaderRGBA[1] = 255;
 		ent.shaderRGBA[2] = 255;
 		ent.shaderRGBA[3] = 255;
-		trap_R_AddRefEntityToScene( &ent );
+		trap_R_AddRefEntityToScene(&ent);
 		return;
 	}
 
