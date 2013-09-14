@@ -1446,11 +1446,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 	// this requires SDL >= 1.2.14. and fixes CAPSLOCK binding
 	// may cause compatibility issues on Sun workstations
-#ifdef WIN32
-	_putenv_s("SDL_DISABLE_LOCK_KEYS", "1");
-#else
-	setenv("SDL_DISABLE_LOCK_KEYS", "1", 1);
-#endif // WIN32
+	SDL_putenv("SDL_DISABLE_LOCK_KEYS=1");
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
