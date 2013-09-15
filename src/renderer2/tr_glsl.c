@@ -1232,6 +1232,8 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t *program, const char *nam
 	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
 	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
 
+	program->programs = Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
+
 	for (i = 0; i < numPermutations; i++)
 	{
 		char *tempString = NULL;

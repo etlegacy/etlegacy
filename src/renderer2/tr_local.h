@@ -4034,20 +4034,39 @@ typedef struct
 	//
 	// GPU shader programs
 	//
-	shaderProgram_t genericShader[GENERICDEF_COUNT];
-	shaderProgram_t textureColorShader;
-	shaderProgram_t fogShader[FOGDEF_COUNT];
-	shaderProgram_t dlightShader[DLIGHTDEF_COUNT];
-	shaderProgram_t lightallShader[LIGHTDEF_COUNT];
-	shaderProgram_t shadowmapShader;
-	shaderProgram_t pshadowShader;
-	shaderProgram_t down4xShader;
-	shaderProgram_t bokehShader;
-	shaderProgram_t tonemapShader;
-	shaderProgram_t calclevels4xShader[2];
-	shaderProgram_t shadowmaskShader;
-	shaderProgram_t ssaoShader;
-	shaderProgram_t depthBlurShader[2];
+	shaderProgramList_t gl_genericShader;
+	shaderProgramList_t gl_lightMappingShader;
+	shaderProgramList_t gl_vertexLightingShader_DBS_entity;
+	shaderProgramList_t gl_vertexLightingShader_DBS_world;
+	shaderProgramList_t gl_forwardLightingShader_omniXYZ;
+	shaderProgramList_t gl_forwardLightingShader_projXYZ;
+	shaderProgramList_t gl_forwardLightingShader_directionalSun;
+	shaderProgramList_t gl_deferredLightingShader_omniXYZ;
+	shaderProgramList_t gl_deferredLightingShader_projXYZ;
+	shaderProgramList_t gl_deferredLightingShader_directionalSun;
+	shaderProgramList_t gl_geometricFillShader;
+	shaderProgramList_t gl_shadowFillShader;
+	shaderProgramList_t gl_reflectionShader;
+	shaderProgramList_t gl_skyboxShader;
+	shaderProgramList_t gl_fogQuake3Shader;
+	shaderProgramList_t gl_fogGlobalShader;
+	shaderProgramList_t gl_heatHazeShader;
+	shaderProgramList_t gl_screenShader;
+	shaderProgramList_t gl_portalShader;
+	shaderProgramList_t gl_toneMappingShader;
+	shaderProgramList_t gl_contrastShader;
+	shaderProgramList_t gl_cameraEffectsShader;
+	shaderProgramList_t gl_blurXShader;
+	shaderProgramList_t gl_blurYShader;
+	shaderProgramList_t gl_debugShadowMapShader;
+	shaderProgramList_t gl_liquidShader;
+	shaderProgramList_t gl_rotoscopeShader;
+	shaderProgramList_t gl_bloomShader;
+	shaderProgramList_t gl_refractionShader;
+	shaderProgramList_t gl_depthToColorShader;
+	shaderProgramList_t gl_volumetricFogShader;
+	shaderProgramList_t gl_volumetricLightingShader;
+	shaderProgramList_t gl_dispersionShader;
 #endif // RENDERER2C
 
 
