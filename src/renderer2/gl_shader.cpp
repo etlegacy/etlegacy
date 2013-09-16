@@ -77,6 +77,421 @@ GLShader_volumetricFog      *gl_volumetricFogShader      = NULL;
 GLShader_volumetricLighting *gl_volumetricLightingShader = NULL;
 GLShader_dispersion         *gl_dispersionShader         = NULL;
 
+void GLSL_InitGPUShaders(void)
+{
+	int startTime, endTime;
+
+	ri.Printf(PRINT_ALL, "------- GLSL_InitGPUShaders -------\n");
+
+	// make sure the render thread is stopped
+	R_SyncRenderThread();
+
+	GL_CheckErrors();
+
+#if defined(USE_GLSL_OPTIMIZER)
+	s_glslOptimizer = glslopt_initialize(qtrue);
+#endif
+
+	startTime = ri.Milliseconds();
+
+	// single texture rendering
+	gl_genericShader = new GLShader_generic();
+
+	// simple vertex color shading for entities
+	gl_vertexLightingShader_DBS_entity = new GLShader_vertexLighting_DBS_entity();
+
+	// simple vertex color shading for the world
+	gl_vertexLightingShader_DBS_world = new GLShader_vertexLighting_DBS_world();
+
+	// standard light mapping
+	gl_lightMappingShader = new GLShader_lightMapping();
+
+	// geometric-buffer fill rendering with diffuse + bump + specular
+	if (DS_STANDARD_ENABLED())
+	{
+		// G-Buffer construction
+		gl_geometricFillShader = new GLShader_geometricFill();
+
+		// deferred omni-directional lighting post process effect
+		gl_deferredLightingShader_omniXYZ = new GLShader_deferredLighting_omniXYZ();
+
+		gl_deferredLightingShader_projXYZ = new GLShader_deferredLighting_projXYZ();
+
+		gl_deferredLightingShader_directionalSun = new GLShader_deferredLighting_directionalSun();
+	}
+	else
+	{
+		// omni-directional specular bump mapping ( Doom3 style )
+		gl_forwardLightingShader_omniXYZ = new GLShader_forwardLighting_omniXYZ();
+
+		// projective lighting ( Doom3 style )
+		gl_forwardLightingShader_projXYZ = new GLShader_forwardLighting_projXYZ();
+
+		// directional sun lighting ( Doom3 style )
+		gl_forwardLightingShader_directionalSun = new GLShader_forwardLighting_directionalSun();
+	}
+
+	// shadowmap distance compression
+	gl_shadowFillShader = new GLShader_shadowFill();
+
+	// volumetric lighting
+	gl_volumetricLightingShader = new GLShader_volumetricLighting();
+
+	// bumped cubemap reflection for abitrary polygons ( EMBM )
+	gl_reflectionShader = new GLShader_reflection();
+
+	// skybox drawing for abitrary polygons
+	gl_skyboxShader = new GLShader_skybox();
+
+	// Q3A volumetric fog
+	gl_fogQuake3Shader = new GLShader_fogQuake3();
+
+	// global fog post process effect
+	gl_fogGlobalShader = new GLShader_fogGlobal();
+
+	// heatHaze post process effect
+	gl_heatHazeShader = new GLShader_heatHaze();
+
+	// screen post process effect
+	gl_screenShader = new GLShader_screen();
+
+	// portal process effect
+	gl_portalShader = new GLShader_portal();
+
+	// HDR -> LDR tone mapping
+	gl_toneMappingShader = new GLShader_toneMapping();
+
+	// LDR bright pass filter
+	gl_contrastShader = new GLShader_contrast();
+
+	// camera post process effect
+	gl_cameraEffectsShader = new GLShader_cameraEffects();
+
+	// gaussian blur
+	gl_blurXShader = new GLShader_blurX();
+
+	gl_blurYShader = new GLShader_blurY();
+
+	// debug utils
+	gl_debugShadowMapShader = new GLShader_debugShadowMap();
+
+	// liquid post process effect
+	gl_liquidShader = new GLShader_liquid();
+
+	// rotoscope post process effect
+	gl_rotoscopeShader = new GLShader_rotoscope();
+
+	// bloom post process effects
+	gl_bloomShader = new GLShader_bloom();
+
+	// cubemap refraction for abitrary polygons
+	gl_refractionShader = new GLShader_refraction();
+
+	// depth to color encoding
+	gl_depthToColorShader = new GLShader_depthToColor();
+
+	// volumetric fog post process effect
+	gl_volumetricFogShader = new GLShader_volumetricFog();
+
+	// cubemap dispersion for abitrary polygons
+	gl_dispersionShader = new GLShader_dispersion();
+
+#if !defined(GLSL_COMPILE_STARTUP_ONLY)
+#ifdef EXPERIMENTAL
+	// screen space ambien occlusion post process effect
+	GLSL_InitGPUShader(&tr.screenSpaceAmbientOcclusionShader, "screenSpaceAmbientOcclusion", ATTR_POSITION, qtrue, qtrue);
+
+	tr.screenSpaceAmbientOcclusionShader.u_CurrentMap =
+		glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_CurrentMap");
+	tr.screenSpaceAmbientOcclusionShader.u_DepthMap =
+		glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_DepthMap");
+	tr.screenSpaceAmbientOcclusionShader.u_ModelViewProjectionMatrix =
+		glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ModelViewProjectionMatrix");
+	//tr.screenSpaceAmbientOcclusionShader.u_ViewOrigin = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ViewOrigin");
+	//tr.screenSpaceAmbientOcclusionShader.u_SSAOJitter = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_SSAOJitter");
+	//tr.screenSpaceAmbientOcclusionShader.u_SSAORadius = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_SSAORadius");
+	//tr.screenSpaceAmbientOcclusionShader.u_UnprojectMatrix = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_UnprojectMatrix");
+	//tr.screenSpaceAmbientOcclusionShader.u_ProjectMatrix = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ProjectMatrix");
+
+	glUseProgramObject(tr.screenSpaceAmbientOcclusionShader.program);
+	glUniform1i(tr.screenSpaceAmbientOcclusionShader.u_CurrentMap, 0);
+	glUniform1i(tr.screenSpaceAmbientOcclusionShader.u_DepthMap, 1);
+	glUseProgramObject(0);
+
+	GLSL_ValidateProgram(tr.screenSpaceAmbientOcclusionShader.program);
+	GLSL_ShowProgramUniforms(tr.screenSpaceAmbientOcclusionShader.program);
+	GL_CheckErrors();
+#endif
+#ifdef EXPERIMENTAL
+	// depth of field post process effect
+	GLSL_InitGPUShader(&tr.depthOfFieldShader, "depthOfField", ATTR_POSITION, qtrue, qtrue);
+
+	tr.depthOfFieldShader.u_CurrentMap                = glGetUniformLocation(tr.depthOfFieldShader.program, "u_CurrentMap");
+	tr.depthOfFieldShader.u_DepthMap                  = glGetUniformLocation(tr.depthOfFieldShader.program, "u_DepthMap");
+	tr.depthOfFieldShader.u_ModelViewProjectionMatrix =
+		glGetUniformLocation(tr.depthOfFieldShader.program, "u_ModelViewProjectionMatrix");
+
+	glUseProgramObject(tr.depthOfFieldShader.program);
+	glUniform1i(tr.depthOfFieldShader.u_CurrentMap, 0);
+	glUniform1i(tr.depthOfFieldShader.u_DepthMap, 1);
+	glUseProgramObject(0);
+
+	GLSL_ValidateProgram(tr.depthOfFieldShader.program);
+	GLSL_ShowProgramUniforms(tr.depthOfFieldShader.program);
+	GL_CheckErrors();
+#endif
+
+#endif // #if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	endTime = ri.Milliseconds();
+
+#if defined(USE_GLSL_OPTIMIZER)
+	glslopt_cleanup(s_glslOptimizer);
+#endif
+
+	ri.Printf(PRINT_ALL, "GLSL shaders load time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
+
+	if (r_recompileShaders->integer)
+	{
+		ri.Cvar_Set("r_recompileShaders", "0");
+	}
+}
+
+void GLSL_ShutdownGPUShaders(void)
+{
+	//	int				i;
+
+	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
+
+	if (gl_genericShader)
+	{
+		delete gl_genericShader;
+		gl_genericShader = NULL;
+	}
+
+	if (gl_vertexLightingShader_DBS_entity)
+	{
+		delete gl_vertexLightingShader_DBS_entity;
+		gl_vertexLightingShader_DBS_entity = NULL;
+	}
+
+	if (gl_vertexLightingShader_DBS_world)
+	{
+		delete gl_vertexLightingShader_DBS_world;
+		gl_vertexLightingShader_DBS_world = NULL;
+	}
+
+	if (gl_lightMappingShader)
+	{
+		delete gl_lightMappingShader;
+		gl_lightMappingShader = NULL;
+	}
+
+	if (gl_geometricFillShader)
+	{
+		delete gl_geometricFillShader;
+		gl_geometricFillShader = NULL;
+	}
+
+	if (gl_deferredLightingShader_omniXYZ)
+	{
+		delete gl_deferredLightingShader_omniXYZ;
+		gl_deferredLightingShader_omniXYZ = NULL;
+	}
+
+	if (gl_depthToColorShader)
+	{
+		delete gl_depthToColorShader;
+		gl_depthToColorShader = NULL;
+	}
+
+	if (gl_shadowFillShader)
+	{
+		delete gl_shadowFillShader;
+		gl_shadowFillShader = NULL;
+	}
+
+	if (gl_forwardLightingShader_omniXYZ)
+	{
+		delete gl_forwardLightingShader_omniXYZ;
+		gl_forwardLightingShader_omniXYZ = NULL;
+	}
+
+	if (gl_forwardLightingShader_projXYZ)
+	{
+		delete gl_forwardLightingShader_projXYZ;
+		gl_forwardLightingShader_projXYZ = NULL;
+	}
+
+	if (gl_forwardLightingShader_directionalSun)
+	{
+		delete gl_forwardLightingShader_directionalSun;
+		gl_forwardLightingShader_directionalSun = NULL;
+	}
+
+	if (gl_rotoscopeShader)
+	{
+		delete gl_rotoscopeShader;
+		gl_rotoscopeShader = NULL;
+	}
+
+	if (gl_refractionShader)
+	{
+		delete gl_refractionShader;
+		gl_refractionShader = NULL;
+	}
+
+#if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	if (tr.dispersionShader_C.program)
+	{
+		glDeleteObject(tr.dispersionShader_C.program);
+		Com_Memset(&tr.dispersionShader_C, 0, sizeof(shaderProgram_t));
+	}
+
+	if (tr.deferredShadowingShader_proj.program)
+	{
+		glDeleteObject(tr.deferredShadowingShader_proj.program);
+		Com_Memset(&tr.deferredShadowingShader_proj, 0, sizeof(shaderProgram_t));
+	}
+
+#endif // #if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	if (gl_bloomShader)
+	{
+		delete gl_bloomShader;
+		gl_bloomShader = NULL;
+	}
+
+	if (gl_reflectionShader)
+	{
+		delete gl_reflectionShader;
+		gl_reflectionShader = NULL;
+	}
+
+	if (gl_skyboxShader)
+	{
+		delete gl_skyboxShader;
+		gl_skyboxShader = NULL;
+	}
+
+	if (gl_fogQuake3Shader)
+	{
+		delete gl_fogQuake3Shader;
+		gl_fogQuake3Shader = NULL;
+	}
+
+	if (gl_fogGlobalShader)
+	{
+		delete gl_fogGlobalShader;
+		gl_fogGlobalShader = NULL;
+	}
+
+	if (gl_heatHazeShader)
+	{
+		delete gl_heatHazeShader;
+		gl_heatHazeShader = NULL;
+	}
+
+	if (gl_screenShader)
+	{
+		delete gl_screenShader;
+		gl_screenShader = NULL;
+	}
+
+	if (gl_portalShader)
+	{
+		delete gl_portalShader;
+		gl_portalShader = NULL;
+	}
+
+	if (gl_toneMappingShader)
+	{
+		delete gl_toneMappingShader;
+		gl_toneMappingShader = NULL;
+	}
+
+	if (gl_contrastShader)
+	{
+		delete gl_contrastShader;
+		gl_contrastShader = NULL;
+	}
+
+	if (gl_cameraEffectsShader)
+	{
+		delete gl_cameraEffectsShader;
+		gl_cameraEffectsShader = NULL;
+	}
+
+	if (gl_blurXShader)
+	{
+		delete gl_blurXShader;
+		gl_blurXShader = NULL;
+	}
+
+	if (gl_blurYShader)
+	{
+		delete gl_blurYShader;
+		gl_blurYShader = NULL;
+	}
+
+	if (gl_debugShadowMapShader)
+	{
+		delete gl_debugShadowMapShader;
+		gl_debugShadowMapShader = NULL;
+	}
+
+	if (gl_liquidShader)
+	{
+		delete gl_liquidShader;
+		gl_liquidShader = NULL;
+	}
+
+	if (gl_volumetricFogShader)
+	{
+		delete gl_volumetricFogShader;
+		gl_volumetricFogShader = NULL;
+	}
+
+	if (gl_volumetricLightingShader)
+	{
+		delete gl_volumetricLightingShader;
+		gl_volumetricLightingShader = NULL;
+	}
+
+	if (gl_dispersionShader)
+	{
+		delete gl_dispersionShader;
+		gl_dispersionShader = NULL;
+	}
+
+#if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+#ifdef EXPERIMENTAL
+	if (tr.screenSpaceAmbientOcclusionShader.program)
+	{
+		glDeleteObject(tr.screenSpaceAmbientOcclusionShader.program);
+		Com_Memset(&tr.screenSpaceAmbientOcclusionShader, 0, sizeof(shaderProgram_t));
+	}
+#endif
+#ifdef EXPERIMENTAL
+	if (tr.depthOfFieldShader.program)
+	{
+		glDeleteObject(tr.depthOfFieldShader.program);
+		Com_Memset(&tr.depthOfFieldShader, 0, sizeof(shaderProgram_t));
+	}
+#endif
+
+#endif // #if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	glState.currentProgram = 0;
+	if (glUseProgram != NULL)
+	{
+		glUseProgram(0);
+	}
+}
+
+
 bool GLCompileMacro_USE_VERTEX_SKINNING::HasConflictingMacros(int permutation, const std::vector< GLCompileMacro * > &macros) const
 {
 	for (size_t i = 0; i < macros.size(); i++)
@@ -380,7 +795,6 @@ void GLShader::GetShaderExtraDefines(char **defines, int *size) const
 	static char bufferExtra[32000];
 
 	char *bufferFinal = NULL;
-	int  sizeFinal;
 
 	float fbufWidthScale, fbufHeightScale;
 	float npotWidthScale, npotHeightScale;
