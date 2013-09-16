@@ -4998,11 +4998,19 @@ void G_mapvoteinfo_read()
 	if (len < 0)
 	{
 		trap_FS_FCloseFile(f);
-		G_Printf("readconfig: could not open mapvoteinfo.txt file\n");
+		G_Printf("G_mapvoteinfo_read: could not open mapvoteinfo.txt file\n");
 		return;
 	}
 
-	cnf  = malloc(len + 1);
+	cnf = malloc(len + 1);
+
+	if (cnf == NULL)
+	{
+		trap_FS_FCloseFile(f);
+		G_Printf("G_mapvoteinfo_read: memory allocation error for mapvoteinfo.txt data\n");
+		return;
+	}
+
 	cnf2 = cnf;
 	trap_FS_Read(cnf, len, f);
 	*(cnf + len) = '\0';
@@ -5055,7 +5063,7 @@ void G_mapvoteinfo_read()
 			}
 			else
 			{
-				G_Printf("mapvoteinfo: [mapvoteinfo] parse error near '%s' on line %i\n", t, COM_GetCurrentParseLine());
+				G_Printf("G_mapvoteinfo_read: [mapvoteinfo] parse error near '%s' on line %i\n", t, COM_GetCurrentParseLine());
 			}
 		}
 		t = COM_Parse(&cnf);
