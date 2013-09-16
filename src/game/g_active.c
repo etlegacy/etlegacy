@@ -482,6 +482,50 @@ void G_TouchTriggers(gentity_t *ent)
 	}
 }
 
+/*
+=================
+G_SpectatorAttackFollow
+
+returns true if a player was found to follow
+=================
+*/
+qboolean G_SpectatorAttackFollow(gentity_t *ent)
+{
+	trace_t       tr;
+	vec3_t        forward, right, up;
+	vec3_t        start, end;
+	vec3_t        mins, maxs;
+	static vec3_t enlargeMins = { -64.0f, -64.0f, -48.0f };
+	static vec3_t enlargeMaxs = { 64.0f, 64.0f, 0.0f };
+
+	if (!ent->client)
+	{
+		return qfalse;
+	}
+
+	AngleVectors(ent->client->ps.viewangles, forward, right, up);
+	VectorCopy(ent->client->ps.origin, start);
+	VectorMA(start, MAX_TRACE, forward, end);
+
+	// enlarge the hitboxes, so spectators can easily click on them..
+	VectorCopy(ent->r.mins, mins);
+	VectorCopy(ent->r.maxs, maxs);
+	VectorAdd(mins, enlargeMins, mins);
+	VectorAdd(maxs, enlargeMaxs, maxs);
+	// also put the start-point a bit forward, so we don't start the trace in solid..
+	VectorMA(start, 75.0f, forward, start);
+
+	trap_Trace(&tr, start, mins, maxs, end, ent->client->ps.clientNum, CONTENTS_BODY | CONTENTS_CORPSE);
+
+	if ((&g_entities[tr.entityNum])->client)
+	{
+		ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
+		ent->client->sess.spectatorClient = tr.entityNum;
+		return qtrue;
+	}
+	return qfalse;
+}
+
 void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 {
 	gclient_t *client       = ent->client;
@@ -568,13 +612,45 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	if (client->pers.mvCount < 1)
 	{
 #endif
-	// attack button cycles through spectators
-	if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK))
+	// attack button + "firing" a players = spectate that "victim"
+	if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK) &&
+	    client->sess.spectatorState != SPECTATOR_FOLLOW &&
+	    client->sess.sessionTeam == TEAM_SPECTATOR)        // don't do it if on a team
 	{
-		Cmd_FollowCycle_f(ent, 1);
+		if (G_SpectatorAttackFollow(ent))
+		{
+			return;
+		}
+		else
+		{
+			// not clicked on a player?.. then follow next,
+			// to prevent constant traces done by server.
+			if (client->buttons & BUTTON_SPRINT)
+			{
+				Cmd_FollowCycle_f(ent, 1, qtrue);
+			}
+			// no humans playing?.. then follow a bot
+			if (client->sess.spectatorState != SPECTATOR_FOLLOW)
+			{
+				Cmd_FollowCycle_f(ent, 1, qfalse);
+			}
+		}
+		// attack + sprint button cycles through non-bot/human players
+		// attack button cycles through all players
+	}
+	else if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK) &&
+	         !(client->buttons & BUTTON_ACTIVATE))
+	{
+		Cmd_FollowCycle_f(ent, 1, (client->buttons & BUTTON_SPRINT));
+	}
+	// FIXME: WBUTTON_ATTACK2
+	else if ((client->wbuttons & WBUTTON_ATTACK2) && !(client->oldwbuttons & WBUTTON_ATTACK2) &&
+	         !(client->buttons & BUTTON_ACTIVATE))
+	{
+		Cmd_FollowCycle_f(ent, -1, (client->buttons & BUTTON_SPRINT));
 	}
 #ifdef DEBUG
-#ifdef FEATURE_OMNIBOT
+#ifdef OMNIBOTS
 	// activate button swaps places with bot
 	else if (client->sess.sessionTeam != TEAM_SPECTATOR && g_allowBotSwap.integer &&
 	         ((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) &&
@@ -585,14 +661,11 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	}
 #endif
 #endif
-	else if (
-	    (client->sess.sessionTeam == TEAM_SPECTATOR) &&       // don't let dead team players do free fly
-	    (client->sess.spectatorState == SPECTATOR_FOLLOW) &&
-	    (((client->buttons & BUTTON_ACTIVATE) &&
-	      !(client->oldbuttons & BUTTON_ACTIVATE)) || ucmd->upmove > 0) &&
-	    G_allowFollow(ent, TEAM_AXIS) && G_allowFollow(ent, TEAM_ALLIES))
+	else if (client->sess.sessionTeam == TEAM_SPECTATOR && client->sess.spectatorState == SPECTATOR_FOLLOW &&
+	         (((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) || ucmd->upmove > 0) &&
+	         G_allowFollow(ent, TEAM_AXIS) && G_allowFollow(ent, TEAM_ALLIES))
 	{
-		// code moved to StopFollowing
+
 		StopFollowing(ent);
 	}
 #ifdef FEATURE_MULTIVIEW
