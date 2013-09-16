@@ -1141,7 +1141,8 @@ void StopFollowing(gentity_t *ent);
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState, int *specClient);
 qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons);
 void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updateclient);
-void Cmd_FollowCycle_f(gentity_t *ent, int dir);
+void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots);
+qboolean G_FollowSame(gentity_t *ent);
 void Cmd_Kill_f(gentity_t *ent);
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 
@@ -1403,8 +1404,6 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0);
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void Cmd_SetClass_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void G_PlaySound_Cmd(void);
 int ClientNumbersFromString(char *s, int *plist);
 char *ConcatArgs(int start);

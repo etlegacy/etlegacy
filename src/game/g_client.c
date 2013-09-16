@@ -669,17 +669,23 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			TossClientItems(ent);
 		}
 
-		ent->client->sess.spectatorClient = startclient;
-		Cmd_FollowCycle_f(ent, 1);  // get fresh spectatorClient
-
-		if (ent->client->sess.spectatorClient == startclient)
+		if (G_FollowSame(ent))
 		{
-			// No one to follow, so just stay put
-			ent->client->sess.spectatorState = SPECTATOR_FREE;
+			ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
 		}
 		else
 		{
-			ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
+			ent->client->sess.spectatorClient = startclient;
+			Cmd_FollowCycle_f(ent, 1, qfalse); // get fresh spectatorClient
+			if (ent->client->sess.spectatorClient == startclient)
+			{
+				// No one to follow, so just stay put
+				ent->client->sess.spectatorState = SPECTATOR_FREE;
+			}
+			else
+			{
+				ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
+			}
 		}
 
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)
@@ -697,11 +703,9 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		{
 			cl = &level.clients[level.sortedClients[i]];
 
-			if (((cl->ps.pm_flags & PMF_LIMBO) ||
-			     (cl->sess.sessionTeam == TEAM_SPECTATOR && cl->sess.spectatorState == SPECTATOR_FOLLOW)) &&
-			    cl->sess.spectatorClient == ent - g_entities)     //ent->s.number ) {
+			if ((cl->ps.pm_flags & PMF_LIMBO) && cl->sess.spectatorClient == ent - g_entities)
 			{
-				Cmd_FollowCycle_f(&g_entities[level.sortedClients[i]], 1);
+				Cmd_FollowCycle_f(&g_entities[level.sortedClients[i]], 1, qfalse);
 			}
 		}
 	}
@@ -3160,7 +3164,7 @@ void ClientDisconnect(int clientNum)
 		if ((flag->client->ps.pm_flags & PMF_LIMBO)
 		    && flag->client->sess.spectatorClient == clientNum)
 		{
-			Cmd_FollowCycle_f(flag, 1);
+			Cmd_FollowCycle_f(flag, 1, qfalse);
 		}
 	}
 

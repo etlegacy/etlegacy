@@ -67,6 +67,8 @@
 #define ITEM_RADIUS         10      // item sizes are needed for client side pickup detection
                                     // Rafael changed the radius so that the items would fit in the 3 new containers
 
+#define MAX_TRACE           8192.0f // whenever you change this make sure bullet_Endpos for scope weapons is in sync!
+
 #define FLAMETHROWER_RANGE  2500    // multiplayer range, was 850 in SP
 
 #define VOTE_TIME           30000   // 30 seconds before vote times out
