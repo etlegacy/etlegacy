@@ -650,7 +650,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		Cmd_FollowCycle_f(ent, -1, (client->buttons & BUTTON_SPRINT));
 	}
 #ifdef DEBUG
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// activate button swaps places with bot
 	else if (client->sess.sessionTeam != TEAM_SPECTATOR && g_allowBotSwap.integer &&
 	         ((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) &&
@@ -688,7 +688,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	int      inactivityspec = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
 	qboolean inTeam         = (client->sess.sessionTeam == TEAM_ALLIES || client->sess.sessionTeam == TEAM_AXIS) ? qtrue : qfalse;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	qboolean doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients + g_OmniBotPlaying.integer <= 0)) ? qtrue : qfalse;
 #else
 	qboolean doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients <= 0)) ? qtrue : qfalse;
