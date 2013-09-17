@@ -3312,6 +3312,14 @@ void CL_ShutdownRef(void)
 	}
 	re.Shutdown(qtrue);
 	memset(&re, 0, sizeof(re));
+
+#ifdef USE_RENDERER_DLOPEN
+	//Unload the library
+	if(rendererLib)
+	{
+		Sys_UnloadLibrary(rendererLib);
+	}
+#endif
 }
 
 /*
