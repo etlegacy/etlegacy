@@ -27,7 +27,6 @@ void QDECL G_Lua_Printf(const char *fmt, ...)
 	Q_vsnprintf(buff, sizeof(buff), fmt, argptr);
 	va_end(argptr);
 
-	// cs: removed dedicated server restriction. its nice to see errors on listen server too.
 	trap_Printf(buff);
 }
 
@@ -159,8 +158,9 @@ static int _et_IPCSend(lua_State *L)
 static int _et_G_Print(lua_State *L)
 {
 	char text[1024];
+
 	Q_strncpyz(text, luaL_checkstring(L, 1), sizeof(text));
-	trap_Printf(text);
+	trap_Printf(va("%s", text));
 	return 0;
 }
 
@@ -168,6 +168,7 @@ static int _et_G_Print(lua_State *L)
 static int _et_G_LogPrint(lua_State *L)
 {
 	char text[1024];
+
 	Q_strncpyz(text, luaL_checkstring(L, 1), sizeof(text));
 
 	G_Lua_Printf("%s", text);
@@ -356,7 +357,7 @@ static int _et_trap_DropClient(lua_State *L)
 {
 	int        clientnum = luaL_checkint(L, 1);
 	const char *reason   = luaL_checkstring(L, 2);
-	int        ban       = trap_Cvar_VariableIntegerValue("g_defaultBanTime");
+	int        ban       = trap_Cvar_VariableIntegerValue("g_defaultBanTime"); // FIXME: 3d add param int for ban time
 
 	ban = luaL_optint(L, 3, ban);
 	trap_DropClient(clientnum, reason, ban);
@@ -509,7 +510,7 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 {
 	const char *dirname            = luaL_checkstring(L, 1);
 	const char *filename_extension = luaL_checkstring(L, 2);
-	int        newTable, index, i, filelen, numfiles;
+	int        newTable, index = 1, i, filelen, numfiles;
 	char       filename[MAX_QPATH]; // was 128
 	char       *filenameptr = bigTextBuffer;
 
@@ -517,7 +518,6 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 
 	lua_createtable(L, numfiles, 0);
 	newTable = lua_gettop(L);
-	index    = 1;
 
 	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
 	{
@@ -553,9 +553,17 @@ static int _et_trap_FS_Read(lua_State *L)
 	int          count     = luaL_checkint(L, 2);
 
 	filedata = malloc(count + 1);
+
+	if (filedata == NULL)
+	{
+		G_Printf("Lua: Memory allocation error for _et_trap_FS_Read file data\n");
+		return 0;
+	}
+
 	trap_FS_Read(filedata, count, fd);
 	*(filedata + count) = '\0';
 	lua_pushstring(L, filedata);
+	free(filedata);
 	return 1;
 }
 
@@ -1690,6 +1698,13 @@ qboolean G_LuaInit(void)
 			else
 			{
 				code = malloc(flen + 1);
+
+				if (code == NULL)
+				{
+					G_Lua_Printf("Lua API: memory allocation error for %s data\n", crt);
+					// FIXME: we should actually abort here
+				}
+
 				trap_FS_Read(code, flen, f);
 				*(code + flen) = '\0';
 				trap_FS_FCloseFile(f);
@@ -1704,7 +1719,14 @@ qboolean G_LuaInit(void)
 				else
 				{
 					// Init lua_vm_t struct
-					vm     = (lua_vm_t *) malloc(sizeof(lua_vm_t));
+					vm = (lua_vm_t *) malloc(sizeof(lua_vm_t));
+
+					if (vm == NULL)
+					{
+						G_Lua_Printf("Lua API: memory allocation error for %s data\n", crt);
+						// FIXME: we should actually abort here
+					}
+
 					vm->id = -1;
 					Q_strncpyz(vm->file_name, crt, sizeof(vm->file_name));
 					Q_strncpyz(vm->mod_name, "", sizeof(vm->mod_name));
