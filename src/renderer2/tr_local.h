@@ -3690,8 +3690,6 @@ void GL_BindNearestCubeMap(const vec3_t xyz);
 void GL_Unbind();
 void BindAnimatedImage(textureBundle_t *bundle);
 void GL_TextureFilter(image_t *image, filterType_t filterType);
-void GL_BindProgram(shaderProgram_t *program);
-void GL_BindNullProgram(void);
 void GL_SetDefaultState(void);
 void GL_SelectTexture(int unit);
 void GL_TextureMode(const char *string);
@@ -3885,6 +3883,8 @@ extern shaderCommands_t tess;
 
 void GLSL_InitGPUShaders();
 void GLSL_ShutdownGPUShaders();
+void GLSL_BindProgram(shaderProgram_t *program);
+void GLSL_BindNullProgram(void);
 
 // *INDENT-OFF*
 void Tess_Begin(void (*stageIteratorFunc)(),

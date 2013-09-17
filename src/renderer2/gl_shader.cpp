@@ -202,11 +202,11 @@ void GLSL_InitGPUShaders(void)
 	GLSL_InitGPUShader(&tr.screenSpaceAmbientOcclusionShader, "screenSpaceAmbientOcclusion", ATTR_POSITION, qtrue, qtrue);
 
 	tr.screenSpaceAmbientOcclusionShader.u_CurrentMap =
-		glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_CurrentMap");
+	    glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_CurrentMap");
 	tr.screenSpaceAmbientOcclusionShader.u_DepthMap =
-		glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_DepthMap");
+	    glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_DepthMap");
 	tr.screenSpaceAmbientOcclusionShader.u_ModelViewProjectionMatrix =
-		glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ModelViewProjectionMatrix");
+	    glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ModelViewProjectionMatrix");
 	//tr.screenSpaceAmbientOcclusionShader.u_ViewOrigin = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ViewOrigin");
 	//tr.screenSpaceAmbientOcclusionShader.u_SSAOJitter = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_SSAOJitter");
 	//tr.screenSpaceAmbientOcclusionShader.u_SSAORadius = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_SSAORadius");
@@ -229,7 +229,7 @@ void GLSL_InitGPUShaders(void)
 	tr.depthOfFieldShader.u_CurrentMap                = glGetUniformLocation(tr.depthOfFieldShader.program, "u_CurrentMap");
 	tr.depthOfFieldShader.u_DepthMap                  = glGetUniformLocation(tr.depthOfFieldShader.program, "u_DepthMap");
 	tr.depthOfFieldShader.u_ModelViewProjectionMatrix =
-		glGetUniformLocation(tr.depthOfFieldShader.program, "u_ModelViewProjectionMatrix");
+	    glGetUniformLocation(tr.depthOfFieldShader.program, "u_ModelViewProjectionMatrix");
 
 	glUseProgramObject(tr.depthOfFieldShader.program);
 	glUniform1i(tr.depthOfFieldShader.u_CurrentMap, 0);
@@ -488,6 +488,41 @@ void GLSL_ShutdownGPUShaders(void)
 	if (glUseProgram != NULL)
 	{
 		glUseProgram(0);
+	}
+}
+
+void GLSL_BindProgram(shaderProgram_t *program)
+{
+	if (!program)
+	{
+		GLSL_BindNullProgram();
+		return;
+	}
+
+	if (r_logFile->integer)
+	{
+		// don't just call LogComment, or we will get a call to va() every frame!
+		GLimp_LogComment(va("--- GL_BindProgram( name = '%s', macros = '%s' ) ---\n", program->name, program->compileMacros));
+	}
+
+	if (glState.currentProgram != program)
+	{
+		glUseProgram(program->program);
+		glState.currentProgram = program;
+	}
+}
+
+void GLSL_BindNullProgram(void)
+{
+	if (r_logFile->integer)
+	{
+		GLimp_LogComment("--- GL_BindNullProgram ---\n");
+	}
+
+	if (glState.currentProgram)
+	{
+		glUseProgram(0);
+		glState.currentProgram = NULL;
 	}
 }
 
@@ -1740,7 +1775,7 @@ void GLShader::BindProgram()
 		ri.Error(ERR_FATAL, "Invalid shader configuration: shader = '%s', macros = '%s'", _name.c_str(), activeMacros.c_str());
 	}
 
-	GL_BindProgram(_currentProgram);
+	GLSL_BindProgram(_currentProgram);
 }
 
 void GLShader::SetRequiredVertexPointers()

@@ -3373,7 +3373,7 @@ static void R_DebugGraphics(void)
 		// the render thread can't make callbacks to the main thread
 		R_SyncRenderThread();
 
-		GL_BindProgram(0);
+		GLSL_BindProgram(0);
 		GL_SelectTexture(0);
 		GL_Bind(tr.whiteImage);
 		GL_Cull(CT_FRONT_SIDED);

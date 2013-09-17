@@ -159,43 +159,6 @@ void GL_TextureFilter(image_t *image, filterType_t filterType)
 	}
 }
 
-#ifndef RENDERER2C
-void GL_BindProgram(shaderProgram_t *program)
-{
-	if (!program)
-	{
-		GL_BindNullProgram();
-		return;
-	}
-
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- GL_BindProgram( name = '%s', macros = '%s' ) ---\n", program->name, program->compileMacros));
-	}
-
-	if (glState.currentProgram != program)
-	{
-		glUseProgram(program->program);
-		glState.currentProgram = program;
-	}
-}
-
-void GL_BindNullProgram(void)
-{
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- GL_BindNullProgram ---\n");
-	}
-
-	if (glState.currentProgram)
-	{
-		glUseProgram(0);
-		glState.currentProgram = NULL;
-	}
-}
-#endif
-
 void GL_SelectTexture(int unit)
 {
 	if (glState.currenttmu == unit)
@@ -2240,7 +2203,7 @@ static void RB_RenderInteractionsShadowMapped()
 			if (drawShadows)
 			{
 				// HACK: bring OpenGL into a safe state or strange FBO update problems will occur
-				GL_BindProgram(NULL);
+				GLSL_BindProgram(NULL);
 				GL_State(GLS_DEFAULT);
 				//GL_VertexAttribsState(ATTR_POSITION);
 
@@ -4305,7 +4268,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 			if (drawShadows)
 			{
 				// HACK: bring OpenGL into a safe state or strange FBO update problems will occur
-				GL_BindProgram(NULL);
+				GLSL_BindProgram(NULL);
 				GL_State(GLS_DEFAULT);
 				//GL_VertexAttribsState(ATTR_POSITION);
 
@@ -6439,7 +6402,7 @@ void RB_RenderDepthOfField()
 	}
 
 	// enable shader, set arrays
-	GL_BindProgram(&tr.depthOfFieldShader);
+	GLSL_BindProgram(&tr.depthOfFieldShader);
 
 	GL_State(GLS_DEPTHTEST_DISABLE);    // | GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);

@@ -1283,7 +1283,7 @@ static void Tess_SurfaceBeam(void)
 		VectorAdd(start_points[i], direction, end_points[i]);
 	}
 
-	GL_BindProgram(0);
+	GLSL_BindProgram(0);
 	GL_SelectTexture(0);
 	GL_Bind(tr.whiteImage);
 
