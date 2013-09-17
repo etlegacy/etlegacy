@@ -3315,7 +3315,7 @@ void CL_ShutdownRef(void)
 
 #ifdef USE_RENDERER_DLOPEN
 	//Unload the library
-	if(rendererLib)
+	if (rendererLib)
 	{
 		Sys_UnloadLibrary(rendererLib);
 	}
@@ -3971,6 +3971,10 @@ void CL_Shutdown(void)
 
 #ifdef FEATURE_IRC_CLIENT
 	CL_OW_IRCWaitShutdown();
+
+	Cmd_RemoveCommand("irc_connect");
+	Cmd_RemoveCommand("irc_quit");
+	Cmd_RemoveCommand("irc_say");
 #endif
 
 	Cvar_Set("cl_running", "0");
