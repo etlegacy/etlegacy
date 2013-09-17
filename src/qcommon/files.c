@@ -4334,18 +4334,10 @@ void FS_InitFilesystem(void)
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
 	// - we want the nice error message here as well
-	if (FS_ReadFile("default.cfg", NULL) <= 0
-#ifdef PANDORA
-	    // also ensure default_pandora.cfg
-	    && FS_ReadFile(CONFIG_NAME_DEFAULT, NULL) <= 0
-#endif
-	    )
+	// FIXME: temporary fix - default.cfg is now part of pak3.pk3, add a smarter check
+	if (FS_ReadFile("fonts/ariblk_0_16.tga", NULL) <= 0)
 	{
-#ifdef PANDORA
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg and default_pandora.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
-#else
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
-#endif
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load base data files!\nVerify your installation and make sure genuine ET files\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
 	}
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
