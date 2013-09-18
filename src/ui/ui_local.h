@@ -623,7 +623,6 @@ typedef struct
 	qhandle_t passwordFilter;
 	qhandle_t friendlyFireFilter;
 	qhandle_t maxLivesFilter;
-	qhandle_t punkBusterFilter;
 	qhandle_t weaponRestrictionsFilter;
 	qhandle_t antiLagFilter;
 	qhandle_t teamBalanceFilter;

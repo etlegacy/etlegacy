@@ -6598,16 +6598,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 					{
 						handles[2] = -1;
 					}
-					/*
-					if (punkbuster) // FIXME: remove, obsolete
-					{
-					    handles[3] = uiInfo.punkBusterFilter;
-					}
-					else
-					{
-					    handles[3] = -1;
-					}
-					*/
+
 					if (gamename)
 					{
 						// FIXME: some servers do not send gamename cvar in "getinfo" request -> parse them again with extended info(getstatus)
@@ -7436,7 +7427,6 @@ void _UI_Init(void)
 	uiInfo.passwordFilter           = trap_R_RegisterShaderNoMip("ui/assets/filter_pass.tga");
 	uiInfo.friendlyFireFilter       = trap_R_RegisterShaderNoMip("ui/assets/filter_ff.tga");
 	uiInfo.maxLivesFilter           = trap_R_RegisterShaderNoMip("ui/assets/filter_lives.tga");
-	uiInfo.punkBusterFilter         = trap_R_RegisterShaderNoMip("ui/assets/filter_pb.tga"); // FIXME: remove, obsolete
 	uiInfo.weaponRestrictionsFilter = trap_R_RegisterShaderNoMip("ui/assets/filter_weap.tga");
 	uiInfo.antiLagFilter            = trap_R_RegisterShaderNoMip("ui/assets/filter_antilag.tga");
 	uiInfo.teamBalanceFilter        = trap_R_RegisterShaderNoMip("ui/assets/filter_balance.tga");
