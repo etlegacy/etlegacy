@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-09-19 21:16+0100\n"
+"PO-Revision-Date: 2013-09-19 21:41+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -3677,6 +3677,18 @@ msgstr "Czy na pewno chcesz aby"
 
 msgid "delete YOUR favourites?"
 msgstr "usunac twoje ulubione?"
+
+msgid "Modify Selected HUD:"
+msgstr "Modyfikuj Wybrany HUD:"
+
+msgid "PopUpTime:"
+msgstr "Wiadomosci Czas:"
+
+msgid "PopUpTimeStay:"
+msgstr "Wiadomosci Pozostanie:"
+
+msgid "PopUpTimeFade:"
+msgstr "Wiadomosci Znikanie:"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

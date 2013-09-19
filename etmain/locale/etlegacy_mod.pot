@@ -3625,6 +3625,18 @@ msgstr ""
 msgid "delete YOUR favourites?"
 msgstr ""
 
+msgid "Modify Selected HUD:"
+msgstr ""
+
+msgid "PopUpTime:"
+msgstr ""
+
+msgid "PopUpTimeStay:"
+msgstr ""
+
+msgid "PopUpTimeFade:"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

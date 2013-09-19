@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-09-19 21:02+0100\n"
+"PO-Revision-Date: 2013-09-19 21:42+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
 "Language: cs_CZ\n"
@@ -3682,6 +3682,19 @@ msgid "Do you really want to"
 msgstr "Jsi si jisty, ze chces spustit"
 
 msgid "delete YOUR favourites?"
+msgstr ""
+
+#, fuzzy
+msgid "Modify Selected HUD:"
+msgstr "Upravit alternativni HUD:"
+
+msgid "PopUpTime:"
+msgstr ""
+
+msgid "PopUpTimeStay:"
+msgstr ""
+
+msgid "PopUpTimeFade:"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

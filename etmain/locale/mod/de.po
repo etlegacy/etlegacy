@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-09-19 21:01+0100\n"
+"PO-Revision-Date: 2013-09-19 21:41+0100\n"
 "Last-Translator: Vinzenz Krügl <harlekin@hirntot.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -3698,6 +3698,18 @@ msgid "Do you really want to"
 msgstr "Sind Sie sicher, dass Sie einen"
 
 msgid "delete YOUR favourites?"
+msgstr ""
+
+msgid "Modify Selected HUD:"
+msgstr ""
+
+msgid "PopUpTime:"
+msgstr ""
+
+msgid "PopUpTimeStay:"
+msgstr ""
+
+msgid "PopUpTimeFade:"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
