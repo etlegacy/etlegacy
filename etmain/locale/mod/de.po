@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-18 23:21+0100\n"
+"PO-Revision-Date: 2013-09-19 21:01+0100\n"
 "Last-Translator: Vinzenz Krügl <harlekin@hirntot.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -63,7 +63,8 @@ msgstr "Aktzeptiere %ss Anfrage sich deiner Kampfeinheit anzuschließen?"
 #: src/cgame/cg_draw.c:2109
 #, c-format
 msgid "Accept %s's proposition to invite %s to join your fireteam?"
-msgstr "Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
+msgstr ""
+"Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
@@ -3189,6 +3190,11 @@ msgstr ""
 msgid "Allies have destroyed the gun tracking"
 msgstr ""
 
+msgid ""
+"^3All players ready!^7\n"
+"Match starting..."
+msgstr ""
+
 msgid "The Axis North-West MG Nest has been destroyed."
 msgstr ""
 
@@ -3553,14 +3559,14 @@ msgstr ""
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr ""
 
-msgid "^3All players ready!^7\n"
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
 msgstr ""
 
-msgid "Match starting...\n"
-msgstr ""
-
+#, fuzzy
 msgid "You are on the Allied team"
-msgstr Du bist nicht im Aliierten Team""
+msgstr "Du bist nicht im Axen Team"
 
 msgid "^1*** Match Reset! ***\n"
 msgstr ""
@@ -3666,8 +3672,32 @@ msgstr "Warnung, verlasse die Baustelle..."
 msgid "got caught in"
 msgstr ""
 
-#, fuzzy
 msgid "'s construction madness"
+msgstr ""
+
+msgid "Need paks: %s\n"
+msgstr ""
+
+msgid "Mod filter:"
+msgstr ""
+
+#, fuzzy
+msgid "DELETE FAVS"
+msgstr "LOESCHE"
+
+#, fuzzy
+msgid "RESET FILTERS"
+msgstr "FILTER"
+
+#, fuzzy
+msgid "DELETE SERVER FAVOURITES"
+msgstr "ZU FAVORITEN HINZUFUEGEN"
+
+#, fuzzy
+msgid "Do you really want to"
+msgstr "Sind Sie sicher, dass Sie einen"
+
+msgid "delete YOUR favourites?"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

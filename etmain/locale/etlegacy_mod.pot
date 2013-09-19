@@ -3604,6 +3604,27 @@ msgstr ""
 msgid "'s construction madness"
 msgstr ""
 
+msgid "Need paks: %s\n"
+msgstr ""
+
+msgid "Mod filter:"
+msgstr ""
+
+msgid "DELETE FAVS"
+msgstr ""
+
+msgid "RESET FILTERS"
+msgstr ""
+
+msgid "DELETE SERVER FAVOURITES"
+msgstr ""
+
+msgid "Do you really want to"
+msgstr ""
+
+msgid "delete YOUR favourites?"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

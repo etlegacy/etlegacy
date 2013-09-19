@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-24 11:49+0200\n"
+"PO-Revision-Date: 2013-09-19 21:00+0100\n"
 "Last-Translator: Jere S <shogaiam@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
 #: src/cgame/cg_consolecmds.c:568
@@ -331,7 +331,7 @@ msgstr ""
 "Ole hyvä ja valitse perusasetukset alhaalta. Voit muuttaa näitä arvoja "
 "milloin tahansa sekä muita asetuksia asetus- valikon kautta. Jos useampi "
 "kuin yksi henkinlö haluaa pelata Wolfenstein: Enemy Territory peliä, voit "
-"luota useamman profiilin profiili valikon kautta.\v"
+"luota useamman profiilin profiili valikon kautta."
 
 msgid "Player Alias:"
 msgstr "Pelaajan nimimerkki:"
@@ -3605,7 +3605,6 @@ msgstr ""
 msgid "an Objective"
 msgstr ""
 
-#: src/cgame/cg_draw.c:441
 msgid "Warning, leave the construction area..."
 msgstr ""
 
@@ -3614,6 +3613,31 @@ msgstr "jäi loukkuun"
 
 msgid "'s construction madness"
 msgstr "'s szalenstwie budowlanym"
+
+msgid "Need paks: %s\n"
+msgstr ""
+
+#, fuzzy
+msgid "Mod filter:"
+msgstr "Veritirskeet:"
+
+#, fuzzy
+msgid "DELETE FAVS"
+msgstr "POISTA"
+
+#, fuzzy
+msgid "RESET FILTERS"
+msgstr "SUODATTIMET"
+
+msgid "DELETE SERVER FAVOURITES"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to"
+msgstr "Oletko varma että haluat käynnistää"
+
+msgid "delete YOUR favourites?"
+msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

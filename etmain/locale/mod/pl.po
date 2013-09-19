@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-18 23:20+0100\n"
+"PO-Revision-Date: 2013-09-19 21:16+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -3656,6 +3656,27 @@ msgstr "zostal zlapany w"
 
 msgid "'s construction madness"
 msgstr "'s szalenstwie budowlanym"
+
+msgid "Need paks: %s\n"
+msgstr "Potrzebuje paczek %s\n"
+
+msgid "Mod filter:"
+msgstr "Filtr Moda:"
+
+msgid "DELETE FAVS"
+msgstr "USUN ULU"
+
+msgid "RESET FILTERS"
+msgstr "RESETUJ FILTRY"
+
+msgid "DELETE SERVER FAVOURITES"
+msgstr "USUN ULUBIONE SERWERY"
+
+msgid "Do you really want to"
+msgstr "Czy na pewno chcesz aby"
+
+msgid "delete YOUR favourites?"
+msgstr "usunac twoje ulubione?"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

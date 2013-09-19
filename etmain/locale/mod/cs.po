@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-18 23:21+0100\n"
+"PO-Revision-Date: 2013-09-19 21:02+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
 "Language: cs_CZ\n"
@@ -3656,6 +3656,32 @@ msgid "got caught in"
 msgstr ""
 
 msgid "'s construction madness"
+msgstr ""
+
+msgid "Need paks: %s\n"
+msgstr ""
+
+#, fuzzy
+msgid "Mod filter:"
+msgstr "Splouchance krve:"
+
+#, fuzzy
+msgid "DELETE FAVS"
+msgstr "SMAZAT"
+
+#, fuzzy
+msgid "RESET FILTERS"
+msgstr "FILTRY"
+
+#, fuzzy
+msgid "DELETE SERVER FAVOURITES"
+msgstr "DAT DO OBLIBENYCH"
+
+#, fuzzy
+msgid "Do you really want to"
+msgstr "Jsi si jisty, ze chces spustit"
+
+msgid "delete YOUR favourites?"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
