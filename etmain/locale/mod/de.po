@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-09-19 21:41+0100\n"
+"PO-Revision-Date: 2013-09-20 01:16+0100\n"
 "Last-Translator: Vinzenz Krügl <harlekin@hirntot.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -3659,6 +3659,11 @@ msgstr ""
 #: src/cgame/cg_consolecmds.c:1289
 #, c-format
 msgid "You will spawn as a %s %s with a %s."
+msgstr ""
+
+#: src/cgame/cg_limbopanel.c:1223
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
 msgstr ""
 
 #: src/cgame/cg_draw.c:441
