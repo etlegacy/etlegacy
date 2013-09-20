@@ -1204,11 +1204,11 @@ void CG_Class_f(void)
 	{
 	case TEAM_AXIS:
 		classtype  = "r";
-		teamstring = "Axis";
+		teamstring = CG_TranslateString("Axis");
 		break;
 	case TEAM_ALLIES:
 		classtype  = "b";
-		teamstring = "Allies";
+		teamstring = CG_TranslateString("Allies");
 		break;
 	default:
 		CG_Printf("Invalid team.\n");

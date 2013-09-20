@@ -3026,13 +3026,12 @@ msgstr ""
 msgid "%s have stolen %s!"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1204 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1207
 msgid "Axis"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1208 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
 msgid "Allies"
 msgstr ""
 
@@ -3715,6 +3714,10 @@ msgid "PopUpTimeStay:"
 msgstr ""
 
 msgid "PopUpTimeFade:"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1211
+msgid "Allies"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

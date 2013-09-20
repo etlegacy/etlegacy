@@ -3014,13 +3014,12 @@ msgstr "%sZauwazony przez ^7%s"
 msgid "%s have stolen %s!"
 msgstr "%s ukradli %s!"
 
-#: src/cgame/cg_consolecmds.c:1204 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1207
 msgid "Axis"
 msgstr "Os"
 
-#: src/cgame/cg_consolecmds.c:1208 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
 msgid "Allies"
 msgstr "Alianci"
 
@@ -3694,6 +3693,10 @@ msgstr "Wiadomosci Pozostanie:"
 
 msgid "PopUpTimeFade:"
 msgstr "Wiadomosci Znikanie:"
+
+#: src/cgame/cg_consolecmds.c:1211
+msgid "Allies"
+msgstr "Aliancki"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
