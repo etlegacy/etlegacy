@@ -301,6 +301,9 @@ vmCvar_t g_customConfig;
 
 vmCvar_t g_moverScale;
 
+vmCvar_t g_fixedphysics;
+vmCvar_t g_fixedphysicsfps;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -529,7 +532,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_maxTeamLandmines,         "g_maxTeamLandmines",         "10",                         0 },
 	{ &g_countryflags,             "g_countryflags",             "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse},
 
-	// rename to g_team... ?
 	{ &team_airstrikeTime,         "team_airstrikeTime",         "10",                         0 },
 	{ &team_artyTime,              "team_artyTime",              "10",                         0 },
 	// team class/weapon limiting
@@ -560,6 +562,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_mapConfigs,               "g_mapConfigs",               "",                           0 },
 	{ &g_customConfig,             "g_customConfig",             "",                           0 },
 	{ &g_moverScale,               "g_moverScale",               "1.0",                        0 },
+	{ &g_fixedphysics,             "g_fixedphysics",             "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
+	{ &g_fixedphysicsfps,          "g_fixedphysicsfps",          "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
 };
 
 // made static to avoid aliasing

@@ -1986,6 +1986,9 @@ typedef struct cgs_s
 	int mapVoteMapX;
 	int mapVoteMapY;
 
+	int fixedphysics;
+	int fixedphysicsfps;
+
 } cgs_t;
 
 //==============================================================================

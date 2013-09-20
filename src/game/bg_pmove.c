@@ -43,6 +43,19 @@
 
 #include "bg_local.h"
 
+#ifdef CGAMEDLL
+#define PM_FIXEDPHYSICS         cgs.fixedphysics
+#define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
+
+#elif GAMEDLL
+extern vmCvar_t g_fixedphysics;
+extern vmCvar_t g_fixedphysicsfps;
+
+#define PM_FIXEDPHYSICS         g_fixedphysics.integer
+#define PM_FIXEDPHYSICSFPS      g_fixedphysicsfps.integer
+
+#endif
+
 pmove_t *pm;
 pml_t   pml;
 
@@ -6149,8 +6162,63 @@ void PmoveSingle(pmove_t *pmove)
 	// entering / leaving water splashes
 	PM_WaterEvents();
 
-	// snap some parts of playerstate to save network bandwidth
-	trap_SnapVector(pm->ps->velocity);
+	if (PM_FIXEDPHYSICS)
+	{
+		// Pmove accurate code
+		// the new way: don't care so much about 6 bytes/frame
+		// or so of network bandwidth, and add some mostly framerate-
+		// independent error to make up for the lack of rounding error
+		// halt if not going fast enough (0.5 units/sec)
+		if (VectorLengthSquared(pm->ps->velocity) < 0.25f)
+		{
+			VectorClear(pm->ps->velocity);
+		}
+		else
+		{
+			int   i;
+			float fac;
+			float fps = PM_FIXEDPHYSICSFPS;
+
+			if (fps > 333)
+			{
+				fps = 333;
+			}
+			else if (fps < 60)
+			{
+				fps = 60;
+			}
+
+			fac = (float)pml.msec / (1000.0f / fps);
+
+			// add some error...
+			for (i = 0; i < 3; ++i)
+			{
+				// ...if the velocity in this direction changed enough
+				if (fabs(pm->ps->velocity[i] - pml.previous_velocity[i]) > 0.5f / fac)
+				{
+					if (pm->ps->velocity[i] < 0)
+					{
+						pm->ps->velocity[i] -= 0.5f * fac;
+					}
+					else
+					{
+						pm->ps->velocity[i] += 0.5f * fac;
+					}
+				}
+			}
+			// we can stand a little bit of rounding error for the sake
+			// of lower bandwidth
+			VectorScale(pm->ps->velocity, 64.0f, pm->ps->velocity);
+			// snap some parts of playerstate to save network bandwidth
+			trap_SnapVector(pm->ps->velocity);
+			VectorScale(pm->ps->velocity, 1.0f / 64.0f, pm->ps->velocity);
+		}
+	}
+	else
+	{
+		// snap some parts of playerstate to save network bandwidth
+		trap_SnapVector(pm->ps->velocity);
+	}
 }
 
 /*
