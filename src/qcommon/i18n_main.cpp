@@ -280,7 +280,7 @@ static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryMan
 		strings.insert(std::make_pair(msgid, dict.get_dictionary().translate(msgid)));
 	}
 
-	if (cl_languageDebug)
+	if (cl_languageDebug->integer)
 	{
 		if (!Q_stricmp(strings.find(msgid)->second.c_str(), msgid))
 		{
@@ -328,7 +328,7 @@ static void Tinygettext_Error(const std::string& str)
 
 static void Tinygettext_Warning(const std::string& str)
 {
-	if (cl_languageDebug)
+	if (cl_languageDebug->integer)
 	{
 		Com_Printf("^3%s^7", str.c_str());
 	}
@@ -336,7 +336,7 @@ static void Tinygettext_Warning(const std::string& str)
 
 static void Tinygettext_Info(const std::string& str)
 {
-	if (cl_languageDebug)
+	if (cl_languageDebug->integer)
 	{
 		Com_Printf("%s", str.c_str());
 	}
