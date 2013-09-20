@@ -46,7 +46,7 @@
 #define ITEM_TYPE_MULTI             12      // multiple list setting, enumerated
 #define ITEM_TYPE_BIND              13      // multiple list setting, enumerated
 #define ITEM_TYPE_MENUMODEL         14      // special menu model
-#define ITEM_TYPE_TIMEOUT_COUNTER   15      // ydnar
+#define ITEM_TYPE_TIMEOUT_COUNTER   15      //
 #define ITEM_TYPE_TRICHECKBOX       16      // tri-state check box
 
 #define ITEM_ALIGN_LEFT             0       // left alignment
@@ -105,7 +105,7 @@
 #define FEEDER_SERVERSTATUS         0x0d    // server status
 #define FEEDER_FINDPLAYER           0x0e    // find player
 #define FEEDER_CINEMATICS           0x0f    // cinematics
-#define FEEDER_SAVEGAMES            0x10    // Obsolete. savegames
+#define FEEDER_SAVEGAMES            0x10    // obsolete. savegames
 #define FEEDER_CAMPAIGNS            0x1a    // all unlocked campaigns available
 #define FEEDER_ALLCAMPAIGNS         0x1b    // all campaigns available
 #define FEEDER_PROFILES             0x1c    // profiles
@@ -132,15 +132,15 @@
 #define CG_SHOW_OTHERTEAMHASFLAG            0x00020000
 #define CG_SHOW_YOURTEAMHASENEMYFLAG        0x00040000
 #define CG_SHOW_ANYNONTEAMGAME              0x00080000
-//(SA)
+
 #define CG_SHOW_HIGHLIGHTED                 0x00100000
 
-#define CG_SHOW_NOT_V_BINOC                 0x00400000  //----(SA)	added	// hide on binoc huds
-#define CG_SHOW_NOT_V_SNOOPER               0x00800000  //----(SA)	added	// hide on snooper huds
-#define CG_SHOW_NOT_V_FGSCOPE               0x01000000  //----(SA)	added	// hide on fg42 scope huds
-#define CG_SHOW_NOT_V_CLEAR                 0x02000000  //----(SA)	added	// hide on normal, full-view huds
-#define CG_SHOW_NOT_V_GARANDSCOPE           0x04000000  // Arnout: hide on garand scope huds
-#define CG_SHOW_NOT_V_K43SCOPE              0x08000000  // Arnout: hide on k43 scope huds
+#define CG_SHOW_NOT_V_BINOC                 0x00400000  // hide on binoc huds
+#define CG_SHOW_NOT_V_SNOOPER               0x00800000  // hide on snooper huds
+#define CG_SHOW_NOT_V_FGSCOPE               0x01000000  // hide on fg42 scope huds
+#define CG_SHOW_NOT_V_CLEAR                 0x02000000  // hide on normal, full-view huds
+#define CG_SHOW_NOT_V_GARANDSCOPE           0x04000000  // hide on garand scope huds
+#define CG_SHOW_NOT_V_K43SCOPE              0x08000000  // hide on k43 scope huds
 
 #define CG_SHOW_2DONLY                      0x10000000
 
@@ -201,21 +201,25 @@
 #define CG_PLAYER_ITEM              19
 #define CG_PLAYER_SCORE             20
 
-/*#define CG_BLUE_FLAGHEAD			21
+/*
+#define CG_BLUE_FLAGHEAD			21
 #define CG_BLUE_FLAGSTATUS			22
 #define CG_BLUE_FLAGNAME			23
 #define CG_RED_FLAGHEAD             24
 #define CG_RED_FLAGSTATUS			25
-#define CG_RED_FLAGNAME             26*/
+#define CG_RED_FLAGNAME             26
+*/
 
 #define CG_BLUE_SCORE               27
 #define CG_RED_SCORE                28
-/*#define CG_RED_NAME               29
+/*
+#define CG_RED_NAME                 29
 #define CG_BLUE_NAME				30
 #define CG_HARVESTER_SKULLS         31	// only shows in harvester
-#define CG_ONEFLAG_STATUS			32	// only shows in one flag*/
+#define CG_ONEFLAG_STATUS			32	// only shows in one flag
+*/
 #define CG_TEAM_COLOR               34
-//#define CG_CTF_POWERUP				35
+//#define CG_CTF_POWERUP            35
 
 #define CG_AREA_POWERUP             36
 #define CG_AREA_LAGOMETER           37  // painted with old system
@@ -252,7 +256,6 @@
 #define CG_2NDPLACE                 68
 #define CG_CAPTURES                 69
 
-// (SA) adding
 #define CG_PLAYER_AMMOCLIP_VALUE    70
 #define CG_PLAYER_WEAPON_ICON2D     71
 #define CG_CURSORHINT               72
@@ -264,7 +267,7 @@
 #define CG_AREA_HOLDABLE            79
 #define CG_CURSORHINT_STATUS        80  // like 'health' bar when pointing at a func_explosive
 #define CG_PLAYER_WEAPON_STABILITY  81  // shows aimSpreadScale value
-#define CG_PLAYER_WEAPON_RECHARGE   82  // DHM - Nerve :: For various multiplayer weapons that have recharge times
+#define CG_PLAYER_WEAPON_RECHARGE   82  // For various multiplayer weapons that have recharge times
 
 #define UI_OWNERDRAW_BASE           200
 #define UI_HANDICAP                 200
@@ -326,11 +329,11 @@
 #define UI_LOADPANEL                257
 
 #define UI_MENUMODEL                257
-#define UI_SAVEGAME_SHOT            258 // Obsolete
+#define UI_SAVEGAME_SHOT            258 // obsolete
 
 #define UI_LIMBOCHAT                259
 
-// Arnout: Enemy Territory
+// Enemy Territory
 #define UI_CAMPAIGNCINEMATIC        260
 #define UI_CAMPAIGNNAME             261
 #define UI_CAMPAIGNDESCRIPTION      262
@@ -350,12 +353,12 @@
 
 #define UI_GAMETYPEDESCRIPTION      280
 
-// Gordon: Mission briefing
+// Mission briefing
 #define UI_MB_MAP                   300
 #define UI_MB_TITLE                 301
 #define UI_MB_OBJECTIVES            302
 
-// NERVE - SMF - wolf multiplayer class/item selection mechanism
+// wolf multiplayer class/item selection mechanism
 #define WM_START_SELECT         0
 
 #define WM_SELECT_TEAM          1
@@ -375,13 +378,13 @@
 #define WM_ENGINEER             4
 #define WM_COVERTOPS            5
 
-// Arnout: UI fonts, supports up to 6 fonts
+// UI fonts, supports up to 6 fonts
 #define UI_FONT_ARIBLK_16       0
 #define UI_FONT_ARIBLK_27       1
 #define UI_FONT_COURBD_21       2
 #define UI_FONT_COURBD_30       3
 
-// OSP - callvote server setting toggles
+// callvote server setting toggles
 // CS_SERVERTOGGLES
 #define CV_SVS_MUTESPECS        1
 #define CV_SVS_FRIENDLYFIRE     2
