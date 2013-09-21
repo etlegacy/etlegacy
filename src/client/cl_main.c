@@ -84,6 +84,8 @@ cvar_t *m_filter;
 
 cvar_t *cl_activeAction;
 
+cvar_t *cl_activatelean;
+
 cvar_t *cl_autorecord;
 
 cvar_t *cl_allowDownload;
@@ -3712,6 +3714,8 @@ void CL_Init(void)
 	rcon_client_password  = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	cl_activeAction       = Cvar_Get("activeAction", "", CVAR_TEMP);
 	cl_autorecord         = Cvar_Get("cl_autorecord", "0", CVAR_TEMP);
+
+	cl_activatelean = Cvar_Get("cl_activatelean", "1", CVAR_ARCHIVE);
 
 	cl_timedemo      = Cvar_Get("timedemo", "0", 0);
 	cl_avidemo       = Cvar_Get("cl_avidemo", "0", 0);

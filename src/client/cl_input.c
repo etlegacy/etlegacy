@@ -649,7 +649,7 @@ void CL_KeyMove(usercmd_t *cmd)
 	side += movespeed * CL_KeyState(&kb[KB_MOVERIGHT]);
 	side -= movespeed * CL_KeyState(&kb[KB_MOVELEFT]);
 
-	if (cmd->buttons & BUTTON_ACTIVATE)
+	if (cmd->buttons & BUTTON_ACTIVATE && cl_activatelean->integer)
 	{
 		if (side > 0)
 		{
@@ -662,6 +662,7 @@ void CL_KeyMove(usercmd_t *cmd)
 
 		side = 0;   // disallow the strafe when holding 'activate'
 	}
+
 
 	up += movespeed * CL_KeyState(&kb[KB_UP]);
 	up -= movespeed * CL_KeyState(&kb[KB_DOWN]);
