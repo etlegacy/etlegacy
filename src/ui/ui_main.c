@@ -5765,7 +5765,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime;
 
 	//Set the filter text
-	DC->setCVar("ui_tmp_ServersFiltered",va("^zSERVERS FILTERED: ^2%i^z/^1%i",numinvisible,count));
+	DC->setCVar("ui_tmp_ServersFiltered", va("^zSERVERS FILTERED: ^2%i^z/^1%i", numinvisible, count));
 }
 
 typedef struct
