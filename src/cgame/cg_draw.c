@@ -2546,7 +2546,7 @@ static void CG_DrawLimboMessage(void)
 	if (cg_descriptiveText.integer)
 	{
 		str = CG_TranslateString("You are wounded and waiting for a medic.");
-		CG_DrawSmallStringColor(INFOTEXT_STARTX, y, str, colorWhite);
+		CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 		y += 18;
 
 		if (cgs.gametype == GT_WOLF_LMS)
@@ -2557,7 +2557,7 @@ static void CG_DrawLimboMessage(void)
 
 		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), BindingFromName("+moveup"));
 
-		CG_DrawSmallStringColor(INFOTEXT_STARTX, 134, str, colorWhite);
+		CG_DrawStringExt(INFOTEXT_STARTX, 134, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 		y += 18;
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
@@ -2568,7 +2568,7 @@ static void CG_DrawLimboMessage(void)
 
 	str = (ps->persistant[PERS_RESPAWNS_LEFT] == 0) ? CG_TranslateString("No more reinforcements this round.") : va(CG_TranslateString("Reinforcements deploy in %d seconds."), CG_CalculateReinfTime(qfalse));
 
-	CG_DrawSmallStringColor(INFOTEXT_STARTX, y, str, colorWhite);
+	CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 	y += 18;
 
 	trap_R_SetColor(NULL);
