@@ -263,12 +263,12 @@ qboolean ReadyToCallArtillery(gentity_t *ent)
 {
 	if (ent->client->sess.skill[SK_SIGNALS] >= 2)
 	{
-		if (level.time - ent->client->ps.classWeaponTime <= (level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1] * 0.66f))
+		if (level.time - ent->client->ps.classWeaponTime <= (level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.66f))
 		{
 			return qfalse;
 		}
 	}
-	else if (level.time - ent->client->ps.classWeaponTime <= level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
+	else if (level.time - ent->client->ps.classWeaponTime <= level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 	{
 		return qfalse;
 	}
@@ -1352,7 +1352,7 @@ void ClientThink_real(gentity_t *ent)
 	VectorCopy(client->ps.origin, client->oldOrigin);
 
 	pm.gametype           = g_gametype.integer;
-	pm.ltChargeTime       = level.lieutenantChargeTime[client->sess.sessionTeam - 1];
+	pm.ltChargeTime       = level.fieldopsChargeTime[client->sess.sessionTeam - 1];
 	pm.soldierChargeTime  = level.soldierChargeTime[client->sess.sessionTeam - 1];
 	pm.engineerChargeTime = level.engineerChargeTime[client->sess.sessionTeam - 1];
 	pm.medicChargeTime    = level.medicChargeTime[client->sess.sessionTeam - 1];

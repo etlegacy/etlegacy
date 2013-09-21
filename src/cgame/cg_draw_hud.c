@@ -867,7 +867,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	}
 	else if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
 	{
-		chargeTime = cg.ltChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+		chargeTime = cg.fieldopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 	}
 	else if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{

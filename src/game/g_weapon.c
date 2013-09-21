@@ -336,18 +336,18 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 	gitem_t   *item;
 	gentity_t *ent2;
 
-	if (level.time - ent->client->ps.classWeaponTime > level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
+	if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 	{
-		ent->client->ps.classWeaponTime = level.time - level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+		ent->client->ps.classWeaponTime = level.time - level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 	}
 
 	if (ent->client->sess.skill[SK_SIGNALS] >= 1)
 	{
-		ent->client->ps.classWeaponTime += level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1] * 0.15;
+		ent->client->ps.classWeaponTime += level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.15;
 	}
 	else
 	{
-		ent->client->ps.classWeaponTime += level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
+		ent->client->ps.classWeaponTime += level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
 	}
 
 	item = BG_FindItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? "Mega Ammo Pack" : "Ammo Pack");
@@ -3046,12 +3046,12 @@ void Weapon_Artillery(gentity_t *ent)
 
 	if (ent->client->sess.skill[SK_SIGNALS] >= 2)
 	{
-		if (level.time - ent->client->ps.classWeaponTime > level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
+		if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 		{
-			ent->client->ps.classWeaponTime = level.time - level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+			ent->client->ps.classWeaponTime = level.time - level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 
-		ent->client->ps.classWeaponTime += 0.66f * level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+		ent->client->ps.classWeaponTime += 0.66f * level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 	}
 	else
 	{
@@ -4267,14 +4267,14 @@ void FireWeapon(gentity_t *ent)
 		Weapon_Engineer(ent);
 		break;
 	case WP_SMOKE_MARKER:
-		if (level.time - ent->client->ps.classWeaponTime > level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
+		if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 		{
-			ent->client->ps.classWeaponTime = level.time - level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+			ent->client->ps.classWeaponTime = level.time - level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 
 		if (ent->client->sess.skill[SK_SIGNALS] >= 2)
 		{
-			ent->client->ps.classWeaponTime += .66f * level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+			ent->client->ps.classWeaponTime += .66f * level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 		else
 		{

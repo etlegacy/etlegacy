@@ -1085,7 +1085,7 @@ void CG_PredictPlayerState(void)
 		// only fill in the charge times if we're on a playing team
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS || cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
 		{
-			cg_pmove.ltChargeTime        = cg.ltChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+			cg_pmove.ltChargeTime        = cg.fieldopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 			cg_pmove.soldierChargeTime   = cg.soldierChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 			cg_pmove.engineerChargeTime  = cg.engineerChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 			cg_pmove.medicChargeTime     = cg.medicChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];

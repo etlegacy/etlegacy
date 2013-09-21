@@ -992,7 +992,7 @@ typedef struct level_locals_s
 	int soldierChargeTime[2];
 	int medicChargeTime[2];
 	int engineerChargeTime[2];
-	int lieutenantChargeTime[2];
+	int fieldopsChargeTime[2];
 
 	int covertopsChargeTime[2];
 
@@ -1005,7 +1005,7 @@ typedef struct level_locals_s
 	float soldierChargeTimeModifier[2];
 	float medicChargeTimeModifier[2];
 	float engineerChargeTimeModifier[2];
-	float lieutenantChargeTimeModifier[2];
+	float fieldopsChargeTimeModifier[2];
 	float covertopsChargeTimeModifier[2];
 
 	int firstbloodTeam;
@@ -1572,10 +1572,10 @@ extern vmCvar_t g_redlimbotime;
 extern vmCvar_t g_bluelimbotime;
 extern vmCvar_t g_medicChargeTime;
 extern vmCvar_t g_engineerChargeTime;
-extern vmCvar_t g_LTChargeTime;
+extern vmCvar_t g_fieldopsChargeTime;
 extern vmCvar_t g_soldierChargeTime;
-
 extern vmCvar_t g_covertopsChargeTime;
+
 extern vmCvar_t g_debugConstruct;
 extern vmCvar_t g_landminetimeout;
 

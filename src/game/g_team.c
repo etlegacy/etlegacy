@@ -1517,11 +1517,9 @@ void SP_team_WOLF_checkpoint(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-===================
-Team_ClassForString
-===================
-*/
+/**
+ * @note Unused
+ */
 int Team_ClassForString(char *string)
 {
 	if (!Q_stricmp(string, "soldier"))
@@ -1535,10 +1533,6 @@ int Team_ClassForString(char *string)
 	else if (!Q_stricmp(string, "engineer"))
 	{
 		return PC_ENGINEER;
-	}
-	else if (!Q_stricmp(string, "lieutenant"))         // FIXME: remove from missionpack
-	{
-		return PC_FIELDOPS;
 	}
 	else if (!Q_stricmp(string, "fieldops"))
 	{

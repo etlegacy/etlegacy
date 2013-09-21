@@ -715,8 +715,8 @@ void CG_ChargeTimesChanged(void)
 	cg.medicChargeTime[1]     = atoi(Info_ValueForKey(info, "a1"));
 	cg.engineerChargeTime[0]  = atoi(Info_ValueForKey(info, "x2"));
 	cg.engineerChargeTime[1]  = atoi(Info_ValueForKey(info, "a2"));
-	cg.ltChargeTime[0]        = atoi(Info_ValueForKey(info, "x3"));
-	cg.ltChargeTime[1]        = atoi(Info_ValueForKey(info, "a3"));
+	cg.fieldopsChargeTime[0]  = atoi(Info_ValueForKey(info, "x3"));
+	cg.fieldopsChargeTime[1]  = atoi(Info_ValueForKey(info, "a3"));
 	cg.covertopsChargeTime[0] = atoi(Info_ValueForKey(info, "x4"));
 	cg.covertopsChargeTime[1] = atoi(Info_ValueForKey(info, "a4"));
 }

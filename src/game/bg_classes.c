@@ -294,10 +294,6 @@ int BG_ClassTextToClass(char *token)
 	{
 		return PC_MEDIC;
 	}
-	else if (!Q_stricmp(token, "lieutenant"))         // FIXME: remove from missionpack
-	{
-		return PC_FIELDOPS;
-	}
 	else if (!Q_stricmp(token, "fieldops"))
 	{
 		return PC_FIELDOPS;

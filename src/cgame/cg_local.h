@@ -1092,7 +1092,7 @@ typedef struct
 	char oidTriggerInfoAllies[MAX_OID_TRIGGERS][256];
 	char oidTriggerInfoAxis[MAX_OID_TRIGGERS][256];
 
-	int ltChargeTime[2];
+	int fieldopsChargeTime[2];
 	int soldierChargeTime[2];
 	int engineerChargeTime[2];
 	int medicChargeTime[2];

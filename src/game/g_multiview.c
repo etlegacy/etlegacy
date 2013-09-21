@@ -398,7 +398,7 @@ qboolean G_smvRunCamera(gentity_t *ent)
 	}
 	else if (tps->stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
 	{
-		chargeTime = g_LTChargeTime.value;
+		chargeTime = g_fieldopsChargeTime.value;
 	}
 	else if (tps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{

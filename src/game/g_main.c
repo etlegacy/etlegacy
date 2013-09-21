@@ -149,7 +149,7 @@ vmCvar_t g_bluelimbotime;
 // charge times for character class special weapons
 vmCvar_t g_medicChargeTime;
 vmCvar_t g_engineerChargeTime;
-vmCvar_t g_LTChargeTime;
+vmCvar_t g_fieldopsChargeTime;
 vmCvar_t g_soldierChargeTime;
 vmCvar_t g_covertopsChargeTime;
 
@@ -323,9 +323,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_bluelimbotime,            "g_bluelimbotime",            "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},
 	{ &g_medicChargeTime,          "g_medicChargeTime",          "45000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_engineerChargeTime,       "g_engineerChargeTime",       "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
-	{ &g_LTChargeTime,             "g_LTChargeTime",             "40000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
+	{ &g_fieldopsChargeTime,       "g_fieldopsChargeTime",       "40000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_soldierChargeTime,        "g_soldierChargeTime",        "20000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
-
 	{ &g_covertopsChargeTime,      "g_covertopsChargeTime",      "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_landminetimeout,          "g_landminetimeout",          "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue},
 
@@ -1593,11 +1592,11 @@ void G_UpdateCvars(void)
 					level.engineerChargeTime[1] = g_engineerChargeTime.integer * level.engineerChargeTimeModifier[1];
 					chargetimechanged           = qtrue;
 				}
-				else if (cv->vmCvar == &g_LTChargeTime)
+				else if (cv->vmCvar == &g_fieldopsChargeTime)
 				{
-					level.lieutenantChargeTime[0] = g_LTChargeTime.integer * level.lieutenantChargeTimeModifier[0];
-					level.lieutenantChargeTime[1] = g_LTChargeTime.integer * level.lieutenantChargeTimeModifier[1];
-					chargetimechanged             = qtrue;
+					level.fieldopsChargeTime[0] = g_fieldopsChargeTime.integer * level.fieldopsChargeTimeModifier[0];
+					level.fieldopsChargeTime[1] = g_fieldopsChargeTime.integer * level.fieldopsChargeTimeModifier[1];
+					chargetimechanged           = qtrue;
 				}
 				else if (cv->vmCvar == &g_covertopsChargeTime)
 				{
@@ -1757,8 +1756,8 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "a1", va("%i", level.medicChargeTime[1]));
 		Info_SetValueForKey(cs, "x2", va("%i", level.engineerChargeTime[0]));
 		Info_SetValueForKey(cs, "a2", va("%i", level.engineerChargeTime[1]));
-		Info_SetValueForKey(cs, "x3", va("%i", level.lieutenantChargeTime[0]));
-		Info_SetValueForKey(cs, "a3", va("%i", level.lieutenantChargeTime[1]));
+		Info_SetValueForKey(cs, "x3", va("%i", level.fieldopsChargeTime[0]));
+		Info_SetValueForKey(cs, "a3", va("%i", level.fieldopsChargeTime[1]));
 		Info_SetValueForKey(cs, "x4", va("%i", level.covertopsChargeTime[0]));
 		Info_SetValueForKey(cs, "a4", va("%i", level.covertopsChargeTime[1]));
 		trap_SetConfigstring(CS_CHARGETIMES, cs);
@@ -2235,18 +2234,18 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	level.warmupModificationCount = g_warmup.modificationCount;
 
-	level.soldierChargeTime[0]    = level.soldierChargeTime[1] = g_soldierChargeTime.integer;
-	level.medicChargeTime[0]      = level.medicChargeTime[1] = g_medicChargeTime.integer;
-	level.engineerChargeTime[0]   = level.engineerChargeTime[1] = g_engineerChargeTime.integer;
-	level.lieutenantChargeTime[0] = level.lieutenantChargeTime[1] = g_LTChargeTime.integer;
+	level.soldierChargeTime[0]  = level.soldierChargeTime[1] = g_soldierChargeTime.integer;
+	level.medicChargeTime[0]    = level.medicChargeTime[1] = g_medicChargeTime.integer;
+	level.engineerChargeTime[0] = level.engineerChargeTime[1] = g_engineerChargeTime.integer;
+	level.fieldopsChargeTime[0] = level.fieldopsChargeTime[1] = g_fieldopsChargeTime.integer;
 
 	level.covertopsChargeTime[0] = level.covertopsChargeTime[1] = g_covertopsChargeTime.integer;
 
-	level.soldierChargeTimeModifier[0]    = level.soldierChargeTimeModifier[1] = 1.f;
-	level.medicChargeTimeModifier[0]      = level.medicChargeTimeModifier[1] = 1.f;
-	level.engineerChargeTimeModifier[0]   = level.engineerChargeTimeModifier[1] = 1.f;
-	level.lieutenantChargeTimeModifier[0] = level.lieutenantChargeTimeModifier[1] = 1.f;
-	level.covertopsChargeTimeModifier[0]  = level.covertopsChargeTimeModifier[1] = 1.f;
+	level.soldierChargeTimeModifier[0]   = level.soldierChargeTimeModifier[1] = 1.f;
+	level.medicChargeTimeModifier[0]     = level.medicChargeTimeModifier[1] = 1.f;
+	level.engineerChargeTimeModifier[0]  = level.engineerChargeTimeModifier[1] = 1.f;
+	level.fieldopsChargeTimeModifier[0]  = level.fieldopsChargeTimeModifier[1] = 1.f;
+	level.covertopsChargeTimeModifier[0] = level.covertopsChargeTimeModifier[1] = 1.f;
 
 	cs[0] = '\0';
 	Info_SetValueForKey(cs, "x0", va("%i", level.soldierChargeTime[0]));
@@ -2255,8 +2254,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	Info_SetValueForKey(cs, "a1", va("%i", level.medicChargeTime[1]));
 	Info_SetValueForKey(cs, "x2", va("%i", level.engineerChargeTime[0]));
 	Info_SetValueForKey(cs, "a2", va("%i", level.engineerChargeTime[1]));
-	Info_SetValueForKey(cs, "x3", va("%i", level.lieutenantChargeTime[0]));
-	Info_SetValueForKey(cs, "a3", va("%i", level.lieutenantChargeTime[1]));
+	Info_SetValueForKey(cs, "x3", va("%i", level.fieldopsChargeTime[0]));
+	Info_SetValueForKey(cs, "a3", va("%i", level.fieldopsChargeTime[1]));
 	Info_SetValueForKey(cs, "x4", va("%i", level.covertopsChargeTime[0]));
 	Info_SetValueForKey(cs, "a4", va("%i", level.covertopsChargeTime[1]));
 	trap_SetConfigstring(CS_CHARGETIMES, cs);

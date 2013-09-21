@@ -498,7 +498,7 @@ typedef struct
 	qboolean noWeapClips;           // if the game is setup for no weapon clips by the server
 
 	int gametype;
-	int ltChargeTime;
+	int ltChargeTime;               // fieldopsChargeTime in cgame and ui. Cannot change here because of compatibility
 	int soldierChargeTime;
 	int engineerChargeTime;
 	int medicChargeTime;
