@@ -5764,8 +5764,24 @@ static void UI_BuildServerDisplayList(qboolean force)
 
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime;
 
-	//Set the filter text
-	DC->setCVar("ui_tmp_ServersFiltered", va("^zSERVERS FILTERED: ^2%i^z/^1%i", numinvisible, count));
+	// Set the filter text
+	// this zone flickers when total count hasn't got 3 digits but we don't know before ...
+	// FIXME: add another tmp cvar for message only or use delimter and parse ... -> new menu item for message
+	if (count > 0)
+	{
+		if (numinvisible > 0)
+		{
+			DC->setCVar("ui_tmp_ServersFiltered", va("^zFiltered/Total: %i/%i", numinvisible, count));
+		}
+		else
+		{
+			DC->setCVar("ui_tmp_ServersFiltered", va("^3Check your filters - no servers found!        ^zFiltered/Total: %i/%i", numinvisible, count));
+		}
+	}
+	else
+	{
+		DC->setCVar("ui_tmp_ServersFiltered", "^1Check your connection - no servers found!      ^zFiltered/Total: 0/000");
+	}
 }
 
 typedef struct
