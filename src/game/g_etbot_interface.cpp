@@ -51,7 +51,7 @@ BotEntity m_EntityHandles[MAX_GENTITIES];
 #define WC_WEAPON_TIME_LEFT level.time - ps->classWeaponTime
 #define WC_SOLDIER_TIME     level.soldierChargeTime[team - TEAM_AXIS]
 #define WC_ENGINEER_TIME    level.engineerChargeTime[team - TEAM_AXIS]
-#define WC_FIELDOPS_TIME    level.lieutenantChargeTime[team - TEAM_AXIS]
+#define WC_FIELDOPS_TIME    level.fieldopsChargeTime[team - TEAM_AXIS]
 #define WC_MEDIC_TIME       level.medicChargeTime[team - TEAM_AXIS]
 #define WC_COVERTOPS_TIME   level.covertopsChargeTime[team - TEAM_AXIS]
 
