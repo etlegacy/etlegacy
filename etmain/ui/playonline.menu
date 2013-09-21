@@ -570,6 +570,24 @@ menuDef {
 	}
 	
 	itemDef {
+		name       "serverFilterLaber"
+		group      GROUP_NAME
+		rect       $evalfloat(12+SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH+110) 165 200 16
+		type       ITEM_TYPE_TEXT
+		textfont   UI_FONT_ARIBLK_27
+		// textstyle  ITEM_TEXTSTYLE_SHADOWED
+		textscale  .19
+		textalign  ITEM_ALIGN_RIGHT
+		textalignx 0
+		textaligny 8
+		forecolor  .6 .6 .6 1
+		cvar       "ui_tmp_ServersFiltered"
+		visible    1
+		decoration
+		autowrapped
+	}
+	
+	itemDef {
 		name		"favouritesColumn"
 		group		GROUP_NAME
 		rect		$evalfloat(12+SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH+84) 195 12 COLUMN_HEIGHT
