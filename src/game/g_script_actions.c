@@ -950,6 +950,15 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 		level.engineerChargeTimeModifier[team] = factor;
 		level.engineerChargeTime[team]         = g_engineerChargeTime.integer * factor;
 	}
+	else if (!Q_stricmp(playerclass, "lieutenant")) // obsolete, but still used in map scripts
+	{
+		if (g_developer.integer)
+		{
+			G_Printf(S_COLOR_YELLOW "WARNING G_ScriptAction_SetChargeTimeFactor: 'lieutenant' is a deprecated keyword, use 'fieldops' instead\n");
+		}
+		level.fieldopsChargeTimeModifier[team] = factor;
+		level.fieldopsChargeTime[team]         = g_fieldopsChargeTime.integer * factor;
+	}
 	else if (!Q_stricmp(playerclass, "fieldops"))
 	{
 		level.fieldopsChargeTimeModifier[team] = factor;
