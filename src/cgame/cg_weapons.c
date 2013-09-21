@@ -2133,8 +2133,6 @@ cg.time should be between oldFrameTime and frameTime after exit
 */
 static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
-	animation_t *anim;
-
 	// debugging tool to get no animations
 	if (cg_animSpeed.integer == 0)
 	{
@@ -2163,7 +2161,8 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	// oldFrame and calculate a new frame
 	if (cg.time >= lf->frameTime)
 	{
-		int f;
+		int         f;
+		animation_t *anim;
 
 		lf->oldFrame      = lf->frame;
 		lf->oldFrameTime  = lf->frameTime;
@@ -3130,23 +3129,24 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	// FIXME: do a switch
 	// weapons that don't need to go any further as they have no flash or light
-	if (weaponNum == WP_GRENADE_LAUNCHER ||
-	    weaponNum == WP_GRENADE_PINEAPPLE ||
-	    weaponNum == WP_KNIFE ||
-	    weaponNum == WP_DYNAMITE ||
-	    weaponNum == WP_GPG40 ||
-	    weaponNum == WP_M7 ||
-	    weaponNum == WP_LANDMINE ||
-	    weaponNum == WP_SATCHEL ||
-	    weaponNum == WP_SATCHEL_DET ||
-	    weaponNum == WP_SMOKE_BOMB ||
-	    weaponNum == WP_MEDIC_SYRINGE ||
-	    weaponNum == WP_MEDIC_ADRENALINE
-	    )
+	switch (weaponNum)
 	{
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
+	case WP_KNIFE:
+	case WP_DYNAMITE:
+	case WP_GPG40:
+	case WP_M7:
+	case WP_LANDMINE:
+	case WP_SATCHEL:
+	case WP_SATCHEL_DET:
+	case WP_SMOKE_BOMB:
+	case WP_MEDIC_SYRINGE:
+	case WP_MEDIC_ADRENALINE:
 		return;
+	default:
+		break;
 	}
 
 	// weaps with barrel smoke
@@ -3253,10 +3253,10 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// allow the gun to be completely removed
 	if ((!cg_drawGun.integer))
 	{
-		vec3_t origin;
-
 		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !(cg.predictedPlayerState.eFlags & (EF_MG42_ACTIVE | EF_MOUNTEDTANK)))
 		{
+			vec3_t origin;
+
 			// special hack for flamethrower...
 			VectorCopy(cg.refdef_current->vieworg, origin);
 
@@ -3272,7 +3272,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 		{
 			if (cg.binocZoomTime < 0)
 			{
-				if (-cg.binocZoomTime + 500 + 200 < cg.time)
+				if (-cg.binocZoomTime + 700 < cg.time)
 				{
 					cg.binocZoomTime = 0;
 				}
@@ -3748,6 +3748,8 @@ int getEquivWeapon(int weapnum)
 {
 	int num = weapnum;
 
+	// FIXME: WP_GPG40 <-> WP_M7 ?
+
 	switch (weapnum)
 	{
 	// going from german to american
@@ -3792,7 +3794,6 @@ int getEquivWeapon(int weapnum)
 CG_SetSniperZoom
 ==============
 */
-
 void CG_SetSniperZoom(int lastweap, int newweap)
 {
 	int zoomindex;
@@ -3809,39 +3810,17 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 	}
 	cg.zoomedScope = 0;
 
-	// check for fade-outs
-	switch (lastweap)
-	{
-	case WP_FG42SCOPE:
-//          cg.zoomedScope  = 1;    // TODO: add to zoomTable
-//          cg.zoomTime     = cg.time;
-		break;
-	case WP_GARAND_SCOPE:
-//          cg.zoomedScope  = 500;  // TODO: add to zoomTable
-//          cg.zoomTime     = cg.time;
-		break;
-	case WP_K43_SCOPE:
-//          cg.zoomedScope  = 500;  // TODO: add to zoomTable
-//          cg.zoomTime     = cg.time;
-		break;
-	}
-
 	switch (newweap)
 	{
-
 	default:
 		return;     // no sniper zoom, get out.
-
 	case WP_FG42SCOPE:
 		cg.zoomval     = cg_zoomDefaultSniper.value; // JPW NERVE changed from defaultFG per atvi req
 		cg.zoomedScope = 1;         // TODO: add to zoomTable
 		zoomindex      = ZOOM_SNIPER; // JPW NERVE was FG42SCOPE
 		break;
 	case WP_GARAND_SCOPE:
-		cg.zoomval     = cg_zoomDefaultSniper.value;
-		cg.zoomedScope = 900;       // TODO: add to zoomTable
-		zoomindex      = ZOOM_SNIPER;
-		break;
+	// fall through
 	case WP_K43_SCOPE:
 		cg.zoomval     = cg_zoomDefaultSniper.value;
 		cg.zoomedScope = 900;       // TODO: add to zoomTable
@@ -4376,6 +4355,7 @@ void CG_NextWeap(qboolean switchBanks)
 				else
 				{
 					qboolean found = qfalse;
+
 					switch (num)
 					{
 					case WP_CARBINE:
@@ -4561,6 +4541,7 @@ void CG_PrevWeap(qboolean switchBanks)
 			else
 			{
 				qboolean found = qfalse;
+
 				switch (num)
 				{
 				case WP_CARBINE:
@@ -5280,8 +5261,6 @@ CG_MortarEFX
 */
 void CG_MortarEFX(centity_t *cent)
 {
-	refEntity_t flash;
-
 	if (cent->currentState.density & 1)
 	{
 		// smoke
@@ -5290,6 +5269,8 @@ void CG_MortarEFX(centity_t *cent)
 
 	if (cent->currentState.density & 2)
 	{
+		refEntity_t flash;
+
 		// light
 		trap_R_AddLightToScene(cent->currentState.origin, 256, 0.75 + 8.0 / (rand() & 31), 1.0, 1.0, 1.0, 0, 0);
 
@@ -5335,7 +5316,7 @@ void CG_WeaponFireRecoil(int weapon)
 		break;
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
-		pitchAdd = 0.3;
+		pitchAdd = 0.3f;
 		break;
 	case WP_FG42SCOPE:
 	case WP_FG42:
@@ -5345,7 +5326,7 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_THOMPSON:
 	case WP_STEN:
 		pitchAdd  = (1 + rand() % 3) * 0.3;
-		yawRandom = 0.6;
+		yawRandom = 0.6f;
 		break;
 	default:
 		return;
@@ -6639,11 +6620,11 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
 {
 	if (cg_tracers.integer == 2 && sourceEntityNum != cg.clientNum)
 	{
-		return;                                                            //Only own tracers
+		return; // Only own tracers
 	}
 	else if (cg_tracers.integer == 3 && sourceEntityNum == cg.clientNum)
 	{
-		return;                                                                 //Only others tracers
+		return; // Only others tracers
 
 	}
 	if (otherEntityNum >= 0 && otherEntityNum != ENTITYNUM_NONE)
