@@ -6,6 +6,7 @@ OpenWolf GPL Source Code
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2010 COR Entertainment, LLC.
 Copyright (C) 2011 Dusan Jocic <dusanjocic@msn.com>
+Copyright (C) 2012 ET: Legacy team
 
 OpenWolf is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,10 +21,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+ @file cl_irc.c
+ @brief irc client
 ===========================================================================
 */
-
-// cl_irc.c  -- irc client
 
 #ifndef HAVE_CONFIG_H
 // #include "config.h"
@@ -238,8 +239,8 @@ static struct irc_user_t IRC_User;
 /*
  * Events that can be displayed and flags that apply to them.
  */
-#define IRC_EVT_SAY     0x00000000  // Standard message
-#define IRC_EVT_ACT     0x00000001  // /me message
+#define IRC_EVT_SAY         0x00000000  // Standard message
+#define IRC_EVT_ACT         0x00000001  // /me message
 #define IRC_EVT_JOIN        0x00000002  // Join
 #define IRC_EVT_PART        0x00000003  // Part
 #define IRC_EVT_QUIT        0x00000004  // Quit
@@ -616,7 +617,6 @@ static qboolean IRC_Parser(char next)
 			P_ERROR(RECOVERY);
 		}
 		break;
-
 	/*
 	 * Start of prefix; anything is accepted, except for '!', '@', ' '
 	 * and control characters which all cause an error recovery.
@@ -632,7 +632,6 @@ static qboolean IRC_Parser(char next)
 			P_INIT_STRING(pfx_nickOrServer);
 		}
 		break;
-
 	/*
 	 * Prefix, server or nick name. Control characters cause an error,
 	 * ' ', '!' and '@' cause state changes.
@@ -659,7 +658,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_STRING(pfx_nickOrServer);
 		}
 		break;
-
 	/*
 	 * Start of user name; anything goes, except for '!', '@', ' '
 	 * and control characters which cause an error.
@@ -675,7 +673,6 @@ static qboolean IRC_Parser(char next)
 			P_INIT_STRING(pfx_user);
 		}
 		break;
-
 	/*
 	 * User name; '@' will cause state changes, '!' , ' ' and
 	 * control characters will cause errors.
@@ -694,7 +691,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_STRING(pfx_user);
 		}
 		break;
-
 	/*
 	 * Start of host name; anything goes, except for '!', '@', ' '
 	 * and control characters which cause an error.
@@ -710,7 +706,6 @@ static qboolean IRC_Parser(char next)
 			P_INIT_STRING(pfx_host);
 		}
 		break;
-
 	/*
 	 * Host name; ' ' will cause state changes, '!' and control
 	 * characters will cause errors.
@@ -729,7 +724,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_STRING(pfx_host);
 		}
 		break;
-
 	/*
 	 * Start of command, will accept start of numeric and string
 	 * commands; anything else is an error.
@@ -750,7 +744,6 @@ static qboolean IRC_Parser(char next)
 			P_AUTO_ERROR;
 		}
 		break;
-
 	/*
 	 * String command. Uppercase letters will cause the parser
 	 * to continue on string commands, ' ' indicates a parameter
@@ -775,7 +768,6 @@ static qboolean IRC_Parser(char next)
 			P_ERROR(RECOVERY);
 		}
 		break;
-
 	/*
 	 * Second/third digit of numeric command; anything but a digit
 	 * is an error.
@@ -792,7 +784,6 @@ static qboolean IRC_Parser(char next)
 			P_AUTO_ERROR;
 		}
 		break;
-
 	/*
 	 * End of numeric command, could be a ' ' or a '\r'.
 	 */
@@ -810,7 +801,6 @@ static qboolean IRC_Parser(char next)
 			P_ERROR(RECOVERY);
 		}
 		break;
-
 	/*
 	 * Start of parameter. ':' means it's a trailing parameter,
 	 * spaces and control characters shouldn't be here, and
@@ -840,7 +830,6 @@ static qboolean IRC_Parser(char next)
 			P_START_PARAM;
 		}
 		break;
-
 	/*
 	 * "Middle" parameter; ' ' means there's another parameter coming,
 	 * '\r' means the end of the message, control characters are not
@@ -868,7 +857,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_PARAM;
 		}
 		break;
-
 	/*
 	 * Trailing parameter; '\r' means the end of the command,
 	 * and anything else is just added to the string.
@@ -887,7 +875,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_PARAM;
 		}
 		break;
-
 	/*
 	 * End of line, expect '\n'. If found, we may have a message
 	 * to handle (unless there were errors). Anything else is an
@@ -904,7 +891,6 @@ static qboolean IRC_Parser(char next)
 			P_AUTO_ERROR;
 		}
 		break;
-
 	/*
 	 * Error recovery: wait for an '\r'.
 	 */
@@ -1219,7 +1205,9 @@ static ID_INLINE void IRC_InitRateLimiter()
 	int i;
 
 	for (i = 0 ; i < sizeof(IRC_RateLimiter) / sizeof(unsigned int) ; i++)
+	{
 		IRC_RateLimiter[i] = 0;
+	}
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1233,9 +1221,11 @@ IRC_NeutraliseString
 */
 static void IRC_NeutraliseString(char *buffer, const char *source)
 {
+	char c;
+
 	while (*source)
 	{
-		char c = *source;
+		c = *source;
 
 		if (IS_CNTRL(c))
 		{
@@ -1513,8 +1503,6 @@ not have been received anyway.
 #define RANDOM_NUMBER_CHAR ('0' + rand() % 10)
 static int IRCH_NickError()
 {
-	int i;
-
 	if (IRC_ThreadStatus == IRC_THREAD_SETNICK)
 	{
 		if (++IRC_User.nickattempts == 4)
@@ -1529,6 +1517,8 @@ static int IRCH_NickError()
 		}
 		else
 		{
+			int i;
+
 			for (i = IRC_User.nicklen - 3 ; i < IRC_User.nicklen ; i++)
 			{
 				IRC_User.nick[i] = RANDOM_NUMBER_CHAR;
@@ -2244,16 +2234,17 @@ connection can't be established.
 */
 static qboolean IRC_InitialConnect()
 {
-	int err_code, retries = 3;
+	int err_code = IRC_CMD_SUCCESS;
+	int retries  = 3;
 	int rc_delay = cl_IRC_reconnect_delay->integer;
+
+	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 
 	if (rc_delay < 5)
 	{
 		rc_delay = 5;
 	}
 
-	err_code         = IRC_CMD_SUCCESS;
-	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 	do
 	{
 		// If we're re-attempting a connection, wait a little bit,
@@ -2284,16 +2275,16 @@ or if the thread's status is set to QUITTING.
 */
 static int IRC_Reconnect()
 {
-	int err_code;
+	int err_code = IRC_CMD_SUCCESS;
 	int rc_delay = cl_IRC_reconnect_delay->integer;
+
+	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 
 	if (rc_delay < 5)
 	{
 		rc_delay = 5;
 	}
 
-	err_code         = IRC_CMD_SUCCESS;
-	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 	do
 	{
 		IRC_Sleep((err_code == IRC_CMD_SUCCESS) ? (rc_delay >> 1) : rc_delay);
