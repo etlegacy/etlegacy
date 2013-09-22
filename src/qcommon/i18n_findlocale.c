@@ -16,11 +16,11 @@ static int is_lcchar(const int c)
 
 static void lang_country_variant_from_envstring(const char *str, char **lang, char **country, char **variant)
 {
-	int end = 0;
-	int start;
+	int end   = 0;
+	int start = end;
 
 	// get lang, if any
-	start = end;
+
 	while (is_lcchar(str[end]))
 	{
 		++end;
@@ -137,7 +137,9 @@ static int accumulate_env(const char *name, FL_Locale *l)
 	{
 		return accumulate_locstring(env, l);
 	}
-	free(lang); free(country); free(variant);
+	free(lang);
+	free(country);
+	free(variant);
 	return 0;
 }
 
@@ -450,6 +452,7 @@ FL_Success FL_FindLocale(FL_Locale **locale)
 {
 	FL_Success success = FL_FAILED;
 	FL_Locale  *rtn    = malloc(sizeof(FL_Locale));
+
 	rtn->lang    = NULL;
 	rtn->country = NULL;
 	rtn->variant = NULL;

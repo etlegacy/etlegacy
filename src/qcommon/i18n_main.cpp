@@ -83,9 +83,8 @@ private:
 public:
 	QInputbuf(const std::string& filename) : putBack(1)
 	{
-		char *end;
+		char *end = buffer + BUFFER_SIZE - putBack;
 
-		end = buffer + BUFFER_SIZE - putBack;
 		setg(end, end, end);
 
 		FS_FOpenFileRead(filename.c_str(), &fileHandle, qfalse);
@@ -264,6 +263,8 @@ void I18N_SetLanguage(const char *language)
 static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryManager &dict)
 {
 	// HACK: how to tell tinygettext not to translate if cl_language is English?
+	// FIXME: this can be done in CL_TranslateString 
+	// we should also move the cl_language cvars out of this file to have a clean architecture & data structure 
 	if (!Q_stricmp(cl_language->string, "en"))
 	{
 		return msgid;
