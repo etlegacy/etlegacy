@@ -3266,10 +3266,24 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 			{
 				if (item->type == ITEM_TYPE_TRICHECKBOX)
 				{
-					int curvalue = DC->getCVarValue(item->cvar) + 1;
+					int curvalue;
+
+					if (key == K_MOUSE2)
+					{
+						curvalue = DC->getCVarValue(item->cvar) - 1;
+					}
+					else
+					{
+						curvalue = DC->getCVarValue(item->cvar) + 1;
+					}
+
 					if (curvalue > 2)
 					{
 						curvalue = 0;
+					}
+					else if (curvalue < 0)
+					{
+						curvalue = 2;
 					}
 					DC->setCVar(item->cvar, va("%i", curvalue));
 				}
