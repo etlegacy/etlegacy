@@ -138,7 +138,6 @@ int PM_AltSwitchToForWeapon(int weapon)
 	case WP_MORTAR:
 	case WP_MOBILE_MG42:
 		return WEAP_ALTSWITCHFROM;
-
 	default:
 		return WEAP_ALTSWITCHTO;
 	}
@@ -154,7 +153,6 @@ int PM_AttackAnimForWeapon(int weapon)
 	case WP_MEDIC_ADRENALINE:
 	case WP_MOBILE_MG42_SET:
 		return WEAP_ATTACK2;
-
 	default:
 		return WEAP_ATTACK1;
 	}
@@ -170,7 +168,6 @@ int PM_LastAttackAnimForWeapon(int weapon)
 		return WEAP_ATTACK2;
 	case WP_MORTAR_SET:
 		return WEAP_ATTACK1;
-
 	default:
 		return WEAP_ATTACK_LASTSHOT;
 	}
@@ -208,7 +205,6 @@ int PM_RaiseAnimForWeapon(int weapon)
 		return WEAP_DROP2;
 	case WP_SATCHEL_DET:
 		return WEAP_RELOAD2;
-
 	default:
 		return WEAP_RAISE;
 	}
@@ -223,7 +219,6 @@ int PM_DropAnimForWeapon(int weapon)
 		return WEAP_DROP2;
 	case WP_SATCHEL_DET:
 		return WEAP_RELOAD1;
-
 	default:
 		return WEAP_DROP;
 	}
@@ -1757,11 +1752,10 @@ The ground trace didn't hit a surface, so we are in freefall
 */
 static void PM_GroundTraceMissed(void)
 {
-	trace_t trace;
-
 	if (pm->ps->groundEntityNum != ENTITYNUM_NONE)
 	{
-		vec3_t point;
+		trace_t trace;
+		vec3_t  point;
 
 		// we just transitioned into freefall
 		if (pm->debugLevel)
@@ -2301,6 +2295,7 @@ static void PM_Footsteps(void)
 	}
 	else if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
 	{
+		// FIXME: do a switch
 		if (pm->waterlevel == 0)
 		{
 			// on ground will only play sounds if running
@@ -3834,6 +3829,7 @@ static void PM_Weapon(void)
 
 		// aha, THIS is the kewl quick fire mode :)
 		// added back for multiplayer pistol balancing
+		// FIXME: do a switch
 		if (pm->ps->weapon == WP_LUGER || pm->ps->weapon == WP_COLT || pm->ps->weapon == WP_SILENCER || pm->ps->weapon == WP_SILENCED_COLT ||
 		    pm->ps->weapon == WP_KAR98 || pm->ps->weapon == WP_K43 || pm->ps->weapon == WP_CARBINE || pm->ps->weapon == WP_GARAND ||
 		    pm->ps->weapon == WP_GARAND_SCOPE || pm->ps->weapon == WP_K43_SCOPE || BG_IsAkimboWeapon(pm->ps->weapon))
@@ -3894,6 +3890,8 @@ static void PM_Weapon(void)
 		return;
 	}
 
+	// FIXME: do a switch
+
 	if (pm->ps->weaponstate == WEAPON_RELOADING)
 	{
 		PM_FinishWeaponReload();
@@ -3909,9 +3907,6 @@ static void PM_Weapon(void)
 	if (pm->ps->weaponstate == WEAPON_RAISING)
 	{
 		pm->ps->weaponstate = WEAPON_READY;
-
-		//if((pm->ps->eFlags & EF_PRONE) && pm->ps->weapon == WP_MOBILE_MG42 )
-		//  pm->pmext->proneMG42Zoomed = qtrue;
 
 		PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 		return;
@@ -4532,11 +4527,10 @@ static void PM_Weapon(void)
 	case WP_SMOKE_BOMB:
 		PM_StartWeaponAnim(weapattackanim);
 		break;
-
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
-	case WP_MEDKIT:
+	//case WP_MEDKIT: // commented out - fixes animation
 	case WP_PLIERS:
 	case WP_SMOKE_MARKER:
 	case WP_SATCHEL_DET:
@@ -4544,10 +4538,8 @@ static void PM_Weapon(void)
 	case WP_MOBILE_MG42_SET:
 		PM_ContinueWeaponAnim(weapattackanim);
 		break;
-
 	case WP_MORTAR_SET:
 		break;          // no animation
-
 	default:
 		// testing
 		//PM_ContinueWeaponAnim(weapattackanim);
@@ -4635,20 +4627,17 @@ static void PM_Weapon(void)
 	case WP_MORTAR_SET:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		break;
-
 	case WP_LUGER:
 	case WP_SILENCER:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		// colt and luger are supposed to be balanced
 		aimSpreadScaleAdd = 20;
 		break;
-
 	case WP_COLT:
 	case WP_SILENCED_COLT:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 20;
 		break;
-
 	case WP_AKIMBO_COLT:
 	case WP_AKIMBO_SILENCEDCOLT:
 		// if you're firing an akimbo weapon, and your other gun is dry,
@@ -4673,7 +4662,6 @@ static void PM_Weapon(void)
 
 		aimSpreadScaleAdd = 20;
 		break;
-
 	case WP_AKIMBO_LUGER:
 	case WP_AKIMBO_SILENCEDLUGER:
 		// if you're firing an akimbo weapon, and your other gun is dry,
@@ -4700,7 +4688,6 @@ static void PM_Weapon(void)
 		// colt and luger are supposed to be balanced
 		aimSpreadScaleAdd = 20;
 		break;
-
 	case WP_GARAND:
 	case WP_K43:
 	case WP_KAR98:
@@ -4708,30 +4695,25 @@ static void PM_Weapon(void)
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 50;
 		break;
-
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 200;
 		break;
-
 	case WP_FG42:
 	case WP_FG42SCOPE:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 200 / 2.f;
 		break;
-
 	case WP_MP40:
 	case WP_THOMPSON:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 15 + rand() % 10;   // new values for DM
 		break;
-
 	case WP_STEN:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 15 + rand() % 10;   // new values for DM
 		break;
-
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
 		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
@@ -4744,13 +4726,11 @@ static void PM_Weapon(void)
 		}
 		aimSpreadScaleAdd = 20;
 		break;
-
 	case WP_MEDIC_SYRINGE:
 	case WP_MEDIC_ADRENALINE:
 	case WP_AMMO:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		break;
-
 	// engineers disarm bomb "on the fly" (high sample rate) but medics & LTs throw out health pack/smoke grenades slow
 	case WP_PLIERS:
 		addTime = 50;
@@ -4761,7 +4741,6 @@ static void PM_Weapon(void)
 	case WP_SMOKE_MARKER:
 		addTime = 1000;
 		break;
-
 	default:
 		break;
 	}
@@ -5007,7 +4986,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 	if (!leaning)      // go back to center position
 	{
 		if (leanofs > 0)            // right
-		{   //FIXME: play lean anim backwards?
+		{   // FIXME: play lean anim backwards?
 			leanofs -= (((float)pml.msec / (float)LEAN_TIME_FR) * LEAN_MAX);
 			if (leanofs < 0)
 			{
@@ -5015,7 +4994,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 			}
 		}
 		else if (leanofs < 0)         // left
-		{   //FIXME: play lean anim backwards?
+		{   // FIXME: play lean anim backwards?
 			leanofs += (((float)pml.msec / (float)LEAN_TIME_FR) * LEAN_MAX);
 			if (leanofs > 0)
 			{
@@ -5520,11 +5499,10 @@ vec3_t   laddervec;
 
 void PM_CheckLadderMove(void)
 {
-	vec3_t  spot;
-	vec3_t  flatforward;
-	trace_t trace;
-	float   tracedist;
-
+	vec3_t   spot;
+	vec3_t   flatforward;
+	trace_t  trace;
+	float    tracedist;
 	qboolean wasOnLadder;
 
 	if (pm->ps->pm_time)
@@ -5938,7 +5916,6 @@ void PmoveSingle(pmove_t *pmove)
 		}
 	}
 
-
 	if (pm->ps->pm_flags & PMF_RESPAWNED)
 	{
 		if (pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
@@ -5969,7 +5946,7 @@ void PmoveSingle(pmove_t *pmove)
 		pmove->cmd.doubleTap   = 0;
 	}
 
-	// fretn, moved from engine to this very place
+	// moved from engine to this very place
 	// no movement while using a static mg42
 	if (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
@@ -6221,13 +6198,9 @@ void PmoveSingle(pmove_t *pmove)
 	}
 }
 
-/*
-================
-Pmove
-
-Can be called by either the server or the client
-================
-*/
+/**
+ * @brief Can be called by either the server or the client
+ */
 int Pmove(pmove_t *pmove)
 {
 	int msec;
@@ -6307,6 +6280,6 @@ int Pmove(pmove_t *pmove)
 	}
 	else
 	{
-		return (0);
+		return 0;
 	}
 }
