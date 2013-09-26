@@ -150,10 +150,8 @@ void G_UpdateFireteamConfigString(fireteamData_t *ft)
 			}
 		}
 
-//		Com_sprintf(buffer, 128, "\\n\\%s\\l\\%i\\c\\%.8x%.8x", ft->name, ft->joinOrder[0], clnts[1], clnts[0]);
-//		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], clnts[1], clnts[0]);
-//		G_Printf(va("%s\n", buffer));
 		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\p\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], ft->priv, clnts[1], clnts[0]);
+		//G_Printf(va("%s\n", buffer));
 	}
 
 	trap_SetConfigstring(CS_FIRETEAMS + (ft - level.fireTeams), buffer);
@@ -288,9 +286,9 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 		G_ClientPrintAndReturn(entityNum, "You are already on a fireteam, leave it first");
 	}
 
-/*	if(!name || !*name) {
-        G_ClientPrintAndReturn(entityNum, "You must choose a name for your fireteam");
-    }*/
+	//if(!name || !*name) {
+	//  G_ClientPrintAndReturn(entityNum, "You must choose a name for your fireteam");
+	//}
 
 	if ((ft = G_FindFreeFireteam()) == NULL)
 	{
@@ -332,7 +330,7 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 		ft->priv = qfalse;
 	}
 
-//	Q_strncpyz(ft->name, name, 32);
+	//Q_strncpyz(ft->name, name, 32);
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_FireTeamCreated(entityNum, ft->ident);
@@ -375,7 +373,6 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
-
 		if (i >= MAX_FIRETEAM_MEMBERS)
 		{
 			G_ClientPrintAndReturn(entityNum, "Too many players already on this Fireteam");
@@ -398,7 +395,7 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 	}
 }
 
-// core: Check if the fireteam contains only bots..
+// Check if the fireteam contains only bots..
 // excludeEntityNum will be excluded from the test (if -1, it has no effect)
 // firstHuman returns the joinOrder of the first human found in the fireteam (-1 if none is found)
 qboolean G_OnlyBotsInFireteam(fireteamData_t *ft, int excludeEntityNum, int *firstHuman)
@@ -452,6 +449,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 	if (G_IsOnFireteam(entityNum, &ft))
 	{
 		int j;
+
 		for (i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; ++i)
 		{
 			if (ft->joinOrder[i] == entityNum)
@@ -730,8 +728,8 @@ void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 		G_Error("G_ApplyToFireTeam: Fireteam leader client is NULL\n");
 	}
 
-	// TEMP
-//	G_AddClientToFireteam( entityNum, ft->joinOrder[0] );
+	// DEBUG
+	//G_AddClientToFireteam( entityNum, ft->joinOrder[0] );
 
 	trap_SendServerCommand(entityNum, va("application -1"));
 	trap_SendServerCommand(leader - g_entities, va("application %i", entityNum));
@@ -815,9 +813,9 @@ int G_FireteamNumberForString(const char *name, team_t team)
 			fireteam = i + 1;
 		}
 
-/*		if(!Q_stricmp(level.fireTeams[i].name, name)) {
-            fireteam = i+1;
-        }*/
+		//if(!Q_stricmp(level.fireTeams[i].name, name)) {
+		//  fireteam = i+1;
+		//}
 	}
 
 	if (fireteam <= 0)
