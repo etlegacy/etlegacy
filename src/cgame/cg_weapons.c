@@ -1955,6 +1955,9 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_MAPMORTAR:
 		filename = "mapmortar.weap";
 		break;     // do we really need this?
+	case WP_KNIFE_KABAR:
+		filename = "knife_kbar.weap";
+		break;
 	case WP_ARTY:
 	case VERYBIGEXPLOSION:
 	case WP_DUMMY_MG42:
@@ -3135,6 +3138,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	case WP_GRENADE_LAUNCHER:
 	case WP_GRENADE_PINEAPPLE:
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 	case WP_DYNAMITE:
 	case WP_GPG40:
 	case WP_M7:
@@ -3482,7 +3486,7 @@ CG_WeaponHasAmmo
 static qboolean CG_WeaponHasAmmo(int i)
 {
 	// certain weapons don't have ammo
-	if (i == WP_KNIFE || i == WP_PLIERS)
+	if (i == WP_KNIFE || i == WP_KNIFE_KABAR || i == WP_PLIERS)
 	{
 		return qtrue;
 	}
@@ -5766,6 +5770,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	switch (weapon)
 	{
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 		i = rand() % 4;
 		if (!surfFlags)
 		{
@@ -6285,6 +6290,7 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 		CG_MissileHitWall(weapon, 0, origin, dir, 0);   // like the old one
 		break;
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 		CG_MissileHitWall(weapon, 0, origin, dir, 1);    // this one makes the hitting fleshy sound. whee
 		break;
 	default:

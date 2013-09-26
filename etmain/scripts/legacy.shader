@@ -811,3 +811,23 @@ ui/assets/mp_wrench_red
 		alphaGen vertex
 	}
 }
+
+// KA-BAR  shaders
+models/weapons2/knife_kbar/knife_yd
+{
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+	}
+	{
+		map models/weapons2/knife_kbar/knife_yd_alpha.jpg
+		blendFunc GL_DST_COLOR GL_ZERO
+		rgbGen identity
+	}
+	{
+		map models/weapons2/knife_kbar/knife_yd.jpg
+		blendFunc GL_ONE GL_ONE
+		rgbGen lightingdiffuse
+	}
+}

@@ -966,7 +966,14 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	client->ps.weapons[0] = 0;
 	client->ps.weapons[1] = 0;
 
-	AddWeaponToPlayer(client, WP_KNIFE, 1, 0, qtrue);
+	if (client->sess.sessionTeam == TEAM_AXIS)
+	{
+		AddWeaponToPlayer(client, WP_KNIFE, 1, 0, qtrue);
+	}
+	else
+	{
+		AddWeaponToPlayer(client, WP_KNIFE_KABAR, 1, 0, qtrue);
+	}
 
 	client->ps.weaponstate = WEAPON_READY;
 
@@ -1002,7 +1009,6 @@ void SetWolfSpawnWeapons(gclient_t *client)
 				}
 				AddWeaponToPlayer(client, WP_LANDMINE, GetAmmoTableData(WP_LANDMINE)->defaultStartingAmmo, GetAmmoTableData(WP_LANDMINE)->defaultStartingClip, qfalse);
 				AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 4, qfalse);
-
 			}
 			else
 			{

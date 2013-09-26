@@ -115,11 +115,11 @@ KNIFE
 Weapon_Knife
 ==============
 */
-void Weapon_Knife(gentity_t *ent)
+void Weapon_Knife(gentity_t *ent, int modnum)
 {
 	trace_t   tr;
 	gentity_t *traceEnt, *tent;
-	int       damage, mod = MOD_KNIFE;
+	int       damage, mod = modnum;
 	vec3_t    pforward, end;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
@@ -178,7 +178,7 @@ void Weapon_Knife(gentity_t *ent)
 		if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
 		{
 			damage = 100;   // enough to drop a 'normal' (100 health) human with one jab
-			mod    = MOD_KNIFE; // MOD_BACKSTAB
+			mod    = modnum; // FIXME: MOD_BACKSTAB
 
 			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
 			{
@@ -3169,6 +3169,7 @@ int G_GetWeaponDamage(int weapon)
 	default:
 		return 1;
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 		return 10;
 	case WP_STEN:
 		return 14;
@@ -4230,7 +4231,8 @@ void FireWeapon(gentity_t *ent)
 	    ent->s.weapon != WP_SATCHEL &&
 	    ent->s.weapon != WP_SATCHEL_DET)
 	{
-		if (!(ent->s.weapon == WP_KNIFE ||
+		if (!(ent->s.weapon == WP_KNIFE || // FIXME: do a switch
+		      ent->s.weapon == WP_KNIFE_KABAR ||
 		      ent->s.weapon == WP_STEN ||
 		      ent->s.weapon == WP_SILENCER ||
 		      ent->s.weapon == WP_SILENCED_COLT ||
@@ -4255,7 +4257,10 @@ void FireWeapon(gentity_t *ent)
 	switch (ent->s.weapon)
 	{
 	case WP_KNIFE:
-		Weapon_Knife(ent);
+		Weapon_Knife(ent, MOD_KNIFE);
+		break;
+	case WP_KNIFE_KABAR:
+		Weapon_Knife(ent, MOD_KNIFE_KABAR);
 		break;
 	case WP_MEDKIT:
 #ifdef FEATURE_OMNIBOT

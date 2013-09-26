@@ -2971,6 +2971,7 @@ void PM_CheckForReload(int weapon)
 	case WP_M7:
 	case WP_FLAMETHROWER:
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 	case WP_GRENADE_LAUNCHER:
 	case WP_PANZERFAUST:
 	case WP_GRENADE_PINEAPPLE:
@@ -4115,7 +4116,9 @@ static void PM_Weapon(void)
 	// player is underwater - no fire
 	if (pm->waterlevel == 3)
 	{
+		// FIXME: do a switch
 		if (pm->ps->weapon != WP_KNIFE &&
+		    pm->ps->weapon != WP_KNIFE_KABAR &&
 		    pm->ps->weapon != WP_GRENADE_LAUNCHER &&
 		    pm->ps->weapon != WP_GRENADE_PINEAPPLE &&
 		    pm->ps->weapon != WP_MEDIC_SYRINGE &&
@@ -4255,6 +4258,7 @@ static void PM_Weapon(void)
 
 	// melee
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 		if (!delayedFire)
 		{
 			if (pm->ps->eFlags & EF_PRONE)
@@ -4615,6 +4619,7 @@ static void PM_Weapon(void)
 	switch (pm->ps->weapon)
 	{
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 	case WP_PANZERFAUST:
 	case WP_DYNAMITE:
 	case WP_GRENADE_LAUNCHER:

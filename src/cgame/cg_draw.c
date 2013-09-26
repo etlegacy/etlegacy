@@ -52,7 +52,7 @@ void CG_Text_SetActiveFont(int font)
 
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	float out = 0, useScale = scale * font->glyphScale;
+	float out = 0;
 
 	if (text)
 	{
@@ -83,7 +83,7 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 		}
 	}
 
-	return out * useScale;
+	return out * scale * font->glyphScale;
 }
 
 int CG_Text_Width(const char *text, float scale, int limit)
@@ -95,8 +95,7 @@ int CG_Text_Width(const char *text, float scale, int limit)
 
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	float max      = 0;
-	float useScale = scale * font->glyphScale;
+	float max = 0;
 
 	if (text)
 	{
@@ -129,7 +128,7 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 			}
 		}
 	}
-	return max * useScale;
+	return max * scale * font->glyphScale;
 }
 
 int CG_Text_Height(const char *text, float scale, int limit)
@@ -1757,8 +1756,7 @@ void CG_CheckForCursorHints(void)
 
 	// invisible entities don't show hints
 	if (trace.entityNum >= MAX_CLIENTS &&
-	    (tracent->currentState.powerups == STATE_INVISIBLE ||
-	     tracent->currentState.powerups == STATE_UNDERCONSTRUCTION))
+	    (tracent->currentState.powerups == STATE_INVISIBLE || tracent->currentState.powerups == STATE_UNDERCONSTRUCTION))
 	{
 		return;
 	}
@@ -1789,7 +1787,7 @@ void CG_CheckForCursorHints(void)
 	}
 	else if (trace.entityNum < MAX_CLIENTS)       // people
 	{   // knife
-		if (cg.snap->ps.weapon == WP_KNIFE)
+		if (cg.snap->ps.weapon == WP_KNIFE || cg.snap->ps.weapon == WP_KNIFE_KABAR)
 		{
 			if (dist <= CH_KNIFE_DIST)
 			{
@@ -1899,8 +1897,7 @@ static void CG_DrawCrosshairNames(void)
 	{
 		if ((cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED)) && cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
 		{
-			if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR &&
-			    cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+			if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 			{
 				s = CG_TranslateString("Disguised Enemy!");
 				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;

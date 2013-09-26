@@ -680,6 +680,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	case WP_AMMO:
 	case WP_MEDKIT:
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 	case WP_PLIERS:
 	case WP_SMOKE_MARKER:
 	case WP_DYNAMITE:

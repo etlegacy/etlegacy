@@ -705,6 +705,11 @@ static int _weaponBotToGame(int weapon)
 	case 102:
 		return WP_JOHNSON;
 #endif
+#ifdef LEGACY
+	case 94:
+		return WP_KNIFE_KABAR;
+#endif
+
 	default:
 		return WP_NONE;
 	}
@@ -847,7 +852,11 @@ int Bot_WeaponGameToBot(int weapon)
 		return 101;
 	case WP_JOHNSON:
 		return 102;
-#endif
+#endif // NOQUARTER
+#ifdef LEGACY
+	case WP_KNIFE_KABAR:
+		return ET_WP_KNIFE;
+#endif // LEGACY
 	default:
 		return ET_WP_NONE;
 	}
@@ -2529,7 +2538,15 @@ public:
 			}
 		}
 #endif //NOQUARTER
-
+#ifdef LEGACY
+		if (bot->client->sess.sessionTeam == TEAM_ALLIES)
+		{
+			if (cmd.weapon == WP_KNIFE)
+			{
+				cmd.weapon = WP_KNIFE_KABAR;
+			}
+		}
+#endif
 		// dont choose scoped directly.
 		switch (cmd.weapon)
 		{

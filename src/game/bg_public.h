@@ -65,7 +65,7 @@
 #define RANK_TIED_FLAG      0x4000
 
 #define ITEM_RADIUS         10      // item sizes are needed for client side pickup detection
-                                    // Rafael changed the radius so that the items would fit in the 3 new containers
+                                    // - changed the radius so that the items would fit in the 3 new containers
 
 #define MAX_TRACE           8192.0f // whenever you change this make sure bullet_Endpos for scope weapons is in sync!
 
@@ -752,6 +752,9 @@ typedef enum
 	WP_AKIMBO_SILENCEDLUGER, // 46
 	WP_MOBILE_MG42_SET,     // 47
 
+	// legacy weapons
+	WP_KNIFE_KABAR,                // 48
+
 	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 48
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
@@ -840,7 +843,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define IS_RIFLENADE_WEAPON(w) \
 	(w == WP_GPG40           || w == WP_M7)
 
-#define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
+#define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
 // NOTE: what about WP_VENOM and other XP weapons?
 // added akimbo weapons and deployed MG42
@@ -1369,6 +1372,8 @@ typedef enum
 	MOD_SWITCHTEAM,
 
 	MOD_SHOVE,
+
+	MOD_KNIFE_KABAR,
 
 	MOD_NUM_MODS
 
