@@ -115,10 +115,8 @@ GL_BindMultitexture
 */
 void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
 {
-	int texnum0, texnum1;
-
-	texnum0 = image0->texnum;
-	texnum1 = image1->texnum;
+	int texnum0 = image0->texnum;
+	int texnum1 = image1->texnum;
 
 	if (r_nobind->integer && tr.dlightImage)            // performance evaluation option
 	{
@@ -197,7 +195,6 @@ void GL_TexEnv(int env)
 	}
 
 	glState.texEnv[glState.currenttmu] = env;
-
 
 	switch (env)
 	{
@@ -449,7 +446,7 @@ void RB_BeginDrawingView(void)
 	GL_State(GLS_DEFAULT);
 
 
-	////////// (SA) modified to ensure one glclear() per frame at most
+	////////// modified to ensure one glclear() per frame at most
 
 	// clear relevant buffers
 	clearBits = 0;
@@ -552,7 +549,7 @@ void RB_BeginDrawingView(void)
 			}
 			else
 			{
-				qglClearColor(0.05, 0.05, 0.05, 1.0);    // JPW NERVE changed per id req was 0.5s
+				qglClearColor(0.05, 0.05, 0.05, 1.0);    // changed per id req was 0.5s
 			}
 		}
 		else  // world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
@@ -692,7 +689,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 			if (entityNum != ENTITYNUM_WORLD)
 			{
 				backEnd.currentEntity    = &backEnd.refdef.entities[entityNum];
-				backEnd.refdef.floatTime = originalTime; // - backEnd.currentEntity->e.shaderTime; // JPW NERVE pulled this to match q3ta
+				backEnd.refdef.floatTime = originalTime; // - backEnd.currentEntity->e.shaderTime; // pulled this to match q3ta
 
 				// we have to reset the shaderTime as well otherwise image animations start
 				// from the wrong frame
@@ -960,9 +957,7 @@ RB_SetColor
 */
 const void *RB_SetColor(const void *data)
 {
-	const setColorCommand_t *cmd;
-
-	cmd = ( const setColorCommand_t * ) data;
+	const setColorCommand_t *cmd = ( const setColorCommand_t * ) data;
 
 	backEnd.color2D[0] = cmd->color[0] * 255;
 	backEnd.color2D[1] = cmd->color[1] * 255;
@@ -979,11 +974,9 @@ RB_StretchPic
 */
 const void *RB_StretchPic(const void *data)
 {
-	const stretchPicCommand_t *cmd;
+	const stretchPicCommand_t *cmd = ( const stretchPicCommand_t * ) data;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
-
-	cmd = ( const stretchPicCommand_t * ) data;
 
 	if (!backEnd.projection2D)
 	{
@@ -1053,11 +1046,9 @@ const void *RB_StretchPic(const void *data)
 
 const void *RB_Draw2dPolys(const void *data)
 {
-	const poly2dCommand_t *cmd;
+	const poly2dCommand_t *cmd = ( const poly2dCommand_t * ) data;
 	shader_t              *shader;
 	int                   i;
-
-	cmd = ( const poly2dCommand_t * ) data;
 
 	if (!backEnd.projection2D)
 	{
@@ -1111,13 +1102,11 @@ RB_RotatedPic
 */
 const void *RB_RotatedPic(const void *data)
 {
-	const stretchPicCommand_t *cmd;
+	const stretchPicCommand_t *cmd = ( const stretchPicCommand_t * ) data;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 	float                     angle;
 	float                     pi2 = M_PI * 2;
-
-	cmd = ( const stretchPicCommand_t * ) data;
 
 	if (!backEnd.projection2D)
 	{
@@ -1196,11 +1185,9 @@ RB_StretchPicGradient
 */
 const void *RB_StretchPicGradient(const void *data)
 {
-	const stretchPicCommand_t *cmd;
+	const stretchPicCommand_t *cmd = ( const stretchPicCommand_t * ) data;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
-
-	cmd = ( const stretchPicCommand_t * ) data;
 
 	if (!backEnd.projection2D)
 	{
@@ -1301,9 +1288,7 @@ RB_DrawBuffer
 */
 const void *RB_DrawBuffer(const void *data)
 {
-	const drawBufferCommand_t *cmd;
-
-	cmd = ( const drawBufferCommand_t * ) data;
+	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
 	// clear screen for debugging
 	if (r_clear->integer)
@@ -1514,18 +1499,16 @@ RB_RenderToTexture
 */
 const void *RB_RenderToTexture(const void *data)
 {
-	const renderToTextureCommand_t *cmd;
+	const renderToTextureCommand_t *cmd = ( const renderToTextureCommand_t * ) data;
 
-//  ri.Printf( PRINT_ALL, "RB_RenderToTexture\n" );
-
-	cmd = ( const renderToTextureCommand_t * ) data;
+	//ri.Printf( PRINT_ALL, "RB_RenderToTexture\n" );
 
 	GL_Bind(cmd->image);
 	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
 	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
 	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 	qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cmd->x, cmd->y, cmd->w, cmd->h, 0);
-//  qglCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
+	//qglCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
 
 	return ( const void * ) (cmd + 1);
 }
@@ -1537,11 +1520,9 @@ RB_Finish
 */
 const void *RB_Finish(const void *data)
 {
-	const renderFinishCommand_t *cmd;
+	const renderFinishCommand_t *cmd = ( const renderFinishCommand_t * ) data;
 
-//  ri.Printf( PRINT_ALL, "RB_Finish\n" );
-
-	cmd = ( const renderFinishCommand_t * ) data;
+	//ri.Printf( PRINT_ALL, "RB_Finish\n" );
 
 	qglFinish();
 
@@ -1588,11 +1569,9 @@ void RB_ExecuteRenderCommands(const void *data)
 		case RC_VIDEOFRAME:
 			data = RB_TakeVideoFrameCmd(data);
 			break;
-		//bani
 		case RC_RENDERTOTEXTURE:
 			data = RB_RenderToTexture(data);
 			break;
-		//bani
 		case RC_FINISH:
 			data = RB_Finish(data);
 			break;
