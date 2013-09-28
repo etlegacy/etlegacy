@@ -643,6 +643,18 @@ qboolean FS_FileInPathExists(const char *testpath)
  */
 qboolean FS_FileExists(const char *file)
 {
+	if (!file)
+	{
+		Com_Printf("ERROR FS_FileExists: null filename\n");
+		return qfalse;
+	}
+
+	if (file[0] == '\0')
+	{
+		Com_Printf("WARNING FS_FileExists: empty filename\n");
+		return qfalse;
+	}
+
 	return FS_FileInPathExists(FS_BuildOSPath(fs_homepath->string, fs_gamedir, file));
 }
 

@@ -2790,12 +2790,10 @@ void Com_Init(char *commandLine)
 			}
 		}
 
-// FIXME: changing com_pidfile at runtime is a bad idea ... mark as latched?
-//        - same issue for log file & similar cvars
 #ifdef DEDICATED
-		com_pidfile = Cvar_Get("com_pidfile", "etlegacy_server.pid", CVAR_TEMP);
+		com_pidfile = Cvar_Get("com_pidfile", "etlegacy_server.pid", CVAR_INIT | CVAR_PROTECTED);
 #else
-		com_pidfile = Cvar_Get("com_pidfile", va("profiles/%s/profile.pid", Cvar_VariableString("cl_profile")), CVAR_TEMP);
+		com_pidfile = Cvar_Get("com_pidfile", va("profiles/%s/profile.pid", Cvar_VariableString("cl_profile")), CVAR_INIT | CVAR_PROTECTED);
 #endif
 
 		if (cl_profileStr[0])

@@ -205,12 +205,18 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 	if (exitCode < 2)
 	{
 		// Normal exit
-		if (FS_FileExists(com_pidfile->string))
+		const char *pidfile = Cvar_VariableString("com_pidfile");
+
+		// com_pidfile does not yet exist on early exit
+		if (pidfile[0] != '\0')
 		{
-			// FIXME: delete even when outside of homepath
-			remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
-			          PATH_SEP, Cvar_VariableString("fs_game"),
-			          PATH_SEP, com_pidfile->string));
+			if (FS_FileExists(pidfile))
+			{
+				// FIXME: delete even when outside of homepath
+				remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
+				          PATH_SEP, Cvar_VariableString("fs_game"),
+				          PATH_SEP, com_pidfile->string));
+			}
 		}
 	}
 
