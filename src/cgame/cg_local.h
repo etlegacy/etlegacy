@@ -1170,7 +1170,7 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define BG_NUM_ITEMS 75 // keep in sync with bg_numItems! FIXME: make this non static one day
+#define BG_NUM_ITEMS 76 // keep in sync with bg_numItems! FIXME: make this non static one day
 
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t
@@ -2219,7 +2219,6 @@ void CG_UpdateCvars(void);
 
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
-void CG_LoadMenus(const char *menuFile);
 void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
