@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-18 23:21+0100\n"
+"PO-Revision-Date: 2013-09-20 01:16+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
 "Language: cs_CZ\n"
@@ -3012,13 +3012,12 @@ msgstr ""
 msgid "%s have stolen %s!"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1204 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1207
 msgid "Axis"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1208 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
 msgid "Allies"
 msgstr ""
 
@@ -3645,6 +3644,11 @@ msgstr ""
 msgid "You will spawn as a %s %s with a %s."
 msgstr ""
 
+#: src/cgame/cg_limbopanel.c:1223
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
+msgstr ""
+
 #: src/cgame/cg_draw.c:441
 msgid "an Objective"
 msgstr ""
@@ -3656,6 +3660,49 @@ msgid "got caught in"
 msgstr ""
 
 msgid "'s construction madness"
+msgstr ""
+
+msgid "Need paks: %s\n"
+msgstr ""
+
+#, fuzzy
+msgid "Mod filter:"
+msgstr "Splouchance krve:"
+
+#, fuzzy
+msgid "DELETE FAVS"
+msgstr "SMAZAT"
+
+#, fuzzy
+msgid "RESET FILTERS"
+msgstr "FILTRY"
+
+#, fuzzy
+msgid "DELETE SERVER FAVOURITES"
+msgstr "DAT DO OBLIBENYCH"
+
+#, fuzzy
+msgid "Do you really want to"
+msgstr "Jsi si jisty, ze chces spustit"
+
+msgid "delete YOUR favourites?"
+msgstr ""
+
+#, fuzzy
+msgid "Modify Selected HUD:"
+msgstr "Upravit alternativni HUD:"
+
+msgid "PopUpTime:"
+msgstr ""
+
+msgid "PopUpTimeStay:"
+msgstr ""
+
+msgid "PopUpTimeFade:"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1211
+msgid "Allies"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

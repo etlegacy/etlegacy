@@ -153,14 +153,14 @@ void SP_misc_teleporter_dest(gentity_t *ent)
 
 void use_spotlight(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	gentity_t *tent;
-
 	if (ent->r.linked)
 	{
 		trap_UnlinkEntity(ent);
 	}
 	else
 	{
+		gentity_t *tent;
+
 		tent = G_PickTarget(ent->target);
 		VectorCopy(tent->s.origin, ent->s.origin2);
 
@@ -1010,7 +1010,6 @@ void clamp_playerbehindgun(gentity_t *self, gentity_t *other, vec3_t dang)
 {
 	vec3_t forward, right, up;
 	vec3_t point;
-
 
 	AngleVectors(self->s.apos.trBase, forward, right, up);
 	if (self->s.eType == ET_AAGUN)

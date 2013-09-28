@@ -32,7 +32,7 @@
  * @file sys_platform.c
  * @brief Contains windows-specific code for console.
  */
-
+#if defined(USE_WINDOWS_CONSOLE)
 #if defined (_MSC_VER) && (_MSC_VER >= 1200)
 #pragma warning(disable : 4201)
 #pragma warning( push )
@@ -64,3 +64,6 @@ void    Sys_ShowConsole(int level, qboolean quitOnClose);
 int     Game_Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
 void    Com_FrameExt(void);
 void    WinSetExceptionWnd(HWND wnd);
+void    Sys_SetErrorText(const char *text);
+void    Sys_PumpConsoleEvents(void);
+#endif

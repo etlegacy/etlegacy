@@ -416,6 +416,8 @@ extern cvar_t *cl_timedemo;
 extern cvar_t *cl_activeAction;
 extern cvar_t *cl_autorecord;
 
+extern cvar_t *cl_activatelean;
+
 extern cvar_t *cl_allowDownload;
 extern cvar_t *cl_conXOffset;
 extern cvar_t *cl_inGameVideo;
@@ -614,6 +616,7 @@ void Con_DrawCharacter(int cx, int line, int num);
 
 void Con_CheckResize(void);
 void Con_Init(void);
+void Con_Shutdown(void);
 void Con_Clear_f(void);
 void Con_ToggleConsole_f(void);
 void Con_DrawNotify(void);

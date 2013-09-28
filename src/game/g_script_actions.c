@@ -888,15 +888,10 @@ qboolean G_ScriptAction_AbortMove(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===============
-G_ScriptAction_SetChargeTimeFactor
-
-  syntax: setchargetimefactor <team> <class> <factor>
-
-  team: 0 = axis, 1 = allies
-===============
-*/
+/**
+ * syntax: setchargetimefactor <team> <class> <factor>
+ * team: 0 = axis, 1 = allies
+ */
 qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 {
 	char   *pString = params, *token;
@@ -955,15 +950,19 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 		level.engineerChargeTimeModifier[team] = factor;
 		level.engineerChargeTime[team]         = g_engineerChargeTime.integer * factor;
 	}
+	else if (!Q_stricmp(playerclass, "lieutenant")) // obsolete, but still used in map scripts
+	{
+		if (g_developer.integer)
+		{
+			G_Printf(S_COLOR_YELLOW "WARNING G_ScriptAction_SetChargeTimeFactor: 'lieutenant' is a deprecated keyword, use 'fieldops' instead\n");
+		}
+		level.fieldopsChargeTimeModifier[team] = factor;
+		level.fieldopsChargeTime[team]         = g_fieldopsChargeTime.integer * factor;
+	}
 	else if (!Q_stricmp(playerclass, "fieldops"))
 	{
-		level.lieutenantChargeTimeModifier[team] = factor;
-		level.lieutenantChargeTime[team]         = g_LTChargeTime.integer * factor;
-	}
-	else if (!Q_stricmp(playerclass, "lieutenant"))         // FIXME: remove from missionpack
-	{
-		level.lieutenantChargeTimeModifier[team] = factor;
-		level.lieutenantChargeTime[team]         = g_LTChargeTime.integer * factor;
+		level.fieldopsChargeTimeModifier[team] = factor;
+		level.fieldopsChargeTime[team]         = g_fieldopsChargeTime.integer * factor;
 	}
 	else if (!Q_stricmp(playerclass, "covertops"))
 	{
@@ -980,8 +979,8 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 		Info_SetValueForKey(cs, "a1", va("%i", level.medicChargeTime[1]));
 		Info_SetValueForKey(cs, "x2", va("%i", level.engineerChargeTime[0]));
 		Info_SetValueForKey(cs, "a2", va("%i", level.engineerChargeTime[1]));
-		Info_SetValueForKey(cs, "x3", va("%i", level.lieutenantChargeTime[0]));
-		Info_SetValueForKey(cs, "a3", va("%i", level.lieutenantChargeTime[1]));
+		Info_SetValueForKey(cs, "x3", va("%i", level.fieldopsChargeTime[0]));
+		Info_SetValueForKey(cs, "a3", va("%i", level.fieldopsChargeTime[1]));
 		Info_SetValueForKey(cs, "x4", va("%i", level.covertopsChargeTime[0]));
 		Info_SetValueForKey(cs, "a4", va("%i", level.covertopsChargeTime[1]));
 		trap_SetConfigstring(CS_CHARGETIMES, cs);

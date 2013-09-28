@@ -51,7 +51,7 @@ BotEntity m_EntityHandles[MAX_GENTITIES];
 #define WC_WEAPON_TIME_LEFT level.time - ps->classWeaponTime
 #define WC_SOLDIER_TIME     level.soldierChargeTime[team - TEAM_AXIS]
 #define WC_ENGINEER_TIME    level.engineerChargeTime[team - TEAM_AXIS]
-#define WC_FIELDOPS_TIME    level.lieutenantChargeTime[team - TEAM_AXIS]
+#define WC_FIELDOPS_TIME    level.fieldopsChargeTime[team - TEAM_AXIS]
 #define WC_MEDIC_TIME       level.medicChargeTime[team - TEAM_AXIS]
 #define WC_COVERTOPS_TIME   level.covertopsChargeTime[team - TEAM_AXIS]
 
@@ -705,6 +705,11 @@ static int _weaponBotToGame(int weapon)
 	case 102:
 		return WP_JOHNSON;
 #endif
+#ifdef LEGACY
+	case 94:
+		return WP_KNIFE_KABAR;
+#endif
+
 	default:
 		return WP_NONE;
 	}
@@ -847,7 +852,11 @@ int Bot_WeaponGameToBot(int weapon)
 		return 101;
 	case WP_JOHNSON:
 		return 102;
-#endif
+#endif // NOQUARTER
+#ifdef LEGACY
+	case WP_KNIFE_KABAR:
+		return ET_WP_KNIFE;
+#endif // LEGACY
 	default:
 		return ET_WP_NONE;
 	}
@@ -1838,7 +1847,7 @@ static int _GetEntityClass(gentity_t *_ent)
 	default:
 		break;
 	}
-	;
+
 	return 0;
 }
 
@@ -2529,7 +2538,15 @@ public:
 			}
 		}
 #endif //NOQUARTER
-
+#ifdef LEGACY
+		if (bot->client->sess.sessionTeam == TEAM_ALLIES)
+		{
+			if (cmd.weapon == WP_KNIFE)
+			{
+				cmd.weapon = WP_KNIFE_KABAR;
+			}
+		}
+#endif
 		// dont choose scoped directly.
 		switch (cmd.weapon)
 		{

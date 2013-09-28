@@ -34,7 +34,7 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "sys_local.h"
-#include "windows.h"
+#include <windows.h>
 
 #define QCONSOLE_HISTORY 32
 
@@ -48,6 +48,7 @@
 #endif
 
 static WORD qconsole_attrib;
+static WORD qconsole_backgroundAttrib;
 
 // saved console status
 static DWORD               qconsole_orig_mode;
@@ -62,8 +63,42 @@ static int  qconsole_history_oldest = 0;
 static char qconsole_line[MAX_EDIT_LINE];
 static int  qconsole_linelen = 0;
 
-static HANDLE qconsole_hout;
-static HANDLE qconsole_hin;
+static HANDLE   qconsole_hout;
+static HANDLE   qconsole_hin;
+static qboolean qconsole_drawinput = qtrue;
+
+/*
+==================
+CON_ColorCharToAttrib
+
+Convert Quake color character to Windows text attrib
+==================
+*/
+static WORD CON_ColorCharToAttrib(char color)
+{
+	WORD attrib;
+
+	if (color == COLOR_WHITE)
+	{
+		// use console's foreground and background colors
+		attrib = qconsole_attrib;
+	}
+	else
+	{
+		float *rgba = g_color_table[ColorIndex(color)];
+
+		// set foreground color
+		attrib = (rgba[0] >= 0.5 ? FOREGROUND_RED : 0) |
+		         (rgba[1] >= 0.5 ? FOREGROUND_GREEN : 0) |
+		         (rgba[2] >= 0.5 ? FOREGROUND_BLUE : 0) |
+		         (rgba[3] >= 0.5 ? FOREGROUND_INTENSITY : 0);
+
+		// use console's background color
+		attrib |= qconsole_backgroundAttrib;
+	}
+
+	return attrib;
+}
 
 /*
 ==================
@@ -166,8 +201,9 @@ static void CON_Show(void)
 	COORD                      writeSize = { MAX_EDIT_LINE, 1 };
 	COORD                      writePos  = { 0, 0 };
 	SMALL_RECT                 writeArea = { 0, 0, 0, 0 };
-	int                        i;
+	int                        i, j;
 	CHAR_INFO                  line[MAX_EDIT_LINE];
+	WORD                       attrib;
 
 	GetConsoleScreenBufferInfo(qconsole_hout, &binfo);
 
@@ -182,19 +218,34 @@ static void CON_Show(void)
 	writeArea.Bottom = binfo.dwCursorPosition.Y;
 	writeArea.Right  = MAX_EDIT_LINE;
 
+	// set color to white
+	attrib = CON_ColorCharToAttrib(COLOR_WHITE);
+
 	// build a space-padded CHAR_INFO array
-	for (i = 0; i < MAX_EDIT_LINE; i++)
+	for (i = j = 0; j < MAX_EDIT_LINE; j++)
 	{
+		if (Q_IsColorString(qconsole_line + i))
+		{
+			attrib = CON_ColorCharToAttrib(*(qconsole_line + i + 1));
+			i     += 2;
+			continue;
+		}
+		else if (qconsole_line[i] == Q_COLOR_ESCAPE)
+		{
+			i += 1;
+		}
+
 		if (i < qconsole_linelen)
 		{
-			line[i].Char.AsciiChar = qconsole_line[i];
+			line[j].Char.AsciiChar = qconsole_line[i];
+			++i;
 		}
 		else
 		{
-			line[i].Char.AsciiChar = ' ';
+			line[j].Char.AsciiChar = ' ';
 		}
 
-		line[i].Attributes = qconsole_attrib;
+		line[j].Attributes = attrib;
 	}
 
 	if (qconsole_linelen > binfo.srWindow.Right)
@@ -272,9 +323,14 @@ void CON_Init(void)
 	curs.bVisible = FALSE;
 	SetConsoleCursorInfo(qconsole_hout, &curs);
 
+	qconsole_backgroundAttrib = qconsole_attrib & (BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
+
 	// initialize history
 	for (i = 0; i < QCONSOLE_HISTORY; i++)
 		qconsole_history[i][0] = '\0';
+
+	// set text color to white
+	SetConsoleTextAttribute(qconsole_hout, CON_ColorCharToAttrib(COLOR_WHITE));
 }
 
 /*
@@ -397,13 +453,81 @@ char *CON_Input(void)
 }
 
 /*
+=================
+CON_WindowsColorPrint
+
+Set text colors based on Q3 color codes
+=================
+*/
+void CON_WindowsColorPrint(const char *msg)
+{
+	static char buffer[MAXPRINTMSG];
+	int         length = 0;
+
+	while (*msg)
+	{
+		qconsole_drawinput = (*msg == '\n');
+
+		if (Q_IsColorString(msg) || *msg == '\n')
+		{
+			// First empty the buffer
+			if (length > 0)
+			{
+				buffer[length] = '\0';
+				fputs(buffer, stderr);
+				length = 0;
+			}
+
+			if (*msg == '\n')
+			{
+				// Reset color and then add the newline
+				SetConsoleTextAttribute(qconsole_hout, CON_ColorCharToAttrib(COLOR_WHITE));
+				fputs("\n", stderr);
+				msg++;
+			}
+			else
+			{
+				// Set the color
+				SetConsoleTextAttribute(qconsole_hout, CON_ColorCharToAttrib(*(msg + 1)));
+				msg += 2;
+			}
+		}
+		else
+		{
+			if (length >= MAXPRINTMSG - 1)
+			{
+				break;
+			}
+
+			buffer[length] = *msg;
+			length++;
+			msg++;
+		}
+	}
+
+	// Empty anything still left in the buffer
+	if (length > 0)
+	{
+		buffer[length] = '\0';
+		fputs(buffer, stderr);
+	}
+}
+
+/*
 ==================
 CON_Print
 ==================
 */
 void CON_Print(const char *msg)
 {
-	fputs(msg, stderr);
+	if (com_ansiColor && com_ansiColor->integer)
+	{
+		CON_WindowsColorPrint(msg);
+	}
+	else
+	{
+		fputs(msg, stderr);
+	}
 
 	CON_Show();
 }

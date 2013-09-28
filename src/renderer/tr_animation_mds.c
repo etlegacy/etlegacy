@@ -143,15 +143,12 @@ R_CullModel
 */
 static int R_CullModel(mdsHeader_t *header, trRefEntity_t *ent)
 {
-	vec3_t     bounds[2];
-	mdsFrame_t *oldFrame, *newFrame;
-	int        i, frameSize;
-
-	frameSize = (int) (sizeof(mdsFrame_t) - sizeof(mdsBoneFrameCompressed_t) + header->numBones * sizeof(mdsBoneFrameCompressed_t));
-
+	vec3_t bounds[2];
+	int    i;
+	int    frameSize = (int) (sizeof(mdsFrame_t) - sizeof(mdsBoneFrameCompressed_t) + header->numBones * sizeof(mdsBoneFrameCompressed_t));
 	// compute frame pointers
-	newFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.frame * frameSize);
-	oldFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.oldframe * frameSize);
+	mdsFrame_t *newFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.frame * frameSize);
+	mdsFrame_t *oldFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.oldframe * frameSize);
 
 	// cull bounding sphere ONLY if this is not an upscaled entity
 	if (!ent->e.nonNormalizedAxes)
@@ -329,16 +326,11 @@ R_AddAnimSurfaces
 */
 void R_AddAnimSurfaces(trRefEntity_t *ent)
 {
-	mdsHeader_t  *header;
+	mdsHeader_t  *header = tr.currentModel->model.mds;
 	mdsSurface_t *surface;
 	shader_t     *shader = 0;
 	int          i, fogNum, cull;
-	qboolean     personalModel;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
-
-	header = tr.currentModel->model.mds;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.

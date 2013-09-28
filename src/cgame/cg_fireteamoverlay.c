@@ -77,12 +77,12 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	}
 
 	// Then score
-	/*  if ( ca->score > cb->score ) {
-	        return -1;
-	    }
-	    if ( cb->score > ca->score ) {
-	        return 1;
-	    }*/                                                                                                                       // not atm
+	//if ( ca->score > cb->score ) {
+	//  return -1;
+	//}
+	//if ( cb->score > ca->score ) {
+	//  return 1;
+	//}                                                                                                                       // not atm
 
 	return 0;
 }
@@ -356,13 +356,15 @@ static vec4_t tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 static vec4_t bgColor = { 0.0f, 0.0f, 0.0f, 0.6f };       // window
 static vec4_t borderColor = { 0.5f, 0.5f, 0.5f, 0.5f };   // window
 
+#define MIN_BORDER_DISTANCE 10 //Currently this if is used for X axis only
+
 // FIXME: add more options to shorten this box
 void CG_DrawFireTeamOverlay(rectDef_t *rect)
 {
 	int            x = rect->x;
 	int            y = rect->y + 1;             // +1, jitter it into place in 1024 :)
 	int            i;
-	int            boxWidth  = 106;
+	int            boxWidth  = 90;
 	int            bestWidth = -1;
 	char           buffer[64];
 	float          h   = 16;                    // 12 + 2 + 2
@@ -371,6 +373,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
 	int            locwidth;
 	int            namewidth;
+	int            lineX;
 	vec3_t         origin;
 
 	int curWeap;
@@ -394,17 +397,25 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			break;
 		}
 
-		origin[0] = ci->location[0];
-		origin[1] = ci->location[1];
-
-		locStr[i] = CG_BuildLocationString(ci->clientNum, origin, LOC_FTEAM);
-
-		if (!locStr[i][1] || !*locStr[i])
+		if (cg_locations.integer & LOC_FTEAM)
 		{
-			locStr[i] = "";
+			origin[0] = ci->location[0];
+			origin[1] = ci->location[1];
+
+			locStr[i] = CG_BuildLocationString(ci->clientNum, origin, LOC_FTEAM);
+
+			if (!locStr[i][1] || !*locStr[i])
+			{
+				locStr[i] = "";
+			}
+
+			locwidth = CG_Text_Width_Ext(locStr[i], 0.2f, 0, &cgs.media.limboFont2);
+		}
+		else
+		{
+			locwidth = 0;
 		}
 
-		locwidth = CG_Text_Width_Ext(locStr[i], 0.2f, 0, &cgs.media.limboFont2);
 
 		//if ( cg_fixedFTeamSize.integer ) {
 		//	namewidth = 102;
@@ -433,6 +444,16 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		boxWidth += 28;
 	}
 
+	if ((Ccg_WideX(640) - MIN_BORDER_DISTANCE) < (x + boxWidth))
+	{
+		float realw = Ccg_WideX(640);
+		x = x - ((x + boxWidth) - realw) - MIN_BORDER_DISTANCE;
+	}
+	else if (x < MIN_BORDER_DISTANCE)
+	{
+		x = MIN_BORDER_DISTANCE;
+	}
+
 	CG_DrawRect(x, y, boxWidth, h, 1, borderColor);
 	CG_FillRect(x + 1, y + 1, boxWidth - 2, h - 2, bgColor);
 
@@ -452,14 +473,12 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 	Q_strupr(buffer);
 	CG_Text_Paint_Ext(x + 3, y + FT_BAR_HEIGHT, .19f, .19f, tclr, buffer, 0, 0, 0, &cgs.media.limboFont1);
-
-	x += 2;
-
+	x    += 2;
+	lineX = x;
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
+		x  = lineX;
 		y += FT_BAR_HEIGHT + FT_BAR_YSPACING;
-		x  = rect->x + 2;
-
 		// Grab a pointer to the current player
 		ci = CG_SortedFireTeamPlayerForPosition(i);
 
@@ -565,8 +584,10 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		}
 		// Set hard limit on width
 		x += 24;
-
-		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		if (cg_locations.integer & LOC_FTEAM)
+		{
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		}
 	}
 }
 

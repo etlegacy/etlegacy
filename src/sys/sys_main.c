@@ -41,9 +41,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#ifdef _WIN32
-#include <windows.h>
-#endif
 #ifdef __AROS__
 #include <proto/dos.h>
 #endif
@@ -63,6 +60,11 @@
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
+
+#ifdef USE_WINDOWS_CONSOLE
+#include <windows.h>
+#include "sys_win32.h"
+#endif
 
 static char binaryPath[MAX_OSPATH] = { 0 };
 static char installPath[MAX_OSPATH] = { 0 };
@@ -139,12 +141,7 @@ void Sys_In_Restart_f(void)
 /**
  * @brief Handle new console input
  */
-#if !defined (_WIN32)
-char *Sys_ConsoleInput(void)
-{
-	return CON_Input();
-}
-#elif defined (__linux__)
+#if !defined (USE_WINDOWS_CONSOLE)
 char *Sys_ConsoleInput(void)
 {
 	return CON_Input();
@@ -208,12 +205,18 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 	if (exitCode < 2)
 	{
 		// Normal exit
-		if (FS_FileExists(com_pidfile->string))
+		const char *pidfile = Cvar_VariableString("com_pidfile");
+
+		// com_pidfile does not yet exist on early exit
+		if (pidfile[0] != '\0')
 		{
-			// FIXME: delete even when outside of homepath
-			remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
-			          PATH_SEP, Cvar_VariableString("fs_game"),
-			          PATH_SEP, com_pidfile->string));
+			if (FS_FileExists(pidfile))
+			{
+				// FIXME: delete even when outside of homepath
+				remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
+				          PATH_SEP, Cvar_VariableString("fs_game"),
+				          PATH_SEP, com_pidfile->string));
+			}
 		}
 	}
 
@@ -231,7 +234,7 @@ void Sys_Quit(void)
 	NET_Shutdown();
 #endif
 	Sys_Exit(0);
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 	Sys_DestroyConsole();
 #endif
 }
@@ -290,14 +293,14 @@ cpuFeatures_t Sys_GetProcessorFeatures(void)
 Sys_Init
 =================
 */
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 extern void Sys_ClearViewlog_f(void);
 #endif
 
 void Sys_Init(void)
 {
 	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 	Cmd_AddCommand("clearviewlog", Sys_ClearViewlog_f);
 #endif
 
@@ -452,7 +455,7 @@ Sys_Print
 */
 void Sys_Print(const char *msg)
 {
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 	Conbuf_AppendText(msg);
 #else
 	CON_LogWrite(msg);
@@ -469,7 +472,7 @@ void Sys_Error(const char *error, ...)
 {
 	va_list argptr;
 	char    string[1024];
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 	MSG msg;
 #endif
 
@@ -477,7 +480,7 @@ void Sys_Error(const char *error, ...)
 	Q_vsnprintf(string, sizeof(string), error, argptr);
 	va_end(argptr);
 
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 	Conbuf_AppendText(string);
 	Conbuf_AppendText("\n");
 

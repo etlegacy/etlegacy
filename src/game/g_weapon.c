@@ -115,11 +115,11 @@ KNIFE
 Weapon_Knife
 ==============
 */
-void Weapon_Knife(gentity_t *ent)
+void Weapon_Knife(gentity_t *ent, int modnum)
 {
 	trace_t   tr;
 	gentity_t *traceEnt, *tent;
-	int       damage, mod = MOD_KNIFE;
+	int       damage, mod = modnum;
 	vec3_t    pforward, end;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
@@ -178,7 +178,7 @@ void Weapon_Knife(gentity_t *ent)
 		if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
 		{
 			damage = 100;   // enough to drop a 'normal' (100 health) human with one jab
-			mod    = MOD_KNIFE; // MOD_BACKSTAB
+			mod    = modnum; // FIXME: MOD_BACKSTAB
 
 			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
 			{
@@ -336,18 +336,18 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 	gitem_t   *item;
 	gentity_t *ent2;
 
-	if (level.time - ent->client->ps.classWeaponTime > level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
+	if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 	{
-		ent->client->ps.classWeaponTime = level.time - level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+		ent->client->ps.classWeaponTime = level.time - level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 	}
 
 	if (ent->client->sess.skill[SK_SIGNALS] >= 1)
 	{
-		ent->client->ps.classWeaponTime += level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1] * 0.15;
+		ent->client->ps.classWeaponTime += level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.15;
 	}
 	else
 	{
-		ent->client->ps.classWeaponTime += level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
+		ent->client->ps.classWeaponTime += level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
 	}
 
 	item = BG_FindItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? "Mega Ammo Pack" : "Ammo Pack");
@@ -2640,6 +2640,7 @@ void weapon_callAirStrike(gentity_t *ent)
 
 	{
 		gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+
 		te->s.eventParm = GAMESOUND_WPN_AIRSTRIKE_PLANE;
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
@@ -3045,12 +3046,12 @@ void Weapon_Artillery(gentity_t *ent)
 
 	if (ent->client->sess.skill[SK_SIGNALS] >= 2)
 	{
-		if (level.time - ent->client->ps.classWeaponTime > level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
+		if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 		{
-			ent->client->ps.classWeaponTime = level.time - level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+			ent->client->ps.classWeaponTime = level.time - level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 
-		ent->client->ps.classWeaponTime += 0.66f * level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+		ent->client->ps.classWeaponTime += 0.66f * level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 	}
 	else
 	{
@@ -3168,6 +3169,7 @@ int G_GetWeaponDamage(int weapon)
 	default:
 		return 1;
 	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
 		return 10;
 	case WP_STEN:
 		return 14;
@@ -3221,7 +3223,6 @@ float G_GetWeaponSpread(int weapon)
 	case WP_SILENCER:
 	case WP_AKIMBO_LUGER:
 	case WP_AKIMBO_SILENCEDLUGER:
-		return 600;
 	case WP_COLT:
 	case WP_SILENCED_COLT:
 	case WP_AKIMBO_COLT:
@@ -3231,7 +3232,6 @@ float G_GetWeaponSpread(int weapon)
 	case WP_THOMPSON:
 		return 400;
 	case WP_STEN:
-		return 200;
 	case WP_FG42SCOPE:
 		return 200;
 	case WP_FG42:
@@ -4231,7 +4231,8 @@ void FireWeapon(gentity_t *ent)
 	    ent->s.weapon != WP_SATCHEL &&
 	    ent->s.weapon != WP_SATCHEL_DET)
 	{
-		if (!(ent->s.weapon == WP_KNIFE ||
+		if (!(ent->s.weapon == WP_KNIFE || // FIXME: do a switch
+		      ent->s.weapon == WP_KNIFE_KABAR ||
 		      ent->s.weapon == WP_STEN ||
 		      ent->s.weapon == WP_SILENCER ||
 		      ent->s.weapon == WP_SILENCED_COLT ||
@@ -4256,7 +4257,10 @@ void FireWeapon(gentity_t *ent)
 	switch (ent->s.weapon)
 	{
 	case WP_KNIFE:
-		Weapon_Knife(ent);
+		Weapon_Knife(ent, MOD_KNIFE);
+		break;
+	case WP_KNIFE_KABAR:
+		Weapon_Knife(ent, MOD_KNIFE_KABAR);
 		break;
 	case WP_MEDKIT:
 #ifdef FEATURE_OMNIBOT
@@ -4268,14 +4272,14 @@ void FireWeapon(gentity_t *ent)
 		Weapon_Engineer(ent);
 		break;
 	case WP_SMOKE_MARKER:
-		if (level.time - ent->client->ps.classWeaponTime > level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
+		if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 		{
-			ent->client->ps.classWeaponTime = level.time - level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+			ent->client->ps.classWeaponTime = level.time - level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 
 		if (ent->client->sess.skill[SK_SIGNALS] >= 2)
 		{
-			ent->client->ps.classWeaponTime += .66f * level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1];
+			ent->client->ps.classWeaponTime += .66f * level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 		else
 		{

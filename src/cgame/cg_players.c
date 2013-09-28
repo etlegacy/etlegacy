@@ -452,8 +452,7 @@ may include ANIM_TOGGLEBIT
 */
 static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation)
 {
-	animation_t *anim;
-
+	animation_t    *anim;
 	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
 
 	if (!character)
@@ -737,11 +736,11 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	anim = lf->animation;
 
 	// check for forcing last frame
-	if (cent->currentState.eFlags & EF_FORCE_END_FRAME
+	if ((cent->currentState.eFlags & EF_FORCE_END_FRAME)
 	    // In SP, corpse also stays at the last frame (of the death animation)
 	    // so that the death animation can end up in different positions
 	    // and the body will stay in that position
-	    || (cent->currentState.eType == ET_CORPSE))
+	    || cent->currentState.eType == ET_CORPSE)
 	{
 		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
 		lf->oldFrameModel = lf->frameModel = anim->mdxFile;
@@ -1258,7 +1257,7 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 	{
 		leaning = 0;    // not allowed to lean while dead
 	}
-	if (cent->currentState.eFlags & EF_PRONE || cent->currentState.weapon == WP_MORTAR_SET)
+	if ((cent->currentState.eFlags & EF_PRONE) || cent->currentState.weapon == WP_MORTAR_SET)
 	{
 		leaning = 0;    // not allowed to lean while prone
 	}
@@ -1781,9 +1780,9 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 	trap_CM_BoxTrace(&trace, cent->lerpOrigin, end, NULL, NULL, 0, MASK_PLAYERSOLID);
 
 	// no shadow if too high
-	//% if ( trace.fraction == 1.0 || trace.fraction == 0.0f ) {
-	//%     return qfalse;
-	//% }
+	//if ( trace.fraction == 1.0 || trace.fraction == 0.0f ) {
+	//  return qfalse;
+	//}
 
 	*shadowPlane = trace.endpos[2] + 1;
 
@@ -2079,10 +2078,8 @@ char *vtosf(const vec3_t v)
 {
 	static int  index;
 	static char str[8][64];
-	char        *s;
+	char        *s = str[index];     // use an array so that multiple vtos won't collide
 
-	// use an array so that multiple vtos won't collide
-	s     = str[index];
 	index = (index + 1) & 7;
 
 	Com_sprintf(s, 64, "(%f %f %f)", v[0], v[1], v[2]);
@@ -2186,7 +2183,6 @@ void CG_Player(centity_t *cent)
 	centity_t      *cgsnap     = &cg_entities[cg.snap->ps.clientNum];
 	bg_character_t *character;
 	float          hilightIntensity = 0.f;
-
 
 	// if set to invisible, skip
 	if (cent->currentState.eFlags & EF_NODRAW)
@@ -2607,7 +2603,6 @@ void CG_Player(centity_t *cent)
 				}
 			case ACC_MOUTH2:            // hat2
 			case ACC_MOUTH3:            // hat3
-
 				if (i == ACC_RANK)
 				{
 					if (ci->rank == 0)
@@ -2628,7 +2623,6 @@ void CG_Player(centity_t *cent)
 			case ACC_WEAPON2:       // weap2
 				CG_PositionEntityOnTag(&acc, &body, "tag_weapon2", 0, NULL);
 				break;
-
 
 			default:
 				continue;
@@ -3408,8 +3402,6 @@ void CG_ClearHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int animation
 
 void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
-	animation_t *anim;
-
 	// see if the animation sequence is switching
 	if (!lf->animation)
 	{
@@ -3424,7 +3416,8 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 	// oldFrame and calculate a new frame
 	if (cg.time >= lf->frameTime)
 	{
-		int f;
+		int         f;
+		animation_t *anim;
 
 		lf->oldFrame      = lf->frame;
 		lf->oldFrameTime  = lf->frameTime;

@@ -88,8 +88,6 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "statsdump",      qtrue,  qtrue,  NULL,                  ":^7 Shows player stats + match info saved locally to a file"                                },
 	{ "stoprecord",     qtrue,  qtrue,  NULL,                  ":^7 Stops a demo recording currently in progress"                                           },
 	{ "team",           qtrue,  qtrue,  Cmd_Team_f,            " <b|r|s|none>:^7 Joins a team (b = allies, r = axis, s = spectator)"                        },
-//  { "setclass",       qtrue,  qtrue,  Cmd_SetClass_f, " <classnum>:^7 Selects a class" },
-//  { "setweapons",     qtrue,  qtrue,  Cmd_SetWeapons_f, " <weapon|weapon2>:^7 Selects your weapon loadout" },
 	{ "timein",         qfalse, qfalse, G_pause_cmd,           ":^7 Unpauses a match (if initiated by the issuing team)"                                    },
 	{ "timeout",        qfalse, qtrue,  G_pause_cmd,           ":^7 Allows a team to pause a match"                                                         },
 	{ "topshots",       qtrue,  qtrue,  G_weaponRankings_cmd,  ":^7 Shows BEST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon"  },

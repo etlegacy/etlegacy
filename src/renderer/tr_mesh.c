@@ -94,13 +94,11 @@ R_CullModel
 */
 static int R_CullModel(md3Header_t *header, trRefEntity_t *ent)
 {
-	vec3_t     bounds[2];
-	md3Frame_t *oldFrame, *newFrame;
-	int        i;
-
+	vec3_t bounds[2];
+	int    i;
 	// compute frame pointers
-	newFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.frame;
-	oldFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.oldframe;
+	md3Frame_t *newFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.frame;
+	md3Frame_t *oldFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.oldframe;
 
 	// cull bounding sphere ONLY if this is not an upscaled entity
 	if (!ent->e.nonNormalizedAxes)
@@ -324,10 +322,7 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 	int          cull;
 	int          lod;
 	int          fogNum;
-	qboolean     personalModel;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 
 	if (ent->e.renderfx & RF_WRAP_FRAMES)
 	{
@@ -401,7 +396,7 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 			// match the surface name to something in the skin file
 			shader = tr.defaultShader;
 
-			//----(SA)  added blink
+			// added blink
 			if (ent->e.renderfx & RF_BLINK)
 			{
 				char *s = va("%s_b", surface->name);   // append '_b' for 'blink'
@@ -437,7 +432,6 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 					}
 				}
 			}
-
 
 			if (shader == tr.defaultShader)
 			{

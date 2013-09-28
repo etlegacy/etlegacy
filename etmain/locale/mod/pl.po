@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-18 23:20+0100\n"
+"PO-Revision-Date: 2013-09-20 01:05+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -3014,13 +3014,12 @@ msgstr "%sZauwazony przez ^7%s"
 msgid "%s have stolen %s!"
 msgstr "%s ukradli %s!"
 
-#: src/cgame/cg_consolecmds.c:1204 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1207
 msgid "Axis"
 msgstr "Os"
 
-#: src/cgame/cg_consolecmds.c:1208 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
 msgid "Allies"
 msgstr "Alianci"
 
@@ -3644,6 +3643,11 @@ msgstr "Brak dostepnych informacji o broni."
 msgid "You will spawn as a %s %s with a %s."
 msgstr "Zespawnujesz sie jako %s %s z %s."
 
+#: src/cgame/cg_limbopanel.c:1223
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
+msgstr "Zespawnujesz sie jako %s %s z %s."
+
 #: src/cgame/cg_draw.c:441
 msgid "an Objective"
 msgstr "Cel"
@@ -3656,6 +3660,43 @@ msgstr "zostal zlapany w"
 
 msgid "'s construction madness"
 msgstr "'s szalenstwie budowlanym"
+
+msgid "Need paks: %s\n"
+msgstr "Potrzebuje paczek %s\n"
+
+msgid "Mod filter:"
+msgstr "Filtr Moda:"
+
+msgid "DELETE FAVS"
+msgstr "USUN ULU"
+
+msgid "RESET FILTERS"
+msgstr "RESETUJ FILTRY"
+
+msgid "DELETE SERVER FAVOURITES"
+msgstr "USUN ULUBIONE SERWERY"
+
+msgid "Do you really want to"
+msgstr "Czy na pewno chcesz aby"
+
+msgid "delete YOUR favourites?"
+msgstr "usunac twoje ulubione?"
+
+msgid "Modify Selected HUD:"
+msgstr "Modyfikuj Wybrany HUD:"
+
+msgid "PopUpTime:"
+msgstr "Wiadomosci Czas:"
+
+msgid "PopUpTimeStay:"
+msgstr "Wiadomosci Pozostanie:"
+
+msgid "PopUpTimeFade:"
+msgstr "Wiadomosci Znikanie:"
+
+#: src/cgame/cg_consolecmds.c:1211
+msgid "Allies"
+msgstr "Aliancki"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

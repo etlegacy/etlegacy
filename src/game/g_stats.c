@@ -393,6 +393,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	{
 	// light weapons
 	case MOD_KNIFE:
+	case MOD_KNIFE_KABAR:
 	case MOD_LUGER:
 	case MOD_COLT:
 	case MOD_MP40:
@@ -474,6 +475,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	{
 	// light weapons
 	case MOD_KNIFE:
+	case MOD_KNIFE_KABAR:
 		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "knife kill");
 		break;
 

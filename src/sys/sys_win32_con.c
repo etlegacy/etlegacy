@@ -32,7 +32,7 @@
  * @file sys_platform.c
  * @brief Contains windows-specific code for console.
  */
-
+#if defined(USE_WINDOWS_CONSOLE)
 #include "../client/client.h"
 #include "win_resource.h"
 #include "sys_win32.h"
@@ -110,7 +110,6 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	switch (uMsg)
 	{
 	case WM_SIZE:
-
 		cx = LOWORD(lParam);
 		cy = HIWORD(lParam);
 
@@ -336,7 +335,6 @@ static char    win_currentMatch[MAX_TOKEN_CHARS];
 static int     win_matchCount;
 static int     win_matchIndex;
 static int     win_findMatchIndex;
-static int     win_tabTime = 0;
 static field_t win_historyEditLines[WIN_COMMAND_HISTORY];
 static int     win_nextHistoryLine = 0;
 static int     win_historyLine     = 0;
@@ -477,9 +475,8 @@ Win_CompleteCommand
 */
 static void Win_CompleteCommand(qboolean showMatches)
 {
-	field_t *edit, temp;
-
-	edit = &win_consoleField;
+	field_t *edit = &win_consoleField;
+	field_t temp;
 
 	if (win_acLength == 0)
 	{
@@ -655,8 +652,10 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			// enable this code for tab double-tap show matching
 #if 0
+			static int win_tabTime = 0;
 			{
 				int tabTime = Sys_Milliseconds();
+
 				if ((tabTime - win_tabTime) < 100)
 				{
 					Win_CompleteCommand(qtrue);
@@ -758,7 +757,6 @@ void Sys_CreateConsole(void)
 	{
 		return;
 	}
-
 
 	// create fonts
 	hDC     = GetDC(s_wcd.hWnd);
@@ -1027,3 +1025,27 @@ void Sys_ClearViewlog_f(void)
 {
 	SendMessage(s_wcd.hwndBuffer, WM_SETTEXT, 0, (LPARAM)"");
 }
+
+/*
+==============
+Sys_PumpConsoleEvents
+==============
+*/
+void Sys_PumpConsoleEvents(void)
+{
+	MSG msg;
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		if (!GetMessage(&msg, NULL, 0, 0))
+		{
+			Com_Quit_f();
+		}
+
+		// save the msg time, because wndprocs don't have access to the timestamp
+		g_wv.sysMsgTime = msg.time;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+#endif

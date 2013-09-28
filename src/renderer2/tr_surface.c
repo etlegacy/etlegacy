@@ -66,9 +66,6 @@ Tess_CheckOverflow
 */
 void Tess_CheckOverflow(int verts, int indexes)
 {
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if ((glState.currentVBO != NULL && glState.currentVBO != tess.vbo) ||
 	    (glState.currentIBO != NULL && glState.currentIBO != tess.ibo))
 	{
@@ -77,7 +74,7 @@ void Tess_CheckOverflow(int verts, int indexes)
 		R_BindVBO(tess.vbo);
 		R_BindIBO(tess.ibo);
 	}
-#endif
+
 	if (tess.numVertexes + verts < SHADER_MAX_VERTEXES && tess.numIndexes + indexes < SHADER_MAX_INDEXES)
 	{
 		return;
@@ -432,30 +429,19 @@ Tr3B: update the default VBO to replace the client side vertex arrays
 */
 void Tess_UpdateVBOs(uint32_t attribBits)
 {
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (r_logFile->integer)
 	{
 		GLimp_LogComment(va("--- Tess_UpdateVBOs( attribBits = %i ) ---\n", attribBits));
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_CheckErrors();
-#endif
 
 	// update the default VBO
 	if (tess.numVertexes > 0 && tess.numVertexes <= SHADER_MAX_VERTEXES)
 	{
 		R_BindVBO(tess.vbo);
 
-#if defined(USE_D3D10)
-		// TODO
-#else
 		GL_CheckErrors();
-#endif
 
 		if (!(attribBits & ATTR_BITS))
 		{
@@ -545,11 +531,7 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 		}
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_CheckErrors();
-#endif
 
 	// update the default IBO
 	if (tess.numIndexes > 0 && tess.numIndexes <= SHADER_MAX_INDEXES)
@@ -559,13 +541,7 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, tess.numIndexes * sizeof(glIndex_t), tess.indexes);
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_CheckErrors();
-#endif
-
-#endif // USE_D3D10
 }
 
 /*
@@ -640,11 +616,7 @@ void Tess_InstantQuad(vec4_t quadVerts[4])
 	tess.numVertexes         = 0;
 	tess.numIndexes          = 0;
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_CheckErrors();
-#endif
 }
 
 /*
@@ -1311,7 +1283,7 @@ static void Tess_SurfaceBeam(void)
 		VectorAdd(start_points[i], direction, end_points[i]);
 	}
 
-	GL_BindProgram(0);
+	GLSL_BindProgram(0);
 	GL_SelectTexture(0);
 	GL_Bind(tr.whiteImage);
 
@@ -1969,6 +1941,7 @@ static void Tess_SurfaceAxis(void)
 	/*
 	   GL_BindProgram(0);
 	   GL_SelectTexture(0);
+	   GL_State( GLS_DEFAULT );
 	   GL_Bind(tr.whiteImage);
 
 	   glLineWidth(3);
@@ -2000,9 +1973,6 @@ static void Tess_SurfaceEntity(surfaceType_t *surfType)
 {
 	GLimp_LogComment("--- Tess_SurfaceEntity ---\n");
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (glState.currentVBO != tess.vbo || glState.currentIBO != tess.ibo)
 	{
 		Tess_EndBegin();
@@ -2010,7 +1980,6 @@ static void Tess_SurfaceEntity(surfaceType_t *surfType)
 		R_BindVBO(tess.vbo);
 		R_BindIBO(tess.ibo);
 	}
-#endif
 
 	switch (backEnd.currentEntity->e.reType)
 	{
@@ -2054,9 +2023,6 @@ static void Tess_SurfaceFlare(srfFlare_t *surf)
 
 	GLimp_LogComment("--- Tess_SurfaceFlare ---\n");
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (glState.currentVBO != tess.vbo || glState.currentIBO != tess.ibo)
 	{
 		Tess_EndBegin();
@@ -2064,7 +2030,6 @@ static void Tess_SurfaceFlare(srfFlare_t *surf)
 		R_BindVBO(tess.vbo);
 		R_BindIBO(tess.ibo);
 	}
-#endif
 
 	VectorMA(surf->origin, 2.0, surf->normal, origin);
 	VectorSubtract(origin, backEnd.viewParms.orientation.origin, dir);
@@ -2077,11 +2042,7 @@ static void Tess_SurfaceFlare(srfFlare_t *surf)
 		return;
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	RB_AddFlare((void *)surf, tess.fogNum, origin, surf->color, surf->normal);
-#endif
 }
 
 /*
@@ -2140,7 +2101,6 @@ void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 
 	refEnt = &backEnd.currentEntity->e;
 
-#if !defined(USE_D3D10)
 	if (refEnt->oldframe == refEnt->frame)
 	{
 		glState.vertexAttribsInterpolation = 0;
@@ -2152,7 +2112,6 @@ void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 
 	glState.vertexAttribsOldFrame = refEnt->oldframe;
 	glState.vertexAttribsNewFrame = refEnt->frame;
-#endif
 
 	//glState.vertexAttribPointersSet = 0;
 	//GL_VertexAttribPointers(ATTR_BITS | ATTR_POSITION2 | ATTR_TANGENT2 | ATTR_BINORMAL2 | ATTR_NORMAL2);

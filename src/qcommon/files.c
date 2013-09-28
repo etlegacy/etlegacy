@@ -643,6 +643,18 @@ qboolean FS_FileInPathExists(const char *testpath)
  */
 qboolean FS_FileExists(const char *file)
 {
+	if (!file)
+	{
+		Com_Printf("ERROR FS_FileExists: null filename\n");
+		return qfalse;
+	}
+
+	if (file[0] == '\0')
+	{
+		Com_Printf("WARNING FS_FileExists: empty filename\n");
+		return qfalse;
+	}
+
 	return FS_FileInPathExists(FS_BuildOSPath(fs_homepath->string, fs_gamedir, file));
 }
 
@@ -1932,7 +1944,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 		case FS_SEEK_SET:
 			unzSetOffset(fsh[f].handleFiles.file.z, fsh[f].zipFilePos);
 			unzOpenCurrentFile(fsh[f].handleFiles.file.z);
-		// fallthrough
+		// fall through
 		case FS_SEEK_CUR:
 			while (remainder > PK3_SEEK_BUFFER_SIZE)
 			{
@@ -1941,12 +1953,9 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 			}
 			FS_Read(buffer, remainder, f);
 			return offset;
-			break;
-
 		default:
 			Com_Error(ERR_FATAL, "FS_Seek: Bad zip origin");
 			return -1;
-			break;
 		}
 	}
 	else
@@ -2581,11 +2590,6 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 		}
 		else if (search->dir)     // scan for files in the filesystem
 		{
-			char *netpath;
-			int  numSysFiles;
-			char **sysFiles;
-			char *name;
-
 			// don't scan directories for files if we are pure or restricted
 			if (fs_numServerPaks && !allowNonPureFilesOnDisk)
 			{
@@ -2593,6 +2597,11 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 			}
 			else
 			{
+				char *netpath;
+				int  numSysFiles;
+				char **sysFiles;
+				char *name;
+
 				netpath  = FS_BuildOSPath(search->dir->path, search->dir->gamedir, path);
 				sysFiles = Sys_ListFiles(netpath, extension, filter, &numSysFiles, qfalse);
 				for (i = 0 ; i < numSysFiles ; i++)
@@ -2868,6 +2877,7 @@ int FS_GetModList(char *listbuf, int bufsize)
 				if (nDescLen > 0 && descHandle)
 				{
 					FILE *file;
+
 					file = FS_FileForHandle(descHandle);
 					Com_Memset(descPath, 0, sizeof(descPath));
 					nDescLen = fread(descPath, 1, 48, file);
@@ -3162,7 +3172,7 @@ void FS_Path_f(void)
 	}
 }
 
-/*
+/**
  * @brief Simulates the 'touch' unix command
  */
 void FS_TouchFile_f(void)
@@ -3465,7 +3475,7 @@ qboolean FS_VerifyOfficialPaks(void)
 	{
 		if (FS_idPak(fs_serverPakNames[i], BASEGAME))
 		{
-			Q_strncpyz(officialpaks[numOfficialPaksOnServer].pakname, fs_serverPakNames[i], sizeof(officialpaks[0].pakname));
+			Q_strncpyz(officialpaks[numOfficialPaksOnServer].pakname, fs_serverPakNames[i], sizeof(officialpaks[i].pakname));
 			officialpaks[numOfficialPaksOnServer].ok = qfalse;
 			numOfficialPaksOnServer++;
 		}
@@ -3488,9 +3498,9 @@ qboolean FS_VerifyOfficialPaks(void)
 						if (!Q_stricmp(packPath, officialpaks[j].pakname))
 						{
 							officialpaks[j].ok = qtrue;
+							numOfficialPaksLocal++;
 						}
 					}
-					numOfficialPaksLocal++;
 				}
 				break;
 			}
@@ -3931,7 +3941,6 @@ const char *FS_LoadedPakNames(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-	int          len;
 
 	info[0] = 0;
 
@@ -3947,18 +3956,11 @@ const char *FS_LoadedPakNames(void)
 		{
 			Q_strcat(info, sizeof(info), " ");
 		}
-		// Arnout: changed to have the full path
-		//Q_strcat( info, sizeof( info ), search->pack->pakBasename );
+
+		// full path ...
 		Q_strcat(info, sizeof(info), search->pack->pakGamename);
 		Q_strcat(info, sizeof(info), "/");
 		Q_strcat(info, sizeof(info), search->pack->pakBasename);
-	}
-
-	// remove last space char
-	len = strlen(info);
-	if (len > 1) // foolproof
-	{
-		info[len - 1] = 0;
 	}
 
 	return info;
@@ -4344,9 +4346,10 @@ void FS_InitFilesystem(void)
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
 	// - we want the nice error message here as well
-	if (FS_ReadFile("default.cfg", NULL) <= 0)
+	// FIXME: temporary fix - default.cfg is now part of pak3.pk3, add a smarter check
+	if (FS_ReadFile("fonts/ariblk_0_16.tga", NULL) <= 0)
 	{
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- mp_bin.pk3\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load base data files!\nVerify your installation and make sure genuine ET files\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
 	}
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
@@ -4375,7 +4378,12 @@ void FS_Restart(int checksumFeed)
 	// if we can't find default.cfg, assume that the paths are
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
-	if (FS_ReadFile("default.cfg", NULL) <= 0)
+	if (FS_ReadFile("default.cfg", NULL) <= 0
+#ifdef PANDORA
+	    // also ensure default_pandora.cfg
+	    && FS_ReadFile(CONFIG_NAME_DEFAULT, NULL) <= 0
+#endif
+	    )
 	{
 		// this might happen when connecting to a pure server not using BASEGAME/pak0.pk3
 		// (for instance a TA demo server)
@@ -4392,7 +4400,11 @@ void FS_Restart(int checksumFeed)
 			return;
 		}
 		// added some verbosity, 'couldn't load default.cfg' confuses the hell out of users
+#ifdef PANDORA
+		Com_Error(ERR_FATAL, "FS_Restart: Couldn't load default.cfg and default_pandora.cfg - I am missing essential files - verify your installation?");
+#else
 		Com_Error(ERR_FATAL, "FS_Restart: Couldn't load default.cfg - I am missing essential files - verify your installation?");
+#endif
 	}
 
 	// new check before safeMode
@@ -4475,6 +4487,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 		break;
 	case FS_APPEND_SYNC:
 		sync = qtrue;
+	// fall through
 	case FS_APPEND:
 		*f = FS_FOpenFileAppend(qpath);
 		r  = 0;

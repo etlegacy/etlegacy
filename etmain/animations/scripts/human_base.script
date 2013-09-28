@@ -15,6 +15,7 @@
 DEFINES
 
 // weapons
+set weapons knives = knife AND Ka-Bar
 set weapons pistols = Luger AND Colt AND sp5 pistol AND Silenced Colt
 set weapons akimbo_pistols = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
 set weapons machineguns = MP40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND Mobile MG42
@@ -26,8 +27,8 @@ set weapons throwables_underhand = dynamite weapon
 set weapons one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt
 set weapons two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
 
-set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knife AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator
-set weapons all_one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knife AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
+set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator
+set weapons all_one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
 set weapons all_two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator
 
 // movetypes
@@ -154,7 +155,7 @@ STATE COMBAT
 		{
 			both stand_grenade
 		}
-		weapons knife
+		weapons knives
 		{
 			both stand_knife
 		}
@@ -295,7 +296,7 @@ STATE COMBAT
 		{
 			both alert_crchidle_1h
 		}
-		weapons knife
+		weapons knives
 		{
 			legs alert_crchidle_1h torso stand_knife
 		}
@@ -1018,7 +1019,7 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
-		weapons knife
+		weapons knives
 		{
 			both alert_bk_1h
 		}
@@ -1448,7 +1449,7 @@ STATE COMBAT
 			{
 				legs prone_legs torso prone_grenade_idle
 			}
-			weapons knife
+			weapons knives
 			{
 				legs prone_legs torso prone_knife_attack
 			}
@@ -1741,8 +1742,8 @@ fireweapon
 		torso firing_grenadeB
 	}
 
-// KNIFE
-	weapons knife
+// KNIVES
+	weapons knives
 	{
 		torso firing_knifeA
 	}
@@ -2178,7 +2179,7 @@ fireweaponprone
 	{
 		torso prone_grenade_fire
 	}
-	weapons knife
+	weapons knives
 	{
 		torso prone_knife_attack
 	}
@@ -2306,7 +2307,7 @@ raiseweaponprone
 	{
 		torso prone_grenade_switch
 	}
-	weapons knife
+	weapons knives
 	{
 		torso prone_knife_switch
 	}
@@ -2510,7 +2511,7 @@ raiseweapon
 	{
 		torso raise_panzer
 	}
-	weapons knife
+	weapons knives
 	{
 		torso raise_knife
 	}
@@ -2955,7 +2956,7 @@ climbdismount
 
 DEATH
 {
-	enemy_weapon knife, enemy_position behind
+	enemy_weapon knives, enemy_position behind
 	{
 		both death_machinegun_1
 	}

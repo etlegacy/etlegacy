@@ -56,99 +56,75 @@ void RB_Fog(glfog_t *curfog)
 	}
 
 	if (!curfog->registered)
-	{                           //----(SA)
+	{
 		RB_FogOff();
 		return;
 	}
 
-	//----(SA) assme values of '0' for these parameters means 'use default'
+	// assme values of '0' for these parameters means 'use default'
 	if (!curfog->density)
 	{
 		curfog->density = 1;
 	}
 	if (!curfog->hint)
 	{
-#if defined(USE_D3D10)
-		// TODO
-#else
 		curfog->hint = GL_DONT_CARE;
-#endif
 	}
 	if (!curfog->mode)
 	{
-#if defined(USE_D3D10)
-		// TODO
-#else
 		curfog->mode = GL_LINEAR;
-#endif
 	}
-	//----(SA)  end
-
 
 	RB_FogOn();
 
 	// only send changes if necessary
 
 //  if(curfog->mode != setfog.mode || !setfog.registered) {
-#if defined(USE_D3D10)
-	// TODO
-#else
+
 	glFogi(GL_FOG_MODE, curfog->mode);
-#endif
+
 //      setfog.mode = curfog->mode;
 //  }
 //  if(curfog->color[0] != setfog.color[0] || curfog->color[1] != setfog.color[1] || curfog->color[2] != setfog.color[2] || !setfog.registered) {
-#if defined(USE_D3D10)
-	// TODO
-#else
+
 	glFogfv(GL_FOG_COLOR, curfog->color);
-#endif
+
 //      VectorCopy(setfog.color, curfog->color);
 //  }
 //  if(curfog->density != setfog.density || !setfog.registered) {
-#if defined(USE_D3D10)
-	// TODO
-#else
+
 	glFogf(GL_FOG_DENSITY, curfog->density);
-#endif
+
 //      setfog.density = curfog->density;
 //  }
 //  if(curfog->hint != setfog.hint || !setfog.registered) {
-#if defined(USE_D3D10)
-	// TODO
-#else
+
 	glHint(GL_FOG_HINT, curfog->hint);
-#endif
+
 //      setfog.hint = curfog->hint;
 //  }
 //  if(curfog->start != setfog.start || !setfog.registered) {
-#if defined(USE_D3D10)
-	// TODO
-#else
+
 	glFogf(GL_FOG_START, curfog->start);
-#endif
+
 //      setfog.start = curfog->start;
 //  }
 
 	if (r_zfar->value)
 	{                           // (SA) allow override for helping level designers test fog distances
 //      if(setfog.end != r_zfar->value || !setfog.registered) {
-#if defined(USE_D3D10)
-		// TODO
-#else
+
 		glFogf(GL_FOG_END, r_zfar->value);
-#endif
+
 //          setfog.end = r_zfar->value;
 //      }
 	}
 	else
 	{
 //      if(curfog->end != setfog.end || !setfog.registered) {
-#if defined(USE_D3D10)
-		// TODO
-#else
+
 		glFogf(GL_FOG_END, curfog->end);
-#endif
+
 //          setfog.end = curfog->end;
 //      }
 	}
@@ -157,20 +133,14 @@ void RB_Fog(glfog_t *curfog)
 	// NV fog mode
 	if (glConfig.NVFogAvailable)
 	{
-#if defined(USE_D3D10)
-		// TODO
-#else
 		glFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
-#endif
 	}
 // end
 
 	setfog.registered = qtrue;
-#if defined(USE_D3D10)
-	// TODO
-#else
+
 	GL_ClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
-#endif
+
 #endif
 }
 
@@ -184,11 +154,8 @@ void RB_FogOff()
 		return;
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	glDisable(GL_FOG);
-#endif
+
 	fogIsOn = qfalse;
 #endif
 }
@@ -232,11 +199,8 @@ void RB_FogOn()
 		return;
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	glEnable(GL_FOG);
-#endif
+
 	fogIsOn = qtrue;
 #endif
 }
@@ -283,31 +247,21 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 		tr.glfogsettings[fogvar].end      = var2;
 		if (density > 1)
 		{
-#if defined(USE_D3D10)
-			// TODO
-#else
-			tr.glfogsettings[fogvar].mode = GL_LINEAR;
-#endif
+			tr.glfogsettings[fogvar].mode        = GL_LINEAR;
 			tr.glfogsettings[fogvar].drawsky     = qfalse;
 			tr.glfogsettings[fogvar].clearscreen = qtrue;
 			tr.glfogsettings[fogvar].density     = 1.0;
 		}
 		else
 		{
-#if defined(USE_D3D10)
-			// TODO
-#else
-			tr.glfogsettings[fogvar].mode = GL_EXP;
-#endif
+			tr.glfogsettings[fogvar].mode        = GL_EXP;
 			tr.glfogsettings[fogvar].drawsky     = qtrue;
 			tr.glfogsettings[fogvar].clearscreen = qfalse;
 			tr.glfogsettings[fogvar].density     = density;
 		}
-#if defined(USE_D3D10)
-		// TODO
-#else
+
 		tr.glfogsettings[fogvar].hint = GL_DONT_CARE;
-#endif
+
 		tr.glfogsettings[fogvar].registered = qtrue;
 
 		return;
@@ -340,7 +294,6 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 	tr.glfogsettings[FOG_TARGET].startTime  = tr.refdef.time;
 	tr.glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
 }
-
 
 /*
 ==============
@@ -429,7 +382,6 @@ void R_SetFrameFog()
 		int   fadeTime;
 
 		// transitioning from density to distance
-#if !defined(USE_D3D10)
 		if (tr.glfogsettings[FOG_LAST].mode == GL_EXP && tr.glfogsettings[FOG_TARGET].mode == GL_LINEAR)
 		{
 			// for now just fast transition to the target when dissimilar fogs are
@@ -484,7 +436,6 @@ void R_SetFrameFog()
 			tr.glfogsettings[FOG_CURRENT].clearscreen = (qboolean)(tr.glfogsettings[FOG_TARGET].clearscreen ||
 			                                                       tr.glfogsettings[FOG_LAST].clearscreen);
 		}
-#endif
 	}
 	else
 	{
@@ -495,11 +446,7 @@ void R_SetFrameFog()
 
 
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
-#endif
 	{
 		if (tr.glfogsettings[FOG_CURRENT].end < tr.viewParms.zFar)
 		{
@@ -509,10 +456,8 @@ void R_SetFrameFog()
 //  else
 //      tr.glfogsettings[FOG_CURRENT].end = 5;
 
-
 	if (r_speeds->integer == RSPEEDS_FOG)
 	{
-#if !defined(USE_D3D10)
 		if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 		{
 			ri.Printf(PRINT_ALL, "farclip fog - den: %0.1f  calc zFar: %0.1f  fog zfar: %0.1f\n",
@@ -523,10 +468,8 @@ void R_SetFrameFog()
 			ri.Printf(PRINT_ALL, "density fog - den: %0.4f  calc zFar: %0.1f  fog zFar: %0.1f\n",
 			          tr.glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, tr.glfogsettings[FOG_CURRENT].end);
 		}
-#endif
 	}
 }
-
 
 /*
 ====================

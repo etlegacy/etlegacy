@@ -119,7 +119,7 @@ RB_AddFlare
 This is called at surface tesselation time
 ==================
 */
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float scale, vec3_t normal, int id, qboolean cgvisible)     //----(SA)  added scale. added id.  added visible
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float scale, vec3_t normal, int id, qboolean cgvisible) // added scale. added id.  added visible
 {
 	int     i;
 	flare_t *f;
@@ -158,7 +158,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 	// see if a flare with a matching surface, scene, and view exists
 	for (f = r_activeFlares ; f ; f = f->next)
 	{
-		// (SA) added back in more checks for different scenes
+		// added back in more checks for different scenes
 		if (f->id == id && f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal)
 		{
 			break;
@@ -261,7 +261,7 @@ void RB_AddDlightFlares(void)
 			j = 0;
 		}
 
-		RB_AddFlare((void *)l, j, l->origin, l->color, 1.0f, NULL, id++, qtrue);    //----(SA)  also set scale
+		RB_AddFlare((void *)l, j, l->origin, l->color, 1.0f, NULL, id++, qtrue); // also set scale
 	}
 }
 
@@ -281,7 +281,7 @@ void RB_AddCoronaFlares(void)
 		return;
 	}
 
-	if (!(tr.world))       // (SA) possible currently at the player model selection menu
+	if (!(tr.world)) // possible currently at the player model selection menu
 	{
 		return;
 	}
@@ -316,9 +316,7 @@ void RB_AddCoronaFlares(void)
 
 /*
 ===============================================================================
-
 FLARE BACK END
-
 ===============================================================================
 */
 
@@ -329,31 +327,30 @@ RB_TestFlare
 */
 void RB_TestFlare(flare_t *f)
 {
-//  float           depth;
+	//float           depth;
 	qboolean visible;
 	float    fade;
-//  float           screenZ;
+	//float           screenZ;
 
 	backEnd.pc.c_flareTests++;
 
 	// doing a readpixels is as good as doing a glFinish(), so
 	// don't bother with another sync
-//  glState.finishCalled = qfalse;
-//  glState.finishCalled = qtrue;   // (SA) Hmm, shouldn't this be true?
+	//glState.finishCalled = qfalse;
+	//glState.finishCalled = qtrue;   // (SA) Hmm, shouldn't this be true?
 
 	// read back the z buffer contents
-//  qglReadPixels( f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth );
-//  screenZ = backEnd.viewParms.projectionMatrix[14] /
-//      ( ( 2*depth - 1 ) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10] );
+	//qglReadPixels( f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth );
+	//screenZ = backEnd.viewParms.projectionMatrix[14] /
+	//  ( ( 2*depth - 1 ) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10] );
 
-	//----(SA)  24 was way to low tolerance.  It gave Dan problems with free standing light fixtures
-	//----(SA)  I will monitor to see if changing this screws up any other situations
-	//----(SA)  and 2 was way to high tolerance
-//  visible = ( -f->eyeZ - -screenZ ) < 2;
-//  visible = ( -f->eyeZ - -screenZ ) < 24;
-//  visible = ( -f->eyeZ - -screenZ ) < 6;
-
-//  visible = qtrue;
+	// 24 was way to low tolerance.  It gave Dan problems with free standing light fixtures
+	// I will monitor to see if changing this screws up any other situations
+	// and 2 was way to high tolerance
+	//visible = ( -f->eyeZ - -screenZ ) < 2;
+	//visible = ( -f->eyeZ - -screenZ ) < 24;
+	//visible = ( -f->eyeZ - -screenZ ) < 6;
+	//visible = qtrue;
 	visible = f->cgvisible;
 
 	if (visible)
@@ -400,14 +397,14 @@ void RB_RenderFlare(flare_t *f)
 
 	backEnd.pc.c_flareRenders++;
 
-	//----(SA)  changed to use alpha blend rather than additive blend
-	//          this is to accomidate the fact we can't right now do
-	//          additive blends and have them fog correctly with our distance fog.
+	// changed to use alpha blend rather than additive blend
+	// this is to accomidate the fact we can't right now do
+	// additive blends and have them fog correctly with our distance fog.
 	//      /when/ we fix the blend problems with distance fog, this should
 	//      be changed back to additive since there's nearly no hit for that
 	//      but the alpha blend is noticably slower.
 
-	VectorScale(f->color, tr.identityLight, color);         //----(SA)  mod for alpha blend rather than additive
+	VectorScale(f->color, tr.identityLight, color);         // mod for alpha blend rather than additive
 
 	iColor[0] = color[0] * 255;
 	iColor[1] = color[1] * 255;
@@ -425,7 +422,7 @@ void RB_RenderFlare(flare_t *f)
 	tess.vertexColors[tess.numVertexes].v[0] = iColor[0];
 	tess.vertexColors[tess.numVertexes].v[1] = iColor[1];
 	tess.vertexColors[tess.numVertexes].v[2] = iColor[2];
-	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255;        //----(SA)    mod for alpha blend rather than additive
+	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255; // mod for alpha blend rather than additive
 	tess.numVertexes++;
 
 	tess.xyz[tess.numVertexes].v[0]          = f->windowX - size;
@@ -435,7 +432,7 @@ void RB_RenderFlare(flare_t *f)
 	tess.vertexColors[tess.numVertexes].v[0] = iColor[0];
 	tess.vertexColors[tess.numVertexes].v[1] = iColor[1];
 	tess.vertexColors[tess.numVertexes].v[2] = iColor[2];
-	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255;        //----(SA)    mod for alpha blend rather than additive
+	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255; // mod for alpha blend rather than additive
 	tess.numVertexes++;
 
 	tess.xyz[tess.numVertexes].v[0]          = f->windowX + size;
@@ -445,7 +442,7 @@ void RB_RenderFlare(flare_t *f)
 	tess.vertexColors[tess.numVertexes].v[0] = iColor[0];
 	tess.vertexColors[tess.numVertexes].v[1] = iColor[1];
 	tess.vertexColors[tess.numVertexes].v[2] = iColor[2];
-	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255;        //----(SA)    mod for alpha blend rather than additive
+	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255; // mod for alpha blend rather than additive
 	tess.numVertexes++;
 
 	tess.xyz[tess.numVertexes].v[0]          = f->windowX + size;
@@ -455,8 +452,8 @@ void RB_RenderFlare(flare_t *f)
 	tess.vertexColors[tess.numVertexes].v[0] = iColor[0];
 	tess.vertexColors[tess.numVertexes].v[1] = iColor[1];
 	tess.vertexColors[tess.numVertexes].v[2] = iColor[2];
-	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255;        //----(SA)    mod for alpha blend rather than additive
-//  tess.vertexColors[tess.numVertexes].v[3] = 255;     //----(SA)  mod for alpha blend rather than additive
+	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255; // mod for alpha blend rather than additive
+	//tess.vertexColors[tess.numVertexes].v[3] = 255; // mod for alpha blend rather than additive
 	tess.numVertexes++;
 
 	tess.indexes[tess.numIndexes++] = 0;
@@ -496,7 +493,7 @@ void RB_RenderFlares(void)
 		return;
 	}
 
-	// (SA) turned light flares back on.  must evaluate problem id had with this
+	// turned light flares back on.  must evaluate problem id had with this
 	RB_AddDlightFlares();
 	RB_AddCoronaFlares();
 

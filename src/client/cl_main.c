@@ -84,6 +84,8 @@ cvar_t *m_filter;
 
 cvar_t *cl_activeAction;
 
+cvar_t *cl_activatelean;
+
 cvar_t *cl_autorecord;
 
 cvar_t *cl_allowDownload;
@@ -612,7 +614,6 @@ static char wavName[MAX_QPATH];     // compiler bug workaround
 void CL_WriteWaveOpen(void)
 {
 	// we will just save it as a 16bit stereo 22050kz pcm file
-
 	char name[MAX_OSPATH];
 	char *s;
 
@@ -2193,6 +2194,7 @@ void CL_CheckForResend(void)
 
 	default:
 		Com_Error(ERR_FATAL, "CL_CheckForResend: bad cls.state");
+		break;
 	}
 }
 
@@ -3041,6 +3043,7 @@ void CL_Frame(int msec)
 				break;
 			default:
 				Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
+				break;
 			}
 		}
 		// fixed time for next frame
@@ -3311,6 +3314,14 @@ void CL_ShutdownRef(void)
 	}
 	re.Shutdown(qtrue);
 	memset(&re, 0, sizeof(re));
+
+#ifdef USE_RENDERER_DLOPEN
+	//Unload the library
+	if (rendererLib)
+	{
+		Sys_UnloadLibrary(rendererLib);
+	}
+#endif
 }
 
 /*
@@ -3704,6 +3715,8 @@ void CL_Init(void)
 	cl_activeAction       = Cvar_Get("activeAction", "", CVAR_TEMP);
 	cl_autorecord         = Cvar_Get("cl_autorecord", "0", CVAR_TEMP);
 
+	cl_activatelean = Cvar_Get("cl_activatelean", "1", CVAR_ARCHIVE);
+
 	cl_timedemo      = Cvar_Get("timedemo", "0", 0);
 	cl_avidemo       = Cvar_Get("cl_avidemo", "0", 0);
 	cl_forceavidemo  = Cvar_Get("cl_forceavidemo", "0", 0);
@@ -3899,7 +3912,7 @@ void CL_Shutdown(void)
 
 	if (recursive)
 	{
-		printf("recursive shutdown\n");
+		Com_Printf("WARNING: Recursive shutdown\n");
 		return;
 	}
 	recursive = qtrue;
@@ -3933,6 +3946,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("cinematic");
 	Cmd_RemoveCommand("stoprecord");
 	Cmd_RemoveCommand("connect");
+	Cmd_RemoveCommand("reconnect");
 	Cmd_RemoveCommand("localservers");
 	Cmd_RemoveCommand("globalservers");
 	Cmd_RemoveCommand("rcon");
@@ -3940,7 +3954,13 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("ping");
 	Cmd_RemoveCommand("serverstatus");
 	Cmd_RemoveCommand("showip");
+	Cmd_RemoveCommand("fs_openedList");
+	Cmd_RemoveCommand("fs_referencedList");
 	Cmd_RemoveCommand("model");
+	Cmd_RemoveCommand("video");
+	Cmd_RemoveCommand("stopvideo");
+
+	Con_Shutdown();
 
 	// startup-caching system
 	Cmd_RemoveCommand("cache_startgather");
@@ -3955,6 +3975,10 @@ void CL_Shutdown(void)
 
 #ifdef FEATURE_IRC_CLIENT
 	CL_OW_IRCWaitShutdown();
+
+	Cmd_RemoveCommand("irc_connect");
+	Cmd_RemoveCommand("irc_quit");
+	Cmd_RemoveCommand("irc_say");
 #endif
 
 	Cvar_Set("cl_running", "0");
@@ -3962,6 +3986,7 @@ void CL_Shutdown(void)
 	recursive = qfalse;
 
 	memset(&cls, 0, sizeof(cls));
+	//Key_SetCatcher( 0 );
 
 	Com_Printf("-----------------------\n");
 }

@@ -832,7 +832,6 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 		Q_strncpyz(mapName, bspName, sizeof(mapName));
 		COM_StripExtension3(mapName, mapName, sizeof(mapName));
 
-#if !defined(USE_D3D10)
 		if (tr.worldHDR_RGBE)
 		{
 			// we are about to upload textures
@@ -916,11 +915,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 					glBindTexture(image->type, 0);
 
-#if defined(USE_D3D10)
-					// TODO
-#else
 					GL_CheckErrors();
-#endif
 
 					Com_Dealloc(hdrImage);
 
@@ -978,7 +973,6 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 			}
 		}
 		else
-#endif // USE_D3D10
 		{
 			lightmapFiles = ri.FS_ListFiles(mapName, ".png", &numLightmaps);
 
@@ -1431,37 +1425,11 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 			cv->verts[i].lightmap[j] = LittleFloat(verts[i].lightmap[j]);
 		}
 
-#if defined(COMPAT_Q3A)
-		cv->verts[i].lightmap[0] = FatPackU(LittleFloat(verts[i].lightmap[0]), realLightmapNum);
-		cv->verts[i].lightmap[1] = FatPackV(LittleFloat(verts[i].lightmap[1]), realLightmapNum);
-
 		for (j = 0; j < 4; j++)
 		{
 			cv->verts[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
 		}
 		R_ColorShiftLightingFloats(cv->verts[i].lightColor, cv->verts[i].lightColor);
-
-#elif defined(COMPAT_Q3A) || defined(COMPAT_ET)
-		for (j = 0; j < 4; j++)
-		{
-			cv->verts[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
-		}
-		R_ColorShiftLightingFloats(cv->verts[i].lightColor, cv->verts[i].lightColor);
-#else
-		for (j = 0; j < 4; j++)
-		{
-			cv->verts[i].paintColor[j] = Q_bound(0, LittleFloat(verts[i].paintColor[j]), 1);
-			cv->verts[i].lightColor[j] = LittleFloat(verts[i].lightColor[j]);
-		}
-
-		for (j = 0; j < 3; j++)
-		{
-			cv->verts[i].lightDirection[j] = LittleFloat(verts[i].lightDirection[j]);
-		}
-		//VectorNormalize(cv->verts[i].lightDirection);
-
-		R_HDRTonemapLightingColors(cv->verts[i].lightColor, cv->verts[i].lightColor, qtrue);
-#endif
 	}
 
 	// copy triangles
@@ -1638,37 +1606,11 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 			points[i].lightmap[j] = LittleFloat(verts[i].lightmap[j]);
 		}
 
-#if defined(COMPAT_Q3A)
-		points[i].lightmap[0] = FatPackU(LittleFloat(verts[i].lightmap[0]), realLightmapNum);
-		points[i].lightmap[1] = FatPackV(LittleFloat(verts[i].lightmap[1]), realLightmapNum);
-
 		for (j = 0; j < 4; j++)
 		{
 			points[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
 		}
 		R_ColorShiftLightingFloats(points[i].lightColor, points[i].lightColor);
-
-#elif defined(COMPAT_Q3A) || defined(COMPAT_ET)
-		for (j = 0; j < 4; j++)
-		{
-			points[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
-		}
-		R_ColorShiftLightingFloats(points[i].lightColor, points[i].lightColor);
-#else
-		for (j = 0; j < 4; j++)
-		{
-			points[i].paintColor[j] = Q_bound(0, LittleFloat(verts[i].paintColor[j]), 1);
-			points[i].lightColor[j] = LittleFloat(verts[i].lightColor[j]);
-		}
-
-		for (j = 0; j < 3; j++)
-		{
-			points[i].lightDirection[j] = LittleFloat(verts[i].lightDirection[j]);
-		}
-		//VectorNormalize(points[i].lightDirection);
-
-		R_HDRTonemapLightingColors(points[i].lightColor, points[i].lightColor, qtrue);
-#endif
 	}
 
 	// pre-tesseleate
@@ -1776,27 +1718,11 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 			cv->verts[i].lightmap[j] = LittleFloat(verts[i].lightmap[j]);
 		}
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		for (j = 0; j < 4; j++)
 		{
 			cv->verts[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
 		}
 		R_ColorShiftLightingFloats(cv->verts[i].lightColor, cv->verts[i].lightColor);
-#else
-		for (j = 0; j < 4; j++)
-		{
-			cv->verts[i].paintColor[j] = Q_bound(0, LittleFloat(verts[i].paintColor[j]), 1);
-			cv->verts[i].lightColor[j] = LittleFloat(verts[i].lightColor[j]);
-		}
-
-		for (j = 0; j < 3; j++)
-		{
-			cv->verts[i].lightDirection[j] = LittleFloat(verts[i].lightDirection[j]);
-		}
-		//VectorNormalize(cv->verts[i].lightDirection);
-
-		R_HDRTonemapLightingColors(cv->verts[i].lightColor, cv->verts[i].lightColor, qtrue);
-#endif
 	}
 
 	// copy triangles
@@ -4888,9 +4814,6 @@ static void R_CreateWorldVBO()
 	s_worldData.vbo = R_CreateVBO2(va("staticBspModel0_VBO %i", 0), numVerts, verts,
 	                               ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL |
 	                               ATTR_NORMAL | ATTR_COLOR
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	                               | ATTR_PAINTCOLOR | ATTR_LIGHTDIRECTION
-#endif
 	                               , VBO_USAGE_STATIC);
 #endif
 
@@ -5338,9 +5261,6 @@ static void R_CreateSubModelVBOs()
 				    R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, verts,
 				                 ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
 				                 | ATTR_COLOR
- #if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-				                 | ATTR_PAINTCOLOR | ATTR_LIGHTDIRECTION
-#endif
 				                 , VBO_USAGE_STATIC);
 #endif
 
@@ -5445,6 +5365,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			break;
 		default:
 			ri.Error(ERR_DROP, "Bad surfaceType");
+			return;
 		}
 	}
 
@@ -5463,8 +5384,6 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 		R_MovePatchSurfacesToHunk();
 	}
 }
-
-
 
 /*
 =================
@@ -5717,11 +5636,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 		InitLink(&out->occlusionQuery2, out);
 		//QueueInit(&node->multiQuery);
 
-#if defined(USE_D3D10)
-		// TODO
-#else
 		glGenQueriesARB(MAX_VIEWS, out->occlusionQueryObjects);
-#endif
 
 		tess.multiDrawPrimitives = 0;
 		tess.numIndexes          = 0;
@@ -6161,7 +6076,6 @@ void R_LoadLightGrid(lump_t *l)
 
 	for (i = 0; i < w->numLightGridPoints; i++, in++, gridPoint++)
 	{
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		byte tmpAmbient[4];
 		byte tmpDirected[4];
 
@@ -6183,14 +6097,6 @@ void R_LoadLightGrid(lump_t *l)
 			gridPoint->ambientColor[j]  = tmpAmbient[j] * (1.0f / 255.0f);
 			gridPoint->directedColor[j] = tmpDirected[j] * (1.0f / 255.0f);
 		}
-#else
-		for (j = 0; j < 3; j++)
-		{
-
-			gridPoint->ambientColor[j]  = LittleFloat(in->ambient[j]);
-			gridPoint->directedColor[j] = LittleFloat(in->directed[j]);
-		}
-#endif
 
 		gridPoint->ambientColor[3]  = 1.0f;
 		gridPoint->directedColor[3] = 1.0f;
@@ -6213,17 +6119,9 @@ void R_LoadLightGrid(lump_t *l)
 		gridPoint->direction[1] = sin(lat) * sin(lng);
 		gridPoint->direction[2] = cos(lng);
 
-#if 0
 		// debug print to see if the XBSP format is correct
-		ri.Printf(PRINT_ALL, "%9d Amb: (%03.1f %03.1f %03.1f) Dir: (%03.1f %03.1f %03.1f)\n",
-		          i, gridPoint->ambient[0], gridPoint->ambient[1], gridPoint->ambient[2], gridPoint->directed[0], gridPoint->directed[1], gridPoint->directed[2]);
-#endif
-
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-		// deal with overbright bits
-		R_HDRTonemapLightingColors(gridPoint->ambientColor, gridPoint->ambientColor, qtrue);
-		R_HDRTonemapLightingColors(gridPoint->directedColor, gridPoint->directedColor, qtrue);
-#endif
+		//ri.Printf(PRINT_ALL, "%9d Amb: (%03.1f %03.1f %03.1f) Dir: (%03.1f %03.1f %03.1f)\n",
+		//  i, gridPoint->ambient[0], gridPoint->ambient[1], gridPoint->ambient[2], gridPoint->directed[0], gridPoint->directed[1], gridPoint->directed[2]);
 	}
 
 	// calculate grid point positions
@@ -9197,11 +9095,7 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
 	}
 #endif
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_Bind(tr.autoCubeImage);
-#endif
 }
 
 void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeNearest, cubemapProbe_t **cubeProbeSecondNearest)
@@ -9701,10 +9595,6 @@ void R_BuildCubeMaps(void)
 #endif
 		}
 
-#if defined(USE_D3D10)
-		// TODO
-		continue;
-#else
 		// build the cubemap
 		//cubeProbe->cubemap = R_CreateCubeImage(va("_autoCube%d", j), (const byte **)tr.cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
@@ -9727,7 +9617,6 @@ void R_BuildCubeMaps(void)
 		R_UploadImage((const byte **)tr.cubeTemp, 6, cubeProbe->cubemap);
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
-#endif
 	}
 	ri.Printf(PRINT_ALL, "\n");
 

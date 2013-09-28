@@ -305,6 +305,7 @@ typedef struct itemDef_s
 	int settingFlags;
 	int voteFlag;
 
+	const char *onTab;
 	const char *onEsc;
 	const char *onEnter;
 
@@ -447,6 +448,8 @@ typedef struct
 	void (*getKeysForBinding)(const char *binding, int *key1, int *key2);
 
 	qboolean (*keyIsDown)(int keynum);
+
+	void (*getClipboardData)(char *buf, int bufsize);
 
 	void (*setBinding)(int keynum, const char *binding);
 	void (*executeText)(int exec_when, const char *text);

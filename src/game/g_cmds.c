@@ -542,7 +542,7 @@ int ClientNumberFromString(gentity_t *to, char *s)
 	}
 
 	CPx(to - g_entities, va("print \"User [lof]%s [lon]is not on the server\n\"", s));
-	return(-1);
+	return -1;
 }
 
 /*
@@ -1338,6 +1338,12 @@ void StopFollowing(gentity_t *ent)
 		vec3_t    pos, angle;
 		gclient_t *client = ent->client;
 
+		// FIXME: to avoid having a spectator with a gun..
+		//if (client->wbuttons & WBUTTON_ATTACK2 || client->buttons & BUTTON_ATTACK)
+		//{
+		//	return;
+		//}
+
 		VectorCopy(client->ps.origin, pos);
 		//pos[2] += 16; // removing for now
 		VectorCopy(client->ps.viewangles, angle);
@@ -1926,14 +1932,6 @@ void Cmd_ResetSetup_f(gentity_t *ent)
 	}
 }
 
-void Cmd_SetClass_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
-{
-}
-
-void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
-{
-}
-
 /*
 =================
 Cmd_Follow_f
@@ -1943,6 +1941,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	int  i;
 	char arg[MAX_TOKEN_CHARS];
+	int  pids[MAX_CLIENTS];
 
 	if (trap_Argc() != 2)
 	{
@@ -1953,15 +1952,22 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		return;
 	}
 
-	if (ent->client->ps.pm_flags & PMF_LIMBO)
+	if ((ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES) && !(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
-		CP("print \"Can't issue a follow command while in limbo.\n\"");
-		CP("print \"Hit FIRE to switch between teammates.\n\"");
+		CP("print \"Can't follow while not in limbo if on a team!\n\"");
 		return;
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
-	i = ClientNumberFromString(ent, arg);
+	// Let /follow match partial names
+	// Use > instead of != since could be a team name
+	if (ClientNumbersFromString(arg, pids) > 1)
+	{
+		CP("print \"Partial Name Matches more than 1 Player.\n\"");
+		return;
+	}
+	i = pids[0];
+
 	if (i == -1)
 	{
 		if (!Q_stricmp(arg, "allies"))
@@ -1974,6 +1980,13 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		}
 		else
 		{
+			return;
+		}
+		if ((ent->client->sess.sessionTeam == TEAM_AXIS ||
+		     ent->client->sess.sessionTeam == TEAM_ALLIES) &&
+		    ent->client->sess.sessionTeam != i)
+		{
+			CP("print \"Can't follow a player on an enemy team!\n\"");
 			return;
 		}
 
@@ -1995,7 +2008,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 			{
 				ent->client->sess.spec_team = i;
 				CP(va("print \"Spectator follow is now locked on the %s team.\n\"", aTeams[i]));
-				Cmd_FollowCycle_f(ent, 1);
+				Cmd_FollowCycle_f(ent, 1, qfalse);
 			}
 		}
 		else
@@ -2004,6 +2017,15 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 			CP(va("print \"%s team spectating is now disabled.\n\"", aTeams[i]));
 		}
 
+		return;
+	}
+
+	// Can't follow enemy players if not a spectator
+	if ((ent->client->sess.sessionTeam == TEAM_AXIS ||
+	     ent->client->sess.sessionTeam == TEAM_ALLIES) &&
+	    ent->client->sess.sessionTeam != level.clients[i].sess.sessionTeam)
+	{
+		CP("print \"Can't follow a player on an enemy team!\n\"");
 		return;
 	}
 
@@ -2018,6 +2040,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	{
 		return;
 	}
+
 	if (level.clients[i].ps.pm_flags & PMF_LIMBO)
 	{
 		return;
@@ -2030,12 +2053,6 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		return;
 	}
 
-	// first set them to spectator
-	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
-	{
-		SetTeam(ent, "spectator", qfalse, -1, -1, qfalse);
-	}
-
 	ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
 	ent->client->sess.spectatorClient = i;
 }
@@ -2045,7 +2062,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 Cmd_FollowCycle_f
 =================
 */
-void Cmd_FollowCycle_f(gentity_t *ent, int dir)
+void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 {
 	int clientnum;
 	int original;
@@ -2053,7 +2070,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 	// first set them to spectator
 	if ((ent->client->sess.spectatorState == SPECTATOR_NOT) && (!(ent->client->ps.pm_flags & PMF_LIMBO))) // for limbo state
 	{
-		SetTeam(ent, "spectator", qfalse, -1, -1, qfalse);
+		SetTeam(ent, "s", qfalse, -1, -1, qfalse);
 	}
 
 	if (dir != 1 && dir != -1)
@@ -2110,6 +2127,12 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 			continue;
 		}
 
+		// cycle through humans only?..
+		if (skipBots && (g_entities[clientnum].r.svFlags & SVF_BOT))
+		{
+			continue;
+		}
+
 		// this is good, we can use it
 		ent->client->sess.spectatorClient = clientnum;
 		ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
@@ -2118,6 +2141,56 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 	while (clientnum != original);
 
 	// leave it where it was
+}
+
+/**
+ * @brief Try to follow the same client as last time (before getting killed)
+ */
+qboolean G_FollowSame(gentity_t *ent)
+{
+	int clientnum = ent->client->sess.spectatorClient;
+
+	if (clientnum >= level.maxclients)
+	{
+		return qfalse;
+	}
+	if (clientnum < 0)
+	{
+		return qfalse;
+	}
+
+	// can only follow connected clients
+	if (level.clients[clientnum].pers.connected != CON_CONNECTED)
+	{
+		return qfalse;
+	}
+
+	// can't follow another spectator
+	if (level.clients[clientnum].sess.sessionTeam == TEAM_SPECTATOR)
+	{
+		return qfalse;
+	}
+
+	// couple extra checks for limbo mode
+	if (ent->client->ps.pm_flags & PMF_LIMBO)
+	{
+		if (level.clients[clientnum].sess.sessionTeam != ent->client->sess.sessionTeam)
+		{
+			return qfalse;
+		}
+	}
+
+	if (level.clients[clientnum].ps.pm_flags & PMF_LIMBO)
+	{
+		return qfalse;
+	}
+
+	if (!G_desiredFollow(ent, level.clients[clientnum].sess.sessionTeam))
+	{
+		return qfalse;
+	}
+
+	return qtrue;
 }
 
 /**
@@ -3307,7 +3380,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		return qfalse;
 	}
 
-	if (ent->client->pers.cmd.buttons & BUTTON_WALKING || (ent->client->ps.pm_flags & PMF_DUCKED))
+	if ((ent->client->pers.cmd.buttons & BUTTON_WALKING) || (ent->client->ps.pm_flags & PMF_DUCKED))
 	{
 		walking = qtrue;
 	}
@@ -3734,7 +3807,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 	// look for a guy to push
 #ifdef FEATURE_OMNIBOT
-	if (g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT))
+	if ((g_OmniBotFlags.integer & OBF_SHOVING) || !(ent->r.svFlags & SVF_BOT))
 	{
 #endif
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
@@ -4473,11 +4546,11 @@ void ClientCommand(int clientNum)
 	}
 	else if (Q_stricmp(cmd, "follownext") == 0)
 	{
-		Cmd_FollowCycle_f(ent, 1);
+		Cmd_FollowCycle_f(ent, 1, qfalse);
 	}
 	else if (Q_stricmp(cmd, "followprev") == 0)
 	{
-		Cmd_FollowCycle_f(ent, -1);
+		Cmd_FollowCycle_f(ent, -1, qfalse);
 	}
 	else if (Q_stricmp(cmd, "where") == 0)
 	{

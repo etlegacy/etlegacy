@@ -94,6 +94,7 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 	{ WP_AKIMBO_SILENCEDLUGER, WS_LUGER           },
 
 	{ WP_MOBILE_MG42_SET,      WS_MG42            }, // 47
+	{ WP_KNIFE_KABAR,          WS_KNIFE           }, // 48
 };
 
 // Get right stats index based on weapon id

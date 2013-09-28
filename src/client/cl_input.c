@@ -182,6 +182,102 @@ void IN_KeyUp(kbutton_t *b)
 	b->active = qfalse;
 }
 
+#ifdef CROUCH
+void IN_ToggleKeyDown(kbutton_t *b)
+{
+	int      k;
+	char     *c;
+	unsigned uptime;
+
+	c = Cmd_Argv(1);
+	if (c[0])
+	{
+		k = atoi(c);
+	}
+	else
+	{
+		k = -1;     // typed manually at the console for continuous down
+	}
+
+	if (k == b->down[0] || k == b->down[1])
+	{
+		return;     // repeating key
+	}
+
+	if (!b->down[0])
+	{
+		b->down[0] = k;
+	}
+	else if (!b->down[1])
+	{
+		b->down[1] = k;
+	}
+	else
+	{
+		Com_Printf("Three keys down for a button!\n");
+		return;
+	}
+
+	b->active = 1 - b->active;    // toggle
+	// save timestamp for partial frame summing
+	c      = Cmd_Argv(2);
+	uptime = atoi(c);
+	if (b->active)
+	{
+		b->downtime = uptime;
+	}
+	else
+	{
+		if (uptime)
+		{
+			b->msec += uptime - b->downtime;
+		}
+		else
+		{
+			b->msec += frame_msec / 2;
+		}
+	}
+	b->wasPressed = b->active;
+} // CROUCH
+
+void IN_ToggleKeyUp(kbutton_t *b)
+{
+	int  k;
+	char *c;
+
+	c = Cmd_Argv(1);
+	if (c[0])
+	{
+		k = atoi(c);
+	}
+	else
+	{
+		// typed manually at the console, assume for unsticking, so clear all
+		b->down[0] = b->down[1] = 0;
+		b->active  = qfalse;
+		return;
+	}
+
+	if (b->down[0] == k)
+	{
+		b->down[0] = 0;
+	}
+	else if (b->down[1] == k)
+	{
+		b->down[1] = 0;
+	}
+	else
+	{
+		return;     // key up without coresponding down (menu pass through)
+	}
+	if (b->down[0] || b->down[1])
+	{
+		return;     // some other key is still holding it down
+	}
+
+}
+#endif
+
 /*
 ===============
 CL_KeyState
@@ -230,14 +326,33 @@ float CL_KeyState(kbutton_t *key)
 	return val;
 }
 
+#ifdef CROUCH
+void IN_UpDown(void)
+{
+	kb[KB_DOWN].active = 0; IN_KeyDown(&kb[KB_UP]);
+}
+#else
 void IN_UpDown(void)
 {
 	IN_KeyDown(&kb[KB_UP]);
 }
+#endif
+
 void IN_UpUp(void)
 {
 	IN_KeyUp(&kb[KB_UP]);
 }
+
+#ifdef CROUCH
+void IN_DownDown(void)
+{
+	IN_ToggleKeyDown(&kb[KB_DOWN]);
+}
+void IN_DownUp(void)
+{
+	IN_ToggleKeyUp(&kb[KB_DOWN]);
+}
+#else
 void IN_DownDown(void)
 {
 	IN_KeyDown(&kb[KB_DOWN]);
@@ -246,6 +361,8 @@ void IN_DownUp(void)
 {
 	IN_KeyUp(&kb[KB_DOWN]);
 }
+#endif
+
 void IN_LeftDown(void)
 {
 	IN_KeyDown(&kb[KB_LEFT]);
@@ -532,7 +649,7 @@ void CL_KeyMove(usercmd_t *cmd)
 	side += movespeed * CL_KeyState(&kb[KB_MOVERIGHT]);
 	side -= movespeed * CL_KeyState(&kb[KB_MOVELEFT]);
 
-	if (cmd->buttons & BUTTON_ACTIVATE)
+	if (cmd->buttons & BUTTON_ACTIVATE && cl_activatelean->integer)
 	{
 		if (side > 0)
 		{
@@ -545,6 +662,7 @@ void CL_KeyMove(usercmd_t *cmd)
 
 		side = 0;   // disallow the strafe when holding 'activate'
 	}
+
 
 	up += movespeed * CL_KeyState(&kb[KB_UP]);
 	up -= movespeed * CL_KeyState(&kb[KB_DOWN]);
@@ -672,7 +790,11 @@ void CL_JoystickMove(usercmd_t *cmd)
 		anglespeed = 0.001 * cls.frametime;
 	}
 
+#ifdef PANDORA
+	if (kb[KB_STRAFE].active)
+#else
 	if (!kb[KB_STRAFE].active)
+#endif
 	{
 		cl.viewangles[YAW] += anglespeed * cl_yawspeed->value * cl.joystickAxis[AXIS_SIDE];
 	}
@@ -734,12 +856,20 @@ void CL_MouseMove(usercmd_t *cmd)
 	if (cl.snap.ps.persistant[PERS_HWEAPON_USE])
 	{
 		mx *= 2.5; //(accelSensitivity * 0.1);
+#ifdef PANDORA
+		my *= 1.25f; //(accelSensitivity * 0.075);
+#else
 		my *= 2; //(accelSensitivity * 0.075);
+#endif
 	}
 	else
 	{
 		mx *= accelSensitivity;
+#ifdef PANDORA
+		my *= accelSensitivity * 0.5f;
+#else
 		my *= accelSensitivity;
+#endif
 	}
 
 	if (!mx && !my)

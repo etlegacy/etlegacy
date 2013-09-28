@@ -1751,6 +1751,7 @@ void CG_Debriefing_Startup(void)
 	// LMS . display screen with our puppets first?
 	default:
 		cgs.dbMode = 0;
+		break;
 	}
 }
 

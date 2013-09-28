@@ -599,7 +599,7 @@ R_SetFrameFog
 */
 void R_SetFrameFog(void)
 {
-	// Arnout: new style global fog transitions
+	// new style global fog transitions
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
@@ -738,7 +738,7 @@ SetFarClip
 */
 static void SetFarClip(void)
 {
-	float farthestCornerDistance = 0;
+	float farthestCornerDistance;
 	int   i;
 
 	// if not rendering the world (icons, menus, etc)
@@ -753,7 +753,6 @@ static void SetFarClip(void)
 	// distances, but setting it back to 0 uses the map (or procedurally generated) default
 	if (r_zfar->value)
 	{
-
 		tr.viewParms.zFar = r_zfar->integer;
 		R_SetFrameFog();
 
@@ -1229,16 +1228,15 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
  */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
-	float    shortest = 100000000;
-	int      entityNum;
-	int      numTriangles;
-	shader_t *shader;
-	int      fogNum;
-	int      frontFace;
-	int      dlighted;
-	vec4_t   clip, eye;
-	int      i;
-	//unsigned int pointOr  = 0;
+	float        shortest = 100000000;
+	int          entityNum;
+	int          numTriangles;
+	shader_t     *shader;
+	int          fogNum;
+	int          frontFace;
+	int          dlighted;
+	vec4_t       clip, eye;
+	int          i;
 	unsigned int pointAnd = (unsigned int)~0;
 	int          j;
 	unsigned int pointFlags;
@@ -1269,7 +1267,6 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			}
 		}
 		pointAnd &= pointFlags;
-		//pointOr  |= pointFlags;
 	}
 
 	// trivially reject
@@ -1689,6 +1686,7 @@ void R_AddEntitySurfaces(void)
 			break;
 		default:
 			ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad reType");
+			break;
 		}
 	}
 }
@@ -1703,7 +1701,7 @@ void R_GenerateDrawSurfs(void)
 	// set the projection matrix (and view frustum) here
 	// first with max or fog distance so we can have proper
 	// arbitrary frustum farplane culling optimization
-	if (tr.refdef.rdflags & RDF_NOWORLDMODEL || tr.world == NULL)
+	if ((tr.refdef.rdflags & RDF_NOWORLDMODEL) || tr.world == NULL)
 	{
 		VectorSet(tr.viewParms.visBounds[0], MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);
 		VectorSet(tr.viewParms.visBounds[1], MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD);

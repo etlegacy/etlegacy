@@ -7,8 +7,14 @@
 #------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.3)
 
+# FIXME: rename GLES to FEATURE_RENDERER_GLES
+# FIXME: rename CROUCH to FEATURE_CROUCH
+# FIXME: HAVE_GLES -> FEATURE_RENDERER_GLES
+# FIXME: currently eglport.c and eglport.h are disabled by macro HAVE_GLES for non GLES builds 
+#        -> adjust the FILE sources and remove the macro from above files
+
 project(ETLEGACY C CXX)
-set(ETLEGACY_VERSION "2.71rc1-dirty")
+set(ETLEGACY_VERSION "2.71rc2-dirty")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
@@ -25,6 +31,10 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
 option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
+option(PANDORA			"Set to ON if targeting an OpenPandora device"	${PANDORA})
+
+# Find the sed executable
+find_program(SED_EXECUTABLE sed)
 
 # Enable pk3 creation if zip executable is found. Download it on Windows
 find_program(ZIP_EXECUTABLE zip PATHS ${CMAKE_BINARY_DIR})
@@ -79,15 +89,19 @@ option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
+option(FEATURE_WINDOWS_CONSOLE		"Build win32 executables with Windows console"				ON)
+option(CROUCH	"Set to ON if you want Toggle Crouch"	${CROUCH})
 
-cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"	ON "BUNDLED_LIBS" OFF)
+option(GLES	"Set to ON if you want GLES renderer"	${GLES})
+
+cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"				ON "BUNDLED_LIBS" OFF)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (32-bit Windows or linux only)"	ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
 
 set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
-option(ET_KEY			"Copy etkey file (requires ET_FS_BASEPATH set)"				OFF)
-	
+cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"				ON "ET_FS_BASEPATH" OFF)
+
 #-----------------------------------------------------------------
 # Platform-specific settings
 #-----------------------------------------------------------------
@@ -95,24 +109,48 @@ option(ET_KEY			"Copy etkey file (requires ET_FS_BASEPATH set)"				OFF)
 message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
-	set(CMAKE_SYSTEM_PROCESSOR i386)
-	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
+	if(PANDORA)
+		set(CMAKE_SYSTEM_PROCESSOR arm)
+		message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
+	else()
+		set(CMAKE_SYSTEM_PROCESSOR i386)
+		message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
+	endif()
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 	
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+	if(PANDORA)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char")
+	else()
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+	endif()
 	
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
-	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
+	if(PANDORA)
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
+		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
+		set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
+	else()
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
+		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
+		set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
+	endif()
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
 	# optimization/debug flags
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
+	if(PANDORA)
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math -ftree-vectorize -Ofast")
+	else()
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
+	endif()
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
+	if(PANDORA)
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math -ftree-vectorize  -Ofast")
+	else()
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
+	endif()
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
@@ -139,9 +177,7 @@ if(UNIX)
 	if(NOT MSYS)
 		include(CheckCCompilerFlag)
 		check_c_compiler_flag("-fvisibility=hidden" SUPPORT_VISIBILITY)
-		if(SUPPORT_VISIBILITY)
-			# note: visibility support starts with  __GNUC__ >= 4
-			message(STATUS "Compiling with -fvisibility=hidden")
+		if(SUPPORT_VISIBILITY) # GCC 4+
 			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
@@ -172,6 +208,16 @@ if(NOT CMAKE_SYSTEM MATCHES "Darwin")
 		message(STATUS "Warning: processor architecture not recognised (${CMAKE_SYSTEM_PROCESSOR})")
 	endif()
 endif(NOT CMAKE_SYSTEM MATCHES "Darwin")
+
+if(PANDORA)
+	add_definitions(-DPANDORA -DARM -DNEON -DAUTOAIM)
+endif()
+if (GLES)
+	add_definitions(-DHAVE_GLES) 
+endif()
+if (CROUCH)
+	add_definitions(-DCROUCH)
+endif()
 
 #-----------------------------------------------------------------
 # Sources
@@ -322,6 +368,12 @@ FILE(GLOB RENDERER1_FILES
 	"src/renderer/*.h"
 )
 
+FILE(GLOB RENDERERGLES_FILES
+	"src/rendererGLES/*.c"
+	"src/rendererGLES/*.h"
+	"src/sdl/eglport.c"
+)
+
 FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.c"
 	"src/renderer2/*.cpp"
@@ -329,7 +381,7 @@ FILE(GLOB RENDERER2_FILES
 )
 
 FILE(GLOB RENDERER2_SHADERS
-	"etmain/glsl/*.glsl"
+	"src/renderer2/glsl/*.glsl"
 )
 
 FILE(GLOB IRC_CLIENT_FILES
@@ -381,24 +433,31 @@ endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JP
 # Client features
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	find_package(OpenGL REQUIRED)
-	list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
-	include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
+	if(GLES)
+		list(APPEND RENDERER_LIBRARIES -lEGL -lGLES_CM)
+		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
+	else()
+		find_package(OpenGL REQUIRED)
+		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
+		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
+	endif()
 
 	if(NOT WIN32) # Dependency of GLEW and SDL_syswm.h
 		find_package(X11 REQUIRED)
 		include_directories(${X11_INCLUDE_DIR})
 	endif(NOT WIN32)
 
-	if(NOT BUNDLED_GLEW)
-		find_package(GLEW REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${GLEW_LIBRARY})
-		include_directories(SYSTEM ${GLEW_INCLUDE_PATH})
-	else()
-		list(APPEND RENDERER_LIBRARIES ${BUNDLED_GLEW_LIBRARIES})
-		include_directories(SYSTEM ${BUNDLED_GLEW_INCLUDE_DIR})
-		add_definitions(-DBUNDLED_GLEW)
-		add_definitions(-DGLEW_STATIC)
+	if(NOT GLES)
+		if(NOT BUNDLED_GLEW)
+			find_package(GLEW REQUIRED)
+			list(APPEND RENDERER_LIBRARIES ${GLEW_LIBRARY})
+			include_directories(SYSTEM ${GLEW_INCLUDE_PATH})
+		else()
+			list(APPEND RENDERER_LIBRARIES ${BUNDLED_GLEW_LIBRARIES})
+			include_directories(SYSTEM ${BUNDLED_GLEW_INCLUDE_DIR})
+			add_definitions(-DBUNDLED_GLEW)
+			add_definitions(-DGLEW_STATIC)
+		endif()
 	endif()
 
 	if(NOT BUNDLED_SDL)
@@ -588,7 +647,7 @@ if(FEATURE_CURSES)
 endif(FEATURE_CURSES)
 
 #-----------------------------------------------------------------
-# Groups for Visual Studio (Windows)
+# Groups for Visual Studio (Windows) and win32 definitions
 #-----------------------------------------------------------------
 if(WIN32)
 	source_group("Source Files\\Client" FILES ${CLIENT_FILES})
@@ -603,6 +662,9 @@ if(WIN32)
 	source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
 	source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
 	source_group("Shaders" FILES ${RENDERER2_SHADERS})
+	if(FEATURE_WINDOWS_CONSOLE)
+		add_definitions( "-DUSE_WINDOWS_CONSOLE" )
+	endif(FEATURE_WINDOWS_CONSOLE)
 endif(WIN32)
 
 #-----------------------------------------------------------------
@@ -621,13 +683,19 @@ if(BUILD_CLIENT)
 		set(REND_LIBTYPE STATIC)
 	endif(RENDERER_DYNAMIC)
 	if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
-		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+		if(GLES)
+			add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+		else()
+			add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+		endif()
 		if(BUNDLED_SDL)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_sdl)
 		endif(BUNDLED_SDL)
-		if(BUNDLED_GLEW)
+		if(NOT GLES)
+			if(BUNDLED_GLEW)
 				add_dependencies(renderer_opengl1_${ARCH} bundled_glew)
-		endif(BUNDLED_GLEW)
+			endif(BUNDLED_GLEW)
+		endif(NOT GLES)
 		if(BUNDLED_JPEG)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
 		endif(BUNDLED_JPEG)
@@ -635,18 +703,50 @@ if(BUILD_CLIENT)
 		set_target_properties(renderer_opengl1_${ARCH}
 			PROPERTIES COMPILE_DEFINITIONS "USE_ICON"
 		)
-		install(TARGETS renderer_opengl1_${ARCH}
-			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-		)
+		# install the dynamic lib only
+		if(RENDERER_DYNAMIC)
+			install(TARGETS renderer_opengl1_${ARCH}
+				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+			)
+		endif(RENDERER_DYNAMIC)
 		if(NOT RENDERER_DYNAMIC)
 			list(APPEND CLIENT_LIBRARIES renderer_opengl1_${ARCH})
-		endif()
-	endif()
+		endif(NOT RENDERER_DYNAMIC)
+	endif(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 	if(FEATURE_RENDERER2)
 		if(MSVC)
 			list(APPEND RENDERER2_FILES ${RENDERER2_SHADERS})
 		endif(MSVC)
+		
+		#This is where we generate the fallback shaders source file.
+		if(SED_EXECUTABLE)
+			SET(SHADER_OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/glsl/tr_glslsources.c")
+			FILE(READ "src/renderer2/glsl/copyright.txt" SHADER_SOURCES)
+			SET(SHADER_SOURCES "${SHADER_SOURCES}\n/* This file was generated by CMake do not modify as it will get overwritten */\n\n#include \"${CMAKE_CURRENT_SOURCE_DIR}/src/renderer2/tr_local.h\"\n\n")
+			FOREACH (SHAD ${RENDERER2_SHADERS})
+				GET_FILENAME_COMPONENT(SHAD_NAME ${SHAD} NAME_WE)
+				string(TOLOWER ${SHAD_NAME} SHAD_NAME_LOW)
+				set(SHAD_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/glsl)
+				execute_process(COMMAND ${SED_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/glsl2c.sed ${SHAD}
+					WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+					OUTPUT_VARIABLE OUT_RES
+					RESULT_VARIABLE RES_VAR
+				)
+				IF(SHADER_FUNCTION)
+					SET(SHADER_FUNCTION "${SHADER_FUNCTION}\telse if(!Q_stricmp(name,\"${SHAD_NAME_LOW}\"))\n\t{\n\t\treturn fallbackShader_${SHAD_NAME_LOW};\n\t}\n")
+				ELSE(SHADER_FUNCTION)
+					SET(SHADER_FUNCTION "const char* GetFallbackShader(const char *name)\n{\n\tif(!Q_stricmp(name,\"${SHAD_NAME_LOW}\"))\n\t{\n\t\treturn fallbackShader_${SHAD_NAME_LOW};\n\t}\n")
+				ENDIF(SHADER_FUNCTION)
+				SET(SHADER_SOURCES "${SHADER_SOURCES}const char *fallbackShader_${SHAD_NAME_LOW} =\n${OUT_RES}\n")
+			ENDFOREACH(SHAD)
+			SET(SHADER_FUNCTION "${SHADER_FUNCTION}\treturn NULL;\n}")
+			FILE(WRITE "${SHADER_OUTPUT_FILE}" "${SHADER_SOURCES}${SHADER_FUNCTION}")
+			LIST(APPEND RENDERER2_FILES "${SHADER_OUTPUT_FILE}")
+		else(SED_EXECUTABLE)
+			MESSAGE("The fallbackshader source file was not created due to \"sed\" missing. The build will fail. :(")
+		endif(SED_EXECUTABLE)
+		
 		# increased default hunkmegs value
 		add_definitions(-DFEATURE_INC_HUNKMEGS)
 		add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON})
@@ -672,7 +772,12 @@ if(BUILD_CLIENT)
 		endif()
 	endif(FEATURE_RENDERER2)
 	
-	add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	if(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	else(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
+	
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
 	endif(BUNDLED_SDL)
@@ -688,6 +793,7 @@ if(BUILD_CLIENT)
 		${CLIENT_LIBRARIES}
 		${SDL_LIBRARIES}
 	)
+	
 	set_target_properties(etl
 		PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
 	install(TARGETS etl
@@ -695,7 +801,11 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
-	add_executable(etlded WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+	if(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etlded WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+	else(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etlded ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+	endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
@@ -808,7 +918,7 @@ if(INSTALL_OMNIBOT AND BUILD_MOD)
 		)
 	elseif(WIN32)
 		execute_process(
-			COMMAND ${UNZIP_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
+			COMMAND ${UNZIP_EXECUTABLE} -u ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
 		)
 	endif()
@@ -817,6 +927,15 @@ if(INSTALL_OMNIBOT AND BUILD_MOD)
 	install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
 	)
+	
+	# ensure unique permissions and bot user path has write permission set
+	if(UNIX)
+		execute_process(
+			COMMAND chmod -R 644 "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot/"
+			WORKING_DIRECTORY "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
+		)
+	endif(UNIX)
+	
 endif(INSTALL_OMNIBOT AND BUILD_MOD)
 
 #-----------------------------------------------------------------

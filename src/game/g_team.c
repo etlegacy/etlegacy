@@ -120,7 +120,9 @@ void QDECL PrintMsg(gentity_t *ent, const char *fmt, ...)
 
 	// double quotes are bad
 	while ((p = strchr(msg, '"')) != NULL)
+	{
 		*p = '\'';
+	}
 
 	trap_SendServerCommand(((ent == NULL) ? -1 : ent - g_entities), va("print \"%s\"", msg));
 }
@@ -335,6 +337,7 @@ void Team_ReturnFlagSound(gentity_t *ent, int team)
 void Team_ReturnFlag(gentity_t *ent)
 {
 	int team = ent->item->giTag == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES;
+
 	Team_ReturnFlagSound(ent, team);
 	Team_ResetFlag(ent);
 	PrintMsg(NULL, "The %s flag has returned!\n", TeamName(team));
@@ -442,6 +445,7 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	if (cl->sess.sessionTeam == TEAM_AXIS)
 	{
 		gentity_t *pm = G_PopupMessage(PM_OBJECTIVE);
+
 		pm->s.effect3Time = G_StringIndex(ent->message);
 		pm->s.effect2Time = TEAM_AXIS;
 		pm->s.density     = 0; // 0 = stolen
@@ -458,6 +462,7 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	else
 	{
 		gentity_t *pm = G_PopupMessage(PM_OBJECTIVE);
+
 		pm->s.effect3Time = G_StringIndex(ent->message);
 		pm->s.effect2Time = TEAM_ALLIES;
 		pm->s.density     = 0; // 0 = stolen
@@ -476,7 +481,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	// reset player disguise on stealing docs
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-
 
 	if (team == TEAM_AXIS)
 	{
@@ -552,15 +556,12 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 {
 	gentity_t *spot;
 	gentity_t *spots[MAX_TEAM_SPAWN_POINTS];
-
-	int count, closest;
-	int i = 0;
-
-	char  *classname;
-	float shortest, tmp;
-
-	vec3_t target;
-	vec3_t farthest;
+	int       count, closest;
+	int       i = 0;
+	char      *classname;
+	float     shortest, tmp;
+	vec3_t    target;
+	vec3_t    farthest;
 
 	if (team == TEAM_AXIS)
 	{
@@ -712,7 +713,7 @@ void TeamplayInfoMessage(team_t team)
 {
 	char      entry[1024];
 	char      string[1400];
-	int       stringlength;
+	int       stringlength = 0;
 	int       i, j;
 	gentity_t *player;
 	int       cnt;
@@ -721,15 +722,13 @@ void TeamplayInfoMessage(team_t team)
 	char      *tinfo;
 
 	// send the latest information on all clients
-	string[0]    = 0;
-	stringlength = 0;
+	string[0] = 0;
 
 	for (i = 0, cnt = 0; i < level.numConnectedClients; i++)
 	{
 		player = g_entities + level.sortedClients[i];
 		if (player->inuse && player->client->sess.sessionTeam == team)
 		{
-
 			// If in LIMBO, don't show followee's health
 			if (player->client->ps.pm_flags & PMF_LIMBO)
 			{
@@ -1036,7 +1035,6 @@ void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace);
 
 void checkpoint_use_think(gentity_t *self)
 {
-
 	self->count2 = -1;
 
 	if (self->count == TEAM_AXIS)
@@ -1147,7 +1145,6 @@ void checkpoint_think(gentity_t *self)
 {
 	switch (self->s.frame)
 	{
-
 	case WCP_ANIM_NOFLAG:
 		break;
 	case WCP_ANIM_RAISE_AXIS:
@@ -1174,7 +1171,6 @@ void checkpoint_think(gentity_t *self)
 		break;
 	default:
 		break;
-
 	}
 
 	if (self->spawnflags & SPAWNPOINT)
@@ -1521,11 +1517,9 @@ void SP_team_WOLF_checkpoint(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-===================
-Team_ClassForString
-===================
-*/
+/**
+ * @note Unused
+ */
 int Team_ClassForString(char *string)
 {
 	if (!Q_stricmp(string, "soldier"))
@@ -1539,10 +1533,6 @@ int Team_ClassForString(char *string)
 	else if (!Q_stricmp(string, "engineer"))
 	{
 		return PC_ENGINEER;
-	}
-	else if (!Q_stricmp(string, "lieutenant"))         // FIXME: remove from missionpack
-	{
-		return PC_FIELDOPS;
 	}
 	else if (!Q_stricmp(string, "fieldops"))
 	{
@@ -1563,7 +1553,6 @@ OSP
 
 char      *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^4Allies^7", "Spectators" };
 team_info teamInfo[TEAM_NUM_TEAMS];
-
 
 // Resets a team's settings
 void G_teamReset(int team_num, qboolean fClearSpecLock)
@@ -1635,10 +1624,9 @@ int QDECL G_SortPlayersByXP(const void *a, const void *b)
 // Shuffle active players onto teams
 void G_shuffleTeams(void)
 {
-	int i, cTeam; //, cMedian = level.numNonSpectatorClients / 2;
-	int cnt = 0;
-	int sortClients[MAX_CLIENTS];
-
+	int       i, cTeam; //, cMedian = level.numNonSpectatorClients / 2;
+	int       cnt = 0;
+	int       sortClients[MAX_CLIENTS];
 	gclient_t *cl;
 
 	G_teamReset(TEAM_AXIS, qtrue);
@@ -1711,6 +1699,7 @@ qboolean G_checkReady(void)
 	if (level.numNonSpectatorClients >= match_minplayers.integer && level.voteInfo.numVotingClients > 0)
 	{
 		int i;
+
 		// Step through all active clients
 		notReady = 0;
 		for (i = 0; i < level.numConnectedClients; i++)
@@ -1776,10 +1765,8 @@ qboolean G_readyMatchState(void)
 // Check if we need to reset the game state due to an empty team
 void G_verifyMatchState(int nTeam)
 {
-	gamestate_t gs = g_gamestate.integer;
-
 	if ((level.lastRestartTime + 1000) < level.time && (nTeam == TEAM_ALLIES || nTeam == TEAM_AXIS) &&
-	    (gs == GS_PLAYING || gs == GS_WARMUP_COUNTDOWN || gs == GS_INTERMISSION))
+	    (g_gamestate.integer == GS_PLAYING || g_gamestate.integer == GS_WARMUP_COUNTDOWN || g_gamestate.integer == GS_INTERMISSION))
 	{
 		if (TeamCount(-1, nTeam) == 0)
 		{

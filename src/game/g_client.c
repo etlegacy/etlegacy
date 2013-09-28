@@ -669,17 +669,23 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			TossClientItems(ent);
 		}
 
-		ent->client->sess.spectatorClient = startclient;
-		Cmd_FollowCycle_f(ent, 1);  // get fresh spectatorClient
-
-		if (ent->client->sess.spectatorClient == startclient)
+		if (G_FollowSame(ent))
 		{
-			// No one to follow, so just stay put
-			ent->client->sess.spectatorState = SPECTATOR_FREE;
+			ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
 		}
 		else
 		{
-			ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
+			ent->client->sess.spectatorClient = startclient;
+			Cmd_FollowCycle_f(ent, 1, qfalse); // get fresh spectatorClient
+			if (ent->client->sess.spectatorClient == startclient)
+			{
+				// No one to follow, so just stay put
+				ent->client->sess.spectatorState = SPECTATOR_FREE;
+			}
+			else
+			{
+				ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
+			}
 		}
 
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)
@@ -697,11 +703,9 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		{
 			cl = &level.clients[level.sortedClients[i]];
 
-			if (((cl->ps.pm_flags & PMF_LIMBO) ||
-			     (cl->sess.sessionTeam == TEAM_SPECTATOR && cl->sess.spectatorState == SPECTATOR_FOLLOW)) &&
-			    cl->sess.spectatorClient == ent - g_entities)     //ent->s.number ) {
+			if ((cl->ps.pm_flags & PMF_LIMBO) && cl->sess.spectatorClient == ent - g_entities)
 			{
-				Cmd_FollowCycle_f(&g_entities[level.sortedClients[i]], 1);
+				Cmd_FollowCycle_f(&g_entities[level.sortedClients[i]], 1, qfalse);
 			}
 		}
 	}
@@ -962,7 +966,14 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	client->ps.weapons[0] = 0;
 	client->ps.weapons[1] = 0;
 
-	AddWeaponToPlayer(client, WP_KNIFE, 1, 0, qtrue);
+	if (client->sess.sessionTeam == TEAM_AXIS)
+	{
+		AddWeaponToPlayer(client, WP_KNIFE, 1, 0, qtrue);
+	}
+	else
+	{
+		AddWeaponToPlayer(client, WP_KNIFE_KABAR, 1, 0, qtrue);
+	}
 
 	client->ps.weaponstate = WEAPON_READY;
 
@@ -998,7 +1009,6 @@ void SetWolfSpawnWeapons(gclient_t *client)
 				}
 				AddWeaponToPlayer(client, WP_LANDMINE, GetAmmoTableData(WP_LANDMINE)->defaultStartingAmmo, GetAmmoTableData(WP_LANDMINE)->defaultStartingClip, qfalse);
 				AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 4, qfalse);
-
 			}
 			else
 			{
@@ -2299,7 +2309,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		if (!strcmp(cs_ip, "localhost"))
 		{
 			// give bots country flag of the server location g_countryflags 2
-			if (isBot && g_countryflags.integer & CF_BOTS)
+			if (isBot && (g_countryflags.integer & CF_BOTS))
 			{
 				char          server_ip[MAX_IP4_LENGTH];
 				unsigned int  ret;
@@ -3157,10 +3167,10 @@ void ClientDisconnect(int clientNum)
 		{
 			StopFollowing(flag);
 		}
-		if (flag->client->ps.pm_flags & PMF_LIMBO
+		if ((flag->client->ps.pm_flags & PMF_LIMBO)
 		    && flag->client->sess.spectatorClient == clientNum)
 		{
-			Cmd_FollowCycle_f(flag, 1);
+			Cmd_FollowCycle_f(flag, 1, qfalse);
 		}
 	}
 

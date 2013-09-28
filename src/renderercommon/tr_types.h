@@ -452,7 +452,12 @@ typedef struct polyBuffer_s
 	byte color[MAX_PB_VERTS][4];
 	int numVerts;
 
+#ifdef HAVE_GLES
+	unsigned short indicies[MAX_PB_INDICIES];
+#else
 	unsigned int indicies[MAX_PB_INDICIES];
+#endif
+
 	int numIndicies;
 
 	qhandle_t shader;

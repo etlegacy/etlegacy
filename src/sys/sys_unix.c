@@ -34,8 +34,10 @@
 
 #ifndef DEDICATED
 #    ifdef BUNDLED_SDL
+#        include "SDL.h"
 #        include "SDL_video.h"
 #    else
+#        include <SDL/SDL.h>
 #        include <SDL/SDL_video.h>
 #    endif
 #endif
@@ -594,7 +596,7 @@ void Sys_Sleep(int msec)
 }
 
 /**
- * @brief Display an error message
+ * @brief Displays an error message and writes the error into crashlog.txt
  * @param[in] error Error String
  */
 void Sys_ErrorDialog(const char *error)
@@ -605,18 +607,32 @@ void Sys_ErrorDialog(const char *error)
 	const char   *homepath = Cvar_VariableString("fs_homepath");
 	const char   *gamedir  = Cvar_VariableString("fs_gamedir");
 	const char   *fileName = "crashlog.txt";
+	char         *dirpath  = FS_BuildOSPath(homepath, gamedir, "");
 	char         *ospath   = FS_BuildOSPath(homepath, gamedir, fileName);
 
 	Sys_Print(va("%s\n", error));
 
 #ifndef DEDICATED
+	// We may have grabbed input devices. Need to release.
+	if (SDL_WasInit(SDL_INIT_VIDEO))
+	{
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+	}
+
 	Sys_Dialog(DT_ERROR, va("%s\nSee \"%s\" for details.\n", error, ospath), "Error");
 #endif
 
 	// Make sure the write path for the crashlog exists...
-	if (FS_CreatePath(ospath))
+	// check homepath
+	if (!Sys_Mkdir(homepath))
 	{
-		Com_Printf("ERROR: couldn't create path '%s' for crash log.\n", ospath);
+		Com_Printf("ERROR: couldn't create path '%s' to write file '%s'.\n", homepath, ospath);
+		return;
+	}
+	// check gamedir (inside homepath)
+	if (!Sys_Mkdir(dirpath))
+	{
+		Com_Printf("ERROR: couldn't create path '%s' to write file '%s'.\n", dirpath, ospath);
 		return;
 	}
 
@@ -626,7 +642,7 @@ void Sys_ErrorDialog(const char *error)
 	f = open(ospath, O_CREAT | O_TRUNC | O_WRONLY, 0640);
 	if (f == -1)
 	{
-		Com_Printf("ERROR: couldn't open %s\n", fileName);
+		Com_Printf("ERROR: couldn't open '%s'\n", fileName);
 		return;
 	}
 
@@ -635,7 +651,7 @@ void Sys_ErrorDialog(const char *error)
 	{
 		if (write(f, buffer, size) != size)
 		{
-			Com_Printf("ERROR: couldn't fully write to %s\n", fileName);
+			Com_Printf("ERROR: couldn't fully write to '%s'\n", fileName);
 			break;
 		}
 	}

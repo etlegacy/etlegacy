@@ -94,13 +94,11 @@ R_CullModel
 */
 static int R_CullModel(mdcHeader_t *header, trRefEntity_t *ent)
 {
-	vec3_t     bounds[2];
-	md3Frame_t *oldFrame, *newFrame;
-	int        i;
-
+	vec3_t bounds[2];
+	int    i;
 	// compute frame pointers
-	newFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.frame;
-	oldFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.oldframe;
+	md3Frame_t *newFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.frame;
+	md3Frame_t *oldFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.oldframe;
 
 	// cull bounding sphere ONLY if this is not an upscaled entity
 	if (!ent->e.nonNormalizedAxes)
@@ -185,8 +183,7 @@ R_ComputeLOD
 */
 static int R_ComputeLOD(trRefEntity_t *ent)
 {
-	md3Frame_t *frame;
-	int        lod;
+	int lod;
 
 	if (tr.currentModel->numLods < 2)
 	{
@@ -195,9 +192,10 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 	}
 	else
 	{
-		float projectedRadius;
-		float radius;
-		float flod;
+		float      projectedRadius;
+		float      radius;
+		float      flod;
+		md3Frame_t *frame;
 
 		// multiple LODs exist, so compute projected bounding sphere
 		// and use that as a criteria for selecting LOD
@@ -324,10 +322,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 	int          cull;
 	int          lod;
 	int          fogNum;
-	qboolean     personalModel;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 
 	if (ent->e.renderfx & RF_WRAP_FRAMES)
 	{

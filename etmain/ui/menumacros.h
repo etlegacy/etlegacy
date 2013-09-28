@@ -395,6 +395,61 @@
 		tooltip EDITFIELDLEFT_TOOLTIP                           \
 	}
 
+#define EDITFIELDLEFTACTION(EDITFIELDLEFTACTION_X, EDITFIELDLEFTACTION_Y, EDITFIELDLEFTACTION_W, EDITFIELDLEFTACTION_H, EDITFIELDLEFTACTION_TEXT, EDITFIELDLEFTACTION_TEXT_SCALE, EDITFIELDLEFTACTION_TEXT_ALIGN_Y, EDITFIELDLEFTACTION_CVAR, EDITFIELDLEFTACTION_MAXCHARS, EDITFIELDLEFTACTION_MAXPAINTCHARS, EDITFIELDLEFTACTION_ACTION, EDITFIELDLEFTACTION_TOOLTIP)   \
+    itemDef {                                                           \
+		name            "efleft" ## EDITFIELDLEFTACTION_TEXT                    \
+		group GROUP_NAME                                      \
+		rect $evalfloat(EDITFIELDLEFTACTION_X) $evalfloat(EDITFIELDLEFTACTION_Y) $evalfloat(EDITFIELDLEFTACTION_W) $evalfloat(EDITFIELDLEFTACTION_H) \
+		type ITEM_TYPE_EDITFIELD                             \
+		text EDITFIELDLEFTACTION_TEXT                              \
+		textfont UI_FONT_COURBD_21                               \
+		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
+		textscale EDITFIELDLEFTACTION_TEXT_SCALE                        \
+		textaligny EDITFIELDLEFTACTION_TEXT_ALIGN_Y                      \
+		forecolor       .6 .6 .6 1                                      \
+		cvar EDITFIELDLEFTACTION_CVAR                              \
+		maxChars EDITFIELDLEFTACTION_MAXCHARS                          \
+		maxPaintChars EDITFIELDLEFTACTION_MAXPAINTCHARS                     \
+		visible         1                                               \
+		tooltip EDITFIELDLEFTACTION_TOOLTIP                           \
+		accept {                                                        \
+			EDITFIELDLEFTACTION_ACTION                               \
+		}                                                            \
+	}
+
+#define EDITFIELDSIMPLE(EDITFIELDSIMPLE_X, EDITFIELDSIMPLE_Y, EDITFIELDSIMPLE_W, EDITFIELDSIMPLE_H, EDITFIELDSIMPLE_TEXT, EDITFIELDSIMPLE_TEXT_SCALE, EDITFIELDSIMPLE_TEXT_ALIGN_Y, EDITFIELDSIMPLE_CVAR, EDITFIELDSIMPLE_MAXCHARS, EDITFIELDSIMPLE_MAXPAINTCHARS, EDITFIELDSIMPLE_ACCEPT, EDITFIELDSIMPLE_TOOLTIP)   \
+    itemDef {                                                           \
+		name        "efsimpleback" ## EDITFIELDSIMPLE_TEXT                            \
+		group GROUP_NAME                                          \
+		rect $evalfloat(EDITFIELDSIMPLE_X) $evalfloat(EDITFIELDSIMPLE_Y) $evalfloat(EDITFIELDSIMPLE_W) $evalfloat(EDITFIELDSIMPLE_H) \
+		style WINDOW_STYLE_FILLED                                 \
+		backcolor   .5 .5 .5 .2                                         \
+		visible     1                                                   \
+		decoration                                                      \
+	}                                                                   \
+                                                                        \
+    itemDef {                                                           \
+		name            "efsimple" ## EDITFIELDSIMPLE_TEXT              \
+		group GROUP_NAME                                      \
+		rect $evalfloat(EDITFIELDSIMPLE_X) $evalfloat(EDITFIELDSIMPLE_Y) $evalfloat(EDITFIELDSIMPLE_W) $evalfloat(EDITFIELDSIMPLE_H) \
+		type ITEM_TYPE_EDITFIELD                             \
+		text EDITFIELDSIMPLE_TEXT                                  \
+		textfont UI_FONT_COURBD_21                               \
+		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
+		textscale EDITFIELDSIMPLE_TEXT_SCALE                            \
+		textalign ITEM_ALIGN_LEFT								\
+		textaligny EDITFIELDSIMPLE_TEXT_ALIGN_Y                          \
+		forecolor       .6 .6 .6 1                                      \
+		cvar EDITFIELDSIMPLE_CVAR                                  \
+		maxChars EDITFIELDSIMPLE_MAXCHARS                              \
+		maxPaintChars EDITFIELDSIMPLE_MAXPAINTCHARS                         \
+		visible         1                                               \
+		tooltip EDITFIELDSIMPLE_TOOLTIP                               \
+		accept {                                                        \
+			EDITFIELDSIMPLE_ACCEPT                               \
+		}                                                         \
+	}  
+
 #define NUMERICFIELD(NUMERICFIELD_X, NUMERICFIELD_Y, NUMERICFIELD_W, NUMERICFIELD_H, NUMERICFIELD_TEXT, NUMERICFIELD_TEXT_SCALE, NUMERICFIELD_TEXT_ALIGN_Y, NUMERICFIELD_CVAR, NUMERICFIELD_MAXCHARS, NUMERICFIELD_TOOLTIP)   \
     itemDef {                                                           \
 		name        "nfback" ## NUMERICFIELD_TEXT                         \

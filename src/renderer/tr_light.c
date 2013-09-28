@@ -74,13 +74,13 @@ void R_CullDlights(void)
 	int      i, numDlights, dlightBits;
 	dlight_t *dl;
 
-	/* limit */
+	// limit
 	if (tr.refdef.num_dlights > MAX_DLIGHTS)
 	{
 		tr.refdef.num_dlights = MAX_DLIGHTS;
 	}
 
-	/* walk dlight list */
+	// walk dlight list
 	numDlights = 0;
 	dlightBits = 0;
 	for (i = 0, dl = tr.refdef.dlights; i < tr.refdef.num_dlights; i++, dl++)
@@ -92,10 +92,10 @@ void R_CullDlights(void)
 		}
 	}
 
-	/* reset count */
+	// reset count
 	tr.refdef.num_dlights = numDlights;
 
-	/* set bits */
+	// set bits
 	tr.refdef.dlightBits = dlightBits;
 }
 
@@ -149,7 +149,6 @@ void R_DlightBmodel(bmodel_t *bmodel)
 	//		meaning, shouldn't ->needDlights be changed to an int rather than a qbool?
 
 	tr.currentEntity->needDlights = mask;
-
 
 	// set the dlight bits in all the surfaces
 	for (i = 0 ; i < bmodel->numSurfaces ; i++)
@@ -295,9 +294,9 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 		VectorMA(direction, factor, normal, direction);
 
 		// test code
-		//%	if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) && i == 0 )
-		//%		ri.Printf( PRINT_ALL, "lat: %3d lng: %3d dir: %2.3f %2.3f %2.3f\n",
-		//%			data[ 7 ], data[ 8 ], normal[ 0 ], normal[ 1 ], normal[ 2 ] );
+		//if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) && i == 0 )
+		//  ri.Printf( PRINT_ALL, "lat: %3d lng: %3d dir: %2.3f %2.3f %2.3f\n",
+		//  data[ 7 ], data[ 8 ], normal[ 0 ], normal[ 1 ], normal[ 2 ] );
 	}
 
 	if (totalFactor > 0 && totalFactor < 0.99)
@@ -323,7 +322,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	VectorNormalize2(direction, ent->lightDir);
 
 	// debug hack
-	//%	VectorSubtract( vec3_origin, direction, ent->lightDir );
+	//VectorSubtract( vec3_origin, direction, ent->lightDir );
 }
 
 /*
@@ -411,9 +410,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	}
 	else
 	{
-		//%	ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
-		//%	ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
-		//%	VectorCopy( tr.sunDirection, ent->lightDir );
+		//ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
+		//ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
+		//VectorCopy( tr.sunDirection, ent->lightDir );
 		ent->ambientLight[0]  = tr.identityLight * 64;
 		ent->ambientLight[1]  = tr.identityLight * 64;
 		ent->ambientLight[2]  = tr.identityLight * 96;
@@ -453,7 +452,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	{
 		dl = &refdef->dlights[i];
 
-		if (dl->shader)     //----(SA)	if the dlight has a diff shader specified, you don't know what it does, so don't let it affect entities lighting
+		if (dl->shader)     // if the dlight has a diff shader specified, you don't know what it does, so don't let it affect entities lighting
 		{
 			continue;
 		}
@@ -554,7 +553,7 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 {
 	trRefEntity_t ent;
 
-	// bk010103 - this segfaults with -nolight maps
+	// this segfaults with -nolight maps
 	if (tr.world->lightGridData == NULL)
 	{
 		return qfalse;

@@ -77,6 +77,456 @@ GLShader_volumetricFog      *gl_volumetricFogShader      = NULL;
 GLShader_volumetricLighting *gl_volumetricLightingShader = NULL;
 GLShader_dispersion         *gl_dispersionShader         = NULL;
 
+void GLSL_InitGPUShaders(void)
+{
+	int startTime, endTime;
+
+	ri.Printf(PRINT_ALL, "------- GLSL_InitGPUShaders -------\n");
+
+	// make sure the render thread is stopped
+	R_SyncRenderThread();
+
+	GL_CheckErrors();
+
+#if defined(USE_GLSL_OPTIMIZER)
+	s_glslOptimizer = glslopt_initialize(qtrue);
+#endif
+
+	startTime = ri.Milliseconds();
+
+	// single texture rendering
+	gl_genericShader = new GLShader_generic();
+
+	// simple vertex color shading for entities
+	gl_vertexLightingShader_DBS_entity = new GLShader_vertexLighting_DBS_entity();
+
+	// simple vertex color shading for the world
+	gl_vertexLightingShader_DBS_world = new GLShader_vertexLighting_DBS_world();
+
+	// standard light mapping
+	gl_lightMappingShader = new GLShader_lightMapping();
+
+	// geometric-buffer fill rendering with diffuse + bump + specular
+	if (DS_STANDARD_ENABLED())
+	{
+		// G-Buffer construction
+		gl_geometricFillShader = new GLShader_geometricFill();
+
+		// deferred omni-directional lighting post process effect
+		gl_deferredLightingShader_omniXYZ = new GLShader_deferredLighting_omniXYZ();
+
+		gl_deferredLightingShader_projXYZ = new GLShader_deferredLighting_projXYZ();
+
+		gl_deferredLightingShader_directionalSun = new GLShader_deferredLighting_directionalSun();
+	}
+	else
+	{
+		// omni-directional specular bump mapping ( Doom3 style )
+		gl_forwardLightingShader_omniXYZ = new GLShader_forwardLighting_omniXYZ();
+
+		// projective lighting ( Doom3 style )
+		gl_forwardLightingShader_projXYZ = new GLShader_forwardLighting_projXYZ();
+
+		// directional sun lighting ( Doom3 style )
+		gl_forwardLightingShader_directionalSun = new GLShader_forwardLighting_directionalSun();
+	}
+
+	// shadowmap distance compression
+	gl_shadowFillShader = new GLShader_shadowFill();
+
+	// volumetric lighting
+	gl_volumetricLightingShader = new GLShader_volumetricLighting();
+
+	// bumped cubemap reflection for abitrary polygons ( EMBM )
+	gl_reflectionShader = new GLShader_reflection();
+
+	// skybox drawing for abitrary polygons
+	gl_skyboxShader = new GLShader_skybox();
+
+	// Q3A volumetric fog
+	gl_fogQuake3Shader = new GLShader_fogQuake3();
+
+	// global fog post process effect
+	gl_fogGlobalShader = new GLShader_fogGlobal();
+
+	// heatHaze post process effect
+	gl_heatHazeShader = new GLShader_heatHaze();
+
+	// screen post process effect
+	gl_screenShader = new GLShader_screen();
+
+	// portal process effect
+	gl_portalShader = new GLShader_portal();
+
+	// HDR -> LDR tone mapping
+	gl_toneMappingShader = new GLShader_toneMapping();
+
+	// LDR bright pass filter
+	gl_contrastShader = new GLShader_contrast();
+
+	// camera post process effect
+	gl_cameraEffectsShader = new GLShader_cameraEffects();
+
+	// gaussian blur
+	gl_blurXShader = new GLShader_blurX();
+
+	gl_blurYShader = new GLShader_blurY();
+
+	// debug utils
+	gl_debugShadowMapShader = new GLShader_debugShadowMap();
+
+	// liquid post process effect
+	gl_liquidShader = new GLShader_liquid();
+
+	// rotoscope post process effect
+	gl_rotoscopeShader = new GLShader_rotoscope();
+
+	// bloom post process effects
+	gl_bloomShader = new GLShader_bloom();
+
+	// cubemap refraction for abitrary polygons
+	gl_refractionShader = new GLShader_refraction();
+
+	// depth to color encoding
+	gl_depthToColorShader = new GLShader_depthToColor();
+
+	// volumetric fog post process effect
+	gl_volumetricFogShader = new GLShader_volumetricFog();
+
+	// cubemap dispersion for abitrary polygons
+	gl_dispersionShader = new GLShader_dispersion();
+
+#if !defined(GLSL_COMPILE_STARTUP_ONLY)
+#ifdef EXPERIMENTAL
+	// screen space ambien occlusion post process effect
+	GLSL_InitGPUShader(&tr.screenSpaceAmbientOcclusionShader, "screenSpaceAmbientOcclusion", ATTR_POSITION, qtrue, qtrue);
+
+	tr.screenSpaceAmbientOcclusionShader.u_CurrentMap =
+	    glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_CurrentMap");
+	tr.screenSpaceAmbientOcclusionShader.u_DepthMap =
+	    glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_DepthMap");
+	tr.screenSpaceAmbientOcclusionShader.u_ModelViewProjectionMatrix =
+	    glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ModelViewProjectionMatrix");
+	//tr.screenSpaceAmbientOcclusionShader.u_ViewOrigin = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ViewOrigin");
+	//tr.screenSpaceAmbientOcclusionShader.u_SSAOJitter = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_SSAOJitter");
+	//tr.screenSpaceAmbientOcclusionShader.u_SSAORadius = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_SSAORadius");
+	//tr.screenSpaceAmbientOcclusionShader.u_UnprojectMatrix = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_UnprojectMatrix");
+	//tr.screenSpaceAmbientOcclusionShader.u_ProjectMatrix = glGetUniformLocation(tr.screenSpaceAmbientOcclusionShader.program, "u_ProjectMatrix");
+
+	glUseProgramObject(tr.screenSpaceAmbientOcclusionShader.program);
+	glUniform1i(tr.screenSpaceAmbientOcclusionShader.u_CurrentMap, 0);
+	glUniform1i(tr.screenSpaceAmbientOcclusionShader.u_DepthMap, 1);
+	glUseProgramObject(0);
+
+	GLSL_ValidateProgram(tr.screenSpaceAmbientOcclusionShader.program);
+	GLSL_ShowProgramUniforms(tr.screenSpaceAmbientOcclusionShader.program);
+	GL_CheckErrors();
+#endif
+#ifdef EXPERIMENTAL
+	// depth of field post process effect
+	GLSL_InitGPUShader(&tr.depthOfFieldShader, "depthOfField", ATTR_POSITION, qtrue, qtrue);
+
+	tr.depthOfFieldShader.u_CurrentMap                = glGetUniformLocation(tr.depthOfFieldShader.program, "u_CurrentMap");
+	tr.depthOfFieldShader.u_DepthMap                  = glGetUniformLocation(tr.depthOfFieldShader.program, "u_DepthMap");
+	tr.depthOfFieldShader.u_ModelViewProjectionMatrix =
+	    glGetUniformLocation(tr.depthOfFieldShader.program, "u_ModelViewProjectionMatrix");
+
+	glUseProgramObject(tr.depthOfFieldShader.program);
+	glUniform1i(tr.depthOfFieldShader.u_CurrentMap, 0);
+	glUniform1i(tr.depthOfFieldShader.u_DepthMap, 1);
+	glUseProgramObject(0);
+
+	GLSL_ValidateProgram(tr.depthOfFieldShader.program);
+	GLSL_ShowProgramUniforms(tr.depthOfFieldShader.program);
+	GL_CheckErrors();
+#endif
+
+#endif // #if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	endTime = ri.Milliseconds();
+
+#if defined(USE_GLSL_OPTIMIZER)
+	glslopt_cleanup(s_glslOptimizer);
+#endif
+
+	ri.Printf(PRINT_ALL, "GLSL shaders load time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
+
+	if (r_recompileShaders->integer)
+	{
+		ri.Cvar_Set("r_recompileShaders", "0");
+	}
+}
+
+void GLSL_ShutdownGPUShaders(void)
+{
+	//	int				i;
+
+	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
+
+	if (gl_genericShader)
+	{
+		delete gl_genericShader;
+		gl_genericShader = NULL;
+	}
+
+	if (gl_vertexLightingShader_DBS_entity)
+	{
+		delete gl_vertexLightingShader_DBS_entity;
+		gl_vertexLightingShader_DBS_entity = NULL;
+	}
+
+	if (gl_vertexLightingShader_DBS_world)
+	{
+		delete gl_vertexLightingShader_DBS_world;
+		gl_vertexLightingShader_DBS_world = NULL;
+	}
+
+	if (gl_lightMappingShader)
+	{
+		delete gl_lightMappingShader;
+		gl_lightMappingShader = NULL;
+	}
+
+	if (gl_geometricFillShader)
+	{
+		delete gl_geometricFillShader;
+		gl_geometricFillShader = NULL;
+	}
+
+	if (gl_deferredLightingShader_omniXYZ)
+	{
+		delete gl_deferredLightingShader_omniXYZ;
+		gl_deferredLightingShader_omniXYZ = NULL;
+	}
+
+	if (gl_depthToColorShader)
+	{
+		delete gl_depthToColorShader;
+		gl_depthToColorShader = NULL;
+	}
+
+	if (gl_shadowFillShader)
+	{
+		delete gl_shadowFillShader;
+		gl_shadowFillShader = NULL;
+	}
+
+	if (gl_forwardLightingShader_omniXYZ)
+	{
+		delete gl_forwardLightingShader_omniXYZ;
+		gl_forwardLightingShader_omniXYZ = NULL;
+	}
+
+	if (gl_forwardLightingShader_projXYZ)
+	{
+		delete gl_forwardLightingShader_projXYZ;
+		gl_forwardLightingShader_projXYZ = NULL;
+	}
+
+	if (gl_forwardLightingShader_directionalSun)
+	{
+		delete gl_forwardLightingShader_directionalSun;
+		gl_forwardLightingShader_directionalSun = NULL;
+	}
+
+	if (gl_rotoscopeShader)
+	{
+		delete gl_rotoscopeShader;
+		gl_rotoscopeShader = NULL;
+	}
+
+	if (gl_refractionShader)
+	{
+		delete gl_refractionShader;
+		gl_refractionShader = NULL;
+	}
+
+#if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	if (tr.dispersionShader_C.program)
+	{
+		glDeleteObject(tr.dispersionShader_C.program);
+		Com_Memset(&tr.dispersionShader_C, 0, sizeof(shaderProgram_t));
+	}
+
+	if (tr.deferredShadowingShader_proj.program)
+	{
+		glDeleteObject(tr.deferredShadowingShader_proj.program);
+		Com_Memset(&tr.deferredShadowingShader_proj, 0, sizeof(shaderProgram_t));
+	}
+
+#endif // #if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	if (gl_bloomShader)
+	{
+		delete gl_bloomShader;
+		gl_bloomShader = NULL;
+	}
+
+	if (gl_reflectionShader)
+	{
+		delete gl_reflectionShader;
+		gl_reflectionShader = NULL;
+	}
+
+	if (gl_skyboxShader)
+	{
+		delete gl_skyboxShader;
+		gl_skyboxShader = NULL;
+	}
+
+	if (gl_fogQuake3Shader)
+	{
+		delete gl_fogQuake3Shader;
+		gl_fogQuake3Shader = NULL;
+	}
+
+	if (gl_fogGlobalShader)
+	{
+		delete gl_fogGlobalShader;
+		gl_fogGlobalShader = NULL;
+	}
+
+	if (gl_heatHazeShader)
+	{
+		delete gl_heatHazeShader;
+		gl_heatHazeShader = NULL;
+	}
+
+	if (gl_screenShader)
+	{
+		delete gl_screenShader;
+		gl_screenShader = NULL;
+	}
+
+	if (gl_portalShader)
+	{
+		delete gl_portalShader;
+		gl_portalShader = NULL;
+	}
+
+	if (gl_toneMappingShader)
+	{
+		delete gl_toneMappingShader;
+		gl_toneMappingShader = NULL;
+	}
+
+	if (gl_contrastShader)
+	{
+		delete gl_contrastShader;
+		gl_contrastShader = NULL;
+	}
+
+	if (gl_cameraEffectsShader)
+	{
+		delete gl_cameraEffectsShader;
+		gl_cameraEffectsShader = NULL;
+	}
+
+	if (gl_blurXShader)
+	{
+		delete gl_blurXShader;
+		gl_blurXShader = NULL;
+	}
+
+	if (gl_blurYShader)
+	{
+		delete gl_blurYShader;
+		gl_blurYShader = NULL;
+	}
+
+	if (gl_debugShadowMapShader)
+	{
+		delete gl_debugShadowMapShader;
+		gl_debugShadowMapShader = NULL;
+	}
+
+	if (gl_liquidShader)
+	{
+		delete gl_liquidShader;
+		gl_liquidShader = NULL;
+	}
+
+	if (gl_volumetricFogShader)
+	{
+		delete gl_volumetricFogShader;
+		gl_volumetricFogShader = NULL;
+	}
+
+	if (gl_volumetricLightingShader)
+	{
+		delete gl_volumetricLightingShader;
+		gl_volumetricLightingShader = NULL;
+	}
+
+	if (gl_dispersionShader)
+	{
+		delete gl_dispersionShader;
+		gl_dispersionShader = NULL;
+	}
+
+#if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+#ifdef EXPERIMENTAL
+	if (tr.screenSpaceAmbientOcclusionShader.program)
+	{
+		glDeleteObject(tr.screenSpaceAmbientOcclusionShader.program);
+		Com_Memset(&tr.screenSpaceAmbientOcclusionShader, 0, sizeof(shaderProgram_t));
+	}
+#endif
+#ifdef EXPERIMENTAL
+	if (tr.depthOfFieldShader.program)
+	{
+		glDeleteObject(tr.depthOfFieldShader.program);
+		Com_Memset(&tr.depthOfFieldShader, 0, sizeof(shaderProgram_t));
+	}
+#endif
+
+#endif // #if !defined(GLSL_COMPILE_STARTUP_ONLY)
+
+	glState.currentProgram = 0;
+	if (glUseProgram != NULL)
+	{
+		glUseProgram(0);
+	}
+}
+
+void GLSL_BindProgram(shaderProgram_t *program)
+{
+	if (!program)
+	{
+		GLSL_BindNullProgram();
+		return;
+	}
+
+	if (r_logFile->integer)
+	{
+		// don't just call LogComment, or we will get a call to va() every frame!
+		GLimp_LogComment(va("--- GL_BindProgram( name = '%s', macros = '%s' ) ---\n", program->name, program->compileMacros));
+	}
+
+	if (glState.currentProgram != program)
+	{
+		glUseProgram(program->program);
+		glState.currentProgram = program;
+	}
+}
+
+void GLSL_BindNullProgram(void)
+{
+	if (r_logFile->integer)
+	{
+		GLimp_LogComment("--- GL_BindNullProgram ---\n");
+	}
+
+	if (glState.currentProgram)
+	{
+		glUseProgram(0);
+		glState.currentProgram = NULL;
+	}
+}
+
+
 bool GLCompileMacro_USE_VERTEX_SKINNING::HasConflictingMacros(int permutation, const std::vector< GLCompileMacro * > &macros) const
 {
 	for (size_t i = 0; i < macros.size(); i++)
@@ -226,13 +676,12 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
                                          const char *libShaderNames,
                                          GLenum shaderType) const
 {
-	char   filename[MAX_QPATH];
 	GLchar *mainBuffer = NULL;
-	int    mainSize;
+	int    mainSize    = 0;
 	char   *token;
 
-	int  libsSize;
-	char *libsBuffer;        // all libs concatenated
+	int  libsSize    = 0;
+	char *libsBuffer = NULL;        // all libs concatenated
 
 	char **libs = ( char ** ) &libShaderNames;
 
@@ -240,478 +689,34 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 	GL_CheckErrors();
 
-	// load libs
-	libsSize   = 0;
-	libsBuffer = NULL;
-
 	while (1)
 	{
-		int  libSize;
-		char *libBuffer; // single extra lib file
-
 		token = COM_ParseExt2(libs, qfalse);
 
 		if (!token[0])
 		{
 			break;
 		}
-
-		if (shaderType == GL_VERTEX_SHADER)
-		{
-			Com_sprintf(filename, sizeof(filename), "glsl/%s_vp.glsl", token);
-			ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
-		}
-		else
-		{
-			Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", token);
-			ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
-		}
-
-		libSize = ri.FS_ReadFile(filename, ( void ** ) &libBuffer);
-
-		if (!libBuffer)
-		{
-			ri.Error(ERR_DROP, "Couldn't load %s", filename);
-		}
-
-		// append it to the libsBuffer
-		libsBuffer = ( char * ) realloc(libsBuffer, libsSize + libSize);
-
-		memset(libsBuffer + libsSize, 0, libSize);
-		libsSize += libSize;
-
-		Q_strcat(libsBuffer, libsSize, libBuffer);
-		//Q_strncpyz(libsBuffer + libsSize, libBuffer, libSize -1);
-
-		ri.FS_FreeFile(libBuffer);
+		GetShaderText(token, shaderType, &libsBuffer, &libsSize, qtrue);
 	}
 
 	// load main() program
-	if (shaderType == GL_VERTEX_SHADER)
-	{
-		Com_sprintf(filename, sizeof(filename), "glsl/%s_vp.glsl", mainShaderName);
-		ri.Printf(PRINT_ALL, "...loading vertex main() shader '%s'\n", filename);
-	}
-	else
-	{
-		Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", mainShaderName);
-		ri.Printf(PRINT_ALL, "...loading fragment main() shader '%s'\n", filename);
-	}
+	GetShaderText(mainShaderName, shaderType, &mainBuffer, &mainSize, qfalse);
 
-	mainSize = ri.FS_ReadFile(filename, ( void ** ) &mainBuffer);
-
-	if (!mainBuffer)
+	if (!libsBuffer && !mainBuffer)
 	{
-		ri.Error(ERR_DROP, "Couldn't load %s", filename);
+		ri.Error(ERR_FATAL, "Shader loading failed!\n");
 	}
-
 	{
-		static char bufferExtra[32000];
-		int         sizeExtra;
+		char *bufferExtra;
+		int  sizeExtra;
 
 		char *bufferFinal = NULL;
 		int  sizeFinal;
 
-		float fbufWidthScale, fbufHeightScale;
-		float npotWidthScale, npotHeightScale;
+		GetShaderExtraDefines(&bufferExtra, &sizeExtra);
 
-		Com_Memset(bufferExtra, 0, sizeof(bufferExtra));
-
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_Q3A\n#define COMPAT_Q3A 1\n#endif\n");
-#endif
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_ET\n#define COMPAT_ET 1\n#endif\n");
-
-		// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value));
-		//Q_strcat(bufferExtra, sizeof(bufferExtra),
-		//       va("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef deform_t\n"
-		            "#define deform_t\n"
-		            "#define DEFORM_WAVE %i\n"
-		            "#define DEFORM_BULGE %i\n"
-		            "#define DEFORM_MOVE %i\n"
-		            "#endif\n",
-		            DEFORM_WAVE,
-		            DEFORM_BULGE,
-		            DEFORM_MOVE));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef genFunc_t\n"
-		            "#define genFunc_t\n"
-		            "#define GF_NONE %1.1f\n"
-		            "#define GF_SIN %1.1f\n"
-		            "#define GF_SQUARE %1.1f\n"
-		            "#define GF_TRIANGLE %1.1f\n"
-		            "#define GF_SAWTOOTH %1.1f\n"
-		            "#define GF_INVERSE_SAWTOOTH %1.1f\n"
-		            "#define GF_NOISE %1.1f\n"
-		            "#endif\n",
-		            ( float ) GF_NONE,
-		            ( float ) GF_SIN,
-		            ( float ) GF_SQUARE,
-		            ( float ) GF_TRIANGLE,
-		            ( float ) GF_SAWTOOTH,
-		            ( float ) GF_INVERSE_SAWTOOTH,
-		            ( float ) GF_NOISE));
-
-		/*
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		                                 va("#ifndef deformGen_t\n"
-		                                        "#define deformGen_t\n"
-		                                        "#define DGEN_WAVE_SIN %1.1f\n"
-		                                        "#define DGEN_WAVE_SQUARE %1.1f\n"
-		                                        "#define DGEN_WAVE_TRIANGLE %1.1f\n"
-		                                        "#define DGEN_WAVE_SAWTOOTH %1.1f\n"
-		                                        "#define DGEN_WAVE_INVERSE_SAWTOOTH %1.1f\n"
-		                                        "#define DGEN_BULGE %i\n"
-		                                        "#define DGEN_MOVE %i\n"
-		                                        "#endif\n",
-		                                        (float)DGEN_WAVE_SIN,
-		                                        (float)DGEN_WAVE_SQUARE,
-		                                        (float)DGEN_WAVE_TRIANGLE,
-		                                        (float)DGEN_WAVE_SAWTOOTH,
-		                                        (float)DGEN_WAVE_INVERSE_SAWTOOTH,
-		                                        DGEN_BULGE,
-		                                        DGEN_MOVE));
-		                                */
-
-		/*
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		                                 va("#ifndef colorGen_t\n"
-		                                        "#define colorGen_t\n"
-		                                        "#define CGEN_VERTEX %i\n"
-		                                        "#define CGEN_ONE_MINUS_VERTEX %i\n"
-		                                        "#endif\n",
-		                                        CGEN_VERTEX,
-		                                        CGEN_ONE_MINUS_VERTEX));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		                                                 va("#ifndef alphaGen_t\n"
-		                                                        "#define alphaGen_t\n"
-		                                                        "#define AGEN_VERTEX %i\n"
-		                                                        "#define AGEN_ONE_MINUS_VERTEX %i\n"
-		                                                        "#endif\n",
-		                                                        AGEN_VERTEX,
-		                                                        AGEN_ONE_MINUS_VERTEX));
-		                                                        */
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef alphaTest_t\n"
-		            "#define alphaTest_t\n"
-		            "#define ATEST_GT_0 %i\n"
-		            "#define ATEST_LT_128 %i\n"
-		            "#define ATEST_GE_128 %i\n"
-		            "#endif\n",
-		            ATEST_GT_0,
-		            ATEST_LT_128,
-		            ATEST_GE_128));
-
-		fbufWidthScale  = Q_recip(( float ) glConfig.vidWidth);
-		fbufHeightScale = Q_recip(( float ) glConfig.vidHeight);
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_FBufScale\n#define r_FBufScale vec2(%f, %f)\n#endif\n", fbufWidthScale, fbufHeightScale));
-
-		if (glConfig2.textureNPOTAvailable)
-		{
-			npotWidthScale  = 1;
-			npotHeightScale = 1;
-		}
-		else
-		{
-			npotWidthScale  = ( float ) glConfig.vidWidth / ( float ) NearestPowerOfTwo(glConfig.vidWidth);
-			npotHeightScale = ( float ) glConfig.vidHeight / ( float ) NearestPowerOfTwo(glConfig.vidHeight);
-		}
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale));
-
-		if (glConfig.driverType == GLDRV_MESA)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLDRV_MESA\n#define GLDRV_MESA 1\n#endif\n");
-		}
-
-		if (glConfig.hardwareType == GLHW_ATI)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI\n#define GLHW_ATI 1\n#endif\n");
-		}
-		else if (glConfig.hardwareType == GLHW_ATI_DX10)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI_DX10\n#define GLHW_ATI_DX10 1\n#endif\n");
-		}
-		else if (glConfig.hardwareType == GLHW_NV_DX10)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_NV_DX10\n#define GLHW_NV_DX10 1\n#endif\n");
-		}
-
-		if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
-		{
-			if (r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef ESM\n#define ESM 1\n#endif\n");
-			}
-			else if (r_shadows->integer == SHADOWING_EVSM32)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef EVSM\n#define EVSM 1\n#endif\n");
-
-				// The exponents for the EVSM techniques should be less than ln(FLT_MAX/FILTER_SIZE)/2 {ln(FLT_MAX/1)/2 ~44.3}
-				//         42.9 is the maximum possible value for FILTER_SIZE=15
-				//         42.0 is the truncated value that we pass into the sample
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-				         va("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0f, 42.0f));
-
-				if (r_evsmPostProcess->integer)
-				{
-					Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_EVSMPostProcess\n#define r_EVSMPostProcess 1\n#endif\n");
-				}
-			}
-			else
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM\n#define VSM 1\n#endif\n");
-
-				if (glConfig.hardwareType == GLHW_ATI)
-				{
-					Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
-				}
-			}
-
-			if ((glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10) && r_shadows->integer == SHADOWING_VSM32)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.000001\n#endif\n");
-			}
-			else
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n");
-			}
-
-			if (r_lightBleedReduction->value)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-				         va("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n",
-				            r_lightBleedReduction->value));
-			}
-
-			if (r_overDarkeningFactor->value)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-				         va("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n",
-				            r_overDarkeningFactor->value));
-			}
-
-			if (r_shadowMapDepthScale->value)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-				         va("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n",
-				            r_shadowMapDepthScale->value));
-			}
-
-			if (r_debugShadowMaps->integer)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-				         va("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer));
-			}
-
-			/*
-			if(r_softShadows->integer == 1)
-			{
-			        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_2X2\n#define PCF_2X2 1\n#endif\n");
-			}
-			else if(r_softShadows->integer == 2)
-			{
-			        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_3X3\n#define PCF_3X3 1\n#endif\n");
-			}
-			else if(r_softShadows->integer == 3)
-			{
-			        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_4X4\n#define PCF_4X4 1\n#endif\n");
-			}
-			else if(r_softShadows->integer == 4)
-			{
-			        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_5X5\n#define PCF_5X5 1\n#endif\n");
-			}
-			else if(r_softShadows->integer == 5)
-			{
-			        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_6X6\n#define PCF_6X6 1\n#endif\n");
-			}
-			*/
-			if (r_softShadows->integer == 6)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCSS\n#define PCSS 1\n#endif\n");
-			}
-			else if (r_softShadows->integer)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-				         va("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f));
-			}
-
-			if (r_parallelShadowSplits->integer)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-				         va("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer));
-			}
-
-			if (r_showParallelShadowSplits->integer)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_ShowParallelShadowSplits\n#define r_ShowParallelShadowSplits 1\n#endif\n");
-			}
-		}
-
-		if (r_deferredShading->integer && glConfig2.maxColorAttachments >= 4 && glConfig2.textureFloatAvailable &&
-		    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
-		{
-			if (r_deferredShading->integer == DS_STANDARD)
-			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_DeferredShading\n#define r_DeferredShading 1\n#endif\n");
-			}
-		}
-
-		if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_HDRRendering\n#define r_HDRRendering 1\n#endif\n");
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_HDRContrastThreshold\n#define r_HDRContrastThreshold %f\n#endif\n",
-			            r_hdrContrastThreshold->value));
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_HDRContrastOffset\n#define r_HDRContrastOffset %f\n#endif\n",
-			            r_hdrContrastOffset->value));
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_HDRToneMappingOperator\n#define r_HDRToneMappingOperator_%i\n#endif\n",
-			            r_hdrToneMappingOperator->integer));
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_HDRGamma\n#define r_HDRGamma %f\n#endif\n",
-			            r_hdrGamma->value));
-		}
-
-		if (r_precomputedLighting->integer)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         "#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
-		}
-
-		if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable && /*glConfig.hardwareType != GLHW_ATI && glConfig.hardwareType != GLHW_ATI_DX10 &&*/ glConfig.driverType != GLDRV_MESA)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_heatHazeFix\n#define r_heatHazeFix 1\n#endif\n");
-		}
-
-		if (r_showLightMaps->integer)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_showLightMaps\n#define r_showLightMaps 1\n#endif\n");
-		}
-
-		if (r_showDeluxeMaps->integer)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_showDeluxeMaps\n#define r_showDeluxeMaps 1\n#endif\n");
-		}
-
-#ifdef EXPERIMENTAL
-
-		if (r_screenSpaceAmbientOcclusion->integer)
-		{
-			int             i;
-			static vec3_t   jitter[32];
-			static qboolean jitterInit = qfalse;
-
-			if (!jitterInit)
-			{
-				for (i = 0; i < 32; i++)
-				{
-					float *jit = &jitter[i][0];
-
-					float rad = crandom() * 1024.0f; // FIXME radius;
-					float a   = crandom() * M_PI * 2;
-					float b   = crandom() * M_PI * 2;
-
-					jit[0] = rad * sin(a) * cos(b);
-					jit[1] = rad * sin(a) * sin(b);
-					jit[2] = rad * cos(a);
-				}
-
-				jitterInit = qtrue;
-			}
-
-			// TODO
-		}
-
-#endif
-
-		if (glConfig2.vboVertexSkinningAvailable)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_VertexSkinning\n#define r_VertexSkinning 1\n#endif\n");
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", glConfig2.maxVertexSkinningBones));
-		}
-		else
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", 4));
-		}
-
-		/*
-		   if(glConfig.drawBuffersAvailable && glConfig.maxDrawBuffers >= 4)
-		   {
-		   //Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GL_ARB_draw_buffers\n#define GL_ARB_draw_buffers 1\n#endif\n");
-		   Q_strcat(bufferExtra, sizeof(bufferExtra), "#extension GL_ARB_draw_buffers : enable\n");
-		   }
-		 */
-
-		if (r_normalMapping->integer)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_NormalMapping\n#define r_NormalMapping 1\n#endif\n");
-		}
-
-		if (/* TODO: check for shader model 3 hardware  && */ r_normalMapping->integer && r_parallaxMapping->integer)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_ParallaxMapping\n#define r_ParallaxMapping 1\n#endif\n");
-		}
-
-		if (r_wrapAroundLighting->value)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %f\n#endif\n",
-			            r_wrapAroundLighting->value));
-		}
-
-		if (r_halfLambertLighting->integer)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_HalfLambertLighting\n#define r_HalfLambertLighting 1\n#endif\n");
-		}
-
-		if (r_rimLighting->integer)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimLighting\n#define r_RimLighting 1\n#endif\n");
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimColor\n#define r_RimColor vec4(0.26, 0.19, 0.16, 0.0)\n#endif\n");
-			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_RimExponent\n#define r_RimExponent %f\n#endif\n",
-			                                              r_rimExponent->value));
-		}
-
-		// OK we added a lot of stuff but if we do something bad in the GLSL shaders then we want the proper line
-		// so we have to reset the line counting
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#line 0\n");
-
-		sizeExtra = strlen(bufferExtra);
 		sizeFinal = sizeExtra + mainSize + libsSize;
-
-		//ri.Printf(PRINT_ALL, "GLSL extra: %s\n", bufferExtra);
 
 		bufferFinal = ( char * ) ri.Hunk_AllocateTempMemory(sizeFinal);
 
@@ -724,101 +729,502 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 		Q_strcat(bufferFinal, sizeFinal, mainBuffer);
 
-#if 0
-		{
-			static char msgPart[1024];
-			int         i;
-			ri.Printf(PRINT_WARNING, "----------------------------------------------------------\n");
-			ri.Printf(PRINT_WARNING, "CONCATENATED shader '%s' ----------\n", filename);
-			ri.Printf(PRINT_WARNING, " BEGIN ---------------------------------------------------\n");
-
-			for (i = 0; i < sizeFinal; i += 1024)
-			{
-				Q_strncpyz(msgPart, bufferFinal + i, sizeof(msgPart));
-				ri.Printf(PRINT_ALL, "%s", msgPart);
-			}
-
-			ri.Printf(PRINT_WARNING, " END-- ---------------------------------------------------\n");
-		}
-#endif
-
-#if 0
-
-		if (optimize)
-		{
-			static char msgPart[1024];
-			int         length = 0;
-			int         i;
-
-			glslopt_shader_type glsloptShaderType;
-
-			if (shaderType == GL_FRAGMENT_SHADER)
-			{
-				glsloptShaderType = kGlslOptShaderFragment;
-			}
-			else
-			{
-				glsloptShaderType = kGlslOptShaderVertex;
-			}
-
-			glslopt_shader *shaderOptimized = glslopt_optimize(s_glslOptimizer,
-			                                                   glsloptShaderType, bufferFinal, 0);
-
-			if (glslopt_get_status(shaderOptimized))
-			{
-				const char *newSource = glslopt_get_output(shaderOptimized);
-
-				ri.Printf(PRINT_DEVELOPER, "----------------------------------------------------------\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED shader '%s' ----------\n", filename);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN ---------------------------------------------------\n");
-
-				length = strlen(newSource);
-
-				for (i = 0; i < length; i += 1024)
-				{
-					Q_strncpyz(msgPart, newSource + i, sizeof(msgPart));
-					ri.Printf(PRINT_WARNING, "%s\n", msgPart);
-				}
-
-				ri.Printf(PRINT_DEVELOPER, " END-- ---------------------------------------------------\n");
-				shaderText = std::string(newSource, length);
-			}
-			else
-			{
-				const char *errorLog = glslopt_get_log(shaderOptimized);
-
-				//ri.Printf(PRINT_WARNING, "Couldn't optimize '%s'", filename);
-
-				length = strlen(errorLog);
-
-				for (i = 0; i < length; i += 1024)
-				{
-					Q_strncpyz(msgPart, errorLog + i, sizeof(msgPart));
-					ri.Printf(PRINT_ALL, "%s\n", msgPart);
-				}
-
-				ri.Printf(PRINT_ALL, "^1Couldn't optimize %s\n", filename);
-				shaderText = std::string(bufferFinal, sizeFinal);
-			}
-
-			glslopt_shader_delete(shaderOptimized);
-		}
-		else
-		{
-			shaderText = std::string(bufferFinal, sizeFinal);
-		}
-
-#else
 		shaderText = std::string(bufferFinal, sizeFinal);
-#endif
-
 		ri.Hunk_FreeTempMemory(bufferFinal);
+		free(bufferExtra);
 	}
-
-	ri.FS_FreeFile(mainBuffer);
+	free(mainBuffer);
 	free(libsBuffer);
 
 	return shaderText;
+}
+
+void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, int *size, qboolean append) const
+{
+	char fullname[MAX_QPATH];
+	int  dataSize;
+	char *dataBuffer;
+
+	if (shaderType == GL_VERTEX_SHADER)
+	{
+		Com_sprintf(fullname, sizeof(fullname), "%s_vp", name);
+		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
+	}
+	else
+	{
+		Com_sprintf(fullname, sizeof(fullname), "%s_fp", name);
+		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
+	}
+
+	if (ri.FS_FOpenFileRead(va("glsl/%s.glsl", fullname), NULL, qfalse))
+	{
+		dataSize = ri.FS_ReadFile(va("glsl/%s.glsl", fullname), ( void ** ) &dataBuffer);
+	}
+	else
+	{
+		dataBuffer = NULL;
+	}
+
+	if (!dataBuffer)
+	{
+		const char *temp = NULL;
+
+		temp = GetFallbackShader(fullname);
+		if (temp)
+		{
+			//Found a fallback shader and will use it
+			int strl = 0;
+			strl = strlen(temp) + 1;
+			if (append && *size)
+			{
+				*data = ( char * ) realloc(*data, *size + strl);
+				memset(*data + *size, 0, strl);
+
+			}
+			else
+			{
+				*data = (char *) malloc(strl);
+				memset(*data, 0, strl);
+			}
+
+			*size += strl;
+
+			Q_strcat(*data, *size, temp);
+			Q_strcat(*data, *size, "\n");
+		}
+		else
+		{
+			ri.Error(ERR_FATAL, "Couldn't load shader %s", fullname);
+		}
+	}
+	else
+	{
+		++dataSize; //We incease this for the newline
+		if (append && *size)
+		{
+			*data = ( char * ) realloc(*data, *size + dataSize);
+			memset(*data + *size, 0, dataSize);
+		}
+		else
+		{
+			*data = (char *) malloc(dataSize);
+			memset(*data, 0, dataSize);
+		}
+
+		*size += dataSize;
+
+		Q_strcat(*data, *size, dataBuffer);
+		Q_strcat(*data, *size, "\n");
+	}
+
+	if (dataBuffer)
+	{
+		ri.FS_FreeFile(dataBuffer);
+	}
+
+	Com_Printf("Loaded shader '%s'\n", fullname);
+}
+
+void GLShader::GetShaderExtraDefines(char **defines, int *size) const
+{
+	static char bufferExtra[32000];
+
+	char *bufferFinal = NULL;
+
+	float fbufWidthScale, fbufHeightScale;
+	float npotWidthScale, npotHeightScale;
+
+	Com_Memset(bufferExtra, 0, sizeof(bufferExtra));
+
+	// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value));
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value));
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value));
+	//Q_strcat(bufferExtra, sizeof(bufferExtra),
+	//       va("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value));
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS));
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS));
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef deform_t\n"
+	            "#define deform_t\n"
+	            "#define DEFORM_WAVE %i\n"
+	            "#define DEFORM_BULGE %i\n"
+	            "#define DEFORM_MOVE %i\n"
+	            "#endif\n",
+	            DEFORM_WAVE,
+	            DEFORM_BULGE,
+	            DEFORM_MOVE));
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef genFunc_t\n"
+	            "#define genFunc_t\n"
+	            "#define GF_NONE %1.1f\n"
+	            "#define GF_SIN %1.1f\n"
+	            "#define GF_SQUARE %1.1f\n"
+	            "#define GF_TRIANGLE %1.1f\n"
+	            "#define GF_SAWTOOTH %1.1f\n"
+	            "#define GF_INVERSE_SAWTOOTH %1.1f\n"
+	            "#define GF_NOISE %1.1f\n"
+	            "#endif\n",
+	            ( float ) GF_NONE,
+	            ( float ) GF_SIN,
+	            ( float ) GF_SQUARE,
+	            ( float ) GF_TRIANGLE,
+	            ( float ) GF_SAWTOOTH,
+	            ( float ) GF_INVERSE_SAWTOOTH,
+	            ( float ) GF_NOISE));
+
+	/*
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	                                 va("#ifndef deformGen_t\n"
+	                                        "#define deformGen_t\n"
+	                                        "#define DGEN_WAVE_SIN %1.1f\n"
+	                                        "#define DGEN_WAVE_SQUARE %1.1f\n"
+	                                        "#define DGEN_WAVE_TRIANGLE %1.1f\n"
+	                                        "#define DGEN_WAVE_SAWTOOTH %1.1f\n"
+	                                        "#define DGEN_WAVE_INVERSE_SAWTOOTH %1.1f\n"
+	                                        "#define DGEN_BULGE %i\n"
+	                                        "#define DGEN_MOVE %i\n"
+	                                        "#endif\n",
+	                                        (float)DGEN_WAVE_SIN,
+	                                        (float)DGEN_WAVE_SQUARE,
+	                                        (float)DGEN_WAVE_TRIANGLE,
+	                                        (float)DGEN_WAVE_SAWTOOTH,
+	                                        (float)DGEN_WAVE_INVERSE_SAWTOOTH,
+	                                        DGEN_BULGE,
+	                                        DGEN_MOVE));
+	                                */
+
+	/*
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	                                 va("#ifndef colorGen_t\n"
+	                                        "#define colorGen_t\n"
+	                                        "#define CGEN_VERTEX %i\n"
+	                                        "#define CGEN_ONE_MINUS_VERTEX %i\n"
+	                                        "#endif\n",
+	                                        CGEN_VERTEX,
+	                                        CGEN_ONE_MINUS_VERTEX));
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	                                                 va("#ifndef alphaGen_t\n"
+	                                                        "#define alphaGen_t\n"
+	                                                        "#define AGEN_VERTEX %i\n"
+	                                                        "#define AGEN_ONE_MINUS_VERTEX %i\n"
+	                                                        "#endif\n",
+	                                                        AGEN_VERTEX,
+	                                                        AGEN_ONE_MINUS_VERTEX));
+	                                                        */
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef alphaTest_t\n"
+	            "#define alphaTest_t\n"
+	            "#define ATEST_GT_0 %i\n"
+	            "#define ATEST_LT_128 %i\n"
+	            "#define ATEST_GE_128 %i\n"
+	            "#endif\n",
+	            ATEST_GT_0,
+	            ATEST_LT_128,
+	            ATEST_GE_128));
+
+	fbufWidthScale  = Q_recip(( float ) glConfig.vidWidth);
+	fbufHeightScale = Q_recip(( float ) glConfig.vidHeight);
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef r_FBufScale\n#define r_FBufScale vec2(%f, %f)\n#endif\n", fbufWidthScale, fbufHeightScale));
+
+	if (glConfig2.textureNPOTAvailable)
+	{
+		npotWidthScale  = 1;
+		npotHeightScale = 1;
+	}
+	else
+	{
+		npotWidthScale  = ( float ) glConfig.vidWidth / ( float ) NearestPowerOfTwo(glConfig.vidWidth);
+		npotHeightScale = ( float ) glConfig.vidHeight / ( float ) NearestPowerOfTwo(glConfig.vidHeight);
+	}
+
+	Q_strcat(bufferExtra, sizeof(bufferExtra),
+	         va("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale));
+
+	if (glConfig.driverType == GLDRV_MESA)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLDRV_MESA\n#define GLDRV_MESA 1\n#endif\n");
+	}
+
+	if (glConfig.hardwareType == GLHW_ATI)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI\n#define GLHW_ATI 1\n#endif\n");
+	}
+	else if (glConfig.hardwareType == GLHW_ATI_DX10)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI_DX10\n#define GLHW_ATI_DX10 1\n#endif\n");
+	}
+	else if (glConfig.hardwareType == GLHW_NV_DX10)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_NV_DX10\n#define GLHW_NV_DX10 1\n#endif\n");
+	}
+
+	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
+	{
+		if (r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef ESM\n#define ESM 1\n#endif\n");
+		}
+		else if (r_shadows->integer == SHADOWING_EVSM32)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef EVSM\n#define EVSM 1\n#endif\n");
+
+			// The exponents for the EVSM techniques should be less than ln(FLT_MAX/FILTER_SIZE)/2 {ln(FLT_MAX/1)/2 ~44.3}
+			//         42.9 is the maximum possible value for FILTER_SIZE=15
+			//         42.0 is the truncated value that we pass into the sample
+			Q_strcat(bufferExtra, sizeof(bufferExtra),
+			         va("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0f, 42.0f));
+
+			if (r_evsmPostProcess->integer)
+			{
+				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_EVSMPostProcess\n#define r_EVSMPostProcess 1\n#endif\n");
+			}
+		}
+		else
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM\n#define VSM 1\n#endif\n");
+
+			if (glConfig.hardwareType == GLHW_ATI)
+			{
+				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
+			}
+		}
+
+		if ((glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10) && r_shadows->integer == SHADOWING_VSM32)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.000001\n#endif\n");
+		}
+		else
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n");
+		}
+
+		if (r_lightBleedReduction->value)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra),
+			         va("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n",
+			            r_lightBleedReduction->value));
+		}
+
+		if (r_overDarkeningFactor->value)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra),
+			         va("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n",
+			            r_overDarkeningFactor->value));
+		}
+
+		if (r_shadowMapDepthScale->value)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra),
+			         va("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n",
+			            r_shadowMapDepthScale->value));
+		}
+
+		if (r_debugShadowMaps->integer)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra),
+			         va("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer));
+		}
+
+		/*
+		if(r_softShadows->integer == 1)
+		{
+		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_2X2\n#define PCF_2X2 1\n#endif\n");
+		}
+		else if(r_softShadows->integer == 2)
+		{
+		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_3X3\n#define PCF_3X3 1\n#endif\n");
+		}
+		else if(r_softShadows->integer == 3)
+		{
+		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_4X4\n#define PCF_4X4 1\n#endif\n");
+		}
+		else if(r_softShadows->integer == 4)
+		{
+		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_5X5\n#define PCF_5X5 1\n#endif\n");
+		}
+		else if(r_softShadows->integer == 5)
+		{
+		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_6X6\n#define PCF_6X6 1\n#endif\n");
+		}
+		*/
+		if (r_softShadows->integer == 6)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCSS\n#define PCSS 1\n#endif\n");
+		}
+		else if (r_softShadows->integer)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra),
+			         va("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f));
+		}
+
+		if (r_parallelShadowSplits->integer)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra),
+			         va("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer));
+		}
+
+		if (r_showParallelShadowSplits->integer)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_ShowParallelShadowSplits\n#define r_ShowParallelShadowSplits 1\n#endif\n");
+		}
+	}
+
+	if (r_deferredShading->integer && glConfig2.maxColorAttachments >= 4 && glConfig2.textureFloatAvailable &&
+	    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
+	{
+		if (r_deferredShading->integer == DS_STANDARD)
+		{
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_DeferredShading\n#define r_DeferredShading 1\n#endif\n");
+		}
+	}
+
+	if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_HDRRendering\n#define r_HDRRendering 1\n#endif\n");
+
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         va("#ifndef r_HDRContrastThreshold\n#define r_HDRContrastThreshold %f\n#endif\n",
+		            r_hdrContrastThreshold->value));
+
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         va("#ifndef r_HDRContrastOffset\n#define r_HDRContrastOffset %f\n#endif\n",
+		            r_hdrContrastOffset->value));
+
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         va("#ifndef r_HDRToneMappingOperator\n#define r_HDRToneMappingOperator_%i\n#endif\n",
+		            r_hdrToneMappingOperator->integer));
+
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         va("#ifndef r_HDRGamma\n#define r_HDRGamma %f\n#endif\n",
+		            r_hdrGamma->value));
+	}
+
+	if (r_precomputedLighting->integer)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         "#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
+	}
+
+	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable && /*glConfig.hardwareType != GLHW_ATI && glConfig.hardwareType != GLHW_ATI_DX10 &&*/ glConfig.driverType != GLDRV_MESA)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_heatHazeFix\n#define r_heatHazeFix 1\n#endif\n");
+	}
+
+	if (r_showLightMaps->integer)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_showLightMaps\n#define r_showLightMaps 1\n#endif\n");
+	}
+
+	if (r_showDeluxeMaps->integer)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_showDeluxeMaps\n#define r_showDeluxeMaps 1\n#endif\n");
+	}
+
+#ifdef EXPERIMENTAL
+
+	if (r_screenSpaceAmbientOcclusion->integer)
+	{
+		int             i;
+		static vec3_t   jitter[32];
+		static qboolean jitterInit = qfalse;
+
+		if (!jitterInit)
+		{
+			for (i = 0; i < 32; i++)
+			{
+				float *jit = &jitter[i][0];
+
+				float rad = crandom() * 1024.0f;     // FIXME radius;
+				float a   = crandom() * M_PI * 2;
+				float b   = crandom() * M_PI * 2;
+
+				jit[0] = rad * sin(a) * cos(b);
+				jit[1] = rad * sin(a) * sin(b);
+				jit[2] = rad * cos(a);
+			}
+
+			jitterInit = qtrue;
+		}
+
+		// TODO
+	}
+
+#endif
+
+	if (glConfig2.vboVertexSkinningAvailable)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_VertexSkinning\n#define r_VertexSkinning 1\n#endif\n");
+
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", glConfig2.maxVertexSkinningBones));
+	}
+	else
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", 4));
+	}
+
+	/*
+	   if(glConfig.drawBuffersAvailable && glConfig.maxDrawBuffers >= 4)
+	   {
+	   //Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GL_ARB_draw_buffers\n#define GL_ARB_draw_buffers 1\n#endif\n");
+	   Q_strcat(bufferExtra, sizeof(bufferExtra), "#extension GL_ARB_draw_buffers : enable\n");
+	   }
+	 */
+
+	if (r_normalMapping->integer)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_NormalMapping\n#define r_NormalMapping 1\n#endif\n");
+	}
+
+	if (/* TODO: check for shader model 3 hardware  && */ r_normalMapping->integer && r_parallaxMapping->integer)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_ParallaxMapping\n#define r_ParallaxMapping 1\n#endif\n");
+	}
+
+	if (r_wrapAroundLighting->value)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra),
+		         va("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %f\n#endif\n",
+		            r_wrapAroundLighting->value));
+	}
+
+	if (r_halfLambertLighting->integer)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_HalfLambertLighting\n#define r_HalfLambertLighting 1\n#endif\n");
+	}
+
+	if (r_rimLighting->integer)
+	{
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimLighting\n#define r_RimLighting 1\n#endif\n");
+		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimColor\n#define r_RimColor vec4(0.26, 0.19, 0.16, 0.0)\n#endif\n");
+		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_RimExponent\n#define r_RimExponent %f\n#endif\n",
+		                                              r_rimExponent->value));
+	}
+
+	// OK we added a lot of stuff but if we do something bad in the GLSL shaders then we want the proper line
+	// so we have to reset the line counting
+	Q_strcat(bufferExtra, sizeof(bufferExtra), "#line 0\n");
+
+	*size    = strlen(bufferExtra) + 1;
+	*defines = (char *) malloc(*size);
+	memset(*defines, 0, *size);
+	Q_strcat(*defines, *size, bufferExtra);
 }
 
 void GLShader::SaveShaderProgram(GLuint program, const char *pname, int i) const
@@ -890,26 +1296,9 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
                                               const std::string &fragmentShaderText,
                                               const std::string &compileMacros, int iteration) const
 {
-#ifdef USE_GLSL_OPTIMIZER
-	bool optimize = r_glslOptimizer->integer ? true : false;
-#endif
-
-	//ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
-
 	Q_strncpyz(program->name, programName, sizeof(program->name));
 
-#if 0
-
-	if (!compileMacros.empty())
-	{
-		program->compileMacros = ( char * ) ri.Hunk_Alloc(sizeof(char) * compileMacros.length() + 1, h_low);
-		Q_strncpyz(program->compileMacros, compileMacros.c_str(), compileMacros.length() + 1);
-	}
-	else
-#endif
-	{
-		program->compileMacros = NULL;
-	}
+	program->compileMacros = NULL;
 
 	program->program = glCreateProgram();
 	program->attribs = _vertexAttribsRequired; // | _vertexAttribsOptional;
@@ -969,93 +1358,68 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 		// add them
 		std::string vertexShaderTextWithMacros   = vertexHeader + macrosString + vertexShaderText;
 		std::string fragmentShaderTextWithMacros = fragmentHeader + macrosString + fragmentShaderText;
+
 #ifdef USE_GLSL_OPTIMIZER
-		if (optimize)
+		if (r_glslOptimizer->integer)
 		{
-			static char msgPart[1024];
-			int         length = 0;
-			int         i;
-
-			const std::string version = (glConfig.driverType == GLDRV_OPENGL3) ? "#version 130\n" : "#version 120\n";
-
-			glslopt_shader *shaderOptimized = glslopt_optimize(s_glslOptimizer, kGlslOptShaderVertex, vertexShaderTextWithMacros.c_str(), 0);
-			if (glslopt_get_status(shaderOptimized))
-			{
-				vertexShaderTextWithMacros = version + glslopt_get_output(shaderOptimized);
-
-				ri.Printf(PRINT_DEVELOPER, "----------------------------------------------------------\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED VERTEX shader '%s' ----------\n", programName);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN ---------------------------------------------------\n");
-
-				length = strlen(vertexShaderTextWithMacros.c_str());
-
-				for (i = 0; i < length; i += 1024)
-				{
-					Q_strncpyz(msgPart, vertexShaderTextWithMacros.c_str() + i, sizeof(msgPart));
-					ri.Printf(PRINT_DEVELOPER, "%s\n", msgPart);
-				}
-
-				ri.Printf(PRINT_DEVELOPER, " END-- ---------------------------------------------------\n");
-			}
-			else
-			{
-				const char *errorLog = glslopt_get_log(shaderOptimized);
-
-				length = strlen(errorLog);
-
-				for (i = 0; i < length; i += 1024)
-				{
-					Q_strncpyz(msgPart, errorLog + i, sizeof(msgPart));
-					ri.Printf(PRINT_WARNING, "%s\n", msgPart);
-				}
-
-				ri.Printf(PRINT_WARNING, "^1Couldn't optimize VERTEX shader %s\n", programName);
-			}
-			glslopt_shader_delete(shaderOptimized);
-
-
-			glslopt_shader *shaderOptimized1 = glslopt_optimize(s_glslOptimizer, kGlslOptShaderFragment, fragmentShaderTextWithMacros.c_str(), 0);
-			if (glslopt_get_status(shaderOptimized1))
-			{
-				fragmentShaderTextWithMacros = version + glslopt_get_output(shaderOptimized1);
-
-				ri.Printf(PRINT_DEVELOPER, "----------------------------------------------------------\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED FRAGMENT shader '%s' ----------\n", programName);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN ---------------------------------------------------\n");
-
-				length = strlen(fragmentShaderTextWithMacros.c_str());
-
-				for (i = 0; i < length; i += 1024)
-				{
-					Q_strncpyz(msgPart, fragmentShaderTextWithMacros.c_str() + i, sizeof(msgPart));
-					ri.Printf(PRINT_DEVELOPER, "%s\n", msgPart);
-				}
-
-				ri.Printf(PRINT_DEVELOPER, " END-- ---------------------------------------------------\n");
-			}
-			else
-			{
-				const char *errorLog = glslopt_get_log(shaderOptimized1);
-
-				length = strlen(errorLog);
-
-				for (i = 0; i < length; i += 1024)
-				{
-					Q_strncpyz(msgPart, errorLog + i, sizeof(msgPart));
-					ri.Printf(PRINT_WARNING, "%s\n", msgPart);
-				}
-
-				ri.Printf(PRINT_WARNING, "^1Couldn't optimize FRAGMENT shader %s\n", programName);
-			}
-			glslopt_shader_delete(shaderOptimized1);
+			OptimizeShader(vertexShaderTextWithMacros, programName);
+			OptimizeShader(fragmentShaderTextWithMacros, programName);
 		}
 #endif
+
 		CompileGPUShader(program->program, programName, vertexShaderTextWithMacros.c_str(), strlen(vertexShaderTextWithMacros.c_str()), GL_VERTEX_SHADER);
 		CompileGPUShader(program->program, programName, fragmentShaderTextWithMacros.c_str(), strlen(fragmentShaderTextWithMacros.c_str()), GL_FRAGMENT_SHADER);
 		BindAttribLocations(program->program);    //, _vertexAttribsRequired | _vertexAttribsOptional);
 		LinkProgram(program->program);
 	}
 
+}
+
+void GLShader::OptimizeShader(const std::string &shader, const char *programname)
+{
+#ifdef USE_GLSL_OPTIMIZER
+	static char msgPart[1024];
+	int         length = 0;
+	int         i;
+
+	const std::string version = (glConfig.driverType == GLDRV_OPENGL3) ? "#version 130\n" : "#version 120\n";
+
+	glslopt_shader *shaderOptimized = glslopt_optimize(s_glslOptimizer, kGlslOptShaderVertex, shader.c_str(), 0);
+
+	if (glslopt_get_status(shaderOptimized))
+	{
+		shader = version + glslopt_get_output(shaderOptimized);
+
+		ri.Printf(PRINT_DEVELOPER, "----------------------------------------------------------\n");
+		ri.Printf(PRINT_DEVELOPER, "OPTIMIZED shader '%s' ----------\n", programname);
+		ri.Printf(PRINT_DEVELOPER, " BEGIN ---------------------------------------------------\n");
+
+		length = strlen(shader.c_str());
+
+		for (i = 0; i < length; i += 1024)
+		{
+			Q_strncpyz(msgPart, shader.c_str() + i, sizeof(msgPart));
+			ri.Printf(PRINT_DEVELOPER, "%s\n", msgPart);
+		}
+
+		ri.Printf(PRINT_DEVELOPER, " END-- ---------------------------------------------------\n");
+	}
+	else
+	{
+		const char *errorLog = glslopt_get_log(shaderOptimized);
+
+		length = strlen(errorLog);
+
+		for (i = 0; i < length; i += 1024)
+		{
+			Q_strncpyz(msgPart, errorLog + i, sizeof(msgPart));
+			ri.Printf(PRINT_WARNING, "%s\n", msgPart);
+		}
+
+		ri.Printf(PRINT_WARNING, "^1Couldn't optimize shader %s\n", programname);
+	}
+	glslopt_shader_delete(shaderOptimized);
+#endif
 }
 
 void GLShader::CompilePermutations()
@@ -1112,7 +1476,6 @@ void GLShader::CompilePermutations()
 		}
 
 		std::string compileMacros;
-
 		if (GetCompileMacrosString(i, compileMacros))
 		{
 			this->BuildShaderCompileMacros(compileMacros);
@@ -1171,7 +1534,8 @@ void GLShader::CompileGPUShader(GLuint program, const char *programName, const c
 	{
 		PrintShaderSource(shader);
 		PrintInfoLog(shader, qfalse);
-		ri.Error(ERR_DROP, "Couldn't compile %s %s", (shaderType == GL_VERTEX_SHADER ? "vertex shader" : "fragment shader"), programName);
+		ri.FS_WriteFile(va("debug/%s_%s.debug", programName, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), shaderText, shaderTextSize);
+		ri.Error(ERR_FATAL, "Couldn't compile %s %s", (shaderType == GL_VERTEX_SHADER ? "vertex shader" : "fragment shader"), programName);
 		return;
 	}
 
@@ -1277,7 +1641,7 @@ void GLShader::LinkProgram(GLuint program) const
 	if (!linked)
 	{
 		PrintInfoLog(program, qfalse);
-		ri.Error(ERR_DROP, "Shaders failed to link!!!");
+		ri.Error(ERR_FATAL, "Shaders failed to link!!!");
 	}
 }
 
@@ -1292,7 +1656,7 @@ void GLShader::ValidateProgram(GLuint program) const
 	if (!validated)
 	{
 		PrintInfoLog(program, qfalse);
-		ri.Error(ERR_DROP, "Shaders failed to validate!!!");
+		ri.Error(ERR_FATAL, "Shaders failed to validate!!!");
 	}
 }
 
@@ -1411,7 +1775,7 @@ void GLShader::BindProgram()
 		ri.Error(ERR_FATAL, "Invalid shader configuration: shader = '%s', macros = '%s'", _name.c_str(), activeMacros.c_str());
 	}
 
-	GL_BindProgram(_currentProgram);
+	GLSL_BindProgram(_currentProgram);
 }
 
 void GLShader::SetRequiredVertexPointers()

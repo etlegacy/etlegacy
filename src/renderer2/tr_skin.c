@@ -263,8 +263,6 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 	return 0;
 }
 
-//----(SA) end
-
 /*
 ===============
 RE_RegisterSkin
@@ -276,7 +274,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	qhandle_t     hSkin;
 	skin_t        *skin;
 	skinSurface_t *surf;
-	skinModel_t   *model;       //----(SA) added
+	skinModel_t   *model;
 	char          *text, *text_p;
 	char          *token;
 	char          surfName[MAX_QPATH];
@@ -292,7 +290,6 @@ qhandle_t RE_RegisterSkin(const char *name)
 		Com_Printf("Skin name exceeds MAX_QPATH\n");
 		return 0;
 	}
-
 
 	// see if the skin is already loaded
 	for (hSkin = 1; hSkin < tr.numSkins; hSkin++)
@@ -315,9 +312,9 @@ qhandle_t RE_RegisterSkin(const char *name)
 		return 0;
 	}
 
-//----(SA)  moved things around slightly to fix the problem where you restart
-//          a map that has ai characters who had invalid skin names entered
-//          in thier "skin" or "head" field
+	// - moved things around slightly to fix the problem where you restart
+	// a map that has ai characters who had invalid skin names entered
+	// in thier "skin" or "head" field
 
 	// make sure the render thread is stopped
 	R_SyncRenderThread();
@@ -345,9 +342,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	tr.skins[hSkin] = skin;
 	Q_strncpyz(skin->name, name, sizeof(skin->name));
 	skin->numSurfaces = 0;
-	skin->numModels   = 0;      //----(SA) added
-
-//----(SA)  end
+	skin->numModels   = 0;
 
 	text_p = text;
 	while (text_p && *text_p)
@@ -375,6 +370,12 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 		if (!Q_stricmpn(token, "md3_", 4))
 		{
+			if (skin->numModels >= MAX_PART_MODELS)
+			{
+				ri.Printf(PRINT_WARNING, "WARNING: Ignoring models in '%s', the max is %d!\n", name, MAX_PART_MODELS);
+				break;
+			}
+
 			// this is specifying a model
 			model = skin->models[skin->numModels] = (skinModel_t *)ri.Hunk_Alloc(sizeof(*skin->models[0]), h_low);
 			Q_strncpyz(model->type, token, sizeof(model->type));
@@ -392,11 +393,17 @@ qhandle_t RE_RegisterSkin(const char *name)
 		// parse the shader name
 		token = CommaParse(&text_p);
 
+		if (skin->numSurfaces >= MD3_MAX_SURFACES)
+		{
+			ri.Printf(PRINT_WARNING, "WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
+			break;
+		}
+
 		surf = skin->surfaces[skin->numSurfaces] = (skinSurface_t *)ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
 		Q_strncpyz(surf->name, surfName, sizeof(surf->name));
 
-		// RB: bspSurface not not have ::hash yet
-//		surf->hash = Com_HashKey(surf->name, sizeof(surf->name));
+		// FIXME: bspSurface not not have ::hash yet
+		//surf->hash = Com_HashKey(surf->name, sizeof(surf->name));
 		surf->shader = R_FindShader(token, SHADER_3D_DYNAMIC, qtrue);
 		skin->numSurfaces++;
 	}

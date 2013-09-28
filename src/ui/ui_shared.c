@@ -41,6 +41,8 @@
 #define SCROLL_TIME_ADJUSTOFFSET    40
 #define SCROLL_TIME_FLOOR           20
 
+#define EDITFIELD_TEMP_CVAR         "ui_textfield_temp"
+
 typedef struct scrollInfo_s
 {
 	int nextScrollTime;
@@ -86,6 +88,7 @@ void Item_Paint(itemDef_t *item);
 void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s);
 void Item_SetupKeywordHash(void);
 void Menu_SetupKeywordHash(void);
+void Item_HandleSaveValue(void);
 int BindingIDFromName(const char *name);
 qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down);
 itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu);
@@ -111,11 +114,13 @@ void Cui_WideRect(Rectangle *rect)
 	rect->w *= DC->xscale;
 	rect->h *= DC->yscale;
 
-	if (DC->glconfig.windowAspect > RATIO43)
+#ifndef PANDORA
+	if (DC->glconfig.windowAspect > RATIO43 && DC->getCVarValue("r_mode") != 11)
 	{
 		rect->x *= RATIO43 / DC->glconfig.windowAspect;
 		rect->w *= RATIO43 / DC->glconfig.windowAspect;
 	}
+#endif
 }
 
 /**
@@ -698,6 +703,7 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 	{
 		// this is just two gradient bars along each horz edge
 		rectDef_t r = w->rect;
+
 		r.h = w->borderSize;
 		GradientBar_Paint(&r, w->borderColor);
 		r.y = w->rect.y + w->rect.h - 1;
@@ -791,16 +797,18 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	y = menu->window.rect.y;
 
 	r              = &menu->window.rect;
-	fullscreenMenu = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+	fullscreenMenu = (r->x == 0 && r->y == 0 && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
 	centered       = (r->x == 16 && r->w == 608);
 	menuName       = menu->window.name;
+
+	Cui_WideRect(&menu->window.rect);
 
 	for (i = 0; i < menu->itemCount; ++i)
 	{
 		itemName = menu->items[i]->window.name;
 		// fullscreen menu/item..
 		r              = &menu->items[i]->window.rectClient;
-		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
 
 		if (fullscreenItem)
 		{
@@ -851,8 +859,8 @@ void Menu_PostParse(menuDef_t *menu)
 	{
 		menu->window.rect.x = 0;
 		menu->window.rect.y = 0;
-		menu->window.rect.w = 640;
-		menu->window.rect.h = 480;
+		menu->window.rect.w = SCREEN_WIDTH;
+		menu->window.rect.h = SCREEN_HEIGHT;
 	}
 	Menu_UpdatePosition(menu);
 }
@@ -892,7 +900,7 @@ itemDef_t *Menu_ClearFocus(menuDef_t *menu)
 
 qboolean IsVisible(int flags)
 {
-	return (flags & WINDOW_VISIBLE && !(flags & WINDOW_FADINGOUT));
+	return ((flags & WINDOW_VISIBLE) && !(flags & WINDOW_FADINGOUT));
 }
 
 qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y)
@@ -1276,7 +1284,7 @@ void Menus_OpenByName(const char *p)
 
 static void Menu_RunCloseScript(menuDef_t *menu)
 {
-	if (menu && menu->window.flags & WINDOW_VISIBLE && menu->onClose)
+	if (menu && (menu->window.flags & WINDOW_VISIBLE) && menu->onClose)
 	{
 		itemDef_t item;
 
@@ -2201,6 +2209,7 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 				editPtr->paintOffset = 0;
 			}
 
+			DC->setCVar(EDITFIELD_TEMP_CVAR, "");
 			editItem->cursorPos = 0;
 			g_editingField      = qtrue;
 			g_editItem          = editItem;
@@ -2269,6 +2278,8 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 	char     script[4096], *p;
 	qboolean bRan;
 	qboolean b_localAbort = qfalse;
+
+	Item_HandleSaveValue();
 
 	memset(script, 0, sizeof(script));
 
@@ -2410,7 +2421,7 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 	menuDef_t   *parent; // bk001206: = (menuDef_t*)item->parent;
 
 	// sanity check, non-null, not a decoration and does not already have the focus
-	if (item == NULL || item->window.flags & WINDOW_DECORATION || item->window.flags & WINDOW_HASFOCUS || !(item->window.flags & WINDOW_VISIBLE))
+	if (item == NULL || (item->window.flags & WINDOW_DECORATION) || (item->window.flags & WINDOW_HASFOCUS) || !(item->window.flags & WINDOW_VISIBLE))
 	{
 		return qfalse;
 	}
@@ -2419,12 +2430,12 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 	parent = (menuDef_t *)item->parent;
 
 	// items can be enabled and disabled based on cvars
-	if (item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
+	if ((item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE)) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
 	{
 		return qfalse;
 	}
 
-	if (item->cvarFlags & (CVAR_SHOW | CVAR_HIDE) && !Item_EnableShowViaCvar(item, CVAR_SHOW))
+	if ((item->cvarFlags & (CVAR_SHOW | CVAR_HIDE)) && !Item_EnableShowViaCvar(item, CVAR_SHOW))
 	{
 		return qfalse;
 	}
@@ -2442,9 +2453,8 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 
 	if (item->type == ITEM_TYPE_TEXT)
 	{
-		rectDef_t r;
+		rectDef_t r = item->textRect;
 
-		r    = item->textRect;
 		r.y -= r.h;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
@@ -2828,12 +2838,12 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 		// in the text rect?
 
 		// items can be enabled and disabled based on cvars
-		if (item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
+		if ((item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE)) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
 		{
 			return;
 		}
 
-		if (item->cvarFlags & (CVAR_SHOW | CVAR_HIDE) && !Item_EnableShowViaCvar(item, CVAR_SHOW))
+		if ((item->cvarFlags & (CVAR_SHOW | CVAR_HIDE)) && !Item_EnableShowViaCvar(item, CVAR_SHOW))
 		{
 			return;
 		}
@@ -2942,7 +2952,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
 	int          count    = DC->feederCount(item->special);
 
-	if (force || (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && item->window.flags & WINDOW_HASFOCUS))
+	if (force || (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && (item->window.flags & WINDOW_HASFOCUS)))
 	{
 		int max = Item_ListBox_MaxScroll(item);
 		int viewmax;
@@ -3247,7 +3257,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 
 qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 {
-	if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && item->window.flags & WINDOW_HASFOCUS && item->cvar)
+	if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && (item->window.flags & WINDOW_HASFOCUS) && item->cvar)
 	{
 		if (key == K_MOUSE1 || key == K_ENTER || key == K_MOUSE2 || key == K_MOUSE3)
 		{
@@ -3256,10 +3266,24 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 			{
 				if (item->type == ITEM_TYPE_TRICHECKBOX)
 				{
-					int curvalue = DC->getCVarValue(item->cvar) + 1;
+					int curvalue;
+
+					if (key == K_MOUSE2)
+					{
+						curvalue = DC->getCVarValue(item->cvar) - 1;
+					}
+					else
+					{
+						curvalue = DC->getCVarValue(item->cvar) + 1;
+					}
+
 					if (curvalue > 2)
 					{
 						curvalue = 0;
+					}
+					else if (curvalue < 0)
+					{
+						curvalue = 2;
 					}
 					DC->setCVar(item->cvar, va("%i", curvalue));
 				}
@@ -3276,7 +3300,7 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 
 qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
 {
-	if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && item->window.flags & WINDOW_HASFOCUS && item->cvar)
+	if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && (item->window.flags & WINDOW_HASFOCUS) && item->cvar)
 	{
 		if (key == K_MOUSE1 || key == K_ENTER || key == K_MOUSE2 || key == K_MOUSE3)
 		{
@@ -3393,7 +3417,7 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 
 	if (multiPtr)
 	{
-		if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && item->window.flags & WINDOW_HASFOCUS && item->cvar)
+		if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && (item->window.flags & WINDOW_HASFOCUS) && item->cvar)
 		{
 			if (key == K_MOUSE1 || key == K_ENTER || key == K_MOUSE2 || key == K_MOUSE3)
 			{
@@ -3441,6 +3465,90 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+void Item_CalcTextFieldCursor(itemDef_t *item)
+{
+	if (item->cvar)
+	{
+		char           buff[1024];
+		int            len;
+		editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
+		memset(buff, 0, sizeof(buff));
+		DC->getCVarString(item->cvar, buff, sizeof(buff));
+		len = strlen(buff);
+		if (editPtr->maxChars && len > editPtr->maxChars)
+		{
+			len = editPtr->maxChars;
+		}
+		item->cursorPos = len;
+		DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+	}
+}
+
+void Item_HandleTextFieldSelect(itemDef_t *item)
+{
+	if (item)
+	{
+		Item_CalcTextFieldCursor(item);
+		g_editingField = qtrue;
+		g_editItem     = item;
+	}
+}
+
+void Item_HandleTextFieldDeSelect(itemDef_t *item)
+{
+	if (item && item->cvar)
+	{
+		char buff[1024];
+
+		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
+		DC->setCVar(item->cvar, buff);
+	}
+	g_editingField = qfalse;
+	g_editItem     = NULL;
+}
+
+void Item_HandleSaveValue(void)
+{
+	if (g_editItem)
+	{
+		itemDef_t *temp = g_editItem;
+		Item_HandleTextFieldDeSelect(temp);
+		Item_HandleTextFieldSelect(temp);
+	}
+}
+
+qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *item, editFieldDef_t *editPtr)
+{
+	if (DC->getOverstrikeMode && !DC->getOverstrikeMode())
+	{
+		if ((*len == MAX_EDITFIELD - 1) || (editPtr->maxChars && *len >= editPtr->maxChars))
+		{
+			return qtrue;
+		}
+		memmove(&buff[item->cursorPos + 1], &buff[item->cursorPos], *len + 1 - item->cursorPos);
+	}
+	else
+	{
+		if (editPtr->maxChars && item->cursorPos >= editPtr->maxChars)
+		{
+			return qtrue;
+		}
+	}
+
+	buff[item->cursorPos] = key;
+
+	if (item->cursorPos < *len + 1)
+	{
+		item->cursorPos++;
+		if (editPtr->maxPaintChars && item->cursorPos > editPtr->maxPaintChars)
+		{
+			editPtr->paintOffset++;
+		}
+	}
+	*len += 1;
+	return qfalse;
+}
+
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 {
 	char           buff[1024];
@@ -3452,7 +3560,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		int len;
 
 		memset(buff, 0, sizeof(buff));
-		DC->getCVarString(item->cvar, buff, sizeof(buff));
+		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 
 		len = strlen(buff);
 
@@ -3484,7 +3592,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 					}
 					buff[len] = '\0';
 				}
-				DC->setCVar(item->cvar, buff);
+				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 				return qtrue;
 			}
 
@@ -3502,44 +3610,43 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				}
 			}
 
-			if (DC->getOverstrikeMode && !DC->getOverstrikeMode())
+			if (Item_TextFieldInsertToCursor(&len, buff, key, item, editPtr))
 			{
-				if ((len == MAX_EDITFIELD - 1) || (editPtr->maxChars && len >= editPtr->maxChars))
-				{
-					return qtrue;
-				}
-				memmove(&buff[item->cursorPos + 1], &buff[item->cursorPos], len + 1 - item->cursorPos);
+				return qtrue;
 			}
-			else
-			{
-				if (editPtr->maxChars && item->cursorPos >= editPtr->maxChars)
-				{
-					return qtrue;
-				}
-			}
-
-			buff[item->cursorPos] = key;
-
-			DC->setCVar(item->cvar, buff);
-
-			if (item->cursorPos < len + 1)
-			{
-				item->cursorPos++;
-				if (editPtr->maxPaintChars && item->cursorPos > editPtr->maxPaintChars)
-				{
-					editPtr->paintOffset++;
-				}
-			}
+			DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 		}
 		else
 		{
+			if (tolower(key) == 'v' && DC->keyIsDown(K_CTRL) && item->type != ITEM_TYPE_NUMERICFIELD)  //clipboard paste only on normal textfield
+			{
+				char clipbuff[1024];
+
+				memset(clipbuff, 0, sizeof(clipbuff));
+				DC->getClipboardData(clipbuff, sizeof(clipbuff));
+				if (strlen(clipbuff))
+				{
+					int i       = 0;
+					int cliplen = strlen(clipbuff);
+					for (; i < cliplen; i++)
+					{
+						if (Item_TextFieldInsertToCursor(&len, buff, clipbuff[i], item, editPtr))
+						{
+							break;
+						}
+					}
+					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+				}
+				return qtrue;
+			}
+
 			if (key == K_DEL || key == K_KP_DEL)
 			{
 				if (item->cursorPos < len)
 				{
 					memmove(buff + item->cursorPos, buff + item->cursorPos + 1, len - item->cursorPos);
 					buff[len] = '\0';
-					DC->setCVar(item->cvar, buff);
+					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 				}
 				return qtrue;
 			}
@@ -3596,13 +3703,24 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			}
 		}
 
-		if (key == K_TAB || key == K_DOWNARROW || key == K_KP_DOWNARROW)
+		if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW)
 		{
 			newItem = Menu_SetNextCursorItem(item->parent);
 			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
 			{
-				g_editItem = newItem;
+				Item_HandleTextFieldDeSelect(item);
+				Item_HandleTextFieldSelect(newItem);
+				//g_editItem = newItem;
 			}
+			else
+			{
+				Item_HandleSaveValue();
+			}
+		}
+		else if (key == K_TAB && item->onTab)
+		{
+			Item_RunScript(item, NULL, item->onTab);
+			return qtrue;
 		}
 
 		if (key == K_UPARROW || key == K_KP_UPARROW)
@@ -3610,7 +3728,9 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			newItem = Menu_SetPrevCursorItem(item->parent);
 			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
 			{
-				g_editItem = newItem;
+				Item_HandleTextFieldDeSelect(item);
+				Item_HandleTextFieldSelect(newItem);
+				//g_editItem = newItem;
 			}
 		}
 
@@ -3629,8 +3749,8 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 
 		return qtrue;
 	}
-	return qfalse;
 
+	return qfalse;
 }
 
 static void Scroll_ListBox_AutoFunc(void *p)
@@ -3818,7 +3938,7 @@ void Item_StartCapture(itemDef_t *item, int key)
 qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down)
 {
 	//DC->Print("slider handle key\n");
-	if (item->window.flags & WINDOW_HASFOCUS && item->cvar && Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory))
+	if ((item->window.flags & WINDOW_HASFOCUS) && item->cvar && Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory))
 	{
 		if (key == K_MOUSE1 || key == K_ENTER || key == K_MOUSE2 || key == K_MOUSE3)
 		{
@@ -3865,9 +3985,8 @@ qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down)
 
 qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 {
-	int realKey;
+	int realKey = key;
 
-	realKey = key;
 	if (realKey & K_CHAR_FLAG)
 	{
 		realKey &= ~K_CHAR_FLAG;
@@ -3890,6 +4009,12 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 	if (!down)
 	{
 		return qfalse;
+	}
+
+	if (realKey == K_TAB && item->onTab)
+	{
+		Item_RunScript(item, NULL, item->onTab);
+		return qtrue;
 	}
 
 	if (realKey == K_ESCAPE && item->onEsc)
@@ -3943,10 +4068,9 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 		return Item_Slider_HandleKey(item, key, down);
 		break;
 	default:
-		return qfalse;
 		break;
 	}
-	//return qfalse;
+	return qfalse;
 }
 
 void Item_Action(itemDef_t *item)
@@ -3970,7 +4094,6 @@ itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu)
 
 	while (menu->cursorItem > -1)
 	{
-
 		menu->cursorItem--;
 		if (menu->cursorItem < 0 && !wrapped)
 		{
@@ -4006,7 +4129,6 @@ itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu)
 	}
 
 	oldCursor = menu->cursorItem;
-
 
 	if (menu->cursorItem == -1)
 	{
@@ -4143,7 +4265,7 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 		// basically the behaviour we are looking for is if there are windows in the stack.. see if
 		// the cursor is within any of them.. if not close them otherwise activate them and pass the
 		// key on.. force a mouse move to activate focus and script stuff
-		if (down && menu->window.flags & WINDOW_OOB_CLICK)
+		if (down && (menu->window.flags & WINDOW_OOB_CLICK))
 		{
 			Menu_RunCloseScript(menu);
 			menu->window.flags &= ~(WINDOW_HASFOCUS | WINDOW_VISIBLE | WINDOW_MOUSEOVER);
@@ -4219,14 +4341,12 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	{
 		if (!Item_TextField_HandleKey(g_editItem, key))
 		{
-			g_editingField = qfalse;
-			g_editItem     = NULL;
+			Item_HandleTextFieldDeSelect(g_editItem);
 			return;
 		}
 		else if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3)
 		{
-			g_editingField = qfalse;
-			g_editItem     = NULL;
+			Item_HandleTextFieldDeSelect(g_editItem);
 			Display_MouseMove(NULL, DC->cursorx, DC->cursory);
 		}
 		else if (key == K_TAB || key == K_UPARROW || key == K_DOWNARROW)
@@ -4317,7 +4437,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			debugMode ^= 1;
 		}
 		break;
-
 	case K_F12:
 		if (DC->getCVarValue("developer"))
 		{
@@ -4328,7 +4447,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_UPARROW:
 		Menu_SetPrevCursorItem(menu);
 		break;
-
 	case K_ESCAPE:
 		if (!g_waitingForKey && menu->onESC)
 		{
@@ -4337,7 +4455,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			Item_RunScript(&it, NULL, menu->onESC);
 		}
 		break;
-
 	case K_ENTER:
 	case K_KP_ENTER:
 	case K_MOUSE3:
@@ -4345,9 +4462,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		{
 			if (item->type == ITEM_TYPE_EDITFIELD || item->type == ITEM_TYPE_NUMERICFIELD)
 			{
-				item->cursorPos = 0;
-				g_editingField  = qtrue;
-				g_editItem      = item;
+				Item_HandleTextFieldSelect(item);
 			}
 			else
 			{
@@ -4355,7 +4470,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			}
 		}
 		break;
-
 	case K_TAB:
 		if (DC->keyIsDown(K_SHIFT))
 		{
@@ -4370,7 +4484,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_DOWNARROW:
 		Menu_SetNextCursorItem(menu);
 		break;
-
 	case K_MOUSE1:
 	case K_MOUSE2:
 		if (item)
@@ -4396,9 +4509,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 						editPtr->paintOffset = 0;
 					}
 
-					item->cursorPos = 0;
-					g_editingField  = qtrue;
-					g_editItem      = item;
+					Item_HandleTextFieldSelect(item);
 
 					// see elsewhere for venomous comment about this particular piece of "functionality"
 					//DC->setOverstrikeMode(qtrue);
@@ -4413,7 +4524,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			}
 		}
 		break;
-
 	case K_JOY1:
 	case K_JOY2:
 	case K_JOY3:
@@ -4509,13 +4619,14 @@ void Item_SetTextExtents(itemDef_t *item, int *width, int *height, const char *t
 
 void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 {
-	vec4_t    lowLight;
 	menuDef_t *parent = (menuDef_t *)item->parent;
 
 	Fade(&item->window.flags, &item->window.foreColor[3], parent->fadeClamp, &item->window.nextTime, parent->fadeCycle, qtrue, parent->fadeAmount);
 
-	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
+		vec4_t lowLight;
+
 		lowLight[0] = 0.8 * parent->focusColor[0];
 		lowLight[1] = 0.8 * parent->focusColor[1];
 		lowLight[2] = 0.8 * parent->focusColor[2];
@@ -4524,6 +4635,8 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 	}
 	else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime / BLINK_DIVISOR) & 1))
 	{
+		vec4_t lowLight;
+
 		lowLight[0] = 0.8 * item->window.foreColor[0];
 		lowLight[1] = 0.8 * item->window.foreColor[1];
 		lowLight[2] = 0.8 * item->window.foreColor[2];
@@ -4538,7 +4651,7 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 
 	if (item->enableCvar && *item->enableCvar && item->cvarTest && *item->cvarTest)
 	{
-		if (item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
+		if ((item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE)) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
 		{
 			memcpy(newColor, &parent->disableColor, sizeof(vec4_t));
 		}
@@ -4827,12 +4940,19 @@ void Item_TextField_Paint(itemDef_t *item)
 
 	if (item->cvar)
 	{
-		DC->getCVarString(item->cvar, buff, sizeof(buff));
+		if ((item->window.flags & WINDOW_HASFOCUS) && g_editingField)
+		{
+			DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
+		}
+		else
+		{
+			DC->getCVarString(item->cvar, buff, sizeof(buff));
+		}
 	}
 
 	parent = (menuDef_t *)item->parent;
 
-	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		lowLight[0] = 0.8 * parent->focusColor[0];
 		lowLight[1] = 0.8 * parent->focusColor[1];
@@ -4876,7 +4996,7 @@ void Item_TextField_Paint(itemDef_t *item)
 		screen_offset = 0;
 	}
 
-	if (item->window.flags & WINDOW_HASFOCUS && g_editingField)
+	if ((item->window.flags & WINDOW_HASFOCUS) && g_editingField)
 	{
 		char cursor = DC->getOverstrikeMode() ? '_' : '|';
 		DC->drawTextWithCursor(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, buff + editPtr->paintOffset + field_offset, item->cursorPos - editPtr->paintOffset - field_offset, cursor, editPtr->maxPaintChars, item->textStyle);
@@ -4895,7 +5015,7 @@ void Item_CheckBox_Paint(itemDef_t *item)
 	qboolean   hasMultiText = qfalse;
 	multiDef_t *multiPtr    = (multiDef_t *)item->typeData;
 
-	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		vec4_t lowLight;
 
@@ -4972,7 +5092,7 @@ void Item_YesNo_Paint(itemDef_t *item)
 	menuDef_t *parent = (menuDef_t *)item->parent;
 	float     value   = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
 
-	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		vec4_t lowLight;
 
@@ -5005,7 +5125,7 @@ void Item_Multi_Paint(itemDef_t *item)
 	const char *text   = "";
 	menuDef_t  *parent = (menuDef_t *)item->parent;
 
-	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		vec4_t lowLight;
 
@@ -5226,7 +5346,7 @@ void Item_Slider_Paint(itemDef_t *item)
 	float     x, y;
 	menuDef_t *parent = (menuDef_t *)item->parent;
 
-	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		vec4_t lowLight;
 
@@ -5273,7 +5393,7 @@ void Item_Bind_Paint(itemDef_t *item)
 
 	value = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
 
-	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		if (g_bindItem == item)
 		{
@@ -5815,7 +5935,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 			}
 		}
 
-		if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
+		if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 		{
 			lowLight[0] = 0.8 * parent->focusColor[0];
 			lowLight[1] = 0.8 * parent->focusColor[1];
@@ -5832,7 +5952,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 			LerpColor(item->window.foreColor, lowLight, color, 0.5 + 0.5 * sin(DC->realTime / PULSE_DIVISOR));
 		}
 
-		if (item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
+		if ((item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE)) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
 		{
 			memcpy(color, parent->disableColor, sizeof(vec4_t));
 		}
@@ -5865,7 +5985,6 @@ void Item_Paint(itemDef_t *item)
 		return;
 	}
 
-	//if (item != NULL)
 	{
 		menuDef_t *parent = (menuDef_t *)item->parent;
 
@@ -6058,6 +6177,7 @@ void Item_Paint(itemDef_t *item)
 		{
 			vec4_t    color;
 			rectDef_t *r = Item_CorrectedTextRect(item);
+
 			color[1] = color[3] = 1;
 			color[0] = color[2] = 0;
 			DC->drawRect(r->x, r->y, r->w, r->h, 1, color);
@@ -6148,7 +6268,7 @@ menuDef_t *Menu_GetFocused(void)
 
 	for (i = 0; i < menuCount; i++)
 	{
-		if (Menus[i].window.flags & WINDOW_HASFOCUS && Menus[i].window.flags & WINDOW_VISIBLE)
+		if ((Menus[i].window.flags & WINDOW_HASFOCUS) && (Menus[i].window.flags & WINDOW_VISIBLE))
 		{
 			return &Menus[i];
 		}
@@ -6216,7 +6336,7 @@ qboolean Menus_AnyFullScreenVisible(void)
 
 	for (i = 0; i < menuCount; i++)
 	{
-		if (Menus[i].window.flags & WINDOW_VISIBLE && Menus[i].fullScreen)
+		if ((Menus[i].window.flags & WINDOW_VISIBLE) && Menus[i].fullScreen)
 		{
 			return qtrue;
 		}
@@ -6236,7 +6356,7 @@ menuDef_t *Menus_ActivateByName(const char *p, qboolean modalStack)
 		{
 			m = &Menus[i];
 			Menus_Activate(m);
-			if (modalStack && m->window.flags & WINDOW_MODAL)
+			if (modalStack && (m->window.flags & WINDOW_MODAL))
 			{
 				if (modalMenuCount >= MAX_MODAL_MENUS)
 				{
@@ -6320,12 +6440,12 @@ void Menu_HandleMouseMove(menuDef_t *menu, float x, float y)
 			}
 
 			// items can be enabled and disabled based on cvars
-			if (menu->items[i]->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE) && !Item_EnableShowViaCvar(menu->items[i], CVAR_ENABLE))
+			if ((menu->items[i]->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE)) && !Item_EnableShowViaCvar(menu->items[i], CVAR_ENABLE))
 			{
 				continue;
 			}
 
-			if (menu->items[i]->cvarFlags & (CVAR_SHOW | CVAR_HIDE) && !Item_EnableShowViaCvar(menu->items[i], CVAR_SHOW))
+			if ((menu->items[i]->cvarFlags & (CVAR_SHOW | CVAR_HIDE)) && !Item_EnableShowViaCvar(menu->items[i], CVAR_SHOW))
 			{
 				continue;
 			}
@@ -6436,7 +6556,7 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 	{
 		menu->openTime = DC->realTime;
 	}
-	else if (menu->window.flags & WINDOW_VISIBLE &&
+	else if ((menu->window.flags & WINDOW_VISIBLE) &&
 	         menu->timeout > 0 && menu->onTimeout != NULL &&
 	         menu->openTime + menu->timeout <= DC->realTime)
 	{
@@ -7198,6 +7318,15 @@ qboolean ItemParse_doubleClick(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+qboolean ItemParse_onTab(itemDef_t *item, int handle)
+{
+	if (!PC_Script_Parse(handle, &item->onTab))
+	{
+		return qfalse;
+	}
+	return qtrue;
+}
+
 qboolean ItemParse_onEsc(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onEsc))
@@ -7736,6 +7865,7 @@ keywordHash_t itemParseKeywords[] =
 	{ "textasfloat",       ItemParse_textasfloat,       NULL },
 	{ "disableCvar",       ItemParse_disableCvar,       NULL },
 	{ "doubleclick",       ItemParse_doubleClick,       NULL },
+	{ "onTab",             ItemParse_onTab,             NULL },
 	{ "onEsc",             ItemParse_onEsc,             NULL },
 	{ "onEnter",           ItemParse_onEnter,           NULL },
 	{ "elementheight",     ItemParse_elementheight,     NULL },
@@ -8661,7 +8791,7 @@ void Display_CacheAll(void)
 
 static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y)
 {
-	if (menu && menu->window.flags & (WINDOW_VISIBLE | WINDOW_FORCED))
+	if (menu && (menu->window.flags & (WINDOW_VISIBLE | WINDOW_FORCED)))
 	{
 		if (Rect_ContainsPoint(&menu->window.rect, x, y))
 		{

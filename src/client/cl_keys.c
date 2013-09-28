@@ -719,7 +719,7 @@ void Console_Key(int key)
 
 	if (key == K_TAB)
 	{
-		Field_AutoComplete(&g_consoleField);
+		Console_AutoCompelete(&g_consoleField, &con.acLength);
 		return;
 	}
 
@@ -1578,12 +1578,16 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	// console mode and menu mode, to keep the character from continuing
 	// an action started before a mode switch.
 
-#ifdef _WIN32 //If the control is down the the num keys are activated incorrectly this should be fixed better later.
+	//This was due to sdl_input.c IN_TranslateSDLToQ3Key nulling them as they did not have unicode value (bug)
+	//This fix *should* not be needed anymore.
+	/*
+	#ifdef _WIN32 //If the control is down the the num keys are activated incorrectly this should be fixed better later.
 	if (keys[K_CTRL].down && !down && (key >= 48 && key <= 57))
 	{
-		down = 1;
+	    down = 1;
 	}
-#endif // _WIN32
+	#endif // _WIN32
+	*/
 
 	if (!down)
 	{

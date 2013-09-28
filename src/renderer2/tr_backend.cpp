@@ -159,41 +159,6 @@ void GL_TextureFilter(image_t *image, filterType_t filterType)
 	}
 }
 
-void GL_BindProgram(shaderProgram_t *program)
-{
-	if (!program)
-	{
-		GL_BindNullProgram();
-		return;
-	}
-
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- GL_BindProgram( name = '%s', macros = '%s' ) ---\n", program->name, program->compileMacros));
-	}
-
-	if (glState.currentProgram != program)
-	{
-		glUseProgram(program->program);
-		glState.currentProgram = program;
-	}
-}
-
-void GL_BindNullProgram(void)
-{
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- GL_BindNullProgram ---\n");
-	}
-
-	if (glState.currentProgram)
-	{
-		glUseProgram(0);
-		glState.currentProgram = NULL;
-	}
-}
-
 void GL_SelectTexture(int unit)
 {
 	if (glState.currenttmu == unit)
@@ -873,48 +838,6 @@ void GL_VertexAttribsState(uint32_t stateBits)
 		}
 	}
 
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	if (diff & ATTR_PAINTCOLOR)
-	{
-		if (stateBits & ATTR_PAINTCOLOR)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_PAINTCOLOR )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_PAINTCOLOR);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_PAINTCOLOR )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_PAINTCOLOR);
-		}
-	}
-
-	if (diff & ATTR_LIGHTDIRECTION)
-	{
-		if (stateBits & ATTR_LIGHTDIRECTION)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_LIGHTDIRECTION )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_LIGHTDIRECTION);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_LIGHTDIRECTION )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_LIGHTDIRECTION);
-		}
-	}
-#endif
-
 	if (diff & ATTR_BONE_INDEXES)
 	{
 		if (stateBits & ATTR_BONE_INDEXES)
@@ -1133,30 +1056,6 @@ void GL_VertexAttribPointers(uint32_t attribBits)
 		glVertexAttribPointer(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsColors));
 		glState.vertexAttribPointersSet |= ATTR_COLOR;
 	}
-
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	if ((attribBits & ATTR_PAINTCOLOR))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_PAINTCOLOR )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_PAINTCOLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsPaintColors));
-		glState.vertexAttribPointersSet |= ATTR_PAINTCOLOR;
-	}
-
-	if ((attribBits & ATTR_LIGHTDIRECTION))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_LIGHTDIRECTION )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_LIGHTDIRECTION, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsLightDirections));
-		glState.vertexAttribPointersSet |= ATTR_LIGHTDIRECTION;
-	}
-#endif // #if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
 
 	if ((attribBits & ATTR_BONE_INDEXES))
 	{
@@ -2304,7 +2203,7 @@ static void RB_RenderInteractionsShadowMapped()
 			if (drawShadows)
 			{
 				// HACK: bring OpenGL into a safe state or strange FBO update problems will occur
-				GL_BindProgram(NULL);
+				GLSL_BindProgram(NULL);
 				GL_State(GLS_DEFAULT);
 				//GL_VertexAttribsState(ATTR_POSITION);
 
@@ -4369,7 +4268,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 			if (drawShadows)
 			{
 				// HACK: bring OpenGL into a safe state or strange FBO update problems will occur
-				GL_BindProgram(NULL);
+				GLSL_BindProgram(NULL);
 				GL_State(GLS_DEFAULT);
 				//GL_VertexAttribsState(ATTR_POSITION);
 
@@ -6503,7 +6402,7 @@ void RB_RenderDepthOfField()
 	}
 
 	// enable shader, set arrays
-	GL_BindProgram(&tr.depthOfFieldShader);
+	GLSL_BindProgram(&tr.depthOfFieldShader);
 
 	GL_State(GLS_DEPTHTEST_DISABLE);    // | GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);
@@ -6587,22 +6486,10 @@ void RB_RenderGlobalFog()
 		return;
 	}
 
-#if defined(COMPAT_ET)
 	if (!tr.world || tr.world->globalFog < 0)
 	{
 		return;
 	}
-#else
-	if (r_forceFog->value <= 0 && VectorLength(tr.fogColor) <= 0)
-	{
-		return;
-	}
-
-	if (r_forceFog->value <= 0 && tr.fogDensity <= 0)
-	{
-		return;
-	}
-#endif
 
 	GL_Cull(CT_TWO_SIDED);
 
@@ -6613,7 +6500,6 @@ void RB_RenderGlobalFog()
 
 	gl_fogGlobalShader->SetUniform_ViewOrigin(backEnd.viewParms.orientation.origin); // world space
 
-#if defined(COMPAT_ET)
 	{
 		fog_t *fog;
 
@@ -6642,23 +6528,6 @@ void RB_RenderGlobalFog()
 		gl_fogGlobalShader->SetUniform_FogDistanceVector(fogDistanceVector);
 		gl_fogGlobalShader->SetUniform_Color(fog->color);
 	}
-#else
-	GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA | GLS_DSTBLEND_SRC_ALPHA);
-
-	if (r_forceFog->value)
-	{
-		Vector4Set(fogDepthVector, r_forceFog->value, 0, 0, 0);
-		VectorCopy(colorMdGrey, fogColor);
-	}
-	else
-	{
-		Vector4Set(fogDepthVector, tr.fogDensity, 0, 0, 0);
-		VectorCopy(tr.fogColor, fogColor);
-	}
-
-	gl_fogGlobalShader->SetUniform_FogDepthVector(fogDepthVector);
-	gl_fogGlobalShader->SetUniform_Color(fogColor);
-#endif
 
 	gl_fogGlobalShader->SetUniform_ViewMatrix(backEnd.viewParms.world.viewMatrix);
 	gl_fogGlobalShader->SetUniform_UnprojectMatrix(backEnd.viewParms.unprojectionMatrix);
@@ -10607,10 +10476,8 @@ static void RB_RenderView(void)
 		{
 			clearBits |= GL_STENCIL_BUFFER_BIT;
 		}
-#if defined(COMPAT_ET)
 		// ydnar: global q3 fog volume
-		else
-		if (tr.world && tr.world->globalFog >= 0)
+		else if (tr.world && tr.world->globalFog >= 0)
 		{
 			clearBits |= GL_DEPTH_BUFFER_BIT;
 
@@ -10754,26 +10621,6 @@ static void RB_RenderView(void)
 				                     GL_NEAREST);
 			}
 		}
-#else
-		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
-		{
-			clearBits |= GL_COLOR_BUFFER_BIT;   // FIXME: only if sky shaders have been used
-			GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // FIXME: get color of sky
-		}
-		else
-		{
-			if (HDR_ENABLED())
-			{
-				// copy color of the main context to deferredRenderFBO
-				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-				glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     GL_COLOR_BUFFER_BIT,
-				                     GL_NEAREST);
-			}
-		}
-#endif
 
 		glClear(clearBits);
 
@@ -11095,29 +10942,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	GL_Bind(tr.scratchImage[client]);
 	gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
 
-	// if the scratchImage isn't in the format we want, specify it as a new texture
-	if (cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height)
-	{
-		tr.scratchImage[client]->width  = tr.scratchImage[client]->uploadWidth = cols;
-		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	}
-	else
-	{
-		if (dirty)
-		{
-			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
-			// it and don't try and do a texture compression
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
-	}
+	RE_UploadCinematic(w, h, cols, rows, data, client, dirty);
 
 	if (r_speeds->integer)
 	{
@@ -11216,9 +11041,14 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+#if 1
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#else
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, colorBlack);
+#endif
 	}
 	else
 	{

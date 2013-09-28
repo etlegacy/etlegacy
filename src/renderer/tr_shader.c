@@ -2155,7 +2155,7 @@ static void ComputeStageIteratorFunc(void)
 	if (shader.isSky)
 	{
 		shader.optimalStageIteratorFunc = RB_StageIteratorSky;
-		goto done;
+		return;
 	}
 
 	if (r_ignoreFastPath->integer)
@@ -2186,7 +2186,7 @@ static void ComputeStageIteratorFunc(void)
 							if (!shader.numDeforms)
 							{
 								shader.optimalStageIteratorFunc = RB_StageIteratorVertexLitTexture;
-								goto done;
+								return;
 							}
 						}
 					}
@@ -2210,16 +2210,13 @@ static void ComputeStageIteratorFunc(void)
 						if (shader.multitextureEnv)
 						{
 							shader.optimalStageIteratorFunc = RB_StageIteratorLightmappedMultitexture;
-							goto done;
+							return;
 						}
 					}
 				}
 			}
 		}
 	}
-
-done:
-	return;
 }
 
 typedef struct
@@ -2407,6 +2404,7 @@ static void FixRenderCommandList(int newShader)
 			case RC_SET_COLOR:
 			{
 				const setColorCommand_t *sc_cmd = (const setColorCommand_t *)curCmd;
+
 				curCmd = (const void *)(sc_cmd + 1);
 				break;
 			}
@@ -2415,6 +2413,7 @@ static void FixRenderCommandList(int newShader)
 			case RC_STRETCH_PIC_GRADIENT:
 			{
 				const stretchPicCommand_t *sp_cmd = (const stretchPicCommand_t *)curCmd;
+
 				curCmd = (const void *)(sp_cmd + 1);
 				break;
 			}
@@ -2449,12 +2448,14 @@ static void FixRenderCommandList(int newShader)
 			case RC_DRAW_BUFFER:
 			{
 				const drawBufferCommand_t *db_cmd = (const drawBufferCommand_t *)curCmd;
+
 				curCmd = (const void *)(db_cmd + 1);
 				break;
 			}
 			case RC_SWAP_BUFFERS:
 			{
 				const swapBuffersCommand_t *sb_cmd = (const swapBuffersCommand_t *)curCmd;
+
 				curCmd = (const void *)(sb_cmd + 1);
 				break;
 			}
@@ -2480,10 +2481,8 @@ Sets shader->sortedIndex
 static void SortNewShader(void)
 {
 	int      i;
-	float    sort;
 	shader_t *newShader = tr.shaders[tr.numShaders - 1];
-
-	sort = newShader->sort;
+	float    sort       = newShader->sort;
 
 	for (i = tr.numShaders - 2 ; i >= 0 ; i--)
 	{
@@ -2495,7 +2494,7 @@ static void SortNewShader(void)
 		tr.sortedShaders[i + 1]->sortedIndex++;
 	}
 
-	// Arnout: fix rendercommandlist
+	// fix rendercommandlist
 	FixRenderCommandList(i + 1);
 
 	newShader->sortedIndex  = i + 1;
@@ -2846,7 +2845,6 @@ static shader_t *FinishShader(void)
 			}
 		}
 
-
 		// determine sort order and fog color adjustment
 		if ((pStage->stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) &&
 		    (stages[0].stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)))
@@ -3092,12 +3090,10 @@ static char *FindShaderInShaderText(const char *shadername)
 	// if we have any dynamic shaders loaded, check them first
 	if (dshader)
 	{
-		dynamicshader_t *dptr;
+		dynamicshader_t *dptr = dshader;
 		char            *q;
-		int             i;
+		int             i = 0;
 
-		dptr = dshader;
-		i    = 0;
 		while (dptr)
 		{
 			if (!dptr->shadertext || !strlen(dptr->shadertext))
@@ -3808,14 +3804,10 @@ static void BuildShaderChecksumLookup(void)
 	}
 }
 
-/*
-====================
-ScanAndLoadShaderFiles
-
-Finds and loads all .shader files, combining them into
-a single large text block that can be scanned for shader names
-=====================
-*/
+/**
+ * @brief Finds and loads all .shader files, combining them into
+ * a single large text block that can be scanned for shader names
+ */
 #define MAX_SHADER_FILES    4096
 static void ScanAndLoadShaderFiles(void)
 {

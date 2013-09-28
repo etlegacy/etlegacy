@@ -159,10 +159,9 @@ void CG_UpdatePMLists(void)
 					listItem->inuse  = qfalse;
 					listItem->next   = NULL;
 				}
-				else
-				{
-					// just sit where we are, no pressure to do anything...
-				}
+				//else
+				//{ // just sit where we are, no pressure to do anything...
+				//}
 			}
 		}
 	}
@@ -194,7 +193,6 @@ void CG_UpdatePMLists(void)
 
 				listItem->next  = NULL;
 				listItem->inuse = qfalse;
-
 			}
 			while ((listItem = next));
 
@@ -445,7 +443,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 
 #define PM_ICON_SIZE_NORMAL 20
 #define PM_ICON_SIZE_SMALL 12
-void CG_DrawPMItems(rectDef_t rect)
+void CG_DrawPMItems(rectDef_t rect, int style)
 {
 	vec4_t       colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t       colourText = { 1.f, 1.f, 1.f, 1.f };
@@ -457,8 +455,7 @@ void CG_DrawPMItems(rectDef_t rect)
 	if (cg_drawSmallPopupIcons.integer)
 	{
 		size = PM_ICON_SIZE_SMALL;
-
-		y += 4;
+		y   += 4;
 	}
 	else
 	{
@@ -503,7 +500,7 @@ void CG_DrawPMItems(rectDef_t rect)
 		size = 0;
 	}
 
-	CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, cg_pmWaitingList->message, 0, 0, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2);
 
 	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
 	{
@@ -540,7 +537,7 @@ void CG_DrawPMItems(rectDef_t rect)
 			size = 0;
 		}
 
-		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
 	}
 }
 
@@ -566,7 +563,6 @@ void CG_DrawPMItemsBig(void)
 	trap_R_SetColor(colourText);
 	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 56, y, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
-
 
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, 0.22f, 0, &cgs.media.limboFont2);
 	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
@@ -643,7 +639,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 	case PM_TEAM:
 		switch (cent->currentState.density)
 		{
-		case 0:         // joined
+		case 0:             // joined
 		{
 			const char *teamstr = NULL;
 
@@ -665,6 +661,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 		case 1:
 			return va(CG_TranslateString("%s^7 disconnected"), cgs.clientinfo[cent->currentState.effect3Time].name);
 		}
+		break;
 	}
 
 	return NULL;

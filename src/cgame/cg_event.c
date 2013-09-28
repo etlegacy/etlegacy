@@ -251,6 +251,19 @@ static void CG_Obituary(entityState_t *ent)
 			}
 			break;
 
+		case MOD_KNIFE_KABAR:
+			message  = "was stabbed by";
+			message2 = "'s KA-BAR";
+			// goat luvin
+			if (attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
+			{
+				if (ci->team != ca->team)
+				{
+					trap_S_StartSound(cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.goatAxis);
+				}
+			}
+			break;
+
 		case MOD_AKIMBO_COLT:
 		case MOD_AKIMBO_SILENCEDCOLT:
 			message  = "was killed by";

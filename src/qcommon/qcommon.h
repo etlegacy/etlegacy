@@ -37,13 +37,18 @@
 #define _QCOMMON_H_
 
 #include "../qcommon/cm_public.h"
-
+/*
+#if defined(USE_WINDOWS_CONSOLE)
+#include "../sys/sys_win32.h"
+#endif
+*/
 // Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #   ifndef __attribute__
 #       define __attribute__(x)
 #   endif
 #endif
+
 
 // msg.c
 
@@ -798,6 +803,7 @@ typedef struct
 	char buffer[MAX_EDIT_LINE];
 } field_t;
 
+void Console_AutoCompelete(field_t *field, int *comletionlen);
 void Field_Clear(field_t *edit);
 void Field_AutoComplete(field_t *edit);
 void Field_CompleteKeyname(void);
@@ -1143,11 +1149,7 @@ void Sys_SnapVector(float *v);
 // the system console is shown when a dedicated server is running
 void Sys_DisplaySystemConsole(qboolean show);
 
-void Sys_ShowConsole(int level, qboolean quitOnClose);
-
 cpuFeatures_t Sys_GetProcessorFeatures(void);
-
-void Sys_SetErrorText(const char *text);
 
 void Sys_SendPacket(int length, const void *data, netadr_t to);
 qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message);

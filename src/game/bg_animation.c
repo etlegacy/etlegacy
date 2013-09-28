@@ -1035,7 +1035,6 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 			}
 
 			break;
-
 		case PARSEMODE_ANIMATION:
 		case PARSEMODE_CANNED_ANIMATIONS:
 			if (!Q_stricmp(token, "{"))
@@ -1161,7 +1160,6 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 			}
 
 			break;
-
 		case PARSEMODE_EVENTS:
 			if (!Q_stricmp(token, "{"))
 			{
@@ -1252,7 +1250,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				// huh ??
 				BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 			}
-
+			break;
 		default:
 			break;
 		}

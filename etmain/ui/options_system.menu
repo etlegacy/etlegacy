@@ -39,13 +39,13 @@ menuDef {
 	
 // Audio //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 102, "AUDIO" )
-	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "" )
-	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Music Volume:", .2, 8, "s_musicvolume" .25 0 1, "" )
-	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Sound Quality:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "" )
-	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "" )
-	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Mute When Minimized:", .2, 8, "s_muteWhenMinimized", "" )
-	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Mute When Unfocused:", .2, 8, "s_muteWhenUnfocused", "" )
-	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Hitsounds:", .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Team Hit Sound" 2 "No Head Hit Sound" 4 "No Body Hit Sound" 8 }, "" )
+	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "Set the effects volume" )
+	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Music Volume:", .2, 8, "s_musicvolume" .25 0 1, "Set the music volume" )
+	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Sound Quality:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "Set the sound quality" )
+	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "Enables or disables the doppler effect" )
+	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Mute When Minimized:", .2, 8, "s_muteWhenMinimized", "Enables or disables sound when window is minimized" )
+	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Mute When Unfocused:", .2, 8, "s_muteWhenUnfocused", "Enables or disables sound when window is unfocused" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Hitsounds:", .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Team Hit Sound" 2 "No Head Hit Sound" 4 "No Body Hit Sound" 8 }, "Set hit sounds" )
 
 // Networking //
 	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 54, "NETWORKING" )
@@ -55,9 +55,9 @@ menuDef {
 
 // Downloads //
 	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 52, "DOWNLOADS" )
-	YESNO( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Check for Updates on Start-Up:", .2, 8, "cl_autoupdate", "" )
-	YESNO( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Get Missing Files from Server:", .2, 8, "cl_allowDownload", "" )
-	YESNO( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Use HTTP/FTP Downloads:", .2, 8, "cl_wwwDownload", "" )
+	YESNO( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Check for Updates on Start-Up:", .2, 8, "cl_autoupdate", "Automatically check for updates?" )
+	YESNO( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Get Missing Files from Server:", .2, 8, "cl_allowDownload", "Download missing files when available?" )
+	YESNO( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Use HTTP/FTP Downloads:", .2, 8, "cl_wwwDownload", "Enables or disables http/ftp downloads" )
 		
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, uiScript vidReset ; close options_system ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLY", .3, 14,

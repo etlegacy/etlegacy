@@ -315,8 +315,6 @@ void CG_Respawn(qboolean revived)
 	trap_R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
 }
 
-extern char *eventnames[];
-
 void CG_CheckPlayerstateEvents(playerState_t *ps, playerState_t *ops)
 {
 	int       i;
@@ -376,7 +374,6 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps)
 			// if the new playerstate event is different from a previously predicted one
 			if (ps->events[i & (MAX_EVENTS - 1)] != cg.predictableEvents[i & (MAX_PREDICTED_EVENTS - 1)])
 			{
-
 				event                        = ps->events[i & (MAX_EVENTS - 1)];
 				cent->currentState.event     = event;
 				cent->currentState.eventParm = ps->eventParms[i & (MAX_EVENTS - 1)];
@@ -413,7 +410,7 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 
 	// hitsounds
 	// FIXME: add server control cvars?!
-	if (ops->persistant[PERS_HITS] != ps->persistant[PERS_HITS] && cg_hitSounds.integer & HITSOUNDS_ON)
+	if (ops->persistant[PERS_HITS] != ps->persistant[PERS_HITS] && (cg_hitSounds.integer & HITSOUNDS_ON))
 	{
 		if (ps->persistant[PERS_HITS] < ops->persistant[PERS_HITS])
 		{
@@ -637,7 +634,7 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		cg.proneMovingTime = -cg.time;
 	}
 
-	if (!(ps->eFlags & EF_PRONE) && ops->eFlags & EF_PRONE)
+	if (!(ps->eFlags & EF_PRONE) && (ops->eFlags & EF_PRONE))
 	{
 		if (cg.weaponSelect == WP_MOBILE_MG42_SET)
 		{

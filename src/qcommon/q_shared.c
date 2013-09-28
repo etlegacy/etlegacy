@@ -91,6 +91,7 @@ COM_GetExtension
 const char *COM_GetExtension(const char *name)
 {
 	const char *dot = strrchr(name, '.'), *slash;
+
 	if (dot && (!(slash = strrchr(name, '/')) || slash < dot))
 	{
 		return dot + 1;
@@ -147,6 +148,7 @@ qboolean COM_CompareExtension(const char *in, const char *ext)
 void COM_StripFilename(char *in, char *out)
 {
 	char *end;
+
 	Q_strncpyz(out, in, strlen(in) + 1);
 	end  = COM_SkipPath(out);
 	*end = 0;
@@ -159,6 +161,7 @@ void COM_StripFilename(char *in, char *out)
 void COM_DefaultExtension(char *path, int maxSize, const char *extension)
 {
 	const char *dot = strrchr(path, '.'), *slash;
+
 	if (dot && (!(slash = strrchr(path, '/')) || slash < dot))
 	{
 		return;
@@ -176,9 +179,8 @@ Com_HashKey
 */
 int Com_HashKey(char *string, int maxlen)
 {
-	int register hash, i;
+	int register hash = 0, i;
 
-	hash = 0;
 	for (i = 0; i < maxlen && string[i] != '\0'; i++)
 	{
 		hash += string[i] * (119 + i);
@@ -198,9 +200,8 @@ COM_BitCheck
 */
 qboolean COM_BitCheck(const int array[], int bitNum)
 {
-	int i;
+	int i = 0;
 
-	i = 0;
 	while (bitNum > 31)
 	{
 		i++;
@@ -219,9 +220,8 @@ COM_BitSet
 */
 void COM_BitSet(int array[], int bitNum)
 {
-	int i;
+	int i = 0;
 
-	i = 0;
 	while (bitNum > 31)
 	{
 		i++;
@@ -240,9 +240,8 @@ COM_BitClear
 */
 void COM_BitClear(int array[], int bitNum)
 {
-	int i;
+	int i = 0;
 
-	i = 0;
 	while (bitNum > 31)
 	{
 		i++;
@@ -255,10 +254,8 @@ void COM_BitClear(int array[], int bitNum)
 
 short ShortSwap(short l)
 {
-	byte b1, b2;
-
-	b1 = l & 255;
-	b2 = (l >> 8) & 255;
+	byte b1 = l & 255;
+	byte b2 = (l >> 8) & 255;
 
 	return (b1 << 8) + b2;
 }
@@ -270,12 +267,10 @@ short ShortNoSwap(short l)
 
 int LongSwap(int l)
 {
-	byte b1, b2, b3, b4;
-
-	b1 = l & 255;
-	b2 = (l >> 8) & 255;
-	b3 = (l >> 16) & 255;
-	b4 = (l >> 24) & 255;
+	byte b1 = l & 255;
+	byte b2 = (l >> 8) & 255;
+	byte b3 = (l >> 16) & 255;
+	byte b4 = (l >> 24) & 255;
 
 	return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
 }
@@ -660,7 +655,6 @@ char *COM_Parse2(char **data_p)
 	return COM_ParseExt2(data_p, qtrue);
 }
 
-
 // *INDENT-OFF*
 char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 {
@@ -685,7 +679,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		return com_token;
 	}
 
-	// RF, backup the session data so we can unget easily
+	// backup the session data so we can unget easily
 	COM_BackupParseSession(data_p);
 
 	// skip whitespace
@@ -1657,7 +1651,7 @@ does a varargs printf into a temp buffer, so I don't need to have
 varargs versions of all text functions.
 FIXME: make this buffer size safe someday
 
-Ridah, modified this into a circular list, to further prevent stepping on
+- modified this into a circular list, to further prevent stepping on
 previous strings
 ============
 */
@@ -1727,8 +1721,7 @@ float *tv(float x, float y, float z)
 	static vec3_t vecs[8];
 	float         *v;
 
-	// use an array so that multiple tempvectors won't collide
-	// for a while
+	// use an array so that multiple tempvectors won't collide for a while
 	v     = vecs[index];
 	index = (index + 1) & 7;
 

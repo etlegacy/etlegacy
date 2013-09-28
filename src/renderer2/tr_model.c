@@ -114,6 +114,10 @@ qhandle_t RE_RegisterModel(const char *name)
 		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: NULL name\n");
 		return 0;
 	}
+	else
+	{
+		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel model: %s\n", name);
+	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
@@ -206,9 +210,9 @@ qhandle_t RE_RegisterModel(const char *name)
 	for (lod = MD3_MAX_LODS - 1; lod >= 0; lod--)
 	{
 		char filename[1024];
+		buffer = NULL;
 
 		strcpy(filename, name);
-
 		if (lod != 0)
 		{
 			char namebuf[80];
@@ -222,12 +226,17 @@ qhandle_t RE_RegisterModel(const char *name)
 		}
 
 		filename[strlen(filename) - 1] = 'c';   // try MDC first
-		ri.FS_ReadFile(filename, (void **)&buffer);
-
+		if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
+		{
+			ri.FS_ReadFile(filename, (void **)&buffer);
+		}
 		if (!buffer)
 		{
 			filename[strlen(filename) - 1] = '3';   // try MD3 second
-			ri.FS_ReadFile(filename, (void **)&buffer);
+			if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
+			{
+				ri.FS_ReadFile(filename, (void **)&buffer);
+			}
 			if (!buffer)
 			{
 				continue;
@@ -237,25 +246,23 @@ qhandle_t RE_RegisterModel(const char *name)
 		loadmodel = mod;
 
 		ident = LittleLong(*(unsigned *)buffer);
-
+		if (ident != MD3_IDENT && ident != MDC_IDENT)
+		{
+			ri.Printf(PRINT_WARNING, "RE_RegisterModel: unknown fileid for %s\n", name);
+			ri.FS_FreeFile(buffer);
+			goto fail;
+		}
 
 		if (ident == MD3_IDENT)
 		{
 			loaded = R_LoadMD3(mod, lod, buffer, bufferLen, name);
-			ri.FS_FreeFile(buffer);
 		}
 		else if (ident == MDC_IDENT)
 		{
 			loaded = R_LoadMDC(mod, lod, buffer, bufferLen, name);
-			ri.FS_FreeFile(buffer);
 		}
-		else
-		{
-			ri.FS_FreeFile(buffer);
 
-			ri.Printf(PRINT_WARNING, "RE_RegisterModel: unknown fileid for %s\n", name);
-			goto fail;
-		}
+		ri.FS_FreeFile(buffer);
 
 		if (!loaded)
 		{
@@ -298,7 +305,6 @@ qhandle_t RE_RegisterModel(const char *name)
 			mod->numLods++;
 			mod->mdv[lod] = mod->mdv[lod + 1];
 		}
-
 		return mod->index;
 	}
 #ifdef _DEBUG
@@ -482,11 +488,7 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 	tr.visIndex = 0;
 	memset(tr.visClusters, -2, sizeof(tr.visClusters)); // force markleafs to regenerate
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	R_ClearFlares();
-#endif
 
 	RE_ClearScene();
 
@@ -527,7 +529,6 @@ void R_ModelInit(void)
 	mod->type = MOD_BAD;
 }
 
-
 /*
 ================
 R_Modellist_f
@@ -537,8 +538,8 @@ void R_Modellist_f(void)
 {
 	int      i, j, k;
 	model_t  *mod;
-	int      total;
-	int      totalDataSize;
+	int      total         = 0;
+	int      totalDataSize = 0;
 	qboolean showFrames;
 
 	if (!strcmp(ri.Cmd_Argv(1), "frames"))
@@ -550,8 +551,6 @@ void R_Modellist_f(void)
 		showFrames = qfalse;
 	}
 
-	total         = 0;
-	totalDataSize = 0;
 	for (i = 1; i < tr.numModels; i++)
 	{
 		mod = tr.models[i];
@@ -600,7 +599,6 @@ void R_Modellist_f(void)
 			ri.Printf(PRINT_ALL, "%d.%02d MB '%s'\n", mod->dataSize / (1024 * 1024),
 			          (mod->dataSize % (1024 * 1024)) * 100 / (1024 * 1024),
 			          mod->name);
-
 			total++;
 		}
 
@@ -619,9 +617,7 @@ void R_Modellist_f(void)
 #endif
 }
 
-
 //=============================================================================
-
 
 /*
 ================
@@ -902,8 +898,6 @@ int RE_BoneIndex(qhandle_t hModel, const char *boneName)
 
 	return -1;
 }
-
-
 
 /*
 ====================

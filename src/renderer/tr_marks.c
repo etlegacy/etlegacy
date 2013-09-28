@@ -261,11 +261,10 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
                         int *returnedPoints, int *returnedFragments,
                         vec3_t mins, vec3_t maxs)
 {
-	int            pingPong, i;
+	int            pingPong = 0, i;
 	markFragment_t *mf;
 
 	// chop the surface by all the bounding planes of the to be projected polygon
-	pingPong = 0;
 
 	for (i = 0 ; i < numPlanes ; i++)
 	{
@@ -339,7 +338,6 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 	//increment view count for double check prevention
 	tr.viewCount++;
 
-	//
 	VectorNormalize2(projection, projectionDir);
 	// find all the brushes that are to be considered
 	ClearBounds(mins, maxs);
@@ -738,7 +736,6 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 		}
 		else if (*surfaces[i] == SF_FACE)
 		{
-			extern float VectorDistance(vec3_t v1, vec3_t v2);
 			vec3_t axis[3];
 			vec3_t originalPoints[4];
 			vec3_t newCenter;
@@ -905,11 +902,11 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 		else if (*surfaces[i] == SF_TRIANGLES)
 		{
 			// duplicated so we don't mess with the original clips for the curved surfaces
-			vec3_t lnormals[MAX_VERTS_ON_POLY + 2];
-			float  ldists[MAX_VERTS_ON_POLY + 2];
-
+			vec3_t         lnormals[MAX_VERTS_ON_POLY + 2];
+			float          ldists[MAX_VERTS_ON_POLY + 2];
 			srfTriangles_t *cts;
 			cts = ( srfTriangles_t * ) surfaces[i];
+
 			if (!oldMapping)
 			{
 				for (k = 0 ; k < numPoints ; k++)

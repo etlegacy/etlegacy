@@ -214,7 +214,7 @@ static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean sho
 	}
 }
 
-/*
+/**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
  *
  * This is done by calling GLimp_Init (which gives us a working OGL subsystem)
@@ -223,8 +223,6 @@ static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean sho
  */
 static void InitOpenGL(void)
 {
-	char renderer_buffer[1024];
-
 	// initialize OS specific portions of the renderer
 	//
 	// GLimp_Init directly or indirectly references the following cvars:
@@ -236,6 +234,7 @@ static void InitOpenGL(void)
 
 	if (glConfig.vidWidth == 0)
 	{
+		char  renderer_buffer[1024];
 		GLint temp;
 
 		GLimp_Init();
@@ -727,8 +726,6 @@ RB_TakeVideoFrameCmd
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
 	const videoFrameCommand_t *cmd = (const videoFrameCommand_t *)data;
-	int                       frameSize;
-	int                       i;
 
 	// check if the recording is still going on, the buffer might have cmds eventho the recording has stopped
 	if (ri.CL_VideoRecording())
@@ -748,7 +745,9 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 		}
 		else
 		{
-			frameSize = cmd->width * cmd->height;
+			int i;
+			int frameSize = cmd->width * cmd->height;
+
 			for (i = 0; i < frameSize; i++)  // Pack to 24bpp and swap R and B
 			{
 				cmd->encodeBuffer[i * 3]     = cmd->captureBuffer[i * 4 + 2];
@@ -1075,7 +1074,7 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
 	ri.Printf(PRINT_ALL, "PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
-	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
+	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
 
 	if (glConfig.displayFrequency)
 	{
@@ -1085,6 +1084,8 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "N/A\n");
 	}
+
+	ri.Printf(PRINT_ALL, "ASPECT RATIO: %.4f\n", glConfig.windowAspect);
 
 	if (glConfig.deviceSupportsGamma)
 	{
@@ -1431,16 +1432,15 @@ void RE_Shutdown(qboolean destroyWindow)
 {
 	ri.Printf(PRINT_ALL, "RE_Shutdown( %i )\n", destroyWindow);
 
-	ri.Cmd_RemoveCommand("modellist");
-	ri.Cmd_RemoveCommand("screenshotJPEG");
-	ri.Cmd_RemoveCommand("screenshot");
 	ri.Cmd_RemoveCommand("imagelist");
 	ri.Cmd_RemoveCommand("shaderlist");
 	ri.Cmd_RemoveCommand("skinlist");
+	ri.Cmd_RemoveCommand("modellist");
+	ri.Cmd_RemoveCommand("modelist");
+	ri.Cmd_RemoveCommand("screenshot");
+	ri.Cmd_RemoveCommand("screenshotJPEG");
 	ri.Cmd_RemoveCommand("gfxinfo");
 	ri.Cmd_RemoveCommand("minimize");
-	ri.Cmd_RemoveCommand("modelist");
-	ri.Cmd_RemoveCommand("shaderstate");
 	ri.Cmd_RemoveCommand("taginfo");
 
 	// keep a backup of the current images if possible

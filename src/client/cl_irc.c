@@ -6,6 +6,7 @@ OpenWolf GPL Source Code
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2010 COR Entertainment, LLC.
 Copyright (C) 2011 Dusan Jocic <dusanjocic@msn.com>
+Copyright (C) 2012 ET: Legacy team
 
 OpenWolf is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,10 +21,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+ @file cl_irc.c
+ @brief irc client
 ===========================================================================
 */
-
-// cl_irc.c  -- irc client
 
 #ifndef HAVE_CONFIG_H
 // #include "config.h"
@@ -238,8 +239,8 @@ static struct irc_user_t IRC_User;
 /*
  * Events that can be displayed and flags that apply to them.
  */
-#define IRC_EVT_SAY     0x00000000  // Standard message
-#define IRC_EVT_ACT     0x00000001  // /me message
+#define IRC_EVT_SAY         0x00000000  // Standard message
+#define IRC_EVT_ACT         0x00000001  // /me message
 #define IRC_EVT_JOIN        0x00000002  // Join
 #define IRC_EVT_PART        0x00000003  // Part
 #define IRC_EVT_QUIT        0x00000004  // Quit
@@ -616,7 +617,6 @@ static qboolean IRC_Parser(char next)
 			P_ERROR(RECOVERY);
 		}
 		break;
-
 	/*
 	 * Start of prefix; anything is accepted, except for '!', '@', ' '
 	 * and control characters which all cause an error recovery.
@@ -632,7 +632,6 @@ static qboolean IRC_Parser(char next)
 			P_INIT_STRING(pfx_nickOrServer);
 		}
 		break;
-
 	/*
 	 * Prefix, server or nick name. Control characters cause an error,
 	 * ' ', '!' and '@' cause state changes.
@@ -659,7 +658,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_STRING(pfx_nickOrServer);
 		}
 		break;
-
 	/*
 	 * Start of user name; anything goes, except for '!', '@', ' '
 	 * and control characters which cause an error.
@@ -675,7 +673,6 @@ static qboolean IRC_Parser(char next)
 			P_INIT_STRING(pfx_user);
 		}
 		break;
-
 	/*
 	 * User name; '@' will cause state changes, '!' , ' ' and
 	 * control characters will cause errors.
@@ -694,7 +691,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_STRING(pfx_user);
 		}
 		break;
-
 	/*
 	 * Start of host name; anything goes, except for '!', '@', ' '
 	 * and control characters which cause an error.
@@ -710,7 +706,6 @@ static qboolean IRC_Parser(char next)
 			P_INIT_STRING(pfx_host);
 		}
 		break;
-
 	/*
 	 * Host name; ' ' will cause state changes, '!' and control
 	 * characters will cause errors.
@@ -729,7 +724,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_STRING(pfx_host);
 		}
 		break;
-
 	/*
 	 * Start of command, will accept start of numeric and string
 	 * commands; anything else is an error.
@@ -750,7 +744,6 @@ static qboolean IRC_Parser(char next)
 			P_AUTO_ERROR;
 		}
 		break;
-
 	/*
 	 * String command. Uppercase letters will cause the parser
 	 * to continue on string commands, ' ' indicates a parameter
@@ -775,7 +768,6 @@ static qboolean IRC_Parser(char next)
 			P_ERROR(RECOVERY);
 		}
 		break;
-
 	/*
 	 * Second/third digit of numeric command; anything but a digit
 	 * is an error.
@@ -792,7 +784,6 @@ static qboolean IRC_Parser(char next)
 			P_AUTO_ERROR;
 		}
 		break;
-
 	/*
 	 * End of numeric command, could be a ' ' or a '\r'.
 	 */
@@ -810,7 +801,6 @@ static qboolean IRC_Parser(char next)
 			P_ERROR(RECOVERY);
 		}
 		break;
-
 	/*
 	 * Start of parameter. ':' means it's a trailing parameter,
 	 * spaces and control characters shouldn't be here, and
@@ -840,7 +830,6 @@ static qboolean IRC_Parser(char next)
 			P_START_PARAM;
 		}
 		break;
-
 	/*
 	 * "Middle" parameter; ' ' means there's another parameter coming,
 	 * '\r' means the end of the message, control characters are not
@@ -868,7 +857,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_PARAM;
 		}
 		break;
-
 	/*
 	 * Trailing parameter; '\r' means the end of the command,
 	 * and anything else is just added to the string.
@@ -887,7 +875,6 @@ static qboolean IRC_Parser(char next)
 			P_ADD_PARAM;
 		}
 		break;
-
 	/*
 	 * End of line, expect '\n'. If found, we may have a message
 	 * to handle (unless there were errors). Anything else is an
@@ -904,7 +891,6 @@ static qboolean IRC_Parser(char next)
 			P_AUTO_ERROR;
 		}
 		break;
-
 	/*
 	 * Error recovery: wait for an '\r'.
 	 */
@@ -1082,6 +1068,8 @@ static __attribute__((format(printf, 1, 2))) int IRC_Send(const char *format, ..
 	buffer[len++] = '\r';
 	buffer[len++] = '\n';
 
+	Com_DPrintf("IRC Send: %s\n", buffer);
+
 	// Send message
 	sent = send(IRC_Socket, buffer, len, IRC_SEND_FLAGS);
 	if (sent < len)
@@ -1217,7 +1205,9 @@ static ID_INLINE void IRC_InitRateLimiter()
 	int i;
 
 	for (i = 0 ; i < sizeof(IRC_RateLimiter) / sizeof(unsigned int) ; i++)
+	{
 		IRC_RateLimiter[i] = 0;
+	}
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1231,9 +1221,11 @@ IRC_NeutraliseString
 */
 static void IRC_NeutraliseString(char *buffer, const char *source)
 {
+	char c;
+
 	while (*source)
 	{
-		char c = *source;
+		c = *source;
 
 		if (IS_CNTRL(c))
 		{
@@ -1429,7 +1421,7 @@ Send the user's nickname.
 */
 static int IRC_SendNickname()
 {
-	return IRC_Send("NICK %s\n", IRC_User.nick);
+	return IRC_Send("NICK %s", IRC_User.nick);
 }
 
 /*
@@ -1441,7 +1433,7 @@ Join the channel
 */
 static int IRC_JoinChannel()
 {
-	return IRC_Send("JOIN #%s\n", cl_IRC_channel->string);
+	return IRC_Send("JOIN #%s", cl_IRC_channel->string);
 }
 
 /*
@@ -1455,7 +1447,7 @@ static int IRCH_Ping()
 {
 	if (IRC_ReceivedMessage.arg_count == 1)
 	{
-		return IRC_Send("PONG :%s\n", IRC_String(arg_values[0]));
+		return IRC_Send("PONG :%s", IRC_String(arg_values[0]));
 	}
 	return IRC_CMD_SUCCESS;
 }
@@ -1511,13 +1503,11 @@ not have been received anyway.
 #define RANDOM_NUMBER_CHAR ('0' + rand() % 10)
 static int IRCH_NickError()
 {
-	int i;
-
 	if (IRC_ThreadStatus == IRC_THREAD_SETNICK)
 	{
 		if (++IRC_User.nickattempts == 4)
 		{
-			IRC_Send("QUIT :Could not set nickname\n");
+			IRC_Send("QUIT :Could not set nickname");
 			return IRC_CMD_FATAL;
 		}
 
@@ -1527,6 +1517,8 @@ static int IRCH_NickError()
 		}
 		else
 		{
+			int i;
+
 			for (i = IRC_User.nicklen - 3 ; i < IRC_User.nicklen ; i++)
 			{
 				IRC_User.nick[i] = RANDOM_NUMBER_CHAR;
@@ -1555,7 +1547,7 @@ static int IRCH_Connected()
 	if (IRC_ThreadStatus != IRC_THREAD_SETNICK)
 	{
 		IRC_Display(IRC_MakeEvent(QUIT, 1), "", "IRC client bug\n");
-		IRC_Send("QUIT :ET: Legacy IRC bug!\n");
+		IRC_Send("QUIT :ET: Legacy IRC bug!");
 		return IRC_CMD_RETRY;
 	}
 	IRC_ThreadStatus = IRC_THREAD_CONNECTED;
@@ -1577,7 +1569,7 @@ static int IRCH_Joined()
 	if (IRC_ThreadStatus < IRC_THREAD_CONNECTED)
 	{
 		IRC_Display(IRC_MakeEvent(QUIT, 1), "", "IRC client bug\n");
-		IRC_Send("QUIT :ET: Legacy IRC bug!\n");
+		IRC_Send("QUIT :ET: Legacy IRC bug!");
 		return IRC_CMD_RETRY;
 	}
 
@@ -1640,7 +1632,7 @@ static int IRCH_Kick()
 		else
 		{
 			IRC_Display(IRC_MakeEvent(QUIT, 1), "", "kicked from channel..\n");
-			IRC_Send("QUIT :b&!\n");
+			IRC_Send("QUIT :b&!");
 			return IRC_CMD_FATAL;
 		}
 	}
@@ -1702,7 +1694,7 @@ static int IRC_HandleMessage(qboolean is_channel, const char *string)
 
 	if (IRC_CheckEventRate(IRC_RL_MESSAGE))
 	{
-		return IRC_Send("PRIVMSG %s :Sorry, the ET: Legacy IRC client does not support private messages\n", IRC_String(pfx_nickOrServer));
+		return IRC_Send("PRIVMSG %s :Sorry, the ET: Legacy IRC client does not support private messages", IRC_String(pfx_nickOrServer));
 	}
 	return IRC_CMD_SUCCESS;
 }
@@ -1786,7 +1778,7 @@ User is banned. Leave and do not come back.
 static int IRCH_Banned()
 {
 	IRC_Display(IRC_MakeEvent(QUIT, 1), "", "banned from channel..\n");
-	IRC_Send("QUIT :b&!\n");
+	IRC_Send("QUIT :b&!");
 	return IRC_CMD_FATAL;
 }
 
@@ -1816,7 +1808,7 @@ static int CTCP_Action(qboolean is_channel, const char *argument)
 
 	if (IRC_CheckEventRate(IRC_RL_MESSAGE))
 	{
-		return IRC_Send("PRIVMSG %s :Sorry, the ET: Legacy IRC client does not support private messages\n", IRC_String(pfx_nickOrServer));
+		return IRC_Send("PRIVMSG %s :Sorry, the ET: Legacy IRC client does not support private messages", IRC_String(pfx_nickOrServer));
 	}
 	return IRC_CMD_SUCCESS;
 }
@@ -1837,10 +1829,10 @@ static int CTCP_Ping(qboolean is_channel, const char *argument)
 
 	if (*argument)
 	{
-		return IRC_Send("NOTICE %s :\001PING %s\001\n", IRC_String(pfx_nickOrServer), argument);
+		return IRC_Send("NOTICE %s :\001PING %s\001", IRC_String(pfx_nickOrServer), argument);
 	}
 
-	return IRC_Send("NOTICE %s :\001PING\001\n", IRC_String(pfx_nickOrServer));
+	return IRC_Send("NOTICE %s :\001PING\001", IRC_String(pfx_nickOrServer));
 }
 
 /*
@@ -1857,7 +1849,7 @@ static int CTCP_Version(qboolean is_channel, const char *argument)
 		return IRC_CMD_SUCCESS;
 	}
 
-	return IRC_Send("NOTICE %s :\001VERSION ET: Legacy IRC client - v\n" Q3_VERSION "\001", IRC_String(pfx_nickOrServer));
+	return IRC_Send("NOTICE %s :\001VERSION ET: Legacy IRC client - v" Q3_VERSION "\001", IRC_String(pfx_nickOrServer));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2051,6 +2043,51 @@ static int IRC_ProcessData(void)
 	return IRC_CMD_SUCCESS;
 }
 
+char *IRC_GetName(const char *name)
+{
+	int  i       = 0, j = 0, k = 0;
+	int  namelen = strlen(name);
+	char c;
+	char *retName = NULL;
+
+	retName = (char *) malloc((sizeof(char) * namelen) + 1);
+	memset(retName, 0, (sizeof(char) * namelen) + 1);
+
+	for (; j < namelen; j++)
+	{
+		if (!name[i])
+		{
+			continue;
+		}
+		if (name[i] == Q_COLOR_ESCAPE)
+		{
+			i++;
+			if (name[i] != Q_COLOR_ESCAPE)
+			{
+				if (name[i])
+				{
+					i++;
+				}
+				continue;
+			}
+		}
+
+		c = name[i++];
+		if ((j == 0 && !(IS_ALPHA(c) || IS_SPECL(c))) || (j > 0 && !IS_CLEAN(c)))
+		{
+			c = '_';
+		}
+
+		if (!(IS_CLEAN(c)))
+		{
+			c = '_';
+		}
+		retName[k++] = c;
+	}
+
+	return retName;
+}
+
 /*
 ==================
 IRC_InitialiseUser
@@ -2060,75 +2097,36 @@ Prepares the user record which is used when issuing the USER command.
 */
 static qboolean IRC_InitialiseUser(const char *name)
 {
-	qboolean   ovrnn;
-	const char *source;
-	int        i        = 0, j = 0;
-	int        replaced = 0;
-	int        namelen  = 0;
-	char       c;
+	char *source;
 
-	ovrnn   = cl_IRC_override_nickname->integer && strlen(cl_IRC_nickname->string);
-	source  = ovrnn ? cl_IRC_nickname->string : name;
-	namelen = ovrnn ? strlen(cl_IRC_nickname->string) : strlen(name);
+	if (cl_IRC_override_nickname->integer)
+	{
+		source = IRC_GetName(cl_IRC_nickname->string);
+	}
+	else
+	{
+		source = IRC_GetName(name);
+	}
 
 	// Strip color chars for the player's name, and remove special
 	// characters
 	IRC_User.nicklen      = 0;
 	IRC_User.nickattempts = 1;
-	for (; j < namelen; j++)
-	{
-		if (!ovrnn)
-		{
-			// Only process color escape codes if the nickname
-			// is being computed from the player source
-			if (i == 32 || !source[i])
-			{
-				IRC_User.nick[j++] = 0;
-				continue;
-			}
-			if (source[i] == Q_COLOR_ESCAPE)
-			{
-				i++;
-				if (source[i] != Q_COLOR_ESCAPE)
-				{
-					if (source[i])
-					{
-						i++;
-					}
-					continue;
-				}
-			}
-		}
 
-		c = source[i++];
-		if ((j == 0 && !(IS_ALPHA(c) || IS_SPECL(c))) || (j > 0 && !IS_CLEAN(c)))
-		{
-			c = '_';
-			replaced++;
-		}
-		IRC_User.nick[j] = c;
+	IRC_User.nicklen = strlen(source);
 
-		// User names are even more sensitive
-		if (!(IS_CLEAN(c)))
-		{
-			c = '_';
-		}
-		IRC_User.username[j] = c;
-	}
+	Q_strncpyz(IRC_User.nick, source, sizeof(IRC_User.nick));
 
-	IRC_User.nicklen = j;
-
-	// If the nickname is overriden and its modified value differs,
-	// it is invalid
-	if (ovrnn && strcmp(source, IRC_User.nick))
-	{
-		return qfalse;
-	}
+	Q_strncpyz(IRC_User.username, source, sizeof(IRC_User.username));
 
 	// Set static address
 	strcpy(IRC_User.email, "mymail@mail.com");
 
-	return (IRC_User.nicklen > 0 && replaced < IRC_User.nicklen / 2);
+	Com_DPrintf("IRC nick: %s username %s\n", IRC_User.nick, IRC_User.username);
+
+	free(source);
+
+	return (IRC_User.nicklen > 0);
 }
 
 /*
@@ -2151,7 +2149,7 @@ static int IRC_AttemptConnection()
 	int                port;
 
 	CHECK_SHUTDOWN;
-	Com_Printf("...IRC: connecting to server\n");
+	Com_Printf("...IRC: connecting to server %s\n", cl_IRC_server->string);
 
 	// Force players to use a non-default name
 	strcpy(name, Cvar_VariableString("name"));
@@ -2205,7 +2203,7 @@ static int IRC_AttemptConnection()
 
 	// Send username and nick name
 	CHECK_SHUTDOWN_CLOSE;
-	err_code = IRC_Send("USER %s %s %s :%s\n", IRC_User.username, IRC_User.email, host_name, IRC_User.nick);
+	err_code = IRC_Send("USER %s %s %s :%s", IRC_User.username, IRC_User.email, host_name, IRC_User.nick);
 	if (err_code == IRC_CMD_SUCCESS)
 	{
 		err_code = IRC_SendNickname();
@@ -2236,16 +2234,17 @@ connection can't be established.
 */
 static qboolean IRC_InitialConnect()
 {
-	int err_code, retries = 3;
+	int err_code = IRC_CMD_SUCCESS;
+	int retries  = 3;
 	int rc_delay = cl_IRC_reconnect_delay->integer;
+
+	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 
 	if (rc_delay < 5)
 	{
 		rc_delay = 5;
 	}
 
-	err_code         = IRC_CMD_SUCCESS;
-	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 	do
 	{
 		// If we're re-attempting a connection, wait a little bit,
@@ -2276,16 +2275,16 @@ or if the thread's status is set to QUITTING.
 */
 static int IRC_Reconnect()
 {
-	int err_code;
+	int err_code = IRC_CMD_SUCCESS;
 	int rc_delay = cl_IRC_reconnect_delay->integer;
+
+	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 
 	if (rc_delay < 5)
 	{
 		rc_delay = 5;
 	}
 
-	err_code         = IRC_CMD_SUCCESS;
-	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 	do
 	{
 		IRC_Sleep((err_code == IRC_CMD_SUCCESS) ? (rc_delay >> 1) : rc_delay);
@@ -2328,7 +2327,7 @@ static void IRC_MainLoop()
 			{
 				IRC_ThreadStatus = IRC_THREAD_QUITTING;
 				IRC_Display(IRC_MakeEvent(QUIT, 1), "", "quit from menu\n");
-				err_code = IRC_Send("QUIT :ET: Legacy IRC %s\n", Q3_VERSION);
+				err_code = IRC_Send("QUIT :ET: Legacy IRC %s", Q3_VERSION);
 			}
 			else
 			{
@@ -2555,7 +2554,7 @@ void CL_OW_IRCSetup(void)
 {
 	cl_IRC_connect_at_startup = Cvar_Get("cl_IRC_connect_at_startup", "0", CVAR_ARCHIVE);
 	cl_IRC_server             = Cvar_Get("cl_IRC_server", "irc.freenode.net", CVAR_ARCHIVE);
-	cl_IRC_channel            = Cvar_Get("cl_IRC_channel", "etlegacy", CVAR_ARCHIVE); // etlegacy_lobby ?
+	cl_IRC_channel            = Cvar_Get("cl_IRC_channel", "etlegacy.com", CVAR_ARCHIVE);
 	cl_IRC_port               = Cvar_Get("cl_IRC_port", "6667", CVAR_ARCHIVE);
 	cl_IRC_override_nickname  = Cvar_Get("cl_IRC_override_nickname", "0", CVAR_ARCHIVE);
 	cl_IRC_nickname           = Cvar_Get("cl_IRC_nickname", "", CVAR_ARCHIVE);

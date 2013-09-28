@@ -251,7 +251,7 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 			VectorCopy(vec3_origin, angles);
 			VectorCopy(cent->lerpOrigin, origin);
 		}
-		// MrE: use bbox of capsule
+		// use bbox of capsule
 		if (capsule)
 		{
 			trap_CM_TransformedCapsuleTrace(&trace, start, end,
@@ -423,7 +423,7 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 		cmdNum = trap_GetCurrentCmdNumber();
 		trap_GetUserCmd(cmdNum, &cmd);
 
-		// rain - added tracemask
+		// added tracemask
 		PM_UpdateViewAngles(out, &cg.pmext, &cmd, CG_Trace, MASK_PLAYERSOLID);
 	}
 
@@ -1020,6 +1020,7 @@ void CG_PredictPlayerState(void)
 			{
 				vec3_t adjusted;
 				float  len;
+
 				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, deltaAngles);
 				// add the deltaAngles (fixes jittery view while riding trains)
 				// only do this if player is prone or using set mortar
@@ -1045,11 +1046,9 @@ void CG_PredictPlayerState(void)
 					}
 					if (cg_errorDecay.integer)
 					{
-						int   t;
-						float f;
+						int   t = cg.time - cg.predictedErrorTime;
+						float f = (cg_errorDecay.value - t) / cg_errorDecay.value;
 
-						t = cg.time - cg.predictedErrorTime;
-						f = (cg_errorDecay.value - t) / cg_errorDecay.value;
 						if (f < 0)
 						{
 							f = 0;
@@ -1070,10 +1069,6 @@ void CG_PredictPlayerState(void)
 			}
 		}
 
-		// don't predict gauntlet firing, which is only supposed to happen
-		// when it actually inflicts damage
-		cg_pmove.gauntletHit = qfalse;
-
 		if (cg_pmove.pmove_fixed)
 		{
 			cg_pmove.cmd.serverTime = ((cg_pmove.cmd.serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
@@ -1090,7 +1085,7 @@ void CG_PredictPlayerState(void)
 		// only fill in the charge times if we're on a playing team
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS || cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
 		{
-			cg_pmove.ltChargeTime        = cg.ltChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+			cg_pmove.ltChargeTime        = cg.fieldopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 			cg_pmove.soldierChargeTime   = cg.soldierChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 			cg_pmove.engineerChargeTime  = cg.engineerChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 			cg_pmove.medicChargeTime     = cg.medicChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
@@ -1146,10 +1141,7 @@ void CG_PredictPlayerState(void)
 	}
 	else
 	{
-		float x;
-
-		// starts at 1, approaches 0 over time
-		x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
+		float x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
 
 		// move
 		cg.predictedPlayerState.origin[2] +=

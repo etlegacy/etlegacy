@@ -165,6 +165,9 @@ void CG_ParseServerinfo(void)
 
 	cgs.minclients = atoi(Info_ValueForKey(info, "g_minGameClients")); //  overloaded for ready counts
 
+	cgs.fixedphysics    = atoi(Info_ValueForKey(info, "g_fixedphysics"));
+	cgs.fixedphysicsfps = atoi(Info_ValueForKey(info, "g_fixedphysicsfps"));
+
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
 }
@@ -712,8 +715,8 @@ void CG_ChargeTimesChanged(void)
 	cg.medicChargeTime[1]     = atoi(Info_ValueForKey(info, "a1"));
 	cg.engineerChargeTime[0]  = atoi(Info_ValueForKey(info, "x2"));
 	cg.engineerChargeTime[1]  = atoi(Info_ValueForKey(info, "a2"));
-	cg.ltChargeTime[0]        = atoi(Info_ValueForKey(info, "x3"));
-	cg.ltChargeTime[1]        = atoi(Info_ValueForKey(info, "a3"));
+	cg.fieldopsChargeTime[0]  = atoi(Info_ValueForKey(info, "x3"));
+	cg.fieldopsChargeTime[1]  = atoi(Info_ValueForKey(info, "a3"));
 	cg.covertopsChargeTime[0] = atoi(Info_ValueForKey(info, "x4"));
 	cg.covertopsChargeTime[1] = atoi(Info_ValueForKey(info, "a4"));
 }
@@ -1629,7 +1632,6 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat))
 	{
-		//
 		if (mode == SAY_TEAM || !cg_teamChatsOnly.integer)
 		{
 			bufferedVoiceChat_t vchat;
@@ -1654,8 +1656,25 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 			if (mode == SAY_TEAM)
 			{
-				Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
-				            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat)); // FIXME: CG_TranslateString doesn't make sense here
+				// show latched class for sayplayerclass cmd
+				if (cgs.clientinfo[clientNum].cls != cgs.clientinfo[clientNum].latchedcls)
+				{
+					if (!strcmp(cmd, "IamMedic") || !strcmp(cmd, "IamEngineer") || !strcmp(cmd, "IamFieldOps") || !strcmp(cmd, "IamCovertOps") || !strcmp(cmd, "IamSoldier"))
+					{
+						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s Next class: %s",
+						            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat), BG_ClassnameForNumber(cgs.clientinfo[clientNum].latchedcls)); // FIXME: CG_TranslateString doesn't make sense here
+					}
+					else // isn't sayplayerclass cmd
+					{
+						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
+						            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+					}
+				}
+				else
+				{
+					Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
+					            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+				}
 			}
 			else if (mode == SAY_BUDDY)
 			{

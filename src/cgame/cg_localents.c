@@ -168,7 +168,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			}
 		}
 
-		if (cg_locations.integer & LOC_SHOWCOORDS && locValid)
+		if ((cg_locations.integer & LOC_SHOWCOORDS) && locValid)
 		{
 			Q_strcat(locStr, 64, va(" ^3(%s)", BG_GetLocationString(loc)));   // append a location
 		}
@@ -216,8 +216,8 @@ void CG_LoadLocations(void)
 
 	if (fLen > MAX_BUFFER)
 	{
-		CG_Error("Location file is too big, make it smaller (max = %i bytes)\n", MAX_BUFFER);
 		trap_FS_FCloseFile(f);
+		CG_Error("Location file is too big, make it smaller (max = %i bytes)\n", MAX_BUFFER);
 	}
 
 	trap_FS_Read(&fBuffer, fLen, f);                    // read the file into the buffer
@@ -836,7 +836,7 @@ void CG_AddFragment(localEntity_t *le)
 		// still in free fall
 		VectorCopy(newOrigin, le->refEntity.origin);
 
-		if (le->leFlags & LEF_TUMBLE || le->angles.trType == TR_LINEAR)
+		if ((le->leFlags & LEF_TUMBLE) || le->angles.trType == TR_LINEAR)
 		{
 			vec3_t angles;
 

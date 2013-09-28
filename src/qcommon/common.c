@@ -2192,9 +2192,6 @@ Com_GetSystemEvent
 */
 sysEvent_t Com_GetSystemEvent(void)
 {
-#if defined(_WIN32)
-	MSG msg;
-#endif
 	sysEvent_t ev;
 	char       *s;
 	msg_t      netmsg;
@@ -2207,23 +2204,10 @@ sysEvent_t Com_GetSystemEvent(void)
 		return eventQueue[(eventTail - 1) & MASK_QUEUED_EVENTS];
 	}
 
+#if defined(USE_WINDOWS_CONSOLE)
 	// pump the message loop
-#if defined(_WIN32)
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-	{
-		if (!GetMessage(&msg, NULL, 0, 0))
-		{
-			Com_Quit_f();
-		}
-
-		// save the msg time, because wndprocs don't have access to the timestamp
-		g_wv.sysMsgTime = msg.time;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	Sys_PumpConsoleEvents();
 #endif
-
 
 	// check for console commands
 	s = Sys_ConsoleInput();
@@ -2454,7 +2438,6 @@ int Com_EventLoop(void)
 		switch (ev.evType)
 		{
 		default:
-			// bk001129 - was ev.evTime
 			Com_Error(ERR_FATAL, "Com_EventLoop: bad event type %i", ev.evType);
 			break;
 		case SE_NONE:
@@ -2464,7 +2447,6 @@ int Com_EventLoop(void)
 			break;
 		case SE_CHAR:
 #ifndef DEDICATED
-			// fretn
 			// we just pressed the console button,
 			// so ignore this event
 			// this prevents chars appearing at console input
@@ -2775,9 +2757,9 @@ void Com_Init(char *commandLine)
 
 	Com_InitJournaling();
 
-	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "z_hdet", CVAR_ARCHIVE);
+	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "z_hdet", CVAR_PROTECTED);
 
-	Cbuf_AddText("exec default.cfg\n");
+	Cbuf_AddText(va("exec %s\n", CONFIG_NAME_DEFAULT));
 
 	// skip the etconfig.cfg if "safe" is on the command line
 	if (!Com_SafeMode())
@@ -2809,9 +2791,9 @@ void Com_Init(char *commandLine)
 		}
 
 #ifdef DEDICATED
-		com_pidfile = Cvar_Get("com_pidfile", "etlegacy_server.pid", CVAR_TEMP);
+		com_pidfile = Cvar_Get("com_pidfile", "etlegacy_server.pid", CVAR_INIT | CVAR_PROTECTED);
 #else
-		com_pidfile = Cvar_Get("com_pidfile", va("profiles/%s/profile.pid", Cvar_VariableString("cl_profile")), CVAR_TEMP);
+		com_pidfile = Cvar_Get("com_pidfile", va("profiles/%s/profile.pid", Cvar_VariableString("cl_profile")), CVAR_INIT | CVAR_PROTECTED);
 #endif
 
 		if (cl_profileStr[0])
@@ -2889,7 +2871,7 @@ void Com_Init(char *commandLine)
 	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
-#if defined (_WIN32) || defined (__AROS__)
+#if defined (__AROS__)
 	com_ansiColor = Cvar_Get("com_ansiColor", "0", CVAR_ARCHIVE);
 #else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
@@ -2932,7 +2914,7 @@ void Com_Init(char *commandLine)
 	if (!com_dedicated->integer)
 	{
 		CL_Init();
-#if defined (_WIN32) && defined (_DEBUG)
+#if defined (USE_WINDOWS_CONSOLE)
 		Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 	}
@@ -3163,7 +3145,7 @@ void Com_Frame(void)
 	// if "viewlog" has been modified, show or hide the log console
 	if (com_viewlog->modified)
 	{
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 		if (!com_dedicated->value)
 		{
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
@@ -3225,14 +3207,14 @@ void Com_Frame(void)
 		if (!com_dedicated->integer)
 		{
 			CL_Init();
-#if defined (_WIN32)
+#if defined (USE_WINDOWS_CONSOLE)
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 		}
 		else
 		{
 			CL_Shutdown();
-#if defined (_WIN32) && !defined (_DEBUG)
+#if defined (USE_WINDOWS_CONSOLE)
 			Sys_ShowConsole(1, qtrue);
 #endif
 		}
@@ -3380,9 +3362,10 @@ void Field_Clear(field_t *edit)
 	edit->scroll = 0;
 }
 
-static const char *completionString;
-static char       shortestMatch[MAX_TOKEN_CHARS];
-static int        matchCount;
+static char completionString[MAX_TOKEN_CHARS];
+static char shortestMatch[MAX_TOKEN_CHARS];
+static int  matchCount;
+static int  matchIndex;
 // field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
 
@@ -3415,6 +3398,33 @@ static void FindMatches(const char *s)
 		}
 	}
 	shortestMatch[i] = 0;
+}
+
+/*
+===============
+FindIndexMatch
+
+===============
+*/
+static int findMatchIndex;
+static void FindIndexMatch(const char *s)
+{
+
+	//Com_Printf("S: %s CompletionString: %s\n",s,completionString);
+
+	if (Q_stricmpn(s, completionString, strlen(completionString)))
+	{
+		return;
+	}
+
+	//Com_Printf("FindMatchIndex: %i Matchindex: %i Shortestmatch: %s Current Check: %s\n",findMatchIndex,matchIndex,shortestMatch,s);
+
+	if (findMatchIndex == matchIndex)
+	{
+		Q_strncpyz(shortestMatch, s, sizeof(shortestMatch));
+	}
+
+	findMatchIndex++;
 }
 
 /*
@@ -3557,12 +3567,13 @@ void Field_CompleteCommand(char *cmd,
 	// If there is trailing whitespace on the cmd
 	if (*(cmd + strlen(cmd) - 1) == ' ')
 	{
-		completionString = "";
+		completionString[0] = 0;
 		completionArgument++;
 	}
 	else
 	{
-		completionString = Cmd_Argv(completionArgument - 1);
+		Q_strncpyz(completionString, Cmd_Argv(completionArgument - 1), sizeof(completionString));
+		//completionString = Cmd_Argv(completionArgument - 1);
 	}
 
 #if SLASH_COMMAND
@@ -3620,7 +3631,8 @@ void Field_CompleteCommand(char *cmd,
 #if SLASH_COMMAND
 		if (completionString[0] == '\\' || completionString[0] == '/')
 		{
-			completionString++;
+			memmove(completionString, completionString + 1, sizeof(completionString) - 1);
+			//completionString++;
 		}
 #endif
 
@@ -3664,13 +3676,95 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 	*hunkexpected = com_expectedhunkusage;
 }
 
+void Console_AutoCompelete(field_t *field, int *comletionlen)
+{
+	int completionOffset = 0;
+
+	if (!*comletionlen)
+	{
+		matchCount       = 0;
+		matchIndex       = 0;
+		shortestMatch[0] = 0;
+
+		Field_AutoComplete(field);
+
+		if (matchCount <= 1)
+		{
+			return;
+		}
+		//Multiple matches
+#if 1
+		{
+			//Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
+			int completionArgument = 0;
+			completionArgument = Cmd_Argc();
+
+			// If there is trailing whitespace on the cmd
+			if (*(field->buffer + strlen(field->buffer) - 1) == ' ')
+			{
+				completionArgument++;
+			}
+
+			//We will skip this hightlight method if theres more than one command given
+			if (completionArgument > 1)
+			{
+				return;
+			}
+		}
+#endif
+		/*
+		completionOffset = strlen(field->buffer) - strlen(completionString);
+
+		Q_strncpyz(&field->buffer[completionOffset], shortestMatch,
+		           sizeof(field->buffer) - completionOffset);
+
+		*comletionlen = field->cursor = strlen(field->buffer);
+		*/
+
+		Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
+		completionOffset = strlen(field->buffer) - strlen(completionString);
+		*comletionlen    = field->cursor = strlen(field->buffer);
+	}
+	else
+	{
+		if (matchCount != 1)
+		{
+			// get the next match and show instead
+			matchIndex++;
+			if (matchIndex == matchCount)
+			{
+				matchIndex = 0;
+			}
+			findMatchIndex = 0;
+
+#if SLASH_COMMAND
+			if (completionString[0] == '\\' || completionString[0] == '/')
+			{
+				memmove(completionString, completionString + 1, sizeof(completionString) - 1);
+			}
+#endif
+			Cmd_CommandCompletion(FindIndexMatch);
+			Cvar_CommandCompletion(FindIndexMatch);
+
+			Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
+			field->cursor = strlen(field->buffer);
+
+			/*
+			completionOffset = strlen(field->buffer) - strlen(completionString);
+			Q_strncpyz(&field->buffer[completionOffset], shortestMatch,
+			    sizeof(field->buffer) - completionOffset);
+			field->cursor = strlen( field->buffer );
+			*/
+		}
+	}
+}
+
 /**
  * @brief Perform Tab expansion
  */
 void Field_AutoComplete(field_t *field)
 {
 	completionField = field;
-
 	Field_CompleteCommand(completionField->buffer, qtrue, qtrue);
 }
 

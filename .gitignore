@@ -1,9 +1,35 @@
+#
+# Project specific
+#
 /build
 /obj
 /doc
-*.sh
 !easybuild.sh
-*.kdev4
-*~
 /Makefile
 /*.make
+
+#
+# OS specific
+#
+
+# Linux/KDE
+*~
+*.sh
+/.directory
+*.kdev4
+
+# Windows
+Thumbs.db
+
+#
+# Editor specific
+#
+*.bak
+
+# Eclipse
+/.project
+
+# CDT-specific
+/.cproject
+
+

@@ -1092,7 +1092,7 @@ typedef struct
 	char oidTriggerInfoAllies[MAX_OID_TRIGGERS][256];
 	char oidTriggerInfoAxis[MAX_OID_TRIGGERS][256];
 
-	int ltChargeTime[2];
+	int fieldopsChargeTime[2];
 	int soldierChargeTime[2];
 	int engineerChargeTime[2];
 	int medicChargeTime[2];
@@ -1170,7 +1170,7 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define BG_NUM_ITEMS 75 // keep in sync with bg_numItems! FIXME: make this non static one day
+#define BG_NUM_ITEMS 76 // keep in sync with bg_numItems! FIXME: make this non static one day
 
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t
@@ -1705,6 +1705,7 @@ typedef struct oidInfo_s
 // locations
 #define MAX_C_LOCATIONS 1024
 // locations draw bits and cvar
+/*
 #define LOC_FTEAM                   1
 #define LOC_VCHAT                   2
 #define LOC_TCHAT                   2
@@ -1713,6 +1714,18 @@ typedef struct oidInfo_s
 #define LOC_SHOWCOORDS              16
 #define LOC_SHOWDISTANCE            32
 #define LOC_DEBUG                   512
+*/
+enum
+{
+	LOC_FTEAM        = BIT(0),
+	LOC_VCHAT        = BIT(1),
+	LOC_TCHAT        = BIT(1),
+	LOC_LANDMINES    = BIT(2),
+	LOC_KEEPUNKNOWN  = BIT(3),
+	LOC_SHOWCOORDS   = BIT(4),
+	LOC_SHOWDISTANCE = BIT(5),
+	LOC_DEBUG        = BIT(9),
+};
 
 typedef struct location_s
 {
@@ -1973,6 +1986,9 @@ typedef struct cgs_s
 	int mapVoteMapX;
 	int mapVoteMapY;
 
+	int fixedphysics;
+	int fixedphysicsfps;
+
 } cgs_t;
 
 //==============================================================================
@@ -2165,6 +2181,7 @@ extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
+extern vmCvar_t cg_simpleItems;
 
 extern vmCvar_t cg_automapZoom;
 
@@ -2202,7 +2219,6 @@ void CG_UpdateCvars(void);
 
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
-void CG_LoadMenus(const char *menuFile);
 void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
@@ -3219,7 +3235,7 @@ void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
 void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader, vec3_t color);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
-void CG_DrawPMItems(rectDef_t rect);
+void CG_DrawPMItems(rectDef_t rect, int style);
 void CG_DrawPMItemsBig(void);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);

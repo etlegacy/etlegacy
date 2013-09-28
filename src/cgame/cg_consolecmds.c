@@ -41,13 +41,17 @@ void CG_TargetCommand_f(void)
 	char test[4];
 
 	targetNum = CG_CrosshairPlayer();
-	if (!targetNum)
+	if (targetNum < 0) // targetNum != -1
 	{
 		return;
 	}
 
 	trap_Argv(1, test, 4);
-	trap_SendConsoleCommand(va("gc %i %i", targetNum, atoi(test)));
+
+	// gc command was forwarded to server after if wasn't recognized locally, but let's just send straight to server.
+	// trap_SendConsoleCommand should of had a \n at end, but using trap_SendClientCommand makes more sense.
+	//trap_SendConsoleCommand(va("gc %i %i", targetNum, atoi(test)));
+	trap_SendClientCommand(va("gc %i %i", targetNum, atoi(test)));
 }
 
 /**
@@ -1109,7 +1113,6 @@ static void CG_CPM_f(void)
  */
 void CG_TimerSet_f(void)
 {
-
 	if (cgs.gamestate != GS_PLAYING)
 	{
 		CG_Printf("You may only use this command during the match.\n");
@@ -1201,11 +1204,11 @@ void CG_Class_f(void)
 	{
 	case TEAM_AXIS:
 		classtype  = "r";
-		teamstring = "Axis";
+		teamstring = CG_TranslateString("Axis");
 		break;
 	case TEAM_ALLIES:
 		classtype  = "b";
-		teamstring = "Allies";
+		teamstring = CG_TranslateString("Allies");
 		break;
 	default:
 		CG_Printf("Invalid team.\n");
@@ -1425,8 +1428,8 @@ qboolean CG_ConsoleCommand(void)
 }
 
 
-/*
- * Let the client system know about all of our commands so it can perform tab
+/**
+ * @brief Let the client system know about all of our commands so it can perform tab
  * completion
  */
 void CG_InitConsoleCommands(void)
@@ -1533,6 +1536,7 @@ void CG_InitConsoleCommands(void)
 void CG_parseMapVoteListInfo()
 {
 	int i;
+
 	cgs.dbNumMaps = (trap_Argc() - 2) / 4;
 
 	if (atoi(CG_Argv(1)))

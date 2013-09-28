@@ -184,6 +184,7 @@ void Cbuf_ExecuteText(int exec_when, const char *text)
 		break;
 	default:
 		Com_Error(ERR_FATAL, "Cbuf_ExecuteText: bad exec_when");
+		break;
 	}
 }
 
@@ -1040,7 +1041,7 @@ void Cmd_CleanHomepath_f(void)
 	if (Cmd_Argc() < 3)
 	{
 		// basically files are downloaded again when required - but better print a warning for inexperienced users
-		Com_Printf("usage: clean <mod> <pattern[1]> <pattern[n]>\nexample: clean all *tmp */zzz* etmain/etkey\nwarning: This command deletes files in fs_homepath. If you are not sure how to use this command do not play with fire!");
+		Com_Printf("usage: clean <mod> <pattern[1]> <pattern[n]>\nexample: clean all *tmp */zzz* etmain/etkey\nwarning: This command deletes files in fs_homepath. If you are not sure how to use this command do not play with fire!\n");
 		return;
 	}
 

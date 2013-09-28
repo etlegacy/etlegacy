@@ -65,7 +65,9 @@
 #define RANK_TIED_FLAG      0x4000
 
 #define ITEM_RADIUS         10      // item sizes are needed for client side pickup detection
-                                    // Rafael changed the radius so that the items would fit in the 3 new containers
+                                    // - changed the radius so that the items would fit in the 3 new containers
+
+#define MAX_TRACE           8192.0f // whenever you change this make sure bullet_Endpos for scope weapons is in sync!
 
 #define FLAMETHROWER_RANGE  2500    // multiplayer range, was 850 in SP
 
@@ -494,10 +496,9 @@ typedef struct
 	int debugLevel;                 // if set, diagnostic output will be printed
 	qboolean noFootsteps;           // if the game is setup for no footsteps by the server
 	qboolean noWeapClips;           // if the game is setup for no weapon clips by the server
-	qboolean gauntletHit;           // true if a gauntlet attack would actually hit something
 
 	int gametype;
-	int ltChargeTime;
+	int ltChargeTime;               // fieldopsChargeTime in cgame and ui. Cannot change here because of compatibility
 	int soldierChargeTime;
 	int engineerChargeTime;
 	int medicChargeTime;
@@ -751,6 +752,9 @@ typedef enum
 	WP_AKIMBO_SILENCEDLUGER, // 46
 	WP_MOBILE_MG42_SET,     // 47
 
+	// legacy weapons
+	WP_KNIFE_KABAR,                // 48
+
 	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 48
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
@@ -839,7 +843,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define IS_RIFLENADE_WEAPON(w) \
 	(w == WP_GPG40           || w == WP_M7)
 
-#define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
+#define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
 // NOTE: what about WP_VENOM and other XP weapons?
 // added akimbo weapons and deployed MG42
@@ -1369,6 +1373,8 @@ typedef enum
 
 	MOD_SHOVE,
 
+	MOD_KNIFE_KABAR,
+
 	MOD_NUM_MODS
 
 } meansOfDeath_t;
@@ -1434,8 +1440,6 @@ qboolean BG_IsAkimboWeapon(int weaponNum);
 qboolean BG_IsAkimboSideArm(int weaponNum, playerState_t *ps);
 int BG_AkimboSidearm(int weaponNum);
 
-qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon);
-
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
 
 // content masks
@@ -1452,11 +1456,12 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 // entityState_t->eType
 
 // cursorhints (stored in ent->s.dmgFlags since that's only used for players at the moment)
-// note: don't remove any of these see OB ET_Config.h
+// FIXME: clean this - many hint types are obsolete but keep enum numbers!
+// note: adjust omnibot while cleaning this see OB ET_Config.h
 typedef enum
 {
-	HINT_NONE,      // reserved
-	HINT_FORCENONE, // reserved
+	HINT_NONE = 0,      // reserved
+	HINT_FORCENONE,     // reserved
 	HINT_PLAYER,
 	HINT_ACTIVATE,
 	HINT_DOOR,
@@ -1464,8 +1469,8 @@ typedef enum
 	HINT_DOOR_LOCKED,
 	HINT_DOOR_ROTATING_LOCKED,
 	HINT_MG42,
-	HINT_BREAKABLE,
-	HINT_BREAKABLE_DYNAMITE,
+	HINT_BREAKABLE,             // FIXME: remove - never set!
+	HINT_BREAKABLE_DYNAMITE,    // FIXME: remove - never set!
 	HINT_CHAIR,
 	HINT_ALARM,
 	HINT_HEALTH,
@@ -1487,10 +1492,10 @@ typedef enum
 	HINT_HOLDABLE,
 	HINT_INVENTORY,
 	HINT_SCENARIC,
-	HINT_EXIT,
-	HINT_NOEXIT,
-	HINT_PLYR_FRIEND,
-	HINT_PLYR_NEUTRAL,
+	HINT_EXIT,         // FIXME: remove me - never set!
+	HINT_NOEXIT,       // FIXME: remove me - never set!
+	HINT_PLYR_FRIEND,  // FIXME: remove this!
+	HINT_PLYR_NEUTRAL, // FIXME: remove this!
 	HINT_PLYR_ENEMY,
 	HINT_PLYR_UNKNOWN,
 	HINT_BUILD,
@@ -1502,7 +1507,7 @@ typedef enum
 	HINT_LANDMINE,
 	HINT_TANK,
 	HINT_SATCHELCHARGE,
-	HINT_LOCKPICK, // @brief unused - don't remove see OMNIBOT
+	HINT_LOCKPICK, // @brief unused
 
 	HINT_BAD_USER,  // invisible user with no target
 

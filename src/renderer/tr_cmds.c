@@ -597,7 +597,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
 
-	//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
+	//ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
 
 	if (textureid > tr.numImages || textureid < 0)
 	{

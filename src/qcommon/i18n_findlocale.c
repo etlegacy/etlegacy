@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -10,23 +9,18 @@
 
 #include "i18n_findlocale.h"
 
-static int
-is_lcchar(const int c)
+static int is_lcchar(const int c)
 {
 	return isalnum(c);
 }
 
-static void
-lang_country_variant_from_envstring(const char *str,
-                                    char **lang,
-                                    char **country,
-                                    char **variant)
+static void lang_country_variant_from_envstring(const char *str, char **lang, char **country, char **variant)
 {
-	int end = 0;
-	int start;
+	int end   = 0;
+	int start = end;
 
-	/* get lang, if any */
-	start = end;
+	// get lang, if any
+
 	while (is_lcchar(str[end]))
 	{
 		++end;
@@ -36,6 +30,7 @@ lang_country_variant_from_envstring(const char *str,
 		int  i;
 		int  len = end - start;
 		char *s  = malloc(len + 1);
+
 		for (i = 0; i < len; ++i)
 		{
 			s[i] = tolower(str[start + i]);
@@ -48,12 +43,12 @@ lang_country_variant_from_envstring(const char *str,
 		*lang = NULL;
 	}
 
-	if (str[end] && str[end] != ':') /* not at end of str */
+	if (str[end] && str[end] != ':') // not at end of str
 	{
 		++end;
 	}
 
-	/* get country, if any */
+	// get country, if any
 	start = end;
 	while (is_lcchar(str[end]))
 	{
@@ -64,6 +59,7 @@ lang_country_variant_from_envstring(const char *str,
 		int  i;
 		int  len = end - start;
 		char *s  = malloc(len + 1);
+
 		for (i = 0; i < len; ++i)
 		{
 			s[i] = toupper(str[start + i]);
@@ -76,12 +72,12 @@ lang_country_variant_from_envstring(const char *str,
 		*country = NULL;
 	}
 
-	if (str[end] && str[end] != ':') /* not at end of str */
+	if (str[end] && str[end] != ':') // not at end of str
 	{
 		++end;
 	}
 
-	/* get variant, if any */
+	// get variant, if any
 	start = end;
 	while (str[end] && str[end] != ':')
 	{
@@ -92,6 +88,7 @@ lang_country_variant_from_envstring(const char *str,
 		int  i;
 		int  len = end - start;
 		char *s  = malloc(len + 1);
+
 		for (i = 0; i < len; ++i)
 		{
 			s[i] = str[start + i];
@@ -105,13 +102,12 @@ lang_country_variant_from_envstring(const char *str,
 	}
 }
 
-
-static int
-accumulate_locstring(const char *str, FL_Locale *l)
+static int accumulate_locstring(const char *str, FL_Locale *l)
 {
 	char *lang    = NULL;
 	char *country = NULL;
 	char *variant = NULL;
+
 	if (str)
 	{
 		lang_country_variant_from_envstring(str, &lang, &country, &variant);
@@ -123,33 +119,34 @@ accumulate_locstring(const char *str, FL_Locale *l)
 			return 1;
 		}
 	}
-	free(lang); free(country); free(variant);
+	free(lang);
+	free(country);
+	free(variant);
 	return 0;
 }
 
-
-static int
-accumulate_env(const char *name, FL_Locale *l)
+static int accumulate_env(const char *name, FL_Locale *l)
 {
 	char *env;
 	char *lang    = NULL;
 	char *country = NULL;
 	char *variant = NULL;
+
 	env = getenv(name);
 	if (env)
 	{
 		return accumulate_locstring(env, l);
 	}
-	free(lang); free(country); free(variant);
+	free(lang);
+	free(country);
+	free(variant);
 	return 0;
 }
 
-
-static void
-canonise_fl(FL_Locale *l)
+static void canonise_fl(FL_Locale *l)
 {
-	/* this function fixes some common locale-specifying mistakes */
-	/* en_UK -> en_GB */
+	// this function fixes some common locale-specifying mistakes
+	// en_UK -> en_GB
 	if (l->lang && 0 == strcmp(l->lang, "en"))
 	{
 		if (l->country && 0 == strcmp(l->country, "UK"))
@@ -158,7 +155,7 @@ canonise_fl(FL_Locale *l)
 			l->country = strdup("GB");
 		}
 	}
-	/* ja_JA -> ja_JP */
+	// ja_JA -> ja_JP
 	if (l->lang && 0 == strcmp(l->lang, "ja"))
 	{
 		if (l->country && 0 == strcmp(l->country, "JA"))
@@ -169,21 +166,24 @@ canonise_fl(FL_Locale *l)
 	}
 }
 
-
 #ifdef WIN32
+
 #include <stdio.h>
+
 #define ML(pn, sn) MAKELANGID(LANG_ ## pn, SUBLANG_ ## pn ## _ ## sn)
 #define MLN(pn) MAKELANGID(LANG_ ## pn, SUBLANG_DEFAULT)
 #define RML(pn, sn) MAKELANGID(LANG_ ## pn, SUBLANG_ ## sn)
+
 typedef struct
 {
 	LANGID id;
 	char *code;
 } IDToCode;
+
 static const IDToCode both_to_code[] =
 {
 	{ ML(ENGLISH,      US),                         "en_US.ISO_8859-1" },
-	{ ML(ENGLISH,      CAN),                        "en_CA"            }, /* english / canadian */
+	{ ML(ENGLISH,      CAN),                        "en_CA"            }, // english / canadian
 	{ ML(ENGLISH,      UK),                         "en_GB"            },
 	{ ML(ENGLISH,      EIRE),                       "en_IE"            },
 	{ ML(ENGLISH,      AUS),                        "en_AU"            },
@@ -192,13 +192,13 @@ static const IDToCode both_to_code[] =
 	{ ML(SPANISH,      MEXICAN),                    "es_MX"            },
 	{ MLN(FRENCH),     "fr_FR" },
 	{ ML(FRENCH,       CANADIAN),                   "fr_CA"            },
-	{ ML(FRENCH,       BELGIAN),                    "fr_BE"            }, /* ? */
-	{ ML(DUTCH,        BELGIAN),                    "nl_BE"            }, /* ? */
+	{ ML(FRENCH,       BELGIAN),                    "fr_BE"            }, // ?
+	{ ML(DUTCH,        BELGIAN),                    "nl_BE"            }, // ?
 	{ ML(PORTUGUESE,   BRAZILIAN),                  "pt_BR"            },
 	{ MLN(PORTUGUESE), "pt_PT" },
 	{ MLN(SWEDISH),    "sv_SE" },
 	{ ML(CHINESE,      HONGKONG),                   "zh_HK"            },
-	/* these are machine-generated and not yet verified */
+	// these are machine-generated and not yet verified
 	{ RML(AFRIKAANS,   DEFAULT),                    "af_ZA"            },
 	{ RML(ALBANIAN,    DEFAULT),                    "sq_AL"            },
 	{ RML(ARABIC,      ARABIC_ALGERIA),             "ar_DZ"            },
@@ -222,7 +222,7 @@ static const IDToCode both_to_code[] =
 	{ RML(AZERI,       AZERI_LATIN),                "az_AZ"            },
 	{ RML(BASQUE,      DEFAULT),                    "eu_ES"            },
 	{ RML(BELARUSIAN,  DEFAULT),                    "be_BY"            },
-/*{RML(BRETON,DEFAULT), "br_FR"},*/
+	//{RML(BRETON,DEFAULT), "br_FR"},
 	{ RML(BULGARIAN,   DEFAULT),                    "bg_BG"            },
 	{ RML(CATALAN,     DEFAULT),                    "ca_ES"            },
 	{ RML(CHINESE,     CHINESE_HONGKONG),           "zh_HK"            },
@@ -230,12 +230,12 @@ static const IDToCode both_to_code[] =
 	{ RML(CHINESE,     CHINESE_SIMPLIFIED),         "zh_CN"            },
 	{ RML(CHINESE,     CHINESE_SINGAPORE),          "zh_SG"            },
 	{ RML(CHINESE,     CHINESE_TRADITIONAL),        "zh_TW"            },
-/*{RML(CORNISH,DEFAULT), "kw_GB"},*/
+	//{RML(CORNISH,DEFAULT), "kw_GB"},
 	{ RML(CZECH,       DEFAULT),                    "cs_CZ"            },
 	{ RML(DANISH,      DEFAULT),                    "da_DK"            },
 	{ RML(DUTCH,       DUTCH),                      "nl_NL"            },
 	{ RML(DUTCH,       DUTCH_BELGIAN),              "nl_BE"            },
-/*{RML(DUTCH,DUTCH_SURINAM), "nl_SR"},*/
+	//{RML(DUTCH,DUTCH_SURINAM), "nl_SR"},
 	{ RML(ENGLISH,     ENGLISH_AUS),                "en_AU"            },
 	{ RML(ENGLISH,     ENGLISH_BELIZE),             "en_BZ"            },
 	{ RML(ENGLISH,     ENGLISH_CAN),                "en_CA"            },
@@ -249,7 +249,7 @@ static const IDToCode both_to_code[] =
 	{ RML(ENGLISH,     ENGLISH_UK),                 "en_GB"            },
 	{ RML(ENGLISH,     ENGLISH_US),                 "en_US"            },
 	{ RML(ENGLISH,     ENGLISH_ZIMBABWE),           "en_ZW"            },
-/*{RML(ESPERANTO,DEFAULT), "eo_"},*/
+	//{RML(ESPERANTO,DEFAULT), "eo_"},
 	{ RML(ESTONIAN,    DEFAULT),                    "et_EE"            },
 	{ RML(FAEROESE,    DEFAULT),                    "fo_FO"            },
 	{ RML(FARSI,       DEFAULT),                    "fa_IR"            },
@@ -260,10 +260,10 @@ static const IDToCode both_to_code[] =
 	{ RML(FRENCH,      FRENCH_LUXEMBOURG),          "fr_LU"            },
 	{ RML(FRENCH,      FRENCH_MONACO),              "fr_MC"            },
 	{ RML(FRENCH,      FRENCH_SWISS),               "fr_CH"            },
-/*{RML(GAELIC,GAELIC), "ga_IE"},*/
-/*{RML(GAELIC,GAELIC_MANX), "gv_GB"},*/
-/*{RML(GAELIC,GAELIC_SCOTTISH), "gd_GB"},*/
-/*{RML(GALICIAN,DEFAULT), "gl_ES"},*/
+	//{RML(GAELIC,GAELIC), "ga_IE"},
+	//{RML(GAELIC,GAELIC_MANX), "gv_GB"},
+	//{RML(GAELIC,GAELIC_SCOTTISH), "gd_GB"},
+	//{RML(GALICIAN,DEFAULT), "gl_ES"},
 	{ RML(GEORGIAN,    DEFAULT),                    "ka_GE"            },
 	{ RML(GERMAN,      GERMAN),                     "de_DE"            },
 	{ RML(GERMAN,      GERMAN_AUSTRIAN),            "de_AT"            },
@@ -284,14 +284,14 @@ static const IDToCode both_to_code[] =
 	{ RML(KAZAK,       DEFAULT),                    "kk_KZ"            },
 	{ RML(KONKANI,     DEFAULT),                    "kok_IN"           },
 	{ RML(KOREAN,      KOREAN),                     "ko_KR"            },
-/*{RML(KYRGYZ,DEFAULT), "ky_KG"},*/
+	//{RML(KYRGYZ,DEFAULT), "ky_KG"},
 	{ RML(LATVIAN,     DEFAULT),                    "lv_LV"            },
 	{ RML(LITHUANIAN,  LITHUANIAN),                 "lt_LT"            },
 	{ RML(MACEDONIAN,  DEFAULT),                    "mk_MK"            },
 	{ RML(MALAY,       MALAY_BRUNEI_DARUSSALAM),    "ms_BN"            },
 	{ RML(MALAY,       MALAY_MALAYSIA),             "ms_MY"            },
 	{ RML(MARATHI,     DEFAULT),                    "mr_IN"            },
-/*{RML(MONGOLIAN,DEFAULT), "mn_MN"},*/
+	//{RML(MONGOLIAN,DEFAULT), "mn_MN"},
 	{ RML(NORWEGIAN,   NORWEGIAN_BOKMAL),           "nb_NO"            },
 	{ RML(NORWEGIAN,   NORWEGIAN_NYNORSK),          "nn_NO"            },
 	{ RML(POLISH,      DEFAULT),                    "pl_PL"            },
@@ -329,7 +329,7 @@ static const IDToCode both_to_code[] =
 	{ RML(SWAHILI,     DEFAULT),                    "sw_KE"            },
 	{ RML(SWEDISH,     SWEDISH),                    "sv_SE"            },
 	{ RML(SWEDISH,     SWEDISH_FINLAND),            "sv_FI"            },
-/*{RML(SYRIAC,DEFAULT), "syr_SY"},*/
+	//{RML(SYRIAC,DEFAULT), "syr_SY"},
 	{ RML(TAMIL,       DEFAULT),                    "ta_IN"            },
 	{ RML(TATAR,       DEFAULT),                    "tt_TA"            },
 	{ RML(TELUGU,      DEFAULT),                    "te_IN"            },
@@ -340,25 +340,26 @@ static const IDToCode both_to_code[] =
 	{ RML(UZBEK,       UZBEK_CYRILLIC),             "uz_UZ"            },
 	{ RML(UZBEK,       UZBEK_LATIN),                "uz_UZ"            },
 	{ RML(VIETNAMESE,  DEFAULT),                    "vi_VN"            },
-/*{RML(WALON,DEFAULT), "wa_BE"},*/
-/*{RML(WELSH,DEFAULT), "cy_GB"},*/
+	//{RML(WALON,DEFAULT), "wa_BE"},
+	//{RML(WELSH,DEFAULT), "cy_GB"},
 };
+
 static const IDToCode primary_to_code[] =
 {
 	{ LANG_AFRIKAANS,  "af" },
 	{ LANG_ARABIC,     "ar" },
 	{ LANG_AZERI,      "az" },
 	{ LANG_BULGARIAN,  "bg" },
-/*{LANG_BRETON,     "br"},*/
+	//{LANG_BRETON,     "br"},
 	{ LANG_BELARUSIAN, "by" },
 	{ LANG_CATALAN,    "ca" },
 	{ LANG_CZECH,      "cs" },
-/*{LANG_WELSH,      "cy"},*/
+	//{LANG_WELSH,      "cy"},
 	{ LANG_DANISH,     "da" },
 	{ LANG_GERMAN,     "de" },
 	{ LANG_GREEK,      "el" },
 	{ LANG_ENGLISH,    "en" },
-/*{LANG_ESPERANTO,  "eo"},*/
+	//{LANG_ESPERANTO,  "eo"},
 	{ LANG_SPANISH,    "es" },
 	{ LANG_ESTONIAN,   "et" },
 	{ LANG_BASQUE,     "eu" },
@@ -366,8 +367,8 @@ static const IDToCode primary_to_code[] =
 	{ LANG_FINNISH,    "fi" },
 	{ LANG_FAEROESE,   "fo" },
 	{ LANG_FRENCH,     "fr" },
-/*{LANG_GAELIC,     "ga"},*/
-/*{LANG_GALICIAN,   "gl"},*/
+	//{LANG_GAELIC,     "ga"},
+	//{LANG_GALICIAN,   "gl"},
 	{ LANG_GUJARATI,   "gu" },
 	{ LANG_HEBREW,     "he" },
 	{ LANG_HINDI,      "hi" },
@@ -381,17 +382,17 @@ static const IDToCode primary_to_code[] =
 	{ LANG_KAZAK,      "kk" },
 	{ LANG_KANNADA,    "kn" },
 	{ LANG_KOREAN,     "ko" },
-/*{LANG_KYRGYZ,     "ky"},*/
+	//{LANG_KYRGYZ,     "ky"},
 	{ LANG_LITHUANIAN, "lt" },
 	{ LANG_LATVIAN,    "lv" },
 	{ LANG_MACEDONIAN, "mk" },
-/*{LANG_MONGOLIAN,  "mn"},*/
+	//{LANG_MONGOLIAN,  "mn"},
 	{ LANG_MARATHI,    "mr" },
 	{ LANG_MALAY,      "ms" },
 	{ LANG_NORWEGIAN,  "nb" },
 	{ LANG_DUTCH,      "nl" },
 	{ LANG_NORWEGIAN,  "nn" },
-	{ LANG_NORWEGIAN,  "no" }, /* unofficial? */
+	{ LANG_NORWEGIAN,  "no" }, // unofficial?
 	{ LANG_PUNJABI,    "pa" },
 	{ LANG_POLISH,     "pl" },
 	{ LANG_PORTUGUESE, "pt" },
@@ -411,23 +412,21 @@ static const IDToCode primary_to_code[] =
 	{ LANG_URDU,       "ur" },
 	{ LANG_UZBEK,      "uz" },
 	{ LANG_VIETNAMESE, "vi" },
-/*{LANG_WALON,      "wa"},*/
+	//{LANG_WALON,      "wa"},
 	{ LANG_CHINESE,    "zh" },
 };
-static int num_primary_to_code =
-    sizeof(primary_to_code) / sizeof(*primary_to_code);
-static int num_both_to_code =
-    sizeof(both_to_code) / sizeof(*both_to_code);
 
-static const int
-lcid_to_fl(LCID lcid,
-           FL_Locale *rtn)
+static int num_primary_to_code = sizeof(primary_to_code) / sizeof(*primary_to_code);
+static int num_both_to_code    = sizeof(both_to_code) / sizeof(*both_to_code);
+
+static const int lcid_to_fl(LCID lcid, FL_Locale *rtn)
 {
 	LANGID langid       = LANGIDFROMLCID(lcid);
 	LANGID primary_lang = PRIMARYLANGID(langid);
 	LANGID sub_lang     = SUBLANGID(langid);
 	int    i;
-	/* try to find an exact primary/sublanguage combo that we know about */
+
+	// try to find an exact primary/sublanguage combo that we know about
 	for (i = 0; i < num_both_to_code; ++i)
 	{
 		if (both_to_code[i].id == langid)
@@ -436,7 +435,7 @@ lcid_to_fl(LCID lcid,
 			return 1;
 		}
 	}
-	/* fallback to just checking the primary language id */
+	// fallback to just checking the primary language id
 	for (i = 0; i < num_primary_to_code; ++i)
 	{
 		if (primary_to_code[i].id == primary_lang)
@@ -449,18 +448,17 @@ lcid_to_fl(LCID lcid,
 }
 #endif
 
-
-FL_Success
-FL_FindLocale(FL_Locale **locale)
+FL_Success FL_FindLocale(FL_Locale **locale)
 {
 	FL_Success success = FL_FAILED;
 	FL_Locale  *rtn    = malloc(sizeof(FL_Locale));
+
 	rtn->lang    = NULL;
 	rtn->country = NULL;
 	rtn->variant = NULL;
 
 #ifdef WIN32
-	/* win32 >= mswindows95 */
+	// win32 >= mswindows95
 	{
 		LCID lcid = GetThreadLocale();
 		if (lcid_to_fl(lcid, rtn))
@@ -469,7 +467,7 @@ FL_FindLocale(FL_Locale **locale)
 		}
 		if (success == FL_FAILED)
 		{
-			/* assume US English on mswindows systems unless we know otherwise */
+			// assume US English on mswindows systems unless we know otherwise
 			if (accumulate_locstring("en_US.ISO_8859-1", rtn))
 			{
 				success = FL_DEFAULT_GUESS;
@@ -477,16 +475,16 @@ FL_FindLocale(FL_Locale **locale)
 		}
 	}
 #else
-	/* assume unixoid */
+	// assume unixoid
 	{
-		/* examples: */
-		/* sv_SE.ISO_8859-1 */
-		/* fr_FR.ISO8859-1 */
-		/* no_NO_NB */
-		/* no_NO_NY */
-		/* no_NO */
-		/* de_DE */
-		/* try the various vars in decreasing order of authority */
+		// examples:
+		// sv_SE.ISO_8859-1
+		// fr_FR.ISO8859-1
+		// no_NO_NB
+		// no_NO_NY
+		// no_NO
+		// de_DE
+		// try the various vars in decreasing order of authority
 		if (accumulate_env("LC_ALL", rtn) ||
 		    accumulate_env("LC_MESSAGES", rtn) ||
 		    accumulate_env("LANG", rtn) ||
@@ -514,13 +512,12 @@ FL_FindLocale(FL_Locale **locale)
 	return success;
 }
 
-
-void
-FL_FreeLocale(FL_Locale **locale)
+void FL_FreeLocale(FL_Locale **locale)
 {
 	if (locale)
 	{
 		FL_Locale *l = *locale;
+
 		if (l)
 		{
 			if (l->lang)

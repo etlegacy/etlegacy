@@ -1,15 +1,13 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-18 23:21+0100\n"
-"Last-Translator: Vinzenz Krügl <harlekin@hirntot.org>\n"
+"PO-Revision-Date: 2013-09-20 01:16+0100\n"
+"Last-Translator: IR4\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +61,8 @@ msgstr "Aktzeptiere %ss Anfrage sich deiner Kampfeinheit anzuschließen?"
 #: src/cgame/cg_draw.c:2109
 #, c-format
 msgid "Accept %s's proposition to invite %s to join your fireteam?"
-msgstr "Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
+msgstr ""
+"Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
@@ -114,9 +113,8 @@ msgid "You are wounded and waiting for a medic."
 msgstr "Du bist verwundet und wartest auf einen Sanitäter."
 
 #: src/cgame/cg_draw.c:2540
-#, fuzzy
 msgid "Press %s to go into reinforcement queue."
-msgstr "Drücke SPRINGEN um dich der Verstärkung anzuschließen."
+msgstr "Drücke %s um dich der Verstärkung anzuschließen."
 
 #: src/cgame/cg_draw.c:2550
 msgid "No more reinforcements this round."
@@ -306,7 +304,7 @@ msgid "CREATE"
 msgstr "ERSTELLE"
 
 msgid "DELETE"
-msgstr "LOESCHE"
+msgstr "LÖSCHE"
 
 msgid "RENAME"
 msgstr "UMBENENNEN"
@@ -315,7 +313,7 @@ msgid "SET AS DEFAULT"
 msgstr "ALS STANDARD"
 
 msgid "BACK"
-msgstr "ZURUECK"
+msgstr "ZURÜCK"
 
 msgid "SELECT PROFILE"
 msgstr "WÄHLE PROFIL"
@@ -329,9 +327,9 @@ msgid ""
 "than one person wish to play Wolfenstein: Enemy Territory, you can create "
 "additional profiles by visiting the Profiles Menu."
 msgstr ""
-"Bitte Grundeinstellungen hier einstellen. Sie können diese jederzeit ändern "
+"Bitte Grundeinstellungen hier einstellen. Du kannst diese jederzeit ändern "
 "und auf fortgeschrittene Optionen zugreifen. Sollte mehr als eine Person "
-"Wolfenstein: Enemy Territory spielen wollen, können Sie zusätzliche Profile "
+"Wolfenstein: Enemy Territory spielen wollen, kannst Du zusätzliche Profile "
 "erstellen."
 
 msgid "Player Alias:"
@@ -374,7 +372,7 @@ msgid "New Profile Name:"
 msgstr "Neuer Profil Name:"
 
 msgid "DELETE PROFILE"
-msgstr "LOESCHE PROFIL"
+msgstr "LÖSCHE PROFIL"
 
 msgid "Are you sure?"
 msgstr "Bist du sicher?"
@@ -386,7 +384,7 @@ msgid "NO"
 msgstr "NEIN"
 
 msgid "DELETE WARNING"
-msgstr "LOESCHE WARNUNG"
+msgstr "LÖSCHE WARNUNG"
 
 msgid "Can't delete"
 msgstr "Kann aktives Profil"
@@ -440,7 +438,7 @@ msgid "CONNECT TO IP"
 msgstr "VERBINDE ZU IP"
 
 msgid "SERVER INFO"
-msgstr ""
+msgstr "SERVER INFO"
 
 msgid "JOIN SERVER"
 msgstr "SPIEL BEITRETEN"
@@ -467,7 +465,7 @@ msgid "Auto-Configure Server:"
 msgstr "Auto-Konfig. Server:"
 
 msgid "Dedicated Server:"
-msgstr ""
+msgstr "Dedizierter Server"
 
 msgid "Password:"
 msgstr "Passwort:"
@@ -482,13 +480,13 @@ msgid "Anti-Lag"
 msgstr ""
 
 msgid "Max Lives"
-msgstr "MAX Leben"
+msgstr "Max Leben"
 
 msgid "Weapon Restrictions"
-msgstr ""
+msgstr "Waffen Beschränkungen"
 
 msgid "Balanced Teams"
-msgstr ""
+msgstr "Ausgeglichene Teams"
 
 msgid "NAME"
 msgstr "NAME"
@@ -728,10 +726,10 @@ msgid "to play the game on the host machine."
 msgstr "Spiel auf dem Host-Rechner zu spielen."
 
 msgid "Are you sure you want to start"
-msgstr "Sind Sie sicher, dass Sie einen"
+msgstr "Möchtest Du wirklich einen"
 
 msgid "a Dedicated Server?"
-msgstr "Dedicated Server starten wollen?"
+msgstr "dedizierten Server starten?"
 
 msgid "LOAD MOD"
 msgstr "LADE MOD"
@@ -1738,7 +1736,7 @@ msgid ""
 msgstr ""
 
 msgid "Yeah, right, like YOU have"
-msgstr "Ja, richtig, als hätten SIE"
+msgstr "Ja, richtig, als hättest DU"
 
 msgid "anything better to do!"
 msgstr "etwas Besseres zu tun!"
@@ -1762,7 +1760,7 @@ msgid "REDIRECTION ADVISED"
 msgstr ""
 
 msgid "Do you want to redirect to:"
-msgstr "Wollen Sie weitergeleitet werden zu:"
+msgstr "Möchtest Du weitergeleitet werden zu:"
 
 msgid "CHANGE VIDEO SETTINGS"
 msgstr ""
@@ -2143,122 +2141,98 @@ msgstr "9. Zerstöre das Fahrzeug"
 msgid "0. Escort Vehicle"
 msgstr "0. Eskortiere das Fahrzeug"
 
-#, fuzzy
 msgid "Path cleared."
-msgstr "P. Weg gesichert."
+msgstr "Weg gesichert."
 
 msgid "The enemy is weakened."
 msgstr ""
 
-#, fuzzy
 msgid "All clear."
-msgstr "C. Alles klar"
+msgstr "Alles gesichert"
 
-#, fuzzy
 msgid "Incoming!"
-msgstr "F. Eindringling!"
+msgstr "Eindringlinge!"
 
-#, fuzzy
 msgid "Fire in the hole!"
-msgstr "F. Geht in Deckung!"
+msgstr "Geht in Deckung!"
 
 msgid "I'm on defense."
-msgstr ""
+msgstr "Ich verteidige"
 
 msgid "I'm on offense."
-msgstr ""
+msgstr "Ich greife an"
 
-#, fuzzy
 msgid "Taking fire!"
-msgstr "T. Unter Beschuss!"
+msgstr "Unter Beschuss!"
 
-#, fuzzy
 msgid "Mines cleared."
-msgstr "M. Minen entfernt"
+msgstr "Minen geräumt."
 
-#, fuzzy
 msgid "Enemy in disguise."
-msgstr "E. Getarnter Feind"
+msgstr "Getarnter Feind"
 
-#, fuzzy
 msgid "Need a Medic!"
-msgstr "M. Sanitäter!"
+msgstr "Sanitäter!"
 
-#, fuzzy
 msgid "I need ammo!"
-msgstr "A. Brauche Munition!"
+msgstr "Ich brauche Munition!"
 
-#, fuzzy
 msgid "I need backup!"
-msgstr "B. Ich brauche Unterstützung!"
+msgstr "Ich brauche Unterstützung!"
 
-#, fuzzy
 msgid "We need an engineer!"
-msgstr "E.  Wir brauchen einen Ingenieur!"
+msgstr "Wir brauchen einen Ingenieur!"
 
-#, fuzzy
 msgid "Cover me!"
-msgstr "C. Gib mir Deckung!"
+msgstr "Gib mir Deckung!"
 
-#, fuzzy
 msgid "Hold your fire!"
-msgstr "H. Feuer einstellen!"
+msgstr "Feuer einstellen!"
 
-#, fuzzy
 msgid "Where to?"
-msgstr "W. Wohin?"
+msgstr "Wohin?"
 
-#, fuzzy
 msgid "We need Covert Ops!"
-msgstr "O. Wir brauchen Spione!"
+msgstr "Wir brauchen Spione!"
 
-#, fuzzy
 msgid "Follow me!"
-msgstr "F. Folge Mir!"
+msgstr "Folge Mir!"
 
-#, fuzzy
 msgid "Let's go!"
-msgstr "G. Los gehts!"
+msgstr "Los gehts!"
 
-#, fuzzy
 msgid "Move!"
-msgstr "M. Vorwärts!"
+msgstr "Vorwärts!"
 
-#, fuzzy
 msgid "Clear the path!"
-msgstr "C. Mach den Weg frei!"
+msgstr "Mach den Weg frei!"
 
-#, fuzzy
 msgid "Defend our objective!"
-msgstr "O. Verteidige unser Ziel!"
+msgstr "Verteidige unser Ziel!"
 
-#, fuzzy
 msgid "Disarm the dynamite!"
-msgstr "D. Entschärfe das Dynamit!"
+msgstr "Entschärfe das Dynamit!"
 
-#, fuzzy
 msgid "Clear the mines!"
-msgstr "N. Räumt die Minen!"
+msgstr "Räumt die Minen!"
 
-#, fuzzy
 msgid "Reinforce the offense!"
-msgstr "R. Angriff kordinieren"
+msgstr "Angriff kordinieren!"
 
-#, fuzzy
 msgid "Reinforce the defense!"
-msgstr "E. Verteidigung kordinieren"
+msgstr "Verteidigung kordinieren!"
 
 msgid "Affirmative!"
-msgstr ""
+msgstr "Bestätigt"
 
 msgid "No!"
-msgstr ""
+msgstr "Nein!"
 
 msgid "Thank you!"
-msgstr ""
+msgstr "Danke Dir!"
 
 msgid "You're welcome."
-msgstr ""
+msgstr "Gerne geschehen."
 
 msgid "Bitte sehr."
 msgstr ""
@@ -2272,13 +2246,11 @@ msgstr ""
 msgid "Kein problem."
 msgstr ""
 
-#, fuzzy
 msgid "Sorry!"
-msgstr "S. Tschuldigung"
+msgstr "Entschuldigung!"
 
-#, fuzzy
 msgid "Oops!"
-msgstr "O. Oops"
+msgstr "Uups!"
 
 msgid "Yes!"
 msgstr ""
@@ -2307,9 +2279,8 @@ msgstr ""
 msgid "Bye."
 msgstr ""
 
-#, fuzzy
 msgid "Great shot!"
-msgstr "S. Guter Schuss"
+msgstr "Guter Schuss!"
 
 msgid "You got it, man!"
 msgstr ""
@@ -2350,9 +2321,8 @@ msgstr ""
 msgid "Sehr gut!"
 msgstr ""
 
-#, fuzzy
 msgid "Thanks!"
-msgstr "t. Danke"
+msgstr "Danke!"
 
 msgid "Danke!"
 msgstr ""
@@ -2363,52 +2333,41 @@ msgstr ""
 msgid "No problem."
 msgstr ""
 
-#, fuzzy
 msgid "Good game!"
-msgstr "G. Gutes Spiel"
+msgstr "Gutes Spiel!"
 
-#, fuzzy
 msgid "Command acknowledged!"
-msgstr "A. Befehl bestädigt"
+msgstr "Befehl bestätigt!"
 
-#, fuzzy
 msgid "Command declined!"
-msgstr "D. Befehl abgelehnt"
+msgstr "Befehl verweigert!"
 
-#, fuzzy
 msgid "Command completed!"
-msgstr "C. Befehl ausgeführt"
+msgstr "Befehl ausgeführt!"
 
-#, fuzzy
 msgid "Destroy primary objective!"
-msgstr "P. Zerstöre das Primärziel"
+msgstr "Zerstöre das Primärziel!"
 
-#, fuzzy
 msgid "Destroy secondary objective!"
-msgstr "S. Zerstöre das sekundärziel"
+msgstr "Zerstöre das Sekundärziel!"
 
-#, fuzzy
 msgid "Destroy construction!"
-msgstr "X. Zerstöre die Anlage"
+msgstr "Zerstöre die Anlage!"
 
 msgid "I'm constructing!"
 msgstr ""
 
-#, fuzzy
 msgid "Repair the vehicle!"
-msgstr "R. Repariere das Fahrzeug"
+msgstr "Repariere das Fahrzeug!"
 
-#, fuzzy
 msgid "Disable the vehicle!"
-msgstr "V. Zerstöre das Fahrzeug"
+msgstr "Zerstöre das Fahrzeug!"
 
-#, fuzzy
 msgid "Escort the vehicle!"
-msgstr "E. Eskortiere das Fahrzeug"
+msgstr "Eskortiere das Fahrzeug!"
 
-#, fuzzy
 msgid "Covering fire!"
-msgstr "C. Gib mir Deckung!"
+msgstr "Gib mir Feuerschutz!"
 
 msgid "I'm a soldier."
 msgstr ""
@@ -2573,16 +2532,16 @@ msgid "BAN"
 msgstr ""
 
 msgid "WARN PLAYER"
-msgstr "WARNE SPIELER"
+msgstr "VERWARNE SPIELER"
 
 msgid "Warning:"
-msgstr "Warnung:"
+msgstr "Verwarnung:"
 
 msgid "ADD TO FAVORITES"
 msgstr "ZU FAVORITEN HINZUFUEGEN"
 
 msgid "Do you want to disconnect"
-msgstr "Wollen Sie die Verbindung"
+msgstr "Willst Du die Verbindung"
 
 msgid "from the server?"
 msgstr "zum Server trennen?"
@@ -2683,22 +2642,20 @@ msgstr ""
 msgid "ABORT"
 msgstr ""
 
-#, fuzzy
 msgid "SIMPLE CLEAN"
-msgstr "EINFACH"
+msgstr ""
 
 msgid "FULL CLEAN"
 msgstr ""
 
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 msgid "unknown cmd"
 msgstr ""
 
-#, fuzzy
 msgid "Server:"
-msgstr "Server IP:"
+msgstr "Server:"
 
 msgid "changed to"
 msgstr ""
@@ -2707,9 +2664,8 @@ msgstr ""
 msgid "Auto Map Zoom:"
 msgstr "Kompass Karte grösser:"
 
-#, fuzzy
 msgid "was killed by"
-msgstr "Abschuss"
+msgstr ""
 
 msgid "^1WAS KILLED BY TEAMMATE^7"
 msgstr ""
@@ -2723,9 +2679,8 @@ msgstr ""
 msgid "Dynamite is set, but NOT armed!"
 msgstr ""
 
-#, fuzzy
 msgid "Arming dynamite..."
-msgstr "Warte auf Spielstatus..."
+msgstr ""
 
 msgid "Dynamite is now armed with a 30 second timer!"
 msgstr ""
@@ -2817,9 +2772,8 @@ msgstr ""
 msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr ""
 
-#, fuzzy
 msgid "I need a Medic!"
-msgstr "M. Sanitäter!"
+msgstr "Ich brauche einen Sanitäter!"
 
 msgid "entered the game\n"
 msgstr ""
@@ -2935,9 +2889,8 @@ msgstr ""
 msgid "No vote in progress.\n"
 msgstr ""
 
-#, fuzzy
 msgid "Show Clock:"
-msgstr "Zeige Blut:"
+msgstr "Zeige Uhr:"
 
 msgid "No or bad challenge for address.\n"
 msgstr ""
@@ -2963,12 +2916,11 @@ msgstr ""
 msgid "The Axis have too many players."
 msgstr ""
 
-#, fuzzy
 msgid "Attack!"
-msgstr "Angriff:"
+msgstr "Angriff!"
 
 msgid "Fall back!"
-msgstr ""
+msgstr "Rückzug!"
 
 #: src/cgame/cg_players.c:315
 #, c-format
@@ -3025,13 +2977,12 @@ msgstr ""
 msgid "%s have stolen %s!"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1204 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1207
 msgid "Axis"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1208 src/cgame/cg_popupmessages.c:638
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
 msgid "Allies"
 msgstr ""
 
@@ -3081,13 +3032,11 @@ msgstr ""
 msgid "Enemy Recognition"
 msgstr ""
 
-#, fuzzy
 msgid "Medic Ammo"
-msgstr "A. Brauche Munition!"
+msgstr ""
 
-#, fuzzy
 msgid "Binoculars"
-msgstr "Fernglas:"
+msgstr "Fernglas"
 
 msgid "Full Revive"
 msgstr ""
@@ -3116,9 +3065,8 @@ msgstr ""
 msgid "Improved use of Light Weapon Ammunition"
 msgstr ""
 
-#, fuzzy
 msgid "Faster Reload"
-msgstr "Automatisches nachladen"
+msgstr "Schnelles Nachladen"
 
 msgid "Improved Light Weapon Handling"
 msgstr ""
@@ -3396,9 +3344,8 @@ msgstr ""
 msgid "Allied team has destroyed the Axis Fuel Dump!"
 msgstr ""
 
-#, fuzzy
 msgid "was killed"
-msgstr "Abschuss"
+msgstr "ist gefallen"
 
 msgid "You are near the Old City Wall\n"
 msgstr ""
@@ -3553,14 +3500,13 @@ msgstr ""
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr ""
 
-msgid "^3All players ready!^7\n"
-msgstr ""
-
-msgid "Match starting...\n"
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
 msgstr ""
 
 msgid "You are on the Allied team"
-msgstr Du bist nicht im Aliierten Team""
+msgstr "Du bist nicht im Aliierten Team"
 
 msgid "^1*** Match Reset! ***\n"
 msgstr ""
@@ -3571,20 +3517,18 @@ msgstr "Du bist nicht im Axen Team"
 #: src/cgame/cg_fireteamoverlay.c:446
 #, c-format
 msgid "Private Fireteam: %s"
-msgstr ""
+msgstr "Private Kampfeinheit: %s"
 
 #: src/cgame/cg_fireteamoverlay.c:450
 #, c-format
 msgid "Fireteam: %s"
-msgstr ""
+msgstr "Kampfeinheit: %s"
 
 #: src/cgame/cg_info.c:585
-#, fuzzy
 msgid "PLAYER STATS"
-msgstr "SPIELER STAT"
+msgstr "SPIELER STATS"
 
 #: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
-#, fuzzy
 msgid "Weapon"
 msgstr "Waffe"
 
@@ -3605,9 +3549,8 @@ msgid "Deaths"
 msgstr ""
 
 #: src/cgame/cg_info.c:606
-#, fuzzy
 msgid "Headshots"
-msgstr "S. Guter Schuss"
+msgstr "Kopfschuss"
 
 #: src/cgame/cg_info.c:615
 msgid "No weapon info available."
@@ -3615,7 +3558,7 @@ msgstr "Keine Waffe verfügbar."
 
 #: src/cgame/cg_info.c:650
 msgid "Rank"
-msgstr ""
+msgstr "Rang"
 
 #: src/cgame/cg_info.c:667
 msgid "Skills"
@@ -3642,7 +3585,6 @@ msgid "\"TOPSHOT\" ACCURACIES"
 msgstr ""
 
 #: src/cgame/cg_info.c:810
-#, fuzzy
 msgid "Player"
 msgstr "Spieler"
 
@@ -3655,8 +3597,12 @@ msgstr ""
 msgid "You will spawn as a %s %s with a %s."
 msgstr ""
 
+#: src/cgame/cg_limbopanel.c:1223
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
+msgstr ""
+
 #: src/cgame/cg_draw.c:441
-#, fuzzy
 msgid "an Objective"
 msgstr "ein Ziel"
 
@@ -3666,9 +3612,45 @@ msgstr "Warnung, verlasse die Baustelle..."
 msgid "got caught in"
 msgstr ""
 
-#, fuzzy
 msgid "'s construction madness"
 msgstr ""
+
+msgid "Need paks: %s\n"
+msgstr ""
+
+msgid "Mod filter:"
+msgstr "Mod Filter:"
+
+msgid "DELETE FAVS"
+msgstr "FAVS LÖSCHEN"
+
+msgid "RESET FILTERS"
+msgstr "FILTER ZURÜCKSETZEN"
+
+msgid "DELETE SERVER FAVOURITES"
+msgstr "FAVORITEN LÖSCHEN"
+
+msgid "Do you really want to"
+msgstr "Möchtest Du wirklich"
+
+msgid "delete YOUR favourites?"
+msgstr "Deine Favoriten löschen?"
+
+msgid "Modify Selected HUD:"
+msgstr ""
+
+msgid "PopUpTime:"
+msgstr ""
+
+msgid "PopUpTimeStay:"
+msgstr ""
+
+msgid "PopUpTimeFade:"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1211
+msgid "Allies"
+msgstr "Alliierte"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

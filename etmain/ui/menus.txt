@@ -12,6 +12,7 @@
 	loadMenu { "ui/playonline.menu" }
 	loadMenu { "ui/playonline_connecttoip.menu" }
 	loadMenu { "ui/playonline_serverinfo.menu" }
+	loadMenu { "ui/playonline_deletefavs.menu" }
 	loadMenu { "ui/hostgame.menu" }
 	loadMenu { "ui/hostgame_advanced.menu" }
 	loadMenu { "ui/hostgame_extended.menu" }	

@@ -137,9 +137,14 @@ qboolean UI_ConsoleCommand(int realTime)
 		UI_Cache_f();
 		return qtrue;
 	}
-	else if (Q_stricmp(cmd, "listfav") == 0)
+	else if (Q_stricmp(cmd, "listfavs") == 0)
 	{
 		UI_ListFavourites_f();
+		return qtrue;
+	}
+	else if (Q_stricmp(cmd, "removefavs") == 0)
+	{
+		UI_RemoveAllFavourites_f();
 		return qtrue;
 	}
 
@@ -289,16 +294,6 @@ void UI_DrawRect(float x, float y, float width, float height, const float *color
 	UI_DrawSides(x, y, width, height);
 
 	trap_R_SetColor(NULL);
-}
-
-void UI_SetColor(const float *rgba)
-{
-	trap_R_SetColor(rgba);
-}
-
-void UI_UpdateScreen(void)
-{
-	trap_UpdateScreen();
 }
 
 /**

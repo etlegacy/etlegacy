@@ -57,7 +57,8 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
 	{
 		imageBufferSize[bufferType] = R_IMAGE_BUFFER_SIZE;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
-//DAJ TEST		imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] );
+		// TEST
+		//imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] );
 	}
 	if (size > imageBufferSize[bufferType])       // it needs to grow
 	{
@@ -222,14 +223,13 @@ void R_ImageList_f(void)
 {
 	int        i;
 	image_t    *image;
-	int        texels;
+	int        texels   = 0;
 	const char *yesno[] =
 	{
 		"no ", "yes"
 	};
 
 	ri.Printf(PRINT_ALL, "\n      -w-- -h-- -mm- -TMU- -if-- wrap --name-------\n");
-	texels = 0;
 
 	for (i = 0 ; i < tr.numImages ; i++)
 	{
@@ -276,6 +276,7 @@ void R_ImageList_f(void)
 			break;
 		default:
 			ri.Printf(PRINT_ALL, "???? ");
+			break;
 		}
 
 		switch (image->wrapClampMode)
@@ -428,17 +429,14 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 {
 	int      i, j, k;
 	byte     *outpix;
-	int      inWidthMask, inHeightMask;
+	int      inWidthMask  = inWidth - 1;
+	int      inHeightMask = inHeight - 1;
 	int      total;
-	int      outWidth, outHeight;
+	int      outWidth  = inWidth >> 1;
+	int      outHeight = inHeight >> 1;
 	unsigned *temp;
 
-	outWidth  = inWidth >> 1;
-	outHeight = inHeight >> 1;
-	temp      = ri.Hunk_AllocateTempMemory(outWidth * outHeight * 4);
-
-	inWidthMask  = inWidth - 1;
-	inHeightMask = inHeight - 1;
+	temp = ri.Hunk_AllocateTempMemory(outWidth * outHeight * 4);
 
 	for (i = 0 ; i < outHeight ; i++)
 	{
@@ -540,13 +538,8 @@ Apply a color blend over a set of pixels
 static void R_BlendOverTexture(byte *data, int pixelCount, byte blend[4])
 {
 	int i;
-	int inverseAlpha;
-	int premult[3];
-
-	inverseAlpha = 255 - blend[3];
-	premult[0]   = blend[0] * blend[3];
-	premult[1]   = blend[1] * blend[3];
-	premult[2]   = blend[2] * blend[3];
+	int inverseAlpha = 255 - blend[3];
+	int premult[3]   = { blend[0] * blend[3], blend[1] * blend[3], blend[2] * blend[3] };
 
 	for (i = 0 ; i < pixelCount ; i++, data += 4)
 	{
@@ -1566,11 +1559,10 @@ compatable with our normal parsing rules.
 */
 static char *CommaParse(char **data_p)
 {
-	int         c = 0, len = 0;
-	char        *data;
+	int         c     = 0, len = 0;
+	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
-	data         = *data_p;
 	com_token[0] = 0;
 
 	// make sure incoming data is valid
@@ -1677,9 +1669,8 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 {
 	int    i;
 	int    hash;
-	skin_t *skin;
+	skin_t *skin = tr.skins[skinid];
 
-	skin = tr.skins[skinid];
 	hash = Com_HashKey((char *)type, strlen(type));
 
 	for (i = 0; i < skin->numModels; i++)
@@ -1717,7 +1708,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		surfnum = 0;
 	}
 
-	model = R_GetModelByHandle(modelid);    // (SA) should be correct now
+	model = R_GetModelByHandle(modelid);    // should be correct now
 
 	if (model)
 	{
@@ -1774,7 +1765,6 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 /*
 ===============
 RE_RegisterSkin
-
 ===============
 */
 qhandle_t RE_RegisterSkin(const char *name)
@@ -1883,6 +1873,12 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 		if (strstr(token, "md3_"))
 		{
+			if (skin->numModels >= MAX_PART_MODELS)
+			{
+				ri.Printf(PRINT_WARNING, "WARNING: Ignoring models in '%s', the max is %d!\n", name, MAX_PART_MODELS);
+				break;
+			}
+
 			// this is specifying a model
 			model = skin->models[skin->numModels] = ri.Hunk_Alloc(sizeof(*skin->models[0]), h_low);
 			Q_strncpyz(model->type, token, sizeof(model->type));
@@ -1899,6 +1895,12 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 		// parse the shader name
 		token = CommaParse(&text_p);
+
+		if (skin->numSurfaces >= MD3_MAX_SURFACES)
+		{
+			ri.Printf(PRINT_WARNING, "WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
+			break;
+		}
 
 		surf = skin->surfaces[skin->numSurfaces] = ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
 		Q_strncpyz(surf->name, surfName, sizeof(surf->name));
@@ -1995,6 +1997,7 @@ void *R_CacheImageAlloc(int size)
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
 		void *buf = malloc(size);    // ri.Z_Malloc causes load times about twice as long?
+
 		if (!buf)
 		{
 			ri.Error(ERR_DROP, "R_CacheImageAlloc: unable to allocate buffer\n ");
@@ -2031,7 +2034,6 @@ qboolean R_TouchImage(image_t *inImage)
 {
 	image_t *bImage, *bImagePrev;
 	int     hash;
-	//char    *name;
 
 	if (inImage == tr.dlightImage ||
 	    inImage == tr.whiteImage ||
@@ -2042,7 +2044,6 @@ qboolean R_TouchImage(image_t *inImage)
 	}
 
 	hash = inImage->hash;
-	//name = inImage->imgName;
 
 	bImage     = backupHashTable[hash];
 	bImagePrev = NULL;
@@ -2220,7 +2221,6 @@ image_t *R_FindCachedImage(const char *name, int hash)
 
 	while (bImage)
 	{
-
 		if (!Q_stricmp(name, bImage->imgName))
 		{
 			// add it to the current images
@@ -2246,7 +2246,7 @@ int R_GetTextureId(const char *name)
 {
 	int i;
 
-	//	ri.Printf( PRINT_ALL, "R_GetTextureId [%s].\n", name );
+	//ri.Printf( PRINT_ALL, "R_GetTextureId [%s].\n", name );
 	for (i = 0 ; i < tr.numImages ; i++)
 	{
 		if (!strcmp(name, tr.images[i]->imgName))

@@ -784,7 +784,7 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 	out[1] = from[1] * ft + to[1] * tt;
 	out[2] = from[2] * ft + to[2] * tt;
 
-	//% VectorNormalize( out );
+	//VectorNormalize( out );
 	VectorNormalizeFast(out);
 }
 
@@ -799,10 +799,10 @@ static ID_INLINE void LocalIngleVector(int ingles[3], vec3_t forward)
 	sp = SIN_TABLE(ingles[PITCH] & 65535);
 	cp = COS_TABLE(ingles[PITCH] & 65535);
 
-	//% sy = sin( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
-	//% cy = cos( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
-	//% sp = sin( SHORT2ANGLE( ingles[ PITCH ] ) * (M_PI*2 / 360) );
-	//% cp = cos( SHORT2ANGLE( ingles[ PITCH ] ) *  (M_PI*2 / 360) );
+	//sy = sin( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
+	//cy = cos( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
+	//sp = sin( SHORT2ANGLE( ingles[ PITCH ] ) * (M_PI*2 / 360) );
+	//cp = cos( SHORT2ANGLE( ingles[ PITCH ] ) *  (M_PI*2 / 360) );
 
 	forward[0] = cp * cy;
 	forward[1] = cp * sy;
@@ -1191,7 +1191,6 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 
 	rawBones[boneNum] = *bonePtr;
 	newBones[boneNum] = 1;
-
 }
 
 /*
@@ -1318,9 +1317,7 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 				}
 				angles[j] = angles[j] + thisBoneInfo->torsoWeight * diff;
 			}
-
 		}
-
 	}
 
 	AnglesToAxis(angles, bonePtr->matrix);

@@ -379,10 +379,10 @@ typedef struct shader_s
 	float sort;                         // lower numbered shaders draw before higher numbered
 
 	qboolean defaultShader;             // we want to return index 0 if the shader failed to
-	// load for some reason, but R_FindShader should
-	// still keep a name allocated for it, so if
-	// something calls RE_RegisterShader again with
-	// the same name, we don't try looking for it again
+	                                    // load for some reason, but R_FindShader should
+	                                    // still keep a name allocated for it, so if
+	                                    // something calls RE_RegisterShader again with
+	                                    // the same name, we don't try looking for it again
 
 	qboolean explicitlyDefined;         // found in a .shader file
 
@@ -423,8 +423,8 @@ typedef struct shader_s
 
 	void (*optimalStageIteratorFunc)(void);
 
-	double clampTime;                                    // time this shader is clamped to
-	double timeOffset;                                   // current time offset for this shader
+	double clampTime;                                   // time this shader is clamped to
+	double timeOffset;                                  // current time offset for this shader
 
 	int numStates;                                      // if non-zero this is a state shader
 	struct shader_s *currentShader;                     // current state if this is a state shader
@@ -800,7 +800,6 @@ typedef struct srfTriangles2_s
 
 	int numVerts;
 
-
 	vec4hack_t *xyz;
 	vec2hack_t *st;
 	vec2hack_t *lightmap;
@@ -1041,7 +1040,7 @@ compared quickly during the qsorting process
 
 the bits are allocated as follows:
 
-(SA) modified for Wolf (11 bits of entity num)
+modified for Wolf (11 bits of entity num)
 
 old:
 
@@ -1272,7 +1271,6 @@ void R_TagInfo_f(void);
 void R_AddPolygonSurfaces(void);
 void R_AddPolygonBufferSurfaces(void);
 
-
 void R_DecomposeSort(unsigned sort, int *entityNum, shader_t **shader,
                      int *fogNum, int *frontFace, int *dlightMap);
 
@@ -1310,7 +1308,7 @@ void GL_Cull(int cullType);
 #define GLS_SRCBLEND_DST_ALPHA                  0x00000007
 #define GLS_SRCBLEND_ONE_MINUS_DST_ALPHA        0x00000008
 #define GLS_SRCBLEND_ALPHA_SATURATE             0x00000009
-#define     GLS_SRCBLEND_BITS                   0x0000000f
+#define GLS_SRCBLEND_BITS                       0x0000000f
 
 #define GLS_DSTBLEND_ZERO                       0x00000010
 #define GLS_DSTBLEND_ONE                        0x00000020
@@ -1320,7 +1318,7 @@ void GL_Cull(int cullType);
 #define GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA        0x00000060
 #define GLS_DSTBLEND_DST_ALPHA                  0x00000070
 #define GLS_DSTBLEND_ONE_MINUS_DST_ALPHA        0x00000080
-#define     GLS_DSTBLEND_BITS                   0x000000f0
+#define GLS_DSTBLEND_BITS                       0x000000f0
 
 #define GLS_DEPTHMASK_TRUE                      0x00000100
 
@@ -1332,7 +1330,7 @@ void GL_Cull(int cullType);
 #define GLS_ATEST_GT_0                          0x10000000
 #define GLS_ATEST_LT_80                         0x20000000
 #define GLS_ATEST_GE_80                         0x40000000
-#define     GLS_ATEST_BITS                      0x70000000
+#define GLS_ATEST_BITS                          0x70000000
 
 #define GLS_DEFAULT         GLS_DEPTHMASK_TRUE
 
@@ -1405,26 +1403,6 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h);
 
 void RE_Finish(void);
 int R_GetTextureId(const char *name);
-
-/*
-====================================================================
-IMPLEMENTATION SPECIFIC FUNCTIONS
-====================================================================
-*/
-
-extern int gl_NormalFontBase;
-
-void GLimp_Init(void);
-void GLimp_Shutdown(void);
-void GLimp_EndFrame(void);
-void GLimp_LogComment(char *comment);
-void GLimp_Minimize(void);
-
-// NOTE: linux works with float gamma value, not the gamma table
-// the params won't be used, getting the r_gamma cvar directly
-void GLimp_SetGamma(unsigned char red[256],
-                    unsigned char green[256],
-                    unsigned char blue[256]);
 
 /*
 ====================================================================
@@ -1934,15 +1912,12 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
 
 #define MDC_MAX_DIST        (MDC_MAX_OFS * MDC_DIST_SCALE)
 
-#if 0
-void R_MDC_DecodeXyzCompressed(mdcXyzCompressed_t *xyzComp, vec3_t out, vec3_t normal);
-#else   // optimized version
+// optimized version
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
 	(out)[0] = ((float)((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	(out)[1] = ((float)((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	(out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
-#endif
 
 void R_AddMDCSurfaces(trRefEntity_t *ent);
 

@@ -205,7 +205,7 @@ void TossClientItems(gentity_t *self)
 	if (primaryWeapon)
 	{
 		// drop our primary weapon
-		G_DropWeapon(self, primaryWeapon);
+		G_DropWeapon(self, primaryWeapon); // FIXME; drop secondary too?!
 	}
 }
 
@@ -359,6 +359,8 @@ char *modNames[] =
 	"MOD_SWITCHTEAM",
 
 	"MOD_SHOVE",
+
+	"MOD_KNIFE_KABAR",
 
 	// MOD_NUM_MODS
 };
@@ -748,15 +750,15 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	// remove powerups
 	// FIXME: but not FLAKJACKET and HELMETSHIELD
-	{
-		//int flakJacket=self->client->ps.powerups[PW_FLAKJACKET];
-		//int helmetArmor=self->client->ps.powerups[PW_HELMETSHIELD];
+	//{
+	//int flakJacket=self->client->ps.powerups[PW_FLAKJACKET];
+	//int helmetArmor=self->client->ps.powerups[PW_HELMETSHIELD];
 
-		memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));
+	memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));
 
-		//self->client->ps.powerups[PW_FLAKJACKET]=flakJacket;
-		//self->client->ps.powerups[PW_HELMETSHIELD]=helmetArmor;
-	}
+	//self->client->ps.powerups[PW_FLAKJACKET]=flakJacket;
+	//self->client->ps.powerups[PW_HELMETSHIELD]=helmetArmor;
+	//}
 
 	// never gib in a nodrop
 	// FIXME: contents is always 0 here
@@ -843,30 +845,30 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 qboolean IsHeadShotWeapon(int mod)
 {
 	// players are allowed headshots from these weapons
-	if (mod == MOD_LUGER ||
-	    mod == MOD_COLT ||
-	    mod == MOD_AKIMBO_COLT ||
-	    mod == MOD_AKIMBO_LUGER ||
-	    mod == MOD_AKIMBO_SILENCEDCOLT ||
-	    mod == MOD_AKIMBO_SILENCEDLUGER ||
-	    mod == MOD_MP40 ||
-	    mod == MOD_THOMPSON ||
-	    mod == MOD_STEN ||
-	    mod == MOD_GARAND
-
-	    || mod == MOD_KAR98
-	    || mod == MOD_K43
-	    || mod == MOD_K43_SCOPE
-	    || mod == MOD_CARBINE
-	    || mod == MOD_GARAND
-	    || mod == MOD_GARAND_SCOPE
-	    || mod == MOD_SILENCER
-	    || mod == MOD_SILENCED_COLT
-	    || mod == MOD_FG42
-	    || mod == MOD_FG42SCOPE
-	    )
+	switch (mod)
 	{
+	case MOD_LUGER:
+	case MOD_COLT:
+	case MOD_AKIMBO_COLT:
+	case MOD_AKIMBO_LUGER:
+	case MOD_AKIMBO_SILENCEDCOLT:
+	case MOD_AKIMBO_SILENCEDLUGER:
+	case MOD_MP40:
+	case MOD_THOMPSON:
+	case MOD_STEN:
+	case MOD_KAR98:
+	case MOD_K43:
+	case MOD_K43_SCOPE:
+	case MOD_CARBINE:
+	case MOD_GARAND:
+	case MOD_GARAND_SCOPE:
+	case MOD_SILENCER:
+	case MOD_SILENCED_COLT:
+	case MOD_FG42:
+	case MOD_FG42SCOPE:
 		return qtrue;
+	default:
+		break;
 	}
 
 	return qfalse;

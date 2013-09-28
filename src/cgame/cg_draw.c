@@ -38,7 +38,6 @@
 #define STATUSBARHEIGHT 452
 char *BindingFromName(const char *cvar);
 void Controls_GetConfig(void);
-void SetHeadOrigin(clientInfo_t *ci, playerInfo_t *pi);
 void CG_DrawOverlays(void);
 int activeFont;
 
@@ -53,7 +52,7 @@ void CG_Text_SetActiveFont(int font)
 
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	float out = 0, useScale = scale * font->glyphScale;
+	float out = 0;
 
 	if (text)
 	{
@@ -84,7 +83,7 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 		}
 	}
 
-	return out * useScale;
+	return out * scale * font->glyphScale;
 }
 
 int CG_Text_Width(const char *text, float scale, int limit)
@@ -96,8 +95,7 @@ int CG_Text_Width(const char *text, float scale, int limit)
 
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	float max      = 0;
-	float useScale = scale * font->glyphScale;
+	float max = 0;
 
 	if (text)
 	{
@@ -130,7 +128,7 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 			}
 		}
 	}
-	return max * useScale;
+	return max * scale * font->glyphScale;
 }
 
 int CG_Text_Height(const char *text, float scale, int limit)
@@ -670,11 +668,13 @@ CG_DrawLagometer
 */
 static void CG_DrawLagometer(void)
 {
-	int   a, x, y, i;
-	float v;
-	float ax, ay, aw, ah, mid, range;
-	int   color;
-	float vscale;
+	int    a, x, y, i;
+	float  v;
+	float  ax, ay, aw, ah, mid, range;
+	int    color;
+	float  vscale;
+	vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
+	vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
 
 	if (!cg_lagometer.integer) // || cgs.localServer)
 	{
@@ -687,7 +687,9 @@ static void CG_DrawLagometer(void)
 	y = SCREEN_HEIGHT - 200;
 
 	trap_R_SetColor(NULL);
-	CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
+	//CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
+	CG_FillRect(x, y, 48, 48 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, 48, 48, 1, HUD_Border);
 
 	ax = x;
 	ay = y;
@@ -1579,7 +1581,7 @@ static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
 
-	if (cg.predictedPlayerState.eFlags & EF_PRONE && cg.snap->ps.weapon == WP_PANZERFAUST)
+	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && cg.snap->ps.weapon == WP_PANZERFAUST)
 	{
 		trap_R_SetColor(colorRed);
 	}
@@ -1687,7 +1689,7 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 
 	cent = &cg_entities[cg.crosshairClientNum];
 
-	if (cent && cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
 		if (cgs.clientinfo[cg.crosshairClientNum].team == cgs.clientinfo[cg.clientNum].team)
 		{
@@ -1754,8 +1756,7 @@ void CG_CheckForCursorHints(void)
 
 	// invisible entities don't show hints
 	if (trace.entityNum >= MAX_CLIENTS &&
-	    (tracent->currentState.powerups == STATE_INVISIBLE ||
-	     tracent->currentState.powerups == STATE_UNDERCONSTRUCTION))
+	    (tracent->currentState.powerups == STATE_INVISIBLE || tracent->currentState.powerups == STATE_UNDERCONSTRUCTION))
 	{
 		return;
 	}
@@ -1786,7 +1787,7 @@ void CG_CheckForCursorHints(void)
 	}
 	else if (trace.entityNum < MAX_CLIENTS)       // people
 	{   // knife
-		if (cg.snap->ps.weapon == WP_KNIFE)
+		if (cg.snap->ps.weapon == WP_KNIFE || cg.snap->ps.weapon == WP_KNIFE_KABAR)
 		{
 			if (dist <= CH_KNIFE_DIST)
 			{
@@ -1896,8 +1897,7 @@ static void CG_DrawCrosshairNames(void)
 	{
 		if ((cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED)) && cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
 		{
-			if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR &&
-			    cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+			if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 			{
 				s = CG_TranslateString("Disguised Enemy!");
 				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
@@ -2455,7 +2455,7 @@ static void CG_DrawSpectatorMessage(void)
 		return;
 	}
 
-	if (!(cg.snap->ps.pm_flags & PMF_LIMBO || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR))
+	if (!((cg.snap->ps.pm_flags & PMF_LIMBO) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR))
 	{
 		return;
 	}
@@ -2535,7 +2535,7 @@ static void CG_DrawLimboMessage(void)
 		return;
 	}
 
-	if (cg.snap->ps.pm_flags & PMF_LIMBO || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	if ((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
 		return;
 	}
@@ -2543,7 +2543,7 @@ static void CG_DrawLimboMessage(void)
 	if (cg_descriptiveText.integer)
 	{
 		str = CG_TranslateString("You are wounded and waiting for a medic.");
-		CG_DrawSmallStringColor(INFOTEXT_STARTX, y, str, colorWhite);
+		CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 		y += 18;
 
 		if (cgs.gametype == GT_WOLF_LMS)
@@ -2554,7 +2554,7 @@ static void CG_DrawLimboMessage(void)
 
 		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), BindingFromName("+moveup"));
 
-		CG_DrawSmallStringColor(INFOTEXT_STARTX, 134, str, colorWhite);
+		CG_DrawStringExt(INFOTEXT_STARTX, 134, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 		y += 18;
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
@@ -2565,7 +2565,7 @@ static void CG_DrawLimboMessage(void)
 
 	str = (ps->persistant[PERS_RESPAWNS_LEFT] == 0) ? CG_TranslateString("No more reinforcements this round.") : va(CG_TranslateString("Reinforcements deploy in %d seconds."), CG_CalculateReinfTime(qfalse));
 
-	CG_DrawSmallStringColor(INFOTEXT_STARTX, y, str, colorWhite);
+	CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 	y += 18;
 
 	trap_R_SetColor(NULL);
@@ -2721,7 +2721,7 @@ static void CG_DrawWarmup(void)
 
 		CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
 
-		if (!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
+		if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
 		{
 			CG_autoRecord_f();
 		}
@@ -3087,7 +3087,7 @@ CG_DrawFlashBlend
 static void CG_DrawFlashBlend(void)
 {
 	// no flash blends if in limbo or spectator, and in the limbo menu
-	if ((cg.snap->ps.pm_flags & PMF_LIMBO || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
+	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
 	{
 		return;
 	}
@@ -3754,6 +3754,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 	default:
 		separation = 0;
 		CG_Error("CG_DrawActive: Undefined stereoView\n");
+		break;
 	}
 
 	// clear around the rendered view if sized down

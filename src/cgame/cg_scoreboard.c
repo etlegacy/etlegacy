@@ -65,14 +65,12 @@ qboolean cf_draw(float x, float y, float fade, int clientNum)
 
 	if (client_flag < 255)
 	{
-		unsigned int flag_sd = 512;
-		float        alpha[4];
-		float        x1 = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
-		float        y1 = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
-		float        x2 = x1 + FLAG_STEP;
-		float        y2 = y1 + FLAG_STEP;
-
-		alpha[0] = alpha[1] = alpha[2] = 1.0; alpha[3] = fade;
+		unsigned int flag_sd  = 512;
+		float        alpha[4] = { 1.f, 1.f, 1.f, fade };
+		float        x1       = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
+		float        y1       = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
+		float        x2       = x1 + FLAG_STEP;
+		float        y2       = y1 + FLAG_STEP;
 
 		trap_R_SetColor(alpha);
 		CG_DrawPicST(x, y, FLAG_STEP, FLAG_STEP, x1 / flag_sd, y1 / flag_sd, x2 / flag_sd, y2 / flag_sd, cgs.media.countryFlags);
@@ -652,7 +650,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!"; // FIXME: translations
+				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!";
 			}
 			else
 			{

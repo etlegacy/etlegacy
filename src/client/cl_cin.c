@@ -1642,6 +1642,8 @@ void CIN_DrawCinematic(int handle)
 		return;
 	}
 
+	//Com_Printf(PRINT_ALL, "DrawStretchRaw(%f, %f, %f, %f)\n", x, y, w, h);
+
 	re.DrawStretchRaw(x, y, w, h, cinTable[handle].drawX, cinTable[handle].drawY, buf, handle, cinTable[handle].dirty);
 	cinTable[handle].dirty = qfalse;
 }
