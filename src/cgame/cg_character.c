@@ -65,6 +65,7 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 	if (len >= sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s too long\n", va("%s.gibs", modelPath));
+		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 
@@ -309,6 +310,7 @@ static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *an
 	if (len >= sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s is too long\n", filename);
+		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 	trap_FS_Read(bigTextBuffer, len, f);
