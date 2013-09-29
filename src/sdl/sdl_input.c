@@ -52,13 +52,14 @@
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
-// @todo SDL 2.0 window pointer from SDL_glimp.c
+// TODO: SDL 2.0 window pointer from SDL_glimp.c
 extern SDL_Window *screen;
 
-static cvar_t *in_nograb;
 static cvar_t *in_keyboardDebug = NULL;
 
-static cvar_t   *in_mouse        = NULL;
+static cvar_t *in_mouse = NULL;
+static cvar_t *in_nograb;
+
 static qboolean mouseAvailable   = qfalse;
 static qboolean mouseActive      = qfalse;
 static qboolean keyRepeatEnabled = qfalse;
@@ -515,21 +516,21 @@ static const char *IN_TranslateSDLToQ3Key(SDL_Keysym *keysym,
 			break;
 		}
 	}
-	/*
-	 * FIXME: disabled for sdl2
-	else if (down && !keysym->unicode)
-	{
-	    // Some exceptions which are missing the unicode value ex KP_SLASH
-	    switch (*key)
-	    {
-	    case K_KP_SLASH:
-	        *buf = '/';
-	        break;
-	    default:
-	        break;
-	    }
-	}*/
-
+/*
+    // FIXME: SDL2 does not have unicode field in SDL_Keysym
+    else if (down && !keysym->unicode)
+    {
+        // Some exceptions which are missing the unicode value ex KP_SLASH
+        switch (*key)
+        {
+        case K_KP_SLASH:
+            *buf = '/';
+            break;
+        default:
+            break;
+        }
+    }
+*/
 	if (in_keyboardDebug->integer)
 	{
 		IN_PrintKey(keysym, *key, down);
@@ -590,7 +591,7 @@ static void IN_ActivateMouse(void)
 
 	if (!mouseActive)
 	{
-		SDL_ShowCursor(0);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetWindowGrab(screen, SDL_TRUE);
 
 		IN_GobbleMotionEvents();
@@ -652,9 +653,10 @@ static void IN_DeactivateMouse(void)
 		IN_GobbleMotionEvents();
 
 		SDL_SetWindowGrab(screen, SDL_FALSE);
+		SDL_SetRelativeMouseMode(SDL_FALSE);
 
 		// Don't warp the mouse unless the cursor is within the window
-		if (screen == SDL_GetMouseFocus())
+		if (SDL_GetWindowFlags(screen) & SDL_WINDOW_MOUSE_FOCUS)
 		{
 			SDL_WarpMouseInWindow(screen, cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2);
 		}
