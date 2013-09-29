@@ -613,12 +613,6 @@ void Sys_ErrorDialog(const char *error)
 	Sys_Print(va("%s\n", error));
 
 #ifndef DEDICATED
-	// We may have grabbed input devices. Need to release.
-	if (SDL_WasInit(SDL_INIT_VIDEO))
-	{
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
-	}
-
 	Sys_Dialog(DT_ERROR, va("%s\nSee \"%s\" for details.\n", error, ospath), "Error");
 #endif
 

@@ -52,20 +52,6 @@
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
-#ifdef __APPLE__
-// Mouse acceleration needs to be disabled
-#define MACOS_X_ACCELERATION_HACK
-// Cursor needs hack to hide
-#define MACOS_X_CURSOR_HACK
-#endif // __APPLE__
-
-#ifdef MACOS_X_ACCELERATION_HACK
-#include <IOKit/IOTypes.h>
-#include <IOKit/hidsystem/IOHIDLib.h>
-#include <IOKit/hidsystem/IOHIDParameter.h>
-#include <IOKit/hidsystem/event_status_driver.h>
-#endif
-
 // @todo SDL 2.0 window pointer from SDL_glimp.c
 extern SDL_Window *screen;
 
@@ -76,11 +62,6 @@ static cvar_t   *in_mouse        = NULL;
 static qboolean mouseAvailable   = qfalse;
 static qboolean mouseActive      = qfalse;
 static qboolean keyRepeatEnabled = qfalse;
-
-#ifdef MACOS_X_ACCELERATION_HACK
-static cvar_t *in_disablemacosxmouseaccel = NULL;
-static double originalMouseSpeed          = -1.0;
-#endif
 
 static SDL_Joystick *stick                = NULL;
 static cvar_t       *in_joystick          = NULL;
@@ -588,34 +569,6 @@ static const char *IN_TranslateSDLToQ3Key(SDL_Keysym *keysym,
 	return (char *)buf;
 }
 
-#ifdef MACOS_X_ACCELERATION_HACK
-
-static io_connect_t IN_GetIOHandle(void) // mac os x mouse accel hack
-{
-	io_connect_t  iohandle = MACH_PORT_NULL;
-	kern_return_t status;
-	io_service_t  iohidsystem = MACH_PORT_NULL;
-	mach_port_t   masterport;
-
-	status = IOMasterPort(MACH_PORT_NULL, &masterport);
-	if (status != KERN_SUCCESS)
-	{
-		return 0;
-	}
-
-	iohidsystem = IORegistryEntryFromPath(masterport, kIOServicePlane ":/IOResources/IOHIDSystem");
-	if (!iohidsystem)
-	{
-		return 0;
-	}
-
-	status = IOServiceOpen(iohidsystem, mach_task_self(), kIOHIDParamConnectType, &iohandle);
-	IOObjectRelease(iohidsystem);
-
-	return iohandle;
-}
-#endif
-
 static void IN_GobbleMotionEvents(void)
 {
 	SDL_Event dummy[1];
@@ -635,50 +588,9 @@ static void IN_ActivateMouse(void)
 		return;
 	}
 
-#ifdef MACOS_X_ACCELERATION_HACK
-	if (!mouseActive) // mac os x mouse accel hack
-	{
-		// Save the status of mouse acceleration
-		originalMouseSpeed = -1.0; // in case of error
-		if (in_disablemacosxmouseaccel->integer)
-		{
-			io_connect_t mouseDev = IN_GetIOHandle();
-			if (mouseDev != 0)
-			{
-				if (IOHIDGetAccelerationWithKey(mouseDev, CFSTR(kIOHIDMouseAccelerationType), &originalMouseSpeed) == kIOReturnSuccess)
-				{
-					Com_Printf("previous mouse acceleration: %f\n", originalMouseSpeed);
-					if (IOHIDSetAccelerationWithKey(mouseDev, CFSTR(kIOHIDMouseAccelerationType), -1.0) != kIOReturnSuccess)
-					{
-						Com_Printf("Could not disable mouse acceleration (failed at IOHIDSetAccelerationWithKey).\n");
-						Cvar_Set("in_disablemacosxmouseaccel", 0);
-					}
-				}
-				else
-				{
-					Com_Printf("Could not disable mouse acceleration (failed at IOHIDGetAccelerationWithKey).\n");
-					Cvar_Set("in_disablemacosxmouseaccel", 0);
-				}
-				IOServiceClose(mouseDev);
-			}
-			else
-			{
-				Com_Printf("Could not disable mouse acceleration (failed at IO_GetIOHandle).\n");
-				Cvar_Set("in_disablemacosxmouseaccel", 0);
-			}
-		}
-	}
-#endif
-
 	if (!mouseActive)
 	{
 		SDL_ShowCursor(0);
-#ifdef MACOS_X_CURSOR_HACK
-		// This is a bug in the current SDL/macosx...have to toggle it a few
-		//  times to get the cursor to hide.
-		SDL_ShowCursor(1);
-		SDL_ShowCursor(0);
-#endif
 		SDL_SetWindowGrab(screen, SDL_TRUE);
 
 		IN_GobbleMotionEvents();
@@ -734,29 +646,6 @@ static void IN_DeactivateMouse(void)
 	{
 		return;
 	}
-
-#ifdef MACOS_X_ACCELERATION_HACK
-	if (mouseActive) // mac os x mouse accel hack
-	{
-		if (originalMouseSpeed != -1.0)
-		{
-			io_connect_t mouseDev = IN_GetIOHandle();
-			if (mouseDev != 0)
-			{
-				Com_Printf("restoring mouse acceleration to: %f\n", originalMouseSpeed);
-				if (IOHIDSetAccelerationWithKey(mouseDev, CFSTR(kIOHIDMouseAccelerationType), originalMouseSpeed) != kIOReturnSuccess)
-				{
-					Com_Printf("Could not re-enable mouse acceleration (failed at IOHIDSetAccelerationWithKey).\n");
-				}
-				IOServiceClose(mouseDev);
-			}
-			else
-			{
-				Com_Printf("Could not re-enable mouse acceleration (failed at IO_GetIOHandle).\n");
-			}
-		}
-	}
-#endif
 
 	if (mouseActive)
 	{
@@ -895,7 +784,6 @@ static void IN_ShutdownJoystick(void)
 
 static void IN_JoyMove(void)
 {
-<<<<<<< HEAD
     qboolean     joy_pressed[ARRAY_LEN(joy_keys)];
     unsigned int axes  = 0;
     unsigned int hats  = 0;
@@ -1123,246 +1011,6 @@ static void IN_JoyMove(void)
 
     // Save for future generations.
     stick_state.oldaxes = axes;
-=======
-    qboolean     joy_pressed[ARRAY_LEN(joy_keys)];
-    unsigned int axes  = 0;
-    unsigned int hats  = 0;
-    int          total = 0;
-    int          i     = 0;
-
-    if (!stick)
-    {
-        return;
-    }
-
-    SDL_JoystickUpdate();
-
-    memset(joy_pressed, '\0', sizeof(joy_pressed));
-
-    // update the ball state.
-    total = SDL_JoystickNumBalls(stick);
-    if (total > 0)
-    {
-        int balldx = 0;
-        int balldy = 0;
-        int dx;
-        int dy;
-
-        for (i = 0; i < total; i++)
-        {
-            dx = 0;
-            dy = 0;
-
-            SDL_JoystickGetBall(stick, i, &dx, &dy);
-            balldx += dx;
-            balldy += dy;
-        }
-        if (balldx || balldy)
-        {
-            // !!! FIXME: is this good for stick balls, or just mice?
-            // Scale like the mouse input...
-            if (abs(balldx) > 1)
-            {
-                balldx *= 2;
-            }
-            if (abs(balldy) > 1)
-            {
-                balldy *= 2;
-            }
-            Com_QueueEvent(0, SE_MOUSE, balldx, balldy, 0, NULL);
-        }
-    }
-
-    // now query the stick buttons...
-    total = SDL_JoystickNumButtons(stick);
-    if (total > 0)
-    {
-        if (total > ARRAY_LEN(stick_state.buttons))
-        {
-            total = ARRAY_LEN(stick_state.buttons);
-        }
-        for (i = 0; i < total; i++)
-        {
-            qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
-
-            if (pressed != stick_state.buttons[i])
-            {
-                Com_QueueEvent(0, SE_KEY, K_JOY1 + i, pressed, 0, NULL);
-                stick_state.buttons[i] = pressed;
-            }
-        }
-    }
-
-    // look at the hats...
-    total = SDL_JoystickNumHats(stick);
-    if (total > 0)
-    {
-        if (total > 4)
-        {
-            total = 4;
-        }
-        for (i = 0; i < total; i++)
-        {
-            ((Uint8 *)&hats)[i] = SDL_JoystickGetHat(stick, i);
-        }
-    }
-
-    // update hat state
-    if (hats != stick_state.oldhats)
-    {
-        for (i = 0; i < 4; i++)
-        {
-            if (((Uint8 *)&hats)[i] != ((Uint8 *)&stick_state.oldhats)[i])
-            {
-                // release event
-                switch (((Uint8 *)&stick_state.oldhats)[i])
-                {
-                case SDL_HAT_UP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_DOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_LEFT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-                    break;
-                default:
-                    break;
-                }
-                // press event
-                switch (((Uint8 *)&hats)[i])
-                {
-                case SDL_HAT_UP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_DOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_LEFT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-
-    // save hat state
-    stick_state.oldhats = hats;
-
-    // finally, look at the axes...
-    total = SDL_JoystickNumAxes(stick);
-    if (total > 0)
-    {
-        if (total > 16)
-        {
-            total = 16;
-        }
-        for (i = 0; i < total; i++)
-        {
-            Sint16 axis = SDL_JoystickGetAxis(stick, i);
-
-            if (in_joystickUseAnalog->integer)
-            {
-                float f;
-#ifdef PANDORA
-                if (i == 1)
-                {
-                    axis = -axis;           // Invert Y axis
-                }
-#endif
-                f = ((float) abs(axis)) / 32767.0f;
-
-                if (f < in_joystickThreshold->value)
-                {
-                    axis = 0;
-                }
-
-                if (axis != stick_state.oldaaxes[i])
-                {
-#ifdef PANDORA
-                    Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis / 256, 0, NULL);
-#else // FIXME: is axis/256 (as done for pandora) a general fix?
-                    Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis, 0, NULL);
-#endif
-                    stick_state.oldaaxes[i] = axis;
-                }
-            }
-            else
-            {
-                float f = ((float) axis) / 32767.0f;
-
-                if (f < -in_joystickThreshold->value)
-                {
-                    axes |= (1 << (i * 2));
-                }
-                else if (f > in_joystickThreshold->value)
-                {
-                    axes |= (1 << ((i * 2) + 1));
-                }
-            }
-        }
-    }
-
-    // Time to update axes state based on old vs. new.
-    if (axes != stick_state.oldaxes)
-    {
-        for (i = 0; i < 16; i++)
-        {
-            if ((axes & (1 << i)) && !(stick_state.oldaxes & (1 << i)))
-            {
-                Com_QueueEvent(0, SE_KEY, joy_keys[i], qtrue, 0, NULL);
-            }
-
-            if (!(axes & (1 << i)) && (stick_state.oldaxes & (1 << i)))
-            {
-                Com_QueueEvent(0, SE_KEY, joy_keys[i], qfalse, 0, NULL);
-            }
-        }
-    }
-
-    // Save for future generations.
-    stick_state.oldaxes = axes;
->>>>>>> master
 }
 */
 
@@ -1601,10 +1249,6 @@ void IN_Init(void)
 	in_joystick          = Cvar_Get("in_joystick", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	in_joystickDebug     = Cvar_Get("in_joystickDebug", "0", CVAR_TEMP);
 	in_joystickThreshold = Cvar_Get("joy_threshold", "0.15", CVAR_ARCHIVE);
-
-#ifdef MACOS_X_ACCELERATION_HACK
-	in_disablemacosxmouseaccel = Cvar_Get("in_disablemacosxmouseaccel", "1", CVAR_ARCHIVE);
-#endif
 
 	// @todo equivalent in SDL 2.0 ?
 	//SDL_EnableUNICODE(1);
