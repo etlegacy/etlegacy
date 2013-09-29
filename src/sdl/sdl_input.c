@@ -534,20 +534,20 @@ static const char *IN_TranslateSDLToQ3Key(SDL_Keysym *keysym,
 			break;
 		}
 	}
-    /*
-     * FIXME: disabled for sdl2
-    else if (down && !keysym->unicode)
+	/*
+	 * FIXME: disabled for sdl2
+	else if (down && !keysym->unicode)
 	{
-		// Some exceptions which are missing the unicode value ex KP_SLASH
-		switch (*key)
-		{
-		case K_KP_SLASH:
-			*buf = '/';
-			break;
-		default:
-			break;
-		}
-    }*/
+	    // Some exceptions which are missing the unicode value ex KP_SLASH
+	    switch (*key)
+	    {
+	    case K_KP_SLASH:
+	        *buf = '/';
+	        break;
+	    default:
+	        break;
+	    }
+	}*/
 
 	if (in_keyboardDebug->integer)
 	{
@@ -1124,244 +1124,244 @@ static void IN_JoyMove(void)
     // Save for future generations.
     stick_state.oldaxes = axes;
 =======
-	qboolean     joy_pressed[ARRAY_LEN(joy_keys)];
-	unsigned int axes  = 0;
-	unsigned int hats  = 0;
-	int          total = 0;
-	int          i     = 0;
+    qboolean     joy_pressed[ARRAY_LEN(joy_keys)];
+    unsigned int axes  = 0;
+    unsigned int hats  = 0;
+    int          total = 0;
+    int          i     = 0;
 
-	if (!stick)
-	{
-		return;
-	}
+    if (!stick)
+    {
+        return;
+    }
 
-	SDL_JoystickUpdate();
+    SDL_JoystickUpdate();
 
-	memset(joy_pressed, '\0', sizeof(joy_pressed));
+    memset(joy_pressed, '\0', sizeof(joy_pressed));
 
-	// update the ball state.
-	total = SDL_JoystickNumBalls(stick);
-	if (total > 0)
-	{
-		int balldx = 0;
-		int balldy = 0;
-		int dx;
-		int dy;
+    // update the ball state.
+    total = SDL_JoystickNumBalls(stick);
+    if (total > 0)
+    {
+        int balldx = 0;
+        int balldy = 0;
+        int dx;
+        int dy;
 
-		for (i = 0; i < total; i++)
-		{
-			dx = 0;
-			dy = 0;
+        for (i = 0; i < total; i++)
+        {
+            dx = 0;
+            dy = 0;
 
-			SDL_JoystickGetBall(stick, i, &dx, &dy);
-			balldx += dx;
-			balldy += dy;
-		}
-		if (balldx || balldy)
-		{
-			// !!! FIXME: is this good for stick balls, or just mice?
-			// Scale like the mouse input...
-			if (abs(balldx) > 1)
-			{
-				balldx *= 2;
-			}
-			if (abs(balldy) > 1)
-			{
-				balldy *= 2;
-			}
-			Com_QueueEvent(0, SE_MOUSE, balldx, balldy, 0, NULL);
-		}
-	}
+            SDL_JoystickGetBall(stick, i, &dx, &dy);
+            balldx += dx;
+            balldy += dy;
+        }
+        if (balldx || balldy)
+        {
+            // !!! FIXME: is this good for stick balls, or just mice?
+            // Scale like the mouse input...
+            if (abs(balldx) > 1)
+            {
+                balldx *= 2;
+            }
+            if (abs(balldy) > 1)
+            {
+                balldy *= 2;
+            }
+            Com_QueueEvent(0, SE_MOUSE, balldx, balldy, 0, NULL);
+        }
+    }
 
-	// now query the stick buttons...
-	total = SDL_JoystickNumButtons(stick);
-	if (total > 0)
-	{
-		if (total > ARRAY_LEN(stick_state.buttons))
-		{
-			total = ARRAY_LEN(stick_state.buttons);
-		}
-		for (i = 0; i < total; i++)
-		{
-			qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
+    // now query the stick buttons...
+    total = SDL_JoystickNumButtons(stick);
+    if (total > 0)
+    {
+        if (total > ARRAY_LEN(stick_state.buttons))
+        {
+            total = ARRAY_LEN(stick_state.buttons);
+        }
+        for (i = 0; i < total; i++)
+        {
+            qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
 
-			if (pressed != stick_state.buttons[i])
-			{
-				Com_QueueEvent(0, SE_KEY, K_JOY1 + i, pressed, 0, NULL);
-				stick_state.buttons[i] = pressed;
-			}
-		}
-	}
+            if (pressed != stick_state.buttons[i])
+            {
+                Com_QueueEvent(0, SE_KEY, K_JOY1 + i, pressed, 0, NULL);
+                stick_state.buttons[i] = pressed;
+            }
+        }
+    }
 
-	// look at the hats...
-	total = SDL_JoystickNumHats(stick);
-	if (total > 0)
-	{
-		if (total > 4)
-		{
-			total = 4;
-		}
-		for (i = 0; i < total; i++)
-		{
-			((Uint8 *)&hats)[i] = SDL_JoystickGetHat(stick, i);
-		}
-	}
+    // look at the hats...
+    total = SDL_JoystickNumHats(stick);
+    if (total > 0)
+    {
+        if (total > 4)
+        {
+            total = 4;
+        }
+        for (i = 0; i < total; i++)
+        {
+            ((Uint8 *)&hats)[i] = SDL_JoystickGetHat(stick, i);
+        }
+    }
 
-	// update hat state
-	if (hats != stick_state.oldhats)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			if (((Uint8 *)&hats)[i] != ((Uint8 *)&stick_state.oldhats)[i])
-			{
-				// release event
-				switch (((Uint8 *)&stick_state.oldhats)[i])
-				{
-				case SDL_HAT_UP:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-					break;
-				case SDL_HAT_RIGHT:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-					break;
-				case SDL_HAT_DOWN:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-					break;
-				case SDL_HAT_LEFT:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-					break;
-				case SDL_HAT_RIGHTUP:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-					break;
-				case SDL_HAT_RIGHTDOWN:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-					break;
-				case SDL_HAT_LEFTUP:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-					break;
-				case SDL_HAT_LEFTDOWN:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-					break;
-				default:
-					break;
-				}
-				// press event
-				switch (((Uint8 *)&hats)[i])
-				{
-				case SDL_HAT_UP:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-					break;
-				case SDL_HAT_RIGHT:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-					break;
-				case SDL_HAT_DOWN:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-					break;
-				case SDL_HAT_LEFT:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-					break;
-				case SDL_HAT_RIGHTUP:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-					break;
-				case SDL_HAT_RIGHTDOWN:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-					break;
-				case SDL_HAT_LEFTUP:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-					break;
-				case SDL_HAT_LEFTDOWN:
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	}
+    // update hat state
+    if (hats != stick_state.oldhats)
+    {
+        for (i = 0; i < 4; i++)
+        {
+            if (((Uint8 *)&hats)[i] != ((Uint8 *)&stick_state.oldhats)[i])
+            {
+                // release event
+                switch (((Uint8 *)&stick_state.oldhats)[i])
+                {
+                case SDL_HAT_UP:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
+                    break;
+                case SDL_HAT_RIGHT:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
+                    break;
+                case SDL_HAT_DOWN:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
+                    break;
+                case SDL_HAT_LEFT:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
+                    break;
+                case SDL_HAT_RIGHTUP:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
+                    break;
+                case SDL_HAT_RIGHTDOWN:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
+                    break;
+                case SDL_HAT_LEFTUP:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
+                    break;
+                case SDL_HAT_LEFTDOWN:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
+                    break;
+                default:
+                    break;
+                }
+                // press event
+                switch (((Uint8 *)&hats)[i])
+                {
+                case SDL_HAT_UP:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
+                    break;
+                case SDL_HAT_RIGHT:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
+                    break;
+                case SDL_HAT_DOWN:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
+                    break;
+                case SDL_HAT_LEFT:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
+                    break;
+                case SDL_HAT_RIGHTUP:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
+                    break;
+                case SDL_HAT_RIGHTDOWN:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
+                    break;
+                case SDL_HAT_LEFTUP:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
+                    break;
+                case SDL_HAT_LEFTDOWN:
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
+                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
 
-	// save hat state
-	stick_state.oldhats = hats;
+    // save hat state
+    stick_state.oldhats = hats;
 
-	// finally, look at the axes...
-	total = SDL_JoystickNumAxes(stick);
-	if (total > 0)
-	{
-		if (total > 16)
-		{
-			total = 16;
-		}
-		for (i = 0; i < total; i++)
-		{
-			Sint16 axis = SDL_JoystickGetAxis(stick, i);
+    // finally, look at the axes...
+    total = SDL_JoystickNumAxes(stick);
+    if (total > 0)
+    {
+        if (total > 16)
+        {
+            total = 16;
+        }
+        for (i = 0; i < total; i++)
+        {
+            Sint16 axis = SDL_JoystickGetAxis(stick, i);
 
-			if (in_joystickUseAnalog->integer)
-			{
-				float f;
+            if (in_joystickUseAnalog->integer)
+            {
+                float f;
 #ifdef PANDORA
-				if (i == 1)
-				{
-					axis = -axis;           // Invert Y axis
-				}
+                if (i == 1)
+                {
+                    axis = -axis;           // Invert Y axis
+                }
 #endif
-				f = ((float) abs(axis)) / 32767.0f;
+                f = ((float) abs(axis)) / 32767.0f;
 
-				if (f < in_joystickThreshold->value)
-				{
-					axis = 0;
-				}
+                if (f < in_joystickThreshold->value)
+                {
+                    axis = 0;
+                }
 
-				if (axis != stick_state.oldaaxes[i])
-				{
+                if (axis != stick_state.oldaaxes[i])
+                {
 #ifdef PANDORA
-					Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis / 256, 0, NULL);
+                    Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis / 256, 0, NULL);
 #else // FIXME: is axis/256 (as done for pandora) a general fix?
-					Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis, 0, NULL);
+                    Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis, 0, NULL);
 #endif
-					stick_state.oldaaxes[i] = axis;
-				}
-			}
-			else
-			{
-				float f = ((float) axis) / 32767.0f;
+                    stick_state.oldaaxes[i] = axis;
+                }
+            }
+            else
+            {
+                float f = ((float) axis) / 32767.0f;
 
-				if (f < -in_joystickThreshold->value)
-				{
-					axes |= (1 << (i * 2));
-				}
-				else if (f > in_joystickThreshold->value)
-				{
-					axes |= (1 << ((i * 2) + 1));
-				}
-			}
-		}
-	}
+                if (f < -in_joystickThreshold->value)
+                {
+                    axes |= (1 << (i * 2));
+                }
+                else if (f > in_joystickThreshold->value)
+                {
+                    axes |= (1 << ((i * 2) + 1));
+                }
+            }
+        }
+    }
 
-	// Time to update axes state based on old vs. new.
-	if (axes != stick_state.oldaxes)
-	{
-		for (i = 0; i < 16; i++)
-		{
-			if ((axes & (1 << i)) && !(stick_state.oldaxes & (1 << i)))
-			{
-				Com_QueueEvent(0, SE_KEY, joy_keys[i], qtrue, 0, NULL);
-			}
+    // Time to update axes state based on old vs. new.
+    if (axes != stick_state.oldaxes)
+    {
+        for (i = 0; i < 16; i++)
+        {
+            if ((axes & (1 << i)) && !(stick_state.oldaxes & (1 << i)))
+            {
+                Com_QueueEvent(0, SE_KEY, joy_keys[i], qtrue, 0, NULL);
+            }
 
-			if (!(axes & (1 << i)) && (stick_state.oldaxes & (1 << i)))
-			{
-				Com_QueueEvent(0, SE_KEY, joy_keys[i], qfalse, 0, NULL);
-			}
-		}
-	}
+            if (!(axes & (1 << i)) && (stick_state.oldaxes & (1 << i)))
+            {
+                Com_QueueEvent(0, SE_KEY, joy_keys[i], qfalse, 0, NULL);
+            }
+        }
+    }
 
-	// Save for future generations.
-	stick_state.oldaxes = axes;
+    // Save for future generations.
+    stick_state.oldaxes = axes;
 >>>>>>> master
 }
 */

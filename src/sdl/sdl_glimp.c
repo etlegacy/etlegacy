@@ -203,7 +203,7 @@ void GLimp_Shutdown(void)
 	{
 		SDL_DestroyWindow(screen);
 		screen = NULL;
-    }
+	}
 
 #ifdef HAVE_GLES
 	EGL_Close();
@@ -1089,27 +1089,19 @@ GLimp_SetMode
 */
 static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
-/*	const char *glstring;
+	const char *glstring;
 	int        sdlcolorbits;
 	int        colorbits, depthbits, stencilbits;
 	int        tcolorbits, tdepthbits, tstencilbits;
 	int        samples;
 	int        i          = 0;
 	SDL_Window *vidscreen = NULL;
-	Uint32     flags      = SDL_WINDOW_OPENGL;
-    GLenum     glewResult;*/
-	int         sdlcolorbits;
-	int         colorbits, depthbits, stencilbits;
-	int         tcolorbits, tdepthbits, tstencilbits;
-	int         samples;
-	int         i          = 0;
-	SDL_Surface *vidscreen = NULL;
 #ifdef HAVE_GLES
 	Uint32 flags = 0;
 #else
-    Uint32 flags = SDL_WINDOW_OPENGL;
+	Uint32 flags = SDL_WINDOW_OPENGL;
 #endif
-    GLenum glewResult;
+	GLenum glewResult;
 
 	ri.Printf(PRINT_ALL, "Initializing OpenGL display\n");
 
@@ -1154,30 +1146,29 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	glConfig.vidHeight    = 480;
 	glConfig.windowAspect = 800.0 / 480.0;
 #else
-/*	if (mode == -2)
+	/*if (mode == -2)
 	{
-		// use desktop video resolution
-		if (videoInfo->current_h > 0)
-		{
-			glConfig.vidWidth  = videoInfo->current_w;
-			glConfig.vidHeight = videoInfo->current_h;
-		}
-		else
-		{
-			glConfig.vidWidth  = 640;
-			glConfig.vidHeight = 480;
-			ri.Printf(PRINT_ALL,
-			          "Cannot determine display resolution, assuming 640x480\n");
-		}
+	    // use desktop video resolution
+	    if (videoInfo->current_h > 0)
+	    {
+	        glConfig.vidWidth  = videoInfo->current_w;
+	        glConfig.vidHeight = videoInfo->current_h;
+	    }
+	    else
+	    {
+	        glConfig.vidWidth  = 640;
+	        glConfig.vidHeight = 480;
+	        ri.Printf(PRINT_ALL,
+	                  "Cannot determine display resolution, assuming 640x480\n");
+	    }
 
-		glConfig.windowAspect = (float)glConfig.vidWidth / (float)glConfig.vidHeight;
+	    glConfig.windowAspect = (float)glConfig.vidWidth / (float)glConfig.vidHeight;
 	}
-    else if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
+	else*/if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
 	{
 		ri.Printf(PRINT_ALL, "invalid mode\n");
 		return RSERR_INVALID_MODE;
 	}
-    */
 #endif
 	ri.Printf(PRINT_ALL, "%dx%d\n", glConfig.vidWidth, glConfig.vidHeight);
 
@@ -1482,10 +1473,6 @@ GLimp_StartDriverAndSetMode
 static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
 	rserr_t err;
-
-	// this requires SDL >= 1.2.14. and fixes CAPSLOCK binding
-	// may cause compatibility issues on Sun workstations
-	SDL_putenv("SDL_DISABLE_LOCK_KEYS=1");
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
