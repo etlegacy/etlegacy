@@ -257,20 +257,6 @@ cpuFeatures_t Sys_GetProcessorFeatures(void)
 	{
 		features |= CF_MMX;
 	}
-	/* @todo SDL 2.0 not available
-	if (SDL_HasMMXExt())
-	{
-	    features |= CF_MMX_EXT;
-	}*/
-	if (SDL_Has3DNow())
-	{
-		features |= CF_3DNOW;
-	}
-	/* @todo SDL 2.0 not available
-	if (SDL_Has3DNowExt())
-	{
-	    features |= CF_3DNOW_EXT;
-	}*/
 	if (SDL_HasSSE())
 	{
 		features |= CF_SSE;
@@ -278,10 +264,6 @@ cpuFeatures_t Sys_GetProcessorFeatures(void)
 	if (SDL_HasSSE2())
 	{
 		features |= CF_SSE2;
-	}
-	if (SDL_HasAltiVec())
-	{
-		features |= CF_ALTIVEC;
 	}
 #endif
 

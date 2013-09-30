@@ -163,7 +163,6 @@ SNDDMA_Init
 */
 qboolean SNDDMA_Init(void)
 {
-	char          drivername[128];
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 	int           tmp;
@@ -197,12 +196,7 @@ qboolean SNDDMA_Init(void)
 
 	Com_Printf("OK\n");
 
-	strcpy(drivername, SDL_GetAudioDriver(0));
-	if (drivername[0] == NULL)
-	{
-		strcpy(drivername, "(UNKNOWN)");
-	}
-	Com_Printf("SDL audio driver is \"%s\".\n", drivername);
+	Com_Printf("SDL audio driver is \"%s\".\n", SDL_GetCurrentAudioDriver());
 
 	memset(&desired, '\0', sizeof(desired));
 	memset(&obtained, '\0', sizeof(obtained));

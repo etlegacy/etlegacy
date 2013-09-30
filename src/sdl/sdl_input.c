@@ -1093,71 +1093,83 @@ static void IN_ProcessEvents(void)
 		case SDL_QUIT:
 			Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
 			break;
-		case SDL_WINDOWEVENT_RESIZED:
-		{
-			char width[32], height[32];
 
-			Com_sprintf(width, sizeof(width), "%d", e.window.data1);
-			Com_sprintf(height, sizeof(height), "%d", e.window.data2);
-			Cvar_Set("r_customwidth", width);
-			Cvar_Set("r_customheight", height);
-			Cvar_Set("r_mode", "-1");
-			/* wait until user stops dragging for 1 second, so
-			  we aren't constantly recreating the GL context while
-			  he tries to drag...*/
-			vidRestartTime = Sys_Milliseconds() + 1000;
-		}
-		break;
-		case SDL_WINDOWEVENT_ENTER:
-		case SDL_WINDOWEVENT_FOCUS_GAINED:
-			Cvar_SetValue("com_unfocused", qfalse);
-#ifdef USE_RAW_INPUT_MOUSE
-			if (in_mouse->integer == 3)    //raw input stops working on winxp after losing focus. (why?)
+		case SDL_WINDOWEVENT:
+			switch (e.window.event)
 			{
-				IN_ShutdownRawMouse();
-				IN_InitRawMouse();
+			case SDL_WINDOWEVENT_RESIZED:
+			{
+				char width[32], height[32];
+				Com_sprintf(width, sizeof(width), "%d", e.window.data1);
+				Com_sprintf(height, sizeof(height), "%d", e.window.data2);
+				Cvar_Set("r_customwidth", width);
+				Cvar_Set("r_customheight", height);
+				Cvar_Set("r_mode", "-1");
+
+				// Wait until user stops dragging for 1 second, so
+				// we aren't constantly recreating the GL context while
+				// he tries to drag...
+				vidRestartTime = Sys_Milliseconds() + 1000;
 			}
-#endif
 			break;
-		case SDL_WINDOWEVENT_LEAVE:
-		case SDL_WINDOWEVENT_FOCUS_LOST:
-			Cvar_SetValue("com_unfocused", qtrue);
+
+			case SDL_WINDOWEVENT_MINIMIZED:
+				Cvar_SetValue("com_minimized", 1);
+				break;
+
+			case SDL_WINDOWEVENT_RESTORED:
+			case SDL_WINDOWEVENT_MAXIMIZED:
+				Cvar_SetValue("com_minimized", 0);
+				break;
+
+			case SDL_WINDOWEVENT_LEAVE:
+			case SDL_WINDOWEVENT_FOCUS_LOST:
+				Cvar_SetValue("com_unfocused", 1);
+				break;
+
+			case SDL_WINDOWEVENT_ENTER:
+			case SDL_WINDOWEVENT_FOCUS_GAINED:
+			{
+				Cvar_SetValue("com_unfocused", 0);
+					#ifdef USE_RAW_INPUT_MOUSE
+				if (in_mouse->integer == 3)                            //raw input stops working on winxp after losing focus. (why?)
+				{
+					IN_ShutdownRawMouse();
+					IN_InitRawMouse();
+				}
+					#endif
+			}
 			break;
-		case SDL_WINDOWEVENT_MINIMIZED:
-			Cvar_SetValue("com_minimized", qtrue);
+			}
 			break;
-		case SDL_WINDOWEVENT_MAXIMIZED:
-			Cvar_SetValue("com_minimized", qfalse);
-			break;
+
 		default:
 			break;
-		} // end switch( event type )
+		}
 	}
 }
 
 void IN_Frame(void)
 {
 	qboolean loading;
-	qboolean fullscreen;
 
 	//IN_JoyMove();
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
-	loading    = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
-	fullscreen = Cvar_VariableIntegerValue("r_fullscreen");
+	loading = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
 
-	if (!fullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
+	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
 		// Console is down in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (!fullscreen && loading)
+	else if (!cls.glconfig.isFullscreen && loading)
 	{
 		// Loading in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (screen != SDL_GetMouseFocus())
+	else if (!(SDL_GetWindowFlags(screen) & SDL_WINDOW_INPUT_FOCUS))
 	{
 		// Window not got focus
 		IN_DeactivateMouse();
@@ -1173,15 +1185,6 @@ void IN_Frame(void)
 		vidRestartTime = 0;
 		Cbuf_AddText("vid_restart\n");
 	}
-}
-
-static void IN_InitKeyLockStates(void)
-{
-	Uint8 *keystate = SDL_GetKeyboardState(NULL);
-
-	keys[K_SCROLLOCK].down  = keystate[SDL_GetScancodeFromKey(SDLK_SCROLLLOCK)];
-	keys[K_KP_NUMLOCK].down = keystate[SDL_GetScancodeFromKey(SDLK_NUMLOCKCLEAR)];
-	keys[K_CAPSLOCK].down   = keystate[SDL_GetScancodeFromKey(SDLK_CAPSLOCK)];
 }
 
 #ifdef _WIN32
@@ -1230,6 +1233,15 @@ void IN_DisableDingFilter()
 }
 #endif
 
+static void IN_InitKeyLockStates(void)
+{
+	unsigned char *keystate = SDL_GetKeyboardState(NULL);
+
+	keys[K_SCROLLOCK].down  = keystate[SDL_SCANCODE_SCROLLLOCK];
+	keys[K_KP_NUMLOCK].down = keystate[SDL_SCANCODE_NUMLOCKCLEAR];
+	keys[K_CAPSLOCK].down   = keystate[SDL_SCANCODE_CAPSLOCK];
+}
+
 void IN_Init(void)
 {
 	int appState;
@@ -1254,11 +1266,6 @@ void IN_Init(void)
 
 	SDL_StartTextInput();
 
-	// @todo equivalent in SDL 2.0 ?
-	//SDL_EnableUNICODE(1);
-	//SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-	keyRepeatEnabled = qtrue;
-
 #ifdef USE_RAW_INPUT_MOUSE
 	if (mouseRaw)
 	{
@@ -1281,16 +1288,13 @@ void IN_Init(void)
 	mouseAvailable = (in_mouse->value != 0);
 	IN_DeactivateMouse();
 
-	// @todo equivalent in SDL 2.0 ?
-	//appState = SDL_GetAppState();
-	//Cvar_SetValue("com_unfocused", !(appState & SDL_APPINPUTFOCUS));
-	//Cvar_SetValue("com_minimized", !(appState & SDL_APPACTIVE));
+	appState = SDL_GetWindowFlags(screen);
+	Cvar_SetValue("com_unfocused", !(appState & SDL_WINDOW_INPUT_FOCUS));
+	Cvar_SetValue("com_minimized", appState & SDL_WINDOW_MINIMIZED);
 
 	IN_InitKeyLockStates();
 
-#ifndef __APPLE__ // FIXME: Joystick initialization crashes some Mac OS X clients
-	IN_InitJoystick();
-#endif
+	//IN_InitJoystick(); // FIXME: Joystick initialization crashes some Mac OS X clients
 
 #ifdef _WIN32
 	IN_EnableDingFilter();
@@ -1300,6 +1304,7 @@ void IN_Init(void)
 
 void IN_Shutdown(void)
 {
+	SDL_StopTextInput();
 	Com_Printf("SDL input devices shut down.\n");
 #ifdef USE_RAW_INPUT_MOUSE
 	IN_ShutdownRawMouse();
@@ -1313,6 +1318,8 @@ void IN_Shutdown(void)
 	mouseAvailable = qfalse;
 
 	//IN_ShutdownJoystick();
+
+	screen = NULL;
 }
 
 void IN_Restart(void)

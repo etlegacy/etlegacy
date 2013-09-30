@@ -234,38 +234,32 @@ void GLimp_LogComment(char *comment)
 	// FIXME
 }
 
-/* unused - see GLimp_DetectAvailableModes
-===============
-GLimp_CompareModes
-===============
-
 static int GLimp_CompareModes(const void *a, const void *b)
 {
-    const float ASPECT_EPSILON  = 0.001f;
-    SDL_Rect    *modeA          = *(SDL_Rect **)a;
-    SDL_Rect    *modeB          = *(SDL_Rect **)b;
-    float       aspectA         = (float)modeA->w / (float)modeA->h;
-    float       aspectB         = (float)modeB->w / (float)modeB->h;
-    int         areaA           = modeA->w * modeA->h;
-    int         areaB           = modeB->w * modeB->h;
-    float       aspectDiffA     = fabs(aspectA - displayAspect);
-    float       aspectDiffB     = fabs(aspectB - displayAspect);
-    float       aspectDiffsDiff = aspectDiffA - aspectDiffB;
+	const float ASPECT_EPSILON  = 0.001f;
+	SDL_Rect    *modeA          = (SDL_Rect *)a;
+	SDL_Rect    *modeB          = (SDL_Rect *)b;
+	float       aspectA         = (float)modeA->w / (float)modeA->h;
+	float       aspectB         = (float)modeB->w / (float)modeB->h;
+	int         areaA           = modeA->w * modeA->h;
+	int         areaB           = modeB->w * modeB->h;
+	float       aspectDiffA     = fabs(aspectA - displayAspect);
+	float       aspectDiffB     = fabs(aspectB - displayAspect);
+	float       aspectDiffsDiff = aspectDiffA - aspectDiffB;
 
-    if (aspectDiffsDiff > ASPECT_EPSILON)
-    {
-        return 1;
-    }
-    else if (aspectDiffsDiff < -ASPECT_EPSILON)
-    {
-        return -1;
-    }
-    else
-    {
-        return areaA - areaB;
-    }
+	if (aspectDiffsDiff > ASPECT_EPSILON)
+	{
+		return 1;
+	}
+	else if (aspectDiffsDiff < -ASPECT_EPSILON)
+	{
+		return -1;
+	}
+	else
+	{
+		return areaA - areaB;
+	}
 }
-*/
 
 /*
 ===============
@@ -274,17 +268,53 @@ GLimp_DetectAvailableModes
 */
 static void GLimp_DetectAvailableModes(void)
 {
-	char            buf[MAX_STRING_CHARS] = { 0 };
-	SDL_DisplayMode mode;
-	int             numModes;
-	int             i;
+	int      i;
+	char     buf[MAX_STRING_CHARS] = { 0 };
+	SDL_Rect modes[128];
+	int      numModes = 0;
 
-	numModes = SDL_GetNumDisplayModes(displayIndex);
+	int             display = SDL_GetWindowDisplayIndex(screen);
+	SDL_DisplayMode windowMode;
 
-	i = 0;
-	while (!SDL_GetDisplayMode(displayIndex, i, &mode))
+	if (SDL_GetWindowDisplayMode(screen, &windowMode) < 0)
 	{
-		const char *newModeString = va("%ux%u ", mode.w, mode.h);
+		ri.Printf(PRINT_WARNING, "Couldn't get window display mode, no resolutions detected\n");
+		return;
+	}
+
+	for (i = 0; i < SDL_GetNumDisplayModes(display); i++)
+	{
+		SDL_DisplayMode mode;
+
+		if (SDL_GetDisplayMode(display, i, &mode) < 0)
+		{
+			continue;
+		}
+
+		if (!mode.w || !mode.h)
+		{
+			ri.Printf(PRINT_ALL, "Display supports any resolution\n");
+			return;
+		}
+
+		if (windowMode.format != mode.format)
+		{
+			continue;
+		}
+
+		modes[numModes].w = mode.w;
+		modes[numModes].h = mode.h;
+		numModes++;
+	}
+
+	if (numModes > 1)
+	{
+		qsort(modes, numModes, sizeof(SDL_Rect), GLimp_CompareModes);
+	}
+
+	for (i = 0; i < numModes; i++)
+	{
+		const char *newModeString = va("%ux%u ", modes[i].w, modes[i].h);
 
 		if (strlen(newModeString) < (int)sizeof(buf) - strlen(buf))
 		{
@@ -292,15 +322,8 @@ static void GLimp_DetectAvailableModes(void)
 		}
 		else
 		{
-			ri.Printf(PRINT_WARNING, "Skipping mode %ux%x, buffer too small\n", mode.w, mode.h);
+			ri.Printf(PRINT_WARNING, "Skipping mode %ux%x, buffer too small\n", modes[i].w, modes[i].h);
 		}
-		++i;
-	}
-
-	if (i < numModes)
-	{
-		ri.Printf(PRINT_WARNING, "Can't get list of available modes\n");
-		return;
 	}
 
 	if (*buf)
@@ -1106,11 +1129,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	GLenum glewResult;
 
 	ri.Printf(PRINT_ALL, "Initializing OpenGL display\n");
-
-	if (screen)
-	{
-		return RSERR_OK;
-	}
 
 	if (r_allowResize->integer)
 	{

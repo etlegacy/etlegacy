@@ -35,9 +35,9 @@
 #include "../qcommon/qcommon.h"
 
 // Require a minimum version of SDL
-#define MINSDL_MAJOR 1
-#define MINSDL_MINOR 2
-#define MINSDL_PATCH 14
+#define MINSDL_MAJOR 2
+#define MINSDL_MINOR 0
+#define MINSDL_PATCH 0
 
 // Input subsystem
 void IN_Init(void);

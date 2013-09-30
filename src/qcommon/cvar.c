@@ -1462,10 +1462,9 @@ void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize)
 	Q_strncpyz(buff, Cvar_InfoString(bit), buffsize);
 }
 
-/*
-=====================
-Cvar_CheckRange
-=====================
+/**
+ * @brief Check if a variable is between allowed limits
+ * @todo FIXME
  */
 void Cvar_CheckRange(cvar_t *var, float min, float max, qboolean integral)
 {
