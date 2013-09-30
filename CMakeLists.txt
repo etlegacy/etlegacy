@@ -134,7 +134,10 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
 		set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
 	endif()
-endif(UNIX AND CROSS_COMPILE32)
+elseif(WIN32 AND CROSS_COMPILE32)
+	set(CMAKE_SYSTEM_PROCESSOR x86) #the new cmake on windows will otherwise use arch name of x64 which will fuck up our naming
+	set(ENV{PLATFORM} win32) #this is redundant but just to  be safe
+endif()
 
 if(UNIX)
 	# optimization/debug flags
