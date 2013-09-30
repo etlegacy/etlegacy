@@ -33,8 +33,12 @@ option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
 option(PANDORA			"Set to ON if targeting an OpenPandora device"	${PANDORA})
 
-# Find the sed executable
-find_program(SED_EXECUTABLE sed)
+# Find GNU sed executable, BSD variant does not work with our script
+if(UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "Linux")
+    find_program(SED_EXECUTABLE gsed)
+else()
+    find_program(SED_EXECUTABLE sed)
+endif()
 
 # Enable pk3 creation if zip executable is found. Download it on Windows
 find_program(ZIP_EXECUTABLE zip PATHS ${CMAKE_BINARY_DIR})
