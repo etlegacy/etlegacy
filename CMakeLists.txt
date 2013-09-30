@@ -700,9 +700,7 @@ if(BUILD_CLIENT)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
 		endif(BUNDLED_JPEG)
 		target_link_libraries(renderer_opengl1_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
-		set_target_properties(renderer_opengl1_${ARCH}
-			PROPERTIES COMPILE_DEFINITIONS "USE_ICON"
-		)
+
 		# install the dynamic lib only
 		if(RENDERER_DYNAMIC)
 			install(TARGETS renderer_opengl1_${ARCH}
@@ -761,7 +759,7 @@ if(BUILD_CLIENT)
 		endif(BUNDLED_JPEG)
 		target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
 		set_target_properties(renderer_opengl2_${ARCH}
-			PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2;USE_ICON"
+			PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"
 		)
 		install(TARGETS renderer_opengl2_${ARCH}
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
@@ -793,9 +791,7 @@ if(BUILD_CLIENT)
 		${CLIENT_LIBRARIES}
 		${SDL_LIBRARIES}
 	)
-	
-	set_target_properties(etl
-		PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
+
 	install(TARGETS etl
 		RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
 endif(BUILD_CLIENT)

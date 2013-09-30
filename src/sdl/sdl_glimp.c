@@ -175,9 +175,10 @@ typedef enum
 } rserr_t;
 
 // @todo SDL 2.0 howto make screen available to cl_keys.c, etc. without extern
-static int          displayIndex = 0;
-SDL_Window          *screen      = NULL;
-static SDL_Renderer *renderer    = NULL;
+static int           displayIndex  = 0;
+SDL_Window           *screen       = NULL;
+static SDL_Renderer  *renderer     = NULL;
+static SDL_GLContext SDL_glContext = NULL;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
@@ -1089,13 +1090,14 @@ GLimp_SetMode
 */
 static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
-	const char *glstring;
-	int        sdlcolorbits;
-	int        colorbits, depthbits, stencilbits;
-	int        tcolorbits, tdepthbits, tstencilbits;
-	int        samples;
-	int        i          = 0;
-	SDL_Window *vidscreen = NULL;
+	int             perChannelColorBits;
+	int             colorBits, depthBits, stencilBits;
+	int             samples;
+	int             i     = 0;
+	SDL_Surface     *icon = NULL;
+	SDL_DisplayMode desktopMode;
+	int             display = 0;
+	int             x       = SDL_WINDOWPOS_UNDEFINED, y = SDL_WINDOWPOS_UNDEFINED;
 #ifdef HAVE_GLES
 	Uint32 flags = 0;
 #else
@@ -1115,24 +1117,35 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
-	// find matching display mode to desktop
-	SDL_DisplayMode desktopMode;
-	if (SDL_GetCurrentDisplayMode(displayIndex, &desktopMode))
+	icon = SDL_CreateRGBSurfaceFrom(
+	    (void *)CLIENT_WINDOW_ICON.pixel_data,
+	    CLIENT_WINDOW_ICON.width,
+	    CLIENT_WINDOW_ICON.height,
+	    CLIENT_WINDOW_ICON.bytes_per_pixel * 8,
+	    CLIENT_WINDOW_ICON.bytes_per_pixel * CLIENT_WINDOW_ICON.width,
+#ifdef Q3_LITTLE_ENDIAN
+	    0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
+#else
+	    0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+#endif
+	    );
+
+	// If a window exists, note its display index
+	if (screen != NULL)
 	{
-		ri.Printf(PRINT_DEVELOPER, "SDL_GetCurrentDisplayMode failed: %s\n", SDL_GetError());
+		display = SDL_GetWindowDisplayIndex(screen);
 	}
 
-	if (desktopMode.h > 0)
+	if (SDL_GetDesktopDisplayMode(display, &desktopMode) == 0)
 	{
-		// Guess the display aspect ratio through the desktop resolution
-		// by assuming (relatively safely) that it is set at or close to
-		// the display's native aspect ratio
 		displayAspect = (float)desktopMode.w / (float)desktopMode.h;
 
 		ri.Printf(PRINT_ALL, "Estimated display aspect: %.3f\n", displayAspect);
 	}
 	else
 	{
+		Com_Memset(&desktopMode, 0, sizeof(SDL_DisplayMode));
+
 		ri.Printf(PRINT_ALL,
 		          "Cannot estimate display aspect, assuming 1.333\n");
 	}
@@ -1146,25 +1159,25 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	glConfig.vidHeight    = 480;
 	glConfig.windowAspect = 800.0 / 480.0;
 #else
-	/*if (mode == -2)
+	if (mode == -2)
 	{
-	    // use desktop video resolution
-	    if (videoInfo->current_h > 0)
-	    {
-	        glConfig.vidWidth  = videoInfo->current_w;
-	        glConfig.vidHeight = videoInfo->current_h;
-	    }
-	    else
-	    {
-	        glConfig.vidWidth  = 640;
-	        glConfig.vidHeight = 480;
-	        ri.Printf(PRINT_ALL,
-	                  "Cannot determine display resolution, assuming 640x480\n");
-	    }
+		// use desktop video resolution
+		if (desktopMode.h > 0)
+		{
+			glConfig.vidWidth  = desktopMode.w;
+			glConfig.vidHeight = desktopMode.h;
+		}
+		else
+		{
+			glConfig.vidWidth  = 640;
+			glConfig.vidHeight = 480;
+			ri.Printf(PRINT_ALL,
+			          "Cannot determine display resolution, assuming 640x480\n");
+		}
 
-	    glConfig.windowAspect = (float)glConfig.vidWidth / (float)glConfig.vidHeight;
+		glConfig.windowAspect = (float)glConfig.vidWidth / (float)glConfig.vidHeight;
 	}
-	else*/if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
+	else if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
 	{
 		ri.Printf(PRINT_ALL, "invalid mode\n");
 		return RSERR_INVALID_MODE;
@@ -1172,23 +1185,32 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 #endif
 	ri.Printf(PRINT_ALL, "%dx%d\n", glConfig.vidWidth, glConfig.vidHeight);
 
-	/* @todo 2.0
-	 * use this instead ?
-	fullscreenMode.w = glConfig.vidWidth;
-	fullscreenMode.h = glConfig.vidHeight;
-	fullscreenMode.format = 0;
-	fullscreenMode.refresh_rate = 0;
-
-	SDL_GetClosestDisplayMode(displayIndex, &fullscreenMode, &fullscreenMode);
-
-	glConfig.vidWidth = fullscreenMode.w;
-	glConfig.vidHeight = fullscreenMode.h;
-	*/
-
 #ifdef PANDORA
 	flags                |= SDL_FULLSCREEN;
 	glConfig.isFullscreen = qtrue;
 #else
+
+	// Center window
+	if (r_centerWindow->integer && !fullscreen)
+	{
+		x = (desktopMode.w / 2) - (glConfig.vidWidth / 2);
+		y = (desktopMode.h / 2) - (glConfig.vidHeight / 2);
+	}
+
+	// Destroy existing state if it exists
+	if (SDL_glContext != NULL)
+	{
+		SDL_GL_DeleteContext(SDL_glContext);
+		SDL_glContext = NULL;
+	}
+
+	if (screen != NULL)
+	{
+		SDL_GetWindowPosition(screen, &x, &y);
+		ri.Printf(PRINT_DEVELOPER, "Existing window at %dx%d before being destroyed\n", x, y);
+		SDL_DestroyWindow(screen);
+		screen = NULL;
+	}
 
 	if (fullscreen)
 	{
@@ -1206,28 +1228,30 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 #endif
 
-	colorbits = r_colorbits->value;
-	if ((!colorbits) || (colorbits >= 32))
+	colorBits = r_colorbits->value;
+	if ((!colorBits) || (colorBits >= 32))
 	{
-		colorbits = 24;
+		colorBits = 24;
 	}
 
 	if (!r_depthbits->value)
 	{
-		depthbits = 24;
+		depthBits = 24;
 	}
 	else
 	{
-		depthbits = r_depthbits->value;
+		depthBits = r_depthbits->value;
 	}
-	stencilbits = r_stencilbits->value;
+	stencilBits = r_stencilbits->value;
 	samples     = r_ext_multisample->value;
 
 	for (i = 0; i < 16; i++)
 	{
+		int testColorBits, testDepthBits, testStencilBits;
+
 		// 0 - default
-		// 1 - minus colorbits
-		// 2 - minus depthbits
+		// 1 - minus colorBits
+		// 2 - minus depthBits
 		// 3 - minus stencil
 		if ((i % 4) == 0 && i)
 		{
@@ -1235,98 +1259,101 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			switch (i / 4)
 			{
 			case 2:
-				if (colorbits == 24)
+				if (colorBits == 24)
 				{
-					colorbits = 16;
+					colorBits = 16;
 				}
 				break;
 			case 1:
-				if (depthbits == 32)
+				if (depthBits == 32)
 				{
-					depthbits = 24;
+					depthBits = 24;
 				}
-				else if (depthbits == 24)
+				else if (depthBits == 24)
 				{
-					depthbits = 16;
+					depthBits = 16;
 				}
-				else if (depthbits == 16)
+				else if (depthBits == 16)
 				{
-					depthbits = 8;
+					depthBits = 8;
 				}
 			case 3:
-				if (stencilbits == 24)
+				if (stencilBits == 24)
 				{
-					stencilbits = 16;
+					stencilBits = 16;
 				}
-				else if (stencilbits == 16)
+				else if (stencilBits == 16)
 				{
-					stencilbits = 8;
+					stencilBits = 8;
 				}
 			}
 		}
 
-		tcolorbits   = colorbits;
-		tdepthbits   = depthbits;
-		tstencilbits = stencilbits;
+		testColorBits   = colorBits;
+		testDepthBits   = depthBits;
+		testStencilBits = stencilBits;
 
 		if ((i % 4) == 3) // reduce colorbits
 		{
-			if (tcolorbits == 24)
+			if (testColorBits == 24)
 			{
-				tcolorbits = 16;
+				testColorBits = 16;
 			}
 		}
 
 		if ((i % 4) == 2) // reduce depthbits
 		{
-			if (tdepthbits == 24)
+			if (testDepthBits == 24)
 			{
-				tdepthbits = 16;
+				testDepthBits = 16;
 			}
-			else if (tdepthbits == 16)
+			else if (testDepthBits == 16)
 			{
-				tdepthbits = 8;
+				testDepthBits = 8;
 			}
 		}
 
 		if ((i % 4) == 1) // reduce stencilbits
 		{
-			if (tstencilbits == 24)
+			if (testStencilBits == 24)
 			{
-				tstencilbits = 16;
+				testStencilBits = 16;
 			}
-			else if (tstencilbits == 16)
+			else if (testStencilBits == 16)
 			{
-				tstencilbits = 8;
+				testStencilBits = 8;
 			}
 			else
 			{
-				tstencilbits = 0;
+				testStencilBits = 0;
 			}
 		}
 
-		sdlcolorbits = 4;
-		if (tcolorbits == 24)
+		if (testColorBits == 24)
 		{
-			sdlcolorbits = 8;
+			perChannelColorBits = 8;
+		}
+		else
+		{
+			perChannelColorBits = 4;
 		}
 
 #ifndef HAVE_GLES
 #ifdef __sgi /* Fix for SGIs grabbing too many bits of color */
-		if (sdlcolorbits == 4)
+		if (perChannelColorBits == 4)
 		{
-			sdlcolorbits = 0; /* Use minimum size for 16-bit color */
+			perChannelColorBits = 0; /* Use minimum size for 16-bit color */
 
 		}
 		/* Need alpha or else SGIs choose 36+ bit RGB mode */
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 #endif
 
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, sdlcolorbits);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, sdlcolorbits);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, sdlcolorbits);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, tdepthbits);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, tstencilbits);
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, perChannelColorBits);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, perChannelColorBits);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, perChannelColorBits);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, testDepthBits);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, testStencilBits);
 
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
@@ -1347,57 +1374,22 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-#if 0
-		// TODO: SDL_GL_ACCELERATED_VISUAL is broken on ATI cards
-		//       This code can be enabled once we move to SDL >= 1.3
 		// If not allowing software GL, demand accelerated
 		if (!r_allowSoftwareGL->integer)
 		{
-			if (SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1) < 0)
-			{
-				ri.Printf(PRINT_ALL, "Unable to guarantee accelerated "
-				                     "visual with libSDL < 1.2.10\n");
-			}
+			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		}
-#endif
 
-		SDL_ShowCursor(0);
-
-		// Create the window where we will draw.
-		vidscreen = SDL_CreateWindow(CLIENT_WINDOW_TITLE,
-		                             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		                             glConfig.vidWidth, glConfig.vidHeight,
-		                             flags | SDL_WINDOW_SHOWN);
-
-		if (!vidscreen)
+		if ((screen = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y,
+		                               glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN)) == 0)
 		{
 			ri.Printf(PRINT_DEVELOPER, "SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;
 		}
 #endif //HAVE_GLES
 
-#ifdef USE_ICON
-		{
-			SDL_Surface *icon = SDL_CreateRGBSurfaceFrom(
-			    (void *)CLIENT_WINDOW_ICON.pixel_data,
-			    CLIENT_WINDOW_ICON.width,
-			    CLIENT_WINDOW_ICON.height,
-			    CLIENT_WINDOW_ICON.bytes_per_pixel * 8,
-			    CLIENT_WINDOW_ICON.bytes_per_pixel * CLIENT_WINDOW_ICON.width,
-#ifdef Q3_LITTLE_ENDIAN
-			    0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
-#else
-			    0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
-#endif
-			    );
-
-			SDL_SetWindowIcon(screen, icon);
-			SDL_FreeSurface(icon);
-		}
-#endif
-
 		// We must call SDL_CreateRenderer in order for draw calls to affect this window.
-		renderer = SDL_CreateRenderer(vidscreen, -1, SDL_RENDERER_ACCELERATED);
+		renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
 
 		if (!renderer)
 		{
@@ -1405,29 +1397,52 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			continue;
 		}
 
-		if (SDL_GL_SetSwapInterval(r_swapInterval->integer))
+		if (fullscreen)
 		{
-			ri.Printf(PRINT_ALL, "r_swapInterval requires libSDL >= 1.2.10\n");
+			SDL_DisplayMode mode;
+
+			switch (testColorBits)
+			{
+			case 16: mode.format = SDL_PIXELFORMAT_RGB565; break;
+			case 24: mode.format = SDL_PIXELFORMAT_RGB24;  break;
+			default: ri.Printf(PRINT_DEVELOPER, "testColorBits is %d, can't fullscreen\n", testColorBits); continue;
+			}
+
+			mode.w            = glConfig.vidWidth;
+			mode.h            = glConfig.vidHeight;
+			mode.refresh_rate = glConfig.displayFrequency = ri.Cvar_VariableIntegerValue("r_displayRefresh");
+			mode.driverdata   = NULL;
+
+			if (SDL_SetWindowDisplayMode(screen, &mode) < 0)
+			{
+				ri.Printf(PRINT_DEVELOPER, "SDL_SetWindowDisplayMode failed: %s\n", SDL_GetError());
+				continue;
+			}
 		}
 
-		//opengl_context = GLimp_GetCurrentContext();
+		SDL_SetWindowIcon(screen, icon);
 
-#ifdef __APPLE__ // apple hack renderer1
-		GLimp_GetCurrentContext();
-#endif
 #ifdef HAVE_GLES
 		EGL_Open(glConfig.vidWidth, glConfig.vidHeight);
-		sdlcolorbits = eglColorbits;
-		tdepthbits   = eglDepthbits;
-		tstencilbits = eglStencilbits;
+		sdlcolorbits    = eglColorbits;
+		testDepthBits   = eglDepthbits;
+		testStencilBits = eglStencilbits;
 #endif
 
-		ri.Printf(PRINT_ALL, "Using %d/%d/%d Color bits, %d depth, %d stencil display.\n",
-		          sdlcolorbits, sdlcolorbits, sdlcolorbits, tdepthbits, tstencilbits);
+		if ((SDL_glContext = SDL_GL_CreateContext(screen)) == NULL)
+		{
+			ri.Printf(PRINT_DEVELOPER, "SDL_GL_CreateContext failed: %s\n", SDL_GetError());
+			continue;
+		}
 
-		glConfig.colorBits   = tcolorbits;
-		glConfig.depthBits   = tdepthbits;
-		glConfig.stencilBits = tstencilbits;
+		SDL_GL_SetSwapInterval(r_swapInterval->integer);
+
+		glConfig.colorBits   = testColorBits;
+		glConfig.depthBits   = testDepthBits;
+		glConfig.stencilBits = testStencilBits;
+
+		ri.Printf(PRINT_ALL, "Using %d color bits, %d depth, %d stencil display.\n",
+		          glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
 		break;
 	}
 
@@ -1452,13 +1467,15 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 #endif
 
-	if (!vidscreen || !renderer)
+	if (!screen || !renderer)
 	{
 		ri.Printf(PRINT_ALL, "Couldn't get a visual\n");
 		return RSERR_INVALID_MODE;
 	}
 
-	screen = vidscreen;
+	SDL_FreeSurface(icon);
+
+	GLimp_DetectAvailableModes();
 
 	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
 
@@ -1476,7 +1493,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
-		char driverName[64];
+		const char *driverName;
 
 		if (SDL_Init(SDL_INIT_VIDEO) == -1)
 		{
@@ -1485,7 +1502,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 			return qfalse;
 		}
 
-		strcpy(driverName, SDL_GetCurrentVideoDriver());
+		driverName = SDL_GetCurrentVideoDriver();
 		ri.Printf(PRINT_ALL, "SDL using driver \"%s\"\n", driverName);
 		ri.Cvar_Set("r_sdlDriver", driverName);
 	}
@@ -1778,8 +1795,6 @@ void GLimp_Init(void)
 		ri.Cvar_Set("com_abnormalExit", "0");
 	}
 
-	ri.Sys_SetEnv("SDL_VIDEO_CENTERED", r_centerWindow->integer ? "1" : "");
-
 	ri.Sys_GLimpInit();
 
 	// Create the window and set up the context
@@ -1822,24 +1837,11 @@ success:
 	// This values force the UI to disable driver selection
 	glConfig.driverType = GLDRV_ICD;
 #endif
-	glConfig.hardwareType        = GLHW_GENERIC;
-	glConfig.deviceSupportsGamma = SDL_SetWindowGammaRamp(screen, NULL, NULL, NULL) == 0;
+	glConfig.hardwareType = GLHW_GENERIC;
 
-	// Mysteriously, if you use an NVidia graphics card and multiple monitors,
-	// SDL_SetGamma will incorrectly return false... the first time; ask
-	// again and you get the correct answer. This is a suspected driver bug, see
-	// http://bugzilla.icculus.org/show_bug.cgi?id=4316
-	glConfig.deviceSupportsGamma = SDL_SetWindowGammaRamp(screen, NULL, NULL, NULL) == 0;
-
-	if (-1 == r_ignorehwgamma->integer)
-	{
-		glConfig.deviceSupportsGamma = 1;
-	}
-
-	if (1 == r_ignorehwgamma->integer)
-	{
-		glConfig.deviceSupportsGamma = 0;
-	}
+	// Only using SDL_SetWindowBrightness to determine if hardware gamma is supported
+	glConfig.deviceSupportsGamma = !r_ignorehwgamma->integer &&
+	                               SDL_SetWindowBrightness(screen, 1.0f) >= 0;
 
 	// get our config strings
 
@@ -1887,25 +1889,32 @@ void GLimp_EndFrame(void)
 	if (r_fullscreen->modified)
 	{
 		qboolean fullscreen;
-		Uint32   flags = SDL_GetWindowFlags(screen);
+		qboolean needToToggle, sdlToggled = qfalse;
 
 		// Find out the current state
-		fullscreen = !!(flags & SDL_WINDOW_FULLSCREEN);
+		fullscreen = !!(SDL_GetWindowFlags(screen) & SDL_WINDOW_FULLSCREEN);
 
-		if (r_fullscreen->integer && Cvar_VariableIntegerValue("in_nograb"))
+		if (r_fullscreen->integer && ri.Cvar_VariableIntegerValue("in_nograb"))
 		{
 			ri.Printf(PRINT_ALL, "Fullscreen not allowed with in_nograb 1\n");
 			ri.Cvar_Set("r_fullscreen", "0");
 			r_fullscreen->modified = qfalse;
 		}
 
-		if (SDL_SetWindowFullscreen(screen, r_fullscreen->integer))
-		{
-			// SDL_SetWindowFullscreen didn't work, so do it the slow way
-			ri.Printf(PRINT_ALL, "SDL_SetWindowFullscreen failed: %s\n", SDL_GetError());
+		// Is the state we want different from the current state?
+		needToToggle = !!r_fullscreen->integer != fullscreen;
 
-			ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart");
-			IN_Restart();
+		if (needToToggle)
+		{
+			sdlToggled = SDL_SetWindowFullscreen(screen, r_fullscreen->integer) >= 0;
+
+			// SDL_WM_ToggleFullScreen didn't work, so do it the slow way
+			if (!sdlToggled)
+			{
+				ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
+			}
+
+			ri.IN_Restart();
 		}
 
 		r_fullscreen->modified = qfalse;
