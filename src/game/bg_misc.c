@@ -2415,6 +2415,7 @@ qboolean BG_IsAkimboWeapon(int weaponNum)
 	default:
 		return qfalse;
 	}
+}
 
 /*
 ==============
