@@ -3157,11 +3157,7 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 	}
 }
 
-// mechanism allows different weapon damage for single/multiplayer; we want "balanced" weapons
-// in multiplayer but don't want to alter the existing single-player damage items that have already
-// been changed
-// KLUDGE/FIXME: also modded #defines below to become macros that call this fn for minimal impact elsewhere
-
+// FIXME: weapontable
 int G_GetWeaponDamage(int weapon)
 {
 	switch (weapon)
@@ -3192,6 +3188,8 @@ int G_GetWeaponDamage(int weapon)
 	case WP_MP40:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		return 18;
 	case WP_FG42SCOPE:
 		return 30;
@@ -3215,6 +3213,7 @@ int G_GetWeaponDamage(int weapon)
 	}
 }
 
+// FIXME: weapontable
 float G_GetWeaponSpread(int weapon)
 {
 	switch (weapon)
@@ -3246,6 +3245,8 @@ float G_GetWeaponSpread(int weapon)
 		return 700;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		return 2500;
 	}
 
@@ -3254,6 +3255,8 @@ float G_GetWeaponSpread(int weapon)
 	return 0;   // shouldn't get here
 }
 
+
+// FIXME: weapontable
 #define LUGER_SPREAD    G_GetWeaponSpread(WP_LUGER)
 #define LUGER_DAMAGE    G_GetWeaponDamage(WP_LUGER)
 
@@ -3298,6 +3301,9 @@ float G_GetWeaponSpread(int weapon)
 
 #define MOBILE_MG42_SPREAD  G_GetWeaponSpread(WP_MOBILE_MG42)
 #define MOBILE_MG42_DAMAGE  G_GetWeaponDamage(WP_MOBILE_MG42)
+
+#define MOBILE_BROWNING_SPREAD  G_GetWeaponSpread(WP_MOBILE_BROWNING)
+#define MOBILE_BROWNING_DAMAGE  G_GetWeaponDamage(WP_MOBILE_BROWNING)
 
 #define FG42_SPREAD     G_GetWeaponSpread(WP_FG42)
 #define FG42_DAMAGE     G_GetWeaponDamage(WP_FG42)
@@ -4357,7 +4363,9 @@ void FireWeapon(gentity_t *ent)
 	case WP_MOBILE_MG42_SET:
 		Bullet_Fire(ent, MOBILE_MG42_SPREAD * 0.05f * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
 		break;
-
+	case WP_MOBILE_BROWNING_SET:
+		Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * 0.05f * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
+		break;
 	case WP_MOBILE_MG42:
 		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
 		{
@@ -4366,6 +4374,16 @@ void FireWeapon(gentity_t *ent)
 		else
 		{
 			Bullet_Fire(ent, MOBILE_MG42_SPREAD * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
+		}
+		break;
+	case WP_MOBILE_BROWNING:
+		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
+		{
+			Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * 0.6f * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
+		}
+		else
+		{
+			Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
 		}
 		break;
 	case WP_K43_SCOPE:

@@ -1347,11 +1347,11 @@ void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 void mg42_fire(gentity_t *other)
 {
-	gentity_t *self;
+	gentity_t *self = &g_entities[other->client->ps.viewlocked_entNum];
 	vec3_t    forward, right, up;
 	vec3_t    muzzle;
 
-	self = &g_entities[other->client->ps.viewlocked_entNum];
+
 
 	//AngleVectors (self->s.apos.trBase, forward, right, up);
 	AngleVectors(other->client->ps.viewangles, forward, right, up);
@@ -1373,7 +1373,7 @@ void mg42_fire(gentity_t *other)
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
 
-	Fire_Lead(self, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up);
+	Fire_Lead(self, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up); // FIXME: browning
 }
 
 void mg42_track(gentity_t *self, gentity_t *other)

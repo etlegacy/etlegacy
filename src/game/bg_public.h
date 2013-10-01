@@ -542,7 +542,7 @@ int Pmove(pmove_t *pmove);
 
 #define NUM_PLAYER_CLASSES      5
 
-#define MAX_WEAPS_IN_BANK_MP    12
+#define MAX_WEAPS_IN_BANK_MP    13
 #define MAX_WEAP_BANKS_MP       10
 
 // leaning flags..
@@ -753,7 +753,9 @@ typedef enum
 	WP_MOBILE_MG42_SET,     // 47
 
 	// legacy weapons
-	WP_KNIFE_KABAR,                // 48
+	WP_KNIFE_KABAR,         // 48
+	WP_MOBILE_BROWNING,     // 49
+	WP_MOBILE_BROWNING_SET, // 50
 
 	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 48
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
@@ -853,9 +855,9 @@ extern int weapAlts[];  // defined in bg_misc.c
 	    weapon == WP_THOMPSON || weapon == WP_STEN          || \
 	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
 	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
-	    weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
+	    weapon == WP_MOBILE_BROWNING || weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
 	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
-	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET \
+	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET || weapon == WP_MOBILE_BROWNING_SET \
 	)
 
 // entityState_t->event values
@@ -1374,6 +1376,8 @@ typedef enum
 	MOD_SHOVE,
 
 	MOD_KNIFE_KABAR,
+
+	MOD_MOBILE_BROWNING,
 
 	MOD_NUM_MODS
 
@@ -2250,7 +2254,7 @@ typedef enum popupMessageBigType_e
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
 
-#define NUM_HEAVY_WEAPONS 6
+#define NUM_HEAVY_WEAPONS 8
 extern weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS];
 
 int PM_AltSwitchFromForWeapon(int weapon);

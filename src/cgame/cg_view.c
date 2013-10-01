@@ -553,7 +553,7 @@ static void CG_OffsetFirstPersonView(void)
 	origin = cg.refdef_current->vieworg;
 	angles = cg.refdefViewAngles;
 
-	if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET)
+	if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET || cg.snap->ps.weapon == WP_MOBILE_BROWNING_SET)
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];
@@ -1042,7 +1042,7 @@ static int CG_CalcFov(void)
 	{
 		fov_x = 55;
 	}
-	else if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET)
+	else if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET || cg.snap->ps.weapon == WP_MOBILE_BROWNING_SET)
 	{
 		fov_x = 55;
 	}
@@ -1636,7 +1636,8 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 
 		rd.rdflags &= ~RDF_SNOOPERVIEW;
 
-		if (BG_PlayerMounted(cg.snap->ps.eFlags) || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET)
+		if (BG_PlayerMounted(cg.snap->ps.eFlags)
+		    || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET || cg.predictedPlayerState.weapon == WP_MOBILE_BROWNING_SET)
 		{
 			fov_x = 55;
 		}

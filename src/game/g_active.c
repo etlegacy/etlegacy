@@ -1009,6 +1009,21 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
 
 			break;
+		/*
+		        case EV_FIRE_WEAPON_BROWNING:
+		            // reset player disguise on stealing docs
+		            ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+
+		            mg42_fire(ent);
+
+		            // Only 1 stats bin for mg42
+		#ifndef DEBUG_STATS
+		            if (g_gamestate.integer == GS_PLAYING)
+		#endif
+		            ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_BROWNING)].atts++;
+
+		            break;
+		*/
 		case EV_FIRE_WEAPON_MOUNTEDMG42:
 			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;

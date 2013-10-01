@@ -1170,7 +1170,7 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define BG_NUM_ITEMS 76 // keep in sync with bg_numItems! FIXME: make this non static one day
+#define BG_NUM_ITEMS 78 // keep in sync with bg_numItems! FIXME: make this non static one day
 
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t

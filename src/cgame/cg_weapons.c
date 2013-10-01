@@ -239,6 +239,8 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 			break;
 		case WP_MOBILE_MG42:
 		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING:
+		case WP_MOBILE_BROWNING_SET:
 			offset[0]  = 12;
 			offset[1]  = -4;
 			offset[2]  = 24;
@@ -1924,6 +1926,10 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_MOBILE_MG42:
 		filename = "mg42.weap";
 		break;
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
+		filename = "browning.weap";
+		break;
 	case WP_SILENCER:
 		filename = "silenced_luger.weap";
 		break;
@@ -2285,7 +2291,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	if (!cg.renderingThirdPerson &&
-	    (cg.predictedPlayerState.weapon == WP_MORTAR_SET || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET) &&
+	    (cg.predictedPlayerState.weapon == WP_MORTAR_SET || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET || cg.predictedPlayerState.weapon == WP_MOBILE_BROWNING_SET) &&
 	    cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		angles[PITCH] = cg.pmext.mountedWeaponAngles[PITCH];
@@ -2381,7 +2387,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// idle drift
-	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK)) && (cg.predictedPlayerState.weapon != WP_MORTAR_SET) && (cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET))
+	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK)) && (cg.predictedPlayerState.weapon != WP_MORTAR_SET) && (cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET && cg.predictedPlayerState.weapon != WP_MOBILE_BROWNING_SET))
 	{
 		float fracsin = sin(cg.time * 0.001);
 
@@ -2777,7 +2783,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-			//else if (weaponNum == WP_MOBILE_MG42_SET)
+			//else if (weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING_SET)
 			//{
 			//}
 
@@ -2991,14 +2997,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
-		else if (weaponNum == WP_MOBILE_MG42)
+		else if (weaponNum == WP_MOBILE_MG42 || weaponNum == WP_MOBILE_BROWNING)
 		{
 			barrel.hModel = weapon->modModels[0];
 			barrel.frame  = 1;
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
-		else if (weaponNum == WP_MOBILE_MG42_SET)
+		else if (weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING_SET)
 		{
 			barrel.hModel = weapon->modModels[0];
 			barrel.frame  = 0;
@@ -3083,7 +3089,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// continuous smoke after firing
 		if (ps || cg.renderingThirdPerson || !isPlayer)
 		{
-			if (weaponNum == WP_STEN || weaponNum == WP_MOBILE_MG42 || weaponNum == WP_MOBILE_MG42_SET)
+			if (weaponNum == WP_STEN || weaponNum == WP_MOBILE_MG42 || weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING_SET)
 			{
 				// hot smoking gun
 				if (cg.time - cent->overheatTime < 3000)
@@ -3869,6 +3875,8 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 		case WP_MORTAR_SET:
 		case WP_MOBILE_MG42:
 		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING:
+		case WP_MOBILE_BROWNING_SET:
 			switchsound = cg_weapons[newweap].switchSound;
 			break;
 		case WP_CARBINE:
@@ -4106,7 +4114,7 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 	}
-	else if (cg.weaponSelect == WP_MOBILE_MG42)
+	else if (cg.weaponSelect == WP_MOBILE_MG42 || cg.weaponSelect == WP_MOBILE_BROWNING)
 	{
 		if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
 		{
@@ -4152,11 +4160,13 @@ void CG_AltWeapon_f(void)
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
 	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
+	    // FIXME: do switches
 	    ((original == WP_GPG40 || num == WP_GPG40 || original == WP_M7 || num == WP_M7) ||
 	     (original == WP_SILENCER || num == WP_SILENCER || original == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
 	     (original == WP_AKIMBO_SILENCEDCOLT || num == WP_AKIMBO_SILENCEDCOLT || original == WP_AKIMBO_SILENCEDLUGER || num == WP_AKIMBO_SILENCEDLUGER) ||
 	     (original == WP_MORTAR_SET || num == WP_MORTAR_SET) ||
-	     (original == WP_MOBILE_MG42_SET || num == WP_MOBILE_MG42_SET)))
+	     (original == WP_MOBILE_MG42_SET || num == WP_MOBILE_MG42_SET) ||
+	     (original == WP_MOBILE_BROWNING_SET || num == WP_MOBILE_BROWNING_SET)))
 	{
 		return;
 	}
@@ -4182,7 +4192,7 @@ void CG_NextWeap(qboolean switchBanks)
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (curweap == WP_MORTAR_SET || curweap == WP_MOBILE_MG42_SET)
+	if (curweap == WP_MORTAR_SET || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -4412,7 +4422,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (curweap == WP_MORTAR_SET || curweap == WP_MOBILE_MG42_SET)
+	if (curweap == WP_MORTAR_SET || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -4634,7 +4644,7 @@ void CG_LastWeaponUsed_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
-	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET)
+	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -4909,7 +4919,7 @@ void CG_WeaponBank_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
-	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET)
+	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -5023,7 +5033,7 @@ void CG_Weapon_f(void)
 		return;
 	}
 
-	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET)
+	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -5100,6 +5110,11 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		else if (cg.weaponSelect == WP_MOBILE_MG42_SET)
 		{
 			cg.weaponSelect = WP_MOBILE_MG42;
+			return;
+		}
+		else if (cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+		{
+			cg.weaponSelect = WP_MOBILE_BROWNING;
 			return;
 		}
 
@@ -5326,6 +5341,8 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_FG42:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
@@ -5806,6 +5823,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	case WP_CARBINE:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 	case WP_K43:
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
@@ -6518,7 +6537,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			VectorCopy(cg.snap->ps.origin, muzzle);
 			muzzle[2] += cg.snap->ps.viewheight;
 			AngleVectors(cg.snap->ps.viewangles, forward, NULL, NULL);
-			if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET)
+			if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET || cg.snap->ps.weapon == WP_MOBILE_BROWNING_SET)
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}
@@ -6579,7 +6598,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		if (cent->currentState.eFlags & EF_PRONE)
 		{
 			muzzle[2] += PRONE_VIEWHEIGHT;
-			if (cent->currentState.weapon == WP_MOBILE_MG42_SET)
+			if (cent->currentState.weapon == WP_MOBILE_MG42_SET || cent->currentState.weapon == WP_MOBILE_BROWNING_SET)
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}

@@ -362,6 +362,8 @@ char *modNames[] =
 
 	"MOD_KNIFE_KABAR",
 
+	"MOD_MOBILE_BROWNING",
+
 	// MOD_NUM_MODS
 };
 

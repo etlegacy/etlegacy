@@ -224,6 +224,8 @@ static int weapIconDrawSize(int weap)
 	case WP_M7:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 	case WP_K43:
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
@@ -254,7 +256,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	if (cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE ||
 	    cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
 	{
-		realweap = WP_MOBILE_MG42;
+		realweap = WP_MOBILE_MG42; // FIXME: browning
 	}
 	else
 	{

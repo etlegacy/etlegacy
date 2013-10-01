@@ -812,7 +812,7 @@ ui/assets/mp_wrench_red
 	}
 }
 
-// KA-BAR  shaders
+// KA-BAR
 models/weapons2/knife_kbar/knife_yd
 {
 	{
@@ -829,5 +829,57 @@ models/weapons2/knife_kbar/knife_yd
 		map models/weapons2/knife_kbar/knife_yd.jpg
 		blendFunc GL_ONE GL_ONE
 		rgbGen lightingdiffuse
+	}
+}
+
+// Mobile Browning .30 cal MG
+models/weapons2/browning/browning
+{
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+	}
+	{
+		map models/multiplayer/browning/browning.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+	}
+}
+
+models/weapons2/browning/biped
+{
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+	}
+	{
+		map models/weapons2/browning/biped.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+	}
+}
+
+models/weapons2/browning/barrel
+{
+	cull none
+	{
+		map models/multiplayer/browning/barrel.tga
+		rgbGen const ( 0 0 0 ) 
+		alphaFunc GE128
+		depthWrite
+	}
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+		depthFunc equal
+	}
+	{
+		map models/multiplayer/browning/barrel.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+		depthFunc equal
 	}
 }

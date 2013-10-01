@@ -397,6 +397,11 @@ static void CG_Obituary(entityState_t *ent)
 			message2 = "'s Mobile MG42";
 			break;
 
+		case MOD_MOBILE_BROWNING:
+			message  = "was mown down by";
+			message2 = "'s Mobile Browning";
+			break;
+
 		case MOD_GARAND_SCOPE:
 			message  = "was silenced by";
 			message2 = "'s Garand";
@@ -2389,6 +2394,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		        (cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect)) ||
 		        es->weapon == WP_MORTAR_SET ||
 		        es->weapon == WP_MOBILE_MG42_SET ||
+		        es->weapon == WP_MOBILE_BROWNING_SET ||
 		        es->weapon == WP_GRENADE_LAUNCHER ||
 		        es->weapon == WP_GRENADE_PINEAPPLE ||
 		        es->weapon == WP_DYNAMITE ||

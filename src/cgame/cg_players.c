@@ -3247,6 +3247,7 @@ weaponType_t weaponTypes[] =
 	{ WP_FG42,                 "FG42",    },
 	{ WP_GARAND,               "M1 GARAND",},
 	{ WP_MOBILE_MG42,          "MOBILE MG42",},
+	{ WP_MOBILE_BROWNING,      "MOBILE BROWNING",},
 	{ WP_K43,                  "K43",     },
 	{ WP_MORTAR,               "MORTAR",  },
 	{ WP_COLT,                 "COLT",    },

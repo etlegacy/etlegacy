@@ -2909,12 +2909,12 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_FLAMETHROWER:
 	case WP_FG42:
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING: // FIXME: //*shader = cgs.media.limboWeaponCard3;
 	case WP_MP40:
 	case WP_STEN:
 	case WP_THOMPSON:
 		*shader = cgs.media.limboWeaponCard1;
 		break;
-
 	case WP_COLT:
 	case WP_LUGER:
 	case WP_AKIMBO_COLT:
@@ -2929,7 +2929,6 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_K43:
 		*shader = cgs.media.limboWeaponCard2;
 		break;
-
 	default:     // shouldn't happen
 		*shader = 0;
 		break;
@@ -2980,6 +2979,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 		break;
 	case WP_CARBINE:
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING: // FIXME
 		*t0 = 4 / 8.f;
 		*t1 = 5 / 8.f;
 		break;
@@ -3459,6 +3459,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 		break;
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING:
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
 		{
 			return qtrue;
