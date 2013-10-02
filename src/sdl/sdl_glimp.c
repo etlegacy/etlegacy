@@ -57,7 +57,7 @@
 #if defined(WIN32)
 #include <GL/wglew.h>
 #else
-#ifndef HAVE_GLES
+#if !defined(HAVE_GLES) && !defined(__AROS__)
 #include <GL/glxew.h>
 #endif
 #endif
