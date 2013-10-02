@@ -1727,6 +1727,21 @@ enum
 	LOC_DEBUG        = BIT(9),
 };
 
+enum
+{
+	BAR_LEFT       = BIT(0),
+	BAR_CENTER     = BIT(1),
+	BAR_VERT       = BIT(2),
+	BAR_NOHUDALPHA = BIT(3),
+	BAR_BG         = BIT(4),
+	// different spacing modes for use w/ BAR_BG
+	BAR_BGSPACING_X0Y5 = BIT(5),
+	BAR_BGSPACING_X0Y0 = BIT(6),
+	BAR_LERP_COLOR     = BIT(7),
+	BAR_BORDER         = BIT(8),
+	BAR_BORDER_SMALL   = BIT(9),
+};
+
 typedef struct location_s
 {
 	int index;

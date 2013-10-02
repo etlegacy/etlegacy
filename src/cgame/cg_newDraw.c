@@ -577,6 +577,8 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	// draw status bar under the cursor hint
 	if (cg.cursorHintValue)
 	{
+		vec4_t backG    = { 1, 1, 1, 0.3f };
+		float  curValue = (float)cg.cursorHintValue / 255.0f;
 		if (yellowbar)
 		{
 			Vector4Set(color, 1, 1, 0, 1.0f);
@@ -585,7 +587,10 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		{
 			Vector4Set(color, 0, 0, 1, 0.5f);
 		}
-		CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, color, NULL, NULL, (float)cg.cursorHintValue / 255.0f, 0);
+		if (curValue > 0.01f)
+		{
+			CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
+		}
 	}
 }
 
@@ -640,7 +645,7 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, 2 | 4 | 256);   // flags (BAR_CENTER|BAR_VERT|BAR_LERP_COLOR)
+	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
 }
 
 /*
@@ -660,14 +665,14 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 
 	if (align != HUD_HORIZONTAL)
 	{
-		flags |= 4;   // BAR_VERT
+		flags |= BAR_VERT;   // BAR_VERT
 	}
 
-	flags |= 1;       // BAR_LEFT           - this is hardcoded now, but will be decided by the menu script
-	flags |= 16;      // BAR_BG         - draw the filled contrast box
-	//flags|=32;      // BAR_BGSPACING_X0Y5   - different style
+	flags |= BAR_LEFT;             // this is hardcoded now, but will be decided by the menu script
+	flags |= BAR_BG;               // draw the filled contrast box
+	//flags|=BAR_BGSPACING_X0Y5;   // different style
 
-	flags |= 256;     // BAR_COLOR_LERP
+	flags |= BAR_LERP_COLOR;
 
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags);
 }

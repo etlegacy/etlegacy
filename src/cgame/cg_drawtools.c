@@ -114,30 +114,8 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
 CG_HorizontalPercentBar
     Generic routine for pretty much all status indicators that show a fractional
     value to the palyer by virtue of how full a drawn box is.
-
-flags:
-    left        - 1
-    center      - 2     // direction is 'right' by default and orientation is 'horizontal'
-    vert        - 4
-    nohudalpha  - 8     // don't adjust bar's alpha value by the cg_hudalpha value
-    bg          - 16    // background contrast box (bg set with bgColor of 'NULL' means use default bg color (1,1,1,0.25)
-    spacing     - 32    // some bars use different sorts of spacing when drawing both an inner and outer box
-
-    lerp color  - 256   // use an average of the start and end colors to set the fill color
 ==============
 */
-
-// TODO: these flags will be shared, but it was easier to work on stuff if I wasn't changing header files a lot
-#define BAR_LEFT        0x0001
-#define BAR_CENTER      0x0002
-#define BAR_VERT        0x0004
-#define BAR_NOHUDALPHA  0x0008
-#define BAR_BG          0x0010
-// different spacing modes for use w/ BAR_BG
-#define BAR_BGSPACING_X0Y5  0x0020
-#define BAR_BGSPACING_X0Y0  0x0040
-
-#define BAR_LERP_COLOR  0x0100
 
 #define BAR_BORDERSIZE 2
 
@@ -193,6 +171,15 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			w -= (2 * indent);
 			h -= (2 * indent);
 		}
+	}
+	else if ((flags & BAR_BORDER) || (flags & BAR_BORDER_SMALL))
+	{
+		int indent = (flags & BAR_BORDER_SMALL ? 1 : BAR_BORDERSIZE);
+		CG_DrawRect_FixedBorder(x, y, w, h, indent, bgColor);
+		x += indent;
+		y += indent;
+		w -= (2 * indent);
+		h -= (2 * indent);
 	}
 
 	// adjust for horiz/vertical and draw the fractional box
