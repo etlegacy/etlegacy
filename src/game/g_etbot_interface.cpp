@@ -1054,7 +1054,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 				{
 					ET_WP_MP40,
 					ET_WP_PANZERFAUST,
-					88, // BROWNING
+					88,                // BROWNING
 					ET_WP_FLAMETHROWER,
 					ET_WP_MORTAR,
 					ET_WP_THOMPSON
