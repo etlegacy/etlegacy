@@ -178,7 +178,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		CG_DrawRect_FixedBorder(x, y, w, h, indent, bgColor);
 		x += indent;
 		y += indent;
-		w -= (2 * indent);
+		w -= indent;
 		h -= (2 * indent);
 	}
 

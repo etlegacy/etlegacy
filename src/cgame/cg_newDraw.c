@@ -386,8 +386,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     *color;
 	qhandle_t icon, icon2 = 0;
 	float     scale, halfscale;
-	qboolean  yellowbar = qfalse;
-	float     middle    = rect->x + cgs.wideXoffset;
+	float     middle = rect->x + cgs.wideXoffset;
 
 	if (!cg_cursorHints.integer)
 	{
@@ -579,14 +578,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	{
 		vec4_t backG    = { 1, 1, 1, 0.3f };
 		float  curValue = (float)cg.cursorHintValue / 255.0f;
-		if (yellowbar)
-		{
-			Vector4Set(color, 1, 1, 0, 1.0f);
-		}
-		else
-		{
-			Vector4Set(color, 0, 0, 1, 0.5f);
-		}
+
 		if (curValue > 0.01f)
 		{
 			CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
