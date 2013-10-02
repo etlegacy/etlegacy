@@ -1574,6 +1574,7 @@ typedef struct
 	qhandle_t limboCounterBorder;
 	qhandle_t limboWeaponCard1;
 	qhandle_t limboWeaponCard2;
+	qhandle_t limboWeaponCard3;
 	qhandle_t limboWeaponCardArrow;
 	qhandle_t limboObjectiveBack[3];
 	qhandle_t limboClassBar;

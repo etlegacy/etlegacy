@@ -2909,7 +2909,6 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_FLAMETHROWER:
 	case WP_FG42:
 	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING: // FIXME: //*shader = cgs.media.limboWeaponCard3;
 	case WP_MP40:
 	case WP_STEN:
 	case WP_THOMPSON:
@@ -2928,6 +2927,9 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_KAR98:
 	case WP_K43:
 		*shader = cgs.media.limboWeaponCard2;
+		break;
+	case WP_MOBILE_BROWNING:
+		*shader = cgs.media.limboWeaponCard3;
 		break;
 	default:     // shouldn't happen
 		*shader = 0;
@@ -2956,6 +2958,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_AKIMBO_SILENCEDLUGER:
 	case WP_SILENCER:
 	case WP_MORTAR:
+	case WP_MOBILE_BROWNING:
 		*t0 = 0 / 8.f;
 		*t1 = 1 / 8.f;
 		break;
@@ -2979,7 +2982,6 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 		break;
 	case WP_CARBINE:
 	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING: // FIXME
 		*t0 = 4 / 8.f;
 		*t1 = 5 / 8.f;
 		break;

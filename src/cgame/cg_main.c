@@ -1998,8 +1998,8 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.limboWeaponCard1     = trap_R_RegisterShaderNoMip("gfx/limbo/weaponcard01");
 	cgs.media.limboWeaponCard2     = trap_R_RegisterShaderNoMip("gfx/limbo/weaponcard02");
+	cgs.media.limboWeaponCard3     = trap_R_RegisterShaderNoMip("gfx/limbo/weaponcard03");
 	cgs.media.limboWeaponCardArrow = trap_R_RegisterShaderNoMip("gfx/limbo/weap_dnarrow.tga");
-
 
 	cgs.media.limboObjectiveBack[0] = trap_R_RegisterShaderNoMip("gfx/limbo/objective_back_axis");
 	cgs.media.limboObjectiveBack[1] = trap_R_RegisterShaderNoMip("gfx/limbo/objective_back_allied");
@@ -2087,7 +2087,6 @@ int CG_ConfigStringCopy(int index, char *buff, int buffsize)
 /*
 ======================
 CG_StartMusic
-
 ======================
 */
 void CG_StartMusic(void)
@@ -2245,10 +2244,9 @@ static qhandle_t CG_FeederItemImage(float feederID, int index)
 
 static void CG_FeederSelection(float feederID, int index)
 {
-	int i, count;
+	int i, count = 0;
 	int team = (feederID == FEEDER_REDTEAM_LIST) ? TEAM_AXIS : TEAM_ALLIES;
 
-	count = 0;
 	for (i = 0; i < cg.numScores; i++)
 	{
 		if (cg.scores[i].team == team)
