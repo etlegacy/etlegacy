@@ -369,32 +369,42 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		if (weapon == WP_THOMPSON)
+		switch (weapon)
 		{
+		case WP_THOMPSON:
 			weapon = WP_MP40;
-		}
-		else if (weapon == WP_CARBINE)
-		{
+			break;
+		case WP_CARBINE:
 			weapon = WP_KAR98;
-		}
-		else if (weapon == WP_GARAND)
-		{
+			break;
+		case WP_GARAND:
 			weapon = WP_K43;
+			break;
+		case WP_MOBILE_BROWNING:
+			weapon = WP_MOBILE_MG42;
+			break;
+		default:
+			break;
 		}
 	}
 	else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		if (weapon == WP_MP40)
+		switch (weapon)
 		{
+		case WP_MP40:
 			weapon = WP_THOMPSON;
-		}
-		else if (weapon == WP_KAR98)
-		{
+			break;
+		case WP_KAR98:
 			weapon = WP_CARBINE;
-		}
-		else if (weapon == WP_K43)
-		{
+			break;
+		case WP_K43:
 			weapon = WP_GARAND;
+			break;
+		case WP_MOBILE_MG42:
+			weapon = WP_MOBILE_BROWNING;
+			break;
+		default:
+			break;
 		}
 	}
 
