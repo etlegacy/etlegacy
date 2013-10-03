@@ -1816,18 +1816,17 @@ CG_DrawCrosshairNames
 static void CG_DrawCrosshairNames(void)
 {
 	float      *color;
-	char       *name;
 	float      w;
-	const char *s, *playerClass;
+	const char *s;
 	int        playerHealth = 0;
 	vec4_t     c;
 	qboolean   drawStuff = qfalse;
-	const char *playerRank;
 	qboolean   isTank    = qfalse;
 	int        maxHealth = 1;
 	float      dist; // Distance to the entity under the crosshair
 	float      zChange;
 	qboolean   hitClient = qfalse;
+	float      middle    = 320 + cgs.wideXoffset;
 
 	if (cg_drawCrosshair.integer < 0)
 	{
@@ -1874,7 +1873,7 @@ static void CG_DrawCrosshairNames(void)
 				}
 
 				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
+				CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
 			}
 			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 			{
@@ -1882,7 +1881,7 @@ static void CG_DrawCrosshairNames(void)
 				if (*s)
 				{
 					w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-					CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
+					CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
 				}
 				return;
 			}
@@ -1901,7 +1900,7 @@ static void CG_DrawCrosshairNames(void)
 			{
 				s = CG_TranslateString("Disguised Enemy!");
 				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
+				CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
 				return;
 			}
 			else if (dist > 512)
@@ -1913,17 +1912,19 @@ static void CG_DrawCrosshairNames(void)
 
 				drawStuff = qtrue;
 
-				// determine player class
-				playerClass = BG_ClassLetterForNumber((cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 6);
-
-				name = cgs.clientinfo[cg.crosshairClientNum].disguiseName;
-
-				playerRank = cgs.clientinfo[cg.crosshairClientNum].team != TEAM_AXIS ? rankNames_Axis[cgs.clientinfo[cg.crosshairClientNum].disguiseRank] : rankNames_Allies[cgs.clientinfo[cg.crosshairClientNum].disguiseRank];
-				s          = va("[%s] %s %s", CG_TranslateString(playerClass), playerRank, name);
-				w          = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
+				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
+				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
 
 				// draw the name and class
-				CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
+				CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
+				// - 16 - 110/2
+				CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass((cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
+
+				if (cgs.clientinfo[cg.crosshairClientNum].disguiseRank < 0)
+				{
+					// + 110/2
+					CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].disguiseRank][cgs.clientinfo[cg.crosshairClientNum].team != TEAM_AXIS ? 1 : 0].shader);
+				}
 
 				// set the health
 				// - make sure it's the health for the right entity;
@@ -1967,17 +1968,19 @@ static void CG_DrawCrosshairNames(void)
 
 		drawStuff = qtrue;
 
-		// determine player class
-		playerClass = BG_ClassLetterForNumber(cg_entities[cg.crosshairClientNum].currentState.teamNum);
-
-		name = cgs.clientinfo[cg.crosshairClientNum].name;
-
-		playerRank = cgs.clientinfo[cg.crosshairClientNum].team == TEAM_AXIS ? rankNames_Axis[cgs.clientinfo[cg.crosshairClientNum].rank] : rankNames_Allies[cgs.clientinfo[cg.crosshairClientNum].rank];
-		s          = va("[%s] %s %s", CG_TranslateString(playerClass), playerRank, name);
-		w          = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
+		s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
+		w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
 
 		// draw the name and class
-		CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
+		CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
+		// - 16 - 110/2
+		CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cg_entities[cg.crosshairClientNum].currentState.teamNum)]);
+
+		if (cgs.clientinfo[cg.crosshairClientNum].rank < 0)
+		{
+			//  + 110/2
+			CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].rank][cgs.clientinfo[cg.crosshairClientNum].team == TEAM_AXIS ? 1 : 0].shader);
+		}
 
 		// set the health
 		if (cg.crosshairClientNum == cg.snap->ps.identifyClient)
@@ -2048,7 +2051,8 @@ static void CG_DrawCrosshairNames(void)
 
 		Vector4Set(bgcolor, 1.f, 1.f, 1.f, .25f * color[3]);
 
-		CG_FilledBar((320 - 110 / 2) + cgs.wideXoffset, 190, 110, 10, c, NULL, bgcolor, barFrac, 16);
+		// - 110/2
+		CG_FilledBar(middle - 55, 190, 110, 10, c, NULL, bgcolor, barFrac, 16);
 	}
 
 	if (isTank)
