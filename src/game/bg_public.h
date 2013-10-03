@@ -842,23 +842,12 @@ extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
 extern int weapAlts[];  // defined in bg_misc.c
 
+// weapon table
 #define IS_RIFLENADE_WEAPON(w) \
 	(w == WP_GPG40           || w == WP_M7)
 
+// weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
-
-// NOTE: what about WP_VENOM and other XP weapons?
-// added akimbo weapons and deployed MG42
-#define IS_AUTORELOAD_WEAPON(weapon) \
-	(   \
-	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
-	    weapon == WP_THOMPSON || weapon == WP_STEN          || \
-	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
-	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
-	    weapon == WP_MOBILE_BROWNING || weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
-	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
-	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET || weapon == WP_MOBILE_BROWNING_SET \
-	)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive
@@ -1936,9 +1925,6 @@ int BG_ClassWeaponCount(bg_playerclass_t *classInfo, team_t team);
 const char *BG_ShortClassnameForNumber(int classNum);
 const char *BG_ClassnameForNumber(int classNum);
 const char *BG_ClassLetterForNumber(int classNum);
-
-void BG_DisableClassWeapon(bg_playerclass_t *classinfo, int weapon);
-void BG_DisableWeaponForAllClasses(int weapon);
 
 extern bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES];
 extern bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES];
