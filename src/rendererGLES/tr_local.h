@@ -1856,10 +1856,6 @@ typedef struct
 
 extern backEndData_t *backEndData;
 
-extern volatile renderCommandList_t *renderCommandList;
-
-extern volatile qboolean renderThreadActive;
-
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
