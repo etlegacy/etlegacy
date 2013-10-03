@@ -666,7 +666,7 @@ int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList)
 	return(numDamaged);
 }
 
-void G_LandminePrime(gentity_t *self);
+extern void G_LandminePrime(gentity_t *self);
 extern void explosive_indicator_think(gentity_t *ent);
 
 #define MIN_BLOCKINGWARNING_INTERVAL 5000
@@ -3697,11 +3697,9 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 	gentity_t *m;
 	trace_t   tr;
 	vec3_t    viewpos;
-	float     upangle = 0, pitch;           // start with level throwing and adjust based on angle
+	float     upangle = 0, pitch = ent->s.apos.trBase[0];  // start with level throwing and adjust based on angle
 	vec3_t    tosspos;
 	qboolean  underhand = qtrue;
-
-	pitch = ent->s.apos.trBase[0];
 
 	// smoke grenades always overhand
 	if (pitch >= 0)
@@ -3811,8 +3809,10 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 
 	m->damage = 0;  // grenade's don't explode on contact
 
-	if (grenType == WP_LANDMINE)
+
+	switch (grenType)
 	{
+	case WP_LANDMINE:
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)     // store team so we can generate red or blue smoke
 		{
 			m->s.otherEntityNum2 = 1;
@@ -3821,17 +3821,12 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		{
 			m->s.otherEntityNum2 = 0;
 		}
-	}
-
-	// override for smoke gren
-	if (grenType == WP_SMOKE_BOMB)
-	{
+		break;
+	case WP_SMOKE_BOMB: // override for smoke gren
 		m->s.effect1Time = 16;
 		m->think         = weapon_smokeBombExplode;
-	}
-
-	if (grenType == WP_SMOKE_MARKER)
-	{
+		break;
+	case WP_SMOKE_MARKER:
 		m->s.teamNum = ent->client->sess.sessionTeam;   // store team so we can generate red or blue smoke
 		if (ent->client->sess.skill[SK_SIGNALS] >= 3)
 		{
@@ -3845,6 +3840,10 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 			m->nextthink = level.time + 2500;
 			m->think     = weapon_checkAirStrikeThink1;
 		}
+		break;
+	default:
+		break;
+
 	}
 
 	// adjust for movement of character.  TODO: Probably comment in later, but only for forward/back not strafing
@@ -3868,7 +3867,7 @@ gentity_t *Weapon_Panzerfaust_Fire(gentity_t *ent)
 
 /*
 ======================================================================
-LIGHTNING GUN
+FLAMETHROWER
 ======================================================================
 */
 
