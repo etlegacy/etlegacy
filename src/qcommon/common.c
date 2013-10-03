@@ -34,18 +34,14 @@
 
 #include "q_shared.h"
 #include "qcommon.h"
-
 #include <setjmp.h>
 #if defined (_WIN32)
-#include "../sys/sys_win32.h"
-#endif
-
-#ifndef _WIN32
-#include <netinet/in.h>
-#include <sys/stat.h> // umask
-#include <unistd.h> // getpid()
+#   include "../sys/sys_win32.h"
+#   include <winsock.h>
 #else
-#include <winsock.h>
+#   include <netinet/in.h>
+#   include <sys/stat.h> // umask
+#   include <unistd.h> // getpid()
 #endif
 
 // NOTE: if protocol gets bumped please add 84 to the list before 0
@@ -368,12 +364,12 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 			CL_GetAutoUpdate();
 		}
 		else
-#endif /* FEATURE_AUTOUPDATE */
+#endif // FEATURE_AUTOUPDATE
 		{
 			longjmp(abortframe, -1);
 		}
 	}
-#endif
+#endif // DEDICATED
 	else
 	{
 		CL_Shutdown();
@@ -430,6 +426,7 @@ char *com_consoleLines[MAX_CONSOLE_LINES];
 void Com_ParseCommandLine(char *commandLine)
 {
 	int inq = 0;
+
 	com_consoleLines[0] = commandLine;
 	com_numConsoleLines = 1;
 
@@ -1572,8 +1569,6 @@ void Com_InitSmallZoneMemory(void)
 		Com_Error(ERR_FATAL, "Small zone data failed to allocate %1.1f megs", (float)s_smallZoneTotal / (1024 * 1024));
 	}
 	Z_ClearZone(smallzone, s_smallZoneTotal);
-
-	return;
 }
 
 void Com_InitZoneMemory(void)
@@ -1823,15 +1818,17 @@ void SV_ShutdownGameProgs(void);
  */
 void Hunk_Clear(void)
 {
-
 #ifndef DEDICATED
 	CL_ShutdownCGame();
 	CL_ShutdownUI();
 #endif
+
 	SV_ShutdownGameProgs();
+
 #ifndef DEDICATED
 	CIN_CloseAllVideos();
 #endif
+
 	hunk_low.mark          = 0;
 	hunk_low.permanent     = 0;
 	hunk_low.temp          = 0;
@@ -2434,7 +2431,6 @@ int Com_EventLoop(void)
 			return ev.evTime;
 		}
 
-
 		switch (ev.evType)
 		{
 		default:
@@ -2916,7 +2912,7 @@ void Com_Init(char *commandLine)
 		CL_Init();
 #if defined (USE_WINDOWS_CONSOLE)
 		Sys_ShowConsole(com_viewlog->integer, qfalse);
-#endif
+#endif // USE_WINDOWS_CONSOLE
 	}
 
 	// set com_frameTime so that if a map is started on the
@@ -2940,7 +2936,7 @@ void Com_Init(char *commandLine)
 	{
 		Cbuf_AddText("in_restart;");
 	}
-#endif
+#endif // USE_RAW_INPUT_MOUSE
 
 
 	// force recommendedSet and don't do vid_restart if in safe mode
@@ -2963,7 +2959,7 @@ void Com_Init(char *commandLine)
 		// HACK: screen size on Mac is not properly set
 		//       on first run in fullscreen for some reason
 		Cbuf_AddText("vid_restart\n");
-#endif
+#endif //  __APPLE__
 	}
 
 	com_fullyInitialized = qtrue;
@@ -3084,8 +3080,7 @@ int Com_ModifyMsec(int msec)
 		}
 		clampTime = 5000;
 	}
-	else
-	if (!com_sv_running->integer)
+	else if (!com_sv_running->integer)
 	{
 		// clients of remote servers do not want to clamp time, because
 		// it would skew their view of the server's time temporarily
@@ -3114,15 +3109,13 @@ Com_Frame
 */
 void Com_Frame(void)
 {
-	int        msec, minMsec;
-	static int lastTime;
-
-	int timeBeforeFirstEvents;
-	int timeBeforeServer;
-	int timeBeforeEvents;
-	int timeBeforeClient;
-	int timeAfter;
-
+	int             msec, minMsec;
+	static int      lastTime;
+	int             timeBeforeFirstEvents;
+	int             timeBeforeServer;
+	int             timeBeforeEvents;
+	int             timeBeforeClient;
+	int             timeAfter;
 	static int      watchdogTime = 0;
 	static qboolean watchWarn    = qfalse;
 
@@ -3150,7 +3143,7 @@ void Com_Frame(void)
 		{
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
 		}
-#endif
+#endif // USE_WINDOWS_CONSOLE
 		com_viewlog->modified = qfalse;
 	}
 
@@ -3169,6 +3162,7 @@ void Com_Frame(void)
 	{
 		minMsec = 1;
 	}
+
 	do
 	{
 		com_frameTime = Com_EventLoop();
@@ -3209,14 +3203,14 @@ void Com_Frame(void)
 			CL_Init();
 #if defined (USE_WINDOWS_CONSOLE)
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
-#endif
+#endif // USE_WINDOWS_CONSOLE
 		}
 		else
 		{
 			CL_Shutdown();
 #if defined (USE_WINDOWS_CONSOLE)
 			Sys_ShowConsole(1, qtrue);
-#endif
+#endif // USE_WINDOWS_CONSOLE
 		}
 	}
 
@@ -3403,13 +3397,11 @@ static void FindMatches(const char *s)
 /*
 ===============
 FindIndexMatch
-
 ===============
 */
 static int findMatchIndex;
 static void FindIndexMatch(const char *s)
 {
-
 	//Com_Printf("S: %s CompletionString: %s\n",s,completionString);
 
 	if (Q_stricmpn(s, completionString, strlen(completionString)))
@@ -3527,7 +3519,7 @@ void Field_CompleteKeyname(void)
 		Key_KeynameCompletion(PrintMatches);
 	}
 }
-#endif
+#endif // DEDICATED
 
 /*
 ===============
@@ -3553,8 +3545,7 @@ void Field_CompleteFilename(const char *dir,
 Field_CompleteCommand
 ===============
 */
-void Field_CompleteCommand(char *cmd,
-                           qboolean doCommands, qboolean doCvars)
+void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 {
 	int completionArgument = 0;
 
@@ -3599,8 +3590,8 @@ void Field_CompleteCommand(char *cmd,
 
 		completionField->buffer[0] = '\\';
 	}
-#endif
-#endif
+#endif // DEDICATED
+#endif // SLASH_COMMAND
 
 	if (completionArgument > 1)
 	{
@@ -3614,8 +3605,8 @@ void Field_CompleteCommand(char *cmd,
 		{
 			baseCmd++;
 		}
-#endif
-#endif
+#endif // DEDICATED
+#endif // SLASH_COMMAND
 
 		if ((p = Field_FindFirstSeparator(cmd)))
 		{
@@ -3697,6 +3688,7 @@ void Console_AutoCompelete(field_t *field, int *comletionlen)
 		{
 			//Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
 			int completionArgument = 0;
+
 			completionArgument = Cmd_Argc();
 
 			// If there is trailing whitespace on the cmd
@@ -3742,7 +3734,7 @@ void Console_AutoCompelete(field_t *field, int *comletionlen)
 			{
 				memmove(completionString, completionString + 1, sizeof(completionString) - 1);
 			}
-#endif
+#endif // SLASH_COMMAND
 			Cmd_CommandCompletion(FindIndexMatch);
 			Cvar_CommandCompletion(FindIndexMatch);
 
