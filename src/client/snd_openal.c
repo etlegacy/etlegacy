@@ -2042,6 +2042,7 @@ static void S_AL_SSSourceFree(int ss)
 {
 	// Release the output streaming sound source
 	S_AL_SrcUnlock(ssSourceHandle[ss]);
+	S_AL_SrcKill(ssSourceHandle[ss]);
 	ssSource[ss]       = 0;
 	ssSourceHandle[ss] = -1;
 }
@@ -2909,6 +2910,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 
 	if (!si)
 	{
+		Com_Printf("Invalid sound interface NULL.\n");
 		return qfalse;
 	}
 
