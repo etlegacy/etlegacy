@@ -809,6 +809,17 @@ void ByteToDir(int b, vec3_t dir);
 #define VectorScale(v, s, o)    ((o)[0] = (v)[0] * (s), (o)[1] = (v)[1] * (s), (o)[2] = (v)[2] * (s))
 #define VectorMA(v, s, b, o)    ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s))
 
+#define MatrixMultiply(in1, in2, o)                                                                     \
+	o[0][0] = (in1)[0][0] * (in2)[0][0] + (in1)[0][1] * (in2)[1][0] + (in1)[0][2] * (in2)[2][0],        \
+	o[0][1] = (in1)[0][0] * (in2)[0][1] + (in1)[0][1] * (in2)[1][1] + (in1)[0][2] * (in2)[2][1],        \
+	o[0][2] = (in1)[0][0] * (in2)[0][2] + (in1)[0][1] * (in2)[1][2] + (in1)[0][2] * (in2)[2][2],        \
+	o[1][0] = (in1)[1][0] * (in2)[0][0] + (in1)[1][1] * (in2)[1][0] + (in1)[1][2] * (in2)[2][0],        \
+	o[1][1] = (in1)[1][0] * (in2)[0][1] + (in1)[1][1] * (in2)[1][1] + (in1)[1][2] * (in2)[2][1],        \
+	o[1][2] = (in1)[1][0] * (in2)[0][2] + (in1)[1][1] * (in2)[1][2] + (in1)[1][2] * (in2)[2][2],        \
+	o[2][0] = (in1)[2][0] * (in2)[0][0] + (in1)[2][1] * (in2)[1][0] + (in1)[2][2] * (in2)[2][0],        \
+	o[2][1] = (in1)[2][0] * (in2)[0][1] + (in1)[2][1] * (in2)[1][1] + (in1)[2][2] * (in2)[2][1],        \
+	o[2][2] = (in1)[2][0] * (in2)[0][2] + (in1)[2][1] * (in2)[1][2] + (in1)[2][2] * (in2)[2][2]
+
 #else
 
 #define DotProduct(x, y)         _DotProduct(x, y)
@@ -817,8 +828,9 @@ void ByteToDir(int b, vec3_t dir);
 #define VectorCopy(a, b)         _VectorCopy(a, b)
 #define VectorScale(v, s, o)    _VectorScale(v, s, o)
 #define VectorMA(v, s, b, o)    _VectorMA(v, s, b, o)
+#define MatrixMultiply(in1, in2, o) _MatrixMultiply(in1, in2, o)
 
-#endif
+#endif // 1
 
 #ifdef __LCC__
 #ifdef VectorCopy
@@ -856,6 +868,7 @@ void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out);
 void _VectorCopy(const vec3_t in, vec3_t out);
 void _VectorScale(const vec3_t in, float scale, vec3_t out);
 void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);
+void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 
 unsigned ColorBytes3(float r, float g, float b); // Unused.
 unsigned ColorBytes4(float r, float g, float b, float a);
@@ -925,7 +938,6 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);
 
 int PlaneTypeForNormal(vec3_t normal);
 
-void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 void TransposeMatrix(vec3_t matrix[3], vec3_t transpose[3]);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void PerpendicularVector(vec3_t dst, const vec3_t src);
@@ -1287,6 +1299,8 @@ typedef enum
 #define ENTITYNUM_NONE      (MAX_GENTITIES - 1)
 #define ENTITYNUM_WORLD     (MAX_GENTITIES - 2)
 #define ENTITYNUM_MAX_NORMAL    (MAX_GENTITIES - 2)
+
+#define NULL_MODEL          0
 
 #define MAX_MODELS          256     // these are sent over the net as 8 bits (upped to 9 bits, erm actually it was already at 9 bits, wtf? NEVAR TRUST GAMECODE COMMENTS, comments are evil :E, lets hope it doesn't horribly break anything....)
 #define MAX_SOUNDS          256     // so they cannot be blindly increased

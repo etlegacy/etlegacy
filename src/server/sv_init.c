@@ -296,7 +296,7 @@ void SV_Startup(void)
 	}
 	SV_BoundMaxClients(1);
 
-	// RF, avoid trying to allocate large chunk on a fragmented zone
+	// avoid trying to allocate large chunk on a fragmented zone
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
