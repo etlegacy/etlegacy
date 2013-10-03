@@ -757,7 +757,7 @@ typedef enum
 	WP_MOBILE_BROWNING,     // 49
 	WP_MOBILE_BROWNING_SET, // 50
 
-	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 48
+	WP_NUM_WEAPONS          // 51
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -840,6 +840,15 @@ typedef struct ammotable_s
 // Lookup table to find ammo table entry
 extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
+
+typedef struct weapontable_s
+{
+	int damage;             // g
+	float spread;           // g
+	qboolean isRiflenade;   // bg
+	qboolean isAutoReload;  // bg
+} weapontable_t;
+
 extern int weapAlts[];  // defined in bg_misc.c
 
 // weapon table
@@ -848,6 +857,18 @@ extern int weapAlts[];  // defined in bg_misc.c
 
 // weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
+
+// FIXME: weapon table
+#define IS_AUTORELOAD_WEAPON(weapon) \
+	(   \
+	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
+	    weapon == WP_THOMPSON || weapon == WP_STEN          || \
+	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
+	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
+	    weapon == WP_MOBILE_BROWNING || weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
+	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
+	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET || weapon == WP_MOBILE_BROWNING_SET \
+	)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive
