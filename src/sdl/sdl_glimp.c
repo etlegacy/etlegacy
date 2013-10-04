@@ -217,14 +217,15 @@ void GLimp_Minimize(void)
 	SDL_WM_IconifyWindow();
 }
 
-/*
-===============
-GLimp_LogComment
-===============
-*/
-void GLimp_LogComment(char *comment)
+/**
+ * @brief Logs OpenGL commands when com_developer cvar is enabled
+ */
+void GLimp_LogComment(const char *comment)
 {
-	// FIXME
+	//if (com_developer->integer)
+	//{
+	//	Com_Printf("%s", comment);
+	//}
 }
 
 /* unused - see GLimp_DetectAvailableModes

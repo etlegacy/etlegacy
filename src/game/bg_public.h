@@ -757,7 +757,7 @@ typedef enum
 	WP_MOBILE_BROWNING,     // 49
 	WP_MOBILE_BROWNING_SET, // 50
 
-	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 48
+	WP_NUM_WEAPONS          // 51
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -840,15 +840,25 @@ typedef struct ammotable_s
 // Lookup table to find ammo table entry
 extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
+
+typedef struct weapontable_s
+{
+	int damage;             // g
+	float spread;           // g
+	qboolean isRiflenade;   // bg
+	qboolean isAutoReload;  // bg
+} weapontable_t;
+
 extern int weapAlts[];  // defined in bg_misc.c
 
+// weapon table
 #define IS_RIFLENADE_WEAPON(w) \
 	(w == WP_GPG40           || w == WP_M7)
 
+// weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
-// NOTE: what about WP_VENOM and other XP weapons?
-// added akimbo weapons and deployed MG42
+// FIXME: weapon table
 #define IS_AUTORELOAD_WEAPON(weapon) \
 	(   \
 	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
@@ -1936,9 +1946,6 @@ int BG_ClassWeaponCount(bg_playerclass_t *classInfo, team_t team);
 const char *BG_ShortClassnameForNumber(int classNum);
 const char *BG_ClassnameForNumber(int classNum);
 const char *BG_ClassLetterForNumber(int classNum);
-
-void BG_DisableClassWeapon(bg_playerclass_t *classinfo, int weapon);
-void BG_DisableWeaponForAllClasses(int weapon);
 
 extern bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES];
 extern bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES];

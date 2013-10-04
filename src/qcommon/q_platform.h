@@ -157,14 +157,7 @@
 #if defined(__APPLE__) || defined(__APPLE_CC__)
 
 #define OS_STRING "macosx"
-
-#ifdef __clang__
-#define ID_INLINE static inline
-#define ID_NONSTATIC_INLINE inline
-#else
-#define ID_INLINE inline
-#endif
-
+#define ID_INLINE __inline
 #define PATH_SEP '/'
 
 #ifdef __ppc__
@@ -196,13 +189,7 @@
 #define OS_STRING "kFreeBSD"
 #endif
 
-#ifdef __clang__
-#define ID_INLINE static inline
-#define ID_NONSTATIC_INLINE inline
-#else
 #define ID_INLINE inline
-#endif
-
 #define PATH_SEP '/'
 
 #if defined __i386__
@@ -389,10 +376,6 @@
 
 #ifndef ID_INLINE
 #error "ID_INLINE not defined"
-#endif
-
-#ifndef ID_NONSTATIC_INLINE
-#define ID_NONSTATIC_INLINE ID_INLINE
 #endif
 
 #ifndef PATH_SEP

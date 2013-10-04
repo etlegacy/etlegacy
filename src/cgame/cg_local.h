@@ -3045,7 +3045,7 @@ typedef struct
 	int height;
 } rankicon_t;
 
-extern rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2];
+extern rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2];
 
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 
@@ -3244,7 +3244,7 @@ qboolean CG_CommandCentreSpawnPointClick(void);
 #define CC_2D_W 352
 #define CC_2D_H 352
 
-void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_t *headcharacter, float yaw, float pitch, qboolean drawHat, hudHeadAnimNumber_t animation, qhandle_t painSkin, int rank, qboolean spectator);
+void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_t *headcharacter, float yaw, float pitch, qboolean drawHat, hudHeadAnimNumber_t animation, qhandle_t painSkin, int rank, qboolean spectator, int team);
 
 // cg_popupmessages.c
 void CG_InitPM(void);
