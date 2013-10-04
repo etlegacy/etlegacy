@@ -1920,10 +1920,10 @@ static void CG_DrawCrosshairNames(void)
 				// - 16 - 110/2
 				CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass((cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 
-				if (cgs.clientinfo[cg.crosshairClientNum].disguiseRank < 0)
+				if (cgs.clientinfo[cg.crosshairClientNum].disguiseRank > 0)
 				{
 					// + 110/2
-					CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].disguiseRank][cgs.clientinfo[cg.crosshairClientNum].team != TEAM_AXIS ? 1 : 0].shader);
+					CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].disguiseRank][cgs.clientinfo[cg.crosshairClientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
 				}
 
 				// set the health
@@ -1976,10 +1976,10 @@ static void CG_DrawCrosshairNames(void)
 		// - 16 - 110/2
 		CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cg_entities[cg.crosshairClientNum].currentState.teamNum)]);
 
-		if (cgs.clientinfo[cg.crosshairClientNum].rank < 0)
+		if (cgs.clientinfo[cg.crosshairClientNum].rank > 0)
 		{
 			//  + 110/2
-			CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].rank][cgs.clientinfo[cg.crosshairClientNum].team == TEAM_AXIS ? 1 : 0].shader);
+			CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].rank][cgs.clientinfo[cg.crosshairClientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
 		// set the health
