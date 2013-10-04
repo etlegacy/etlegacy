@@ -53,91 +53,9 @@
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
-/* HACK: Just hack it for now. */
-#if defined(WIN32)
-#include <GL/wglew.h>
-#else
-#if !defined(HAVE_GLES) && !defined(__AROS__)
-#include <GL/glxew.h>
-#endif
-#endif
-
-//static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
-
-/* Just hack it for now. */
-#ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
-typedef CGLContextObj QGLContext;
-
-static QGLContext opengl_context;
-
-static void GLimp_GetCurrentContext(void)
-{
-	opengl_context = CGLGetCurrentContext();
-}
-#elif SDL_VIDEO_DRIVER_X11
-
-#ifdef FEATURE_RENDERER2
-#include <GL/glx.h>
-typedef struct
-{
-	GLXContext ctx;
-	Display *dpy;
-	GLXDrawable drawable;
-} QGLContext_t;
-typedef QGLContext_t QGLContext;
-
-static QGLContext opengl_context;
-
-static void GLimp_GetCurrentContext(void)
-{
-	opengl_context.ctx      = glXGetCurrentContext();
-	opengl_context.dpy      = glXGetCurrentDisplay();
-	opengl_context.drawable = glXGetCurrentDrawable();
-}
-#endif // FEATURE_RENDERER2
 #ifdef HAVE_GLES
 #include "eglport.h"
 #endif
-
-#elif _WIN32
-
-typedef struct
-{
-	HDC hDC;                    // handle to device context
-	HGLRC hGLRC;                // handle to GL rendering context
-} QGLContext_t;
-typedef QGLContext_t QGLContext;
-
-static QGLContext opengl_context;
-
-static void GLimp_GetCurrentContext(void)
-{
-	SDL_SysWMinfo info;
-
-	SDL_VERSION(&info.version);
-
-	if (!SDL_GetWMInfo(&info))
-	{
-		ri.Printf(PRINT_WARNING, "Failed to obtain HWND from SDL (InputRegistry)");
-		return;
-	}
-
-	opengl_context.hDC   = GetDC(info.window);
-	opengl_context.hGLRC = info.hglrc;
-}
-#else // other *NON* SDL_VIDEO_DRIVER_X11 *nix - FIXME
-
-#ifdef FEATURE_RENDERER2
-static void GLimp_GetCurrentContext(void)
-#endif // FEATURE_RENDERER2
-
-#endif
-
-// No SMP - stubs
-void GLimp_RenderThreadWrapper(void *arg)
-{
-}
 
 qboolean GLimp_SpawnRenderThread(void ( *function )(void))
 {
@@ -175,7 +93,6 @@ typedef enum
 } rserr_t;
 
 // @todo SDL 2.0 howto make screen available to cl_keys.c, etc. without extern
-static int           displayIndex  = 0;
 SDL_Window           *screen       = NULL;
 static SDL_Renderer  *renderer     = NULL;
 static SDL_GLContext SDL_glContext = NULL;
@@ -338,13 +255,7 @@ static void GLimp_DetectAvailableModes(void)
 #ifdef FEATURE_RENDERER2
 static qboolean GLimp_InitOpenGL3xContext()
 {
-#if defined(WIN32) || defined(__linux__)
-	int        retVal;
-	const char *success[] = { "failed", "success" };
-#endif
 	int GLmajor, GLminor;
-
-	GLimp_GetCurrentContext();
 
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 
@@ -353,161 +264,6 @@ static qboolean GLimp_InitOpenGL3xContext()
 	// Check if we have to create a core profile.
 	// Core profiles are not necessarily compatible, so we have
 	// to request the desired version.
-#if defined(WIN32)
-	if (WGLEW_ARB_create_context_profile)
-	{
-		int attribs[256];   // should be really enough
-		int numAttribs = 0;
-
-		memset(attribs, 0, sizeof(attribs));
-
-		if (qtrue)
-		{
-			attribs[numAttribs++] = WGL_CONTEXT_MAJOR_VERSION_ARB;
-			attribs[numAttribs++] = 3;
-
-			attribs[numAttribs++] = WGL_CONTEXT_MINOR_VERSION_ARB;
-			attribs[numAttribs++] = 2;
-		}
-
-		attribs[numAttribs++] = WGL_CONTEXT_FLAGS_ARB;
-
-		if (qfalse)
-		{
-			attribs[numAttribs++] = WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB |  WGL_CONTEXT_DEBUG_BIT_ARB;
-		}
-		else
-		{
-			attribs[numAttribs++] = WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
-		}
-
-		attribs[numAttribs++] = WGL_CONTEXT_PROFILE_MASK_ARB;
-
-		if (qtrue)
-		{
-			attribs[numAttribs++] = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
-		}
-		else
-		{
-			attribs[numAttribs++] = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
-		}
-
-		// set current context to NULL
-		retVal = wglMakeCurrent(opengl_context.hDC, NULL) != 0;
-		ri.Printf(PRINT_ALL, "...wglMakeCurrent( %p, %p ): %s\n", opengl_context.hDC, NULL, success[retVal]);
-
-		// delete HGLRC
-		if (opengl_context.hGLRC)
-		{
-			retVal = wglDeleteContext(opengl_context.hGLRC) != 0;
-			ri.Printf(PRINT_ALL, "...deleting initial GL context: %s\n", success[retVal]);
-			opengl_context.hGLRC = NULL;
-		}
-
-		ri.Printf(PRINT_ALL, "...initializing new OpenGL context");
-
-		opengl_context.hGLRC = wglCreateContextAttribsARB(opengl_context.hDC, 0, attribs);
-
-		if (wglMakeCurrent(opengl_context.hDC, opengl_context.hGLRC))
-		{
-			ri.Printf(PRINT_ALL, " done\n");
-		}
-		else
-		{
-			ri.Printf(PRINT_WARNING, "Could not initialize requested OpenGL profile\n");
-		}
-	}
-	else
-	{
-		ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context\n");
-	}
-
-#elif defined(__linux__)
-
-	if (GLXEW_ARB_create_context_profile)
-	{
-		int         numAttribs = 0;
-		int         attribs[256];
-		GLXFBConfig *FBConfig;
-
-		// get FBConfig XID
-		memset(attribs, 0, sizeof(attribs));
-
-		attribs[numAttribs++] = GLX_FBCONFIG_ID;
-		glXQueryContext(opengl_context.dpy, opengl_context.ctx,
-		                GLX_FBCONFIG_ID, &attribs[numAttribs++]);
-		FBConfig = glXChooseFBConfig(opengl_context.dpy, 0,
-		                             attribs, &numAttribs);
-
-		if (numAttribs == 0)
-		{
-			ri.Printf(PRINT_WARNING, "Could not get FBConfig for XID %d\n", attribs[1]);
-		}
-
-		memset(attribs, 0, sizeof(attribs));
-		numAttribs = 0;
-
-		if (qtrue)
-		{
-			attribs[numAttribs++] = GLX_CONTEXT_MAJOR_VERSION_ARB;
-			attribs[numAttribs++] = 3;
-
-			attribs[numAttribs++] = GLX_CONTEXT_MINOR_VERSION_ARB;
-			attribs[numAttribs++] = 2;
-		}
-
-		attribs[numAttribs++] = GLX_CONTEXT_FLAGS_ARB;
-
-		if (qfalse)
-		{
-			attribs[numAttribs++] = GLX_CONTEXT_DEBUG_BIT_ARB;
-		}
-		else
-		{
-			attribs[numAttribs++] = GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
-		}
-
-		attribs[numAttribs++] = GLX_CONTEXT_PROFILE_MASK_ARB;
-
-		if (qtrue)
-		{
-			attribs[numAttribs++] = GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
-		}
-		else
-		{
-			attribs[numAttribs++] = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
-		}
-
-		// set current context to NULL
-		retVal = glXMakeCurrent(opengl_context.dpy, None, NULL) != 0;
-		ri.Printf(PRINT_ALL, "...glXMakeCurrent( %p, %p ): %s\n", opengl_context.dpy, NULL, success[retVal]);
-
-		// delete dpy
-		if (opengl_context.ctx)
-		{
-			glXDestroyContext(opengl_context.dpy, opengl_context.ctx);
-			retVal = (glGetError() == 0);
-			ri.Printf(PRINT_ALL, "...deleting initial GL context: %s\n", success[retVal]);
-			opengl_context.ctx = NULL;
-		}
-
-		ri.Printf(PRINT_ALL, "...initializing new OpenGL context ");
-
-		opengl_context.ctx = glXCreateContextAttribsARB(opengl_context.dpy,
-		                                                FBConfig[0], NULL, GL_TRUE, attribs);
-
-		if (glXMakeCurrent(opengl_context.dpy, opengl_context.drawable, opengl_context.ctx))
-		{
-			ri.Printf(PRINT_ALL, " done\n");
-		}
-		else
-		{
-			ri.Printf(PRINT_WARNING, "Could not initialize requested OpenGL profile\n");
-		}
-	}
-#else
-	ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context because your systems is not supported\n");
-#endif
 
 	if (GLmajor < 2)
 	{
@@ -1080,15 +836,8 @@ static void GLimp_XreaLInitExtensions(void)
 		}
 		else
 		{
-			ri.Printf(PRINT_WARNING, "Skipping mode %ux%x, buffer too small\n", mode.w, mode.h);
+			ri.Printf(PRINT_ALL, "...ignoring GL_SGIS_generate_mipmap\n");
 		}
-		++i;
-	}
-
-	if (i < numModes)
-	{
-		ri.Printf(PRINT_WARNING, "Can't get list of available modes\n");
-		return;
 	}
 	else
 	{
