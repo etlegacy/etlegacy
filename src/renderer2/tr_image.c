@@ -3654,19 +3654,19 @@ void R_InitImages(void)
 	tr.charsetImage = R_FindImageFile(charsetImage, IF_NOCOMPRESSION | IF_NOPICMIP, FT_DEFAULT, WT_CLAMP, NULL);
 	if (!tr.charsetImage)
 	{
-		ri.Error(ERR_FATAL, "R_InitImages: could not load '%s'", charsetImage);
+		ri.Printf(PRINT_WARNING, "R_InitImages: could not load '%s'\n", charsetImage);
 	}
 
 	tr.grainImage = R_FindImageFile(grainImage, IF_NOCOMPRESSION | IF_NOPICMIP, FT_DEFAULT, WT_REPEAT, NULL);
 	if (!tr.grainImage)
 	{
-		ri.Error(ERR_FATAL, "R_InitImages: could not load '%s'", grainImage);
+		ri.Printf(PRINT_WARNING, "R_InitImages: could not load '%s'\n", grainImage);
 	}
 
 	tr.vignetteImage = R_FindImageFile(vignetteImage, IF_NOCOMPRESSION | IF_NOPICMIP, FT_DEFAULT, WT_CLAMP, NULL);
 	if (!tr.vignetteImage)
 	{
-		ri.Error(ERR_FATAL, "R_InitImages: could not load '%s'", vignetteImage);
+		ri.Printf(PRINT_WARNING, "R_InitImages: could not load '%s'\n", vignetteImage);
 	}
 }
 
