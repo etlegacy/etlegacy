@@ -743,6 +743,41 @@ void QDECL CG_Printf(const char *msg, ...)
 	trap_Print(text);
 }
 
+void QDECL CG_DPrintf(const char *msg, ...)
+{
+	va_list argptr;
+	char    text[1024];
+	float   developer;
+
+	developer = CG_Cvar_Get("developer");
+	if (!developer)
+	{
+		return;
+	}
+
+	va_start(argptr, msg);
+	Q_vsnprintf(text, sizeof(text), msg, argptr);
+	va_end(argptr);
+	if (!Q_strncmp(text, "[cgnotify]", 10))
+	{
+		char buf[1024];
+
+		if (!cg_drawNotifyText.integer)
+		{
+			Q_strncpyz(buf, &text[10], 1013);
+			trap_Print(buf);
+			return;
+		}
+
+		CG_AddToNotify(&text[10]);
+		Q_strncpyz(buf, &text[10], 1013);
+		Q_strncpyz(text, "[skipnotify]", 13);
+		Q_strcat(text, 1011, buf);
+	}
+
+	trap_Print(text);
+}
+
 void QDECL CG_Error(const char *msg, ...)
 {
 	va_list argptr;
