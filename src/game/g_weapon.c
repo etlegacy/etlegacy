@@ -666,7 +666,7 @@ int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList)
 	return(numDamaged);
 }
 
-void G_LandminePrime(gentity_t *self);
+extern void G_LandminePrime(gentity_t *self);
 extern void explosive_indicator_think(gentity_t *ent);
 
 #define MIN_BLOCKINGWARNING_INTERVAL 5000
@@ -3157,11 +3157,7 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 	}
 }
 
-// mechanism allows different weapon damage for single/multiplayer; we want "balanced" weapons
-// in multiplayer but don't want to alter the existing single-player damage items that have already
-// been changed
-// KLUDGE/FIXME: also modded #defines below to become macros that call this fn for minimal impact elsewhere
-
+// FIXME: weapontable
 int G_GetWeaponDamage(int weapon)
 {
 	switch (weapon)
@@ -3192,6 +3188,8 @@ int G_GetWeaponDamage(int weapon)
 	case WP_MP40:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		return 18;
 	case WP_FG42SCOPE:
 		return 30;
@@ -3215,6 +3213,7 @@ int G_GetWeaponDamage(int weapon)
 	}
 }
 
+// FIXME: weapontable
 float G_GetWeaponSpread(int weapon)
 {
 	switch (weapon)
@@ -3246,6 +3245,8 @@ float G_GetWeaponSpread(int weapon)
 		return 700;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		return 2500;
 	}
 
@@ -3254,6 +3255,8 @@ float G_GetWeaponSpread(int weapon)
 	return 0;   // shouldn't get here
 }
 
+
+// FIXME: weapontable
 #define LUGER_SPREAD    G_GetWeaponSpread(WP_LUGER)
 #define LUGER_DAMAGE    G_GetWeaponDamage(WP_LUGER)
 
@@ -3298,6 +3301,9 @@ float G_GetWeaponSpread(int weapon)
 
 #define MOBILE_MG42_SPREAD  G_GetWeaponSpread(WP_MOBILE_MG42)
 #define MOBILE_MG42_DAMAGE  G_GetWeaponDamage(WP_MOBILE_MG42)
+
+#define MOBILE_BROWNING_SPREAD  G_GetWeaponSpread(WP_MOBILE_BROWNING)
+#define MOBILE_BROWNING_DAMAGE  G_GetWeaponDamage(WP_MOBILE_BROWNING)
 
 #define FG42_SPREAD     G_GetWeaponSpread(WP_FG42)
 #define FG42_DAMAGE     G_GetWeaponDamage(WP_FG42)
@@ -3691,11 +3697,9 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 	gentity_t *m;
 	trace_t   tr;
 	vec3_t    viewpos;
-	float     upangle = 0, pitch;           // start with level throwing and adjust based on angle
+	float     upangle = 0, pitch = ent->s.apos.trBase[0];  // start with level throwing and adjust based on angle
 	vec3_t    tosspos;
 	qboolean  underhand = qtrue;
-
-	pitch = ent->s.apos.trBase[0];
 
 	// smoke grenades always overhand
 	if (pitch >= 0)
@@ -3805,8 +3809,10 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 
 	m->damage = 0;  // grenade's don't explode on contact
 
-	if (grenType == WP_LANDMINE)
+
+	switch (grenType)
 	{
+	case WP_LANDMINE:
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)     // store team so we can generate red or blue smoke
 		{
 			m->s.otherEntityNum2 = 1;
@@ -3815,17 +3821,12 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		{
 			m->s.otherEntityNum2 = 0;
 		}
-	}
-
-	// override for smoke gren
-	if (grenType == WP_SMOKE_BOMB)
-	{
+		break;
+	case WP_SMOKE_BOMB: // override for smoke gren
 		m->s.effect1Time = 16;
 		m->think         = weapon_smokeBombExplode;
-	}
-
-	if (grenType == WP_SMOKE_MARKER)
-	{
+		break;
+	case WP_SMOKE_MARKER:
 		m->s.teamNum = ent->client->sess.sessionTeam;   // store team so we can generate red or blue smoke
 		if (ent->client->sess.skill[SK_SIGNALS] >= 3)
 		{
@@ -3839,6 +3840,10 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 			m->nextthink = level.time + 2500;
 			m->think     = weapon_checkAirStrikeThink1;
 		}
+		break;
+	default:
+		break;
+
 	}
 
 	// adjust for movement of character.  TODO: Probably comment in later, but only for forward/back not strafing
@@ -3862,7 +3867,7 @@ gentity_t *Weapon_Panzerfaust_Fire(gentity_t *ent)
 
 /*
 ======================================================================
-LIGHTNING GUN
+FLAMETHROWER
 ======================================================================
 */
 
@@ -4357,7 +4362,9 @@ void FireWeapon(gentity_t *ent)
 	case WP_MOBILE_MG42_SET:
 		Bullet_Fire(ent, MOBILE_MG42_SPREAD * 0.05f * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
 		break;
-
+	case WP_MOBILE_BROWNING_SET:
+		Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * 0.05f * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
+		break;
 	case WP_MOBILE_MG42:
 		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
 		{
@@ -4366,6 +4373,16 @@ void FireWeapon(gentity_t *ent)
 		else
 		{
 			Bullet_Fire(ent, MOBILE_MG42_SPREAD * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
+		}
+		break;
+	case WP_MOBILE_BROWNING:
+		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
+		{
+			Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * 0.6f * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
+		}
+		else
+		{
+			Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
 		}
 		break;
 	case WP_K43_SCOPE:

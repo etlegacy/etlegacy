@@ -1136,10 +1136,10 @@ void SetWolfSpawnWeapons(gclient_t *client)
 				case WP_FLAMETHROWER:
 					AddWeaponToPlayer(client, WP_FLAMETHROWER, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingAmmo, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingClip, qtrue);
 					break;
-				case WP_MOBILE_MG42:
-					if (AddWeaponToPlayer(client, WP_MOBILE_MG42, GetAmmoTableData(WP_MOBILE_MG42)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_MG42)->defaultStartingClip, qtrue))
+				case WP_MOBILE_BROWNING:
+					if (AddWeaponToPlayer(client, WP_MOBILE_BROWNING, GetAmmoTableData(WP_MOBILE_BROWNING)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_BROWNING)->defaultStartingClip, qtrue))
 					{
-						AddWeaponToPlayer(client, WP_MOBILE_MG42_SET, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingClip, qfalse);
+						AddWeaponToPlayer(client, WP_MOBILE_BROWNING_SET, GetAmmoTableData(WP_MOBILE_BROWNING_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_BROWNING_SET)->defaultStartingClip, qfalse);
 					}
 					break;
 				case WP_MORTAR:

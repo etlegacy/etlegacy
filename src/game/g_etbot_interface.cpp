@@ -282,9 +282,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, int *s
 	switch (weapon)
 	{
 #ifdef NOQUARTER
-	// IRATA added BAZOOKA
 	case WP_BAZOOKA:
-
 #endif
 	case WP_PANZERFAUST:
 		if (ps->eFlags & EF_PRONE)
@@ -706,6 +704,10 @@ static int _weaponBotToGame(int weapon)
 		return WP_JOHNSON;
 #endif
 #ifdef LEGACY
+	case 88:
+		return WP_MOBILE_BROWNING;
+	case 89:
+		return WP_MOBILE_BROWNING_SET;
 	case 94:
 		return WP_KNIFE_KABAR;
 #endif
@@ -854,6 +856,10 @@ int Bot_WeaponGameToBot(int weapon)
 		return 102;
 #endif // NOQUARTER
 #ifdef LEGACY
+	case WP_MOBILE_BROWNING:
+		return ET_WP_MOBILE_MG42; //cs: was 88
+	case WP_MOBILE_BROWNING_SET:
+		return ET_WP_MOBILE_MG42_SET; //cs: was 89
 	case WP_KNIFE_KABAR:
 		return ET_WP_KNIFE;
 #endif // LEGACY
@@ -1039,7 +1045,43 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 				iSelected = wpns[rInt];
 				break;
 			}
+#else // !NOQUARTER
+
+#ifdef LEGACY
+			if (team == ET_TEAM_ALLIES)
+			{
+				int wpns[] =
+				{
+					ET_WP_MP40,
+					ET_WP_PANZERFAUST,
+					88,                // BROWNING
+					ET_WP_FLAMETHROWER,
+					ET_WP_MORTAR,
+					ET_WP_THOMPSON
+				};
+
+				int rInt = rand() % (sizeof(wpns) / sizeof(wpns[0]));
+				iSelected = wpns[rInt];
+				break;
+			}
+			else
+			{
+				int wpns[] =
+				{
+					ET_WP_THOMPSON,
+					ET_WP_PANZERFAUST,
+					ET_WP_MOBILE_MG42,
+					ET_WP_FLAMETHROWER,
+					//92 // MORTAR2
+					ET_WP_MORTAR,
+				};
+
+				int rInt = rand() % (sizeof(wpns) / sizeof(wpns[0]));
+				iSelected = wpns[rInt];
+				break;
+			}
 #else
+
 			int wpns[] =
 			{
 				// add shit as needed
@@ -1050,12 +1092,14 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 				ET_WP_MORTAR,
 #ifdef JAYMOD_name
 				77     //WP_M97
-#endif
+#endif // JAYMOD_name
 			};
 			int rInt = rand() % (sizeof(wpns) / sizeof(wpns[0]));
 			iSelected = wpns[rInt];
 			break;
-#endif
+#endif // LEGACY
+#endif // NOQUARTER
+
 		}
 		case ET_CLASS_MEDIC:
 		{
@@ -2541,7 +2585,15 @@ public:
 #ifdef LEGACY
 		if (bot->client->sess.sessionTeam == TEAM_ALLIES)
 		{
-			if (cmd.weapon == WP_KNIFE)
+			if (cmd.weapon == WP_MOBILE_MG42)
+			{
+				cmd.weapon = WP_MOBILE_BROWNING;
+			}
+			else if (cmd.weapon == WP_MOBILE_MG42_SET)
+			{
+				cmd.weapon = WP_MOBILE_BROWNING_SET;
+			}
+			else if (cmd.weapon == WP_KNIFE)
 			{
 				cmd.weapon = WP_KNIFE_KABAR;
 			}
@@ -4263,6 +4315,21 @@ public:
 			}
 #endif
 
+#ifdef LEGACY
+			// need to translate for correct ammo ...
+			if (bot->client->sess.sessionTeam == TEAM_ALLIES)
+			{
+				switch (_weaponId)
+				{
+				case WP_MOBILE_MG42:
+					_weaponId = WP_MOBILE_BROWNING;
+					break;
+				default:
+					break;
+				}
+			}
+#endif
+
 			ammoIndex = BG_FindAmmoForWeapon((weapon_t)_weaponId);
 
 #ifdef NOQUARTER
@@ -5487,9 +5554,24 @@ public:
 							pEnt->client->sess.latchPlayerWeapon = _weaponBotToGame(pMsg->m_Selection);
 						}
 #else // !NOQUARTER
+
+#ifdef LEGACY
+						// dupe weapons now have same id for NQ
+						if (pEnt->client->sess.sessionTeam == TEAM_ALLIES && pMsg->m_Selection == ET_WP_MOBILE_MG42)
+						{
+							pEnt->client->sess.playerWeapon      = WP_MOBILE_BROWNING;
+							pEnt->client->sess.latchPlayerWeapon = WP_MOBILE_BROWNING;
+						}
+						else
+						{
+							pEnt->client->sess.playerWeapon      = _weaponBotToGame(pMsg->m_Selection);
+							pEnt->client->sess.latchPlayerWeapon = _weaponBotToGame(pMsg->m_Selection);
+						}
+#else // !LEGACY
 						pEnt->client->sess.playerWeapon      = _weaponBotToGame(pMsg->m_Selection);
 						pEnt->client->sess.latchPlayerWeapon = _weaponBotToGame(pMsg->m_Selection);
-#endif
+#endif // LEGACY
+#endif // NOQUARTER
 					}
 
 					pMsg->m_Good = True;
@@ -6422,6 +6504,9 @@ qboolean Bot_Util_AllowPush(int weaponId)
 	case WP_MORTAR2_SET:
 	case WP_MOBILE_BROWNING_SET:
 	case WP_BAR_SET:
+#endif
+#ifdef LEGACY
+	case WP_MOBILE_BROWNING_SET:
 #endif
 	case WP_MOBILE_MG42_SET:
 		return qfalse;

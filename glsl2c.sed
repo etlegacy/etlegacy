@@ -13,8 +13,7 @@
 }
 
 #1 iconst char *charName =	# the name of the string
-$ a\;
-s/\x1b\[.\{1,5\}m//g
+s/\x1b\[.\{1,5\}m//g		# remove possible control chars
 /^M/d						# remove carriage return
 s/\r//						# remove carriage return
 /^[ \t]*$/d					# remove empty lines
@@ -26,3 +25,4 @@ s/\t/\\t/g					# converts tabs to \t
 s/  /\\t/g					# converts tabs to \t
 s/^/"/						# adds quotation mark to the beginning of a line
 s/$/\\n"/					# adds \n and a quotation mark to the end of a line
+$s/$/;/						# add ; to the last line to finnish the variable value

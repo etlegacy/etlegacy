@@ -812,7 +812,7 @@ ui/assets/mp_wrench_red
 	}
 }
 
-// KA-BAR  shaders
+// KA-BAR
 models/weapons2/knife_kbar/knife_yd
 {
 	{
@@ -829,5 +829,523 @@ models/weapons2/knife_kbar/knife_yd
 		map models/weapons2/knife_kbar/knife_yd.jpg
 		blendFunc GL_ONE GL_ONE
 		rgbGen lightingdiffuse
+	}
+}
+
+// Mobile Browning .30 cal MG
+models/weapons2/browning/browning
+{
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+	}
+	{
+		map models/multiplayer/browning/browning.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+	}
+}
+
+models/weapons2/browning/biped
+{
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+	}
+	{
+		map models/weapons2/browning/biped.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+	}
+}
+
+models/weapons2/browning/barrel
+{
+	cull none
+	{
+		map models/multiplayer/browning/barrel.tga
+		rgbGen const ( 0 0 0 ) 
+		alphaFunc GE128
+		depthWrite
+	}
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+		depthFunc equal
+	}
+	{
+		map models/multiplayer/browning/barrel.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+		depthFunc equal
+	}
+}
+
+//Helmet Ranks//
+models/players/temperate/common/rank1
+{
+	polygonoffset
+
+	{
+		map models/players/temperate/common/rank1.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank2
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank2.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank3
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank3.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank4
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank4.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank5
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank5.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank6
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank6.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank7
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank7.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank8
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank8.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank9
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank9.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank10
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank10.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/rank11
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/rank11.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank1
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank1.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank2
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank2.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank3
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank3.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank4
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank4.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank5
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank5.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank6
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank6.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank7
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank7.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank8
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank8.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank9
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank9.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank10
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank10.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+models/players/temperate/common/xrank11
+{
+	polygonoffset
+	{
+		map models/players/temperate/common/xrank11.tga
+		alphaFunc GE128
+		rgbGen lightingDiffuse
+	}
+}
+
+//HUD Ranks//
+gfx/hud/ranks/rank1
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank1.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank2
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank2.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank3
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank3.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank4
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank4.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank5
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank5.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank6
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank6.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank7
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank7.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank8
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank8.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank9
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank9.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank10
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank10.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/rank11
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/rank11.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+
+gfx/hud/ranks/xrank1
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank1.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank2
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank2.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank3
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank3.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank4
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank4.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank5
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank5.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank6
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank6.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank7
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank7.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank8
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank8.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank9
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank9.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank10
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank10.tga
+		blendfunc blend
+		rgbGen vertex
+	}
+}
+
+gfx/hud/ranks/xrank11
+{
+	nomipmaps
+	nopicmip
+	{
+		map gfx/hud/ranks/xrank11.tga
+		blendfunc blend
+		rgbGen vertex
 	}
 }

@@ -57,7 +57,7 @@
 #if defined(WIN32)
 #include <GL/wglew.h>
 #else
-#ifndef HAVE_GLES
+#if !defined(HAVE_GLES) && !defined(__AROS__)
 #include <GL/glxew.h>
 #endif
 #endif
@@ -224,14 +224,15 @@ void GLimp_Minimize(void)
 	SDL_MinimizeWindow(screen);
 }
 
-/*
-===============
-GLimp_LogComment
-===============
-*/
-void GLimp_LogComment(char *comment)
+/**
+ * @brief Logs OpenGL commands when com_developer cvar is enabled
+ */
+void GLimp_LogComment(const char *comment)
 {
-	// FIXME
+	//if (com_developer->integer)
+	//{
+	//	Com_Printf("%s", comment);
+	//}
 }
 
 static int GLimp_CompareModes(const void *a, const void *b)

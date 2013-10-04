@@ -7,6 +7,10 @@
 #include <winnt.h>
 #endif
 
+#ifdef __AROS__
+#include <proto/locale.h>
+#endif
+
 #include "i18n_findlocale.h"
 
 static int is_lcchar(const int c)
@@ -448,6 +452,80 @@ static const int lcid_to_fl(LCID lcid, FL_Locale *rtn)
 }
 #endif
 
+#ifdef __AROS__
+typedef struct
+{
+	char *langstr;
+	char *code;
+} LocaleToCode;
+
+LocaleToCode LocaleConvTab[] =
+{
+	{ "català",     "ca" }, // Catalan
+	{ "czech",      "cz" }, // French
+	{ "dansk",      "da" }, // Danish
+	{ "deutsch",    "de" }, // German
+	{ "español",    "es" }, // Spanish
+	{ "esperanto",  "eo" }, // Esperanto
+	{ "français",   "fr" }, // French
+	{ "hrvatski",   "hr" }, // Croatian
+	{ "ellinikí",   "el" }, // Greek
+	{ "íslenska",   "is" }, // Icelandic
+	{ "italiano",   "it" }, // Italian
+	{ "magyar",     "hu" }, // Hungarian <3
+	{ "malti",      "mt" }, // Maltese
+	{ "nederlands", "nl" }, // Dutch
+	{ "norsk",      "no" }, // Norwegian Nynorsk
+	{ "polski",     "pl" }, // Polish
+	{ "português",  "pt" }, // Portuguese
+	{ "russian",    "ru" }, // Russian
+	{ "shqipja",    "sq" }, // Albanian
+	{ "svenska",    "sv" }, // Swedish
+	{ "suomi",      "fi" }, // Finnish
+	{ "thai",       "th" }, // Thai
+	{ "türkçe",     "tr" }, // Turkish
+	{ 0,            0    }
+};
+
+static int amiga_locale(FL_Locale *rtn)
+{
+	struct Locale *deflocale;
+	char          *localestr = NULL;
+
+	if ((deflocale = OpenLocale(NULL)))
+	{
+		int i = 0;
+		while (!localestr && (i < 10) && deflocale->loc_PrefLanguages[i])
+		{
+			LocaleToCode *lcptr = LocaleConvTab;
+
+			while (lcptr->langstr)
+			{
+				if (!StrnCmp(deflocale, lcptr->langstr, deflocale->loc_PrefLanguages[i], -1, SC_ASCII))
+				{
+					break;
+				}
+
+				lcptr++;
+			}
+
+			localestr = lcptr->code;
+
+			i++;
+		}
+		CloseLocale(deflocale);
+	}
+
+	if (localestr)
+	{
+		accumulate_locstring(localestr, rtn);
+		return 1;
+	}
+
+	return 0;
+}
+#endif
+
 FL_Success FL_FindLocale(FL_Locale **locale)
 {
 	FL_Success success = FL_FAILED;
@@ -468,6 +546,21 @@ FL_Success FL_FindLocale(FL_Locale **locale)
 		if (success == FL_FAILED)
 		{
 			// assume US English on mswindows systems unless we know otherwise
+			if (accumulate_locstring("en_US.ISO_8859-1", rtn))
+			{
+				success = FL_DEFAULT_GUESS;
+			}
+		}
+	}
+#elif defined(__AROS__)
+	{
+		if (amiga_locale(rtn))
+		{
+			success = FL_CONFIDENT;
+		}
+		if (success == FL_FAILED)
+		{
+			// assume US English on AROS systems unless we know otherwise
 			if (accumulate_locstring("en_US.ISO_8859-1", rtn))
 			{
 				success = FL_DEFAULT_GUESS;

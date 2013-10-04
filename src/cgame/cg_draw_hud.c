@@ -646,7 +646,7 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 		}
 	}
 
-	CG_DrawPlayerHead(headRect, character, headcharacter, 180, 0, cg.snap->ps.eFlags & EF_HEADSHOT ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse);
+	CG_DrawPlayerHead(headRect, character, headcharacter, 180, 0, cg.snap->ps.eFlags & EF_HEADSHOT ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse, cgs.clientinfo[cg.snap->ps.clientNum].team);
 }
 
 static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
@@ -706,8 +706,10 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		break;
 	}
 
+
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK))
 	{
+		// FIXME: browning? there is Jagdpanther using the browning?
 		return WP_MOBILE_MG42;
 	}
 
@@ -858,6 +860,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	vec4_t   color;
 
 	// Draw power bar
+	// FIXME: do a switch
 	if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 	{
 		chargeTime = cg.engineerChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];

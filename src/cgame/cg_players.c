@@ -312,7 +312,7 @@ void CG_NewClientInfo(int clientNum)
 
 			CG_SoundPlaySoundScript(cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES ? rankSoundNames_Allies[newInfo.rank] : rankSoundNames_Axis[newInfo.rank], NULL, -1, qtrue);
 
-			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][0].shader);
+			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
 		// Make sure primary class and primary weapons are correct for
@@ -2176,7 +2176,7 @@ void CG_Player(centity_t *cent)
 	refEntity_t    acc;
 	vec3_t         playerOrigin = { 0 }, lightorigin = { 0 };
 	int            clientNum, i;
-	int            renderfx;
+	int            renderfx, rank, team;
 	qboolean       shadow      = qfalse; // gjd added to make sure it was initialized;
 	float          shadowPlane = 0;
 	qboolean       usingBinocs = qfalse;
@@ -2566,6 +2566,17 @@ void CG_Player(centity_t *cent)
 		CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
 	}
 
+	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+	{
+		rank = ci->disguiseRank;
+		team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+	}
+	else
+	{
+		rank = ci->rank;
+		team = ci->team;
+	}
+
 	// add accessories
 	for (i = ACC_BELT_LEFT; i < ACC_MAX; i++)
 	{
@@ -2609,7 +2620,7 @@ void CG_Player(centity_t *cent)
 					{
 						continue;
 					}
-					acc.customShader = rankicons[ci->rank][1].shader;
+					acc.customShader = rankicons[rank][team == TEAM_AXIS ? 1 : 0][1].shader;
 				}
 
 				CG_PositionEntityOnTag(&acc, &head, "tag_mouth", 0, NULL);
@@ -3247,6 +3258,7 @@ weaponType_t weaponTypes[] =
 	{ WP_FG42,                 "FG42",    },
 	{ WP_GARAND,               "M1 GARAND",},
 	{ WP_MOBILE_MG42,          "MOBILE MG42",},
+	{ WP_MOBILE_BROWNING,      "MOBILE BROWNING",},
 	{ WP_K43,                  "K43",     },
 	{ WP_MORTAR,               "MORTAR",  },
 	{ WP_COLT,                 "COLT",    },

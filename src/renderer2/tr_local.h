@@ -1493,6 +1493,46 @@ typedef enum
 	UNIFORM_COUNT
 } uniform_t;
 
+#ifdef RENDERER2C
+typedef enum
+{
+	PROG_GENERICSHADER = 0,
+	PROG_LIGHTMAPPINGSHADER,
+	PROG_VERTEXLIGHTINGSHADER_DBS_ENTITY,
+	PROG_VERTEXLIGHTINGSHADER_DBS_WORLD,
+	PROG_FORWARDLIGHTINGSHADER_OMNIXYZ,
+	PROG_FORWARDLIGHTINGSHADER_PROJXYZ,
+	PROG_FORWARDLIGHTINGSHADER_DIRECTIONALSUN,
+	PROG_DEFERREDLIGHTINGSHADER_OMNIXYZ,
+	PROG_DEFERREDLIGHTINGSHADER_PROJXYZ,
+	PROG_DEFERREDLIGHTINGSHADER_DIRECTIONALSUN,
+	PROG_GEOMETRICFILLSHADER,
+	PROG_SHADOWFILLSHADER,
+	PROG_REFLECTIONSHADER,
+	PROG_SKYBOXSHADER,
+	PROG_FOGQUAKE3SHADER,
+	PROG_FOGGLOBALSHADER,
+	PROG_HEATHAZESHADER,
+	PROG_SCREENSHADER,
+	PROG_PORTALSHADER,
+	PROG_TONEMAPPINGSHADER,
+	PROG_CONTRASTSHADER,
+	PROG_CAMERAEFFECTSSHADER,
+	PROG_BLURXSHADER,
+	PROG_BLURYSHADER,
+	PROG_DEBUGSHADOWMAPSHADER,
+	PROG_LIQUIDSHADER,
+	PROG_ROTOSCOPESHADER,
+	PROG_BLOOMSHADER,
+	PROG_REFRACTIONSHADER,
+	PROG_DEPTHTOCOLORSHADER,
+	PROG_VOLUMETRICFOGSHADER,
+	PROG_VOLUMETRICLIGHTINGSHADER,
+	PROG_DISPERSIONSHADER,
+	PROG_NUMOF
+}program_t;
+#endif
+
 // Tr3B - shaderProgram_t represents a pair of one
 // GLSL vertex and one GLSL fragment shader
 
@@ -3183,45 +3223,6 @@ typedef struct
 
 #endif // GLSL_COMPILE_STARTUP_ONLY
 
-#ifdef RENDERER2C
-	//
-	// GPU shader programs
-	//
-	shaderProgramList_t gl_genericShader;
-	shaderProgramList_t gl_lightMappingShader;
-	shaderProgramList_t gl_vertexLightingShader_DBS_entity;
-	shaderProgramList_t gl_vertexLightingShader_DBS_world;
-	shaderProgramList_t gl_forwardLightingShader_omniXYZ;
-	shaderProgramList_t gl_forwardLightingShader_projXYZ;
-	shaderProgramList_t gl_forwardLightingShader_directionalSun;
-	shaderProgramList_t gl_deferredLightingShader_omniXYZ;
-	shaderProgramList_t gl_deferredLightingShader_projXYZ;
-	shaderProgramList_t gl_deferredLightingShader_directionalSun;
-	shaderProgramList_t gl_geometricFillShader;
-	shaderProgramList_t gl_shadowFillShader;
-	shaderProgramList_t gl_reflectionShader;
-	shaderProgramList_t gl_skyboxShader;
-	shaderProgramList_t gl_fogQuake3Shader;
-	shaderProgramList_t gl_fogGlobalShader;
-	shaderProgramList_t gl_heatHazeShader;
-	shaderProgramList_t gl_screenShader;
-	shaderProgramList_t gl_portalShader;
-	shaderProgramList_t gl_toneMappingShader;
-	shaderProgramList_t gl_contrastShader;
-	shaderProgramList_t gl_cameraEffectsShader;
-	shaderProgramList_t gl_blurXShader;
-	shaderProgramList_t gl_blurYShader;
-	shaderProgramList_t gl_debugShadowMapShader;
-	shaderProgramList_t gl_liquidShader;
-	shaderProgramList_t gl_rotoscopeShader;
-	shaderProgramList_t gl_bloomShader;
-	shaderProgramList_t gl_refractionShader;
-	shaderProgramList_t gl_depthToColorShader;
-	shaderProgramList_t gl_volumetricFogShader;
-	shaderProgramList_t gl_volumetricLightingShader;
-	shaderProgramList_t gl_dispersionShader;
-#endif // RENDERER2C
-
 
 	// -----------------------------------------
 
@@ -4409,8 +4410,6 @@ typedef struct
 } backEndData_t;
 
 extern backEndData_t *backEndData[SMP_FRAMES];  // the second one may not be allocated
-
-extern volatile renderCommandList_t *renderCommandList;
 
 extern volatile qboolean renderThreadActive;
 

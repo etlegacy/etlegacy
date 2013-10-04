@@ -587,8 +587,8 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case TRAP_SQRT:
 		return FloatAsInt(sqrt(VMF(1)));
 
-	case TRAP_MATRIXMULTIPLY:
-		MatrixMultiply(VMA(1), VMA(2), VMA(3));
+	case TRAP_MATRIXMULTIPLY: // never called for real
+		_MatrixMultiply(VMA(1), VMA(2), VMA(3));
 		return 0;
 
 	case TRAP_ANGLEVECTORS:

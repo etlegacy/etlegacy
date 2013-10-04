@@ -105,7 +105,6 @@ void R_Fog(glfog_t *curfog)
 	if (r_zfar->value)                 // allow override for helping level designers test fog distances
 	{
 		qglFogf(GL_FOG_END, r_zfar->value);
-
 	}
 	else
 	{
@@ -1434,7 +1433,7 @@ DRAWSURF SORTING
 R_Radix
 ===============
 */
-static ID_NONSTATIC_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t *dest)
+static ID_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t *dest)
 {
 	int           count[256] = { 0 };
 	int           index[256];
@@ -1641,7 +1640,6 @@ void R_AddEntitySurfaces(void)
 			shader = R_GetShaderByHandle(ent->e.customShader);
 			R_AddDrawSurf(&entitySurface, shader, R_SpriteFogNum(ent), 0, 0);
 			break;
-
 		case RT_MODEL:
 			// we must set up parts of tr.or for model culling
 			R_RotateForEntity(ent, &tr.viewParms, &tr.orientation);

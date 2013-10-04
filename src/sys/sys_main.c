@@ -82,15 +82,10 @@ Sys_SetBinaryPath
 void Sys_SetBinaryPath(const char *path)
 {
 #ifdef __AROS__
-	if (!strcmp(path, "."))
-	{
-		NameFromLock(GetProgramDir(), binaryPath, sizeof(binaryPath));
-	}
-	else
+	NameFromLock(GetProgramDir(), binaryPath, sizeof(binaryPath));
+#else
+	Q_strncpyz(binaryPath, path, sizeof(binaryPath));
 #endif
-	{
-		Q_strncpyz(binaryPath, path, sizeof(binaryPath));
-	}
 }
 
 /*

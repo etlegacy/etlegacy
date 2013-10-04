@@ -797,7 +797,6 @@ G_Script_GetEventIndex
 int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
 {
 	int i, eventNum = -1;
-
 	int hash = BG_StringHashValue_Lwr(eventStr);
 
 	// find out which event this is

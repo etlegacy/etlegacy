@@ -2,13 +2,14 @@
 # ET: Legacy Makefile for AROS
 #
 
-ETLEGACY_VERSION = 2.71rc1
+ETLEGACY_VERSION = 2.71rc2
 
 BUILD_CLIENT = 1
 BUILD_SERVER = 0
 BUILD_GAME_SO = 1
 
 CC = gcc
+CXX = g++
 MKDIR = mkdir
 
 CLIENT_NAME = etl
@@ -25,15 +26,18 @@ ifeq ($(ARCH),powerpc64)
 endif
 
 MOUNT_DIR = src
+LIBS_DIR = libs
 BUILD_DIR = build
 
 GENERATE_DEPENDENCIES = 1
 
+FEATURE_CURL = 1
+FEATURE_OGG_VORBIS = 1
 FEATURE_OPENAL = 0
 FEATURE_FREETYPE = 0
-FEATURE_TRACKBASE = 1
-FEATURE_OGG_VORBIS = 1
+FEATURE_TRACKER = 0
 FEATURE_PUREHACK = 1
+FEATURE_GETTEXT = 1
 
 #############################################################################
 
@@ -41,7 +45,8 @@ BD = $(BUILD_DIR)/debug-$(PLATFORM)-$(ARCH)
 BR = $(BUILD_DIR)/release-$(PLATFORM)-$(ARCH)
 CDIR = $(MOUNT_DIR)/client
 SDIR = $(MOUNT_DIR)/server
-RDIR =  $(MOUNT_DIR)/renderer
+RDIR = $(MOUNT_DIR)/renderer
+RCDIR = $(MOUNT_DIR)/renderercommon
 CMDIR = $(MOUNT_DIR)/qcommon
 SDLDIR = $(MOUNT_DIR)/sdl
 SYSDIR = $(MOUNT_DIR)/sys
@@ -50,6 +55,7 @@ CGDIR = $(MOUNT_DIR)/cgame
 BLIBDIR = $(MOUNT_DIR)/botlib
 NDIR = $(MOUNT_DIR)/null
 UIDIR = $(MOUNT_DIR)/ui
+TGTDIR = $(LIBS_DIR)/tinygettext
 
 #############################################################################
 # SETUP AND BUILD -- AROS
@@ -72,9 +78,9 @@ ifeq ($(FEATURE_FREETYPE),1)
 	CLIENT_CFLAGS += -DFEATURE_FREETYPE
 endif
 
-ifeq ($(FEATURE_TRACKBASE),1)
-	CLIENT_CFLAGS += -DFEATURE_TRACKBASE
-	SERVER_CFLAGS += -DFEATURE_TRACKBASE
+ifeq ($(FEATURE_TRACKER),1)
+	CLIENT_CFLAGS += -DFEATURE_TRACKER
+	SERVER_CFLAGS += -DFEATURE_TRACKER
 endif
 
 ifeq ($(FEATURE_PUREHACK),1)
@@ -82,7 +88,11 @@ ifeq ($(FEATURE_PUREHACK),1)
 	SERVER_CFLAGS += -DFEATURE_PUREHACK
 endif
 
-DEBUG_CFLAGS = -g -O0
+ifeq ($(FEATURE_GETTEXT),1)
+	CLIENT_CFLAGS += -DFEATURE_GETTEXT
+endif
+
+DEBUG_CFLAGS = -g -O0 -D_DEBUG
 OPTIMIZEVM = -O2 -funroll-loops -fomit-frame-pointer
 OPTIMIZE = $(OPTIMIZEVM) -ffast-math
 
@@ -92,7 +102,7 @@ SHLIBLDFLAGS = $(LDFLAGS)
 
 LIBS = -ldll
 
-CLIENT_LIBS = $(shell sdl-config --libs) -ljpeg 
+CLIENT_LIBS = -lglew $(shell sdl-config --libs)
 
 ifeq ($(FEATURE_OPENAL),1)
 	CLIENT_LIBS += -lopenal
@@ -106,7 +116,15 @@ ifeq ($(FEATURE_FREETYPE),1)
 	CLIENT_LIBS += -lfreetype2
 endif
 
-CLIENT_LIBS += -lcurl -lssl -lcrypto -lz
+ifeq ($(FEATURE_CURL),1)
+	CLIENT_LIBS += -lcurl -lssl -lcrypto
+endif
+
+ifeq ($(FEATURE_GETTEXT),1)
+	CLIENT_LIBS += -liconv
+endif
+
+CLIENT_LIBS += -ljpeg -lz
 
 SHLIBNAME=_mp_aros_$(ARCH).$(SHLIBEXT)
 
@@ -144,6 +162,11 @@ endif
 define DO_CC
 $(echo_cmd) "CC $<"
 $(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -o $@ -c $<
+endef
+
+define DO_CXX
+$(echo_cmd) "CXX $<"
+$(Q)$(CXX) $(NOTSHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -o $@ -c $<
 endef
 
 define DO_BOT_CC
@@ -294,7 +317,6 @@ Q3OBJ = \
 	$(B)/client/cmd.o \
 	$(B)/client/common.o \
 	$(B)/client/cvar.o \
-	$(B)/client/dl_main_curl.o \
 	$(B)/client/files.o \
 	$(B)/client/md4.o \
 	$(B)/client/md5.o \
@@ -319,17 +341,19 @@ Q3OBJ = \
 	$(B)/client/sv_bot.o \
 	$(B)/client/sv_ccmds.o \
 	$(B)/client/sv_client.o \
+	$(B)/client/sv_demo.o \
 	$(B)/client/sv_game.o \
 	$(B)/client/sv_init.o \
 	$(B)/client/sv_main.o \
 	$(B)/client/sv_net_chan.o \
 	$(B)/client/sv_snapshot.o \
-	$(B)/client/sv_trackbase.o \
+	$(B)/client/sv_tracker.o \
 	$(B)/client/sv_world.o \
 	\
 	$(B)/client/q_math.o \
 	$(B)/client/q_shared.o \
 	\
+	$(B)/client/ioapi.o \
 	$(B)/client/unzip.o \
 	$(B)/client/vm.o \
 	$(B)/client/vm_interpreted.o \
@@ -384,10 +408,30 @@ Q3OBJ = \
 	$(B)/client/sys_unix.o \
 	$(B)/client/con_passive.o
 
+ifeq ($(FEATURE_CURL),1)
+	Q3OBJ += $(B)/client/dl_main_curl.o
+else
+	Q3OBJ += $(B)/client/dl_main_stubs.o
+endif
+
+ifeq ($(FEATURE_GETTEXT),1)
+	Q3OBJ += \
+		$(B)/client/i18n_main.o \
+		$(B)/client/i18n_findlocale.o \
+		$(B)/client/iconv.o \
+		$(B)/client/tinygettext.o \
+		$(B)/client/dictionary.o \
+		$(B)/client/dictionary_manager.o \
+		$(B)/client/language.o \
+		$(B)/client/log.o \
+		$(B)/client/plural_forms.o \
+		$(B)/client/po_parser.o
+endif
+
 $(B)/$(CLIENT_NAME)$(FULLBINEXT): $(Q3OBJ) $(Q3POBJ)
 	$(echo_cmd) "LD $@"
-	$(echo_cmd) "$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) -o $@ $(Q3OBJ) $(Q3POBJ) $(CLIENT_LIBS) $(LIBS)"
-	$(Q)$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) \
+	$(echo_cmd) "$(CXX) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) -o $@ $(Q3OBJ) $(Q3POBJ) $(CLIENT_LIBS) $(LIBS)"
+	$(Q)$(CXX) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) \
 		-o $@ $(Q3OBJ) $(Q3POBJ) \
 		$(CLIENT_LIBS) $(LIBS)
 	$(Q)$(STRIP) --strip-unneeded $@
@@ -405,7 +449,7 @@ Q3DOBJ = \
 	$(B)/ded/sv_main.o \
 	$(B)/ded/sv_net_chan.o \
 	$(B)/ded/sv_snapshot.o \
-	$(B)/ded/sv_trackbase.o \
+	$(B)/ded/sv_tracker.o \
 	$(B)/ded/sv_world.o \
 	\
 	$(B)/ded/cm_load.o \
@@ -478,6 +522,7 @@ Q3CGOBJ_ = \
 	$(B)/$(MODNAME)/cgame/cg_consolecmds.o \
 	$(B)/$(MODNAME)/cgame/cg_debriefing.o \
 	$(B)/$(MODNAME)/cgame/cg_draw.o \
+	$(B)/$(MODNAME)/cgame/cg_draw_hud.o \
 	$(B)/$(MODNAME)/cgame/cg_drawtools.o \
 	$(B)/$(MODNAME)/cgame/cg_effects.o \
 	$(B)/$(MODNAME)/cgame/cg_ents.o \
@@ -537,6 +582,7 @@ Q3GOBJ_ = \
 	$(B)/$(MODNAME)/game/bg_stats.o \
 	$(B)/$(MODNAME)/game/bg_tracemap.o \
 	$(B)/$(MODNAME)/game/et-antiwarp.o \
+	$(B)/$(MODNAME)/game/geoip.o \
 	$(B)/$(MODNAME)/game/g_active.o \
 	$(B)/$(MODNAME)/game/g_alarm.o \
 	$(B)/$(MODNAME)/game/g_antilag.o \
@@ -619,10 +665,16 @@ $(B)/client/%.o: $(SDIR)/%.c
 $(B)/client/%.o: $(CMDIR)/%.c
 	$(DO_CC)
 
+$(B)/client/%.o: $(CMDIR)/%.cpp
+	$(DO_CXX)
+
 $(B)/client/%.o: $(BLIBDIR)/%.c
 	$(DO_BOT_CC)
 
 $(B)/client/%.o: $(RDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(RCDIR)/%.c
 	$(DO_CC)
 
 $(B)/client/%.o: $(SDLDIR)/%.c
@@ -634,8 +686,8 @@ $(B)/client/%.o: $(GDIR)/%.c
 $(B)/client/%.o: $(SYSDIR)/%.c
 	$(DO_CC)
 
-$(B)/client/%.o: $(SYSDIR)/%.m
-	$(DO_CC)
+$(B)/client/%.o: $(TGTDIR)/%.cpp
+	$(DO_CXX)
 
 $(B)/ded/%.o: $(SDIR)/%.c
 	$(DO_DED_CC)
@@ -647,9 +699,6 @@ $(B)/ded/%.o: $(BLIBDIR)/%.c
 	$(DO_BOT_CC)
 
 $(B)/ded/%.o: $(SYSDIR)/%.c
-	$(DO_DED_CC)
-
-$(B)/ded/%.o: $(SYSDIR)/%.m
 	$(DO_DED_CC)
 
 $(B)/ded/%.o: $(NDIR)/%.c
@@ -699,10 +748,10 @@ OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3DOBJ) \
 clean: clean-debug clean-release
 
 clean-debug:
-	@$(MAKE) clean2 B=$(BD)
+	@$(MAKE) -f Makefile.aros clean2 B=$(BD)
 
 clean-release:
-	@$(MAKE) clean2 B=$(BR)
+	@$(MAKE) -f Makefile.aros clean2 B=$(BR)
 
 clean2:
 	@echo "CLEAN $(B)"

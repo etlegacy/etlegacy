@@ -130,6 +130,54 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_PrimaryLightRadius",        GLSL_FLOAT  }
 };
 
+typedef struct programInfo_s
+{
+	char *name;
+	char *filename;
+	int macros[MAX_MACROS];
+	int numMacros;
+	char *extraMacros;
+	char *vertexLibraries;
+	char *fragmentLibraries;
+	shaderProgramList_t *list;
+}programInfo_t;
+
+static programInfo_t programsInfo[] =
+{
+	{ "generic",                         "generic",                   { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_TCGEN_ENVIRONMENT, USE_TCGEN_LIGHTMAP      }, 7, NULL,                         "vertexSkinning vertexAnimation deformVertexes", NULL,            NULL },
+	{ "lightMapping",                    "lightMapping",              { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_DEFORM_VERTEXES,  USE_NORMAL_MAPPING,   USE_PARALLAX_MAPPING },5,                     "TWOSIDED", "deformVertexes", "reliefMapping", NULL},
+	{ "vertexLighting_DBS_entity",       "vertexLighting_DBS_entity", { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_REFLECTIVE_SPECULAR}, 8, "TWOSIDED",                   "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
+	{ "vertexLighting_DBS_world",        "vertexLighting_DBS_world",  { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_DEFORM_VERTEXES,  USE_NORMAL_MAPPING,   USE_PARALLAX_MAPPING },5,                     "TWOSIDED", "deformVertexes", "reliefMapping", NULL},
+	{ "forwardLighting_omniXYZ",         "forwardLighting",           { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_SHADOWING}, 8, "TWOSIDED",                   "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
+	{ "forwardLighting_projXYZ",         "forwardLighting",           { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_SHADOWING}, 8, "LIGHT_PROJ TWOSIDED",        "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
+	{ "forwardLighting_directionalSun",  "forwardLighting",           { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_SHADOWING}, 8, "LIGHT_DIRECTIONAL TWOSIDED", "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
+	{ "deferredLighting_omniXYZ",        "deferredLighting",          { USE_PORTAL_CLIPPING, USE_FRUSTUM_CLIPPING, USE_NORMAL_MAPPING,   USE_SHADOWING },      4,                   NULL,                  NULL, NULL, NULL        },
+	{ "deferredLighting_projXYZ",        "deferredLighting",          { USE_PORTAL_CLIPPING, USE_FRUSTUM_CLIPPING, USE_NORMAL_MAPPING,   USE_SHADOWING },      4,                   "LIGHT_PROJ",          NULL, NULL, NULL        },
+	{ "deferredLighting_directionalSun", "deferredLighting",          { USE_PORTAL_CLIPPING, USE_FRUSTUM_CLIPPING, USE_NORMAL_MAPPING,   USE_SHADOWING },      4,                   "LIGHT_DIRECTIONAL",   NULL, NULL, NULL        },
+	{ "geometricFill",                   "geometricFill",             { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_PARALLAX_MAPPING,  USE_REFLECTIVE_SPECULAR }, 7, "TWOSIDED",                   "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
+	{ "shadowFill",                      "shadowFill",                { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, LIGHT_DIRECTIONAL },   6, NULL, "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
+	{ "reflection",                      "reflection_CB",             { USE_PORTAL_CLIPPING, USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES,  USE_NORMAL_MAPPING },5,                     "TWOSIDED", "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
+	{ "skybox",                          "skybox",                    { USE_PORTAL_CLIPPING },1,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "fogQuake3",                       "fogQuake3",                 { USE_PORTAL_CLIPPING, USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES,  EYE_OUTSIDE },       5,                     NULL, "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
+	{ "fogGlobal",                       "fogGlobal",                 { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "heatHaze",                        "heatHaze",                  { USE_PORTAL_CLIPPING, USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES },4,                   NULL,                  "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
+	{ "screen",                          "screen",                    { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "portal",                          "portal",                    { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "toneMapping",                     "toneMapping",               { BRIGHTPASS_FILTER }, 1,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "contrast",                        "contrast",                  { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "cameraEffects",                   "cameraEffects",             { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "blurX",                           "blurX",                     { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "blurY",                           "blurY",                     { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "debugShadowMap",                  "debugShadowMap",            { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "liquid",                          "liquid",                    { USE_PARALLAX_MAPPING },1,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "rotoscope",                       "rotoscope",                 { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "bloom",                           "bloom",                     { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "refraction",                      "refraction_C",              { USE_VERTEX_SKINNING },1,                    NULL,                 "vertexSkinning",     NULL,                NULL },
+	{ "depthToColor",                    "depthToColor",              { USE_VERTEX_SKINNING },1,                    NULL,                 "vertexSkinning",     NULL,                NULL },
+	{ "volumetricFog",                   "volumetricFog",             { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "lightVolume_omni",                "lightVolume_omni",          { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
+	{ "dispersion",                      "dispersion_C",              { USE_VERTEX_SKINNING },1,                    NULL,                 NULL,                 NULL,                NULL }
+};
 
 static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 {

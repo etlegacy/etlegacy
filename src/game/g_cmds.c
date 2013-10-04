@@ -1514,6 +1514,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		}
 		break;
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING:
 		maxCount = team_maxMg42s.integer;
 		if (maxCount == -1)
 		{
@@ -1531,7 +1532,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		{
 			if (ent->client->ps.pm_flags & PMF_LIMBO)
 			{
-				CP("cp \"^1*^3 MG42 not available!^1 *\" 1");
+				CP("cp \"^1*^3 MACHINE GUN not available!^1 *\" 1");
 			}
 			return qtrue;
 		}
@@ -3607,7 +3608,7 @@ void Cmd_Activate_f(gentity_t *ent)
 		return;
 	}
 
-	if (ent->s.weapon == WP_MORTAR_SET || ent->s.weapon == WP_MOBILE_MG42_SET)
+	if (ent->s.weapon == WP_MORTAR_SET || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -3788,7 +3789,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 		return;
 	}
 
-	if (ent->s.weapon == WP_MORTAR_SET || ent->s.weapon == WP_MOBILE_MG42_SET)
+	if (ent->s.weapon == WP_MORTAR_SET || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}

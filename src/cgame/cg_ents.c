@@ -2884,8 +2884,6 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 
 	if (tank->tankframe != cg.clientFrame)
 	{
-		int i;
-
 		tank->tankframe = cg.clientFrame;
 
 		memset(&ent, 0, sizeof(refEntity_t));
@@ -2912,14 +2910,28 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 		VectorCopy(playerangles, angles);
 		angles[PITCH] = 0;
 
-		for (i = 0; i < MAX_CLIENTS; i++)
+		// kw: thirdperson tank bugfix
+		if (cg.snap->ps.eFlags & EF_MOUNTEDTANK
+		    && cg_entities[cg.snap->ps.clientNum].tagParent
+		    == tank - cg_entities)
 		{
-			// is this entity mounted on a tank, and attached to _OUR_ turret entity (which could be us)
-			if (cg_entities[i].currentValid && (cg_entities[i].currentState.eFlags & EF_MOUNTEDTANK) && cg_entities[i].tagParent == tank - cg_entities)
+
+			angles[YAW]   -= tank->lerpAngles[YAW];
+			angles[PITCH] -= tank->lerpAngles[PITCH];
+		}
+		else
+		{
+			int i;
+
+			for (i = 0; i < MAX_CLIENTS; i++)
 			{
-				angles[YAW]   -= tank->lerpAngles[YAW];
-				angles[PITCH] -= tank->lerpAngles[PITCH];
-				break;
+				// is this entity mounted on a tank, and attached to _OUR_ turret entity (which could be us)
+				if (cg_entities[i].currentValid && (cg_entities[i].currentState.eFlags & EF_MOUNTEDTANK) && cg_entities[i].tagParent == tank - cg_entities)
+				{
+					angles[YAW]   -= tank->lerpAngles[YAW];
+					angles[PITCH] -= tank->lerpAngles[PITCH];
+					break;
+				}
 			}
 		}
 

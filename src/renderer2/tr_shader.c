@@ -194,105 +194,52 @@ static qboolean ParseVector(char **text, int count, float *v)
 
 const opstring_t opStrings[] =
 {
-	{ "bad",                OP_BAD                }
-	,
-
-	{ "&&",                 OP_LAND               }
-	,
-	{ "||",                 OP_LOR                }
-	,
-	{ ">=",                 OP_GE                 }
-	,
-	{ "<=",                 OP_LE                 }
-	,
-	{ "==",                 OP_LEQ                }
-	,
-	{ "!=",                 OP_LNE                }
-	,
-
-	{ "+",                  OP_ADD                }
-	,
-	{ "-",                  OP_SUB                }
-	,
-	{ "/",                  OP_DIV                }
-	,
-	{ "%",                  OP_MOD                }
-	,
-	{ "*",                  OP_MUL                }
-	,
-	{ "neg",                OP_NEG                }
-	,
-
-	{ "<",                  OP_LT                 }
-	,
-	{ ">",                  OP_GT                 }
-	,
-
-	{ "(",                  OP_LPAREN             }
-	,
-	{ ")",                  OP_RPAREN             }
-	,
-	{ "[",                  OP_LBRACKET           }
-	,
-	{ "]",                  OP_RBRACKET           }
-	,
-
-	{ "c",                  OP_NUM                }
-	,
-	{ "time",               OP_TIME               }
-	,
-	{ "parm0",              OP_PARM0              }
-	,
-	{ "parm1",              OP_PARM1              }
-	,
-	{ "parm2",              OP_PARM2              }
-	,
-	{ "parm3",              OP_PARM3              }
-	,
-	{ "parm4",              OP_PARM4              }
-	,
-	{ "parm5",              OP_PARM5              }
-	,
-	{ "parm6",              OP_PARM6              }
-	,
-	{ "parm7",              OP_PARM7              }
-	,
-	{ "parm8",              OP_PARM8              }
-	,
-	{ "parm9",              OP_PARM9              }
-	,
-	{ "parm10",             OP_PARM10             }
-	,
-	{ "parm11",             OP_PARM11             }
-	,
-	{ "global0",            OP_GLOBAL0            }
-	,
-	{ "global1",            OP_GLOBAL1            }
-	,
-	{ "global2",            OP_GLOBAL2            }
-	,
-	{ "global3",            OP_GLOBAL3            }
-	,
-	{ "global4",            OP_GLOBAL4            }
-	,
-	{ "global5",            OP_GLOBAL5            }
-	,
-	{ "global6",            OP_GLOBAL6            }
-	,
-	{ "global7",            OP_GLOBAL7            }
-	,
-	{ "fragmentShaders",    OP_FRAGMENTSHADERS    }
-	,
-	{ "frameBufferObjects", OP_FRAMEBUFFEROBJECTS }
-	,
-	{ "sound",              OP_SOUND              }
-	,
-	{ "distance",           OP_DISTANCE           }
-	,
-
-	{ "table",              OP_TABLE              }
-	,
-
+	{ "bad",                OP_BAD                },
+	{ "&&",                 OP_LAND               },
+	{ "||",                 OP_LOR                },
+	{ ">=",                 OP_GE                 },
+	{ "<=",                 OP_LE                 },
+	{ "==",                 OP_LEQ                },
+	{ "!=",                 OP_LNE                },
+	{ "+",                  OP_ADD                },
+	{ "-",                  OP_SUB                },
+	{ "/",                  OP_DIV                },
+	{ "%",                  OP_MOD                },
+	{ "*",                  OP_MUL                },
+	{ "neg",                OP_NEG                },
+	{ "<",                  OP_LT                 },
+	{ ">",                  OP_GT                 },
+	{ "(",                  OP_LPAREN             },
+	{ ")",                  OP_RPAREN             },
+	{ "[",                  OP_LBRACKET           },
+	{ "]",                  OP_RBRACKET           },
+	{ "c",                  OP_NUM                },
+	{ "time",               OP_TIME               },
+	{ "parm0",              OP_PARM0              },
+	{ "parm1",              OP_PARM1              },
+	{ "parm2",              OP_PARM2              },
+	{ "parm3",              OP_PARM3              },
+	{ "parm4",              OP_PARM4              },
+	{ "parm5",              OP_PARM5              },
+	{ "parm6",              OP_PARM6              },
+	{ "parm7",              OP_PARM7              },
+	{ "parm8",              OP_PARM8              },
+	{ "parm9",              OP_PARM9              },
+	{ "parm10",             OP_PARM10             },
+	{ "parm11",             OP_PARM11             },
+	{ "global0",            OP_GLOBAL0            },
+	{ "global1",            OP_GLOBAL1            },
+	{ "global2",            OP_GLOBAL2            },
+	{ "global3",            OP_GLOBAL3            },
+	{ "global4",            OP_GLOBAL4            },
+	{ "global5",            OP_GLOBAL5            },
+	{ "global6",            OP_GLOBAL6            },
+	{ "global7",            OP_GLOBAL7            },
+	{ "fragmentShaders",    OP_FRAGMENTSHADERS    },
+	{ "frameBufferObjects", OP_FRAMEBUFFEROBJECTS },
+	{ "sound",              OP_SOUND              },
+	{ "distance",           OP_DISTANCE           },
+	{ "table",              OP_TABLE              },
 	{ NULL,                 OP_BAD                }
 };
 
@@ -369,7 +316,6 @@ static qboolean IsOperand(opcode_t oc)
 	case OP_SOUND:
 	case OP_DISTANCE:
 		return qtrue;
-
 	default:
 		return qfalse;
 	}
@@ -395,7 +341,6 @@ static qboolean IsOperator(opcode_t oc)
 	case OP_GT:
 	case OP_TABLE:
 		return qtrue;
-
 	default:
 		return qfalse;
 	}
@@ -407,35 +352,27 @@ static int GetOpPrecedence(opcode_t oc)
 	{
 	case OP_LOR:
 		return 1;
-
 	case OP_LAND:
 		return 2;
-
 	case OP_LEQ:
 	case OP_LNE:
 		return 3;
-
 	case OP_GE:
 	case OP_LE:
 	case OP_LT:
 	case OP_GT:
 		return 4;
-
 	case OP_ADD:
 	case OP_SUB:
 		return 5;
-
 	case OP_DIV:
 	case OP_MOD:
 	case OP_MUL:
 		return 6;
-
 	case OP_NEG:
 		return 7;
-
 	case OP_TABLE:
 		return 8;
-
 	default:
 		return 0;
 	}
@@ -724,7 +661,6 @@ static void ParseExpression(char **text, expression_t *exp)
 			ri.Printf(PRINT_ALL, "WARNING: unknown token '%s' for arithmetic expression in shader '%s'\n", token,
 			          shader.name);
 			break;
-
 		case OP_LBRACKET:
 			inFixOps[numInFixOps++] = op;
 
@@ -733,7 +669,6 @@ static void ParseExpression(char **text, expression_t *exp)
 			op2.value               = 0;
 			inFixOps[numInFixOps++] = op2;
 			break;
-
 		case OP_RBRACKET:
 			// add extra )
 			op2.type                = OP_RPAREN;
@@ -742,17 +677,14 @@ static void ParseExpression(char **text, expression_t *exp)
 
 			inFixOps[numInFixOps++] = op;
 			break;
-
 		case OP_NUM:
 			op.value                = atof(token);
 			inFixOps[numInFixOps++] = op;
 			break;
-
 		case OP_TABLE:
 			// value already set by GetOpType
 			inFixOps[numInFixOps++] = op;
 			break;
-
 		default:
 			op.value                = 0;
 			inFixOps[numInFixOps++] = op;
@@ -788,11 +720,9 @@ static void ParseExpression(char **text, expression_t *exp)
 		case OP_NUM:
 			ri.Printf(PRINT_ALL, "%f ", op.value);
 			break;
-
 		case OP_TABLE:
 			ri.Printf(PRINT_ALL, "%s ", tr.shaderTables[(int)op.value]->name);
 			break;
-
 		default:
 			ri.Printf(PRINT_ALL, "%s ", opStrings[op.type].s);
 			break;
@@ -902,11 +832,9 @@ static void ParseExpression(char **text, expression_t *exp)
 		case OP_NUM:
 			ri.Printf(PRINT_ALL, "%f ", op.value);
 			break;
-
 		case OP_TABLE:
 			ri.Printf(PRINT_ALL, "%s ", tr.shaderTables[(int)op.value]->name);
 			break;
-
 		default:
 			ri.Printf(PRINT_ALL, "%s ", opStrings[op.type].s);
 			break;
@@ -2499,9 +2427,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "texture") || !Q_stricmp(token, "base"))
 			{
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-				ri.Printf(PRINT_WARNING, "WARNING: texGen texture keyword not supported in shader '%s'\n", shader.name);
-#endif
+				ri.Printf(PRINT_WARNING, "WARNING: texGen texture/base keyword not supported in shader '%s'\n", shader.name);
 			}
 			else if (!Q_stricmp(token, "vector"))
 			{
@@ -4590,13 +4516,11 @@ static void CollapseStages()
 	shaderStage_t tmpSpecularStage;
 	shaderStage_t tmpReflectionStage;
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 	int           idxColorStage;
 	shaderStage_t tmpColorStage;
 
 	int           idxLightmapStage;
 	shaderStage_t tmpLightmapStage;
-#endif
 
 	shader_t tmpShader;
 
@@ -4626,24 +4550,18 @@ static void CollapseStages()
 		Com_Memset(&tmpNormalStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		idxColorStage = -1;
 		Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
 
 		idxLightmapStage = -1;
 		Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
-#endif
 
 		if (!stages[j].active)
 		{
 			continue;
 		}
 
-		if (
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-		    stages[j].type == ST_COLORMAP ||
-#endif
-		    stages[j].type == ST_REFRACTIONMAP ||
+		if (stages[j].type == ST_REFRACTIONMAP ||
 		    stages[j].type == ST_DISPERSIONMAP ||
 		    stages[j].type == ST_SKYBOXMAP ||
 		    stages[j].type == ST_SCREENMAP ||
@@ -4944,8 +4862,7 @@ static void SortNewShader(void)
 		tr.sortedShaders[i + 1]->sortedIndex++;
 	}
 
-	// Arnout: fix rendercommandlist
-	// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=493
+	// fix rendercommandlist
 	FixRenderCommandList(i + 1);
 
 	newShader->sortedIndex  = i + 1;
@@ -5147,7 +5064,6 @@ static shader_t *FinishShader(void)
 		case ST_LIGHTMAP:
 			// skip
 			break;
-
 		case ST_COLORMAP:
 		default:
 		{
@@ -5159,7 +5075,6 @@ static shader_t *FinishShader(void)
 			}
 			break;
 		}
-
 		case ST_DIFFUSEMAP:
 		{
 			if (!shader.isSky)
@@ -5174,7 +5089,6 @@ static shader_t *FinishShader(void)
 			}
 			break;
 		}
-
 		case ST_NORMALMAP:
 		{
 			if (!shader.isSky)
@@ -5189,7 +5103,6 @@ static shader_t *FinishShader(void)
 			}
 			break;
 		}
-
 		case ST_SPECULARMAP:
 		{
 			if (!pStage->bundle[0].image[0])
@@ -5199,7 +5112,6 @@ static shader_t *FinishShader(void)
 			}
 			break;
 		}
-
 		case ST_ATTENUATIONMAP_XY:
 		{
 			if (!pStage->bundle[0].image[0])
@@ -5210,7 +5122,6 @@ static shader_t *FinishShader(void)
 			}
 			break;
 		}
-
 		case ST_ATTENUATIONMAP_Z:
 		{
 			if (!pStage->bundle[0].image[0])
@@ -5492,10 +5403,8 @@ If found, it will return a valid shader
 */
 static char *FindShaderInShaderText(const char *shaderName)
 {
-
 	char *token, *p;
-
-	int i, hash;
+	int  i, hash;
 
 	hash = generateHashValue(shaderName, MAX_SHADERTEXT_HASH);
 
@@ -5745,7 +5654,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		Q_strncpyz(fileName, implicitMap, sizeof(fileName));
 	}
 
-	// ydnar: implicit shaders were breaking nopicmip/nomipmaps
+	// implicit shaders were breaking nopicmip/nomipmaps
 	if (!mipRawImage)
 	{
 		//shader.noMipMaps = qtrue;
@@ -5782,7 +5691,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		stages[0].stateBits          = GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
 		break;
 	}
-
 	case SHADER_3D_DYNAMIC:
 	{
 		// dynamic colors at vertexes
@@ -5793,7 +5701,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		stages[0].stateBits          = implicitStateBits;
 		break;
 	}
-
 	case SHADER_3D_STATIC:
 	{
 		// explicit colors at vertexes
@@ -5804,7 +5711,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		stages[0].stateBits          = implicitStateBits;
 		break;
 	}
-
 	case SHADER_LIGHT:
 	{
 		stages[0].type               = ST_ATTENUATIONMAP_Z;
@@ -5821,7 +5727,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		//stages[1].stateBits |= GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO;
 		break;
 	}
-
 	default:
 		break;
 	}
@@ -6049,15 +5954,12 @@ void R_ShaderList_f(void)
 		case SHADER_2D:
 			ri.Printf(PRINT_ALL, "2D   ");
 			break;
-
 		case SHADER_3D_DYNAMIC:
 			ri.Printf(PRINT_ALL, "3D_D ");
 			break;
-
 		case SHADER_3D_STATIC:
 			ri.Printf(PRINT_ALL, "3D_S ");
 			break;
-
 		case SHADER_LIGHT:
 			ri.Printf(PRINT_ALL, "ATTN ");
 			break;

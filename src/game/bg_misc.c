@@ -125,7 +125,7 @@ int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         }, // empty bank '0'
 	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
 	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,        0,          0,       0,      0,              0         },
-	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST,         WP_FLAMETHROWER,         WP_KAR98, WP_CARBINE, WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MORTAR },
+	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST,         WP_FLAMETHROWER,         WP_KAR98, WP_CARBINE, WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR},
 	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
 	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,                      0,                       0,        0,          0,       0,      0,              0,        },
 	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET,         0,                       0,        0,          0,       0,      0,              0         },
@@ -136,12 +136,13 @@ int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 
 // Using one unified list for which weapons can received ammo
 // This is used both by the ammo pack code and by the bot code to determine if reloads are needed
+// FIXME: weapontable
 int reloadableWeapons[] =
 {
-	WP_MP40,                WP_THOMPSON,             WP_STEN,        WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,
-	WP_KAR98,               WP_CARBINE,              WP_FG42,        WP_K43,          WP_MOBILE_MG42, WP_COLT,
-	WP_LUGER,               WP_MORTAR,               WP_AKIMBO_COLT, WP_AKIMBO_LUGER, WP_M7,          WP_GPG40,
-	WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER,
+	WP_MP40,                WP_THOMPSON,             WP_STEN,            WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,
+	WP_KAR98,               WP_CARBINE,              WP_FG42,            WP_K43,          WP_MOBILE_MG42, WP_COLT,
+	WP_LUGER,               WP_MORTAR,               WP_AKIMBO_COLT,     WP_AKIMBO_LUGER, WP_M7,          WP_GPG40,
+	WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, WP_MOBILE_BROWNING,
 	-1
 };
 
@@ -224,9 +225,12 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_SILENCEDLUGER },                                        // WP_AKIMBO_SILENCEDLUGER  // 46
 	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_MG42          },                                        // WP_MOBILE_MG42_SET       // 47
 	{ 999, 0, 999, 0,  0,   0,    50,           200,  0,    0,   MOD_KNIFE_KABAR          },                                        // WP_KNIFE_KABAR           // 48
+	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_BROWNING      },                                        // WP_MOBILE_BROWNING       // 49
+	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_BROWNING      },                                        // WP_MOBILE_BROWNING_SET   // 50
 };
 
 // moved in here so both games can get to it
+// FIXME: weapontable
 int weapAlts[] =
 {
 	WP_NONE,            // 0 WP_NONE
@@ -284,6 +288,8 @@ int weapAlts[] =
 	WP_NONE,            // 46 WP_AKIMBO_SILENCEDLUGER
 	WP_MOBILE_MG42,     // 47 WP_MOBILE_MG42_SET
 	WP_NONE,            // 48 WP_KNIFE_KABAR
+	WP_MOBILE_BROWNING_SET, // 49 WP_MOBILE_MG42_SET
+	WP_MOBILE_BROWNING,     // 50 WP_MOBILE_MG42_SET
 };
 
 char *animStrings[] =
@@ -1276,9 +1282,9 @@ gitem_t bg_itemlist[] =
 			"models/multiplayer/binocs/v_binocs.md3",
 			"models/multiplayer/binocs/v_binocs.md3",
 			"models/multiplayer/binocs/v_binocs.md3"
-//          "models/multiplayer/ammopack/ammopack.md3",
-//          "models/multiplayer/ammopack/v_ammopack.md3",
-//          "models/multiplayer/ammopack/ammopack_pickup_s.md3"
+			//"models/multiplayer/ammopack/ammopack.md3",
+			//"models/multiplayer/ammopack/v_ammopack.md3",
+			//"models/multiplayer/ammopack/ammopack_pickup_s.md3"
 		},
 		"icons/iconw_ammopack_1",    // icon
 		"icons/ammo2",               // ammo icon
@@ -1712,6 +1718,46 @@ gitem_t bg_itemlist[] =
 		WP_MOBILE_MG42_SET,
 		WP_MOBILE_MG42,
 		WP_MOBILE_MG42,
+		"",                  // precache
+		"",                  // sounds
+	},
+
+	{
+		"weapon_mobile_browning_set",
+		"sound/misc/w_pkup.wav",
+		{
+			"models/weapons2/browning/brown30cal_3rd.md3",
+			"models/weapons2/browning/v_brown30cal.md3",
+			0
+		},
+		"icons/iconw_browning_1",    // icon
+		"icons/ammo2",           // ammo icon
+		"Mobile Browning Bipod",     // pickup
+		30,
+		IT_WEAPON,
+		WP_MOBILE_BROWNING_SET,
+		WP_MOBILE_BROWNING,
+		WP_MOBILE_BROWNING,
+		"",                  // precache
+		"",                  // sounds
+	},
+
+	{
+		"weapon_mobile_browning",
+		"sound/misc/w_pkup.wav",
+		{
+			"models/weapons2/browning/brown30cal_3rd.md3",
+			"models/weapons2/browning/v_brown30cal.md3",
+			0
+		},
+		"icons/iconw_browning_1",    // icon
+		"icons/ammo2",           // ammo icon
+		"Mobile Browning",           // pickup
+		30,
+		IT_WEAPON,
+		WP_MOBILE_BROWNING,
+		WP_MOBILE_BROWNING,
+		WP_MOBILE_BROWNING,
 		"",                  // precache
 		"",                  // sounds
 	},
@@ -2361,15 +2407,14 @@ BG_IsAkimboWeapon
 */
 qboolean BG_IsAkimboWeapon(int weaponNum)
 {
-	if (weaponNum == WP_AKIMBO_COLT ||
-	    weaponNum == WP_AKIMBO_SILENCEDCOLT ||
-	    weaponNum == WP_AKIMBO_LUGER ||
-	    weaponNum == WP_AKIMBO_SILENCEDLUGER)
+	switch (weaponNum)
 	{
+	case WP_AKIMBO_COLT:
+	case WP_AKIMBO_SILENCEDCOLT:
+	case WP_AKIMBO_LUGER:
+	case WP_AKIMBO_SILENCEDLUGER:
 		return qtrue;
-	}
-	else
-	{
+	default:
 		return qfalse;
 	}
 }
@@ -2404,6 +2449,7 @@ qboolean BG_IsAkimboSideArm(int weaponNum, playerState_t *ps)
 BG_AkimboSidearm
 ==============
 */
+// FIXME: weapontable
 int BG_AkimboSidearm(int weaponNum)
 {
 	switch (weaponNum)
@@ -2576,7 +2622,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 	int ammoAdded = qfalse;
 	int maxammo;
 	int weapNumOfClips;
-	int i      = BG_GrenadesForClass(ps->stats[STAT_PLAYER_CLASS], skill); // handle grenades first
+	int i      = BG_GrenadesForClass(ps->stats[STAT_PLAYER_CLASS], skill);     // handle grenades first
 	int weapon = BG_GrenadeTypeForTeam(teamNum);
 	int clip   = BG_FindClipForWeapon(weapon);
 
@@ -2681,7 +2727,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 
 					if (BG_IsAkimboWeapon(weapon))
 					{
-						weapNumOfClips = numOfClips * 2; // double clips babeh!
+						weapNumOfClips = numOfClips * 2;     // double clips babeh!
 					}
 					else
 					{
@@ -2735,13 +2781,10 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		}
 
 		return qtrue;
-
 	case IT_AMMO:
 		return qfalse;
-
 	case IT_ARMOR:
 		return qfalse;
-
 	case IT_HEALTH:
 		// ps->teamNum is really class.... thx whoever decided on that...
 		if (ps->teamNum == PC_MEDIC)
@@ -2760,8 +2803,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 			}
 		}
 		return qtrue;
-
-	case IT_TEAM: // team items, such as flags
+	case IT_TEAM:     // team items, such as flags
 		// density tracks how many uses left
 		if ((ent->density < 1) || (((ps->persistant[PERS_TEAM] == TEAM_AXIS) ? ps->powerups[PW_BLUEFLAG] : ps->powerups[PW_REDFLAG]) != 0))
 		{
@@ -2795,13 +2837,10 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 
 	case IT_HOLDABLE:
 		return qtrue;
-
-	case IT_TREASURE:   // treasure always picked up
+	case IT_TREASURE:     // treasure always picked up
 		return qtrue;
-
 	case IT_KEY:
-		return qtrue;   // keys are always picked up
-
+		return qtrue;     // keys are always picked up
 	case IT_BAD:
 		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: IT_BAD");
 		break;
@@ -2884,10 +2923,8 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 /*
 ================
 BG_RaySphereIntersection
-
 ================
 */
-
 qboolean BG_RaySphereIntersection(float radius, vec3_t origin, splineSegment_t *path, float *t0, float *t1)
 {
 	vec3_t v;
@@ -3148,7 +3185,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		// get distance travelled at current time
 		VectorMA(tr->trBase, phase * 0.5 * deltaTime * deltaTime, result, result);
 		break;
-	case TR_DECCELERATE:    // trDelta is the starting speed
+	case TR_DECCELERATE:     // trDelta is the starting speed
 		if (atTime > tr->trTime + tr->trDuration)
 		{
 			atTime = tr->trTime + tr->trDuration;
@@ -3397,7 +3434,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		break;
 	case TR_SINE:
 		deltaTime = (atTime - tr->trTime) / (float) tr->trDuration;
-		phase     = cos(deltaTime * M_PI * 2);  // derivative of sin = cos
+		phase     = cos(deltaTime * M_PI * 2);     // derivative of sin = cos
 		phase    *= 0.5;
 		VectorScale(tr->trDelta, phase, result);
 		break;
@@ -3425,7 +3462,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		result[2] -= (DEFAULT_GRAVITY * 0.2) * deltaTime;
 		break;
 	// RF, acceleration
-	case TR_ACCELERATE: // trDelta is eventual speed
+	case TR_ACCELERATE:     // trDelta is eventual speed
 		if (atTime > tr->trTime + tr->trDuration)
 		{
 			VectorClear(result);
@@ -3435,7 +3472,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		phase     = deltaTime / (float)tr->trDuration;
 		VectorScale(tr->trDelta, deltaTime * deltaTime, result);
 		break;
-	case TR_DECCELERATE:    // trDelta is breaking force
+	case TR_DECCELERATE:     // trDelta is breaking force
 		if (atTime > tr->trTime + tr->trDuration)
 		{
 			VectorClear(result);
@@ -3457,7 +3494,6 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 /*
 ============
 BG_GetMarkDir
-
   used to find a good directional vector for a mark projection, which will be more likely
   to wrap around adjacent surfaces
 
@@ -3630,7 +3666,6 @@ Handles the sequence numbers
 
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps)
 {
-
 #ifdef _DEBUG
 	{
 		char buf[256];
@@ -3681,7 +3716,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 {
 	int i;
 
-	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR || ps->stats[STAT_HEALTH] <= GIB_HEALTH) // || ps->pm_flags & PMF_LIMBO ) { // limbo
+	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR || ps->stats[STAT_HEALTH] <= GIB_HEALTH)     // || ps->pm_flags & PMF_LIMBO ) { // limbo
 	{
 		s->eType = ET_INVISIBLE;
 	}
@@ -3808,6 +3843,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 }
 
 // some weapons are duplicated for code puposes.... just want to treat them as a single
+// FIXME: weapon table
 weapon_t BG_DuplicateWeapon(weapon_t weap)
 {
 	switch (weap)
@@ -4016,6 +4052,7 @@ splinePath_t *BG_Find_Spline(const char *match)
 splinePath_t *BG_AddSplinePath(const char *name, const char *target, vec3_t origin)
 {
 	splinePath_t *spline;
+
 	if (numSplinePaths >= MAX_SPLINE_PATHS)
 	{
 		Com_Error(ERR_DROP, "MAX SPLINES (%i) hit", MAX_SPLINE_PATHS);
@@ -4054,7 +4091,7 @@ float BG_SplineLength(splinePath_t *pSpline)
 	float i;
 	float granularity = 0.01f;
 	float dist        = 0;
-//  float tension;
+	//float tension;
 	vec3_t vec[2];
 	vec3_t lastPoint = { 0 };
 	vec3_t result;
@@ -4221,6 +4258,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		}
 		break;
 	/*case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING
 	case WP_PANZERFAUST:
 	case WP_FLAMETHROWER:
 	    if( skill[SK_HEAVY_WEAPONS] >= 1 )
@@ -4500,6 +4538,7 @@ PC_String_Parse
 qboolean PC_String_Parse(int handle, const char **out)
 {
 	pc_token_t token;
+
 	if (!trap_PC_ReadToken(handle, &token))
 	{
 		return qfalse;
@@ -4601,14 +4640,14 @@ int BG_simpleWeaponState(int ws)
 	case WEAPON_READY:
 	case WEAPON_READYING:
 	case WEAPON_RELAXING:
-		return(WSTATE_IDLE);
+		return WSTATE_IDLE;
 	case WEAPON_RAISING:
 	case WEAPON_DROPPING:
 	case WEAPON_DROPPING_TORELOAD:
-		return(WSTATE_SWITCH);
+		return WSTATE_SWITCH;
 	case WEAPON_FIRING:
 	case WEAPON_FIRINGALT:
-		return(WSTATE_FIRE);
+		return WSTATE_FIRE;
 	case WEAPON_RELOADING:
 		return(WSTATE_RELOAD);
 	}
@@ -4706,8 +4745,8 @@ int BG_drawStrlen(const char *str)
 // Returns size of printable string
 int BG_colorstrncpyz(char *in, char *out, int str_max, int out_max)
 {
-	int       str_len = 0; // current printable string size
-	int       out_len = 0; // current true string size
+	int       str_len = 0;     // current printable string size
+	int       out_len = 0;     // current true string size
 	const int in_len  = strlen(in);
 
 	out_max--;
@@ -4858,22 +4897,25 @@ void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName)
 	trap_Cvar_Set(cvarName, "White");
 }
 
+// FIXME: weapon table
 qboolean BG_isLightWeaponSupportingFastReload(int weapon)
 {
-	if (weapon == WP_LUGER ||
-	    weapon == WP_COLT ||
-	    weapon == WP_MP40 ||
-	    weapon == WP_THOMPSON ||
-	    weapon == WP_STEN ||
-	    weapon == WP_SILENCER ||
-	    weapon == WP_FG42 ||
-	    weapon == WP_SILENCED_COLT)
+	switch (weapon)
 	{
+	case WP_LUGER:
+	case WP_COLT:
+	case WP_MP40:
+	case WP_THOMPSON:
+	case WP_STEN:
+	case WP_SILENCER:
+	case WP_FG42:
+	case WP_SILENCED_COLT:
 		return qtrue;
 	}
 	return qfalse;
 }
 
+// FIXME: weapon table
 qboolean BG_IsScopedWeapon(int weapon)
 {
 	switch (weapon)
@@ -4963,7 +5005,9 @@ weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS] =
 	WP_MOBILE_MG42_SET,
 	WP_PANZERFAUST,
 	WP_MORTAR,
-	WP_MORTAR_SET
+	WP_MORTAR_SET,
+	WP_MOBILE_BROWNING,
+	WP_MOBILE_BROWNING_SET
 };
 
 /////////////////////////

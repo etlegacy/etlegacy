@@ -15,21 +15,23 @@
 DEFINES
 
 // weapons
-set weapons knives = knife AND Ka-Bar
-set weapons pistols = Luger AND Colt AND sp5 pistol AND Silenced Colt
-set weapons akimbo_pistols = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
-set weapons machineguns = MP40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND Mobile MG42
-set weapons rifles = K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
+set weapons knives               = knife AND Ka-Bar
+set weapons Bipods               = Mobile MG42 Bipod AND Mobile Browning Bipod
+set weapons pistols              = Luger AND Colt AND sp5 pistol AND Silenced Colt
+set weapons akimbo_pistols       = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
+set weapons machineguns          = MP40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND Mobile MG42 AND Mobile Browning
+set weapons rifles               = K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
+
 // broke off dynamite, since we never want to throw it overhand
-set weapons throwables = pineapple AND grenade AND Smoke Bomb
+set weapons throwables           = pineapple AND grenade AND Smoke Bomb
 set weapons throwables_underhand = dynamite weapon
 
-set weapons one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt
-set weapons two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
+set weapons one_handed_weapons   = Luger AND Colt AND sp5 pistol AND Silenced Colt
+set weapons two_handed_weapons   = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mobile Browning
 
-set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator
+set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning
 set weapons all_one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
-set weapons all_two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator
+set weapons all_two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning
 
 // movetypes
 set movetype moving = walk AND walkcr AND walkcrbk AND walkbk AND run AND runbk AND straferight AND strafeleft
@@ -225,11 +227,11 @@ STATE COMBAT
 		{
 			both stand_panzer
 		}
-		weapons Mobile MG42, firing
+		weapons Mobile MG42 AND Mobile Browning, firing
 		{
 			legs firing_machinegun torso firing_mobilemg42
 		}
-		weapons Mobile MG42
+		weapons Mobile MG42 AND Mobile Browning
 		{
 			legs stand_machinegun torso stand_mobilemg42
 		}
@@ -1397,11 +1399,11 @@ STATE COMBAT
 			{
 				legs prone_legs torso prone_poke_idle
 			}
-			weapons Mobile MG42 Bipod
+			weapons Mobile MG42 Bipod AND Mobile Browning Bipod
 			{
 				legs prone_legs torso prone_mg42_idle
 			}
-			weapons Mobile MG42
+			weapons Mobile MG42 AND Mobile Browning
 			{
 				legs prone_legs torso prone_mg42_idle
 			}
@@ -1816,39 +1818,39 @@ fireweapon
 		torso firing_akimbo
 	}
 // MOBILE MG42
-	weapons Mobile MG42
+	weapons Mobile MG42 AND Mobile Browning
 	{
 		torso firing_mobilemg42
 	}
-	weapons Mobile MG42, movetype straferight
+	weapons Mobile MG42 AND Mobile Browning, movetype straferight
 	{
 		torso alert_run_2h duration 50
 	}
-	weapons Mobile MG42, movetype strafeleft
+	weapons Mobile MG42 AND Mobile Browning, movetype strafeleft
 	{
 		torso alert_run_2h duration 50
 	}
-	weapons Mobile MG42, movetype walk AND turnleft AND turnright AND idlecr
+	weapons Mobile MG42 AND Mobile Browning, movetype walk AND turnleft AND turnright AND idlecr
 	{
 		torso firing_mobilemg42 duration 50
 	}
-	weapons Mobile MG42, movetype walkcrbk
+	weapons Mobile MG42 AND Mobile Browning, movetype walkcrbk
 	{
 		torso firing_crbk_2h duration 50
 	}
-	weapons Mobile MG42, movetype crouching
+	weapons Mobile MG42 AND Mobile Browning, movetype crouching
 	{
 		torso firing_crch_2h duration 50
 	}
-	weapons Mobile MG42, movetype run AND swim
+	weapons Mobile MG42 AND Mobile Browning, movetype run AND swim
 	{
 		torso alert_run_2h duration 50
 	}
-	weapons Mobile MG42, movetype backstep AND swimbk
+	weapons Mobile MG42 AND Mobile Browning, movetype backstep AND swimbk
 	{
 		torso alert_bk_2h duration 50
 	}
-	weapons Mobile MG42
+	weapons Mobile MG42 AND Mobile Browning
 	{
 		torso firing_mobilemg42 duration 50
 	}
@@ -2191,11 +2193,11 @@ fireweaponprone
 	{
 		torso e_prone_pistols_fire
 	}
-	weapons Mobile MG42
+	weapons Mobile MG42 AND Mobile Browning
 	{
 		torso prone_mg42_fire
 	}
-	weapons Mobile MG42 Bipod
+	weapons Mobile MG42 Bipod  AND Mobile Browning Bipod
 	{
 		torso prone_mg42_fire
 	}
@@ -2319,7 +2321,7 @@ raiseweaponprone
 	{
 		torso e_prone_pistols_switch
 	}
-	weapons Mobile MG42
+	weapons Mobile MG42 AND Mobile Browning
 	{
 		torso prone_mg42_switch
 	}
@@ -2411,11 +2413,11 @@ reloadprone
 	{
 		torso e_prone_pistols_reload
 	}
-	weapons Mobile MG42
+	weapons Mobile MG42 AND Mobile Browning
 	{
 		torso prone_mg42_reload
 	}
-	weapons Mobile MG42 Bipod
+	weapons Mobile MG42 Bipod  AND Mobile Browning Bipod
 	{
 		torso prone_mg42_reload
 	}
@@ -2523,7 +2525,7 @@ raiseweapon
 	{
 		torso raise_akimbo
 	}
-	weapons Mobile MG42
+	weapons Mobile MG42 AND Mobile Browning
 	{
 		torso raise_mobilemg42
 	}
@@ -2635,7 +2637,7 @@ reload
 	{
 		torso reload_akimbo
 	}
-	weapons Mobile MG42
+	weapons Mobile MG42 AND Mobile Browning
 	{
 		torso reload_mobilemg42
 	}

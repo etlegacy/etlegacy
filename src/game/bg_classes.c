@@ -43,7 +43,7 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 		"ui/assets/mp_arrow_blue.tga",
 		{
 			WP_THOMPSON,
-			WP_MOBILE_MG42,
+			WP_MOBILE_BROWNING,
 			WP_FLAMETHROWER,
 			WP_PANZERFAUST,
 			WP_MORTAR

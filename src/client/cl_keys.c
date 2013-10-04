@@ -1188,7 +1188,7 @@ void Key_Bind_f(void)
 
 	if (c == 2)
 	{
-		if (keys[b].binding)
+		if (keys[b].binding && keys[b].binding[0])
 		{
 			Com_Printf("\"%s\" = \"%s\"\n", Key_KeynumToString(b), keys[b].binding);
 		}

@@ -1170,7 +1170,7 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define BG_NUM_ITEMS 76 // keep in sync with bg_numItems! FIXME: make this non static one day
+#define BG_NUM_ITEMS 78 // keep in sync with bg_numItems! FIXME: make this non static one day
 
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t
@@ -1574,6 +1574,7 @@ typedef struct
 	qhandle_t limboCounterBorder;
 	qhandle_t limboWeaponCard1;
 	qhandle_t limboWeaponCard2;
+	qhandle_t limboWeaponCard3;
 	qhandle_t limboWeaponCardArrow;
 	qhandle_t limboObjectiveBack[3];
 	qhandle_t limboClassBar;
@@ -1725,6 +1726,21 @@ enum
 	LOC_SHOWCOORDS   = BIT(4),
 	LOC_SHOWDISTANCE = BIT(5),
 	LOC_DEBUG        = BIT(9),
+};
+
+enum
+{
+	BAR_LEFT       = BIT(0),
+	BAR_CENTER     = BIT(1),
+	BAR_VERT       = BIT(2),
+	BAR_NOHUDALPHA = BIT(3),
+	BAR_BG         = BIT(4),
+	// different spacing modes for use w/ BAR_BG
+	BAR_BGSPACING_X0Y5 = BIT(5),
+	BAR_BGSPACING_X0Y0 = BIT(6),
+	BAR_LERP_COLOR     = BIT(7),
+	BAR_BORDER         = BIT(8),
+	BAR_BORDER_SMALL   = BIT(9),
 };
 
 typedef struct location_s
@@ -3028,7 +3044,7 @@ typedef struct
 	int height;
 } rankicon_t;
 
-extern rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2];
+extern rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2];
 
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 
@@ -3227,7 +3243,7 @@ qboolean CG_CommandCentreSpawnPointClick(void);
 #define CC_2D_W 352
 #define CC_2D_H 352
 
-void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_t *headcharacter, float yaw, float pitch, qboolean drawHat, hudHeadAnimNumber_t animation, qhandle_t painSkin, int rank, qboolean spectator);
+void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_t *headcharacter, float yaw, float pitch, qboolean drawHat, hudHeadAnimNumber_t animation, qhandle_t painSkin, int rank, qboolean spectator, int team);
 
 // cg_popupmessages.c
 void CG_InitPM(void);

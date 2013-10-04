@@ -331,6 +331,8 @@ int weaponIconScale(int weap)
 	case WP_M7:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 	case WP_K43:
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:

@@ -137,6 +137,7 @@ int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 	int maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
 	int originalCount = ent->client->ps.ammo[ammoweap];
 
+	// FIXME: do a switch
 	if (ammoweap == WP_GRENADE_LAUNCHER)             // make sure if he picks up a grenade that he get's the "launcher" too
 	{
 		COM_BitSet(ent->client->ps.weapons, WP_GRENADE_LAUNCHER);
@@ -296,6 +297,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	ent2 = LaunchItem(item, org, velocity, client->ps.clientNum);
 	COM_BitClear(client->ps.weapons, weapon);
 
+	// FIXME: do a switch
 	if (weapon == WP_KAR98)
 	{
 		COM_BitClear(client->ps.weapons, WP_GPG40);
@@ -323,6 +325,10 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	else if (weapon == WP_MOBILE_MG42)
 	{
 		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
+	}
+	else if (weapon == WP_MOBILE_BROWNING)
+	{
+		COM_BitClear(client->ps.weapons, WP_MOBILE_BROWNING_SET);
 	}
 
 	// Clear out empty weapon, change to next best weapon
@@ -363,32 +369,42 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		if (weapon == WP_THOMPSON)
+		switch (weapon)
 		{
+		case WP_THOMPSON:
 			weapon = WP_MP40;
-		}
-		else if (weapon == WP_CARBINE)
-		{
+			break;
+		case WP_CARBINE:
 			weapon = WP_KAR98;
-		}
-		else if (weapon == WP_GARAND)
-		{
+			break;
+		case WP_GARAND:
 			weapon = WP_K43;
+			break;
+		case WP_MOBILE_BROWNING:
+			weapon = WP_MOBILE_MG42;
+			break;
+		default:
+			break;
 		}
 	}
 	else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		if (weapon == WP_MP40)
+		switch (weapon)
 		{
+		case WP_MP40:
 			weapon = WP_THOMPSON;
-		}
-		else if (weapon == WP_KAR98)
-		{
+			break;
+		case WP_KAR98:
 			weapon = WP_CARBINE;
-		}
-		else if (weapon == WP_K43)
-		{
+			break;
+		case WP_K43:
 			weapon = WP_GARAND;
+			break;
+		case WP_MOBILE_MG42:
+			weapon = WP_MOBILE_BROWNING;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -465,7 +481,8 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			return 0;
 		}
 
-		if (other->client->ps.weapon == WP_MORTAR_SET || other->client->ps.weapon == WP_MOBILE_MG42_SET)
+		if (other->client->ps.weapon == WP_MORTAR_SET ||
+		    other->client->ps.weapon == WP_MOBILE_MG42_SET || other->client->ps.weapon == WP_MOBILE_BROWNING_SET)
 		{
 			return 0;
 		}
@@ -492,6 +509,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				COM_BitSet(other->client->ps.weapons, ent->item->giTag);
 
 				// Fixup mauser/sniper issues
+				// FIXME: do a switch
 				if (ent->item->giTag == WP_FG42)
 				{
 					COM_BitSet(other->client->ps.weapons, WP_FG42SCOPE);
@@ -511,6 +529,10 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				else if (ent->item->giTag == WP_MOBILE_MG42)
 				{
 					COM_BitSet(other->client->ps.weapons, WP_MOBILE_MG42_SET);
+				}
+				else if (ent->item->giTag == WP_MOBILE_BROWNING)
+				{
+					COM_BitSet(other->client->ps.weapons, WP_MOBILE_BROWNING_SET);
 				}
 				else if (ent->item->giTag == WP_CARBINE)
 				{
@@ -892,8 +914,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	}
 	else     // auto-remove after 30 seconds
 	{
-		dropped->think = G_FreeEntity;
-
+		dropped->think     = G_FreeEntity;
 		dropped->nextthink = level.time + 30000;
 	}
 

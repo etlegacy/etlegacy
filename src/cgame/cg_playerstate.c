@@ -92,6 +92,8 @@ void CG_CheckAmmo(void)
 		case WP_M7:
 		case WP_MOBILE_MG42:
 		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING:
+		case WP_MOBILE_BROWNING_SET:
 		case WP_K43:
 		case WP_MORTAR_SET:
 		default:
@@ -636,7 +638,7 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 
 	if (!(ps->eFlags & EF_PRONE) && (ops->eFlags & EF_PRONE))
 	{
-		if (cg.weaponSelect == WP_MOBILE_MG42_SET)
+		if (cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 		{
 			CG_FinishWeaponChange(cg.weaponSelect, ps->nextWeapon);
 		}

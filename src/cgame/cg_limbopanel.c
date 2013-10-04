@@ -1760,7 +1760,7 @@ void CG_LimboPanel_RenderLight(panel_button_t *button)
 	}
 }
 
-void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_t *headcharacter, float yaw, float pitch, qboolean drawHat, hudHeadAnimNumber_t animation, qhandle_t painSkin, int rank, qboolean spectator)
+void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_t *headcharacter, float yaw, float pitch, qboolean drawHat, hudHeadAnimNumber_t animation, qhandle_t painSkin, int rank, qboolean spectator, int team)
 {
 	float       len;
 	vec3_t      origin;
@@ -1852,7 +1852,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 			memset(&mrank, 0, sizeof(mrank));
 
 			mrank.hModel       = character->accModels[ACC_RANK];
-			mrank.customShader = rankicons[rank][1].shader;
+			mrank.customShader = rankicons[rank][team == TEAM_AXIS ? 1 : 0][1].shader;
 			mrank.renderfx     = RF_NOSHADOW | RF_FORCENOLOD;   // no stencil shadows
 
 			CG_PositionEntityOnTag(&mrank, &head, "tag_mouth", 0, NULL);
@@ -1926,7 +1926,7 @@ void CG_LimboPanel_RenderHead(panel_button_t *button)
 	if (CG_LimboPanel_GetTeam() != TEAM_SPECTATOR)
 	{
 		CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, clrBack);
-		CG_DrawPlayerHead(&button->rect, CG_LimboPanel_GetCharacter(), CG_LimboPanel_GetCharacter(), 180, 0, qtrue, HD_IDLE4, 0, cgs.clientinfo[cg.clientNum].rank, qfalse);
+		CG_DrawPlayerHead(&button->rect, CG_LimboPanel_GetCharacter(), CG_LimboPanel_GetCharacter(), 180, 0, qtrue, HD_IDLE4, 0, cgs.clientinfo[cg.clientNum].rank, qfalse, CG_LimboPanel_GetTeam());
 	}
 	else
 	{
@@ -2914,7 +2914,6 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_THOMPSON:
 		*shader = cgs.media.limboWeaponCard1;
 		break;
-
 	case WP_COLT:
 	case WP_LUGER:
 	case WP_AKIMBO_COLT:
@@ -2929,7 +2928,9 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_K43:
 		*shader = cgs.media.limboWeaponCard2;
 		break;
-
+	case WP_MOBILE_BROWNING:
+		*shader = cgs.media.limboWeaponCard3;
+		break;
 	default:     // shouldn't happen
 		*shader = 0;
 		break;
@@ -2957,6 +2958,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_AKIMBO_SILENCEDLUGER:
 	case WP_SILENCER:
 	case WP_MORTAR:
+	case WP_MOBILE_BROWNING:
 		*t0 = 0 / 8.f;
 		*t1 = 1 / 8.f;
 		break;
@@ -3459,6 +3461,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 		break;
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING:
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
 		{
 			return qtrue;

@@ -542,7 +542,7 @@ int Pmove(pmove_t *pmove);
 
 #define NUM_PLAYER_CLASSES      5
 
-#define MAX_WEAPS_IN_BANK_MP    12
+#define MAX_WEAPS_IN_BANK_MP    13
 #define MAX_WEAP_BANKS_MP       10
 
 // leaning flags..
@@ -753,9 +753,11 @@ typedef enum
 	WP_MOBILE_MG42_SET,     // 47
 
 	// legacy weapons
-	WP_KNIFE_KABAR,                // 48
+	WP_KNIFE_KABAR,         // 48
+	WP_MOBILE_BROWNING,     // 49
+	WP_MOBILE_BROWNING_SET, // 50
 
-	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 48
+	WP_NUM_WEAPONS          // 51
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -838,24 +840,34 @@ typedef struct ammotable_s
 // Lookup table to find ammo table entry
 extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
+
+typedef struct weapontable_s
+{
+	int damage;             // g
+	float spread;           // g
+	qboolean isRiflenade;   // bg
+	qboolean isAutoReload;  // bg
+} weapontable_t;
+
 extern int weapAlts[];  // defined in bg_misc.c
 
+// weapon table
 #define IS_RIFLENADE_WEAPON(w) \
 	(w == WP_GPG40           || w == WP_M7)
 
+// weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
-// NOTE: what about WP_VENOM and other XP weapons?
-// added akimbo weapons and deployed MG42
+// FIXME: weapon table
 #define IS_AUTORELOAD_WEAPON(weapon) \
 	(   \
 	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
 	    weapon == WP_THOMPSON || weapon == WP_STEN          || \
 	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
 	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
-	    weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
+	    weapon == WP_MOBILE_BROWNING || weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
 	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
-	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET \
+	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET || weapon == WP_MOBILE_BROWNING_SET \
 	)
 
 // entityState_t->event values
@@ -1374,6 +1386,8 @@ typedef enum
 	MOD_SHOVE,
 
 	MOD_KNIFE_KABAR,
+
+	MOD_MOBILE_BROWNING,
 
 	MOD_NUM_MODS
 
@@ -1933,9 +1947,6 @@ const char *BG_ShortClassnameForNumber(int classNum);
 const char *BG_ClassnameForNumber(int classNum);
 const char *BG_ClassLetterForNumber(int classNum);
 
-void BG_DisableClassWeapon(bg_playerclass_t *classinfo, int weapon);
-void BG_DisableWeaponForAllClasses(int weapon);
-
 extern bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES];
 extern bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES];
 
@@ -2250,7 +2261,7 @@ typedef enum popupMessageBigType_e
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
 
-#define NUM_HEAVY_WEAPONS 6
+#define NUM_HEAVY_WEAPONS 8
 extern weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS];
 
 int PM_AltSwitchFromForWeapon(int weapon);

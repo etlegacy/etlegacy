@@ -2218,6 +2218,7 @@ qboolean S_Base_Init(soundInterface_t *si)
 
 	if (!si)
 	{
+		Com_Printf("Invalid sound interface NULL.\n");
 		return qfalse;
 	}
 

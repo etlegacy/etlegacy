@@ -117,6 +117,7 @@ int PM_IdleAnimForWeapon(int weapon)
 	case WP_MORTAR_SET:
 	case WP_MEDIC_ADRENALINE:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 		return WEAP_IDLE2;
 
 	default:
@@ -137,6 +138,7 @@ int PM_AltSwitchToForWeapon(int weapon)
 	case WP_M7:
 	case WP_MORTAR:
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING:
 		return WEAP_ALTSWITCHFROM;
 	default:
 		return WEAP_ALTSWITCHTO;
@@ -152,6 +154,7 @@ int PM_AttackAnimForWeapon(int weapon)
 	case WP_SATCHEL_DET:
 	case WP_MEDIC_ADRENALINE:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 		return WEAP_ATTACK2;
 	default:
 		return WEAP_ATTACK1;
@@ -165,6 +168,7 @@ int PM_LastAttackAnimForWeapon(int weapon)
 	case WP_GPG40:
 	case WP_M7:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 		return WEAP_ATTACK2;
 	case WP_MORTAR_SET:
 		return WEAP_ATTACK1;
@@ -181,6 +185,7 @@ int PM_ReloadAnimForWeapon(int weapon)
 	case WP_M7:
 		return WEAP_RELOAD2;
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 		return WEAP_RELOAD3;
 	default:
 		if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && BG_isLightWeaponSupportingFastReload(weapon))
@@ -202,6 +207,7 @@ int PM_RaiseAnimForWeapon(int weapon)
 	case WP_M7:
 		return WEAP_RELOAD3;
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 		return WEAP_DROP2;
 	case WP_SATCHEL_DET:
 		return WEAP_RELOAD2;
@@ -685,7 +691,9 @@ static float PM_CmdScale(usercmd_t *cmd)
 
 	if ((pm->ps->weapon == WP_PANZERFAUST) ||
 	    (pm->ps->weapon == WP_MOBILE_MG42) ||
+	    (pm->ps->weapon == WP_MOBILE_BROWNING) ||
 	    (pm->ps->weapon == WP_MOBILE_MG42_SET) ||
+	    (pm->ps->weapon == WP_MOBILE_BROWNING_SET) ||
 	    (pm->ps->weapon == WP_MORTAR))
 	{
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 3)
@@ -1011,6 +1019,11 @@ static qboolean PM_CheckProne(void)
 					PM_BeginWeaponChange(
 					    WP_MOBILE_MG42_SET,
 					    WP_MOBILE_MG42,
+					    qfalse);
+				case WP_MOBILE_BROWNING_SET:
+					PM_BeginWeaponChange(
+					    WP_MOBILE_BROWNING_SET,
+					    WP_MOBILE_BROWNING,
 					    qfalse);
 					break;
 				}
@@ -2385,6 +2398,11 @@ static void PM_BeginWeaponReload(int weapon)
 		return;
 	}
 
+	if ((weapon == WP_MOBILE_BROWNING || weapon == WP_MOBILE_BROWNING_SET) && pm->ps->ammoclip[WP_MOBILE_BROWNING] != 0)
+	{
+		return;
+	}
+
 	if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
 	{
 		return;
@@ -2615,6 +2633,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		}
 		break;
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			vec3_t axis[3];
@@ -2627,6 +2646,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
 		}
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime = 0;
@@ -2837,12 +2857,14 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime = 1722;
 		}
 		break;
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime = 1250;
@@ -3336,6 +3358,8 @@ void PM_AdjustAimSpreadScale(void)
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		wpnScale = 0.9f;
 		break;
 	case WP_FG42:
@@ -4167,6 +4191,8 @@ static void PM_Weapon(void)
 	case WP_FG42SCOPE:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		if (!weaponstateFiring)
 		{
 			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
@@ -4433,6 +4459,7 @@ static void PM_Weapon(void)
 		switch (pm->ps->weapon)
 		{
 		case WP_MOBILE_MG42:
+		case WP_MOBILE_BROWNING:
 			fwdmove_knockback = 4000.f;
 			//bckmove_knockback = 400.f;
 			break;
@@ -4540,6 +4567,8 @@ static void PM_Weapon(void)
 	case WP_SATCHEL_DET:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		PM_ContinueWeaponAnim(weapattackanim);
 		break;
 	case WP_MORTAR_SET:
@@ -4721,6 +4750,8 @@ static void PM_Weapon(void)
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
 		{
 			addTime = 2000;
@@ -4771,6 +4802,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MOBILE_MG42:
+	case WP_MOBILE_BROWNING:
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = 200;
 		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
@@ -4785,6 +4817,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	/*case WP_MOBILE_MG42_SET:
+	    case WP_MOBILE_BROWNING_SET:
 	    pm->pmext->weapRecoilTime = 0;
 	    pm->pmext->weapRecoilYaw = 0.f;
 	    break;*/
@@ -5405,7 +5438,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		}*/
 
 		// Check if we are allowed to rotate to there
-		if (ps->weapon == WP_MOBILE_MG42_SET)
+		if (ps->weapon == WP_MOBILE_MG42_SET || ps->weapon == WP_MOBILE_BROWNING_SET)
 		{
 			float yawDiff;
 
@@ -5881,6 +5914,7 @@ void PmoveSingle(pmove_t *pmove)
 			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
 			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
 			    pm->ps->weapon != WP_MOBILE_MG42_SET &&
+			    pm->ps->weapon != WP_MOBILE_BROWNING_SET &&
 			    pm->ps->weapon != WP_MORTAR_SET)
 			{
 
@@ -6079,6 +6113,18 @@ void PmoveSingle(pmove_t *pmove)
 #endif // CGAMEDLL
 			}
 		}
+
+		if (pm->ps->weapon == WP_MOBILE_BROWNING_SET)
+		{
+			if (!(pm->ps->eFlags & EF_PRONE))
+			{
+				PM_BeginWeaponChange(WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING, qfalse);
+#ifdef CGAMEDLL
+				cg.weaponSelect = WP_MOBILE_BROWNING;
+#endif // CGAMEDLL
+			}
+		}
+
 		if (pm->ps->weapon == WP_SATCHEL_DET)
 		{
 			if (!(pm->ps->ammoclip[WP_SATCHEL_DET]))

@@ -33,8 +33,6 @@
 
 #include "tr_local.h"
 
-volatile renderCommandList_t *renderCommandList;
-
 /*
 =====================
 R_PerformanceCounters

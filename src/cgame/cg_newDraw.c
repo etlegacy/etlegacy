@@ -224,6 +224,8 @@ static int weapIconDrawSize(int weap)
 	case WP_M7:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
 	case WP_K43:
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
@@ -254,7 +256,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	if (cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE ||
 	    cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
 	{
-		realweap = WP_MOBILE_MG42;
+		realweap = WP_MOBILE_MG42; // FIXME: browning
 	}
 	else
 	{
@@ -384,8 +386,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     *color;
 	qhandle_t icon, icon2 = 0;
 	float     scale, halfscale;
-	qboolean  yellowbar = qfalse;
-	float     middle    = rect->x + cgs.wideXoffset;
+	float     middle = rect->x + cgs.wideXoffset;
 
 	if (!cg_cursorHints.integer)
 	{
@@ -575,15 +576,13 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	// draw status bar under the cursor hint
 	if (cg.cursorHintValue)
 	{
-		if (yellowbar)
+		vec4_t backG    = { 1, 1, 1, 0.3f };
+		float  curValue = (float)cg.cursorHintValue / 255.0f;
+
+		if (curValue > 0.01f)
 		{
-			Vector4Set(color, 1, 1, 0, 1.0f);
+			CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
 		}
-		else
-		{
-			Vector4Set(color, 0, 0, 1, 0.5f);
-		}
-		CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, color, NULL, NULL, (float)cg.cursorHintValue / 255.0f, 0);
 	}
 }
 
@@ -638,7 +637,7 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, 2 | 4 | 256);   // flags (BAR_CENTER|BAR_VERT|BAR_LERP_COLOR)
+	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
 }
 
 /*
@@ -658,14 +657,14 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 
 	if (align != HUD_HORIZONTAL)
 	{
-		flags |= 4;   // BAR_VERT
+		flags |= BAR_VERT;   // BAR_VERT
 	}
 
-	flags |= 1;       // BAR_LEFT           - this is hardcoded now, but will be decided by the menu script
-	flags |= 16;      // BAR_BG         - draw the filled contrast box
-	//flags|=32;      // BAR_BGSPACING_X0Y5   - different style
+	flags |= BAR_LEFT;             // this is hardcoded now, but will be decided by the menu script
+	flags |= BAR_BG;               // draw the filled contrast box
+	//flags|=BAR_BGSPACING_X0Y5;   // different style
 
-	flags |= 256;     // BAR_COLOR_LERP
+	flags |= BAR_LERP_COLOR;
 
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags);
 }
