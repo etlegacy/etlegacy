@@ -3201,7 +3201,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	default:
 		DEBUGNAME("UNKNOWN");
-		CG_Error("Unknown event: %i\n", event);
+		if(cg.demoPlayback)
+		{
+			CG_DPrintf("Unknown event: %i\n", event);
+		}
+		else
+		{
+			CG_Error("Unknown event: %i\n", event);
+		}
 		break;
 	}
 
