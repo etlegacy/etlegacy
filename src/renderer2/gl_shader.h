@@ -98,7 +98,7 @@ static ID_INLINE void GLSL_SetUniform_SpecularTextureMatrix(shaderProgram_t *pro
 	qglUniformMatrix4fvARB(program->u_SpecularTextureMatrix, 1, GL_FALSE, m);
 }
 
-void            GLimp_LogComment(char *comment);
+void            GLimp_LogComment(const char *comment);
 
 static ID_INLINE void GLSL_SetUniform_AlphaTest(shaderProgram_t *program, uint32_t stateBits)
 {

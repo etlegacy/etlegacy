@@ -71,7 +71,7 @@ extern int gl_NormalFontBase;
 void GLimp_Init(void);
 void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
-void GLimp_LogComment(char *comment);
+void GLimp_LogComment(const char *comment);
 void GLimp_Minimize(void);
 
 // NOTE: linux works with float gamma value, not the gamma table
