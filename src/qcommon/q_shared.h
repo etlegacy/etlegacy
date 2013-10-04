@@ -221,7 +221,7 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 
 // Note ET:L uses BSD Library functions for this
 
-static ID_NONSTATIC_INLINE float idSqrt(float x)
+static ID_INLINE float idSqrt(float x)
 {
     const float half = 0.5;
     const float one  = 1.0;
@@ -731,7 +731,7 @@ extern void (QDECL *Q_SnapVector)(vec3_t vec);
 	} while (0)
 #endif
 
-static ID_NONSTATIC_INLINE long Q_ftol(float f)
+static ID_INLINE long Q_ftol(float f)
 {
 #if id386_sse && defined(_MSC_VER)
 	static int tmp;
@@ -762,7 +762,7 @@ static ID_NONSTATIC_INLINE long Q_ftol(float f)
 
 #if idppc
 
-static ID_NONSTATIC_INLINE float Q_rsqrt(float number)
+static ID_INLINE float Q_rsqrt(float number)
 {
 	float x = 0.5f * number;
 	float y;
@@ -775,7 +775,7 @@ static ID_NONSTATIC_INLINE float Q_rsqrt(float number)
 }
 
 #ifdef __GNUC__
-static ID_NONSTATIC_INLINE float Q_fabs(float x)
+static ID_INLINE float Q_fabs(float x)
 {
 	float abs_x;
 
