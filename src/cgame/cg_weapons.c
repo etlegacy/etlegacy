@@ -2471,21 +2471,26 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	// don't draw weapon stuff when looking through a scope
-	if (weaponNum == WP_FG42SCOPE || weaponNum == WP_GARAND_SCOPE || weaponNum == WP_K43_SCOPE)
+	switch (weaponNum)
 	{
+	// don't draw weapon stuff when looking through a scope
+	case WP_FG42SCOPE:
+	case WP_GARAND_SCOPE:
+	case WP_K43_SCOPE:
 		if (isPlayer && !cg.renderingThirdPerson)
 		{
 			return;
 		}
-	}
-
-	if (weaponNum == WP_GRENADE_PINEAPPLE || weaponNum == WP_GRENADE_LAUNCHER)
-	{
+		break;
+	case WP_GRENADE_PINEAPPLE:
+	case WP_GRENADE_LAUNCHER:
 		if (ps && !ps->ammoclip[weaponNum])
 		{
 			return;
 		}
+		break;
+	default:
+		break;
 	}
 
 	// no weapon when on mg_42
@@ -2923,6 +2928,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isPlayer && !cg.renderingThirdPerson)  // for now just do it on the first person weapons
 	{
+		// FIXME: do a switch
 		if (weaponNum == WP_CARBINE || weaponNum == WP_KAR98 || weaponNum == WP_GPG40 || weaponNum == WP_M7)
 		{
 			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
@@ -3492,10 +3498,16 @@ CG_WeaponHasAmmo
 static qboolean CG_WeaponHasAmmo(int i)
 {
 	// certain weapons don't have ammo
-	if (i == WP_KNIFE || i == WP_KNIFE_KABAR || i == WP_PLIERS)
+	switch (i)
 	{
+	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
+	case WP_PLIERS:
 		return qtrue;
+	default:
+		break;
 	}
+
 
 	if (!(cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(i)]) &&
 	    !(cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(i)]))
@@ -3778,7 +3790,6 @@ int getEquivWeapon(int weapnum)
 	case WP_SILENCER:
 		num = WP_SILENCED_COLT;
 		break;
-
 	// going from american to german
 	case WP_COLT:
 		num = WP_LUGER;
@@ -4074,6 +4085,7 @@ void CG_AltWeapon_f(void)
 	}
 
 	// Need ground for this
+	// FIXME: do a switch
 	if (cg.weaponSelect == WP_MORTAR)
 	{
 		int    contents;
@@ -4160,7 +4172,7 @@ void CG_AltWeapon_f(void)
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
 	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
-	    // FIXME: do switches
+	    // FIXME: do a switch
 	    ((original == WP_GPG40 || num == WP_GPG40 || original == WP_M7 || num == WP_M7) ||
 	     (original == WP_SILENCER || num == WP_SILENCER || original == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
 	     (original == WP_AKIMBO_SILENCEDCOLT || num == WP_AKIMBO_SILENCEDCOLT || original == WP_AKIMBO_SILENCEDLUGER || num == WP_AKIMBO_SILENCEDLUGER) ||
@@ -4644,6 +4656,7 @@ void CG_LastWeaponUsed_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
+	// FIXME: do a switch or macro
 	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
@@ -4919,6 +4932,7 @@ void CG_WeaponBank_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
+	// FIXME: do a switch or macro
 	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
@@ -4997,6 +5011,7 @@ void CG_WeaponBank_f(void)
 	}
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
+	// FIXME: do a switch
 	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
 	    ((curweap == WP_GPG40 || num == WP_GPG40 || curweap == WP_M7 || num == WP_M7) ||
 	     (curweap == WP_SILENCER || num == WP_SILENCER || curweap == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
@@ -5033,6 +5048,7 @@ void CG_Weapon_f(void)
 		return;
 	}
 
+	// FIXME: do a switch or macro
 	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
@@ -5070,6 +5086,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 
 	if (allowforceswitch)
 	{
+		// FIXME: do a switch
 		if (cg.weaponSelect == WP_SMOKE_BOMB)
 		{
 			if (CG_WeaponSelectable(WP_LUGER))
@@ -5482,6 +5499,7 @@ void CG_FireWeapon(centity_t *cent)
 	}
 
 	// lightning gun only does this this on initial press
+	// FIXME: do a switch
 	if (ent->weapon == WP_FLAMETHROWER)
 	{
 		if (cent->pe.lightningFiring)

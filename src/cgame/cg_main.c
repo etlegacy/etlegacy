@@ -1432,9 +1432,6 @@ CG_RegisterGraphics
 This function may execute for a couple of minutes with a slow disk.
 =================
 */
-
-void WM_RegisterWeaponTypeShaders(void);
-
 static void CG_RegisterGraphics(void)
 {
 	char        name[1024];
@@ -1655,7 +1652,7 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.smallgunBrassModel = trap_R_RegisterModel("models/weapons2/shells/sm_shell.md3");
 
-	//-wolf debris
+	// wolf debris
 	cgs.media.debBlock[0] = trap_R_RegisterModel("models/mapobjects/debris/brick1.md3");
 	cgs.media.debBlock[1] = trap_R_RegisterModel("models/mapobjects/debris/brick2.md3");
 	cgs.media.debBlock[2] = trap_R_RegisterModel("models/mapobjects/debris/brick3.md3");
@@ -1766,8 +1763,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.skillPics[SK_LIGHT_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_lightweap");
 	cgs.media.skillPics[SK_HEAVY_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_soldier");
 	cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = trap_R_RegisterShaderNoMip("gfx/limbo/ic_covertops");
-
-	WM_RegisterWeaponTypeShaders();
 
 	CG_LoadRankIcons();
 

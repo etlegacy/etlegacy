@@ -368,8 +368,7 @@ static void CG_StepOffset(void)
 	}
 	if (timeDelta < STEP_TIME)
 	{
-		cg.refdef_current->vieworg[2] -= cg.stepChange
-		                                 * (STEP_TIME - timeDelta) / STEP_TIME;
+		cg.refdef_current->vieworg[2] -= cg.stepChange * (STEP_TIME - timeDelta) / STEP_TIME;
 	}
 }
 
@@ -553,6 +552,7 @@ static void CG_OffsetFirstPersonView(void)
 	origin = cg.refdef_current->vieworg;
 	angles = cg.refdefViewAngles;
 
+	// FIXME: do a switch
 	if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET || cg.snap->ps.weapon == WP_MOBILE_BROWNING_SET)
 	{
 		vec3_t forward, point;
@@ -615,6 +615,7 @@ static void CG_OffsetFirstPersonView(void)
 	if (cg.damageTime)
 	{
 		float ratio = cg.time - cg.damageTime;
+
 		if (ratio < DAMAGE_DEFLECT_TIME)
 		{
 			ratio         /= DAMAGE_DEFLECT_TIME;
@@ -869,7 +870,7 @@ void CG_Zoom(void)
 		case WP_FG42SCOPE:
 		case WP_GARAND_SCOPE:
 		case WP_K43_SCOPE:
-			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;     // JPW NERVE was DefaultFG, changed per atvi req
+			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;     // was DefaultFG, changed per atvi req
 			break;
 		default:
 			// show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
@@ -907,7 +908,7 @@ void CG_Zoom(void)
 			case WP_FG42SCOPE:
 			case WP_GARAND_SCOPE:
 			case WP_K43_SCOPE:
-				cg.zoomval = cg_zoomDefaultSniper.value;     // JPW NERVE was DefaultFG, changed per atvi req
+				cg.zoomval = cg_zoomDefaultSniper.value;     // was DefaultFG, changed per atvi req
 				break;
 			default:
 				cg.zoomval = 0;

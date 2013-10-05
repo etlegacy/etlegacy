@@ -3020,13 +3020,7 @@ typedef struct
 extern weaponType_t weaponTypes[];
 weaponType_t *WM_FindWeaponTypeForWeapon(weapon_t weapon);
 
-extern animation_t *lastTorsoAnim;
-extern animation_t *lastLegsAnim;
-extern qboolean    ccInitial;
-
-void CG_MenuCheckPendingAnimation(playerInfo_t *pi);
-void CG_MenuPendingAnimation(playerInfo_t *pi, const char *legsAnim, const char *torsoAnim, int delay);
-void CG_MenuSetAnimation(playerInfo_t *pi, const char *legsAnim, const char *torsoAnim, qboolean force, qboolean clearpending);
+extern qboolean ccInitial;
 
 #define CC_FILTER_AXIS          (1 << 0)
 #define CC_FILTER_ALLIES        (1 << 1)

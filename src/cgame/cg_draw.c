@@ -2582,8 +2582,6 @@ CG_DrawFollow
 */
 static qboolean CG_DrawFollow(void)
 {
-	char deploytime[128];
-
 #ifdef FEATURE_MULTIVIEW
 	// MV following info for mainview
 	if (CG_ViewingDraw())
@@ -2600,17 +2598,25 @@ static qboolean CG_DrawFollow(void)
 	// if in limbo, show different follow message
 	if (cg.snap->ps.pm_flags & PMF_LIMBO)
 	{
+		char deploytime[128];
+
 		if (cgs.gametype != GT_WOLF_LMS)
 		{
 			if (cg.snap->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 			{
 				if (cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] >= 0)
 				{
-					int deployTime = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
+					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) * 0.001f;
+					int reinfDepTime = CG_CalculateReinfTime(qfalse) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
 
-					deployTime *= 0.001f;
-
-					sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in %d seconds"), CG_CalculateReinfTime(qfalse) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime);
+					if (reinfDepTime > 1)
+					{
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in %d seconds"), reinfDepTime);
+					}
+					else
+					{
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in %d second"), reinfDepTime);
+					}
 				}
 				else
 				{
@@ -2619,7 +2625,16 @@ static qboolean CG_DrawFollow(void)
 			}
 			else
 			{
-				sprintf(deploytime, CG_TranslateString("Deploying in %d seconds"), CG_CalculateReinfTime(qfalse));
+				int reinfTime = CG_CalculateReinfTime(qfalse);
+
+				if (reinfTime > 1)
+				{
+					sprintf(deploytime, CG_TranslateString("Deploying in %d seconds"), reinfTime);
+				}
+				else
+				{
+					sprintf(deploytime, CG_TranslateString("Deploying in %d second"), reinfTime);
+				}
 			}
 
 			CG_DrawStringExt(INFOTEXT_STARTX, 118, deploytime, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
@@ -2628,22 +2643,38 @@ static qboolean CG_DrawFollow(void)
 		// Don't display if you're following yourself
 		if (cg.snap->ps.clientNum != cg.clientNum)
 		{
-			sprintf(deploytime, "(%s %s %s [%s])", CG_TranslateString("Following"),
-			        cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES ? rankNames_Allies[cgs.clientinfo[cg.snap->ps.clientNum].rank] : rankNames_Axis[cgs.clientinfo[cg.snap->ps.clientNum].rank],
-			        cgs.clientinfo[cg.snap->ps.clientNum].name,
-			        BG_ClassnameForNumber(cgs.clientinfo[cg.snap->ps.clientNum].cls));
+			char *follow = CG_TranslateString("Following");
+			char *w;
+			int  startClass = strlen(va("(%s ", follow)) * BIGCHAR_WIDTH / 2 + 2;
 
-			CG_DrawStringExt(INFOTEXT_STARTX, 136, deploytime, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
+			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
+			{
+				w = va("(%s  %s  )", follow, cgs.clientinfo[cg.snap->ps.clientNum].name);
+				CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2 - INFOTEXT_STARTX - 5 * BIGCHAR_WIDTH / 2 + 2, 137, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			}
+			else
+			{
+				w = va("(%s  %s)", follow, cgs.clientinfo[cg.snap->ps.clientNum].name);
+			}
+
+			CG_DrawPic(startClass, 137, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+			CG_DrawStringExt(INFOTEXT_STARTX, 136, w, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
+
 		}
 	}
 	else
 	{
-		CG_DrawStringExt(INFOTEXT_STARTX, 118, CG_TranslateString("Following"), colorWhite, qtrue, qtrue, BIGCHAR_WIDTH / 2, BIGCHAR_HEIGHT, 0);
+		char *follow    = CG_TranslateString("Following");
+		char *w         = va("%s  %s", follow, cgs.clientinfo[cg.snap->ps.clientNum].name);
+		int  startClass = strlen(va("%s ", follow)) * BIGCHAR_WIDTH / 2 + 2;
 
-		CG_DrawStringExt(84, 118, va("%s %s [%s]",
-		                             cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES ? rankNames_Allies[cgs.clientinfo[cg.snap->ps.clientNum].rank] : rankNames_Axis[cgs.clientinfo[cg.snap->ps.clientNum].rank],
-		                             cgs.clientinfo[cg.snap->ps.clientNum].name, BG_ClassnameForNumber(cgs.clientinfo[cg.snap->ps.clientNum].cls)),
-		                 colorWhite, qtrue, qtrue, BIGCHAR_WIDTH / 2, BIGCHAR_HEIGHT, 0);
+		CG_DrawPic(startClass, 120, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+		CG_DrawStringExt(INFOTEXT_STARTX, 118, w, colorWhite, qtrue, qtrue, BIGCHAR_WIDTH / 2, BIGCHAR_HEIGHT, 0);
+
+		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
+		{
+			CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2 - INFOTEXT_STARTX - BIGCHAR_WIDTH / 2, 120, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+		}
 	}
 
 	return qtrue;
