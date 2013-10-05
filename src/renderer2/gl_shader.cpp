@@ -829,8 +829,6 @@ void GLShader::GetShaderExtraDefines(char **defines, int *size) const
 {
 	static char bufferExtra[32000];
 
-	char *bufferFinal = NULL;
-
 	float fbufWidthScale, fbufHeightScale;
 	float npotWidthScale, npotHeightScale;
 

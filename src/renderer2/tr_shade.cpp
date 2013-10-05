@@ -110,12 +110,9 @@ void Tess_DrawElements()
 	}
 }
 
-
 /*
 =============================================================
-
 SURFACE SHADERS
-
 =============================================================
 */
 
@@ -178,7 +175,6 @@ static void BindDeluxeMap()
 
 	GL_Bind(deluxemap);
 }
-
 
 /*
 ================
@@ -251,10 +247,6 @@ static void DrawTris()
 
 	glDepthRange(0, 1);
 }
-
-
-
-
 
 /*
 ==============
@@ -336,7 +328,6 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 			tess.stageIteratorFunc2 = &Tess_StageIteratorGBuffer;
 		}
 	}
-
 
 	tess.skipTangentSpaces = skipTangentSpaces;
 	tess.skipVBO           = skipVBO;
@@ -498,7 +489,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	gl_vertexLightingShader_DBS_entity->SetReflectiveSpecular(normalMapping && tr.cubeHashTable != NULL);
 
-//	gl_vertexLightingShader_DBS_entity->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_vertexLightingShader_DBS_entity->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_vertexLightingShader_DBS_entity->BindProgram();
 
@@ -597,7 +588,6 @@ static void Render_vertexLighting_DBS_entity(int stage)
 			GL_Bind(tr.blackImage);
 		}
 		gl_vertexLightingShader_DBS_entity->SetUniform_SpecularTextureMatrix(tess.svars.texMatrices[TB_SPECULARMAP]);
-
 
 		//if(r_reflectionMapping->integer)
 		{
@@ -721,7 +711,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	gl_vertexLightingShader_DBS_world->SetNormalMapping(normalMapping);
 	gl_vertexLightingShader_DBS_world->SetParallaxMapping(normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
-//	gl_vertexLightingShader_DBS_world->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_vertexLightingShader_DBS_world->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_vertexLightingShader_DBS_world->BindProgram();
 
@@ -915,7 +905,7 @@ static void Render_lightMapping(int stage, bool asColorMap, bool normalMapping)
 	gl_lightMappingShader->SetNormalMapping(normalMapping);
 	gl_lightMappingShader->SetParallaxMapping(normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
-//	gl_lightMappingShader->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_lightMappingShader->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_lightMappingShader->BindProgram();
 
@@ -1021,7 +1011,6 @@ static void Render_geometricFill(int stage, bool cmap2black)
 {
 	shaderStage_t *pStage;
 	uint32_t      stateBits;
-	vec4_t        ambientColor;
 
 	GLimp_LogComment("--- Render_geometricFill ---\n");
 
@@ -1049,7 +1038,7 @@ static void Render_geometricFill(int stage, bool cmap2black)
 
 	gl_geometricFillShader->SetReflectiveSpecular(false); //normalMapping && tr.cubeHashTable != NULL);
 
-//	gl_geometricFillShader->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_geometricFillShader->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_geometricFillShader->BindProgram();
 
@@ -1057,6 +1046,8 @@ static void Render_geometricFill(int stage, bool cmap2black)
 
 	/*
 	{
+	    vec4_t ambientColor;
+
 	    if(r_precomputedLighting->integer)
 	    {
 	        VectorCopy(backEnd.currentEntity->ambientLight, ambientColor);
@@ -1077,10 +1068,10 @@ static void Render_geometricFill(int stage, bool cmap2black)
 
 	gl_geometricFillShader->SetUniform_AlphaTest(pStage->stateBits);
 	gl_geometricFillShader->SetUniform_ViewOrigin(backEnd.viewParms.orientation.origin); // world space
-//	gl_geometricFillShader->SetUniform_AmbientColor(ambientColor);
+	//gl_geometricFillShader->SetUniform_AmbientColor(ambientColor);
 
 	gl_geometricFillShader->SetUniform_ModelMatrix(backEnd.orientation.transformMatrix);
-//	gl_geometricFillShader->SetUniform_ModelViewMatrix(glState.modelViewMatrix[glState.stackIndex]);
+	//gl_geometricFillShader->SetUniform_ModelViewMatrix(glState.modelViewMatrix[glState.stackIndex]);
 	gl_geometricFillShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 	// u_BoneMatrix
@@ -1181,13 +1172,12 @@ static void Render_geometricFill(int stage, bool cmap2black)
 	GL_CheckErrors();
 }
 
-
 static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage;
-	colorGen_t    rgbGen;
-	alphaGen_t    alphaGen;
-	vec4_t        ambientColor;
+	//colorGen_t    rgbGen;
+	//alphaGen_t    alphaGen;
+	vec4_t ambientColor;
 
 	GLimp_LogComment("--- Render_depthFill ---\n");
 
@@ -1300,7 +1290,6 @@ static void Render_shadowFill(int stage)
 	shaderStage_t *pStage;
 	uint32_t      stateBits;
 
-
 	GLimp_LogComment("--- Render_shadowFill ---\n");
 
 	pStage = tess.surfaceStages[stage];
@@ -1324,8 +1313,6 @@ static void Render_shadowFill(int stage)
 	gl_shadowFillShader->BindProgram();
 
 	gl_shadowFillShader->SetRequiredVertexPointers();
-
-
 
 	if (r_debugShadowMaps->integer)
 	{
@@ -1410,7 +1397,6 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 
 	GLimp_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
 
-
 	bool normalMapping = r_normalMapping->integer && (diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL);
 
 	bool shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0);
@@ -1427,7 +1413,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	gl_forwardLightingShader_omniXYZ->SetNormalMapping(normalMapping);
 	gl_forwardLightingShader_omniXYZ->SetParallaxMapping(normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
-//	gl_forwardLightingShader_omniXYZ->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_forwardLightingShader_omniXYZ->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_forwardLightingShader_omniXYZ->SetShadowing(shadowCompare);
 
@@ -1497,7 +1483,6 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	gl_forwardLightingShader_omniXYZ->SetUniform_LightScale(light->l.scale);
 	gl_forwardLightingShader_omniXYZ->SetUniform_LightWrapAround(RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
 	gl_forwardLightingShader_omniXYZ->SetUniform_LightAttenuationMatrix(light->attenuationMatrix2);
-
 
 	GL_CheckErrors();
 
@@ -1636,7 +1621,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	gl_forwardLightingShader_projXYZ->SetNormalMapping(normalMapping);
 	gl_forwardLightingShader_projXYZ->SetParallaxMapping(normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
-//	gl_forwardLightingShader_projXYZ->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_forwardLightingShader_projXYZ->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_forwardLightingShader_projXYZ->SetShadowing(shadowCompare);
 
@@ -1706,7 +1691,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	gl_forwardLightingShader_projXYZ->SetUniform_LightScale(light->l.scale);
 	gl_forwardLightingShader_projXYZ->SetUniform_LightWrapAround(RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
 	gl_forwardLightingShader_projXYZ->SetUniform_LightAttenuationMatrix(light->attenuationMatrix2);
-
 
 	GL_CheckErrors();
 
@@ -1847,7 +1831,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	gl_forwardLightingShader_directionalSun->SetNormalMapping(normalMapping);
 	gl_forwardLightingShader_directionalSun->SetParallaxMapping(normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
-//	gl_forwardLightingShader_directionalSun->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_forwardLightingShader_directionalSun->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_forwardLightingShader_directionalSun->SetShadowing(shadowCompare);
 
@@ -1923,7 +1907,6 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	gl_forwardLightingShader_directionalSun->SetUniform_LightScale(light->l.scale);
 	gl_forwardLightingShader_directionalSun->SetUniform_LightWrapAround(RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
 	gl_forwardLightingShader_directionalSun->SetUniform_LightAttenuationMatrix(light->attenuationMatrix2);
-
 
 	GL_CheckErrors();
 
@@ -2061,7 +2044,7 @@ static void Render_reflection_CB(int stage)
 
 	// choose right shader program ----------------------------------
 	gl_reflectionShader->SetPortalClipping(backEnd.viewParms.isPortal);
-//	gl_reflectionShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS) != 0);
+	//gl_reflectionShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS) != 0);
 
 	gl_reflectionShader->SetVertexSkinning(glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
 	gl_reflectionShader->SetVertexAnimation(glState.vertexAttribsInterpolation > 0);
@@ -2070,12 +2053,11 @@ static void Render_reflection_CB(int stage)
 
 	gl_reflectionShader->SetNormalMapping(normalMapping);
 
-//	gl_reflectionShader->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
+	//gl_reflectionShader->SetMacro_TWOSIDED(tess.surfaceShader->cullType);
 
 	gl_reflectionShader->BindProgram();
 
 	// end choose right shader program ------------------------------
-
 
 	gl_reflectionShader->SetUniform_ViewOrigin(backEnd.viewParms.orientation.origin); // in world space
 
@@ -2648,7 +2630,6 @@ static void Render_liquid(int stage)
 	GL_CheckErrors();
 }
 
-
 static void Render_fog()
 {
 	fog_t    *fog;
@@ -2752,8 +2733,6 @@ static void Render_fog()
 	gl_fogQuake3Shader->SetMacro_EYE_OUTSIDE(eyeT < 0);
 
 	gl_fogQuake3Shader->BindProgram();
-
-
 
 	gl_fogQuake3Shader->SetUniform_FogDistanceVector(fogDistanceVector);
 	gl_fogQuake3Shader->SetUniform_FogDepthVector(fogDepthVector);
@@ -2962,7 +2941,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	float green;
 	float blue;
 	float alpha;
-	int   i;
 
 	GLimp_LogComment("--- Tess_ComputeColor ---\n");
 
@@ -3206,6 +3184,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		float    alpha, range, lowest, highest, dot;
 		vec3_t   worldUp;
 		qboolean zombieEffect = qfalse;
+		int      i;
 
 		if (VectorCompare(backEnd.currentEntity->e.fireRiseDir, vec3_origin))
 		{
@@ -3348,7 +3327,6 @@ static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 		}
 	}
 }
-
 
 /*
 ==============
@@ -3920,7 +3898,6 @@ void Tess_StageIteratorGBuffer()
 	}
 }
 
-
 void Tess_StageIteratorGBufferNormalsOnly()
 {
 	int stage;
@@ -4019,7 +3996,6 @@ void Tess_StageIteratorGBufferNormalsOnly()
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
-
 
 void Tess_StageIteratorDepthFill()
 {
@@ -4318,8 +4294,6 @@ void Tess_StageIteratorLighting()
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
-
-
 
 /*
 =================
