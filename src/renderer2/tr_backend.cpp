@@ -1377,7 +1377,10 @@ static void RB_RenderDrawSurfaces(bool opaque, bool depthFill, renderDrawSurface
 	GL_CheckErrors();
 }
 
-
+/**
+ * @brief RB_RenderOpaqueSurfacesIntoDepth
+ * @note Unused
+ */
 static void RB_RenderOpaqueSurfacesIntoDepth(bool onlyWorld)
 {
 	trRefEntity_t *entity, *oldEntity;
@@ -3361,6 +3364,10 @@ skipInteraction:
 	}
 }
 
+/**
+ * @brief RB_RenderDrawSurfacesIntoGeometricBuffer
+ * @note Unused
+ */
 static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 {
 	trRefEntity_t *entity, *oldEntity;
@@ -8430,16 +8437,15 @@ void RB_CollectBspOcclusionQueries()
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
 	{
-		int       j;
+		int       j = 0;
 		bspNode_t *node;
-		link_t    *l, *sentinel; // *next
-		int       ocCount;
-		int       avCount;
+		link_t    *l, *sentinel;
+		int       ocCount = 0;
+		int       avCount = 0;
 		GLint     available;
 
 		glFinish();
 
-		ocCount  = 0;
 		sentinel = &tr.occlusionQueryList;
 		for (l = sentinel->next; l != sentinel; l = l->next)
 		{
@@ -8453,7 +8459,6 @@ void RB_CollectBspOcclusionQueries()
 
 		//ri.Printf(PRINT_ALL, "waiting for %i queries...\n", ocCount);
 
-		avCount = 0;
 		do
 		{
 			for (l = sentinel->next; l != sentinel; l = l->next)

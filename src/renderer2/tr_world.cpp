@@ -1463,6 +1463,10 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 
 //#define DEBUG_CHC 1
 
+/**
+ * @brief DrawNode_r
+ * @note Unused
+ */
 static void DrawNode_r(bspNode_t *node, int planeBits)
 {
 	do
