@@ -669,7 +669,6 @@ static void CG_Item(centity_t *cent)
 	gitem_t       *item;
 
 	// (item index is stored in es->modelindex for item)
-
 	if (es->modelindex >= bg_numItems)
 	{
 		CG_Error("Bad item index %i on entity\n", es->modelindex);
@@ -1233,6 +1232,7 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
+	// FIXME: do a switch
 	if (cent->currentState.weapon == WP_MORTAR_SET
 	    || cent->currentState.weapon == WP_PANZERFAUST
 	    || cent->currentState.weapon == WP_MAPMORTAR
@@ -2250,7 +2250,6 @@ CG_InterpolateEntityPosition
 static void CG_InterpolateEntityPosition(centity_t *cent)
 {
 	vec3_t current, next;
-	float  f;
 
 	// it would be an internal error to find an entity that interpolates without
 	// a snapshot ahead of the current one
@@ -2263,23 +2262,21 @@ static void CG_InterpolateEntityPosition(centity_t *cent)
 		return;
 	}
 
-	f = cg.frameInterpolation;
-
 	// this will linearize a sine or parabolic curve, but it is important
 	// to not extrapolate player positions if more recent data is available
 	BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, current, qfalse, cent->currentState.effect2Time);
 	BG_EvaluateTrajectory(&cent->nextState.pos, cg.nextSnap->serverTime, next, qfalse, cent->currentState.effect2Time);
 
-	cent->lerpOrigin[0] = current[0] + f * (next[0] - current[0]);
-	cent->lerpOrigin[1] = current[1] + f * (next[1] - current[1]);
-	cent->lerpOrigin[2] = current[2] + f * (next[2] - current[2]);
+	cent->lerpOrigin[0] = current[0] + cg.frameInterpolation * (next[0] - current[0]);
+	cent->lerpOrigin[1] = current[1] + cg.frameInterpolation * (next[1] - current[1]);
+	cent->lerpOrigin[2] = current[2] + cg.frameInterpolation * (next[2] - current[2]);
 
 	BG_EvaluateTrajectory(&cent->currentState.apos, cg.snap->serverTime, current, qtrue, cent->currentState.effect2Time);
 	BG_EvaluateTrajectory(&cent->nextState.apos, cg.nextSnap->serverTime, next, qtrue, cent->currentState.effect2Time);
 
-	cent->lerpAngles[0] = LerpAngle(current[0], next[0], f);
-	cent->lerpAngles[1] = LerpAngle(current[1], next[1], f);
-	cent->lerpAngles[2] = LerpAngle(current[2], next[2], f);
+	cent->lerpAngles[0] = LerpAngle(current[0], next[0], cg.frameInterpolation);
+	cent->lerpAngles[1] = LerpAngle(current[1], next[1], cg.frameInterpolation);
+	cent->lerpAngles[2] = LerpAngle(current[2], next[2], cg.frameInterpolation);
 }
 
 /*
@@ -2765,7 +2762,6 @@ qboolean CG_AddCEntity_Filter(centity_t *cent)
 void CG_AddPacketEntities(void)
 {
 	int           num;
-	playerState_t *ps;
 
 	// set cg.frameInterpolation
 	if (cg.nextSnap)
@@ -2805,8 +2801,7 @@ void CG_AddPacketEntities(void)
 	AnglesToAxis(cg.autoAnglesFast, cg.autoAxisFast);
 
 	// generate and add the entity from the playerstate
-	ps = &cg.predictedPlayerState;
-	BG_PlayerStateToEntityState(ps, &cg.predictedPlayerEntity.currentState, cg.time, qfalse);
+	BG_PlayerStateToEntityState(&cg.predictedPlayerState, &cg.predictedPlayerEntity.currentState, cg.time, qfalse);
 	CG_AddCEntity(&cg.predictedPlayerEntity);
 
 	// lerp the non-predicted value for lightning gun origins
@@ -2857,9 +2852,6 @@ void CGTagToRefEntity(refEntity_t *ent, tag_t *tag)
 
 void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg42upper, refEntity_t *mg42gun, refEntity_t *player, refEntity_t *flash, vec_t *playerangles, const char *tagName, qboolean browning)
 {
-	refEntity_t ent;
-	vec3_t      angles;
-
 	memset(mg42base, 0, sizeof(refEntity_t));
 	memset(mg42gun, 0, sizeof(refEntity_t));
 	memset(mg42upper, 0, sizeof(refEntity_t));
@@ -2868,6 +2860,7 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 
 	mg42base->hModel  = cgs.media.hMountedMG42Base;
 	mg42upper->hModel = cgs.media.hMountedMG42Nest;
+
 	if (browning)
 	{
 		mg42gun->hModel = cgs.media.hMountedBrowning;
@@ -2884,6 +2877,9 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 
 	if (tank->tankframe != cg.clientFrame)
 	{
+		refEntity_t ent;
+		vec3_t      angles;
+
 		tank->tankframe = cg.clientFrame;
 
 		memset(&ent, 0, sizeof(refEntity_t));
@@ -2910,8 +2906,8 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 		VectorCopy(playerangles, angles);
 		angles[PITCH] = 0;
 
-		// kw: thirdperson tank bugfix
-		if (cg.snap->ps.eFlags & EF_MOUNTEDTANK
+		// thirdperson tank bugfix
+		if ((cg.snap->ps.eFlags & EF_MOUNTEDTANK)
 		    && cg_entities[cg.snap->ps.clientNum].tagParent
 		    == tank - cg_entities)
 		{
