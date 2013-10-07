@@ -140,6 +140,8 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case UI_SHUTDOWN:
 		_UI_Shutdown();
 		return 0;
+	case UI_HASUNIQUECDKEY: // obsolete - keep this to avoid 'Bad ui export type' for vanilla clients
+		return 0;
 	default:
 		Com_Printf("Bad ui export type: %ld\n", (long int) command);
 		break;
