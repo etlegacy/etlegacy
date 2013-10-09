@@ -35,7 +35,6 @@
 
 #include "cg_local.h"
 
-#define STATUSBARHEIGHT 452
 char *BindingFromName(const char *cvar);
 void Controls_GetConfig(void);
 void CG_DrawOverlays(void);
@@ -2649,23 +2648,22 @@ static qboolean CG_DrawFollow(void)
 
 			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 			{
-				w = va("(%s  %s  )", follow, cgs.clientinfo[cg.snap->ps.clientNum].name);
-				CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2 - INFOTEXT_STARTX - 5 * BIGCHAR_WIDTH / 2 + 2, 137, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+				w = va("(%s  %s  )", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
+				CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2 - BIGCHAR_WIDTH + 2, 137, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 			}
 			else
 			{
-				w = va("(%s  %s)", follow, cgs.clientinfo[cg.snap->ps.clientNum].name);
+				w = va("(%s  %s)", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
 			}
 
 			CG_DrawPic(startClass, 137, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 			CG_DrawStringExt(INFOTEXT_STARTX, 136, w, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
-
 		}
 	}
 	else
 	{
 		char *follow    = CG_TranslateString("Following");
-		char *w         = va("%s  %s", follow, cgs.clientinfo[cg.snap->ps.clientNum].name);
+		char *w         = va("%s  %s", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
 		int  startClass = strlen(va("%s ", follow)) * BIGCHAR_WIDTH / 2 + 2;
 
 		CG_DrawPic(startClass, 120, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
@@ -2673,7 +2671,7 @@ static qboolean CG_DrawFollow(void)
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 		{
-			CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2 - INFOTEXT_STARTX - BIGCHAR_WIDTH / 2, 120, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2  + BIGCHAR_WIDTH / 2, 120, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 	}
 
