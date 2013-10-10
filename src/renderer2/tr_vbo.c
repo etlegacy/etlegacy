@@ -498,11 +498,6 @@ static void R_InitUnitCubeVBO()
 	srfVert_t     *verts;
 	srfTriangle_t *triangles;
 
-	if (glConfig.smpActive)
-	{
-		ri.Error(ERR_FATAL, "R_InitUnitCubeVBO: FIXME SMP");
-	}
-
 	tess.multiDrawPrimitives = 0;
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;

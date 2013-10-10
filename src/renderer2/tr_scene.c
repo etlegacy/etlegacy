@@ -60,50 +60,6 @@ int r_numDecals;
 
 /*
 ====================
-R_ToggleSmpFrame
-====================
-*/
-void R_ToggleSmpFrame(void)
-{
-	if (r_smp->integer)
-	{
-		// use the other buffers next frame, because another CPU
-		// may still be rendering into the current ones
-		tr.smpFrame ^= 1;
-	}
-	else
-	{
-		tr.smpFrame = 0;
-	}
-
-	backEndData[tr.smpFrame]->commands.used = 0;
-
-	r_firstSceneDrawSurf    = 0;
-	r_firstSceneInteraction = 0;
-
-	r_numLights       = 0;
-	r_firstSceneLight = 0;
-
-	r_numEntities      = 0;
-	r_firstSceneEntity = 0;
-
-	r_numPolys       = 0;
-	r_firstScenePoly = 0;
-
-	r_numPolyVerts = 0;
-
-	r_numPolybuffers       = 0;
-	r_firstScenePolybuffer = 0;
-
-	// decals
-	r_numDecalProjectors       = 0;
-	r_firstSceneDecalProjector = 0;
-	r_numDecals                = 0;
-	r_firstSceneDecal          = 0;
-}
-
-/*
-====================
 RE_ClearScene
 ====================
 */
@@ -214,11 +170,11 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 			return;
 		}
 
-		poly              = &backEndData[tr.smpFrame]->polys[r_numPolys];
+		poly              = &backEndData->polys[r_numPolys];
 		poly->surfaceType = SF_POLY;
 		poly->hShader     = hShader;
 		poly->numVerts    = numVerts;
-		poly->verts       = &backEndData[tr.smpFrame]->polyVerts[r_numPolyVerts];
+		poly->verts       = &backEndData->polyVerts[r_numPolyVerts];
 
 		Com_Memcpy(poly->verts, &verts[numVerts * j], numVerts * sizeof(*verts));
 
@@ -315,7 +271,7 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 		return;
 	}
 
-	pPolySurf = &backEndData[tr.smpFrame]->polybuffers[r_numPolybuffers];
+	pPolySurf = &backEndData->polybuffers[r_numPolybuffers];
 	r_numPolybuffers++;
 
 	pPolySurf->surfaceType = SF_POLYBUFFER;
@@ -370,9 +326,9 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 		ri.Error(ERR_DROP, "RE_AddRefEntityToScene: bad reType %i", ent->reType);
 	}
 
-	Com_Memcpy(&backEndData[tr.smpFrame]->entities[r_numEntities].e, ent, sizeof(refEntity_t));
-	//backEndData[tr.smpFrame]->entities[r_numentities].e = *ent;
-	backEndData[tr.smpFrame]->entities[r_numEntities].lightingCalculated = qfalse;
+	Com_Memcpy(&backEndData->entities[r_numEntities].e, ent, sizeof(refEntity_t));
+	//backEndData->entities[r_numentities].e = *ent;
+	backEndData->entities[r_numEntities].lightingCalculated = qfalse;
 
 	r_numEntities++;
 }
@@ -406,7 +362,7 @@ void RE_AddRefLightToScene(const refLight_t *l)
 		ri.Error(ERR_DROP, "RE_AddRefLightToScene: bad rlType %i", l->rlType);
 	}
 
-	light = &backEndData[tr.smpFrame]->lights[r_numLights++];
+	light = &backEndData->lights[r_numLights++];
 	Com_Memcpy(&light->l, l, sizeof(light->l));
 
 	light->isStatic = qfalse;
@@ -473,7 +429,7 @@ static void R_AddWorldLightsToScene()
 			continue;
 		}
 
-		Com_Memcpy(&backEndData[tr.smpFrame]->lights[r_numLights], light, sizeof(trRefLight_t));
+		Com_Memcpy(&backEndData->lights[r_numLights], light, sizeof(trRefLight_t));
 		r_numLights++;
 	}
 }
@@ -504,7 +460,7 @@ void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity
 		return;
 	}
 
-	light = &backEndData[tr.smpFrame]->lights[r_numLights++];
+	light = &backEndData->lights[r_numLights++];
 
 	light->l.rlType = RL_OMNI;
 	//light->l.lightfx = 0;
@@ -569,7 +525,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 		return;
 	}
 
-	cor = &backEndData[tr.smpFrame]->coronas[r_numcoronas++];
+	cor = &backEndData->coronas[r_numcoronas++];
 	VectorCopy(org, cor->origin);
 	cor->color[0] = r;
 	cor->color[1] = g;
@@ -666,31 +622,31 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.floatTime = tr.refdef.time * 0.001f;
 
 	tr.refdef.numDrawSurfs = r_firstSceneDrawSurf;
-	tr.refdef.drawSurfs    = backEndData[tr.smpFrame]->drawSurfs;
+	tr.refdef.drawSurfs    = backEndData->drawSurfs;
 
 	tr.refdef.numInteractions = r_firstSceneInteraction;
-	tr.refdef.interactions    = backEndData[tr.smpFrame]->interactions;
+	tr.refdef.interactions    = backEndData->interactions;
 
 	tr.refdef.numEntities = r_numEntities - r_firstSceneEntity;
-	tr.refdef.entities    = &backEndData[tr.smpFrame]->entities[r_firstSceneEntity];
+	tr.refdef.entities    = &backEndData->entities[r_firstSceneEntity];
 
 	tr.refdef.numLights = r_numLights - r_firstSceneLight;
-	tr.refdef.lights    = &backEndData[tr.smpFrame]->lights[r_firstSceneLight];
+	tr.refdef.lights    = &backEndData->lights[r_firstSceneLight];
 
 	tr.refdef.num_coronas = r_numcoronas - r_firstSceneCorona;
-	tr.refdef.coronas     = &backEndData[tr.smpFrame]->coronas[r_firstSceneCorona];
+	tr.refdef.coronas     = &backEndData->coronas[r_firstSceneCorona];
 
 	tr.refdef.numPolys = r_numPolys - r_firstScenePoly;
-	tr.refdef.polys    = &backEndData[tr.smpFrame]->polys[r_firstScenePoly];
+	tr.refdef.polys    = &backEndData->polys[r_firstScenePoly];
 
 	tr.refdef.numPolybuffers = r_numPolybuffers - r_firstScenePolybuffer;
-	tr.refdef.polybuffers    = &backEndData[tr.smpFrame]->polybuffers[r_firstScenePolybuffer];
+	tr.refdef.polybuffers    = &backEndData->polybuffers[r_firstScenePolybuffer];
 
 	tr.refdef.numDecalProjectors = r_numDecalProjectors - r_firstSceneDecalProjector;
-	tr.refdef.decalProjectors    = &backEndData[tr.smpFrame]->decalProjectors[r_firstSceneDecalProjector];
+	tr.refdef.decalProjectors    = &backEndData->decalProjectors[r_firstSceneDecalProjector];
 
 	tr.refdef.numDecals = r_numDecals - r_firstSceneDecal;
-	tr.refdef.decals    = &backEndData[tr.smpFrame]->decals[r_firstSceneDecal];
+	tr.refdef.decals    = &backEndData->decals[r_firstSceneDecal];
 
 
 	// a single frame may have multiple scenes draw inside it --

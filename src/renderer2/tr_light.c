@@ -136,15 +136,15 @@ void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 			/*
 			   if(*surf->data == SF_FACE)
 			   {
-			   ((srfSurfaceFace_t *) surf->data)->dlightBits[tr.smpFrame] = mask;
+			   ((srfSurfaceFace_t *) surf->data)->dlightBits = mask;
 			   }
 			   else if(*surf->data == SF_GRID)
 			   {
-			   ((srfGridMesh_t *) surf->data)->dlightBits[tr.smpFrame] = mask;
+			   ((srfGridMesh_t *) surf->data)->dlightBits = mask;
 			   }
 			   else if(*surf->data == SF_TRIANGLES)
 			   {
-			   ((srfTriangles_t *) surf->data)->dlightBits[tr.smpFrame] = mask;
+			   ((srfTriangles_t *) surf->data)->dlightBits = mask;
 			   }
 			 */
 
@@ -791,11 +791,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		vec4_t        quadVerts[4];
 		srfVert_t     *verts;
 		srfTriangle_t *triangles;
-
-		if (glConfig.smpActive)
-		{
-			ri.Error(ERR_FATAL, "R_SetupLightFrustum: FIXME SMP");
-		}
 
 		tess.multiDrawPrimitives = 0;
 		tess.numIndexes          = 0;

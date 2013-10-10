@@ -56,11 +56,6 @@ typedef unsigned short glIndex_t;
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-// everything that is needed by the backend needs
-// to be double buffered to allow it to run in
-// parallel on a dual cpu machine
-#define SMP_FRAMES      2
-
 #define MAX_SHADERS             (1 << 12)
 #define SHADERS_MASK            (MAX_SHADERS - 1)
 
@@ -2143,7 +2138,7 @@ typedef struct srfGeneric_s
 	cplane_t plane;
 
 	// dynamic lighting information
-//	int             dlightBits[SMP_FRAMES];
+//	int             dlightBits;
 }
 srfGeneric_t;
 
@@ -3042,7 +3037,6 @@ typedef struct
 // from the front end state
 typedef struct
 {
-	int smpFrame;
 	trRefdef_t refdef;
 	viewParms_t viewParms;
 	orientationr_t orientation;
@@ -3100,8 +3094,6 @@ typedef struct
 	int viewCountNoReset;
 	int lightCount;             // incremented every time a dlight traverses the world
 	// and every R_MarkFragments call
-
-	int smpFrame;               // toggles from 0 to 1 every endFrame
 
 	int frameSceneNum;          // zeroed at RE_BeginFrame
 
@@ -3595,10 +3587,6 @@ extern cvar_t *r_evsmPostProcess;
 extern cvar_t *r_dynamicLightCastShadows;
 extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
-
-// SMP
-extern cvar_t *r_smp;
-extern cvar_t *r_showSmp;
 
 //====================================================================
 
@@ -4120,8 +4108,6 @@ SCENE GENERATION, tr_scene.c
 ============================================================
 */
 
-void R_ToggleSmpFrame(void);
-
 void RE_ClearScene(void);
 void RE_AddRefEntityToScene(const refEntity_t *ent);
 void RE_AddRefLightToScene(const refLight_t *light);
@@ -4409,15 +4395,12 @@ typedef struct
 	renderCommandList_t commands;
 } backEndData_t;
 
-extern backEndData_t *backEndData[SMP_FRAMES];  // the second one may not be allocated
+extern backEndData_t *backEndData;  // the second one may not be allocated
 
 extern volatile qboolean renderThreadActive;
 
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
-
-void R_InitCommandBuffers(void);
-void R_ShutdownCommandBuffers(void);
 
 void R_SyncRenderThread(void);
 

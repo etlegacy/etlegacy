@@ -171,45 +171,6 @@ void R_PerformanceCounters(void)
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-
-/*
-====================
-R_InitCommandBuffers
-====================
-*/
-void R_InitCommandBuffers(void)
-{
-	glConfig.smpActive = qfalse;
-	if (r_smp->integer)
-	{
-		ri.Printf(PRINT_ALL, "Trying SMP acceleration...\n");
-		if (GLimp_SpawnRenderThread(RB_RenderThread))
-		{
-			ri.Printf(PRINT_ALL, "...succeeded.\n");
-			glConfig.smpActive = qtrue;
-		}
-		else
-		{
-			ri.Printf(PRINT_ALL, "...failed.\n");
-		}
-	}
-}
-
-/*
-====================
-R_ShutdownCommandBuffers
-====================
-*/
-void R_ShutdownCommandBuffers(void)
-{
-	// kill the rendering thread
-	if (glConfig.smpActive)
-	{
-		GLimp_WakeRenderer(NULL);
-		glConfig.smpActive = qfalse;
-	}
-}
-
 /*
 ====================
 R_IssueRenderCommands
@@ -222,37 +183,13 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
 	renderCommandList_t *cmdList;
 
-	cmdList = &backEndData[tr.smpFrame]->commands;
+	cmdList = &backEndData->commands;
 	assert(cmdList);            // bk001205
 	// add an end-of-list command
 	*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
-
-	if (glConfig.smpActive)
-	{
-		// if the render thread is not idle, wait for it
-		if (renderThreadActive)
-		{
-			c_blockedOnRender++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, "R");
-			}
-		}
-		else
-		{
-			c_blockedOnMain++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, ".");
-			}
-		}
-
-		// sleep until the renderer has completed
-		GLimp_FrontEndSleep();
-	}
 
 	// at this point, the back end thread is idle, so it is ok
 	// to look at it's performance counters
@@ -264,15 +201,7 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	// actually start the commands going
 	if (!r_skipBackEnd->integer)
 	{
-		// let it start on the new batch
-		if (!glConfig.smpActive)
-		{
-			RB_ExecuteRenderCommands(cmdList->cmds);
-		}
-		else
-		{
-			GLimp_WakeRenderer(cmdList);
-		}
+		GLimp_WakeRenderer(cmdList);
 	}
 }
 
@@ -294,12 +223,6 @@ void R_SyncRenderThread(void)
 		return;
 	}
 	R_IssueRenderCommands(qfalse);
-
-	if (!glConfig.smpActive)
-	{
-		return;
-	}
-	GLimp_FrontEndSleep();
 }
 
 void R_IssuePendingRenderCommands(void)
@@ -319,7 +242,7 @@ void *R_GetCommandBuffer(int bytes)
 {
 	renderCommandList_t *cmdList;
 
-	cmdList = &backEndData[tr.smpFrame]->commands;
+	cmdList = &backEndData->commands;
 
 	// always leave room for the swap buffers and end of list commands
 	// RB: added swapBuffers_t from ET
@@ -547,7 +470,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	}
 
 	cmd->commandId = RC_2DPOLYS;
-	cmd->verts     = &backEndData[tr.smpFrame]->polyVerts[r_numPolyVerts];
+	cmd->verts     = &backEndData->polyVerts[r_numPolyVerts];
 	cmd->numverts  = numverts;
 	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
 	cmd->shader = R_GetShaderByHandle(hShader);
@@ -828,10 +751,6 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	cmd->commandId = RC_SWAP_BUFFERS;
 
 	R_IssueRenderCommands(qtrue);
-
-	// use the other buffers next frame, because another CPU
-	// may still be rendering into the current ones
-	R_ToggleSmpFrame();
 
 	if (frontEndMsec)
 	{

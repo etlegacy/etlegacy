@@ -1021,7 +1021,6 @@ static void Render_geometricFill(int stage, bool cmap2black)
 {
 	shaderStage_t *pStage;
 	uint32_t      stateBits;
-	vec4_t        ambientColor;
 
 	GLimp_LogComment("--- Render_geometricFill ---\n");
 
@@ -1185,8 +1184,6 @@ static void Render_geometricFill(int stage, bool cmap2black)
 static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage;
-	colorGen_t    rgbGen;
-	alphaGen_t    alphaGen;
 	vec4_t        ambientColor;
 
 	GLimp_LogComment("--- Render_depthFill ---\n");
@@ -2962,7 +2959,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	float green;
 	float blue;
 	float alpha;
-	int   i;
 
 	GLimp_LogComment("--- Tess_ComputeColor ---\n");
 

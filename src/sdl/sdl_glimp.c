@@ -57,12 +57,6 @@
 #include "eglport.h"
 #endif
 
-qboolean GLimp_SpawnRenderThread(void ( *function )(void))
-{
-	ri.Printf(PRINT_WARNING, "ERROR: SMP support was disabled at compile time\n");
-	return qfalse;
-}
-
 void GLimp_ShutdownRenderThread(void)
 {
 }

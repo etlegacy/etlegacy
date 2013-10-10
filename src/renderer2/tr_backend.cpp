@@ -35,7 +35,7 @@
 #include "gl_shader.h"
 
 
-backEndData_t  *backEndData[SMP_FRAMES];
+backEndData_t  *backEndData;
 backEndState_t backEnd;
 
 void GL_Bind(image_t *image)
@@ -11704,15 +11704,6 @@ void RB_ExecuteRenderCommands(const void *data)
 	GLimp_LogComment("--- RB_ExecuteRenderCommands ---\n");
 
 	t1 = ri.Milliseconds();
-
-	if (!r_smp->integer || data == backEndData[0]->commands.cmds)
-	{
-		backEnd.smpFrame = 0;
-	}
-	else
-	{
-		backEnd.smpFrame = 1;
-	}
 
 	while (1)
 	{

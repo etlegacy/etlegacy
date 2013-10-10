@@ -73,8 +73,8 @@ static void MD5Init(struct MD5Context *ctx)
 #define MD5STEP(f, w, x, y, z, data, s) \
 	(w += f(x, y, z) + data, w = w << s | w >> (32 - s), w += x)
 
-/*
- * The core of the MD5 algorithm, this alters an existing MD5 hash to
+/**
+ * @brief The core of the MD5 algorithm, this alters an existing MD5 hash to
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
  * the data and converts bytes into longwords for this routine.
  */
@@ -162,8 +162,8 @@ static void MD5Transform(uint32_t buf[4],
 	buf[3] += d;
 }
 
-/*
- * Update context to reflect the concatenation of another buffer full
+/**
+ * @brief Update context to reflect the concatenation of another buffer full
  * of bytes.
  */
 static void MD5Update(struct MD5Context *ctx, unsigned char const *buf,
@@ -269,6 +269,14 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest)
 	memset(ctx, 0, sizeof(*ctx));          /* In case it's sensitive */
 }
 
+/**
+ * @brief Generates md5 checksum of a given file
+ * @param fn         file name
+ * @param length     file length. Ignored if 0
+ * @param prefix     ignored if NULL
+ * @param prefix_len ignored if 0
+ * @return           md5 checksum
+ */
 char *Com_MD5File(const char *fn, int length, const char *prefix, int prefix_len)
 {
 	static char   final[33]  = { "" };
@@ -343,7 +351,7 @@ void MD5InitSeed(MD5_CTX *mdContext, unsigned long pseudoRandomNumber)
 	mdContext->buf[3]  = ( uint32_t ) 0x10325476 + pseudoRandomNumber * 97;
 }
 
-/*
+/**
  * @author Morsik
  * https://github.com/morsik/war-territory
  */

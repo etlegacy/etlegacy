@@ -64,8 +64,6 @@ cvar_t *r_ignore;
 cvar_t *r_znear;
 cvar_t *r_zfar;
 
-cvar_t *r_smp;
-cvar_t *r_showSmp;
 cvar_t *r_skipBackEnd;
 cvar_t *r_skipLightBuffer;
 
@@ -407,10 +405,6 @@ static qboolean InitOpenGL(void)
 
 	GL_CheckErrors();
 
-	// init command buffers and SMP
-	R_InitCommandBuffers();
-	GL_CheckErrors();
-
 	// print info
 	GfxInfo_f();
 	GL_CheckErrors();
@@ -431,12 +425,6 @@ void GL_CheckErrors_(const char *fileName, int line)
 {
 	int  err;
 	char s[128];
-
-	if (glConfig.smpActive)
-	{
-		// we can't print onto the console while rendering in another thread
-		return;
-	}
 
 	if (r_ignoreGLErrors->integer)
 	{
@@ -1346,11 +1334,6 @@ void GfxInfo_f(void)
 		ri.Printf(PRINT_ALL, "Using GPU vertex skinning with max %i bones in a single pass\n", glConfig2.maxVertexSkinningBones);
 	}
 
-	if (glConfig.smpActive)
-	{
-		ri.Printf(PRINT_ALL, "Using dual processor acceleration\n");
-	}
-
 	if (r_finish->integer)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
@@ -1450,8 +1433,6 @@ void R_Register(void)
 
 	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0.125", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
-
-	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "1", CVAR_CHEAT | CVAR_LATCH);
@@ -1583,7 +1564,6 @@ void R_Register(void)
 	r_flareSize = ri.Cvar_Get("r_flareSize", "40", CVAR_CHEAT);
 	r_flareFade = ri.Cvar_Get("r_flareFade", "7", CVAR_CHEAT);
 
-	r_showSmp         = ri.Cvar_Get("r_showSmp", "0", CVAR_CHEAT);
 	r_skipBackEnd     = ri.Cvar_Get("r_skipBackEnd", "0", CVAR_CHEAT);
 	r_skipLightBuffer = ri.Cvar_Get("r_skipLightBuffer", "0", CVAR_CHEAT);
 
@@ -1821,24 +1801,10 @@ void R_Init(void)
 	GLSL_InitGPUShaders();
 #endif
 
-	backEndData[0]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[0]), h_low);
-	backEndData[0]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
-	backEndData[0]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
-	backEndData[0]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
-
-	if (r_smp->integer)
-	{
-		backEndData[1]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[1]), h_low);
-		backEndData[1]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
-		backEndData[1]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
-		backEndData[1]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
-	}
-	else
-	{
-		backEndData[1] = NULL;
-	}
-
-	R_ToggleSmpFrame();
+	backEndData              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData), h_low);
+	backEndData->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
+	backEndData->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
+	backEndData->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
 
 	R_InitImages();
 
@@ -1911,7 +1877,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	{
 		R_SyncRenderThread();
 
-		R_ShutdownCommandBuffers();
 		R_ShutdownImages();
 		R_ShutdownVBOs();
 		R_ShutdownFBOs();

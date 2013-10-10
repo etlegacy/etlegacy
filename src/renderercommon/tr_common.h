@@ -79,7 +79,6 @@ void GLimp_Minimize(void);
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
 
 //To be dropped functions
-qboolean GLimp_SpawnRenderThread(void (*function) (void));
 void GLimp_ShutdownRenderThread(void);
 void GLimp_WakeRenderer(void *data);
 
