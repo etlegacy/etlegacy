@@ -1918,8 +1918,6 @@ void RE_Shutdown(qboolean destroyWindow)
 #if !defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_ShutdownGPUShaders();
 #endif
-
-		//GLimp_ShutdownRenderThread();
 	}
 
 	R_DoneFreeType();

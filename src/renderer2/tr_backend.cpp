@@ -1377,7 +1377,10 @@ static void RB_RenderDrawSurfaces(bool opaque, bool depthFill, renderDrawSurface
 	GL_CheckErrors();
 }
 
-
+/**
+ * @brief RB_RenderOpaqueSurfacesIntoDepth
+ * @note Unused
+ */
 static void RB_RenderOpaqueSurfacesIntoDepth(bool onlyWorld)
 {
 	trRefEntity_t *entity, *oldEntity;
@@ -2385,9 +2388,7 @@ static void RB_RenderInteractionsShadowMapped()
 						vec4_t   splitFrustum[6];
 						vec3_t   splitFrustumCorners[8];
 						vec3_t   splitFrustumBounds[2];
-						vec3_t   splitFrustumViewBounds[2];
 						vec3_t   splitFrustumClipBounds[2];
-						float    splitFrustumRadius;
 						int      numCasters;
 						vec3_t   casterBounds[2];
 						vec3_t   receiverBounds[2];
@@ -2473,8 +2474,7 @@ static void RB_RenderInteractionsShadowMapped()
 								vec3_t rayIntersectionNear, rayIntersectionFar;
 								float  zNear, zFar;
 
-								// don't just call LogComment, or we will get
-								// a call to va() every frame!
+								// don't just call LogComment, or we will get a call to va() every frame!
 								//GLimp_LogComment(va("----- Skipping shadowCube side: %i -----\n", cubeSide));
 
 								PlaneIntersectRay(viewOrigin, viewDirection, splitFrustum[FRUSTUM_FAR], rayIntersectionFar);
@@ -3361,6 +3361,10 @@ skipInteraction:
 	}
 }
 
+/**
+ * @brief RB_RenderDrawSurfacesIntoGeometricBuffer
+ * @note Unused
+ */
 static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 {
 	trRefEntity_t *entity, *oldEntity;
@@ -3539,15 +3543,11 @@ void RB_RenderInteractionsDeferred()
 	shader_t      *lightShader;
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
-//	int             i;
-	int j;
-	//vec3_t          viewOrigin;
-	//vec3_t          lightOrigin;
-	vec4_t   lightColor;
-	matrix_t ortho;
-	vec4_t   quadVerts[4];
-	vec4_t   lightFrustum[6];
-	int      startTime = 0, endTime = 0;
+	int           j;
+	matrix_t      ortho;
+	vec4_t        quadVerts[4];
+	vec4_t        lightFrustum[6];
+	int           startTime = 0, endTime = 0;
 
 	GLimp_LogComment("--- RB_RenderInteractionsDeferred ---\n");
 
@@ -4187,15 +4187,11 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
 	int           i, j;
-	//vec3_t          viewOrigin;
-	//vec3_t          lightOrigin;
-	vec3_t   lightDirection;
-	vec4_t   lightColor;
-	qboolean shadowCompare;
-	matrix_t ortho;
-	vec4_t   quadVerts[4];
-	vec4_t   lightFrustum[6];
-	int      startTime = 0, endTime = 0;
+	vec3_t        lightDirection;
+	matrix_t      ortho;
+	vec4_t        quadVerts[4];
+	vec4_t        lightFrustum[6];
+	int           startTime = 0, endTime = 0;
 
 	GLimp_LogComment("--- RB_RenderInteractionsDeferredShadowMapped ---\n");
 
@@ -4446,15 +4442,13 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						vec4_t   splitFrustum[6];
 						vec3_t   splitFrustumCorners[8];
 						vec3_t   splitFrustumBounds[2];
-						vec3_t   splitFrustumViewBounds[2];
 						vec3_t   splitFrustumClipBounds[2];
-						//float			splitFrustumRadius;
-						int    numCasters;
-						vec3_t casterBounds[2];
-						vec3_t receiverBounds[2];
-						vec3_t cropBounds[2];
-						vec4_t point;
-						vec4_t transf;
+						int      numCasters;
+						vec3_t   casterBounds[2];
+						vec3_t   receiverBounds[2];
+						vec3_t   cropBounds[2];
+						vec4_t   point;
+						vec4_t   transf;
 
 						GLimp_LogComment("--- Rendering directional shadowMap ---\n");
 
@@ -6470,8 +6464,7 @@ void RB_RenderDepthOfField()
 void RB_RenderGlobalFog()
 {
 	vec3_t   local;
-	vec4_t   fogDistanceVector, fogDepthVector;
-	vec4_t   fogColor;
+	vec4_t   fogDistanceVector;
 	matrix_t ortho;
 
 	GLimp_LogComment("--- RB_RenderGlobalFog ---\n");
@@ -7863,7 +7856,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 
 	vec3_t   boundsCenter;
 	vec3_t   boundsSize;
-	matrix_t transform, scale, rot;
+	matrix_t rot;
 	axis_t   axis;
 
 
@@ -8430,16 +8423,18 @@ void RB_RenderBspOcclusionQueries()
 	GL_CheckErrors();
 }
 
-
+/**
+ * @brief RB_CollectBspOcclusionQueries
+ */
 void RB_CollectBspOcclusionQueries()
 {
 	GLimp_LogComment("--- RB_CollectBspOcclusionQueries ---\n");
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
 	{
-		int       j;
+		int       j = 0;  // FIXME: something isn't right here, j stays at zero
 		bspNode_t *node;
-		link_t    *l, *next, *sentinel;
+		link_t    *l, *sentinel;
 
 		int   ocCount;
 		int   avCount;
@@ -8479,6 +8474,7 @@ void RB_CollectBspOcclusionQueries()
 
 					if (available)
 					{
+						// FIXME: j is always zero
 						node->issueOcclusionQuery[j] = qfalse;
 						avCount++;
 
@@ -9505,7 +9501,6 @@ static void RB_RenderDebugUtils()
 	{
 		cubemapProbe_t *cubeProbe;
 		int            j;
-		vec4_t         quadVerts[4];
 		vec3_t         mins = { -8, -8, -8 };
 		vec3_t         maxs = { 8, 8, 8 };
 		//vec3_t			viewOrigin;
@@ -9802,7 +9797,7 @@ static void RB_RenderDebugUtils()
 						vec3_t forward = { 0, 0, -1 };
 						vec3_t up      = { 1, 0, 0 };
 
-						matrix_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix;
+						matrix_t viewMatrix, projectionMatrix;
 
 
 						// Quake -> OpenGL view matrix from light perspective
@@ -11753,34 +11748,5 @@ void RB_ExecuteRenderCommands(const void *data)
 			backEnd.pc.msec = t2 - t1;
 			return;
 		}
-	}
-}
-
-
-/*
-================
-RB_RenderThread
-================
-*/
-void RB_RenderThread(void)
-{
-	const void *data;
-
-	// wait for either a rendering command or a quit command
-	while (1)
-	{
-		// sleep until we have work to do
-		data = GLimp_RendererSleep();
-
-		if (!data)
-		{
-			return;             // all done, renderer is shutting down
-		}
-
-		renderThreadActive = qtrue;
-
-		RB_ExecuteRenderCommands(data);
-
-		renderThreadActive = qfalse;
 	}
 }

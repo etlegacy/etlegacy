@@ -4227,7 +4227,6 @@ RENDERER BACK END FUNCTIONS
 =============================================================
 */
 
-void RB_RenderThread(void);
 void RB_ExecuteRenderCommands(const void *data);
 
 /*

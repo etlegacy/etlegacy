@@ -1661,8 +1661,6 @@ RENDERER BACK END FUNCTIONS
 =============================================================
 */
 
-void RB_ExecuteRenderCommands(const void *data);
-
 /*
 =============================================================
 RENDERER BACK END COMMAND QUEUE

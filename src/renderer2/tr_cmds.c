@@ -197,12 +197,6 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	{
 		R_PerformanceCounters();
 	}
-
-	// actually start the commands going
-	if (!r_skipBackEnd->integer)
-	{
-		GLimp_WakeRenderer(cmdList);
-	}
 }
 
 

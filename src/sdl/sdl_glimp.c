@@ -57,23 +57,6 @@
 #include "eglport.h"
 #endif
 
-void GLimp_ShutdownRenderThread(void)
-{
-}
-
-void *GLimp_RendererSleep(void)
-{
-	return NULL;
-}
-
-void GLimp_FrontEndSleep(void)
-{
-}
-
-void GLimp_WakeRenderer(void *data)
-{
-}
-
 typedef enum
 {
 	RSERR_OK,
