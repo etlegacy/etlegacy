@@ -2529,7 +2529,7 @@ CG_DrawLimboMessage
 
 static void CG_DrawLimboMessage(void)
 {
-	const char    *str;
+	char    *str;
 	playerState_t *ps = &cg.snap->ps;
 	int           y   = 118;
 
@@ -2566,7 +2566,24 @@ static void CG_DrawLimboMessage(void)
 		return;
 	}
 
-	str = (ps->persistant[PERS_RESPAWNS_LEFT] == 0) ? CG_TranslateString("No more reinforcements this round.") : va(CG_TranslateString("Reinforcements deploy in %d seconds."), CG_CalculateReinfTime(qfalse));
+	if (ps->persistant[PERS_RESPAWNS_LEFT] == 0)
+	{
+		str = CG_TranslateString("No more reinforcements this round.");
+	}
+	else
+	{
+		int reinfTime = CG_CalculateReinfTime(qfalse);
+
+		if (reinfTime > 1)
+		{
+			sprintf(str, CG_TranslateString("Deploying in %d seconds"), reinfTime);
+		}
+		else
+		{
+			sprintf(str, CG_TranslateString("Deploying in %d second"), reinfTime);
+		}
+
+	}
 
 	CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 	y += 18;
