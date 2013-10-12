@@ -2529,7 +2529,7 @@ CG_DrawLimboMessage
 
 static void CG_DrawLimboMessage(void)
 {
-	char    *str;
+	char          *str;
 	playerState_t *ps = &cg.snap->ps;
 	int           y   = 118;
 
@@ -2609,6 +2609,20 @@ static qboolean CG_DrawFollow(void)
 	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW))
 	{
 		return qfalse;
+	}
+
+	// Spectators view teamflags
+	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	{
+
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
+		{
+			CG_DrawPic(INFOTEXT_STARTX, 118 - 12, 18, 12, cgs.media.alliedFlag);
+		}
+		else
+		{
+			CG_DrawPic(INFOTEXT_STARTX, 118 - 12, 18, 12, cgs.media.axisFlag);
+		}
 	}
 
 	// if in limbo, show different follow message
