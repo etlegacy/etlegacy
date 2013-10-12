@@ -2761,7 +2761,7 @@ qboolean CG_AddCEntity_Filter(centity_t *cent)
 
 void CG_AddPacketEntities(void)
 {
-	int           num;
+	int num;
 
 	// set cg.frameInterpolation
 	if (cg.nextSnap)

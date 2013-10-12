@@ -2377,6 +2377,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
 		DEBUGNAME("EV_NOAMMO");
+
+		// FIXME: do a switch
 		if ((es->weapon != WP_GRENADE_LAUNCHER) &&
 		    (es->weapon != WP_GRENADE_PINEAPPLE) &&
 		    (es->weapon != WP_DYNAMITE) &&
@@ -2390,6 +2392,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);
 		}
 
+		// FIXME: do a switch
 		if (es->number == cg.snap->ps.clientNum && (
 		        (cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect)) ||
 		        es->weapon == WP_MORTAR_SET ||
@@ -2878,12 +2881,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_RUMBLE_EFX:
 	{
-		float pitch, yaw;
-
 		DEBUGNAME("EV_RUMBLE_EFX");
-		pitch = cent->currentState.angles[0];
-		yaw   = cent->currentState.angles[1];
-		CG_RumbleEfx(pitch, yaw);
+		CG_RumbleEfx(cent->currentState.angles[0], cent->currentState.angles[1]);
 	}
 	break;
 
@@ -2921,9 +2920,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	{
 		int    numsparks;
 		int    i;
-		int    duration;
-		float  x, y;
-		float  speed;
 		vec3_t source, dest;
 
 		DEBUGNAME("EV_SPARKS");
@@ -2932,15 +2928,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			cent->currentState.density = 1;
 		}
 		numsparks = rand() % cent->currentState.density;
-		duration  = cent->currentState.frame;
-		x         = cent->currentState.angles2[0];
-		y         = cent->currentState.angles2[1];
-		speed     = cent->currentState.angles2[2];
 
 		if (!numsparks)
 		{
 			numsparks = 1;
 		}
+
 		for (i = 0; i < numsparks; i++)
 		{
 			if (event == EV_SPARKS_ELECTRIC)
@@ -2956,7 +2949,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
-				CG_ParticleSparks(cent->currentState.origin, cent->currentState.angles, duration, x, y, speed);
+				CG_ParticleSparks(cent->currentState.origin, cent->currentState.angles, cent->currentState.frame, cent->currentState.angles2[0], cent->currentState.angles2[1], cent->currentState.angles2[2]);
 			}
 		}
 	}
@@ -2964,12 +2957,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_GUNSPARKS:
 	{
-		int numsparks = cent->currentState.density;
-		int speed     = cent->currentState.angles2[2];
-
 		DEBUGNAME("EV_GUNSPARKS");
 
-		CG_AddBulletParticles(cent->currentState.origin, cent->currentState.angles, speed, 800, numsparks, 1.0f);
+		CG_AddBulletParticles(cent->currentState.origin, cent->currentState.angles, cent->currentState.angles2[2], 800, cent->currentState.density, 1.0f);
 	}
 	break;
 
