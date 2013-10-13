@@ -40,6 +40,9 @@ void Controls_GetConfig(void);
 void CG_DrawOverlays(void);
 int activeFont;
 
+extern vec4_t HUD_Background;
+extern vec4_t HUD_Border;
+
 ///////////////////////
 ////// new hud stuff
 ///////////////////////
@@ -228,61 +231,6 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 	fontInfo_t *font = &cgDC.Assets.fonts[activeFont];
 
 	CG_Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
-}
-
-int CG_DrawFieldWidth(int x, int y, int width, int value, int charWidth, int charHeight)
-{
-	char num[16], *ptr;
-	int  l;
-	int  totalwidth = 0;
-
-	if (width < 1)
-	{
-		return 0;
-	}
-
-	// draw number string
-	if (width > 5)
-	{
-		width = 5;
-	}
-
-	switch (width)
-	{
-	case 1:
-		value = value > 9 ? 9 : value;
-		value = value < 0 ? 0 : value;
-		break;
-	case 2:
-		value = value > 99 ? 99 : value;
-		value = value < -9 ? -9 : value;
-		break;
-	case 3:
-		value = value > 999 ? 999 : value;
-		value = value < -99 ? -99 : value;
-		break;
-	case 4:
-		value = value > 9999 ? 9999 : value;
-		value = value < -999 ? -999 : value;
-		break;
-	}
-
-	Com_sprintf(num, sizeof(num), "%i", value);
-	l = strlen(num);
-	if (l > width)
-	{
-		l = width;
-	}
-
-	ptr = num;
-	while (*ptr && l)
-	{
-		totalwidth += charWidth;
-		ptr++;
-		l--;
-	}
-
-	return totalwidth;
 }
 
 /*
@@ -667,13 +615,11 @@ CG_DrawLagometer
 */
 static void CG_DrawLagometer(void)
 {
-	int    a, x, y, i;
-	float  v;
-	float  ax, ay, aw, ah, mid, range;
-	int    color;
-	float  vscale;
-	vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-	vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
+	int   a, x, y, i;
+	float v;
+	float ax, ay, aw, ah, mid, range;
+	int   color;
+	float vscale;
 
 	if (!cg_lagometer.integer) // || cgs.localServer)
 	{
@@ -687,8 +633,8 @@ static void CG_DrawLagometer(void)
 
 	trap_R_SetColor(NULL);
 	//CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
-	CG_FillRect(x, y, 48, 48 + 2, HUD_Background);
-	CG_DrawRect_FixedBorder(x, y, 48, 48, 1, HUD_Border);
+	CG_FillRect(x, y, 48, 50, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, 48, 50, 1, HUD_Border);
 
 	ax = x;
 	ay = y;
@@ -2617,12 +2563,14 @@ static qboolean CG_DrawFollow(void)
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 		{
-			CG_DrawPic(INFOTEXT_STARTX, 118 - 12, 18, 12, cgs.media.alliedFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, 101, 16, 16, cgs.media.alliedFlag);
 		}
 		else
 		{
-			CG_DrawPic(INFOTEXT_STARTX, 118 - 12, 18, 12, cgs.media.axisFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, 101, 16, 16, cgs.media.axisFlag);
 		}
+
+		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, 100, 18, 18, 1, HUD_Border);
 	}
 
 	// if in limbo, show different follow message

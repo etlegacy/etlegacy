@@ -33,8 +33,6 @@
 
 #include "cg_local.h"
 
-int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign);
-
 int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 {
 	char buffer[1024];
@@ -253,10 +251,10 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	VectorCopy(*refcolor, hcolor);
 	hcolor[3] = 1.f;
 
-	if (cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE ||
-	    cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
+	if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE) ||
+	    (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK))
 	{
-		realweap = WP_MOBILE_MG42; // FIXME: browning
+		realweap = WP_MOBILE_MG42; // we do replace the icon for browning - see below
 	}
 	else
 	{
@@ -270,7 +268,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		return;
 	}
 
-	if (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK && cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+	if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK) && (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8))
 	{
 		icon = cgs.media.browningIcon;
 	}
