@@ -2522,16 +2522,16 @@ static void CG_DrawLimboMessage(void)
 
 		if (reinfTime > 1)
 		{
-			sprintf(str, CG_TranslateString("Deploying in %d seconds"), reinfTime);
+			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
 		else
 		{
-			sprintf(str, CG_TranslateString("Deploying in %d second"), reinfTime);
+			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 		}
 
 	}
 
-	CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
+	CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 	y += 18;
 
 	trap_R_SetColor(NULL);
@@ -2563,14 +2563,14 @@ static qboolean CG_DrawFollow(void)
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 		{
-			CG_DrawPic(INFOTEXT_STARTX + 1, 101, 16, 16, cgs.media.alliedFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, 106, 18, 12, cgs.media.alliedFlag);
 		}
 		else
 		{
-			CG_DrawPic(INFOTEXT_STARTX + 1, 101, 16, 16, cgs.media.axisFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, 106, 18, 12, cgs.media.axisFlag);
 		}
 
-		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, 100, 18, 18, 1, HUD_Border);
+		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, 105, 20, 14, 1, HUD_Border);
 	}
 
 	// if in limbo, show different follow message
@@ -2589,11 +2589,11 @@ static qboolean CG_DrawFollow(void)
 
 					if (reinfDepTime > 1)
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in %d seconds"), reinfDepTime);
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
 					}
 					else
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in %d second"), reinfDepTime);
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7second"), reinfDepTime);
 					}
 				}
 				else
@@ -2607,15 +2607,15 @@ static qboolean CG_DrawFollow(void)
 
 				if (reinfTime > 1)
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in %d seconds"), reinfTime);
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 				}
 				else
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in %d second"), reinfTime);
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 				}
 			}
 
-			CG_DrawStringExt(INFOTEXT_STARTX, 118, deploytime, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
+			CG_DrawStringExt(INFOTEXT_STARTX, 118, deploytime, colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
 		}
 
 		// Don't display if you're following yourself
@@ -2628,14 +2628,14 @@ static qboolean CG_DrawFollow(void)
 			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 			{
 				w = va("(%s  %s  )", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
-				CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2 - BIGCHAR_WIDTH + 2, 137, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+				CG_DrawPic(strlen(w) * BIGCHAR_WIDTH / 2 - BIGCHAR_WIDTH + 2, 138, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 			}
 			else
 			{
 				w = va("(%s  %s)", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
 			}
 
-			CG_DrawPic(startClass, 137, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+			CG_DrawPic(startClass, 138, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 			CG_DrawStringExt(INFOTEXT_STARTX, 136, w, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
 		}
 	}
