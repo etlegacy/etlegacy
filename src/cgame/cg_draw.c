@@ -2720,7 +2720,7 @@ static void CG_DrawWarmup(void)
 		sec = 0;
 	}
 
-	s = va("%s %s%i^7", CG_TranslateString("^3WARMUP:^7 Match begins in:"), sec  < 4 ? "^3" : "^2", sec + 1);
+	s = va("%s %s%i^7", CG_TranslateString("^3WARMUP:^7 Match begins in:"), sec  < 3 ? "^1" : "^2", sec + 1);
 
 	w = CG_DrawStrlen(s);
 	x = Ccg_WideX(320) - w * 6;
