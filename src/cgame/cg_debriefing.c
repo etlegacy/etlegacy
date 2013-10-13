@@ -41,33 +41,33 @@ int QDECL CG_SortPlayersByXP(const void *a, const void *b);
 
 panel_button_text_t debriefTitleFont =
 {
-	0.3f,           0.3f,
-	{ 1.f,          1.f,              1.f,  0.8f },
-	0,              ITEM_ALIGN_CENTER,
+	0.3f,                  0.3f,
+	{ 1.f,                 1.f,              1.f,  0.8f },
+	0,                     ITEM_ALIGN_CENTER,
 	&cgs.media.limboFont2,
 };
 
 panel_button_text_t debriefHeadingFont =
 {
-	0.24f,          0.24f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
+	0.24f,                 0.24f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
 panel_button_text_t debriefListFont =
 {
-	0.20f,          0.22f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
+	0.20f,                 0.22f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
 panel_button_text_t debriefPlayerHeadingSmallerFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
@@ -484,9 +484,9 @@ panel_button_t debriefPlayerListWindow =
 
 panel_button_text_t debriefPlayerListFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
@@ -596,9 +596,9 @@ panel_button_t debriefPlayerListScroll =
 
 panel_button_text_t debriefPlayerInfoFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
@@ -840,25 +840,25 @@ panel_button_t teamDebriefMapShot =
 
 panel_button_text_t teamDebriefBigTitle =
 {
-	0.32f,          0.32f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
+	0.32f,                 0.32f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
 panel_button_text_t teamDebriefTitleSmall =
 {
-	0.24f,          0.24f,
-	{ 1.f,          1.f,              1.f,0.8f },
-	0,              ITEM_ALIGN_CENTER,
+	0.24f,                 0.24f,
+	{ 1.f,                 1.f,              1.f,0.8f },
+	0,                     ITEM_ALIGN_CENTER,
 	&cgs.media.limboFont2,
 };
 
 panel_button_text_t teamDebriefTitle =
 {
-	0.28f,          0.28f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
+	0.28f,                 0.28f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
@@ -1028,17 +1028,17 @@ panel_button_t *teamDebriefPanelButtons[] =
 
 panel_button_text_t chatPanelButtonFont =
 {
-	0.20f,          0.20f,
-	{ 1.f,          1.f,              1.f,0.8f },
-	0,              ITEM_ALIGN_CENTER,
+	0.20f,                 0.20f,
+	{ 1.f,                 1.f,              1.f,0.8f },
+	0,                     ITEM_ALIGN_CENTER,
 	&cgs.media.limboFont2,
 };
 
 panel_button_text_t chatPanelButtonFontRed =
 {
-	0.20f,          0.20f,
-	{ 1.f,          0.f,              0.f,0.8f },
-	0,              ITEM_ALIGN_CENTER,
+	0.20f,                 0.20f,
+	{ 1.f,                 0.f,              0.f,0.8f },
+	0,                     ITEM_ALIGN_CENTER,
 	&cgs.media.limboFont2,
 };
 
@@ -1406,9 +1406,9 @@ panel_button_t mapVoteWindow =
 
 panel_button_text_t mapVoteFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
 	&cgs.media.limboFont2,
 };
 
