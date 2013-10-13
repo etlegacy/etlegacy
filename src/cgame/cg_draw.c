@@ -2698,11 +2698,11 @@ static void CG_DrawWarmup(void)
 				Q_strncpyz(str1, BindingFromName("ready"), 32);
 				if (!Q_stricmp(str1, "(?" "?" "?)"))
 				{
-					s2 = CG_TranslateString("Type ^3\\ready^* in the console to start");
+					s2 = CG_TranslateString("Type ^3\\ready^7 in the console to start");
 				}
 				else
 				{
-					s2 = va("Press ^3%s^* to start", str1);
+					s2 = va("Press ^3%s^7 to start", str1);
 					s2 = CG_TranslateString(s2);
 				}
 				w = CG_DrawStrlen(s2);
@@ -2720,11 +2720,11 @@ static void CG_DrawWarmup(void)
 		sec = 0;
 	}
 
-	s = va("%s %i", CG_TranslateString("(WARMUP) Match begins in:"), sec + 1);
+	s = va("%s %s%i^7", CG_TranslateString("^3WARMUP:^7 Match begins in:"), sec  < 4 ? "^3" : "^2", sec + 1);
 
 	w = CG_DrawStrlen(s);
 	x = Ccg_WideX(320) - w * 6;
-	CG_DrawStringExt(x, 120, s, colorYellow, qfalse, qtrue, 12, 18, 0);
+	CG_DrawStringExt(x, 188, s, colorWhite, qfalse, qtrue, 12, 18, 0);
 
 	// pre start actions
 	if (sec == 3 && !announced)
