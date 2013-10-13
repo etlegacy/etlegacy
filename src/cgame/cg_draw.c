@@ -2522,16 +2522,16 @@ static void CG_DrawLimboMessage(void)
 
 		if (reinfTime > 1)
 		{
-			sprintf(str, CG_TranslateString("Deploying in %d seconds"), reinfTime);
+			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
 		else
 		{
-			sprintf(str, CG_TranslateString("Deploying in %d second"), reinfTime);
+			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 		}
 
 	}
 
-	CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
+	CG_DrawStringExt(INFOTEXT_STARTX, y, str, colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 	y += 18;
 
 	trap_R_SetColor(NULL);
@@ -2589,11 +2589,11 @@ static qboolean CG_DrawFollow(void)
 
 					if (reinfDepTime > 1)
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in %d seconds"), reinfDepTime);
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
 					}
 					else
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in %d second"), reinfDepTime);
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7second"), reinfDepTime);
 					}
 				}
 				else
@@ -2607,15 +2607,15 @@ static qboolean CG_DrawFollow(void)
 
 				if (reinfTime > 1)
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in %d seconds"), reinfTime);
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 				}
 				else
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in %d second"), reinfTime);
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 				}
 			}
 
-			CG_DrawStringExt(INFOTEXT_STARTX, 118, deploytime, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
+			CG_DrawStringExt(INFOTEXT_STARTX, 118, deploytime, colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 80);
 		}
 
 		// Don't display if you're following yourself
