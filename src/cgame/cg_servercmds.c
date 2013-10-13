@@ -2457,11 +2457,11 @@ static void CG_ServerCommand(void)
 			{
 				CG_Printf("[cgnotify]*** ^3INFO: ^5%s\n", CG_LocalizeServerCommand(CG_Argv(1)));
 			}
-			CG_PriorityCenterPrint(s, SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.20), SMALLCHAR_WIDTH, atoi(CG_Argv(2)));
+			CG_PriorityCenterPrint(s, SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, atoi(CG_Argv(2)));
 		}
 		else
 		{
-			CG_CenterPrint(CG_LocalizeServerCommand(CG_Argv(1)), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.20), SMALLCHAR_WIDTH);
+			CG_CenterPrint(CG_LocalizeServerCommand(CG_Argv(1)), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH);
 		}
 		return;
 	}
@@ -2899,7 +2899,7 @@ static void CG_ServerCommand(void)
 	else if (!Q_stricmp(cmd, "spawnserver"))
 	{
 		// print message informing player the server is restarting with a new map
-		CG_PriorityCenterPrint(va("%s", CG_TranslateString("^3Server Restarting")), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.25), SMALLCHAR_WIDTH, 999999);
+		CG_PriorityCenterPrint(va("%s", CG_TranslateString("^3Server Restarting")), SCREEN_HEIGHT * 0.75, SMALLCHAR_WIDTH, 999999);
 
 		// hack here
 		cg.serverRespawning = qtrue;
