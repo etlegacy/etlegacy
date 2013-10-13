@@ -952,7 +952,7 @@ void CG_DemoHelpDraw(void)
 		x += 4;
 		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor2, "DEMO CONTROLS", 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor2, CG_TranslateString("DEMO CONTROLS"), 0.0f, 0, hStyle, hFont);
 		y += 3;
 
 		// Control info
@@ -980,7 +980,7 @@ void CG_DemoHelpDraw(void)
 #endif
 
 		y += tSpacing * 2;
-		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^nBACKSPACE ^mhelp on/off", 0.0f, 0, tStyle, tFont);
+		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("^nBACKSPACE ^mhelp on/off"), 0.0f, 0, tStyle, tFont);
 	}
 }
 

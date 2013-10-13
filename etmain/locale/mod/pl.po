@@ -3698,6 +3698,12 @@ msgstr "Wiadomosci Znikanie:"
 msgid "Allies"
 msgstr "Aliancki"
 
+msgid "DEMO CONTROLS"
+msgstr "USTAWIENIA DEMA"
+
+msgid "^nBACKSPACE ^mhelp on/off"
+msgstr "^nBACKSPACE ^mpomoc wl/wyl"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

@@ -3645,6 +3645,12 @@ msgstr ""
 msgid "Allies"
 msgstr ""
 
+msgid "DEMO CONTROLS"
+msgstr ""
+
+msgid "^nBACKSPACE ^mhelp on/off"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
