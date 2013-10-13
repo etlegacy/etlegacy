@@ -213,8 +213,9 @@ static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
 		Com_Printf("  ");
 	}
 
-	Com_Printf("0x%02x \"%s\"", keysym->scancode,
-	           SDL_GetKeyName(keysym->sym));
+	Com_Printf("Scancode: 0x%02x(%s) Sym: 0x%02x(%s)",
+	           keysym->scancode, SDL_GetScancodeName(keysym->scancode),
+	           keysym->sym, SDL_GetKeyName(keysym->sym));
 
 	if (keysym->mod & KMOD_LSHIFT)
 	{
@@ -242,11 +243,11 @@ static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
 	}
 	if (keysym->mod & KMOD_LGUI)
 	{
-		Com_Printf(" KMOD_LMETA");
+		Com_Printf(" KMOD_LGUI");
 	}
 	if (keysym->mod & KMOD_RGUI)
 	{
-		Com_Printf(" KMOD_RMETA");
+		Com_Printf(" KMOD_RGUI");
 	}
 	if (keysym->mod & KMOD_NUM)
 	{
@@ -265,19 +266,7 @@ static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
 		Com_Printf(" KMOD_RESERVED");
 	}
 
-	Com_Printf(" Q:0x%02x(%s)", key, Key_KeynumToString(key));
-
-	if (keysym->sym)
-	{
-		Com_Printf(" U:0x%02x", keysym->sym);
-
-		if (keysym->sym > ' ' && keysym->sym < '~')
-		{
-			Com_Printf("(%c)", (char)keysym->sym);
-		}
-	}
-
-	Com_Printf("\n");
+	Com_Printf(" Q:0x%02x(%s)\n", key, Key_KeynumToString(key));
 }
 
 #define MAX_CONSOLE_KEYS 16
@@ -1083,11 +1072,14 @@ static void IN_ProcessEvents(void)
 			if (e.wheel.y > 0)
 			{
 				Com_QueueEvent(0, SE_KEY, K_MWHEELUP, qtrue, 0, NULL);
+				Com_QueueEvent(0, SE_KEY, K_MWHEELUP, qfalse, 0, NULL);
 			}
 			else
 			{
 				Com_QueueEvent(0, SE_KEY, K_MWHEELDOWN, qtrue, 0, NULL);
+				Com_QueueEvent(0, SE_KEY, K_MWHEELDOWN, qfalse, 0, NULL);
 			}
+
 			break;
 
 		case SDL_QUIT:
