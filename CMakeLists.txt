@@ -961,8 +961,8 @@ endif(INSTALL_OMNIBOT)
 
 # proper icon
 if(UNIX)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/ETL.xpm"
-		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pixmaps/"
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.svg"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
 	)
 else(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
