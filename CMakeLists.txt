@@ -962,7 +962,7 @@ endif(INSTALL_OMNIBOT)
 # proper icon
 if(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/ETL.xpm"
-		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pixmaps/"
 	)
 else(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
