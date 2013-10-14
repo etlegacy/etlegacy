@@ -332,6 +332,8 @@ cvar_t *r_ext_multitexture;
 cvar_t *r_ext_texture_env_add;
 cvar_t *r_allowExtensions;
 
+cvar_t *r_screenshotJpegQuality;
+
 static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {
 	if (shouldBeIntegral)
@@ -699,7 +701,7 @@ static void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fil
 		R_GammaCorrect(buffer + offset, memcount);
 	}
 
-	RE_SaveJPG(fileName, 90, width, height, buffer + offset, padlen);
+	RE_SaveJPG(fileName, r_screenshotJpegQuality->integer, width, height, buffer + offset, padlen);
 	ri.Hunk_FreeTempMemory(buffer);
 }
 
@@ -1016,7 +1018,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 				memmove(cmd->captureBuffer + i * lineLen, pixels + i * captureLineLen, lineLen);
 			}
 
-			outputSize = RE_SaveJPGToBuffer(cmd->encodeBuffer, 3 * cmd->width * cmd->height, 90, cmd->width, cmd->height, cmd->captureBuffer, 0);
+			outputSize = RE_SaveJPGToBuffer(cmd->encodeBuffer, 3 * cmd->width * cmd->height, r_screenshotJpegQuality->integer, cmd->width, cmd->height, cmd->captureBuffer, 0);
 			ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, outputSize);
 		}
 		else
@@ -1477,6 +1479,8 @@ void R_Register(void)
 	AssertCvarRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
 
 	r_lightSpacePerspectiveWarping = ri.Cvar_Get("r_lightSpacePerspectiveWarping", "1", CVAR_CHEAT);
+
+	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
 	// archived variables that can change at any time
 	r_lodBias        = ri.Cvar_Get("r_lodBias", "0", CVAR_ARCHIVE);
