@@ -959,9 +959,16 @@ if(INSTALL_OMNIBOT)
 	)
 endif(INSTALL_OMNIBOT)
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
-	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-)
+# proper icon
+if(UNIX)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/ETL.xpm"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pixmaps/"
+	)
+else(UNIX)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+	)
+endif(UNIX)
 
 # project adds
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
@@ -1033,8 +1040,13 @@ set(CPACK_PACKAGE_NAME				"etlegacy")
 set(CPACK_BUNDLE_NAME				"etlegacy")
 set(CPACK_PACKAGE_FILE_NAME			"etlegacy")
 set(CPACK_BUNDLE_STARTUP_COMMAND		"etl")
-set(CPACK_PACKAGE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.ico")
-set(CPACK_BUNDLE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.ico") # FIXME: convert to icns format
+if(UNIX)
+	set(CPACK_PACKAGE_ICON				"${CMAKE_SOURCE_DIR}/misc/ETL.xpm")
+	set(CPACK_BUNDLE_ICON				"${CMAKE_SOURCE_DIR}/misc/ETL.xpm") # FIXME: convert to icns format
+else(UNIX)
+	set(CPACK_PACKAGE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.ico")
+	set(CPACK_BUNDLE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.ico") # FIXME: convert to icns format
+endif(UNIX)
 set(CPACK_BUNDLE_PLIST				"${CMAKE_SOURCE_DIR}/misc/Info.plist")
 set(CPACK_PACKAGE_CONTACT			"mail@etlegacy.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY		"ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
