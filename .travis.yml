@@ -2,6 +2,7 @@ language: c
 
 compiler:
   - gcc
+  - clang
 
 env:
   native:
@@ -10,7 +11,7 @@ env:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libsdl1.2-dev:i386 libvorbis-dev:i386 libjpeg8-dev:i386 libcurl4-openssl-dev:i386 liblua5.1-dev:i386
+  - sudo apt-get install -qq libsdl1.2-dev libvorbis-dev libjpeg8-dev libcurl4-openssl-dev liblua5.1-dev
 
 script:
   - ./easybuild.sh
