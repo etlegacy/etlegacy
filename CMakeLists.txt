@@ -35,9 +35,9 @@ option(PANDORA			"Set to ON if targeting an OpenPandora device"	${PANDORA})
 
 # Find GNU sed executable, BSD variant does not work with our script
 if(UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "Linux")
-    find_program(SED_EXECUTABLE gsed)
+	find_program(SED_EXECUTABLE gsed)
 else()
-    find_program(SED_EXECUTABLE sed)
+	find_program(SED_EXECUTABLE sed)
 endif()
 
 # Enable pk3 creation if zip executable is found. Download it on Windows
@@ -148,7 +148,10 @@ if(UNIX)
 	if(PANDORA)
 		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math -ftree-vectorize -Ofast")
 	else()
-		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
+		if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+			set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+		endif()
 	endif()
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 
