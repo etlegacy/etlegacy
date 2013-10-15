@@ -266,9 +266,9 @@ int SkillNumForClass(int classNum)
 	}
 }
 
-static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float fade)
+static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
 {
-	int          maxchars, offset;
+	int          maxchars = 16, offset = 0;
 	int          i, j;
 	float        tempx;
 	vec4_t       hcolor;
@@ -295,8 +295,11 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
 
-	maxchars = 16;
-	offset   = 0;
+	// add some extra space when not showing lives in non-LMS
+	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft)
+	{
+		maxchars += 2;
+	}
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
@@ -371,6 +374,12 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	tempx += INFO_PLAYER_WIDTH - offset;
 
+	// add the extra room here
+	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft && ci->team != TEAM_SPECTATOR)
+	{
+		tempx += INFO_LIVES_WIDTH;
+	}
+
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
@@ -398,6 +407,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	{
 		CG_DrawPic(tempx - 3, y + 1, 14, 14, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
+
 	tempx += INFO_CLASS_WIDTH;
 
 	CG_DrawSmallString(tempx, y, va("^7%3i", score->score), fade);
@@ -424,7 +434,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 	tempx += INFO_LATENCY_WIDTH;
 
-	if (cg_gameType.integer != GT_WOLF_LMS)
+	if (cg_gameType.integer != GT_WOLF_LMS && livesleft)
 	{
 		if (score->respawnsLeft >= 0)
 		{
@@ -450,9 +460,9 @@ const char *WM_TimeToString(float msec)
 	return va("%i:%i%i", mins, tens, seconds);
 }
 
-static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color, float fade)
+static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
 {
-	int          maxchars, offset;
+	int          maxchars = 16, offset = 0;
 	float        tempx;
 	vec4_t       hcolor;
 	clientInfo_t *ci;
@@ -478,9 +488,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
-
-	maxchars = 16;
-	offset   = 0;
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
@@ -554,6 +561,12 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;
+
+	// add the extra room here
+	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft)
+	{
+		tempx += INFO_LIVES_WIDTH;
+	}
 
 	if (ci->team == TEAM_SPECTATOR)
 	{
@@ -685,12 +698,37 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
                              int absmaxrows)
 {
-	vec4_t   hcolor;
-	float    tempx, tempy;
-	int      i;
-	int      count          = 0;
-	int      width          = INFO_TOTAL_WIDTH;
-	qboolean use_mini_chars = qfalse;
+	vec4_t     hcolor;
+	float      tempx, tempy;
+	int        i;
+	int        count          = 0;
+	int        width          = INFO_TOTAL_WIDTH;
+	qboolean   use_mini_chars = qfalse, livesleft = qfalse;
+	const char *buffer        = CG_ConfigString(CS_SERVERINFO);
+	const char *str           = Info_ValueForKey(buffer, "g_maxlives");
+
+	if (str && *str && atoi(str))
+	{
+		livesleft = qtrue;
+	}
+
+	if (!livesleft)
+	{
+		str = Info_ValueForKey(buffer, "g_alliedmaxlives");
+		if (str && *str && atoi(str))
+		{
+			livesleft = qtrue;
+		}
+	}
+
+	if (!livesleft)
+	{
+		str = Info_ValueForKey(buffer, "g_axismaxlives");
+		if (str && *str && atoi(str))
+		{
+			livesleft = qtrue;
+		}
+	}
 
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);
@@ -743,6 +781,12 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	CG_DrawSmallString(tempx, y, CG_TranslateString("Name"), fade);
 	tempx += INFO_PLAYER_WIDTH;
 
+	// add some extra space when not showing lives in non-LMS
+	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft)
+	{
+		tempx += INFO_LIVES_WIDTH;
+	}
+
 	CG_DrawSmallString(tempx, y, CG_TranslateString("Class"), fade);
 	tempx += INFO_CLASS_WIDTH;
 
@@ -760,7 +804,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	CG_DrawSmallString(tempx, y, CG_TranslateString("Ping"), fade);
 	tempx += INFO_LATENCY_WIDTH;
 
-	if (cgs.gametype != GT_WOLF_LMS)
+	if (cgs.gametype != GT_WOLF_LMS && livesleft)
 	{
 		CG_DrawPicST(tempx + 2, y, INFO_LIVES_WIDTH - 4, 16, 0.f, 0.f, 0.5f, 1.f, team == TEAM_ALLIES ? cgs.media.hudAlliedHelmet : cgs.media.hudAxisHelmet);
 		tempx += INFO_LIVES_WIDTH;
@@ -837,12 +881,12 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 		if (use_mini_chars)
 		{
-			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade);
+			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade, livesleft);
 			y += MINICHAR_HEIGHT;
 		}
 		else
 		{
-			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade);
+			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade, livesleft);
 			y += SMALLCHAR_HEIGHT;
 		}
 
@@ -876,12 +920,12 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 		if (use_mini_chars)
 		{
-			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade);
+			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade, livesleft);
 			y += MINICHAR_HEIGHT;
 		}
 		else
 		{
-			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade);
+			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade, livesleft);
 			y += SMALLCHAR_HEIGHT;
 		}
 	}
