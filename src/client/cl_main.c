@@ -3054,7 +3054,7 @@ void CL_Frame(int msec)
 			msec = 1;
 		}
 	}
-	else if (cl_avidemo->integer == 0 && CL_VideoRecording())
+	else if ((cl_avidemo->integer == 0 || cls.state != CA_ACTIVE) && CL_VideoRecording())
 	{
 		CL_StopVideo_f();
 	}
