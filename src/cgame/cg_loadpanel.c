@@ -388,11 +388,11 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 		if (enabled)
 		{
-			x = +cgs.wideXoffset;
+			x = 489 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_lv);
 		}
 
-		str = Info_ValueForKey(buffer, "sv_punkbuster");
+		str = Info_ValueForKey(buffer, "sv_punkbuster"); //FIXME: unused
 		if (str && *str && atoi(str))
 		{
 			x = 518 + cgs.wideXoffset;
