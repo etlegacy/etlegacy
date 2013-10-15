@@ -363,25 +363,27 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 		if (atoi(Info_ValueForKey(buffer, "g_gametype")) != GT_WOLF_LMS)
 		{
-			str = Info_ValueForKey(buffer, "g_alliedmaxlives");
+			str = Info_ValueForKey(buffer, "g_maxlives");
 			if (str && *str && atoi(str))
 			{
 				enabled = qtrue;
 			}
-			else
+
+			if (!enabled)
+			{
+				str = Info_ValueForKey(buffer, "g_alliedmaxlives");
+				if (str && *str && atoi(str))
+				{
+					enabled = qtrue;
+				}
+			}
+
+			if (!enabled)
 			{
 				str = Info_ValueForKey(buffer, "g_axismaxlives");
 				if (str && *str && atoi(str))
 				{
 					enabled = qtrue;
-				}
-				else
-				{
-					str = Info_ValueForKey(buffer, "g_maxlives");
-					if (str && *str && atoi(str))
-					{
-						enabled = qtrue;
-					}
 				}
 			}
 		}
