@@ -129,7 +129,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2593
 #, c-format
-msgid "Bonus Life! Deploying in %d seconds"
+msgid "Bonus Life! Deploying in ^3%d ^7seconds"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2597
@@ -138,7 +138,12 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2602
 #, c-format
-msgid "Deploying in %d seconds"
+msgid "Deploying in ^3%d ^7seconds"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2613
+#, c-format
+msgid "Deploying in ^3%d ^7second"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621

@@ -130,7 +130,7 @@ msgstr "Rozstawienie posilkow za %d sekund"
 
 #: src/cgame/cg_draw.c:2593
 #, c-format
-msgid "Bonus Life! Deploying in %d seconds"
+msgid "Bonus Life! Deploying in ^3%d ^7seconds"
 msgstr "Dodatkowe Zycie! Rozstawienie za %d sekund"
 
 #: src/cgame/cg_draw.c:2597
@@ -139,8 +139,13 @@ msgstr "Brak rozstawien w tej rundzie"
 
 #: src/cgame/cg_draw.c:2602
 #, c-format
-msgid "Deploying in %d seconds"
+msgid "Deploying in ^3%d ^7seconds"
 msgstr "Rozstawienie za %d sekund"
+
+#: src/cgame/cg_draw.c:2613
+#, c-format
+msgid "Deploying in ^3%d ^7second"
+msgstr "Rozstawienie za %d sekunde"
 
 #: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
 msgid "Following"
