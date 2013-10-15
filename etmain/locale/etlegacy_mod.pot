@@ -3651,6 +3651,9 @@ msgstr ""
 msgid "^nBACKSPACE ^mhelp on/off"
 msgstr ""
 
+msgid "^3WARMUP:^7 Match begins in:"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

@@ -3704,6 +3704,9 @@ msgstr "USTAWIENIA DEMA"
 msgid "^nBACKSPACE ^mhelp on/off"
 msgstr "^nBACKSPACE ^mpomoc wl/wyl"
 
+msgid "^3WARMUP:^7 Match begins in:"
+msgstr "^3ROZGRZEWKA:^7 Mecz zacznie sie za:"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
