@@ -983,10 +983,16 @@ if(INSTALL_OMNIBOT)
 	)
 endif(INSTALL_OMNIBOT)
 
-# proper icon
+# other adds
 if(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.svg"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.desktop"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
 	)
 else(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
