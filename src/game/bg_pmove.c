@@ -998,33 +998,19 @@ static qboolean PM_CheckProne(void)
 				switch (pm->ps->weapon)
 				{
 				case WP_FG42SCOPE:
-					PM_BeginWeaponChange(
-					    WP_FG42SCOPE,
-					    WP_FG42,
-					    qfalse);
+					PM_BeginWeaponChange(WP_FG42SCOPE, WP_FG42, qfalse);
 					break;
 				case WP_GARAND_SCOPE:
-					PM_BeginWeaponChange(
-					    WP_GARAND_SCOPE,
-					    WP_GARAND,
-					    qfalse);
+					PM_BeginWeaponChange(WP_GARAND_SCOPE, WP_GARAND, qfalse);
 					break;
 				case WP_K43_SCOPE:
-					PM_BeginWeaponChange(
-					    WP_K43_SCOPE,
-					    WP_K43,
-					    qfalse);
+					PM_BeginWeaponChange(WP_K43_SCOPE, WP_K43, qfalse);
 					break;
 				case WP_MOBILE_MG42_SET:
-					PM_BeginWeaponChange(
-					    WP_MOBILE_MG42_SET,
-					    WP_MOBILE_MG42,
-					    qfalse);
+					PM_BeginWeaponChange(WP_MOBILE_MG42_SET, WP_MOBILE_MG42, qfalse);
+					break;
 				case WP_MOBILE_BROWNING_SET:
-					PM_BeginWeaponChange(
-					    WP_MOBILE_BROWNING_SET,
-					    WP_MOBILE_BROWNING,
-					    qfalse);
+					PM_BeginWeaponChange(WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING, qfalse);
 					break;
 				}
 
@@ -2090,7 +2076,6 @@ static void PM_Footsteps(void)
 	// swimming
 	if (pm->waterlevel > 2)
 	{
-
 		if (pm->ps->pm_flags & PMF_BACKWARDS_RUN)
 		{
 			animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_SWIMBK, qtrue);
@@ -2151,7 +2136,6 @@ static void PM_Footsteps(void)
 	}
 
 	footstep = qfalse;
-
 
 	if (pm->ps->eFlags & EF_PRONE)
 	{
@@ -2283,53 +2267,54 @@ static void PM_Footsteps(void)
 		// sounds much more natural this way
 		if (old > pm->ps->bobCycle)
 		{
-			if (pm->waterlevel == 0)
+			switch (pm->waterlevel)
 			{
+			case 0:
 				if (footstep && !pm->noFootsteps)
 				{
 					PM_AddEventExt(EV_FOOTSTEP, PM_FootstepForSurface());
 				}
-			}
-			else if (pm->waterlevel == 1)
-			{
+				break;
+			case 1:
 				// splashing
 				PM_AddEvent(EV_FOOTSPLASH);
-			}
-			else if (pm->waterlevel == 2)
-			{
+				break;
+			case 2:
 				// wading / swimming at surface
 				PM_AddEvent(EV_SWIM);
-			}
-			else if (pm->waterlevel == 3)
-			{
+				break;
+			case 3:
 				// no sound when completely underwater
+				break;
+			default:
+				break;
 			}
 		}
 	}
 	else if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
 	{
-		// FIXME: do a switch
-		if (pm->waterlevel == 0)
+		switch (pm->waterlevel)
 		{
+		case 0:
 			// on ground will only play sounds if running
 			if (footstep && !pm->noFootsteps)
 			{
 				PM_AddEventExt(EV_FOOTSTEP, PM_FootstepForSurface());
 			}
-		}
-		else if (pm->waterlevel == 1)
-		{
+			break;
+		case 1:
 			// splashing
 			PM_AddEvent(EV_FOOTSPLASH);
-		}
-		else if (pm->waterlevel == 2)
-		{
+			break;
+		case 2:
 			// wading / swimming at surface
 			PM_AddEvent(EV_SWIM);
-		}
-		else if (pm->waterlevel == 3)
-		{
+			break;
+		case 3:
 			// no sound when completely underwater
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -2393,16 +2378,28 @@ static void PM_BeginWeaponReload(int weapon)
 		return;
 	}
 
-	if ((weapon == WP_MOBILE_MG42 || weapon == WP_MOBILE_MG42_SET) && pm->ps->ammoclip[WP_MOBILE_MG42] != 0)
+	switch (weapon)
 	{
-		return;
+	case WP_MOBILE_MG42:
+	case WP_MOBILE_MG42_SET:
+		if (pm->ps->ammoclip[WP_MOBILE_MG42] != 0)
+		{
+			return;
+		}
+		break;
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
+		if (pm->ps->ammoclip[WP_MOBILE_BROWNING] != 0)
+		{
+			return;
+		}
+		break;
+	default:
+		break;
 	}
 
-	if ((weapon == WP_MOBILE_BROWNING || weapon == WP_MOBILE_BROWNING_SET) && pm->ps->ammoclip[WP_MOBILE_BROWNING] != 0)
-	{
-		return;
-	}
-
+	// FIXME: crappy code if we add new weapons ... this might cause issues with KAR-BAR
+	// || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 ... do with weapon table
 	if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
 	{
 		return;
@@ -2433,7 +2430,6 @@ static void PM_BeginWeaponReload(int weapon)
 	case WP_GRENADE_PINEAPPLE:
 	case WP_SMOKE_BOMB:
 		break;
-
 	default:
 		// override current animation (so reloading after firing will work)
 		if (pm->ps->eFlags & EF_PRONE)
@@ -2962,7 +2958,6 @@ static void PM_ReloadClip(int weapon)
 PM_FinishWeaponReload
 ==============
 */
-
 static void PM_FinishWeaponReload(void)
 {
 	PM_ReloadClip(pm->ps->weapon);            // move ammo into clip
@@ -3374,6 +3369,8 @@ void PM_AdjustAimSpreadScale(void)
 	case WP_KAR98:
 	case WP_CARBINE:
 		wpnScale = 0.5f;
+		break;
+	default:
 		break;
 	}
 

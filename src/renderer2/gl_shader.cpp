@@ -259,8 +259,6 @@ void GLSL_InitGPUShaders(void)
 
 void GLSL_ShutdownGPUShaders(void)
 {
-	//	int				i;
-
 	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
 
 	if (gl_genericShader)
@@ -828,8 +826,6 @@ void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, i
 void GLShader::GetShaderExtraDefines(char **defines, int *size) const
 {
 	static char bufferExtra[32000];
-
-	char *bufferFinal = NULL;
 
 	float fbufWidthScale, fbufHeightScale;
 	float npotWidthScale, npotHeightScale;

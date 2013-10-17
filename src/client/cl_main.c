@@ -2987,7 +2987,8 @@ void CL_StopVideo_f(void)
 {
 	if (CL_VideoRecording())
 	{
-		//cl_avidemo->integer = 0;
+		//TODO: fix this, for some reason if we dont manually set avidemo to 0 it wont get set.
+		cl_avidemo->integer = 0;
 		Cvar_Set("cl_avidemo", "0");
 
 		// We need to call something like S_Base_StopAllSounds();
@@ -3053,7 +3054,7 @@ void CL_Frame(int msec)
 			msec = 1;
 		}
 	}
-	else if (cl_avidemo->integer == 0 && CL_VideoRecording())
+	else if ((cl_avidemo->integer == 0 || cls.state != CA_ACTIVE) && CL_VideoRecording())
 	{
 		CL_StopVideo_f();
 	}

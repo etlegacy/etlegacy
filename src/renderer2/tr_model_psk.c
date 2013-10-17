@@ -243,42 +243,79 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	numVertexes = chunkHeader.numData;
 	vertexes    = Com_Allocate(numVertexes * sizeof(axVertex_t));
 
-	for (i = 0, vertex = vertexes; i < numVertexes; i++, vertex++)
 	{
-		vertex->pointIndex = MemStreamGetShort(stream);
+		int tmpVertexInt = -1; // tmp vertex member values - MemStreamGet functions return -1 if they fail
+		                       // now we print a warning if they do or abort if pointIndex is invalid
 
-		if (vertex->pointIndex < 0 || vertex->pointIndex >= numPoints)
+		for (i = 0, vertex = vertexes; i < numVertexes; i++, vertex++)
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has vertex with point index out of range (%i while max %i)\n", modName, vertex->pointIndex, numPoints);
-			DeallocAll();
-			return qfalse;
+			tmpVertexInt = MemStreamGetShort(stream);
+			if (tmpVertexInt < 0 || tmpVertexInt >= numPoints)
+			{
+				ri.Printf(PRINT_ERROR, "R_LoadPSK: '%s' has vertex with point index out of range (%i while max %i)\n", modName, tmpVertexInt, numPoints);
+				DeallocAll();
+				return qfalse;
+			}
+			vertex->pointIndex = tmpVertexInt;
+
+			tmpVertexInt = MemStreamGetShort(stream);
+			if (tmpVertexInt < 0)
+			{
+				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->unknownA)\n");
+			}
+			vertex->unknownA = tmpVertexInt;
+
+			vertex->st[0] = MemStreamGetFloat(stream);
+			if (vertex->st[0] == -1)
+			{
+				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream possibly NULL or empty (vertex->st[0])\n");
+			}
+
+			vertex->st[1] = MemStreamGetFloat(stream);
+			if (vertex->st[1] == -1)
+			{
+				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream possibly NULL or empty (vertex->st[1])\n");
+			}
+
+			tmpVertexInt = MemStreamGetC(stream);
+			if (tmpVertexInt < 0)
+			{
+				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
+			}
+			vertex->materialIndex = tmpVertexInt;
+
+			tmpVertexInt = MemStreamGetC(stream);
+			if (tmpVertexInt < 0)
+			{
+				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
+			}
+			vertex->reserved = tmpVertexInt;
+
+			tmpVertexInt = MemStreamGetShort(stream);
+			if (tmpVertexInt < 0)
+			{
+				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
+			}
+			vertex->unknownB = tmpVertexInt;
+#if 0
+			ri.Printf(PRINT_ALL, "R_LoadPSK: axVertex_t(%i):\n"
+			                     "axVertex:pointIndex: %i\n"
+			                     "axVertex:unknownA: %i\n"
+			                     "axVertex::st: %f %f\n"
+			                     "axVertex:materialIndex: %i\n"
+			                     "axVertex:reserved: %d\n"
+			                     "axVertex:unknownB: %d\n",
+			          i,
+			          vertex->pointIndex,
+			          vertex->unknownA,
+			          vertex->st[0], vertex->st[1],
+			          vertex->materialIndex,
+			          vertex->reserved,
+			          vertex->unknownB);
+#endif
 		}
 
-		vertex->unknownA      = MemStreamGetShort(stream);
-		vertex->st[0]         = MemStreamGetFloat(stream);
-		vertex->st[1]         = MemStreamGetFloat(stream);
-		vertex->materialIndex = MemStreamGetC(stream);
-		vertex->reserved      = MemStreamGetC(stream);
-		vertex->unknownB      = MemStreamGetShort(stream);
-
-#if 0
-		ri.Printf(PRINT_ALL, "R_LoadPSK: axVertex_t(%i):\n"
-		                     "axVertex:pointIndex: %i\n"
-		                     "axVertex:unknownA: %i\n"
-		                     "axVertex::st: %f %f\n"
-		                     "axVertex:materialIndex: %i\n"
-		                     "axVertex:reserved: %d\n"
-		                     "axVertex:unknownB: %d\n",
-		          i,
-		          vertex->pointIndex,
-		          vertex->unknownA,
-		          vertex->st[0], vertex->st[1],
-		          vertex->materialIndex,
-		          vertex->reserved,
-		          vertex->unknownB);
-#endif
 	}
-
 	// read triangles
 	GetChunkHeader(stream, &chunkHeader);
 

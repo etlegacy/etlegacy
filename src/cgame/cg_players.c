@@ -37,14 +37,8 @@
 #define SWING_RIGHT 1
 #define SWING_LEFT  2
 
-#define JUMP_HEIGHT             56
-#define SWINGSPEED              0.3
-
 static int   dp_realtime;
 static float jumpHeight;
-
-animation_t *lastTorsoAnim;
-animation_t *lastLegsAnim;
 
 extern const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1];
 
@@ -81,8 +75,7 @@ qboolean CG_IsCrouchingAnim(animModelInfo_t *animModelInfo, int animNum)
 
 	// FIXME: make compatible with new scripting
 	animNum &= ~ANIM_TOGGLEBIT;
-
-	anim = BG_GetAnimationForIndex(animModelInfo, animNum);
+	anim     = BG_GetAnimationForIndex(animModelInfo, animNum);
 
 	if (anim->movetype & ((1 << ANIM_MT_IDLECR) | (1 << ANIM_MT_WALKCR) | (1 << ANIM_MT_WALKCRBK)))
 	{
@@ -309,7 +302,6 @@ void CG_NewClientInfo(int clientNum)
 
 		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank)
 		{
-
 			CG_SoundPlaySoundScript(cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES ? rankSoundNames_Allies[newInfo.rank] : rankSoundNames_Axis[newInfo.rank], NULL, -1, qtrue);
 
 			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
@@ -489,8 +481,6 @@ cg.time should be between oldFrameTime and frameTime after exit
 */
 void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
-	animation_t *anim;
-
 	// debugging tool to get no animations
 	if (cg_animSpeed.integer == 0)
 	{
@@ -508,7 +498,8 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 	// oldFrame and calculate a new frame
 	if (cg.time >= lf->frameTime)
 	{
-		int f;
+		animation_t *anim;
+		int         f;
 
 		lf->oldFrame      = lf->frame;
 		lf->oldFrameTime  = lf->frameTime;
@@ -723,8 +714,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	}
 
 	isLadderAnim = lf->animation && (lf->animation->flags & ANIMFL_LADDERANIM);
-
-	oldAnim = lf->animation;
+	oldAnim      = lf->animation;
 
 	// see if the animation sequence is switching
 	if (newAnimation != lf->animationNumber || !lf->animation)
@@ -777,7 +767,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 				}
 				moveSpeed = Distance(cent->lerpOrigin, lf->oldFramePos) / ((float)(cg.time - lf->oldFrameTime) / 1000.0);
 			}
-			//
+
 			// convert it to a factor of this animation's movespeed
 			lf->animSpeedScale       = moveSpeed / (float)anim->moveSpeed;
 			lf->oldFrameSnapshotTime = cg.latestSnapshotTime;
@@ -1381,12 +1371,11 @@ Handles seperate torso motion
 */
 static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], vec3_t head[3])
 {
-	vec3_t legsAngles, torsoAngles, headAngles;
-	float  dest;
-	vec3_t velocity;
-	float  speed;
-	int    legsSet;
-	//int            torsoSet;
+	vec3_t         legsAngles, torsoAngles, headAngles;
+	float          dest;
+	vec3_t         velocity;
+	float          speed;
+	int            legsSet, torsoSet;
 	clientInfo_t   *ci        = &cgs.clientinfo[cent->currentState.clientNum];
 	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
 
@@ -1395,11 +1384,17 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		return;
 	}
 
-	legsSet = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
-	//torsoSet = cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT;
+	legsSet  = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
+	torsoSet = cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT;
 
 	VectorCopy(cent->lerpAngles, headAngles);
 	headAngles[YAW] = AngleMod(headAngles[YAW]);
+
+	if (cent->currentState.eType == ET_CORPSE)
+	{
+		headAngles[0] = headAngles[2] = 0;
+	}
+
 	VectorClear(legsAngles);
 	VectorClear(torsoAngles);
 
@@ -2616,7 +2611,7 @@ void CG_Player(centity_t *cent)
 			case ACC_MOUTH3:            // hat3
 				if (i == ACC_RANK)
 				{
-					if (ci->rank == 0)
+					if (rank <= 0)
 					{
 						continue;
 					}
@@ -3246,6 +3241,8 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 	trap_R_RestoreViewParms();
 }
 
+// used for spawn messages and weapon cards
+// FIXME: weapon table
 weaponType_t weaponTypes[] =
 {
 	{ WP_MP40,                 "MP 40"    },
@@ -3291,99 +3288,6 @@ weaponType_t *WM_FindWeaponTypeForWeapon(weapon_t weapon)
 		w++;
 	}
 	return NULL;
-}
-
-void WM_RegisterWeaponTypeShaders(void)
-{
-	weaponType_t *w = weaponTypes;
-
-	while (w->weapindex)
-	{
-		//w->shaderHandle = trap_R_RegisterShaderNoMip( w->shader );
-		w++;
-	}
-}
-
-void CG_MenuSetAnimation(playerInfo_t *pi, const char *legsAnim, const char *torsoAnim, qboolean force, qboolean clearpending)
-{
-	lastLegsAnim  = pi->legs.animation = CG_GetLimboAnimation(pi, legsAnim);
-	lastTorsoAnim = pi->torso.animation = CG_GetLimboAnimation(pi, torsoAnim);
-
-	if (force)
-	{
-		pi->legs.oldFrame  = pi->legs.frame = pi->legs.animation->firstFrame;
-		pi->torso.oldFrame = pi->torso.frame = pi->torso.animation->firstFrame;
-
-		pi->legs.frameTime  = cg.time;
-		pi->torso.frameTime = cg.time;
-
-		pi->legs.oldFrameModel  = pi->legs.frameModel = pi->legs.animation->mdxFile;
-		pi->torso.oldFrameModel = pi->torso.frameModel = pi->torso.animation->mdxFile;
-
-		pi->numPendingAnimations = 0;
-	}
-	else
-	{
-		pi->legs.oldFrame       = pi->legs.frame;
-		pi->legs.oldFrameModel  = pi->legs.frameModel;
-		pi->legs.frame          = pi->legs.animation->firstFrame;
-		pi->torso.oldFrame      = pi->torso.frame;
-		pi->torso.oldFrameModel = pi->torso.frameModel;
-		pi->torso.frame         = pi->torso.animation->firstFrame;
-
-		pi->legs.frameTime  += 200; // Give them some time to lerp between animations
-		pi->torso.frameTime += 200;
-	}
-
-	if (clearpending)
-	{
-		pi->numPendingAnimations = 0;
-	}
-}
-
-void CG_MenuPendingAnimation(playerInfo_t *pi, const char *legsAnim, const char *torsoAnim, int delay)
-{
-	if (pi->numPendingAnimations >= 4)
-	{
-		return;
-	}
-
-	if (!pi->numPendingAnimations)
-	{
-		pi->pendingAnimations[pi->numPendingAnimations].pendingAnimationTime = cg.time + delay;
-	}
-	else
-	{
-		pi->pendingAnimations[pi->numPendingAnimations].pendingAnimationTime = pi->pendingAnimations[pi->numPendingAnimations - 1].pendingAnimationTime + delay;
-	}
-	pi->pendingAnimations[pi->numPendingAnimations].pendingLegsAnim  = legsAnim;
-	pi->pendingAnimations[pi->numPendingAnimations].pendingTorsoAnim = torsoAnim;
-
-	lastLegsAnim  = CG_GetLimboAnimation(pi, legsAnim);
-	lastTorsoAnim = CG_GetLimboAnimation(pi, torsoAnim);
-	pi->numPendingAnimations++;
-}
-
-void CG_MenuCheckPendingAnimation(playerInfo_t *pi)
-{
-	if (pi->numPendingAnimations <= 0)
-	{
-		return;
-	}
-
-	if (pi->pendingAnimations[0].pendingAnimationTime && pi->pendingAnimations[0].pendingAnimationTime < cg.time)
-	{
-		int i;
-
-		CG_MenuSetAnimation(pi, pi->pendingAnimations[0].pendingLegsAnim, pi->pendingAnimations[0].pendingTorsoAnim, qfalse, qfalse);
-
-		for (i = 0; i < 3; i++)
-		{
-			memcpy(&pi->pendingAnimations[i], &pi->pendingAnimations[i + 1], sizeof(pendingAnimation_t));
-		}
-
-		pi->numPendingAnimations--;
-	}
 }
 
 void CG_SetHudHeadLerpFrameAnimation(bg_character_t *ch, lerpFrame_t *lf, int newAnimation)

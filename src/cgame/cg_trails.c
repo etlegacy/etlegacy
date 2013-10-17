@@ -349,6 +349,8 @@ int CG_AddSparkJunc(int headJuncIndex, void *usedby, qhandle_t shader, vec3_t po
 	return ((int)(j - trailJuncs) + 1);
 }
 
+#define ST_RATIO    4.0     // sprite image: width / height
+
 /*
 ===============
 CG_AddSmokeJunc
@@ -358,7 +360,6 @@ CG_AddSmokeJunc
 */
 int CG_AddSmokeJunc(int headJuncIndex, void *usedby, qhandle_t shader, vec3_t pos, int trailLife, float alpha, float startWidth, float endWidth)
 {
-#define ST_RATIO    4.0     // sprite image: width / height
 	trailJunc_t *j, *headJunc;
 
 	if (headJuncIndex < 0 || headJuncIndex >= MAX_TRAILJUNCS)
@@ -522,6 +523,10 @@ static vec3_t vforward, vright, vup;
 static polyVert_t verts[MAX_TRAIL_VERTS];
 static polyVert_t outVerts[MAX_TRAIL_VERTS * 3];
 
+// clipping
+#define TRAIL_FADE_CLOSE_DIST   64.0
+#define TRAIL_FADE_FAR_SCALE    4.0
+
 void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 {
 	int         k, i, n, l, numOutVerts;
@@ -531,8 +536,6 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 	trailJunc_t *j, *jNext;
 	vec3_t      up, p, v;
 	// clipping vars
-#define TRAIL_FADE_CLOSE_DIST   64.0
-#define TRAIL_FADE_FAR_SCALE    4.0
 	vec3_t viewProj;
 	float  viewDist, fadeAlpha;
 
@@ -540,6 +543,7 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 	if (trail->flags & TJFL_SPARKHEADFLARE)
 	{
 		polyBuffer_t *pPolyBuffer = CG_PB_FindFreePolyBuffer(cgs.media.sparkFlareShader, 4, 6);
+
 		if (pPolyBuffer)
 		{
 			int pos = pPolyBuffer->numVerts;

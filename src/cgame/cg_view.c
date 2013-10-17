@@ -368,8 +368,7 @@ static void CG_StepOffset(void)
 	}
 	if (timeDelta < STEP_TIME)
 	{
-		cg.refdef_current->vieworg[2] -= cg.stepChange
-		                                 * (STEP_TIME - timeDelta) / STEP_TIME;
+		cg.refdef_current->vieworg[2] -= cg.stepChange * (STEP_TIME - timeDelta) / STEP_TIME;
 	}
 }
 
@@ -553,7 +552,10 @@ static void CG_OffsetFirstPersonView(void)
 	origin = cg.refdef_current->vieworg;
 	angles = cg.refdefViewAngles;
 
-	if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET || cg.snap->ps.weapon == WP_MOBILE_BROWNING_SET)
+	switch (cg.snap->ps.weapon)
+	{
+	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];
@@ -566,7 +568,8 @@ static void CG_OffsetFirstPersonView(void)
 
 		origin[2] = oldZ;
 	}
-	else if (cg.snap->ps.weapon == WP_MORTAR_SET)
+	break;
+	case WP_MORTAR_SET:
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];
@@ -579,6 +582,11 @@ static void CG_OffsetFirstPersonView(void)
 
 		origin[2] = oldZ;
 	}
+	break;
+	default:
+		break;
+	}
+
 
 	// if dead, fix the angle and don't add any kick
 	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && cg.snap->ps.stats[STAT_HEALTH] <= 0)
@@ -615,6 +623,7 @@ static void CG_OffsetFirstPersonView(void)
 	if (cg.damageTime)
 	{
 		float ratio = cg.time - cg.damageTime;
+
 		if (ratio < DAMAGE_DEFLECT_TIME)
 		{
 			ratio         /= DAMAGE_DEFLECT_TIME;
@@ -869,7 +878,7 @@ void CG_Zoom(void)
 		case WP_FG42SCOPE:
 		case WP_GARAND_SCOPE:
 		case WP_K43_SCOPE:
-			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;     // JPW NERVE was DefaultFG, changed per atvi req
+			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;     // was DefaultFG, changed per atvi req
 			break;
 		default:
 			// show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
@@ -907,7 +916,7 @@ void CG_Zoom(void)
 			case WP_FG42SCOPE:
 			case WP_GARAND_SCOPE:
 			case WP_K43_SCOPE:
-				cg.zoomval = cg_zoomDefaultSniper.value;     // JPW NERVE was DefaultFG, changed per atvi req
+				cg.zoomval = cg_zoomDefaultSniper.value;     // was DefaultFG, changed per atvi req
 				break;
 			default:
 				cg.zoomval = 0;
@@ -1781,43 +1790,12 @@ static void CG_RenderLocations(void)
 	}
 }
 
-extern void CG_SetupDlightstyles(void);
-
-//#define DEBUGTIME_ENABLED
-#ifdef DEBUGTIME_ENABLED
-#define DEBUGTIME elapsed = (trap_Milliseconds() - dbgTime); if (dbgCnt++ == 1) { CG_Printf("t%i:%i ", dbgCnt, elapsed = (trap_Milliseconds() - dbgTime)); } dbgTime += elapsed;
-#else
-#define DEBUGTIME
-#endif
-
-#ifdef _DEBUG
-//#define FAKELAG
-#ifdef FAKELAG
-extern int snapshotDelayTime;
-#endif // FAKELAG
-#endif // _DEBUG
-
-/**
- * @brief Generates and draws a game scene and status information at the given time.
- */
-void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback)
+void CG_ProcessCvars()
 {
 	char     currentVal[256];
 	float    cvalF, val1F, val2F;
 	int      i, val1I, val2I; // cvalI,
 	qboolean cvalIsF, val1IsF, val2IsF;
-#ifdef DEBUGTIME_ENABLED
-	int dbgTime = trap_Milliseconds(), elapsed;
-	int dbgCnt  = 0;
-#endif
-
-	cg.time         = serverTime;
-	cgDC.realTime   = cg.time;
-	cg.demoPlayback = demoPlayback;
-
-#ifdef FAKELAG
-	cg.time -= snapshotDelayTime;
-#endif // FAKELAG
 
 	for (i = 0; i < cg.svCvarCount; ++i)
 	{
@@ -1952,6 +1930,43 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 			break;
 		}
 	}
+}
+
+//#define DEBUGTIME_ENABLED
+#ifdef DEBUGTIME_ENABLED
+#define DEBUGTIME elapsed = (trap_Milliseconds() - dbgTime); if (dbgCnt++ == 1) { CG_Printf("t%i:%i ", dbgCnt, elapsed = (trap_Milliseconds() - dbgTime)); } dbgTime += elapsed;
+#else
+#define DEBUGTIME
+#endif
+
+#ifdef _DEBUG
+//#define FAKELAG
+#ifdef FAKELAG
+extern int snapshotDelayTime;
+#endif // FAKELAG
+#endif // _DEBUG
+
+extern void CG_SetupDlightstyles(void);
+
+/**
+ * @brief Generates and draws a game scene and status information at the given time.
+ */
+void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback)
+{
+#ifdef DEBUGTIME_ENABLED
+	int dbgTime = trap_Milliseconds(), elapsed;
+	int dbgCnt  = 0;
+#endif
+
+	cg.time         = serverTime;
+	cgDC.realTime   = cg.time;
+	cg.demoPlayback = demoPlayback;
+
+#ifdef FAKELAG
+	cg.time -= snapshotDelayTime;
+#endif // FAKELAG
+
+	CG_ProcessCvars();
 
 #ifdef DEBUGTIME_ENABLED
 	CG_Printf("\n");

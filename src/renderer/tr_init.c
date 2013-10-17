@@ -727,37 +727,79 @@ RB_TakeVideoFrameCmd
 */
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
-	const videoFrameCommand_t *cmd = (const videoFrameCommand_t *)data;
+	const videoFrameCommand_t *cmd;
+	byte                      *cBuf;
+	size_t                    memcount, linelen;
+	int                       padwidth, avipadwidth, padlen, avipadlen;
+	GLint                     packAlign;
 
-	// check if the recording is still going on, the buffer might have cmds eventho the recording has stopped
-	if (ri.CL_VideoRecording())
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
 	{
-		glReadPixels(0, 0, cmd->width, cmd->height, GL_RGBA, GL_UNSIGNED_BYTE, cmd->captureBuffer);
-		// gamma correct
-		if ((tr.overbrightBits > 0) && glConfig.deviceSupportsGamma)
-		{
-			R_GammaCorrect(cmd->captureBuffer, cmd->width * cmd->height * 4);
-		}
-		if (cmd->motionJpeg)
-		{
-			/* This should be fixed
-			frameSize = RE_SaveJPGToBuffer(cmd->encodeBuffer, 90, cmd->width, cmd->height, cmd->captureBuffer);
-			ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, frameSize);
-			*/
-		}
-		else
-		{
-			int i;
-			int frameSize = cmd->width * cmd->height;
+		RB_EndSurface();
+	}
 
-			for (i = 0; i < frameSize; i++)  // Pack to 24bpp and swap R and B
+	cmd = (const videoFrameCommand_t *)data;
+
+	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+
+	linelen = cmd->width * 3;
+
+	// Alignment stuff for glReadPixels
+	padwidth = PAD(linelen, packAlign);
+	padlen   = padwidth - linelen;
+	// AVI line padding
+	avipadwidth = PAD(linelen, AVI_LINE_PADDING);
+	avipadlen   = avipadwidth - linelen;
+
+	cBuf = PADP(cmd->captureBuffer, packAlign);
+
+	qglReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
+	              GL_UNSIGNED_BYTE, cBuf);
+
+	memcount = padwidth * cmd->height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma)
+	{
+		R_GammaCorrect(cBuf, memcount);
+	}
+
+	if (cmd->motionJpeg)
+	{
+		memcount = RE_SaveJPGToBuffer(cmd->encodeBuffer, linelen * cmd->height,
+		                              r_screenshotJpegQuality->integer,
+		                              cmd->width, cmd->height, cBuf, padlen);
+		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, memcount);
+	}
+	else
+	{
+		byte *lineend, *memend;
+		byte *srcptr, *destptr;
+
+		srcptr  = cBuf;
+		destptr = cmd->encodeBuffer;
+		memend  = srcptr + memcount;
+
+		// swap R and B and remove line paddings
+		while (srcptr < memend)
+		{
+			lineend = srcptr + linelen;
+			while (srcptr < lineend)
 			{
-				cmd->encodeBuffer[i * 3]     = cmd->captureBuffer[i * 4 + 2];
-				cmd->encodeBuffer[i * 3 + 1] = cmd->captureBuffer[i * 4 + 1];
-				cmd->encodeBuffer[i * 3 + 2] = cmd->captureBuffer[i * 4];
+				*destptr++ = srcptr[2];
+				*destptr++ = srcptr[1];
+				*destptr++ = srcptr[0];
+				srcptr    += 3;
 			}
-			ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, frameSize * 3);
+
+			Com_Memset(destptr, '\0', avipadlen);
+			destptr += avipadlen;
+
+			srcptr += padlen;
 		}
+
+		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, avipadwidth * cmd->height);
 	}
 
 	return (const void *)(cmd + 1);

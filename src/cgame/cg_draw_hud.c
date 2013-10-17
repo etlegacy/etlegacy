@@ -110,6 +110,11 @@ hudStucture_t hudlist[MAXHUDS];
 hudStucture_t *activehud;
 hudStucture_t hud0;
 
+// FIXME: use these in all HUD related draw functions to have unique colors
+vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
+vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text = { 0.625f, 0.625f, 0.6f, 1.0f };
+
 rectDef_t CG_getRect(float x, float y, float w, float h)
 {
 	rectDef_t rect = { x, y, w, h };
@@ -212,9 +217,8 @@ static void CG_addHudToList(hudStucture_t hud)
 	hudCount++;
 }
 
-/*
-* HUD SCRIPT FUNCTIONS BELLOW
-*/
+//  HUD SCRIPT FUNCTIONS BELLOW
+
 static qboolean CG_HUD_ParseError(int handle, char *format, ...)
 {
 	int         line;
@@ -1600,11 +1604,6 @@ static void CG_DrawStatsDebug(void)
   UPPER RIGHT CORNER
 ===========================================================================================
 */
-
-// FIXME: use these in all functions below to have unique colors
-vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text = { 0.625f, 0.625f, 0.6f, 1.0f };
 
 #define UPPERRIGHT_X 634
 #define UPPERRIGHT_W 50

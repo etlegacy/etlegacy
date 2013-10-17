@@ -233,8 +233,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		event       = EV_MISSILE_HIT;
 		param       = DirToByte(trace->plane.normal);
 		otherentnum = other->s.number;
-		//G_AddEvent( ent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
-		//ent->s.otherEntityNum = other->s.number;
 	}
 	else
 	{
@@ -245,25 +243,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 
 		event = EV_MISSILE_MISS;
 		param = DirToByte(dir);
-		//G_AddEvent( ent, EV_MISSILE_MISS, DirToByte( dir ) );
 	}
-
-	//ent->freeAfterEvent = qtrue;
-
-	// change over to a normal entity right at the point of impact
-	//etype = ent->s.eType;
-	//ent->s.eType = ET_GENERAL;
-
-	//SnapVectorTowards( trace->endpos, ent->s.pos.trBase );  // save net bandwidth
-	/*  {
-	        gentity_t* tent;
-
-	        tent = G_TempEntity( trace->endpos, EV_RAILTRAIL );
-	        VectorMA(trace->endpos, 16, trace->plane.normal, tent->s.origin2);
-	        tent->s.dmgFlags = 0;
-	    }*/
-
-	//G_SetOrigin( ent, trace->endpos );
 
 	temp                   = G_TempEntity(trace->endpos, event);
 	temp->s.otherEntityNum = otherentnum;
@@ -498,15 +478,28 @@ void G_ExplodeMissile(gentity_t *ent)
 			}
 		}
 
-		// give big weapons the shakey shakey // FIXME: WP_MORTAR/SET
-		if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_PANZERFAUST || ent->s.weapon == WP_GRENADE_LAUNCHER ||
-		    ent->s.weapon == WP_GRENADE_PINEAPPLE || ent->s.weapon == WP_MAPMORTAR || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SMOKE_MARKER
-		    || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL /*|| ent->s.weapon == WP_SMOKE_BOMB*/
-		    )
+		// give big weapons the shakey shakey // FIXME: WP_MORTAR/SET?
+		// FIXME: weapon table
+		switch (ent->s.weapon)
+		{
+		case WP_DYNAMITE:
+		case WP_PANZERFAUST:
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+		case WP_MAPMORTAR:
+		case WP_ARTY:
+		case WP_SMOKE_MARKER:
+		case WP_LANDMINE:
+		case WP_SATCHEL:
 		{
 			gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+
 			tent->s.onFireStart = ent->splashDamage * 4;
 			tent->r.svFlags    |= SVF_BROADCAST;
+		}
+		break;
+		default:
+			break;
 		}
 	}
 }
@@ -756,6 +749,7 @@ void G_RunMissile(gentity_t *ent)
 		if (ent->s.eType != ET_MISSILE)
 		{
 			gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+
 			tent->s.onFireStart = ent->splashDamage * 4;
 			tent->r.svFlags    |= SVF_BROADCAST;
 			return;     // exploded
@@ -773,7 +767,6 @@ void G_RunMissile(gentity_t *ent)
 /*
 ================
 G_PredictBounceMissile
-
 ================
 */
 void G_PredictBounceMissile(gentity_t *ent, trajectory_t *pos, trace_t *trace, int time)
@@ -827,11 +820,10 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 	vec3_t       origin;
 	trace_t      tr;
 	int          time;
-	trajectory_t pos;
+	trajectory_t pos = ent->s.pos;
 	vec3_t       org;
 	gentity_t    backupEnt;
 
-	pos = ent->s.pos;
 	BG_EvaluateTrajectory(&pos, level.time, org, qfalse, ent->s.effect2Time);
 
 	backupEnt = *ent;
@@ -1760,36 +1752,33 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink = level.time + 2500;
 	}
 
-	// FIXME: do a switch
-	if (grenadeWPID == WP_DYNAMITE)
+	switch (grenadeWPID)
 	{
+	case WP_DYNAMITE:
 		noExplode       = qtrue;
 		bolt->nextthink = level.time + 15000;
 		bolt->think     = DynaSink;
 		bolt->timestamp = level.time + 16500;
 		bolt->free      = DynaFree;
-	}
-
-	if (grenadeWPID == WP_LANDMINE)
-	{
+		break;
+	case WP_LANDMINE:
 		noExplode       = qtrue;
 		bolt->nextthink = level.time + 15000;
 		bolt->think     = DynaSink;
 		bolt->timestamp = level.time + 16500;
-	}
-
-	if (grenadeWPID == WP_SATCHEL)
-	{
+		break;
+	case WP_SATCHEL:
 		noExplode         = qtrue;
 		bolt->nextthink   = 0;
 		bolt->s.clientNum = self->s.clientNum;
 		bolt->free        = G_FreeSatchel;
-	}
-
-	if (grenadeWPID == WP_MORTAR_SET)        // only on impact
-	{
+		break;
+	case WP_MORTAR_SET: // only on impact
 		noExplode       = qtrue;
 		bolt->nextthink = 0;
+		break;
+	default:
+		break;
 	}
 
 	// no self->client for shooter_grenade's

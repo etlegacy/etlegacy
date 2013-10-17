@@ -2396,7 +2396,6 @@ static void RB_RenderInteractionsShadowMapped()
 						vec4_t   point;
 						vec4_t   transf;
 
-
 						GLimp_LogComment("--- Rendering directional shadowMap ---\n");
 
 						R_BindFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
@@ -3532,9 +3531,6 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 	}
 }
 
-
-
-
 void RB_RenderInteractionsDeferred()
 {
 	interaction_t *ia;
@@ -3808,7 +3804,6 @@ skipInteraction:
 						}
 					}
 				}
-
 
 				// last interaction of current light
 				lightShader       = light->shader;
@@ -4159,8 +4154,6 @@ skipInteraction:
 		backEnd.pc.c_deferredLightingTime = endTime - startTime;
 	}
 }
-
-
 
 static void RB_RenderInteractionsDeferredShadowMapped()
 {
@@ -5227,7 +5220,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 				{
 					// prepare rendering of the light volume
 					// either bind VBO or setup the tess struct
-					#if 0 // FIXME check why this does not work here
+#if 0 // FIXME check why this does not work here
 					if (light->isStatic && light->frustumVBO && light->frustumIBO)
 					{
 						// render in world space
@@ -5245,7 +5238,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						tess.numIndexes  = light->frustumIndexes;
 					}
 					else
-					#endif
+#endif
 					{
 						tess.multiDrawPrimitives = 0;
 						tess.numIndexes          = 0;
@@ -7859,7 +7852,6 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 	matrix_t rot;
 	axis_t   axis;
 
-
 #if 0
 	VectorSubtract(entity->localBounds[1], entity->localBounds[0], boundsSize);
 #else
@@ -8442,7 +8434,6 @@ void RB_CollectBspOcclusionQueries()
 
 		glFinish();
 
-		ocCount  = 0;
 		sentinel = &tr.occlusionQueryList;
 		for (l = sentinel->next; l != sentinel; l = l->next)
 		{
@@ -8456,7 +8447,6 @@ void RB_CollectBspOcclusionQueries()
 
 		//ri.Printf(PRINT_ALL, "waiting for %i queries...\n", ocCount);
 
-		avCount = 0;
 		do
 		{
 			for (l = sentinel->next; l != sentinel; l = l->next)
@@ -9503,7 +9493,6 @@ static void RB_RenderDebugUtils()
 		int            j;
 		vec3_t         mins = { -8, -8, -8 };
 		vec3_t         maxs = { 8, 8, 8 };
-		//vec3_t			viewOrigin;
 
 		if (backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOCUBEMAP))
 		{
@@ -9520,7 +9509,7 @@ static void RB_RenderDebugUtils()
 		gl_reflectionShader->SetDeformVertexes(false);
 
 		gl_reflectionShader->SetNormalMapping(false);
-//		gl_reflectionShader->DisableMacro_TWOSIDED();
+		//gl_reflectionShader->DisableMacro_TWOSIDED();
 
 		gl_reflectionShader->BindProgram();
 
@@ -9742,7 +9731,6 @@ static void RB_RenderDebugUtils()
 
 		GL_CheckErrors();
 
-
 		for (int i = 0; i < 2; i++)
 		{
 			float    x, y, w, h;
@@ -9799,17 +9787,16 @@ static void RB_RenderDebugUtils()
 
 						matrix_t viewMatrix, projectionMatrix;
 
-
 						// Quake -> OpenGL view matrix from light perspective
-						#if 0
+#if 0
 						VectorToAngles(lightDirection, angles);
 						MatrixFromAngles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 						MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, backEnd.viewParms.orientation.origin);
 						MatrixAffineInverse(transformMatrix, viewMatrix);
 						MatrixMultiplyMOD(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
-						#else
+#else
 						MatrixLookAtRH(viewMatrix, backEnd.viewParms.orientation.origin, forward, up);
-						#endif
+#endif
 
 						//ClearBounds(splitFrustumBounds[0], splitFrustumBounds[1]);
 						//BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], backEnd.viewParms.visBounds[0], backEnd.viewParms.visBounds[1]);
@@ -9837,7 +9824,6 @@ static void RB_RenderDebugUtils()
 						GL_LoadModelViewMatrix(viewMatrix);
 						GL_LoadProjectionMatrix(projectionMatrix);
 					}
-
 
 					// set uniforms
 					gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);

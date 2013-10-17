@@ -1412,7 +1412,7 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 
 			if (constructibles[1]->s.eType != ET_CONSTRUCTIBLE)
 			{
-				G_Error("'trigger_objective_info' targets multiple entities with targetname '%s', the second one isn't a 'func_constructible'\n", ent->target);
+				G_Error("'trigger_objective_info' targets multiple entities with targetname '%s', the second one isn't a 'func_constructible' [%d]\n", ent->target, constructibles[1]->s.eType);
 			}
 
 			if (team[0] == team[1])

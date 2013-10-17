@@ -241,12 +241,17 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	entry[0] = '\0';
 
 	// number of respawns left
+	respawnsLeft = cl->ps.persistant[PERS_RESPAWNS_LEFT];
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		if (g_entities[level.sortedClients[i]].health <= 0)
 		{
 			respawnsLeft = -2;
 		}
+	}
+	else if (respawnsLeft == 0 && ((cl->ps.pm_flags & PMF_LIMBO) || (level.intermissiontime && g_entities[level.sortedClients[i]].health <= 0)))
+	{
+		respawnsLeft = -2;
 	}
 
 	if (cl->pers.connected == CON_CONNECTING)

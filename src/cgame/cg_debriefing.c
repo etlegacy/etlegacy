@@ -39,38 +39,36 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos);
 
 int QDECL CG_SortPlayersByXP(const void *a, const void *b);
 
-#define DB_MASTER_FONT &cgs.media.limboFont2
-
 panel_button_text_t debriefTitleFont =
 {
-	0.3f,           0.3f,
-	{ 1.f,          1.f,              1.f,  0.8f },
-	0,              ITEM_ALIGN_CENTER,
-	DB_MASTER_FONT,
+	0.3f,                  0.3f,
+	{ 1.f,                 1.f,              1.f,  0.8f },
+	0,                     ITEM_ALIGN_CENTER,
+	&cgs.media.limboFont2,
 };
 
 panel_button_text_t debriefHeadingFont =
 {
-	0.24f,          0.24f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.24f,                 0.24f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 panel_button_text_t debriefListFont =
 {
-	0.20f,          0.22f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.20f,                 0.22f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 panel_button_text_t debriefPlayerHeadingSmallerFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 #define DB_RANK_X   213 + 4
@@ -486,10 +484,10 @@ panel_button_t debriefPlayerListWindow =
 
 panel_button_text_t debriefPlayerListFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 panel_button_t debriefHeadingRank =
@@ -598,10 +596,10 @@ panel_button_t debriefPlayerListScroll =
 
 panel_button_text_t debriefPlayerInfoFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 panel_button_t debriefPlayerInfoWindow =
@@ -842,26 +840,26 @@ panel_button_t teamDebriefMapShot =
 
 panel_button_text_t teamDebriefBigTitle =
 {
-	0.32f,          0.32f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.32f,                 0.32f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 panel_button_text_t teamDebriefTitleSmall =
 {
-	0.24f,          0.24f,
-	{ 1.f,          1.f,              1.f,0.8f },
-	0,              ITEM_ALIGN_CENTER,
-	DB_MASTER_FONT,
+	0.24f,                 0.24f,
+	{ 1.f,                 1.f,              1.f,0.8f },
+	0,                     ITEM_ALIGN_CENTER,
+	&cgs.media.limboFont2,
 };
 
 panel_button_text_t teamDebriefTitle =
 {
-	0.28f,          0.28f,
-	{ 1.f,          1.f,  1.f,0.8f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.28f,                 0.28f,
+	{ 1.f,                 1.f,  1.f,0.8f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 panel_button_t teamDebriefMapWinnerText =
@@ -1030,18 +1028,18 @@ panel_button_t *teamDebriefPanelButtons[] =
 
 panel_button_text_t chatPanelButtonFont =
 {
-	0.20f,          0.20f,
-	{ 1.f,          1.f,              1.f,0.8f },
-	0,              ITEM_ALIGN_CENTER,
-	DB_MASTER_FONT,
+	0.20f,                 0.20f,
+	{ 1.f,                 1.f,              1.f,0.8f },
+	0,                     ITEM_ALIGN_CENTER,
+	&cgs.media.limboFont2,
 };
 
 panel_button_text_t chatPanelButtonFontRed =
 {
-	0.20f,          0.20f,
-	{ 1.f,          0.f,              0.f,0.8f },
-	0,              ITEM_ALIGN_CENTER,
-	DB_MASTER_FONT,
+	0.20f,                 0.20f,
+	{ 1.f,                 0.f,              0.f,0.8f },
+	0,                     ITEM_ALIGN_CENTER,
+	&cgs.media.limboFont2,
 };
 
 panel_button_t chatPanelWindow =
@@ -1243,7 +1241,7 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 		                  button->rect.y + (3 * (button->rect.h / 4)),
 		                  .20f, .20f, clrTxtBck,
 		                  cgs.dbMapDispName[cgs.dbMapVotedFor[button->data[7] - 1]],
-		                  0, 0, 0, DB_MASTER_FONT);
+		                  0, 0, 0, &cgs.media.limboFont2);
 	}
 
 	CG_PanelButtonsRender_Button_Ext(&button->rect, str);
@@ -1344,7 +1342,7 @@ void CG_MapVote_VoteButton_Draw(panel_button_t *button)
 		                  button->rect.y + (3 * (button->rect.h / 4)),
 		                  .20f, .20f, clrTxtBck,
 		                  cgs.dbMapDispName[cgs.dbMapVotedFor[0]],
-		                  0, 0, 0, DB_MASTER_FONT);
+		                  0, 0, 0, &cgs.media.limboFont2);
 	}
 	CG_PanelButtonsRender_Button_Ext(&button->rect, str);
 	return;
@@ -1408,10 +1406,10 @@ panel_button_t mapVoteWindow =
 
 panel_button_text_t mapVoteFont =
 {
-	0.2f,           0.2f,
-	{ 0.6f,         0.6f,0.6f,    1.f },
-	0,              0,
-	DB_MASTER_FONT,
+	0.2f,                  0.2f,
+	{ 0.6f,                0.6f,0.6f,    1.f },
+	0,                     0,
+	&cgs.media.limboFont2,
 };
 
 panel_button_t mapVoteHeadingName =

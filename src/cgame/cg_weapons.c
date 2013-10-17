@@ -37,10 +37,7 @@
 vec3_t ejectBrassCasingOrigin;
 
 // forward decs
-static int getAltWeapon(int weapnum);
-int getEquivWeapon(int weapnum);
 int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
-static qboolean CG_WeaponHasAmmo(int i);
 extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP]; // moved to bg_misc.c so I can get a droplist
 
 /*
@@ -639,26 +636,26 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 
 		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
 		rnd = random();
-		// FIXME: do a switch
-		if (ent->currentState.eType == ET_FLAMEBARREL)
+
+		switch (ent->currentState.eType)
 		{
+		case ET_FLAMEBARREL:
 			if ((rand() % 100) > 50)
 			{
 				CG_ParticleExplosion("twiltb2", lastPos, vec3_origin, 100 + (int)(rnd * 400), 5, 7 + (int)(rnd * 10), qfalse);       // fire
 
 			}
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
-		}
-		else if (ent->currentState.eType == ET_FP_PARTS)
-		{
+			break;
+		case ET_FP_PARTS:
 			if ((rand() % 100) > 50)
 			{
 				CG_ParticleExplosion("twiltb2", lastPos, vec3_origin, 100 + (int)(rnd * 400), 5, 7 + (int)(rnd * 10), qfalse);       // fire
 
 			}
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
-		}
-		else if (ent->currentState.eType == ET_RAMJET)
+			break;
+		case ET_RAMJET:
 		{
 			int duration;
 
@@ -667,7 +664,9 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 			CG_ParticleExplosion("twiltb2", lastPos, vec3_origin, duration + (int)(rnd * 100), 5, 5 + (int)(rnd * 10), qfalse);       // fire
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 400 + (int)(rnd * 750), 12, 24 + (int)(rnd * 30), qfalse);          // smoke
 		}
-		else if (ent->currentState.eType == ET_FIRE_COLUMN || ent->currentState.eType == ET_FIRE_COLUMN_SMOKE)
+		break;
+		case ET_FIRE_COLUMN:
+		case ET_FIRE_COLUMN_SMOKE:
 		{
 			int duration;
 			int sizeStart;
@@ -712,10 +711,11 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 				CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
 			}
 		}
-		else
-		{
+		break;
+		default:
 			//CG_ParticleExplosion( "twiltb", lastPos, vec3_origin, 300+(int)(rnd*100), 4, 14+(int)(rnd*8) );   // fire
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
+			break;
 		}
 	}
 	/*
@@ -2441,7 +2441,7 @@ The main player will have this called for BOTH cases, so effects like light and
 sound should only be done on the world model case.
 =============
 */
-static qboolean debuggingweapon = qfalse;
+//#define DEBUG_WEAPON
 
 #define BARREL_SMOKE_TIME 1000
 
@@ -2456,9 +2456,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	centity_t    *nonPredictedCent;
 	qboolean     firing;
 	qboolean     akimboFire = qfalse;
-	//qboolean    playerScaled;
-	qboolean drawpart;
-	qboolean isPlayer = (qboolean)(cent->currentState.clientNum == cg.snap->ps.clientNum); // might as well have this check consistant throughout the routine
+	qboolean     drawpart;
+	qboolean     isPlayer = (qboolean)(cent->currentState.clientNum == cg.snap->ps.clientNum); // might as well have this check consistant throughout the routine
 
 	if (ps && cg.cameraMode)
 	{
@@ -2471,21 +2470,26 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	// don't draw weapon stuff when looking through a scope
-	if (weaponNum == WP_FG42SCOPE || weaponNum == WP_GARAND_SCOPE || weaponNum == WP_K43_SCOPE)
+	switch (weaponNum)
 	{
+	// don't draw weapon stuff when looking through a scope
+	case WP_FG42SCOPE:
+	case WP_GARAND_SCOPE:
+	case WP_K43_SCOPE:
 		if (isPlayer && !cg.renderingThirdPerson)
 		{
 			return;
 		}
-	}
-
-	if (weaponNum == WP_GRENADE_PINEAPPLE || weaponNum == WP_GRENADE_LAUNCHER)
-	{
+		break;
+	case WP_GRENADE_PINEAPPLE:
+	case WP_GRENADE_LAUNCHER:
 		if (ps && !ps->ammoclip[weaponNum])
 		{
 			return;
 		}
+		break;
+	default:
+		break;
 	}
 
 	// no weapon when on mg_42
@@ -2602,19 +2606,17 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	if (!gun.hModel)
 	{
-		if (debuggingweapon)
-		{
-			CG_Printf("returning due to: !gun.hModel\n");
-		}
+#ifdef DEBUG_WEAPON
+		CG_Printf("returning due to: !gun.hModel\n");
+#endif
 		return;
 	}
 
 	if (!ps && (cg.snap->ps.pm_flags & PMF_LADDER) && isPlayer)          // player on ladder
 	{
-		if (debuggingweapon)
-		{
-			CG_Printf("returning due to: !ps && cg.snap->ps.pm_flags & PMF_LADDER\n");
-		}
+#ifdef DEBUG_WEAPON
+		CG_Printf("returning due to: !ps && cg.snap->ps.pm_flags & PMF_LADDER\n");
+#endif
 		return;
 	}
 
@@ -2656,14 +2658,13 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon", 0, NULL);
 	}
 
-	/*  playerScaled = (qboolean)(cgs.clientinfo[ cent->currentState.clientNum ].playermodelScale[0] != 0);
-	    if(!ps && playerScaled) {   // don't "un-scale" weap up in 1st person
-	        for(i=0;i<3;i++) {  // scale weapon back up so it doesn't pick up the adjusted scale of the character models.
-	                            // this will affect any parts attached to the gun as well (barrel/bolt/flash/brass/etc.)
-	            VectorScale( gun.axis[i], 1.0/(cgs.clientinfo[ cent->currentState.clientNum ].playermodelScale[i]), gun.axis[i]);
-	        }
-
-	    }*/
+	//qboolean    playerScaled = (qboolean)(cgs.clientinfo[ cent->currentState.clientNum ].playermodelScale[0] != 0);
+	//if(!ps && playerScaled) {   // don't "un-scale" weap up in 1st person
+	// for(i=0;i<3;i++) {  // scale weapon back up so it doesn't pick up the adjusted scale of the character models.
+	//   // this will affect any parts attached to the gun as well (barrel/bolt/flash/brass/etc.)
+	//   VectorScale( gun.axis[i], 1.0/(cgs.clientinfo[ cent->currentState.clientNum ].playermodelScale[i]), gun.axis[i]);
+	// }
+	//}
 
 	if (ps)
 	{
@@ -2923,6 +2924,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isPlayer && !cg.renderingThirdPerson)  // for now just do it on the first person weapons
 	{
+		// FIXME: do a switch
 		if (weaponNum == WP_CARBINE || weaponNum == WP_KAR98 || weaponNum == WP_GPG40 || weaponNum == WP_M7)
 		{
 			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
@@ -3102,7 +3104,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
 					}
 				}
-
 			}
 			else if (weaponNum == WP_PANZERFAUST)
 			{
@@ -3139,6 +3140,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// weapons that don't need to go any further as they have no flash or light
+	// FIXME: weapon table
 	switch (weaponNum)
 	{
 	case WP_GRENADE_LAUNCHER:
@@ -3492,9 +3494,14 @@ CG_WeaponHasAmmo
 static qboolean CG_WeaponHasAmmo(int i)
 {
 	// certain weapons don't have ammo
-	if (i == WP_KNIFE || i == WP_KNIFE_KABAR || i == WP_PLIERS)
+	switch (i)
 	{
+	case WP_KNIFE:
+	case WP_KNIFE_KABAR:
+	case WP_PLIERS:
 		return qtrue;
+	default:
+		break;
 	}
 
 	if (!(cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(i)]) &&
@@ -3563,7 +3570,6 @@ int CG_WeaponIndex(int weapnum, int *bank, int *cycle)
 	{
 		for (cyc = 0; cyc < MAX_WEAPS_IN_BANK_MP; cyc++)
 		{
-
 			if (!weapBanksMultiPlayer[bnk][cyc])
 			{
 				break;
@@ -3745,20 +3751,16 @@ static int getAltWeapon(int weapnum)
 	return weapnum;
 }
 
-/*
-==============
-getEquivWeapon
-    return the id of the opposite team's weapon.
-    Passing the weapnum of the mp40 returns the id of the thompson, and likewise
-    passing the weapnum of the thompson returns the id of the mp40.
-    No equivalent available will return the weapnum passed in.
-==============
-*/
+/**
+ *   @brief Passing the weapnum of the mp40 returns the id of the thompson, and likewise
+ *   passing the weapnum of the thompson returns the id of the mp40.
+ *   No equivalent available will return the weapnum passed in.
+ *
+ *   @return the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
+ */
 int getEquivWeapon(int weapnum)
 {
 	int num = weapnum;
-
-	// FIXME: WP_GPG40 <-> WP_M7 ?
 
 	switch (weapnum)
 	{
@@ -3778,7 +3780,6 @@ int getEquivWeapon(int weapnum)
 	case WP_SILENCER:
 		num = WP_SILENCED_COLT;
 		break;
-
 	// going from american to german
 	case WP_COLT:
 		num = WP_LUGER;
@@ -4074,6 +4075,7 @@ void CG_AltWeapon_f(void)
 	}
 
 	// Need ground for this
+	// FIXME: do a switch
 	if (cg.weaponSelect == WP_MORTAR)
 	{
 		int    contents;
@@ -4160,7 +4162,7 @@ void CG_AltWeapon_f(void)
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
 	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
-	    // FIXME: do switches
+	    // FIXME: do a switch
 	    ((original == WP_GPG40 || num == WP_GPG40 || original == WP_M7 || num == WP_M7) ||
 	     (original == WP_SILENCER || num == WP_SILENCER || original == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
 	     (original == WP_AKIMBO_SILENCEDCOLT || num == WP_AKIMBO_SILENCEDCOLT || original == WP_AKIMBO_SILENCEDLUGER || num == WP_AKIMBO_SILENCEDLUGER) ||
@@ -4644,6 +4646,7 @@ void CG_LastWeaponUsed_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
+	// FIXME: do a switch or macro
 	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
@@ -4919,6 +4922,7 @@ void CG_WeaponBank_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
+	// FIXME: do a switch or macro
 	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
@@ -4997,6 +5001,7 @@ void CG_WeaponBank_f(void)
 	}
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
+	// FIXME: do a switch
 	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
 	    ((curweap == WP_GPG40 || num == WP_GPG40 || curweap == WP_M7 || num == WP_M7) ||
 	     (curweap == WP_SILENCER || num == WP_SILENCER || curweap == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
@@ -5033,6 +5038,7 @@ void CG_Weapon_f(void)
 		return;
 	}
 
+	// FIXME: do a switch or macro
 	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
@@ -5070,6 +5076,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 
 	if (allowforceswitch)
 	{
+		// FIXME: do a switch
 		if (cg.weaponSelect == WP_SMOKE_BOMB)
 		{
 			if (CG_WeaponSelectable(WP_LUGER))
@@ -5482,6 +5489,7 @@ void CG_FireWeapon(centity_t *cent)
 	}
 
 	// lightning gun only does this this on initial press
+	// FIXME: do a switch
 	if (ent->weapon == WP_FLAMETHROWER)
 	{
 		if (cent->pe.lightningFiring)

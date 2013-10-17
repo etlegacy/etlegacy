@@ -187,6 +187,7 @@ static void UI_LoadArenasFromFile(char *filename)
 				if (strstr(token.string, "wolfmp"))
 				{
 					uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_WOLF);
+					uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_WOLF_MAPVOTE);
 				}
 				if (strstr(token.string, "wolfsw"))
 				{
@@ -409,6 +410,7 @@ static void UI_LoadCampaignsFromFile(const char *filename)
 			if (strstr(token.string, "wolfmp"))
 			{
 				uiInfo.campaignList[uiInfo.campaignCount].typeBits |= (1 << GT_WOLF);
+				uiInfo.campaignList[uiInfo.campaignCount].typeBits |= (1 << GT_WOLF_MAPVOTE);
 			}
 			if (strstr(token.string, "wolfsw"))
 			{
@@ -631,9 +633,6 @@ void UI_LoadCampaigns(void)
 		uiInfo.campaignList[j].order = uiInfo.campaignList[i].order + 1;
 		i                            = j;
 	}
-
-	// Load the campaign save
-	BG_LoadCampaignSave(va("profiles/%s/campaign.dat", cl_profile.string), &uiInfo.campaignStatus, cl_profile.string);
 
 	for (i = 0; i < uiInfo.campaignCount; i++)
 	{

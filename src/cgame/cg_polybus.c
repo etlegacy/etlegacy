@@ -41,16 +41,21 @@ qboolean     cg_polyBuffersInuse[MAX_PB_BUFFERS];
 polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies)
 {
 	int i;
+	int firstFree = -1;
 
 	// first find one with the same shader if possible
-	for (i = 0; i < MAX_PB_BUFFERS; i++)
+	for (i = 0; i < MAX_PB_BUFFERS; ++i)
 	{
-		if (cg_polyBuffers[i].shader != shader)
+		if (!cg_polyBuffersInuse[i])
 		{
+			if (firstFree == -1)
+			{
+				firstFree = i;
+			}
 			continue;
 		}
 
-		if (!cg_polyBuffersInuse[i])
+		if (cg_polyBuffers[i].shader != shader)
 		{
 			continue;
 		}
@@ -71,20 +76,17 @@ polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIn
 		return &cg_polyBuffers[i];
 	}
 
-	// or just find a free one
-	for (i = 0; i < MAX_PB_BUFFERS; i++)
+	// return the free pB we have already found above
+	if (firstFree != -1)
 	{
-		if (!cg_polyBuffersInuse[i])
-		{
-			cg_polyBuffersInuse[i]        = qtrue;
-			cg_polyBuffers[i].shader      = shader;
-			cg_polyBuffers[i].numIndicies = 0;
-			cg_polyBuffers[i].numVerts    = 0;
-
-			return &cg_polyBuffers[i];
-		}
+		cg_polyBuffersInuse[firstFree]        = qtrue;
+		cg_polyBuffers[firstFree].shader      = shader;
+		cg_polyBuffers[firstFree].numIndicies = 0;
+		cg_polyBuffers[firstFree].numVerts    = 0;
+		return &cg_polyBuffers[firstFree];
 	}
 
+	// or return NULL if no free buffer was found..
 	return NULL;
 }
 
