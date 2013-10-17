@@ -327,7 +327,6 @@ FILE(GLOB UI_SRC
 	"src/ui/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
-	"src/game/bg_campaign.c"
 	"src/game/bg_classes.c"
 	"src/game/bg_misc.c"
 )

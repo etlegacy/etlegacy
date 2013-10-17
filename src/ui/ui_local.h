@@ -288,94 +288,7 @@ extern void UI_DrawConnectScreen(qboolean overlay);
 // ui_loadpanel.c
 extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 
-// ui_players.c
-
-//FIXME ripped from cg_local.h
-typedef struct
-{
-	int oldFrame;
-	int oldFrameTime;               // time when ->oldFrame was exactly on
-
-	int frame;
-	int frameTime;                  // time when ->frame will be exactly on
-
-	float backlerp;
-
-	float yawAngle;
-	qboolean yawing;
-	float pitchAngle;
-	qboolean pitching;
-
-	int animationNumber;            // may include ANIM_TOGGLEBIT
-	animation_t *animation;
-	int animationTime;              // time when the first frame of the animation will be exact
-} lerpFrame_t;
-
-typedef struct
-{
-	// model info
-	qhandle_t legsModel;
-	qhandle_t legsSkin;
-	lerpFrame_t legs;
-
-	qhandle_t torsoModel;
-	qhandle_t torsoSkin;
-	lerpFrame_t torso;
-
-	qhandle_t headModel;
-	qhandle_t headSkin;
-
-	animation_t animations[MAX_ANIMATIONS];
-
-	qhandle_t weaponModel;
-	qhandle_t barrelModel;
-	qhandle_t flashModel;
-	vec3_t flashDlightColor;
-	int muzzleFlashTime;
-
-	// currently in use drawing parms
-	vec3_t viewAngles;
-	vec3_t moveAngles;
-	weapon_t currentWeapon;
-	int legsAnim;
-	int torsoAnim;
-
-	// animation vars
-	weapon_t weapon;
-	weapon_t lastWeapon;
-	weapon_t pendingWeapon;
-	int weaponTimer;
-	int pendingLegsAnim;
-	int torsoAnimationTimer;
-
-	int pendingTorsoAnim;
-	int legsAnimationTimer;
-
-	qboolean chat;
-	qboolean newModel;
-
-	qboolean barrelSpinning;
-	float barrelAngle;
-	int barrelTime;
-
-	int realWeapon;
-
-	// added fields so it will work with wolf's skeletal animation system
-	// parsed from the start of the cfg file
-	gender_t gender;
-	footstep_t footsteps;
-	vec3_t headOffset;
-	int version;
-	qboolean isSkeletal;
-	int numAnimations;
-
-	qhandle_t backpackModel;
-	qhandle_t helmetModel;
-
-} playerInfo_t;
-
 // new ui stuff
-#define UI_NUMFX 7
 #define MAX_HEADS 64
 #define MAX_ALIASES 64
 #define MAX_HEADNAME  32
@@ -396,11 +309,6 @@ typedef struct
 #define MAX_SERVERSTATUS_TEXT   2048
 #define MAX_FOUNDPLAYER_SERVERS 16
 #define TEAM_MEMBERS 5
-#define GAMES_ALL           0
-#define GAMES_FFA           1
-#define GAMES_TEAMPLAY      2
-#define GAMES_TOURNEY       3
-#define GAMES_CTF           4
 
 #define MAX_MODS 64
 #define MAX_DEMOS 256
@@ -568,8 +476,6 @@ typedef struct
 	int profileCount;
 	int profileIndex;
 
-	int skillIndex;
-
 	modInfo_t modList[MAX_MODS];
 	int modCount;
 	int modIndex;
@@ -606,7 +512,6 @@ typedef struct
 	int q3HeadCount;
 	char q3HeadNames[MAX_PLAYERMODELS][64];
 	qhandle_t q3HeadIcons[MAX_PLAYERMODELS];
-	int q3SelectedHead;
 
 	int effectsColor;
 

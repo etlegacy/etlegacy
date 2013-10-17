@@ -240,9 +240,6 @@ typedef struct
 	cpsCampaign_t campaigns[MAX_CAMPAIGNS];
 } cpsFile_t;
 
-qboolean BG_LoadCampaignSave(const char *filename, cpsFile_t *file, const char *profile);
-qboolean BG_StoreCampaignSave(const char *filename, cpsFile_t *file, const char *profile);
-
 typedef struct
 {
 	const char *campaignShortName;
@@ -677,7 +674,7 @@ typedef enum
 	KEY_1,      // skull
 	KEY_2,      // chalice
 	KEY_3,      // eye
-	KEY_4,      // field radio
+	KEY_4,      // field radio          unused
 	KEY_5,      // satchel charge
 	INV_BINOCS, // binoculars
 	KEY_7,
@@ -919,9 +916,9 @@ typedef enum
 	EV_FIRE_WEAPONB,
 	EV_FIRE_WEAPON_LASTSHOT,
 	EV_NOFIRE_UNDERWATER,
-	EV_FIRE_WEAPON_MG42,
-	EV_FIRE_WEAPON_MOUNTEDMG42,
-	EV_GRENADE_BOUNCE,      // eventParm will be the soundindex
+	EV_FIRE_WEAPON_MG42,        // mounted MG
+	EV_FIRE_WEAPON_MOUNTEDMG42, // tank MG
+	EV_GRENADE_BOUNCE,          // eventParm will be the soundindex
 	EV_GENERAL_SOUND,
 	EV_GENERAL_SOUND_VOLUME,
 	EV_GLOBAL_SOUND,        // no attenuation
