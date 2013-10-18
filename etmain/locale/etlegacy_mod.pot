@@ -3669,22 +3669,6 @@ msgstr ""
 msgid "See HALL OF FAME below"
 msgstr ""
 
-msgid ""
-"ETPub Team - ETPro Team - NQ Team, core hug goes to C. - Omni-Bot Team, "
-"especially crapshot, Dr. Evil & Palota - RTCW COOP Team - Lazlo Menczel - "
-"Ryan C. Gordon - Timothee "
-msgstr ""
-
-msgid ""
-" Besset - Splash Damage ET community - Unvanquished Team Xreal Team - Zynx"
-msgstr ""
-
-msgid ""
-"Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
-msgstr ""
-
 msgid "^1WEBSITE"
 msgstr ""
 
@@ -3697,28 +3681,11 @@ msgstr ""
 msgid "HALL OF FAME"
 msgstr ""
 
-msgid "SPLASH DAMAGE"
-msgstr ""
-
 msgid "^3ET LEGACY HALL OF FAME"
 msgstr ""
 
 msgid "Advices, Bug reports, Patches"
 msgstr ""
 
-msgid ""
-"acqu - antman - boutetnico - BSzili - deki - Dragonji - Ensiform - Harlekin "
-"- ilm - Jonathan Gray - kkthx - MAN-AT-ARMS - Mateos - Mathieu Olivier - "
-"merlin - muessli - Odal - PtitSeb - RaFaL - Ragnar - Runeforce aka "
-"lakersforce - Saukko - Spyhawk - StM - Dusan 'TheDushan' Jocic - Zack "
-"'zturtleman' Middleton"
-msgstr ""
-
 msgid "^1TRANSLATIONS"
-msgstr ""
-
-msgid ""
-"Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, "
-"Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: "
-"ponce - Polish: morsik, RaFal - Portuguese: Zer0"
 msgstr ""
