@@ -4928,6 +4928,37 @@ qboolean BG_IsScopedWeapon(int weapon)
 	return qfalse;
 }
 
+// FIXME: weapon table
+qboolean BG_WeaponHasAlt(int weapon, int playerClass)
+{
+	switch (weapon)
+	{
+	case WP_LUGER:
+	case WP_COLT:
+	case WP_AKIMBO_COLT:
+	case WP_AKIMBO_LUGER:
+		return (playerClass == PC_COVERTOPS);
+	case WP_GRENADE_LAUNCHER:
+	case WP_KAR98:
+	case WP_CARBINE:
+	case WP_GARAND:
+	case WP_MOBILE_MG42:
+	case WP_K43:
+	case WP_FG42:
+	case WP_MORTAR:
+	case WP_SILENCED_COLT:
+	case WP_GARAND_SCOPE:
+	case WP_K43_SCOPE:
+	case WP_FG42SCOPE:
+	case WP_MORTAR_SET:
+	case WP_AKIMBO_SILENCEDCOLT:
+	case WP_AKIMBO_SILENCEDLUGER:
+	case WP_MOBILE_MG42_SET:
+		return qtrue;
+	}
+	return qfalse;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct locInfo_s
 {

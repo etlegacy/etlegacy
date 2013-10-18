@@ -299,6 +299,8 @@ vmCvar_t cg_altHudFlags;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamLatchedClass;
 
+vmCvar_t cg_weapaltReloads;
+
 vmCvar_t cg_simpleItems;
 
 vmCvar_t cg_automapZoom;
@@ -519,6 +521,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_popupTime,             "cg_popupTime",             "1000",  CVAR_ARCHIVE                 },
 	{ &cg_popupFadeTime,         "cg_popupFadeTime",         "2500",  CVAR_ARCHIVE                 },
 	{ &cg_popupStayTime,         "cg_popupStayTime",         "2000",  CVAR_ARCHIVE                 },
+	{ &cg_weapaltReloads,        "cg_weapaltReloads",        "0",     CVAR_ARCHIVE                 },
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

@@ -2199,6 +2199,8 @@ extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
 extern vmCvar_t cg_simpleItems;
 
+extern vmCvar_t cg_weapaltReloads;
+
 extern vmCvar_t cg_automapZoom;
 
 extern vmCvar_t cg_drawTime;

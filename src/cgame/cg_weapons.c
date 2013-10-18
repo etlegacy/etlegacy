@@ -4057,7 +4057,8 @@ CG_AltfireWeapon_f
 */
 void CG_AltWeapon_f(void)
 {
-	int original, num;
+	int      original, num;
+	qboolean reload = qfalse;
 
 	if (!cg.snap)
 	{
@@ -4176,6 +4177,21 @@ void CG_AltWeapon_f(void)
 	if (CG_WeaponSelectable(num))        // new weapon is valid
 	{
 		CG_FinishWeaponChange(original, num);
+		if (original == num)
+		{
+			reload = qtrue;
+		}
+	}
+	else
+	{
+		reload = qtrue;
+	}
+
+	if (reload && cg_weapaltReloads.integer && !BG_WeaponHasAlt(cg.weaponSelect, cgs.clientinfo[cg.clientNum].cls))
+	{
+		//This is a horrible way of doing it but theres not other way atm.
+		trap_SendConsoleCommand("+reload\n");
+		trap_SendConsoleCommand("-reload\n");
 	}
 }
 

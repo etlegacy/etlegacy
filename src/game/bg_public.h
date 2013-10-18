@@ -2102,6 +2102,7 @@ skillType_t BG_ClassSkillForClass(int classnum);
 
 qboolean BG_isLightWeaponSupportingFastReload(int weapon);
 qboolean BG_IsScopedWeapon(int weapon);
+qboolean BG_WeaponHasAlt(int weapon, int playerClass);
 
 int BG_FootstepForSurface(int surfaceFlags);
 

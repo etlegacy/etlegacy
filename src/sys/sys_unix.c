@@ -73,8 +73,8 @@
 #include <proto/iffparse.h>
 #include <proto/openurl.h>
 #ifdef __MORPHOS__
-#define kill(x,y) -1
-#define setenv(x,y,z)
+#define kill(x, y) - 1
+#define setenv(x, y, z)
 #define unsetenv(x)
 #define dirname(x) x
 #define basename(x) x
