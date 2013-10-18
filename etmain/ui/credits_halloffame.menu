@@ -63,7 +63,7 @@ menuDef {
 		name		"headerLogo"
 		group		GROUP_NAME
 		rect		6 80 $evalfloat(WINDOW_WIDTH-12) 16
-		text		"^3HALL OF FAME"
+		text		"^3ET LEGACY HALL OF FAME"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3
@@ -94,32 +94,40 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+12, .7*(WINDOW_WIDTH-24), 10, "Acqu - Bug reports & patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+24, .7*(WINDOW_WIDTH-24), 10, "Antman - Map location override databases ", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+36, .7*(WINDOW_WIDTH-24), 10, "Dragon aka Dragonji - Bug reports & Windows tester", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+48, .7*(WINDOW_WIDTH-24), 10, "Lakersforce - Translations, bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+60, .7*(WINDOW_WIDTH-24), 10, "Mathieu Olivier - Bug fixes and code clean up", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+72, .7*(WINDOW_WIDTH-24), 10, "Merlin - Bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "Dusan 'TheDushan' Jocic - Advices, patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
-	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "Ensiform - Advices, comments", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+108, .7*(WINDOW_WIDTH-24), 10, "Spyhawk - Bug reports & patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+120, .7*(WINDOW_WIDTH-24), 10, "boutetnico - advices, patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "deki - bug reporting & patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+144, .7*(WINDOW_WIDTH-24), 10, "Jonathan Gray - OpenBSD patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+156, .7*(WINDOW_WIDTH-24), 10, "kkthx - patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+168, .7*(WINDOW_WIDTH-24), 10, "Harlekin - bug reporting, menu patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+180, .7*(WINDOW_WIDTH-24), 10, "MAN-AT-ARMS - patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+192, .7*(WINDOW_WIDTH-24), 10, "Mateos - bug reporting", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+204, .7*(WINDOW_WIDTH-24), 10, "Mathieu Olivier - bug fixes and code clean ups", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+216, .7*(WINDOW_WIDTH-24), 10, "merlin - bug reporting", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+228, .7*(WINDOW_WIDTH-24), 10, "muessli - just a Windows gamer who is searching for typos", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+240, .7*(WINDOW_WIDTH-24), 10, "Odal - bug reporting", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+252, .7*(WINDOW_WIDTH-24), 10, "Ragnar - bug reporting", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+264, .7*(WINDOW_WIDTH-24), 10, "Runeforce aka lakersforce - bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+276, .7*(WINDOW_WIDTH-24), 10, "Saukko - bug reporting, feature requests", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+288, .7*(WINDOW_WIDTH-24), 10, "StM - patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+300, .7*(WINDOW_WIDTH-24), 10, "zturtleman Zack Middleton - patches & inspirations", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	
+
+	LABELWHITE( 6, CREDITS_Y+12, .7*(WINDOW_WIDTH-24), 10, "Advices, Bug reports, Patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+	LABELWHITE( 6, CREDITS_Y+36, .7*(WINDOW_WIDTH-24), 10, "acqu - antman - boutetnico - BSzili - deki - Dragonji - Ensiform - Harlekin - ilm - Jonathan Gray - kkthx - MAN-AT-ARMS - Mateos - Mathieu Olivier - merlin - muessli - Odal - PtitSeb - RaFaL - Ragnar - Runeforce aka lakersforce - Saukko - Spyhawk - StM - Dusan 'TheDushan' Jocic - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+	itemDef {
+		name		"headerTranslations"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y+108) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1TRANSLATIONS"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	LABELWHITE( 6, CREDITS_Y+120, .7*(WINDOW_WIDTH-24), 10, "Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: ponce - Polish: morsik, RaFal - Portuguese: Zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+// Fun //
+        itemDef {
+                name            "fun"
+                rect            $evalfloat(.3*(WINDOW_WIDTH-24)) $evalfloat(CREDITS_Y+260) 256 32
+                style           WINDOW_STYLE_SHADER
+                background      "gfx/2d/classic1"
+                forecolor       1 1 1 1
+                visible         1
+                decoration
+        }
+
 // Buttons //
 #ifdef FUI
         BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_halloffame ; open main )
