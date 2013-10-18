@@ -56,14 +56,14 @@ menuDef {
 	}
 
 // Background Logo //
-	itemDef {
-		name		"et_logo"
-		rect		104 124 400 200		// 16, 16 offset!!
-		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/et_logo_huge"
-		visible		1
-		decoration
-	}
+//	itemDef {
+//		name		"etl_logo"
+//		rect		104 124 400 200		// 16, 16 offset!!
+//		style		WINDOW_STYLE_SHADER
+//		background	"ui/assets/etl_logo_huge"
+//		visible		1
+//		decoration
+//	}
 
 // Company Logos //
 	itemDef {
