@@ -293,7 +293,7 @@ Dlls will call this directly
 */
 intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
-#if defined(__x86_64__) || defined (__llvm__) || ((defined __linux__) && (defined __powerpc__))
+#if defined(__x86_64__) || defined (__llvm__) || ((defined __linux__) && (defined __powerpc__)) || defined(__MORPHOS__)
 	// rcg010206 - see commentary above
 	intptr_t args[16];
 	int      i;
