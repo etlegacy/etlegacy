@@ -98,36 +98,11 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "IR4T4 - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson - Website, coding & scripts", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S - main windows coder, render", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+60, .7*(WINDOW_WIDTH-24), 10, "BSzili - AROS port", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+72, .7*(WINDOW_WIDTH-24), 10, "ptitSeb - PANDORA port, OpenGL-ES renderer", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "RaFaL aka ***Rafal*** - Menu scripts and Windows tester", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "ilm - basic SDL2 port", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	
-		
-// Contributors //
-	itemDef {
-		name		"headerContributors"
-		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+60) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"^1CONTRIBUTORS"
-		textfont	UI_FONT_ARIBLK_16
-		textstyle	ITEM_TEXTSTYLE_SHADOWED
-		textscale	.19
-		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
-		textaligny	10
-		forecolor	1 1 1 1
-		visible		1
-		decoration
-	}
-
-	LABELWHITE( 6, CREDITS_Y+72, .7*(WINDOW_WIDTH-24), 10, "Acqu - Bug reports & patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "Antman - Map location override databases ", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "Dragon aka Dragonji - Bug reports & Windows tester", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+108, .7*(WINDOW_WIDTH-24), 10, "Lakersforce - Translations, bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+120, .7*(WINDOW_WIDTH-24), 10, "Mathieu Olivier - Bug fixes and code clean up", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "Merlin - Bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+144, .7*(WINDOW_WIDTH-24), 10, "RaFaL aka ***Rafal*** - Menu scripts and Windows tester", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+156, .7*(WINDOW_WIDTH-24), 10, "Dusan 'TheDushan' Jocic - Advices, patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
-	LABELWHITE( 6, CREDITS_Y+168, .7*(WINDOW_WIDTH-24), 10, "Ensiform - Advices, comments", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-
-
 // Greetings //
 	itemDef {
 		name		"headerGreetings"
@@ -173,5 +148,6 @@ menuDef {
 #else
         BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_etlegacy ; open ingame_main )
 #endif
+        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "HALL OF FAME", .3, 14, close credits_etlegacy ; open credits_halloffame )
         BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_etlegacy ; open credits_splashdamage )
 }

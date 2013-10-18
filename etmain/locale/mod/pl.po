@@ -1293,7 +1293,7 @@ msgid "IR4T4 - Coding, mod development & bad boy"
 msgstr "IR4T4 - Programista, wydawca moda & zly chlopiec"
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
-msgstr "Konrad 'morsik' Moson - Srona, kodowanie & skrypty"
+msgstr "Konrad 'morsik' Moson - Strona, kodowanie & skrypty"
 
 msgid "Jere 'Jacker' S - main windows coder, render"
 msgstr "Jere 'Jacker' S - glowny programista windowsa, renderowanie"
