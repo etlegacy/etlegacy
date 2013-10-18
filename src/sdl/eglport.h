@@ -23,7 +23,7 @@
  *
  */
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 
 #ifndef EGLPORT_H
 #define EGLPORT_H
@@ -109,4 +109,4 @@ extern int8_t eglStencilbits;
 
 #endif /* EGLPORT_H */
 
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
