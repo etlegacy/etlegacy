@@ -37,8 +37,8 @@
 #        include "SDL.h"
 #        include "SDL_video.h"
 #    else
-#        include <SDL/SDL.h>
-#        include <SDL/SDL_video.h>
+#        include <SDL2/SDL.h>
+#        include <SDL2/SDL_video.h>
 #    endif
 #endif
 

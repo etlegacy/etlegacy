@@ -36,7 +36,7 @@
 #    ifdef BUNDLED_SDL
 #        include "SDL_video.h"
 #    else
-#        include <SDL/SDL_video.h>
+#        include <SDL2/SDL_video.h>
 #    endif
 #endif
 
