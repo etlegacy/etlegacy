@@ -97,9 +97,9 @@ OPTIMIZEVM = -O2 -funroll-loops -fomit-frame-pointer
 OPTIMIZE = $(OPTIMIZEVM) -ffast-math
 
 ifeq ($(PLATFORM), MorphOS)
-	SHLIBEXT = dll
-else
 	SHLIBEXT = so
+else
+	SHLIBEXT = dll
 endif
 SHLIBCFLAGS =
 SHLIBLDFLAGS = $(LDFLAGS)
@@ -114,7 +114,11 @@ else
 	LIBS = -ldll
 endif
 
-CLIENT_LIBS = -lglew $(shell sdl-config --libs)
+ifneq ($(PLATFORM), MorphOS)
+	CLIENT_LIBS = -lglew
+endif
+
+CLIENT_LIBS = $(shell sdl-config --libs)
 
 ifeq ($(FEATURE_OPENAL),1)
 	CLIENT_LIBS += -lopenal

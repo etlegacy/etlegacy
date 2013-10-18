@@ -3883,7 +3883,7 @@ static void FS_Startup(const char *gameName)
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
 
-#ifndef DEDICATED
+#if !defined(DEDICATED) && !defined(__AROS__) && !defined(__MORPHOS__)
 	// don't start if base == home, so downloads won't overwrite original files
 	//if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))

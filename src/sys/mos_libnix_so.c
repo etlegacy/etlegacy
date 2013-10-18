@@ -18,7 +18,7 @@
  * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
  *
  * @file mos_libnix_so.c
- * @brief Handles the C library initialization of the shared libraries
+ * @brief Handles the C library initialization of the shared objects
  * on MorphOS.
  */
 
