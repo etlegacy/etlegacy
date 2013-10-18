@@ -469,6 +469,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		return;
 	}
 
+	key = tolower(key);
 	len = strlen(edit->buffer);
 
 	switch (key)
@@ -527,6 +528,8 @@ void Field_KeyDownEvent(field_t *edit, int key)
 	case K_INS:
 	case K_KP_INS:
 		key_overstrikeMode = !key_overstrikeMode;
+		break;
+	default:
 		break;
 	}
 
@@ -739,7 +742,6 @@ void Console_Key(int key)
 	{
 		con.acLength = 0;
 	}
-
 
 	// command history (ctrl-p ctrl-n for unix style)
 

@@ -3549,6 +3549,11 @@ qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *
 	return qfalse;
 }
 
+/**
+ * @brief Handles standard text editting operations inside of textfields
+ *
+ * Unix-style shortcuts are also supported.
+ */
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 {
 	char           buff[1024];
@@ -3578,7 +3583,6 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		if (key & K_CHAR_FLAG)
 		{
 			key &= ~K_CHAR_FLAG;
-
 
 			if (key == 'h' - 'a' + 1)          // ctrl-h is backspace
 			{
@@ -3640,7 +3644,23 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				return qtrue;
 			}
 
-			if (key == K_DEL || key == K_KP_DEL)
+			if (key == K_BACKSPACE)
+			{
+				if (item->cursorPos > 0)
+				{
+					memmove(&buff[item->cursorPos - 1], &buff[item->cursorPos], len + 1 - item->cursorPos);
+					item->cursorPos--;
+					if (item->cursorPos < editPtr->paintOffset)
+					{
+						editPtr->paintOffset--;
+					}
+					buff[len] = '\0';
+				}
+				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+				return qtrue;
+			}
+
+			if (key == K_DEL || key == K_KP_DEL || (tolower(key) == 'd' && DC->keyIsDown(K_CTRL)))
 			{
 				if (item->cursorPos < len)
 				{
@@ -3651,7 +3671,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				return qtrue;
 			}
 
-			if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW)
+			if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW || (tolower(key) == 'f' && DC->keyIsDown(K_CTRL)))
 			{
 				if (editPtr->maxPaintChars && item->cursorPos >= editPtr->paintOffset + editPtr->maxPaintChars && item->cursorPos < len)
 				{
@@ -3666,7 +3686,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				return qtrue;
 			}
 
-			if (key == K_LEFTARROW || key == K_KP_LEFTARROW)
+			if (key == K_LEFTARROW || key == K_KP_LEFTARROW || (tolower(key) == 'b' && DC->keyIsDown(K_CTRL)))
 			{
 				if (item->cursorPos > 0)
 				{
@@ -3679,14 +3699,14 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				return qtrue;
 			}
 
-			if (key == K_HOME || key == K_KP_HOME)     // || ( tolower(key) == 'a' && trap_Key_IsDown( K_CTRL ) ) ) {
+			if (key == K_HOME || key == K_KP_HOME || (tolower(key) == 'a' && DC->keyIsDown(K_CTRL)))
 			{
 				item->cursorPos      = 0;
 				editPtr->paintOffset = 0;
 				return qtrue;
 			}
 
-			if (key == K_END || key == K_KP_END)     // ( tolower(key) == 'e' && trap_Key_IsDown( K_CTRL ) ) ) {
+			if (key == K_END || key == K_KP_END || (tolower(key) == 'e' && DC->keyIsDown(K_CTRL)))
 			{
 				item->cursorPos = len;
 				if (item->cursorPos > editPtr->maxPaintChars)
@@ -3703,7 +3723,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			}
 		}
 
-		if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW)
+		if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW || (tolower(key) == 'n' && DC->keyIsDown(K_CTRL)))
 		{
 			newItem = Menu_SetNextCursorItem(item->parent);
 			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
@@ -3723,7 +3743,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			return qtrue;
 		}
 
-		if (key == K_UPARROW || key == K_KP_UPARROW)
+		if (key == K_UPARROW || key == K_KP_UPARROW || (tolower(key) == 'p' && DC->keyIsDown(K_CTRL)))
 		{
 			newItem = Menu_SetPrevCursorItem(item->parent);
 			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
