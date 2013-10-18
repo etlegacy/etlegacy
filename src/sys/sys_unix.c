@@ -53,7 +53,7 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <unistd.h>
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 #include <sys/mman.h>
 #endif
 #include <sys/time.h>
@@ -62,9 +62,9 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 #ifndef SIGIOT
-#define SIGIOT SIGTERM
+#define SIGIOT SIGABRT
 #endif
 #include <datatypes/textclass.h>
 #include <intuition/intuition.h>
@@ -72,11 +72,18 @@
 #include <proto/intuition.h>
 #include <proto/iffparse.h>
 #include <proto/openurl.h>
+#ifdef __MORPHOS__
+#define kill(x,y) -1
+#define setenv(x,y,z)
+#define unsetenv(x)
+#define dirname(x) x
+#define basename(x) x
+#endif
 
 struct Library *OpenURLBase;
 #endif
 
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 qboolean stdinIsATTY;
 #endif
 
@@ -89,7 +96,7 @@ static char homePath[MAX_OSPATH] = { 0 };
  */
 char *Sys_DefaultHomePath(void)
 {
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	char *p;
 
 	if (!*homePath)
@@ -185,7 +192,7 @@ void Sys_SnapVector(float *v)
  */
 qboolean Sys_RandomBytes(byte *string, int len)
 {
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	FILE *fp;
 
 	fp = fopen("/dev/urandom", "r");
@@ -213,7 +220,7 @@ qboolean Sys_RandomBytes(byte *string, int len)
  */
 char *Sys_GetCurrentUser(void)
 {
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	struct passwd *p;
 
 	if ((p = getpwuid(getuid())) != NULL)
@@ -227,7 +234,7 @@ char *Sys_GetCurrentUser(void)
 
 char *Sys_GetClipboardData(void)
 {
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 	struct IFFHandle   *IFFHandle;
 	struct ContextNode *cn;
 	char               *data = NULL;
@@ -562,7 +569,7 @@ void Sys_Sleep(int msec)
 		return;
 	}
 
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	if (stdinIsATTY)
 	{
 		fd_set fdset;
@@ -659,9 +666,9 @@ void Sys_ErrorDialog(const char *error)
 	close(f);
 }
 
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 /**
- * @brief Display an AROS dialog box
+ * @brief Display an Intuition dialog box
  * @param     type    Dialog Type
  * @param[in] message Message to show
  * @param[in] title   Message box title
@@ -960,7 +967,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
  */
 void Sys_DoStartProcess(char *cmdline)
 {
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	switch (fork())
 	{
 	case -1:
@@ -1013,7 +1020,7 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	char fn[MAX_OSPATH];
 	char cmdline[MAX_CMD];
 #endif
@@ -1028,7 +1035,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	Com_Printf("Open URL: %s\n", url);
 
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	Com_DPrintf("URL script: %s\n", fn);
 
 #ifdef __APPLE__
@@ -1079,7 +1086,7 @@ void Sys_PlatformInit(void)
 	signal(SIGIOT, Sys_SigHandler);
 	signal(SIGBUS, Sys_SigHandler);
 
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 	stdinIsATTY = isatty(STDIN_FILENO) &&
 	              !(term && (!strcmp(term, "raw") || !strcmp(term, "dumb")));
 #endif

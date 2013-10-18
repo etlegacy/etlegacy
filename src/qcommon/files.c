@@ -37,6 +37,8 @@
 #include "unzip.h"
 #ifdef _WIN32
 #define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
+#elif defined (__MORPHOS__)
+#define realpath(N, R) strdup(N)
 #endif // _WIN32
 
 /*
@@ -3805,7 +3807,7 @@ static void FS_Startup(const char *gameName)
 
 	if (!homePath || !homePath[0])
 	{
-#if defined(DEDICATED) || defined(__AROS__)
+#if defined(DEDICATED) || defined(__AROS__) || defined(__MORPHOS__)
 		homePath = fs_basepath->string;
 #else
 		Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.");

@@ -5702,7 +5702,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 					continue;
 				}
 
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 				{
 					char *whitelist[] =
 					{

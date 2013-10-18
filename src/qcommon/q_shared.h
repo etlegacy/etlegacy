@@ -342,6 +342,18 @@ static ID_INLINE float idSqrt(float x)
 
 #endif // __AROS__
 
+//======================= MORPHOS DEFINES =================================
+
+#ifdef __MORPHOS__
+
+#define MAC_STATIC
+
+#define CPUSTRING   "morphos-ppc"
+
+#define PATH_SEP '/'
+
+#endif // __MORPHOS__
+
 //=============================================================
 
 typedef unsigned char byte;
@@ -1066,6 +1078,8 @@ const char *Q_stristr(const char *s, const char *find);
 
 #ifdef _WIN32
 #define Q_putenv _putenv
+#elif defined(__MORPHOS__)
+#define Q_putenv(x)
 #else
 #define Q_putenv putenv
 #endif

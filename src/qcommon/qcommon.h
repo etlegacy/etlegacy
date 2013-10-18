@@ -1124,6 +1124,8 @@ qboolean Sys_IsNumLockDown(void);
 #define Sys_GetDLLName(x) x DLL_EXT
 #elif defined __AROS__
 #define Sys_GetDLLName(x) x "_mp_aros_" ARCH_STRING DLL_EXT
+#elif __MORPHOS__
+#define Sys_GetDLLName(x) x "_mp_morphos_" ARCH_STRING DLL_EXT
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif

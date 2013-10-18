@@ -35,7 +35,11 @@
 #include "snd_local.h"
 #include "snd_codec.h"
 
+#ifdef __MORPHOS__
+#define DEF_COMSOUNDMEGS "48"
+#else
 #define DEF_COMSOUNDMEGS "160"
+#endif
 
 /*
 ===============================================================================

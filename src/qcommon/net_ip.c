@@ -58,7 +58,7 @@ typedef unsigned short sa_family_t;
 static WSADATA  winsockdata;
 static qboolean winsockInitialized = qfalse;
 
-#elif defined __AROS__
+#elif defined (__AROS__) || defined (__MORPHOS__)
 
 #include <errno.h>
 #include <netdb.h>
@@ -71,6 +71,11 @@ static qboolean winsockInitialized = qfalse;
 
 typedef unsigned short sa_family_t;
 typedef int SOCKET;
+#ifdef __MORPHOS__
+#include <net/socketbasetags.h>
+typedef int socklen_t;
+//#define inet_ntoa Inet_NtoA
+#endif
 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -441,7 +446,11 @@ static void Sys_SockaddrToString(char *dest, int destlen, struct sockaddr *input
 		*dest = '\0';
 	}
 #else // IPV4
+#ifdef __MORPHOS__
+	char *addr = Inet_NtoA(((struct sockaddr_in *)input)->sin_addr.s_addr);
+#else
 	char *addr = inet_ntoa(((struct sockaddr_in *)input)->sin_addr);
+#endif
 
 	Q_strncpyz(dest, addr, destlen);
 #endif
@@ -859,7 +868,7 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 	}
 	else
 	{
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__MORPHOS__)
 		if (addr.ss_family == AF_INET)
 #endif
 		{
@@ -1034,7 +1043,7 @@ int NET_IPSocket(char *net_interface, int port, int *err)
 {
 	SOCKET             newsocket;
 	struct sockaddr_in address;
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 	char _true = 1;
 #else
 	u_long _true = 1;
@@ -1588,7 +1597,7 @@ static void NET_GetLocalAddress(void)
 		Sys_ShowIP();
 	}
 }
-#elif defined __AROS__
+#elif defined (__AROS__) || defined (__MORPHOS__)
 static void NET_GetLocalAddress(void)
 {
 	char               hostname[256];
@@ -1970,7 +1979,7 @@ void NET_Init(void)
 	winsockInitialized = qtrue;
 	Com_Printf("Winsock Initialized\n");
 #endif
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 	SocketBase = OpenLibrary("bsdsocket.library", 0);
 	if (!SocketBase)
 	{
@@ -2010,7 +2019,7 @@ void NET_Shutdown(void)
 	WSACleanup();
 	winsockInitialized = qfalse;
 #endif
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 	if (SocketBase)
 	{
 		CloseLibrary(SocketBase);

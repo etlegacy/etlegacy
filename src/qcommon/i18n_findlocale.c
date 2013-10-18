@@ -7,7 +7,7 @@
 #include <winnt.h>
 #endif
 
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 #include <proto/locale.h>
 #endif
 
@@ -452,7 +452,7 @@ static const int lcid_to_fl(LCID lcid, FL_Locale *rtn)
 }
 #endif
 
-#ifdef __AROS__
+#if defined(__AROS__) || defined(__MORPHOS__)
 typedef struct
 {
 	char *langstr;
@@ -552,7 +552,7 @@ FL_Success FL_FindLocale(FL_Locale **locale)
 			}
 		}
 	}
-#elif defined(__AROS__)
+#elif defined(__AROS__) || defined(__MORPHOS__)
 	{
 		if (amiga_locale(rtn))
 		{
@@ -560,7 +560,7 @@ FL_Success FL_FindLocale(FL_Locale **locale)
 		}
 		if (success == FL_FAILED)
 		{
-			// assume US English on AROS systems unless we know otherwise
+			// assume US English unless we know otherwise
 			if (accumulate_locstring("en_US.ISO_8859-1", rtn))
 			{
 				success = FL_DEFAULT_GUESS;
