@@ -107,7 +107,7 @@ menuDef {
 	itemDef {
 		name		"headerGreetings"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+180) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+108) $evalfloat(WINDOW_WIDTH-12) 12
 		text		"^1GREETINGS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -120,11 +120,17 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+192, .7*(WINDOW_WIDTH-24), 10, "ETPub Team", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+204, .7*(WINDOW_WIDTH-24), 10, "NQ Team - core hug goes to C..", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+216, .7*(WINDOW_WIDTH-24), 10, "Omni-Bot Team - especially crapshot, Dr. Evil & Palota", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+228, .7*(WINDOW_WIDTH-24), 10, "Splash Damage ET Community", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+240, .7*(WINDOW_WIDTH-24), 10, "Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+120, .7*(WINDOW_WIDTH-24), 10, "ETPub Team", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "NQ Team - core hug goes to C..", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+144, .7*(WINDOW_WIDTH-24), 10, "Omni-Bot Team - especially crapshot, Dr. Evil & Palota", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+156, .7*(WINDOW_WIDTH-24), 10, "Splash Damage ET Community", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+168, .7*(WINDOW_WIDTH-24), 10, "Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+180, .7*(WINDOW_WIDTH-24), 10, "ETPro Team", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+192, .7*(WINDOW_WIDTH-24), 10, "RTCW COOP Team", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+204, .7*(WINDOW_WIDTH-24), 10, "Ryan C. Gorgon", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+216, .7*(WINDOW_WIDTH-24), 10, "Timothee "TTimo" Besset", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+228, .7*(WINDOW_WIDTH-24), 10, "Unvanquished Team", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+240, .7*(WINDOW_WIDTH-24), 10, "XreaL Team", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // TODO: add
 // "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations."
