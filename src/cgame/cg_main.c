@@ -311,6 +311,12 @@ vmCvar_t cg_popupTime;
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
 
+vmCvar_t cg_fontScaleWS;
+vmCvar_t cg_fontScaleLF;
+vmCvar_t cg_fontScaleFV;
+vmCvar_t cg_fontScaleOS;
+vmCvar_t cg_fontScaleCP;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -522,6 +528,13 @@ cvarTable_t cvarTable[] =
 	{ &cg_popupFadeTime,         "cg_popupFadeTime",         "2500",  CVAR_ARCHIVE                 },
 	{ &cg_popupStayTime,         "cg_popupStayTime",         "2000",  CVAR_ARCHIVE                 },
 	{ &cg_weapaltReloads,        "cg_weapaltReloads",        "0",     CVAR_ARCHIVE                 },
+
+	// Fonts
+	{ &cg_fontScaleWS,           "cg_fontScaleWS",           "0.35",  CVAR_ARCHIVE                 }, // Warmup Spectator
+	{ &cg_fontScaleLF,           "cg_fontScaleLF",           "0.22",  CVAR_ARCHIVE                 }, // Limbo Follow
+	{ &cg_fontScaleFV,           "cg_fontScaleFV",           "0.22",  CVAR_ARCHIVE                 }, // Fireteam Vote
+	{ &cg_fontScaleOS,           "cg_fontScaleOS",           "0.22",  CVAR_ARCHIVE                 }, // Obituaries Skill
+	{ &cg_fontScaleCP,           "cg_fontScaleCP",           "0.22",  CVAR_ARCHIVE                 }, // CenterPrint
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

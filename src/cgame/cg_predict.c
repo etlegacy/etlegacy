@@ -585,7 +585,7 @@ static void CG_TouchTriggerPrediction(void)
 
 			if (cs)
 			{
-				CG_ObjectivePrint(va("You are near %s\n", cs), SMALLCHAR_WIDTH);
+				CG_ObjectivePrint(va("You are near %s\n", cs), cg_fontScaleCP.value);
 			}
 
 			continue;

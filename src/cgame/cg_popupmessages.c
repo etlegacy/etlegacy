@@ -451,6 +451,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	int          i, j, size;
 	pmListItem_t *listItem = cg_pmOldList;
 	float        y         = rect.y; //360;
+	float        fontScale = cg_fontScaleOS.value;
 
 	if (cg_drawSmallPopupIcons.integer)
 	{
@@ -500,7 +501,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		size = 0;
 	}
 
-	CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(4 + size + 2, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2);
 
 	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
 	{
@@ -537,7 +538,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 			size = 0;
 		}
 
-		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, fontScale, fontScale, colourText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
 	}
 }
 
@@ -545,9 +546,9 @@ void CG_DrawPMItemsBig(void)
 {
 	vec4_t colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t colourText = { 1.f, 1.f, 1.f, 1.f };
-	float  t;
-	float  y = 270;
-	float  w;
+	float  t, w;
+	float  y         = 270;
+	float  fontScale = cg_fontScaleOS.value;
 
 	if (!cg_pmWaitingListBig)
 	{
@@ -564,8 +565,8 @@ void CG_DrawPMItemsBig(void)
 	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 56, y, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
-	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, 0.22f, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
+	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, fontScale, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, fontScale, fontScale, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
 
 #define TXTCOLOR_OBJ "^O"

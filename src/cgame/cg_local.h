@@ -880,7 +880,9 @@ typedef struct
 
 	// centerprinting
 	int centerPrintTime;
+	int centerPrintCharHeight;
 	int centerPrintCharWidth;
+	float centerPrintFontScale;
 	int centerPrintY;
 	char centerPrint[1024];
 	int centerPrintLines;
@@ -998,7 +1000,9 @@ typedef struct
 
 	int oidTeam;
 	int oidPrintTime;
+	int oidPrintCharHeight;
 	int oidPrintCharWidth;
+	float oidPrintFontScale;
 	int oidPrintY;
 	char oidPrint[1024];
 	int oidPrintLines;
@@ -2208,6 +2212,12 @@ extern vmCvar_t cg_popupTime;
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
 
+extern vmCvar_t cg_fontScaleWS;
+extern vmCvar_t cg_fontScaleLF;
+extern vmCvar_t cg_fontScaleFV;
+extern vmCvar_t cg_fontScaleOS;
+extern vmCvar_t cg_fontScaleCP;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02
@@ -2337,9 +2347,9 @@ void CG_StatsDebugAddText(const char *text);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
-void CG_CenterPrint(const char *str, int y, int charWidth);
-void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority);
-void CG_ObjectivePrint(const char *str, int charWidth);
+void CG_CenterPrint(const char *str, int y, float fontScale);
+void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority);
+void CG_ObjectivePrint(const char *str, float fontScale);
 void CG_DrawActive(stereoFrame_t stereoView);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
@@ -3073,7 +3083,7 @@ qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
-#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT * 0.8), SMALLCHAR_WIDTH)
+#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value)
 
 #ifdef FEATURE_MULTIVIEW
 // cg_multiview.c

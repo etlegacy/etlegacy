@@ -1220,7 +1220,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 
 	{
 		weaponType_t *wt = WM_FindWeaponTypeForWeapon(weap1);
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, cg_fontScaleCP.value, -1);
 	}
 
 	cgs.limboLoadoutSelected = qtrue;
