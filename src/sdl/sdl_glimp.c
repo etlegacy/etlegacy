@@ -1402,7 +1402,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		break;
 	}
 
-#ifndef HAVE_GLES
+#if !defined(HAVE_GLES) && !defined(__MORPHOS__)
 	glewResult = glewInit();
 
 	if (GLEW_OK != glewResult)
@@ -1445,9 +1445,11 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 {
 	rserr_t err;
 
+#ifndef __MORPHOS__
 	// this requires SDL >= 1.2.14. and fixes CAPSLOCK binding
 	// may cause compatibility issues on Sun workstations
 	SDL_putenv("SDL_DISABLE_LOCK_KEYS=1");
+#endif
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -1511,7 +1513,7 @@ static void GLimp_InitExtensions(void)
 
 	glConfig.textureCompression = TC_NONE;
 
-#ifndef HAVE_GLES
+#if !defined(HAVE_GLES) && !defined(__MORPHOS__)
 	// GL_EXT_texture_compression_s3tc
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
@@ -1532,7 +1534,7 @@ static void GLimp_InitExtensions(void)
 		ri.Printf(PRINT_ALL, "...GL_EXT_texture_compression_s3tc not found\n");
 	}
 
-#ifndef HAVE_GLES
+#if !defined(HAVE_GLES) && !defined(__MORPHOS__)
 	// GL_S3_s3tc ... legacy extension before GL_EXT_texture_compression_s3tc.
 	if (glConfig.textureCompression == TC_NONE)
 	{
@@ -1559,6 +1561,8 @@ static void GLimp_InitExtensions(void)
 #ifdef HAVE_GLES
 	glConfig.textureEnvAddAvailable = qtrue;
 	ri.Printf(PRINT_ALL, "...using GL_EXT_texture_env_add\n");
+#elif defined(__MORPHOS__)
+	ri.Printf(PRINT_ALL, "...GL_EXT_texture_env_add not found\n");
 #else
 	glConfig.textureEnvAddAvailable = qfalse;
 	if (GLEW_EXT_texture_env_add)
@@ -1582,7 +1586,7 @@ static void GLimp_InitExtensions(void)
 
 	// GL_ARB_multitexture
 	glConfig.maxActiveTextures = 1;
-#ifdef HAVE_GLES
+#if defined(HAVE_GLES) || defined(__MORPHOS__)
 	GLint glint = 0;
 	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
