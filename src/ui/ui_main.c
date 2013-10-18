@@ -4962,28 +4962,27 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "vidSave") == 0)
 		{
-			int mode;
+			int r_mode = trap_Cvar_VariableValue("r_mode");
 
-			// get mode
-			mode = trap_Cvar_VariableValue("r_mode");
-
-			// save mode to old mode
-			trap_Cvar_SetValue("r_oldMode", mode);
+			// Save the last usable mode
+			trap_Cvar_SetValue("r_oldMode", r_mode);
 		}
 		else if (Q_stricmp(name, "vidReset") == 0)
 		{
-			int oldMode;
-
-			// get old mode
-			oldMode = trap_Cvar_VariableValue("r_oldMode");
-			if (oldMode == 0)
-			{
-				oldMode = 3;
-			}
+			int   r_oldmode  = trap_Cvar_VariableValue("r_oldMode");
+			float ui_r_gamma = trap_Cvar_VariableValue("ui_r_gamma");
+			float r_gamma    = trap_Cvar_VariableValue("r_gamma");
 
 			// reset mode to old mode
-			trap_Cvar_SetValue("r_mode", oldMode);
+			trap_Cvar_SetValue("r_mode", r_oldmode);
 			trap_Cvar_Set("r_oldMode", "");
+
+			// if gamma has been changed in UI, but not saved
+			// reset it back to the last value
+			if ((ui_r_gamma != r_gamma) && (ui_r_gamma != 0))
+			{
+				trap_Cvar_Set("r_gamma", va("%f", ui_r_gamma));
+			}
 		}
 		else if (Q_stricmp(name, "vidConfirm") == 0)
 		{
@@ -5103,8 +5102,8 @@ void UI_RunMenuScript(char **args)
 				ui_cl_packetdup  = 1;
 			}
 
+			// do not save ui_r_gamma here as it is used only for starting value
 			trap_Cvar_Set("r_mode", va("%i", ui_r_mode));
-			trap_Cvar_Set("r_gamma", va("%f", ui_r_gamma));
 			trap_Cvar_Set("rate", va("%i", ui_rate));
 			trap_Cvar_Set("cl_maxpackets", va("%i", ui_cl_maxpackets));
 			trap_Cvar_Set("cl_packetdup", va("%i", ui_cl_packetdup));
