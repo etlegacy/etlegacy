@@ -669,7 +669,7 @@ int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList)
 extern void G_LandminePrime(gentity_t *self);
 extern void explosive_indicator_think(gentity_t *ent);
 
-#define MIN_BLOCKINGWARNING_INTERVAL 5000
+#define MIN_BLOCKINGWARNING_INTERVAL 3000
 
 static void MakeTemporarySolid(gentity_t *ent)
 {
@@ -949,7 +949,6 @@ static qboolean TryConstructing(gentity_t *ent)
 		    otherconstructible->s.angles2[1] ||
 		    (otherconstructible->count2 && otherconstructible->grenadeFired))
 		{
-
 			return qfalse;
 		}
 	}
@@ -1234,6 +1233,7 @@ static qboolean TryConstructing(gentity_t *ent)
 				// Find the trigger_objective_info that targets us (if not set before)
 				{
 					gentity_t *tent = NULL;
+
 					while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
 					{
 						if (tent->s.eType == ET_OID_TRIGGER)
@@ -1883,7 +1883,6 @@ evilbanigoto:
 
 			if (traceEnt->health >= 250)
 			{
-
 				traceEnt->health    = 255;
 				traceEnt->think     = G_FreeEntity;
 				traceEnt->nextthink = level.time + FRAMETIME;
@@ -2679,7 +2678,7 @@ void weapon_callAirStrike(gentity_t *ent)
 	VectorCopy(tr.endpos, bomboffset);
 	VectorCopy(tr.endpos, skypoint);
 	traceheight       = bomboffset[2];
-	bottomtraceheight = traceheight - 8192.f;
+	bottomtraceheight = traceheight - MAX_TRACE;
 
 	VectorSubtract(ent->s.pos.trBase, ent->parent->client->ps.origin, lookaxis);
 	lookaxis[2] = 0;
@@ -2938,7 +2937,7 @@ void Weapon_Artillery(gentity_t *ent)
 
 	VectorCopy(trace.endpos, bomboffset);
 	traceheight       = bomboffset[2];
-	bottomtraceheight = traceheight - 8192;
+	bottomtraceheight = traceheight - MAX_TRACE;
 
 	// "spotter" round (i == 0)
 	// i == 1->4 is regular explosives
@@ -3213,7 +3212,7 @@ int G_GetWeaponDamage(int weapon)
 	}
 }
 
-// FIXME: weapontable
+// FIXME: weapontable (only bullet weapons)
 float G_GetWeaponSpread(int weapon)
 {
 	switch (weapon)
@@ -3255,70 +3254,6 @@ float G_GetWeaponSpread(int weapon)
 	return 0;   // shouldn't get here
 }
 
-
-// FIXME: weapontable
-#define LUGER_SPREAD    G_GetWeaponSpread(WP_LUGER)
-#define LUGER_DAMAGE    G_GetWeaponDamage(WP_LUGER)
-
-#define SILENCER_DAMAGE     G_GetWeaponDamage(WP_SILENCER)
-#define SILENCER_SPREAD     G_GetWeaponSpread(WP_SILENCER)
-
-#define AKIMBO_LUGER_DAMAGE         G_GetWeaponDamage(WP_AKIMBO_LUGER)
-#define AKIMBO_LUGER_SPREAD         G_GetWeaponSpread(WP_AKIMBO_LUGER)
-
-#define AKIMBO_SILENCEDLUGER_DAMAGE G_GetWeaponDamage(WP_AKIMBO_SILENCEDLUGER)
-#define AKIMBO_SILENCEDLUGER_SPREAD G_GetWeaponSpread(WP_AKIMBO_SILENCEDLUGER)
-
-#define COLT_SPREAD     G_GetWeaponSpread(WP_COLT)
-#define COLT_DAMAGE     G_GetWeaponDamage(WP_COLT)
-
-#define SILENCED_COLT_DAMAGE    G_GetWeaponDamage(WP_SILENCED_COLT)
-#define SILENCED_COLT_SPREAD    G_GetWeaponSpread(WP_SILENCED_COLT)
-
-#define AKIMBO_COLT_DAMAGE  G_GetWeaponDamage(WP_AKIMBO_COLT)
-#define AKIMBO_COLT_SPREAD  G_GetWeaponSpread(WP_AKIMBO_COLT)
-
-#define AKIMBO_SILENCEDCOLT_DAMAGE  G_GetWeaponDamage(WP_AKIMBO_SILENCEDCOLT)
-#define AKIMBO_SILENCEDCOLT_SPREAD  G_GetWeaponSpread(WP_AKIMBO_SILENCEDCOLT)
-
-#define MP40_SPREAD     G_GetWeaponSpread(WP_MP40)
-#define MP40_DAMAGE     G_GetWeaponDamage(WP_MP40)
-#define THOMPSON_SPREAD G_GetWeaponSpread(WP_THOMPSON)
-#define THOMPSON_DAMAGE G_GetWeaponDamage(WP_THOMPSON)
-#define STEN_SPREAD     G_GetWeaponSpread(WP_STEN)
-#define STEN_DAMAGE     G_GetWeaponDamage(WP_STEN)
-
-#define GARAND_SPREAD   G_GetWeaponSpread(WP_GARAND)
-#define GARAND_DAMAGE   G_GetWeaponDamage(WP_GARAND)
-
-#define KAR98_SPREAD    G_GetWeaponSpread(WP_KAR98)
-#define KAR98_DAMAGE    G_GetWeaponDamage(WP_KAR98)
-
-#define CARBINE_SPREAD  G_GetWeaponSpread(WP_CARBINE)
-#define CARBINE_DAMAGE  G_GetWeaponDamage(WP_CARBINE)
-
-#define KAR98_GREN_DAMAGE   G_GetWeaponDamage(WP_GREN_KAR98)
-
-#define MOBILE_MG42_SPREAD  G_GetWeaponSpread(WP_MOBILE_MG42)
-#define MOBILE_MG42_DAMAGE  G_GetWeaponDamage(WP_MOBILE_MG42)
-
-#define MOBILE_BROWNING_SPREAD  G_GetWeaponSpread(WP_MOBILE_BROWNING)
-#define MOBILE_BROWNING_DAMAGE  G_GetWeaponDamage(WP_MOBILE_BROWNING)
-
-#define FG42_SPREAD     G_GetWeaponSpread(WP_FG42)
-#define FG42_DAMAGE     G_GetWeaponDamage(WP_FG42)
-
-#define FG42SCOPE_SPREAD    G_GetWeaponSpread(WP_FG42SCOPE)
-#define FG42SCOPE_DAMAGE    G_GetWeaponDamage(WP_FG42SCOPE)
-#define K43_SPREAD  G_GetWeaponSpread(WP_K43)
-#define K43_DAMAGE  G_GetWeaponDamage(WP_K43)
-
-#define GARANDSCOPE_SPREAD  G_GetWeaponSpread(WP_GARAND_SCOPE)
-#define GARANDSCOPE_DAMAGE  G_GetWeaponDamage(WP_GARAND_SCOPE)
-
-#define K43SCOPE_SPREAD G_GetWeaponSpread(WP_K43_SCOPE)
-#define K43SCOPE_DAMAGE G_GetWeaponDamage(WP_K43_SCOPE)
-
 /*
 ==============
 EmitterCheck
@@ -3356,7 +3291,7 @@ void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
 	float    r, u;
 	qboolean randSpread = qtrue;
-	int      dist       = 8192;
+	int      dist       = MAX_TRACE;
 
 	r = crandom() * spread;
 	u = crandom() * spread;
@@ -4210,7 +4145,7 @@ void FireWeapon(gentity_t *ent)
 	}
 	else
 	{
-		aimSpreadScale = 1.0;
+		aimSpreadScale = 1.0f;
 	}
 
 	if ((ent->client->ps.eFlags & EF_ZOOMING) && (ent->client->ps.stats[STAT_KEYS] & (1 << INV_BINOCS)))
@@ -4306,49 +4241,30 @@ void FireWeapon(gentity_t *ent)
 		Weapon_MagicAmmo(ent);
 		break;
 	case WP_LUGER:
-		Bullet_Fire(ent, LUGER_SPREAD * aimSpreadScale, LUGER_DAMAGE, qtrue);
-		break;
 	case WP_SILENCER:
-		Bullet_Fire(ent, SILENCER_SPREAD * aimSpreadScale, SILENCER_DAMAGE, qtrue);
-		break;
 	case WP_AKIMBO_LUGER:
-		Bullet_Fire(ent, AKIMBO_LUGER_SPREAD * aimSpreadScale, AKIMBO_LUGER_DAMAGE, qtrue);
-		break;
 	case WP_AKIMBO_SILENCEDLUGER:
-		Bullet_Fire(ent, AKIMBO_SILENCEDLUGER_SPREAD * aimSpreadScale, AKIMBO_SILENCEDLUGER_DAMAGE, qtrue);
-		break;
 	case WP_COLT:
-		Bullet_Fire(ent, COLT_SPREAD * aimSpreadScale, COLT_DAMAGE, qtrue);
-		break;
 	case WP_SILENCED_COLT:
-		Bullet_Fire(ent, SILENCED_COLT_SPREAD * aimSpreadScale, SILENCED_COLT_DAMAGE, qtrue);
-		break;
 	case WP_AKIMBO_COLT:
-		Bullet_Fire(ent, AKIMBO_COLT_SPREAD * aimSpreadScale, AKIMBO_COLT_DAMAGE, qtrue);
-		break;
 	case WP_AKIMBO_SILENCEDCOLT:
-		Bullet_Fire(ent, AKIMBO_SILENCEDCOLT_SPREAD * aimSpreadScale, AKIMBO_SILENCEDCOLT_DAMAGE, qtrue);
+	case WP_FG42:
+	case WP_STEN:
+	case WP_MP40:
+	case WP_THOMPSON:
+		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qtrue);
 		break;
 	case WP_KAR98:
-		aimSpreadScale = 1.0f;
-		Bullet_Fire(ent, KAR98_SPREAD * aimSpreadScale, KAR98_DAMAGE, qfalse);
-		break;
 	case WP_CARBINE:
+	case WP_GARAND:
+	case WP_K43:
 		aimSpreadScale = 1.0f;
-		Bullet_Fire(ent, CARBINE_SPREAD * aimSpreadScale, CARBINE_DAMAGE, qfalse);
+		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
 		break;
 	case WP_FG42SCOPE:
-		Bullet_Fire(ent, FG42SCOPE_SPREAD * aimSpreadScale, FG42SCOPE_DAMAGE, qfalse);
-		break;
-	case WP_FG42:
-		Bullet_Fire(ent, FG42_SPREAD * aimSpreadScale, FG42_DAMAGE, qtrue);
-		break;
 	case WP_GARAND_SCOPE:
-		Bullet_Fire(ent, GARANDSCOPE_SPREAD * aimSpreadScale, GARANDSCOPE_DAMAGE, qfalse);
-		break;
-	case WP_GARAND:
-		aimSpreadScale = 1.0f;
-		Bullet_Fire(ent, GARAND_SPREAD * aimSpreadScale, GARAND_DAMAGE, qfalse);
+	case WP_K43_SCOPE:
+		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
 		break;
 	case WP_SATCHEL_DET:
 		if (G_ExplodeSatchels(ent))
@@ -4360,46 +4276,19 @@ void FireWeapon(gentity_t *ent)
 		}
 		break;
 	case WP_MOBILE_MG42_SET:
-		Bullet_Fire(ent, MOBILE_MG42_SPREAD * 0.05f * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
-		break;
 	case WP_MOBILE_BROWNING_SET:
-		Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * 0.05f * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
+		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * 0.05f * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
 		break;
 	case WP_MOBILE_MG42:
-		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
-		{
-			Bullet_Fire(ent, MOBILE_MG42_SPREAD * 0.6f * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
-		}
-		else
-		{
-			Bullet_Fire(ent, MOBILE_MG42_SPREAD * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
-		}
-		break;
 	case WP_MOBILE_BROWNING:
 		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
 		{
-			Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * 0.6f * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
+			Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * 0.6f * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
 		}
 		else
 		{
-			Bullet_Fire(ent, MOBILE_BROWNING_SPREAD * aimSpreadScale, MOBILE_BROWNING_DAMAGE, qfalse);
+			Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
 		}
-		break;
-	case WP_K43_SCOPE:
-		Bullet_Fire(ent, K43SCOPE_SPREAD * aimSpreadScale, K43SCOPE_DAMAGE, qfalse);
-		break;
-	case WP_K43:
-		aimSpreadScale = 1.0;
-		Bullet_Fire(ent, K43_SPREAD * aimSpreadScale, K43_DAMAGE, qfalse);
-		break;
-	case WP_STEN:
-		Bullet_Fire(ent, STEN_SPREAD * aimSpreadScale, STEN_DAMAGE, qtrue);
-		break;
-	case WP_MP40:
-		Bullet_Fire(ent, MP40_SPREAD * aimSpreadScale, MP40_DAMAGE, qtrue);
-		break;
-	case WP_THOMPSON:
-		Bullet_Fire(ent, THOMPSON_SPREAD * aimSpreadScale, THOMPSON_DAMAGE, qtrue);
 		break;
 	case WP_PANZERFAUST:
 		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
@@ -4420,6 +4309,7 @@ void FireWeapon(gentity_t *ent)
 		if (ent->client)
 		{
 			vec3_t forward;
+
 			AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
 			VectorMA(ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
 		}
@@ -4450,64 +4340,59 @@ void FireWeapon(gentity_t *ent)
 		}
 		pFiredShot = weapon_mortar_fire(ent, ent->s.weapon);
 		break;
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
-	case WP_LANDMINE:
 	case WP_SATCHEL:
 	case WP_SMOKE_BOMB:
-		if (ent->s.weapon == WP_SMOKE_BOMB || ent->s.weapon == WP_SATCHEL)
+		if (level.time - ent->client->ps.classWeaponTime > level.covertopsChargeTime[ent->client->sess.sessionTeam - 1])
 		{
-			if (level.time - ent->client->ps.classWeaponTime > level.covertopsChargeTime[ent->client->sess.sessionTeam - 1])
-			{
-				ent->client->ps.classWeaponTime = level.time - level.covertopsChargeTime[ent->client->sess.sessionTeam - 1];
-			}
-
-			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2)
-			{
-				ent->client->ps.classWeaponTime += .66f * level.covertopsChargeTime[ent->client->sess.sessionTeam - 1];
-			}
-			else
-			{
-				ent->client->ps.classWeaponTime = level.time;
-			}
+			ent->client->ps.classWeaponTime = level.time - level.covertopsChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 
-		if (ent->s.weapon == WP_LANDMINE)
+		if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2)
 		{
-			if (level.time - ent->client->ps.classWeaponTime > level.engineerChargeTime[ent->client->sess.sessionTeam - 1])
-			{
-				ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-			}
-
-			if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
-			{
-				// use 33%, not 66%, when upgraded.
-				// do not penalize the happy fun engineer.
-				ent->client->ps.classWeaponTime += .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-			}
-			else
-			{
-				ent->client->ps.classWeaponTime += .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-			}
+			ent->client->ps.classWeaponTime += .66f * level.covertopsChargeTime[ent->client->sess.sessionTeam - 1];
+		}
+		else
+		{
+			ent->client->ps.classWeaponTime = level.time;
+		}
+		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
+		break;
+	case WP_LANDMINE:
+		if (level.time - ent->client->ps.classWeaponTime > level.engineerChargeTime[ent->client->sess.sessionTeam - 1])
+		{
+			ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 
-		if (ent->s.weapon == WP_DYNAMITE)
+		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 		{
-			if (level.time - ent->client->ps.classWeaponTime > level.engineerChargeTime[ent->client->sess.sessionTeam - 1])
-			{
-				ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-			}
-
-			if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
-			{
-				ent->client->ps.classWeaponTime += .66f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-			}
-			else
-			{
-				ent->client->ps.classWeaponTime = level.time;
-			}
+			// use 33%, not 66%, when upgraded.
+			// do not penalize the happy fun engineer.
+			ent->client->ps.classWeaponTime += .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 		}
+		else
+		{
+			ent->client->ps.classWeaponTime += .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
+		}
+		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
+		break;
+	case WP_DYNAMITE:
+		if (level.time - ent->client->ps.classWeaponTime > level.engineerChargeTime[ent->client->sess.sessionTeam - 1])
+		{
+			ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
+		}
+
+		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+		{
+			ent->client->ps.classWeaponTime += .66f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
+		}
+		else
+		{
+			ent->client->ps.classWeaponTime = level.time;
+		}
+		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
+		break;
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
 		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
 		break;
 	case WP_FLAMETHROWER:

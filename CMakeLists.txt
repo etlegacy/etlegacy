@@ -327,7 +327,6 @@ FILE(GLOB UI_SRC
 	"src/ui/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
-	"src/game/bg_campaign.c"
 	"src/game/bg_classes.c"
 	"src/game/bg_misc.c"
 )
@@ -653,18 +652,40 @@ endif(FEATURE_CURSES)
 # Groups for Visual Studio (Windows) and win32 definitions
 #-----------------------------------------------------------------
 if(WIN32)
-	source_group("Source Files\\Client" FILES ${CLIENT_FILES})
-	source_group("Source Files\\Server" FILES ${SERVER_FILES})
-	source_group("Source Files\\System" FILES ${SYSTEM_FILES})
-	source_group("Source Files\\SDL" FILES ${SDL_FILES})
-	source_group("Source Files\\Botlib" FILES ${BOTLIB_FILES})
-	source_group("Source Files\\Common" FILES ${COMMON_SRC})
-	source_group("Source Files\\Platform" FILES ${PLATFORM_SRC})
-	source_group("Source Files\\zlib" FILES ${ZLIB_SRC})
-	source_group("Source Files\\Renderer" FILES ${RENDERER1_FILES})
-	source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
-	source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
-	source_group("Shaders" FILES ${RENDERER2_SHADERS})
+	if(MSVC)
+		FILE(GLOB CLIENT_SRC_GROUP
+			"src/client/cl_*.h"
+			"src/client/cl_*.c"
+		)
+
+		FILE(GLOB CLIENT_SND_SRC_GROUP
+			"src/client/qal.c"
+			"src/client/qal.h"
+			"src/client/snd_*.c"
+			"src/client/snd_*.h"
+		)
+
+		FILE(GLOB TINY_GETTEXT_SRC_GROUP
+			"libs/tinygettext/*.cpp"
+			"libs/tinygettext/*.hpp"
+		)
+
+		source_group("Source Files\\Client" FILES ${CLIENT_SRC_GROUP})
+		source_group("Source Files\\Sound" FILES ${CLIENT_SND_SRC_GROUP})
+		source_group("Source Files\\Server" FILES ${SERVER_FILES})
+		source_group("Source Files\\System" FILES ${SYSTEM_FILES})
+		source_group("Source Files\\SDL" FILES ${SDL_FILES})
+		source_group("Source Files\\Botlib" FILES ${BOTLIB_FILES})
+		source_group("Source Files\\Common" FILES ${COMMON_SRC})
+		source_group("Source Files\\Platform" FILES ${PLATFORM_SRC})
+		source_group("Source Files\\zlib" FILES ${ZLIB_SRC})
+		source_group("Source Files\\GetText" FILES ${TINY_GETTEXT_SRC_GROUP})
+		source_group("Source Files\\Renderer" FILES ${RENDERER1_FILES})
+		source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
+		source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
+		source_group("Shaders" FILES ${RENDERER2_SHADERS})
+	endif(MSVC)
+	
 	if(FEATURE_WINDOWS_CONSOLE)
 		add_definitions( "-DUSE_WINDOWS_CONSOLE" )
 	endif(FEATURE_WINDOWS_CONSOLE)
@@ -962,10 +983,16 @@ if(INSTALL_OMNIBOT)
 	)
 endif(INSTALL_OMNIBOT)
 
-# proper icon
+# other adds
 if(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.svg"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.desktop"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
 	)
 else(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
