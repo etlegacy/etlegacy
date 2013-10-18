@@ -308,6 +308,19 @@ gfx/limbo/cm_dynamite
 	}
 }
 
+gfx/limbo/dynamite
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_dynamite.tga
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 gfx/limbo/cm_flagallied
 {
 	nopicmip

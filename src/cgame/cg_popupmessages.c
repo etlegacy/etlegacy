@@ -86,7 +86,7 @@ void CG_PMItemBigSound(pmListItemBig_t *item);
 
 void CG_InitPMGraphics(void)
 {
-	cgs.media.pmImages[PM_DYNAMITE]     = trap_R_RegisterShaderNoMip("gfx/limbo/cm_dynamite");
+	cgs.media.pmImages[PM_DYNAMITE]     = trap_R_RegisterShaderNoMip("gfx/limbo/dynamite");
 	cgs.media.pmImages[PM_CONSTRUCTION] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_MINES]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_DEATH]        = trap_R_RegisterShaderNoMip("gfx/hud/pm_death");
