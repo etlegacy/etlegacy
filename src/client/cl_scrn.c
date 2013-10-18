@@ -542,7 +542,7 @@ void SCR_UpdateScreen(void)
 	recursive = 1;
 
 	// if running in stereo, we need to draw the frame twice
-#ifndef HAVE_GLES
+#ifndef FEATURE_RENDERER_GLES
 	if (cls.glconfig.stereoEnabled)
 	{
 		SCR_DrawScreenField(STEREO_LEFT);

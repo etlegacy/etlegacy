@@ -182,7 +182,7 @@ void IN_KeyUp(kbutton_t *b)
 	b->active = qfalse;
 }
 
-#ifdef CROUCH
+#ifdef FEATURE_CROUCH
 void IN_ToggleKeyDown(kbutton_t *b)
 {
 	int      k;
@@ -238,7 +238,7 @@ void IN_ToggleKeyDown(kbutton_t *b)
 		}
 	}
 	b->wasPressed = b->active;
-} // CROUCH
+} // FEATURE_CROUCH
 
 void IN_ToggleKeyUp(kbutton_t *b)
 {
@@ -326,7 +326,7 @@ float CL_KeyState(kbutton_t *key)
 	return val;
 }
 
-#ifdef CROUCH
+#ifdef FEATURE_CROUCH
 void IN_UpDown(void)
 {
 	kb[KB_DOWN].active = 0; IN_KeyDown(&kb[KB_UP]);
@@ -343,7 +343,7 @@ void IN_UpUp(void)
 	IN_KeyUp(&kb[KB_UP]);
 }
 
-#ifdef CROUCH
+#ifdef FEATURE_CROUCH
 void IN_DownDown(void)
 {
 	IN_ToggleKeyDown(&kb[KB_DOWN]);

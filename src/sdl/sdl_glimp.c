@@ -57,7 +57,7 @@
 #if defined(WIN32)
 #include <GL/wglew.h>
 #else
-#if !defined(HAVE_GLES) && !defined(__AROS__) && !defined(__MORPHOS__)
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__AROS__) && !defined(__MORPHOS__)
 #include <GL/glxew.h>
 #endif
 #endif
@@ -96,7 +96,7 @@ static void GLimp_GetCurrentContext(void)
 	opengl_context.drawable = glXGetCurrentDrawable();
 }
 #endif // FEATURE_RENDERER2
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #include "eglport.h"
 #endif
 
@@ -191,7 +191,7 @@ void GLimp_Shutdown(void)
 {
 	ri.IN_Shutdown();
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 	EGL_Close();
 #endif
 
@@ -1097,7 +1097,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	int         samples;
 	int         i          = 0;
 	SDL_Surface *vidscreen = NULL;
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 	Uint32 flags = 0;
 #else
 	Uint32 flags = SDL_OPENGL;
@@ -1301,7 +1301,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			sdlcolorbits = 8;
 		}
 
-#ifndef HAVE_GLES
+#ifndef FEATURE_RENDERER_GLES
 #ifdef __sgi /* Fix for SGIs grabbing too many bits of color */
 		if (sdlcolorbits == 4)
 		{
@@ -1353,7 +1353,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			ri.Printf(PRINT_ALL, "r_swapInterval requires libSDL >= 1.2.10\n");
 		}
 
-#endif //HAVE_GLES
+#endif //FEATURE_RENDERER_GLES
 #ifdef USE_ICON
 		{
 			SDL_Surface *icon = SDL_CreateRGBSurfaceFrom(
@@ -1386,7 +1386,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 #ifdef __APPLE__ // apple hack renderer1
 		GLimp_GetCurrentContext();
 #endif
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 		EGL_Open(glConfig.vidWidth, glConfig.vidHeight);
 		sdlcolorbits = eglColorbits;
 		tdepthbits   = eglDepthbits;
@@ -1402,7 +1402,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		break;
 	}
 
-#if !defined(HAVE_GLES) && !defined(__MORPHOS__)
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
 	glewResult = glewInit();
 
 	if (GLEW_OK != glewResult)
@@ -1513,7 +1513,7 @@ static void GLimp_InitExtensions(void)
 
 	glConfig.textureCompression = TC_NONE;
 
-#if !defined(HAVE_GLES) && !defined(__MORPHOS__)
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
 	// GL_EXT_texture_compression_s3tc
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
@@ -1534,7 +1534,7 @@ static void GLimp_InitExtensions(void)
 		ri.Printf(PRINT_ALL, "...GL_EXT_texture_compression_s3tc not found\n");
 	}
 
-#if !defined(HAVE_GLES) && !defined(__MORPHOS__)
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
 	// GL_S3_s3tc ... legacy extension before GL_EXT_texture_compression_s3tc.
 	if (glConfig.textureCompression == TC_NONE)
 	{
@@ -1558,7 +1558,7 @@ static void GLimp_InitExtensions(void)
 #endif
 
 	// GL_EXT_texture_env_add
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 	glConfig.textureEnvAddAvailable = qtrue;
 	ri.Printf(PRINT_ALL, "...using GL_EXT_texture_env_add\n");
 #elif defined(__MORPHOS__)
@@ -1586,7 +1586,7 @@ static void GLimp_InitExtensions(void)
 
 	// GL_ARB_multitexture
 	glConfig.maxActiveTextures = 1;
-#if defined(HAVE_GLES) || defined(__MORPHOS__)
+#if defined(FEATURE_RENDERER_GLES) || defined(__MORPHOS__)
 	GLint glint = 0;
 	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
@@ -1857,7 +1857,7 @@ Responsible for doing a swapbuffers
 */
 void GLimp_EndFrame(void)
 {
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 	EGL_SwapBuffers();
 #else
 	// don't flip if drawing to front buffer
