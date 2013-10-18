@@ -1295,56 +1295,14 @@ msgstr "IR4T4 - Programista, wydawca moda & zly chlopiec"
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
 msgstr "Konrad 'morsik' Moson - Strona, kodowanie & skrypty"
 
-msgid "Jere 'Jacker' S - main windows coder, render"
-msgstr "Jere 'Jacker' S - glowny programista windowsa, renderowanie"
+msgid "Jere 'Jacker' S - Main windows coder & render"
+msgstr "Jere 'Jacker' S - Glowny programista windowsa & renderowanie"
 
 msgid "^1CONTRIBUTORS"
 msgstr "^1UCZESTNICY"
 
-msgid "Acqu - Bug reports & patches"
-msgstr "Acqu - reporter bugow & latki"
-
-msgid "Antman - Map location override databases "
-msgstr "Antman - Lokalizacje Map"
-
-msgid "Dragon aka Dragonji - Bug reports & Windows tester"
-msgstr "Dragon aka Dragonji - reporter bugow & Tester Windows"
-
-msgid "Lakersforce - Translations, bug reports"
-msgstr "Lakersforce - Tlumaczenie, reporter bugow"
-
-msgid "Mathieu Olivier - Bug fixes and code clean up"
-msgstr "Mathieu Olivier - Naprawa Bugow i wyczyszczenie kodu"
-
-msgid "Merlin - Bug reports"
-msgstr "Merlin - Reporter Bugow"
-
-msgid "RaFaL aka ***Rafal*** - Menu scripts and Windows tester"
-msgstr "RaFaL aka ***Rafal*** - Skrypty Menu i Tester Windows"
-
-msgid "Dusan 'TheDushan' Jocic - Advices, patches"
-msgstr "Dusan 'TheDushan' Jocic - Rady, Latki"
-
-msgid "Ensiform - Advices, comments"
-msgstr "Ensiform - Rady, Komentarze"
-
 msgid "^1GREETINGS"
 msgstr "^1PODZIEKOWANIA"
-
-msgid "ETPub Team"
-msgstr "Zespol ETPub"
-
-msgid "NQ Team - core hug goes to C.."
-msgstr "NQ Tym - core podziekowania ida do C.."
-
-msgid "Omni-Bot Team - especially crapshot, Dr. Evil & Palota"
-msgstr "Zespol Omni-Bot - szczegolnie crapshot, Dr. Evil & Palota"
-
-msgid "Splash Damage ET Community"
-msgstr "Wspolnota ET Splash Damage"
-
-msgid "Zynx"
-msgstr "Zynx"
 
 msgid "SPLASH DAMAGE"
 msgstr "SPLASH DAMAGE"
@@ -3760,3 +3718,71 @@ msgstr "Lista Ulubionych pelna\n"
 #, c-format
 msgid "Added favorite server %s\n"
 msgstr "Dodany ulubiony serwer %s\n"
+
+msgid "See HALL OF FAME below"
+msgstr "Zobacz Sale Chwaly ponizej"
+
+msgid ""
+"ETPub Team - ETPro Team - NQ Team, core hug goes to C. - Omni-Bot Team, "
+"especially crapshot, Dr. Evil & Palota - RTCW COOP Team - Lazlo Menczel - "
+"Ryan C. Gordon - Timothee "
+msgstr "Zespol ETPub - Zespol ETPro - Zespol NQ, core hug goes to C. - Zespol Omni-Bot,"
+"szczegolnie crapshot, Dr. Evil & Palota - Zespol RTCW COOP - Lazlo Menczel - "
+"Ryan C. Gordon - Timothee "
+
+msgid ""
+" Besset - Splash Damage ET community - Unvanquished Team Xreal Team - Zynx"
+msgstr ""
+" Besset - Wspolnota Splash Damage ET - Zespol Unvanquished Zespol Xreal - Zynx"
+
+msgid ""
+"Many thanks to Splash Damage for their release of the source code, ioWolfET "
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
+"their inspirations."
+msgstr ""
+
+msgid "^1WEBSITE"
+msgstr "^1STRONA"
+
+msgid "http://www.etlegacy.com"
+msgstr "http://www.etlegacy.com"
+
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+
+msgid "HALL OF FAME"
+msgstr "SALA CHWALY"
+
+msgid "SPLASH DAMAGE"
+msgstr "SPLASH DAMAGE"
+
+msgid "^3ET LEGACY HALL OF FAME"
+msgstr "^3SALA CHWALY ET LEGACY"
+
+msgid "Advices, Bug reports, Patches"
+msgstr "Porady, Raporty o bledach, Latki"
+
+msgid ""
+"acqu - antman - boutetnico - BSzili - deki - Dragonji - Ensiform - Harlekin "
+"- ilm - Jonathan Gray - kkthx - MAN-AT-ARMS - Mateos - Mathieu Olivier - "
+"merlin - muessli - Odal - PtitSeb - RaFaL - Ragnar - Runeforce aka "
+"lakersforce - Saukko - Spyhawk - StM - Dusan 'TheDushan' Jocic - Zack "
+"'zturtleman' Middleton"
+msgstr ""
+"acqu - antman - boutetnico - BSzili - deki - Dragonji - Ensiform - Harlekin "
+"- ilm - Jonathan Gray - kkthx - MAN-AT-ARMS - Mateos - Mathieu Olivier - "
+"merlin - muessli - Odal - PtitSeb - RaFaL - Ragnar - Runeforce aka "
+"lakersforce - Saukko - Spyhawk - StM - Dusan 'TheDushan' Jocic - Zack "
+"'zturtleman' Middleton"
+
+msgid "^1TRANSLATIONS"
+msgstr "^1TLUMACZENIE"
+
+msgid ""
+"Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, "
+"Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: "
+"ponce - Polish: morsik, RaFal - Portuguese: Zer0"
+msgstr ""
+"Czeski: Radegast -  Dunski: Runeforce - Holenderski: ilm - Francuski: boutetnico, "
+"Mateos, ponce - Finlandzki: Jacker, Saukko - Niemiecki: deki, Harlekin - Wloski: "
+"ponce - Polski: morsik, RaFal - Portugalski: Zer0"
