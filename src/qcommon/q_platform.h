@@ -353,7 +353,7 @@
 
 #ifdef __MORPHOS__
 
-#define OS_STRING "MORPHOS"
+#define OS_STRING "MorphOS"
 #define ID_INLINE inline
 #define PATH_SEP '/'
 
