@@ -2005,6 +2005,7 @@ typedef struct cgs_s
 
 	int fixedphysics;
 	int fixedphysicsfps;
+	int pronedelay;
 
 } cgs_t;
 

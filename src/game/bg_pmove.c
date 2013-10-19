@@ -46,15 +46,20 @@
 #ifdef CGAMEDLL
 #define PM_FIXEDPHYSICS         cgs.fixedphysics
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
+#define PM_PRONEDELAY           cgs.pronedelay
 
 #elif GAMEDLL
 extern vmCvar_t g_fixedphysics;
 extern vmCvar_t g_fixedphysicsfps;
+extern vmCvar_t g_pronedelay;
 
 #define PM_FIXEDPHYSICS         g_fixedphysics.integer
 #define PM_FIXEDPHYSICSFPS      g_fixedphysicsfps.integer
+#define PM_PRONEDELAY           g_pronedelay.integer
 
 #endif
+
+#define AIMSPREAD_MAXSPREAD 255
 
 pmove_t *pm;
 pml_t   pml;
@@ -900,6 +905,12 @@ Sets mins, maxs, and pm->ps->viewheight
 static qboolean PM_CheckProne(void)
 {
 	//Com_Printf( "%i: PM_CheckProne\n", pm->cmd.serverTime);
+	int pronedelay = 750;
+
+	if (PM_PRONEDELAY)
+	{
+		pronedelay = 1750;
+	}
 
 	if (!(pm->ps->eFlags & EF_PRONE))
 	{
@@ -932,7 +943,7 @@ static qboolean PM_CheckProne(void)
 		}
 
 		if ((((pm->ps->pm_flags & PMF_DUCKED) && pm->cmd.doubleTap == DT_FORWARD) ||
-		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > 750)
+		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > pronedelay)
 		{
 			trace_t trace;
 
@@ -949,6 +960,14 @@ static qboolean PM_CheckProne(void)
 			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
 			pm->ps->eFlags &= ~EF_PRONE;
 
+			if (PM_PRONEDELAY)
+			{
+				pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;
+				pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
+				pm->ps->aimSpreadMaxTime    = 1000;
+				pm->ps->aimSpreadMaxSet     = pm->cmd.serverTime;
+			}
+
 			if (trace.fraction == 1.0f)
 			{
 				// go prone
@@ -964,7 +983,7 @@ static qboolean PM_CheckProne(void)
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
 		    (pm->ps->eFlags & EF_MOUNTEDTANK) ||
-		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - pm->pmext->proneTime > 750))
+		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - pm->pmext->proneTime > pronedelay))
 		{
 			trace_t trace;
 
@@ -990,7 +1009,7 @@ static qboolean PM_CheckProne(void)
 				// stop prone
 				pm->ps->eFlags      &= ~EF_PRONE;
 				pm->ps->eFlags      &= ~EF_PRONE_MOVING;
-				pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
+				pm->pmext->proneTime = pm->cmd.serverTime; // timestamp 'stop prone'
 
 				// don't let them keep scope out when
 				// standing from prone or they will
@@ -3426,15 +3445,23 @@ void PM_AdjustAimSpreadScale(void)
 		decrease = AIMSPREAD_DECREASE_RATE;
 	}
 
+	if (pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD && pm->cmd.serverTime - pm->ps->aimSpreadMaxSet < pm->ps->aimSpreadMaxTime)
+	{
+		return;
+	}
+
+	pm->ps->aimSpreadMaxSet  = 0;
+	pm->ps->aimSpreadMaxTime = 0;
+
 	// update the aimSpreadScale
 	pm->ps->aimSpreadScaleFloat += (increase - decrease);
 	if (pm->ps->aimSpreadScaleFloat < 0)
 	{
 		pm->ps->aimSpreadScaleFloat = 0;
 	}
-	if (pm->ps->aimSpreadScaleFloat > 255)
+	if (pm->ps->aimSpreadScaleFloat > AIMSPREAD_MAXSPREAD)
 	{
-		pm->ps->aimSpreadScaleFloat = 255;
+		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 	}
 
 	pm->ps->aimSpreadScale = (int)pm->ps->aimSpreadScaleFloat;  // update the int for the client

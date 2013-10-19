@@ -7362,7 +7362,7 @@ void _UI_Init(qboolean legacyClient)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	uiInfo.legacyClient = (legacyClient == NULL?qfalse:legacyClient);
+	uiInfo.legacyClient = (legacyClient == NULL ? qfalse : legacyClient);
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;

@@ -304,6 +304,8 @@ vmCvar_t g_moverScale;
 vmCvar_t g_fixedphysics;
 vmCvar_t g_fixedphysicsfps;
 
+vmCvar_t g_pronedelay;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -563,6 +565,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_moverScale,               "g_moverScale",               "1.0",                        0 },
 	{ &g_fixedphysics,             "g_fixedphysics",             "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 	{ &g_fixedphysicsfps,          "g_fixedphysicsfps",          "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
+	{ &g_pronedelay,               "g_pronedelay",               "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 };
 
 // made static to avoid aliasing
@@ -2205,7 +2208,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
 	}
 
-	level.legacyServer = (legacyServer == NULL?qfalse:legacyServer);
+	level.legacyServer = (legacyServer == NULL ? qfalse : legacyServer);
 
 	// set some level globals
 	i = level.server_settings;
