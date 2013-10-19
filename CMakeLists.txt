@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 2.8.3)
 #        -> adjust the FILE sources and remove the macro from above files
 
 project(ETLEGACY C CXX)
-set(ETLEGACY_VERSION "2.71rc2-dirty")
+set(ETLEGACY_VERSION "2.71rc3-dirty")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
