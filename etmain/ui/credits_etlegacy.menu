@@ -62,7 +62,7 @@ menuDef {
 	itemDef {
 		name		"headerLogo"
 		group		GROUP_NAME
-		rect		6 80 $evalfloat(WINDOW_WIDTH-12) 16
+		rect		6 72 $evalfloat(WINDOW_WIDTH-12) 16
 		text		"^3DEVELOPED BY ET LEGACY TEAM"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -76,7 +76,7 @@ menuDef {
 	}
 	
 // Credits Sections //
-#define CREDITS_Y	108
+#define CREDITS_Y	96
 
 	itemDef {
 		name		"headerProgramming"
@@ -95,16 +95,17 @@ menuDef {
 	}
 
 	LABELWHITE( 6, CREDITS_Y+12, .8*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek - Project founder, coding & management", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
-	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "IR4T4 - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R. - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S. - Main windows coder & render", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson - Website, coding & scripts", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
+
 // Contributors //
 	itemDef {
-		name		"headerContributors"
+		name		"headerPorts"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+72) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"^1CONTRIBUTORS"
+		text		"^1PORTS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -116,13 +117,14 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "See HALL OF FAME below", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "'BSzili' - AROS and MorphOS", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "'PtitSeb' - Pandora", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	
 // Greetings //
 	itemDef {
 		name		"headerGreetings"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+108) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+120) $evalfloat(WINDOW_WIDTH-12) 12
 		text		"^1GREETINGS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -136,14 +138,36 @@ menuDef {
 	}
 
 
-	LABELWHITE( 6, CREDITS_Y+120, .7*(WINDOW_WIDTH-24), 10, "ETPub Team - ETPro Team - NQ Team, core hug goes to C. - Omni-Bot Team, especially crapshot, Dr. Evil & Palota - RTCW COOP Team - Lazlo Menczel - Ryan C. Gordon - Timothee \"TTimo\" Besset - Splash Damage ET community - Unvanquished Team Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+180, .7*(WINDOW_WIDTH-24), 10, "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations.", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "ETPub Team - ETPro Team - NQ Team - Omni-Bot Team \n RTCW COOP Team - Lazlo Menczel - Ryan C. Gordon \n Timothee \"TTimo\" Besset - Splash Damage ET community \n Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	
+	LABELWHITE( 6, CREDITS_Y+190, (WINDOW_WIDTH-24), 10, "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations.", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+
+
+// Contributors //
+	itemDef {
+		name		"headerContributors"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y+228) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1CONTRIBUTORS"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	LABELWHITE( 6, CREDITS_Y+240, .7*(WINDOW_WIDTH-24), 10, "^3See HALL OF FAME below", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Website //
 	itemDef {
 		name		"headerWebsite"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+240) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+264) $evalfloat(WINDOW_WIDTH-12) 12
 		text		"^1WEBSITE"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -156,10 +180,10 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+252, .7*(WINDOW_WIDTH-24), 10, "http://www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+276, .7*(WINDOW_WIDTH-24), 10, "http://www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Copyright Notices //
-        LABEL( 6, CREDITS_Y+290, .7*(WINDOW_WIDTH-24), 10, "Â© 2012-2013 ET Legacy Team - under the terms of GPL version 3.", .15, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+        LABEL( 6, CREDITS_Y+300, .7*(WINDOW_WIDTH-24), 10, "© 2012-2013 ET Legacy Team - under the terms of GPL version 3.", .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Buttons //
 #ifdef FUI
