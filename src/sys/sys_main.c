@@ -44,8 +44,9 @@
 #if defined(__AROS__) || defined(__MORPHOS__)
 #include <proto/dos.h>
 #ifdef __MORPHOS__
-int __stack = 0x100000;
 #include <proto/exec.h>
+#include <locale.h>
+int            __stack      = 0x100000;
 struct Library *DynLoadBase = NULL;
 #endif
 #endif
@@ -854,6 +855,9 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef __MORPHOS__
+	// don't let locales with decimal comma screw up the string to float conversions
+	setlocale(LC_NUMERIC, "C");
+
 	DynLoadBase = OpenLibrary("dynload.library", 51);
 
 	if (DynLoadBase && DynLoadBase->lib_Revision < 3)
