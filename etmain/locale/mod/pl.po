@@ -1289,14 +1289,14 @@ msgstr "^1PROGRAMISCI"
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
 msgstr "Jan 'Radegast' Simek - zalozyciel projektu, kodowanie & kierowanie"
 
-msgid "IR4T4 - Coding, mod development & bad boy"
-msgstr "IR4T4 - Programista, wydawca moda & zly chlopiec"
+msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
+msgstr "Olaf 'IR4T4' R. - Programista, wydawca moda & zly chlopiec"
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
 msgstr "Konrad 'morsik' Moson - Strona, kodowanie & skrypty"
 
-msgid "Jere 'Jacker' S - Main windows coder & render"
-msgstr "Jere 'Jacker' S - Glowny programista windowsa & renderowanie"
+msgid "Jere 'Jacker' S. - Main windows coder & render"
+msgstr "Jere 'Jacker' S. - Glowny programista windowsa & renderowanie"
 
 msgid "^1CONTRIBUTORS"
 msgstr "^1UCZESTNICY"
@@ -3719,8 +3719,8 @@ msgstr "Lista Ulubionych pelna\n"
 msgid "Added favorite server %s\n"
 msgstr "Dodany ulubiony serwer %s\n"
 
-msgid "See HALL OF FAME below"
-msgstr "Zobacz Sale Chwaly ponizej"
+msgid "^3See HALL OF FAME below"
+msgstr "^3Zobacz Sale Chwaly ponizej"
 
 msgid "^1WEBSITE"
 msgstr "^1STRONA"
@@ -3729,7 +3729,7 @@ msgid "http://www.etlegacy.com"
 msgstr "http://www.etlegacy.com"
 
 msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2013 ET Legacy Team - na licencji GPL w wersji 3."
 
 msgid "HALL OF FAME"
 msgstr "SALA CHWALY"
@@ -3742,3 +3742,15 @@ msgstr "Porady, Raporty o bledach, Latki"
 
 msgid "^1TRANSLATIONS"
 msgstr "^1TLUMACZENIE"
+
+msgid "^1PORTS"
+msgstr "^1PORTY"
+
+msgid "'BSzili' - AROS and MorphOS"
+msgstr "'BSzili' - AROS and MorphOS"
+
+msgid "'PtitSeb' - Pandora"
+msgstr "'PtitSeb' - Pandora"
+
+msgid "^1PACKAGE MAINTAINERS"
+msgstr "^1OPIEKUNOWIE PACZEK"

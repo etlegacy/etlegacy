@@ -1281,7 +1281,7 @@ msgstr ""
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
 msgstr ""
 
-msgid "IR4T4 - Coding, mod development & bad boy"
+msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
 msgstr ""
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
@@ -3666,7 +3666,7 @@ msgstr ""
 msgid "Added favorite server %s\n"
 msgstr ""
 
-msgid "See HALL OF FAME below"
+msgid "^3See HALL OF FAME below"
 msgstr ""
 
 msgid "^1WEBSITE"
@@ -3688,4 +3688,16 @@ msgid "Advices, Bug reports, Patches"
 msgstr ""
 
 msgid "^1TRANSLATIONS"
+msgstr ""
+
+msgid "^1PORTS"
+msgstr ""
+
+msgid "'BSzili' - AROS and MorphOS"
+msgstr ""
+
+msgid "'PtitSeb' - Pandora"
+msgstr ""
+
+msgid "^1PACKAGE MAINTAINERS"
 msgstr ""
