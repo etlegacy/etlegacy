@@ -91,7 +91,7 @@ extern displayContextDef_t *DC;
 
 extern itemDef_t *g_bindItem;
 
-void _UI_Init(void);
+void _UI_Init(qboolean legacyClient);
 void _UI_Shutdown(void);
 void _UI_KeyEvent(int key, qboolean down);
 void _UI_MouseEvent(int dx, int dy);
@@ -135,7 +135,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case UI_GETAPIVERSION:
 		return UI_API_VERSION;
 	case UI_INIT:
-		_UI_Init();
+		_UI_Init(arg1);
 		return 0;
 	case UI_SHUTDOWN:
 		_UI_Shutdown();
@@ -7333,7 +7333,7 @@ static void UI_RunCinematicFrame(int handle)
 	trap_CIN_RunCinematic(handle);
 }
 
-void _UI_Init(void)
+void _UI_Init(qboolean legacyClient)
 {
 	int x;
 
@@ -7361,6 +7361,8 @@ void _UI_Init(void)
 		// no wide screen
 		uiInfo.uiDC.bias = 0;
 	}
+
+	uiInfo.legacyClient = (legacyClient == NULL?qfalse:legacyClient);
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;

@@ -36,7 +36,7 @@
 
 displayContextDef_t cgDC;
 
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback);
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, qboolean legacyClient);
 void CG_Shutdown(void);
 qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
@@ -55,7 +55,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	switch (command)
 	{
 	case CG_INIT:
-		CG_Init(arg0, arg1, arg2, arg3);
+		CG_Init(arg0, arg1, arg2, arg3, arg4);
 		cgs.initing = qfalse;
 		return 0;
 	case CG_SHUTDOWN:
@@ -2448,7 +2448,7 @@ Will perform callbacks to make the loading info screen update.
 #define DEBUG_INITPROFILE_INIT int elapsed, dbgTime = trap_Milliseconds();
 #define DEBUG_INITPROFILE_EXEC(f) if (developer.integer) { CG_Printf("^5%s passed in %i msec\n", f, elapsed = trap_Milliseconds() - dbgTime);  dbgTime += elapsed; }
 #endif // _DEBUG
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback)
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, qboolean legacyClient)
 {
 	const char *s;
 	int        i;
@@ -2481,6 +2481,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	// sync to main refdef
 	cg.refdef_current = &cg.refdef;
+
+	cg.demoPlayback = demoPlayback;
+
+	cg.legacyClient = (legacyClient == NULL?qfalse:legacyClient);
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);

@@ -778,6 +778,7 @@ typedef struct
 	int xpChangeTime;
 
 	qboolean demoPlayback;
+	qboolean legacyClient;
 	qboolean loading;               // don't defer players at initial startup
 	qboolean intermissionStarted;   // don't play voice rewards, because game will end shortly
 

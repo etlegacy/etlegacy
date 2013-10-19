@@ -898,6 +898,8 @@ typedef struct level_locals_s
 
 	fileHandle_t logFile;
 
+	qboolean legacyServer;
+
 	char rawmapname[MAX_QPATH];
 
 	// store latched cvars here that we want to get at often
