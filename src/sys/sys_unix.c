@@ -96,12 +96,15 @@ static char homePath[MAX_OSPATH] = { 0 };
  */
 char *Sys_DefaultHomePath(void)
 {
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	char *p;
 
 	if (!*homePath)
 	{
+#if defined(__AROS__) || defined(__MORPHOS__)
+		if (*(p = Sys_DefaultInstallPath()) != 0)
+#else
 		if ((p = getenv("HOME")) != NULL)
+#endif
 		{
 			Q_strncpyz(homePath, p, sizeof(homePath));
 #ifdef __APPLE__
@@ -111,7 +114,6 @@ char *Sys_DefaultHomePath(void)
 #endif
 		}
 	}
-#endif
 
 	return homePath;
 }

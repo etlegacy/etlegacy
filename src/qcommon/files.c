@@ -3807,7 +3807,7 @@ static void FS_Startup(const char *gameName)
 
 	if (!homePath || !homePath[0])
 	{
-#if defined(DEDICATED) || defined(__AROS__) || defined(__MORPHOS__)
+#ifdef DEDICATED
 		homePath = fs_basepath->string;
 #else
 		Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.");
@@ -3883,7 +3883,7 @@ static void FS_Startup(const char *gameName)
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
 
-#if !defined(DEDICATED) && !defined(__AROS__) && !defined(__MORPHOS__)
+#ifdef DEDICATED
 	// don't start if base == home, so downloads won't overwrite original files
 	//if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))
