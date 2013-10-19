@@ -3509,10 +3509,6 @@ static void CG_Draw2D(void)
 				CG_DrawTimedMenus();
 			}
 		}
-
-		CG_DrawVote();
-
-		CG_DrawLagometer();
 	}
 
 	// don't draw center string if scoreboard is up
@@ -3538,6 +3534,12 @@ static void CG_Draw2D(void)
 		CG_DrawObjectiveInfo();
 		CG_DrawSpectatorMessage();
 		CG_DrawLimboMessage();
+
+		if (!cg.cameraMode)
+		{
+			CG_DrawVote();
+			CG_DrawLagometer();
+		}
 	}
 	else
 	{
