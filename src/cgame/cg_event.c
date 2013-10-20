@@ -2389,7 +2389,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		    (es->weapon != WP_AMMO) &&
 		    (es->weapon != WP_MEDKIT))
 		{
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound); // FIXME: CHAN_LOCAL_SOUND ?
 		}
 
 		// FIXME: do a switch

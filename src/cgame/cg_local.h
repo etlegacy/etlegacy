@@ -896,9 +896,6 @@ typedef struct
 	int exitStatsTime;
 	int exitStatsFade;
 
-	// low ammo warning state
-	int lowAmmoWarning;             // 1 = low, 2 = empty
-
 	// kill timers for carnage reward
 	int lastKillTime;
 
