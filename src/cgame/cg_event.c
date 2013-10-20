@@ -2396,6 +2396,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		if (es->number == cg.snap->ps.clientNum && (
 		        (cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect)) ||
 		        es->weapon == WP_MORTAR_SET ||
+		        es->weapon == WP_MORTAR2_SET ||
 		        es->weapon == WP_MOBILE_MG42_SET ||
 		        es->weapon == WP_MOBILE_BROWNING_SET ||
 		        es->weapon == WP_GRENADE_LAUNCHER ||
@@ -2548,7 +2549,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_MISSILE_HIT");
 		ByteToDir(es->eventParm, dir);
 		CG_MissileHitPlayer(cent, es->weapon, position, dir, es->otherEntityNum);
-		if (es->weapon == WP_MORTAR_SET)
+		if (IS_MORTAR_WEAPON_SET(es->weapon))
 		{
 			if (!es->legsAnim)
 			{
@@ -2571,7 +2572,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_MISSILE_MISS");
 		ByteToDir(es->eventParm, dir);
 		CG_MissileHitWall(es->weapon, 0, position, dir, 0); // modified to send missilehitwall surface parameters
-		if (es->weapon == WP_MORTAR_SET)
+		if (IS_MORTAR_WEAPON_SET(es->weapon))
 		{
 			if (!es->legsAnim)
 			{

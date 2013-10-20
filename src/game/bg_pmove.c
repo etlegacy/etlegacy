@@ -120,6 +120,7 @@ int PM_IdleAnimForWeapon(int weapon)
 	case WP_M7:
 	case WP_SATCHEL_DET:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 	case WP_MEDIC_ADRENALINE:
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
@@ -142,6 +143,7 @@ int PM_AltSwitchToForWeapon(int weapon)
 	case WP_GPG40:
 	case WP_M7:
 	case WP_MORTAR:
+	case WP_MORTAR2:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING:
 		return WEAP_ALTSWITCHFROM;
@@ -176,6 +178,7 @@ int PM_LastAttackAnimForWeapon(int weapon)
 	case WP_MOBILE_BROWNING_SET:
 		return WEAP_ATTACK2;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		return WEAP_ATTACK1;
 	default:
 		return WEAP_ATTACK_LASTSHOT;
@@ -701,6 +704,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	case WP_MOBILE_BROWNING:
 	case WP_MOBILE_BROWNING_SET:
 	case WP_MORTAR:
+	case WP_MORTAR2:
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 3)
 		{
 			scale *= 0.75;
@@ -932,7 +936,7 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		if (pm->ps->weapon == WP_MORTAR_SET)
+		if (IS_MORTAR_WEAPON_SET(pm->ps->weapon))
 		{
 			return qfalse;
 		}
@@ -2003,7 +2007,7 @@ static void PM_CheckDuck(void)
 		return;
 	}
 
-	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || pm->ps->weapon == WP_MORTAR_SET) // duck
+	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || IS_MORTAR_WEAPON_SET(pm->ps->weapon)) // duck
 	{
 		pm->ps->pm_flags |= PMF_DUCKED;
 	}
@@ -2552,6 +2556,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		PM_AddEvent(EV_CHANGE_WEAPON);
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
@@ -2669,6 +2674,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		}
 		break;
 	case WP_MORTAR:
+	case WP_MORTAR2:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			vec3_t axis[3];
@@ -2682,6 +2688,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime = 0;
@@ -2887,6 +2894,7 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_MORTAR:
+	case WP_MORTAR2:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime    = 1000;
@@ -2894,6 +2902,7 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime    = 1667;
@@ -4002,6 +4011,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 1)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->soldierChargeTime * 0.33f))
@@ -4143,7 +4153,7 @@ static void PM_Weapon(void)
 	}
 
 	// a not mounted mortar can't fire
-	if (pm->ps->weapon == WP_MORTAR)
+	if (pm->ps->weapon == WP_MORTAR || pm->ps->weapon == WP_MORTAR2)
 	{
 		return;
 	}
@@ -4288,10 +4298,11 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (!weaponstateFiring)
 		{
 			PM_AddEvent(EV_SPINUP);
-			PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET));
+			PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET)); // FIXME: PM_AttackAnimForWeapon() returns WEAP_ATTACK1 anyway
 			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		else
@@ -4597,6 +4608,7 @@ static void PM_Weapon(void)
 		PM_ContinueWeaponAnim(weapattackanim);
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		break;          // no animation
 	default:
 		// testing
@@ -4632,11 +4644,20 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET: // FIXME: see below - see cg_weapons.c
 		if (!pm->ps->ammo[WP_MORTAR])
 		{
 			PM_AddEvent(EV_NOAMMO);
 		}
 		break;
+	/*
+	case WP_MORTAR2_SET:
+	if (!pm->ps->ammo[WP_MORTAR2])
+	{
+	    PM_AddEvent(EV_NOAMMO);
+	}
+	break;
+	*/
 	default:
 		break;
 	}
@@ -4684,6 +4705,7 @@ static void PM_Weapon(void)
 	case WP_LANDMINE:
 	case WP_SMOKE_BOMB:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		break;
 	case WP_LUGER:
@@ -5038,7 +5060,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 	}
 
-	if ((ps->eFlags & EF_PRONE) || ps->weapon == WP_MORTAR_SET)
+	if ((ps->eFlags & EF_PRONE) || IS_MORTAR_WEAPON_SET(ps->weapon))
 	{
 		leaning = 0;    // not allowed to lean while prone
 
@@ -5301,7 +5323,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			}
 		}
 	}
-	else if (ps->weapon == WP_MORTAR_SET)
+	else if (IS_MORTAR_WEAPON_SET(ps->weapon))
 	{
 		float degsSec = 60.f;
 		float pitch, oldPitch;
@@ -5940,7 +5962,8 @@ void PmoveSingle(pmove_t *pmove)
 			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
 			    pm->ps->weapon != WP_MOBILE_MG42_SET &&
 			    pm->ps->weapon != WP_MOBILE_BROWNING_SET &&
-			    pm->ps->weapon != WP_MORTAR_SET)
+			    pm->ps->weapon != WP_MORTAR_SET &&
+			    pm->ps->weapon != WP_MORTAR2_SET)
 			{
 
 				pm->ps->eFlags |= EF_ZOOMING;
@@ -6093,7 +6116,7 @@ void PmoveSingle(pmove_t *pmove)
 	case PM_INTERMISSION: // no movement at all
 		return;
 	case PM_NORMAL:
-		if (pm->ps->weapon == WP_MORTAR_SET)
+		if (IS_MORTAR_WEAPON_SET(pm->ps->weapon))
 		{
 			pm->cmd.forwardmove = 0;
 			pm->cmd.rightmove   = 0;
@@ -6124,6 +6147,11 @@ void PmoveSingle(pmove_t *pmove)
 		if (pm->ps->weapon == WP_MORTAR_SET)
 		{
 			pm->ps->weapon = WP_MORTAR;
+		}
+
+		if (pm->ps->weapon == WP_MORTAR2_SET)
+		{
+			pm->ps->weapon = WP_MORTAR2;
 		}
 	}
 	else

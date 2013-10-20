@@ -338,9 +338,9 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 	if (check->client)
 	{
 		// make sure the client's view rotates when on a rotating mover
-		// RF, this is done client-side now
-		// ydnar: only do this if player is prone or using set mortar
-		if ((check->client->ps.eFlags & EF_PRONE) || check->s.weapon == WP_MORTAR_SET)
+		// - this is done client-side now
+		// - only do this if player is prone or using set mortar
+		if ((check->client->ps.eFlags & EF_PRONE) || IS_MORTAR_WEAPON_SET(check->s.weapon))
 		{
 			check->client->ps.delta_angles[YAW] += ANGLE2SHORT(amove[YAW]);
 		}

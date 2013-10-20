@@ -106,7 +106,7 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_MOBILE_MG42,
 			WP_FLAMETHROWER,
 			WP_PANZERFAUST,
-			WP_MORTAR
+			WP_MORTAR2
 		},
 	},
 

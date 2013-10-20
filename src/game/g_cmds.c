@@ -1566,6 +1566,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		}
 		break;
 	case WP_MORTAR:
+	case WP_MORTAR2:
 		maxCount = team_maxMortars.integer;
 		if (maxCount == -1)
 		{
@@ -1583,7 +1584,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		{
 			if (ent->client->ps.pm_flags & PMF_LIMBO)
 			{
-				CP("cp \"^1*^3 MORTAR not available!^1 *\" 1");
+				CP("cp \"^1*^3 MORTAR/GRANATWERFER not available!^1 *\" 1");
 			}
 			return qtrue;
 		}
@@ -3613,7 +3614,7 @@ void Cmd_Activate_f(gentity_t *ent)
 		return;
 	}
 
-	if (ent->s.weapon == WP_MORTAR_SET || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(ent->s.weapon) || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -3794,7 +3795,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 		return;
 	}
 
-	if (ent->s.weapon == WP_MORTAR_SET || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(ent->s.weapon) || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}

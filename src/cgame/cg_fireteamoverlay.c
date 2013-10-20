@@ -338,16 +338,16 @@ int weaponIconScale(int weap)
 	case WP_K43_SCOPE:
 	case WP_MORTAR:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2:
+	case WP_MORTAR2_SET:
 		return 2;
 	}
 
 	return 1;
 }
 
-
 /*
 CG_DrawFireTeamOverlay
-
     based on NQ CG_DrawFireTeamOverlay
 */
 

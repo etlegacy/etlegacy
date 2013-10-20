@@ -96,6 +96,7 @@ void CG_CheckAmmo(void)
 		case WP_MOBILE_BROWNING_SET:
 		case WP_K43:
 		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
 		default:
 			total += cg.snap->ps.ammo[BG_FindAmmoForWeapon(i)] * 1000;
 			break;

@@ -1115,10 +1115,10 @@ void SetWolfSpawnWeapons(gclient_t *client)
 						AddWeaponToPlayer(client, WP_MOBILE_MG42_SET, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingClip, qfalse);
 					}
 					break;
-				case WP_MORTAR:
-					if (AddWeaponToPlayer(client, WP_MORTAR, GetAmmoTableData(WP_MORTAR)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR)->defaultStartingClip, qtrue))
+				case WP_MORTAR2:
+					if (AddWeaponToPlayer(client, WP_MORTAR2, GetAmmoTableData(WP_MORTAR2)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR2)->defaultStartingClip, qtrue))
 					{
-						AddWeaponToPlayer(client, WP_MORTAR_SET, GetAmmoTableData(WP_MORTAR_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR_SET)->defaultStartingClip, qfalse);
+						AddWeaponToPlayer(client, WP_MORTAR2_SET, GetAmmoTableData(WP_MORTAR2_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR2_SET)->defaultStartingClip, qfalse);
 					}
 					break;
 				}

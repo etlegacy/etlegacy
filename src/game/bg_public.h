@@ -539,7 +539,7 @@ int Pmove(pmove_t *pmove);
 
 #define NUM_PLAYER_CLASSES      5
 
-#define MAX_WEAPS_IN_BANK_MP    13
+#define MAX_WEAPS_IN_BANK_MP    14
 #define MAX_WEAP_BANKS_MP       10
 
 // leaning flags..
@@ -754,7 +754,10 @@ typedef enum
 	WP_MOBILE_BROWNING,     // 49
 	WP_MOBILE_BROWNING_SET, // 50
 
-	WP_NUM_WEAPONS          // 51
+	WP_MORTAR2,             // 51
+	WP_MORTAR2_SET,         // 52
+
+	WP_NUM_WEAPONS          // 53
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -851,6 +854,13 @@ extern int weapAlts[];  // defined in bg_misc.c
 // weapon table
 #define IS_RIFLENADE_WEAPON(w) \
 	(w == WP_GPG40           || w == WP_M7)
+
+#define IS_MORTAR_WEAPON(w) \
+	(w == WP_MORTAR              || w == WP_MORTAR2              || \
+	 w == WP_MORTAR_SET          || w == WP_MORTAR2_SET)
+
+#define IS_MORTAR_WEAPON_SET(w) \
+	(w == WP_MORTAR_SET          || w == WP_MORTAR2_SET)
 
 // weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
@@ -2259,7 +2269,7 @@ typedef enum popupMessageBigType_e
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
 
-#define NUM_HEAVY_WEAPONS 8
+#define NUM_HEAVY_WEAPONS 10
 extern weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS];
 
 int PM_AltSwitchFromForWeapon(int weapon);

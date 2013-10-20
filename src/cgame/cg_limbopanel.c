@@ -2905,6 +2905,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	switch (weap)
 	{
 	case WP_MORTAR:
+	case WP_MORTAR2: // FIXME: weapon card
 	case WP_PANZERFAUST:
 	case WP_FLAMETHROWER:
 	case WP_FG42:
@@ -2958,6 +2959,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_AKIMBO_SILENCEDLUGER:
 	case WP_SILENCER:
 	case WP_MORTAR:
+	case WP_MORTAR2: // FIXME
 	case WP_MOBILE_BROWNING:
 		*t0 = 0 / 8.f;
 		*t1 = 1 / 8.f;
@@ -3455,6 +3457,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 		break;
 	case WP_MORTAR:
+	case WP_MORTAR2:
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMortars))
 		{
 			return qtrue;

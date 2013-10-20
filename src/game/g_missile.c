@@ -252,7 +252,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	temp->s.weapon    = ent->s.weapon;
 	temp->s.clientNum = ent->r.ownerNum;
 
-	if (ent->s.weapon == WP_MORTAR_SET)
+	if (IS_MORTAR_WEAPON_SET(ent->s.weapon))
 	{
 		temp->s.legsAnim = ent->s.legsAnim; // need this one as well
 		temp->r.svFlags |= SVF_BROADCAST;
@@ -570,7 +570,7 @@ void G_RunMissile(gentity_t *ent)
 	}
 
 	if (level.tracemapLoaded &&
-	    (ent->s.weapon == WP_MORTAR_SET ||
+	    (IS_MORTAR_WEAPON_SET(ent->s.weapon) ||
 	     ent->s.weapon == WP_GPG40 ||
 	     ent->s.weapon == WP_M7 ||
 	     ent->s.weapon == WP_GRENADE_LAUNCHER ||
@@ -647,7 +647,7 @@ void G_RunMissile(gentity_t *ent)
 	// ignoring interactions with the missile owner
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
 
-	if (ent->s.weapon == WP_MORTAR_SET && ent->count2 == 1)
+	if (IS_MORTAR_WEAPON_SET(ent->s.weapon) && ent->count2 == 1)
 	{
 		if (ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 512)
 		{
@@ -703,7 +703,7 @@ void G_RunMissile(gentity_t *ent)
 		int impactDamage;
 
 		if (level.tracemapLoaded &&
-		    (ent->s.weapon == WP_MORTAR_SET ||
+		    (IS_MORTAR_WEAPON_SET(ent->s.weapon) ||
 		     ent->s.weapon == WP_GPG40 ||
 		     ent->s.weapon == WP_M7 ||
 		     ent->s.weapon == WP_GRENADE_LAUNCHER ||
@@ -724,7 +724,7 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (ent->s.weapon == WP_PANZERFAUST || ent->s.weapon == WP_MORTAR_SET)
+		if (ent->s.weapon == WP_PANZERFAUST || IS_MORTAR_WEAPON_SET(ent->s.weapon))
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives
 		}
@@ -1774,6 +1774,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->free        = G_FreeSatchel;
 		break;
 	case WP_MORTAR_SET: // only on impact
+	case WP_MORTAR2_SET:
 		noExplode       = qtrue;
 		bolt->nextthink = 0;
 		break;
@@ -1850,6 +1851,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		bolt->classname           = "mortar_grenade";
 		bolt->splashRadius        = 800;
 		bolt->methodOfDeath       = MOD_MORTAR;
