@@ -1522,9 +1522,6 @@ typedef struct playerState_s
 	int lastFireTime;               // used by server to hold last firing frame briefly when randomly releasing trigger (AI)
 	                                // Set, but never used?
 
-	int aimSpreadMaxTime;           // sets the time in m seconds how long the max spread will last
-	int aimSpreadMaxSet;            // sets the time when the max spread was initialized
-
 	int quickGrenTime;              // unused
 	int leanStopDebounceTime;       // unused
 

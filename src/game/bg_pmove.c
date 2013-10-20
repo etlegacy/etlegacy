@@ -60,6 +60,7 @@ extern vmCvar_t g_pronedelay;
 #endif
 
 #define AIMSPREAD_MAXSPREAD 255
+#define MAX_AIMSPREAD_TIME 1000
 
 pmove_t *pm;
 pml_t   pml;
@@ -969,8 +970,6 @@ static qboolean PM_CheckProne(void)
 			{
 				pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;
 				pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
-				pm->ps->aimSpreadMaxTime    = 1000;
-				pm->ps->aimSpreadMaxSet     = pm->cmd.serverTime;
 			}
 
 			if (trace.fraction == 1.0f)
@@ -3455,13 +3454,11 @@ void PM_AdjustAimSpreadScale(void)
 		decrease = AIMSPREAD_DECREASE_RATE;
 	}
 
-	if (pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD && pm->cmd.serverTime - pm->ps->aimSpreadMaxSet < pm->ps->aimSpreadMaxTime)
+
+	if (PM_PRONEDELAY && pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD && pm->cmd.serverTime - pm->pmext->proneTime < MAX_AIMSPREAD_TIME)
 	{
 		return;
 	}
-
-	pm->ps->aimSpreadMaxSet  = 0;
-	pm->ps->aimSpreadMaxTime = 0;
 
 	// update the aimSpreadScale
 	pm->ps->aimSpreadScaleFloat += (increase - decrease);
