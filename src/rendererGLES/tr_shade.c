@@ -707,7 +707,7 @@ static void RB_FogPass(void)
 	int   i;
 
 	// no fog pass in snooper
-	if (tr.refdef.rdflags & RDF_SNOOPERVIEW || tess.shader->noFog || !r_wolffog->integer)
+	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.shader->noFog || !r_wolffog->integer)
 	{
 		return;
 	}
@@ -1198,7 +1198,7 @@ void SetIteratorFog(void)
 		return;
 	}
 
-	if (skyboxportal && backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)
+	if (skyboxportal && (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL))
 	{
 		if (glfogsettings[FOG_PORTALVIEW].registered)
 		{

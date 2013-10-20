@@ -1689,6 +1689,7 @@ void R_AddEntitySurfaces(void)
 			break;
 		default:
 			ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad reType");
+			break;
 		}
 	}
 }
@@ -1703,7 +1704,7 @@ void R_GenerateDrawSurfs(void)
 	// set the projection matrix (and view frustum) here
 	// first with max or fog distance so we can have proper
 	// arbitrary frustum farplane culling optimization
-	if (tr.refdef.rdflags & RDF_NOWORLDMODEL || tr.world == NULL)
+	if ((tr.refdef.rdflags & RDF_NOWORLDMODEL) || tr.world == NULL)
 	{
 		VectorSet(tr.viewParms.visBounds[0], MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);
 		VectorSet(tr.viewParms.visBounds[1], MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD);

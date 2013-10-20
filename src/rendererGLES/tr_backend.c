@@ -471,7 +471,7 @@ void RB_BeginDrawingView(void)
 		{
 			clearBits |= GL_DEPTH_BUFFER_BIT;
 
-			if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)      // fastsky: clear color
+			if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))      // fastsky: clear color
 			{   // try clearing first with the portal sky fog color, then the world fog color, then finally a default
 				clearBits |= GL_COLOR_BUFFER_BIT;
 				if (glfogsettings[FOG_PORTALVIEW].registered)
@@ -538,7 +538,7 @@ void RB_BeginDrawingView(void)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
 		}
-		else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+		else if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 		{
 
 			clearBits |= GL_COLOR_BUFFER_BIT;
