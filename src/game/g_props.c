@@ -2848,7 +2848,7 @@ void props_castlebed_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	if (other->client->ps.pm_flags & PMF_JUMP_HELD
+	if ((other->client->ps.pm_flags & PMF_JUMP_HELD)
 	    && other->s.groundEntityNum == ent->s.number
 	    && !other->client->ps.pm_time)
 	{
@@ -3017,7 +3017,7 @@ void SP_props_snowGenerator(gentity_t *ent)
 	ent->r.contents = CONTENTS_TRIGGER;
 	ent->r.svFlags  = SVF_NOCLIENT;
 
-	if (ent->spawnflags & 1 || ent->spawnflags & 2)
+	if ((ent->spawnflags & 1) || (ent->spawnflags & 2))
 	{
 		ent->think     = props_snowGenerator_think;
 		ent->nextthink = level.time + FRAMETIME;
@@ -3083,7 +3083,7 @@ void props_decoration_animate(gentity_t *ent)
 
 	if (ent->s.frame > ent->count2)
 	{
-		if (ent->spawnflags & 32 || ent->spawnflags & 64)
+		if ((ent->spawnflags & 32) || (ent->spawnflags & 64))
 		{
 			ent->s.frame = ent->props_frame_state;
 
@@ -3294,7 +3294,7 @@ void SP_props_decoration(gentity_t *ent)
 		ent->touch = props_touch;
 
 	}
-	else if (!(ent->health) && ent->spawnflags & 4)
+	else if (!(ent->health) && (ent->spawnflags & 4))
 	{
 		G_SpawnString("frames", "0", &frames);
 		num_frames = atof(frames);
