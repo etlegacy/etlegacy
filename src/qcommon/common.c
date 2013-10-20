@@ -103,6 +103,7 @@ cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *con_drawnotify;
 cvar_t *com_introPlayed;
 cvar_t *com_ansiColor;
+cvar_t *com_altivec;
 cvar_t *cl_paused;
 cvar_t *sv_paused;
 cvar_t *cl_packetdelay;
@@ -2698,6 +2699,26 @@ void Com_TrackProfile(char *profile_path)
 	}
 }
 
+static void Com_DetectAltivec(void)
+{
+	// Only detect if user hasn't forcibly disabled it.
+	if (com_altivec->integer)
+	{
+		static qboolean altivec  = qfalse;
+		static qboolean detected = qfalse;
+		if (!detected)
+		{
+			altivec  = (Sys_GetProcessorFeatures() & CF_ALTIVEC);
+			detected = qtrue;
+		}
+
+		if (!altivec)
+		{
+			Cvar_Set("com_altivec", "0");    // we don't have it! Disable support!
+		}
+	}
+}
+
 /*
 =================
 Com_Init
@@ -2872,6 +2893,7 @@ void Com_Init(char *commandLine)
 #else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
 #endif
+	com_altivec        = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
 
 	com_hunkused      = Cvar_Get("com_hunkused", "0", 0);
@@ -2938,6 +2960,11 @@ void Com_Init(char *commandLine)
 	}
 #endif // USE_RAW_INPUT_MOUSE
 
+	// always set the cvar, but only print the info if it makes sense.
+	Com_DetectAltivec();
+#if idppc
+	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
+#endif
 
 	// force recommendedSet and don't do vid_restart if in safe mode
 	if (!com_recommendedSet->integer && !safeMode)
@@ -3174,6 +3201,12 @@ void Com_Frame(void)
 	}
 	while (msec < minMsec);
 	Cbuf_Execute();
+
+	if (com_altivec->modified)
+	{
+		Com_DetectAltivec();
+		com_altivec->modified = qfalse;
+	}
 
 	lastTime = com_frameTime;
 

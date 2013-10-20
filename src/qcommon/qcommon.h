@@ -883,6 +883,7 @@ extern cvar_t *com_journal;
 extern cvar_t *com_ansiColor;
 extern cvar_t *com_unfocused;
 extern cvar_t *com_minimized;
+extern cvar_t *com_altivec;
 
 // updater and motd
 extern cvar_t *com_autoupdate;
