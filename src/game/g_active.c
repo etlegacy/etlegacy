@@ -706,9 +706,9 @@ qboolean ClientInactivityTimer(gclient_t *client)
 
 	// the client is still active?
 	if (client->pers.cmd.forwardmove || client->pers.cmd.rightmove || client->pers.cmd.upmove ||
-	    client->pers.cmd.wbuttons & (WBUTTON_ATTACK2 | WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT)  ||
-	    client->pers.cmd.buttons & BUTTON_ATTACK ||
-	    client->ps.eFlags & (EF_MOUNTEDTANK | EF_MG42_ACTIVE) ||
+	    (client->pers.cmd.wbuttons & (WBUTTON_ATTACK2 | WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))  ||
+	    (client->pers.cmd.buttons & BUTTON_ATTACK) ||
+	    (client->ps.eFlags & (EF_MOUNTEDTANK | EF_MG42_ACTIVE)) ||
 	    (client->ps.pm_type == PM_DEAD /*&& !(client->ps.eFlags & EF_PLAYDEAD)*/))     // playdead sets PM_DEAD, so check if playing dead ...
 	{
 		client->inactivityWarning = qfalse;
@@ -858,7 +858,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	return qtrue;
 }
 
-/*
+/**
  * @brief Actions that happen once a second
  * @param[in,out] ent  Entity
  * @param         msec Scheduler time
@@ -995,7 +995,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			G_Damage(ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
 			ent->client->pmext.shoved = qfalse;
 			break;
-
 		case EV_FIRE_WEAPON_MG42:
 			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
@@ -1007,23 +1006,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			if (g_gamestate.integer == GS_PLAYING)
 #endif
 			ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
-
 			break;
-		/*
-		        case EV_FIRE_WEAPON_BROWNING:
-		            // reset player disguise on stealing docs
-		            ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-
-		            mg42_fire(ent);
-
-		            // Only 1 stats bin for mg42
-		#ifndef DEBUG_STATS
-		            if (g_gamestate.integer == GS_PLAYING)
-		#endif
-		            ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_BROWNING)].atts++;
-
-		            break;
-		*/
 		case EV_FIRE_WEAPON_MOUNTEDMG42:
 			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
@@ -1034,22 +1017,18 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			if (g_gamestate.integer == GS_PLAYING)
 #endif
 			ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
-
 			break;
-
 		case EV_FIRE_WEAPON_AAGUN:
 			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			aagun_fire(ent);
 			break;
-
 		case EV_FIRE_WEAPON:
 		case EV_FIRE_WEAPONB:
 		case EV_FIRE_WEAPON_LASTSHOT:
 			FireWeapon(ent);
 			break;
-
 		default:
 			break;
 		}
@@ -1162,7 +1141,7 @@ void ClientThink_real(gentity_t *ent)
 		return;
 	}
 
-	if (ent->s.eFlags & EF_MOUNTEDTANK && ent->tagParent)
+	if ((ent->s.eFlags & EF_MOUNTEDTANK) && ent->tagParent)
 	{
 		client->pmext.centerangles[YAW]   = ent->tagParent->r.currentAngles[YAW];
 		client->pmext.centerangles[PITCH] = ent->tagParent->r.currentAngles[PITCH];

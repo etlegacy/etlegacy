@@ -693,14 +693,14 @@ static float PM_CmdScale(usercmd_t *cmd)
 	// full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
 	// back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
 	// player if the own the weapon at all.
-
-	if ((pm->ps->weapon == WP_PANZERFAUST) ||
-	    (pm->ps->weapon == WP_MOBILE_MG42) ||
-	    (pm->ps->weapon == WP_MOBILE_BROWNING) ||
-	    (pm->ps->weapon == WP_MOBILE_MG42_SET) ||
-	    (pm->ps->weapon == WP_MOBILE_BROWNING_SET) ||
-	    (pm->ps->weapon == WP_MORTAR))
+	switch (pm->ps->weapon)
 	{
+	case WP_PANZERFAUST:
+	case WP_MOBILE_MG42:
+	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
+	case WP_MORTAR:
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 3)
 		{
 			scale *= 0.75;
@@ -709,14 +709,15 @@ static float PM_CmdScale(usercmd_t *cmd)
 		{
 			scale *= 0.5;
 		}
-	}
-
-	if (pm->ps->weapon == WP_FLAMETHROWER)     // trying some different balance for the FT
-	{
+		break;
+	case WP_FLAMETHROWER: // trying some different balance for the FT
 		if (!(pm->skill[SK_HEAVY_WEAPONS] >= 3) || (pm->cmd.buttons & BUTTON_ATTACK))
 		{
 			scale *= 0.7;
 		}
+		break;
+	default:
+		break;
 	}
 
 	return scale;

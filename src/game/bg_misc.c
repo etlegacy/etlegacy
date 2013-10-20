@@ -36,16 +36,8 @@
 #include "bg_public.h"
 #include "../../etmain/ui/menudef.h"
 
-#ifdef CGAMEDLL
-extern vmCvar_t cg_gameType;
-#define gametypeCvar cg_gameType
-#elif GAMEDLL
+#ifdef GAMEDLL
 extern vmCvar_t g_developer;
-extern vmCvar_t g_gametype;
-#define gametypeCvar g_gametype
-#else
-extern vmCvar_t ui_gameType;
-#define gametypeCvar ui_gameType
 #endif
 
 const char *skillNames[SK_NUM_SKILLS] =
