@@ -92,6 +92,10 @@ ifeq ($(FEATURE_GETTEXT),1)
 	CLIENT_CFLAGS += -DFEATURE_GETTEXT
 endif
 
+ifeq ($(PLATFORM), MorphOS)
+	CLIENT_CFLAGS += -maltivec
+endif
+
 DEBUG_CFLAGS = -g -O0 -D_DEBUG
 OPTIMIZEVM = -O2 -funroll-loops -fomit-frame-pointer
 OPTIMIZE = $(OPTIMIZEVM) -ffast-math
