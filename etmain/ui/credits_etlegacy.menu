@@ -41,9 +41,9 @@ menuDef {
 // Logo //
 	itemDef {
 		name		"logoShadow"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-128)+1) $evalfloat(8+1) 128 128
+		rect		$evalfloat(.5*(WINDOW_WIDTH-128)+1) $evalfloat(8+1) 128 64
 		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/etl"
+		background	"ui/assets/etl_logo"
 		forecolor	0 0 0 1
 		visible		1
 		decoration
@@ -51,9 +51,9 @@ menuDef {
 
 	itemDef {
 		name		"logo"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-128)-1) $evalfloat(8-1) 128 128
+		rect		$evalfloat(.5*(WINDOW_WIDTH-128)-1) $evalfloat(8-1) 128 64
 		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/etl"
+		background	"ui/assets/etl_logo"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
@@ -62,7 +62,7 @@ menuDef {
 	itemDef {
 		name		"headerLogo"
 		group		GROUP_NAME
-		rect		6 80 $evalfloat(WINDOW_WIDTH-12) 16
+		rect		6 72 $evalfloat(WINDOW_WIDTH-12) 16
 		text		"^3DEVELOPED BY ET LEGACY TEAM"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -76,7 +76,7 @@ menuDef {
 	}
 	
 // Credits Sections //
-#define CREDITS_Y	108
+#define CREDITS_Y	96
 
 	itemDef {
 		name		"headerProgramming"
@@ -95,17 +95,17 @@ menuDef {
 	}
 
 	LABELWHITE( 6, CREDITS_Y+12, .8*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek - Project founder, coding & management", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
-	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "IR4T4 - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson - Website, coding & scripts", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S - main windows coder, render", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	
-		
+	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R. - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S. - Main windows coder & render", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson - Website, coding & scripts", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+
 // Contributors //
 	itemDef {
-		name		"headerContributors"
+		name		"headerPorts"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+60) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"^1CONTRIBUTORS"
+		rect		6 $evalfloat(CREDITS_Y+72) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1PORTS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -117,22 +117,14 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+72, .7*(WINDOW_WIDTH-24), 10, "Acqu - Bug reports & patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "Antman - Map location override databases ", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "Dragon aka Dragonji - Bug reports & Windows tester", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+108, .7*(WINDOW_WIDTH-24), 10, "Lakersforce - Translations, bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+120, .7*(WINDOW_WIDTH-24), 10, "Mathieu Olivier - Bug fixes and code clean up", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "Merlin - Bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+144, .7*(WINDOW_WIDTH-24), 10, "RaFaL aka ***Rafal*** - Menu scripts and Windows tester", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+156, .7*(WINDOW_WIDTH-24), 10, "Dusan 'TheDushan' Jocic - Advices, patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
-	LABELWHITE( 6, CREDITS_Y+168, .7*(WINDOW_WIDTH-24), 10, "Ensiform - Advices, comments", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-
-
+	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "'BSzili' - AROS and MorphOS", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "'PtitSeb' - Pandora", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	
 // Greetings //
 	itemDef {
 		name		"headerGreetings"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+180) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+120) $evalfloat(WINDOW_WIDTH-12) 12
 		text		"^1GREETINGS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -145,27 +137,53 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+192, .7*(WINDOW_WIDTH-24), 10, "ETPub Team", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+204, .7*(WINDOW_WIDTH-24), 10, "NQ Team - core hug goes to C..", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+216, .7*(WINDOW_WIDTH-24), 10, "Omni-Bot Team - especially crapshot, Dr. Evil & Palota", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+228, .7*(WINDOW_WIDTH-24), 10, "Splash Damage ET Community", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+240, .7*(WINDOW_WIDTH-24), 10, "Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
-// TODO: add
-// "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations."
+	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "ETPub Team - ETPro Team - NQ Team - Omni-Bot Team \n RTCW COOP Team - Lazlo Menczel - Ryan C. Gordon \n Timothee \"TTimo\" Besset - Splash Damage ET community \n Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	
+	LABELWHITE( 6, CREDITS_Y+190, (WINDOW_WIDTH-24), 10, "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations.", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 
-// FUN
+
+// Contributors //
 	itemDef {
-		name		"fun"
-		rect		$evalfloat(.3*(WINDOW_WIDTH-24)) $evalfloat(CREDITS_Y+260) 256 32
-		style		WINDOW_STYLE_SHADER
-		background	"gfx/2d/classic1"
+		name		"headerContributors"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y+228) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1CONTRIBUTORS"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
 
+	LABELWHITE( 6, CREDITS_Y+240, .7*(WINDOW_WIDTH-24), 10, "^3See HALL OF FAME below", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+// Website //
+	itemDef {
+		name		"headerWebsite"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y+264) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1WEBSITE"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	LABELWHITE( 6, CREDITS_Y+276, .7*(WINDOW_WIDTH-24), 10, "http://www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+// Copyright Notices //
+        LABEL( 6, CREDITS_Y+300, .7*(WINDOW_WIDTH-24), 10, "© 2012-2013 ET Legacy Team - under the terms of GPL version 3.", .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Buttons //
 #ifdef FUI
@@ -173,5 +191,6 @@ menuDef {
 #else
         BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_etlegacy ; open ingame_main )
 #endif
+        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "HALL OF FAME", .3, 14, close credits_etlegacy ; open credits_halloffame )
         BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_etlegacy ; open credits_splashdamage )
 }

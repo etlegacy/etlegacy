@@ -1,0 +1,105 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		//standModel		""									// weapon pickup 'stand'
+		droppedAnglesHack
+		pickupModel			"models/multiplayer/mortar/mortar_pickup_ax.md3"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/multiplayer/mortar/weapon.cfg"
+		handsModel			"models/multiplayer/mortar/v_mortar_hand.md3"
+		
+		//flashDlightColor	0 0 0
+		//flashSound		""									// supports up to 4 flash sounds
+		//flashEchoSound	""									// supports up to 4 flash echo sounds
+		//lastShotSound		""									// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		//reloadSound		""
+		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		switchSound			"sound/weapons/mortar/mortar_off.wav"		// allow overriding of weaponswitch sound
+		
+		//weaponIcon				"icons/iconw_mortar_ax"
+		weaponSelectedIcon		"icons/iconw_mortar_ax_1_select"
+		
+		//missileModel		""
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model		"models/multiplayer/mortar/v_mortar_ax.md3"
+			axisskin			"models/multiplayer/mortar/v_mortar_axis.skin"
+			alliedskin			"models/multiplayer/mortar/v_mortar_axis.skin"
+			
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag			"tag_barrel"
+					model		"models/multiplayer/mortar/v_mortar_barrel.md3"
+					axisskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
+					alliedskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model		"models/multiplayer/mortar/v_mortar_barrel2.md3"
+					axisskin	"models/multiplayer/mortar/mortar_axis.skin"
+					alliedskin	"models/multiplayer/mortar/mortar_allied.skin"
+				}
+				part 2
+				{
+					tag		"tag_barrel3"
+					model		"models/multiplayer/mortar/v_mortar_barrel3.md3"
+					axisskin	"models/multiplayer/mortar/mortar_barrel3_axis.skin"
+					alliedskin	"models/multiplayer/mortar/mortar_barrel3_axis.skin"
+				}
+				part 3
+				{
+					tag		"tag_barrel4"
+					model		"models/multiplayer/mortar/v_mortar_barrel4.md3"
+					axisskin	"models/multiplayer/mortar/mortar_barrel4_axis.skin"
+					alliedskin	"models/multiplayer/mortar/mortar_barrel4_axis.skin"
+				}
+				part 4
+				{
+					tag		"tag_barrel5"
+					model		"models/multiplayer/mortar/v_mortar_barrel5.md3"
+					axisskin	"models/multiplayer/mortar/mortar_barrel5_axis.skin"
+					alliedskin	"models/multiplayer/mortar/mortar_barrel5_axis.skin"
+				}
+				part 5
+				{
+					tag		"tag_barrel6"
+					model		"models/multiplayer/mortar/v_mortar_ax_barrel6.md3"
+					axisskin	"models/multiplayer/mortar/mortar_barrel6_axis.skin"
+					alliedskin	"models/multiplayer/mortar/mortar_barrel6_axis.skin"
+				}
+				part 6
+				{
+					tag		"tag_barrel7"
+					model		"models/multiplayer/mortar/v_mortar_barrel7.md3"
+				}				
+			}
+		}
+		
+		thirdPerson {
+			model				"models/multiplayer/mortar/mortar_3rda_ax.md3"			
+			axisskin			"models/multiplayer/mortar/mortar_3rda_axis.skin"
+			alliedskin			"models/multiplayer/mortar/mortar_3rda_axis.skin"
+		}
+	}
+}

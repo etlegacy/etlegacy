@@ -36,16 +36,8 @@
 #include "bg_public.h"
 #include "../../etmain/ui/menudef.h"
 
-#ifdef CGAMEDLL
-extern vmCvar_t cg_gameType;
-#define gametypeCvar cg_gameType
-#elif GAMEDLL
+#ifdef GAMEDLL
 extern vmCvar_t g_developer;
-extern vmCvar_t g_gametype;
-#define gametypeCvar g_gametype
-#else
-extern vmCvar_t ui_gameType;
-#define gametypeCvar ui_gameType
 #endif
 
 const char *skillNames[SK_NUM_SKILLS] =
@@ -118,20 +110,21 @@ pathCorner_t pathCorners[MAX_PATH_CORNERS];
 #define DELAY_PISTOL    100 // colt, luger, sp5, cross
 #define DELAY_SHOULDER  50  // rl
 #define DELAY_THROW     250 // grenades, dynamite
+#define DELAY_HW        750
 
 // the new loadout for WolfXP
 int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 {
-	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         }, // empty bank '0'
-	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
-	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,        0,          0,       0,      0,              0         },
-	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST,         WP_FLAMETHROWER,         WP_KAR98, WP_CARBINE, WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR},
-	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
-	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,                      0,                       0,        0,          0,       0,      0,              0,        },
-	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET,         0,                       0,        0,          0,       0,      0,              0         },
-	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
-	{ WP_BINOCULARS,       0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
-	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
+	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0          }, // empty bank '0'
+	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0          },
+	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,        0,          0,       0,      0,              0          },
+	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST,         WP_FLAMETHROWER,         WP_KAR98, WP_CARBINE, WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR, WP_MORTAR2},
+	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0          },
+	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,                      0,                       0,        0,          0,       0,      0,              0,         },
+	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET,         0,                       0,        0,          0,       0,      0,              0          },
+	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0          },
+	{ WP_BINOCULARS,       0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0          },
+	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0          },
 };
 
 // Using one unified list for which weapons can received ammo
@@ -142,7 +135,7 @@ int reloadableWeapons[] =
 	WP_MP40,                WP_THOMPSON,             WP_STEN,            WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,
 	WP_KAR98,               WP_CARBINE,              WP_FG42,            WP_K43,          WP_MOBILE_MG42, WP_COLT,
 	WP_LUGER,               WP_MORTAR,               WP_AKIMBO_COLT,     WP_AKIMBO_LUGER, WP_M7,          WP_GPG40,
-	WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, WP_MOBILE_BROWNING,
+	WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, WP_MOBILE_BROWNING, WP_MORTAR2,
 	-1
 };
 
@@ -177,7 +170,7 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 24,  1, 8,   24, 8,   1500, DELAY_PISTOL, 400,  0,    0,   MOD_LUGER                },                                        // WP_LUGER                 // 2    // NOTE: also 32 round 'snail' magazine
 	{ 90,  1, 30,  30, 30,  2400, DELAY_LOW,    150,  0,    0,   MOD_MP40                 },                                        // WP_MP40                  // 3
 	{ 45,  1, 15,  0,  4,   1000, DELAY_THROW,  1600, 0,    0,   MOD_GRENADE_LAUNCHER     },                                        // WP_GRENADE_LAUNCHER      // 4
-	{ 4,   1, 1,   0,  4,   1000, 750,          2000, 0,    0,   MOD_PANZERFAUST          },                                        // WP_PANZERFAUST           // 5    // updated delay so prediction is correct
+	{ 4,   1, 1,   0,  4,   1000, DELAY_HW,     2000, 0,    0,   MOD_PANZERFAUST          },                                        // WP_PANZERFAUST           // 5    // updated delay so prediction is correct
 	{ 200, 1, 200, 0,  200, 1000, DELAY_LOW,    50,   0,    0,   MOD_FLAMETHROWER         },                                        // WP_FLAMETHROWER          // 6
 	{ 24,  1, 8,   24, 8,   1500, DELAY_PISTOL, 400,  0,    0,   MOD_COLT                 },                                        // WP_COLT                  // 7
 	{ 90,  1, 30,  30, 30,  2400, DELAY_LOW,    150,  0,    0,   MOD_THOMPSON             },                                        // WP_THOMPSON              // 8
@@ -209,7 +202,7 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 30,  1, 10,  20, 10,  2500, DELAY_LOW,    400,  0,    0,   MOD_K43                  },                                        // WP_K43                   // 31       K43
 	{ 60,  1, 20,  40, 20,  2000, DELAY_LOW,    100,  0,    0,   MOD_FG42                 },                                        // WP_FG42                  // 32
 	{ 0,   0, 0,   0,  0,   0,    0,            0,    1500, 300, 0                        },                                        // WP_DUMMY_MG42            // 33
-	{ 15,  1, 1,   0,  0,   0,    750,          1600, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR                // 34
+	{ 15,  1, 1,   0,  0,   0,    DELAY_HW,     1600, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR                // 34
 	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_COLT          },                                        // WP_AKIMBO_COLT           // 35
 	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_LUGER         },                                        // WP_AKIMBO_LUGER          // 36
 	{ 4,   1, 1,   4,  1,   3000, DELAY_LOW,    400,  0,    0,   MOD_GPG40                },                                        // WP_GPG40                 // 37
@@ -219,7 +212,7 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 30,  1, 10,  20, 8,   1500, 0,            400,  0,    0,   MOD_GARAND_SCOPE         },                                        // WP_GARAND_SCOPE          // 40       GARAND  old max ammo 24 max clip size 8 start ammo 16 start clip 8
 	{ 30,  1, 10,  20, 10,  2500, 0,            400,  0,    0,   MOD_K43_SCOPE            },                                        // WP_K43_SCOPE             // 41       K43
 	{ 60,  1, 20,  40, 20,  2000, DELAY_LOW,    400,  0,    0,   MOD_FG42SCOPE            },                                        // WP_FG42SCOPE             // 42
-	{ 16,  1, 1,   12, 0,   0,    750,          1400, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR_SET            // 43
+	{ 16,  1, 1,   12, 0,   0,    DELAY_HW,     1400, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR_SET            // 43
 	{ 10,  1, 1,   0,  10,  1500, 50,           1000, 0,    0,   MOD_SYRINGE              },                                        // WP_MEDIC_ADRENALINE      // 44
 	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_SILENCEDCOLT  },                                        // WP_AKIMBO_SILENCEDCOLT   // 45
 	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_SILENCEDLUGER },                                        // WP_AKIMBO_SILENCEDLUGER  // 46
@@ -227,6 +220,8 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 999, 0, 999, 0,  0,   0,    50,           200,  0,    0,   MOD_KNIFE_KABAR          },                                        // WP_KNIFE_KABAR           // 48
 	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_BROWNING      },                                        // WP_MOBILE_BROWNING       // 49
 	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_BROWNING      },                                        // WP_MOBILE_BROWNING_SET   // 50
+	{ 15,  1, 1,   0,  0,   0,    DELAY_HW,     1600, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR2				// 51
+	{ 16,  1, 1,   12, 0,   0,    DELAY_HW,     1400, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR2_SET			// 52
 };
 
 // moved in here so both games can get to it
@@ -288,8 +283,10 @@ int weapAlts[] =
 	WP_NONE,            // 46 WP_AKIMBO_SILENCEDLUGER
 	WP_MOBILE_MG42,     // 47 WP_MOBILE_MG42_SET
 	WP_NONE,            // 48 WP_KNIFE_KABAR
-	WP_MOBILE_BROWNING_SET, // 49 WP_MOBILE_MG42_SET
-	WP_MOBILE_BROWNING,     // 50 WP_MOBILE_MG42_SET
+	WP_MOBILE_BROWNING_SET, // 49 WP_MOBILE_BROWNING
+	WP_MOBILE_BROWNING,     // 50 WP_MOBILE_BROWNING_SET
+	WP_MORTAR2_SET,     // 51 WP_MORTAR2
+	WP_MORTAR2,         // 52 WP_MORTAR_SET
 };
 
 char *animStrings[] =
@@ -1594,6 +1591,46 @@ gitem_t bg_itemlist[] =
 		"",             // precache
 		"",             // sounds
 	},
+
+	{
+		"weapon_mortar2",
+		"sound/misc/w_pkup.wav",
+		{
+			"models/multiplayer/mortar/mortar_3rd.md3",
+			"models/multiplayer/mortar/v_mortar.md3",
+			0
+		},
+		"icons/iconw_mortar_1",
+		"icons/ammo5",
+		"Granatwerfer",
+		0,
+		IT_WEAPON,
+		WP_MORTAR2,
+		WP_MORTAR,
+		WP_MORTAR,
+		"",             // precache
+		"",             // sounds
+	},
+	{
+		"weapon_mortar2_set",
+		"sound/misc/w_pkup.wav", // FIXME: I've never heard this
+		{
+			"models/multiplayer/mortar/mortar_3rd.md3",
+			"models/multiplayer/mortar/v_mortar.md3",
+			0
+		},
+		"icons/iconw_mortar_1",
+		"icons/ammo5",
+		"Mounted Granatwerfer",
+		0,
+		IT_WEAPON,
+		WP_MORTAR2_SET,
+		WP_MORTAR,
+		WP_MORTAR,
+		"",             // precache
+		"",             // sounds
+	},
+
 	/*
 	weapon_landmine
 	*/
@@ -3856,6 +3893,8 @@ weapon_t BG_DuplicateWeapon(weapon_t weap)
 		return WP_K43;
 	case WP_GRENADE_PINEAPPLE:
 		return WP_GRENADE_LAUNCHER;
+	case WP_MORTAR2_SET:
+		return WP_MORTAR_SET;
 	default:
 		return weap;
 	}
@@ -4268,6 +4307,8 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 	    break;
 	case WP_MORTAR:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2:
+	case WP_MORTAR2_SET:
 	    if( skill[SK_HEAVY_WEAPONS] >= 1 )
 	        return( GetAmmoTableData(weaponNum)->maxammo + 2 );
 	    else
@@ -4928,6 +4969,41 @@ qboolean BG_IsScopedWeapon(int weapon)
 	return qfalse;
 }
 
+// FIXME: weapon table
+qboolean BG_WeaponHasAlt(int weapon, int playerClass)
+{
+	switch (weapon)
+	{
+	case WP_LUGER:
+	case WP_COLT:
+	case WP_AKIMBO_COLT:
+	case WP_AKIMBO_LUGER:
+		return (playerClass == PC_COVERTOPS);
+	case WP_GRENADE_LAUNCHER:
+	case WP_KAR98:
+	case WP_CARBINE:
+	case WP_GARAND:
+	case WP_K43:
+	case WP_FG42:
+	case WP_SILENCED_COLT:
+	case WP_GARAND_SCOPE:
+	case WP_K43_SCOPE:
+	case WP_FG42SCOPE:
+	case WP_MORTAR:
+	case WP_MORTAR_SET:
+	case WP_MORTAR2:
+	case WP_MORTAR2_SET:
+	case WP_AKIMBO_SILENCEDCOLT:
+	case WP_AKIMBO_SILENCEDLUGER:
+	case WP_MOBILE_MG42:
+	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
+		return qtrue;
+	}
+	return qfalse;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct locInfo_s
 {
@@ -5007,7 +5083,9 @@ weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS] =
 	WP_MORTAR,
 	WP_MORTAR_SET,
 	WP_MOBILE_BROWNING,
-	WP_MOBILE_BROWNING_SET
+	WP_MOBILE_BROWNING_SET,
+	WP_MORTAR2,
+	WP_MORTAR2_SET,
 };
 
 /////////////////////////

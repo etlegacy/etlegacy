@@ -1,0 +1,160 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	448
+#define GROUP_NAME		"grpCreditshalloffame"
+
+// System Menu //
+menuDef {
+	name		"credits_halloffame"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+	
+	onESC {
+		close credits_halloffame ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif
+	}
+
+// Window //
+	itemDef {
+		name		"window"
+		group		GROUP_NAME
+		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+		style		WINDOW_STYLE_FILLED
+		backcolor	0 0 0 1
+		border		WINDOW_BORDER_FULL
+		bordercolor	.5 .5 .5 .5
+		visible		1
+		decoration
+	}
+
+// Logo //
+	itemDef {
+		name		"logoShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-128)+1) $evalfloat(8+1) 128 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/etl_logo"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logo"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-128)-1) $evalfloat(8-1) 128 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/etl_logo"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+	
+	itemDef {
+		name		"headerLogo"
+		group		GROUP_NAME
+		rect		6 72 $evalfloat(WINDOW_WIDTH-12) 16
+		text		"^3ET LEGACY HALL OF FAME"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.3
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	14
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+	
+// Contributors //
+#define CREDITS_Y	96
+
+	itemDef {
+		name		"headerContributors"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1CONTRIBUTORS"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+
+	LABELWHITE( 6, CREDITS_Y+12, .7*(WINDOW_WIDTH-24), 10, "Advices, Bug reports, Patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "acqu - antman - boutetnico - deki - Dragonji - Ensiform - Harlekin - ilm - Jonathan Gray - kkthx - MAN-AT-ARMS - Mateos - Mathieu Olivier - merlin - muessli - Odal - RaFaL - Ragnar - Runeforce aka lakersforce - Saukko - Spyhawk - StM - Dusan 'TheDushan' Jocic - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+	itemDef {
+		name		"headerTranslations"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y+108) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1TRANSLATIONS"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	LABELWHITE( 6, CREDITS_Y+120, .8*(WINDOW_WIDTH-24), 10, "Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: ponce - Polish: morsik, RaFal - Portuguese: Zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+
+
+	itemDef {
+		name		"headerPM"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y+168) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1PACKAGE MAINTAINERS"
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+
+
+
+
+// Fun //
+        itemDef {
+                name            "fun"
+                rect            $evalfloat(.3*(WINDOW_WIDTH-24)) $evalfloat(CREDITS_Y+260) 256 32
+                style           WINDOW_STYLE_SHADER
+                background      "gfx/2d/classic1"
+                forecolor       1 1 1 1
+                visible         1
+                decoration
+        }
+
+// Buttons //
+#ifdef FUI
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_halloffame ; open main )
+#else
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_halloffame ; open ingame_main )
+#endif
+        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ET LEGACY", .3, 14, close credits_halloffame ; open credits_etlegacy )
+        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_halloffame ; open credits_splashdamage )
+}

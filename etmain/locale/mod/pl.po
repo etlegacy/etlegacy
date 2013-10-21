@@ -300,7 +300,7 @@ msgid "MODS"
 msgstr "MODY"
 
 msgid "CREDITS"
-msgstr "NAPISY"
+msgstr "AUTORZY"
 
 msgid "ETLEGACY.COM"
 msgstr "ETLEGACY.COM"
@@ -1289,62 +1289,20 @@ msgstr "^1PROGRAMISCI"
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
 msgstr "Jan 'Radegast' Simek - zalozyciel projektu, kodowanie & kierowanie"
 
-msgid "IR4T4 - Coding, mod development & bad boy"
-msgstr "IR4T4 - Programista, wydawca moda & zly chlopiec"
+msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
+msgstr "Olaf 'IR4T4' R. - Programista, wydawca moda & zly chlopiec"
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
-msgstr "Konrad 'morsik' Moson - Srona, kodowanie & skrypty"
+msgstr "Konrad 'morsik' Moson - Strona, kodowanie & skrypty"
 
-msgid "Jere 'Jacker' S - main windows coder, render"
-msgstr "Jere 'Jacker' S - glowny programista windowsa, renderowanie"
+msgid "Jere 'Jacker' S. - Main windows coder & render"
+msgstr "Jere 'Jacker' S. - Glowny programista windowsa & renderowanie"
 
 msgid "^1CONTRIBUTORS"
 msgstr "^1UCZESTNICY"
 
-msgid "Acqu - Bug reports & patches"
-msgstr "Acqu - reporter bugow & latki"
-
-msgid "Antman - Map location override databases "
-msgstr "Antman - Lokalizacje Map"
-
-msgid "Dragon aka Dragonji - Bug reports & Windows tester"
-msgstr "Dragon aka Dragonji - reporter bugow & Tester Windows"
-
-msgid "Lakersforce - Translations, bug reports"
-msgstr "Lakersforce - Tlumaczenie, reporter bugow"
-
-msgid "Mathieu Olivier - Bug fixes and code clean up"
-msgstr "Mathieu Olivier - Naprawa Bugow i wyczyszczenie kodu"
-
-msgid "Merlin - Bug reports"
-msgstr "Merlin - Reporter Bugow"
-
-msgid "RaFaL aka ***Rafal*** - Menu scripts and Windows tester"
-msgstr "RaFaL aka ***Rafal*** - Skrypty Menu i Tester Windows"
-
-msgid "Dusan 'TheDushan' Jocic - Advices, patches"
-msgstr "Dusan 'TheDushan' Jocic - Rady, Latki"
-
-msgid "Ensiform - Advices, comments"
-msgstr "Ensiform - Rady, Komentarze"
-
 msgid "^1GREETINGS"
 msgstr "^1PODZIEKOWANIA"
-
-msgid "ETPub Team"
-msgstr "Zespol ETPub"
-
-msgid "NQ Team - core hug goes to C.."
-msgstr "NQ Tym - core podziekowania ida do C.."
-
-msgid "Omni-Bot Team - especially crapshot, Dr. Evil & Palota"
-msgstr "Zespol Omni-Bot - szczegolnie crapshot, Dr. Evil & Palota"
-
-msgid "Splash Damage ET Community"
-msgstr "Wspolnota ET Splash Damage"
-
-msgid "Zynx"
-msgstr "Zynx"
 
 msgid "SPLASH DAMAGE"
 msgstr "SPLASH DAMAGE"
@@ -3760,3 +3718,39 @@ msgstr "Lista Ulubionych pelna\n"
 #, c-format
 msgid "Added favorite server %s\n"
 msgstr "Dodany ulubiony serwer %s\n"
+
+msgid "^3See HALL OF FAME below"
+msgstr "^3Zobacz Sale Chwaly ponizej"
+
+msgid "^1WEBSITE"
+msgstr "^1STRONA"
+
+msgid "http://www.etlegacy.com"
+msgstr "http://www.etlegacy.com"
+
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2013 ET Legacy Team - na licencji GPL w wersji 3."
+
+msgid "HALL OF FAME"
+msgstr "SALA CHWALY"
+
+msgid "^3ET LEGACY HALL OF FAME"
+msgstr "^3SALA CHWALY ET LEGACY"
+
+msgid "Advices, Bug reports, Patches"
+msgstr "Porady, Raporty o bledach, Latki"
+
+msgid "^1TRANSLATIONS"
+msgstr "^1TLUMACZENIE"
+
+msgid "^1PORTS"
+msgstr "^1PORTY"
+
+msgid "'BSzili' - AROS and MorphOS"
+msgstr "'BSzili' - AROS and MorphOS"
+
+msgid "'PtitSeb' - Pandora"
+msgstr "'PtitSeb' - Pandora"
+
+msgid "^1PACKAGE MAINTAINERS"
+msgstr "^1OPIEKUNOWIE PACZEK"

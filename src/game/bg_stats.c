@@ -98,6 +98,9 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 
 	{ WP_MOBILE_BROWNING,      WS_MG42            }, // 49
 	{ WP_MOBILE_BROWNING_SET,  WS_MG42            }, // 50
+	{ WP_MORTAR2,              WS_MORTAR          }, // 51
+	{ WP_MORTAR2_SET,          WS_MORTAR          }, // 52
+
 };
 
 // Get right stats index based on weapon id

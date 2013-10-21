@@ -332,7 +332,7 @@ R_AddBrushModelSurfaces
 */
 void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 {
-	int              i, clip, fognum, decalBits;
+	int              i, fognum, decalBits;
 	vec3_t           mins, maxs;
 	model_t          *pModel;
 	bmodel_t         *bmodel;
@@ -344,8 +344,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 
 	bmodel = pModel->model.bmodel;
 
-	clip = R_CullLocalBox(bmodel->bounds);
-	if (clip == CULL_OUT)
+	if (R_CullLocalBox(bmodel->bounds) == CULL_OUT)
 	{
 		return;
 	}

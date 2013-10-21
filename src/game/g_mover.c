@@ -130,7 +130,7 @@ gentity_t *G_TestEntityPosition(gentity_t *ent)
 
 	if (ent->clipmask)
 	{
-//      if ( ent->r.contents == CONTENTS_CORPSE && ent->health <= 0 ) { // players waiting to be revived are important
+//if ( ent->r.contents == CONTENTS_CORPSE && ent->health <= 0 ) { // players waiting to be revived are important
 //      if ( ent->r.contents == CONTENTS_CORPSE ) {
 		// corpse aren't important
 		//G_Damage( ent, NULL, NULL, NULL, NULL, 99999, 0, MOD_CRUSH );
@@ -154,7 +154,7 @@ gentity_t *G_TestEntityPosition(gentity_t *ent)
 	{
 		trap_TraceCapsule(&tr, ent->client->ps.origin, ent->r.mins, ent->r.maxs, ent->client->ps.origin, ent->s.number, mask);
 
-		if (!tr.startsolid && ent->client->ps.eFlags & EF_PRONE)
+		if (!tr.startsolid && (ent->client->ps.eFlags & EF_PRONE))
 		{
 			vec3_t org, flatforward, point;
 
@@ -338,9 +338,9 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 	if (check->client)
 	{
 		// make sure the client's view rotates when on a rotating mover
-		// RF, this is done client-side now
-		// ydnar: only do this if player is prone or using set mortar
-		if ((check->client->ps.eFlags & EF_PRONE) || check->s.weapon == WP_MORTAR_SET)
+		// - this is done client-side now
+		// - only do this if player is prone or using set mortar
+		if ((check->client->ps.eFlags & EF_PRONE) || IS_MORTAR_WEAPON_SET(check->s.weapon))
 		{
 			check->client->ps.delta_angles[YAW] += ANGLE2SHORT(amove[YAW]);
 		}
@@ -3072,7 +3072,7 @@ void Think_SetupTrainTargets(gentity_t *ent)
 		path->nextTrain = next;
 	}
 
-	if (!Q_stricmp(ent->classname, "func_train") && ent->spawnflags & 2)       // TOGGLE
+	if (!Q_stricmp(ent->classname, "func_train") && (ent->spawnflags & 2))       // TOGGLE
 	{
 		VectorCopy(ent->nextTrain->s.origin, ent->s.pos.trBase);
 		VectorCopy(ent->nextTrain->s.origin, ent->r.currentOrigin);
@@ -3742,7 +3742,7 @@ void SP_func_static(gentity_t *ent)
 		}
 	}
 
-	if (ent->spawnflags & 2 || ent->spawnflags & 4)
+	if ((ent->spawnflags & 2) || (ent->spawnflags & 4))
 	{
 		ent->pain = Static_Pain;
 
@@ -4793,7 +4793,7 @@ void use_invisible_user(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			ent->spawnflags |= 1;
 		}
 
-		if (ent->spawnflags & 2 && !(ent->spawnflags & 1))
+		if ((ent->spawnflags & 2) && !(ent->spawnflags & 1))
 		{
 			G_Script_ScriptEvent(ent, "activate", NULL);
 			G_UseTargets(ent, other);
@@ -4803,7 +4803,7 @@ void use_invisible_user(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		return;
 	}
 
-	if (other->client && ent->spawnflags & 1)
+	if (other->client && (ent->spawnflags & 1))
 	{
 		// play 'off' sound
 		// I think this is where this goes.  Raf, let me know if it's wrong.  I need someone to tell me what a test map is for this (I'll ask Dan tomorrow)

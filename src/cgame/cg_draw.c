@@ -1114,7 +1114,7 @@ static void CG_DrawMortarReticle(void)
 
 	// last fire pos
 	fadeTime = 0;
-	if (cg.lastFiredWeapon == WP_MORTAR_SET && cg.mortarImpactTime >= -1)
+	if (IS_MORTAR_WEAPON_SET(cg.lastFiredWeapon) && cg.mortarImpactTime >= -1)
 	{
 		fadeTime = cg.time - (cg.predictedPlayerEntity.muzzleFlashTime + 5000);
 
@@ -1295,7 +1295,7 @@ static void CG_DrawMortarReticle(void)
 	}
 
 	// last fire pos
-	if (cg.lastFiredWeapon == WP_MORTAR_SET && cg.mortarImpactTime >= -1)
+	if (IS_MORTAR_WEAPON_SET(cg.lastFiredWeapon) && cg.mortarImpactTime >= -1)
 	{
 		if (fadeTime < 3000)
 		{
@@ -1455,7 +1455,7 @@ static void CG_DrawCrosshair(void)
 	}
 
 	// FIXME: spectators/chasing?
-	if (cg.predictedPlayerState.weapon == WP_MORTAR_SET && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+	if (IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		CG_DrawMortarReticle();
 		return;
@@ -3509,10 +3509,6 @@ static void CG_Draw2D(void)
 				CG_DrawTimedMenus();
 			}
 		}
-
-		CG_DrawVote();
-
-		CG_DrawLagometer();
 	}
 
 	// don't draw center string if scoreboard is up
@@ -3538,6 +3534,12 @@ static void CG_Draw2D(void)
 		CG_DrawObjectiveInfo();
 		CG_DrawSpectatorMessage();
 		CG_DrawLimboMessage();
+
+		if (!cg.cameraMode)
+		{
+			CG_DrawVote();
+			CG_DrawLagometer();
+		}
 	}
 	else
 	{

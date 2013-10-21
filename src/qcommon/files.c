@@ -37,6 +37,8 @@
 #include "unzip.h"
 #ifdef _WIN32
 #define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
+#elif defined (__MORPHOS__)
+#define realpath(N, R) strdup(N)
 #endif // _WIN32
 
 /*
@@ -3805,7 +3807,7 @@ static void FS_Startup(const char *gameName)
 
 	if (!homePath || !homePath[0])
 	{
-#if defined(DEDICATED) || defined(__AROS__)
+#ifdef DEDICATED
 		homePath = fs_basepath->string;
 #else
 		Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.");
@@ -3881,7 +3883,7 @@ static void FS_Startup(const char *gameName)
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
 
-#ifndef DEDICATED
+#ifdef DEDICATED
 	// don't start if base == home, so downloads won't overwrite original files
 	//if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))

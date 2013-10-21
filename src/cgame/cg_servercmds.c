@@ -167,6 +167,7 @@ void CG_ParseServerinfo(void)
 
 	cgs.fixedphysics    = atoi(Info_ValueForKey(info, "g_fixedphysics"));
 	cgs.fixedphysicsfps = atoi(Info_ValueForKey(info, "g_fixedphysicsfps"));
+	cgs.pronedelay      = atoi(Info_ValueForKey(info, "g_pronedelay"));
 
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));

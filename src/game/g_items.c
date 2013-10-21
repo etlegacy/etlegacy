@@ -322,6 +322,10 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	{
 		COM_BitClear(client->ps.weapons, WP_MORTAR_SET);
 	}
+	else if (weapon == WP_MORTAR2)
+	{
+		COM_BitClear(client->ps.weapons, WP_MORTAR2_SET);
+	}
 	else if (weapon == WP_MOBILE_MG42)
 	{
 		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
@@ -339,7 +343,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 		client->ps.weapon = 0;
 	}
 
-	if (weapon == WP_MORTAR)
+	if (IS_MORTAR_WEAPON_SET(weapon))
 	{
 		ent2->count = client->ps.ammo[BG_FindAmmoForWeapon(weapon)] + client->ps.ammoclip[BG_FindClipForWeapon(weapon)];
 	}
@@ -383,6 +387,9 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		case WP_MOBILE_BROWNING:
 			weapon = WP_MOBILE_MG42;
 			break;
+		case WP_MORTAR:
+			weapon = WP_MORTAR2;
+			break;
 		default:
 			break;
 		}
@@ -402,6 +409,9 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 			break;
 		case WP_MOBILE_MG42:
 			weapon = WP_MOBILE_BROWNING;
+			break;
+		case WP_MORTAR2:
+			weapon = WP_MORTAR;
 			break;
 		default:
 			break;
@@ -481,7 +491,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			return 0;
 		}
 
-		if (other->client->ps.weapon == WP_MORTAR_SET ||
+		if (other->client->ps.weapon == WP_MORTAR_SET || other->client->ps.weapon == WP_MORTAR2_SET ||
 		    other->client->ps.weapon == WP_MOBILE_MG42_SET || other->client->ps.weapon == WP_MOBILE_BROWNING_SET)
 		{
 			return 0;
@@ -526,6 +536,10 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				{
 					COM_BitSet(other->client->ps.weapons, WP_MORTAR_SET);
 				}
+				else if (ent->item->giTag == WP_MORTAR2)
+				{
+					COM_BitSet(other->client->ps.weapons, WP_MORTAR2_SET);
+				}
 				else if (ent->item->giTag == WP_MOBILE_MG42)
 				{
 					COM_BitSet(other->client->ps.weapons, WP_MOBILE_MG42_SET);
@@ -546,7 +560,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giTag)] = 0;
 				other->client->ps.ammo[BG_FindAmmoForWeapon(ent->item->giTag)]     = 0;
 
-				if (ent->item->giTag == WP_MORTAR)
+				if (ent->item->giTag == WP_MORTAR || ent->item->giTag == WP_MORTAR2)
 				{
 					other->client->ps.ammo[BG_FindClipForWeapon(ent->item->giTag)] = quantity;
 

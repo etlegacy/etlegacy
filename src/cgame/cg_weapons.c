@@ -1946,6 +1946,12 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_MORTAR_SET:
 		filename = "mortar_set.weap";
 		break;
+	case WP_MORTAR2:
+		filename = "axis_mortar.weap";
+		break;
+	case WP_MORTAR2_SET:
+		filename = "axis_mortar_set.weap";
+		break;
 	case WP_AKIMBO_LUGER:
 		filename = "akimbo_luger.weap";
 		break;
@@ -2291,7 +2297,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	if (!cg.renderingThirdPerson &&
-	    (cg.predictedPlayerState.weapon == WP_MORTAR_SET || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET || cg.predictedPlayerState.weapon == WP_MOBILE_BROWNING_SET) &&
+	    (IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET || cg.predictedPlayerState.weapon == WP_MOBILE_BROWNING_SET) &&
 	    cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		angles[PITCH] = cg.pmext.mountedWeaponAngles[PITCH];
@@ -2387,7 +2393,9 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// idle drift
-	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK)) && (cg.predictedPlayerState.weapon != WP_MORTAR_SET) && (cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET && cg.predictedPlayerState.weapon != WP_MOBILE_BROWNING_SET))
+	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK))
+	    && (cg.predictedPlayerState.weapon != WP_MORTAR_SET && cg.predictedPlayerState.weapon != WP_MORTAR2_SET)
+	    && (cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET && cg.predictedPlayerState.weapon != WP_MOBILE_BROWNING_SET))
 	{
 		float fracsin = sin(cg.time * 0.001);
 
@@ -2638,7 +2646,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	firing = ((cent->currentState.eFlags & EF_FIRING) != 0);
 
-	if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weapon == WP_MORTAR_SET && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+	if (ps && !cg.renderingThirdPerson && IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		vec3_t angles;
 
@@ -2649,7 +2657,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		CG_PositionRotatedEntityOnTag(&gun, parent, "tag_weapon");
 	}
-	else if ((!ps || cg.renderingThirdPerson) && (weaponNum == WP_MORTAR_SET || weaponNum == WP_MORTAR))
+	else if ((!ps || cg.renderingThirdPerson) && (IS_MORTAR_WEAPON_SET(weaponNum) || weaponNum == WP_MORTAR || weaponNum == WP_MORTAR2))
 	{
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
 	}
@@ -2752,7 +2760,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		for (i = W_PART_1; i < W_MAX_PARTS; i++)
 		{
-			if (weaponNum == WP_MORTAR_SET && (i == W_PART_4 || i == W_PART_5))
+			if (IS_MORTAR_WEAPON_SET(weaponNum) && (i == W_PART_4 || i == W_PART_5))
 			{
 				if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 				{
@@ -2763,7 +2771,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			spunpart      = qfalse;
 			barrel.hModel = weapon->partModels[W_FP_MODEL][i].model;
 
-			if (weaponNum == WP_MORTAR_SET)
+			if (IS_MORTAR_WEAPON_SET(weaponNum))
 			{
 				if (i == W_PART_3)
 				{
@@ -2806,7 +2814,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
 
-				if (weaponNum == WP_MORTAR_SET && (i == W_PART_1 || i == W_PART_2))
+				if (IS_MORTAR_WEAPON_SET(weaponNum) && (i == W_PART_1 || i == W_PART_2))
 				{
 					if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 					{
@@ -2896,7 +2904,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 						satchelDetPart.customShader = weapon->modModels[2];
 						CG_AddWeaponWithPowerups(&satchelDetPart, cent->currentState.powerups, ps, cent);
 					}
-					else if (weaponNum == WP_MORTAR_SET && i == W_PART_3)
+					else if (IS_MORTAR_WEAPON_SET(weaponNum) && i == W_PART_3)
 					{
 						if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 						{
@@ -3120,7 +3128,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 		}
 
-		if (weaponNum == WP_MORTAR_SET)
+		if (IS_MORTAR_WEAPON_SET(weaponNum))
 		{
 			if (ps && !cg.renderingThirdPerson && cg.time - cent->muzzleFlashTime < 800)
 			{
@@ -3874,6 +3882,8 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 		case WP_M7:
 		case WP_MORTAR:
 		case WP_MORTAR_SET:
+		case WP_MORTAR2:
+		case WP_MORTAR2_SET:
 		case WP_MOBILE_MG42:
 		case WP_MOBILE_MG42_SET:
 		case WP_MOBILE_BROWNING:
@@ -4057,7 +4067,8 @@ CG_AltfireWeapon_f
 */
 void CG_AltWeapon_f(void)
 {
-	int original, num;
+	int      original, num;
+	qboolean reload = qfalse;
 
 	if (!cg.snap)
 	{
@@ -4076,7 +4087,7 @@ void CG_AltWeapon_f(void)
 
 	// Need ground for this
 	// FIXME: do a switch
-	if (cg.weaponSelect == WP_MORTAR)
+	if (cg.weaponSelect == WP_MORTAR || cg.weaponSelect == WP_MORTAR2)
 	{
 		int    contents;
 		vec3_t point;
@@ -4085,7 +4096,7 @@ void CG_AltWeapon_f(void)
 		{
 			return;
 		}
-		if (!cg.predictedPlayerState.ammoclip[WP_MORTAR])
+		if (!cg.predictedPlayerState.ammoclip[WP_MORTAR]) // FIXME: WP_MORTAR2
 		{
 			return;
 		}
@@ -4167,6 +4178,7 @@ void CG_AltWeapon_f(void)
 	     (original == WP_SILENCER || num == WP_SILENCER || original == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
 	     (original == WP_AKIMBO_SILENCEDCOLT || num == WP_AKIMBO_SILENCEDCOLT || original == WP_AKIMBO_SILENCEDLUGER || num == WP_AKIMBO_SILENCEDLUGER) ||
 	     (original == WP_MORTAR_SET || num == WP_MORTAR_SET) ||
+	     (original == WP_MORTAR2_SET || num == WP_MORTAR2_SET) ||
 	     (original == WP_MOBILE_MG42_SET || num == WP_MOBILE_MG42_SET) ||
 	     (original == WP_MOBILE_BROWNING_SET || num == WP_MOBILE_BROWNING_SET)))
 	{
@@ -4176,6 +4188,21 @@ void CG_AltWeapon_f(void)
 	if (CG_WeaponSelectable(num))        // new weapon is valid
 	{
 		CG_FinishWeaponChange(original, num);
+		if (original == num)
+		{
+			reload = qtrue;
+		}
+	}
+	else
+	{
+		reload = qtrue;
+	}
+
+	if (reload && cg_weapaltReloads.integer && !BG_WeaponHasAlt(cg.weaponSelect, cgs.clientinfo[cg.clientNum].cls))
+	{
+		//This is a horrible way of doing it but theres not other way atm.
+		trap_SendConsoleCommand("+reload\n");
+		trap_SendConsoleCommand("-reload\n");
 	}
 }
 
@@ -4194,7 +4221,7 @@ void CG_NextWeap(qboolean switchBanks)
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (curweap == WP_MORTAR_SET || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(curweap) || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -4213,8 +4240,11 @@ void CG_NextWeap(qboolean switchBanks)
 	case WP_M7:
 		curweap = num = WP_CARBINE;
 		break;
-	case WP_MORTAR_SET:
+	case WP_MORTAR_SET: // FIXME: never reached see early return above - num/curweap are same
 		curweap = num = WP_MORTAR;
+		break;
+	case WP_MORTAR2_SET: // FIXME: never reached see early return above - num/curweap are same
+		curweap = num = WP_MORTAR2;
 		break;
 	default:
 		break;
@@ -4424,7 +4454,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (curweap == WP_MORTAR_SET || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(curweap) || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -4443,8 +4473,11 @@ void CG_PrevWeap(qboolean switchBanks)
 	case WP_M7:
 		curweap = num = WP_CARBINE;
 		break;
-	case WP_MORTAR_SET:
+	case WP_MORTAR_SET: // FIXME: never reached see early return above - num/curweap are same
 		curweap = num = WP_MORTAR;
+		break;
+	case WP_MORTAR2_SET: // FIXME: never reached see early return above - num/curweap are same
+		curweap = num = WP_MORTAR2;
 		break;
 	}
 
@@ -4647,7 +4680,7 @@ void CG_LastWeaponUsed_f(void)
 
 	}
 	// FIXME: do a switch or macro
-	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -4923,7 +4956,7 @@ void CG_WeaponBank_f(void)
 
 	}
 	// FIXME: do a switch or macro
-	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -5005,7 +5038,7 @@ void CG_WeaponBank_f(void)
 	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
 	    ((curweap == WP_GPG40 || num == WP_GPG40 || curweap == WP_M7 || num == WP_M7) ||
 	     (curweap == WP_SILENCER || num == WP_SILENCER || curweap == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
-	     (curweap == WP_MORTAR_SET || num == WP_MORTAR_SET)))
+	     (curweap == WP_MORTAR_SET || num == WP_MORTAR_SET || curweap == WP_MORTAR2_SET || num == WP_MORTAR2_SET)))
 	{
 		return;
 	}
@@ -5039,7 +5072,7 @@ void CG_Weapon_f(void)
 	}
 
 	// FIXME: do a switch or macro
-	if (cg.weaponSelect == WP_MORTAR_SET || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
 	{
 		return;
 	}
@@ -5112,6 +5145,11 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		else if (cg.weaponSelect == WP_MORTAR_SET)
 		{
 			cg.weaponSelect = WP_MORTAR;
+			return;
+		}
+		else if (cg.weaponSelect == WP_MORTAR2_SET)
+		{
+			cg.weaponSelect = WP_MORTAR2;
 			return;
 		}
 		else if (cg.weaponSelect == WP_MOBILE_MG42_SET)
@@ -5478,7 +5516,7 @@ void CG_FireWeapon(centity_t *cent)
 		CG_WeaponFireRecoil(ent->weapon);
 	}
 
-	if (ent->weapon == WP_MORTAR_SET)
+	if (IS_MORTAR_WEAPON_SET(ent->weapon))
 	{
 		if (ent->clientNum == cg.snap->ps.clientNum)
 		{
@@ -6055,6 +6093,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	case WP_SATCHEL:
 	case WP_LANDMINE:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		sfx2range = 1200;
 		if (weapon == WP_GPG40 || weapon == WP_M7)
 		{
@@ -6070,7 +6109,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			sfx  = cgs.media.sfx_landmineexp;
 			sfx2 = cgs.media.sfx_landmineexpDist;
 		}
-		else if (weapon == WP_MORTAR_SET)
+		else if (weapon == WP_MORTAR_SET || weapon == WP_MORTAR2_SET)
 		{
 			sfx = sfx2 = 0;
 		}

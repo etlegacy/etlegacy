@@ -7,14 +7,11 @@
 #------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.3)
 
-# FIXME: rename GLES to FEATURE_RENDERER_GLES
-# FIXME: rename CROUCH to FEATURE_CROUCH
-# FIXME: HAVE_GLES -> FEATURE_RENDERER_GLES
-# FIXME: currently eglport.c and eglport.h are disabled by macro HAVE_GLES for non GLES builds 
+# FIXME: currently eglport.c and eglport.h are disabled by macro FEATURE_RENDERER_GLES for non GLES builds
 #        -> adjust the FILE sources and remove the macro from above files
 
 project(ETLEGACY C CXX)
-set(ETLEGACY_VERSION "2.71rc2-dirty")
+set(ETLEGACY_VERSION "2.71rc3-dirty")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
@@ -31,7 +28,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
 option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
-option(PANDORA			"Set to ON if targeting an OpenPandora device"	${PANDORA})
+option(PANDORA			"Set to ON if targeting an OpenPandora device"			OFF)
 
 # Find GNU sed executable, BSD variant does not work with our script
 if(UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "Linux")
@@ -90,13 +87,12 @@ option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"	
 option(FEATURE_CURSES		"Enable PDCurses console"						OFF)
 option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			ON)
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
+option(FEATURE_RENDERER_GLES	"Set to ON if you want OpenGL ES renderer"				OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
-option(FEATURE_WINDOWS_CONSOLE		"Build win32 executables with Windows console"				ON)
-option(CROUCH	"Set to ON if you want Toggle Crouch"	${CROUCH})
-
-option(GLES	"Set to ON if you want GLES renderer"	${GLES})
+option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"				ON)
+option(FEATURE_CROUCH		"Set to ON if you want Toggle Crouch"					OFF)
 
 cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"				ON "BUNDLED_LIBS" OFF)
 
@@ -146,20 +142,19 @@ endif()
 
 if(UNIX)
 	# optimization/debug flags
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
 	if(PANDORA)
-		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math -ftree-vectorize -Ofast")
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ftree-vectorize -Ofast")
 	else()
-		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
 		if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 			set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 		endif()
 	endif()
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
 	if(PANDORA)
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math -ftree-vectorize  -Ofast")
-	else()
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ftree-vectorize  -Ofast")
 	endif()
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
@@ -222,11 +217,11 @@ endif(NOT CMAKE_SYSTEM MATCHES "Darwin")
 if(PANDORA)
 	add_definitions(-DPANDORA -DARM -DNEON -DAUTOAIM)
 endif()
-if (GLES)
-	add_definitions(-DHAVE_GLES) 
+if (FEATURE_RENDERER_GLES)
+	add_definitions(-DFEATURE_RENDERER_GLES)
 endif()
-if (CROUCH)
-	add_definitions(-DCROUCH)
+if (FEATURE_CROUCH)
+	add_definitions(-DFEATURE_CROUCH)
 endif()
 
 #-----------------------------------------------------------------
@@ -442,7 +437,7 @@ endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JP
 # Client features
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	if(GLES)
+	if(FEATURE_RENDERER_GLES)
 		list(APPEND RENDERER_LIBRARIES -lEGL -lGLES_CM)
 		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
 	else()
@@ -456,7 +451,7 @@ if(BUILD_CLIENT)
 		include_directories(${X11_INCLUDE_DIR})
 	endif(NOT WIN32)
 
-	if(NOT GLES)
+	if(NOT FEATURE_RENDERER_GLES)
 		if(NOT BUNDLED_GLEW)
 			find_package(GLEW REQUIRED)
 			list(APPEND RENDERER_LIBRARIES ${GLEW_LIBRARY})
@@ -714,7 +709,7 @@ if(BUILD_CLIENT)
 		set(REND_LIBTYPE STATIC)
 	endif(RENDERER_DYNAMIC)
 	if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
-		if(GLES)
+		if(FEATURE_RENDERER_GLES)
 			add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
 		else()
 			add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
@@ -722,11 +717,11 @@ if(BUILD_CLIENT)
 		if(BUNDLED_SDL)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_sdl)
 		endif(BUNDLED_SDL)
-		if(NOT GLES)
+		if(NOT FEATURE_RENDERER_GLES)
 			if(BUNDLED_GLEW)
 				add_dependencies(renderer_opengl1_${ARCH} bundled_glew)
 			endif(BUNDLED_GLEW)
-		endif(NOT GLES)
+		endif(NOT FEATURE_RENDERER_GLES)
 		if(BUNDLED_JPEG)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
 		endif(BUNDLED_JPEG)
@@ -986,10 +981,16 @@ if(INSTALL_OMNIBOT)
 	)
 endif(INSTALL_OMNIBOT)
 
-# proper icon
+# other adds
 if(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.svg"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.desktop"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
 	)
 else(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"

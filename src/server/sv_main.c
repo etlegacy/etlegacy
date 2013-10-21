@@ -642,7 +642,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 	int           playerLength;
 	char          infostring[MAX_INFO_STRING];
 
-	if (!force && sv_protect->integer & SVP_IOQ3)
+	if (!force && (sv_protect->integer & SVP_IOQ3))
 	{
 		// Prevent using getstatus as an amplifier
 		if (SVC_RateLimitAddress(from, 10, 1000))

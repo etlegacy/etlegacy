@@ -1636,9 +1636,9 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 
 void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
-	if (cg.lastFiredWeapon == WP_MORTAR_SET && cg.mortarImpactTime >= 0)
+	if (IS_MORTAR_WEAPON_SET(cg.lastFiredWeapon) && cg.mortarImpactTime >= 0)
 	{
-		if (cg.snap->ps.weapon != WP_MORTAR_SET)
+		if (cg.snap->ps.weapon != WP_MORTAR_SET && cg.snap->ps.weapon != WP_MORTAR2_SET)
 		{
 			cg.mortarImpactTime = 0;
 		}
@@ -1700,7 +1700,7 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 		}
 	}
 
-	if (COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR_SET))
+	if (COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR_SET) || COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR2_SET))
 	{
 		vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
 		vec3_t point;

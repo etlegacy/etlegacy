@@ -22,7 +22,7 @@
  *  THE SOFTWARE.
  *
  */
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 
 #include "eglport.h"
 
@@ -716,4 +716,4 @@ uint32_t Platform_GetTicks(void)
 #endif
 	return ticks;
 }
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES

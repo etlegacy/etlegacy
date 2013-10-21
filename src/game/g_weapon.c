@@ -3207,6 +3207,7 @@ int G_GetWeaponDamage(int weapon)
 		return 250;
 	case WP_PANZERFAUST:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 	case WP_DYNAMITE:
 		return 400;
 	}
@@ -4325,6 +4326,7 @@ void FireWeapon(gentity_t *ent)
 		pFiredShot                       = weapon_gpg40_fire(ent, ent->s.weapon);
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
 		{
 			ent->client->ps.classWeaponTime = level.time - level.soldierChargeTime[ent->client->sess.sessionTeam - 1];

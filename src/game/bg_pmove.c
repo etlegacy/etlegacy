@@ -46,15 +46,21 @@
 #ifdef CGAMEDLL
 #define PM_FIXEDPHYSICS         cgs.fixedphysics
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
+#define PM_PRONEDELAY           cgs.pronedelay
 
 #elif GAMEDLL
 extern vmCvar_t g_fixedphysics;
 extern vmCvar_t g_fixedphysicsfps;
+extern vmCvar_t g_pronedelay;
 
 #define PM_FIXEDPHYSICS         g_fixedphysics.integer
 #define PM_FIXEDPHYSICSFPS      g_fixedphysicsfps.integer
+#define PM_PRONEDELAY           g_pronedelay.integer
 
 #endif
+
+#define AIMSPREAD_MAXSPREAD 255
+#define MAX_AIMSPREAD_TIME 1000
 
 pmove_t *pm;
 pml_t   pml;
@@ -115,6 +121,7 @@ int PM_IdleAnimForWeapon(int weapon)
 	case WP_M7:
 	case WP_SATCHEL_DET:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 	case WP_MEDIC_ADRENALINE:
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
@@ -137,6 +144,7 @@ int PM_AltSwitchToForWeapon(int weapon)
 	case WP_GPG40:
 	case WP_M7:
 	case WP_MORTAR:
+	case WP_MORTAR2:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING:
 		return WEAP_ALTSWITCHFROM;
@@ -171,6 +179,7 @@ int PM_LastAttackAnimForWeapon(int weapon)
 	case WP_MOBILE_BROWNING_SET:
 		return WEAP_ATTACK2;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		return WEAP_ATTACK1;
 	default:
 		return WEAP_ATTACK_LASTSHOT;
@@ -688,14 +697,15 @@ static float PM_CmdScale(usercmd_t *cmd)
 	// full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
 	// back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
 	// player if the own the weapon at all.
-
-	if ((pm->ps->weapon == WP_PANZERFAUST) ||
-	    (pm->ps->weapon == WP_MOBILE_MG42) ||
-	    (pm->ps->weapon == WP_MOBILE_BROWNING) ||
-	    (pm->ps->weapon == WP_MOBILE_MG42_SET) ||
-	    (pm->ps->weapon == WP_MOBILE_BROWNING_SET) ||
-	    (pm->ps->weapon == WP_MORTAR))
+	switch (pm->ps->weapon)
 	{
+	case WP_PANZERFAUST:
+	case WP_MOBILE_MG42:
+	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING:
+	case WP_MOBILE_BROWNING_SET:
+	case WP_MORTAR:
+	case WP_MORTAR2:
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 3)
 		{
 			scale *= 0.75;
@@ -704,14 +714,15 @@ static float PM_CmdScale(usercmd_t *cmd)
 		{
 			scale *= 0.5;
 		}
-	}
-
-	if (pm->ps->weapon == WP_FLAMETHROWER)     // trying some different balance for the FT
-	{
+		break;
+	case WP_FLAMETHROWER: // trying some different balance for the FT
 		if (!(pm->skill[SK_HEAVY_WEAPONS] >= 3) || (pm->cmd.buttons & BUTTON_ATTACK))
 		{
 			scale *= 0.7;
 		}
+		break;
+	default:
+		break;
 	}
 
 	return scale;
@@ -900,6 +911,12 @@ Sets mins, maxs, and pm->ps->viewheight
 static qboolean PM_CheckProne(void)
 {
 	//Com_Printf( "%i: PM_CheckProne\n", pm->cmd.serverTime);
+	int pronedelay = 750;
+
+	if (PM_PRONEDELAY)
+	{
+		pronedelay = 1750;
+	}
 
 	if (!(pm->ps->eFlags & EF_PRONE))
 	{
@@ -920,7 +937,7 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		if (pm->ps->weapon == WP_MORTAR_SET)
+		if (IS_MORTAR_WEAPON_SET(pm->ps->weapon))
 		{
 			return qfalse;
 		}
@@ -932,7 +949,7 @@ static qboolean PM_CheckProne(void)
 		}
 
 		if ((((pm->ps->pm_flags & PMF_DUCKED) && pm->cmd.doubleTap == DT_FORWARD) ||
-		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > 750)
+		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > pronedelay)
 		{
 			trace_t trace;
 
@@ -949,6 +966,12 @@ static qboolean PM_CheckProne(void)
 			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
 			pm->ps->eFlags &= ~EF_PRONE;
 
+			if (PM_PRONEDELAY)
+			{
+				pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;
+				pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
+			}
+
 			if (trace.fraction == 1.0f)
 			{
 				// go prone
@@ -964,7 +987,7 @@ static qboolean PM_CheckProne(void)
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
 		    (pm->ps->eFlags & EF_MOUNTEDTANK) ||
-		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - pm->pmext->proneTime > 750))
+		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - pm->pmext->proneTime > pronedelay))
 		{
 			trace_t trace;
 
@@ -990,7 +1013,7 @@ static qboolean PM_CheckProne(void)
 				// stop prone
 				pm->ps->eFlags      &= ~EF_PRONE;
 				pm->ps->eFlags      &= ~EF_PRONE_MOVING;
-				pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
+				pm->pmext->proneTime = pm->cmd.serverTime; // timestamp 'stop prone'
 
 				// don't let them keep scope out when
 				// standing from prone or they will
@@ -1983,7 +2006,7 @@ static void PM_CheckDuck(void)
 		return;
 	}
 
-	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || pm->ps->weapon == WP_MORTAR_SET) // duck
+	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || IS_MORTAR_WEAPON_SET(pm->ps->weapon)) // duck
 	{
 		pm->ps->pm_flags |= PMF_DUCKED;
 	}
@@ -2532,6 +2555,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		PM_AddEvent(EV_CHANGE_WEAPON);
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
@@ -2649,6 +2673,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		}
 		break;
 	case WP_MORTAR:
+	case WP_MORTAR2:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			vec3_t axis[3];
@@ -2662,6 +2687,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime = 0;
@@ -2867,6 +2893,7 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_MORTAR:
+	case WP_MORTAR2:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime    = 1000;
@@ -2874,6 +2901,7 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (newweapon == weapAlts[oldweapon])
 		{
 			switchtime    = 1667;
@@ -3426,15 +3454,21 @@ void PM_AdjustAimSpreadScale(void)
 		decrease = AIMSPREAD_DECREASE_RATE;
 	}
 
+
+	if (PM_PRONEDELAY && pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD && pm->cmd.serverTime - pm->pmext->proneTime < MAX_AIMSPREAD_TIME)
+	{
+		return;
+	}
+
 	// update the aimSpreadScale
 	pm->ps->aimSpreadScaleFloat += (increase - decrease);
 	if (pm->ps->aimSpreadScaleFloat < 0)
 	{
 		pm->ps->aimSpreadScaleFloat = 0;
 	}
-	if (pm->ps->aimSpreadScaleFloat > 255)
+	if (pm->ps->aimSpreadScaleFloat > AIMSPREAD_MAXSPREAD)
 	{
-		pm->ps->aimSpreadScaleFloat = 255;
+		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 	}
 
 	pm->ps->aimSpreadScale = (int)pm->ps->aimSpreadScaleFloat;  // update the int for the client
@@ -3974,6 +4008,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 1)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->soldierChargeTime * 0.33f))
@@ -4115,7 +4150,7 @@ static void PM_Weapon(void)
 	}
 
 	// a not mounted mortar can't fire
-	if (pm->ps->weapon == WP_MORTAR)
+	if (pm->ps->weapon == WP_MORTAR || pm->ps->weapon == WP_MORTAR2)
 	{
 		return;
 	}
@@ -4260,10 +4295,11 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (!weaponstateFiring)
 		{
 			PM_AddEvent(EV_SPINUP);
-			PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET));
+			PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET)); // FIXME: PM_AttackAnimForWeapon() returns WEAP_ATTACK1 anyway
 			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		else
@@ -4569,6 +4605,7 @@ static void PM_Weapon(void)
 		PM_ContinueWeaponAnim(weapattackanim);
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		break;          // no animation
 	default:
 		// testing
@@ -4604,11 +4641,20 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET: // FIXME: see below - see cg_weapons.c
 		if (!pm->ps->ammo[WP_MORTAR])
 		{
 			PM_AddEvent(EV_NOAMMO);
 		}
 		break;
+	/*
+	case WP_MORTAR2_SET:
+	if (!pm->ps->ammo[WP_MORTAR2])
+	{
+	    PM_AddEvent(EV_NOAMMO);
+	}
+	break;
+	*/
 	default:
 		break;
 	}
@@ -4656,6 +4702,7 @@ static void PM_Weapon(void)
 	case WP_LANDMINE:
 	case WP_SMOKE_BOMB:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		break;
 	case WP_LUGER:
@@ -5010,7 +5057,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 	}
 
-	if ((ps->eFlags & EF_PRONE) || ps->weapon == WP_MORTAR_SET)
+	if ((ps->eFlags & EF_PRONE) || IS_MORTAR_WEAPON_SET(ps->weapon))
 	{
 		leaning = 0;    // not allowed to lean while prone
 
@@ -5273,7 +5320,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			}
 		}
 	}
-	else if (ps->weapon == WP_MORTAR_SET)
+	else if (IS_MORTAR_WEAPON_SET(ps->weapon))
 	{
 		float degsSec = 60.f;
 		float pitch, oldPitch;
@@ -5912,7 +5959,8 @@ void PmoveSingle(pmove_t *pmove)
 			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
 			    pm->ps->weapon != WP_MOBILE_MG42_SET &&
 			    pm->ps->weapon != WP_MOBILE_BROWNING_SET &&
-			    pm->ps->weapon != WP_MORTAR_SET)
+			    pm->ps->weapon != WP_MORTAR_SET &&
+			    pm->ps->weapon != WP_MORTAR2_SET)
 			{
 
 				pm->ps->eFlags |= EF_ZOOMING;
@@ -6065,7 +6113,7 @@ void PmoveSingle(pmove_t *pmove)
 	case PM_INTERMISSION: // no movement at all
 		return;
 	case PM_NORMAL:
-		if (pm->ps->weapon == WP_MORTAR_SET)
+		if (IS_MORTAR_WEAPON_SET(pm->ps->weapon))
 		{
 			pm->cmd.forwardmove = 0;
 			pm->cmd.rightmove   = 0;
@@ -6096,6 +6144,11 @@ void PmoveSingle(pmove_t *pmove)
 		if (pm->ps->weapon == WP_MORTAR_SET)
 		{
 			pm->ps->weapon = WP_MORTAR;
+		}
+
+		if (pm->ps->weapon == WP_MORTAR2_SET)
+		{
+			pm->ps->weapon = WP_MORTAR2;
 		}
 	}
 	else

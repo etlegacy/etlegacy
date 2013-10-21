@@ -1,11 +1,10 @@
 #
-# ET: Legacy Makefile for AROS
+# ET: Legacy Makefile for AROS and MorphOS
 #
 
 ETLEGACY_VERSION = 2.71rc2
 
 BUILD_CLIENT = 1
-BUILD_SERVER = 0
 BUILD_GAME_SO = 1
 
 CC = gcc
@@ -13,7 +12,6 @@ CXX = g++
 MKDIR = mkdir
 
 CLIENT_NAME = etl
-SERVER_NAME = etlded
 MODNAME = legacy
 
 PLATFORM = $(shell uname -s)
@@ -25,6 +23,11 @@ ifeq ($(ARCH),powerpc64)
 	ARCH = ppc64
 endif
 
+STRIPFLAGS = --strip-unneeded
+ifeq ($(PLATFORM), MorphOS)
+	STRIPFLAGS += -K dllEntry -K vmMain -K morphos_so_init -K morphos_so_deinit
+endif
+
 MOUNT_DIR = src
 LIBS_DIR = libs
 BUILD_DIR = build
@@ -32,7 +35,7 @@ BUILD_DIR = build
 GENERATE_DEPENDENCIES = 1
 
 FEATURE_CURL = 1
-FEATURE_OGG_VORBIS = 1
+FEATURE_OGG_VORBIS = 0
 FEATURE_OPENAL = 0
 FEATURE_FREETYPE = 0
 FEATURE_TRACKER = 0
@@ -58,13 +61,12 @@ UIDIR = $(MOUNT_DIR)/ui
 TGTDIR = $(LIBS_DIR)/tinygettext
 
 #############################################################################
-# SETUP AND BUILD -- AROS
+# SETUP AND BUILD
 #############################################################################
 
 BASE_CFLAGS = -Wall -fno-strict-aliasing -Wimplicit -pipe -I$(BUILD_DIR)
 
 CLIENT_CFLAGS = $(shell sdl-config --cflags)
-SERVER_CFLAGS =
 
 ifeq ($(FEATURE_OPENAL),1)
 	CLIENT_CFLAGS += -DFEATURE_OPENAL
@@ -80,29 +82,47 @@ endif
 
 ifeq ($(FEATURE_TRACKER),1)
 	CLIENT_CFLAGS += -DFEATURE_TRACKER
-	SERVER_CFLAGS += -DFEATURE_TRACKER
 endif
 
 ifeq ($(FEATURE_PUREHACK),1)
 	CLIENT_CFLAGS += -DFEATURE_PUREHACK
-	SERVER_CFLAGS += -DFEATURE_PUREHACK
 endif
 
 ifeq ($(FEATURE_GETTEXT),1)
 	CLIENT_CFLAGS += -DFEATURE_GETTEXT
 endif
 
+ifeq ($(PLATFORM), MorphOS)
+	CLIENT_CFLAGS += -maltivec
+endif
+
 DEBUG_CFLAGS = -g -O0 -D_DEBUG
 OPTIMIZEVM = -O2 -funroll-loops -fomit-frame-pointer
 OPTIMIZE = $(OPTIMIZEVM) -ffast-math
 
-SHLIBEXT = dll
+ifeq ($(PLATFORM), MorphOS)
+	SHLIBEXT = so
+else
+	SHLIBEXT = dll
+endif
 SHLIBCFLAGS =
 SHLIBLDFLAGS = $(LDFLAGS)
+ifeq ($(PLATFORM), MorphOS)
+	SHLIBCFLAGS += -noixemul
+	SHLIBLDFLAGS += -noixemul -nostartfiles
+endif
 
-LIBS = -ldll
+ifeq ($(PLATFORM), MorphOS)
+	LIBS = -lm
+else
+	LIBS = -ldll
+endif
 
-CLIENT_LIBS = -lglew $(shell sdl-config --libs)
+ifneq ($(PLATFORM), MorphOS)
+	CLIENT_LIBS = -lglew
+endif
+
+CLIENT_LIBS = $(shell sdl-config --libs)
 
 ifeq ($(FEATURE_OPENAL),1)
 	CLIENT_LIBS += -lopenal
@@ -117,7 +137,10 @@ ifeq ($(FEATURE_FREETYPE),1)
 endif
 
 ifeq ($(FEATURE_CURL),1)
-	CLIENT_LIBS += -lcurl -lssl -lcrypto
+	CLIENT_LIBS += -lcurl
+	ifneq ($(PLATFORM), MorphOS)
+		CLIENT_LIBS += -lssl -lcrypto
+	endif
 endif
 
 ifeq ($(FEATURE_GETTEXT),1)
@@ -126,13 +149,13 @@ endif
 
 CLIENT_LIBS += -ljpeg -lz
 
-SHLIBNAME=_mp_aros_$(ARCH).$(SHLIBEXT)
+ifeq ($(PLATFORM), MorphOS)
+	SHLIBNAME=_mp_morphos_$(ARCH).$(SHLIBEXT)
+else
+	SHLIBNAME=_mp_aros_$(ARCH).$(SHLIBEXT)
+endif
 
 TARGETS =
-
-ifneq ($(BUILD_SERVER),0)
-	TARGETS += $(B)/$(SERVER_NAME)
-endif
 
 ifneq ($(BUILD_CLIENT),0)
 	TARGETS += $(B)/$(CLIENT_NAME)
@@ -194,11 +217,6 @@ $(echo_cmd) "UI_CC $<"
 $(Q)$(CC) -DUIDLL $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
 endef
 
-define DO_DED_CC
-$(echo_cmd) "DED_CC $<"
-$(Q)$(CC) $(NOTSHLIBCFLAGS) -DDEDICATED $(CFLAGS) $(SERVER_CFLAGS) $(OPTIMIZE) -o $@ -c $<
-endef
-
 #############################################################################
 # MAIN TARGETS
 #############################################################################
@@ -209,14 +227,12 @@ all: debug release
 debug:
 	@$(MAKE) -f makefile.aros targets B=$(BD) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
 	  OPTIMIZE="-D_DEBUG $(DEBUG_CFLAGS)" OPTIMIZEVM="-D_DEBUG $(DEBUG_CFLAGS)" \
-	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
-	  STRIP="echo"
+	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" V=$(V) STRIP="echo"
 
 release:
 	@$(MAKE) -f makefile.aros targets B=$(BR) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
 	  OPTIMIZE="-DNDEBUG $(OPTIMIZE)" OPTIMIZEVM="-DNDEBUG $(OPTIMIZEVM)" \
-	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
-	  STRIP="strip"
+	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" V=$(V) STRIP="strip"
 
 # Create the build directories, check libraries and print out
 # an informational message, then start building
@@ -239,12 +255,6 @@ targets: makedirs
 	@echo ""
 	@echo "  CLIENT_CFLAGS:"
 	-@for i in $(CLIENT_CFLAGS); \
-	do \
-		echo "    $$i"; \
-	done
-	@echo ""
-	@echo "  SERVER_CFLAGS:"
-	-@for i in $(SERVER_CFLAGS); \
 	do \
 		echo "    $$i"; \
 	done
@@ -281,7 +291,6 @@ makedirs:
 	@if [ ! -d $(BUILD_DIR) ];then $(MKDIR) $(BUILD_DIR);fi
 	@if [ ! -d $(B) ];then $(MKDIR) $(B);fi
 	@if [ ! -d $(B)/client ];then $(MKDIR) $(B)/client;fi
-	@if [ ! -d $(B)/ded ];then $(MKDIR) $(B)/ded;fi
 	@if [ ! -d $(B)/$(MODNAME) ];then $(MKDIR) $(B)/$(MODNAME);fi
 	@if [ ! -d $(B)/$(MODNAME)/cgame ];then $(MKDIR) $(B)/$(MODNAME)/cgame;fi
 	@if [ ! -d $(B)/$(MODNAME)/game ];then $(MKDIR) $(B)/$(MODNAME)/game;fi
@@ -428,85 +437,22 @@ ifeq ($(FEATURE_GETTEXT),1)
 		$(B)/client/po_parser.o
 endif
 
-$(B)/$(CLIENT_NAME)$(FULLBINEXT): $(Q3OBJ) $(Q3POBJ)
+$(B)/$(CLIENT_NAME): $(Q3OBJ) $(Q3POBJ)
 	$(echo_cmd) "LD $@"
 	$(echo_cmd) "$(CXX) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) -o $@ $(Q3OBJ) $(Q3POBJ) $(CLIENT_LIBS) $(LIBS)"
 	$(Q)$(CXX) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) \
 		-o $@ $(Q3OBJ) $(Q3POBJ) \
 		$(CLIENT_LIBS) $(LIBS)
-	$(Q)$(STRIP) --strip-unneeded $@
-
-#############################################################################
-# DEDICATED SERVER
-#############################################################################
-
-Q3DOBJ = \
-	$(B)/ded/sv_bot.o \
-	$(B)/ded/sv_client.o \
-	$(B)/ded/sv_ccmds.o \
-	$(B)/ded/sv_game.o \
-	$(B)/ded/sv_init.o \
-	$(B)/ded/sv_main.o \
-	$(B)/ded/sv_net_chan.o \
-	$(B)/ded/sv_snapshot.o \
-	$(B)/ded/sv_tracker.o \
-	$(B)/ded/sv_world.o \
-	\
-	$(B)/ded/cm_load.o \
-	$(B)/ded/cm_patch.o \
-	$(B)/ded/cm_polylib.o \
-	$(B)/ded/cm_test.o \
-	$(B)/ded/cm_trace.o \
-	$(B)/ded/cmd.o \
-	$(B)/ded/common.o \
-	$(B)/ded/cvar.o \
-	$(B)/ded/files.o \
-	$(B)/ded/md4.o \
-	$(B)/ded/md5.o \
-	$(B)/ded/msg.o \
-	$(B)/ded/net_chan.o \
-	$(B)/ded/net_ip.o \
-	$(B)/ded/puff.o \
-	$(B)/ded/huffman.o \
-	\
-	$(B)/ded/q_math.o \
-	$(B)/ded/q_shared.o \
-	\
-	$(B)/ded/unzip.o \
-	$(B)/ded/vm.o \
-	$(B)/ded/vm_interpreted.o \
-	\
-	$(B)/ded/be_interface.o \
-	$(B)/ded/l_libvar.o \
-	$(B)/ded/l_log.o \
-	$(B)/ded/l_memory.o \
-	$(B)/ded/l_precomp.o \
-	$(B)/ded/l_script.o \
-	$(B)/ded/l_struct.o \
-	\
-	$(B)/ded/null_client.o \
-	$(B)/ded/null_input.o \
-	$(B)/ded/null_snddma.o \
-	\
-	$(B)/ded/con_log.o \
-	$(B)/ded/sys_main.o \
-	$(B)/ded/sys_platform.o \
-	$(B)/ded/con_passive.o
-
-$(B)/$(SERVER_NAME)$(FULLBINEXT): $(Q3DOBJ)
-	$(echo_cmd) "LD $@"
-	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(Q3DOBJ) $(LIBS)
-
+	$(Q)$(STRIP) $(STRIPFLAGS) $@
 
 #############################################################################
 ## CGAME
 #############################################################################
 
-Q3CGOBJ_ = \
+Q3CGOBJ = \
 	$(B)/$(MODNAME)/cgame/cg_main.o \
 	$(B)/$(MODNAME)/cgame/bg_animation.o \
 	$(B)/$(MODNAME)/cgame/bg_animgroup.o \
-	$(B)/$(MODNAME)/cgame/bg_campaign.o \
 	$(B)/$(MODNAME)/cgame/bg_character.o \
 	$(B)/$(MODNAME)/cgame/bg_classes.o \
 	$(B)/$(MODNAME)/cgame/bg_misc.o \
@@ -555,24 +501,26 @@ Q3CGOBJ_ = \
 	$(B)/$(MODNAME)/cgame/cg_weapons.o \
 	$(B)/$(MODNAME)/cgame/cg_window.o \
 	$(B)/$(MODNAME)/cgame/q_math.o \
-	$(B)/$(MODNAME)/cgame/q_shared.o
-  
-Q3CGOBJ = $(Q3CGOBJ_) $(B)/$(MODNAME)/cgame/cg_syscalls.o
+	$(B)/$(MODNAME)/cgame/q_shared.o \
+	$(B)/$(MODNAME)/cgame/cg_syscalls.o
+
+ifeq ($(PLATFORM), MorphOS)
+	Q3CGOBJ += $(B)/$(MODNAME)/cgame/mos_libnix_so.o
+endif
 
 $(B)/$(MODNAME)/cgame$(SHLIBNAME): $(Q3CGOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3CGOBJ) $(LIBS)
-	$(Q)$(STRIP) --strip-unneeded $@
+	$(Q)$(STRIP) $(STRIPFLAGS) $@
 
 #############################################################################
 ## GAME
 #############################################################################
 
-Q3GOBJ_ = \
+Q3GOBJ = \
 	$(B)/$(MODNAME)/game/g_main.o \
 	$(B)/$(MODNAME)/game/bg_animation.o \
 	$(B)/$(MODNAME)/game/bg_animgroup.o \
-	$(B)/$(MODNAME)/game/bg_campaign.o \
 	$(B)/$(MODNAME)/game/bg_character.o \
 	$(B)/$(MODNAME)/game/bg_classes.o \
 	$(B)/$(MODNAME)/game/bg_misc.o \
@@ -620,21 +568,23 @@ Q3GOBJ_ = \
 	$(B)/$(MODNAME)/game/g_vote.o \
 	$(B)/$(MODNAME)/game/g_weapon.o \
 	$(B)/$(MODNAME)/game/q_math.o \
-	$(B)/$(MODNAME)/game/q_shared.o
+	$(B)/$(MODNAME)/game/q_shared.o \
+	$(B)/$(MODNAME)/game/g_syscalls.o
 
-Q3GOBJ = $(Q3GOBJ_) $(B)/$(MODNAME)/game/g_syscalls.o
+ifeq ($(PLATFORM), MorphOS)
+	Q3GOBJ += $(B)/$(MODNAME)/game/mos_libnix_so.o
+endif
 
 $(B)/$(MODNAME)/qagame$(SHLIBNAME): $(Q3GOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3GOBJ) $(LIBS)
-	$(Q)$(STRIP) --strip-unneeded $@
+	$(Q)$(STRIP) $(STRIPFLAGS) $@
 
 #############################################################################
 ## UI
 #############################################################################
 
-Q3UIOBJ_ = \
-	$(B)/$(MODNAME)/ui/bg_campaign.o \
+Q3UIOBJ = \
 	$(B)/$(MODNAME)/ui/bg_classes.o \
 	$(B)/$(MODNAME)/ui/bg_misc.o \
 	$(B)/$(MODNAME)/ui/ui_main.o \
@@ -643,14 +593,17 @@ Q3UIOBJ_ = \
 	$(B)/$(MODNAME)/ui/ui_loadpanel.o \
 	$(B)/$(MODNAME)/ui/ui_shared.o \
 	$(B)/$(MODNAME)/ui/q_math.o \
-	$(B)/$(MODNAME)/ui/q_shared.o
+	$(B)/$(MODNAME)/ui/q_shared.o \
+	$(B)/$(MODNAME)/ui/ui_syscalls.o
 
-Q3UIOBJ = $(Q3UIOBJ_) $(B)/$(MODNAME)/ui/ui_syscalls.o
+ifeq ($(PLATFORM), MorphOS)
+	Q3UIOBJ += $(B)/$(MODNAME)/ui/mos_libnix_so.o
+endif
 
 $(B)/$(MODNAME)/ui$(SHLIBNAME): $(Q3UIOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3UIOBJ) $(LIBS)
-	$(Q)$(STRIP) --strip-unneeded $@
+	$(Q)$(STRIP) $(STRIPFLAGS) $@
 
 #############################################################################
 ## CLIENT/SERVER RULES
@@ -689,24 +642,6 @@ $(B)/client/%.o: $(SYSDIR)/%.c
 $(B)/client/%.o: $(TGTDIR)/%.cpp
 	$(DO_CXX)
 
-$(B)/ded/%.o: $(SDIR)/%.c
-	$(DO_DED_CC)
-
-$(B)/ded/%.o: $(CMDIR)/%.c
-	$(DO_DED_CC)
-
-$(B)/ded/%.o: $(BLIBDIR)/%.c
-	$(DO_BOT_CC)
-
-$(B)/ded/%.o: $(SYSDIR)/%.c
-	$(DO_DED_CC)
-
-$(B)/ded/%.o: $(NDIR)/%.c
-	$(DO_DED_CC)
-
-$(B)/ded/%.o: $(GDIR)/%.c
-	$(DO_DED_CC)
-	
 #############################################################################
 ## GAME MODULE RULES
 #############################################################################
@@ -723,11 +658,17 @@ $(B)/$(MODNAME)/cgame/ui_%.o: $(UIDIR)/ui_%.c
 $(B)/$(MODNAME)/cgame/%.o: $(CGDIR)/%.c
 	$(DO_CGAME_CC)
 
+$(B)/$(MODNAME)/cgame/%.o: $(SYSDIR)/%.c
+	$(DO_CGAME_CC)
+
 $(B)/$(MODNAME)/game/%.o: $(GDIR)/%.c
 	$(DO_GAME_CC)
 
 $(B)/$(MODNAME)/game/q_%.o: $(CMDIR)/q_%.c
-	$(DO_GAME_CC)	
+	$(DO_GAME_CC)
+
+$(B)/$(MODNAME)/game/%.o: $(SYSDIR)/%.c
+	$(DO_GAME_CC)
 	
 $(B)/$(MODNAME)/ui/q_%.o: $(CMDIR)/q_%.c
 	$(DO_UI_CC)
@@ -736,6 +677,9 @@ $(B)/$(MODNAME)/ui/bg_%.o: $(GDIR)/bg_%.c
 	$(DO_UI_CC)
 
 $(B)/$(MODNAME)/ui/%.o: $(UIDIR)/%.c
+	$(DO_UI_CC)
+
+$(B)/$(MODNAME)/ui/%.o: $(SYSDIR)/%.c
 	$(DO_UI_CC)
 
 #############################################################################

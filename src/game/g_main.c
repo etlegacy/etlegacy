@@ -304,6 +304,8 @@ vmCvar_t g_moverScale;
 vmCvar_t g_fixedphysics;
 vmCvar_t g_fixedphysicsfps;
 
+vmCvar_t g_pronedelay;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -563,12 +565,13 @@ cvarTable_t gameCvarTable[] =
 	{ &g_moverScale,               "g_moverScale",               "1.0",                        0 },
 	{ &g_fixedphysics,             "g_fixedphysics",             "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 	{ &g_fixedphysicsfps,          "g_fixedphysicsfps",          "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
+	{ &g_pronedelay,               "g_pronedelay",               "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 };
 
 // made static to avoid aliasing
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
-void G_InitGame(int levelTime, int randomSeed, int restart);
+void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServer);
 void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
 void CheckExitRules(void);
@@ -607,7 +610,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 
 		Bot_Interface_InitHandles();
 #endif
-		G_InitGame(arg0, arg1, arg2);
+		G_InitGame(arg0, arg1, arg2, arg3);
 		G_Printf("Game Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
 #ifdef FEATURE_OMNIBOT
 
@@ -2162,7 +2165,7 @@ qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init)
 G_InitGame
 ============
 */
-void G_InitGame(int levelTime, int randomSeed, int restart)
+void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServer)
 {
 	int  i;
 	char cs[MAX_INFO_STRING];
@@ -2204,6 +2207,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	{
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
 	}
+
+	level.legacyServer = (legacyServer == NULL ? qfalse : legacyServer);
 
 	// set some level globals
 	i = level.server_settings;
@@ -3336,6 +3341,7 @@ void ExitLevel(void)
 	int       i;
 	gclient_t *cl;
 
+	// FIXME: do a switch
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
@@ -3429,6 +3435,7 @@ void ExitLevel(void)
 	{
 		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
 	}
+
 	level.changemap        = NULL;
 	level.intermissiontime = 0;
 
@@ -3568,6 +3575,7 @@ void G_LogExit(const char *string)
 	// Send gameCompleteStatus message to master servers
 	trap_SendConsoleCommand(EXEC_APPEND, "gameCompleteStatus\n");
 
+	// FIXME: do a switch
 	if (g_gametype.integer == GT_WOLF_STOPWATCH)
 	{
 		char cs[MAX_STRING_CHARS];
@@ -4064,31 +4072,25 @@ FUNCTIONS CALLED EVERY FRAME
 ========================================================================
 */
 
-/*
-=============
-CheckWolfMP
-
-Once a frame, check for changes in wolf MP player state
-=============
-*/
+/**
+ * @brief Once a frame, check for changes in wolf MP player state
+ */
 void CheckWolfMP(void)
 {
 	// check because we run 6 game frames before calling Connect and/or ClientBegin
 	// for clients on a map_restart
 	if (g_gametype.integer >= GT_WOLF)
 	{
-		if (g_gamestate.integer == GS_PLAYING || g_gamestate.integer == GS_INTERMISSION)
+		switch (g_gamestate.integer)
 		{
+		case GS_PLAYING:
+		case GS_INTERMISSION:
 			if (level.intermissiontime && g_gamestate.integer != GS_INTERMISSION)
 			{
 				trap_Cvar_Set("gamestate", va("%i", GS_INTERMISSION));
 			}
 			return;
-		}
-
-		// check warmup latch
-		if (g_gamestate.integer == GS_WARMUP)
-		{
+		case  GS_WARMUP: // check warmup latch
 			if (!g_doWarmup.integer ||
 			    (level.numPlayingClients >= match_minplayers.integer &&
 			     level.lastRestartTime + 1000 < level.time && G_readyMatchState()))
@@ -4100,11 +4102,8 @@ void CheckWolfMP(void)
 				trap_Cvar_Update(&g_gamestate);
 				trap_SetConfigstring(CS_WARMUP, va("%i", level.warmupTime));
 			}
-		}
-
-		// if the warmup time has counted down, restart
-		if (g_gamestate.integer == GS_WARMUP_COUNTDOWN)
-		{
+			break;
+		case GS_WARMUP_COUNTDOWN: // if the warmup time has counted down, restart
 			if (level.time > level.warmupTime)
 			{
 				level.warmupTime += 10000;
@@ -4113,6 +4112,9 @@ void CheckWolfMP(void)
 				level.restarted = qtrue;
 				return;
 			}
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -4262,13 +4264,9 @@ void CheckCvars(void)
 	}
 }
 
-/*
-=============
-G_RunThink
-
-Runs thinking code for this frame if necessary
-=============
-*/
+/**
+ * @briefRuns thinking code for this frame if necessary
+ */
 void G_RunThink(gentity_t *ent)
 {
 	float thinktime;
@@ -4623,14 +4621,15 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	if (ent->s.eType == ET_MISSILE
-	    || ent->s.eType == ET_FLAMEBARREL
-	    || ent->s.eType == ET_FP_PARTS
-	    || ent->s.eType == ET_FIRE_COLUMN
-	    || ent->s.eType == ET_FIRE_COLUMN_SMOKE
-	    || ent->s.eType == ET_EXPLO_PART
-	    || ent->s.eType == ET_RAMJET)
+	switch (ent->s.eType)
 	{
+	case ET_MISSILE:
+	case ET_FLAMEBARREL:
+	case ET_FP_PARTS:
+	case ET_FIRE_COLUMN:
+	case ET_FIRE_COLUMN_SMOKE:
+	case ET_EXPLO_PART:
+	case ET_RAMJET:
 		// pausing
 		if (level.match_pause == PAUSE_NONE)
 		{
@@ -4647,20 +4646,16 @@ void G_RunEntity(gentity_t *ent, int msec)
 			}
 			G_RunThink(ent);
 		}
-
 		return;
-	}
-
-	// Server-side collision for flamethrower
-	if (ent->s.eType == ET_FLAMETHROWER_CHUNK)
-	{
+	case  ET_FLAMETHROWER_CHUNK: // Server-side collision for flamethrower
 		G_RunFlamechunk(ent);
 
 		// hack for instantaneous velocity
 		VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 		VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
-
 		return;
+	default:
+		break;
 	}
 
 	if (ent->s.eType == ET_ITEM || ent->physicsObject)

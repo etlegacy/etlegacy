@@ -1045,17 +1045,24 @@ void Cmd_CleanHomepath_f(void)
 		return;
 	}
 
+	// if home- and basepath are same better don't start to clean ...
+	if (FS_IsSamePath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_basepath")))
+	{
+		Com_Printf("Invalid configuration to run clean cmd - 'fs_homepath' and 'fs_basepath' are equal.\n");
+		return;
+	}
+
 	// avoid unreferenced pk3 runtime issues (not on HD but still referenced in game)
 #ifndef DEDICATED
 	if (cls.state != CA_DISCONNECTED)
 	{
-		Com_Printf("You are connected to a server - '/disconnect' to run '/clean'.\n");
+		Com_Printf("You are connected to a server - enter '/disconnect' to run '/clean'.\n");
 		return;
 	}
 #else
 	if (com_sv_running && com_sv_running->integer)
 	{
-		Com_Printf("Server is running - '/killserver'  to run '/clean'.\n");
+		Com_Printf("Server is running - enter '/killserver' to run '/clean'.\n");
 		return;
 	}
 #endif // DEDICATED

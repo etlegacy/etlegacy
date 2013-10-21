@@ -3,10 +3,10 @@ Type=Application
 Name=ET:Legacy
 GenericName=A team-based multiplayer WWII tactical first-person shooter
 Comment=A team-based multiplayer WWII tactical first-person shooter
-Icon=etl.svg
+Icon=etl
 Exec=etl +connect %u
 Terminal=false
 MimeType=x-scheme-handler/et;
-Categories=Application;Game
+Categories=Game;ActionGame;
 StartupNotify=false
 

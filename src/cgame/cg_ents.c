@@ -1234,6 +1234,7 @@ static void CG_Missile(centity_t *cent)
 	// convert direction of travel into axis
 	// FIXME: do a switch
 	if (cent->currentState.weapon == WP_MORTAR_SET
+	    || cent->currentState.weapon == WP_MORTAR2_SET
 	    || cent->currentState.weapon == WP_PANZERFAUST
 	    || cent->currentState.weapon == WP_MAPMORTAR
 	    || cent->currentState.weapon == WP_GPG40

@@ -229,6 +229,8 @@ static int weapIconDrawSize(int weap)
 	case WP_K43_SCOPE:
 	case WP_MORTAR:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2:
+	case WP_MORTAR2_SET:
 		return 2;
 	}
 

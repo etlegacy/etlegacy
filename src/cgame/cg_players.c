@@ -1247,7 +1247,7 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 	{
 		leaning = 0;    // not allowed to lean while dead
 	}
-	if ((cent->currentState.eFlags & EF_PRONE) || cent->currentState.weapon == WP_MORTAR_SET)
+	if ((cent->currentState.eFlags & EF_PRONE) || IS_MORTAR_WEAPON_SET(cent->currentState.weapon))
 	{
 		leaning = 0;    // not allowed to lean while prone
 	}
@@ -3258,6 +3258,7 @@ weaponType_t weaponTypes[] =
 	{ WP_MOBILE_BROWNING,      "MOBILE BROWNING",},
 	{ WP_K43,                  "K43",     },
 	{ WP_MORTAR,               "MORTAR",  },
+	{ WP_MORTAR2,              "GRANATWERFER",},
 	{ WP_COLT,                 "COLT",    },
 	{ WP_LUGER,                "LUGER",   },
 	{ WP_AKIMBO_COLT,          "AKIMBO COLTS",},

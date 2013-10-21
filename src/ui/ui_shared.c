@@ -824,7 +824,7 @@ void Menu_UpdatePosition(menuDef_t *menu)
 				Item_SetScreenCoords(menu->items[i], x + 2 * xoffset, y);
 			}
 			// horizontally centered..
-			else if (!Q_stricmp(itemName, "et_logo") ||
+			else if (!Q_stricmp(itemName, "etl_logo") ||
 			         !Q_stricmp(itemName, "credits_etlegacy"))
 			{
 				Item_SetScreenCoords(menu->items[i], x + xoffset, y);

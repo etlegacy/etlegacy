@@ -956,7 +956,6 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 
 	if (tr.surfaceFlags & SURF_NOIMPACT)
 	{
-
 		tent                    = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_WALL);
 		tent->s.otherEntityNum  = ent->s.number;
 		tent->s.otherEntityNum2 = activator->s.number;
@@ -981,7 +980,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	}
 	else
 	{
-		// Ridah, bullet impact should reflect off surface
+		// bullet impact should reflect off surface
 		vec3_t reflect;
 		float  dot;
 
@@ -1147,7 +1146,7 @@ void aagun_think(gentity_t *self)
 		BG_EvaluateTrajectory(&self->s.apos, level.time, self->s.apos.trBase, qfalse, 0);
 	}
 
-//  self->s.frame++;
+	//self->s.frame++;
 
 	if (owner->client)
 	{
@@ -2009,14 +2008,13 @@ void misc_spawner_think(gentity_t *ent)
 
 void misc_spawner_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-
 	ent->think     = misc_spawner_think;
 	ent->nextthink = level.time + FRAMETIME;
 
-//  VectorCopy (other->r.currentOrigin, ent->r.currentOrigin);
-//  VectorCopy (ent->r.currentOrigin, ent->s.pos.trBase);
+	//VectorCopy (other->r.currentOrigin, ent->r.currentOrigin);
+	//VectorCopy (ent->r.currentOrigin, ent->s.pos.trBase);
 
-//  VectorCopy (other->r.currentAngles, ent->r.currentAngles);
+	//VectorCopy (other->r.currentAngles, ent->r.currentAngles);
 
 	trap_LinkEntity(ent);
 }

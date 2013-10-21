@@ -778,6 +778,7 @@ typedef struct
 	int xpChangeTime;
 
 	qboolean demoPlayback;
+	qboolean legacyClient;
 	qboolean loading;               // don't defer players at initial startup
 	qboolean intermissionStarted;   // don't play voice rewards, because game will end shortly
 
@@ -894,9 +895,6 @@ typedef struct
 	// game stats
 	int exitStatsTime;
 	int exitStatsFade;
-
-	// low ammo warning state
-	int lowAmmoWarning;             // 1 = low, 2 = empty
 
 	// kill timers for carnage reward
 	int lastKillTime;
@@ -2004,6 +2002,7 @@ typedef struct cgs_s
 
 	int fixedphysics;
 	int fixedphysicsfps;
+	int pronedelay;
 
 } cgs_t;
 
@@ -2198,6 +2197,8 @@ extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
 extern vmCvar_t cg_simpleItems;
+
+extern vmCvar_t cg_weapaltReloads;
 
 extern vmCvar_t cg_automapZoom;
 

@@ -701,7 +701,9 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	case WP_GRENADE_PINEAPPLE:
 	case WP_FLAMETHROWER:
 	case WP_MORTAR:
+	case WP_MORTAR2:
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 	case WP_PANZERFAUST:
 		skipammo = qtrue;
 		break;
@@ -710,10 +712,9 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		break;
 	}
 
-
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK))
 	{
-		// FIXME: browning? there is Jagdpanther using the browning?
+		// FIXME: browning on tank?
 		return WP_MOBILE_MG42;
 	}
 
@@ -732,6 +733,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		*akimboammo = -1;
 	}
 
+	// FIXME: do a switch
 	if (weap == WP_LANDMINE)
 	{
 		if (!cgs.gameManager)
@@ -750,7 +752,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 			}
 		}
 	}
-	else if (weap == WP_MORTAR || weap == WP_MORTAR_SET || weap == WP_PANZERFAUST)
+	else if (weap == WP_MORTAR || weap == WP_MORTAR_SET || weap == WP_MORTAR2 || weap == WP_MORTAR2_SET || weap == WP_PANZERFAUST)
 	{
 		*ammo += *clips;
 	}
@@ -2231,7 +2233,7 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawSnapshot(y);
 	}
 
-	if (cg_drawTime.integer & LOCALTIME_ON && (!cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
+	if ((cg_drawTime.integer & LOCALTIME_ON) && (!cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
 	{
 		y = CG_DrawLocalTime(y);
 	}

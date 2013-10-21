@@ -59,7 +59,7 @@ menuDef {
 		name		"image"
 		rect		120 140 400 200
 		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/et_logo_huge_dark"
+		background	"ui/assets/etl_logo_huge_dark"
 		visible		1
 		decoration
 	}

@@ -33,8 +33,6 @@
 
 #include "tr_local.h"
 
-volatile renderCommandList_t *renderCommandList;
-
 /*
 =====================
 R_PerformanceCounters
@@ -568,7 +566,6 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	// add swap-buffers command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_SWAP_BUFFERS;
 	cmdList->used                            += sizeof(swapBuffersCommand_t);
-
 
 	R_IssueRenderCommands(qtrue);
 

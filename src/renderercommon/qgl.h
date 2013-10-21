@@ -34,16 +34,26 @@
 #ifndef __QGL_H__
 #define __QGL_H__
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   include <GLES/gl.h>
 #   include <EGL/egl.h>
+#elif defined(__MORPHOS__)
+#   include <proto/tinygl.h>
+#   include <tgl/gl.h>
+#   define GL_GENERATE_MIPMAP_SGIS 0x8191
+#   define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
+#   define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
+#   define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+#   define GL_RGB4_S3TC 0x83A1
+#   define GLAPIENTRY
+#   define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_UNITS_ARB
 #else
 #   ifdef BUNDLED_GLEW
 #       include "GL/glew.h"
 #   else
 #       include <GL/glew.h>
 #   endif
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 /*
 #ifndef FEATURE_RENDERER2
@@ -59,7 +69,25 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_GLES
+#ifdef __MORPHOS__
+#undef glActiveTextureARB
+static void glActiveTextureARB(GLenum unit)
+{
+	GLActiveTextureARB(__tglContext, unit);
+}
+#undef glLockArraysEXT
+static void glLockArraysEXT(int f, int c)
+{
+	GLLockArraysEXT(__tglContext, f, c);
+}
+#undef glUnlockArraysEXT
+static void glUnlockArraysEXT()
+{
+	GLUnlockArraysEXT(__tglContext);
+}
+#endif
+
+#ifdef FEATURE_RENDERER_GLES
 #   define qglMultiTexCoord2fARB(t, s)                             glMultiTexCoord4f(t, s, 0, 1.0f)
 #   define qglActiveTextureARB                                     glActiveTexture
 #   define qglClientActiveTextureARB                               glClientActiveTexture
@@ -67,15 +95,15 @@ extern "C" {
 #   define qglMultiTexCoord2fARB                                   glMultiTexCoord2fARB
 #   define qglActiveTextureARB                                     glActiveTextureARB
 #   define qglClientActiveTextureARB                               glClientActiveTextureARB
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglLockArraysEXT                                        glLockArraysEXT
 #define qglUnlockArraysEXT                                      glUnlockArraysEXT
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 extern void (*glLockArraysEXT)(GLint, GLint);
 extern void (*glUnlockArraysEXT)(void);
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglPNTrianglesiATI                                      glPNTrianglesiATI
 #define qglPNTrianglesfATI                                      glPNTrianglesfATI
@@ -193,20 +221,20 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglClearAccum glClearAccum
 #define qglClearColor glClearColor
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglClearDepth glClearDepthf
 #else
 #   define qglClearDepth glClearDepth
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglClearIndex glClearIndex
 #define qglClearStencil glClearStencil
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglClipPlane glClipPlanef
 #else
 #   define qglClipPlane glClipPlane
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglColor3b glColor3b
 #define qglColor3bv glColor3bv
@@ -214,13 +242,13 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglColor3dv glColor3dv
 
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglColor3f(r, g, b) glColor4f(r, g, b, 1.0f)
 #   define qglColor3fv(a) glColor4f(a[0], a[1], a[2], 1.0f)
 #else
 #   define qglColor3f glColor3f
 #   define qglColor3fv glColor3fv
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglColor3i glColor3i
 #define qglColor3iv glColor3iv
@@ -238,11 +266,11 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglColor4dv glColor4dv
 #define qglColor4f glColor4f
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglColor4fv(a) glColor4f(a[0], a[1], a[2], a[3])
 #else
 #   define qglColor4fv glColor4fv
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglColor4i glColor4i
 #define qglColor4iv glColor4iv
@@ -250,11 +278,11 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglColor4sv glColor4sv
 #define qglColor4ub glColor4ub
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglColor4ubv(a) glColor4ub((a)[0], (a)[1], (a)[2], (a)[3])
 #else
 #   define qglColor4ubv glColor4ubv
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglColor4ui glColor4ui
 #define qglColor4uiv glColor4uiv
@@ -274,11 +302,11 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglDepthFunc glDepthFunc
 #define qglDepthMask glDepthMask
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglDepthRange glDepthRangef
 #else
 #   define qglDepthRange glDepthRange
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglDisable glDisable
 #define qglDisableClientState glDisableClientState
@@ -311,20 +339,20 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglFogf glFogf
 #define qglFogfv glFogfv
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglFogi  glFogf
 #else
 #   define qglFogi glFogi
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglFogiv glFogiv
 #define qglFrontFace glFrontFace
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglFrustum glFrustumf
 #else
 #   define qglFrustum glFrustum
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglGenLists glGenLists
 #define qglGenTextures glGenTextures
@@ -417,11 +445,11 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglNormal3sv glNormal3sv
 #define qglNormalPointer glNormalPointer
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #   define qglOrtho glOrthof
 #else
 #   define qglOrtho glOrtho
-#endif // HAVE_GLES
+#endif // FEATURE_RENDERER_GLES
 
 #define qglPassThrough glPassThrough
 #define qglPixelMapfv glPixelMapfv
@@ -570,7 +598,7 @@ extern void (*glUnlockArraysEXT)(void);
 #define qglVertexPointer glVertexPointer
 #define qglViewport glViewport
 
-#ifdef HAVE_GLES
+#ifdef FEATURE_RENDERER_GLES
 #define GL_CLAMP     GL_CLAMP_TO_EDGE
 #define GL_TEXTURE0_ARB GL_TEXTURE0
 #define GL_TEXTURE1_ARB GL_TEXTURE1

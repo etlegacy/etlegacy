@@ -570,6 +570,7 @@ static void CG_OffsetFirstPersonView(void)
 	}
 	break;
 	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];

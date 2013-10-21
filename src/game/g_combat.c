@@ -183,6 +183,7 @@ void TossClientItems(gentity_t *self)
 	    case WP_MOBILE_MG42_SET:
 	        weapon = WP_MOBILE_MG42;
 	        break;
+	        // browning ... mortar2
 	}
 
 	// find the item type for this weapon
@@ -1481,7 +1482,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// set weapons means less knockback
-	if (client && (client->ps.weapon == WP_MORTAR_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
+	if (client && (IS_MORTAR_WEAPON_SET(client->ps.weapon) || client->ps.weapon == WP_MOBILE_BROWNING_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
 	{
 		knockback *= 0.5;
 	}

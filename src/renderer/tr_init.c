@@ -186,12 +186,12 @@ cvar_t *r_maxpolys;
 cvar_t *r_maxpolyverts;
 
 // TODO: check if this crazy stuff is needed
-vec4hack_t     tess_xyz[SHADER_MAX_VERTEXES];
-vec4hack_t     tess_normal[SHADER_MAX_VERTEXES];
-vec2hack_t     tess_texCoords0[SHADER_MAX_VERTEXES];
-vec2hack_t     tess_texCoords1[SHADER_MAX_VERTEXES];
-glIndex_t      tess_indexes[SHADER_MAX_INDEXES];
-color4ubhack_t tess_vertexColors[SHADER_MAX_VERTEXES];
+vec4hack_t     tess_xyz[SHADER_MAX_VERTEXES] QALIGN(16);
+vec4hack_t     tess_normal[SHADER_MAX_VERTEXES] QALIGN(16);
+vec2hack_t     tess_texCoords0[SHADER_MAX_VERTEXES] QALIGN(16);
+vec2hack_t     tess_texCoords1[SHADER_MAX_VERTEXES] QALIGN(16);
+glIndex_t      tess_indexes[SHADER_MAX_INDEXES] QALIGN(16);
+color4ubhack_t tess_vertexColors[SHADER_MAX_VERTEXES] QALIGN(16);
 
 static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {

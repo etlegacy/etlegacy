@@ -1281,61 +1281,19 @@ msgstr ""
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
 msgstr ""
 
-msgid "IR4T4 - Coding, mod development & bad boy"
+msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
 msgstr ""
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
 msgstr ""
 
-msgid "Jere 'Jacker' S - main windows coder, render"
+msgid "Jere 'Jacker' S. - Main windows coder & render"
 msgstr ""
 
 msgid "^1CONTRIBUTORS"
 msgstr ""
 
-msgid "Acqu - Bug reports & patches"
-msgstr ""
-
-msgid "Antman - Map location override databases "
-msgstr ""
-
-msgid "Dragon aka Dragonji - Bug reports & Windows tester"
-msgstr ""
-
-msgid "Lakersforce - Translations, bug reports"
-msgstr ""
-
-msgid "Mathieu Olivier - Bug fixes and code clean up"
-msgstr ""
-
-msgid "Merlin - Bug reports"
-msgstr ""
-
-msgid "RaFaL aka ***Rafal*** - Menu scripts and Windows tester"
-msgstr ""
-
-msgid "Dusan 'TheDushan' Jocic - Advices, patches"
-msgstr ""
-
-msgid "Ensiform - Advices, comments"
-msgstr ""
-
 msgid "^1GREETINGS"
-msgstr ""
-
-msgid "ETPub Team"
-msgstr ""
-
-msgid "NQ Team - core hug goes to C.."
-msgstr ""
-
-msgid "Omni-Bot Team - especially crapshot, Dr. Evil & Palota"
-msgstr ""
-
-msgid "Splash Damage ET Community"
-msgstr ""
-
-msgid "Zynx"
 msgstr ""
 
 msgid "SPLASH DAMAGE"
@@ -3706,4 +3664,40 @@ msgstr ""
 #: src/ui/ui_main.c:4340 src/ui/ui_main.c:4388 src/ui/ui_main.c:4423
 #, c-format
 msgid "Added favorite server %s\n"
+msgstr ""
+
+msgid "^3See HALL OF FAME below"
+msgstr ""
+
+msgid "^1WEBSITE"
+msgstr ""
+
+msgid "http://www.etlegacy.com"
+msgstr ""
+
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+msgstr ""
+
+msgid "HALL OF FAME"
+msgstr ""
+
+msgid "^3ET LEGACY HALL OF FAME"
+msgstr ""
+
+msgid "Advices, Bug reports, Patches"
+msgstr ""
+
+msgid "^1TRANSLATIONS"
+msgstr ""
+
+msgid "^1PORTS"
+msgstr ""
+
+msgid "'BSzili' - AROS and MorphOS"
+msgstr ""
+
+msgid "'PtitSeb' - Pandora"
+msgstr ""
+
+msgid "^1PACKAGE MAINTAINERS"
 msgstr ""

@@ -28,6 +28,30 @@ models/weapons2/shells/m_shell
 	}
 }
 
+
+icons/iconw_mortar
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_mortar.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_mortar_ax
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_mortar_ax.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+
 icons/iconw_landmine_1_select
 {
 	nomipmaps
@@ -111,6 +135,17 @@ icons/iconw_mortar_1_select
 	nopicmip
 	{
 		map icons/iconw_mortar_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_mortar_ax_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_mortar_ax_1_select.tga
 		blendFunc blend
 		rgbGen vertex
 	}
@@ -302,6 +337,19 @@ gfx/limbo/cm_dynamite
 	{
 		map gfx/limbo/cm_dynamite.tga
 		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/dynamite
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_dynamite.tga
 		blendfunc blend
 		rgbGen vertex
 		alphaGen vertex
@@ -884,7 +932,31 @@ models/weapons2/browning/barrel
 	}
 }
 
-//Helmet Ranks//
+//Axis Granatwefer 34
+models/multiplayer/mortar/mortar_ax
+{
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+	}
+	{
+		map models/multiplayer/mortar/mortar_ax.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+	}
+}
+
+models/multiplayer/mortar/mortar_shell_ax
+{
+	{
+		map models/multiplayer/mortar/mortar_shell_ax.jpg
+		rgbGen lightingdiffuse
+	}
+}
+
+
+// Helmet Ranks 
 models/players/temperate/common/rank1
 {
 	polygonoffset
