@@ -303,6 +303,10 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, int *s
 		break;
 	case WP_MORTAR:
 	case WP_MORTAR_SET:
+#ifdef LEGACY
+	case WP_MORTAR2:
+	case WP_MORTAR2_SET:
+#endif
 #ifdef NOQUARTER
 	case WP_MORTAR2:
 	case WP_MORTAR2_SET:
@@ -708,6 +712,10 @@ static int _weaponBotToGame(int weapon)
 		return WP_MOBILE_BROWNING;
 	case 89:
 		return WP_MOBILE_BROWNING_SET;
+	case 92:
+		return WP_MORTAR2;
+	case 93:
+		return WP_MORTAR2_SET;
 	case 94:
 		return WP_KNIFE_KABAR;
 #endif
@@ -860,6 +868,10 @@ int Bot_WeaponGameToBot(int weapon)
 		return ET_WP_MOBILE_MG42; //cs: was 88
 	case WP_MOBILE_BROWNING_SET:
 		return ET_WP_MOBILE_MG42_SET; //cs: was 89
+	case WP_MORTAR2:
+		return ET_WP_MORTAR; //cs: was 92
+	case WP_MORTAR2_SET:
+		return ET_WP_MORTAR_SET; //cs: was 93
 	case WP_KNIFE_KABAR:
 		return ET_WP_KNIFE;
 #endif // LEGACY
@@ -1775,11 +1787,13 @@ static int _GetEntityClass(gentity_t *_ent)
 		case WP_GPG40:
 			return ET_CLASSEX_GPG40_GRENADE;
 		case WP_MORTAR_SET:
-			return ET_CLASSEX_MORTAR;
+#ifdef LEGACY
+		case WP_MORTAR2_SET:
+#endif
 #ifdef NOQUARTER
 		case WP_MORTAR2_SET:
-			return ET_CLASSEX_MORTAR;
 #endif
+			return ET_CLASSEX_MORTAR;
 		default:
 			if (!Q_strncmp(_ent->classname, "air strike", sizeof("air strike")))
 			{
@@ -2597,6 +2611,18 @@ public:
 			{
 				cmd.weapon = WP_KNIFE_KABAR;
 			}
+
+		}
+		else if (bot->client->sess.sessionTeam == TEAM_AXIS)
+		{
+			if (cmd.weapon == WP_MORTAR)
+			{
+				cmd.weapon = WP_MORTAR2;
+			}
+			else if (cmd.weapon == WP_MORTAR_SET)
+			{
+				cmd.weapon = WP_MORTAR2_SET;
+			}
 		}
 #endif
 		// dont choose scoped directly.
@@ -3388,6 +3414,9 @@ public:
 			case WP_M7:
 			case WP_GPG40:
 			case WP_MORTAR_SET:
+#ifdef LEGACY
+			case WP_MORTAR2_SET:
+#endif
 #ifdef NOQUARTER
 			case WP_MORTAR2_SET:
 			case WP_BAZOOKA:
@@ -3806,6 +3835,9 @@ public:
 				case WP_M7:
 				case WP_GPG40:
 				case WP_MORTAR_SET:
+#ifdef LEGACY
+				case WP_MORTAR2_SET:
+#endif
 #ifdef NOQUARTER
 				case WP_MORTAR2_SET:
 				case WP_BAZOOKA:
@@ -4248,6 +4280,10 @@ public:
 			case WP_MORTAR:
 			case WP_MORTAR_SET:
 			case WP_PANZERFAUST:
+#ifdef LEGACY
+			case WP_MORTAR2:
+			case WP_MORTAR2_SET:
+#endif
 #ifdef NOQUARTER
 			case WP_MORTAR2:
 			case WP_MORTAR2_SET:
@@ -4328,6 +4364,20 @@ public:
 					break;
 				}
 			}
+			else if (bot->client->sess.sessionTeam == TEAM_AXIS)
+			{
+				switch (_weaponId)
+				{
+				case WP_MORTAR:
+					_weaponId = WP_MORTAR2;
+					break;
+				case WP_MORTAR_SET:
+					_weaponId = WP_MORTAR2_SET;
+					break;
+				default:
+					break;
+				}
+			}
 #endif
 
 			ammoIndex = BG_FindAmmoForWeapon((weapon_t)_weaponId);
@@ -4356,6 +4406,10 @@ public:
 			case WP_MORTAR:
 			case WP_MORTAR_SET:
 			case WP_PANZERFAUST:
+#ifdef LEGACY
+			case WP_MORTAR2:
+			case WP_MORTAR2_SET:
+#endif
 #ifdef NOQUARTER
 			case WP_MORTAR2:
 			case WP_MORTAR2_SET:
@@ -5562,6 +5616,11 @@ public:
 							pEnt->client->sess.playerWeapon      = WP_MOBILE_BROWNING;
 							pEnt->client->sess.latchPlayerWeapon = WP_MOBILE_BROWNING;
 						}
+						else if (pEnt->client->sess.sessionTeam == TEAM_AXIS && pMsg->m_Selection == ET_WP_MORTAR)
+						{
+							pEnt->client->sess.playerWeapon      = WP_MORTAR2;
+							pEnt->client->sess.latchPlayerWeapon = WP_MORTAR2;
+						}
 						else
 						{
 							pEnt->client->sess.playerWeapon      = _weaponBotToGame(pMsg->m_Selection);
@@ -6507,6 +6566,7 @@ qboolean Bot_Util_AllowPush(int weaponId)
 #endif
 #ifdef LEGACY
 	case WP_MOBILE_BROWNING_SET:
+	case WP_MORTAR2_SET:
 #endif
 	case WP_MOBILE_MG42_SET:
 		return qfalse;
