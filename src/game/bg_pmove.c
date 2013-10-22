@@ -1013,7 +1013,7 @@ static qboolean PM_CheckProne(void)
 				// stop prone
 				pm->ps->eFlags      &= ~EF_PRONE;
 				pm->ps->eFlags      &= ~EF_PRONE_MOVING;
-				pm->pmext->proneTime = pm->cmd.serverTime; // timestamp 'stop prone'
+				pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
 
 				// don't let them keep scope out when
 				// standing from prone or they will
