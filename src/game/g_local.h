@@ -891,7 +891,7 @@ typedef struct level_locals_s
 	struct gclient_s *clients;          // [maxclients]
 
 	struct gentity_s *gentities;
-	int gentitySize;
+
 	int num_entities;                   // current number, <= MAX_GENTITIES
 
 	int warmupTime;                     // restart match at this time
@@ -923,13 +923,13 @@ typedef struct level_locals_s
 	int numConnectedClients;
 	int numNonSpectatorClients;         // includes connecting clients
 	int numPlayingClients;              // connected, non-spectators
-	int sortedClients[MAX_CLIENTS];             // sorted by score
+	int sortedClients[MAX_CLIENTS];     // sorted by score
 	int follow1, follow2;               // clientNums for auto-follow spectators
 
 	int warmupModificationCount;            // for detecting if g_warmup is changed
 
+	// voting
 	voteInfo_t voteInfo;
-
 	int numTeamClients[2];
 	int numVotingTeamClients[2];
 
@@ -958,11 +958,10 @@ typedef struct level_locals_s
 
 	int portalSequence;
 
-	char *scriptAI;
 	int reloadPauseTime;                // don't think AI/client's until this time has elapsed
 	int reloadDelayTime;                // don't start loading the savegame until this has expired
 
-	int capturetimes[4];         // red, blue, none, spectator for WOLF_MP_CPH
+	int capturetimes[4];         // red, blue, none, spectator for WOLF_MP_CPH - this isn't used
 	int redReinforceTime, blueReinforceTime;         // last time reinforcements arrived in ms
 	int redNumWaiting, blueNumWaiting;         // number of reinforcements in queue
 	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];      // coordinates of spawn targets
@@ -974,8 +973,6 @@ typedef struct level_locals_s
 	// player/AI model scripting (server repository)
 	animScriptData_t animScriptData;
 
-	int totalHeadshots;
-	int missedHeadshots;
 	qboolean lastRestartTime;
 
 	int numFinalDead[2];                // unable to respawn and in limbo (per team)
@@ -983,12 +980,6 @@ typedef struct level_locals_s
 
 	qboolean latchGametype;
 
-	int attackingTeam;                  // which team is attacking
-	int explosiveTargets[2];            // attackers need to explode something to get through
-	qboolean captureFlagMode;
-	qboolean initStaticEnts;
-	qboolean initSeekCoverChains;
-	char *botScriptBuffer;
 	int globalAccumBuffer[MAX_SCRIPT_ACCUM_BUFFERS];
 
 	int soldierChargeTime[2];
@@ -1060,8 +1051,6 @@ typedef struct level_locals_s
 	int axisArtyCounter, alliedArtyCounter; // arty/airstrike rate limiting
 	int axisAutoSpawn, alliesAutoSpawn;
 	int axisMG42Counter, alliesMG42Counter;
-
-	int lastClientBotThink;
 
 	limbo_cam_t limboCams[MAX_LIMBO_CAMS];
 	int numLimboCams;
