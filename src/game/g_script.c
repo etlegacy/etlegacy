@@ -1166,6 +1166,17 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 	G_Damage(other, ent, ent, NULL, NULL, 9999, 0, MOD_CRUSH);
 }
 
+// script mover flags
+#define SMF_TRIGGERSPAWN        1 
+#define SMF_SOLID               2
+#define SMF_EXPLOSIVEDAMAGEONLY 4
+#define SMF_RESURRECTABLE       8
+#define SMF_COMPASS             16
+#define SMF_ALLIES              32
+#define SMF_AXIS                64
+#define SMF_MOUNTED_GUN         128
+#define SMF_DENSITY             256
+
 /*QUAKED script_mover (0.5 0.25 1.0) ? TRIGGERSPAWN SOLID EXPLOSIVEDAMAGEONLY RESURECTABLE COMPASS ALLIED AXIS MOUNTED_GUN
 Scripted brush entity. A simplified means of moving brushes around based on events.
 
@@ -1208,17 +1219,17 @@ void SP_script_mover(gentity_t *ent)
 
 	ent->s.density = 0;
 
-	if (ent->spawnflags & 256)
+	if (ent->spawnflags & SMF_DENSITY)
 	{
 		ent->s.density |= 2;
 	}
 
-	if (ent->spawnflags & 8)
+	if (ent->spawnflags & SMF_RESURRECTABLE)
 	{
 		ent->use = script_mover_use;
 	}
 
-	if (ent->spawnflags & 16)
+	if (ent->spawnflags & SMF_COMPASS)
 	{
 		ent->s.time2 = 1;
 	}
@@ -1227,11 +1238,11 @@ void SP_script_mover(gentity_t *ent)
 		ent->s.time2 = 0;
 	}
 
-	if (ent->spawnflags & 32)
+	if (ent->spawnflags & SMF_ALLIES)
 	{
 		ent->s.teamNum = TEAM_ALLIES;
 	}
-	else if (ent->spawnflags & 64)
+	else if (ent->spawnflags & SMF_AXIS)
 	{
 		ent->s.teamNum = TEAM_AXIS;
 	}
@@ -1240,7 +1251,7 @@ void SP_script_mover(gentity_t *ent)
 		ent->s.teamNum = TEAM_FREE;
 	}
 
-	if (ent->spawnflags & 1)
+	if (ent->spawnflags & SMF_TRIGGERSPAWN)
 	{
 		ent->use = script_mover_use;
 		trap_UnlinkEntity(ent);   // make sure it's not visible
@@ -1307,7 +1318,7 @@ void SP_script_mover(gentity_t *ent)
 		VectorCopy(scale, ent->s.angles2);
 	}
 
-	if (ent->spawnflags & 128)
+	if (ent->spawnflags & SMF_MOUNTED_GUN)
 	{
 		char *tagent;
 
