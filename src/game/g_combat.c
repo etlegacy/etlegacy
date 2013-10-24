@@ -1287,38 +1287,54 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 	}
 
-	if ((targ->waterlevel >= 3) && (mod == MOD_FLAMETHROWER))
+	if (targ->waterlevel >= 3 && mod == MOD_FLAMETHROWER)
 	{
 		return;
 	}
 
-	// shootable doors / buttons don't actually have any health
-	if (targ->s.eType == ET_MOVER && !(targ->isProp) && !targ->scriptName)
+	switch(targ->s.eType)
 	{
-		if (targ->use && targ->moverState == MOVER_POS1)
+	case ET_MOVER:
+			
+		// shootable doors / buttons don't actually have any health
+		if (!targ->isProp && !targ->scriptName)
 		{
-			G_UseEntity(targ, inflictor, attacker);
-		}
-		return;
-	}
-
-	// In the old code, this check wasn't done for props, so I put that check back in to make props_statue properly work
-	// 4 means destructible
-	if (targ->s.eType == ET_MOVER && (targ->spawnflags & 4) && !targ->isProp)
-	{
-		if (!G_WeaponIsExplosive(mod))
-		{
+			if (targ->use && targ->moverState == MOVER_POS1)
+			{
+				G_UseEntity(targ, inflictor, attacker);
+			}
 			return;
-		}
-
-		// check for team
-		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
+		}	
+			
+		if ((targ->spawnflags & 4) && !targ->isProp)
 		{
-			return;
+			if (!G_WeaponIsExplosive(mod))
+			{
+				return;
+			}
+
+			// check for team
+			if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
+			{
+				return;
+			}
 		}
-	}
-	else if (targ->s.eType == ET_EXPLOSIVE)
-	{
+		
+		if ((targ->spawnflags & 1024) && !targ->isProp)
+		{
+			if (mod != MOD_FLAMETHROWER)
+			{
+				return;
+			}
+
+			// check for team
+			if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
+			{
+				return;
+			}
+		}
+		break;
+	case ET_EXPLOSIVE:
 		if (targ->parent && G_GetWeaponClassForMOD(mod) == 2)
 		{
 			return;
@@ -1334,37 +1350,38 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 			return;
 		}
-	}
-	else if (targ->s.eType == ET_MISSILE && targ->methodOfDeath == MOD_LANDMINE)
-	{
-		if (targ->s.modelindex2)
+		break;
+	case ET_MISSILE:
+		if (targ->methodOfDeath == MOD_LANDMINE)
 		{
-			if (G_WeaponIsExplosive(mod))
+			if (targ->s.modelindex2)
 			{
-				mapEntityData_t *mEnt;
-
-				if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
+				if (G_WeaponIsExplosive(mod))
 				{
-					G_FreeMapEntityData(&mapEntityData[0], mEnt);
-				}
+					mapEntityData_t *mEnt;
 
-				if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
-				{
-					G_FreeMapEntityData(&mapEntityData[1], mEnt);
-				}
+					if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
+					{
+						G_FreeMapEntityData(&mapEntityData[0], mEnt);
+					}
 
-				if (attacker && attacker->client)
-				{
-					AddScore(attacker, 1);
-				}
+					if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
+					{
+						G_FreeMapEntityData(&mapEntityData[1], mEnt);
+					}
 
-				G_ExplodeMissile(targ);
+					if (attacker && attacker->client)
+					{
+						AddScore(attacker, 1);
+					}
+
+					G_ExplodeMissile(targ);
+				}
 			}
+			return;
 		}
-		return;
-	}
-	else if (targ->s.eType == ET_CONSTRUCTIBLE)
-	{
+		break;
+	case ET_CONSTRUCTIBLE:
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
 			return;
@@ -1382,6 +1399,9 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				return;
 			}
 		}
+		break;
+	default:
+		break;
 	}
 
 	client = targ->client;
