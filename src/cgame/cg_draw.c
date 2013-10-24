@@ -2665,12 +2665,13 @@ static qboolean CG_DrawFollow(void)
 			char *follow    = CG_TranslateString("Following");
 			int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 			int  startClass = CG_Text_Width_Ext(va("(%s ", follow), fontScale, 0, &cgs.media.limboFont2) + 3;
+			int  startRank;
 			char *w;
 
 			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 			{
-				w = va("(%s  %s  )", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
-				int startRank = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2);
+				w         = va("(%s  %s  )", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
+				startRank = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2);
 				CG_DrawPic(INFOTEXT_STARTX + startRank - 3 * charWidth, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 			}
 			else
@@ -2687,13 +2688,14 @@ static qboolean CG_DrawFollow(void)
 		char *follow    = CG_TranslateString("Following");
 		char *w         = va("%s  %s", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
 		int  startClass = CG_Text_Width_Ext(va("%s ", follow), fontScale, 0, &cgs.media.limboFont2) + 3;
+		int  startRank;
 
 		CG_DrawPic(startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 		{
-			int startRank = CG_Text_Width_Ext(va("%s ", w), fontScale, 0, &cgs.media.limboFont2);
+			startRank = CG_Text_Width_Ext(va("%s ", w), fontScale, 0, &cgs.media.limboFont2);
 			CG_DrawPic(INFOTEXT_STARTX + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 	}
