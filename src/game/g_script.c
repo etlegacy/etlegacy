@@ -1167,7 +1167,7 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 }
 
 // script mover flags
-#define SMF_TRIGGERSPAWN        1 
+#define SMF_TRIGGERSPAWN        1
 #define SMF_SOLID               2
 #define SMF_EXPLOSIVEDAMAGEONLY 4
 #define SMF_RESURRECTABLE       8

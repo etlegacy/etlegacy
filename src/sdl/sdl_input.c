@@ -66,6 +66,10 @@
 #include <IOKit/hidsystem/event_status_driver.h>
 #endif
 
+#ifdef DISABLE_DINGY
+void IN_EnableDingFilter();
+#endif
+
 static cvar_t *in_nograb;
 static cvar_t *in_keyboardDebug = NULL;
 
@@ -1230,13 +1234,20 @@ static void IN_ProcessEvents(void)
 			if (e.active.state & SDL_APPINPUTFOCUS)
 			{
 				Cvar_SetValue("com_unfocused", !e.active.gain);
-#ifdef USE_RAW_INPUT_MOUSE
-				if (e.active.gain && in_mouse->integer == 3)    //raw input stops working on winxp after losing focus. (why?)
+				if (e.active.gain)
 				{
-					IN_ShutdownRawMouse();
-					IN_InitRawMouse();
-				}
+					//We need to re-establish the even catchers for windows
+#ifdef USE_RAW_INPUT_MOUSE
+					if (in_mouse->integer == 3)    //raw input stops working on winxp after losing focus. (why?)
+					{
+						IN_ShutdownRawMouse();
+						IN_InitRawMouse();
+					}
 #endif
+#ifdef DISABLE_DINGY
+					IN_EnableDingFilter();
+#endif
+				}
 			}
 			if (e.active.state & SDL_APPACTIVE)
 			{
@@ -1302,7 +1313,7 @@ static void IN_InitKeyLockStates(void)
 }
 
 #ifdef _WIN32
-WNDPROC LegacyWndProc = NULL;
+static WNDPROC LegacyWndProc = NULL;
 
 /**
  * @brief Skips the show menu command for the frame, and thatway disables the "no menu found" error sound.
@@ -1317,25 +1328,11 @@ LRESULT CALLBACK WNDDingIgnore(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
 }
 
 /**
- * @brief Enables the filter if not already active
- */
-void IN_EnableDingFilter()
-{
-	if (!LegacyWndProc)
-	{
-		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
-		SDL_GetWMInfo(&wmInfo);
-		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
-		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
-	}
-}
-
-/**
  * @brief Disables the filter if active
  */
 void IN_DisableDingFilter()
 {
+	Com_DPrintf("Disabling dingy filter\n");
 	if (LegacyWndProc)
 	{
 		SDL_SysWMinfo wmInfo;
@@ -1343,6 +1340,23 @@ void IN_DisableDingFilter()
 		SDL_GetWMInfo(&wmInfo);
 		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
 		LegacyWndProc = NULL;
+	}
+}
+
+/**
+ * @brief Enables the filter if not already active
+ */
+void IN_EnableDingFilter()
+{
+	IN_DisableDingFilter();
+	Com_DPrintf("Enabling dingy filter\n");
+	if (!LegacyWndProc)
+	{
+		SDL_SysWMinfo wmInfo;
+		SDL_VERSION(&wmInfo.version);
+		SDL_GetWMInfo(&wmInfo);
+		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
+		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
 	}
 }
 #endif
@@ -1409,7 +1423,7 @@ void IN_Init(void)
 	IN_InitJoystick();
 #endif
 
-#ifdef _WIN32
+#ifdef DISABLE_DINGY
 	IN_EnableDingFilter();
 #endif
 	Com_DPrintf("------------------------------------\n");
@@ -1422,7 +1436,7 @@ void IN_Shutdown(void)
 	IN_ShutdownRawMouse();
 #endif
 
-#ifdef _WIN32
+#ifdef DISABLE_DINGY
 	IN_DisableDingFilter();
 #endif
 

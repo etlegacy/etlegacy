@@ -121,6 +121,8 @@
 
 #define USE_RAW_INPUT_MOUSE
 
+#define DISABLE_DINGY
+
 #elif defined(_WIN32) || defined(__WIN32__)
 
 #undef QDECL
@@ -149,6 +151,8 @@
 #define DLL_EXT ".dll"
 
 #define USE_RAW_INPUT_MOUSE
+
+#define DISABLE_DINGY
 
 #endif
 
