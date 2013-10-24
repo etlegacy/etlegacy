@@ -2458,11 +2458,11 @@ static void CG_ServerCommand(void)
 			{
 				CG_Printf("[cgnotify]*** ^3INFO: ^5%s\n", CG_LocalizeServerCommand(CG_Argv(1)));
 			}
-			CG_PriorityCenterPrint(s, SCREEN_HEIGHT * 0.8), cg_fontScaleCP.value, atoi(CG_Argv(2)));
+			CG_PriorityCenterPrint(s, SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value, atoi(CG_Argv(2)));
 		}
 		else
 		{
-			CG_CenterPrint(CG_LocalizeServerCommand(CG_Argv(1)), SCREEN_HEIGHT * 0.8), cg_fontScaleCP.value);
+			CG_CenterPrint(CG_LocalizeServerCommand(CG_Argv(1)), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value);
 		}
 		return;
 	}
