@@ -619,7 +619,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	tempx += INFO_LATENCY_WIDTH;
 
-	if (cg_gameType.integer != GT_WOLF_LMS)
+	if (cg_gameType.integer != GT_WOLF_LMS && livesleft)
 	{
 		if (score->respawnsLeft >= 0)
 		{
