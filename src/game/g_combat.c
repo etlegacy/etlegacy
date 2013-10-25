@@ -1292,10 +1292,10 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		return;
 	}
 
-	switch(targ->s.eType)
+	switch (targ->s.eType)
 	{
 	case ET_MOVER:
-			
+
 		// shootable doors / buttons don't actually have any health
 		if (!targ->isProp && !targ->scriptName)
 		{
@@ -1304,8 +1304,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				G_UseEntity(targ, inflictor, attacker);
 			}
 			return;
-		}	
-			
+		}
+
 		if ((targ->spawnflags & 4) && !targ->isProp)
 		{
 			if (!G_WeaponIsExplosive(mod))
@@ -1319,7 +1319,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				return;
 			}
 		}
-		
+
 		if ((targ->spawnflags & 1024) && !targ->isProp)
 		{
 			if (mod != MOD_FLAMETHROWER)

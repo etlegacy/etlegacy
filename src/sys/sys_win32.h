@@ -47,6 +47,7 @@ typedef struct
 	HINSTANCE reflib_library;           // Handle to refresh DLL
 	qboolean reflib_active;
 	HWND hWnd;
+	HWND hWndSplash;
 	HINSTANCE hInstance;
 	qboolean activeApp;
 	qboolean isMinimized;
@@ -60,7 +61,8 @@ typedef struct
 extern WinVars_t g_wv;
 
 void    Sys_CreateConsole(void);
-void    Sys_ShowConsole(int level, qboolean quitOnClose);
+void    Sys_Splash(qboolean show);
+void    Sys_ShowConsole(int visLevel, qboolean quitOnClose);
 int     Game_Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
 void    Com_FrameExt(void);
 void    WinSetExceptionWnd(HWND wnd);

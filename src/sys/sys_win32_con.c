@@ -67,6 +67,7 @@
 #define COLOR_TEXT_ERROR1 RGB(255, 0, 0)
 #define COLOR_TEXT_ERROR2 RGB(0, 0, 0)
 #define COLOR_BCK_NORMAL  RGB(28, 47, 54)
+#define COLOR_BCK_ERROR   RGB(28, 47, 54)
 
 typedef struct
 {
@@ -209,7 +210,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		}
 		else if (( HWND ) lParam == s_wcd.hwndErrorBox)
 		{
-			SetBkColor(( HDC ) wParam, COLOR_BCK_NORMAL);
+			SetBkColor(( HDC ) wParam, COLOR_BCK_ERROR);
 			if (s_timePolarity & 1)
 			{
 				SetTextColor(( HDC ) wParam, COLOR_TEXT_ERROR1);
@@ -257,8 +258,8 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	case WM_CREATE:
 		s_wcd.hbmLogo            = LoadBitmap(g_wv.hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
 		s_wcd.hbmClearBitmap     = LoadBitmap(g_wv.hInstance, MAKEINTRESOURCE(IDB_BITMAP2));
-		s_wcd.hbrEditBackground  = CreateSolidBrush(RGB(204, 204, 204));
-		s_wcd.hbrErrorBackground = CreateSolidBrush(RGB(0x80, 0x80, 0x80));
+		s_wcd.hbrEditBackground  = CreateSolidBrush(COLOR_BCK_NORMAL);
+		s_wcd.hbrErrorBackground = CreateSolidBrush(COLOR_BCK_ERROR);
 		SetTimer(hWnd, 1, 1000, NULL);
 		break;
 	case WM_ERASEBKGND:
@@ -774,12 +775,16 @@ void Sys_CreateConsole(void)
 	SendMessage(s_wcd.hwndButtonClear, WM_SETFONT, (WPARAM)s_wcd.hfButtonFont, FALSE);
 	SendMessage(s_wcd.hwndButtonQuit, WM_SETFONT, (WPARAM)s_wcd.hfButtonFont, FALSE);
 
+	/*
 	ShowWindow(s_wcd.hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(s_wcd.hWnd);
 	SetForegroundWindow(s_wcd.hWnd);
 	SetFocus(s_wcd.hwndInputLine);
 
 	s_wcd.visLevel = 1;
+	*/
+
+	s_wcd.visLevel = 0;
 }
 
 /*
@@ -831,6 +836,11 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 	ShowWindow(s_wcd.hWnd, SW_SHOWNORMAL);
 	SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
 
+	if (visLevel > 0)
+	{
+		Sys_Splash(qfalse);
+	}
+
 	switch (visLevel)
 	{
 	case 0:
@@ -838,6 +848,9 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 		break;
 	case 1:
 		ShowWindow(s_wcd.hWnd, SW_SHOWNORMAL);
+		UpdateWindow(s_wcd.hWnd);
+		SetForegroundWindow(s_wcd.hWnd);
+		SetFocus(s_wcd.hwndInputLine);
 		SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
 		break;
 	case 2:
