@@ -138,11 +138,16 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		rows = 1;
 
-		CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
-		CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);
-		CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 21, 1, colorBlack);
+		CG_FillRect(x - 5, y - 2, width + 5, 35, clrUiBar);
+		CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 35, 1, colorBlack);
 
-		y += SMALLCHAR_HEIGHT * (rows - 1);
+		if (CG_ConfigString(CS_CONFIGNAME)[0])
+		{
+			s = va("Config: ^7%s^7", CG_ConfigString(CS_CONFIGNAME));
+			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			y += SMALLCHAR_HEIGHT;
+		}
+
 		if (cgs.timelimit > 0.0f)
 		{
 			msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);

@@ -561,7 +561,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_intermissionReadyPercent, "g_intermissionReadyPercent", "100",                        0 },
 	{ &g_mapScriptDirectory,       "g_mapScriptDirectory",       "",                           0 },
 	{ &g_mapConfigs,               "g_mapConfigs",               "",                           0 },
-	{ &g_customConfig,             "g_customConfig",             "",                           0 },
+	{ &g_customConfig,             "g_customConfig",             "defaultpublic",              CVAR_ARCHIVE },
 	{ &g_moverScale,               "g_moverScale",               "1.0",                        0 },
 	{ &g_fixedphysics,             "g_fixedphysics",             "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 	{ &g_fixedphysicsfps,          "g_fixedphysicsfps",          "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
@@ -1928,239 +1928,6 @@ void bani_getmapxp(void)
 }
 
 /*
-=============
-G_ConfigParse
-=============
-*/
-static qboolean BG_PCF_ParseError(int handle, char *format, ...)
-{
-	int         line = 0;
-	char        filename[MAX_QPATH];
-	va_list     argptr;
-	static char string[4096];
-
-	va_start(argptr, format);
-	Q_vsnprintf(string, sizeof(string), format, argptr);
-	va_end(argptr);
-
-	filename[0] = '\0';
-
-	trap_PC_SourceFileAndLine(handle, filename, &line);
-
-	Com_Printf(S_COLOR_RED "ERROR: %s, line %d: %s\n", filename, line, string);
-
-	trap_PC_FreeSource(handle);
-
-	return qfalse;
-}
-
-static qboolean G_ConfigParse(int handle, config_t *config)
-{
-	pc_token_t token;
-	char       text[256];
-	char       value[256];
-
-	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
-	{
-		return BG_PCF_ParseError(handle, "expected '{'");
-	}
-
-	while (1)
-	{
-		if (!trap_PC_ReadToken(handle, &token))
-		{
-			break;
-		}
-		if (token.string[0] == '}')
-		{
-			break;
-		}
-
-		// simple set that does not need to save
-		if (!Q_stricmp(token.string, "set"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-			{
-				return BG_PCF_ParseError(handle, "expected cvar to set");
-			}
-			else
-			{
-				if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
-				{
-					return BG_PCF_ParseError(handle, "expected cvar value");
-				}
-
-				if (value[0] == '-')
-				{
-					if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-					{
-						return BG_PCF_ParseError(handle, "expected value after '-'");
-					}
-
-					Q_strncpyz(value, va("-%s", text), sizeof(value));
-				}
-
-				trap_Cvar_Set(text, value);
-			}
-			// commands do not need to save as well
-		}
-		else if (!Q_stricmp(token.string, "command"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-			{
-				return BG_PCF_ParseError(handle, "expected command to execute");
-			}
-			else
-			{
-				trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", text));
-			}
-			// setlock - need to save us to whine
-		}
-		else if (!Q_stricmp(token.string, "setl"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].name, sizeof(config->setl[0].name)))
-			{
-				return BG_PCF_ParseError(handle, "expected name of cvar to set and lock");
-			}
-
-			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].value, sizeof(config->setl[0].value)))
-			{
-				return BG_PCF_ParseError(handle, "expected value of cvar to set and lock");
-			}
-
-			if (config->setl[config->numSetl].value[0] == '-')
-			{
-				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-				{
-					return BG_PCF_ParseError(handle, "expected value after '-'");
-				}
-
-				Q_strncpyz(config->setl[config->numSetl].value, va("-%s", text), sizeof(config->setl[0].value));
-			}
-
-			trap_Cvar_Set(config->setl[config->numSetl].name, config->setl[config->numSetl].value);
-			config->numSetl++;
-		}
-		else
-		{
-			return BG_PCF_ParseError(handle, "unknown token '%s'", token.string);
-		}
-	}
-
-	return qtrue;
-}
-
-qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init)
-{
-	char       filename[MAX_QPATH];
-	int        handle = 0;
-	config_t   *config;
-	pc_token_t token;
-
-	if (forceFilename[0])
-	{
-		Q_strncpyz(filename, forceFilename, sizeof(filename));
-	}
-	else if (g_customConfig.string[0])
-	{
-		Q_strncpyz(filename, g_customConfig.string, sizeof(filename));
-		// need to reload config?
-		if (!level.config.loaded)
-		{
-			init = qtrue;
-		}
-	}
-	else if (g_mapConfigs.string[0])
-	{
-		Q_strncpyz(filename, g_mapConfigs.string, sizeof(filename));
-		Q_strcat(filename, sizeof(filename), "/");
-		Q_strcat(filename, sizeof(filename), level.rawmapname);
-		Q_strcat(filename, sizeof(filename), ".config");
-		init = qfalse;
-	}
-	else
-	{
-		return qfalse;
-	}
-
-	if (init)
-	{
-		memset(&level.config, 0, sizeof(config_t));
-	}
-
-	handle = trap_PC_LoadSource(filename);
-
-	if (!handle)
-	{
-		G_Printf("^3Warning: No config with filename '%s' found\n", filename);
-		return qfalse;
-	}
-
-	config = &level.config;
-
-	while (1)
-	{
-		if (!trap_PC_ReadToken(handle, &token))
-		{
-			break;
-		}
-
-		if (!Q_stricmp(token.string, "configname"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, config->name, sizeof(config->name)))
-			{
-				return BG_PCF_ParseError(handle, "expected config name");
-			}
-
-			trap_SetConfigstring(CS_CONFIGNAME, config->name);
-		}
-		else if (!Q_stricmp(token.string, "version"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, config->version, sizeof(config->name)))
-			{
-				return BG_PCF_ParseError(handle, "expected config version");
-			}
-		}
-		else if (!Q_stricmp(token.string, "init"))
-		{
-			if (!G_ConfigParse(handle, config))
-			{
-				return BG_PCF_ParseError(handle, "failed to load init struct");
-			}
-			else
-			{
-				if (level.config.version[0] && level.config.name[0])
-				{
-					trap_SendServerCommand(-1, va("cp \"Script '%s^7' version '%s'^7 loaded\n\"", level.config.name, level.config.version));
-				}
-				else if (level.config.name[0])
-				{
-					trap_SendServerCommand(-1, va("cp \"Script '%s^7' loaded\n\"", level.config.name));
-				}
-			}
-		}
-		else if (!Q_stricmp(token.string, "default"))
-		{
-			if (!G_ConfigParse(handle, config))
-			{
-				return BG_PCF_ParseError(handle, "failed to load default struct");
-			}
-		}
-		else if (!Q_stricmp(token.string, level.rawmapname))
-		{
-			if (!G_ConfigParse(handle, config))
-			{
-				return BG_PCF_ParseError(handle, "failed to load %s struct", level.rawmapname);
-			}
-		}
-	}
-	level.config.loaded = qtrue;
-
-	trap_PC_FreeSource(handle);
-	return qtrue;
-}
-
-/*
 ============
 G_InitGame
 ============
@@ -2456,13 +2223,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 	// reserve some spots for dead player bodies
 	InitBodyQue();
 
-	// load etpro configs
-	trap_SetConfigstring(CS_CONFIGNAME, "");
-
-	G_LoadConfig("", qfalse);
-
 	// load level script
 	G_Script_ScriptLoad();
+
+	//Set the game config
+	G_configSet(g_customConfig.string);
 
 	numSplinePaths = 0 ;
 	numPathCorners = 0;

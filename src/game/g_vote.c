@@ -99,6 +99,7 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "warmupdamage",   G_Warmupfire_v,    "Warmup Damage",             " <0|1|2>^7\n  Specifies if players can inflict damage during warmup" },
 	{ 0x1ff, "antilag",        G_AntiLag_v,       "Anti-Lag",                  " <0|1>^7\n  Toggles Anit-Lag on the server"                          },
 	{ 0x1ff, "balancedteams",  G_BalancedTeams_v, "Balanced Teams",            " <0|1>^7\n  Toggles team balance forcing"                            },
+	{ 0x1ff, "config",         G_Config_v,        "Game config",               " <configname>^7\n  Loads up the server game config"                  },
 	{ 0,     0,                NULL,              0 }
 };
 
@@ -332,7 +333,7 @@ int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 	else
 	{
 		// Load in comp settings for current gametype
-		G_configSet(g_gametype.integer, qtrue);
+		G_configSet("defaultcomp");
 		AP("cpm \"Competition Settings Loaded!\n\"");
 	}
 
@@ -855,7 +856,7 @@ int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 	else
 	{
 		// Load in pub settings for current gametype
-		G_configSet(g_gametype.integer, qfalse);
+		G_configSet("defaultpublic");
 		AP("cpm \"Public Settings Loaded!\n\"");
 	}
 
@@ -1093,6 +1094,41 @@ int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char 
 		G_voteSetOnOff("Balanced Teams", "g_balancedteams");
 		trap_Cvar_Set("g_teamForceBalance", level.voteInfo.vote_value);
 		trap_Cvar_Set("g_lms_teamForceBalance", level.voteInfo.vote_value);
+	}
+
+	return(G_OK);
+}
+
+int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if (arg)
+	{
+		if (trap_Argc() > 3)
+		{
+			G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
+			G_PrintConfigs(ent);
+			return(G_INVALID);
+		}
+		else if (vote_allow_comp.integer <= 0 && ent && !ent->client->sess.referee)
+		{
+			G_voteDisableMessage(ent, arg);
+			return(G_INVALID);
+		}
+		else if (arg2 == NULL || strlen(arg2) < 1)
+		{
+			G_PrintConfigs(ent);
+			return(G_INVALID);
+		}
+		Com_sprintf(level.voteInfo.vote_value, VOTE_MAXSTRING, "%s", arg2);
+	}
+	else // Vote action (vote has passed)
+	{
+		// Load in comp settings for current gametype
+		if (G_configSet(level.voteInfo.vote_value))
+		{
+			AP("cpm \"Competition Settings Loaded!\n\"");
+		}
 	}
 
 	return(G_OK);

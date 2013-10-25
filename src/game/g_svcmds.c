@@ -1509,11 +1509,7 @@ void CC_loadconfig(void)
 
 	trap_SetConfigstring(CS_CONFIGNAME, "");
 	memset(&level.config, 0, sizeof(config_t));
-	if (G_LoadConfig(scriptName, qtrue))
-	{
-		G_Printf("Loaded config: %s\n", level.config.name);
-		trap_Cvar_Set("g_customConfig", scriptName);
-	}
+	G_configSet(scriptName);
 }
 
 
@@ -1686,10 +1682,7 @@ qboolean ConsoleCommand(void)
 	{
 		trap_SetConfigstring(CS_CONFIGNAME, "");
 		memset(&level.config, 0, sizeof(config_t));
-		if (G_LoadConfig("", qtrue))
-		{
-			G_Printf("Reloaded config: %s\n", level.config.name);
-		}
+		G_configSet(g_customConfig.string);
 
 		return qtrue;
 	}

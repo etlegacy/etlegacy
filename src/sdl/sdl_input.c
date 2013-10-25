@@ -1376,7 +1376,13 @@ void IN_Init(void)
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_ARCHIVE);
 
 	// mouse variables
-	in_mouse  = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE);
+#ifdef WIN32
+	//We enable raw input on default for windows (this fixes manny issues with gaming mouses on WIN)
+	in_mouse = Cvar_Get("in_mouse", "3", CVAR_ARCHIVE);
+#else
+	in_mouse = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE);
+#endif // WIN32
+
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
 
 	in_joystick          = Cvar_Get("in_joystick", "0", CVAR_ARCHIVE | CVAR_LATCH);

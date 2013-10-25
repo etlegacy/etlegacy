@@ -881,9 +881,12 @@ typedef struct config_s
 {
 	char name[256];
 	char version[256];
+	char signature[256];
+	char mapscripthash[256];
 	cfgCvar_t setl[256];
 	int numSetl;
 	qboolean loaded;
+	qboolean publicConfig;
 } config_t;
 
 typedef struct level_locals_s
@@ -1408,7 +1411,6 @@ void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Error(const char *fmt, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
-qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init);
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
@@ -2013,7 +2015,8 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum);
 
 // g_config.c
-void G_configSet(int mode, qboolean doComp);
+qboolean G_configSet(const char *configname);
+void G_PrintConfigs(gentity_t *ent);
 
 // g_match.c
 void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod);
@@ -2127,6 +2130,7 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_AntiLag_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 
 void G_LinkDebris(void);
 void G_LinkDamageParents(void);
