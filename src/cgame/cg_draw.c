@@ -2729,7 +2729,7 @@ static void CG_DrawWarmup(void)
 
 			}
 
-			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? "player" : "players");
+			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
 			w  = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
 			x  = Ccg_WideX(320) - w / 2;
 			CG_Text_Paint_Ext(x, 188, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -2746,7 +2746,7 @@ static void CG_DrawWarmup(void)
 				}
 				else
 				{
-					s2 = va("Press ^3%s^7 to start", str1);
+					s2 = va(CG_TranslateString("Press ^3%s^7 to start"), str1);
 					s2 = CG_TranslateString(s2);
 				}
 				w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);

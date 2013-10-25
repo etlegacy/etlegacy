@@ -150,7 +150,7 @@ msgstr ""
 msgid "Following"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2651
+#: src/cgame/cg_draw.c:2732
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr ""
@@ -3703,4 +3703,19 @@ msgid "'PtitSeb' - Pandora"
 msgstr ""
 
 msgid "^1PACKAGE MAINTAINERS"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "players"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2749
+msgid "Press ^3%s^7 to start"
+msgstr ""
+
+msgid "Not enough players to start match!\n"
 msgstr ""

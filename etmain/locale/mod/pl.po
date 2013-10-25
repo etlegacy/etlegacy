@@ -151,7 +151,7 @@ msgstr "Rozstawienie za %d sekunde"
 msgid "Following"
 msgstr "Podazanie"
 
-#: src/cgame/cg_draw.c:2651
+#: src/cgame/cg_draw.c:2732
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr "^3ROZGRZEWKA:^7 Oczekiwanie na ^2%i^7 %s"
@@ -3757,3 +3757,18 @@ msgstr "'PtitSeb' - Pandora"
 
 msgid "^1PACKAGE MAINTAINERS"
 msgstr "^1OPIEKUNOWIE PACZEK"
+
+#: src/cgame/cg_draw.c:2732
+msgid "player"
+msgstr "gracz"
+
+#: src/cgame/cg_draw.c:2732
+msgid "players"
+msgstr "graczy"
+
+#: src/cgame/cg_draw.c:2749
+msgid "Press ^3%s^7 to start"
+msgstr "Nadus ^3%s^7 aby zaczac"
+
+msgid "Not enough players to start match!\n"
+msgstr "Zbyt malo graczy aby zaczac mecz!\n"
