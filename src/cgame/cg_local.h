@@ -1540,6 +1540,7 @@ typedef struct
 	fontInfo_t limboFont1;
 	fontInfo_t limboFont1_lo;
 	fontInfo_t limboFont2;
+	fontInfo_t limboFont2_lo;
 	qhandle_t limboNumber_roll;
 	qhandle_t limboNumber_back;
 	qhandle_t limboStar_roll;

@@ -1988,6 +1988,7 @@ static void CG_RegisterGraphics(void)
 	trap_R_RegisterFont("ariblk", 27, &cgs.media.limboFont1);
 	trap_R_RegisterFont("ariblk", 16, &cgs.media.limboFont1_lo);
 	trap_R_RegisterFont("courbd", 30, &cgs.media.limboFont2);
+	trap_R_RegisterFont("courbd", 21, &cgs.media.limboFont2_lo);
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 
