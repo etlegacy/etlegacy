@@ -2341,12 +2341,15 @@ msgstr ""
 msgid "I'm a covert ops."
 msgstr ""
 
+#: src/cgame/cg_draw.c:2126
 msgid "Create a Fireteam?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2112
 msgid "Make Fireteam private?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2360
 msgid "Response Sent"
 msgstr ""
 

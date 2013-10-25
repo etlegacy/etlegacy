@@ -2369,14 +2369,17 @@ msgstr "Jestem Field Ops."
 msgid "I'm a covert ops."
 msgstr "Jestem Covert Ops."
 
+#: src/cgame/cg_draw.c:2126
 msgid "Create a Fireteam?"
 msgstr "Stworzyc Zespol?"
 
+#: src/cgame/cg_draw.c:2112
 msgid "Make Fireteam private?"
 msgstr "Zrobic Zepol prywatny?"
 
+#: src/cgame/cg_draw.c:2360
 msgid "Response Sent"
-msgstr "Otpowiedz Wyslana"
+msgstr "Odpowiedz Wyslana"
 
 msgid "^1Legacy"
 msgstr "^1Legacy"
