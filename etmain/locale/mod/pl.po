@@ -3760,7 +3760,7 @@ msgstr "^1OPIEKUNOWIE PACZEK"
 
 #: src/cgame/cg_draw.c:2732
 msgid "player"
-msgstr "gracz"
+msgstr "gracza"
 
 #: src/cgame/cg_draw.c:2732
 msgid "players"
