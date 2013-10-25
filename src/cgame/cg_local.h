@@ -70,10 +70,6 @@
 
 #define STAT_MINUS          10  // num frame for '-' stats digit
 
-#define ICON_SIZE           48
-#define CHAR_WIDTH          32
-#define CHAR_HEIGHT         48
-
 #define TEAMCHAT_WIDTH      70
 #define TEAMCHAT_HEIGHT     8
 

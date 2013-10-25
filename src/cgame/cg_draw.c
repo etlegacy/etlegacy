@@ -2610,7 +2610,7 @@ static qboolean CG_DrawFollow(void)
 			CG_DrawPic(INFOTEXT_STARTX + 1, y - (charHeight * 2.0f) - 12, 18, 12, cgs.media.axisFlag);
 		}
 
-		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, y - 1 - (charHeight * 2.0f) - 12, 20, 14, 1, HUD_Border);
+		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, y - (charHeight * 2.0f) - 13, 20, 14, 1, HUD_Border);
 	}
 
 	// if in limbo, show different follow message
