@@ -3772,3 +3772,12 @@ msgstr "Nadus ^3%s^7 aby zaczac"
 
 msgid "Not enough players to start match!\n"
 msgstr "Zbyt malo graczy aby zaczac mecz!\n"
+
+msgid "Your invitation has been submitted"
+msgstr "Twoje zaproszenie zostalo wyslane"
+
+msgid "Your invitation was accepted"
+msgstr "Twoje zaproszenie zostalo zaakceptowane"
+
+msgid "Your invitation reply has been sent"
+msgstr "Twoja odpowiedz zaproszenia zostala wyslana"

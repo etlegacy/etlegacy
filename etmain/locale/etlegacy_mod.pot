@@ -3719,3 +3719,12 @@ msgstr ""
 
 msgid "Not enough players to start match!\n"
 msgstr ""
+
+msgid "Your invitation has been submitted"
+msgstr ""
+
+msgid "Your invitation was accepted"
+msgstr ""
+
+msgid "Your invitation reply has been sent"
+msgstr ""

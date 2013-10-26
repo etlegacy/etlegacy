@@ -2323,7 +2323,7 @@ static void CG_DrawVote(void)
 	{
 		if (cgs.invitationClient == -1)
 		{
-			str = "Your invitation has been submitted";
+			str = CG_TranslateString("Your invitation has been submitted");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
@@ -2337,14 +2337,14 @@ static void CG_DrawVote(void)
 
 		if (cgs.invitationClient == -3)
 		{
-			str = "Your invitation was accepted";
+			str = CG_TranslateString("Your invitation was accepted");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
 		if (cgs.invitationClient == -4)
 		{
-			str = "Your invitation reply has been sent";
+			str = CG_TranslateString("Your invitation reply has been sent");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
