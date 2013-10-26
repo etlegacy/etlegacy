@@ -3728,3 +3728,42 @@ msgstr ""
 
 msgid "Your invitation reply has been sent"
 msgstr ""
+
+msgid "You were team-killed by a bot."
+msgstr ""
+
+msgid "You were team-killed by the Server Host"
+msgstr ""
+
+msgid "Server Host cannot be complained against"
+msgstr ""
+
+msgid "Complaint dismissed"
+msgstr ""
+
+msgid "Your complaint has been filed"
+msgstr ""
+
+msgid "Your application has been submitted"
+msgstr ""
+
+msgid "Your application failed"
+msgstr ""
+
+msgid "Your application has been approved"
+msgstr ""
+
+msgid "Your application reply has been sent"
+msgstr ""
+
+msgid "Your proposition has been submitted"
+msgstr ""
+
+msgid "Your proposition was rejected"
+msgstr ""
+
+msgid "Your proposition was accepted"
+msgstr ""
+
+msgid "Your proposition reply has been sent"
+msgstr ""

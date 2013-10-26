@@ -3781,3 +3781,42 @@ msgstr "Twoje zaproszenie zostalo zaakceptowane"
 
 msgid "Your invitation reply has been sent"
 msgstr "Twoja odpowiedz zaproszenia zostala wyslana"
+
+msgid "You were team-killed by a bot."
+msgstr "Zostales zabity przez bota."
+
+msgid "You were team-killed by the Server Host"
+msgstr "Zostales zabity przez Gospodarza Serwera"
+
+msgid "Server Host cannot be complained against"
+msgstr "Gospodarz Serwera nie moze byc oskarzony przeciwko"
+
+msgid "Complaint dismissed"
+msgstr "Skarga odwolana"
+
+msgid "Your complaint has been filed"
+msgstr "Twoja skarga zostala wypelniona"
+
+msgid "Your application has been submitted"
+msgstr "Twoja aplikacja zostala wyslana"
+
+msgid "Your application failed"
+msgstr "Twoja aplikacja nie powiodla sie"
+
+msgid "Your application has been approved"
+msgstr "Twoja aplikacja zostala przyjeta"
+
+msgid "Your application reply has been sent"
+msgstr "Twoja odpowiedz na aplikacje zostala wyslana"
+
+msgid "Your proposition has been submitted"
+msgstr "Twoja propozycja zostala wyslana"
+
+msgid "Your proposition was rejected"
+msgstr "Twoja propozycja zostala odrzucona"
+
+msgid "Your proposition was accepted"
+msgstr "Twoja Propozycja zostala przyjeta"
+
+msgid "Your proposition reply has been sent"
+msgstr "Twoja odpowiedz na propozycje zostala wyslana"

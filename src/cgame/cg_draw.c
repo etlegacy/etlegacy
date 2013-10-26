@@ -2227,31 +2227,31 @@ static void CG_DrawVote(void)
 	{
 		if (cgs.complaintClient == -1)
 		{
-			str = "Your complaint has been filed";
+			str = CG_TranslateString("Your complaint has been filed");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 		if (cgs.complaintClient == -2)
 		{
-			str = "Complaint dismissed";
+			str = CG_TranslateString("Complaint dismissed");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 		if (cgs.complaintClient == -3)
 		{
-			str = "Server Host cannot be complained against";
+			str = CG_TranslateString("Server Host cannot be complained against");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 		if (cgs.complaintClient == -4)
 		{
-			str = "You were team-killed by the Server Host";
+			str = CG_TranslateString("You were team-killed by the Server Host");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 		if (cgs.complaintClient == -5)
 		{
-			str = "You were team-killed by a bot.";
+			str = CG_TranslateString("You were team-killed by a bot.");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
@@ -2261,28 +2261,28 @@ static void CG_DrawVote(void)
 	{
 		if (cgs.applicationClient == -1)
 		{
-			str = "Your application has been submitted";
+			str = CG_TranslateString("Your application has been submitted");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
 		if (cgs.applicationClient == -2)
 		{
-			str = "Your application failed";
+			str = CG_TranslateString("Your application failed");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
 		if (cgs.applicationClient == -3)
 		{
-			str = "Your application has been approved";
+			str = CG_TranslateString("Your application has been approved");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
 		if (cgs.applicationClient == -4)
 		{
-			str = "Your application reply has been sent";
+			str = CG_TranslateString("Your application reply has been sent");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
@@ -2292,28 +2292,28 @@ static void CG_DrawVote(void)
 	{
 		if (cgs.propositionClient == -1)
 		{
-			str = "Your proposition has been submitted";
+			str = CG_TranslateString("Your proposition has been submitted");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
 		if (cgs.propositionClient == -2)
 		{
-			str = "Your proposition was rejected";
+			str = CG_TranslateString("Your proposition was rejected");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
 		if (cgs.propositionClient == -3)
 		{
-			str = "Your proposition was accepted";
+			str = CG_TranslateString("Your proposition was accepted");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
 		if (cgs.propositionClient == -4)
 		{
-			str = "Your proposition reply has been sent";
+			str = CG_TranslateString("Your proposition reply has been sent");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
