@@ -565,7 +565,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	tempx += INFO_PLAYER_WIDTH - offset;
 
 	// add the extra room here
-	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft)
+	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft && ci->team != TEAM_SPECTATOR)
 	{
 		tempx += INFO_LIVES_WIDTH;
 	}
