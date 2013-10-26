@@ -1660,6 +1660,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
 
 	cgs.media.objectiveShader = trap_R_RegisterShader("sprites/objective");
+	cgs.media.readyShader = trap_R_RegisterShader("sprites/ready");
 
 	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def
 

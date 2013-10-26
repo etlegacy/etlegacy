@@ -318,16 +318,14 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
-		/* FIXME: adjust x,y coordinates ...
 		// draw ready icon if client is ready..
 		if (score->scoreflags & 1 && cgs.gamestate != GS_PLAYING)
 		{
-		    CG_DrawPic(tempx - 3, y + 1, 14, 14, cgs.media.readyIcon);
-		    offset += 14;
-		    tempx += 14;
-		    maxchars -= 2;
+			CG_DrawPic(tempx - 1, y - 10, 10, 10, cgs.media.readyShader);
+			offset   += 10;
+			tempx    += 10;
+			maxchars -= 2;
 		}
-		*/
 
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
@@ -507,16 +505,14 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
-
-		/* FIXME adjust x,y coordinates ...
 		// draw ready icon if client is ready..
-		if ( score->scoreflags & 1 && ( cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_INTERMISSION ) ) {
-		    CG_DrawPic( tempx-2 + 1, y + 1, 14, 14, cgs.media.readyIcon );
-		    offset += 14;
-		    tempx += 14;
-		    maxchars -= 2;
+		if (score->scoreflags & 1 && (cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_INTERMISSION))
+		{
+			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.readyShader);
+			offset   += 14;
+			tempx    += 14;
+			maxchars -= 2;
 		}
-		*/
 
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
@@ -529,7 +525,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		// draw the skull icon if out of lives
 		if (score->respawnsLeft == -2 || (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == -1))
 		{
-			CG_DrawPic(tempx, y - 9, 10, 10, cgs.media.scoreEliminatedShader);
+			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.scoreEliminatedShader);
 			offset   += 14;
 			tempx    += 14;
 			maxchars -= 2;

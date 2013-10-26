@@ -1220,6 +1220,7 @@ typedef struct
 	qhandle_t voiceChatShader;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
+	qhandle_t readyShader;
 
 	qhandle_t destroyShader;
 
