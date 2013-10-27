@@ -3339,21 +3339,6 @@ int CG_LimboPanel_TeamCount(weapon_t weap)
 	return cnt;
 }
 
-qboolean CG_IsHeavyWeapon(weapon_t weap)
-{
-	int i;
-
-	for (i = 0; i < NUM_HEAVY_WEAPONS; i++)
-	{
-		if (bg_heavyWeapons[i] == weap)
-		{
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
 qboolean CG_LimboPanel_WeaponIsDisabled(int index)
 {
 	weapon_t weapon = CG_LimboPanel_GetPlayerClass()->classWeapons[index];
@@ -3432,7 +3417,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	}
 
 	// Never restrict normal weapons
-	if (!CG_IsHeavyWeapon(weapon) && weapon != WP_KAR98 && weapon != WP_CARBINE)
+	if (!IS_HEAVY_WEAPON(weapon) && weapon != WP_KAR98 && weapon != WP_CARBINE)
 	{
 		return qfalse;
 	}
@@ -3440,7 +3425,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	count  = CG_LimboPanel_TeamCount(-1);
 	wcount = CG_LimboPanel_TeamCount(weapon);
 
-	if (CG_IsHeavyWeapon(weapon))
+	if (IS_HEAVY_WEAPON(weapon)) // why this check again?
 	{
 		if (wcount >= ceil(count * cgs.weaponRestrictions))
 		{

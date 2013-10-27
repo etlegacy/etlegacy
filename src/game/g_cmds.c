@@ -1414,21 +1414,6 @@ int G_NumPlayersOnTeam(team_t team)
 	return cnt;
 }
 
-qboolean G_IsHeavyWeapon(weapon_t weap)
-{
-	int i;
-
-	for (i = 0; i < NUM_HEAVY_WEAPONS; i++)
-	{
-		if (bg_heavyWeapons[i] == weap)
-		{
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
 int G_TeamCount(gentity_t *ent, weapon_t weap)
 {
 	int i, j, cnt;
@@ -1470,6 +1455,9 @@ int G_TeamCount(gentity_t *ent, weapon_t weap)
 	return cnt;
 }
 
+/**
+ * @brief Checks for heavy weapons only
+ */
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {
 	int playerCount, weaponCount, maxCount;
@@ -1480,7 +1468,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		return qtrue;
 	}
 
-	if (!G_IsHeavyWeapon(weapon))
+	if (!IS_HEAVY_WEAPON(weapon))
 	{
 		return qfalse;
 	}

@@ -129,7 +129,6 @@ int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 
 // Using one unified list for which weapons can received ammo
 // This is used both by the ammo pack code and by the bot code to determine if reloads are needed
-// FIXME: weapontable
 int reloadableWeapons[] =
 {
 	WP_MP40,                WP_THOMPSON,             WP_STEN,            WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,
@@ -4382,6 +4381,7 @@ const char *PC_String_Parse(int handle)
 {
 	static char buf[MAX_TOKEN_CHARS];
 	pc_token_t  token;
+
 	if (!trap_PC_ReadToken(handle, &token))
 	{
 		return NULL;
@@ -4895,20 +4895,6 @@ qboolean BG_BBoxCollision(vec3_t min1, vec3_t max1, vec3_t min2, vec3_t max2)
 
 	return qtrue;
 }
-
-weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS] =
-{
-	WP_FLAMETHROWER,
-	WP_MOBILE_MG42,
-	WP_MOBILE_MG42_SET,
-	WP_PANZERFAUST,
-	WP_MORTAR,
-	WP_MORTAR_SET,
-	WP_MOBILE_BROWNING,
-	WP_MOBILE_BROWNING_SET,
-	WP_MORTAR2,
-	WP_MORTAR2_SET,
-};
 
 /////////////////////////
 

@@ -764,10 +764,6 @@ typedef enum
 // moved from cg_weapons (now used in g_active) for drop command, actual array in bg_misc.c
 extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP];
 
-//		Using one unified list for which weapons can received ammo
-//		This is used both by the ammo pack code and by the bot code to determine if reloads are needed
-extern int reloadableWeapons[];
-
 typedef struct
 {
 	int kills, teamkills, killedby;
@@ -845,8 +841,8 @@ typedef struct weapontable_s
 	int weapon;               // reference
 	int damage;               // g
 	float spread;             // g
-	int splashDamage;
-	int splashRadius;
+	int splashDamage;         // g
+	int splashRadius;         // g
 
 	qboolean keepDisguise;    // g
 
@@ -860,6 +856,7 @@ typedef struct weapontable_s
 	qboolean isMortar;        // bg
 	qboolean isMortarSet;     // bg
 
+	qboolean isHeavyWeapon;   // bg
 	qboolean isSetWeapon;     // bg
 
 	qboolean isUnderWaterFire; // bg
@@ -893,6 +890,13 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define IS_SET_WEAPON(w)    \
 	(w == WP_MORTAR_SET      || w == WP_MORTAR2_SET             || \
 	 w == WP_MOBILE_MG42_SET  || w == WP_MOBILE_BROWNING_SET)
+
+#define IS_HEAVY_WEAPON(w) \
+	(w == WP_FLAMETHROWER  || w == WP_MOBILE_MG42 || \
+	 w == WP_MOBILE_MG42_SET || w == WP_PANZERFAUST || \
+	 w == WP_MORTAR          || w == WP_MORTAR_SET  || \
+	 w == WP_MOBILE_BROWNING || w == WP_MOBILE_BROWNING_SET || \
+	 w == WP_MORTAR2         || w == WP_MORTAR2_SET)
 
 // weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
@@ -2299,9 +2303,6 @@ typedef enum popupMessageBigType_e
 	PM_DISGUISE,
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
-
-#define NUM_HEAVY_WEAPONS 10
-extern weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS];
 
 int PM_AltSwitchFromForWeapon(int weapon);
 int PM_AltSwitchToForWeapon(int weapon);
