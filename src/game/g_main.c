@@ -1937,9 +1937,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 	int  i;
 	char cs[MAX_INFO_STRING];
 
-	G_Printf("------- Game Initialization -------\n");
-	G_Printf("gamename: %s\n", GAMEVERSION);
-	G_Printf("gamedate: %s\n", __DATE__);
+	G_Printf("------- Game Initialization -------\ngamename: %s\ngamedate: %s\n", GAMEVERSION, __DATE__);
 
 	srand(randomSeed);
 
@@ -2080,6 +2078,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 
 	trap_GetServerinfo(cs, sizeof(cs));
 	Q_strncpyz(level.rawmapname, Info_ValueForKey(cs, "mapname"), sizeof(level.rawmapname));
+
+	G_Printf("map: %s\n", level.rawmapname);
 
 	G_ParseCampaigns();
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
@@ -2348,7 +2348,7 @@ void G_ShutdownGame(int restart)
 		trap_Cvar_Update(&g_gametype);
 	}
 
-	G_Printf("==== ShutdownGame (%i)====\n", restart);
+	G_Printf("==== ShutdownGame (%i - %s) ====\n", restart, level.rawmapname);
 
 #ifdef FEATURE_OMNIBOT
 	if (!Bot_Interface_Shutdown())

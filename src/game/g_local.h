@@ -1318,7 +1318,6 @@ gentity_t *G_FindSatchel(gentity_t *ent);
 void G_ExplodeMines(gentity_t *ent);
 qboolean G_ExplodeSatchels(gentity_t *ent);
 void G_FreeSatchel(gentity_t *ent);
-int G_GetWeaponDamage(int weapon);
 
 void CalcMuzzlePoints(gentity_t *ent, int weapon);
 void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);

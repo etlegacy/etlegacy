@@ -864,7 +864,7 @@ typedef struct weapontable_s
 
 	qboolean isUnderWaterFire; // bg
 
-	qboolean isValidStatWeapon;//bg (just check)
+	qboolean isValidStatWeapon; //bg (just check)
 
 } weaponTable_t;
 
