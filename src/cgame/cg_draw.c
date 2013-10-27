@@ -2562,7 +2562,6 @@ static void CG_DrawLimboMessage(void)
 		{
 			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 		}
-
 	}
 
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -2600,7 +2599,6 @@ static qboolean CG_DrawFollow(void)
 	// Spectators view teamflags
 	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
-
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 		{
 			CG_DrawPic(INFOTEXT_STARTX + 1, y - (charHeight * 2.0f) - 12, 18, 12, cgs.media.alliedFlag);
@@ -2688,13 +2686,14 @@ static qboolean CG_DrawFollow(void)
 		char *follow    = CG_TranslateString("Following");
 		char *w         = va("%s  %s", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
 		int  startClass = CG_Text_Width_Ext(va("%s ", follow), fontScale, 0, &cgs.media.limboFont2) + 3;
-		int  startRank;
 
 		CG_DrawPic(startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 		{
+			int startRank;
+
 			startRank = CG_Text_Width_Ext(va("%s ", w), fontScale, 0, &cgs.media.limboFont2);
 			CG_DrawPic(INFOTEXT_STARTX + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
@@ -2722,11 +2721,10 @@ static void CG_DrawWarmup(void)
 		{
 			if (CG_ConfigString(CS_CONFIGNAME)[0])
 			{
-				s1 = va("^3Config:^7%s^7", CG_ConfigString(CS_CONFIGNAME));
+				s1 = va("^3Config: ^7%s^7", CG_ConfigString(CS_CONFIGNAME));
 				w  = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x  = Ccg_WideX(320) - w / 2;
 				CG_Text_Paint_Ext(x, 162, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
 			}
 
 			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
