@@ -3275,7 +3275,7 @@ static void CG_DrawObjectiveInfo(void)
 		start++;
 	}
 
-	y2 = y - cg.oidPrintCharHeight * 1.5;
+	y2 = y - cg.oidPrintCharHeight * 1.5 - 2;
 
 	VectorCopy(color, backColor);
 	backColor[3] = 0.5 * color[3];
@@ -3315,7 +3315,7 @@ static void CG_DrawObjectiveInfo(void)
 
 		x = 320 - w / 2;
 
-		CG_Text_Paint_Ext(x + cgs.wideXoffset, y, cg.oidPrintFontScale, cg.oidPrintFontScale, colorWhite, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x + cgs.wideXoffset, y, cg.oidPrintFontScale, cg.oidPrintFontScale, color, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		y += cg.oidPrintCharHeight * 1.5;
 
