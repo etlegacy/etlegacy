@@ -1150,52 +1150,10 @@ The server says this item is used on this level
 static void CG_RegisterItemSounds(int itemNum)
 {
 	gitem_t *item = &bg_itemlist[itemNum];
-	char    data[MAX_QPATH];
-	char    *s, *start;
-	int     len;
 
 	if (item->pickup_sound && *item->pickup_sound)
 	{
 		cgs.media.itemPickUpSounds[itemNum] = trap_S_RegisterSound(item->pickup_sound, qfalse);
-	}
-
-	// parse the space seperated precache string for other media
-	s = item->sounds;
-	if (!s || !s[0])
-	{
-		return;
-	}
-
-	while (*s)
-	{
-		start = s;
-		while (*s && *s != ' ')
-		{
-			s++;
-		}
-
-		len = s - start;
-		if (len >= MAX_QPATH || len < 5)
-		{
-			CG_Error("CG_RegisterItemSounds: %s has bad precache string\n", item->classname);
-			return;
-		}
-		memcpy(data, start, len);
-		data[len] = 0;
-		if (*s)
-		{
-			s++;
-		}
-
-		if (!strcmp(data + len - 3, "wav"))
-		{
-			// FIXME: put into cgs.media
-			trap_S_RegisterSound(data, qfalse);
-		}
-		else
-		{
-			CG_Printf(S_COLOR_YELLOW "WARNING CG_RegisterItemSounds: Invalid format for item sound\n");
-		}
 	}
 }
 
@@ -1425,6 +1383,7 @@ static void CG_RegisterSounds(void)
 	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_2] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_3] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);
 
+	cgs.cachedSounds[GAMESOUND_MISC_REVIVE] = trap_S_RegisterSound("sound/misc/vo_revive.wav", qfalse);
 
 	CG_PrecacheFXSounds();
 }

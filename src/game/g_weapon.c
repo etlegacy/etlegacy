@@ -474,8 +474,9 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	usedSyringe = qtrue;
 
 	// sound
-	te              = G_TempEntity(traceEnt->r.currentOrigin, EV_GENERAL_SOUND);
-	te->s.eventParm = G_SoundIndex("sound/misc/vo_revive.wav");
+	//te              = G_TempEntity(traceEnt->r.currentOrigin, EV_GENERAL_SOUND);
+	//te->s.eventParm = G_SoundIndex("sound/misc/vo_revive.wav");
+	G_Sound(traceEnt, GAMESOUND_MISC_REVIVE);
 
 	if (g_fastres.integer > 0)
 	{

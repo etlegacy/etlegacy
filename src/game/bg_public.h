@@ -1471,8 +1471,6 @@ typedef struct gitem_s
 	int giAmmoIndex;            // type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
 	int giClipIndex;            // which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
-	char *precaches;            // string of all models and images this item will use
-	char *sounds;               // string of all sounds this item will use
 } gitem_t;
 
 // included in both the game dll and the client
@@ -2323,6 +2321,8 @@ typedef enum
 	GAMESOUND_WPN_ARTILLERY_FLY_1,  // "sound/weapons/artillery/artillery_fly_1.wav"    Used by Artillery before impact
 	GAMESOUND_WPN_ARTILLERY_FLY_2,  // "sound/weapons/artillery/artillery_fly_2.wav"
 	GAMESOUND_WPN_ARTILLERY_FLY_3,  // "sound/weapons/artillery/artillery_fly_3.wav"
+
+	GAMESOUND_MISC_REVIVE,          // "sound/misc/vo_revive.wav"                       Used by revival Needle
 
 	GAMESOUND_MAX
 } gameSounds;

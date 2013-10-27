@@ -555,8 +555,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,          // ammotype
 		0,          // cliptype
-		"",          // precache
-		"",          // sounds
 	},  // leave index 0 alone
 	/*QUAKED item_treasure (1 1 0) (-8 -8 -8) (8 8 8) suspended
 	Items the player picks up that are just used to tally a score at end-level
@@ -585,8 +583,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 
 	// ARMOR/HEALTH/STAMINA
@@ -611,8 +607,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 	/*QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -634,8 +628,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 	/*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -657,8 +649,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 
 	{
@@ -677,8 +667,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 	/*QUAKED item_health_turkey (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	multi-stage health item.
@@ -704,8 +692,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 	/*QUAKED item_health_breadandmeat (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	multi-stage health item.
@@ -729,8 +715,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 	/*QUAKED item_health_wall (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	defaults to 50 pts health
@@ -754,8 +738,6 @@ gitem_t bg_itemlist[] =
 		0,
 		0,
 		0,
-		"",
-		"",
 	},
 
 	// STAMINA
@@ -782,8 +764,6 @@ gitem_t bg_itemlist[] =
 		WP_KNIFE,
 		WP_KNIFE,
 		WP_KNIFE,
-		"",                      // precache
-		"",                      // sounds
 	},
 
 	{
@@ -802,8 +782,6 @@ gitem_t bg_itemlist[] =
 		WP_KNIFE_KABAR,
 		WP_KNIFE_KABAR,
 		WP_KNIFE_KABAR,
-		"",                      // precache
-		"",                      // sounds
 	},
 
 	/*QUAKED weapon_luger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -826,8 +804,6 @@ gitem_t bg_itemlist[] =
 		WP_LUGER,
 		WP_LUGER,
 		WP_LUGER,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_akimboluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -849,8 +825,6 @@ gitem_t bg_itemlist[] =
 		WP_AKIMBO_LUGER,
 		WP_LUGER,
 		WP_AKIMBO_LUGER,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_akimbosilencedluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -872,8 +846,6 @@ gitem_t bg_itemlist[] =
 		WP_AKIMBO_SILENCEDLUGER,
 		WP_LUGER,
 		WP_AKIMBO_LUGER,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_thompson (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -895,8 +867,6 @@ gitem_t bg_itemlist[] =
 		WP_THOMPSON,
 		WP_THOMPSON,
 		WP_THOMPSON,
-		"",                  // precache
-		"",                  // sounds
 	},
 
 	{
@@ -915,8 +885,6 @@ gitem_t bg_itemlist[] =
 		WP_DUMMY_MG42,          // giTag
 		WP_DUMMY_MG42,          // giAmmoIndex
 		WP_DUMMY_MG42,          // giClipIndex
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_sten (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -938,8 +906,6 @@ gitem_t bg_itemlist[] =
 		WP_STEN,
 		WP_STEN,
 		WP_STEN,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -961,8 +927,6 @@ gitem_t bg_itemlist[] =
 		WP_COLT,
 		WP_COLT,
 		WP_COLT,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_akimbocolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -984,8 +948,6 @@ gitem_t bg_itemlist[] =
 		WP_AKIMBO_COLT,
 		WP_COLT,
 		WP_AKIMBO_COLT,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_akimbosilencedcolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1007,8 +969,6 @@ gitem_t bg_itemlist[] =
 		WP_AKIMBO_SILENCEDCOLT,
 		WP_COLT,
 		WP_AKIMBO_COLT,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_mp40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	"stand" values:
@@ -1033,8 +993,6 @@ gitem_t bg_itemlist[] =
 		WP_MP40,
 		WP_MP40,
 		WP_MP40,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED weapon_panzerfaust (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1056,8 +1014,6 @@ gitem_t bg_itemlist[] =
 		WP_PANZERFAUST,
 		WP_PANZERFAUST,
 		WP_PANZERFAUST,
-		"",                      // precache
-		"",                      // sounds
 	},
 // removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
 //          by virtue of getting grenade ammo.  So we don't need to have them in maps
@@ -1080,8 +1036,6 @@ gitem_t bg_itemlist[] =
 		WP_GRENADE_LAUNCHER,
 		WP_GRENADE_LAUNCHER,
 		WP_GRENADE_LAUNCHER,
-		"",                      // precache
-		"",              // sounds
 	},
 	/*
 	weapon_grenadePineapple
@@ -1102,8 +1056,6 @@ gitem_t bg_itemlist[] =
 		WP_GRENADE_PINEAPPLE,
 		WP_GRENADE_PINEAPPLE,
 		WP_GRENADE_PINEAPPLE,
-		"",                      // precache
-		"",              // sounds
 	},
 	// weapon_grenadesmoke
 	{
@@ -1122,8 +1074,6 @@ gitem_t bg_itemlist[] =
 		WP_SMOKE_MARKER,
 		WP_SMOKE_MARKER,
 		WP_SMOKE_MARKER,
-		"",                      // precache
-		"",              // sounds
 	},
 	// weapon_smoketrail -- only used as a special effects emitter for smoke trails (artillery spotter etc)
 	{
@@ -1142,8 +1092,6 @@ gitem_t bg_itemlist[] =
 		WP_SMOKETRAIL,
 		WP_SMOKETRAIL,
 		WP_SMOKETRAIL,
-		"",                      // precache
-		"",              // sounds
 	},
 	/*
 	weapon_medic_heal
@@ -1164,8 +1112,6 @@ gitem_t bg_itemlist[] =
 		WP_MEDKIT,
 		WP_MEDKIT,
 		WP_MEDKIT,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*
 	weapon_dynamite
@@ -1186,8 +1132,6 @@ gitem_t bg_itemlist[] =
 		WP_DYNAMITE,
 		WP_DYNAMITE,
 		WP_DYNAMITE,
-		"models/multiplayer/dynamite/dynamite.md3 models/multiplayer/dynamite/dynamite_3rd.md3", // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_flamethrower (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1209,8 +1153,6 @@ gitem_t bg_itemlist[] =
 		WP_FLAMETHROWER,
 		WP_FLAMETHROWER,
 		WP_FLAMETHROWER,
-		"",                          // precache
-		"",                          // sounds
 	},
 	/*
 	weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1231,8 +1173,6 @@ gitem_t bg_itemlist[] =
 		WP_MAPMORTAR,
 		WP_MAPMORTAR,
 		WP_MAPMORTAR,
-		"",                      // precache
-		"",                      // sounds - was sound/weapons/mortar/mortarf1.wav
 	},
 	/*
 	weapon_class_special (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1253,8 +1193,6 @@ gitem_t bg_itemlist[] =
 		WP_PLIERS,
 		WP_PLIERS,
 		WP_PLIERS,
-		"",                      // precache
-		"",  // sounds
 	},
 	/*
 	weapon_arty (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1275,8 +1213,6 @@ gitem_t bg_itemlist[] =
 		WP_ARTY,
 		WP_ARTY,
 		WP_ARTY,
-		"",                      // precache
-		"",  // sounds
 	},
 	/*
 	weapon_medic_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1297,8 +1233,6 @@ gitem_t bg_itemlist[] =
 		WP_MEDIC_SYRINGE,
 		WP_MEDIC_SYRINGE,
 		WP_MEDIC_SYRINGE,
-		"",                      // precache
-		"sound/misc/vo_revive.wav",  // sounds
 	},
 	/*
 	weapon_medic_adrenaline (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1319,8 +1253,6 @@ gitem_t bg_itemlist[] =
 		WP_MEDIC_ADRENALINE,
 		WP_MEDIC_SYRINGE,
 		WP_MEDIC_SYRINGE,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*
 	weapon_magicammo (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1341,8 +1273,6 @@ gitem_t bg_itemlist[] =
 		WP_AMMO,
 		WP_AMMO,
 		WP_AMMO,
-		"",                      // precache
-		"",                      // sounds
 	},
 	{
 		"weapon_magicammo2",
@@ -1363,8 +1293,6 @@ gitem_t bg_itemlist[] =
 		WP_AMMO,
 		WP_AMMO,
 		WP_AMMO,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*
 	weapon_binoculars (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1385,8 +1313,6 @@ gitem_t bg_itemlist[] =
 		WP_BINOCULARS,
 		WP_BINOCULARS,
 		WP_BINOCULARS,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_k43 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1408,8 +1334,6 @@ gitem_t bg_itemlist[] =
 		WP_K43,
 		WP_K43,
 		WP_K43,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_kar43_scope (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1431,8 +1355,6 @@ gitem_t bg_itemlist[] =
 		WP_K43_SCOPE,
 		WP_K43,
 		WP_K43,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_kar98Rifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1454,8 +1376,6 @@ gitem_t bg_itemlist[] =
 		WP_KAR98,
 		WP_KAR98,
 		WP_KAR98,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_gpg40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1477,8 +1397,6 @@ gitem_t bg_itemlist[] =
 		WP_GPG40,
 		WP_GPG40,
 		WP_GPG40,
-		"",                          // precache
-		"",                          // sounds
 	},
 	/*QUAKED weapon_gpg40_allied (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1500,8 +1418,6 @@ gitem_t bg_itemlist[] =
 		WP_M7,
 		WP_M7,
 		WP_M7,
-		"",                          // precache
-		"",                          // sounds
 	},
 	/*QUAKED weapon_M1CarbineRifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1523,8 +1439,6 @@ gitem_t bg_itemlist[] =
 		WP_CARBINE,
 		WP_CARBINE,
 		WP_CARBINE,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*
 	weapon_garandRifle (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
@@ -1547,8 +1461,6 @@ gitem_t bg_itemlist[] =
 		WP_GARAND,
 		WP_GARAND,
 		WP_GARAND,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*
 	weapon_garandRifleScope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
@@ -1571,8 +1483,6 @@ gitem_t bg_itemlist[] =
 		WP_GARAND_SCOPE,
 		WP_GARAND,
 		WP_GARAND,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_fg42 (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1594,8 +1504,6 @@ gitem_t bg_itemlist[] =
 		WP_FG42,
 		WP_FG42,
 		WP_FG42,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED weapon_fg42scope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1617,8 +1525,6 @@ gitem_t bg_itemlist[] =
 		WP_FG42SCOPE,   // this weap
 		WP_FG42,        // shares ammo w/
 		WP_FG42,        // shares clip w/
-		"",             // precache
-		"",             // sounds
 	},
 	/*
 	weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
@@ -1641,8 +1547,6 @@ gitem_t bg_itemlist[] =
 		WP_MORTAR,  // this weap
 		WP_MORTAR,  // shares ammo w/
 		WP_MORTAR,  // shares clip w/
-		"",         // precache
-		"",         // sounds
 	},
 	{
 		"weapon_mortar_set",
@@ -1660,8 +1564,6 @@ gitem_t bg_itemlist[] =
 		WP_MORTAR_SET,  // this weap
 		WP_MORTAR,      // shares ammo w/
 		WP_MORTAR,      // shares clip w/
-		"",             // precache
-		"",             // sounds
 	},
 
 	{
@@ -1680,8 +1582,6 @@ gitem_t bg_itemlist[] =
 		WP_MORTAR2,
 		WP_MORTAR,
 		WP_MORTAR,
-		"",             // precache
-		"",             // sounds
 	},
 	{
 		"weapon_mortar2_set",
@@ -1699,8 +1599,6 @@ gitem_t bg_itemlist[] =
 		WP_MORTAR2_SET,
 		WP_MORTAR,
 		WP_MORTAR,
-		"",             // precache
-		"",             // sounds
 	},
 
 	/*
@@ -1722,8 +1620,6 @@ gitem_t bg_itemlist[] =
 		WP_LANDMINE,
 		WP_LANDMINE,
 		WP_LANDMINE,
-		"models/multiplayer/landmine/landmine.md3",
-		"",                      // sounds
 	},
 	/*
 	weapon_satchel (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1744,8 +1640,6 @@ gitem_t bg_itemlist[] =
 		WP_SATCHEL,
 		WP_SATCHEL,
 		WP_SATCHEL,
-		"",                      // precache
-		"",                      // sounds
 	},
 
 	{
@@ -1764,8 +1658,6 @@ gitem_t bg_itemlist[] =
 		WP_SATCHEL_DET,
 		WP_SATCHEL_DET,
 		WP_SATCHEL_DET,
-		"",                      // precache
-		"",                      // sounds
 	},
 
 	{
@@ -1784,8 +1676,6 @@ gitem_t bg_itemlist[] =
 		WP_SMOKE_BOMB,
 		WP_SMOKE_BOMB,
 		WP_SMOKE_BOMB,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED weapon_mobile_mg42 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended spin - respawn
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1807,8 +1697,6 @@ gitem_t bg_itemlist[] =
 		WP_MOBILE_MG42,
 		WP_MOBILE_MG42,
 		WP_MOBILE_MG42,
-		"",                  // precache
-		"",                  // sounds
 	},
 
 	{
@@ -1827,8 +1715,6 @@ gitem_t bg_itemlist[] =
 		WP_MOBILE_MG42_SET,
 		WP_MOBILE_MG42,
 		WP_MOBILE_MG42,
-		"",                  // precache
-		"",                  // sounds
 	},
 
 	{
@@ -1847,8 +1733,6 @@ gitem_t bg_itemlist[] =
 		WP_MOBILE_BROWNING_SET,
 		WP_MOBILE_BROWNING,
 		WP_MOBILE_BROWNING,
-		"",                  // precache
-		"",                  // sounds
 	},
 
 	{
@@ -1867,8 +1751,6 @@ gitem_t bg_itemlist[] =
 		WP_MOBILE_BROWNING,
 		WP_MOBILE_BROWNING,
 		WP_MOBILE_BROWNING,
-		"",                  // precache
-		"",                  // sounds
 	},
 
 	{
@@ -1888,8 +1770,6 @@ gitem_t bg_itemlist[] =
 		WP_SILENCER,
 		WP_LUGER,
 		WP_LUGER,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1911,8 +1791,6 @@ gitem_t bg_itemlist[] =
 		WP_SILENCED_COLT,
 		WP_COLT,
 		WP_COLT,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*
 	weapon_medic_heal
@@ -1933,8 +1811,6 @@ gitem_t bg_itemlist[] =
 		WP_MEDKIT,
 		WP_MEDKIT,
 		WP_MEDKIT,
-		"",                      // precache
-		"",                      // sounds
 	},
 	/*QUAKED ammo_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: medic
@@ -1957,8 +1833,6 @@ gitem_t bg_itemlist[] =
 		WP_MEDIC_SYRINGE,
 		WP_MEDIC_SYRINGE,
 		WP_MEDIC_SYRINGE,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_smoke_grenade (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
@@ -1981,8 +1855,6 @@ gitem_t bg_itemlist[] =
 		WP_SMOKE_BOMB,
 		WP_SMOKE_BOMB,
 		WP_SMOKE_BOMB,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_dynamite (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
@@ -2005,8 +1877,6 @@ gitem_t bg_itemlist[] =
 		WP_DYNAMITE,
 		WP_DYNAMITE,
 		WP_DYNAMITE,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_disguise (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: covertops
@@ -2029,8 +1899,6 @@ gitem_t bg_itemlist[] =
 		-1, // ignored
 		-1, // ignored
 		-1, // ignored
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_airstrike (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
@@ -2053,8 +1921,6 @@ gitem_t bg_itemlist[] =
 		WP_SMOKE_MARKER,
 		WP_SMOKE_MARKER,
 		WP_SMOKE_MARKER,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_landmine (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
@@ -2077,8 +1943,6 @@ gitem_t bg_itemlist[] =
 		WP_LANDMINE,
 		WP_LANDMINE,
 		WP_LANDMINE,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_satchel_charge (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
@@ -2101,8 +1965,6 @@ gitem_t bg_itemlist[] =
 		WP_SATCHEL,
 		WP_SATCHEL,
 		WP_SATCHEL,
-		"",                  // precache
-		"",                  // sounds
 	},
 
 	// AMMO ITEMS
@@ -2128,8 +1990,6 @@ gitem_t bg_itemlist[] =
 		WP_LUGER,
 		WP_LUGER,
 		WP_LUGER,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_9mm (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
@@ -2152,8 +2012,6 @@ gitem_t bg_itemlist[] =
 		WP_LUGER,
 		WP_LUGER,
 		WP_LUGER,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_9mm_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
@@ -2176,8 +2034,6 @@ gitem_t bg_itemlist[] =
 		WP_LUGER,
 		WP_LUGER,
 		WP_LUGER,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_45cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
@@ -2200,8 +2056,6 @@ gitem_t bg_itemlist[] =
 		WP_COLT,
 		WP_COLT,
 		WP_COLT,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_45cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
@@ -2224,8 +2078,6 @@ gitem_t bg_itemlist[] =
 		WP_COLT,
 		WP_COLT,
 		WP_COLT,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_45cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
@@ -2248,8 +2100,6 @@ gitem_t bg_itemlist[] =
 		WP_COLT,
 		WP_COLT,
 		WP_COLT,
-		"",                  // precache
-		"",                  // sounds
 	},
 	/*QUAKED ammo_30cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
@@ -2272,8 +2122,6 @@ gitem_t bg_itemlist[] =
 		WP_GARAND,
 		WP_GARAND,
 		WP_GARAND,
-		"",                          // precache
-		"",                          // sounds}
 	},
 	/*QUAKED ammo_30cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
@@ -2296,8 +2144,6 @@ gitem_t bg_itemlist[] =
 		WP_GARAND,
 		WP_GARAND,
 		WP_GARAND,
-		"",                          // precache
-		"",                          // sounds
 	},
 	/*QUAKED ammo_30cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
@@ -2320,8 +2166,6 @@ gitem_t bg_itemlist[] =
 		WP_GARAND,
 		WP_GARAND,
 		WP_GARAND,
-		"",                          // precache
-		"",                          // sounds
 	},
 
 	// POWERUP ITEMS
@@ -2347,8 +2191,6 @@ gitem_t bg_itemlist[] =
 		PW_REDFLAG,
 		0,
 		0,
-		"",              // precache
-		"",              // sounds
 	},
 	/*QUAKED team_CTF_blueflag (0 0 1) (-16 -16 -16) (16 16 16)
 	Only in CTF games
@@ -2371,39 +2213,7 @@ gitem_t bg_itemlist[] =
 		PW_BLUEFLAG,
 		0,
 		0,
-		"",                 // precache
-		"",                 // sounds
 	},
-
-	// Wolf keys
-
-	/* QUAKED key_1 (1 1 0) (-8 -8 -8) (8 8 8) SUSPENDED SPIN - RESPAWN
-	key 1
-	pickup sound : "sound/misc/w_pkup.wav"
-	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
-	model="models/powerups/xp_key/key.md3"
-	*/
-	/*
-	    {
-	        "key_key1",
-	        "sound/misc/w_pkup.wav",    //"sound/pickup/keys/skull.wav",
-	        {
-	            "models/powerups/xp_key/key.md3",
-	            0, 0
-	        },
-	        "", //"icons/iconk_skull",  // icon
-	        NULL,                   // ammo icon
-	        "Key 1",        // pickup
-	        0,
-	        IT_KEY,
-	        KEY_1,
-	        0,
-	        0,
-	        "",                     // precache
-	        "models/keys/key.wav",  // sounds
-	    },
-
-	*/
 
 	// end of list marker
 	{ NULL }
