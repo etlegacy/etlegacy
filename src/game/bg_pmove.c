@@ -932,7 +932,7 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		if (pm->ps->weaponDelay && pm->ps->weapon == WP_PANZERFAUST)
+		if (pm->ps->weaponDelay && IS_PANZER_WEAPON(pm->ps->weapon))
 		{
 			return qfalse;
 		}
@@ -2417,15 +2417,19 @@ static void PM_BeginWeaponReload(int weapon)
 			return;
 		}
 		break;
+
+	// if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
+	// FIXME: case WP_AMMO ?
+	case WP_SMOKETRAIL:
+	case WP_MAPMORTAR:
+	case VERYBIGEXPLOSION:
+	case WP_MEDKIT:
+	case WP_BINOCULARS:
+	case WP_PLIERS:
+	case WP_SMOKE_MARKER:
+		return;
 	default:
 		break;
-	}
-
-	// FIXME: crappy code if we add new weapons ... this might cause issues with KAR-BAR
-	// || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 ... do with weapon table
-	if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
-	{
-		return;
 	}
 
 	item = BG_FindItemForWeapon(weapon);
@@ -2466,7 +2470,7 @@ static void PM_BeginWeaponReload(int weapon)
 		break;
 	}
 
-	if (weapon != WP_MORTAR && weapon != WP_MORTAR_SET)
+	if (!IS_MORTAR_WEAPON(weapon))
 	{
 		PM_ContinueWeaponAnim(PM_ReloadAnimForWeapon(pm->ps->weapon));
 	}
@@ -2975,7 +2979,7 @@ static void PM_ReloadClip(int weapon)
 	}
 
 	// reload akimbo stuff
-	if (BG_IsAkimboWeapon(weapon))
+	if (IS_AKIMBO_WEAPON(weapon))
 	{
 		PM_ReloadClip(BG_AkimboSidearm(weapon));
 	}
@@ -3010,6 +3014,7 @@ void PM_CheckForReload(int weapon)
 	}
 
 	// some weapons don't reload
+	// FIXME: weapon table
 	switch (weapon)
 	{
 	case WP_GPG40:
@@ -3090,7 +3095,7 @@ void PM_CheckForReload(int weapon)
 				}
 
 				// akimbo should also check other weapon status
-				if (BG_IsAkimboWeapon(weapon))
+				if (IS_AKIMBO_WEAPON(weapon))
 				{
 					if (pm->ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(weapon))] < GetAmmoTableData(BG_FindClipForWeapon(BG_AkimboSidearm(weapon)))->maxclip)
 					{
@@ -3103,7 +3108,7 @@ void PM_CheckForReload(int weapon)
 		{
 			if (!pm->ps->ammoclip[clipWeap] && pm->ps->ammo[ammoWeap])
 			{
-				if (BG_IsAkimboWeapon(weapon))
+				if (IS_AKIMBO_WEAPON(weapon))
 				{
 					if (!pm->ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(weapon))])
 					{
@@ -3189,7 +3194,7 @@ void PM_WeaponUseAmmo(int wp, int amount)
 	{
 		int takeweapon = BG_FindClipForWeapon(wp);
 
-		if (BG_IsAkimboWeapon(wp))
+		if (IS_AKIMBO_WEAPON(wp))
 		{
 			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(wp))]))
 			{
@@ -3217,7 +3222,7 @@ int PM_WeaponAmmoAvailable(int wp)
 	{
 		int takeweapon = BG_FindClipForWeapon(wp);
 
-		if (BG_IsAkimboWeapon(wp))
+		if (IS_AKIMBO_WEAPON(wp))
 		{
 			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(wp))]))
 			{
@@ -3787,7 +3792,7 @@ static void PM_Weapon(void)
 
 	pm->watertype = 0;
 
-	if (BG_IsAkimboWeapon(pm->ps->weapon))
+	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
 	{
 		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)], pm->ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(pm->ps->weapon))]);
 	}
@@ -3888,7 +3893,7 @@ static void PM_Weapon(void)
 		// FIXME: do a switch
 		if (pm->ps->weapon == WP_LUGER || pm->ps->weapon == WP_COLT || pm->ps->weapon == WP_SILENCER || pm->ps->weapon == WP_SILENCED_COLT ||
 		    pm->ps->weapon == WP_KAR98 || pm->ps->weapon == WP_K43 || pm->ps->weapon == WP_CARBINE || pm->ps->weapon == WP_GARAND ||
-		    pm->ps->weapon == WP_GARAND_SCOPE || pm->ps->weapon == WP_K43_SCOPE || BG_IsAkimboWeapon(pm->ps->weapon))
+		    pm->ps->weapon == WP_GARAND_SCOPE || pm->ps->weapon == WP_K43_SCOPE || IS_AKIMBO_WEAPON(pm->ps->weapon))
 		{
 			// moved releasedFire into pmext instead of ps
 			if (pm->pmext->releasedFire)
@@ -3897,7 +3902,7 @@ static void PM_Weapon(void)
 				{
 					// akimbo weapons only have a 200ms delay, so
 					// use a shorter time for quickfire (#255)
-					if (BG_IsAkimboWeapon(pm->ps->weapon))
+					if (IS_AKIMBO_WEAPON(pm->ps->weapon))
 					{
 						if (pm->ps->weaponTime <= 50)
 						{
@@ -4554,7 +4559,7 @@ static void PM_Weapon(void)
 
 	// if this was the last round in the clip, play the 'lastshot' animation
 	// this animation has the weapon in a "ready to reload" state
-	if (BG_IsAkimboWeapon(pm->ps->weapon))
+	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
 	{
 		if (akimboFire)
 		{
@@ -4659,7 +4664,7 @@ static void PM_Weapon(void)
 		break;
 	}
 
-	if (BG_IsAkimboWeapon(pm->ps->weapon))
+	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
 	{
 		if (akimboFire)
 		{

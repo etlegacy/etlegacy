@@ -224,6 +224,75 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 16,  1, 1,   12, 0,   0,    DELAY_HW,     1400, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR2_SET			// 52
 };
 
+// WIP: New weapon table (similar to ammoTableMP) to store common weapon properties
+// This will save us tons of switches, creates better code and might be populated by custom entries one day
+// FIXME: fill me & use!
+weaponTable_t weaponTable[WP_NUM_WEAPONS] =
+{
+//  weapon
+	{ WP_NONE,                 }, // 0
+	{ WP_KNIFE,                }, // 1
+	{ WP_LUGER,                }, // 2
+	{ WP_MP40,                 }, // 3
+	{ WP_GRENADE_LAUNCHER,     }, // 4
+	{ WP_PANZERFAUST,          }, // 5
+	{ WP_FLAMETHROWER,         }, // 6
+	{ WP_COLT,                 }, // 7	// equivalent american weapon to german luger
+	{ WP_THOMPSON,             }, // 8	// equivalent american weapon to german mp40
+	{ WP_GRENADE_PINEAPPLE,    }, // 9
+
+	{ WP_STEN,                 }, // 10	// silenced sten sub-machinegun
+	{ WP_MEDIC_SYRINGE,        }, // 11	// broken out from CLASS_SPECIAL per Id request
+	{ WP_AMMO,                 }, // 12	// likewise
+	{ WP_ARTY,                 }, // 13
+	{ WP_SILENCER,             }, // 14	// used to be sp5
+	{ WP_DYNAMITE,             }, // 15
+	{ WP_SMOKETRAIL,           }, // 16
+	{ WP_MAPMORTAR,            }, // 17
+	{ VERYBIGEXPLOSION,        }, // 18	// explosion effect for airplanes
+	{ WP_MEDKIT,               }, // 19
+
+	{ WP_BINOCULARS,           }, // 20
+	{ WP_PLIERS,               }, // 21
+	{ WP_SMOKE_MARKER,         }, // 22	// changed name to cause less confusion
+	{ WP_KAR98,                }, // 23	// WolfXP weapons
+	{ WP_CARBINE,              }, // 24
+	{ WP_GARAND,               }, // 25
+	{ WP_LANDMINE,             }, // 26
+	{ WP_SATCHEL,              }, // 27
+	{ WP_SATCHEL_DET,          }, // 28
+	{ WP_SMOKE_BOMB,           }, // 29
+
+	{ WP_MOBILE_MG42,          }, // 30
+	{ WP_K43,                  }, // 31
+	{ WP_FG42,                 }, // 32
+	{ WP_DUMMY_MG42,           }, // 33   // for storing heat on mounted mg42s...
+	{ WP_MORTAR,               }, // 34
+	{ WP_AKIMBO_COLT,          }, // 35
+	{ WP_AKIMBO_LUGER,         }, // 36
+
+	{ WP_GPG40,                }, // 37
+	{ WP_M7,                   }, // 38
+	{ WP_SILENCED_COLT,        }, // 39
+
+	{ WP_GARAND_SCOPE,         }, // 40
+	{ WP_K43_SCOPE,            }, // 41
+	{ WP_FG42SCOPE,            }, // 42
+	{ WP_MORTAR_SET,           }, // 43
+	{ WP_MEDIC_ADRENALINE,     }, // 44
+	{ WP_AKIMBO_SILENCEDCOLT,  }, // 45
+	{ WP_AKIMBO_SILENCEDLUGER, }, // 46
+	{ WP_MOBILE_MG42_SET,      }, // 47
+
+	// legacy weapons
+	{ WP_KNIFE_KABAR,          }, // 48
+	{ WP_MOBILE_BROWNING,      }, // 49
+	{ WP_MOBILE_BROWNING_SET,  }, // 50
+
+	{ WP_MORTAR2,              }, // 51
+	{ WP_MORTAR2_SET,          }, // 52
+};
+
 // moved in here so both games can get to it
 // FIXME: weapontable
 int weapAlts[] =
@@ -2410,7 +2479,7 @@ BG_AkimboFireSequence
 */
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip)
 {
-	if (!BG_IsAkimboWeapon(weapon))
+	if (!IS_AKIMBO_WEAPON(weapon))
 	{
 		return qfalse;
 	}
@@ -2439,50 +2508,6 @@ qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip)
 
 /*
 ==============
-BG_IsAkimboWeapon
-==============
-*/
-qboolean BG_IsAkimboWeapon(int weaponNum)
-{
-	switch (weaponNum)
-	{
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-		return qtrue;
-	default:
-		return qfalse;
-	}
-}
-
-/*
-==============
-BG_IsAkimboSideArm
-==============
-*/
-qboolean BG_IsAkimboSideArm(int weaponNum, playerState_t *ps)
-{
-	switch (weaponNum)
-	{
-	case WP_COLT:
-		if (ps->weapon == WP_AKIMBO_COLT || ps->weapon == WP_AKIMBO_SILENCEDCOLT)
-		{
-			return qtrue;
-		}
-		break;
-	case WP_LUGER:
-		if (ps->weapon == WP_AKIMBO_LUGER || ps->weapon == WP_AKIMBO_SILENCEDLUGER)
-		{
-			return qtrue;
-		}
-		break;
-	}
-	return qfalse;
-}
-
-/*
-==============
 BG_AkimboSidearm
 ==============
 */
@@ -2504,22 +2529,6 @@ int BG_AkimboSidearm(int weaponNum)
 	}
 	return WP_NONE;
 }
-
-/*
-==============
-BG_AkimboForSideArm
-==============
-*/
-/*int BG_AkimboForSideArm( int weaponNum ) {
-    switch( weaponNum )
-    {
-    case WP_COLT:           return WP_AKIMBO_COLT;          break;
-    case WP_SILENCED_COLT:  return WP_AKIMBO_SILENCEDCOLT;  break;
-    case WP_LUGER:          return WP_AKIMBO_LUGER;         break;
-    case WP_SILENCER:       return WP_AKIMBO_SILENCEDLUGER; break;
-    default:                return WP_NONE;                 break;
-    }
-}*/
 
 /*
 ==============
@@ -2762,7 +2771,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 					}
 					ammoAdded = qtrue;
 
-					if (BG_IsAkimboWeapon(weapon))
+					if (IS_AKIMBO_WEAPON(weapon))
 					{
 						weapNumOfClips = numOfClips * 2;     // double clips babeh!
 					}

@@ -840,20 +840,37 @@ typedef struct ammotable_s
 // Lookup table to find ammo table entry
 extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
-
 typedef struct weapontable_s
 {
+	int weapon;             // reference
 	int damage;             // g
 	float spread;           // g
+
+	qboolean isAutoReload;  // bg // move this to ammo table?
+
+	qboolean isAkimbo;      // bg
+	qboolean isPanzer;      // bg
 	qboolean isRiflenade;   // bg
-	qboolean isAutoReload;  // bg
-} weapontable_t;
+	qboolean isMortar;      // bg
+	qboolean isMortarSet;   // bg
+
+	qboolean isSetWeapon;   // bg
+} weaponTable_t;
+
+extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 
 extern int weapAlts[];  // defined in bg_misc.c
 
-// weapon table
+// FIXME: weapon table - put following macros in
 #define IS_RIFLENADE_WEAPON(w) \
-	(w == WP_GPG40           || w == WP_M7)
+	(w == WP_GPG40               || w == WP_M7)
+
+#define IS_PANZER_WEAPON(w) \
+	(w == WP_PANZERFAUST)
+
+#define IS_AKIMBO_WEAPON(w) \
+	(w == WP_AKIMBO_COLT         || w == WP_AKIMBO_LUGER         || \
+	 w == WP_AKIMBO_SILENCEDCOLT || w == WP_AKIMBO_SILENCEDLUGER)
 
 #define IS_MORTAR_WEAPON(w) \
 	(w == WP_MORTAR              || w == WP_MORTAR2              || \
@@ -862,20 +879,24 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define IS_MORTAR_WEAPON_SET(w) \
 	(w == WP_MORTAR_SET          || w == WP_MORTAR2_SET)
 
+#define IS_SET_WEAPON(w)    \
+	(w == WP_MORTAR_SET      || w == WP_MORTAR2_SET             || \
+	 w == WP_MOBILE_MG42_SET  || w == WP_MOBILE_BROWNING_SET)
+
 // weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
-// FIXME: weapon table
-#define IS_AUTORELOAD_WEAPON(weapon) \
-	(   \
-	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
-	    weapon == WP_THOMPSON || weapon == WP_STEN          || \
-	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
-	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
-	    weapon == WP_MOBILE_BROWNING || weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
-	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
-	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET || weapon == WP_MOBILE_BROWNING_SET \
+#define IS_AUTORELOAD_WEAPON(w) \
+	(w == WP_LUGER    || w == WP_COLT          || w == WP_MP40          || \
+	 w == WP_THOMPSON || w == WP_STEN          || \
+	 w == WP_KAR98    || w == WP_CARBINE       || w == WP_GARAND_SCOPE  || \
+	 w == WP_FG42     || w == WP_K43           || w == WP_MOBILE_MG42   || \
+	 w == WP_MOBILE_BROWNING || w == WP_SILENCED_COLT    || w == WP_SILENCER      || \
+	 w == WP_GARAND   || w == WP_K43_SCOPE     || w == WP_FG42SCOPE     || \
+	 IS_AKIMBO_WEAPON(w) || w == WP_MOBILE_MG42_SET || w == WP_MOBILE_BROWNING_SET \
 	)
+
+//#define IS_VALID_WEAPON(w) ( w > WP_NONE && w < WP_NUM_WEAPONS )
 
 // entityState_t->event values
 // entity events are for effects that take place reletive
@@ -1457,9 +1478,6 @@ weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
 weapon_t BG_FindClipForWeapon(weapon_t weapon);
 
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
-qboolean BG_IsAkimboWeapon(int weaponNum);
-qboolean BG_IsAkimboSideArm(int weaponNum, playerState_t *ps);
-int BG_AkimboSidearm(int weaponNum);
 
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
 
@@ -2231,6 +2249,10 @@ qboolean BG_LoadSpeakerScript(const char *filename);
 // Lookup table to find ammo table entry
 extern ammotable_t ammoTableMP[WP_NUM_WEAPONS];
 #define GetAmmoTableData(ammoIndex) ((ammotable_t *)(&ammoTableMP[ammoIndex]))
+
+// Lookup table to find weapon table entry
+extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
+#define GetWeaponTableData(weaponIndex) ((weaponTable_t *)(&weaponTable[weaponIndex]))
 
 #define MAX_MAP_SIZE 65536
 

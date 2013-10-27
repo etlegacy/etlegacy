@@ -2542,7 +2542,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	weapon = &cg_weapons[weaponNum];
 
-	if (BG_IsAkimboWeapon(weaponNum))
+	if (IS_AKIMBO_WEAPON(weaponNum))
 	{
 		if (isPlayer)
 		{
@@ -2657,7 +2657,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		CG_PositionRotatedEntityOnTag(&gun, parent, "tag_weapon");
 	}
-	else if ((!ps || cg.renderingThirdPerson) && (IS_MORTAR_WEAPON_SET(weaponNum) || weaponNum == WP_MORTAR || weaponNum == WP_MORTAR2))
+	else if ((!ps || cg.renderingThirdPerson) && IS_MORTAR_WEAPON(weaponNum))
 	{
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
 	}
@@ -2732,7 +2732,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		refEntity_t brass;
 
-		if (BG_IsAkimboWeapon(weaponNum) && akimboFire)
+		if (IS_AKIMBO_WEAPON(weaponNum) && akimboFire)
 		{
 			CG_PositionRotatedEntityOnTag(&brass, parent, "tag_brass2");
 		}
@@ -3054,7 +3054,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	angles[ROLL]  = crandom() * 10;
 	AnglesToAxis(angles, flash.axis);
 
-	if (/*isPlayer &&*/ BG_IsAkimboWeapon(weaponNum))
+	if (/*isPlayer &&*/ IS_AKIMBO_WEAPON(weaponNum))
 	{
 		if (!ps || cg.renderingThirdPerson)
 		{
@@ -3113,7 +3113,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-			else if (weaponNum == WP_PANZERFAUST)
+			else if (IS_PANZER_WEAPON(weaponNum))
 			{
 				if (cg.time - cent->muzzleFlashTime < BARREL_SMOKE_TIME)
 				{
@@ -5175,7 +5175,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		}
 
 		// Early out if we just fired Panzerfaust, go to SMG, pistol, then grenades
-		if (cg.weaponSelect == WP_PANZERFAUST)
+		if (IS_PANZER_WEAPON(cg.weaponSelect))
 		{
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{

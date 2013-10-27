@@ -1529,7 +1529,7 @@ static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
 
-	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && cg.snap->ps.weapon == WP_PANZERFAUST)
+	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && IS_PANZER_WEAPON(cg.snap->ps.weapon))
 	{
 		trap_R_SetColor(colorRed);
 	}
