@@ -2293,32 +2293,9 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
-void CG_DrawChar(int x, int y, int width, int height, int ch);
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags);
 
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
-
-void CG_DrawString(float x, float y, const char *string,
-                   float charWidth, float charHeight, const float *modulate);
-
-void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
-                      qboolean forceColor, qboolean shadow, int charWidth,
-                      int charHeight, int maxChars);
-
-void CG_DrawStringExt2(int x, int y, const char *string, const float *setColor,
-                       qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
-void CG_DrawStringExt_Shadow(int x, int y, const char *string, const float *setColor,
-                             qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars);
-
-void CG_DrawBigString(int x, int y, const char *s, float alpha);
-void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
-void CG_DrawSmallString(int x, int y, const char *s, float alpha);
-void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color);
-
-void CG_DrawBigString2(int x, int y, const char *s, float alpha);
-void CG_DrawBigStringColor2(int x, int y, const char *s, vec4_t color);
-
-int CG_DrawStrlen(const char *str);
 
 float *CG_FadeColor(int startMsec, int totalMsec);
 float *CG_TeamColor(int team);

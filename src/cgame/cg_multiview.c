@@ -670,7 +670,7 @@ void CG_mvDraw(cg_window_t *sw)
 
 #if 0
 	cg.refdef_current = &refdef;
-	CG_DrawStringExt(1, 1, ci->name, colorWhite, qtrue, qtrue, 8, 8, 0);
+	CG_Text_Paint_Ext(1, 1, cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	cg.refdef_current = &cg.refdef;
 #endif
 
@@ -689,7 +689,7 @@ void CG_mvDraw(cg_window_t *sw)
 //
 void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, float s, int wState, qboolean fSelected)
 {
-	int          x;
+	int          w, x;
 	rectDef_t    rect;
 	float        fw              = 8.0f, fh = 8.0f;
 	centity_t    *cent           = &cg_entities[pID];
@@ -739,13 +739,12 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 		noSelectBorder = &colorMdYellow;
 	}
 
-	CG_DrawStringExt(b_x + 1, b_y + b_h - (fh * 2 + 1 + 2), ci->name, colorWhite, qfalse, qtrue, fw, fh, 0);
-	CG_DrawStringExt(b_x + 1, b_y + b_h - (fh + 2), va("%s^7%d", CG_TranslateString(p_class), ci->health), colorWhite, qfalse, qtrue, fw, fh, 0);
+	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2 + 1 + 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, va("%s^7%d", CG_TranslateString(p_class), ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	p_class = va("%d^1/^7%d", ci->ammoclip, ci->ammo);
-	x       = CG_DrawStrlen(p_class);
-	CG_DrawStringExt(b_x + b_w - (x * fw + 1), b_y + b_h - (fh + 2), p_class, colorWhite, qfalse, qtrue, fw, fh, 0);
-
+	w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + b_w - w - 1, b_y + b_h - (fh + 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// Weapon icon
 	rect.x                                  = b_x + b_w - (50 + 1);
@@ -764,8 +763,8 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	{
 		p_class = va("^2S^7%d%%", ci->sprintTime);
 		rect.y -= (fh + 1);
-		x       = CG_DrawStrlen(p_class);
-		CG_DrawStringExt(b_x + b_w - (x * fw + 1), rect.y, p_class, colorWhite, qfalse, qtrue, fw, fh, 0);
+		w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// Weapon charge info
@@ -773,8 +772,8 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	{
 		p_class = va("^1C^7%d%%", ci->chargeTime);
 		rect.y -= (fh + 1);
-		x       = CG_DrawStrlen(p_class);
-		CG_DrawStringExt(b_x + b_w - (x * fw + 1), rect.y, p_class, colorWhite, qfalse, qtrue, fw, fh, 0);
+		w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// Cursorhint work
@@ -782,8 +781,8 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	{
 		p_class = va("^3W:^7%d%%", ci->hintTime);
 		rect.y -= (fh + 1);
-		x       = CG_DrawStrlen(p_class);
-		CG_DrawStringExt(b_x + (b_w - (x * (fw - 1))) / 2, b_y + b_h - (fh + 2), p_class, colorWhite, qfalse, qtrue, fw - 1, fh - 1, 0);
+		w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + (b_w - (w - w / fw)) / 2, b_y + b_h - (fh + 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// Finally, the window border
@@ -860,7 +859,7 @@ void CG_mvOverlayClientUpdate(int pID, int index)
 		       );
 	}
 
-	cg.mvOverlay[index].width = CG_DrawStrlen(cg.mvOverlay[index].info) * MVINFO_TEXTSIZE;
+	cg.mvOverlay[index].width = CG_Text_Width_Ext(cg.mvOverlay[index].info, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 }
 
 // Update info on all clients received for display/cursor interaction
@@ -947,21 +946,12 @@ void CG_mvOverlayDisplay(void)
 				// Draw name info only if we're hovering over the text element
 				if (!(cg.mvCurrentActive->mvInfo & MV_SELECTED) || cg.mvCurrentActive == cg.mvCurrentMainview)
 				{
-					int w = CG_DrawStrlen(cgs.clientinfo[pID].name) * (MVINFO_TEXTSIZE - 1);
-
+					int w = CG_Text_Width_Ext(cgs.clientinfo[pID].name, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 					CG_FillRect(x - 1 - w - 6, y + 1, w + 2, MVINFO_TEXTSIZE - 1 + 2, colorMdGrey);
-					CG_DrawStringExt(x - w - 6, y + 1,
-					                 cgs.clientinfo[pID].name,
-					                 colorYellow, qtrue, qtrue,
-					                 MVINFO_TEXTSIZE - 1,
-					                 MVINFO_TEXTSIZE - 1, 0);
+					CG_Text_Paint_Ext(x - w - 6, y + 1, cg_fontScaleCP.value, cg_fontScaleCP.value, colorYellow, cgs.clientinfo[pID].name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 			}
-
-			CG_DrawStringExt(x, y, o->info,
-			                 colorWhite, qfalse, qtrue,
-			                 MVINFO_TEXTSIZE,
-			                 MVINFO_TEXTSIZE, 0);
+			CG_Text_Paint_Ext(x, y, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, o->info, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
 	}
 }

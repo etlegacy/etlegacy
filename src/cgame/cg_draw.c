@@ -447,7 +447,7 @@ static void CG_DrawNotify(void)
 
         for (i = cgs.notifyLastPos; i < cgs.notifyPos; i++)
         {
-            len = CG_DrawStrlen(cgs.notifyMsgs[i % chatHeight]);
+            len = CG_Text_Width_Ext(cgs.notifyMsgs[i % chatHeight], cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
             if (len > w)
             {
                 w = len;
@@ -482,10 +482,7 @@ static void CG_DrawNotify(void)
             hcolor[3] = alphapercent;
             trap_R_SetColor(hcolor);
 
-            CG_DrawStringExt(NOTIFYLOC_X + TINYCHAR_WIDTH,
-                             yLoc - (cgs.notifyPos - i) * TINYCHAR_HEIGHT,
-                             cgs.notifyMsgs[i % chatHeight], hcolor, qfalse, qfalse,
-                             TINYCHAR_WIDTH, TINYCHAR_HEIGHT, maxCharsBeforeOverlay);
+            CG_Text_Paint_Ext(NOTIFYLOC_X + TINYCHAR_WIDTH, yLoc - (cgs.notifyPos - i) * TINYCHAR_HEIGHT, cg_fontScaleOS.value, cg_fontScaleOS.value, hColor, cgs.notifyMsgs[i % chatHeight], 0, maxCharsBeforeOverlay, 0, &cgs.media.limboFont2);
         }
     }
 */
@@ -593,8 +590,8 @@ static void CG_DrawDisconnect(void)
 
 	// also add text in center of screen
 	s = CG_TranslateString("Connection Interrupted");
-	w = CG_DrawStrlen(s) * BIGCHAR_WIDTH;
-	CG_DrawBigString(320 - w / 2, 100, s, 1.0F);
+	w = CG_Text_Width_Ext(s, cg_fontScaleWS.value, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(320 - w / 2, 100, cg_fontScaleWS.value, cg_fontScaleWS.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// blink the icon
 	if ((cg.time >> 9) & 1)
@@ -735,7 +732,7 @@ static void CG_DrawLagometer(void)
 #endif // ALLOW_GSYNC
 	    )
 	{
-		CG_DrawBigString(ax, ay, "snc", 1.0);
+		CG_Text_Paint_Ext(ax, ay, cg_fontScaleWS.value, cg_fontScaleWS.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	CG_DrawDisconnect();
@@ -912,7 +909,7 @@ static void CG_DrawCenterString(void)
 		}
 		linebuffer[l] = 0;
 
-		w = cg.centerPrintCharWidth * CG_DrawStrlen(linebuffer);
+		w = CG_Text_Width_Ext(linebuffer, cg.centerPrintFontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(320) - w / 2;
 
 		CG_Text_Paint_Ext(x, y, cg.centerPrintFontScale, cg.centerPrintFontScale, colorWhite, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -2971,7 +2968,7 @@ static void CG_DrawFlashFade(void)
 			{
 				if (cg.snap->ps.powerups[PW_BLACKOUT] & i)
 				{
-					CG_DrawStringExt(INFOTEXT_STARTX, nOffset, va(CG_TranslateString("The %s team is speclocked!"), teams[i]), color, qtrue, qfalse, 10, 10, 0);
+					CG_Text_Paint_Ext(INFOTEXT_STARTX, nOffset, cg_fontScaleFV.value, cg_fontScaleFV.value, color, va(CG_TranslateString("The %s team is speclocked!"), teams[i]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 					nOffset += 12;
 				}
 			}

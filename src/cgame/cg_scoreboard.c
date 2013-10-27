@@ -365,7 +365,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	// draw name
 	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, ci->name, 0, maxchars, 0, &cgs.media.limboFont2_lo);
-	maxchars -= CG_DrawStrlen(ci->name);
+	maxchars -= CG_Text_Width_Ext(ci->name, 0.24, 0, &cgs.media.limboFont2_lo);
 
 	// draw medals
 	buf[0] = '\0';
@@ -552,10 +552,9 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	// draw name
 	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, ci->name, 0, maxchars, 0, &cgs.media.limboFont2_lo);
+	maxchars -= CG_Text_Width_Ext(ci->name, 0.20, 0, &cgs.media.limboFont2_lo);
 
 	// draw medals
-	maxchars -= CG_DrawStrlen(ci->name);
-
 	buf[0] = '\0';
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
