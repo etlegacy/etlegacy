@@ -1775,6 +1775,7 @@ static void CG_DrawCrosshairNames(void)
 	float      zChange;
 	qboolean   hitClient = qfalse;
 	float      middle    = 320 + cgs.wideXoffset;
+	float      fontScale = cg_fontScaleCN.value;
 
 	if (cg_drawCrosshair.integer < 0)
 	{
@@ -1820,16 +1821,18 @@ static void CG_DrawCrosshairNames(void)
 					return;
 				}
 
-				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
+				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+
 			}
 			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 			{
 				s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairClientNum));
 				if (*s)
 				{
-					w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-					CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
+					w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+					CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+
 				}
 				return;
 			}
@@ -1847,8 +1850,8 @@ static void CG_DrawCrosshairNames(void)
 			if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 			{
 				s = CG_TranslateString("Disguised Enemy!");
-				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
+				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 				return;
 			}
 			else if (dist > 512)
@@ -1860,11 +1863,10 @@ static void CG_DrawCrosshairNames(void)
 
 				drawStuff = qtrue;
 
-				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
-				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-
 				// draw the name and class
-				CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
+				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
+				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 				// - 16 - 110/2
 				CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass((cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 
@@ -1916,11 +1918,10 @@ static void CG_DrawCrosshairNames(void)
 
 		drawStuff = qtrue;
 
-		s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
-		w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-
 		// draw the name and class
-		CG_DrawSmallStringColor(middle - w / 2, 170, s, color);
+		s = va("%s", cgs.clientinfo[cg.crosshairClientNum].cleanname);
+		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 		// - 16 - 110/2
 		CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cg_entities[cg.crosshairClientNum].currentState.teamNum)]);
 

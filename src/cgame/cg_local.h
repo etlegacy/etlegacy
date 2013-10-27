@@ -2215,6 +2215,7 @@ extern vmCvar_t cg_fontScaleLF;
 extern vmCvar_t cg_fontScaleFV;
 extern vmCvar_t cg_fontScaleOS;
 extern vmCvar_t cg_fontScaleCP;
+extern vmCvar_t cg_fontScaleCN;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
