@@ -159,7 +159,7 @@ void Weapon_Knife(gentity_t *ent, int modnum)
 		return;
 	}
 
-	damage = G_GetWeaponDamage(ent->s.weapon);   // default knife damage for frontal attacks
+	damage = GetWeaponTableData(ent->s.weapon)->damage;   // default knife damage for frontal attacks (10)
 
 	// Covert ops deal double damage with a knife
 	if (ent->client->sess.playerType == PC_COVERTOPS)
@@ -2769,25 +2769,23 @@ void artilleryThink_real(gentity_t *ent)
 {
 	ent->freeAfterEvent = qtrue;
 	trap_LinkEntity(ent);
-	{
-		int sfx = rand() % 3;
 
-		switch (sfx)
-		{
-		case 0:
-			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_1);
-			ent->s.onFireStart = 255;
-			break;
-		case 1:
-			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_2);
-			ent->s.onFireStart = 255;
-			break;
-		case 2:
-			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_3);
-			ent->s.onFireStart = 255;
-			break;
-		}
+	switch (rand() % 3)
+	{
+	case 0:
+		G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_1);
+		ent->s.onFireStart = 255;
+		break;
+	case 1:
+		G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_2);
+		ent->s.onFireStart = 255;
+		break;
+	case 2:
+		G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_3);
+		ent->s.onFireStart = 255;
+		break;
 	}
+
 }
 void artilleryThink(gentity_t *ent)
 {
@@ -3154,105 +3152,6 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 			v[i] = ceil(v[i]);
 		}
 	}
-}
-
-// FIXME: weapontable
-int G_GetWeaponDamage(int weapon)
-{
-	switch (weapon)
-	{
-	default:
-		return 1;
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
-		return 10;
-	case WP_STEN:
-		return 14;
-	case WP_CARBINE:
-	case WP_GARAND:
-	case WP_KAR98:
-	case WP_K43:
-		return 34;
-	case WP_FG42:
-		return 15;
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_THOMPSON:
-	case WP_MP40:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-		return 18;
-	case WP_FG42SCOPE:
-		return 30;
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-		return 50;
-	case WP_SMOKE_MARKER:
-		return 140;     // just enough to kill somebody standing on it
-	case WP_MAPMORTAR:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GPG40:
-	case WP_M7:
-	case WP_LANDMINE:
-	case WP_SATCHEL:
-		return 250;
-	case WP_PANZERFAUST:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-	case WP_DYNAMITE:
-		return 400;
-	}
-}
-
-// FIXME: weapontable (only bullet weapons)
-float G_GetWeaponSpread(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-		return 600;
-	case WP_MP40:
-	case WP_THOMPSON:
-		return 400;
-	case WP_STEN:
-	case WP_FG42SCOPE:
-		return 200;
-	case WP_FG42:
-		return 500;
-	case WP_GARAND:
-	case WP_CARBINE:
-	case WP_KAR98:
-	case WP_K43:
-		return 250;
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-		return 700;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-		return 2500;
-	}
-
-	G_Printf("shouldn't ever get here (weapon %d)\n", weapon);
-
-	return 0;   // shouldn't get here
 }
 
 /*
@@ -4253,19 +4152,19 @@ void FireWeapon(gentity_t *ent)
 	case WP_STEN:
 	case WP_MP40:
 	case WP_THOMPSON:
-		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qtrue);
+		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qtrue);
 		break;
 	case WP_KAR98:
 	case WP_CARBINE:
 	case WP_GARAND:
 	case WP_K43:
 		aimSpreadScale = 1.0f;
-		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
+		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
 		break;
 	case WP_FG42SCOPE:
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
-		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
+		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
 		break;
 	case WP_SATCHEL_DET:
 		if (G_ExplodeSatchels(ent))
@@ -4278,17 +4177,17 @@ void FireWeapon(gentity_t *ent)
 		break;
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
-		Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * 0.05f * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
+		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * 0.05f * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING:
 		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
 		{
-			Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * 0.6f * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
+			Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * 0.6f * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
 		}
 		else
 		{
-			Bullet_Fire(ent, G_GetWeaponSpread(ent->s.weapon) * aimSpreadScale, G_GetWeaponDamage(ent->s.weapon), qfalse);
+			Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
 		}
 		break;
 	case WP_PANZERFAUST:

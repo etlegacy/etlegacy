@@ -2177,7 +2177,6 @@ than 10 left.
 
 "angle"     landmine orientation
 */
-extern int G_GetWeaponDamage(int weapon);
 extern void G_LandmineThink(gentity_t *self);
 
 void landmine_setup(gentity_t *ent)
@@ -2215,8 +2214,8 @@ void landmine_setup(gentity_t *ent)
 	ent->s.weapon   = WP_LANDMINE;
 	ent->r.ownerNum = ENTITYNUM_WORLD;
 
-	ent->damage       = G_GetWeaponDamage(WP_LANDMINE);     // overridden for dynamite
-	ent->splashDamage = G_GetWeaponDamage(WP_LANDMINE);
+	ent->damage       = GetWeaponTableData(WP_LANDMINE)->damage;     // overridden for dynamite
+	ent->splashDamage = GetWeaponTableData(WP_LANDMINE)->damage;
 
 	ent->accuracy            = 0;
 	ent->classname           = "landmine";
@@ -2229,7 +2228,7 @@ void landmine_setup(gentity_t *ent)
 	ent->takedamage          = qtrue;
 	ent->r.contents          = CONTENTS_CORPSE; // (player can walk through)
 
-	ent->splashRadius = G_GetWeaponDamage(WP_LANDMINE);
+	ent->splashRadius = GetWeaponTableData(WP_LANDMINE)->damage;
 
 	ent->health        = 0;
 	ent->s.modelindex2 = 0;

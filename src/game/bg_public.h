@@ -842,19 +842,30 @@ extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
 typedef struct weapontable_s
 {
-	int weapon;             // reference
-	int damage;             // g
-	float spread;           // g
+	int weapon;               // reference
+	int damage;               // g
+	float spread;             // g
+	int splashDamage;
+	int splashRadius;
 
-	qboolean isAutoReload;  // bg // move this to ammo table?
+	qboolean keepDisguise;    // g
 
-	qboolean isAkimbo;      // bg
-	qboolean isPanzer;      // bg
-	qboolean isRiflenade;   // bg
-	qboolean isMortar;      // bg
-	qboolean isMortarSet;   // bg
+	int weapAlts;             // bg
 
-	qboolean isSetWeapon;   // bg
+	qboolean isAutoReload;    // bg // move this to ammo table?!
+
+	qboolean isAkimbo;        // bg
+	qboolean isPanzer;        // bg
+	qboolean isRiflenade;     // bg
+	qboolean isMortar;        // bg
+	qboolean isMortarSet;     // bg
+
+	qboolean isSetWeapon;     // bg
+
+	qboolean isUnderWaterFire; // bg
+
+	qboolean isValidStatWeapon;//bg (just check)
+
 } weaponTable_t;
 
 extern weaponTable_t *GetWeaponTableData(int weaponIndex);

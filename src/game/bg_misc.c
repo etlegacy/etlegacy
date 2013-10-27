@@ -227,70 +227,73 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 // WIP: New weapon table (similar to ammoTableMP) to store common weapon properties
 // This will save us tons of switches, creates better code and might be populated by custom entries one day
 // FIXME: fill me & use!
+
+// damage - returns 1 for no damage ... FIXME: some weapons are handled differently f.e. VERYBIGEXPLOSION
+// spread - bullet weapons only
 weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 {
-//  weapon
-	{ WP_NONE,                 }, // 0
-	{ WP_KNIFE,                }, // 1
-	{ WP_LUGER,                }, // 2
-	{ WP_MP40,                 }, // 3
-	{ WP_GRENADE_LAUNCHER,     }, // 4
-	{ WP_PANZERFAUST,          }, // 5
-	{ WP_FLAMETHROWER,         }, // 6
-	{ WP_COLT,                 }, // 7	// equivalent american weapon to german luger
-	{ WP_THOMPSON,             }, // 8	// equivalent american weapon to german mp40
-	{ WP_GRENADE_PINEAPPLE,    }, // 9
+	// weapon              damage spread
+	{ WP_NONE,                 1,   0,    }, // 0
+	{ WP_KNIFE,                10,  0,    }, // 1
+	{ WP_LUGER,                18,  600,  }, // 2
+	{ WP_MP40,                 18,  400,  }, // 3
+	{ WP_GRENADE_LAUNCHER,     250, 0,    }, // 4
+	{ WP_PANZERFAUST,          400, 0,    }, // 5
+	{ WP_FLAMETHROWER,         1,   0,    }, // 6
+	{ WP_COLT,                 18,  600,  }, // 7	// equivalent american weapon to german luger
+	{ WP_THOMPSON,             18,  400,  }, // 8	// equivalent american weapon to german mp40
+	{ WP_GRENADE_PINEAPPLE,    250, 0,    }, // 9
 
-	{ WP_STEN,                 }, // 10	// silenced sten sub-machinegun
-	{ WP_MEDIC_SYRINGE,        }, // 11	// broken out from CLASS_SPECIAL per Id request
-	{ WP_AMMO,                 }, // 12	// likewise
-	{ WP_ARTY,                 }, // 13
-	{ WP_SILENCER,             }, // 14	// used to be sp5
-	{ WP_DYNAMITE,             }, // 15
-	{ WP_SMOKETRAIL,           }, // 16
-	{ WP_MAPMORTAR,            }, // 17
-	{ VERYBIGEXPLOSION,        }, // 18	// explosion effect for airplanes
-	{ WP_MEDKIT,               }, // 19
+	{ WP_STEN,                 14,  200,  }, // 10	// silenced sten sub-machinegun
+	{ WP_MEDIC_SYRINGE,        1,   0,    }, // 11	// broken out from CLASS_SPECIAL per Id request
+	{ WP_AMMO,                 1,   0,    }, // 12	// likewise
+	{ WP_ARTY,                 1,   0,    }, // 13
+	{ WP_SILENCER,             18,  600,  }, // 14	// used to be sp5
+	{ WP_DYNAMITE,             400, 0,    }, // 15
+	{ WP_SMOKETRAIL,           1,   0,    }, // 16
+	{ WP_MAPMORTAR,            250, 0,    }, // 17
+	{ VERYBIGEXPLOSION,        1,   0,    }, // 18	// explosion effect for airplanes
+	{ WP_MEDKIT,               1,   0,    }, // 19
 
-	{ WP_BINOCULARS,           }, // 20
-	{ WP_PLIERS,               }, // 21
-	{ WP_SMOKE_MARKER,         }, // 22	// changed name to cause less confusion
-	{ WP_KAR98,                }, // 23	// WolfXP weapons
-	{ WP_CARBINE,              }, // 24
-	{ WP_GARAND,               }, // 25
-	{ WP_LANDMINE,             }, // 26
-	{ WP_SATCHEL,              }, // 27
-	{ WP_SATCHEL_DET,          }, // 28
-	{ WP_SMOKE_BOMB,           }, // 29
+	{ WP_BINOCULARS,           1,   0,    }, // 20
+	{ WP_PLIERS,               1,   0,    }, // 21
+	{ WP_SMOKE_MARKER,         140, 0,    }, // 22	// changed name to cause less confusion
+	{ WP_KAR98,                34,  250,  }, // 23	// WolfXP weapons
+	{ WP_CARBINE,              34,  250,  }, // 24
+	{ WP_GARAND,               34,  250,  }, // 25
+	{ WP_LANDMINE,             250, 0,    }, // 26
+	{ WP_SATCHEL,              250, 0,    }, // 27
+	{ WP_SATCHEL_DET,          1,   0,    }, // 28
+	{ WP_SMOKE_BOMB,           1,   0,    }, // 29
 
-	{ WP_MOBILE_MG42,          }, // 30
-	{ WP_K43,                  }, // 31
-	{ WP_FG42,                 }, // 32
-	{ WP_DUMMY_MG42,           }, // 33   // for storing heat on mounted mg42s...
-	{ WP_MORTAR,               }, // 34
-	{ WP_AKIMBO_COLT,          }, // 35
-	{ WP_AKIMBO_LUGER,         }, // 36
+	{ WP_MOBILE_MG42,          18,  2500, }, // 30
+	{ WP_K43,                  34,  250,  }, // 31
+	{ WP_FG42,                 16,  500,  }, // 32
+	{ WP_DUMMY_MG42,           1,   0,    }, // 33   // for storing heat on mounted mg42s...
+	{ WP_MORTAR,               1,   0,    }, // 34
+	{ WP_AKIMBO_COLT,          18,  600,  }, // 35
+	{ WP_AKIMBO_LUGER,         18,  600,  }, // 36
 
-	{ WP_GPG40,                }, // 37
-	{ WP_M7,                   }, // 38
-	{ WP_SILENCED_COLT,        }, // 39
+	{ WP_GPG40,                250, 0,    }, // 37
+	{ WP_M7,                   250, 0,    }, // 38
+	{ WP_SILENCED_COLT,        18,  600,  }, // 39
 
-	{ WP_GARAND_SCOPE,         }, // 40
-	{ WP_K43_SCOPE,            }, // 41
-	{ WP_FG42SCOPE,            }, // 42
-	{ WP_MORTAR_SET,           }, // 43
-	{ WP_MEDIC_ADRENALINE,     }, // 44
-	{ WP_AKIMBO_SILENCEDCOLT,  }, // 45
-	{ WP_AKIMBO_SILENCEDLUGER, }, // 46
-	{ WP_MOBILE_MG42_SET,      }, // 47
+	{ WP_GARAND_SCOPE,         50,  700,  }, // 40
+	{ WP_K43_SCOPE,            50,  700,  }, // 41
+	{ WP_FG42SCOPE,            30,  200,  }, // 42
+	{ WP_MORTAR_SET,           400, 0,    }, // 43
+	{ WP_MEDIC_ADRENALINE,     1,   0,    }, // 44
+	{ WP_AKIMBO_SILENCEDCOLT,  18,  600,  }, // 45
+	{ WP_AKIMBO_SILENCEDLUGER, 18,  600,  }, // 46
+	{ WP_MOBILE_MG42_SET,      18,  2500, }, // 47
 
 	// legacy weapons
-	{ WP_KNIFE_KABAR,          }, // 48
-	{ WP_MOBILE_BROWNING,      }, // 49
-	{ WP_MOBILE_BROWNING_SET,  }, // 50
+	{ WP_KNIFE_KABAR,          10,  0,    }, // 48
+	{ WP_MOBILE_BROWNING,      18,  2500, }, // 49
+	{ WP_MOBILE_BROWNING_SET,  18,  2500, }, // 50
 
-	{ WP_MORTAR2,              }, // 51
-	{ WP_MORTAR2_SET,          }, // 52
+	{ WP_MORTAR2,              1,   0,    }, // 51
+	{ WP_MORTAR2_SET,          400, 0,    }, // 52
 };
 
 // moved in here so both games can get to it

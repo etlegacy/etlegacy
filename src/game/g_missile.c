@@ -1218,8 +1218,6 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 
 //=============================================================================
 
-int G_GetWeaponDamage(int weapon);
-
 void DynaSink(gentity_t *self)
 {
 	self->clipmask   = 0;
@@ -1800,10 +1798,10 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	bolt->parent     = self;
 	bolt->s.teamNum  = self->client->sess.sessionTeam;
 
-	// commented out bolt->damage and bolt->splashdamage, override with G_GetWeaponDamage()
+	// commented out bolt->damage and bolt->splashdamage, override with GetWeaponTableData(WP_X)->damage()
 	// so it works with different netgame balance.  didn't uncomment bolt->damage on dynamite 'cause its so *special*
-	bolt->damage       = G_GetWeaponDamage(grenadeWPID); // overridden for dynamite
-	bolt->splashDamage = G_GetWeaponDamage(grenadeWPID);
+	bolt->damage       = GetWeaponTableData(grenadeWPID)->damage; // overridden for dynamite
+	bolt->splashDamage = GetWeaponTableData(grenadeWPID)->damage;
 
 	switch (grenadeWPID)
 	{
@@ -1927,7 +1925,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	}
 
 	// blast radius proportional to damage
-	bolt->splashRadius = G_GetWeaponDamage(grenadeWPID);
+	bolt->splashRadius = GetWeaponTableData(grenadeWPID)->damage;
 
 	bolt->clipmask = MASK_MISSILESHOT;
 
@@ -1977,9 +1975,9 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
-	bolt->damage              = G_GetWeaponDamage(WP_PANZERFAUST);
-	bolt->splashDamage        = G_GetWeaponDamage(WP_PANZERFAUST);
-	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // hardcoded bleh hack
+	bolt->damage              = GetWeaponTableData(WP_PANZERFAUST)->damage;
+	bolt->splashDamage        = GetWeaponTableData(WP_PANZERFAUST)->damage;
+	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // hardcoded bleh hack FIXME: weapon table
 	bolt->methodOfDeath       = MOD_PANZERFAUST;
 	bolt->splashMethodOfDeath = MOD_PANZERFAUST;
 	bolt->clipmask            = MASK_MISSILESHOT;
@@ -2147,6 +2145,7 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	if (self->spawnflags)
 	{
 		gentity_t *tent;
+
 		tent            = G_TempEntity(self->s.pos.trBase, EV_MORTAREFX);
 		tent->s.density = self->spawnflags; // send smoke and muzzle flash flags
 		VectorCopy(self->s.pos.trBase, tent->s.origin);
@@ -2166,8 +2165,8 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.weapon            = WP_MAPMORTAR;
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
-	bolt->damage              = G_GetWeaponDamage(WP_MAPMORTAR);
-	bolt->splashDamage        = G_GetWeaponDamage(WP_MAPMORTAR);
+	bolt->damage              = GetWeaponTableData(WP_MAPMORTAR)->damage;
+	bolt->splashDamage        = GetWeaponTableData(WP_MAPMORTAR)->damage;
 	bolt->splashRadius        = 120;
 	bolt->methodOfDeath       = MOD_MAPMORTAR;
 	bolt->splashMethodOfDeath = MOD_MAPMORTAR_SPLASH;

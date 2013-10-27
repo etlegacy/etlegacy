@@ -1184,6 +1184,7 @@ static void PM_WaterMove(void)
 	if (pml.groundPlane && DotProduct(pm->ps->velocity, pml.groundTrace.plane.normal) < 0)
 	{
 		float vel = VectorLength(pm->ps->velocity);
+
 		// slide along the ground plane
 		PM_ClipVelocity(pm->ps->velocity, pml.groundTrace.plane.normal,
 		                pm->ps->velocity, OVERCLIP);
