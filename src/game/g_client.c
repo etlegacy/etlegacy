@@ -1300,6 +1300,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 				}
 				break;
 			}
+			break;
 		}
 
 		if (pc == PC_SOLDIER)
