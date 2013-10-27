@@ -2800,10 +2800,13 @@ msgid "rediscovered gravity."
 msgstr "ponownie odkryl grawitacje."
 
 msgid "'s Landmine"
-msgstr "'s Mine"
+msgstr "'s Miny"
 
 msgid "'s Mobile MG42"
 msgstr "'s Mobilne MG42"
+
+msgid "'s Mobile Browning"
+msgstr "'s Mobilny Browning"
 
 msgid "'s rifle grenade"
 msgstr "'s granata od rifli"
@@ -3820,3 +3823,9 @@ msgstr "Twoja Propozycja zostala przyjeta"
 
 msgid "Your proposition reply has been sent"
 msgstr "Twoja odpowiedz na propozycje zostala wyslana"
+
+msgid "Your invitation was rejected"
+msgstr "Twoje zaproszenie zostalo odrzucone"
+
+msgid "'s flamethrower"
+msgstr "'s miotacz ognia"

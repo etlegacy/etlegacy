@@ -2760,6 +2760,9 @@ msgstr ""
 msgid "'s Mobile MG42"
 msgstr ""
 
+msgid "'s Mobile Browning"
+msgstr ""
+
 msgid "'s rifle grenade"
 msgstr ""
 
@@ -3766,4 +3769,10 @@ msgid "Your proposition was accepted"
 msgstr ""
 
 msgid "Your proposition reply has been sent"
+msgstr ""
+
+msgid "Your invitation was rejected"
+msgstr ""
+
+msgid "'s flamethrower"
 msgstr ""

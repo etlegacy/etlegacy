@@ -2330,7 +2330,7 @@ static void CG_DrawVote(void)
 
 		if (cgs.invitationClient == -2)
 		{
-			str = "Your invitation was rejected";
+			str = CG_TranslateString("Your invitation was rejected");
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
