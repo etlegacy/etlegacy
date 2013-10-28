@@ -312,10 +312,8 @@ vmCvar_t cg_popupTime;
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
 
-vmCvar_t cg_fontScaleWS;
-vmCvar_t cg_fontScaleLF;
-vmCvar_t cg_fontScaleFV;
-vmCvar_t cg_fontScaleOS;
+vmCvar_t cg_fontScaleTP;
+vmCvar_t cg_fontScaleSP;
 vmCvar_t cg_fontScaleCP;
 vmCvar_t cg_fontScaleCN;
 
@@ -533,10 +531,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_weapaltReloads,        "cg_weapaltReloads",        "0",     CVAR_ARCHIVE                 },
 
 	// Fonts
-	{ &cg_fontScaleWS,           "cg_fontScaleWS",           "0.35",  CVAR_ARCHIVE                 }, // Warmup Spectator
-	{ &cg_fontScaleLF,           "cg_fontScaleLF",           "0.22",  CVAR_ARCHIVE                 }, // Limbo Follow
-	{ &cg_fontScaleFV,           "cg_fontScaleFV",           "0.22",  CVAR_ARCHIVE                 }, // Fireteam Vote
-	{ &cg_fontScaleOS,           "cg_fontScaleOS",           "0.22",  CVAR_ARCHIVE                 }, // Obituaries Skill
+	{ &cg_fontScaleTP,           "cg_fontScaleTP",           "0.35",  CVAR_ARCHIVE                 }, // TopPrint
+	{ &cg_fontScaleSP,           "cg_fontScaleSP",           "0.22",  CVAR_ARCHIVE                 }, // SidePrint
 	{ &cg_fontScaleCP,           "cg_fontScaleCP",           "0.22",  CVAR_ARCHIVE                 }, // CenterPrint
 	{ &cg_fontScaleCN,           "cg_fontScaleCN",           "0.25",  CVAR_ARCHIVE                 }, // CrossName
 };

@@ -670,7 +670,7 @@ void CG_mvDraw(cg_window_t *sw)
 
 #if 0
 	cg.refdef_current = &refdef;
-	CG_Text_Paint_Ext(1, 1, cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(1, 1, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	cg.refdef_current = &cg.refdef;
 #endif
 
@@ -739,12 +739,12 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 		noSelectBorder = &colorMdYellow;
 	}
 
-	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2 + 1 + 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, va("%s^7%d", CG_TranslateString(p_class), ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2 + 1 + 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, va("%s^7%d", CG_TranslateString(p_class), ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	p_class = va("%d^1/^7%d", ci->ammoclip, ci->ammo);
-	w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(b_x + b_w - w - 1, b_y + b_h - (fh + 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + b_w - w - 1, b_y + b_h - (fh + 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// Weapon icon
 	rect.x                                  = b_x + b_w - (50 + 1);
@@ -763,8 +763,8 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	{
 		p_class = va("^2S^7%d%%", ci->sprintTime);
 		rect.y -= (fh + 1);
-		w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// Weapon charge info
@@ -772,8 +772,8 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	{
 		p_class = va("^1C^7%d%%", ci->chargeTime);
 		rect.y -= (fh + 1);
-		w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// Cursorhint work
@@ -781,8 +781,8 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	{
 		p_class = va("^3W:^7%d%%", ci->hintTime);
 		rect.y -= (fh + 1);
-		w       = CG_Text_Width_Ext(p_class, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(b_x + (b_w - (w - w / fw)) / 2, b_y + b_h - (fh + 2), cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + (b_w - (w - w / fw)) / 2, b_y + b_h - (fh + 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// Finally, the window border

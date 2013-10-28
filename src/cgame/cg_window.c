@@ -271,13 +271,12 @@ void CG_demoTimescaleDraw(void)
 	if (cg.demoPlayback && cgs.timescaleUpdate > cg.time && demo_drawTimeScale.integer != 0)
 	{
 		char *s = va("^3TimeScale: ^7%.1f", cg_timescale.value);
-		int  h  = CG_Text_Height_Ext("A", cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
-		int  w  = CG_Text_Width_Ext(s, cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
-
+		int  h  = CG_Text_Height_Ext("A", cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+		int  w  = CG_Text_Width_Ext(s, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 
 		CG_FillRect(42 - 3, 400, w + 7, h * 2.5, colorDkGreen);
 		CG_DrawRect(42 - 3, 400, w + 7, h * 2.5, 1, colorMdYellow);
-		CG_Text_Paint_Ext(42, 411, cg_fontScaleOS.value, cg_fontScaleOS.value, colorWhite, s, 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(42, 411, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, s, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
 
@@ -431,7 +430,7 @@ void CG_windowDraw(void)
 
 			if (!(w->effects & WFX_TRUETYPE))
 			{
-				CG_Text_Paint_Ext(x, y + h, cg_fontScaleOS.value, cg_fontScaleOS.value, textColor, (char *)w->lineText[j], 0, 0, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, y + h, cg_fontScaleSP.value, cg_fontScaleSP.value, textColor, (char *)w->lineText[j], 0, 0, 0, &cgs.media.limboFont2);
 			}
 		}
 	}
@@ -489,7 +488,7 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 		}
 		else
 		{
-			tmp = CG_Text_Width_Ext((char *)w->lineText[i], cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
+			tmp = CG_Text_Width_Ext((char *)w->lineText[i], cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		}
 
 		if (tmp > w->w)

@@ -451,7 +451,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	int          i, j, size;
 	pmListItem_t *listItem = cg_pmOldList;
 	float        y         = rect.y; //360;
-	float        fontScale = cg_fontScaleOS.value;
+	float        fontScale = cg_fontScaleSP.value;
 
 	if (cg_drawSmallPopupIcons.integer)
 	{
@@ -548,7 +548,7 @@ void CG_DrawPMItemsBig(void)
 	vec4_t colourText = { 1.f, 1.f, 1.f, 1.f };
 	float  t, w;
 	float  y         = 270;
-	float  fontScale = cg_fontScaleOS.value;
+	float  fontScale = cg_fontScaleSP.value;
 
 	if (!cg_pmWaitingListBig)
 	{

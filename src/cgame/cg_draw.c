@@ -447,7 +447,7 @@ static void CG_DrawNotify(void)
 
         for (i = cgs.notifyLastPos; i < cgs.notifyPos; i++)
         {
-            len = CG_Text_Width_Ext(cgs.notifyMsgs[i % chatHeight], cg_fontScaleOS.value, 0, &cgs.media.limboFont2);
+            len = CG_Text_Width_Ext(cgs.notifyMsgs[i % chatHeight], cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
             if (len > w)
             {
                 w = len;
@@ -482,7 +482,7 @@ static void CG_DrawNotify(void)
             hcolor[3] = alphapercent;
             trap_R_SetColor(hcolor);
 
-            CG_Text_Paint_Ext(NOTIFYLOC_X + TINYCHAR_WIDTH, yLoc - (cgs.notifyPos - i) * TINYCHAR_HEIGHT, cg_fontScaleOS.value, cg_fontScaleOS.value, hColor, cgs.notifyMsgs[i % chatHeight], 0, maxCharsBeforeOverlay, 0, &cgs.media.limboFont2);
+            CG_Text_Paint_Ext(NOTIFYLOC_X + TINYCHAR_WIDTH, yLoc - (cgs.notifyPos - i) * TINYCHAR_HEIGHT, cg_fontScaleSP.value, cg_fontScaleSP.value, hColor, cgs.notifyMsgs[i % chatHeight], 0, maxCharsBeforeOverlay, 0, &cgs.media.limboFont2);
         }
     }
 */
@@ -590,8 +590,8 @@ static void CG_DrawDisconnect(void)
 
 	// also add text in center of screen
 	s = CG_TranslateString("Connection Interrupted");
-	w = CG_Text_Width_Ext(s, cg_fontScaleWS.value, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(320 - w / 2, 100, cg_fontScaleWS.value, cg_fontScaleWS.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	w = CG_Text_Width_Ext(s, cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(320 - w / 2, 100, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// blink the icon
 	if ((cg.time >> 9) & 1)
@@ -732,7 +732,7 @@ static void CG_DrawLagometer(void)
 #endif // ALLOW_GSYNC
 	    )
 	{
-		CG_Text_Paint_Ext(ax, ay, cg_fontScaleWS.value, cg_fontScaleWS.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(ax, ay, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	CG_DrawDisconnect();
@@ -2025,9 +2025,9 @@ CG_DrawSpectator
 static void CG_DrawSpectator(void)
 {
 	char *s = CG_TranslateString("SPECTATOR");
-	int  w  = CG_Text_Width_Ext(va("%s", s), cg_fontScaleWS.value, 0, &cgs.media.limboFont2);
+	int  w  = CG_Text_Width_Ext(va("%s", s), cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
 
-	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 440, cg_fontScaleWS.value, cg_fontScaleWS.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 440, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /*
@@ -2041,9 +2041,9 @@ static void CG_DrawVote(void)
 	char  *str;
 	char  str1[32], str2[32];
 	int   y, charHeight;
-	float fontScale = cg_fontScaleFV.value;
+	float fontScale = cg_fontScaleSP.value;
 
-	charHeight = CG_Text_Height_Ext("A", cg_fontScaleLF.value, 0, &cgs.media.limboFont2); // Find Limbo text position
+	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	y          = INFOTEXT_STARTY + (charHeight * 2.0f) * 5;
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
@@ -2421,7 +2421,7 @@ static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
 	static int lastconfigGet = 0;
-	float      fontScale     = cg_fontScaleLF.value;
+	float      fontScale     = cg_fontScaleSP.value;
 	int        y, charHeight;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
@@ -2508,7 +2508,7 @@ static void CG_DrawLimboMessage(void)
 	playerState_t *ps = &cg.snap->ps;
 	int           y   = INFOTEXT_STARTY;
 	int           charHeight;
-	float         fontScale = cg_fontScaleLF.value;
+	float         fontScale = cg_fontScaleSP.value;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 
@@ -2575,7 +2575,7 @@ CG_DrawFollow
 */
 static qboolean CG_DrawFollow(void)
 {
-	float fontScale = cg_fontScaleLF.value;
+	float fontScale = cg_fontScaleSP.value;
 	int   charHeight;
 	int   y = INFOTEXT_STARTY;
 
@@ -2711,7 +2711,7 @@ static void CG_DrawWarmup(void)
 	int             sec = cg.warmup;
 	const char      *s, *s1, *s2;
 	static qboolean announced = qfalse;
-	float           fontScale = cg_fontScaleWS.value;
+	float           fontScale = cg_fontScaleTP.value;
 
 	if (!sec)
 	{
@@ -2968,7 +2968,7 @@ static void CG_DrawFlashFade(void)
 			{
 				if (cg.snap->ps.powerups[PW_BLACKOUT] & i)
 				{
-					CG_Text_Paint_Ext(INFOTEXT_STARTX, nOffset, cg_fontScaleFV.value, cg_fontScaleFV.value, color, va(CG_TranslateString("The %s team is speclocked!"), teams[i]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+					CG_Text_Paint_Ext(INFOTEXT_STARTX, nOffset, cg_fontScaleSP.value, cg_fontScaleSP.value, color, va(CG_TranslateString("The %s team is speclocked!"), teams[i]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 					nOffset += 12;
 				}
 			}
