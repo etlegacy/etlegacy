@@ -72,9 +72,6 @@ void G_PrintConfigs(gentity_t *ent)
 	configPointer = configNames;
 	for (i = 0; i < numconfigs; i++, configPointer += namelen + 1)
 	{
-		int          flen = 0;
-		fileHandle_t f;
-
 		namelen = strlen(configPointer);
 		strcpy(filename, Q_StrReplace(configPointer, ".config", ""));
 		if (!Q_stricmp(filename, g_customConfig.string))
@@ -92,7 +89,6 @@ void G_PrintConfigs(gentity_t *ent)
 qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 {
 	pc_token_t token;
-	char       arg[256];
 	char       text[256];
 	char       value[256];
 
