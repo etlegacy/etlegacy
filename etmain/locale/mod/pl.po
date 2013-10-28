@@ -3388,7 +3388,7 @@ msgid "You are near the South Anti-Tank Gun\n"
 msgstr "Jestes blisko Poludniowego Dziala Przeciw Czolgowego\n"
 
 msgid "You are near the Health and Ammo Cabinets\n"
-msgstr "Jestes blisko Szafek Zrowia i Amunicjii\n"
+msgstr "Jestes blisko Szafek Zdrowia i Amunicji\n"
 
 msgid "You are near the Allied East beach MG nest\n"
 msgstr "Jestes blisko Allianckiego Wschodniego Gniazda MG na plazy\n"
@@ -3771,7 +3771,7 @@ msgstr "graczy"
 
 #: src/cgame/cg_draw.c:2749
 msgid "Press ^3%s^7 to start"
-msgstr "Nadus ^3%s^7 aby zaczac"
+msgstr "Wcisnij ^3%s^7 aby zaczac"
 
 msgid "Not enough players to start match!\n"
 msgstr "Zbyt malo graczy aby zaczac mecz!\n"
