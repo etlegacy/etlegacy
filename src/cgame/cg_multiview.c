@@ -441,7 +441,7 @@ void CG_mvTransitionPlayerState(playerState_t *ps)
 	}
 	else if (x == PC_FIELDOPS)
 	{
-		mult = cg.ltChargeTime[ci->team - 1];
+		mult = cg.fieldopsChargeTime[ci->team - 1];
 	}
 	else if (x == PC_COVERTOPS)
 	{
