@@ -3829,3 +3829,6 @@ msgstr "Twoje zaproszenie zostalo odrzucone"
 
 msgid "'s flamethrower"
 msgstr "'s miotacz ognia"
+
+msgid "'s Satchel Charge"
+msgstr "'s Ladunek Kulminacyjny"

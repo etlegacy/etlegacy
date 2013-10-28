@@ -3776,3 +3776,6 @@ msgstr ""
 
 msgid "'s flamethrower"
 msgstr ""
+
+msgid "'s Satchel Charge"
+msgstr ""
