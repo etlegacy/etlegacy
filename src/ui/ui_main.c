@@ -91,7 +91,7 @@ extern displayContextDef_t *DC;
 
 extern itemDef_t *g_bindItem;
 
-void _UI_Init(qboolean legacyClient);
+void _UI_Init(int legacyClient);
 void _UI_Shutdown(void);
 void _UI_KeyEvent(int key, qboolean down);
 void _UI_MouseEvent(int dx, int dy);
@@ -7333,7 +7333,7 @@ static void UI_RunCinematicFrame(int handle)
 	trap_CIN_RunCinematic(handle);
 }
 
-void _UI_Init(qboolean legacyClient)
+void _UI_Init(int legacyClient)
 {
 	int x;
 
@@ -7362,7 +7362,7 @@ void _UI_Init(qboolean legacyClient)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	uiInfo.legacyClient = (legacyClient == NULL ? qfalse : legacyClient);
+	uiInfo.legacyClient = legacyClient;
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;
