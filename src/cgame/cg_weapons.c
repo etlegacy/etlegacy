@@ -3248,6 +3248,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	vec3_t       angles;
 	vec3_t       gunoff;
 	weaponInfo_t *weapon;
+	float        lengthscale;
 
 	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -3325,7 +3326,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// drop gun lower at higher fov
-	if (cg_fov.integer > 90)
+	if (!cg_gun_fovscale.integer && cg_fov.integer > 90)
 	{
 		fovOffset = -0.2 * (cg_fov.integer - 90);
 	}
@@ -3469,6 +3470,24 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		hand.hModel   = weapon->handsModel;
 		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
+
+		if (cg_gun_fovscale.integer && cg_fov.integer != 0)
+		{
+			if (cg_gun_fovscale.integer > 1 && cg_fov.integer <= 90)
+			{
+				lengthscale = 1.0f;
+			}
+			else
+			{
+				lengthscale = 1.0f / tan(DEG2RAD(cg_fov.integer / 2));
+			}
+		}
+		else
+		{
+			lengthscale = 1.0f;
+		}
+
+		VectorScale(hand.axis[0], lengthscale, hand.axis[0]);
 
 		// add everything onto the hand
 		CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity);

@@ -2068,6 +2068,7 @@ extern vmCvar_t cg_tracerSpeed;
 extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_ignore;
 extern vmCvar_t cg_fov;
+extern vmCvar_t cg_gun_fovscale;
 extern vmCvar_t cg_muzzleFlash;
 
 extern vmCvar_t cg_zoomDefaultSniper;
