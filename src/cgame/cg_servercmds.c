@@ -2429,7 +2429,7 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "cpm"))
 	{
-		CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), cgs.media.voiceChatShader, NULL);
+		CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.voiceChatShader, 0, 0, NULL);
 		return;
 	}
 	else if (!Q_stricmp(cmd, "cp"))

@@ -1105,7 +1105,7 @@ void CG_ForceTapOut_f(void)
  */
 static void CG_CPM_f(void)
 {
-	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), cgs.media.voiceChatShader, NULL);
+	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), " ", cgs.media.voiceChatShader, 0, 0, NULL);
 }
 
 /**

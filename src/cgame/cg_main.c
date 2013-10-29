@@ -307,6 +307,7 @@ vmCvar_t cg_drawTime;
 vmCvar_t cg_popupTime;
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
+vmCvar_t cg_graphicObituaries;
 
 vmCvar_t cg_fontScaleTP;
 vmCvar_t cg_fontScaleSP;
@@ -524,6 +525,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_popupTime,             "cg_popupTime",             "1000",  CVAR_ARCHIVE                 },
 	{ &cg_popupFadeTime,         "cg_popupFadeTime",         "2500",  CVAR_ARCHIVE                 },
 	{ &cg_popupStayTime,         "cg_popupStayTime",         "2000",  CVAR_ARCHIVE                 },
+	{ &cg_graphicObituaries,     "cg_graphicObituaries",     "0",     CVAR_ARCHIVE                 },
 	{ &cg_weapaltReloads,        "cg_weapaltReloads",        "0",     CVAR_ARCHIVE                 },
 
 	// Fonts

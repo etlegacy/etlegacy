@@ -46,7 +46,10 @@ struct pmStackItem_s
 	qboolean inuse;
 	int time;
 	char message[128];
+	char message2[128];
 	qhandle_t shader;
+	qhandle_t weaponShader;
+	int scaleShader;
 
 	vec3_t color;
 
@@ -299,7 +302,7 @@ pmListItem_t *CG_FindFreePMItem(void)
 	}
 }
 
-void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader, vec3_t color)
+void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color)
 {
 	pmListItem_t *listItem;
 	char         *end;
@@ -308,6 +311,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	{
 		return;
 	}
+
 	if (type >= PM_NUM_TYPES)
 	{
 		CG_Printf("Invalid popup type: %d\n", type);
@@ -327,12 +331,18 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	}
 	else
 	{
-		listItem->shader = cgs.media.pmImages[type];
+		listItem->shader = -1;
 	}
 
-	listItem->inuse = qtrue;
-	listItem->type  = type;
-	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[0].message));
+	if (message2)
+	{
+		listItem->weaponShader = weaponShader;
+		listItem->scaleShader  = scaleShader;
+	}
+	else
+	{
+		listItem->weaponShader = -1;
+	}
 
 	// colored obituaries
 	listItem->color[0] = listItem->color[1] = listItem->color[2] = 1.f;
@@ -340,6 +350,10 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	{
 		VectorCopy(color, listItem->color);
 	}
+
+	listItem->inuse = qtrue;
+	listItem->type  = type;
+	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[0].message));
 
 	// moved this: print and THEN chop off the newline, as the
 	// console deals with newlines perfectly.  We do chop off the newline
@@ -349,17 +363,34 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 		listItem->message[strlen(listItem->message) - 1] = 0;
 	}
 
-	trap_Print(va("%s\n", listItem->message));
-
-	while ((end = strchr(listItem->message, '\n'))) // added parens
+	while ((end = strchr(listItem->message, '\n')))
 	{
 		*end = '\0';
 	}
-
 	// don't eat popups for empty lines
 	if (*listItem->message == '\0')
 	{
 		return;
+	}
+
+	if (message2)
+	{
+		Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStack[0].message2));
+
+		if (listItem->message[strlen(listItem->message2) - 1] == '\n')
+		{
+			listItem->message[strlen(listItem->message2) - 1] = 0;
+		}
+
+		while ((end = strchr(listItem->message2, '\n')))
+		{
+			*end = '\0';
+		}
+
+		if (*listItem->message2 == '\0')
+		{
+			return;
+		}
 	}
 
 	if (!cg_pmWaitingList)
@@ -500,13 +531,47 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	}
 	else
 	{
-		size = 0;
+		size = -2;
 	}
 
 	CG_Text_Paint_Ext(4 + size + 2, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2);
 
+	int w, sizew;
+
+	w     = CG_Text_Width_Ext(cg_pmWaitingList->message, fontScale, 0, &cgs.media.limboFont2);
+	sizew = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
+
+	if (cg_pmWaitingList->weaponShader > 0)
+	{
+		for (i = 0; i < 3; i++)
+		{
+			colourText[i] = cg_pmWaitingList->color[i];
+		}
+		trap_R_SetColor(colourText);
+
+		CG_DrawPic(4 + size + w + 8, y, sizew * cg_pmWaitingList->scaleShader, sizew, cg_pmWaitingList->weaponShader);
+
+		for (i = 0; i < 3; i++)
+		{
+			colourText[i] = 1.f;
+		}
+		trap_R_SetColor(NULL);
+	}
+	else
+	{
+		size  = -2;
+		sizew = 0;
+	}
+
+	if (cg_pmWaitingList->message2[0])
+	{
+		CG_Text_Paint_Ext(4 + size + sizew * cg_pmWaitingList->scaleShader + 12 + w, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message2, 0, 0, 0, &cgs.media.limboFont2);
+	}
+
 	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
 	{
+		size = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
+
 		y -= size + 2;
 
 		t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
@@ -521,7 +586,8 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 		if (listItem->shader > 0)
 		{
-			for (j = 0; j < 3; j++) // colorize
+
+			for (j = 0; j < 3; j++)     // colorize
 			{
 				colourText[j] = listItem->color[j];
 			}
@@ -529,7 +595,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 			trap_R_SetColor(colourText);
 			CG_DrawPic(4, y, size, size, listItem->shader);
 
-			for (j = 0; j < 3; j++) // decolorize
+			for (j = 0; j < 3; j++)     // decolorize
 			{
 				colourText[j] = 1.f;
 			}
@@ -537,10 +603,42 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		}
 		else
 		{
-			size = 0;
+			size = -2;
 		}
 
 		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, fontScale, fontScale, colourText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
+
+		int w, sizew;
+
+		w     = CG_Text_Width_Ext(listItem->message, fontScale, 0, &cgs.media.limboFont2);
+		sizew = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
+
+		if (listItem->weaponShader > 0)
+		{
+			for (i = 0; i < 3; i++)
+			{
+				colourText[i] = listItem->color[i];
+			}
+			trap_R_SetColor(colourText);
+
+			CG_DrawPic(4 + size + w + 8, y, sizew * listItem->scaleShader, sizew, listItem->weaponShader);
+
+			for (i = 0; i < 3; i++)
+			{
+				colourText[i] = 1.f;
+			}
+			trap_R_SetColor(NULL);
+		}
+		else
+		{
+			size  = -2;
+			sizew = 0;
+		}
+
+		if (listItem->message2[0])
+		{
+			CG_Text_Paint_Ext(4 + size + sizew * listItem->scaleShader + 12 + w, y + 12, fontScale, fontScale, colourText, listItem->message2, 0, 0, 0, &cgs.media.limboFont2);
+		}
 	}
 }
 
