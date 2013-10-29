@@ -8,7 +8,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608 //400
-#define WINDOW_HEIGHT	376
+#define WINDOW_HEIGHT	410
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 //#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 	
@@ -105,8 +105,20 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob roll:", .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, "Enable/Disable the bob roll (left/right) effect when moving" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob yaw (turn left/right) effect when moving" )
 
+// Fonts //
+  #define FONTS_Y 260
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 64, "FONTS SIZE" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Top Print:", .2, 8, "cg_fontScaleTP" 0.15 0 0.5, "Set font size for Warmup message and Spectator label" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Side Print:", .2, 8, "cg_fontScaleSP" 0.15 0 0.5, "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleCP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Center Print:", .2, 8, "cg_fontScaleCP" 0.15 0 0.5, "Set font size for CenterPrint/Objective Info/Skill reward messages" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleCN", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Crosshair Name:", .2, 8, "cg_fontScaleCN" 0.15 0 0.5, "Set font size for Crosshair Name label" )
+
 // Misc //
-  #define MISC_Y 260
+  #define MISC_Y 330
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 52, "MISC" )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTime:", .2, 8, "cg_popupTime" 2500 0 6000, "Set the delay time in which a pop-up appear" )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
