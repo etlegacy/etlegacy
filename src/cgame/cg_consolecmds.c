@@ -1156,7 +1156,7 @@ void CG_TimerSet_f(void)
 /**
  * @brief ETPro style timer resetting
  */
-void CG_ResetTimer_f(void)
+void CG_TimerReset_f(void)
 {
 	int msec;
 
@@ -1389,7 +1389,8 @@ static consoleCommand_t commands[] =
 	{ "cpm",                 CG_CPM_f                },
 	{ "forcetapout",         CG_ForceTapOut_f        },
 	{ "timerSet",            CG_TimerSet_f           },
-	{ "resetTimer",          CG_ResetTimer_f         },
+	{ "timerReset",          CG_TimerReset_f         },
+	{ "resetTimer",          CG_TimerReset_f         }, // keep ETPro compatibility
 	{ "class",               CG_Class_f              },
 	{ "readhuds",            CG_ReadHuds_f           },
 };
