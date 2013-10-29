@@ -3780,9 +3780,6 @@ msgstr ""
 msgid "'s Satchel Charge"
 msgstr ""
 
-msgid "Scale Gun:"
-msgstr ""
-
 msgid "FONTS SIZE"
 msgstr ""
 
