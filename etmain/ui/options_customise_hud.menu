@@ -52,18 +52,17 @@ menuDef {
 	
 // In-Game Display //
 #define DISPLAY_Y 222
-	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 137, "IN-GAME DISPLAY" )
+	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "IN-GAME DISPLAY" )
 	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Ejecting Brass:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "Sets the duration ejected bullet shells etc last for." )
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Field Of View:", .2, 8, "cg_fov" 1.3 80 120, "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27" )
-	YESNO( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Scale Gun:", .2, 8, "cg_fun_fovscale", "Fixing scaling a gun" )
-	MULTI( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Corona Distance:", .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, "Sets the maximum distance light corona is displayed" )
-	YESNO( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Particles:", .2, 8, "cg_wolfparticles", "Toggles display of particle effects – e.g. Explosions, some smoke effects." )
-	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Wall Mark Lifetime:", .2, 8, "cg_markTime", cvarFloatList { "Long" 30000 "Normal" 20000 "Short" 10000 "Off" 0 }, "Duration of bullet marks on walls etc" )
-	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Flash:", .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Red blood \"flash\" scale when receiving damage" )
-	MULTI( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Splatter:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Blood \"splatter\" transparency when taking damage from other players" )
-	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Show Blood:", .2, 8, "cg_showblood", "Toggles showing blood spurt effect when player's are shot." )
-	YESNO( 8, DISPLAY_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Atmospheric Effects:", .2, 8, "cg_atmosphericEffects", "Draws Atmospheric effects (Snow/Rain) on-screen." )
+	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Corona Distance:", .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, "Sets the maximum distance light corona is displayed" )
+	YESNO( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Particles:", .2, 8, "cg_wolfparticles", "Toggles display of particle effects – e.g. Explosions, some smoke effects." )
+	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Wall Mark Lifetime:", .2, 8, "cg_markTime", cvarFloatList { "Long" 30000 "Normal" 20000 "Short" 10000 "Off" 0 }, "Duration of bullet marks on walls etc" )
+	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Flash:", .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Red blood \"flash\" scale when receiving damage" )
+	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Splatter:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Blood \"splatter\" transparency when taking damage from other players" )
+	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show Blood:", .2, 8, "cg_showblood", "Toggles showing blood spurt effect when player's are shot." )
+	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Atmospheric Effects:", .2, 8, "cg_atmosphericEffects", "Draws Atmospheric effects (Snow/Rain) on-screen." )
 
 // Crosshair //
 #define CROSSHAIR_Y 32
