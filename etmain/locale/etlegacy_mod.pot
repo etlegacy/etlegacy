@@ -3779,3 +3779,21 @@ msgstr ""
 
 msgid "'s Satchel Charge"
 msgstr ""
+
+msgid "Scale Gun:"
+msgstr ""
+
+msgid "FONTS SIZE"
+msgstr ""
+
+msgid "Top Print:"
+msgstr ""
+
+msgid "Side Print:"
+msgstr ""
+
+msgid "Center Print:"
+msgstr ""
+
+msgid "Crosshair Name:"
+msgstr ""

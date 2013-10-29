@@ -3832,3 +3832,21 @@ msgstr "'s miotacz ognia"
 
 msgid "'s Satchel Charge"
 msgstr "'s Ladunek Kulminacyjny"
+
+msgid "Scale Gun:"
+msgstr "Skalowanie Broni:"
+
+msgid "FONTS SIZE"
+msgstr "WIELKOSC CZCIONKI"
+
+msgid "Top Print:"
+msgstr "Gorna:"
+
+msgid "Side Print:"
+msgstr "Boczna:"
+
+msgid "Center Print:"
+msgstr "Srodkowa:"
+
+msgid "Crosshair Name:"
+msgstr "Celownik:"
