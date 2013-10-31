@@ -2960,9 +2960,8 @@ void Com_Init(char *commandLine)
 	}
 #endif // USE_RAW_INPUT_MOUSE
 
-	// always set the cvar, but only print the info if it makes sense.
-	Com_DetectAltivec();
 #if idppc
+	Com_DetectAltivec();
 	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
 #endif
 
@@ -3202,11 +3201,13 @@ void Com_Frame(void)
 	while (msec < minMsec);
 	Cbuf_Execute();
 
+#if idppc
 	if (com_altivec->modified)
 	{
 		Com_DetectAltivec();
 		com_altivec->modified = qfalse;
 	}
+#endif
 
 	lastTime = com_frameTime;
 
