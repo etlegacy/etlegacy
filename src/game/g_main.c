@@ -571,7 +571,7 @@ cvarTable_t gameCvarTable[] =
 // made static to avoid aliasing
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
-void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServer);
+void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer);
 void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
 void CheckExitRules(void);
@@ -1932,7 +1932,7 @@ void bani_getmapxp(void)
 G_InitGame
 ============
 */
-void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServer)
+void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 {
 	int  i;
 	char cs[MAX_INFO_STRING];
@@ -1973,7 +1973,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
 	}
 
-	level.legacyServer = (legacyServer == NULL ? qfalse : legacyServer);
+	level.legacyServer = legacyServer;
 
 	// set some level globals
 	i = level.server_settings;
