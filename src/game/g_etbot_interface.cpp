@@ -5876,7 +5876,7 @@ public:
 #elif defined ETPUB_VERSION
 					pMsg->m_Max = g_maxTeamLandmines.integer;
 #elif defined LEGACY
-					pMsg->m_Max = g_maxTeamLandmines.integer;
+					pMsg->m_Max = team_maxLandmines.integer;
 #else
 					pMsg->m_Max = MAX_TEAM_LANDMINES;
 #endif

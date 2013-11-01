@@ -1452,8 +1452,8 @@ void SP_script_multiplayer(gentity_t *ent)
 		G_Error("^1ERROR: multiple script_multiplayers found^7\n");
 	}
 	level.gameManager                    = ent;
-	level.gameManager->s.otherEntityNum  = g_maxTeamLandmines.integer;  // axis landmine count
-	level.gameManager->s.otherEntityNum2 = g_maxTeamLandmines.integer;  // allies landmine count
+	level.gameManager->s.otherEntityNum  = team_maxLandmines.integer;  // axis landmine count
+	level.gameManager->s.otherEntityNum2 = team_maxLandmines.integer;  // allies landmine count
 	level.gameManager->s.modelindex      = qfalse; // axis HQ doesn't exist
 	level.gameManager->s.modelindex2     = qfalse; // allied HQ doesn't exist
 

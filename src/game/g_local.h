@@ -1683,8 +1683,6 @@ extern vmCvar_t g_resetXPMapCount;
 
 extern vmCvar_t g_campaignFile;
 
-extern vmCvar_t g_maxTeamLandmines;
-
 extern vmCvar_t g_countryflags;
 
 // arty/airstrike rate limiting
@@ -1704,6 +1702,7 @@ extern vmCvar_t team_maxFlamers;
 extern vmCvar_t team_maxMg42s;
 extern vmCvar_t team_maxPanzers;
 extern vmCvar_t team_maxRiflegrenades;
+extern vmCvar_t team_maxLandmines;
 // skills
 extern vmCvar_t skill_soldier;
 extern vmCvar_t skill_medic;

@@ -1729,7 +1729,7 @@ void Weapon_Engineer(gentity_t *ent)
 				// check landmine team so that enemy mines can be disarmed
 				// even if you're using all of yours :x
 			}
-			else if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= g_maxTeamLandmines.integer && G_LandmineTeam(traceEnt) == ent->client->sess.sessionTeam)
+			else if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= team_maxLandmines.integer && G_LandmineTeam(traceEnt) == ent->client->sess.sessionTeam)
 			{
 
 				if (G_LandmineUnarmed(traceEnt))

@@ -260,8 +260,6 @@ vmCvar_t g_resetXPMapCount;
 
 vmCvar_t g_campaignFile;
 
-vmCvar_t g_maxTeamLandmines;
-
 vmCvar_t g_countryflags; // GeoIP
 
 // arty/airstrike rate limiting
@@ -281,6 +279,7 @@ vmCvar_t team_maxFlamers;
 vmCvar_t team_maxMg42s;
 vmCvar_t team_maxPanzers;
 vmCvar_t team_maxRiflegrenades;
+vmCvar_t team_maxLandmines;
 //skills
 vmCvar_t skill_soldier;
 vmCvar_t skill_medic;
@@ -530,7 +529,6 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_campaignFile,             "g_campaignFile",             "",                           0 },
 
-	{ &g_maxTeamLandmines,         "g_maxTeamLandmines",         "10",                         0 },
 	{ &g_countryflags,             "g_countryflags",             "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse},
 
 	{ &team_airstrikeTime,         "team_airstrikeTime",         "10",                         0 },
@@ -548,6 +546,7 @@ cvarTable_t gameCvarTable[] =
 	{ &team_maxMg42s,              "team_maxMg42s",              "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxPanzers,            "team_maxPanzers",            "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxRiflegrenades,      "team_maxRiflegrenades",      "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxLandmines,          "team_maxLandmines",          "10",                         0 },
 	//Skills
 	{ &skill_soldier,              "skill_soldier",              "20 50 90 140",               0 },
 	{ &skill_medic,                "skill_medic",                "20 50 90 140",               0 },
@@ -4625,8 +4624,8 @@ void G_RunFrame(int levelTime)
 
 	if (level.gameManager)
 	{
-		level.gameManager->s.otherEntityNum  = g_maxTeamLandmines.integer - G_CountTeamLandmines(TEAM_AXIS);
-		level.gameManager->s.otherEntityNum2 = g_maxTeamLandmines.integer - G_CountTeamLandmines(TEAM_ALLIES);
+		level.gameManager->s.otherEntityNum  = team_maxLandmines.integer - G_CountTeamLandmines(TEAM_AXIS);
+		level.gameManager->s.otherEntityNum2 = team_maxLandmines.integer - G_CountTeamLandmines(TEAM_ALLIES);
 	}
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
