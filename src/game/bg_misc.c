@@ -138,15 +138,17 @@ int reloadableWeapons[] =
 	-1
 };
 
-// [0] = maxammo        -   max player ammo carrying capacity.
-// [1] = uses           -   how many 'rounds' it takes/costs to fire one cycle.
-// [2] = maxclip        -   max 'rounds' in a clip.
-// [3] = reloadTime     -   time from start of reload until ready to fire.
-// [4] = fireDelayTime  -   time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
-// [5] = nextShotTime   -   when firing continuously, this is the time between shots
-// [6] = maxHeat        -   max active firing time before weapon 'overheats' (at which point the weapon will fail for a moment)
-// [7] = coolRate       -   how fast the weapon cools down.
-// [8] = mod            -   means of death
+// [0]  = maxammo        -   max player ammo carrying capacity.
+// [1]  = uses           -   how many 'rounds' it takes/costs to fire one cycle.
+// [2]  = maxclip        -   max 'rounds' in a clip.
+// [3]  = startammo      -   player ammo when spawning.
+// [4]  = startclip      -   player clips when spawning.
+// [5]  = reloadTime     -   time from start of reload until ready to fire.
+// [6]  = fireDelayTime  -   time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
+// [7]  = nextShotTime   -   when firing continuously, this is the time between shots
+// [8]  = maxHeat        -   max active firing time before weapon 'overheats' (at which point the weapon will fail for a moment)
+// [9]  = coolRate       -   how fast the weapon cools down.
+// [10] = mod            -   means of death.
 
 // potential inclusions in the table:
 // damage           -
@@ -539,21 +541,21 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 gitem_t bg_itemlist[] =
 {
 	{
-		NULL,
-		NULL,
+		NULL,                   // classname
+		NULL,                   // pickup_sound
 		{
-			0,
-			0,
-			0
+			0,                  // world_model[0]
+			0,                  // world_model[1]
+			0                   // world_model[2]
 		},
-		NULL,   // icon
-		NULL,   // ammo icon
-		NULL,   // pickup
-		0,
-		0,
-		0,
-		0,          // ammotype
-		0,          // cliptype
+		NULL,                   // icon
+		NULL,                   // ammoicon
+		NULL,                   // pickup_name
+		0,                      // quantity
+		0,                      // giType
+		0,                      // giTag
+		0,                      // ammotype
+		0,                      // cliptype
 	},  // leave index 0 alone
 	/*QUAKED item_treasure (1 1 0) (-8 -8 -8) (8 8 8) suspended
 	Items the player picks up that are just used to tally a score at end-level
@@ -662,7 +664,7 @@ gitem_t bg_itemlist[] =
 		NULL,   // ammo icon
 		"Health",
 		0,
-		IT_WEAPON,
+		IT_HEALTH,
 		0,
 		0,
 		0,

@@ -500,10 +500,37 @@ A new item was picked up this frame
 */
 static void CG_ItemPickup(int itemNum)
 {
-	int itemid = bg_itemlist[itemNum].giTag;
-	int wpbank_cur, wpbank_pickup;
+	int                itemid = bg_itemlist[itemNum].giTag;
+	int                wpbank_cur, wpbank_pickup;
+	popupMessageType_t giType;
 
-	CG_AddPMItem(PM_MESSAGE, va(CG_TranslateString("Picked up %s"), CG_PickupItemText(itemNum)), cgs.media.pmImages[PM_MESSAGE], NULL);
+	switch (bg_itemlist[itemNum].giType)
+	{
+	case IT_AMMO:
+		giType = PM_AMMOPICKUP;
+		break;
+	case IT_WEAPON:
+		if (itemid == WP_AMMO)
+		{
+			giType = PM_AMMOPICKUP;
+		}
+		else
+		{
+			giType = PM_MESSAGE;
+		}
+		break;
+	case IT_HEALTH:
+		giType = PM_HEALTHPICKUP;
+		break;
+	case IT_TEAM:
+		giType = PM_OBJECTIVE;
+		break;
+	default:
+		giType = PM_MESSAGE;
+		break;
+	}
+
+	CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_PickupItemText(itemNum)), cgs.media.pmImages[giType], NULL);
 
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON)

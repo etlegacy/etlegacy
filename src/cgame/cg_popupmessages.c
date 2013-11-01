@@ -94,6 +94,8 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImages[PM_OBJECTIVE]    = trap_R_RegisterShaderNoMip("sprites/objective");
 	cgs.media.pmImages[PM_DESTRUCTION]  = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_TEAM]         = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_AMMOPICKUP]   = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
+	cgs.media.pmImages[PM_HEALTHPICKUP] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
 
 	cgs.media.pmImageAlliesConstruct = trap_R_RegisterShaderNoMip("gfx/hud/pm_constallied");
 	cgs.media.pmImageAxisConstruct   = trap_R_RegisterShaderNoMip("gfx/hud/pm_constaxis");

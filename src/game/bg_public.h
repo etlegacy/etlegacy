@@ -2293,6 +2293,8 @@ typedef enum popupMessageType_e
 	PM_OBJECTIVE,
 	PM_DESTRUCTION,
 	PM_TEAM,
+	PM_AMMOPICKUP,
+	PM_HEALTHPICKUP,
 	PM_NUM_TYPES
 } popupMessageType_t;
 
