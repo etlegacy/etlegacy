@@ -1692,15 +1692,12 @@ void CG_CheckForCursorHints(void)
 	if (trace.fraction == 1)
 	{
 		// might be water
-		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))	// was only on servercode
+		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))   // was only on servercode
 		{
-			if (dist <= CH_WATER_DIST)
-			{
-				cg.cursorHintIcon  = HINT_WATER;
-				cg.cursorHintTime  = cg.time;
-				cg.cursorHintFade  = 500;
-				cg.cursorHintValue = 0;
-			}
+			cg.cursorHintIcon  = HINT_WATER;
+			cg.cursorHintTime  = cg.time;
+			cg.cursorHintFade  = 500;
+			cg.cursorHintValue = 0;
 		}
 		return;
 	}
@@ -1719,7 +1716,7 @@ void CG_CheckForCursorHints(void)
 	// world
 	if (trace.entityNum == ENTITYNUM_WORLD)
 	{
-		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))	// was only on servercode
+		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))   // was only on servercode
 		{
 			if (dist <= CH_WATER_DIST)
 			{
