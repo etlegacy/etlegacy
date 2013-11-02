@@ -3048,19 +3048,11 @@ void CL_Frame(int msec)
 			}
 		}
 		// fixed time for next frame
-		float fps = 25 * com_timescale->value;
-		if (fps > 1000.0f)
+		msec = (1000 / cl_avidemo->integer) * com_timescale->value;
+		if (msec == 0)
 		{
-			fps = 1000.0f;
+			msec = 1;
 		}
-		float frameTime = (1000.0f / fps);
-		if (frameTime < 1)
-		{
-			frameTime = 1;
-		}
-		frameTime        += clc.aviDemoRemain;
-		msec              = (int)frameTime;
-		clc.aviDemoRemain = frameTime - msec;
 	}
 	else if ((cl_avidemo->integer == 0 || cls.state != CA_ACTIVE) && CL_VideoRecording())
 	{
