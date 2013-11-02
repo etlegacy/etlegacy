@@ -3048,7 +3048,7 @@ void CL_Frame(int msec)
 			}
 		}
 		// fixed time for next frame
-		float fps = cl_aviFrameRate->value * com_timescale->value;
+		float fps = 25 * com_timescale->value;
 		if (fps > 1000.0f)
 		{
 			fps = 1000.0f;

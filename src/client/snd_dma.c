@@ -1466,7 +1466,7 @@ void S_GetSoundtime(void)
 
 	if (CL_VideoRecording())
 	{
-		float fps = cl_aviFrameRate->value;
+		float fps = 25;
 		if (fps > 1000.0f)
 		{
 			fps = 1000.0f;
