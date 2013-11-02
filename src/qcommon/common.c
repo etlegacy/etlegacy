@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -2699,6 +2699,7 @@ void Com_TrackProfile(char *profile_path)
 	}
 }
 
+#if idppc
 static void Com_DetectAltivec(void)
 {
 	// Only detect if user hasn't forcibly disabled it.
@@ -2718,6 +2719,7 @@ static void Com_DetectAltivec(void)
 		}
 	}
 }
+#endif
 
 /*
 =================
@@ -3703,7 +3705,7 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 
 void Console_AutoCompelete(field_t *field, int *comletionlen)
 {
-	int completionOffset = 0;
+	//int completionOffset = 0;
 
 	if (!*comletionlen)
 	{
@@ -3748,8 +3750,8 @@ void Console_AutoCompelete(field_t *field, int *comletionlen)
 		*/
 
 		Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
-		completionOffset = strlen(field->buffer) - strlen(completionString);
-		*comletionlen    = field->cursor = strlen(field->buffer);
+		//completionOffset = strlen(field->buffer) - strlen(completionString);
+		*comletionlen = field->cursor = strlen(field->buffer);
 	}
 	else
 	{

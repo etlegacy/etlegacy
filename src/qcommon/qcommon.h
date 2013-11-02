@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -650,6 +650,7 @@ void FS_FreeFileList(char **list);
 
 qboolean FS_FileExists(const char *file);
 
+qboolean FS_IsSamePath(const char *s1, const char *s2);
 qboolean FS_CreatePath(char *OSPath);
 void FS_Remove(const char *osPath);
 

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1386,6 +1386,9 @@ void G_UpdateSvCvars(void)
 	trap_SetConfigstring(CS_SVCVAR, cs);
 }
 
+/**
+ * @brief Forces client cvar to a specific value
+ */
 void CC_svcvar(void)
 {
 	char cvarName[MAX_CVAR_VALUE_STRING];

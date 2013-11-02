@@ -244,7 +244,7 @@ void I18N_SetLanguage(const char *language)
 	dictionary_mod.set_language(tinygettext::Language::from_env(std::string(language)));
 
 	Com_Printf("\nLanguage set to %s\n", dictionary.get_language().get_name().c_str());
-	Com_sprintf(cl_language_last, sizeof(cl_language_last), language);
+	Com_sprintf(cl_language_last, sizeof(cl_language_last), "%s", language);
 
 	strings.clear();
 }
@@ -262,17 +262,17 @@ void I18N_SetLanguage(const char *language)
  */
 static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryManager &dict)
 {
+	if (Q_stricmp(cl_language->string, cl_language_last))
+	{
+		I18N_SetLanguage(cl_language->string);
+	}
+
 	// HACK: how to tell tinygettext not to translate if cl_language is English?
 	// FIXME: this can be done in CL_TranslateString
 	// we should also move the cl_language cvars out of this file to have a clean architecture & data structure
 	if (!Q_stricmp(cl_language->string, "en"))
 	{
 		return msgid;
-	}
-
-	if (Q_stricmp(cl_language->string, cl_language_last))
-	{
-		I18N_SetLanguage(cl_language->string);
 	}
 
 	// Store translated string if it is not there yet

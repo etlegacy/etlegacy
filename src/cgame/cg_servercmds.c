@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -128,14 +128,10 @@ static void CG_ParseTeamInfo(void)
 	}
 }
 
-/*
-================
-CG_ParseServerinfo
-
-This is called explicitly when the gamestate is first received,
-and whenever the server updates any serverinfo flagged cvars
-================
-*/
+/**
+ * @brief This is called explicitly when the gamestate is first received,
+ * and whenever the server updates any serverinfo flagged cvars
+ */
 void CG_ParseServerinfo(void)
 {
 	const char *info = CG_ConfigString(CS_SERVERINFO);
@@ -591,7 +587,7 @@ void CG_ParseServerVersionInfo(const char *pszVersionInfo)
 void CG_ParseReinforcementTimes(const char *pszReinfSeedString)
 {
 	const char   *tmp = pszReinfSeedString, *tmp2;
-	unsigned int i, j, dwDummy, dwOffset[TEAM_NUM_TEAMS];
+	unsigned int i, j, dwOffset[TEAM_NUM_TEAMS];
 
 #define GETVAL(x, y) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = atoi(++tmp) / y;
 
@@ -610,9 +606,6 @@ void CG_ParseReinforcementTimes(const char *pszReinfSeedString)
 				cgs.aReinfOffset[i] *= 1000;
 				break;
 			}
-			GETVAL(dwDummy, 1); // FIXME: inspect this, from cppcheck:
-			                    // Variable 'dwDummy' is assigned a value that is never used
-			                    // (++tmp?)
 		}
 	}
 }

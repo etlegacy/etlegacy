@@ -5069,7 +5069,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
 			int   ui_r_mode                           = trap_Cvar_VariableValue("ui_r_mode");
-			float ui_r_gamma                          = trap_Cvar_VariableValue("ui_r_gamma");
 			int   ui_rate                             = trap_Cvar_VariableValue("ui_rate");
 			int   ui_cl_maxpackets                    = trap_Cvar_VariableValue("ui_cl_maxpackets");
 			int   ui_cl_packetdup                     = trap_Cvar_VariableValue("ui_cl_packetdup");
@@ -5102,7 +5101,6 @@ void UI_RunMenuScript(char **args)
 				ui_cl_packetdup  = 1;
 			}
 
-			// do not save ui_r_gamma here as it is used only for starting value
 			trap_Cvar_Set("r_mode", va("%i", ui_r_mode));
 			trap_Cvar_Set("rate", va("%i", ui_rate));
 			trap_Cvar_Set("cl_maxpackets", va("%i", ui_cl_maxpackets));
@@ -6488,7 +6486,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 	{
 		if (index >= 0 && index < uiInfo.serverStatus.numDisplayServers)
 		{
-			int ping, game, antilag, needpass, friendlyfire, maxlives, punkbuster, weaponrestrictions, balancedteams, serverload;
+			int ping, game, antilag, needpass, friendlyfire, maxlives, weaponrestrictions, balancedteams, serverload;
 
 			if (lastColumn != column || lastTime > uiInfo.uiDC.realTime + 5000)
 			{
@@ -6588,7 +6586,6 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 					needpass           = atoi(Info_ValueForKey(info, "needpass"));
 					friendlyfire       = atoi(Info_ValueForKey(info, "friendlyFire"));
 					maxlives           = atoi(Info_ValueForKey(info, "maxlives"));
-					punkbuster         = atoi(Info_ValueForKey(info, "punkbuster"));
 					weaponrestrictions = atoi(Info_ValueForKey(info, "weaprestrict"));
 					antilag            = atoi(Info_ValueForKey(info, "g_antilag"));
 					balancedteams      = atoi(Info_ValueForKey(info, "balancedteams"));

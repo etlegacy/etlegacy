@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -398,14 +398,13 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 // took this out of Weapon_Syringe so we can use it from other places
 qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 {
-	vec3_t    org;
-	trace_t   tr;
-	int       healamt, headshot, oldweapon, oldweaponstate, oldclasstime = 0;
-	qboolean  usedSyringe = qfalse;
-	int       ammo[MAX_WEAPONS];        // total amount of ammo
-	int       ammoclip[MAX_WEAPONS];    // ammo in clip
-	int       weapons[MAX_WEAPONS / (sizeof(int) * 8)]; // 64 bits for weapons held
-	gentity_t *te;
+	vec3_t   org;
+	trace_t  tr;
+	int      healamt, headshot, oldweapon, oldweaponstate, oldclasstime = 0;
+	qboolean usedSyringe = qfalse;
+	int      ammo[MAX_WEAPONS];         // total amount of ammo
+	int      ammoclip[MAX_WEAPONS];     // ammo in clip
+	int      weapons[MAX_WEAPONS / (sizeof(int) * 8)];  // 64 bits for weapons held
 
 	// heal the dude
 	// copy some stuff out that we'll wanna restore

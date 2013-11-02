@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -36,20 +36,16 @@
 
 displayContextDef_t cgDC;
 
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, qboolean legacyClient);
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient);
 void CG_Shutdown(void);
 qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
 
-/*
-================
-vmMain
-
-This is the only way control passes into the module.
-This must be the very first function compiled into the .q3vm file
-================
-*/
+/**
+ * @brief This is the only way control passes into the module.
+ * This must be the very first function compiled into the .q3vm file
+ */
 Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11)
 {
 	switch (command)
@@ -2422,7 +2418,7 @@ Will perform callbacks to make the loading info screen update.
 #define DEBUG_INITPROFILE_INIT int elapsed, dbgTime = trap_Milliseconds();
 #define DEBUG_INITPROFILE_EXEC(f) if (developer.integer) { CG_Printf("^5%s passed in %i msec\n", f, elapsed = trap_Milliseconds() - dbgTime);  dbgTime += elapsed; }
 #endif // _DEBUG
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, qboolean legacyClient)
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient)
 {
 	const char *s;
 	int        i;
@@ -2458,7 +2454,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.demoPlayback = demoPlayback;
 
-	cg.legacyClient = (legacyClient == NULL ? qfalse : legacyClient);
+	cg.legacyClient = legacyClient;
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);
