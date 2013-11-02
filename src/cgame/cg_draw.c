@@ -1692,7 +1692,7 @@ void CG_CheckForCursorHints(void)
 	if (trace.fraction == 1)
 	{
 		// might be water
-		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))   // was only on servercode
+		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))
 		{
 			cg.cursorHintIcon  = HINT_WATER;
 			cg.cursorHintTime  = cg.time;
@@ -1716,19 +1716,9 @@ void CG_CheckForCursorHints(void)
 	// world
 	if (trace.entityNum == ENTITYNUM_WORLD)
 	{
-		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))   // was only on servercode
+		if ((trace.surfaceFlags & SURF_LADDER) && !(cg.snap->ps.pm_flags & PMF_LADDER))
 		{
-			if (dist <= CH_WATER_DIST)
-			{
-				cg.cursorHintIcon  = HINT_WATER;
-				cg.cursorHintTime  = cg.time;
-				cg.cursorHintFade  = 500;
-				cg.cursorHintValue = 0;
-			}
-		}
-		else if ((trace.surfaceFlags & SURF_LADDER) && !(cg.snap->ps.pm_flags & PMF_LADDER))
-		{
-			if (dist <= CH_DIST)
+			if (dist <= CH_LADDER_DIST)
 			{
 				cg.cursorHintIcon  = HINT_LADDER;
 				cg.cursorHintTime  = cg.time;
