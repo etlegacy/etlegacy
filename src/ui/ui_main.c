@@ -5223,6 +5223,32 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
+		else if (Q_stricmp(name, "SetFontScale") == 0)
+		{
+			int fontScale = trap_Cvar_VariableValue("cg_fontScale");
+
+			if (fontScale == 1)
+			{
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.30);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.20);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.20);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.22);
+			}
+			else if (fontScale == 2)
+			{
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.25);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.18);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.18);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.20);
+			}
+			else
+			{
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.35);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.22);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.22);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.25);
+			}
+		}
 		else
 		{
 			Com_Printf("^3WARNING: unknown UI script %s\n", name);
