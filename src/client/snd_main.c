@@ -542,7 +542,7 @@ void S_Play_f(void)
 
 		if (h)
 		{
-			si.StartLocalSound(h, CHAN_LOCAL_SOUND, 1.0f);
+			si.StartLocalSound(h, CHAN_LOCAL_SOUND, 127);
 		}
 		else
 		{
