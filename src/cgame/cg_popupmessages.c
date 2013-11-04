@@ -481,7 +481,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	vec4_t       colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t       colourText = { 1.f, 1.f, 1.f, 1.f };
 	float        t;
-	int          i, j, size;
+	int          i, j, size, w, sizew;
 	pmListItem_t *listItem = cg_pmOldList;
 	float        y         = rect.y; //360;
 	float        fontScale = cg_fontScaleSP.value;
@@ -535,8 +535,6 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	}
 
 	CG_Text_Paint_Ext(4 + size + 2, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2);
-
-	int w, sizew;
 
 	w     = CG_Text_Width_Ext(cg_pmWaitingList->message, fontScale, 0, &cgs.media.limboFont2);
 	sizew = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
@@ -607,8 +605,6 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		}
 
 		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, fontScale, fontScale, colourText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
-
-		int w, sizew;
 
 		w     = CG_Text_Width_Ext(listItem->message, fontScale, 0, &cgs.media.limboFont2);
 		sizew = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
