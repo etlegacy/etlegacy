@@ -1824,7 +1824,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	case WP_SMOKE_BOMB:
 		bolt->classname = "smoke_bomb";
 		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
-		// this is supposed to be MOD_SMOKEBOMB, not SMOKEGRENADE
 		bolt->methodOfDeath = MOD_SMOKEBOMB;
 		break;
 	case WP_GRENADE_LAUNCHER:
@@ -1837,8 +1836,8 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	case WP_GRENADE_PINEAPPLE:
 		bolt->classname           = "grenade";
 		bolt->splashRadius        = 300;
-		bolt->methodOfDeath       = MOD_GRENADE_LAUNCHER;
-		bolt->splashMethodOfDeath = MOD_GRENADE_LAUNCHER;
+		bolt->methodOfDeath       = MOD_GRENADE_PINEAPPLE;
+		bolt->splashMethodOfDeath = MOD_GRENADE_PINEAPPLE;
 		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		break;
 	case WP_SMOKE_MARKER:
@@ -1894,7 +1893,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		VectorCopy(bolt->r.maxs, bolt->r.absmax);
 		break;
 	case WP_DYNAMITE:
-
 		bolt->accuracy = 0;     // sets to score below if dynamite is in trigger_objective_info & it's an objective
 		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
 		// differentiate non-armed dynamite with non-pulsing dlight
