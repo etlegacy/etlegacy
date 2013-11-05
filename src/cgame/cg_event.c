@@ -497,11 +497,11 @@ static void CG_Obituary(entityState_t *ent)
 
 				if (cg_graphicObituaries.integer == 1)
 				{
-					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
+					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
 				}
 				else
 				{
-					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
+					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
 				}
 			}
 			else
