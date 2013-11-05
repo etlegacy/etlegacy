@@ -156,7 +156,6 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 extern qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent);
 
-
 // Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
 static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {

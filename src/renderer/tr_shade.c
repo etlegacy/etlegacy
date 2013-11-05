@@ -36,6 +36,9 @@
  */
 
 #include "tr_local.h"
+#if idppc_altivec && !defined(__APPLE__)
+#include <altivec.h>
+#endif
 
 /*
 ================
@@ -715,7 +718,183 @@ DynamicLightPass()
 perform dynamic lighting with multiple rendering passes
 ===================
 */
-static void DynamicLightPass(void)
+#if idppc_altivec
+static void DynamicLightPass_altivec(void)
+{
+	int                  i, l, a, b, c, *intColors;
+	vec_t                origin0, origin1, origin2;
+	vec_t                dir0, dir1, dir2;
+	byte                 *colors;
+	unsigned             hitIndexes[SHADER_MAX_INDEXES];
+	int                  numIndexes;
+	float                radius, radiusInverseCubed;
+	float                intensity, remainder, modulate;
+	vec3_t               floatColor;
+	dlight_t             *dl;
+	float                colorMax = 255;
+	vector float         floatColorVec0, floatColorVec1;
+	vector float         modulateVec, colorVec, zero, colorMaxVec;
+	vector short         colorShort;
+	vector signed int    colorInt;
+	vector unsigned char floatColorVecPerm, modulatePerm, colorChar;
+	vector unsigned char vSel = VECCONST_UINT8(0x00, 0x00, 0x00, 0xff,
+	                                           0x00, 0x00, 0x00, 0xff,
+	                                           0x00, 0x00, 0x00, 0xff,
+	                                           0x00, 0x00, 0x00, 0xff);
+
+	// early out
+	if (backEnd.refdef.num_dlights == 0)
+	{
+		return;
+	}
+
+	// There has to be a better way to do this so that floatColor
+	// and/or modulate are already 16-byte aligned.
+	floatColorVecPerm = vec_lvsl(0, (float *)floatColor);
+	modulatePerm      = vec_lvsl(0, (float *)&modulate);
+	modulatePerm      = (vector unsigned char)vec_splat((vector unsigned int)modulatePerm, 0);
+	zero              = (vector float)vec_splat_s8(0);
+	colorMaxVec       = vec_splat(vec_lde(0, &colorMax), 0);
+
+	// walk light list
+	for (l = 0; l < backEnd.refdef.num_dlights; l++)
+	{
+		// early out
+		if (!(tess.dlightBits & (1 << l)))
+		{
+			continue;
+		}
+
+		// clear colors
+		Com_Memset(tess.svars.colors, 0, sizeof(tess.svars.colors));
+
+		// setup
+		dl                 = &backEnd.refdef.dlights[l];
+		origin0            = dl->transformed[0];
+		origin1            = dl->transformed[1];
+		origin2            = dl->transformed[2];
+		radius             = dl->radius;
+		radiusInverseCubed = dl->radiusInverseCubed;
+		intensity          = dl->intensity;
+		floatColor[0]      = dl->color[0] * 255.0f;
+		floatColor[1]      = dl->color[1] * 255.0f;
+		floatColor[2]      = dl->color[2] * 255.0f;
+
+		floatColorVec0 = vec_ld(0, floatColor);
+		floatColorVec1 = vec_ld(11, floatColor);
+		floatColorVec0 = vec_perm(floatColorVec0, floatColorVec0, floatColorVecPerm);
+
+		// directional lights have max intensity and washout remainder intensity
+		if (dl->flags & REF_DIRECTED_DLIGHT)
+		{
+			remainder = intensity * 0.125;
+		}
+		else
+		{
+			remainder = 0.0f;
+		}
+
+		// illuminate vertexes
+		colors = tess.svars.colors[0];
+		for (i = 0; i < tess.numVertexes; i++, colors += 4)
+		{
+			backEnd.pc.c_dlightVertexes++;
+
+			// directional dlight, origin is a directional normal
+			if (dl->flags & REF_DIRECTED_DLIGHT)
+			{
+				// twosided surfaces use absolute value of the calculated lighting
+				modulate = intensity * DotProduct(dl->origin, tess.normal[i].v);
+				if (tess.shader->cullType == CT_TWO_SIDED)
+				{
+					modulate = fabs(modulate);
+				}
+				modulate += remainder;
+			}
+			// ball dlight
+			else
+			{
+				dir0 = radius - fabs(origin0 - tess.xyz[i].v[0]);
+				if (dir0 <= 0.0f)
+				{
+					continue;
+				}
+				dir1 = radius - fabs(origin1 - tess.xyz[i].v[1]);
+				if (dir1 <= 0.0f)
+				{
+					continue;
+				}
+				dir2 = radius - fabs(origin2 - tess.xyz[i].v[2]);
+				if (dir2 <= 0.0f)
+				{
+					continue;
+				}
+
+				modulate = intensity * dir0 * dir1 * dir2 * radiusInverseCubed;
+			}
+
+			// optimizations
+			if (modulate < (1.0f / 128.0f))
+			{
+				continue;
+			}
+			else if (modulate > 1.0f)
+			{
+				modulate = 1.0f;
+			}
+
+			modulateVec = vec_ld(0, (float *)&modulate);
+			modulateVec = vec_perm(modulateVec, modulateVec, modulatePerm);
+			colorVec    = vec_madd(floatColorVec0, modulateVec, zero);
+			colorVec    = vec_max(colorVec, colorMaxVec); // clamp
+			colorInt    = vec_cts(colorVec, 0); // RGBx
+			colorShort  = vec_pack(colorInt, colorInt);     // RGBxRGBx
+			colorChar   = vec_packsu(colorShort, colorShort); // RGBxRGBxRGBxRGBx
+			colorChar   = vec_sel(colorChar, vSel, vSel);   // RGBARGBARGBARGBA replace alpha with 255
+			vec_ste((vector unsigned int)colorChar, 0, (unsigned int *)colors);   // store color
+		}
+
+		// build a list of triangles that need light
+		intColors  = (int *) tess.svars.colors;
+		numIndexes = 0;
+		for (i = 0; i < tess.numIndexes; i += 3)
+		{
+			a = tess.indexes[i];
+			b = tess.indexes[i + 1];
+			c = tess.indexes[i + 2];
+			if (!(intColors[a] | intColors[b] | intColors[c]))
+			{
+				continue;
+			}
+			hitIndexes[numIndexes++] = a;
+			hitIndexes[numIndexes++] = b;
+			hitIndexes[numIndexes++] = c;
+		}
+
+		if (numIndexes == 0)
+		{
+			continue;
+		}
+
+		// debug code (fixme, there's a bug in this function!)
+		//for( i = 0; i < numIndexes; i++ )
+		//  intColors[ hitIndexes[ i ] ] = 0x000000FF;
+
+		qglEnableClientState(GL_COLOR_ARRAY);
+		qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+
+		R_FogOff();
+		GL_Bind(tr.whiteImage);
+		GL_State(GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL);
+		R_DrawElements(numIndexes, hitIndexes);
+		backEnd.pc.c_totalIndexes  += numIndexes;
+		backEnd.pc.c_dlightIndexes += numIndexes;
+		R_FogOn();
+	}
+}
+#endif
+
+static void DynamicLightPass_scalar(void)
 {
 	int      i, l, a, b, c, color, *intColors;
 	vec3_t   origin;
@@ -860,6 +1039,19 @@ static void DynamicLightPass(void)
 		backEnd.pc.c_dlightIndexes += numIndexes;
 		R_FogOn();
 	}
+}
+
+static void DynamicLightPass(void)
+{
+#if idppc_altivec
+	if (com_altivec->integer)
+	{
+		// must be in a seperate function or G3 systems will crash.
+		DynamicLightPass_altivec();
+		return;
+	}
+#endif // idppc_altivec
+	DynamicLightPass_scalar();
 }
 
 /*

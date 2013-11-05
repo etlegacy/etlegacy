@@ -42,6 +42,7 @@
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
+#include "win_resource.h"
 #include "sys_local.h"
 #include "sys_win32.h"
 
@@ -850,6 +851,30 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 	}
 }
 
+void Sys_Splash(qboolean show)
+{
+	if (show)
+	{
+		if (g_wv.hWndSplash)
+		{
+			return;
+		}
+
+		g_wv.hWndSplash = CreateDialog(g_wv.hInstance, MAKEINTRESOURCE(IDD_SPLASH), NULL, NULL);
+	}
+	else
+	{
+		if (!g_wv.hWndSplash)
+		{
+			return;
+		}
+
+		ShowWindow(g_wv.hWndSplash, SW_HIDE);
+		DestroyWindow(g_wv.hWndSplash);
+		g_wv.hWndSplash = NULL;
+	}
+}
+
 /*
 ==================
 Sys_OpenURL
@@ -923,8 +948,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	g_wv.hInstance = hInstance;
 	Q_strncpyz(sys_cmdline, lpCmdLine, sizeof(sys_cmdline));
 
+#ifndef DEDICATED
+	//show the splash screen
+	Sys_Splash(qtrue);
+#endif
+
 	// done before Com/Sys_Init since we need this for error output
 	Sys_CreateConsole();
+
+#ifdef DEDICATED
+	Sys_ShowConsole(1, qtrue);
+#endif
 
 	// no abort/retry/fail errors
 	SetErrorMode(SEM_FAILCRITICALERRORS);
@@ -934,6 +968,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Com_Init(sys_cmdline);
 	NET_Init();
+
+	Sys_Splash(qfalse);
 
 	_getcwd(cwd, sizeof(cwd));
 	Com_Printf("Working directory: %s\n", cwd);

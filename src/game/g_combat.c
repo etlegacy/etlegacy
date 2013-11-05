@@ -884,6 +884,9 @@ gentity_t *G_BuildHead(gentity_t *ent)
 
 	head = G_Spawn();
 
+	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
+	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
+
 	if (trap_GetTag(ent->s.number, 0, "tag_head", &orientation))
 	{
 		G_SetOrigin(head, orientation.origin);
@@ -893,6 +896,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 		float  height, dest;
 		vec3_t v, angles, forward, up, right;
 
+		VectorClear(v);
 		G_SetOrigin(head, ent->r.currentOrigin);
 
 		if (ent->client->ps.eFlags & EF_PRONE)
@@ -939,8 +943,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 	VectorCopy(ent->r.currentAngles, head->s.angles);
 	VectorCopy(head->s.angles, head->s.apos.trBase);
 	VectorCopy(head->s.angles, head->s.apos.trDelta);
-	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
-	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
+
 	head->clipmask   = CONTENTS_SOLID;
 	head->r.contents = CONTENTS_SOLID;
 	head->parent     = ent;
@@ -1049,13 +1052,9 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 	if (traceEnt == head)
 	{
-		level.totalHeadshots++;
 		return qtrue;
 	}
-	else
-	{
-		level.missedHeadshots++;
-	}
+
 	return qfalse;
 }
 
@@ -1288,91 +1287,54 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 	}
 
-	if ((targ->waterlevel >= 3) && (mod == MOD_FLAMETHROWER))
+	if (targ->waterlevel >= 3 && mod == MOD_FLAMETHROWER)
 	{
 		return;
 	}
 
-	// shootable doors / buttons don't actually have any health
-	if (targ->s.eType == ET_MOVER && !(targ->isProp) && !targ->scriptName)
+	switch (targ->s.eType)
 	{
-		if (targ->use && targ->moverState == MOVER_POS1)
-		{
-			G_UseEntity(targ, inflictor, attacker);
-		}
-		return;
-	}
+	case ET_MOVER:
 
-	// In the old code, this check wasn't done for props, so I put that check back in to make props_statue properly work
-	// 4 means destructible
-	if (targ->s.eType == ET_MOVER && (targ->spawnflags & 4) && !targ->isProp)
-	{
-		if (!G_WeaponIsExplosive(mod))
+		// shootable doors / buttons don't actually have any health
+		if (!targ->isProp && !targ->scriptName)
 		{
-			return;
-		}
-
-		// check for team
-		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
-		{
-			return;
-		}
-	}
-	else if (targ->s.eType == ET_EXPLOSIVE)
-	{
-#if 0
-		// 32 Explosive
-		// 64 Dynamite only
-		// 256 Airstrike/artillery only
-		// 512 Satchel only
-		if ((targ->spawnflags & 32) || (targ->spawnflags & 64) || (targ->spawnflags & 256) || (targ->spawnflags & 512))
-		{
-			switch (mod)
+			if (targ->use && targ->moverState == MOVER_POS1)
 			{
-			case MOD_GRENADE:
-			case MOD_GRENADE_LAUNCHER:
-			case MOD_GRENADE_PINEAPPLE:
-			case MOD_MAPMORTAR:
-			case MOD_EXPLOSIVE:
-			case MOD_LANDMINE:
-			case MOD_GPG40:
-			case MOD_M7:
-				if (!(targ->spawnflags & 32))
-				{
-					return;
-				}
-				break;
-			case MOD_SATCHEL:
-				if (!(targ->spawnflags & 512))
-				{
-					return;
-				}
-				break;
-			case MOD_ARTY:
-			case MOD_AIRSTRIKE:
-				if (!(targ->spawnflags & 256))
-				{
-					return;
-				}
-				break;
-			case MOD_DYNAMITE:
-				if (!(targ->spawnflags & 64))
-				{
-					return;
-				}
-				break;
-			default:
+				G_UseEntity(targ, inflictor, attacker);
+			}
+			return;
+		}
+
+		if ((targ->spawnflags & 4) && !targ->isProp)
+		{
+			if (!G_WeaponIsExplosive(mod))
+			{
 				return;
 			}
 
 			// check for team
-			if (targ->s.teamNum == inflictor->s.teamNum)
+			if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 			{
 				return;
 			}
 		}
-#endif // 0
 
+		if ((targ->spawnflags & 1024) && !targ->isProp)
+		{
+			if (mod != MOD_FLAMETHROWER)
+			{
+				return;
+			}
+
+			// check for team
+			if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
+			{
+				return;
+			}
+		}
+		break;
+	case ET_EXPLOSIVE:
 		if (targ->parent && G_GetWeaponClassForMOD(mod) == 2)
 		{
 			return;
@@ -1388,37 +1350,38 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 			return;
 		}
-	}
-	else if (targ->s.eType == ET_MISSILE && targ->methodOfDeath == MOD_LANDMINE)
-	{
-		if (targ->s.modelindex2)
+		break;
+	case ET_MISSILE:
+		if (targ->methodOfDeath == MOD_LANDMINE)
 		{
-			if (G_WeaponIsExplosive(mod))
+			if (targ->s.modelindex2)
 			{
-				mapEntityData_t *mEnt;
-
-				if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
+				if (G_WeaponIsExplosive(mod))
 				{
-					G_FreeMapEntityData(&mapEntityData[0], mEnt);
-				}
+					mapEntityData_t *mEnt;
 
-				if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
-				{
-					G_FreeMapEntityData(&mapEntityData[1], mEnt);
-				}
+					if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
+					{
+						G_FreeMapEntityData(&mapEntityData[0], mEnt);
+					}
 
-				if (attacker && attacker->client)
-				{
-					AddScore(attacker, 1);
-				}
+					if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
+					{
+						G_FreeMapEntityData(&mapEntityData[1], mEnt);
+					}
 
-				G_ExplodeMissile(targ);
+					if (attacker && attacker->client)
+					{
+						AddScore(attacker, 1);
+					}
+
+					G_ExplodeMissile(targ);
+				}
 			}
+			return;
 		}
-		return;
-	}
-	else if (targ->s.eType == ET_CONSTRUCTIBLE)
-	{
+		break;
+	case ET_CONSTRUCTIBLE:
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
 			return;
@@ -1436,6 +1399,9 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				return;
 			}
 		}
+		break;
+	default:
+		break;
 	}
 
 	client = targ->client;

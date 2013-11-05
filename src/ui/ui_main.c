@@ -91,7 +91,7 @@ extern displayContextDef_t *DC;
 
 extern itemDef_t *g_bindItem;
 
-void _UI_Init(qboolean legacyClient);
+void _UI_Init(int legacyClient);
 void _UI_Shutdown(void);
 void _UI_KeyEvent(int key, qboolean down);
 void _UI_MouseEvent(int dx, int dy);
@@ -5069,7 +5069,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
 			int   ui_r_mode                           = trap_Cvar_VariableValue("ui_r_mode");
-			float ui_r_gamma                          = trap_Cvar_VariableValue("ui_r_gamma");
 			int   ui_rate                             = trap_Cvar_VariableValue("ui_rate");
 			int   ui_cl_maxpackets                    = trap_Cvar_VariableValue("ui_cl_maxpackets");
 			int   ui_cl_packetdup                     = trap_Cvar_VariableValue("ui_cl_packetdup");
@@ -5102,7 +5101,6 @@ void UI_RunMenuScript(char **args)
 				ui_cl_packetdup  = 1;
 			}
 
-			// do not save ui_r_gamma here as it is used only for starting value
 			trap_Cvar_Set("r_mode", va("%i", ui_r_mode));
 			trap_Cvar_Set("rate", va("%i", ui_rate));
 			trap_Cvar_Set("cl_maxpackets", va("%i", ui_cl_maxpackets));
@@ -5224,6 +5222,32 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowBots", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
+		}
+		else if (Q_stricmp(name, "SetFontScale") == 0)
+		{
+			int fontScale = trap_Cvar_VariableValue("cg_fontScale");
+
+			if (fontScale == 1)
+			{
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.30);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.20);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.20);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.22);
+			}
+			else if (fontScale == 2)
+			{
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.25);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.18);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.18);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.20);
+			}
+			else
+			{
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.35);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.22);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.22);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.25);
+			}
 		}
 		else
 		{
@@ -6488,7 +6512,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 	{
 		if (index >= 0 && index < uiInfo.serverStatus.numDisplayServers)
 		{
-			int ping, game, antilag, needpass, friendlyfire, maxlives, punkbuster, weaponrestrictions, balancedteams, serverload;
+			int ping, game, antilag, needpass, friendlyfire, maxlives, weaponrestrictions, balancedteams, serverload;
 
 			if (lastColumn != column || lastTime > uiInfo.uiDC.realTime + 5000)
 			{
@@ -6588,7 +6612,6 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 					needpass           = atoi(Info_ValueForKey(info, "needpass"));
 					friendlyfire       = atoi(Info_ValueForKey(info, "friendlyFire"));
 					maxlives           = atoi(Info_ValueForKey(info, "maxlives"));
-					punkbuster         = atoi(Info_ValueForKey(info, "punkbuster"));
 					weaponrestrictions = atoi(Info_ValueForKey(info, "weaprestrict"));
 					antilag            = atoi(Info_ValueForKey(info, "g_antilag"));
 					balancedteams      = atoi(Info_ValueForKey(info, "balancedteams"));
@@ -7333,7 +7356,7 @@ static void UI_RunCinematicFrame(int handle)
 	trap_CIN_RunCinematic(handle);
 }
 
-void _UI_Init(qboolean legacyClient)
+void _UI_Init(int legacyClient)
 {
 	int x;
 
@@ -7362,7 +7385,7 @@ void _UI_Init(qboolean legacyClient)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	uiInfo.legacyClient = (legacyClient == NULL ? qfalse : legacyClient);
+	uiInfo.legacyClient = legacyClient;
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;

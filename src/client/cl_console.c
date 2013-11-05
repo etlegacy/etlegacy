@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -733,20 +733,16 @@ void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrol
 	}
 }
 
-/*
-================
-Con_DrawSolidConsole
-
-Draws the console with the solid background
-================
-*/
+/**
+ * @brief Draws the console with the solid background
+ */
 void Con_DrawSolidConsole(float frac)
 {
 	int    i, x, y;
 	int    rows;
 	short  *text;
 	int    row;
-	int    yoffset = cls.glconfig.vidHeight * frac, lines;
+	int    yoffset = cls.glconfig.vidHeight * frac;
 	int    currentColor;
 	vec4_t color;
 	char   version[256] = ET_VERSION;
@@ -760,8 +756,6 @@ void Con_DrawSolidConsole(float frac)
 	{
 		yoffset = cls.glconfig.vidHeight;
 	}
-
-	lines = yoffset / SMALLCHAR_HEIGHT;
 
 	// on wide screens, we will center the text
 	con.xadjust = 0;

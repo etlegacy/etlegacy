@@ -16,8 +16,7 @@ qboolean G_DoAntiwarp(gentity_t *ent)
 	if (ent && ent->client)
 	{
 		// don't antiwarp spectators
-		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR ||
-		    ent->client->ps.pm_flags & PMF_LIMBO)
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO))
 		{
 			return qfalse;
 		}
@@ -43,8 +42,8 @@ qboolean G_DoAntiwarp(gentity_t *ent)
 void etpro_AddUsercmd(int clientNum, usercmd_t *cmd)
 {
 	gentity_t *ent = g_entities + clientNum;
+	int       idx  = (ent->client->cmdhead + ent->client->cmdcount) % LAG_MAX_COMMANDS;
 
-	int idx = (ent->client->cmdhead + ent->client->cmdcount) % LAG_MAX_COMMANDS;
 	ent->client->cmds[idx] = *cmd;
 
 	if (ent->client->cmdcount < LAG_MAX_COMMANDS)
@@ -58,12 +57,10 @@ void etpro_AddUsercmd(int clientNum, usercmd_t *cmd)
 }
 
 // zinx - G_CmdScale is a hack :x
-extern float pm_proneSpeedScale;
 static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 {
-	float scale;
+	float scale = abs(cmd->forwardmove);
 
-	scale = abs(cmd->forwardmove);
 	if (abs(cmd->rightmove) > scale)
 	{
 		scale = abs(cmd->rightmove);
@@ -110,6 +107,8 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 #endif
 
 #if 0   // zinx - not letting them go at sprint speed for now.
+	extern float pm_proneSpeedScale;
+
 	if (ent->client->ps.eFlags & EF_PRONE)
 	{
 		scale *= pm_proneSpeedScale;
@@ -125,10 +124,12 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 
 void DoClientThinks(gentity_t *ent)
 {
-	int lastCmd, lastTime;
-	int latestTime;
-	int drop_threshold = LAG_MAX_DROP_THRESHOLD;
-	int startPackets   = ent->client->cmdcount;
+	usercmd_t *cmd;
+	float     speed, delta, scale;
+	int       lastCmd, lastTime, latestTime, serverTime, totalDelta, timeDelta, savedTime;
+	int       drop_threshold = LAG_MAX_DROP_THRESHOLD;
+	int       startPackets   = ent->client->cmdcount;
+	qboolean  deltahax;
 
 	if (ent->client->cmdcount <= 0)
 	{
@@ -160,14 +161,12 @@ void DoClientThinks(gentity_t *ent)
 
 	while (ent->client->cmdcount > 0)
 	{
-		usercmd_t *cmd = &ent->client->cmds[ent->client->cmdhead];
-		float     speed, delta, scale;
-		int       savedTime;
-		qboolean  deltahax = qfalse;
+		cmd = &ent->client->cmds[ent->client->cmdhead];
 
-		int serverTime = cmd->serverTime;
-		int totalDelta = latestTime - cmd->serverTime;
-		int timeDelta;
+		deltahax = qfalse;
+
+		serverTime = cmd->serverTime;
+		totalDelta = latestTime - cmd->serverTime;
 
 		if (ent->client->pers.pmoveFixed)
 		{
@@ -198,9 +197,7 @@ void DoClientThinks(gentity_t *ent)
 
 		scale = 1.f / LAG_DECAY;
 
-		speed  = G_CmdScale(ent, cmd);
-		delta  = (speed * (float)timeDelta);
-		delta *= scale;
+		speed = G_CmdScale(ent, cmd);
 
 		if (timeDelta > 50)
 		{
@@ -208,6 +205,11 @@ void DoClientThinks(gentity_t *ent)
 			delta     = (speed * (float)timeDelta);
 			delta    *= scale;
 			deltahax  = qtrue;
+		}
+		else
+		{
+			delta  = (speed * (float)timeDelta);
+			delta *= scale;
 		}
 
 		if ((ent->client->cmddelta + delta) >= LAG_MAX_DELTA)

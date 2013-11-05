@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -36,20 +36,16 @@
 
 displayContextDef_t cgDC;
 
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, qboolean legacyClient);
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient);
 void CG_Shutdown(void);
 qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
 
-/*
-================
-vmMain
-
-This is the only way control passes into the module.
-This must be the very first function compiled into the .q3vm file
-================
-*/
+/**
+ * @brief This is the only way control passes into the module.
+ * This must be the very first function compiled into the .q3vm file
+ */
 Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11)
 {
 	switch (command)
@@ -164,6 +160,7 @@ vmCvar_t cg_tracerSpeed;
 vmCvar_t cg_autoswitch;
 vmCvar_t cg_ignore;
 vmCvar_t cg_fov;
+vmCvar_t cg_gun_fovscale;
 vmCvar_t cg_muzzleFlash;
 vmCvar_t cg_zoomStepSniper;
 vmCvar_t cg_zoomDefaultSniper;
@@ -310,6 +307,12 @@ vmCvar_t cg_drawTime;
 vmCvar_t cg_popupTime;
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
+vmCvar_t cg_graphicObituaries;
+
+vmCvar_t cg_fontScaleTP;
+vmCvar_t cg_fontScaleSP;
+vmCvar_t cg_fontScaleCP;
+vmCvar_t cg_fontScaleCN;
 
 typedef struct
 {
@@ -330,6 +333,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_zoomDefaultSniper,     "cg_zoomDefaultSniper",     "20",    CVAR_ARCHIVE                 }, // changed per atvi req
 	{ &cg_zoomStepSniper,        "cg_zoomStepSniper",        "2",     CVAR_ARCHIVE                 },
 	{ &cg_fov,                   "cg_fov",                   "90",    CVAR_ARCHIVE                 },
+	{ &cg_gun_fovscale,          "cg_gun_fovscale",          "1",     0                            },
 	{ &cg_muzzleFlash,           "cg_muzzleFlash",           "1",     CVAR_ARCHIVE                 },
 	{ &cg_letterbox,             "cg_letterbox",             "0",     CVAR_TEMP                    },
 	{ &cg_stereoSeparation,      "cg_stereoSeparation",      "0.4",   CVAR_ARCHIVE                 },
@@ -521,7 +525,14 @@ cvarTable_t cvarTable[] =
 	{ &cg_popupTime,             "cg_popupTime",             "1000",  CVAR_ARCHIVE                 },
 	{ &cg_popupFadeTime,         "cg_popupFadeTime",         "2500",  CVAR_ARCHIVE                 },
 	{ &cg_popupStayTime,         "cg_popupStayTime",         "2000",  CVAR_ARCHIVE                 },
+	{ &cg_graphicObituaries,     "cg_graphicObituaries",     "0",     CVAR_ARCHIVE                 },
 	{ &cg_weapaltReloads,        "cg_weapaltReloads",        "0",     CVAR_ARCHIVE                 },
+
+	// Fonts
+	{ &cg_fontScaleTP,           "cg_fontScaleTP",           "0.35",  CVAR_ARCHIVE                 }, // TopPrint
+	{ &cg_fontScaleSP,           "cg_fontScaleSP",           "0.22",  CVAR_ARCHIVE                 }, // SidePrint
+	{ &cg_fontScaleCP,           "cg_fontScaleCP",           "0.22",  CVAR_ARCHIVE                 }, // CenterPrint
+	{ &cg_fontScaleCN,           "cg_fontScaleCN",           "0.25",  CVAR_ARCHIVE                 }, // CrossName
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -1137,52 +1148,10 @@ The server says this item is used on this level
 static void CG_RegisterItemSounds(int itemNum)
 {
 	gitem_t *item = &bg_itemlist[itemNum];
-	char    data[MAX_QPATH];
-	char    *s, *start;
-	int     len;
 
 	if (item->pickup_sound && *item->pickup_sound)
 	{
 		cgs.media.itemPickUpSounds[itemNum] = trap_S_RegisterSound(item->pickup_sound, qfalse);
-	}
-
-	// parse the space seperated precache string for other media
-	s = item->sounds;
-	if (!s || !s[0])
-	{
-		return;
-	}
-
-	while (*s)
-	{
-		start = s;
-		while (*s && *s != ' ')
-		{
-			s++;
-		}
-
-		len = s - start;
-		if (len >= MAX_QPATH || len < 5)
-		{
-			CG_Error("CG_RegisterItemSounds: %s has bad precache string\n", item->classname);
-			return;
-		}
-		memcpy(data, start, len);
-		data[len] = 0;
-		if (*s)
-		{
-			s++;
-		}
-
-		if (!strcmp(data + len - 3, "wav"))
-		{
-			// FIXME: put into cgs.media
-			trap_S_RegisterSound(data, qfalse);
-		}
-		else
-		{
-			CG_Printf(S_COLOR_YELLOW "WARNING CG_RegisterItemSounds: Invalid format for item sound\n");
-		}
 	}
 }
 
@@ -1412,6 +1381,7 @@ static void CG_RegisterSounds(void)
 	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_2] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_3] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);
 
+	cgs.cachedSounds[GAMESOUND_MISC_REVIVE] = trap_S_RegisterSound("sound/misc/vo_revive.wav", qfalse);
 
 	CG_PrecacheFXSounds();
 }
@@ -1688,6 +1658,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
 
 	cgs.media.objectiveShader = trap_R_RegisterShader("sprites/objective");
+	cgs.media.readyShader     = trap_R_RegisterShader("sprites/ready");
 
 	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def
 
@@ -1975,6 +1946,7 @@ static void CG_RegisterGraphics(void)
 	trap_R_RegisterFont("ariblk", 27, &cgs.media.limboFont1);
 	trap_R_RegisterFont("ariblk", 16, &cgs.media.limboFont1_lo);
 	trap_R_RegisterFont("courbd", 30, &cgs.media.limboFont2);
+	trap_R_RegisterFont("courbd", 21, &cgs.media.limboFont2_lo);
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 
@@ -2448,7 +2420,7 @@ Will perform callbacks to make the loading info screen update.
 #define DEBUG_INITPROFILE_INIT int elapsed, dbgTime = trap_Milliseconds();
 #define DEBUG_INITPROFILE_EXEC(f) if (developer.integer) { CG_Printf("^5%s passed in %i msec\n", f, elapsed = trap_Milliseconds() - dbgTime);  dbgTime += elapsed; }
 #endif // _DEBUG
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, qboolean legacyClient)
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient)
 {
 	const char *s;
 	int        i;
@@ -2484,7 +2456,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.demoPlayback = demoPlayback;
 
-	cg.legacyClient = (legacyClient == NULL ? qfalse : legacyClient);
+	cg.legacyClient = legacyClient;
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);

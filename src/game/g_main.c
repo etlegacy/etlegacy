@@ -260,8 +260,6 @@ vmCvar_t g_resetXPMapCount;
 
 vmCvar_t g_campaignFile;
 
-vmCvar_t g_maxTeamLandmines;
-
 vmCvar_t g_countryflags; // GeoIP
 
 // arty/airstrike rate limiting
@@ -281,6 +279,7 @@ vmCvar_t team_maxFlamers;
 vmCvar_t team_maxMg42s;
 vmCvar_t team_maxPanzers;
 vmCvar_t team_maxRiflegrenades;
+vmCvar_t team_maxLandmines;
 //skills
 vmCvar_t skill_soldier;
 vmCvar_t skill_medic;
@@ -530,7 +529,6 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_campaignFile,             "g_campaignFile",             "",                           0 },
 
-	{ &g_maxTeamLandmines,         "g_maxTeamLandmines",         "10",                         0 },
 	{ &g_countryflags,             "g_countryflags",             "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse},
 
 	{ &team_airstrikeTime,         "team_airstrikeTime",         "10",                         0 },
@@ -548,6 +546,7 @@ cvarTable_t gameCvarTable[] =
 	{ &team_maxMg42s,              "team_maxMg42s",              "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxPanzers,            "team_maxPanzers",            "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxRiflegrenades,      "team_maxRiflegrenades",      "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxLandmines,          "team_maxLandmines",          "10",                         0 },
 	//Skills
 	{ &skill_soldier,              "skill_soldier",              "20 50 90 140",               0 },
 	{ &skill_medic,                "skill_medic",                "20 50 90 140",               0 },
@@ -561,7 +560,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_intermissionReadyPercent, "g_intermissionReadyPercent", "100",                        0 },
 	{ &g_mapScriptDirectory,       "g_mapScriptDirectory",       "",                           0 },
 	{ &g_mapConfigs,               "g_mapConfigs",               "",                           0 },
-	{ &g_customConfig,             "g_customConfig",             "",                           0 },
+	{ &g_customConfig,             "g_customConfig",             "defaultpublic",              CVAR_ARCHIVE },
 	{ &g_moverScale,               "g_moverScale",               "1.0",                        0 },
 	{ &g_fixedphysics,             "g_fixedphysics",             "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 	{ &g_fixedphysicsfps,          "g_fixedphysicsfps",          "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
@@ -571,7 +570,7 @@ cvarTable_t gameCvarTable[] =
 // made static to avoid aliasing
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
-void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServer);
+void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer);
 void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
 void CheckExitRules(void);
@@ -1928,251 +1927,16 @@ void bani_getmapxp(void)
 }
 
 /*
-=============
-G_ConfigParse
-=============
-*/
-static qboolean BG_PCF_ParseError(int handle, char *format, ...)
-{
-	int         line = 0;
-	char        filename[MAX_QPATH];
-	va_list     argptr;
-	static char string[4096];
-
-	va_start(argptr, format);
-	Q_vsnprintf(string, sizeof(string), format, argptr);
-	va_end(argptr);
-
-	filename[0] = '\0';
-
-	trap_PC_SourceFileAndLine(handle, filename, &line);
-
-	Com_Printf(S_COLOR_RED "ERROR: %s, line %d: %s\n", filename, line, string);
-
-	trap_PC_FreeSource(handle);
-
-	return qfalse;
-}
-
-static qboolean G_ConfigParse(int handle, config_t *config)
-{
-	pc_token_t token;
-	char       text[256];
-	char       value[256];
-
-	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
-	{
-		return BG_PCF_ParseError(handle, "expected '{'");
-	}
-
-	while (1)
-	{
-		if (!trap_PC_ReadToken(handle, &token))
-		{
-			break;
-		}
-		if (token.string[0] == '}')
-		{
-			break;
-		}
-
-		// simple set that does not need to save
-		if (!Q_stricmp(token.string, "set"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-			{
-				return BG_PCF_ParseError(handle, "expected cvar to set");
-			}
-			else
-			{
-				if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
-				{
-					return BG_PCF_ParseError(handle, "expected cvar value");
-				}
-
-				if (value[0] == '-')
-				{
-					if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-					{
-						return BG_PCF_ParseError(handle, "expected value after '-'");
-					}
-
-					Q_strncpyz(value, va("-%s", text), sizeof(value));
-				}
-
-				trap_Cvar_Set(text, value);
-			}
-			// commands do not need to save as well
-		}
-		else if (!Q_stricmp(token.string, "command"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-			{
-				return BG_PCF_ParseError(handle, "expected command to execute");
-			}
-			else
-			{
-				trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", text));
-			}
-			// setlock - need to save us to whine
-		}
-		else if (!Q_stricmp(token.string, "setl"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].name, sizeof(config->setl[0].name)))
-			{
-				return BG_PCF_ParseError(handle, "expected name of cvar to set and lock");
-			}
-
-			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].value, sizeof(config->setl[0].value)))
-			{
-				return BG_PCF_ParseError(handle, "expected value of cvar to set and lock");
-			}
-
-			if (config->setl[config->numSetl].value[0] == '-')
-			{
-				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-				{
-					return BG_PCF_ParseError(handle, "expected value after '-'");
-				}
-
-				Q_strncpyz(config->setl[config->numSetl].value, va("-%s", text), sizeof(config->setl[0].value));
-			}
-
-			trap_Cvar_Set(config->setl[config->numSetl].name, config->setl[config->numSetl].value);
-			config->numSetl++;
-		}
-		else
-		{
-			return BG_PCF_ParseError(handle, "unknown token '%s'", token.string);
-		}
-	}
-
-	return qtrue;
-}
-
-qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init)
-{
-	char       filename[MAX_QPATH];
-	int        handle = 0;
-	config_t   *config;
-	pc_token_t token;
-
-	if (forceFilename[0])
-	{
-		Q_strncpyz(filename, forceFilename, sizeof(filename));
-	}
-	else if (g_customConfig.string[0])
-	{
-		Q_strncpyz(filename, g_customConfig.string, sizeof(filename));
-		// need to reload config?
-		if (!level.config.loaded)
-		{
-			init = qtrue;
-		}
-	}
-	else if (g_mapConfigs.string[0])
-	{
-		Q_strncpyz(filename, g_mapConfigs.string, sizeof(filename));
-		Q_strcat(filename, sizeof(filename), "/");
-		Q_strcat(filename, sizeof(filename), level.rawmapname);
-		Q_strcat(filename, sizeof(filename), ".config");
-		init = qfalse;
-	}
-	else
-	{
-		return qfalse;
-	}
-
-	if (init)
-	{
-		memset(&level.config, 0, sizeof(config_t));
-	}
-
-	handle = trap_PC_LoadSource(filename);
-
-	if (!handle)
-	{
-		G_Printf("^3Warning: No config with filename '%s' found\n", filename);
-		return qfalse;
-	}
-
-	config = &level.config;
-
-	while (1)
-	{
-		if (!trap_PC_ReadToken(handle, &token))
-		{
-			break;
-		}
-
-		if (!Q_stricmp(token.string, "configname"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, config->name, sizeof(config->name)))
-			{
-				return BG_PCF_ParseError(handle, "expected config name");
-			}
-
-			trap_SetConfigstring(CS_CONFIGNAME, config->name);
-		}
-		else if (!Q_stricmp(token.string, "version"))
-		{
-			if (!PC_String_ParseNoAlloc(handle, config->version, sizeof(config->name)))
-			{
-				return BG_PCF_ParseError(handle, "expected config version");
-			}
-		}
-		else if (!Q_stricmp(token.string, "init"))
-		{
-			if (!G_ConfigParse(handle, config))
-			{
-				return BG_PCF_ParseError(handle, "failed to load init struct");
-			}
-			else
-			{
-				if (level.config.version[0] && level.config.name[0])
-				{
-					trap_SendServerCommand(-1, va("cp \"Script '%s^7' version '%s'^7 loaded\n\"", level.config.name, level.config.version));
-				}
-				else if (level.config.name[0])
-				{
-					trap_SendServerCommand(-1, va("cp \"Script '%s^7' loaded\n\"", level.config.name));
-				}
-			}
-		}
-		else if (!Q_stricmp(token.string, "default"))
-		{
-			if (!G_ConfigParse(handle, config))
-			{
-				return BG_PCF_ParseError(handle, "failed to load default struct");
-			}
-		}
-		else if (!Q_stricmp(token.string, level.rawmapname))
-		{
-			if (!G_ConfigParse(handle, config))
-			{
-				return BG_PCF_ParseError(handle, "failed to load %s struct", level.rawmapname);
-			}
-		}
-	}
-	level.config.loaded = qtrue;
-
-	trap_PC_FreeSource(handle);
-	return qtrue;
-}
-
-/*
 ============
 G_InitGame
 ============
 */
-void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServer)
+void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 {
 	int  i;
 	char cs[MAX_INFO_STRING];
 
-	G_Printf("------- Game Initialization -------\n");
-	G_Printf("gamename: %s\n", GAMEVERSION);
-	G_Printf("gamedate: %s\n", __DATE__);
+	G_Printf("------- Game Initialization -------\ngamename: %s\ngamedate: %s\n", GAMEVERSION, __DATE__);
 
 	srand(randomSeed);
 
@@ -2208,7 +1972,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
 	}
 
-	level.legacyServer = (legacyServer == NULL ? qfalse : legacyServer);
+	level.legacyServer = legacyServer;
 
 	// set some level globals
 	i = level.server_settings;
@@ -2313,6 +2077,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 
 	trap_GetServerinfo(cs, sizeof(cs));
 	Q_strncpyz(level.rawmapname, Info_ValueForKey(cs, "mapname"), sizeof(level.rawmapname));
+
+	G_Printf("map: %s\n", level.rawmapname);
 
 	G_ParseCampaigns();
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
@@ -2456,13 +2222,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, qboolean legacyServe
 	// reserve some spots for dead player bodies
 	InitBodyQue();
 
-	// load etpro configs
-	trap_SetConfigstring(CS_CONFIGNAME, "");
-
-	G_LoadConfig("", qfalse);
-
 	// load level script
 	G_Script_ScriptLoad();
+
+	//Set the game config
+	G_configSet(g_customConfig.string);
 
 	numSplinePaths = 0 ;
 	numPathCorners = 0;
@@ -2583,7 +2347,7 @@ void G_ShutdownGame(int restart)
 		trap_Cvar_Update(&g_gametype);
 	}
 
-	G_Printf("==== ShutdownGame (%i)====\n", restart);
+	G_Printf("==== ShutdownGame (%i - %s) ====\n", restart, level.rawmapname);
 
 #ifdef FEATURE_OMNIBOT
 	if (!Bot_Interface_Shutdown())
@@ -4860,8 +4624,8 @@ void G_RunFrame(int levelTime)
 
 	if (level.gameManager)
 	{
-		level.gameManager->s.otherEntityNum  = g_maxTeamLandmines.integer - G_CountTeamLandmines(TEAM_AXIS);
-		level.gameManager->s.otherEntityNum2 = g_maxTeamLandmines.integer - G_CountTeamLandmines(TEAM_ALLIES);
+		level.gameManager->s.otherEntityNum  = team_maxLandmines.integer - G_CountTeamLandmines(TEAM_AXIS);
+		level.gameManager->s.otherEntityNum2 = team_maxLandmines.integer - G_CountTeamLandmines(TEAM_ALLIES);
 	}
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);

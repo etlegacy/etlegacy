@@ -262,9 +262,7 @@ void CG_demoAviFPSDraw(void)
 
 	if (cg.demoPlayback && fKeyDown && cgs.aviDemoRate >= 0)
 	{
-		CG_DrawStringExt(42, 425,
-		                 ((cgs.aviDemoRate > 0) ? va("^3Record AVI @ ^7%d^2fps", cgs.aviDemoRate) : "^1Stop AVI Recording"),
-		                 colorWhite, qfalse, qfalse, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT - 2, 0);
+		CG_Text_Paint_Ext(42, 425, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, ((cgs.aviDemoRate > 0) ? va("^3Record AVI @ ^7%d^2fps", cgs.aviDemoRate) : "^1Stop AVI Recording"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 }
 
@@ -273,12 +271,12 @@ void CG_demoTimescaleDraw(void)
 	if (cg.demoPlayback && cgs.timescaleUpdate > cg.time && demo_drawTimeScale.integer != 0)
 	{
 		char *s = va("^3TimeScale: ^7%.1f", cg_timescale.value);
-		int  w  = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
+		int  h  = CG_Text_Height_Ext("A", cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+		int  w  = CG_Text_Width_Ext(s, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 
-		CG_FillRect(42 - 2, 400, w + 5, SMALLCHAR_HEIGHT + 3, colorDkGreen);
-		CG_DrawRect(42 - 2, 400, w + 5, SMALLCHAR_HEIGHT + 3, 1, colorMdYellow);
-
-		CG_DrawStringExt(42, 400, s, colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
+		CG_FillRect(42 - 3, 400, w + 7, h * 2.5, colorDkGreen);
+		CG_DrawRect(42 - 3, 400, w + 7, h * 2.5, 1, colorMdYellow);
+		CG_Text_Paint_Ext(42, 411, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, s, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
 
@@ -432,8 +430,7 @@ void CG_windowDraw(void)
 
 			if (!(w->effects & WFX_TRUETYPE))
 			{
-				CG_DrawStringExt2(x, y + h, (char *)w->lineText[j], textColor,
-				                  qfalse, qtrue, w->fontWidth, w->fontHeight, 0);
+				CG_Text_Paint_Ext(x, y + h, cg_fontScaleSP.value, cg_fontScaleSP.value, textColor, (char *)w->lineText[j], 0, 0, 0, &cgs.media.limboFont2);
 			}
 		}
 	}
@@ -491,7 +488,7 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 		}
 		else
 		{
-			tmp = CG_DrawStrlen((char *)w->lineText[i]) * w->fontWidth;
+			tmp = CG_Text_Width_Ext((char *)w->lineText[i], cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		}
 
 		if (tmp > w->w)

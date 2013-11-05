@@ -55,6 +55,10 @@
 // TODO: SDL 2.0 window pointer from SDL_glimp.c
 extern SDL_Window *screen;
 
+#ifdef DISABLE_DINGY
+void IN_EnableDingFilter();
+#endif
+
 static cvar_t *in_keyboardDebug = NULL;
 
 static cvar_t *in_mouse = NULL;
@@ -1123,13 +1127,18 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
 				Cvar_SetValue("com_unfocused", 0);
-					#ifdef USE_RAW_INPUT_MOUSE
-				if (in_mouse->integer == 3)                            //raw input stops working on winxp after losing focus. (why?)
+
+				//We need to re-establish the even catchers for windows
+#ifdef USE_RAW_INPUT_MOUSE
+				if (in_mouse->integer == 3)        //raw input stops working on winxp after losing focus. (why?)
 				{
 					IN_ShutdownRawMouse();
 					IN_InitRawMouse();
 				}
-					#endif
+#endif
+#ifdef DISABLE_DINGY
+				IN_EnableDingFilter();
+#endif
 			}
 			break;
 			}
@@ -1180,7 +1189,7 @@ void IN_Frame(void)
 }
 
 #ifdef _WIN32
-WNDPROC LegacyWndProc = NULL;
+static WNDPROC LegacyWndProc = NULL;
 
 /**
  * @brief Skips the show menu command for the frame, and thatway disables the "no menu found" error sound.
@@ -1195,25 +1204,11 @@ LRESULT CALLBACK WNDDingIgnore(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
 }
 
 /**
- * @brief Enables the filter if not already active
- */
-void IN_EnableDingFilter()
-{
-	if (!LegacyWndProc)
-	{
-		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
-		SDL_GetWMInfo(&wmInfo);
-		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
-		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
-	}
-}
-
-/**
  * @brief Disables the filter if active
  */
 void IN_DisableDingFilter()
 {
+	Com_DPrintf("Disabling dingy filter\n");
 	if (LegacyWndProc)
 	{
 		SDL_SysWMinfo wmInfo;
@@ -1221,6 +1216,23 @@ void IN_DisableDingFilter()
 		SDL_GetWMInfo(&wmInfo);
 		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
 		LegacyWndProc = NULL;
+	}
+}
+
+/**
+ * @brief Enables the filter if not already active
+ */
+void IN_EnableDingFilter()
+{
+	IN_DisableDingFilter();
+	Com_DPrintf("Enabling dingy filter\n");
+	if (!LegacyWndProc)
+	{
+		SDL_SysWMinfo wmInfo;
+		SDL_VERSION(&wmInfo.version);
+		SDL_GetWMInfo(&wmInfo);
+		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
+		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
 	}
 }
 #endif
@@ -1249,7 +1261,13 @@ void IN_Init(void)
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_ARCHIVE);
 
 	// mouse variables
-	in_mouse  = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE);
+#ifdef WIN32
+	//We enable raw input on default for windows (this fixes manny issues with gaming mouses on WIN)
+	in_mouse = Cvar_Get("in_mouse", "3", CVAR_ARCHIVE);
+#else
+	in_mouse = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE);
+#endif // WIN32
+
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
 
 	in_joystick          = Cvar_Get("in_joystick", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1288,7 +1306,7 @@ void IN_Init(void)
 
 	//IN_InitJoystick(); // FIXME: Joystick initialization crashes some Mac OS X clients
 
-#ifdef _WIN32
+#ifdef DISABLE_DINGY
 	IN_EnableDingFilter();
 #endif
 	Com_DPrintf("------------------------------------\n");
@@ -1302,7 +1320,7 @@ void IN_Shutdown(void)
 	IN_ShutdownRawMouse();
 #endif
 
-#ifdef _WIN32
+#ifdef DISABLE_DINGY
 	IN_DisableDingFilter();
 #endif
 

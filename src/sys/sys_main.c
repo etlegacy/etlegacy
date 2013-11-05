@@ -471,6 +471,7 @@ void Sys_Error(const char *error, ...)
 	Conbuf_AppendText(string);
 	Conbuf_AppendText("\n");
 
+	Sys_Splash(qfalse);
 	Sys_SetErrorText(string);
 	Sys_ShowConsole(1, qtrue);
 

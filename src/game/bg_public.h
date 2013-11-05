@@ -764,10 +764,6 @@ typedef enum
 // moved from cg_weapons (now used in g_active) for drop command, actual array in bg_misc.c
 extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP];
 
-//		Using one unified list for which weapons can received ammo
-//		This is used both by the ammo pack code and by the bot code to determine if reloads are needed
-extern int reloadableWeapons[];
-
 typedef struct
 {
 	int kills, teamkills, killedby;
@@ -840,20 +836,49 @@ typedef struct ammotable_s
 // Lookup table to find ammo table entry
 extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
-
 typedef struct weapontable_s
 {
-	int damage;             // g
-	float spread;           // g
-	qboolean isRiflenade;   // bg
-	qboolean isAutoReload;  // bg
-} weapontable_t;
+	int weapon;               // reference
+	int damage;               // g
+	float spread;             // g
+	int splashDamage;         // g
+	int splashRadius;         // g
+
+	qboolean keepDisguise;    // g
+
+	int weapAlts;             // bg
+
+	qboolean isAutoReload;    // bg // move this to ammo table?!
+
+	qboolean isAkimbo;        // bg
+	qboolean isPanzer;        // bg
+	qboolean isRiflenade;     // bg
+	qboolean isMortar;        // bg
+	qboolean isMortarSet;     // bg
+
+	qboolean isHeavyWeapon;   // bg
+	qboolean isSetWeapon;     // bg
+
+	qboolean isUnderWaterFire; // bg
+
+	qboolean isValidStatWeapon; //bg (just check)
+
+} weaponTable_t;
+
+extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 
 extern int weapAlts[];  // defined in bg_misc.c
 
-// weapon table
+// FIXME: weapon table - put following macros in
 #define IS_RIFLENADE_WEAPON(w) \
-	(w == WP_GPG40           || w == WP_M7)
+	(w == WP_GPG40               || w == WP_M7)
+
+#define IS_PANZER_WEAPON(w) \
+	(w == WP_PANZERFAUST)
+
+#define IS_AKIMBO_WEAPON(w) \
+	(w == WP_AKIMBO_COLT         || w == WP_AKIMBO_LUGER         || \
+	 w == WP_AKIMBO_SILENCEDCOLT || w == WP_AKIMBO_SILENCEDLUGER)
 
 #define IS_MORTAR_WEAPON(w) \
 	(w == WP_MORTAR              || w == WP_MORTAR2              || \
@@ -862,20 +887,31 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define IS_MORTAR_WEAPON_SET(w) \
 	(w == WP_MORTAR_SET          || w == WP_MORTAR2_SET)
 
+#define IS_SET_WEAPON(w)    \
+	(w == WP_MORTAR_SET      || w == WP_MORTAR2_SET             || \
+	 w == WP_MOBILE_MG42_SET  || w == WP_MOBILE_BROWNING_SET)
+
+#define IS_HEAVY_WEAPON(w) \
+	(w == WP_FLAMETHROWER  || w == WP_MOBILE_MG42 || \
+	 w == WP_MOBILE_MG42_SET || w == WP_PANZERFAUST || \
+	 w == WP_MORTAR          || w == WP_MORTAR_SET  || \
+	 w == WP_MOBILE_BROWNING || w == WP_MOBILE_BROWNING_SET || \
+	 w == WP_MORTAR2         || w == WP_MORTAR2_SET)
+
 // weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
-// FIXME: weapon table
-#define IS_AUTORELOAD_WEAPON(weapon) \
-	(   \
-	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
-	    weapon == WP_THOMPSON || weapon == WP_STEN          || \
-	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
-	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
-	    weapon == WP_MOBILE_BROWNING || weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
-	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
-	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET || weapon == WP_MOBILE_BROWNING_SET \
+#define IS_AUTORELOAD_WEAPON(w) \
+	(w == WP_LUGER    || w == WP_COLT          || w == WP_MP40          || \
+	 w == WP_THOMPSON || w == WP_STEN          || \
+	 w == WP_KAR98    || w == WP_CARBINE       || w == WP_GARAND_SCOPE  || \
+	 w == WP_FG42     || w == WP_K43           || w == WP_MOBILE_MG42   || \
+	 w == WP_MOBILE_BROWNING || w == WP_SILENCED_COLT    || w == WP_SILENCER      || \
+	 w == WP_GARAND   || w == WP_K43_SCOPE     || w == WP_FG42SCOPE     || \
+	 IS_AKIMBO_WEAPON(w) || w == WP_MOBILE_MG42_SET || w == WP_MOBILE_BROWNING_SET \
 	)
+
+//#define IS_VALID_WEAPON(w) ( w > WP_NONE && w < WP_NUM_WEAPONS )
 
 // entityState_t->event values
 // entity events are for effects that take place reletive
@@ -1439,8 +1475,6 @@ typedef struct gitem_s
 	int giAmmoIndex;            // type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
 	int giClipIndex;            // which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
-	char *precaches;            // string of all models and images this item will use
-	char *sounds;               // string of all sounds this item will use
 } gitem_t;
 
 // included in both the game dll and the client
@@ -1457,9 +1491,7 @@ weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
 weapon_t BG_FindClipForWeapon(weapon_t weapon);
 
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
-qboolean BG_IsAkimboWeapon(int weaponNum);
-qboolean BG_IsAkimboSideArm(int weaponNum, playerState_t *ps);
-int BG_AkimboSidearm(int weaponNum);
+int BG_AkimboSidearm(int weaponNum); // FIXME: weapon table
 
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
 
@@ -2232,6 +2264,10 @@ qboolean BG_LoadSpeakerScript(const char *filename);
 extern ammotable_t ammoTableMP[WP_NUM_WEAPONS];
 #define GetAmmoTableData(ammoIndex) ((ammotable_t *)(&ammoTableMP[ammoIndex]))
 
+// Lookup table to find weapon table entry
+extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
+#define GetWeaponTableData(weaponIndex) ((weaponTable_t *)(&weaponTable[weaponIndex]))
+
 #define MAX_MAP_SIZE 65536
 
 qboolean BG_BBoxCollision(vec3_t min1, vec3_t max1, vec3_t min2, vec3_t max2);
@@ -2258,6 +2294,8 @@ typedef enum popupMessageType_e
 	PM_OBJECTIVE,
 	PM_DESTRUCTION,
 	PM_TEAM,
+	PM_AMMOPICKUP,
+	PM_HEALTHPICKUP,
 	PM_NUM_TYPES
 } popupMessageType_t;
 
@@ -2268,9 +2306,6 @@ typedef enum popupMessageBigType_e
 	PM_DISGUISE,
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
-
-#define NUM_HEAVY_WEAPONS 10
-extern weapon_t bg_heavyWeapons[NUM_HEAVY_WEAPONS];
 
 int PM_AltSwitchFromForWeapon(int weapon);
 int PM_AltSwitchToForWeapon(int weapon);
@@ -2290,6 +2325,8 @@ typedef enum
 	GAMESOUND_WPN_ARTILLERY_FLY_1,  // "sound/weapons/artillery/artillery_fly_1.wav"    Used by Artillery before impact
 	GAMESOUND_WPN_ARTILLERY_FLY_2,  // "sound/weapons/artillery/artillery_fly_2.wav"
 	GAMESOUND_WPN_ARTILLERY_FLY_3,  // "sound/weapons/artillery/artillery_fly_3.wav"
+
+	GAMESOUND_MISC_REVIVE,          // "sound/misc/vo_revive.wav"                       Used by revival Needle
 
 	GAMESOUND_MAX
 } gameSounds;

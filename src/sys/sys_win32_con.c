@@ -59,6 +59,16 @@
 #define EDIT_ID         100
 #define INPUT_ID        101
 
+//Old value: 16384
+#define CONSOLE_BUFFER_SIZE     32768
+
+#define COLOR_TEXT_NORMAL RGB(192, 192, 192)
+#define COLOR_TEXT_EDIT   RGB(255, 255, 255)
+#define COLOR_TEXT_ERROR1 RGB(255, 0, 0)
+#define COLOR_TEXT_ERROR2 RGB(0, 0, 0)
+#define COLOR_BCK_NORMAL  RGB(28, 47, 54)
+#define COLOR_BCK_ERROR   RGB(28, 47, 54)
+
 typedef struct
 {
 	HWND hWnd;
@@ -78,7 +88,7 @@ typedef struct
 	HBRUSH hbrErrorBackground;
 
 	HFONT hfBufferFont;
-	HFONT hfButtonFont; // unused
+	HFONT hfButtonFont;
 
 	HWND hwndInputLine;
 
@@ -194,39 +204,32 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	case WM_CTLCOLORSTATIC:
 		if (( HWND ) lParam == s_wcd.hwndBuffer)
 		{
-			SetBkColor(( HDC ) wParam, RGB(204, 204, 204));
-			SetTextColor(( HDC ) wParam, RGB(0, 0, 0));
-
-#if 0   // this draws a background in the edit box, but there are issues with this
-			if ((hdcScaled = CreateCompatibleDC(( HDC ) wParam)) != 0)
-			{
-				if (SelectObject(( HDC ) hdcScaled, s_wcd.hbmLogo))
-				{
-					StretchBlt(( HDC ) wParam, 0, 0, 512, 384,
-					           hdcScaled, 0, 0, 512, 384,
-					           SRCCOPY);
-				}
-				DeleteDC(hdcScaled);
-			}
-#endif
+			SetBkColor(( HDC ) wParam, COLOR_BCK_NORMAL);
+			SetTextColor(( HDC ) wParam, COLOR_TEXT_NORMAL);
 			return ( long ) s_wcd.hbrEditBackground;
 		}
 		else if (( HWND ) lParam == s_wcd.hwndErrorBox)
 		{
+			SetBkColor(( HDC ) wParam, COLOR_BCK_ERROR);
 			if (s_timePolarity & 1)
 			{
-				SetBkColor(( HDC ) wParam, RGB(0x80, 0x80, 0x80));
-				SetTextColor(( HDC ) wParam, RGB(0xff, 0x0, 0x00));
+				SetTextColor(( HDC ) wParam, COLOR_TEXT_ERROR1);
 			}
 			else
 			{
-				SetBkColor(( HDC ) wParam, RGB(0x80, 0x80, 0x80));
-				SetTextColor(( HDC ) wParam, RGB(0x00, 0x0, 0x00));
+				SetTextColor(( HDC ) wParam, COLOR_TEXT_ERROR2);
 			}
 			return ( long ) s_wcd.hbrErrorBackground;
 		}
 		break;
+	case WM_CTLCOLOREDIT:
+		if ((HWND)lParam == s_wcd.hwndInputLine)
+		{
+			SetBkColor((HDC)wParam, COLOR_BCK_NORMAL);
+			SetTextColor((HDC)wParam, COLOR_TEXT_EDIT);
 
+			return (long)s_wcd.hbrEditBackground;
+		}
 	case WM_COMMAND:
 		if (wParam == COPY_ID)
 		{
@@ -255,57 +258,11 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	case WM_CREATE:
 		s_wcd.hbmLogo            = LoadBitmap(g_wv.hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
 		s_wcd.hbmClearBitmap     = LoadBitmap(g_wv.hInstance, MAKEINTRESOURCE(IDB_BITMAP2));
-		s_wcd.hbrEditBackground  = CreateSolidBrush(RGB(204, 204, 204));
-		s_wcd.hbrErrorBackground = CreateSolidBrush(RGB(0x80, 0x80, 0x80));
+		s_wcd.hbrEditBackground  = CreateSolidBrush(COLOR_BCK_NORMAL);
+		s_wcd.hbrErrorBackground = CreateSolidBrush(COLOR_BCK_ERROR);
 		SetTimer(hWnd, 1, 1000, NULL);
 		break;
 	case WM_ERASEBKGND:
-#if 0
-		HDC     hdcScaled;
-		HGDIOBJ oldObject;
-
-#if 0   // a single, large image
-		hdcScaled = CreateCompatibleDC(( HDC ) wParam);
-		assert(hdcScaled != 0);
-
-		if (hdcScaled)
-		{
-			oldObject = SelectObject(( HDC ) hdcScaled, s_wcd.hbmLogo);
-			assert(oldObject != 0);
-			if (oldObject)
-			{
-				StretchBlt(( HDC ) wParam, 0, 0, s_wcd.windowWidth, s_wcd.windowHeight,
-				           hdcScaled, 0, 0, 512, 384,
-				           SRCCOPY);
-			}
-			DeleteDC(hdcScaled);
-			hdcScaled = 0;
-		}
-#else   // a repeating brush
-		{
-			HBRUSH hbrClearBrush;
-			RECT   r;
-
-			GetWindowRect(hWnd, &r);
-
-			r.bottom = r.bottom - r.top + 1;
-			r.right  = r.right - r.left + 1;
-			r.top    = 0;
-			r.left   = 0;
-
-			hbrClearBrush = CreatePatternBrush(s_wcd.hbmClearBitmap);
-
-			assert(hbrClearBrush != 0);
-
-			if (hbrClearBrush)
-			{
-				FillRect(( HDC ) wParam, &r, hbrClearBrush);
-				DeleteObject(hbrClearBrush);
-			}
-		}
-#endif
-		return 1;
-#endif
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	case WM_TIMER:
 		if (wParam == 1)
@@ -733,7 +690,7 @@ void Sys_CreateConsole(void)
 	rect.right  = SYSCON_DEFAULT_WIDTH;
 	rect.top    = 0;
 	rect.bottom = SYSCON_DEFAULT_HEIGHT;
-	AdjustWindowRect(&rect, DEDSTYLE, FALSE);
+	AdjustWindowRectEx(&rect, DEDSTYLE, FALSE, 0);
 
 	hDC     = GetDC(GetDesktopWindow());
 	swidth  = GetDeviceCaps(hDC, HORZRES);
@@ -761,23 +718,10 @@ void Sys_CreateConsole(void)
 	// create fonts
 	hDC     = GetDC(s_wcd.hWnd);
 	nHeight = -MulDiv(8, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-
-	s_wcd.hfBufferFont = CreateFont(nHeight,
-	                                0,
-	                                0,
-	                                0,
-	                                FW_LIGHT,
-	                                0,
-	                                0,
-	                                0,
-	                                DEFAULT_CHARSET,
-	                                OUT_DEFAULT_PRECIS,
-	                                CLIP_DEFAULT_PRECIS,
-	                                DEFAULT_QUALITY,
-	                                FF_MODERN | FIXED_PITCH,
-	                                "Courier New");
-
 	ReleaseDC(s_wcd.hWnd, hDC);
+
+	s_wcd.hfBufferFont = CreateFont(nHeight, 0, 0, 0, FW_LIGHT, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "Courier New");
+	s_wcd.hfButtonFont = CreateFont(nHeight, 0, 0, 0, FW_LIGHT, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "Microsoft Sans Serif");
 
 	// create the input line
 	s_wcd.hwndInputLine = CreateWindowEx(WS_EX_CLIENTEDGE,
@@ -811,27 +755,36 @@ void Sys_CreateConsole(void)
 
 	// create the scrollbuffer
 	s_wcd.hwndBuffer = CreateWindowEx(WS_EX_CLIENTEDGE,
-	                                  "edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_BORDER |
+	                                  "edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL /* | WS_BORDER*/ |
 	                                  ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
 	                                  6, 40, 526, 354,
 	                                  s_wcd.hWnd,
 	                                  ( HMENU ) EDIT_ID,    // child window ID
 	                                  g_wv.hInstance, NULL);
-	SendMessage(s_wcd.hwndBuffer, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, 0);
 
 #if defined (_WIN64)
 	s_wcd.SysInputLineWndProc = ( WNDPROC ) SetWindowLongPtr(s_wcd.hwndInputLine, GWLP_WNDPROC, ( LONG_PTR ) InputLineWndProc);
 #else
 	s_wcd.SysInputLineWndProc = ( WNDPROC ) SetWindowLong(s_wcd.hwndInputLine, GWL_WNDPROC, ( long ) InputLineWndProc);
 #endif
-	SendMessage(s_wcd.hwndInputLine, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, 0);
 
+	SendMessage(s_wcd.hwndBuffer, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, FALSE);
+	SendMessage(s_wcd.hwndInputLine, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, FALSE);
+
+	SendMessage(s_wcd.hwndButtonCopy, WM_SETFONT, (WPARAM)s_wcd.hfButtonFont, FALSE);
+	SendMessage(s_wcd.hwndButtonClear, WM_SETFONT, (WPARAM)s_wcd.hfButtonFont, FALSE);
+	SendMessage(s_wcd.hwndButtonQuit, WM_SETFONT, (WPARAM)s_wcd.hfButtonFont, FALSE);
+
+	/*
 	ShowWindow(s_wcd.hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(s_wcd.hWnd);
 	SetForegroundWindow(s_wcd.hWnd);
 	SetFocus(s_wcd.hwndInputLine);
 
 	s_wcd.visLevel = 1;
+	*/
+
+	s_wcd.visLevel = 0;
 }
 
 /*
@@ -841,6 +794,15 @@ Sys_DestroyConsole
 */
 void Sys_DestroyConsole(void)
 {
+	if (s_wcd.hfBufferFont)
+	{
+		DeleteObject(s_wcd.hfBufferFont);
+	}
+	if (s_wcd.hfButtonFont)
+	{
+		DeleteObject(s_wcd.hfButtonFont);
+	}
+
 	if (s_wcd.hWnd)
 	{
 		ShowWindow(s_wcd.hWnd, SW_HIDE);
@@ -874,6 +836,11 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 	ShowWindow(s_wcd.hWnd, SW_SHOWNORMAL);
 	SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
 
+	if (visLevel > 0)
+	{
+		Sys_Splash(qfalse);
+	}
+
 	switch (visLevel)
 	{
 	case 0:
@@ -881,6 +848,9 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 		break;
 	case 1:
 		ShowWindow(s_wcd.hWnd, SW_SHOWNORMAL);
+		UpdateWindow(s_wcd.hWnd);
+		SetForegroundWindow(s_wcd.hWnd);
+		SetFocus(s_wcd.hwndInputLine);
 		SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
 		break;
 	case 2:
@@ -920,7 +890,6 @@ Conbuf_AppendText
 */
 void Conbuf_AppendText(const char *pMsg)
 {
-#define CONSOLE_BUFFER_SIZE     16384
 	char                 buffer[CONSOLE_BUFFER_SIZE * 2], *b = buffer;
 	const char           *msg;
 	int                  bufLen, i = 0;

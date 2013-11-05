@@ -435,7 +435,7 @@ typedef struct
 	qboolean demoAvailable;
 	qboolean soundHighScore;
 
-	qboolean legacyClient;
+	int legacyClient;
 
 	int characterCount;
 	characterInfo characterList[MAX_HEADS];

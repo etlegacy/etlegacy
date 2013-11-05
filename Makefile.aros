@@ -122,7 +122,7 @@ ifneq ($(PLATFORM), MorphOS)
 	CLIENT_LIBS = -lglew
 endif
 
-CLIENT_LIBS = $(shell sdl-config --libs)
+CLIENT_LIBS += $(shell sdl-config --libs)
 
 ifeq ($(FEATURE_OPENAL),1)
 	CLIENT_LIBS += -lopenal

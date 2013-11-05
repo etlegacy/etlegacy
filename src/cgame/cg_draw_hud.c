@@ -714,7 +714,6 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK))
 	{
-		// FIXME: browning on tank?
 		return WP_MOBILE_MG42;
 	}
 
@@ -724,7 +723,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	// current clip
 	*ammo = ps->ammoclip[BG_FindClipForWeapon(weap)];
 
-	if (BG_IsAkimboWeapon(weap))
+	if (IS_AKIMBO_WEAPON(weap))
 	{
 		*akimboammo = ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(weap))];
 	}
@@ -733,7 +732,6 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		*akimboammo = -1;
 	}
 
-	// FIXME: do a switch
 	if (weap == WP_LANDMINE)
 	{
 		if (!cgs.gameManager)
@@ -752,7 +750,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 			}
 		}
 	}
-	else if (weap == WP_MORTAR || weap == WP_MORTAR_SET || weap == WP_MORTAR2 || weap == WP_MORTAR2_SET || weap == WP_PANZERFAUST)
+	else if (IS_MORTAR_WEAPON(weap) || IS_PANZER_WEAPON(weap))
 	{
 		*ammo += *clips;
 	}

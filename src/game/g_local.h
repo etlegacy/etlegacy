@@ -881,9 +881,12 @@ typedef struct config_s
 {
 	char name[256];
 	char version[256];
+	char signature[256];
+	char mapscripthash[256];
 	cfgCvar_t setl[256];
 	int numSetl;
 	qboolean loaded;
+	qboolean publicConfig;
 } config_t;
 
 typedef struct level_locals_s
@@ -891,7 +894,7 @@ typedef struct level_locals_s
 	struct gclient_s *clients;          // [maxclients]
 
 	struct gentity_s *gentities;
-	int gentitySize;
+
 	int num_entities;                   // current number, <= MAX_GENTITIES
 
 	int warmupTime;                     // restart match at this time
@@ -923,13 +926,13 @@ typedef struct level_locals_s
 	int numConnectedClients;
 	int numNonSpectatorClients;         // includes connecting clients
 	int numPlayingClients;              // connected, non-spectators
-	int sortedClients[MAX_CLIENTS];             // sorted by score
+	int sortedClients[MAX_CLIENTS];     // sorted by score
 	int follow1, follow2;               // clientNums for auto-follow spectators
 
 	int warmupModificationCount;            // for detecting if g_warmup is changed
 
+	// voting
 	voteInfo_t voteInfo;
-
 	int numTeamClients[2];
 	int numVotingTeamClients[2];
 
@@ -958,11 +961,10 @@ typedef struct level_locals_s
 
 	int portalSequence;
 
-	char *scriptAI;
 	int reloadPauseTime;                // don't think AI/client's until this time has elapsed
 	int reloadDelayTime;                // don't start loading the savegame until this has expired
 
-	int capturetimes[4];         // red, blue, none, spectator for WOLF_MP_CPH
+	int capturetimes[4];         // red, blue, none, spectator for WOLF_MP_CPH - this isn't used
 	int redReinforceTime, blueReinforceTime;         // last time reinforcements arrived in ms
 	int redNumWaiting, blueNumWaiting;         // number of reinforcements in queue
 	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];      // coordinates of spawn targets
@@ -974,8 +976,6 @@ typedef struct level_locals_s
 	// player/AI model scripting (server repository)
 	animScriptData_t animScriptData;
 
-	int totalHeadshots;
-	int missedHeadshots;
 	qboolean lastRestartTime;
 
 	int numFinalDead[2];                // unable to respawn and in limbo (per team)
@@ -983,12 +983,6 @@ typedef struct level_locals_s
 
 	qboolean latchGametype;
 
-	int attackingTeam;                  // which team is attacking
-	int explosiveTargets[2];            // attackers need to explode something to get through
-	qboolean captureFlagMode;
-	qboolean initStaticEnts;
-	qboolean initSeekCoverChains;
-	char *botScriptBuffer;
 	int globalAccumBuffer[MAX_SCRIPT_ACCUM_BUFFERS];
 
 	int soldierChargeTime[2];
@@ -1060,8 +1054,6 @@ typedef struct level_locals_s
 	int axisArtyCounter, alliedArtyCounter; // arty/airstrike rate limiting
 	int axisAutoSpawn, alliesAutoSpawn;
 	int axisMG42Counter, alliesMG42Counter;
-
-	int lastClientBotThink;
 
 	limbo_cam_t limboCams[MAX_LIMBO_CAMS];
 	int numLimboCams;
@@ -1326,7 +1318,6 @@ gentity_t *G_FindSatchel(gentity_t *ent);
 void G_ExplodeMines(gentity_t *ent);
 qboolean G_ExplodeSatchels(gentity_t *ent);
 void G_FreeSatchel(gentity_t *ent);
-int G_GetWeaponDamage(int weapon);
 
 void CalcMuzzlePoints(gentity_t *ent, int weapon);
 void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
@@ -1419,7 +1410,6 @@ void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Error(const char *fmt, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
-qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init);
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
@@ -1693,8 +1683,6 @@ extern vmCvar_t g_resetXPMapCount;
 
 extern vmCvar_t g_campaignFile;
 
-extern vmCvar_t g_maxTeamLandmines;
-
 extern vmCvar_t g_countryflags;
 
 // arty/airstrike rate limiting
@@ -1714,6 +1702,7 @@ extern vmCvar_t team_maxFlamers;
 extern vmCvar_t team_maxMg42s;
 extern vmCvar_t team_maxPanzers;
 extern vmCvar_t team_maxRiflegrenades;
+extern vmCvar_t team_maxLandmines;
 // skills
 extern vmCvar_t skill_soldier;
 extern vmCvar_t skill_medic;
@@ -2024,7 +2013,8 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum);
 
 // g_config.c
-void G_configSet(int mode, qboolean doComp);
+qboolean G_configSet(const char *configname);
+void G_PrintConfigs(gentity_t *ent);
 
 // g_match.c
 void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod);
@@ -2138,6 +2128,7 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_AntiLag_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 
 void G_LinkDebris(void);
 void G_LinkDamageParents(void);

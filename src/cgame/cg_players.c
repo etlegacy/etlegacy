@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -356,7 +356,7 @@ void CG_NewClientInfo(int clientNum)
 
 				CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), skillNames[i], newInfo.skill[i]), cgs.media.skillPics[i]);
 
-				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.20), SMALLCHAR_WIDTH, 99999);
+				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value, 99999);
 			}
 		}
 
@@ -1355,27 +1355,23 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 	}
 }
 
-/*
-===============
-CG_PlayerAngles
-
-Handles seperate torso motion
-
-  legs pivot based on direction of movement
-
-  head always looks exactly at cent->lerpAngles
-
-  if motion < 20 degrees, show in head only
-  if < 45 degrees, also show in torso
-===============
-*/
+/**
+ * @brief Handles seperate torso motion
+ *
+ * legs pivot based on direction of movement
+ *
+ * head always looks exactly at cent->lerpAngles
+ *
+ * if motion < 20 degrees, show in head only
+ * if < 45 degrees, also show in torso
+ */
 static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], vec3_t head[3])
 {
 	vec3_t         legsAngles, torsoAngles, headAngles;
 	float          dest;
 	vec3_t         velocity;
 	float          speed;
-	int            legsSet, torsoSet;
+	int            legsSet; // torsoSet;
 	clientInfo_t   *ci        = &cgs.clientinfo[cent->currentState.clientNum];
 	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
 
@@ -1384,8 +1380,8 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		return;
 	}
 
-	legsSet  = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
-	torsoSet = cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT;
+	legsSet = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
+	//torsoSet = cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT;
 
 	VectorCopy(cent->lerpAngles, headAngles);
 	headAngles[YAW] = AngleMod(headAngles[YAW]);

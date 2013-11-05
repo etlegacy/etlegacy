@@ -312,7 +312,8 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 #define FT_BAR_YSPACING 2.f
 #define FT_BAR_HEIGHT   10.f
 
-int weaponIconScale(int weap)
+// FIXME: weapon table
+int CG_WeaponIconScale(int weap)
 {
 	switch (weap)
 	{
@@ -556,11 +557,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		curWeap = cg_entities[ci->clientNum].currentState.weapon;
 		if (cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 		{
-			CG_DrawPic(x, y, weaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
+			CG_DrawPic(x, y, CG_WeaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
 		}
 		else if (cg_weapons[curWeap].weaponIcon[1])
 		{
-			CG_DrawPic(x, y, weaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[1]);
+			CG_DrawPic(x, y, CG_WeaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[1]);
 		}
 
 		x += 24;

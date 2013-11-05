@@ -142,12 +142,13 @@ static ID_INLINE void WRITE_2BYTES(int x)
 ===============
 WRITE_1BYTES
 ===============
-*/
+
 static ID_INLINE void WRITE_1BYTES(int x)
 {
-	buffer[bufIndex] = x;
-	bufIndex        += 1;
+    buffer[bufIndex] = x;
+    bufIndex        += 1;
 }
+*/
 
 /*
 ===============
@@ -461,12 +462,10 @@ CL_CheckFileSize
 */
 static qboolean CL_CheckFileSize(int bytesToAdd)
 {
-	unsigned int newFileSize;
-
-	newFileSize = afd.fileSize +    // Current file size
-	              bytesToAdd +  // What we want to add
-	              (afd.numIndices * 16) + // The index
-	              4;            // The index size
+	unsigned int newFileSize = afd.fileSize +          // Current file size
+	                           bytesToAdd +            // What we want to add
+	                           (afd.numIndices * 16) + // The index
+	                           4;                      // The index size
 
 	// I assume all the operating systems
 	// we target can handle a 2Gb file

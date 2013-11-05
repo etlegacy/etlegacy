@@ -151,7 +151,7 @@ msgstr "Rozstawienie za %d sekunde"
 msgid "Following"
 msgstr "Podazanie"
 
-#: src/cgame/cg_draw.c:2651
+#: src/cgame/cg_draw.c:2732
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr "^3ROZGRZEWKA:^7 Oczekiwanie na ^2%i^7 %s"
@@ -2369,14 +2369,17 @@ msgstr "Jestem Field Ops."
 msgid "I'm a covert ops."
 msgstr "Jestem Covert Ops."
 
+#: src/cgame/cg_draw.c:2126
 msgid "Create a Fireteam?"
 msgstr "Stworzyc Zespol?"
 
+#: src/cgame/cg_draw.c:2112
 msgid "Make Fireteam private?"
 msgstr "Zrobic Zepol prywatny?"
 
+#: src/cgame/cg_draw.c:2360
 msgid "Response Sent"
-msgstr "Otpowiedz Wyslana"
+msgstr "Odpowiedz Wyslana"
 
 msgid "^1Legacy"
 msgstr "^1Legacy"
@@ -2797,10 +2800,13 @@ msgid "rediscovered gravity."
 msgstr "ponownie odkryl grawitacje."
 
 msgid "'s Landmine"
-msgstr "'s Mine"
+msgstr "'s Miny"
 
 msgid "'s Mobile MG42"
 msgstr "'s Mobilne MG42"
+
+msgid "'s Mobile Browning"
+msgstr "'s Mobilny Browning"
 
 msgid "'s rifle grenade"
 msgstr "'s granata od rifli"
@@ -3382,7 +3388,7 @@ msgid "You are near the South Anti-Tank Gun\n"
 msgstr "Jestes blisko Poludniowego Dziala Przeciw Czolgowego\n"
 
 msgid "You are near the Health and Ammo Cabinets\n"
-msgstr "Jestes blisko Szafek Zrowia i Amunicjii\n"
+msgstr "Jestes blisko Szafek Zdrowia i Amunicji\n"
 
 msgid "You are near the Allied East beach MG nest\n"
 msgstr "Jestes blisko Allianckiego Wschodniego Gniazda MG na plazy\n"
@@ -3754,3 +3760,90 @@ msgstr "'PtitSeb' - Pandora"
 
 msgid "^1PACKAGE MAINTAINERS"
 msgstr "^1OPIEKUNOWIE PACZEK"
+
+#: src/cgame/cg_draw.c:2732
+msgid "player"
+msgstr "gracza"
+
+#: src/cgame/cg_draw.c:2732
+msgid "players"
+msgstr "graczy"
+
+#: src/cgame/cg_draw.c:2749
+msgid "Press ^3%s^7 to start"
+msgstr "Wcisnij ^3%s^7 aby zaczac"
+
+msgid "Not enough players to start match!\n"
+msgstr "Zbyt malo graczy aby zaczac mecz!\n"
+
+msgid "Your invitation has been submitted"
+msgstr "Twoje zaproszenie zostalo wyslane"
+
+msgid "Your invitation was accepted"
+msgstr "Twoje zaproszenie zostalo zaakceptowane"
+
+msgid "Your invitation reply has been sent"
+msgstr "Twoja odpowiedz zaproszenia zostala wyslana"
+
+msgid "You were team-killed by a bot."
+msgstr "Zostales zabity przez bota."
+
+msgid "You were team-killed by the Server Host"
+msgstr "Zostales zabity przez Gospodarza Serwera"
+
+msgid "Server Host cannot be complained against"
+msgstr "Gospodarz Serwera nie moze byc oskarzony przeciwko"
+
+msgid "Complaint dismissed"
+msgstr "Skarga odwolana"
+
+msgid "Your complaint has been filed"
+msgstr "Twoja skarga zostala wypelniona"
+
+msgid "Your application has been submitted"
+msgstr "Twoja aplikacja zostala wyslana"
+
+msgid "Your application failed"
+msgstr "Twoja aplikacja nie powiodla sie"
+
+msgid "Your application has been approved"
+msgstr "Twoja aplikacja zostala przyjeta"
+
+msgid "Your application reply has been sent"
+msgstr "Twoja odpowiedz na aplikacje zostala wyslana"
+
+msgid "Your proposition has been submitted"
+msgstr "Twoja propozycja zostala wyslana"
+
+msgid "Your proposition was rejected"
+msgstr "Twoja propozycja zostala odrzucona"
+
+msgid "Your proposition was accepted"
+msgstr "Twoja Propozycja zostala przyjeta"
+
+msgid "Your proposition reply has been sent"
+msgstr "Twoja odpowiedz na propozycje zostala wyslana"
+
+msgid "Your invitation was rejected"
+msgstr "Twoje zaproszenie zostalo odrzucone"
+
+msgid "'s flamethrower"
+msgstr "'s miotacz ognia"
+
+msgid "'s Satchel Charge"
+msgstr "'s Ladunek Kulminacyjny"
+
+msgid "FONTS SIZE"
+msgstr "WIELKOSC CZCIONKI"
+
+msgid "Top Print:"
+msgstr "Gorna:"
+
+msgid "Side Print:"
+msgstr "Boczna:"
+
+msgid "Center Print:"
+msgstr "Srodkowa:"
+
+msgid "Crosshair Name:"
+msgstr "Celownik:"

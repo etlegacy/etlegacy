@@ -150,7 +150,7 @@ msgstr ""
 msgid "Following"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2651
+#: src/cgame/cg_draw.c:2732
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr ""
@@ -2341,12 +2341,15 @@ msgstr ""
 msgid "I'm a covert ops."
 msgstr ""
 
+#: src/cgame/cg_draw.c:2126
 msgid "Create a Fireteam?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2112
 msgid "Make Fireteam private?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2360
 msgid "Response Sent"
 msgstr ""
 
@@ -2755,6 +2758,9 @@ msgid "'s Landmine"
 msgstr ""
 
 msgid "'s Mobile MG42"
+msgstr ""
+
+msgid "'s Mobile Browning"
 msgstr ""
 
 msgid "'s rifle grenade"
@@ -3700,4 +3706,91 @@ msgid "'PtitSeb' - Pandora"
 msgstr ""
 
 msgid "^1PACKAGE MAINTAINERS"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "players"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2749
+msgid "Press ^3%s^7 to start"
+msgstr ""
+
+msgid "Not enough players to start match!\n"
+msgstr ""
+
+msgid "Your invitation has been submitted"
+msgstr ""
+
+msgid "Your invitation was accepted"
+msgstr ""
+
+msgid "Your invitation reply has been sent"
+msgstr ""
+
+msgid "You were team-killed by a bot."
+msgstr ""
+
+msgid "You were team-killed by the Server Host"
+msgstr ""
+
+msgid "Server Host cannot be complained against"
+msgstr ""
+
+msgid "Complaint dismissed"
+msgstr ""
+
+msgid "Your complaint has been filed"
+msgstr ""
+
+msgid "Your application has been submitted"
+msgstr ""
+
+msgid "Your application failed"
+msgstr ""
+
+msgid "Your application has been approved"
+msgstr ""
+
+msgid "Your application reply has been sent"
+msgstr ""
+
+msgid "Your proposition has been submitted"
+msgstr ""
+
+msgid "Your proposition was rejected"
+msgstr ""
+
+msgid "Your proposition was accepted"
+msgstr ""
+
+msgid "Your proposition reply has been sent"
+msgstr ""
+
+msgid "Your invitation was rejected"
+msgstr ""
+
+msgid "'s flamethrower"
+msgstr ""
+
+msgid "'s Satchel Charge"
+msgstr ""
+
+msgid "FONTS SIZE"
+msgstr ""
+
+msgid "Top Print:"
+msgstr ""
+
+msgid "Side Print:"
+msgstr ""
+
+msgid "Center Print:"
+msgstr ""
+
+msgid "Crosshair Name:"
 msgstr ""

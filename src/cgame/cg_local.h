@@ -70,10 +70,6 @@
 
 #define STAT_MINUS          10  // num frame for '-' stats digit
 
-#define ICON_SIZE           48
-#define CHAR_WIDTH          32
-#define CHAR_HEIGHT         48
-
 #define TEAMCHAT_WIDTH      70
 #define TEAMCHAT_HEIGHT     8
 
@@ -778,7 +774,7 @@ typedef struct
 	int xpChangeTime;
 
 	qboolean demoPlayback;
-	qboolean legacyClient;
+	int legacyClient;
 	qboolean loading;               // don't defer players at initial startup
 	qboolean intermissionStarted;   // don't play voice rewards, because game will end shortly
 
@@ -880,7 +876,9 @@ typedef struct
 
 	// centerprinting
 	int centerPrintTime;
+	int centerPrintCharHeight;
 	int centerPrintCharWidth;
+	float centerPrintFontScale;
 	int centerPrintY;
 	char centerPrint[1024];
 	int centerPrintLines;
@@ -998,7 +996,9 @@ typedef struct
 
 	int oidTeam;
 	int oidPrintTime;
+	int oidPrintCharHeight;
 	int oidPrintCharWidth;
+	float oidPrintFontScale;
 	int oidPrintY;
 	char oidPrint[1024];
 	int oidPrintLines;
@@ -1220,6 +1220,7 @@ typedef struct
 	qhandle_t voiceChatShader;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
+	qhandle_t readyShader;
 
 	qhandle_t destroyShader;
 
@@ -1536,6 +1537,7 @@ typedef struct
 	fontInfo_t limboFont1;
 	fontInfo_t limboFont1_lo;
 	fontInfo_t limboFont2;
+	fontInfo_t limboFont2_lo;
 	qhandle_t limboNumber_roll;
 	qhandle_t limboNumber_back;
 	qhandle_t limboStar_roll;
@@ -2066,6 +2068,7 @@ extern vmCvar_t cg_tracerSpeed;
 extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_ignore;
 extern vmCvar_t cg_fov;
+extern vmCvar_t cg_gun_fovscale;
 extern vmCvar_t cg_muzzleFlash;
 
 extern vmCvar_t cg_zoomDefaultSniper;
@@ -2207,6 +2210,12 @@ extern vmCvar_t cg_drawTime;
 extern vmCvar_t cg_popupTime;
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
+extern vmCvar_t cg_graphicObituaries;
+
+extern vmCvar_t cg_fontScaleTP;
+extern vmCvar_t cg_fontScaleSP;
+extern vmCvar_t cg_fontScaleCP;
+extern vmCvar_t cg_fontScaleCN;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -2283,32 +2292,9 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
-void CG_DrawChar(int x, int y, int width, int height, int ch);
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags);
 
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
-
-void CG_DrawString(float x, float y, const char *string,
-                   float charWidth, float charHeight, const float *modulate);
-
-void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
-                      qboolean forceColor, qboolean shadow, int charWidth,
-                      int charHeight, int maxChars);
-
-void CG_DrawStringExt2(int x, int y, const char *string, const float *setColor,
-                       qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
-void CG_DrawStringExt_Shadow(int x, int y, const char *string, const float *setColor,
-                             qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars);
-
-void CG_DrawBigString(int x, int y, const char *s, float alpha);
-void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
-void CG_DrawSmallString(int x, int y, const char *s, float alpha);
-void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color);
-
-void CG_DrawBigString2(int x, int y, const char *s, float alpha);
-void CG_DrawBigStringColor2(int x, int y, const char *s, vec4_t color);
-
-int CG_DrawStrlen(const char *str);
 
 float *CG_FadeColor(int startMsec, int totalMsec);
 float *CG_TeamColor(int team);
@@ -2337,9 +2323,9 @@ void CG_StatsDebugAddText(const char *text);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
-void CG_CenterPrint(const char *str, int y, int charWidth);
-void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority);
-void CG_ObjectivePrint(const char *str, int charWidth);
+void CG_CenterPrint(const char *str, int y, float fontScale);
+void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority);
+void CG_ObjectivePrint(const char *str, float fontScale);
 void CG_DrawActive(stereoFrame_t stereoView);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
@@ -3072,8 +3058,10 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos);
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
 
+int CG_WeaponIconScale(int weap); // FIXME: weapon table
+
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
-#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.2), SMALLCHAR_WIDTH)
+#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value)
 
 #ifdef FEATURE_MULTIVIEW
 // cg_multiview.c
@@ -3245,7 +3233,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 void CG_InitPM(void);
 void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
-void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader, vec3_t color);
+void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
 void CG_DrawPMItems(rectDef_t rect, int style);
 void CG_DrawPMItemsBig(void);

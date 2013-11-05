@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -2699,6 +2699,7 @@ void Com_TrackProfile(char *profile_path)
 	}
 }
 
+#if idppc
 static void Com_DetectAltivec(void)
 {
 	// Only detect if user hasn't forcibly disabled it.
@@ -2718,6 +2719,7 @@ static void Com_DetectAltivec(void)
 		}
 	}
 }
+#endif
 
 /*
 =================
@@ -2960,9 +2962,8 @@ void Com_Init(char *commandLine)
 	}
 #endif // USE_RAW_INPUT_MOUSE
 
-	// always set the cvar, but only print the info if it makes sense.
-	Com_DetectAltivec();
 #if idppc
+	Com_DetectAltivec();
 	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
 #endif
 
@@ -3202,11 +3203,13 @@ void Com_Frame(void)
 	while (msec < minMsec);
 	Cbuf_Execute();
 
+#if idppc
 	if (com_altivec->modified)
 	{
 		Com_DetectAltivec();
 		com_altivec->modified = qfalse;
 	}
+#endif
 
 	lastTime = com_frameTime;
 
@@ -3702,7 +3705,7 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 
 void Console_AutoCompelete(field_t *field, int *comletionlen)
 {
-	int completionOffset = 0;
+	//int completionOffset = 0;
 
 	if (!*comletionlen)
 	{
@@ -3747,8 +3750,8 @@ void Console_AutoCompelete(field_t *field, int *comletionlen)
 		*/
 
 		Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
-		completionOffset = strlen(field->buffer) - strlen(completionString);
-		*comletionlen    = field->cursor = strlen(field->buffer);
+		//completionOffset = strlen(field->buffer) - strlen(completionString);
+		*comletionlen = field->cursor = strlen(field->buffer);
 	}
 	else
 	{

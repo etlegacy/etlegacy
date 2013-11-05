@@ -1105,7 +1105,7 @@ void CG_ForceTapOut_f(void)
  */
 static void CG_CPM_f(void)
 {
-	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), cgs.media.voiceChatShader, NULL);
+	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), " ", cgs.media.voiceChatShader, 0, 0, NULL);
 }
 
 /**
@@ -1156,7 +1156,7 @@ void CG_TimerSet_f(void)
 /**
  * @brief ETPro style timer resetting
  */
-void CG_ResetTimer_f(void)
+void CG_TimerReset_f(void)
 {
 	int msec;
 
@@ -1289,7 +1289,7 @@ void CG_Class_f(void)
 
 	// Print out the selected class and weapon info
 	wt = WM_FindWeaponTypeForWeapon(classinfo->classWeapons[weapon1 - 1]);
-	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, -1);
+	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, cg_fontScaleCP.value, -1);
 	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 }
@@ -1389,7 +1389,8 @@ static consoleCommand_t commands[] =
 	{ "cpm",                 CG_CPM_f                },
 	{ "forcetapout",         CG_ForceTapOut_f        },
 	{ "timerSet",            CG_TimerSet_f           },
-	{ "resetTimer",          CG_ResetTimer_f         },
+	{ "timerReset",          CG_TimerReset_f         },
+	{ "resetTimer",          CG_TimerReset_f         }, // keep ETPro compatibility
 	{ "class",               CG_Class_f              },
 	{ "readhuds",            CG_ReadHuds_f           },
 };
