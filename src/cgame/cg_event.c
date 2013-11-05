@@ -198,13 +198,13 @@ static void CG_Obituary(entityState_t *ent)
 			if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
 			{
 				weaponShader = cg_weapons[weapon].weaponIcon[0];
-				scaleShader  = weaponIconScale(weapon);
+				scaleShader  = CG_WeaponIconScale(weapon);
 
 			}
 			else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
 			{
 				weaponShader = cg_weapons[weapon].weaponIcon[1];
-				scaleShader  = weaponIconScale(weapon);
+				scaleShader  = CG_WeaponIconScale(weapon);
 			}
 			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, (attacker == target ? OB_YELLOW : NULL));
 		}
@@ -486,13 +486,13 @@ static void CG_Obituary(entityState_t *ent)
 				if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
 				{
 					weaponShader = cg_weapons[weapon].weaponIcon[0];
-					scaleShader  = weaponIconScale(weapon);
+					scaleShader  = CG_WeaponIconScale(weapon);
 
 				}
 				else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
 				{
 					weaponShader = cg_weapons[weapon].weaponIcon[1];
-					scaleShader  = weaponIconScale(weapon);
+					scaleShader  = CG_WeaponIconScale(weapon);
 				}
 
 				if (cg_graphicObituaries.integer == 1)
@@ -2787,7 +2787,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team != es->teamNum)
 		{
 			break;
-		}
+		} // fall through
 	case EV_GLOBAL_SOUND:     // play from the player's head so it never diminishes
 		DEBUGNAME("EV_GLOBAL_SOUND");
 		{
