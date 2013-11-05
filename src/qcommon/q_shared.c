@@ -1260,13 +1260,9 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 }
 #endif
 
-/*
-=============
-Q_strncpyz
-
-Safe strncpy that ensures a trailing zero
-=============
-*/
+/**
+ * @brief Safe strncpy that ensures a trailing zero
+ */
 void Q_strncpyz(char *dest, const char *src, int destsize)
 {
 	if (!dest)
@@ -1281,6 +1277,14 @@ void Q_strncpyz(char *dest, const char *src, int destsize)
 	{
 		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1");
 	}
+
+#ifdef __APPLE__
+	// FIXME: temporary workaround for crashes on OS X 10.9 Mavericks
+	if (src == dest)
+	{
+		return;
+	}
+#endif
 
 	strncpy(dest, src, destsize - 1);
 	dest[destsize - 1] = 0;
