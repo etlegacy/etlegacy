@@ -1130,7 +1130,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		{
 			ri.Printf(PRINT_DEVELOPER, "SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;
-        }
+		}
 
 #endif // FEATURE_RENDERER_GLES
 

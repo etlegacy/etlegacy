@@ -1342,13 +1342,6 @@ void CL_FirstSnapshot(void)
 
 	clc.timeDemoBaseTime = cl.snap.serverTime;
 
-#ifdef USE_RAW_INPUT_MOUSE
-	if (Cvar_VariableIntegerValue("in_mouse") == 3)
-	{
-		Cbuf_AddText("in_restart;");
-	}
-#endif
-
 	// if this is the first frame of active play,
 	// execute the contents of activeAction now
 	// this is to allow scripting a timedemo to start right

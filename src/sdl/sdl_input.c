@@ -37,14 +37,6 @@
 #    include <SDL2/SDL.h>
 #endif
 
-#ifdef _WIN32 // USE_RAW_INPUT_MOUSE is not defined yet
-#ifdef BUNDLED_SDL
-#   include "SDL_syswm.h"
-#else
-#   include <SDL2/SDL_syswm.h>
-#endif
-#endif
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,130 +70,6 @@ static cvar_t       *in_joystickUseAnalog = NULL;
 static int vidRestartTime = 0;
 
 #define CTRL(a) ((a) - 'a' + 1)
-
-#ifdef USE_RAW_INPUT_MOUSE
-
-static WNDPROC  SDLWindowProc = NULL;
-static qboolean mouseRaw;
-
-/*
-Doing that because I couldn't get to RAWINPUT through SDL_SYSWMEVENT //run
-http://lists.libsdl.org/pipermail/sdl-libsdl.org/2005-February/048704.html
-*/
-
-int rawMouseButtonMap[5] = { K_MOUSE1, K_MOUSE2, K_MOUSE3, K_MOUSE4, K_MOUSE5 };
-
-static LONG WINAPI RawWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch (uMsg)
-	{
-	case WM_INPUT:
-		if (mouseRaw)
-		{
-			RAWINPUT     ri;
-			unsigned int i = sizeof(ri);
-
-			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &ri, &i, sizeof(RAWINPUTHEADER));
-			if (mouseActive)
-			{
-				for (i = 0; i < 5; i++)
-				{
-					if (ri.data.mouse.ulButtons & (1 << (i * 2)))
-					{
-						Com_QueueEvent(0, SE_KEY, rawMouseButtonMap[i], qtrue, 0, NULL);
-					}
-					else if (ri.data.mouse.ulButtons & (1 << (i * 2 + 1)))
-					{
-						Com_QueueEvent(0, SE_KEY, rawMouseButtonMap[i], qfalse, 0, NULL);
-					}
-				}
-				if (ri.data.mouse.lLastX || ri.data.mouse.lLastY)
-				{
-					Com_QueueEvent(0, SE_MOUSE, ri.data.mouse.lLastX, ri.data.mouse.lLastY, 0, NULL);
-				}
-			}
-			if (ri.data.mouse.usButtonFlags & RI_MOUSE_WHEEL)
-			{
-				for (i = 0; i < abs((signed short)ri.data.mouse.usButtonData) / WHEEL_DELTA; i++)
-				{
-					Com_QueueEvent(0, SE_KEY, (signed short)ri.data.mouse.usButtonData < 0 ? K_MWHEELDOWN : K_MWHEELUP, qtrue, 0, NULL);
-					Com_QueueEvent(0, SE_KEY, (signed short)ri.data.mouse.usButtonData < 0 ? K_MWHEELDOWN : K_MWHEELUP, qfalse, 0, NULL);
-				}
-			}
-		}
-		break;
-	default:
-		break;
-	}
-	return CallWindowProc(SDLWindowProc, hWnd, uMsg, wParam, lParam);
-}
-
-/*
-============================================================
-RAW INPUT MOUSE
-(Cgg)
-============================================================
-*/
-
-static qboolean IN_InitRawMouse(void)
-{
-	// http://www.usb.org/developers/devclass_docs/Hut1_12.pdf
-	if (!SDLWindowProc)
-	{
-		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
-		SDL_GetWMInfo(&wmInfo);
-		SDLWindowProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
-		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)RawWndProc);
-	}
-
-	{
-		RAWINPUTDEVICE dev =
-		{
-			1,  // usUsagePage - generic desktop controls
-			2,  // usUsage - mouse
-			0,  // dwFlags
-			0   // hwndTarget
-		};
-		if (!RegisterRawInputDevices(&dev, 1, sizeof(dev)))
-		{
-			Com_Printf("Raw input registration failed. (0x%lx)\n", GetLastError());
-			return qfalse;
-		}
-	}
-	Com_DPrintf("Registered for raw input.\n");
-	mouseRaw = qtrue;
-	return qtrue;
-}
-
-static qboolean IN_ShutdownRawMouse(void)
-{
-	RAWINPUTDEVICE dev =
-	{
-		1,  // usUsagePage - generic desktop controls
-		2,  // usUsage - mouse
-		RIDEV_REMOVE,   // dwFlags
-		NULL    // hwndTarget
-	};
-	if (!RegisterRawInputDevices(&dev, 1, sizeof(dev)))
-	{
-		Com_Printf("Mouse release failed. (0x%lx)\n", GetLastError());
-		return qfalse;
-	}
-	mouseRaw = qfalse;
-	Com_DPrintf("Released raw input mouse.\n");
-	if (SDLWindowProc)
-	{
-		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
-		SDL_GetWMInfo(&wmInfo);
-		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)SDLWindowProc);
-		SDLWindowProc = NULL;
-	}
-	return qtrue;
-}
-
-#endif
 
 /**
  * @brief Prints keyboard identifiers in the console
@@ -1128,14 +996,6 @@ static void IN_ProcessEvents(void)
 			{
 				Cvar_SetValue("com_unfocused", 0);
 
-				//We need to re-establish the even catchers for windows
-#ifdef USE_RAW_INPUT_MOUSE
-				if (in_mouse->integer == 3)        //raw input stops working on winxp after losing focus. (why?)
-				{
-					IN_ShutdownRawMouse();
-					IN_InitRawMouse();
-				}
-#endif
 #ifdef DISABLE_DINGY
 				IN_EnableDingFilter();
 #endif
@@ -1261,12 +1121,7 @@ void IN_Init(void)
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_ARCHIVE);
 
 	// mouse variables
-#ifdef WIN32
-	//We enable raw input on default for windows (this fixes manny issues with gaming mouses on WIN)
-	in_mouse = Cvar_Get("in_mouse", "3", CVAR_ARCHIVE);
-#else
 	in_mouse = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE);
-#endif // WIN32
 
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
 
@@ -1275,25 +1130,6 @@ void IN_Init(void)
 	in_joystickThreshold = Cvar_Get("joy_threshold", "0.15", CVAR_ARCHIVE);
 
 	SDL_StartTextInput();
-
-#ifdef USE_RAW_INPUT_MOUSE
-	if (mouseRaw)
-	{
-		IN_ShutdownRawMouse();
-	}
-	if (in_mouse->integer == 3 && IN_InitRawMouse())
-	{
-		SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-		SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
-		SDL_EventState(SDL_MOUSEBUTTONUP, SDL_IGNORE);
-	}
-	else
-	{
-		SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
-		SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_ENABLE);
-		SDL_EventState(SDL_MOUSEBUTTONUP, SDL_ENABLE);
-	}
-#endif
 
 	mouseAvailable = (in_mouse->value != 0);
 	IN_DeactivateMouse();
@@ -1316,9 +1152,6 @@ void IN_Shutdown(void)
 {
 	SDL_StopTextInput();
 	Com_Printf("SDL input devices shut down.\n");
-#ifdef USE_RAW_INPUT_MOUSE
-	IN_ShutdownRawMouse();
-#endif
 
 #ifdef DISABLE_DINGY
 	IN_DisableDingFilter();

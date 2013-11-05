@@ -2955,13 +2955,6 @@ void Com_Init(char *commandLine)
 
 	CL_StartHunkUsers();
 
-#ifdef USE_RAW_INPUT_MOUSE
-	if (Cvar_VariableIntegerValue("in_mouse") == 3)
-	{
-		Cbuf_AddText("in_restart;");
-	}
-#endif // USE_RAW_INPUT_MOUSE
-
 #if idppc
 	Com_DetectAltivec();
 	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
