@@ -243,7 +243,7 @@ qboolean S_LoadSound(sfx_t *sfx)
 
 	if (info.width == 1)
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is a 8 bit wav file\n", sfx->soundName);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is a 8 bit audio file\n", sfx->soundName);
 	}
 
 	if ((info.rate != 11025) && (info.rate != 22050) && (info.rate != 44100))

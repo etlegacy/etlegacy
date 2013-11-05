@@ -506,11 +506,9 @@ void S_MasterGain(float gain)
 }
 #endif // USE_VOIP
 
-/*
-=================
-S_Play_f
-=================
-*/
+/**
+ * @brief Plays a given sound file in path
+ */
 void S_Play_f(void)
 {
 	int         i;
@@ -534,11 +532,10 @@ void S_Play_f(void)
 	{
 		if (!strrchr(Cmd_Argv(i), '.'))
 		{
-			//Com_sprintf(name, sizeof(name), "%s.wav", Cmd_Argv(1)); // genuine ET 'forces' wav
-			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension", Cmd_Argv(i));
+			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension\n", Cmd_Argv(i));
 		}
 
-		h = si.RegisterSound(Cmd_Argv(i), qfalse); // *qtrue* TODO: detect compression via extension?
+		h = si.RegisterSound(Cmd_Argv(i), qfalse); // TODO: detect compression via extension? ioq uses qfalse by default
 
 		if (h)
 		{
@@ -546,7 +543,7 @@ void S_Play_f(void)
 		}
 		else
 		{
-			Com_Printf("Warning: S_Play_f sound '%s' not played.", Cmd_Argv(i));
+			Com_Printf("Warning: S_Play_f sound '%s' not played.\n", Cmd_Argv(i));
 		}
 	}
 }
