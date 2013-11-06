@@ -1655,30 +1655,30 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 				{
 					if (!strcmp(cmd, "IamMedic") || !strcmp(cmd, "IamEngineer") || !strcmp(cmd, "IamFieldOps") || !strcmp(cmd, "IamCovertOps") || !strcmp(cmd, "IamSoldier"))
 					{
-						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s Next class: %s",
-						            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat), BG_ClassnameForNumber(cgs.clientinfo[clientNum].latchedcls)); // FIXME: CG_TranslateString doesn't make sense here
+						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s Next class: %s",
+						            ci->name, loc, color, CG_TranslateString(chat), BG_ClassnameForNumber(cgs.clientinfo[clientNum].latchedcls)); // FIXME: CG_TranslateString doesn't make sense here
 					}
 					else // isn't sayplayerclass cmd
 					{
-						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
-						            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s",
+						            ci->name, loc, color, CG_TranslateString(chat));
 					}
 				}
 				else
 				{
-					Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
-					            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+					Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s",
+					            ci->name, loc, color, CG_TranslateString(chat));
 				}
 			}
 			else if (mode == SAY_BUDDY)
 			{
-				Com_sprintf(vchat.message, sizeof(vchat.message), "<%s>%c%c<%s>: %c%c%s",
-				            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
+				Com_sprintf(vchat.message, sizeof(vchat.message), "<%s^7>^3<%s^3>: ^%c%s",
+				            ci->name, loc, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
 			}
 			else
 			{
-				Com_sprintf(vchat.message, sizeof(vchat.message), "%s%c%c: %c%c%s",
-				            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
+				Com_sprintf(vchat.message, sizeof(vchat.message), "%s^3: ^%c%s",
+				            ci->name, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
 			}
 			CG_AddBufferedVoiceChat(&vchat);
 		}
@@ -2545,7 +2545,7 @@ static void CG_ServerCommand(void)
 	{
 		char       text[MAX_SAY_TEXT];
 		vec3_t     origin;
-		char       *locStr = NULL;
+		char       *loc = NULL;
 		const char *s;
 		int        clientNum;
 
@@ -2564,15 +2564,15 @@ static void CG_ServerCommand(void)
 			s = CG_Argv(1);
 		}
 
-		locStr = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
+		loc = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
 
-		if (!locStr || !*locStr)
+		if (!loc || !*loc)
 		{
-			locStr = "";
+			loc = "";
 		}
 
 		// process locations and name
-		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s):%s", cgs.clientinfo[clientNum].name, locStr, s);
+		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3): %s", cgs.clientinfo[clientNum].name, loc, s);
 
 		CG_RemoveChatEscapeChar(text);
 		CG_AddToTeamChat(text, clientNum); // disguise ?
