@@ -515,7 +515,7 @@ static void CG_Obituary(entityState_t *ent)
 					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, message), va("%s%s", attackerName, message2), shader, 0, 0, NULL);
 				}
 			}
-			trap_Print(va("%s %s %s%s\n", targetName, message, attackerName, message2));
+			trap_Print(va((ci->team == ca->team ? "%s ^1%s^7 %s^1%s\n" : "%s %s %s%s\n"), targetName, message, attackerName, message2));
 			return;
 		}
 	}
