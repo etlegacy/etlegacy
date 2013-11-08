@@ -50,47 +50,47 @@ weaponDef
 				{
 					tag			"tag_barrel"
 					model		"models/multiplayer/mortar/v_mortar_barrel.md3"
-					axisskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
-					alliedskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
+					//axisskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
+					//alliedskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
 				}
 				part 1
 				{
-					tag		"tag_barrel2"
+					tag			"tag_barrel2"
 					model		"models/multiplayer/mortar/v_mortar_barrel2.md3"
 					axisskin	"models/multiplayer/mortar/mortar_axis.skin"
 					alliedskin	"models/multiplayer/mortar/mortar_allied.skin"
 				}
 				part 2
 				{
-					tag		"tag_barrel3"
+					tag			"tag_barrel3"
 					model		"models/multiplayer/mortar/v_mortar_barrel3.md3"
 					axisskin	"models/multiplayer/mortar/mortar_barrel3_axis.skin"
 					alliedskin	"models/multiplayer/mortar/mortar_barrel3_axis.skin"
 				}
 				part 3
 				{
-					tag		"tag_barrel4"
+					tag			"tag_barrel4"
 					model		"models/multiplayer/mortar/v_mortar_barrel4.md3"
 					axisskin	"models/multiplayer/mortar/mortar_barrel4_axis.skin"
 					alliedskin	"models/multiplayer/mortar/mortar_barrel4_axis.skin"
 				}
 				part 4
 				{
-					tag		"tag_barrel5"
+					tag			"tag_barrel5"
 					model		"models/multiplayer/mortar/v_mortar_barrel5.md3"
 					axisskin	"models/multiplayer/mortar/mortar_barrel5_axis.skin"
 					alliedskin	"models/multiplayer/mortar/mortar_barrel5_axis.skin"
 				}
 				part 5
 				{
-					tag		"tag_barrel6"
+					tag			"tag_barrel6"
 					model		"models/multiplayer/mortar/v_mortar_ax_barrel6.md3"
 					axisskin	"models/multiplayer/mortar/mortar_barrel6_axis.skin"
 					alliedskin	"models/multiplayer/mortar/mortar_barrel6_axis.skin"
 				}
 				part 6
 				{
-					tag		"tag_barrel7"
+					tag			"tag_barrel7"
 					model		"models/multiplayer/mortar/v_mortar_barrel7.md3"
 				}				
 			}
