@@ -1808,9 +1808,6 @@ msgstr "O. Ziele"
 msgid "P. Path Cleared."
 msgstr "P. Weg gesichert."
 
-msgid "W. Enemy Weak!"
-msgstr "W. Feind ist angeschlagen!"
-
 msgid "C. All Clear"
 msgstr "C. Alles klar"
 

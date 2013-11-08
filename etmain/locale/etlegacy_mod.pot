@@ -1765,9 +1765,6 @@ msgstr ""
 msgid "P. Path Cleared."
 msgstr ""
 
-msgid "W. Enemy Weak!"
-msgstr ""
-
 msgid "C. All Clear"
 msgstr ""
 
@@ -3780,7 +3777,7 @@ msgstr ""
 msgid "'s Satchel Charge"
 msgstr ""
 
-msgid "FONTS SIZE"
+msgid "FONTS"
 msgstr ""
 
 msgid "Top Print:"
@@ -3793,4 +3790,7 @@ msgid "Center Print:"
 msgstr ""
 
 msgid "Crosshair Name:"
+msgstr ""
+
+msgid "Fonts Size:"
 msgstr ""

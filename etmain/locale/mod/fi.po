@@ -1808,9 +1808,6 @@ msgstr ""
 msgid "P. Path Cleared."
 msgstr ""
 
-msgid "W. Enemy Weak!"
-msgstr ""
-
 msgid "C. All Clear"
 msgstr ""
 
