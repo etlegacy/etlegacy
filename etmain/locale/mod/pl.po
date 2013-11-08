@@ -3830,8 +3830,8 @@ msgstr "'s miotacz ognia"
 msgid "'s Satchel Charge"
 msgstr "'s Ladunek Kulminacyjny"
 
-msgid "FONTS SIZE"
-msgstr "WIELKOSC CZCIONKI"
+msgid "FONTS"
+msgstr "CZCIONKA"
 
 msgid "Top Print:"
 msgstr "Gorna:"
@@ -3844,3 +3844,6 @@ msgstr "Srodkowa:"
 
 msgid "Crosshair Name:"
 msgstr "Celownik:"
+
+msgid "Fonts Size:"
+msgstr "Wielkosc Czcionki:"
