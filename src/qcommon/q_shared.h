@@ -902,7 +902,7 @@ void VectorNormalizeFast(vec3_t v);      // does NOT return vector length, uses 
 vec_t VectorNormalize2(const vec3_t v, vec3_t out);
 void VectorInverse(vec3_t v);
 void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out); // Unused.
-void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out);
+void VectorRotate(const vec3_t in, vec3_t matrix[3], vec3_t out);
 int Q_log2(int val); // Unused.
 
 float Q_acos(float c);
@@ -1650,7 +1650,7 @@ typedef enum
 	ET_SPEAKER,
 	ET_PUSH_TRIGGER,
 	ET_TELEPORT_TRIGGER,
-	ET_INVISIBLE,
+	ET_INVISIBLE, // 10
 	ET_CONCUSSIVE_TRIGGER,  // trigger for concussive dust particles
 	ET_OID_TRIGGER,         // Objective Info Display
 	ET_EXPLOSIVE_INDICATOR,
@@ -1662,7 +1662,7 @@ typedef enum
 	ET_TRAP,
 
 	ET_GAMEMODEL,           // misc_gamemodel.  similar to misc_model, but it's a dynamic model so we have LOD
-	ET_FOOTLOCKER,
+	ET_FOOTLOCKER, // 20
 
 	ET_FLAMEBARREL,
 	ET_FP_PARTS,
@@ -1680,7 +1680,7 @@ typedef enum
 
 	ET_AI_EFFECT,
 
-	ET_CAMERA,
+	ET_CAMERA, // 30
 	ET_MOVERSCALED,
 
 	ET_CONSTRUCTIBLE_INDICATOR,
@@ -1693,7 +1693,7 @@ typedef enum
 	ET_TANK_INDICATOR_DEAD,
 	// An indicator object created by the bot code to show where the bots are moving to
 	ET_BOTGOAL_INDICATOR,   // obsolete/unused
-	ET_CORPSE,              // dead player
+	ET_CORPSE, //40         // dead player
 	ET_SMOKER,              // target_smoke entity
 
 	ET_TEMPHEAD,            // temporary head for clients for bullet traces
