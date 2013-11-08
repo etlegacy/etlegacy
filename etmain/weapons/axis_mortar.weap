@@ -97,9 +97,8 @@ weaponDef
 		}
 		
 		thirdPerson {
-			model				"models/multiplayer/mortar/mortar_3rda_ax.md3"			
-			axisskin			"models/multiplayer/mortar/mortar_3rda_axis.skin"
-			alliedskin			"models/multiplayer/mortar/mortar_3rda_axis.skin"
+			model				"models/multiplayer/mortar/mortar_3rda_ax.md3"	
+			skin			"models/multiplayer/mortar/mortar_3rda_axis.skin"		
 		}
 	}
 }
