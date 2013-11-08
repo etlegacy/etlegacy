@@ -2167,6 +2167,16 @@ static void CG_DrawVote(void)
 		if (sec < 0)
 		{
 			sec = 0;
+			// expired votetime 
+			cgs.voteTime                  = 0;
+			cgs.complaintEndTime          = 0;
+			cgs.applicationEndTime        = 0;
+			cgs.propositionEndTime        = 0;
+			cgs.invitationEndTime         = 0;
+			cgs.autoFireteamEndTime       = 0;
+			cgs.autoFireteamCreateEndTime = 0;
+			cgs.autoFireteamJoinEndTime   = 0;
+			return;
 		}
 
 		if (!Q_stricmpn(cgs.voteString, "kick", 4))
