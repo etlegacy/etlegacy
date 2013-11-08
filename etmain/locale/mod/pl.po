@@ -3847,3 +3847,21 @@ msgstr "Celownik:"
 
 msgid "Fonts Size:"
 msgstr "Wielkosc Czcionki:"
+
+msgid "Obituaries Icons:"
+msgstr "Typ Zabic:"
+
+msgid "MATCH BEGINS IN:"
+msgstr "MECZ ZACZNIE SIE ZA:"
+
+msgid "You must be in the game to be ^3ready^7!\n"
+msgstr "Musisz byc w grze aby ^3gotowy^7!\n"
+
+msgid "ALLIES COULDN'T BEAT THE CLOCK!"
+msgstr "ALLIANCI NIE MOGLI POKONAC CZASU!"
+
+msgid "You cannot arm dynamite near a friendly objective!"
+msgstr "Nie mozesz uzbroic dynamitu blisko przyjaznej budowli!"
+
+msgid "Axis team has destroyed the Bridge!"
+msgstr "Os rozwalila Most!"

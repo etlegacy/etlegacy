@@ -3794,3 +3794,21 @@ msgstr ""
 
 msgid "Fonts Size:"
 msgstr ""
+
+msgid "Obituaries Icons:"
+msgstr ""
+
+msgid "MATCH BEGINS IN:"
+msgstr ""
+
+msgid "You must be in the game to be ^3ready^7!\n"
+msgstr ""
+
+msgid "ALLIES COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly objective!"
+msgstr ""
+
+msgid "Axis team has destroyed the Bridge!"
+msgstr ""
