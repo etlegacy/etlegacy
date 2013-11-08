@@ -606,6 +606,11 @@ void CG_ParseReinforcementTimes(const char *pszReinfSeedString)
 				cgs.aReinfOffset[i] *= 1000;
 				break;
 			}
+			if ((tmp = strchr(tmp, ' ')) == NULL)
+			{
+				return;
+			}
+			++tmp;
 		}
 	}
 }
