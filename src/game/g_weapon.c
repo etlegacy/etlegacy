@@ -1684,9 +1684,11 @@ void Weapon_Engineer(gentity_t *ent)
 		}
 		else
 		{
+			float xpperround;
+
 			traceEnt->health += 3;
 			// constructible xp sharing - repairing an emplaced mg42
-			float xpperround = 0.03529f;
+			xpperround = 0.03529f;
 			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround);
 			G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing a MG42");
 		}
