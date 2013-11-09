@@ -1349,8 +1349,6 @@ CG_DrawBinocReticle
 */
 static void CG_DrawBinocReticle(void)
 {
-	// an alternative.  This gives nice sharp lines at the expense of a few extra polys
-
 	if (cgs.media.binocShaderSimple)
 	{
 		CG_DrawPic(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, cgs.media.binocShaderSimple);
@@ -1408,17 +1406,11 @@ static void CG_DrawCrosshair(void)
 	{
 	// weapons that get no reticle
 	case WP_NONE:       // no weapon, no crosshair
-		if (cg.zoomedBinoc)
-		{
-			CG_DrawBinocReticle();
-		}
-
 		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 		{
 			return;
 		}
 		break;
-
 	// special reticle for weapon
 	case WP_FG42SCOPE:
 	case WP_GARAND_SCOPE:
@@ -3018,7 +3010,15 @@ CG_DrawFlashZoomTransition
 static void CG_DrawFlashZoomTransition(void)
 {
 	float frac;
-	float fadeTime;
+	float fadeTime  = 400.f;
+	float blackTime = 0.f;
+
+	// slow down a bit with a black effect to prevent binoc snap transition effect
+	if (cg.zoomedBinoc)
+	{
+		blackTime = 150.f;      // snap visible if <135.f
+		fadeTime  = blackTime + 400.f;
+	}
 
 	if (!cg.snap)
 	{
@@ -3038,16 +3038,21 @@ static void CG_DrawFlashZoomTransition(void)
 		return;
 	}
 
-	fadeTime = 400.f;
-
 	frac = cg.time - cg.zoomTime;
 
 	if (frac < fadeTime)
 	{
 		vec4_t color;
 
-		frac = frac / fadeTime;
-		Vector4Set(color, 0, 0, 0, 1.0f - frac);
+		if (frac < blackTime)
+		{
+			Vector4Set(color, 0, 0, 0, 1.0f);
+		}
+		else
+		{
+			frac = frac / (float)fadeTime;
+			Vector4Set(color, 0, 0, 0, 1.0f - frac);
+		}
 		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, color);
 	}
 }
