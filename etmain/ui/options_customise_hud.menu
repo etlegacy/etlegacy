@@ -71,7 +71,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Size:", .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, "Sets the size of the displayed crosshair" )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Pulsing:", .2, 8, "cg_crosshairPulse", "Toggles crosshair spread sizing while moving/firing" )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Health Info:", .2, 8, "cg_crosshairHealth", "Colors the crosshair based on current health (overrides crosshair color settings)" )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Name Drawing:", .2, 8, "cg_drawCrosshairNames", "Displays player info when the crosshair is over a teammate" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Info Drawing:", .2, 8, "cg_drawCrosshairNames", cvarFloatList { "Off" 0 "Name" 1 "Class" 2 "Rank" 4 "Name + Class" 3 "Name + Rank" 5 "Class + Rank" 6 "Name + Class + Rank" 7 }, "Displays player info when the crosshair is over a teammate" )
 
 	itemDef {
 		name		"crosshair_select"

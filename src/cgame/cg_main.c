@@ -347,7 +347,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawFPS,               "cg_drawFPS",               "0",     CVAR_ARCHIVE                 },
 	{ &cg_drawSnapshot,          "cg_drawSnapshot",          "0",     CVAR_ARCHIVE                 },
 	{ &cg_drawCrosshair,         "cg_drawCrosshair",         "1",     CVAR_ARCHIVE                 },
-	{ &cg_drawCrosshairNames,    "cg_drawCrosshairNames",    "1",     CVAR_ARCHIVE                 },
+	{ &cg_drawCrosshairNames,    "cg_drawCrosshairNames",    "7",     CVAR_ARCHIVE                 },
 	{ &cg_drawCrosshairPickups,  "cg_drawCrosshairPickups",  "1",     CVAR_ARCHIVE                 },
 	{ &cg_useWeapsForZoom,       "cg_useWeapsForZoom",       "1",     CVAR_ARCHIVE                 },
 	{ &cg_weaponCycleDelay,      "cg_weaponCycleDelay",      "150",   CVAR_ARCHIVE                 },
