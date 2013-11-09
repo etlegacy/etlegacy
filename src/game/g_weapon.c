@@ -957,6 +957,9 @@ static qboolean TryConstructing(gentity_t *ent)
 	if (constructible->s.eType == ET_CONSTRUCTIBLE &&
 	    constructible->s.teamNum == ent->client->sess.sessionTeam)
 	{
+		// constructible xp sharing
+		float addhealth;
+		float xpperround;
 
 		if (constructible->s.angles2[0] >= 250)     // have to do this so we don't score multiple times
 		{
@@ -1068,8 +1071,15 @@ static qboolean TryConstructing(gentity_t *ent)
 			G_PrintClientSpammyCenterPrint(ent - g_entities, "Constructing...");
 		}
 
+		// constructible xp sharing
+		addhealth  = (255.f / (constructible->constructibleStats.duration / (float)FRAMETIME));
+		xpperround = constructible->constructibleStats.constructxpbonus / (255.f / addhealth) + 0.01f;
+		G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround);
+		G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "construction sharing.");
+
 		// Give health until it is full, don't continue
-		constructible->s.angles2[0] += (255.f / (constructible->constructibleStats.duration / (float)FRAMETIME));
+		constructible->s.angles2[0] += addhealth;
+
 		if (constructible->s.angles2[0] >= 250)
 		{
 			constructible->s.angles2[0] = 0;
@@ -1142,9 +1152,6 @@ static qboolean TryConstructing(gentity_t *ent)
 		        }*/
 
 		AddScore(ent, constructible->accuracy);   // give drop score to guy who built it
-
-		G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, constructible->constructibleStats.constructxpbonus);
-		G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, constructible->constructibleStats.constructxpbonus, "finishing a construction");
 
 		// unlink the objective info to get rid of the indicator for now
 		// don't unlink, we still want the location popup. Instead, constructible_indicator_think got changed to free
@@ -1663,9 +1670,10 @@ void Weapon_Engineer(gentity_t *ent)
 
 			if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
 			{
-				AddScore(ent, WOLF_REPAIR_BONUS);   // props to the E for the fixin'
-				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
-				G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f, "repairing a MG42");
+				// constructible xp sharing - some lucky dood is going to get the last 0.00035 points and the repair bonus
+				AddScore(ent, WOLF_REPAIR_BONUS);
+				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f);
+				G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f, "repairing a MG42");
 			}
 
 			traceEnt->takedamage = qtrue;
@@ -1677,6 +1685,10 @@ void Weapon_Engineer(gentity_t *ent)
 		else
 		{
 			traceEnt->health += 3;
+			// constructible xp sharing - repairing an emplaced mg42
+			float xpperround = 0.03529f;
+			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround);
+			G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing a MG42");
 		}
 	}
 	else
