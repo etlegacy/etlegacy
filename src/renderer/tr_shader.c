@@ -3564,7 +3564,7 @@ qhandle_t RE_RegisterShader(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Printf(PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterShader WARNING: shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -3596,7 +3596,7 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Printf(PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterShaderNoMip WARNING: shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
