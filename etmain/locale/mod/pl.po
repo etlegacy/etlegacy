@@ -47,8 +47,8 @@ msgstr "OBSERWATOR"
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s for team-killing?"
-msgstr "Czy zaskarzyc gracza %s za zabicie czlonka z teamu?"
+msgid "File complaint against %s^3 for team-killing?"
+msgstr "Czy zaskarzyc gracza %s^3 za zabicie czlonka z teamu?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
@@ -59,18 +59,18 @@ msgstr "Nacisnij '%s' dla TAK, lub '%s' dla NIE"
 
 #: src/cgame/cg_draw.c:2096
 #, c-format
-msgid "Accept %s's application to join your fireteam?"
-msgstr "Zaakceptuj podanie %s aby mogl dolaczyc do oddzialu?"
+msgid "Accept %s^3's application to join your fireteam?"
+msgstr "Zaakceptuj podanie %s^3's aby mogl dolaczyc do oddzialu?"
 
 #: src/cgame/cg_draw.c:2109
 #, c-format
-msgid "Accept %s's proposition to invite %s to join your fireteam?"
-msgstr "Zaakceptowac propozycje %s aby %s mogl dolaczyc do oddzialu?"
+msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
+msgstr "Zaakceptowac propozycje %s^3's aby %s^3 mogl dolaczyc do oddzialu?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
-msgid "Accept %s's invitation to join their fireteam?"
-msgstr "Akceptuj %s zaproszenie aby dolaczyc do ich oddzialu?"
+msgid "Accept %s^3's invitation to join their fireteam?"
+msgstr "Akceptuj %s^3's zaproszenie aby dolaczyc do ich oddzialu?"
 
 #: src/cgame/cg_draw.c:2218
 #, c-format
@@ -922,8 +922,8 @@ msgstr "Pulsowanie Celownika:"
 msgid "Crosshair Health Info:"
 msgstr "Poziom Zycia:"
 
-msgid "Crosshair Name Drawing:"
-msgstr "Nazwy Graczy:"
+msgid "Crosshair Info Drawing:"
+msgstr "Informacja o Graczu:"
 
 msgid "Primary Color:"
 msgstr "Pierwszy Kolor:"
@@ -2913,11 +2913,11 @@ msgstr "Twoj oddzial jest teraz publiczny"
 msgid "Your fireteam is now private"
 msgstr "Twoj oddzial jest teraz prywatny"
 
-msgid "The Allies have too many players."
-msgstr "Alianci maja zbyt duzo graczy."
+msgid "The Allies have too many players.\n"
+msgstr "Alianci maja zbyt duzo graczy.\n"
 
-msgid "The Axis have too many players."
-msgstr "Os ma zbyt duzo graczy."
+msgid "The Axis has too many players.\n"
+msgstr "Os ma zbyt duzo graczy.\n"
 
 msgid "Attack!"
 msgstr "Atak!"
@@ -3865,3 +3865,9 @@ msgstr "Nie mozesz uzbroic dynamitu blisko przyjaznej budowli!"
 
 msgid "Axis team has destroyed the Bridge!"
 msgstr "Os rozwalila Most!"
+
+msgid "^3Aborting, can't see target."
+msgstr "^3Przerywanie, nie mozna namierzyc celu."
+
+msgid "^3Firing for effect!"
+msgstr "^3Rozpoczynam Strzelac!"

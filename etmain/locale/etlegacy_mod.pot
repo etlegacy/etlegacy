@@ -46,7 +46,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s for team-killing?"
+msgid "File complaint against %s^3 for team-killing?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
@@ -58,17 +58,17 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2096
 #, c-format
-msgid "Accept %s's application to join your fireteam?"
+msgid "Accept %s^3's application to join your fireteam?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2109
 #, c-format
-msgid "Accept %s's proposition to invite %s to join your fireteam?"
+msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
-msgid "Accept %s's invitation to join their fireteam?"
+msgid "Accept %s^3's invitation to join their fireteam?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2218
@@ -917,7 +917,7 @@ msgstr ""
 msgid "Crosshair Health Info:"
 msgstr ""
 
-msgid "Crosshair Name Drawing:"
+msgid "Crosshair Info Drawing:"
 msgstr ""
 
 msgid "Primary Color:"
@@ -2868,10 +2868,10 @@ msgstr ""
 msgid "Your fireteam is now private"
 msgstr ""
 
-msgid "The Allies have too many players."
+msgid "The Allies have too many players.\n"
 msgstr ""
 
-msgid "The Axis have too many players."
+msgid "The Axis has too many players.\n"
 msgstr ""
 
 msgid "Attack!"
@@ -3811,4 +3811,10 @@ msgid "You cannot arm dynamite near a friendly objective!"
 msgstr ""
 
 msgid "Axis team has destroyed the Bridge!"
+msgstr ""
+
+msgid "^3Aborting, can't see target."
+msgstr ""
+
+msgid "^3Firing for effect!"
 msgstr ""
