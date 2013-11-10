@@ -213,7 +213,7 @@ channel_t *S_ChannelMalloc(void)
 	}
 	v            = freelist;
 	freelist     = *(channel_t **)freelist;
-	v->allocTime = Com_Milliseconds();
+	v->allocTime = Sys_Milliseconds();
 	return v;
 }
 
@@ -621,7 +621,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 		Com_Printf("S_Base_StartSoundEx: %i : %s\n", s_paintedtime, sfx->soundName);
 	}
 
-	time = Com_Milliseconds();
+	time = Sys_Milliseconds();
 	ch   = s_channels;
 
 	for (i = 0; i < MAX_CHANNELS ; i++, ch++)
@@ -1062,7 +1062,7 @@ void S_AddLoopSounds(void)
 
 	numLoopChannels = 0;
 
-	time = Com_Milliseconds();
+	time = Sys_Milliseconds();
 
 	loopFrame++;
 	for (i = 0 ; i < numLoopSounds; i++)
@@ -1521,7 +1521,7 @@ void S_Update_(void)
 		return;
 	}
 
-	thisTime = Com_Milliseconds();
+	thisTime = Sys_Milliseconds();
 
 	// Updates s_soundtime
 	S_GetSoundtime();
@@ -1741,6 +1741,7 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 	}
 	// Open stream
 	ss->stream = S_CodecOpenStream(intro);
+
 	if (!ss->stream)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING S_StartStreamingSoundEx: couldn't open stream file %s\n", intro);
@@ -1961,18 +1962,19 @@ S_UpdateStreamingSounds
 */
 void S_UpdateStreamingSounds(void)
 {
-	int   bufferSamples;
-	int   fileSamples;
-	byte  raw[30000];       // just enough to fit in a mac stack frame
-	int   fileBytes;
-	int   r;
-	int   i, j;
-	float lvol, rvol;
-	float streamingVol = 1.0f;
+	int              bufferSamples;
+	int              fileSamples;
+	byte             raw[30000]; // just enough to fit in a mac stack frame
+	int              fileBytes;
+	int              r;
+	int              i, j;
+	float            lvol, rvol;
+	float            streamingVol = 1.0f;
+	streamingSound_t *ss;
 
 	for (i = 0; i < MAX_STREAMING_SOUNDS; i++)
 	{
-		streamingSound_t *ss = &streamingSounds[i];
+		ss = &streamingSounds[i];
 		if (!ss->stream)
 		{
 			continue;
@@ -2041,6 +2043,7 @@ void S_UpdateStreamingSounds(void)
 					if (ss->entnum >= 0 && ss->attenuation)
 					{
 						int r, l;
+
 						S_SpatializeOrigin(entityPositions[ss->entnum], s_volume->value * 255.0f, &l, &r, SOUND_RANGE_DEFAULT, qfalse);
 						if ((lvol = ((float)l / 255.0f)) > 1.0f)
 						{
@@ -2160,7 +2163,7 @@ void S_FreeOldestSound(void)
 	sfx_t     *sfx;
 	sndBuffer *buffer, *nbuffer;
 
-	oldest = Com_Milliseconds();
+	oldest = Sys_Milliseconds();
 
 	for (i = 1 ; i < numSfx ; i++)
 	{
