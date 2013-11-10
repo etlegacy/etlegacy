@@ -2072,7 +2072,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("File complaint against %s for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
+		str = va(CG_TranslateString("File complaint against %s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
@@ -2086,7 +2086,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("Accept %s's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name);
+		str = va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
@@ -2100,7 +2100,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("Accept %s's proposition to invite %s to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
+		str = va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
@@ -2114,7 +2114,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("Accept %s's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name);
+		str = va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
