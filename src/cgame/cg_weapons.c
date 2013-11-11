@@ -1888,6 +1888,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 		filename = "syringe.weap";
 		break;
 	case WP_BINOCULARS:
+	case WP_ARTY:
 		filename = "binocs.weap";
 		break;
 	case WP_KAR98:
@@ -1970,7 +1971,6 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_KNIFE_KABAR:
 		filename = "knife_kbar.weap";
 		break;
-	case WP_ARTY:
 	case VERYBIGEXPLOSION:
 	case WP_DUMMY_MG42:
 		//CG_Printf(S_COLOR_YELLOW "WARNING: skipping weapon %i to register.\n", weaponNum);
