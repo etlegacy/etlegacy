@@ -1822,8 +1822,8 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink           = level.time + 4000;
 		break;
 	case WP_SMOKE_BOMB:
-		bolt->classname = "smoke_bomb";
-		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
+		bolt->classname     = "smoke_bomb";
+		bolt->s.eFlags      = EF_BOUNCE_HALF | EF_BOUNCE;
 		bolt->methodOfDeath = MOD_SMOKEBOMB;
 		break;
 	case WP_GRENADE_LAUNCHER:
