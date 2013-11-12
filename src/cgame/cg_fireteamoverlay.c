@@ -46,7 +46,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	ca = &cgs.clientinfo[cna];
 	cb = &cgs.clientinfo[cnb];
 
-	// Not on our team, so shove back
+	// not on our team, so shove back
 	if (!CG_IsOnSameFireteam(cnb, cg.clientNum))
 	{
 		return -1;
@@ -56,7 +56,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 		return 1;
 	}
 
-	// Leader comes first
+	// leader comes first
 	if (CG_IsFireTeamLeader(cna))
 	{
 		return -1;
@@ -66,7 +66,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 		return 1;
 	}
 
-	// Then higher ranks
+	// then higher ranks
 	if (ca->rank > cb->rank)
 	{
 		return -1;
@@ -76,7 +76,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 		return 1;
 	}
 
-	// Then score
+	// then score
 	//if ( ca->score > cb->score ) {
 	//  return -1;
 	//}
@@ -87,7 +87,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	return 0;
 }
 
-// Sorts client's fireteam by leader then rank
+// sorts client's fireteam by leader then rank
 void CG_SortClientFireteam()
 {
 	int i;
@@ -106,7 +106,7 @@ void CG_SortClientFireteam()
 	//C/G_Printf( "\n" );
 }
 
-// Parses fireteam servercommand
+// parses fireteam servercommand
 void CG_ParseFireteams()
 {
 	int        i, j;
@@ -419,18 +419,17 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			locwidth = 0;
 		}
 
-
-		//if ( cg_fixedFTeamSize.integer ) {
-		//	namewidth = 102;
-		//}
-		//else {
 		namewidth = CG_Text_Width_Ext(ci->name, 0.2f, 17, &cgs.media.limboFont2);
 
 		if (ci->health == 0)
 		{
 			namewidth += 7;
 		}
-		//}
+
+		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
+		{
+			namewidth += 14;
+		}
 
 		if ((locwidth + namewidth) > bestWidth)
 		{
@@ -482,10 +481,10 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	{
 		x  = lineX;
 		y += FT_BAR_HEIGHT + FT_BAR_YSPACING;
-		// Grab a pointer to the current player
+		// grab a pointer to the current player
 		ci = CG_SortedFireTeamPlayerForPosition(i);
 
-		// Make sure it's valid
+		// make sure it's valid
 		if (!ci)
 		{
 			break;
@@ -526,19 +525,19 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		//	x += 14;
 		//} else if
 
-		// ..or else draw objective icon (if they are carrying one) in fireteam overlay..
+		// draw objective icon (if they are carrying one) in fireteam overlay
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			CG_DrawPic(x, y, 12, 12, cgs.media.objectiveShader);
 			x += 14;
 		}
-		// core: ... or else draw the disguised icon in fireteam overlay..
+		// or else draw the disguised icon in fireteam overlay
 		else if (ci->powerups & (1 << PW_OPS_DISGUISED))
 		{
 			CG_DrawPic(x, y, 12, 12, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			x += 14;
 		}
-		// ..otherwise draw rank icon in fireteam overlay
+		// otherwise draw rank icon in fireteam overlay
 		//else {
 		//	if (ci->rank > 0) CG_DrawPic( x, y, 12, 12, rankicons[ ci->rank ][  ci->team == TEAM_AXIS ? 1 : 0 ][0].shader );
 		//	x += 14;
@@ -548,9 +547,6 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, ci->name, 0, 17, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		// add space
-		//if ( cg_fixedFTeamSize.integer )
-		//	x += 115;
-		//else
 		x += 14 + CG_Text_Width_Ext(ci->name, 0.2f, 17, &cgs.media.limboFont2);
 
 		// draw the player's weapon icon
@@ -585,7 +581,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		{
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
-		// Set hard limit on width
+		// set hard limit on width
 		x += 24;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
