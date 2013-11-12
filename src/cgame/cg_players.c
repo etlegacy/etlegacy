@@ -1683,7 +1683,6 @@ static void CG_PlayerSprites(centity_t *cent)
 	    && cg.snap->ps.stats[STAT_HEALTH] > 0
 	    && cg.snap->ps.persistant[PERS_TEAM] == team)
 	{
-
 		CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, 8);
 		return;
 	}
@@ -1700,6 +1699,12 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, 48);
 		return;
+	}
+
+	// draw disguised icon over disguised teammates
+	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && cg.snap->ps.persistant[PERS_TEAM] == team)
+	{
+		CG_PlayerFloatSprite(cent, cgs.media.disguiseShader, 56);
 	}
 
 	{
