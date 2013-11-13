@@ -3818,3 +3818,45 @@ msgstr ""
 
 msgid "^3Firing for effect!"
 msgstr ""
+
+msgid "'s tank-mounted MG42"
+msgstr ""
+
+msgid "'s dynamite"
+msgstr ""
+
+msgid "Timelimit hit."
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:146
+#, c-format
+msgid "Config: ^7%s^7"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2745
+#, c-format
+msgid "^3Config: ^7%s^7"
+msgstr ""
+
+msgid "Landmine Revealed\n"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "disable"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "activate"
+msgstr ""
+
+msgid "^3Insufficient fire support."
+msgstr ""
+
+msgid "'s tank-mounted browning 30cal"
+msgstr ""
+
+msgid "'s grenade"
+msgstr ""
+
+msgid "was crushed"
+msgstr ""

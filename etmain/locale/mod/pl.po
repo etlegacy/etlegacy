@@ -3867,7 +3867,49 @@ msgid "Axis team has destroyed the Bridge!"
 msgstr "Os rozwalila Most!"
 
 msgid "^3Aborting, can't see target."
-msgstr "^3Przerywanie, nie mozna namierzyc celu."
+msgstr "^3Przerwanie, nie mozna namierzyc celu."
 
 msgid "^3Firing for effect!"
-msgstr "^3Rozpoczynam Strzelac!"
+msgstr "^3Rozpoczecie Ostrzalu!"
+
+msgid "'s tank-mounted MG42"
+msgstr "'s MG42 na czolgu"
+
+msgid "'s dynamite"
+msgstr "'s dynamit"
+
+msgid "Timelimit hit."
+msgstr "Limitczasowy skonczony."
+
+#: src/cgame/cg_scoreboard.c:146
+#, c-format
+msgid "Config: ^7%s^7"
+msgstr "Konfiguracja: ^7%s^7"
+
+#: src/cgame/cg_draw.c:2745
+#, c-format
+msgid "^3Config: ^7%s^7"
+msgstr "^3Konfiguracja: ^7%s^7"
+
+msgid "Landmine Revealed\n"
+msgstr "Mina Wykryta\n"
+
+#: src/cgame/cg_draw.c:2486
+msgid "disable"
+msgstr "wylaczyc"
+
+#: src/cgame/cg_draw.c:2486
+msgid "activate"
+msgstr "wlaczyc"
+
+msgid "^3Insufficient fire support."
+msgstr "^3Niewystarczajacy ogien wsparcia."
+
+msgid "'s tank-mounted browning 30cal"
+msgstr "'s browning 30cal na czolgu"
+
+msgid "'s grenade"
+msgstr "'s granat"
+
+msgid "was crushed"
+msgstr "zostal zmiazdzony"
