@@ -3860,3 +3860,23 @@ msgstr ""
 
 msgid "was crushed"
 msgstr ""
+
+msgid "W. Enemy Weak!"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:322
+#, c-format
+msgid ""
+"Connecting to:\n"
+" %s^*\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:195
+msgid "CONNECTING..."
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:191
+msgid "DOWNLOADING..."
+msgstr ""

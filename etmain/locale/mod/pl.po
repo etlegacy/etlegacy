@@ -3913,3 +3913,27 @@ msgstr "'s granat"
 
 msgid "was crushed"
 msgstr "zostal zmiazdzony"
+
+msgid "W. Enemy Weak!"
+msgstr "W. Slaby Wrog!"
+
+#: src/ui/ui_loadpanel.c:322
+#, c-format
+msgid ""
+"Connecting to:\n"
+" %s^*\n"
+"\n"
+"%s"
+msgstr ""
+"Laczenie z:\n"
+" %s^*\n"
+"\n"
+"%s"
+
+#: src/ui/ui_loadpanel.c:195
+msgid "CONNECTING..."
+msgstr "LACZENIE..."
+
+#: src/ui/ui_loadpanel.c:191
+msgid "DOWNLOADING..."
+msgstr "SCIAGANIE..."
