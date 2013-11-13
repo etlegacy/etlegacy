@@ -2483,7 +2483,7 @@ static void CG_DrawSpectatorMessage(void)
 
 #ifdef FEATURE_MULTIVIEW
 	str2 = BindingFromName("mvactivate");
-	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? "disable" : "activate"));
+	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
 #endif
@@ -2742,7 +2742,7 @@ static void CG_DrawWarmup(void)
 		{
 			if (CG_ConfigString(CS_CONFIGNAME)[0])
 			{
-				s1 = va("^3Config: ^7%s^7", CG_ConfigString(CS_CONFIGNAME));
+				s1 = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
 				w  = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x  = Ccg_WideX(320) - w / 2;
 				CG_Text_Paint_Ext(x, 162, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
