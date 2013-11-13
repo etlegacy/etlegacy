@@ -1739,15 +1739,11 @@ float *tv(float x, float y, float z)
 =====================================================================
 */
 
-/*
-===============
-Info_ValueForKey
-
-Searches the string for the given
-key and returns the associated value, or an empty string.
-FIXME: overflow check?
-===============
-*/
+/**
+ * @brief Searches the string for the given key and returns
+ * the associated value, or an empty string.
+ * FIXME: overflow check?
+ */
 char *Info_ValueForKey(const char *s, const char *key)
 {
 	char        pkey[BIG_INFO_KEY];

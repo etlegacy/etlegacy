@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -55,23 +55,29 @@ WM_DrawObjectives
 #define INFO_LINE_HEIGHT        30
 #define INFO_TOTAL_WIDTH        (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
 
-// GeoIP
-#define FLAG_STEP       32.0f
-qboolean cf_draw(float x, float y, float fade, int clientNum)
+/**
+ * @brief Draw a client country flag
+ * @ingroup GeoIP
+ */
+static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 {
-	unsigned int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));    // uci
+	int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));    // uci
 
-	if (client_flag < 255)
+	if (client_flag < 255) // MAX_COUNTRY_NUM
 	{
-		unsigned int flag_sd  = 512;
-		float        alpha[4] = { 1.f, 1.f, 1.f, fade };
-		float        x1       = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
-		float        y1       = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
-		float        x2       = x1 + FLAG_STEP;
-		float        y2       = y1 + FLAG_STEP;
+		// TODO: use 48 and 768 for new flags
+		const int flag_size = 32;  // pixels from start of one flag to start of another on both x and y axis
+		const int all_flags = 512; // dimensions of the picture containing all flags
+
+		float alpha[4] = { 1.f, 1.f, 1.f, fade };
+		float x1       = (float)((client_flag * flag_size) % all_flags);
+		float y1       = (float)(floor((client_flag * flag_size) / all_flags) * flag_size);
+		float x2       = x1 + flag_size;
+		float y2       = y1 + flag_size;
 
 		trap_R_SetColor(alpha);
-		CG_DrawPicST(x, y, FLAG_STEP, FLAG_STEP, x1 / flag_sd, y1 / flag_sd, x2 / flag_sd, y2 / flag_sd, cgs.media.countryFlags);
+		// TODO: use flag_size / 3 for new flags
+		CG_DrawPicST(x, y, flag_size, flag_size, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
 		trap_R_SetColor(NULL);
 		return qtrue;
 	}
@@ -353,7 +359,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		if (cf_draw(tempx - 9, y - 21, fade, ci->clientNum))
+		// TODO: use - 4 and - 12 or so for new flags
+		if (CG_DrawFlag(tempx - 9, y - 21, fade, ci->clientNum))
 		{
 			offset   += 18;
 			tempx    += 18;
@@ -540,7 +547,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		if (cf_draw(tempx - 9, y - 20, fade, ci->clientNum))
+		// TODO: check position for new flags
+		if (CG_DrawFlag(tempx - 9, y - 20, fade, ci->clientNum))
 		{
 			offset   += 18;
 			tempx    += 18;
