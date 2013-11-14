@@ -247,19 +247,19 @@ const char *CG_LoadPanel_GameTypeName(gametype_t gt)
 	switch (gt)
 	{
 	case GT_SINGLE_PLAYER:
-		return "Single Player";
+		return CG_TranslateString("Single Player");
 	case GT_COOP:
-		return "Co-op";
+		return CG_TranslateString("Co-op");
 	case GT_WOLF:
-		return "Objective";
+		return CG_TranslateString("Objective");
 	case GT_WOLF_STOPWATCH:
-		return "Stopwatch";
+		return CG_TranslateString("Stopwatch");
 	case GT_WOLF_CAMPAIGN:
-		return "Campaign";
+		return CG_TranslateString("Campaign");
 	case GT_WOLF_LMS:
-		return "Last Man Standing";
+		return CG_TranslateString("Last Man Standing");
 	case GT_WOLF_MAPVOTE:
-		return "Map Voting";
+		return CG_TranslateString("Map Voting");
 	default:
 		break;
 	}
