@@ -3937,3 +3937,31 @@ msgstr "LACZENIE..."
 #: src/ui/ui_loadpanel.c:191
 msgid "DOWNLOADING..."
 msgstr "SCIAGANIE..."
+
+#: src/cgame/cg_loadpanel.c:250
+msgid "Single Player"
+msgstr "Pojedynczy Gracz"
+
+#: src/cgame/cg_loadpanel.c:252
+msgid "Co-op"
+msgstr "Kooperacja"
+
+#: src/cgame/cg_loadpanel.c:254
+msgid "Objective"
+msgstr "Cel"
+
+#: src/cgame/cg_loadpanel.c:256
+msgid "Stopwatch"
+msgstr "Na Czas"
+
+#: src/cgame/cg_loadpanel.c:258
+msgid "Campaign"
+msgstr "Kampania"
+
+#: src/cgame/cg_loadpanel.c:260
+msgid "Last Man Standing"
+msgstr "Ostatni Ocalaly"
+
+#: src/cgame/cg_loadpanel.c:262
+msgid "Map Voting"
+msgstr "Glosowanie na Mapy"

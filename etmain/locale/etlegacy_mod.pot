@@ -3880,3 +3880,31 @@ msgstr ""
 #: src/ui/ui_loadpanel.c:191
 msgid "DOWNLOADING..."
 msgstr ""
+
+#: src/cgame/cg_loadpanel.c:250
+msgid "Single Player"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:252
+msgid "Co-op"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:254
+msgid "Objective"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:256
+msgid "Stopwatch"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:258
+msgid "Campaign"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:260
+msgid "Last Man Standing"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:262
+msgid "Map Voting"
+msgstr ""
