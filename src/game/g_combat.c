@@ -883,6 +883,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 	orientation_t orientation;
 
 	head = G_Spawn();
+	head->classname = "head";
 
 	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
 	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
@@ -965,6 +966,7 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 	}
 
 	leg = G_Spawn();
+	leg->classname = "leg";
 
 	AngleVectors(ent->client->ps.viewangles, flatforward, NULL, NULL);
 	flatforward[2] = 0;
