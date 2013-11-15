@@ -45,8 +45,8 @@ msgstr "KATSELIJA"
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s for team-killing?"
-msgstr "Tee valitus %s vastaan joukkuetaposta"
+msgid "File complaint against %s^3 for team-killing?"
+msgstr "Tee valitus %s^3 vastaan joukkuetaposta"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
@@ -1806,9 +1806,6 @@ msgid "O. Objectives"
 msgstr ""
 
 msgid "P. Path Cleared."
-msgstr ""
-
-msgid "W. Enemy Weak!"
 msgstr ""
 
 msgid "C. All Clear"

@@ -49,13 +49,13 @@ weaponDef
 				{
 					tag			"tag_barrel"
 					model		"models/multiplayer/mortar/v_mortar_barrel.md3"
-					axisskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
-					alliedskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
+					//axisskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
+					//alliedskin	"models/multiplayer/mortar/v_mortar_barrel_axis.skin"
 				}
 				part 1
 				{
-					tag		"tag_barrel2"
-					model	"models/multiplayer/mortar/v_mortar_barrel2.md3"
+					tag			"tag_barrel2"
+					model		"models/multiplayer/mortar/v_mortar_barrel2.md3"
 					axisskin	"models/multiplayer/mortar/mortar_axis.skin"
 					alliedskin	"models/multiplayer/mortar/mortar_allied.skin"
 				}
@@ -97,8 +97,7 @@ weaponDef
 		
 		thirdPerson {
 			model				"models/multiplayer/mortar/mortar_3rd_ax.md3"
-			axisskin			"models/multiplayer/mortar/mortar_3rd_axis.skin"
-			alliedskin			"models/multiplayer/mortar/mortar_3rd_axis.skin"
+			skin				"models/multiplayer/mortar/mortar_3rda_axis.skin"
 		}
 	}
 }

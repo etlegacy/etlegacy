@@ -46,7 +46,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s for team-killing?"
+msgid "File complaint against %s^3 for team-killing?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
@@ -58,17 +58,17 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2096
 #, c-format
-msgid "Accept %s's application to join your fireteam?"
+msgid "Accept %s^3's application to join your fireteam?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2109
 #, c-format
-msgid "Accept %s's proposition to invite %s to join your fireteam?"
+msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
-msgid "Accept %s's invitation to join their fireteam?"
+msgid "Accept %s^3's invitation to join their fireteam?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2218
@@ -917,7 +917,7 @@ msgstr ""
 msgid "Crosshair Health Info:"
 msgstr ""
 
-msgid "Crosshair Name Drawing:"
+msgid "Crosshair Info Drawing:"
 msgstr ""
 
 msgid "Primary Color:"
@@ -1763,9 +1763,6 @@ msgid "O. Objectives"
 msgstr ""
 
 msgid "P. Path Cleared."
-msgstr ""
-
-msgid "W. Enemy Weak!"
 msgstr ""
 
 msgid "C. All Clear"
@@ -2871,10 +2868,10 @@ msgstr ""
 msgid "Your fireteam is now private"
 msgstr ""
 
-msgid "The Allies have too many players."
+msgid "The Allies have too many players.\n"
 msgstr ""
 
-msgid "The Axis have too many players."
+msgid "The Axis has too many players.\n"
 msgstr ""
 
 msgid "Attack!"
@@ -3780,7 +3777,7 @@ msgstr ""
 msgid "'s Satchel Charge"
 msgstr ""
 
-msgid "FONTS SIZE"
+msgid "FONTS"
 msgstr ""
 
 msgid "Top Print:"
@@ -3793,4 +3790,121 @@ msgid "Center Print:"
 msgstr ""
 
 msgid "Crosshair Name:"
+msgstr ""
+
+msgid "Fonts Size:"
+msgstr ""
+
+msgid "Obituaries Icons:"
+msgstr ""
+
+msgid "MATCH BEGINS IN:"
+msgstr ""
+
+msgid "You must be in the game to be ^3ready^7!\n"
+msgstr ""
+
+msgid "ALLIES COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly objective!"
+msgstr ""
+
+msgid "Axis team has destroyed the Bridge!"
+msgstr ""
+
+msgid "^3Aborting, can't see target."
+msgstr ""
+
+msgid "^3Firing for effect!"
+msgstr ""
+
+msgid "'s tank-mounted MG42"
+msgstr ""
+
+msgid "'s dynamite"
+msgstr ""
+
+msgid "Timelimit hit."
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:146
+#, c-format
+msgid "Config: ^7%s^7"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2745
+#, c-format
+msgid "^3Config: ^7%s^7"
+msgstr ""
+
+msgid "Landmine Revealed\n"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "disable"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "activate"
+msgstr ""
+
+msgid "^3Insufficient fire support."
+msgstr ""
+
+msgid "'s tank-mounted browning 30cal"
+msgstr ""
+
+msgid "'s grenade"
+msgstr ""
+
+msgid "was crushed"
+msgstr ""
+
+msgid "W. Enemy Weak!"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:322
+#, c-format
+msgid ""
+"Connecting to:\n"
+" %s^*\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:195
+msgid "CONNECTING..."
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:191
+msgid "DOWNLOADING..."
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:250
+msgid "Single Player"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:252
+msgid "Co-op"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:254
+msgid "Objective"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:256
+msgid "Stopwatch"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:258
+msgid "Campaign"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:260
+msgid "Last Man Standing"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:262
+msgid "Map Voting"
 msgstr ""

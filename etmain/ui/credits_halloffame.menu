@@ -97,7 +97,7 @@ menuDef {
 
 	LABELWHITE( 6, CREDITS_Y+12, .7*(WINDOW_WIDTH-24), 10, "Advices, Bug reports, Patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
-	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "acqu - antman - boutetnico - deki - Dragonji - Ensiform - Harlekin - ilm - Jonathan Gray - kkthx - MAN-AT-ARMS - Mateos - Mathieu Olivier - merlin - muessli - Odal - RaFaL - Ragnar - Runeforce aka lakersforce - Saukko - Spyhawk - StM - Dusan 'TheDushan' Jocic - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "acqu - antman - boutetnico - deki - Dragonji - Ensiform - Harlekin - ilm - Jonathan Gray - kkthx - Lul3k - MAN-AT-ARMS - Mateos - Mathieu Olivier - merlin - muessli - Odal - RaFaL - Ragnar - Runeforce aka lakersforce - Saukko - Spyhawk - StM - Dusan 'TheDushan' Jocic - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 	itemDef {
 		name		"headerTranslations"
@@ -115,7 +115,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+120, .8*(WINDOW_WIDTH-24), 10, "Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: ponce - Polish: morsik, RaFal - Portuguese: Zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+120, .8*(WINDOW_WIDTH-24), 10, "Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: ponce - Polish: morsik, RaFal, Lul3k - Portuguese: Zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 
 	itemDef {

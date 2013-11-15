@@ -1217,6 +1217,7 @@ typedef struct
 	qhandle_t scoreEliminatedShader;
 
 	qhandle_t medicReviveShader;
+	qhandle_t disguiseShader;
 	qhandle_t voiceChatShader;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
@@ -2221,6 +2222,11 @@ extern vmCvar_t cg_fontScaleCN;
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02
 #define LOCALTIME_12HOUR            0x04
+
+// crosshair name flags
+#define CROSSHAIR_NAME              0x01
+#define CROSSHAIR_CLASS             0x02
+#define CROSSHAIR_RANK              0x04
 
 // cg_main.c
 const char *CG_ConfigString(int index);

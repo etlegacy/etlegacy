@@ -125,6 +125,7 @@ static void CG_Obituary(entityState_t *ent)
 		break;
 	}
 
+	// check for self kill messages
 	if (attacker == target)
 	{
 		switch (mod)
@@ -139,7 +140,7 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_PANZERFAUST:
 			message = "vaporized himself";
 			break;
-		case MOD_FLAMETHROWER: // rain
+		case MOD_FLAMETHROWER:
 			message = "played with fire";
 			break;
 		case MOD_AIRSTRIKE:
@@ -195,16 +196,42 @@ static void CG_Obituary(entityState_t *ent)
 		{
 			int scaleShader = 1;
 
-			if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+			switch (mod) // deal with icon specials
 			{
-				weaponShader = cg_weapons[weapon].weaponIcon[0];
-				scaleShader  = CG_WeaponIconScale(weapon);
+			// FIXME:
+			//case MOD_FALLING:
+			//case MOD_CRUSH:
+			//case MOD_WATER:
+			//case MOD_SLIME:
+			//case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
 
-			}
-			else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
-			{
-				weaponShader = cg_weapons[weapon].weaponIcon[1];
-				scaleShader  = CG_WeaponIconScale(weapon);
+			//case MOD_AIRSTRIKE:
+			//case MOD_CRUSH_CONSTRUCTION:
+			//case MOD_CRUSH_CONSTRUCTIONDEATH:
+			case MOD_ARTY:
+				if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
+				{
+					weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[0];
+					scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+				}
+				else if (cg_weapons[WP_BINOCULARS].weaponIcon[1])
+				{
+					weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
+					scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+				}
+				break;
+			default:
+				if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+				{
+					weaponShader = cg_weapons[weapon].weaponIcon[0];
+					scaleShader  = CG_WeaponIconScale(weapon);
+				}
+				else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
+				{
+					weaponShader = cg_weapons[weapon].weaponIcon[1];
+					scaleShader  = CG_WeaponIconScale(weapon);
+				}
+				break;
 			}
 			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, (attacker == target ? OB_YELLOW : NULL));
 		}
@@ -274,7 +301,6 @@ static void CG_Obituary(entityState_t *ent)
 				}
 			}
 			break;
-
 		case MOD_KNIFE_KABAR:
 			message  = "was stabbed by";
 			message2 = "'s KA-BAR";
@@ -287,180 +313,146 @@ static void CG_Obituary(entityState_t *ent)
 				}
 			}
 			break;
-
 		case MOD_AKIMBO_COLT:
 		case MOD_AKIMBO_SILENCEDCOLT:
 			message  = "was killed by";
 			message2 = "'s Akimbo .45ACP 1911s";
 			break;
-
 		case MOD_AKIMBO_LUGER:
 		case MOD_AKIMBO_SILENCEDLUGER:
 			message  = "was killed by";
 			message2 = "'s Akimbo Luger 9mms";
 			break;
-
 		case MOD_SILENCER:
 		case MOD_LUGER:
 			message  = "was killed by";
 			message2 = "'s Luger 9mm";
 			break;
-
 		case MOD_SILENCED_COLT:
 		case MOD_COLT:
 			message  = "was killed by";
 			message2 = "'s .45ACP 1911";
 			break;
-
 		case MOD_MP40:
 			message  = "was killed by";
 			message2 = "'s MP40";
 			break;
-
 		case MOD_THOMPSON:
 			message  = "was killed by";
 			message2 = "'s Thompson";
 			break;
-
 		case MOD_STEN:
 			message  = "was killed by";
 			message2 = "'s Sten";
 			break;
-
 		case MOD_DYNAMITE:
 			message  = "was blasted by";
 			message2 = "'s dynamite";
 			break;
-
 		case MOD_PANZERFAUST:
 			message  = "was blasted by";
 			message2 = "'s Panzerfaust";
 			break;
-
 		case MOD_GRENADE_LAUNCHER:
 		case MOD_GRENADE_PINEAPPLE:
 			message  = "was exploded by";
 			message2 = "'s grenade";
 			break;
-
 		case MOD_FLAMETHROWER:
 			message  = "was cooked by";
 			message2 = "'s flamethrower";
 			break;
-
 		case MOD_MORTAR:
 			message  = "never saw";
 			message2 = "'s mortar round coming";
 			break;
-
 		case MOD_MACHINEGUN:
 			message  = "was perforated by";
 			message2 = "'s crew-served MG";
 			break;
-
 		case MOD_BROWNING:
 			message  = "was perforated by";
 			message2 = "'s tank-mounted browning 30cal";
 			break;
-
 		case MOD_MG42:
 			message  = "was perforated by";
 			message2 = "'s tank-mounted MG42";
 			break;
-
 		case MOD_AIRSTRIKE:
 			message  = "was blasted by";
 			message2 = "'s support fire";
 			break;
-
 		case MOD_ARTY:
 			message  = "was shelled by";
 			message2 = "'s artillery support";
 			break;
-
 		case MOD_SWAP_PLACES:
 			message  = "^2swapped places with^7";
 			message2 = "";
 			break;
-
 		case MOD_KAR98: // same weapon really
 		case MOD_K43:
 			message  = "was killed by";
 			message2 = "'s K43";
 			break;
-
 		case MOD_CARBINE: // same weapon really
 		case MOD_GARAND:
 			message  = "was killed by";
 			message2 = "'s Garand";
 			break;
-
 		case MOD_GPG40:
 		case MOD_M7:
 			message  = "was killed by";
 			message2 = "'s rifle grenade";
 			break;
-
 		case MOD_LANDMINE:
 			message  = "failed to spot";
 			message2 = "'s Landmine";
 			break;
-
 		case MOD_CRUSH_CONSTRUCTION:
 			message  = "got caught in";
 			message2 = "'s construction madness";
 			break;
-
 		case MOD_CRUSH_CONSTRUCTIONDEATH:
 			message  = "got burried under";
 			message2 = "'s rubble";
 			break;
-
 		case MOD_MOBILE_MG42:
 			message  = "was mown down by";
 			message2 = "'s Mobile MG42";
 			break;
-
 		case MOD_MOBILE_BROWNING:
 			message  = "was mown down by";
 			message2 = "'s Mobile Browning";
 			break;
-
 		case MOD_GARAND_SCOPE:
 			message  = "was silenced by";
 			message2 = "'s Garand";
 			break;
-
 		case MOD_K43_SCOPE:
 			message  = "was silenced by";
 			message2 = "'s K43";
 			break;
-
 		case MOD_FG42:
 			message  = "was killed by";
 			message2 = "'s FG42";
 			break;
-
 		case MOD_FG42SCOPE:
 			message  = "was sniped by";
 			message2 = "'s FG42";
 			break;
-
 		case MOD_SATCHEL:
 			message  = "was blasted by";
 			message2 = "'s Satchel Charge";
 			break;
-
 		case MOD_SMOKEGRENADE:
 			message  = "stood on";
 			message2 = "'s airstrike marker";
 			break;
-
 		case MOD_SHOVE:
 			message  = "was thrown to his doom by";
 			message2 = "";
 			break;
-
 		default:
 			message  = "was killed by";
 			message2 = "";
@@ -483,25 +475,49 @@ static void CG_Obituary(entityState_t *ent)
 			{
 				int scaleShader = 1;
 
-				if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+				switch (mod) // deal with icon specials
 				{
-					weaponShader = cg_weapons[weapon].weaponIcon[0];
-					scaleShader  = CG_WeaponIconScale(weapon);
-
-				}
-				else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
-				{
-					weaponShader = cg_weapons[weapon].weaponIcon[1];
-					scaleShader  = CG_WeaponIconScale(weapon);
+				// FIXME:
+				//case MOD_MACHINEGUN:
+				//case MOD_BROWNING:
+				//case MOD_MG42:
+				//case MOD_AIRSTRIKE:
+				//case MOD_CRUSH_CONSTRUCTION:
+				//case MOD_CRUSH_CONSTRUCTIONDEATH:
+				//case MOD_SHOVE:
+				case MOD_ARTY:
+					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
+					{
+						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[0];
+						scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+					}
+					else if (cg_weapons[WP_BINOCULARS].weaponIcon[1])
+					{
+						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
+						scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+					}
+					break;
+				default:
+					if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+					{
+						weaponShader = cg_weapons[weapon].weaponIcon[0];
+						scaleShader  = CG_WeaponIconScale(weapon);
+					}
+					else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
+					{
+						weaponShader = cg_weapons[weapon].weaponIcon[1];
+						scaleShader  = CG_WeaponIconScale(weapon);
+					}
+					break;
 				}
 
 				if (cg_graphicObituaries.integer == 1)
 				{
-					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
+					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
 				}
 				else
 				{
-					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
+					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
 				}
 			}
 			else
@@ -515,7 +531,7 @@ static void CG_Obituary(entityState_t *ent)
 					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, message), va("%s%s", attackerName, message2), shader, 0, 0, NULL);
 				}
 			}
-			trap_Print(va("%s %s %s%s\n", targetName, message, attackerName, message2));
+			trap_Print(va((ci->team == ca->team ? "%s ^1%s^7 %s^1%s\n" : "%s %s %s%s\n"), targetName, message, attackerName, message2));
 			return;
 		}
 	}

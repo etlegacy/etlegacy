@@ -598,7 +598,7 @@ static sfxHandle_t S_AL_RegisterSound(const char *sample, qboolean compressed)
 	{
 		S_AL_BufferLoad(sfx, s_alPrecache->integer);
 	}
-	knownSfx[sfx].lastUsedTime = Com_Milliseconds();
+	knownSfx[sfx].lastUsedTime = Sys_Milliseconds();
 
 	if (knownSfx[sfx].isDefault)
 	{

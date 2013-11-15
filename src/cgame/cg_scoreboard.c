@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -55,23 +55,42 @@ WM_DrawObjectives
 #define INFO_LINE_HEIGHT        30
 #define INFO_TOTAL_WIDTH        (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
 
-// GeoIP
-#define FLAG_STEP       32.0f
-qboolean cf_draw(float x, float y, float fade, int clientNum)
+/**
+ * @brief Draw a client country flag
+ *
+ * All flags are stored in one single image where they are aligned
+ * into a grid of 16x16 fields. Each flag has an id number starting
+ * with 0 at the top left corner and ending with 255 in the bottom right
+ * corner. Client's flag id is stored in the "uci" field of configstrings.
+ *
+ * @ingroup GeoIP
+ */
+static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 {
-	unsigned int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));    // uci
+	int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));    // uci
 
-	if (client_flag < 255)
+	if (client_flag < 255) // MAX_COUNTRY_NUM
 	{
-		unsigned int flag_sd  = 512;
-		float        alpha[4] = { 1.f, 1.f, 1.f, fade };
-		float        x1       = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
-		float        y1       = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
-		float        x2       = x1 + FLAG_STEP;
-		float        y2       = y1 + FLAG_STEP;
+		const int flag_size = 32;  // dimensions of a single flag
+		const int all_flags = 512; // dimensions of the picture containing all flags
+
+		float alpha[4] = { 1.f, 1.f, 1.f, fade };
+		float x1       = (float)((client_flag * flag_size) % all_flags);
+		float y1       = (float)(floor((client_flag * flag_size) / all_flags) * flag_size);
+		float x2       = x1 + flag_size;
+		float y2       = y1 + flag_size;
 
 		trap_R_SetColor(alpha);
-		CG_DrawPicST(x, y, FLAG_STEP, FLAG_STEP, x1 / flag_sd, y1 / flag_sd, x2 / flag_sd, y2 / flag_sd, cgs.media.countryFlags);
+
+		if (cg.legacyClient)
+		{
+			CG_DrawPicST(x, y, 18, 18, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
+		}
+		else
+		{
+			CG_DrawPicST(x, y, flag_size, flag_size, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
+		}
+
 		trap_R_SetColor(NULL);
 		return qtrue;
 	}
@@ -132,7 +151,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	// mission time & reinforce time
 	else
 	{
-		int msec, mins, seconds, tens;
+		int msec, mins, seconds, tens, w;
 
 		rows = 1;
 
@@ -143,7 +162,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			CG_FillRect(x - 5, y - 15, width + 5, 35, clrUiBar);
 			CG_DrawRect_FixedBorder(x - 5, y - 15, width + 5, 35, 1, colorBlack);
 
-			s = va("Config: ^7%s^7", CG_ConfigString(CS_CONFIGNAME));
+			s = va(CG_TranslateString("Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
 			CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 			y += 16;
@@ -194,8 +213,12 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
-		// FIXME: do a switch for gametype
-		if (cgs.gametype != GT_WOLF_LMS)
+		if (cg.warmup)
+		{
+			s = va("%s %i", CG_TranslateString("MATCH BEGINS IN:"), (cg.warmup - cg.time) / 1000 + 1);
+			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+		}
+		if (cgs.gametype != GT_WOLF_LMS && !cg.warmup)
 		{
 			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 			{
@@ -218,41 +241,35 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			}
 		}
-		if (cgs.gametype == GT_WOLF_STOPWATCH)
-		{
-			int w;
 
+		switch (cgs.gametype)
+		{
+		case GT_WOLF_STOPWATCH:
 			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
-		}
-		else if (cgs.gametype == GT_WOLF_LMS)
-		{
-			int w;
-
+			break;
+		case GT_WOLF_LMS:
 			s = va("%s %i  %s %i-%i", CG_TranslateString("ROUND"), cgs.currentRound + 1, CG_TranslateString("SCORE"), cg.teamWonRounds[1], cg.teamWonRounds[0]);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
-		}
-		else if (cgs.gametype == GT_WOLF_CAMPAIGN)
-		{
-			int w;
-
+			break;
+		case GT_WOLF_CAMPAIGN:
 			s = va("MAP %i of %i", cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
-		}
-		else if (cgs.gametype == GT_WOLF_MAPVOTE)
-		{
-			int w;
-
+			break;
+		case GT_WOLF_MAPVOTE:
 			s = (cgs.mapVoteMapY ? va("MAP %i of %i", cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			break;
+		default:
+			break;
 		}
 
 		y += 19;
@@ -308,7 +325,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
 
-	y += 13;
+	y += 12;
 
 	// add some extra space when not showing lives in non-LMS
 	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft)
@@ -322,16 +339,16 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		if (score->scoreflags & 1 && cgs.gamestate != GS_PLAYING)
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, cgs.media.readyShader);
-			offset   += 10;
-			tempx    += 10;
+			offset   += 12;
+			tempx    += 12;
 			maxchars -= 2;
 		}
 
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, cgs.media.objectiveShader);
-			offset   += 10;
-			tempx    += 10;
+			offset   += 12;
+			tempx    += 12;
 			maxchars -= 2;
 		}
 
@@ -339,15 +356,15 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		if (score->respawnsLeft == -2 || (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == -1))
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, cgs.media.scoreEliminatedShader);
-			offset   += 10;
-			tempx    += 10;
+			offset   += 12;
+			tempx    += 12;
 			maxchars -= 2;
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0)
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, cgs.media.medicIcon);
-			offset   += 10;
-			tempx    += 10;
+			offset   += 12;
+			tempx    += 12;
 			maxchars -= 2;
 		}
 	}
@@ -355,10 +372,21 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		if (cf_draw(tempx - 11, y - 21, fade, ci->clientNum))
+		qboolean flag;
+
+		if (cg.legacyClient)
 		{
-			offset   += 14;
-			tempx    += 14;
+			flag = CG_DrawFlag(tempx - 3, y - 13, fade, ci->clientNum);
+		}
+		else
+		{
+			flag = CG_DrawFlag(tempx - 9, y - 21, fade, ci->clientNum);
+		}
+
+		if (flag)
+		{
+			offset   += 18;
+			tempx    += 18;
 			maxchars -= 2;
 		}
 	}
@@ -474,7 +502,7 @@ const char *WM_TimeToString(float msec)
 
 static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
 {
-	int          maxchars = 22, offset = 0;
+	int          maxchars = 23, offset = 0;
 	float        tempx;
 	vec4_t       hcolor;
 	clientInfo_t *ci;
@@ -542,10 +570,21 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		if (cf_draw(tempx - 11, y - 20, fade, ci->clientNum))
+		qboolean flag;
+
+		if (cg.legacyClient)
 		{
-			offset   += 14;
-			tempx    += 14;
+			flag = CG_DrawFlag(tempx - 3, y - 12, fade, ci->clientNum);
+		}
+		else
+		{
+			flag = CG_DrawFlag(tempx - 9, y - 20, fade, ci->clientNum);
+		}
+
+		if (flag)
+		{
+			offset   += 18;
+			tempx    += 18;
 			maxchars -= 2;
 		}
 	}
@@ -600,7 +639,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	{
 		CG_DrawPic(tempx, y - 9, 10, 10, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
-	tempx += INFO_CLASS_WIDTH;
+	tempx += INFO_CLASS_WIDTH + 4;
 
 	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%3i", score->score), 0, 0, 0, &cgs.media.limboFont2_lo);
 	if (cg_gameType.integer == GT_WOLF_LMS)

@@ -47,8 +47,8 @@ msgstr "POZOROVATEL"
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s for team-killing?"
-msgstr "Podat stiznost proti %s za zabiti spoluhrace?"
+msgid "File complaint against %s^3 for team-killing?"
+msgstr "Podat stiznost proti %s^3 za zabiti spoluhrace?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
@@ -1826,9 +1826,6 @@ msgid "O. Objectives"
 msgstr ""
 
 msgid "P. Path Cleared."
-msgstr ""
-
-msgid "W. Enemy Weak!"
 msgstr ""
 
 msgid "C. All Clear"

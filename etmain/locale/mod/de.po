@@ -43,8 +43,8 @@ msgstr "ZUSCHAUER"
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s for team-killing?"
-msgstr "Veranlasse eine Beschwerde gegen %s wegen Teambeschuss?"
+msgid "File complaint against %s^3 for team-killing?"
+msgstr "Veranlasse eine Beschwerde gegen %s^3 wegen Teambeschuss?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
@@ -1807,9 +1807,6 @@ msgstr "O. Ziele"
 
 msgid "P. Path Cleared."
 msgstr "P. Weg gesichert."
-
-msgid "W. Enemy Weak!"
-msgstr "W. Feind ist angeschlagen!"
 
 msgid "C. All Clear"
 msgstr "C. Alles klar"

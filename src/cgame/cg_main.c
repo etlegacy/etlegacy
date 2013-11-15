@@ -347,7 +347,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawFPS,               "cg_drawFPS",               "0",     CVAR_ARCHIVE                 },
 	{ &cg_drawSnapshot,          "cg_drawSnapshot",          "0",     CVAR_ARCHIVE                 },
 	{ &cg_drawCrosshair,         "cg_drawCrosshair",         "1",     CVAR_ARCHIVE                 },
-	{ &cg_drawCrosshairNames,    "cg_drawCrosshairNames",    "1",     CVAR_ARCHIVE                 },
+	{ &cg_drawCrosshairNames,    "cg_drawCrosshairNames",    "7",     CVAR_ARCHIVE                 },
 	{ &cg_drawCrosshairPickups,  "cg_drawCrosshairPickups",  "1",     CVAR_ARCHIVE                 },
 	{ &cg_useWeapsForZoom,       "cg_useWeapsForZoom",       "1",     CVAR_ARCHIVE                 },
 	{ &cg_weaponCycleDelay,      "cg_weaponCycleDelay",      "150",   CVAR_ARCHIVE                 },
@@ -1588,7 +1588,15 @@ static void CG_RegisterGraphics(void)
 	cgs.media.compassConstructShader            = trap_R_RegisterShaderNoMip("sprites/construct.tga");
 	cgs.media.blackmask                         = trap_R_RegisterShaderNoMip("images/blackmask"); // etpro icons support
 
-	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");   // GeoIP
+	// Use higher resolution flags for ET:L clients. 2.60b clients don't display PNG format
+	if (cg.legacyClient)
+	{
+		cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags_legacy");
+	}
+	else
+	{
+		cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags_260b");
+	}
 
 	//cgs.media.compassDestroyShader = trap_R_RegisterShaderNoMip("sprites/destroy.tga");
 
@@ -1651,6 +1659,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.spawnInvincibleShader = trap_R_RegisterShader("sprites/shield");
 	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
+	cgs.media.disguiseShader        = trap_R_RegisterShader("sprites/undercover");
 
 	cgs.media.destroyShader = trap_R_RegisterShader("sprites/destroy");
 

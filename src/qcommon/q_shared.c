@@ -113,7 +113,12 @@ void COM_StripExtension(const char *in, char *out, int destsize)
 
 	if (dot && (!(slash = strrchr(in, '/')) || slash < dot))
 	{
-		Q_strncpyz(out, in, (destsize < dot - in + 1 ? destsize : dot - in + 1));
+		destsize = (destsize < dot - in + 1 ? destsize : dot - in + 1);
+	}
+
+	if (in == out && destsize > 1)
+	{
+		out[destsize - 1] = '\0';
 	}
 	else
 	{
@@ -1278,14 +1283,6 @@ void Q_strncpyz(char *dest, const char *src, int destsize)
 		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1");
 	}
 
-#ifdef __APPLE__
-	// FIXME: temporary workaround for crashes on OS X 10.9 Mavericks
-	if (src == dest)
-	{
-		return;
-	}
-#endif
-
 	strncpy(dest, src, destsize - 1);
 	dest[destsize - 1] = 0;
 }
@@ -1742,15 +1739,11 @@ float *tv(float x, float y, float z)
 =====================================================================
 */
 
-/*
-===============
-Info_ValueForKey
-
-Searches the string for the given
-key and returns the associated value, or an empty string.
-FIXME: overflow check?
-===============
-*/
+/**
+ * @brief Searches the string for the given key and returns
+ * the associated value, or an empty string.
+ * FIXME: overflow check?
+ */
 char *Info_ValueForKey(const char *s, const char *key)
 {
 	char        pkey[BIG_INFO_KEY];

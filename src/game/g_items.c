@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -30,7 +30,7 @@
  *
  * @file g_items.c
  *
- * Items are any object that a player can touch to gain some effect.
+ * @brief Items are any object that a player can touch to gain some effect.
  * Pickup will return the number of seconds until they should respawn.
  * all items should pop when dropped in lava or slime.
  * Respawnable items don't actually go away when picked up, they are just made
@@ -1165,7 +1165,18 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	// check for stop
 	if (trace->plane.normal[2] > 0 && ent->s.pos.trDelta[2] < 40)
 	{
-		trace->endpos[2] += 1.0;    // make sure it is off ground
+		vectoangles(trace->plane.normal, ent->s.angles);
+		ent->s.angles[0] += 90;
+		if (ent->s.angles[0] > 0.0 && ent->s.angles[0] < 50.0)
+		{
+			// align items on inclined ground
+			G_SetAngle(ent, ent->s.angles);
+			trace->endpos[2] -= (tan(DEG2RAD(ent->s.angles[0])) * ITEM_RADIUS);
+		}
+		else
+		{
+			trace->endpos[2] += 1.0;    // make sure it is off ground
+		}
 		SnapVector(trace->endpos);
 		G_SetOrigin(ent, trace->endpos);
 		ent->s.groundEntityNum = trace->entityNum;

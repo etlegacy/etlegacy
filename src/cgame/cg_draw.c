@@ -1349,8 +1349,6 @@ CG_DrawBinocReticle
 */
 static void CG_DrawBinocReticle(void)
 {
-	// an alternative.  This gives nice sharp lines at the expense of a few extra polys
-
 	if (cgs.media.binocShaderSimple)
 	{
 		CG_DrawPic(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, cgs.media.binocShaderSimple);
@@ -1408,17 +1406,11 @@ static void CG_DrawCrosshair(void)
 	{
 	// weapons that get no reticle
 	case WP_NONE:       // no weapon, no crosshair
-		if (cg.zoomedBinoc)
-		{
-			CG_DrawBinocReticle();
-		}
-
 		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 		{
 			return;
 		}
 		break;
-
 	// special reticle for weapon
 	case WP_FG42SCOPE:
 	case WP_GARAND_SCOPE:
@@ -1818,24 +1810,29 @@ static void CG_DrawCrosshairNames(void)
 				playerHealth = cg_entities[cg.crosshairClientNum].currentState.dl_intensity;
 				maxHealth    = 255;
 
-				s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairClientNum));
-				if (!*s)
+				if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
 				{
-					return;
+					s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairClientNum));
+					if (!*s)
+					{
+						return;
+					}
+
+					w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+					CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 				}
-
-				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
-
 			}
 			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 			{
-				s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairClientNum));
-				if (*s)
+				if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
 				{
-					w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-					CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+					s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairClientNum));
+					if (*s)
+					{
+						w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+						CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 
+					}
 				}
 				return;
 			}
@@ -1869,11 +1866,16 @@ static void CG_DrawCrosshairNames(void)
 				// draw the name and class
 				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
 				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
-				// - 16 - 110/2
-				CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass((cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
-
-				if (cgs.clientinfo[cg.crosshairClientNum].disguiseRank > 0)
+				if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
+				{
+					CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+				}
+				if (cg_drawCrosshairNames.integer & CROSSHAIR_CLASS)
+				{
+					// - 16 - 110/2
+					CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass((cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
+				}
+				if (cgs.clientinfo[cg.crosshairClientNum].disguiseRank > 0 && (cg_drawCrosshairNames.integer & CROSSHAIR_RANK))
 				{
 					// + 110/2
 					CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].disguiseRank][cgs.clientinfo[cg.crosshairClientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
@@ -1924,11 +1926,16 @@ static void CG_DrawCrosshairNames(void)
 		// draw the name and class
 		s = va("%s", cgs.clientinfo[cg.crosshairClientNum].cleanname);
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
-		// - 16 - 110/2
-		CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cg_entities[cg.crosshairClientNum].currentState.teamNum)]);
-
-		if (cgs.clientinfo[cg.crosshairClientNum].rank > 0)
+		if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
+		{
+			CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+		}
+		if (cg_drawCrosshairNames.integer & CROSSHAIR_CLASS)
+		{
+			// - 16 - 110/2
+			CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cg_entities[cg.crosshairClientNum].currentState.teamNum)]);
+		}
+		if (cgs.clientinfo[cg.crosshairClientNum].rank > 0 && (cg_drawCrosshairNames.integer & CROSSHAIR_RANK))
 		{
 			//  + 110/2
 			CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].rank][cgs.clientinfo[cg.crosshairClientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
@@ -2057,7 +2064,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("File complaint against %s for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
+		str = va(CG_TranslateString("File complaint against %s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
@@ -2071,7 +2078,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("Accept %s's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name);
+		str = va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
@@ -2085,7 +2092,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("Accept %s's proposition to invite %s to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
+		str = va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
@@ -2099,7 +2106,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
-		str = va(CG_TranslateString("Accept %s's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name);
+		str = va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
@@ -2167,6 +2174,16 @@ static void CG_DrawVote(void)
 		if (sec < 0)
 		{
 			sec = 0;
+			// expired votetime
+			cgs.voteTime                  = 0;
+			cgs.complaintEndTime          = 0;
+			cgs.applicationEndTime        = 0;
+			cgs.propositionEndTime        = 0;
+			cgs.invitationEndTime         = 0;
+			cgs.autoFireteamEndTime       = 0;
+			cgs.autoFireteamCreateEndTime = 0;
+			cgs.autoFireteamJoinEndTime   = 0;
+			return;
 		}
 
 		if (!Q_stricmpn(cgs.voteString, "kick", 4))
@@ -2466,7 +2483,7 @@ static void CG_DrawSpectatorMessage(void)
 
 #ifdef FEATURE_MULTIVIEW
 	str2 = BindingFromName("mvactivate");
-	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? "disable" : "activate"));
+	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
 #endif
@@ -2725,7 +2742,7 @@ static void CG_DrawWarmup(void)
 		{
 			if (CG_ConfigString(CS_CONFIGNAME)[0])
 			{
-				s1 = va("^3Config: ^7%s^7", CG_ConfigString(CS_CONFIGNAME));
+				s1 = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
 				w  = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x  = Ccg_WideX(320) - w / 2;
 				CG_Text_Paint_Ext(x, 162, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -2993,7 +3010,7 @@ CG_DrawFlashZoomTransition
 static void CG_DrawFlashZoomTransition(void)
 {
 	float frac;
-	float fadeTime;
+	float fadeTime  = 400.f;
 
 	if (!cg.snap)
 	{
@@ -3013,15 +3030,13 @@ static void CG_DrawFlashZoomTransition(void)
 		return;
 	}
 
-	fadeTime = 400.f;
-
 	frac = cg.time - cg.zoomTime;
 
 	if (frac < fadeTime)
 	{
 		vec4_t color;
 
-		frac = frac / fadeTime;
+		frac = frac / (float)fadeTime;
 		Vector4Set(color, 0, 0, 0, 1.0f - frac);
 		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, color);
 	}

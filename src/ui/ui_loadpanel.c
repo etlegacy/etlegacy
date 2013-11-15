@@ -188,11 +188,11 @@ void UI_LoadPanel_RenderHeaderText(panel_button_t *button)
 
 	if ((cstate.connState == CA_DISCONNECTED || cstate.connState == CA_CONNECTED) && *downloadName)
 	{
-		button->text = "DOWNLOADING...";
+		button->text = trap_TranslateString("DOWNLOADING...");
 	}
 	else
 	{
-		button->text = "CONNECTING...";
+		button->text = trap_TranslateString("CONNECTING...");
 	}
 
 	BG_PanelButtonsRender_Text(button);
@@ -319,7 +319,7 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 
 	trap_GetClientState(&cstate);
 
-	Com_sprintf(buff, sizeof(buff), "Connecting to:\n %s^*\n\n%s", cstate.servername, Info_ValueForKey(cstate.updateInfoString, "motd"));
+	Com_sprintf(buff, sizeof(buff), trap_TranslateString("Connecting to:\n %s^*\n\n%s"), cstate.servername, Info_ValueForKey(cstate.updateInfoString, "motd"));
 
 	if (trap_Cvar_VariableValue("com_updateavailable"))
 	{

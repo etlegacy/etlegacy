@@ -990,7 +990,7 @@ static int CG_CalcFov(void)
 		if (!cg.renderingThirdPerson || developer.integer)
 		{
 			float zoomFov;
-			int   f;
+			float f;
 
 			// account for zooms
 			if (cg.zoomval)

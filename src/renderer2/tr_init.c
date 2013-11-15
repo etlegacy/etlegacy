@@ -1709,7 +1709,7 @@ void R_Register(void)
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	//FOR sdl_glimp.c
-	r_noborder        = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE);
+	r_noborder        = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_stereoEnabled   = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_ext_multisample, 0, 4, qtrue);

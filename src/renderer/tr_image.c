@@ -1130,7 +1130,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 
 	if (((width - 1) & width) || ((height - 1) & height))
 	{
-		Com_Printf("^1Image not power of 2 scaled: %s\n", name);
+		ri.Printf(PRINT_ALL, "^1Image not power of 2 scaled: %s\n", name);
 		return NULL;
 	}
 
@@ -1651,7 +1651,7 @@ static char *CommaParse(char **data_p)
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-		//Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+		//ri.Printf(PRINT_ALL, "Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -1784,13 +1784,13 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	if (!name || !name[0])
 	{
-		Com_Printf("Empty name passed to RE_RegisterSkin\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterSkin WARNING: empty name passed to RE_RegisterSkin\n");
 		return 0;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Skin name exceeds MAX_QPATH\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterSkin WARNING: skin name exceeds MAX_QPATH in RE_RegisterSkin\n");
 		return 0;
 	}
 
@@ -1811,7 +1811,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// allocate a new skin
 	if (tr.numSkins == MAX_SKINS)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: RE_RegisterSkin( '%s' ) MAX_SKINS hit\n", name);
+		ri.Printf(PRINT_DEVELOPER, "WARNING: RE_RegisterSkin '%s' - MAX_SKINS hit\n", name);
 		return 0;
 	}
 	tr.numSkins++;
@@ -1844,6 +1844,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	if (!text.c)
 	{
+		ri.Printf(PRINT_WARNING, "WARNING: RE_RegisterSkin '%s' - empty skin or file not in path\n", name);
 		return 0;
 	}
 
@@ -1972,8 +1973,7 @@ void R_SkinList_f(void)
 		ri.Printf(PRINT_ALL, "%3i:%s\n", i, skin->name);
 		for (j = 0 ; j < skin->numSurfaces ; j++)
 		{
-			ri.Printf(PRINT_ALL, "       %s = %s\n",
-			          skin->surfaces[j]->name, skin->surfaces[j]->shader->name);
+			ri.Printf(PRINT_ALL, "       %s = %s\n", skin->surfaces[j]->name, skin->surfaces[j]->shader->name);
 		}
 	}
 	ri.Printf(PRINT_ALL, "------------------\n");

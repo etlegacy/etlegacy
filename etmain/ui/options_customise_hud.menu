@@ -46,7 +46,7 @@ menuDef {
 	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Show Locations:", .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, "Displays locations in fireteam" )
 	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, "Enable Flags:", .2, 8, "cg_countryflags", "Displays players country flags in score board." )
 	YESNO( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, "Fireteam Latched Class:", .2, 8, "cg_fireteamLatchedClass", "Displays Fireteam latched class." )
-	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, "Obituaries Icons:", .2, 8, "cg_graphicObituaries", "Displays graphical obituaries" )
+	MULTI( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, "Obituaries Icons:", .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, "Displays graphical obituaries" )
 	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, "Switch HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, "Switches between different HUD" )
 	MULTI( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, "Modify Selected HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, "Customises Selected HUD" )
 
@@ -71,7 +71,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Size:", .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, "Sets the size of the displayed crosshair" )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Pulsing:", .2, 8, "cg_crosshairPulse", "Toggles crosshair spread sizing while moving/firing" )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Health Info:", .2, 8, "cg_crosshairHealth", "Colors the crosshair based on current health (overrides crosshair color settings)" )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Name Drawing:", .2, 8, "cg_drawCrosshairNames", "Displays player info when the crosshair is over a teammate" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Info Drawing:", .2, 8, "cg_drawCrosshairNames", cvarFloatList { "Off" 0 "Name" 1 "Class" 2 "Rank" 4 "Name + Class" 3 "Name + Rank" 5 "Class + Rank" 6 "Name + Class + Rank" 7 }, "Displays player info when the crosshair is over a teammate" )
 
 	itemDef {
 		name		"crosshair_select"
