@@ -3825,7 +3825,7 @@ msgstr ""
 msgid "'s dynamite"
 msgstr ""
 
-msgid "Timelimit hit."
+msgid "Timelimit hit.\n"
 msgstr ""
 
 #: src/cgame/cg_scoreboard.c:146
@@ -3907,4 +3907,15 @@ msgstr ""
 
 #: src/cgame/cg_loadpanel.c:262
 msgid "Map Voting"
+msgstr ""
+
+msgid "Competition Settings Loaded!\n"
+msgstr ""
+
+msgid "Public Settings Loaded!\n"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
+#, c-format
+msgid "MAP %i of %i"
 msgstr ""
