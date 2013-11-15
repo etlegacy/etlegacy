@@ -257,13 +257,13 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			break;
 		case GT_WOLF_CAMPAIGN:
-			s = va("MAP %i of %i", cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
+			s = va(CG_TranslateString("MAP %i of %i"), cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			break;
 		case GT_WOLF_MAPVOTE:
-			s = (cgs.mapVoteMapY ? va("MAP %i of %i", cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
+			s = (cgs.mapVoteMapY ? va(CG_TranslateString("MAP %i of %i"), cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
