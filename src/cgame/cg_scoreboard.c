@@ -82,14 +82,7 @@ static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 
 		trap_R_SetColor(alpha);
 
-		if (cg.legacyClient)
-		{
-			CG_DrawPicST(x, y, 18, 18, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
-		}
-		else
-		{
-			CG_DrawPicST(x, y, flag_size, flag_size, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
-		}
+		CG_DrawPicST(x, y, 18, 18, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
 
 		trap_R_SetColor(NULL);
 		return qtrue;
@@ -372,18 +365,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		qboolean flag;
-
-		if (cg.legacyClient)
-		{
-			flag = CG_DrawFlag(tempx - 3, y - 13, fade, ci->clientNum);
-		}
-		else
-		{
-			flag = CG_DrawFlag(tempx - 9, y - 21, fade, ci->clientNum);
-		}
-
-		if (flag)
+		if (CG_DrawFlag(tempx - 3, y - 13, fade, ci->clientNum))
 		{
 			offset   += 18;
 			tempx    += 18;
@@ -575,18 +557,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		qboolean flag;
-
-		if (cg.legacyClient)
-		{
-			flag = CG_DrawFlag(tempx - 3, y - 12, fade, ci->clientNum);
-		}
-		else
-		{
-			flag = CG_DrawFlag(tempx - 9, y - 20, fade, ci->clientNum);
-		}
-
-		if (flag)
+		if (CG_DrawFlag(tempx - 3, y - 12, fade, ci->clientNum))
 		{
 			offset   += 18;
 			tempx    += 18;
