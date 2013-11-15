@@ -57,6 +57,12 @@ WM_DrawObjectives
 
 /**
  * @brief Draw a client country flag
+ *
+ * All flags are stored in one single image where they are aligned
+ * into a grid of 16x16 fields. Each flag has an id number starting
+ * with 0 at the top left corner and ending with 255 in the bottom right
+ * corner. Client's flag id is stored in the "uci" field of configstrings.
+ *
  * @ingroup GeoIP
  */
 static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
@@ -65,8 +71,7 @@ static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 
 	if (client_flag < 255) // MAX_COUNTRY_NUM
 	{
-		// TODO: use 48 and 768 for new flags
-		const int flag_size = 32;  // pixels from start of one flag to start of another on both x and y axis
+		const int flag_size = 32;  // dimensions of a single flag
 		const int all_flags = 512; // dimensions of the picture containing all flags
 
 		float alpha[4] = { 1.f, 1.f, 1.f, fade };
@@ -76,8 +81,16 @@ static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 		float y2       = y1 + flag_size;
 
 		trap_R_SetColor(alpha);
-		// TODO: use flag_size / 3 for new flags
-		CG_DrawPicST(x, y, flag_size, flag_size, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
+
+		if (cg.legacyClient)
+		{
+			CG_DrawPicST(x, y, 18, 18, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
+		}
+		else
+		{
+			CG_DrawPicST(x, y, flag_size, flag_size, x1 / all_flags, y1 / all_flags, x2 / all_flags, y2 / all_flags, cgs.media.countryFlags);
+		}
+
 		trap_R_SetColor(NULL);
 		return qtrue;
 	}
@@ -359,8 +372,18 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		// TODO: use - 4 and - 12 or so for new flags
-		if (CG_DrawFlag(tempx - 9, y - 21, fade, ci->clientNum))
+		qboolean flag;
+
+		if (cg.legacyClient)
+		{
+			flag = CG_DrawFlag(tempx - 3, y - 13, fade, ci->clientNum);
+		}
+		else
+		{
+			flag = CG_DrawFlag(tempx - 9, y - 21, fade, ci->clientNum);
+		}
+
+		if (flag)
 		{
 			offset   += 18;
 			tempx    += 18;
@@ -552,8 +575,18 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	// GeoIP - draw flag before name
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		// TODO: check position for new flags
-		if (CG_DrawFlag(tempx - 9, y - 20, fade, ci->clientNum))
+		qboolean flag;
+
+		if (cg.legacyClient)
+		{
+			flag = CG_DrawFlag(tempx - 3, y - 12, fade, ci->clientNum);
+		}
+		else
+		{
+			flag = CG_DrawFlag(tempx - 9, y - 20, fade, ci->clientNum);
+		}
+
+		if (flag)
 		{
 			offset   += 18;
 			tempx    += 18;
