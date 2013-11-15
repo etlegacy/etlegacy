@@ -3011,14 +3011,6 @@ static void CG_DrawFlashZoomTransition(void)
 {
 	float frac;
 	float fadeTime  = 400.f;
-	float blackTime = 0.f;
-
-	// slow down a bit with a black effect to prevent binoc snap transition effect
-	if (cg.zoomedBinoc)
-	{
-		blackTime = 150.f;      // snap visible if <135.f
-		fadeTime  = blackTime + 400.f;
-	}
 
 	if (!cg.snap)
 	{
@@ -3044,15 +3036,8 @@ static void CG_DrawFlashZoomTransition(void)
 	{
 		vec4_t color;
 
-		if (frac < blackTime)
-		{
-			Vector4Set(color, 0, 0, 0, 1.0f);
-		}
-		else
-		{
-			frac = frac / (float)fadeTime;
-			Vector4Set(color, 0, 0, 0, 1.0f - frac);
-		}
+		frac = frac / (float)fadeTime;
+		Vector4Set(color, 0, 0, 0, 1.0f - frac);
 		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, color);
 	}
 }
