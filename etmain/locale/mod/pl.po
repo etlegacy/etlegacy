@@ -3878,8 +3878,8 @@ msgstr "'s MG42 na czolgu"
 msgid "'s dynamite"
 msgstr "'s dynamit"
 
-msgid "Timelimit hit."
-msgstr "Limitczasowy skonczony."
+msgid "Timelimit hit.\n"
+msgstr "Limitczasowy skonczony.\n"
 
 #: src/cgame/cg_scoreboard.c:146
 #, c-format
@@ -3965,3 +3965,14 @@ msgstr "Ostatni Ocalaly"
 #: src/cgame/cg_loadpanel.c:262
 msgid "Map Voting"
 msgstr "Glosowanie na Mapy"
+
+msgid "Competition Settings Loaded!\n"
+msgstr "Ustawienia Rozgrywki Wczytane!\n"
+
+msgid "Public Settings Loaded!\n"
+msgstr "Ustawienia Publiczne Wczytane!\n"
+
+#: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
+#, c-format
+msgid "MAP %i of %i"
+msgstr "MAPA %i z %i"
