@@ -2706,6 +2706,7 @@ msgstr ""
 msgid "dynamited himself to pieces"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2797
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr ""
 
@@ -3918,4 +3919,23 @@ msgstr ""
 #: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
 #, c-format
 msgid "MAP %i of %i"
+msgstr ""
+
+msgid "Landmine cannot be armed here..."
+msgstr ""
+
+msgid "Your team has too many landmines placed..."
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly construction!"
+msgstr ""
+
+#: src/cgame/cg_draw.c:402
+#, c-format
+msgid "an %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:381 src/cgame/cg_draw.c:390 src/cgame/cg_draw.c:406
+#, c-format
+msgid "a %s"
 msgstr ""

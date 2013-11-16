@@ -2751,6 +2751,7 @@ msgstr "niezauwazyl wlasnej miny"
 msgid "dynamited himself to pieces"
 msgstr "rozwalil sie na kawalki"
 
+#: src/cgame/cg_draw.c:2797
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr "^3PRZYGOTUJ SIE DO WALKI!\n"
 
@@ -3861,7 +3862,7 @@ msgid "ALLIES COULDN'T BEAT THE CLOCK!"
 msgstr "ALLIANCI NIE MOGLI POKONAC CZASU!"
 
 msgid "You cannot arm dynamite near a friendly objective!"
-msgstr "Nie mozesz uzbroic dynamitu blisko przyjaznej budowli!"
+msgstr "Nie mozesz uzbroic dynamitu blisko przyjaznego celu!"
 
 msgid "Axis team has destroyed the Bridge!"
 msgstr "Os rozwalila Most!"
@@ -3976,3 +3977,22 @@ msgstr "Ustawienia Publiczne Wczytane!\n"
 #, c-format
 msgid "MAP %i of %i"
 msgstr "MAPA %i z %i"
+
+msgid "Landmine cannot be armed here..."
+msgstr "Miny nie moga byc tutaj podlozone.."
+
+msgid "Your team has too many landmines placed..."
+msgstr "Twoj zespol ma zbyc duzo podlozonych min..."
+
+msgid "You cannot arm dynamite near a friendly construction!"
+msgstr "Nie mozesz uzbroic dynamitu blisko przyjaznej konstrukcji!"
+
+#: src/cgame/cg_draw.c:402
+#, c-format
+msgid "an %s"
+msgstr "- %s"
+
+#: src/cgame/cg_draw.c:381 src/cgame/cg_draw.c:390 src/cgame/cg_draw.c:406
+#, c-format
+msgid "a %s"
+msgstr "- %s"
