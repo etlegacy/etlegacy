@@ -124,6 +124,33 @@ void CG_BuildSolidList(void)
 	}
 }
 
+// client-side hitbox prediction code modified for cgame
+float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
+{
+	if (!hitEnt)
+	{
+		return 0;
+	}
+
+	if (hitEnt->eFlags & EF_DEAD)
+	{
+		return 4;
+	}
+	else if (hitEnt->eFlags & EF_PRONE)
+	{
+		return 4;
+	}
+	else if (hitEnt->eFlags & EF_CROUCHING)
+	{
+		return 24;
+	}
+	else
+	{
+		return 36;
+	}
+}
+
+
 /*
 ====================
 CG_ClipMoveToEntities
@@ -169,7 +196,16 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 			bmins[0] = bmins[1] = -x;
 			bmaxs[0] = bmaxs[1] = x;
 			bmins[2] = -zd;
-			bmaxs[2] = zu;
+
+			// client-side hitbox prediction code
+			if (ent->eType == ET_PLAYER && cg.bulletTrace)
+			{
+				bmaxs[2] = CG_ClientHitboxMaxZ(ent, zu);
+			}
+			else
+			{
+				bmaxs[2] = zu;
+			}
 
 			//cmodel = trap_CM_TempCapsuleModel( bmins, bmaxs );
 			cmodel = trap_CM_TempBoxModel(bmins, bmaxs);
@@ -244,7 +280,16 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 			bmins[0] = bmins[1] = -x;
 			bmaxs[0] = bmaxs[1] = x;
 			bmins[2] = -zd;
-			bmaxs[2] = zu;
+
+			// client-side hitbox prediction code
+			if (ent->eType == ET_PLAYER && cg.bulletTrace)
+			{
+				bmaxs[2] = CG_ClientHitboxMaxZ(ent, zu);
+			}
+			else
+			{
+				bmaxs[2] = zu;
+			}
 
 			cmodel = trap_CM_TempCapsuleModel(bmins, bmaxs);
 

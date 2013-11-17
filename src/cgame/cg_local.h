@@ -1164,6 +1164,8 @@ typedef struct
 	int cvarBackupsCount;
 
 	fileHandle_t logFile;
+	// tracing bullet, predict hitboxes used on server
+	qboolean bulletTrace;
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS   5

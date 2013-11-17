@@ -196,7 +196,21 @@ void trap_SetBrushModel(gentity_t *ent, const char *name)
 
 void trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
+	gentity_t *hitEnt = NULL;
+
 	syscall(G_TRACE, results, start, mins, maxs, end, passEntityNum, contentmask);
+
+	hitEnt = &g_entities[results->entityNum];
+	if (hitEnt && hitEnt->client && hitEnt->takedamage)
+	{
+		float oldMaxZ = hitEnt->r.maxs[2];
+		float newMaxZ = ClientHitboxMaxZ(hitEnt);
+
+		hitEnt->r.maxs[2] = newMaxZ;
+		memset(results, 0, sizeof(results));
+		syscall(G_TRACE, results, start, mins, maxs, end, passEntityNum, contentmask);
+		hitEnt->r.maxs[2] = oldMaxZ;
+	}
 }
 
 void trap_TraceNoEnts(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
