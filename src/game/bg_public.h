@@ -209,9 +209,6 @@ typedef struct
 // changed this from 6 to 10
 #define MAX_MAPS_PER_CAMPAIGN   10
 
-#define CPS_IDENT   (('S' << 24) + ('P' << 16) + ('C' << 8) + 'I')
-#define CPS_VERSION 1
-
 typedef struct
 {
 	int mapnameHash;
@@ -861,7 +858,10 @@ typedef struct weapontable_s
 
 	qboolean isUnderWaterFire; // bg
 
-	qboolean isValidStatWeapon; //bg (just check)
+	qboolean isValidStatWeapon; // bg (just check)
+
+	// client
+	// icons
 
 } weaponTable_t;
 
@@ -1031,6 +1031,8 @@ typedef enum
 
 	EV_MAX_EVENTS   // just added as an 'endcap'
 } entity_event_t;
+
+extern const char *eventnames[EV_MAX_EVENTS];
 
 typedef enum
 {
