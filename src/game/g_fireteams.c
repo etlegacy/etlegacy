@@ -533,7 +533,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 				break;
 			}
 
-			trap_SendServerCommand(ft->joinOrder[i], va("cpm \"%s has left the Fireteam\"\n", level.clients[entityNum].pers.netname));
+			trap_SendServerCommand(ft->joinOrder[i], va("cpm \"%s ^7has left the Fireteam\"\n", level.clients[entityNum].pers.netname));
 		}
 	}
 
