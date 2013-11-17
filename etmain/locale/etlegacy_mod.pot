@@ -3939,3 +3939,27 @@ msgstr ""
 #, c-format
 msgid "a %s"
 msgstr ""
+
+msgid "Countdown started.... ^3notready^7 ignored!\n"
+msgstr ""
+
+msgid "No complaint filed against you.\n"
+msgstr ""
+
+msgid "You are not the leader of a fireteam\n"
+msgstr ""
+
+msgid "You have been warned by your Fireteam Commander\n"
+msgstr ""
+
+msgid "You have been kicked from the fireteam"
+msgstr ""
+
+msgid "You are now the leader of your fireteam"
+msgstr ""
+
+msgid "The Fireteam you are on has been disbanded"
+msgstr ""
+
+msgid "You have been given fireteam admin rights"
+msgstr ""

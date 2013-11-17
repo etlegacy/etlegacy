@@ -3996,3 +3996,27 @@ msgstr "- %s"
 #, c-format
 msgid "a %s"
 msgstr "- %s"
+
+msgid "Countdown started.... ^3notready^7 ignored!\n"
+msgstr "Odliczanie rozpoczete.... ^3niegotowy^7 zignorowane!\n"
+
+msgid "No complaint filed against you.\n"
+msgstr "Brak wypelnionej skargi przeciwko tobie.\n"
+
+msgid "You are not the leader of a fireteam\n"
+msgstr "Nie jestes liderem oddzialu\n"
+
+msgid "You have been warned by your Fireteam Commander\n"
+msgstr "Zostales ostrzezony przez twojego Dowodce Oddzialu\n"
+
+msgid "You have been kicked from the fireteam"
+msgstr "Zostales wywalony z oddzialu"
+
+msgid "You are now the leader of your fireteam"
+msgstr "Jestes teraz liderem twojego oddzialu"
+
+msgid "The Fireteam you are on has been disbanded"
+msgstr "Oddzial w ktorym jestes rozpadl sie"
+
+msgid "You have been given fireteam admin rights"
+msgstr "Dostales prawa admina oddzialu"
