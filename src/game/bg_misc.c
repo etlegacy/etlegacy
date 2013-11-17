@@ -149,19 +149,6 @@ int reloadableWeapons[] =
 // [8]  = maxHeat        -   max active firing time before weapon 'overheats' (at which point the weapon will fail for a moment)
 // [9]  = coolRate       -   how fast the weapon cools down.
 // [10] = mod            -   means of death.
-
-// potential inclusions in the table:
-// damage           -
-// splashDamage     -
-// soundRange       -   distance which ai can hear the weapon
-// ammoWarning      -   amount we give the player a 'low on ammo' warning (just a HUD color change or something)
-// clipWarning      -   amount we give the player a 'low in clip' warning (just a HUD color change or something)
-// maxclip2         -   allow the player to (mod/powerup) upgrade clip size when aplicable (luger has 8 round standard clip and 32 round snail magazine, for ex.)
-
-
-// Separate table for SP and MP allow us to make the ammo and med packs function differently and may allow use to balance
-// weapons separately for each game.
-// - changed to actually use the maxammo values
 ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 {
 	//  MAX             USES    MAX     START   START  RELOAD   FIRE            NEXT    HEAT,   COOL,   MOD,    ...
@@ -228,9 +215,14 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 // WIP: New weapon table (similar to ammoTableMP) to store common weapon properties
 // This will save us tons of switches, creates better code and might be populated by custom entries one day
 // FIXME: fill me & use!
+// ... we might merge it later on with ammoTableMP
 
 // damage - returns 1 for no damage ... FIXME: some weapons are handled differently f.e. VERYBIGEXPLOSION
 // spread - bullet weapons only
+
+// [0]  = weapon         -
+// [1]  = damage         -
+// [2]  = spread         -
 weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 {
 	// weapon              damage spread
@@ -3412,7 +3404,7 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 	VectorCopy(ndir, out);
 }
 
-char *eventnames[] =
+const char *eventnames[EV_MAX_EVENTS] =
 {
 	"EV_NONE",
 	"EV_FOOTSTEP",
@@ -3513,7 +3505,7 @@ char *eventnames[] =
 	"EV_MEDIC_CALL",
 	"EV_SHOVE_SOUND",
 
-	"EV_MAX_EVENTS",
+	//"EV_MAX_EVENTS",
 };
 
 /*
@@ -3533,9 +3525,9 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 		if (atof(buf) != 0)
 		{
 #ifdef QAGAME
-			Com_Printf(" game event svt %5d -> %5d: num = %20s parm %d\n", ps->pmove_framecount /*ps->commandTime*/, ps->eventSequence, eventnames[newEvent], eventParm);
+			Com_Printf(" game event svt %5d -> %5d: num = %20s parm %d\n", ps->pmove_framecount /*ps->commandTime*/, ps->eventSequence, newEvent < EV_MAX_EVENTS ? eventnames[newEvent] : "*unknown event*", eventParm);
 #else
-			Com_Printf("Cgame event svt %5d -> %5d: num = %20s parm %d\n", ps->pmove_framecount /*ps->commandTime*/, ps->eventSequence, eventnames[newEvent], eventParm);
+			Com_Printf("Cgame event svt %5d -> %5d: num = %20s parm %d\n", ps->pmove_framecount /*ps->commandTime*/, ps->eventSequence, newEvent < EV_MAX_EVENTS ? eventnames[newEvent] : "*unknown event*", eventParm);
 #endif
 		}
 	}
