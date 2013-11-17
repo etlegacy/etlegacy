@@ -717,11 +717,13 @@ char *enttypenames[] =
 	"ET_EVENTS"
 };
 
-/*
-===================
-Svcmd_EntityList_f
-===================
-*/
+/**
+ * @brief prints a list of used - or when any param is added for all entities with following info
+ *        - entnum
+ *        - entity type OR event
+ *        - classname
+ *        - neverFree
+ */
 void Svcmd_EntityList_f(void)
 {
 	int       e, entsFree = 0;
@@ -734,30 +736,32 @@ void Svcmd_EntityList_f(void)
 		{
 			if (trap_Argc() > 1)
 			{
-				G_Printf("^2%4i: %s\n", e, check->classname);
+				G_Printf("^2%4i: %s (%i)\n", e, check->classname, check->neverFree);
 			}
 			entsFree++;
 			continue;
 		}
 
-		G_Printf("%4i:", e);
 
-		if (check->s.eType <= ET_EVENTS)
+		// print the ents which are in use
+		G_Printf("^7%4i: ", e);
+
+		if (check->s.eType <= ET_EVENTS) // print events
 		{
-			G_Printf("%-27s", enttypenames[check->s.eType]);
+			G_Printf("^3%-27s^7", enttypenames[check->s.eType]);
 		}
 		else
 		{
-			G_Printf("%-27i", check->s.eType); // tempEntity FIXME: print event
+			G_Printf("^2%-27s^7", eventnames[check->s.eType - ET_EVENTS]);
 		}
 
 		if (check->classname)
 		{
-			G_Printf(" %s\n", check->classname);
+			G_Printf(" %s (%i)\n", check->classname, check->neverFree);
 		}
 		else
 		{
-			G_Printf(" *unknown classname*\n");
+			G_Printf(" *unknown classname* (%i)\n", check->neverFree);
 		}
 	}
 	G_Printf("%4i: entities not in use\n", entsFree);
