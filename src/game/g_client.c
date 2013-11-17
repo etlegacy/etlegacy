@@ -3310,3 +3310,38 @@ void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags)
 	// Store the surface flags
 	g_entities[clientNum].surfaceFlags = surfaceFlags;
 }
+
+// ClientHitboxMaxZ returns the proper value to use for
+// the entity's r.maxs[2] when running a trace.
+float ClientHitboxMaxZ(gentity_t *hitEnt)
+{
+	if (!hitEnt)
+	{
+		return 0;
+	}
+	if (!hitEnt->client)
+	{
+		return hitEnt->r.maxs[2];
+	}
+
+	if (hitEnt->client->ps.eFlags & EF_DEAD)
+	{
+		return 4;
+	}
+	else if (hitEnt->client->ps.eFlags & EF_PRONE)
+	{
+		return 4;
+	}
+	else if (hitEnt->client->ps.eFlags & EF_CROUCHING)
+	{
+		// changed this because the crouched moving
+		// animation is higher than the idle one
+		// and that should be the most commonly used
+		//return 18;
+		return 24;
+	}
+	else
+	{
+		return 36;
+	}
+}

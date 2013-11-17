@@ -3383,11 +3383,14 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		{
 			gentity_t *bboxEnt;
 			vec3_t    b1, b2;
+			vec3_t    maxs;
 
 			VectorCopy(traceEnt->r.currentOrigin, b1);
 			VectorCopy(traceEnt->r.currentOrigin, b2);
 			VectorAdd(b1, traceEnt->r.mins, b1);
-			VectorAdd(b2, traceEnt->r.maxs, b2);
+			VectorCopy(traceEnt->r.maxs, maxs);
+			maxs[2] = ClientHitboxMaxZ(traceEnt);
+			VectorAdd(b2, maxs, b2);
 			bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 			VectorCopy(b2, bboxEnt->s.origin2);
 			bboxEnt->s.dmgFlags = 1;    // ("type")

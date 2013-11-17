@@ -1418,6 +1418,7 @@ void ClientUserinfoChanged(int clientNum);
 void ClientDisconnect(int clientNum);
 void ClientBegin(int clientNum);
 void ClientCommand(int clientNum);
+float ClientHitboxMaxZ(gentity_t *hitEnt);
 
 // g_active.c
 void ClientThink(int clientNum);

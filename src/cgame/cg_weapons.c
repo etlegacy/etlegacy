@@ -6775,7 +6775,9 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		VectorMA(end, r, right, end);
 		VectorMA(end, u, up, end);
 
+		cg.bulletTrace = qtrue;
 		CG_Trace(&tr, muzzle, NULL, NULL, end, otherEntNum2, MASK_SHOT);
+		cg.bulletTrace = qfalse;
 
 		SnapVectorTowards(tr.endpos, muzzle);
 		VectorCopy(tr.endpos, end);
@@ -7002,16 +7004,25 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 
 				//CG_RailTrail2( NULL, start, end );
 
+				cg.bulletTrace = qtrue;
 				CG_Trace(&trace, start, NULL, NULL, end, 0, MASK_SHOT);
+				cg.bulletTrace = qfalse;
+
 				// water check
+				cg.bulletTrace = qtrue;
 				CG_Trace(&trace2, start, NULL, NULL, end, 0, MASK_WATER | MASK_SHOT);
+				cg.bulletTrace = qfalse;
+
 				if (trace.fraction != trace2.fraction)
 				{
 					//trap_CM_BoxTrace( &trace2, start, end, NULL, NULL, -1, MASK_WATER );
 
 					trap_S_StartSound(end, -1, CHAN_AUTO, cgs.media.sfx_bullet_waterhit[rand() % 5]);
 
+					cg.bulletTrace = qtrue;
 					CG_Trace(&trace2, start, NULL, NULL, end, -1, MASK_WATER);
+					cg.bulletTrace = qfalse;
+
 					CG_MissileHitWall(fromweap, 2, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags);
 					return;
 				}
