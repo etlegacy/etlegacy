@@ -1811,7 +1811,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// allocate a new skin
 	if (tr.numSkins == MAX_SKINS)
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING: RE_RegisterSkin '%s' - MAX_SKINS hit\n", name);
+		ri.Printf(PRINT_WARNING, "WARNING: RE_RegisterSkin '%s' - MAX_SKINS hit\n", name);
 		return 0;
 	}
 	tr.numSkins++;
@@ -1844,7 +1844,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	if (!text.c)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: RE_RegisterSkin '%s' - empty skin or file not in path\n", name);
+		ri.Printf(PRINT_DEVELOPER, "WARNING: RE_RegisterSkin '%s' - empty skin or file not in path\n", name);
 		return 0;
 	}
 
