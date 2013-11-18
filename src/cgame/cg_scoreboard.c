@@ -423,6 +423,11 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	         )
 	{
 		CG_DrawPic(tempx - 3, y - 12, 14, 14, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
+
+		if (cgs.clientinfo[ci->clientNum].rank > 0)
+		{
+			CG_DrawPic(tempx + 15, y - 12, 16, 16, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
+		}
 	}
 
 	tempx += INFO_CLASS_WIDTH;
@@ -605,6 +610,11 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		CG_DrawPic(tempx, y - 9, 10, 10, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
+
+		if (cgs.clientinfo[ci->clientNum].rank > 0)
+		{
+			CG_DrawPic(tempx + 13, y - 9, 12, 12, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
+		}
 	}
 	tempx += INFO_CLASS_WIDTH + 4;
 
