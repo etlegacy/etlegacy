@@ -329,7 +329,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	if (ci->team != TEAM_SPECTATOR)
 	{
 		// draw ready icon if client is ready..
-		if (score->scoreflags & 1 && cgs.gamestate != GS_PLAYING)
+		if ((score->scoreflags & 1) && cgs.gamestate != GS_PLAYING)
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, cgs.media.readyShader);
 			offset   += 12;
@@ -431,7 +431,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 		if (cgs.clientinfo[ci->clientNum].rank > 0)
 		{
-			CG_DrawPic(tempx + 15, y - 12, 16, 16, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
+			CG_DrawPic(tempx + 13, y - 12, 16, 16, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 	}
 
@@ -521,7 +521,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (ci->team != TEAM_SPECTATOR)
 	{
 		// draw ready icon if client is ready..
-		if (score->scoreflags & 1 && (cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_INTERMISSION))
+		if ((score->scoreflags & 1) && (cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_INTERMISSION))
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.readyShader);
 			offset   += 14;
@@ -617,7 +617,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 		if (cgs.clientinfo[ci->clientNum].rank > 0)
 		{
-			CG_DrawPic(tempx + 13, y - 9, 12, 12, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
+			CG_DrawPic(tempx + 13, y - 9, 12, 12, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 	}
 	tempx += INFO_CLASS_WIDTH + 4;
@@ -815,7 +815,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		tempx += INFO_LIVES_WIDTH;
 	}
 
-	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Class"), 0, 0, 0, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("C R"), 0, 0, 0, &cgs.media.limboFont2_lo);
 	tempx += INFO_CLASS_WIDTH;
 
 	if (cgs.gametype == GT_WOLF_LMS)
@@ -996,7 +996,7 @@ qboolean CG_DrawScoreboard(void)
 
 	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_INTERMISSION)
 	{
-		fade = 1.0;
+		fade = 1.0f;
 	}
 	else
 	{
@@ -1013,7 +1013,7 @@ qboolean CG_DrawScoreboard(void)
 
 	y = WM_DrawObjectives(x, y, width, fade);
 
-	if (cgs.gametype == GT_WOLF_STOPWATCH && (cg.snap->ps.pm_type == PM_INTERMISSION))
+	if (cgs.gametype == GT_WOLF_STOPWATCH && cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		y = WM_DrawInfoLine(x, 155, fade);
 
