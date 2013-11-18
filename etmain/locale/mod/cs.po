@@ -243,8 +243,8 @@ msgid "Name"
 msgstr "Jmeno"
 
 #: src/cgame/cg_scoreboard.c:704
-msgid "Class"
-msgstr "Trida"
+msgid "C R"
+msgstr "T H"
 
 #: src/cgame/cg_scoreboard.c:709
 msgid "Score"

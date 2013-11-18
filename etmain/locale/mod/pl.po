@@ -247,8 +247,8 @@ msgid "Name"
 msgstr "Nazwa"
 
 #: src/cgame/cg_scoreboard.c:704
-msgid "Class"
-msgstr "Klasa"
+msgid "C R"
+msgstr "K R"
 
 #: src/cgame/cg_scoreboard.c:709
 msgid "Score"
