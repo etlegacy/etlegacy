@@ -248,11 +248,8 @@ START_ANIMATE - if flagged, the entity will spawn animating
 */
 void SP_misc_gamemodel(gentity_t *ent)
 {
-	vec_t  scale;
 	vec3_t vScale;
 	int    trunksize, trunkheight;
-	char   tagname[MAX_QPATH];
-	int    num_frames, start_frame, fps;
 
 	// static gamemodels client side only now :D so server can just wave bye-bye
 	if (!ent->scriptName && !ent->targetname && !ent->spawnflags)
@@ -268,6 +265,8 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 	if (ent->spawnflags & 2)
 	{
+		int num_frames, start_frame, fps;
+
 		G_SpawnInt("frames", "0", &num_frames);
 		G_SpawnInt("start", "0", &start_frame);
 		G_SpawnInt("fps", "20", &fps);
@@ -290,6 +289,8 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 	if (ent->model)
 	{
+		char tagname[MAX_QPATH];
+
 		COM_StripExtension(ent->model, tagname, sizeof(tagname));
 		Q_strcat(tagname, MAX_QPATH, ".tag");
 
@@ -302,6 +303,8 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 	if (!G_SpawnVector("modelscale_vec", "1 1 1", vScale))
 	{
+		vec_t scale;
+
 		if (G_SpawnFloat("modelscale", "1", &scale))
 		{
 			VectorSet(vScale, scale, scale, scale);
@@ -1156,8 +1159,6 @@ void aagun_think(gentity_t *self)
 
 		if (VectorLengthSquared(vec) < Square(96) && owner->active && owner->health > 0)
 		{
-			int i;
-
 			self->active                                   = qtrue;
 			owner->client->ps.persistant[PERS_HWEAPON_USE] = 2;
 			aagun_track(self, owner);
@@ -1211,9 +1212,7 @@ void aagun_think(gentity_t *self)
 
 void aagun_stopusing(gentity_t *self)
 {
-	gentity_t *owner;
-
-	owner = &g_entities[self->r.ownerNum];
+	gentity_t *owner = &g_entities[self->r.ownerNum];
 
 	if (owner && owner->client)
 	{
@@ -1320,8 +1319,6 @@ void SP_aagun(gentity_t *self)
 
 void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
-	vec3_t dang;
-
 	if (!self->active)
 	{
 		return;
@@ -1329,7 +1326,8 @@ void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	if (other->active)
 	{
-		int i;
+		vec3_t dang;
+		int    i;
 
 		for (i = 0; i < 3; i++)
 		{
@@ -1349,8 +1347,6 @@ void mg42_fire(gentity_t *other)
 	gentity_t *self = &g_entities[other->client->ps.viewlocked_entNum];
 	vec3_t    forward, right, up;
 	vec3_t    muzzle;
-
-
 
 	//AngleVectors (self->s.apos.trBase, forward, right, up);
 	AngleVectors(other->client->ps.viewangles, forward, right, up);
@@ -1536,9 +1532,7 @@ void mg42_think(gentity_t *self)
 // this is to be called for the gun ent, not the tripod
 void mg42_stopusing(gentity_t *self)
 {
-	gentity_t *owner;
-
-	owner = &g_entities[self->r.ownerNum];
+	gentity_t *owner = &g_entities[self->r.ownerNum];
 
 	if (owner && owner->client)
 	{
@@ -1564,7 +1558,6 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 {
 	gentity_t *gun;
 	gentity_t *owner;
-	trace_t   tr;
 
 	// self->chain not set if no tripod
 	if (self->chain)
@@ -1595,6 +1588,8 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 
 	if (owner && owner->client)
 	{
+		trace_t tr;
+
 		// Restore original position if current position is bad
 		trap_Trace(&tr, owner->r.currentOrigin, owner->r.mins, owner->r.maxs, owner->r.currentOrigin, owner->s.number, MASK_PLAYERSOLID);
 		if (tr.startsolid)
@@ -1627,9 +1622,7 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 
 void mg42_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	gentity_t *owner;
-
-	owner = &g_entities[ent->r.ownerNum];
+	gentity_t *owner = &g_entities[ent->r.ownerNum];
 
 	if (owner && owner->client)
 	{
@@ -1655,12 +1648,12 @@ void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent);
 
 void mg42_spawn(gentity_t *ent)
 {
-	gentity_t *base, *gun;
-	vec3_t    offset;
-
-	// Xian -- If in knifeonly mode, prevent MG42's from spawning
+	// If in knifeonly mode, prevent MG42's from spawning
 	if (g_knifeonly.integer != 1)
 	{
+		gentity_t *base, *gun;
+		vec3_t    offset;
+
 		// Need to spawn the base even when no tripod cause the gun itself isn't solid
 		base            = G_Spawn();
 		base->classname = "misc_mg42base";   // ease tracking
@@ -1753,7 +1746,6 @@ void mg42_spawn(gentity_t *ent)
 
 		// storing heat now
 		gun->mg42weapHeat = 0;
-		//      gun->mg42firetime    =      0;
 
 		// move track and targetname over to these entities for construction system
 		gun->track = ent->track;
