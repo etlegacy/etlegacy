@@ -3010,7 +3010,7 @@ CG_DrawFlashZoomTransition
 static void CG_DrawFlashZoomTransition(void)
 {
 	float frac;
-	float fadeTime  = 400.f;
+	float fadeTime = 400.f;
 
 	if (!cg.snap)
 	{
