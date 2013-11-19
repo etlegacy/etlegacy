@@ -1766,6 +1766,7 @@ msgstr "Zmiana na poprzednie"
 msgid "setting in %s seconds..."
 msgstr "ustawienia za %s sekund..."
 
+#: src/cgame/cg_fireteams.c:340
 msgid "MESSAGE"
 msgstr "WIADOMOSC"
 
@@ -2486,6 +2487,7 @@ msgstr "MAPY"
 msgid "CAMPAIGNS"
 msgstr "KAMPANIE"
 
+#: src/cgame/cg_fireteams.c:358
 msgid "KICK"
 msgstr "WYRZUC"
 
@@ -2510,6 +2512,7 @@ msgstr "WRZUC DO ALIANTOW"
 msgid "MAKE SPEC"
 msgstr "WRZUC NA WIDZA"
 
+#: src/cgame/cg_fireteams.c:361
 msgid "WARN"
 msgstr "OSTRZEZENIE"
 
@@ -4020,3 +4023,23 @@ msgstr "Oddzial w ktorym jestes rozpadl sie"
 
 msgid "You have been given fireteam admin rights"
 msgstr "Dostales prawa admina oddzialu"
+
+#: src/cgame/cg_fireteams.c:343
+msgid "FIRETEAMS"
+msgstr "ODDZIALY"
+
+#: src/cgame/cg_fireteams.c:346
+msgid "JOIN"
+msgstr "DOLACZ"
+
+#: src/cgame/cg_fireteams.c:349
+msgid "PROPOSE"
+msgstr "ZAPROPONUJ"
+
+#: src/cgame/cg_fireteams.c:355
+msgid "INVITE"
+msgstr "ZAPROS"
+
+#: src/cgame/cg_fireteams.c:364
+msgid "SET ADMIN"
+msgstr "USTAW ADMINA"

@@ -1801,6 +1801,7 @@ msgstr "Navrat k puvodnim nastavenim"
 msgid "setting in %s seconds..."
 msgstr "nastaveni za %s vterin..."
 
+#: src/cgame/cg_fireteams.c:340
 msgid "MESSAGE"
 msgstr "VZKAZ"
 
@@ -2523,6 +2524,7 @@ msgstr "MAPY"
 msgid "CAMPAIGNS"
 msgstr "KAMPANE"
 
+#: src/cgame/cg_fireteams.c:358
 msgid "KICK"
 msgstr "VYKOPNOUT"
 
@@ -2547,6 +2549,7 @@ msgstr ""
 msgid "MAKE SPEC"
 msgstr ""
 
+#: src/cgame/cg_fireteams.c:361
 msgid "WARN"
 msgstr "VAROVAT"
 

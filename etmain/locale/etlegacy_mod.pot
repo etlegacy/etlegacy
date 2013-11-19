@@ -1738,6 +1738,7 @@ msgstr ""
 msgid "setting in %s seconds..."
 msgstr ""
 
+#: src/cgame/cg_fireteams.c:340
 msgid "MESSAGE"
 msgstr ""
 
@@ -2458,6 +2459,7 @@ msgstr ""
 msgid "CAMPAIGNS"
 msgstr ""
 
+#: src/cgame/cg_fireteams.c:358
 msgid "KICK"
 msgstr ""
 
@@ -2482,6 +2484,7 @@ msgstr ""
 msgid "MAKE SPEC"
 msgstr ""
 
+#: src/cgame/cg_fireteams.c:361
 msgid "WARN"
 msgstr ""
 
@@ -3962,4 +3965,24 @@ msgid "The Fireteam you are on has been disbanded"
 msgstr ""
 
 msgid "You have been given fireteam admin rights"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:343
+msgid "FIRETEAMS"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:346
+msgid "JOIN"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:349
+msgid "PROPOSE"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:355
+msgid "INVITE"
+msgstr ""
+	
+#: src/cgame/cg_fireteams.c:364
+msgid "SET ADMIN"
 msgstr ""
