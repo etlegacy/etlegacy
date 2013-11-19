@@ -690,11 +690,11 @@ void CG_DrawPlayerSF(panel_button_t *button, int *pageofs)
 	{
 		if (cg_quickMessageAlt.integer)
 		{
-			str = va("%i. %s", (8 + 1) % 10, "Previous");
+			str = va("%i. %s", (8 + 1) % 10, CG_TranslateString("Previous"));
 		}
 		else
 		{
-			str = va("%c. %s", 'P', "Previous");
+			str = va("%c. %s", 'P', CG_TranslateString("Previous"));
 		}
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, str, 0, 0, button->font->style, button->font->font);
 
@@ -706,11 +706,11 @@ void CG_DrawPlayerSF(panel_button_t *button, int *pageofs)
 	{
 		if (cg_quickMessageAlt.integer)
 		{
-			str = va("%i. %s", (9 + 1) % 10, "Next");
+			str = va("%i. %s", (9 + 1) % 10, CG_TranslateString("Next"));
 		}
 		else
 		{
-			str = va("%c. %s", 'N', "Next");
+			str = va("%c. %s", 'N', CG_TranslateString("Next"));
 		}
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, str, 0, 0, button->font->style, button->font->font);
 
@@ -751,11 +751,11 @@ void CG_DrawPlayerNF(panel_button_t *button, int *pageofs)
 	{
 		if (cg_quickMessageAlt.integer)
 		{
-			str = va("%i. %s", (8 + 1) % 10, "Previous");
+			str = va("%i. %s", (8 + 1) % 10, CG_TranslateString("Previous"));
 		}
 		else
 		{
-			str = va("%c. %s", 'P', "Previous");
+			str = va("%c. %s", 'P', CG_TranslateString("Previous"));
 		}
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, str, 0, 0, button->font->style, button->font->font);
 
@@ -767,11 +767,11 @@ void CG_DrawPlayerNF(panel_button_t *button, int *pageofs)
 	{
 		if (cg_quickMessageAlt.integer)
 		{
-			str = va("%i. %s", (9 + 1) % 10, "Next");
+			str = va("%i. %s", (9 + 1) % 10, CG_TranslateString("Next"));
 		}
 		else
 		{
-			str = va("%c. %s", 'N', "Next");
+			str = va("%c. %s", 'N', CG_TranslateString("Next"));
 		}
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, str, 0, 0, button->font->style, button->font->font);
 
