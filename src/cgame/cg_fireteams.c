@@ -337,31 +337,31 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button)
 	switch (cgs.ftMenuMode)
 	{
 	case 0:
-		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "MESSAGE", 0, 0, button->font->style, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("MESSAGE"), 0, 0, button->font->style, button->font->font);
 		break;
 	case 1:
-		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "FIRETEAMS", 0, 0, button->font->style, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("FIRETEAMS"), 0, 0, button->font->style, button->font->font);
 		break;
 	case 2:
-		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "JOIN", 0, 0, button->font->style, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("JOIN"), 0, 0, button->font->style, button->font->font);
 		break;
 	case 3:
-		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "PROPOSE", 0, 0, button->font->style, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("PROPOSE"), 0, 0, button->font->style, button->font->font);
 		break;
 	case 4:
 		switch (cgs.ftMenuPos)
 		{
 		case 2:
-			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "INVITE", 0, 0, button->font->style, button->font->font);
+			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("INVITE"), 0, 0, button->font->style, button->font->font);
 			break;
 		case 3:
-			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "KICK", 0, 0, button->font->style, button->font->font);
+			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("KICK"), 0, 0, button->font->style, button->font->font);
 			break;
 		case 4:
-			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "WARN", 0, 0, button->font->style, button->font->font);
+			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("WARN"), 0, 0, button->font->style, button->font->font);
 			break;
 		case 6:
-			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "SET ADMIN", 0, 0, button->font->style, button->font->font);
+			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SET ADMIN"), 0, 0, button->font->style, button->font->font);
 			break;
 		}
 	}
