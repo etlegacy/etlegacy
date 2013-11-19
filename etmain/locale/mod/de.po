@@ -1781,6 +1781,7 @@ msgstr ""
 msgid "setting in %s seconds..."
 msgstr ""
 
+#: src/cgame/cg_fireteams.c:340
 msgid "MESSAGE"
 msgstr ""
 
@@ -2498,6 +2499,7 @@ msgstr "KARTEN"
 msgid "CAMPAIGNS"
 msgstr "KAMPAGNEN"
 
+#: src/cgame/cg_fireteams.c:358
 msgid "KICK"
 msgstr ""
 
@@ -2522,6 +2524,7 @@ msgstr ""
 msgid "MAKE SPEC"
 msgstr ""
 
+#: src/cgame/cg_fireteams.c:361
 msgid "WARN"
 msgstr ""
 
