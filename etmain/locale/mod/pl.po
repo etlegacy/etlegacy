@@ -4043,3 +4043,13 @@ msgstr "ZAPROS"
 #: src/cgame/cg_fireteams.c:364
 msgid "SET ADMIN"
 msgstr "USTAW ADMINA"
+
+#: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
+#: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
+msgid "Previous"
+msgstr "Poprzedni"
+
+#: src/cgame/cg_fireteams.c:709 src/cgame/cg_fireteams.c:713
+#: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
+msgid "Next"
+msgstr "Nastepny"
