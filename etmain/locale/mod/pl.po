@@ -4101,3 +4101,105 @@ msgstr "Inny gracz musi byc w tym samym oddziale aby moglbys dac mu prawa admina
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
 msgstr "Musisz byc adminem oddzialu aby dac prawa admina komus innemu"
+
+msgid "Invalid referee password!\n"
+msgstr "Nieprawidlowe haslo sedziego!\n"
+
+msgid "Usage: ref [password]\n"
+msgstr "Uzycie: ref [haslo]\n"
+
+msgid "\n^3Referee commands:^7\n"
+msgstr "\n^3Komendy sedziego:^7\n"
+
+msgid "Usage: ^3\\ref <cmd> [params]\n\n"
+msgstr "Uzycie: ^3\\ref <komenda> [parametry]\n\n"
+
+msgid "^5pause speclock warmup ^7[value]\n"
+msgstr "^5pause speclock warmup ^7[wartosc]\n"
+
+msgid "Sorry, referee status disabled on this server.\n"
+msgstr "Wybacz, status sedziego wylaczony na tym serwerze.\n"
+
+msgid "Referee has ^3LOCKED^7 teams\n"
+msgstr "Sedzia ^3ZABLOKOWAL^7 zespoly\n"
+
+msgid "You have LOCKED teams\n"
+msgstr "ZABLOKOWALES zespoly\n"
+
+msgid "Referee has ^3UNLOCKED^7 teams\n"
+msgstr "Sedzia ^3ODBLOKOWAL^7 zespoly\n"
+
+msgid "You have UNLOCKED teams\n"
+msgstr "ODBLOKOWALES zespoly\n"
+
+msgid "The ^4Allies^7 team is LOCKED!\n"
+msgstr "Zespol ^4Alliancki^7 jest ZABLOKOWANY!\n"
+
+msgid "The ^1Axis^7 team is LOCKED!\n"
+msgstr "Zespol ^1Osi^7 jest ZABLOKOWANY!\n"
+
+msgid "^3Referee ^1PAUSED^3 the match^3!\n"
+msgstr "^3Sedzia ^1ZATRZYMAL^3 mecz^3!\n"
+
+msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
+msgstr "^3Mecz ^1ZATRZYMANY^3! (^7Sedzia^3)\n"
+
+msgid "The match is already ^1PAUSED!\n"
+msgstr "Mecz jest juz ^1ZATRZYMANY!\n"
+
+msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
+msgstr "^3Sedzia ^5WZNOWIL^3 mecz ... wznowienie za 10 sekund!\n"
+
+msgid "The match is already ^5UNPAUSED!\n"
+msgstr "Mecz jest juz ^5WZNOWIONY!\n"
+
+msgid "Bad client slot: "
+msgstr "Zly slot klienta: "
+
+msgid "Client"
+msgstr "Klient"
+
+msgid "is not active\n"
+msgstr "nie jest aktywny\n"
+
+msgid "You can only remove people in the game!\n"
+msgstr "Mozesz tylko usuwac ludzi w grze!\n"
+
+msgid "User "
+msgstr "Uzytkownik "
+
+msgid "is not on the server\n"
+msgstr "nie jest na serwerze\n"
+
+msgid "^5You've been removed from the ^4Allies^7 team\n"
+msgstr "^5Zostales usuniety z ^4Allianckiego^7 zespolu\n"
+
+msgid "^5You've been removed from the ^1Axis^7 team\n"
+msgstr "^5Zostales usuniety z ^7zespolu ^1Osi\n"
+
+msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
+msgstr "Sedzia ^3ZABLOKOWAL OBSERWATOROW\n"
+
+msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
+msgstr "Sedzia ^3ODBLOKOWAL OBSERWATOROW\n"
+
+msgid "usage: ref warn <clientname> [reason].\n"
+msgstr "uzycie: ref warn <nazwaklienta> [powod].\n"
+
+msgid "Client not on server.\n"
+msgstr "Nie ma Klienta na serwerze.\n"
+
+msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
+msgstr "%s^7 otrzymal ^1Ostrzezenie^7 (Brak Dostatecznego Powodu)\n"
+
+msgid "Cannot mute a referee.\n"
+msgstr "Nie mozna uciszyc sedziego.\n"
+
+msgid "^5You've been muted\n"
+msgstr "^5Zostales uciszony\n"
+
+msgid "Can't chat - you are muted\n"
+msgstr "Nie mozesz pisac - jestes uciszony\n"
+
+msgid "^5You've been unmuted\n"
+msgstr "^5Dostales mozliwosc pisania\n"

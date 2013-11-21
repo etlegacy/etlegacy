@@ -4044,3 +4044,105 @@ msgstr ""
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
 msgstr ""
+
+msgid "Invalid referee password!\n"
+msgstr ""
+
+msgid "Usage: ref [password]\n"
+msgstr ""
+
+msgid "\n^3Referee commands:^7\n"
+msgstr ""
+
+msgid "Usage: ^3\\ref <cmd> [params]\n\n"
+msgstr ""
+
+msgid "^5pause speclock warmup ^7[value]\n"
+msgstr ""
+
+msgid "Sorry, referee status disabled on this server.\n"
+msgstr ""
+
+msgid "Referee has ^3LOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have LOCKED teams\n"
+msgstr ""
+
+msgid "Referee has ^3UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have UNLOCKED teams\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "^3Referee ^1PAUSED^3 the match^3!\n"
+msgstr ""
+
+msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
+msgstr ""
+
+msgid "The match is already ^1PAUSED!\n"
+msgstr ""
+
+msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
+msgstr ""
+
+msgid "The match is already ^5UNPAUSED!\n"
+msgstr ""
+
+msgid "Bad client slot: "
+msgstr ""
+
+msgid "Client"
+msgstr ""
+
+msgid "is not active\n"
+msgstr ""
+
+msgid "You can only remove people in the game!\n"
+msgstr ""
+
+msgid "User "
+msgstr ""
+
+msgid "is not on the server\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^4Allies^7 team\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^1Axis^7 team\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "usage: ref warn <clientname> [reason].\n"
+msgstr ""
+
+msgid "Client not on server.\n"
+msgstr ""
+
+msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
+msgstr ""
+
+msgid "Cannot mute a referee.\n"
+msgstr ""
+
+msgid "^5You've been muted\n"
+msgstr ""
+
+msgid "Can't chat - you are muted\n"
+msgstr ""
+
+msgid "^5You've been unmuted\n"
+msgstr ""
