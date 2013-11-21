@@ -4053,3 +4053,51 @@ msgstr "Poprzedni"
 #: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
 msgid "Next"
 msgstr "Nastepny"
+
+msgid "Too many players already on this Fireteam"
+msgstr "Zbyt duzo graczy juz w tym Oddziale"
+
+msgid "The leader has now left the Fireteam you applied to"
+msgstr "Lider odszedl z Oddzialu do ktorego chciales dojsc"
+
+msgid "The other player is already on a fireteam"
+msgstr "Ten gracz jest juz w oddziale"
+
+msgid "You are not on the same team as the other player"
+msgstr "Nie jestes w tym samym zespole jak inny gracz"
+
+msgid "You are not on the same Fireteam as the other player"
+msgstr "Nie jestes w tym samym Oddziale jak inny gracz"
+
+msgid "Invalid client selected"
+msgstr "Niewlasciwie wybrany klient"
+
+msgid "usage: fireteam admin <clientname|clientnumber>"
+msgstr "uzycie: fireteam admin <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam propose <clientname|clientnumber>"
+msgstr "uzycie: fireteam propose <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam kick <clientname|clientnumber>"
+msgstr "uzycie: fireteam kick <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam warn <clientname|clientnumber>"
+msgstr "uzycie: fireteam warn <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam invite <clientname|clientnumber>"
+msgstr "uzycie: fireteam invite <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
+msgstr "uzycie: fireteam apply <nazwaoddzialu|numeroddzialu>"
+
+msgid "usage: fireteam <create|leave|apply|invite>"
+msgstr "uzycie: fireteam <create|leave|apply|invite>"
+
+msgid "You are already on a fireteam, leave it first"
+msgstr "Jestes juz w oddziale, wpierw odejdz"
+
+msgid "The other player must be on the same fireteam for you to give admin rights to"
+msgstr "Inny gracz musi byc w tym samym oddziale aby moglbys dac mu prawa admina"
+
+msgid "You must be a fireteam admin to give admin rights to someone else"
+msgstr "Musisz byc adminem oddzialu aby dac prawa admina komus innemu"

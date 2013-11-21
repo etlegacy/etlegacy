@@ -3996,3 +3996,51 @@ msgstr ""
 #: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
 msgid "Next"
 msgstr ""
+
+msgid "Too many players already on this Fireteam"
+msgstr ""
+
+msgid "The leader has now left the Fireteam you applied to"
+msgstr ""
+
+msgid "The other player is already on a fireteam"
+msgstr ""
+
+msgid "You are not on the same team as the other player"
+msgstr ""
+
+msgid "You are not on the same Fireteam as the other player"
+msgstr ""
+
+msgid "Invalid client selected"
+msgstr ""
+
+msgid "usage: fireteam admin <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam propose <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam kick <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam warn <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam invite <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
+msgstr ""
+
+msgid "usage: fireteam <create|leave|apply|invite>"
+msgstr ""
+
+msgid "You are already on a fireteam, leave it first"
+msgstr ""
+
+msgid "The other player must be on the same fireteam for you to give admin rights to"
+msgstr ""
+
+msgid "You must be a fireteam admin to give admin rights to someone else"
+msgstr ""
