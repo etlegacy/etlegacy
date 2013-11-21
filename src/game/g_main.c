@@ -4540,6 +4540,15 @@ void G_RunFrame(int levelTime)
 		return;
 	}
 
+	// workaround for q3 bug
+	// levelTime will start over when the timelimit expires on dual objective maps.
+	if (level.previousTime > level.time)
+	{
+		level.overTime = level.previousTime;
+	}
+
+	levelTime = levelTime + level.overTime;
+
 	// Handling of pause offsets
 	if (level.match_pause == PAUSE_NONE)
 	{
