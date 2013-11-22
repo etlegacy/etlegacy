@@ -4203,3 +4203,15 @@ msgstr "Nie mozesz pisac - jestes uciszony\n"
 
 msgid "^5You've been unmuted\n"
 msgstr "^5Dostales mozliwosc pisania\n"
+
+msgid "\n"
+"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+msgstr "\n"
+"^3 ID^1 : ^3Gracz                     Nudge  Rate  MaxPkts  Snaps\n"
+
+msgid "\n"
+"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
+"Snaps\n"
+msgstr "\n"
+"^3Status^1   : ^3ID^1 : ^3Gracz                     Nudge  Rate  MaxPkts  "
+"Snaps\n"
