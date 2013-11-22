@@ -4146,3 +4146,12 @@ msgstr ""
 
 msgid "^5You've been unmuted\n"
 msgstr ""
+
+msgid "\n"
+"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+msgstr ""
+
+msgid "\n"
+"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
+"Snaps\n"
+msgstr ""
