@@ -654,7 +654,7 @@ gitem_t bg_itemlist[] =
 		},
 		NULL,
 		NULL,   // ammo icon
-		"Health",
+		"Health Pack",
 		0,
 		IT_HEALTH,
 		0,
