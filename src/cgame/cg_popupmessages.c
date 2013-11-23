@@ -555,7 +555,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	}
 	else
 	{
-		size  = -2;
+		size  = 2;
 		sizew = 0;
 	}
 
@@ -625,7 +625,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		}
 		else
 		{
-			size  = -2;
+			size  = 2;
 			sizew = 0;
 		}
 

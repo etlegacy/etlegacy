@@ -89,7 +89,7 @@ static void CG_Obituary(entityState_t *ent)
 		message = "committed suicide";
 		break;
 	case MOD_FALLING:
-		message = "rediscovered gravity.";
+		message = "rediscovered gravity";
 		break;
 	case MOD_CRUSH:
 		message = "was crushed";
@@ -538,7 +538,7 @@ static void CG_Obituary(entityState_t *ent)
 
 	// we don't know what it was
 	CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, NULL);
-	trap_Print(va("%s died.\n", targetName));
+	trap_Print(va("%s died\n", targetName));
 }
 
 //==========================================================================

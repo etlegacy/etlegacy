@@ -2682,42 +2682,48 @@ static qboolean CG_DrawFollow(void)
 		if (cg.snap->ps.clientNum != cg.clientNum)
 		{
 			char *follow    = CG_TranslateString("Following");
+			char *w         = cgs.clientinfo[cg.snap->ps.clientNum].cleanname;
 			int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-			int  startClass = CG_Text_Width_Ext(va("(%s ", follow), fontScale, 0, &cgs.media.limboFont2) + 3;
-			int  startRank;
-			char *w;
+			int  startClass = CG_Text_Width_Ext(va("(%s", follow), fontScale, 0, &cgs.media.limboFont2) + charWidth;
+			int  startRank  = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
+			int  endRank;
+
+			CG_DrawPic(INFOTEXT_STARTX + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
 			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 			{
-				w         = va("(%s  %s  )", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
-				startRank = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2);
-				CG_DrawPic(INFOTEXT_STARTX + startRank - 3 * charWidth, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+				CG_DrawPic(INFOTEXT_STARTX + startClass + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+				endRank = 14;
 			}
 			else
 			{
-				w = va("(%s  %s)", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
+				endRank = -charWidth;
 			}
 
-			CG_DrawPic(startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
-			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, va("(%s", follow), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(INFOTEXT_STARTX + startClass + 14 + charWidth, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(INFOTEXT_STARTX + startClass + startRank + endRank, y, fontScale, fontScale, colorWhite, ")", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
 	}
 	else
 	{
 		char *follow    = CG_TranslateString("Following");
-		char *w         = va("%s  %s", follow, cgs.clientinfo[cg.snap->ps.clientNum].cleanname);
-		int  startClass = CG_Text_Width_Ext(va("%s ", follow), fontScale, 0, &cgs.media.limboFont2) + 3;
+		char *w         = cgs.clientinfo[cg.snap->ps.clientNum].cleanname;
+		int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int  startClass = CG_Text_Width_Ext(follow, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
-		CG_DrawPic(startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
-		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawPic(INFOTEXT_STARTX + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 		{
 			int startRank;
 
-			startRank = CG_Text_Width_Ext(va("%s ", w), fontScale, 0, &cgs.media.limboFont2);
-			CG_DrawPic(INFOTEXT_STARTX + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			startRank = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
+			CG_DrawPic(INFOTEXT_STARTX + startClass + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
+
+		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, follow, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(INFOTEXT_STARTX + startClass + 14 + charWidth, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	return qtrue;
