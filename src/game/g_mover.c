@@ -3200,7 +3200,7 @@ void info_limbo_camera_setup(gentity_t *self)
 	caminfo = &level.limboCams[level.numLimboCams];
 	level.numLimboCams++;
 
-	if (!self->target || !*self->target)
+	if (!self->target || !*self->target || !self->target[0])
 	{
 		G_Error("info_limbo_camera with no target\n");
 	}
@@ -3208,7 +3208,7 @@ void info_limbo_camera_setup(gentity_t *self)
 	target = G_FindByTargetname(NULL, self->target);
 	if (!target)
 	{
-		G_Error("info_limbo_camera cannot find target\n");
+		G_Error("info_limbo_camera cannot find target '%s'\n", self->target);
 	}
 
 	VectorCopy(self->s.origin, caminfo->origin);
@@ -3218,16 +3218,14 @@ void info_limbo_camera_setup(gentity_t *self)
 	switch (target->s.eType)
 	{
 	case ET_MOVER:
-		caminfo->hasEnt = qtrue;
-		caminfo->spawn  = qfalse;
-
+		caminfo->hasEnt    = qtrue;
+		caminfo->spawn     = qfalse;
 		caminfo->targetEnt = target - g_entities;
 		break;
 
 	case ET_WOLF_OBJECTIVE:
-		caminfo->hasEnt = qfalse;
-		caminfo->spawn  = qtrue;
-
+		caminfo->hasEnt    = qfalse;
+		caminfo->spawn     = qtrue;
 		caminfo->targetEnt = target - g_entities;
 		break;
 
@@ -4469,7 +4467,6 @@ void SP_target_explosion(gentity_t *ent)
 {
 	char *type;
 	char *s;
-	char buffer[MAX_QPATH];
 
 	if (ent->spawnflags & 1)      // force lowgravity
 	{
@@ -4533,6 +4530,8 @@ void SP_target_explosion(gentity_t *ent)
 	{
 		if (Q_stricmp(s, "nosound"))
 		{
+			char buffer[MAX_QPATH];
+
 			Q_strncpyz(buffer, s, sizeof(buffer));
 			ent->s.dl_intensity = G_SoundIndex(buffer);
 		}
