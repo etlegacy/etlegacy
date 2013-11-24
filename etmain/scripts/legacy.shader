@@ -932,7 +932,7 @@ models/weapons2/browning/barrel
 	}
 }
 
-//Axis Granatwefer 34
+// Axis Granatwefer 34
 models/multiplayer/mortar/mortar_ax
 {
 	{
@@ -955,6 +955,19 @@ models/multiplayer/mortar/mortar_shell_ax
 	}
 }
 
+models/multiplayer/mortar/mortar_sd
+{
+	{
+		map textures/effects/envmap_slate.tga
+		rgbGen lightingdiffuse
+		tcGen environment
+	}
+	{
+		map models/multiplayer/mortar/mortar_sd.tga
+		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
+		rgbGen lightingdiffuse
+	}
+}
 
 // Helmet Ranks 
 models/players/temperate/common/rank1
@@ -1419,5 +1432,17 @@ gfx/hud/ranks/xrank11
 		map gfx/hud/ranks/xrank11.tga
 		blendfunc blend
 		rgbGen vertex
+	}
+}
+
+// Disguised Shader
+sprites/disguised
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/undercover.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex	
 	}
 }
