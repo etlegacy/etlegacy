@@ -150,23 +150,15 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		y += 13;
 
+		CG_FillRect(x - 5, y - 15, width + 5, 21, clrUiBar);
+		CG_DrawRect_FixedBorder(x - 5, y - 15, width + 5, 21, 1, colorBlack);
+
+		y += 3 * (rows - 1);
+
 		if (CG_ConfigString(CS_CONFIGNAME)[0])
 		{
-			CG_FillRect(x - 5, y - 15, width + 5, 35, clrUiBar);
-			CG_DrawRect_FixedBorder(x - 5, y - 15, width + 5, 35, 1, colorBlack);
-
-			s = va(CG_TranslateString("Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
-			CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
-
-			y += 16;
-		}
-		else
-		{
-			CG_FillRect(x - 5, y - 15, width + 5, 21, clrUiBack);
-			CG_FillRect(x - 5, y - 15, width + 5, 21, clrUiBar);
-			CG_DrawRect_FixedBorder(x - 5, y - 15, width + 5, 21, 1, colorBlack);
-
-			y += 3 * (rows - 1);
+			CG_FillRect(x - 5, y + 5, width + 5, 18, clrUiBack);
+			CG_DrawRect_FixedBorder(x - 5, y + 5, width + 5, 18, 1, colorBlack);
 		}
 
 		if (cgs.timelimit > 0.0f)
@@ -265,7 +257,15 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			break;
 		}
 
-		y += 19;
+		y += 18;
+
+		if (CG_ConfigString(CS_CONFIGNAME)[0])
+		{
+			s = va(CG_TranslateString("Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
+			CG_Text_Paint_Ext(x, y, 0.24f, 0.28f, tclr, s, 0, 0, 0, &cgs.media.limboFont2_lo);
+
+			y += 18;
+		}
 	}
 	return y;
 }
