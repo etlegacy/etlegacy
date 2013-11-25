@@ -1436,7 +1436,7 @@ gfx/hud/ranks/xrank11
 }
 
 // Disguised Shader
-sprites/disguised
+sprites/undercover
 {
 	nocompress
 	nopicmip
