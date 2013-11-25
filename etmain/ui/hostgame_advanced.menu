@@ -78,7 +78,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Successful voting:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Specifies the minimum percentage required for a vote to pass" )
 	
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "ALLOW VOTES" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Comp Settings:", .2, 24, 8, "vote_allow_comp", "Allow players to vote for competition settings" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Game config:", .2, 24, 8, "vote_allow_config", "Allow players to vote for game config" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Game Type:", .2, 24, 8, "vote_allow_gametype", "Allow players to vote for a change in game type" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "Player Kick:", .2, 24, 8, "vote_allow_kick", "Allow players to vote for other players to be kicked" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Map:", .2, 24, 8, "vote_allow_map", "Allow players to vote for a different campaign or map" )
@@ -86,8 +86,9 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Mute Spects:", .2, 24, 8, "vote_allow_mutespecs", "Allow players to vote for spectators to be muted" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Next Map:", .2, 24, 8, "vote_allow_nextmap", "Allow players to vote for the next campaign or map" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balanced Teams:", .2, 24, 8, "vote_allow_balancedteams", "Allow players to vote for enforced team balance" )
-	
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pub Settings:", .2, 24, 8, "vote_allow_pub", "Allow players to vote for public settings" )
+
+//Deprecated	
+//	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pub Settings:", .2, 24, 8, "vote_allow_pub", "Allow players to vote for public settings" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Referee:", .2, 24, 8, "vote_allow_referee", "Allow players to vote for a referee" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "XP Shuffle:", .2, 24, 8, "vote_allow_shuffleteamsxp", "Allow players to vote for teams to be shuffled" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Swap Teams:", .2, 24, 8, "vote_allow_swapteams", "Allow players to vote for teams to swap sides" )

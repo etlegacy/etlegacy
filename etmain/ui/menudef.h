@@ -398,14 +398,14 @@
 #define CV_SVS_NEXTMAP          512
 
 // "cg_ui_voteFlags"
-#define CV_SVF_COMP             1
+#define CV_SVF_CONFIG           1
 #define CV_SVF_GAMETYPE         2
 #define CV_SVF_KICK             4
 #define CV_SVF_MAP              8
 #define CV_SVF_MATCHRESET       16
 #define CV_SVF_MUTESPECS        32
 #define CV_SVF_NEXTMAP          64
-#define CV_SVF_PUB              128
+//#define CV_SVF_PUB              128 //This is freed for reuse
 #define CV_SVF_REFEREE          256
 #define CV_SVF_SHUFFLETEAMS     512
 #define CV_SVF_SWAPTEAMS        1024

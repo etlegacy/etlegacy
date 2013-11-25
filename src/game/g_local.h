@@ -1629,14 +1629,13 @@ extern vmCvar_t team_nocontrols;
 
 // NOTE!!! If any vote flags are added, MAKE SURE to update the voteFlags struct in bg_misc.c w/appropriate info,
 //         menudef.h for the mask and g_main.c for vote_allow_* flag updates
-extern vmCvar_t vote_allow_comp;
+extern vmCvar_t vote_allow_config;
 extern vmCvar_t vote_allow_gametype;
 extern vmCvar_t vote_allow_kick;
 extern vmCvar_t vote_allow_map;
 extern vmCvar_t vote_allow_matchreset;
 extern vmCvar_t vote_allow_mutespecs;
 extern vmCvar_t vote_allow_nextmap;
-extern vmCvar_t vote_allow_pub;
 extern vmCvar_t vote_allow_referee;
 extern vmCvar_t vote_allow_shuffleteamsxp;
 extern vmCvar_t vote_allow_swapteams;
