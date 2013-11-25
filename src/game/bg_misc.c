@@ -4438,14 +4438,13 @@ const char *bg_fireteamNames[MAX_FIRETEAMS / 2] =
 
 const voteType_t voteToggles[] =
 {
-	{ "vote_allow_comp",           CV_SVF_COMP          },
+	{ "vote_allow_config",         CV_SVF_CONFIG        },
 	{ "vote_allow_gametype",       CV_SVF_GAMETYPE      },
 	{ "vote_allow_kick",           CV_SVF_KICK          },
 	{ "vote_allow_map",            CV_SVF_MAP           },
 	{ "vote_allow_matchreset",     CV_SVF_MATCHRESET    },
 	{ "vote_allow_mutespecs",      CV_SVF_MUTESPECS     },
 	{ "vote_allow_nextmap",        CV_SVF_NEXTMAP       },
-	{ "vote_allow_pub",            CV_SVF_PUB           },
 	{ "vote_allow_referee",        CV_SVF_REFEREE       },
 	{ "vote_allow_shuffleteamsxp", CV_SVF_SHUFFLETEAMS  },
 	{ "vote_allow_swapteams",      CV_SVF_SWAPTEAMS     },

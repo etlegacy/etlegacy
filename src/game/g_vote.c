@@ -322,7 +322,7 @@ int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 			G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
 			return(G_INVALID);
 		}
-		else if (vote_allow_comp.integer <= 0 && ent && !ent->client->sess.referee)
+		else if (vote_allow_config.integer <= 0 && ent && !ent->client->sess.referee)
 		{
 			G_voteDisableMessage(ent, arg);
 			return(G_INVALID);
@@ -845,7 +845,7 @@ int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 			G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
 			return(G_INVALID);
 		}
-		else if (vote_allow_pub.integer <= 0 && ent && !ent->client->sess.referee)
+		else if (vote_allow_config.integer <= 0 && ent && !ent->client->sess.referee)
 		{
 			G_voteDisableMessage(ent, arg);
 			return(G_INVALID);
@@ -1110,7 +1110,7 @@ int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 			G_PrintConfigs(ent);
 			return(G_INVALID);
 		}
-		else if (vote_allow_comp.integer <= 0 && ent && !ent->client->sess.referee)
+		else if (vote_allow_config.integer <= 0 && ent && !ent->client->sess.referee)
 		{
 			G_voteDisableMessage(ent, arg);
 			return(G_INVALID);
