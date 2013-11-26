@@ -100,9 +100,6 @@ extern vec3_t playerlegsProneMaxs;
 #define MG42_DAMAGE_MP          20
 #define MG42_RATE_OF_FIRE_MP    66
 
-#define MG42_DAMAGE_SP          40
-#define MG42_RATE_OF_FIRE_SP    100
-
 #define AAGUN_RATE_OF_FIRE  100
 #define MG42_YAWSPEED       300.f       // degrees per second
 
@@ -2160,9 +2157,7 @@ int BG_simpleHintsExpand(int hint, int val);
 int BG_simpleWeaponState(int ws);
 
 // Color escape handling
-int BG_colorstrncpyz(char *in, char *out, int str_max, int out_max);
 int BG_drawStrlen(const char *str);
-int BG_strRelPos(char *in, int index);
 int BG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF);
 
 // Crosshair support

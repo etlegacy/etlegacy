@@ -4573,6 +4573,7 @@ int BG_simpleHintsExpand(int hint, int val)
 #endif
 
 // Real printable charater count
+// FIXME: move to cgame
 int BG_drawStrlen(const char *str)
 {
 	int cnt = 0;
@@ -4592,68 +4593,9 @@ int BG_drawStrlen(const char *str)
 	return(cnt);
 }
 
-// Copies a color string, with limit of real chars to print
-//      in = reference buffer w/color
-//      out = target buffer
-//      str_max = max size of printable string
-//      out_max = max size of target buffer
-//
-// Returns size of printable string
-int BG_colorstrncpyz(char *in, char *out, int str_max, int out_max)
-{
-	int       str_len = 0;     // current printable string size
-	int       out_len = 0;     // current true string size
-	const int in_len  = strlen(in);
-
-	out_max--;
-	while (*in && out_len < out_max && str_len < str_max)
-	{
-		if (*in == '^')
-		{
-			if (out_len + 2 >= in_len && out_len + 2 >= out_max)
-			{
-				break;
-			}
-
-			*out++   = *in++;
-			*out++   = *in++;
-			out_len += 2;
-			continue;
-		}
-
-		*out++ = *in++;
-		str_len++;
-		out_len++;
-	}
-
-	*out = 0;
-
-	return(str_len);
-}
-
-int BG_strRelPos(char *in, int index)
-{
-	int        cPrintable = 0;
-	const char *ref       = in;
-
-	while (*ref && cPrintable < index)
-	{
-		if (Q_IsColorString(ref))
-		{
-			ref += 2;
-		}
-		else
-		{
-			ref++;
-			cPrintable++;
-		}
-	}
-
-	return(ref - in);
-}
-
 // strip colors and control codes, copying up to dwMaxLength-1 "good" chars and nul-terminating
 // returns the length of the cleaned string
+// FIXME: move to cgame
 int BG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF)
 {
 	const char *pInCopy     = pszIn;
