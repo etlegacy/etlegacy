@@ -446,6 +446,11 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 			continue;
 		}
 
+		if (!from->targetname) // there are ents with no targetname set
+		{
+			continue;
+		}
+
 		if (from->targetnamehash == hash && !Q_stricmp(from->targetname, match))
 		{
 			return from;
@@ -472,6 +477,11 @@ gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
 	for ( ; from < max ; from++)
 	{
 		if (!from->inuse)
+		{
+			continue;
+		}
+
+		if (!from->targetname) // there are ents with no targetname set
 		{
 			continue;
 		}
