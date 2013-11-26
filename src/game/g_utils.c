@@ -424,6 +424,12 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 	gentity_t *max = &g_entities[level.num_entities];
 	int       hash = BG_StringHashValue(match);
 
+	if (hash == -1) // if there is no name (not empty string!) BG_StringHashValue returns -1
+	{
+		G_Printf("G_FindByTargetname WARNING: invalid match pointer");
+		//return NULL; ?!
+	}
+
 	if (!from)
 	{
 		from = g_entities;
@@ -769,6 +775,7 @@ gentity_t *G_Spawn(void)
 
 			// the first couple seconds of server time can involve a lot of
 			// freeing and allocating, so relax the replacement policy
+			// FIXME: inspect -> add '&& level.startTime != 0' for warmup?
 			if (!force && e->freetime > level.startTime + 2000 && level.time - e->freetime < 1000)
 			{
 				continue;
