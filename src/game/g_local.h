@@ -895,7 +895,7 @@ typedef struct level_locals_s
 
 	struct gentity_s *gentities;
 
-	int num_entities;                   // current number, <= MAX_GENTITIES
+	int num_entities;                   // current number, <= MAX_GENTITIES - this is an index of highest used entity and grows very quickly to MAX_GENTITIES
 
 	int warmupTime;                     // restart match at this time
 

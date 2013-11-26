@@ -736,12 +736,11 @@ void Svcmd_EntityList_f(void)
 		{
 			if (trap_Argc() > 1)
 			{
-				G_Printf("^2%4i: %s (%i)\n", e, check->classname, check->neverFree);
+				G_Printf("^2%4i: %s %s\n", e, check->classname, check->targetname);
 			}
 			entsFree++;
 			continue;
 		}
-
 
 		// print the ents which are in use
 		G_Printf("^7%4i: ", e);
@@ -757,11 +756,11 @@ void Svcmd_EntityList_f(void)
 
 		if (check->classname)
 		{
-			G_Printf(" %s (%i)\n", check->classname, check->neverFree);
+			G_Printf(" %s ^1%s^7\n", check->classname, check->targetname);
 		}
 		else
 		{
-			G_Printf(" *unknown classname* (%i)\n", check->neverFree);
+			G_Printf(" *unknown classname* %s\n", check->targetname);
 		}
 	}
 	G_Printf("%4i: entities not in use\n", entsFree);

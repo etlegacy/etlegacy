@@ -356,6 +356,7 @@ long BG_StringHashValue(const char *fname)
 	if (hash == -1)
 	{
 		hash = 0;   // never return -1
+		Com_Printf("BG_StringHash WARNING: fname with empty string returning 0");
 	}
 	return hash;
 }
