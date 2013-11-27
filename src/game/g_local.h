@@ -1724,6 +1724,8 @@ extern vmCvar_t g_customConfig;
 
 extern vmCvar_t g_moverScale;
 
+extern vmCvar_t g_debugHitboxes;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;

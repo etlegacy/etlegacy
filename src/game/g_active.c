@@ -1568,6 +1568,34 @@ void ClientThink_real(gentity_t *ent)
 		}
 	}
 
+	// debug hitboxes
+	if (g_debugHitboxes.integer == 2)
+	{
+		gentity_t *bboxEnt, *head;
+		vec3_t    b1, b2;
+		vec3_t    maxs;
+
+		VectorCopy(ent->r.currentOrigin, b1);
+		VectorCopy(ent->r.currentOrigin, b2);
+		VectorAdd(b1, ent->r.mins, b1);
+		VectorCopy(ent->r.maxs, maxs);
+		maxs[2] = ClientHitboxMaxZ(ent);
+		VectorAdd(b2, maxs, b2);
+		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
+		VectorCopy(b2, bboxEnt->s.origin2);
+		bboxEnt->s.dmgFlags = 1;
+
+		head = G_BuildHead(ent);
+		VectorCopy(head->r.currentOrigin, b1);
+		VectorCopy(head->r.currentOrigin, b2);
+		VectorAdd(b1, head->r.mins, b1);
+		VectorAdd(b2, head->r.maxs, b2);
+		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
+		VectorCopy(b2, bboxEnt->s.origin2);
+		bboxEnt->s.dmgFlags = 1;
+		G_FreeEntity(head);
+	}
+
 	// perform once-a-second actions
 	if (level.match_pause == PAUSE_NONE)
 	{
@@ -2157,6 +2185,34 @@ void ClientEndFrame(gentity_t *ent)
 		ent->client->warping = qtrue;
 	}
 	ent->client->warped = qfalse;
+
+	// debug hitboxes
+	if (g_debugHitboxes.integer == 1)
+	{
+		gentity_t *bboxEnt, *head;
+		vec3_t    b1, b2;
+		vec3_t    maxs;
+
+		VectorCopy(ent->r.currentOrigin, b1);
+		VectorCopy(ent->r.currentOrigin, b2);
+		VectorAdd(b1, ent->r.mins, b1);
+		VectorCopy(ent->r.maxs, maxs);
+		maxs[2] = ClientHitboxMaxZ(ent);
+		VectorAdd(b2, maxs, b2);
+		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
+		VectorCopy(b2, bboxEnt->s.origin2);
+		bboxEnt->s.dmgFlags = 1;
+
+		head = G_BuildHead(ent);
+		VectorCopy(head->r.currentOrigin, b1);
+		VectorCopy(head->r.currentOrigin, b2);
+		VectorAdd(b1, head->r.mins, b1);
+		VectorAdd(b2, head->r.maxs, b2);
+		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
+		VectorCopy(b2, bboxEnt->s.origin2);
+		bboxEnt->s.dmgFlags = 1;
+		G_FreeEntity(head);
+	}
 
 	// store the client's current position for antilag traces
 	G_StoreClientPosition(ent);

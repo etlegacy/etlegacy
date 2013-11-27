@@ -304,6 +304,8 @@ vmCvar_t g_fixedphysicsfps;
 
 vmCvar_t g_pronedelay;
 
+vmCvar_t g_debugHitboxes;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -563,6 +565,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_fixedphysics,             "g_fixedphysics",             "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 	{ &g_fixedphysicsfps,          "g_fixedphysicsfps",          "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
 	{ &g_pronedelay,               "g_pronedelay",               "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
+	// Debug
+	{ &g_debugHitboxes,            "g_debugHitboxes",            "0",                          CVAR_CHEAT },
 };
 
 // made static to avoid aliasing
