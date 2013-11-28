@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -55,8 +55,8 @@
 #define CONTENTS_TELEPORTER         0x00040000
 #define CONTENTS_JUMPPAD            0x00080000
 #define CONTENTS_CLUSTERPORTAL      0x00100000
-#define CONTENTS_DONOTENTER         0x00200000
-#define CONTENTS_DONOTENTER_LARGE   0x00400000
+#define CONTENTS_DONOTENTER         0x00200000  // unused in ETL
+#define CONTENTS_DONOTENTER_LARGE   0x00400000  // unused in ETL
 #define CONTENTS_ORIGIN             0x01000000  // removed before bsping an entity
 #define CONTENTS_BODY               0x02000000  // should never be on a brush, only in game
 #define CONTENTS_CORPSE             0x04000000
@@ -87,7 +87,7 @@
 #define SURF_NODLIGHT           0x00020000  // don't dlight even if solid (solid lava, skies)
 #define SURF_WOOD               0x00040000
 #define SURF_GRASS              0x00080000
-#define SURF_CERAMIC            0x40    // out of surf's, so replacing unused 'SURF_FLESH'
+#define SURF_CERAMIC            0x40        // out of surf's, so replacing unused 'SURF_FLESH'
 #define SURF_GRAVEL             0x00100000
 #define SURF_GLASS              0x00200000  // out of surf's, so replacing unused 'SURF_SMGROUP'
 #define SURF_SNOW               0x00400000
@@ -100,6 +100,6 @@
 #define SURF_MONSLICK_E         0x20000000
 #define SURF_MONSLICK_S         0x40000000
 
-#define SURF_LANDMINE           0x80000000  // ydnar: ok to place landmines on this surface
+#define SURF_LANDMINE           0x80000000  // ok to place landmines on this surface
 
 #endif
