@@ -908,7 +908,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 	 IS_AKIMBO_WEAPON(w) || w == WP_MOBILE_MG42_SET || w == WP_MOBILE_BROWNING_SET \
 	)
 
-//#define IS_VALID_WEAPON(w) ( w > WP_NONE && w < WP_NUM_WEAPONS )
+#define IS_VALID_WEAPON(w) (w > WP_NONE && w < WP_NUM_WEAPONS)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive

@@ -2402,6 +2402,11 @@ static void PM_BeginWeaponReload(int weapon)
 		return;
 	}
 
+	if (!IS_VALID_WEAPON(weapon))
+	{
+		return;
+	}
+
 	switch (weapon)
 	{
 	case WP_MOBILE_MG42:
@@ -3270,7 +3275,8 @@ void PM_CoolWeapons(void)
 {
 	int wp, maxHeat;
 
-	for (wp = 0; wp < WP_NUM_WEAPONS; wp++)
+	// FIXME: weapon table? - non bullet weapons don't have to be cooled - this loop is a waste
+	for (wp = WP_KNIFE; wp < WP_NUM_WEAPONS; wp++)
 	{
 		// if you have the weapon
 		if (COM_BitCheck(pm->ps->weapons, wp))
@@ -3297,6 +3303,7 @@ void PM_CoolWeapons(void)
 	}
 
 	// a weapon is currently selected, convert current heat value to 0-255 range for client transmission
+	// note: we are still cooling WP_NONE and other non bullet weapons
 	if (pm->ps->weapon)
 	{
 		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
