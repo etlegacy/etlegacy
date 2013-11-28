@@ -267,6 +267,11 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	gitem_t   *item;
 	trace_t   tr;
 
+	if (!IS_VALID_WEAPON(weapon))
+	{
+		return;
+	}
+
 	item = BG_FindItemForWeapon(weapon);
 	VectorCopy(client->ps.viewangles, angles);
 
