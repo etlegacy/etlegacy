@@ -89,7 +89,7 @@ void G_PrintAccuracyLog(gentity_t *ent)
 
 	Q_strncpyz(buffer, "WeaponStats", 2048);
 
-	for (i = 0; i < WP_NUM_WEAPONS; i++)
+	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
 		if (!BG_ValidStatWeapon(i))
 		{

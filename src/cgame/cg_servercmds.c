@@ -2403,7 +2403,7 @@ static void CG_ServerCommand(void)
 	{
 		int i, start = 1;
 
-		for (i = 0; i < WP_NUM_WEAPONS; i++)
+		for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 		{
 			if (!BG_ValidStatWeapon(i))
 			{
