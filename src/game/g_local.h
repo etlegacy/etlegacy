@@ -1940,15 +1940,13 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 
 void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 
-void aagun_fire(gentity_t *other);
-
 // Match settings
 #define PAUSE_NONE      0x00    // Match is NOT paused.
 #define PAUSE_UNPAUSING 0x01    // Pause is about to expire
 
 // HRESULTS
-#define G_OK            0
-#define G_INVALID       -1
+#define G_OK         0
+#define G_INVALID   -1
 #define G_NOTFOUND  -2
 
 #define AP(x) trap_SendServerCommand(-1, x)                     // Print to all
@@ -2194,7 +2192,7 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 
 qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
-#define LOGOPTS_SCRIPTEVENTS    32      // Log script events (dyna-defuse/-planted/objective)
+#define LOGOPTS_SCRIPTEVENTS 32 // Log script events (dyna-defuse/-planted/objective)
 
 // Spawnflags
 
@@ -2255,13 +2253,13 @@ fieldtype_t GetFieldType(char *fieldname);
 #endif
 
 // g_protect flags
-#define G_PROTECT_LOCALHOST_REF  1
+#define G_PROTECT_LOCALHOST_REF 1
 
 // MAPVOTE
 void G_mapvoteinfo_write(void);
 void G_mapvoteinfo_read(void);
 
 // g_misc flags
-#define G_MISC_SHOVE_NOZ           1
+#define G_MISC_SHOVE_NOZ 1
 
 #endif
