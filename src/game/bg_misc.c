@@ -3482,10 +3482,6 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_OILPARTICLES",
 	"EV_OILSLICK",
 	"EV_OILSLICKREMOVE",
-	"EV_FLAKGUN1",
-	"EV_FLAKGUN2",
-	"EV_FLAKGUN3",
-	"EV_FLAKGUN4",
 	"EV_SNOWFLURRY",
 	"EV_DUST",
 	"EV_RUMBLE_EFX",
@@ -3715,6 +3711,7 @@ weapon_t BG_DuplicateWeapon(weapon_t weap)
 	}
 }
 
+// note: don't call this for WP_NONE
 gitem_t *BG_ValidStatWeapon(weapon_t weap)
 {
 	weapon_t weap2;
