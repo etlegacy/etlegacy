@@ -349,7 +349,7 @@ typedef struct
 	qhandle_t charSetShader;
 	qhandle_t whiteShader;
 	qhandle_t consoleShader;
-	qhandle_t consoleShader2;
+	//qhandle_t consoleShader2;
 
 	// www downloading
 	// in the static stuff since this may have to survive server disconnects
