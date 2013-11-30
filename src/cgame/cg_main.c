@@ -408,8 +408,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_enableBreath,          "cg_enableBreath",          "1",     CVAR_ARCHIVE                 },
 	{ &cg_timescale,             "timescale",                "1",     0                            },
 
-	{ &pmove_fixed,              "pmove_fixed",              "0",     0                            },
-	{ &pmove_msec,               "pmove_msec",               "8",     0                            },
+	{ &pmove_fixed,              "pmove_fixed",              "0",     CVAR_SYSTEMINFO              },
+	{ &pmove_msec,               "pmove_msec",               "8",     CVAR_SYSTEMINFO              },
 
 	{ &cg_voiceSpriteTime,       "cg_voiceSpriteTime",       "6000",  CVAR_ARCHIVE                 },
 
