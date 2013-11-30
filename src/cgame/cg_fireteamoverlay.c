@@ -366,17 +366,15 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 {
 	int            x = rect->x;
 	int            y = rect->y + 1;             // +1, jitter it into place in 1024 :)
-	int            i;
-	int            boxWidth  = 90;
-	int            bestWidth = -1;
+	int            i, locwidth, namewidth, puwidth, lineX;
+	int            boxWidth      = 90;
+	int            bestNameWidth = -1;
+	int            bestLocWidth  = -1;
 	char           buffer[64];
 	float          h   = 16;                    // 12 + 2 + 2
 	clientInfo_t   *ci = NULL;
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
-	int            locwidth;
-	int            namewidth;
-	int            lineX;
 	vec3_t         origin;
 
 	int curWeap;
@@ -419,27 +417,27 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			locwidth = 0;
 		}
 
-		namewidth = CG_Text_Width_Ext(ci->name, 0.2f, 17, &cgs.media.limboFont2);
-
-		if (ci->health == 0)
-		{
-			namewidth += 7;
-		}
+		namewidth = CG_Text_Width_Ext(ci->name, 0.2f, 0, &cgs.media.limboFont2);
 
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
 		{
 			namewidth += 14;
 		}
 
-		if ((locwidth + namewidth) > bestWidth)
+		if (namewidth > bestNameWidth)
 		{
-			bestWidth = locwidth + namewidth;
+			bestNameWidth = namewidth;
+		}
+
+		if (locwidth > bestLocWidth)
+		{
+			bestLocWidth = locwidth;
 		}
 
 		h += 12.f;
 	}
 
-	boxWidth += bestWidth;
+	boxWidth += bestLocWidth + bestNameWidth;
 
 	if (cg_fireteamLatchedClass.integer)
 	{
@@ -493,11 +491,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// hilight selected players
 		if (ci->selected)
 		{
-			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 4, FT_BAR_HEIGHT, clr3);
+			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 6, FT_BAR_HEIGHT, clr3);
 		}
 		else
 		{
-			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 4, FT_BAR_HEIGHT, clr2);
+			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 6, FT_BAR_HEIGHT, clr2);
 		}
 
 		x += 4;
@@ -505,11 +503,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// draw class icon in fireteam overlay
 		CG_DrawPic(x, y, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 		x += 14;
+
 		if (cg_fireteamLatchedClass.integer && ci->cls != ci->latchedcls)
 		{
 			// draw the yellow arrow
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, "^3->", 0, 17, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			//x += 2 + CG_Text_Width_Ext("^3->", 0.2f, 17, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, "^3->", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			x += 14;
 			// draw latched class icon in fireteam overlay
 			CG_DrawPic(x, y, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->latchedcls)]);
@@ -529,25 +527,29 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			CG_DrawPic(x, y, 12, 12, cgs.media.objectiveShader);
-			x += 14;
+			x      += 14;
+			puwidth = 14;
 		}
 		// or else draw the disguised icon in fireteam overlay
 		else if (ci->powerups & (1 << PW_OPS_DISGUISED))
 		{
 			CG_DrawPic(x, y, 12, 12, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
-			x += 14;
+			x      += 14;
+			puwidth = 14;
 		}
 		// otherwise draw rank icon in fireteam overlay
-		//else {
-		//	if (ci->rank > 0) CG_DrawPic( x, y, 12, 12, rankicons[ ci->rank ][  ci->team == TEAM_AXIS ? 1 : 0 ][0].shader );
-		//	x += 14;
-		//}
+		else
+		{
+			//if (ci->rank > 0) CG_DrawPic( x, y, 12, 12, rankicons[ ci->rank ][  ci->team == TEAM_AXIS ? 1 : 0 ][0].shader );
+			//x += 14;
+			puwidth = 0;
+		}
 
 		// draw the player's name
-		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, ci->name, 0, 17, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		// add space
-		x += 14 + CG_Text_Width_Ext(ci->name, 0.2f, 17, &cgs.media.limboFont2);
+		x += 14 + bestNameWidth - puwidth;
 
 		// draw the player's weapon icon
 		curWeap = cg_entities[ci->clientNum].currentState.weapon;
@@ -562,27 +564,36 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 		x += 24;
 
-		if (ci->health > 80)
+		if (ci->health >= 100)
 		{
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			x += 12;
+		}
+		else if (ci->health > 10)
+		{
+			x += 6;
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? tclr : colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			x += 6;
 		}
 		else if (ci->health > 0)
 		{
+			x += 12;
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
 		else if (ci->health == 0)
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? colorWhite : colorRed, "*", 0, 17, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			x += 7;
+			x += 6;
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? colorWhite : colorRed, "*", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			x += 6;
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? colorRed : colorWhite, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			x -= 7;
 		}
 		else
 		{
+			x += 12;
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
 		// set hard limit on width
-		x += 24;
+		x += 12;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
