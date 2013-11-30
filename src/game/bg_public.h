@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -923,12 +923,21 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define EV_EVENT_BIT2       0x00000200
 #define EV_EVENT_BITS       (EV_EVENT_BIT1 | EV_EVENT_BIT2)
 
+// note: if you add events also add eventnames - see bg_misc.c
 typedef enum
 {
-	EV_NONE,
+	EV_NONE = 0,
 	EV_FOOTSTEP,
-	EV_FOOTSPLASH,
-	EV_SWIM,
+	//EV_FOOTSTEP_METAL,
+	//EV_FOOTSTEP_WOOD,
+	//EV_FOOTSTEP_GRASS,
+	//EV_FOOTSTEP_GRAVEL,
+	//EV_FOOTSTEP_ROOF,
+	//EV_FOOTSTEP_SNOW,
+	//EV_FOOTSTEP_CARPET,
+	EV_FOOTSPLASH = 9,
+	//EV_FOOTWADE,
+	EV_SWIM = 11,
 	EV_STEP_4,
 	EV_STEP_8,
 	EV_STEP_12,
@@ -941,16 +950,17 @@ typedef enum
 	EV_FALL_DMG_15,
 	EV_FALL_DMG_25,
 	EV_FALL_DMG_50,
-	EV_WATER_TOUCH, // foot touches
-	EV_WATER_LEAVE, // foot leaves
-	EV_WATER_UNDER, // head touches
-	EV_WATER_CLEAR, // head leaves
+	EV_WATER_TOUCH,         // foot touches
+	EV_WATER_LEAVE,         // foot leaves
+	EV_WATER_UNDER,         // head touches
+	EV_WATER_CLEAR,         // head leaves
 	EV_ITEM_PICKUP,         // normal item pickups are predictable
 	EV_ITEM_PICKUP_QUIET,   // same, but don't play the default pickup sound as it was specified in the ent
 	EV_GLOBAL_ITEM_PICKUP,  // powerup / team sounds are broadcast to everyone
 	EV_NOAMMO,
 	EV_WEAPONSWITCHED,
-	EV_FILL_CLIP,
+	//EV_EMPTYCLIP,
+	EV_FILL_CLIP = 34,
 	EV_MG42_FIXED,
 	EV_WEAP_OVERHEAT,
 	EV_CHANGE_WEAPON,
@@ -961,7 +971,11 @@ typedef enum
 	EV_NOFIRE_UNDERWATER,
 	EV_FIRE_WEAPON_MG42,        // mounted MG
 	EV_FIRE_WEAPON_MOUNTEDMG42, // tank MG
-	EV_GRENADE_BOUNCE,          // eventParm will be the soundindex
+	//EV_ITEM_RESPAWN,
+	//EV_ITEM_POP,
+	//EV_PLAYER_TELEPORT_IN,
+	//EV_PLAYER_TELEPORT_OUT,
+	EV_GRENADE_BOUNCE = 49,          // eventParm will be the soundindex
 	EV_GENERAL_SOUND,
 	EV_GENERAL_SOUND_VOLUME,
 	EV_GLOBAL_SOUND,        // no attenuation
@@ -976,14 +990,20 @@ typedef enum
 	EV_BULLET,              // otherEntity is the shooter
 	EV_LOSE_HAT,
 	EV_PAIN,
-	EV_OBITUARY,
+	//EV_CROUCH_PAIN,
+	//EV_DEATH1,
+	//EV_DEATH2,
+	//EV_DEATH3,
+	EV_OBITUARY = 68,
 	EV_STOPSTREAMINGSOUND, // swiped from sherman
 	EV_POWERUP_QUAD,
 	EV_POWERUP_BATTLESUIT,
 	EV_POWERUP_REGEN,
 	EV_GIB_PLAYER,          // gib a previously living player
-	EV_STOPLOOPINGSOUND,
-	EV_SMOKE,
+	//EV_DEBUG_LINE,
+	EV_STOPLOOPINGSOUND = 75,  // unused
+	//EV_TAUNT,
+	EV_SMOKE = 77,
 	EV_SPARKS,
 	EV_SPARKS_ELECTRIC,
 	EV_EXPLODE,     // func_explosive
@@ -991,24 +1011,38 @@ typedef enum
 	EV_EFFECT,      // target_effect
 	EV_MORTAREFX,   // mortar firing
 	EV_SPINUP,      // panzerfaust preamble
-	EV_MISSILE_MISS_SMALL,
+	//EV_SNOW_ON,
+	//EV_SNOW_OFF,
+	EV_MISSILE_MISS_SMALL = 87,
 	EV_MISSILE_MISS_LARGE,
 	EV_MORTAR_IMPACT,
 	EV_MORTAR_MISS,
-	EV_SPIT_HIT,
-	EV_SPIT_MISS,
-	EV_SHARD,
+	//EV_SPIT_HIT,
+	//EV_SPIT_MISS,
+	EV_SHARD = 93,
 	EV_JUNK,
 	EV_EMITTER, // generic particle emitter that uses client-side particle scripts
 	EV_OILPARTICLES,
 	EV_OILSLICK,
 	EV_OILSLICKREMOVE,
-	EV_SNOWFLURRY,
-	EV_DUST,
+	//EV_MG42EFX,
+	//EV_FLAKGUN1,
+	//EV_FLAKGUN2,
+	//EV_FLAKGUN3,
+	//EV_FLAKGUN4,
+	//EV_EXERT1,
+	//EV_EXERT2,
+	//EV_EXERT3,
+	EV_SNOWFLURRY = 107,
+	//EV_CONCUSSIVE,
+	EV_DUST = 109,
 	EV_RUMBLE_EFX,
 	EV_GUNSPARKS,
 	EV_FLAMETHROWER_EFFECT,
-	EV_MG42BULLET_HIT_FLESH,    // these two send the seed as well
+	//EV_POPUP,
+	//EV_POPUPBOOK,
+	//EV_GIVEPAGE,
+	EV_MG42BULLET_HIT_FLESH = 116,  // these two send the seed as well
 	EV_MG42BULLET_HIT_WALL,
 	EV_SHAKE,
 	EV_DISGUISE_SOUND,
@@ -1019,10 +1053,9 @@ typedef enum
 	EV_POPUPMESSAGE,
 	EV_ARTYMESSAGE,
 	EV_AIRSTRIKEMESSAGE,
-	EV_MEDIC_CALL,
-	EV_SHOVE_SOUND,
-
-	EV_MAX_EVENTS   // just added as an 'endcap'
+	EV_MEDIC_CALL,  // end of vanilla events
+	EV_SHOVE_SOUND, // 127 - ETL shove
+	EV_MAX_EVENTS   // 128 - just added as an 'endcap'
 } entity_event_t;
 
 extern const char *eventnames[EV_MAX_EVENTS];
@@ -1187,7 +1220,7 @@ typedef enum
 } animNumber_t;
 
 // text represenation for scripting
-extern char *animStrings[];     // defined in bg_misc.c
+extern const char *animStrings[];     // defined in bg_misc.c
 
 typedef enum
 {
