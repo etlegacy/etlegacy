@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -44,7 +44,7 @@ void *G_Alloc(int size)
 
 	if (g_debugAlloc.integer)
 	{
-		G_Printf("G_Alloc of %i bytes (%i left)\n", size, POOLSIZE - allocPoint - ((size + 31) & ~31));
+		G_Printf("G_Alloc of %i bytes (%i bytes left)\n", size, POOLSIZE - allocPoint - ((size + 31) & ~31));
 	}
 
 	if (allocPoint + size > POOLSIZE)
@@ -67,5 +67,5 @@ void G_InitMemory(void)
 
 void Svcmd_GameMem_f(void)
 {
-	G_Printf("Game memory status: %i out of %i bytes allocated\n", allocPoint, POOLSIZE);
+	G_Printf("Game memory status: %i out of %i bytes allocated - %i bytes free\n", allocPoint, POOLSIZE, POOLSIZE - allocPoint);
 }
