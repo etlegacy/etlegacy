@@ -776,10 +776,10 @@ void Con_DrawSolidConsole(float frac)
 		{
 			color[0] = color[1] = color[2] = frac * 2.0f;
 			color[3] = 1.0f;
-			re.SetColor(color);
+			//re.SetColor(color);
 
 			// draw the logo
-			SCR_DrawPic(192, 70, 256, 128, cls.consoleShader2);
+			//SCR_DrawPic(192, 70, 256, 128, cls.consoleShader2);
 			re.SetColor(NULL);
 		}
 	}
