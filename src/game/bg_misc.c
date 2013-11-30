@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -354,7 +354,7 @@ int weapAlts[] =
 	WP_MORTAR2,         // 52 WP_MORTAR_SET
 };
 
-char *animStrings[] =
+const char *animStrings[] =
 {
 	"BOTH_DEATH1",
 	"BOTH_DEAD1",
@@ -3404,11 +3404,20 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 	VectorCopy(ndir, out);
 }
 
+// see bg_public.h
 const char *eventnames[EV_MAX_EVENTS] =
 {
 	"EV_NONE",
 	"EV_FOOTSTEP",
+	"unused event",              // EV_FOOTSTEP_METAL,
+	"unused event",              // EV_FOOTSTEP_WOOD,
+	"unused event",              // EV_FOOTSTEP_GRASS,
+	"unused event",              // EV_FOOTSTEP_GRAVEL,
+	"unused event",              // EV_FOOTSTEP_ROOF,
+	"unused event",              // EV_FOOTSTEP_SNOW,
+	"unused event",              // EV_FOOTSTEP_CARPET",
 	"EV_FOOTSPLASH",
+	"unused event",              // EV_FOOTWADE,
 	"EV_SWIM",
 	"EV_STEP_4",
 	"EV_STEP_8",
@@ -3431,6 +3440,7 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_GLOBAL_ITEM_PICKUP",
 	"EV_NOAMMO",
 	"EV_WEAPONSWITCHED",
+	"unused event",              // EV_EMPTYCLIP,
 	"EV_FILL_CLIP",
 	"EV_MG42_FIXED",
 	"EV_WEAP_OVERHEAT",
@@ -3442,6 +3452,10 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_NOFIRE_UNDERWATER",
 	"EV_FIRE_WEAPON_MG42",
 	"EV_FIRE_WEAPON_MOUNTEDMG42",
+	"unused event",              // EV_ITEM_RESPAWN,
+	"unused event",              // EV_ITEM_POP,
+	"unused event",              // EV_PLAYER_TELEPORT_IN,
+	"unused event",              // EV_PLAYER_TELEPORT_OUT,
 	"EV_GRENADE_BOUNCE",
 	"EV_GENERAL_SOUND",
 	"EV_GENERAL_SOUND_VOLUME",
@@ -3457,13 +3471,19 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_BULLET",
 	"EV_LOSE_HAT",
 	"EV_PAIN",
+	"unused event",              // EV_CROUCH_PAIN,
+	"unused event",              // EV_DEATH1,
+	"unused event",              // EV_DEATH2,
+	"unused event",              // EV_DEATH3,
 	"EV_OBITUARY",
 	"EV_STOPSTREAMINGSOUND",
 	"EV_POWERUP_QUAD",
 	"EV_POWERUP_BATTLESUIT",
 	"EV_POWERUP_REGEN",
 	"EV_GIB_PLAYER",
+	"unused event",              // EV_DEBUG_LINE,
 	"EV_STOPLOOPINGSOUND",
+	"unused event",              // EV_TAUNT,
 	"EV_SMOKE",
 	"EV_SPARKS",
 	"EV_SPARKS_ELECTRIC",
@@ -3472,21 +3492,37 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_EFFECT",
 	"EV_MORTAREFX",
 	"EV_SPINUP",
+	"unused event",              // EV_SNOW_ON,
+	"unused event",              // EV_SNOW_OFF,
 	"EV_MISSILE_MISS_SMALL",
 	"EV_MISSILE_MISS_LARGE",
 	"EV_MORTAR_IMPACT",
 	"EV_MORTAR_MISS",
+	"unused event",              // EV_SPIT_HIT,
+	"unused event",              // EV_SPIT_MISS,
 	"EV_SHARD",
 	"EV_JUNK",
 	"EV_EMITTER",
 	"EV_OILPARTICLES",
 	"EV_OILSLICK",
 	"EV_OILSLICKREMOVE",
+	"unused event",              // EV_MG42EFX,
+	"unused event",              // EV_FLAKGUN1,
+	"unused event",              // EV_FLAKGUN2,
+	"unused event",              // EV_FLAKGUN3,
+	"unused event",              // EV_FLAKGUN4,
+	"unused event",              // EV_EXERT1,
+	"unused event",              // EV_EXERT2,
+	"unused event",              // EV_EXERT3,
 	"EV_SNOWFLURRY",
+	"unused event",              // EV_CONCUSSIVE,
 	"EV_DUST",
 	"EV_RUMBLE_EFX",
 	"EV_GUNSPARKS",
 	"EV_FLAMETHROWER_EFFECT",
+	"unused event",              // EV_POPUP,
+	"unused event",              // EV_POPUPBOOK,
+	"unused event",              // EV_GIVEPAGE,
 	"EV_MG42BULLET_HIT_FLESH",
 	"EV_MG42BULLET_HIT_WALL",
 	"EV_SHAKE",
@@ -3500,7 +3536,6 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_AIRSTRIKEMESSAGE",
 	"EV_MEDIC_CALL",
 	"EV_SHOVE_SOUND",
-
 	//"EV_MAX_EVENTS",
 };
 
