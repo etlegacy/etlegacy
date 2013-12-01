@@ -1888,7 +1888,7 @@ typedef enum
 	GS_RESET
 } gamestate_t;
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && (_MSC_VER < 1800)
 float rint(float v);
 #endif
 
