@@ -1556,7 +1556,8 @@ void Svcmd_CSInfo_f(void)
 			}
 		}
 	}
-	else {
+	else
+	{
 		G_Printf("Note: csinfo <CS No.> will print the content of given string\n\n");
 	}
 
