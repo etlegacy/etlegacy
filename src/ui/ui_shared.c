@@ -810,10 +810,19 @@ void Menu_UpdatePosition(menuDef_t *menu)
 		r              = &menu->items[i]->window.rectClient;
 		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
 
-		if (fullscreenItem)
+		// exclude background clouds as fullscreen item from Cui_WideRect(r) and adjust rect width
+		if (!Q_stricmp(itemName, "clouds"))
 		{
-			Cui_WideRect(r);
+			r->w = r->w + 2 * xoffset;
 		}
+		else // all other items
+		{
+			if (fullscreenItem)
+			{
+				Cui_WideRect(r);
+			}
+		}
+
 		// alignment..
 		if ((fullscreenMenu && !fullscreenItem) || !Q_stricmp(menuName, "main") || !Q_stricmp(menuName, "ingame_main") || centered)
 		{
