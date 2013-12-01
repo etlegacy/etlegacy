@@ -311,8 +311,8 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_FIRSTBLOOD                   22      // Team that has first blood
 #define CS_ROUNDSCORES1                 23      // Axis round wins
 #define CS_ROUNDSCORES2                 24      // Allied round wins
-#define CS_MAIN_AXIS_OBJECTIVE          25      // Most important current objective
-#define CS_MAIN_ALLIES_OBJECTIVE        26      // Most important current objective
+#define CS_MAIN_AXIS_OBJECTIVE          25      // unused - Most important current objective
+#define CS_MAIN_ALLIES_OBJECTIVE        26      // unused - Most important current objective
 #define CS_MUSIC_QUEUE                  27
 #define CS_SCRIPT_MOVER_NAMES           28
 #define CS_CONSTRUCTION_NAMES           29

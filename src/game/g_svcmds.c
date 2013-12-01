@@ -728,8 +728,8 @@ void Svcmd_EntityList_f(void)
 {
 	int       e, entsFree = 0;
 	gentity_t *check = g_entities + 1;
+	char      line[128];
 
-	// FIXME: create line before print
 	for (e = 0; e < MAX_GENTITIES ; e++, check++)
 	{
 		if (!check->inuse)
@@ -742,25 +742,29 @@ void Svcmd_EntityList_f(void)
 			continue;
 		}
 
+		memset(line, 0, sizeof(line));
+
 		// print the ents which are in use
-		G_Printf("^7%4i: ", e);
+		//Q_strcat(line, sizeof(line), va("^7%4i: ", e));
+
+		Com_sprintf(line, 128, "^7%4i: ", e);
 
 		if (check->s.eType <= ET_EVENTS) // print events
 		{
-			G_Printf("^3%-27s^7", enttypenames[check->s.eType]);
+			Q_strcat(line, sizeof(line), va("^3%-27s^7", enttypenames[check->s.eType]));
 		}
 		else
 		{
-			G_Printf("^2%-27s^7", eventnames[check->s.eType - ET_EVENTS]);
+			Q_strcat(line, sizeof(line), va("^2%-27s^7", eventnames[check->s.eType - ET_EVENTS]));
 		}
 
 		if (check->classname)
 		{
-			G_Printf(" %s ^1%s^7\n", check->classname, check->targetname);
+			G_Printf("%s %-25s ^1%s^7\n", line, check->classname, check->targetname);
 		}
 		else
 		{
-			G_Printf(" *unknown classname* %s\n", check->targetname);
+			G_Printf("%s *unknown classname* %s\n", line, check->targetname);
 		}
 	}
 	G_Printf("%4i: entities not in use\n", entsFree);
@@ -1518,6 +1522,293 @@ void CC_loadconfig(void)
 	G_configSet(scriptName);
 }
 
+void Svcmd_CSInfo_f(void)
+{
+	int      i = 0, j;
+	char     cs[BIG_INFO_STRING];
+	char     cspart[MAX_TOKEN_CHARS];
+	char     valuestr[MAX_TOKEN_CHARS];
+	int      value       = -1;
+	int      size        = 0;
+	int      total       = 0;
+	char     *str        = NULL;
+	qboolean arg1        = (trap_Argc() > 1) ? qtrue : qfalse;
+	qboolean arg1numeric = qtrue;
+
+	valuestr[0] = 0;
+	if (arg1)
+	{
+		trap_Argv(1, valuestr, sizeof(valuestr));
+		for (i = 0; i < strlen(valuestr); i++)
+		{
+			if (valuestr[i] < '0' || valuestr[i] > '9')
+			{
+				arg1numeric = qfalse;
+				break;
+			}
+		}
+		if (arg1numeric)
+		{
+			value = atoi(valuestr);
+			if (value >= MAX_CONFIGSTRINGS)
+			{
+				value = -1;
+			}
+		}
+	}
+	else {
+		G_Printf("Note: csinfo <CS No.> will print the content of given string\n\n");
+	}
+
+	G_Printf("CS   Length   Type\n--------------------------------------------\n");
+	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
+	{
+		trap_GetConfigstring(i, cs, sizeof(cs));
+		size   = strlen(cs);
+		total += size;
+		if (size == 0)
+		{
+			continue;
+		}
+
+		switch (i)
+		{
+		case CS_SERVERINFO:
+			str = "CS_SERVERINFO";
+			break;
+		case CS_SYSTEMINFO:
+			str = "CS_SYSTEMINFO";
+			break;
+		case CS_MUSIC:
+			str = "CS_MUSIC";
+			break;
+		case CS_MESSAGE:
+			str = "CS_MESSAGE";
+			break;
+		case CS_MOTD:
+			str = "CS_MOTD";
+			break;
+		case CS_MUSIC_QUEUE:
+			str = "CS_MUSIC_QUEUE";
+			break;
+		case CS_WARMUP:
+			str = "CS_WARMUP";
+			break;
+		case CS_VOTE_STRING:
+			str = "CS_VOTE_STRING";
+			break;
+		case CS_VOTE_YES:
+			str = "CS_VOTE_YES";
+			break;
+		case CS_VOTE_NO:
+			str = "CS_VOTE_NO";
+			break;
+		case CS_GAME_VERSION:
+			str = "CS_GAME_VERSION";
+			break;
+		case CS_LEVEL_START_TIME:
+			str = "CS_LEVEL_START_TIME";
+			break;
+		case CS_INTERMISSION:
+			str = "CS_INTERMISSION";
+			break;
+		case CS_MULTI_INFO:
+			str = "CS_MULTI_INFO";
+			break;
+		case CS_MULTI_MAPWINNER:
+			str = "CS_MULTI_MAPWINNER";
+			break;
+		case CS_MULTI_OBJECTIVE:
+			str = "CS_MULTI_OBJECTIVE";
+			break;
+		case CS_SCREENFADE:
+			str = "CS_SCREENFADE";
+			break;
+		case CS_FOGVARS:
+			str = "CS_FOGVARS";
+			break;
+		case CS_SKYBOXORG:
+			str = "CS_SKYBOXORG";
+			break;
+		case CS_TARGETEFFECT:
+			str = "CS_TARGETEFFECT";
+			break;
+		case CS_WOLFINFO:
+			str = "CS_WOLFINFO";
+			break;
+		case CS_FIRSTBLOOD:
+			str = "CS_FIRSTBLOOD";
+			break;
+		case CS_ROUNDSCORES1:
+			str = "CS_ROUNDSCORES1";
+			break;
+		case CS_ROUNDSCORES2:
+			str = "CS_ROUNDSCORES2";
+			break;
+		case CS_MAIN_AXIS_OBJECTIVE:
+			str = "CS_MAIN_AXIS_OBJECTIVE";
+			break;
+		case  CS_MAIN_ALLIES_OBJECTIVE:
+			str = "CS_MAIN_ALLIES_OBJECTIVE";
+			break;
+		case CS_SCRIPT_MOVER_NAMES:
+			str = "CS_SCRIPT_MOVER_NAMES";
+			break;
+		case CS_CONSTRUCTION_NAMES:
+			str = "CS_CONSTRUCTION_NAMES";
+			break;
+		case CS_VERSIONINFO:
+			str = "CS_VERSIONINFO";
+			break;
+		case CS_REINFSEEDS:
+			str = "CS_REINFSEEDS";
+			break;
+		case CS_SERVERTOGGLES:
+			str = "CS_SERVERTOGGLES";
+			break;
+		case CS_GLOBALFOGVARS:
+			str = "CS_GLOBALFOGVARS";
+			break;
+		case CS_AXIS_MAPS_XP:
+			str = "CS_AXIS_MAPS_XP";
+			break;
+		case CS_ALLIED_MAPS_XP:
+			str = "CS_ALLIED_MAPS_XP";
+			break;
+		case CS_INTERMISSION_START_TIME:
+			str = "CS_INTERMISSION_START_TIME";
+			break;
+		case CS_ENDGAME_STATS:
+			str = "CS_ENDGAME_STATS";
+			break;
+		case CS_CHARGETIMES:
+			str = "CS_CHARGETIMES";
+			break;
+		case CS_FILTERCAMS:
+			str = "CS_FILTERCAMS";
+			break;
+		case CS_LEGACYINFO:
+			str = "CS_LEGACYINFO";
+			break;
+		case CS_TEAMRESTRICTIONS:
+			str = "CS_TEAMRESTRICTIONS";
+			break;
+		case CS_SVCVAR:
+			str = "CS_SVCVAR";
+			break;
+		case CS_CONFIGNAME:
+			str = "CS_CONFIGNAME";
+			break;
+		case CS_UPGRADERANGE:
+			str = "CS_UPGRADERANGE";
+			break;
+		case CS_SHADERSTATE:
+			str = "CS_SHADERSTATE";
+			break;
+		default:
+			if (i >= CS_MODELS && i < CS_MODELS + MAX_MODELS)
+			{
+				str = "CS_MODELS";
+				break;
+			}
+			else if (i >= CS_SOUNDS && i < CS_SOUNDS + MAX_SOUNDS)
+			{
+				str = "CS_SOUNDS";
+				break;
+			}
+			else if (i >= CS_SHADERS && i < CS_SHADERS + MAX_CS_SHADERS)
+			{
+				str = "CS_SHADERS";
+				break;
+			}
+			else if (i >= CS_SKINS && i < CS_SKINS + MAX_CS_SKINS)
+			{
+				str = "CS_SKINS";
+				break;
+			}
+			else if (i >= CS_CHARACTERS && i < CS_CHARACTERS + MAX_CHARACTERS)
+			{
+				str = "CS_CHARACTERS";
+				break;
+			}
+			else if (i >= CS_PLAYERS && i < CS_PLAYERS + MAX_CLIENTS)
+			{
+				str = "CS_PLAYERS";
+				break;
+			}
+			else if (i >= CS_MULTI_SPAWNTARGETS && i < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS)
+			{
+				str = "CS_MULTI_SPAWNTARGETS";
+				break;
+			}
+			else if (i >= CS_OID_TRIGGERS && i < CS_OID_TRIGGERS + MAX_OID_TRIGGERS)
+			{
+				str = "CS_OID_TRIGGERS";
+				break;
+			}
+			else if (i >= CS_OID_DATA && i < CS_OID_DATA + MAX_OID_TRIGGERS)
+			{
+				str = "CS_OID_DATA";
+				break;
+			}
+			else if (i >= CS_DLIGHTS && i < CS_DLIGHTS + MAX_DLIGHT_CONFIGSTRINGS)
+			{
+				str = "CS_DLIGHTS";
+				break;
+			}
+			else if (i >= CS_SPLINES && i < CS_SPLINES + MAX_SPLINE_CONFIGSTRINGS)
+			{
+				str = "CS_SERVERINFO";
+				break;
+			}
+			else if (i >= CS_TAGCONNECTS && i < CS_TAGCONNECTS + MAX_TAGCONNECTS)
+			{
+				str = "CS_TAGCONNECTS";
+				break;
+			}
+			else if (i >= CS_FIRETEAMS && i < CS_FIRETEAMS + MAX_FIRETEAMS)
+			{
+				str = "CS_FIRETEAMS";
+				break;
+			}
+			else if (i >= CS_CUSTMOTD && i < CS_CUSTMOTD + MAX_MOTDLINES)
+			{
+				str = "CS_CUSTMOTD";
+				break;
+			}
+			else if (i >= CS_STRINGS && i < CS_STRINGS + MAX_CSSTRINGS)
+			{
+				str = "CS_STRINGS";
+				break;
+			}
+			else
+			{
+				str = "";
+			}
+			break;
+		}
+
+		if (arg1)
+		{
+			if ((arg1numeric && value == i) || (!arg1numeric && !Q_stricmp(valuestr, str)))
+			{
+				G_Printf(va("%-4i %-8i %s\n", i, size, str));
+				// value 239 is taken from SBP()
+				for (j = 0; j <= (int)(size / (239 - 1)); j++)
+				{
+					Q_strncpyz(cspart, (char *)&cs[j * (239 - 1)], 239);
+					G_Printf(va("%s", cspart));
+				}
+				G_Printf("\n");
+			}
+		}
+		else
+		{
+			G_Printf(va("%-4i %-8i %s\n", i, size, str));
+		}
+	}
+	G_Printf(va("--------------------------------------------\nTotal CONFIGSTRING Length: %i\n", total));
+}
 
 /*
 =================
@@ -1547,6 +1838,12 @@ qboolean ConsoleCommand(void)
 	if (Q_stricmp(cmd, "entitylist") == 0)
 	{
 		Svcmd_EntityList_f();
+		return qtrue;
+	}
+
+	if (Q_stricmp(cmd, "csinfo") == 0)
+	{
+		Svcmd_CSInfo_f();
 		return qtrue;
 	}
 
