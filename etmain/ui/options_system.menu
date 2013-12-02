@@ -20,14 +20,14 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onOpen
 	{
 		uiScript systemCvarsGet ;
 		uiScript vidSave ;
 		uiScript glCustom
 	}
-	
+
 	onESC {
 		uiScript systemCvarsReset ;
 		uiScript vidReset ;
@@ -36,7 +36,7 @@ menuDef {
 	}
 
 	WINDOW( "SYSTEM", 90 )
-	
+
 // Audio //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 102, "AUDIO" )
 	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "Set the effects volume" )
@@ -58,7 +58,7 @@ menuDef {
 	YESNO( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Check for Updates on Start-Up:", .2, 8, "cl_autoupdate", "Automatically check for updates?" )
 	YESNO( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Get Missing Files from Server:", .2, 8, "cl_allowDownload", "Download missing files when available?" )
 	YESNO( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Use HTTP/FTP Downloads:", .2, 8, "cl_wwwDownload", "Enables or disables http/ftp downloads" )
-		
+
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, uiScript vidReset ; close options_system ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLY", .3, 14,
 		conditionalScript vidrestartIsRequired 2

@@ -35,7 +35,7 @@ menuDef {
 
 // Window //
 	WINDOW( "MISC", 50)
-	
+
 // Buttons //
 	BUTTON( 6, 32, .5*(WINDOW_WIDTH-18), 14, "START MATCH", .24, 11, exec "cmd ref startmatch"; uiScript closeingame )
 	BUTTONEXT( 6, 50, .5*(WINDOW_WIDTH-18), 14, "RESET MATCH", .24, 11, exec "cmd ref matchreset"; uiScript closeingame, voteFlag CV_SVF_MATCHRESET )
@@ -70,7 +70,7 @@ menuDef {
 		voteFlag	CV_SVF_TIMELIMIT
 		decoration
 	}
-	
+
 	NUMERICFIELDLEFTEXT( 8, 194+2, .66*(WINDOW_WIDTH-18), 10, "Time Limit:", .2, 8, "ui_voteTimelimit", 6, voteFlag CV_SVF_TIMELIMIT, "Set the time limit for the server" )
 	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 194, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript refTimelimit; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
 
@@ -79,10 +79,10 @@ menuDef {
 
 	BUTTONEXT( 6, 230, WINDOW_WIDTH-12, 14, "PAUSE", .24, 11, exec "cmd ref pause"; uiScript closeingame, settingDisabled CV_SVS_PAUSE cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6, 230, WINDOW_WIDTH-12, 14, "UNPAUSE", .24, 11, exec "cmd ref unpause"; uiScript closeingame, settingEnabled CV_SVS_PAUSE cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
-	
+
 	BUTTONEXT( 6, 248, .5*(WINDOW_WIDTH-18), 14, "LOCK TEAMS", .24, 11, exec "cmd ref lock"; uiScript closeingame, settingDisabled CV_SVS_LOCKTEAMS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6, 248, .5*(WINDOW_WIDTH-18), 14, "UNLOCK TEAMS", .24, 11, exec "cmd ref unlock"; uiScript closeingame, settingEnabled CV_SVS_LOCKTEAMS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
-	
+
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 248, .5*(WINDOW_WIDTH-18), 14, "LOCK SPECS", .24, 11, exec "cmd ref speclock"; uiScript closeingame, settingDisabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 248, .5*(WINDOW_WIDTH-18), 14, "UNLOCK SPECS", .24, 11, exec "cmd ref specunlock"; uiScript closeingame, settingEnabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 

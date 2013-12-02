@@ -7,7 +7,7 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	456
 #define GROUP_NAME		"grpHostGameAdvanced"
-		
+
 // Host Game Advanced Menu //
 menuDef {
 	name		"hostgame_advanced"
@@ -15,7 +15,7 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onESC {
 		close hostgame_advanced ;
 		open hostgame
@@ -23,7 +23,7 @@ menuDef {
 
 // Window //
 	WINDOW( "HOST GAME: ADVANCED", 266 )
-	
+
 // Subwindows //
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
 
@@ -36,7 +36,7 @@ menuDef {
 	NUMERICFIELD( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Spectator Inactivity:", .2, 8, "g_spectatorInactivity", 3, "Max time (in sec) a spectator can remain idle before being kicked from the server (0 = disabled)" )
 	NUMERICFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Intermission Time:", .2, 8, "g_intermissionTime", 3, "Time of intermission" )
 	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Intermission Ready %:", .2, 8, "g_intermissionReadyPercent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Percentage of 'ready' players to start next map" )
-	
+
 // Match //
 	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 220, "MATCH" )
 	YESNO( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Wait for Ready:", .2, 8, "g_doWarmup", "Whether the server should require players to be ready before a match can start" )
@@ -55,11 +55,11 @@ menuDef {
 	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Axis Spawn Time:", .2, 8, "ui_userAxisRespawnTime", 2, "Override the default Axis spawn time" )
 	NUMERICFIELD( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Allied Max Lives:", .2, 8, "g_alliedmaxlives", 3, "Specify the number of Allied lives in a max lives game" )
 	NUMERICFIELD( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Axis Max Lives:", .2, 8, "g_axismaxlives", 3, "Specify the number of Axis lives in a max lives game" )
-	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Stopwatch Round-Type:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain sides)" )	
-	
+	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Stopwatch Round-Type:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain sides)" )
+
 // LMS //
 	SUBWINDOW( 6, 364, (SUBWINDOW_WIDTH), 64, "LAST MAN STANDING" )
-	
+
 	NUMERICFIELD( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "LMS Rounds Per Match:", .2, 8, "g_lms_roundlimit", 2, "Override the default LMS rounds per match" )	// fixme: range check
 	NUMERICFIELD( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "LMS Matches Per Map:", .2, 8, "g_lms_matchlimit", 2, "Override the default LMS matches (comprising of rounds) per map" )	// fixme: range check
 	YESNO( 8, 404, (SUBWINDOW_WIDTH)-4, 10, "LMS Spectate Team Only:", .2, 8, "g_lms_followTeamOnly", "Stops players spectating the enemy team" )
@@ -76,7 +76,7 @@ menuDef {
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 40, "VOTING" )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Votes per Player:", .2, 8, "vote_limit", 2, "Specifies the maximum number of votes per player per match" )
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Successful voting:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Specifies the minimum percentage required for a vote to pass" )
-	
+
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "ALLOW VOTES" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Game config:", .2, 24, 8, "vote_allow_config", "Allow players to vote for game config" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Game Type:", .2, 24, 8, "vote_allow_gametype", "Allow players to vote for a change in game type" )
@@ -87,7 +87,7 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Next Map:", .2, 24, 8, "vote_allow_nextmap", "Allow players to vote for the next campaign or map" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balanced Teams:", .2, 24, 8, "vote_allow_balancedteams", "Allow players to vote for enforced team balance" )
 
-//Deprecated	
+//Deprecated
 //	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pub Settings:", .2, 24, 8, "vote_allow_pub", "Allow players to vote for public settings" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Referee:", .2, 24, 8, "vote_allow_referee", "Allow players to vote for a referee" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "XP Shuffle:", .2, 24, 8, "vote_allow_shuffleteamsxp", "Allow players to vote for teams to be shuffled" )
@@ -96,7 +96,7 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Timelimit:", .2, 24, 8, "vote_allow_timelimit", "Allow players to vote for a different time limit" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Warmup Damage:", .2, 24, 8, "vote_allow_warmupdamage", "Allow players to vote for warmup damage to be enabled or disabled" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Anti-Lag:", .2, 24, 8, "vote_allow_antilag", "Allow players to vote for antilag to be enabled or disabled" )
-	
+
 // Message of the Day //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 266, (SUBWINDOW_WIDTH), 76, "MESSAGE OF THE DAY" )
 
@@ -110,7 +110,7 @@ menuDef {
 		decoration
 	}
 	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 282, (SUBWINDOW_WIDTH)-8, 10, "Line 1:", .2, 8, "server_motd0", 26, 35, "Specifies the message clients will see when connecting to the server" )
-	
+
 	itemDef {
 		name		"efleftbackLine 2:"
 		group		GROUP_NAME
@@ -119,7 +119,7 @@ menuDef {
 		backcolor	.5 .5 .5 .2
 		visible		1
 		decoration
-	}	
+	}
 	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 294, (SUBWINDOW_WIDTH)-8, 10, "Line 2:", .2, 8, "server_motd1", 26, 35, "Specifies the message clients will see when connecting to the server" )
 
 	itemDef {
@@ -130,9 +130,9 @@ menuDef {
 		backcolor	.5 .5 .5 .2
 		visible		1
 		decoration
-	}	
+	}
 	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 306, (SUBWINDOW_WIDTH)-8, 10, "Line 3:", .2, 8, "server_motd2", 26, 35, "Specifies the message clients will see when connecting to the server" )
-	
+
 	itemDef {
 		name		"efleftbackLine 4:"
 		group		GROUP_NAME
@@ -141,7 +141,7 @@ menuDef {
 		backcolor	.5 .5 .5 .2
 		visible		1
 		decoration
-	}	
+	}
 	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 318, (SUBWINDOW_WIDTH)-8, 10, "Line 4:", .2, 8, "server_motd3", 26, 35, "Specifies the message clients will see when connecting to the server" )
 
 	itemDef {
@@ -152,9 +152,9 @@ menuDef {
 		backcolor	.5 .5 .5 .2
 		visible		1
 		decoration
-	}	
+	}
 	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 330, (SUBWINDOW_WIDTH)-8, 10, "Line 5:", .2, 8, "server_motd4", 26, 35, "Specifies the message clients will see when connecting to the server" )
-	
+
 // Download //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 348, (SUBWINDOW_WIDTH), 64/*72*/, "DOWNLOAD" )
 	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 364, (SUBWINDOW_WIDTH)-4, 10, "Client Downloads:", .2, 8, "sv_allowDownload", "Allows players to download missing files from the server" )

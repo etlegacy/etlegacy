@@ -48,7 +48,7 @@ menuDef {
 		columns			1 0 200 33
 		visible			1
 		tooltip			""
-		
+
 		doubleClick {
 			conditionalscript ui_profile 1
 				// Load the cached servers before the vid_restart (which saves the cached servers),
@@ -57,7 +57,7 @@ menuDef {
 				( "open profile" )
 		}
 	}
-	
+
 // Buttons //
 	BUTTON( 252, 32, WINDOW_WIDTH-252-6, 14, "CREATE", .24, 11, clearFocus ; open profile_create )
 	BUTTON( 252, 50, WINDOW_WIDTH-252-6, 14, "DELETE", .24, 11, clearFocus ; conditionalscript UIProfileIsActiveProfile 2

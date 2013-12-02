@@ -7,16 +7,16 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpCreditsetpro"
-		
+
 // System Menu //
-	
+
 menuDef {
 	name		"credits_et260"
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onESC {
 		close credits_et260 ;
 #ifdef FUI
@@ -38,7 +38,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 // Logo //
 	itemDef {
 		name		"logoShadow"
@@ -59,7 +59,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"headerLogo"
 		group		GROUP_NAME
@@ -75,7 +75,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 // Credits Sections //
 #define CREDITS_Y	108
 

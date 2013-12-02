@@ -17,22 +17,22 @@ menuDef
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 	popup
-	
+
 	fadeClamp	0.5
-	
+
 	onOpen
 	{
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background
 	}
-	
+
 	onESC
 	{
 		close rec_restart ;
 		open background_1 ;
 		open options_system
 	}
-	
+
 // Background //
 	itemDef {
 		name		"background"
@@ -56,7 +56,7 @@ menuDef
 #else
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Set recommended video settings\nand return to the ingame menu?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 #endif // FUI
-	
+
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, execnow "setRecommended" ; close rec_restart ; exec "vid_restart" )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, close rec_restart ; open options_graphics )
 }

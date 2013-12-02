@@ -11,7 +11,7 @@
 #define WINDOW_HEIGHT	422
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 //#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
-	
+
 menuDef {
 	name		"options_customise_hud"
 	visible		0
@@ -28,7 +28,7 @@ menuDef {
 #define SUBWINDOW_WIDTH_L		.50*(WINDOW_WIDTH-18)
 #define SUBWINDOW_WIDTH_R		.50*(WINDOW_WIDTH-18)
 
-	WINDOW( "VIEW", 94 ) 
+	WINDOW( "VIEW", 94 )
 
 // Hud Display //
   #define HUD_Y 32
@@ -50,7 +50,7 @@ menuDef {
 	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, "Switch HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, "Switches between different HUD" )
 	MULTI( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, "Modify Selected HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, "Customises Selected HUD" )
 
-	
+
 // In-Game Display //
 #define DISPLAY_Y 234
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "IN-GAME DISPLAY" )
@@ -84,7 +84,7 @@ menuDef {
 		bordercolor	.6 .6 .6 1
 		visible		1
 		tooltip		"Set crosshair type"
-		
+
 		mouseEnter {
 			setitemcolor "crosshair_select" bordercolor .9 .9 .9 1
 		}
@@ -93,7 +93,7 @@ menuDef {
 			setitemcolor "crosshair_select" bordercolor .6 .6 .6 1
 		}
 	}
-	
+
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+104, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Color:", .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Set the color for the primary crosshair" )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_L)-4, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Alpha:", .2, 8, "cg_crosshairAlpha" 1 0 1, "Set the transparency level for the primary crosshair" )
@@ -131,7 +131,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeStay:", .2, 8, "cg_popupStayTime" 2500 0 6000, "Set the time a pop-up stays visible" )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeFade:", .2, 8, "cg_popupFadeTime" 2500 0 6000, "Set the time a pop-up fades away" )
-	
+
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close options_customise_hud ; open options )
 }

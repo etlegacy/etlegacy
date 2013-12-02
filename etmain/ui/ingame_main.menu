@@ -15,23 +15,23 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-  
+
 	onOpen {
 
 		conditionalscript ROldModeCheck 2
 			( "clearFocus ; open vid_confirm" )
 			( "clearFocus" )
 	}
-	
+
 	onEsc {
 		close ingame_main ;
 	}
 
 // Window //
 	WINDOW( "^1Legacy", 50 )
-	
+
 // Buttons //
-	BUTTONEXT( 6, 32, WINDOW_WIDTH-12, 18, "VOTE", .3, 14, uiScript clientCheckVote ; 
+	BUTTONEXT( 6, 32, WINDOW_WIDTH-12, 18, "VOTE", .3, 14, uiScript clientCheckVote ;
 		conditionalScript cg_ui_novote 0
 		( "clearFocus ; open ingame_votedisabled" )
 		( "close ingame_main ; open ingame_vote" ),

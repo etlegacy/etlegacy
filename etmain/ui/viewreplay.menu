@@ -48,12 +48,12 @@ menuDef {
 		columns			1 0 200 33
 		visible			1
 		tooltip			"Select the replay to view or delete"
-		
+
 		doubleClick {
 			uiScript RunDemo
 		}
 	}
-	
+
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close viewreplay ; open main )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "DELETE", .3, 14, conditionalScript ValidReplaySelected 2

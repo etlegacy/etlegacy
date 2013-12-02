@@ -15,7 +15,7 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onESC {
 		close credits_etlegacy ;
 #ifdef FUI
@@ -58,7 +58,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"headerLogo"
 		group		GROUP_NAME
@@ -74,7 +74,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 // Credits Sections //
 #define CREDITS_Y	96
 
@@ -94,7 +94,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+12, .8*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek - Project founder, coding & management", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
+	LABELWHITE( 6, CREDITS_Y+12, .8*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek - Project founder, coding & management", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R. - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S. - Main windows coder & render", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson - Website, coding & scripts", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
@@ -119,7 +119,7 @@ menuDef {
 
 	LABELWHITE( 6, CREDITS_Y+84, .7*(WINDOW_WIDTH-24), 10, "'BSzili' - AROS and MorphOS", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "'PtitSeb' - Pandora", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	
+
 // Greetings //
 	itemDef {
 		name		"headerGreetings"
@@ -139,7 +139,7 @@ menuDef {
 
 
 	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "ETPub Team - ETPro Team - NQ Team - Omni-Bot Team \n RTCW COOP Team - Lazlo Menczel - Ryan C. Gordon \n Timothee \"TTimo\" Besset - Splash Damage ET community \n Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	
+
 	LABELWHITE( 6, CREDITS_Y+190, (WINDOW_WIDTH-24), 10, "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations.", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 
