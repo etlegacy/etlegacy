@@ -31,7 +31,7 @@ menuDef {
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 40, "PLAYER" )
 	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Player Alias:", .2, 8, "name", 36, 18, "Enter the name that you wish to be known by to others on servers" )
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
-	//MULTI( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Language:", .2, 8, "cl_language", cvarFloatList { "English (default)" 0 "French" 1 "German" 2 "Italian" 3 "Spanish" 4 "Polish" 5 "Dutch" 6 "Czech" 7 "Swedish" 8 "Finnish" 9 "Danish" 10 "Portuguese" 11 "Norwegian" 12 }, "Set your desired language" )
+	//MULTI( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Language:", .2, 8, "cl_language", cvarStrList { "English (default)" en "French" fr "German" de "Italian" it "Spanish" es "Polish" pl "Dutch" nl "Czech" cz "Swedish" se "Finnish" fi "Danish" da "Portuguese" pt "Norwegian" no }, "Set your desired language" )
 
 // Physics //
 	SUBWINDOW( 6, 78, (SUBWINDOW_WIDTH), 40, "PHYSICS" )
