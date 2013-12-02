@@ -15,11 +15,11 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-  
+
 	onOpen {
 		uiScript voteInitToggles
 	}
-	
+
 	onEsc {
 		close ingame_vote ;
 		open ingame_main
@@ -45,7 +45,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"windowtitle"
 		group		GROUP_NAME
@@ -63,7 +63,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"windowtitle"
 		group		GROUP_NAME
@@ -81,7 +81,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 // Buttons //
 	BUTTONEXT( 6, 32, WINDOW_WIDTH-12, 18, "MISC", .3, 14, close ingame_vote ; open ingame_vote_misc, cvarTest "authLevel" showCVar { RL_NONE } )
 	BUTTONEXT( 6, 32, WINDOW_WIDTH-12, 18, "MISC", .3, 14, close ingame_vote ; open ingame_vote_misc_refrcon, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )

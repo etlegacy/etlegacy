@@ -19,7 +19,7 @@ menuDef {
 	onOpen {
 		copyCvar g_gametype ui_netgametype ;
 		uiScript loadArenas ;
-		
+
 		conditionalScript ui_netgametype 3	// 3: cvartest
 			( "hide bttnSelectionMaps ; hide bttnSelectionCampaigns ; hide mapList_maps ; show mapList_campaigns" )
 			( "show bttnSelectionMaps ; show bttnSelectionCampaigns ; show mapList_maps ; hide mapList_campaigns" ) "4" ;
@@ -56,7 +56,7 @@ menuDef {
 		columns			1 0 200 33
 		visible			0
 	}
-	
+
 	itemDef {
 		name			"mapList_campaigns"
 		group			GROUP_NAME

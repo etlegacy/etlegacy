@@ -30,8 +30,8 @@ menuDef {
 // Extended //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 34, "MISC" )
 	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Country Flags:", .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, "Enable Country Flags on the server" )
-	
-// Buttons //	
+
+// Buttons //
         BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close hostgame_extended ; open hostgame )
         BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ADVANCED", .3, 14, close hostgame_extended ; open hostgame_advanced )
         BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "DEFAULT", .3, 14, open hostgame_advanced_default )

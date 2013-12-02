@@ -1,13 +1,13 @@
 #include "ui/menudef.h"
 #include "ui/menumacros.h"
- 
+
 // Defines //
 #define WINDOW_X                16
 #define WINDOW_Y                16
 #define WINDOW_WIDTH    128
-#define WINDOW_HEIGHT   200	
+#define WINDOW_HEIGHT   200
 #define GROUP_NAME              "grpOptions"
-                 
+
 // Options Menu //
 menuDef {
         name            "options"
@@ -15,7 +15,7 @@ menuDef {
         fullscreen      0
         rect            WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
         style           WINDOW_STYLE_FILLED
-        
+
         onESC {
                 close options ;
 #ifdef FUI
@@ -24,10 +24,10 @@ menuDef {
                 open ingame_main
 #endif // FUI
         }
- 
+
 // Window //
         WINDOW( "OPTIONS", 106 )
-        
+
 // Buttons //
         BUTTON ( 6, 32, WINDOW_WIDTH-12, 18, "GAME", .3, 14, close options ; open options_customise_game )
         BUTTON ( 6, 56, WINDOW_WIDTH-12, 18, "VIEW", .3, 14, close options ; open options_customise_hud )

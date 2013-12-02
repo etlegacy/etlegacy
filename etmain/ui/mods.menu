@@ -48,12 +48,12 @@ menuDef {
 		columns			1 0 200 33
 		visible			1
 		tooltip			"Select the modification to play"
-		
+
 		doubleClick {
 			uiScript RunMod
 		}
 	}
-	
+
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, close mods ; open main )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "LOAD MOD", .3, 14, uiScript RunMod )

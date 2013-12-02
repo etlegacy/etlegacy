@@ -7,7 +7,7 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpCreditsQuit"
-		
+
 // Quit Credits Menu //
 menuDef {
 	name		"credits_quit"
@@ -15,7 +15,7 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onESC {
 		uiScript Quit;
 	}
@@ -33,7 +33,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 // Logo //
 	itemDef {
 		name		"logoShadow"
@@ -54,7 +54,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"headerLogo"
 		group		GROUP_NAME
@@ -70,15 +70,15 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 // Credits Sections //
 #define CREDITS_Y	108
-	
+
 	LABELWHITE( 6, CREDITS_Y, .5*(WINDOW_WIDTH-24), 10, "Paul 'Locki' Wedgwood", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y, .5*(WINDOW_WIDTH-24), 10, "Game Designer / Managing Director", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Francisca 'Freya' Wedgwood", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Business Director", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	
+
 // Art //
 	itemDef {
 		name		"headerArt"
@@ -95,14 +95,14 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	LABELWHITE( 6, CREDITS_Y+46, .5*(WINDOW_WIDTH-24), 10, "Richard 'Fluffy_gIMp' Jolly", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+46, .5*(WINDOW_WIDTH-24), 10, "Lead Artist / Creative Director", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+58, .5*(WINDOW_WIDTH-24), 10, "Francis 'Frankie' Hobbins", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+58, .5*(WINDOW_WIDTH-24), 10, "Artist / Animator", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+70, .5*(WINDOW_WIDTH-24), 10, "Per 'Per128' Abrahamsen", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+70, .5*(WINDOW_WIDTH-24), 10, "Additional Art", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	
+
 // Programming //
 	itemDef {
 		name		"headerProgramming"
@@ -119,7 +119,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	LABELWHITE( 6, CREDITS_Y+104, .5*(WINDOW_WIDTH-24), 10, "Arnout 'RR2DO2' van Meer", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+104, .5*(WINDOW_WIDTH-24), 10, "Lead Programmer", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+116, .5*(WINDOW_WIDTH-24), 10, "Gordon 'digibob' Biggans", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
@@ -143,12 +143,12 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	LABELWHITE( 6, CREDITS_Y+162, .5*(WINDOW_WIDTH-24), 10, "Tim 'Marauder' Kautz", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+162, .5*(WINDOW_WIDTH-24), 10, "Designer / Audio Engineer", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+174, .5*(WINDOW_WIDTH-24), 10, "Ed 'Bongoboy' Stern", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+174, .5*(WINDOW_WIDTH-24), 10, "Designer / Writer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	
+
 // Level Design //
 	itemDef {
 		name		"headerLevelDesign"
@@ -180,7 +180,7 @@ menuDef {
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+268, .5*(WINDOW_WIDTH-24), 10, "Level Designer", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+280, .5*(WINDOW_WIDTH-24), 10, "Lee 'Llama' Mercer", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+280, .5*(WINDOW_WIDTH-24), 10, "Additional Level Design", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	
+
 // Copyright Notices //
 	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, "© 2012-2013 ET Legacy Team - under the terms of GPL version 3.", .15, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( 6, CREDITS_Y+300, WINDOW_WIDTH-12, 10, "© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners.", .15, ITEM_ALIGN_LEFT, 0, 8 )

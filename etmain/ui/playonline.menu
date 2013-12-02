@@ -7,7 +7,7 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpPlayOnline"
-		
+
 // System Menu //
 menuDef {
 	name		"playonline"
@@ -15,9 +15,9 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onOpen {
-			
+
 		// sort by servername ?
 		conditionalScript serversort_0 2
 			( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor serverColumn backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab forecolor .9 .9 .9 1" )
@@ -54,13 +54,13 @@ menuDef {
 
 // Window //
 	WINDOW( "PLAY ONLINE", 146 )
-	
+
 // Subwindows //
 	#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 
 // Filters //
 	#define FILTERS_WIDTH		.75*(WINDOW_WIDTH-18)
-	
+
 	SUBWINDOW( 6, 32, (FILTERS_WIDTH), 28, "MESSAGE OF THE DAY" )
 	itemDef {
 		name			"messageOfTheDay"
@@ -76,9 +76,9 @@ menuDef {
 		visible			1
 		decoration
 	}
-	
+
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, "FILTERS" )
-	
+
 	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Source:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Choose the type of game servers to display from Internet, local and the favorites list" )
 	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
 	MULTIACTIONLEFT( 8, 140, .5*((FILTERS_WIDTH)-6), 10, "Mod filter:", .2, 8, "ui_browserModFilter", cvarFloatList { "Disabled" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "Nitmod" 5 "SiLEnT" 6 "TrueCombat:Elite" 7 "ETNam" 8 "ETRun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, "Displays only game servers offering this Mod" )
@@ -169,7 +169,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	// FIXME: THIS FEATURE IS CURRENTLY NOT WORKING
 	//TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 128, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowBots", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Bots", "Includes or excludes servers with bots from the server list" )
 
@@ -224,9 +224,9 @@ menuDef {
 
 // Server Browser //
 	SUBWINDOW( 6, 162, (SUBWINDOW_WIDTH), 256, "SERVER BROWSER" )
-	
+
 	// Rows
-	
+
 	itemDef {
 		name		"row1"
 		group		GROUP_NAME
@@ -236,7 +236,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"row2"
 		group		GROUP_NAME
@@ -246,7 +246,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"row3"
 		group		GROUP_NAME
@@ -256,7 +256,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"row4"
 		group		GROUP_NAME
@@ -266,7 +266,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"row5"
 		group		GROUP_NAME
@@ -276,7 +276,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"row6"
 		group		GROUP_NAME
@@ -286,7 +286,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"row7"
 		group		GROUP_NAME
@@ -296,7 +296,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"row8"
 		group		GROUP_NAME
@@ -306,16 +306,16 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	// Columns and sort tabs
-	
+
 #define COLUMN_HEIGHT		194
 #define SERVERNAME_WIDTH	250
 #define MAPNAME_WIDTH		96
 #define PLAYERS_WIDTH		42
 #define GAMETYPE_WIDTH		48
 #define PING_WIDTH			34
-	
+
 	itemDef {
 		name		"serverColumnTab"
 		group		"grpTabs"
@@ -356,7 +356,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"mapColumnTab"
 		group		"grpTabs"
@@ -397,7 +397,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"playerColumnTab"
 		group		"grpTabs"
@@ -438,7 +438,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"gametypeColumnTab"
 		group		"grpTabs"
@@ -520,7 +520,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"filtersColumnTab"
 		group		GROUP_NAME
@@ -539,7 +539,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"filtersColumn"
 		group		GROUP_NAME
@@ -549,7 +549,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"favouritesColumnTab"
 		group		GROUP_NAME
@@ -568,7 +568,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name       "serverFilterLaber"
 		group      GROUP_NAME
@@ -586,7 +586,7 @@ menuDef {
 		decoration
 		autowrapped
 	}
-	
+
 	itemDef {
 		name		"favouritesColumn"
 		group		GROUP_NAME
@@ -598,7 +598,7 @@ menuDef {
 	}
 
 	// Server List
-	
+
 	itemDef {
 		name			"serverList"
 		group			GROUP_NAME
@@ -622,12 +622,12 @@ menuDef {
 							$evalfloat(SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH) 84 5
 							$evalfloat(SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH+84) 12 1
 		visible			1
-		
+
 		doubleClick {
 			/*close playonline ;*/
 			uiScript JoinServer
 		}
-		
+
 		onEnter {
 			uiScript JoinServer
 		}
@@ -635,7 +635,7 @@ menuDef {
 
 	// Status bar
 
-	
+
 	// Misc Buttons
 	BUTTON( 12, 102+316-20, .195*((SUBWINDOW_WIDTH)-30), 14, "REFRESH LIST", .24, 11, uiScript RefreshServers )
 	BUTTON( 6+6+(.195*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .195*((SUBWINDOW_WIDTH)-30), 14, "CONNECT TO IP", .24, 11, clearFocus ; open playonline_connecttoip )

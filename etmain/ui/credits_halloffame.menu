@@ -15,7 +15,7 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onESC {
 		close credits_halloffame ;
 #ifdef FUI
@@ -58,7 +58,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 	itemDef {
 		name		"headerLogo"
 		group		GROUP_NAME
@@ -74,7 +74,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	
+
 // Contributors //
 #define CREDITS_Y	96
 

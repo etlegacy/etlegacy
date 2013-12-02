@@ -71,7 +71,7 @@ menuDef {
 		voteFlag	CV_SVF_TIMELIMIT
 		decoration
 	}
-	
+
 	NUMERICFIELDLEFTEXT( 8, 176+2, .66*(WINDOW_WIDTH-18), 10, "Time Limit:", .2, 8, "ui_voteTimelimit", 6, voteFlag CV_SVF_TIMELIMIT, "Specify a time limit to vote on" )
 	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript voteTimelimit; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
 

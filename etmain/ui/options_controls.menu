@@ -7,7 +7,7 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	458
 #define GROUP_NAME		"grpOptionsControls"
-		
+
 // Controls Menu //
 menuDef {
 	name		"options_controls"
@@ -15,7 +15,7 @@ menuDef {
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	
+
 	onESC {
 		close options_controls ;
 		open options
@@ -23,10 +23,10 @@ menuDef {
 
 // Window //
 	WINDOW( "CONTROLS", 90 )
-	
+
 // Subwindows //
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
-	
+
 // Move //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 160, "MOVE" )
 	BIND( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Forward:", .2, 8, "+forward", "" )
@@ -41,7 +41,7 @@ menuDef {
 	BIND( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Walk:", .2, 8, "+speed", "" )
 	BIND( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Sprint:", .2, 8, "+sprint", "" )
 	BIND( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Use (Activate):", .2, 8, "+activate", "" )
-	
+
 // Input //
 	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 52, "INPUT" )
 	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Invert Mouse:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Inverts mouse pitch" )
@@ -49,7 +49,7 @@ menuDef {
 	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Mouse Sensitivity:", .2, 8, "sensitivity" 5 1 30, "Use the slider to increase or decrease mouse sensitivity" )
 	CVARFLOATLABEL( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 	MULTI( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "Mouse Pitch:", .2, 8, "m_pitch", cvarFloatList { "0.015 (lowest allowed)" 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 "0.022 (default)" 0.022 }, "Up-Down Motion Of The Crosshair While Moving." )
-	
+
 // Chat //
 	SUBWINDOW( 6, 256, (SUBWINDOW_WIDTH), 64, "CHAT" )
 	BIND( 8, 272, .5*((SUBWINDOW_WIDTH)-6), 10, "Chat:", .2, 8, "messagemode", "" )
@@ -68,14 +68,14 @@ menuDef {
 	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Player Stats:", .2, 8, "+stats", "" )
 	BIND( 8, 414, (SUBWINDOW_WIDTH)-4, 10, "Top Shots:", .2, 8, "+topshots", "" )
 //	BIND( 8, 414, (SUBWINDOW_WIDTH)-4, 10, "Multiview:", .2, 8, "mvactivate", "" )
-	
+
 // Use Weapons //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "USE WEAPONS" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 48, (SUBWINDOW_WIDTH)-4, 10, "Attack:", .2, 8, "+attack", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Switch to Alternate:", .2, 8, "weapalt", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 72, (SUBWINDOW_WIDTH)-4, 10, "Reload Weapon:", .2, 8, "+reload", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 84, (SUBWINDOW_WIDTH)-4, 10, "Binocular Zoom:", .2, 8, "+zoom", "" )
-	
+
 // Select Weapons //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 124, "SELECT WEAPONS" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Next Weapon:", .2, 8, "weapnext", "" )
