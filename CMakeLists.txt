@@ -101,6 +101,12 @@ cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIB
 set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"				ON "ET_FS_BASEPATH" OFF)
 
+IF(NOT CMAKE_BUILD_TYPE)
+    #SET(CMAKE_BUILD_TYPE "Debug")
+    SET(CMAKE_BUILD_TYPE "Release")
+    MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}") 
+ENDIF(NOT CMAKE_BUILD_TYPE)
+
 #-----------------------------------------------------------------
 # Platform-specific settings
 #-----------------------------------------------------------------
@@ -195,6 +201,9 @@ elseif(WIN32)
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
 	endif(MSVC)
+	if(MINGW)
+		add_definitions(-D_WIN32_IE=0x0501)
+	endif(MINGW)
 endif()
 
 # Get the system architecture
@@ -416,7 +425,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 # Use bundled libraries
-if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS AND NOT MINGW)
+if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
 	if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 		message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
 		add_subdirectory(libs)
@@ -430,7 +439,7 @@ if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG 
 		message(STATUS "and enable BUNDLED_* in CMake configuration.")
 		message(FATAL_ERROR "Build stopped because of missing libraries.")
 	endif()
-endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS AND NOT MINGW)
+endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
 
 #-----------------------------------------------------------------
 # Client features
@@ -762,7 +771,7 @@ if(BUILD_CLIENT)
 			FILE(WRITE "${SHADER_OUTPUT_FILE}" "${SHADER_SOURCES}${SHADER_FUNCTION}")
 			LIST(APPEND RENDERER2_FILES "${SHADER_OUTPUT_FILE}")
 		else(SED_EXECUTABLE)
-			MESSAGE("The fallbackshader source file was not created due to \"sed\" missing. The build will fail. :(")
+			MESSAGE(FATAL_ERROR "The fallbackshader source file was not created due to \"sed\" missing. The build would fail. :(")
 		endif(SED_EXECUTABLE)
 		
 		# increased default hunkmegs value
@@ -803,7 +812,7 @@ if(BUILD_CLIENT)
 		add_dependencies(etl bundled_curl)
 	endif(BUNDLED_CURL)
 	if(BUNDLED_OGG_VORBIS)
-		add_dependencies(etl bundled_ogg bundled_ogg_vorbis)
+		add_dependencies(etl bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
 	endif(BUNDLED_OGG_VORBIS)
 	
 	target_link_libraries(etl
