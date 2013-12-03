@@ -203,7 +203,12 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			s = va("%s %i", CG_TranslateString("MATCH BEGINS IN:"), (cg.warmup - cg.time) / 1000 + 1);
 			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 		}
-		if (cgs.gametype != GT_WOLF_LMS && !cg.warmup)
+		else if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
+		{
+			s = va(CG_TranslateString("WAITING ON %i %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+		}
+		else if (cgs.gametype != GT_WOLF_LMS && !cg.warmup)
 		{
 			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 			{
@@ -326,6 +331,17 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		maxchars += 2;
 	}
 
+	// draw GeoIP flag
+	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
+	{
+		if (CG_DrawFlag(tempx - 3, y - 11, fade, ci->clientNum))
+		{
+			offset   += 15;
+			tempx    += 15;
+			maxchars -= 2;
+		}
+	}
+
 	if (ci->team != TEAM_SPECTATOR)
 	{
 		// draw ready icon if client is ready..
@@ -359,17 +375,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
-		}
-	}
-
-	// GeoIP - draw flag before name
-	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
-	{
-		if (CG_DrawFlag(tempx - 3, y - 11, fade, ci->clientNum))
-		{
-			offset   += 15;
-			tempx    += 15;
-			maxchars -= 1;
 		}
 	}
 
@@ -518,6 +523,17 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	y += 10;
 
+	// draw GeoIP flag
+	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
+	{
+		if (CG_DrawFlag(tempx - 3, y - 10, fade, ci->clientNum))
+		{
+			offset   += 15;
+			tempx    += 15;
+			maxchars -= 2;
+		}
+	}
+
 	if (ci->team != TEAM_SPECTATOR)
 	{
 		// draw ready icon if client is ready..
@@ -551,17 +567,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			offset   += 14;
 			tempx    += 14;
 			maxchars -= 2;
-		}
-	}
-
-	// GeoIP - draw flag before name
-	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
-	{
-		if (CG_DrawFlag(tempx - 3, y - 10, fade, ci->clientNum))
-		{
-			offset   += 15;
-			tempx    += 15;
-			maxchars -= 1;
 		}
 	}
 
