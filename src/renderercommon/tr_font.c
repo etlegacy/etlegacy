@@ -446,10 +446,11 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		return;
 	}
 
-	len = ri.FS_ReadFile(fontName, &faceData);
+	Com_sprintf(name, sizeof(name), "fonts/%s.ttf", fontName);
+	len = ri.FS_ReadFile(name, &faceData);
 	if (len <= 0)
 	{
-		ri.Printf(PRINT_WARNING, "RE_RegisterFont: Unable to read font file '%s'\n", fontName);
+		ri.Printf(PRINT_WARNING, "RE_RegisterFont: Unable to read font file '%s'\n", name);
 		return;
 	}
 
