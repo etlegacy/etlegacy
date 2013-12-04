@@ -61,6 +61,7 @@ cmake_dependent_option(BUNDLED_JPEG		"Use bundled JPEG library instead of the sy
 cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_FREETYPE		"Use bundled Freetype2 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
@@ -426,7 +427,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 # Use bundled libraries
-if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
+if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_FREETYPE OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
 	if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 		message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
 		add_subdirectory(libs)
@@ -440,7 +441,7 @@ if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG 
 		message(STATUS "and enable BUNDLED_* in CMake configuration.")
 		message(FATAL_ERROR "Build stopped because of missing libraries.")
 	endif()
-endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
+endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_FREETYPE OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
 
 #-----------------------------------------------------------------
 # Client features
@@ -567,9 +568,14 @@ if(BUILD_CLIENT)
 	endif(FEATURE_IPV6)
 
 	if(FEATURE_FREETYPE)
-		find_package(Freetype REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${FREETYPE_LIBRARIES})
-		include_directories(SYSTEM ${FREETYPE_INCLUDE_DIRS})
+		if(NOT BUNDLED_FREETYPE)
+			find_package(Freetype REQUIRED)
+			list(APPEND RENDERER_LIBRARIES ${FREETYPE_LIBRARIES})
+			include_directories(SYSTEM ${FREETYPE_INCLUDE_DIRS})
+		else()
+			list(APPEND RENDERER_LIBRARIES ${BUNDLED_FREETYPE_LIBRARIES})
+			include_directories(SYSTEM ${BUNDLED_FREETYPE_INCLUDE_DIR})
+		endif()
 		add_definitions(-DFEATURE_FREETYPE)
 	endif(FEATURE_FREETYPE)
 
@@ -733,6 +739,9 @@ if(BUILD_CLIENT)
 		if(BUNDLED_JPEG)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
 		endif(BUNDLED_JPEG)
+		if(BUNDLED_FREETYPE)
+			add_dependencies(renderer_opengl1_${ARCH} bundled_freetype)
+		endif(BUNDLED_FREETYPE)
 		target_link_libraries(renderer_opengl1_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
 
 		# install the dynamic lib only
@@ -791,6 +800,9 @@ if(BUILD_CLIENT)
 		if(BUNDLED_JPEG)
 			add_dependencies(renderer_opengl2_${ARCH} bundled_jpeg)
 		endif(BUNDLED_JPEG)
+		if(BUNDLED_FREETYPE)
+			add_dependencies(renderer_opengl2_${ARCH} bundled_freetype)
+		endif(BUNDLED_FREETYPE)
 		target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
 		set_target_properties(renderer_opengl2_${ARCH}
 			PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"

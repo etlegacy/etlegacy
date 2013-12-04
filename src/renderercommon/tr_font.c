@@ -539,8 +539,13 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 			}
 
 			//Com_sprintf (name, sizeof(name), "fonts/fontImage_%i_%i", imageNumber++, pointSize);
+#ifdef FEATURE_RENDERER2
+			image = R_CreateImage(name, imageBuff, 256, 256, IF_NOPICMIP, FT_LINEAR, WT_CLAMP);
+			h = RE_RegisterShaderFromImage(name, image, qfalse);
+#else
 			image = R_CreateImage(name, imageBuff, 256, 256, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 			h     = RE_RegisterShaderFromImage(name, LIGHTMAP_2D, image, qfalse);
+#endif
 			for (j = lastStart; j < i; j++)
 			{
 				font->glyphs[j].glyph = h;
