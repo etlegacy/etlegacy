@@ -227,6 +227,7 @@ cvar_t *r_lightScale;
 cvar_t *r_debugLight;
 cvar_t *r_debugSort;
 cvar_t *r_printShaders;
+cvar_t *r_saveFontData;
 
 cvar_t *r_maxpolys;
 cvar_t *r_maxpolyverts;
@@ -1553,7 +1554,8 @@ void R_Register(void)
 
 	r_evsmPostProcess = ri.Cvar_Get("r_evsmPostProcess", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_printShaders = ri.Cvar_Get("r_printShaders", "0", CVAR_ARCHIVE);
+	r_printShaders = ri.Cvar_Get("r_printShaders", "0", 0);
+	r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0);
 
 	r_bloom       = ri.Cvar_Get("r_bloom", "0", CVAR_ARCHIVE);
 	r_bloomBlur   = ri.Cvar_Get("r_bloomBlur", "5.0", CVAR_ARCHIVE);
