@@ -86,8 +86,8 @@
 
 FT_Library ftLibrary = NULL;
 
-const char * const supportedFormats[] = {"ttf", "otf"};
-const int formatCount = sizeof(supportedFormats);
+const char *const supportedFormats[] = { "ttf", "otf" };
+const int         formatCount = sizeof(supportedFormats);
 
 #endif
 
@@ -209,7 +209,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		bitmap = R_RenderGlyph(face->glyph, &glyph);
 		if (bitmap)
 		{
-			glyph.xSkip =_TRUNC(face->glyph->metrics.horiAdvance) + 1;
+			glyph.xSkip = _TRUNC(face->glyph->metrics.horiAdvance) + 1;
 		}
 		else
 		{
@@ -312,7 +312,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		glyph.t           = (float)*yOut / FONT_SIZE;
 		glyph.s2          = glyph.s + (float)scaled_width / FONT_SIZE;
 		glyph.t2          = glyph.t + (float)scaled_height / FONT_SIZE;
-		*xOut += scaled_width + 1;
+		*xOut            += scaled_width + 1;
 	}
 
 	ri.Free(bitmap->buffer);
@@ -356,10 +356,10 @@ float readFloat(void)
 	return me.ffred;
 }
 
-qboolean R_LoadPreRenderedFont(const char *datName,fontInfo_t *font)
+qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 {
 	unsigned char *faceData;
-	int  i, len;
+	int           i, len;
 
 	len = ri.FS_ReadFile(datName, NULL);
 	if (len == sizeof(fontInfo_t))
@@ -413,9 +413,9 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	float         max;
 	float         glyphScale;
 	unsigned char *faceData;
-	int  i = 0, len = 0;
-	char name[1024];
-	qboolean formatFound = qfalse;
+	int           i = 0, len = 0;
+	char          name[1024];
+	qboolean      formatFound = qfalse;
 
 	if (ftLibrary == NULL)
 	{
@@ -423,10 +423,10 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 		return qfalse;
 	}
 
-	while(i < formatCount)
+	while (i < formatCount)
 	{
-		Com_sprintf(name, sizeof(name), "fonts/%s.%s", fontName,supportedFormats[i]);
-		if(ri.FS_FOpenFileRead(name, NULL, qfalse))
+		Com_sprintf(name, sizeof(name), "fonts/%s.%s", fontName, supportedFormats[i]);
+		if (ri.FS_FOpenFileRead(name, NULL, qfalse))
 		{
 			formatFound = qtrue;
 			break;
@@ -434,7 +434,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 		i++;
 	}
 
-	if(!formatFound)
+	if (!formatFound)
 	{
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: Unable to find any supported font files by the name of %s\n", fontName);
 		return qfalse;
@@ -443,7 +443,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	i = 0;
 
 	len = ri.FS_ReadFile(name, (void **)&faceData);
-	if(len <= 0)
+	if (len <= 0)
 	{
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: Unable to read font file '%s'\n", name);
 		return qfalse;
@@ -536,7 +536,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 			//Com_sprintf (name, sizeof(name), "fonts/fontImage_%i_%i", imageNumber++, pointSize);
 #ifdef FEATURE_RENDERER2
 			image = R_CreateImage(name, imageBuff, FONT_SIZE, FONT_SIZE, IF_NOPICMIP, FT_LINEAR, WT_CLAMP);
-			h = RE_RegisterShaderFromImage(name, image, qfalse);
+			h     = RE_RegisterShaderFromImage(name, image, qfalse);
 #else
 			image = R_CreateImage(name, imageBuff, FONT_SIZE, FONT_SIZE, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 			h     = RE_RegisterShaderFromImage(name, LIGHTMAP_2D, image, qfalse);
@@ -585,7 +585,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	char datName[MAX_QPATH];
-	int i;
+	int  i;
 	Com_sprintf(datName, sizeof(datName), "fonts/%s_%i.dat", fontName, pointSize);
 	for (i = 0; i < registeredFontCount; i++)
 	{
@@ -633,7 +633,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	// make sure the render thread is stopped
 	R_IssuePendingRenderCommands();
 
-	if(R_GetFont( fontName, pointSize, font))
+	if (R_GetFont(fontName, pointSize, font))
 	{
 		return;
 	}
