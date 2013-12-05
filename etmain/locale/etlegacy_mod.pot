@@ -4282,7 +4282,3 @@ msgstr ""
 
 msgid "'s K43"
 msgstr ""
-
-msgid "%s^7\n"
-"is no longer a referee\n"
-msgstr ""
