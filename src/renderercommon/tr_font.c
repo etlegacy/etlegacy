@@ -98,15 +98,14 @@ static fontInfo_t registeredFont[MAX_FONTS];
 #ifdef FEATURE_FREETYPE
 void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *top, int *bottom, int *height, int *pitch)
 {
-
-	*left  = _FLOOR(glyph->metrics.horiBearingX);
-	*right = _CEIL(glyph->metrics.horiBearingX + glyph->metrics.width);
+	*left  = _FLOOR(glyph->metrics.horiBearingX - 1);
+	*right = _CEIL(glyph->metrics.horiBearingX + glyph->metrics.width + 1);
 	*width = _TRUNC(*right - *left);
 
-	*top    = _CEIL(glyph->metrics.horiBearingY);
-	*bottom = _FLOOR(glyph->metrics.horiBearingY - glyph->metrics.height);
+	*top    = _CEIL(glyph->metrics.horiBearingY + 1);
+	*bottom = _FLOOR(glyph->metrics.horiBearingY - glyph->metrics.height - 1);
 	*height = _TRUNC(*top - *bottom);
-	*pitch  = (*width + 3) & - 4; //(qtrue ? (*width + 3) & - 4 : (*width + 7) >> 3);
+	*pitch  = (*width + 3) & - 4;
 }
 
 
@@ -133,7 +132,7 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 	bit2->pitch      = pitch;
 	bit2->pixel_mode = FT_PIXEL_MODE_GRAY;
 	//bit2->pixel_mode = ft_pixel_mode_mono;
-	bit2->buffer    = (unsigned char *)ri.Z_Malloc(pitch * height);
+	bit2->buffer    = (unsigned char *)ri.Z_Malloc(size);
 	bit2->num_grays = 256;
 
 	Com_Memset(bit2->buffer, 0, size);
@@ -145,6 +144,7 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 	glyphOut->pitch  = pitch;
 	glyphOut->top    = _TRUNC(glyph->metrics.horiBearingY) + 1;
 	glyphOut->bottom = bottom;
+	glyphOut->xSkip  = _TRUNC(glyph->metrics.horiAdvance) + 1;
 	return bit2;
 }
 
@@ -205,13 +205,16 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 	// make sure everything is here
 	if (face != NULL)
 	{
-		FT_Load_Glyph(face, FT_Get_Char_Index(face, c), FT_LOAD_DEFAULT);
-		bitmap = R_RenderGlyph(face->glyph, &glyph);
-		if (bitmap)
+		FT_UInt index = FT_Get_Char_Index(face, c);
+
+		if (index == 0)
 		{
-			glyph.xSkip = _TRUNC(face->glyph->metrics.horiAdvance) + 1;
+			return &glyph; // nothing to render
 		}
-		else
+
+		FT_Load_Glyph(face, index, FT_LOAD_DEFAULT);
+		bitmap = R_RenderGlyph(face->glyph, &glyph);
+		if (!bitmap)
 		{
 			return &glyph;
 		}
@@ -312,7 +315,12 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		glyph.t           = (float)*yOut / FONT_SIZE;
 		glyph.s2          = glyph.s + (float)scaled_width / FONT_SIZE;
 		glyph.t2          = glyph.t + (float)scaled_height / FONT_SIZE;
-		*xOut            += scaled_width + 1;
+
+		//ET uses pitch as a horizontal BearingX so we need to change this at this point for the font to be usable in game
+		//Super stupid btw
+		glyph.pitch = _TRUNC(face->glyph->metrics.horiBearingX);
+
+		*xOut += scaled_width + 1;
 	}
 
 	ri.Free(bitmap->buffer);
@@ -635,7 +643,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 	if (!R_GetFont(fontName, pointSize, font))
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: failed to register font with name '%s'\n",fontName);
+		ri.Printf(PRINT_ALL, "RE_RegisterFont: failed to register font with name '%s'\n", fontName);
 	}
 }
 
