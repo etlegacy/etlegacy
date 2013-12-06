@@ -550,7 +550,7 @@ typedef struct clientInfo_s
 	int skill[SK_NUM_SKILLS];
 	int skillpoints[SK_NUM_SKILLS]; // filled OOB by +wstats
 
-	char disguiseName[MAX_QPATH];
+	char cleandisguiseName[MAX_QPATH];
 	int disguiseRank;
 
 	int weapon;

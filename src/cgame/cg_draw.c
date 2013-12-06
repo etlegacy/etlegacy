@@ -1864,7 +1864,7 @@ static void CG_DrawCrosshairNames(void)
 				drawStuff = qtrue;
 
 				// draw the name and class
-				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
+				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].cleandisguiseName);
 				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 				if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
 				{
