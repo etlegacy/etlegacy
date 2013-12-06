@@ -87,7 +87,7 @@
 FT_Library ftLibrary = NULL;
 
 const char *const supportedFormats[] = { "ttf", "otf" };
-const int         formatCount = sizeof(supportedFormats);
+const int         formatCount = ARRAY_LEN(supportedFormats);
 
 #endif
 
@@ -106,7 +106,7 @@ void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *
 	*top    = _CEIL(glyph->metrics.horiBearingY);
 	*bottom = _FLOOR(glyph->metrics.horiBearingY - glyph->metrics.height);
 	*height = _TRUNC(*top - *bottom);
-	*pitch  = (qtrue ? (*width + 3) & - 4 : (*width + 7) >> 3);
+	*pitch  = (*width + 3) & - 4; //(qtrue ? (*width + 3) & - 4 : (*width + 7) >> 3);
 }
 
 
@@ -126,14 +126,14 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 
 	size = pitch * height;
 
-	bit2 = ri.Z_Malloc(sizeof(FT_Bitmap));
+	bit2 = (FT_Bitmap *)ri.Z_Malloc(sizeof(FT_Bitmap));
 
 	bit2->width      = width;
 	bit2->rows       = height;
 	bit2->pitch      = pitch;
 	bit2->pixel_mode = FT_PIXEL_MODE_GRAY;
 	//bit2->pixel_mode = ft_pixel_mode_mono;
-	bit2->buffer    = ri.Z_Malloc(pitch * height);
+	bit2->buffer    = (unsigned char *)ri.Z_Malloc(pitch * height);
 	bit2->num_grays = 256;
 
 	Com_Memset(bit2->buffer, 0, size);
@@ -156,7 +156,7 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	unsigned char *flip;
 	unsigned char *src, *dst;
 
-	buffer = ri.Z_Malloc(width * height * 4 + 18);
+	buffer = (byte *)ri.Z_Malloc(width * height * 4 + 18);
 	Com_Memset(buffer, 0, 18);
 	buffer[2]  = 2;     // uncompressed type
 	buffer[12] = width & 255;
@@ -633,9 +633,9 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	// make sure the render thread is stopped
 	R_IssuePendingRenderCommands();
 
-	if (R_GetFont(fontName, pointSize, font))
+	if (!R_GetFont(fontName, pointSize, font))
 	{
-		return;
+		ri.Printf(PRINT_ALL, "RE_RegisterFont: failed to register font with name '%s'\n",fontName);
 	}
 }
 
