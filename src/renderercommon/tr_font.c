@@ -86,8 +86,8 @@
 
 FT_Library ftLibrary = NULL;
 
-const char *const supportedFormats[] = { "ttf", "otf" };
-const int         formatCount = ARRAY_LEN(supportedFormats);
+const char *supportedFormats[] = { "ttf", "otf" };
+const int  formatCount = ARRAY_LEN(supportedFormats);
 
 #endif
 
@@ -193,7 +193,7 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	ri.Free(buffer);
 }
 
-static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, int *yOut, int *maxHeight, FT_Face face, const unsigned char c, qboolean calcHeight)
+static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut, int *xOut, int *yOut, int *maxHeight, FT_Face face, const unsigned char c, qboolean calcHeight)
 {
 	int                i;
 	static glyphInfo_t glyph;
@@ -244,13 +244,13 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		scaled_height = glyph.height;
 
 		// we need to make sure we fit
-		if (*xOut + scaled_width + 1 >= 255)
+		if (*xOut + scaled_width + 1 >= imageSize - 1)
 		{
 			*xOut  = 0;
 			*yOut += *maxHeight + 1;
 		}
 
-		if (*yOut + *maxHeight + 1 >= 255)
+		if (*yOut + *maxHeight + 1 >= imageSize - 1)
 		{
 			*yOut = -1;
 			*xOut = -1;
@@ -261,7 +261,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 
 
 		src = bitmap->buffer;
-		dst = imageOut + (*yOut * FONT_SIZE) + *xOut;
+		dst = imageOut + (*yOut * imageSize) + *xOut;
 
 		if (bitmap->pixel_mode == FT_PIXEL_MODE_MONO)
 		{
@@ -292,7 +292,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 				}
 
 				src += glyph.pitch;
-				dst += FONT_SIZE;
+				dst += imageSize;
 
 			}
 		}
@@ -302,7 +302,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 			{
 				Com_Memcpy(dst, src, glyph.pitch);
 				src += glyph.pitch;
-				dst += FONT_SIZE;
+				dst += imageSize;
 			}
 		}
 
@@ -311,10 +311,10 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 
 		glyph.imageHeight = scaled_height;
 		glyph.imageWidth  = scaled_width;
-		glyph.s           = (float)*xOut / FONT_SIZE;
-		glyph.t           = (float)*yOut / FONT_SIZE;
-		glyph.s2          = glyph.s + (float)scaled_width / FONT_SIZE;
-		glyph.t2          = glyph.t + (float)scaled_height / FONT_SIZE;
+		glyph.s           = (float)*xOut / imageSize;
+		glyph.t           = (float)*yOut / imageSize;
+		glyph.s2          = glyph.s + (float)scaled_width / imageSize;
+		glyph.t2          = glyph.t + (float)scaled_height / imageSize;
 
 		//ET uses pitch as a horizontal BearingX so we need to change this at this point for the font to be usable in game
 		//Super stupid btw
@@ -424,6 +424,8 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	int           i = 0, len = 0;
 	char          name[1024];
 	qboolean      formatFound = qfalse;
+	int           imageSize;
+	float         dpi;
 
 	if (ftLibrary == NULL)
 	{
@@ -465,32 +467,44 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 		return qfalse;
 	}
 
-	if (FT_Set_Char_Size(face, pointSize << 6, pointSize << 6, DPI, DPI))
+
+	// scale dpi based on screen height
+	dpi = (float)DPI * (glConfig.vidHeight / (float)SCREEN_HEIGHT);
+
+	if (FT_Set_Char_Size(face, pointSize << 6, pointSize << 6, dpi, dpi))
 	{
-		// FIXME: ri.FS_FreeFile(faceData); ?
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType, unable to set face char size.\n");
 		return qfalse;
 	}
 
 	//*font = &registeredFonts[registeredFontCount++];
 
+	// scale image size based on screen height, use the next higher power of two
+	for (imageSize = FONT_SIZE; imageSize < (float)FONT_SIZE * (glConfig.vidHeight / (float)SCREEN_HEIGHT); imageSize <<= 1);
+
+	// do not exceed maxTextureSize
+	if (imageSize > glConfig.maxTextureSize)
+	{
+		imageSize = glConfig.maxTextureSize;
+	}
+
 	// make a 256x256 image buffer, once it is full, register it, clean it and keep going
 	// until all glyphs are rendered
 
-	out = (unsigned char *)ri.Z_Malloc(FONT_SIZE * FONT_SIZE);
+	out = (unsigned char *)ri.Z_Malloc(imageSize * imageSize);
 	if (out == NULL)
 	{
 		// FIXME: ri.FS_FreeFile(faceData); ?
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: ri.Z_Malloc failure during output image creation.\n");
 		return qfalse;
 	}
-	Com_Memset(out, 0, FONT_SIZE * FONT_SIZE);
+	Com_Memset(out, 0, imageSize * imageSize);
 
 	maxHeight = 0;
 
 	for (i = GLYPH_START; i < GLYPH_END; i++)
 	{
-		RE_ConstructGlyphInfo(out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
+		RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
 	}
 
 	xOut        = 0;
@@ -501,14 +515,14 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	while (i <= GLYPH_END)
 	{
-		glyph = RE_ConstructGlyphInfo(out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qfalse);
+		glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qfalse);
 
 		if (xOut == -1 || yOut == -1 || i == GLYPH_END)
 		{
 			// ran out of room
 			// we need to create an image from the bitmap, set all the handles in the glyphs to this point
 
-			scaledSize = FONT_SIZE * FONT_SIZE;
+			scaledSize = imageSize * imageSize;
 			newSize    = scaledSize * 4;
 			imageBuff  = (unsigned char *)ri.Z_Malloc(newSize);
 			left       = 0;
@@ -538,15 +552,15 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 			Com_sprintf(name, sizeof(name), "fonts/%s_%i_%i.tga", fontName, imageNumber++, pointSize);
 			if (r_saveFontData->integer)
 			{
-				WriteTGA(name, imageBuff, FONT_SIZE, FONT_SIZE);
+				WriteTGA(name, imageBuff, imageSize, imageSize);
 			}
 
 			//Com_sprintf (name, sizeof(name), "fonts/fontImage_%i_%i", imageNumber++, pointSize);
 #ifdef FEATURE_RENDERER2
-			image = R_CreateImage(name, imageBuff, FONT_SIZE, FONT_SIZE, IF_NOPICMIP, FT_LINEAR, WT_CLAMP);
+			image = R_CreateImage(name, imageBuff, imageSize, imageSize, IF_NOPICMIP, FT_LINEAR, WT_CLAMP);
 			h     = RE_RegisterShaderFromImage(name, image, qfalse);
 #else
-			image = R_CreateImage(name, imageBuff, FONT_SIZE, FONT_SIZE, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+			image = R_CreateImage(name, imageBuff, imageSize, imageSize, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 			h     = RE_RegisterShaderFromImage(name, LIGHTMAP_2D, image, qfalse);
 #endif
 			for (j = lastStart; j < i; j++)
@@ -555,7 +569,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 				Q_strncpyz(font->glyphs[j].shaderName, name, sizeof(font->glyphs[j].shaderName));
 			}
 			lastStart = i;
-			Com_Memset(out, 0, FONT_SIZE * FONT_SIZE);
+			Com_Memset(out, 0, imageSize * imageSize);
 			xOut = 0;
 			yOut = 0;
 			ri.Free(imageBuff);
@@ -569,7 +583,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	}
 
 	// change the scale to be relative to 1 based on 72 dpi ( so dpi of 144 means a scale of .5 )
-	glyphScale = 72.0f / DPI;
+	glyphScale = 72.0f / dpi;
 
 	// we also need to adjust the scale based on point size relative to 48 points as the ui scaling is based on a 48 point font
 	glyphScale *= 48.0f / pointSize;
