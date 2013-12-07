@@ -1093,6 +1093,8 @@ int Q_strnicmp(const char *string1, const char *string2, int n);
 int Q_PrintStrlen(const char *string);
 // removes color sequences from string
 char *Q_CleanStr(char *string);
+// removes color sequences from string using multiple passes
+void Q_StripColor(char *string);
 // Count the number of char tocount encountered in string
 int Q_CountChar(const char *string, char tocount);
 // removes whitespaces and other bad directory characters
