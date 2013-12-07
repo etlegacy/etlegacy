@@ -220,6 +220,7 @@ void CG_NewClientInfo(int clientNum)
 	v            = Info_ValueForKey(configstring, "r");
 	newInfo.rank = atoi(v);
 
+	// fireteam
 	v                = Info_ValueForKey(configstring, "f");
 	newInfo.fireteam = atoi(v);
 
@@ -262,6 +263,7 @@ void CG_NewClientInfo(int clientNum)
 
 	// diguiseName
 	v = Info_ValueForKey(configstring, "dn");
+	Q_strncpyz(newInfo.disguiseName, v, sizeof(newInfo.disguiseName));
 	Q_strncpyz(newInfo.cleandisguiseName, v, sizeof(newInfo.cleandisguiseName));
 	Q_CleanStr(newInfo.cleandisguiseName);
 

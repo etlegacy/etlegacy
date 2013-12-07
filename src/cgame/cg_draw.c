@@ -1796,7 +1796,7 @@ static void CG_DrawCrosshairNames(void)
 
 	if (cg.crosshairClientNum > MAX_CLIENTS)
 	{
-		if (!cg_drawCrosshairNames.integer)
+		if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
 		{
 			return;
 		}
@@ -1810,7 +1810,7 @@ static void CG_DrawCrosshairNames(void)
 				playerHealth = cg_entities[cg.crosshairClientNum].currentState.dl_intensity;
 				maxHealth    = 255;
 
-				if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
+				if (cg_drawCrosshairNames.integer > 0)
 				{
 					s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairClientNum));
 					if (!*s)
@@ -1824,7 +1824,7 @@ static void CG_DrawCrosshairNames(void)
 			}
 			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 			{
-				if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
+				if (cg_drawCrosshairNames.integer > 0)
 				{
 					s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairClientNum));
 					if (*s)
@@ -1856,7 +1856,7 @@ static void CG_DrawCrosshairNames(void)
 			}
 			else if (dist > 512)
 			{
-				if (!cg_drawCrosshairNames.integer)
+				if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
 				{
 					return;
 				}
@@ -1864,18 +1864,26 @@ static void CG_DrawCrosshairNames(void)
 				drawStuff = qtrue;
 
 				// draw the name and class
-				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].cleandisguiseName);
-				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-				if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
+				if (cg_drawCrosshairNames.integer > 0)
 				{
+					if (cg_drawCrosshairNames.integer == 2)
+					{
+						s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
+					}
+					else
+					{
+						s = cgs.clientinfo[cg.crosshairClientNum].cleandisguiseName;
+					}
+					w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+
 					CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 				}
-				if (cg_drawCrosshairNames.integer & CROSSHAIR_CLASS)
+				if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
 				{
 					// - 16 - 110/2
 					CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass((cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 				}
-				if (cgs.clientinfo[cg.crosshairClientNum].disguiseRank > 0 && (cg_drawCrosshairNames.integer & CROSSHAIR_RANK))
+				if (cgs.clientinfo[cg.crosshairClientNum].disguiseRank > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK))
 				{
 					// + 110/2
 					CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].disguiseRank][cgs.clientinfo[cg.crosshairClientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
@@ -1908,7 +1916,7 @@ static void CG_DrawCrosshairNames(void)
 		}
 	}
 
-	if (!cg_drawCrosshairNames.integer)
+	if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
 	{
 		return;
 	}
@@ -1924,18 +1932,26 @@ static void CG_DrawCrosshairNames(void)
 		drawStuff = qtrue;
 
 		// draw the name and class
-		s = va("%s", cgs.clientinfo[cg.crosshairClientNum].cleanname);
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-		if (cg_drawCrosshairNames.integer & CROSSHAIR_NAME)
+		if (cg_drawCrosshairNames.integer > 0)
 		{
+			if (cg_drawCrosshairNames.integer == 2)
+			{
+				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
+			}
+			else
+			{
+				s = cgs.clientinfo[cg.crosshairClientNum].cleanname;
+			}
+			w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+
 			CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 		}
-		if (cg_drawCrosshairNames.integer & CROSSHAIR_CLASS)
+		if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
 		{
 			// - 16 - 110/2
 			CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cg_entities[cg.crosshairClientNum].currentState.teamNum)]);
 		}
-		if (cgs.clientinfo[cg.crosshairClientNum].rank > 0 && (cg_drawCrosshairNames.integer & CROSSHAIR_RANK))
+		if (cgs.clientinfo[cg.crosshairClientNum].rank > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK))
 		{
 			//  + 110/2
 			CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].rank][cgs.clientinfo[cg.crosshairClientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
