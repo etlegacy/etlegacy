@@ -8,7 +8,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608 //400
-#define WINDOW_HEIGHT	422
+#define WINDOW_HEIGHT	434
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 //#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 
@@ -67,16 +67,17 @@ menuDef {
 
 // Crosshair //
 #define CROSSHAIR_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 152, "CROSSHAIR" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 164, "CROSSHAIR" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Size:", .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, "Sets the size of the displayed crosshair" )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Pulsing:", .2, 8, "cg_crosshairPulse", "Toggles crosshair spread sizing while moving/firing" )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Health Info:", .2, 8, "cg_crosshairHealth", "Colors the crosshair based on current health (overrides crosshair color settings)" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Info Drawing:", .2, 8, "cg_drawCrosshairNames", cvarFloatList { "Off" 0 "Name" 1 "Class" 2 "Rank" 4 "Name + Class" 3 "Name + Rank" 5 "Class + Rank" 6 "Name + Class + Rank" 7 }, "Displays player info when the crosshair is over a teammate" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Name:", .2, 8, "cg_drawCrosshairNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, "Displays player name when the crosshair is over a teammate" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Info:", .2, 8, "cg_drawCrosshairInfo", cvarFloatList { "Off" 0 "Class" 1 "Rank" 2 "Class + Rank" 3 }, "Displays player info when the crosshair is over a teammate" )
 
 	itemDef {
 		name		"crosshair_select"
 		group		GROUP_NAME
-		rect		$evalfloat((SUBWINDOW_WIDTH_L)+.5*((SUBWINDOW_WIDTH_R)-64)) 97 35 35
+		rect		$evalfloat((SUBWINDOW_WIDTH_L)+.5*((SUBWINDOW_WIDTH_R)-64)) 109 35 35
 		style		WINDOW_STYLE_FILLED
 		ownerdraw	UI_CROSSHAIR
 		backcolor	.4 .4 .4 .9
@@ -94,15 +95,15 @@ menuDef {
 		}
 	}
 
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+104, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Color:", .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Set the color for the primary crosshair" )
-	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_L)-4, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Alpha:", .2, 8, "cg_crosshairAlpha" 1 0 1, "Set the transparency level for the primary crosshair" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+128, (SUBWINDOW_WIDTH_R)-4, 10, "Secondary Color:", .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Set the color for the secondary crosshair" )
-	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+140, (SUBWINDOW_WIDTH_L)-4, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+140, (SUBWINDOW_WIDTH_R)-4, 10, "Secondary Alpha:", .2, 8, "cg_crosshairAlphaAlt" 1 0 1, "Set the transparency level for the secondary crosshair" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Color:", .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Set the color for the primary crosshair" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+128, (SUBWINDOW_WIDTH_L)-4, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+128, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Alpha:", .2, 8, "cg_crosshairAlpha" 1 0 1, "Set the transparency level for the primary crosshair" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+140, (SUBWINDOW_WIDTH_R)-4, 10, "Secondary Color:", .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Set the color for the secondary crosshair" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_L)-4, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_R)-4, 10, "Secondary Alpha:", .2, 8, "cg_crosshairAlphaAlt" 1 0 1, "Set the transparency level for the secondary crosshair" )
 
 // Movement //
-  #define MOVEMENT_Y 190
+  #define MOVEMENT_Y 202
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 64, "MOVEMENT" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, "Enable/Disable the vertical bob effect when moving" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Bob pitch:", .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob pitch (forwards/backwards) effect when moving" )
@@ -110,7 +111,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob yaw (turn left/right) effect when moving" )
 
 // Fonts //
-  #define FONTS_Y 260
+  #define FONTS_Y 272
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 76, "FONTS" )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Fonts Size:", .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, "Sets the size of the in-game fonts" )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -123,7 +124,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Crosshair Name:", .2, 8, "cg_fontScaleCN" 0.15 0 0.5, "Set font size for Crosshair Name label" )
 
 // Misc //
-  #define MISC_Y 342
+  #define MISC_Y 354
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 52, "MISC" )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTime:", .2, 8, "cg_popupTime" 2500 0 6000, "Set the delay time in which a pop-up appear" )

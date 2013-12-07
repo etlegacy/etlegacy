@@ -550,6 +550,7 @@ typedef struct clientInfo_s
 	int skill[SK_NUM_SKILLS];
 	int skillpoints[SK_NUM_SKILLS]; // filled OOB by +wstats
 
+	char disguiseName[MAX_QPATH];
 	char cleandisguiseName[MAX_QPATH];
 	int disguiseRank;
 
@@ -2034,6 +2035,7 @@ extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
 extern vmCvar_t cg_drawSnapshot;
 extern vmCvar_t cg_drawCrosshair;
+extern vmCvar_t cg_drawCrosshairInfo;
 extern vmCvar_t cg_drawCrosshairNames;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_useWeapsForZoom;
@@ -2226,9 +2228,8 @@ extern vmCvar_t cg_fontScaleCN;
 #define LOCALTIME_12HOUR            0x04
 
 // crosshair name flags
-#define CROSSHAIR_NAME              0x01
-#define CROSSHAIR_CLASS             0x02
-#define CROSSHAIR_RANK              0x04
+#define CROSSHAIR_CLASS             0x01
+#define CROSSHAIR_RANK              0x02
 
 // cg_main.c
 const char *CG_ConfigString(int index);
