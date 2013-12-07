@@ -917,7 +917,7 @@ msgstr ""
 msgid "Crosshair Health Info:"
 msgstr ""
 
-msgid "Crosshair Info Drawing:"
+msgid "Crosshair Info:"
 msgstr ""
 
 msgid "Primary Color:"
