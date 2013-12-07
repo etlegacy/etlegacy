@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -528,8 +528,7 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 		interval = now - bucket->lastTime;
 
 		// Reclaim expired buckets
-		if (bucket->lastTime > 0 && (interval > (burst * period) ||
-		                             interval < 0))
+		if (bucket->lastTime > 0 && (interval > (burst * period) || interval < 0))
 		{
 			if (bucket->prev != NULL)
 			{
@@ -729,6 +728,7 @@ void SVC_Info(netadr_t from)
 	// A maximum challenge length of 128 should be more than plenty.
 	if (strlen(Cmd_Argv(1)) > 128)
 	{
+		SV_WriteAttackLog("SVC_Info: challenge lenght exceeded, dropping request\n");
 		return;
 	}
 
@@ -1325,6 +1325,9 @@ int SV_FrameMsec()
 extern void Sys_Sleep(int msec);
 #endif
 
+#define CPU_USAGE_WARNING  70
+#define FRAME_TIME_WARNING 30
+
 /**
  * @brief Player movement occurs as a result of packet events, which happen
  * before SV_Frame is called
@@ -1400,6 +1403,7 @@ void SV_Frame(int msec)
 		Cbuf_AddText(va("map %s\n", mapname));
 		return;
 	}
+
 	// this can happen considerably earlier when lots of clients play and the map doesn't change
 	if (svs.nextSnapshotEntities >= 0x7FFFFFFE - svs.numSnapshotEntities)
 	{
@@ -1558,14 +1562,14 @@ void SV_Frame(int msec)
 
 		// FIXME: add mail, IRC, player info etc for both warnings
 		// TODO: inspect/adjust these values and/or add cvars
-		if (svs.stats.cpu > 70)
+		if (svs.stats.cpu > CPU_USAGE_WARNING)
 		{
-			Com_Printf("^3WARNING: Server CPU has reached a critical usage of %i %%\n", (int) svs.stats.cpu);
+			Com_Printf("^3WARNING: Server CPU has reached a critical usage of %i%%\n", (int) svs.stats.cpu);
 		}
 
-		if (svs.stats.avg > 30)
+		if (svs.stats.avg > FRAME_TIME_WARNING)
 		{
-			Com_Printf("^3WARNING: Average frame time has reached a critical value of %i ms\n", (int) svs.stats.avg);
+			Com_Printf("^3WARNING: Average frame time has reached a critical value of %ims\n", (int) svs.stats.avg);
 		}
 	}
 }
