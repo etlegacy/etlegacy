@@ -3042,10 +3042,6 @@ void Com_WriteConfiguration(void)
 		{
 			Com_WriteConfigToFile(va("profiles/%s/%s", cl_profileStr, CONFIG_NAME));
 		}
-		else
-		{
-			Com_WriteConfigToFile(CONFIG_NAME);
-		}
 	}
 }
 
