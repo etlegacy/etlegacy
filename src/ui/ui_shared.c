@@ -2182,10 +2182,6 @@ void Script_ExecWolfConfig(itemDef_t *item, qboolean *bAbort, char **args)
 				}
 			}
 		}
-		else
-		{
-			DC->executeText(EXEC_NOW, va("exec %s\n", CONFIG_NAME));
-		}
 	}
 }
 
