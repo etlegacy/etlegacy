@@ -119,7 +119,7 @@
 #define SLIDER_HEIGHT       10.0    // 16.0
 #define SLIDER_THUMB_WIDTH  12.0
 #define SLIDER_THUMB_HEIGHT 12.0    // 20.0
-#define NUM_CROSSHAIRS      10
+#define NUM_CROSSHAIRS      16
 
 typedef struct rectDef_s
 {

@@ -76,7 +76,7 @@
 #define NOTIFY_WIDTH        80
 #define NOTIFY_HEIGHT       5
 
-#define NUM_CROSSHAIRS      10
+#define NUM_CROSSHAIRS      16
 
 // trails
 #define STYPE_STRETCH   0
