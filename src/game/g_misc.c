@@ -126,6 +126,8 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	// toggle the teleport bit so the client knows to not lerp
 	player->client->ps.eFlags ^= EF_TELEPORT_BIT;
 
+	G_ResetMarkers(player);
+
 	// set angles
 	SetClientViewAngle(player, angles);
 
@@ -1988,6 +1990,12 @@ void misc_spawner_think(gentity_t *ent)
 	gentity_t *drop = NULL;
 
 	item = BG_FindItem(ent->spawnitem);
+
+	if (!item)
+	{
+		G_Printf("-----> WARNING <-------\n");
+		G_Printf("misc_spawner used and no item found!\n");
+	}
 
 	drop = Drop_Item(ent, item, 0, qfalse);
 
