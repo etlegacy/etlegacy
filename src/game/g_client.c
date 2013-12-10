@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -353,13 +353,12 @@ just like the existing corpse to leave behind.
 void CopyToBodyQue(gentity_t *ent)
 {
 	gentity_t *body;
-	int       contents, i;
+	int       i;
 
 	trap_UnlinkEntity(ent);
 
 	// if client is in a nodrop area, don't leave the body
-	contents = trap_PointContents(ent->client->ps.origin, -1);
-	if (contents & CONTENTS_NODROP)
+	if (trap_PointContents(ent->client->ps.origin, -1) & CONTENTS_NODROP)
 	{
 		return;
 	}
@@ -1845,9 +1844,15 @@ void ClientUserinfoChanged(int clientNum)
 		G_Printf("Userinfo: %s\n", userinfo);
 	}
 
-	if (!(g_protect.integer & G_PROTECT_LOCALHOST_REF))
+	if (g_protect.integer & G_PROTECT_LOCALHOST_REF)
 	{
-		// check for local client and set ref
+		if (ent->r.svFlags & SVF_BOT)
+		{
+			client->pers.localClient = qtrue; // don't kick or vote against bots ... but don't set referee!
+		}
+	}
+	else // no protection, check for local client and set ref (for LAN/listen server games)
+	{
 		if (!strcmp(client->pers.client_ip, "localhost"))
 		{
 			client->pers.localClient = qtrue;
@@ -3294,6 +3299,8 @@ void ClientDisconnect(int clientNum)
 	ent->active                           = 0;
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
+
+	G_deleteStats(clientNum);
 
 	CalculateRanks();
 
