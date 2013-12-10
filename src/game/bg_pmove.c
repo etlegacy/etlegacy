@@ -5646,22 +5646,7 @@ void PM_CheckLadderMove(void)
 	{
 		pml.ladder = qtrue;
 	}
-	/*
-	    if (!pml.ladder && DotProduct(pm->ps->velocity, pml.forward) < 0) {
-	        // trace along the negative velocity, so we grab onto a ladder if we are trying to reverse onto it from above the ladder
-	        flatforward[0] = -pm->ps->velocity[0];
-	        flatforward[1] = -pm->ps->velocity[1];
-	        flatforward[2] = 0;
-	        VectorNormalize (flatforward);
 
-	        VectorMA (pm->ps->origin, tracedist, flatforward, spot);
-	        pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, spot, pm->ps->clientNum, pm->tracemask);
-	        if ((trace.fraction < 1) && (trace.surfaceFlags & SURF_LADDER))
-	        {
-	            pml.ladder = qtrue;
-	        }
-	    }
-	*/
 	if (pml.ladder)
 	{
 		VectorCopy(trace.plane.normal, laddervec);
