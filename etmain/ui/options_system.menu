@@ -50,8 +50,8 @@ menuDef {
 // Networking //
 	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 54, "NETWORKING" )
 	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Connection:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Choose your connection type" )
-	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Max Packets:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "cap for upstream data packet transmissions" )
-	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "number of duplicates for every data packet sent upstream, minimized packetloss" )
+	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Max Packets:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "Cap for upstream data packet transmissions" )
+	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "Number of duplicates for every data packet sent upstream, minimized packetloss" )
 
 // Downloads //
 	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 52, "DOWNLOADS" )
