@@ -58,10 +58,10 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	const char *s;
 
 	// stats reset check
-	if (level.fResetStats)
-	{
-		G_deleteStats(client - level.clients);
-	}
+	//if (level.fResetStats)
+	//{
+	G_deleteStats(client - level.clients);
+	//}
 
 #ifdef FEATURE_MULTIVIEW
 	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
@@ -381,10 +381,12 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
     sess->startxptotal = 0;
 
     sess->coach_team = 0;
-    sess->referee = (client->pers.localClient) ? RL_REFEREE : RL_NONE;
+    // we set ref in ClientUserinfoChanged
+    sess->referee = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
     sess->spec_invite = 0;
     sess->spec_team   = 0;
-    G_deleteStats(client - level.clients);
+   // G_WriteClientSessionData calls this
+   //G_deleteStats(client - level.clients);
 
     sess->uci = 0; // GeoIP
 
