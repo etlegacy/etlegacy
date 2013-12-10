@@ -1254,10 +1254,10 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	G_verifyMatchState(oldTeam);
 
 	// Reset stats when changing teams
-	if (team != oldTeam)
-	{
-		G_deleteStats(clientNum);
-	}
+	//if (team != oldTeam)
+	//{
+	//	G_deleteStats(clientNum);
+	//}
 
 	G_UpdateSpawnCounts();
 
