@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1005,13 +1005,10 @@ fileHandle_t FS_FOpenFileAppend(const char *filename)
 	return f;
 }
 
-/*
-===========
-FS_FilenameCompare
-
-Ignore case and seprator char distinctions
-===========
-*/
+/**
+ * @brief Compare filenames
+ * Ignores case and separator char distinctions
+ */
 qboolean FS_FilenameCompare(const char *s1, const char *s2)
 {
 	int c1, c2;
@@ -1154,7 +1151,7 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 		return -1;
 	}
 
-	// make sure the q3key file is only readable by the quake3.exe at initialization
+	// make sure the etkey file is only readable by the etl.exe at initialization
 	// any other time the key should only be accessed in memory using the provided functions
 	if (com_fullyInitialized && strstr(filename, "etkey"))
 	{
@@ -4312,6 +4309,37 @@ void FS_Fileinfo_f(void)
 }
 
 /**
+ * @brief If we can't find pak0.pk3, assume that the paths are busted
+ * and error out now, rather than getting an unreadable graphics screen.
+ *
+ * pak0.pk3 is the main requirement for a successful initialization,
+ * additional missing paks can be checked and redownloaded after start up.
+ */
+static void FS_CheckRequiredFiles(int checksumFeed)
+{
+	if (!FS_FOpenFileRead("pak0.pk3", NULL, qfalse))
+	{
+		// this might happen when connecting to a pure server not using BASEGAME/pak0.pk3
+		// i.e. standalone game server
+		if (checksumFeed && lastValidBase[0])
+		{
+			FS_PureServerSetLoadedPaks("", "");
+			Cvar_Set("fs_basepath", lastValidBase);
+			Cvar_Set("fs_game", lastValidGame);
+			lastValidBase[0] = '\0';
+			lastValidGame[0] = '\0';
+			FS_Restart(checksumFeed);
+			Com_Error(ERR_DROP, "Invalid game folder");
+
+			return;
+		}
+
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Original game data files not found.\n\nPlease copy pak0.pk3, pak1.pk3 and pak2.pk3 from the Wolfenstein: Enemy Territory installation to one of these locations:\n\n\"%s%c%s\"\n\nor\n\n\"%s%c%s\"\n",
+		          Cvar_VariableString("fs_basepath"), PATH_SEP, BASEGAME, Cvar_VariableString("fs_homepath"), PATH_SEP, BASEGAME);
+	}
+}
+
+/**
  * @brief Called only at initial startup, not when the filesystem
  * is resetting due to a game change
  */
@@ -4344,15 +4372,7 @@ void FS_InitFilesystem(void)
 	// try to start up normally
 	FS_Startup(BASEGAME);
 
-	// if we can't find default.cfg, assume that the paths are
-	// busted and error out now, rather than getting an unreadable
-	// graphics screen when the font fails to load
-	// - we want the nice error message here as well
-	// FIXME: temporary fix - default.cfg is now part of pak3.pk3, add a smarter check
-	if (FS_ReadFile("fonts/ariblk_0_16.tga", NULL) <= 0)
-	{
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load base data files!\nVerify your installation and make sure genuine ET files\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
-	}
+	FS_CheckRequiredFiles(0);
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
@@ -4377,37 +4397,7 @@ void FS_Restart(int checksumFeed)
 	// try to start up normally
 	FS_Startup(BASEGAME);
 
-	// if we can't find default.cfg, assume that the paths are
-	// busted and error out now, rather than getting an unreadable
-	// graphics screen when the font fails to load
-	if (FS_ReadFile("default.cfg", NULL) <= 0
-#ifdef PANDORA
-	    // also ensure default_pandora.cfg
-	    && FS_ReadFile(CONFIG_NAME_DEFAULT, NULL) <= 0
-#endif
-	    )
-	{
-		// this might happen when connecting to a pure server not using BASEGAME/pak0.pk3
-		// (for instance a TA demo server)
-		if (lastValidBase[0])
-		{
-			FS_PureServerSetLoadedPaks("", "");
-			Cvar_Set("fs_basepath", lastValidBase);
-			Cvar_Set("fs_game", lastValidGame);
-			lastValidBase[0] = '\0';
-			lastValidGame[0] = '\0';
-			FS_Restart(checksumFeed);
-			Com_Error(ERR_DROP, "Invalid game folder");
-
-			return;
-		}
-		// added some verbosity, 'couldn't load default.cfg' confuses the hell out of users
-#ifdef PANDORA
-		Com_Error(ERR_FATAL, "FS_Restart: Couldn't load default.cfg and default_pandora.cfg - I am missing essential files - verify your installation?");
-#else
-		Com_Error(ERR_FATAL, "FS_Restart: Couldn't load default.cfg - I am missing essential files - verify your installation?");
-#endif
-	}
+	FS_CheckRequiredFiles(checksumFeed);
 
 	// new check before safeMode
 	if (Q_stricmp(fs_gamedirvar->string, lastValidGame))
