@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -127,17 +127,13 @@ void SV_GetChallenge(netadr_t from)
 	return;
 }
 
-/*
-==================
-SV_DirectConnect
-
-A "connect" OOB command has been received
-==================
-*/
+/**
+ * @brief A "connect" OOB command has been received
+ */
 void SV_DirectConnect(netadr_t from)
 {
 	char                userinfo[MAX_INFO_STRING];
-	int                 i;
+	int                 i, count = 0;
 	client_t            *cl, *newcl;
 	MAC_STATIC client_t temp;
 	int                 clientNum;
@@ -147,7 +143,7 @@ void SV_DirectConnect(netadr_t from)
 	char                *password;
 	int                 startIndex;
 	char                *denied;
-	int                 count;
+	qboolean            secondRun = qfalse;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
@@ -310,39 +306,35 @@ void SV_DirectConnect(netadr_t from)
 			newcl = cl;
 			break;
 		}
+
+		// if the server is full, we prefer human players over bots
+		if ((startIndex < sv_privateClients->integer || secondRun) &&
+		    cl->netchan.remoteAddress.type == NA_BOT)
+		{
+			SV_DropClient(&svs.clients[i], "humans over robots!");
+			newcl = &svs.clients[i];
+			break;
+		}
+
+		if (i + 1 == sv_maxclients->integer)
+		{
+			secondRun = qtrue;
+			i         = startIndex;
+		}
 	}
 
 	if (!newcl)
 	{
 		if (NET_IsLocalAddress(from))
 		{
-			count = 0;
-			for (i = startIndex; i < sv_maxclients->integer ; i++)
-			{
-				cl = &svs.clients[i];
-				if (cl->netchan.remoteAddress.type == NA_BOT)
-				{
-					count++;
-				}
-			}
-			// if they're all bots
-			if (count >= sv_maxclients->integer - startIndex)
-			{
-				SV_DropClient(&svs.clients[sv_maxclients->integer - 1], "only bots on server");
-				newcl = &svs.clients[sv_maxclients->integer - 1];
-			}
-			else
-			{
-				Com_Error(ERR_FATAL, "server is full on local connect");
-				return;
-			}
+			Com_Error(ERR_FATAL, "server is full on local connect");
 		}
 		else
 		{
 			NET_OutOfBandPrint(NS_SERVER, from, va("print\n%s\n", sv_fullmsg->string));
 			Com_DPrintf("Rejected a connection.\n");
-			return;
 		}
+		return;
 	}
 
 	// we got a newcl, so reset the reliableSequence and reliableAcknowledge
@@ -401,7 +393,6 @@ gotnewcl:
 
 	// if this was the first client on the server, or the last client
 	// the server can hold, send a heartbeat to the master.
-	count = 0;
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
 		if (svs.clients[i].state >= CS_CONNECTED)
