@@ -1251,9 +1251,9 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 void CG_MapVoteList_Draw(panel_button_t *button)
 {
 	int           i;
-	float         y  = button->rect.y + 12;
-	float         y2 = DB_MAPVOTE_Y;
-	qhandle_t     pic;
+	float         y      = button->rect.y + 12;
+	float         y2     = DB_MAPVOTE_Y;
+	qhandle_t     pic    = 0;
 	static vec4_t acolor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	int           diff;
 
@@ -1280,7 +1280,11 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			diff      = cg.time - cgs.dbSelectedMapTime;
 			acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
 			trap_R_SetColor(acolor);
-			pic = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[i + cgs.dbMapVoteListOffset]));
+			// First check if the corresponding map is downloaded to prevent warning about missing levelshot
+			if (trap_FS_FOpenFile(va("maps/%s.bsp", cgs.dbMaps[i + cgs.dbMapVoteListOffset]), NULL, FS_READ))
+			{
+				pic = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[i + cgs.dbMapVoteListOffset]));
+			}
 			if (pic)
 			{
 				CG_DrawPic(DB_MAPVOTE_X2 + 24 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 2, 250, 177.0f / 233.0f * 250, pic);

@@ -7029,7 +7029,15 @@ static void UI_FeederSelection(float feederID, int index)
 
 		if (mapName && *mapName)
 		{
-			uiInfo.serverStatus.currentServerPreview = trap_R_RegisterShaderNoMip(va("levelshots/%s", Info_ValueForKey(info, "mapname")));
+			// First check if the corresponding map is downloaded to prevent warning about missing levelshot
+			if (trap_FS_FOpenFile(va("maps/%s.bsp", Info_ValueForKey(info, "mapname")), NULL, FS_READ))
+			{
+				uiInfo.serverStatus.currentServerPreview = trap_R_RegisterShaderNoMip(va("levelshots/%s", Info_ValueForKey(info, "mapname")));
+			}
+			else
+			{
+				uiInfo.serverStatus.currentServerPreview = trap_R_RegisterShaderNoMip("levelshots/unknownmap");
+			}
 		}
 		else
 		{
