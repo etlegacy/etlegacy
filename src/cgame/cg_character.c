@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -57,19 +57,19 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 	len = trap_FS_FOpenFile(va("%s.gibs", modelPath), &f, FS_READ);
 	if (len <= 0)
 	{
-		CG_Printf("File %s not found\n", va("%s.gibs", modelPath));
+		CG_Printf("File %s.gibs not found\n", modelPath);
 		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 
 	if (len >= sizeof(bigTextBuffer) - 1)
 	{
-		CG_Printf("File %s too long\n", va("%s.gibs", modelPath));
+		CG_Printf("File %s.gibs too long\n", modelPath);
 		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 
-	//CG_Printf( "CG_ParseGibModel reading %s\n", va("%s.gibs", modelPath) );
+	//CG_Printf("CG_ParseGibModel reading %s.gibs\n", modelPath);
 
 	trap_FS_Read(bigTextBuffer, len, f);
 	bigTextBuffer[len] = 0;
