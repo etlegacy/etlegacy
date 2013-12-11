@@ -380,7 +380,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		cl     = &level.clients[idnum];
 		cl_ent = g_entities + idnum;
 
-		SanitizeString(cl->pers.netname, n2, qtrue);
+		SanitizeString(cl->pers.netname, n2, qfalse);
 		n2[26]   = 0;
 		ref[0]   = 0;
 		ready[0] = 0;
