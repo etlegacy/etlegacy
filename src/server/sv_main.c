@@ -697,7 +697,7 @@ static void SVC_Status(netadr_t from, qboolean force)
  */
 void SVC_Info(netadr_t from)
 {
-	int  i, count, humans;
+	int  i, players = 0, humans = 0;
 	char *gamedir;
 	char infostring[MAX_INFO_STRING];
 	char *antilag;
@@ -733,18 +733,18 @@ void SVC_Info(netadr_t from)
 	}
 
 	// don't count privateclients
-	count = humans = 0;
 	for (i = sv_privateClients->integer ; i < sv_maxclients->integer ; i++)
 	{
 		if (svs.clients[i].state >= CS_CONNECTED)
 		{
-			count++;
+			players++;
 			if (svs.clients[i].netchan.remoteAddress.type != NA_BOT)
 			{
 				humans++;
 			}
 		}
 	}
+
 
 	infostring[0] = 0;
 
@@ -756,7 +756,8 @@ void SVC_Info(netadr_t from)
 	Info_SetValueForKey(infostring, "hostname", sv_hostname->string);
 	Info_SetValueForKey(infostring, "serverload", va("%i", svs.serverLoad));
 	Info_SetValueForKey(infostring, "mapname", sv_mapname->string);
-	Info_SetValueForKey(infostring, "clients", va("%i", count));
+	Info_SetValueForKey(infostring, "clients", va("%i", players));
+	Info_SetValueForKey(infostring, "humans", va("%i", humans));
 	Info_SetValueForKey(infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer));
 	Info_SetValueForKey(infostring, "gametype", Cvar_VariableString("g_gametype"));
 	Info_SetValueForKey(infostring, "pure", va("%i", sv_pure->integer));

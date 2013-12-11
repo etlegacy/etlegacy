@@ -177,6 +177,7 @@ typedef enum
 
 } uiImport_t;
 
+// Number of columns in the server list
 #define SORT_HOST           0
 #define SORT_MAP            1
 #define SORT_CLIENTS        2

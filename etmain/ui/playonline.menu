@@ -427,6 +427,7 @@ menuDef {
 		}
 	}
 
+	// TODO: increase the width of this column to fit players+humans / total players
 	itemDef {
 		name		"playerColumn"
 		group		"grpColumns"
