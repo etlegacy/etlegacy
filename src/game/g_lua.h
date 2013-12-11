@@ -95,10 +95,23 @@ typedef struct
 
 extern lua_vm_t *lVM[LUA_NUM_VM];
 
+typedef enum printMessageType_e
+{
+	GPRINT_TEXT = 0,
+	GPRINT_DEVELOPER,
+	GPRINT_ERROR
+} printMessageType_t;
+
+typedef struct luaPrintFunctions_s
+{
+	printMessageType_t category;
+	const char *function;
+} luaPrintFunctions_t;
+
 // API
 qboolean G_LuaInit(void);
-qboolean G_LuaCall(lua_vm_t *vm, char *func, int nargs, int nresults);
-qboolean G_LuaGetNamedFunction(lua_vm_t *vm, char *name);
+qboolean G_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults);
+qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name);
 qboolean G_LuaStartVM(lua_vm_t *vm);
 void G_LuaStopVM(lua_vm_t *vm);
 void G_LuaShutdown(void);
@@ -118,7 +131,7 @@ qboolean G_LuaHook_ClientCommand(int clientNum, char *command);
 qboolean G_LuaHook_ConsoleCommand(char *command);
 qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill);
 qboolean G_LuaHook_SetPlayerSkill(int cno, skillType_t skill);
-void G_LuaHook_Print(char *text);
+void G_LuaHook_Print(printMessageType_t category, char *text);
 qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath);
 qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int mod);
 
