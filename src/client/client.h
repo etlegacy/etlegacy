@@ -291,6 +291,7 @@ typedef struct
 	int netType;
 	int gameType;
 	int clients;
+	int humans;
 	int maxClients;
 	int minPing;
 	int maxPing;

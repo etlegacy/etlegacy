@@ -5499,7 +5499,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			{
 				maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 
-				if (clients != maxClients && (
+				if (clients < maxClients && (
 				        (!clients && ui_browserShowEmptyOrFull.integer == 2) ||
 				        (clients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
@@ -5508,8 +5508,8 @@ static void UI_BuildServerDisplayList(qboolean force)
 				}
 
 				if (clients && (
-				        (clients == maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
-				        (clients != maxClients && ui_browserShowEmptyOrFull.integer == 1)))
+				        (clients >= maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
+				        (clients < maxClients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -6547,6 +6547,13 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
+				// TODO: increase the player column width to fit the number humans playing
+				/*
+				Com_sprintf(clientBuff, sizeof(clientBuff), "%s%s/%s",
+				            Info_ValueForKey(info, "clients"),
+				            (atoi(Info_ValueForKey(info, "humans")) ? va("(^W%s^9)", Info_ValueForKey(info, "humans")) : "(?)"),
+				            Info_ValueForKey(info, "sv_maxclients"));
+				*/
 				Com_sprintf(clientBuff, sizeof(clientBuff), "%s/%s", Info_ValueForKey(info, "clients"), Info_ValueForKey(info, "sv_maxclients"));
 				return clientBuff;
 			case SORT_GAME:
