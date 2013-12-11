@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -29,6 +29,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file sv_bot.c
+ * @brief Server interface for bots
  */
 
 #include "server.h"
@@ -42,18 +43,23 @@ static bot_debugpoly_t debugpolygons[MAX_DEBUGPOLYS];
 
 extern botlib_export_t *botlib_export;
 
-/*
-==================
-SV_BotAllocateClient
-==================
-*/
+/**
+ * @brief Attempts to add a bot to the game
+ * First player slot is reserved and cannot be used by a bot.
+ *
+ * If the specified slot is taken or private, the first free
+ * slot starting from the public slots will be returned.
+ *
+ * @param[in] clientNum has to be bigger than 0
+ * @returns assigned client slot or -1 if it fails to allocate one
+ */
 int SV_BotAllocateClient(int clientNum)
 {
 	int      i;
 	client_t *cl;
 
 	// added possibility to request a clientnum
-	if (clientNum > 0)
+	if (clientNum > 0 && clientNum >= sv_privateClients->integer)
 	{
 		if (clientNum >= sv_maxclients->integer)
 		{
@@ -72,8 +78,10 @@ int SV_BotAllocateClient(int clientNum)
 	}
 	else
 	{
-		// find a client slot
-		for (i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++)
+		qboolean secondRun = qfalse;
+
+		// start searching above private slots for a free client slot
+		for (i = sv_privateClients->integer, cl = svs.clients + sv_privateClients->integer; i < sv_maxclients->integer; i++, cl++)
 		{
 			// Wolfenstein, never use the first slot, otherwise if a bot connects before the first client on a listen server, game won't start
 			if (i < 1)
@@ -84,6 +92,19 @@ int SV_BotAllocateClient(int clientNum)
 			if (cl->state == CS_FREE)
 			{
 				break; // done.
+			}
+
+			// if all public slots are taken, try private ones
+			if (i + 1 == sv_maxclients->integer)
+			{
+				if (!sv_privateClients->integer || secondRun)
+				{
+					break;
+				}
+
+				secondRun = qtrue;
+				i         = 0;
+				cl        = svs.clients;
 			}
 		}
 	}
