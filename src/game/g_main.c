@@ -677,7 +677,7 @@ void QDECL G_Printf(const char *fmt, ...)
 
 #ifdef FEATURE_LUA
 	// LUA* API callbacks
-	G_LuaHook_Print(text);
+	G_LuaHook_Print(GPRINT_TEXT, text);
 #endif
 
 	trap_Printf(text);
@@ -699,6 +699,11 @@ void QDECL G_DPrintf(const char *fmt, ...)
 	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
 
+#ifdef FEATURE_LUA
+	// LUA* API callbacks
+	G_LuaHook_Print(GPRINT_DEVELOPER, text);
+#endif
+
 	trap_Printf(text);
 }
 
@@ -712,6 +717,11 @@ void QDECL G_Error(const char *fmt, ...)
 	va_start(argptr, fmt);
 	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
+
+#ifdef FEATURE_LUA
+	// LUA* API callbacks
+	G_LuaHook_Print(GPRINT_ERROR, text);
+#endif
 
 	trap_Error(text);
 }

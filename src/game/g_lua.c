@@ -1773,7 +1773,7 @@ qboolean G_LuaInit(void)
  * G_LuaCall( func, vm, nargs, nresults )
  * Calls a function already on the stack.
  */
-qboolean G_LuaCall(lua_vm_t *vm, char *func, int nargs, int nresults)
+qboolean G_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults)
 {
 	switch (lua_pcall(vm->L, nargs, nresults, 0))
 	{
@@ -1802,7 +1802,7 @@ qboolean G_LuaCall(lua_vm_t *vm, char *func, int nargs, int nresults)
  * Finds a function by name and puts it onto the stack.
  * If the function does not exist, returns qfalse.
  */
-qboolean G_LuaGetNamedFunction(lua_vm_t *vm, char *name)
+qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 {
 	if (vm->L)
 	{
@@ -2527,11 +2527,18 @@ qboolean G_LuaHook_SetPlayerSkill(int cno, skillType_t skill)
 	return qfalse;
 }
 
+static luaPrintFunctions_t g_luaPrintFunctions[] =
+{
+	{ GPRINT_TEXT,      "et_Print"  },
+	{ GPRINT_DEVELOPER, "et_DPrint" },
+	{ GPRINT_ERROR,     "et_Error"  }
+};
+
 /*
  * G_LuaHook_Print
  * et_Print( text ) callback
  */
-void G_LuaHook_Print(char *text)
+void G_LuaHook_Print(printMessageType_t category, char *text)
 {
 	int      i;
 	lua_vm_t *vm;
@@ -2545,14 +2552,14 @@ void G_LuaHook_Print(char *text)
 			{
 				continue;
 			}
-			if (!G_LuaGetNamedFunction(vm, "et_Print"))
+			if (!G_LuaGetNamedFunction(vm, g_luaPrintFunctions[category].function))
 			{
 				continue;
 			}
 			// Arguments
 			lua_pushstring(vm->L, text);
 			// Call
-			if (!G_LuaCall(vm, "et_Print", 1, 0))
+			if (!G_LuaCall(vm, g_luaPrintFunctions[category].function, 1, 0))
 			{
 				//G_LuaStopVM(vm);
 				continue;
