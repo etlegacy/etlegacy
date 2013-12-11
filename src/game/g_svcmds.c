@@ -1793,22 +1793,22 @@ void Svcmd_CSInfo_f(void)
 		{
 			if ((arg1numeric && value == i) || (!arg1numeric && !Q_stricmp(valuestr, str)))
 			{
-				G_Printf(va("%-4i %-8i %s\n", i, size, str));
+				G_Printf("%-4i %-8i %s\n", i, size, str);
 				// value 239 is taken from SBP()
 				for (j = 0; j <= (int)(size / (239 - 1)); j++)
 				{
 					Q_strncpyz(cspart, (char *)&cs[j * (239 - 1)], 239);
-					G_Printf(va("%s", cspart));
+					G_Printf("%s", cspart);
 				}
 				G_Printf("\n");
 			}
 		}
 		else
 		{
-			G_Printf(va("%-4i %-8i %s\n", i, size, str));
+			G_Printf("%-4i %-8i %s\n", i, size, str);
 		}
 	}
-	G_Printf(va("--------------------------------------------\nTotal CONFIGSTRING Length: %i\n", total));
+	G_Printf("--------------------------------------------\nTotal CONFIGSTRING Length: %i\n", total);
 }
 
 /*
