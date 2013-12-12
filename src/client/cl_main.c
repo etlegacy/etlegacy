@@ -2331,6 +2331,7 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 {
 	server->adr            = *address;
 	server->clients        = 0;
+	server->humans         = 0;
 	server->hostName[0]    = '\0';
 	server->mapName[0]     = '\0';
 	server->maxClients     = 0;
@@ -2341,6 +2342,15 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 	server->gameType       = 0;
 	server->netType        = 0;
 	server->allowAnonymous = 0;
+	server->punkbuster     = 0;
+	server->load           = -1;
+	server->balancedteams  = 0;
+	server->friendlyFire   = 0;
+	server->maxlives       = 0;
+	server->needpass       = 0;
+	server->antilag        = 0;
+	server->weaprestrict   = 0;
+	server->gameName[0]    = '\0';
 }
 
 #define MAX_SERVERSPERPACKET    256
@@ -2352,7 +2362,7 @@ CL_ServersResponsePacket
 */
 void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extended)
 {
-	int      i, count, total;
+	int      i, j, count, total;
 	netadr_t addresses[MAX_SERVERSPERPACKET];
 	int      numservers;
 	byte     *buffptr;
@@ -2447,6 +2457,22 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 	{
 		// build net address
 		serverInfo_t *server = &cls.globalServers[count];
+
+		// It's possible to have sent many master server requests. Then
+		// we may receive many times the same addresses from the master server.
+		// We just avoid to add a server if it is still in the global servers list.
+		for (j = 0; j < count; j++)
+		{
+			if (NET_CompareAdr(cls.globalServers[j].adr, addresses[i]))
+			{
+				break;
+			}
+		}
+
+		if (j < count)
+		{
+			continue;
+		}
 
 		CL_InitServerInfo(server, &addresses[i]);
 		// advance to next slot
@@ -4154,28 +4180,8 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 	}
 
 	// add this to the list
-	cls.numlocalservers                = i + 1;
-	cls.localServers[i].adr            = from;
-	cls.localServers[i].clients        = 0;
-	cls.localServers[i].hostName[0]    = '\0';
-	cls.localServers[i].load           = -1;
-	cls.localServers[i].mapName[0]     = '\0';
-	cls.localServers[i].maxClients     = 0;
-	cls.localServers[i].maxPing        = 0;
-	cls.localServers[i].minPing        = 0;
-	cls.localServers[i].ping           = -1;
-	cls.localServers[i].game[0]        = '\0';
-	cls.localServers[i].gameType       = 0;
-	cls.localServers[i].netType        = from.type;
-	cls.localServers[i].allowAnonymous = 0;
-	cls.localServers[i].friendlyFire   = 0;
-	cls.localServers[i].maxlives       = 0;
-	cls.localServers[i].needpass       = 0;
-	cls.localServers[i].punkbuster     = 0;
-	cls.localServers[i].antilag        = 0;
-	cls.localServers[i].weaprestrict   = 0;
-	cls.localServers[i].balancedteams  = 0;
-	cls.localServers[i].gameName[0]    = '\0';
+	cls.numlocalservers = i + 1;
+	CL_InitServerInfo(&cls.localServers[i], &from);
 
 	Q_strncpyz(info, MSG_ReadString(msg), MAX_INFO_STRING);
 	if (strlen(info))
