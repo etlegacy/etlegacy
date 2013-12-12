@@ -4,9 +4,13 @@
 // Defines //
 #define WINDOW_X		16
 #define WINDOW_Y		16
-#define WINDOW_WIDTH	400
-#define WINDOW_HEIGHT	459
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	290 // 448
 #define GROUP_NAME		"grpOptionsCustomiseGame"
+
+// Subwindows //
+#define SUBWINDOW_WIDTH_L		.50*(WINDOW_WIDTH-18)
+#define SUBWINDOW_WIDTH_R		.50*(WINDOW_WIDTH-18)
 
 // Customise Game Menu //
 menuDef {
@@ -24,50 +28,58 @@ menuDef {
 // Window //
 	WINDOW( "GAME", 94 )
 
-// Subwindows //
-#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
-
 // Player //
-	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 40, "PLAYER" )
-	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Player Alias:", .2, 8, "name", 36, 18, "Enter the name that you wish to be known by to others on servers" )
+#define PLAYER_Y 32
+	SUBWINDOW( 6, PLAYER_Y, (SUBWINDOW_WIDTH_L), 40, "PLAYER" )
+	EDITFIELD( 8, PLAYER_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Player Alias:", .2, 8, "name", 36, 18, "Enter the name that you wish to be known by to others on servers" )
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
-	//MULTI( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Language:", .2, 8, "cl_language", cvarStrList { "English (default)" en "French" fr "German" de "Italian" it "Spanish" es "Polish" pl "Dutch" nl "Czech" cz "Swedish" se "Finnish" fi "Danish" da "Portuguese" pt "Norwegian" no }, "Set your desired language" )
+	//MULTI( 8, PLAYER_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Language:", .2, 8, "cl_language", cvarStrList { "English (default)" en "French" fr "German" de "Italian" it "Spanish" es "Polish" pl "Dutch" nl "Czech" cz "Swedish" se "Finnish" fi "Danish" da "Portuguese" pt "Norwegian" no }, "Set your desired language" )
 
 // Physics //
-	SUBWINDOW( 6, 78, (SUBWINDOW_WIDTH), 40, "PHYSICS" )
-	YESNO( 8, 94, (SUBWINDOW_WIDTH)-4, 10, "Always Run:", .2, 8, "cl_run", "Toogle walk/run" )
-	MULTI( 8, 106, (SUBWINDOW_WIDTH)-4, 10, "Double-Tap Prone:", .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, "Set the delay time between keypresses required to be a double-tap" )
+#define PHYSICS_Y 78
+	SUBWINDOW( 6, PHYSICS_Y, (SUBWINDOW_WIDTH_L), 40, "PHYSICS" )
+	YESNO( 8, PHYSICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Always Run:", .2, 8, "cl_run", "Toogle walk/run" )
+	MULTI( 8, PHYSICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Double-Tap Prone:", .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, "Set the delay time between keypresses required to be a double-tap" )
 
 // Weapons //
-	SUBWINDOW( 6, 124, (SUBWINDOW_WIDTH), 78, "WEAPONS" )
-	YESNO( 8, 140, (SUBWINDOW_WIDTH)-4, 10, "Automatic Reload:", .2, 8, "cg_autoReload", "Automatically reload when ammunition clip runs out" )
-	YESNO( 8, 152, (SUBWINDOW_WIDTH)-4, 10, "Autoswitch:", .2, 8, "cg_noAmmoAutoSwitch", "Automatically switch to a new weapon when out of ammunition" )
-	MULTI( 8, 164, (SUBWINDOW_WIDTH)-4, 10, "Weapon Icon Flash:", .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { "Off" 0 "On" 1 "ETPro style" 2}, "Flash weapon icon when firing, reloading, or switching" )
-	YESNO( 8, 176, (SUBWINDOW_WIDTH)-4, 10, "Muzzle Flash:", .2, 8, "cg_muzzleflash", "Enables or disables weapon fire (muzzle flash)" )
-	MULTI( 8, 188, (SUBWINDOW_WIDTH)-4, 10, "Bullet Tracers:", .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, "Enable/Disable bullet tracers" )
+#define WEAPONS_Y 124
+	SUBWINDOW( 6, WEAPONS_Y, (SUBWINDOW_WIDTH_L), 78, "WEAPONS" )
+	YESNO( 8, WEAPONS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Automatic Reload:", .2, 8, "cg_autoReload", "Automatically reload when ammunition clip runs out" )
+	YESNO( 8, WEAPONS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Autoswitch:", .2, 8, "cg_noAmmoAutoSwitch", "Automatically switch to a new weapon when out of ammunition" )
+	MULTI( 8, WEAPONS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Weapon Icon Flash:", .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { "Off" 0 "2 colors" 1 "3 colors" 2}, "Flash weapon icon when firing, reloading, or switching" )
+	YESNO( 8, WEAPONS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Muzzle Flash:", .2, 8, "cg_muzzleflash", "Enables or disables weapon fire (muzzle flash)" )
+	MULTI( 8, WEAPONS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Bullet Tracers:", .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, "Enable/Disable bullet tracers" )
 
-// Binoculars //	FIXME - isn't this really a 'scopes' section?
-	SUBWINDOW( 6, 206, (SUBWINDOW_WIDTH), 52, "SCOPE" )
-	MULTI( 8, 222, (SUBWINDOW_WIDTH)-4, 10, "Use Weapon Cycle for Zoom:", .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, "Weapon switch will zoom in and out while scoped, rather than switch weapons" )
-	MULTI( 8, 234, (SUBWINDOW_WIDTH)-4, 10, "Default Zoom Level:", .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 20 "Near" 16 "Far" 8 "All the Way In" 4 }, "Set the default zoom level for scopes" )
-	MULTI( 8, 246, (SUBWINDOW_WIDTH)-4, 10, "Zoom Levels:", .2, 8, "cg_zoomstepsniper", cvarFloatList { "4 Levels of Zoom" 4 "8 Levels of Zoom" 2 }, "Specifies the increments you zoom by" )
+// Scope //
+#define SCOPE_Y 208
+	SUBWINDOW( 6, SCOPE_Y, (SUBWINDOW_WIDTH_L), 52, "SCOPE" )
+	MULTI( 8, SCOPE_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Weapon Cycle for Zoom:", .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, "Weapon switch will zoom in and out while scoped, rather than switch weapons" )
+	MULTI( 8, SCOPE_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Default Zoom Level:", .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 20 "Near" 16 "Far" 8 "All the Way In" 4 }, "Set the default zoom level for scopes" )
+	MULTI( 8, SCOPE_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Zoom Levels:", .2, 8, "cg_zoomstepsniper", cvarFloatList { "4 Levels of Zoom" 4 "8 Levels of Zoom" 2 }, "Specifies the increments you zoom by" )
 
 // Chat //
-	SUBWINDOW( 6, 264, (SUBWINDOW_WIDTH), 76, "CHAT" )
-	MULTI( 8, 280, (SUBWINDOW_WIDTH)-4, 10, "Quick Chat Mode:", .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, "Use alpha or numeric keys to send radio messages" )
-	MULTI( 8, 292, (SUBWINDOW_WIDTH)-4, 10, "Chat Icon Time:", .2, 8, "cg_voicespritetime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, "Specify how long the chat icon appears above other players' heads" )
-	YESNO( 8, 304, (SUBWINDOW_WIDTH)-4, 10, "Team chat only:", .2, 8, "cg_teamChatsOnly", "Play only team chat in-game" )
-	YESNO( 8, 316, (SUBWINDOW_WIDTH)-4, 10, "No voice chat:", .2, 8, "cg_noVoiceChats", "Don't play voice chat in-game" )
-	YESNO( 8, 328, (SUBWINDOW_WIDTH)-4, 10, "No voice text:", .2, 8, "cg_noVoiceText", "Don't show voice text in-game" )
+#define CHAT_Y 32
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CHAT_Y, (SUBWINDOW_WIDTH_R), 64, "CHAT" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Quick Chat Mode:", .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, "Use alpha or numeric keys to send radio messages" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Chat Icon Time:", .2, 8, "cg_voicespritetime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, "Specify how long the chat icon appears above other players' heads" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Team chat only:", .2, 8, "cg_teamChatsOnly", "Play only team chat in-game" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "No voice text:", .2, 8, "cg_noVoiceText", "Don't show voice text in-game" )
+
+// Sounds //
+#define SOUND_Y 102
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 52, "SOUND" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Announcer:", .2, 8, "cg_announcer", "Enables or disables the in-game Commander" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "No voice chat:", .2, 8, "cg_noVoiceChats", "Don't play voice chat in-game" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Hitsounds:", .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Team Hit Sound" 2 "No Head Hit Sound" 4 "No Body Hit Sound" 8 }, "Set hit sounds" )
 
 // Miscellaneous //
-	SUBWINDOW( 6, 346, (SUBWINDOW_WIDTH), 88, "MISCELLANEOUS" )
-	MULTI( 8, 362, (SUBWINDOW_WIDTH)-4, 10, "Complaint PopUp:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, "Display the option to file complaints about teammates who kill you" )
-	YESNO( 8, 374, (SUBWINDOW_WIDTH)-4, 10, "Log Important Messages:", .2, 8, "cg_printObjectiveInfo", "Prints important game messages to the console" )
-	MULTI( 8, 386, (SUBWINDOW_WIDTH)-4, 10, "Auto-Action:", .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, "Automatically performs actions at the start or end of a round" )
-	YESNO( 8, 398, (SUBWINDOW_WIDTH)-4, 10, "Use JPEG for AutoScreenshots:", .2, 8, "cg_useScreenshotJPEG", "Switches between .tga and .jpg picture types for the \"autoscreenshot\" command" )
-	YESNO( 8, 410, (SUBWINDOW_WIDTH)-4, 10, "Show Tool Tips :", .2, 8, "ui_showtooltips", "Display Tool Tips in the UI" )
-	YESNO( 8, 422, (SUBWINDOW_WIDTH)-4, 10, "Announcer:", .2, 8, "cg_announcer", "Enables or disables the in-game Commander" )
+#define MISC_Y 160
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 76, "MISCELLANEOUS" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Complaint PopUp:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, "Display the option to file complaints about teammates who kill you" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Log Important Messages:", .2, 8, "cg_printObjectiveInfo", "Prints important game messages to the console" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Auto-Action:", .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, "Automatically performs actions at the start or end of a round" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "AutoScreenshots format:", .2, 8, "cg_useScreenshotJPEG", cvarFloatList { "TGA" 0 "JPEG" 1 }, "Switches between .tga and .jpg picture types for the \"autoscreenshot\" command" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, "Show Tool Tips :", .2, 8, "ui_showtooltips", "Display Tool Tips in the UI" )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close options_customise_game ; open options )

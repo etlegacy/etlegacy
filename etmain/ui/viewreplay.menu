@@ -4,8 +4,8 @@
 // Defines //
 #define WINDOW_X		16
 #define WINDOW_Y		16
-#define WINDOW_WIDTH	252
-#define WINDOW_HEIGHT	152
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpViewReplay"
 
 // View Replay Menu //
@@ -32,7 +32,7 @@ menuDef {
 	itemDef {
 		name			"demoList"
 		group			GROUP_NAME
-		rect			6 32 240 90
+		rect			6 32 596 366
 		type			ITEM_TYPE_LISTBOX
 		textfont		UI_FONT_COURBD_21
 		textscale		.2
