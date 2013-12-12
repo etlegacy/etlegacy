@@ -1540,10 +1540,6 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 	while (1);
 }
 
-
-
-
-
 static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMultiQueryLink)
 {
 #if defined(DEBUG_CHC)

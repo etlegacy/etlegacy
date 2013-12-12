@@ -8428,8 +8428,8 @@ void RB_CollectBspOcclusionQueries()
 		bspNode_t *node;
 		link_t    *l, *sentinel;
 
-		int   ocCount;
-		int   avCount;
+		int   ocCount = 0;
+		int   avCount = 0;
 		GLint available;
 
 		glFinish();

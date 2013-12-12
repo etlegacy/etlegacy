@@ -534,7 +534,7 @@ int8_t GetNativeDisplay(void)
 	{
 #if defined(USE_EGL_SDL)
 		printf("EGLport: Opening SDL/X11 display\n");
-		SDL_VERSION(&sysWmInfo.version);
+		SDL_GetVersion(&sysWmInfo.version);
 		SDL_GetWMInfo(&sysWmInfo);
 		nativeDisplay = (EGLNativeDisplayType)sysWmInfo.info.x11.display;
 

@@ -45,6 +45,9 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "sys_local.h"
+#ifndef DEDICATED
+#include "../renderercommon/tr_common.h"
+#endif
 
 #include <signal.h>
 #include <sys/types.h>
@@ -1050,7 +1053,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #endif
 
 	GLimp_Minimize();
-#endif
+#endif // not DEDICATED
 }
 
 /**

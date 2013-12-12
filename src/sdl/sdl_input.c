@@ -1072,7 +1072,7 @@ void IN_DisableDingFilter()
 	if (LegacyWndProc)
 	{
 		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
+		SDL_GetVersion(&wmInfo.version);
 		SDL_GetWMInfo(&wmInfo);
 		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
 		LegacyWndProc = NULL;
@@ -1089,7 +1089,7 @@ void IN_EnableDingFilter()
 	if (!LegacyWndProc)
 	{
 		SDL_SysWMinfo wmInfo;
-		SDL_VERSION(&wmInfo.version);
+		SDL_GetVersion(&wmInfo.version);
 		SDL_GetWMInfo(&wmInfo);
 		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
 		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
