@@ -1954,8 +1954,6 @@ void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 #define PAUSE_NONE      0x00    // Match is NOT paused.
 #define PAUSE_UNPAUSING 0x01    // Pause is about to expire
 
-#define ZSF_COMP        0x01    // Have comp settings loaded for current gametype?
-
 #define HELP_COLUMNS    4
 
 #define CMD_DEBOUNCE    5000    // 5s between cmds
