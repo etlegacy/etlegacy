@@ -8096,7 +8096,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "match_timeoutcount",                  "3",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "match_timeoutlength",                 "180",                        CVAR_ARCHIVE                   },
 	{ NULL,                             "match_warmupDamage",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "server_autoconfig",                   "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_customConfig",                      "",                           CVAR_ARCHIVE                   },
 	{ NULL,                             "server_motd0",                        " ^NEnemy Territory ^7MOTD ", CVAR_ARCHIVE                   },
 	{ NULL,                             "server_motd1",                        "",                           CVAR_ARCHIVE                   },
 	{ NULL,                             "server_motd2",                        "",                           CVAR_ARCHIVE                   },

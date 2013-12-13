@@ -1618,7 +1618,6 @@ extern vmCvar_t match_readypercent;
 extern vmCvar_t match_timeoutcount;
 extern vmCvar_t match_timeoutlength;
 extern vmCvar_t match_warmupDamage;
-extern vmCvar_t server_autoconfig;
 extern vmCvar_t server_motd0;
 extern vmCvar_t server_motd1;
 extern vmCvar_t server_motd2;
@@ -1648,7 +1647,6 @@ extern vmCvar_t vote_allow_balancedteams;
 extern vmCvar_t vote_allow_muting;
 extern vmCvar_t vote_limit;
 extern vmCvar_t vote_percent;
-extern vmCvar_t z_serverflags;
 
 extern vmCvar_t g_debugSkills;
 extern vmCvar_t g_heavyWeaponRestriction;

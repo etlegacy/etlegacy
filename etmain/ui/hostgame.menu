@@ -38,7 +38,8 @@ menuDef {
 	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Server Name:", .2, 8, "sv_hostname", 32, 18, "Specifies the name of your game server" )
 	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Game Type:", .2, 8, "ui_netGameType", cvarFloatList { "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 "Single-Map Objective" 2 "Stopwatch" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, "Click to specify the type of game to load" )
 	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Maximum Players:", .2, 8, "sv_maxclients", 3, "Maximum # of players that can connect to the server" )
-	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Auto-Configure Server:", .2, 8, "server_autoconfig", cvarFloatList { "No" 0 "Competition Settings" 1 "Public Settings" 2 }, "Server automatically configures it self to specified default settings" )
+	// TODO: use FEEDER to automatically show available configs
+	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Auto-Configure Server:", .2, 8, "g_customConfig", cvarStrList { "No" 0 "Competition Settings" defaultcomp "Public Settings" defaultpublic }, "Server automatically configures it self to specified default settings" )
 	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Dedicated Server:", .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Yes - LAN" 1 "Yes - Internet" 2 }, "Specifies if the server should be \"dedicated\" for LAN or Internet play (no client)" )
 	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Password:", .2, 8, "g_password", 25, 18, "Password clients must set to join the server" )
 

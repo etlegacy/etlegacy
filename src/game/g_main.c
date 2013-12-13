@@ -163,7 +163,6 @@ vmCvar_t match_readypercent;
 vmCvar_t match_timeoutcount;
 vmCvar_t match_timeoutlength;
 vmCvar_t match_warmupDamage;
-vmCvar_t server_autoconfig;
 vmCvar_t team_maxPanzers;
 vmCvar_t team_maxplayers;
 vmCvar_t team_nocontrols;
@@ -191,7 +190,6 @@ vmCvar_t vote_allow_balancedteams;
 vmCvar_t vote_allow_muting;
 vmCvar_t vote_limit;
 vmCvar_t vote_percent;
-vmCvar_t z_serverflags;
 
 vmCvar_t refereePassword;
 vmCvar_t g_debugConstruct;
@@ -424,7 +422,6 @@ cvarTable_t gameCvarTable[] =
 	{ &match_timeoutcount,         "match_timeoutcount",         "3",                          0,                                               0, qfalse, qtrue},
 	{ &match_timeoutlength,        "match_timeoutlength",        "180",                        0,                                               0, qfalse, qtrue},
 	{ &match_warmupDamage,         "match_warmupDamage",         "1",                          0,                                               0, qfalse},
-	{ &server_autoconfig,          "server_autoconfig",          "0",                          0,                                               0, qfalse, qfalse},
 	{ &server_motd0,               "server_motd0",               " ^NEnemy Territory ^7MOTD ", 0,                                               0, qfalse, qfalse},
 	{ &server_motd1,               "server_motd1",               "",                           0,                                               0, qfalse, qfalse},
 	{ &server_motd2,               "server_motd2",               "",                           0,                                               0, qfalse, qfalse},
@@ -453,8 +450,6 @@ cvarTable_t gameCvarTable[] =
 	{ &vote_percent,               "vote_percent",               "50",                         0,                                               0, qfalse, qfalse},
 
 	// state vars
-	{ &z_serverflags,              "z_serverflags",              "0",                          0,                                               0, qfalse, qfalse},
-
 	{ &g_debugConstruct,           "g_debugConstruct",           "0",                          CVAR_CHEAT,                                      0, qfalse},
 
 	{ &g_scriptDebug,              "g_scriptDebug",              "0",                          CVAR_CHEAT,                                      0, qfalse},
