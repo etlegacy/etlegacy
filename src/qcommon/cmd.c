@@ -1028,20 +1028,27 @@ void Cmd_CompleteCfgName(char *args, int argNum)
 
 /**
  * @brief Recursively removes files matching a given pattern from homepath.
+ *
  * Useful for removing incomplete downloads and other garbage.
  * Files listed in the com_cleanWhitelist cvar are protected from deletion.
+ * Additionally, executable and configuration files are protected unless 'force'
+ * argument is passed to this command.
  */
 void Cmd_CleanHomepath_f(void)
 {
-	int      i, j, numFiles = 0, delFiles = 0, totalNumFiles = 0;
-	char     **pFiles = NULL, *tokens;
-	char     path[MAX_OSPATH], whitelist[MAX_OSPATH];
-	qboolean whitelisted;
+	int      i, j, patternFiles = 0, delFiles = 0, totalFiles = 0;
+	char     path[MAX_OSPATH];
+	qboolean force = qfalse, pretend = qfalse;
+
+	// *.so and *.dll are denied per default in FS_Remove but throw a Com_Error() -> game aborts
+	const char whitelist[] = ".txt .cfg .dat .gm .way .so .dll";
 
 	if (Cmd_Argc() < 3)
 	{
-		// basically files are downloaded again when required - but better print a warning for inexperienced users
-		Com_Printf("usage: clean <mod> <pattern[1]> <pattern[n]>\nexample: clean all *tmp */zzz* etmain/etkey\nwarning: This command deletes files in fs_homepath. If you are not sure how to use this command do not play with fire!\n");
+		// files in fs_homepath are downloaded again when required - but better print a warning for inexperienced users
+		Com_Printf("usage: clean [force | pretend] [modname / all] [pattern 1] [pattern n]\n"
+		           "example: clean all *tmp */zzz* etmain/etkey\n"
+		           "Warning: This command deletes files in fs_homepath. If you are not sure how to use this command do not play with fire!\n");
 		return;
 	}
 
@@ -1069,48 +1076,56 @@ void Cmd_CleanHomepath_f(void)
 
 	Cvar_VariableStringBuffer("fs_homepath", path, sizeof(path));
 
-	// If the first argument is "all" or "*", search the whole homepath
-	// FIXME: add more options ? see #53
-	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
+	// if there are any command options, they must be at the very beginning
+	for (i = 1; i < Cmd_Argc(); i++)
+	{
+		if (!Q_stricmp(Cmd_Argv(i), "force") || !Q_stricmp(Cmd_Argv(i), "f"))
+		{
+			force = qtrue;
+			continue;
+		}
+
+		if (!Q_stricmp(Cmd_Argv(i), "pretend") || !Q_stricmp(Cmd_Argv(i), "p"))
+		{
+			pretend = qtrue;
+			continue;
+		}
+
+		break;
+	}
+
+	// if the first argument is "all" or "*", search the whole homepath
+	if (Q_stricmp(Cmd_Argv(i), "all") && Q_stricmp(Cmd_Argv(i), "*"))
 	{
 		Q_strcat(path, sizeof(path), va("%c%s", PATH_SEP, Cmd_Argv(1)));
 	}
 
-	for (i = 2; i < Cmd_Argc(); i++)
+	for (i++; i < Cmd_Argc(); i++)
 	{
-		pFiles = Sys_ListFiles(path, NULL, Cmd_Argv(i), &numFiles, qtrue);
+		char **pFiles = NULL;
 
-		Com_Printf("Found %i files matching the pattern \"%s\" under %s\n", numFiles, Cmd_Argv(i), path);
+		pFiles = Sys_ListFiles(path, NULL, Cmd_Argv(i), &patternFiles, qtrue);
 
-		// debug
-		//for (j = 0; j < numFiles; j++)
-		//{
-		//	Com_Printf("FILE[%i]: %s - pattern: %s\n", j + 1, pFiles[j], Cmd_Argv(i));
-		//}
+		Com_Printf("Found %i files matching the pattern \"%s\" under %s\n", patternFiles, Cmd_Argv(i), path);
 
-		for (j = 0; j < numFiles; j++)
+		for (j = 0; j < patternFiles; j++)
 		{
-			whitelisted = qfalse;
-			totalNumFiles++;
+			char     *tokens;
+			char     tmp_whitelist[MAX_OSPATH];
+			qboolean whitelisted = qfalse;
 
-			// FIXME: - don't let admins force this! - move to dat file?
-			//        - optimize - don't do this each loop! -> strtok modifies the input string, which is undefined behaviour on a literal char[], at least in C99
-			//          & print the whitelist files on top again
+			totalFiles++;
 
-			Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
-			// Prevent clumsy users from deleting important files - keep leading space!
-			Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way .so .dll"); // *.so and *.dll are denied per default in FS_Remove but throw a Com_Error() -> game aborts
-
-			//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
+			Q_strncpyz(tmp_whitelist, (force ? Cvar_VariableString("com_cleanwhitelist") : va("%s %s", Cvar_VariableString("com_cleanwhitelist"), whitelist)), sizeof(tmp_whitelist));
 
 			// Check if this file is in the whitelist
-			tokens = strtok(whitelist, " ,;");
+			tokens = strtok(tmp_whitelist, " ,;");
 
 			while (tokens != NULL)
 			{
 				if (strstr(pFiles[j], tokens))
 				{
-					Com_Printf("- skipping file[%i]: %s%c%s - pattern: %s\n", j + 1, path, PATH_SEP, pFiles[j], tokens);
+					Com_Printf("- skipping file[%i]: %s%c%s (whitelisted by pattern: %s)\n", j + 1, path, PATH_SEP, pFiles[j], tokens);
 					whitelisted = qtrue;
 					break;
 				}
@@ -1122,16 +1137,30 @@ void Cmd_CleanHomepath_f(void)
 				continue;
 			}
 
-			Com_Printf("- removing file[%i]: %s%c%s\n", j + 1, path, PATH_SEP, pFiles[j]);
-			//remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion - see whitelist
-			FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
-			delFiles++;
+			if (!pretend)
+			{
+				Com_Printf("- removing file[%i]: %s%c%s\n", j + 1, path, PATH_SEP, pFiles[j]);
+
+				if (force)
+				{
+					remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion
+				}
+				else
+				{
+					FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
+				}
+				delFiles++;
+			}
+			else
+			{
+				Com_Printf("- pretending to remove file[%i]: %s%c%s\n", j + 1, path, PATH_SEP, pFiles[j]);
+			}
 		}
 
 		Sys_FreeFileList(pFiles);
-		numFiles = 0;
+		patternFiles = 0;
 	}
-	Com_Printf("Path of fs_homepath cleaned - %i matches - %i files skipped - %i files deleted.\n", totalNumFiles, totalNumFiles - delFiles, delFiles);
+	Com_Printf("Path of fs_homepath cleaned - %i matches - %i files skipped - %i files deleted.\n", totalFiles, totalFiles - delFiles, delFiles);
 }
 
 /*
