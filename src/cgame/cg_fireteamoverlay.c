@@ -341,6 +341,10 @@ int CG_WeaponIconScale(int weap)
 	case WP_MORTAR_SET:
 	case WP_MORTAR2:
 	case WP_MORTAR2_SET:
+	case WP_SILENCED_COLT:
+	case WP_SILENCER:
+	case WP_AKIMBO_SILENCEDCOLT:
+	case WP_AKIMBO_SILENCEDLUGER:
 		return 2;
 	}
 

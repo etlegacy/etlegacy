@@ -24,7 +24,7 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
-		//weaponIcon				"icons/iconw_browning"
+		weaponIcon				"icons/iconw_browning"
 		weaponSelectedIcon		"icons/iconw_browning_1_select"
 		
 		//missileModel		""

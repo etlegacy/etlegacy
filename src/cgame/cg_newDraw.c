@@ -195,50 +195,6 @@ void CG_FitTextToWidth_SingleLine(char *instr, float scale, float w, int size)
 
 /*
 ==============
-weapIconDrawSize
-==============
-*/
-static int weapIconDrawSize(int weap)
-{
-	switch (weap)
-	{
-
-	// weapons to not draw
-//      case WP_KNIFE:
-//          return 0;
-
-	// weapons with 'wide' icons
-	case WP_THOMPSON:
-	case WP_MP40:
-	case WP_STEN:
-	case WP_PANZERFAUST:
-	case WP_FLAMETHROWER:
-	case WP_GARAND:
-	case WP_FG42:
-	case WP_FG42SCOPE:
-	case WP_KAR98:
-	case WP_GPG40:
-	case WP_CARBINE:
-	case WP_M7:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-	case WP_K43:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-	case WP_MORTAR:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2:
-	case WP_MORTAR2_SET:
-		return 2;
-	}
-
-	return 1;
-}
-
-/*
-==============
 CG_DrawPlayerWeaponIcon
 ==============
 */
@@ -263,7 +219,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		realweap = cg.predictedPlayerState.weapon;
 	}
 
-	size = weapIconDrawSize(realweap);
+	size = CG_WeaponIconScale(realweap);
 
 	if (!size)
 	{

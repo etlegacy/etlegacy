@@ -1,0 +1,88 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		//standModel		""										// weapon pickup 'stand' (do we still use this?)
+		droppedAnglesHack
+		pickupModel			"models/multiplayer/m1_garand/m1_garand_scope_pickup.md3"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/multiplayer/m1_garand/weapon2.cfg"
+		handsModel			"models/multiplayer/m1_garand/v_m1_garand_hand2.md3"
+		
+		flashDlightColor	1.0 0.6 0.23
+		flashSound			"sound/weapons/garand/m1_fire_silence.wav"		// supports up to 4 flash sounds
+		//flashEchoSound	""									// supports up to 4 flash echo sounds
+		lastShotSound		"sound/weapons/garand/m1_fire_silence_last.wav"	// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		reloadSound			"sound/weapons/garand/m1_reload.wav"
+		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""									// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_mauser"
+		weaponSelectedIcon	"icons/iconw_mauser_1_select"
+		
+		//missileModel		""
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		modModel 0			"models/multiplayer/m1_garand/v_m1_garand_scope2.md3"
+		modModel 1			"models/multiplayer/m1_garand/v_m1_garand_silencer.md3"
+		modModel 2			"models/multiplayer/m1_garand/m1_garand_scp.md3"
+		
+		firstPerson {
+			model			"models/multiplayer/m1_garand/v_m1_garand.md3"
+			flashModel		"models/multiplayer/m1_garand/v_m1_garand_flash.mdc"
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/multiplayer/m1_garand/v_m1_garand_barrel.md3"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model	"models/multiplayer/m1_garand/v_m1_garand_barrel2.md3"
+				}
+				part 2
+				{
+					tag		"tag_barrel3"
+					model	"models/multiplayer/m1_garand/v_m1_garand_barrel3.md3"
+				}
+				part 3
+				{
+					tag		"tag_barrel4"
+					model	"models/multiplayer/m1_garand/v_m1_garand_barrel4.md3"
+				}
+				part 4
+				{
+					tag		"tag_barrel5"
+					model	"models/multiplayer/m1_garand/v_m1_garand_barrel5.md3"
+				}
+				//part 5
+				//{
+				//	tag		"tag_barrel6"
+				//	model	"models/multiplayer/m1_garand/v_m1_garand_barrel6.md4"
+				//}
+			}
+		}
+		
+		thirdPerson {
+			model			"models/multiplayer/m1_garand/m1_garand_3rd.md3"
+			flashmodel		"models/multiplayer/m1_garand/m1_garand_3rd_flash.mdc"
+		}
+	}
+}

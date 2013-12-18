@@ -1,0 +1,60 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		//standModel		""										// weapon pickup 'stand' (do we still use this?)
+		//pickupModel		""
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/weapons2/grenade/weapon.cfg"
+		handsModel			"models/weapons2/grenade/v_pineapple_hand.mdc"
+		
+		flashDlightColor	1 0.7 0.5
+		flashSound			"sound/weapons/grenade/gren_throw.wav"	// supports up to 4 flash sounds
+		//flashEchoSound	""										// supports up to 4 flash echo sounds
+		//lastShotSound		""										// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		//reloadSound		""
+		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""									// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_pineapple"
+		weaponSelectedIcon	"icons/iconw_pineapple_1_select"
+		
+		missileModel		"models/weapons2/grenade/pineapple.md3"
+		//missileSound		""
+		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model			"models/weapons2/grenade/v_pineapple.md3"
+			//flashModel		""
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/weapons2/grenade/v_pineapple_barrel.mdc"
+				}
+			}
+		}
+		
+		thirdPerson {
+			model			"models/weapons2/grenade/ss_pineapple.md3"
+			//flashmodel		""
+		}
+	}
+}
