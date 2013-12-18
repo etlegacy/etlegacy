@@ -435,6 +435,8 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_KNIFE_KABAR,                        WS_KNIFE           },
 
 	{ MOD_MOBILE_BROWNING,                    WS_MG42            },
+
+	{ MOD_BAZOOKA,                            WS_PANZERFAUST     },
 };
 
 // Get right stats index based on weapon mod

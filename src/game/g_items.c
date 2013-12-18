@@ -164,7 +164,7 @@ int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 		Fill_Clip(&ent->client->ps, weapon);
 	}
 
-	if (ammoweap == WP_PANZERFAUST || ammoweap == WP_FLAMETHROWER)
+	if (ammoweap == WP_PANZERFAUST || ammoweap == WP_BAZOOKA || ammoweap == WP_FLAMETHROWER)
 	{
 		ent->client->ps.ammoclip[ammoweap] += count;
 
@@ -395,6 +395,9 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		case WP_MORTAR:
 			weapon = WP_MORTAR2;
 			break;
+		case WP_BAZOOKA:
+			weapon = WP_PANZERFAUST;
+			break;
 		default:
 			break;
 		}
@@ -417,6 +420,9 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 			break;
 		case WP_MORTAR2:
 			weapon = WP_MORTAR;
+			break;
+		case WP_PANZERFAUST:
+			weapon = WP_BAZOOKA;
 			break;
 		default:
 			break;

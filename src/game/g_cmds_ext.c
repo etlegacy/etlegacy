@@ -757,28 +757,28 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 // These map to WS_* weapon indexes
 const unsigned int cQualifyingShots[WS_MAX] =
 {
-	10,     // 0
-	15,     // 1
-	15,     // 2
-	30,     // 3
-	30,     // 4
-	30,     // 5
-	30,     // 6
-	3,      // 7
-	100,    // 8
-	5,      // 9
-	5,      // 10
-	5,      // 11
-	3,      // 12
-	3,      // 13
-	5,      // 14
-	3,      // 15
-	3,      // 16
-	5,      // 17
-	10,     // 18
-	100,    // 19
-	30,     // 20
-	30      // 21
+	10,     // 0  WS_KNIFE
+	15,     // 1  WS_LUGER
+	15,     // 2  WS_COLT
+	30,     // 3  WS_MP40
+	30,     // 4  WS_THOMPSON
+	30,     // 5  WS_STEN
+	30,     // 6  WS_FG42
+	3,      // 7  WS_PANZERFAUST
+	100,    // 8  WS_FLAMETHROWER
+	5,      // 9  WS_GRENADE
+	5,      // 10 WS_MORTAR
+	5,      // 11 WS_DYNAMITE
+	3,      // 12 WS_AIRSTRIKE
+	3,      // 13 WS_ARTILLERY
+	5,      // 14 WS_SYRINGE
+	3,      // 15 WS_SMOKE
+	3,      // 16 WS_SATCHEL
+	5,      // 17 WS_GRENADELAUNCHER
+	10,     // 18 WS_LANDMINE
+	100,    // 19 WS_MG42
+	30,     // 20 WS_GARAND
+	30,     // 21 WS_K43
 };
 
 // ************** TOPSHOTS/BOTTOMSHOTS

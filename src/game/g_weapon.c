@@ -53,6 +53,7 @@ qboolean G_WeaponIsExplosive(meansOfDeath_t mod)
 	case MOD_GRENADE_LAUNCHER:
 	case MOD_GRENADE_PINEAPPLE:
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 	case MOD_LANDMINE:
 	case MOD_GPG40:
 	case MOD_M7:
@@ -81,6 +82,7 @@ int G_GetWeaponClassForMOD(meansOfDeath_t mod)
 	case MOD_GRENADE_LAUNCHER:
 	case MOD_GRENADE_PINEAPPLE:
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 	case MOD_LANDMINE:
 	case MOD_GPG40:
 	case MOD_M7:
@@ -3697,7 +3699,13 @@ ROCKET
 gentity_t *Weapon_Panzerfaust_Fire(gentity_t *ent)
 {
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
-	return fire_rocket(ent, muzzleEffect, forward);
+	return fire_rocket(ent, muzzleEffect, forward, WP_PANZERFAUST);
+}
+
+gentity_t *Weapon_Bazooka_Fire(gentity_t *ent)
+{
+	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
+	return fire_rocket(ent, muzzleEffect, forward, WP_BAZOOKA);
 }
 
 /*
@@ -3861,6 +3869,7 @@ void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, v
 	switch (weapon)    // Ridah, changed this so I can predict weapons
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		VectorMA(muzzlePoint, 10, right, muzzlePoint);
 		break;
 	case WP_DYNAMITE:
@@ -4206,6 +4215,30 @@ void FireWeapon(gentity_t *ent)
 		}
 
 		pFiredShot = Weapon_Panzerfaust_Fire(ent);
+		if (ent->client)
+		{
+			vec3_t forward;
+
+			AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
+			VectorMA(ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
+		}
+		break;
+	case WP_BAZOOKA:
+		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
+		{
+			ent->client->ps.classWeaponTime = level.time - level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
+		}
+
+		if (ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 1)
+		{
+			ent->client->ps.classWeaponTime += .66f * level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
+		}
+		else
+		{
+			ent->client->ps.classWeaponTime = level.time;
+		}
+
+		pFiredShot = Weapon_Bazooka_Fire(ent);
 		if (ent->client)
 		{
 			vec3_t forward;

@@ -1129,8 +1129,8 @@ void SetWolfSpawnWeapons(gclient_t *client)
 				case WP_THOMPSON:
 					AddWeaponToPlayer(client, WP_THOMPSON, 2 * (GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo), GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
 					break;
-				case WP_PANZERFAUST:
-					AddWeaponToPlayer(client, WP_PANZERFAUST, GetAmmoTableData(WP_PANZERFAUST)->defaultStartingAmmo, GetAmmoTableData(WP_PANZERFAUST)->defaultStartingClip, qtrue);
+				case WP_BAZOOKA:
+					AddWeaponToPlayer(client, WP_BAZOOKA, GetAmmoTableData(WP_BAZOOKA)->defaultStartingAmmo, GetAmmoTableData(WP_BAZOOKA)->defaultStartingClip, qtrue);
 					break;
 				case WP_FLAMETHROWER:
 					AddWeaponToPlayer(client, WP_FLAMETHROWER, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingAmmo, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingClip, qtrue);

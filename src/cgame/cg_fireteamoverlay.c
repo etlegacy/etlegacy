@@ -322,6 +322,7 @@ int CG_WeaponIconScale(int weap)
 	case WP_MP40:
 	case WP_STEN:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_FLAMETHROWER:
 	case WP_GARAND:
 	case WP_FG42:

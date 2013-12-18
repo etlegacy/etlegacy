@@ -433,6 +433,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_BROWNING:
 	case MOD_MG42:
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 	case MOD_FLAMETHROWER:
 	case MOD_MORTAR:
 		G_LoseSkillPoints(tker, SK_HEAVY_WEAPONS, 3.f);
@@ -539,15 +540,16 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 		break;
 
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 		if (splash)
 		{
 			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "panzerfaust splash damage kill");
+			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "rocket launcher splash damage kill");
 		}
 		else
 		{
 			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "panzerfaust direct hit kill");
+			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "rocket launcher direct hit kill");
 		}
 		break;
 	case MOD_FLAMETHROWER:

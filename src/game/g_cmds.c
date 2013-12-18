@@ -1484,6 +1484,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 	switch (weapon)
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		maxCount = team_maxPanzers.integer;
 		if (maxCount == -1)
 		{
@@ -1501,7 +1502,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		{
 			if (ent->client->ps.pm_flags & PMF_LIMBO)
 			{
-				CP("cp \"^1*^3 PANZERFAUST not available!^1 *\" 1");
+				CP("cp \"^1*^3 ROCKET LAUNCHER not available!^1 *\" 1");
 			}
 			return qtrue;
 		}

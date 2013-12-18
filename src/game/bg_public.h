@@ -533,7 +533,7 @@ int Pmove(pmove_t *pmove);
 
 #define NUM_PLAYER_CLASSES      5
 
-#define MAX_WEAPS_IN_BANK_MP    14
+#define MAX_WEAPS_IN_BANK_MP    15
 #define MAX_WEAP_BANKS_MP       10
 
 // leaning flags..
@@ -747,11 +747,11 @@ typedef enum
 	WP_KNIFE_KABAR,         // 48
 	WP_MOBILE_BROWNING,     // 49
 	WP_MOBILE_BROWNING_SET, // 50
-
 	WP_MORTAR2,             // 51
 	WP_MORTAR2_SET,         // 52
+	WP_BAZOOKA,             // 53
 
-	WP_NUM_WEAPONS          // 53
+	WP_NUM_WEAPONS          // 54
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -871,7 +871,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 	(w == WP_GPG40               || w == WP_M7)
 
 #define IS_PANZER_WEAPON(w) \
-	(w == WP_PANZERFAUST)
+	(w == WP_PANZERFAUST         || w == WP_BAZOOKA)
 
 #define IS_AKIMBO_WEAPON(w) \
 	(w == WP_AKIMBO_COLT         || w == WP_AKIMBO_LUGER         || \
@@ -889,8 +889,9 @@ extern int weapAlts[];  // defined in bg_misc.c
 	 w == WP_MOBILE_MG42_SET  || w == WP_MOBILE_BROWNING_SET)
 
 #define IS_HEAVY_WEAPON(w) \
-	(w == WP_FLAMETHROWER  || w == WP_MOBILE_MG42 || \
-	 w == WP_MOBILE_MG42_SET || w == WP_PANZERFAUST || \
+	(w == WP_FLAMETHROWER  || \
+	 w == WP_MOBILE_MG42 || w == WP_MOBILE_MG42_SET || \
+	 w == WP_PANZERFAUST || w == WP_BAZOOKA || \
 	 w == WP_MORTAR          || w == WP_MORTAR_SET  || \
 	 w == WP_MOBILE_BROWNING || w == WP_MOBILE_BROWNING_SET || \
 	 w == WP_MORTAR2         || w == WP_MORTAR2_SET)
@@ -1459,6 +1460,8 @@ typedef enum
 	MOD_KNIFE_KABAR,
 
 	MOD_MOBILE_BROWNING,
+
+	MOD_BAZOOKA,
 
 	MOD_NUM_MODS
 

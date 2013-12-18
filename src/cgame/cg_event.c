@@ -138,6 +138,7 @@ static void CG_Obituary(entityState_t *ent)
 			message = "dove on his own grenade";
 			break;
 		case MOD_PANZERFAUST:
+		case MOD_BAZOOKA:
 			message = "vaporized himself";
 			break;
 		case MOD_FLAMETHROWER:
@@ -352,6 +353,10 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_PANZERFAUST:
 			message  = "was blasted by";
 			message2 = "'s Panzerfaust";
+			break;
+		case MOD_BAZOOKA:
+			message  = "was blasted by";
+			message2 = "'s Bazooka";
 			break;
 		case MOD_GRENADE_LAUNCHER:
 		case MOD_GRENADE_PINEAPPLE:
@@ -2486,6 +2491,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		        es->weapon == WP_DYNAMITE ||
 		        es->weapon == WP_SMOKE_MARKER ||
 		        es->weapon == WP_PANZERFAUST ||
+		        es->weapon == WP_BAZOOKA ||
 		        es->weapon == WP_ARTY ||
 		        es->weapon == WP_LANDMINE ||
 		        es->weapon == WP_SATCHEL ||

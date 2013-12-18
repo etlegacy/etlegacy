@@ -19,7 +19,7 @@ set weapons knives               = knife AND Ka-Bar
 set weapons Bipods               = Mobile MG42 Bipod AND Mobile Browning Bipod
 set weapons pistols              = Luger AND Colt AND sp5 pistol AND Silenced Colt
 set weapons akimbo_pistols       = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
-set weapons machineguns          = MP40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND Mobile MG42 AND Mobile Browning
+set weapons machineguns          = MP40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND bazooka AND Mobile MG42 AND Mobile Browning
 set weapons rifles               = K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
 
 // broke off dynamite, since we never want to throw it overhand
@@ -27,11 +27,11 @@ set weapons throwables           = pineapple AND grenade AND Smoke Bomb
 set weapons throwables_underhand = dynamite weapon
 
 set weapons one_handed_weapons   = Luger AND Colt AND sp5 pistol AND Silenced Colt
-set weapons two_handed_weapons   = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mobile Browning
+set weapons two_handed_weapons   = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mobile Browning
 
-set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
 set weapons all_one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
-set weapons all_two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all_two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
 
 // movetypes
 set movetype moving = walk AND walkcr AND walkcrbk AND walkbk AND run AND runbk AND straferight AND strafeleft
@@ -219,6 +219,10 @@ STATE COMBAT
 		{
 			both stand_rifle
 		}
+		weapons bazooka
+		{
+			legs stand_panzer torso stand_rifle
+		}
 		weapons panzerfaust, firing
 		{
 			legs firing_panzer torso stand_panzer
@@ -346,6 +350,10 @@ STATE COMBAT
 		{
 			legs alert_crchidle_2h torso stand_rifle
 		}
+		weapons bazooka
+		{
+			legs alert_crchidle_2h torso stand_rifle
+		}
 		weapons panzerfaust
 		{
 			legs alert_crchidle_2h torso stand_panzer
@@ -469,6 +477,10 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_rifle
 		}
+		weapons bazooka
+		{
+			legs relaxed_walk_1h_1 torso stand_rifle
+		}
 		weapons panzerfaust
 		{
 			legs relaxed_walk_1h_1 torso stand_panzer
@@ -588,6 +600,10 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
+		weapons bazooka
+		{
+			legs alert_bk_2h torso stand_rifle
+		}
 		weapons panzerfaust
 		{
 			legs alert_bk_2h torso stand_panzer
@@ -704,6 +720,10 @@ STATE COMBAT
 			legs alert_crch_2h torso stand_rifle
 		}
 		weapons FG42 Scope
+		{
+			legs alert_crch_2h torso stand_rifle
+		}
+		weapons bazooka
 		{
 			legs alert_crch_2h torso stand_rifle
 		}
@@ -827,6 +847,10 @@ STATE COMBAT
 		{
 			legs alert_crbk_2h torso stand_rifle
 		}
+		weapons bazooka
+		{
+			legs alert_crbk_2h torso stand_rifle
+		}
 		weapons panzerfaust
 		{
 			legs alert_crbk_2h torso stand_panzer
@@ -943,6 +967,10 @@ STATE COMBAT
 			legs alert_run_2h torso stand_rifle
 		}
 		weapons FG42 Scope
+		{
+			legs alert_run_2h torso stand_rifle
+		}
+		weapons bazooka
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1069,6 +1097,10 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
+		weapons bazooka
+		{
+			legs alert_bk_2h torso stand_rifle
+		}
 		weapons panzerfaust
 		{
 			legs alert_bk_2h torso stand_panzer
@@ -1185,6 +1217,10 @@ STATE COMBAT
 			legs alert_run_2h torso stand_rifle
 		}
 		weapons FG42 Scope
+		{
+			legs alert_run_2h torso stand_rifle
+		}
+		weapons bazooka
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1307,6 +1343,10 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_rifle
 		}
+		weapons bazooka
+		{
+			legs alert_run_2h torso stand_rifle
+		}
 		weapons panzerfaust
 		{
 			legs alert_run_2h torso stand_panzer
@@ -1405,6 +1445,10 @@ STATE COMBAT
 			weapons Mobile MG42 AND Mobile Browning
 			{
 				legs prone_legs torso prone_mg42_idle
+			}
+			weapons bazooka
+			{
+				legs prone_legs torso e_prone_rifle_snipeidle
 			}
 			weapons panzerfaust
 			{
@@ -1701,6 +1745,11 @@ fireweapon
 	weapons syringe
 	{
 		torso firing_syringe
+	}
+// BAZOOKA
+	weapons bazooka
+	{
+		torso stand_rifle
 	}
 // PANZERFAUST
 	weapons panzerfaust, movetype walk AND turnleft AND turnright AND idlecr AND idle
@@ -2172,6 +2221,10 @@ fireweaponprone
 	{
 		torso prone_poke_fire
 	}
+	weapons bazooka
+	{
+		torso e_prone_rifle_snipefire
+	}
 	weapons panzerfaust
 	{
 		torso prone_panzor_idle
@@ -2299,6 +2352,10 @@ raiseweaponprone
 	weapons syringe AND Adrenaline Syringe
 	{
 		torso prone_poke_switch
+	}
+	weapons bazooka
+	{
+		torso prone_rifle_switch
 	}
 	weapons panzerfaust
 	{
@@ -2508,6 +2565,10 @@ raiseweapon
 	{
 		torso raise_knife
 	}
+	weapons bazooka
+	{
+		torso raise_machinegun
+	}
 	weapons panzerfaust
 	{
 		torso raise_panzer
@@ -2615,6 +2676,10 @@ reload
 	weapons special
 	{
 		torso raise_knife
+	}
+	weapons bazooka
+	{
+		torso reload_rifle
 	}
 	weapons panzerfaust
 	{
@@ -2796,7 +2861,14 @@ jump
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
-
+	weapons bazooka, movetype run
+	{
+		legs jump_1step_2h torso stand_rifle
+	}
+	weapons bazooka
+	{
+		legs jump_nostep_1h torso stand_rifle
+	}
 	weapons panzerfaust, movetype run
 	{
 		legs jump_1step_2h torso stand_panzer
@@ -2914,6 +2986,14 @@ jumpbk
 		legs jump_1step_2h torso stand_rifle
 	}
 	weapons FG42 Scope
+	{
+		legs jump_nostep_1h torso stand_rifle
+	}
+	weapons bazooka, movetype run
+	{
+		legs jump_1step_2h torso stand_rifle
+	}
+	weapons bazooka
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}

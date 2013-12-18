@@ -1269,7 +1269,7 @@ void G_RunFlamechunk(gentity_t *ent);
 
 gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t aimdir, int grenadeWPID);
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir);
+gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType);
 gentity_t *fire_speargun(gentity_t *self, vec3_t start, vec3_t dir);
 
 #define Fire_Lead(ent, activator, spread, damage, muzzle, forward, right, up) Fire_Lead_Ext(ent, activator, spread, damage, muzzle, forward, right, up, MOD_MACHINEGUN)

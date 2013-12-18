@@ -2917,6 +2917,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 		*shader = cgs.media.limboWeaponCard2;
 		break;
 	case WP_MOBILE_BROWNING:
+	case WP_BAZOOKA:
 		*shader = cgs.media.limboWeaponCard3;
 		break;
 	default:     // shouldn't happen
@@ -2954,6 +2955,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_AKIMBO_SILENCEDCOLT:
 	case WP_SILENCED_COLT:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		*t0 = 1 / 8.f;
 		*t1 = 2 / 8.f;
 		break;
@@ -3423,6 +3425,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	switch (weapon)
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxPanzers))
 		{
 			return qtrue;

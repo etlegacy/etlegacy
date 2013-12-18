@@ -1743,6 +1743,7 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		case MOD_GRENADE_LAUNCHER:
 		case MOD_GRENADE_PINEAPPLE:
 		case MOD_PANZERFAUST:
+		case MOD_BAZOOKA:
 		case MOD_GPG40:
 		case MOD_M7:
 		case MOD_ARTY:

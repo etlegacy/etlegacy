@@ -3253,6 +3253,7 @@ weaponType_t weaponTypes[] =
 	{ WP_THOMPSON,             "THOMPSON" },
 	{ WP_STEN,                 "STEN",    },
 	{ WP_PANZERFAUST,          "PANZERFAUST",},
+	{ WP_BAZOOKA,              "BAZOOKA", },
 	{ WP_FLAMETHROWER,         "FLAMETHROWER",},
 	{ WP_KAR98,                "K43",     },
 	{ WP_CARBINE,              "M1 GARAND",},

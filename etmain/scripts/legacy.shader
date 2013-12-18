@@ -51,6 +51,27 @@ icons/iconw_mortar_ax
 	}
 }
 
+icons/iconw_bazooka
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_bazooka.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_bazooka_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_bazooka_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
 
 icons/iconw_landmine_1_select
 {

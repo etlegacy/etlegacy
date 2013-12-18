@@ -484,6 +484,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		{
 		case WP_DYNAMITE:
 		case WP_PANZERFAUST:
+		case WP_BAZOOKA:
 		case WP_GRENADE_LAUNCHER:
 		case WP_GRENADE_PINEAPPLE:
 		case WP_MAPMORTAR:
@@ -724,7 +725,7 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (ent->s.weapon == WP_PANZERFAUST || IS_MORTAR_WEAPON_SET(ent->s.weapon))
+		if (IS_PANZER_WEAPON(ent->s.weapon) || IS_MORTAR_WEAPON_SET(ent->s.weapon))
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives
 		}
@@ -1955,9 +1956,21 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 fire_rocket
 =================
 */
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
+gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
 {
 	gentity_t *bolt = G_Spawn();
+	int mod;
+
+	// FIXME: weapon table
+    switch (rocketType) {
+            case WP_BAZOOKA:
+                    mod = MOD_BAZOOKA;
+                    break;
+            default:
+                    rocketType = WP_PANZERFAUST;
+                    mod = MOD_PANZERFAUST;
+                    break;
+    }
 
 	VectorNormalize(dir);
 
@@ -1976,8 +1989,8 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->damage              = GetWeaponTableData(WP_PANZERFAUST)->damage;
 	bolt->splashDamage        = GetWeaponTableData(WP_PANZERFAUST)->damage;
 	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // hardcoded bleh hack FIXME: weapon table
-	bolt->methodOfDeath       = MOD_PANZERFAUST;
-	bolt->splashMethodOfDeath = MOD_PANZERFAUST;
+	bolt->methodOfDeath       = mod;
+	bolt->splashMethodOfDeath = mod;
 	bolt->clipmask            = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_LINEAR;

@@ -365,6 +365,8 @@ char *modNames[] =
 
 	"MOD_MOBILE_BROWNING",
 
+	"MOD_BAZOOKA",
+
 	// MOD_NUM_MODS
 };
 
@@ -1571,6 +1573,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		case MOD_DYNAMITE:
 		case MOD_MORTAR:
 		case MOD_PANZERFAUST:
+		case MOD_BAZOOKA:
 			take -= take * .5f;
 			break;
 		default:

@@ -705,6 +705,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		skipammo = qtrue;
 		break;
 

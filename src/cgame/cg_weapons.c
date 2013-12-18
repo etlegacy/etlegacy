@@ -1860,6 +1860,9 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_PANZERFAUST:
 		filename = "panzerfaust.weap";
 		break;
+	case WP_BAZOOKA:
+		filename = "bazooka.weap";
+		break;
 	case WP_FLAMETHROWER:
 		filename = "flamethrower.weap";
 		break;
@@ -5193,13 +5196,13 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			}
 		}
 
-		// Early out if we just fired Panzerfaust, go to SMG, pistol, then grenades
+		// Early out if we just fired Panzerfaust or Bazooka, go to SMG, pistol, then grenades
 		if (IS_PANZER_WEAPON(cg.weaponSelect))
 		{
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
-				// Make sure we don't reselect the panzer
-				if (weapBanksMultiPlayer[3][i] != WP_PANZERFAUST && CG_WeaponSelectable(weapBanksMultiPlayer[3][i])) // find an SMG
+				// Make sure we don't reselect the panzer or bazooka
+				if (weapBanksMultiPlayer[3][i] != WP_PANZERFAUST && weapBanksMultiPlayer[3][i] != WP_BAZOOKA && CG_WeaponSelectable(weapBanksMultiPlayer[3][i])) // find an SMG
 				{
 					cg.weaponSelect = weapBanksMultiPlayer[3][i];
 					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
@@ -5389,6 +5392,7 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_AKIMBO_COLT:
 	case WP_AKIMBO_SILENCEDCOLT:
 	case WP_PANZERFAUST: // push the player back instead
+	case WP_BAZOOKA:
 		break;
 	case WP_GARAND:
 	case WP_KAR98:
@@ -6186,6 +6190,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		}
 		break;
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case VERYBIGEXPLOSION:
 	case WP_ARTY:
 	case WP_SMOKE_MARKER:
@@ -6372,6 +6377,7 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 	{
 	case WP_GRENADE_LAUNCHER:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		CG_MissileHitWall(weapon, 0, origin, dir, 0);   // like the old one
 		break;
 	case WP_KNIFE:

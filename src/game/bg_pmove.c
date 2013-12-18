@@ -700,6 +700,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	switch (pm->ps->weapon)
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING:
@@ -3030,6 +3031,7 @@ void PM_CheckForReload(int weapon)
 	case WP_KNIFE_KABAR:
 	case WP_GRENADE_LAUNCHER:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_GRENADE_PINEAPPLE:
 	case WP_MEDIC_SYRINGE:
 	case WP_AMMO:
@@ -3995,6 +3997,7 @@ static void PM_Weapon(void)
 	case WP_NONE: // this is possible since the player starts with nothing
 		return;
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
@@ -4255,6 +4258,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_LUGER:
 	case WP_COLT:
 	case WP_GARAND:
@@ -4274,7 +4278,7 @@ static void PM_Weapon(void)
 		if (!weaponstateFiring)
 		{
 			// pfaust has spinup time in MP
-			if (pm->ps->weapon == WP_PANZERFAUST)
+			if (pm->ps->weapon == WP_PANZERFAUST || pm->ps->weapon == WP_BAZOOKA)
 			{
 				PM_AddEvent(EV_SPINUP);
 			}
@@ -4510,6 +4514,7 @@ static void PM_Weapon(void)
 			//bckmove_knockback = 400.f;
 			break;
 		case WP_PANZERFAUST:
+		case WP_BAZOOKA:
 			fwdmove_knockback = 32000.f;
 			//bckmove_knockback = 1200.f;
 			break;
@@ -4627,10 +4632,11 @@ static void PM_Weapon(void)
 		break;
 	}
 
-	// Jin multiplayer, pfaust fires once then switches to pistol since it's useless for a while
+	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
 	switch (pm->ps->weapon) // no ammo events
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_SMOKE_MARKER:
 	case WP_DYNAMITE:
 	case WP_SMOKE_BOMB:
@@ -4706,6 +4712,7 @@ static void PM_Weapon(void)
 	case WP_KNIFE:
 	case WP_KNIFE_KABAR:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_DYNAMITE:
 	case WP_GRENADE_LAUNCHER:
 	case WP_GRENADE_PINEAPPLE:

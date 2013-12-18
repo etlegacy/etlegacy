@@ -81,6 +81,7 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 //
 #if 0   // zinx - not letting them go at sprint speed for now.
 	if ((ent->client->ps.weapon == WP_PANZERFAUST) ||
+		(ent->client->ps.weapon == WP_BAZOOKA) ||
 	    (ent->client->ps.weapon == WP_MOBILE_MG42) ||
 	    (ent->client->ps.weapon == WP_MOBILE_MG42_SET) ||
 	    (ent->client->ps.weapon == WP_MOBILE_BROWNING) ||
