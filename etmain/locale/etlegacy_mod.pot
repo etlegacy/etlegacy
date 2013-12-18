@@ -788,7 +788,7 @@ msgstr ""
 msgid "SCOPE"
 msgstr ""
 
-msgid "Use Weapon Cycle for Zoom:"
+msgid "Weapon Cycle for Zoom"
 msgstr ""
 
 msgid "Default Zoom Level:"
@@ -4281,4 +4281,10 @@ msgid "'s FG42"
 msgstr ""
 
 msgid "'s K43"
+msgstr ""
+
+msgid "SOUND"
+msgstr ""
+
+msgid "AutoScreenshots format:"
 msgstr ""
