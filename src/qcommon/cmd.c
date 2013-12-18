@@ -1097,7 +1097,14 @@ void Cmd_CleanHomepath_f(void)
 	// if the first argument is "all" or "*", search the whole homepath
 	if (Q_stricmp(Cmd_Argv(i), "all") && Q_stricmp(Cmd_Argv(i), "*"))
 	{
-		Q_strcat(path, sizeof(path), va("%c%s", PATH_SEP, Cmd_Argv(1)));
+		Q_strcat(path, sizeof(path), va("%c%s", PATH_SEP, Cmd_Argv(i)));
+
+		// check if it points to a valid directory
+		if (FS_OSStatFile(path) != 1)
+		{
+			Com_Printf("Cannot commence cleaning, because \"%s\" is not a valid directory under fs_homepath (%s)\n", Cmd_Argv(i), path);
+			return;
+		}
 	}
 
 	for (i++; i < Cmd_Argc(); i++)
