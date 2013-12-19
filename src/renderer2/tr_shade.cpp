@@ -2119,7 +2119,7 @@ static void Render_refraction_C(int stage)
 
 	// enable shader, set arrays
 	gl_refractionShader->BindProgram();
-	GL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
+	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 
 	// set uniforms
 	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin); // in world space
@@ -2167,7 +2167,7 @@ static void Render_dispersion_C(int stage)
 	gl_dispersionShader->SetVertexSkinning(glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
 
 	gl_dispersionShader->BindProgram();
-	GL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
+	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 
 	// set uniforms
 	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
@@ -2256,7 +2256,7 @@ static void Render_screen(int stage)
 	else
 	*/
 	{
-		GL_VertexAttribsState(ATTR_POSITION);
+		GLSL_VertexAttribsState(ATTR_POSITION);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, tess.svars.color);
 	}
 
@@ -2290,7 +2290,7 @@ static void Render_portal(int stage)
 	else
 	*/
 	{
-		GL_VertexAttribsState(ATTR_POSITION);
+		GLSL_VertexAttribsState(ATTR_POSITION);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, tess.svars.color);
 	}
 
@@ -2561,7 +2561,7 @@ static void Render_liquid(int stage)
 
 	// enable shader, set arrays
 	gl_liquidShader->BindProgram();
-	GL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR);
+	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR);
 
 	// set uniforms
 	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
@@ -2839,7 +2839,7 @@ static void Render_volumetricFog()
 
 		// setup shader with uniforms
 		gl_depthToColorShader->BindProgram();
-		GL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
+		GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 		GL_State(0); //GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
 		gl_depthToColorShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
@@ -2873,7 +2873,7 @@ static void Render_volumetricFog()
 
 		// enable shader, set arrays
 		gl_volumetricFogShader->BindProgram();
-		GL_VertexAttribsState(ATTR_POSITION);
+		GLSL_VertexAttribsState(ATTR_POSITION);
 
 		//GL_State(GLS_DEPTHTEST_DISABLE);	// | GLS_DEPTHMASK_TRUE);
 		//GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ZERO | GLS_DSTBLEND_ONE_MINUS_SRC_COLOR);

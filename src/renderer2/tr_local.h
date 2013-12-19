@@ -1406,6 +1406,7 @@ enum
 {
 	GLSL_INT,
 	GLSL_FLOAT,
+	GLSL_FLOAT5,
 	GLSL_VEC2,
 	GLSL_VEC3,
 	GLSL_VEC4,
@@ -3324,6 +3325,9 @@ typedef struct
 	programInfo_t *gl_volumetricFogShader;
 	programInfo_t *gl_volumetricLightingShader;
 	programInfo_t *gl_dispersionShader;
+
+	//This is set with the GLSL_SelectPermutation
+	shaderProgram_t *selectedProgram;
 #endif
 
 
@@ -3822,8 +3826,6 @@ void GL_CheckErrors_(const char *filename, int line);
 #define GL_CheckErrors()    GL_CheckErrors_(__FILE__, __LINE__)
 
 void GL_State(uint32_t stateVector);
-void GL_VertexAttribsState(uint32_t stateBits);
-void GL_VertexAttribPointers(uint32_t attribBits);
 void GL_Cull(int cullType);
 
 /*
@@ -4564,6 +4566,21 @@ const char *GetFallbackShader(const char *name);
 
 //tr_glsl.c
 void GLSL_LoadDefinitions(void);
+void GLSL_VertexAttribsState(uint32_t stateBits);
+void GLSL_VertexAttribPointers(uint32_t attribBits);
+#ifdef RENDERER2C
+void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value);
+void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value);
+void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_t v);
+void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t v);
+void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t v);
+void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t v);
+void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const matrix_t matrix);
+void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray,int arraysize);
+void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray,int arraysize);
+void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled);
+void GLSL_SelectPermutation(programInfo_t *programlist);
+#endif
 
 #if defined(__cplusplus)
 }

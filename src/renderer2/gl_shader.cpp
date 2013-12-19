@@ -1791,7 +1791,7 @@ void GLShader::SetRequiredVertexPointers()
 		}
 	}
 
-	GL_VertexAttribsState((_vertexAttribsRequired | _vertexAttribs | macroVertexAttribs));      // & ~_vertexAttribsUnsupported);
+	GLSL_VertexAttribsState((_vertexAttribsRequired | _vertexAttribs | macroVertexAttribs));      // & ~_vertexAttribsUnsupported);
 }
 
 GLShader_generic::GLShader_generic() :

@@ -680,456 +680,6 @@ void GL_State(uint32_t stateBits)
 	glState.glStateBits = stateBits;
 }
 
-
-void GL_VertexAttribsState(uint32_t stateBits)
-{
-	uint32_t diff;
-
-	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
-	{
-		stateBits |= (ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS);
-	}
-
-	GL_VertexAttribPointers(stateBits);
-
-	diff = stateBits ^ glState.vertexAttribsState;
-	if (!diff)
-	{
-		return;
-	}
-
-	if (diff & ATTR_POSITION)
-	{
-		if (stateBits & ATTR_POSITION)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_POSITION);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_POSITION);
-		}
-	}
-
-	if (diff & ATTR_TEXCOORD)
-	{
-		if (stateBits & ATTR_TEXCOORD)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
-		}
-	}
-
-	if (diff & ATTR_LIGHTCOORD)
-	{
-		if (stateBits & ATTR_LIGHTCOORD)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
-		}
-	}
-
-	if (diff & ATTR_TANGENT)
-	{
-		if (stateBits & ATTR_TANGENT)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_TANGENT);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_TANGENT);
-		}
-	}
-
-	if (diff & ATTR_BINORMAL)
-	{
-		if (stateBits & ATTR_BINORMAL)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_BINORMAL);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL);
-		}
-	}
-
-	if (diff & ATTR_NORMAL)
-	{
-		if (stateBits & ATTR_NORMAL)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_NORMAL);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_NORMAL);
-		}
-	}
-
-	if (diff & ATTR_COLOR)
-	{
-		if (stateBits & ATTR_COLOR)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_COLOR )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_COLOR);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_COLOR )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_COLOR);
-		}
-	}
-
-	if (diff & ATTR_BONE_INDEXES)
-	{
-		if (stateBits & ATTR_BONE_INDEXES)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
-		}
-	}
-
-	if (diff & ATTR_BONE_WEIGHTS)
-	{
-		if (stateBits & ATTR_BONE_WEIGHTS)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
-		}
-	}
-
-	if (diff & ATTR_POSITION2)
-	{
-		if (stateBits & ATTR_POSITION2)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_POSITION2);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_POSITION2);
-		}
-	}
-
-	if (diff & ATTR_TANGENT2)
-	{
-		if (stateBits & ATTR_TANGENT2)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_TANGENT2);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_TANGENT2);
-		}
-	}
-
-	if (diff & ATTR_BINORMAL2)
-	{
-		if (stateBits & ATTR_BINORMAL2)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_BINORMAL2);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL2);
-		}
-	}
-
-	if (diff & ATTR_NORMAL2)
-	{
-		if (stateBits & ATTR_NORMAL2)
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
-			}
-			glEnableVertexAttribArray(ATTR_INDEX_NORMAL2);
-		}
-		else
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
-			}
-			glDisableVertexAttribArray(ATTR_INDEX_NORMAL2);
-		}
-	}
-
-	glState.vertexAttribsState = stateBits;
-}
-
-void GL_VertexAttribPointers(uint32_t attribBits)
-{
-	if (!glState.currentVBO)
-	{
-		ri.Error(ERR_FATAL, "GL_VertexAttribPointers: no VBO bound");
-		return;
-	}
-
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- GL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name));
-	}
-
-	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
-	{
-		attribBits |= (ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS);
-	}
-
-	if ((attribBits & ATTR_POSITION))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_POSITION, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsXYZ + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeXYZ)));
-		glState.vertexAttribPointersSet |= ATTR_POSITION;
-	}
-
-	if ((attribBits & ATTR_TEXCOORD))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TEXCOORD )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_TEXCOORD0, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsTexCoords));
-		glState.vertexAttribPointersSet |= ATTR_TEXCOORD;
-	}
-
-	if ((attribBits & ATTR_LIGHTCOORD))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_LIGHTCOORD )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_TEXCOORD1, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsLightCoords));
-		glState.vertexAttribPointersSet |= ATTR_LIGHTCOORD;
-	}
-
-	if ((attribBits & ATTR_TANGENT))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_TANGENT, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsTangents + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeTangents)));
-		glState.vertexAttribPointersSet |= ATTR_TANGENT;
-	}
-
-	if ((attribBits & ATTR_BINORMAL))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_BINORMAL, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsBinormals + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeBinormals)));
-		glState.vertexAttribPointersSet |= ATTR_BINORMAL;
-	}
-
-	if ((attribBits & ATTR_NORMAL))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_NORMAL, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsNormals + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeNormals)));
-		glState.vertexAttribPointersSet |= ATTR_NORMAL;
-	}
-
-	if ((attribBits & ATTR_COLOR))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_COLOR )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsColors));
-		glState.vertexAttribPointersSet |= ATTR_COLOR;
-	}
-
-	if ((attribBits & ATTR_BONE_INDEXES))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_INDEXES )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_BONE_INDEXES, 4, GL_INT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsBoneIndexes));
-		glState.vertexAttribPointersSet |= ATTR_BONE_INDEXES;
-	}
-
-	if ((attribBits & ATTR_BONE_WEIGHTS))
-	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_WEIGHTS )\n");
-		}
-
-		glVertexAttribPointer(ATTR_INDEX_BONE_WEIGHTS, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsBoneWeights));
-		glState.vertexAttribPointersSet |= ATTR_BONE_WEIGHTS;
-	}
-
-	if (glState.vertexAttribsInterpolation > 0)
-	{
-		if ((attribBits & ATTR_POSITION2))
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION2 )\n");
-			}
-
-			glVertexAttribPointer(ATTR_INDEX_POSITION2, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsXYZ + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeXYZ)));
-			glState.vertexAttribPointersSet |= ATTR_POSITION2;
-		}
-
-		if ((attribBits & ATTR_TANGENT2))
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT2 )\n");
-			}
-
-			glVertexAttribPointer(ATTR_INDEX_TANGENT2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsTangents + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeTangents)));
-			glState.vertexAttribPointersSet |= ATTR_TANGENT2;
-		}
-
-		if ((attribBits & ATTR_BINORMAL2))
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL2 )\n");
-			}
-
-			glVertexAttribPointer(ATTR_INDEX_BINORMAL2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsBinormals + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeBinormals)));
-			glState.vertexAttribPointersSet |= ATTR_BINORMAL2;
-		}
-
-		if ((attribBits & ATTR_NORMAL2))
-		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL2 )\n");
-			}
-
-			glVertexAttribPointer(ATTR_INDEX_NORMAL2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsNormals + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeNormals)));
-			glState.vertexAttribPointersSet |= ATTR_NORMAL2;
-		}
-	}
-}
-
-
-
-
 /*
 ================
 RB_Hyperspace
@@ -1601,7 +1151,7 @@ static void Render_lightVolume(interaction_t *ia)
 			bool   shadowCompare;
 
 			GLimp_LogComment("--- Render_lightVolume_omni ---\n");
-
+#ifndef RENDERER2C
 			// enable shader, set arrays
 			gl_volumetricLightingShader->BindProgram();
 			//GL_VertexAttribsState(tr.lightVolumeShader_omni.attribs);
@@ -1632,7 +1182,32 @@ static void Render_lightVolume(interaction_t *ia)
 			gl_volumetricLightingShader->SetUniform_UnprojectMatrix(backEnd.viewParms.unprojectionMatrix);
 
 			//gl_volumetricLightingShader->SetUniform_PortalClipping(&tr.lightVolumeShader_omni, backEnd.viewParms.isPortal);
+#else
+			GLSL_SelectPermutation(tr.gl_volumetricLightingShader);
+			GL_Cull(CT_TWO_SIDED);
+			GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
+			// set uniforms
+			VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
+			VectorCopy(light->origin, lightOrigin);
+			VectorCopy(tess.svars.color, lightColor);
+
+			shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0);
+
+			
+			GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,viewOrigin);
+			GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTORIGIN,lightOrigin);
+			GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,lightColor);
+			GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTRADIUS,light->sphereRadius);
+			GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTSCALE,light->l.scale);
+			GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_LIGHTATTENUATIONMATRIX,light->attenuationMatrix2);
+
+			// FIXME  gl_volumetricLightingShader->SetUniform_ShadowMatrix(light->attenuationMatrix);
+			
+			GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_SHADOWCOMPARE,shadowCompare);
+			GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+			GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_UNPROJECTMATRIX,backEnd.viewParms.unprojectionMatrix);
+#endif
 			// bind u_DepthMap
 			GL_SelectTexture(0);
 			if (r_deferredShading->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable &&
@@ -2792,9 +2367,13 @@ static void RB_RenderInteractionsShadowMapped()
 							GL_Cull(CT_TWO_SIDED);
 							GL_State(GLS_DEPTHTEST_DISABLE);
 
+#ifndef RENDERER2C
 							gl_debugShadowMapShader->BindProgram();
 							gl_debugShadowMapShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
-
+#else
+							GLSL_SelectPermutation(tr.gl_debugShadowMapShader);
+							GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+#endif
 							GL_SelectTexture(0);
 							GL_Bind(tr.sunShadowMapFBOImage[frustumIndex]);
 
@@ -2821,7 +2400,7 @@ static void RB_RenderInteractionsShadowMapped()
 								GL_Scissor(x, y, w, h);
 
 								GL_PushMatrix();
-
+#ifndef RENDERER2C
 								gl_genericShader->DisableAlphaTesting();
 								gl_genericShader->DisablePortalClipping();
 								gl_genericShader->DisableVertexSkinning();
@@ -2834,16 +2413,34 @@ static void RB_RenderInteractionsShadowMapped()
 								// set uniforms
 								gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 								gl_genericShader->SetUniform_Color(colorBlack);
-
+#else
+								GLSL_SetMacroState(tr.gl_genericShader,USE_ALPHA_TESTING,qfalse);
+								GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_SKINNING,qfalse);
+								GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_ANIMATION,qfalse);
+								GLSL_SetMacroState(tr.gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
+								GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
+								GLSL_SelectPermutation(tr.gl_genericShader);
+								{
+									vec4_t temp;
+									ColorModulate(CGEN_VERTEX,AGEN_VERTEX,&temp);
+									GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
+									GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
+								}
+#endif
 								GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 								GL_Cull(CT_TWO_SIDED);
 
 								// bind u_ColorMap
 								GL_SelectTexture(0);
 								GL_Bind(tr.whiteImage);
-								gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
 
+#ifndef RENDERER2C
+								gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
 								gl_genericShader->SetUniform_ModelViewProjectionMatrix(light->shadowMatrices[frustumIndex]);
+#else
+								GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_COLORTEXTUREMATRIX,matrixIdentity);
+								GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,light->shadowMatrices[frustumIndex]);
+#endif
 
 								tess.multiDrawPrimitives = 0;
 								tess.numIndexes          = 0;
@@ -2896,13 +2493,22 @@ static void RB_RenderInteractionsShadowMapped()
 								// draw light volume
 								if (light->isStatic && light->frustumVBO && light->frustumIBO)
 								{
+#ifndef RENDERER2C
 									gl_genericShader->SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 									gl_genericShader->SetUniform_Color(colorYellow);
+#else
+									{
+										vec4_t temp;
+										ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM,&temp);
+										GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
+										GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorYellow);
+									}
+#endif
 
 									R_BindVBO(light->frustumVBO);
 									R_BindIBO(light->frustumIBO);
 
-									GL_VertexAttribsState(ATTR_POSITION);
+									GLSL_VertexAttribsState(ATTR_POSITION);
 
 									tess.numVertexes = light->frustumVerts;
 									tess.numIndexes  = light->frustumIndexes;
@@ -3710,7 +3316,7 @@ skipInteraction:
 							R_BindVBO(tr.unitCubeVBO);
 							R_BindIBO(tr.unitCubeIBO);
 
-							GL_VertexAttribsState(ATTR_POSITION);
+							GLSL_VertexAttribsState(ATTR_POSITION);
 
 							tess.multiDrawPrimitives = 0;
 							tess.numVertexes         = tr.unitCubeVBO->vertexesNum;
@@ -3861,6 +3467,7 @@ skipInteraction:
 
 					if (light->l.rlType == RL_OMNI)
 					{
+#ifndef RENDERER2C
 						// choose right shader program ----------------------------------
 						gl_deferredLightingShader_omniXYZ->SetPortalClipping(backEnd.viewParms.isPortal);
 						gl_deferredLightingShader_omniXYZ->SetNormalMapping(r_normalMapping->integer);
@@ -3881,6 +3488,24 @@ skipInteraction:
 
 						gl_deferredLightingShader_omniXYZ->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 						gl_deferredLightingShader_omniXYZ->SetUniform_UnprojectMatrix(backEnd.viewParms.unprojectionMatrix);
+#else
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_NORMAL_MAPPING,r_normalMapping->integer);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_SHADOWING,qfalse);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_FRUSTUM_CLIPPING,light->clipsNearPlane);
+						GLSL_SelectPermutation(tr.gl_deferredLightingShader_omniXYZ);
+
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,backEnd.viewParms.orientation.origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTORIGIN,light->origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,tess.svars.color);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTRADIUS,light->sphereRadius);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTSCALE,light->l.scale);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_LIGHTATTENUATIONMATRIX,light->attenuationMatrix2);
+						GLSL_SetUniformVec4ARR(tr.selectedProgram,UNIFORM_LIGHTFRUSTUM,lightFrustum,6);
+
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_UNPROJECTMATRIX,backEnd.viewParms.unprojectionMatrix);
+#endif
 
 						if (backEnd.viewParms.isPortal)
 						{
@@ -3892,7 +3517,11 @@ skipInteraction:
 							plane[2] = backEnd.viewParms.portalPlane.normal[2];
 							plane[3] = backEnd.viewParms.portalPlane.dist;
 
+#ifndef RENDERER2C
 							gl_deferredLightingShader_omniXYZ->SetUniform_PortalPlane(plane);
+#else
+							GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+#endif
 						}
 
 						// bind u_DiffuseMap
@@ -3943,6 +3572,7 @@ skipInteraction:
 					}
 					else if (light->l.rlType == RL_PROJ)
 					{
+#ifndef RENDERER2C
 						// choose right shader program ----------------------------------
 						gl_deferredLightingShader_projXYZ->SetPortalClipping(backEnd.viewParms.isPortal);
 						gl_deferredLightingShader_projXYZ->SetNormalMapping(r_normalMapping->integer);
@@ -3963,6 +3593,24 @@ skipInteraction:
 
 						gl_deferredLightingShader_projXYZ->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 						gl_deferredLightingShader_projXYZ->SetUniform_UnprojectMatrix(backEnd.viewParms.unprojectionMatrix);
+#else
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_NORMAL_MAPPING,r_normalMapping->integer);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_SHADOWING,qfalse);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_FRUSTUM_CLIPPING,light->clipsNearPlane);
+						GLSL_SelectPermutation(tr.gl_deferredLightingShader_projXYZ);
+
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,backEnd.viewParms.orientation.origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTORIGIN,light->origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,tess.svars.color);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTRADIUS,light->sphereRadius);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTSCALE,light->l.scale);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_LIGHTATTENUATIONMATRIX,light->attenuationMatrix2);
+						GLSL_SetUniformVec4ARR(tr.selectedProgram,UNIFORM_LIGHTFRUSTUM,lightFrustum,6);
+
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_UNPROJECTMATRIX,backEnd.viewParms.unprojectionMatrix);
+#endif
 
 						if (backEnd.viewParms.isPortal)
 						{
@@ -3974,7 +3622,11 @@ skipInteraction:
 							plane[2] = backEnd.viewParms.portalPlane.normal[2];
 							plane[3] = backEnd.viewParms.portalPlane.dist;
 
+#ifndef RENDERER2C
 							gl_deferredLightingShader_projXYZ->SetUniform_PortalPlane(plane);
+#else
+							GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+#endif
 						}
 
 						// bind u_DiffuseMap
@@ -4025,6 +3677,7 @@ skipInteraction:
 					}
 					else if (light->l.rlType == RL_DIRECTIONAL)
 					{
+#ifndef RENDERER2C
 						// choose right shader program ----------------------------------
 						gl_deferredLightingShader_directionalSun->SetPortalClipping(backEnd.viewParms.isPortal);
 						gl_deferredLightingShader_directionalSun->SetNormalMapping(r_normalMapping->integer);
@@ -4045,6 +3698,24 @@ skipInteraction:
 
 						gl_deferredLightingShader_directionalSun->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 						gl_deferredLightingShader_directionalSun->SetUniform_UnprojectMatrix(backEnd.viewParms.unprojectionMatrix);
+#else
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_directionalSun,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_directionalSun,USE_NORMAL_MAPPING,r_normalMapping->integer);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_directionalSun,USE_SHADOWING,qfalse);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_directionalSun,USE_FRUSTUM_CLIPPING,light->clipsNearPlane);
+						GLSL_SelectPermutation(tr.gl_deferredLightingShader_directionalSun);
+
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,backEnd.viewParms.orientation.origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTORIGIN,light->origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,tess.svars.color);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTRADIUS,light->sphereRadius);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTSCALE,light->l.scale);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_LIGHTATTENUATIONMATRIX,light->attenuationMatrix2);
+						GLSL_SetUniformVec4ARR(tr.selectedProgram,UNIFORM_LIGHTFRUSTUM,lightFrustum,6);
+
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_UNPROJECTMATRIX,backEnd.viewParms.unprojectionMatrix);
+#endif
 
 						if (backEnd.viewParms.isPortal)
 						{
@@ -4056,7 +3727,11 @@ skipInteraction:
 							plane[2] = backEnd.viewParms.portalPlane.normal[2];
 							plane[3] = backEnd.viewParms.portalPlane.dist;
 
+#ifndef RENDERER2C
 							gl_deferredLightingShader_directionalSun->SetUniform_PortalPlane(plane);
+#else
+							GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+#endif
 						}
 
 						// bind u_DiffuseMap
@@ -5286,7 +4961,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							R_BindVBO(tr.unitCubeVBO);
 							R_BindIBO(tr.unitCubeIBO);
 
-							GL_VertexAttribsState(ATTR_POSITION);
+							GLSL_VertexAttribsState(ATTR_POSITION);
 
 							tess.multiDrawPrimitives = 0;
 							tess.numVertexes         = tr.unitCubeVBO->vertexesNum;
@@ -5452,6 +5127,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 					if (light->l.rlType == RL_OMNI)
 					{
+#ifndef RENDERER2C
 						// choose right shader program ----------------------------------
 						gl_deferredLightingShader_omniXYZ->SetPortalClipping(backEnd.viewParms.isPortal);
 						gl_deferredLightingShader_omniXYZ->SetNormalMapping(r_normalMapping->integer);
@@ -5472,6 +5148,24 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 						gl_deferredLightingShader_omniXYZ->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 						gl_deferredLightingShader_omniXYZ->SetUniform_UnprojectMatrix(backEnd.viewParms.unprojectionMatrix);
+#else
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_NORMAL_MAPPING,r_normalMapping->integer);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_SHADOWING,shadowCompare);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_omniXYZ,USE_FRUSTUM_CLIPPING,light->clipsNearPlane);
+						GLSL_SelectPermutation(tr.gl_deferredLightingShader_omniXYZ);
+
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,backEnd.viewParms.orientation.origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTORIGIN,light->origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,tess.svars.color);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTRADIUS,light->sphereRadius);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTSCALE,light->l.scale);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_LIGHTATTENUATIONMATRIX,light->attenuationMatrix2);
+						GLSL_SetUniformVec4ARR(tr.selectedProgram,UNIFORM_LIGHTFRUSTUM,lightFrustum,6);
+
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_UNPROJECTMATRIX,backEnd.viewParms.unprojectionMatrix);
+#endif
 
 						if (backEnd.viewParms.isPortal)
 						{
@@ -5482,8 +5176,11 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							plane[1] = backEnd.viewParms.portalPlane.normal[1];
 							plane[2] = backEnd.viewParms.portalPlane.normal[2];
 							plane[3] = backEnd.viewParms.portalPlane.dist;
-
+#ifndef RENDERER2C
 							gl_deferredLightingShader_omniXYZ->SetUniform_PortalPlane(plane);
+#else
+							GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+#endif
 						}
 
 						// bind u_DiffuseMap
@@ -5533,6 +5230,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					}
 					else if (light->l.rlType == RL_PROJ)
 					{
+#ifndef RENDERER2C
 						// choose right shader program ----------------------------------
 						gl_deferredLightingShader_projXYZ->SetPortalClipping(backEnd.viewParms.isPortal);
 						gl_deferredLightingShader_projXYZ->SetNormalMapping(r_normalMapping->integer);
@@ -5550,16 +5248,45 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						gl_deferredLightingShader_projXYZ->SetUniform_LightScale(light->l.scale);
 						gl_deferredLightingShader_projXYZ->SetUniform_LightAttenuationMatrix(light->attenuationMatrix2);
 						gl_deferredLightingShader_projXYZ->SetUniform_LightFrustum(lightFrustum);
+#else
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_NORMAL_MAPPING,r_normalMapping->integer);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_SHADOWING,shadowCompare);
+						GLSL_SetMacroState(tr.gl_deferredLightingShader_projXYZ,USE_FRUSTUM_CLIPPING,light->clipsNearPlane);
+						GLSL_SelectPermutation(tr.gl_deferredLightingShader_projXYZ);
+
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,backEnd.viewParms.orientation.origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTORIGIN,light->origin);
+						GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,tess.svars.color);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTRADIUS,light->sphereRadius);
+						GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_LIGHTSCALE,light->l.scale);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_LIGHTATTENUATIONMATRIX,light->attenuationMatrix2);
+						GLSL_SetUniformVec4ARR(tr.selectedProgram,UNIFORM_LIGHTFRUSTUM,lightFrustum,6);
+
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_UNPROJECTMATRIX,backEnd.viewParms.unprojectionMatrix);
+#endif
 
 						if (shadowCompare)
 						{
+#ifndef RENDERER2C
 							gl_deferredLightingShader_projXYZ->SetUniform_ShadowTexelSize(shadowTexelSize);
 							gl_deferredLightingShader_projXYZ->SetUniform_ShadowBlur(r_shadowBlur->value);
 							gl_deferredLightingShader_projXYZ->SetUniform_ShadowMatrix(light->shadowMatrices);
+#else
+							GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_SHADOWTEXELSIZE,shadowTexelSize);
+							GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_SHADOWBLUR,r_shadowBlur->value);
+							GLSL_SetUniformMatrix16ARR(tr.selectedProgram,UNIFORM_SHADOWMATRIX,light->shadowMatrices,MAX_SHADOWMAPS);
+#endif
 						}
 
+#ifndef RENDERER2C
 						gl_deferredLightingShader_projXYZ->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 						gl_deferredLightingShader_projXYZ->SetUniform_UnprojectMatrix(backEnd.viewParms.unprojectionMatrix);
+#else
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_UNPROJECTMATRIX,backEnd.viewParms.unprojectionMatrix);
+#endif
 
 						if (backEnd.viewParms.isPortal)
 						{
@@ -5571,7 +5298,11 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							plane[2] = backEnd.viewParms.portalPlane.normal[2];
 							plane[3] = backEnd.viewParms.portalPlane.dist;
 
+#ifndef RENDERER2C
 							gl_deferredLightingShader_projXYZ->SetUniform_PortalPlane(plane);
+#else
+							GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+#endif
 						}
 
 						// bind u_DiffuseMap
@@ -5916,7 +5647,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								R_BindVBO(light->frustumVBO);
 								R_BindIBO(light->frustumIBO);
 
-								GL_VertexAttribsState(ATTR_POSITION);
+								GLSL_VertexAttribsState(ATTR_POSITION);
 
 								tess.numVertexes = light->frustumVerts;
 								tess.numIndexes  = light->frustumIndexes;
@@ -7185,7 +6916,7 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 		R_BindVBO(light->frustumVBO);
 		R_BindIBO(light->frustumIBO);
 
-		GL_VertexAttribsState(ATTR_POSITION);
+		GLSL_VertexAttribsState(ATTR_POSITION);
 
 		tess.numVertexes = light->frustumVerts;
 		tess.numIndexes  = light->frustumIndexes;
@@ -7899,7 +7630,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 	R_BindVBO(tr.unitCubeVBO);
 	R_BindIBO(tr.unitCubeIBO);
 
-	GL_VertexAttribsState(ATTR_POSITION);
+	GLSL_VertexAttribsState(ATTR_POSITION);
 
 	tess.multiDrawPrimitives = 0;
 	tess.numVertexes         = tr.unitCubeVBO->vertexesNum;
@@ -8402,7 +8133,7 @@ void RB_RenderBspOcclusionQueries()
 			R_BindVBO(node->volumeVBO);
 			R_BindIBO(node->volumeIBO);
 
-			GL_VertexAttribsState(ATTR_POSITION);
+			GLSL_VertexAttribsState(ATTR_POSITION);
 
 			tess.numVertexes = node->volumeVerts;
 			tess.numIndexes  = node->volumeIndexes;
@@ -8666,7 +8397,7 @@ static void RB_RenderDebugUtils()
 					R_BindVBO(light->frustumVBO);
 					R_BindIBO(light->frustumIBO);
 
-					GL_VertexAttribsState(ATTR_POSITION);
+					GLSL_VertexAttribsState(ATTR_POSITION);
 
 					tess.numVertexes = light->frustumVerts;
 					tess.numIndexes  = light->frustumIndexes;
@@ -8719,7 +8450,7 @@ static void RB_RenderDebugUtils()
 						R_BindVBO(tr.unitCubeVBO);
 						R_BindIBO(tr.unitCubeIBO);
 
-						GL_VertexAttribsState(ATTR_POSITION);
+						GLSL_VertexAttribsState(ATTR_POSITION);
 
 						tess.multiDrawPrimitives = 0;
 						tess.numVertexes         = tr.unitCubeVBO->vertexesNum;
@@ -10029,7 +9760,7 @@ static void RB_RenderDebugUtils()
 				R_BindVBO(node->volumeVBO);
 				R_BindIBO(node->volumeIBO);
 
-				GL_VertexAttribsState(ATTR_POSITION);
+				GLSL_VertexAttribsState(ATTR_POSITION);
 
 				tess.multiDrawPrimitives = 0;
 				tess.numVertexes         = node->volumeVerts;

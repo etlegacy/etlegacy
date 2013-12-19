@@ -251,6 +251,9 @@ void QuatToVectorsFRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up);
 void QuatToVectorsFLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up);
 void MatrixSetupTransformFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin);
 void MatrixToVectorsFRU(const matrix_t m, vec3_t forward, vec3_t right, vec3_t up);
+void ColorModulate(int colorGen, int alphaGen, vec4_t *out);
+
+#define Vector5Copy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3], (b)[4] = (a)[4])
 
 byte ClampByte(int i);
 
@@ -261,6 +264,15 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 static ID_INLINE int Vector4Compare(const vec4_t v1, const vec4_t v2)
 {
 	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3])
+	{
+		return 0;
+	}
+	return 1;
+}
+
+static ID_INLINE int Vector5Compare(const vec5_t v1, const vec5_t v2)
+{
+	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3]|| v1[4] != v2[4])
 	{
 		return 0;
 	}

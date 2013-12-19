@@ -465,7 +465,7 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 			}
 		}
 
-		GL_VertexAttribsState(attribBits);
+		GLSL_VertexAttribsState(attribBits);
 
 		if (attribBits & ATTR_POSITION)
 		{

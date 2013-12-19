@@ -1514,7 +1514,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 			R_BindVBO(node->volumeVBO);
 			R_BindIBO(node->volumeIBO);
 
-			GL_VertexAttribsState(ATTR_POSITION);
+			GLSL_VertexAttribsState(ATTR_POSITION);
 
 			tess.numVertexes = node->volumeVerts;
 			tess.numIndexes  = node->volumeIndexes;
@@ -1587,7 +1587,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 	R_BindVBO(node->volumeVBO);
 	R_BindIBO(node->volumeIBO);
 
-	GL_VertexAttribsState(ATTR_POSITION);
+	GLSL_VertexAttribsState(ATTR_POSITION);
 
 	tess.numVertexes = node->volumeVerts;
 	tess.numIndexes  = node->volumeIndexes;
@@ -1681,7 +1681,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 		R_BindVBO(node->volumeVBO);
 		R_BindIBO(node->volumeIBO);
 
-		GL_VertexAttribsState(ATTR_POSITION);
+		GLSL_VertexAttribsState(ATTR_POSITION);
 
 		tess.multiDrawPrimitives = 0;
 		tess.numVertexes         = node->volumeVerts;
@@ -1879,7 +1879,7 @@ static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 			R_BindVBO(node->volumeVBO);
 			R_BindIBO(node->volumeIBO);
 
-			GL_VertexAttribsState(ATTR_POSITION);
+			GLSL_VertexAttribsState(ATTR_POSITION);
 
 			tess.numVertexes = node->volumeVerts;
 			tess.numIndexes  = node->volumeIndexes;

@@ -131,7 +131,6 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 	bit2->rows       = height;
 	bit2->pitch      = pitch;
 	bit2->pixel_mode = FT_PIXEL_MODE_GRAY;
-	//bit2->pixel_mode = ft_pixel_mode_mono;
 	bit2->buffer    = (unsigned char *)ri.Z_Malloc(size);
 	bit2->num_grays = 256;
 
@@ -230,15 +229,6 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 			ri.Free(bitmap);
 			return &glyph;
 		}
-
-		/*
-		// need to convert to power of 2 sizes so we do not get
-		// any scaling from the gl upload
-		for (scaled_width = 1 ; scaled_width < glyph.pitch ; scaled_width<<=1)
-		    ;
-		for (scaled_height = 1 ; scaled_height < glyph.height ; scaled_height<<=1)
-		    ;
-		 */
 
 		scaled_width  = glyph.pitch;
 		scaled_height = glyph.height;
@@ -462,7 +452,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	// allocate on the stack first in case we fail
 	if (FT_New_Memory_Face(ftLibrary, faceData, len, 0, &face))
 	{
-		// FIXME: ri.FS_FreeFile(faceData); ?
+		ri.FS_FreeFile(faceData);
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType, unable to allocate new face.\n");
 		return qfalse;
 	}
@@ -473,6 +463,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	if (FT_Set_Char_Size(face, pointSize << 6, pointSize << 6, dpi, dpi))
 	{
+		ri.FS_FreeFile(faceData);
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType, unable to set face char size.\n");
 		return qfalse;
 	}

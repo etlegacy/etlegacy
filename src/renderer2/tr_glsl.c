@@ -1342,224 +1342,6 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 	qglUseProgramObjectARB(0);
 }
 
-static void GLSL_BindAttribLocations(GLuint program)
-{
-	//if(attribs & ATTR_POSITION)
-	glBindAttribLocation(program, ATTR_INDEX_POSITION, "attr_Position");
-
-	//if(attribs & ATTR_TEXCOORD)
-	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD0, "attr_TexCoord0");
-
-	//if(attribs & ATTR_LIGHTCOORD)
-	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD1, "attr_TexCoord1");
-
-	//  if(attribs & ATTR_TEXCOORD2)
-	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
-
-	//  if(attribs & ATTR_TEXCOORD3)
-	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
-
-	//if(attribs & ATTR_TANGENT)
-	glBindAttribLocation(program, ATTR_INDEX_TANGENT, "attr_Tangent");
-
-	//if(attribs & ATTR_BINORMAL)
-	glBindAttribLocation(program, ATTR_INDEX_BINORMAL, "attr_Binormal");
-
-	//if(attribs & ATTR_NORMAL)
-	glBindAttribLocation(program, ATTR_INDEX_NORMAL, "attr_Normal");
-
-	//if(attribs & ATTR_COLOR)
-	glBindAttribLocation(program, ATTR_INDEX_COLOR, "attr_Color");
-
-	//if(glConfig2.vboVertexSkinningAvailable)
-	{
-		glBindAttribLocation(program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
-		glBindAttribLocation(program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
-	}
-
-	//if(attribs & ATTR_POSITION2)
-	glBindAttribLocation(program, ATTR_INDEX_POSITION2, "attr_Position2");
-
-	//if(attribs & ATTR_TANGENT2)
-	glBindAttribLocation(program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
-
-	//if(attribs & ATTR_BINORMAL2)
-	glBindAttribLocation(program, ATTR_INDEX_BINORMAL2, "attr_Binormal2");
-
-	//if(attribs & ATTR_NORMAL2)
-	glBindAttribLocation(program, ATTR_INDEX_NORMAL2, "attr_Normal2");
-}
-
-static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, const char *vpCode, const char *fpCode)
-{
-	ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
-
-	if (strlen(name) >= MAX_QPATH)
-	{
-		ri.Error(ERR_DROP, "GLSL_InitGPUShader2: \"%s\" is too long", name);
-	}
-
-	Q_strncpyz(program->name, name, sizeof(program->name));
-
-	program->program = qglCreateProgramObjectARB();
-
-	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER_ARB)))
-	{
-		ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
-		qglDeleteObjectARB(program->program);
-		return 0;
-	}
-
-	if (fpCode)
-	{
-		if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER_ARB)))
-		{
-			ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
-			qglDeleteObjectARB(program->program);
-			return 0;
-		}
-	}
-
-	GLSL_BindAttribLocations(program->program);
-
-	GLSL_LinkProgram(program->program);
-
-	return 1;
-}
-
-static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, const char *vertex, const char *frag, const char *macrostring)
-{
-	char vpSource[32000];
-	char fpSource[32000];
-	int  size = sizeof(vpSource);
-
-	GLSL_GetShaderHeader(GL_VERTEX_SHADER, vpSource, size);
-	GLSL_GetShaderHeader(GL_FRAGMENT_SHADER, fpSource, size);
-
-	if (macrostring)
-	{
-		char **compileMacrosP = ( char ** ) &macrostring;
-		char *token;
-
-		while (1)
-		{
-			token = COM_ParseExt2(compileMacrosP, qfalse);
-
-			if (!token[0])
-			{
-				break;
-			}
-
-			Q_strcat(vpSource, size, va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
-			Q_strcat(fpSource, size, va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
-		}
-	}
-
-	Q_strcat(vpSource, size, vertex);
-	Q_strcat(fpSource, size, frag);
-
-	GLSL_InitGPUShader2(program, name, vpSource, fpSource);
-}
-
-static void GLSL_MapMacro(macroBitMap_t *map, int macro, int mappedbit)
-{
-	map->macro     = macro;
-	map->bitOffset = mappedbit;
-}
-
-qboolean GLSL_CompileShaderList(programInfo_t *info)
-{
-	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
-	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename?info->fragFilename:info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
-	int    macronum        = 0;
-	int    startTime, endTime;
-	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
-	int    i               = 0;
-
-	info->list = (shaderProgramList_t *)Ren_Malloc(sizeof(shaderProgramList_t));
-	memset(info->list,0,sizeof(shaderProgramList_t));
-
-	if(info->numMacros > 0)
-	{
-		info->list->macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
-		for(i = 0; i < info->numMacros; i++)
-		{
-			GLSL_MapMacro(&info->list->macromap[i], info->macros[i], i);
-		}
-		info->list->mappedMacros = i;
-	}
-	else
-	{
-		info->list->macromap     = NULL;
-		info->list->mappedMacros = 0;
-	}
-
-	numPermutations = BIT(info->numMacros);
-
-	ri.Printf(PRINT_ALL, "...compiling %s shaders\n", info->name);
-	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
-	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
-
-	info->list->programs = Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
-
-	for (i = 0; i < numPermutations; i++)
-	{
-		char *tempString = NULL;
-
-		if ((i + 1) >= nextTicCount)
-		{
-			size_t ticsNeeded = (size_t)(((double)(i + 1) / numPermutations) * 50.0);
-
-			do
-			{
-				ri.Printf(PRINT_ALL, "*");
-			}
-			while (++tics < ticsNeeded);
-
-			nextTicCount = (size_t)((tics / 50.0) * numPermutations);
-
-			if (i == (numPermutations - 1))
-			{
-				if (tics < 51)
-				{
-					ri.Printf(PRINT_ALL, "*");
-				}
-
-				ri.Printf(PRINT_ALL, "\n");
-			}
-		}
-
-		if (GLSL_GenerateMacroString(info->list, info->extraMacros, i, &tempString))
-		{
-			GLSL_FinnishShaderTextAndCompile(&info->list->programs[i], info->name, vertexShader, fragmentShader, tempString);
-			numCompiled++;
-		}
-		else
-		{
-			info->list->programs[i].program = NULL;
-		}
-
-	}
-
-	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
-	info->compiled = qtrue;
-	return qtrue;
-}
-
-programInfo_t *GLSL_GetShaderProgram(const char *name)
-{
-	programInfo_t *prog;
-
-	prog = GLSL_FindShader(name);
-
-	if(prog)
-	{
-		//Compile the shader program
-		GLSL_CompileShaderList(prog);
-	}
-}
-
 void GLSL_InitUniforms(shaderProgram_t *program)
 {
 	int i, size;
@@ -1737,12 +1519,12 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 		return;
 	}
 
-	if (VectorCompare4(v, compare))
+	if (Vector4Compare(v, compare))
 	{
 		return;
 	}
 
-	VectorCopy4(v, compare);
+	Vector4Copy(v, compare);
 
 	qglUniform4fARB(uniforms[uniformNum], v[0], v[1], v[2], v[3]);
 }
@@ -1763,12 +1545,12 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 		return;
 	}
 
-	if (VectorCompare5(v, compare))
+	if (Vector5Compare(v, compare))
 	{
 		return;
 	}
 
-	VectorCopy5(v, compare);
+	Vector5Copy(v, compare);
 
 	qglUniform1fvARB(uniforms[uniformNum], 5, v);
 }
@@ -1789,14 +1571,280 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 		return;
 	}
 
-	if (Matrix16Compare(matrix, compare))
+	if (MatrixCompare(matrix, compare))
 	{
 		return;
 	}
 
-	Matrix16Copy(matrix, compare);
+	MatrixCopy(matrix, compare);
 
 	qglUniformMatrix4fvARB(uniforms[uniformNum], 1, GL_FALSE, matrix);
+}
+
+void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray,int arraysize)
+{
+
+}
+
+void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray,int arraysize)
+{
+
+}
+
+static void GLSL_BindAttribLocations(GLuint program)
+{
+	//if(attribs & ATTR_POSITION)
+	glBindAttribLocation(program, ATTR_INDEX_POSITION, "attr_Position");
+
+	//if(attribs & ATTR_TEXCOORD)
+	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD0, "attr_TexCoord0");
+
+	//if(attribs & ATTR_LIGHTCOORD)
+	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD1, "attr_TexCoord1");
+
+	//  if(attribs & ATTR_TEXCOORD2)
+	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
+
+	//  if(attribs & ATTR_TEXCOORD3)
+	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
+
+	//if(attribs & ATTR_TANGENT)
+	glBindAttribLocation(program, ATTR_INDEX_TANGENT, "attr_Tangent");
+
+	//if(attribs & ATTR_BINORMAL)
+	glBindAttribLocation(program, ATTR_INDEX_BINORMAL, "attr_Binormal");
+
+	//if(attribs & ATTR_NORMAL)
+	glBindAttribLocation(program, ATTR_INDEX_NORMAL, "attr_Normal");
+
+	//if(attribs & ATTR_COLOR)
+	glBindAttribLocation(program, ATTR_INDEX_COLOR, "attr_Color");
+
+	//if(glConfig2.vboVertexSkinningAvailable)
+	{
+		glBindAttribLocation(program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
+		glBindAttribLocation(program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
+	}
+
+	//if(attribs & ATTR_POSITION2)
+	glBindAttribLocation(program, ATTR_INDEX_POSITION2, "attr_Position2");
+
+	//if(attribs & ATTR_TANGENT2)
+	glBindAttribLocation(program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
+
+	//if(attribs & ATTR_BINORMAL2)
+	glBindAttribLocation(program, ATTR_INDEX_BINORMAL2, "attr_Binormal2");
+
+	//if(attribs & ATTR_NORMAL2)
+	glBindAttribLocation(program, ATTR_INDEX_NORMAL2, "attr_Normal2");
+}
+
+static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, const char *vpCode, const char *fpCode)
+{
+	ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
+
+	if (strlen(name) >= MAX_QPATH)
+	{
+		ri.Error(ERR_DROP, "GLSL_InitGPUShader2: \"%s\" is too long", name);
+	}
+
+	Q_strncpyz(program->name, name, sizeof(program->name));
+
+	program->program = qglCreateProgramObjectARB();
+
+	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER_ARB)))
+	{
+		ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
+		qglDeleteObjectARB(program->program);
+		return qfalse;
+	}
+
+	if (fpCode)
+	{
+		if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER_ARB)))
+		{
+			ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
+			qglDeleteObjectARB(program->program);
+			return qfalse;
+		}
+	}
+
+	GLSL_BindAttribLocations(program->program);
+
+	GLSL_LinkProgram(program->program);
+
+	return qtrue;
+}
+
+static qboolean GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, const char *vertex, const char *frag, const char *macrostring)
+{
+	char vpSource[32000];
+	char fpSource[32000];
+	int  size = sizeof(vpSource);
+
+	GLSL_GetShaderHeader(GL_VERTEX_SHADER, vpSource, size);
+	GLSL_GetShaderHeader(GL_FRAGMENT_SHADER, fpSource, size);
+
+	if (macrostring)
+	{
+		char **compileMacrosP = ( char ** ) &macrostring;
+		char *token;
+
+		while (1)
+		{
+			token = COM_ParseExt2(compileMacrosP, qfalse);
+
+			if (!token[0])
+			{
+				break;
+			}
+
+			Q_strcat(vpSource, size, va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
+			Q_strcat(fpSource, size, va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
+		}
+	}
+
+	Q_strcat(vpSource, size, vertex);
+	Q_strcat(fpSource, size, frag);
+
+	if(GLSL_InitGPUShader2(program, name, vpSource, fpSource))
+	{
+		GLSL_InitUniforms(program);
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
+
+static void GLSL_SetInitialUniformValues(programInfo_t *info,int permutation)
+{
+	int i,location;
+	GLSL_BindProgram(&info->list->programs[permutation]);
+
+	for(i = 0; i < info->numUniformValues; i++)
+	{
+		location = qglGetUniformLocationARB(info->list->programs[permutation].program, info->uniformValues[i].type.name);
+
+		switch (info->uniformValues[i].type.type)
+		{
+		case GLSL_INT:
+			GLSL_SetUniformInt(&info->list->programs[permutation],location,*((int *)info->uniformValues[i].value));
+			break;
+		default:
+			ri.Error(ERR_FATAL,"Only INT supported atm");
+		}
+	}
+
+	GLSL_BindNullProgram();
+}
+
+static void GLSL_MapMacro(macroBitMap_t *map, int macro, int mappedbit)
+{
+	map->macro     = macro;
+	map->bitOffset = mappedbit;
+}
+
+qboolean GLSL_CompileShaderList(programInfo_t *info)
+{
+	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
+	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename?info->fragFilename:info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
+	int    macronum        = 0;
+	int    startTime, endTime;
+	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
+	int    i               = 0;
+
+	info->list = (shaderProgramList_t *)Ren_Malloc(sizeof(shaderProgramList_t));
+	memset(info->list,0,sizeof(shaderProgramList_t));
+
+	if(info->numMacros > 0)
+	{
+		info->list->macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
+		for(i = 0; i < info->numMacros; i++)
+		{
+			GLSL_MapMacro(&info->list->macromap[i], info->macros[i], i);
+		}
+		info->list->mappedMacros = i;
+	}
+	else
+	{
+		info->list->macromap     = NULL;
+		info->list->mappedMacros = 0;
+	}
+
+	numPermutations = BIT(info->numMacros);
+
+	ri.Printf(PRINT_ALL, "...compiling %s shaders\n", info->name);
+	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
+	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
+
+	info->list->programs = Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
+
+	for (i = 0; i < numPermutations; i++)
+	{
+		char *tempString = NULL;
+
+		if ((i + 1) >= nextTicCount)
+		{
+			size_t ticsNeeded = (size_t)(((double)(i + 1) / numPermutations) * 50.0);
+
+			do
+			{
+				ri.Printf(PRINT_ALL, "*");
+			}
+			while (++tics < ticsNeeded);
+
+			nextTicCount = (size_t)((tics / 50.0) * numPermutations);
+
+			if (i == (numPermutations - 1))
+			{
+				if (tics < 51)
+				{
+					ri.Printf(PRINT_ALL, "*");
+				}
+
+				ri.Printf(PRINT_ALL, "\n");
+			}
+		}
+
+		if (GLSL_GenerateMacroString(info->list, info->extraMacros, i, &tempString))
+		{
+			if(GLSL_FinnishShaderTextAndCompile(&info->list->programs[i], info->name, vertexShader, fragmentShader, tempString))
+			{
+				//Set uniform values
+				GLSL_SetInitialUniformValues(info,i);
+				GLSL_FinishGPUShader(&info->list->programs[i]);
+			}
+
+			numCompiled++;
+		}
+		else
+		{
+			info->list->programs[i].program = NULL;
+		}
+
+	}
+
+	endTime = ri.Milliseconds();
+	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
+	info->compiled = qtrue;
+	return qtrue;
+}
+
+programInfo_t *GLSL_GetShaderProgram(const char *name)
+{
+	programInfo_t *prog;
+
+	prog = GLSL_FindShader(name);
+
+	if(prog)
+	{
+		//Compile the shader program
+		GLSL_CompileShaderList(prog);
+	}
+
+	return prog;
 }
 
 void GLSL_SetMacros(shaderProgramList_t *programlist, int macros)
@@ -1804,9 +1852,15 @@ void GLSL_SetMacros(shaderProgramList_t *programlist, int macros)
 	programlist->currentMacros = macros;
 }
 
-void GLSL_SelectPermutation(shaderProgramList_t *programlist)
+void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 {
+	//FIXME: implement this
+}
 
+void GLSL_SelectPermutation(programInfo_t *programlist)
+{
+	//FIXME: implement this
+	//set the tr.selectedProgram
 }
 
 void GLSL_DeleteGPUShader(shaderProgram_t *program)
@@ -1902,6 +1956,9 @@ void GLSL_ShutdownGPUShaders(void)
 
 	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
 
+
+	//FIXME: sort thrue this!
+	/*
 	qglDisableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD0);
 	qglDisableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD1);
 	qglDisableVertexAttribArrayARB(ATTR_INDEX_POSITION);
@@ -1918,6 +1975,8 @@ void GLSL_ShutdownGPUShaders(void)
 #endif
 	qglDisableVertexAttribArrayARB(ATTR_INDEX_COLOR);
 	qglDisableVertexAttribArrayARB(ATTR_INDEX_LIGHTDIRECTION);
+	*/
+
 	GLSL_BindNullProgram();
 
 	//Clean up programInfo_t:s
@@ -1963,11 +2022,16 @@ void GLSL_BindNullProgram(void)
 		glState.currentProgram = NULL;
 	}
 }
-
+#endif // RENDERER2C
 
 void GLSL_VertexAttribsState(uint32_t stateBits)
 {
 	uint32_t diff;
+
+	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	{
+		stateBits |= (ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS);
+	}
 
 	GLSL_VertexAttribPointers(stateBits);
 
@@ -1981,13 +2045,19 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_POSITION)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_POSITION )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_POSITION);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_POSITION);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_POSITION )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_POSITION);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_POSITION);
 		}
 	}
 
@@ -1995,13 +2065,19 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_TEXCOORD)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_TEXCOORD )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD0);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_TEXCOORD )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD0);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
 		}
 	}
 
@@ -2009,13 +2085,59 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_LIGHTCOORD)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_LIGHTCOORD )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD1);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_LIGHTCOORD )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD1);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
+		}
+	}
+
+	if (diff & ATTR_TANGENT)
+	{
+		if (stateBits & ATTR_TANGENT)
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_TANGENT);
+		}
+		else
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_TANGENT);
+		}
+	}
+
+	if (diff & ATTR_BINORMAL)
+	{
+		if (stateBits & ATTR_BINORMAL)
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_BINORMAL);
+		}
+		else
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL);
 		}
 	}
 
@@ -2023,71 +2145,79 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_NORMAL)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_NORMAL )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_NORMAL);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_NORMAL);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_NORMAL )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_NORMAL);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_NORMAL);
 		}
 	}
-
-#ifdef USE_VERT_TANGENT_SPACE
-	if (diff & ATTR_TANGENT)
-	{
-		if (stateBits & ATTR_TANGENT)
-		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_TANGENT )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_TANGENT);
-		}
-		else
-		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_TANGENT )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_TANGENT);
-		}
-	}
-
-	if (diff & ATTR_BITANGENT)
-	{
-		if (stateBits & ATTR_BITANGENT)
-		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_BITANGENT )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_BITANGENT);
-		}
-		else
-		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_BITANGENT )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_BITANGENT);
-		}
-	}
-#endif
 
 	if (diff & ATTR_COLOR)
 	{
 		if (stateBits & ATTR_COLOR)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_COLOR )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_COLOR);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_COLOR )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_COLOR);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_COLOR )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_COLOR);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_COLOR )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		}
 	}
 
-	if (diff & ATTR_LIGHTDIRECTION)
+	if (diff & ATTR_BONE_INDEXES)
 	{
-		if (stateBits & ATTR_LIGHTDIRECTION)
+		if (stateBits & ATTR_BONE_INDEXES)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_LIGHTDIRECTION )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_LIGHTDIRECTION);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_LIGHTDIRECTION )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_LIGHTDIRECTION);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
+		}
+	}
+
+	if (diff & ATTR_BONE_WEIGHTS)
+	{
+		if (stateBits & ATTR_BONE_WEIGHTS)
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
+		}
+		else
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
 		}
 	}
 
@@ -2095,13 +2225,59 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_POSITION2)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_POSITION2 )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_POSITION2);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_POSITION2);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_POSITION2 )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_POSITION2);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_POSITION2);
+		}
+	}
+
+	if (diff & ATTR_TANGENT2)
+	{
+		if (stateBits & ATTR_TANGENT2)
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_TANGENT2);
+		}
+		else
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_TANGENT2);
+		}
+	}
+
+	if (diff & ATTR_BINORMAL2)
+	{
+		if (stateBits & ATTR_BINORMAL2)
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_BINORMAL2);
+		}
+		else
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL2);
 		}
 	}
 
@@ -2109,226 +2285,187 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_NORMAL2)
 		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_NORMAL2 )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_NORMAL2);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
+			}
+			glEnableVertexAttribArray(ATTR_INDEX_NORMAL2);
 		}
 		else
 		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_NORMAL2 )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_NORMAL2);
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
+			}
+			glDisableVertexAttribArray(ATTR_INDEX_NORMAL2);
 		}
 	}
-
-#ifdef USE_VERT_TANGENT_SPACE
-	if (diff & ATTR_TANGENT2)
-	{
-		if (stateBits & ATTR_TANGENT2)
-		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_TANGENT2 )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_TANGENT2);
-		}
-		else
-		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_TANGENT2 )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_TANGENT2);
-		}
-	}
-
-	if (diff & ATTR_BITANGENT2)
-	{
-		if (stateBits & ATTR_BITANGENT2)
-		{
-			GLimp_LogComment("qglEnableVertexAttribArrayARB( ATTR_INDEX_BITANGENT2 )\n");
-			qglEnableVertexAttribArrayARB(ATTR_INDEX_BITANGENT2);
-		}
-		else
-		{
-			GLimp_LogComment("qglDisableVertexAttribArrayARB( ATTR_INDEX_BITANGENT2 )\n");
-			qglDisableVertexAttribArrayARB(ATTR_INDEX_BITANGENT2);
-		}
-	}
-#endif
 
 	glState.vertexAttribsState = stateBits;
 }
 
 void GLSL_VertexAttribPointers(uint32_t attribBits)
 {
-	qboolean animated;
-	int      newFrame, oldFrame;
-
 	if (!glState.currentVBO)
 	{
 		ri.Error(ERR_FATAL, "GL_VertexAttribPointers: no VBO bound");
 		return;
 	}
 
-	// don't just call LogComment, or we will get a call to va() every frame!
-	GLimp_LogComment(va("--- GL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name));
-
-	// position/normal/tangent/bitangent are always set in case of animation
-	oldFrame = glState.vertexAttribsOldFrame;
-	newFrame = glState.vertexAttribsNewFrame;
-	animated = (oldFrame != newFrame) && (glState.vertexAttribsInterpolation > 0.0f);
-
-	if ((attribBits & ATTR_POSITION) && (!(glState.vertexAttribPointersSet & ATTR_POSITION) || animated))
+	if (r_logFile->integer)
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_POSITION )\n");
+		// don't just call LogComment, or we will get a call to va() every frame!
+		GLimp_LogComment(va("--- GL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name));
+	}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_POSITION, 3, GL_FLOAT, 0, glState.currentVBO->stride_xyz, BUFFER_OFFSET(glState.currentVBO->ofs_xyz + newFrame * glState.currentVBO->size_xyz));
+	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	{
+		attribBits |= (ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS);
+	}
+
+	if ((attribBits & ATTR_POSITION))
+	{
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION )\n");
+		}
+
+		glVertexAttribPointer(ATTR_INDEX_POSITION, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsXYZ + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeXYZ)));
 		glState.vertexAttribPointersSet |= ATTR_POSITION;
 	}
 
-	if ((attribBits & ATTR_TEXCOORD) && !(glState.vertexAttribPointersSet & ATTR_TEXCOORD))
+	if ((attribBits & ATTR_TEXCOORD))
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_TEXCOORD )\n");
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TEXCOORD )\n");
+		}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_TEXCOORD0, 2, GL_FLOAT, 0, glState.currentVBO->stride_st, BUFFER_OFFSET(glState.currentVBO->ofs_st));
+		glVertexAttribPointer(ATTR_INDEX_TEXCOORD0, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsTexCoords));
 		glState.vertexAttribPointersSet |= ATTR_TEXCOORD;
 	}
 
-	if ((attribBits & ATTR_LIGHTCOORD) && !(glState.vertexAttribPointersSet & ATTR_LIGHTCOORD))
+	if ((attribBits & ATTR_LIGHTCOORD))
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_LIGHTCOORD )\n");
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_LIGHTCOORD )\n");
+		}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_TEXCOORD1, 2, GL_FLOAT, 0, glState.currentVBO->stride_lightmap, BUFFER_OFFSET(glState.currentVBO->ofs_lightmap));
+		glVertexAttribPointer(ATTR_INDEX_TEXCOORD1, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsLightCoords));
 		glState.vertexAttribPointersSet |= ATTR_LIGHTCOORD;
 	}
 
-	if ((attribBits & ATTR_NORMAL) && (!(glState.vertexAttribPointersSet & ATTR_NORMAL) || animated))
+	if ((attribBits & ATTR_TANGENT))
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_NORMAL )\n");
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT )\n");
+		}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_NORMAL, 3, GL_FLOAT, 0, glState.currentVBO->stride_normal, BUFFER_OFFSET(glState.currentVBO->ofs_normal + newFrame * glState.currentVBO->size_normal));
-		glState.vertexAttribPointersSet |= ATTR_NORMAL;
-	}
-
-#ifdef USE_VERT_TANGENT_SPACE
-	if ((attribBits & ATTR_TANGENT) && (!(glState.vertexAttribPointersSet & ATTR_TANGENT) || animated))
-	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_TANGENT )\n");
-
-		qglVertexAttribPointerARB(ATTR_INDEX_TANGENT, 3, GL_FLOAT, 0, glState.currentVBO->stride_tangent, BUFFER_OFFSET(glState.currentVBO->ofs_tangent + newFrame * glState.currentVBO->size_normal)); // FIXME
+		glVertexAttribPointer(ATTR_INDEX_TANGENT, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsTangents + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeTangents)));
 		glState.vertexAttribPointersSet |= ATTR_TANGENT;
 	}
 
-	if ((attribBits & ATTR_BITANGENT) && (!(glState.vertexAttribPointersSet & ATTR_BITANGENT) || animated))
+	if ((attribBits & ATTR_BINORMAL))
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_BITANGENT )\n");
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL )\n");
+		}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_BITANGENT, 3, GL_FLOAT, 0, glState.currentVBO->stride_bitangent, BUFFER_OFFSET(glState.currentVBO->ofs_bitangent + newFrame * glState.currentVBO->size_normal)); // FIXME
-		glState.vertexAttribPointersSet |= ATTR_BITANGENT;
+		glVertexAttribPointer(ATTR_INDEX_BINORMAL, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsBinormals + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeBinormals)));
+		glState.vertexAttribPointersSet |= ATTR_BINORMAL;
 	}
-#endif
 
-	if ((attribBits & ATTR_COLOR) && !(glState.vertexAttribPointersSet & ATTR_COLOR))
+	if ((attribBits & ATTR_NORMAL))
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_COLOR )\n");
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL )\n");
+		}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, glState.currentVBO->stride_vertexcolor, BUFFER_OFFSET(glState.currentVBO->ofs_vertexcolor));
+		glVertexAttribPointer(ATTR_INDEX_NORMAL, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsNormals + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeNormals)));
+		glState.vertexAttribPointersSet |= ATTR_NORMAL;
+	}
+
+	if ((attribBits & ATTR_COLOR))
+	{
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_COLOR )\n");
+		}
+
+		glVertexAttribPointer(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsColors));
 		glState.vertexAttribPointersSet |= ATTR_COLOR;
 	}
 
-	if ((attribBits & ATTR_LIGHTDIRECTION) && !(glState.vertexAttribPointersSet & ATTR_LIGHTDIRECTION))
+	if ((attribBits & ATTR_BONE_INDEXES))
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_LIGHTDIRECTION )\n");
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_INDEXES )\n");
+		}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_LIGHTDIRECTION, 3, GL_FLOAT, 0, glState.currentVBO->stride_lightdir, BUFFER_OFFSET(glState.currentVBO->ofs_lightdir));
-		glState.vertexAttribPointersSet |= ATTR_LIGHTDIRECTION;
+		glVertexAttribPointer(ATTR_INDEX_BONE_INDEXES, 4, GL_INT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsBoneIndexes));
+		glState.vertexAttribPointersSet |= ATTR_BONE_INDEXES;
 	}
 
-	if ((attribBits & ATTR_POSITION2) && (!(glState.vertexAttribPointersSet & ATTR_POSITION2) || animated))
+	if ((attribBits & ATTR_BONE_WEIGHTS))
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_POSITION2 )\n");
+		if (r_logFile->integer)
+		{
+			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_WEIGHTS )\n");
+		}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_POSITION2, 3, GL_FLOAT, 0, glState.currentVBO->stride_xyz, BUFFER_OFFSET(glState.currentVBO->ofs_xyz + oldFrame * glState.currentVBO->size_xyz));
-		glState.vertexAttribPointersSet |= ATTR_POSITION2;
+		glVertexAttribPointer(ATTR_INDEX_BONE_WEIGHTS, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsBoneWeights));
+		glState.vertexAttribPointersSet |= ATTR_BONE_WEIGHTS;
 	}
 
-	if ((attribBits & ATTR_NORMAL2) && (!(glState.vertexAttribPointersSet & ATTR_NORMAL2) || animated))
+	if (glState.vertexAttribsInterpolation > 0)
 	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_NORMAL2 )\n");
+		if ((attribBits & ATTR_POSITION2))
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION2 )\n");
+			}
 
-		qglVertexAttribPointerARB(ATTR_INDEX_NORMAL2, 3, GL_FLOAT, 0, glState.currentVBO->stride_normal, BUFFER_OFFSET(glState.currentVBO->ofs_normal + oldFrame * glState.currentVBO->size_normal));
-		glState.vertexAttribPointersSet |= ATTR_NORMAL2;
+			glVertexAttribPointer(ATTR_INDEX_POSITION2, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsXYZ + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeXYZ)));
+			glState.vertexAttribPointersSet |= ATTR_POSITION2;
+		}
+
+		if ((attribBits & ATTR_TANGENT2))
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT2 )\n");
+			}
+
+			glVertexAttribPointer(ATTR_INDEX_TANGENT2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsTangents + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeTangents)));
+			glState.vertexAttribPointersSet |= ATTR_TANGENT2;
+		}
+
+		if ((attribBits & ATTR_BINORMAL2))
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL2 )\n");
+			}
+
+			glVertexAttribPointer(ATTR_INDEX_BINORMAL2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsBinormals + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeBinormals)));
+			glState.vertexAttribPointersSet |= ATTR_BINORMAL2;
+		}
+
+		if ((attribBits & ATTR_NORMAL2))
+		{
+			if (r_logFile->integer)
+			{
+				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL2 )\n");
+			}
+
+			glVertexAttribPointer(ATTR_INDEX_NORMAL2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsNormals + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeNormals)));
+			glState.vertexAttribPointersSet |= ATTR_NORMAL2;
+		}
 	}
-
-#ifdef USE_VERT_TANGENT_SPACE
-	if ((attribBits & ATTR_TANGENT2) && (!(glState.vertexAttribPointersSet & ATTR_TANGENT2) || animated))
-	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_TANGENT2 )\n");
-
-		qglVertexAttribPointerARB(ATTR_INDEX_TANGENT2, 3, GL_FLOAT, 0, glState.currentVBO->stride_tangent, BUFFER_OFFSET(glState.currentVBO->ofs_tangent + oldFrame * glState.currentVBO->size_normal)); // FIXME
-		glState.vertexAttribPointersSet |= ATTR_TANGENT2;
-	}
-
-	if ((attribBits & ATTR_BITANGENT2) && (!(glState.vertexAttribPointersSet & ATTR_BITANGENT2) || animated))
-	{
-		GLimp_LogComment("qglVertexAttribPointerARB( ATTR_INDEX_BITANGENT2 )\n");
-
-		qglVertexAttribPointerARB(ATTR_INDEX_BITANGENT2, 3, GL_FLOAT, 0, glState.currentVBO->stride_bitangent, BUFFER_OFFSET(glState.currentVBO->ofs_bitangent + oldFrame * glState.currentVBO->size_normal)); // FIXME
-		glState.vertexAttribPointersSet |= ATTR_BITANGENT2;
-	}
-#endif
-
 }
-
-
-shaderProgram_t *GLSL_GetGenericShaderProgram(int stage)
-{
-	shaderStage_t *pStage       = tess.xstages[stage];
-	int           shaderAttribs = 0;
-
-	if (tess.fogNum && pStage->adjustColorsForFog)
-	{
-		shaderAttribs |= GENERICDEF_USE_FOG;
-	}
-
-	if (pStage->bundle[1].image[0] && tess.shader->multitextureEnv)
-	{
-		shaderAttribs |= GENERICDEF_USE_LIGHTMAP;
-	}
-
-	switch (pStage->rgbGen)
-	{
-	case CGEN_LIGHTING_DIFFUSE:
-		shaderAttribs |= GENERICDEF_USE_RGBAGEN;
-		break;
-	default:
-		break;
-	}
-
-	switch (pStage->alphaGen)
-	{
-	case AGEN_LIGHTING_SPECULAR:
-	case AGEN_PORTAL:
-	case AGEN_FRESNEL:
-		shaderAttribs |= GENERICDEF_USE_RGBAGEN;
-		break;
-	default:
-		break;
-	}
-
-	if (pStage->bundle[0].tcGen != TCGEN_TEXTURE)
-	{
-		shaderAttribs |= GENERICDEF_USE_TCGEN_AND_TCMOD;
-	}
-
-	if (tess.shader->numDeforms && !ShaderRequiresCPUDeforms(tess.shader))
-	{
-		shaderAttribs |= GENERICDEF_USE_DEFORM_VERTEXES;
-	}
-
-	if (glState.vertexAttribsInterpolation > 0.0f && backEnd.currentEntity && backEnd.currentEntity != &tr.worldEntity)
-	{
-		shaderAttribs |= GENERICDEF_USE_VERTEX_ANIMATION;
-	}
-
-	if (pStage->bundle[0].numTexMods)
-	{
-		shaderAttribs |= GENERICDEF_USE_TCGEN_AND_TCMOD;
-	}
-
-	return &tr.genericShader[shaderAttribs];
-}
-#endif // RENDERER2C

@@ -1363,6 +1363,39 @@ byte ClampByte(int i)
 	return i;
 }
 
+void ColorModulate(int colorGen, int alphaGen, vec4_t *out)
+{
+	switch (colorGen)
+	{
+	case CGEN_VERTEX:
+		VectorSet(*out, 1, 1, 1);
+		break;
+
+	case CGEN_ONE_MINUS_VERTEX:
+		VectorSet(*out, -1, -1, -1);
+		break;
+
+	default:
+		VectorSet(*out, 0, 0, 0);
+		break;
+	}
+
+	switch (alphaGen)
+	{
+	case AGEN_VERTEX:
+		*out[3] = 1.0f;
+		break;
+
+	case AGEN_ONE_MINUS_VERTEX:
+		*out[3] = -1.0f;
+		break;
+
+	default:
+		*out[3] = 0.0f;
+		break;
+	}
+}
+
 /*
 =============
 Q_strreplace
