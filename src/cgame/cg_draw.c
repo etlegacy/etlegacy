@@ -634,17 +634,17 @@ static void CG_DrawLagometer(void)
 	}
 
 	// draw the graph
-	x = Ccg_WideX(SCREEN_WIDTH) - 48;
-	y = SCREEN_HEIGHT - 200;
+	x = Ccg_WideX(SCREEN_WIDTH) - 58;
+	y = SCREEN_HEIGHT - 264;
 
 	trap_R_SetColor(NULL);
-	//CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
-	CG_FillRect(x, y, 48, 50, HUD_Background);
-	CG_DrawRect_FixedBorder(x, y, 48, 50, 1, HUD_Border);
+	//CG_DrawPic(x, y, 53, 48, cgs.media.lagometerShader);
+	CG_FillRect(x, y, 55, 50, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, 55, 50, 1, HUD_Border);
 
 	ax = x;
 	ay = y;
-	aw = 48;
+	aw = 53;
 	ah = 48;
 	CG_AdjustFrom640(&ax, &ay, &aw, &ah);
 
