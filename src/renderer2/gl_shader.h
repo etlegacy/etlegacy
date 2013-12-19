@@ -1098,6 +1098,7 @@ protected:
 
 	// RB: This is not good oo design, but it can be a workaround and its cost is more or less only a virtual function call.
 	// It also works regardless of RTTI is enabled or not.
+	/*
 	enum EGLCompileMacro
 	{
 		USE_ALPHA_TESTING,
@@ -1118,6 +1119,7 @@ protected:
 		LIGHT_DIRECTIONAL,
 		USE_GBUFFER
 	};
+	*/
 
 public:
 	virtual const char *GetName() const     = 0;

@@ -1,0 +1,335 @@
+//GLSL Shader definitions
+
+/*
+sample
+{
+	filename "sample"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING
+	extramacros "LIGHT_PROJ"
+	vertexLibraries "sample_vertex_lib sample_vertex_lib2"
+	fragmentLibraries "sample_fragment_lib sample_fragment_lib2"
+	uniform int u_ColorMap 0
+}
+*/
+
+generic
+{
+	filename "generic"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_TCGEN_ENVIRONMENT USE_TCGEN_LIGHTMAP
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+}
+
+lightMapping
+{
+	filename "lightMapping"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING
+	extramacros "TWOSIDED"
+	vertexLibraries "deformVertexes"
+	fragmentLibraries "reliefMapping"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_LightMap 3
+	uniform int u_DeluxeMap 4
+}
+
+vertexLighting_DBS_entity
+{
+	filename "vertexLighting_DBS_entity"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIVE_SPECULAR
+	extramacros "TWOSIDED"
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	fragmentLibraries "reliefMapping"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_EnvironmentMap0 3
+	uniform int u_EnvironmentMap1 4
+}
+
+vertexLighting_DBS_world
+{
+	filename "vertexLighting_DBS_world"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING
+	extramacros "TWOSIDED"
+	vertexLibraries "deformVertexes"
+	fragmentLibraries "reliefMapping"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+}
+
+forwardLighting_omniXYZ
+{
+	filename "forwardLighting"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING
+	extramacros "TWOSIDED"
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	fragmentLibraries "reliefMapping"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_AttenuationMapXY 3
+	uniform int u_AttenuationMapZ 4
+	uniform int u_ShadowMap 5
+	uniform int u_RandomMap 6
+}
+
+forwardLighting_projXYZ
+{
+	filename "forwardLighting"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING
+	extramacros "LIGHT_PROJ TWOSIDED"
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	fragmentLibraries "reliefMapping"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_AttenuationMapXY 3
+	uniform int u_AttenuationMapZ 4
+	uniform int u_ShadowMap 5
+	uniform int u_RandomMap 6
+}
+
+forwardLighting_directionalSun
+{
+	filename "forwardLighting"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING
+	extramacros "LIGHT_DIRECTIONAL TWOSIDED"
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	fragmentLibraries "reliefMapping"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_AttenuationMapXY 3
+	uniform int u_AttenuationMapZ 4
+	uniform int u_ShadowMap0 5
+	uniform int u_ShadowMap1 6
+	uniform int u_ShadowMap2 7
+	uniform int u_ShadowMap3 8
+	uniform int u_ShadowMap4 9
+}
+
+deferredLighting_omniXYZ
+{
+	filename "deferredLighting"
+	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_DepthMap 3
+	uniform int u_AttenuationMapXY 4
+	uniform int u_AttenuationMapZ 5
+	uniform int u_ShadowMap 6
+}
+
+deferredLighting_projXYZ
+{
+	filename "deferredLighting"
+	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
+	extramacros "LIGHT_PROJ"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_DepthMap 3
+	uniform int u_AttenuationMapXY 4
+	uniform int u_AttenuationMapZ 5
+	uniform int u_ShadowMap0 6
+}
+
+deferredLighting_directionalSun
+{
+	filename "deferredLighting"
+	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
+	extramacros "LIGHT_DIRECTIONAL"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_DepthMap 3
+	uniform int u_AttenuationMapXY 4
+	uniform int u_AttenuationMapZ 5
+	uniform int u_ShadowMap0 6
+	uniform int u_ShadowMap1 7
+	uniform int u_ShadowMap2 8
+	uniform int u_ShadowMap3 9
+	uniform int u_ShadowMap4 10
+}
+
+geometricFill
+{
+	filename "geometricFill"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_PARALLAX_MAPPING USE_REFLECTIVE_SPECULAR
+	extramacros "TWOSIDED"
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	fragmentLibraries "reliefMapping"
+	uniform int u_DiffuseMap 0
+	uniform int u_NormalMap 1
+	uniform int u_SpecularMap 2
+	uniform int u_EnvironmentMap0 3
+	uniform int u_EnvironmentMap1 4
+}
+
+shadowFill
+{
+	filename "shadowFill"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES LIGHT_DIRECTIONAL
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	uniform int u_ColorMap 0
+}
+
+reflection
+{
+	filename "reflection_CB"
+	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING
+	extramacros "TWOSIDED"
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	uniform int u_ColorMap 0
+	uniform int u_NormalMap 1
+}
+
+skybox
+{
+	filename "skybox"
+	macros USE_PORTAL_CLIPPING
+	uniform int u_ColorMap 0
+}
+
+fogQuake3
+{
+	filename "fogQuake3"
+	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES EYE_OUTSIDE
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	uniform int u_ColorMap 0
+}
+
+fogGlobal
+{
+	filename "fogGlobal"
+	uniform int u_ColorMap 0
+	uniform int u_DepthMap 1
+}
+
+heatHaze
+{
+	filename "heatHaze"
+	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES
+	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	uniform int u_ColorMap 0
+	uniform int u_CurrentMap 1
+	uniform int u_ContrastMap 2
+}
+
+screen
+{
+	filename "screen"
+	uniform int u_CurrentMap 0
+}
+
+portal
+{
+	filename "portal"
+	uniform int u_CurrentMap 0
+}
+
+toneMapping
+{
+	filename "toneMapping"
+	macros BRIGHTPASS_FILTER
+	uniform int u_CurrentMap 0
+}
+
+contrast
+{
+	filename "contrast"
+	uniform int u_ColorMap 0
+}
+
+cameraEffects
+{
+	filename "cameraEffects"
+	uniform int u_CurrentMap 0
+	uniform int u_GrainMap 1
+	uniform int u_VignetteMap 2
+}
+
+blurX
+{
+	filename "blurX"
+	uniform int u_ColorMap 0
+}
+
+blurY
+{
+	filename "blurY"
+	uniform int u_ColorMap 0
+}
+
+debugShadowMap
+{
+	filename "debugShadowMap"
+	uniform int u_CurrentMap 0
+}
+
+liquid
+{
+	filename "liquid"
+	macros USE_PARALLAX_MAPPING
+	uniform int u_CurrentMap 0
+	uniform int u_PortalMap 1
+	uniform int u_DepthMap 2
+	uniform int u_NormalMap 3
+}
+
+rotoscope
+{
+	filename "rotoscope"
+	uniform int u_ColorMap 0
+	uniform int u_BlurMagnitude 1
+}
+
+bloom
+{
+	filename "bloom"
+	uniform int u_ColorMap 0
+	uniform int u_ContrastMap 1
+	uniform int u_BlurMagnitude 2
+}
+
+refraction
+{
+	filename "refraction_C"
+	macros USE_VERTEX_SKINNING
+	vertexLibraries "vertexSkinning"
+	uniform int u_ColorMap 0
+}
+
+depthToColor
+{
+	filename "depthToColor"
+	macros USE_VERTEX_SKINNING
+	vertexLibraries "vertexSkinning"
+}
+
+volumetricFog
+{
+	filename "volumetricFog"
+	uniform int u_DepthMap 0
+	uniform int u_DepthMapBack 1
+	uniform int u_DepthMapFront 2
+}
+
+lightVolume_omni
+{
+	filename "lightVolume_omni"
+	uniform int u_DepthMap 0
+	uniform int u_AttenuationMapXY 1
+	uniform int u_AttenuationMapZ 2
+	uniform int u_ShadowMap 3
+}
+
+dispersion
+{
+	filename "dispersion_C"
+	macros USE_VERTEX_SKINNING
+	uniform int u_ColorMap 0
+}

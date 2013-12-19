@@ -1406,11 +1406,35 @@ enum
 {
 	GLSL_INT,
 	GLSL_FLOAT,
-	GLSL_FLOAT5,
 	GLSL_VEC2,
 	GLSL_VEC3,
 	GLSL_VEC4,
-	GLSL_MAT16
+	GLSL_MAT16,
+	GLSL_FLOATARR,
+	GLSL_VEC4ARR,
+	GLSL_MAT16ARR
+};
+
+enum EGLCompileMacro
+{
+    USE_ALPHA_TESTING,
+	USE_PORTAL_CLIPPING,
+	USE_FRUSTUM_CLIPPING,
+	USE_VERTEX_SKINNING,
+	USE_VERTEX_ANIMATION,
+	USE_DEFORM_VERTEXES,
+	USE_TCGEN_ENVIRONMENT,
+	USE_TCGEN_LIGHTMAP,
+	USE_NORMAL_MAPPING,
+	USE_PARALLAX_MAPPING,
+	USE_REFLECTIVE_SPECULAR,
+	USE_SHADOWING,
+	TWOSIDED,
+	EYE_OUTSIDE,
+	BRIGHTPASS_FILTER,
+	LIGHT_DIRECTIONAL,
+	USE_GBUFFER,
+	MAX_MACROS
 };
 
 typedef enum
@@ -1490,48 +1514,56 @@ typedef enum
 	UNIFORM_PRIMARYLIGHTAMBIENT,
 	UNIFORM_PRIMARYLIGHTRADIUS,
 
+	//FROM XREAL
+	UNIFORM_COLORTEXTUREMATRIX,
+	UNIFORM_DIFFUSETEXTUREMATRIX,
+	UNIFORM_NORMALTEXTUREMATRIX,
+	UNIFORM_SPECULARTEXTUREMATRIX,
+	UNIFORM_ALPHATEST,
+	UNIFORM_COLORMODULATE,
+	UNIFORM_BONEMATRIX,
+	UNIFORM_VERTEXINTERPOLATION,
+	UNIFORM_PORTALPLANE,
+	UNIFORM_CURRENTMAP,
+	UNIFORM_COLORMAP,
+	UNIFORM_AMBIENTCOLOR,
+	UNIFORM_LIGHTDIR,
+	UNIFORM_LIGHTCOLOR,
+	UNIFORM_LIGHTSCALE,
+	UNIFORM_LIGHTWRAPAROUND,
+	UNIFORM_LIGHTATTENUATIONMATRIX,
+	UNIFORM_LIGHTFRUSTUM,
+	UNIFORM_SHADOWTEXELSIZE,
+	UNIFORM_SHADOWBLUR,
+	UNIFORM_SHADOWMATRIX,
+	UNIFORM_SHADOWPARALLELSPLITDISTANCES,
+	UNIFORM_VIEWMATRIX,
+	UNIFORM_MODELVIEWMATRIX,
+	UNIFORM_MODELVIEWMATRIXTRANSPOSE,
+	UNIFORM_PROJECTIONMATRIXTRANSPOSE,
+	UNIFORM_UNPROJECTMATRIX,
+	UNIFORM_DEPTHSCALE,
+	UNIFORM_ENVIRONMENTINTERPOLATION,
+	UNIFORM_DEFORMPARMS,
+	UNIFORM_FOGDISTANCEVECTOR,
+	UNIFORM_FOGDEPTHVECTOR,
+	UNIFORM_DEFORMMAGNITUDE,
+	UNIFORM_HDRKEY,
+	UNIFORM_HDRAVERAGELUMINANCE,
+	UNIFORM_HDRMAXLUMINANCE,
+	UNIFORM_REFRACTIONINDEX,
+	UNIFORM_FOGDENSITY,
+	UNIFORM_FOGCOLOR,
+	UNIFORM_FRESNELPOWER,
+	UNIFORM_FRESNELSCALE,
+	UNIFORM_FRESNELBIAS,
+	UNIFORM_BLURMAGNITUDE,
+	UNIFORM_NORMALSCALE,
+	UNIFORM_SHADOWCOMPARE,
+	UNIFORM_ETARATIO,
+
 	UNIFORM_COUNT
 } uniform_t;
-
-#ifdef RENDERER2C
-typedef enum
-{
-	PROG_GENERICSHADER = 0,
-	PROG_LIGHTMAPPINGSHADER,
-	PROG_VERTEXLIGHTINGSHADER_DBS_ENTITY,
-	PROG_VERTEXLIGHTINGSHADER_DBS_WORLD,
-	PROG_FORWARDLIGHTINGSHADER_OMNIXYZ,
-	PROG_FORWARDLIGHTINGSHADER_PROJXYZ,
-	PROG_FORWARDLIGHTINGSHADER_DIRECTIONALSUN,
-	PROG_DEFERREDLIGHTINGSHADER_OMNIXYZ,
-	PROG_DEFERREDLIGHTINGSHADER_PROJXYZ,
-	PROG_DEFERREDLIGHTINGSHADER_DIRECTIONALSUN,
-	PROG_GEOMETRICFILLSHADER,
-	PROG_SHADOWFILLSHADER,
-	PROG_REFLECTIONSHADER,
-	PROG_SKYBOXSHADER,
-	PROG_FOGQUAKE3SHADER,
-	PROG_FOGGLOBALSHADER,
-	PROG_HEATHAZESHADER,
-	PROG_SCREENSHADER,
-	PROG_PORTALSHADER,
-	PROG_TONEMAPPINGSHADER,
-	PROG_CONTRASTSHADER,
-	PROG_CAMERAEFFECTSSHADER,
-	PROG_BLURXSHADER,
-	PROG_BLURYSHADER,
-	PROG_DEBUGSHADOWMAPSHADER,
-	PROG_LIQUIDSHADER,
-	PROG_ROTOSCOPESHADER,
-	PROG_BLOOMSHADER,
-	PROG_REFRACTIONSHADER,
-	PROG_DEPTHTOCOLORSHADER,
-	PROG_VOLUMETRICFOGSHADER,
-	PROG_VOLUMETRICLIGHTINGSHADER,
-	PROG_DISPERSIONSHADER,
-	PROG_NUMOF
-}program_t;
-#endif
 
 // Tr3B - shaderProgram_t represents a pair of one
 // GLSL vertex and one GLSL fragment shader
@@ -1541,7 +1573,7 @@ typedef struct shaderProgram_s
 	char name[MAX_QPATH];
 
 	GLuint program;
-	uint32_t attribs;           // vertex array attributes
+	//uint32_t attribs;           // vertex array attributes
 
 
 #ifdef RENDERER2C
@@ -1753,8 +1785,8 @@ typedef struct shaderProgram_s
 
 typedef struct macroBitMap_s
 {
-	int bitOffset;
-	unsigned int macro;
+	unsigned int bitOffset;
+	int macro;
 } macroBitMap_t;
 
 typedef struct shaderProgramList_s
@@ -1769,6 +1801,37 @@ typedef struct shaderProgramList_s
 	int mappedMacros;
 } shaderProgramList_t;
 #endif
+
+typedef struct uniformInfo_s
+{
+	char *name;
+	int type;
+}uniformInfo_t;
+
+typedef struct uniformValue_s
+{
+	uniformInfo_t type;
+	void *value;
+} uniformValue_t;
+
+typedef struct programInfo_s
+{
+	char *name;
+	char *filename;
+	char *fragFilename;
+	int macros[MAX_MACROS];
+	int numMacros;
+	char *extraMacros;
+	char *vertexLibraries;
+	char *fragmentLibraries;
+	uniformValue_t uniformValues[64];
+	int numUniformValues;
+	qboolean compiled;
+#ifdef RENDERER2C
+	shaderProgramList_t *list;
+#endif
+	struct programInfo_s *next;
+}programInfo_t;
 
 #define SHADER_PROGRAM_T_OFS(x) ((size_t)&(((shaderProgram_t *)0)->x))
 
@@ -3035,6 +3098,8 @@ typedef struct
 	int c_multiDrawPrimitives;
 	int c_multiVboIndexes;
 
+	int c_glslShaderBinds;
+
 	int msec;                   // total msec for backend run
 } backEndCounters_t;
 
@@ -3222,6 +3287,44 @@ typedef struct
 #endif
 
 #endif // GLSL_COMPILE_STARTUP_ONLY
+
+#ifdef RENDERER2C
+	programInfo_t *gl_genericShader;
+	programInfo_t *gl_lightMappingShader;
+	programInfo_t *gl_vertexLightingShader_DBS_entity;
+	programInfo_t *gl_vertexLightingShader_DBS_world;
+	programInfo_t *gl_forwardLightingShader_omniXYZ;
+	programInfo_t *gl_forwardLightingShader_projXYZ;
+	programInfo_t *gl_forwardLightingShader_directionalSun;
+	programInfo_t *gl_deferredLightingShader_omniXYZ;
+	programInfo_t *gl_deferredLightingShader_projXYZ;
+	programInfo_t *gl_deferredLightingShader_directionalSun;
+	programInfo_t *gl_geometricFillShader;
+	programInfo_t *gl_shadowFillShader;
+	programInfo_t *gl_reflectionShader;
+	programInfo_t *gl_skyboxShader;
+	programInfo_t *gl_fogQuake3Shader;
+	programInfo_t *gl_fogGlobalShader;
+	programInfo_t *gl_heatHazeShader;
+	programInfo_t *gl_screenShader;
+	programInfo_t *gl_portalShader;
+	programInfo_t *gl_toneMappingShader;
+	programInfo_t *gl_contrastShader;
+	programInfo_t *gl_cameraEffectsShader;
+	programInfo_t *gl_blurXShader;
+	programInfo_t *gl_blurYShader;
+	programInfo_t *gl_debugShadowMapShader;
+
+	//Dushan
+	programInfo_t *gl_liquidShader;
+	programInfo_t *gl_rotoscopeShader;
+	programInfo_t *gl_bloomShader;
+	programInfo_t *gl_refractionShader;
+	programInfo_t *gl_depthToColorShader;
+	programInfo_t *gl_volumetricFogShader;
+	programInfo_t *gl_volumetricLightingShader;
+	programInfo_t *gl_dispersionShader;
+#endif
 
 
 	// -----------------------------------------
@@ -4456,7 +4559,11 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 void LoadRGBEToHalfs(const char *name, unsigned short **halfImage, int *width, int *height);
 
 // fallback shaders
+extern const char *defaultShaderDefinitions;
 const char *GetFallbackShader(const char *name);
+
+//tr_glsl.c
+void GLSL_LoadDefinitions(void);
 
 #if defined(__cplusplus)
 }

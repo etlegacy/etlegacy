@@ -20,36 +20,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 // tr_glsl.c
-#ifdef RENDERER2C
 
 #include "tr_local.h"
 
-enum EGLCompileMacro
+static char *complieMacroNames[] = 
 {
-	USE_ALPHA_TESTING       = BIT(0),
-	USE_PORTAL_CLIPPING     = BIT(1),
-	USE_FRUSTUM_CLIPPING    = BIT(2),
-	USE_VERTEX_SKINNING     = BIT(3),
-	USE_VERTEX_ANIMATION    = BIT(4),
-	USE_DEFORM_VERTEXES     = BIT(5),
-	USE_TCGEN_ENVIRONMENT   = BIT(6),
-	USE_TCGEN_LIGHTMAP      = BIT(7),
-	USE_NORMAL_MAPPING      = BIT(8),
-	USE_PARALLAX_MAPPING    = BIT(9),
-	USE_REFLECTIVE_SPECULAR = BIT(10),
-	USE_SHADOWING           = BIT(11),
-	EYE_OUTSIDE             = BIT(12),
-	BRIGHTPASS_FILTER       = BIT(13),
-	LIGHT_DIRECTIONAL       = BIT(14),
-	USE_GBUFFER             = BIT(15),
-	MAX_MACROS              = 16
+	"USE_ALPHA_TESTING",
+	"USE_PORTAL_CLIPPING",
+    "USE_FRUSTUM_CLIPPING",
+    "USE_VERTEX_SKINNING",
+    "USE_VERTEX_ANIMATION",
+    "USE_DEFORM_VERTEXES",
+    "USE_TCGEN_ENVIRONMENT",
+    "USE_TCGEN_LIGHTMAP",
+    "USE_NORMAL_MAPPING",
+    "USE_PARALLAX_MAPPING",
+    "USE_REFLECTIVE_SPECULAR",
+    "USE_SHADOWING",
+	"TWOSIDED",
+    "EYE_OUTSIDE",
+    "BRIGHTPASS_FILTER",
+    "LIGHT_DIRECTIONAL",
+    "USE_GBUFFER"
 };
-
-typedef struct uniformInfo_s
-{
-	char *name;
-	int type;
-}uniformInfo_t;
 
 // These must be in the same order as in uniform_t in tr_local.h.
 static uniformInfo_t uniformsInfo[] =
@@ -83,7 +76,6 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_TCGen0Vector1",             GLSL_VEC3   },
 
 	{ "u_DeformGen",                 GLSL_INT    },
-	{ "u_DeformParams",              GLSL_FLOAT5 },
 
 	{ "u_ColorGen",                  GLSL_INT    },
 	{ "u_AlphaGen",                  GLSL_INT    },
@@ -127,57 +119,343 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_PrimaryLightOrigin",        GLSL_VEC4   },
 	{ "u_PrimaryLightColor",         GLSL_VEC3   },
 	{ "u_PrimaryLightAmbient",       GLSL_VEC3   },
-	{ "u_PrimaryLightRadius",        GLSL_FLOAT  }
+	{ "u_PrimaryLightRadius",        GLSL_FLOAT  },
+
+	//from XREAL
+	{ "u_ColorTextureMatrix",		 GLSL_MAT16  },
+	{ "u_DiffuseTextureMatrix",		 GLSL_MAT16  },
+	{ "u_NormalTextureMatrix",		 GLSL_MAT16  },
+	{ "u_SpecularTextureMatrix",	 GLSL_MAT16  },
+	{ "u_AlphaTest",				 GLSL_INT    },
+	{ "u_ColorModulate",			 GLSL_VEC4   },
+	{ "u_BoneMatrix",				 GLSL_MAT16  },
+	{ "u_VertexInterpolation",		 GLSL_FLOAT  },
+	{ "u_PortalPlane",				 GLSL_VEC4   },
+	{ "u_CurrentMap",				 GLSL_INT    },
+	{ "u_ColorMap",					 GLSL_INT    },
+	{ "u_AmbientColor",				 GLSL_VEC3   },
+	{ "u_LightDir",					 GLSL_VEC3   },
+	{ "u_LightColor",				 GLSL_VEC3   },
+	{ "u_LightScale",				 GLSL_FLOAT  },
+	{ "u_LightWrapAround",			 GLSL_FLOAT  },
+	{ "u_LightAttenuationMatrix",    GLSL_MAT16  }, 
+	{ "u_LightFrustum",				GLSL_VEC4ARR}, // VEC4 [6]
+	{ "u_ShadowTexelSize",			 GLSL_FLOAT  },
+	{ "u_ShadowBlur",				 GLSL_FLOAT  },
+	{ "u_ShadowMatrix",			   GLSL_MAT16ARR}, //MAT16 [5]
+	{ "u_ShadowParallelSplitDistances", GLSL_VEC4},
+	{ "u_ViewMatrix",				 GLSL_MAT16  },
+	{ "u_ModelViewMatrix",			 GLSL_MAT16  },
+	{ "u_ModelViewMatrixTranspose",  GLSL_MAT16  },
+	{ "u_ProjectionMatrixTranspose", GLSL_MAT16  },
+	{ "u_UnprojectMatrix",			 GLSL_MAT16  },
+	{ "u_DepthScale",				 GLSL_FLOAT  },
+	{ "u_EnvironmentInterpolation",  GLSL_FLOAT  },
+	{ "u_DeformParms",				 GLSL_FLOATARR}, // FLOAT [MAX_SHADER_DEFORM_PARMS]
+	{ "u_FogDistanceVector",		 GLSL_VEC4   },
+	{ "u_FogDepthVector",			 GLSL_VEC4   },
+	{ "u_DeformMagnitude",			 GLSL_FLOAT  },
+	{ "u_HDRKey",					 GLSL_FLOAT  },
+	{ "u_HDRAverageLuminance",		 GLSL_FLOAT  },
+	{ "u_HDRMaxLuminance",			 GLSL_FLOAT  },
+	{ "u_RefractionIndex",			 GLSL_FLOAT  },
+	{ "u_FogDensity",				 GLSL_FLOAT  },
+	{ "u_FogColor",					 GLSL_VEC3   },
+	{ "u_FresnelPower",				 GLSL_FLOAT  },
+	{ "u_FresnelScale",				 GLSL_FLOAT  },
+	{ "u_FresnelBias",				 GLSL_FLOAT  },
+	{ "u_BlurMagnitude",			 GLSL_FLOAT  },
+	{ "u_NormalScale",				 GLSL_FLOAT  },
+	{ "u_ShadowCompare",			 GLSL_FLOAT  },
+	{ "u_EtaRatio",					 GLSL_VEC3   }
 };
 
-typedef struct programInfo_s
-{
-	char *name;
-	char *filename;
-	int macros[MAX_MACROS];
-	int numMacros;
-	char *extraMacros;
-	char *vertexLibraries;
-	char *fragmentLibraries;
-	shaderProgramList_t *list;
-}programInfo_t;
+#define FILE_HASH_SIZE      4096
+#define MAX_SHADER_DEF_FILES 1024
+#define DEFAULT_SHADER_DEF NULL
+static programInfo_t *hashTable[FILE_HASH_SIZE];
 
-static programInfo_t programsInfo[] =
+static char *definitionText;
+
+/*
+================
+return a hash value for the filename
+This function is cloned to many files, should be moved to common->
+================
+*/
+static long generateHashValue(const char *fname)
 {
-	{ "generic",                         "generic",                   { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_TCGEN_ENVIRONMENT, USE_TCGEN_LIGHTMAP      }, 7, NULL,                         "vertexSkinning vertexAnimation deformVertexes", NULL,            NULL },
-	{ "lightMapping",                    "lightMapping",              { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_DEFORM_VERTEXES,  USE_NORMAL_MAPPING,   USE_PARALLAX_MAPPING },5,                     "TWOSIDED", "deformVertexes", "reliefMapping", NULL},
-	{ "vertexLighting_DBS_entity",       "vertexLighting_DBS_entity", { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_REFLECTIVE_SPECULAR}, 8, "TWOSIDED",                   "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
-	{ "vertexLighting_DBS_world",        "vertexLighting_DBS_world",  { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_DEFORM_VERTEXES,  USE_NORMAL_MAPPING,   USE_PARALLAX_MAPPING },5,                     "TWOSIDED", "deformVertexes", "reliefMapping", NULL},
-	{ "forwardLighting_omniXYZ",         "forwardLighting",           { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_SHADOWING}, 8, "TWOSIDED",                   "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
-	{ "forwardLighting_projXYZ",         "forwardLighting",           { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_SHADOWING}, 8, "LIGHT_PROJ TWOSIDED",        "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
-	{ "forwardLighting_directionalSun",  "forwardLighting",           { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_NORMAL_MAPPING,    USE_PARALLAX_MAPPING, USE_SHADOWING}, 8, "LIGHT_DIRECTIONAL TWOSIDED", "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
-	{ "deferredLighting_omniXYZ",        "deferredLighting",          { USE_PORTAL_CLIPPING, USE_FRUSTUM_CLIPPING, USE_NORMAL_MAPPING,   USE_SHADOWING },      4,                   NULL,                  NULL, NULL, NULL        },
-	{ "deferredLighting_projXYZ",        "deferredLighting",          { USE_PORTAL_CLIPPING, USE_FRUSTUM_CLIPPING, USE_NORMAL_MAPPING,   USE_SHADOWING },      4,                   "LIGHT_PROJ",          NULL, NULL, NULL        },
-	{ "deferredLighting_directionalSun", "deferredLighting",          { USE_PORTAL_CLIPPING, USE_FRUSTUM_CLIPPING, USE_NORMAL_MAPPING,   USE_SHADOWING },      4,                   "LIGHT_DIRECTIONAL",   NULL, NULL, NULL        },
-	{ "geometricFill",                   "geometricFill",             { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, USE_PARALLAX_MAPPING,  USE_REFLECTIVE_SPECULAR }, 7, "TWOSIDED",                   "vertexSkinning vertexAnimation deformVertexes", "reliefMapping", NULL },
-	{ "shadowFill",                      "shadowFill",                { USE_PORTAL_CLIPPING, USE_ALPHA_TESTING,    USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES, LIGHT_DIRECTIONAL },   6, NULL, "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
-	{ "reflection",                      "reflection_CB",             { USE_PORTAL_CLIPPING, USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES,  USE_NORMAL_MAPPING },5,                     "TWOSIDED", "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
-	{ "skybox",                          "skybox",                    { USE_PORTAL_CLIPPING },1,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "fogQuake3",                       "fogQuake3",                 { USE_PORTAL_CLIPPING, USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES,  EYE_OUTSIDE },       5,                     NULL, "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
-	{ "fogGlobal",                       "fogGlobal",                 { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "heatHaze",                        "heatHaze",                  { USE_PORTAL_CLIPPING, USE_VERTEX_SKINNING,  USE_VERTEX_ANIMATION, USE_DEFORM_VERTEXES },4,                   NULL,                  "vertexSkinning vertexAnimation deformVertexes", NULL, NULL},
-	{ "screen",                          "screen",                    { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "portal",                          "portal",                    { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "toneMapping",                     "toneMapping",               { BRIGHTPASS_FILTER }, 1,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "contrast",                        "contrast",                  { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "cameraEffects",                   "cameraEffects",             { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "blurX",                           "blurX",                     { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "blurY",                           "blurY",                     { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "debugShadowMap",                  "debugShadowMap",            { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "liquid",                          "liquid",                    { USE_PARALLAX_MAPPING },1,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "rotoscope",                       "rotoscope",                 { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "bloom",                           "bloom",                     { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "refraction",                      "refraction_C",              { USE_VERTEX_SKINNING },1,                    NULL,                 "vertexSkinning",     NULL,                NULL },
-	{ "depthToColor",                    "depthToColor",              { USE_VERTEX_SKINNING },1,                    NULL,                 "vertexSkinning",     NULL,                NULL },
-	{ "volumetricFog",                   "volumetricFog",             { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "lightVolume_omni",                "lightVolume_omni",          { NULL },              0,                    NULL,                 NULL,                 NULL,                NULL },
-	{ "dispersion",                      "dispersion_C",              { USE_VERTEX_SKINNING },1,                    NULL,                 NULL,                 NULL,                NULL }
-};
+	int  i    = 0;
+	long hash = 0;
+	char letter;
+
+	while (fname[i] != '\0')
+	{
+		letter = tolower(fname[i]);
+		if (letter == '.')
+		{
+			break;                          // don't include extension
+		}
+		if (letter == PATH_SEP)
+		{
+			letter = '/';                   // damn path names
+		}
+		hash += (long)(letter) * (i + 119);
+		i++;
+	}
+	hash &= (FILE_HASH_SIZE - 1);
+	return hash;
+}
+
+int GLSL_GetMacroByName(const char *name)
+{
+	int i;
+	for(i = 0; i < MAX_MACROS; i++)
+	{
+		if (!Q_stricmp(name, complieMacroNames[i]))
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void CopyStringAlloc(char **out,char *in)
+{
+	size_t size = strlen(in) * sizeof(char) + 1;
+	*out = (char *) malloc(size);
+	memset(*out,'\0',size);
+	Q_strncpyz(*out, in, size);
+}
+
+qboolean CopyNextToken(char **text,char **out)
+{
+	char *token;
+	token = COM_ParseExt(text, qtrue);
+	if (!token[0])
+	{
+		return qfalse;
+	}
+
+	// end of shader definition
+	if (token[0] == '}')
+	{
+		return qfalse;
+	}
+
+	CopyStringAlloc(out,token);
+	return qtrue;
+}
+
+programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
+{
+	char *token;
+	int  i = 0;
+	programInfo_t *def;
+	void *valptr;
+
+	token = COM_ParseExt(text, qtrue);
+	if (token[0] != '{')
+	{
+		ri.Printf(PRINT_WARNING, "WARNING: expecting '{', found '%s' instead in shader definition '%s'\n", token, defname);
+		return NULL;
+	}
+
+	def = (programInfo_t *)malloc(sizeof(programInfo_t));
+	memset(def,0,sizeof(programInfo_t));
+
+	def->compiled = qfalse;
+
+	while (1)
+	{
+		token = COM_ParseExt(text, qtrue);
+		if (!token[0])
+		{
+			ri.Printf(PRINT_WARNING, "WARNING: no concluding '}' in shader definition %s\n", defname);
+			goto parseerror;
+		}
+
+		// end of shader definition
+		if (token[0] == '}')
+		{
+			break;
+		}
+		else if (!Q_stricmp(token, "filename"))
+		{
+			CopyNextToken(text,&def->filename);
+		}
+		else if (!Q_stricmp(token, "fragfilename"))
+		{
+			CopyNextToken(text,&def->fragFilename);
+		}
+		else if (!Q_stricmp(token, "macros"))
+		{
+			int macro;
+			while((token = COM_ParseExt(text, qfalse))[0])
+			{
+				macro = GLSL_GetMacroByName(token);
+				if(macro >= 0)
+				{
+					def->macros[def->numMacros] = macro;
+					def->numMacros++;
+				}
+				else
+				{
+					ri.Printf(PRINT_WARNING,"WARNING: Macro '%s' for shaderdef '%s' was not recognized\n",token,defname);
+					goto parseerror;
+				}
+			}
+		}
+		else if (!Q_stricmp(token, "extramacros"))
+		{
+			CopyNextToken(text,&def->extraMacros);
+		}
+		else if (!Q_stricmp(token, "vertexLibraries"))
+		{
+			CopyNextToken(text,&def->vertexLibraries);
+		}
+		else if (!Q_stricmp(token, "fragmentLibraries"))
+		{
+			CopyNextToken(text,&def->fragmentLibraries);
+		}
+		else if (!Q_stricmp(token, "uniform"))
+		{
+			token = COM_ParseExt(text, qtrue);
+			if(!Q_stricmp(token, "int"))
+			{
+				def->uniformValues[def->numUniformValues].type.type = GLSL_INT;
+				CopyNextToken(text,&def->uniformValues[def->numUniformValues].type.name);
+				token = COM_ParseExt(text, qtrue);
+				valptr = malloc(sizeof(int));
+				*((int*)valptr) = atoi(token);
+				def->uniformValues[def->numUniformValues].value = valptr;
+				//Com_Printf("%d\n",*((int*)valptr));
+			}
+			//FIXME: implement other formats
+			def->numUniformValues++;
+		}
+	}
+
+
+	return def;
+
+parseerror:
+	free(def);
+	return NULL;
+}
+
+static char *GLSL_FindDefinitionInText(const char *shadername)
+{
+	char *p = definitionText;
+	char *token;
+
+	// look for label
+	// note that this could get confused if a shader name is used inside
+	// another shader definition
+	while (1)
+	{
+		token = COM_ParseExt(&p, qtrue);
+		if (token[0] == 0)
+		{
+			break;
+		}
+
+		if (!Q_stricmp(token, shadername))
+		{
+			return p;
+		}
+
+		SkipBracedSection(&p);
+	}
+
+	return NULL;
+}
+
+programInfo_t *GLSL_FindShader(const char *name)
+{
+	char     strippedName[MAX_QPATH];
+	char     fileName[MAX_QPATH];
+	int      i, hash;
+	char     *shaderText;
+	programInfo_t *sh;
+
+	if (name[0] == 0)
+	{
+		return DEFAULT_SHADER_DEF;
+	}
+
+	COM_StripExtension(name, strippedName, sizeof(strippedName));
+	COM_FixPath(strippedName);
+
+	hash = generateHashValue(strippedName);
+
+	for (sh = hashTable[hash]; sh; sh = sh->next)
+	{
+		// index by name
+		// the original way was correct
+		if (!Q_stricmp(sh->name, strippedName))
+		{
+			// match found
+			return sh;
+		}
+	}
+
+	shaderText = GLSL_FindDefinitionInText(strippedName);
+	if(!shaderText)
+	{
+		ri.Printf(PRINT_ALL,"Shader definition find failed: %s\n",name);
+		return DEFAULT_SHADER_DEF;
+	}
+
+	sh = GLSL_ParseDefinition(&shaderText,strippedName);
+	if(!sh)
+	{
+		ri.Printf(PRINT_ALL,"Shader definition parsing failed: %s\n",name);
+		return DEFAULT_SHADER_DEF;
+	}
+	else
+	{
+		sh->next = hashTable[hash];
+		hashTable[hash] = sh;
+		return sh;
+	}
+}
+
+void GLSL_LoadDefinitions(void)
+{
+	/*
+	char **shaderFiles;
+	char *buffers[MAX_SHADER_DEF_FILES];
+	char *p;
+	int  numShaderFiles;
+	*/
+	programInfo_t *test;
+	programInfo_t *test2;
+
+	//FIXME: Also load from external files in the future...
+	//For no just copy the existing data to our searchable string
+	definitionText = (char *)ri.Hunk_Alloc(strlen(defaultShaderDefinitions) + 1, h_low);
+	memset(definitionText,'\0',strlen(defaultShaderDefinitions) + 1);
+	Q_strncpyz(definitionText,defaultShaderDefinitions,strlen(defaultShaderDefinitions));
+	
+
+	//Test code
+	/*
+	test = GLSL_FindShader("vertexLighting_DBS_entity");
+
+	ri.Printf(PRINT_ALL,"GLGL_LoadDefitionions end Filename %s Vert libs: %s\n",test->filename,test->vertexLibraries);
+
+	test2 = GLSL_FindShader("generic");
+	test = GLSL_FindShader("generic");
+
+	ri.Printf(PRINT_ALL,"GLGL_LoadDefitionions end Filename %s Vert libs: %s\n",test->filename,test->vertexLibraries);
+
+	ri.Error(ERR_FATAL,"GLGL_LoadDefitionions end Filename %s Vert libs: %s",test2->filename,test2->vertexLibraries);
+	*/
+}
+
+#ifdef RENDERER2C
 
 static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 {
@@ -243,47 +521,6 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 	ri.Free(msg);
 }
 
-static char *GLSL_GetMacroName(int macro)
-{
-	switch (macro)
-	{
-	case USE_ALPHA_TESTING:
-		return "USE_ALPHA_TESTING";
-	case USE_PORTAL_CLIPPING:
-		return "USE_PORTAL_CLIPPING";
-	case USE_FRUSTUM_CLIPPING:
-		return "USE_FRUSTUM_CLIPPING";
-	case USE_VERTEX_SKINNING:
-		return "USE_VERTEX_SKINNING";
-	case USE_VERTEX_ANIMATION:
-		return "USE_VERTEX_ANIMATION";
-	case USE_DEFORM_VERTEXES:
-		return "USE_DEFORM_VERTEXES";
-	case USE_TCGEN_ENVIRONMENT:
-		return "USE_TCGEN_ENVIRONMENT";
-	case USE_TCGEN_LIGHTMAP:
-		return "USE_TCGEN_LIGHTMAP";
-	case USE_NORMAL_MAPPING:
-		return "USE_NORMAL_MAPPING";
-	case USE_PARALLAX_MAPPING:
-		return "USE_PARALLAX_MAPPING";
-	case USE_REFLECTIVE_SPECULAR:
-		return "USE_REFLECTIVE_SPECULAR";
-	case USE_SHADOWING:
-		return "USE_SHADOWING";
-	case EYE_OUTSIDE:
-		return "EYE_OUTSIDE";
-	case BRIGHTPASS_FILTER:
-		return "BRIGHTPASS_FILTER";
-	case LIGHT_DIRECTIONAL:
-		return "LIGHT_DIRECTIONAL";
-	case USE_GBUFFER:
-		return "USE_GBUFFER";
-	default:
-		return NULL;
-	}
-}
-
 static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
 {
 	switch (compilemacro)
@@ -313,7 +550,7 @@ static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
 	return qfalse;
 }
 
-static qboolean GLSL_MissesRequiredMacros(int compilemacro, int usedmacros)
+static qboolean GLSL_MissesRequiredMacros(int compilemacro, unsigned long usedmacros)
 {
 	switch (compilemacro)
 	{
@@ -1002,10 +1239,13 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	return shaderText;
 }
 
+/*
+This whole method is stupid, clean this shit up
+*/
 static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const char *macros, int permutation, char **out)
 {
-	// TODO: implement this
-	int i, macroatrib = 0;
+	int i;
+	unsigned long macroatrib = 0;
 
 	*out = (char *) malloc(1000);
 	memset(*out, 0, 1000);
@@ -1016,7 +1256,7 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 		{
 			if (permutation & BIT(program->macromap[i].bitOffset))
 			{
-				macroatrib |= program->macromap[i].macro;
+				macroatrib |= BIT(program->macromap[i].macro);
 			}
 		}
 
@@ -1024,17 +1264,17 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 		{
 			if (macroatrib & BIT(i))
 			{
-				if (GLSL_HasConflictingMacros(BIT(i), macroatrib))
+				if (GLSL_HasConflictingMacros(i, macroatrib))
 				{
 					return qfalse;
 				}
 
-				if (GLSL_MissesRequiredMacros(BIT(i), macroatrib))
+				if (GLSL_MissesRequiredMacros(i, macroatrib))
 				{
 					return qfalse;
 				}
 
-				Q_strcat(*out, 1000, va("%s ", GLSL_GetMacroName(BIT(i))));
+				Q_strcat(*out, 1000, va("%s ", complieMacroNames[i]));
 			}
 		}
 	}
@@ -1150,7 +1390,7 @@ static void GLSL_BindAttribLocations(GLuint program)
 	glBindAttribLocation(program, ATTR_INDEX_NORMAL2, "attr_Normal2");
 }
 
-static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, int attribs, const char *vpCode, const char *fpCode)
+static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, const char *vpCode, const char *fpCode)
 {
 	ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
 
@@ -1162,7 +1402,6 @@ static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, int a
 	Q_strncpyz(program->name, name, sizeof(program->name));
 
 	program->program = qglCreateProgramObjectARB();
-	program->attribs = attribs;
 
 	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER_ARB)))
 	{
@@ -1188,7 +1427,7 @@ static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, int a
 	return 1;
 }
 
-static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, int attribs, const char *vertex, const char *frag, const char *macrostring)
+static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, const char *vertex, const char *frag, const char *macrostring)
 {
 	char vpSource[32000];
 	char fpSource[32000];
@@ -1219,7 +1458,7 @@ static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const cha
 	Q_strcat(vpSource, size, vertex);
 	Q_strcat(fpSource, size, frag);
 
-	GLSL_InitGPUShader2(program, name, attribs, vpSource, fpSource);
+	GLSL_InitGPUShader2(program, name, vpSource, fpSource);
 }
 
 static void GLSL_MapMacro(macroBitMap_t *map, int macro, int mappedbit)
@@ -1228,57 +1467,40 @@ static void GLSL_MapMacro(macroBitMap_t *map, int macro, int mappedbit)
 	map->bitOffset = mappedbit;
 }
 
-static qboolean GLSL_InitGPUShader(shaderProgramList_t *program, const char *name, int attribs, const char *libs, int macros, const char *macrostring)
+qboolean GLSL_CompileShaderList(programInfo_t *info)
 {
-	char   *vertexShader   = GLSL_BuildGPUShaderText(name, libs, GL_VERTEX_SHADER);
-	char   *fragmentShader = GLSL_BuildGPUShaderText(name, libs, GL_FRAGMENT_SHADER);
+	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
+	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename?info->fragFilename:info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
 	int    macronum        = 0;
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0;
 
-	program->allMacros = macros;
+	info->list = (shaderProgramList_t *)Ren_Malloc(sizeof(shaderProgramList_t));
+	memset(info->list,0,sizeof(shaderProgramList_t));
 
-	if (macros)
+	if(info->numMacros > 0)
 	{
-		for (i = 0; i < MAX_MACROS; i++)
+		info->list->macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
+		for(i = 0; i < info->numMacros; i++)
 		{
-			if (macros & BIT(i))
-			{
-				macronum++;
-			}
+			GLSL_MapMacro(&info->list->macromap[i], info->macros[i], i);
 		}
-	}
-
-	if (macronum)
-	{
-		int macrotemp = 0;
-		program->macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
-		for (i = 0; i < MAX_MACROS; i++)
-		{
-			if (macros & BIT(i))
-			{
-				GLSL_MapMacro(&program->macromap[macrotemp], BIT(i), macrotemp);
-				macrotemp++;
-			}
-		}
-		program->mappedMacros = macrotemp;
+		info->list->mappedMacros = i;
 	}
 	else
 	{
-		program->macromap     = NULL;
-		program->mappedMacros = 0;
+		info->list->macromap     = NULL;
+		info->list->mappedMacros = 0;
 	}
 
-	startTime = ri.Milliseconds();
+	numPermutations = BIT(info->numMacros);
 
-	numPermutations = BIT(macronum);
-
-	ri.Printf(PRINT_ALL, "...compiling %s shaders\n", name);
+	ri.Printf(PRINT_ALL, "...compiling %s shaders\n", info->name);
 	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
 	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
 
-	program->programs = Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
+	info->list->programs = Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
 
 	for (i = 0; i < numPermutations; i++)
 	{
@@ -1307,20 +1529,35 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t *program, const char *nam
 			}
 		}
 
-		if (GLSL_GenerateMacroString(program, macrostring, i, &tempString))
+		if (GLSL_GenerateMacroString(info->list, info->extraMacros, i, &tempString))
 		{
-			GLSL_FinnishShaderTextAndCompile(&program->programs[i], name, attribs, vertexShader, fragmentShader, tempString);
+			GLSL_FinnishShaderTextAndCompile(&info->list->programs[i], info->name, vertexShader, fragmentShader, tempString);
 			numCompiled++;
 		}
 		else
 		{
-			program->programs[i].program = NULL;
+			info->list->programs[i].program = NULL;
 		}
 
 	}
+
 	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, name, (endTime - startTime) / 1000.0);
+	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
+	info->compiled = qtrue;
 	return qtrue;
+}
+
+programInfo_t *GLSL_GetShaderProgram(const char *name)
+{
+	programInfo_t *prog;
+
+	prog = GLSL_FindShader(name);
+
+	if(prog)
+	{
+		//Compile the shader program
+		GLSL_CompileShaderList(prog);
+	}
 }
 
 void GLSL_InitUniforms(shaderProgram_t *program)
@@ -1613,6 +1850,45 @@ void GLSL_InitGPUShaders(void)
 
 	startTime = ri.Milliseconds();
 
+	//Load all definitions
+	GLSL_LoadDefinitions();
+
+	tr.gl_genericShader                         = GLSL_GetShaderProgram("generic");
+	tr.gl_lightMappingShader                    = GLSL_GetShaderProgram("lightMapping");
+	tr.gl_vertexLightingShader_DBS_entity       = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
+	tr.gl_vertexLightingShader_DBS_world        = GLSL_GetShaderProgram("vertexLighting_DBS_world");
+	tr.gl_forwardLightingShader_omniXYZ         = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
+	tr.gl_forwardLightingShader_projXYZ         = GLSL_GetShaderProgram("forwardLighting_projXYZ");
+	tr.gl_forwardLightingShader_directionalSun  = GLSL_GetShaderProgram("forwardLighting_directionalSun");
+	tr.gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
+	tr.gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
+	tr.gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
+	tr.gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
+	tr.gl_shadowFillShader                      = GLSL_GetShaderProgram("shadowFill");
+	tr.gl_reflectionShader                      = GLSL_GetShaderProgram("reflection");
+	tr.gl_skyboxShader                          = GLSL_GetShaderProgram("skybox");
+	tr.gl_fogQuake3Shader                       = GLSL_GetShaderProgram("fogQuake3");
+	tr.gl_fogGlobalShader                       = GLSL_GetShaderProgram("fogGlobal");
+	tr.gl_heatHazeShader                        = GLSL_GetShaderProgram("heatHaze");
+	tr.gl_screenShader                          = GLSL_GetShaderProgram("screen");
+	tr.gl_portalShader                          = GLSL_GetShaderProgram("portal");
+	tr.gl_toneMappingShader                     = GLSL_GetShaderProgram("toneMapping");
+	tr.gl_contrastShader                        = GLSL_GetShaderProgram("contrast");
+	tr.gl_cameraEffectsShader                   = GLSL_GetShaderProgram("cameraEffects");
+	tr.gl_blurXShader                           = GLSL_GetShaderProgram("blurX");
+	tr.gl_blurYShader                           = GLSL_GetShaderProgram("blurY");
+	tr.gl_debugShadowMapShader                  = GLSL_GetShaderProgram("debugShadowMap");
+
+	//Dushan
+	tr.gl_liquidShader             = GLSL_GetShaderProgram("liquid");
+	tr.gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
+	tr.gl_bloomShader              = GLSL_GetShaderProgram("bloom");
+	tr.gl_refractionShader         = GLSL_GetShaderProgram("refraction");
+	tr.gl_depthToColorShader       = GLSL_GetShaderProgram("depthToColor");
+	tr.gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
+	tr.gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
+	tr.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
+
 	endTime = ri.Milliseconds();
 
 	ri.Printf(PRINT_ALL, "loaded %i GLSL shaders (%i gen %i light %i etc) in %5.2f seconds\n",
@@ -1644,34 +1920,7 @@ void GLSL_ShutdownGPUShaders(void)
 	qglDisableVertexAttribArrayARB(ATTR_INDEX_LIGHTDIRECTION);
 	GLSL_BindNullProgram();
 
-	for (i = 0; i < GENERICDEF_COUNT; i++)
-		GLSL_DeleteGPUShader(&tr.genericShader[i]);
-
-	GLSL_DeleteGPUShader(&tr.textureColorShader);
-
-	for (i = 0; i < FOGDEF_COUNT; i++)
-		GLSL_DeleteGPUShader(&tr.fogShader[i]);
-
-	for (i = 0; i < DLIGHTDEF_COUNT; i++)
-		GLSL_DeleteGPUShader(&tr.dlightShader[i]);
-
-	for (i = 0; i < LIGHTDEF_COUNT; i++)
-		GLSL_DeleteGPUShader(&tr.lightallShader[i]);
-
-	GLSL_DeleteGPUShader(&tr.shadowmapShader);
-	GLSL_DeleteGPUShader(&tr.pshadowShader);
-	GLSL_DeleteGPUShader(&tr.down4xShader);
-	GLSL_DeleteGPUShader(&tr.bokehShader);
-	GLSL_DeleteGPUShader(&tr.tonemapShader);
-
-	for (i = 0; i < 2; i++)
-		GLSL_DeleteGPUShader(&tr.calclevels4xShader[i]);
-
-	GLSL_DeleteGPUShader(&tr.shadowmaskShader);
-	GLSL_DeleteGPUShader(&tr.ssaoShader);
-
-	for (i = 0; i < 2; i++)
-		GLSL_DeleteGPUShader(&tr.depthBlurShader[i]);
+	//Clean up programInfo_t:s
 
 	glState.currentProgram = 0;
 	qglUseProgramObjectARB(0);

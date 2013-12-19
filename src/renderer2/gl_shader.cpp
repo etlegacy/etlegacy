@@ -1297,7 +1297,7 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 	program->compileMacros = NULL;
 
 	program->program = glCreateProgram();
-	program->attribs = _vertexAttribsRequired; // | _vertexAttribsOptional;
+	//program->attribs = _vertexAttribsRequired; // | _vertexAttribsOptional;
 
 	if (r_recompileShaders->integer || !LoadShaderProgram(program->program, programName, iteration))
 	{
