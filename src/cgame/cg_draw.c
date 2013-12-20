@@ -555,8 +555,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
  */
 static void CG_DrawDisconnect(void)
 {
-	float      x = Ccg_WideX(SCREEN_WIDTH) - 48; // disconnect icon
-	float      y = SCREEN_HEIGHT - 200; // disconnect icon
+	float      x = Ccg_WideX(SCREEN_WIDTH - 6) - 52;
+	float      y = SCREEN_HEIGHT - 264;
 	int        cmdNum;
 	usercmd_t  cmd;
 	const char *s;
@@ -586,7 +586,7 @@ static void CG_DrawDisconnect(void)
 	// also add text in center of screen
 	s = CG_TranslateString("Connection Interrupted");
 	w = CG_Text_Width_Ext(s, cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(320 - w / 2, 100, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 188, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// blink the icon
 	if ((cg.time >> 9) & 1)
@@ -594,7 +594,7 @@ static void CG_DrawDisconnect(void)
 		return;
 	}
 
-	CG_DrawPic(x, y, 48, 48, cgs.media.disconnectIcon);
+	CG_DrawPic(x + 1, y + 1, 53, 53, cgs.media.disconnectIcon);
 }
 
 #define MAX_LAGOMETER_PING  900
