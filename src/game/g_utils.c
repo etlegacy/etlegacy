@@ -1749,6 +1749,7 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		case MOD_ARTY:
 		case MOD_AIRSTRIKE:
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 		case MOD_SMOKEGRENADE:
 			return ent->s.teamNum;
 		case MOD_SATCHEL:

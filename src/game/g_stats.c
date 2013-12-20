@@ -436,6 +436,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_BAZOOKA:
 	case MOD_FLAMETHROWER:
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 		G_LoseSkillPoints(tker, SK_HEAVY_WEAPONS, 3.f);
 		//G_DebugAddSkillPoints( attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced mg42 kill" );
 		break;
@@ -557,6 +558,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "flamethrower kill");
 		break;
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 		if (splash)
 		{
 			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
@@ -622,7 +624,9 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 		G_DebugAddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
 		break;
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, constructibleStats->destructxpbonus);
 		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
 		break;

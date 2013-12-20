@@ -173,6 +173,7 @@ static void CG_Obituary(entityState_t *ent)
 			message = "buried himself alive";
 			break;
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 			message = "never saw his own mortar round coming";
 			break;
 		case MOD_SMOKEGRENADE:
@@ -368,6 +369,7 @@ static void CG_Obituary(entityState_t *ent)
 			message2 = "'s flamethrower";
 			break;
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 			message  = "never saw";
 			message2 = "'s mortar round coming";
 			break;

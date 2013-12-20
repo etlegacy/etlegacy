@@ -758,27 +758,31 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 const unsigned int cQualifyingShots[WS_MAX] =
 {
 	10,     // 0  WS_KNIFE
-	15,     // 1  WS_LUGER
-	15,     // 2  WS_COLT
-	30,     // 3  WS_MP40
-	30,     // 4  WS_THOMPSON
-	30,     // 5  WS_STEN
-	30,     // 6  WS_FG42
-	3,      // 7  WS_PANZERFAUST
-	100,    // 8  WS_FLAMETHROWER
-	5,      // 9  WS_GRENADE
-	5,      // 10 WS_MORTAR
-	5,      // 11 WS_DYNAMITE
-	3,      // 12 WS_AIRSTRIKE
-	3,      // 13 WS_ARTILLERY
-	5,      // 14 WS_SYRINGE
-	3,      // 15 WS_SMOKE
-	3,      // 16 WS_SATCHEL
-	5,      // 17 WS_GRENADELAUNCHER
-	10,     // 18 WS_LANDMINE
-	100,    // 19 WS_MG42
-	30,     // 20 WS_GARAND
-	30,     // 21 WS_K43
+	10,     // 1  WS_KNIFE_KBAR
+	15,     // 2  WS_LUGER
+	15,     // 3  WS_COLT
+	30,     // 4  WS_MP40
+	30,     // 5  WS_THOMPSON
+	30,     // 6  WS_STEN
+	30,     // 7  WS_FG42
+	3,      // 8  WS_PANZERFAUST
+	3,      // 9  WS_BAZOOKA
+	100,    // 10 WS_FLAMETHROWER
+	5,      // 11 WS_GRENADE
+	5,      // 12 WS_MORTAR
+	5,      // 13 WS_MORTAR2
+	5,      // 14 WS_DYNAMITE
+	3,      // 15 WS_AIRSTRIKE
+	3,      // 16 WS_ARTILLERY
+	5,      // 17 WS_SYRINGE
+	3,      // 18 WS_SMOKE
+	3,      // 19 WS_SATCHEL
+	5,      // 20 WS_GRENADELAUNCHER
+	10,     // 21 WS_LANDMINE
+	100,    // 22 WS_MG42
+	100,    // 23 WS_BROWNING
+	30,     // 24 WS_GARAND
+	30,     // 25 WS_K43
 };
 
 // ************** TOPSHOTS/BOTTOMSHOTS

@@ -1849,11 +1849,17 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
 		break;
 	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
 		bolt->classname           = "mortar_grenade";
 		bolt->splashRadius        = 800;
 		bolt->methodOfDeath       = MOD_MORTAR;
 		bolt->splashMethodOfDeath = MOD_MORTAR;
+		bolt->s.eFlags            = 0;
+		break;
+	case WP_MORTAR2_SET:
+		bolt->classname           = "mortar_grenade";
+		bolt->splashRadius        = 800;
+		bolt->methodOfDeath       = MOD_MORTAR2;
+		bolt->splashMethodOfDeath = MOD_MORTAR2;
 		bolt->s.eFlags            = 0;
 		break;
 	case WP_LANDMINE:
@@ -1959,18 +1965,19 @@ fire_rocket
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
 {
 	gentity_t *bolt = G_Spawn();
-	int mod;
+	int       mod;
 
 	// FIXME: weapon table
-    switch (rocketType) {
-            case WP_BAZOOKA:
-                    mod = MOD_BAZOOKA;
-                    break;
-            default:
-                    rocketType = WP_PANZERFAUST;
-                    mod = MOD_PANZERFAUST;
-                    break;
-    }
+	switch (rocketType)
+	{
+	case WP_BAZOOKA:
+		mod = MOD_BAZOOKA;
+		break;
+	default:
+		rocketType = WP_PANZERFAUST;
+		mod        = MOD_PANZERFAUST;
+		break;
+	}
 
 	VectorNormalize(dir);
 

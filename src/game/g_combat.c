@@ -362,9 +362,8 @@ char *modNames[] =
 	"MOD_SHOVE",
 
 	"MOD_KNIFE_KABAR",
-
 	"MOD_MOBILE_BROWNING",
-
+	"MOD_MORTAR2",
 	"MOD_BAZOOKA",
 
 	// MOD_NUM_MODS
@@ -609,7 +608,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 							if (!(meansOfDeath == MOD_LANDMINE && (g_disableComplaints.integer & TKFL_MINES)) &&
 							    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && (g_disableComplaints.integer & TKFL_AIRSTRIKE)) &&
-							    !(meansOfDeath == MOD_MORTAR && (g_disableComplaints.integer & TKFL_MORTAR)))
+							    !((meansOfDeath == MOD_MORTAR || meansOfDeath == MOD_MORTAR2) && (g_disableComplaints.integer & TKFL_MORTAR)))
 							{
 								trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
 								if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked by dynamite on objective
@@ -1572,6 +1571,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		case MOD_AIRSTRIKE:
 		case MOD_DYNAMITE:
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 		case MOD_PANZERFAUST:
 		case MOD_BAZOOKA:
 			take -= take * .5f;

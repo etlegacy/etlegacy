@@ -1338,29 +1338,32 @@ typedef enum
 // weapon stat info: mapping between MOD_ and WP_ types (FIXME for new ET weapons)
 typedef enum extWeaponStats_s
 {
-	WS_KNIFE,               // 0
-	WS_LUGER,               // 1
-	WS_COLT,                // 2
-	WS_MP40,                // 3
-	WS_THOMPSON,            // 4
-	WS_STEN,                // 5
-	WS_FG42,                // 6	-- Also includes WS_BAR (allies version of fg42)
-	WS_PANZERFAUST,         // 7
-	WS_FLAMETHROWER,        // 8
-	WS_GRENADE,             // 9	-- Includes axis and allies grenade types
-	WS_MORTAR,              // 10
-	WS_DYNAMITE,            // 11
-	WS_AIRSTRIKE,           // 12	-- Lt. smoke grenade attack
-	WS_ARTILLERY,           // 13	-- Lt. binocular attack
-	WS_SYRINGE,             // 14	-- Medic syringe uses/successes
-
-	WS_SMOKE,               // 15
-	WS_SATCHEL,             // 16
-	WS_GRENADELAUNCHER,     // 17
-	WS_LANDMINE,            // 18
-	WS_MG42,                // 19
-	WS_GARAND,              // 20 // (carbine and garand)
-	WS_K43,                 // 21 // (kar98 and k43)
+	WS_KNIFE,           // 0
+	WS_KNIFE_KBAR,      // 1
+	WS_LUGER,           // 2
+	WS_COLT,            // 3
+	WS_MP40,            // 4
+	WS_THOMPSON,        // 5
+	WS_STEN,            // 6
+	WS_FG42,            // 7
+	WS_PANZERFAUST,     // 8
+	WS_BAZOOKA,         // 9
+	WS_FLAMETHROWER,    // 10
+	WS_GRENADE,         // 11   -- includes axis and allies grenade types
+	WS_MORTAR,          // 12
+	WS_MORTAR2,         // 13
+	WS_DYNAMITE,        // 14
+	WS_AIRSTRIKE,       // 15   -- Fieldops smoke grenade attack
+	WS_ARTILLERY,       // 16   -- Fieldops binocular attack
+	WS_SYRINGE,         // 17   -- Medic syringe uses/successes
+	WS_SMOKE,           // 18
+	WS_SATCHEL,         // 19
+	WS_GRENADELAUNCHER, // 20
+	WS_LANDMINE,        // 21
+	WS_MG42,            // 22
+	WS_BROWNING,        // 23
+	WS_GARAND,          // 24   -- carbine and garand
+	WS_K43,             // 25   -- kar98 and k43
 
 	WS_MAX
 } extWeaponStats_t;
@@ -1458,9 +1461,8 @@ typedef enum
 	MOD_SHOVE,
 
 	MOD_KNIFE_KABAR,
-
 	MOD_MOBILE_BROWNING,
-
+	MOD_MORTAR2,
 	MOD_BAZOOKA,
 
 	MOD_NUM_MODS

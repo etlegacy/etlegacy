@@ -60,6 +60,7 @@ qboolean G_WeaponIsExplosive(meansOfDeath_t mod)
 	case MOD_ARTY:
 	case MOD_AIRSTRIKE:
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 	case MOD_SATCHEL:
 	case MOD_DYNAMITE:
 	// map entity based explosions
@@ -89,6 +90,7 @@ int G_GetWeaponClassForMOD(meansOfDeath_t mod)
 	case MOD_ARTY:
 	case MOD_AIRSTRIKE:
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 	// map entity based explosions
 	case MOD_GRENADE:
 	case MOD_MAPMORTAR:
