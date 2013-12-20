@@ -516,29 +516,18 @@ typedef struct
 
 lagometer_t lagometer;
 
-/*
-==============
-CG_AddLagometerFrameInfo
-
-Adds the current interpolate / extrapolate bar for this frame
-==============
-*/
+/**
+ * @brief Adds the current interpolate / extrapolate bar for this frame.
+ */
 void CG_AddLagometerFrameInfo(void)
 {
 	lagometer.frameSamples[lagometer.frameCount & (LAG_SAMPLES - 1)] = cg.time - cg.latestSnapshotTime;
 	lagometer.frameCount++;
 }
 
-/*
-==============
-CG_AddLagometerSnapshotInfo
-
-Each time a snapshot is received, log its ping time and
-the number of snapshots that were dropped before it.
-
-Pass NULL for a dropped packet.
-==============
-*/
+/**
+ * @brief Each time a snapshot is received, log its ping time and the number of snapshots that were dropped before it.
+ */
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 {
 	// dropped packet
@@ -560,13 +549,10 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	lagometer.snapshotCount++;
 }
 
-/*
-==============
-CG_DrawDisconnect
-
-Should we draw something differnet for long lag vs no packets?
-==============
-*/
+/**
+ * @brief Draw blinking icon when disconnected
+ * @todo draw something differnet for long lag vs no packets
+ */
 static void CG_DrawDisconnect(void)
 {
 	float      x = Ccg_WideX(SCREEN_WIDTH) - 48; // disconnect icon
@@ -614,11 +600,10 @@ static void CG_DrawDisconnect(void)
 #define MAX_LAGOMETER_PING  900
 #define MAX_LAGOMETER_RANGE 300
 
-/*
-==============
-CG_DrawLagometer
-==============
-*/
+/**
+ * @brief Draw Lagometer.
+ * @todo Move to CG_DrawUpperRight?
+ */
 static void CG_DrawLagometer(void)
 {
 	int   a, x, y, i;
@@ -634,18 +619,18 @@ static void CG_DrawLagometer(void)
 	}
 
 	// draw the graph
-	x = Ccg_WideX(SCREEN_WIDTH) - 58;
+	x = Ccg_WideX(SCREEN_WIDTH - 6) - 52;
 	y = SCREEN_HEIGHT - 264;
 
 	trap_R_SetColor(NULL);
 	//CG_DrawPic(x, y, 53, 48, cgs.media.lagometerShader);
-	CG_FillRect(x, y, 55, 50, HUD_Background);
-	CG_DrawRect_FixedBorder(x, y, 55, 50, 1, HUD_Border);
+	CG_FillRect(x, y, 55, 55, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, 55, 55, 1, HUD_Border);
 
-	ax = x;
-	ay = y;
+	ax = x + 1;
+	ay = y + 1;
 	aw = 53;
-	ah = 48;
+	ah = 53;
 	CG_AdjustFrom640(&ax, &ay, &aw, &ah);
 
 	color = -1;
