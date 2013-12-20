@@ -1569,7 +1569,7 @@ STATE COMBAT
 			both prone_crawl_bk
 		}
 	}
-/* ETPro - FIXME: implement keyword 'NOT'	
+/* ETPro - FIXME: implement keyword 'NOT'
 	turnright
 	{
 		// - fixed movetype condition, so reenabled crouch

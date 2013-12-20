@@ -88,7 +88,7 @@
 		stand_pistolB		2577	22	22	7	0	0	0
 		firing_pistolB_1	2551	12	0	30	0	50	0
 		firing_pistolB_2	2563	13	0	30	0	50	0
-								
+
 		raise_rifle		2600	22	0	20	0	0	0
 		stand_rifle		2623	12	12	5	0	0	0
 		firing_rifle		2636	22	0	20	0	0	0
@@ -111,7 +111,7 @@
 		firing_knifeA		2959	10	10	30	0	0	0
 
 		drop			2975	5	0	20	0	0	0
-		
+
 		climb_up		2981	21	21	20	-1	0	0
 		climb_dis		3003	31	0	20	0	0	0
 		climb_start		3035	46	0	20	0	0	0
@@ -166,10 +166,10 @@
 		tunning_radio		4132	108	108	15	0	0	0
 		nazi_salute		4243	29	29	15	0	0	0
 
-		// BASE FRAME						
+		// BASE FRAME
 		base_frame		4274	1	0	15	0	0	0
 
-		//HEADFRAMES						
+		//HEADFRAMES
 		//head_neutral_mclosed
 		//head_neutral_ma
 		//head_neutral_mu
@@ -212,7 +212,7 @@
 		mortar_fire		4800	13	0	15	0	0	0
 		mortar_drop_dep		4813	5	0	15	0	0	0
 		mortar_raise_dep	4818	5	0	15	0	0	0
-		mortar_drop		4822	6	0	15	0	0	0	
+		mortar_drop		4822	6	0	15	0	0	0
 
 		// SATCHEL CHARGE REMOTE
 		satchel_remote_raise	4828	4	0	15	0	0	0
@@ -222,7 +222,7 @@
 		satchel_remote_drop	4836	4	0	15	0	0	0
 
 		// SELF INJECT 4870
-		self_inject		4848	16	0	15	0	0	0	
+		self_inject		4848	16	0	15	0	0	0
 
 		//PRONE
 		//
@@ -230,19 +230,19 @@
 		prone_crawl		4431	19	19	15	0	0	0
 		prone_crawl_bk		4431	19	19	15	0	0	1
 
-		//Prone Pistol	
+		//Prone Pistol
 		prone_pistol_switch	4450	6	0	15	0	0	0
 		prone_pistol_fire 	4462	3	0	12	0	0	0
 		prone_pistol_reload	4467	49	0	25	0	0	0
 		Prone_Pistol_idle	4459	1	0	20	0	0	0
 
-		//Prone Rifle 
+		//Prone Rifle
 		prone_rifle_switch	4517	12	0	15	0	0	0
 		prone_rifle_fire	4529	4	0	18	0	0	0
 		prone_rifle_reload	4532	40	0	18	0	0	0
 		prone_rifle_idle	4528	1	0	20	0	0	0
 		prone_rifle_sswitch	4704	6	0	18	0	0	0
-		prone_rifle_sidle	4705	1	0	20	0	0	0	
+		prone_rifle_sidle	4705	1	0	20	0	0	0
 		prone_rifle_sfire	4710	3	0	18	0	0	0
 
 		//Prone Machine Gun
@@ -278,6 +278,6 @@
 
 		//Prone Death
 		prone_die1		4573    10	0	20	0	0	0
-		
+
 		//Prone Legs
 		prone_legs		4594	1	0	20	0	0	0
