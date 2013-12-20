@@ -1916,6 +1916,232 @@ static float CG_DrawLocalTime(float y)
 	return y + 12 + 4;
 }
 
+/*
+===============================================================================
+LAGOMETER
+===============================================================================
+*/
+
+#define LAG_SAMPLES     128
+#define MAX_LAGOMETER_PING  900
+#define MAX_LAGOMETER_RANGE 300
+
+typedef struct
+{
+	int frameSamples[LAG_SAMPLES];
+	int frameCount;
+	int snapshotFlags[LAG_SAMPLES];
+	int snapshotSamples[LAG_SAMPLES];
+	int snapshotCount;
+} lagometer_t;
+
+lagometer_t lagometer;
+
+/**
+ * @brief Adds the current interpolate / extrapolate bar for this frame
+ */
+void CG_AddLagometerFrameInfo(void)
+{
+	lagometer.frameSamples[lagometer.frameCount & (LAG_SAMPLES - 1)] = cg.time - cg.latestSnapshotTime;
+	lagometer.frameCount++;
+}
+
+/**
+ * @brief Log the ping time and number of dropped snapshots before it each time a snapshot is received
+ */
+void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
+{
+	// dropped packet
+	if (!snap)
+	{
+		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = -1;
+		lagometer.snapshotCount++;
+		return;
+	}
+
+	if (cg.demoPlayback)
+	{
+		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
+	}
+
+	// add this snapshot's info
+	lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
+	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)]   = snap->snapFlags;
+	lagometer.snapshotCount++;
+}
+
+/**
+ * @brief Draw disconnect icon for long lag
+ */
+static float CG_DrawDisconnect(float y)
+{
+	int        cmdNum, w, x;
+	usercmd_t  cmd;
+	const char *s;
+
+	// use same dimension as timer
+	w = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
+	x = Ccg_WideX(UPPERRIGHT_X) - ((UPPERRIGHT_W > w) ? UPPERRIGHT_W : w) - 2;
+
+	// draw the phone jack if we are completely past our buffers
+	cmdNum = trap_GetCurrentCmdNumber() - CMD_BACKUP + 1;
+	trap_GetUserCmd(cmdNum, &cmd);
+	if (cmd.serverTime <= cg.snap->ps.commandTime
+	    || cmd.serverTime > cg.time)        // special check for map_restart
+	{
+		return y + w + 13;
+	}
+
+	// also add text in center of screen
+	s = CG_TranslateString("Connection Interrupted");
+	w = CG_Text_Width_Ext(s, cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+	// blink the icon
+	if ((cg.time >> 9) & 1)
+	{
+		return y + w + 13;
+	}
+
+	CG_DrawPic(x, y, w, w, cgs.media.disconnectIcon);
+	return y + w + 13;
+}
+
+/**
+ * @brief Draw the lagometer
+ */
+static float CG_DrawLagometer(float y)
+{
+	int   a, w, w2, x, i;
+	float v;
+	float ax, ay, aw, ah, mid, range;
+	int   color;
+	float vscale;
+
+	// use same dimension as timer
+	w  = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+	x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+
+	// draw the graph
+	trap_R_SetColor(NULL);
+	CG_FillRect(x, y, w2 + 5, w2 + 5, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, w2 + 5, 1, HUD_Border);
+
+	ax = x + 1;
+	ay = y + 1;
+	aw = w2 + 3;
+	ah = w2 + 3;
+	CG_AdjustFrom640(&ax, &ay, &aw, &ah);
+
+	color = -1;
+	range = ah / 3;
+	mid   = ay + range;
+
+	vscale = range / MAX_LAGOMETER_RANGE;
+
+	// draw the frame interpoalte / extrapolate graph
+	for (a = 0 ; a < aw ; a++)
+	{
+		i  = (lagometer.frameCount - 1 - a) & (LAG_SAMPLES - 1);
+		v  = lagometer.frameSamples[i];
+		v *= vscale;
+		if (v > 0)
+		{
+			if (color != 1)
+			{
+				color = 1;
+				trap_R_SetColor(colorYellow);
+			}
+			if (v > range)
+			{
+				v = range;
+			}
+			trap_R_DrawStretchPic(ax + aw - a, mid - v, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+		else if (v < 0)
+		{
+			if (color != 2)
+			{
+				color = 2;
+				trap_R_SetColor(colorBlue);
+			}
+			v = -v;
+			if (v > range)
+			{
+				v = range;
+			}
+			trap_R_DrawStretchPic(ax + aw - a, mid, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+	}
+
+	// draw the snapshot latency / drop graph
+	range  = ah / 2;
+	vscale = range / MAX_LAGOMETER_PING;
+
+	for (a = 0 ; a < aw ; a++)
+	{
+		i = (lagometer.snapshotCount - 1 - a) & (LAG_SAMPLES - 1);
+		v = lagometer.snapshotSamples[i];
+		if (v > 0)
+		{
+			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)
+			{
+				if (color != 5)
+				{
+					color = 5;  // YELLOW for rate delay
+					trap_R_SetColor(colorYellow);
+				}
+			}
+			else
+			{
+				if (color != 3)
+				{
+					color = 3;
+					trap_R_SetColor(colorGreen);
+				}
+			}
+			v = v * vscale;
+			if (v > range)
+			{
+				v = range;
+			}
+			trap_R_DrawStretchPic(ax + aw - a, ay + ah - v, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+		else if (v < 0)
+		{
+			if (color != 4)
+			{
+				color = 4;      // RED for dropped snapshots
+				trap_R_SetColor(colorRed);
+			}
+			trap_R_DrawStretchPic(ax + aw - a, ay + ah - range, 1, range, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+	}
+
+	trap_R_SetColor(NULL);
+
+	if (cg_nopredict.integer
+#ifdef ALLOW_GSYNC
+	    || cg_synchronousClients.integer
+#endif // ALLOW_GSYNC
+	    )
+	{
+		CG_Text_Paint_Ext(ax, ay, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	}
+
+	// don't draw if a demo and we're running at a different timescale, or if the server is respawning
+	if ((cg.demoPlayback && cg_timescale.value == 1.0f) || !cg.serverRespawning)
+	{
+		CG_DrawDisconnect(y);
+	}
+
+	return y + w + 13;
+}
+
+/**
+ * @brief Draw the player status
+ */
 static void CG_DrawPlayerStatus(void)
 {
 	if (activehud->weaponicon.visible)
@@ -1973,6 +2199,9 @@ static void CG_DrawPlayerStatus(void)
 	}
 }
 
+/**
+ * @brief Draw the player stats
+ */
 static void CG_DrawPlayerStats(void)
 {
 	if (activehud->healthtext.visible)
@@ -2235,5 +2464,10 @@ void CG_DrawUpperRight(void)
 	if ((cg_drawTime.integer & LOCALTIME_ON) && (!cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
 	{
 		y = CG_DrawLocalTime(y);
+	}
+
+	if (cg_lagometer.integer && !cg.cameraMode && !cg.serverRespawning)
+	{
+		y = CG_DrawLagometer(y);
 	}
 }
