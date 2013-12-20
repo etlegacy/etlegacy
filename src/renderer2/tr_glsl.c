@@ -1581,6 +1581,11 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 	qglUniformMatrix4fvARB(uniforms[uniformNum], 1, GL_FALSE, matrix);
 }
 
+void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray,int arraysize)
+{
+
+}
+
 void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray,int arraysize)
 {
 
@@ -1861,6 +1866,12 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 {
 	//FIXME: implement this
 	//set the tr.selectedProgram
+}
+
+void GLSL_SetRequiredVertexPointers(programInfo_t *programlist)
+{
+	//FIXME: implement this
+	//see void GLShader::SetRequiredVertexPointers() in gl_shader.cpp
 }
 
 void GLSL_DeleteGPUShader(shaderProgram_t *program)

@@ -1396,6 +1396,67 @@ void ColorModulate(int colorGen, int alphaGen, vec4_t *out)
 	}
 }
 
+#ifdef RENDERER2C
+void DeformParms(deformStage_t deforms[], int numDeforms)
+{
+	float deformParms[MAX_SHADER_DEFORM_PARMS];
+	int   deformOfs = 0,i;
+
+	if (numDeforms > MAX_SHADER_DEFORMS)
+	{
+		numDeforms = MAX_SHADER_DEFORMS;
+	}
+
+	deformParms[deformOfs++] = numDeforms;
+
+	for (i = 0; i < numDeforms; i++)
+	{
+		deformStage_t *ds = &deforms[i];
+
+		switch (ds->deformation)
+		{
+		case DEFORM_WAVE:
+			deformParms[deformOfs++] = DEFORM_WAVE;
+
+			deformParms[deformOfs++] = ds->deformationWave.func;
+			deformParms[deformOfs++] = ds->deformationWave.base;
+			deformParms[deformOfs++] = ds->deformationWave.amplitude;
+			deformParms[deformOfs++] = ds->deformationWave.phase;
+			deformParms[deformOfs++] = ds->deformationWave.frequency;
+
+			deformParms[deformOfs++] = ds->deformationSpread;
+			break;
+
+		case DEFORM_BULGE:
+			deformParms[deformOfs++] = DEFORM_BULGE;
+
+			deformParms[deformOfs++] = ds->bulgeWidth;
+			deformParms[deformOfs++] = ds->bulgeHeight;
+			deformParms[deformOfs++] = ds->bulgeSpeed;
+			break;
+
+		case DEFORM_MOVE:
+			deformParms[deformOfs++] = DEFORM_MOVE;
+
+			deformParms[deformOfs++] = ds->deformationWave.func;
+			deformParms[deformOfs++] = ds->deformationWave.base;
+			deformParms[deformOfs++] = ds->deformationWave.amplitude;
+			deformParms[deformOfs++] = ds->deformationWave.phase;
+			deformParms[deformOfs++] = ds->deformationWave.frequency;
+
+			deformParms[deformOfs++] = ds->bulgeWidth;
+			deformParms[deformOfs++] = ds->bulgeHeight;
+			deformParms[deformOfs++] = ds->bulgeSpeed;
+			break;
+
+		default:
+			break;
+		}
+		GLSL_SetUniformFloatARR(tr.selectedProgram,UNIFORM_DEFORMPARAMS,deformParms,MAX_SHADER_DEFORM_PARMS);
+	}
+}
+#endif
+
 /*
 =============
 Q_strreplace

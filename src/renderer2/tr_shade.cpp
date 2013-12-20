@@ -187,6 +187,7 @@ static void DrawTris()
 {
 	GLimp_LogComment("--- DrawTris ---\n");
 
+#ifndef RENDERER2C
 	gl_genericShader->DisableAlphaTesting();
 	gl_genericShader->SetPortalClipping(backEnd.viewParms.isPortal);
 
@@ -199,26 +200,55 @@ static void DrawTris()
 
 	gl_genericShader->BindProgram();
 	gl_genericShader->SetRequiredVertexPointers();
+#else
+	GLSL_SetMacroState(tr.gl_genericShader,USE_ALPHA_TESTING,qfalse);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_SKINNING,glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_ANIMATION,glState.vertexAttribsInterpolation > 0);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_LIGHTMAP,qfalse);
+
+	GLSL_SelectPermutation(tr.gl_genericShader);
+	GLSL_SetRequiredVertexPointers(tr.gl_genericShader);
+#endif
 
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 
 	if (r_showBatches->integer || r_showLightBatches->integer)
 	{
+#ifndef RENDERER2C
 		gl_genericShader->SetUniform_Color(g_color_table[backEnd.pc.c_batches % 8]);
+#else
+		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,g_color_table[backEnd.pc.c_batches % 8]);
+#endif
 	}
 	else if (glState.currentVBO == tess.vbo)
 	{
+#ifndef RENDERER2C
 		gl_genericShader->SetUniform_Color(colorRed);
+#else
+		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorRed);
+#endif
 	}
 	else if (glState.currentVBO)
 	{
+#ifndef RENDERER2C
 		gl_genericShader->SetUniform_Color(colorBlue);
+#else
+		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlue);
+#endif
 	}
 	else
 	{
+#ifndef RENDERER2C
 		gl_genericShader->SetUniform_Color(colorWhite);
+#else
+		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorWhite);
+#endif
 	}
 
+#ifndef RENDERER2C
 	gl_genericShader->SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
 
 	gl_genericShader->SetUniform_ModelMatrix(backEnd.orientation.transformMatrix);
@@ -235,11 +265,39 @@ static void DrawTris()
 		gl_genericShader->SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
 		gl_genericShader->SetUniform_Time(backEnd.refdef.floatTime);
 	}
+#else
+	{
+		vec4_t temp;
+		ColorModulate(CGEN_CONST, AGEN_CONST,&temp);
+		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
+	}
+
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	{
+		GLSL_SetUniformMatrix16ARR(tr.selectedProgram,UNIFORM_BONEMATRIX,tess.boneMatrices,MAX_BONES);
+	}
+
+	// u_DeformGen
+	if (tess.surfaceShader->numDeforms)
+	{
+		//gl_genericShader->SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+		//GLSL_SetUniform
+		DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+		GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_TIME,backEnd.refdef.floatTime);
+	}
+#endif
 
 	// bind u_ColorMap
 	GL_SelectTexture(0);
 	GL_Bind(tr.whiteImage);
+
+#ifndef RENDERER2C
 	gl_genericShader->SetUniform_ColorTextureMatrix(tess.svars.texMatrices[TB_COLORMAP]);
+#else
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_COLORTEXTUREMATRIX,tess.svars.texMatrices[TB_COLORMAP]);
+#endif
 
 	glDepthRange(0, 0);
 
