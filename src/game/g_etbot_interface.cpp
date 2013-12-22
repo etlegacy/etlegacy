@@ -880,7 +880,7 @@ int Bot_WeaponGameToBot(int weapon)
 	case WP_KNIFE_KABAR:
 		return ET_WP_KNIFE;
 	case WP_BAZOOKA:
-		return ET_WP_PANZERFAUST;
+		return 96;
 #endif // LEGACY
 	default:
 		return ET_WP_NONE;
