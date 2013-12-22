@@ -470,7 +470,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	trap_LinkEntity(ent);
 
 	// Let the person being revived know about it
-	trap_SendServerCommand(traceEnt - g_entities, va("cp \"You have been revived by [lof]%s[lon] [lof]%s!\n\"", ent->client->sess.sessionTeam == TEAM_ALLIES ? rankNames_Allies[ent->client->sess.rank] : rankNames_Axis[ent->client->sess.rank], ent->client->pers.netname));
+	trap_SendServerCommand(traceEnt - g_entities, va("cp \"You have been revived by [lof]%s[lon] [lof]%s!\"", ent->client->sess.sessionTeam == TEAM_ALLIES ? rankNames_Allies[ent->client->sess.rank] : rankNames_Axis[ent->client->sess.rank], ent->client->pers.netname));
 	traceEnt->props_frame_state = ent->s.number;
 
 	// Mark that the medicine was indeed dispensed
@@ -1683,7 +1683,7 @@ void Weapon_Engineer(gentity_t *ent)
 			traceEnt->takedamage = qtrue;
 			traceEnt->s.eFlags  &= ~EF_SMOKING;
 
-			trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG!\n\"");
+			trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG!\"");
 			G_AddEvent(ent, EV_MG42_FIXED, 0);
 		}
 		else

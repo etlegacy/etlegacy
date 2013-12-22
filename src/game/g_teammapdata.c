@@ -1240,7 +1240,7 @@ void G_UpdateTeamMapData(void)
                                                         }
                                                     }*/
 
-													trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
+													trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
 
 													AddScore(ent, 1);
 

@@ -1977,7 +1977,7 @@ qboolean ConsoleCommand(void)
 
 	if (!Q_stricmp(cmd, "cp"))
 	{
-		trap_SendServerCommand(-1, va("cp \"%s\n\"", Q_AddCR(ConcatArgs(1))));
+		trap_SendServerCommand(-1, va("cp \"%s\"", Q_AddCR(ConcatArgs(1))));
 		return qtrue;
 	}
 

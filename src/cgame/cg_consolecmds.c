@@ -1289,7 +1289,7 @@ void CG_Class_f(void)
 
 	// Print out the selected class and weapon info
 	wt = WM_FindWeaponTypeForWeapon(classinfo->classWeapons[weapon1 - 1]);
-	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, cg_fontScaleCP.value, -1);
+	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), 400, cg_fontScaleCP.value, -1);
 	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 }

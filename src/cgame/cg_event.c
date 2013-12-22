@@ -267,7 +267,7 @@ static void CG_Obituary(entityState_t *ent)
 			s = va("%s %s", CG_TranslateString("You killed"), targetName);
 		}
 		// print the text message as well
-		CG_PriorityCenterPrint(s, SCREEN_HEIGHT * 0.75, cg_fontScaleCP.value, 1);
+		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
 	}
 
 	// check for double client messages

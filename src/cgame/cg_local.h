@@ -3069,7 +3069,7 @@ const char *CG_BuildSelectedFirteamString(void);
 int CG_WeaponIconScale(int weap); // FIXME: weapon table
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
-#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value)
+#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), 400, cg_fontScaleCP.value)
 
 #ifdef FEATURE_MULTIVIEW
 // cg_multiview.c

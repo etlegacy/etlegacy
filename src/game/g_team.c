@@ -1075,13 +1075,13 @@ void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		{
 			time = ent->health / 2;
 			time++;
-			trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\n\"", time));
+			trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\"", time));
 		}
 		else
 		{
 			time = (10 - ent->health) / 2;
 			time++;
-			trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\n\"", time));
+			trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\"", time));
 		}
 		return;
 	}
@@ -1097,7 +1097,7 @@ void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 		time = ent->health / 2;
 		time++;
-		trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\n\"", time));
+		trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\"", time));
 	}
 	else
 	{
@@ -1110,7 +1110,7 @@ void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 		time = (10 - ent->health) / 2;
 		time++;
-		trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\n\"", time));
+		trap_SendServerCommand(activator - g_entities, va("cp \"Flag will be held in %i seconds!\"", time));
 	}
 
 	ent->count2    = level.time;

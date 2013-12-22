@@ -995,7 +995,7 @@ void Cmd_Kill_f(gentity_t *ent)
 			return;
 		}
 #endif
-		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\n\"");
+		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\"");
 
 		return;
 	}
@@ -1087,7 +1087,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 
 		if (g_noTeamSwitching.integer && (team != ent->client->sess.sessionTeam && ent->client->sess.sessionTeam != TEAM_SPECTATOR) && g_gamestate.integer == GS_PLAYING && !force)
 		{
-			trap_SendServerCommand(clientNum, "cp \"You cannot switch during a match, please wait until the round ends.\n\"");
+			trap_SendServerCommand(clientNum, "cp \"You cannot switch during a match, please wait until the round ends.\"");
 			return qfalse;  // ignore the request
 		}
 

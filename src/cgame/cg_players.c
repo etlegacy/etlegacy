@@ -359,7 +359,7 @@ void CG_NewClientInfo(int clientNum)
 
 				CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), skillNames[i], newInfo.skill[i]), cgs.media.skillPics[i]);
 
-				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value, 99999);
+				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
 			}
 		}
 
