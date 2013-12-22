@@ -2033,6 +2033,146 @@ void GLSL_BindNullProgram(void)
 		glState.currentProgram = NULL;
 	}
 }
+
+void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
+{
+	float deformParms[MAX_SHADER_DEFORM_PARMS];
+	int   deformOfs = 0,i;
+
+	if (numDeforms > MAX_SHADER_DEFORMS)
+	{
+		numDeforms = MAX_SHADER_DEFORMS;
+	}
+
+	deformParms[deformOfs++] = numDeforms;
+
+	for (i = 0; i < numDeforms; i++)
+	{
+		deformStage_t *ds = &deforms[i];
+
+		switch (ds->deformation)
+		{
+		case DEFORM_WAVE:
+			deformParms[deformOfs++] = DEFORM_WAVE;
+
+			deformParms[deformOfs++] = ds->deformationWave.func;
+			deformParms[deformOfs++] = ds->deformationWave.base;
+			deformParms[deformOfs++] = ds->deformationWave.amplitude;
+			deformParms[deformOfs++] = ds->deformationWave.phase;
+			deformParms[deformOfs++] = ds->deformationWave.frequency;
+
+			deformParms[deformOfs++] = ds->deformationSpread;
+			break;
+
+		case DEFORM_BULGE:
+			deformParms[deformOfs++] = DEFORM_BULGE;
+
+			deformParms[deformOfs++] = ds->bulgeWidth;
+			deformParms[deformOfs++] = ds->bulgeHeight;
+			deformParms[deformOfs++] = ds->bulgeSpeed;
+			break;
+
+		case DEFORM_MOVE:
+			deformParms[deformOfs++] = DEFORM_MOVE;
+
+			deformParms[deformOfs++] = ds->deformationWave.func;
+			deformParms[deformOfs++] = ds->deformationWave.base;
+			deformParms[deformOfs++] = ds->deformationWave.amplitude;
+			deformParms[deformOfs++] = ds->deformationWave.phase;
+			deformParms[deformOfs++] = ds->deformationWave.frequency;
+
+			deformParms[deformOfs++] = ds->bulgeWidth;
+			deformParms[deformOfs++] = ds->bulgeHeight;
+			deformParms[deformOfs++] = ds->bulgeSpeed;
+			break;
+
+		default:
+			break;
+		}
+		GLSL_SetUniformFloatARR(tr.selectedProgram,UNIFORM_DEFORMPARAMS,deformParms,MAX_SHADER_DEFORM_PARMS);
+	}
+}
+
+void GLSL_SetUniform_ColorModulate(int colorGen, int alphaGen)
+{
+	vec4_t temp;
+	switch (colorGen)
+	{
+	case CGEN_VERTEX:
+		VectorSet(temp, 1, 1, 1);
+		break;
+
+	case CGEN_ONE_MINUS_VERTEX:
+		VectorSet(temp, -1, -1, -1);
+		break;
+
+	default:
+		VectorSet(temp, 0, 0, 0);
+		break;
+	}
+
+	switch (alphaGen)
+	{
+	case AGEN_VERTEX:
+		temp[3] = 1.0f;
+		break;
+
+	case AGEN_ONE_MINUS_VERTEX:
+		temp[3] = -1.0f;
+		break;
+
+	default:
+		temp[3] = 0.0f;
+		break;
+	}
+
+	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
+}
+
+void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
+{
+	alphaTest_t value;
+
+	switch (stateBits & GLS_ATEST_BITS)
+	{
+	case GLS_ATEST_GT_0:
+		value = ATEST_GT_0;
+		break;
+
+	case GLS_ATEST_LT_128:
+		value = ATEST_LT_128;
+		break;
+
+	case GLS_ATEST_GE_128:
+		value = ATEST_GE_128;
+		break;
+
+	default:
+		value = ATEST_NONE;
+		break;
+	}
+
+#if defined(LOG_GLSL_UNIFORMS)
+	if (r_logFile->integer)
+	{
+		// don't just call LogComment, or we will get
+		// a call to va() every frame!
+		GLimp_LogComment(va("--- GLSL_SetUniformAlphaTest( program = %s, value = %i ) ---\n", program->name, value));
+	}
+#endif
+
+#if defined(USE_UNIFORM_FIREWALL)
+	if (program->t_AlphaTest == value)
+	{
+		return;
+	}
+
+	program->t_AlphaTest = value;
+#endif
+	
+	GLSL_SetUniformInt(tr.selectedProgram,UNIFORM_ALPHATEST,value);
+}
+
 #endif // RENDERER2C
 
 void GLSL_VertexAttribsState(uint32_t stateBits)

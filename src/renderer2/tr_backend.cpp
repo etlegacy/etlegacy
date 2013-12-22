@@ -2420,12 +2420,8 @@ static void RB_RenderInteractionsShadowMapped()
 								GLSL_SetMacroState(tr.gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
 								GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
 								GLSL_SelectPermutation(tr.gl_genericShader);
-								{
-									vec4_t temp;
-									ColorModulate(CGEN_VERTEX,AGEN_VERTEX,&temp);
-									GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-									GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
-								}
+								GLSL_SetUniform_ColorModulate(CGEN_VERTEX,AGEN_VERTEX);
+								GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 								GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 								GL_Cull(CT_TWO_SIDED);
@@ -2497,12 +2493,8 @@ static void RB_RenderInteractionsShadowMapped()
 									gl_genericShader->SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 									gl_genericShader->SetUniform_Color(colorYellow);
 #else
-									{
-										vec4_t temp;
-										ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM,&temp);
-										GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-										GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorYellow);
-									}
+									GLSL_SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+									GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorYellow);
 #endif
 
 									R_BindVBO(light->frustumVBO);
@@ -5595,11 +5587,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 							GLSL_SelectPermutation(tr.gl_genericShader);
 
-							{
-								vec4_t temp;
-								ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-								GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-							}
+							GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 
 							GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 							GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWMATRIX,light->shadowMatrices[frustumIndex]);
@@ -5701,11 +5689,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								gl_genericShader->SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 								gl_genericShader->SetUniform_Color(colorYellow);
 #else
-								{
-									vec4_t temp;
-									ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM,&temp);
-									GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-								}
+								GLSL_SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 								GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorYellow);
 #endif
 
@@ -7536,12 +7520,7 @@ void RB_RenderLightOcclusionQueries()
 		gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		gl_genericShader->SetUniform_Color(colorBlack);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
-
+		GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 
@@ -8155,11 +8134,7 @@ void RB_RenderEntityOcclusionQueries()
 		gl_genericShader->SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
 		gl_genericShader->SetUniform_Color(colorBlue);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_CONST, AGEN_CONST,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlue);
 #endif
 
@@ -8356,11 +8331,7 @@ void RB_RenderBspOcclusionQueries()
 		gl_genericShader->SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
 		gl_genericShader->SetUniform_Color(colorBlue);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_CONST, AGEN_CONST,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlue);
 #endif
 
@@ -8569,11 +8540,7 @@ static void RB_RenderDebugUtils()
 #ifndef RENDERER2C
 		gl_genericShader->SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 #endif
 
 		// bind u_ColorMap
@@ -8989,11 +8956,7 @@ static void RB_RenderDebugUtils()
 		gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		gl_genericShader->SetUniform_Color(colorBlack);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 
@@ -9200,11 +9163,7 @@ static void RB_RenderDebugUtils()
 		gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		gl_genericShader->SetUniform_Color(colorBlack);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 
@@ -9326,11 +9285,7 @@ static void RB_RenderDebugUtils()
 		gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		gl_genericShader->SetUniform_Color(colorBlack);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 
@@ -9571,11 +9526,7 @@ static void RB_RenderDebugUtils()
 #ifndef RENDERER2C
 		gl_genericShader->SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 #endif
 
 		// bind u_ColorMap
@@ -9770,11 +9721,7 @@ static void RB_RenderDebugUtils()
 
 			GLSL_SelectPermutation(tr.gl_genericShader);
 
-			{
-				vec4_t temp;
-				ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-				GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-			}
+			GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 
@@ -9877,11 +9824,7 @@ static void RB_RenderDebugUtils()
 
 		GLSL_SelectPermutation(tr.gl_genericShader);
 
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 
 		GLSL_SetRequiredVertexPointers(tr.gl_genericShader);
@@ -9992,11 +9935,7 @@ static void RB_RenderDebugUtils()
 
 		GLSL_SelectPermutation(tr.gl_genericShader);
 
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 #endif
 
 		// bind u_ColorMap
@@ -10114,11 +10053,7 @@ static void RB_RenderDebugUtils()
 					gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 					gl_genericShader->SetUniform_Color(colorBlack);
 #else
-					{
-						vec4_t temp;
-						ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-						GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-					}
+					GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 					GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 
@@ -10188,11 +10123,7 @@ static void RB_RenderDebugUtils()
 #ifndef RENDERER2C
 					gl_genericShader->SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 #else
-					{
-						vec4_t temp;
-						ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM,&temp);
-						GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-					}
+					GLSL_SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 #endif
 				}
 			} // i == 1
@@ -10446,11 +10377,7 @@ static void RB_RenderDebugUtils()
 		gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		gl_genericShader->SetUniform_Color(colorBlack);
 #else
-		{
-			vec4_t temp;
-			ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-		}
+		GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
 
@@ -11304,11 +11231,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 
 	GLSL_SelectPermutation(tr.gl_genericShader);
 
-	{
-		vec4_t temp;
-		ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-	}
+	GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 
 	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
@@ -11921,11 +11844,7 @@ void RB_ShowImages(void)
 	gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 	gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
 #else
-	{
-		vec4_t temp;
-		ColorModulate(CGEN_VERTEX, AGEN_VERTEX,&temp);
-		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-	}
+	GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_COLORTEXTUREMATRIX,matrixIdentity);
 #endif
 

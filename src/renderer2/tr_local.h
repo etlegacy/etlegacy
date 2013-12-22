@@ -4582,6 +4582,9 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled);
 void GLSL_SelectPermutation(programInfo_t *programlist);
 void GLSL_SetRequiredVertexPointers(programInfo_t *programlist);
+void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms);
+void GLSL_SetUniform_ColorModulate(int colorGen, int alphaGen);
+void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
 #endif
 
 #if defined(__cplusplus)

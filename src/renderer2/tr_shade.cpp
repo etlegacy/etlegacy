@@ -266,11 +266,7 @@ static void DrawTris()
 		gl_genericShader->SetUniform_Time(backEnd.refdef.floatTime);
 	}
 #else
-	{
-		vec4_t temp;
-		ColorModulate(CGEN_CONST, AGEN_CONST,&temp);
-		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
-	}
+	GLSL_SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
 
 	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
 	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
@@ -282,9 +278,7 @@ static void DrawTris()
 	// u_DeformGen
 	if (tess.surfaceShader->numDeforms)
 	{
-		//gl_genericShader->SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		//GLSL_SetUniform
-		DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
 		GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_TIME,backEnd.refdef.floatTime);
 	}
 #endif
@@ -414,6 +408,7 @@ static void Render_generic(int stage)
 	GL_State(pStage->stateBits);
 
 	// choose right shader program ----------------------------------
+#ifndef RENDERER2C
 	gl_genericShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS) != 0);
 	gl_genericShader->SetPortalClipping(backEnd.viewParms.isPortal);
 
@@ -425,6 +420,7 @@ static void Render_generic(int stage)
 	gl_genericShader->SetTCGenLightmap(pStage->tcGen_Lightmap);
 
 	gl_genericShader->BindProgram();
+
 	// end choose right shader program ------------------------------
 
 	// set uniforms
@@ -436,6 +432,30 @@ static void Render_generic(int stage)
 
 	// u_AlphaTest
 	gl_genericShader->SetUniform_AlphaTest(pStage->stateBits);
+#else
+	GLSL_SetMacroState(tr.gl_genericShader,USE_ALPHA_TESTING,(pStage->stateBits & GLS_ATEST_BITS) != 0);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_SKINNING,glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_ANIMATION,glState.vertexAttribsInterpolation > 0);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_DEFORM_VERTEXES,tess.surfaceShader->numDeforms);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_ENVIRONMENT,pStage->tcGen_Environment);
+	GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_LIGHTMAP,pStage->tcGen_Lightmap);
+
+	GLSL_SelectPermutation(tr.gl_genericShader);
+
+	// end choose right shader program ------------------------------
+
+	// set uniforms
+	if (pStage->tcGen_Environment)
+	{
+		// calculate the environment texcoords in object space
+		GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,backEnd.orientation.viewOrigin);
+	}
+
+	// u_AlphaTest
+	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+#endif
+	
 
 	// u_ColorGen
 	switch (pStage->rgbGen)
@@ -463,6 +483,7 @@ static void Render_generic(int stage)
 		break;
 	}
 
+#ifndef RENDERER2C
 	// u_ColorModulate
 	gl_genericShader->SetUniform_ColorModulate(rgbGen, alphaGen);
 
@@ -510,6 +531,50 @@ static void Render_generic(int stage)
 	gl_genericShader->SetUniform_ColorTextureMatrix(tess.svars.texMatrices[TB_COLORMAP]);
 
 	gl_genericShader->SetRequiredVertexPointers();
+#else
+	GLSL_SetUniform_ColorModulate(rgbGen, alphaGen);
+	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,tess.svars.color);
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+
+	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	{
+		GLSL_SetUniformMatrix16ARR(tr.selectedProgram,UNIFORM_BONEMATRIX,tess.boneMatrices,MAX_BONES);
+	}
+
+	// u_VertexInterpolation
+	if (glState.vertexAttribsInterpolation > 0)
+	{
+		GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_VERTEXINTERPOLATION,glState.vertexAttribsInterpolation);
+	}
+
+	// u_DeformGen
+	if (tess.surfaceShader->numDeforms)
+	{
+		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+		GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_TIME,backEnd.refdef.floatTime);
+	}
+
+	if (backEnd.viewParms.isPortal)
+	{
+		vec4_t plane;
+
+		// clipping plane in world space
+		plane[0] = backEnd.viewParms.portalPlane.normal[0];
+		plane[1] = backEnd.viewParms.portalPlane.normal[1];
+		plane[2] = backEnd.viewParms.portalPlane.normal[2];
+		plane[3] = backEnd.viewParms.portalPlane.dist;
+
+		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+	}
+
+	// bind u_ColorMap
+	GL_SelectTexture(0);
+	BindAnimatedImage(&pStage->bundle[TB_COLORMAP]);
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_COLORTEXTUREMATRIX,tess.svars.texMatrices[TB_COLORMAP]);
+
+	GLSL_SetRequiredVertexPointers(tr.gl_genericShader);
+#endif
 
 	Tess_DrawElements();
 
@@ -524,7 +589,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	vec4_t        lightColor;
 	uint32_t      stateBits;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
-
+#ifndef RENDERER2C
 	GLimp_LogComment("--- Render_vertexLighting_DBS_entity ---\n");
 
 	stateBits = pStage->stateBits;
@@ -554,12 +619,38 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	// end choose right shader program ------------------------------
 
 	// now we are ready to set the shader program uniforms
-
-
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
 		gl_vertexLightingShader_DBS_entity->SetUniform_BoneMatrix(MAX_BONES, tess.boneMatrices);
 	}
+#else
+	qboolean normalMapping;
+
+	GLimp_LogComment("--- Render_vertexLighting_DBS_entity ---\n");
+	stateBits = pStage->stateBits;
+	GL_State(stateBits);
+	if(r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	{
+		normalMapping = qtrue;
+	}
+
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_ALPHA_TESTING,(pStage->stateBits & GLS_ATEST_BITS) != 0);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_VERTEX_SKINNING,glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_VERTEX_ANIMATION,glState.vertexAttribsInterpolation > 0);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_DEFORM_VERTEXES,tess.surfaceShader->numDeforms);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_NORMAL_MAPPING,normalMapping);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_PARALLAX_MAPPING,normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_entity,USE_REFLECTIVE_SPECULAR,normalMapping && tr.cubeHashTable != NULL);
+
+	GLSL_SelectPermutation(tr.gl_vertexLightingShader_DBS_entity);
+
+	// now we are ready to set the shader program uniforms
+	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	{
+		GLSL_SetUniformMatrix16ARR(tr.selectedProgram,UNIFORM_BONEMATRIX,tess.boneMatrices,MAX_BONES);
+	}
+#endif
 
 	// set uniforms
 	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
@@ -572,6 +663,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
 
 	// u_AlphaTest
+#ifndef RENDERER2C
 	gl_vertexLightingShader_DBS_entity->SetUniform_AlphaTest(pStage->stateBits);
 
 	gl_vertexLightingShader_DBS_entity->SetUniform_AmbientColor(ambientColor);
@@ -602,24 +694,55 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		depthScale = RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value);
 		gl_vertexLightingShader_DBS_entity->SetUniform_DepthScale(depthScale);
 	}
+#else
+	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+	GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_AMBIENTCOLOR,ambientColor);
+	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_VIEWORIGIN,viewOrigin);
+	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_LIGHTDIR,lightDir);
+	GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,lightColor);
+
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+
+	if (glState.vertexAttribsInterpolation > 0)
+	{
+		GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_VERTEXINTERPOLATION,glState.vertexAttribsInterpolation);
+	}
+
+	if (r_parallaxMapping->integer && tess.surfaceShader->parallax)
+	{
+		float depthScale;
+
+		depthScale = RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value);
+		GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_DEPTHSCALE,depthScale);
+	}
+#endif
 
 	if (backEnd.viewParms.isPortal)
 	{
-		float plane[4];
+		vec4_t plane;
 
 		// clipping plane in world space
 		plane[0] = backEnd.viewParms.portalPlane.normal[0];
 		plane[1] = backEnd.viewParms.portalPlane.normal[1];
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
-
+#ifndef RENDERER2C
 		gl_vertexLightingShader_DBS_entity->SetUniform_PortalPlane(plane);
+#else
+		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+#endif
 	}
 
 	// bind u_DiffuseMap
 	GL_SelectTexture(0);
 	GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
+
+#ifndef RENDERER2C
 	gl_vertexLightingShader_DBS_entity->SetUniform_DiffuseTextureMatrix(tess.svars.texMatrices[TB_DIFFUSEMAP]);
+#else
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_DIFFUSETEXTUREMATRIX,tess.svars.texMatrices[TB_DIFFUSEMAP]);
+#endif
 
 	if (normalMapping)
 	{
@@ -633,7 +756,12 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		{
 			GL_Bind(tr.flatImage);
 		}
+
+#ifndef RENDERER2C
 		gl_vertexLightingShader_DBS_entity->SetUniform_NormalTextureMatrix(tess.svars.texMatrices[TB_NORMALMAP]);
+#else
+		GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_NORMALTEXTUREMATRIX,tess.svars.texMatrices[TB_NORMALMAP]);
+#endif
 
 		// bind u_SpecularMap
 		GL_SelectTexture(2);
@@ -645,7 +773,12 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		{
 			GL_Bind(tr.blackImage);
 		}
+
+#ifndef RENDERER2C
 		gl_vertexLightingShader_DBS_entity->SetUniform_SpecularTextureMatrix(tess.svars.texMatrices[TB_SPECULARMAP]);
+#else
+		GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_SPECULARTEXTUREMATRIX,tess.svars.texMatrices[TB_SPECULARMAP]);
+#endif
 
 		//if(r_reflectionMapping->integer)
 		{
@@ -684,7 +817,11 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				GL_Bind(cubeProbeSecondNearest->cubemap);
 
 				// u_EnvironmentInterpolation
+#ifndef RENDERER2C
 				gl_vertexLightingShader_DBS_entity->SetUniform_EnvironmentInterpolation(0.0);
+#else
+				GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_ENVIRONMENTINTERPOLATION,0.0);
+#endif
 			}
 			else if (cubeProbeSecondNearest == NULL)
 			{
@@ -699,7 +836,11 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				//GL_Bind(cubeProbeNearest->cubemap);
 
 				// u_EnvironmentInterpolation
+#ifndef RENDERER2C
 				gl_vertexLightingShader_DBS_entity->SetUniform_EnvironmentInterpolation(0.0);
+#else
+				GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_ENVIRONMENTINTERPOLATION,0.0);
+#endif
 			}
 			else
 			{
@@ -734,12 +875,19 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				GL_Bind(cubeProbeSecondNearest->cubemap);
 
 				// u_EnvironmentInterpolation
+#ifndef RENDERER2C
 				gl_vertexLightingShader_DBS_entity->SetUniform_EnvironmentInterpolation(interpolate);
+#else
+				GLSL_SetUniformFloat(tr.selectedProgram,UNIFORM_ENVIRONMENTINTERPOLATION,interpolate);
+#endif
 			}
 		}
 	}
-
+#ifndef RENDERER2C
 	gl_vertexLightingShader_DBS_entity->SetRequiredVertexPointers();
+#else
+	GLSL_SetRequiredVertexPointers(tr.gl_vertexLightingShader_DBS_entity);
+#endif
 
 	Tess_DrawElements();
 
@@ -754,6 +902,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	alphaGen_t    alphaGen;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
+#ifndef RENDERER2C
 	GLimp_LogComment("--- Render_vertexLighting_DBS_world ---\n");
 
 	stateBits = pStage->stateBits;
@@ -774,6 +923,25 @@ static void Render_vertexLighting_DBS_world(int stage)
 	gl_vertexLightingShader_DBS_world->BindProgram();
 
 	// end choose right shader program ------------------------------
+#else
+	qboolean normalMapping = qfalse;
+	GLimp_LogComment("--- Render_vertexLighting_DBS_world ---\n");
+
+	stateBits = pStage->stateBits;
+
+	if(r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	{
+		normalMapping = qtrue;
+	}
+
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_world,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_world,USE_ALPHA_TESTING,(pStage->stateBits & GLS_ATEST_BITS) != 0);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_world,USE_DEFORM_VERTEXES,tess.surfaceShader->numDeforms);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_world,USE_NORMAL_MAPPING,normalMapping);
+	GLSL_SetMacroState(tr.gl_vertexLightingShader_DBS_world,USE_PARALLAX_MAPPING,normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+
+	GLSL_SelectPermutation(tr.gl_vertexLightingShader_DBS_world);
+#endif
 
 	// now we are ready to set the shader program uniforms
 
