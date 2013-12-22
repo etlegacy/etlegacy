@@ -429,6 +429,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 		break;
 
 	case MOD_MOBILE_MG42:
+	case MOD_MOBILE_BROWNING:
 	case MOD_MACHINEGUN:
 	case MOD_BROWNING:
 	case MOD_MG42:
@@ -509,8 +510,9 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 
 	// heavy weapons
 	case MOD_MOBILE_MG42:
+	case MOD_MOBILE_BROWNING:
 		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "mobile mg42 kill");
+		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "mobile machinegun kill");
 		break;
 
 	// scoped weapons
