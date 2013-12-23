@@ -485,6 +485,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 	switch (mEnt->type)
 	{
+	case ME_PLAYER_OBJECTIVE:
 	case ME_PLAYER_DISGUISED:
 	case ME_PLAYER_REVIVE:
 	case ME_PLAYER:
@@ -516,6 +517,11 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		cent = &cg_entities[mEnt->data];
 
 		if (mEnt->type == ME_PLAYER_DISGUISED && !(cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
+		{
+			return;
+		}
+
+		if (mEnt->type == ME_PLAYER_OBJECTIVE && !(cent->currentState.powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG))))
 		{
 			return;
 		}
@@ -686,8 +692,14 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			c_clr[3] = 1.0f;
 
 			trap_R_SetColor(c_clr);
-			CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], classInfo->icon);
-
+			if (mEnt->type == ME_PLAYER_OBJECTIVE)
+			{
+				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.objectiveShader);
+			}
+			else
+			{
+				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], classInfo->icon);
+			}
 			CG_DrawRotatedPic(icon_pos[0] - 1, icon_pos[1] - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow, (0.5 - (mEnt->yaw - 180.f) / 360.f));
 			trap_R_SetColor(NULL);
 		}
@@ -1026,6 +1038,32 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 	}
 }
 
+qboolean CG_ObjectiveMapCheck(mapEntityData_t *mEnt)
+{
+	if (mEnt->data < 0 || mEnt->data >= 64)
+	{
+		return qfalse;
+	}
+
+	if (!cgs.clientinfo[mEnt->data].infoValid)
+	{
+		return qfalse;
+	}
+
+
+	if (!(cg_entities[mEnt->data].currentState.powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG))))
+	{
+		return qfalse;
+	}
+
+	if (VectorDistance(cg.snap->ps.origin, cg_entities[mEnt->data].lerpOrigin) < 512)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
 {
 	if (mEnt->data < 0 || mEnt->data >= 64)
@@ -1154,6 +1192,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 		if (mEnt->type == ME_PLAYER ||
 		    mEnt->type == ME_PLAYER_DISGUISED ||
+		    mEnt->type == ME_PLAYER_OBJECTIVE ||
 		    mEnt->type == ME_PLAYER_REVIVE)
 		{
 			goto CG_DrawMap_check;
@@ -1161,13 +1200,14 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		goto CG_DrawMap_draw;
 
 CG_DrawMap_check:
-		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
+		if ((mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt)) || !CG_ObjectiveMapCheck(mEnt))
 		{
 			continue;
 		}
 
 		if (mEnt->type != ME_PLAYER &&
 		    mEnt->type != ME_PLAYER_DISGUISED &&
+		    mEnt->type != ME_PLAYER_OBJECTIVE &&
 		    mEnt->type != ME_PLAYER_REVIVE)
 		{
 			continue;
@@ -1230,13 +1270,19 @@ CG_DrawMap_draw:
 		}
 		else
 		{
-			//PLAYER ICON
-
 			// FIXME: make a severside change so it also sends player compass info
 			// when spectating and remove this hack.
-
 			classInfo = CG_PlayerClassForClientinfo(&cgs.clientinfo[snap->ps.clientNum], &cg_entities[snap->ps.clientNum]);
-			CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], classInfo->icon);
+
+			if (snap->ps.powerups[PW_REDFLAG] || snap->ps.powerups[PW_BLUEFLAG])
+			{
+				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.objectiveShader);
+			}
+			else
+			{
+				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], classInfo->icon);
+			}
+
 			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f) - 1, pos[1] - (size[1] * 0.5f) - 1, size[0] + 2, size[1] + 2, classInfo->arrow, (0.5 - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 	}
