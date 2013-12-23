@@ -2479,7 +2479,6 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t origin2, int ptime, int snum);
 void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent);
 void CG_OilSlickRemove(centity_t *cent);
-void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir);
 void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir);
 
 // cg_trails.c
