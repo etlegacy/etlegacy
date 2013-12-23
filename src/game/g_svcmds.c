@@ -727,7 +727,7 @@ char *enttypenames[] =
 void Svcmd_EntityList_f(void)
 {
 	int       e, entsFree = 0;
-	gentity_t *check = g_entities + 1;
+	gentity_t *check = g_entities;
 	char      line[128];
 
 	for (e = 0; e < MAX_GENTITIES ; e++, check++)
@@ -767,8 +767,7 @@ void Svcmd_EntityList_f(void)
 			G_Printf("%s *unknown classname* %s\n", line, check->targetname);
 		}
 	}
-	G_Printf("%4i: entities not in use\n", entsFree);
-	G_Printf("%4i: num_entities\n", level.num_entities);
+	G_Printf("^2%4i: num_entities - %4i: entities not in use\n", level.num_entities, entsFree);
 }
 
 // note: if a player is called '3' and there are only 2 players
