@@ -3102,7 +3102,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// continuous smoke after firing
 		if (ps || cg.renderingThirdPerson || !isPlayer)
 		{
-			if (weaponNum == WP_STEN || weaponNum == WP_MOBILE_MG42 || weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING_SET)
+			if (weaponNum == WP_STEN || weaponNum == WP_MOBILE_MG42 || weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING || weaponNum == WP_MOBILE_BROWNING_SET)
 			{
 				// hot smoking gun
 				if (cg.time - cent->overheatTime < 3000)
