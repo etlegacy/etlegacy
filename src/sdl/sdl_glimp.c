@@ -712,6 +712,7 @@ static void GLimp_XreaLInitExtensions(void)
 		good = qtrue;
 
 		Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig2.shadingLanguageVersion));
+		sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_shading_language_100\n");
 	}
 	else

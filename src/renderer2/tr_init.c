@@ -403,8 +403,6 @@ static qboolean InitOpenGL(void)
 			glConfig.maxTextureSize = 0;
 		}
 
-		GLSL_LoadDefinitions();
-
 #if defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_InitGPUShaders();
 #endif

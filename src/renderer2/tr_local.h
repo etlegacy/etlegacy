@@ -1796,8 +1796,7 @@ typedef struct shaderProgramList_s
 	shaderProgram_t *current;
 	int permutations;
 	int currentPermutation;
-	int allMacros;
-	int currentMacros;
+	unsigned long currentMacros;
 	macroBitMap_t *macromap;
 	int mappedMacros;
 } shaderProgramList_t;
@@ -1823,6 +1822,7 @@ typedef struct programInfo_s
 	int macros[MAX_MACROS];
 	int numMacros;
 	char *extraMacros;
+	unsigned int attributes;
 	char *vertexLibraries;
 	char *fragmentLibraries;
 	uniformValue_t uniformValues[64];
@@ -3429,7 +3429,6 @@ extern glstate_t glState;       // outside of TR since it shouldn't be cleared d
 // the glconfig_t struct.
 extern qboolean      textureFilterAnisotropic;
 extern int           maxAnisotropy;
-extern glRefConfig_t glRefConfig;
 extern float         displayAspect; //FIXME
 
 
@@ -4565,7 +4564,6 @@ extern const char *defaultShaderDefinitions;
 const char *GetFallbackShader(const char *name);
 
 //tr_glsl.c
-void GLSL_LoadDefinitions(void);
 void GLSL_VertexAttribsState(uint32_t stateBits);
 void GLSL_VertexAttribPointers(uint32_t attribBits);
 #ifdef RENDERER2C

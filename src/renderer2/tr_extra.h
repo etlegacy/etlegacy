@@ -88,6 +88,9 @@ typedef struct
 	qboolean framebufferBlitAvailable;
 
 	qboolean generateMipmapAvailable;
+
+	int glslMajorVersion;
+	int glslMinorVersion;
 } glconfig2_t;
 // XreaL END
 
@@ -134,40 +137,6 @@ typedef enum
 	TCR_LATC = 0x0001,
 	TCR_BPTC = 0x0002,
 } textureCompressionRef_t;
-
-// We can't change glConfig_t without breaking DLL/vms compatibility, so
-// store extensions we have here.
-typedef struct
-{
-	qboolean drawRangeElements;
-	qboolean multiDrawArrays;
-	qboolean occlusionQuery;
-
-	int glslMajorVersion;
-	int glslMinorVersion;
-
-	memInfo_t memInfo;
-
-	qboolean framebufferObject;
-	int maxRenderbufferSize;
-	int maxColorAttachments;
-
-	qboolean multiTexture;
-	qboolean textureNonPowerOfTwo;
-	qboolean textureFloat;
-	qboolean halfFloatPixel;
-	qboolean packedDepthStencil;
-	textureCompressionRef_t textureCompression;
-
-	qboolean framebufferMultisample;
-	qboolean framebufferBlit;
-
-	qboolean texture_srgb;
-
-	qboolean depthClamp;
-} glRefConfig_t;
-
-extern glRefConfig_t glRefConfig;
 
 extern matrix_t matrixIdentity;
 extern quat_t   quatIdentity;

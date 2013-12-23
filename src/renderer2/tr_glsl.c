@@ -170,6 +170,29 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_EtaRatio",					 GLSL_VEC3   }
 };
 
+typedef struct 
+{
+	unsigned int attr;
+	char name[32];
+} attrmap;
+
+const attrmap attributeMap[] ={
+	{ATTR_POSITION,"ATTR_POSITION"},
+	{ATTR_TEXCOORD,"ATTR_TEXCOORD"},
+	{ATTR_LIGHTCOORD,"ATTR_LIGHTCOORD"},
+	{ATTR_TANGENT,"ATTR_TANGENT"},
+	{ATTR_BINORMAL,"ATTR_BINORMAL"},
+	{ATTR_NORMAL,"ATTR_NORMAL"},
+	{ATTR_COLOR,"ATTR_COLOR"},
+	{ATTR_BONE_INDEXES,"ATTR_BONE_INDEXES"},
+	{ATTR_BONE_WEIGHTS,"ATTR_BONE_WEIGHTS"},
+	{ATTR_POSITION2,"ATTR_POSITION2"},
+	{ATTR_TANGENT2,"ATTR_TANGENT2"},
+	{ATTR_BINORMAL2,"ATTR_BINORMAL2"},
+	{ATTR_NORMAL2,"ATTR_NORMAL2"}
+};
+const int numberofAttributes = ARRAY_LEN(attributeMap);
+
 #define FILE_HASH_SIZE      4096
 #define MAX_SHADER_DEF_FILES 1024
 #define DEFAULT_SHADER_DEF NULL
@@ -221,7 +244,21 @@ int GLSL_GetMacroByName(const char *name)
 	return -1;
 }
 
-void CopyStringAlloc(char **out,char *in)
+unsigned int GLSL_GetAttribByName(const char *name)
+{
+	int i;
+	for(i = 0; i < numberofAttributes; i++)
+	{
+		if (!Q_stricmp(name, attributeMap[i].name))
+		{
+			return attributeMap[i].attr;
+		}
+	}
+
+	return -1;
+}
+
+void CopyStringAlloc(char **out,const char *in)
 {
 	size_t size = strlen(in) * sizeof(char) + 1;
 	*out = (char *) malloc(size);
@@ -265,6 +302,7 @@ programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
 	def = (programInfo_t *)malloc(sizeof(programInfo_t));
 	memset(def,0,sizeof(programInfo_t));
 
+	CopyStringAlloc(&def->name,defname);
 	def->compiled = qfalse;
 
 	while (1)
@@ -310,6 +348,15 @@ programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
 		else if (!Q_stricmp(token, "extramacros"))
 		{
 			CopyNextToken(text,&def->extraMacros);
+		}
+		else if (!Q_stricmp(token, "attribs"))
+		{
+			unsigned int attribs = 0;
+			while((token = COM_ParseExt(text, qfalse))[0])
+			{
+				attribs |= GLSL_GetAttribByName(token);
+			}
+			def->attributes = attribs;
 		}
 		else if (!Q_stricmp(token, "vertexLibraries"))
 		{
@@ -375,8 +422,7 @@ static char *GLSL_FindDefinitionInText(const char *shadername)
 programInfo_t *GLSL_FindShader(const char *name)
 {
 	char     strippedName[MAX_QPATH];
-	char     fileName[MAX_QPATH];
-	int      i, hash;
+	int      hash;
 	char     *shaderText;
 	programInfo_t *sh;
 
@@ -430,8 +476,8 @@ void GLSL_LoadDefinitions(void)
 	char *p;
 	int  numShaderFiles;
 	*/
-	programInfo_t *test;
-	programInfo_t *test2;
+	//programInfo_t *test;
+	//programInfo_t *test2;
 
 	//FIXME: Also load from external files in the future...
 	//For no just copy the existing data to our searchable string
@@ -584,6 +630,9 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 
 	switch (compilemacro)
 	{
+	case TWOSIDED:
+		attr = ATTR_NORMAL;
+		break;
 	case USE_VERTEX_ANIMATION:
 		attr = ATTR_NORMAL | ATTR_POSITION2 | ATTR_NORMAL2;
 
@@ -620,7 +669,6 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 	static char bufferExtra[32000];
 
 	char *bufferFinal = NULL;
-	int  sizeFinal;
 
 	float fbufWidthScale, fbufHeightScale;
 	float npotWidthScale, npotHeightScale;
@@ -1023,7 +1071,7 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 	dest[0] = '\0';
 
 	// HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.30 ones
-	if (glRefConfig.glslMajorVersion > 1 || (glRefConfig.glslMajorVersion == 1 && glRefConfig.glslMinorVersion >= 30))
+	if (glConfig2.glslMajorVersion > 1 || (glConfig2.glslMajorVersion == 1 && glConfig2.glslMinorVersion >= 30))
 	{
 		Q_strcat(dest, size, "#version 130\n");
 
@@ -1349,17 +1397,17 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 	GLint *uniforms = program->uniforms;
 
 	size = 0;
+
 	for (i = 0; i < UNIFORM_COUNT; i++)
 	{
 		uniforms[i] = qglGetUniformLocationARB(program->program, uniformsInfo[i].name);
-
+		
 		if (uniforms[i] == -1)
 		{
 			continue;
 		}
 
 		program->uniformBufferOffsets[i] = size;
-
 		switch (uniformsInfo[i].type)
 		{
 		case GLSL_INT:
@@ -1387,7 +1435,7 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 			break;
 		}
 	}
-
+	
 	program->uniformBuffer = Ren_Malloc(size);
 }
 
@@ -1583,16 +1631,20 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 
 void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray,int arraysize)
 {
-
+	GLint *uniforms = program->uniforms;
+	glUniform1fv(uniforms[uniformNum], arraysize, floatarray);
 }
 
 void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray,int arraysize)
 {
-
+	GLint *uniforms = program->uniforms;
+	glUniform4fv(uniforms[uniformNum], arraysize, &vectorarray[0][0]);
 }
 
 void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray,int arraysize)
 {
+	GLint *uniforms = program->uniforms;
+	glUniformMatrix4fv(uniforms[uniformNum], arraysize, GL_FALSE, &matrixarray[0][0]);
 
 }
 
@@ -1683,8 +1735,8 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 
 static qboolean GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, const char *vertex, const char *frag, const char *macrostring)
 {
-	char vpSource[32000];
-	char fpSource[32000];
+	char vpSource[64000];
+	char fpSource[64000];
 	int  size = sizeof(vpSource);
 
 	GLSL_GetShaderHeader(GL_VERTEX_SHADER, vpSource, size);
@@ -1711,7 +1763,7 @@ static qboolean GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const
 
 	Q_strcat(vpSource, size, vertex);
 	Q_strcat(fpSource, size, frag);
-
+	
 	if(GLSL_InitGPUShader2(program, name, vpSource, fpSource))
 	{
 		GLSL_InitUniforms(program);
@@ -1784,6 +1836,8 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
 	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
 
+	startTime = ri.Milliseconds();
+
 	info->list->programs = Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
 
 	for (i = 0; i < numPermutations; i++)
@@ -1820,13 +1874,14 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 				//Set uniform values
 				GLSL_SetInitialUniformValues(info,i);
 				GLSL_FinishGPUShader(&info->list->programs[i]);
+				info->list->currentPermutation = i;
 			}
 
 			numCompiled++;
 		}
 		else
 		{
-			info->list->programs[i].program = NULL;
+			info->list->programs[i].program = 0;
 		}
 
 	}
@@ -1852,26 +1907,72 @@ programInfo_t *GLSL_GetShaderProgram(const char *name)
 	return prog;
 }
 
-void GLSL_SetMacros(shaderProgramList_t *programlist, int macros)
-{
-	programlist->currentMacros = macros;
-}
-
 void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 {
 	//FIXME: implement this
+	int i;
+
+	for(i = 0; i < programlist->numMacros; i++)
+	{
+		if(programlist->macros[i] == macro)
+		{
+			if(enabled > 0)
+			{
+				programlist->list->currentPermutation |= BIT(programlist->list->macromap[i].bitOffset);
+				programlist->list->currentMacros |= BIT(macro);
+			}
+			else
+			{
+				programlist->list->currentPermutation ^= BIT(programlist->list->macromap[i].bitOffset);
+				programlist->list->currentMacros ^= BIT(macro);
+			}
+		}
+	}
 }
 
 void GLSL_SelectPermutation(programInfo_t *programlist)
 {
 	//FIXME: implement this
 	//set the tr.selectedProgram
+	tr.selectedProgram = programlist->list->current = &programlist->list->programs[programlist->list->currentPermutation];
 }
 
 void GLSL_SetRequiredVertexPointers(programInfo_t *programlist)
 {
 	//FIXME: implement this
 	//see void GLShader::SetRequiredVertexPointers() in gl_shader.cpp
+	/*
+	uint32_t macroVertexAttribs = 0;
+	size_t   numMacros          = _compileMacros.size();
+
+	for (size_t j = 0; j < numMacros; j++)
+	{
+		GLCompileMacro *macro = _compileMacros[j];
+
+		int bit = macro->GetBit();
+
+		if (IsMacroSet(bit))
+		{
+			macroVertexAttribs |= macro->GetRequiredVertexAttributes();
+		}
+	}
+
+	GLSL_VertexAttribsState((_vertexAttribsRequired | _vertexAttribs | macroVertexAttribs));      // & ~_vertexAttribsUnsupported);
+	*/
+	uint32_t macroVertexAttribs = 0;
+	int j;
+
+	for (j = 0; j < programlist->numMacros; j++)
+	{
+		int macro = programlist->macros[j];
+		
+		if (programlist->list->currentMacros & macro)
+		{
+			macroVertexAttribs |= GLSL_GetRequiredVertexAttributes(macro);
+		}
+	}
+
+	GLSL_VertexAttribsState((programlist->attributes | macroVertexAttribs)); 
 }
 
 void GLSL_DeleteGPUShader(shaderProgram_t *program)
@@ -1904,9 +2005,7 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 void GLSL_InitGPUShaders(void)
 {
 	int  startTime, endTime;
-	int  i;
 	char extradefines[1024];
-	int  attribs;
 	int  numGenShaders = 0, numLightShaders = 0, numEtcShaders = 0;
 
 	ri.Printf(PRINT_ALL, "------- GLSL_InitGPUShaders -------\n");
@@ -1954,11 +2053,9 @@ void GLSL_InitGPUShaders(void)
 	tr.gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	tr.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
-	endTime = ri.Milliseconds();
+	//endTime = ri.Milliseconds();
 
-	ri.Printf(PRINT_ALL, "loaded %i GLSL shaders (%i gen %i light %i etc) in %5.2f seconds\n",
-	          numGenShaders + numLightShaders + numEtcShaders, numGenShaders, numLightShaders,
-	          numEtcShaders, (endTime - startTime) / 1000.0);
+	//ri.Printf(PRINT_ALL, "loaded %i GLSL shaders (%i gen %i light %i etc) in %5.2f seconds\n",numGenShaders + numLightShaders + numEtcShaders, numGenShaders, numLightShaders,numEtcShaders, (endTime - startTime) / 1000.0);
 }
 
 void GLSL_ShutdownGPUShaders(void)
