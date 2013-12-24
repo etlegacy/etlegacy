@@ -624,7 +624,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		gl_vertexLightingShader_DBS_entity->SetUniform_BoneMatrix(MAX_BONES, tess.boneMatrices);
 	}
 #else
-	qboolean normalMapping;
+	qboolean normalMapping = qfalse;
 
 	GLimp_LogComment("--- Render_vertexLighting_DBS_entity ---\n");
 	stateBits = pStage->stateBits;
@@ -1332,7 +1332,7 @@ static void Render_geometricFill(int stage, bool cmap2black)
 	uint32_t      stateBits;
 
 	GLimp_LogComment("--- Render_geometricFill ---\n");
-
+	
 	pStage = tess.surfaceStages[stage];
 
 	// remove blend mode

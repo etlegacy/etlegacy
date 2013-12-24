@@ -2914,6 +2914,9 @@ void Com_Init(char *commandLine)
 		Cmd_AddCommand("error", Com_Error_f);
 		Cmd_AddCommand("crash", Com_Crash_f);
 		Cmd_AddCommand("freeze", Com_Freeze_f);
+#if defined(_WIN32) && defined(USE_WINDOWS_CONSOLE)
+		Sys_ShowConsole(1,qtrue);
+#endif
 	}
 	Cmd_AddCommand("quit", Com_Quit_f);
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f);

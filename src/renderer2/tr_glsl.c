@@ -76,6 +76,7 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_TCGen0Vector1",             GLSL_VEC3   },
 
 	{ "u_DeformGen",                 GLSL_INT    },
+	{ "u_DeformParams",				GLSL_FLOATARR},
 
 	{ "u_ColorGen",                  GLSL_INT    },
 	{ "u_AlphaGen",                  GLSL_INT    },
@@ -262,7 +263,7 @@ void CopyStringAlloc(char **out,const char *in)
 {
 	size_t size = strlen(in) * sizeof(char) + 1;
 	*out = (char *) malloc(size);
-	memset(*out,'\0',size);
+	Com_Memset(*out,'\0',size);
 	Q_strncpyz(*out, in, size);
 }
 
@@ -300,7 +301,7 @@ programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
 	}
 
 	def = (programInfo_t *)malloc(sizeof(programInfo_t));
-	memset(def,0,sizeof(programInfo_t));
+	Com_Memset(def,0,sizeof(programInfo_t));
 
 	CopyStringAlloc(&def->name,defname);
 	def->compiled = qfalse;
@@ -482,7 +483,7 @@ void GLSL_LoadDefinitions(void)
 	//FIXME: Also load from external files in the future...
 	//For no just copy the existing data to our searchable string
 	definitionText = (char *)ri.Hunk_Alloc(strlen(defaultShaderDefinitions) + 1, h_low);
-	memset(definitionText,'\0',strlen(defaultShaderDefinitions) + 1);
+	Com_Memset(definitionText,'\0',strlen(defaultShaderDefinitions) + 1);
 	Q_strncpyz(definitionText,defaultShaderDefinitions,strlen(defaultShaderDefinitions));
 	
 
@@ -1062,7 +1063,7 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 
 	*size    = strlen(bufferExtra) + 1;
 	*defines = (char *) malloc(*size);
-	memset(*defines, 0, *size);
+	Com_Memset(*defines, 0, *size);
 	Q_strcat(*defines, *size, bufferExtra);
 }
 
@@ -1174,13 +1175,13 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 			if (append && *size)
 			{
 				*data = ( char * ) realloc(*data, *size + strl);
-				memset(*data + *size, 0, strl);
+				Com_Memset(*data + *size, 0, strl);
 
 			}
 			else
 			{
 				*data = (char *) malloc(strl);
-				memset(*data, 0, strl);
+				Com_Memset(*data, 0, strl);
 			}
 
 			*size += strl;
@@ -1199,12 +1200,12 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		if (append && *size)
 		{
 			*data = ( char * ) realloc(*data, *size + dataSize);
-			memset(*data + *size, 0, dataSize);
+			Com_Memset(*data + *size, 0, dataSize);
 		}
 		else
 		{
 			*data = (char *) malloc(dataSize);
-			memset(*data, 0, dataSize);
+			Com_Memset(*data, 0, dataSize);
 		}
 
 		*size += dataSize;
@@ -1296,7 +1297,7 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 	unsigned long macroatrib = 0;
 
 	*out = (char *) malloc(1000);
-	memset(*out, 0, 1000);
+	Com_Memset(*out, 0, 1000);
 
 	if (permutation)
 	{
@@ -1436,7 +1437,7 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 		}
 	}
 	
-	program->uniformBuffer = Ren_Malloc(size);
+	program->uniformBuffer = (char *)Com_Allocate(size);
 }
 
 void GLSL_FinishGPUShader(shaderProgram_t *program)
@@ -1698,7 +1699,7 @@ static void GLSL_BindAttribLocations(GLuint program)
 
 static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, const char *vpCode, const char *fpCode)
 {
-	ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
+	//ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
 
 	if (strlen(name) >= MAX_QPATH)
 	{
@@ -1784,10 +1785,21 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info,int permutation)
 	{
 		location = qglGetUniformLocationARB(info->list->programs[permutation].program, info->uniformValues[i].type.name);
 
+		if(location == -1)
+		{
+			//ri.Error(ERR_FATAL,"Cannot find uniform \"%s\" from program: %s",info->uniformValues[i].type.name,info->name);
+			ri.Printf(PRINT_DEVELOPER,"Cannot find uniform \"%s\" from program: %s %d\n",info->uniformValues[i].type.name,info->name,location);
+		}
+		else
+		{
+			ri.Printf(PRINT_DEVELOPER,"Setting initial uniform \"%s\" value: %d\n",info->uniformValues[i].type.name,*((int *)info->uniformValues[i].value));
+		}
+
 		switch (info->uniformValues[i].type.type)
 		{
 		case GLSL_INT:
-			GLSL_SetUniformInt(&info->list->programs[permutation],location,*((int *)info->uniformValues[i].value));
+			//GLSL_SetUniformInt(&info->list->programs[permutation],location,*((int *)info->uniformValues[i].value));
+			glUniform1i(location,*((int *)info->uniformValues[i].value));
 			break;
 		default:
 			ri.Error(ERR_FATAL,"Only INT supported atm");
@@ -1812,12 +1824,14 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0;
 
-	info->list = (shaderProgramList_t *)Ren_Malloc(sizeof(shaderProgramList_t));
-	memset(info->list,0,sizeof(shaderProgramList_t));
+	info->list = (shaderProgramList_t *)Com_Allocate(sizeof(shaderProgramList_t));
+	Com_Memset(info->list,0,sizeof(shaderProgramList_t));
 
 	if(info->numMacros > 0)
 	{
-		info->list->macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
+		info->list->macromap = (macroBitMap_t *)Com_Allocate(sizeof(macroBitMap_t) * macronum);
+		Com_Memset(info->list->macromap,0,sizeof(macroBitMap_t) * macronum);
+
 		for(i = 0; i < info->numMacros; i++)
 		{
 			GLSL_MapMacro(&info->list->macromap[i], info->macros[i], i);
@@ -1838,7 +1852,8 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 
 	startTime = ri.Milliseconds();
 
-	info->list->programs = Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
+	info->list->programs = (shaderProgram_t *)Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
+	Com_Memset(info->list->programs,0,sizeof(shaderProgram_t) * numPermutations);
 
 	for (i = 0; i < numPermutations; i++)
 	{
@@ -2027,7 +2042,9 @@ void GLSL_InitGPUShaders(void)
 	tr.gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
 	tr.gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
 	tr.gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
+	
 	tr.gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
+	
 	tr.gl_shadowFillShader                      = GLSL_GetShaderProgram("shadowFill");
 	tr.gl_reflectionShader                      = GLSL_GetShaderProgram("reflection");
 	tr.gl_skyboxShader                          = GLSL_GetShaderProgram("skybox");
@@ -2052,6 +2069,8 @@ void GLSL_InitGPUShaders(void)
 	tr.gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
 	tr.gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	tr.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
+
+	ri.Error(ERR_FATAL,"Loppuun tulee...");
 
 	//endTime = ri.Milliseconds();
 
@@ -2186,7 +2205,7 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 		default:
 			break;
 		}
-		GLSL_SetUniformFloatARR(tr.selectedProgram,UNIFORM_DEFORMPARAMS,deformParms,MAX_SHADER_DEFORM_PARMS);
+		GLSL_SetUniformFloatARR(tr.selectedProgram,UNIFORM_DEFORMPARMS,deformParms,MAX_SHADER_DEFORM_PARMS);
 	}
 }
 
