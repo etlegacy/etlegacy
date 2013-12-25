@@ -2069,7 +2069,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2083,7 +2083,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2097,7 +2097,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2111,7 +2111,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2125,7 +2125,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2139,7 +2139,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2153,7 +2153,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
