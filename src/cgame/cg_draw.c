@@ -3550,7 +3550,10 @@ static void CG_Draw2D(void)
 
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
-			CG_DrawSpectator();
+			if (!CG_DrawScoreboard())
+			{
+				CG_DrawSpectator();
+			}
 			CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
 
