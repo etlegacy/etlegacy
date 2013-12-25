@@ -43,8 +43,8 @@ void CG_DrawBorder(float x, float y, float w, float h, qboolean fill, qboolean d
 
 team_t teamOrder[3] =
 {
-	TEAM_ALLIES,
 	TEAM_AXIS,
+	TEAM_ALLIES,
 	TEAM_SPECTATOR,
 };
 
@@ -1318,10 +1318,10 @@ void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 	switch (button->data[0])
 	{
 	case 0:
-		shader = cgs.media.limboTeamButtonAllies;
+		shader = cgs.media.limboTeamButtonAxis;
 		break;
 	case 1:
-		shader = cgs.media.limboTeamButtonAxis;
+		shader = cgs.media.limboTeamButtonAllies;
 		break;
 	case 2:
 		shader = cgs.media.limboTeamButtonSpec;
