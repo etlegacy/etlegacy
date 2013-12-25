@@ -18,20 +18,6 @@ extern field_t fields[];
 
 lua_vm_t *lVM[LUA_NUM_VM];
 
-void QDECL G_Lua_Printf(const char *fmt, ...)
-{
-	va_list argptr;
-	char    buff[1024];
-
-	va_start(argptr, fmt);
-	Q_vsnprintf(buff, sizeof(buff), fmt, argptr);
-	va_end(argptr);
-
-	trap_Printf(buff);
-}
-
-void QDECL G_Lua_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-
 // gentity number = C_gentity_ptr_to_entNum( pointer-value )
 // input:  pointer to a gentity (gentity*)
 // output: the entity number.
@@ -171,7 +157,7 @@ static int _et_G_LogPrint(lua_State *L)
 
 	Q_strncpyz(text, luaL_checkstring(L, 1), sizeof(text));
 
-	G_Lua_Printf("%s", text);
+	G_Printf("%s", text);
 
 	// Additional logging
 	if (level.logFile)
@@ -1686,13 +1672,13 @@ qboolean G_LuaInit(void)
 			flen = trap_FS_FOpenFile(crt, &f, FS_READ);
 			if (flen < 0)
 			{
-				G_Lua_Printf("Lua API: can not open file %s\n", crt);
+				G_Printf("Lua API: can not open file %s\n", crt);
 			}
 			else if (flen > LUA_MAX_FSIZE)
 			{
 				// Let's not load arbitrarily big files to memory.
 				// If your lua file exceeds the limit, let me know.
-				G_Lua_Printf("Lua API: ignoring file %s (too big)\n", crt);
+				G_Printf("Lua API: ignoring file %s (too big)\n", crt);
 				trap_FS_FCloseFile(f);
 			}
 			else
@@ -1701,7 +1687,7 @@ qboolean G_LuaInit(void)
 
 				if (code == NULL)
 				{
-					G_Lua_Printf("Lua API: memory allocation error for %s data\n", crt);
+					G_Printf("Lua API: memory allocation error for %s data\n", crt);
 					// FIXME: we should actually abort here
 				}
 
@@ -1714,7 +1700,7 @@ qboolean G_LuaInit(void)
 				{
 					// don't load disallowed lua modules into vm
 					free(code); // fixed memory leaking in Lua API - thx ETPub/goesa
-					G_Lua_Printf("Lua API: Lua module [%s] [%s] disallowed by ACL\n", crt, signature);
+					G_Printf("Lua API: Lua module [%s] [%s] disallowed by ACL\n", crt, signature);
 				}
 				else
 				{
@@ -1723,7 +1709,7 @@ qboolean G_LuaInit(void)
 
 					if (vm == NULL)
 					{
-						G_Lua_Printf("Lua API: memory allocation error for %s data\n", crt);
+						G_Printf("Lua API: memory allocation error for %s data\n", crt);
 						// FIXME: we should actually abort here
 					}
 
@@ -1761,7 +1747,7 @@ qboolean G_LuaInit(void)
 			}
 			if (num_vm >= LUA_NUM_VM)
 			{
-				G_Lua_Printf("Lua API: too many lua files specified, only the first %d have been loaded\n", LUA_NUM_VM);
+				G_Printf("Lua API: too many lua files specified, only the first %d have been loaded\n", LUA_NUM_VM);
 				break;
 			}
 		}
@@ -1779,16 +1765,16 @@ qboolean G_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults)
 	{
 	case LUA_ERRRUN:
 		// made output more ETPro compatible
-		G_Lua_Printf("Lua API: %s error running lua script: %s\n", func, lua_tostring(vm->L, -1));
+		G_Printf("Lua API: %s error running lua script: %s\n", func, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRMEM:
-		G_Lua_Printf("Lua API: memory allocation error #2 ( %s )\n", vm->file_name);
+		G_Printf("Lua API: memory allocation error #2 ( %s )\n", vm->file_name);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRERR:
-		G_Lua_Printf("Lua API: traceback error ( %s )\n", vm->file_name);
+		G_Printf("Lua API: traceback error ( %s )\n", vm->file_name);
 		vm->err++;
 		return qfalse;
 	default:
@@ -1847,7 +1833,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	vm->L = luaL_newstate();
 	if (!vm->L)
 	{
-		G_Lua_Printf("%s API: Lua failed to initialise.\n", LUA_VERSION);
+		G_Printf("%s API: Lua failed to initialise.\n", LUA_VERSION);
 		return qfalse;
 	}
 
@@ -1915,19 +1901,19 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	luaL_register(vm->L, "et", etlib); // void luaL_register (lua_State *L, const char *libname,  const luaL_Reg *l);
 
 	// Load the code
-	G_Lua_Printf("%s API: Loading %s\n", LUA_VERSION, vm->file_name);
+	G_Printf("%s API: Loading %s\n", LUA_VERSION, vm->file_name);
 
 	res = luaL_loadbuffer(vm->L, vm->code, vm->code_size, vm->file_name);
 	if (res == LUA_ERRSYNTAX)
 	{
-		G_Lua_Printf("%s API: syntax error during pre-compilation: %s\n", LUA_VERSION, lua_tostring(vm->L, -1));
+		G_Printf("%s API: syntax error during pre-compilation: %s\n", LUA_VERSION, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;
 	}
 	else if (res == LUA_ERRMEM)
 	{
-		G_Lua_Printf("%s API: memory allocation error #1 ( %s )\n", LUA_VERSION, vm->file_name);
+		G_Printf("%s API: memory allocation error #1 ( %s )\n", LUA_VERSION, vm->file_name);
 		vm->err++;
 		return qfalse;
 	}
@@ -1973,7 +1959,7 @@ void G_LuaStopVM(lua_vm_t *vm)
 		}
 		if (!vm->err)
 		{
-			G_Lua_Printf("%s API: Lua module [%s] [%s] unloaded.\n", LUA_VERSION, vm->file_name, vm->mod_signature);
+			G_Printf("%s API: Lua module [%s] [%s] unloaded.\n", LUA_VERSION, vm->file_name, vm->mod_signature);
 		}
 	}
 	free(vm);
