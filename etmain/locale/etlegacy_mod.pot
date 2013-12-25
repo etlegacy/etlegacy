@@ -53,7 +53,7 @@ msgstr ""
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
 #: src/cgame/cg_draw.c:2164
 #, c-format
-msgid "Press '%s' for YES, or '%s' for No"
+msgid "Press '%s' for YES, or '%s' for NO"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2096
@@ -2843,7 +2843,7 @@ msgstr ""
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
 
-msgid "^9You must be alive to use ^3/kill.\n"
+msgid "^9You must be alive to use ^3/kill."
 msgstr ""
 
 msgid "No vote in progress.\n"
@@ -3840,7 +3840,7 @@ msgstr ""
 msgid "^3Config: ^7%s^7"
 msgstr ""
 
-msgid "Landmine Revealed\n"
+msgid "Landmine revealed"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2486
