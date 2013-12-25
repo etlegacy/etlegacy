@@ -1806,15 +1806,9 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 	return qfalse;
 }
 
-#ifdef LUA_5_2
-// Lua 5.1 -> 5.2 compatible hack :)
-// https://github.com/icgood/luafilesystem/commit/f634765b26c52d03aceed88c2130130ab43f6fa9
-static void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
-{
-	luaL_newlib(L, l);
-	lua_pushvalue(L, -1);
-	lua_setglobal(L, libname);
-}
+// Compatibility with Lua 5.1
+#if LUA_VERSION_NUM < 502
+	#define luaL_newlib(L, l) (lua_newtable(L), luaL_register(L, NULL, l))
 #endif
 
 /*
@@ -1895,10 +1889,11 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, SAY_BUDDY);
 	lua_regconstinteger(vm->L, SAY_TEAMNL);
 	lua_regconststring(vm->L, HOSTARCH);
-	lua_setglobal(vm->L, "et");
 
 	// register functions
-	luaL_register(vm->L, "et", etlib); // void luaL_register (lua_State *L, const char *libname,  const luaL_Reg *l);
+	luaL_newlib(vm->L, etlib);
+	lua_pushvalue(vm->L, -1);
+	lua_setglobal(vm->L, "et");
 
 	// Load the code
 	G_Printf("%s API: Loading %s\n", LUA_VERSION, vm->file_name);

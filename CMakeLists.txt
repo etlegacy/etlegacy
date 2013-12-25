@@ -619,15 +619,9 @@ if(BUILD_MOD)
 
 	if(FEATURE_LUA)
 		if(NOT BUNDLED_LUA)
-			find_package(Lua 5.1 REQUIRED)
+			find_package(Lua 5.1 REQUIRED) # or 5.2
 			list(APPEND MOD_LIBRARIES ${LUA_LIBRARIES})
 			include_directories(SYSTEM ${LUA_INCLUDE_DIR})
-
-			if(${LUA_VERSION_STRING} MATCHES "^5.2")
-				add_definitions(-DLUA_5_2)
-			elseif(NOT LUA_VERSION_STRING)
-				message(WARNING "Unable to detect Lua version, assuming 5.1")
-			endif()
 		else() # BUNDLED_LUA
 			list(APPEND MOD_LIBRARIES ${LUA_BUNDLED_LIBRARIES})
 			include_directories(SYSTEM ${LUA_BUNDLED_INCLUDE_DIR})
