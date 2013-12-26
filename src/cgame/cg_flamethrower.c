@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -108,7 +108,6 @@ static centFlameInfo_t centFlameInfo[MAX_GENTITIES];
 
 typedef struct
 {
-//  float fireVolume;   // not needed, since we add individual loop sources for the flame, so it gets spacialized
 	float blowVolume;
 	float streamVolume;
 } flameSoundStatus_t;
@@ -759,11 +758,6 @@ static qboolean  initFlameShaders = qtrue;
 #define MAX_CLIPPED_FLAMES  8       // dont draw more than this many per frame
 static int numClippedFlames;
 
-void CG_FlameDamage(int owner, vec3_t org, float radius)
-{
-	return;
-}
-
 void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 {
 	vec3_t        point, p2, sProj;
@@ -880,7 +874,8 @@ static int nextFlameLight = 0;
 static int lastFlameOwner = -1;
 
 
-#define FLAME_SOUND_RANGE   1024.0
+#define FLAME_SOUND_RANGE               1024.0
+#define FLAME_SPRITE_START_BLUE_SCALE   0.2
 
 /*
 ===============
@@ -1086,8 +1081,6 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 				}
 			}
 		}
-
-#define FLAME_SPRITE_START_BLUE_SCALE   0.2
 
 		if (!f->ignitionOnly &&
 		    ((float)(FLAME_SPRITE_START_BLUE_SCALE * f->blueLife) < (float)lived))
@@ -1389,6 +1382,8 @@ void CG_AddFlameChunks(void)
 	}
 }
 
+#define MIN_BLOW_VOLUME     30
+
 /*
 ===============
 CG_UpdateFlamethrowerSounds
@@ -1397,7 +1392,6 @@ CG_UpdateFlamethrowerSounds
 void CG_UpdateFlamethrowerSounds(void)
 {
 	flameChunk_t *f, *trav;
-#define MIN_BLOW_VOLUME     30
 
 	// draw each of the headFlameChunk's
 	f = headFlameChunks;
