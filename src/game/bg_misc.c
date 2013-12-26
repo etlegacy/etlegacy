@@ -533,6 +533,7 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
 */
 
+// Important note: whenever you add new items update CG_NUM_ITEMS
 gitem_t bg_itemlist[] =
 {
 	{
@@ -2236,7 +2237,7 @@ gitem_t bg_itemlist[] =
 	{ NULL }
 };
 
-int bg_numItems = sizeof(bg_itemlist) / sizeof(bg_itemlist[0]) - 1; // keep in sync with BG_NUM_ITEMS!
+int bg_numItems = ARRAY_LEN(bg_itemlist) - 1; // keep in sync with CG_NUM_ITEMS!
 
 /*
 ===============
@@ -2367,7 +2368,8 @@ BG_FindItemForAmmo
 */
 gitem_t *BG_FindItemForAmmo(int ammo)
 {
-	int i = 0;
+	int i = 1; // FIXME: we don't have to start at item 1 here
+	           // bg_numItems is sorted by type
 
 	for (; i < bg_numItems; i++)
 	{

@@ -1171,7 +1171,7 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define BG_NUM_ITEMS 78 // keep in sync with bg_numItems! FIXME: make this non static one day
+#define CG_NUM_ITEMS 81 // keep in sync with bg_numItems! FIXME: make this non static one day
 
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t
@@ -1498,7 +1498,7 @@ typedef struct
 
 	sfxHandle_t shoveSound;
 
-	sfxHandle_t itemPickUpSounds[BG_NUM_ITEMS];
+	sfxHandle_t itemPickUpSounds[CG_NUM_ITEMS];
 
 	qhandle_t ccStamps[2];
 	qhandle_t ccFilterPics[8]; // was 10, set to 8 (we init 0-7)
