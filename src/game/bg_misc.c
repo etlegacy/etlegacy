@@ -2362,27 +2362,6 @@ int BG_AkimboSidearm(int weaponNum)
 }
 
 /*
-==============
-BG_FindItemForAmmo
-==============
-*/
-gitem_t *BG_FindItemForAmmo(int ammo)
-{
-	int i = 1; // FIXME: we don't have to start at item 1 here
-	           // bg_numItems is sorted by type
-
-	for (; i < bg_numItems; i++)
-	{
-		if (bg_itemlist[i].giType == IT_AMMO && bg_itemlist[i].giAmmoIndex == ammo)
-		{
-			return &bg_itemlist[i];
-		}
-	}
-	Com_Error(ERR_DROP, "Item not found for ammo: %d", ammo);
-	return NULL;
-}
-
-/*
 ===============
 BG_FindItem
 ===============

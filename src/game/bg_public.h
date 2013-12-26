@@ -1517,9 +1517,7 @@ extern int     bg_numItems;
 gitem_t *BG_FindItem(const char *pickupName);
 gitem_t *BG_FindItemForClassName(const char *className);
 gitem_t *BG_FindItemForWeapon(weapon_t weapon);
-gitem_t *BG_FindItemForPowerup(powerup_t pw);
 
-gitem_t *BG_FindItemForAmmo(int weapon);
 weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
 weapon_t BG_FindClipForWeapon(weapon_t weapon);
 
