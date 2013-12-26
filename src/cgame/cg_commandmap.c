@@ -1038,32 +1038,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 	}
 }
 
-qboolean CG_ObjectiveMapCheck(mapEntityData_t *mEnt)
-{
-	if (mEnt->data < 0 || mEnt->data >= 64)
-	{
-		return qfalse;
-	}
-
-	if (!cgs.clientinfo[mEnt->data].infoValid)
-	{
-		return qfalse;
-	}
-
-
-	if (!(cg_entities[mEnt->data].currentState.powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG))))
-	{
-		return qfalse;
-	}
-
-	if (VectorDistance(cg.snap->ps.origin, cg_entities[mEnt->data].lerpOrigin) < 512)
-	{
-		return qfalse;
-	}
-
-	return qtrue;
-}
-
 qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
 {
 	if (mEnt->data < 0 || mEnt->data >= 64)
@@ -1075,7 +1049,6 @@ qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
 	{
 		return qfalse;
 	}
-
 
 	if (!(cg_entities[mEnt->data].currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
@@ -1200,7 +1173,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		goto CG_DrawMap_draw;
 
 CG_DrawMap_check:
-		if ((mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt)) || !CG_ObjectiveMapCheck(mEnt))
+		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
 		{
 			continue;
 		}
@@ -1270,8 +1243,7 @@ CG_DrawMap_draw:
 		}
 		else
 		{
-			// FIXME: make a severside change so it also sends player compass info
-			// when spectating and remove this hack.
+			// show only current player position to spectators
 			classInfo = CG_PlayerClassForClientinfo(&cgs.clientinfo[snap->ps.clientNum], &cg_entities[snap->ps.clientNum]);
 
 			if (snap->ps.powerups[PW_REDFLAG] || snap->ps.powerups[PW_BLUEFLAG])
