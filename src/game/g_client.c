@@ -2860,11 +2860,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	savedPing = client->ps.ping;
 	savedTeam = client->ps.teamNum;
 
-	if (inIntermission)
-	{
-		client->ps.pm_type = PM_INTERMISSION;
-	}
-
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
 		persistant[i] = client->ps.persistant[i];
@@ -2882,6 +2877,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->sess       = savedSess;
 	client->ps.ping    = savedPing;
 	client->ps.teamNum = savedTeam;
+
+	if (inIntermission)
+	{
+		client->ps.pm_type = PM_INTERMISSION;
+	}
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
