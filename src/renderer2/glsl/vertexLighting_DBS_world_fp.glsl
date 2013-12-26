@@ -146,7 +146,7 @@ void    main()
 #endif
 
 
-#else
+#elif 1
 
 	vec3 N;
 

@@ -1585,6 +1585,8 @@ typedef struct shaderProgram_s
 	GLint uniforms[UNIFORM_COUNT];
 	short uniformBufferOffsets[UNIFORM_COUNT]; // max 32767/64=511 uniforms
 	char *uniformBuffer;
+
+	qboolean compiled;
 #else
 	char *compileMacros;
 

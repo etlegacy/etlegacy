@@ -504,6 +504,28 @@ void GLSL_LoadDefinitions(void)
 
 #ifdef RENDERER2C
 
+void GLSL_TestProgram(programInfo_t *program)
+{
+	int i;
+	if(program->list->permutations <= 0)
+	{
+		ri.Printf(PRINT_DEVELOPER,"No permutations");
+	}
+	for(i = 0; i < program->list->permutations; i++)
+	{
+		shaderProgram_t *prog = &program->list->programs[i];
+		if(!prog || !prog->compiled)
+		{
+			ri.Printf(PRINT_DEVELOPER,"Uncompiled version: %d\n",i);
+			continue;
+		}
+		else
+		{
+			ri.Printf(PRINT_DEVELOPER,"Compiled shader name %s permutation: %d\n",prog->name,i);
+		}
+	}
+}
+
 static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 {
 	char        *msg;
@@ -1452,6 +1474,7 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 	GLint *uniforms = program->uniforms;
 	GLint *compare  = (GLint *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
 
+
 	if (uniforms[uniformNum] == -1)
 	{
 		return;
@@ -1846,6 +1869,8 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 
 	numPermutations = BIT(info->numMacros);
 
+	info->list->permutations = numPermutations;
+
 	ri.Printf(PRINT_ALL, "...compiling %s shaders\n", info->name);
 	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
 	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
@@ -1889,7 +1914,12 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 				//Set uniform values
 				GLSL_SetInitialUniformValues(info,i);
 				GLSL_FinishGPUShader(&info->list->programs[i]);
+				info->list->programs[i].compiled = qtrue;
 				info->list->currentPermutation = i;
+			}
+			else
+			{
+				ri.Error(ERR_FATAL,"Failed to compile shader: %s permutation %d\n",info->name,i);
 			}
 
 			numCompiled++;
@@ -1897,6 +1927,7 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 		else
 		{
 			info->list->programs[i].program = 0;
+			info->list->programs[i].compiled = qfalse;
 		}
 
 	}
@@ -1949,7 +1980,16 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 {
 	//FIXME: implement this
 	//set the tr.selectedProgram
-	tr.selectedProgram = programlist->list->current = &programlist->list->programs[programlist->list->currentPermutation];
+	shaderProgram_t *prog = &programlist->list->programs[programlist->list->currentPermutation];
+	
+	if(!prog || !prog->compiled)
+	{
+		ri.Error(ERR_FATAL,"Trying to select uncompiled shader permutation: %d of shader \"%s\"\n",programlist->list->currentPermutation,programlist->name);
+	}
+	else
+	{
+		tr.selectedProgram = programlist->list->current = prog;
+	}
 }
 
 void GLSL_SetRequiredVertexPointers(programInfo_t *programlist)
@@ -2035,7 +2075,9 @@ void GLSL_InitGPUShaders(void)
 	tr.gl_genericShader                         = GLSL_GetShaderProgram("generic");
 	tr.gl_lightMappingShader                    = GLSL_GetShaderProgram("lightMapping");
 	tr.gl_vertexLightingShader_DBS_entity       = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
+	
 	tr.gl_vertexLightingShader_DBS_world        = GLSL_GetShaderProgram("vertexLighting_DBS_world");
+	
 	tr.gl_forwardLightingShader_omniXYZ         = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
 	tr.gl_forwardLightingShader_projXYZ         = GLSL_GetShaderProgram("forwardLighting_projXYZ");
 	tr.gl_forwardLightingShader_directionalSun  = GLSL_GetShaderProgram("forwardLighting_directionalSun");
@@ -2070,9 +2112,9 @@ void GLSL_InitGPUShaders(void)
 	tr.gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	tr.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
-	ri.Error(ERR_FATAL,"Loppuun tulee...");
+	GLSL_TestProgram(tr.gl_genericShader);
 
-	//endTime = ri.Milliseconds();
+	endTime = ri.Milliseconds();
 
 	//ri.Printf(PRINT_ALL, "loaded %i GLSL shaders (%i gen %i light %i etc) in %5.2f seconds\n",numGenShaders + numLightShaders + numEtcShaders, numGenShaders, numLightShaders,numEtcShaders, (endTime - startTime) / 1000.0);
 }
