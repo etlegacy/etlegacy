@@ -1707,7 +1707,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	// draw disguised icon over disguised teammates
 	if ((cent->currentState.powerups & (1 << PW_OPS_DISGUISED)) && cg.snap->ps.persistant[PERS_TEAM] == team)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.disguiseShader, 56);
+		CG_PlayerFloatSprite(cent, cgs.media.friendShader, 56);
 	}
 
 	{

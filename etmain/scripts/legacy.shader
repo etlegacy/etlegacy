@@ -1456,15 +1456,15 @@ gfx/hud/ranks/xrank11
 	}
 }
 
-// Disguised Shader
-sprites/undercover
+// disguised shader
+gfx/2d/friendlycross
 {
 	nocompress
 	nopicmip
 	{
-		map sprites/undercover.tga
+		map gfx/2d/friendlycross.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen vertex	
+		rgbGen vertex
 	}
 }
 

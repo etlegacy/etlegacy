@@ -648,12 +648,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 					CG_DrawPic(icon_pos[0] + 12, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, cg.predictedPlayerEntity.voiceChatSprite);
 				}
 			}
-			else if (mEnt->type == ME_PLAYER_DISGUISED)
-			{
-				trap_R_SetColor(colorOrange);
-				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
-				trap_R_SetColor(NULL);
-			}
 			else if (/*!(cgs.ccFilter & CC_FILTER_BUDDIES) &&*/ CG_IsOnSameFireteam(cg.clientNum, mEnt->data))
 			{
 				if (ci->ccSelected)
@@ -692,7 +686,17 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			c_clr[3] = 1.0f;
 
 			trap_R_SetColor(c_clr);
-			if (mEnt->type == ME_PLAYER_OBJECTIVE)
+
+			// FIXME: the map entity ME_PLAYER_DISGUISED is never defined here, so this is a bit hackish
+			if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+			{
+				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], classInfo->icon);
+				if (ci->team == snap->ps.persistant[PERS_TEAM])
+				{
+					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.friendShader);
+				}
+			}
+			else if (mEnt->type == ME_PLAYER_OBJECTIVE)
 			{
 				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.objectiveShader);
 			}
@@ -1246,7 +1250,12 @@ CG_DrawMap_draw:
 			// show only current player position to spectators
 			classInfo = CG_PlayerClassForClientinfo(&cgs.clientinfo[snap->ps.clientNum], &cg_entities[snap->ps.clientNum]);
 
-			if (snap->ps.powerups[PW_REDFLAG] || snap->ps.powerups[PW_BLUEFLAG])
+			if (snap->ps.powerups[PW_OPS_DISGUISED])
+			{
+				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], classInfo->icon);
+				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.friendShader);
+			}
+			else if (snap->ps.powerups[PW_REDFLAG] || snap->ps.powerups[PW_BLUEFLAG])
 			{
 				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.objectiveShader);
 			}
