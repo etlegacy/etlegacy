@@ -1426,11 +1426,11 @@ static void CG_RegisterGraphics(void)
 		"gfx/2d/numbers/minus_32b",
 	};
 
-	CG_LoadingString(cgs.mapname);
+	CG_LoadingString(va(" - %s -", cgs.mapname));
 
 	trap_R_LoadWorldMap(cgs.mapname);
 
-	CG_LoadingString("entities");
+	CG_LoadingString(" - entities -");
 
 	numSplinePaths = 0;
 	numPathCorners = 0;
@@ -1448,7 +1448,7 @@ static void CG_RegisterGraphics(void)
 	CG_LoadObjectiveData();
 
 	// precache status bar pics
-	CG_LoadingString("game media");
+	CG_LoadingString(" - game media -");
 
 	CG_LoadingString(" - textures -");
 
@@ -2042,7 +2042,7 @@ static void CG_RegisterGraphics(void)
 		cgs.media.fireteamicons[i] = trap_R_RegisterShaderNoMip(va("gfx/hud/fireteam/fireteam%i", i + 1));
 	}
 
-	CG_LoadingString("game media done");
+	CG_LoadingString(" - game media -");
 }
 
 /*
@@ -2567,7 +2567,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 #endif
 
 	// load the new map
-	CG_LoadingString("collision map");
+	CG_LoadingString(" - collision map -");
 
 	trap_CM_LoadMap(cgs.mapname);
 
@@ -2579,7 +2579,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.loading = qtrue;     // force players to load instead of defer
 
-	CG_LoadingString("sounds");
+	CG_LoadingString(" - sounds -");
 
 	CG_RegisterSounds();
 
@@ -2587,11 +2587,11 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	DEBUG_INITPROFILE_EXEC("sounds")
 #endif // DEBUG
 
-	CG_LoadingString("graphics");
+	CG_LoadingString(" - graphics -");
 
 	CG_RegisterGraphics();
 
-	CG_LoadingString("flamechunks");
+	CG_LoadingString(" - flamechunks -");
 
 	CG_InitFlameChunks();       // register and clear all flamethrower resources
 
@@ -2599,7 +2599,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	DEBUG_INITPROFILE_EXEC("graphics")
 #endif // DEBUG
 
-	CG_LoadingString("clients");
+	CG_LoadingString(" - clients -");
 
 	CG_RegisterClients();       // if low on memory, some clients will be deferred
 

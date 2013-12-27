@@ -49,7 +49,8 @@
 #define _attribute(x)
 #endif
 
-// #define LEGACY_MOD_VERSION ETLEGACY_VERSION_SHORT
+#define LEGACY_MOD         "Legacy"
+#define LEGACY_MOD_VERSION ETLEGACY_VERSION_SHORT
 #define LEGACY // for omnibot
 
 #define SPRINTTIME 20000.0f
