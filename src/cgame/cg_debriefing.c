@@ -2072,7 +2072,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(DB_RANK_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, ci->name, 0, 28, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 28, 0, button->font->font);
 
 		CG_Text_Paint_Ext(DB_TIME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, 0, button->font->font);
 
@@ -2608,7 +2608,7 @@ void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void)

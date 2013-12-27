@@ -551,7 +551,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		}
 
 		// draw the player's name
-		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		// add space
 		x += 14 + bestNameWidth - puwidth;
@@ -571,19 +571,19 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 		if (ci->health >= 100)
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorGreen, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			x += 12;
 		}
-		else if (ci->health > 10)
+		else if (ci->health >= 10)
 		{
 			x += 6;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? tclr : colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? colorGreen: colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			x += 6;
 		}
 		else if (ci->health > 0)
 		{
 			x += 12;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
 		else if (ci->health == 0)
 		{
