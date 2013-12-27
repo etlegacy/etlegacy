@@ -1960,6 +1960,11 @@ void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 	//FIXME: implement this
 	int i;
 
+	if(!programlist)
+	{
+		ri.Error(ERR_FATAL,"GLSL_SetMacroState: NULL programinfo");
+	}
+
 	if(!programlist->compiled)
 	{
 		ri.Error(ERR_FATAL,"Trying to set macro state of shader \"%s\" but it is not compiled\n",programlist->name);
@@ -2000,6 +2005,11 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 	//set the tr.selectedProgram
 	shaderProgram_t *prog;
 	
+	if(!programlist)
+	{
+		ri.Error(ERR_FATAL,"GLSL_SelectPermutation: NULL programinfo");
+	}
+
 	if(!programlist->compiled)
 	{
 		ri.Error(ERR_FATAL,"Trying to select permutation of shader \"%s\" but the list is not compiled\n",programlist->name);
