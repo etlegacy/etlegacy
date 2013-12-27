@@ -1915,7 +1915,7 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 				GLSL_SetInitialUniformValues(info,i);
 				GLSL_FinishGPUShader(&info->list->programs[i]);
 				info->list->programs[i].compiled = qtrue;
-				info->list->currentPermutation = i;
+				//info->list->currentPermutation = i;
 			}
 			else
 			{
@@ -1935,6 +1935,7 @@ qboolean GLSL_CompileShaderList(programInfo_t *info)
 	endTime = ri.Milliseconds();
 	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
 	info->compiled = qtrue;
+	info->list->currentPermutation = 0;
 	return qtrue;
 }
 
@@ -1989,6 +1990,7 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 	else
 	{
 		tr.selectedProgram = programlist->list->current = prog;
+		GLSL_BindProgram(prog);
 	}
 }
 
@@ -2113,6 +2115,7 @@ void GLSL_InitGPUShaders(void)
 	tr.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
 	GLSL_TestProgram(tr.gl_genericShader);
+	GLSL_TestProgram(tr.gl_vertexLightingShader_DBS_entity);
 
 	endTime = ri.Milliseconds();
 
