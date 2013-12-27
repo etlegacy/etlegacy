@@ -93,6 +93,7 @@ option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
 option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"				ON)
 option(FEATURE_CROUCH		"Set to ON if you want Toggle Crouch"					OFF)
+option(FEATURE_RENDERER2C "Set ON to build Renderer 2 in C only" OFF)
 
 cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"				ON "BUNDLED_LIBS" OFF)
 
@@ -820,8 +821,15 @@ if(BUILD_CLIENT)
 			add_dependencies(renderer_opengl2_${ARCH} bundled_freetype)
 		endif(BUNDLED_FREETYPE)
 		target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
+
+		if(FEATURE_RENDERER2C)
+			set(ren2prop "FEATURE_RENDERER2;USE_ICON;RENDERER2C")
+		else(FEATURE_RENDERER2C)
+			set(ren2prop "FEATURE_RENDERER2;USE_ICON")
+		endif(FEATURE_RENDERER2C)
+
 		set_target_properties(renderer_opengl2_${ARCH}
-			PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2;USE_ICON"
+			PROPERTIES COMPILE_DEFINITIONS "${ren2prop}"
 		)
 		install(TARGETS renderer_opengl2_${ARCH}
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"

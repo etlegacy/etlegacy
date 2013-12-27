@@ -1743,6 +1743,8 @@ void GLShader::SelectProgram()
 		}
 	}
 
+	ri.Printf(PRINT_DEVELOPER,"Seleting shader permutation index: %d\n",index);
+
 	_currentProgram = &_shaderPrograms[index];
 }
 

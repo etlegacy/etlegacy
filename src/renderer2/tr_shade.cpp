@@ -697,8 +697,8 @@ static void Render_vertexLighting_DBS_entity(int stage)
 #else
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 	GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_AMBIENTCOLOR,ambientColor);
-	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_VIEWORIGIN,viewOrigin);
-	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_LIGHTDIR,lightDir);
+	GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,viewOrigin);
+	GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTDIR,lightDir);
 	GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_LIGHTCOLOR,lightColor);
 
 	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);

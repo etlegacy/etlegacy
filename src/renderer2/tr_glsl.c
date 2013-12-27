@@ -262,7 +262,7 @@ unsigned int GLSL_GetAttribByName(const char *name)
 void CopyStringAlloc(char **out,const char *in)
 {
 	size_t size = strlen(in) * sizeof(char) + 1;
-	*out = (char *) malloc(size);
+	*out = (char *) Com_Allocate(size);
 	Com_Memset(*out,'\0',size);
 	Q_strncpyz(*out, in, size);
 }
@@ -389,7 +389,7 @@ programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
 	return def;
 
 parseerror:
-	free(def);
+	Com_Dealloc(def);
 	return NULL;
 }
 
@@ -554,7 +554,7 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 	}
 	else
 	{
-		msg = Ren_Malloc(maxLength);
+		msg = ri.Hunk_AllocateTempMemory(maxLength);
 
 		qglGetInfoLogARB(object, maxLength, &maxLength, msg);
 
@@ -564,7 +564,7 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 
 			ri.Printf(printLevel, "%s\n", msgPart);
 		}
-		ri.Free(msg);
+		ri.Hunk_FreeTempMemory(msg);
 	}
 }
 
@@ -577,7 +577,7 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 
 	qglGetObjectParameterivARB(object, GL_OBJECT_SHADER_SOURCE_LENGTH_ARB, &maxLength);
 
-	msg = Ren_Malloc(maxLength);
+	msg = ri.Hunk_AllocateTempMemory(maxLength);
 
 	qglGetShaderSourceARB(object, maxLength, &maxLength, msg);
 
@@ -587,7 +587,7 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 		ri.Printf(PRINT_ALL, "%s\n", msgPart);
 	}
 
-	ri.Free(msg);
+	ri.Hunk_FreeTempMemory(msg);
 }
 
 static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
@@ -1119,7 +1119,7 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 	}
 }
 
-static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, const GLcharARB *buffer, int size, GLenum shaderType)
+static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, const GLcharARB *buffer, int size, GLenum shaderType,const char *name)
 {
 	GLint       compiled;
 	GLhandleARB shader;
@@ -1135,9 +1135,10 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 	qglGetObjectParameterivARB(shader, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
 	if (!compiled)
 	{
+		ri.FS_WriteFile(va("debug/%s_%s.debug", name, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), buffer, size);
 		GLSL_PrintShaderSource(shader);
 		GLSL_PrintInfoLog(shader, qfalse);
-		ri.Error(ERR_DROP, "Couldn't compile shader");
+		ri.Error(ERR_FATAL, "Couldn't compile shader");
 		return 0;
 	}
 
@@ -1733,7 +1734,7 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 
 	program->program = qglCreateProgramObjectARB();
 
-	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER_ARB)))
+	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER_ARB,name)))
 	{
 		ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
 		qglDeleteObjectARB(program->program);
@@ -1742,7 +1743,7 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 
 	if (fpCode)
 	{
-		if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER_ARB)))
+		if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER_ARB,name)))
 		{
 			ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
 			qglDeleteObjectARB(program->program);
@@ -1838,7 +1839,7 @@ static void GLSL_MapMacro(macroBitMap_t *map, int macro, int mappedbit)
 	map->bitOffset = mappedbit;
 }
 
-qboolean GLSL_CompileShaderList(programInfo_t *info)
+qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
 	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
 	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename?info->fragFilename:info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
@@ -1948,7 +1949,7 @@ programInfo_t *GLSL_GetShaderProgram(const char *name)
 	if(prog)
 	{
 		//Compile the shader program
-		GLSL_CompileShaderList(prog);
+		GLSL_CompileShaderProgram(prog);
 	}
 
 	return prog;
@@ -1958,6 +1959,20 @@ void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 {
 	//FIXME: implement this
 	int i;
+
+	if(!programlist->compiled)
+	{
+		ri.Error(ERR_FATAL,"Trying to set macro state of shader \"%s\" but it is not compiled\n",programlist->name);
+	}
+
+	if(enabled > 0 && programlist->list->currentMacros & BIT(macro))
+	{
+		return;
+	}
+	else if(enabled <= 0 && !programlist->list->currentMacros & BIT(macro))
+	{
+		return;
+	}
 
 	for(i = 0; i < programlist->numMacros; i++)
 	{
@@ -1970,8 +1985,10 @@ void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 			}
 			else
 			{
-				programlist->list->currentPermutation ^= BIT(programlist->list->macromap[i].bitOffset);
-				programlist->list->currentMacros ^= BIT(macro);
+				//programlist->list->currentPermutation ^= BIT(programlist->list->macromap[i].bitOffset);
+				//programlist->list->currentMacros ^= BIT(macro);
+				programlist->list->currentPermutation &= ~BIT(programlist->list->macromap[i].bitOffset);
+				programlist->list->currentMacros &= ~BIT(macro);
 			}
 		}
 	}
@@ -1981,8 +1998,15 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 {
 	//FIXME: implement this
 	//set the tr.selectedProgram
-	shaderProgram_t *prog = &programlist->list->programs[programlist->list->currentPermutation];
+	shaderProgram_t *prog;
 	
+	if(!programlist->compiled)
+	{
+		ri.Error(ERR_FATAL,"Trying to select permutation of shader \"%s\" but the list is not compiled\n",programlist->name);
+	}
+
+	prog = &programlist->list->programs[programlist->list->currentPermutation];
+
 	if(!prog || !prog->compiled)
 	{
 		ri.Error(ERR_FATAL,"Trying to select uncompiled shader permutation: %d of shader \"%s\"\n",programlist->list->currentPermutation,programlist->name);
@@ -2052,7 +2076,7 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 
 		if (program->uniformBuffer)
 		{
-			ri.Free(program->uniformBuffer);
+			Com_Dealloc(program->uniformBuffer);
 		}
 
 		Com_Memset(program, 0, sizeof(*program));
@@ -2080,14 +2104,19 @@ void GLSL_InitGPUShaders(void)
 	
 	tr.gl_vertexLightingShader_DBS_world        = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 	
-	tr.gl_forwardLightingShader_omniXYZ         = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
-	tr.gl_forwardLightingShader_projXYZ         = GLSL_GetShaderProgram("forwardLighting_projXYZ");
-	tr.gl_forwardLightingShader_directionalSun  = GLSL_GetShaderProgram("forwardLighting_directionalSun");
-	tr.gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
-	tr.gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
-	tr.gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
-	
-	tr.gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
+	if(DS_STANDARD_ENABLED())
+	{
+		tr.gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
+		tr.gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
+		tr.gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
+		tr.gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
+	}
+	else
+	{
+		tr.gl_forwardLightingShader_omniXYZ         = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
+		tr.gl_forwardLightingShader_projXYZ         = GLSL_GetShaderProgram("forwardLighting_projXYZ");
+		tr.gl_forwardLightingShader_directionalSun  = GLSL_GetShaderProgram("forwardLighting_directionalSun");
+	}
 	
 	tr.gl_shadowFillShader                      = GLSL_GetShaderProgram("shadowFill");
 	tr.gl_reflectionShader                      = GLSL_GetShaderProgram("reflection");
