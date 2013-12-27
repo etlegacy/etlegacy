@@ -1657,18 +1657,36 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray,int arraysize)
 {
 	GLint *uniforms = program->uniforms;
+
+	if (uniforms[uniformNum] == -1)
+	{
+		return;
+	}
+
 	glUniform1fv(uniforms[uniformNum], arraysize, floatarray);
 }
 
 void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray,int arraysize)
 {
 	GLint *uniforms = program->uniforms;
+
+	if (uniforms[uniformNum] == -1)
+	{
+		return;
+	}
+
 	glUniform4fv(uniforms[uniformNum], arraysize, &vectorarray[0][0]);
 }
 
 void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray,int arraysize)
 {
 	GLint *uniforms = program->uniforms;
+
+	if (uniforms[uniformNum] == -1)
+	{
+		return;
+	}
+
 	glUniformMatrix4fv(uniforms[uniformNum], arraysize, GL_FALSE, &matrixarray[0][0]);
 
 }
@@ -2108,9 +2126,10 @@ void GLSL_InitGPUShaders(void)
 	//Load all definitions
 	GLSL_LoadDefinitions();
 
-	tr.gl_genericShader                         = GLSL_GetShaderProgram("generic");
+	tr.gl_genericShader                         = GLSL_GetShaderProgram("generic"); //<-
 	tr.gl_lightMappingShader                    = GLSL_GetShaderProgram("lightMapping");
-	tr.gl_vertexLightingShader_DBS_entity       = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
+
+	tr.gl_vertexLightingShader_DBS_entity       = GLSL_GetShaderProgram("vertexLighting_DBS_entity"); //<-
 	
 	tr.gl_vertexLightingShader_DBS_world        = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 	

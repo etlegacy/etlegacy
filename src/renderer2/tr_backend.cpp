@@ -2415,11 +2415,14 @@ static void RB_RenderInteractionsShadowMapped()
 								gl_genericShader->SetUniform_Color(colorBlack);
 #else
 								GLSL_SetMacroState(tr.gl_genericShader,USE_ALPHA_TESTING,qfalse);
+								GLSL_SetMacroState(tr.gl_genericShader,USE_PORTAL_CLIPPING,qfalse);
 								GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_SKINNING,qfalse);
 								GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_ANIMATION,qfalse);
 								GLSL_SetMacroState(tr.gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
 								GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
+
 								GLSL_SelectPermutation(tr.gl_genericShader);
+
 								GLSL_SetUniform_ColorModulate(CGEN_VERTEX,AGEN_VERTEX);
 								GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
 #endif
@@ -5588,8 +5591,8 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							GLSL_SelectPermutation(tr.gl_genericShader);
 
 							GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
-
 							GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
+
 							GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWMATRIX,light->shadowMatrices[frustumIndex]);
 							// bind u_ColorMap
 							GL_SelectTexture(0);
@@ -9723,6 +9726,8 @@ static void RB_RenderDebugUtils()
 
 			GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
+
+			GLSL_SetRequiredVertexPointers(tr.gl_genericShader);
 #endif
 
 			GL_State(GLS_DEFAULT);
@@ -11232,8 +11237,9 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	GLSL_SelectPermutation(tr.gl_genericShader);
 
 	GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
-
 	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorBlack);
+
+	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
 #endif
 
 	// bind u_ColorMap
