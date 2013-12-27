@@ -115,16 +115,16 @@ pathCorner_t pathCorners[MAX_PATH_CORNERS];
 // the new loadout for WolfXP
 int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 {
-	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          }, // empty bank '0'
-	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          },
-	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,        0,          0,       0,      0,              0,                  0,         0,          0          },
-	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST,         WP_FLAMETHROWER,         WP_KAR98, WP_CARBINE, WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR, WP_MORTAR2, WP_BAZOOKA },
-	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          },
-	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,                      0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          },
-	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET,         0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          },
-	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          },
-	{ WP_BINOCULARS,       0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          },
-	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0,                  0,         0,          0          },
+	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          }, // empty bank '0'
+	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          },
+	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_SILENCER,    WP_SILENCED_COLT, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,       0,      0,              0,                  0,         0,          0          },
+	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,  WP_KAR98,               WP_CARBINE,              WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR, WP_MORTAR2, WP_BAZOOKA },
+	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          },
+	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          },
+	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET, 0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          },
+	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          },
+	{ WP_BINOCULARS,       0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          },
+	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0          },
 };
 
 // Using one unified list for which weapons can received ammo
@@ -4763,41 +4763,6 @@ qboolean BG_IsScopedWeapon(int weapon)
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
 	case WP_FG42SCOPE:
-		return qtrue;
-	}
-	return qfalse;
-}
-
-// FIXME: weapon table
-qboolean BG_WeaponHasAlt(int weapon, int playerClass)
-{
-	switch (weapon)
-	{
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_LUGER:
-		return (playerClass == PC_COVERTOPS);
-	case WP_GRENADE_LAUNCHER:
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_GARAND:
-	case WP_K43:
-	case WP_FG42:
-	case WP_SILENCED_COLT:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-	case WP_FG42SCOPE:
-	case WP_MORTAR:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2:
-	case WP_MORTAR2_SET:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
 		return qtrue;
 	}
 	return qfalse;

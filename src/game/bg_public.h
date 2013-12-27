@@ -896,7 +896,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 	 w == WP_MOBILE_BROWNING || w == WP_MOBILE_BROWNING_SET || \
 	 w == WP_MORTAR2         || w == WP_MORTAR2_SET)
 
-// weapon table
+// FIXME: weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
 #define IS_AUTORELOAD_WEAPON(w) \
@@ -2175,7 +2175,6 @@ skillType_t BG_ClassSkillForClass(int classnum);
 
 qboolean BG_isLightWeaponSupportingFastReload(int weapon);
 qboolean BG_IsScopedWeapon(int weapon);
-qboolean BG_WeaponHasAlt(int weapon, int playerClass);
 
 int BG_FootstepForSurface(int surfaceFlags);
 

@@ -4220,9 +4220,9 @@ void CG_AltWeapon_f(void)
 		reload = qtrue;
 	}
 
-	if (reload && cg_weapaltReloads.integer && !BG_WeaponHasAlt(cg.weaponSelect, cgs.clientinfo[cg.clientNum].cls))
+	if (reload && cg_weapaltReloads.integer)
 	{
-		//This is a horrible way of doing it but theres not other way atm.
+		//FIXME: This is a horrible way of doing it but theres not other way atm.
 		trap_SendConsoleCommand("+reload\n");
 		trap_SendConsoleCommand("-reload\n");
 	}
