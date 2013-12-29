@@ -1805,9 +1805,9 @@ void G_wipeCvars(void)
 			continue;
 		}
 
-		if (g_gametype.integer == GT_WOLF_STOPWATCH && (strcmp(pCvars->cvarName, "g_lms_currentMatch") ||
-		                                                strcmp(pCvars->cvarName, "g_lms_roundlimit") ||
-		                                                strcmp(pCvars->cvarName, "g_lms_matchlimit")))
+		if (g_gametype.integer == GT_WOLF_LMS && (strcmp(pCvars->cvarName, "g_lms_currentMatch") ||
+		                                          strcmp(pCvars->cvarName, "g_lms_roundlimit") ||
+		                                          strcmp(pCvars->cvarName, "g_lms_matchlimit")))
 		{
 			continue;
 		}
