@@ -212,7 +212,7 @@ HINSTANCE Omnibot_LL(const char *file)
 eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path, const char *mod)
 {
 	eomnibot_error r = BOT_ERROR_NONE;
-	if (!path || strln(path) == 0)
+	if (!path || strlen(path) == 0)
 		g_BotLibrary = Omnibot_LL( OB_VA(".\\%s\\omni-bot\\%s.dll", mod, lib) );
 	else
 		g_BotLibrary = Omnibot_LL( OB_VA("%s\\%s.dll", path ? path : ".", lib) );
