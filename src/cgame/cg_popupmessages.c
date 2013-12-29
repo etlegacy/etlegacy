@@ -312,7 +312,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 		return;
 	}
 
-	if (type < 0 || type >= PM_NUM_TYPES)
+	if (type >= PM_NUM_TYPES)
 	{
 		CG_Printf("Invalid popup type: %d\n", type);
 		return;
