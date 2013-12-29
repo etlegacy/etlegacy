@@ -209,14 +209,20 @@ HINSTANCE Omnibot_LL(const char *file)
 	return hndl;
 }
 
-eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path)
+eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path, const char *mod)
 {
 	eomnibot_error r = BOT_ERROR_NONE;
-	g_BotLibrary = Omnibot_LL( OB_VA("%s\\%s.dll", path ? path : ".", lib) );
+	if (!path || strln(path) == 0)
+		g_BotLibrary = Omnibot_LL( OB_VA(".\\%s\\omni-bot\\%s.dll", mod, lib) );
+	else
+		g_BotLibrary = Omnibot_LL( OB_VA("%s\\%s.dll", path ? path : ".", lib) );
+	
 	if(g_BotLibrary == 0)
 		g_BotLibrary = Omnibot_LL( OB_VA(".\\omni-bot\\%s.dll", lib) );
 	if(g_BotLibrary == 0)
 		g_BotLibrary = Omnibot_LL( OB_VA("%s.dll", lib) );
+	if(g_BotLibrary == 0)
+		g_BotLibrary = Omnibot_LL( OB_VA(".\\legacy\\omni-bot\\%s.dll", lib) );
 	if(g_BotLibrary == 0)
 	{
 		g_OmnibotLibPath.clear();
@@ -298,7 +304,6 @@ const char *OB_VA(const char* _msg, ...)
 	return pNextBuffer;
 }
 
-
 int OB_VA_OWNBUFFER(char *_buffer, int _buffersize, CHECK_PRINTF_ARGS const char* _msg, ...)
 {
 	va_list list;
@@ -339,10 +344,19 @@ void *Omnibot_LL(const char *file)
 	return pLib;
 }
 
-eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path)
+eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path, const char *mod)
 {
 	eomnibot_error r = BOT_ERROR_NONE;
-	g_BotLibrary = Omnibot_LL(OB_VA("%s/%s.so", path ? path : ".", lib));
+	
+	if(!path || strlen(path) == 0)
+	{
+		g_BotLibrary = Omnibot_LL(OB_VA("./%s/omni-bot/%s.so", mod, lib));
+	}
+	else
+	{
+		g_BotLibrary = Omnibot_LL(OB_VA("%s/%s.so", path ? path : ".", lib));
+	}
+	
 	if(!g_BotLibrary)
 	{
 		g_BotLibrary = Omnibot_LL(OB_VA("./%s.so", lib));
@@ -358,6 +372,10 @@ eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *pat
 		char *homeDir = getenv("HOME");
 		if(homeDir)
 			g_BotLibrary = Omnibot_LL(OB_VA("%s.so", lib));
+	}
+	if(!g_BotLibrary)
+	{
+		g_BotLibrary = Omnibot_LL(OB_VA("./legacy/omni-bot/%s.so", lib));
 	}
 	if(!g_BotLibrary)
 	{
