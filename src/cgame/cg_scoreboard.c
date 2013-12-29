@@ -718,12 +718,12 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		s = CG_TranslateString(s);
 	}
 
-	CG_FillRect(320 - w / 2, y, w, 20, clrUiBar);
-	CG_DrawRect_FixedBorder(320 - w / 2, y, w, 20, 1, colorBlack);
+	CG_FillRect(Ccg_WideX(320) - w / 2, y, w, 20, clrUiBar);
+	CG_DrawRect_FixedBorder(Ccg_WideX(320) - w / 2, y, w, 20, 1, colorBlack);
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
-	CG_Text_Paint_Ext(320 - w * 0.5f, y + 15, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(Ccg_WideX(320) - w * 0.5f, y + 15, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	return y + INFO_LINE_HEIGHT + 6;
 }
