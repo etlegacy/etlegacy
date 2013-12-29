@@ -632,7 +632,7 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 	ri.Hunk_FreeTempMemory(msg);
 }
 
-static qboolean GLSL_HasConflictingMacros(int compilemacro, unsigned long usedmacros)
+static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
 {
 	switch (compilemacro)
 	{
@@ -661,7 +661,7 @@ static qboolean GLSL_HasConflictingMacros(int compilemacro, unsigned long usedma
 	return qfalse;
 }
 
-static qboolean GLSL_MissesRequiredMacros(int compilemacro, unsigned long usedmacros)
+static qboolean GLSL_MissesRequiredMacros(int compilemacro, int usedmacros)
 {
 	switch (compilemacro)
 	{
@@ -1359,7 +1359,7 @@ This whole method is stupid, clean this shit up
 static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const char *macros, int permutation, char **out)
 {
 	int i;
-	unsigned long macroatrib = 0;
+	int macroatrib = 0;
 
 	*out = (char *) malloc(1000);
 	Com_Memset(*out, 0, 1000);
@@ -2064,7 +2064,7 @@ void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 	else if(enabled <= 0 && !programlist->list->currentMacros & BIT(macro))
 	{
 		return;
-	}
+	}	
 
 	for(i = 0; i < programlist->list->mappedMacros; i++)
 	{
@@ -2147,7 +2147,7 @@ void GLSL_SetRequiredVertexPointers(programInfo_t *programlist)
 	{
 		int macro = programlist->macros[j];
 		
-		if (programlist->list->currentMacros & macro)
+		if (programlist->list->currentMacros & BIT(macro))
 		{
 			macroVertexAttribs |= GLSL_GetRequiredVertexAttributes(macro);
 		}

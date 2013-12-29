@@ -346,6 +346,8 @@ float           MemStreamGetFloat(memStream_t *s);
 
 //=============================================
 
+void printBits(size_t const size, void const * const ptr);
+
 #ifdef __cplusplus
 }
 #endif
