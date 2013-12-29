@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1236,6 +1236,7 @@ static void CG_Missile(centity_t *cent)
 	if (cent->currentState.weapon == WP_MORTAR_SET
 	    || cent->currentState.weapon == WP_MORTAR2_SET
 	    || cent->currentState.weapon == WP_PANZERFAUST
+	    || cent->currentState.weapon == WP_BAZOOKA
 	    || cent->currentState.weapon == WP_MAPMORTAR
 	    || cent->currentState.weapon == WP_GPG40
 	    || cent->currentState.weapon == WP_M7)
