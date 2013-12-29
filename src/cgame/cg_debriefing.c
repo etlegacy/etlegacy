@@ -2601,7 +2601,15 @@ void CG_Debriefing_PlayerRank_Draw(panel_button_t *button)
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Rank:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_FullRankNameForClientInfo(ci), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	if (ci->rank > 0)
+	{
+		CG_DrawPic(button->rect.x, button->rect.y - 12, 16, 16, rankicons[ci->rank][ci->team == TEAM_AXIS ? 1 : 0][0].shader);
+		CG_Text_Paint_Ext(button->rect.x + 18, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_FullRankNameForClientInfo(ci), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	}
+	else
+	{
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_FullRankNameForClientInfo(ci), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	}
 }
 
 void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
