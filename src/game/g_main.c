@@ -1800,6 +1800,18 @@ void G_wipeCvars(void)
 
 	for (i = 0, pCvars = gameCvarTable; i < gameCvarTableSize; i++, pCvars++)
 	{
+		if (g_gametype.integer == GT_WOLF_STOPWATCH && strcmp(pCvars->cvarName, "g_currentRound"))
+		{
+			continue;
+		}
+
+		if (g_gametype.integer == GT_WOLF_STOPWATCH && (strcmp(pCvars->cvarName, "g_lms_currentMatch") ||
+		                                                strcmp(pCvars->cvarName, "g_lms_roundlimit") ||
+		                                                strcmp(pCvars->cvarName, "g_lms_matchlimit")))
+		{
+			continue;
+		}
+
 		if (pCvars->vmCvar && pCvars->fConfigReset)
 		{
 			G_Printf("set %s %s\n", pCvars->cvarName, pCvars->defaultString);
