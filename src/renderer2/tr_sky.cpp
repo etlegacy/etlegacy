@@ -820,21 +820,21 @@ void RB_DrawSun(void)
 
 	gl_genericShader->BindProgram();
 #else
-	GLSL_SetMacroState(tr.gl_genericShader,USE_ALPHA_TESTING,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_SKINNING,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_ANIMATION,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_ALPHA_TESTING,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+	GLSL_SetMacroState(gl_genericShader,USE_VERTEX_SKINNING,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_VERTEX_ANIMATION,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
 
-	GLSL_SelectPermutation(tr.gl_genericShader);
+	GLSL_SelectPermutation(gl_genericShader);
 #endif
 
 	// set uniforms
 #ifndef RENDERER2C
 	gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
 #else
-	GLSL_SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
+	GLSL_SetUniform_ColorModulate(gl_genericShader,CGEN_VERTEX, AGEN_VERTEX);
 #endif
 
 	MatrixSetupTranslation(transformMatrix, backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
@@ -848,8 +848,8 @@ void RB_DrawSun(void)
 	gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 	gl_genericShader->SetPortalClipping(backEnd.viewParms.isPortal);
 #else
-	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
-	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+	GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
+	GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
 #endif
 
 	if (backEnd.viewParms.isPortal)
@@ -865,7 +865,7 @@ void RB_DrawSun(void)
 #ifndef RENDERER2C
 		gl_genericShader->SetUniform_PortalPlane(plane);
 #else
-		GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+		GLSL_SetUniformVec4(selectedProgram,UNIFORM_PORTALPLANE,plane);
 #endif
 	}
 
@@ -1046,12 +1046,12 @@ void Tess_StageIteratorSky(void)
 			gl_skyboxShader->SetUniform_ModelMatrix(backEnd.orientation.transformMatrix);
 			gl_skyboxShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 #else
-			GLSL_SetMacroState(tr.gl_skyboxShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
-			GLSL_SelectPermutation(tr.gl_skyboxShader);
+			GLSL_SetMacroState(gl_skyboxShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+			GLSL_SelectPermutation(gl_skyboxShader);
 
-			GLSL_SetUniformVec3(tr.selectedProgram,UNIFORM_VIEWORIGIN,backEnd.viewParms.orientation.origin);   // in world space
-			GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
-			GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+			GLSL_SetUniformVec3(selectedProgram,UNIFORM_VIEWORIGIN,backEnd.viewParms.orientation.origin);   // in world space
+			GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
+			GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
 #endif
 
 			// u_PortalPlane
@@ -1068,14 +1068,14 @@ void Tess_StageIteratorSky(void)
 #ifndef RENDERER2C
 				gl_skyboxShader->SetUniform_PortalPlane(plane);
 #else
-				GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_PORTALPLANE,plane);
+				GLSL_SetUniformVec4(selectedProgram,UNIFORM_PORTALPLANE,plane);
 #endif
 			}
 
 #ifndef RENDERER2C
 			gl_skyboxShader->SetRequiredVertexPointers();
 #else
-			GLSL_SetRequiredVertexPointers(tr.gl_skyboxShader);
+			GLSL_SetRequiredVertexPointers(gl_skyboxShader);
 #endif
 
 			// bind u_ColorMap

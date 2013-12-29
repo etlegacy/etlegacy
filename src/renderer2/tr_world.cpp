@@ -1505,7 +1505,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 #ifndef RENDERER2C
 			gl_genericShader->SetUniform_Color(colorGreen);
 #else
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorGreen);
+			GLSL_SetUniformVec4(selectedProgram,UNIFORM_COLOR,colorGreen);
 #endif
 		}
 		else
@@ -1513,7 +1513,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 #ifndef RENDERER2C
 			gl_genericShader->SetUniform_Color(colorMdGrey);
 #else
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorMdGrey);
+			GLSL_SetUniformVec4(selectedProgram,UNIFORM_COLOR,colorMdGrey);
 #endif
 		}
 
@@ -1675,7 +1675,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 #ifndef RENDERER2C
 			gl_genericShader->SetUniform_Color(colorGreen);
 #else
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorGreen);
+			GLSL_SetUniformVec4(selectedProgram,UNIFORM_COLOR,colorGreen);
 #endif
 		}
 		else
@@ -1683,7 +1683,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 #ifndef RENDERER2C
 			gl_genericShader->SetUniform_Color(colorMdGrey);
 #else
-			GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorMdGrey);
+			GLSL_SetUniformVec4(selectedProgram,UNIFORM_COLOR,colorMdGrey);
 #endif
 		}
 
@@ -2039,14 +2039,14 @@ static void R_CoherentHierachicalCulling()
 
 	gl_genericShader->BindProgram();
 #else
-	GLSL_SetMacroState(tr.gl_genericShader,USE_ALPHA_TESTING,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_PORTAL_CLIPPING,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_SKINNING,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_VERTEX_ANIMATION,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
-	GLSL_SetMacroState(tr.gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_ALPHA_TESTING,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_VERTEX_SKINNING,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_VERTEX_ANIMATION,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_DEFORM_VERTEXES,qfalse);
+	GLSL_SetMacroState(gl_genericShader,USE_TCGEN_ENVIRONMENT,qfalse);
 
-	GLSL_SelectPermutation(tr.gl_genericShader);
+	GLSL_SelectPermutation(gl_genericShader);
 #endif
 	GL_Cull(CT_TWO_SIDED);
 
@@ -2063,8 +2063,8 @@ static void R_CoherentHierachicalCulling()
 	gl_genericShader->SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
 	gl_genericShader->SetUniform_Color(colorWhite);
 #else
-	GLSL_SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
-	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLOR,colorWhite);
+	GLSL_SetUniform_ColorModulate(gl_genericShader,CGEN_CONST, AGEN_CONST);
+	GLSL_SetUniformVec4(selectedProgram,UNIFORM_COLOR,colorWhite);
 #endif
 
 	// set up the transformation matrix
@@ -2073,7 +2073,7 @@ static void R_CoherentHierachicalCulling()
 #ifndef RENDERER2C
 	gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 #else
-	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+	GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
 #endif
 
 	// bind u_ColorMap
@@ -2083,7 +2083,7 @@ static void R_CoherentHierachicalCulling()
 #ifndef RENDERER2C
 	gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
 #else
-	GLSL_SetUniformMatrix16(tr.selectedProgram,UNIFORM_COLORTEXTUREMATRIX,matrixIdentity);
+	GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_COLORTEXTUREMATRIX,matrixIdentity);
 #endif
 
 

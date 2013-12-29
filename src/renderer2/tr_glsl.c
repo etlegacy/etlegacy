@@ -88,7 +88,7 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_LightForward",              GLSL_VEC3   },
 	{ "u_LightUp",                   GLSL_VEC3   },
 	{ "u_LightRight",                GLSL_VEC3   },
-	{ "u_LightOrigin",               GLSL_VEC4   },
+	{ "u_LightOrigin",               GLSL_VEC3   },
 	{ "u_LightRadius",               GLSL_FLOAT  },
 	{ "u_AmbientLight",              GLSL_VEC3   },
 	{ "u_DirectedLight",             GLSL_VEC3   },
@@ -200,6 +200,47 @@ const int numberofAttributes = ARRAY_LEN(attributeMap);
 static programInfo_t *hashTable[FILE_HASH_SIZE];
 
 static char *definitionText;
+
+#ifdef RENDERER2C
+programInfo_t *gl_genericShader;
+programInfo_t *gl_lightMappingShader;
+programInfo_t *gl_vertexLightingShader_DBS_entity;
+programInfo_t *gl_vertexLightingShader_DBS_world;
+programInfo_t *gl_forwardLightingShader_omniXYZ;
+programInfo_t *gl_forwardLightingShader_projXYZ;
+programInfo_t *gl_forwardLightingShader_directionalSun;
+programInfo_t *gl_deferredLightingShader_omniXYZ;
+programInfo_t *gl_deferredLightingShader_projXYZ;
+programInfo_t *gl_deferredLightingShader_directionalSun;
+programInfo_t *gl_geometricFillShader;
+programInfo_t *gl_shadowFillShader;
+programInfo_t *gl_reflectionShader;
+programInfo_t *gl_skyboxShader;
+programInfo_t *gl_fogQuake3Shader;
+programInfo_t *gl_fogGlobalShader;
+programInfo_t *gl_heatHazeShader;
+programInfo_t *gl_screenShader;
+programInfo_t *gl_portalShader;
+programInfo_t *gl_toneMappingShader;
+programInfo_t *gl_contrastShader;
+programInfo_t *gl_cameraEffectsShader;
+programInfo_t *gl_blurXShader;
+programInfo_t *gl_blurYShader;
+programInfo_t *gl_debugShadowMapShader;
+
+//Dushan
+programInfo_t *gl_liquidShader;
+programInfo_t *gl_rotoscopeShader;
+programInfo_t *gl_bloomShader;
+programInfo_t *gl_refractionShader;
+programInfo_t *gl_depthToColorShader;
+programInfo_t *gl_volumetricFogShader;
+programInfo_t *gl_volumetricLightingShader;
+programInfo_t *gl_dispersionShader;
+
+//This is set with the GLSL_SelectPermutation
+shaderProgram_t *selectedProgram;
+#endif
 
 /*
 ================
@@ -341,6 +382,7 @@ programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
 				}
 				else
 				{
+					ri.Error(ERR_FATAL,"PERKELE: %s",token);
 					ri.Printf(PRINT_WARNING,"WARNING: Macro '%s' for shaderdef '%s' was not recognized\n",token,defname);
 					goto parseerror;
 				}
@@ -590,12 +632,12 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 	ri.Hunk_FreeTempMemory(msg);
 }
 
-static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
+static qboolean GLSL_HasConflictingMacros(int compilemacro, unsigned long usedmacros)
 {
 	switch (compilemacro)
 	{
 	case USE_VERTEX_SKINNING:
-		if (usedmacros & USE_VERTEX_ANIMATION)
+		if (usedmacros & BIT(USE_VERTEX_ANIMATION))
 		{
 			return qtrue;
 		}
@@ -607,7 +649,7 @@ static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
 		}
 		break;
 	case USE_VERTEX_ANIMATION:
-		if (usedmacros & USE_VERTEX_SKINNING)
+		if (usedmacros & BIT(USE_VERTEX_SKINNING))
 		{
 			return qtrue;
 		}
@@ -624,13 +666,13 @@ static qboolean GLSL_MissesRequiredMacros(int compilemacro, unsigned long usedma
 	switch (compilemacro)
 	{
 	case USE_PARALLAX_MAPPING:
-		if (usedmacros & USE_NORMAL_MAPPING)
+		if (usedmacros & BIT(USE_NORMAL_MAPPING))
 		{
 			return qtrue;
 		}
 		break;
 	case USE_REFLECTIVE_SPECULAR:
-		if (usedmacros & USE_NORMAL_MAPPING)
+		if (usedmacros & BIT(USE_NORMAL_MAPPING))
 		{
 			return qtrue;
 		}
@@ -1484,6 +1526,7 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 	if (uniformsInfo[uniformNum].type != GLSL_INT)
 	{
 		ri.Printf(PRINT_WARNING, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1510,6 +1553,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT)
 	{
 		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1536,6 +1580,7 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC2)
 	{
 		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1563,6 +1608,7 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC3)
 	{
 		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1589,6 +1635,7 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4)
 	{
 		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1615,6 +1662,7 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT5)
 	{
 		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1641,6 +1689,7 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16)
 	{
 		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1663,6 +1712,13 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 		return;
 	}
 
+	if (uniformsInfo[uniformNum].type != GLSL_FLOATARR)
+	{
+		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		return;
+	}
+
 	glUniform1fv(uniforms[uniformNum], arraysize, floatarray);
 }
 
@@ -1675,6 +1731,13 @@ void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *ve
 		return;
 	}
 
+	if (uniformsInfo[uniformNum].type != GLSL_VEC4ARR)
+	{
+		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		return;
+	}
+
 	glUniform4fv(uniforms[uniformNum], arraysize, &vectorarray[0][0]);
 }
 
@@ -1684,6 +1747,13 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 
 	if (uniforms[uniformNum] == -1)
 	{
+		return;
+	}
+
+	if (uniformsInfo[uniformNum].type != GLSL_MAT16ARR)
+	{
+		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1934,7 +2004,6 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 				GLSL_SetInitialUniformValues(info,i);
 				GLSL_FinishGPUShader(&info->list->programs[i]);
 				info->list->programs[i].compiled = qtrue;
-				//info->list->currentPermutation = i;
 			}
 			else
 			{
@@ -1997,9 +2066,9 @@ void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 		return;
 	}
 
-	for(i = 0; i < programlist->numMacros; i++)
+	for(i = 0; i < programlist->list->mappedMacros; i++)
 	{
-		if(programlist->macros[i] == macro)
+		if(programlist->list->macromap[i].macro == macro)
 		{
 			if(enabled > 0)
 			{
@@ -2008,19 +2077,22 @@ void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 			}
 			else
 			{
-				//programlist->list->currentPermutation ^= BIT(programlist->list->macromap[i].bitOffset);
-				//programlist->list->currentMacros ^= BIT(macro);
 				programlist->list->currentPermutation &= ~BIT(programlist->list->macromap[i].bitOffset);
 				programlist->list->currentMacros &= ~BIT(macro);
 			}
 		}
+	}
+
+	if(programlist->list->permutations < programlist->list->currentPermutation)
+	{
+		ri.Error(ERR_FATAL,"GLSL_SetMacroState: Trying to set macro state to impossible result for shader: %s with macro: %i permutation number %i",programlist->name,macro,programlist->list->permutations);
 	}
 }
 
 void GLSL_SelectPermutation(programInfo_t *programlist)
 {
 	//FIXME: implement this
-	//set the tr.selectedProgram
+	//set the selectedProgram
 	shaderProgram_t *prog;
 	
 	if(!programlist)
@@ -2041,7 +2113,7 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 	}
 	else
 	{
-		tr.selectedProgram = programlist->list->current = prog;
+		selectedProgram = programlist->list->current = prog;
 		GLSL_BindProgram(prog);
 	}
 }
@@ -2126,54 +2198,54 @@ void GLSL_InitGPUShaders(void)
 	//Load all definitions
 	GLSL_LoadDefinitions();
 
-	tr.gl_genericShader                         = GLSL_GetShaderProgram("generic"); //<-
-	tr.gl_lightMappingShader                    = GLSL_GetShaderProgram("lightMapping");
+	gl_genericShader                         = GLSL_GetShaderProgram("generic"); //<-
+	gl_lightMappingShader                    = GLSL_GetShaderProgram("lightMapping");
 
-	tr.gl_vertexLightingShader_DBS_entity       = GLSL_GetShaderProgram("vertexLighting_DBS_entity"); //<-
+	gl_vertexLightingShader_DBS_entity       = GLSL_GetShaderProgram("vertexLighting_DBS_entity"); //<-
 	
-	tr.gl_vertexLightingShader_DBS_world        = GLSL_GetShaderProgram("vertexLighting_DBS_world");
+	gl_vertexLightingShader_DBS_world        = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 	
 	if(DS_STANDARD_ENABLED())
 	{
-		tr.gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
-		tr.gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
-		tr.gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
-		tr.gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
+		gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
+		gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
+		gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
+		gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
 	}
 	else
 	{
-		tr.gl_forwardLightingShader_omniXYZ         = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
-		tr.gl_forwardLightingShader_projXYZ         = GLSL_GetShaderProgram("forwardLighting_projXYZ");
-		tr.gl_forwardLightingShader_directionalSun  = GLSL_GetShaderProgram("forwardLighting_directionalSun");
+		gl_forwardLightingShader_omniXYZ         = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
+		gl_forwardLightingShader_projXYZ         = GLSL_GetShaderProgram("forwardLighting_projXYZ");
+		gl_forwardLightingShader_directionalSun  = GLSL_GetShaderProgram("forwardLighting_directionalSun");
 	}
 	
-	tr.gl_shadowFillShader                      = GLSL_GetShaderProgram("shadowFill");
-	tr.gl_reflectionShader                      = GLSL_GetShaderProgram("reflection");
-	tr.gl_skyboxShader                          = GLSL_GetShaderProgram("skybox");
-	tr.gl_fogQuake3Shader                       = GLSL_GetShaderProgram("fogQuake3");
-	tr.gl_fogGlobalShader                       = GLSL_GetShaderProgram("fogGlobal");
-	tr.gl_heatHazeShader                        = GLSL_GetShaderProgram("heatHaze");
-	tr.gl_screenShader                          = GLSL_GetShaderProgram("screen");
-	tr.gl_portalShader                          = GLSL_GetShaderProgram("portal");
-	tr.gl_toneMappingShader                     = GLSL_GetShaderProgram("toneMapping");
-	tr.gl_contrastShader                        = GLSL_GetShaderProgram("contrast");
-	tr.gl_cameraEffectsShader                   = GLSL_GetShaderProgram("cameraEffects");
-	tr.gl_blurXShader                           = GLSL_GetShaderProgram("blurX");
-	tr.gl_blurYShader                           = GLSL_GetShaderProgram("blurY");
-	tr.gl_debugShadowMapShader                  = GLSL_GetShaderProgram("debugShadowMap");
+	gl_shadowFillShader                      = GLSL_GetShaderProgram("shadowFill");
+	gl_reflectionShader                      = GLSL_GetShaderProgram("reflection");
+	gl_skyboxShader                          = GLSL_GetShaderProgram("skybox");
+	gl_fogQuake3Shader                       = GLSL_GetShaderProgram("fogQuake3");
+	gl_fogGlobalShader                       = GLSL_GetShaderProgram("fogGlobal");
+	gl_heatHazeShader                        = GLSL_GetShaderProgram("heatHaze");
+	gl_screenShader                          = GLSL_GetShaderProgram("screen");
+	gl_portalShader                          = GLSL_GetShaderProgram("portal");
+	gl_toneMappingShader                     = GLSL_GetShaderProgram("toneMapping");
+	gl_contrastShader                        = GLSL_GetShaderProgram("contrast");
+	gl_cameraEffectsShader                   = GLSL_GetShaderProgram("cameraEffects");
+	gl_blurXShader                           = GLSL_GetShaderProgram("blurX");
+	gl_blurYShader                           = GLSL_GetShaderProgram("blurY");
+	gl_debugShadowMapShader                  = GLSL_GetShaderProgram("debugShadowMap");
 
 	//Dushan
-	tr.gl_liquidShader             = GLSL_GetShaderProgram("liquid");
-	tr.gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
-	tr.gl_bloomShader              = GLSL_GetShaderProgram("bloom");
-	tr.gl_refractionShader         = GLSL_GetShaderProgram("refraction");
-	tr.gl_depthToColorShader       = GLSL_GetShaderProgram("depthToColor");
-	tr.gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
-	tr.gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
-	tr.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
+	gl_liquidShader             = GLSL_GetShaderProgram("liquid");
+	gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
+	gl_bloomShader              = GLSL_GetShaderProgram("bloom");
+	gl_refractionShader         = GLSL_GetShaderProgram("refraction");
+	gl_depthToColorShader       = GLSL_GetShaderProgram("depthToColor");
+	gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
+	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
+	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
-	GLSL_TestProgram(tr.gl_genericShader);
-	GLSL_TestProgram(tr.gl_vertexLightingShader_DBS_entity);
+	GLSL_TestProgram(gl_genericShader);
+	GLSL_TestProgram(gl_vertexLightingShader_DBS_entity);
 
 	endTime = ri.Milliseconds();
 
@@ -2308,24 +2380,27 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 		default:
 			break;
 		}
-		GLSL_SetUniformFloatARR(tr.selectedProgram,UNIFORM_DEFORMPARMS,deformParms,MAX_SHADER_DEFORM_PARMS);
+		GLSL_SetUniformFloatARR(selectedProgram,UNIFORM_DEFORMPARMS,deformParms,MAX_SHADER_DEFORM_PARMS);
 	}
 }
 
-void GLSL_SetUniform_ColorModulate(int colorGen, int alphaGen)
+void GLSL_SetUniform_ColorModulate(programInfo_t *prog,int colorGen, int alphaGen)
 {
 	vec4_t temp;
 	switch (colorGen)
 	{
 	case CGEN_VERTEX:
+		prog->attributes |= ATTR_COLOR;
 		VectorSet(temp, 1, 1, 1);
 		break;
 
 	case CGEN_ONE_MINUS_VERTEX:
+		prog->attributes |= ATTR_COLOR;
 		VectorSet(temp, -1, -1, -1);
 		break;
 
 	default:
+		prog->attributes &= ~ATTR_COLOR;
 		VectorSet(temp, 0, 0, 0);
 		break;
 	}
@@ -2333,10 +2408,12 @@ void GLSL_SetUniform_ColorModulate(int colorGen, int alphaGen)
 	switch (alphaGen)
 	{
 	case AGEN_VERTEX:
+		prog->attributes |= ATTR_COLOR;
 		temp[3] = 1.0f;
 		break;
 
 	case AGEN_ONE_MINUS_VERTEX:
+		prog->attributes |= ATTR_COLOR;
 		temp[3] = -1.0f;
 		break;
 
@@ -2345,7 +2422,7 @@ void GLSL_SetUniform_ColorModulate(int colorGen, int alphaGen)
 		break;
 	}
 
-	GLSL_SetUniformVec4(tr.selectedProgram,UNIFORM_COLORMODULATE,temp);
+	GLSL_SetUniformVec4(selectedProgram,UNIFORM_COLORMODULATE,temp);
 }
 
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
@@ -2370,26 +2447,8 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
 		value = ATEST_NONE;
 		break;
 	}
-
-#if defined(LOG_GLSL_UNIFORMS)
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va("--- GLSL_SetUniformAlphaTest( program = %s, value = %i ) ---\n", program->name, value));
-	}
-#endif
-
-#if defined(USE_UNIFORM_FIREWALL)
-	if (program->t_AlphaTest == value)
-	{
-		return;
-	}
-
-	program->t_AlphaTest = value;
-#endif
 	
-	GLSL_SetUniformInt(tr.selectedProgram,UNIFORM_ALPHATEST,value);
+	GLSL_SetUniformInt(selectedProgram,UNIFORM_ALPHATEST,value);
 }
 
 #endif // RENDERER2C
