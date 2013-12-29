@@ -648,7 +648,7 @@ void CG_GameStatsDraw(void)
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Rank"), 0.0f, 0, hStyle2, hFont2);
-		x += 82;
+		x += 122;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
 
 		x = realX + 4;

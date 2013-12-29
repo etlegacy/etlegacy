@@ -1980,7 +1980,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 		}
 	}
 
-	Q_strncpyz(gs->strRank, va("%-13s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
+	Q_strncpyz(gs->strRank, va("%-20s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
 
 	if (skillMask != 0)
 	{
