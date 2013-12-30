@@ -440,6 +440,11 @@ static char *GLSL_FindDefinitionInText(const char *shadername)
 	char *p = definitionText;
 	char *token;
 
+	if(!p)
+	{
+		ri.Error(ERR_FATAL,"GLSL_FindDefinitionInText: Definition text is null");
+	}
+
 	// look for label
 	// note that this could get confused if a shader name is used inside
 	// another shader definition
@@ -2181,6 +2186,55 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 	}
 }
 
+void GLSL_DeleteShaderProgramList(shaderProgramList_t *programlist)
+{
+	int i;
+
+	Com_Dealloc(programlist->macromap);
+
+	for(i = 0; i <programlist->permutations; i++)
+	{
+		GLSL_DeleteGPUShader(&programlist->programs[i]);
+	}
+
+	Com_Dealloc(programlist->programs);
+}
+
+void GLSL_DeleteShaderProramInfo(programInfo_t *program)
+{
+	GLSL_DeleteShaderProgramList(program->list);
+
+	if(program->extraMacros)
+	{
+		Com_Dealloc(program->extraMacros);
+	}
+
+	if(program->filename)
+	{
+		Com_Dealloc(program->filename);
+	}
+
+	if(program->fragFilename)
+	{
+		Com_Dealloc(program->fragFilename);
+	}
+
+	if(program->fragmentLibraries)
+	{
+		Com_Dealloc(program->fragmentLibraries);
+	}
+
+	if(program->name)
+	{
+		Com_Dealloc(program->name);
+	}
+
+	if(program->vertexLibraries)
+	{
+		Com_Dealloc(program->vertexLibraries);
+	}
+}
+
 void GLSL_InitGPUShaders(void)
 {
 	int  startTime, endTime;
@@ -2250,32 +2304,25 @@ void GLSL_InitGPUShaders(void)
 
 void GLSL_ShutdownGPUShaders(void)
 {
+	int i;
+
 	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
 
-
-	//FIXME: sort thrue this!
-	/*
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD0);
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_TEXCOORD1);
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_POSITION);
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_POSITION2);
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_NORMAL);
-#ifdef USE_VERT_TANGENT_SPACE
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_TANGENT);
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_BITANGENT);
-#endif
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_NORMAL2);
-#ifdef USE_VERT_TANGENT_SPACE
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_TANGENT2);
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_BITANGENT2);
-#endif
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_COLOR);
-	qglDisableVertexAttribArrayARB(ATTR_INDEX_LIGHTDIRECTION);
-	*/
-
+	//GLSL_VertexAttribsState(0);
 	GLSL_BindNullProgram();
 
 	//Clean up programInfo_t:s
+	for(i = 0; i < FILE_HASH_SIZE; i++)
+	{
+		if(hashTable[i])
+		{
+			programInfo_t *prog = hashTable[i];
+			GLSL_DeleteShaderProramInfo(prog);
+			Com_Dealloc(prog);
+		}
+	}
+
+	Com_Dealloc(definitionText);
 
 	glState.currentProgram = 0;
 	qglUseProgramObjectARB(0);
