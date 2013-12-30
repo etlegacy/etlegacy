@@ -368,7 +368,6 @@ Q3OBJ = \
 	$(B)/client/vm_interpreted.o \
 	\
 	$(B)/client/be_interface.o \
-	$(B)/client/l_libvar.o \
 	$(B)/client/l_memory.o \
 	$(B)/client/l_precomp.o \
 	$(B)/client/l_script.o \

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -34,7 +34,6 @@
 
 #include "../qcommon/q_shared.h"
 #include "l_memory.h"
-#include "l_libvar.h"
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
@@ -52,9 +51,7 @@ botlib_import_t botimport;
 int botlibsetup = qfalse;
 
 //===========================================================================
-//
 // several functions used by the exported functions
-//
 //===========================================================================
 
 qboolean BotLibSetup(char *str)
@@ -97,8 +94,6 @@ int Export_BotLibShutdown(void)
 	}
 	recursive = 1;
 
-	// free all libvars
-	LibVarDeAllocAll();
 	// remove all global defines from the pre compiler
 	PC_RemoveAllGlobalDefines();
 
@@ -110,23 +105,6 @@ int Export_BotLibShutdown(void)
 
 	return BLERR_NOERROR;
 } //end of the function Export_BotLibShutdown
-
-int Export_BotLibVarSet(char *var_name, char *value)
-{
-	LibVarSet(var_name, value);
-	return BLERR_NOERROR;
-} //end of the function Export_BotLibVarSet
-
-int Export_BotLibVarGet(char *var_name, char *value, int size)
-{
-	char *varvalue;
-
-	varvalue = LibVarGetString(var_name);
-	strncpy(value, varvalue, size - 1);
-	value[size - 1] = '\0';
-	return BLERR_NOERROR;
-} //end of the function Export_BotLibVarGet
-
 
 /*
 ============
@@ -147,8 +125,6 @@ botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import)
 
 	be_botlib_export.BotLibSetup    = Export_BotLibSetup;
 	be_botlib_export.BotLibShutdown = Export_BotLibShutdown;
-	be_botlib_export.BotLibVarSet   = Export_BotLibVarSet;
-	be_botlib_export.BotLibVarGet   = Export_BotLibVarGet;
 
 	be_botlib_export.PC_AddGlobalDefine        = PC_AddGlobalDefine;
 	be_botlib_export.PC_RemoveAllGlobalDefines = PC_RemoveAllGlobalDefines;

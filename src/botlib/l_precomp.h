@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -50,7 +50,6 @@
 #define PATHSEPERATOR_CHAR      '/'
 #endif
 #endif
-
 
 #define DEFINE_FIXED            0x0001
 
@@ -104,7 +103,6 @@ typedef struct source_s
 	int skip;                               // > 0 if skipping conditional code
 	token_t token;                          //last read token
 } source_t;
-
 
 //read a token from the source
 int PC_ReadToken(source_t *source, token_t *token);

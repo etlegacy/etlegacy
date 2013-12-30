@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -46,7 +46,6 @@
 // TTimo: used to be MAX_QPATH, which is the game filesystem max len, and not the OS max len
 #define _MAX_PATH               1024
 #endif
-
 
 //script flags
 #define SCFL_NOERRORS               0x0001

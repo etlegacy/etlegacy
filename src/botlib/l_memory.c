@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -65,12 +65,6 @@ typedef struct memoryblock_s
 
 memoryblock_t *memory;
 
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
 void LinkMemoryBlock(memoryblock_t *block)
 {
 	block->prev = NULL;
@@ -81,12 +75,7 @@ void LinkMemoryBlock(memoryblock_t *block)
 	}
 	memory = block;
 } //end of the function LinkMemoryBlock
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void UnlinkMemoryBlock(memoryblock_t *block)
 {
 	if (block->prev)
@@ -102,12 +91,7 @@ void UnlinkMemoryBlock(memoryblock_t *block)
 		block->next->prev = block->prev;
 	}
 } //end of the function UnlinkMemoryBlock
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 #ifdef MEMDEBUG
 void *GetMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
@@ -133,12 +117,7 @@ void *GetMemory(unsigned long size)
 	numblocks++;
 	return block->ptr;
 } //end of the function GetMemoryDebug
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 #ifdef MEMDEBUG
 void *GetClearedMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
@@ -154,12 +133,7 @@ void *GetClearedMemory(unsigned long size)
 	memset(ptr, 0, size);
 	return ptr;
 } //end of the function GetClearedMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 #ifdef MEMDEBUG
 void *GetHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
@@ -185,12 +159,7 @@ void *GetHunkMemory(unsigned long size)
 	numblocks++;
 	return block->ptr;
 } //end of the function GetHunkMemoryDebug
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 #ifdef MEMDEBUG
 void *GetClearedHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
