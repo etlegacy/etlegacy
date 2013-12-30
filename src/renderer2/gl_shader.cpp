@@ -740,7 +740,7 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, int *size, qboolean append) const
 {
 	char fullname[MAX_QPATH];
-	int  dataSize;
+	int  dataSize = 0;
 	char *dataBuffer;
 
 	if (shaderType == GL_VERTEX_SHADER)
