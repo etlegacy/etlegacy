@@ -91,6 +91,8 @@ typedef struct
 
 	int glslMajorVersion;
 	int glslMinorVersion;
+
+	qboolean getProgramBinaryAvailable;
 } glconfig2_t;
 // XreaL END
 

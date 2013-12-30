@@ -1830,6 +1830,7 @@ typedef struct programInfo_s
 	uniformValue_t uniformValues[64];
 	int numUniformValues;
 	qboolean compiled;
+	unsigned int checkSum;
 #ifdef RENDERER2C
 	shaderProgramList_t *list;
 #endif

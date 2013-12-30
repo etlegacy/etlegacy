@@ -201,6 +201,20 @@ static programInfo_t *hashTable[FILE_HASH_SIZE];
 
 static char *definitionText;
 
+#define GL_SHADER_VERSION 3
+
+typedef struct GLShaderHeader_s
+{
+	unsigned int version;
+	unsigned int checkSum; // checksum of shader source this was built from
+
+	unsigned int macros[ MAX_MACROS ]; // macros the shader uses ( may or may not be enabled )
+	unsigned int numMacros;
+
+	GLenum binaryFormat; // argument to glProgramBinary
+	GLint  binaryLength; // argument to glProgramBinary
+}GLShaderHeader_t;
+
 #ifdef RENDERER2C
 programInfo_t *gl_genericShader;
 programInfo_t *gl_lightMappingShader;
@@ -636,6 +650,149 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 	}
 
 	ri.Hunk_FreeTempMemory(msg);
+}
+
+qboolean GLSL_LoadShaderBinary(programInfo_t *info, size_t programNum )
+{
+#ifdef GLEW_ARB_get_program_binary
+	GLint          success;
+	GLint          fileLength;
+	void           *binary;
+	byte           *binaryptr;
+	GLShaderHeader_t shaderHeader;
+	shaderProgram_t *shaderProgram;
+	unsigned int i;
+
+	// we need to recompile the shaders
+	if( r_recompileShaders->integer )
+	{
+		return qfalse;
+	}
+
+	// don't even try if the necessary functions aren't available
+	if( !glConfig2.getProgramBinaryAvailable)
+	{
+		return qfalse;
+	}
+
+	fileLength = ri.FS_ReadFile( va( "glsl/%s/%s_%u.bin", info->name, info->name, ( unsigned int ) programNum ), &binary );
+
+	// file empty or not found
+	if( fileLength <= 0 )
+	{
+		return qfalse;
+	}
+
+	binaryptr = ( byte* )binary;
+
+	// get the shader header from the file
+	memcpy( &shaderHeader, binaryptr, sizeof( shaderHeader ) );
+	binaryptr += sizeof( shaderHeader );
+
+	// check if this shader binary is the correct format
+	if ( shaderHeader.version != GL_SHADER_VERSION )
+	{
+		ri.FS_FreeFile( binary );
+		return qfalse;
+	}
+
+	// make sure this shader uses the same number of macros
+	if ( shaderHeader.numMacros != info->numMacros )
+	{
+		ri.FS_FreeFile( binary );
+		return qfalse;
+	}
+
+	// make sure this shader uses the same macros
+	for ( i = 0; i < shaderHeader.numMacros; i++ )
+	{
+		if ( info->macros[i] != shaderHeader.macros[ i ] )
+		{
+			ri.FS_FreeFile( binary );
+			return qfalse;
+		}
+	}
+
+	// make sure the checksums for the source code match
+	if ( shaderHeader.checkSum != info->checkSum )
+	{
+		ri.FS_FreeFile( binary );
+		return qfalse;
+	}
+
+	// load the shader
+	shaderProgram = &info->list->programs[programNum];
+	shaderProgram->program = qglCreateProgramObjectARB();
+	glProgramBinary( shaderProgram->program, shaderHeader.binaryFormat, binaryptr, shaderHeader.binaryLength );
+	glGetProgramiv( shaderProgram->program, GL_LINK_STATUS, &success );
+
+	if ( !success )
+	{
+		ri.FS_FreeFile( binary );
+		qglDeleteObjectARB(shaderProgram->program);
+		return qfalse;
+	}
+
+	ri.FS_FreeFile( binary );
+	return qtrue;
+#else
+	return qfalse;
+#endif
+}
+
+void GLSL_SaveShaderBinary( programInfo_t *info, size_t programNum )
+{
+#ifdef GLEW_ARB_get_program_binary
+	GLint                 binaryLength;
+	GLuint                binarySize = 0;
+	byte                  *binary;
+	byte                  *binaryptr;
+	GLShaderHeader_t        shaderHeader;
+	shaderProgram_t       *shaderProgram;
+	unsigned int i;
+
+	// don't even try if the necessary functions aren't available
+	if( !glConfig2.getProgramBinaryAvailable)
+	{
+		return;
+	}
+
+	shaderProgram = &info->list->programs[programNum];
+
+	memset( &shaderHeader, 0, sizeof( shaderHeader ) );
+
+	// find output size
+	binarySize += sizeof( shaderHeader );
+	glGetProgramiv( shaderProgram->program, GL_PROGRAM_BINARY_LENGTH, &binaryLength );
+	binarySize += binaryLength;
+
+	binaryptr = binary = ( byte* )ri.Hunk_AllocateTempMemory( binarySize );
+
+	// reserve space for the header
+	binaryptr += sizeof( shaderHeader );
+
+	// get the program binary and write it to the buffer
+	glGetProgramBinary( shaderProgram->program, binaryLength, NULL, &shaderHeader.binaryFormat, binaryptr );
+
+	// set the header
+	shaderHeader.version = GL_SHADER_VERSION;
+	shaderHeader.numMacros = info->numMacros;
+
+	for (i = 0; i < shaderHeader.numMacros; i++ )
+	{
+		shaderHeader.macros[ i ] = info->macros[i];
+	}
+
+	shaderHeader.binaryLength = binaryLength;
+	shaderHeader.checkSum = info->checkSum;
+
+	// write the header to the buffer
+	memcpy( ( void* )binary, &shaderHeader, sizeof( shaderHeader ) );
+
+	ri.FS_WriteFile( va( "glsl/%s/%s_%u.bin", info->name, info->name, ( unsigned int ) programNum ), binary, binarySize );
+
+	ri.Hunk_FreeTempMemory( binary );
+#endif
 }
 
 static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
@@ -1409,6 +1566,14 @@ static void GLSL_LinkProgram(GLhandleARB program)
 {
 	GLint linked;
 
+#ifdef GLEW_ARB_get_program_binary
+	// Apparently, this is necessary to get the binary program via glGetProgramBinary
+	if( glConfig2.getProgramBinaryAvailable )
+	{
+		glProgramParameteri( program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE );
+	}
+#endif
+
 	qglLinkProgramARB(program);
 
 	qglGetObjectParameterivARB(program, GL_OBJECT_LINK_STATUS_ARB, &linked);
@@ -1850,7 +2015,7 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 	return qtrue;
 }
 
-static qboolean GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, const char *vertex, const char *frag, const char *macrostring)
+static qboolean GLSL_FinnishShaderTextAndCompile(programInfo_t *info, int permutation, const char *vertex, const char *frag, const char *macrostring)
 {
 	char vpSource[64000];
 	char fpSource[64000];
@@ -1880,10 +2045,24 @@ static qboolean GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const
 
 	Q_strcat(vpSource, size, vertex);
 	Q_strcat(fpSource, size, frag);
-	
-	if(GLSL_InitGPUShader2(program, name, vpSource, fpSource))
+
+	if(GLSL_InitGPUShader2(&info->list->programs[permutation], info->name, vpSource, fpSource))
 	{
-		GLSL_InitUniforms(program);
+		GLSL_SaveShaderBinary(info,permutation);
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
+
+static qboolean GLSL_GetProgramPermutation(programInfo_t *info, int permutation, const char *vertex, const char *frag, const char *macrostring)
+{
+	//load bin
+	if(GLSL_LoadShaderBinary(info, permutation) || GLSL_FinnishShaderTextAndCompile(info,permutation,vertex,frag,macrostring))
+	{
+		GLSL_InitUniforms(&info->list->programs[permutation]);
 		return qtrue;
 	}
 	else
@@ -1938,6 +2117,8 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0;
+	
+	info->checkSum = 1;//TODO: implement checkSum generation
 
 	info->list = (shaderProgramList_t *)Com_Allocate(sizeof(shaderProgramList_t));
 	Com_Memset(info->list,0,sizeof(shaderProgramList_t));
@@ -2001,7 +2182,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 		if (GLSL_GenerateMacroString(info->list, info->extraMacros, i, &tempString))
 		{
-			if(GLSL_FinnishShaderTextAndCompile(&info->list->programs[i], info->name, vertexShader, fragmentShader, tempString))
+			if(GLSL_GetProgramPermutation(info, i, vertexShader, fragmentShader, tempString))
 			{
 				//Set uniform values
 				GLSL_SetInitialUniformValues(info,i);
@@ -2036,7 +2217,7 @@ programInfo_t *GLSL_GetShaderProgram(const char *name)
 
 	prog = GLSL_FindShader(name);
 
-	if(prog)
+	if(prog && !prog->compiled)
 	{
 		//Compile the shader program
 		GLSL_CompileShaderProgram(prog);
