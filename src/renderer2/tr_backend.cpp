@@ -5527,7 +5527,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						gl_debugShadowMapShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 #else
 						GLSL_SelectPermutation(gl_debugShadowMapShader);
-						GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
 #endif
 
 						// bind u_ColorMap
@@ -5593,7 +5593,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							GLSL_SetUniform_ColorModulate(gl_genericShader,CGEN_VERTEX, AGEN_VERTEX);
 							GLSL_SetUniformVec4(selectedProgram,UNIFORM_COLOR,colorBlack);
 
-							GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWMATRIX,light->shadowMatrices[frustumIndex]);
+							GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,light->shadowMatrices[frustumIndex]);
 							// bind u_ColorMap
 							GL_SelectTexture(0);
 							GL_Bind(tr.whiteImage);
