@@ -341,7 +341,7 @@ programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
 		return NULL;
 	}
 
-	def = (programInfo_t *)malloc(sizeof(programInfo_t));
+	def = (programInfo_t *)Com_Allocate(sizeof(programInfo_t));
 	Com_Memset(def,0,sizeof(programInfo_t));
 
 	CopyStringAlloc(&def->name,defname);
@@ -417,7 +417,7 @@ programInfo_t *GLSL_ParseDefinition(char **text,const char *defname)
 				def->uniformValues[def->numUniformValues].type.type = GLSL_INT;
 				CopyNextToken(text,&def->uniformValues[def->numUniformValues].type.name);
 				token = COM_ParseExt(text, qtrue);
-				valptr = malloc(sizeof(int));
+				valptr = Com_Allocate(sizeof(int));
 				*((int*)valptr) = atoi(token);
 				def->uniformValues[def->numUniformValues].value = valptr;
 				//Com_Printf("%d\n",*((int*)valptr));
@@ -1130,7 +1130,7 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 	Q_strcat(bufferExtra, sizeof(bufferExtra), "#line 0\n");
 
 	*size    = strlen(bufferExtra) + 1;
-	*defines = (char *) malloc(*size);
+	*defines = (char *) Com_Allocate(*size);
 	Com_Memset(*defines, 0, *size);
 	Q_strcat(*defines, *size, bufferExtra);
 }
@@ -1249,7 +1249,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 			}
 			else
 			{
-				*data = (char *) malloc(strl);
+				*data = (char *) Com_Allocate(strl);
 				Com_Memset(*data, 0, strl);
 			}
 
@@ -1273,7 +1273,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		}
 		else
 		{
-			*data = (char *) malloc(dataSize);
+			*data = (char *) Com_Allocate(dataSize);
 			Com_Memset(*data, 0, dataSize);
 		}
 
@@ -1346,13 +1346,13 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 
 		Q_strcat(bufferFinal, sizeFinal, mainBuffer);
 
-		shaderText = malloc(sizeFinal);
+		shaderText = Com_Allocate(sizeFinal);
 		strcpy(shaderText, bufferFinal);
 		ri.Hunk_FreeTempMemory(bufferFinal);
-		free(shaderExtra);
+		Com_Dealloc(shaderExtra);
 	}
-	free(mainBuffer);
-	free(libsBuffer);
+	Com_Dealloc(mainBuffer);
+	Com_Dealloc(libsBuffer);
 
 	return shaderText;
 }
@@ -1365,7 +1365,7 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 	int i;
 	int macroatrib = 0;
 
-	*out = (char *) malloc(1000);
+	*out = (char *) Com_Allocate(1000);
 	Com_Memset(*out, 0, 1000);
 
 	if (permutation)
