@@ -155,7 +155,6 @@ void QDECL SourceError(source_t *source, char *str, ...) __attribute__ ((format(
 //print a source warning
 void QDECL SourceWarning(source_t *source, char *str, ...)  __attribute__ ((format(printf, 2, 3)));
 
-//
 int PC_LoadSourceHandle(const char *filename);
 int PC_FreeSourceHandle(int handle);
 int PC_ReadTokenHandle(int handle, struct pc_token_s *pc_token);

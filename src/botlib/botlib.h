@@ -57,29 +57,6 @@ typedef void (*BotPolyFunc)(int color, int numPoints, float *points);
 #define BLERR_NOERROR                   0   //no error
 #define BLERR_LIBRARYNOTSETUP           1   //library not setup
 
-//entity state
-typedef struct bot_entitystate_s
-{
-	int type;               // entity type
-	int flags;              // entity flags
-	vec3_t origin;          // origin of the entity
-	vec3_t angles;          // angles of the model
-	vec3_t old_origin;      // for lerping
-	vec3_t mins;            // bounding box minimums
-	vec3_t maxs;            // bounding box maximums
-	int groundent;          // ground entity
-	int solid;              // solid type
-	int modelindex;         // model used
-	int modelindex2;        // weapons, CTF flags, etc
-	int frame;              // model frame number
-	int event;              // impulse events -- muzzle flashes, footsteps, etc
-	int eventParm;          // even parameter
-	int powerups;           // bit flags
-	int weapon;             // determines weapon and flash model, etc
-	int legsAnim;           // mask off ANIM_TOGGLEBIT
-	int torsoAnim;          // mask off ANIM_TOGGLEBIT
-} bot_entitystate_t;
-
 // from be_aas.h
 //bsp_trace_t hit surface
 typedef struct bsp_surface_s
@@ -145,11 +122,11 @@ typedef struct botlib_import_s
 	bot_debugpoly_t *    (*DebugPolygonGetFree)(void);
 	void (*DebugPolygonDelete)(int id);
 	void (*DebugPolygonDeletePointer)(bot_debugpoly_t *pPoly);
-	//
+
 	// Ridah, Cast AI stuff
 	qboolean (*BotVisibleFromPos)(vec3_t srcpos, int srcnum, vec3_t destpos, int destnum, qboolean updateVisPos);
 	qboolean (*BotCheckAttackAtPos)(int entnum, int enemy, vec3_t pos, qboolean ducking, qboolean allowHitWorld);
-	// done.
+
 	// Gordon: direct hookup into rendering, stop using this silly debugpoly faff
 	void (*BotDrawPolygon)(int color, int numPoints, float *points);
 } botlib_import_t;
@@ -175,14 +152,6 @@ typedef struct botlib_export_s
 	int (*PC_SourceFileAndLine)(int handle, char *filename, int *line);
 	void (*PC_UnreadLastTokenHandle)(int handle);
 
-	//start a frame in the bot library
-	int (*BotLibStartFrame)(float time);
-	//load a new map in the bot library
-	int (*BotLibLoadMap)(const char *mapname);
-	//entity updates
-	int (*BotLibUpdateEntity)(int ent, bot_entitystate_t *state);
-	//just for testing
-	int (*Test)(int parm0, char *parm1, vec3_t parm2, vec3_t parm3);
 } botlib_export_t;
 
 //linking of bot library

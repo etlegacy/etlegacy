@@ -34,7 +34,6 @@
 
 #include "../qcommon/q_shared.h"
 #include "../botlib/botlib.h"
-#include "l_log.h"
 #include "be_interface.h"
 
 #ifdef _DEBUG
@@ -207,12 +206,7 @@ void *GetClearedHunkMemory(unsigned long size)
 	memset(ptr, 0, size);
 	return ptr;
 } //end of the function GetClearedHunkMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 memoryblock_t *BlockFromPointer(void *ptr, char *str)
 {
 	memoryblock_t *block;
@@ -239,12 +233,7 @@ memoryblock_t *BlockFromPointer(void *ptr, char *str)
 	} //end if
 	return block;
 } //end of the function BlockFromPointer
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void FreeMemory(void *ptr)
 {
 	memoryblock_t *block;
@@ -264,12 +253,7 @@ void FreeMemory(void *ptr)
 		botimport.FreeMemory(block);
 	} //end if
 } //end of the function FreeMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 int MemoryByteSize(void *ptr)
 {
 	memoryblock_t *block;
@@ -281,24 +265,14 @@ int MemoryByteSize(void *ptr)
 	}
 	return block->size;
 } //end of the function MemoryByteSize
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void PrintUsedMemorySize(void)
 {
 	botimport.Print(PRT_MESSAGE, "total allocated memory: %d KB\n", allocatedmemory >> 10);
 	botimport.Print(PRT_MESSAGE, "total botlib memory: %d KB\n", totalmemorysize >> 10);
 	botimport.Print(PRT_MESSAGE, "total memory blocks: %d\n", numblocks);
 } //end of the function PrintUsedMemorySize
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void PrintMemoryLabels(void)
 {
 	memoryblock_t *block;
@@ -306,28 +280,23 @@ void PrintMemoryLabels(void)
 
 	PrintUsedMemorySize();
 	i = 0;
-	Log_Write("\r\n");
+	Com_Printf("\r\n");
 	for (block = memory; block; block = block->next)
 	{
 #ifdef MEMDEBUG
 		if (block->id == HUNK_ID)
 		{
-			Log_Write("%6d, hunk %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
+			Com_Printf("%6d, hunk %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
 		} //end if
 		else
 		{
-			Log_Write("%6d,      %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
+			Com_Printf("%6d,      %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
 		} //end else
 #endif //MEMDEBUG
 		i++;
 	} //end for
 } //end of the function PrintMemoryLabels
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void DumpMemory(void)
 {
 	memoryblock_t *block;
@@ -342,12 +311,6 @@ void DumpMemory(void)
 
 #else
 
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
 #ifdef MEMDEBUG
 void *GetMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
@@ -366,12 +329,7 @@ void *GetMemory(unsigned long size)
 	*memid = MEM_ID;
 	return (unsigned long int *) ((char *) ptr + sizeof(unsigned long int));
 } //end of the function GetMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 #ifdef MEMDEBUG
 void *GetClearedMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
@@ -387,12 +345,7 @@ void *GetClearedMemory(unsigned long size)
 	memset(ptr, 0, size);
 	return ptr;
 } //end of the function GetClearedMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 #ifdef MEMDEBUG
 void *GetHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
@@ -411,12 +364,7 @@ void *GetHunkMemory(unsigned long size)
 	*memid = HUNK_ID;
 	return (unsigned long int *) ((char *) ptr + sizeof(unsigned long int));
 } //end of the function GetHunkMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 #ifdef MEMDEBUG
 void *GetClearedHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
@@ -432,12 +380,7 @@ void *GetClearedHunkMemory(unsigned long size)
 	memset(ptr, 0, size);
 	return ptr;
 } //end of the function GetClearedHunkMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void FreeMemory(void *ptr)
 {
 	unsigned long int *memid;
@@ -449,21 +392,11 @@ void FreeMemory(void *ptr)
 		botimport.FreeMemory(memid);
 	} //end if
 } //end of the function FreeMemory
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void PrintUsedMemorySize(void)
 {
 } //end of the function PrintUsedMemorySize
-//===========================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//===========================================================================
+
 void PrintMemoryLabels(void)
 {
 } //end of the function PrintMemoryLabels
