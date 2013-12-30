@@ -524,7 +524,8 @@ void GLSL_LoadDefinitions(void)
 
 	//FIXME: Also load from external files in the future...
 	//For no just copy the existing data to our searchable string
-	definitionText = (char *)ri.Hunk_Alloc(strlen(defaultShaderDefinitions) + 1, h_low);
+	//definitionText = (char *)ri.Hunk_Alloc(strlen(defaultShaderDefinitions) + 1, h_low);
+	definitionText = (char *)Com_Allocate(strlen(defaultShaderDefinitions) * sizeof(char) + 1);
 	Com_Memset(definitionText,'\0',strlen(defaultShaderDefinitions) + 1);
 	Q_strncpyz(definitionText,defaultShaderDefinitions,strlen(defaultShaderDefinitions));
 	
@@ -2245,7 +2246,7 @@ void GLSL_InitGPUShaders(void)
 
 	endTime = ri.Milliseconds();
 
-	//ri.Printf(PRINT_ALL, "loaded %i GLSL shaders (%i gen %i light %i etc) in %5.2f seconds\n",numGenShaders + numLightShaders + numEtcShaders, numGenShaders, numLightShaders,numEtcShaders, (endTime - startTime) / 1000.0);
+	ri.Printf(PRINT_ALL, "Created default shaders in %5.2f seconds\n",(endTime - startTime) / 1000.0);
 }
 
 void GLSL_ShutdownGPUShaders(void)
