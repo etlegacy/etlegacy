@@ -1854,9 +1854,11 @@ void CG_topshotsParse_cmd(qboolean doBest)
 		hits  = atoi(CG_Argv(iArg++));
 		atts  = atoi(CG_Argv(iArg++));
 		kills = atoi(CG_Argv(iArg++));
-		// unused
-		//int deaths = atoi(CG_Argv(iArg++));
+		//int deaths = atoi(CG_Argv(iArg++));	// unused
 		acc = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
+
+		// cap stats at 100%
+		acc = (acc > 100.0f) ? 100.0f : acc;
 
 		// bump up iArg since we didn't push it into deaths, above
 		iArg++;
@@ -1867,9 +1869,7 @@ void CG_topshotsParse_cmd(qboolean doBest)
 			Q_strncpyz(ts->strWS[ts->cWeapons++],
 			           va("%-12s %5.1f %4d/%-4d %5d  %s",
 			              aWeaponInfo[iWeap - 1].pszName,
-			              acc, hits, atts,
-			              kills,
-			              name),
+			              acc, hits, atts, kills, name),
 			           sizeof(ts->strWS[0]));
 		}
 
@@ -1929,18 +1929,20 @@ void CG_parseWeaponStatsGS_cmd(void)
 		{
 			if (weaponMask & (1 << i))
 			{
-				int nHits      = atoi(CG_Argv(iArg++));
-				int nShots     = atoi(CG_Argv(iArg++));
-				int nKills     = atoi(CG_Argv(iArg++));
-				int nDeaths    = atoi(CG_Argv(iArg++));
-				int nHeadshots = atoi(CG_Argv(iArg++));
+				int   nHits      = atoi(CG_Argv(iArg++));
+				int   nShots     = atoi(CG_Argv(iArg++));
+				int   nKills     = atoi(CG_Argv(iArg++));
+				int   nDeaths    = atoi(CG_Argv(iArg++));
+				int   nHeadshots = atoi(CG_Argv(iArg++));
+				float acc        = (nShots > 0) ? (float)(nHits * 100) / (float)nShots : 0.0f;
+
+				// cap stats at 100%
+				acc = (acc > 100.0f) ? 100.0f : acc;
 
 				Q_strncpyz(strName, va("%-12s  ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (nShots > 0 || nHits > 0)
 				{
-					Q_strcat(strName, sizeof(strName), va("%5.1f %4d/%-4d ",
-					                                      ((nShots == 0) ? 0.0 : (float)(nHits * 100.0 / (float)nShots)),
-					                                      nHits, nShots));
+					Q_strcat(strName, sizeof(strName), va("%5.1f %4d/%-4d ", acc, nHits, nShots));
 				}
 				else
 				{
@@ -2218,8 +2220,11 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 		int   atts   = atoi(CG_Argv(iArg++));
 		int   kills  = atoi(CG_Argv(iArg++));
 		int   deaths = atoi(CG_Argv(iArg++));
-		float acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0;
+		float acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
 		char  name[32];
+
+		// cap stats at 100%
+		acc = (acc > 100.0f) ? 100.0f : acc;
 
 		if (fFull)
 		{
@@ -2264,9 +2269,12 @@ void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 		int        atts   = atoi(CG_Argv(iArg++));
 		int        kills  = atoi(CG_Argv(iArg++));
 		int        deaths = atoi(CG_Argv(iArg++));
-		float      acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0;
+		float      acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
 		const char *color = (((doTop) ? acc : ((float)wBestAcc) + 0.999) >= ((doTop) ? wBestAcc : acc)) ? "^3" : "^7";
 		char       name[32];
+
+		// cap stats at 100%
+		acc = (acc > 100.0f) ? 100.0f : acc;
 
 		BG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 		txt_dump(va("%s%5.1f ^5%4d/%-4d ^2%5d ^1%6d %s%s\n", color, acc, hits, atts, kills, deaths, color, name));
