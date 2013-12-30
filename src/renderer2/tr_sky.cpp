@@ -821,6 +821,7 @@ void RB_DrawSun(void)
 	gl_genericShader->BindProgram();
 #else
 	GLSL_SetMacroState(gl_genericShader,USE_ALPHA_TESTING,qfalse);
+	//FIXME: This is false on the c++ but should be isPortal check right?
 	GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
 	GLSL_SetMacroState(gl_genericShader,USE_VERTEX_SKINNING,qfalse);
 	GLSL_SetMacroState(gl_genericShader,USE_VERTEX_ANIMATION,qfalse);
@@ -850,6 +851,8 @@ void RB_DrawSun(void)
 #else
 	GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELMATRIX,backEnd.orientation.transformMatrix);
 	GLSL_SetUniformMatrix16(selectedProgram,UNIFORM_MODELVIEWPROJECTIONMATRIX,glState.modelViewProjectionMatrix[glState.stackIndex]);
+	//FIXME: Why would this be here? Select permutation has already been given and no new cmd is given
+	//GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
 #endif
 
 	if (backEnd.viewParms.isPortal)
