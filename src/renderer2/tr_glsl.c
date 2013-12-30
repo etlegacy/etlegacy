@@ -733,8 +733,6 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 {
 	static char bufferExtra[32000];
 
-	char *bufferFinal = NULL;
-
 	float fbufWidthScale, fbufHeightScale;
 	float npotWidthScale, npotHeightScale;
 
@@ -1204,7 +1202,7 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data, int *size, qboolean append)
 {
 	char fullname[MAX_QPATH];
-	int  dataSize;
+	int  dataSize = 0;
 	char *dataBuffer;
 
 	if (shaderType == GL_VERTEX_SHADER)
@@ -2061,7 +2059,7 @@ void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled)
 	{
 		return;
 	}
-	else if(enabled <= 0 && !programlist->list->currentMacros & BIT(macro))
+	else if(enabled <= 0 && !(programlist->list->currentMacros & BIT(macro)))
 	{
 		return;
 	}	
@@ -2186,8 +2184,6 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 void GLSL_InitGPUShaders(void)
 {
 	int  startTime, endTime;
-	char extradefines[1024];
-	int  numGenShaders = 0, numLightShaders = 0, numEtcShaders = 0;
 
 	ri.Printf(PRINT_ALL, "------- GLSL_InitGPUShaders -------\n");
 
@@ -2254,8 +2250,6 @@ void GLSL_InitGPUShaders(void)
 
 void GLSL_ShutdownGPUShaders(void)
 {
-	int i;
-
 	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
 
 
