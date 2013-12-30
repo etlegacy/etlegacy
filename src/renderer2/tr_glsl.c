@@ -1930,7 +1930,6 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
 	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
 	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename?info->fragFilename:info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
-	int    macronum        = 0;
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0;
@@ -1940,8 +1939,8 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 	if(info->numMacros > 0)
 	{
-		info->list->macromap = (macroBitMap_t *)Com_Allocate(sizeof(macroBitMap_t) * macronum);
-		Com_Memset(info->list->macromap,0,sizeof(macroBitMap_t) * macronum);
+		info->list->macromap = (macroBitMap_t *)Com_Allocate(sizeof(macroBitMap_t) * info->numMacros);
+		Com_Memset(info->list->macromap,0,sizeof(macroBitMap_t) * info->numMacros);
 
 		for(i = 0; i < info->numMacros; i++)
 		{
