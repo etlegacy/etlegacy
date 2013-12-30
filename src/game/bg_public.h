@@ -534,7 +534,7 @@ int Pmove(pmove_t *pmove);
 
 #define NUM_PLAYER_CLASSES      5
 
-#define MAX_WEAPS_IN_BANK_MP    15
+#define MAX_WEAPS_IN_BANK_MP    17
 #define MAX_WEAP_BANKS_MP       10
 
 // leaning flags..
