@@ -74,7 +74,7 @@ void LinkMemoryBlock(memoryblock_t *block)
 		memory->prev = block;
 	}
 	memory = block;
-} //end of the function LinkMemoryBlock
+}
 
 void UnlinkMemoryBlock(memoryblock_t *block)
 {
@@ -90,7 +90,7 @@ void UnlinkMemoryBlock(memoryblock_t *block)
 	{
 		block->next->prev = block->prev;
 	}
-} //end of the function UnlinkMemoryBlock
+}
 
 #ifdef MEMDEBUG
 void *GetMemoryDebug(unsigned long size, char *label, char *file, int line)
@@ -116,7 +116,7 @@ void *GetMemory(unsigned long size)
 	totalmemorysize += block->size + sizeof(memoryblock_t);
 	numblocks++;
 	return block->ptr;
-} //end of the function GetMemoryDebug
+}
 
 #ifdef MEMDEBUG
 void *GetClearedMemoryDebug(unsigned long size, char *label, char *file, int line)
@@ -132,7 +132,7 @@ void *GetClearedMemory(unsigned long size)
 #endif //MEMDEBUG
 	memset(ptr, 0, size);
 	return ptr;
-} //end of the function GetClearedMemory
+}
 
 #ifdef MEMDEBUG
 void *GetHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
@@ -158,7 +158,7 @@ void *GetHunkMemory(unsigned long size)
 	totalmemorysize += block->size + sizeof(memoryblock_t);
 	numblocks++;
 	return block->ptr;
-} //end of the function GetHunkMemoryDebug
+}
 
 #ifdef MEMDEBUG
 void *GetClearedHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
@@ -174,7 +174,7 @@ void *GetClearedHunkMemory(unsigned long size)
 #endif //MEMDEBUG
 	memset(ptr, 0, size);
 	return ptr;
-} //end of the function GetClearedHunkMemory
+}
 
 memoryblock_t *BlockFromPointer(void *ptr, char *str)
 {
@@ -188,20 +188,20 @@ memoryblock_t *BlockFromPointer(void *ptr, char *str)
 		botimport.Print(PRT_FATAL, "%s: NULL pointer\n", str);
 #endif // MEMDEBUG
 		return NULL;
-	} //end if
+	}
 	block = ( memoryblock_t * )((char *) ptr - sizeof(memoryblock_t));
 	if (block->id != MEM_ID && block->id != HUNK_ID)
 	{
 		botimport.Print(PRT_FATAL, "%s: invalid memory block\n", str);
 		return NULL;
-	} //end if
+	}
 	if (block->ptr != ptr)
 	{
 		botimport.Print(PRT_FATAL, "%s: memory block pointer invalid\n", str);
 		return NULL;
-	} //end if
+	}
 	return block;
-} //end of the function BlockFromPointer
+}
 
 void FreeMemory(void *ptr)
 {
@@ -220,8 +220,8 @@ void FreeMemory(void *ptr)
 	if (block->id == MEM_ID)
 	{
 		botimport.FreeMemory(block);
-	} //end if
-} //end of the function FreeMemory
+	}
+}
 
 int MemoryByteSize(void *ptr)
 {
@@ -233,14 +233,14 @@ int MemoryByteSize(void *ptr)
 		return 0;
 	}
 	return block->size;
-} //end of the function MemoryByteSize
+}
 
 void PrintUsedMemorySize(void)
 {
 	botimport.Print(PRT_MESSAGE, "total allocated memory: %d KB\n", allocatedmemory >> 10);
 	botimport.Print(PRT_MESSAGE, "total botlib memory: %d KB\n", totalmemorysize >> 10);
 	botimport.Print(PRT_MESSAGE, "total memory blocks: %d\n", numblocks);
-} //end of the function PrintUsedMemorySize
+}
 
 void PrintMemoryLabels(void)
 {
@@ -256,15 +256,15 @@ void PrintMemoryLabels(void)
 		if (block->id == HUNK_ID)
 		{
 			Com_Printf("%6d, hunk %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
-		} //end if
+		}
 		else
 		{
 			Com_Printf("%6d,      %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
-		} //end else
+		}
 #endif //MEMDEBUG
 		i++;
-	} //end for
-} //end of the function PrintMemoryLabels
+	}
+}
 
 void DumpMemory(void)
 {
@@ -273,10 +273,10 @@ void DumpMemory(void)
 	for (block = memory; block; block = memory)
 	{
 		FreeMemory(block->ptr);
-	} //end for
+	}
 	totalmemorysize = 0;
 	allocatedmemory = 0;
-} //end of the function DumpMemory
+}
 
 #else
 
@@ -297,7 +297,7 @@ void *GetMemory(unsigned long size)
 	memid  = (unsigned long int *) ptr;
 	*memid = MEM_ID;
 	return (unsigned long int *) ((char *) ptr + sizeof(unsigned long int));
-} //end of the function GetMemory
+}
 
 #ifdef MEMDEBUG
 void *GetClearedMemoryDebug(unsigned long size, char *label, char *file, int line)
@@ -313,7 +313,7 @@ void *GetClearedMemory(unsigned long size)
 #endif //MEMDEBUG
 	memset(ptr, 0, size);
 	return ptr;
-} //end of the function GetClearedMemory
+}
 
 #ifdef MEMDEBUG
 void *GetHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
@@ -332,7 +332,7 @@ void *GetHunkMemory(unsigned long size)
 	memid  = (unsigned long int *) ptr;
 	*memid = HUNK_ID;
 	return (unsigned long int *) ((char *) ptr + sizeof(unsigned long int));
-} //end of the function GetHunkMemory
+}
 
 #ifdef MEMDEBUG
 void *GetClearedHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
@@ -348,7 +348,7 @@ void *GetClearedHunkMemory(unsigned long size)
 #endif //MEMDEBUG
 	memset(ptr, 0, size);
 	return ptr;
-} //end of the function GetClearedHunkMemory
+}
 
 void FreeMemory(void *ptr)
 {
@@ -359,15 +359,15 @@ void FreeMemory(void *ptr)
 	if (*memid == MEM_ID)
 	{
 		botimport.FreeMemory(memid);
-	} //end if
-} //end of the function FreeMemory
+	}
+}
 
 void PrintUsedMemorySize(void)
 {
-} //end of the function PrintUsedMemorySize
+}
 
 void PrintMemoryLabels(void)
 {
-} //end of the function PrintMemoryLabels
+}
 
 #endif

@@ -41,13 +41,13 @@
 #include "../botlib/botlib.h"
 #include "be_interface.h"
 
-//library globals in a structure
+// library globals in a structure
 botlib_globals_t botlibglobals;
 
 botlib_export_t be_botlib_export;
 botlib_import_t botimport;
 
-//qtrue if the library is setup
+// qtrue if the library is setup
 int botlibsetup = qfalse;
 
 //===========================================================================
@@ -60,14 +60,14 @@ qboolean BotLibSetup(char *str)
 	{
 		botimport.Print(PRT_ERROR, "%s: bot library used before being setup\n", str);
 		return qfalse;
-	} //end if
+	}
 	return qtrue;
-} //end of the function BotLibSetup
+}
 
 extern define_t *globaldefines;
 int Export_BotLibSetup(qboolean singleplayer)
 {
-	//initialize byte swapping (litte endian etc.)
+	// initialize byte swapping (litte endian etc.)
 
 	botimport.Print(PRT_MESSAGE, "------- BotLib Initialization -------\n");
 
@@ -77,7 +77,7 @@ int Export_BotLibSetup(qboolean singleplayer)
 	botlibglobals.botlibsetup = qtrue;
 
 	return BLERR_NOERROR;
-} //end of the function Export_BotLibSetup
+}
 
 int Export_BotLibShutdown(void)
 {
@@ -87,7 +87,7 @@ int Export_BotLibShutdown(void)
 	{
 		return BLERR_LIBRARYNOTSETUP;
 	}
-	//
+
 	if (recursive)
 	{
 		return BLERR_NOERROR;
@@ -104,7 +104,7 @@ int Export_BotLibShutdown(void)
 	PC_CheckOpenSourceHandles();
 
 	return BLERR_NOERROR;
-} //end of the function Export_BotLibShutdown
+}
 
 /*
 ============
