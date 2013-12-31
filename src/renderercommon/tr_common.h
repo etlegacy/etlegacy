@@ -38,10 +38,6 @@
 #include "iqm.h"
 #include "qgl.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 extern refimport_t ri;
 
 /*
@@ -238,9 +234,5 @@ extern cvar_t *r_wolffog;
 
 extern cvar_t *r_maxpolys;
 extern cvar_t *r_maxpolyverts;
-
-#if defined(__cplusplus)
-}
-#endif
 
 #endif  // __TR_COMMON_H

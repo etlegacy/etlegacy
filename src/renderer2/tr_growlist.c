@@ -33,10 +33,6 @@
 #include "tr_local.h"
 #include "tr_growlist.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
 ============================================================================
 
@@ -127,7 +123,3 @@ int Com_IndexForGrowListElement(const growList_t *list, const void *element)
 	}
 	return -1;
 }
-
-#ifdef __cplusplus
-}
-#endif

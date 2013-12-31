@@ -34,10 +34,6 @@
 #define TR_GROWLIST_H
 #include "tr_local.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct
 {
 	qboolean frameMemory;
@@ -53,9 +49,5 @@ void            Com_DestroyGrowList(growList_t *list);
 int             Com_AddToGrowList(growList_t *list, void *data);
 void *Com_GrowListElement(const growList_t *list, int index);
 int             Com_IndexForGrowListElement(const growList_t *list, const void *element);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -365,9 +365,9 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button)
 			break;
 		}
 		break;
-		default:
-			CG_Printf("WARNING CG_Fireteams_MenuTitleText_Draw: Unknown ftMenuMode");
-			break;
+	default:
+		CG_Printf("WARNING CG_Fireteams_MenuTitleText_Draw: Unknown ftMenuMode");
+		break;
 	}
 }
 

@@ -65,10 +65,6 @@
 #endif
 */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifdef __MORPHOS__
 #undef glActiveTextureARB
 static void glActiveTextureARB(GLenum unit)
@@ -604,10 +600,6 @@ extern void (*glUnlockArraysEXT)(void);
 #define GL_TEXTURE1_ARB GL_TEXTURE1
 #define GL_TEXTURE2_ARB GL_TEXTURE2
 #define GL_TEXTURE3_ARB GL_TEXTURE3
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

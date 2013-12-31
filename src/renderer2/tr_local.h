@@ -42,9 +42,7 @@
 #include "tr_growlist.h"
 #include "tr_extra.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#define RENDERER2C 1
 
 #if 1
 #define GL_INDEX_TYPE       GL_UNSIGNED_INT
@@ -1418,7 +1416,7 @@ enum
 
 enum EGLCompileMacro
 {
-    USE_ALPHA_TESTING,
+	USE_ALPHA_TESTING,
 	USE_PORTAL_CLIPPING,
 	USE_FRUSTUM_CLIPPING,
 	USE_VERTEX_SKINNING,
@@ -3138,11 +3136,6 @@ typedef struct
 	image_t *cubemap;
 } cubemapProbe_t;
 
-#if defined(__cplusplus)
-class GLShader;
-class GLShader_vertexLighting_DBS_entity;
-#endif
-
 /*
 ** trGlobals_t
 **
@@ -3430,9 +3423,9 @@ extern glstate_t glState;       // outside of TR since it shouldn't be cleared d
 // These three variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
 // If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
 // the glconfig_t struct.
-extern qboolean      textureFilterAnisotropic;
-extern int           maxAnisotropy;
-extern float         displayAspect; //FIXME
+extern qboolean textureFilterAnisotropic;
+extern int      maxAnisotropy;
+extern float    displayAspect;      //FIXME
 
 
 // cvars
@@ -4577,19 +4570,15 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t v);
 void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t v);
 void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const matrix_t matrix);
-void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray,int arraysize);
-void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray,int arraysize);
-void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray,int arraysize);
-void GLSL_SetMacroState(programInfo_t *programlist,int macro,int enabled);
+void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray, int arraysize);
+void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray, int arraysize);
+void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray, int arraysize);
+void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled);
 void GLSL_SelectPermutation(programInfo_t *programlist);
 void GLSL_SetRequiredVertexPointers(programInfo_t *programlist);
 void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms);
-void GLSL_SetUniform_ColorModulate(programInfo_t *prog,int colorGen, int alphaGen);
+void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen);
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
-#endif
-
-#if defined(__cplusplus)
-}
 #endif
 
 #endif // TR_LOCAL_H

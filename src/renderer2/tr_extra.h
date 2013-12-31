@@ -35,10 +35,6 @@
 
 #include "tr_local.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define Q_max(a, b)      ((a) > (b) ? (a) : (b))
 #define Q_min(a, b)      ((a) < (b) ? (a) : (b))
 #define Q_bound(a, b, c) (Q_max(a, Q_min(b, c)))
@@ -242,7 +238,7 @@ static ID_INLINE int Vector4Compare(const vec4_t v1, const vec4_t v2)
 
 static ID_INLINE int Vector5Compare(const vec5_t v1, const vec5_t v2)
 {
-	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3]|| v1[4] != v2[4])
+	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3] || v1[4] != v2[4])
 	{
 		return 0;
 	}
@@ -348,10 +344,6 @@ float           MemStreamGetFloat(memStream_t *s);
 
 //=============================================
 
-void printBits(size_t const size, void const * const ptr);
-
-#ifdef __cplusplus
-}
-#endif
+void printBits(size_t const size, void const *const ptr);
 
 #endif

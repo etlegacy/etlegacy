@@ -32,10 +32,6 @@
 
 #include "tr_local.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 matrix_t matrixIdentity = { 1, 0, 0, 0,
 	                        0, 1, 0, 0,
 	                        0, 0, 1, 0,
@@ -1527,23 +1523,19 @@ float MemStreamGetFloat(memStream_t *s)
 
 //============================================================================
 
-void printBits(size_t const size, void const * const ptr)
+void printBits(size_t const size, void const *const ptr)
 {
-	unsigned char *b = (unsigned char*) ptr;
+	unsigned char *b = (unsigned char *) ptr;
 	unsigned char byte;
-	int i, j;
+	int           i, j;
 
-	for (i=size-1;i>=0;i--)
+	for (i = size - 1; i >= 0; i--)
 	{
-		for (j=7;j>=0;j--)
+		for (j = 7; j >= 0; j--)
 		{
-			byte = b[i] & (1<<j);
+			byte   = b[i] & (1 << j);
 			byte >>= j;
-			ri.Printf(PRINT_DEVELOPER,"%u",byte);
+			ri.Printf(PRINT_DEVELOPER, "%u", byte);
 		}
 	}
 }
-
-#ifdef __cplusplus
-}
-#endif

@@ -2023,9 +2023,6 @@ static void RE_PurgeCache(void)
 GetRefAPI
 =====================
 */
-//#if defined(__cplusplus)
-//extern "C" {
-//#endif
 #ifdef USE_RENDERER_DLOPEN
 Q_EXPORT refexport_t * QDECL GetRefAPI(int apiVersion, refimport_t *rimp)
 #else

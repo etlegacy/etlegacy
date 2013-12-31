@@ -1084,27 +1084,27 @@ static void GLimp_XreaLInitExtensions(void)
 	}
 
 #ifdef GLEW_ARB_get_program_binary
-	if( GLEW_ARB_get_program_binary )
+	if (GLEW_ARB_get_program_binary)
 	{
 		int formats = 0;
 
-		glGetIntegerv( GL_NUM_PROGRAM_BINARY_FORMATS, &formats );
+		glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
 
-		if ( !formats )
+		if (!formats)
 		{
-			ri.Printf( PRINT_ALL, "...GL_ARB_get_program_binary found, but with no binary formats\n");
+			ri.Printf(PRINT_ALL, "...GL_ARB_get_program_binary found, but with no binary formats\n");
 			glConfig2.getProgramBinaryAvailable = qfalse;
 		}
 		else
 		{
-			ri.Printf( PRINT_ALL, "...using GL_ARB_get_program_binary\n");
+			ri.Printf(PRINT_ALL, "...using GL_ARB_get_program_binary\n");
 			glConfig2.getProgramBinaryAvailable = qtrue;
 		}
 	}
 	else
 #endif
 	{
-		ri.Printf( PRINT_ALL, "...GL_ARB_get_program_binary not found\n");
+		ri.Printf(PRINT_ALL, "...GL_ARB_get_program_binary not found\n");
 		glConfig2.getProgramBinaryAvailable = qfalse;
 	}
 }

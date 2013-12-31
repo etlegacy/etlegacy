@@ -2134,10 +2134,10 @@ public:
 		// cs: find a usable slot. this should avoid any game / engine sync problems related to CS_FREE
 		gentity_t *clEnt = NULL;
 		int useSlot      = 0;
-		int pcn = trap_Cvar_VariableIntegerValue("sv_privateClients");
+		int pcn          = trap_Cvar_VariableIntegerValue("sv_privateClients");
 
 		// start at sv_privateClients if set, else with 1
-		for (int clNum = (pcn > 1 ? pcn:1); clNum < level.maxclients; clNum++)
+		for (int clNum = (pcn > 1 ? pcn : 1); clNum < level.maxclients; clNum++)
 		{
 			clEnt = &g_entities[clNum];
 			if (!clEnt || clEnt->inuse || (clEnt->client &&

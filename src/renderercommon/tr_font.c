@@ -131,8 +131,8 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 	bit2->rows       = height;
 	bit2->pitch      = pitch;
 	bit2->pixel_mode = FT_PIXEL_MODE_GRAY;
-	bit2->buffer    = (unsigned char *)ri.Z_Malloc(size);
-	bit2->num_grays = 256;
+	bit2->buffer     = (unsigned char *)ri.Z_Malloc(size);
+	bit2->num_grays  = 256;
 
 	Com_Memset(bit2->buffer, 0, size);
 
@@ -471,7 +471,8 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	//*font = &registeredFonts[registeredFontCount++];
 
 	// scale image size based on screen height, use the next higher power of two
-	for (imageSize = FONT_SIZE; imageSize < (float)FONT_SIZE * (glConfig.vidHeight / (float)SCREEN_HEIGHT); imageSize <<= 1);
+	for (imageSize = FONT_SIZE; imageSize < (float)FONT_SIZE * (glConfig.vidHeight / (float)SCREEN_HEIGHT); imageSize <<= 1)
+		;
 
 	// do not exceed maxTextureSize
 	if (imageSize > glConfig.maxTextureSize)
