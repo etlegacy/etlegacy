@@ -3700,7 +3700,7 @@ skipInteraction:
 						GLSL_SelectPermutation(gl_deferredLightingShader_directionalSun);
 
 						GLSL_SetUniformVec3(selectedProgram, UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
-						GLSL_SetUniformVec3(selectedProgram, UNIFORM_LIGHTORIGIN, light->origin);
+						GLSL_SetUniformVec3(selectedProgram, UNIFORM_LIGHTDIR, tr.sunDirection);
 						GLSL_SetUniformVec3(selectedProgram, UNIFORM_LIGHTCOLOR, tess.svars.color);
 						GLSL_SetUniformFloat(selectedProgram, UNIFORM_LIGHTRADIUS, light->sphereRadius);
 						GLSL_SetUniformFloat(selectedProgram, UNIFORM_LIGHTSCALE, light->l.scale);

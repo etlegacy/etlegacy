@@ -864,11 +864,7 @@ void RB_DrawSun(void)
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
 
-#ifndef RENDERER2C
-		gl_genericShader->SetUniform_PortalPlane(plane);
-#else
 		GLSL_SetUniformVec4(selectedProgram, UNIFORM_PORTALPLANE, plane);
-#endif
 	}
 
 
@@ -1040,21 +1036,12 @@ void Tess_StageIteratorSky(void)
 			R_BindVBO(tess.vbo);
 			R_BindIBO(tess.ibo);
 
-#ifndef RENDERER2C
-			gl_skyboxShader->SetPortalClipping(backEnd.viewParms.isPortal);
-			gl_skyboxShader->BindProgram();
-
-			gl_skyboxShader->SetUniform_ViewOrigin(backEnd.viewParms.orientation.origin);   // in world space
-			gl_skyboxShader->SetUniform_ModelMatrix(backEnd.orientation.transformMatrix);
-			gl_skyboxShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
-#else
 			GLSL_SetMacroState(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 			GLSL_SelectPermutation(gl_skyboxShader);
 
 			GLSL_SetUniformVec3(selectedProgram, UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
 			GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 			GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
-#endif
 
 			// u_PortalPlane
 			if (backEnd.viewParms.isPortal)
@@ -1067,18 +1054,10 @@ void Tess_StageIteratorSky(void)
 				plane[2] = backEnd.viewParms.portalPlane.normal[2];
 				plane[3] = backEnd.viewParms.portalPlane.dist;
 
-#ifndef RENDERER2C
-				gl_skyboxShader->SetUniform_PortalPlane(plane);
-#else
 				GLSL_SetUniformVec4(selectedProgram, UNIFORM_PORTALPLANE, plane);
-#endif
 			}
 
-#ifndef RENDERER2C
-			gl_skyboxShader->SetRequiredVertexPointers();
-#else
 			GLSL_SetRequiredVertexPointers(gl_skyboxShader);
-#endif
 
 			// bind u_ColorMap
 			GL_SelectTexture(0);

@@ -1574,8 +1574,6 @@ typedef struct shaderProgram_s
 	GLuint program;
 	//uint32_t attribs;           // vertex array attributes
 
-
-#ifdef RENDERER2C
 	GLhandleARB vertexShader;
 	GLhandleARB fragmentShader;
 
@@ -1585,204 +1583,7 @@ typedef struct shaderProgram_s
 	char *uniformBuffer;
 
 	qboolean compiled;
-#else
-	char *compileMacros;
-
-	// uniform parameters
-	int32_t u_ColorMap;
-	int32_t u_CurrentMap;
-	int32_t u_ContrastMap;
-	int32_t u_DiffuseMap;
-	int32_t u_NormalMap;
-	int32_t u_SpecularMap;
-	int32_t u_LightMap;
-	int32_t u_DeluxeMap;
-	int32_t u_DepthMap;
-	int32_t u_DepthMapBack;
-	int32_t u_DepthMapFront;
-	int32_t u_PortalMap;
-	int32_t u_AttenuationMapXY;
-	int32_t u_AttenuationMapZ;
-	int32_t u_ShadowMap;
-	int32_t u_ShadowMap0;
-	int32_t u_ShadowMap1;
-	int32_t u_ShadowMap2;
-	int32_t u_ShadowMap3;
-	int32_t u_ShadowMap4;
-	int32_t u_EnvironmentMap0;
-	int32_t u_EnvironmentMap1;
-
-	int32_t u_RandomMap;
-	int32_t u_GrainMap;
-	int32_t u_VignetteMap;
-
-	int32_t u_ColorTextureMatrix;
-	matrix_t t_ColorTextureMatrix;
-
-	int32_t u_DiffuseTextureMatrix;
-	matrix_t t_DiffuseTextureMatrix;
-
-	int32_t u_NormalTextureMatrix;
-	matrix_t t_NormalTextureMatrix;
-
-	int32_t u_SpecularTextureMatrix;
-	matrix_t t_SpecularTextureMatrix;
-
-	int32_t u_AlphaTest;
-	alphaTest_t t_AlphaTest;
-
-	int32_t u_ViewOrigin;
-	vec3_t t_ViewOrigin;
-
-	GLint u_DeformParms;
-
-	int32_t u_Color;
-	vec4_t t_Color;
-
-	int32_t u_ColorModulate;
-	vec4_t t_ColorModulate;
-
-	int32_t u_AmbientColor;
-	vec3_t t_AmbientColor;
-
-	int32_t u_LightDir;
-	vec3_t t_LightDir;
-
-	int32_t u_LightOrigin;
-	vec3_t t_LightOrigin;
-
-	int32_t u_LightColor;
-	vec3_t t_LightColor;
-
-	int32_t u_LightRadius;
-	float t_LightRadius;
-
-	int32_t u_LightParallel;
-	qboolean t_LightParallel;
-
-	int32_t u_LightScale;
-	float t_LightScale;
-
-	int32_t u_LightWrapAround;
-	float t_LightWrapAround;
-
-	int32_t u_LightAttenuationMatrix;
-	matrix_t t_LightAttenuationMatrix;
-
-	int32_t u_LightFrustum;
-
-	int32_t u_ShadowMatrix;
-	matrix_t t_ShadowMatrix;
-
-	int32_t u_ShadowCompare;
-	qboolean t_ShadowCompare;
-
-	int32_t u_ShadowTexelSize;
-	float t_ShadowTexelSize;
-
-	int32_t u_ShadowBlur;
-	float t_ShadowBlur;
-
-	GLint u_ShadowParallelSplitDistances;
-	vec4_t t_ShadowParallelSplitDistances;
-
-	int32_t u_RefractionIndex;
-	float t_RefractionIndex;
-
-	int32_t u_FresnelPower;
-	int32_t u_FresnelScale;
-	int32_t u_FresnelBias;
-
-	GLint u_NormalScale;
-
-	int32_t u_EtaRatio;
-
-	int32_t u_FogDensity;
-	int32_t u_FogColor;
-
-	GLint u_FogDistanceVector;
-	vec4_t t_FogDistanceVector;
-
-	GLint u_FogDepthVector;
-	vec4_t t_FogDepthVector;
-
-	GLint u_FogEyeT;
-	float t_FogEyeT;
-
-	int32_t u_SSAOJitter;
-	int32_t u_SSAORadius;
-
-	GLint u_ParallaxMapping;
-	qboolean t_ParallaxMapping;
-
-	int32_t u_DepthScale;
-	float t_DepthScale;
-
-
-	GLint u_PortalClipping;
-	qboolean t_PortalClipping;
-
-	GLint u_PortalPlane;
-	vec4_t t_PortalPlane;
-
-	int32_t u_PortalRange;
-	float t_PortalRange;
-
-	GLint u_EnvironmentInterpolation;
-	float t_EnvironmentInterpolation;
-
-	GLint u_HDRKey;
-	float t_HDRKey;
-
-	GLint u_HDRAverageLuminance;
-	float t_HDRAverageLuminance;
-
-	GLint u_HDRMaxLuminance;
-	float t_HDRMaxLuminance;
-
-	int32_t u_DeformMagnitude;
-	float t_DeformMagnitude;
-
-	GLint u_BlurMagnitude;
-
-	int32_t u_ModelMatrix;          // model -> world
-	matrix_t t_ModelMatrix;
-
-	int32_t u_ViewMatrix;           // world -> camera
-	matrix_t t_ViewMatrix;
-
-	int32_t u_ModelViewMatrix;          // model -> camera
-	matrix_t t_ModelViewMatrix;
-
-	int32_t u_ModelViewMatrixTranspose;
-	matrix_t t_ModelViewMatrixTranspose;
-
-	int32_t u_ProjectionMatrix;
-	matrix_t t_ProjectionMatrix;
-
-	int32_t u_ProjectionMatrixTranspose;
-	matrix_t t_ProjectionMatrixTranspose;
-
-	int32_t u_ModelViewProjectionMatrix;
-	matrix_t t_ModelViewProjectionMatrix;
-
-	int32_t u_UnprojectMatrix;
-	matrix_t t_UnprojectMatrix;
-
-	int32_t u_VertexSkinning;
-	qboolean t_VertexSkinning;
-
-	GLint u_VertexInterpolation;
-	float t_VertexInterpolation;
-
-	int32_t u_BoneMatrix;
-
-	int32_t u_Time;
-	float t_Time;
-#endif
 } shaderProgram_t;
-
-#ifdef RENDERER2C
 
 typedef struct macroBitMap_s
 {
@@ -1800,7 +1601,6 @@ typedef struct shaderProgramList_s
 	macroBitMap_t *macromap;
 	int mappedMacros;
 } shaderProgramList_t;
-#endif
 
 typedef struct uniformInfo_s
 {
@@ -1829,9 +1629,7 @@ typedef struct programInfo_s
 	int numUniformValues;
 	qboolean compiled;
 	unsigned int checkSum;
-#ifdef RENDERER2C
 	shaderProgramList_t *list;
-#endif
 	struct programInfo_s *next;
 }programInfo_t;
 
@@ -3364,7 +3162,6 @@ typedef struct
 	int numUsedOcclusionQueryObjects;
 } trGlobals_t;
 
-#ifdef RENDERER2C
 extern programInfo_t *gl_genericShader;
 extern programInfo_t *gl_lightMappingShader;
 extern programInfo_t *gl_vertexLightingShader_DBS_entity;
@@ -3403,7 +3200,6 @@ extern programInfo_t *gl_dispersionShader;
 
 //This is set with the GLSL_SelectPermutation
 extern shaderProgram_t *selectedProgram;
-#endif
 
 extern const matrix_t quakeToOpenGLMatrix;
 extern const matrix_t openGLToQuakeMatrix;
@@ -4562,7 +4358,6 @@ const char *GetFallbackShader(const char *name);
 //tr_glsl.c
 void GLSL_VertexAttribsState(uint32_t stateBits);
 void GLSL_VertexAttribPointers(uint32_t attribBits);
-#ifdef RENDERER2C
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value);
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value);
 void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_t v);
@@ -4579,6 +4374,5 @@ void GLSL_SetRequiredVertexPointers(programInfo_t *programlist);
 void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms);
 void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen);
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
-#endif
 
 #endif // TR_LOCAL_H

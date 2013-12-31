@@ -216,7 +216,6 @@ typedef struct GLShaderHeader_s
 	GLint binaryLength;  // argument to glProgramBinary
 }GLShaderHeader_t;
 
-#ifdef RENDERER2C
 programInfo_t *gl_genericShader;
 programInfo_t *gl_lightMappingShader;
 programInfo_t *gl_vertexLightingShader_DBS_entity;
@@ -255,7 +254,6 @@ programInfo_t *gl_dispersionShader;
 
 //This is set with the GLSL_SelectPermutation
 shaderProgram_t *selectedProgram;
-#endif
 
 /*
 ================
@@ -564,8 +562,6 @@ void GLSL_LoadDefinitions(void)
 	ri.Error(ERR_FATAL,"GLGL_LoadDefitionions end Filename %s Vert libs: %s",test2->filename,test2->vertexLibraries);
 	*/
 }
-
-#ifdef RENDERER2C
 
 void GLSL_TestProgram(programInfo_t *program)
 {
@@ -2673,8 +2669,6 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
 
 	GLSL_SetUniformInt(selectedProgram, UNIFORM_ALPHATEST, value);
 }
-
-#endif // RENDERER2C
 
 void GLSL_VertexAttribsState(uint32_t stateBits)
 {

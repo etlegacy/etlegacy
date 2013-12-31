@@ -1501,19 +1501,11 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
-#ifndef RENDERER2C
-			gl_genericShader->SetUniform_Color(colorGreen);
-#else
 			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
-#endif
 		}
 		else
 		{
-#ifndef RENDERER2C
-			gl_genericShader->SetUniform_Color(colorMdGrey);
-#else
 			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
-#endif
 		}
 
 		// draw bsp leave or node
@@ -1671,19 +1663,11 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
-#ifndef RENDERER2C
-			gl_genericShader->SetUniform_Color(colorGreen);
-#else
 			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
-#endif
 		}
 		else
 		{
-#ifndef RENDERER2C
-			gl_genericShader->SetUniform_Color(colorMdGrey);
-#else
 			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
-#endif
 		}
 
 		//if(r_logFile->integer)
@@ -2028,16 +2012,6 @@ static void R_CoherentHierachicalCulling()
 		R_BindNullFBO();
 	}
 
-#ifndef RENDERER2C
-	gl_genericShader->DisableAlphaTesting();
-	gl_genericShader->DisablePortalClipping();
-	gl_genericShader->DisableVertexSkinning();
-	gl_genericShader->DisableVertexAnimation();
-	gl_genericShader->DisableDeformVertexes();
-	gl_genericShader->DisableTCGenEnvironment();
-
-	gl_genericShader->BindProgram();
-#else
 	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
 	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
 	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
@@ -2046,7 +2020,7 @@ static void R_CoherentHierachicalCulling()
 	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
 
 	GLSL_SelectPermutation(gl_genericShader);
-#endif
+
 	GL_Cull(CT_TWO_SIDED);
 
 	GL_LoadProjectionMatrix(tr.viewParms.projectionMatrix);
@@ -2058,32 +2032,19 @@ static void R_CoherentHierachicalCulling()
 	           tr.viewParms.viewportWidth, tr.viewParms.viewportHeight);
 
 	// set uniforms
-#ifndef RENDERER2C
-	gl_genericShader->SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
-	gl_genericShader->SetUniform_Color(colorWhite);
-#else
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
 	GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorWhite);
-#endif
 
 	// set up the transformation matrix
 	GL_LoadModelViewMatrix(tr.orientation.modelViewMatrix);
 
-#ifndef RENDERER2C
-	gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
-#else
 	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
-#endif
 
 	// bind u_ColorMap
 	GL_SelectTexture(0);
 	GL_Bind(tr.whiteImage);
 
-#ifndef RENDERER2C
-	gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
-#else
 	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
-#endif
 
 
 #if 0
