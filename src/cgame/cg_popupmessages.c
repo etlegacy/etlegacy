@@ -561,7 +561,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 	if (cg_pmWaitingList->message2[0])
 	{
-		CG_Text_Paint_Ext(size + w + sizew * cg_pmWaitingList->scaleShader + 16, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message2, 0, 0, 0, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
+		CG_Text_Paint_Ext(size + w + sizew * cg_pmWaitingList->scaleShader + 16, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message2, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
 	}
 
 	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
@@ -631,7 +631,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 		if (listItem->message2[0])
 		{
-			CG_Text_Paint_Ext(size + w + sizew * listItem->scaleShader + 16, y + 12, fontScale, fontScale, colourText, listItem->message2, 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(size + w + sizew * listItem->scaleShader + 16, y + 12, fontScale, fontScale, colourText, listItem->message2, 0, 0, style, &cgs.media.limboFont2);
 		}
 	}
 }
