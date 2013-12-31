@@ -2435,17 +2435,18 @@ void R_AddWorldSurfaces(void)
 	ClearBounds(tr.viewParms.visBounds[0], tr.viewParms.visBounds[1]);
 
 	// render sky or world?
-	if (tr.refdef.rdflags & RDF_SKYBOXPORTAL && tr.world->numSkyNodes > 0)
+	if ((tr.refdef.rdflags & RDF_SKYBOXPORTAL) && tr.world->numSkyNodes > 0)
 	{
 		int       i;
 		bspNode_t **node;
 
 		for (i = 0, node = tr.world->skyNodes; i < tr.world->numSkyNodes; i++, node++)
+		{
 			R_AddLeafSurfaces(*node, 0);    // no decals on skybox nodes
+		}
 	}
 	else
 	{
-
 		// determine which leaves are in the PVS / areamask
 		R_MarkLeaves();
 

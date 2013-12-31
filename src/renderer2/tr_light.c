@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -691,6 +691,7 @@ void R_SetupLightView(trRefLight_t *light)
 
 	default:
 		ri.Error(ERR_DROP, "R_SetupLightView: Bad rlType");
+		break;
 	}
 }
 
@@ -1124,11 +1125,10 @@ void R_SetupLightProjection(trRefLight_t *light)
 
 	default:
 		ri.Error(ERR_DROP, "R_SetupLightProjection: Bad rlType");
+		break;
 	}
 }
 // *INDENT-ON*
-
-
 
 /*
 =================

@@ -2095,6 +2095,7 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 			break;
 		default:
 			ri.Error(ERR_FATAL, "Only INT supported atm");
+			break;
 		}
 	}
 
@@ -2238,7 +2239,7 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 		ri.Error(ERR_FATAL, "Trying to set macro state of shader \"%s\" but it is not compiled\n", programlist->name);
 	}
 
-	if (enabled > 0 && programlist->list->currentMacros & BIT(macro))
+	if (enabled > 0 && (programlist->list->currentMacros & BIT(macro)))
 	{
 		return;
 	}
@@ -3115,3 +3116,4 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		}
 	}
 }
+

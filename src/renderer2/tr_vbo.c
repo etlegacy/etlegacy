@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -55,6 +55,7 @@ VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_
 	default:
 		glUsage = 0; //Prevents warning
 		Com_Error(ERR_FATAL, "bad vboUsage_t given: %i", usage);
+		break;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
@@ -130,6 +131,7 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	default:
 		glUsage = 0;
 		Com_Error(ERR_FATAL, "bad vboUsage_t given: %i", usage);
+		break;
 	}
 
 	if (!numVertexes)
@@ -273,6 +275,7 @@ IBO_t *R_CreateIBO(const char *name, byte *indexes, int indexesSize, vboUsage_t 
 	default:
 		glUsage = 0;
 		Com_Error(ERR_FATAL, "bad vboUsage_t given: %i", usage);
+		break;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
@@ -333,6 +336,7 @@ IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles
 	default:
 		glUsage = 0;
 		Com_Error(ERR_FATAL, "bad vboUsage_t given: %i", usage);
+		break;
 	}
 
 	if (!numTriangles)
