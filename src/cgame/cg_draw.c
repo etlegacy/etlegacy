@@ -2029,7 +2029,7 @@ static void CG_DrawCrosshairNames(void)
 //==============================================================================
 
 #define INFOTEXT_STARTX 8
-#define INFOTEXT_STARTY 134
+#define INFOTEXT_STARTY 158
 
 /*
 =================
@@ -2752,13 +2752,13 @@ static void CG_DrawWarmup(void)
 				s1 = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
 				w  = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x  = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, 160, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, 300, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 
 			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
 			w  = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
 			x  = Ccg_WideX(320) - w / 2;
-			CG_Text_Paint_Ext(x, 188, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, 214, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
 			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
@@ -2777,7 +2777,7 @@ static void CG_DrawWarmup(void)
 				}
 				w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, 208, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, 320, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 			return;
 		}
@@ -2794,7 +2794,7 @@ static void CG_DrawWarmup(void)
 
 	w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 	x = Ccg_WideX(320) - w / 2;
-	CG_Text_Paint_Ext(x, 188, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(x, 214, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// pre start actions
 	if (sec == 3 && !announced)
@@ -2896,15 +2896,15 @@ static void CG_DrawWarmup(void)
 
 		w = CG_Text_Width_Ext(s, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 140, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 144, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		w = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 160, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 164, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 208, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 184, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 }
 
