@@ -2683,7 +2683,7 @@ static qboolean CG_DrawFollow(void)
 		if (cg.snap->ps.clientNum != cg.clientNum)
 		{
 			char *follow    = CG_TranslateString("Following");
-			char *w         = cgs.clientinfo[cg.snap->ps.clientNum].cleanname;
+			char *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
 			int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 			int  startClass = CG_Text_Width_Ext(va("(%s", follow), fontScale, 0, &cgs.media.limboFont2) + charWidth;
 			int  startRank  = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
@@ -2709,7 +2709,7 @@ static qboolean CG_DrawFollow(void)
 	else
 	{
 		char *follow    = CG_TranslateString("Following");
-		char *w         = cgs.clientinfo[cg.snap->ps.clientNum].cleanname;
+		char *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
 		int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 		int  startClass = CG_Text_Width_Ext(follow, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
