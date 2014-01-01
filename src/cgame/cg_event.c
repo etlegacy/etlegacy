@@ -246,8 +246,25 @@ static void CG_Obituary(entityState_t *ent)
 		return;
 	}
 
+	// check for double client messages
+	if (!ca)
+	{
+		strcpy(attackerName, "noname");
+	}
+	else
+	{
+		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
+		strcat(attackerName, S_COLOR_WHITE);
+
+		// check for kill messages about the current clientNum
+		if (target == cg.snap->ps.clientNum)
+		{
+			Q_strncpyz(cg.killerName, attackerName, sizeof(cg.killerName));
+		}
+	}
+
 	// check for kill messages from the current clientNum
-	if (attacker == cg.snap->ps.clientNum)
+	if (attacker == cg.clientNum)
 	{
 		char *s;
 
@@ -266,27 +283,33 @@ static void CG_Obituary(entityState_t *ent)
 		{
 			s = va("%s %s", CG_TranslateString("You killed"), targetName);
 		}
-		// print the text message as well
+
+		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
+	}
+	else if (attacker == cg.snap->ps.clientNum)
+	{
+		char *s;
+
+		if (ci->team == ca->team)
+		{
+			if (mod == MOD_SWAP_PLACES)
+			{
+				s = va("%s %s %s", attackerName, CG_TranslateString("^7swapped places with"), targetName);
+			}
+			else
+			{
+				s = va("%s %s %s", attackerName, CG_TranslateString("^7killed ^1TEAMMATE^7"), targetName);
+			}
+		}
+		else
+		{
+			s = va("%s %s %s", attackerName, CG_TranslateString("^7killed"), targetName);
+		}
+
 		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
 	}
 
 	// check for double client messages
-	if (!ca)
-	{
-		strcpy(attackerName, "noname");
-	}
-	else
-	{
-		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
-		strcat(attackerName, S_COLOR_WHITE);
-
-		// check for kill messages about the current clientNum
-		if (target == cg.snap->ps.clientNum)
-		{
-			Q_strncpyz(cg.killerName, attackerName, sizeof(cg.killerName));
-		}
-	}
-
 	if (ca)
 	{
 		switch (mod)
