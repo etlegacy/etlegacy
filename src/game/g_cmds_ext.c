@@ -349,8 +349,8 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	{
 		if (ent)
 		{
-			CP("print \"\n^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n\"");
-			CP("print \"^1-----------------------------------------------------------^7\n\"");
+			CP("print \"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps\n\"");
+			CP("print \"^7-----------------------------------------------------------\n\"");
 		}
 		else
 		{
@@ -362,8 +362,8 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	{
 		if (ent)
 		{
-			CP("print \"\n^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n\"");
-			CP("print \"^1---------------------------------------------------------------------^7\n\"");
+			CP("print \"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps\n\"");
+			CP("print \"^7---------------------------------------------------------------------\n\"");
 		}
 		else
 		{
@@ -392,7 +392,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		}
 		else if (cl->pers.connected == CON_CONNECTING)
 		{
-			strcpy(rate, va("%s", "^3>>> CONNECTING <<<"));
+			strcpy(rate, va("%s", "^3>>> CONNECTING <<<^7"));
 		}
 		else
 		{
@@ -409,15 +409,15 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		{
 			if (cl->sess.sessionTeam == TEAM_SPECTATOR || cl->pers.connected == CON_CONNECTING)
 			{
-				strcpy(ready, ((ent) ? "^5--------^1 :" : "-------- :"));
+				strcpy(ready, ((ent) ? "^5--------^7 :" : "-------- :"));
 			}
 			else if (cl->pers.ready || (g_entities[idnum].r.svFlags & SVF_BOT))
 			{
-				strcpy(ready, ((ent) ? "^3(READY)^1  :" : "(READY)  :"));
+				strcpy(ready, ((ent) ? "^3(READY)^7  :" : "(READY)  :"));
 			}
 			else
 			{
-				strcpy(ready, ((ent) ? "NOTREADY^1 :" : "NOTREADY :"));
+				strcpy(ready, ((ent) ? "^7NOTREADY^7 :" : "NOTREADY :"));
 			}
 		}
 
@@ -429,7 +429,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		if (cl->sess.coach_team)
 		{
 			tteam = cl->sess.coach_team;
-			coach = (ent) ? "^3C" : "C";
+			coach = (ent) ? "^3C^7" : "C";
 		}
 		else
 		{
@@ -452,7 +452,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 		if (ent)
 		{
-			CP(va("print \"%s%s%2d%s^1:%s %-26s^7%s  ^3%s\n\"", ready, tc, idnum, coach, ((ref[0]) ? "^3" : "^7"), n2, rate, ref));
+			CP(va("print \"%s%s%2d%s:%s %-26s^7%s  ^3%s^7\n\"", ready, tc, idnum, coach, ((ref[0]) ? "^3" : "^7"), n2, rate, ref));
 		}
 		else
 		{
