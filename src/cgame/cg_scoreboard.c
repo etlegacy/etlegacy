@@ -1009,8 +1009,6 @@ qboolean CG_DrawScoreboard(void)
 
 		if (!fadeColor)
 		{
-			// next time scoreboard comes up, don't print killer
-			*cg.killerName = 0;
 			return qfalse;
 		}
 		fade = fadeColor[3];
