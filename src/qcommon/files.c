@@ -63,7 +63,7 @@ The "home path" is the path used for all write access. On win32 systems we have 
 == "home path", but this no longer the case for ET: Legacy - it requires "base path"
 != "home path" Any files that are created (demos, screenshots, etc) will be created relative
 to the base path, so home path should usually be writable.
-"home path" points to ~/.etlwolf or c:\<USER>\My Documets\etlwolf by default.
+"home path" points to ~/.etllegacy or c:\<USER>\My Documets\ETLegacy by default.
 
 The user can also install custom mods and content in "home path", so it should be searched
 along with "home path" and "base path" for game content. Mods downloads from online server games
