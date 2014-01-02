@@ -3116,4 +3116,3 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		}
 	}
 }
-

@@ -144,7 +144,7 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
 	{
-		if (client->sess.skillpoints[skill] >= skillLevels[skill][i])
+		if (skillLevels[skill][i] != -1 && client->sess.skillpoints[skill] >= skillLevels[skill][i])
 		{
 			client->sess.skill[skill] = i;
 			break;

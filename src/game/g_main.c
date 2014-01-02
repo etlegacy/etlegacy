@@ -1404,6 +1404,97 @@ void G_SetTargetName(gentity_t *ent, char *targetname)
 	}
 }
 
+void G_SetSkillLevels(int skill, const char *string)
+{
+	char newLevels[MAX_CVAR_VALUE_STRING];
+	char *nextLevel;
+	int  levels[4];
+	int  count;
+
+	Q_strncpyz(newLevels, string, sizeof(string));
+	nextLevel = strtok(newLevels, " ");
+
+	for (count = 0; count < 4; count++)
+	{
+		if (nextLevel)
+		{
+			levels[count] = atoi(nextLevel);
+			if (levels[count] < 0)
+			{
+				levels[count] = -1;
+			}
+			nextLevel = strtok(NULL, " ,");
+		}
+		else
+		{
+			levels[count] = -1;
+		}
+	}
+
+	for (count = 1; count < NUM_SKILL_LEVELS; count++)
+	{
+		skillLevels[skill][count] = levels[count - 1];
+	}
+}
+
+void G_SetSkillLevelsByCvar(vmCvar_t *cvar)
+{
+	char *skillstring;
+	int  skill = -1;
+
+	if (cvar == &skill_battlesense)
+	{
+		skill       = SK_BATTLE_SENSE;
+		skillstring = skill_battlesense.string;
+	}
+	else if (cvar == &skill_engineer)
+	{
+		skill       = SK_EXPLOSIVES_AND_CONSTRUCTION;
+		skillstring = skill_engineer.string;
+	}
+	else if (cvar == &skill_medic)
+	{
+		skill       = SK_FIRST_AID;
+		skillstring = skill_medic.string;
+	}
+	else if (cvar == &skill_fieldops)
+	{
+		skill       = SK_SIGNALS;
+		skillstring = skill_fieldops.string;
+	}
+	else if (cvar == &skill_lightweapons)
+	{
+		skill       = SK_LIGHT_WEAPONS;
+		skillstring = skill_lightweapons.string;
+	}
+	else if (cvar == &skill_soldier)
+	{
+		skill       = SK_HEAVY_WEAPONS;
+		skillstring = skill_soldier.string;
+	}
+	else if (cvar == &skill_covertops)
+	{
+		skill       = SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS;
+		skillstring = skill_covertops.string;
+	}
+
+	if (skill >= 0)
+	{
+		G_SetSkillLevels(skill, skillstring);
+	}
+}
+
+void G_InitSkillLevels()
+{
+	G_SetSkillLevelsByCvar(&skill_battlesense);
+	G_SetSkillLevelsByCvar(&skill_engineer);
+	G_SetSkillLevelsByCvar(&skill_medic);
+	G_SetSkillLevelsByCvar(&skill_fieldops);
+	G_SetSkillLevelsByCvar(&skill_lightweapons);
+	G_SetSkillLevelsByCvar(&skill_soldier);
+	G_SetSkillLevelsByCvar(&skill_covertops);
+}
+
 /*
 ================
 G_FindTeams
@@ -1563,6 +1654,7 @@ void G_UpdateCvars(void)
 	qboolean    fVoteFlags         = qfalse;
 	qboolean    chargetimechanged  = qfalse;
 	qboolean    clsweaprestriction = qfalse;
+	qboolean    skillLevelPoints   = qfalse;
 
 	for (i = 0, cv = gameCvarTable ; i < gameCvarTableSize ; i++, cv++)
 	{
@@ -1701,6 +1793,11 @@ void G_UpdateCvars(void)
 				{
 					clsweaprestriction = qtrue;
 				}
+				else if (cv->vmCvar == &skill_battlesense || cv->vmCvar == &skill_covertops || cv->vmCvar == &skill_engineer || cv->vmCvar == &skill_fieldops || cv->vmCvar == &skill_lightweapons || cv->vmCvar == &skill_medic || cv->vmCvar == &skill_soldier)
+				{
+					G_SetSkillLevelsByCvar(cv->vmCvar);
+					skillLevelPoints = qtrue;
+				}
 #ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
 				{
@@ -1789,6 +1886,18 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
 		Info_SetValueForKey(cs, "m", team_maxplayers.string);
 		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
+	}
+
+	if (skillLevelPoints)
+	{
+		int x;
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			for (x = 0; x < SK_NUM_SKILLS; x++)
+			{
+				G_SetPlayerSkill(g_entities[level.sortedClients[i]].client, x);
+			}
+		}
 	}
 }
 
@@ -1983,6 +2092,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	G_ProcessIPBans();
 
 	G_InitMemory();
+
+	G_InitSkillLevels();
 
 	// intialize gamestate
 	if (g_gamestate.integer == GS_INITIALIZE)

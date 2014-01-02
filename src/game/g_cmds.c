@@ -550,6 +550,23 @@ int ClientNumberFromString(gentity_t *to, char *s)
 	return -1;
 }
 
+int GetSkillPointUntilLevelUp(gentity_t *ent, int skill)
+{
+	if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
+	{
+		int i = ent->client->sess.skill[skill] + 1;
+		int x = 1;
+		for (; i < NUM_SKILL_LEVELS; i++, x++)
+		{
+			if (skillLevels[skill][ent->client->sess.skill[skill] + x] >= 0)
+			{
+				return skillLevels[skill][ent->client->sess.skill[skill] + x] - ent->client->sess.skillpoints[skill];
+			}
+		}
+	}
+	return -1;
+}
+
 /*
 ==================
 Cmd_Give_f
@@ -601,10 +618,10 @@ void Cmd_Give_f(gentity_t *ent)
 			if (skill >= 0 && skill < SK_NUM_SKILLS)
 			{
 				// Detecting the correct amount to move to the next skill level
-				amount = 20;
-				if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
+				amount = GetSkillPointUntilLevelUp(ent, skill);
+				if (amount < 0)
 				{
-					amount = skillLevels[skill][ent->client->sess.skill[skill] + 1] - ent->client->sess.skillpoints[skill];
+					amount = 20;
 				}
 
 				G_AddSkillPoints(ent, skill, amount);
@@ -617,10 +634,10 @@ void Cmd_Give_f(gentity_t *ent)
 			for (i = 0; i < SK_NUM_SKILLS; i++)
 			{
 				// Detecting the correct amount to move to the next skill level
-				amount = 20;
-				if (ent->client->sess.skill[i] < NUM_SKILL_LEVELS - 1)
+				amount = GetSkillPointUntilLevelUp(ent, i);
+				if (amount < 0)
 				{
-					amount = skillLevels[i][ent->client->sess.skill[i] + 1] - ent->client->sess.skillpoints[i];
+					amount = 20;
 				}
 
 				G_AddSkillPoints(ent, i, amount);

@@ -884,7 +884,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 	gentity_t     *head;
 	orientation_t orientation;
 
-	head            = G_Spawn();
+	head = G_Spawn();
 	//head->classname = "head"; // no need to set -> ET_TEMPHEAD
 
 	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
@@ -967,7 +967,7 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 		return NULL;
 	}
 
-	leg            = G_Spawn();
+	leg = G_Spawn();
 	//leg->classname = "leg"; // no need to set -> ET_TEMPLEG
 
 	AngleVectors(ent->client->ps.viewangles, flatforward, NULL, NULL);

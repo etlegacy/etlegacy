@@ -1077,7 +1077,7 @@ int PC_Directive_define(source_t *source)
 	define->next    = source->defines;
 	source->defines = define;
 #endif //DEFINEHASHING
-	// if nothing is defined, just return
+	   // if nothing is defined, just return
 	if (!PC_ReadLine(source, &token))
 	{
 		return qtrue;
@@ -1201,7 +1201,7 @@ define_t *PC_DefineFromString(char *string)
 #if DEFINEHASHING
 	src.definehash = GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
 #endif //DEFINEHASHING
-	// create a define from the source
+	   // create a define from the source
 	res = PC_Directive_define(&src);
 	// free any tokens if left
 	for (t = src.tokens; t; t = src.tokens)
@@ -3060,7 +3060,7 @@ void FreeSource(source_t *source)
 		PC_FreeDefine(define);
 	}
 #endif //DEFINEHASHING
-	// free all indents
+	   // free all indents
 	while (source->indentstack)
 	{
 		indent              = source->indentstack;
@@ -3074,7 +3074,7 @@ void FreeSource(source_t *source)
 		FreeMemory(source->definehash);
 	}
 #endif //DEFINEHASHING
-	// free the source itself
+	   // free the source itself
 	FreeMemory(source);
 }
 
