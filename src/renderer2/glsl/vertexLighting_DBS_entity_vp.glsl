@@ -31,10 +31,7 @@ varying vec3 var_Binormal;
 #endif
 varying vec3 var_Normal;
 
-
-
-
-void    main()
+void main()
 {
 	vec4 position;
 	vec3 tangent;

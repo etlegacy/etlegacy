@@ -8,16 +8,14 @@ varying vec3 var_Position;
 varying vec2 var_Tex;
 varying vec4 var_Color;
 
-void    main()
+void main()
 {
 #if defined(USE_PORTAL_CLIPPING)
+	float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
+	if (dist < 0.0)
 	{
-		float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
-		if (dist < 0.0)
-		{
-			discard;
-			return;
-		}
+		discard;
+		return;
 	}
 #endif
 
@@ -41,10 +39,12 @@ void    main()
 	}
 #endif
 
-	color       *= var_Color;
-	gl_FragColor = color;
+	color *= var_Color;
 
-#if defined(USE_TCGEN_ENVIRONMENT)
+	//Dushan added this. Why?
+#if 0 //defined(USE_TCGEN_ENVIRONMENT)
 	gl_FragColor = vec4(vec3(1.0, 0.0, 0.0), color.a);
+#else
+	gl_FragColor = color;
 #endif
 }

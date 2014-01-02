@@ -1158,6 +1158,7 @@ default values.
 #define CVAR_SERVER_CREATED         16384   // cvar was created by a server the client connected to.
 #define CVAR_VM_CREATED             32768   // cvar was created exclusively in one of the VMs.
 #define CVAR_PROTECTED              65536   // prevent modifying this var from VMs or the server
+#define CVAR_SHADER                 131072  // we need to recompile the glsl shaders
 #define CVAR_MODIFIED               1073741824   // Cvar was modified
 #define CVAR_NONEXISTENT            2147483648U  // Cvar doesn't exist.
 

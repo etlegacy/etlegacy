@@ -2479,6 +2479,11 @@ void GLSL_InitGPUShaders(void)
 	endTime = ri.Milliseconds();
 
 	ri.Printf(PRINT_ALL, "Created default shaders in %5.2f seconds\n", (endTime - startTime) / 1000.0);
+
+	if (r_recompileShaders->integer)
+	{
+		ri.Cvar_Set("r_recompileShaders", "0");
+	}
 }
 
 void GLSL_ShutdownGPUShaders(void)
