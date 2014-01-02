@@ -2683,6 +2683,7 @@ void CG_SetConfigValues(void);
 void CG_ShaderStateChanged(void);
 void CG_ChargeTimesChanged(void);
 void CG_TeamRestrictionsChanged(void);
+void CG_SkillLevelsChanged(void);
 void CG_LoadVoiceChats(void);
 void CG_PlayBufferedVoiceChats(void);
 void CG_AddToNotify(const char *str);

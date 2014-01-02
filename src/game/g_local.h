@@ -2033,6 +2033,9 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 
+// g_stats.c
+void G_UpgradeSkill(gentity_t *ent, skillType_t skill);
+
 typedef struct mod_ws_convert_s
 {
 	meansOfDeath_t mod;

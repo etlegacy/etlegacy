@@ -2633,6 +2633,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_TeamRestrictionsChanged();
 
+	CG_SkillLevelsChanged();
+
 	trap_S_ClearLoopingSounds();
 	trap_S_ClearSounds(qfalse);
 

@@ -1406,24 +1406,23 @@ void G_SetTargetName(gentity_t *ent, char *targetname)
 
 void G_SetSkillLevels(int skill, const char *string)
 {
-	char newLevels[MAX_CVAR_VALUE_STRING];
+	char **temp;
 	char *nextLevel;
 	int  levels[4];
 	int  count;
 
-	Q_strncpyz(newLevels, string, sizeof(string));
-	nextLevel = strtok(newLevels, " ");
+	temp = (char **) &string;
 
 	for (count = 0; count < 4; count++)
 	{
-		if (nextLevel)
+		nextLevel = COM_ParseExt(temp, qfalse);
+		if (nextLevel[0])
 		{
 			levels[count] = atoi(nextLevel);
 			if (levels[count] < 0)
 			{
 				levels[count] = -1;
 			}
-			nextLevel = strtok(NULL, " ,");
 		}
 		else
 		{
@@ -1482,6 +1481,24 @@ void G_SetSkillLevelsByCvar(vmCvar_t *cvar)
 	{
 		G_SetSkillLevels(skill, skillstring);
 	}
+}
+
+#define SKILLSTRING(skill) va("%i,%i,%i,%i", skillLevels[skill][1], skillLevels[skill][2], skillLevels[skill][3], skillLevels[skill][4])
+
+void G_UpdateSkillsToClients()
+{
+	char cs[MAX_INFO_STRING];
+
+	cs[0] = '\0';
+
+	Info_SetValueForKey(cs, "bs", SKILLSTRING(SK_BATTLE_SENSE));
+	Info_SetValueForKey(cs, "en", SKILLSTRING(SK_EXPLOSIVES_AND_CONSTRUCTION));
+	Info_SetValueForKey(cs, "md", SKILLSTRING(SK_FIRST_AID));
+	Info_SetValueForKey(cs, "fo", SKILLSTRING(SK_SIGNALS));
+	Info_SetValueForKey(cs, "lw", SKILLSTRING(SK_LIGHT_WEAPONS));
+	Info_SetValueForKey(cs, "sd", SKILLSTRING(SK_HEAVY_WEAPONS));
+	Info_SetValueForKey(cs, "cv", SKILLSTRING(SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS));
+	trap_SetConfigstring(CS_UPGRADERANGE, cs);
 }
 
 void G_InitSkillLevels()
@@ -1893,11 +1910,19 @@ void G_UpdateCvars(void)
 		int x;
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
+			//somewhat of waste of bandwidth but this should not happen very ofter (next to never)
 			for (x = 0; x < SK_NUM_SKILLS; x++)
 			{
+				int oldskill = g_entities[level.sortedClients[i]].client->sess.skill[x];
 				G_SetPlayerSkill(g_entities[level.sortedClients[i]].client, x);
+				if (oldskill != g_entities[level.sortedClients[i]].client->sess.skill[x])
+				{
+					// call the new func that encapsulates the skill giving behavior
+					G_UpgradeSkill(&g_entities[level.sortedClients[i]], x);
+				}
 			}
 		}
+		G_UpdateSkillsToClients();
 	}
 }
 
@@ -2172,6 +2197,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
 	Info_SetValueForKey(cs, "m", team_maxplayers.string);
 	trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
+
+	G_UpdateSkillsToClients();
 
 	G_SoundIndex("sound/misc/referee.wav");
 	G_SoundIndex("sound/misc/vote.wav");

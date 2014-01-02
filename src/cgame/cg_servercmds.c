@@ -742,6 +742,26 @@ void CG_TeamRestrictionsChanged(void)
 	cg.maxPlayers = atoi(Info_ValueForKey(info, "m"));
 }
 
+#define SETSKILL(skill, string) sscanf(string, "%i,%i,%i,%i", &skillLevels[skill][1], &skillLevels[skill][2], &skillLevels[skill][3], &skillLevels[skill][4])
+
+/*
+===============
+CG_SkillLevelsChanged
+===============
+*/
+void CG_SkillLevelsChanged(void)
+{
+	const char *info = CG_ConfigString(CS_UPGRADERANGE);
+
+	SETSKILL(SK_BATTLE_SENSE, Info_ValueForKey(info, "bs"));
+	SETSKILL(SK_EXPLOSIVES_AND_CONSTRUCTION, Info_ValueForKey(info, "en"));
+	SETSKILL(SK_FIRST_AID, Info_ValueForKey(info, "md"));
+	SETSKILL(SK_SIGNALS, Info_ValueForKey(info, "fo"));
+	SETSKILL(SK_LIGHT_WEAPONS, Info_ValueForKey(info, "lw"));
+	SETSKILL(SK_HEAVY_WEAPONS, Info_ValueForKey(info, "sd"));
+	SETSKILL(SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, Info_ValueForKey(info, "cv"));
+}
+
 /*
 ================
 CG_ConfigStringModified
@@ -834,6 +854,9 @@ static void CG_ConfigStringModified(void)
 		break;
 	case CS_TEAMRESTRICTIONS:
 		CG_TeamRestrictionsChanged();
+		break;
+	case CS_UPGRADERANGE:
+		CG_SkillLevelsChanged();
 		break;
 	case CS_SKYBOXORG:
 		CG_ParseSkyBox();
