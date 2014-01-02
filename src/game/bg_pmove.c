@@ -1385,7 +1385,15 @@ static void PM_WalkMove(void)
 	{
 		if (wishspeed > pm->ps->speed * pm_proneSpeedScale)
 		{
-			wishspeed = pm->ps->speed * pm_proneSpeedScale;
+			// cap the max prone speed while reloading
+			if (pm->ps->weaponstate == WEAPON_RELOADING)
+			{
+				wishspeed = 40.f;
+			}
+			else
+			{
+				wishspeed = pm->ps->speed * pm_proneSpeedScale;
+			}
 		}
 	}
 	else if (pm->ps->pm_flags & PMF_DUCKED)       // clamp the speed lower if ducking
@@ -2489,6 +2497,7 @@ static void PM_BeginWeaponReload(int weapon)
 	{
 		reloadTime *= .65f;
 	}
+
 	if (pm->ps->weaponstate == WEAPON_READY)
 	{
 		pm->ps->weaponTime += reloadTime;
@@ -3884,6 +3893,7 @@ static void PM_Weapon(void)
 		return;
 	}
 
+	// can't shoot while prone and moving
 	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
 	{
 		return;
