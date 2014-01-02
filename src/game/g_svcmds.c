@@ -1142,6 +1142,132 @@ void Svcmd_RevivePlayer(char *name)
 	ReviveEntity(player, player);
 }
 
+/**
+ * @brief Gib command - based on shrubbot
+ */
+qboolean Svcmd_Gib()
+{
+	int       pids[MAX_CLIENTS];
+	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	gentity_t *vic;
+	qboolean  doAll = qfalse;
+
+	// ignore in intermission
+	if (level.intermissiontime)
+	{
+		trap_SendServerCommand(-1, va("print \"Gib not allowed during intermission.\n\""));
+		return qfalse;
+	}
+
+	if (trap_Argc() < 2)
+	{
+		doAll = qtrue;
+	}
+
+	trap_Argv(2, name, sizeof(name));
+
+	if (!Q_stricmp(name, "-1") || doAll)
+	{
+		int it, count = 0;
+
+		for (it = 0; it < level.numConnectedClients; it++)
+		{
+			vic = g_entities + level.sortedClients[it];
+			if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+			      vic->client->sess.sessionTeam == TEAM_ALLIES))
+			{
+				continue;
+			}
+			G_Damage(vic, NULL, NULL, NULL, NULL, 500, 0, MOD_UNKNOWN);
+			count++;
+		}
+		trap_SendServerCommand(-1, va("print \"%d players gibbed.\n\"", count));
+		return qtrue;
+	}
+
+	if (ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(-1, va("print \"Error - can't gib - %s.\n\"", err));
+		return qfalse;
+	}
+	vic = &g_entities[pids[0]];
+
+	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+	      vic->client->sess.sessionTeam == TEAM_ALLIES))
+	{
+		trap_SendServerCommand(-1, va("print \"Player must be on a team to be gibbed.\n\""));
+		return qfalse;
+	}
+
+	G_Damage(vic, NULL, NULL, NULL, NULL, 500, 0, MOD_UNKNOWN);
+	trap_SendServerCommand(-1, va("print \"^7%s ^7was gibbed.\n\"", vic->client->pers.netname));
+	return qtrue;
+}
+
+/**
+ * @brief kill command - kills players
+ */
+qboolean Svcmd_Kill()
+{
+	int       pids[MAX_CLIENTS];
+	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	gentity_t *vic;
+	qboolean  doAll = qfalse;
+
+	// ignore in intermission
+	if (level.intermissiontime)
+	{
+		trap_SendServerCommand(-1, va("print \"Kill not allowed during intermission.\n\""));
+		return qfalse;
+	}
+
+	if (trap_Argc() < 2)
+	{
+		doAll = qtrue;
+	}
+
+	trap_Argv(2, name, sizeof(name));
+
+	if (!Q_stricmp(name, "-1") || doAll)
+	{
+		int it, count = 0;
+
+		for (it = 0; it < level.numConnectedClients; it++)
+		{
+			vic = g_entities + level.sortedClients[it];
+			if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+			      vic->client->sess.sessionTeam == TEAM_ALLIES))
+			{
+				continue;
+			}
+			G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
+			count++;
+		}
+		trap_SendServerCommand(-1, va("print \"%d players killed.\n\"", count));
+		return qtrue;
+	}
+
+	if (ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(-1, va("print \"Error - can't kill - %s.\n\"", err));
+		return qfalse;
+	}
+	vic = &g_entities[pids[0]];
+
+	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+	      vic->client->sess.sessionTeam == TEAM_ALLIES))
+	{
+		trap_SendServerCommand(-1, va("print \"Player must be on a team to be killed.\n\""));
+		return qfalse;
+	}
+
+	G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
+	trap_SendServerCommand(-1, va("print \"^7%s ^7was killed.\n\"", vic->client->pers.netname));
+	return qtrue;
+}
+
 /*
 ==================
 Svcmd_Kick_f
@@ -2015,6 +2141,20 @@ qboolean ConsoleCommand(void)
 		G_PlaySound_Cmd();
 		return qtrue;
 	}
+
+	//if (g_cheats.integer)
+	//{
+	if (!Q_stricmp(cmd, "gib"))
+	{
+		Svcmd_Gib();
+		return qtrue;
+	}
+	if (!Q_stricmp(cmd, "kill"))
+	{
+		Svcmd_Kill();
+		return qtrue;
+	}
+	//}
 
 	if (g_dedicated.integer)
 	{
