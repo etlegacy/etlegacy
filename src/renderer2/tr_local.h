@@ -1585,12 +1585,6 @@ typedef struct shaderProgram_s
 	qboolean compiled;
 } shaderProgram_t;
 
-typedef struct macroBitMap_s
-{
-	int bitOffset;
-	int macro;
-} macroBitMap_t;
-
 typedef struct shaderProgramList_s
 {
 	shaderProgram_t *programs;
@@ -1598,7 +1592,7 @@ typedef struct shaderProgramList_s
 	int permutations;
 	int currentPermutation;
 	int currentMacros;
-	macroBitMap_t *macromap;
+	int macromap[MAX_MACROS];
 	int mappedMacros;
 } shaderProgramList_t;
 

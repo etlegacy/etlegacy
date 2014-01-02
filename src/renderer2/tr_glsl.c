@@ -1524,11 +1524,11 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 
 	if (permutation)
 	{
-		for (i = 0; i < program->mappedMacros; i++)
+		for (i = 0; i < MAX_MACROS; i++)
 		{
-			if (permutation & BIT(program->macromap[i].bitOffset))
+			if (program->macromap[i] != -1 && (permutation & BIT(program->macromap[i])))
 			{
-				macroatrib |= BIT(program->macromap[i].macro);
+				macroatrib |= BIT(i);
 			}
 		}
 
@@ -2102,19 +2102,13 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 	GLSL_BindNullProgram();
 }
 
-static void GLSL_MapMacro(macroBitMap_t *map, int macro, int mappedbit)
-{
-	map->macro     = macro;
-	map->bitOffset = mappedbit;
-}
-
 qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
 	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
 	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename ? info->fragFilename : info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
-	int    i               = 0;
+	int    i               = 0, x = 0;
 
 	info->checkSum = 1; //TODO: implement checkSum generation
 
@@ -2123,18 +2117,25 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 	if (info->numMacros > 0)
 	{
-		info->list->macromap = (macroBitMap_t *)Com_Allocate(sizeof(macroBitMap_t) * info->numMacros);
-		Com_Memset(info->list->macromap, 0, sizeof(macroBitMap_t) * info->numMacros);
-
-		for (i = 0; i < info->numMacros; i++)
+		for (i = 0; i < MAX_MACROS; i++)
 		{
-			GLSL_MapMacro(&info->list->macromap[i], info->macros[i], i);
+			info->list->macromap[i] = -1;
+			for (x = 0; x < info->numMacros; x++)
+			{
+				if (i == info->macros[x])
+				{
+					info->list->macromap[i] = x;
+				}
+			}
 		}
 		info->list->mappedMacros = i;
 	}
 	else
 	{
-		info->list->macromap     = NULL;
+		for (i = 0; i < MAX_MACROS; i++)
+		{
+			info->list->macromap[i] = -1;
+		}
 		info->list->mappedMacros = 0;
 	}
 
@@ -2226,9 +2227,6 @@ programInfo_t *GLSL_GetShaderProgram(const char *name)
 
 void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 {
-	//FIXME: implement this
-	int i;
-
 	if (!programlist)
 	{
 		ri.Error(ERR_FATAL, "GLSL_SetMacroState: NULL programinfo");
@@ -2237,6 +2235,11 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 	if (!programlist->compiled)
 	{
 		ri.Error(ERR_FATAL, "Trying to set macro state of shader \"%s\" but it is not compiled\n", programlist->name);
+	}
+
+	if (programlist->list->macromap[macro] == -1)
+	{
+		return;
 	}
 
 	if (enabled > 0 && (programlist->list->currentMacros & BIT(macro)))
@@ -2248,21 +2251,15 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 		return;
 	}
 
-	for (i = 0; i < programlist->list->mappedMacros; i++)
+	if (enabled > 0)
 	{
-		if (programlist->list->macromap[i].macro == macro)
-		{
-			if (enabled > 0)
-			{
-				programlist->list->currentPermutation |= BIT(programlist->list->macromap[i].bitOffset);
-				programlist->list->currentMacros      |= BIT(macro);
-			}
-			else
-			{
-				programlist->list->currentPermutation &= ~BIT(programlist->list->macromap[i].bitOffset);
-				programlist->list->currentMacros      &= ~BIT(macro);
-			}
-		}
+		programlist->list->currentPermutation |= BIT(programlist->list->macromap[macro]);
+		programlist->list->currentMacros      |= BIT(macro);
+	}
+	else
+	{
+		programlist->list->currentPermutation &= ~BIT(programlist->list->macromap[macro]);
+		programlist->list->currentMacros      &= ~BIT(macro);
 	}
 
 	if (programlist->list->permutations < programlist->list->currentPermutation)
@@ -2368,8 +2365,6 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 void GLSL_DeleteShaderProgramList(shaderProgramList_t *programlist)
 {
 	int i;
-
-	Com_Dealloc(programlist->macromap);
 
 	for (i = 0; i < programlist->permutations; i++)
 	{
