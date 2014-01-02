@@ -1340,7 +1340,6 @@ void Svcmd_Burn(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
-	char      *reason;
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
