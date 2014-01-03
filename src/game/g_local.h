@@ -1152,6 +1152,7 @@ void G_IntermissionVoteTally(gentity_t *ent);
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
 void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume); // Unused.
+qboolean G_MatchOnePlayer(int *plist, char *err, int len);
 int ClientNumberFromString(gentity_t *to, char *s);
 void SanitizeString(char *in, char *out, qboolean fToLower);
 
