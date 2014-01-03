@@ -1131,7 +1131,7 @@ void Svcmd_Gib(void)
 /**
  * @brief kill command - kills players
  */
-void Svcmd_Kill(void)
+void Svcmd_Die(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
@@ -1145,7 +1145,7 @@ void Svcmd_Kill(void)
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		trap_SendServerCommand(-1, va("print \"Kill command not allowed during intermission.\n\""));
+		trap_SendServerCommand(-1, va("print \"Die command not allowed during intermission.\n\""));
 		return;
 	}
 
@@ -1171,14 +1171,14 @@ void Svcmd_Kill(void)
 			G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
 			count++;
 		}
-		trap_SendServerCommand(-1, va("print \"%d players killed.\n\"", count));
+		trap_SendServerCommand(-1, va("print \"%d players died.\n\"", count));
 		return;
 	}
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(-1, va("print \"Error - can't kill - %s.\n\"", err));
+		trap_SendServerCommand(-1, va("print \"Error - can't execute die command - %s.\n\"", err));
 		return;
 	}
 	vic = &g_entities[pids[0]];
@@ -1186,12 +1186,12 @@ void Svcmd_Kill(void)
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		trap_SendServerCommand(-1, va("print \"Player must be on a team to be killed.\n\""));
+		trap_SendServerCommand(-1, va("print \"Player must be on a team to die.\n\""));
 		return;
 	}
 
 	G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
-	trap_SendServerCommand(-1, va("print \"^7%s ^7was killed.\n\"", vic->client->pers.netname));
+	trap_SendServerCommand(-1, va("print \"^7%s ^7died.\n\"", vic->client->pers.netname));
 	return;
 }
 
@@ -2273,9 +2273,9 @@ qboolean ConsoleCommand(void)
 		Svcmd_Gib();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "kill"))
+	if (!Q_stricmp(cmd, "die"))
 	{
-		Svcmd_Kill();
+		Svcmd_Die();
 		return qtrue;
 	}
 	if (!Q_stricmp(cmd, "freeze"))
