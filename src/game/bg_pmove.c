@@ -1388,7 +1388,7 @@ static void PM_WalkMove(void)
 			// cap the max prone speed while reloading
 			if (pm->ps->weaponstate == WEAPON_RELOADING)
 			{
-				wishspeed = 40.f;
+				wishspeed = (wishspeed < 40.f) ? pm->ps->speed * pm_proneSpeedScale : 40.f;
 			}
 			else
 			{
