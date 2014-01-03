@@ -715,7 +715,14 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK))
 	{
-		return WP_MOBILE_MG42;
+		if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+		{
+			return WP_MOBILE_BROWNING;
+		}
+		else
+		{
+			return WP_MOBILE_MG42;
+		}
 	}
 
 	// total ammo in clips

@@ -943,6 +943,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 	for (i = oldEventSequence ; i < client->ps.eventSequence ; i++)
 	{
 		event = client->ps.events[i & (MAX_EVENTS - 1)];
+		gentity_t *self;
 
 		switch (event)
 		{
@@ -996,7 +997,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->pmext.shoved = qfalse;
 			break;
 		case EV_FIRE_WEAPON_MG42:
-			// reset player disguise on stealing docs
+			// reset player disguise on firing mounted mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			mg42_fire(ent);
@@ -1008,7 +1009,13 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
 			break;
 		case EV_FIRE_WEAPON_MOUNTEDMG42:
-			// reset player disguise on stealing docs
+
+			if (!(self = ent->tankLink))
+			{
+				break;
+			}
+
+			// reset player disguise on firing tank mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			mountedmg42_fire(ent);
@@ -1016,10 +1023,19 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 #ifndef DEBUG_STATS
 			if (g_gamestate.integer == GS_PLAYING)
 #endif
-			ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
+			{
+				if (self->s.density & 8)
+				{
+					ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_BROWNING)].atts++;
+				}
+				else
+				{
+					ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
+				}
+			}
 			break;
 		case EV_FIRE_WEAPON_AAGUN:
-			// reset player disguise on stealing docs
+			// reset player disguise on firing aagun
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			aagun_fire(ent);

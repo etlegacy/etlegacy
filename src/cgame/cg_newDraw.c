@@ -212,7 +212,14 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE) ||
 	    (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK))
 	{
-		realweap = WP_MOBILE_MG42; // we do replace the icon for browning - see below
+		if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+		{
+			realweap = WP_MOBILE_BROWNING;
+		}
+		else
+		{
+			realweap = WP_MOBILE_MG42;
+		}
 	}
 	else
 	{
@@ -226,21 +233,14 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		return;
 	}
 
-	if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK) && (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8))
+	if (drawHighlighted)
 	{
-		icon = cgs.media.browningIcon;
+		// we don't have icon[0];
+		icon = cg_weapons[realweap].weaponIcon[1];
 	}
 	else
 	{
-		if (drawHighlighted)
-		{
-			// we don't have icon[0];
-			icon = cg_weapons[realweap].weaponIcon[1];
-		}
-		else
-		{
-			icon = cg_weapons[realweap].weaponIcon[1];
-		}
+		icon = cg_weapons[realweap].weaponIcon[1];
 	}
 
 	// pulsing grenade icon to help the player 'count' in their head

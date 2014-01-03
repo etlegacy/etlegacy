@@ -356,7 +356,7 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 {
 	{ MOD_UNKNOWN,                            WS_MAX             },
 	{ MOD_MACHINEGUN,                         WS_MG42            },
-	{ MOD_BROWNING,                           WS_MG42            },
+	{ MOD_BROWNING,                           WS_BROWNING        },
 	{ MOD_MG42,                               WS_MG42            },
 	{ MOD_GRENADE,                            WS_GRENADE         }, // FIXME: explosion (world kills = WS_GREANDE) ?!
 
