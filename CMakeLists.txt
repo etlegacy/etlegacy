@@ -381,6 +381,7 @@ FILE(GLOB RENDERER_COMMON_DYNAMIC
 	"src/qcommon/q_shared.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/puff.c"
+	"src/qcommon/md4.c"
 )
 	
 FILE(GLOB RENDERER1_FILES
@@ -396,7 +397,6 @@ FILE(GLOB RENDERERGLES_FILES
 
 FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.c"
-	"src/renderer2/*.cpp"
 	"src/renderer2/*.h"
 )
 
