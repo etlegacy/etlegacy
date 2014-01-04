@@ -4104,7 +4104,7 @@ void CG_AltWeapon_f(void)
 #endif
 	    )
 	{
-		trap_SendConsoleCommand( "followprev" );
+		trap_SendConsoleCommand("followprev");
 		return;
 	}
 
