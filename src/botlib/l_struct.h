@@ -35,14 +35,14 @@
 #define MAX_STRINGFIELD             80
 // field types
 #define FT_CHAR                     1           // char
-#define FT_INT                          2           // int
-#define FT_FLOAT                        3           // float
-#define FT_STRING                       4           // char [MAX_STRINGFIELD]
-#define FT_STRUCT                       6           // struct (sub structure)
+#define FT_INT                      2           // int
+#define FT_FLOAT                    3           // float
+#define FT_STRING                   4           // char [MAX_STRINGFIELD]
+#define FT_STRUCT                   6           // struct (sub structure)
 // type only mask
 #define FT_TYPE                     0x00FF  // only type, clear subtype
 // sub types
-#define FT_ARRAY                        0x0100  // array of type
+#define FT_ARRAY                    0x0100  // array of type
 #define FT_BOUNDED                  0x0200  // bounded value
 #define FT_UNSIGNED                 0x0400
 

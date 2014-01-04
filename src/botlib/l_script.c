@@ -1286,11 +1286,13 @@ int ScriptSkipTo(script_t *script, char *value)
 			if (!strncmp(script->script_p, value, len))
 			{
 				return 1;
-			} //end if
-		} //end if
+			}
+		}
 		script->script_p++;
 	}
 	while (1);
+
+	return 0; // never reached
 }
 
 script_t *LoadScriptFile(const char *filename)

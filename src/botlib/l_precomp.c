@@ -1799,9 +1799,9 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 				}
 				lastoperator = o;
 				lastwasvalue = 0;
-			}     //end if
+			}
 			break;
-		}     //end case
+		}
 		default:
 		{
 			SourceError(source, "unknown %s in #if/#elif", t->string);
