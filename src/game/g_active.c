@@ -942,8 +942,8 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 	}
 	for (i = oldEventSequence ; i < client->ps.eventSequence ; i++)
 	{
-		event = client->ps.events[i & (MAX_EVENTS - 1)];
 		gentity_t *self;
+		event = client->ps.events[i & (MAX_EVENTS - 1)];
 
 		switch (event)
 		{
