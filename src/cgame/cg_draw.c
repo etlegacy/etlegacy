@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -40,7 +40,6 @@ void Controls_GetConfig(void);
 void CG_DrawOverlays(void);
 int activeFont;
 
-extern vec4_t HUD_Background;
 extern vec4_t HUD_Border;
 
 ///////////////////////
@@ -2295,7 +2294,6 @@ int CG_CalculateReinfTime(qboolean menu)
 CG_DrawLimboMessage
 =================
 */
-
 static void CG_DrawLimboMessage(void)
 {
 	char          *str;
@@ -2348,16 +2346,15 @@ static void CG_DrawLimboMessage(void)
 
 		if (reinfTime > 1)
 		{
-			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
+			str = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
 		else
 		{
-			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
+			str = va(CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 		}
 	}
 
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	y += charHeight * 2.0f;
 
 	trap_R_SetColor(NULL);
 }
@@ -3573,13 +3570,9 @@ void CG_Coronas(void)
 	}
 }
 
-/*
-=====================
-CG_DrawActive
-
-Perform all drawing needed to completely fill the screen
-=====================
-*/
+/**
+ * @brief Perform all drawing needed to completely fill the screen
+ */
 void CG_DrawActive(stereoFrame_t stereoView)
 {
 	float  separation;
