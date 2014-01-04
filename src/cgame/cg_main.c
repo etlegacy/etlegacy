@@ -2031,8 +2031,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hudDamagedStates[2] = trap_R_RegisterSkin("models/players/hud/damagedskins/blood03.skin");
 	cgs.media.hudDamagedStates[3] = trap_R_RegisterSkin("models/players/hud/damagedskins/blood04.skin");
 
-	cgs.media.browningIcon = trap_R_RegisterShaderNoMip("icons/iconw_browning_1_select");
-
 	cgs.media.axisFlag       = trap_R_RegisterShaderNoMip("gfx/limbo/flag_axis");
 	cgs.media.alliedFlag     = trap_R_RegisterShaderNoMip("gfx/limbo/flag_allied");
 	cgs.media.disconnectIcon = trap_R_RegisterShaderNoMip("gfx/2d/net");
