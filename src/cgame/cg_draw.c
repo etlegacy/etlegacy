@@ -2247,6 +2247,11 @@ static void CG_DrawSpectatorMessage(void)
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
 
+	str2 = BindingFromName("weapalt");
+	str  = va(CG_TranslateString("Press %s to follow previous player"), str2);
+	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	y += charHeight * 2.0f;
+
 #ifdef FEATURE_MULTIVIEW
 	str2 = BindingFromName("mvactivate");
 	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
