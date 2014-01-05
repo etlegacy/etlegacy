@@ -1210,7 +1210,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	gl_lightMappingShader->SetUniform_Color(tess.svars.color);
 #else
 	GLSL_SetMacroState(gl_lightMappingShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_lightMappingShader, USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0);
+	GLSL_SetMacroState(gl_lightMappingShader, USE_ALPHA_TESTING, pStage->stateBits & GLS_ATEST_BITS);
 	GLSL_SetMacroState(gl_lightMappingShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
 	GLSL_SetMacroState(gl_lightMappingShader, USE_NORMAL_MAPPING, normalMapping);
 	GLSL_SetMacroState(gl_lightMappingShader, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
@@ -1314,6 +1314,11 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 #endif
 
 		// bind u_DeluxeMap
+		GL_SelectTexture(4);
+		BindDeluxeMap();
+	}
+	else if(r_showDeluxeMaps->integer == 1)
+	{
 		GL_SelectTexture(4);
 		BindDeluxeMap();
 	}
