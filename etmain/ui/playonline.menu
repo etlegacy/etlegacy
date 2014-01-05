@@ -79,6 +79,8 @@ menuDef {
 
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, "FILTERS" )
 
+	BUTTONEXT( 8+.75*((FILTERS_WIDTH)-6)+2, 67, .25*((FILTERS_WIDTH)-6), 10, "Reset Filters", .2, 8, uiScript ResetFilters; uiScript RefreshFilter, tooltip "Reset all filters to their defaults")
+
 	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Source:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Choose the type of game servers to display from Internet, local and the favorites list" )
 	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
 	MULTIACTIONLEFT( 8, 140, .5*((FILTERS_WIDTH)-6), 10, "Mod filter:", .2, 8, "ui_browserModFilter", cvarFloatList { "Disabled" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "Nitmod" 5 "SiLEnT" 6 "TrueCombat:Elite" 7 "ETNam" 8 "ETRun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, "Displays only game servers offering this Mod" )
