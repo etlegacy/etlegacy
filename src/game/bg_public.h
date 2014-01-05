@@ -1606,7 +1606,6 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
-weapon_t BG_DuplicateWeapon(weapon_t weap);
 weapon_t BG_WeaponForMOD(int MOD);
 
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);

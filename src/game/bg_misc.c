@@ -3730,27 +3730,6 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 	}
 }
 
-// some weapons are duplicated for code puposes.... just want to treat them as a single
-// FIXME: weapon table
-weapon_t BG_DuplicateWeapon(weapon_t weap)
-{
-	switch (weap)
-	{
-	case WP_M7:
-		return WP_GPG40;
-	case WP_GARAND_SCOPE:
-		return WP_GARAND;
-	case WP_K43_SCOPE:
-		return WP_K43;
-	case WP_GRENADE_PINEAPPLE:
-		return WP_GRENADE_LAUNCHER;
-	case WP_MORTAR2_SET:
-		return WP_MORTAR_SET;
-	default:
-		return weap;
-	}
-}
-
 weapon_t BG_WeaponForMOD(int MOD)
 {
 	weapon_t i;
