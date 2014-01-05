@@ -1982,13 +1982,26 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
  */
 static float CG_DrawDisconnect(float y)
 {
-	int        cmdNum, w, x;
+	int        cmdNum, w, w2, x;
 	usercmd_t  cmd;
 	const char *s;
 
 	// use same dimension as timer
-	w = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
-	x = Ccg_WideX(UPPERRIGHT_X) - ((UPPERRIGHT_W > w) ? UPPERRIGHT_W : w) - 2;
+	w  = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+	x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+
+	// dont draw if a demo and we're running at a different timescale
+	if (cg.demoPlayback && cg_timescale.value != 1.0f)
+	{
+		return y + w2 + 13;
+	}
+
+	// don't draw if the server is respawning
+	if (cg.serverRespawning)
+	{
+		return y + w2 + 13;
+	}
 
 	// draw the phone jack if we are completely past our buffers
 	cmdNum = trap_GetCurrentCmdNumber() - CMD_BACKUP + 1;
@@ -1996,7 +2009,7 @@ static float CG_DrawDisconnect(float y)
 	if (cmd.serverTime <= cg.snap->ps.commandTime
 	    || cmd.serverTime > cg.time)        // special check for map_restart
 	{
-		return y + w + 13;
+		return y + w2 + 13;
 	}
 
 	// also add text in center of screen
@@ -2007,11 +2020,11 @@ static float CG_DrawDisconnect(float y)
 	// blink the icon
 	if ((cg.time >> 9) & 1)
 	{
-		return y + w + 13;
+		return y + w2 + 13;
 	}
 
-	CG_DrawPic(x, y, w, w, cgs.media.disconnectIcon);
-	return y + w + 13;
+	CG_DrawPic(x + 1, y + 1, w2 + 3, w2 + 3, cgs.media.disconnectIcon);
+	return y + w2 + 13;
 }
 
 /**
