@@ -360,7 +360,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			tempx    += 12;
 			maxchars -= 2;
 		}
-		else if (ci->powerups & (1 << PW_OPS_DISGUISED))
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && ci->powerups & (1 << PW_OPS_DISGUISED))
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			offset   += 12;
