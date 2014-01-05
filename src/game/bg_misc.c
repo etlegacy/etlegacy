@@ -2203,7 +2203,7 @@ gitem_t bg_itemlist[] =
 		},
 		"",              // icon
 		NULL,            // ammo icon
-		"Objective",     // pickup
+		"Red Flag",      // pickup
 		0,
 		IT_TEAM,
 		PW_REDFLAG,

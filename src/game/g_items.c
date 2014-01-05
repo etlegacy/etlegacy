@@ -44,27 +44,27 @@
 #include "g_etbot_interface.h"
 #endif
 
-#define RESPAWN_SP          -1
-#define RESPAWN_KEY         4
-#define RESPAWN_ARMOR       25
-#define RESPAWN_TEAM_WEAPON 30
-#define RESPAWN_HEALTH      35
-#define RESPAWN_AMMO        40
-#define RESPAWN_HOLDABLE    60
-#define RESPAWN_MEGAHEALTH  120
-#define RESPAWN_POWERUP     120
-#define RESPAWN_PARTIAL     998     // for multi-stage ammo/health
+#define RESPAWN_SP           -1
+#define RESPAWN_KEY          4
+#define RESPAWN_ARMOR        25
+#define RESPAWN_TEAM_WEAPON  30
+#define RESPAWN_HEALTH       35
+#define RESPAWN_AMMO         40
+#define RESPAWN_HOLDABLE     60
+#define RESPAWN_MEGAHEALTH   120
+#define RESPAWN_POWERUP      120
+#define RESPAWN_PARTIAL      998    // for multi-stage ammo/health
 #define RESPAWN_PARTIAL_DONE 999    // for multi-stage ammo/health
 
-//======================================================================
-
-// extracted from Fill_Clip: add the specified ammount of ammo into the clip
-// returns whether ammo was added to the clip
-int AddToClip(
-    playerState_t *ps,          // which player
-    int weapon,                 // weapon to add ammo for
-    int ammomove,               // ammount to add. 0 means fill the clip if possible
-    int outOfReserve)           // is the amount to be added out of reserve
+/**
+* @brief Add the specified ammount of ammo into the clip.
+* @param which player
+* @param weapon to add ammo for
+* @param amount to add. 0 means fill the clip if possible
+* @param amount to be added out of reserve
+* @return whether ammo was added to the clip.
+*/
+int AddToClip(playerState_t *ps, int weapon, int ammomove, int outOfReserve)
 {
 	int inclip, maxclip;
 	int ammoweap = BG_FindAmmoForWeapon(weapon);
@@ -107,29 +107,17 @@ int AddToClip(
 	return qfalse;
 }
 
-//======================================================================
-
-/*
-==============
-Fill_Clip
-    push reserve ammo into available space in the clip
-==============
+/**
+* @brief Push reserve ammo into available space in the clip.
 */
 void Fill_Clip(playerState_t *ps, int weapon)
 {
 	AddToClip(ps, weapon, 0, qtrue);
 }
 
-/*
-==============
-Add_Ammo
-    Try to always add ammo here unless you have specific needs
-    (like the AI "infinite ammo" where they get below 900 and force back up to 999)
-
-    fillClip will push the ammo straight through into the clip and leave the rest in reserve
-
-    - modified to return whether any ammo was added.
-==============
+/**
+* @brief Add ammo.
+* @return whether any ammo was added
 */
 int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 {
@@ -191,21 +179,19 @@ int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 	return (ent->client->ps.ammo[ammoweap] > originalCount);
 }
 
-/*
-=================================================================
-AddMagicAmmo (extracted AddMagicAmmo from Pickup_Weapon())
-
-- added the specified number of clips of magic ammo for any two-handed weapon
-- returns whether any ammo was actually added
-=================================================================
+/**
+* @brief Add the specified number of clips of magic ammo
+* @return whether any ammo was actually added
 */
 qboolean AddMagicAmmo(gentity_t *receiver, int numOfClips)
 {
 	return BG_AddMagicAmmo(&receiver->client->ps, receiver->client->sess.skill, receiver->client->sess.sessionTeam, numOfClips);
 }
 
-//======================================================================
-
+/**
+* @brief Get the primary weapon of the client.
+* @return the primary weapon of the client
+*/
 weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 {
 	int              i;
@@ -259,6 +245,9 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 	return WP_NONE;
 }
 
+/**
+* @brief Drop weapon.
+*/
 void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 {
 	vec3_t    angles, velocity, org, offset, mins, maxs;
@@ -374,6 +363,9 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 #endif
 }
 
+/**
+* @brief Check if a weapon can be picked up.
+*/
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
@@ -437,6 +429,9 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 	return BG_WeaponIsPrimaryForClassAndTeam(ent->client->sess.playerType, ent->client->sess.sessionTeam, weapon);
 }
 
+/**
+* @brief Pick a weapon up.
+*/
 int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 {
 	int      quantity;
@@ -606,8 +601,9 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	return -1;
 }
 
-//======================================================================
-
+/**
+* @brief Pick health.
+*/
 int Pickup_Health(gentity_t *ent, gentity_t *other)
 {
 	int max;
@@ -652,12 +648,8 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	return -1;
 }
 
-//======================================================================
-
-/*
-===============
-RespawnItem
-===============
+/**
+* @brief Respawn item.
 */
 void RespawnItem(gentity_t *ent)
 {
@@ -692,14 +684,12 @@ void RespawnItem(gentity_t *ent)
 	ent->nextthink = 0;
 }
 
-/*
-==============
-Touch_Item
-
-    if other->client->pers.autoActivate == PICKUP_ACTIVATE  (0), he will pick up items only when using +activate
-    if other->client->pers.autoActivate == PICKUP_TOUCH     (1), he will pickup items when touched
-    if other->client->pers.autoActivate == PICKUP_FORCE     (2), he will pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
-==============
+/**
+* @brief Auto action when touching an item.
+*
+* PICKUP_ACTIVATE  (0), he will pick up items only when using +activate
+* PICKUP_TOUCH     (1), he will pickup items when touched
+* PICKUP_FORCE     (2), he will pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
 */
 void Touch_Item_Auto(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
@@ -728,10 +718,8 @@ void Touch_Item_Auto(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 }
 
-/*
-===============
-Touch_Item
-===============
+/**
+* @brief Action when touching an item.
 */
 void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
@@ -810,7 +798,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	{
 		// a sound was specified in the entity, so play that sound
 		// (this G_AddEvent) and send the pickup as "EV_ITEM_PICKUP_QUIET"
-		// so it doesn't make the default pickup sound when the pickup event is recieved
+		// so it doesn't make the default pickup sound when the pickup event is received
 		makenoise = EV_ITEM_PICKUP_QUIET;
 		G_AddEvent(other, EV_GENERAL_SOUND, ent->noise_index);
 	}
@@ -820,9 +808,9 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	// powerup pickups are global broadcasts
 	if (ent->item->giType == IT_TEAM)
 	{
-		gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_ITEM_PICKUP);
-		te->s.eventParm = ent->s.modelindex;
-		te->r.svFlags  |= SVF_BROADCAST;
+	 gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_ITEM_PICKUP);
+	 te->s.eventParm = ent->s.modelindex;
+	 te->r.svFlags  |= SVF_BROADCAST;
 	}
 
 	//G_LogPrintf( "Firing item targets\n" );
@@ -859,14 +847,8 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	trap_LinkEntity(ent);
 }
 
-//======================================================================
-
-/*
-================
-LaunchItem
-
-Spawns an item and tosses it forward
-================
+/**
+* @brief Spawns an item and tosses it forward.
 */
 gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum)
 {
@@ -950,12 +932,8 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	return dropped;
 }
 
-/*
-================
-Drop_Item
-
-Spawns an item and tosses it forward
-================
+/**
+* @brief Spawns an item and tosses it forward.
 */
 gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle, qboolean novelocity)
 {
@@ -980,27 +958,17 @@ gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle, qboolean novelo
 	return LaunchItem(item, ent->s.pos.trBase, velocity, ent->s.number);
 }
 
-/*
-================
-Use_Item
-
-Respawn the item
-================
+/**
+* @brief Respawn the item.
 */
 void Use_Item(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	RespawnItem(ent);
 }
 
-//======================================================================
-
-/*
-================
-FinishSpawningItem
-
-Traces down to find where an item should rest, instead of letting them
-free fall from their spawn points
-================
+/**
+* @brief Traces down to find where an item should rest, instead of letting them
+free fall from their spawn points.
 */
 void FinishSpawningItem(gentity_t *ent)
 {
@@ -1107,15 +1075,8 @@ void FinishSpawningItem(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-============
-G_SpawnItem
-
-Sets the clipping size and plants the object on the floor.
-
-Items can't be immediately dropped to floor, because they might
-be on an entity that hasn't spawned yet.
-============
+/**
+* @brief Sets the clipping size and plants the object on the floor.
 */
 void G_SpawnItem(gentity_t *ent, gitem_t *item)
 {
@@ -1153,10 +1114,8 @@ void G_SpawnItem(gentity_t *ent, gitem_t *item)
 	}
 }
 
-/*
-================
-G_BounceItem
-================
+/**
+* @brief Bounce an item.
 */
 void G_BounceItem(gentity_t *ent, trace_t *trace)
 {
@@ -1199,10 +1158,8 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	ent->s.pos.trTime = level.time;
 }
 
-/*
-=================
-G_RunItemProp
-=================
+/**
+* @brief Run item prop.
 */
 void G_RunItemProp(gentity_t *ent, vec3_t origin)
 {
@@ -1246,10 +1203,8 @@ void G_RunItemProp(gentity_t *ent, vec3_t origin)
 	}
 }
 
-/*
-================
-G_RunItem
-================
+/**
+* @brief Run item.
 */
 void G_RunItem(gentity_t *ent)
 {

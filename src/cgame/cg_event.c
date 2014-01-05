@@ -617,13 +617,14 @@ static void CG_ItemPickup(int itemNum)
 			// don't ever autoswitch to secondary fire weapons
 			// Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
 			if (itemid != WP_FG42SCOPE && itemid != WP_GARAND_SCOPE && itemid != WP_K43_SCOPE && itemid != WP_AMMO)
-			{     // no weap currently selected, always just select the new one
+			{
+				// no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)
 				{
 					cg.weaponSelectTime = cg.time;
 					cg.weaponSelect     = itemid;
 				}
-				// 1 - always switch to new weap (Q3A default)
+				// 1 - always switch to new weap
 				else if (cg_autoswitch.integer == 1)
 				{
 					cg.weaponSelectTime = cg.time;
@@ -643,7 +644,7 @@ static void CG_ItemPickup(int itemNum)
 							cg.weaponSelectTime = cg.time;
 							cg.weaponSelect     = itemid;
 						}
-					}     // end 2
+					}
 
 					// 3 - switch to weap if it's in a bank greater than the current weap
 					// 4 - both 2 and 3
@@ -661,11 +662,11 @@ static void CG_ItemPickup(int itemNum)
 								}
 							}
 						}
-					}     // end 3
-				}     // end cg_autoswitch.integer != 1
+					}
+				}
 			}
-		}     // end cg_autoswitch.integer
-	}     // end bg_itemlist[itemNum].giType == IT_WEAPON
+		}
+	}
 }
 
 /*
