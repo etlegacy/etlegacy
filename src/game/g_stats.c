@@ -39,8 +39,6 @@
 
 void G_LogDeath(gentity_t *ent, weapon_t weap)
 {
-	weap = BG_DuplicateWeapon(weap);
-
 	if (!ent->client)
 	{
 		return;
@@ -51,8 +49,6 @@ void G_LogDeath(gentity_t *ent, weapon_t weap)
 
 void G_LogKill(gentity_t *ent, weapon_t weap)
 {
-	weap = BG_DuplicateWeapon(weap);
-
 	if (!ent->client)
 	{
 		return;
@@ -63,8 +59,6 @@ void G_LogKill(gentity_t *ent, weapon_t weap)
 
 void G_LogTeamKill(gentity_t *ent, weapon_t weap)
 {
-	weap = BG_DuplicateWeapon(weap);
-
 	if (!ent->client)
 	{
 		return;
@@ -379,10 +373,11 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 	}
 }
 
+/**
+ * @brief Loose skill for evil tkers :E
+ */
 void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
 {
-	// for evil tkers :E
-
 	if (!tker->client)
 	{
 		return;
@@ -401,7 +396,6 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_GARAND:
 	case MOD_SILENCER:
 	case MOD_FG42:
-	//case MOD_FG42SCOPE:
 	case MOD_CARBINE:
 	case MOD_KAR98:
 	case MOD_SILENCED_COLT:
