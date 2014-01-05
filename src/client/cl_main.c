@@ -354,7 +354,7 @@ void CL_Record(const char *name)
 	int           len;
 
 	// open the demo file
-	Com_Printf("recording to %s.\n", name);
+	Com_Printf("Recording to %s.\n", name);
 	clc.demofile = FS_FOpenFileWrite(name);
 	if (!clc.demofile)
 	{
@@ -656,7 +656,7 @@ void CL_WriteWaveOpen(void)
 		}
 	}
 
-	Com_Printf("recording to %s.\n", name);
+	Com_Printf("Recording to %s.\n", name);
 	clc.wavefile = FS_FOpenFileWrite(name);
 
 	if (!clc.wavefile)
