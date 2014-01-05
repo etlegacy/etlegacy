@@ -3751,33 +3751,6 @@ weapon_t BG_DuplicateWeapon(weapon_t weap)
 	}
 }
 
-// note: don't call this for WP_NONE
-gitem_t *BG_ValidStatWeapon(weapon_t weap)
-{
-	weapon_t weap2;
-
-	switch (weap)
-	{
-	case WP_MEDKIT:
-	case WP_PLIERS:
-	case WP_SMOKETRAIL:
-	case WP_MEDIC_SYRINGE:
-	case WP_SMOKE_BOMB:
-	case WP_AMMO:
-		return NULL;
-	default:
-		break;
-	}
-
-	weap2 = BG_DuplicateWeapon(weap);
-	if (weap != weap2)
-	{
-		return NULL;
-	}
-
-	return BG_FindItemForWeapon(weap);
-}
-
 weapon_t BG_WeaponForMOD(int MOD)
 {
 	weapon_t i;

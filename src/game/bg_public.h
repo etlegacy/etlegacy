@@ -1607,7 +1607,6 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 weapon_t BG_DuplicateWeapon(weapon_t weap);
-gitem_t *BG_ValidStatWeapon(weapon_t weap);
 weapon_t BG_WeaponForMOD(int MOD);
 
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
