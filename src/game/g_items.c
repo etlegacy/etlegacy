@@ -806,12 +806,12 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	G_AddEvent(other, makenoise, ent->s.modelindex);
 
 	// powerup pickups are global broadcasts
-	// if (ent->item->giType == IT_TEAM)
-	// {
-	//  gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_ITEM_PICKUP);
-	//  te->s.eventParm = ent->s.modelindex;
-	//  te->r.svFlags  |= SVF_BROADCAST;
-	// }
+	if (ent->item->giType == IT_TEAM)
+	{
+		gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_ITEM_PICKUP);
+		te->s.eventParm = ent->s.modelindex;
+		te->r.svFlags  |= SVF_BROADCAST;
+	}
 
 	//G_LogPrintf( "Firing item targets\n" );
 

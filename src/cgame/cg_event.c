@@ -2407,7 +2407,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			item = &bg_itemlist[index];
 			if (*item->pickup_sound)
 			{
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.itemPickUpSounds[index]);
+				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.itemPickUpSounds[index]);
 			}
 
 			// show icon and name on status bar
