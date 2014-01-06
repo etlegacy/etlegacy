@@ -570,7 +570,7 @@ void G_parseStats(char *pszStatsInfo)
 void G_printMatchInfo(gentity_t *ent)
 {
 	int       i, j, cnt = 0, eff;
-	int       tot_kills, tot_deaths, tot_gp, tot_sui, tot_tk, tot_dg, tot_dr, tot_td;
+	int       tot_kills, tot_deaths, tot_gp, tot_sui, tot_tk, tot_dg, tot_dr, tot_td, tot_xp;
 	gclient_t *cl;
 	char      *ref;
 	char      n2[MAX_STRING_CHARS];
@@ -590,7 +590,9 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_dr     = 0;
 		tot_td     = 0;
 		tot_gp     = 0;
+		tot_xp     = 0;
 
+		CP("sc \"\n\"");
 		CP("sc \"^7TEAM   Player          Kll Dth Sui TK Eff  ^3GP^7    ^2DG    ^1DR   ^6TD  ^3Score\n\"");
 		CP("sc \"^7---------------------------------------------------------------------\n\"");
 
@@ -615,6 +617,7 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_dr     += cl->sess.damage_received;
 			tot_td     += cl->sess.team_damage;
 			tot_gp     += cl->sess.game_points;
+			tot_xp     += cl->ps.persistant[PERS_SCORE];
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
 			if (eff < 0)
@@ -667,7 +670,7 @@ void G_printMatchInfo(gentity_t *ent)
 		      tot_dg,
 		      tot_dr,
 		      tot_td,
-		      tot_gp));
+		      tot_xp));
 	}
 
 	CP(va("sc \"%s\n\n\" 0", ((!cnt) ? "^3\nNo scores to report." : "")));

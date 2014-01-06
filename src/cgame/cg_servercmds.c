@@ -2058,7 +2058,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 	Q_strncpyz(strName, ci->name, sizeof(strName));
 	BG_cleanName(cgs.clientinfo[nClient].name, strName, sizeof(strName), qfalse);
-	txt_dump(va("^7Overall stats for: ^3%s ^7(^2%d^7 Round%s)\n\n", strName, nRounds, ((nRounds != 1) ? "s" : "")));
+
+	txt_dump("\n");
+	txt_dump(va("^7Overall stats for: ^3%s ^7(^2%d^7 Round%s)\n", strName, nRounds, ((nRounds != 1) ? "s" : "")));
+	txt_dump("\n");
 
 	if (fFull)
 	{
@@ -2161,6 +2164,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	if (!fFull)
 	{
 		txt_dump("\n\n\n");
+	}
+	else
+	{
+		txt_dump("\n");
 	}
 
 	// Medals only in campaign mode
