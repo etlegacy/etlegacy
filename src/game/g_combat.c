@@ -1795,7 +1795,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				targ->enemy     = attacker;
 				targ->deathType = mod;
 
-				// mg42 doesn't have die func (FIXME)
 				if (targ->die)
 				{
 					// Kill the entity.  Note that this funtion can set ->die to another
