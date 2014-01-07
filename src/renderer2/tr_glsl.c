@@ -2105,7 +2105,7 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *fragment)
 {
 	char *fullSource;
-	int size = 0;
+	int  size = 0;
 
 	size += strlen(vertex);
 	size += strlen(fragment);
@@ -2117,7 +2117,7 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 	Q_strcat(fullSource, size, vertex);
 	Q_strcat(fullSource, size, fragment);
 
-	info->checkSum = Com_BlockChecksum(fullSource,strlen(fullSource));
+	info->checkSum = Com_BlockChecksum(fullSource, strlen(fullSource));
 
 	ri.Hunk_FreeTempMemory(fullSource);
 }
@@ -2129,9 +2129,9 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;
-	
+
 	//info->checkSum = 1;
-	GLSL_GenerateCheckSum(info,vertexShader,fragmentShader);
+	GLSL_GenerateCheckSum(info, vertexShader, fragmentShader);
 
 	info->list = (shaderProgramList_t *)Com_Allocate(sizeof(shaderProgramList_t));
 	Com_Memset(info->list, 0, sizeof(shaderProgramList_t));
@@ -2397,7 +2397,7 @@ void GLSL_DeleteShaderProgramList(shaderProgramList_t *programlist)
 
 void GLSL_DeleteShaderProramInfo(programInfo_t *program)
 {
-	if(program->list)
+	if (program->list)
 	{
 		GLSL_DeleteShaderProgramList(program->list);
 	}

@@ -72,7 +72,11 @@ set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFI
 set(INSTALL_DEFAULT_MODDIR	"share/etlegacy"	CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
 
 if(INSTALL_DEFAULT_BASEDIR)
-	add_definitions(-DDEFAULT_BASEDIR=\"${INSTALL_DEFAULT_BASEDIR}\")
+	# On OS X the base dir is the .app's (or etlded binary's) parent path, and is set in the etl code itself
+	# so we do NOT want to define DEFAULT_BASEDIR at build time.
+	if(NOT APPLE)
+		add_definitions(-DDEFAULT_BASEDIR=\"${INSTALL_DEFAULT_BASEDIR}\")
+	endif()
 endif(INSTALL_DEFAULT_BASEDIR)
 
 # Optional features
@@ -175,6 +179,12 @@ if(UNIX)
 		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem") # These flags will cause error with older Xcode
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_C "-isystem")
+		
+		# 10.7 is really an arbitrary choice (it should in theory work back to 10.5). The main point is if
+		# we don't specify a target, it will be require the OS version used at compile time.
+		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+		set(CMAKE_CXX_FLAGS "--sysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
+		
 		if(BUILD_CLIENT)
 			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon")
 		endif()
@@ -836,7 +846,29 @@ if(BUILD_CLIENT)
 	if(FEATURE_WINDOWS_CONSOLE AND WIN32)
 		add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 	else(FEATURE_WINDOWS_CONSOLE AND WIN32)
-		add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+		
+		if (APPLE)
+			
+			# These are vars used in the misc/Info.plist template file
+			# See set_target_properties( ... MACOSX_BUNDLE_INFO_PLIST ...)
+			set(MACOSX_BUNDLE_INFO_STRING            "Wolfenstein Enemy Territory: Legacy")
+			set(MACOSX_BUNDLE_ICON_FILE              "etl.icns")
+			set(MACOSX_BUNDLE_GUI_IDENTIFIER         "com.etlegacy.etl")
+			set(MACOSX_BUNDLE_LONG_VERSION_STRING    "${ETL_CMAKE_VERSION}")
+			set(MACOSX_BUNDLE_BUNDLE_NAME            "WolfETLegacy")
+			set(MACOSX_BUNDLE_SHORT_VERSION_STRING   "${ETL_CMAKE_VERSION_SHORT}")
+			set(MACOSX_BUNDLE_COPYRIGHT              "etlegacy.com")
+			
+			# Specify files to be copied into the .app's Resources folder
+			set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/misc")
+			set(MACOSX_RESOURCES "${RESOURCES_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
+			set_source_files_properties(${CMAKE_SOURCE_DIR}/misc/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+			
+			# Create the .app bundle
+			add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
+		else()
+			add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+		endif()
 	endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
 	
 	if(BUNDLED_SDL)
@@ -855,10 +887,14 @@ if(BUILD_CLIENT)
 		${SDL_LIBRARIES}
 	)
 	
-	set_target_properties(etl
-		PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
+	set_target_properties(etl PROPERTIES
+		COMPILE_DEFINITIONS "USE_ICON"
+		MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist)
+	
 	install(TARGETS etl
+		BUNDLE  DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 		RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
+	
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)

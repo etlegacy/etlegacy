@@ -1317,7 +1317,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		GL_SelectTexture(4);
 		BindDeluxeMap();
 	}
-	else if(r_showDeluxeMaps->integer == 1)
+	else if (r_showDeluxeMaps->integer == 1)
 	{
 		GL_SelectTexture(4);
 		BindDeluxeMap();

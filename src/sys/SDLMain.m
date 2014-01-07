@@ -10,7 +10,8 @@
 #import <Cocoa/Cocoa.h>
 #import <sys/param.h>
 
-#import "SDL/SDL.h"
+//#import "SDL/SDL.h"
+#import "SDL.h"
 #import "SDLMain.h"
 
 #define SDL_USE_CPS 1
@@ -233,9 +234,7 @@ static void CustomApplicationMain( int argc, char **argv )
 /* Set the working directory to the .app's parent directory */
 - (void) setupWorkingDirectory
 {
-	NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
-	[[NSFileManager defaultManager] changeCurrentDirectoryPath:resourcePath];
-	printf( "Base Directory: %s\n", [resourcePath UTF8String] );
+	
 }
 
 void Cbuf_AddText( const char *text );
@@ -262,8 +261,7 @@ void Cbuf_AddText( const char *text );
 {
 	int status;
 
-	/* Set the working directory to the .app's parent directory */
-	[self setupWorkingDirectory];
+	
 
 	/* Hand off to main application code */
 	gCalledAppMainline = TRUE;
@@ -281,6 +279,17 @@ void Cbuf_AddText( const char *text );
 /* Main entry point to executable - should *not* be SDL_main! */
 int main ( int argc, char **argv )
 {
+	/* Set the working directory to the .app's parent directory */
+	char parentdir[MAXPATHLEN];
+	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
+	if (CFURLGetFileSystemRepresentation(url2, 1, (UInt8 *)parentdir, MAXPATHLEN)) {
+		chdir(parentdir);   /* chdir to the binary app's parent */
+	}
+	CFRelease(url);
+	CFRelease(url2);
+	
+	
 	/* Copy the arguments into a global variable */
 	/* This is passed if we are launched by double-clicking */
 	if ( argc >= 2 && strncmp( argv[ 1 ], "-psn", 4 ) == 0 )
