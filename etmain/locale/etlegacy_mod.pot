@@ -1287,7 +1287,7 @@ msgstr ""
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
 msgstr ""
 
-msgid "Jere 'Jacker' S. - Main windows coder & render"
+msgid "Jere 'Jacker' S. - Main windows coder & renderer"
 msgstr ""
 
 msgid "^1CONTRIBUTORS"
@@ -4287,4 +4287,25 @@ msgid "SOUND"
 msgstr ""
 
 msgid "AutoScreenshots format:"
+msgstr ""
+
+msgid "7Config '%s^7' version '%s'^7 loaded"
+msgstr ""
+
+msgid "^7Config '%s^7' loaded"
+msgstr ""
+
+msgid "^7Config '%s^7' ^1FAILED ^7to load"
+msgstr ""
+
+msgid "Reset Filters"
+msgstr ""
+
+msgid "Binoculars Zoom:"
+msgstr ""
+
+msgid "Slot 8 - Binoculars:"
+msgstr ""
+
+msgid "Remy 'Spyhawk' M. - Coding, mod development"
 msgstr ""

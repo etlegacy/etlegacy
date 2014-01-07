@@ -54,7 +54,7 @@ msgstr "Czy zaskarzyc gracza %s^3 za zabicie czlonka z teamu?"
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
 #: src/cgame/cg_draw.c:2164
 #, c-format
-msgid "Press '%s' for YES, or '%s' for No"
+msgid "Press '%s' for YES, or '%s' for NO"
 msgstr "Nacisnij '%s' dla TAK, lub '%s' dla NIE"
 
 #: src/cgame/cg_draw.c:2096
@@ -79,7 +79,7 @@ msgstr "Glosowanie(%i): %s"
 
 #: src/cgame/cg_draw.c:2223
 msgid "Cannot vote as Spectator"
-msgstr "Nie mozna oddawac glosu jako obserwator"
+msgstr "Nie mozna oddac glosu jako obserwator"
 
 #: src/cgame/cg_draw.c:2227
 #, c-format
@@ -332,12 +332,12 @@ msgstr "STWORZ PROFIL"
 msgid ""
 "Please choose your initial settings below. You can change these at any time "
 "and access more advanced options by visiting the Options Menu. Should more "
-"than one person wish to play Wolfenstein: Enemy Territory, you can create "
+"than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
 msgstr ""
 "Wybierz Ustawienia poczatkowe ponizej. Mozesz zmienic je w dowolnym "
 "momencie, a dostep do bardziej zaawansowanych opcji odwiedzajac Menu opcje. "
-"Jezeli wiecej niz jedna osoba zamierza grac Wolfenstein: Enemy Territory na "
+"Jezeli wiecej niz jedna osoba zamierza grac Enemy Territory: Legacy na "
 "tym komputerze, mozna utworzyc dodatkowe profile odwiedzajac Menu profile."
 
 msgid "Player Alias:"
@@ -628,8 +628,8 @@ msgstr "Sukces glosowania:"
 msgid "ALLOW VOTES"
 msgstr "POZWOL GLOSOWAC"
 
-msgid "Comp Settings:"
-msgstr "Ustaw. Rozgryw.:"
+msgid "Game config:"
+msgstr "Konfigu. gry:"
 
 msgid "Player Kick:"
 msgstr "Wyrzuc Gracza:"
@@ -793,8 +793,8 @@ msgstr "Slady Pociskow:"
 msgid "SCOPE"
 msgstr "LUNETA"
 
-msgid "Use Weapon Cycle for Zoom:"
-msgstr "Uzyj kolka myszki by przyb.:"
+msgid "Weapon Cycle for Zoom:"
+msgstr "Kolko myszki dla przyb.:"
 
 msgid "Default Zoom Level:"
 msgstr "Domyslny Poziom Przyblizenia:"
@@ -922,7 +922,7 @@ msgstr "Pulsowanie Celownika:"
 msgid "Crosshair Health Info:"
 msgstr "Poziom Zycia:"
 
-msgid "Crosshair Info Drawing:"
+msgid "Crosshair Info:"
 msgstr "Informacja o Graczu:"
 
 msgid "Primary Color:"
@@ -1295,8 +1295,8 @@ msgstr "Olaf 'IR4T4' R. - Programista, wydawca moda & zly chlopak"
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
 msgstr "Konrad 'morsik' Moson - Strona, kodowanie & skrypty"
 
-msgid "Jere 'Jacker' S. - Main windows coder & render"
-msgstr "Jere 'Jacker' S. - Glowny programista windowsa & renderowanie"
+msgid "Jere 'Jacker' S. - Main windows coder & renderer"
+msgstr "Jere 'Jacker' S. - Glowny programista windowsa & silnik graficzny"
 
 msgid "^1CONTRIBUTORS"
 msgstr "^1UCZESTNICY"
@@ -2599,18 +2599,11 @@ msgstr ""
 "Czy chcesz otworzyc\n"
 " www.etlegacy.com ?"
 
-msgid ""
-"^3Thank you for installing ET:Legacy.\n"
-"\n"
-"^3Visit ^1www.etlegacy.com^3 for more information.\n"
-"\n"
-"^3Let's keep ET alive!"
-msgstr ""
-"^3Dzieki za zainstalowanie ET:Legacy.\n"
-"\n"
-"^3Odwiedz www.etlegacy.com^3 po wiecej informacji.\n"
-"\n"
-"^3Utrzymajmy ET przy zyciu!"
+msgid "^1LET'S KEEP ET ALIVE!"
+msgstr "^1UTRZYMAJMY ET PRZY ZYCIU!"
+
+msgid "^3Thank you for installing ET:Legacy"
+msgstr "^3Dzieki za zainstalowanie ET:Legacy."
 
 msgid "HOST GAME: EXTENDED"
 msgstr "STAWIANIE SERWERA: ROZSZERZONE"
@@ -2762,7 +2755,7 @@ msgid "^1FIGHT!\n"
 msgstr "^1WALKA!\n"
 
 msgid "was stabbed by"
-msgstr "zostal pchniety nozem przez"
+msgstr "zostal pchniety przez"
 
 msgid "was exploded by"
 msgstr "zostal zdetonowany przez"
@@ -2797,8 +2790,8 @@ msgstr "'s pocisku mortara"
 msgid "'s artillery support"
 msgstr "'s artylerie"
 
-msgid "rediscovered gravity."
-msgstr "ponownie odkryl grawitacje."
+msgid "rediscovered gravity"
+msgstr "ponownie odkryl grawitacje"
 
 msgid "'s Landmine"
 msgstr "'s Miny"
@@ -2890,8 +2883,8 @@ msgstr "Obserwatorow"
 msgid "You must be a player or following a player to use +stats\n"
 msgstr "Musisz byc graczem lub obserwowac gracza aby uzyc +stats\n"
 
-msgid "^9You must be alive to use ^3/kill.\n"
-msgstr "^9Musisz byc zywy aby uzyc ^3/kill.\n"
+msgid "^9You must be alive to use ^3/kill."
+msgstr "^9Musisz byc zywy aby uzyc ^3/kill."
 
 msgid "No vote in progress.\n"
 msgstr "Brak glosowan.\n"
@@ -3001,7 +2994,7 @@ msgstr "%s zwrocili %s!"
 #: src/cgame/cg_popupmessages.c:666
 #, c-format
 msgid "%s^7 disconnected"
-msgstr "%s^7 rozlaczony"
+msgstr "%s^7 rozlaczyl sie"
 
 msgid "Improved use of Explosive Ammunition"
 msgstr "Lepsze uzycie Amunicji Wybuchowej"
@@ -3829,10 +3822,10 @@ msgid "Your invitation was rejected"
 msgstr "Twoje zaproszenie zostalo odrzucone"
 
 msgid "'s flamethrower"
-msgstr "'s miotacz ognia"
+msgstr " miotaczem ognia"
 
 msgid "'s Satchel Charge"
-msgstr "'s Ladunek Kulminacyjny"
+msgstr " Ladunkiem Kulminacyjnym"
 
 msgid "FONTS"
 msgstr "CZCIONKA"
@@ -3895,8 +3888,8 @@ msgstr "Konfiguracja: ^7%s^7"
 msgid "^3Config: ^7%s^7"
 msgstr "^3Konfiguracja: ^7%s^7"
 
-msgid "Landmine Revealed\n"
-msgstr "Mina Wykryta\n"
+msgid "Landmine revealed"
+msgstr "Mina wykryta"
 
 #: src/cgame/cg_draw.c:2486
 msgid "disable"
@@ -3982,13 +3975,13 @@ msgid "MAP %i of %i"
 msgstr "MAPA %i z %i"
 
 msgid "Landmine cannot be armed here..."
-msgstr "Miny nie moga byc tutaj podlozone.."
+msgstr "Miny nie moga byc tutaj uzbrojone.."
 
 msgid "Your team has too many landmines placed..."
 msgstr "Twoj zespol ma zbyc duzo podlozonych min..."
 
 msgid "You cannot arm dynamite near a friendly construction!"
-msgstr "Nie mozesz uzbroic dynamitu blisko przyjaznej konstrukcji!"
+msgstr "Nie mozesz podlozyc dynamitu w poblizu przyjaznej konstrukcji!"
 
 #: src/cgame/cg_draw.c:402
 #, c-format
@@ -4004,7 +3997,7 @@ msgid "Countdown started.... ^3notready^7 ignored!\n"
 msgstr "Odliczanie rozpoczete.... ^3niegotowy^7 zignorowane!\n"
 
 msgid "No complaint filed against you.\n"
-msgstr "Brak wypelnionej skargi przeciwko tobie.\n"
+msgstr "Nie wyslano skargi przeciwko tobie.\n"
 
 msgid "You are not the leader of a fireteam\n"
 msgstr "Nie jestes liderem oddzialu\n"
@@ -4022,7 +4015,7 @@ msgid "The Fireteam you are on has been disbanded"
 msgstr "Oddzial w ktorym jestes rozpadl sie"
 
 msgid "You have been given fireteam admin rights"
-msgstr "Dostales prawa admina oddzialu"
+msgstr "Dostales prawa Dowodcy oddzialu"
 
 #: src/cgame/cg_fireteams.c:343
 msgid "FIRETEAMS"
@@ -4042,7 +4035,7 @@ msgstr "ZAPROS"
 
 #: src/cgame/cg_fireteams.c:364
 msgid "SET ADMIN"
-msgstr "USTAW ADMINA"
+msgstr "USTAW DOWODCE"
 
 #: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
 #: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
@@ -4064,10 +4057,7 @@ msgid "The other player is already on a fireteam"
 msgstr "Ten gracz jest juz w oddziale"
 
 msgid "You are not on the same team as the other player"
-msgstr "Nie jestes w tym samym zespole jak inny gracz"
-
-msgid "You are not on the same Fireteam as the other player"
-msgstr "Nie jestes w tym samym Oddziale jak inny gracz"
+msgstr "Nie jestes w tym samym zespole co dany gracz gracz"
 
 msgid "Invalid client selected"
 msgstr "Niewlasciwie wybrany klient"
@@ -4094,13 +4084,13 @@ msgid "usage: fireteam <create|leave|apply|invite>"
 msgstr "uzycie: fireteam <create|leave|apply|invite>"
 
 msgid "You are already on a fireteam, leave it first"
-msgstr "Jestes juz w oddziale, wpierw odejdz"
+msgstr "Jestes juz w oddziale, najpierw odejdz z oddzialu"
 
 msgid "The other player must be on the same fireteam for you to give admin rights to"
-msgstr "Inny gracz musi byc w tym samym oddziale aby moglbys dac mu prawa admina"
+msgstr "Dany gracz musi byc w tym samym oddziale aby moglbys mogl dac mu prawa Dowodcy"
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
-msgstr "Musisz byc adminem oddzialu aby dac prawa admina komus innemu"
+msgstr "Musisz byc Dowodca oddzialu aby dac prawa Dowodcy komus innemu"
 
 msgid "Invalid referee password!\n"
 msgstr "Nieprawidlowe haslo sedziego!\n"
@@ -4118,7 +4108,7 @@ msgid "^5pause speclock warmup ^7[value]\n"
 msgstr "^5pause speclock warmup ^7[wartosc]\n"
 
 msgid "Sorry, referee status disabled on this server.\n"
-msgstr "Wybacz, status sedziego wylaczony na tym serwerze.\n"
+msgstr "Status sedziego jest wylaczony na tym serwerze.\n"
 
 msgid "Referee has ^3LOCKED^7 teams\n"
 msgstr "Sedzia ^3ZABLOKOWAL^7 zespoly\n"
@@ -4133,7 +4123,7 @@ msgid "You have UNLOCKED teams\n"
 msgstr "ODBLOKOWALES zespoly\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr "Zespol ^4Alliancki^7 jest ZABLOKOWANY!\n"
+msgstr "Zespol ^4Alliantow^7 jest ZABLOKOWANY!\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
 msgstr "Zespol ^1Osi^7 jest ZABLOKOWANY!\n"
@@ -4172,7 +4162,7 @@ msgid "is not on the server\n"
 msgstr "nie jest na serwerze\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
-msgstr "^5Zostales usuniety z ^4Allianckiego^7 zespolu\n"
+msgstr "^5Zostales usuniety z zespolu ^4Alliantow\n"
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
 msgstr "^5Zostales usuniety z ^7zespolu ^1Osi\n"
@@ -4215,3 +4205,168 @@ msgid "\n"
 msgstr "\n"
 "^3Status^1   : ^3ID^1 : ^3Gracz                     Nudge  Rate  MaxPkts  "
 "Snaps\n"
+
+msgid "^5\n"
+"Available OSP Game-Commands:\n"
+"----------------------------\n"
+msgstr "^5\n"
+"Dostepne OSP Komendy-W Grze:\n"
+"----------------------------\n"
+
+msgid "\n"
+"Type: ^3\\command_name ?^7 for more information\n"
+msgstr "\n"
+"Napisz: ^3\\nazwa_komendy ?^7 aby uzyskac wiecej informacji\n"
+
+msgid "Spectators can't lock a team!\n"
+msgstr "Widzowie nie moga zablokowac zepsolu!\n"
+
+msgid "The ^4Allies^7 team is now locked!\n"
+msgstr "Zespol ^4Alliancki^7 jest teraz zablokowany!\n"
+
+msgid "^3Your team is already locked!\n"
+msgstr "^3Twoj zespol jest juz zablokowany!\n"
+
+msgid "The ^4Allies^7 team is now unlocked!\n"
+msgstr "Zespol ^4Alliancki^7 jest juz odblokowany!\n"
+
+msgid "^3Your team is already unlocked!\n"
+msgstr "^3Twoj zespol jest juz odblokowany!\n"
+
+msgid "Spectators can't unlock a team!\n"
+msgstr "Widzowie nie moga odblokwoac zespolu!\n"
+
+msgid "The ^1Axis^7 team is now locked!\n"
+msgstr "Zespol ^1Osi^7 jest teraz zablokowany!\n"
+
+msgid "The ^1Axis^7 team is now unlocked!\n"
+msgstr "Zespol ^1Osi^7 jest juz odblokowany!\n"
+
+msgid "Team commands not enabled on this server.\n"
+msgstr "Komendy Zespolu nie sa wlaczone na tym serwerze.\n"
+
+msgid "\n"
+"^3>>> Unknown vote command: ^7 \n"
+msgstr "\n"
+"^3>>> Nieznana komenda glosowania: ^7 \n"
+
+msgid "\n"
+"Valid ^3callvote^7 commands are:\n"
+"^3----------------------------\n"
+msgstr "\n"
+"Prawidlowymi komendami ^3callvote^7 sa:\n"
+"^3----------------------------\n"
+
+msgid "\n"
+"Usage: ^3\\callvote <command> <params>\n"
+"^7For current settings/help, use: ^3\\callvote <command> ?\n"
+"\n"
+msgstr "\n"
+"Uzycie: ^3\\callvote <komenda> <parametry>\n"
+"^7Dla biezacych ustawien/pomocy, uzyj: ^3\\callvote <komenda> ?\n"
+"\n"
+
+msgid "Type ^3\stats <player_id>^7 to see stats on an active player.\n"
+msgstr "Napisz ^3\stats <id_gracza>^7 aby zobaczyc statystyki aktywnego gracza.\n"
+
+msgid "Spectators can't ready a team!\n"
+msgstr "Widzowie nie moga byc gotowi!\n"
+
+msgid "The ^4Allies^7 team is ready!\n"
+msgstr "Zespol ^4Alliantow^7 jest gotowy!\n"
+
+msgid "The ^1Axis^7 team is ready!\n"
+msgstr "Zespol ^1Osi^7 jest gotowy!\n"
+
+msgid "A vote is already in progress.\n"
+msgstr "Glosowanie jest juz w toku.\n"
+
+msgid "called a vote.\n"
+msgstr "wybral glosowanie.\n"
+
+msgid "^5Vote passed!\n"
+msgstr "^5Glosownie zaliczone!\n"
+
+msgid "Spectator team\n"
+msgstr "Zespol Widzow\n"
+
+msgid "Allies team\n"
+msgstr "Zespol Alliantow\n"
+
+msgid "Axis team\n"
+msgstr "Zespol Osi\n"
+
+msgid "Sorry, "
+msgstr "Wybacz, "
+
+msgid "voting has been disabled"
+msgstr "glosowania zostaly wylaczone"
+
+msgid "Not allowed to call a vote as a spectator.\n"
+msgstr "Nie wolno glosowac jako obserwator.\n"
+
+msgid "called a vote."
+msgstr "wybral glosowanie."
+
+msgid "Vote cast.\n"
+msgstr "Oddanie glosow.\n"
+
+msgid "'s KA-BAR"
+msgstr " Nozem Bojowym"
+
+msgid "'s .45ACP 1911"
+msgstr " Coltem .45"
+
+msgid "'s Thompson"
+msgstr " Thompsonem"
+
+msgid "'s MP40"
+msgstr " MP40"
+
+msgid "'s knife"
+msgstr " nozem"
+
+msgid "'s Luger 9mm"
+msgstr " Lugerem 9mm"
+
+msgid "'s Panzerfaust"
+msgstr " Pocisk Przeciwczolgowy"
+
+msgid "'s Garand"
+msgstr " Garantem"
+
+msgid "'s Sten"
+msgstr " Stenem"
+
+msgid "'s FG42"
+msgstr " FG42"
+
+msgid "'s K43"
+msgstr " K43"
+
+msgid "SOUND"
+msgstr "DZWIEK"
+
+msgid "AutoScreenshots format:"
+msgstr "Format autoscreena:"
+
+msgid "7Config '%s^7' version '%s'^7 loaded"
+msgstr "7Konfig '%s^7' w wersji '%s'^7 wczytany"
+
+msgid "^7Config '%s^7' loaded"
+msgstr "^7Konfig '%s^7' wczytany"
+
+msgid "^7Config '%s^7' ^1FAILED ^7to load"
+msgstr "^7Konfig '%s^7' ^1PROBLEM ^7z zaladowaniem"
+
+msgid "Reset Filters"
+msgstr "Resetuj Filtry"
+
+msgid "Binoculars Zoom:"
+msgstr "Lornetka Przyblizenie:"
+
+msgid "Slot 8 - Binoculars:"
+msgstr "Slot 8 - Lornetka:"
+
+msgid "Remy 'Spyhawk' M. - Coding, mod development"
+msgstr "Remy 'Spyhawk' M. - Programowanie, wydawca moda"
