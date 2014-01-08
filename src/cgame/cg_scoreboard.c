@@ -294,6 +294,28 @@ int SkillNumForClass(int classNum)
 	}
 }
 
+/**
+ * @brief Real printable charater count
+ */
+int CG_drawStrlen(const char *str)
+{
+	int cnt = 0;
+
+	while (*str)
+	{
+		if (Q_IsColorString(str))
+		{
+			str += 2;
+		}
+		else
+		{
+			cnt++;
+			str++;
+		}
+	}
+	return(cnt);
+}
+
 static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
 {
 	int          maxchars = 16, offset = 0;
@@ -360,7 +382,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			tempx    += 12;
 			maxchars -= 2;
 		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && ci->powerups & (1 << PW_OPS_DISGUISED))
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && (ci->powerups & (1 << PW_OPS_DISGUISED)))
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			offset   += 12;
@@ -403,7 +425,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	// CG_Text_Paint_Ext will draw everything if maxchars <= 0
 	if (maxchars > 0)
 	{
-		CG_Text_Paint_Ext(tempx + (BG_drawStrlen(ci->name) * 8 + 8), y, 0.24, 0.28, colorWhite, buf, 0, maxchars, 0, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.24, 0.28, colorWhite, buf, 0, maxchars, 0, &cgs.media.limboFont2_lo);
 	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;
@@ -594,7 +616,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (maxchars > 0)
 	{
-		CG_Text_Paint_Ext(tempx + (BG_drawStrlen(ci->name) * 8 + 8), y, 0.20, 0.25, colorWhite, buf, 0, maxchars, 0, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.20, 0.25, colorWhite, buf, 0, maxchars, 0, &cgs.media.limboFont2_lo);
 	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;

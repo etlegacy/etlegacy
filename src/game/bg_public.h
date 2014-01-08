@@ -2186,10 +2186,6 @@ int BG_simpleHintsExpand(int hint, int val);
 #endif
 int BG_simpleWeaponState(int ws);
 
-// Color escape handling
-int BG_drawStrlen(const char *str);
-int BG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF);
-
 // Crosshair support
 void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName);
 

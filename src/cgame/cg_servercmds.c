@@ -1888,7 +1888,7 @@ void CG_topshotsParse_cmd(qboolean doBest)
 
 		if (ts->cWeapons < WS_MAX * 2)
 		{
-			BG_cleanName(cgs.clientinfo[cnum].name, name, 17, qfalse);
+			CG_cleanName(cgs.clientinfo[cnum].name, name, 17, qfalse);
 			Q_strncpyz(ts->strWS[ts->cWeapons++],
 			           va("%-12s %5.1f %4d/%-4d %5d  %s",
 			              aWeaponInfo[iWeap - 1].pszName,
@@ -2058,7 +2058,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	ci = &cgs.clientinfo[nClient];
 
 	Q_strncpyz(strName, ci->name, sizeof(strName));
-	BG_cleanName(cgs.clientinfo[nClient].name, strName, sizeof(strName), qfalse);
+	CG_cleanName(cgs.clientinfo[nClient].name, strName, sizeof(strName), qfalse);
 
 	txt_dump("\n");
 	txt_dump(va("^7Overall stats for: ^3%s ^7(^2%d^7 Round%s)\n", strName, nRounds, ((nRounds != 1) ? "s" : "")));
@@ -2260,13 +2260,13 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 
 		if (fFull)
 		{
-			BG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
+			CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 			txt_dump(va("^3%s ^7%5.1f ^5%4d/%-4d ^2%5d ^1%6d ^7%s\n",
 			            aWeaponInfo[iWeap - 1].pszCode, acc, hits, atts, kills, deaths, name));
 		}
 		else
 		{
-			BG_cleanName(cgs.clientinfo[cnum].name, name, 12, qfalse);
+			CG_cleanName(cgs.clientinfo[cnum].name, name, 12, qfalse);
 			txt_dump(va("^3%s ^7%5.1f ^5%4d/%-4d ^2%3d ^1%3d ^7%s\n",
 			            aWeaponInfo[iWeap - 1].pszCode, acc, hits, atts, kills, deaths, name));
 		}
@@ -2308,7 +2308,7 @@ void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 		// cap stats at 100%
 		acc = (acc > 100.0f) ? 100.0f : acc;
 
-		BG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
+		CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 		txt_dump(va("%s%5.1f ^5%4d/%-4d ^2%5d ^1%6d %s%s\n", color, acc, hits, atts, kills, deaths, color, name));
 	}
 }
@@ -2322,7 +2322,7 @@ void CG_scores_cmd(void)
 	{
 		char s[MAX_STRING_CHARS];
 
-		BG_cleanName(str, s, sizeof(s), qtrue);
+		CG_cleanName(str, s, sizeof(s), qtrue);
 		trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
 	}
 
@@ -2354,7 +2354,7 @@ void CG_printFile(char *str)
 	{
 		char s[MAX_STRING_CHARS];
 
-		BG_cleanName(str, s, sizeof(s), qtrue);
+		CG_cleanName(str, s, sizeof(s), qtrue);
 		trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
 	}
 }

@@ -2264,6 +2264,8 @@ sfxHandle_t CG_GetGameSound(int index);
 
 void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
+int CG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF);
+
 // cg_view.c
 void CG_TestModel_f(void);
 void CG_TestGun_f(void);

@@ -915,6 +915,35 @@ char *CG_generateFilename(void)
 	          ));
 }
 
+/**
+ * @brief strip colors and control codes, copying up to dwMaxLength-1 "good" chars and nul-terminating
+ * @return the length of the cleaned string
+ */
+int CG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF)
+{
+	const char *pInCopy     = pszIn;
+	const char *pszOutStart = pszOut;
+
+	while (*pInCopy && (pszOut - pszOutStart < dwMaxLength - 1))
+	{
+		if (*pInCopy == '^')
+		{
+			pInCopy += ((pInCopy[1] == 0) ? 1 : 2);
+		}
+		else if ((*pInCopy < 32 && (!fCRLF || *pInCopy != '\n')) || (*pInCopy > 126))
+		{
+			pInCopy++;
+		}
+		else
+		{
+			*pszOut++ = *pInCopy++;
+		}
+	}
+
+	*pszOut = 0;
+	return(pszOut - pszOutStart);
+}
+
 int CG_findClientNum(char *s)
 {
 	int      id;
@@ -942,7 +971,7 @@ int CG_findClientNum(char *s)
 	}
 
 	// check for a name match
-	BG_cleanName(s, s2, sizeof(s2), qfalse);
+	CG_cleanName(s, s2, sizeof(s2), qfalse);
 	for (id = 0; id < cgs.maxclients; id++)
 	{
 		if (!cgs.clientinfo[id].infoValid)
@@ -950,7 +979,7 @@ int CG_findClientNum(char *s)
 			continue;
 		}
 
-		BG_cleanName(cgs.clientinfo[id].name, n2, sizeof(n2), qfalse);
+		CG_cleanName(cgs.clientinfo[id].name, n2, sizeof(n2), qfalse);
 		if (!Q_stricmp(n2, s2))
 		{
 			return(id);

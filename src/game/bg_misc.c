@@ -2238,18 +2238,18 @@ gitem_t bg_itemlist[] =
 };
 
 int bg_numItems = ARRAY_LEN(bg_itemlist) - 1; // keep in sync with CG_NUM_ITEMS!
+int firstWeaponItem = 9; // bg_itemlist is sorted and weapons start at 9
 
 /*
 ===============
 BG_FindItemForWeapon
-
 ===============
 */
 gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 {
 	gitem_t *it;
 
-	for (it = bg_itemlist + 1 ; it->classname ; it++)
+	for (it = bg_itemlist + firstWeaponItem ; it->classname ; it++)
 	{
 		if (it->giType == IT_WEAPON && it->giTag == weapon)
 		{
@@ -2272,7 +2272,7 @@ weapon_t BG_FindClipForWeapon(weapon_t weapon)
 {
 	gitem_t *it;
 
-	for (it = bg_itemlist + 1 ; it->classname ; it++)
+	for (it = bg_itemlist + firstWeaponItem ; it->classname ; it++)
 	{
 		if (it->giType == IT_WEAPON && it->giTag == weapon)
 		{
@@ -2292,7 +2292,7 @@ weapon_t BG_FindAmmoForWeapon(weapon_t weapon)
 {
 	gitem_t *it;
 
-	for (it = bg_itemlist + 1 ; it->classname ; it++)
+	for (it = bg_itemlist + firstWeaponItem ; it->classname ; it++)
 	{
 		if (it->giType == IT_WEAPON && it->giTag == weapon)
 		{
@@ -4566,54 +4566,7 @@ int BG_simpleHintsExpand(int hint, int val)
 }
 #endif
 
-// Real printable charater count
-// FIXME: move to cgame
-int BG_drawStrlen(const char *str)
-{
-	int cnt = 0;
 
-	while (*str)
-	{
-		if (Q_IsColorString(str))
-		{
-			str += 2;
-		}
-		else
-		{
-			cnt++;
-			str++;
-		}
-	}
-	return(cnt);
-}
-
-// strip colors and control codes, copying up to dwMaxLength-1 "good" chars and nul-terminating
-// returns the length of the cleaned string
-// FIXME: move to cgame
-int BG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF)
-{
-	const char *pInCopy     = pszIn;
-	const char *pszOutStart = pszOut;
-
-	while (*pInCopy && (pszOut - pszOutStart < dwMaxLength - 1))
-	{
-		if (*pInCopy == '^')
-		{
-			pInCopy += ((pInCopy[1] == 0) ? 1 : 2);
-		}
-		else if ((*pInCopy < 32 && (!fCRLF || *pInCopy != '\n')) || (*pInCopy > 126))
-		{
-			pInCopy++;
-		}
-		else
-		{
-			*pszOut++ = *pInCopy++;
-		}
-	}
-
-	*pszOut = 0;
-	return(pszOut - pszOutStart);
-}
 
 // Only used locally
 typedef struct
@@ -4660,7 +4613,7 @@ void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName)
 	if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
 	{
 		s += 2;
-		//parse rrggbb
+		// parse rrggbb
 		if (Q_IsHexColorString(s))
 		{
 			col[0] = ((float)(gethex(*(s)) * 16 + gethex(*(s + 1)))) / 255.00;
