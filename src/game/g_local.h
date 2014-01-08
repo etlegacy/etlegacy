@@ -545,7 +545,8 @@ typedef struct
 	int spec_invite;
 	int spec_team;
 	int suicides;
-	int team_damage;
+	int team_damage_given;
+	int team_damage_received;
 	int team_kills;
 
 	// MAPVOTE

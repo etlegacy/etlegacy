@@ -781,7 +781,8 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.spec_invite,               FIELD_INT,         0),
 	_et_gclient_addfield(sess.spec_team,                 FIELD_INT,         0),
 	_et_gclient_addfield(sess.suicides,                  FIELD_INT,         0),
-	_et_gclient_addfield(sess.team_damage,               FIELD_INT,         0),
+	_et_gclient_addfield(sess.team_damage_given,         FIELD_INT,         0),
+	_et_gclient_addfield(sess.team_damage_received,      FIELD_INT,         0),
 	_et_gclient_addfield(sess.team_kills,                FIELD_INT,         0),
 	_et_gclient_addfield(sess.uci,                       FIELD_INT,         0),
 
@@ -797,8 +798,6 @@ static const gentity_field_t gclient_fields[] =
 
 	// missing sess.semiadmin
 	// missing sess.gibs
-	// _et_gclient_addfield(sess.team_damage_given, FIELD_INT, 0),
-	// _et_gclient_addfield(sess.team_damage_received, FIELD_INT, 0),
 	// _et_gclient_addfieldalias(sess.team_damage, sess.team_damage_given, FIELD_INT, 0),
 	// _et_gclient_addfieldalias(sess.team_received, sess.team_damage_received, FIELD_INT, 0),
 

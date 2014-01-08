@@ -1985,12 +1985,13 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 		if (gs->fHasStats)
 		{
-			int dmg_given = atoi(CG_Argv(iArg++));
-			int dmg_rcvd  = atoi(CG_Argv(iArg++));
-			int team_dmg  = atoi(CG_Argv(iArg++));
+			int dmg_given      = atoi(CG_Argv(iArg++));
+			int dmg_rcvd       = atoi(CG_Argv(iArg++));
+			int team_dmg_given = atoi(CG_Argv(iArg++));
+			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
 
-			Q_strncpyz(gs->strExtra[0], va("Damage Given: %-6d  Team Damage: %d", dmg_given, team_dmg), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[1], va("Damage Recvd: %d", dmg_rcvd), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[0], va("Damage Given: %-6d  Team Damage Given: %d", dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[1], va("Damage Recvd: %-6d  Team Damage Recvd: %d", dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
 		}
 	}
 
@@ -2046,7 +2047,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	qboolean     fFull     = (txt_dump != CG_printWindow);
 	qboolean     fHasStats = qfalse;
 	char         strName[MAX_STRING_CHARS];
-	int          atts, deaths, dmg_given, dmg_rcvd, hits, kills, team_dmg, headshots;
+	int          atts, deaths, dmg_given, dmg_rcvd, hits, kills, team_dmg_given, team_dmg_rcvd, headshots;
 	unsigned int i, iArg = 1;
 	unsigned int nClient      = atoi(CG_Argv(iArg++));
 	unsigned int nRounds      = atoi(CG_Argv(iArg++));
@@ -2065,13 +2066,13 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 	if (fFull)
 	{
-		txt_dump("Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n");
-		txt_dump("-------------------------------------------------\n");
+		txt_dump("^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n");
+		txt_dump("^7-------------------------------------------------\n");
 	}
 	else
 	{
-		txt_dump("Weapon     Acrcy Hits/Atts Kll Dth HS\n");
-		//txt_dump(     "-------------------------------------\n");
+		txt_dump("^7Weapon     Acrcy Hits/Atts Kll Dth HS\n");
+		//txt_dump(     "^7-------------------------------------\n");
 		txt_dump("\n");
 	}
 
@@ -2121,9 +2122,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 		if (fHasStats)
 		{
-			dmg_given = atoi(CG_Argv(iArg++));
-			dmg_rcvd  = atoi(CG_Argv(iArg++));
-			team_dmg  = atoi(CG_Argv(iArg++));
+			dmg_given      = atoi(CG_Argv(iArg++));
+			dmg_rcvd       = atoi(CG_Argv(iArg++));
+			team_dmg_given = atoi(CG_Argv(iArg++));
+			team_dmg_rcvd  = atoi(CG_Argv(iArg++));
 
 			if (!fFull)
 			{
@@ -2134,8 +2136,8 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 				txt_dump("\n");
 			}
 
-			txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage: ^7%d\n", dmg_given, team_dmg));
-			txt_dump(va("^3Damage Recvd: ^7%d\n", dmg_rcvd));
+			txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage Given: ^7%d\n", dmg_given, team_dmg_given));
+			txt_dump(va("^3Damage Recvd: ^7%-6d  ^3Team Damage Recvd: ^7%d\n", dmg_rcvd, team_dmg_rcvd));
 		}
 	}
 
@@ -2171,10 +2173,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	}
 
 	// Medals only in campaign mode
-	txt_dump(va("Skills         Level/Points%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "  Medals" : "")));
+	txt_dump(va("^7Skills         Level/Points%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "  Medals" : "")));
 	if (fFull)
 	{
-		txt_dump(va("---------------------------%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "--------" : "")));
+		txt_dump(va("^7---------------------------%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "--------" : "")));
 	}
 	else
 	{
