@@ -834,14 +834,14 @@ extern ammotable_t *GetAmmoTableData(int ammoIndex);
 typedef struct weapontable_s
 {
 	int weapon;               // reference
+	int weapAlts;             // bg
+
 	int damage;               // g
 	float spread;             // g
 	int splashDamage;         // g
 	int splashRadius;         // g
 
 	qboolean keepDisguise;    // g
-
-	int weapAlts;             // bg
 
 	qboolean isAutoReload;    // bg // move this to ammo table?!
 

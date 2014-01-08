@@ -348,7 +348,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 
 	if (weapon == WP_KAR98 || weapon == WP_CARBINE)
 	{
-		ent2->delay = client->ps.ammo[BG_FindAmmoForWeapon(weapAlts[weapon])];
+		ent2->delay = client->ps.ammo[BG_FindAmmoForWeapon(weaponTable[weapon].weapAlts)];
 	}
 	else
 	{
@@ -487,7 +487,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		// secondary weapon ammo
 		if (ent->delay)
 		{
-			Add_Ammo(other, weapAlts[ent->item->giTag], ent->delay, qfalse);
+			Add_Ammo(other, weaponTable[ent->item->giTag].weapAlts, ent->delay, qfalse);
 		}
 	}
 	else
@@ -573,7 +573,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					// secondary weapon ammo
 					if (ent->delay)
 					{
-						Add_Ammo(other, weapAlts[ent->item->giTag], ent->delay, qfalse);
+						Add_Ammo(other, weaponTable[ent->item->giTag].weapAlts, ent->delay, qfalse);
 					}
 				}
 				else
@@ -583,7 +583,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					// secondary weapon ammo
 					if (ent->delay)
 					{
-						other->client->ps.ammo[weapAlts[ent->item->giTag]] = ent->delay;
+						other->client->ps.ammo[weaponTable[ent->item->giTag].weapAlts] = ent->delay;
 					}
 				}
 			}

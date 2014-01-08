@@ -223,138 +223,73 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 // spread - bullet weapons only
 
 // [0]  = weapon         -
-// [1]  = damage         -
-// [2]  = spread         -
+// [1]  = weapAlts       -
+// [2]  = damage         -
+// [3]  = spread         -
 weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 {
-	// weapon              damage spread
-	{ WP_NONE,                 1,   0,    }, // 0
-	{ WP_KNIFE,                10,  0,    }, // 1
-	{ WP_LUGER,                18,  600,  }, // 2
-	{ WP_MP40,                 18,  400,  }, // 3
-	{ WP_GRENADE_LAUNCHER,     250, 0,    }, // 4
-	{ WP_PANZERFAUST,          400, 0,    }, // 5
-	{ WP_FLAMETHROWER,         1,   0,    }, // 6
-	{ WP_COLT,                 18,  600,  }, // 7	// equivalent american weapon to german luger
-	{ WP_THOMPSON,             18,  400,  }, // 8	// equivalent american weapon to german mp40
-	{ WP_GRENADE_PINEAPPLE,    250, 0,    }, // 9
+	// weapon                  weapAlts              damage spread
+	{ WP_NONE,                 WP_NONE,                1,   0,    }, // 0
+	{ WP_KNIFE,                WP_NONE,                10,  0,    }, // 1
+	{ WP_LUGER,                WP_SILENCER,            18,  600,  }, // 2
+	{ WP_MP40,                 WP_NONE,                18,  400,  }, // 3
+	{ WP_GRENADE_LAUNCHER,     WP_NONE,                250, 0,    }, // 4
+	{ WP_PANZERFAUST,          WP_NONE,                400, 0,    }, // 5
+	{ WP_FLAMETHROWER,         WP_NONE,                1,   0,    }, // 6
+	{ WP_COLT,                 WP_SILENCED_COLT,       18,  600,  }, // 7	// equivalent american weapon to german luger
+	{ WP_THOMPSON,             WP_NONE,                18,  400,  }, // 8	// equivalent american weapon to german mp40
+	{ WP_GRENADE_PINEAPPLE,    WP_NONE,                250, 0,    }, // 9
 
-	{ WP_STEN,                 14,  200,  }, // 10	// silenced sten sub-machinegun
-	{ WP_MEDIC_SYRINGE,        1,   0,    }, // 11	// broken out from CLASS_SPECIAL per Id request
-	{ WP_AMMO,                 1,   0,    }, // 12	// likewise
-	{ WP_ARTY,                 1,   0,    }, // 13
-	{ WP_SILENCER,             18,  600,  }, // 14	// used to be sp5
-	{ WP_DYNAMITE,             400, 0,    }, // 15
-	{ WP_SMOKETRAIL,           1,   0,    }, // 16
-	{ WP_MAPMORTAR,            250, 0,    }, // 17
-	{ VERYBIGEXPLOSION,        1,   0,    }, // 18	// explosion effect for airplanes
-	{ WP_MEDKIT,               1,   0,    }, // 19
+	{ WP_STEN,                 WP_NONE,                14,  200,  }, // 10	// silenced sten sub-machinegun
+	{ WP_MEDIC_SYRINGE,        WP_NONE,                1,   0,    }, // 11	// broken out from CLASS_SPECIAL per Id request
+	{ WP_AMMO,                 WP_NONE,                1,   0,    }, // 12	// likewise
+	{ WP_ARTY,                 WP_NONE,                1,   0,    }, // 13
+	{ WP_SILENCER,             WP_LUGER,               18,  600,  }, // 14	// used to be sp5
+	{ WP_DYNAMITE,             WP_NONE,                400, 0,    }, // 15
+	{ WP_SMOKETRAIL,           WP_NONE,                1,   0,    }, // 16
+	{ WP_MAPMORTAR,            WP_NONE,                250, 0,    }, // 17
+	{ VERYBIGEXPLOSION,        WP_NONE,                1,   0,    }, // 18	// explosion effect for airplanes
+	{ WP_MEDKIT,               WP_NONE,                1,   0,    }, // 19
 
-	{ WP_BINOCULARS,           1,   0,    }, // 20
-	{ WP_PLIERS,               1,   0,    }, // 21
-	{ WP_SMOKE_MARKER,         140, 0,    }, // 22	// changed name to cause less confusion
-	{ WP_KAR98,                34,  250,  }, // 23	// WolfXP weapons
-	{ WP_CARBINE,              34,  250,  }, // 24
-	{ WP_GARAND,               34,  250,  }, // 25
-	{ WP_LANDMINE,             250, 0,    }, // 26
-	{ WP_SATCHEL,              250, 0,    }, // 27
-	{ WP_SATCHEL_DET,          1,   0,    }, // 28
-	{ WP_SMOKE_BOMB,           1,   0,    }, // 29
+	{ WP_BINOCULARS,           WP_NONE,                1,   0,    }, // 20
+	{ WP_PLIERS,               WP_NONE,                1,   0,    }, // 21
+	{ WP_SMOKE_MARKER,         WP_NONE,                140, 0,    }, // 22	// changed name to cause less confusion
+	{ WP_KAR98,                WP_GPG40,               34,  250,  }, // 23	// WolfXP weapons
+	{ WP_CARBINE,              WP_M7,                  34,  250,  }, // 24
+	{ WP_GARAND,               WP_GARAND_SCOPE,        34,  250,  }, // 25
+	{ WP_LANDMINE,             WP_NONE,                250, 0,    }, // 26
+	{ WP_SATCHEL,              WP_NONE,                250, 0,    }, // 27
+	{ WP_SATCHEL_DET,          WP_NONE,                1,   0,    }, // 28
+	{ WP_SMOKE_BOMB,           WP_NONE,                1,   0,    }, // 29
 
-	{ WP_MOBILE_MG42,          18,  2500, }, // 30
-	{ WP_K43,                  34,  250,  }, // 31
-	{ WP_FG42,                 16,  500,  }, // 32
-	{ WP_DUMMY_MG42,           1,   0,    }, // 33   // for storing heat on mounted mg42s...
-	{ WP_MORTAR,               1,   0,    }, // 34
-	{ WP_AKIMBO_COLT,          18,  600,  }, // 35
-	{ WP_AKIMBO_LUGER,         18,  600,  }, // 36
+	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     18,  2500, }, // 30
+	{ WP_K43,                  WP_K43_SCOPE,           34,  250,  }, // 31
+	{ WP_FG42,                 WP_FG42SCOPE,           16,  500,  }, // 32
+	{ WP_DUMMY_MG42,           WP_NONE,                1,   0,    }, // 33   // for storing heat on mounted mg42s...
+	{ WP_MORTAR,               WP_MORTAR_SET,          1,   0,    }, // 34
+	{ WP_AKIMBO_COLT,          WP_NONE,                18,  600,  }, // 35
+	{ WP_AKIMBO_LUGER,         WP_NONE,                18,  600,  }, // 36
 
-	{ WP_GPG40,                250, 0,    }, // 37
-	{ WP_M7,                   250, 0,    }, // 38
-	{ WP_SILENCED_COLT,        18,  600,  }, // 39
+	{ WP_GPG40,                WP_KAR98,               250, 0,    }, // 37
+	{ WP_M7,                   WP_CARBINE,             250, 0,    }, // 38
+	{ WP_SILENCED_COLT,        WP_COLT,                18,  600,  }, // 39
 
-	{ WP_GARAND_SCOPE,         50,  700,  }, // 40
-	{ WP_K43_SCOPE,            50,  700,  }, // 41
-	{ WP_FG42SCOPE,            30,  200,  }, // 42
-	{ WP_MORTAR_SET,           400, 0,    }, // 43
-	{ WP_MEDIC_ADRENALINE,     1,   0,    }, // 44
-	{ WP_AKIMBO_SILENCEDCOLT,  18,  600,  }, // 45
-	{ WP_AKIMBO_SILENCEDLUGER, 18,  600,  }, // 46
-	{ WP_MOBILE_MG42_SET,      18,  2500, }, // 47
+	{ WP_GARAND_SCOPE,         WP_GARAND,              50,  700,  }, // 40
+	{ WP_K43_SCOPE,            WP_K43,                 50,  700,  }, // 41
+	{ WP_FG42SCOPE,            WP_FG42,                30,  200,  }, // 42
+	{ WP_MORTAR_SET,           WP_MORTAR,              400, 0,    }, // 43
+	{ WP_MEDIC_ADRENALINE,     WP_NONE,                1,   0,    }, // 44
+	{ WP_AKIMBO_SILENCEDCOLT,  WP_NONE,                18,  600,  }, // 45
+	{ WP_AKIMBO_SILENCEDLUGER, WP_NONE,                18,  600,  }, // 46
+	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         18,  2500, }, // 47
 
 	// legacy weapons
-	{ WP_KNIFE_KABAR,          10,  0,    }, // 48
-	{ WP_MOBILE_BROWNING,      18,  2500, }, // 49
-	{ WP_MOBILE_BROWNING_SET,  18,  2500, }, // 50
-	{ WP_MORTAR2,              1,   0,    }, // 51
-	{ WP_MORTAR2_SET,          400, 0,    }, // 52
-	{ WP_BAZOOKA,              400, 0,    }, // 53
-};
-
-// moved in here so both games can get to it
-// FIXME: weapontable
-int weapAlts[] =
-{
-	WP_NONE,            // 0 WP_NONE
-	WP_NONE,            // 1 WP_KNIFE
-	WP_SILENCER,        // 2 WP_LUGER
-	WP_NONE,            // 3 WP_MP40
-	WP_NONE,            // 4 WP_GRENADE_LAUNCHER
-	WP_NONE,            // 5 WP_PANZERFAUST
-	WP_NONE,            // 6 WP_FLAMETHROWER
-
-	WP_SILENCED_COLT,   // 7 WP_COLT
-	WP_NONE,            // 8 WP_THOMPSON
-	WP_NONE,            // 9 WP_GRENADE_PINEAPPLE
-	WP_NONE,            // 10 WP_STEN
-	WP_NONE,            // 11 WP_MEDIC_SYRINGE
-	WP_NONE,            // 12 WP_AMMO
-	WP_NONE,            // 13 WP_ARTY
-
-	WP_LUGER,           // 14 WP_SILENCER   // was sp5
-	WP_NONE,            // 15 WP_DYNAMITE   // modified (not in rotation yet)
-	WP_NONE,            // 16 WP_SMOKETRAIL
-	WP_NONE,            // 17 WP_MAPMORTAR
-	WP_NONE,            // 18 VERYBIGEXPLOSION
-	WP_NONE,            // 19 WP_MEDKIT
-	WP_NONE,            // 20 WP_BINOCULARS
-
-	WP_NONE,            // 21 WP_PLIERS
-	WP_NONE,            // 22 WP_SMOKE_MARKER
-	WP_GPG40,           // 23 WP_KAR98
-	WP_M7,              // 24 WP_CARBINE (GARAND really)
-	WP_GARAND_SCOPE,    // 25 WP_GARAND
-	WP_NONE,            // 26 WP_LANDMINE
-	WP_NONE,            // 27 WP_SATCHEL
-	WP_NONE,            // 28 WP_SATCHEL_DET
-
-	WP_NONE,            // 29 WP_SMOKE_BOMB
-	WP_MOBILE_MG42_SET, // 30 WP_MOBILE_MG42
-	WP_K43_SCOPE,       // 31 WP_K43
-	WP_FG42SCOPE,       // 32 WP_FG42
-	WP_NONE,            // 33 WP_DUMMY_MG42
-	WP_MORTAR_SET,      // 34 WP_MORTAR
-	WP_NONE,            // 35 WP_AKIMBO_COLT
-	WP_NONE,            // 36 WP_AKIMBO_LUGER
-
-	WP_KAR98,           // 37 WP_GPG40
-	WP_CARBINE,         // 38 WP_M7
-
-	WP_COLT,            // 39 WP_SILENCED_COLT
-	WP_GARAND,          // 40 WP_GARAND_SCOPE
-	WP_K43,             // 41 WP_K43_SCOPE
-	WP_FG42,            // 42 WP_FG42SCOPE
-	WP_MORTAR,          // 43 WP_MORTAR_SET
-	WP_NONE,            // 44 WP_MEDIC_ADRENALINE
-	WP_NONE,            // 45 WP_AKIMBO_SILENCEDCOLT
-	WP_NONE,            // 46 WP_AKIMBO_SILENCEDLUGER
-	WP_MOBILE_MG42,     // 47 WP_MOBILE_MG42_SET
-	WP_NONE,            // 48 WP_KNIFE_KABAR
-	WP_MOBILE_BROWNING_SET, // 49 WP_MOBILE_BROWNING
-	WP_MOBILE_BROWNING, // 50 WP_MOBILE_BROWNING_SET
-	WP_MORTAR2_SET,     // 51 WP_MORTAR2
-	WP_MORTAR2,         // 52 WP_MORTAR_SET
-	WP_NONE,            // 53 WP_BAZOOKA
+	{ WP_KNIFE_KABAR,          WP_NONE,                10,  0,    }, // 48
+	{ WP_MOBILE_BROWNING,      WP_MOBILE_BROWNING_SET, 18,  2500, }, // 49
+	{ WP_MOBILE_BROWNING_SET,  WP_MOBILE_BROWNING,     18,  2500, }, // 50
+	{ WP_MORTAR2,              WP_MORTAR2_SET,         1,   0,    }, // 51
+	{ WP_MORTAR2_SET,          WP_MORTAR2,             400, 0,    }, // 52
+	{ WP_BAZOOKA,              WP_NONE,                400, 0,    }, // 53
 };
 
 const char *animStrings[] =
@@ -2237,7 +2172,7 @@ gitem_t bg_itemlist[] =
 	{ NULL }
 };
 
-int bg_numItems = ARRAY_LEN(bg_itemlist) - 1; // keep in sync with CG_NUM_ITEMS!
+int bg_numItems     = ARRAY_LEN(bg_itemlist) - 1; // keep in sync with CG_NUM_ITEMS!
 int firstWeaponItem = 9; // bg_itemlist is sorted and weapons start at 9
 
 /*
@@ -3544,14 +3479,9 @@ const char *eventnames[EV_MAX_EVENTS] =
 	//"EV_MAX_EVENTS",
 };
 
-/*
-===============
-BG_AddPredictableEventToPlayerstate
-
-Handles the sequence numbers
-===============
-*/
-
+/**
+ * @brief Handles the sequence numbers
+ */
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps)
 {
 #ifdef _DEBUG
@@ -3575,7 +3505,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 // would like to just inline this but would likely break qvm support
 #define SETUP_MOUNTEDGUN_STATUS(ps)                           \
-	switch (ps->persistant[PERS_HWEAPON_USE]) {                \
+    switch (ps->persistant[PERS_HWEAPON_USE]) {                \
 	case 1:                                                 \
 		ps->eFlags                    |= EF_MG42_ACTIVE;                       \
 		ps->eFlags                    &= ~EF_AAGUN_ACTIVE;                     \
@@ -3592,14 +3522,10 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 		break;                                              \
 	}
 
-/*
-========================
-BG_PlayerStateToEntityState
-
-This is done after each set of usercmd_t on the server,
-and after local prediction on the client
-========================
-*/
+/**
+ * @brief This is done after each set of usercmd_t on the server,
+ *        and after local prediction on the client
+ */
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap)
 {
 	int i;
@@ -3734,7 +3660,7 @@ weapon_t BG_WeaponForMOD(int MOD)
 {
 	weapon_t i;
 
-	for (i = 0; i < WP_NUM_WEAPONS; i++)
+	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
 		if (GetAmmoTableData(i)->mod == MOD)
 		{
@@ -4396,13 +4322,9 @@ qboolean PC_String_Parse(int handle, const char **out)
 }
 #endif
 
-/*
-=================
-PC_String_ParseNoAlloc
-
-Same as one above, but uses a static buff and not the string memory pool
-=================
-*/
+/**
+ * @brief Same as PC_String_Parse, but uses a static buff and not the string memory pool
+ */
 qboolean PC_String_ParseNoAlloc(int handle, char *out, size_t size)
 {
 	pc_token_t token;
@@ -4566,8 +4488,6 @@ int BG_simpleHintsExpand(int hint, int val)
 }
 #endif
 
-
-
 // Only used locally
 typedef struct
 {
@@ -4674,6 +4594,7 @@ qboolean BG_IsScopedWeapon(int weapon)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
 typedef struct locInfo_s
 {
 	vec2_t gridStartCoord;

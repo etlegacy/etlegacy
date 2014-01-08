@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -3773,9 +3773,9 @@ getAltWeapon
 */
 static int getAltWeapon(int weapnum)
 {
-	if (weapAlts[weapnum])
+	if (weaponTable[weapnum].weapAlts)
 	{
-		return weapAlts[weapnum];
+		return weaponTable[weapnum].weapAlts;
 	}
 
 	return weapnum;
