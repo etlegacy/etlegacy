@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>Wolf ET: Legacy</string>
+	<string>ET: Legacy</string>
 	<key>CFBundleExecutable</key>
 	<string>etl</string>
 	<key>CFBundleGetInfoString</key>

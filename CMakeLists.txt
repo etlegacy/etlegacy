@@ -851,11 +851,11 @@ if(BUILD_CLIENT)
 			
 			# These are vars used in the misc/Info.plist template file
 			# See set_target_properties( ... MACOSX_BUNDLE_INFO_PLIST ...)
-			set(MACOSX_BUNDLE_INFO_STRING            "Wolfenstein Enemy Territory: Legacy")
+			set(MACOSX_BUNDLE_INFO_STRING            "Enemy Territory: Legacy")
 			set(MACOSX_BUNDLE_ICON_FILE              "etl.icns")
 			set(MACOSX_BUNDLE_GUI_IDENTIFIER         "com.etlegacy.etl")
 			set(MACOSX_BUNDLE_LONG_VERSION_STRING    "${ETL_CMAKE_VERSION}")
-			set(MACOSX_BUNDLE_BUNDLE_NAME            "WolfETLegacy")
+			set(MACOSX_BUNDLE_BUNDLE_NAME            "ETLegacy")
 			set(MACOSX_BUNDLE_SHORT_VERSION_STRING   "${ETL_CMAKE_VERSION_SHORT}")
 			set(MACOSX_BUNDLE_COPYRIGHT              "etlegacy.com")
 			
