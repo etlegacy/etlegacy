@@ -2402,8 +2402,7 @@ PM_BeginWeaponReload
 */
 static void PM_BeginWeaponReload(int weapon)
 {
-	gitem_t *item;
-	int     reloadTime;
+	int reloadTime;
 
 	// only allow reload if the weapon isn't already occupied (firing is okay)
 	if (pm->ps->weaponstate != WEAPON_READY && pm->ps->weaponstate != WEAPON_FIRING)
@@ -2447,13 +2446,8 @@ static void PM_BeginWeaponReload(int weapon)
 		break;
 	}
 
-	item = BG_FindItemForWeapon(weapon);
-	if (!item)
-	{
-		return;
-	}
 	// fixing reloading with a full clip
-	if (pm->ps->ammoclip[item->giAmmoIndex] >= GetAmmoTableData(weapon)->maxclip)
+	if (pm->ps->ammoclip[BG_FindAmmoForWeapon(weapon)] >= GetAmmoTableData(weapon)->maxclip)
 	{
 		return;
 	}

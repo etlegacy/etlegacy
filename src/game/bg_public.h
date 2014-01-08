@@ -836,6 +836,9 @@ typedef struct weapontable_s
 	int weapon;               // reference
 	int weapAlts;             // bg
 
+	int ammoIndex;            // bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
+	int clipIndex;            // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
+
 	int damage;               // g
 	float spread;             // g
 	int splashDamage;         // g
@@ -1505,9 +1508,6 @@ typedef struct gitem_s
 	itemType_t giType;          // IT_* flags
 
 	int giTag;
-
-	int giAmmoIndex;            // type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
-	int giClipIndex;            // which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
 } gitem_t;
 
