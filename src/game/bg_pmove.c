@@ -98,11 +98,6 @@ void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags);
 
 #endif
 
-/*
-===============
-PM_AddEvent
-===============
-*/
 void PM_AddEvent(int newEvent)
 {
 	BG_AddPredictableEventToPlayerstate(newEvent, 0, pm->ps);
@@ -126,7 +121,6 @@ int PM_IdleAnimForWeapon(int weapon)
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
 		return WEAP_IDLE2;
-
 	default:
 		return WEAP_IDLE1;
 	}
@@ -239,11 +233,6 @@ int PM_DropAnimForWeapon(int weapon)
 	}
 }
 
-/*
-===============
-PM_AddTouchEnt
-===============
-*/
 void PM_AddTouchEnt(int entityNum)
 {
 	int i;
@@ -271,11 +260,6 @@ void PM_AddTouchEnt(int entityNum)
 	pm->numtouch++;
 }
 
-/*
-==============
-PM_StartWeaponAnim
-==============
-*/
 static void PM_StartWeaponAnim(int anim)
 {
 	if (pm->ps->pm_type >= PM_DEAD)
@@ -314,13 +298,9 @@ void PM_ContinueWeaponAnim(int anim)
 	PM_StartWeaponAnim(anim);
 }
 
-/*
-==================
-PM_ClipVelocity
-
-Slide off of the impacting surface
-==================
-*/
+/**
+ * @brief Slide off of the impacting surface
+ */
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 {
 	float backoff = DotProduct(in, normal);
@@ -339,13 +319,9 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 	out[2] = in[2] - (normal[2] * backoff);
 }
 
-/*
-==================
-PM_TraceAll
-
-finds worst trace of body/legs, for collision.
-==================
-*/
+/**
+ * @brief finds worst trace of body/legs, for collision.
+ */
 void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	trace_t steptrace;
@@ -456,7 +432,9 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 	tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
 }
 
-/* Traces all player bboxes -- body. legs, and head */
+/**
+ * @briefTraces all player bboxes -- body. legs, and head 
+ */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
 	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
@@ -510,13 +488,9 @@ void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end)
 	PM_TraceAllParts(trace, NULL, start, end);
 }
 
-/*
-==================
-PM_Friction
-
-Handles both ground friction and water friction
-==================
-*/
+/**
+ * @brief Handles both ground friction and water friction
+ */
 static void PM_Friction(void)
 {
 	vec3_t vec;
@@ -604,13 +578,9 @@ static void PM_Friction(void)
 	VectorScale(vel, newspeed, vel);
 }
 
-/*
-==============
-PM_Accelerate
-
-Handles user intended acceleration
-==============
-*/
+/**
+ * @brief Handles user intended acceleration
+ */
 static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 {
 	// q2 style
