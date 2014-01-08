@@ -42,8 +42,6 @@
 #include "tr_growlist.h"
 #include "tr_extra.h"
 
-#define RENDERER2C 1
-
 #if 1
 #define GL_INDEX_TYPE       GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;
@@ -1402,6 +1400,7 @@ enum
 
 enum
 {
+	GLSL_BOOL,
 	GLSL_INT,
 	GLSL_FLOAT,
 	GLSL_FLOAT5,
@@ -1560,6 +1559,12 @@ typedef enum
 	UNIFORM_NORMALSCALE,
 	UNIFORM_SHADOWCOMPARE,
 	UNIFORM_ETARATIO,
+
+	//Booleans
+	UNIFORM_B_SHOW_LIGHTMAP,
+	UNIFORM_B_SHOW_DELUXEMAP,
+	UNIFORM_B_NORMALMAP,
+	UNIFORM_B_PARALLAXMAP,
 
 	UNIFORM_COUNT
 } uniform_t;
@@ -4352,6 +4357,7 @@ const char *GetFallbackShader(const char *name);
 //tr_glsl.c
 void GLSL_VertexAttribsState(uint32_t stateBits);
 void GLSL_VertexAttribPointers(uint32_t attribBits);
+void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean value);
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value);
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value);
 void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_t v);

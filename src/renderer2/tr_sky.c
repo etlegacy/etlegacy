@@ -809,16 +809,6 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-#ifndef RENDERER2C
-	gl_genericShader->DisableAlphaTesting();
-	gl_genericShader->DisablePortalClipping();
-	gl_genericShader->DisableVertexSkinning();
-	gl_genericShader->DisableVertexAnimation();
-	gl_genericShader->DisableDeformVertexes();
-	gl_genericShader->DisableTCGenEnvironment();
-
-	gl_genericShader->BindProgram();
-#else
 	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
 	//FIXME: This is false on the c++ but should be isPortal check right?
 	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
@@ -828,14 +818,9 @@ void RB_DrawSun(void)
 	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
 
 	GLSL_SelectPermutation(gl_genericShader);
-#endif
 
 	// set uniforms
-#ifndef RENDERER2C
-	gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
-#else
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
-#endif
 
 	MatrixSetupTranslation(transformMatrix, backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
 	MatrixMultiplyMOD(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
@@ -843,16 +828,10 @@ void RB_DrawSun(void)
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
-#ifndef RENDERER2C
-	gl_genericShader->SetUniform_ModelMatrix(backEnd.orientation.transformMatrix);
-	gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
-	gl_genericShader->SetPortalClipping(backEnd.viewParms.isPortal);
-#else
 	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 	//FIXME: Why would this be here? Select permutation has already been given and no new cmd is given
 	//GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
-#endif
 
 	if (backEnd.viewParms.isPortal)
 	{

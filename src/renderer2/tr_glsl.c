@@ -168,7 +168,15 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_BlurMagnitude",                GLSL_FLOAT    },
 	{ "u_NormalScale",                  GLSL_FLOAT    },
 	{ "u_ShadowCompare",                GLSL_FLOAT    },
-	{ "u_EtaRatio",                     GLSL_VEC3     }
+	{ "u_EtaRatio",                     GLSL_VEC3     },
+
+	//BOOLEANS
+	{ "SHOW_LIGHTMAP",                  GLSL_BOOL     },
+	{ "SHOW_DELUXEMAP",                 GLSL_BOOL     },
+
+	{ "NORMALMAP",                      GLSL_BOOL     },
+	{ "PARALLAXMAP",                    GLSL_BOOL     }
+
 };
 
 typedef struct
@@ -1187,16 +1195,6 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_heatHazeFix\n#define r_heatHazeFix 1\n#endif\n");
 	}
 
-	if (r_showLightMaps->integer)
-	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_showLightMaps\n#define r_showLightMaps 1\n#endif\n");
-	}
-
-	if (r_showDeluxeMaps->integer)
-	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_showDeluxeMaps\n#define r_showDeluxeMaps 1\n#endif\n");
-	}
-
 #ifdef EXPERIMENTAL
 
 	if (r_screenSpaceAmbientOcclusion->integer)
@@ -1642,6 +1640,9 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 		program->uniformBufferOffsets[i] = size;
 		switch (uniformsInfo[i].type)
 		{
+		case GLSL_BOOL:
+			size += sizeof(GLboolean);
+			break;
 		case GLSL_INT:
 			size += sizeof(GLint);
 			break;
@@ -1676,6 +1677,34 @@ void GLSL_FinishGPUShader(shaderProgram_t *program)
 	GLSL_ValidateProgram(program->program);
 	GLSL_ShowProgramUniforms(program->program);
 	GL_CheckErrors();
+}
+
+void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean value)
+{
+	GLint     *uniforms = program->uniforms;
+	GLboolean *compare  = (GLboolean *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
+
+
+	if (uniforms[uniformNum] == -1)
+	{
+		return;
+	}
+
+	if (uniformsInfo[uniformNum].type != GLSL_BOOL)
+	{
+		ri.Printf(PRINT_WARNING, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		return;
+	}
+
+	if (value == *compare)
+	{
+		return;
+	}
+
+	*compare = value;
+
+	qglUniform1iARB(uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)

@@ -1713,8 +1713,8 @@ void R_Register(void)
 	r_showLightGrid            = ri.Cvar_Get("r_showLightGrid", "0", CVAR_CHEAT);
 	r_showOcclusionQueries     = ri.Cvar_Get("r_showOcclusionQueries", "0", CVAR_CHEAT);
 	r_showBatches              = ri.Cvar_Get("r_showBatches", "0", CVAR_CHEAT);
-	r_showLightMaps            = ri.Cvar_Get("r_showLightMaps", "0", CVAR_CHEAT | CVAR_LATCH);
-	r_showDeluxeMaps           = ri.Cvar_Get("r_showDeluxeMaps", "0", CVAR_CHEAT | CVAR_LATCH);
+	r_showLightMaps            = ri.Cvar_Get("r_showLightMaps", "0", CVAR_CHEAT);
+	r_showDeluxeMaps           = ri.Cvar_Get("r_showDeluxeMaps", "0", CVAR_CHEAT);
 	r_showAreaPortals          = ri.Cvar_Get("r_showAreaPortals", "0", CVAR_CHEAT);
 	r_showCubeProbes           = ri.Cvar_Get("r_showCubeProbes", "0", CVAR_CHEAT);
 	r_showBspNodes             = ri.Cvar_Get("r_showBspNodes", "0", CVAR_CHEAT);
