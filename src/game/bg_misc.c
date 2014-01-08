@@ -280,7 +280,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_K43_SCOPE,            WP_K43,                 WP_K43,               WP_K43,               50,  700,  }, // 41
 	{ WP_FG42SCOPE,            WP_FG42,                WP_FG42,              WP_FG42,              30,  200,  }, // 42
 	{ WP_MORTAR_SET,           WP_MORTAR,              WP_MORTAR,            WP_MORTAR,            400, 0,    }, // 43
-	{ WP_MEDIC_ADRENALINE,     WP_NONE,                1,                    0,                    },   // 44
+	{ WP_MEDIC_ADRENALINE,     WP_NONE,                WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     1,   0,    }, // 44
 	{ WP_AKIMBO_SILENCEDCOLT,  WP_NONE,                WP_COLT,              WP_AKIMBO_COLT,       18,  600,  }, // 45
 	{ WP_AKIMBO_SILENCEDLUGER, WP_NONE,                WP_LUGER,             WP_AKIMBO_LUGER,      18,  600,  }, // 46
 	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         WP_MOBILE_MG42,       WP_MOBILE_MG42,       18,  2500, }, // 47
@@ -926,9 +926,8 @@ gitem_t bg_itemlist[] =
 	},
 // removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
 //          by virtue of getting grenade ammo.  So we don't need to have them in maps
-	/*
-	weapon_grenadelauncher
-	*/
+
+	// weapon_grenadelauncher
 	{
 		"weapon_grenadelauncher",
 		"sound/misc/w_pkup.wav",
@@ -944,9 +943,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_GRENADE_LAUNCHER,
 	},
-	/*
-	weapon_grenadePineapple
-	*/
+	// weapon_grenadePineapple
 	{
 		"weapon_grenadepineapple",
 		"sound/misc/w_pkup.wav",
@@ -994,9 +991,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SMOKETRAIL,
 	},
-	/*
-	weapon_medic_heal
-	*/
+	// weapon_medic_heal
 	{
 		"weapon_medic_heal",
 		"sound/misc/w_pkup.wav",
@@ -1012,9 +1007,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MEDKIT,
 	},
-	/*
-	weapon_dynamite
-	*/
+	// weapon_dynamite
 	{
 		"weapon_dynamite",
 		"",
@@ -1049,9 +1042,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_FLAMETHROWER,
 	},
-	/*
-	weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_mapmortar",
 		"sound/misc/w_pkup.wav",
@@ -1067,9 +1058,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MAPMORTAR,
 	},
-	/*
-	weapon_class_special (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_class_special (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_class_special",
 		"sound/misc/w_pkup.wav",
@@ -1085,9 +1074,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_PLIERS,
 	},
-	/*
-	weapon_arty (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_arty (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_arty",
 		"",
@@ -1103,9 +1090,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_ARTY,
 	},
-	/*
-	weapon_medic_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_medic_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_medic_syringe",
 		"",
@@ -1121,9 +1106,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MEDIC_SYRINGE,
 	},
-	/*
-	weapon_medic_adrenaline (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_medic_adrenaline (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_medic_adrenaline",
 		"",
@@ -1139,9 +1122,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MEDIC_ADRENALINE,
 	},
-	/*
-	weapon_magicammo (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_magicammo (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_magicammo",
 		"sound/misc/w_pkup.wav",
@@ -1175,9 +1156,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_AMMO,
 	},
-	/*
-	weapon_binoculars (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_binoculars (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_binoculars",
 		"sound/misc/w_pkup.wav",
@@ -1451,10 +1430,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MORTAR2_SET,
 	},
-
-	/*
-	weapon_landmine
-	*/
+	// weapon_landmine
 	{
 		"weapon_landmine",
 		"",
@@ -1470,9 +1446,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_LANDMINE,
 	},
-	/*
-	weapon_satchel (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-	*/
+	// weapon_satchel (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
 		"weapon_satchel",
 		"",
@@ -1623,9 +1597,7 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SILENCED_COLT,
 	},
-	/*
-	weapon_medic_heal
-	*/
+	// weapon_medic_heal
 	{
 		"weapon_medic_heal",
 		"sound/misc/w_pkup.wav",
@@ -2015,11 +1987,6 @@ gitem_t bg_itemlist[] =
 int bg_numItems     = ARRAY_LEN(bg_itemlist) - 1; // keep in sync with CG_NUM_ITEMS!
 int firstWeaponItem = 9; // bg_itemlist is sorted and weapons start at 9
 
-/*
-===============
-BG_FindItemForWeapon
-===============
-*/
 gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 {
 	gitem_t *it;
@@ -2036,36 +2003,21 @@ gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 	return NULL;
 }
 
-#define DEATHMATCH_SHARED_AMMO 0
-
-/*
-==============
-BG_FindClipForWeapon
-==============
-*/
 weapon_t BG_FindClipForWeapon(weapon_t weapon)
 {
 	// FIXME: check valid weapon?
 	return weaponTable[weapon].clipIndex;
 }
 
-/*
-==============
-BG_FindAmmoForWeapon
-==============
-*/
 weapon_t BG_FindAmmoForWeapon(weapon_t weapon)
 {
 	// FIXME: check valid weapon?
 	return weaponTable[weapon].ammoIndex;
 }
 
-/*
-==============
-BG_AkimboFireSequence
-    returns 'true' if it's the left hand's turn to fire, 'false' if it's the right hand's turn
-==============
-*/
+/**
+ * @return 'true' if it's the left hand's turn to fire, 'false' if it's the right hand's turn
+ */
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip)
 {
 	if (!IS_AKIMBO_WEAPON(weapon))
@@ -2095,11 +2047,6 @@ qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip)
 	return qtrue;
 }
 
-/*
-==============
-BG_AkimboSidearm
-==============
-*/
 // FIXME: weapontable
 int BG_AkimboSidearm(int weaponNum)
 {
@@ -2119,11 +2066,6 @@ int BG_AkimboSidearm(int weaponNum)
 	return WP_NONE;
 }
 
-/*
-===============
-BG_FindItem
-===============
-*/
 gitem_t *BG_FindItem(const char *pickupName)
 {
 	gitem_t *it;
@@ -2154,14 +2096,10 @@ gitem_t *BG_FindItemForClassName(const char *className)
 	return NULL;
 }
 
-/*
-============
-BG_PlayerTouchesItem
-
-Items can be picked up without actually touching their physical bounds to make
-grabbing them easier
-============
-*/
+/**
+ * @brief Items can be picked up without actually touching their physical bounds to make
+ *        grabbing them easier
+ */
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime)
 {
 	vec3_t origin;
@@ -2182,15 +2120,11 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 	return qtrue;
 }
 
-/*
-=================================
-BG_AddMagicAmmo:
-    if numOfClips is 0, no ammo is added, it just return whether any ammo CAN be added;
-    otherwise return whether any ammo was ACTUALLY added.
-
-WARNING: when numOfClips is 0, DO NOT CHANGE ANYTHING under ps.
-=================================
-*/
+/**
+ *  @brief if numOfClips is 0, no ammo is added, it just return whether any ammo CAN be added;
+ *         otherwise return whether any ammo was ACTUALLY added.
+ *         WARNING: when numOfClips is 0, DO NOT CHANGE ANYTHING under ps.
+ */
 int BG_GrenadesForClass(int cls, int *skills)
 {
 	switch (cls)
@@ -2231,7 +2165,9 @@ weapon_t BG_GrenadeTypeForTeam(team_t team)
 	}
 }
 
-// setting numOfClips = 0 allows you to check if the client needs ammo, but doesnt give any
+/**
+ * @brief  setting numOfClips = 0 allows you to check if the client needs ammo, but doesnt give any
+ */
 qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips)
 {
 	int ammoAdded = qfalse;
@@ -2362,16 +2298,10 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 	return ammoAdded;
 }
 
-#define AMMOFORWEAP BG_FindAmmoForWeapon(item->giTag)
-
-/*
-================
-BG_CanItemBeGrabbed
-
-Returns false if the item should not be picked up.
-This needs to be the same for client side prediction and server use.
-================
-*/
+/**
+ * @brief This needs to be the same for client side prediction and server use.
+ * @return false if the item should not be picked up.
+ */
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum)
 {
 	gitem_t *item;
@@ -2535,11 +2465,6 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 	return qtrue;
 }
 
-/*
-================
-BG_RaySphereIntersection
-================
-*/
 qboolean BG_RaySphereIntersection(float radius, vec3_t origin, splineSegment_t *path, float *t0, float *t1)
 {
 	vec3_t v;
@@ -2728,11 +2653,6 @@ void BG_ComputeSegments(splinePath_t *pSpline)
 	}
 }
 
-/*
-================
-BG_EvaluateTrajectory
-================
-*/
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath)
 {
 	float        deltaTime;
@@ -3026,13 +2946,9 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 	}
 }
 
-/*
-================
-BG_EvaluateTrajectoryDelta
-
-For determining velocity at a given time
-================
-*/
+/**
+ * @brief For determining velocity at a given time
+ */
 void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splineData)
 {
 	float deltaTime;
@@ -3076,7 +2992,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		VectorCopy(tr->trDelta, result);
 		result[2] -= (DEFAULT_GRAVITY * 0.2) * deltaTime;
 		break;
-	// RF, acceleration
+	// acceleration
 	case TR_ACCELERATE:     // trDelta is eventual speed
 		if (atTime > tr->trTime + tr->trDuration)
 		{
@@ -3106,15 +3022,12 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 	}
 }
 
-/*
-============
-BG_GetMarkDir
-  used to find a good directional vector for a mark projection, which will be more likely
-  to wrap around adjacent surfaces
-
-  dir is the direction of the projectile or trace that has resulted in a surface being hit
-============
-*/
+/**
+ * @brief used to find a good directional vector for a mark projection, which will be more likely
+ * to wrap around adjacent surfaces
+ *
+ * dir is the direction of the projectile or trace that has resulted in a surface being hit
+ */
 void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 {
 	vec3_t ndir, lnormal;
@@ -3584,11 +3497,6 @@ const char *miniRankNames_Allies[NUM_EXPERIENCE_LEVELS] =
 	"Gen",
 };
 
-/*
-=============
-BG_Find_PathCorner
-=============
-*/
 pathCorner_t *BG_Find_PathCorner(const char *match)
 {
 	int i;
@@ -3604,11 +3512,6 @@ pathCorner_t *BG_Find_PathCorner(const char *match)
 	return NULL;
 }
 
-/*
-=============
-BG_AddPathCorner
-=============
-*/
 void BG_AddPathCorner(const char *name, vec3_t origin)
 {
 	if (numPathCorners >= MAX_PATH_CORNERS)
@@ -3621,11 +3524,6 @@ void BG_AddPathCorner(const char *name, vec3_t origin)
 	numPathCorners++;
 }
 
-/*
-=============
-BG_Find_Spline
-=============
-*/
 splinePath_t *BG_Find_Spline(const char *match)
 {
 	int i;
@@ -3907,11 +3805,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 	}
 }
 
-/*
-================
-BG_AdjustAAGunMuzzleForBarrel
-================
-*/
 void BG_AdjustAAGunMuzzleForBarrel(vec_t *origin, vec_t *forward, vec_t *right, vec_t *up, int barrel)
 {
 	switch (barrel)
@@ -3939,11 +3832,6 @@ void BG_AdjustAAGunMuzzleForBarrel(vec_t *origin, vec_t *forward, vec_t *right, 
 	}
 }
 
-/*
-=================
-PC_SourceWarning
-=================
-*/
 void PC_SourceWarning(int handle, char *format, ...)
 {
 	int         line;
@@ -3962,11 +3850,6 @@ void PC_SourceWarning(int handle, char *format, ...)
 	Com_Printf(S_COLOR_YELLOW "WARNING: %s, line %d: %s\n", filename, line, string);
 }
 
-/*
-=================
-PC_SourceError
-=================
-*/
 void PC_SourceError(int handle, char *format, ...)
 {
 	int         line;
@@ -3989,11 +3872,6 @@ void PC_SourceError(int handle, char *format, ...)
 #endif
 }
 
-/*
-=================
-PC_Float_Parse
-=================
-*/
 qboolean PC_Float_Parse(int handle, float *f)
 {
 	pc_token_t token;
@@ -4027,11 +3905,6 @@ qboolean PC_Float_Parse(int handle, float *f)
 	return qtrue;
 }
 
-/*
-=================
-PC_Color_Parse
-=================
-*/
 qboolean PC_Color_Parse(int handle, vec4_t *c)
 {
 	int   i;
@@ -4048,11 +3921,6 @@ qboolean PC_Color_Parse(int handle, vec4_t *c)
 	return qtrue;
 }
 
-/*
-=================
-PC_Vec_Parse
-=================
-*/
 qboolean PC_Vec_Parse(int handle, vec3_t *c)
 {
 	int   i;
@@ -4069,11 +3937,6 @@ qboolean PC_Vec_Parse(int handle, vec3_t *c)
 	return qtrue;
 }
 
-/*
-=================
-PC_Int_Parse
-=================
-*/
 qboolean PC_Int_Parse(int handle, int *i)
 {
 	pc_token_t token;
@@ -4126,11 +3989,6 @@ const char *PC_String_Parse(int handle)
 
 #else
 
-/*
-=================
-PC_String_Parse
-=================
-*/
 qboolean PC_String_Parse(int handle, const char **out)
 {
 	pc_token_t token;
