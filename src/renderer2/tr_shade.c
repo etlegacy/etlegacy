@@ -128,11 +128,7 @@ static void BindLightMap()
 
 	if (tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements)
 	{
-#if defined(COMPAT_Q3A)
-		lightmap = tr.fatLightmap;
-#else
 		lightmap = (image_t *) Com_GrowListElement(&tr.lightmaps, tess.lightmapNum);
-#endif
 	}
 	else
 	{
