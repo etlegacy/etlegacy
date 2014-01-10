@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -107,7 +107,6 @@ void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *
 	*height = _TRUNC(*top - *bottom);
 	*pitch  = (*width + 3) & - 4;
 }
-
 
 FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 {
@@ -262,6 +261,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 				unsigned char *_dst = dst;
 				unsigned char mask  = 0x80;
 				unsigned char val   = *_src;
+
 				for (j = 0; j < glyph.pitch; j++)
 				{
 					if (mask == 0x80)
@@ -313,8 +313,15 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 		*xOut += scaled_width + 1;
 	}
 
-	ri.Free(bitmap->buffer);
-	ri.Free(bitmap);
+	if (bitmap && bitmap->buffer)
+	{
+		ri.Free(bitmap->buffer);
+	}
+
+	if (bitmap)
+	{
+		ri.Free(bitmap);
+	}
 
 	return &glyph;
 }
@@ -486,7 +493,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	out = (unsigned char *)ri.Z_Malloc(imageSize * imageSize);
 	if (out == NULL)
 	{
-		// FIXME: ri.FS_FreeFile(faceData); ?
+		ri.FS_FreeFile(faceData);
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: ri.Z_Malloc failure during output image creation.\n");
 		return qfalse;
 	}
@@ -496,6 +503,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	for (i = GLYPH_START; i < GLYPH_END; i++)
 	{
+		// FIXME: RE_ConstructGlyphInfo might return NULL and we won't notice that
 		RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
 	}
 
@@ -508,6 +516,13 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	while (i <= GLYPH_END)
 	{
 		glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qfalse);
+
+		// FIXME: glyph might be NULL for various reasons
+		if (!glyph)
+		{
+			//ri.FS_FreeFile(faceData);
+			ri.Printf(PRINT_WARNING, "R_LoadScalableFont: glyph is NULL!\n");
+		}
 
 		if (xOut == -1 || yOut == -1 || i == GLYPH_END)
 		{
@@ -600,6 +615,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	char datName[MAX_QPATH];
 	int  i;
+
 	Com_sprintf(datName, sizeof(datName), "fonts/%s_%i.dat", fontName, pointSize);
 	for (i = 0; i < registeredFontCount; i++)
 	{
