@@ -433,7 +433,7 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 }
 
 /**
- * @briefTraces all player bboxes -- body. legs, and head 
+ * @briefTraces all player bboxes -- body, legs, and head
  */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
@@ -2649,6 +2649,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 			CrossProduct(axis[0], axis[2], axis[1]);
 			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
 		}
+		break;
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
 		if (newweapon == weaponTable[oldweapon].weapAlts)

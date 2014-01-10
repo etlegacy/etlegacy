@@ -2597,20 +2597,19 @@ void CG_Player(centity_t *cent)
 			case ACC_BELT_RIGHT:
 				CG_PositionEntityOnTag(&acc, &body, "tag_bleft", 0, NULL);
 				break;
-
 			case ACC_BELT:
 				CG_PositionEntityOnTag(&acc, &body, "tag_ubelt", 0, NULL);
 				break;
 			case ACC_BACK:
 				CG_PositionEntityOnTag(&acc, &body, "tag_back", 0, NULL);
 				break;
-
 			case ACC_HAT:               // hat
 			case ACC_RANK:
 				if (cent->currentState.eFlags & EF_HEADSHOT)
 				{
 					continue;
 				}
+				break;
 			case ACC_MOUTH2:            // hat2
 			case ACC_MOUTH3:            // hat3
 				if (i == ACC_RANK)
@@ -2621,10 +2620,8 @@ void CG_Player(centity_t *cent)
 					}
 					acc.customShader = rankicons[rank][team == TEAM_AXIS ? 1 : 0][1].shader;
 				}
-
 				CG_PositionEntityOnTag(&acc, &head, "tag_mouth", 0, NULL);
 				break;
-
 			// weapon and weapon2
 			// these are used by characters who have permanent weapons attached to their character in the skin
 			case ACC_WEAPON:        // weap
@@ -2633,7 +2630,6 @@ void CG_Player(centity_t *cent)
 			case ACC_WEAPON2:       // weap2
 				CG_PositionEntityOnTag(&acc, &body, "tag_weapon2", 0, NULL);
 				break;
-
 			default:
 				continue;
 			}

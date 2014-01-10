@@ -77,9 +77,6 @@ static void CG_Obituary(entityState_t *ent)
 	else
 	{
 		ca = &cgs.clientinfo[attacker];
-
-		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
-		strcat(attackerName, S_COLOR_WHITE);
 	}
 
 	Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
@@ -247,6 +244,17 @@ static void CG_Obituary(entityState_t *ent)
 		trap_Print(va("%s %s\n", targetName, message));
 
 		return;
+	}
+
+	// check for double client messages
+	if (!ca)
+	{
+		strcpy(attackerName, "noname");
+	}
+	else
+	{
+		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
+		strcat(attackerName, S_COLOR_WHITE);
 	}
 
 	// check for kill messages from the current clientNum

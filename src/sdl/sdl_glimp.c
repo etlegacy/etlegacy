@@ -1269,6 +1269,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 				{
 					depthbits = 8;
 				}
+				break;
 			case 3:
 				if (stencilbits == 24)
 				{
@@ -1278,6 +1279,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 				{
 					stencilbits = 8;
 				}
+				break;
 			}
 		}
 

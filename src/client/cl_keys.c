@@ -478,7 +478,6 @@ void Field_KeyDownEvent(field_t *edit, int key)
 			        edit->buffer + edit->cursor + 1, len - edit->cursor);
 		}
 		break;
-
 	case K_RIGHTARROW:
 	case K_KP_RIGHTARROW:
 		if (edit->cursor < len)
@@ -486,7 +485,6 @@ void Field_KeyDownEvent(field_t *edit, int key)
 			edit->cursor++;
 		}
 		break;
-
 	case K_LEFTARROW:
 	case K_KP_LEFTARROW:
 		if (edit->cursor > 0)
@@ -497,6 +495,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 	case K_HOME:
 	case K_KP_HOME:
 		edit->cursor = 0;
+		break;
 	case 'a':
 		if (keys[K_CTRL].down)
 		{
@@ -506,6 +505,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 	case K_END:
 	case K_KP_END:
 		edit->cursor = len;
+		break;
 	case 'e':
 		if (keys[K_CTRL].down)
 		{
