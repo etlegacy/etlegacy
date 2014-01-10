@@ -7986,7 +7986,7 @@ cvarTable_t cvarTable[] =
 	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0                              },
 
 	{ &ui_brassTime,                    "cg_brassTime",                        "2500",                       CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "4",                          CVAR_ARCHIVE                   },
+	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "1",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairInfo,            "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairNames,           "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE                   },
