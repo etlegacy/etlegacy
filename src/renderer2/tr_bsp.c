@@ -5840,7 +5840,6 @@ void R_LoadEntities(lump_t *l)
 		if (!Q_stricmp(keyname, "deluxeMapping") && !Q_stricmp(value, "1"))
 		{
 			ri.Printf(PRINT_ALL, "map features directional light mapping\n");
-			ri.Error(ERR_FATAL, "Tulee deluxemap");
 			tr.worldDeluxeMapping = qtrue;
 			continue;
 		}
@@ -5853,7 +5852,6 @@ void R_LoadEntities(lump_t *l)
 		// check for deluxe mapping provided by NetRadiant's q3map2
 		if (!Q_stricmp(keyname, "_q3map2_cmdline"))
 		{
-			ri.Error(ERR_FATAL, "Tulee deluxemap2? %s", value);
 			s = strstr(value, "-deluxe");
 			if (s)
 			{
@@ -5877,13 +5875,7 @@ void R_LoadEntities(lump_t *l)
 			ri.Printf(PRINT_WARNING, "WARNING: expected worldspawn found '%s'\n", value);
 			continue;
 		}
-
-		ri.Printf(PRINT_DEVELOPER, "Tulee keyname: %s\n", keyname);
 	}
-
-	//ri.Error(ERR_FATAL,"JEP");
-	//FIXME: just hacked it
-	tr.worldDeluxeMapping = qtrue;
 
 //  ri.Printf(PRINT_ALL, "-----------\n%s\n----------\n", p);
 
