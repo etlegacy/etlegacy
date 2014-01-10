@@ -2609,9 +2609,6 @@ void CG_Player(centity_t *cent)
 				{
 					continue;
 				}
-				break;
-			case ACC_MOUTH2:            // hat2
-			case ACC_MOUTH3:            // hat3
 				if (i == ACC_RANK)
 				{
 					if (rank <= 0)
@@ -2620,6 +2617,10 @@ void CG_Player(centity_t *cent)
 					}
 					acc.customShader = rankicons[rank][team == TEAM_AXIS ? 1 : 0][1].shader;
 				}
+				CG_PositionEntityOnTag(&acc, &head, "tag_mouth", 0, NULL);
+				break;
+			case ACC_MOUTH2:            // hat2
+			case ACC_MOUTH3:            // hat3
 				CG_PositionEntityOnTag(&acc, &head, "tag_mouth", 0, NULL);
 				break;
 			// weapon and weapon2
