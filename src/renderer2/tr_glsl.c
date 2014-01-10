@@ -539,58 +539,11 @@ programInfo_t *GLSL_FindShader(const char *name)
 
 void GLSL_LoadDefinitions(void)
 {
-	/*
-	char **shaderFiles;
-	char *buffers[MAX_SHADER_DEF_FILES];
-	char *p;
-	int  numShaderFiles;
-	*/
-	//programInfo_t *test;
-	//programInfo_t *test2;
-
 	//FIXME: Also load from external files in the future...
 	//For no just copy the existing data to our searchable string
-	//definitionText = (char *)ri.Hunk_Alloc(strlen(defaultShaderDefinitions) + 1, h_low);
 	definitionText = (char *)Com_Allocate(strlen(defaultShaderDefinitions) * sizeof(char) + 1);
 	Com_Memset(definitionText, '\0', strlen(defaultShaderDefinitions) + 1);
 	Q_strncpyz(definitionText, defaultShaderDefinitions, strlen(defaultShaderDefinitions));
-
-
-	//Test code
-	/*
-	test = GLSL_FindShader("vertexLighting_DBS_entity");
-
-	ri.Printf(PRINT_ALL,"GLGL_LoadDefitionions end Filename %s Vert libs: %s\n",test->filename,test->vertexLibraries);
-
-	test2 = GLSL_FindShader("generic");
-	test = GLSL_FindShader("generic");
-
-	ri.Printf(PRINT_ALL,"GLGL_LoadDefitionions end Filename %s Vert libs: %s\n",test->filename,test->vertexLibraries);
-
-	ri.Error(ERR_FATAL,"GLGL_LoadDefitionions end Filename %s Vert libs: %s",test2->filename,test2->vertexLibraries);
-	*/
-}
-
-void GLSL_TestProgram(programInfo_t *program)
-{
-	int i;
-	if (program->list->permutations <= 0)
-	{
-		ri.Printf(PRINT_DEVELOPER, "No permutations");
-	}
-	for (i = 0; i < program->list->permutations; i++)
-	{
-		shaderProgram_t *prog = &program->list->programs[i];
-		if (!prog || !prog->compiled)
-		{
-			ri.Printf(PRINT_DEVELOPER, "Uncompiled version: %d\n", i);
-			continue;
-		}
-		else
-		{
-			ri.Printf(PRINT_DEVELOPER, "Compiled shader name %s permutation: %d\n", prog->name, i);
-		}
-	}
 }
 
 static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
@@ -2475,10 +2428,10 @@ void GLSL_InitGPUShaders(void)
 	//Load all definitions
 	GLSL_LoadDefinitions();
 
-	gl_genericShader      = GLSL_GetShaderProgram("generic");                    //<-
+	gl_genericShader      = GLSL_GetShaderProgram("generic");
 	gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
 
-	gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");       //<-
+	gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
 
 	gl_vertexLightingShader_DBS_world = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 
@@ -2520,9 +2473,6 @@ void GLSL_InitGPUShaders(void)
 	gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
 	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
-
-	GLSL_TestProgram(gl_genericShader);
-	GLSL_TestProgram(gl_vertexLightingShader_DBS_entity);
 
 	endTime = ri.Milliseconds();
 
