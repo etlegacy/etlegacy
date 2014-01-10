@@ -3850,8 +3850,14 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 		{
 			if (!found)
 			{
-				G_Printf("^1Warning: setstate (%s) called and no entities found\n",
-				         name);
+				// set to debug since some scripts call SetState on game entities
+				// which are not in game at start (f.e. oasis water pump - pump2_sound)
+				// map makers/scripters should run g_scriptDebug 1 anyway
+				// so if this occures on final maps we just ignore it
+				if (g_scriptDebug.integer || g_developer.integer)
+				{
+					G_Printf("^1Warning: setstate (%s) called and no entities found\n", name);
+				}
 			}
 			break;
 		}
