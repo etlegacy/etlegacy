@@ -1291,17 +1291,24 @@ void ClientThink_real(gentity_t *ent)
 			client->ps.pm_type = PM_FREEZE;
 		}
 	}
-	else if (client->noclip)
+	else if (client->noclip) // not clipped
 	{
 		client->ps.pm_type = PM_NOCLIP;
 	}
-	else if (client->ps.stats[STAT_HEALTH] <= 0)
+	else if (client->ps.stats[STAT_HEALTH] <= 0) // dead
 	{
 		client->ps.pm_type = PM_DEAD;
 	}
-	else
+	else // in game
 	{
-		client->ps.pm_type = PM_NORMAL;
+		if (client->freezed)
+		{
+			client->ps.pm_type = PM_FREEZE;
+		}
+		else
+		{
+			client->ps.pm_type = PM_NORMAL;
+		}
 	}
 
 	client->ps.aiState = AISTATE_COMBAT;

@@ -1235,8 +1235,8 @@ void Svcmd_Freeze(void)
 			{
 				continue;
 			}
-			//vic->client->freezed = qtrue;
-			vic->takedamage = qfalse;
+			vic->client->freezed = qtrue;
+			vic->takedamage      = qfalse;
 			count++;
 		}
 		trap_SendServerCommand(-1, va("print \"%d players are frozen.\n\"", count));
@@ -1258,8 +1258,8 @@ void Svcmd_Freeze(void)
 		return;
 	}
 
-	//vic->client->freezed = qtrue;
-	vic->takedamage = qfalse;
+	vic->client->freezed = qtrue;
+	vic->takedamage      = qfalse;
 
 	trap_SendServerCommand(-1, va("print \"^7%s ^7is frozen.\n\"", vic->client->pers.netname));
 
@@ -1300,8 +1300,8 @@ void Svcmd_Unfreeze(void)
 			{
 				continue;
 			}
-			//vic->client->freezed = qfalse;
-			vic->takedamage = qtrue;
+			vic->client->freezed = qfalse;
+			vic->takedamage      = qtrue;
 			count++;
 		}
 		trap_SendServerCommand(-1, va("print \"%d players are unfrozen.\n\"", count));
@@ -1323,8 +1323,8 @@ void Svcmd_Unfreeze(void)
 		return;
 	}
 
-	//vic->client->freezed = qfalse;
-	vic->takedamage = qtrue;
+	vic->client->freezed = qfalse;
+	vic->takedamage      = qtrue;
 
 	trap_SendServerCommand(-1, va("print \"^7%s ^7has been unfrozen.\n\"", vic->client->pers.netname));
 

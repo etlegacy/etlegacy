@@ -47,10 +47,9 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 {
 	gclient_t *cl;
 	int       *p;
-	char      line[MAX_NAME_LENGTH + 10];
-
+	
 	err[0]  = '\0';
-	line[0] = '\0';
+	
 	if (plist[0] == -1)
 	{
 		Q_strcat(err, len, "no connected player by that name or slot #");
@@ -58,6 +57,10 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 	}
 	if (plist[1] != -1)
 	{
+		char line[MAX_NAME_LENGTH + 10];
+		
+		line[0] = '\0';
+		
 		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
 		for (p = plist; *p != -1; p++)
 		{
@@ -1013,7 +1016,12 @@ void Cmd_Kill_f(gentity_t *ent)
 		}
 #endif
 		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\"");
+		return;
+	}
 
+	if (ent->client->freezed)
+	{
+		trap_SendServerCommand(ent - g_entities, "cp \"^9You are frozen - ^3/kill^9 is disabled.\"");
 		return;
 	}
 
@@ -1092,6 +1100,12 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	// see what change is requested
 
 	G_TeamDataForString(s, client - level.clients, &team, &specState, &specClient);
+
+	if (ent->client->freezed)
+	{
+		trap_SendServerCommand( clientNum, "cp \"You are frozen!\n\"" );
+		return qfalse;
+	}
 
 	if (team != TEAM_SPECTATOR)
 	{

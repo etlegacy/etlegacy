@@ -834,6 +834,8 @@ struct gclient_s
 	qboolean hasaward;
 	qboolean wantsscore;
 	qboolean maxlivescalced;
+
+	qboolean freezed; // client is frozen see PM_FREEZE
 };
 
 typedef struct

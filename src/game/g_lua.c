@@ -693,7 +693,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(lasthurt_mod,                   FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.playerStats.suicides,      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(lastKillTime,                   FIELD_INT,         FIELD_FLAG_READONLY),
-
+	_et_gclient_addfield(freezed,                        FIELD_INT,         0),
 	_et_gclient_addfield(ps.eFlags,                      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
