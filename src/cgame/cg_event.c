@@ -59,8 +59,8 @@ static void CG_Obituary(entityState_t *ent)
 	weapon_t     weapon       = ent->weapon;
 	char         *message;
 	char         *message2;
-	char         targetName[32];
-	char         attackerName[32];
+	char         targetName[MAX_NAME_LENGTH];
+	char         attackerName[MAX_NAME_LENGTH];
 	clientInfo_t *ci, *ca;    // ca = attacker
 
 	if (target < 0 || target >= MAX_CLIENTS)
