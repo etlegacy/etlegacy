@@ -164,6 +164,24 @@ into your system path automatically if you select that option during Git install
 If compilation of bundled libraries is aborted for any reason, you will probably need to clean libs/ directory
 and start over. This can be done by executing `git clean -df && git reset --hard HEAD` inside libs/ directory.
 
+
+### Mac OS X
+
+* Building and Installation
+
+In Terminal, run:
+
+    $ ./easybuild.sh
+    $ cd build && make install && cd ../
+
+This will put an 'etlegacy' folder into your user folder.
+
+In the legacy mod folder, the cgame_mac and ui_mac files are redundant since they're in the etl_bin.pk3 and
+will be extracted at runtime, so you can delete those. The client is named etl.app (and can safely be
+renamed), while the dedicated server is just a command-line binary named "etded".
+
+
+
 LICENSE
 =======
 
