@@ -962,11 +962,11 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 
 	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
 	{
-		chatHeight = cg_teamChatHeight.integer;
+		chatHeight = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_HEIGHT : cg_teamChatHeight.integer;
 	}
 	else
 	{
-		chatHeight = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_HEIGHT : cg_teamChatHeight.integer;
+		chatHeight = TEAMCHAT_HEIGHT;
 	}
 
 	if (chatHeight <= 0 || cg_teamChatTime.integer <= 0)
