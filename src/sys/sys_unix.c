@@ -108,7 +108,8 @@ char *Sys_DefaultHomePath(void)
 		{
 			Q_strncpyz(homePath, p, sizeof(homePath));
 #ifdef __APPLE__
-			Q_strcat(homePath, sizeof(homePath), "/Library/Application Support/etlegacy");
+			Q_strncpyz(homePath, OSX_ApplicationSupportPath(), sizeof(homePath));
+			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
 #else
 			Q_strcat(homePath, sizeof(homePath), "/.etlegacy");
 #endif
