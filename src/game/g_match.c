@@ -522,6 +522,8 @@ void G_deleteStats(int nClient)
 	cl->sess.team_damage_given    = 0;
 	cl->sess.team_damage_received = 0;
 	cl->sess.team_kills           = 0;
+	cl->sess.time_axis            = 0;
+	cl->sess.time_allies          = 0;
 
 	memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
@@ -574,7 +576,7 @@ void G_parseStats(char *pszStatsInfo)
 void G_printMatchInfo(gentity_t *ent)
 {
 	int       i, j, cnt = 0, eff;
-	int       tot_kills, tot_deaths, tot_gp, tot_sui, tot_tk, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
+	int       tot_timex, tot_timel, tot_kills, tot_deaths, tot_gp, tot_sui, tot_tk, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 	gclient_t *cl;
 	char      *ref;
 	char      n2[MAX_STRING_CHARS];
@@ -586,6 +588,8 @@ void G_printMatchInfo(gentity_t *ent)
 			continue;
 		}
 
+		tot_timex  = 0;
+		tot_timel  = 0;
 		tot_kills  = 0;
 		tot_deaths = 0;
 		tot_sui    = 0;
@@ -598,8 +602,8 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_xp     = 0;
 
 		CP("sc \"\n\"");
-		CP("sc \"^7TEAM   Player          Kll Dth Sui TK Eff  ^3GP^7    ^2DG    ^1DR  ^6TDG  ^4TDR  ^3Score\n\"");
-		CP("sc \"^7--------------------------------------------------------------------------\n\"");
+		CP("sc \"^7TEAM   Player          ^1TmX ^4TmL ^7Kll Dth Sui  TK Eff  ^3GP^7    ^2DG    ^1DR  ^6TDG  ^4TDR  ^3Score\n\"");
+		CP("sc \"^7-----------------------------------------------------------------------------------\n\"");
 
 		for (j = 0; j < level.numPlayingClients; j++)
 		{
@@ -614,6 +618,8 @@ void G_printMatchInfo(gentity_t *ent)
 			n2[15] = 0;
 
 			ref         = "^7";
+			tot_timex  += cl->sess.time_axis;
+			tot_timel  += cl->sess.time_allies;
 			tot_kills  += cl->sess.kills;
 			tot_deaths += cl->sess.deaths;
 			tot_sui    += cl->sess.suicides;
@@ -640,10 +646,12 @@ void G_printMatchInfo(gentity_t *ent)
 			}
 
 			cnt++;
-			CP(va("sc \"%-10s %s%-15s^3%4d%4d%4d%3d%s%4d^3%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+			CP(va("sc \"%-10s %s%-15s^1%4d^4%4d^3%4d%4d%4d%4d%s%4d^3%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 			      aTeams[i],
 			      ref,
 			      n2,
+			      cl->sess.time_axis / 60000,
+			      cl->sess.time_allies / 60000,
 			      cl->sess.kills,
 			      cl->sess.deaths,
 			      cl->sess.suicides,
@@ -664,10 +672,12 @@ void G_printMatchInfo(gentity_t *ent)
 			eff = 0;
 		}
 
-		CP("sc \"^7--------------------------------------------------------------------------\n\"");
-		CP(va("sc \"%-10s ^5%-15s%4d%4d%4d%3d^5%4d^3%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+		CP("sc \"^7------------------------------------------- ---------------------------------------\n\"");
+		CP(va("sc \"%-10s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d^5%4d^3%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 		      aTeams[i],
 		      "Totals",
+		      tot_timex / 60000,
+		      tot_timel / 60000,
 		      tot_kills,
 		      tot_deaths,
 		      tot_sui,

@@ -39,10 +39,10 @@
 
 /*
 =================
-CG_ParseScores
+CG_ParseScore
 =================
 */
-// NOTE: team doesnt actually signify team, think i was on drugs that day.....
+// NOTE: team doesnt actually signify team
 static void CG_ParseScore(team_t team)
 {
 	int i, j, powerups;

@@ -1715,6 +1715,7 @@ void CG_Debriefing_Startup(void)
 	cgs.dbAccuraciesRecieved        = qfalse;
 	cgs.dbWeaponStatsRecieved       = qfalse;
 	cgs.dbPlayerKillsDeathsRecieved = qfalse;
+	cgs.dbPlayerTimeRecieved        = qfalse;
 
 	cgs.dbLastRequestTime = 0;
 	cgs.dbSelectedClient  = cg.clientNum;
@@ -1774,6 +1775,12 @@ void CG_Debriefing_InfoRequests(void)
 	if (!cgs.dbMapListReceived && cgs.gametype == GT_WOLF_MAPVOTE)
 	{
 		trap_SendClientCommand("immaplist");
+		return;
+	}
+
+	if (!cgs.dbPlayerTimeRecieved)
+	{
+		trap_SendClientCommand("impt");
 		return;
 	}
 
@@ -2150,6 +2157,18 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 	cgs.dbAccuraciesRecieved = qtrue;
 }
 
+void CG_Debriefing_ParsePlayerTime(void)
+{
+	int i;
+
+	for (i = 0; i < cgs.maxclients; i++)
+	{
+		cgs.clientinfo[i].timeAxis   = atoi(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].timeAllies = atoi(CG_Argv(i * 2 + 2));
+	}
+	cgs.dbPlayerTimeRecieved = qtrue;
+}
+
 void CG_Debriefing_ParsePlayerKillsDeaths(void)
 {
 	int i;
@@ -2191,6 +2210,11 @@ qboolean CG_Debriefing_ServerCommand(const char *cmd)
 	else if (!Q_stricmp(cmd, "impkd"))
 	{
 		CG_Debriefing_ParsePlayerKillsDeaths();
+		return qtrue;
+	}
+	else if (!Q_stricmp(cmd, "impt"))
+	{
+		CG_Debriefing_ParsePlayerTime();
 		return qtrue;
 	}
 	// MAPVOTE
@@ -2550,9 +2574,10 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 {
-	score_t *score = NULL;
-	int     i;
-	float   w;
+	clientInfo_t *ci    = CG_Debriefing_GetSelectedClientInfo();
+	score_t      *score = NULL;
+	int          i;
+	float        w;
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
@@ -2570,7 +2595,7 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 	w = CG_Text_Width_Ext("Time: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Time:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i ^9(^1%i^9/^4%i^9)", score->time, ci->timeAxis, ci->timeAllies), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)

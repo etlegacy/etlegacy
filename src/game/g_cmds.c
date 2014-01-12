@@ -263,10 +263,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	}
 	else
 	{
-		//unlagged - true ping
 		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-		//ping = cl->pers.realPing < 999 ? cl->pers.realPing : 999;
-		// en unlagged - true ping
 	}
 
 	if (g_gametype.integer == GT_WOLF_LMS)
@@ -4086,6 +4083,32 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent)
 	trap_SendServerCommand(ent - g_entities, buffer);
 }
 
+void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
+{
+	char buffer[1024];
+	int  i;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	Q_strncpyz(buffer, "impt ", sizeof(buffer));
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (g_entities[i].inuse)
+		{
+			Q_strcat(buffer, sizeof(buffer), va("%i %i ", level.clients[i].sess.time_axis / 60000, level.clients[i].sess.time_allies / 60000));
+		}
+		else
+		{
+			Q_strcat(buffer, sizeof(buffer), "0 0 ");
+		}
+	}
+
+	trap_SendServerCommand(ent - g_entities, buffer);
+}
+
 void G_CalcClientAccuracies(void)
 {
 	int i, j;
@@ -4461,6 +4484,11 @@ void ClientCommand(int clientNum)
 	else if (!Q_stricmp(cmd, "impkd"))
 	{
 		Cmd_IntermissionPlayerKillsDeaths_f(ent);
+		return;
+	}
+	else if (!Q_stricmp(cmd, "impt"))
+	{
+		Cmd_IntermissionPlayerTime_f(ent);
 		return;
 	}
 	else if (!Q_stricmp(cmd, "imwa"))

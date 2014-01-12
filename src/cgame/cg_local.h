@@ -572,6 +572,8 @@ typedef struct clientInfo_s
 	int totalWeapAcc;
 	int kills;
 	int deaths;
+	int timeAxis;
+	int timeAllies;
 
 #ifdef FEATURE_MULTIVIEW
 	// per client MV ps info
@@ -1957,6 +1959,7 @@ typedef struct cgs_s
 	qboolean dbShowing;
 	qboolean dbAccuraciesRecieved;
 	qboolean dbPlayerKillsDeathsRecieved;
+	qboolean dbPlayerTimeRecieved;
 	qboolean dbWeaponStatsRecieved;
 	qboolean dbAwardsParsed;
 	char *dbAwardNames[NUM_ENDGAME_AWARDS];
