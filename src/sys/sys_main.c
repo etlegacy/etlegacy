@@ -640,6 +640,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 
 #ifdef __APPLE__
 	Com_Printf("Sys_LoadDll -> Sys_TryLibraryLoad(%s, %s, %s)... \n", base, gamedir, fname);
+	libHandle = NULL;
 
 	// Incoming is (for example) "cgame_mac"
 	// What we may actually have is:
@@ -656,6 +657,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	// 1: The zipped .bundle package
 	{
 		Com_Printf("-- Trying zipped .bundle... ");
+		fn = FS_BuildOSPath(base, gamedir, fname);
 		if (FS_Unzip(fn, qtrue))
 		{
 			char buffer[MAX_OSPATH];
