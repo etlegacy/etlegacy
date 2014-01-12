@@ -572,6 +572,7 @@ typedef struct clientInfo_s
 	int totalWeapAcc;
 	int kills;
 	int deaths;
+	int suicides;
 	int timeAxis;
 	int timeAllies;
 
