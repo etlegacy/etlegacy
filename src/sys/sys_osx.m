@@ -100,3 +100,17 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 
 	return result;
 }
+
+
+/**
+ * @brief Returns the path to the user's Application Support folder.
+ */
+const char * OSX_ApplicationSupportPath()
+{
+	static const char * path[1024] = {0};
+	const char * tempPath = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) lastObject] UTF8String];
+	Q_strncpyz(path, tempPath, sizeof(path));
+	return path;
+}
+
+

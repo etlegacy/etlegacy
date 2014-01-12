@@ -70,3 +70,7 @@ void Sys_UnloadDll(void *dllHandle);
 void Conbuf_AppendText(const char *msg);
 void Sys_DestroyConsole(void);
 #endif
+
+#ifdef __APPLE__
+const char * OSX_ApplicationSupportPath(void);
+#endif
