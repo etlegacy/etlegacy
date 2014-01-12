@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -178,7 +178,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 {
 	localEntity_t *ex;
 	int           offset;
-	vec3_t        tmpVec, newOrigin;
+	vec3_t        newOrigin;
 
 	if (msec <= 0)
 	{
@@ -191,6 +191,8 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 	ex = CG_AllocLocalEntity();
 	if (isSprite)
 	{
+		vec3_t tmpVec;
+
 		ex->leType = LE_SPRITE_EXPLOSION;
 
 		// randomly rotate sprite orientation
@@ -276,7 +278,6 @@ void CG_AddBloodTrails(vec3_t origin, vec3_t dir, int speed, int duration, int c
 		le->bounceFactor = 0.9;
 	}
 }
-
 
 #define BLOOD_SPURT_COUNT   4
 /*
@@ -419,7 +420,7 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	le->ownerNum = cent->currentState.number;
 
 	// if the player is on fire, then spawn some flaming gibs
-	if (cent && CG_EntOnFire(cent))
+	if (CG_EntOnFire(cent))
 	{
 		le->onFireStart = cent->currentState.onFireStart;
 		le->onFireEnd   = re->fadeEndTime + 1000;
@@ -1512,6 +1513,7 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 		if (cent->miscTime > 0)
 		{
 			smokesprite_t *smokesprite = lastusedsmokesprite;
+
 			while (smokesprite)
 			{
 				if (smokesprite->smokebomb == cent)
@@ -1529,7 +1531,6 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 void CG_AddSmokeSprites(void)
 {
 	smokesprite_t *smokesprite = lastusedsmokesprite;
-	qhandle_t     shader;
 	byte          color[4];
 	polyVert_t    verts[4];
 	vec3_t        top, bottom;
@@ -1629,9 +1630,7 @@ void CG_AddSmokeSprites(void)
 		verts[3].st[1] = 1;
 		memcpy(verts[3].modulate, color, 4);
 
-		shader = cgs.media.smokePuffShader;
-
-		trap_R_AddPolyToScene(shader, 4, verts);
+		trap_R_AddPolyToScene(cgs.media.smokePuffShader, 4, verts);
 
 		smokesprite = smokesprite->prev;
 	}
