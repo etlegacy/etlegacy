@@ -1745,6 +1745,13 @@ enum
 	BAR_BORDER_SMALL   = BIT(9),
 };
 
+typedef struct
+{
+	int fadeTime;
+	int show;
+	int requestTime;
+} objectives_t;
+
 typedef struct location_s
 {
 	int index;
@@ -1912,6 +1919,7 @@ typedef struct cgs_s
 	int game_versioninfo;                               // game base version
 	gameStats_t gamestats;
 	topshotStats_t topshots;
+	objectives_t objectives;
 	qboolean fResize;                                   // MV window "resize" status
 	qboolean fSelect;                                   // MV window "select" status
 	qboolean fKeyPressed[256];                          // Key status to get around console issues

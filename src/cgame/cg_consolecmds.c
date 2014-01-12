@@ -170,6 +170,38 @@ void CG_topshotsUp_f(void)
 	}
 }
 
+void CG_objectivesDown_f(void)
+{
+	if (!cg.demoPlayback)
+	{
+		if (cgs.objectives.show == SHOW_SHUTDOWN && cg.time < cgs.objectives.fadeTime)
+		{
+			cgs.objectives.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.objectives.fadeTime;
+		}
+		else if (cgs.objectives.show != SHOW_ON)
+		{
+			cgs.objectives.fadeTime = cg.time + STATS_FADE_TIME;
+		}
+		cgs.objectives.show = SHOW_ON;
+	}
+}
+
+void CG_objectivesUp_f(void)
+{
+	if (cgs.objectives.show == SHOW_ON)
+	{
+		cgs.objectives.show = SHOW_SHUTDOWN;
+		if (cg.time < cgs.objectives.fadeTime)
+		{
+			cgs.objectives.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.objectives.fadeTime;
+		}
+		else
+		{
+			cgs.objectives.fadeTime = cg.time + STATS_FADE_TIME;
+		}
+	}
+}
+
 void CG_ScoresDown_f(void)
 {
 	if (cg.scoresRequestTime + 2000 < cg.time)
@@ -1351,6 +1383,8 @@ static consoleCommand_t commands[] =
 	{ "-stats",              CG_StatsUp_f            },
 	{ "+topshots",           CG_topshotsDown_f       },
 	{ "-topshots",           CG_topshotsUp_f         },
+	{ "+objectives",         CG_objectivesDown_f     },
+	{ "-objectives",         CG_objectivesUp_f       },
 
 	{ "autoRecord",          CG_autoRecord_f         },
 	{ "autoScreenshot",      CG_autoScreenShot_f     },

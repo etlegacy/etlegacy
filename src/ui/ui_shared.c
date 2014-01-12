@@ -5205,6 +5205,7 @@ static bind_t g_bindings[] =
 	{ "+scores",          K_TAB,           -1,  K_TAB,           -1,  -1, -1 },
 	{ "+stats",           K_ALT,           -1,  K_F9,            -1,  -1, -1 },
 	{ "+topshots",        K_CTRL,          -1,  K_F10,           -1,  -1, -1 },
+	{ "+objectives",      'o',             -1,  'o',             -1,  -1, -1 },
 	{ "toggleconsole",    '`',             '~', '`',             '~', -1, -1 },
 	{ "togglemenu",       K_ESCAPE,        -1,  K_ESCAPE,        -1,  -1, -1 },
 	{ "openlimbomenu",    'l',             -1,  'l',             -1,  -1, -1 },

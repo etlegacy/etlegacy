@@ -830,6 +830,445 @@ void CG_TopShotsDraw(void)
 	}
 }
 
+#define OBJ_X   -20     // spacing from right
+#define OBJ_Y   -60     // spacing from bottom
+#define OBJ_W   308
+
+void CG_ObjectivesDraw()
+{
+	const char *cs;
+	char       color[3];
+	int        status;
+
+	if (cgs.objectives.show == SHOW_OFF)
+	{
+		return;
+
+	}
+	else
+	{
+		int  i, x = 640 + OBJ_X - OBJ_W, y = 480, h;
+		int  lines = 0, count = 0;
+		char temp[1024], *s, *p;
+
+		vec4_t bgColor     = COLOR_BG;          // window
+		vec4_t borderColor = COLOR_BORDER;      // window
+
+		vec4_t bgColorTitle     = COLOR_BG_TITLE;   // titlebar
+		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
+
+		// Main header
+		int        hStyle  = ITEM_TEXTSTYLE_SHADOWED;
+		float      hScale  = 0.16f;
+		float      hScaleY = 0.21f;
+		fontInfo_t *hFont  = FONT_HEADER;
+
+		vec4_t hdrColor  = COLOR_HDR;       // text
+		vec4_t hdrColor2 = COLOR_HDR2;      // text
+
+		// Text settings
+		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
+		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
+		float      tScale   = 0.19f;
+		fontInfo_t *tFont   = FONT_TEXT;
+		vec4_t     tColor   = COLOR_TEXT;   // text
+
+		float diff = cgs.objectives.fadeTime - cg.time;
+
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
+		{
+			Q_strncpyz(temp, cg.objMapDescription_Neutral, sizeof(temp));
+			while ((s = strchr(temp, '*')))
+			{
+				*s = '\n';
+			}
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			p = temp;
+			while (*p)
+			{
+				if (*p == '\n')
+				{
+					*p++ = '\0';
+					lines++;
+				}
+				else
+				{
+					p++;
+				}
+			}
+			if (temp[0])
+			{
+				count++;
+			}
+
+			Q_strncpyz(temp, cg.objMapDescription_Allied, sizeof(temp));
+			while ((s = strchr(temp, '*')))
+			{
+				*s = '\n';
+			}
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			p = temp;
+			while (*p)
+			{
+				if (*p == '\n')
+				{
+					*p++ = '\0';
+					lines++;
+				}
+				else
+				{
+					p++;
+				}
+			}
+			if (temp[0])
+			{
+				lines += 1; // Allied
+				count++;
+			}
+
+			Q_strncpyz(temp, cg.objMapDescription_Axis, sizeof(temp));
+			while ((s = strchr(temp, '*')))
+			{
+				*s = '\n';
+			}
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			p = temp;
+			while (*p)
+			{
+				if (*p == '\n')
+				{
+					*p++ = '\0';
+					lines++;
+				}
+				else
+				{
+					p++;
+				}
+			}
+			if (temp[0])
+			{
+				lines += 1; // Axis
+				count++;
+			}
+		}
+		else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
+		{
+			for (i = 0; i < MAX_OBJECTIVES && cg.objDescription_Allied[i][0] ; i++)
+			{
+				Q_strncpyz(temp, cg.objDescription_Allied[i], sizeof(temp));
+				// no double newlines as they make the pop up look really bad
+				while ((s = strstr(temp, "**")))
+				{
+					*s = ' ';
+				}
+				while ((s = strchr(temp, '*')))
+				{
+					*s = '\n';
+				}
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				p = temp;
+				while (*p)
+				{
+					if (*p == '\n')
+					{
+						*p++ = '\0';
+						lines++;
+					}
+					else
+					{
+						p++;
+					}
+				}
+				if (temp[0])
+				{
+					count++;
+				}
+			}
+		}
+		else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
+		{
+			for (i = 0; i < MAX_OBJECTIVES && cg.objDescription_Axis[i][0] ; i++)
+			{
+				Q_strncpyz(temp, cg.objDescription_Axis[i], sizeof(temp));
+				while ((s = strstr(temp, "**")))
+				{
+					*s = ' ';
+				}
+				while ((s = strchr(temp, '*')))
+				{
+					*s = '\n';
+				}
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				p = temp;
+				while (*p)
+				{
+					if (*p == '\n')
+					{
+						*p++ = '\0';
+						lines++;
+					}
+					else
+					{
+						p++;
+					}
+				}
+				if (temp[0])
+				{
+					count++;
+				}
+			}
+		}
+
+		// FIXME: Should compute this beforehand
+		h = 2 + tSpacing + 2 +                                  // Header
+		    1 +
+		    tSpacing * (((lines + count - 1) > 0) ? (lines + count - 1) : 1) +
+		    1 + 2;
+
+		// Fade-in effects
+		if (diff > 0.0f)
+		{
+			float scale = (diff / STATS_FADE_TIME);
+
+			if (cgs.objectives.show == SHOW_ON)
+			{
+				scale = 1.0f - scale;
+			}
+
+			bgColor[3]          *= scale;
+			bgColorTitle[3]     *= scale;
+			borderColor[3]      *= scale;
+			borderColorTitle[3] *= scale;
+			hdrColor[3]         *= scale;
+			hdrColor2[3]        *= scale;
+			tColor[3]           *= scale;
+
+			y += (TS_Y - h) * scale;
+
+		}
+		else if (cgs.objectives.show == SHOW_SHUTDOWN)
+		{
+			cgs.objectives.show = SHOW_OFF;
+			return;
+		}
+		else
+		{
+			y += TS_Y - h;
+		}
+
+		CG_DrawRect(x, y, OBJ_W, h, 1, borderColor);
+		CG_FillRect(x, y, OBJ_W, h, bgColor);
+
+		// Header
+		CG_FillRect(x, y, OBJ_W, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(x, y, OBJ_W, tSpacing + 4, 1, borderColorTitle);
+
+		y += 1;
+		y += tSpacing;
+		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, "OBJECTIVES", 0.0f, 0, hStyle, hFont);
+		y += 4;
+
+		if (!count)
+		{
+			y += tSpacing;
+			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "Unable to load objectives", 0.0f, 0, tStyle, tFont);
+			return;
+		}
+
+		cs = CG_ConfigString(CS_MULTI_OBJECTIVE);
+
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
+		{
+			Q_strncpyz(temp, cg.objMapDescription_Neutral, sizeof(temp));
+			while ((s = strchr(temp, '*')))
+			{
+				*s = '\n';
+			}
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			s = p = temp;
+			while (*p)
+			{
+				if (*p == '\n')
+				{
+					*p++ = '\0';
+					y   += tSpacing;
+					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					s = p;
+				}
+				else
+				{
+					p++;
+				}
+			}
+			if (temp[0] && count > 0)
+			{
+				count--;
+				y += tSpacing;
+			}
+
+			Q_strncpyz(temp, cg.objMapDescription_Allied, sizeof(temp));
+			while ((s = strchr(temp, '*')))
+			{
+				*s = '\n';
+			}
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			y += tSpacing;
+			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^4Allies", 0.0f, 0, tStyle, tFont);
+			s = p = temp;
+			while (*p)
+			{
+				if (*p == '\n')
+				{
+					*p++ = '\0';
+					y   += tSpacing;
+					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					s = p;
+				}
+				else
+				{
+					p++;
+				}
+			}
+			if (temp[0] && count > 0)
+			{
+				count--;
+				y += tSpacing;
+			}
+
+			Q_strncpyz(temp, cg.objMapDescription_Axis, sizeof(temp));
+			while ((s = strchr(temp, '*')))
+			{
+				*s = '\n';
+			}
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			y += tSpacing;
+			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^1Axis", 0.0f, 0, tStyle, tFont);
+			s = p = temp;
+			while (*p)
+			{
+				if (*p == '\n')
+				{
+					*p++ = '\0';
+					y   += tSpacing;
+					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					s = p;
+				}
+				else
+				{
+					p++;
+				}
+			}
+			if (temp[0] && count > 0)
+			{
+				count--;
+				y += tSpacing;
+			}
+		}
+		else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
+		{
+			for (i = 0; i < MAX_OBJECTIVES && cg.objDescription_Allied[i][0] ; i++)
+			{
+				Q_strncpyz(temp, cg.objDescription_Allied[i], sizeof(temp));
+				while ((s = strstr(temp, "**")))
+				{
+					*s = ' ';
+				}
+				while ((s = strchr(temp, '*')))
+				{
+					*s = '\n';
+				}
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+
+				status   = 0;
+				color[0] = '\0';
+				status   = atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
+				if (status == 1)
+				{
+					Q_strncpyz(color, "^2", sizeof(color));
+				}
+				else if (status == 2)
+				{
+					Q_strncpyz(color, "^1", sizeof(color));
+				}
+
+				s = p = temp;
+				while (*p)
+				{
+					if (*p == '\n')
+					{
+						*p++ = '\0';
+						y   += tSpacing;
+						CG_Text_Paint_Ext(x, y, tScale, tScale, tColor,
+						                  va("%s%s", color[0] ? color : "", s),
+						                  0.0f, 0, tStyle, tFont);
+						s = p;
+					}
+					else
+					{
+						p++;
+					}
+				}
+				if (temp[0] && count > 0)
+				{
+					count--;
+					y += tSpacing;
+				}
+			}
+		}
+		else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
+		{
+			for (i = 0; i < MAX_OBJECTIVES && cg.objDescription_Axis[i][0] ; i++)
+			{
+				Q_strncpyz(temp, cg.objDescription_Axis[i], sizeof(temp));
+				while ((s = strstr(temp, "**")))
+				{
+					*s = ' ';
+				}
+				while ((s = strchr(temp, '*')))
+				{
+					*s = '\n';
+				}
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+
+				status   = 0;
+				color[0] = '\0';
+				status   = atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
+				if (status == 1)
+				{
+					Q_strncpyz(color, "^2", sizeof(color));
+				}
+				else if (status == 2)
+				{
+					Q_strncpyz(color, "^1", sizeof(color));
+				}
+
+				s = p = temp;
+				while (*p)
+				{
+					if (*p == '\n')
+					{
+						*p++ = '\0';
+						y   += tSpacing;
+						CG_Text_Paint_Ext(x, y, tScale, tScale, tColor,
+						                  va("%s%s", color[0] ? color : "", s),
+						                  0.0f, 0, tStyle, tFont);
+						s = p;
+					}
+					else
+					{
+						p++;
+					}
+				}
+				if (temp[0] && count > 0)
+				{
+					count--;
+					y += tSpacing;
+				}
+			}
+		}
+	}
+}
+
 #define DH_X    -20     // spacing from right
 #define DH_Y    -60     // spacing from bottom
 #define DH_W    148
@@ -1160,6 +1599,7 @@ void CG_DrawOverlays(void)
 {
 	CG_GameStatsDraw();
 	CG_TopShotsDraw();
+	CG_ObjectivesDraw();
 #ifdef FEATURE_MULTIVIEW
 	CG_SpecHelpDraw();
 #endif
