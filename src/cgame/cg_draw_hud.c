@@ -1089,7 +1089,6 @@ static void CG_DrawPowerUps(rectDef_t rect)
 	playerState_t *ps = &cg.snap->ps;
 
 	// draw treasure icon if we have the flag
-	// rain - #274 - use the playerstate instead of the clientinfo
 	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG])
 	{
 		trap_R_SetColor(NULL);
@@ -1098,6 +1097,8 @@ static void CG_DrawPowerUps(rectDef_t rect)
 	else if (ps->powerups[PW_OPS_DISGUISED])       // Disguised?
 	{
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+		// show the class to the client
+		CG_DrawPic(rect.x + 9, rect.y + 9, 18, 18, cgs.media.skillPics[BG_ClassSkillForClass((cg_entities[ps->clientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 	}
 }
 
