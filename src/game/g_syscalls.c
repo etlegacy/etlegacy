@@ -207,7 +207,7 @@ void trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const v
 		float newMaxZ = ClientHitboxMaxZ(hitEnt);
 
 		hitEnt->r.maxs[2] = newMaxZ;
-		memset(results, 0, sizeof(results));
+		memset(results, 0, sizeof(trace_t));
 		syscall(G_TRACE, results, start, mins, maxs, end, passEntityNum, contentmask);
 		hitEnt->r.maxs[2] = oldMaxZ;
 	}
