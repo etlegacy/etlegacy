@@ -47,9 +47,9 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 {
 	gclient_t *cl;
 	int       *p;
-	
-	err[0]  = '\0';
-	
+
+	err[0] = '\0';
+
 	if (plist[0] == -1)
 	{
 		Q_strcat(err, len, "no connected player by that name or slot #");
@@ -58,9 +58,9 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 	if (plist[1] != -1)
 	{
 		char line[MAX_NAME_LENGTH + 10];
-		
+
 		line[0] = '\0';
-		
+
 		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
 		for (p = plist; *p != -1; p++)
 		{
@@ -299,7 +299,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	            level.sortedClients[i],
 	            totalXP,
 	            ping,
-	            (level.time - cl->pers.enterTime) / 60000,
+	            (level.time - cl->pers.enterTime - (level.time - level.intermissiontime)) / 60000,
 	            g_entities[level.sortedClients[i]].s.powerups,
 	            miscFlags,
 	            respawnsLeft
@@ -1103,7 +1103,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 
 	if (ent->client->freezed)
 	{
-		trap_SendServerCommand( clientNum, "cp \"You are frozen!\n\"" );
+		trap_SendServerCommand(clientNum, "cp \"You are frozen!\n\"");
 		return qfalse;
 	}
 
