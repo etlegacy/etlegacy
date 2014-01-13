@@ -1065,7 +1065,7 @@ void CG_ObjectivesDraw()
 
 		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, "OBJECTIVES", 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("OBJECTIVES"), 0.0f, 0, hStyle, hFont);
 		y += 4;
 
 		if (!count)
