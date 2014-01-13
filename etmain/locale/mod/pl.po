@@ -4370,3 +4370,21 @@ msgstr "Slot 8 - Lornetka:"
 
 msgid "Remy 'Spyhawk' M. - Coding, mod development"
 msgstr "Remy 'Spyhawk' M. - Programowanie, wydawca moda"
+
+msgid "died"
+msgstr "zginal"
+
+#: src/cgame/cg_draw.c:2250
+#, c-format
+msgid "Press %s to follow previous player"
+msgstr "Nacisnij %s aby obserwowac poprzedniego gracza"
+
+msgid "^9You are frozen - ^3/kill^9 is disabled."
+msgstr "^9Jestes zamrozony - ^3/kill^9 jest wylaczone."
+
+msgid "Objectives:"
+msgstr "Cele:"
+
+#: src/cgame/cg_info.c:1068
+msgid "OBJECTIVES"
+msgstr "CELE"

@@ -4309,3 +4309,21 @@ msgstr ""
 
 msgid "Remy 'Spyhawk' M. - Coding, mod development"
 msgstr ""
+
+msgid "died"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2250
+#, c-format
+msgid "Press %s to follow previous player"
+msgstr ""
+
+msgid "^9You are frozen - ^3/kill^9 is disabled."
+msgstr ""
+
+msgid "Objectives:"
+msgstr ""
+
+#: src/cgame/cg_info.c:1068
+msgid "OBJECTIVES"
+msgstr ""
