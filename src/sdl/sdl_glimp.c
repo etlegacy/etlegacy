@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -182,11 +182,6 @@ cvar_t *r_allowResize; // make window resizable
 cvar_t *r_centerWindow;
 cvar_t *r_sdlDriver;
 
-/*
-===============
-GLimp_Shutdown
-===============
-*/
 void GLimp_Shutdown(void)
 {
 	ri.IN_Shutdown();
@@ -261,11 +256,6 @@ static int GLimp_CompareModes(const void *a, const void *b)
 }
 */
 
-/*
-===============
-GLimp_DetectAvailableModes
-===============
-*/
 static void GLimp_DetectAvailableModes(void)
 {
 	char     buf[MAX_STRING_CHARS] = { 0 };
@@ -407,7 +397,6 @@ static qboolean GLimp_InitOpenGL3xContext()
 	}
 
 #elif defined(__linux__)
-
 	if (GLXEW_ARB_create_context_profile)
 	{
 		int         numAttribs = 0;
@@ -517,10 +506,9 @@ static qboolean GLimp_InitOpenGL3xContext()
 	"machine since it is missing one or more required OpenGL "                             \
 	"extensions. Please update your video card drivers and try again.\n"
 
-static void GLimp_XreaLInitExtensions(void)
+static void GLimp_InitExtensions2(void)
 {
-	qboolean good;
-	char     missingExts[4096];
+	char missingExts[4096];
 
 	ri.Printf(PRINT_ALL, "Initializing OpenGL extensions\n");
 
@@ -533,22 +521,16 @@ static void GLimp_XreaLInitExtensions(void)
 
 			if (glConfig.maxActiveTextures > 1)
 			{
-				good = qtrue;
-
 				ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_multitexture\n");
 			}
 			else
 			{
-				good = qfalse;
-
 				Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_multitexture\n");
 				ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture, < 2 texture units");
 			}
 		}
 		else
 		{
-			good = qfalse;
-
 			Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_multitexture\n");
 			ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture");
 		}
@@ -557,14 +539,10 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_ARB_depth_texture
 	if (GLEW_ARB_depth_texture)
 	{
-		good = qtrue;
-
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_depth_texture\n");
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_depth_texture\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_depth_texture");
 	}
@@ -572,15 +550,11 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_ARB_texture_cube_map
 	if (GLEW_ARB_texture_cube_map)
 	{
-		good = qtrue;
-
 		glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &glConfig2.maxCubeMapTextureSize);
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_texture_cube_map\n");
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_texture_cube_map\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_texture_cube_map");
 	}
@@ -589,14 +563,10 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_ARB_vertex_program
 	if (GLEW_ARB_vertex_program)
 	{
-		good = qtrue;
-
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_vertex_program\n");
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_vertex_program\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_program");
 	}
@@ -604,14 +574,10 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_ARB_vertex_buffer_object
 	if (GLEW_ARB_vertex_buffer_object)
 	{
-		good = qtrue;
-
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_vertex_buffer_object\n");
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_vertex_buffer_object\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_buffer_object");
 	}
@@ -641,14 +607,10 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_ARB_shader_objects
 	if (GLEW_ARB_shader_objects)
 	{
-		good = qtrue;
-
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_shader_objects\n");
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_shader_objects\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shader_objects");
 	}
@@ -657,7 +619,6 @@ static void GLimp_XreaLInitExtensions(void)
 	if (GLEW_ARB_vertex_shader)
 	{
 		int reservedComponents;
-		good = qtrue;
 
 		GL_CheckErrors();
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB, &glConfig2.maxVertexUniforms); GL_CheckErrors();
@@ -684,8 +645,6 @@ static void GLimp_XreaLInitExtensions(void)
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_vertex_shader\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_shader");
 	}
@@ -694,14 +653,10 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_ARB_fragment_shader
 	if (GLEW_ARB_fragment_shader)
 	{
-		good = qtrue;
-
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_fragment_shader\n");
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_fragment_shader\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_fragment_shader");
 	}
@@ -709,16 +664,12 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_ARB_shading_language_100
 	if (GLEW_ARB_shading_language_100)
 	{
-		good = qtrue;
-
 		Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig2.shadingLanguageVersion));
 		sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
 		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_shading_language_100\n");
 	}
 	else
 	{
-		good = qfalse;
-
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_shading_language_100\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shading_language_100");
 	}
@@ -1110,11 +1061,6 @@ static void GLimp_XreaLInitExtensions(void)
 }
 #endif
 
-/*
-===============
-GLimp_SetMode
-===============
-*/
 static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
 	int         sdlcolorbits;
@@ -1269,7 +1215,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 				{
 					depthbits = 8;
 				}
-			case 3:
+			case 3: // fall through
 				if (stencilbits == 24)
 				{
 					stencilbits = 16;
@@ -1462,11 +1408,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	return RSERR_OK;
 }
 
-/*
-===============
-GLimp_StartDriverAndSetMode
-===============
-*/
 static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
 	rserr_t err;
@@ -1522,11 +1463,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 }
 
 #ifndef FEATURE_RENDERER2
-/*
-===============
-GLimp_InitExtensions
-===============
-*/
+
 static void GLimp_InitExtensions(void)
 {
 	if (!r_allowExtensions->integer)
@@ -1862,10 +1799,10 @@ success:
 
 #ifdef FEATURE_RENDERER2
 	GLimp_SetHardware();
-	GLimp_XreaLInitExtensions();
+	GLimp_InitExtensions2(); // renderer2
 #else
 	// initialize extensions
-	GLimp_InitExtensions();
+	GLimp_InitExtensions(); // vanilla renderer
 #endif
 
 	ri.Cvar_Get("r_availableModes", "", CVAR_ROM);
@@ -1874,13 +1811,9 @@ success:
 	ri.IN_Init();
 }
 
-/*
-===============
-GLimp_EndFrame
-
-Responsible for doing a swapbuffers
-===============
-*/
+/**
+ * @brief Responsible for doing a swapbuffers
+ */
 void GLimp_EndFrame(void)
 {
 #ifdef FEATURE_RENDERER_GLES
