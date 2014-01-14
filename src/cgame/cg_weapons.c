@@ -594,11 +594,7 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 	{
 		step = 50;
 	}
-	else if (ent->currentState.eType == ET_RAMJET)
-	{
-		step = 10;
-	}
-	else
+	else // ent->currentState.eType == ET_RAMJET & others
 	{
 		step = 10;
 	}
@@ -3251,7 +3247,6 @@ void CG_AddViewWeapon(playerState_t *ps)
 	vec3_t       angles;
 	vec3_t       gunoff;
 	weaponInfo_t *weapon;
-	float        lengthscale;
 
 	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -3410,6 +3405,8 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 	if (ps->weapon > WP_NONE)
 	{
+		float lengthscale;
+
 		weapon = &cg_weapons[ps->weapon];
 
 		memset(&hand, 0, sizeof(hand));
