@@ -433,7 +433,7 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 }
 
 /**
- * @briefTraces all player bboxes -- body, legs, and head
+ * @brief Traces all player bboxes -- body, legs, and head
  */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
@@ -4412,14 +4412,14 @@ static void PM_Weapon(void)
 	if (pm->ps->weapon)
 	{
 		int      ammoAvailable;
-		qboolean reloading, playswitchsound = qtrue;
 
 		ammoAvailable = PM_WeaponAmmoAvailable(pm->ps->weapon);
 
 		if (ammoNeeded > ammoAvailable)
 		{
+			qboolean playswitchsound = qtrue;
 			// you have ammo for this, just not in the clip
-			reloading = (qboolean)(ammoNeeded <= pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)]);
+			qboolean reloading = (qboolean)(ammoNeeded <= pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)]);
 
 			// if not in auto-reload mode, and reload was not explicitely requested, just play the 'out of ammo' sound
 			if (!pm->pmext->bAutoReload && IS_AUTORELOAD_WEAPON(pm->ps->weapon) && !(pm->cmd.wbuttons & WBUTTON_RELOAD))

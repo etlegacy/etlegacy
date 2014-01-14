@@ -1660,6 +1660,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		return;
 	}
 
+	// FIXME: do a switch
 	if (ent->moverState == MOVER_POS1)
 	{
 		// start moving 50 msec later, becase if this was player
