@@ -1714,7 +1714,6 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 {
 	char     *s;
 	qtime_t  time;
-	qboolean pmtime = qfalse;
 	vec4_t   color  = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int      tens;
 	char     *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
@@ -1764,7 +1763,9 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 	if (cg_drawTime.integer & LOCALTIME_ON)
 	{
-		//Fetch the local time
+		qboolean pmtime = qfalse;
+
+		// Fetch the local time
 		trap_RealTime(&time);
 
 		if (cg_drawTime.integer & LOCALTIME_SECOND)

@@ -838,16 +838,14 @@ void CG_ObjectivesDraw()
 {
 	const char *cs;
 	char       color[3];
-	int        status;
 
 	if (cgs.objectives.show == SHOW_OFF)
 	{
 		return;
-
 	}
 	else
 	{
-		int  i, x = 640 + OBJ_X - OBJ_W, y = 480, h;
+		int  i, status, x = 640 + OBJ_X - OBJ_W, y = 480, h;
 		int  lines = 0, count = 0;
 		char temp[1024], *s, *p;
 
