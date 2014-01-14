@@ -446,7 +446,7 @@ void G_InitWorldSession(void)
 			}
 		}
 
-        // OSP - have to make sure spec locks follow the right teams
+        // have to make sure spec locks follow the right teams
         if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
         {
             G_swapTeamLocks();

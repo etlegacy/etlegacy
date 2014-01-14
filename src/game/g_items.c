@@ -452,7 +452,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					AddScore(ent->parent, WOLF_AMMO_UP);
 					if (ent->parent && ent->parent->client)
 					{
-						G_LogPrintf("Ammo_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));    // OSP
+						G_LogPrintf("Ammo_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));
 					}
 				}
 				ent->parent->client->PCSpecialPickedUpCount++;

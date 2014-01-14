@@ -1545,12 +1545,6 @@ int Team_ClassForString(char *string)
 	return -1;
 }
 
-/*
-===============================================================================
-OSP
-===============================================================================
-*/
-
 char      *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^4Allies^7", "Spectators" };
 team_info teamInfo[TEAM_NUM_TEAMS];
 

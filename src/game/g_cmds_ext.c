@@ -57,8 +57,8 @@ static const cmd_reference_t aCommandInfo[] =
 {
 	{ "+stats",         qtrue,  qtrue,  NULL,                  ":^7 HUD overlay showing current weapon stats info"                                          },
 	{ "+topshots",      qtrue,  qtrue,  NULL,                  ":^7 HUD overlay showing current top accuracies of all players"                              },
-	{ "+objectives",    qtrue,  qtrue,  NULL,                  ":^7 HUD overlay showing current objectives info"                              },
-	{ "?",              qtrue,  qtrue,  G_commands_cmd,        ":^7 Gives a list of OSP-specific commands"                                                  },
+	{ "+objectives",    qtrue,  qtrue,  NULL,                  ":^7 HUD overlay showing current objectives info"                                            },
+	{ "?",              qtrue,  qtrue,  G_commands_cmd,        ":^7 Gives a list of commands"                                                               },
 	{ "autorecord",     qtrue,  qtrue,  NULL,                  ":^7 Creates a demo with a consistent naming scheme"                                         },
 	{ "autoscreenshot", qtrue,  qtrue,  NULL,                  ":^7 Creates a screenshot with a consistent naming scheme"                                   },
 	{ "bottomshots",    qtrue,  qfalse, G_weaponRankings_cmd,  ":^7 Shows WORST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
@@ -67,7 +67,7 @@ static const cmd_reference_t aCommandInfo[] =
 //  { "coachdecline",   qtrue,  qtrue,  NULL, ":^7 Declines coach invitation or resigns coach status" },
 //  { "coachinvite",    qtrue,  qtrue,  NULL, " <player_ID>:^7 Invites a player to coach team" },
 //  { "coachkick",      qtrue,  qtrue,  NULL, " <player_ID>:^7 Kicks active coach from team" },
-	{ "commands",       qtrue,  qtrue,  G_commands_cmd,        ":^7 Gives a list of OSP-specific commands"                                                  },
+	{ "commands",       qtrue,  qtrue,  G_commands_cmd,        ":^7 Gives a list of commands"                                                               },
 	{ "currenttime",    qtrue,  qtrue,  NULL,                  ":^7 Displays current local time"                                                            },
 	{ "follow",         qfalse, qtrue,  Cmd_Follow_f,          " <player_ID|allies|axis>:^7 Spectates a particular player or team"                          },
 //  { "invite",         qtrue,  qtrue,  NULL, " <player_ID>:^7 Invites a player to join a team" },
@@ -112,7 +112,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ 0,                qfalse, qtrue,  NULL,                  0                                                                                            }
 };
 
-// OSP-specific Commands
+// Commands
 qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime)
 {
 	unsigned int          i, cCommands = sizeof(aCommandInfo) / sizeof(aCommandInfo[0]);
@@ -199,7 +199,7 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		return;
 	}
 
-	CP("print \"^5\nAvailable OSP Game-Commands:\n----------------------------\n\"");
+	CP("print \"^5\nAvailable Game Commands:\n------------------------\n\"");
 	for (i = 0; i < rows; i++)
 	{
 		if (i + rows * 3 + 1 <= num_cmds)
@@ -228,8 +228,6 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	CP("print \"\nType: ^3\\command_name ?^7 for more information\n\"");
 }
 
-// ************** LOCK / UNLOCK
-//
 // Locks/unlocks a player's team.
 void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
@@ -266,8 +264,6 @@ void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-// ************** PAUSE / UNPAUSE
-//
 // Pause/unpause a match.
 void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 {
@@ -334,8 +330,6 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 	}
 }
 
-// ************** PLAYERS
-//
 // Show client info
 void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
@@ -492,9 +486,6 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	}
 }
 
-
-// ************** READY / NOTREADY
-//
 // Sets a player's "ready" status.
 void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 {
@@ -557,24 +548,18 @@ void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 	G_readyMatchState();
 }
 
-// ************** SAY_TEAMNL
-//
 // Team chat w/no location info
 void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	Cmd_Say_f(ent, SAY_TEAMNL, qfalse);
 }
 
-// ************** SCORES
-//
 // Shows match stats to the requesting client.
 void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	G_printMatchInfo(ent);
 }
 
-// ************** SPECINVITE
-//
 // Sends an invitation to a player to spectate a team.
 void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
@@ -639,8 +624,6 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-// ************** SPECLOCK / SPECUNLOCK
-//
 // Locks/unlocks a player's team from spectators.
 void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
@@ -680,16 +663,12 @@ void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-// ************** WEAPONSTATS
-//
 // Shows a player's stats to the requesting client.
 void G_weaponStats_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
 	G_statsPrint(ent, 0);
 }
 
-// ************** STATSALL
-//
 // Shows all players' stats to the requesting client.
 void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
@@ -707,8 +686,6 @@ void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 	}
 }
 
-// ************** TEAMREADY
-//
 // Sets a player's team "ready" status.
 void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 {
@@ -786,8 +763,6 @@ const unsigned int cQualifyingShots[WS_MAX] =
 	30,     // 25 WS_K43
 };
 
-// ************** TOPSHOTS/BOTTOMSHOTS
-//
 // Gives back overall or specific weapon rankings
 int QDECL SortStats(const void *a, const void *b)
 {

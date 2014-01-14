@@ -1973,7 +1973,7 @@ typedef enum
 {
 	DP_PAUSEINFO,       // Print current pause info
 	DP_UNPAUSING,       // Print unpause countdown + unpause
-	DP_CONNECTINFO,     // Display OSP info on connect
+	DP_CONNECTINFO,     // Display info on connect
 	DP_MVSPAWN          // Set up MV views for clients who need them
 } enum_t_dp;
 

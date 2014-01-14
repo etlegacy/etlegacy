@@ -51,7 +51,7 @@ typedef struct
 	int cvarFlags;
 	int modificationCount;          // for tracking changes
 	qboolean trackChange;           // track this variable, and announce if changed
-	qboolean fConfigReset;          // OSP: set this var to the default on a config reset
+	qboolean fConfigReset;          // set this var to the default on a config reset
 } cvarTable_t;
 
 gentity_t g_entities[MAX_GENTITIES];
@@ -1627,7 +1627,7 @@ void G_RegisterCvars(void)
 		if (cv->vmCvar)
 		{
 			cv->modificationCount = cv->vmCvar->modificationCount;
-			// OSP - Update vote info for clients, if necessary
+			// update vote info for clients, if necessary
 			G_checkServerToggle(cv->vmCvar);
 		}
 	}
@@ -2667,7 +2667,6 @@ int QDECL SortRanks(const void *a, const void *b)
 	return 0;
 }
 
-// (relatively) sane replacement for OSP's Players_Axis/Players_Allies
 void etpro_PlayerInfo(void)
 {
 	//128 bits
