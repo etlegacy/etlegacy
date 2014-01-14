@@ -4155,8 +4155,8 @@ msgid "\n"
 msgstr ""
 
 msgid "^5\n"
-"Available OSP Game-Commands:\n"
-"----------------------------\n"
+"Available Game Commands:\n"
+"------------------------\n"
 msgstr ""
 
 msgid "\n"
