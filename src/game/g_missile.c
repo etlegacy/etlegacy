@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -275,11 +275,6 @@ Concussive_think
 ==============
 */
 
-/*
-==============
-M_think
-==============
-*/
 void M_think(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -296,26 +291,23 @@ void M_think(gentity_t *ent)
 	if (ent->s.density == 1)
 	{
 		tent->s.origin[2] += 16;
+
+		tent->s.angles2[0] = 16;
 	}
 	else
 	{
 		//tent->s.origin[2]+=32;
 		// Note to self Maxx said to lower the spawn loc for the smoke 16 units
 		tent->s.origin[2] += 16;
+
+		// Note to self Maxx changed this to 24
+		tent->s.angles2[0] = 24;
 	}
 
 	tent->s.time    = 3000;
 	tent->s.time2   = 100;
 	tent->s.density = 0;
-	if (ent->s.density == 1)
-	{
-		tent->s.angles2[0] = 16;
-	}
-	else
-	{
-		// Note to self Maxx changed this to 24
-		tent->s.angles2[0] = 24;
-	}
+
 	tent->s.angles2[1] = 96;
 	tent->s.angles2[2] = 50;
 
