@@ -1308,14 +1308,14 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, button->font->colour,
-			                  va("Last Played             : %s",
-			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? "Never" : va("%d maps ago",
-			                                                                                            cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
+			                  va(CG_TranslateString("Last Played             : %s"),
+			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? CG_TranslateString("Never") : va(CG_TranslateString("%d maps ago"),
+			                                                                                                                cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
 			                  0, 0, 0, button->font->font);
 			y2 += 15;
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, button->font->colour,
-			                  va("Total Accumulated Votes : %d", cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
+			                  va(CG_TranslateString("Total Accumulated Votes : %d"), cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
 			                  0, 0, 0, button->font->font);
 		}
 		CG_Text_Paint_Ext(DB_MAPNAME_X + 12 + cgs.wideXoffset, y, button->font->scalex,
@@ -2575,7 +2575,7 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
 	float        w   = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "ACC:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("ACC:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
@@ -2611,7 +2611,7 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 	}
 
 	w = CG_Text_Width_Ext("Time: ", button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Time:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Time:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i ^9(^1%i^9/^4%i^9)", score->time, ci->timeAxis, ci->timeAllies), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
@@ -2623,7 +2623,7 @@ void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)
 	int          i;
 
 	w = CG_Text_Width_Ext("Medals: ", button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Medals:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Medals:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	x = button->rect.x;
 	for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -2642,7 +2642,7 @@ void CG_Debriefing_PlayerRank_Draw(panel_button_t *button)
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
 	float        w   = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Rank:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Rank:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	if (ci->rank > 0)
 	{
@@ -2762,13 +2762,13 @@ void CG_Debriefing_ChatButton_Draw(panel_button_t *button)
 	switch (cgs.dbChatMode)
 	{
 	case 1:
-		str = "^5TO TEAM";
+		str = (CG_TranslateString("^5TO TEAM"));
 		break;
 	case 2:
-		str = "^3TO FIRETEAM";
+		str = (CG_TranslateString("^3TO FIRETEAM"));
 		break;
 	default:
-		str = "^2TO GLOBAL";
+		str = (CG_TranslateString("^2TO GLOBAL"));
 		break;
 	}
 
@@ -3127,11 +3127,11 @@ const char *CG_Debreifing2_WinStringForTeam(team_t team)
 	switch (team)
 	{
 	case TEAM_ALLIES:
-		return "ALLIES WIN!";
+		return (CG_TranslateString("ALLIES WIN!"));
 	case TEAM_AXIS:
-		return "AXIS WIN!";
+		return (CG_TranslateString("AXIS WIN!"));
 	default:
-		return "IT'S A TIE!";
+		return (CG_TranslateString("IT'S A TIE!"));
 	}
 }
 
@@ -3188,7 +3188,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 	{
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindWinningTeamForMap()), 0, 18, 0.25f, 16);
 
-		s = va("CAMPAIGN STATUS: %s", CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()));
+		s = va(CG_TranslateString("CAMPAIGN STATUS: %s"), CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()));
 		w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y + 16, 0.25f, 0.25f, clrTxtBck, s, 0, 0, 0, &cgs.media.limboFont1);
 	}
@@ -3197,7 +3197,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()), 0, 18, 0.25f, 16);
 	}
 
-	s = va("%i SECS TO NEXT MAP", MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
+	s = va(CG_TranslateString("%i SECS TO NEXT MAP"), MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 	x = button->rect.x + button->rect.w - w - 4;
@@ -3308,7 +3308,7 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 		{
 			CG_FillRect(button->rect.x + 2, button->rect.y + 2, button->rect.w - 4, 12, clrBck);
 		}
-		CG_Text_Paint_Ext(button->rect.x + 4, button->rect.y + 11, 0.19f, 0.19f, clrTxtBck, va("Campaign: %s", cgs.campaignData.campaignName), 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(button->rect.x + 4, button->rect.y + 11, 0.19f, 0.19f, clrTxtBck, va(CG_TranslateString("Campaign: %s"), cgs.campaignData.campaignName), 0, 0, 0, &cgs.media.limboFont2);
 
 		y = button->rect.y + 14;
 		for (i = 0; i < cgs.campaignData.mapCount; i++)
