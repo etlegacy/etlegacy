@@ -4289,15 +4289,6 @@ msgstr ""
 msgid "AutoScreenshots format:"
 msgstr ""
 
-msgid "7Config '%s^7' version '%s'^7 loaded"
-msgstr ""
-
-msgid "^7Config '%s^7' loaded"
-msgstr ""
-
-msgid "^7Config '%s^7' ^1FAILED ^7to load"
-msgstr ""
-
 msgid "Reset Filters"
 msgstr ""
 
@@ -4400,4 +4391,9 @@ msgstr ""
 #: src/cgame/cg_debriefing.c:1312
 #, c-format
 msgid "%d maps ago"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:208
+#, c-format
+msgid "WAITING ON %i %s"
 msgstr ""

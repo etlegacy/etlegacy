@@ -232,7 +232,7 @@ msgstr "OS"
 #: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
 #: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
 msgid "PLAYERS"
-msgstr "GRACZ"
+msgstr "GRACZY"
 
 #: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
 msgid "FIRST BLOOD"
@@ -761,7 +761,7 @@ msgid "GRAPHICS"
 msgstr "GRAFIKA"
 
 msgid "PLAYER"
-msgstr "GRACZE"
+msgstr "GRACZ"
 
 msgid "PHYSICS"
 msgstr "FYZIKA"
@@ -2872,10 +2872,10 @@ msgid "%s^7 has joined the %s^7!"
 msgstr "%s^7 dolaczyl do %s^7!"
 
 msgid "Axis team"
-msgstr "Teamu OSi"
+msgstr "Zespolu OSi"
 
 msgid "Allied team"
-msgstr "Teamu Aliantow"
+msgstr "Zespolu Aliantow"
 
 msgid "Spectators"
 msgstr "Obserwatorow"
@@ -4350,15 +4350,6 @@ msgstr "DZWIEK"
 msgid "AutoScreenshots format:"
 msgstr "Format autoscreena:"
 
-msgid "7Config '%s^7' version '%s'^7 loaded"
-msgstr "7Konfig '%s^7' w wersji '%s'^7 wczytany"
-
-msgid "^7Config '%s^7' loaded"
-msgstr "^7Konfig '%s^7' wczytany"
-
-msgid "^7Config '%s^7' ^1FAILED ^7to load"
-msgstr "^7Konfig '%s^7' ^1PROBLEM ^7z zaladowaniem"
-
 msgid "Reset Filters"
 msgstr "Resetuj Filtry"
 
@@ -4462,3 +4453,8 @@ msgstr "Nigdy"
 #, c-format
 msgid "%d maps ago"
 msgstr "%d map temu"
+
+#: src/cgame/cg_scoreboard.c:208
+#, c-format
+msgid "WAITING ON %i %s"
+msgstr "CZEKAM NA %i %s"
