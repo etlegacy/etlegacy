@@ -4388,3 +4388,77 @@ msgstr "Cele:"
 #: src/cgame/cg_info.c:1068
 msgid "OBJECTIVES"
 msgstr "CELE"
+
+#: src/cgame/cg_debriefing.c:3191
+#, c-format
+msgid "CAMPAIGN STATUS: %s"
+msgstr "STATUS KAMPANI: %s"
+
+#: src/cgame/cg_debriefing.c:3200
+#, c-format
+msgid "%i SECS TO NEXT MAP"
+msgstr "%i SEK DO NAST MAPY"
+
+#: src/cgame/cg_debriefing.c:3130
+msgid "ALLIES WIN!"
+msgstr "ALIANCI WYGRALI!"
+
+#: src/cgame/cg_debriefing.c:3132
+msgid "AXIS WIN!"
+msgstr "OS WYGRALA!"
+
+#: src/cgame/cg_debriefing.c:3134
+msgid "IT'S A TIE!"
+msgstr "REMIS!"
+
+#: src/cgame/cg_debriefing.c:3311
+#, c-format
+msgid "Campaign: %s"
+msgstr "Kampania: %s"
+
+#: src/cgame/cg_debriefing.c:2614
+msgid "Time:"
+msgstr "Czas:"
+
+#: src/cgame/cg_debriefing.c:2626
+msgid "Medals:"
+msgstr "Medale:"
+
+#: src/cgame/cg_debriefing.c:2645
+msgid "Rank:"
+msgstr "Ranga:"
+
+#: src/cgame/cg_debriefing.c:2578
+msgid "ACC:"
+msgstr "CEL:"
+
+#: src/cgame/cg_debriefing.c:2765
+msgid "^5TO TEAM"
+msgstr "^5DO ZESPOLU"
+
+#: src/cgame/cg_debriefing.c:2768
+msgid "^3TO FIRETEAM"
+msgstr "^3DO ODDZIALU"
+
+#: src/cgame/cg_debriefing.c:2771
+msgid "^2TO GLOBAL"
+msgstr "^2DO OGOLNEGO"
+
+#: src/cgame/cg_debriefing.c:1311
+#, c-format
+msgid "Last Played             : %s"
+msgstr "Ostatnio Grana         : %s"
+
+#: src/cgame/cg_debriefing.c:1318
+#, c-format
+msgid "Total Accumulated Votes : %d"
+msgstr "Laczna Ilosc Glosow    : %d"
+
+#: src/cgame/cg_debriefing.c:1312
+msgid "Never"
+msgstr "Nigdy"
+
+#: src/cgame/cg_debriefing.c:1312
+#, c-format
+msgid "%d maps ago"
+msgstr "%d map temu"

@@ -4327,3 +4327,77 @@ msgstr ""
 #: src/cgame/cg_info.c:1068
 msgid "OBJECTIVES"
 msgstr ""
+
+#: src/cgame/cg_debriefing.c:3191
+#, c-format
+msgid "CAMPAIGN STATUS: %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3200
+#, c-format
+msgid "%i SECS TO NEXT MAP"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3130
+msgid "ALLIES WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3132
+msgid "AXIS WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3134
+msgid "IT'S A TIE!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3311
+#, c-format
+msgid "Campaign: %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2614
+msgid "Time:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2626
+msgid "Medals:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2645
+msgid "Rank:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2578
+msgid "ACC:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2765
+msgid "^5TO TEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2768
+msgid "^3TO FIRETEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2771
+msgid "^2TO GLOBAL"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1311
+#, c-format
+msgid "Last Played             : %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1318
+#, c-format
+msgid "Total Accumulated Votes : %d"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1312
+msgid "Never"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1312
+#, c-format
+msgid "%d maps ago"
+msgstr ""
