@@ -770,13 +770,13 @@ msgid "Always Run:"
 msgstr "Zawsze Biegnij:"
 
 msgid "Double-Tap Prone:"
-msgstr "Podwojne Klikniecie do Padania:"
+msgstr "Podwojne Kli. do Padania:"
 
 msgid "WEAPONS"
 msgstr "BRONIE"
 
 msgid "Automatic Reload:"
-msgstr "Atomatyczne Przeladowanie:"
+msgstr "Auto Przeladowanie:"
 
 msgid "Autoswitch:"
 msgstr "Auto-zmiana:"
@@ -797,7 +797,7 @@ msgid "Weapon Cycle for Zoom:"
 msgstr "Kolko myszki dla przyb.:"
 
 msgid "Default Zoom Level:"
-msgstr "Domyslny Poziom Przyblizenia:"
+msgstr "Dom. Poziom Przyblizenia:"
 
 msgid "Zoom Levels:"
 msgstr "Poziom Przyblizenia:"
