@@ -481,11 +481,13 @@ char *G_createStats(gentity_t *refEnt)
 	// Only send these when there are some weaponstats. This is what the client expects.
 	if (dwWeaponMask != 0)
 	{
-		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d",
+		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d %d",
 		                                              refEnt->client->sess.damage_given,
 		                                              refEnt->client->sess.damage_received,
 		                                              refEnt->client->sess.team_damage_given,
-		                                              refEnt->client->sess.team_damage_received));
+		                                              refEnt->client->sess.team_damage_received,
+		                                              refEnt->client->sess.suicides,
+		                                              refEnt->client->sess.team_kills));
 	}
 
 	// Add skillpoints as necessary

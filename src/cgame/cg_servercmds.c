@@ -1989,9 +1989,12 @@ void CG_parseWeaponStatsGS_cmd(void)
 			int dmg_rcvd       = atoi(CG_Argv(iArg++));
 			int team_dmg_given = atoi(CG_Argv(iArg++));
 			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
+			int suicides       = atoi(CG_Argv(iArg++));
+			int team_kills     = atoi(CG_Argv(iArg++));
 
 			Q_strncpyz(gs->strExtra[0], va("Damage Given: %-6d  Team Damage Given: %d", dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[1], va("Damage Recvd: %-6d  Team Damage Recvd: %d", dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[2], va("Suicides: %-2d Team Kills: %d", suicides, team_kills), sizeof(gs->strExtra[0]));
 		}
 	}
 
@@ -2047,7 +2050,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	qboolean     fFull     = (txt_dump != CG_printWindow);
 	qboolean     fHasStats = qfalse;
 	char         strName[MAX_STRING_CHARS];
-	int          atts, deaths, dmg_given, dmg_rcvd, hits, kills, team_dmg_given, team_dmg_rcvd, headshots;
+	int          atts, deaths, dmg_given, dmg_rcvd, hits, kills, team_dmg_given, team_dmg_rcvd, headshots, suicides, team_kills;
 	unsigned int i, iArg = 1;
 	unsigned int nClient      = atoi(CG_Argv(iArg++));
 	unsigned int nRounds      = atoi(CG_Argv(iArg++));
@@ -2126,6 +2129,8 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 			dmg_rcvd       = atoi(CG_Argv(iArg++));
 			team_dmg_given = atoi(CG_Argv(iArg++));
 			team_dmg_rcvd  = atoi(CG_Argv(iArg++));
+			suicides       = atoi(CG_Argv(iArg++));
+			team_kills     = atoi(CG_Argv(iArg++));
 
 			if (!fFull)
 			{
@@ -2138,6 +2143,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 			txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage Given: ^7%d\n", dmg_given, team_dmg_given));
 			txt_dump(va("^3Damage Recvd: ^7%-6d  ^3Team Damage Recvd: ^7%d\n", dmg_rcvd, team_dmg_rcvd));
+			txt_dump(va("^3Suicides: ^7%-2d  ^3Team Kills: ^7%d\n", suicides, team_kills));
 		}
 	}
 

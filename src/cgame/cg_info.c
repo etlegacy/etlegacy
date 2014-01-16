@@ -625,7 +625,7 @@ void CG_GameStatsDraw(void)
 			if (gs->fHasStats)
 			{
 				y += tSpacing;
-				for (i = 0; i < 2; i++)
+				for (i = 0; i < 3; i++)
 				{
 					y += tSpacing;
 					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, gs->strExtra[i], 0.0f, 0, tStyle, tFont);
