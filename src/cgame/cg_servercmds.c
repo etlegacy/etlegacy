@@ -2061,7 +2061,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	qboolean     fFull     = (txt_dump != CG_printWindow);
 	qboolean     fHasStats = qfalse;
 	char         strName[MAX_STRING_CHARS];
-	int          atts, deaths, dmg_given, dmg_rcvd, hits, kills, team_dmg_given, team_dmg_rcvd, headshots, suicides, team_kills;
+	int          atts, deaths, hits, kills, headshots;
 	unsigned int i, iArg = 1;
 	unsigned int nClient      = atoi(CG_Argv(iArg++));
 	unsigned int nRounds      = atoi(CG_Argv(iArg++));
@@ -2139,12 +2139,12 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 		if (fHasStats)
 		{
-			dmg_given      = atoi(CG_Argv(iArg++));
-			dmg_rcvd       = atoi(CG_Argv(iArg++));
-			team_dmg_given = atoi(CG_Argv(iArg++));
-			team_dmg_rcvd  = atoi(CG_Argv(iArg++));
-			suicides       = atoi(CG_Argv(iArg++));
-			team_kills     = atoi(CG_Argv(iArg++));
+			int dmg_given      = atoi(CG_Argv(iArg++));
+			int dmg_rcvd       = atoi(CG_Argv(iArg++));
+			int team_dmg_given = atoi(CG_Argv(iArg++));
+			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
+			int suicides       = atoi(CG_Argv(iArg++));
+			int team_kills     = atoi(CG_Argv(iArg++));
 
 			float htRatio = (totHits == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
 			float hsRatio = (totHeadshots == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
