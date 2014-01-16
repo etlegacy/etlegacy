@@ -2002,10 +2002,10 @@ void CG_parseWeaponStatsGS_cmd(void)
 			float htRatio = (totHits == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
 			float hsRatio = (totHeadshots == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
 
-			Q_strncpyz(gs->strExtra[0], va("Damage Given: %-6d  Team Damage Given: %d", dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[1], va("Damage Recvd: %-6d  Team Damage Recvd: %d", dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[0], va(CG_TranslateString("Damage Given: %-6d  Team Damage Given: %d"), dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[1], va(CG_TranslateString("Damage Recvd: %-6d  Team Damage Recvd: %d"), dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[2], "", sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[3], va("Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f", suicides, team_kills, htRatio, hsRatio), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"), suicides, team_kills, htRatio, hsRatio), sizeof(gs->strExtra[0]));
 		}
 	}
 
