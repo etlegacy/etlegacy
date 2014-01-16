@@ -2785,31 +2785,31 @@ msgid "was perforated by"
 msgstr "zostal podziurawiony przez"
 
 msgid "'s mortar round coming"
-msgstr "'s pocisku mortara"
+msgstr " pocisku mortara"
 
 msgid "'s artillery support"
-msgstr "'s artylerie"
+msgstr " artylerie"
 
 msgid "rediscovered gravity"
 msgstr "ponownie odkryl grawitacje"
 
 msgid "'s Landmine"
-msgstr "'s Miny"
+msgstr " Miny"
 
 msgid "'s Mobile MG42"
-msgstr "'s Mobilne MG42"
+msgstr " Mobilne MG42"
 
 msgid "'s Mobile Browning"
-msgstr "'s Mobilny Browning"
+msgstr " Mobilny Browning"
 
 msgid "'s rifle grenade"
-msgstr "'s granata od rifli"
+msgstr " granatem od rifli"
 
 msgid "'s support fire"
-msgstr "'s ogien wsparcia"
+msgstr " ogien wsparcia"
 
 msgid "'s crew-served MG"
-msgstr "'s serie z MG"
+msgstr " serie z MG"
 
 msgid "was thrown to his doom by"
 msgstr "zostal zepchniety przez"
@@ -2872,7 +2872,7 @@ msgid "%s^7 has joined the %s^7!"
 msgstr "%s^7 dolaczyl do %s^7!"
 
 msgid "Axis team"
-msgstr "Zespolu OSi"
+msgstr "Zespolu Osi"
 
 msgid "Allied team"
 msgstr "Zespolu Aliantow"
