@@ -71,14 +71,15 @@ panel_button_text_t debriefPlayerHeadingSmallerFont =
 	&cgs.media.limboFont2,
 };
 
-#define DB_RANK_X     213 + 4
-#define DB_NAME_X     DB_RANK_X + 28
-#define DB_TIME_X     DB_NAME_X + 168
-#define DB_KILLS_X    DB_TIME_X + 32
-#define DB_DEATHS_X   DB_KILLS_X + 38
-#define DB_SUICIDES_X DB_DEATHS_X + 38
-#define DB_XP_X       DB_SUICIDES_X + 56
-#define DH_HEADING_Y  60
+#define DB_RANK_X      213 + 4
+#define DB_NAME_X      DB_RANK_X + 28
+#define DB_TIME_X      DB_NAME_X + 180
+#define DB_KILLS_X     DB_TIME_X + 24
+#define DB_DEATHS_X    DB_KILLS_X + 24
+#define DB_SUICIDES_X  DB_DEATHS_X + 24
+#define DB_TEAMKILLS_X DB_SUICIDES_X + 24
+#define DB_XP_X        DB_TEAMKILLS_X + 56
+#define DH_HEADING_Y   60
 
 panel_button_t debriefTitleBack =
 {
@@ -495,8 +496,8 @@ panel_button_t debriefHeadingRank =
 {
 	NULL,
 	"Rank",
-	{ DB_RANK_X,               DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_RANK_X,               DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -508,8 +509,8 @@ panel_button_t debriefHeadingName =
 {
 	NULL,
 	"Name",
-	{ DB_NAME_X,               DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_NAME_X,               DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -521,25 +522,12 @@ panel_button_t debriefHeadingTime =
 {
 	NULL,
 	"Time",
-	{ DB_TIME_X,               DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_TIME_X,               DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
-	NULL,
-};
-
-panel_button_t debriefHeadingXP =
-{
-	NULL,
-	"XP",
-	{ DB_XP_X,                 DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
-	CG_DebriefingXPHeader_Draw,
 	NULL,
 };
 
@@ -560,8 +548,8 @@ panel_button_t debriefHeadingDeaths =
 {
 	NULL,
 	"Deaths",
-	{ DB_DEATHS_X,             DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_DEATHS_X,             DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -582,12 +570,38 @@ panel_button_t debriefHeadingSuicides =
 	NULL,
 };
 
+panel_button_t debriefHeadingTeamKills =
+{
+	NULL,
+	"TeamKills",
+	{ DB_TEAMKILLS_X,          DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	&debriefPlayerListFont,    /* font     */
+	NULL,                      /* keyDown  */
+	NULL,                      /* keyUp    */
+	BG_PanelButtonsRender_Text,
+	NULL,
+};
+
+panel_button_t debriefHeadingXP =
+{
+	NULL,
+	"XP",
+	{ DB_XP_X,                 DH_HEADING_Y,       0, 0 },
+	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	&debriefPlayerListFont,    /* font     */
+	NULL,                      /* keyDown  */
+	NULL,                      /* keyUp    */
+	CG_DebriefingXPHeader_Draw,
+	NULL,
+};
+
 panel_button_t debriefPlayerList =
 {
 	NULL,
 	NULL,
-	{ DB_RANK_X,                 DH_HEADING_Y,         SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
-	{ 0,                         0,                    0,                                           0, 0, 0, 0, 0},
+	{ DB_RANK_X,                 DH_HEADING_Y + 8,         SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
+	{ 0,                         0,                        0,                                           0, 0, 0, 0, 0},
 	&debriefPlayerListFont,      /* font     */
 	CG_DebriefingPlayerList_KeyDown, /* keyDown  */
 	NULL,                        /* keyUp    */
@@ -733,8 +747,8 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefTitleWindow,
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
 	&debriefHeadingRank,            &debriefHeadingName,
-	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingSuicides,
-	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,              &debriefPlayerInfoXP,&debriefPlayerInfoACC,
+	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingSuicides,              &debriefHeadingTeamKills,
+	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,    &debriefPlayerInfoACC,
 	&debriefPlayerInfoSkills0,
 	&debriefPlayerInfoSkills1,
 	&debriefPlayerInfoSkills2,
@@ -2104,13 +2118,14 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->kills), 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->deaths), 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_SUICIDES_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->suicides), 0, 0, 0, button->font->font);
-
+			CG_Text_Paint_Ext(DB_TEAMKILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->teamkills), 0, 0, 0, button->font->font);
 		}
 		else
 		{
 			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_SUICIDES_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_TEAMKILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 		}
 
 		y += 12;
@@ -2192,9 +2207,10 @@ void CG_Debriefing_ParsePlayerKillsDeaths(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].kills    = atoi(CG_Argv((i * 3) + 1));
-		cgs.clientinfo[i].deaths   = atoi(CG_Argv((i * 3) + 2));
-		cgs.clientinfo[i].suicides = atoi(CG_Argv((i * 3) + 3));
+		cgs.clientinfo[i].kills     = atoi(CG_Argv((i * 4) + 1));
+		cgs.clientinfo[i].deaths    = atoi(CG_Argv((i * 4) + 2));
+		cgs.clientinfo[i].suicides  = atoi(CG_Argv((i * 4) + 3));
+		cgs.clientinfo[i].teamkills = atoi(CG_Argv((i * 4) + 4));
 	}
 	cgs.dbPlayerKillsDeathsRecieved = qtrue;
 }

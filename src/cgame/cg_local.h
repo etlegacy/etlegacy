@@ -573,6 +573,7 @@ typedef struct clientInfo_s
 	int kills;
 	int deaths;
 	int suicides;
+	int teamkills;
 	int timeAxis;
 	int timeAllies;
 
