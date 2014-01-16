@@ -721,6 +721,19 @@ panel_button_t debriefPlayerInfoACC =
 	NULL,
 };
 
+panel_button_t debriefPlayerInfoHS =
+{
+	NULL,
+	NULL,
+	{ 142,                      126,   0, 0 },
+	{ 0,                        0,     0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,     /* font     */
+	NULL,                       /* keyDown  */
+	NULL,                       /* keyUp    */
+	CG_Debriefing_PlayerHS_Draw,
+	NULL,
+};
+
 #define PLAYERHEADER_SKILLS(number)           \
 	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
@@ -748,7 +761,7 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
 	&debriefHeadingRank,            &debriefHeadingName,
 	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingSuicides,              &debriefHeadingTeamKills,
-	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,    &debriefPlayerInfoACC,
+	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,    &debriefPlayerInfoACC,&debriefPlayerInfoHS,
 	&debriefPlayerInfoSkills0,
 	&debriefPlayerInfoSkills1,
 	&debriefPlayerInfoSkills2,
@@ -2184,7 +2197,8 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].totalWeapAcc = atoi(CG_Argv(i + 1));
+		cgs.clientinfo[i].totalWeapAcc   = atoi(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].totalWeapHSpct = atoi(CG_Argv(i * 2 + 2));
 	}
 	cgs.dbAccuraciesRecieved = qtrue;
 }
@@ -2592,8 +2606,16 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 	float        w   = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("ACC:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+}
+
+void CG_Debriefing_PlayerHS_Draw(panel_button_t *button)
+{
+	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
+	float        w   = CG_Text_Width_Ext("HS: ", button->font->scalex, 0, button->font->font);
+
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("HS:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i%%", ci->totalWeapHSpct), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)

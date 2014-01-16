@@ -535,7 +535,7 @@ void CG_GameStatsDraw(void)
 		    2 + 2 + tSpacing + 2 +                          // Stats columns
 		    1 +                                             // Stats + extra
 		    tSpacing * ((gs->cWeapons > 0) ? gs->cWeapons : 1) +
-		    tSpacing * ((gs->fHasStats) ? 3 : 0) +
+		    tSpacing * ((gs->fHasStats) ? 5 : 0) +
 		    ((cgs.gametype == GT_WOLF_LMS) ? 0 :
 		     (
 		         4 + 2 * tSpacing +                                 // Rank/XP
@@ -625,7 +625,7 @@ void CG_GameStatsDraw(void)
 			if (gs->fHasStats)
 			{
 				y += tSpacing;
-				for (i = 0; i < 3; i++)
+				for (i = 0; i < 4; i++)
 				{
 					y += tSpacing;
 					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, gs->strExtra[i], 0.0f, 0, tStyle, tFont);

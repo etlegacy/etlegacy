@@ -570,6 +570,7 @@ typedef struct clientInfo_s
 
 	// Intermission stats
 	int totalWeapAcc;
+	int totalWeapHSpct;
 	int kills;
 	int deaths;
 	int suicides;
@@ -1676,7 +1677,7 @@ typedef struct cg_weaponstats_s
 typedef struct
 {
 	char strWS[WS_MAX][MAX_STRING_TOKENS];
-	char strExtra[3][MAX_STRING_TOKENS];
+	char strExtra[4][MAX_STRING_TOKENS];
 	char strRank[MAX_STRING_TOKENS];
 	char strSkillz[SK_NUM_SKILLS][MAX_STRING_TOKENS];
 	int cWeapons;
@@ -3289,6 +3290,7 @@ void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
+void CG_Debriefing_PlayerHS_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
 
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button);
