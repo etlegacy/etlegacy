@@ -4397,3 +4397,18 @@ msgstr ""
 #, c-format
 msgid "WAITING ON %i %s"
 msgstr ""
+
+#: src/cgame/cg_servercmds.c:2005
+#, c-format
+msgid "Damage Given: %-6d  Team Damage Given: %d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2006
+#, c-format
+msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2008
+#, c-format
+msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
+msgstr ""
