@@ -3903,10 +3903,10 @@ msgid "^3Insufficient fire support."
 msgstr "^3Niewystarczajacy ogien wsparcia."
 
 msgid "'s tank-mounted browning 30cal"
-msgstr "'s browning 30cal na czolgu"
+msgstr " browning 30cal na czolgu"
 
 msgid "'s grenade"
-msgstr "'s granat"
+msgstr " granat"
 
 msgid "was crushed"
 msgstr "zostal zmiazdzony"
