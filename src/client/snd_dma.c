@@ -164,11 +164,6 @@ static void S_Base_MasterGain(float val)
 }
 #endif
 
-/*
-=================
-S_Base_SoundList
-=================
-*/
 void S_Base_SoundList(void)
 {
 	int   i;
@@ -240,11 +235,9 @@ void S_ChannelSetup(void)
 // Load a sound
 // =======================================================================
 
-/*
-================
-return a hash value for the sfx name
-================
-*/
+/**
+ * @return a hash value for the sfx name
+ */
 static long S_HashSFXName(const char *name)
 {
 	int  i    = 0;
@@ -269,13 +262,9 @@ static long S_HashSFXName(const char *name)
 	return hash;
 }
 
-/*
-==================
-S_FindName
-
-Will allocate a new sfx if it isn't found
-==================
-*/
+/**
+ * @brief Will allocate a new sfx if it isn't found
+ */
 static sfx_t *S_FindName(const char *name)
 {
 	int   i;
@@ -340,13 +329,9 @@ static sfx_t *S_FindName(const char *name)
 	return sfx;
 }
 
-/*
-=================
-S_DefaultSound
-
-@note Unused
-=================
-*/
+/**
+ * @note Unused
+ */
 void S_DefaultSound(sfx_t *sfx)
 {
 	int i;
@@ -361,11 +346,6 @@ void S_DefaultSound(sfx_t *sfx)
 	}
 }
 
-/*
-================
-S_Reload
-================
-*/
 void S_Base_Reload(void)
 {
 	sfx_t *sfx;
@@ -387,28 +367,19 @@ void S_Base_Reload(void)
 	}
 }
 
-/*
-===================
-S_DisableSounds
-
-Disables sounds until the next S_BeginRegistration.
-This is called when the hunk is cleared and the sounds
-are no longer valid.
-===================
-*/
+/**
+ * @brief Disables sounds until the next S_BeginRegistration.
+ *       This is called when the hunk is cleared and the sounds are no longer valid.
+ */
 void S_Base_DisableSounds(void)
 {
 	S_Base_StopAllSounds();
 	s_soundMuted = qtrue;
 }
 
-/*
-==================
-S_RegisterSound
-
-Creates a default buzz sound if the file can't be loaded
-==================
-*/
+/**
+ * @brief Creates a default buzz sound if the file can't be loaded
+ */
 sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 {
 	sfx_t *sfx;
@@ -466,12 +437,6 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 	return sfx - knownSfx;
 }
 
-/*
-=====================
-S_BeginRegistration
-
-=====================
-*/
 void S_Base_BeginRegistration(void)
 {
 	s_soundMuted = qfalse;      // we can play again
@@ -500,13 +465,9 @@ void S_memoryLoad(sfx_t *sfx)
 
 //=============================================================================
 
-/*
-=================
-S_SpatializeOrigin
-
-Used for spatializing s_channels
-=================
-*/
+/**
+ * @brief Used for spatializing s_channels
+ */
 void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right_vol, float range, int no_attenuation)
 {
 	vec_t lscale, rscale;
@@ -710,21 +671,11 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	ch->doppler     = qfalse;
 }
 
-/*
-====================
-S_StartSound
-====================
-*/
 void S_Base_StartSound(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfxHandle, int volume)
 {
 	S_Base_StartSoundEx(origin, entnum, entchannel, sfxHandle, 0, volume);
 }
 
-/*
-==================
-S_StartLocalSound
-==================
-*/
 void S_Base_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume)
 {
 	if (!s_soundStarted || s_soundMuted)
@@ -741,11 +692,6 @@ void S_Base_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume)
 	S_Base_StartSound(NULL, listener_number, channelNum, sfxHandle, volume);
 }
 
-/*
-=================
-S_ClearSounds
-=================
-*/
 void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 {
 	if (!s_soundStarted)
@@ -835,11 +781,6 @@ void S_Base_ClearSoundBuffer(qboolean killStreaming)
 	S_Base_ClearSounds(killStreaming, qtrue);
 }
 
-/*
-==================
-S_StopAllSounds
-==================
-*/
 void S_Base_StopAllSounds(void)
 {
 	if (!s_soundStarted)
@@ -850,12 +791,6 @@ void S_Base_StopAllSounds(void)
 	S_Base_ClearSoundBuffer(qtrue);
 }
 
-/*
-==================
-S_ClearLoopingSounds
-
-==================
-*/
 void S_Base_ClearLoopingSounds(void)
 {
 	int i;
@@ -978,14 +913,10 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 	numLoopSounds++;
 }
 
-/*
-==================
-S_AddLoopingSound
-
-Called during entity generation for a frame
-Include velocity in case I get around to doing doppler...
-==================
-*/
+/**
+ * @brief Called during entity generation for a frame
+ *        Include velocity in case I get around to doing doppler...
+ */
 void S_Base_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfxHandle, int volume, int soundTime)
 {
 	sfx_t *sfx;
@@ -1038,15 +969,11 @@ void S_Base_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int 
 	numLoopSounds++;
 }
 
-/*
-==================
-S_AddLoopSounds
-
-Spatialize all of the looping sounds.
-All sounds are on the same cycle, so any duplicates can just
-sum up the channel multipliers.
-==================
-*/
+/**
+ * @brief Spatialize all of the looping sounds.
+ *        All sounds are on the same cycle, so any duplicates can just
+ *        sum up the channel multipliers.
+ */
 void S_AddLoopSounds(void)
 {
 	int         i, j, time;
@@ -1149,14 +1076,10 @@ void S_AddLoopSounds(void)
 
 //=============================================================================
 
-/*
-=================
-S_ByteSwapRawSamples
-
-If raw data has been loaded in little endien binary form, this must be done.
-If raw data was calculated, as with ADPCM, this should not be called.
-=================
-*/
+/**
+ * @brief If raw data has been loaded in little endien binary form, this must be done.
+ *        If raw data was calculated, as with ADPCM, this should not be called.
+ */
 void S_ByteSwapRawSamples(int samples, int width, int s_channels, const byte *data)
 {
 	int i;
@@ -1305,13 +1228,9 @@ void S_Base_RawSamples(int stream, int samples, int rate, int width, int s_chann
 
 //=============================================================================
 
-/*
-=====================
-S_UpdateEntityPosition
-
-let the sound system know where an entity currently is
-======================
-*/
+/**
+ * @brief let the sound system know where an entity currently is
+ */
 void S_Base_UpdateEntityPosition(int entnum, const vec3_t origin)
 {
 	if (entnum < 0 || entnum >= MAX_GENTITIES)
@@ -1321,13 +1240,9 @@ void S_Base_UpdateEntityPosition(int entnum, const vec3_t origin)
 	VectorCopy(origin, entityPositions[entnum]);
 }
 
-/*
-============
-S_Respatialize
-
-Change the volumes of all the playing sounds for changes in their positions
-============
-*/
+/**
+ * @brief Change the volumes of all the playing sounds for changes in their positions
+ */
 void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwater)
 {
 	int       i;
@@ -1378,13 +1293,9 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
 	S_AddLoopSounds();
 }
 
-/*
-========================
-S_ScanChannelStarts
-
-Returns qtrue if any new sounds were started since the last mix
-========================
-*/
+/**
+ * @return qtrue if any new sounds were started since the last mix
+ */
 static qboolean S_ScanChannelStarts(void)
 {
 	channel_t *ch = s_channels;
@@ -1417,13 +1328,9 @@ static qboolean S_ScanChannelStarts(void)
 	return newSamples;
 }
 
-/*
-============
-S_Update
-
-Called once each time through the main loop
-============
-*/
+/**
+ * @brief Called once each time through the main loop
+ */
 void S_Base_Update(void)
 {
 	if (!s_soundStarted || s_soundMuted)
@@ -1763,29 +1670,19 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 	return (ss->stream->info.samples / (float)ss->stream->info.rate) * 1000.0f;
 }
 
-/*
-==============
-S_StartStreamingSound
-
-==============
-*/
 float S_Base_StartStreamingSound(const char *intro, const char *loop, int entnum, int channel, int attenuation)
 {
 	return S_StartStreamingSoundEx(intro, loop, entnum, channel, qfalse, attenuation);
 }
 
-/*
-==============
-S_FreeStreamingSound
-
-Frees a streaming sound so that it can be used again, but does not terminate the sound.
-==============
-*/
+/**
+ * @brief Frees a streaming sound so that it can be used again, but does not terminate the sound.
+ */
 void S_FreeStreamingSound(int stream)
 {
 	streamingSound_t *ss;
 
-	if (stream < 0 && stream >= MAX_STREAMING_SOUNDS)
+	if (stream < 0 || stream >= MAX_STREAMING_SOUNDS)
 	{
 		return;
 	}
@@ -1804,24 +1701,15 @@ void S_FreeStreamingSound(int stream)
 	ss->queueStreamType = 0;
 }
 
-/*
-==============
-S_StopStreamingSound
-
-Stops a streaming sound completely in its tracks.
-==============
-*/
+/**
+ * @brief Stops a streaming sound completely in its tracks.
+ */
 void S_StopStreamingSound(int stream)
 {
 	S_FreeStreamingSound(stream);
 	s_rawend[RAW_STREAM(stream)] = 0;
 }
 
-/*
-==============
-S_StopEntStreamingSound
-==============
-*/
 void S_Base_StopEntStreamingSound(int entnum)
 {
 	int i;
@@ -1842,11 +1730,6 @@ void S_Base_StopEntStreamingSound(int entnum)
 	}
 }
 
-/*
-==============
-S_FadeAllSounds
-==============
-*/
 void S_Base_FadeAllSounds(float targetVol, int time, qboolean stopsounds)
 {
 	// Because of strange timing issues, sometimes we try to fade up before the fade down completed
@@ -1872,11 +1755,6 @@ void S_Base_FadeAllSounds(float targetVol, int time, qboolean stopsounds)
 	}
 }
 
-/*
-==============
-S_FadeStreamingSound
-==============
-*/
 void S_Base_FadeStreamingSound(float targetVol, int time, int stream)
 {
 	streamingSound_t *ss;
@@ -1915,11 +1793,6 @@ void S_Base_FadeStreamingSound(float targetVol, int time, int stream)
 	ss->fadeTargetVol = targetVol;
 }
 
-/*
-==============
-S_GetStreamingFade
-==============
-*/
 float S_GetStreamingFade(streamingSound_t *ss)
 {
 	float oldfrac, newfrac;
@@ -1941,31 +1814,16 @@ float S_GetStreamingFade(streamingSound_t *ss)
 	return (oldfrac * ss->fadeStartVol) + (newfrac * ss->fadeTargetVol);
 }
 
-/*
-======================
-S_StopBackgroundTrack
-======================
-*/
 void S_Base_StopBackgroundTrack(void)
 {
 	S_StopStreamingSound(0);
 }
 
-/*
-======================
-S_StartBackgroundTrack
-======================
-*/
 void S_Base_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime)
 {
 	S_StartStreamingSoundEx(intro, loop, -1, -1, qtrue, fadeupTime);
 }
 
-/*
-======================
-S_UpdateStreamingSounds
-======================
-*/
 void S_UpdateStreamingSounds(void)
 {
 	int              bufferSamples;
@@ -2121,22 +1979,14 @@ void S_UpdateStreamingSounds(void)
 	}
 }
 
-/*
-======================
-S_GetVoiceAmplitude
-======================
-*/
 int S_Base_GetVoiceAmplitude(int entnum)
 {
 	return 0;
 }
 
-/*
-======================
-S_GetCurrentSoundTime
-Returns how long the sound lasts in milliseconds
-======================
-*/
+/**
+ * @brief Returns how long the sound lasts in milliseconds
+ */
 int S_Base_GetSoundLength(sfxHandle_t sfxHandle)
 {
 	if (sfxHandle < 0 || sfxHandle >= numSfx)
@@ -2147,22 +1997,14 @@ int S_Base_GetSoundLength(sfxHandle_t sfxHandle)
 	return (int)((float)knownSfx[sfxHandle].soundLength / dma.speed * 1000.0);
 }
 
-/*
-======================
-S_GetCurrentSoundTime
-For looped sound synchronisation
-======================
-*/
+/**
+ * @brief For looped sound synchronisation
+ */
 int S_Base_GetCurrentSoundTime(void)
 {
 	return s_soundtime + dma.speed;
 }
 
-/*
-======================
-S_FreeOldestSound
-======================
-*/
 void S_FreeOldestSound(void)
 {
 	int       i, oldest, used = 0;
@@ -2216,11 +2058,6 @@ void S_Base_Shutdown(void)
 	Cmd_RemoveCommand("s_info");
 }
 
-/*
-================
-S_Init
-================
-*/
 qboolean S_Base_Init(soundInterface_t *si)
 {
 	qboolean r;
