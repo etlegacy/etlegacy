@@ -581,10 +581,10 @@ msgid "Axis Spawn Time:"
 msgstr "Czas Odro. Osi:"
 
 msgid "Allied Max Lives:"
-msgstr "Maksymalne Zycia Aliantow:"
+msgstr "Ilosc Zyc Aliantow:"
 
 msgid "Axis Max Lives:"
-msgstr "Maksymalne Zycia OSi:"
+msgstr "Ilosc Zyc OSi:"
 
 msgid "Stopwatch Round-Type:"
 msgstr "Na Czas Typ-Rundy:"
@@ -620,7 +620,7 @@ msgid "VOTING"
 msgstr "GLOSOWANIE"
 
 msgid "Max Votes per Player:"
-msgstr "Max ilosc glosow na Gracza:"
+msgstr "Max glosow na Gracza:"
 
 msgid "Successful voting:"
 msgstr "Sukces glosowania:"
@@ -692,10 +692,10 @@ msgid "Client Downloads:"
 msgstr "Sciag. przez Klienta:"
 
 msgid "Maximum Download Rate:"
-msgstr "Maks Predkosc Sciagania:"
+msgstr "Maks Predkosc Sciag.:"
 
 msgid "FTP/HTTP Redirects:"
-msgstr "Przekierowywanie FTP/HTTP:"
+msgstr "Przekierowy. FTP/HTTP:"
 
 msgid "Base URL:"
 msgstr "Bazwowy URL:"
