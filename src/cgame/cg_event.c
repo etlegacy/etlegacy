@@ -2968,11 +2968,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			CG_ParticleSmoke(cgs.media.smokePuffShaderdirty, cent);
 		}
-		else if (!(cent->currentState.density))
-		{
-			CG_ParticleSmoke(cgs.media.smokePuffShader, cent);
-		}
-		else
+		else // if (!(cent->currentState.density)) & others
 		{
 			CG_ParticleSmoke(cgs.media.smokePuffShader, cent);
 		}

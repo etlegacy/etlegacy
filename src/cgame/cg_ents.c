@@ -67,14 +67,9 @@ void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, cons
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
 }
 
-/*
-======================
-CG_PositionRotatedEntityOnTag
-
-Modifies the entities position and axis by the given
-tag location
-======================
-*/
+/**
+ * @brief Modifies the entities position and axis by the given tag location
+ */
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName)
 {
 	int           i;
@@ -102,13 +97,9 @@ FUNCTIONS CALLED EACH FRAME
 ==========================================================================
 */
 
-/*
-======================
-CG_SetEntitySoundPosition
-
-Also called by event processing code
-======================
-*/
+/**
+ * @brief Also called by event processing code
+ */
 void CG_SetEntitySoundPosition(centity_t *cent)
 {
 	if (cent->currentState.solid == SOLID_BMODEL)
@@ -127,11 +118,6 @@ void CG_SetEntitySoundPosition(centity_t *cent)
 
 #define LS_FRAMETIME 100 // (ms)  cycle through lightstyle characters at 10fps
 
-/*
-==============
-CG_SetDlightIntensity
-==============
-*/
 void CG_AddLightstyle(centity_t *cent)
 {
 	float lightval;
@@ -223,13 +209,9 @@ void CG_AddLightstyle(centity_t *cent)
 
 void CG_GetWindVector(vec3_t dir);
 
-/*
-==================
-CG_EntityEffects
-
-Add continuous entity effects, like local entity emission and lighting
-==================
-*/
+/**
+ * @brief Add continuous entity effects, like local entity emission and lighting
+ */
 static void CG_EntityEffects(centity_t *cent)
 {
 	static vec3_t dir;
@@ -382,11 +364,6 @@ static void CG_EntityEffects(centity_t *cent)
 	}
 }
 
-/*
-==================
-CG_General
-==================
-*/
 static void CG_General(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -588,13 +565,9 @@ static void CG_General(centity_t *cent)
 	memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 }
 
-/*
-==================
-CG_Speaker
-
-Speaker entities can automatically play sounds
-==================
-*/
+/**
+ * @brief Speaker entities can automatically play sounds
+ */
 static void CG_Speaker(centity_t *cent)
 {
 	if (!cent->currentState.clientNum)      // FIXME: use something other than clientNum...
@@ -657,11 +630,6 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	return qtrue;
 }
 
-/*
-==================
-CG_Item
-==================
-*/
 static void CG_Item(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -920,11 +888,6 @@ static void CG_Item(centity_t *cent)
 
 //============================================================================
 
-/*
-===============
-CG_Smoker
-===============
-*/
 static void CG_Smoker(centity_t *cent)
 {
 	// this ent has some special setting up
@@ -950,11 +913,7 @@ static void CG_Smoker(centity_t *cent)
 		{
 			CG_ParticleSmoke(cgs.media.smokePuffShaderdirty, cent);
 		}
-		else if (!(cent->currentState.density))
-		{
-			CG_ParticleSmoke(cgs.media.smokePuffShader, cent);
-		}
-		else
+		else // if (!(cent->currentState.density)) & others
 		{
 			CG_ParticleSmoke(cgs.media.smokePuffShader, cent);
 		}
@@ -963,11 +922,6 @@ static void CG_Smoker(centity_t *cent)
 	cent->lastTrailTime = cg.time;  // time we were last received at the client
 }
 
-/*
-===============
-CG_Missile
-===============
-*/
 static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weaponInfo_t *weapon)
 {
 	entityState_t *s1 = &cent->currentState;
@@ -1302,11 +1256,6 @@ static animation_t multi_flagpoleAnims[] =
 
 extern void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale);
 
-/*
-==============
-CG_TrapSetAnim
-==============
-*/
 static void CG_TrapSetAnim(centity_t *cent, lerpFrame_t *lf, int newAnim)
 {
 	// transition animation
@@ -1375,11 +1324,6 @@ static void CG_Trap(centity_t *cent)
 	memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 }
 
-/*
-==============
-CG_Corona
-==============
-*/
 static void CG_Corona(centity_t *cent)
 {
 	int      r, g, b;
@@ -1439,11 +1383,6 @@ static void CG_Corona(centity_t *cent)
 	}
 }
 
-/*
-==============
-CG_Efx
-==============
-*/
 static void CG_SpotlightEfx(centity_t *cent)
 {
 	vec3_t targetpos, normalized_direction, direction;
@@ -1541,14 +1480,10 @@ static void CG_Explosive(centity_t *cent)
 	}
 }
 
-/*
-===============
-CG_Constructible
-    This is currently almost exactly the same as CG_Mover
-    It's split out so that any changes or experiments are
-    unattached to anything else.
-===============
-*/
+/**
+ * @brief This is currently almost exactly the same as CG_Mover
+ * It's split out so that any changes or experiments are unattached to anything else.
+ */
 static void CG_Constructible(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1586,11 +1521,6 @@ static void CG_Constructible(centity_t *cent)
 	}
 }
 
-/*
-===============
-CG_Mover
-===============
-*/
 static void CG_Mover(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1799,13 +1729,9 @@ void CG_Mover_PostProcess(centity_t *cent)
 	}
 }
 
-/*
-===============
-CG_Beam_2
-
-new beam entity, for rope like stuff...
-===============
-*/
+/**
+ * @brief new beam entity, for rope like stuff...
+ */
 void CG_Beam_2(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1835,13 +1761,9 @@ void CG_Beam_2(centity_t *cent)
 	trap_R_AddRefEntityToScene(&ent);
 }
 
-/*
-===============
-CG_Beam
-
-Also called as an event
-===============
-*/
+/**
+ * @brief Also called as an event
+ */
 void CG_Beam(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1876,11 +1798,6 @@ void CG_Beam(centity_t *cent)
 	trap_R_AddRefEntityToScene(&ent);
 }
 
-/*
-===============
-CG_Portal
-===============
-*/
 static void CG_Portal(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1906,11 +1823,6 @@ static void CG_Portal(centity_t *cent)
 	trap_R_AddRefEntityToScene(&ent);
 }
 
-/*
-===============
-CG_Prop
-===============
-*/
 static void CG_Prop(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -2083,11 +1995,6 @@ cabinetTag_t cabinetInfo[CT_MAX] =
 	},
 };
 
-/*
-=========================
-CG_Cabinet
-=========================
-*/
 void CG_Cabinet(centity_t *cent, cabinetType_t type)
 {
 	refEntity_t cabinet;
@@ -2162,13 +2069,9 @@ void CG_SetupCabinets(void)
 	}
 }
 
-/*
-=========================
-CG_AdjustPositionForMover
-
-Also called by client movement prediction code
-=========================
-*/
+/**
+ * @brief Also called by client movement prediction code
+ */
 void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out, vec3_t outDeltaAngles)
 {
 	centity_t *cent;
@@ -2244,11 +2147,6 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 	// note: origin changes when on a rotating object
 }
 
-/*
-=============================
-CG_InterpolateEntityPosition
-=============================
-*/
 static void CG_InterpolateEntityPosition(centity_t *cent)
 {
 	vec3_t current, next;
@@ -2281,12 +2179,6 @@ static void CG_InterpolateEntityPosition(centity_t *cent)
 	cent->lerpAngles[2] = LerpAngle(current[2], next[2], cg.frameInterpolation);
 }
 
-/*
-===============
-CG_CalcEntityLerpPositions
-
-===============
-*/
 void CG_CalcEntityLerpPositions(centity_t *cent)
 {
 	if (cent->interpolate && cent->currentState.pos.trType == TR_INTERPOLATE)
@@ -2320,11 +2212,6 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 	}
 }
 
-/*
-===============
-CG_ProcessEntity
-===============
-*/
 static void CG_ProcessEntity(centity_t *cent)
 {
 	switch (cent->currentState.eType)
@@ -2431,11 +2318,6 @@ static void CG_ProcessEntity(centity_t *cent)
 	}
 }
 
-/*
-===============
-CG_AddCEntity
-===============
-*/
 void CG_AddCEntity(centity_t *cent)
 {
 	// event-only entities will have been dealt with already

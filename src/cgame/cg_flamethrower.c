@@ -1374,7 +1374,7 @@ void CG_AddFlameChunks(void)
 			}
 			CG_FreeFlameChunk(f);
 		}
-		else if (!f->ignitionOnly || (centFlameInfo[f->ownerCent].lastFlameChunk == f))         // don't draw the ignition flame after we start firing
+		else if (!f->ignitionOnly || (centFlameInfo[f->ownerCent].lastFlameChunk == f)) // don't draw the ignition flame after we start firing
 		{
 			CG_AddFlameToScene(f);
 		}
@@ -1403,16 +1403,16 @@ void CG_UpdateFlamethrowerSounds(void)
 			// blow/ignition sound
 			if (centFlameStatus[f->ownerCent].blowVolume * 255.0 > MIN_BLOW_VOLUME)
 			{
-				trap_S_AddLoopingSound(f->org, vec3_origin, cgs.media.flameBlowSound, (int)(255.0 * centFlameStatus[f->ownerCent].blowVolume), 0);     // JPW NERVE
+				trap_S_AddLoopingSound(f->org, vec3_origin, cgs.media.flameBlowSound, (int)(255.0 * centFlameStatus[f->ownerCent].blowVolume), 0);
 			}
 			else
 			{
-				trap_S_AddLoopingSound(f->org, vec3_origin, cgs.media.flameBlowSound, MIN_BLOW_VOLUME, 0);   // JPW NERVE
+				trap_S_AddLoopingSound(f->org, vec3_origin, cgs.media.flameBlowSound, MIN_BLOW_VOLUME, 0);
 			}
 
 			if (centFlameStatus[f->ownerCent].streamVolume)
 			{
-				trap_S_AddLoopingSound(f->org, vec3_origin, cgs.media.flameStreamSound, (int)(255.0 * centFlameStatus[f->ownerCent].streamVolume), 0);     // JPW NERVE
+				trap_S_AddLoopingSound(f->org, vec3_origin, cgs.media.flameStreamSound, (int)(255.0 * centFlameStatus[f->ownerCent].streamVolume), 0);
 			}
 
 			centFlameInfo[f->ownerCent].lastSoundUpdate = cg.time;

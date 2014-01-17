@@ -2483,7 +2483,7 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawSnapshot(y);
 	}
 
-	if ((cg_drawTime.integer & LOCALTIME_ON) && (!cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
+	if ((cg_drawTime.integer & LOCALTIME_ON) && !(cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
 	{
 		y = CG_DrawLocalTime(y);
 	}

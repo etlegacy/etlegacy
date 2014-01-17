@@ -342,7 +342,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				float xc, yc;
 
 				line[0] = x + grid_x;
-				xc      = line[0] >= x + .5f * w ? line[0] - (x + .5f * w) : (x + .5f * w) - line[0];
+				xc      = (line[0] >= x + .5f * w) ? line[0] - (x + .5f * w) : (x + .5f * w) - line[0];
 				yc      = SQRTFAST(Square(.5f * w) - Square(xc));
 				line[1] = y + (.5f * h) - yc;
 				line[2] = 1.f;
@@ -378,7 +378,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				float xc, yc;
 
 				line[1] = y + grid_y;
-				yc      = line[1] >= y + .5f * h ? line[1] - (y + .5f * h) : (y + .5f * h) - line[1];
+				yc      = (line[1] >= y + .5f * h) ? line[1] - (y + .5f * h) : (y + .5f * h) - line[1];
 				xc      = SQRTFAST(Square(.5f * h) - Square(yc));
 				line[0] = x + (.5f * w) - xc;
 				line[2] = 2 * xc;
