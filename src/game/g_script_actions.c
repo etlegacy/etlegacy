@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -253,7 +253,6 @@ qboolean G_ScriptAction_ShaderRemapFlush(gentity_t *ent, char *params)
 qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 {
 	char     *pString, *token;
-	qboolean wait = qfalse;
 
 	if (params && (ent->scriptStatus.scriptFlags & SCFL_GOING_TO_MARKER))
 	{
@@ -298,6 +297,7 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 		float        dist;
 		int          backward;
 		int          i;
+		qboolean     wait = qfalse;
 
 		pString = params;
 
@@ -629,11 +629,9 @@ G_ScriptAction_FollowSpline
   transitions
 ===============
 */
-
 qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 {
 	char     *pString, *token;
-	qboolean wait    = qfalse;
 	float    roll[2] = { 0, 0 };
 
 	if (params && (ent->scriptStatus.scriptFlags & SCFL_GOING_TO_MARKER))
@@ -677,6 +675,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 		float        speed;
 		float        length = 0;
 		int          backward;
+		qboolean     wait = qfalse;
 
 		pString = params;
 
@@ -889,8 +888,8 @@ qboolean G_ScriptAction_AbortMove(gentity_t *ent, char *params)
 }
 
 /**
- * syntax: setchargetimefactor <team> <class> <factor>
- * team: 0 = axis, 1 = allies
+ * @brief syntax: setchargetimefactor <team> <class> <factor>
+ *        team: 0 = axis, 1 = allies
  */
 qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 {
@@ -1161,11 +1160,6 @@ qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_Kill
-=================
-*/
 qboolean G_ScriptAction_Kill(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1250,7 +1244,6 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 	char      *pString, *token;
 	gentity_t *target = NULL;
 	vec3_t    vec;
-	qboolean  wait = qfalse, turntotarget = qfalse;
 	int       trType;
 	vec3_t    diff;
 	vec3_t    angles;
@@ -1295,6 +1288,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 		pathCorner_t *pPathCorner;
 		float        speed, dist;
 		int          i, duration;
+		qboolean     wait = qfalse, turntotarget = qfalse;
 
 		pString = params;
 		token   = COM_ParseExt(&pString, qfalse);
@@ -2280,7 +2274,6 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 {
 	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
 	int      bufferIndex;
-	qboolean terminate, found;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -2425,6 +2418,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 		{
 			gentity_t *trent;
 			int       oldId;
+			qboolean  terminate, found;
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(lastToken, token, sizeof(lastToken));
