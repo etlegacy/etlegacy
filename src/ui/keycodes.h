@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,9 +28,10 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file keycodes.h
  * @brief key numbers that should be passed to KeyEvent
- * normal keys should be passed as lowercased ascii
+ *        normal keys should be passed as lowercased ascii
+ *
+ * @file keycodes.h
  */
 
 #ifndef __KEYCODES_H__

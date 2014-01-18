@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,8 +28,9 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file ui_atoms.c
  * @brief User interface building blocks and support functions.
+ *
+ * @file ui_atoms.c
  */
 
 #include "ui_local.h"
@@ -103,11 +104,6 @@ static void UI_Cache_f(void)
 	Display_CacheAll();
 }
 
-/*
-=================
-UI_ConsoleCommand
-=================
-*/
 qboolean UI_ConsoleCommand(int realTime)
 {
 	char            *cmd;
@@ -166,11 +162,6 @@ qboolean UI_ConsoleCommand(int realTime)
 	return qfalse;
 }
 
-/*
-=================
-UI_Shutdown
-=================
-*/
 void UI_Shutdown(void)
 {
 }

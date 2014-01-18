@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -770,6 +770,7 @@ void _UI_Refresh(int realtime)
 	if (Menu_Count() > 0)
 	{
 		uiClientState_t cstate;
+		
 		trap_GetClientState(&cstate);
 		if (cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE)
 		{
@@ -843,6 +844,7 @@ qboolean Asset_Parse(int handle)
 		if (Q_stricmp(token.string, "font") == 0)
 		{
 			int pointSize, fontIndex;
+			
 			if (!PC_Int_Parse(handle, &fontIndex) || !PC_String_Parse(handle, &tempStr) || !PC_Int_Parse(handle, &pointSize))
 			{
 				return qfalse;

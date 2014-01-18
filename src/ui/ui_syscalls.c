@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,9 +28,10 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file ui_syscalls.c
  * @brief this file is only included when building a dll, syscalls.asm is
  * included instead when building a qvm
+ *
+ * @file ui_syscalls.c
  */
 
 #include "ui_local.h"
