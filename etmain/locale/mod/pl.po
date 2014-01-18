@@ -4330,7 +4330,7 @@ msgid "'s Luger 9mm"
 msgstr " Lugerem 9mm"
 
 msgid "'s Panzerfaust"
-msgstr " Pocisk Przeciwczolgowy"
+msgstr " Pociskiem Przeciwczolgowym"
 
 msgid "'s Garand"
 msgstr " Garantem"
@@ -4473,3 +4473,9 @@ msgstr "Obrazen Otrzy: %-6d  Otrzy Obrazen Zespolu: %d"
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
 msgstr "Samobojstw: %-2d Zabic Zespolu: %-2d Cel: %-4.1f HS%%: %-4.1f"
+
+msgid "'s Bazooka"
+msgstr " Pociskiem Przeciwczolgowym"
+
+msgid "'s Akimbo .45ACP 1911s"
+msgstr " Podwojnym .45ACP 1911s"

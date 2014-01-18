@@ -4412,3 +4412,9 @@ msgstr ""
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
 msgstr ""
+
+msgid "'s Bazooka"
+msgstr ""
+
+msgid "'s Akimbo .45ACP 1911s"
+msgstr ""
