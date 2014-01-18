@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,9 +28,10 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file cg_syscalls.c
  * @brief this file is only included when building a dll, cg_syscalls.asm is
- * included instead when building a qvm
+ *        included instead when building a qvm
+ *
+ * @file cg_syscalls.c
  */
 
 #include "cg_local.h"
@@ -42,7 +43,13 @@ Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 	syscall = syscallptr;
 }
 
-#define PASSFLOAT(x) (*(int *)&x)
+int PASSFLOAT(float x)
+{
+	floatint_t fi;
+
+	fi.f = x;
+	return fi.i;
+}
 
 void trap_PumpEventLoop(void)
 {
@@ -322,7 +329,7 @@ int trap_S_GetSoundLength(sfxHandle_t sfx)
 	return syscall(CG_S_GETSOUNDLENGTH, sfx);
 }
 
-// ydnar: for timing looped sounds
+// for timing looped sounds
 int trap_S_GetCurrentSoundTime(void)
 {
 	return syscall(CG_S_GETCURRENTSOUNDTIME);
