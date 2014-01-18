@@ -2882,7 +2882,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 	qboolean      depthRange, oldDepthRange;
 	int           i;
 	drawSurf_t    *drawSurf;
-	int           startTime = 0, endTime = 0;
+	int           startTime = 0;
 
 	GLimp_LogComment("--- RB_RenderDrawSurfacesIntoGeometricBuffer ---\n");
 
@@ -2966,8 +2966,6 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 			}
 		}
 
-
-
 		// change the modelview matrix if needed
 		if (entity != oldEntity)
 		{
@@ -3036,8 +3034,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		glFinish();
-		endTime                          = ri.Milliseconds();
-		backEnd.pc.c_deferredGBufferTime = endTime - startTime;
+		backEnd.pc.c_deferredGBufferTime = ri.Milliseconds() - startTime;
 	}
 }
 
@@ -3057,7 +3054,7 @@ void RB_RenderInteractionsDeferred()
 	matrix_t ortho;
 	vec4_t   quadVerts[4];
 	vec4_t   lightFrustum[6];
-	int      startTime = 0, endTime = 0;
+	int      startTime = 0;
 
 	GLimp_LogComment("--- RB_RenderInteractionsDeferred ---\n");
 
@@ -3652,8 +3649,7 @@ skipInteraction:
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		glFinish();
-		endTime                           = ri.Milliseconds();
-		backEnd.pc.c_deferredLightingTime = endTime - startTime;
+		backEnd.pc.c_deferredLightingTime = ri.Milliseconds() - startTime;
 	}
 }
 
@@ -3690,7 +3686,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 	matrix_t ortho;
 	vec4_t   quadVerts[4];
 	vec4_t   lightFrustum[6];
-	int      startTime = 0, endTime = 0;
+	int      startTime = 0;
 
 	GLimp_LogComment("--- RB_RenderInteractionsDeferredShadowMapped ---\n");
 
@@ -5763,8 +5759,7 @@ skipInteraction:
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		glFinish();
-		endTime                           = ri.Milliseconds();
-		backEnd.pc.c_deferredLightingTime = endTime - startTime;
+		backEnd.pc.c_deferredLightingTime = ri.Milliseconds() - startTime;
 	}
 }
 
@@ -7022,7 +7017,7 @@ void RB_RenderLightOcclusionQueries()
 		link_t        occlusionQueryQueue;
 		link_t        invisibleQueue;
 		growList_t    invisibleList;
-		int           startTime = 0, endTime = 0;
+		int           startTime = 0;
 
 		glVertexAttrib4f(ATTR_INDEX_COLOR, 1.0f, 0.0f, 0.0f, 0.05f);
 
@@ -7196,8 +7191,7 @@ void RB_RenderLightOcclusionQueries()
 		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
 		{
 			glFinish();
-			endTime                                   = ri.Milliseconds();
-			backEnd.pc.c_occlusionQueriesResponseTime = endTime - startTime;
+			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
 
 			startTime = ri.Milliseconds();
 		}
@@ -7280,8 +7274,7 @@ void RB_RenderLightOcclusionQueries()
 		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
 		{
 			glFinish();
-			endTime                                = ri.Milliseconds();
-			backEnd.pc.c_occlusionQueriesFetchTime = endTime - startTime;
+			backEnd.pc.c_occlusionQueriesFetchTime = ri.Milliseconds() - startTime;
 		}
 	}
 
@@ -7606,7 +7599,7 @@ void RB_RenderEntityOcclusionQueries()
 		link_t        occlusionQueryQueue;
 		link_t        invisibleQueue;
 		growList_t    invisibleList;
-		int           startTime = 0, endTime = 0;
+		int           startTime = 0;
 
 		glVertexAttrib4f(ATTR_INDEX_COLOR, 1.0f, 0.0f, 0.0f, 0.05f);
 
@@ -7775,8 +7768,7 @@ void RB_RenderEntityOcclusionQueries()
 		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
 		{
 			glFinish();
-			endTime                                   = ri.Milliseconds();
-			backEnd.pc.c_occlusionQueriesResponseTime = endTime - startTime;
+			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
 
 			startTime = ri.Milliseconds();
 		}
@@ -9625,7 +9617,7 @@ static void RB_RenderView(void)
 		// Deferred shading path
 
 		int clearBits = 0;
-		int startTime = 0, endTime = 0;
+		int startTime = 0;
 
 		// sync with gl if needed
 		if (r_finish->integer == 1 && !glState.finishCalled)
@@ -9727,8 +9719,7 @@ static void RB_RenderView(void)
 		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 		{
 			glFinish();
-			endTime                          = ri.Milliseconds();
-			backEnd.pc.c_deferredGBufferTime = endTime - startTime;
+			backEnd.pc.c_deferredGBufferTime = ri.Milliseconds() - startTime;
 		}
 
 		// try to cull lights using hardware occlusion queries
@@ -9758,8 +9749,7 @@ static void RB_RenderView(void)
 		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 		{
 			glFinish();
-			endTime                           = ri.Milliseconds();
-			backEnd.pc.c_deferredLightingTime = endTime - startTime;
+			backEnd.pc.c_deferredLightingTime = ri.Milliseconds() - startTime;
 		}
 
 		R_BindFBO(tr.geometricRenderFBO);
@@ -9781,8 +9771,7 @@ static void RB_RenderView(void)
 		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 		{
 			glFinish();
-			endTime                             = ri.Milliseconds();
-			backEnd.pc.c_forwardTranslucentTime = endTime - startTime;
+			backEnd.pc.c_forwardTranslucentTime = ri.Milliseconds() - startTime;
 		}
 
 		// render debug information
@@ -9876,7 +9865,7 @@ static void RB_RenderView(void)
 		// Forward shading path
 
 		int clearBits = 0;
-		int startTime = 0, endTime = 0;
+		int startTime = 0;
 
 		// sync with gl if needed
 		if (r_finish->integer == 1 && !glState.finishCalled)
@@ -10117,8 +10106,7 @@ static void RB_RenderView(void)
 		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 		{
 			glFinish();
-			endTime                         = ri.Milliseconds();
-			backEnd.pc.c_forwardAmbientTime = endTime - startTime;
+			backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
 		}
 
 		// try to cull lights using hardware occlusion queries
