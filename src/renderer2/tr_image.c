@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_image.c
  */
-// tr_image.c
+
 #include "tr_local.h"
 
 static byte          s_intensitytable[256];
@@ -40,9 +42,6 @@ int gl_filter_max = GL_LINEAR;
 
 image_t *r_imageHashTable[IMAGE_FILE_HASH_SIZE];
 
-/*
-** R_GammaCorrect
-*/
 void R_GammaCorrect(byte *buffer, int bufSize)
 {
 	int i;
@@ -101,11 +100,6 @@ long GenerateImageHashValue(const char *fname)
 	return hash;
 }
 
-/*
-===============
-GL_TextureMode
-===============
-*/
 void GL_TextureMode(const char *string)
 {
 	int     i;
@@ -163,11 +157,6 @@ void GL_TextureMode(const char *string)
 	}
 }
 
-/*
-===============
-R_SumOfUsedImages
-===============
-*/
 int R_SumOfUsedImages(void)
 {
 	int     total = 0;
@@ -187,11 +176,6 @@ int R_SumOfUsedImages(void)
 	return total;
 }
 
-/*
-===============
-R_ImageList_f
-===============
-*/
 void R_ImageList_f(void)
 {
 	int        i;

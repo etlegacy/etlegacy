@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ * 
+ * @file tr_sky.c
  */
-// tr_sky.c
+
 #include "tr_local.h"
 
 #define SKY_SUBDIVISIONS        8
@@ -40,9 +42,7 @@ static float s_cloudTexP[6][SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 
 /*
 ===================================================================================
-
 POLYGON TO BOX SIDE PROJECTION
-
 ===================================================================================
 */
 
@@ -59,11 +59,6 @@ static vec3_t sky_clip[6] =
 static float sky_mins[2][6], sky_maxs[2][6];
 static float sky_min, sky_max;
 
-/*
-================
-AddSkyPolygon
-================
-*/
 static void AddSkyPolygon(int nump, vec3_t vecs)
 {
 	int    i, j;
@@ -187,11 +182,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 
 #define ON_EPSILON      0.1f    // point on plane side epsilon
 #define MAX_CLIP_VERTS  64
-/*
-================
-ClipSkyPolygon
-================
-*/
+
 static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 {
 	float    *norm;
@@ -289,11 +280,6 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 	ClipSkyPolygon(newc[1], newv[1][0], stage + 1);
 }
 
-/*
-==============
-ClearSkyBox
-==============
-*/
 static void ClearSkyBox(void)
 {
 	int i;
@@ -305,11 +291,6 @@ static void ClearSkyBox(void)
 	}
 }
 
-/*
-================
-Tess_ClipSkyPolygons
-================
-*/
 void Tess_ClipSkyPolygons()
 {
 	vec3_t p[5];                // need one extra point for clipping
@@ -330,17 +311,13 @@ void Tess_ClipSkyPolygons()
 
 /*
 ===================================================================================
-
 CLOUD VERTEX GENERATION
-
 ===================================================================================
 */
 
-/*
-** MakeSkyVec
-**
-** Parms: s, t range from -1 to 1
-*/
+/**
+ * @brief Parms: s, t range from -1 to 1
+ */
 static void MakeSkyVec(float s, float t, int axis, vec4_t outSt, vec4_t outXYZ)
 {
 	// 1 = s, 2 = t, 3 = 2048
@@ -728,10 +705,9 @@ static void BuildCloudData()
 	Tess_UpdateVBOs(0);
 }
 
-/*
-** R_InitSkyTexCoords
-** Called when a sky shader is parsed
-*/
+/**
+ *  @brief Called when a sky shader is parsed
+ */
 void R_InitSkyTexCoords(float heightCloud)
 {
 	int    i, s, t;
@@ -786,9 +762,6 @@ void R_InitSkyTexCoords(float heightCloud)
 
 //======================================================================================
 
-/*
-** RB_DrawSun
-*/
 void RB_DrawSun(void)
 {
 	float    size;
@@ -845,7 +818,6 @@ void RB_DrawSun(void)
 
 		GLSL_SetUniformVec4(selectedProgram, UNIFORM_PORTALPLANE, plane);
 	}
-
 
 	dist = backEnd.viewParms.skyFar / 1.75; // div sqrt(3)
 	size = dist * 0.4;
@@ -933,15 +905,10 @@ void RB_DrawSun(void)
 	GL_PopMatrix();
 }
 
-/*
-================
-Tess_StageIteratorSky
-
-All of the visible sky triangles are in tess
-
-Other things could be stuck in here, like birds in the sky, etc
-================
-*/
+/**
+ * @brief All of the visible sky triangles are in tess
+ * Other things could be stuck in here, like birds in the sky, etc
+ */
 void Tess_StageIteratorSky(void)
 {
 	// log this call
@@ -1045,7 +1012,6 @@ void Tess_StageIteratorSky(void)
 			DrawSkyBox(tess.surfaceShader);
 #endif
 		}
-
 
 		// generate the vertexes for all the clouds, which will be drawn
 		// by the generic shader routine

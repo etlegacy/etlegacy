@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,15 +28,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_fbo.c
  */
-// tr_fbo.c
+
 #include "tr_local.h"
 
-/*
-=============
-R_CheckFBO
-=============
-*/
 qboolean R_CheckFBO(const FBO_t *fbo)
 {
 	int code;
@@ -105,11 +102,6 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 	return qfalse;
 }
 
-/*
-============
-R_CreateFBO
-============
-*/
 FBO_t *R_CreateFBO(const char *name, int width, int height)
 {
 	FBO_t *fbo;
@@ -192,11 +184,6 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 	GL_CheckErrors();
 }
 
-/*
-================
-R_CreateFBODepthBuffer
-================
-*/
 void R_CreateFBODepthBuffer(FBO_t *fbo, int format)
 {
 	qboolean absent;
@@ -227,11 +214,6 @@ void R_CreateFBODepthBuffer(FBO_t *fbo, int format)
 	GL_CheckErrors();
 }
 
-/*
-================
-R_CreateFBOStencilBuffer
-================
-*/
 void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 {
 	qboolean absent;
@@ -265,11 +247,6 @@ void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 	GL_CheckErrors();
 }
 
-/*
-================
-R_CreateFBOPackedDepthStencilBuffer
-================
-*/
 void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 {
 	qboolean absent;
@@ -303,12 +280,6 @@ void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 	GL_CheckErrors();
 }
 
-
-/*
-=================
-R_AttachFBOTexture1D
-=================
-*/
 void R_AttachFBOTexture1D(int texId, int index)
 {
 	if (index < 0 || index >= glConfig2.maxColorAttachments)
@@ -320,11 +291,6 @@ void R_AttachFBOTexture1D(int texId, int index)
 	glFramebufferTexture1DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + index, GL_TEXTURE_1D, texId, 0);
 }
 
-/*
-=================
-R_AttachFBOTexture2D
-=================
-*/
 void R_AttachFBOTexture2D(int target, int texId, int index)
 {
 	if (target != GL_TEXTURE_2D && (target < GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB || target > GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB))
@@ -342,11 +308,6 @@ void R_AttachFBOTexture2D(int target, int texId, int index)
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + index, target, texId, 0);
 }
 
-/*
-=================
-R_AttachFBOTexture3D
-=================
-*/
 void R_AttachFBOTexture3D(int texId, int index, int zOffset)
 {
 	if (index < 0 || index >= glConfig2.maxColorAttachments)
@@ -358,32 +319,17 @@ void R_AttachFBOTexture3D(int texId, int index, int zOffset)
 	glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + index, GL_TEXTURE_3D_EXT, texId, 0, zOffset);
 }
 
-/*
-=================
-R_AttachFBOTextureDepth
-=================
-*/
 void R_AttachFBOTextureDepth(int texId)
 {
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, texId, 0);
 }
 
-/*
-=================
-R_AttachFBOTexturePackedDepthStencil
-=================
-*/
 void R_AttachFBOTexturePackedDepthStencil(int texId)
 {
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, texId, 0);
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, texId, 0);
 }
 
-/*
-============
-R_BindFBO
-============
-*/
 void R_BindFBO(FBO_t *fbo)
 {
 	if (!fbo)
@@ -421,11 +367,6 @@ void R_BindFBO(FBO_t *fbo)
 	}
 }
 
-/*
-============
-R_BindNullFBO
-============
-*/
 void R_BindNullFBO(void)
 {
 	if (r_logFile->integer)
@@ -441,11 +382,6 @@ void R_BindNullFBO(void)
 	}
 }
 
-/*
-============
-R_InitFBOs
-============
-*/
 void R_InitFBOs(void)
 {
 	int i;
@@ -670,7 +606,6 @@ void R_InitFBOs(void)
 			R_CheckFBO(tr.shadowMapFBO[i]);
 		}
 
-
 		// sun requires different resolutions
 		for (i = 0; i < MAX_SHADOWMAPS; i++)
 		{
@@ -859,7 +794,6 @@ void R_InitFBOs(void)
 			height = NearestPowerOfTwo(glConfig.vidHeight * 0.25f);
 		}
 
-
 		tr.contrastRenderFBO = R_CreateFBO("_contrastRender", width, height);
 		R_BindFBO(tr.contrastRenderFBO);
 
@@ -900,11 +834,6 @@ void R_InitFBOs(void)
 	R_BindNullFBO();
 }
 
-/*
-============
-R_ShutdownFBOs
-============
-*/
 void R_ShutdownFBOs(void)
 {
 	int   i, j;
@@ -948,11 +877,6 @@ void R_ShutdownFBOs(void)
 	}
 }
 
-/*
-============
-R_FBOList_f
-============
-*/
 void R_FBOList_f(void)
 {
 	int   i;

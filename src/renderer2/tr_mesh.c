@@ -28,15 +28,14 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ * 
+ * @brief triangle model functions
+ * 
+ * @file tr_mesh.c
  */
-// tr_mesh.c -- triangle model functions
+
 #include "tr_local.h"
 
-/*
-=============
-R_CullMDV
-=============
-*/
 static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 {
 	mdvFrame_t *oldFrame, *newFrame;
@@ -150,13 +149,6 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 	}
 }
 
-
-
-/*
-=================
-R_ComputeLOD
-=================
-*/
 int R_ComputeLOD(trRefEntity_t *ent)
 {
 	float      radius;
@@ -222,7 +214,6 @@ int R_ComputeLOD(trRefEntity_t *ent)
 	return lod;
 }
 
-
 static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdvSurface)
 {
 	shader_t *shader = 0;
@@ -266,11 +257,6 @@ static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdv
 	return shader;
 }
 
-/*
-=================
-R_AddMDVSurfaces
-=================
-*/
 void R_AddMDVSurfaces(trRefEntity_t *ent)
 {
 	int          i;
@@ -370,11 +356,6 @@ void R_AddMDVSurfaces(trRefEntity_t *ent)
 	}
 }
 
-/*
-=================
-R_AddMDVInteractions
-=================
-*/
 void R_AddMDVInteractions(trRefEntity_t *ent, trRefLight_t *light)
 {
 	int               i;

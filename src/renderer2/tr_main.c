@@ -28,9 +28,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @brief main control flow for each frame
+ *
+ * @file tr_main.c
  */
 
-// tr_main.c -- main control flow for each frame
 #include "tr_local.h"
 
 trGlobals_t tr;
@@ -89,11 +92,6 @@ refimport_t ri;
 // point at this for their sorting surface
 surfaceType_t entitySurface = SF_ENTITY;
 
-/*
-================
-R_CompareVert
-================
-*/
 qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkST)
 {
 	int i;
@@ -114,11 +112,6 @@ qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkST)
 	return qtrue;
 }
 
-/*
-=============
-R_CalcNormalForTriangle
-=============
-*/
 void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2)
 {
 	vec3_t udir, vdir;
@@ -175,11 +168,6 @@ void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
 	VectorNormalize(binormal);
 }
 
-/*
-=============
-R_CalcTangentSpace
-=============
-*/
 void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
                         const vec3_t v0, const vec3_t v1, const vec3_t v2, const vec2_t t0, const vec2_t t1, const vec2_t t2)
 {

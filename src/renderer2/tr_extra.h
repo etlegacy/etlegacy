@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,6 +28,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_extra.h
  */
 
 #ifndef TR_EXTRA_H
@@ -44,7 +46,6 @@
 #define BSP_VERSION_Q3      46
 #define REF_HARD_LINKED 1
 
-// XreaL BEGIN
 typedef struct
 {
 	qboolean ARBTextureCompressionAvailable;
@@ -90,9 +91,6 @@ typedef struct
 
 	qboolean getProgramBinaryAvailable;
 } glconfig2_t;
-// XreaL END
-
-// XreaL BEGIN
 
 // cg_shadows modes
 typedef enum
@@ -107,7 +105,6 @@ typedef enum
 	//SHADOWING_PLANAR,
 	SHADOWING_STENCIL,
 } shadowingMode_t;
-// XreaL END
 
 // light grid
 typedef struct
@@ -117,10 +114,8 @@ typedef struct
 	byte latLong[2];
 } dgridPoint_t;
 
-// XreaL BEGIN
 #define RDF_NOCUBEMAP       (1 << 7)    // RB: don't use cubemaps
 #define RDF_NOBLOOM         (1 << 8)    // RB: disable bloom. useful for hud models
-// XreaL END
 
 typedef enum
 {

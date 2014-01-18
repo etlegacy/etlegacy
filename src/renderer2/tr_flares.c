@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_flares.c
  */
-// tr_flares.c
+
 #include "tr_local.h"
 
 /*
@@ -91,11 +93,6 @@ flare_t *r_activeFlares, *r_inactiveFlares;
 
 int flareCoeff;
 
-/*
-==================
-R_ClearFlares
-==================
-*/
 void R_ClearFlares(void)
 {
 	int i;

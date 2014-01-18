@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,11 +28,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_abckend.c
  */
-// tr_backend.c
 
 #include "tr_local.h"
-
 
 backEndData_t  *backEndData[SMP_FRAMES];
 backEndState_t backEnd;
@@ -440,12 +440,9 @@ void GL_Cull(int cullType)
 }
 
 
-/*
-GL_State
-
-This routine is responsible for setting the most commonly changed state
-in Q3.
-*/
+/**
+ * @brief This routine is responsible for setting the most commonly changed state in Q3.
+ */
 void GL_State(uint32_t stateBits)
 {
 	uint32_t diff = stateBits ^ glState.glStateBits;
@@ -679,13 +676,9 @@ void GL_State(uint32_t stateBits)
 	glState.glStateBits = stateBits;
 }
 
-/*
-================
-RB_Hyperspace
-
-A player has predicted a teleport, but hasn't arrived yet
-================
-*/
+/**
+ * @brief A player has predicted a teleport, but hasn't arrived yet
+ */
 static void RB_Hyperspace(void)
 {
 	float c;
@@ -702,7 +695,6 @@ static void RB_Hyperspace(void)
 	backEnd.isHyperspace = qtrue;
 }
 
-
 static void SetViewportAndScissor(void)
 {
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -715,14 +707,6 @@ static void SetViewportAndScissor(void)
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 }
 
-
-
-
-/*
-================
-RB_SetGL2D
-================
-*/
 static void RB_SetGL2D(void)
 {
 	matrix_t proj;
@@ -753,7 +737,6 @@ static void RB_SetGL2D(void)
 	backEnd.refdef.time      = ri.Milliseconds();
 	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001f;
 }
-
 
 enum renderDrawSurfaces_e
 {
@@ -1067,7 +1050,6 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 	GL_CheckErrors();
 }
 
-
 // *INDENT-OFF*
 static void Render_lightVolume(interaction_t *ia)
 {
@@ -1226,8 +1208,8 @@ static void Render_lightVolume(interaction_t *ia)
 // *INDENT-ON*
 
 
-/*
- * helper function for parallel split shadow mapping
+/**
+ * @brief helper function for parallel split shadow mapping
  */
 static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, interaction_t *ia, int iaCount, vec3_t bounds[2], qboolean shadowCasters)
 {
@@ -1288,13 +1270,9 @@ static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, inte
 			VectorCopy(srf->bounds[0], worldBounds[0]);
 			VectorCopy(srf->bounds[1], worldBounds[1]);
 		}
-		else if (*surface == SF_MDV)
+		else // if (*surface == SF_MDV) & others
 		{
 			//Tess_AddCube(vec3_origin, entity->localBounds[0], entity->localBounds[1], lightColor);
-			goto skipInteraction;
-		}
-		else
-		{
 			goto skipInteraction;
 		}
 
@@ -1419,13 +1397,6 @@ skipInteraction:
 	return numCasters;
 }
 
-
-
-/*
-=================
-RB_RenderInteractions
-=================
-*/
 static void RB_RenderInteractions()
 {
 	shader_t      *shader, *oldShader;
@@ -1437,7 +1408,7 @@ static void RB_RenderInteractions()
 	surfaceType_t *surface;
 	vec3_t        tmp;
 	matrix_t      modelToLight;
-	int           startTime = 0, endTime = 0;
+	int           startTime = 0;
 
 	GLimp_LogComment("--- RB_RenderInteractions ---\n");
 
@@ -1652,16 +1623,10 @@ skipInteraction:
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		glFinish();
-		endTime                          = ri.Milliseconds();
-		backEnd.pc.c_forwardLightingTime = endTime - startTime;
+		backEnd.pc.c_forwardLightingTime = ri.Milliseconds() - startTime;
 	}
 }
 
-/*
-=================
-RB_RenderInteractionsShadowMapped
-=================
-*/
 static void RB_RenderInteractionsShadowMapped()
 {
 	shader_t       *shader, *oldShader;
@@ -1679,7 +1644,7 @@ static void RB_RenderInteractionsShadowMapped()
 	qboolean       drawShadows;
 	int            cubeSide;
 	int            splitFrustumIndex;
-	int            startTime = 0, endTime = 0;
+	int            startTime = 0;
 	const matrix_t bias      = { 0.5, 0.0, 0.0, 0.0,
 		                         0.0,      0.5, 0.0, 0.0,
 		                         0.0,      0.0, 0.5, 0.0,
@@ -1934,7 +1899,6 @@ static void RB_RenderInteractionsShadowMapped()
 						//vec3_t   splitFrustumViewBounds[2];
 						vec3_t splitFrustumClipBounds[2];
 						//float    splitFrustumRadius;
-						int    numCasters;
 						vec3_t casterBounds[2];
 						vec3_t receiverBounds[2];
 						vec3_t cropBounds[2];
@@ -1972,6 +1936,8 @@ static void RB_RenderInteractionsShadowMapped()
 
 						if (r_parallelShadowSplits->integer)
 						{
+							int    numCasters;
+
 							// original light direction is from surface to light
 							VectorInverse(lightDirection);
 							VectorNormalize(lightDirection);
@@ -2052,7 +2018,6 @@ static void RB_RenderInteractionsShadowMapped()
 							{
 								AddPointToBounds(splitFrustumCorners[j], splitFrustumBounds[0], splitFrustumBounds[1]);
 							}
-
 
 #if 0
 							//
@@ -2901,8 +2866,7 @@ skipInteraction:
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		glFinish();
-		endTime                          = ri.Milliseconds();
-		backEnd.pc.c_forwardLightingTime = endTime - startTime;
+		backEnd.pc.c_forwardLightingTime = ri.Milliseconds() - startTime;
 	}
 }
 
@@ -5804,8 +5768,6 @@ skipInteraction:
 	}
 }
 
-
-
 #ifdef EXPERIMENTAL
 void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 {
@@ -6438,7 +6400,7 @@ static void RB_CalculateAdaptation()
 	R_BindFBO(tr.downScaleFBO_64x64);
 
 	// read back the contents
-//	glFinish();
+	//glFinish();
 	glReadPixels(0, 0, 64, 64, GL_RGBA, GL_FLOAT, image);
 
 	sum          = 0.0f;
@@ -6605,7 +6567,6 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 	GL_PopMatrix();
 }
 
-
 void RB_RenderDeferredHDRResultToFrameBuffer()
 {
 	matrix_t ortho;
@@ -6663,13 +6624,8 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 	GL_PopMatrix();
 }
 
-
-
-
 // ================================================================================================
-//
 // LIGHTS OCCLUSION CULLING
-//
 // ================================================================================================
 
 static void RenderLightOcclusionVolume(trRefLight_t *light)
@@ -6767,7 +6723,6 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 				Vector4Set(quadVerts[2], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1);
 				Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
 				Tess_AddQuadStamp2(quadVerts, colorGreen);
-
 			}
 			else
 			{
@@ -6856,12 +6811,10 @@ static void IssueLightOcclusionQuery(link_t *queue, trRefLight_t *light, qboolea
 		// end the query
 		glEndQuery(GL_SAMPLES_PASSED);
 
-#if 1
 		if (!glIsQuery(light->occlusionQueryObject))
 		{
 			ri.Error(ERR_FATAL, "IssueLightOcclusionQuery: light %i has no occlusion query object in slot %i: %i", light - tr.world->lights, backEnd.viewParms.viewCount, light->occlusionQueryObject);
 		}
-#endif
 
 		//light->occlusionQueryNumbers[backEnd.viewParms.viewCount] = backEnd.pc.c_occlusionQueries;
 		backEnd.pc.c_occlusionQueries++;
@@ -7335,13 +7288,9 @@ void RB_RenderLightOcclusionQueries()
 	GL_CheckErrors();
 }
 
-
 // ================================================================================================
-//
 // ENTITY OCCLUSION CULLING
-//
 // ================================================================================================
-
 
 static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 {
@@ -7844,9 +7793,7 @@ void RB_RenderEntityOcclusionQueries()
 }
 
 // ================================================================================================
-//
 // BSP OCCLUSION CULLING
-//
 // ================================================================================================
 
 #if 0
@@ -8122,7 +8069,6 @@ static void RB_RenderDebugUtils()
 					Vector4Copy(colorBlue, lightColor);
 				}
 
-
 				lightColor[3] = 0.2;
 
 				GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, lightColor);
@@ -8324,7 +8270,6 @@ static void RB_RenderDebugUtils()
 							Vector4Set(quadVerts[1], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1);
 							Vector4Set(quadVerts[0], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
 							Tess_AddQuadStamp2(quadVerts, lightColor);
-
 						}
 						else
 						{
@@ -9659,11 +9604,6 @@ static void RB_RenderDebugUtils()
 	GL_CheckErrors();
 }
 
-/*
-==================
-RB_RenderView
-==================
-*/
 static void RB_RenderView(void)
 {
 	if (r_logFile->integer)
@@ -9682,9 +9622,7 @@ static void RB_RenderView(void)
 
 	if (DS_STANDARD_ENABLED())
 	{
-		//
 		// Deferred shading path
-		//
 
 		int clearBits = 0;
 		int startTime = 0, endTime = 0;
@@ -9935,9 +9873,7 @@ static void RB_RenderView(void)
 	}
 	else
 	{
-		//
 		// Forward shading path
-		//
 
 		int clearBits = 0;
 		int startTime = 0, endTime = 0;
@@ -10022,7 +9958,7 @@ static void RB_RenderView(void)
 					}
 					else
 					{
-						//                  GL_ClearColor ( 1.0, 0.0, 0.0, 1.0 );   // red clear for testing portal sky clear
+						//GL_ClearColor ( 1.0, 0.0, 0.0, 1.0 );   // red clear for testing portal sky clear
 						GL_ClearColor(0.5, 0.5, 0.5, 1.0);
 					}
 				}
@@ -10371,15 +10307,11 @@ static void RB_RenderView(void)
 	backEnd.pc.c_views++;
 }
 
-
 /*
 ============================================================================
-
 RENDER BACK END THREAD FUNCTIONS
-
 ============================================================================
 */
-
 
 /*
 =============
@@ -10570,12 +10502,6 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 	GL_CheckErrors();
 }
 
-
-/*
-=============
-RB_SetColor
-=============
-*/
 const void *RB_SetColor(const void *data)
 {
 	const setColorCommand_t *cmd;
@@ -10592,11 +10518,6 @@ const void *RB_SetColor(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-/*
-=============
-RB_StretchPic
-=============
-*/
 const void *RB_StretchPic(const void *data)
 {
 	int                       i;
@@ -10690,7 +10611,6 @@ const void *RB_StretchPic(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-
 const void *RB_Draw2dPolys(const void *data)
 {
 	const poly2dCommand_t *cmd;
@@ -10745,12 +10665,6 @@ const void *RB_Draw2dPolys(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-// NERVE - SMF
-/*
-=============
-RB_RotatedPic
-=============
-*/
 const void *RB_RotatedPic(const void *data)
 {
 	const stretchPicCommand_t *cmd;
@@ -10835,13 +10749,6 @@ const void *RB_RotatedPic(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-// -NERVE - SMF
-
-/*
-==============
-RB_StretchPicGradient
-==============
-*/
 const void *RB_StretchPicGradient(const void *data)
 {
 	const stretchPicCommand_t *cmd;
@@ -10900,8 +10807,6 @@ const void *RB_StretchPicGradient(const void *data)
 		tess.colors[numVerts + 3][3] = cmd->gradientColor[0] * (1.0f / 255.0f);
 	}
 
-
-
 	tess.xyz[numVerts][0] = cmd->x;
 	tess.xyz[numVerts][1] = cmd->y;
 	tess.xyz[numVerts][2] = 0;
@@ -10937,11 +10842,6 @@ const void *RB_StretchPicGradient(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-/*
-=============
-RB_DrawView
-=============
-*/
 const void *RB_DrawView(const void *data)
 {
 	const drawViewCommand_t *cmd;
@@ -10964,12 +10864,6 @@ const void *RB_DrawView(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-
-/*
-=============
-RB_DrawBuffer
-=============
-*/
 const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd;
@@ -10983,7 +10877,7 @@ const void *RB_DrawBuffer(const void *data)
 	// clear screen for debugging
 	if (r_clear->integer)
 	{
-//      GL_ClearColor(1, 0, 0.5, 1);
+		//GL_ClearColor(1, 0, 0.5, 1);
 		GL_ClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
@@ -11095,11 +10989,6 @@ void RB_ShowImages(void)
 	GL_CheckErrors();
 }
 
-/*
-=============
-RB_SwapBuffers
-=============
-*/
 const void *RB_SwapBuffers(const void *data)
 {
 	const swapBuffersCommand_t *cmd;
@@ -11138,7 +11027,6 @@ const void *RB_SwapBuffers(const void *data)
 		ri.Hunk_FreeTempMemory(stencilReadback);
 	}
 
-
 	if (!glState.finishCalled)
 	{
 		glFinish();
@@ -11153,12 +11041,6 @@ const void *RB_SwapBuffers(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-//bani
-/*
-=============
-RB_RenderToTexture
-=============
-*/
 const void *RB_RenderToTexture(const void *data)
 {
 	const renderToTextureCommand_t *cmd;
@@ -11177,12 +11059,6 @@ const void *RB_RenderToTexture(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-//bani
-/*
-=============
-RB_Finish
-=============
-*/
 const void *RB_Finish(const void *data)
 {
 	const renderFinishCommand_t *cmd;
@@ -11272,12 +11148,6 @@ void RB_ExecuteRenderCommands(const void *data)
 	}
 }
 
-
-/*
-================
-RB_RenderThread
-================
-*/
 void RB_RenderThread(void)
 {
 	const void *data;

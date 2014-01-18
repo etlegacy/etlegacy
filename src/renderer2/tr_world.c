@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ * 
+ * @file tr_world.c
  */
-// tr_world.c
 
 #include "tr_local.h"
 
@@ -253,11 +254,6 @@ static qboolean R_LightSurfaceGeneric(srfGeneric_t *face, trRefLight_t *light, b
 	return qtrue;
 }
 
-/*
-======================
-R_AddInteractionSurface
-======================
-*/
 static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 {
 	qboolean          intersects;
@@ -326,15 +322,9 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	}
 }
 
-/*
-======================
-R_AddWorldSurface
-======================
-*/
 static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 {
 	int      i, frontFace;
-	shader_t *shader;
 
 	if (surf->viewCount == tr.viewCountNoReset)
 	{
@@ -342,7 +332,7 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 	}
 	surf->viewCount = tr.viewCountNoReset;
 
-	shader = surf->shader;
+	
 
 	// add decals
 	if (decalBits)
@@ -358,14 +348,18 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 	}
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
-	if (r_mergeClusterSurfaces->integer &&
-	    !r_dynamicBspOcclusionCulling->integer &&
-	    ((r_mergeClusterFaces->integer && *surf->data == SF_FACE) ||
-	     (r_mergeClusterCurves->integer && *surf->data == SF_GRID) ||
-	     (r_mergeClusterTriangles->integer && *surf->data == SF_TRIANGLES)) &&
-	    !shader->isSky && !shader->isPortal && !ShaderRequiresCPUDeforms(shader))
 	{
-		return;
+		shader_t *shader = surf->shader;
+	
+		if (r_mergeClusterSurfaces->integer &&
+			!r_dynamicBspOcclusionCulling->integer &&
+			((r_mergeClusterFaces->integer && *surf->data == SF_FACE) ||
+			 (r_mergeClusterCurves->integer && *surf->data == SF_GRID) ||
+			 (r_mergeClusterTriangles->integer && *surf->data == SF_TRIANGLES)) &&
+			!shader->isSky && !shader->isPortal && !ShaderRequiresCPUDeforms(shader))
+		{
+			return;
+		}
 	}
 #endif
 
@@ -380,17 +374,10 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 
 /*
 =============================================================
-
     BRUSH MODELS
-
 =============================================================
 */
 
-/*
-======================
-R_AddBrushModelSurface
-======================
-*/
 static void R_AddBrushModelSurface(bspSurface_t *surf, int fogIndex)
 {
 	int frontFace;
@@ -410,11 +397,6 @@ static void R_AddBrushModelSurface(bspSurface_t *surf, int fogIndex)
 	R_AddDrawSurf(surf->data, surf->shader, surf->lightmapNum, fogIndex);
 }
 
-/*
-=================
-R_AddBSPModelSurfaces
-=================
-*/
 void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 {
 	bspModel_t *bspModel;
@@ -423,8 +405,8 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	vec3_t     v;
 	vec3_t     transformed;
 	vec3_t     boundsCenter;
-//	float			boundsRadius;
-	int fogNum;
+	int        fogNum;
+	//float	   boundsRadius;
 
 	pModel   = R_GetModelByHandle(ent->e.hModel);
 	bspModel = pModel->bsp;
@@ -504,17 +486,11 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	}
 }
 
-
 /*
 =============================================================
-
     WORLD MODEL
-
 =============================================================
 */
-
-
-
 
 static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 {
@@ -550,7 +526,6 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 		tr.viewParms.visBounds[1][2] = node->maxs[2];
 	}
 
-
 	// add the individual surfaces
 	mark = node->markSurfaces;
 	c    = node->numMarkSurfaces;
@@ -564,11 +539,6 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	}
 }
 
-/*
-================
-R_RecursiveWorldNode
-================
-*/
 static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 {
 	do
@@ -648,15 +618,8 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 		// ydnar: moved off to separate function
 		R_AddLeafSurfaces(node, decalBits);
 	}
-
-
 }
 
-/*
-================
-R_RecursiveInteractionNode
-================
-*/
 static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int planeBits)
 {
 	int i;
@@ -734,7 +697,6 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 		}
 	}
 	while (1);
-
 	{
 		// leaf node, so add mark surfaces
 		int          c;
@@ -755,12 +717,6 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 	}
 }
 
-
-/*
-===============
-R_PointInLeaf
-===============
-*/
 static bspNode_t *R_PointInLeaf(const vec3_t p)
 {
 	bspNode_t *node;
@@ -794,11 +750,6 @@ static bspNode_t *R_PointInLeaf(const vec3_t p)
 	return node;
 }
 
-/*
-==============
-R_ClusterPVS
-==============
-*/
 static const byte *R_ClusterPVS(int cluster)
 {
 	if (!tr.world || !tr.world->vis || cluster < 0 || cluster >= tr.world->numClusters)
@@ -809,11 +760,6 @@ static const byte *R_ClusterPVS(int cluster)
 	return tr.world->vis + cluster * tr.world->clusterBytes;
 }
 
-/*
-=================
-R_inPVS
-=================
-*/
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 {
 	bspNode_t  *leaf;
@@ -830,12 +776,9 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 	return qtrue;
 }
 
-/*
-=================
-BSPSurfaceCompare
-compare function for qsort()
-=================
-*/
+/**
+ * @brief compare function for qsort()
+ */
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 static int BSPSurfaceCompare(const void *a, const void *b)
 {
@@ -867,20 +810,14 @@ static int BSPSurfaceCompare(const void *a, const void *b)
 	return 0;
 }
 
-/*
-===============
-R_UpdateClusterSurfaces()
-===============
-*/
 static void R_UpdateClusterSurfaces()
 {
 	int i, k, l;
 
 	int numVerts;
 	int numTriangles;
-
-//  static glIndex_t indexes[MAX_MAP_DRAW_INDEXES];
-//  static byte     indexes[MAX_MAP_DRAW_INDEXES * sizeof(glIndex_t)];
+	//static glIndex_t indexes[MAX_MAP_DRAW_INDEXES];
+	//static byte     indexes[MAX_MAP_DRAW_INDEXES * sizeof(glIndex_t)];
 	glIndex_t *indexes;
 	int       indexesSize;
 
@@ -1232,14 +1169,9 @@ static void R_UpdateClusterSurfaces()
 }
 #endif // #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 
-/*
-===============
-R_MarkLeaves
-
-Mark the leaves and nodes that are in the PVS for the current
-cluster
-===============
-*/
+/**
+ * @brief Mark the leaves and nodes that are in the PVS for the current
+ */
 static void R_MarkLeaves(void)
 {
 	const byte *vis;
@@ -1283,7 +1215,6 @@ static void R_MarkLeaves(void)
 			}
 		}
 	}
-
 
 	tr.visIndex = (tr.visIndex + 1) % MAX_VISCOUNTS;
 	tr.visCounts[tr.visIndex]++;
@@ -1349,7 +1280,7 @@ static void R_MarkLeaves(void)
 			continue;
 		}
 
-		// ydnar: don't want to walk the entire bsp to add skybox surfaces
+		// don't want to walk the entire bsp to add skybox surfaces
 		if (tr.refdef.rdflags & RDF_SKYBOXPORTAL)
 		{
 			// this only happens once, as game/cgame know the origin of the skybox
@@ -1375,7 +1306,6 @@ static void R_MarkLeaves(void)
 		while (parent);
 	}
 }
-
 
 static void DrawLeaf(bspNode_t *node, int decalBits)
 {
@@ -1425,11 +1355,8 @@ static void DrawLeaf(bspNode_t *node, int decalBits)
 	}
 }
 
-
 // ================================================================================================
-//
 // BSP OCCLUSION CULLING
-//
 // ================================================================================================
 
 static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
@@ -1458,7 +1385,6 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 
 	return qtrue;
 }
-
 
 //#define DEBUG_CHC 1
 
@@ -1538,10 +1464,6 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 	}
 	while (1);
 }
-
-
-
-
 
 static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMultiQueryLink)
 {
@@ -1743,8 +1665,7 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 {
 	link_t *l, *sentinel;
 	int    ocSamples;
-
-	GLint available;
+	GLint  available = 0;
 
 	GLimp_LogComment("--- GetOcclusionQueryResult ---\n");
 
@@ -1757,7 +1678,6 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 	}
 #endif
 
-	available = 0;
 	while (!available)
 	{
 		//if(glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
@@ -1793,9 +1713,8 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 
 static void PullUpVisibility(bspNode_t *node)
 {
-	bspNode_t *parent;
+	bspNode_t *parent = node;
 
-	parent = node;
 	while (parent && !parent->visible[tr.viewCount])
 	{
 		parent->visible[tr.viewCount]     = qtrue;
@@ -1803,7 +1722,6 @@ static void PullUpVisibility(bspNode_t *node)
 
 		parent = parent->parent;
 	}
-	;
 }
 
 /*
@@ -2045,7 +1963,6 @@ static void R_CoherentHierachicalCulling()
 	GL_Bind(tr.whiteImage);
 
 	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
-
 
 #if 0
 	GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -2410,13 +2327,6 @@ static void R_CoherentHierachicalCulling()
 	}
 }
 
-
-
-/*
-=============
-R_AddWorldSurfaces
-=============
-*/
 void R_AddWorldSurfaces(void)
 {
 	if (!r_drawworld->integer)
@@ -2502,11 +2412,6 @@ void R_AddWorldSurfaces(void)
 	}
 }
 
-/*
-=============
-R_AddWorldInteractions
-=============
-*/
 void R_AddWorldInteractions(trRefLight_t *light)
 {
 	if (!r_drawworld->integer)
@@ -2526,11 +2431,6 @@ void R_AddWorldInteractions(trRefLight_t *light)
 	R_RecursiveInteractionNode(tr.world->nodes, light, FRUSTUM_CLIPALL);
 }
 
-/*
-=============
-R_AddPrecachedWorldInteractions
-=============
-*/
 void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 {
 	interactionType_t iaType = IA_DEFAULT;
