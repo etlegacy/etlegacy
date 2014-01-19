@@ -138,9 +138,10 @@ RE_ProjectDecal()
 */
 void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime)
 {
-	int              i;
+	vec4_t           omniProjection;
 	vec3_t           xyz;
 	decalVert_t      dv[4];
+	int              i;
 	decalProjector_t *dp, temp;
 
 	// first frame rendered does not have a valid decals list
@@ -199,7 +200,6 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	{
 		float  radius = projection[3];
 		float  iDist;
-		vec4_t omniProjection;
 
 		// set up omnidirectional
 		numPoints            = 4;
