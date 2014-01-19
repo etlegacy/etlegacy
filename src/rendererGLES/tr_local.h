@@ -57,10 +57,6 @@ typedef unsigned short glIndex_t;
 #define SHADERNUM_BITS          14
 #define MAX_SHADERS             (1 << SHADERNUM_BITS)
 
-#define MAX_SHADER_STATES       2048
-#define MAX_STATES_PER_SHADER   32
-#define MAX_STATE_NAME          32
-
 // a trRefEntity_t has all the information passed in by
 // the client game, as well as some locally derived info
 
@@ -433,15 +429,7 @@ typedef struct shader_s
 	double clampTime;                                    // time this shader is clamped to
 	double timeOffset;                                   // current time offset for this shader
 
-	int numStates;                                      // if non-zero this is a state shader
-	struct shader_s *currentShader;                     // current state if this is a state shader
-	struct shader_s *parentShader;                      // current state if this is a state shader
-	int currentState;                                   // current state index for cycle purposes
-	long expireTime;                                    // time in milliseconds this expires
-
 	struct shader_s *remappedShader;                    // current shader this one is remapped too
-
-	int shaderStates[MAX_STATES_PER_SHADER];            // index to valid shader states
 
 	struct shader_s *next;
 } shader_t;

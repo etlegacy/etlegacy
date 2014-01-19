@@ -1183,12 +1183,6 @@ typedef struct shader_s
 	uint8_t numStages;
 	shaderStage_t *stages[MAX_SHADER_STAGES];
 
-	int numStates;                  // if non-zero this is a state shader
-	struct shader_s *currentShader; // current state if this is a state shader
-	struct shader_s *parentShader;  // current state if this is a state shader
-	int currentState;               // current state index for cycle purposes
-	long expireTime;                // time in milliseconds this expires
-
 	struct shader_s *remappedShader;    // current shader this one is remapped too
 
 	struct shader_s *next;
