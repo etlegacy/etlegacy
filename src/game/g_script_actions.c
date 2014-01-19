@@ -2543,7 +2543,6 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 {
 	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
 	int      bufferIndex;
-	qboolean terminate, found;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -2686,8 +2685,9 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 		}
 		if (level.globalAccumBuffer[bufferIndex] == atoi(token))
 		{
-			gentity_t *trent;
+			gentity_t *trent = NULL;
 			int       oldId;
+			qboolean  terminate = qfalse, found = qfalse;
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(lastToken, token, sizeof(lastToken));
@@ -2703,10 +2703,8 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 				G_Error("G_ScriptAction_GlobalAccum: trigger must have a name and an identifier: %s\n", params);
 			}
 
-			terminate = qfalse;
-			found     = qfalse;
 			// for all entities/bots with this scriptName
-			trent = NULL;
+
 			while ((trent = G_Find(trent, FOFS(scriptName), lastToken)))
 			{
 				found = qtrue;
@@ -4384,7 +4382,6 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 {
 	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH], cvarName[MAX_QPATH];
 	int      cvarValue;
-	qboolean terminate, found;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -4524,8 +4521,9 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 		}
 		if (cvarValue == atoi(token))
 		{
-			gentity_t *trent;
+			gentity_t *trent = NULL;
 			int       oldId;
+			qboolean  terminate = qfalse, found = qfalse;
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(lastToken, token, sizeof(lastToken));
@@ -4541,10 +4539,8 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 				G_Error("G_ScriptAction_Cvar: trigger must have a name and an identifier: %s\n", params);
 			}
 
-			terminate = qfalse;
-			found     = qfalse;
 			// for all entities/bots with this scriptName
-			trent = NULL;
+
 			while ((trent = G_Find(trent, FOFS(scriptName), lastToken)))
 			{
 				found = qtrue;
