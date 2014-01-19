@@ -138,7 +138,6 @@ RE_ProjectDecal()
 */
 void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime)
 {
-	vec4_t           omniProjection;
 	vec3_t           xyz;
 	decalVert_t      dv[4];
 	int              i;
@@ -206,8 +205,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		temp.numPlanes       = 6;
 		temp.omnidirectional = qtrue;
 
-		Vector4Set(omniProjection, 0.0f, 0.0f, -1.0f, radius * 2.0f);
-		projection = omniProjection;
+		Vector4Set(projection, 0.0f, 0.0f, -1.0f, radius * 2.0f);
 		iDist      = 1.0f / (radius * 2.0f);
 
 		// set corner
