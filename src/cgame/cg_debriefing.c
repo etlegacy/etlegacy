@@ -1273,7 +1273,7 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 	}
 	else
 	{
-		str = va("^3%d: ^ZVOTE", 4 - button->data[7]);
+		str = va("^3%d: ^7VOTE", 4 - button->data[7]);
 	}
 
 	if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
@@ -1378,7 +1378,7 @@ void CG_MapVote_VoteButton_Draw(panel_button_t *button)
 	}
 	else
 	{
-		str = "^ZVOTE";
+		str = "^7VOTE";
 	}
 
 	if (cg.snap->ps.eFlags & EF_VOTED)
