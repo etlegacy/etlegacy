@@ -2806,7 +2806,7 @@ msgid "'s rifle grenade"
 msgstr " granatem od rifli"
 
 msgid "'s support fire"
-msgstr " ogien wsparcia"
+msgstr " ogieniem wsparcia"
 
 msgid "'s crew-served MG"
 msgstr " serie z MG"
@@ -3873,7 +3873,7 @@ msgid "'s tank-mounted MG42"
 msgstr "'s MG42 na czolgu"
 
 msgid "'s dynamite"
-msgstr "'s dynamit"
+msgstr " dynamit"
 
 msgid "Timelimit hit.\n"
 msgstr "Limitczasowy skonczony.\n"
@@ -4478,4 +4478,29 @@ msgid "'s Bazooka"
 msgstr " Pociskiem Przeciwczolgowym"
 
 msgid "'s Akimbo .45ACP 1911s"
-msgstr " Podwojnym .45ACP 1911s"
+msgstr " Podwojne .45ACP 1911s"
+
+msgid "^7killed"
+msgstr "^7zabil"
+
+msgid "^7killed ^1TEAMMATE^7"
+msgstr "^7zabil ^1KOMPANA^7"
+
+msgid "Server disconnected"
+msgstr "Serwer rozlaczony"
+
+#: src/ui/ui_main.c:5803
+#, c-format
+msgid "^3Filtered/Total: %i/%i"
+msgstr "^3Zfiltrowanych/Lacznie: %i/%i"
+
+#: src/ui/ui_main.c:5807
+#, c-format
+msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
+msgstr "^3Sprawdz swoje filtry - brak serwerow!  Zfiltrowanych/Lacznie: %i/%i"
+
+#: src/ui/ui_main.c:5812
+msgid ""
+"^1Check your connection - no servers found!      Filtered/Total: 0/000"
+msgstr ""
+"^3Sprawdz swoje filtry - brak serwerow!   Zfiltrowanych/Lacznie: 0/000"
