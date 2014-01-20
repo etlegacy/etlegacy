@@ -763,10 +763,8 @@ void QDECL CG_DPrintf(const char *msg, ...)
 {
 	va_list argptr;
 	char    text[1024];
-	float   developer;
-
-	developer = CG_Cvar_Get("developer");
-	if (!developer)
+	
+	if (!developer.value)
 	{
 		return;
 	}

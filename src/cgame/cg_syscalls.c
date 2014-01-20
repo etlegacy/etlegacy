@@ -822,7 +822,7 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	}
 	else
 	{
-		Com_Printf("^2trap_S_RegisterSound: register sound: %s\n", sample);
+		CG_DPrintf("^2trap_S_RegisterSound: register sound: %s\n", sample);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_S_RegisterSound", sample)
 	return snd;
@@ -844,7 +844,7 @@ qhandle_t trap_R_RegisterModel(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterModel: register model: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterModel: register model: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterModel", name)
 	return handle;
@@ -866,7 +866,7 @@ qhandle_t trap_R_RegisterSkin(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterSkin: register skin: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterSkin: register skin: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterSkin", name)
 	return handle;
@@ -888,7 +888,7 @@ qhandle_t trap_R_RegisterShader(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterShader: register shader: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterShader: register shader: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShader", name)
 	return handle;
@@ -910,7 +910,7 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterShaderNoMip: register shader no mip: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterShaderNoMip: register shader no mip: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShaderNpMip", name);
 	return handle;
