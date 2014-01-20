@@ -136,7 +136,6 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 {
 	srfGeneric_t *gen;
 	int          cull;
-	float        d;
 
 	// force to non-front facing
 	*frontFace = 0;
@@ -178,6 +177,8 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	// plane cull
 	if (gen->plane.type != PLANE_NON_PLANAR && r_facePlaneCull->integer)
 	{
+		float d;
+		
 		d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
 		if (d > 0.0f)
 		{
@@ -207,24 +208,23 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		tr.pc.c_plane_cull_in++;
 	}
 
+	// try sphere cull
+	if (tr.currentEntity != &tr.worldEntity)
 	{
-		// try sphere cull
-		if (tr.currentEntity != &tr.worldEntity)
-		{
-			cull = R_CullLocalPointAndRadius(gen->origin, gen->radius);
-		}
-		else
-		{
-			cull = R_CullPointAndRadius(gen->origin, gen->radius);
-		}
-		if (cull == CULL_OUT)
-		{
-			tr.pc.c_sphere_cull_out++;
-			return qtrue;
-		}
-
-		tr.pc.c_sphere_cull_in++;
+		cull = R_CullLocalPointAndRadius(gen->origin, gen->radius);
 	}
+	else
+	{
+		cull = R_CullPointAndRadius(gen->origin, gen->radius);
+	}
+	
+	if (cull == CULL_OUT)
+	{
+		tr.pc.c_sphere_cull_out++;
+		return qtrue;
+	}
+
+	tr.pc.c_sphere_cull_in++;
 
 	// must be visible
 	return qfalse;
@@ -324,7 +324,7 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 
 static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 {
-	int      i, frontFace;
+	int frontFace;
 
 	if (surf->viewCount == tr.viewCountNoReset)
 	{
@@ -332,12 +332,12 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 	}
 	surf->viewCount = tr.viewCountNoReset;
 
-	
-
 	// add decals
 	if (decalBits)
 	{
-		// ydnar: project any decals
+		int i;
+		
+		// project any decals
 		for (i = 0; i < tr.refdef.numDecalProjectors; i++)
 		{
 			if (decalBits & (1 << i))
@@ -1900,7 +1900,7 @@ static void R_CoherentHierachicalCulling()
 	link_t visibleQueue;          // CHC++
 	link_t invisibleQueue;          // CHC++
 	//link_t		renderQueue;
-	int startTime = 0, endTime = 0;
+	int startTime = 0;
 
 	//ri.Cvar_Set("r_logFile", "1");
 
@@ -2322,8 +2322,7 @@ static void R_CoherentHierachicalCulling()
 	if (r_speeds->integer)
 	{
 		glFinish();
-		endTime         = ri.Milliseconds();
-		tr.pc.c_CHCTime = endTime - startTime;
+		tr.pc.c_CHCTime = ri.Milliseconds() - startTime;
 	}
 }
 

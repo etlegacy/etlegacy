@@ -673,10 +673,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 
 static void BuildCloudData()
 {
-	int      i;
-	shader_t *shader;
-
-	shader = tess.surfaceShader;
+	shader_t *shader = tess.surfaceShader;
 
 	assert(shader->isSky);
 
@@ -690,6 +687,8 @@ static void BuildCloudData()
 
 	if (tess.surfaceShader->sky.cloudHeight)
 	{
+		int i;
+		
 		for (i = 0; i < MAX_SHADER_STAGES; i++)
 		{
 			if (!tess.surfaceStages[i])

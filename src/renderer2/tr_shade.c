@@ -57,8 +57,6 @@ static void MyMultiDrawElements(GLenum mode, const GLsizei *count, GLenum type, 
 
 void Tess_DrawElements()
 {
-	int i;
-
 	if ((tess.numIndexes == 0 || tess.numVertexes == 0) && tess.multiDrawPrimitives == 0)
 	{
 		return;
@@ -69,6 +67,8 @@ void Tess_DrawElements()
 	{
 		if (tess.multiDrawPrimitives)
 		{
+			int i;
+
 			glMultiDrawElements(GL_TRIANGLES, tess.multiDrawCounts, GL_INDEX_TYPE, (const GLvoid **) tess.multiDrawIndexes, tess.multiDrawPrimitives);
 
 			backEnd.pc.c_multiDrawElements++;
@@ -2585,7 +2585,6 @@ static void Render_fog()
 {
 	fog_t    *fog;
 	float    eyeT;
-	qboolean eyeOutside;
 	vec3_t   local;
 	vec4_t   fogDistanceVector, fogDepthVector;
 
@@ -2597,7 +2596,7 @@ static void Render_fog()
 		return;
 	}
 
-	// ydnar: no world, no fogging
+	// no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
@@ -2605,8 +2604,9 @@ static void Render_fog()
 
 	fog = tr.world->fogs + tess.fogNum;
 
-	// Tr3B: use this only to render fog brushes
 #if 1
+	// use this only to render fog brushes
+
 	if (fog->originalBrushNumber < 0 && tess.surfaceShader->sort <= SS_OPAQUE)
 	{
 		return;
@@ -2650,20 +2650,7 @@ static void Render_fog()
 		eyeT = 1;               // non-surface fog always has eye inside
 	}
 
-	// see if the viewpoint is outside
-	// this is needed for clipping distance even for constant fog
-
-	if (eyeT < 0)
-	{
-		eyeOutside = qtrue;
-	}
-	else
-	{
-		eyeOutside = qfalse;
-	}
-
 	fogDistanceVector[3] += 1.0 / 512;
-
 
 	if (tess.surfaceShader->fogPass == FP_EQUAL)
 	{
@@ -2678,7 +2665,7 @@ static void Render_fog()
 	GLSL_SetMacroState(gl_fogQuake3Shader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
 	GLSL_SetMacroState(gl_fogQuake3Shader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
 	GLSL_SetMacroState(gl_fogQuake3Shader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_fogQuake3Shader, EYE_OUTSIDE, eyeT < 0);
+	GLSL_SetMacroState(gl_fogQuake3Shader, EYE_OUTSIDE, eyeT < 0); // viewpoint is outside when eyeT < 0 - needed for clipping distance even for constant fog
 	GLSL_SelectPermutation(gl_fogQuake3Shader);
 
 	GLSL_SetUniformVec4(selectedProgram, UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
@@ -2733,13 +2720,13 @@ static void Render_fog()
 static void Render_volumetricFog()
 {
 	vec3_t viewOrigin;
-	float  fogDensity;
 	vec3_t fogColor;
 
 	GLimp_LogComment("--- Render_volumetricFog---\n");
 
 	if (glConfig2.framebufferBlitAvailable)
 	{
+		float fogDensity;
 		FBO_t *previousFBO;
 
 		previousFBO = glState.currentFBO;
