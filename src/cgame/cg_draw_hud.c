@@ -1425,7 +1425,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		}
 	}
 
-	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || !cg_drawCompass.integer)
 	{
 		return;
 	}
@@ -2428,10 +2428,7 @@ void CG_DrawGlobalHud(void)
 		CG_DrawPMItemsBig();
 	}
 
-	if (cg_drawCompass.integer)
-	{
-		CG_DrawNewCompass(activehud->compas.location);
-	}
+	CG_DrawNewCompass(activehud->compas.location);
 }
 
 /*
