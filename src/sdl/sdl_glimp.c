@@ -396,7 +396,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 		ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context\n");
 	}
 
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__APPLE__)
 	if (GLXEW_ARB_create_context_profile)
 	{
 		int         numAttribs = 0;
