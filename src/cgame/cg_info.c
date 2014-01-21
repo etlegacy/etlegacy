@@ -830,7 +830,7 @@ void CG_TopShotsDraw(void)
 	}
 }
 
-#define OBJ_X   -20     // spacing from right
+#define OBJ_X   166
 #define OBJ_Y   -60     // spacing from bottom
 #define OBJ_W   308
 
@@ -845,7 +845,8 @@ void CG_ObjectivesDraw()
 	}
 	else
 	{
-		int  i, status, x = 640 + OBJ_X - OBJ_W, y = 480, h;
+		int  realX = (Ccg_WideX(SCREEN_WIDTH) / 2) - (OBJ_W / 2);
+		int  i, status, x = realX + 4, y = 480, h;
 		int  lines = 0, count = 0;
 		char temp[1024], *s, *p;
 
@@ -880,7 +881,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 8, sizeof(temp), FONT_TEXT);
 			p = temp;
 			while (*p)
 			{
@@ -904,7 +905,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 			p = temp;
 			while (*p)
 			{
@@ -929,7 +930,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 			p = temp;
 			while (*p)
 			{
@@ -963,7 +964,7 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 				p = temp;
 				while (*p)
 				{
@@ -996,7 +997,7 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 				p = temp;
 				while (*p)
 				{
@@ -1054,16 +1055,16 @@ void CG_ObjectivesDraw()
 			y += TS_Y - h;
 		}
 
-		CG_DrawRect(x, y, OBJ_W, h, 1, borderColor);
-		CG_FillRect(x, y, OBJ_W, h, bgColor);
+		CG_DrawRect(realX, y, OBJ_W, h, 1, borderColor);
+		CG_FillRect(realX, y, OBJ_W, h, bgColor);
 
 		// Header
-		CG_FillRect(x, y, OBJ_W, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(x, y, OBJ_W, tSpacing + 4, 1, borderColorTitle);
+		CG_FillRect(realX, y, OBJ_W, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(realX, y, OBJ_W, tSpacing + 4, 1, borderColorTitle);
 
 		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("OBJECTIVES"), 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, CG_TranslateString("OBJECTIVES"), 0.0f, 0, hStyle, hFont);
 		y += 4;
 
 		if (!count)
@@ -1082,7 +1083,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 8, sizeof(temp), FONT_TEXT);
 			s = p = temp;
 			while (*p)
 			{
@@ -1109,9 +1110,10 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_DrawPic(x, y + 2, 18, 12, cgs.media.alliedFlag);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^4Allies", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 22, y, tScale, tScale, tColor, "^4Allies", 0.0f, 0, tStyle, tFont);
 			s = p = temp;
 			while (*p)
 			{
@@ -1119,7 +1121,7 @@ void CG_ObjectivesDraw()
 				{
 					*p++ = '\0';
 					y   += tSpacing;
-					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					CG_Text_Paint_Ext(x + 22, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
 					s = p;
 				}
 				else
@@ -1138,9 +1140,10 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_DrawPic(x, y + 2, 18, 12, cgs.media.axisFlag);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^1Axis", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 22, y, tScale, tScale, tColor, "^1Axis", 0.0f, 0, tStyle, tFont);
 			s = p = temp;
 			while (*p)
 			{
@@ -1148,7 +1151,7 @@ void CG_ObjectivesDraw()
 				{
 					*p++ = '\0';
 					y   += tSpacing;
-					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					CG_Text_Paint_Ext(x + 22, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
 					s = p;
 				}
 				else
@@ -1175,17 +1178,19 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				status   = 0;
 				color[0] = '\0';
 				status   = atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
 				if (status == 1)
 				{
+					CG_DrawPic(x, y + 3, 18, 12, cgs.media.alliedFlag);
 					Q_strncpyz(color, "^2", sizeof(color));
 				}
 				else if (status == 2)
 				{
+					CG_DrawPic(x, y + 3, 18, 12, cgs.media.axisFlag);
 					Q_strncpyz(color, "^1", sizeof(color));
 				}
 
@@ -1196,9 +1201,7 @@ void CG_ObjectivesDraw()
 					{
 						*p++ = '\0';
 						y   += tSpacing;
-						CG_Text_Paint_Ext(x, y, tScale, tScale, tColor,
-						                  va("%s%s", color[0] ? color : "", s),
-						                  0.0f, 0, tStyle, tFont);
+						CG_Text_Paint_Ext(x + 22, y, tScale, tScale, tColor, va("%s%s", color[0] ? color : "", s), 0.0f, 0, tStyle, tFont);
 						s = p;
 					}
 					else
@@ -1226,17 +1229,19 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				status   = 0;
 				color[0] = '\0';
 				status   = atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
 				if (status == 1)
 				{
+					CG_DrawPic(x, y + 3, 18, 12, cgs.media.axisFlag);
 					Q_strncpyz(color, "^2", sizeof(color));
 				}
 				else if (status == 2)
 				{
+					CG_DrawPic(x, y + 3, 18, 12, cgs.media.alliedFlag);
 					Q_strncpyz(color, "^1", sizeof(color));
 				}
 
@@ -1247,9 +1252,7 @@ void CG_ObjectivesDraw()
 					{
 						*p++ = '\0';
 						y   += tSpacing;
-						CG_Text_Paint_Ext(x, y, tScale, tScale, tColor,
-						                  va("%s%s", color[0] ? color : "", s),
-						                  0.0f, 0, tStyle, tFont);
+						CG_Text_Paint_Ext(x + 22, y, tScale, tScale, tColor, va("%s%s", color[0] ? color : "", s), 0.0f, 0, tStyle, tFont);
 						s = p;
 					}
 					else
