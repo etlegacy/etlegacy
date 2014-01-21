@@ -2317,8 +2317,7 @@ static void CG_DrawLimboMessage(void)
 	if (cg_descriptiveText.integer)
 	{
 		str = CG_TranslateString("You are wounded and waiting for a medic.");
-		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		CG_Text_Paint_Ext(INFOTEXT_STARTX, y + charHeight * 2.0f, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		if (cgs.gametype == GT_WOLF_LMS)
 		{
@@ -2327,8 +2326,7 @@ static void CG_DrawLimboMessage(void)
 		}
 
 		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), BindingFromName("+moveup"));
-		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		CG_Text_Paint_Ext(INFOTEXT_STARTX, y + 2 * charHeight * 2.0f, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
 	{
@@ -2390,14 +2388,14 @@ static qboolean CG_DrawFollow(void)
 	{
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 		{
-			CG_DrawPic(INFOTEXT_STARTX + 1, y - 12, 18, 12, cgs.media.alliedFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, y - charHeight * 2.0f - 12, 18, 12, cgs.media.alliedFlag);
 		}
 		else
 		{
-			CG_DrawPic(INFOTEXT_STARTX + 1, y - 12, 18, 12, cgs.media.axisFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, y - charHeight * 2.0f - 12, 18, 12, cgs.media.axisFlag);
 		}
 
-		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, y - 13, 20, 14, 1, HUD_Border);
+		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
 	}
 
 	// if in limbo, show different follow message
@@ -2480,7 +2478,6 @@ static qboolean CG_DrawFollow(void)
 		int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 		int  startClass = CG_Text_Width_Ext(follow, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
-		y += charHeight * 2.0f;
 		CG_DrawPic(INFOTEXT_STARTX + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
