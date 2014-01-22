@@ -2102,6 +2102,20 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 		G_Error("Cmd_FollowCycle_f: bad dir %i\n", dir);
 	}
 
+	// if dedicated follow client, just switch between the two auto clients
+	if (ent->client->sess.spectatorClient < 0)
+	{
+		if (ent->client->sess.spectatorClient == -1)
+		{
+			ent->client->sess.spectatorClient = -2;
+		}
+		else if (ent->client->sess.spectatorClient == -2)
+		{
+			ent->client->sess.spectatorClient = -1;
+		}
+		return;
+	}
+
 	clientnum = ent->client->sess.spectatorClient;
 	original  = clientnum;
 	do
