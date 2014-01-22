@@ -8346,13 +8346,13 @@ void UI_Campaign_f(void)
 
 	if (i == uiInfo.campaignCount || !(campaign->typeBits & (1 << GT_WOLF)))
 	{
-		Com_Printf(trap_TranslateString("Can't find campaign '%s'\n", str));
+		Com_Printf(trap_TranslateString("Can't find campaign '%s'\n"), str);
 		return;
 	}
 
 	if (!campaign->mapInfos[0])
 	{
-		Com_Printf(trap_TranslateString("Corrupted campaign '%s'\n", str));
+		Com_Printf(trap_TranslateString("Corrupted campaign '%s'\n"), str);
 		return;
 	}
 
@@ -8383,7 +8383,7 @@ void UI_ListCampaigns_f(void)
 
 	if (mpCampaigns)
 	{
-		Com_Printf(trap_TranslateString("%i campaigns found:\n", mpCampaigns));
+		Com_Printf(trap_TranslateString("%i campaigns found:\n"), mpCampaigns);
 	}
 	else
 	{
