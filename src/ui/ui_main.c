@@ -4073,7 +4073,7 @@ void UI_RunMenuScript(char **args)
 				else
 				{
 					// we can't close the menu from here, it's not open yet .. (that's the onOpen script)
-					Com_Printf("Can't show Server Info (not found, or local server)\n");
+					Com_Printf(trap_TranslateString("Can't show Server Info (not found, or local server)\n"));
 				}
 			}
 		}
@@ -7682,7 +7682,7 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5))
 				{
 					Q_strncpyz(buf, buf + 5, sizeof(buf));
-					Com_Printf("Server is full, redirect to: %s\n", buf);
+					Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
 					switch (ui_autoredirect.integer)
 					{
 					//auto-redirect
@@ -8210,13 +8210,13 @@ static void UI_StopServerRefresh(void)
 		return;
 	}
 	uiInfo.serverStatus.refreshActive = qfalse;
-	Com_Printf("%d servers listed in browser with %d players.\n",
+	Com_Printf(trap_TranslateString("%d servers listed in browser with %d players.\n"),
 	           uiInfo.serverStatus.numDisplayServers,
 	           uiInfo.serverStatus.numPlayersOnServers);
 	count = trap_LAN_GetServerCount(ui_netSource.integer);
 	if (count - uiInfo.serverStatus.numDisplayServers > 0)
 	{
-		Com_Printf("%d servers not listed (filtered out by game browser settings)\n",
+		Com_Printf(trap_TranslateString("%d servers not listed (filtered out by game browser settings)\n"),
 		           count - uiInfo.serverStatus.numDisplayServers);
 	}
 }
@@ -8346,13 +8346,13 @@ void UI_Campaign_f(void)
 
 	if (i == uiInfo.campaignCount || !(campaign->typeBits & (1 << GT_WOLF)))
 	{
-		Com_Printf("Can't find campaign '%s'\n", str);
+		Com_Printf(trap_TranslateString("Can't find campaign '%s'\n", str));
 		return;
 	}
 
 	if (!campaign->mapInfos[0])
 	{
-		Com_Printf("Corrupted campaign '%s'\n", str);
+		Com_Printf(trap_TranslateString("Corrupted campaign '%s'\n", str));
 		return;
 	}
 
@@ -8383,11 +8383,11 @@ void UI_ListCampaigns_f(void)
 
 	if (mpCampaigns)
 	{
-		Com_Printf("%i campaigns found:\n", mpCampaigns);
+		Com_Printf(trap_TranslateString("%i campaigns found:\n", mpCampaigns));
 	}
 	else
 	{
-		Com_Printf("No campaigns found.\n");
+		Com_Printf(trap_TranslateString("No campaigns found.\n"));
 		return;
 	}
 
