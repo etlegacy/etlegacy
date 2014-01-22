@@ -4441,3 +4441,33 @@ msgstr ""
 #: src/ui/ui_main.c:5812
 msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
 msgstr ""
+
+msgid "Server connection timed out."
+msgstr ""
+
+msgid "Server disconnected for unknown reason"
+msgstr ""
+
+msgid "Server is full, redirect to: %s\n"
+msgstr ""
+
+msgid "Can't show Server Info (not found, or local server)\n"
+msgstr ""
+
+msgid "%d servers listed in browser with %d players.\n"
+msgstr ""
+
+msgid "%d servers not listed (filtered out by game browser settings)\n"
+msgstr ""
+
+msgid "Can't find campaign '%s'\n"
+msgstr ""
+
+msgid "Corrupted campaign '%s'\n"
+msgstr ""
+
+msgid "%i campaigns found:\n"
+msgstr ""
+
+msgid "No campaigns found.\n"
+msgstr ""

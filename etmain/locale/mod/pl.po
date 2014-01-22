@@ -4504,3 +4504,30 @@ msgid ""
 "^1Check your connection - no servers found!      Filtered/Total: 0/000"
 msgstr ""
 "^3Sprawdz swoje filtry - brak serwerow!   Zfiltrowanych/Lacznie: 0/000"
+
+msgid "Server connection timed out."
+msgstr "Polaczenie z serwerem przerwane."
+
+msgid "Server disconnected for unknown reason"
+msgstr "Serwer rozlaczony za nieznana przyczyne"
+
+msgid "Server is full, redirect to: %s\n"
+msgstr "Serwer jest pelny, przekierowac do: %s\n"
+
+msgid "%d servers listed in browser with %d players.\n"
+msgstr "%d serwerow pokazanych w przegladarce z %d graczami.\n"
+
+msgid "%d servers not listed (filtered out by game browser settings)\n"
+msgstr "%d serwerow nie pokazanych (zfiltrowanych przez ustawienia przegladarki)\n"
+
+msgid "Can't find campaign '%s'\n"
+msgstr "Nie mozna znalesc kampanii '%s'\n"
+
+msgid "Corrupted campaign '%s'\n"
+msgstr "Uszkodzona kampania '%s'\n"
+
+msgid "%i campaigns found:\n"
+msgstr "%i kampanii znalezionych:\n"
+
+msgid "No campaigns found.\n"
+msgstr "Brak znalezionych kampanii.\n"
