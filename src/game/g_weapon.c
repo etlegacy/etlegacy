@@ -1592,7 +1592,7 @@ void Weapon_Engineer(gentity_t *ent)
 	trace_t   tr;
 	gentity_t *traceEnt;
 	vec3_t    mins, end, origin;
-	int       touch[MAX_GENTITIES], scored = 0;
+	int       touch[MAX_GENTITIES];
 
 	// Can't heal an MG42 if you're using one!
 	if (ent->client->ps.persistant[PERS_HWEAPON_USE])
@@ -2265,6 +2265,7 @@ evilbanigoto:
 
 				if (traceEnt->health >= 248)
 				{
+					int      scored = 0;
 					qboolean defusedObj = qfalse;
 
 					traceEnt->health = 255;
@@ -3750,11 +3751,12 @@ static vec3_t flameChunkMaxs = { 4, 4, 4 };
 
 gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 {
-	vec3_t  start;
-	vec3_t  trace_start;
-	vec3_t  trace_end;
-	trace_t trace;
-
+	vec3_t    start;
+	vec3_t    trace_start;
+	vec3_t    trace_end;
+	trace_t   trace;
+	gentity_t *traceEnt;
+	
 	VectorCopy(ent->r.currentOrigin, start);
 	start[2] += ent->client->ps.viewheight;
 	VectorCopy(start, trace_start);
@@ -3783,7 +3785,12 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 		}
 	}
 
-	return fire_flamechunk(ent, start, forward);
+	traceEnt = fire_flamechunk(ent, start, forward);
+	
+	// flamethrower exploit fix
+	ent->r.svFlags |= SVF_BROADCAST;
+	ent->client->flametime = level.time + 2500;
+	return traceEnt;
 }
 
 //======================================================================
