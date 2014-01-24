@@ -1271,6 +1271,13 @@ void ClientThink_real(gentity_t *ent)
 		return;
 	}
 
+	// flamethrower exploit fix
+	if(client->flametime && level.time > client->flametime)
+	{
+		client->flametime = 0;
+		ent->r.svFlags &= ~SVF_BROADCAST;
+	}
+
 	if ((client->ps.eFlags & EF_VIEWING_CAMERA) || level.match_pause != PAUSE_NONE)
 	{
 		ucmd->buttons     = 0;
