@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -34,8 +34,6 @@
  * Current supported effects are rain and snow.
  */
 
-#define ATM_NEW
-
 #include "cg_local.h"
 
 #define MAX_ATMOSPHERIC_HEIGHT          MAX_MAP_SIZE    // maximum world height
@@ -64,52 +62,13 @@ typedef enum
 	ATM_SNOW
 } atmFXType_t;
 
-#ifndef ATM_NEW
-/*
-** Atmospheric Particles PolyPool
-*/
-static polyVert_t atmPolyPool[MAX_ATMOSPHERIC_PARTICLES * 3];
-static int        numParticlesInFrame;
-static qhandle_t  atmPolyShader;
-
-static void CG_ClearPolyPool(void)
-{
-	numParticlesInFrame = 0;
-	atmPolyShader       = 0;
-}
-
-static void CG_RenderPolyPool(void)
-{
-	if (numParticlesInFrame)
-	{
-		trap_R_AddPolysToScene(atmPolyShader, 3, atmPolyPool, numParticlesInFrame);
-		CG_ClearPolyPool();
-	}
-}
-#endif // ATM_NEW
-
 static void CG_AddPolyToPool(qhandle_t shader, const polyVert_t *verts)
 {
-#ifndef ATM_NEW
-	if (atmPolyShader && atmPolyShader != shader)
-	{
-		CG_RenderPolyPool();
-	}
-
-	if (numParticlesInFrame == MAX_ATMOSPHERIC_PARTICLES)
-	{
-		CG_RenderPolyPool();
-	}
-
-	atmPolyShader = shader;
-	memcpy(&atmPolyPool[numParticlesInFrame * 3], verts, 3 * sizeof(polyVert_t));
-	numParticlesInFrame++;
-#else
-	int firstIndex;
-	int firstVertex;
-	int i;
-
+	int          firstIndex;
+	int          firstVertex;
+	int          i;
 	polyBuffer_t *pPolyBuffer = CG_PB_FindFreePolyBuffer(shader, 3, 3);
+
 	if (!pPolyBuffer)
 	{
 		return;
@@ -134,7 +93,6 @@ static void CG_AddPolyToPool(qhandle_t shader, const polyVert_t *verts)
 
 	pPolyBuffer->numIndicies += 3;
 	pPolyBuffer->numVerts    += 3;
-#endif // ATM_NEW
 }
 
 /*
@@ -894,10 +852,6 @@ void CG_AddAtmosphericEffects()
 	{
 		return;
 	}
-
-#ifndef ATM_NEW
-	CG_ClearPolyPool();
-#endif // ATM_NEW
 
 	max = cg_atmosphericEffects.value < 1 ? cg_atmosphericEffects.value * cg_atmFx.numDrops : cg_atmFx.numDrops;
 	if (CG_EffectGustCurrent(currvec, &currweight, &currnum))
