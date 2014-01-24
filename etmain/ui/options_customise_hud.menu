@@ -29,7 +29,7 @@ menuDef {
 
 // Hud Display //
 #define HUD_Y 32
-	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 196, "HUD DISPLAY" )
+	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 208, "HUD DISPLAY" )
 	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Draw Gun:", .2, 8, "cg_drawGun", "Shows gun model on-screen" )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Show Compass:", .2, 8, "cg_drawCompass", "Displays compass (with icons when near select events)" )
 	CVARFLOATLABEL( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -44,12 +44,13 @@ menuDef {
 	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, "Enable Flags:", .2, 8, "cg_countryflags", "Displays players country flags in score board" )
 	YESNO( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, "Fireteam Latched Class:", .2, 8, "cg_fireteamLatchedClass", "Displays Fireteam latched class" )
 	MULTI( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, "Obituaries Icons:", .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, "Displays graphical obituaries" )
-	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, "Switch HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, "Switches between different HUD" )
-	MULTI( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, "Modify Selected HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, "Customises Selected HUD" )
+	YESNO( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, "Show Descriptive Text:", .2, 8, "cg_descriptiveText", "Displays limbo help text" )
+	MULTI( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, "Switch HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, "Switches between different HUD" )
+	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, "Modify Selected HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, "Customises Selected HUD" )
 
 
 // In-Game Display //
-#define DISPLAY_Y 234
+#define DISPLAY_Y 246
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "IN-GAME DISPLAY" )
 	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Ejecting Brass:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "Sets the duration ejected bullet shells etc. last for" )
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
