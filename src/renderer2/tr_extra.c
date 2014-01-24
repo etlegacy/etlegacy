@@ -778,7 +778,7 @@ void MatrixFromQuat(matrix_t m, const quat_t q)
 
 	http://www.intel.com/cd/ids/developer/asmo-na/eng/293748.htm
 	*/
-	float x2, y2, z2, w2;
+	float x2, y2, z2; //w2;
 	float yy2, xy2;
 	float xz2, yz2, zz2;
 	float wz2, wy2, wx2, xx2;
@@ -786,7 +786,7 @@ void MatrixFromQuat(matrix_t m, const quat_t q)
 	x2 = q[0] + q[0];
 	y2 = q[1] + q[1];
 	z2 = q[2] + q[2];
-	w2 = q[3] + q[3];
+	//w2 = q[3] + q[3];
 
 	yy2 = q[1] * y2;
 	xy2 = q[0] * y2;
@@ -1370,7 +1370,7 @@ replaces content of find by replace in dest
 */
 qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *replace)
 {
-	int  lstart, lfind, lreplace, lend;
+	int  lend;
 	char *s;
 	char backup[32000];             // big, but small enough to fit in PPC stack
 
@@ -1387,6 +1387,8 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 	}
 	else
 	{
+		int lstart, lfind, lreplace;
+
 		Q_strncpyz(backup, dest, lend + 1);
 		lstart   = s - dest;
 		lfind    = strlen(find);
