@@ -2583,10 +2583,10 @@ static void Render_liquid(int stage)
 
 static void Render_fog()
 {
-	fog_t    *fog;
-	float    eyeT;
-	vec3_t   local;
-	vec4_t   fogDistanceVector, fogDepthVector;
+	fog_t  *fog;
+	float  eyeT;
+	vec3_t local;
+	vec4_t fogDistanceVector, fogDepthVector;
 
 	//ri.Printf(PRINT_ALL, "--- Render_fog ---\n");
 

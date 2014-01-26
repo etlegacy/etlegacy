@@ -2265,7 +2265,7 @@ evilbanigoto:
 
 				if (traceEnt->health >= 248)
 				{
-					int      scored = 0;
+					int      scored     = 0;
 					qboolean defusedObj = qfalse;
 
 					traceEnt->health = 255;
@@ -3756,7 +3756,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 	vec3_t    trace_end;
 	trace_t   trace;
 	gentity_t *traceEnt;
-	
+
 	VectorCopy(ent->r.currentOrigin, start);
 	start[2] += ent->client->ps.viewheight;
 	VectorCopy(start, trace_start);
@@ -3786,9 +3786,9 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 	}
 
 	traceEnt = fire_flamechunk(ent, start, forward);
-	
+
 	// flamethrower exploit fix
-	ent->r.svFlags |= SVF_BROADCAST;
+	ent->r.svFlags        |= SVF_BROADCAST;
 	ent->client->flametime = level.time + 2500;
 	return traceEnt;
 }

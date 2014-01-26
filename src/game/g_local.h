@@ -833,7 +833,7 @@ struct gclient_s
 	int medals;
 	float acc;
 
-	int	flametime; // flamethrower exploit fix
+	int flametime; // flamethrower exploit fix
 
 	qboolean hasaward;
 	qboolean wantsscore;

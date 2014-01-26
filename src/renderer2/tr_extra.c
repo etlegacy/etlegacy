@@ -1126,10 +1126,10 @@ vec_t QuatNormalize(quat_t q)
 	{
 		float ilength = 1 / length;
 
-		q[0]   *= ilength;
-		q[1]   *= ilength;
-		q[2]   *= ilength;
-		q[3]   *= ilength;
+		q[0] *= ilength;
+		q[1] *= ilength;
+		q[2] *= ilength;
+		q[3] *= ilength;
 	}
 
 	return length;

@@ -28,7 +28,7 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- * 
+ *
  * @file tr_sky.c
  */
 
@@ -688,7 +688,7 @@ static void BuildCloudData()
 	if (tess.surfaceShader->sky.cloudHeight)
 	{
 		int i;
-		
+
 		for (i = 0; i < MAX_SHADER_STAGES; i++)
 		{
 			if (!tess.surfaceStages[i])

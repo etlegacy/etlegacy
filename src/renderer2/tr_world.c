@@ -28,7 +28,7 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- * 
+ *
  * @file tr_world.c
  */
 
@@ -178,7 +178,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	if (gen->plane.type != PLANE_NON_PLANAR && r_facePlaneCull->integer)
 	{
 		float d;
-		
+
 		d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
 		if (d > 0.0f)
 		{
@@ -217,7 +217,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	{
 		cull = R_CullPointAndRadius(gen->origin, gen->radius);
 	}
-	
+
 	if (cull == CULL_OUT)
 	{
 		tr.pc.c_sphere_cull_out++;
@@ -336,7 +336,7 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 	if (decalBits)
 	{
 		int i;
-		
+
 		// project any decals
 		for (i = 0; i < tr.refdef.numDecalProjectors; i++)
 		{
@@ -350,13 +350,13 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 	{
 		shader_t *shader = surf->shader;
-	
+
 		if (r_mergeClusterSurfaces->integer &&
-			!r_dynamicBspOcclusionCulling->integer &&
-			((r_mergeClusterFaces->integer && *surf->data == SF_FACE) ||
-			 (r_mergeClusterCurves->integer && *surf->data == SF_GRID) ||
-			 (r_mergeClusterTriangles->integer && *surf->data == SF_TRIANGLES)) &&
-			!shader->isSky && !shader->isPortal && !ShaderRequiresCPUDeforms(shader))
+		    !r_dynamicBspOcclusionCulling->integer &&
+		    ((r_mergeClusterFaces->integer && *surf->data == SF_FACE) ||
+		     (r_mergeClusterCurves->integer && *surf->data == SF_GRID) ||
+		     (r_mergeClusterTriangles->integer && *surf->data == SF_TRIANGLES)) &&
+		    !shader->isSky && !shader->isPortal && !ShaderRequiresCPUDeforms(shader))
 		{
 			return;
 		}

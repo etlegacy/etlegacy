@@ -28,7 +28,7 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- * 
+ *
  * @file tr_skin.c
  */
 

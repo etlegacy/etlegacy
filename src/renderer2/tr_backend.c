@@ -1936,7 +1936,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 						if (r_parallelShadowSplits->integer)
 						{
-							int    numCasters;
+							int numCasters;
 
 							// original light direction is from surface to light
 							VectorInverse(lightDirection);

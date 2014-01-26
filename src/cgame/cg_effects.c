@@ -628,7 +628,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		int         tagIndex, gibIndex, junction;
 		int         clientNum = cent->currentState.clientNum;
 		qboolean    foundtag;
-		
+
 		if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 		{
 			CG_Error("Bad clientNum on player entity\n");

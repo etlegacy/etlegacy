@@ -197,8 +197,8 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// omnidirectional?
 	if (numPoints == 1)
 	{
-		float  radius = projection[3];
-		float  iDist;
+		float radius = projection[3];
+		float iDist;
 
 		// set up omnidirectional
 		numPoints            = 4;
@@ -206,7 +206,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		temp.omnidirectional = qtrue;
 
 		Vector4Set(projection, 0.0f, 0.0f, -1.0f, radius * 2.0f);
-		iDist      = 1.0f / (radius * 2.0f);
+		iDist = 1.0f / (radius * 2.0f);
 
 		// set corner
 		VectorSet(xyz, points[0][0] - radius, points[0][1] - radius, points[0][2] + radius);
