@@ -142,31 +142,57 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 				G_Printf("set %s %s\n", text, value);
 			}
 		}
-		if (!Q_stricmp(token.string, "setl"))
+		else if (!Q_stricmp(token.string, "setl"))
 		{
-			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].name, sizeof(config->setl[0].name)))
-			{
-				return G_ConfigError(handle, "expected name of cvar to set and lock");
-			}
+			int i = 0;
+			qboolean overwrite = qfalse;
 
-			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].value, sizeof(config->setl[0].value)))
+			if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
 			{
-				return G_ConfigError(handle, "expected value of cvar to set and lock");
+				return G_ConfigError(handle, "expected cvar to set");
 			}
-
-			if (config->setl[config->numSetl].value[0] == '-')
+			else
 			{
-				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+				if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
 				{
-					return G_ConfigError(handle, "expected value after '-'");
+					return G_ConfigError(handle, "expected cvar value");
 				}
 
-				Q_strncpyz(config->setl[config->numSetl].value, va("-%s", text), sizeof(config->setl[0].value));
+				if (value[0] == '-')
+				{
+					if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+					{
+						return G_ConfigError(handle, "expected value after '-'");
+					}
+
+					Q_strncpyz(value, va("-%s", text), sizeof(value));
+				}
 			}
 
-			trap_Cvar_Set(config->setl[config->numSetl].name, config->setl[config->numSetl].value);
-			G_Printf("setl %s %s\n", config->setl[config->numSetl].name, config->setl[config->numSetl].value);
-			config->numSetl++;
+			for(; i < config->numSetl; i++)
+			{
+				if(!Q_stricmp(config->setl[i].name,text))
+				{
+					overwrite = qtrue;
+					break;
+				}
+			}
+
+			if(overwrite)
+			{
+				Q_strncpyz(config->setl[i].name,text,sizeof(config->setl[0].name));
+				Q_strncpyz(config->setl[i].value,value,sizeof(config->setl[0].name));
+			}
+			else
+			{
+				Q_strncpyz(config->setl[config->numSetl].name,text,sizeof(config->setl[0].name));
+				Q_strncpyz(config->setl[config->numSetl].value,value,sizeof(config->setl[0].name));
+				i = config->numSetl;
+				config->numSetl++;
+			}
+
+			trap_Cvar_Set(config->setl[i].name, config->setl[i].value);
+			G_Printf("setl %s %s\n", config->setl[i].name, config->setl[i].value);
 		}
 		else if (!Q_stricmp(token.string, "command"))
 		{
@@ -185,7 +211,7 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 		}
 		else
 		{
-			return G_ConfigError(handle, "unknown token");
+			return G_ConfigError(handle, va("unknown token: %s",token.string));
 		}
 	}
 
@@ -372,4 +398,42 @@ qboolean G_configSet(const char *configname)
 	}
 
 	return qtrue;
+}
+
+void G_ConfigCheckLocked()
+{
+	int i = 0;
+	config_t *config = &level.config;
+
+	if(!config)
+	{
+		return;
+	}
+
+	for(; i < config->numSetl; i++)
+	{
+		char temp[256];
+
+		if(!config->setl[i].name)
+		{
+			continue;
+		}
+
+		trap_Cvar_VariableStringBuffer(config->setl[i].name,temp,256);
+
+		if(Q_stricmp(config->setl[i].value,temp))
+		{
+			G_Printf("Config cvar \"%s\" value: %s does not match the currently set value %s\n",config->setl[i].name,config->setl[i].value,temp);
+			goto configerror;
+			break;
+		}
+	}
+
+	return;
+
+configerror:
+	trap_SetConfigstring(CS_CONFIGNAME, "");
+	trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' ^1WAS UNLOADED DUE TO EXTERNAL MANIPULATION\"", config->name));
+
+	memset(&level.config, 0, sizeof(config_t));
 }

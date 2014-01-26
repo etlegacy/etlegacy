@@ -163,7 +163,6 @@ vmCvar_t match_readypercent;
 vmCvar_t match_timeoutcount;
 vmCvar_t match_timeoutlength;
 vmCvar_t match_warmupDamage;
-vmCvar_t team_maxPanzers;
 vmCvar_t team_maxplayers;
 vmCvar_t team_nocontrols;
 vmCvar_t server_motd0;
@@ -4753,6 +4752,8 @@ void G_RunFrame(int levelTime)
 
 	// get any cvar changes
 	G_UpdateCvars();
+
+	G_ConfigCheckLocked();
 
 	for (i = 0; i < level.num_entities; i++)
 	{
