@@ -211,7 +211,7 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 		}
 		else
 		{
-			return G_ConfigError(handle, va("unknown token: %s",token.string));
+			return G_ConfigError(handle, "unknown token: %s",token.string);
 		}
 	}
 
@@ -222,20 +222,63 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 {
 	pc_token_t token;
 	char       serverinfo[MAX_INFO_STRING];
+	char	   *mapname;
 
 	trap_GetServerinfo(serverinfo, sizeof(serverinfo));
+	mapname = Info_ValueForKey(serverinfo, "mapname");
 
 	trap_PC_ReadToken(handle, &token);
 
 	G_Printf("Map settings for: %s\n", token.string);
+	G_Printf("Current map: %s\n",mapname);
 
-	if (!Q_stricmp(token.string, "default") || !Q_stricmp(token.string, Info_ValueForKey(serverinfo, "mapname")))
+	if (!Q_stricmp(token.string, "default"))
 	{
 		G_Printf("Setting rules for map: %s\n", token.string);
 		return G_ParseSettings(handle, qtrue, config);
 	}
+	else if(!Q_stricmp(token.string, mapname))
+	{
+		int flen = 0;
+		fileHandle_t f;
+		char *code, *signature;
+		qboolean res = qfalse;
+
+		G_Printf("Setting rules for map: %s\n", token.string);
+		res =  G_ParseSettings(handle, qtrue, config);
+		if(res && strlen(config->mapscripthash))
+		{
+			char sdir[MAX_QPATH];
+
+			trap_Cvar_VariableStringBuffer("g_mapScriptDirectory",sdir,sizeof(sdir));
+
+			flen = trap_FS_FOpenFile(va("%s/%s.script",sdir,mapname), &f, FS_READ);
+			if (flen < 0)
+			{
+				return G_ConfigError(handle, "Cannot open mapscript file for hash verification: %s/%s.script",sdir,mapname);
+			}
+
+			code = malloc(flen + 1);
+			trap_FS_Read(code, flen, f);
+			*(code + flen) = '\0';
+			trap_FS_FCloseFile(f);
+			signature = G_SHA1(code);
+
+			free(code);
+
+			if(Q_stricmp(config->mapscripthash,signature))
+			{
+				return G_ConfigError(handle, "Invalid mapscript hash for map: %s hash given in config: \"%s\" scripts actual hash \"%s\"",mapname,config->mapscripthash,signature);
+			}
+
+			G_Printf("Hash is valid for map: %s\n",mapname);
+		}
+
+		return res;
+	}
 	else
 	{
+		
 		G_Printf("Ignoring rules for map: %s\n", token.string);
 		return G_ParseSettings(handle, qfalse, config);
 	}
