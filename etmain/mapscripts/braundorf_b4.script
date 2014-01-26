@@ -1,0 +1,665 @@
+//Braundorf b4 script
+//Written (with sections copied and pasted from other scripts) by Brevik
+//last edit: syd 25-may-05 - fixed plant time + misc bugs.
+
+game_manager
+{
+	spawn 
+   	{
+		create
+		{
+			scriptName "bugfix1"
+			classname "func_fakebrush"
+			origin "3583 -2771 144"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-5 -5 -5"
+			maxs "5 5 5"
+		}
+		create
+		{
+			scriptName "bugfix2"
+			classname "func_fakebrush"
+			origin "3922 -3995 144"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-5 -5 -5"
+			maxs "5 5 5"
+		}
+		create
+		{
+			scriptName "bugfix3"
+			classname "func_fakebrush"
+			origin "2374 -2484 128"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-10 -10 -22"
+			maxs "10 10 22"
+		}
+
+		remapshaderflush
+		
+		// Game rules
+		wm_axis_respawntime	30
+		wm_allied_respawntime	20
+		wm_number_of_objectives	7
+		wm_set_round_timelimit	20
+
+		// Objectives
+		//1 Primary: Blow up Main Gate
+		//2 Primary: Destroy Bunker Controls
+		//3 Secondary: Blow up Side Door
+		//4 Secondary: Hold Factory District
+		//5 Build Command Post
+		//6 Destroy Side Gate
+		
+
+		// Current main objectives for each team (0=Axis, 1=Allies)
+		wm_objective_status 1 0 0
+		wm_objective_status 1 1 0
+		wm_objective_status 2 0 0
+		wm_objective_status 2 1 0
+		wm_objective_status 3 0 0
+		wm_objective_status 3 1 0
+		wm_objective_status 4 0 0
+		wm_objective_status 4 1 0
+		wm_objective_status 5 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+		wm_objective_status 7 0 0
+		wm_objective_status 7 1 0
+		
+		wm_set_main_objective		2	0
+		wm_set_main_objective		2	1
+
+		//Accum values
+		accum 1 set 0 //Overall Allied status
+		accum 2 set 2 //set 2 = null value
+
+		// Stopwatch mode defending team (0=Axis, 1=Allies)
+		wm_set_defending_team	0
+
+		// Winner on expiration of round timer (0=Axis, 1=Allies, -1=no winner at expiration)
+		wm_setwinner	0 
+		wait 150
+
+		
+		// Set initial spawn points for both teams
+		setautospawn	"Factory District Spawn"	1 //Uses name from description field of team_WOLF_objective
+		setautospawn	"Factory District Spawn"	0
+		
+		// Announce "build the command post..."
+		
+		wait 1000
+		// *----------------------------------- vo ------------------------------------------*
+		// wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+		// wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+		// wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *----------------------------------- vo ------------------------------------------*
+
+
+	}
+	
+	trigger endgame
+	{
+		
+   		wait 500
+   		
+		wm_objective_status 2 1 1
+		wm_objective_status 2 0 2
+		
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 1
+
+		// End the round
+		wm_endround
+
+		wait 500
+	}
+} 
+
+//End of Game_manager section
+
+
+// --------------------
+// BUNKER CONTROLS CODE
+// --------------------
+
+bunker_controls_script
+{
+	spawn 
+	{
+		wait 200
+		constructible_class 3 
+	}
+	
+	death 
+	{
+	
+		// wait 200
+
+   		wm_announce "Allies have destroyed the Bunker Controls!"
+   		
+  		// wm_teamvoiceannounce 0 "allies_hq_objective_destroyed"
+		// wm_teamvoiceannounce 1 "allies_hq_objective_destroyed"
+
+		trigger game_manager endgame
+		setstate bc_debris default
+		setstate bc_smoke default
+		togglespeaker bc_explosion2
+	}
+}
+
+bc_debris_script
+{
+	spawn
+	{
+		wait 200
+		setstate bc_debris invisible
+	}
+}
+
+bc_smoke_script
+{
+	spawn
+	{
+		wait 200
+		setstate bc_smoke invisible
+	}
+}
+
+
+
+// --------------
+// MAIN GATE CODE
+// --------------
+
+main_gate_script
+{
+	spawn 
+	{
+		wait 200
+		constructible_class 3
+	}
+	
+	death 
+	{
+	
+		trigger forward_spawn force_allied
+		trigger forward_spawn check_obj
+		trigger forward_spawn kill
+		setstate mg_debris default
+		
+		wm_announce "Allies have destroyed the Main Gate!"
+		
+		wm_teamvoiceannounce 0 "allies_hq_objective_destroyed"
+		wm_teamvoiceannounce 1 "allies_hq_objective_destroyed"
+		
+		wm_objective_status 		1 0 2
+		wm_objective_status 		1 1 1
+		
+	}
+}
+
+mg_debris_script
+{
+	spawn
+	{
+		wait 200
+		setstate mg_debris invisible
+	}
+}
+
+
+// --------------
+// SIDE DOOR CODE
+// --------------
+
+side_door_script
+{
+	spawn 
+	{
+		wait 200
+		constructible_class 3 
+	}
+	
+	death 
+	{
+	
+		wm_announce "Allies have destroyed the Side Door!"
+		
+		wm_teamvoiceannounce 0 "allies_hq_objective_destroyed"
+		wm_teamvoiceannounce 1 "allies_hq_objective_destroyed"
+		
+		wm_objective_status 		3 0 2
+		wm_objective_status 		3 1 1
+		
+	}
+}
+
+
+// --------------
+// SIDE GATE CODE
+// --------------
+
+side_gate
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		constructible_constructxpbonus 7
+		constructible_destructxpbonus 7
+	}
+	
+	built final
+	{
+		wm_announce "The side gate has been built!"
+		
+		wm_teamvoiceannounce 0 "axis_hq_const_completed"
+		wm_teamvoiceannounce 1 "axis_hq_const_completed"
+		
+		setstate side_gate default 
+		setstate side_gate_materials invisible
+		setstate side_gate_materials_extras invisible
+		setstate cm_marker_sidegate default
+		
+		wm_objective_status 7 0 1
+		wm_objective_status 7 1 2
+	}
+	
+	decayed final
+	{
+		setstate side_gate_materials default
+		setstate side_gate_materials_extras default
+		setstate side_gate invisible
+		setstate cm_marker_sidegate invisible
+	}
+	
+	death
+	{
+		wm_announce "The side gate has been destroyed!" 
+		
+		wm_teamvoiceannounce 0 "allies_hq_const_destroyed"
+		wm_teamvoiceannounce 1 "allies_hq_const_destroyed"
+		
+		setstate side_gate_materials default
+		setstate side_gate_materials_extras default
+		setstate cm_marker_sidegate invisible
+		
+		wm_objective_status 7 0 2
+		wm_objective_status 7 1 1
+	}
+}
+
+cm_marker_sidegate
+{
+	spawn
+	{
+		wait 200
+		setstate cm_marker_sidegate invisible
+	}
+}
+
+
+// ------------------
+// FORWARD SPAWN CODE
+// ------------------
+
+forward_spawn
+{
+	spawn
+	{
+
+		accum 0 set 0
+	}
+
+	trigger axis_capture
+	{
+		// setstate forwardflag_wobj default
+		accum 0 abort_if_equal 0
+		accum 0 set 0
+		alertentity forwardflag_wobj
+		
+		
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis recapture the factory district!"
+		
+		wm_teamvoiceannounce 0 "axis_hq_objective_captured"
+		wm_teamvoiceannounce 1 "allies_hq_objective_lost"
+		
+		wm_objective_status 		4 0 1
+		wm_objective_status 		4 1 2
+
+	}
+
+	trigger allied_capture
+	{
+		// setstate forwardflag_wobj default
+		accum 0 abort_if_equal 1
+		accum 0 set 1
+		alertentity forwardflag_wobj
+		
+		// Message to alert players
+		wm_announce	"Allies capture the factory district!"
+		
+		wm_teamvoiceannounce 0 "axis_hq_objective_lost"
+		wm_teamvoiceannounce 1 "allies_hq_objective_captured"
+		
+		wm_objective_status 		4 0 2
+		wm_objective_status 		4 1 1
+	}
+
+	
+	trigger check_obj
+	{
+		accum 0 abort_if_equal 1 // Do Allied own the flag?
+		wm_objective_status 		4 0 2
+		wm_objective_status 		4 1 1
+	}
+	
+	trigger force_allied
+	{
+		accum 0 abort_if_equal 1 // Do Allied own the flag?
+		alertentity forwardflag_wobj
+		alertentity forward_spawn
+		
+		// Message to alert players
+		wm_announce	"Allies permanently capture the factory district!"
+		
+		wm_teamvoiceannounce 0 "axis_hq_objective_lost"
+		wm_teamvoiceannounce 1 "allies_hq_objective_captured"
+				
+		wm_objective_status 		4 0 2
+		wm_objective_status 		4 1 1
+	}
+	
+	trigger kill
+	{
+		remove
+	}
+}
+
+// -------------------------------------------------
+// COMMAND POST CODE:  Copied from sock's online LDR
+// -------------------------------------------------
+
+// ================================================
+neutral_cp_toi
+{
+	spawn
+	{
+		wait 50
+		accum 3 set 0	// 0=Neutral Closed, 1=Allied Damaged, 2=Axis Damaged
+
+		trigger self show_previous_cabinet		// Setup teamdoors and correct cabinet
+	}
+
+	trigger set_alliedcabinet
+	{
+		accum 3 set 1			// Allied cabinet has been built
+	}
+
+	trigger set_axiscabinet
+	{
+		accum 3 set 2			// Axis cabinet has been built
+	}
+
+	trigger show_previous_cabinet			// Show correct CP state
+	{
+		accum 3 trigger_if_equal 0 neutral_cp_toi show_neutral_cabinet
+		accum 3 trigger_if_equal 1 neutral_cp_toi show_allied_cabinet
+		accum 3 trigger_if_equal 2 neutral_cp_toi show_axis_cabinet
+	}
+
+	trigger show_neutral_cabinet			// Neutral Closed CP
+	{
+		setstate neutral_cp_closed default
+		setstate neutral_cp_closed_model default
+	}
+
+	trigger show_allied_cabinet			// Allied damaged CP
+	{
+		setstate allied_cp_damaged default
+		setstate allied_cp_damaged_model default
+	}
+
+	trigger show_axis_cabinet			// Axis damaged CP
+	{
+		setstate axis_cp_damaged default
+		setstate axis_cp_damaged_model default
+	}
+
+	trigger hide_all_cabinet			// Hide all previous CP states
+	{
+		setstate neutral_cp_closed invisible
+		setstate neutral_cp_closed_model invisible
+		setstate allied_cp_damaged invisible
+		setstate allied_cp_damaged_model invisible
+		setstate axis_cp_damaged invisible
+		setstate axis_cp_damaged_model invisible
+	}
+}
+
+// ================================================
+allied_cp_open
+{
+	spawn
+	{
+		wait 100
+		constructible_class 2			// Dyno+Satchel
+
+		setstate allied_cp_damaged invisible	// Hide damaged CP model+clip
+		setstate allied_cp_damaged_model invisible
+		trigger self disable_cp_features		// Default charge bar times
+	}
+
+	trigger disable_cp_features
+	{
+		setstate allied_cp_open_model invisible	// Hide Open CP model
+
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+
+		wm_objective_status 5 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+		
+		sethqstatus 1 0			// Landmines team warning message
+		disablespeaker allied_cp_sound		// Disable morse code sound
+	}
+
+	trigger enable_cp_features
+	{
+		setstate allied_cp_open_model default	// Show open CP model
+
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+
+		wm_objective_status 5 0 2
+		wm_objective_status 5 1 1
+		wm_objective_status 6 0 2
+		wm_objective_status 6 1 1
+		
+		sethqstatus 1 1			// Landmines team warning message
+		enablespeaker allied_cp_sound		// Enable morse code sound
+	}
+
+	buildstart final
+	{
+		trigger neutral_cp_toi hide_all_cabinet	// Hide all previous cabinet states
+	}
+
+	built final
+	{
+		trigger neutral_cp_toi set_alliedcabinet	// Allied cabinet has been built
+		trigger self enable_cp_features		// Increase charge bar times
+		trigger cpspawn_wobj on
+		
+		wm_announce "Allied Command Post constructed. Charge speed increased!"
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *----------------------------------- vo ------------------------------------------*
+	}
+
+	decayed final
+	{
+		setstate allied_cp_open_model invisible	// Hide Open CP model
+		trigger neutral_cp_toi show_previous_cabinet	// Show previous cabinet state
+	}
+
+	death
+	{
+		trigger neutral_cp_toi show_previous_cabinet	// Show damaged cabinet state
+		trigger self disable_cp_features		// Default charge bar times
+		trigger cpspawn_wobj off
+
+		wm_announce "Axis team has destroyed the Allied Command Post!"
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *----------------------------------- vo ------------------------------------------*
+	}
+}
+
+// ================================================
+axis_cp_open
+{
+	spawn
+	{
+		wait 100
+		constructible_class 2			// Dyno+Satchel
+
+		setstate axis_cp_damaged invisible	// Hide damaged CP model+clip
+		setstate axis_cp_damaged_model invisible
+		trigger self disable_cp_features		// Default charge bar times
+	}
+
+	trigger disable_cp_features
+	{
+		setstate axis_cp_open_model invisible	// Hide Open CP model
+
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+
+		wm_objective_status 5 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+		
+		sethqstatus 0 0			// Landmines team warning message
+		disablespeaker axis_cp_sound		// Disable morse code sound
+	}
+
+	trigger enable_cp_features
+	{
+		setstate axis_cp_open_model default	// Show open CP model
+
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+
+		wm_objective_status 5 0 1
+		wm_objective_status 5 1 2
+		wm_objective_status 6 0 1
+		wm_objective_status 6 1 2
+
+		sethqstatus 0 1			// Landmines team warning message
+		enablespeaker axis_cp_sound		// Enable morse code sound
+	}
+
+	buildstart final
+	{
+		trigger neutral_cp_toi hide_all_cabinet	// Hide all previous cabinet states
+	}
+
+	built final
+	{
+		trigger neutral_cp_toi set_axiscabinet	// Allied cabinet built
+		trigger self enable_cp_features		// Increase charge bar times
+		
+		wm_objective_status 5 0 1
+		wm_objective_status 5 1 2
+
+		wm_announce "Axis Command Post constructed. Charge speed increased!"
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *----------------------------------- vo ------------------------------------------*
+	}
+
+	decayed final
+	{
+		setstate axis_cp_open_model invisible	// Hide Open CP model
+		trigger neutral_cp_toi show_previous_cabinet	// Show previous cabinet state
+	}
+
+	death
+	{
+		trigger neutral_cp_toi show_previous_cabinet	// Show damaged cabinet state
+		trigger self disable_cp_features		// Default charge bar times
+
+		wm_announce "Allied team has destroyed the Axis Command Post!"
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *----------------------------------- vo ------------------------------------------*
+	}
+}
+
+
+// -----------------------
+// COMMAND POST SPAWN CODE
+// -----------------------
+
+cp_spawn
+{
+	spawn
+	{
+		wait 50
+		setstate cp_spawn invisible	
+	}
+}
+
+cpspawn_wobj
+{
+	spawn
+	{
+		wait 50
+		setstate cpspawn_wobj invisible
+		setstate cp_spawn invisible
+	}
+
+	trigger on
+	{
+		setstate cpspawn_wobj default
+		setstate cp_spawn default
+	}
+
+	trigger off
+	{
+		setstate cpspawn_wobj invisible
+		setstate cp_spawn invisible
+	}
+}
+
+
+

@@ -1,0 +1,788 @@
+//
+//Brush Scripting
+//Map: mp_beach
+//Last edited by: SEKoner
+//mortis Feb 5 2005 added CP enabled bunker spawns, fixed double/triple messages and other minor bugfixes
+//mortis Feb 5 2005 PST added south beach spawns to work with south TWO
+//mortis May 25 2006 PDT removed cp spawn for bugfix only version. All features present but 'turned off'
+//mortis Oct 14 2006 version for Father - rtcw style side sidespawns
+//mortis Feb 1 2007 fix silly endgame waitstate courtesy dersaiden
+
+game_manager
+{
+	spawn
+	{
+
+
+		// mortis - new allied supply bunker spawns
+
+		create
+		{
+			scriptName "supplybunker_obj"
+			classname "team_WOLF_objective"
+			targetname "supplybunker_obj"
+			origin "2060 2160 600"	// z = CC_FILTER_ALLIES(2) | CC_FILTER_SPAWNS(4)
+			spawnflags 2	// TEAM_ALLIES(2)
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn1"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2000 2100 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn2"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2000 2160 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn3"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2000 2220 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn4"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2060 2100 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn5"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2060 2220 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn6"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2120 2100 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn7"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2120 2160 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "supplybunker_spawn8"
+			classname "team_CTF_bluespawn"
+			targetname "supplybunker_spawn"
+			origin "2120 2220 600"
+			angle 180
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		
+		//mortis create new south beach spawns to work with malfunctioning TWO
+
+		create
+		{
+			scriptName "sidespawn_spawn1"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-1800 -2650 312"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "sidespawn_spawn2"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-1800 -2700 312"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "sidespawn_spawn3"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-1800 -2600 312"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+
+		create
+		{
+			scriptName "sidespawn_spawn4"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-1750 -2650 200"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "sidespawn_spawn5"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-1850 -2650 312"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "sidespawn_spawn6"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-1900 -2750 312"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "sidespawn_spawn7"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-1950 -2750 312"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+		create
+		{
+			scriptName "sidespawn_spawn8"
+			classname "team_CTF_bluespawn"
+			targetname "sidespawn2"
+			origin "-2000 -2650 312"
+			angle 0
+			spawnflags 2	// TEAM_ALLIES
+		}
+
+
+		// Set the respawn times
+
+		wm_axis_respawntime	35
+		wm_allied_respawntime	25
+		wm_number_of_objectives 4
+		wm_set_round_timelimit  19
+
+		// Axis control all objectives at the start (0 == AXIS, 1 == ALLIED)
+		wm_objective_status		1	0	0	//SideWall
+		wm_objective_status		1	1	0	//SideWall
+		wm_objective_status		2	0	0	//DocStat
+		wm_objective_status		2	1	0	//DocStat
+		wm_objective_status		3	0	0	//Transmit
+		wm_objective_status		3	1	0	//Transmit
+		wm_objective_status		4	0	2	//FlagPole
+		wm_objective_status		4	1	1	//FlagPole
+		wm_objective_status		5	0	0	//SideDoor
+		wm_objective_status		5	1	0	//SideDoor
+		// Only for the neutral command post
+		wm_objective_status 		6 	0	 0	//ComPost
+		wm_objective_status		6 	1	 0	//ComPost
+		wm_objective_status 		7	0	 0	//LMS
+		wm_objective_status 		7 	1	 0	//LMS
+		// Set Defending Team for SW Mode
+
+		wm_set_defending_team	0
+
+		// If the round timer expires, the Axis have won, so set the current winning team
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 0
+
+		// Accum #1 will be the state of objective number one
+		accum 1 set 0
+		// Accum #2 is set after either wall is breached, so that the sirens are set only once
+		accum 2 set 0
+
+		// Hide forward bunker flag
+		setstate beach_flag_wobj invisible
+
+
+		// Play objective 1_2 & 1
+		wm_teamvoiceannounce 0 "sideentr_allies_defend"
+		wm_teamvoiceannounce 1 "sideentr_allies_destroy"
+	}
+
+	trigger objective1
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied takes control of objective #1
+		wm_objective_status		1	0	2
+		wm_objective_status		1	1	1
+
+		// UI pop-up to alert players
+		wm_announce	"The Sea Wall has been breached!"
+	}
+
+	trigger objective2
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied takes control of objective #1
+		wm_objective_status		3	0	2
+		wm_objective_status		3	1	1
+
+		// Change the variable within the script so that we can check if someone wins the round
+		accum 1 set 1
+
+		// UI pop-up to alert players
+		wm_announce	"Allies transmitted the documents!"
+
+		// Call function to check if the round has been won
+		trigger game_manager checkgame
+	}
+
+	trigger objective5
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied takes control of objective #1
+		wm_objective_status		5	0	2
+		wm_objective_status		5	1	1
+
+		// UI pop-up to alert players
+		wm_announce	"The Sea Wall Door has been breached!"
+	}
+
+	trigger axis_object_stolen
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied have stolen the documents (0 == AXIS, 1 == ALLIED)
+		wm_objective_status		2	0	2
+		wm_objective_status		2	1	1
+
+	}
+
+	trigger axis_object_returned
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Axis have returned the documents (0 == AXIS, 1 == ALLIED)
+		wm_objective_status		2	0	0
+		wm_objective_status		2	1	0
+
+		wm_teamvoiceannounce 0 "objective_axis_secured"
+		wm_teamvoiceannounce 1 "objective_allies_lost"
+
+	}
+
+	trigger checkgame
+	{
+		accum 1 abort_if_not_equal 1
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 1
+		wm_teamvoiceannounce 0 "objective_axis_lost"
+		wm_teamvoiceannounce 1 "objective_allies_secured"
+
+		//mortis reduce silly wait state from 1500 to 50
+		wait 50
+		// End the round
+		wm_endround
+	}
+
+	trigger beach_flagblue
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied takes control of checkpoint #1
+		wm_objective_status		4	1	2
+		wm_objective_status		4	0	1
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allies capture the Forward Bunker!"
+	}
+
+	trigger beach_flagred
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Axis takes control of checkpoint #1
+		wm_objective_status		4	1	1
+		wm_objective_status		4	0	2
+
+		// Some kind of UI pop-up to alert players
+		wm_announce "Axis captured the Forward Bunker!"
+
+	}
+
+}
+
+allied_obj1 //Dummy ;)
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+	}
+
+	death
+	{
+		
+	}
+}
+
+allied_obj1_1 //Sea wall breached.
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+	}
+
+	death
+	{
+
+		wm_teamvoiceannounce 0 "sidewall_axis_breach"
+		wm_teamvoiceannounce 1 "sidewall_allies_breach"
+
+		trigger game_manager objective1
+	}
+}
+
+allied_obj1_2 //Sea wall door breached.
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+	}
+
+	death
+	{
+
+		wm_teamvoiceannounce 0 "sideentr_axis_breach"
+		wm_teamvoiceannounce 1 "sideentr_allies_breach"
+
+      		setstate axisteamdoor invisible 
+      		setstate axisteamdoor_toi invisible 
+
+		trigger game_manager objective5
+	}
+}
+
+allied_obj2 //The war documents being transmitted.
+{
+	spawn
+	{
+	}
+
+	death
+	{
+		trigger game_manager objective2
+	}
+}
+
+beach_flag
+{
+	trigger axis_capture
+	{
+		trigger game_manager beach_flagred
+
+		wm_addteamvoiceannounce 0 "axis_bunker_defend"
+		wm_addteamvoiceannounce 1 "allies_bunker_capture"
+
+		wm_teamvoiceannounce 0 "axis_bunker_captured"
+		wm_teamvoiceannounce 1 "allies_bunker_lost"
+
+		//setstate beach_flag_spawns default
+		setstate beach_flag_wobj invisible
+	}
+
+	trigger allied_capture
+	{
+		trigger game_manager beach_flagblue
+
+		wm_teamvoiceannounce 0 "axis_bunker_lost"
+		wm_teamvoiceannounce 1 "allies_bunker_captured"
+
+		wm_removeteamvoiceannounce 0 "axis_bunker_defend"
+		wm_removeteamvoiceannounce 1 "allies_bunker_capture"
+
+		wait 400 
+		setstate beach_flag_wobj default
+		//alertentity beach_flag_wobj
+	}
+}
+
+// ================================================
+// ============ NEUTRAL COMMAND POST ==============
+// ================================================
+
+allied_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger allied_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		setstate allied_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate allied_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger allied_compost_built_model enable_allied_features
+
+		enablespeaker allies_compost_sound
+
+		//mortis - disabled in bugfix version
+		//trigger supplybunker_obj on
+
+		//wm_announce "The Allies' supply bunker spawn has been enabled!"
+	}
+
+	decayed final
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger allied_compost_built_model disable_allied_features
+
+		disablespeaker allies_compost_sound
+
+		//mortis - disabled in bugfix version
+		//trigger supplybunker_obj off
+
+		//wm_announce "The Allies' supply bunker spawn has been disabled!"
+	}
+}
+
+allied_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_compost_built_model invisible
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 6 0 2
+		wm_objective_status 6 1 1
+
+
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+
+
+	}
+}
+
+axis_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger axis_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		setstate axis_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate axis_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger axis_compost_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger axis_compost_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_compost_built_model invisible
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 7 0 1
+		wm_objective_status 7 1 2
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 7 0 0
+		wm_objective_status 7 1 0
+	}
+}
+
+//mortis - spawn handling
+supplybunker_obj
+{
+	spawn
+	{
+		set
+		{
+			//these have to be set inside the spawn{} function, not create{}
+			description "Supply Bunker"
+			message "Supply Bunker"
+		}
+		wait 50
+		setstate supplybunker_obj invisible
+		setstate supplybunker_spawn invisible
+	}
+
+	trigger on
+	{               
+		setstate supplybunker_obj default
+		setstate supplybunker_spawn default
+	}
+
+	trigger off
+	{
+		setstate supplybunker_obj invisible
+		setstate supplybunker_spawn invisible
+	}
+}
+
+
+// ================================
+// ======= REMOVE LMS STUFF =======
+// ================================
+
+// LMS Command Post
+neutral_compost_toi_lms
+{
+	spawn
+	{
+		wait 50
+		setstate neutral_compost_toi_lms invisible
+	}
+}
+
+neutral_compost_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}

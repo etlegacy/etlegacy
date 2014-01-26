@@ -1,0 +1,676 @@
+//dersaidin 24/1/07 		remove wait before wm_endround
+game_manager
+{
+	spawn
+	{
+		// Set scenario information
+		remapshader "models/mapobjects/tanks_sd/mg42turret" "models/mapobjects/tanks_sd/mg42turret_2"
+		remapshaderflush
+
+		wm_axis_respawntime		30
+		wm_allied_respawntime		20
+
+		wm_number_of_objectives		3
+
+		wm_set_round_timelimit	15
+
+		// Set objective #1 properties
+
+		// Nazi's control objective #1 at the start
+		// SHORT DESCRIPTIONS
+
+		// Set Defending Team for SW Mode
+
+		wm_set_defending_team	0
+
+		// If the round timer expires, the Nazis have won, so set the current winning team
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 0
+
+		// Accum #1 will be the state of objective number one
+		accum 1 set 0
+		accum 2 set 0
+		accum 3 set 0
+
+		// start triggered loops on/off as required (eg: command post radio sounds)
+		disablespeaker allies_compost_sound
+		disablespeaker axis_compost_sound
+		disablespeaker allies_compost_sound_lms
+		disablespeaker axis_compost_sound_lms
+
+		// *----------------------------------- vo ------------------------------------------*
+		wait 1000
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+		
+	}
+
+	trigger objective1
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied takes control of objective #1
+		wm_objective_status		1 1 2
+
+
+		// Change the variable within the script so that we can check if someone wins the round
+		accum 1 set 1
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allied team has disabled the North Radar!"
+		trigger north_radar destroyed
+		// Call function to check if the round has been won
+		trigger game_manager checkgame
+	}
+
+	trigger objective2
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied takes control of objective #1
+		wm_objective_status		2 1 2
+
+
+		// Change the variable within the script so that we can check if someone wins the round
+		accum 2 set 1
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allied team has disabled the South Radar!"
+		trigger south_radar destroyed
+		// Call function to check if the round has been won
+		trigger game_manager checkgame
+	}
+
+	trigger checkgame
+	{
+		accum 1 abort_if_not_equal 1
+		accum 2 abort_if_not_equal 1
+
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 1
+
+		//wait 1500
+
+		// End the round
+		wm_endround
+	}
+}
+
+radar_obj1 //the north radar structure
+{
+	spawn
+	{
+       constructible_class 3
+	}
+
+	death
+	{
+		trigger game_manager objective1
+	}
+}
+
+radar_obj2 //the south radar structure
+{
+	spawn
+	{
+       constructible_class 3
+	}
+
+	death
+	{
+		trigger game_manager objective2
+	}
+}
+
+north_radar
+{
+	spawn
+	{
+		playsound sound/multiplayer/radar_loop02.wav looping
+		trigger north_radar rotateloop
+	}
+
+	trigger rotateloop
+	{
+		faceangles 0 -90 0 3000
+		faceangles 0 -180 0 3000
+		faceangles 0 -270 0 3000
+		faceangles 0 -360 0 3000
+		trigger north_radar rotateloop
+	}
+
+	trigger destroyed
+	{
+		stopsound
+		halt
+	}
+
+	death
+	{
+	}
+}
+
+south_radar
+{
+	spawn
+	{
+		playsound sound/multiplayer/radar_loop02.wav looping
+		trigger south_radar rotateloop
+	}
+
+	trigger rotateloop
+	{
+		faceangles 0 -90 0 3000
+		faceangles 0 -180 0 3000
+		faceangles 0 -270 0 3000
+		faceangles 0 -360 0 3000
+		trigger south_radar rotateloop
+	}
+
+	trigger destroyed
+	{
+		stopsound
+		halt
+	}
+
+	death
+	{
+	}
+}
+
+checkpoint01
+{
+	spawn
+	{
+		remove
+	}
+}
+
+checkpoint02
+{
+	spawn
+	{
+		remove
+	}
+}
+
+checkpoint03
+{
+	spawn
+	{
+		remove
+	}
+}
+
+checkpoint04
+{
+	spawn
+	{
+		remove
+	}
+}
+
+checkpoint1_base
+{
+	spawn
+	{
+		remove
+	}
+}
+
+checkpoint2_base
+{
+	spawn
+	{
+		remove
+	}
+}
+
+checkpoint3_base
+{
+	spawn
+	{
+		remove
+	}
+}
+
+checkpoint4_base
+{
+	spawn
+	{
+		remove
+	}
+}
+
+// LEVER STUFF
+
+base_lever1
+{
+	spawn
+	{
+	}
+
+	trigger down
+	{
+		gotomarker gate_lever1_downpos 16
+		trigger base_gate1 open
+	}
+
+	trigger up
+	{
+		gotomarker gate_lever1_uppos 16
+		trigger base_gate1 close
+	}
+}
+
+base_lever2
+{
+	spawn
+	{
+	}
+
+	trigger down
+	{
+		gotomarker gate_lever2_downpos 16
+	}
+
+	trigger up
+	{
+		gotomarker gate_lever2_uppos 16
+	}
+}
+
+base_gate1_trigger1
+{
+	spawn
+	{
+			accum 5 set 1
+	}
+
+	trigger base_lever1up
+	{
+			accum 5 abort_if_not_equal 1
+			trigger base_lever1 up
+			trigger base_lever2 up
+			accum 5 set 0
+			wait 4000
+			trigger base_gate1_trigger2 setaccum0
+	}
+
+	trigger setaccum0
+	{
+			accum 5 set 0
+	}
+
+	trigger setaccum1
+	{
+			accum 5 set 1
+	}
+}
+
+base_gate1_trigger2
+{
+	spawn
+	{
+			accum 5 set 1
+	}
+
+	trigger base_lever1down
+	{
+			accum 5 abort_if_not_equal 0
+			trigger base_lever1 down
+			trigger base_lever2 down
+			accum 5 set 1
+			wait 4000
+			trigger base_gate1_trigger1 setaccum1
+	}
+
+	trigger setaccum0
+	{
+			accum 5 set 0
+	}
+
+	trigger setaccum1
+	{
+			accum 5 set 1
+	}
+}
+
+base_gate1
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav
+		wait 400
+		playsound sound/movers/misc/big_gate2.wav looping forever
+		gotomarker gate_pos1 32 wait
+		stopsound
+		playsound sound/movers/misc/big_gate3.wav
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav
+		wait 400
+		playsound sound/movers/misc/big_gate2.wav looping forever
+		gotomarker gate_pos2 32 wait
+		stopsound
+		playsound sound/movers/misc/big_gate3.wav
+	}
+}
+
+// ================================================
+// ============ NEUTRAL COMMAND POST ==============
+// ================================================
+
+allied_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger allied_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		setstate allied_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate allied_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger allied_compost_built_model enable_allied_features
+
+		enablespeaker allies_compost_sound
+	}
+
+	decayed final
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger allied_compost_built_model disable_allied_features
+
+		disablespeaker allies_compost_sound
+	}
+}
+
+allied_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_compost_built_model invisible
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 6 0 2
+		wm_objective_status 6 1 1
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+	}
+}
+
+axis_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger axis_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		setstate axis_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate axis_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger axis_compost_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger axis_compost_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_compost_built_model invisible
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 7 0 1
+		wm_objective_status 7 1 2
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 7 0 0
+		wm_objective_status 7 1 0
+	}
+}
+
+// ================================
+// ======= REMOVE LMS STUFF =======
+// ================================
+
+// LMS Command Post
+neutral_compost_toi_lms
+{
+	spawn
+	{
+		wait 50
+		setstate neutral_compost_toi_lms invisible
+	}
+}
+
+neutral_compost_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
