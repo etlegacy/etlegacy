@@ -110,7 +110,6 @@ void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *
 
 FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 {
-
 	FT_Bitmap *bit2;
 	int       left, right, width, top, bottom, height, pitch, size;
 
@@ -193,10 +192,8 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 
 static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut, int *xOut, int *yOut, int *maxHeight, FT_Face face, const unsigned char c, qboolean calcHeight)
 {
-	int                i;
 	static glyphInfo_t glyph;
 	unsigned char      *src, *dst;
-	float              scaled_width, scaled_height;
 	FT_Bitmap          *bitmap = NULL;
 
 	Com_Memset(&glyph, 0, sizeof(glyphInfo_t));
@@ -204,6 +201,8 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 	if (face != NULL)
 	{
 		FT_UInt index = FT_Get_Char_Index(face, c);
+		float   scaled_width, scaled_height;
+		int     i;
 
 		if (index == 0)
 		{
@@ -248,7 +247,6 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 			return &glyph;
 		}
 
-
 		src = bitmap->buffer;
 		dst = imageOut + (*yOut * imageSize) + *xOut;
 
@@ -283,7 +281,6 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 
 				src += glyph.pitch;
 				dst += imageSize;
-
 			}
 		}
 		else
@@ -306,8 +303,8 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 		glyph.s2          = glyph.s + (float)scaled_width / imageSize;
 		glyph.t2          = glyph.t + (float)scaled_height / imageSize;
 
-		//ET uses pitch as a horizontal BearingX so we need to change this at this point for the font to be usable in game
-		//Super stupid btw
+		// ET uses pitch as a horizontal BearingX so we need to change this at this point for the font to be usable in game
+		// Super stupid btw
 		glyph.pitch = _TRUNC(face->glyph->metrics.horiBearingX);
 
 		*xOut += scaled_width + 1;
@@ -364,11 +361,13 @@ float readFloat(void)
 qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 {
 	unsigned char *faceData;
-	int           i, len;
+	int           len;
 
 	len = ri.FS_ReadFile(datName, NULL);
 	if (len == sizeof(fontInfo_t))
 	{
+		int i;
+
 		ri.FS_ReadFile(datName, (void **)&faceData);
 		fdOffset = 0;
 		fdFile   = faceData;
