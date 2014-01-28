@@ -2063,9 +2063,11 @@ char *IRC_GetName(const char *name)
 		}
 
 		c = name[i++];
-		if ((j == 0 && !(IS_ALPHA(c) || IS_SPECL(c))) || (j > 0 && !IS_CLEAN(c)))
+
+		// First letter in nickname cannot be a special char
+		if (k == 0 && (!IS_ALPHA(c) || IS_SPECL(c)))
 		{
-			c = '_';
+			continue;
 		}
 
 		if (!(IS_CLEAN(c)))
@@ -2089,8 +2091,8 @@ static qboolean IRC_InitialiseUser(const char *name)
 {
 	char *source;
 
-    // Strip color chars for the player's name, and remove special
-    // characters
+	// Strip color chars for the player's name, and remove special
+	// characters
 	if (cl_IRC_override_nickname->integer)
 	{
 		source = IRC_GetName(cl_IRC_nickname->string);
