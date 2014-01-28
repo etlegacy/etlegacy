@@ -4478,7 +4478,7 @@ msgid "'s Bazooka"
 msgstr " Pociskiem Przeciwczolgowym"
 
 msgid "'s Akimbo .45ACP 1911s"
-msgstr " Podwojne .45ACP 1911s"
+msgstr " Podwojnym .45ACP 1911s"
 
 msgid "^7killed"
 msgstr "^7zabil"
@@ -4531,3 +4531,9 @@ msgstr "%i kampanii znalezionych:\n"
 
 msgid "No campaigns found.\n"
 msgstr "Brak znalezionych kampanii.\n"
+
+msgid "Show Descriptive Text:"
+msgstr "Pokaz Text Opisu:"
+
+msgid "'s Akimbo Luger 9mms"
+msgstr " Podwojnym Lugerem 9mm"

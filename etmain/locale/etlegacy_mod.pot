@@ -4471,3 +4471,9 @@ msgstr ""
 
 msgid "No campaigns found.\n"
 msgstr ""
+
+msgid "Show Descriptive Text:"
+msgstr ""
+
+msgid "'s Akimbo Luger 9mms"
+msgstr ""
