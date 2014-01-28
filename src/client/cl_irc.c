@@ -1,8 +1,5 @@
 #ifdef FEATURE_IRC_CLIENT
-/*
-===========================================================================
-
-OpenWolf GPL Source Code
+/**
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2010 COR Entertainment, LLC.
 Copyright (C) 2011 Dusan Jocic <dusanjocic@msn.com>
@@ -23,13 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  @file cl_irc.c
  @brief irc client
-===========================================================================
 */
-
-#ifndef HAVE_CONFIG_H
-// #include "config.h"
-#endif
-
 #include "client.h"
 #include "../qcommon/htable.h"
 
@@ -228,7 +219,6 @@ static hashtable_t IRC_CTCPHandlers;
 struct irc_user_t
 {
 	char nick[16];
-	int nicklen;
 	int nickattempts;
 	char username[16];
 	char email[100];
@@ -1023,7 +1013,7 @@ static void IRC_HandleError(void)
 
 	WSASetLastError(0);
 }
-#elif defined __linux__ || defined __APPLE__ || defined __FreeBSD__
+#else
 static void IRC_HandleError(void)
 {
 	Com_Printf("IRC socket connection error: %s\n", strerror(errno));
@@ -1419,7 +1409,7 @@ IRC_SendNickname
 Send the user's nickname.
 ==================
 */
-static int IRC_SendNickname()
+int IRC_SendNickname()
 {
 	return IRC_Send("NICK %s", IRC_User.nick);
 }
@@ -1491,18 +1481,18 @@ static int IRCH_FatalError()
 	return IRC_CMD_RETRY;
 }
 
-/*
-==================
-IRCH_NickError
-
-Nickname error. If received while the thread is in the SETNICK state,
-we might want to try again. Otherwise, we ignore the error as it should
-not have been received anyway.
-==================
-*/
+/**
+ * @brief Nickname error.
+ *
+ * If received while the thread is in the SETNICK state, we might
+ * want to try again. Otherwise, we ignore the error as it should
+ * not have been received anyway.
+ */
 #define RANDOM_NUMBER_CHAR ('0' + rand() % 10)
 static int IRCH_NickError()
 {
+	int nicklen = strlen(IRC_User.nick);
+
 	if (IRC_ThreadStatus == IRC_THREAD_SETNICK)
 	{
 		if (++IRC_User.nickattempts == 4)
@@ -1511,15 +1501,15 @@ static int IRCH_NickError()
 			return IRC_CMD_FATAL;
 		}
 
-		if (IRC_User.nicklen < 15)
+		if (nicklen < 15)
 		{
-			IRC_User.nick[IRC_User.nicklen++] = RANDOM_NUMBER_CHAR;
+			IRC_User.nick[nicklen++] = RANDOM_NUMBER_CHAR;
 		}
 		else
 		{
 			int i;
 
-			for (i = IRC_User.nicklen - 3 ; i < IRC_User.nicklen ; i++)
+			for (i = nicklen - 3 ; i < nicklen ; i++)
 			{
 				IRC_User.nick[i] = RANDOM_NUMBER_CHAR;
 			}
@@ -2099,6 +2089,8 @@ static qboolean IRC_InitialiseUser(const char *name)
 {
 	char *source;
 
+    // Strip color chars for the player's name, and remove special
+    // characters
 	if (cl_IRC_override_nickname->integer)
 	{
 		source = IRC_GetName(cl_IRC_nickname->string);
@@ -2108,12 +2100,7 @@ static qboolean IRC_InitialiseUser(const char *name)
 		source = IRC_GetName(name);
 	}
 
-	// Strip color chars for the player's name, and remove special
-	// characters
-	IRC_User.nicklen      = 0;
 	IRC_User.nickattempts = 1;
-
-	IRC_User.nicklen = strlen(source);
 
 	Q_strncpyz(IRC_User.nick, source, sizeof(IRC_User.nick));
 
@@ -2126,7 +2113,7 @@ static qboolean IRC_InitialiseUser(const char *name)
 
 	free(source);
 
-	return (IRC_User.nicklen > 0);
+	return (strlen(IRC_User.nick) > 0);
 }
 
 /*
@@ -2402,7 +2389,8 @@ static void IRC_Thread()
 	IRC_AddHandler("NICK", &IRCH_Nick);                         // Nick change
 	IRC_AddHandler("001", &IRCH_Connected);                     // Connection established
 	IRC_AddHandler("404", &IRCH_Banned);                        // Banned (when sending message)
-	IRC_AddHandler("432", &IRCH_FatalError);                    // Erroneous nick name
+	IRC_AddHandler("432", &IRCH_NickError);                     // Erroneous nick name
+	IRC_AddHandler("468", &IRCH_NickError);                     // Erroneous nick name
 	IRC_AddHandler("433", &IRCH_NickError);                     // Nick name in use
 	IRC_AddHandler("474", &IRCH_Banned);                        // Banned (when joining)
 
