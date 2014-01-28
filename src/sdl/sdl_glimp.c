@@ -396,7 +396,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 		ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context\n");
 	}
 
-#elif defined(__linux__) || defined(__APPLE__)
+#elif defined(__linux__)
 	if (GLXEW_ARB_create_context_profile)
 	{
 		int         numAttribs = 0;
@@ -479,7 +479,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 		}
 	}
 #else
-	ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context because your systems is not supported\n");
+	ri.Printf(PRINT_WARNING, "Couldn't initialize opengl 3 context because your systems is not supported\n");
 #endif
 
 	if (GLmajor < 2)
