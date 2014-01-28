@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -29,9 +29,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @brief polygon projection on the world polygons
+ *
+ * @file tr_marks.c
  */
 
-// tr_marks.c -- polygon projection on the world polygons
 #include "tr_local.h"
 
 #define MAX_VERTS_ON_POLY       64
@@ -150,11 +153,6 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	}
 }
 
-/*
-=================
-R_BoxSurfaces_r
-=================
-*/
 void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **list, int listsize, int *listlength, vec3_t dir)
 {
 

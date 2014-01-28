@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -40,7 +40,6 @@ void Controls_GetConfig(void);
 void CG_DrawOverlays(void);
 int activeFont;
 
-extern vec4_t HUD_Background;
 extern vec4_t HUD_Border;
 
 ///////////////////////
@@ -495,256 +494,6 @@ static void CG_DrawNotify(void)
         }
     }
 */
-}
-
-/*
-===============================================================================
-LAGOMETER
-===============================================================================
-*/
-
-#define LAG_SAMPLES     128
-
-typedef struct
-{
-	int frameSamples[LAG_SAMPLES];
-	int frameCount;
-	int snapshotFlags[LAG_SAMPLES];
-	int snapshotSamples[LAG_SAMPLES];
-	int snapshotCount;
-} lagometer_t;
-
-lagometer_t lagometer;
-
-/*
-==============
-CG_AddLagometerFrameInfo
-
-Adds the current interpolate / extrapolate bar for this frame
-==============
-*/
-void CG_AddLagometerFrameInfo(void)
-{
-	lagometer.frameSamples[lagometer.frameCount & (LAG_SAMPLES - 1)] = cg.time - cg.latestSnapshotTime;
-	lagometer.frameCount++;
-}
-
-/*
-==============
-CG_AddLagometerSnapshotInfo
-
-Each time a snapshot is received, log its ping time and
-the number of snapshots that were dropped before it.
-
-Pass NULL for a dropped packet.
-==============
-*/
-void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
-{
-	// dropped packet
-	if (!snap)
-	{
-		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = -1;
-		lagometer.snapshotCount++;
-		return;
-	}
-
-	if (cg.demoPlayback)
-	{
-		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
-	}
-
-	// add this snapshot's info
-	lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
-	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)]   = snap->snapFlags;
-	lagometer.snapshotCount++;
-}
-
-/*
-==============
-CG_DrawDisconnect
-
-Should we draw something differnet for long lag vs no packets?
-==============
-*/
-static void CG_DrawDisconnect(void)
-{
-	float      x = Ccg_WideX(SCREEN_WIDTH) - 48; // disconnect icon
-	float      y = SCREEN_HEIGHT - 200; // disconnect icon
-	int        cmdNum;
-	usercmd_t  cmd;
-	const char *s;
-	int        w;   // bk010215 - FIXME char message[1024];
-
-	// dont draw if a demo and we're running at a different timescale
-	if (cg.demoPlayback && cg_timescale.value != 1.0f)
-	{
-		return;
-	}
-
-	// don't draw if the server is respawning
-	if (cg.serverRespawning)
-	{
-		return;
-	}
-
-	// draw the phone jack if we are completely past our buffers
-	cmdNum = trap_GetCurrentCmdNumber() - CMD_BACKUP + 1;
-	trap_GetUserCmd(cmdNum, &cmd);
-	if (cmd.serverTime <= cg.snap->ps.commandTime
-	    || cmd.serverTime > cg.time)        // special check for map_restart // bk 0102165 - FIXME
-	{
-		return;
-	}
-
-	// also add text in center of screen
-	s = CG_TranslateString("Connection Interrupted");
-	w = CG_Text_Width_Ext(s, cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(320 - w / 2, 100, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-	// blink the icon
-	if ((cg.time >> 9) & 1)
-	{
-		return;
-	}
-
-	CG_DrawPic(x, y, 48, 48, cgs.media.disconnectIcon);
-}
-
-#define MAX_LAGOMETER_PING  900
-#define MAX_LAGOMETER_RANGE 300
-
-/*
-==============
-CG_DrawLagometer
-==============
-*/
-static void CG_DrawLagometer(void)
-{
-	int   a, x, y, i;
-	float v;
-	float ax, ay, aw, ah, mid, range;
-	int   color;
-	float vscale;
-
-	if (!cg_lagometer.integer) // || cgs.localServer)
-	{
-		CG_DrawDisconnect();
-		return;
-	}
-
-	// draw the graph
-	x = Ccg_WideX(SCREEN_WIDTH) - 48;
-	y = SCREEN_HEIGHT - 200;
-
-	trap_R_SetColor(NULL);
-	//CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
-	CG_FillRect(x, y, 48, 50, HUD_Background);
-	CG_DrawRect_FixedBorder(x, y, 48, 50, 1, HUD_Border);
-
-	ax = x;
-	ay = y;
-	aw = 48;
-	ah = 48;
-	CG_AdjustFrom640(&ax, &ay, &aw, &ah);
-
-	color = -1;
-	range = ah / 3;
-	mid   = ay + range;
-
-	vscale = range / MAX_LAGOMETER_RANGE;
-
-	// draw the frame interpoalte / extrapolate graph
-	for (a = 0 ; a < aw ; a++)
-	{
-		i  = (lagometer.frameCount - 1 - a) & (LAG_SAMPLES - 1);
-		v  = lagometer.frameSamples[i];
-		v *= vscale;
-		if (v > 0)
-		{
-			if (color != 1)
-			{
-				color = 1;
-				trap_R_SetColor(colorYellow);
-			}
-			if (v > range)
-			{
-				v = range;
-			}
-			trap_R_DrawStretchPic(ax + aw - a, mid - v, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
-		}
-		else if (v < 0)
-		{
-			if (color != 2)
-			{
-				color = 2;
-				trap_R_SetColor(colorBlue);
-			}
-			v = -v;
-			if (v > range)
-			{
-				v = range;
-			}
-			trap_R_DrawStretchPic(ax + aw - a, mid, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
-		}
-	}
-
-	// draw the snapshot latency / drop graph
-	range  = ah / 2;
-	vscale = range / MAX_LAGOMETER_PING;
-
-	for (a = 0 ; a < aw ; a++)
-	{
-		i = (lagometer.snapshotCount - 1 - a) & (LAG_SAMPLES - 1);
-		v = lagometer.snapshotSamples[i];
-		if (v > 0)
-		{
-			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)
-			{
-				if (color != 5)
-				{
-					color = 5;  // YELLOW for rate delay
-					trap_R_SetColor(colorYellow);
-				}
-			}
-			else
-			{
-				if (color != 3)
-				{
-					color = 3;
-					trap_R_SetColor(colorGreen);
-				}
-			}
-			v = v * vscale;
-			if (v > range)
-			{
-				v = range;
-			}
-			trap_R_DrawStretchPic(ax + aw - a, ay + ah - v, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
-		}
-		else if (v < 0)
-		{
-			if (color != 4)
-			{
-				color = 4;      // RED for dropped snapshots
-				trap_R_SetColor(colorRed);
-			}
-			trap_R_DrawStretchPic(ax + aw - a, ay + ah - range, 1, range, 0, 0, 0, 0, cgs.media.whiteShader);
-		}
-	}
-
-	trap_R_SetColor(NULL);
-
-	if (cg_nopredict.integer
-#ifdef ALLOW_GSYNC
-	    || cg_synchronousClients.integer
-#endif // ALLOW_GSYNC
-	    )
-	{
-		CG_Text_Paint_Ext(ax, ay, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	}
-
-	CG_DrawDisconnect();
 }
 
 /*
@@ -2044,7 +1793,7 @@ static void CG_DrawCrosshairNames(void)
 //==============================================================================
 
 #define INFOTEXT_STARTX 8
-#define INFOTEXT_STARTY 134
+#define INFOTEXT_STARTY 146
 
 /*
 =================
@@ -2084,7 +1833,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2098,7 +1847,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2112,7 +1861,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2126,7 +1875,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2140,7 +1889,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2154,7 +1903,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2168,7 +1917,7 @@ static void CG_DrawVote(void)
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
+		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
@@ -2497,6 +2246,11 @@ static void CG_DrawSpectatorMessage(void)
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
 
+	str2 = BindingFromName("weapalt");
+	str  = va(CG_TranslateString("Press %s to follow previous player"), str2);
+	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	y += charHeight * 2.0f;
+
 #ifdef FEATURE_MULTIVIEW
 	str2 = BindingFromName("mvactivate");
 	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
@@ -2540,7 +2294,6 @@ int CG_CalculateReinfTime(qboolean menu)
 CG_DrawLimboMessage
 =================
 */
-
 static void CG_DrawLimboMessage(void)
 {
 	char          *str;
@@ -2564,8 +2317,7 @@ static void CG_DrawLimboMessage(void)
 	if (cg_descriptiveText.integer)
 	{
 		str = CG_TranslateString("You are wounded and waiting for a medic.");
-		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		CG_Text_Paint_Ext(INFOTEXT_STARTX, y + charHeight * 2.0f, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		if (cgs.gametype == GT_WOLF_LMS)
 		{
@@ -2574,8 +2326,7 @@ static void CG_DrawLimboMessage(void)
 		}
 
 		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), BindingFromName("+moveup"));
-		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		CG_Text_Paint_Ext(INFOTEXT_STARTX, y + 2 * charHeight * 2.0f, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
 	{
@@ -2593,16 +2344,15 @@ static void CG_DrawLimboMessage(void)
 
 		if (reinfTime > 1)
 		{
-			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
+			str = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
 		else
 		{
-			sprintf(str, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
+			str = va(CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 		}
 	}
 
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	y += charHeight * 2.0f;
 
 	trap_R_SetColor(NULL);
 }
@@ -2638,14 +2388,14 @@ static qboolean CG_DrawFollow(void)
 	{
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 		{
-			CG_DrawPic(INFOTEXT_STARTX + 1, y - (charHeight * 2.0f) - 12, 18, 12, cgs.media.alliedFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, y - charHeight * 2.0f - 12, 18, 12, cgs.media.alliedFlag);
 		}
 		else
 		{
-			CG_DrawPic(INFOTEXT_STARTX + 1, y - (charHeight * 2.0f) - 12, 18, 12, cgs.media.axisFlag);
+			CG_DrawPic(INFOTEXT_STARTX + 1, y - charHeight * 2.0f - 12, 18, 12, cgs.media.axisFlag);
 		}
 
-		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, y - (charHeight * 2.0f) - 13, 20, 14, 1, HUD_Border);
+		CG_DrawRect_FixedBorder(INFOTEXT_STARTX, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
 	}
 
 	// if in limbo, show different follow message
@@ -2698,7 +2448,7 @@ static qboolean CG_DrawFollow(void)
 		if (cg.snap->ps.clientNum != cg.clientNum)
 		{
 			char *follow    = CG_TranslateString("Following");
-			char *w         = cgs.clientinfo[cg.snap->ps.clientNum].cleanname;
+			char *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
 			int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 			int  startClass = CG_Text_Width_Ext(va("(%s", follow), fontScale, 0, &cgs.media.limboFont2) + charWidth;
 			int  startRank  = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
@@ -2724,7 +2474,7 @@ static qboolean CG_DrawFollow(void)
 	else
 	{
 		char *follow    = CG_TranslateString("Following");
-		char *w         = cgs.clientinfo[cg.snap->ps.clientNum].cleanname;
+		char *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
 		int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 		int  startClass = CG_Text_Width_Ext(follow, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
@@ -2767,13 +2517,13 @@ static void CG_DrawWarmup(void)
 				s1 = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
 				w  = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x  = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, 162, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, 290, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 
 			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
 			w  = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
 			x  = Ccg_WideX(320) - w / 2;
-			CG_Text_Paint_Ext(x, 188, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
 			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
@@ -2792,7 +2542,7 @@ static void CG_DrawWarmup(void)
 				}
 				w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, 208, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, 310, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 			return;
 		}
@@ -2809,7 +2559,7 @@ static void CG_DrawWarmup(void)
 
 	w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 	x = Ccg_WideX(320) - w / 2;
-	CG_Text_Paint_Ext(x, 188, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// pre start actions
 	if (sec == 3 && !announced)
@@ -2911,15 +2661,15 @@ static void CG_DrawWarmup(void)
 
 		w = CG_Text_Width_Ext(s, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 140, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 144, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		w = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 160, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 164, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 208, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 184, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 }
 
@@ -3565,7 +3315,10 @@ static void CG_Draw2D(void)
 
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
-			CG_DrawSpectator();
+			if (!CG_DrawScoreboard())
+			{
+				CG_DrawSpectator();
+			}
 			CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
 
@@ -3619,7 +3372,6 @@ static void CG_Draw2D(void)
 		if (!cg.cameraMode)
 		{
 			CG_DrawVote();
-			CG_DrawLagometer();
 		}
 	}
 	else
@@ -3816,13 +3568,9 @@ void CG_Coronas(void)
 	}
 }
 
-/*
-=====================
-CG_DrawActive
-
-Perform all drawing needed to completely fill the screen
-=====================
-*/
+/**
+ * @brief Perform all drawing needed to completely fill the screen
+ */
 void CG_DrawActive(stereoFrame_t stereoView)
 {
 	float  separation;

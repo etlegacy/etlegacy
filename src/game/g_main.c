@@ -51,7 +51,7 @@ typedef struct
 	int cvarFlags;
 	int modificationCount;          // for tracking changes
 	qboolean trackChange;           // track this variable, and announce if changed
-	qboolean fConfigReset;          // OSP: set this var to the default on a config reset
+	qboolean fConfigReset;          // set this var to the default on a config reset
 } cvarTable_t;
 
 gentity_t g_entities[MAX_GENTITIES];
@@ -163,7 +163,6 @@ vmCvar_t match_readypercent;
 vmCvar_t match_timeoutcount;
 vmCvar_t match_timeoutlength;
 vmCvar_t match_warmupDamage;
-vmCvar_t server_autoconfig;
 vmCvar_t team_maxPanzers;
 vmCvar_t team_maxplayers;
 vmCvar_t team_nocontrols;
@@ -191,7 +190,6 @@ vmCvar_t vote_allow_balancedteams;
 vmCvar_t vote_allow_muting;
 vmCvar_t vote_limit;
 vmCvar_t vote_percent;
-vmCvar_t z_serverflags;
 
 vmCvar_t refereePassword;
 vmCvar_t g_debugConstruct;
@@ -424,7 +422,6 @@ cvarTable_t gameCvarTable[] =
 	{ &match_timeoutcount,         "match_timeoutcount",         "3",                          0,                                               0, qfalse, qtrue},
 	{ &match_timeoutlength,        "match_timeoutlength",        "180",                        0,                                               0, qfalse, qtrue},
 	{ &match_warmupDamage,         "match_warmupDamage",         "1",                          0,                                               0, qfalse},
-	{ &server_autoconfig,          "server_autoconfig",          "0",                          0,                                               0, qfalse, qfalse},
 	{ &server_motd0,               "server_motd0",               " ^NEnemy Territory ^7MOTD ", 0,                                               0, qfalse, qfalse},
 	{ &server_motd1,               "server_motd1",               "",                           0,                                               0, qfalse, qfalse},
 	{ &server_motd2,               "server_motd2",               "",                           0,                                               0, qfalse, qfalse},
@@ -453,8 +450,6 @@ cvarTable_t gameCvarTable[] =
 	{ &vote_percent,               "vote_percent",               "50",                         0,                                               0, qfalse, qfalse},
 
 	// state vars
-	{ &z_serverflags,              "z_serverflags",              "0",                          0,                                               0, qfalse, qfalse},
-
 	{ &g_debugConstruct,           "g_debugConstruct",           "0",                          CVAR_CHEAT,                                      0, qfalse},
 
 	{ &g_scriptDebug,              "g_scriptDebug",              "0",                          CVAR_CHEAT,                                      0, qfalse},
@@ -548,13 +543,13 @@ cvarTable_t gameCvarTable[] =
 	{ &team_maxRiflegrenades,      "team_maxRiflegrenades",      "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxLandmines,          "team_maxLandmines",          "10",                         0 },
 	//Skills
-	{ &skill_soldier,              "skill_soldier",              "20 50 90 140",               0 },
-	{ &skill_medic,                "skill_medic",                "20 50 90 140",               0 },
-	{ &skill_fieldops,             "skill_fieldops",             "20 50 90 140",               0 },
-	{ &skill_engineer,             "skill_engineer",             "20 50 90 140",               0 },
-	{ &skill_covertops,            "skill_covertops",            "20 50 90 140",               0 },
-	{ &skill_battlesense,          "skill_battlesense",          "20 50 90 140",               0 },
-	{ &skill_lightweapons,         "skill_lightweapons",         "20 50 90 140",               0 },
+	{ &skill_soldier,              "skill_soldier",              "20 50 90 140",               CVAR_ARCHIVE },
+	{ &skill_medic,                "skill_medic",                "20 50 90 140",               CVAR_ARCHIVE },
+	{ &skill_fieldops,             "skill_fieldops",             "20 50 90 140",               CVAR_ARCHIVE },
+	{ &skill_engineer,             "skill_engineer",             "20 50 90 140",               CVAR_ARCHIVE },
+	{ &skill_covertops,            "skill_covertops",            "20 50 90 140",               CVAR_ARCHIVE },
+	{ &skill_battlesense,          "skill_battlesense",          "20 50 90 140",               CVAR_ARCHIVE },
+	{ &skill_lightweapons,         "skill_lightweapons",         "20 50 90 140",               CVAR_ARCHIVE },
 	{ &g_misc,                     "g_misc",                     "0",                          0 },
 	{ &g_intermissionTime,         "g_intermissionTime",         "60",                         0 },
 	{ &g_intermissionReadyPercent, "g_intermissionReadyPercent", "100",                        0 },
@@ -1409,6 +1404,114 @@ void G_SetTargetName(gentity_t *ent, char *targetname)
 	}
 }
 
+void G_SetSkillLevels(int skill, const char *string)
+{
+	char **temp;
+	char *nextLevel;
+	int  levels[4];
+	int  count;
+
+	temp = (char **) &string;
+
+	for (count = 0; count < 4; count++)
+	{
+		nextLevel = COM_ParseExt(temp, qfalse);
+		if (nextLevel[0])
+		{
+			levels[count] = atoi(nextLevel);
+			if (levels[count] < 0)
+			{
+				levels[count] = -1;
+			}
+		}
+		else
+		{
+			levels[count] = -1;
+		}
+	}
+
+	for (count = 1; count < NUM_SKILL_LEVELS; count++)
+	{
+		skillLevels[skill][count] = levels[count - 1];
+	}
+}
+
+void G_SetSkillLevelsByCvar(vmCvar_t *cvar)
+{
+	char *skillstring;
+	int  skill = -1;
+
+	if (cvar == &skill_battlesense)
+	{
+		skill       = SK_BATTLE_SENSE;
+		skillstring = skill_battlesense.string;
+	}
+	else if (cvar == &skill_engineer)
+	{
+		skill       = SK_EXPLOSIVES_AND_CONSTRUCTION;
+		skillstring = skill_engineer.string;
+	}
+	else if (cvar == &skill_medic)
+	{
+		skill       = SK_FIRST_AID;
+		skillstring = skill_medic.string;
+	}
+	else if (cvar == &skill_fieldops)
+	{
+		skill       = SK_SIGNALS;
+		skillstring = skill_fieldops.string;
+	}
+	else if (cvar == &skill_lightweapons)
+	{
+		skill       = SK_LIGHT_WEAPONS;
+		skillstring = skill_lightweapons.string;
+	}
+	else if (cvar == &skill_soldier)
+	{
+		skill       = SK_HEAVY_WEAPONS;
+		skillstring = skill_soldier.string;
+	}
+	else if (cvar == &skill_covertops)
+	{
+		skill       = SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS;
+		skillstring = skill_covertops.string;
+	}
+
+	if (skill >= 0)
+	{
+		G_SetSkillLevels(skill, skillstring);
+	}
+}
+
+#define SKILLSTRING(skill) va("%i,%i,%i,%i", skillLevels[skill][1], skillLevels[skill][2], skillLevels[skill][3], skillLevels[skill][4])
+
+void G_UpdateSkillsToClients()
+{
+	char cs[MAX_INFO_STRING];
+
+	cs[0] = '\0';
+
+	Info_SetValueForKey(cs, "bs", SKILLSTRING(SK_BATTLE_SENSE));
+	Info_SetValueForKey(cs, "en", SKILLSTRING(SK_EXPLOSIVES_AND_CONSTRUCTION));
+	Info_SetValueForKey(cs, "md", SKILLSTRING(SK_FIRST_AID));
+	Info_SetValueForKey(cs, "fo", SKILLSTRING(SK_SIGNALS));
+	Info_SetValueForKey(cs, "lw", SKILLSTRING(SK_LIGHT_WEAPONS));
+	Info_SetValueForKey(cs, "sd", SKILLSTRING(SK_HEAVY_WEAPONS));
+	Info_SetValueForKey(cs, "cv", SKILLSTRING(SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS));
+	trap_SetConfigstring(CS_UPGRADERANGE, cs);
+}
+
+void G_InitSkillLevels()
+{
+	G_SetSkillLevelsByCvar(&skill_battlesense);
+	G_SetSkillLevelsByCvar(&skill_engineer);
+	G_SetSkillLevelsByCvar(&skill_medic);
+	G_SetSkillLevelsByCvar(&skill_fieldops);
+	G_SetSkillLevelsByCvar(&skill_lightweapons);
+	G_SetSkillLevelsByCvar(&skill_soldier);
+	G_SetSkillLevelsByCvar(&skill_covertops);
+}
+
 /*
 ================
 G_FindTeams
@@ -1524,7 +1627,7 @@ void G_RegisterCvars(void)
 		if (cv->vmCvar)
 		{
 			cv->modificationCount = cv->vmCvar->modificationCount;
-			// OSP - Update vote info for clients, if necessary
+			// update vote info for clients, if necessary
 			G_checkServerToggle(cv->vmCvar);
 		}
 	}
@@ -1568,6 +1671,7 @@ void G_UpdateCvars(void)
 	qboolean    fVoteFlags         = qfalse;
 	qboolean    chargetimechanged  = qfalse;
 	qboolean    clsweaprestriction = qfalse;
+	qboolean    skillLevelPoints   = qfalse;
 
 	for (i = 0, cv = gameCvarTable ; i < gameCvarTableSize ; i++, cv++)
 	{
@@ -1706,6 +1810,11 @@ void G_UpdateCvars(void)
 				{
 					clsweaprestriction = qtrue;
 				}
+				else if (cv->vmCvar == &skill_battlesense || cv->vmCvar == &skill_covertops || cv->vmCvar == &skill_engineer || cv->vmCvar == &skill_fieldops || cv->vmCvar == &skill_lightweapons || cv->vmCvar == &skill_medic || cv->vmCvar == &skill_soldier)
+				{
+					G_SetSkillLevelsByCvar(cv->vmCvar);
+					skillLevelPoints = qtrue;
+				}
 #ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
 				{
@@ -1795,6 +1904,26 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "m", team_maxplayers.string);
 		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 	}
+
+	if (skillLevelPoints)
+	{
+		int x;
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			//somewhat of waste of bandwidth but this should not happen very ofter (next to never)
+			for (x = 0; x < SK_NUM_SKILLS; x++)
+			{
+				int oldskill = g_entities[level.sortedClients[i]].client->sess.skill[x];
+				G_SetPlayerSkill(g_entities[level.sortedClients[i]].client, x);
+				if (oldskill != g_entities[level.sortedClients[i]].client->sess.skill[x])
+				{
+					// call the new func that encapsulates the skill giving behavior
+					G_UpgradeSkill(&g_entities[level.sortedClients[i]], x);
+				}
+			}
+		}
+		G_UpdateSkillsToClients();
+	}
 }
 
 // Reset particular server variables back to defaults if a config is voted in.
@@ -1805,6 +1934,18 @@ void G_wipeCvars(void)
 
 	for (i = 0, pCvars = gameCvarTable; i < gameCvarTableSize; i++, pCvars++)
 	{
+		if (g_gametype.integer == GT_WOLF_STOPWATCH && strcmp(pCvars->cvarName, "g_currentRound"))
+		{
+			continue;
+		}
+
+		if (g_gametype.integer == GT_WOLF_LMS && (strcmp(pCvars->cvarName, "g_lms_currentMatch") ||
+		                                          strcmp(pCvars->cvarName, "g_lms_roundlimit") ||
+		                                          strcmp(pCvars->cvarName, "g_lms_matchlimit")))
+		{
+			continue;
+		}
+
 		if (pCvars->vmCvar && pCvars->fConfigReset)
 		{
 			G_Printf("set %s %s\n", pCvars->cvarName, pCvars->defaultString);
@@ -1977,6 +2118,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 
 	G_InitMemory();
 
+	G_InitSkillLevels();
+
 	// intialize gamestate
 	if (g_gamestate.integer == GS_INITIALIZE)
 	{
@@ -2054,6 +2197,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
 	Info_SetValueForKey(cs, "m", team_maxplayers.string);
 	trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
+
+	G_UpdateSkillsToClients();
 
 	G_SoundIndex("sound/misc/referee.wav");
 	G_SoundIndex("sound/misc/vote.wav");
@@ -2522,7 +2667,6 @@ int QDECL SortRanks(const void *a, const void *b)
 	return 0;
 }
 
-// (relatively) sane replacement for OSP's Players_Axis/Players_Allies
 void etpro_PlayerInfo(void)
 {
 	//128 bits

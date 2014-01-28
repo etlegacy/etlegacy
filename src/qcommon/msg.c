@@ -41,7 +41,7 @@ int pcount[256];
 int wastedbits = 0;
 
 static int oldsize = 0;
-// static int overflows = 0;
+//static int overflows = 0;
 
 /*
 ==============================================================================
@@ -213,6 +213,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		break;
 		default:
 			Com_Error(ERR_DROP, "MSG_WriteBits: can't read %d bits", bits);
+			break;
 		}
 	}
 	else
@@ -287,6 +288,7 @@ int MSG_ReadBits(msg_t *msg, int bits)
 		break;
 		default:
 			Com_Error(ERR_DROP, "MSG_ReadBits: can't read %d bits", bits);
+			break;
 		}
 	}
 	else
@@ -327,9 +329,7 @@ int MSG_ReadBits(msg_t *msg, int bits)
 
 //================================================================================
 
-//
 // writing functions
-//
 
 void MSG_WriteChar(msg_t *sb, int c)
 {
@@ -472,9 +472,7 @@ void MSG_WriteAngle16(msg_t *sb, float f)
 
 //============================================================
 
-//
 // reading functions
-//
 
 // returns -1 if no more characters are available
 int MSG_ReadChar(msg_t *msg)
@@ -553,7 +551,7 @@ char *MSG_ReadString(msg_t *msg)
 
 	do
 	{
-		c = MSG_ReadByte(msg);        // use ReadByte so -1 is out of bounds
+		c = MSG_ReadByte(msg); // use ReadByte so -1 is out of bounds
 		if (c == -1 || c == 0)
 		{
 			break;
@@ -586,7 +584,7 @@ char *MSG_ReadBigString(msg_t *msg)
 
 	do
 	{
-		c = MSG_ReadByte(msg);        // use ReadByte so -1 is out of bounds
+		c = MSG_ReadByte(msg); // use ReadByte so -1 is out of bounds
 		if (c == -1 || c == 0)
 		{
 			break;

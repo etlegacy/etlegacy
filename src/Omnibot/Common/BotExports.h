@@ -56,7 +56,7 @@ extern IEngineInterface		*g_InterfaceFunctions;
 extern "C" const char *OB_VA(const char* _msg, ...);
 //////////////////////////////////////////////////////////////////////////
 
-eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path);
+eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path, const char *mod);
 void Omnibot_FreeLibrary();
 bool IsOmnibotLoaded();
 const char *Omnibot_ErrorString(eomnibot_error err);

@@ -547,8 +547,6 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 
 bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 {
-	int team, cls;
-
 	if (cent && cent->currentState.eType == ET_CORPSE)
 	{
 		if (cent->currentState.onFireStart >= 0)
@@ -570,9 +568,8 @@ bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 
 	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
-		team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
-
-		cls = (cent->currentState.powerups >> PW_OPS_CLASS_1) & 7;
+		int team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+		int cls  = (cent->currentState.powerups >> PW_OPS_CLASS_1) & 7;
 
 		return BG_GetCharacter(team, cls);
 	}
@@ -587,13 +584,11 @@ bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 
 bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps)
 {
-	int team, cls;
-
 	if (ps->powerups[PW_OPS_DISGUISED])
 	{
-		team = cgs.clientinfo[ps->clientNum].team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+		int team = cgs.clientinfo[ps->clientNum].team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+		int cls  = 0;
 
-		cls = 0;
 		if (ps->powerups[PW_OPS_CLASS_1])
 		{
 			cls |= 1;

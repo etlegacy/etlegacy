@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -29,8 +29,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_bsp.c
  */
-// tr_bsp.c
+
 #include "tr_local.h"
 
 /*
@@ -145,7 +147,6 @@ static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 R_ColorShiftLightingFloats
 ===============
 */
-#if 1 //defined(COMPAT_Q3A)
 static void R_ColorShiftLightingFloats(const vec4_t in, vec4_t out)
 {
 	int shift, r, g, b;
@@ -175,116 +176,6 @@ static void R_ColorShiftLightingFloats(const vec4_t in, vec4_t out)
 	out[2] = b * (1.0f / 255.0f);
 	out[3] = in[3];
 }
-#endif
-
-/* unused
-===============
-R_HDRTonemapLightingColors
-===============
-
-static void R_HDRTonemapLightingColors(const vec4_t in, vec4_t out, qboolean applyGamma)
-{
-#if 0 //!defined(USE_HDR_LIGHTMAPS)
-    R_ColorShiftLightingFloats(in, out);
-#else
-    int i;
-    //float           scaledLuminance;
-    //float           finalLuminance;
-    //const vec3_t    LUMINANCE_VECTOR = { 0.2125f, 0.7154f, 0.0721f };
-    vec4_t sample;
-
-    if (!tr.worldHDR_RGBE)
-    {
-        R_ColorShiftLightingFloats(in, out);
-        return;
-    }
-
-#if 0
-    scaledLuminance = r_hdrLightmapExposure->value * DotProduct(in, LUMINANCE_VECTOR);
-
-#if 0
-    finalLuminance = scaledLuminance / (scaledLuminance + 1.0);
-#else
-    // exponential tone mapping
-    finalLuminance = 1.0 - exp(-scaledLuminance);
-#endif
-
-    VectorScale(sample, finalLuminance, sample);
-    sample[3] = Q_min(1.0f, sample[3]);
-
-    if (!r_hdrRendering->integer || !r_hdrLightmap->integer || !glConfig2.framebufferObjectAvailable ||
-        !glConfig2.textureFloatAvailable || !glConfig2.framebufferBlitAvailable)
-    {
-        float max;
-
-        // clamp with color normalization
-        NormalizeColor(sample, out);
-        out[3] = Q_min(1.0f, sample[3]);
-    }
-    else
-    {
-        Vector4Copy(sample, out);
-    }
-#else
-    if (!r_hdrRendering->integer || !r_hdrLightmap->integer || !glConfig2.framebufferObjectAvailable ||
-        !glConfig2.textureFloatAvailable || !glConfig2.framebufferBlitAvailable)
-    {
-        float max;
-
-        Vector4Copy(in, sample);
-
-        // clamp with color normalization
-        max = sample[0];
-        if (sample[1] > max)
-        {
-            max = sample[1];
-        }
-        if (sample[2] > max)
-        {
-            max = sample[2];
-        }
-        if (max > 255.0f)
-        {
-            VectorScale(sample, (255.0f / max), out);
-        }
-
-        VectorScale(out, (1.0f / 255.0f), out);
-
-        out[3] = Q_min(1.0f, sample[3]);
-    }
-    else
-    {
-        Vector4Scale(in, 1.0f / 255.0f, sample);
-
-        if (applyGamma)
-        {
-            for (i = 0; i < 3; i++)
-            {
-                sample[i] = pow(sample[i], 1.0f / r_hdrLightmapGamma->value);
-            }
-        }
-
-#if 0
-        scaledLuminance = r_hdrLightmapExposure->value * DotProduct(in, LUMINANCE_VECTOR);
-
-#if 0
-        finalLuminance = scaledLuminance / (scaledLuminance + 1.0);
-#else
-        // exponential tone mapping
-        finalLuminance = 1.0 - exp(-scaledLuminance);
-#endif
-
-        VectorScale(sample, finalLuminance, out);
-#else
-        VectorCopy(sample, out);
-#endif
-
-        out[3] = Q_min(1.0f, sample[3]);
-    }
-#endif
-#endif
-}
-*/
 
 /*
 ===============
@@ -1002,17 +893,20 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 				{
 					if (i % 2 == 0)
 					{
+						ri.Printf(PRINT_DEVELOPER, "Loading lightmap\n");
 						image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
 						Com_AddToGrowList(&tr.lightmaps, image);
 					}
 					else
 					{
+						ri.Printf(PRINT_DEVELOPER, "Loading deluxemap\n");
 						image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP | IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
 						Com_AddToGrowList(&tr.deluxemaps, image);
 					}
 				}
 				else
 				{
+					ri.Printf(PRINT_DEVELOPER, "Loading lightmap\n");
 					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
 					Com_AddToGrowList(&tr.lightmaps, image);
 				}
@@ -1076,138 +970,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 			}
 		}
 	}
-#if defined(COMPAT_Q3A)
-	else
-	{
-		int  i;
-		byte *buf, *buf_p;
-
-		//int       BIGSIZE=2048;
-		//int       BIGNUM=16;
-
-		byte *fatbuffer;
-		int  xoff, yoff, x, y;
-		//float           scale = 0.9f;
-
-		tr.fatLightmapSize = 2048;
-		tr.fatLightmapStep = 16;
-
-		len = l->filelen;
-		if (!len)
-		{
-			return;
-		}
-		buf = fileBase + l->fileofs;
-
-		// we are about to upload textures
-		R_SyncRenderThread();
-
-		// create all the lightmaps
-		numLightmaps = len / (LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3);
-		if (numLightmaps == 1)
-		{
-			//FIXME: HACK: maps with only one lightmap turn up fullbright for some reason.
-			//this avoids this, but isn't the correct solution.
-			numLightmaps++;
-		}
-		else if (numLightmaps >= MAX_LIGHTMAPS)
-		{
-			// 20051020 misantropia
-			ri.Printf(PRINT_WARNING, "WARNING: number of lightmaps > MAX_LIGHTMAPS\n");
-			numLightmaps = MAX_LIGHTMAPS;
-		}
-
-		if (numLightmaps < 65)
-		{
-			// optimize: use a 1024 if we can get away with it
-			tr.fatLightmapSize = 1024;
-			tr.fatLightmapStep = 8;
-
-		}
-		fatbuffer = ri.Hunk_AllocateTempMemory(sizeof(byte) * tr.fatLightmapSize * tr.fatLightmapSize * 4);
-
-		Com_Memset(fatbuffer, 128, tr.fatLightmapSize * tr.fatLightmapSize * 4);
-		for (i = 0; i < numLightmaps; i++)
-		{
-			// expand the 24 bit on-disk to 32 bit
-			buf_p = buf + i * LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3;
-
-			xoff = i % tr.fatLightmapStep;
-			yoff = i / tr.fatLightmapStep;
-
-			//if (tr.radbumping==qfalse)
-			if (1)
-			{
-				for (y = 0; y < LIGHTMAP_SIZE; y++)
-				{
-					for (x = 0; x < LIGHTMAP_SIZE; x++)
-					{
-						int index =
-						    (x + (y * tr.fatLightmapSize)) + ((xoff * LIGHTMAP_SIZE) + (yoff * tr.fatLightmapSize * LIGHTMAP_SIZE));
-						fatbuffer[(index * 4) + 0] = buf_p[((x + (y * LIGHTMAP_SIZE)) * 3) + 0];
-						fatbuffer[(index * 4) + 1] = buf_p[((x + (y * LIGHTMAP_SIZE)) * 3) + 1];
-						fatbuffer[(index * 4) + 2] = buf_p[((x + (y * LIGHTMAP_SIZE)) * 3) + 2];
-						fatbuffer[(index * 4) + 3] = 255;
-
-						R_ColorShiftLightingBytes(&fatbuffer[(index * 4) + 0], &fatbuffer[(index * 4) + 0]);
-					}
-				}
-			}
-			/*else
-			   {
-			   //We need to darken the lightmaps a little bit when mixing radbump and fallback path rendering
-			   //because radbump will be darker due to the error introduced by using 3 basis vector probes for lighting instead of surf normal.
-			   for ( y = 0 ; y < LIGHTMAP_SIZE ; y++ )
-			   {
-			   for ( x = 0 ; x < LIGHTMAP_SIZE ; x++ )
-			   {
-			   int index = (x+(y*tr.fatLightmapSize))+((xoff*LIGHTMAP_SIZE)+(yoff*tr.fatLightmapSize*LIGHTMAP_SIZE));
-			   fatbuffer[(index*4)+0 ]=(byte)(((float)buf_p[((x+(y*LIGHTMAP_SIZE))*3)+0])*scale);
-			   fatbuffer[(index*4)+1 ]=(byte)(((float)buf_p[((x+(y*LIGHTMAP_SIZE))*3)+1])*scale);
-			   fatbuffer[(index*4)+2 ]=(byte)(((float)buf_p[((x+(y*LIGHTMAP_SIZE))*3)+2])*scale);
-			   fatbuffer[(index*4)+3 ]=255;
-			   }
-			   }
-
-			   } */
-
-
-		}
-		//memset(fatbuffer,128,tr.fatLightmapSize*tr.fatLightmapSize*4);
-
-		tr.fatLightmap = R_CreateImage(va("_fatlightmap%d", 0), fatbuffer, tr.fatLightmapSize, tr.fatLightmapSize, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP);
-		Com_AddToGrowList(&tr.lightmaps, tr.fatLightmap);
-
-		ri.Hunk_FreeTempMemory(fatbuffer);
-	}
-#endif
 }
-
-#if defined(COMPAT_Q3A)
-static float FatPackU(float input, int lightmapnum)
-{
-	if (tr.fatLightmapSize > 0)
-	{
-		int x = lightmapnum % tr.fatLightmapStep;
-
-		return (input / ((float)tr.fatLightmapStep)) + ((1.0 / ((float)tr.fatLightmapStep)) * (float)x);
-	}
-
-	return input;
-}
-
-static float FatPackV(float input, int lightmapnum)
-{
-	if (tr.fatLightmapSize > 0)
-	{
-		int y = lightmapnum / ((float)tr.fatLightmapStep);
-
-		return (input / ((float)tr.fatLightmapStep)) + ((1.0 / ((float)tr.fatLightmapStep)) * (float)y);
-	}
-
-	return input;
-}
-#endif
 
 /*
 =================
@@ -1357,11 +1120,7 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 	}
 	else
 	{
-#if defined(COMPAT_Q3A)
-		surf->lightmapNum = 0;
-#else
 		surf->lightmapNum = realLightmapNum;
-#endif
 	}
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
@@ -1552,11 +1311,7 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 	}
 	else
 	{
-#if defined(COMPAT_Q3A)
-		surf->lightmapNum = 0;
-#else
 		surf->lightmapNum = realLightmapNum;
-#endif
 	}
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
@@ -1651,9 +1406,6 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	static surfaceType_t skipData = SF_SKIP;
 
 	// get lightmap
-#if defined(COMPAT_Q3A)
-	surf->lightmapNum = -1;     // FIXME LittleLong(ds->lightmapNum);
-#else
 	realLightmapNum = LittleLong(ds->lightmapNum);
 	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
 	{
@@ -1663,7 +1415,6 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	{
 		surf->lightmapNum = realLightmapNum;
 	}
-#endif
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
 	{
@@ -4379,203 +4130,6 @@ static void R_CreateClusters()
 		node->visCounts[0] = -1;
 	}
 }
-
-/*
-SmoothNormals()
-smooths together coincident vertex normals across the bsp
-*/
-#if 0
-#define MAX_SAMPLES             256
-#define THETA_EPSILON           0.000001
-#define EQUAL_NORMAL_EPSILON    0.01
-
-void SmoothNormals(const char *name, srfVert_t *verts, int numTotalVerts)
-{
-	int   i, j, k, f, cs, numVerts, numVotes, fOld, startTime, endTime;
-	float shadeAngle, defaultShadeAngle, maxShadeAngle, dot, testAngle;
-
-	//shaderInfo_t   *si;
-	float  *shadeAngles;
-	byte   *smoothed;
-	vec3_t average, diff;
-	int    indexes[MAX_SAMPLES];
-	vec3_t votes[MAX_SAMPLES];
-
-	srfVert_t *yDrawVerts;
-
-	ri.Printf(PRINT_ALL, "smoothing normals for mesh '%s'\n", name);
-
-	yDrawVerts = Com_Allocate(numTotalVerts * sizeof(srfVert_t));
-	memcpy(yDrawVerts, verts, numTotalVerts * sizeof(srfVert_t));
-
-	// allocate shade angle table
-	shadeAngles = Com_Allocate(numTotalVerts * sizeof(float));
-	memset(shadeAngles, 0, numTotalVerts * sizeof(float));
-
-	// allocate smoothed table
-	cs       = (numTotalVerts / 8) + 1;
-	smoothed = Com_Allocate(cs);
-	memset(smoothed, 0, cs);
-
-	// set default shade angle
-	defaultShadeAngle = DEG2RAD(179);
-	maxShadeAngle     = defaultShadeAngle;
-
-	// run through every surface and flag verts belonging to non-lightmapped surfaces
-	//   and set per-vertex smoothing angle
-	/*
-	   for(i = 0; i < numBSPDrawSurfaces; i++)
-	   {
-	   // get drawsurf
-	   ds = &bspDrawSurfaces[i];
-
-	   // get shader for shade angle
-	   si = surfaceInfos[i].si;
-	   if(si->shadeAngleDegrees)
-	   shadeAngle = DEG2RAD(si->shadeAngleDegrees);
-	   else
-	   shadeAngle = defaultShadeAngle;
-	   if(shadeAngle > maxShadeAngle)
-	   maxShadeAngle = shadeAngle;
-
-	   // flag its verts
-	   for(j = 0; j < ds->numVerts; j++)
-	   {
-	   f = ds->firstVert + j;
-	   shadeAngles[f] = shadeAngle;
-	   if(ds->surfaceType == MST_TRIANGLE_SOUP)
-	   smoothed[f >> 3] |= (1 << (f & 7));
-	   }
-	   }
-
-	   // bail if no surfaces have a shade angle
-	   if(maxShadeAngle == 0)
-	   {
-	   Com_Dealloc(shadeAngles);
-	   Com_Dealloc(smoothed);
-	   return;
-	   }
-	 */
-
-	// init pacifier
-	fOld      = -1;
-	startTime = ri.Milliseconds();
-
-	// go through the list of vertexes
-	for (i = 0; i < numTotalVerts; i++)
-	{
-		// print pacifier
-		f = 10 * i / numTotalVerts;
-		if (f != fOld)
-		{
-			fOld = f;
-			ri.Printf(PRINT_ALL, "%i...", f);
-		}
-
-		// already smoothed?
-		if (smoothed[i >> 3] & (1 << (i & 7)))
-		{
-			continue;
-		}
-
-		// clear
-		VectorClear(average);
-		numVerts = 0;
-		numVotes = 0;
-
-		// build a table of coincident vertexes
-		for (j = i; j < numTotalVerts && numVerts < MAX_SAMPLES; j++)
-		{
-			// already smoothed?
-			if (smoothed[j >> 3] & (1 << (j & 7)))
-			{
-				continue;
-			}
-
-			// test vertexes
-			if (CompareWorldVertSmoothNormal(&yDrawVerts[i], &yDrawVerts[j]) == qfalse)
-			{
-				continue;
-			}
-
-			// use smallest shade angle
-			//shadeAngle = (shadeAngles[i] < shadeAngles[j] ? shadeAngles[i] : shadeAngles[j]);
-			shadeAngle = maxShadeAngle;
-
-			// check shade angle
-			dot = DotProduct(verts[i].normal, verts[j].normal);
-			if (dot > 1.0)
-			{
-				dot = 1.0;
-			}
-			else if (dot < -1.0)
-			{
-				dot = -1.0;
-			}
-			testAngle = acos(dot) + THETA_EPSILON;
-			if (testAngle >= shadeAngle)
-			{
-				//Sys_Printf( "F(%3.3f >= %3.3f) ", RAD2DEG( testAngle ), RAD2DEG( shadeAngle ) );
-				continue;
-			}
-			//Sys_Printf( "P(%3.3f < %3.3f) ", RAD2DEG( testAngle ), RAD2DEG( shadeAngle ) );
-
-			// add to the list
-			indexes[numVerts++] = j;
-
-			// flag vertex
-			smoothed[j >> 3] |= (1 << (j & 7));
-
-			// see if this normal has already been voted
-			for (k = 0; k < numVotes; k++)
-			{
-				VectorSubtract(verts[j].normal, votes[k], diff);
-				if (fabs(diff[0]) < EQUAL_NORMAL_EPSILON &&
-				    fabs(diff[1]) < EQUAL_NORMAL_EPSILON && fabs(diff[2]) < EQUAL_NORMAL_EPSILON)
-				{
-					break;
-				}
-			}
-
-			// add a new vote?
-			if (k == numVotes && numVotes < MAX_SAMPLES)
-			{
-				VectorAdd(average, verts[j].normal, average);
-				VectorCopy(verts[j].normal, votes[numVotes]);
-				numVotes++;
-			}
-		}
-
-		// don't average for less than 2 verts
-		if (numVerts < 2)
-		{
-			continue;
-		}
-
-		// average normal
-		if (VectorNormalize(average) > 0)
-		{
-			// smooth
-			for (j = 0; j < numVerts; j++)
-				VectorCopy(average, yDrawVerts[indexes[j]].normal);
-		}
-	}
-
-	// copy yDrawVerts normals back
-	for (i = 0; i < numTotalVerts; i++)
-	{
-		VectorCopy(yDrawVerts[i].normal, verts[i].normal);
-	}
-
-	// free the tables
-	Com_Dealloc(yDrawVerts);
-	Com_Dealloc(shadeAngles);
-	Com_Dealloc(smoothed);
-
-	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, " (%5.2f seconds)\n", (endTime - startTime) / 1000.0);
-}
-#endif
 
 /*
 ===============
@@ -9792,38 +9346,38 @@ void RE_LoadWorldMap(const char *name)
 	}
 
 	// load into heap
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadEntities(&header->lumps[LUMP_ENTITIES]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadShaders(&header->lumps[LUMP_SHADERS]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadLightmaps(&header->lumps[LUMP_LIGHTMAPS], name);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadPlanes(&header->lumps[LUMP_PLANES]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadSurfaces(&header->lumps[LUMP_SURFACES], &header->lumps[LUMP_DRAWVERTS], &header->lumps[LUMP_DRAWINDEXES]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadMarksurfaces(&header->lumps[LUMP_LEAFSURFACES]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadNodesAndLeafs(&header->lumps[LUMP_NODES], &header->lumps[LUMP_LEAFS]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadSubmodels(&header->lumps[LUMP_MODELS]);
 
 	// moved fog lump loading here, so fogs can be tagged with a model num
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadFogs(&header->lumps[LUMP_FOGS], &header->lumps[LUMP_BRUSHES], &header->lumps[LUMP_BRUSHSIDES]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadVisibility(&header->lumps[LUMP_VISIBILITY]);
 
-//	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
 	R_LoadLightGrid(&header->lumps[LUMP_LIGHTGRID]);
 
 	// create static VBOS from the world

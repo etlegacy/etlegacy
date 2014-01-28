@@ -18,20 +18,6 @@ extern field_t fields[];
 
 lua_vm_t *lVM[LUA_NUM_VM];
 
-void QDECL G_Lua_Printf(const char *fmt, ...)
-{
-	va_list argptr;
-	char    buff[1024];
-
-	va_start(argptr, fmt);
-	Q_vsnprintf(buff, sizeof(buff), fmt, argptr);
-	va_end(argptr);
-
-	trap_Printf(buff);
-}
-
-void QDECL G_Lua_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-
 // gentity number = C_gentity_ptr_to_entNum( pointer-value )
 // input:  pointer to a gentity (gentity*)
 // output: the entity number.
@@ -171,7 +157,7 @@ static int _et_G_LogPrint(lua_State *L)
 
 	Q_strncpyz(text, luaL_checkstring(L, 1), sizeof(text));
 
-	G_Lua_Printf("%s", text);
+	G_Printf("%s", text);
 
 	// Additional logging
 	if (level.logFile)
@@ -707,7 +693,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(lasthurt_mod,                   FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.playerStats.suicides,      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(lastKillTime,                   FIELD_INT,         FIELD_FLAG_READONLY),
-
+	_et_gclient_addfield(freezed,                        FIELD_INT,         0),
 	_et_gclient_addfield(ps.eFlags,                      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
@@ -795,8 +781,11 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.spec_invite,               FIELD_INT,         0),
 	_et_gclient_addfield(sess.spec_team,                 FIELD_INT,         0),
 	_et_gclient_addfield(sess.suicides,                  FIELD_INT,         0),
-	_et_gclient_addfield(sess.team_damage,               FIELD_INT,         0),
+	_et_gclient_addfield(sess.team_damage_given,         FIELD_INT,         0),
+	_et_gclient_addfield(sess.team_damage_received,      FIELD_INT,         0),
 	_et_gclient_addfield(sess.team_kills,                FIELD_INT,         0),
+	_et_gclient_addfield(sess.time_axis,                 FIELD_INT,         0),
+	_et_gclient_addfield(sess.time_allies,               FIELD_INT,         0),
 	_et_gclient_addfield(sess.uci,                       FIELD_INT,         0),
 
 	_et_gclient_addfield(sess.aWeaponStats,              FIELD_WEAPONSTAT,  0),
@@ -811,8 +800,6 @@ static const gentity_field_t gclient_fields[] =
 
 	// missing sess.semiadmin
 	// missing sess.gibs
-	// _et_gclient_addfield(sess.team_damage_given, FIELD_INT, 0),
-	// _et_gclient_addfield(sess.team_damage_received, FIELD_INT, 0),
 	// _et_gclient_addfieldalias(sess.team_damage, sess.team_damage_given, FIELD_INT, 0),
 	// _et_gclient_addfieldalias(sess.team_received, sess.team_damage_received, FIELD_INT, 0),
 
@@ -1686,13 +1673,13 @@ qboolean G_LuaInit(void)
 			flen = trap_FS_FOpenFile(crt, &f, FS_READ);
 			if (flen < 0)
 			{
-				G_Lua_Printf("Lua API: can not open file %s\n", crt);
+				G_Printf("Lua API: can not open file %s\n", crt);
 			}
 			else if (flen > LUA_MAX_FSIZE)
 			{
 				// Let's not load arbitrarily big files to memory.
 				// If your lua file exceeds the limit, let me know.
-				G_Lua_Printf("Lua API: ignoring file %s (too big)\n", crt);
+				G_Printf("Lua API: ignoring file %s (too big)\n", crt);
 				trap_FS_FCloseFile(f);
 			}
 			else
@@ -1701,7 +1688,7 @@ qboolean G_LuaInit(void)
 
 				if (code == NULL)
 				{
-					G_Lua_Printf("Lua API: memory allocation error for %s data\n", crt);
+					G_Printf("Lua API: memory allocation error for %s data\n", crt);
 					// FIXME: we should actually abort here
 				}
 
@@ -1714,7 +1701,7 @@ qboolean G_LuaInit(void)
 				{
 					// don't load disallowed lua modules into vm
 					free(code); // fixed memory leaking in Lua API - thx ETPub/goesa
-					G_Lua_Printf("Lua API: Lua module [%s] [%s] disallowed by ACL\n", crt, signature);
+					G_Printf("Lua API: Lua module [%s] [%s] disallowed by ACL\n", crt, signature);
 				}
 				else
 				{
@@ -1723,7 +1710,7 @@ qboolean G_LuaInit(void)
 
 					if (vm == NULL)
 					{
-						G_Lua_Printf("Lua API: memory allocation error for %s data\n", crt);
+						G_Printf("Lua API: memory allocation error for %s data\n", crt);
 						// FIXME: we should actually abort here
 					}
 
@@ -1761,7 +1748,7 @@ qboolean G_LuaInit(void)
 			}
 			if (num_vm >= LUA_NUM_VM)
 			{
-				G_Lua_Printf("Lua API: too many lua files specified, only the first %d have been loaded\n", LUA_NUM_VM);
+				G_Printf("Lua API: too many lua files specified, only the first %d have been loaded\n", LUA_NUM_VM);
 				break;
 			}
 		}
@@ -1779,16 +1766,16 @@ qboolean G_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults)
 	{
 	case LUA_ERRRUN:
 		// made output more ETPro compatible
-		G_Lua_Printf("Lua API: %s error running lua script: %s\n", func, lua_tostring(vm->L, -1));
+		G_Printf("Lua API: %s error running lua script: %s\n", func, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRMEM:
-		G_Lua_Printf("Lua API: memory allocation error #2 ( %s )\n", vm->file_name);
+		G_Printf("Lua API: memory allocation error #2 ( %s )\n", vm->file_name);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRERR:
-		G_Lua_Printf("Lua API: traceback error ( %s )\n", vm->file_name);
+		G_Printf("Lua API: traceback error ( %s )\n", vm->file_name);
 		vm->err++;
 		return qfalse;
 	default:
@@ -1820,15 +1807,9 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 	return qfalse;
 }
 
-#ifdef LUA_5_2
-// Lua 5.1 -> 5.2 compatible hack :)
-// https://github.com/icgood/luafilesystem/commit/f634765b26c52d03aceed88c2130130ab43f6fa9
-static void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
-{
-	luaL_newlib(L, l);
-	lua_pushvalue(L, -1);
-	lua_setglobal(L, libname);
-}
+// Compatibility with Lua 5.1
+#if LUA_VERSION_NUM < 502
+	#define luaL_newlib(L, l) (lua_newtable(L), luaL_register(L, NULL, l))
 #endif
 
 /*
@@ -1847,7 +1828,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	vm->L = luaL_newstate();
 	if (!vm->L)
 	{
-		G_Lua_Printf("%s API: Lua failed to initialise.\n", LUA_VERSION);
+		G_Printf("%s API: Lua failed to initialise.\n", LUA_VERSION);
 		return qfalse;
 	}
 
@@ -1909,25 +1890,26 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, SAY_BUDDY);
 	lua_regconstinteger(vm->L, SAY_TEAMNL);
 	lua_regconststring(vm->L, HOSTARCH);
-	lua_setglobal(vm->L, "et");
 
 	// register functions
-	luaL_register(vm->L, "et", etlib); // void luaL_register (lua_State *L, const char *libname,  const luaL_Reg *l);
+	luaL_newlib(vm->L, etlib);
+	lua_pushvalue(vm->L, -1);
+	lua_setglobal(vm->L, "et");
 
 	// Load the code
-	G_Lua_Printf("%s API: Loading %s\n", LUA_VERSION, vm->file_name);
+	G_Printf("%s API: Loading %s\n", LUA_VERSION, vm->file_name);
 
 	res = luaL_loadbuffer(vm->L, vm->code, vm->code_size, vm->file_name);
 	if (res == LUA_ERRSYNTAX)
 	{
-		G_Lua_Printf("%s API: syntax error during pre-compilation: %s\n", LUA_VERSION, lua_tostring(vm->L, -1));
+		G_Printf("%s API: syntax error during pre-compilation: %s\n", LUA_VERSION, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;
 	}
 	else if (res == LUA_ERRMEM)
 	{
-		G_Lua_Printf("%s API: memory allocation error #1 ( %s )\n", LUA_VERSION, vm->file_name);
+		G_Printf("%s API: memory allocation error #1 ( %s )\n", LUA_VERSION, vm->file_name);
 		vm->err++;
 		return qfalse;
 	}
@@ -1973,7 +1955,7 @@ void G_LuaStopVM(lua_vm_t *vm)
 		}
 		if (!vm->err)
 		{
-			G_Lua_Printf("%s API: Lua module [%s] [%s] unloaded.\n", LUA_VERSION, vm->file_name, vm->mod_signature);
+			G_Printf("%s API: Lua module [%s] [%s] unloaded.\n", LUA_VERSION, vm->file_name, vm->mod_signature);
 		}
 	}
 	free(vm);

@@ -312,7 +312,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 		return;
 	}
 
-	if (type < 0 || type >= PM_NUM_TYPES)
+	if (type >= PM_NUM_TYPES)
 	{
 		CG_Printf("Invalid popup type: %d\n", type);
 		return;
@@ -474,6 +474,8 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 
 #define PM_ICON_SIZE_NORMAL 20
 #define PM_ICON_SIZE_SMALL 12
+#define ICON_Y_OFFSET(y)  y+3
+
 void CG_DrawPMItems(rectDef_t rect, int style)
 {
 	vec4_t       colour     = { 0.f, 0.f, 0.f, 1.f };
@@ -519,7 +521,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		}
 		trap_R_SetColor(colourText);
 
-		CG_DrawPic(4, y, size, size, cg_pmWaitingList->shader);
+		CG_DrawPic(4, ICON_Y_OFFSET(y), size, size, cg_pmWaitingList->shader);
 		// decolorize
 		for (j = 0; j < 3; j++)
 		{
@@ -545,7 +547,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		}
 		trap_R_SetColor(colourText);
 
-		CG_DrawPic(size + w + 12, y, sizew * cg_pmWaitingList->scaleShader, sizew, cg_pmWaitingList->weaponShader); // 4 + size + 2 + w + 6
+		CG_DrawPic(size + w + 12, ICON_Y_OFFSET(y), sizew * cg_pmWaitingList->scaleShader, sizew, cg_pmWaitingList->weaponShader); // 4 + size + 2 + w + 6
 
 		for (i = 0; i < 3; i++)
 		{
@@ -561,7 +563,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 	if (cg_pmWaitingList->message2[0])
 	{
-		CG_Text_Paint_Ext(size + w + sizew * cg_pmWaitingList->scaleShader + 16, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message2, 0, 0, 0, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
+		CG_Text_Paint_Ext(size + w + sizew * cg_pmWaitingList->scaleShader + 16, y + 12, fontScale, fontScale, colourText, cg_pmWaitingList->message2, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
 	}
 
 	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
@@ -589,7 +591,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 			}
 			trap_R_SetColor(colourText);
 
-			CG_DrawPic(4, y, size, size, listItem->shader);
+			CG_DrawPic(4, ICON_Y_OFFSET(y), size, size, listItem->shader);
 			// decolorize
 			for (j = 0; j < 3; j++)
 			{
@@ -615,7 +617,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 			}
 			trap_R_SetColor(colourText);
 
-			CG_DrawPic(size + w + 12, y, sizew * listItem->scaleShader, sizew, listItem->weaponShader);
+			CG_DrawPic(size + w + 12, ICON_Y_OFFSET(y), sizew * listItem->scaleShader, sizew, listItem->weaponShader);
 
 			for (i = 0; i < 3; i++)
 			{
@@ -631,7 +633,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 		if (listItem->message2[0])
 		{
-			CG_Text_Paint_Ext(size + w + sizew * listItem->scaleShader + 16, y + 12, fontScale, fontScale, colourText, listItem->message2, 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(size + w + sizew * listItem->scaleShader + 16, y + 12, fontScale, fontScale, colourText, listItem->message2, 0, 0, style, &cgs.media.limboFont2);
 		}
 	}
 }

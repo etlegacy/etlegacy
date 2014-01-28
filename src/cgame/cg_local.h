@@ -570,8 +570,13 @@ typedef struct clientInfo_s
 
 	// Intermission stats
 	int totalWeapAcc;
+	int totalWeapHSpct;
 	int kills;
 	int deaths;
+	int suicides;
+	int teamkills;
+	int timeAxis;
+	int timeAllies;
 
 #ifdef FEATURE_MULTIVIEW
 	// per client MV ps info
@@ -863,7 +868,6 @@ typedef struct
 	qboolean showScores;
 	qboolean scoreBoardShowing;
 	int scoreFadeTime;
-	char killerName[MAX_NAME_LENGTH];
 	char spectatorList[MAX_STRING_CHARS];    // list of names
 	int spectatorLen;                        // length of list
 	float spectatorWidth;                    // width in device units
@@ -1171,7 +1175,7 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define BG_NUM_ITEMS 78 // keep in sync with bg_numItems! FIXME: make this non static one day
+#define CG_NUM_ITEMS 81 // keep in sync with bg_numItems! FIXME: make this non static one day
 
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t
@@ -1220,7 +1224,6 @@ typedef struct
 	qhandle_t scoreEliminatedShader;
 
 	qhandle_t medicReviveShader;
-	qhandle_t disguiseShader;
 	qhandle_t voiceChatShader;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
@@ -1498,7 +1501,7 @@ typedef struct
 
 	sfxHandle_t shoveSound;
 
-	sfxHandle_t itemPickUpSounds[BG_NUM_ITEMS];
+	sfxHandle_t itemPickUpSounds[CG_NUM_ITEMS];
 
 	qhandle_t ccStamps[2];
 	qhandle_t ccFilterPics[8]; // was 10, set to 8 (we init 0-7)
@@ -1674,7 +1677,7 @@ typedef struct cg_weaponstats_s
 typedef struct
 {
 	char strWS[WS_MAX][MAX_STRING_TOKENS];
-	char strExtra[2][MAX_STRING_TOKENS];
+	char strExtra[4][MAX_STRING_TOKENS];
 	char strRank[MAX_STRING_TOKENS];
 	char strSkillz[SK_NUM_SKILLS][MAX_STRING_TOKENS];
 	int cWeapons;
@@ -1746,6 +1749,13 @@ enum
 	BAR_BORDER         = BIT(8),
 	BAR_BORDER_SMALL   = BIT(9),
 };
+
+typedef struct
+{
+	int fadeTime;
+	int show;
+	int requestTime;
+} objectives_t;
 
 typedef struct location_s
 {
@@ -1914,6 +1924,7 @@ typedef struct cgs_s
 	int game_versioninfo;                               // game base version
 	gameStats_t gamestats;
 	topshotStats_t topshots;
+	objectives_t objectives;
 	qboolean fResize;                                   // MV window "resize" status
 	qboolean fSelect;                                   // MV window "select" status
 	qboolean fKeyPressed[256];                          // Key status to get around console issues
@@ -1951,6 +1962,7 @@ typedef struct cgs_s
 	qboolean dbShowing;
 	qboolean dbAccuraciesRecieved;
 	qboolean dbPlayerKillsDeathsRecieved;
+	qboolean dbPlayerTimeRecieved;
 	qboolean dbWeaponStatsRecieved;
 	qboolean dbAwardsParsed;
 	char *dbAwardNames[NUM_ENDGAME_AWARDS];
@@ -2266,6 +2278,8 @@ sfxHandle_t CG_GetGameSound(int index);
 
 void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
+int CG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF);
+
 // cg_view.c
 void CG_TestModel_f(void);
 void CG_TestGun_f(void);
@@ -2479,7 +2493,6 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t origin2, int ptime, int snum);
 void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent);
 void CG_OilSlickRemove(centity_t *cent);
-void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir);
 void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir);
 
 // cg_trails.c
@@ -2518,7 +2531,6 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 void CG_InitFlameChunks(void);
 void CG_AddFlameChunks(void);
 void CG_UpdateFlamethrowerSounds(void);
-void CG_FlameDamage(int owner, vec3_t org, float radius);
 
 // cg_localents.c
 void CG_InitLocalEntities(void);
@@ -2687,6 +2699,7 @@ void CG_SetConfigValues(void);
 void CG_ShaderStateChanged(void);
 void CG_ChargeTimesChanged(void);
 void CG_TeamRestrictionsChanged(void);
+void CG_SkillLevelsChanged(void);
 void CG_LoadVoiceChats(void);
 void CG_PlayBufferedVoiceChats(void);
 void CG_AddToNotify(const char *str);
@@ -3070,7 +3083,7 @@ const char *CG_BuildSelectedFirteamString(void);
 int CG_WeaponIconScale(int weap); // FIXME: weapon table
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
-#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value)
+#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), 400, cg_fontScaleCP.value)
 
 #ifdef FEATURE_MULTIVIEW
 // cg_multiview.c
@@ -3277,6 +3290,7 @@ void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
+void CG_Debriefing_PlayerHS_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
 
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button);

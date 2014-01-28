@@ -170,6 +170,38 @@ void CG_topshotsUp_f(void)
 	}
 }
 
+void CG_objectivesDown_f(void)
+{
+	if (!cg.demoPlayback)
+	{
+		if (cgs.objectives.show == SHOW_SHUTDOWN && cg.time < cgs.objectives.fadeTime)
+		{
+			cgs.objectives.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.objectives.fadeTime;
+		}
+		else if (cgs.objectives.show != SHOW_ON)
+		{
+			cgs.objectives.fadeTime = cg.time + STATS_FADE_TIME;
+		}
+		cgs.objectives.show = SHOW_ON;
+	}
+}
+
+void CG_objectivesUp_f(void)
+{
+	if (cgs.objectives.show == SHOW_ON)
+	{
+		cgs.objectives.show = SHOW_SHUTDOWN;
+		if (cg.time < cgs.objectives.fadeTime)
+		{
+			cgs.objectives.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.objectives.fadeTime;
+		}
+		else
+		{
+			cgs.objectives.fadeTime = cg.time + STATS_FADE_TIME;
+		}
+	}
+}
+
 void CG_ScoresDown_f(void)
 {
 	if (cg.scoresRequestTime + 2000 < cg.time)
@@ -1289,7 +1321,7 @@ void CG_Class_f(void)
 
 	// Print out the selected class and weapon info
 	wt = WM_FindWeaponTypeForWeapon(classinfo->classWeapons[weapon1 - 1]);
-	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, cg_fontScaleCP.value, -1);
+	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), 400, cg_fontScaleCP.value, -1);
 	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 }
@@ -1351,6 +1383,8 @@ static consoleCommand_t commands[] =
 	{ "-stats",              CG_StatsUp_f            },
 	{ "+topshots",           CG_topshotsDown_f       },
 	{ "-topshots",           CG_topshotsUp_f         },
+	{ "+objectives",         CG_objectivesDown_f     },
+	{ "-objectives",         CG_objectivesUp_f       },
 
 	{ "autoRecord",          CG_autoRecord_f         },
 	{ "autoScreenshot",      CG_autoScreenShot_f     },

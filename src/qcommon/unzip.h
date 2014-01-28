@@ -1,7 +1,7 @@
 /* unzip.h -- IO for uncompress .zip files using zlib
-   Version 1.01e, February 12th, 2005
+   Version 1.01h, December 28th, 2009
 
-   Copyright (C) 1998-2005 Gilles Vollant
+   Copyright (C) 1998-2009 Gilles Vollant
 
    This unzip package allow extract file from .ZIP file, compatible with PKZip 2.04g
      WinZip, InfoZip tools and compatible.
@@ -50,9 +50,15 @@ extern "C" {
 #endif
 
 #include "../zlib/zlib.h"
+
 #include "ioapi.h"
 
 #define NOUNCRYPT
+#ifdef HAVE_BZIP2
+#include "bzlib.h"
+#endif
+
+#define Z_BZIP2ED 12
 
 #if defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
@@ -132,11 +138,11 @@ extern int ZEXPORT unzStringFileNameCompare OF((const char *fileName1,
 extern unzFile ZEXPORT unzOpen OF((const char *path));
 /*
   Open a Zip file. path contain the full pathname (by example,
-     on a Windows XP computer "c:\\zlib\\zlib113.zip" or on a Unix computer
+     on a Windows XP computer "c:\\zlib\\zlib113.zip" or on an Unix computer
      "zlib/zlib113.zip".
      If the zipfile cannot be opened (file don't exist or in not valid), the
        return value is NULL.
-     Else, the return value is an unzFile Handle, usable with other function
+     Else, the return value is a unzFile Handle, usable with other function
        of this unzip package.
 */
 

@@ -78,8 +78,6 @@ int SV_BotAllocateClient(int clientNum)
 	}
 	else
 	{
-		qboolean secondRun = qfalse;
-
 		// start searching above private slots for a free client slot
 		for (i = sv_privateClients->integer, cl = svs.clients + sv_privateClients->integer; i < sv_maxclients->integer; i++, cl++)
 		{
@@ -92,19 +90,6 @@ int SV_BotAllocateClient(int clientNum)
 			if (cl->state == CS_FREE)
 			{
 				break; // done.
-			}
-
-			// if all public slots are taken, try private ones
-			if (i + 1 == sv_maxclients->integer)
-			{
-				if (!sv_privateClients->integer || secondRun)
-				{
-					break;
-				}
-
-				secondRun = qtrue;
-				i         = 0;
-				cl        = svs.clients;
 			}
 		}
 	}

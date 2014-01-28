@@ -362,8 +362,9 @@ char *modNames[] =
 	"MOD_SHOVE",
 
 	"MOD_KNIFE_KABAR",
-
 	"MOD_MOBILE_BROWNING",
+	"MOD_MORTAR2",
+	"MOD_BAZOOKA",
 
 	// MOD_NUM_MODS
 };
@@ -607,7 +608,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 							if (!(meansOfDeath == MOD_LANDMINE && (g_disableComplaints.integer & TKFL_MINES)) &&
 							    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && (g_disableComplaints.integer & TKFL_AIRSTRIKE)) &&
-							    !(meansOfDeath == MOD_MORTAR && (g_disableComplaints.integer & TKFL_MORTAR)))
+							    !((meansOfDeath == MOD_MORTAR || meansOfDeath == MOD_MORTAR2) && (g_disableComplaints.integer & TKFL_MORTAR)))
 							{
 								trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
 								if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked by dynamite on objective
@@ -845,6 +846,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 }
 
+// FIXME: weapon table
 qboolean IsHeadShotWeapon(int mod)
 {
 	// players are allowed headshots from these weapons
@@ -882,8 +884,8 @@ gentity_t *G_BuildHead(gentity_t *ent)
 	gentity_t     *head;
 	orientation_t orientation;
 
-	head            = G_Spawn();
-	head->classname = "head";
+	head = G_Spawn();
+	//head->classname = "head"; // no need to set -> ET_TEMPHEAD
 
 	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
 	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
@@ -965,8 +967,8 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 		return NULL;
 	}
 
-	leg            = G_Spawn();
-	leg->classname = "leg";
+	leg = G_Spawn();
+	//leg->classname = "leg"; // no need to set -> ET_TEMPLEG
 
 	AngleVectors(ent->client->ps.viewangles, flatforward, NULL, NULL);
 	flatforward[2] = 0;
@@ -1084,7 +1086,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	leg = G_BuildLeg(targ);
+	leg = G_BuildLeg(targ); // legs are built only if ent->client->ps.eFlags & EF_PRONE is set?!
 
 	if (leg)
 	{
@@ -1570,7 +1572,9 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		case MOD_AIRSTRIKE:
 		case MOD_DYNAMITE:
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 		case MOD_PANZERFAUST:
+		case MOD_BAZOOKA:
 			take -= take * .5f;
 			break;
 		default:
@@ -1791,7 +1795,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				targ->enemy     = attacker;
 				targ->deathType = mod;
 
-				// mg42 doesn't have die func (FIXME)
 				if (targ->die)
 				{
 					// Kill the entity.  Note that this funtion can set ->die to another

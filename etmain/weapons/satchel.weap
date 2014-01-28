@@ -1,0 +1,70 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		//standModel		""									// weapon pickup 'stand'
+		//pickupModel		""
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/multiplayer/satchel/weapon.cfg"
+		handsModel			"models/multiplayer/satchel/v_satchel_hand.md3"
+		//flashDlightColor	0 0 0
+		//flashSound		""									// supports up to 4 flash sounds
+		//flashEchoSound	""									// supports up to 4 flash echo sounds
+		//lastShotSound		""									// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		//reloadSound		""
+		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""									// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_satchel"
+		weaponSelectedIcon	"icons/iconw_satchel_1_select"
+		
+		missileModel		"models/multiplayer/satchel/satchel_world.md3"
+		missileaxisskin		"models/multiplayer/satchel/satchel_axis.skin"
+		missilealliedskin	"models/multiplayer/satchel/satchel_allied.skin"
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model			"models/multiplayer/satchel/v_satchel.md3"
+			axisskin		"models/multiplayer/satchel/satchel_axis.skin"
+			alliedskin		"models/multiplayer/satchel/satchel_allied.skin"
+			//flashModel	""
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/multiplayer/satchel/v_satchel_barrel.md3"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model	"models/multiplayer/satchel/v_satchel_barrel2.md3"
+				}
+			}
+		}
+		
+		thirdPerson {
+			model			"models/multiplayer/satchel/satchel.md3"
+			axisskin		"models/multiplayer/satchel/satchel_axis.skin"
+			alliedskin		"models/multiplayer/satchel/satchel_allied.skin"
+			//flashmodel	""
+		}
+	}
+}

@@ -1242,6 +1242,9 @@ void R_Register(void)
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
 
 	r_primitives = ri.Cvar_Get("r_primitives", "0", CVAR_ARCHIVE);
+	// Added this due to invalid values actually causing no drawing
+	// r_primitives == 2 fixes some issues on ATI cards
+	AssertCvarRange(r_primitives,0,3,qtrue);
 
 	r_ambientScale  = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 	r_directedScale = ri.Cvar_Get("r_directedScale", "1", CVAR_CHEAT);

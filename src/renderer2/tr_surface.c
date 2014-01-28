@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_surface.c
  */
-// tr_surface.c
+
 #include "tr_local.h"
 
 /*
@@ -465,7 +467,7 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 			}
 		}
 
-		GL_VertexAttribsState(attribBits);
+		GLSL_VertexAttribsState(attribBits);
 
 		if (attribBits & ATTR_POSITION)
 		{

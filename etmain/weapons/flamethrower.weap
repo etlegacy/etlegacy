@@ -1,0 +1,49 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		//standModel		""										// weapon pickup 'stand' (do we still use this?)
+		pickupModel			"models/weapons2/flamethrower/pu_flamethrower.md3"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/weapons2/flamethrower/weapon.cfg"
+		handsModel			"models/weapons2/flamethrower/v_flamethrower_hand.mdc"
+		
+		//flashDlightColor	0 0 0
+		//flashSound		""										// supports up to 4 flash sounds
+		//flashEchoSound	""										// supports up to 4 flash echo sounds
+		//lastShotSound		""										// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		//reloadSound		""
+		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""									// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_flamethrower"
+		weaponSelectedIcon	"icons/iconw_flamethrower_1_select"
+		
+		//missileModel		""
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model			"models/weapons2/flamethrower/v_flamethrower.md3"
+			//flashModel	""
+		}
+		
+		thirdPerson {
+			model			"models/weapons2/flamethrower/ss_flamethrower.mdc"
+			flashmodel		"models/weapons2/flamethrower/flamethrower_flash.mdc"
+		}
+	}
+}

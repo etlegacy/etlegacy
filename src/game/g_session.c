@@ -64,9 +64,9 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	//}
 
 #ifdef FEATURE_MULTIVIEW
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       client->sess.sessionTeam,
 	       client->sess.spectatorTime,
@@ -88,6 +88,8 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.spec_team,
 	       client->sess.suicides,
 	       client->sess.team_kills,
+	       client->sess.time_axis,
+	       client->sess.time_allies,
 #ifdef FEATURE_MULTIVIEW
 	       (mvc & 0xFFFF),
 	       ((mvc >> 16) & 0xFFFF),
@@ -236,9 +238,9 @@ void G_ReadSessionData(gclient_t *client)
 	trap_Cvar_VariableStringBuffer(va("session%i", (int)(client - level.clients)), s, sizeof(s));
 
 #ifdef FEATURE_MULTIVIEW
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       (int *)&client->sess.sessionTeam,
 	       &client->sess.spectatorTime,
@@ -260,6 +262,8 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.spec_team,
 	       &client->sess.suicides,
 	       &client->sess.team_kills,
+	       &client->sess.time_axis,
+	       &client->sess.time_allies,
 #ifdef FEATURE_MULTIVIEW
 	       &mvc_l,
 	       &mvc_h,
@@ -384,9 +388,9 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
     // we set ref in ClientUserinfoChanged
     sess->referee = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
     sess->spec_invite = 0;
-    sess->spec_team   = 0;
-   // G_WriteClientSessionData calls this
-   //G_deleteStats(client - level.clients);
+    sess->spec_team = 0;
+    // G_WriteClientSessionData calls this
+    //G_deleteStats(client - level.clients);
 
     sess->uci = 0; // GeoIP
 
@@ -411,7 +415,7 @@ void G_InitWorldSession(void)
     // client sessions
     if (g_gametype.integer != gt)
     {
-        level.newSession  = qtrue;
+        level.newSession = qtrue;
         level.fResetStats = qtrue;
         G_Printf("Gametype changed, clearing session data.\n");
 
@@ -427,7 +431,7 @@ void G_InitWorldSession(void)
 
         // Get team lock stuff
         GETVAL(gt);
-        teamInfo[TEAM_AXIS].spec_lock   = (gt & TEAM_AXIS) ? qtrue : qfalse;
+        teamInfo[TEAM_AXIS].spec_lock = (gt & TEAM_AXIS) ? qtrue : qfalse;
         teamInfo[TEAM_ALLIES].spec_lock = (gt & TEAM_ALLIES) ? qtrue : qfalse;
 
         // See if we need to clear player stats
@@ -446,7 +450,7 @@ void G_InitWorldSession(void)
 			}
 		}
 
-        // OSP - have to make sure spec locks follow the right teams
+        // have to make sure spec locks follow the right teams
         if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
         {
             G_swapTeamLocks();
@@ -486,7 +490,7 @@ void G_InitWorldSession(void)
 		}
         level.fireTeams[i].ident = j + 1;
 
-        p                       = Info_ValueForKey(s, "p");
+        p = Info_ValueForKey(s, "p");
         level.fireTeams[i].priv = !atoi(p) ? qfalse : qtrue;
 
         p = Info_ValueForKey(s, "i");
@@ -505,9 +509,9 @@ void G_InitWorldSession(void)
                     break;
 				}
                 Q_strncpyz(str, c, l - c + 1);
-                str[l - c]                        = '\0';
+                str[l - c] = '\0';
                 level.fireTeams[i].joinOrder[j++] = atoi(str);
-                c                                 = l + 1;
+                c = l + 1;
 			}
 		}
 

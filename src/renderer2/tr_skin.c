@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,29 +28,22 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ * 
+ * @file tr_skin.c
  */
-
-// tr_skin.c
 
 #include "tr_local.h"
 
-
 /*
 ============================================================================
-
 SKINS
-
 ============================================================================
 */
 
-/*
-==================
-CommaParse
-
-This is unfortunate, but the skin files aren't
-compatable with our normal parsing rules.
-==================
-*/
+/**
+ * @brief This is unfortunate, but the skin files aren't
+ * compatable with our normal parsing rules.
+ */
 static char *CommaParse(char **data_p)
 {
 	int         c = 0, len;
@@ -79,7 +72,6 @@ static char *CommaParse(char **data_p)
 			}
 			data++;
 		}
-
 
 		c = *data;
 
@@ -148,7 +140,7 @@ static char *CommaParse(char **data_p)
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-//      Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+		//Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -157,18 +149,12 @@ static char *CommaParse(char **data_p)
 	return com_token;
 }
 
-/*
-==============
-RE_GetSkinModel
-==============
-*/
 qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 {
 	int    i;
 	int    hash;
-	skin_t *skin;
+	skin_t *skin = tr.skins[skinid];
 
-	skin = tr.skins[skinid];
 	hash = Com_HashKey((char *)type, strlen(type));
 
 	for (i = 0; i < skin->numModels; i++)
@@ -227,7 +213,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			{
 				return 0;
 			}
-//          if(surf->shader->lightmapIndex != LIGHTMAP_NONE) {
+			//if(surf->shader->lightmapIndex != LIGHTMAP_NONE) {
 
 			/*
 			RB: FIXME ?
@@ -263,12 +249,6 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 	return 0;
 }
 
-/*
-===============
-RE_RegisterSkin
-
-===============
-*/
 qhandle_t RE_RegisterSkin(const char *name)
 {
 	qhandle_t     hSkin;
@@ -419,12 +399,6 @@ qhandle_t RE_RegisterSkin(const char *name)
 	return hSkin;
 }
 
-
-/*
-===============
-R_InitSkins
-===============
-*/
 void R_InitSkins(void)
 {
 	skin_t *skin;
@@ -439,11 +413,6 @@ void R_InitSkins(void)
 	skin->surfaces[0]->shader = tr.defaultShader;
 }
 
-/*
-===============
-R_GetSkinByHandle
-===============
-*/
 skin_t *R_GetSkinByHandle(qhandle_t hSkin)
 {
 	if (hSkin < 1 || hSkin >= tr.numSkins)
@@ -453,11 +422,6 @@ skin_t *R_GetSkinByHandle(qhandle_t hSkin)
 	return tr.skins[hSkin];
 }
 
-/*
-===============
-R_SkinList_f
-===============
-*/
 void R_SkinList_f(void)
 {
 	int    i, j;

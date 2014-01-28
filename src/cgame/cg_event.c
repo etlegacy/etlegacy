@@ -59,8 +59,8 @@ static void CG_Obituary(entityState_t *ent)
 	weapon_t     weapon       = ent->weapon;
 	char         *message;
 	char         *message2;
-	char         targetName[32];
-	char         attackerName[32];
+	char         targetName[MAX_NAME_LENGTH];
+	char         attackerName[MAX_NAME_LENGTH];
 	clientInfo_t *ci, *ca;    // ca = attacker
 
 	if (target < 0 || target >= MAX_CLIENTS)
@@ -138,6 +138,7 @@ static void CG_Obituary(entityState_t *ent)
 			message = "dove on his own grenade";
 			break;
 		case MOD_PANZERFAUST:
+		case MOD_BAZOOKA:
 			message = "vaporized himself";
 			break;
 		case MOD_FLAMETHROWER:
@@ -172,6 +173,7 @@ static void CG_Obituary(entityState_t *ent)
 			message = "buried himself alive";
 			break;
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 			message = "never saw his own mortar round coming";
 			break;
 		case MOD_SMOKEGRENADE:
@@ -244,8 +246,19 @@ static void CG_Obituary(entityState_t *ent)
 		return;
 	}
 
+	// check for double client messages
+	if (!ca)
+	{
+		strcpy(attackerName, "noname");
+	}
+	else
+	{
+		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
+		strcat(attackerName, S_COLOR_WHITE);
+	}
+
 	// check for kill messages from the current clientNum
-	if (attacker == cg.snap->ps.clientNum)
+	if (attacker == cg.clientNum)
 	{
 		char *s;
 
@@ -264,27 +277,33 @@ static void CG_Obituary(entityState_t *ent)
 		{
 			s = va("%s %s", CG_TranslateString("You killed"), targetName);
 		}
-		// print the text message as well
-		CG_PriorityCenterPrint(s, SCREEN_HEIGHT * 0.75, cg_fontScaleCP.value, 1);
+
+		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
+	}
+	else if (attacker == cg.snap->ps.clientNum)
+	{
+		char *s;
+
+		if (ci->team == ca->team)
+		{
+			if (mod == MOD_SWAP_PLACES)
+			{
+				s = va("%s %s %s", attackerName, CG_TranslateString("^7swapped places with"), targetName);
+			}
+			else
+			{
+				s = va("%s %s %s", attackerName, CG_TranslateString("^7killed ^1TEAMMATE^7"), targetName);
+			}
+		}
+		else
+		{
+			s = va("%s %s %s", attackerName, CG_TranslateString("^7killed"), targetName);
+		}
+
+		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
 	}
 
 	// check for double client messages
-	if (!ca)
-	{
-		strcpy(attackerName, "noname");
-	}
-	else
-	{
-		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
-		strcat(attackerName, S_COLOR_WHITE);
-
-		// check for kill messages about the current clientNum
-		if (target == cg.snap->ps.clientNum)
-		{
-			Q_strncpyz(cg.killerName, attackerName, sizeof(cg.killerName));
-		}
-	}
-
 	if (ca)
 	{
 		switch (mod)
@@ -353,6 +372,10 @@ static void CG_Obituary(entityState_t *ent)
 			message  = "was blasted by";
 			message2 = "'s Panzerfaust";
 			break;
+		case MOD_BAZOOKA:
+			message  = "was blasted by";
+			message2 = "'s Bazooka";
+			break;
 		case MOD_GRENADE_LAUNCHER:
 		case MOD_GRENADE_PINEAPPLE:
 			message  = "was exploded by";
@@ -363,6 +386,7 @@ static void CG_Obituary(entityState_t *ent)
 			message2 = "'s flamethrower";
 			break;
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 			message  = "never saw";
 			message2 = "'s mortar round coming";
 			break;
@@ -601,13 +625,14 @@ static void CG_ItemPickup(int itemNum)
 			// don't ever autoswitch to secondary fire weapons
 			// Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
 			if (itemid != WP_FG42SCOPE && itemid != WP_GARAND_SCOPE && itemid != WP_K43_SCOPE && itemid != WP_AMMO)
-			{     // no weap currently selected, always just select the new one
+			{
+				// no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)
 				{
 					cg.weaponSelectTime = cg.time;
 					cg.weaponSelect     = itemid;
 				}
-				// 1 - always switch to new weap (Q3A default)
+				// 1 - always switch to new weap
 				else if (cg_autoswitch.integer == 1)
 				{
 					cg.weaponSelectTime = cg.time;
@@ -627,7 +652,7 @@ static void CG_ItemPickup(int itemNum)
 							cg.weaponSelectTime = cg.time;
 							cg.weaponSelect     = itemid;
 						}
-					}     // end 2
+					}
 
 					// 3 - switch to weap if it's in a bank greater than the current weap
 					// 4 - both 2 and 3
@@ -645,11 +670,11 @@ static void CG_ItemPickup(int itemNum)
 								}
 							}
 						}
-					}     // end 3
-				}     // end cg_autoswitch.integer != 1
+					}
+				}
 			}
-		}     // end cg_autoswitch.integer
-	}     // end bg_itemlist[itemNum].giType == IT_WEAPON
+		}
+	}
 }
 
 /*
@@ -2390,7 +2415,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			item = &bg_itemlist[index];
 			if (*item->pickup_sound)
 			{
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.itemPickUpSounds[index]);
+				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.itemPickUpSounds[index]);
 			}
 
 			// show icon and name on status bar
@@ -2486,6 +2511,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		        es->weapon == WP_DYNAMITE ||
 		        es->weapon == WP_SMOKE_MARKER ||
 		        es->weapon == WP_PANZERFAUST ||
+		        es->weapon == WP_BAZOOKA ||
 		        es->weapon == WP_ARTY ||
 		        es->weapon == WP_LANDMINE ||
 		        es->weapon == WP_SATCHEL ||
@@ -2942,11 +2968,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			CG_ParticleSmoke(cgs.media.smokePuffShaderdirty, cent);
 		}
-		else if (!(cent->currentState.density))
-		{
-			CG_ParticleSmoke(cgs.media.smokePuffShader, cent);
-		}
-		else
+		else // if (!(cent->currentState.density)) & others
 		{
 			CG_ParticleSmoke(cgs.media.smokePuffShader, cent);
 		}

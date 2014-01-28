@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -98,11 +98,6 @@ void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags);
 
 #endif
 
-/*
-===============
-PM_AddEvent
-===============
-*/
 void PM_AddEvent(int newEvent)
 {
 	BG_AddPredictableEventToPlayerstate(newEvent, 0, pm->ps);
@@ -126,7 +121,6 @@ int PM_IdleAnimForWeapon(int weapon)
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
 		return WEAP_IDLE2;
-
 	default:
 		return WEAP_IDLE1;
 	}
@@ -239,11 +233,6 @@ int PM_DropAnimForWeapon(int weapon)
 	}
 }
 
-/*
-===============
-PM_AddTouchEnt
-===============
-*/
 void PM_AddTouchEnt(int entityNum)
 {
 	int i;
@@ -271,11 +260,6 @@ void PM_AddTouchEnt(int entityNum)
 	pm->numtouch++;
 }
 
-/*
-==============
-PM_StartWeaponAnim
-==============
-*/
 static void PM_StartWeaponAnim(int anim)
 {
 	if (pm->ps->pm_type >= PM_DEAD)
@@ -314,13 +298,9 @@ void PM_ContinueWeaponAnim(int anim)
 	PM_StartWeaponAnim(anim);
 }
 
-/*
-==================
-PM_ClipVelocity
-
-Slide off of the impacting surface
-==================
-*/
+/**
+ * @brief Slide off of the impacting surface
+ */
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 {
 	float backoff = DotProduct(in, normal);
@@ -339,13 +319,9 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 	out[2] = in[2] - (normal[2] * backoff);
 }
 
-/*
-==================
-PM_TraceAll
-
-finds worst trace of body/legs, for collision.
-==================
-*/
+/**
+ * @brief finds worst trace of body/legs, for collision.
+ */
 void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	trace_t steptrace;
@@ -456,7 +432,9 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 	tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
 }
 
-/* Traces all player bboxes -- body. legs, and head */
+/**
+ * @brief Traces all player bboxes -- body, legs, and head
+ */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
 	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
@@ -510,13 +488,9 @@ void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end)
 	PM_TraceAllParts(trace, NULL, start, end);
 }
 
-/*
-==================
-PM_Friction
-
-Handles both ground friction and water friction
-==================
-*/
+/**
+ * @brief Handles both ground friction and water friction
+ */
 static void PM_Friction(void)
 {
 	vec3_t vec;
@@ -604,13 +578,9 @@ static void PM_Friction(void)
 	VectorScale(vel, newspeed, vel);
 }
 
-/*
-==============
-PM_Accelerate
-
-Handles user intended acceleration
-==============
-*/
+/**
+ * @brief Handles user intended acceleration
+ */
 static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 {
 	// q2 style
@@ -700,6 +670,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	switch (pm->ps->weapon)
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING:
@@ -1384,7 +1355,15 @@ static void PM_WalkMove(void)
 	{
 		if (wishspeed > pm->ps->speed * pm_proneSpeedScale)
 		{
-			wishspeed = pm->ps->speed * pm_proneSpeedScale;
+			// cap the max prone speed while reloading
+			if (pm->ps->weaponstate == WEAPON_RELOADING)
+			{
+				wishspeed = (wishspeed < 40.f) ? pm->ps->speed * pm_proneSpeedScale : 40.f;
+			}
+			else
+			{
+				wishspeed = pm->ps->speed * pm_proneSpeedScale;
+			}
 		}
 	}
 	else if (pm->ps->pm_flags & PMF_DUCKED)       // clamp the speed lower if ducking
@@ -2393,8 +2372,7 @@ PM_BeginWeaponReload
 */
 static void PM_BeginWeaponReload(int weapon)
 {
-	gitem_t *item;
-	int     reloadTime;
+	int reloadTime;
 
 	// only allow reload if the weapon isn't already occupied (firing is okay)
 	if (pm->ps->weaponstate != WEAPON_READY && pm->ps->weaponstate != WEAPON_FIRING)
@@ -2438,13 +2416,8 @@ static void PM_BeginWeaponReload(int weapon)
 		break;
 	}
 
-	item = BG_FindItemForWeapon(weapon);
-	if (!item)
-	{
-		return;
-	}
 	// fixing reloading with a full clip
-	if (pm->ps->ammoclip[item->giAmmoIndex] >= GetAmmoTableData(weapon)->maxclip)
+	if (pm->ps->ammoclip[BG_FindAmmoForWeapon(weapon)] >= GetAmmoTableData(weapon)->maxclip)
 	{
 		return;
 	}
@@ -2488,6 +2461,7 @@ static void PM_BeginWeaponReload(int weapon)
 	{
 		reloadTime *= .65f;
 	}
+
 	if (pm->ps->weaponstate == WEAPON_READY)
 	{
 		pm->ps->weaponTime += reloadTime;
@@ -2551,7 +2525,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	{
 	case WP_CARBINE:
 	case WP_KAR98:
-		if (newweapon != weapAlts[oldweapon])
+		if (newweapon != weaponTable[oldweapon].weapAlts)
 		{
 			PM_AddEvent(EV_CHANGE_WEAPON);
 		}
@@ -2584,7 +2558,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	}
 
 	// it's an alt mode, play different anim
-	if (newweapon == weapAlts[oldweapon])
+	if (newweapon == weaponTable[oldweapon].weapAlts)
 	{
 		PM_StartWeaponAnim(PM_AltSwitchFromForWeapon(oldweapon));
 	}
@@ -2598,7 +2572,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	switch (oldweapon)
 	{
 	case WP_CARBINE:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 			if (!pm->ps->ammoclip[newweapon] && pm->ps->ammo[newweapon])
@@ -2608,13 +2582,13 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		}
 		break;
 	case WP_M7:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 		}
 		break;
 	case WP_KAR98:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 			if (!pm->ps->ammoclip[newweapon] && pm->ps->ammo[newweapon])
@@ -2624,32 +2598,32 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		}
 		break;
 	case WP_GPG40:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 		}
 		break;
 	case WP_LUGER:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 		}
 		break;
 	case WP_SILENCER:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 1000;
 			altSwitchAnim = qtrue;
 		}
 		break;
 	case WP_COLT:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 		}
 		break;
 	case WP_SILENCED_COLT:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 1000;
 			altSwitchAnim = qtrue;
@@ -2657,14 +2631,14 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		break;
 	case WP_FG42:
 	case WP_FG42SCOPE:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 50;        // fast
 		}
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			vec3_t axis[3];
 
@@ -2675,16 +2649,17 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 			CrossProduct(axis[0], axis[2], axis[1]);
 			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
 		}
+		break;
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 		}
 		break;
 	case WP_MORTAR:
 	case WP_MORTAR2:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			vec3_t axis[3];
 
@@ -2698,7 +2673,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		break;
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 		}
@@ -2823,7 +2798,7 @@ static void PM_FinishWeaponChange(void)
 	{
 	case WP_LUGER:
 	case WP_COLT:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 0;
 			altSwitchAnim = qtrue ;
@@ -2831,14 +2806,14 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_SILENCER:
 	case WP_SILENCED_COLT:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 1190;
 			altSwitchAnim = qtrue ;
 		}
 		break;
 	case WP_CARBINE:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			if (pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
 			{
@@ -2853,14 +2828,14 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_M7:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 2350;
 			altSwitchAnim = qtrue ;
 		}
 		break;
 	case WP_KAR98:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			if (pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
 			{
@@ -2875,7 +2850,7 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_GPG40:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 2350;
 			altSwitchAnim = qtrue ;
@@ -2883,28 +2858,28 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_FG42:
 	case WP_FG42SCOPE:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 50;        // fast
 		}
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 1722;
 		}
 		break;
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 1250;
 		}
 		break;
 	case WP_MORTAR:
 	case WP_MORTAR2:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 1000;
 			altSwitchAnim = qtrue;
@@ -2912,7 +2887,7 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
-		if (newweapon == weapAlts[oldweapon])
+		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 1667;
 			altSwitchAnim = qtrue;
@@ -2951,7 +2926,7 @@ static void PM_FinishWeaponChange(void)
 		}
 
 		// alt weapon switch was played when switching away, just go into idle
-		if (weapAlts[oldweapon] == newweapon)
+		if (weaponTable[oldweapon].weapAlts == newweapon)
 		{
 			PM_StartWeaponAnim(PM_AltSwitchToForWeapon(newweapon));
 		}
@@ -3030,6 +3005,7 @@ void PM_CheckForReload(int weapon)
 	case WP_KNIFE_KABAR:
 	case WP_GRENADE_LAUNCHER:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_GRENADE_PINEAPPLE:
 	case WP_MEDIC_SYRINGE:
 	case WP_AMMO:
@@ -3080,7 +3056,7 @@ void PM_CheckForReload(int weapon)
 	case WP_K43_SCOPE:
 		if (reloadRequested && pm->ps->ammo[ammoWeap] && pm->ps->ammoclip[clipWeap] < GetAmmoTableData(weapon)->maxclip)
 		{
-			PM_BeginWeaponChange(weapon, weapAlts[weapon], !(pm->ps->ammo[ammoWeap]) ? qfalse : qtrue);
+			PM_BeginWeaponChange(weapon, weaponTable[weapon].weapAlts, !(pm->ps->ammo[ammoWeap]) ? qfalse : qtrue);
 		}
 		return;
 	default:
@@ -3882,6 +3858,7 @@ static void PM_Weapon(void)
 		return;
 	}
 
+	// can't shoot while prone and moving
 	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
 	{
 		return;
@@ -3995,6 +3972,7 @@ static void PM_Weapon(void)
 	case WP_NONE: // this is possible since the player starts with nothing
 		return;
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
@@ -4255,6 +4233,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_LUGER:
 	case WP_COLT:
 	case WP_GARAND:
@@ -4274,7 +4253,7 @@ static void PM_Weapon(void)
 		if (!weaponstateFiring)
 		{
 			// pfaust has spinup time in MP
-			if (pm->ps->weapon == WP_PANZERFAUST)
+			if (pm->ps->weapon == WP_PANZERFAUST || pm->ps->weapon == WP_BAZOOKA)
 			{
 				PM_AddEvent(EV_SPINUP);
 			}
@@ -4433,14 +4412,14 @@ static void PM_Weapon(void)
 	if (pm->ps->weapon)
 	{
 		int      ammoAvailable;
-		qboolean reloading, playswitchsound = qtrue;
 
 		ammoAvailable = PM_WeaponAmmoAvailable(pm->ps->weapon);
 
 		if (ammoNeeded > ammoAvailable)
 		{
+			qboolean playswitchsound = qtrue;
 			// you have ammo for this, just not in the clip
-			reloading = (qboolean)(ammoNeeded <= pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)]);
+			qboolean reloading = (qboolean)(ammoNeeded <= pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)]);
 
 			// if not in auto-reload mode, and reload was not explicitely requested, just play the 'out of ammo' sound
 			if (!pm->pmext->bAutoReload && IS_AUTORELOAD_WEAPON(pm->ps->weapon) && !(pm->cmd.wbuttons & WBUTTON_RELOAD))
@@ -4510,6 +4489,7 @@ static void PM_Weapon(void)
 			//bckmove_knockback = 400.f;
 			break;
 		case WP_PANZERFAUST:
+		case WP_BAZOOKA:
 			fwdmove_knockback = 32000.f;
 			//bckmove_knockback = 1200.f;
 			break;
@@ -4627,10 +4607,11 @@ static void PM_Weapon(void)
 		break;
 	}
 
-	// Jin multiplayer, pfaust fires once then switches to pistol since it's useless for a while
+	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
 	switch (pm->ps->weapon) // no ammo events
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_SMOKE_MARKER:
 	case WP_DYNAMITE:
 	case WP_SMOKE_BOMB:
@@ -4706,6 +4687,7 @@ static void PM_Weapon(void)
 	case WP_KNIFE:
 	case WP_KNIFE_KABAR:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_DYNAMITE:
 	case WP_GRENADE_LAUNCHER:
 	case WP_GRENADE_PINEAPPLE:

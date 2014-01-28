@@ -103,7 +103,9 @@ cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *con_drawnotify;
 cvar_t *com_introPlayed;
 cvar_t *com_ansiColor;
+#if idppc
 cvar_t *com_altivec;
+#endif
 cvar_t *cl_paused;
 cvar_t *sv_paused;
 cvar_t *cl_packetdelay;
@@ -2890,12 +2892,17 @@ void Com_Init(char *commandLine)
 	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
+	
 #if defined (__AROS__) || defined (__MORPHOS__)
 	com_ansiColor = Cvar_Get("com_ansiColor", "0", CVAR_ARCHIVE);
 #else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
 #endif
+	
+#if idppc
 	com_altivec        = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
+#endif
+	
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
 
 	com_hunkused      = Cvar_Get("com_hunkused", "0", 0);
@@ -2914,6 +2921,9 @@ void Com_Init(char *commandLine)
 		Cmd_AddCommand("error", Com_Error_f);
 		Cmd_AddCommand("crash", Com_Crash_f);
 		Cmd_AddCommand("freeze", Com_Freeze_f);
+#if defined(_WIN32) && defined(USE_WINDOWS_CONSOLE)
+		Sys_ShowConsole(1, qtrue);
+#endif
 	}
 	Cmd_AddCommand("quit", Com_Quit_f);
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f);

@@ -47,10 +47,9 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 {
 	gclient_t *cl;
 	int       *p;
-	char      line[MAX_NAME_LENGTH + 10];
 
-	err[0]  = '\0';
-	line[0] = '\0';
+	err[0] = '\0';
+
 	if (plist[0] == -1)
 	{
 		Q_strcat(err, len, "no connected player by that name or slot #");
@@ -58,6 +57,10 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 	}
 	if (plist[1] != -1)
 	{
+		char line[MAX_NAME_LENGTH + 10];
+
+		line[0] = '\0';
+
 		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
 		for (p = plist; *p != -1; p++)
 		{
@@ -260,10 +263,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	}
 	else
 	{
-		//unlagged - true ping
 		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-		//ping = cl->pers.realPing < 999 ? cl->pers.realPing : 999;
-		// en unlagged - true ping
 	}
 
 	if (g_gametype.integer == GT_WOLF_LMS)
@@ -296,7 +296,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	            level.sortedClients[i],
 	            totalXP,
 	            ping,
-	            (level.time - cl->pers.enterTime) / 60000,
+	            (level.time - cl->pers.enterTime - (level.time - level.intermissiontime)) / 60000,
 	            g_entities[level.sortedClients[i]].s.powerups,
 	            miscFlags,
 	            respawnsLeft
@@ -550,6 +550,23 @@ int ClientNumberFromString(gentity_t *to, char *s)
 	return -1;
 }
 
+int GetSkillPointUntilLevelUp(gentity_t *ent, int skill)
+{
+	if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
+	{
+		int i = ent->client->sess.skill[skill] + 1;
+		int x = 1;
+		for (; i < NUM_SKILL_LEVELS; i++, x++)
+		{
+			if (skillLevels[skill][ent->client->sess.skill[skill] + x] >= 0)
+			{
+				return skillLevels[skill][ent->client->sess.skill[skill] + x] - ent->client->sess.skillpoints[skill];
+			}
+		}
+	}
+	return -1;
+}
+
 /*
 ==================
 Cmd_Give_f
@@ -601,10 +618,10 @@ void Cmd_Give_f(gentity_t *ent)
 			if (skill >= 0 && skill < SK_NUM_SKILLS)
 			{
 				// Detecting the correct amount to move to the next skill level
-				amount = 20;
-				if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
+				amount = GetSkillPointUntilLevelUp(ent, skill);
+				if (amount < 0)
 				{
-					amount = skillLevels[skill][ent->client->sess.skill[skill] + 1] - ent->client->sess.skillpoints[skill];
+					amount = 20;
 				}
 
 				G_AddSkillPoints(ent, skill, amount);
@@ -617,10 +634,10 @@ void Cmd_Give_f(gentity_t *ent)
 			for (i = 0; i < SK_NUM_SKILLS; i++)
 			{
 				// Detecting the correct amount to move to the next skill level
-				amount = 20;
-				if (ent->client->sess.skill[i] < NUM_SKILL_LEVELS - 1)
+				amount = GetSkillPointUntilLevelUp(ent, i);
+				if (amount < 0)
 				{
-					amount = skillLevels[i][ent->client->sess.skill[i] + 1] - ent->client->sess.skillpoints[i];
+					amount = 20;
 				}
 
 				G_AddSkillPoints(ent, i, amount);
@@ -995,8 +1012,13 @@ void Cmd_Kill_f(gentity_t *ent)
 			return;
 		}
 #endif
-		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\n\"");
+		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\"");
+		return;
+	}
 
+	if (ent->client->freezed)
+	{
+		trap_SendServerCommand(ent - g_entities, "cp \"^9You are frozen - ^3/kill^9 is disabled.\"");
 		return;
 	}
 
@@ -1076,6 +1098,12 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 
 	G_TeamDataForString(s, client - level.clients, &team, &specState, &specClient);
 
+	if (ent->client->freezed)
+	{
+		trap_SendServerCommand(clientNum, "cp \"You are frozen!\n\"");
+		return qfalse;
+	}
+
 	if (team != TEAM_SPECTATOR)
 	{
 		// Ensure the player can join
@@ -1087,7 +1115,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 
 		if (g_noTeamSwitching.integer && (team != ent->client->sess.sessionTeam && ent->client->sess.sessionTeam != TEAM_SPECTATOR) && g_gamestate.integer == GS_PLAYING && !force)
 		{
-			trap_SendServerCommand(clientNum, "cp \"You cannot switch during a match, please wait until the round ends.\n\"");
+			trap_SendServerCommand(clientNum, "cp \"You cannot switch during a match, please wait until the round ends.\"");
 			return qfalse;  // ignore the request
 		}
 
@@ -1484,6 +1512,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 	switch (weapon)
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		maxCount = team_maxPanzers.integer;
 		if (maxCount == -1)
 		{
@@ -1501,7 +1530,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		{
 			if (ent->client->ps.pm_flags & PMF_LIMBO)
 			{
-				CP("cp \"^1*^3 PANZERFAUST not available!^1 *\" 1");
+				CP("cp \"^1*^3 ROCKET LAUNCHER not available!^1 *\" 1");
 			}
 			return qtrue;
 		}
@@ -2071,6 +2100,20 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 	if (dir != 1 && dir != -1)
 	{
 		G_Error("Cmd_FollowCycle_f: bad dir %i\n", dir);
+	}
+
+	// if dedicated follow client, just switch between the two auto clients
+	if (ent->client->sess.spectatorClient < 0)
+	{
+		if (ent->client->sess.spectatorClient == -1)
+		{
+			ent->client->sess.spectatorClient = -2;
+		}
+		else if (ent->client->sess.spectatorClient == -2)
+		{
+			ent->client->sess.spectatorClient = -1;
+		}
+		return;
 	}
 
 	clientnum = ent->client->sess.spectatorClient;
@@ -4043,7 +4086,33 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent)
 	{
 		if (g_entities[i].inuse)
 		{
-			Q_strcat(buffer, sizeof(buffer), va("%i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths));
+			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths, level.clients[i].sess.suicides, level.clients[i].sess.team_kills));
+		}
+		else
+		{
+			Q_strcat(buffer, sizeof(buffer), "0 0 0 ");
+		}
+	}
+
+	trap_SendServerCommand(ent - g_entities, buffer);
+}
+
+void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
+{
+	char buffer[1024];
+	int  i;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	Q_strncpyz(buffer, "impt ", sizeof(buffer));
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (g_entities[i].inuse)
+		{
+			Q_strcat(buffer, sizeof(buffer), va("%i %i ", level.clients[i].sess.time_axis / 60000, level.clients[i].sess.time_allies / 60000));
 		}
 		else
 		{
@@ -4429,6 +4498,11 @@ void ClientCommand(int clientNum)
 	else if (!Q_stricmp(cmd, "impkd"))
 	{
 		Cmd_IntermissionPlayerKillsDeaths_f(ent);
+		return;
+	}
+	else if (!Q_stricmp(cmd, "impt"))
+	{
+		Cmd_IntermissionPlayerTime_f(ent);
 		return;
 	}
 	else if (!Q_stricmp(cmd, "imwa"))

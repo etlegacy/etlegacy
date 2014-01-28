@@ -1,5 +1,8 @@
 /* lightMapping_fp.glsl */
 
+uniform bool SHOW_LIGHTMAP;
+uniform bool SHOW_DELUXEMAP;
+
 uniform sampler2D u_DiffuseMap;
 uniform sampler2D u_NormalMap;
 uniform sampler2D u_SpecularMap;
@@ -218,12 +221,18 @@ void    main()
 	gl_FragColor = color;
 #endif
 
-#if defined(r_showLightMaps)
-	gl_FragColor = texture2D(u_LightMap, var_TexLight);
-#elif defined(r_showDeluxeMaps)
-	gl_FragColor = texture2D(u_DeluxeMap, var_TexLight);
-#endif
-
+	if (SHOW_DELUXEMAP)
+	{
+		gl_FragColor = texture2D(u_DeluxeMap, var_TexLight);
+	}
+	else if (SHOW_LIGHTMAP)
+	{
+		gl_FragColor = texture2D(u_LightMap, var_TexLight);
+	}
+	else
+	{
+		gl_FragColor = color;
+	}
 
 #if 0
 #if defined(USE_PARALLAX_MAPPING)

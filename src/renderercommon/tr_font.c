@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -108,7 +108,6 @@ void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *
 	*pitch  = (*width + 3) & - 4;
 }
 
-
 FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 {
 
@@ -131,9 +130,8 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 	bit2->rows       = height;
 	bit2->pitch      = pitch;
 	bit2->pixel_mode = FT_PIXEL_MODE_GRAY;
-	//bit2->pixel_mode = ft_pixel_mode_mono;
-	bit2->buffer    = (unsigned char *)ri.Z_Malloc(size);
-	bit2->num_grays = 256;
+	bit2->buffer     = (unsigned char *)ri.Z_Malloc(size);
+	bit2->num_grays  = 256;
 
 	Com_Memset(bit2->buffer, 0, size);
 
@@ -231,15 +229,6 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 			return &glyph;
 		}
 
-		/*
-		// need to convert to power of 2 sizes so we do not get
-		// any scaling from the gl upload
-		for (scaled_width = 1 ; scaled_width < glyph.pitch ; scaled_width<<=1)
-		    ;
-		for (scaled_height = 1 ; scaled_height < glyph.height ; scaled_height<<=1)
-		    ;
-		 */
-
 		scaled_width  = glyph.pitch;
 		scaled_height = glyph.height;
 
@@ -272,6 +261,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 				unsigned char *_dst = dst;
 				unsigned char mask  = 0x80;
 				unsigned char val   = *_src;
+
 				for (j = 0; j < glyph.pitch; j++)
 				{
 					if (mask == 0x80)
@@ -323,8 +313,15 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 		*xOut += scaled_width + 1;
 	}
 
-	ri.Free(bitmap->buffer);
-	ri.Free(bitmap);
+	if (bitmap && bitmap->buffer)
+	{
+		ri.Free(bitmap->buffer);
+	}
+
+	if (bitmap)
+	{
+		ri.Free(bitmap);
+	}
 
 	return &glyph;
 }
@@ -462,7 +459,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	// allocate on the stack first in case we fail
 	if (FT_New_Memory_Face(ftLibrary, faceData, len, 0, &face))
 	{
-		// FIXME: ri.FS_FreeFile(faceData); ?
+		ri.FS_FreeFile(faceData);
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType, unable to allocate new face.\n");
 		return qfalse;
 	}
@@ -473,6 +470,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	if (FT_Set_Char_Size(face, pointSize << 6, pointSize << 6, dpi, dpi))
 	{
+		ri.FS_FreeFile(faceData);
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType, unable to set face char size.\n");
 		return qfalse;
 	}
@@ -480,7 +478,8 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	//*font = &registeredFonts[registeredFontCount++];
 
 	// scale image size based on screen height, use the next higher power of two
-	for (imageSize = FONT_SIZE; imageSize < (float)FONT_SIZE * (glConfig.vidHeight / (float)SCREEN_HEIGHT); imageSize <<= 1);
+	for (imageSize = FONT_SIZE; imageSize < (float)FONT_SIZE * (glConfig.vidHeight / (float)SCREEN_HEIGHT); imageSize <<= 1)
+		;
 
 	// do not exceed maxTextureSize
 	if (imageSize > glConfig.maxTextureSize)
@@ -494,7 +493,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	out = (unsigned char *)ri.Z_Malloc(imageSize * imageSize);
 	if (out == NULL)
 	{
-		// FIXME: ri.FS_FreeFile(faceData); ?
+		ri.FS_FreeFile(faceData);
 		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: ri.Z_Malloc failure during output image creation.\n");
 		return qfalse;
 	}
@@ -504,6 +503,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	for (i = GLYPH_START; i < GLYPH_END; i++)
 	{
+		// FIXME: RE_ConstructGlyphInfo might return NULL and we won't notice that
 		RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
 	}
 
@@ -516,6 +516,13 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	while (i <= GLYPH_END)
 	{
 		glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qfalse);
+
+		// FIXME: glyph might be NULL for various reasons
+		if (!glyph)
+		{
+			//ri.FS_FreeFile(faceData);
+			ri.Printf(PRINT_WARNING, "R_LoadScalableFont: glyph is NULL!\n");
+		}
 
 		if (xOut == -1 || yOut == -1 || i == GLYPH_END)
 		{
@@ -608,6 +615,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	char datName[MAX_QPATH];
 	int  i;
+
 	Com_sprintf(datName, sizeof(datName), "fonts/%s_%i.dat", fontName, pointSize);
 	for (i = 0; i < registeredFontCount; i++)
 	{

@@ -72,7 +72,11 @@ set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFI
 set(INSTALL_DEFAULT_MODDIR	"share/etlegacy"	CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
 
 if(INSTALL_DEFAULT_BASEDIR)
-	add_definitions(-DDEFAULT_BASEDIR=\"${INSTALL_DEFAULT_BASEDIR}\")
+	# On OS X the base dir is the .app's (or etlded binary's) parent path, and is set in the etl code itself
+	# so we do NOT want to define DEFAULT_BASEDIR at build time.
+	if(NOT APPLE)
+		add_definitions(-DDEFAULT_BASEDIR=\"${INSTALL_DEFAULT_BASEDIR}\")
+	endif()
 endif(INSTALL_DEFAULT_BASEDIR)
 
 # Optional features
@@ -176,6 +180,12 @@ if(UNIX)
 		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem") # These flags will cause error with older Xcode
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_C "-isystem")
+		
+		# 10.7 is really an arbitrary choice (it should in theory work back to 10.5). The main point is if
+		# we don't specify a target, it will be require the OS version used at compile time.
+		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+		set(CMAKE_CXX_FLAGS "--sysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
+		
 		if(BUILD_CLIENT)
 			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon")
 		endif()
@@ -382,6 +392,7 @@ FILE(GLOB RENDERER_COMMON_DYNAMIC
 	"src/qcommon/q_shared.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/puff.c"
+	"src/qcommon/md4.c"
 )
 	
 FILE(GLOB RENDERER1_FILES
@@ -397,12 +408,15 @@ FILE(GLOB RENDERERGLES_FILES
 
 FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.c"
-	"src/renderer2/*.cpp"
 	"src/renderer2/*.h"
 )
 
 FILE(GLOB RENDERER2_SHADERS
 	"src/renderer2/glsl/*.glsl"
+)
+
+FILE(GLOB RENDERER2_SHADERDEFS
+	"src/renderer2/gldef/*.gldef"
 )
 
 FILE(GLOB IRC_CLIENT_FILES
@@ -622,15 +636,9 @@ if(BUILD_MOD)
 
 	if(FEATURE_LUA)
 		if(NOT BUNDLED_LUA)
-			find_package(Lua 5.1 REQUIRED)
+			find_package(Lua 5.1 REQUIRED) # or 5.2
 			list(APPEND MOD_LIBRARIES ${LUA_LIBRARIES})
 			include_directories(SYSTEM ${LUA_INCLUDE_DIR})
-
-			if(${LUA_VERSION_STRING} MATCHES "^5.2")
-				add_definitions(-DLUA_5_2)
-			elseif(NOT LUA_VERSION_STRING)
-				message(WARNING "Unable to detect Lua version, assuming 5.1")
-			endif()
 		else() # BUNDLED_LUA
 			list(APPEND MOD_LIBRARIES ${LUA_BUNDLED_LIBRARIES})
 			include_directories(SYSTEM ${LUA_BUNDLED_INCLUDE_DIR})
@@ -754,8 +762,8 @@ if(BUILD_CLIENT)
 		# install the dynamic lib only
 		if(RENDERER_DYNAMIC)
 			install(TARGETS renderer_opengl1_${ARCH}
-				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 			)
 		endif(RENDERER_DYNAMIC)
 		if(NOT RENDERER_DYNAMIC)
@@ -775,7 +783,7 @@ if(BUILD_CLIENT)
 			FOREACH (SHAD ${RENDERER2_SHADERS})
 				GET_FILENAME_COMPONENT(SHAD_NAME ${SHAD} NAME_WE)
 				string(TOLOWER ${SHAD_NAME} SHAD_NAME_LOW)
-				set(SHAD_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/glsl)
+				#set(SHAD_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/glsl)
 				execute_process(COMMAND ${SED_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/glsl2c.sed ${SHAD}
 					WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 					OUTPUT_VARIABLE OUT_RES
@@ -789,7 +797,23 @@ if(BUILD_CLIENT)
 				SET(SHADER_SOURCES "${SHADER_SOURCES}const char *fallbackShader_${SHAD_NAME_LOW} =\n${OUT_RES}\n")
 			ENDFOREACH(SHAD)
 			SET(SHADER_FUNCTION "${SHADER_FUNCTION}\treturn NULL;\n}")
-			FILE(WRITE "${SHADER_OUTPUT_FILE}" "${SHADER_SOURCES}${SHADER_FUNCTION}")
+
+			FOREACH(SHADDEF ${RENDERER2_SHADERDEFS})
+				execute_process(COMMAND ${SED_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/glsl2c.sed ${SHADDEF}
+					WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+					OUTPUT_VARIABLE OUT_RES
+					RESULT_VARIABLE RES_VAR
+				)
+				IF(SHADDEF_VAR)
+					#FIXME
+					#SET(SHADDEF_VAR "${SHADDEF_VAR}\n${OUT_RES}")
+				ELSE(SHADDEF_VAR)
+					SET(SHADDEF_VAR "//GLSL Shader default definitions found in renderer2/gldef folder")
+					SET(SHADDEF_VAR "${SHADDEF_VAR}\nconst char *defaultShaderDefinitions = ${OUT_RES}\n")
+				ENDIF(SHADDEF_VAR)
+			ENDFOREACH(SHADDEF)
+
+			FILE(WRITE "${SHADER_OUTPUT_FILE}" "${SHADER_SOURCES}${SHADDEF_VAR}${SHADER_FUNCTION}")
 			LIST(APPEND RENDERER2_FILES "${SHADER_OUTPUT_FILE}")
 		else(SED_EXECUTABLE)
 			MESSAGE(FATAL_ERROR "The fallbackshader source file was not created due to \"sed\" missing. The build would fail. :(")
@@ -811,12 +835,13 @@ if(BUILD_CLIENT)
 			add_dependencies(renderer_opengl2_${ARCH} bundled_freetype)
 		endif(BUNDLED_FREETYPE)
 		target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
+
 		set_target_properties(renderer_opengl2_${ARCH}
 			PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"
 		)
 		install(TARGETS renderer_opengl2_${ARCH}
-			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 		)
 		if(NOT RENDERER_DYNAMIC)
 			list(APPEND CLIENT_LIBRARIES renderer_opengl2_${ARCH})
@@ -826,7 +851,29 @@ if(BUILD_CLIENT)
 	if(FEATURE_WINDOWS_CONSOLE AND WIN32)
 		add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 	else(FEATURE_WINDOWS_CONSOLE AND WIN32)
-		add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+		
+		if (APPLE)
+			
+			# These are vars used in the misc/Info.plist template file
+			# See set_target_properties( ... MACOSX_BUNDLE_INFO_PLIST ...)
+			set(MACOSX_BUNDLE_INFO_STRING            "Enemy Territory: Legacy")
+			set(MACOSX_BUNDLE_ICON_FILE              "etl.icns")
+			set(MACOSX_BUNDLE_GUI_IDENTIFIER         "com.etlegacy.etl")
+			set(MACOSX_BUNDLE_LONG_VERSION_STRING    "${ETL_CMAKE_VERSION}")
+			set(MACOSX_BUNDLE_BUNDLE_NAME            "ETLegacy")
+			set(MACOSX_BUNDLE_SHORT_VERSION_STRING   "${ETL_CMAKE_VERSION_SHORT}")
+			set(MACOSX_BUNDLE_COPYRIGHT              "etlegacy.com")
+			
+			# Specify files to be copied into the .app's Resources folder
+			set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/misc")
+			set(MACOSX_RESOURCES "${RESOURCES_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
+			set_source_files_properties(${CMAKE_SOURCE_DIR}/misc/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+			
+			# Create the .app bundle
+			add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
+		else()
+			add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+		endif()
 	endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
 	
 	if(BUNDLED_SDL)
@@ -845,7 +892,12 @@ if(BUILD_CLIENT)
 		${SDL_LIBRARIES}
 	)
 
+	set_target_properties(etl PROPERTIES
+		COMPILE_DEFINITIONS "USE_ICON"
+		MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist)
+
 	install(TARGETS etl
+		BUNDLE  DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 		RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
 endif(BUILD_CLIENT)
 

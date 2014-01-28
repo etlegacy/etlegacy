@@ -322,6 +322,7 @@ int CG_WeaponIconScale(int weap)
 	case WP_MP40:
 	case WP_STEN:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 	case WP_FLAMETHROWER:
 	case WP_GARAND:
 	case WP_FG42:
@@ -341,6 +342,10 @@ int CG_WeaponIconScale(int weap)
 	case WP_MORTAR_SET:
 	case WP_MORTAR2:
 	case WP_MORTAR2_SET:
+	case WP_SILENCED_COLT:
+	case WP_SILENCER:
+	case WP_AKIMBO_SILENCEDCOLT:
+	case WP_AKIMBO_SILENCEDLUGER:
 		return 2;
 	}
 
@@ -385,7 +390,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		return;
 	}
 
-	memset(locStr, 0, sizeof(locStr));
+	memset(locStr, 0, sizeof(char *) * MAX_FIRETEAM_MEMBERS);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -546,7 +551,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		}
 
 		// draw the player's name
-		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		// add space
 		x += 14 + bestNameWidth - puwidth;
@@ -566,19 +571,19 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 		if (ci->health >= 100)
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorGreen, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			x += 12;
 		}
-		else if (ci->health > 10)
+		else if (ci->health >= 10)
 		{
 			x += 6;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? tclr : colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? colorGreen : colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			x += 6;
 		}
 		else if (ci->health > 0)
 		{
 			x += 12;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
 		else if (ci->health == 0)
 		{

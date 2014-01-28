@@ -43,8 +43,8 @@ void CG_DrawBorder(float x, float y, float w, float h, qboolean fill, qboolean d
 
 team_t teamOrder[3] =
 {
-	TEAM_ALLIES,
 	TEAM_AXIS,
+	TEAM_ALLIES,
 	TEAM_SPECTATOR,
 };
 
@@ -1220,7 +1220,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	{
 		weaponType_t *wt = WM_FindWeaponTypeForWeapon(weap1);
 
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), wt ? wt->desc : "^1UNKNOWN WEAPON"), 400, cg_fontScaleCP.value, -1);
 	}
 
 	cgs.limboLoadoutSelected = qtrue;
@@ -1318,10 +1318,10 @@ void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 	switch (button->data[0])
 	{
 	case 0:
-		shader = cgs.media.limboTeamButtonAllies;
+		shader = cgs.media.limboTeamButtonAxis;
 		break;
 	case 1:
-		shader = cgs.media.limboTeamButtonAxis;
+		shader = cgs.media.limboTeamButtonAllies;
 		break;
 	case 2:
 		shader = cgs.media.limboTeamButtonSpec;
@@ -2917,6 +2917,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 		*shader = cgs.media.limboWeaponCard2;
 		break;
 	case WP_MOBILE_BROWNING:
+	case WP_BAZOOKA:
 		*shader = cgs.media.limboWeaponCard3;
 		break;
 	default:     // shouldn't happen
@@ -2954,6 +2955,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 	case WP_AKIMBO_SILENCEDCOLT:
 	case WP_SILENCED_COLT:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		*t0 = 1 / 8.f;
 		*t1 = 2 / 8.f;
 		break;
@@ -3423,6 +3425,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	switch (weapon)
 	{
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxPanzers))
 		{
 			return qtrue;

@@ -555,7 +555,8 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
 		break;
 	case WP_PANZERFAUST:
-		fire_rocket(ent, ent->s.origin, dir);
+	case WP_BAZOOKA:
+		fire_rocket(ent, ent->s.origin, dir, ent->s.weapon);
 		VectorScale(ent->s.pos.trDelta, 2, ent->s.pos.trDelta);
 		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
 		break;

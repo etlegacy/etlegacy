@@ -763,10 +763,8 @@ void QDECL CG_DPrintf(const char *msg, ...)
 {
 	va_list argptr;
 	char    text[1024];
-	float   developer;
-
-	developer = CG_Cvar_Get("developer");
-	if (!developer)
+	
+	if (!developer.value)
 	{
 		return;
 	}
@@ -915,6 +913,35 @@ char *CG_generateFilename(void)
 	          ));
 }
 
+/**
+ * @brief strip colors and control codes, copying up to dwMaxLength-1 "good" chars and nul-terminating
+ * @return the length of the cleaned string
+ */
+int CG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF)
+{
+	const char *pInCopy     = pszIn;
+	const char *pszOutStart = pszOut;
+
+	while (*pInCopy && (pszOut - pszOutStart < dwMaxLength - 1))
+	{
+		if (*pInCopy == '^')
+		{
+			pInCopy += ((pInCopy[1] == 0) ? 1 : 2);
+		}
+		else if ((*pInCopy < 32 && (!fCRLF || *pInCopy != '\n')) || (*pInCopy > 126))
+		{
+			pInCopy++;
+		}
+		else
+		{
+			*pszOut++ = *pInCopy++;
+		}
+	}
+
+	*pszOut = 0;
+	return(pszOut - pszOutStart);
+}
+
 int CG_findClientNum(char *s)
 {
 	int      id;
@@ -942,7 +969,7 @@ int CG_findClientNum(char *s)
 	}
 
 	// check for a name match
-	BG_cleanName(s, s2, sizeof(s2), qfalse);
+	CG_cleanName(s, s2, sizeof(s2), qfalse);
 	for (id = 0; id < cgs.maxclients; id++)
 	{
 		if (!cgs.clientinfo[id].infoValid)
@@ -950,7 +977,7 @@ int CG_findClientNum(char *s)
 			continue;
 		}
 
-		BG_cleanName(cgs.clientinfo[id].name, n2, sizeof(n2), qfalse);
+		CG_cleanName(cgs.clientinfo[id].name, n2, sizeof(n2), qfalse);
 		if (!Q_stricmp(n2, s2))
 		{
 			return(id);
@@ -1426,11 +1453,11 @@ static void CG_RegisterGraphics(void)
 		"gfx/2d/numbers/minus_32b",
 	};
 
-	CG_LoadingString(cgs.mapname);
+	CG_LoadingString(va(" - %s -", cgs.mapname));
 
 	trap_R_LoadWorldMap(cgs.mapname);
 
-	CG_LoadingString("entities");
+	CG_LoadingString(" - entities -");
 
 	numSplinePaths = 0;
 	numPathCorners = 0;
@@ -1448,7 +1475,7 @@ static void CG_RegisterGraphics(void)
 	CG_LoadObjectiveData();
 
 	// precache status bar pics
-	CG_LoadingString("game media");
+	CG_LoadingString(" - game media -");
 
 	CG_LoadingString(" - textures -");
 
@@ -1653,7 +1680,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.spawnInvincibleShader = trap_R_RegisterShader("sprites/shield");
 	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
-	cgs.media.disguiseShader        = trap_R_RegisterShader("sprites/undercover");
 
 	cgs.media.destroyShader = trap_R_RegisterShader("sprites/destroy");
 
@@ -2032,8 +2058,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hudDamagedStates[2] = trap_R_RegisterSkin("models/players/hud/damagedskins/blood03.skin");
 	cgs.media.hudDamagedStates[3] = trap_R_RegisterSkin("models/players/hud/damagedskins/blood04.skin");
 
-	cgs.media.browningIcon = trap_R_RegisterShaderNoMip("icons/iconw_browning_1_select");
-
 	cgs.media.axisFlag       = trap_R_RegisterShaderNoMip("gfx/limbo/flag_axis");
 	cgs.media.alliedFlag     = trap_R_RegisterShaderNoMip("gfx/limbo/flag_allied");
 	cgs.media.disconnectIcon = trap_R_RegisterShaderNoMip("gfx/2d/net");
@@ -2043,7 +2067,7 @@ static void CG_RegisterGraphics(void)
 		cgs.media.fireteamicons[i] = trap_R_RegisterShaderNoMip(va("gfx/hud/fireteam/fireteam%i", i + 1));
 	}
 
-	CG_LoadingString("game media done");
+	CG_LoadingString(" - game media -");
 }
 
 /*
@@ -2568,7 +2592,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 #endif
 
 	// load the new map
-	CG_LoadingString("collision map");
+	CG_LoadingString(" - collision map -");
 
 	trap_CM_LoadMap(cgs.mapname);
 
@@ -2580,7 +2604,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.loading = qtrue;     // force players to load instead of defer
 
-	CG_LoadingString("sounds");
+	CG_LoadingString(" - sounds -");
 
 	CG_RegisterSounds();
 
@@ -2588,11 +2612,11 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	DEBUG_INITPROFILE_EXEC("sounds")
 #endif // DEBUG
 
-	CG_LoadingString("graphics");
+	CG_LoadingString(" - graphics -");
 
 	CG_RegisterGraphics();
 
-	CG_LoadingString("flamechunks");
+	CG_LoadingString(" - flamechunks -");
 
 	CG_InitFlameChunks();       // register and clear all flamethrower resources
 
@@ -2600,7 +2624,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	DEBUG_INITPROFILE_EXEC("graphics")
 #endif // DEBUG
 
-	CG_LoadingString("clients");
+	CG_LoadingString(" - clients -");
 
 	CG_RegisterClients();       // if low on memory, some clients will be deferred
 
@@ -2633,6 +2657,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_ChargeTimesChanged();
 
 	CG_TeamRestrictionsChanged();
+
+	CG_SkillLevelsChanged();
 
 	trap_S_ClearLoopingSounds();
 	trap_S_ClearSounds(qfalse);

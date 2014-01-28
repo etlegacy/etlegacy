@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,17 +28,14 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_cmds.c
  */
-// tr_cmds.c
+
 #include "tr_local.h"
 
 volatile qboolean renderThreadActive;
 
-/*
-=====================
-R_PerformanceCounters
-=====================
-*/
 void R_PerformanceCounters(void)
 {
 	if (!r_speeds->integer)
@@ -171,11 +168,6 @@ void R_PerformanceCounters(void)
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-/*
-====================
-R_IssueRenderCommands
-====================
-*/
 int c_blockedOnRender;
 int c_blockedOnMain;
 
@@ -198,7 +190,6 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 		R_PerformanceCounters();
 	}
 }
-
 
 /*
 ====================
@@ -255,12 +246,6 @@ void *R_GetCommandBuffer(int bytes)
 	return cmdList->cmds + cmdList->used - bytes;
 }
 
-
-/*
-=============
-R_AddDrawViewCmd
-=============
-*/
 void R_AddDrawViewCmd()
 {
 	drawViewCommand_t *cmd;
@@ -311,11 +296,6 @@ void RE_SetColor(const float *rgba)
 	cmd->color[3] = rgba[3];
 }
 
-/*
-=============
-R_ClipRegion
-=============
-*/
 static qboolean R_ClipRegion(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2)
 {
 	float left, top, right, bottom;
@@ -387,12 +367,6 @@ static qboolean R_ClipRegion(float *x, float *y, float *w, float *h, float *s1, 
 	return qfalse;
 }
 
-
-/*
-=============
-RE_SetClipRegion
-=============
-*/
 void RE_SetClipRegion(const float *region)
 {
 	if (region == NULL)
@@ -405,12 +379,6 @@ void RE_SetClipRegion(const float *region)
 	}
 }
 
-
-/*
-=============
-RE_StretchPic
-=============
-*/
 void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader)
 {
 	stretchPicCommand_t *cmd;
@@ -441,11 +409,6 @@ void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float
 	cmd->t2        = t2;
 }
 
-/*
-=============
-RE_2DPolyies
-=============
-*/
 extern int r_numPolyVerts;
 
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
@@ -472,12 +435,6 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	r_numPolyVerts += numverts;
 }
 
-
-/*
-=============
-RE_RotatedPic
-=============
-*/
 void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
 {
 	stretchPicCommand_t *cmd;
@@ -509,12 +466,6 @@ void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float
 	cmd->t2    = t2;
 }
 
-//----(SA)  added
-/*
-==============
-RE_StretchPicGradient
-==============
-*/
 void RE_StretchPicGradient(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
                            int gradientType)
@@ -550,10 +501,6 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 	cmd->gradientColor[3] = gradientColor[3] * 255;
 	cmd->gradientType     = gradientType;
 }
-
-//----(SA)  end
-
-
 
 /*
 ====================
@@ -721,7 +668,6 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	}
 }
 
-
 /*
 =============
 RE_EndFrame
@@ -758,11 +704,6 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	backEnd.pc.msec = 0;
 }
 
-/*
-=============
-RE_TakeVideoFrame
-=============
-*/
 void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
 {
 	videoFrameCommand_t *cmd;
@@ -787,12 +728,6 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 	cmd->motionJpeg    = motionJpeg;
 }
 
-//bani
-/*
-==================
-RE_RenderToTexture
-==================
-*/
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
@@ -816,11 +751,6 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->h         = h;
 }
 
-/*
-==================
-RE_Finish
-==================
-*/
 void RE_Finish(void)
 {
 	renderFinishCommand_t *cmd;

@@ -27,9 +27,7 @@ varying vec3 var_Binormal;
 #endif
 varying vec3 var_Normal;
 
-
-
-void    main()
+void main()
 {
 #if defined(USE_PORTAL_CLIPPING)
 	{

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -111,8 +111,6 @@ void P_DamageFeedback(gentity_t *player)
  */
 void P_WorldEffects(gentity_t *ent)
 {
-	int waterlevel;
-
 	if (ent->client->noclip)
 	{
 		ent->client->airOutTime = level.time + HOLDBREATHTIME;
@@ -122,10 +120,8 @@ void P_WorldEffects(gentity_t *ent)
 		return;
 	}
 
-	waterlevel = ent->waterlevel;
-
 	// check for drowning
-	if (waterlevel == 3)
+	if (ent->waterlevel == 3)
 	{
 		// if out of air, start drowning
 		if (ent->client->airOutTime < level.time)
@@ -172,14 +168,14 @@ void P_WorldEffects(gentity_t *ent)
 	}
 
 	// check for sizzle damage (move to pmove?)
-	if (waterlevel && (ent->watertype & CONTENTS_LAVA))
+	if (ent->waterlevel && (ent->watertype & CONTENTS_LAVA))
 	{
 		if (ent->health > 0 && ent->pain_debounce_time <= level.time)
 		{
 			if (ent->watertype & CONTENTS_LAVA)
 			{
 				G_Damage(ent, NULL, NULL, NULL, NULL,
-				         30 * waterlevel, 0, MOD_LAVA);
+				         30 * ent->waterlevel, 0, MOD_LAVA);
 			}
 		}
 	}
@@ -935,6 +931,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 	int       event;
 	gclient_t *client = ent->client;
 	int       damage;
+	gentity_t *self;
 
 	if (oldEventSequence < client->ps.eventSequence - MAX_EVENTS)
 	{
@@ -996,7 +993,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->pmext.shoved = qfalse;
 			break;
 		case EV_FIRE_WEAPON_MG42:
-			// reset player disguise on stealing docs
+			// reset player disguise on firing mounted mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			mg42_fire(ent);
@@ -1008,7 +1005,12 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
 			break;
 		case EV_FIRE_WEAPON_MOUNTEDMG42:
-			// reset player disguise on stealing docs
+			if (!(self = ent->tankLink))
+			{
+				break;
+			}
+
+			// reset player disguise on firing tank mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			mountedmg42_fire(ent);
@@ -1016,10 +1018,19 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 #ifndef DEBUG_STATS
 			if (g_gamestate.integer == GS_PLAYING)
 #endif
-			ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
+			{
+				if (self->s.density & 8)
+				{
+					ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_BROWNING)].atts++;
+				}
+				else
+				{
+					ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(WP_MOBILE_MG42)].atts++;
+				}
+			}
 			break;
 		case EV_FIRE_WEAPON_AAGUN:
-			// reset player disguise on stealing docs
+			// reset player disguise on firing aagun
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			aagun_fire(ent);
@@ -1280,17 +1291,24 @@ void ClientThink_real(gentity_t *ent)
 			client->ps.pm_type = PM_FREEZE;
 		}
 	}
-	else if (client->noclip)
+	else if (client->noclip) // not clipped
 	{
 		client->ps.pm_type = PM_NOCLIP;
 	}
-	else if (client->ps.stats[STAT_HEALTH] <= 0)
+	else if (client->ps.stats[STAT_HEALTH] <= 0) // dead
 	{
 		client->ps.pm_type = PM_DEAD;
 	}
-	else
+	else // in game
 	{
-		client->ps.pm_type = PM_NORMAL;
+		if (client->freezed)
+		{
+			client->ps.pm_type = PM_FREEZE;
+		}
+		else
+		{
+			client->ps.pm_type = PM_NORMAL;
+		}
 	}
 
 	client->ps.aiState = AISTATE_COMBAT;
@@ -1359,22 +1377,6 @@ void ClientThink_real(gentity_t *ent)
 
 	if (client->ps.pm_type != PM_DEAD && level.timeCurrent - client->pers.lastBattleSenseBonusTime > 45000)
 	{
-		/*switch (client->combatState)
-		{
-		case COMBATSTATE_COLD:
-		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 0.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 0.f, "combatstate cold");
-		    break;
-		case COMBATSTATE_WARM:
-		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
-		    break;
-		case COMBATSTATE_HOT:
-		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
-		    break;
-		case COMBATSTATE_SUPERHOT:
-		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
-		    break;
-		}*/
-
 		if (client->combatState != COMBATSTATE_COLD)
 		{
 			if ((client->combatState & (1 << COMBATSTATE_KILLEDPLAYER)) && (client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED)))
@@ -1870,7 +1872,6 @@ void SpectatorClientEndFrame(gentity_t *ent)
 #endif
 }
 
-
 // After reviving a player, their contents stay CONTENTS_CORPSE until it is determine
 // to be safe to return them to PLAYERSOLID
 
@@ -2041,6 +2042,19 @@ void ClientEndFrame(gentity_t *ent)
 	int i;
 	int frames;
 
+	// don't count skulled player time
+	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
+	{
+		if (ent->client->sess.sessionTeam == TEAM_AXIS)
+		{
+			ent->client->sess.time_axis += level.time - level.previousTime;
+		}
+		else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
+		{
+			ent->client->sess.time_allies += level.time - level.previousTime;
+		}
+	}
+
 	// used for informing of speclocked teams.
 	// Zero out here and set only for certain specs
 	ent->client->ps.powerups[PW_BLACKOUT] = 0;
@@ -2055,7 +2069,7 @@ void ClientEndFrame(gentity_t *ent)
 	// range changed for MV
 	for (i = 0 ; i < PW_NUM_POWERUPS ; i++)
 	{
-
+		// FIXME: do a switch
 		if (i == PW_FIRE ||                 // these aren't dependant on level.time
 		    i == PW_ELECTRIC ||
 		    i == PW_BREATHER ||

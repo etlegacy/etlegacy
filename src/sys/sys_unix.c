@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -111,9 +111,10 @@ char *Sys_DefaultHomePath(void)
 		{
 			Q_strncpyz(homePath, p, sizeof(homePath));
 #ifdef __APPLE__
-			Q_strcat(homePath, sizeof(homePath), "/Library/Application Support/etlegacy");
+			Q_strncpyz(homePath, OSX_ApplicationSupportPath(), sizeof(homePath));
+			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
 #else
-			Q_strcat(homePath, sizeof(homePath), "/.etlwolf");
+			Q_strcat(homePath, sizeof(homePath), "/.etlegacy");
 #endif
 		}
 	}
@@ -282,8 +283,6 @@ char *Sys_GetClipboardData(void)
 	return NULL;
 #endif
 }
-
-//#define MEM_THRESHOLD 96 * 1024 * 1024
 
 /**
  * @todo

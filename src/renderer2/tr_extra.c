@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,13 +28,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_extra.c
  */
 
 #include "tr_local.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 matrix_t matrixIdentity = { 1, 0, 0, 0,
 	                        0, 1, 0, 0,
@@ -1022,7 +1020,7 @@ void QuatSlerp(const quat_t from, const quat_t to, float frac, quat_t out)
 
 	   http://www.intel.com/cd/ids/developer/asmo-na/eng/293747.htm
 	 */
-	float cosom, absCosom, sinom, sinSqr, omega, scale0, scale1;
+	float cosom, absCosom, scale0, scale1;
 
 	if (frac <= 0.0f)
 	{
@@ -1047,9 +1045,9 @@ void QuatSlerp(const quat_t from, const quat_t to, float frac, quat_t out)
 
 	if ((1.0f - absCosom) > 1e-6f)
 	{
-		sinSqr = 1.0f - absCosom * absCosom;
-		sinom  = 1.0f / sqrt(sinSqr);
-		omega  = atan2(sinSqr * sinom, absCosom);
+		float sinSqr = 1.0f - absCosom * absCosom;
+		float sinom  = 1.0f / sqrt(sinSqr);
+		float omega  = atan2(sinSqr * sinom, absCosom);
 
 		scale0 = sin((1.0f - frac) * omega) * sinom;
 		scale1 = sin(frac * omega) * sinom;
@@ -1120,14 +1118,14 @@ void QuatMultiply4(const quat_t qa, const quat_t qb, quat_t qc)
 
 vec_t QuatNormalize(quat_t q)
 {
-	float length, ilength;
+	float length = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
 
-	length = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
 	length = sqrt(length);
 
 	if (length)
 	{
-		ilength = 1 / length;
+		float ilength = 1 / length;
+
 		q[0]   *= ilength;
 		q[1]   *= ilength;
 		q[2]   *= ilength;
@@ -1527,6 +1525,19 @@ float MemStreamGetFloat(memStream_t *s)
 
 //============================================================================
 
-#ifdef __cplusplus
+void printBits(size_t const size, void const *const ptr)
+{
+	unsigned char *b = (unsigned char *) ptr;
+	unsigned char byte;
+	int           i, j;
+
+	for (i = size - 1; i >= 0; i--)
+	{
+		for (j = 7; j >= 0; j--)
+		{
+			byte   = b[i] & (1 << j);
+			byte >>= j;
+			ri.Printf(PRINT_DEVELOPER, "%u", byte);
+		}
+	}
 }
-#endif

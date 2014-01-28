@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -77,7 +77,7 @@ void Sys_SnapVector(float *v)
 #endif
 
 /*
- * @return homepath pointing to "My Documents\WolfETL"
+ * @return homepath pointing to "My Documents\ETLegacy"
  */
 char *Sys_DefaultHomePath(void)
 {
@@ -98,7 +98,7 @@ char *Sys_DefaultHomePath(void)
 			return NULL;
 		}
 		Q_strncpyz(homePath, szPath, sizeof(homePath));
-		Q_strcat(homePath, sizeof(homePath), "\\WolfETL");
+		Q_strcat(homePath, sizeof(homePath), "\\ETLegacy");
 	}
 
 	return homePath;

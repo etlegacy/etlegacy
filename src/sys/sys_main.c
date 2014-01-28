@@ -72,6 +72,10 @@ struct Library *DynLoadBase = NULL;
 #include "sys_win32.h"
 #endif
 
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 static char binaryPath[MAX_OSPATH] = { 0 };
 static char installPath[MAX_OSPATH] = { 0 };
 
@@ -617,17 +621,91 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	void (*morphos_so_deinit)(void);
 #endif
 
-	fn = FS_BuildOSPath(base, gamedir, fname);
 
 #ifdef __APPLE__
-	if (FS_Unzip(fn, qtrue))
+	Com_Printf("Sys_LoadDll -> Sys_TryLibraryLoad(%s, %s, %s)... \n", base, gamedir, fname);
+	libHandle = NULL;
+
+	// Incoming is (for example) "cgame_mac"
+	// What we may actually have is:
+	// 1) A zipped .bundle package
+	// 2) A .dylib without an extension
+	// 3) A .dylib with an extension we need to append.
+	//
+	// In older versions of OS X (pre 10.5), dylibs could not be unloaded allowing the host process to reclaim that address space.
+	// This is why .bundles were used instead. When W:ET originally shipped, it used used .bundle packages for the VM libraries,
+	// but to make them single files, it zipped that .bundle package and had no extension at all (ie just "cgame_mac"). But now
+	// that dylibs can be unloaded, there's no practical difference between the two (for W:ET's purposes), so using a single file
+	// dylib is simpler. That's why we now support a dylib with some backward compatibility to allow .bundles.
+
+	// 1: The zipped .bundle package
+	{
+		Com_Printf("-- Trying zipped .bundle... ");
+		fn = FS_BuildOSPath(base, gamedir, fname);
+		if (FS_Unzip(fn, qtrue))
+		{
+			char buffer[MAX_OSPATH];
+			Com_sprintf(buffer, sizeof(buffer), "%s.bundle/Contents/MacOS/%s", fname, fname);
+			fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), gamedir, buffer);
+
+			libHandle = Sys_LoadLibrary(fn);
+			if (!libHandle)
+			{
+				Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
+			}
+			else
+			{
+				Com_Printf("succeeded\n");
+			}
+		}
+		else
+		{
+			Com_Printf("failed. (Not a zip).\n");
+		}
+	}
+
+	// 2: The dylib without an extension
+	if (!libHandle)
+	{
+		fn = FS_BuildOSPath(base, gamedir, fname);
+
+		Com_Printf("-- Trying extension-less dylib... ");
+		libHandle = Sys_LoadLibrary(fn);
+		if (!libHandle)
+		{
+			Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
+		}
+		else
+		{
+			Com_Printf("succeeded\n");
+		}
+	}
+
+	// 3: The dylib with an extension
+	if (!libHandle)
 	{
 		char buffer[MAX_OSPATH];
-		Com_sprintf(buffer, sizeof(buffer), "%s.bundle/Contents/MacOS/%s", fname, fname);
+		Com_sprintf(buffer, sizeof(buffer), "%s.dylib", fname);
 		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), gamedir, buffer);
-	}
-#endif // __APPLE__
 
+		Com_Printf("-- Trying dylib with extension... ");
+		libHandle = Sys_LoadLibrary(fn);
+		if (!libHandle)
+		{
+			Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
+		}
+		else
+		{
+			Com_Printf("succeeded\n");
+		}
+	}
+
+	return libHandle;
+
+
+#else // __APPLE__
+
+	fn = FS_BuildOSPath(base, gamedir, fname);
 	Com_Printf("Sys_LoadDll(%s)... ", fn);
 
 	libHandle = Sys_LoadLibrary(fn);
@@ -637,6 +715,10 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
 		return NULL;
 	}
+
+#endif // __APPLE__
+
+
 
 #ifdef __MORPHOS__
 	morphos_so_init   = dlsym(libHandle, "morphos_so_init");
@@ -686,6 +768,7 @@ void *Sys_LoadGameDll(const char *name,
 	// that they can be referenced
 	if (Cvar_VariableValue("sv_pure") && Q_stricmp(name, "qagame"))
 	{
+		Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
 		FS_CL_ExtractFromPakFile(homepath, gamedir, fname);
 	}
 #endif
@@ -873,8 +956,39 @@ int main(int argc, char **argv)
 #endif
 
 	Sys_ParseArgs(argc, argv);
+
+
+#if defined(__APPLE__) && !defined(DEDICATED)
+	// argv[0] would be /Users/seth/etlegacy/etl.app/Contents/MacOS
+	// But on OS X we want to pretend the binary path is the .app's parent
+	// So that way the base folder is right next to the .app allowing
+	{
+		char     parentdir[1024];
+		CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+		if (!url)
+		{
+			Sys_Dialog(DT_ERROR, "A CFURL for the app bundle could not be found.", "Can't set Sys_SetBinaryPath");
+			Sys_Exit(1);
+		}
+
+		CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
+		if (!url2 || !CFURLGetFileSystemRepresentation(url2, 1, (UInt8 *)parentdir, 1024))
+		{
+			Sys_Dialog(DT_ERROR, "CFURLGetFileSystemRepresentation returned an error when finding the app bundle's parent directory.", "Can't set Sys_SetBinaryPath");
+			Sys_Exit(1);
+		}
+
+		Sys_SetBinaryPath(parentdir);
+
+		CFRelease(url);
+		CFRelease(url2);
+	}
+#else
 	Sys_SetBinaryPath(Sys_Dirname(argv[0]));
-	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR);
+#endif
+
+	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
+
 
 	// Concatenate the command line for passing to Com_Init
 	for (i = 1; i < argc; i++)

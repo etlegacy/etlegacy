@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -69,7 +69,7 @@ static void UI_StopServerRefresh(void);
 static void UI_DoServerRefresh(void);
 static void UI_FeederSelection(float feederID, int index);
 static qboolean UI_FeederSelectionClick(itemDef_t *item);
-static void UI_BuildServerDisplayList(qboolean force);
+static void UI_BuildServerDisplayList(int force);
 static void UI_BuildServerStatus(qboolean force);
 static void UI_BuildFindPlayerList(qboolean force);
 static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2);
@@ -672,6 +672,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 			else
 			{
 				float yadj = useScale * glyph->top;
+
 				if (Text_Width(s, useScale, 1) + x > max)
 				{
 					*maxX = 0;
@@ -769,6 +770,7 @@ void _UI_Refresh(int realtime)
 	if (Menu_Count() > 0)
 	{
 		uiClientState_t cstate;
+		
 		trap_GetClientState(&cstate);
 		if (cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE)
 		{
@@ -806,7 +808,7 @@ char *GetMenuBuffer(const char *filename)
 	trap_FS_Read(buf, len, f);
 	buf[len] = 0;
 	trap_FS_FCloseFile(f);
-	//COM_Compress(buf);
+
 	return buf;
 }
 
@@ -842,6 +844,7 @@ qboolean Asset_Parse(int handle)
 		if (Q_stricmp(token.string, "font") == 0)
 		{
 			int pointSize, fontIndex;
+			
 			if (!PC_Int_Parse(handle, &fontIndex) || !PC_String_Parse(handle, &tempStr) || !PC_Int_Parse(handle, &pointSize))
 			{
 				return qfalse;
@@ -3280,7 +3283,7 @@ static qboolean UI_NetFilter_HandleKey(int flags, float *special, int key)
 		{
 			ui_serverFilterType.integer = numServerFilters - 1;
 		}
-		UI_BuildServerDisplayList(qtrue);
+		UI_BuildServerDisplayList(1);
 		return qtrue;
 	}
 	return qfalse;
@@ -3942,12 +3945,12 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "RefreshServers") == 0)
 		{
 			UI_StartServerRefresh(qtrue);
-			UI_BuildServerDisplayList(qtrue);
+			UI_BuildServerDisplayList(1);
 		}
 		else if (Q_stricmp(name, "RefreshFilter") == 0)
 		{
 			UI_StartServerRefresh(uiInfo.serverStatus.numDisplayServers ? qfalse : qtrue);      // if we don't have any valid servers, it's kinda safe to assume we would like to get a full new list
-			UI_BuildServerDisplayList(qtrue);
+			UI_BuildServerDisplayList(1);
 		}
 		else if (Q_stricmp(name, "RunSPDemo") == 0)
 		{
@@ -4003,7 +4006,7 @@ void UI_RunMenuScript(char **args)
 				uiInfo.serverStatus.nextDisplayRefresh = 0;
 				uiInfo.nextServerStatusRefresh         = 0;
 				uiInfo.nextFindPlayerRefresh           = 0;
-				UI_BuildServerDisplayList(qtrue);
+				UI_BuildServerDisplayList(1);
 			}
 			else
 			{
@@ -4025,7 +4028,7 @@ void UI_RunMenuScript(char **args)
 			{
 				UI_StartServerRefresh(qtrue);
 			}
-			UI_BuildServerDisplayList(qtrue);
+			UI_BuildServerDisplayList(1);
 			UI_FeederSelection(FEEDER_SERVERS, 0);
 		}
 		else if (Q_stricmp(name, "check_ServerStatus") == 0)
@@ -4070,7 +4073,7 @@ void UI_RunMenuScript(char **args)
 				else
 				{
 					// we can't close the menu from here, it's not open yet .. (that's the onOpen script)
-					Com_Printf("Can't show Server Info (not found, or local server)\n");
+					Com_Printf(trap_TranslateString("Can't show Server Info (not found, or local server)\n"));
 				}
 			}
 		}
@@ -4362,7 +4365,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "removeFavorites") == 0)
 		{
 			UI_RemoveAllFavourites_f();
-			UI_BuildServerDisplayList(qtrue);
+			UI_BuildServerDisplayList(1);
 		}
 		else if (Q_stricmp(name, "createFavorite") == 0)
 		{
@@ -5418,13 +5421,13 @@ static void UI_BinaryServerInsertion(int num)
 UI_BuildServerDisplayList
 ==================
 */
-static void UI_BuildServerDisplayList(qboolean force)
+static void UI_BuildServerDisplayList(int force)
 {
 	int        i, count, clients, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
 	char       info[MAX_STRING_CHARS];
 	static int numinvisible;
 
-	if (!(force || uiInfo.uiDC.realTime > uiInfo.serverStatus.nextDisplayRefresh))
+	if (!(force > 0 || uiInfo.uiDC.realTime > uiInfo.serverStatus.nextDisplayRefresh))
 	{
 		return;
 	}
@@ -5449,7 +5452,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 		uiInfo.serverStatus.motdWidth = -1;
 	}
 
-	if (force)
+	if (force == 1)
 	{
 		numinvisible = 0;
 		// clear number of displayed servers
@@ -5485,6 +5488,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 		{
 			continue;
 		}
+
 		// get the ping for this server
 		ping = trap_LAN_GetServerPing(ui_netSource.integer, i);
 		if (ping > /*=*/ 0 || ui_netSource.integer == AS_FAVORITES)
@@ -5620,81 +5624,81 @@ static void UI_BuildServerDisplayList(qboolean force)
 				const char *gamename = Info_ValueForKey(info, "game");
 
 				// FIXME: do a switch -> ui_browserModFilter.integer
-				if ((Q_stristr(gamename, "legacy") == 0) && (ui_browserModFilter.integer == 1))
+				if (Q_stristr(gamename, "legacy") == 0 && ui_browserModFilter.integer == 1)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "etpub") == 0) && (ui_browserModFilter.integer == 2))
+				if (Q_stristr(gamename, "etpub") == 0 && ui_browserModFilter.integer == 2)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "jaymod") == 0) && (ui_browserModFilter.integer == 3))
+				if (Q_stristr(gamename, "jaymod") == 0 && ui_browserModFilter.integer == 3)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "nq") == 0) && (Q_stristr(gamename, "noquarter") == 0) && (ui_browserModFilter.integer == 4))
+				if (Q_stristr(gamename, "nq") == 0 && Q_stristr(gamename, "noquarter") == 0 && ui_browserModFilter.integer == 4)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "nitmod") == 0) && (ui_browserModFilter.integer == 5))
+				if (Q_stristr(gamename, "nitmod") == 0 && ui_browserModFilter.integer == 5)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "silent") == 0) && (ui_browserModFilter.integer == 6))
+				if (Q_stristr(gamename, "silent") == 0 && ui_browserModFilter.integer == 6)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "tce") == 0) && (ui_browserModFilter.integer == 7))
+				if (Q_stristr(gamename, "tce") == 0 && ui_browserModFilter.integer == 7)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "etnam") == 0) && (ui_browserModFilter.integer == 8))
+				if (Q_stristr(gamename, "etnam") == 0 && ui_browserModFilter.integer == 8)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "etrun") == 0) && (ui_browserModFilter.integer == 9))
+				if (Q_stristr(gamename, "etrun") == 0 && ui_browserModFilter.integer == 9)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "etjump") == 0) && (ui_browserModFilter.integer == 10))
+				if (Q_stristr(gamename, "etjump") == 0 && ui_browserModFilter.integer == 10)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "tjmod") == 0) && (ui_browserModFilter.integer == 11))
+				if (Q_stristr(gamename, "tjmod") == 0 && ui_browserModFilter.integer == 11)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "etmain") == 0) && (ui_browserModFilter.integer == 12))
+				if (Q_stristr(gamename, "etmain") == 0 && ui_browserModFilter.integer == 12)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
 
 				if (ui_browserModFilter.integer == -1 &&
-				    ((Q_stristr(gamename, "legacy") != 0) ||
-				     (Q_stristr(gamename, "etpub") != 0) ||
-				     (Q_stristr(gamename, "jaymod") != 0) ||
-				     (Q_stristr(gamename, "nq") != 0) ||
-				     (Q_stristr(gamename, "noquarter") != 0) ||
-				     (Q_stristr(gamename, "nitmod") != 0) ||
-				     (Q_stristr(gamename, "silent") != 0) ||
-				     (Q_stristr(gamename, "tce") != 0) ||
-				     (Q_stristr(gamename, "etnam") != 0) ||
-				     (Q_stristr(gamename, "etrun") != 0) ||
-				     (Q_stristr(gamename, "etjump") != 0) ||
-				     (Q_stristr(gamename, "tjmod") != 0) ||
-				     (Q_stristr(gamename, "etmain") != 0)))
+				    (Q_stristr(gamename, "legacy") != 0 ||
+				     Q_stristr(gamename, "etpub") != 0 ||
+				     Q_stristr(gamename, "jaymod") != 0 ||
+				     Q_stristr(gamename, "nq") != 0 ||
+				     Q_stristr(gamename, "noquarter") != 0 ||
+				     Q_stristr(gamename, "nitmod") != 0 ||
+				     Q_stristr(gamename, "silent") != 0 ||
+				     Q_stristr(gamename, "tce") != 0 ||
+				     Q_stristr(gamename, "etnam") != 0 ||
+				     Q_stristr(gamename, "etrun") != 0 ||
+				     Q_stristr(gamename, "etjump") != 0 ||
+				     Q_stristr(gamename, "tjmod") != 0 ||
+				     Q_stristr(gamename, "etmain") != 0))
 				{
 
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
@@ -5796,16 +5800,16 @@ static void UI_BuildServerDisplayList(qboolean force)
 	{
 		if (numinvisible > 0)
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va("^zFiltered/Total: %i/%i", numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Filtered/Total: %i/%i"), numinvisible, count));
 		}
 		else
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va("^3Check your filters - no servers found!        ^zFiltered/Total: %i/%i", numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!        Filtered/Total: %i/%i"), numinvisible, count));
 		}
 	}
 	else
 	{
-		DC->setCVar("ui_tmp_ServersFiltered", "^1Check your connection - no servers found!      ^zFiltered/Total: 0/000");
+		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1Check your connection - no servers found!      Filtered/Total: 0/000"));
 	}
 }
 
@@ -7125,7 +7129,7 @@ static qboolean UI_FeederSelectionClick(itemDef_t *item)
 					trap_LAN_RemoveServer(AS_FAVORITES, addr);
 					if (ui_netSource.integer == AS_FAVORITES)
 					{
-						UI_BuildServerDisplayList(qtrue);
+						UI_BuildServerDisplayList(1);
 						UI_FeederSelection(FEEDER_SERVERS, 0);
 					}
 				}
@@ -7678,7 +7682,7 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5))
 				{
 					Q_strncpyz(buf, buf + 5, sizeof(buf));
-					Com_Printf("Server is full, redirect to: %s\n", buf);
+					Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
 					switch (ui_autoredirect.integer)
 					{
 					//auto-redirect
@@ -7984,7 +7988,7 @@ cvarTable_t cvarTable[] =
 	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0                              },
 
 	{ &ui_brassTime,                    "cg_brassTime",                        "2500",                       CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "4",                          CVAR_ARCHIVE                   },
+	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "1",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairInfo,            "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairNames,           "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE                   },
@@ -8096,7 +8100,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "match_timeoutcount",                  "3",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "match_timeoutlength",                 "180",                        CVAR_ARCHIVE                   },
 	{ NULL,                             "match_warmupDamage",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "server_autoconfig",                   "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_customConfig",                      "",                           CVAR_ARCHIVE                   },
 	{ NULL,                             "server_motd0",                        " ^NEnemy Territory ^7MOTD ", CVAR_ARCHIVE                   },
 	{ NULL,                             "server_motd1",                        "",                           CVAR_ARCHIVE                   },
 	{ NULL,                             "server_motd2",                        "",                           CVAR_ARCHIVE                   },
@@ -8206,13 +8210,13 @@ static void UI_StopServerRefresh(void)
 		return;
 	}
 	uiInfo.serverStatus.refreshActive = qfalse;
-	Com_Printf("%d servers listed in browser with %d players.\n",
+	Com_Printf(trap_TranslateString("%d servers listed in browser with %d players.\n"),
 	           uiInfo.serverStatus.numDisplayServers,
 	           uiInfo.serverStatus.numPlayersOnServers);
 	count = trap_LAN_GetServerCount(ui_netSource.integer);
 	if (count - uiInfo.serverStatus.numDisplayServers > 0)
 	{
-		Com_Printf("%d servers not listed (filtered out by game browser settings)\n",
+		Com_Printf(trap_TranslateString("%d servers not listed (filtered out by game browser settings)\n"),
 		           count - uiInfo.serverStatus.numDisplayServers);
 	}
 }
@@ -8265,7 +8269,7 @@ static void UI_DoServerRefresh(void)
 		UI_StopServerRefresh();
 	}
 
-	UI_BuildServerDisplayList(qfalse);
+	UI_BuildServerDisplayList(0);
 }
 
 static void UI_StartServerRefresh(qboolean full)
@@ -8342,13 +8346,13 @@ void UI_Campaign_f(void)
 
 	if (i == uiInfo.campaignCount || !(campaign->typeBits & (1 << GT_WOLF)))
 	{
-		Com_Printf("Can't find campaign '%s'\n", str);
+		Com_Printf(trap_TranslateString("Can't find campaign '%s'\n"), str);
 		return;
 	}
 
 	if (!campaign->mapInfos[0])
 	{
-		Com_Printf("Corrupted campaign '%s'\n", str);
+		Com_Printf(trap_TranslateString("Corrupted campaign '%s'\n"), str);
 		return;
 	}
 
@@ -8379,11 +8383,11 @@ void UI_ListCampaigns_f(void)
 
 	if (mpCampaigns)
 	{
-		Com_Printf("%i campaigns found:\n", mpCampaigns);
+		Com_Printf(trap_TranslateString("%i campaigns found:\n"), mpCampaigns);
 	}
 	else
 	{
-		Com_Printf("No campaigns found.\n");
+		Com_Printf(trap_TranslateString("No campaigns found.\n"));
 		return;
 	}
 

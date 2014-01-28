@@ -705,6 +705,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
 	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
 		skipammo = qtrue;
 		break;
 
@@ -714,7 +715,14 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK))
 	{
-		return WP_MOBILE_MG42;
+		if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+		{
+			return WP_MOBILE_BROWNING;
+		}
+		else
+		{
+			return WP_MOBILE_MG42;
+		}
 	}
 
 	// total ammo in clips
@@ -1081,7 +1089,6 @@ static void CG_DrawPowerUps(rectDef_t rect)
 	playerState_t *ps = &cg.snap->ps;
 
 	// draw treasure icon if we have the flag
-	// rain - #274 - use the playerstate instead of the clientinfo
 	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG])
 	{
 		trap_R_SetColor(NULL);
@@ -1090,6 +1097,8 @@ static void CG_DrawPowerUps(rectDef_t rect)
 	else if (ps->powerups[PW_OPS_DISGUISED])       // Disguised?
 	{
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+		// show the class to the client
+		CG_DrawPic(rect.x + 9, rect.y + 9, 18, 18, cgs.media.skillPics[BG_ClassSkillForClass((cg_entities[ps->clientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 	}
 }
 
@@ -1416,7 +1425,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		}
 	}
 
-	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || !cg_drawCompass.integer)
 	{
 		return;
 	}
@@ -1705,7 +1714,6 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 {
 	char     *s;
 	qtime_t  time;
-	qboolean pmtime = qfalse;
 	vec4_t   color  = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int      tens;
 	char     *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
@@ -1755,7 +1763,9 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 	if (cg_drawTime.integer & LOCALTIME_ON)
 	{
-		//Fetch the local time
+		qboolean pmtime = qfalse;
+
+		// Fetch the local time
 		trap_RealTime(&time);
 
 		if (cg_drawTime.integer & LOCALTIME_SECOND)
@@ -1915,6 +1925,245 @@ static float CG_DrawLocalTime(float y)
 	return y + 12 + 4;
 }
 
+/*
+===============================================================================
+LAGOMETER
+===============================================================================
+*/
+
+#define LAG_SAMPLES     128
+#define MAX_LAGOMETER_PING  900
+#define MAX_LAGOMETER_RANGE 300
+
+typedef struct
+{
+	int frameSamples[LAG_SAMPLES];
+	int frameCount;
+	int snapshotFlags[LAG_SAMPLES];
+	int snapshotSamples[LAG_SAMPLES];
+	int snapshotCount;
+} lagometer_t;
+
+lagometer_t lagometer;
+
+/**
+ * @brief Adds the current interpolate / extrapolate bar for this frame
+ */
+void CG_AddLagometerFrameInfo(void)
+{
+	lagometer.frameSamples[lagometer.frameCount & (LAG_SAMPLES - 1)] = cg.time - cg.latestSnapshotTime;
+	lagometer.frameCount++;
+}
+
+/**
+ * @brief Log the ping time and number of dropped snapshots before it each time a snapshot is received
+ */
+void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
+{
+	// dropped packet
+	if (!snap)
+	{
+		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = -1;
+		lagometer.snapshotCount++;
+		return;
+	}
+
+	if (cg.demoPlayback)
+	{
+		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
+	}
+
+	// add this snapshot's info
+	lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
+	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)]   = snap->snapFlags;
+	lagometer.snapshotCount++;
+}
+
+/**
+ * @brief Draw disconnect icon for long lag
+ */
+static float CG_DrawDisconnect(float y)
+{
+	int        cmdNum, w, w2, x;
+	usercmd_t  cmd;
+	const char *s;
+
+	// use same dimension as timer
+	w  = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+	x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+
+	// dont draw if a demo and we're running at a different timescale
+	if (cg.demoPlayback && cg_timescale.value != 1.0f)
+	{
+		return y + w2 + 13;
+	}
+
+	// don't draw if the server is respawning
+	if (cg.serverRespawning)
+	{
+		return y + w2 + 13;
+	}
+
+	// draw the phone jack if we are completely past our buffers
+	cmdNum = trap_GetCurrentCmdNumber() - CMD_BACKUP + 1;
+	trap_GetUserCmd(cmdNum, &cmd);
+	if (cmd.serverTime <= cg.snap->ps.commandTime
+	    || cmd.serverTime > cg.time)        // special check for map_restart
+	{
+		return y + w2 + 13;
+	}
+
+	// also add text in center of screen
+	s = CG_TranslateString("Connection Interrupted");
+	w = CG_Text_Width_Ext(s, cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+	// blink the icon
+	if ((cg.time >> 9) & 1)
+	{
+		return y + w2 + 13;
+	}
+
+	CG_DrawPic(x + 1, y + 1, w2 + 3, w2 + 3, cgs.media.disconnectIcon);
+	return y + w2 + 13;
+}
+
+/**
+ * @brief Draw the lagometer
+ */
+static float CG_DrawLagometer(float y)
+{
+	int   a, w, w2, x, i;
+	float v;
+	float ax, ay, aw, ah, mid, range;
+	int   color;
+	float vscale;
+
+	// use same dimension as timer
+	w  = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+	x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+
+	// draw the graph
+	trap_R_SetColor(NULL);
+	CG_FillRect(x, y, w2 + 5, w2 + 5, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, w2 + 5, 1, HUD_Border);
+
+	ax = x + 1;
+	ay = y + 1;
+	aw = w2 + 3;
+	ah = w2 + 3;
+	CG_AdjustFrom640(&ax, &ay, &aw, &ah);
+
+	color = -1;
+	range = ah / 3;
+	mid   = ay + range;
+
+	vscale = range / MAX_LAGOMETER_RANGE;
+
+	// draw the frame interpoalte / extrapolate graph
+	for (a = 0 ; a < aw ; a++)
+	{
+		i  = (lagometer.frameCount - 1 - a) & (LAG_SAMPLES - 1);
+		v  = lagometer.frameSamples[i];
+		v *= vscale;
+		if (v > 0)
+		{
+			if (color != 1)
+			{
+				color = 1;
+				trap_R_SetColor(colorYellow);
+			}
+			if (v > range)
+			{
+				v = range;
+			}
+			trap_R_DrawStretchPic(ax + aw - a, mid - v, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+		else if (v < 0)
+		{
+			if (color != 2)
+			{
+				color = 2;
+				trap_R_SetColor(colorBlue);
+			}
+			v = -v;
+			if (v > range)
+			{
+				v = range;
+			}
+			trap_R_DrawStretchPic(ax + aw - a, mid, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+	}
+
+	// draw the snapshot latency / drop graph
+	range  = ah / 2;
+	vscale = range / MAX_LAGOMETER_PING;
+
+	for (a = 0 ; a < aw ; a++)
+	{
+		i = (lagometer.snapshotCount - 1 - a) & (LAG_SAMPLES - 1);
+		v = lagometer.snapshotSamples[i];
+		if (v > 0)
+		{
+			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)
+			{
+				if (color != 5)
+				{
+					color = 5;  // YELLOW for rate delay
+					trap_R_SetColor(colorYellow);
+				}
+			}
+			else
+			{
+				if (color != 3)
+				{
+					color = 3;
+					trap_R_SetColor(colorGreen);
+				}
+			}
+			v = v * vscale;
+			if (v > range)
+			{
+				v = range;
+			}
+			trap_R_DrawStretchPic(ax + aw - a, ay + ah - v, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+		else if (v < 0)
+		{
+			if (color != 4)
+			{
+				color = 4;      // RED for dropped snapshots
+				trap_R_SetColor(colorRed);
+			}
+			trap_R_DrawStretchPic(ax + aw - a, ay + ah - range, 1, range, 0, 0, 0, 0, cgs.media.whiteShader);
+		}
+	}
+
+	trap_R_SetColor(NULL);
+
+	if (cg_nopredict.integer
+#ifdef ALLOW_GSYNC
+	    || cg_synchronousClients.integer
+#endif // ALLOW_GSYNC
+	    )
+	{
+		CG_Text_Paint_Ext(ax, ay, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	}
+
+	// don't draw if a demo and we're running at a different timescale, or if the server is respawning
+	if ((cg.demoPlayback && cg_timescale.value == 1.0f) || !cg.serverRespawning)
+	{
+		CG_DrawDisconnect(y);
+	}
+
+	return y + w + 13;
+}
+
+/**
+ * @brief Draw the player status
+ */
 static void CG_DrawPlayerStatus(void)
 {
 	if (activehud->weaponicon.visible)
@@ -1972,6 +2221,9 @@ static void CG_DrawPlayerStatus(void)
 	}
 }
 
+/**
+ * @brief Draw the player stats
+ */
 static void CG_DrawPlayerStats(void)
 {
 	if (activehud->healthtext.visible)
@@ -2176,10 +2428,7 @@ void CG_DrawGlobalHud(void)
 		CG_DrawPMItemsBig();
 	}
 
-	if (cg_drawCompass.integer)
-	{
-		CG_DrawNewCompass(activehud->compas.location);
-	}
+	CG_DrawNewCompass(activehud->compas.location);
 }
 
 /*
@@ -2231,8 +2480,13 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawSnapshot(y);
 	}
 
-	if ((cg_drawTime.integer & LOCALTIME_ON) && (!cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
+	if ((cg_drawTime.integer & LOCALTIME_ON) && !(cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
 	{
 		y = CG_DrawLocalTime(y);
+	}
+
+	if (cg_lagometer.integer && !cg.cameraMode && !cg.serverRespawning)
+	{
+		y = CG_DrawLagometer(y);
 	}
 }

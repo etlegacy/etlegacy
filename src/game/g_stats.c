@@ -39,8 +39,6 @@
 
 void G_LogDeath(gentity_t *ent, weapon_t weap)
 {
-	weap = BG_DuplicateWeapon(weap);
-
 	if (!ent->client)
 	{
 		return;
@@ -51,8 +49,6 @@ void G_LogDeath(gentity_t *ent, weapon_t weap)
 
 void G_LogKill(gentity_t *ent, weapon_t weap)
 {
-	weap = BG_DuplicateWeapon(weap);
-
 	if (!ent->client)
 	{
 		return;
@@ -63,8 +59,6 @@ void G_LogKill(gentity_t *ent, weapon_t weap)
 
 void G_LogTeamKill(gentity_t *ent, weapon_t weap)
 {
-	weap = BG_DuplicateWeapon(weap);
-
 	if (!ent->client)
 	{
 		return;
@@ -91,7 +85,7 @@ void G_PrintAccuracyLog(gentity_t *ent)
 
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
-		if (!BG_ValidStatWeapon(i))
+		if (BG_WeapStatForWeapon(i) == WS_MAX)
 		{
 			continue;
 		}
@@ -144,7 +138,7 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
 	{
-		if (client->sess.skillpoints[skill] >= skillLevels[skill][i])
+		if (skillLevels[skill][i] != -1 && client->sess.skillpoints[skill] >= skillLevels[skill][i])
 		{
 			client->sess.skill[skill] = i;
 			break;
@@ -157,7 +151,7 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 extern qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent);
 
 // Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
-static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
+void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {
 	int i;
 
@@ -379,10 +373,11 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 	}
 }
 
+/**
+ * @brief Loose skill for evil tkers :E
+ */
 void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
 {
-	// for evil tkers :E
-
 	if (!tker->client)
 	{
 		return;
@@ -401,7 +396,6 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_GARAND:
 	case MOD_SILENCER:
 	case MOD_FG42:
-	//case MOD_FG42SCOPE:
 	case MOD_CARBINE:
 	case MOD_KAR98:
 	case MOD_SILENCED_COLT:
@@ -429,12 +423,15 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 		break;
 
 	case MOD_MOBILE_MG42:
+	case MOD_MOBILE_BROWNING:
 	case MOD_MACHINEGUN:
 	case MOD_BROWNING:
 	case MOD_MG42:
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 	case MOD_FLAMETHROWER:
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 		G_LoseSkillPoints(tker, SK_HEAVY_WEAPONS, 3.f);
 		//G_DebugAddSkillPoints( attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced mg42 kill" );
 		break;
@@ -507,8 +504,9 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 
 	// heavy weapons
 	case MOD_MOBILE_MG42:
+	case MOD_MOBILE_BROWNING:
 		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "mobile mg42 kill");
+		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "mobile machinegun kill");
 		break;
 
 	// scoped weapons
@@ -539,15 +537,16 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 		break;
 
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 		if (splash)
 		{
 			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "panzerfaust splash damage kill");
+			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "rocket launcher splash damage kill");
 		}
 		else
 		{
 			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "panzerfaust direct hit kill");
+			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "rocket launcher direct hit kill");
 		}
 		break;
 	case MOD_FLAMETHROWER:
@@ -555,6 +554,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "flamethrower kill");
 		break;
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 		if (splash)
 		{
 			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
@@ -620,7 +620,9 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 		G_DebugAddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
 		break;
 	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
 	case MOD_MORTAR:
+	case MOD_MORTAR2:
 		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, constructibleStats->destructxpbonus);
 		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
 		break;

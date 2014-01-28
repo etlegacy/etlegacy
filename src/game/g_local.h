@@ -545,8 +545,11 @@ typedef struct
 	int spec_invite;
 	int spec_team;
 	int suicides;
-	int team_damage;
+	int team_damage_given;
+	int team_damage_received;
 	int team_kills;
+	int time_axis;
+	int time_allies;
 
 	// MAPVOTE
 	int mapVotedFor[3];
@@ -833,6 +836,8 @@ struct gclient_s
 	qboolean hasaward;
 	qboolean wantsscore;
 	qboolean maxlivescalced;
+
+	qboolean freezed; // client is frozen see PM_FREEZE
 };
 
 typedef struct
@@ -1152,6 +1157,7 @@ void G_IntermissionVoteTally(gentity_t *ent);
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
 void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume); // Unused.
+qboolean G_MatchOnePlayer(int *plist, char *err, int len);
 int ClientNumberFromString(gentity_t *to, char *s);
 void SanitizeString(char *in, char *out, qboolean fToLower);
 
@@ -1269,7 +1275,7 @@ void G_RunFlamechunk(gentity_t *ent);
 
 gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t aimdir, int grenadeWPID);
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir);
+gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType);
 gentity_t *fire_speargun(gentity_t *self, vec3_t start, vec3_t dir);
 
 #define Fire_Lead(ent, activator, spread, damage, muzzle, forward, right, up) Fire_Lead_Ext(ent, activator, spread, damage, muzzle, forward, right, up, MOD_MACHINEGUN)
@@ -1618,7 +1624,6 @@ extern vmCvar_t match_readypercent;
 extern vmCvar_t match_timeoutcount;
 extern vmCvar_t match_timeoutlength;
 extern vmCvar_t match_warmupDamage;
-extern vmCvar_t server_autoconfig;
 extern vmCvar_t server_motd0;
 extern vmCvar_t server_motd1;
 extern vmCvar_t server_motd2;
@@ -1648,7 +1653,6 @@ extern vmCvar_t vote_allow_balancedteams;
 extern vmCvar_t vote_allow_muting;
 extern vmCvar_t vote_limit;
 extern vmCvar_t vote_percent;
-extern vmCvar_t z_serverflags;
 
 extern vmCvar_t g_debugSkills;
 extern vmCvar_t g_heavyWeaponRestriction;
@@ -1956,8 +1960,6 @@ void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 #define PAUSE_NONE      0x00    // Match is NOT paused.
 #define PAUSE_UNPAUSING 0x01    // Pause is about to expire
 
-#define ZSF_COMP        0x01    // Have comp settings loaded for current gametype?
-
 #define HELP_COLUMNS    4
 
 #define CMD_DEBOUNCE    5000    // 5s between cmds
@@ -1973,7 +1975,7 @@ typedef enum
 {
 	DP_PAUSEINFO,       // Print current pause info
 	DP_UNPAUSING,       // Print unpause countdown + unpause
-	DP_CONNECTINFO,     // Display OSP info on connect
+	DP_CONNECTINFO,     // Display info on connect
 	DP_MVSPAWN          // Set up MV views for clients who need them
 } enum_t_dp;
 
@@ -2036,6 +2038,9 @@ void G_resetRoundState(void);
 void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
+
+// g_stats.c
+void G_UpgradeSkill(gentity_t *ent, skillType_t skill);
 
 typedef struct mod_ws_convert_s
 {

@@ -28,8 +28,8 @@ Thumbs.db
 
 # Eclipse
 /.project
+/.settings
 
 # CDT-specific
 /.cproject
-
 

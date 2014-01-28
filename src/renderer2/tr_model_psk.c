@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @brief Unreal Engine 3 .psk model loading and caching
+ *
+ * @file tr_models_psk.
  */
-// tr_models_psk.c -- Unreal Engine 3 .psk model loading and caching
 
 #include "tr_local.h"
 #include "tr_model_skel.h"
@@ -100,11 +103,6 @@ static int CompareTrianglesByMaterialIndex(const void *a, const void *b)
 	return 0;
 }
 
-/*
-=================
-R_LoadPSK
-=================
-*/
 qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modName)
 {
 	int         i, j, k;

@@ -71,13 +71,15 @@ panel_button_text_t debriefPlayerHeadingSmallerFont =
 	&cgs.media.limboFont2,
 };
 
-#define DB_RANK_X   213 + 4
-#define DB_NAME_X   DB_RANK_X   + 28
-#define DB_TIME_X   DB_NAME_X + 180
-#define DB_KILLS_X  DB_TIME_X   + 48
-#define DB_DEATHS_X DB_KILLS_X  + 48
-#define DB_XP_X     DB_DEATHS_X + 56
-#define DH_HEADING_Y 60
+#define DB_RANK_X      213 + 4
+#define DB_NAME_X      DB_RANK_X + 28
+#define DB_TIME_X      DB_NAME_X + 180
+#define DB_KILLS_X     DB_TIME_X + 24
+#define DB_DEATHS_X    DB_KILLS_X + 24
+#define DB_SUICIDES_X  DB_DEATHS_X + 24
+#define DB_TEAMKILLS_X DB_SUICIDES_X + 24
+#define DB_XP_X        DB_TEAMKILLS_X + 56
+#define DH_HEADING_Y   60
 
 panel_button_t debriefTitleBack =
 {
@@ -494,8 +496,8 @@ panel_button_t debriefHeadingRank =
 {
 	NULL,
 	"Rank",
-	{ DB_RANK_X,               DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_RANK_X,               DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -507,8 +509,8 @@ panel_button_t debriefHeadingName =
 {
 	NULL,
 	"Name",
-	{ DB_NAME_X,               DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_NAME_X,               DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -520,25 +522,12 @@ panel_button_t debriefHeadingTime =
 {
 	NULL,
 	"Time",
-	{ DB_TIME_X,               DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_TIME_X,               DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
-	NULL,
-};
-
-panel_button_t debriefHeadingXP =
-{
-	NULL,
-	"XP",
-	{ DB_XP_X,                 DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
-	CG_DebriefingXPHeader_Draw,
 	NULL,
 };
 
@@ -559,7 +548,20 @@ panel_button_t debriefHeadingDeaths =
 {
 	NULL,
 	"Deaths",
-	{ DB_DEATHS_X,             DH_HEADING_Y,       0, 0 },
+	{ DB_DEATHS_X,             DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	&debriefPlayerListFont,    /* font     */
+	NULL,                      /* keyDown  */
+	NULL,                      /* keyUp    */
+	BG_PanelButtonsRender_Text,
+	NULL,
+};
+
+panel_button_t debriefHeadingSuicides =
+{
+	NULL,
+	"Suicides",
+	{ DB_SUICIDES_X,           DH_HEADING_Y,       0, 0 },
 	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
@@ -568,12 +570,38 @@ panel_button_t debriefHeadingDeaths =
 	NULL,
 };
 
+panel_button_t debriefHeadingTeamKills =
+{
+	NULL,
+	"TeamKills",
+	{ DB_TEAMKILLS_X,          DH_HEADING_Y + 8,       0, 0 },
+	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	&debriefPlayerListFont,    /* font     */
+	NULL,                      /* keyDown  */
+	NULL,                      /* keyUp    */
+	BG_PanelButtonsRender_Text,
+	NULL,
+};
+
+panel_button_t debriefHeadingXP =
+{
+	NULL,
+	"XP",
+	{ DB_XP_X,                 DH_HEADING_Y,       0, 0 },
+	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	&debriefPlayerListFont,    /* font     */
+	NULL,                      /* keyDown  */
+	NULL,                      /* keyUp    */
+	CG_DebriefingXPHeader_Draw,
+	NULL,
+};
+
 panel_button_t debriefPlayerList =
 {
 	NULL,
 	NULL,
-	{ DB_RANK_X,                 DH_HEADING_Y,         SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
-	{ 0,                         0,                    0,                                           0, 0, 0, 0, 0},
+	{ DB_RANK_X,                 DH_HEADING_Y + 8,         SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
+	{ 0,                         0,                        0,                                           0, 0, 0, 0, 0},
 	&debriefPlayerListFont,      /* font     */
 	CG_DebriefingPlayerList_KeyDown, /* keyDown  */
 	NULL,                        /* keyUp    */
@@ -693,6 +721,19 @@ panel_button_t debriefPlayerInfoACC =
 	NULL,
 };
 
+panel_button_t debriefPlayerInfoHS =
+{
+	NULL,
+	NULL,
+	{ 142,                      126,   0, 0 },
+	{ 0,                        0,     0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,     /* font     */
+	NULL,                       /* keyDown  */
+	NULL,                       /* keyUp    */
+	CG_Debriefing_PlayerHS_Draw,
+	NULL,
+};
+
 #define PLAYERHEADER_SKILLS(number)           \
 	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
@@ -719,8 +760,8 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefTitleWindow,
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
 	&debriefHeadingRank,            &debriefHeadingName,
-	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,
-	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,            &debriefPlayerInfoTime,                &debriefPlayerInfoXP, &debriefPlayerInfoACC,
+	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingSuicides,              &debriefHeadingTeamKills,
+	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,    &debriefPlayerInfoACC,&debriefPlayerInfoHS,
 	&debriefPlayerInfoSkills0,
 	&debriefPlayerInfoSkills1,
 	&debriefPlayerInfoSkills2,
@@ -728,7 +769,7 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerInfoSkills4,
 	&debriefPlayerInfoSkills5,
 	&debriefPlayerInfoSkills6,
-	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader, &debriefPlayerWeaponStatsKillsHeader,
+	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader,  &debriefPlayerWeaponStatsKillsHeader,
 	&debriefPlayerWeaponStatsList,  &debriefPlayerWeaponStatsListScroll,
 
 	NULL
@@ -1232,7 +1273,7 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 	}
 	else
 	{
-		str = va("^3%d: ^ZVOTE", 4 - button->data[7]);
+		str = va("^3%d: ^7VOTE", 4 - button->data[7]);
 	}
 
 	if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
@@ -1294,14 +1335,14 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, button->font->colour,
-			                  va("Last Played             : %s",
-			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? "Never" : va("%d maps ago",
-			                                                                                            cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
+			                  va(CG_TranslateString("Last Played             : %s"),
+			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? CG_TranslateString("Never") : va(CG_TranslateString("%d maps ago"),
+			                                                                                                                cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
 			                  0, 0, 0, button->font->font);
 			y2 += 15;
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, button->font->colour,
-			                  va("Total Accumulated Votes : %d", cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
+			                  va(CG_TranslateString("Total Accumulated Votes : %d"), cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
 			                  0, 0, 0, button->font->font);
 		}
 		CG_Text_Paint_Ext(DB_MAPNAME_X + 12 + cgs.wideXoffset, y, button->font->scalex,
@@ -1337,7 +1378,7 @@ void CG_MapVote_VoteButton_Draw(panel_button_t *button)
 	}
 	else
 	{
-		str = "^ZVOTE";
+		str = "^7VOTE";
 	}
 
 	if (cg.snap->ps.eFlags & EF_VOTED)
@@ -1715,6 +1756,7 @@ void CG_Debriefing_Startup(void)
 	cgs.dbAccuraciesRecieved        = qfalse;
 	cgs.dbWeaponStatsRecieved       = qfalse;
 	cgs.dbPlayerKillsDeathsRecieved = qfalse;
+	cgs.dbPlayerTimeRecieved        = qfalse;
 
 	cgs.dbLastRequestTime = 0;
 	cgs.dbSelectedClient  = cg.clientNum;
@@ -1774,6 +1816,12 @@ void CG_Debriefing_InfoRequests(void)
 	if (!cgs.dbMapListReceived && cgs.gametype == GT_WOLF_MAPVOTE)
 	{
 		trap_SendClientCommand("immaplist");
+		return;
+	}
+
+	if (!cgs.dbPlayerTimeRecieved)
+	{
+		trap_SendClientCommand("impt");
 		return;
 	}
 
@@ -2072,7 +2120,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(DB_RANK_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, ci->name, 0, 28, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 28, 0, button->font->font);
 
 		CG_Text_Paint_Ext(DB_TIME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, 0, button->font->font);
 
@@ -2082,11 +2130,15 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 		{
 			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->kills), 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->deaths), 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_SUICIDES_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->suicides), 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_TEAMKILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->teamkills), 0, 0, 0, button->font->font);
 		}
 		else
 		{
 			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_SUICIDES_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_TEAMKILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 		}
 
 		y += 12;
@@ -2145,9 +2197,22 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].totalWeapAcc = atoi(CG_Argv(i + 1));
+		cgs.clientinfo[i].totalWeapAcc   = atoi(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].totalWeapHSpct = atoi(CG_Argv(i * 2 + 2));
 	}
 	cgs.dbAccuraciesRecieved = qtrue;
+}
+
+void CG_Debriefing_ParsePlayerTime(void)
+{
+	int i;
+
+	for (i = 0; i < cgs.maxclients; i++)
+	{
+		cgs.clientinfo[i].timeAxis   = atoi(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].timeAllies = atoi(CG_Argv(i * 2 + 2));
+	}
+	cgs.dbPlayerTimeRecieved = qtrue;
 }
 
 void CG_Debriefing_ParsePlayerKillsDeaths(void)
@@ -2156,8 +2221,10 @@ void CG_Debriefing_ParsePlayerKillsDeaths(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].kills  = atoi(CG_Argv(i * 2 + 1));
-		cgs.clientinfo[i].deaths = atoi(CG_Argv(i * 2 + 2));
+		cgs.clientinfo[i].kills     = atoi(CG_Argv((i * 4) + 1));
+		cgs.clientinfo[i].deaths    = atoi(CG_Argv((i * 4) + 2));
+		cgs.clientinfo[i].suicides  = atoi(CG_Argv((i * 4) + 3));
+		cgs.clientinfo[i].teamkills = atoi(CG_Argv((i * 4) + 4));
 	}
 	cgs.dbPlayerKillsDeathsRecieved = qtrue;
 }
@@ -2191,6 +2258,11 @@ qboolean CG_Debriefing_ServerCommand(const char *cmd)
 	else if (!Q_stricmp(cmd, "impkd"))
 	{
 		CG_Debriefing_ParsePlayerKillsDeaths();
+		return qtrue;
+	}
+	else if (!Q_stricmp(cmd, "impt"))
+	{
+		CG_Debriefing_ParsePlayerTime();
 		return qtrue;
 	}
 	// MAPVOTE
@@ -2533,9 +2605,17 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
 	float        w   = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "ACC:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("ACC:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+}
+
+void CG_Debriefing_PlayerHS_Draw(panel_button_t *button)
+{
+	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
+	float        w   = CG_Text_Width_Ext("HS: ", button->font->scalex, 0, button->font->font);
+
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("HS:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i%%", ci->totalWeapHSpct), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
@@ -2550,9 +2630,10 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 {
-	score_t *score = NULL;
-	int     i;
-	float   w;
+	clientInfo_t *ci    = CG_Debriefing_GetSelectedClientInfo();
+	score_t      *score = NULL;
+	int          i;
+	float        w;
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
@@ -2568,9 +2649,9 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 	}
 
 	w = CG_Text_Width_Ext("Time: ", button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Time:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Time:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i ^9(^1%i^9/^4%i^9)", score->time, ci->timeAxis, ci->timeAllies), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)
@@ -2580,7 +2661,7 @@ void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)
 	int          i;
 
 	w = CG_Text_Width_Ext("Medals: ", button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Medals:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Medals:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	x = button->rect.x;
 	for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -2599,16 +2680,24 @@ void CG_Debriefing_PlayerRank_Draw(panel_button_t *button)
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
 	float        w   = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Rank:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Rank:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_FullRankNameForClientInfo(ci), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	if (ci->rank > 0)
+	{
+		CG_DrawPic(button->rect.x, button->rect.y - 12, 16, 16, rankicons[ci->rank][ci->team == TEAM_AXIS ? 1 : 0][0].shader);
+		CG_Text_Paint_Ext(button->rect.x + 18, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_FullRankNameForClientInfo(ci), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	}
+	else
+	{
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_FullRankNameForClientInfo(ci), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	}
 }
 
 void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void)
@@ -2711,13 +2800,13 @@ void CG_Debriefing_ChatButton_Draw(panel_button_t *button)
 	switch (cgs.dbChatMode)
 	{
 	case 1:
-		str = "^5TO TEAM";
+		str = (CG_TranslateString("^5TO TEAM"));
 		break;
 	case 2:
-		str = "^3TO FIRETEAM";
+		str = (CG_TranslateString("^3TO FIRETEAM"));
 		break;
 	default:
-		str = "^2TO GLOBAL";
+		str = (CG_TranslateString("^2TO GLOBAL"));
 		break;
 	}
 
@@ -3076,11 +3165,11 @@ const char *CG_Debreifing2_WinStringForTeam(team_t team)
 	switch (team)
 	{
 	case TEAM_ALLIES:
-		return "ALLIES WIN!";
+		return (CG_TranslateString("ALLIES WIN!"));
 	case TEAM_AXIS:
-		return "AXIS WIN!";
+		return (CG_TranslateString("AXIS WIN!"));
 	default:
-		return "IT'S A TIE!";
+		return (CG_TranslateString("IT'S A TIE!"));
 	}
 }
 
@@ -3137,7 +3226,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 	{
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindWinningTeamForMap()), 0, 18, 0.25f, 16);
 
-		s = va("CAMPAIGN STATUS: %s", CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()));
+		s = va(CG_TranslateString("CAMPAIGN STATUS: %s"), CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()));
 		w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y + 16, 0.25f, 0.25f, clrTxtBck, s, 0, 0, 0, &cgs.media.limboFont1);
 	}
@@ -3146,7 +3235,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()), 0, 18, 0.25f, 16);
 	}
 
-	s = va("%i SECS TO NEXT MAP", MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
+	s = va(CG_TranslateString("%i SECS TO NEXT MAP"), MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 	x = button->rect.x + button->rect.w - w - 4;
@@ -3257,7 +3346,7 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 		{
 			CG_FillRect(button->rect.x + 2, button->rect.y + 2, button->rect.w - 4, 12, clrBck);
 		}
-		CG_Text_Paint_Ext(button->rect.x + 4, button->rect.y + 11, 0.19f, 0.19f, clrTxtBck, va("Campaign: %s", cgs.campaignData.campaignName), 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(button->rect.x + 4, button->rect.y + 11, 0.19f, 0.19f, clrTxtBck, va(CG_TranslateString("Campaign: %s"), cgs.campaignData.campaignName), 0, 0, 0, &cgs.media.limboFont2);
 
 		y = button->rect.y + 14;
 		for (i = 0; i < cgs.campaignData.mapCount; i++)

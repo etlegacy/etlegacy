@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,6 +28,8 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
+ * @brief Map tracemap view generation
+ *
  * @file bg_tracemap.c
  */
 
@@ -36,10 +38,6 @@
 #else
 #include "g_local.h"
 #endif
-
-/*
-**  Map tracemap view generation
-*/
 
 #define MAX_WORLD_HEIGHT            MAX_MAP_SIZE    // maximum world height
 #define MIN_WORLD_HEIGHT            -MAX_MAP_SIZE   // minimum world height
@@ -575,17 +573,17 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 {
 	fileHandle_t f;
 	byte         data, datablock[TRACEMAP_SIZE][4];
-	int          sky_min       = MAX_WORLD_HEIGHT;
-	int          sky_max       = MAX_WORLD_HEIGHT;
-	int          ground_min    = MIN_WORLD_HEIGHT;
-	int          ground_max    = MIN_WORLD_HEIGHT;
-	int          skyground_min = MAX_WORLD_HEIGHT;
-	int          skyground_max = MAX_WORLD_HEIGHT;
+	int          ground_min = MIN_WORLD_HEIGHT;
+	int          ground_max = MIN_WORLD_HEIGHT;
 	//int startTime = trap_Milliseconds();
 
 	if (trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(rawmapname)), &f, FS_READ) >= 0)
 	{
 		float scalefactor;
+		int   sky_min       = MAX_WORLD_HEIGHT;
+		int   sky_max       = MAX_WORLD_HEIGHT;
+		int   skyground_min = MAX_WORLD_HEIGHT;
+		int   skyground_max = MAX_WORLD_HEIGHT;
 		int   i, j;
 
 		// skip over header

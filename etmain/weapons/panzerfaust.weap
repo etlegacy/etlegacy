@@ -1,0 +1,80 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		standModel			"models/weapons2/panzerfaust/pf_stand.mdc"		// weapon pickup 'stand' (do we still use this?)
+		pickupModel			"models/weapons2/panzerfaust/pf.md3"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/weapons2/panzerfaust/weapon.cfg"
+		handsModel			"models/weapons2/panzerfaust/v_pf_hand.mdc"
+		
+		flashDlightColor	0.75 0.3 0.0
+		flashSound			"sound/weapons/rocket/rocket_fire.wav"	// supports up to 4 flash sounds
+//		flashEchoSound		"sound/weapons/rocket/rocket_expl_far.wav"	// supports up to 4 flash echo sounds
+		//lastShotSound		""										// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		//reloadSound		""
+		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
+		spinupSound			"sound/weapons/rocket/rocket_charge.wav"		// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""									// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_panzerfaust"
+		weaponSelectedIcon	"icons/iconw_panzerfaust_1_select"
+		
+		missileModel		"models/ammo/rocket/rocket.md3"
+		missileSound		"sound/weapons/rocket/rocket_fly.wav"
+		missileTrailFunc	"RocketTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		missileDlight		200
+		missileDlightColor	0.75 0.3 0.0
+		
+		ejectBrassFunc		"PanzerFaustEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model			"models/weapons2/panzerfaust/v_pf.md3"
+			flashModel		"models/weapons2/panzerfaust/v_pf_flash.mdc"
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/weapons2/panzerfaust/v_pf_barrel.mdc"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model	"models/weapons2/panzerfaust/v_pf_barrel2.mdc"
+				}
+				part 2
+				{
+					tag		"tag_barrel3"
+					model	"models/weapons2/panzerfaust/v_pf_barrel3.mdc"
+				}
+				part 3
+				{
+					tag		"tag_barrel4"
+					model	"models/weapons2/panzerfaust/v_pf_barrel4.mdc"
+				}
+				part 4
+				{
+					tag		"tag_barrel5"
+					model	"models/weapons2/panzerfaust/v_pf_barrel5.mdc"
+				}
+			}
+		}
+		
+		thirdPerson {
+			model			"models/multiplayer/panzerfaust/multi_pf.md3"
+			flashmodel		"models/weapons2/panzerfaust/pf_flash.mdc"
+		}
+	}
+}

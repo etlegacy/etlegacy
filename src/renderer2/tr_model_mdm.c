@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @brief Enemy Territory .mdm model loading and caching
+ *
+ * @file tr_model_mdm.c
  */
-// tr_model_mdm.c -- Enemy Territory .mdm model loading and caching
 
 #include "tr_local.h"
 #include "tr_model_skel.h"
@@ -68,7 +71,7 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	srfVBOMDMMesh_t *vboSurf;
 	md5Vertex_t     *v;
 
-//	vec4_t          tmpColor = { 1, 1, 1, 1 };
+	//vec4_t          tmpColor = { 1, 1, 1, 1 };
 
 	static int32_t collapse[MDM_MAX_VERTS];
 
@@ -388,11 +391,6 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	 */
 }
 
-/*
-=================
-R_LoadMDM
-=================
-*/
 qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 {
 	int i, j, k;
@@ -435,10 +433,10 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 	LL(mdm->ident);
 	LL(mdm->version);
-//    LL(mdm->numFrames);
+	//LL(mdm->numFrames);
 	LL(mdm->numTags);
 	LL(mdm->numSurfaces);
-//    LL(mdm->ofsFrames);
+	//LL(mdm->ofsFrames);
 	LL(mdm->ofsTags);
 	LL(mdm->ofsEnd);
 	LL(mdm->ofsSurfaces);

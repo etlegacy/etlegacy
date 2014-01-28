@@ -281,6 +281,9 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, int *s
 {
 	switch (weapon)
 	{
+#ifdef LEGACY
+	case WP_BAZOOKA:
+#endif
 #ifdef NOQUARTER
 	case WP_BAZOOKA:
 #endif
@@ -718,6 +721,8 @@ static int _weaponBotToGame(int weapon)
 		return WP_MORTAR2_SET;
 	case 94:
 		return WP_KNIFE_KABAR;
+	case 96:
+		return WP_BAZOOKA;
 #endif
 
 	default:
@@ -874,6 +879,8 @@ int Bot_WeaponGameToBot(int weapon)
 		return ET_WP_MORTAR_SET; //cs: was 93
 	case WP_KNIFE_KABAR:
 		return ET_WP_KNIFE;
+	case WP_BAZOOKA:
+		return 96;
 #endif // LEGACY
 	default:
 		return ET_WP_NONE;
@@ -1065,7 +1072,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 				int wpns[] =
 				{
 					ET_WP_MP40,
-					ET_WP_PANZERFAUST,
+					96,                // BAZOOKA
 					88,                // BROWNING
 					ET_WP_FLAMETHROWER,
 					ET_WP_MORTAR,
@@ -1766,6 +1773,10 @@ static int _GetEntityClass(gentity_t *_ent)
 			return ET_CLASSEX_GRENADE;
 		case WP_PANZERFAUST:
 			return ET_CLASSEX_ROCKET;
+#ifdef LEGACY
+		case WP_BAZOOKA:
+			return ET_CLASSEX_ROCKET;
+#endif
 #ifdef NOQUARTER
 		case WP_BAZOOKA:
 			return ET_CLASSEX_ROCKET;
@@ -2123,7 +2134,10 @@ public:
 		// cs: find a usable slot. this should avoid any game / engine sync problems related to CS_FREE
 		gentity_t *clEnt = NULL;
 		int useSlot      = 0;
-		for (int clNum = 1; clNum < level.maxclients; clNum++)
+		int pcn          = trap_Cvar_VariableIntegerValue("sv_privateClients");
+
+		// start at sv_privateClients if set, else with 1
+		for (int clNum = (pcn > 1 ? pcn : 1); clNum < level.maxclients; clNum++)
 		{
 			clEnt = &g_entities[clNum];
 			if (!clEnt || clEnt->inuse || (clEnt->client &&
@@ -2611,7 +2625,10 @@ public:
 			{
 				cmd.weapon = WP_KNIFE_KABAR;
 			}
-
+			else if (cmd.weapon == WP_PANZERFAUST)
+			{
+				cmd.weapon = WP_BAZOOKA;
+			}
 		}
 		else if (bot->client->sess.sessionTeam == TEAM_AXIS)
 		{
@@ -3416,6 +3433,7 @@ public:
 			case WP_MORTAR_SET:
 #ifdef LEGACY
 			case WP_MORTAR2_SET:
+			case WP_BAZOOKA:
 #endif
 #ifdef NOQUARTER
 			case WP_MORTAR2_SET:
@@ -3837,6 +3855,7 @@ public:
 				case WP_MORTAR_SET:
 #ifdef LEGACY
 				case WP_MORTAR2_SET:
+				case WP_BAZOOKA:
 #endif
 #ifdef NOQUARTER
 				case WP_MORTAR2_SET:
@@ -4283,6 +4302,7 @@ public:
 #ifdef LEGACY
 			case WP_MORTAR2:
 			case WP_MORTAR2_SET:
+			case WP_BAZOOKA:
 #endif
 #ifdef NOQUARTER
 			case WP_MORTAR2:
@@ -4409,6 +4429,7 @@ public:
 #ifdef LEGACY
 			case WP_MORTAR2:
 			case WP_MORTAR2_SET:
+			case WP_BAZOOKA:
 #endif
 #ifdef NOQUARTER
 			case WP_MORTAR2:
@@ -5621,6 +5642,11 @@ public:
 							pEnt->client->sess.playerWeapon      = WP_MORTAR2;
 							pEnt->client->sess.latchPlayerWeapon = WP_MORTAR2;
 						}
+						else if (pEnt->client->sess.sessionTeam == TEAM_ALLIES && pMsg->m_Selection == ET_WP_PANZERFAUST)
+						{
+							pEnt->client->sess.playerWeapon      = WP_BAZOOKA;
+							pEnt->client->sess.latchPlayerWeapon = WP_BAZOOKA;
+						}
 						else
 						{
 							pEnt->client->sess.playerWeapon      = _weaponBotToGame(pMsg->m_Selection);
@@ -6359,7 +6385,7 @@ int Bot_Interface_Init()
 
 	g_InterfaceFunctions = new ETInterface;
 	eomnibot_error err = Omnibot_LoadLibrary(ET_VERSION_LATEST,
-	                                         "omnibot_et", Omnibot_FixPath(g_OmniBotPath.string));
+	                                         "omnibot_et", Omnibot_FixPath(g_OmniBotPath.string), OMNIBOT_MOD_DEFAULT_SEARCH_PATH);
 	if (err == BOT_ERROR_NONE)
 	{
 		return true;

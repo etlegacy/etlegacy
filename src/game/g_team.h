@@ -56,6 +56,7 @@
 #define WOLF_CP_PROTECT_RADIUS  600     // wolf capture protect radius
 #define WOLF_AMMO_UP            1       // pt for giving ammo not to self
 #define WOLF_HEALTH_UP          1       // pt for giving health not to self
+
 #define AXIS_OBJECTIVE      1
 #define ALLIED_OBJECTIVE    2
 #define OBJECTIVE_DESTROYED 4

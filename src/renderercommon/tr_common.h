@@ -38,17 +38,16 @@
 #include "iqm.h"
 #include "qgl.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 extern refimport_t ri;
 
+/*
 #ifdef ZONE_DEBUG
 #define Ren_Malloc(size)    ri.Z_MallocDebug(size, # size, __FILE__, __LINE__)
 #else
 #define Ren_Malloc(size)    ri.Z_Malloc(size, # size)
 #endif
+*/
+#define Ren_Malloc(size) malloc(size)
 
 // image buffer
 typedef enum
@@ -226,9 +225,5 @@ extern cvar_t *r_wolffog;
 
 extern cvar_t *r_maxpolys;
 extern cvar_t *r_maxpolyverts;
-
-#if defined(__cplusplus)
-}
-#endif
 
 #endif  // __TR_COMMON_H

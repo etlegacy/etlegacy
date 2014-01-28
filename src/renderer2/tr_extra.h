@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,16 +28,14 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_extra.h
  */
 
 #ifndef TR_EXTRA_H
 #define TR_EXTRA_H
 
 #include "tr_local.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #define Q_max(a, b)      ((a) > (b) ? (a) : (b))
 #define Q_min(a, b)      ((a) < (b) ? (a) : (b))
@@ -48,7 +46,6 @@ extern "C" {
 #define BSP_VERSION_Q3      46
 #define REF_HARD_LINKED 1
 
-// XreaL BEGIN
 typedef struct
 {
 	qboolean ARBTextureCompressionAvailable;
@@ -88,10 +85,12 @@ typedef struct
 	qboolean framebufferBlitAvailable;
 
 	qboolean generateMipmapAvailable;
-} glconfig2_t;
-// XreaL END
 
-// XreaL BEGIN
+	int glslMajorVersion;
+	int glslMinorVersion;
+
+	qboolean getProgramBinaryAvailable;
+} glconfig2_t;
 
 // cg_shadows modes
 typedef enum
@@ -106,7 +105,6 @@ typedef enum
 	//SHADOWING_PLANAR,
 	SHADOWING_STENCIL,
 } shadowingMode_t;
-// XreaL END
 
 // light grid
 typedef struct
@@ -116,10 +114,8 @@ typedef struct
 	byte latLong[2];
 } dgridPoint_t;
 
-// XreaL BEGIN
 #define RDF_NOCUBEMAP       (1 << 7)    // RB: don't use cubemaps
 #define RDF_NOBLOOM         (1 << 8)    // RB: disable bloom. useful for hud models
-// XreaL END
 
 typedef enum
 {
@@ -134,40 +130,6 @@ typedef enum
 	TCR_LATC = 0x0001,
 	TCR_BPTC = 0x0002,
 } textureCompressionRef_t;
-
-// We can't change glConfig_t without breaking DLL/vms compatibility, so
-// store extensions we have here.
-typedef struct
-{
-	qboolean drawRangeElements;
-	qboolean multiDrawArrays;
-	qboolean occlusionQuery;
-
-	int glslMajorVersion;
-	int glslMinorVersion;
-
-	memInfo_t memInfo;
-
-	qboolean framebufferObject;
-	int maxRenderbufferSize;
-	int maxColorAttachments;
-
-	qboolean multiTexture;
-	qboolean textureNonPowerOfTwo;
-	qboolean textureFloat;
-	qboolean halfFloatPixel;
-	qboolean packedDepthStencil;
-	textureCompressionRef_t textureCompression;
-
-	qboolean framebufferMultisample;
-	qboolean framebufferBlit;
-
-	qboolean texture_srgb;
-
-	qboolean depthClamp;
-} glRefConfig_t;
-
-extern glRefConfig_t glRefConfig;
 
 extern matrix_t matrixIdentity;
 extern quat_t   quatIdentity;
@@ -252,6 +214,8 @@ void QuatToVectorsFLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up);
 void MatrixSetupTransformFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin);
 void MatrixToVectorsFRU(const matrix_t m, vec3_t forward, vec3_t right, vec3_t up);
 
+#define Vector5Copy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3], (b)[4] = (a)[4])
+
 byte ClampByte(int i);
 
 qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *replace);
@@ -261,6 +225,15 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 static ID_INLINE int Vector4Compare(const vec4_t v1, const vec4_t v2)
 {
 	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3])
+	{
+		return 0;
+	}
+	return 1;
+}
+
+static ID_INLINE int Vector5Compare(const vec5_t v1, const vec5_t v2)
+{
+	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3] || v1[4] != v2[4])
 	{
 		return 0;
 	}
@@ -366,8 +339,6 @@ float           MemStreamGetFloat(memStream_t *s);
 
 //=============================================
 
-#ifdef __cplusplus
-}
-#endif
+void printBits(size_t const size, void const *const ptr);
 
 #endif

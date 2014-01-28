@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -45,7 +45,7 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_THOMPSON,
 			WP_MOBILE_BROWNING,
 			WP_FLAMETHROWER,
-			WP_PANZERFAUST,
+			WP_BAZOOKA,
 			WP_MORTAR
 		},
 	},

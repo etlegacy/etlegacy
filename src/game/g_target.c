@@ -238,11 +238,7 @@ void Use_Target_Speaker(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		{
 			G_AddEvent(activator, EV_GENERAL_SOUND_VOLUME, ent->noise_index);
 		}
-		else if (ent->spawnflags & 4)
-		{
-			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, ent->noise_index);
-		}
-		else
+		else // if (ent->spawnflags & 4) & others
 		{
 			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, ent->noise_index);
 		}

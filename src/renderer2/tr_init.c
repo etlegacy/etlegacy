@@ -29,7 +29,9 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @brief Functions that are not called every frame
+ * @brief functions that are not called every frame
+ *
+ * @file tr_init.c
  */
 
 #include "tr_local.h"
@@ -1695,8 +1697,8 @@ void R_Register(void)
 	r_showLightGrid            = ri.Cvar_Get("r_showLightGrid", "0", CVAR_CHEAT);
 	r_showOcclusionQueries     = ri.Cvar_Get("r_showOcclusionQueries", "0", CVAR_CHEAT);
 	r_showBatches              = ri.Cvar_Get("r_showBatches", "0", CVAR_CHEAT);
-	r_showLightMaps            = ri.Cvar_Get("r_showLightMaps", "0", CVAR_CHEAT | CVAR_LATCH);
-	r_showDeluxeMaps           = ri.Cvar_Get("r_showDeluxeMaps", "0", CVAR_CHEAT | CVAR_LATCH);
+	r_showLightMaps            = ri.Cvar_Get("r_showLightMaps", "0", CVAR_CHEAT);
+	r_showDeluxeMaps           = ri.Cvar_Get("r_showDeluxeMaps", "0", CVAR_CHEAT);
 	r_showAreaPortals          = ri.Cvar_Get("r_showAreaPortals", "0", CVAR_CHEAT);
 	r_showCubeProbes           = ri.Cvar_Get("r_showCubeProbes", "0", CVAR_CHEAT);
 	r_showBspNodes             = ri.Cvar_Get("r_showBspNodes", "0", CVAR_CHEAT);
@@ -1988,9 +1990,6 @@ static void RE_PurgeCache(void)
 GetRefAPI
 =====================
 */
-//#if defined(__cplusplus)
-//extern "C" {
-//#endif
 #ifdef USE_RENDERER_DLOPEN
 Q_EXPORT refexport_t * QDECL GetRefAPI(int apiVersion, refimport_t *rimp)
 #else

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -232,12 +232,9 @@ int G_StringIndex(const char *string)
 
 //=====================================================================
 
-/*
-================
-G_TeamCommand
-Broadcasts a command to only a specific team
-================
-*/
+/**
+ * @brief Broadcasts a command to only a specific team
+ */
 void G_TeamCommand(team_t team, char *cmd)
 {
 	int i;
@@ -254,17 +251,12 @@ void G_TeamCommand(team_t team, char *cmd)
 	}
 }
 
-/*
-=============
-G_Find
-
-Searches all active entities for the next one that holds
-the matching string at fieldofs (use the FOFS() macro) in the structure.
-
-Searches beginning at the entity after from, or the beginning if NULL
-NULL will be returned if the end of the list is reached.
-=============
-*/
+/**
+ * @brief Searches all active entities for the next one that holds
+ * the matching string at fieldofs (use the FOFS() macro) in the structure.
+ * Searches beginning at the entity after from, or the beginning if NULL
+ * NULL will be returned if the end of the list is reached.
+ */
 gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 {
 	char      *s;
@@ -299,13 +291,9 @@ gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 	return NULL;
 }
 
-/*
-=============
-G_FindInt
-
-Like G_Find, but searches for integer values..
-=============
-*/
+/**
+ * @brief Like G_Find, but searches for integer values.
+ */
 gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match)
 {
 	int       i;
@@ -336,13 +324,9 @@ gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match)
 	return NULL;
 }
 
-/*
-=============
-G_FindFloat
-
-Like G_Find, but searches for float values..
-=============
-*/
+/**
+ * @brief Like G_Find, but searches for float values..
+ */
 gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match)
 {
 	float     f;
@@ -373,13 +357,9 @@ gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match)
 	return NULL;
 }
 
-/*
-=============
-G_FindVector
-
-Like G_Find, but searches for vector values..
-=============
-*/
+/**
+ * @brief Like G_Find, but searches for vector values..
+ */
 gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match)
 {
 	vec3_t    vec;
@@ -460,7 +440,9 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 	return NULL;
 }
 
-// this version should be used for loops, saves the constant hash building
+/**
+ * @brief this version should be used for loops, saves the constant hash building
+ */
 gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
 {
 	gentity_t *max = &g_entities[level.num_entities];
@@ -495,13 +477,9 @@ gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
 	return NULL;
 }
 
-/*
-=============
-G_PickTarget
-
-Selects a random entity from among the targets
-=============
-*/
+/**
+ * @brief Selects a random entity from among the targets
+ */
 #define MAXCHOICES  32
 
 gentity_t *G_PickTarget(char *targetname)
@@ -572,13 +550,9 @@ qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator)
 	return qtrue;
 }
 
-/*
-=============
-G_UseEntity
-
-Added to allow more checking on what uses what
-=============
-*/
+/**
+ * @brief Added to allow more checking on what uses what
+ */
 void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	// check for allowteams
@@ -591,17 +565,11 @@ void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	ent->use(ent, other, activator);
 }
 
-/*
-==============================
-G_UseTargets
-
-"activator" should be set to the entity that initiated the firing.
-
-Search for (string)targetname in all entities that
-match (string)self.target and call their .use function
-
-==============================
-*/
+/**
+ * @brief "activator" should be set to the entity that initiated the firing.
+ * Search for (string)targetname in all entities that
+ * match (string)self.target and call their .use function
+ */
 void G_UseTargets(gentity_t *ent, gentity_t *activator)
 {
 	gentity_t *t;
@@ -661,14 +629,9 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 	}
 }
 
-/*
-=============
-VectorToString
-
-This is just a convenience function
-for printing vectors
-=============
-*/
+/**
+ * @brief This is just a convenience function for printing vectors
+ */
 char *vtos(const vec3_t v)
 {
 	static int  index;
@@ -683,6 +646,7 @@ char *vtos(const vec3_t v)
 
 	return s;
 }
+
 char *vtosf(const vec3_t v)
 {
 	static int  index;
@@ -698,16 +662,12 @@ char *vtosf(const vec3_t v)
 	return s;
 }
 
-/*
-===============
-G_SetMovedir
-
-The editor only specifies a single value for angles (yaw),
-but we have special constants to generate an up or down direction.
-Angles will be cleared, because it is being used to represent a direction
-instead of an orientation.
-===============
-*/
+/**
+ * @brief The editor only specifies a single value for angles (yaw),
+ * but we have special constants to generate an up or down direction.
+ * Angles will be cleared, because it is being used to represent a direction
+ * instead of an orientation.
+ */
 void G_SetMovedir(vec3_t angles, vec3_t movedir)
 {
 	static vec3_t VEC_UP       = { 0, -1, 0 };
@@ -842,13 +802,9 @@ qboolean G_EntitiesFree(void)
 	return qfalse;
 }
 
-/*
-=================
-G_FreeEntity
-
-Marks the entity as free
-=================
-*/
+/**
+ * @brief Marks the entity as free
+ */
 void G_FreeEntity(gentity_t *ed)
 {
 #ifdef FEATURE_OMNIBOT
@@ -867,10 +823,37 @@ void G_FreeEntity(gentity_t *ed)
 		return;
 	}
 
-	memset(ed, 0, sizeof(*ed));
-	ed->classname = "freed";
-	ed->freetime  = level.time;
-	ed->inuse     = qfalse;
+	// this tiny hack fixes level.num_entities rapidly reaching MAX_GENTITIES-1
+	// some very often spawned entities don't have to relax (=spawned, immediately freed and not transmitted)
+	// before all game entities did relax - now  ET_TEMPHEAD, ET_TEMPLEGS and ET_EVENTS no longer relax
+	// - fix: ET_TEMP* entities are linked for a short amount of time but have no ent->r.svFlags set
+	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
+	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
+	if ((ed->s.eType == ET_TEMPHEAD || ed->s.eType == ET_TEMPLEGS || ed->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0)
+	{
+		// debug
+		//if (ed->s.eType >= ET_EVENTS)
+		//{
+		//  G_Printf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", ed-g_entities, level.num_entities, ed->classname, eventnames[ed->s.eType - ET_EVENTS]);
+		//}
+		//else
+		//{
+		//  G_Printf("^2%4i entity freed - num_entities: %4i - %s\n", ed-g_entities, level.num_entities, ed->classname);
+		//}
+
+		// game entity is immediately available and a 'slot' will be reused
+		memset(ed, 0, sizeof(*ed));
+		ed->classname = "freed";
+		ed->freetime  = -9999;  // e->freetime is never greater than level.startTime + 2000 see G_Spawn()
+		ed->inuse     = qfalse;
+	}
+	else // all other game entities relax
+	{
+		memset(ed, 0, sizeof(*ed));
+		ed->classname = "freed";
+		ed->freetime  = level.time;
+		ed->inuse     = qfalse;
+	}
 }
 
 /*
@@ -948,15 +931,11 @@ gentity_t *G_PopupMessage(popupMessageType_t type)
 
 //==============================================================================
 
-/*
-===============
-G_AddPredictableEvent
-
-Use for non-pmove events that would also be predicted on the
-client side: jumppads and item pickups
-Adds an event+parm and twiddles the event counter
-===============
-*/
+/**
+ * @brief Use for non-pmove events that would also be predicted on the
+ * client side: jumppads and item pickups
+ * Adds an event+parm and twiddles the event counter
+ */
 void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
 {
 	if (!ent->client)
@@ -966,13 +945,9 @@ void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
 	BG_AddPredictableEventToPlayerstate(event, eventParm, &ent->client->ps);
 }
 
-/*
-===============
-G_AddEvent
-
-Adds an event+parm and twiddles the event counter
-===============
-*/
+/**
+ * @brief Adds an event+parm and twiddles the event counter
+ */
 void G_AddEvent(gentity_t *ent, int event, int eventParm)
 {
 	if (!event)
@@ -1000,13 +975,9 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 	ent->r.eventTime = level.time;
 }
 
-/*
-=============
-G_Sound
-
-  removed channel parm, since it wasn't used, and could cause confusion
-=============
-*/
+/**
+ * @brief removed channel parm, since it wasn't used, and could cause confusion
+ */
 void G_Sound(gentity_t *ent, int soundIndex)
 {
 	gentity_t *te = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
@@ -1047,13 +1018,9 @@ void G_AnimScriptSound(int soundIndex, vec3_t org, int client)
 
 //==============================================================================
 
-/*
-================
-G_SetOrigin
-
-Sets the pos trajectory for a fixed position
-================
-*/
+/**
+ * @brief Sets the pos trajectory for a fixed position
+ */
 void G_SetOrigin(gentity_t *ent, vec3_t origin)
 {
 	VectorCopy(origin, ent->s.pos.trBase);
@@ -1111,6 +1078,7 @@ qboolean infront(gentity_t *self, gentity_t *other)
 }
 
 // tag connections
+
 /*
 ==================
 G_ProcessTagConnect
@@ -1743,11 +1711,13 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		case MOD_GRENADE_LAUNCHER:
 		case MOD_GRENADE_PINEAPPLE:
 		case MOD_PANZERFAUST:
+		case MOD_BAZOOKA:
 		case MOD_GPG40:
 		case MOD_M7:
 		case MOD_ARTY:
 		case MOD_AIRSTRIKE:
 		case MOD_MORTAR:
+		case MOD_MORTAR2:
 		case MOD_SMOKEGRENADE:
 			return ent->s.teamNum;
 		case MOD_SATCHEL:

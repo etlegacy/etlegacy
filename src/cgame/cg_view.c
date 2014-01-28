@@ -866,7 +866,7 @@ CG_Zoom
 */
 void CG_Zoom(void)
 {
-	// Fix for demo playback
+	// fix for demo playback
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
 	{
 		cg.predictedPlayerState.eFlags = cg.snap->ps.eFlags;
@@ -894,6 +894,7 @@ void CG_Zoom(void)
 			break;
 		}
 	}
+
 	if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
 	{
 		if (cg.zoomedBinoc)
@@ -935,6 +936,7 @@ void CG_Zoom(void)
 				case WP_FG42SCOPE:
 				case WP_GARAND_SCOPE:
 				case WP_K43_SCOPE:
+					cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;
 					break;
 				default:
 					cg.zoomval = 0;

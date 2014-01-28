@@ -412,15 +412,11 @@ gotnewcl:
 #endif
 }
 
-/*
-=====================
-SV_DropClient
-
-Called when the player is totally leaving the server, either willingly
-or unwillingly.  This is NOT called if the entire server is quiting
-or crashing -- SV_FinalCommand() will handle that
-=====================
-*/
+/**
+ * @brief Called when the player is totally leaving the server, either willingly
+ * or unwillingly.  This is NOT called if the entire server is quiting
+ * or crashing -- SV_FinalCommand() will handle that
+ */
 void SV_DropClient(client_t *drop, const char *reason)
 {
 	int         i;
@@ -514,17 +510,12 @@ void SV_DropClient(client_t *drop, const char *reason)
 #endif
 }
 
-/*
-================
-SV_SendClientGameState
-
-Sends the first message from the server to a connected client.
-This will be sent on the initial connection and upon each new map load.
-
-It will be resent if the client acknowledges a later message but has
-the wrong gamestate.
-================
-*/
+/**
+ * @brief Sends the first message from the server to a connected client.
+ * This will be sent on the initial connection and upon each new map load.
+ * It will be resent if the client acknowledges a later message but has
+ * the wrong gamestate.
+ */
 void SV_SendClientGameState(client_t *client)
 {
 	int           start;
@@ -597,11 +588,6 @@ void SV_SendClientGameState(client_t *client)
 	SV_SendMessageToClient(&msg, client);
 }
 
-/*
-==================
-SV_ClientEnterWorld
-==================
-*/
 void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 {
 	int            clientNum = client - svs.clients;
@@ -637,13 +623,9 @@ CLIENT COMMAND EXECUTION
 ============================================================
 */
 
-/*
-==================
-SV_CloseDownload
-
-clear/free any download vars
-==================
-*/
+/**
+ * @brief clear/free any download vars
+ */
 static void SV_CloseDownload(client_t *cl)
 {
 	int i;
@@ -695,14 +677,10 @@ static void SV_DoneDownload_f(client_t *cl)
 	SV_SendClientGameState(cl);
 }
 
-/*
-==================
-SV_NextDownload_f
-
-The argument will be the last acknowledged block from the client, it should be
-the same as cl->downloadClientBlock
-==================
-*/
+/**
+ * @brief The argument will be the last acknowledged block from the client, it should be
+ * the same as cl->downloadClientBlock
+ */
 void SV_NextDownload_f(client_t *cl)
 {
 	int block = atoi(Cmd_Argv(1));
@@ -729,11 +707,6 @@ void SV_NextDownload_f(client_t *cl)
 	SV_DropClient(cl, "broken download");
 }
 
-/*
-==================
-SV_BeginDownload_f
-==================
-*/
 void SV_BeginDownload_f(client_t *cl)
 {
 	// Kill any existing download
@@ -750,11 +723,6 @@ void SV_BeginDownload_f(client_t *cl)
 	Q_strncpyz(cl->downloadName, Cmd_Argv(1), sizeof(cl->downloadName));
 }
 
-/*
-==================
-SV_WWWDownload_f
-==================
-*/
 void SV_WWWDownload_f(client_t *cl)
 {
 	char *subcmd = Cmd_Argv(1);
@@ -834,15 +802,11 @@ void SV_BadDownload(client_t *cl, msg_t *msg)
 	*cl->downloadName = 0;
 }
 
-/*
-==================
-SV_CheckFallbackURL
-
-sv_wwwFallbackURL can be used to redirect clients to a web URL in case direct ftp/http didn't work (or is disabled on client's end)
-return true when a redirect URL message was filled up
-when the cvar is set to something, the download server will effectively never use a legacy download strategy
-==================
-*/
+/**
+ * @brief sv_wwwFallbackURL can be used to redirect clients to a web URL in case direct ftp/http didn't work (or is disabled on client's end)
+ * @return return true when a redirect URL message was filled up
+ * when the cvar is set to something, the download server will effectively never use a legacy download strategy
+ */
 static qboolean SV_CheckFallbackURL(client_t *cl, msg_t *msg)
 {
 	if (!sv_wwwFallbackURL->string || strlen(sv_wwwFallbackURL->string) == 0)
@@ -861,14 +825,9 @@ static qboolean SV_CheckFallbackURL(client_t *cl, msg_t *msg)
 	return qtrue;
 }
 
-/*
-==================
-SV_WriteDownloadToClient
-
-Check to see if the client wants a file, open it if needed and start pumping the client
-Fill up msg with data
-==================
-*/
+/**
+ * @brief Check to see if the client wants a file, open it if needed and start pumping the client
+ */
 void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 {
 	int      curindex;
@@ -1083,8 +1042,7 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 			Com_Printf("'%s' downloading at sv_dl_maxrate (%d)\n", rc(cl->name), sv_dl_maxRate->integer);
 		}
 	}
-	else
-	if (bTellRate)
+	else if (bTellRate)
 	{
 		Com_Printf("'%s' downloading at rate %d\n", rc(cl->name), rate);
 	}
@@ -1160,13 +1118,9 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	}
 }
 
-/*
-=================
-SV_Disconnect_f
-
-The client is going to disconnect, so remove the connection immediately  FIXME: move to game?
-=================
-*/
+/**
+ * @brief The client is going to disconnect, so remove the connection immediately  FIXME: move to game?
+ */
 static void SV_Disconnect_f(client_t *cl)
 {
 	SV_DropClient(cl, "disconnected");
@@ -1191,14 +1145,14 @@ static void SV_VerifyPaks_f(client_t *cl)
 	int        nClientChkSum[1024];
 	int        nServerChkSum[1024];
 	const char *pPaks, *pArg;
-	qboolean   bGood = qtrue;
 
 	// if we are pure, we "expect" the client to load certain things from
 	// certain pk3 files, namely we want the client to have loaded the
 	// ui and cgame that we think should be loaded based on the pure setting
 	if (sv_pure->integer != 0)
 	{
-		int nClientPaks, nServerPaks, i, j, nCurArg;
+		int      nClientPaks, nServerPaks, i, j, nCurArg;
+		qboolean bGood = qtrue;
 
 		nChkSum1 = nChkSum2 = 0;
 
@@ -1367,25 +1321,15 @@ static void SV_VerifyPaks_f(client_t *cl)
 	}
 }
 
-/*
-=================
-SV_ResetPureClient_f
-=================
-*/
 static void SV_ResetPureClient_f(client_t *cl)
 {
 	cl->pureAuthentic = 0;
 	cl->gotCP         = qfalse;
 }
 
-/*
-=================
-SV_UserinfoChanged
-
-Pull specific info from a newly changed userinfo string
-into a more C friendly form.
-=================
-*/
+/**
+ * @brief Pull specific info from a newly changed userinfo string into a more C friendly form.
+ */
 void SV_UserinfoChanged(client_t *cl)
 {
 	char *val;
@@ -1531,13 +1475,9 @@ static ucmd_t ucmds[] =
 	{ NULL,         NULL }
 };
 
-/*
-==================
-SV_ExecuteClientCommand
-
-Also called by bot code
-==================
-*/
+/**
+ * @brief Also called by bot code
+ */
 void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart)
 {
 	ucmd_t   *u;
@@ -1576,11 +1516,6 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 	}
 }
 
-/*
-===============
-SV_ClientCommand
-===============
-*/
 static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestart)
 {
 	int        seq;
@@ -1650,13 +1585,9 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 
 //==================================================================================
 
-/*
-==================
-SV_ClientThink
-
-Also called by bot code
-==================
-*/
+/**
+ * @brief  Also called by bot code
+ */
 void SV_ClientThink(client_t *cl, usercmd_t *cmd)
 {
 	cl->lastUsercmd = *cmd;
@@ -1792,11 +1723,6 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	}
 }
 
-/*
-=====================
-SV_ParseBinaryMessage
-=====================
-*/
 static void SV_ParseBinaryMessage(client_t *cl, msg_t *msg)
 {
 	int size;
@@ -1818,13 +1744,9 @@ USER CMD EXECUTION
 ===========================================================================
 */
 
-/*
-===================
-SV_ExecuteClientMessage
-
-Parse a client packet
-===================
-*/
+/**
+ * @brief Parses a client packet
+ */
 void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 {
 	int c;

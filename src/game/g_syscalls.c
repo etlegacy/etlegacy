@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,9 +28,10 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file g_syscalls.c
  * @brief this file is only included when building a dll, g_syscalls.asm is
- * included instead when building a qvm
+ *        included instead when building a qvm
+ * 
+ * @file g_syscalls.c
  */
 
 #include "g_local.h"
@@ -44,9 +45,10 @@ Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 
 int PASSFLOAT(float x)
 {
-	float floatTemp;
-	floatTemp = x;
-	return *(int *)&floatTemp;
+	floatint_t fi;
+
+	fi.f = x;
+	return fi.i;
 }
 
 void trap_Printf(const char *fmt)
@@ -207,7 +209,7 @@ void trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const v
 		float newMaxZ = ClientHitboxMaxZ(hitEnt);
 
 		hitEnt->r.maxs[2] = newMaxZ;
-		memset(results, 0, sizeof(results));
+		memset(results, 0, sizeof(trace_t));
 		syscall(G_TRACE, results, start, mins, maxs, end, passEntityNum, contentmask);
 		hitEnt->r.maxs[2] = oldMaxZ;
 	}

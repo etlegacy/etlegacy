@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -275,11 +275,6 @@ Concussive_think
 ==============
 */
 
-/*
-==============
-M_think
-==============
-*/
 void M_think(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -296,26 +291,23 @@ void M_think(gentity_t *ent)
 	if (ent->s.density == 1)
 	{
 		tent->s.origin[2] += 16;
+
+		tent->s.angles2[0] = 16;
 	}
 	else
 	{
 		//tent->s.origin[2]+=32;
 		// Note to self Maxx said to lower the spawn loc for the smoke 16 units
 		tent->s.origin[2] += 16;
+
+		// Note to self Maxx changed this to 24
+		tent->s.angles2[0] = 24;
 	}
 
 	tent->s.time    = 3000;
 	tent->s.time2   = 100;
 	tent->s.density = 0;
-	if (ent->s.density == 1)
-	{
-		tent->s.angles2[0] = 16;
-	}
-	else
-	{
-		// Note to self Maxx changed this to 24
-		tent->s.angles2[0] = 24;
-	}
+
 	tent->s.angles2[1] = 96;
 	tent->s.angles2[2] = 50;
 
@@ -484,6 +476,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		{
 		case WP_DYNAMITE:
 		case WP_PANZERFAUST:
+		case WP_BAZOOKA:
 		case WP_GRENADE_LAUNCHER:
 		case WP_GRENADE_PINEAPPLE:
 		case WP_MAPMORTAR:
@@ -724,7 +717,7 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (ent->s.weapon == WP_PANZERFAUST || IS_MORTAR_WEAPON_SET(ent->s.weapon))
+		if (IS_PANZER_WEAPON(ent->s.weapon) || IS_MORTAR_WEAPON_SET(ent->s.weapon))
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives
 		}
@@ -1848,11 +1841,17 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
 		break;
 	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
 		bolt->classname           = "mortar_grenade";
 		bolt->splashRadius        = 800;
 		bolt->methodOfDeath       = MOD_MORTAR;
 		bolt->splashMethodOfDeath = MOD_MORTAR;
+		bolt->s.eFlags            = 0;
+		break;
+	case WP_MORTAR2_SET:
+		bolt->classname           = "mortar_grenade";
+		bolt->splashRadius        = 800;
+		bolt->methodOfDeath       = MOD_MORTAR2;
+		bolt->splashMethodOfDeath = MOD_MORTAR2;
 		bolt->s.eFlags            = 0;
 		break;
 	case WP_LANDMINE:
@@ -1955,9 +1954,22 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 fire_rocket
 =================
 */
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
+gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
 {
 	gentity_t *bolt = G_Spawn();
+	int       mod;
+
+	// FIXME: weapon table
+	switch (rocketType)
+	{
+	case WP_BAZOOKA:
+		mod = MOD_BAZOOKA;
+		break;
+	default:
+		rocketType = WP_PANZERFAUST;
+		mod        = MOD_PANZERFAUST;
+		break;
+	}
 
 	VectorNormalize(dir);
 
@@ -1976,8 +1988,8 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->damage              = GetWeaponTableData(WP_PANZERFAUST)->damage;
 	bolt->splashDamage        = GetWeaponTableData(WP_PANZERFAUST)->damage;
 	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // hardcoded bleh hack FIXME: weapon table
-	bolt->methodOfDeath       = MOD_PANZERFAUST;
-	bolt->splashMethodOfDeath = MOD_PANZERFAUST;
+	bolt->methodOfDeath       = mod;
+	bolt->splashMethodOfDeath = mod;
 	bolt->clipmask            = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_LINEAR;

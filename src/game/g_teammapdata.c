@@ -635,6 +635,10 @@ void G_UpdateTeamMapData_Player(gentity_t *ent, qboolean forceAllied, qboolean f
 		{
 			mEnt->type = ME_PLAYER_REVIVE;
 		}
+		else if (ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG])
+		{
+			mEnt->type = ME_PLAYER_OBJECTIVE;
+		}
 		else
 		{
 			mEnt->type = ME_PLAYER;
@@ -658,6 +662,10 @@ void G_UpdateTeamMapData_Player(gentity_t *ent, qboolean forceAllied, qboolean f
 		if (ent->health <= 0)
 		{
 			mEnt->type = ME_PLAYER_REVIVE;
+		}
+		else if (ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG])
+		{
+			mEnt->type = ME_PLAYER_OBJECTIVE;
 		}
 		else
 		{
@@ -1171,7 +1179,6 @@ void G_UpdateTeamMapData(void)
 									break;
 								}
 							}
-
 							G_UpdateTeamMapData_Player(ent2, f1, f2);
 						}
 						break;
@@ -1240,7 +1247,7 @@ void G_UpdateTeamMapData(void)
                                                         }
                                                     }*/
 
-													trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
+													trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
 
 													AddScore(ent, 1);
 

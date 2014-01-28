@@ -1956,7 +1956,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alpha
 	}
 
 	//  Allocate output buffer.
-	OutBuffer = ri.Z_Malloc(IHDR_Width * IHDR_Height * Q3IMAGE_BYTESPERPIXEL);
+	OutBuffer = R_GetImageBuffer(IHDR_Width * IHDR_Height * Q3IMAGE_BYTESPERPIXEL, BUFFER_IMAGE);
 	if (!OutBuffer)
 	{
 		ri.Free(DecompressedData);

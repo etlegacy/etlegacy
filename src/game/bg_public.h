@@ -49,7 +49,8 @@
 #define _attribute(x)
 #endif
 
-// #define LEGACY_MOD_VERSION ETLEGACY_VERSION_SHORT
+#define LEGACY_MOD         "Legacy"
+#define LEGACY_MOD_VERSION ETLEGACY_VERSION_SHORT
 #define LEGACY // for omnibot
 
 #define SPRINTTIME 20000.0f
@@ -533,7 +534,7 @@ int Pmove(pmove_t *pmove);
 
 #define NUM_PLAYER_CLASSES      5
 
-#define MAX_WEAPS_IN_BANK_MP    14
+#define MAX_WEAPS_IN_BANK_MP    17
 #define MAX_WEAP_BANKS_MP       10
 
 // leaning flags..
@@ -747,11 +748,11 @@ typedef enum
 	WP_KNIFE_KABAR,         // 48
 	WP_MOBILE_BROWNING,     // 49
 	WP_MOBILE_BROWNING_SET, // 50
-
 	WP_MORTAR2,             // 51
 	WP_MORTAR2_SET,         // 52
+	WP_BAZOOKA,             // 53
 
-	WP_NUM_WEAPONS          // 53
+	WP_NUM_WEAPONS          // 54
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -833,14 +834,17 @@ extern ammotable_t *GetAmmoTableData(int ammoIndex);
 typedef struct weapontable_s
 {
 	int weapon;               // reference
+	int weapAlts;             // bg
+
+	int ammoIndex;            // bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
+	int clipIndex;            // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
+
 	int damage;               // g
 	float spread;             // g
 	int splashDamage;         // g
 	int splashRadius;         // g
 
 	qboolean keepDisguise;    // g
-
-	int weapAlts;             // bg
 
 	qboolean isAutoReload;    // bg // move this to ammo table?!
 
@@ -871,7 +875,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 	(w == WP_GPG40               || w == WP_M7)
 
 #define IS_PANZER_WEAPON(w) \
-	(w == WP_PANZERFAUST)
+	(w == WP_PANZERFAUST         || w == WP_BAZOOKA)
 
 #define IS_AKIMBO_WEAPON(w) \
 	(w == WP_AKIMBO_COLT         || w == WP_AKIMBO_LUGER         || \
@@ -889,13 +893,14 @@ extern int weapAlts[];  // defined in bg_misc.c
 	 w == WP_MOBILE_MG42_SET  || w == WP_MOBILE_BROWNING_SET)
 
 #define IS_HEAVY_WEAPON(w) \
-	(w == WP_FLAMETHROWER  || w == WP_MOBILE_MG42 || \
-	 w == WP_MOBILE_MG42_SET || w == WP_PANZERFAUST || \
+	(w == WP_FLAMETHROWER  || \
+	 w == WP_MOBILE_MG42 || w == WP_MOBILE_MG42_SET || \
+	 w == WP_PANZERFAUST || w == WP_BAZOOKA || \
 	 w == WP_MORTAR          || w == WP_MORTAR_SET  || \
 	 w == WP_MOBILE_BROWNING || w == WP_MOBILE_BROWNING_SET || \
 	 w == WP_MORTAR2         || w == WP_MORTAR2_SET)
 
-// weapon table
+// FIXME: weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
 #define IS_AUTORELOAD_WEAPON(w) \
@@ -1337,29 +1342,32 @@ typedef enum
 // weapon stat info: mapping between MOD_ and WP_ types (FIXME for new ET weapons)
 typedef enum extWeaponStats_s
 {
-	WS_KNIFE,               // 0
-	WS_LUGER,               // 1
-	WS_COLT,                // 2
-	WS_MP40,                // 3
-	WS_THOMPSON,            // 4
-	WS_STEN,                // 5
-	WS_FG42,                // 6	-- Also includes WS_BAR (allies version of fg42)
-	WS_PANZERFAUST,         // 7
-	WS_FLAMETHROWER,        // 8
-	WS_GRENADE,             // 9	-- Includes axis and allies grenade types
-	WS_MORTAR,              // 10
-	WS_DYNAMITE,            // 11
-	WS_AIRSTRIKE,           // 12	-- Lt. smoke grenade attack
-	WS_ARTILLERY,           // 13	-- Lt. binocular attack
-	WS_SYRINGE,             // 14	-- Medic syringe uses/successes
-
-	WS_SMOKE,               // 15
-	WS_SATCHEL,             // 16
-	WS_GRENADELAUNCHER,     // 17
-	WS_LANDMINE,            // 18
-	WS_MG42,                // 19
-	WS_GARAND,              // 20 // (carbine and garand)
-	WS_K43,                 // 21 // (kar98 and k43)
+	WS_KNIFE,           // 0
+	WS_KNIFE_KBAR,      // 1
+	WS_LUGER,           // 2
+	WS_COLT,            // 3
+	WS_MP40,            // 4
+	WS_THOMPSON,        // 5
+	WS_STEN,            // 6
+	WS_FG42,            // 7
+	WS_PANZERFAUST,     // 8
+	WS_BAZOOKA,         // 9
+	WS_FLAMETHROWER,    // 10
+	WS_GRENADE,         // 11   -- includes axis and allies grenade types
+	WS_MORTAR,          // 12
+	WS_MORTAR2,         // 13
+	WS_DYNAMITE,        // 14
+	WS_AIRSTRIKE,       // 15   -- Fieldops smoke grenade attack
+	WS_ARTILLERY,       // 16   -- Fieldops binocular attack
+	WS_SYRINGE,         // 17   -- Medic syringe uses/successes
+	WS_SMOKE,           // 18
+	WS_SATCHEL,         // 19
+	WS_GRENADELAUNCHER, // 20
+	WS_LANDMINE,        // 21
+	WS_MG42,            // 22
+	WS_BROWNING,        // 23
+	WS_GARAND,          // 24   -- carbine and garand
+	WS_K43,             // 25   -- kar98 and k43
 
 	WS_MAX
 } extWeaponStats_t;
@@ -1457,8 +1465,9 @@ typedef enum
 	MOD_SHOVE,
 
 	MOD_KNIFE_KABAR,
-
 	MOD_MOBILE_BROWNING,
+	MOD_MORTAR2,
+	MOD_BAZOOKA,
 
 	MOD_NUM_MODS
 
@@ -1500,9 +1509,6 @@ typedef struct gitem_s
 
 	int giTag;
 
-	int giAmmoIndex;            // type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
-	int giClipIndex;            // which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
-
 } gitem_t;
 
 // included in both the game dll and the client
@@ -1512,9 +1518,7 @@ extern int     bg_numItems;
 gitem_t *BG_FindItem(const char *pickupName);
 gitem_t *BG_FindItemForClassName(const char *className);
 gitem_t *BG_FindItemForWeapon(weapon_t weapon);
-gitem_t *BG_FindItemForPowerup(powerup_t pw);
 
-gitem_t *BG_FindItemForAmmo(int weapon);
 weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
 weapon_t BG_FindClipForWeapon(weapon_t weapon);
 
@@ -1602,8 +1606,6 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
-weapon_t BG_DuplicateWeapon(weapon_t weap);
-gitem_t *BG_ValidStatWeapon(weapon_t weap);
 weapon_t BG_WeaponForMOD(int MOD);
 
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
@@ -2035,13 +2037,13 @@ typedef enum
 	ME_PLAYER,
 	ME_PLAYER_REVIVE,
 	ME_PLAYER_DISGUISED,
+	ME_PLAYER_OBJECTIVE,
 	ME_CONSTRUCT,
 	ME_DESTRUCT,
 	ME_DESTRUCT_2,
 	ME_LANDMINE,
 	ME_TANK,
 	ME_TANK_DEAD,
-	//ME_LANDMINE_ARMED,
 	ME_COMMANDMAP_MARKER,
 } mapEntityType_t;
 
@@ -2172,7 +2174,6 @@ skillType_t BG_ClassSkillForClass(int classnum);
 
 qboolean BG_isLightWeaponSupportingFastReload(int weapon);
 qboolean BG_IsScopedWeapon(int weapon);
-qboolean BG_WeaponHasAlt(int weapon, int playerClass);
 
 int BG_FootstepForSurface(int surfaceFlags);
 
@@ -2184,10 +2185,6 @@ int BG_simpleHintsCollapse(int hint, int val);
 int BG_simpleHintsExpand(int hint, int val);
 #endif
 int BG_simpleWeaponState(int ws);
-
-// Color escape handling
-int BG_drawStrlen(const char *str);
-int BG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF);
 
 // Crosshair support
 void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName);

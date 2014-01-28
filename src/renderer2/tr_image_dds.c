@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -29,6 +29,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_image_dds.c
  */
 
 #include "tr_local.h"
@@ -681,7 +683,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		height = ddsd->dwHeight;
 		depth  = ddsd->u1.dwDepth;
 
-		if (width & (width - 1) || height & (height - 1) || depth & (depth - 1))
+		if ((width & (width - 1)) || (height & (height - 1)) || (depth & (depth - 1)))
 		{
 			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: volume images must be power of two \"%s\"\n", name);
 			goto ret_error;
@@ -697,7 +699,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		//these are allowed to be non power of two, will be dealt with later on
 		//except for compressed images!
-		if (compressed && (width & (width - 1) || height & (height - 1)))
+		if (compressed && ((width & (width - 1)) || (height & (height - 1))))
 		{
 			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: compressed texture images must be power of two \"%s\"\n", name);
 			goto ret_error;
@@ -1088,7 +1090,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		GLuint texnum;
 
-		if (w & (w - 1) || h & (h - 1))
+		if ((w & (w - 1)) || (h & (h - 1)))
 		{
 			// non-pow2: check extensions
 

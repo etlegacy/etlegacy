@@ -1660,6 +1660,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		return;
 	}
 
+	// FIXME: do a switch
 	if (ent->moverState == MOVER_POS1)
 	{
 		// start moving 50 msec later, becase if this was player
@@ -3637,6 +3638,7 @@ void Static_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t point)
 		    && (attacker->s.weapon == WP_GRENADE_LAUNCHER
 		        || attacker->s.weapon == WP_GRENADE_PINEAPPLE
 		        || attacker->s.weapon == WP_PANZERFAUST
+		        || attacker->s.weapon == WP_BAZOOKA
 		        || attacker->client->ps.persistant[PERS_HWEAPON_USE]))
 		{
 

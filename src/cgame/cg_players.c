@@ -185,14 +185,15 @@ void CG_NewClientInfo(int clientNum)
 
 	// grabbing some older stuff, if it's a new client, tinfo will update within one second anyway, otherwise you get the health thing flashing red
 	// NOTE: why are we bothering to do all this setting up of a new clientInfo_t anyway? it was all for deffered clients iirc, which we dont have
-	newInfo.location[0]  = ci->location[0];
-	newInfo.location[1]  = ci->location[1];
-	newInfo.location[2]  = ci->location[2];
-	newInfo.health       = ci->health;
-	newInfo.fireteamData = ci->fireteamData;
-	newInfo.clientNum    = clientNum;
-	newInfo.selected     = ci->selected;
-	newInfo.totalWeapAcc = ci->totalWeapAcc;
+	newInfo.location[0]    = ci->location[0];
+	newInfo.location[1]    = ci->location[1];
+	newInfo.location[2]    = ci->location[2];
+	newInfo.health         = ci->health;
+	newInfo.fireteamData   = ci->fireteamData;
+	newInfo.clientNum      = clientNum;
+	newInfo.selected       = ci->selected;
+	newInfo.totalWeapAcc   = ci->totalWeapAcc;
+	newInfo.totalWeapHSpct = ci->totalWeapHSpct;
 
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
@@ -359,7 +360,7 @@ void CG_NewClientInfo(int clientNum)
 
 				CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), skillNames[i], newInfo.skill[i]), cgs.media.skillPics[i]);
 
-				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value, 99999);
+				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
 			}
 		}
 
@@ -1707,7 +1708,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	// draw disguised icon over disguised teammates
 	if ((cent->currentState.powerups & (1 << PW_OPS_DISGUISED)) && cg.snap->ps.persistant[PERS_TEAM] == team)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.disguiseShader, 56);
+		CG_PlayerFloatSprite(cent, cgs.media.friendShader, 56);
 	}
 
 	{
@@ -2597,22 +2598,18 @@ void CG_Player(centity_t *cent)
 			case ACC_BELT_RIGHT:
 				CG_PositionEntityOnTag(&acc, &body, "tag_bleft", 0, NULL);
 				break;
-
 			case ACC_BELT:
 				CG_PositionEntityOnTag(&acc, &body, "tag_ubelt", 0, NULL);
 				break;
 			case ACC_BACK:
 				CG_PositionEntityOnTag(&acc, &body, "tag_back", 0, NULL);
 				break;
-
 			case ACC_HAT:               // hat
 			case ACC_RANK:
 				if (cent->currentState.eFlags & EF_HEADSHOT)
 				{
 					continue;
 				}
-			case ACC_MOUTH2:            // hat2
-			case ACC_MOUTH3:            // hat3
 				if (i == ACC_RANK)
 				{
 					if (rank <= 0)
@@ -2621,10 +2618,12 @@ void CG_Player(centity_t *cent)
 					}
 					acc.customShader = rankicons[rank][team == TEAM_AXIS ? 1 : 0][1].shader;
 				}
-
 				CG_PositionEntityOnTag(&acc, &head, "tag_mouth", 0, NULL);
 				break;
-
+			case ACC_MOUTH2:            // hat2
+			case ACC_MOUTH3:            // hat3
+				CG_PositionEntityOnTag(&acc, &head, "tag_mouth", 0, NULL);
+				break;
 			// weapon and weapon2
 			// these are used by characters who have permanent weapons attached to their character in the skin
 			case ACC_WEAPON:        // weap
@@ -2633,7 +2632,6 @@ void CG_Player(centity_t *cent)
 			case ACC_WEAPON2:       // weap2
 				CG_PositionEntityOnTag(&acc, &body, "tag_weapon2", 0, NULL);
 				break;
-
 			default:
 				continue;
 			}
@@ -3253,6 +3251,7 @@ weaponType_t weaponTypes[] =
 	{ WP_THOMPSON,             "THOMPSON" },
 	{ WP_STEN,                 "STEN",    },
 	{ WP_PANZERFAUST,          "PANZERFAUST",},
+	{ WP_BAZOOKA,              "BAZOOKA", },
 	{ WP_FLAMETHROWER,         "FLAMETHROWER",},
 	{ WP_KAR98,                "K43",     },
 	{ WP_CARBINE,              "M1 GARAND",},

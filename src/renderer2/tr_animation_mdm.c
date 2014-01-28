@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,19 +28,19 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_animation_mdm.c
  */
 
 #include "tr_local.h"
 
 /*
-
 All bones should be an identity orientation to display the mesh exactly
 as it is specified.
 
 For all other frames, the bones represent the transformation from the
 orientation of the bone in the base frame to the orientation in this
 frame.
-
 */
 
 // undef to use floating-point lerping with explicit trig funcs
@@ -128,11 +128,6 @@ static float ProjectRadius(float r, vec3_t location)
 	return pr;
 }
 
-/*
-=============
-R_CullModel
-=============
-*/
 static int R_CullModel(trRefEntity_t *ent)
 {
 	mdxHeader_t *oldFrameHeader, *newFrameHeader;
@@ -250,14 +245,9 @@ static int R_CullModel(trRefEntity_t *ent)
 	}
 }
 
-/*
-=================
-R_CalcMDMLod
-=================
-*/
 static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, float modelBias, float modelScale)
 {
-	float flod, lodScale;
+	float flod;
 	float projectedRadius;
 
 	// compute projected bounding sphere and use that as a criteria for selecting LOD
@@ -266,8 +256,7 @@ static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, floa
 	if (projectedRadius != 0)
 	{
 		//ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
-		lodScale = r_lodScale->value;   // fudge factor since MDS uses a much smoother method of LOD
-		flod     = projectedRadius * lodScale * modelScale;
+		flod     = projectedRadius * r_lodScale->value * modelScale;
 	}
 	else
 	{
@@ -349,12 +338,6 @@ static int R_CalcMDMLodIndex(refEntity_t *ent, vec3_t origin, float radius, floa
 	return lod;
 }
 
-
-/*
-=================
-R_ComputeFogNum
-=================
-*/
 /*
 static int R_ComputeFogNum(trRefEntity_t * ent)
 {
@@ -491,11 +474,6 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 	return shader;
 }
 
-/*
-==============
-R_MDM_AddAnimSurfaces
-==============
-*/
 void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 {
 	mdmModel_t         *mdm;
@@ -566,11 +544,6 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 	}
 }
 
-/*
-=================
-R_AddMDMInteractions
-=================
-*/
 void R_AddMDMInteractions(trRefEntity_t *ent, trRefLight_t *light)
 {
 	int                i;
@@ -692,7 +665,6 @@ void R_AddMDMInteractions(trRefEntity_t *ent, trRefLight_t *light)
 	}
 }
 
-
 static ID_INLINE void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_t out)
 {
 	out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2];
@@ -751,8 +723,6 @@ static ID_INLINE void LocalAddScaledMatrixTransformVector(vec3_t in, float s, ve
 
 static float LAVangle;
 static float sp, sy, cp, cy, sr, cr;
-
-//static float    sr, cr;// TTimo: unused
 
 static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
@@ -1040,15 +1010,8 @@ static ID_INLINE void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[
 	}
 }
 
-/*
-==============
-R_CalcBone
-==============
-*/
 static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int boneNum)
 {
-	int j;
-
 	thisBoneInfo = &boneInfo[boneNum];
 	if (thisBoneInfo->torsoWeight)
 	{
@@ -1094,6 +1057,8 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 		ANGLES_SHORT_TO_FLOAT(pf, sh);
 		if (isTorso)
 		{
+			int j;
+			
 			sh = (short *)cTBonePtr->angles;
 			pf = tangles;
 			ANGLES_SHORT_TO_FLOAT(pf, sh);
@@ -1193,11 +1158,6 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 	newBones[boneNum] = 1;
 }
 
-/*
-==============
-R_CalcBoneLerp
-==============
-*/
 static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int boneNum)
 {
 	int j;
@@ -1249,7 +1209,6 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 
 	// rotation (take into account 170 to -170 lerps, which need to take the shortest route)
 #ifndef YD_INGLES
-
 	if (fullTorso)
 	{
 		sh  = (short *)cTBonePtr->angles;
@@ -1475,7 +1434,6 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 		bonePtr->translation[0] = frontlerp * frame->parentOffset[0] + backlerp * oldFrame->parentOffset[0];
 		bonePtr->translation[1] = frontlerp * frame->parentOffset[1] + backlerp * oldFrame->parentOffset[1];
 		bonePtr->translation[2] = frontlerp * frame->parentOffset[2] + backlerp * oldFrame->parentOffset[2];
-
 	}
 
 	if (boneNum == torsoParent)
@@ -1563,13 +1521,9 @@ static qboolean R_BonesStillValid(const refEntity_t *refent)
 #endif
 }
 
-/*
-==============
-R_CalcBones
-
-    The list of bones[] should only be built and modified from within here
-==============
-*/
+/**
+ * @brief The list of bones[] should only be built and modified from within here
+ */
 static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 {
 	int         i;
@@ -1767,11 +1721,6 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 #define DBG_SHOWTIME    ;
 #endif
 
-/*
-==============
-Tess_MDM_SurfaceAnim
-==============
-*/
 void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 {
 #if 1
@@ -1866,7 +1815,6 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 	tess.numVertexes += render_count;
 
 #else
-
 	if (render_count == surface->numVerts)
 	{
 		for (i = 0, tri = surface->triangles; i < surface->numTriangles; i++, tri++)
@@ -2252,11 +2200,6 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 #endif // entire function block
 }
 
-/*
-==============
-Tess_SurfaceVBOMDMMesh
-==============
-*/
 void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 {
 	int                i;
@@ -2338,11 +2281,6 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 	Tess_End();
 }
 
-/*
-===============
-R_GetBoneTag
-===============
-*/
 int R_MDM_GetBoneTag(orientation_t *outTag, mdmModel_t *mdm, int startTagIndex, const refEntity_t *refent,
                      const char *tagName)
 {

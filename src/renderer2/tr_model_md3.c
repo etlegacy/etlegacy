@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @rbief model loading and caching
+ *
+ * @file tr_models.c
  */
-// tr_models.c -- model loading and caching
+
 #include "tr_local.h"
 
 #define LL(x) x = LittleLong(x)
@@ -64,11 +68,6 @@ static int MDXSurfaceCompare(const void *a, const void *b)
 
 #endif
 
-/*
-=================
-R_LoadMD3
-=================
-*/
 qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const char *modName)
 {
 	int i, j, k;            //, l;
@@ -109,7 +108,7 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 	mod->dataSize += size;
 	mdvModel       = mod->mdv[lod] = ri.Hunk_Alloc(sizeof(mdvModel_t), h_low);
 
-//  Com_Memcpy(mod->md3[lod], buffer, LittleLong(md3Model->ofsEnd));
+	//Com_Memcpy(mod->md3[lod], buffer, LittleLong(md3Model->ofsEnd));
 
 	LL(md3Model->ident);
 	LL(md3Model->version);

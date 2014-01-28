@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_curve.c
  */
-// tr_curve.c
+
 #include "tr_local.h"
 
 /*
@@ -45,11 +47,6 @@ R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE*MA
 ======================================================================================
 */
 
-/*
-============
-LerpDrawVert
-============
-*/
 static void LerpSurfaceVert(srfVert_t *a, srfVert_t *b, srfVert_t *out)
 {
 	out->xyz[0] = 0.5f * (a->xyz[0] + b->xyz[0]);
@@ -77,11 +74,6 @@ static void LerpSurfaceVert(srfVert_t *a, srfVert_t *b, srfVert_t *out)
 	out->lightDirection[2] = (a->lightDirection[2] + b->lightDirection[2]) * 0.5f;
 }
 
-/*
-============
-Transpose
-============
-*/
 static void Transpose(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE])
 {
 	int       i, j;
@@ -131,7 +123,6 @@ static void Transpose(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_G
 	}
 
 }
-
 
 /*
 =================
@@ -513,11 +504,6 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
     }
 }*/
 
-/*
-============
-InvertCtrl
-============
-*/
 static void InvertCtrl(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE])
 {
 	int       i, j;
@@ -534,12 +520,6 @@ static void InvertCtrl(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_
 	}
 }
 
-
-/*
-=================
-InvertErrorTable
-=================
-*/
 static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int height)
 {
 	int   i;
@@ -559,11 +539,6 @@ static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int 
 
 }
 
-/*
-==================
-PutPointsOnCurve
-==================
-*/
 static void PutPointsOnCurve(srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE], int width, int height)
 {
 	int       i, j;
@@ -591,11 +566,6 @@ static void PutPointsOnCurve(srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE], int w
 	}
 }
 
-/*
-=================
-R_CreateSurfaceGridMesh
-=================
-*/
 static srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height,
                                               srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE],
                                               float errorTable[2][MAX_GRID_SIZE],
@@ -672,11 +642,6 @@ static srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height,
 	return grid;
 }
 
-/*
-=================
-R_FreeSurfaceGridMesh
-=================
-*/
 void R_FreeSurfaceGridMesh(srfGridMesh_t *grid)
 {
 	Com_Dealloc(grid->widthLodError);
@@ -686,11 +651,6 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid)
 	Com_Dealloc(grid);
 }
 
-/*
-=================
-R_SubdividePatchToGrid
-=================
-*/
 srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE])
 {
 	int                  i, j, k, l;
@@ -878,11 +838,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 	return R_CreateSurfaceGridMesh(width, height, ctrl, errorTable, numTriangles, triangles);
 }
 
-/*
-===============
-R_GridInsertColumn
-===============
-*/
 srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3_t point, float loderror)
 {
 	int                  i, j;
@@ -953,11 +908,6 @@ srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3
 	return grid;
 }
 
-/*
-===============
-R_GridInsertRow
-===============
-*/
 srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t point, float loderror)
 {
 	int                  i, j;

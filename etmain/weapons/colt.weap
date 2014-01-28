@@ -1,0 +1,80 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		standModel			"models/weapons2/colt/colt_stand.mdc"	// weapon pickup 'stand' (do we still use this?)
+		//pickupModel		""
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/weapons2/colt/weapon.cfg"
+		handsModel			"models/weapons2/colt/v_colt_hand.mdc"
+		
+		flashDlightColor	1.0 0.6 0.23
+		flashSound			"sound/weapons/colt/colt_fire.wav"		// supports up to 4 flash sounds
+		flashEchoSound		"sound/weapons/colt/colt_far.wav"		// supports up to 4 flash echo sounds
+		//lastShotSound		""										// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		reloadSound			"sound/weapons/colt/colt_reload.wav"
+		reloadFastSound		"sound/weapons/colt/colt_reload_fast.wav"		// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		switchSound			"sound/weapons/misc/silence_off.wav"	// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_colt"
+		weaponSelectedIcon	"icons/iconw_colt_1_select"
+		
+		//missileModel		""
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model			"models/weapons2/colt/v_colt.mdc"
+			flashModel		"models/weapons2/colt/v_colt_flash.mdc"
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/weapons2/colt/v_colt_barrel.mdc"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model	"models/weapons2/colt/v_colt_barrel2.mdc"
+				}
+				part 2
+				{
+					tag		"tag_barrel3"
+					model	"models/weapons2/colt/v_colt_barrel3.mdc"
+				}
+				part 3
+				{
+					tag		"tag_barrel4"
+					model	"models/weapons2/colt/v_colt_barrel4.mdc"
+				}
+				part 4
+				{
+					tag		"tag_barrel5"
+					model	"models/weapons2/colt/v_colt_barrel5.mdc"
+				}
+			}
+		}
+		
+		thirdPerson {
+			model			"models/weapons2/colt/ss_colt.mdc"
+			flashmodel		"models/weapons2/colt/colt_flash.mdc"
+		}
+	}
+}

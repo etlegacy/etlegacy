@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,10 +28,10 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
+ * @brief string allocation/managment
+ *
  * @file ui_shared.c
  */
-
-// string allocation/managment
 
 #include "ui_shared.h"
 #include "ui_local.h"    // For CS settings/retrieval
@@ -5225,6 +5225,7 @@ static bind_t g_bindings[] =
 	{ "+scores",          K_TAB,           -1,  K_TAB,           -1,  -1, -1 },
 	{ "+stats",           K_ALT,           -1,  K_F9,            -1,  -1, -1 },
 	{ "+topshots",        K_CTRL,          -1,  K_F10,           -1,  -1, -1 },
+	{ "+objectives",      'o',             -1,  'o',             -1,  -1, -1 },
 	{ "toggleconsole",    '`',             '~', '`',             '~', -1, -1 },
 	{ "togglemenu",       K_ESCAPE,        -1,  K_ESCAPE,        -1,  -1, -1 },
 	{ "openlimbomenu",    'l',             -1,  'l',             -1,  -1, -1 },

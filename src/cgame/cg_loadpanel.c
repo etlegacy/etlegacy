@@ -45,7 +45,7 @@ qhandle_t  bg_alliedpin;
 qhandle_t  bg_neutralpin;
 qhandle_t  bg_pin;
 
-qhandle_t bg_filter_pb;
+qhandle_t bg_filter_bo;
 qhandle_t bg_filter_ff;
 qhandle_t bg_filter_hw;
 qhandle_t bg_filter_lv;
@@ -300,7 +300,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		bg_neutralpin = DC->registerShaderNoMip("gfx/loading/pin_neutral");
 		bg_pin        = DC->registerShaderNoMip("gfx/loading/pin_shot");
 
-		bg_filter_pb = DC->registerShaderNoMip("ui/assets/filter_pb");
+		bg_filter_bo = DC->registerShaderNoMip("ui/assets/filter_bots");
 		bg_filter_ff = DC->registerShaderNoMip("ui/assets/filter_ff");
 		bg_filter_hw = DC->registerShaderNoMip("ui/assets/filter_weap");
 		bg_filter_lv = DC->registerShaderNoMip("ui/assets/filter_lives");
@@ -331,7 +331,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		int        i;
 		qboolean   enabled = qfalse;
 
-		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, ("^1" PRODUCT_LABEL " ^0" ETLEGACY_VERSION_SHORT), 0, 0, 0, &bg_loadscreenfont1);
+		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, ("^1" LEGACY_MOD " ^0" LEGACY_MOD_VERSION), 0, 0, 0, &bg_loadscreenfont1);
 
 		y   = 340;
 		str = Info_ValueForKey(buffer, "sv_hostname");
@@ -394,11 +394,11 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 			CG_DrawPic(x, y, 16, 16, bg_filter_lv);
 		}
 
-		str = Info_ValueForKey(buffer, "sv_punkbuster"); //FIXME: unused
+		str = Info_ValueForKey(buffer, "omnibot_playing");
 		if (str && *str && atoi(str))
 		{
 			x = 518 + cgs.wideXoffset;
-			CG_DrawPic(x, y, 16, 16, bg_filter_pb);
+			CG_DrawPic(x, y, 16, 16, bg_filter_bo);
 		}
 
 		str = Info_ValueForKey(buffer, "g_heavyWeaponRestriction");

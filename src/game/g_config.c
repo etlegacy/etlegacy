@@ -310,17 +310,17 @@ void G_configLoadAndSet(const char *name)
 
 		if (level.config.version[0] && level.config.name[0])
 		{
-			trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' version '%s'^7 loaded\n\"", level.config.name, level.config.version));
+			trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' version '%s'^7 loaded\"", level.config.name, level.config.version));
 		}
 		else if (level.config.name[0])
 		{
-			trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' loaded\n\"", level.config.name));
+			trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' loaded\"", level.config.name));
 		}
 	}
 	else
 	{
 		trap_SetConfigstring(CS_CONFIGNAME, "");
-		trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' ^1FAILED ^7to load\n\"", name));
+		trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' ^1FAILED ^7to load\"", name));
 	}
 
 	G_UpdateCvars();

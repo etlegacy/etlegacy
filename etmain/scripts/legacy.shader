@@ -51,6 +51,27 @@ icons/iconw_mortar_ax
 	}
 }
 
+icons/iconw_bazooka
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_bazooka.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_bazooka_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_bazooka_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
 
 icons/iconw_landmine_1_select
 {
@@ -1435,15 +1456,15 @@ gfx/hud/ranks/xrank11
 	}
 }
 
-// Disguised Shader
-sprites/undercover
+// disguised shader
+gfx/2d/friendlycross
 {
 	nocompress
 	nopicmip
 	{
-		map sprites/undercover.tga
+		map gfx/2d/friendlycross.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen vertex	
+		rgbGen vertex
 	}
 }
 

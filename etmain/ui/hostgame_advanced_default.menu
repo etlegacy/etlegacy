@@ -12,7 +12,7 @@
 #define DEFAULT_SETTINGS	setcvar sv_hostname "ETHost" ;			\
 							setcvar ui_netGameType 4 ;				\
 							setcvar sv_maxclients 20 ;				\
-							setcvar server_autoconfig 0 ;			\
+							clearcvar g_customConfig ;				\
 							setcvar ui_dedicated 0 ;				\
 							setcvar g_countryflags 1;				\
 							setcvar g_intermissionTime 60;			\

@@ -39,10 +39,10 @@
 
 /*
 =================
-CG_ParseScores
+CG_ParseScore
 =================
 */
-// NOTE: team doesnt actually signify team, think i was on drugs that day.....
+// NOTE: team doesnt actually signify team
 static void CG_ParseScore(team_t team)
 {
 	int i, j, powerups;
@@ -742,6 +742,26 @@ void CG_TeamRestrictionsChanged(void)
 	cg.maxPlayers = atoi(Info_ValueForKey(info, "m"));
 }
 
+#define SETSKILL(skill, string) sscanf(string, "%i,%i,%i,%i", &skillLevels[skill][1], &skillLevels[skill][2], &skillLevels[skill][3], &skillLevels[skill][4])
+
+/*
+===============
+CG_SkillLevelsChanged
+===============
+*/
+void CG_SkillLevelsChanged(void)
+{
+	const char *info = CG_ConfigString(CS_UPGRADERANGE);
+
+	SETSKILL(SK_BATTLE_SENSE, Info_ValueForKey(info, "bs"));
+	SETSKILL(SK_EXPLOSIVES_AND_CONSTRUCTION, Info_ValueForKey(info, "en"));
+	SETSKILL(SK_FIRST_AID, Info_ValueForKey(info, "md"));
+	SETSKILL(SK_SIGNALS, Info_ValueForKey(info, "fo"));
+	SETSKILL(SK_LIGHT_WEAPONS, Info_ValueForKey(info, "lw"));
+	SETSKILL(SK_HEAVY_WEAPONS, Info_ValueForKey(info, "sd"));
+	SETSKILL(SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, Info_ValueForKey(info, "cv"));
+}
+
 /*
 ================
 CG_ConfigStringModified
@@ -834,6 +854,9 @@ static void CG_ConfigStringModified(void)
 		break;
 	case CS_TEAMRESTRICTIONS:
 		CG_TeamRestrictionsChanged();
+		break;
+	case CS_UPGRADERANGE:
+		CG_SkillLevelsChanged();
 		break;
 	case CS_SKYBOXORG:
 		CG_ParseSkyBox();
@@ -939,7 +962,7 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 
 	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
 	{
-		chatHeight = cg_teamChatHeight.integer;
+		chatHeight = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_HEIGHT : cg_teamChatHeight.integer;
 	}
 	else
 	{
@@ -1854,22 +1877,22 @@ void CG_topshotsParse_cmd(qboolean doBest)
 		hits  = atoi(CG_Argv(iArg++));
 		atts  = atoi(CG_Argv(iArg++));
 		kills = atoi(CG_Argv(iArg++));
-		// unused
-		//int deaths = atoi(CG_Argv(iArg++));
+		//int deaths = atoi(CG_Argv(iArg++));	// unused
 		acc = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
+
+		// cap stats at 100%
+		acc = (acc > 100.0f) ? 100.0f : acc;
 
 		// bump up iArg since we didn't push it into deaths, above
 		iArg++;
 
 		if (ts->cWeapons < WS_MAX * 2)
 		{
-			BG_cleanName(cgs.clientinfo[cnum].name, name, 17, qfalse);
+			CG_cleanName(cgs.clientinfo[cnum].name, name, 17, qfalse);
 			Q_strncpyz(ts->strWS[ts->cWeapons++],
 			           va("%-12s %5.1f %4d/%-4d %5d  %s",
 			              aWeaponInfo[iWeap - 1].pszName,
-			              acc, hits, atts,
-			              kills,
-			              name),
+			              acc, hits, atts, kills, name),
 			           sizeof(ts->strWS[0]));
 		}
 
@@ -1911,6 +1934,9 @@ void CG_parseWeaponStatsGS_cmd(void)
 	int          nRounds    = atoi(CG_Argv(iArg++));
 	int          weaponMask = atoi(CG_Argv(iArg++));
 	int          skillMask, xp = 0;
+	int          totHits      = 0;
+	int          totShots     = 0;
+	int          totHeadshots = 0;
 
 	gs->cWeapons  = 0;
 	gs->cSkills   = 0;
@@ -1929,18 +1955,24 @@ void CG_parseWeaponStatsGS_cmd(void)
 		{
 			if (weaponMask & (1 << i))
 			{
-				int nHits      = atoi(CG_Argv(iArg++));
-				int nShots     = atoi(CG_Argv(iArg++));
-				int nKills     = atoi(CG_Argv(iArg++));
-				int nDeaths    = atoi(CG_Argv(iArg++));
-				int nHeadshots = atoi(CG_Argv(iArg++));
+				int   nHits      = atoi(CG_Argv(iArg++));
+				int   nShots     = atoi(CG_Argv(iArg++));
+				int   nKills     = atoi(CG_Argv(iArg++));
+				int   nDeaths    = atoi(CG_Argv(iArg++));
+				int   nHeadshots = atoi(CG_Argv(iArg++));
+				float acc        = (nShots > 0) ? (float)(nHits * 100) / (float)nShots : 0.0f;
+
+				// cap stats at 100%
+				acc = (acc > 100.0f) ? 100.0f : acc;
+
+				totHits      += nHits;
+				totShots     += nShots;
+				totHeadshots += nHeadshots;
 
 				Q_strncpyz(strName, va("%-12s  ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (nShots > 0 || nHits > 0)
 				{
-					Q_strcat(strName, sizeof(strName), va("%5.1f %4d/%-4d ",
-					                                      ((nShots == 0) ? 0.0 : (float)(nHits * 100.0 / (float)nShots)),
-					                                      nHits, nShots));
+					Q_strcat(strName, sizeof(strName), va("%5.1f %4d/%-4d ", acc, nHits, nShots));
 				}
 				else
 				{
@@ -1960,12 +1992,20 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 		if (gs->fHasStats)
 		{
-			int dmg_given = atoi(CG_Argv(iArg++));
-			int dmg_rcvd  = atoi(CG_Argv(iArg++));
-			int team_dmg  = atoi(CG_Argv(iArg++));
+			int dmg_given      = atoi(CG_Argv(iArg++));
+			int dmg_rcvd       = atoi(CG_Argv(iArg++));
+			int team_dmg_given = atoi(CG_Argv(iArg++));
+			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
+			int suicides       = atoi(CG_Argv(iArg++));
+			int team_kills     = atoi(CG_Argv(iArg++));
 
-			Q_strncpyz(gs->strExtra[0], va("Damage Given: %-6d  Team Damage: %d", dmg_given, team_dmg), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[1], va("Damage Recvd: %d", dmg_rcvd), sizeof(gs->strExtra[0]));
+			float htRatio = (totHits == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
+			float hsRatio = (totHeadshots == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
+
+			Q_strncpyz(gs->strExtra[0], va(CG_TranslateString("Damage Given: %-6d  Team Damage Given: %d"), dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[1], va(CG_TranslateString("Damage Recvd: %-6d  Team Damage Recvd: %d"), dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[2], "", sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"), suicides, team_kills, htRatio, hsRatio), sizeof(gs->strExtra[0]));
 		}
 	}
 
@@ -1980,7 +2020,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 		}
 	}
 
-	Q_strncpyz(gs->strRank, va("%-13s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
+	Q_strncpyz(gs->strRank, va("%-20s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
 
 	if (skillMask != 0)
 	{
@@ -2021,29 +2061,35 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	qboolean     fFull     = (txt_dump != CG_printWindow);
 	qboolean     fHasStats = qfalse;
 	char         strName[MAX_STRING_CHARS];
-	int          atts, deaths, dmg_given, dmg_rcvd, hits, kills, team_dmg, headshots;
+	int          atts, deaths, hits, kills, headshots;
 	unsigned int i, iArg = 1;
 	unsigned int nClient      = atoi(CG_Argv(iArg++));
 	unsigned int nRounds      = atoi(CG_Argv(iArg++));
 	unsigned int dwWeaponMask = atoi(CG_Argv(iArg++));
 	unsigned int dwSkillPointMask;
-	int          xp = 0; // XP can be negative
+	int          xp           = 0; // XP can be negative
+	int          totHits      = 0;
+	int          totShots     = 0;
+	int          totHeadshots = 0;
 
 	ci = &cgs.clientinfo[nClient];
 
 	Q_strncpyz(strName, ci->name, sizeof(strName));
-	BG_cleanName(cgs.clientinfo[nClient].name, strName, sizeof(strName), qfalse);
-	txt_dump(va("^7Overall stats for: ^3%s ^7(^2%d^7 Round%s)\n\n", strName, nRounds, ((nRounds != 1) ? "s" : "")));
+	CG_cleanName(cgs.clientinfo[nClient].name, strName, sizeof(strName), qfalse);
+
+	txt_dump("\n");
+	txt_dump(va("^7Overall stats for: ^3%s ^7(^2%d^7 Round%s)\n", strName, nRounds, ((nRounds != 1) ? "s" : "")));
+	txt_dump("\n");
 
 	if (fFull)
 	{
-		txt_dump("Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n");
-		txt_dump("-------------------------------------------------\n");
+		txt_dump("^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n");
+		txt_dump("^7-------------------------------------------------\n");
 	}
 	else
 	{
-		txt_dump("Weapon     Acrcy Hits/Atts Kll Dth HS\n");
-		//txt_dump(     "-------------------------------------\n");
+		txt_dump("^7Weapon     Acrcy Hits/Atts Kll Dth HS\n");
+		//txt_dump(     "^7-------------------------------------\n");
 		txt_dump("\n");
 	}
 
@@ -2093,9 +2139,15 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 		if (fHasStats)
 		{
-			dmg_given = atoi(CG_Argv(iArg++));
-			dmg_rcvd  = atoi(CG_Argv(iArg++));
-			team_dmg  = atoi(CG_Argv(iArg++));
+			int dmg_given      = atoi(CG_Argv(iArg++));
+			int dmg_rcvd       = atoi(CG_Argv(iArg++));
+			int team_dmg_given = atoi(CG_Argv(iArg++));
+			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
+			int suicides       = atoi(CG_Argv(iArg++));
+			int team_kills     = atoi(CG_Argv(iArg++));
+
+			float htRatio = (totHits == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
+			float hsRatio = (totHeadshots == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
 
 			if (!fFull)
 			{
@@ -2106,8 +2158,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 				txt_dump("\n");
 			}
 
-			txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage: ^7%d\n", dmg_given, team_dmg));
-			txt_dump(va("^3Damage Recvd: ^7%d\n", dmg_rcvd));
+			txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage Given: ^7%d\n", dmg_given, team_dmg_given));
+			txt_dump(va("^3Damage Recvd: ^7%-6d  ^3Team Damage Recvd: ^7%d\n", dmg_rcvd, team_dmg_rcvd));
+			txt_dump("\n");
+			txt_dump(va("^3Suicides: ^7%-2d ^3Team Kills: ^7%-2d ^3Accuracy: ^7%-3.1f ^3HS%%: ^7%-3.1f\n", suicides, team_kills, htRatio, hsRatio));
 		}
 	}
 
@@ -2137,12 +2191,16 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	{
 		txt_dump("\n\n\n");
 	}
+	else
+	{
+		txt_dump("\n");
+	}
 
 	// Medals only in campaign mode
-	txt_dump(va("Skills         Level/Points%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "  Medals" : "")));
+	txt_dump(va("^7Skills         Level/Points%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "  Medals" : "")));
 	if (fFull)
 	{
-		txt_dump(va("---------------------------%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "--------" : "")));
+		txt_dump(va("^7---------------------------%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "--------" : "")));
 	}
 	else
 	{
@@ -2218,18 +2276,21 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 		int   atts   = atoi(CG_Argv(iArg++));
 		int   kills  = atoi(CG_Argv(iArg++));
 		int   deaths = atoi(CG_Argv(iArg++));
-		float acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0;
+		float acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
 		char  name[32];
+
+		// cap stats at 100%
+		acc = (acc > 100.0f) ? 100.0f : acc;
 
 		if (fFull)
 		{
-			BG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
+			CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 			txt_dump(va("^3%s ^7%5.1f ^5%4d/%-4d ^2%5d ^1%6d ^7%s\n",
 			            aWeaponInfo[iWeap - 1].pszCode, acc, hits, atts, kills, deaths, name));
 		}
 		else
 		{
-			BG_cleanName(cgs.clientinfo[cnum].name, name, 12, qfalse);
+			CG_cleanName(cgs.clientinfo[cnum].name, name, 12, qfalse);
 			txt_dump(va("^3%s ^7%5.1f ^5%4d/%-4d ^2%3d ^1%3d ^7%s\n",
 			            aWeaponInfo[iWeap - 1].pszCode, acc, hits, atts, kills, deaths, name));
 		}
@@ -2264,11 +2325,14 @@ void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 		int        atts   = atoi(CG_Argv(iArg++));
 		int        kills  = atoi(CG_Argv(iArg++));
 		int        deaths = atoi(CG_Argv(iArg++));
-		float      acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0;
+		float      acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
 		const char *color = (((doTop) ? acc : ((float)wBestAcc) + 0.999) >= ((doTop) ? wBestAcc : acc)) ? "^3" : "^7";
 		char       name[32];
 
-		BG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
+		// cap stats at 100%
+		acc = (acc > 100.0f) ? 100.0f : acc;
+
+		CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 		txt_dump(va("%s%5.1f ^5%4d/%-4d ^2%5d ^1%6d %s%s\n", color, acc, hits, atts, kills, deaths, color, name));
 	}
 }
@@ -2282,7 +2346,7 @@ void CG_scores_cmd(void)
 	{
 		char s[MAX_STRING_CHARS];
 
-		BG_cleanName(str, s, sizeof(s), qtrue);
+		CG_cleanName(str, s, sizeof(s), qtrue);
 		trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
 	}
 
@@ -2314,7 +2378,7 @@ void CG_printFile(char *str)
 	{
 		char s[MAX_STRING_CHARS];
 
-		BG_cleanName(str, s, sizeof(s), qtrue);
+		CG_cleanName(str, s, sizeof(s), qtrue);
 		trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
 	}
 }
@@ -2405,7 +2469,7 @@ static void CG_ServerCommand(void)
 
 		for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 		{
-			if (!BG_ValidStatWeapon(i))
+			if (BG_WeapStatForWeapon(i) == WS_MAX)
 			{
 				continue;
 			}
@@ -2456,11 +2520,11 @@ static void CG_ServerCommand(void)
 			{
 				CG_Printf("[cgnotify]*** ^3INFO: ^5%s\n", CG_LocalizeServerCommand(CG_Argv(1)));
 			}
-			CG_PriorityCenterPrint(s, SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value, atoi(CG_Argv(2)));
+			CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, atoi(CG_Argv(2)));
 		}
 		else
 		{
-			CG_CenterPrint(CG_LocalizeServerCommand(CG_Argv(1)), SCREEN_HEIGHT * 0.8, cg_fontScaleCP.value);
+			CPri(CG_Argv(1));
 		}
 		return;
 	}
@@ -2898,7 +2962,7 @@ static void CG_ServerCommand(void)
 	else if (!Q_stricmp(cmd, "spawnserver"))
 	{
 		// print message informing player the server is restarting with a new map
-		CG_PriorityCenterPrint(va("%s", CG_TranslateString("^3Server Restarting")), SCREEN_HEIGHT * 0.75, cg_fontScaleCP.value, 999999);
+		CG_PriorityCenterPrint(va("%s", CG_TranslateString("^3Server Restarting")), 100, cg_fontScaleTP.value, 999999);
 
 		// hack here
 		cg.serverRespawning = qtrue;

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -364,6 +364,10 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button)
 			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SET ADMIN"), 0, 0, button->font->style, button->font->font);
 			break;
 		}
+		break;
+	default:
+		CG_Printf("WARNING CG_Fireteams_MenuTitleText_Draw: Unknown ftMenuMode");
+		break;
 	}
 }
 

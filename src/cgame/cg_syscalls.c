@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,9 +28,10 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file cg_syscalls.c
  * @brief this file is only included when building a dll, cg_syscalls.asm is
- * included instead when building a qvm
+ *        included instead when building a qvm
+ *
+ * @file cg_syscalls.c
  */
 
 #include "cg_local.h"
@@ -42,7 +43,13 @@ Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 	syscall = syscallptr;
 }
 
-#define PASSFLOAT(x) (*(int *)&x)
+int PASSFLOAT(float x)
+{
+	floatint_t fi;
+
+	fi.f = x;
+	return fi.i;
+}
 
 void trap_PumpEventLoop(void)
 {
@@ -322,7 +329,7 @@ int trap_S_GetSoundLength(sfxHandle_t sfx)
 	return syscall(CG_S_GETSOUNDLENGTH, sfx);
 }
 
-// ydnar: for timing looped sounds
+// for timing looped sounds
 int trap_S_GetCurrentSoundTime(void)
 {
 	return syscall(CG_S_GETCURRENTSOUNDTIME);
@@ -815,7 +822,7 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	}
 	else
 	{
-		Com_Printf("^2trap_S_RegisterSound: register sound: %s\n", sample);
+		CG_DPrintf("^2trap_S_RegisterSound: register sound: %s\n", sample);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_S_RegisterSound", sample)
 	return snd;
@@ -837,7 +844,7 @@ qhandle_t trap_R_RegisterModel(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterModel: register model: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterModel: register model: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterModel", name)
 	return handle;
@@ -859,7 +866,7 @@ qhandle_t trap_R_RegisterSkin(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterSkin: register skin: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterSkin: register skin: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterSkin", name)
 	return handle;
@@ -881,7 +888,7 @@ qhandle_t trap_R_RegisterShader(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterShader: register shader: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterShader: register shader: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShader", name)
 	return handle;
@@ -903,7 +910,7 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 	}
 	else
 	{
-		Com_Printf("^2trap_R_RegisterShaderNoMip: register shader no mip: %s\n", name);
+		CG_DPrintf("^2trap_R_RegisterShaderNoMip: register shader no mip: %s\n", name);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShaderNpMip", name);
 	return handle;

@@ -1,0 +1,90 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		//standModel		""										// weapon pickup 'stand' (do we still use this?)
+		droppedAnglesHack
+		pickupModel			"models/multiplayer/kar98/kar98_gren_pickup.md3"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/multiplayer/kar98/weapon.cfg"
+		handsModel			"models/multiplayer/kar98/v_kar98_hand.md3"
+		
+		flashDlightColor	1.0 0.6 0.23
+		flashSound			"sound/weapons/k43/k43_fire.wav"		// supports up to 4 flash sounds
+		flashEchoSound		"sound/weapons/k43/k43_far.wav"			// supports up to 4 flash echo sounds
+		//lastShotSound		""										// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		reloadSound			"sound/weapons/k43/k43_reload.wav"
+		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		switchSound			"sound/weapons/k43/k43_grenade_off.wav"	// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_kar98"
+		weaponSelectedIcon	"icons/iconw_kar98_1_select"
+		
+		//missileModel		""
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		modModel 0			"models/multiplayer/kar98/v_kar98_scope.md3"
+		
+		firstPerson {
+			model			"models/multiplayer/kar98/v_kar98.md3"
+			axisskin	"models/multiplayer/kar98/kar98_axis.skin"
+			alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
+			flashModel		"models/multiplayer/kar98/v_kar98_flash.mdc"
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/multiplayer/kar98/v_kar98_barrel.mdc"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model	"models/multiplayer/kar98/v_kar98_barrel2.mdc"
+				}
+				part 2
+				{
+					tag		"tag_barrel3"
+					model	"models/multiplayer/kar98/v_kar98_barrel3.md3"
+					axisskin	"models/multiplayer/kar98/kar98_axis.skin"
+					alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
+				}
+				part 3
+				{
+					tag		"tag_barrel4"
+					model	"models/multiplayer/kar98/v_kar98_barrel4.mdc"
+				}
+				part 4
+				{
+					tag		"tag_barrel5"
+					model	"models/multiplayer/kar98/v_kar98_barrel5.mdc"
+				}
+				part 5
+				{
+					tag		"tag_barrel6"
+					model	"models/multiplayer/kar98/v_kar98_barrel6.mdc"
+				}
+			}
+		}
+		
+		thirdPerson {
+			model			"models/multiplayer/kar98/kar98_gren_pickup.md3"
+			flashmodel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"
+		}
+	}
+}

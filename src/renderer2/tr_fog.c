@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,20 +28,15 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file tr_fog.c
  */
-
-// tr_fog.c
 
 #include "tr_local.h"
 
 
 static qboolean fogIsOn = qfalse;
 
-/*
-=================
-R_Fog (void)
-=================
-*/
 void RB_Fog(glfog_t *curfog)
 {
 	static glfog_t setfog;
@@ -129,13 +124,12 @@ void RB_Fog(glfog_t *curfog)
 //      }
 	}
 
-// TTimo - from SP NV fog code
+	// from SP NV fog code
 	// NV fog mode
 	if (glConfig.NVFogAvailable)
 	{
 		glFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
 	}
-// end
 
 	setfog.registered = qtrue;
 
@@ -204,7 +198,6 @@ void RB_FogOn()
 	fogIsOn = qtrue;
 #endif
 }
-
 
 /*
 ==============
@@ -295,11 +288,6 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 	tr.glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
 }
 
-/*
-==============
-R_SetFrameFog
-==============
-*/
 void R_SetFrameFog()
 {
 	if (!tr.world)

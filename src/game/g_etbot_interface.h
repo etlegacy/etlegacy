@@ -15,8 +15,9 @@
 #define OMNIBOT_NAME "Omni-Bot:etmain"
 
 // #define OMNIBOT_MODNAME GAMEVERSION
-#define OMNIBOT_MODNAME "etmain" // don't change to 'legacy' !
-#define OMNIBOT_MODVERSION ETLEGACY_VERSION_SHORT
+#define OMNIBOT_MODNAME                 "etmain" // don't change to 'legacy' - omnibot gm scripts don't know us (for now)!
+#define OMNIBOT_MODVERSION              ETLEGACY_VERSION_SHORT
+#define OMNIBOT_MOD_DEFAULT_SEARCH_PATH "legacy"
 
 //////////////////////////////////////////////////////////////////////////
 // g_OmniBotFlags bits
