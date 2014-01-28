@@ -616,7 +616,10 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 			G_Printf(S_COLOR_RED "Unable to Initialize Omni-Bot.\n");
 		}
 
-		G_Printf("Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		if (g_OmniBotEnable.integer >= 1)
+		{
+			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		}
 #endif
 	}
 		return 0;
