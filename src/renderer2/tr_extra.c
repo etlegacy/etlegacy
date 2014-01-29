@@ -624,37 +624,6 @@ void MatrixTranspose(const matrix_t in, matrix_t out)
 #endif
 }
 
-/*
-============
-COM_StripExtension3
-
-RB: ioquake3 version
-============
-*/
-void COM_StripExtension3(const char *src, char *dest, int destsize)
-{
-	int length;
-
-	Q_strncpyz(dest, src, destsize);
-
-	length = strlen(dest) - 1;
-
-	while (length > 0 && dest[length] != '.')
-	{
-		length--;
-
-		if (dest[length] == '/')
-		{
-			return;             // no extension
-		}
-	}
-
-	if (length)
-	{
-		dest[length] = 0;
-	}
-}
-
 void QuatFromMatrix(quat_t q, const matrix_t m)
 {
 #if 1

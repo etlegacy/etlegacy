@@ -916,7 +916,7 @@ static void R_GenerateMaterialFile_f(void)
             FS_Rename(fileName2, cleanName2);
         }
 
-        COM_StripExtension3(cleanName, cleanName, sizeof(cleanName));
+        COM_StripExtension(cleanName, cleanName, sizeof(cleanName));
         if(!Q_stristr(cleanName, "_nm") && !Q_stristr(cleanName, "blend"))
         {
             Q_strncpyz(baseName, cleanName, sizeof(baseName));
