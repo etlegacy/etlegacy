@@ -443,6 +443,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 	force_rescan_library(SDL32)
 	force_rescan_library(CURL)
 	force_rescan_library(JPEG)
+	force_rescan_library(JPEGTURBO)
 	# TODO: recheck optional libs
 	set(OLD_CROSS_COMPILE32 ${CROSS_COMPILE32} CACHE INTERNAL "Previous value for CROSS_COMPILE32")
 	message(STATUS "Libraries rescanned")
@@ -514,16 +515,30 @@ if(BUILD_CLIENT)
 	endif(APPLE)
 
 	if(NOT BUNDLED_JPEG)
-		find_package(JPEG 8 REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${JPEG_LIBRARIES})
-		include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
+		find_package(JPEGTURBO)
+		if(JPEGTURBO_FOUND)
+			# find_package(JPEGTURBO REQUIRED)
+			list(APPEND RENDERER_LIBRARIES ${JPEGTURBO_LIBRARIES})
+			include_directories(SYSTEM ${JPEGTURBO_INCLUDE_DIR})
 
-		# Check for libjpeg v8
-		include(CheckFunctionExists)
-		set(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
-		set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
-		# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
-		check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
+			# Check for libjpeg-turbo v1.3
+			include(CheckFunctionExists)
+			set(CMAKE_REQUIRED_INCLUDES ${JPEGTURBO_INCLUDE_DIR})
+			set(CMAKE_REQUIRED_LIBRARIES ${JPEGTURBO_LIBRARY})
+			# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
+			check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
+		else()
+			find_package(JPEG 8 REQUIRED)
+			list(APPEND RENDERER_LIBRARIES ${JPEG_LIBRARIES})
+			include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
+
+			# Check for libjpeg v8
+			include(CheckFunctionExists)
+			set(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
+			set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
+			# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
+			check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
+		endif()
 	else()
 		list(APPEND RENDERER_LIBRARIES ${JPEG_BUNDLED_LIBRARIES})
 		include_directories(SYSTEM ${JPEG_BUNDLED_INCLUDE_DIR})
