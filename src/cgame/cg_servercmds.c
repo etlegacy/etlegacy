@@ -2109,6 +2109,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 				deaths    = atoi(CG_Argv(iArg++));
 				headshots = atoi(CG_Argv(iArg++));
 
+				totHits      += hits;
+				totShots     += atts;
+				totHeadshots += headshots;
+
 				Q_strncpyz(strName, va("^3%-9s: ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (atts > 0 || hits > 0)
 				{
