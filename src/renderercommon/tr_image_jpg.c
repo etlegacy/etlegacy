@@ -44,10 +44,6 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-#if JPEG_LIB_VERSION < 80
-#   error Need system libjpeg >= 80
-#endif
-
 /*
  * Override default libjpeg error manager in order to be able to jump back
  * out to our routines during JPEG decoding.
