@@ -1084,6 +1084,9 @@ if(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
 	)
+		install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docs/linux/man/man6/"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man6"
+	)
 else(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
