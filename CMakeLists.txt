@@ -97,8 +97,7 @@ option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
 option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"				ON)
 option(FEATURE_CROUCH		"Set to ON if you want Toggle Crouch"					OFF)
-
-cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"				ON "BUNDLED_LIBS" OFF)
+option(FEATURE_GETTEXT		"Enable localization using tinygettext"					ON)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
@@ -567,24 +566,24 @@ if(BUILD_CLIENT)
 			"src/qcommon/i18n_main.cpp"
 			"src/qcommon/i18n_findlocale.c"
 			"src/qcommon/i18n_findlocale.h"
-			"libs/tinygettext/dictionary_manager.hpp"
-			"libs/tinygettext/file_system.hpp"
-			"libs/tinygettext/iconv.cpp"
-			"libs/tinygettext/plural_forms.hpp"
-			"libs/tinygettext/tinygettext.cpp"
-			"libs/tinygettext/tinygettext.hpp"
-			"libs/tinygettext/dictionary.cpp"
-			"libs/tinygettext/dictionary.hpp"
-			"libs/tinygettext/dictionary_manager.cpp"
-			"libs/tinygettext/iconv.hpp"
-			"libs/tinygettext/language.cpp"
-			"libs/tinygettext/language.hpp"
-			"libs/tinygettext/log.cpp"
-			"libs/tinygettext/log.hpp"
-			"libs/tinygettext/log_stream.hpp"
-			"libs/tinygettext/plural_forms.cpp"
-			"libs/tinygettext/po_parser.cpp"
-			"libs/tinygettext/po_parser.hpp"
+			"src/tinygettext/dictionary_manager.hpp"
+			"src/tinygettext/file_system.hpp"
+			"src/tinygettext/iconv.cpp"
+			"src/tinygettext/plural_forms.hpp"
+			"src/tinygettext/tinygettext.cpp"
+			"src/tinygettext/tinygettext.hpp"
+			"src/tinygettext/dictionary.cpp"
+			"src/tinygettext/dictionary.hpp"
+			"src/tinygettext/dictionary_manager.cpp"
+			"src/tinygettext/iconv.hpp"
+			"src/tinygettext/language.cpp"
+			"src/tinygettext/language.hpp"
+			"src/tinygettext/log.cpp"
+			"src/tinygettext/log.hpp"
+			"src/tinygettext/log_stream.hpp"
+			"src/tinygettext/plural_forms.cpp"
+			"src/tinygettext/po_parser.cpp"
+			"src/tinygettext/po_parser.hpp"
 		)
 		set(CLIENT_SRC ${CLIENT_SRC} ${GETTEXT_SRC})
 	endif(FEATURE_GETTEXT)
@@ -706,8 +705,8 @@ if(WIN32)
 		)
 
 		FILE(GLOB TINY_GETTEXT_SRC_GROUP
-			"libs/tinygettext/*.cpp"
-			"libs/tinygettext/*.hpp"
+			"src/tinygettext/*.cpp"
+			"src/tinygettext/*.hpp"
 		)
 
 		source_group("Source Files\\Client" FILES ${CLIENT_SRC_GROUP})
