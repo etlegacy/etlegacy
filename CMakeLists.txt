@@ -517,14 +517,13 @@ if(BUILD_CLIENT)
 	if(NOT BUNDLED_JPEG)
 		find_package(JPEGTURBO)
 		if(JPEGTURBO_FOUND)
-			# find_package(JPEGTURBO REQUIRED)
-			list(APPEND RENDERER_LIBRARIES ${JPEGTURBO_LIBRARIES})
-			include_directories(SYSTEM ${JPEGTURBO_INCLUDE_DIR})
+			list(APPEND RENDERER_LIBRARIES ${JPEG_LIBRARIES})
+			include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
 
 			# Check for libjpeg-turbo v1.3
 			include(CheckFunctionExists)
-			set(CMAKE_REQUIRED_INCLUDES ${JPEGTURBO_INCLUDE_DIR})
-			set(CMAKE_REQUIRED_LIBRARIES ${JPEGTURBO_LIBRARY})
+			set(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
+			set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
 			# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
 			check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
 		else()
