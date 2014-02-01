@@ -69,7 +69,7 @@ cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is
 # Installation options
 set(INSTALL_DEFAULT_BASEDIR	""			CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
 set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
-set(INSTALL_DEFAULT_MODDIR	"share/etlegacy"	CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+set(INSTALL_DEFAULT_MODDIR	"lib/etlegacy"		CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
 
 if(INSTALL_DEFAULT_BASEDIR)
 	# On OS X the base dir is the .app's (or etlded binary's) parent path, and is set in the etl code itself
