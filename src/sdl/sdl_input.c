@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -33,9 +33,15 @@
 
 #ifdef BUNDLED_SDL
 	#include "SDL.h"
-#else
-#    include <SDL2/SDL.h>
+#ifdef _WIN32
+	#include "SDL_syswm.h"
 #endif
+#else
+	#include <SDL2/SDL.h>
+#ifdef _WIN32
+	#include <SDL2/SDL_syswm.h>
+#endif // _WIN32
+#endif // BUNDLED_SDL
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -1073,8 +1079,8 @@ void IN_DisableDingFilter()
 	{
 		SDL_SysWMinfo wmInfo;
 		SDL_GetVersion(&wmInfo.version);
-		SDL_GetWMInfo(&wmInfo);
-		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
+		SDL_GetWindowWMInfo(screen, &wmInfo);
+		SetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
 		LegacyWndProc = NULL;
 	}
 }
@@ -1090,9 +1096,9 @@ void IN_EnableDingFilter()
 	{
 		SDL_SysWMinfo wmInfo;
 		SDL_GetVersion(&wmInfo.version);
-		SDL_GetWMInfo(&wmInfo);
-		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
-		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
+		SDL_GetWindowWMInfo(screen, &wmInfo);
+		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC);
+		SetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
 	}
 }
 #endif
