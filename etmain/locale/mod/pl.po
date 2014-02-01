@@ -4223,8 +4223,8 @@ msgstr ""
 "^7Dla biezacych ustawien/pomocy, uzyj: ^3\\callvote <komenda> ?\n"
 "\n"
 
-msgid "Type ^3\stats <player_id>^7 to see stats on an active player.\n"
-msgstr "Napisz ^3\stats <id_gracza>^7 aby zobaczyc statystyki aktywnego gracza.\n"
+msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
+msgstr "Napisz ^3\\stats <id_gracza>^7 aby zobaczyc statystyki aktywnego gracza.\n"
 
 msgid "Spectators can't ready a team!\n"
 msgstr "Widzowie nie moga byc gotowi!\n"
@@ -4557,4 +4557,3 @@ msgstr "Server wylaczony\n"
 #, c-format
 msgid "The %s team is speclocked!"
 msgstr "Zespol %s jest nie do obserwowania!"
-
