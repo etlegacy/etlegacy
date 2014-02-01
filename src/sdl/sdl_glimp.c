@@ -64,6 +64,14 @@
 
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 
+#ifdef __APPLE__
+#define MACOS_X_GAMMA_RESET_FIX
+#ifdef MACOS_X_GAMMA_RESET_FIX
+static int gammaResetTime = 0;
+#endif
+#endif // __APPLE__
+
+
 /* Just hack it for now. */
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
@@ -1863,6 +1871,31 @@ void GLimp_EndFrame(void)
 			}
 		}
 
+#ifdef MACOS_X_GAMMA_RESET_FIX
+		// OS X 10.9 has a bug where toggling in or out of fullscreen mode
+		// will cause the gamma to reset to the system default after an unknown
+		// short delay. This little fix simply causes the gamma to be reset
+		// again after a hopefully-long-enough-delay of 3 seconds.
+		// Radar 15961845
+		gammaResetTime = Sys_Milliseconds() + 3000;
+#endif
+
 		r_fullscreen->modified = qfalse;
 	}
+
+
+#ifdef MACOS_X_GAMMA_RESET_FIX
+	if ((gammaResetTime != 0) && (gammaResetTime < Sys_Milliseconds()))
+	{
+		// Circuitous way of resetting the gamma to its current value.
+		char old[6] = {0};
+		Q_strncpyz(old, Cvar_VariableString("r_gamma"), 5);
+		if (strlen(old)) {
+			Cvar_Set("r_gamma", "1");
+			Cvar_Set("r_gamma", old);
+		}
+
+		gammaResetTime = 0;
+	}
+#endif
 }
