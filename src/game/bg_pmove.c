@@ -4411,7 +4411,7 @@ static void PM_Weapon(void)
 
 	if (pm->ps->weapon)
 	{
-		int      ammoAvailable;
+		int ammoAvailable;
 
 		ammoAvailable = PM_WeaponAmmoAvailable(pm->ps->weapon);
 

@@ -184,7 +184,9 @@ if(UNIX)
 		# 10.7 is really an arbitrary choice (it should in theory work back to 10.5). The main point is if
 		# we don't specify a target, it will be require the OS version used at compile time.
 		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
-		set(CMAKE_CXX_FLAGS "--sysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
+		execute_process(COMMAND xcode-select -p OUTPUT_VARIABLE XCODE_DEVELOPER_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+		set(CMAKE_OSX_SYSROOT "${XCODE_DEVELOPER_PATH}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk")
+		set(CMAKE_CXX_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
 		
 		if(BUILD_CLIENT)
 			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon")
@@ -442,6 +444,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 	force_rescan_library(SDL32)
 	force_rescan_library(CURL)
 	force_rescan_library(JPEG)
+	force_rescan_library(JPEGTURBO)
 	# TODO: recheck optional libs
 	set(OLD_CROSS_COMPILE32 ${CROSS_COMPILE32} CACHE INTERNAL "Previous value for CROSS_COMPILE32")
 	message(STATUS "Libraries rescanned")
@@ -519,16 +522,29 @@ if(BUILD_CLIENT)
 	endif(APPLE)
 
 	if(NOT BUNDLED_JPEG)
-		find_package(JPEG 8 REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${JPEG_LIBRARIES})
-		include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
+		find_package(JPEGTURBO)
+		if(JPEGTURBO_FOUND)
+			list(APPEND RENDERER_LIBRARIES ${JPEG_LIBRARIES})
+			include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
 
-		# Check for libjpeg v8
-		include(CheckFunctionExists)
-		set(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
-		set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
-		# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
-		check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
+			# Check for libjpeg-turbo v1.3
+			include(CheckFunctionExists)
+			set(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
+			set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
+			# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
+			check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
+		else()
+			find_package(JPEG 8 REQUIRED)
+			list(APPEND RENDERER_LIBRARIES ${JPEG_LIBRARIES})
+			include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
+
+			# Check for libjpeg v8
+			include(CheckFunctionExists)
+			set(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
+			set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
+			# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
+			check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
+		endif()
 	else()
 		list(APPEND RENDERER_LIBRARIES ${JPEG_BUNDLED_LIBRARIES})
 		include_directories(SYSTEM ${JPEG_BUNDLED_INCLUDE_DIR})
@@ -1070,6 +1086,9 @@ if(UNIX)
 	)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
+	)
+		install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docs/linux/man/man6/"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man6"
 	)
 else(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"

@@ -833,6 +833,8 @@ struct gclient_s
 	int medals;
 	float acc;
 
+	int flametime; // flamethrower exploit fix
+
 	qboolean hasaward;
 	qboolean wantsscore;
 	qboolean maxlivescalced;
@@ -2017,6 +2019,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 // g_config.c
 qboolean G_configSet(const char *configname);
+void G_ConfigCheckLocked();
 void G_PrintConfigs(gentity_t *ent);
 
 // g_match.c

@@ -256,7 +256,7 @@ static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, floa
 	if (projectedRadius != 0)
 	{
 		//ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
-		flod     = projectedRadius * r_lodScale->value * modelScale;
+		flod = projectedRadius * r_lodScale->value * modelScale;
 	}
 	else
 	{
@@ -1058,7 +1058,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 		if (isTorso)
 		{
 			int j;
-			
+
 			sh = (short *)cTBonePtr->angles;
 			pf = tangles;
 			ANGLES_SHORT_TO_FLOAT(pf, sh);

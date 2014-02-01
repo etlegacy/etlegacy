@@ -178,7 +178,6 @@ qboolean BoundsIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t mins
 qboolean BoundsIntersectSphere(const vec3_t mins, const vec3_t maxs, const vec3_t origin, vec_t radius);
 qboolean BoundsIntersectPoint(const vec3_t mins, const vec3_t maxs, const vec3_t origin);
 void MatrixTranspose(const matrix_t in, matrix_t out);
-void COM_StripExtension3(const char *src, char *dest, int destsize);
 void QuatFromMatrix(quat_t q, const matrix_t m);
 void ZeroBounds(vec3_t mins, vec3_t maxs);
 void MatrixSetupTransformFromQuat(matrix_t m, const quat_t quat, const vec3_t origin);

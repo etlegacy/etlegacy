@@ -228,9 +228,6 @@ static qboolean GLimp_InitOpenGL3xContext()
 
 	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
 
-	// Check if we have to create a core profile.
-	// Core profiles are not necessarily compatible, so we have
-	// to request the desired version.
 	if (GLmajor < 2)
 	{
 		// missing shader support, switch to 1.x renderer

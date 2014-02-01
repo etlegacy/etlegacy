@@ -624,37 +624,6 @@ void MatrixTranspose(const matrix_t in, matrix_t out)
 #endif
 }
 
-/*
-============
-COM_StripExtension3
-
-RB: ioquake3 version
-============
-*/
-void COM_StripExtension3(const char *src, char *dest, int destsize)
-{
-	int length;
-
-	Q_strncpyz(dest, src, destsize);
-
-	length = strlen(dest) - 1;
-
-	while (length > 0 && dest[length] != '.')
-	{
-		length--;
-
-		if (dest[length] == '/')
-		{
-			return;             // no extension
-		}
-	}
-
-	if (length)
-	{
-		dest[length] = 0;
-	}
-}
-
 void QuatFromMatrix(quat_t q, const matrix_t m)
 {
 #if 1
@@ -778,7 +747,7 @@ void MatrixFromQuat(matrix_t m, const quat_t q)
 
 	http://www.intel.com/cd/ids/developer/asmo-na/eng/293748.htm
 	*/
-	float x2, y2, z2, w2;
+	float x2, y2, z2; //w2;
 	float yy2, xy2;
 	float xz2, yz2, zz2;
 	float wz2, wy2, wx2, xx2;
@@ -786,7 +755,7 @@ void MatrixFromQuat(matrix_t m, const quat_t q)
 	x2 = q[0] + q[0];
 	y2 = q[1] + q[1];
 	z2 = q[2] + q[2];
-	w2 = q[3] + q[3];
+	//w2 = q[3] + q[3];
 
 	yy2 = q[1] * y2;
 	xy2 = q[0] * y2;
@@ -1126,10 +1095,10 @@ vec_t QuatNormalize(quat_t q)
 	{
 		float ilength = 1 / length;
 
-		q[0]   *= ilength;
-		q[1]   *= ilength;
-		q[2]   *= ilength;
-		q[3]   *= ilength;
+		q[0] *= ilength;
+		q[1] *= ilength;
+		q[2] *= ilength;
+		q[3] *= ilength;
 	}
 
 	return length;
@@ -1370,7 +1339,7 @@ replaces content of find by replace in dest
 */
 qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *replace)
 {
-	int  lstart, lfind, lreplace, lend;
+	int  lend;
 	char *s;
 	char backup[32000];             // big, but small enough to fit in PPC stack
 
@@ -1387,6 +1356,8 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 	}
 	else
 	{
+		int lstart, lfind, lreplace;
+
 		Q_strncpyz(backup, dest, lend + 1);
 		lstart   = s - dest;
 		lfind    = strlen(find);

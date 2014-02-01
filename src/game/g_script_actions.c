@@ -252,7 +252,7 @@ qboolean G_ScriptAction_ShaderRemapFlush(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 {
-	char     *pString, *token;
+	char *pString, *token;
 
 	if (params && (ent->scriptStatus.scriptFlags & SCFL_GOING_TO_MARKER))
 	{
@@ -631,8 +631,8 @@ G_ScriptAction_FollowSpline
 */
 qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 {
-	char     *pString, *token;
-	float    roll[2] = { 0, 0 };
+	char  *pString, *token;
+	float roll[2] = { 0, 0 };
 
 	if (params && (ent->scriptStatus.scriptFlags & SCFL_GOING_TO_MARKER))
 	{
@@ -2272,8 +2272,8 @@ G_ScriptAction_Accum
 
 qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 {
-	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
-	int      bufferIndex;
+	char *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
+	int  bufferIndex;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -2541,8 +2541,8 @@ G_ScriptAction_GlobalAccum
 */
 qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 {
-	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
-	int      bufferIndex;
+	char *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
+	int  bufferIndex;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -4380,8 +4380,8 @@ G_ScriptAction_Cvar
 */
 qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 {
-	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH], cvarName[MAX_QPATH];
-	int      cvarValue;
+	char *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH], cvarName[MAX_QPATH];
+	int  cvarValue;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])

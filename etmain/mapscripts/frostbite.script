@@ -1,0 +1,979 @@
+//last edit: removed wait after transmit - Syd
+
+game_manager
+{
+	spawn
+	{
+	
+	
+		// Game rules
+		wm_axis_respawntime	30
+		wm_allied_respawntime	30
+		wm_number_of_objectives 6
+		wm_set_round_timelimit	15 //10
+
+		// Objectives
+		// 1: Transmit the Supply Documents
+		// 2: Destroy the Main Door
+		// 3: Destroy the Storage Wall
+		// 4: Destroy the Service Door
+		// 5: Axis Field Command
+		// 6: Allies Base of Operations
+
+		wm_set_main_objective		1	0
+		wm_set_main_objective		1	1
+
+		// Objective overview status indicators
+		//wm_objective_status <objective> <team (0=Axis, 1=Allies)> <status (0=neutral 1=complete 2=failed)>
+		wm_objective_status 1 1 0
+		wm_objective_status 1 0 0
+		wm_objective_status 2 1 0
+		wm_objective_status 2 0 0
+		wm_objective_status 3 1 0
+		wm_objective_status 3 0 0
+		wm_objective_status 4 1 0
+		wm_objective_status 4 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 5 0 0
+		wm_objective_status 6 1 0
+		wm_objective_status 6 0 0
+
+		// Stopwatch mode defending team (0=Axis, 1=Allies)
+		wm_set_defending_team	0
+
+		// Winner on expiration of round timer (0=Axis, 1=Allies)
+		wm_setwinner	0
+
+		wait 500
+		// spawns:
+		// Axis Barracks
+		// Axis Garage
+		// Allied Barracks
+		// Upper Complex
+		setautospawn "Axis Barracks" 0
+		setautospawn "Upper Complex" 1
+		alertentity axis_garage_spawns //dont start active (so initial spawn is in barracks)
+
+
+		disablespeaker record_music
+		disablespeaker record_music_broken
+
+
+		// wait for everything to settle
+		wait 500
+
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "frostbite_axis_entrances_defend"
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "frostbite_allies_entrances_destroy"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "frostbite_axis_entrances_defend"
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "frostbite_allies_entrances_destroy"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+	}
+
+	trigger allies_transmit
+	{
+	        wm_announce "The Allies have transmitted the Supply Documents!" 
+		wm_setwinner 1
+		//wait 1500
+		wm_endround
+	}
+
+	trigger main_door_destroyed
+	{
+		wm_announce "The Main Door has been breached!" 
+		wm_objective_status 2 1 1
+		wm_objective_status 2 0 2
+		
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "frostbite_axis_entrance1_destroyed"
+		wm_teamvoiceannounce 1 "frostbite_allies_entrance1_destroyed"
+
+		wm_removeteamvoiceannounce 0 "frostbite_axis_entrances_defend"
+		wm_removeteamvoiceannounce 1 "frostbite_allies_entrances_destroy"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger storage_wall_destroyed
+	{
+		wm_announce "Storage Wall destroyed!" 
+		wm_objective_status 3 1 1
+		wm_objective_status 3 0 2
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "frostbite_axis_entrance2_destroyed"
+		wm_teamvoiceannounce 1 "frostbite_allies_entrance2_destroyed"
+
+		wm_removeteamvoiceannounce 0 "frostbite_axis_entrances_defend"
+		wm_removeteamvoiceannounce 1 "frostbite_allies_entrances_destroy"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger service_door_destroyed
+	{
+		wm_announce "The Service Door has been breached!" 
+		wm_objective_status 4 1 1
+		wm_objective_status 4 0 2
+		
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_objective_destroyed"
+		wm_teamvoiceannounce 1 "allies_hq_objective_destroyed"
+		// *---------------------------------------------------------------------------------*		
+	}
+
+}
+
+axis_lms_wobj
+{
+	spawn
+	{
+		remove
+	}
+}
+
+axis_lms_spawns
+{
+	spawn
+	{
+		remove
+	}
+}
+
+
+/////////////////////////////////////////////////
+// Doors
+/////////////////////////////////////////////////
+
+main_door
+{
+	spawn
+	{
+		constructible_class 3
+	}
+	death
+	{
+		trigger game_manager main_door_destroyed
+	}
+}
+
+service_door
+{
+	spawn
+	{
+		constructible_class 3
+	}
+	death
+	{
+		trigger game_manager service_door_destroyed
+	}
+}
+
+wall
+{
+	spawn
+	{
+		constructible_class 3
+	}
+	death
+	{
+		alertentity wall_rubble
+		trigger storage_door_controls die
+		trigger moving_storage_door die
+		trigger game_manager storage_wall_destroyed
+	}
+}
+
+storage_door_controls
+{
+	spawn
+	{
+		accum 1 set 1
+	}
+	trigger ready
+	{
+		accum 1 set 1
+	}
+	trigger activate
+	{
+		accum 1 abort_if_not_equal 1
+		accum 1 set 0
+		trigger moving_storage_door open
+		trigger moving_storage_door close
+	}
+	trigger die
+	{
+		setstate storage_door_controls invisible
+		remove self
+	}
+}
+
+moving_storage_door
+{
+	spawn
+	{
+		// 0 = shut, 1 = open
+		accum 1 set 0
+	}
+	trigger open
+	{
+		accum 1 abort_if_equal 1
+		resetscript
+		trigger storage_button in
+		wait 500
+		togglespeaker storage_door_sound1
+		enablespeaker storage_door_sound2
+		gotomarker storage_door_open 32 wait
+		disablespeaker storage_door_sound2
+		togglespeaker storage_door_sound3
+		accum 1 set 1
+		wait 1000
+		trigger storage_door_controls ready
+	}
+	trigger close
+	{
+		accum 1 abort_if_equal 0
+		resetscript
+		trigger storage_button out
+		wait 500
+		togglespeaker storage_door_sound1
+		enablespeaker storage_door_sound2
+		gotomarker storage_door_closed 32 wait
+		disablespeaker storage_door_sound2
+		togglespeaker storage_door_sound3
+		accum 1 set 0
+		wait 1000
+		trigger storage_door_controls ready
+	}
+	trigger die
+	{
+		remove self
+	}
+}
+
+storage_button
+{
+	trigger in
+	{
+		togglespeaker storage_button_sound
+		gotomarker storage_button_in 32
+	}
+	trigger out
+	{
+		togglespeaker storage_button_sound
+		gotomarker storage_button_out 32
+	}
+}
+
+/////////////////////////////////////////////////
+// Docs
+/////////////////////////////////////////////////
+
+docs
+{
+      trigger stolen 
+      { 
+         //wm_announce "Allies have stolen the Supply Documents!" 
+         setstate docs_cm_marker invisible 
+      } 
+
+      trigger returned 
+      { 
+         //wm_announce "Supply Documents returned!" 
+         setstate docs_cm_marker default 
+      } 
+
+      trigger captured 
+      { 
+      } 
+}
+
+transmitter
+{
+	death
+	{
+		trigger game_manager allies_transmit
+	}
+}
+
+
+/////////////////////////////////////////////////
+// Spawn stuff
+/////////////////////////////////////////////////
+spawnpost_built
+{
+	spawn
+	{
+		wait 50
+		constructible_class	2
+		trigger spawnpost_built setup
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		trigger spawnpost_built_model trans
+		trigger spawnpost_damaged_model hide
+		trigger spawnpost_closed_model hide
+	}
+
+	built final
+	{
+		trigger spawnpost_built_model show
+		trigger spawnpost_damaged_model enable
+		trigger spawnpost_closed_model disable
+		trigger spawnpost_built_model enable_allied_features
+		trigger upper_complex_wobj on
+
+		enablespeaker allies_compost_sound
+	}
+
+	decayed final
+	{
+		trigger spawnpost_built_model hide
+		trigger spawnpost_damaged_model show
+		trigger spawnpost_closed_model show
+	}
+
+	death
+	{
+		trigger spawnpost_built_model hide
+		trigger spawnpost_damaged_model show
+		trigger spawnpost_built_model disable_allied_features
+		trigger upper_complex_wobj off
+
+		disablespeaker allies_compost_sound
+	}
+}
+
+spawnpost_closed_model
+{
+	spawn
+	{
+		accum 0 set 0
+	}
+
+	trigger hide
+	{
+		setstate spawnpost_closed invisible
+		setstate spawnpost_closed_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 1
+		setstate spawnpost_closed default
+		setstate spawnpost_closed_model default
+	}
+
+	trigger disable
+	{
+		accum 0 set 1
+	}
+}
+
+spawnpost_damaged_model
+{
+	spawn
+	{
+		accum 0 set 0
+		wait 200
+		setstate spawnpost_damaged invisible		
+		setstate spawnpost_damaged_model invisible		
+	}
+
+	trigger hide
+	{
+		setstate spawnpost_damaged invisible
+		setstate spawnpost_damaged_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 1
+		setstate spawnpost_damaged default
+		setstate spawnpost_damaged_model default
+	}
+
+	trigger disable
+	{
+		accum 0 set 1
+	}
+}
+
+spawnpost_built_model
+{
+	spawn
+	{
+		accum 1 set 0
+		accum 2 set 0 // state of command post as far as the VO is concerned (0=not built, 1=built) - Wils
+		wait 200
+		setstate spawnpost_built_model invisible
+	}
+
+	trigger show
+	{
+		setstate spawnpost_built_model default
+		enablespeaker spawnpost_sound
+	}
+
+	trigger hide
+	{
+		setstate spawnpost_built_model invisible
+		disablespeaker spawnpost_sound
+	}
+
+	trigger trans
+	{
+		setstate spawnpost_built_model underconstruction
+	}
+
+	trigger enable_allied_features
+	{
+		// allies built it
+		accum 1 set 1 // Is this ever used? - Wils
+		accum 2 set 1 // State of com post as far as VO is concerned (1=built)
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_objective_status	6 1 1
+		wm_objective_status	6 0 2
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		wm_removeteamvoiceannounce 0 "frostbite_axis_entrances_defend"
+		wm_removeteamvoiceannounce 1 "frostbite_allies_entrances_destroy"		
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger disable_allied_features
+	{
+		// allies lost it
+		accum 2 set 0 // state of com post as far as VO is concerned (0=destroyed)
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_objective_status	6 1 0
+		wm_objective_status	6 0 0
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+	}
+}
+
+upper_complex_wobj
+{
+	spawn
+	{
+		wait 50
+		setstate upper_complex_wobj invisible
+		setstate upper_complex_spawns invisible
+	}
+
+	trigger on
+	{
+		setstate upper_complex_wobj default
+		setstate upper_complex_spawns default
+		alertentity upper_complex_spawns
+//		setautospawn "Upper Complex" 1
+	}
+
+	trigger off
+	{
+		setstate upper_complex_wobj invisible
+		setstate upper_complex_spawns invisible
+		alertentity upper_complex_spawns
+//		setautospawn "Allied Barracks" 1
+	}
+}
+
+upper_complex_spawns
+{
+	spawn
+	{
+		wait 50
+		setstate upper_complex_spawns invisible
+	}
+}
+
+/////////////////////////////////////////////////
+// Axis Command Post
+/////////////////////////////////////////////////
+axis_compost_built
+{
+	spawn
+	{
+		wait 50
+		constructible_class	2
+		trigger axis_compost_built setup
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		trigger axis_compost_built_model trans
+		trigger axis_compost_damaged_model hide
+		trigger axis_compost_closed_model hide
+	}
+
+	built final
+	{
+		trigger axis_compost_built_model show
+		trigger axis_compost_damaged_model enable
+		trigger axis_compost_closed_model disable
+		trigger axis_compost_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		trigger axis_compost_built_model hide
+		trigger axis_compost_damaged_model show
+		trigger axis_compost_closed_model show
+	}
+
+	death
+	{
+		trigger axis_compost_built_model hide
+		trigger axis_compost_damaged_model show
+		trigger axis_compost_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_compost_closed_model
+{
+	spawn
+	{
+		accum 0 set 0
+	}
+
+	trigger hide
+	{
+		setstate axis_compost_closed invisible
+		setstate axis_compost_closed_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 1
+		setstate axis_compost_closed default
+		setstate axis_compost_closed_model default
+	}
+
+	trigger disable
+	{
+		accum 0 set 1
+	}
+}
+
+axis_compost_damaged_model
+{
+	spawn
+	{
+		accum 0 set 0
+		wait 200
+		setstate axis_compost_damaged invisible		
+		setstate axis_compost_damaged_model invisible		
+	}
+
+	trigger hide
+	{
+		setstate axis_compost_damaged invisible
+		setstate axis_compost_damaged_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 1
+		setstate axis_compost_damaged default
+		setstate axis_compost_damaged_model default
+	}
+
+	trigger disable
+	{
+		accum 0 set 1
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		accum 1 set 0
+		accum 2 set 0 // state of command post as far as the VO is concerned (0=not built, 1=built) - Wils
+		wait 200
+		setstate axis_compost_built_model invisible
+	}
+
+	trigger show
+	{
+		setstate axis_compost_built_model default
+		enablespeaker axis_compost_sound
+	}
+
+	trigger hide
+	{
+		setstate axis_compost_built_model invisible
+		disablespeaker axis_compost_sound
+	}
+
+	trigger trans
+	{
+		setstate axis_compost_built_model underconstruction
+	}
+
+	trigger enable_axis_features
+	{
+		// axis built it
+		accum 1 set 1 // Is this ever used? - Wils
+		accum 2 set 1 // State of com post as far as VO is concerned (1=built)
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_objective_status	5 0 1
+		wm_objective_status	5 1 2
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger disable_axis_features
+	{
+		// axis lost it
+		accum 2 set 0 // state of com post as far as VO is concerned (0=destroyed)
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_objective_status	5 1 0
+		wm_objective_status	5 0 0
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+	}
+}
+
+
+/////////////////////////////////////////////////
+// Misc stuff
+/////////////////////////////////////////////////
+
+main_door_flag
+{
+	trigger disable
+	{
+		disablespeaker main_door_flag_sound
+	}
+}
+transmitter_flag
+{
+	trigger disable
+	{
+		disablespeaker transmitter_flag_sound
+	}
+}
+courtyard_flag
+{
+	trigger disable
+	{
+		disablespeaker courtyard_flag_sound
+	}
+}
+
+
+angled_truck
+{
+	spawn
+	{
+		faceangles 0 45 0 1
+	}
+}
+
+
+// accum 1
+// 0 = original record
+// 1 = damaged record
+// accum 2
+// 0 = off
+// 1 = playing
+gramophone
+{
+	spawn
+	{
+		accum 1 set 0
+		accum 2 set 0
+	}
+	
+	trigger damage_record
+	{
+		accum 1 set 1
+		setstate record_broken default
+		trigger gramophone damage_music
+	}
+	trigger damage_music
+	{
+		accum 2 abort_if_not_equal 1
+		togglespeaker record_music
+		accum 2 set 0
+	}
+
+	trigger fix_record
+	{
+		accum 1 set 0
+		setstate record_broken invisible
+		trigger gramophone fix_music
+	}
+	trigger fix_music
+	{
+		accum 2 abort_if_not_equal 1
+		togglespeaker record_music_broken
+		accum 2 set 0
+	}
+	
+	trigger activate
+	{
+		trigger gramophone turn_off
+		trigger gramophone turn_on
+	}
+	
+	trigger turn_off
+	{
+		accum 2 abort_if_equal 0
+		resetscript
+		accum 2 set 0
+		trigger gramophone original_off
+		trigger gramophone broken_off
+	}
+	
+	trigger original_off
+	{
+		accum 1 abort_if_equal 1
+		resetscript
+		trigger record stop
+		togglespeaker record_music
+		togglespeaker record_scratch
+	}
+	
+	trigger broken_off
+	{
+		accum 1 abort_if_equal 0
+		resetscript
+		trigger record_broken stop
+		togglespeaker record_music_broken
+	}
+
+	trigger turn_on
+	{
+		accum 2 abort_if_equal 1
+		resetscript
+		accum 2 set 1
+		trigger gramophone original_on
+		trigger gramophone broken_on
+	}
+	
+	trigger original_on
+	{
+		accum 1 abort_if_equal 1
+		resetscript
+		trigger record start
+		togglespeaker record_scratch
+		wait 430
+		togglespeaker record_music
+	}
+	
+	trigger broken_on
+	{
+		accum 1 abort_if_equal 0
+		resetscript
+		trigger record_broken start
+		togglespeaker record_music_broken
+	}
+	
+	
+}
+
+
+record
+{
+    	spawn
+    	{
+	        constructible_class 1
+	        constructible_chargebarreq 0.3
+		constructible_constructxpbonus 0
+		constructible_destructxpbonus 0
+		constructible_health 10
+		constructible_weaponclass 1
+		constructible_duration 2500
+	}
+
+	trigger start
+	{
+		setrotation 0 -80 0
+	}
+
+	trigger stop
+	{
+		stoprotation
+	}
+	
+	death
+	{
+		trigger record stop
+		trigger gramophone damage_record
+	}
+	
+	built
+	{
+		trigger gramophone fix_record
+	}
+}
+
+record_broken
+{
+	spawn
+	{
+		setstate record_broken invisible
+	}
+
+	trigger start
+	{
+		setrotation 0 -80 0
+	}
+
+	trigger stop
+	{
+		stoprotation
+	}
+	
+}
+
+
+gramophone_toi
+{
+	spawn
+	{
+		//setstate gramophone_toi invisible
+	}
+}
+
+
+
+// ============================================================================
+// Platform MG42 Nest
+// ============================================================================
+platformmg42_script 
+{ 
+   spawn 
+   { 
+      wait 200 
+      constructible_class 2 
+      trigger self startup 
+   } 
+
+   buildstart final 
+   { 
+   } 
+
+   built final 
+   { 
+      setstate platformmg42_sbags default 
+      setstate platformmg42 default 
+      setstate platformmg42_materials invisible 
+
+      // Some kind of UI pop-up to alert players 
+	wm_announce	"Axis team has constructed the Platform MG Nest!"
+   } 
+
+   decayed final 
+   { 
+      trigger self startup 
+   } 
+
+   death 
+   { 
+      trigger self startup 
+      // Some kind of UI pop-up to alert players 
+	wm_announce	"Allied team has destroyed the Platform MG Nest!"
+   } 
+
+   trigger startup 
+   { 
+      setstate platformmg42_sbags invisible 
+      setstate platformmg42 invisible 
+      setstate platformmg42_materials default 
+      repairmg42 platformmg42 
+   } 
+} 
+
+
+

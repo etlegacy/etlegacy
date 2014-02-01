@@ -360,7 +360,6 @@ static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean sho
 	}
 }
 
-
 /*
 ** InitOpenGL
 **
@@ -423,11 +422,6 @@ static qboolean InitOpenGL(void)
 	return qtrue;
 }
 
-/*
-==================
-GL_CheckErrors
-==================
-*/
 void GL_CheckErrors_(const char *fileName, int line)
 {
 	int  err;
@@ -478,9 +472,6 @@ void GL_CheckErrors_(const char *fileName, int line)
 	ri.Error(ERR_FATAL, "caught OpenGL error: %s in file %s line %i", s, fileName, line);
 }
 
-/*
-** R_GetModeInfo
-*/
 typedef struct vidmode_s
 {
 	const char *description;
@@ -548,9 +539,6 @@ qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
 	return qtrue;
 }
 
-/*
-** R_ModeList_f
-*/
 static void R_ModeList_f(void)
 {
 	int i;
@@ -575,7 +563,6 @@ screenshots get written in fs_homepath + fs_gamedir
 three commands: "screenshot", "screenshotJPEG" and "screenshotPNG"
 
 the format is etxreal-YYYY_MM_DD-HH_MM_SS-MS.tga/jpeg/png
-
 ==============================================================================
 */
 
@@ -705,9 +692,7 @@ RB_TakeScreenshotCmd
 */
 const void *RB_TakeScreenshotCmd(const void *data)
 {
-	const screenshotCommand_t *cmd;
-
-	cmd = (const screenshotCommand_t *)data;
+	const screenshotCommand_t *cmd = (const screenshotCommand_t *)data;
 
 	switch (cmd->format)
 	{
@@ -919,7 +904,7 @@ static void R_GenerateMaterialFile_f(void)
             FS_Rename(fileName2, cleanName2);
         }
 
-        COM_StripExtension3(cleanName, cleanName, sizeof(cleanName));
+        COM_StripExtension(cleanName, cleanName, sizeof(cleanName));
         if(!Q_stristr(cleanName, "_nm") && !Q_stristr(cleanName, "blend"))
         {
             Q_strncpyz(baseName, cleanName, sizeof(baseName));
@@ -966,14 +951,9 @@ static void R_GenerateMaterialFile_f(void)
 
 //============================================================================
 
-/*
-==================
-RB_TakeVideoFrameCmd
-==================
-*/
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
-	const videoFrameCommand_t *cmd;
+	const videoFrameCommand_t *cmd = (const videoFrameCommand_t *)data;
 	GLint                     packAlign;
 	int                       lineLen, captureLineLen;
 	byte                      *pixels;
@@ -981,8 +961,6 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 	int                       outputSize;
 	int                       j;
 	int                       aviLineLen;
-
-	cmd = (const videoFrameCommand_t *)data;
 
 	// RB: it is possible to we still have a videoFrameCommand_t but we already stopped
 	// video recording
@@ -1041,9 +1019,6 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 //============================================================================
 
-/*
-** GL_SetDefaultState
-*/
 void GL_SetDefaultState(void)
 {
 	int i;
@@ -1357,11 +1332,6 @@ static void GLSL_restart_f(void)
 	GLSL_InitGPUShaders();
 }
 
-/*
-===============
-R_Register
-===============
-*/
 void R_Register(void)
 {
 	// OpenGL context selection
@@ -1748,11 +1718,6 @@ void R_Register(void)
 	ri.Cmd_AddCommand("glsl_restart", GLSL_restart_f);
 }
 
-/*
-===============
-R_Init
-===============
-*/
 void R_Init(void)
 {
 	int i;
@@ -1856,11 +1821,6 @@ void R_Init(void)
 	ri.Printf(PRINT_ALL, "----- finished R_Init -----\n");
 }
 
-/*
-===============
-RE_Shutdown
-===============
-*/
 void RE_Shutdown(qboolean destroyWindow)
 {
 	ri.Printf(PRINT_ALL, "RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
@@ -1953,7 +1913,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	tr.registered = qfalse;
 }
 
-
 /*
 =============
 RE_EndRegistration
@@ -1984,12 +1943,6 @@ static void RE_PurgeCache(void)
 	*/
 }
 
-
-/*
-=====================
-GetRefAPI
-=====================
-*/
 #ifdef USE_RENDERER_DLOPEN
 Q_EXPORT refexport_t * QDECL GetRefAPI(int apiVersion, refimport_t *rimp)
 #else
@@ -2109,12 +2062,10 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.AnimNumFrames     = RE_AnimNumFrames;
 	re.AnimFrameRate     = RE_AnimFrameRate;
 #endif
-
 	// XreaL END
 
 	return &re;
 }
-
 
 #ifdef USE_RENDERER_DLOPEN
 void QDECL Com_Printf(const char *msg, ...)

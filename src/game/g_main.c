@@ -163,7 +163,6 @@ vmCvar_t match_readypercent;
 vmCvar_t match_timeoutcount;
 vmCvar_t match_timeoutlength;
 vmCvar_t match_warmupDamage;
-vmCvar_t team_maxPanzers;
 vmCvar_t team_maxplayers;
 vmCvar_t team_nocontrols;
 vmCvar_t server_motd0;
@@ -617,7 +616,10 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 			G_Printf(S_COLOR_RED "Unable to Initialize Omni-Bot.\n");
 		}
 
-		G_Printf("Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		if (g_OmniBotEnable.integer >= 1)
+		{
+			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		}
 #endif
 	}
 		return 0;
@@ -4753,6 +4755,8 @@ void G_RunFrame(int levelTime)
 
 	// get any cvar changes
 	G_UpdateCvars();
+
+	G_ConfigCheckLocked();
 
 	for (i = 0; i < level.num_entities; i++)
 	{

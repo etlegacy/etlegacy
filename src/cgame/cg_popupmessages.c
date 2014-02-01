@@ -474,7 +474,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 
 #define PM_ICON_SIZE_NORMAL 20
 #define PM_ICON_SIZE_SMALL 12
-#define ICON_Y_OFFSET(y)  y+3
+#define ICON_Y_OFFSET(y)  y + 3
 
 void CG_DrawPMItems(rectDef_t rect, int style)
 {

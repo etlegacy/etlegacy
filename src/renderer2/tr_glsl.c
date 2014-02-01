@@ -2501,6 +2501,7 @@ void GLSL_ShutdownGPUShaders(void)
 			programInfo_t *prog = hashTable[i];
 			GLSL_DeleteShaderProramInfo(prog);
 			Com_Dealloc(prog);
+			hashTable[i] = NULL;
 		}
 	}
 

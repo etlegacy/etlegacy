@@ -763,7 +763,7 @@ void QDECL CG_DPrintf(const char *msg, ...)
 {
 	va_list argptr;
 	char    text[1024];
-	
+
 	if (!developer.value)
 	{
 		return;

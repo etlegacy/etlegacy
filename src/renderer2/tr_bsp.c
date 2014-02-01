@@ -721,7 +721,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 		char **lightmapFiles;
 
 		Q_strncpyz(mapName, bspName, sizeof(mapName));
-		COM_StripExtension3(mapName, mapName, sizeof(mapName));
+		COM_StripExtension(mapName, mapName, sizeof(mapName));
 
 		if (tr.worldHDR_RGBE)
 		{
@@ -3410,7 +3410,7 @@ static void R_LoadAreaPortals(const char *bspName)
     bspAreaPortal_t *ap;
 
     Q_strncpyz(fileName, bspName, sizeof(fileName));
-    COM_StripExtension3(fileName, fileName, sizeof(fileName));
+    COM_StripExtension(fileName, fileName, sizeof(fileName));
     Q_strcat(fileName, sizeof(fileName), ".areaprt");
 
     bufferLen = ri.FS_ReadFile(fileName, (void **)&buffer);
@@ -9324,7 +9324,7 @@ void RE_LoadWorldMap(const char *name)
 	Q_strncpyz(s_worldData.name, name, sizeof(s_worldData.name));
 
 	Q_strncpyz(s_worldData.baseName, COM_SkipPath(s_worldData.name), sizeof(s_worldData.name));
-	COM_StripExtension3(s_worldData.baseName, s_worldData.baseName, sizeof(s_worldData.baseName));
+	COM_StripExtension(s_worldData.baseName, s_worldData.baseName, sizeof(s_worldData.baseName));
 
 	startMarker = (byte *)ri.Hunk_Alloc(0, h_low);
 

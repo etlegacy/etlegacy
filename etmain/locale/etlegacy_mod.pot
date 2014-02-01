@@ -224,7 +224,7 @@ msgstr ""
 msgid "^3SPECTATOR"
 msgstr ""
 
-#: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:683
+#: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
 msgid "AXIS"
 msgstr ""
 
@@ -237,7 +237,7 @@ msgstr ""
 msgid "FIRST BLOOD"
 msgstr ""
 
-#: src/cgame/cg_scoreboard.c:673 src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:814 src/cgame/cg_scoreboard.c:828
 msgid "ALLIES"
 msgstr ""
 
@@ -4470,4 +4470,75 @@ msgid "%i campaigns found:\n"
 msgstr ""
 
 msgid "No campaigns found.\n"
+msgstr ""
+
+msgid "Show Descriptive Text:"
+msgstr ""
+
+msgid "'s Akimbo Luger 9mms"
+msgstr ""
+
+msgid "Cheats are not enabled on this server.\n"
+msgstr ""
+
+msgid "team: class is not available\n"
+msgstr ""
+
+msgid "^1Soldier^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Medic^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Engineer^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Field Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Covert Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "You must be alive to use this command.\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "Can't follow a player on an enemy team!\n"
+msgstr ""
+
+msgid "Can't follow while not in limbo if on a team!\n"
+msgstr ""
+
+msgid "Partial Name Matches more than 1 Player.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
+msgstr ""
+
+msgid "^1Axis^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
+msgstr ""
+
+msgid "^4Allies^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Server quit\n"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2766
+#, c-format
+msgid "The %s team is speclocked!"
 msgstr ""

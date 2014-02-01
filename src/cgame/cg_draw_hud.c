@@ -1712,12 +1712,12 @@ CG_DrawTimersAlt
 */
 static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime, rectDef_t *roundtimer)
 {
-	char     *s;
-	qtime_t  time;
-	vec4_t   color  = { 0.625f, 0.625f, 0.6f, 1.0f };
-	int      tens;
-	char     *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
-	               va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
+	char    *s;
+	qtime_t time;
+	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
+	int     tens;
+	char    *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
+	              va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
 	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
 	int seconds = msec / 1000;
 	int mins    = seconds / 60;

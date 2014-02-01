@@ -208,7 +208,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		radius               = projection[3];
 
 		Vector4Set(projection, 0.0f, 0.0f, -1.0f, radius * 2.0f);
-		iDist      = 1.0f / (radius * 2.0f);
+		iDist = 1.0f / (radius * 2.0f);
 
 		// set corner
 		VectorSet(xyz, points[0][0] - radius, points[0][1] - radius, points[0][2] + radius);
@@ -408,7 +408,6 @@ qboolean R_TestDecalBoundingSphere(decalProjector_t *dp, vec3_t center, float ra
 {
 	vec3_t delta;
 	float  distance2;
-
 
 	VectorSubtract(center, dp->center, delta);
 	distance2 = DotProduct(delta, delta);
@@ -850,8 +849,7 @@ adds a decal surface to the scene
 */
 void R_AddDecalSurface(decal_t *decal)
 {
-	int        i;     //, dlightMap;
-	float      fade;
+	//int dlightMap;
 	srfDecal_t *srf;
 	//srfGeneric_t   *gen;
 
@@ -873,7 +871,10 @@ void R_AddDecalSurface(decal_t *decal)
 	// fade colors
 	if (decal->fadeStartTime < tr.refdef.time && decal->fadeStartTime < decal->fadeEndTime)
 	{
-		fade = (float)(decal->fadeEndTime - tr.refdef.time) / (float)(decal->fadeEndTime - decal->fadeStartTime);
+
+		float fade = (float)(decal->fadeEndTime - tr.refdef.time) / (float)(decal->fadeEndTime - decal->fadeStartTime);
+		int   i;
+
 		for (i = 0; i < decal->numVerts; i++)
 		{
 			decal->verts[i].modulate[0] *= fade;

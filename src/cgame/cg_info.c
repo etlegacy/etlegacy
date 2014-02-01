@@ -495,8 +495,7 @@ void CG_GameStatsDraw(void)
 	}
 	else
 	{
-		int         realX = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
-		int         i, x = realX + 4, y = GS_Y, h;
+		int         i, x = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2), y = GS_Y, h;
 		gameStats_t *gs = &cgs.gamestats;
 
 		vec4_t bgColor     = COLOR_BG;      // window
@@ -573,53 +572,53 @@ void CG_GameStatsDraw(void)
 			return;
 		}
 
-		CG_DrawRect(realX, y, GS_W, h, 1, borderColor);
-		CG_FillRect(realX, y, GS_W, h, bgColor);
+		CG_DrawRect(x, y, GS_W, h, 1, borderColor);
+		CG_FillRect(x, y, GS_W, h, bgColor);
 
 		// Header
-		CG_FillRect(realX, y, GS_W, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(realX, y, GS_W, tSpacing + 4, 1, borderColorTitle);
+		CG_FillRect(x, y, GS_W, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(x, y, GS_W, tSpacing + 4, 1, borderColorTitle);
 
 		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, CG_TranslateString("PLAYER STATS"), 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("PLAYER STATS"), 0.0f, 0, hStyle, hFont);
 		y += 3;
 
 		y += 2;
 
 		// Weapon stats
 		y += 2;
-		CG_FillRect(realX, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(x, y, GS_W, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(x, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Weapon"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Weapon"), 0.0f, 0, hStyle2, hFont2);
 		x += 66;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Accuracy"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Accuracy"), 0.0f, 0, hStyle2, hFont2);
 		x += 53;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Hits / Shots"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Hits / Shots"), 0.0f, 0, hStyle2, hFont2);
 		x += 62;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Kills"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Kills"), 0.0f, 0, hStyle2, hFont2);
 		x += 29;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Deaths"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Deaths"), 0.0f, 0, hStyle2, hFont2);
 		x += 40;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Headshots"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Headshots"), 0.0f, 0, hStyle2, hFont2);
 
-		x  = realX + 4;
+		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 		y += 2;
 
 		y += 1;
 		if (gs->cWeapons == 0)
 		{
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("No weapon info available."), 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, CG_TranslateString("No weapon info available."), 0.0f, 0, tStyle, tFont);
 		}
 		else
 		{
 			for (i = 0; i < gs->cWeapons; i++)
 			{
 				y += tSpacing;
-				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, gs->strWS[i], 0.0f, 0, tStyle, tFont);
+				CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strWS[i], 0.0f, 0, tStyle, tFont);
 			}
 
 			if (gs->fHasStats)
@@ -628,7 +627,7 @@ void CG_GameStatsDraw(void)
 				for (i = 0; i < 4; i++)
 				{
 					y += tSpacing;
-					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, gs->strExtra[i], 0.0f, 0, tStyle, tFont);
+					CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strExtra[i], 0.0f, 0, tStyle, tFont);
 				}
 			}
 		}
@@ -643,59 +642,58 @@ void CG_GameStatsDraw(void)
 		// Rank/XP info
 		y += tSpacing;
 		y += 2;
-		CG_FillRect(realX, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(x, y, GS_W, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(x, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Rank"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Rank"), 0.0f, 0, hStyle2, hFont2);
 		x += 122;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
 
-		x = realX + 4;
-
+		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, gs->strRank, 0.0f, 0, tStyle, tFont);
+		CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strRank, 0.0f, 0, tStyle, tFont);
 
 		// Skill info
 		y += tSpacing;
 		y += 2;
-		CG_FillRect(realX, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(x, y, GS_W, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(x, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Skills"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Skills"), 0.0f, 0, hStyle2, hFont2);
 		x += 84;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Level"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Level"), 0.0f, 0, hStyle2, hFont2);
 		x += 40;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("XP / Next Level"), 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("XP / Next Level"), 0.0f, 0, hStyle2, hFont2);
 		if (cgs.gametype == GT_WOLF_CAMPAIGN)
 		{
 			x += 86;
-			CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Medals"), 0.0f, 0, hStyle2, hFont2);
+			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Medals"), 0.0f, 0, hStyle2, hFont2);
 		}
 
-		x = realX + 4;
-
+		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 		y += 1;
+
 		if (gs->cSkills == 0)
 		{
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("No skills acquired!"), 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, CG_TranslateString("No skills acquired!"), 0.0f, 0, tStyle, tFont);
 		}
 		else
 		{
 			for (i = 0; i < gs->cSkills; i++)
 			{
 				y += tSpacing;
-				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, gs->strSkillz[i], 0.0f, 0, tStyle, tFont);
+				CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strSkillz[i], 0.0f, 0, tStyle, tFont);
 			}
 
 		}
 	}
 }
 
-#define TS_X    -20     // spacing from right
+#define TS_X    -80     // spacing from right
 #define TS_Y    -60     // spacing from bottom
 #define TS_W    308
 
@@ -704,18 +702,15 @@ void CG_TopShotsDraw(void)
 	if (cgs.topshots.show == SHOW_OFF)
 	{
 		return;
-
 	}
 	else
 	{
-		int            x   = SCREEN_WIDTH + TS_X - TS_W, y = SCREEN_HEIGHT, h;
-		topshotStats_t *ts = &cgs.topshots;
-
-		vec4_t bgColor     = COLOR_BG;          // window
-		vec4_t borderColor = COLOR_BORDER;      // window
-
-		vec4_t bgColorTitle     = COLOR_BG_TITLE;   // titlebar
-		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
+		int            x                = Ccg_WideX(SCREEN_WIDTH) + TS_X - TS_W, y = SCREEN_HEIGHT, h;
+		topshotStats_t *ts              = &cgs.topshots;
+		vec4_t         bgColor          = COLOR_BG; // window
+		vec4_t         borderColor      = COLOR_BORDER; // window
+		vec4_t         bgColorTitle     = COLOR_BG_TITLE; // titlebar
+		vec4_t         borderColorTitle = COLOR_BORDER_TITLE; // titlebar
 
 		// Main header
 		int        hStyle  = ITEM_TEXTSTYLE_SHADOWED;
@@ -809,7 +804,7 @@ void CG_TopShotsDraw(void)
 		x += 32;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Player"), 0.0f, 0, hStyle2, hFont2);
 
-		x  = SCREEN_WIDTH + TS_X - TS_W + 4;
+		x  = Ccg_WideX(SCREEN_WIDTH) + TS_X - TS_W + 4;
 		y += 1;
 
 		if (ts->cWeapons == 0)
@@ -830,7 +825,7 @@ void CG_TopShotsDraw(void)
 	}
 }
 
-#define OBJ_X   -20     // spacing from right
+#define OBJ_X   -80     // spacing from right
 #define OBJ_Y   -60     // spacing from bottom
 #define OBJ_W   308
 
@@ -845,13 +840,11 @@ void CG_ObjectivesDraw()
 	}
 	else
 	{
-		int  i, status, x = 640 + OBJ_X - OBJ_W, y = 480, h;
-		int  lines = 0, count = 0;
-		char temp[1024], *s, *p;
-
-		vec4_t bgColor     = COLOR_BG;          // window
-		vec4_t borderColor = COLOR_BORDER;      // window
-
+		int    i, status, x = Ccg_WideX(SCREEN_WIDTH) + OBJ_X - OBJ_W, y = SCREEN_HEIGHT, h;
+		int    lines = 0, count = 0;
+		char   temp[1024], *s, *p;
+		vec4_t bgColor          = COLOR_BG;     // window
+		vec4_t borderColor      = COLOR_BORDER; // window
 		vec4_t bgColorTitle     = COLOR_BG_TITLE;   // titlebar
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
@@ -880,7 +873,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 8, sizeof(temp), FONT_TEXT);
 			p = temp;
 			while (*p)
 			{
@@ -904,7 +897,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 			p = temp;
 			while (*p)
 			{
@@ -929,7 +922,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 			p = temp;
 			while (*p)
 			{
@@ -963,7 +956,7 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 				p = temp;
 				while (*p)
 				{
@@ -996,7 +989,7 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 28, sizeof(temp), FONT_TEXT);
 				p = temp;
 				while (*p)
 				{
@@ -1069,7 +1062,7 @@ void CG_ObjectivesDraw()
 		if (!count)
 		{
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "Unable to load objectives", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, "Unable to load objectives", 0.0f, 0, tStyle, tFont);
 			return;
 		}
 
@@ -1082,7 +1075,7 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 8, sizeof(temp), FONT_TEXT);
 			s = p = temp;
 			while (*p)
 			{
@@ -1090,7 +1083,7 @@ void CG_ObjectivesDraw()
 				{
 					*p++ = '\0';
 					y   += tSpacing;
-					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
 					s = p;
 				}
 				else
@@ -1109,9 +1102,10 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_DrawPic(x + 4, y + 2, 18, 12, cgs.media.alliedFlag);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^4Allies", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, "^4Allies", 0.0f, 0, tStyle, tFont);
 			s = p = temp;
 			while (*p)
 			{
@@ -1119,7 +1113,7 @@ void CG_ObjectivesDraw()
 				{
 					*p++ = '\0';
 					y   += tSpacing;
-					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
 					s = p;
 				}
 				else
@@ -1138,9 +1132,10 @@ void CG_ObjectivesDraw()
 			{
 				*s = '\n';
 			}
-			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+			CG_DrawPic(x + 4, y + 2, 18, 12, cgs.media.axisFlag);
+			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^1Axis", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, "^1Axis", 0.0f, 0, tStyle, tFont);
 			s = p = temp;
 			while (*p)
 			{
@@ -1148,7 +1143,7 @@ void CG_ObjectivesDraw()
 				{
 					*p++ = '\0';
 					y   += tSpacing;
-					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
+					CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, s, 0.0f, 0, tStyle, tFont);
 					s = p;
 				}
 				else
@@ -1175,17 +1170,19 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				status   = 0;
 				color[0] = '\0';
 				status   = atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
 				if (status == 1)
 				{
+					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.alliedFlag);
 					Q_strncpyz(color, "^2", sizeof(color));
 				}
 				else if (status == 2)
 				{
+					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.axisFlag);
 					Q_strncpyz(color, "^1", sizeof(color));
 				}
 
@@ -1196,9 +1193,7 @@ void CG_ObjectivesDraw()
 					{
 						*p++ = '\0';
 						y   += tSpacing;
-						CG_Text_Paint_Ext(x, y, tScale, tScale, tColor,
-						                  va("%s%s", color[0] ? color : "", s),
-						                  0.0f, 0, tStyle, tFont);
+						CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, va("%s%s", color[0] ? color : "", s), 0.0f, 0, tStyle, tFont);
 						s = p;
 					}
 					else
@@ -1226,17 +1221,19 @@ void CG_ObjectivesDraw()
 				{
 					*s = '\n';
 				}
-				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W, sizeof(temp), FONT_TEXT);
+				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				status   = 0;
 				color[0] = '\0';
 				status   = atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
 				if (status == 1)
 				{
+					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.axisFlag);
 					Q_strncpyz(color, "^2", sizeof(color));
 				}
 				else if (status == 2)
 				{
+					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.alliedFlag);
 					Q_strncpyz(color, "^1", sizeof(color));
 				}
 
@@ -1247,9 +1244,7 @@ void CG_ObjectivesDraw()
 					{
 						*p++ = '\0';
 						y   += tSpacing;
-						CG_Text_Paint_Ext(x, y, tScale, tScale, tColor,
-						                  va("%s%s", color[0] ? color : "", s),
-						                  0.0f, 0, tStyle, tFont);
+						CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, va("%s%s", color[0] ? color : "", s), 0.0f, 0, tStyle, tFont);
 						s = p;
 					}
 					else

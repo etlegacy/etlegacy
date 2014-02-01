@@ -2892,17 +2892,17 @@ void Com_Init(char *commandLine)
 	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
-	
+
 #if defined (__AROS__) || defined (__MORPHOS__)
 	com_ansiColor = Cvar_Get("com_ansiColor", "0", CVAR_ARCHIVE);
 #else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
 #endif
-	
+
 #if idppc
-	com_altivec        = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
+	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
 #endif
-	
+
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
 
 	com_hunkused      = Cvar_Get("com_hunkused", "0", 0);

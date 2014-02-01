@@ -368,7 +368,7 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 		key = K_CONSOLE;
 	}
 
-	// Don't allow extended ASCII to generate characters
+	// FIXME: Don't allow extended ASCII to generate characters
 	//if (*buf & 0x80)
 	//{
 	//	*buf = '\0';
