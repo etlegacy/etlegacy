@@ -34,14 +34,14 @@
 namespace tinygettext {
 
 bool POParser::pedantic = true;
-
+
 void
 POParser::parse(const std::string& filename, std::istream& in, Dictionary& dict)
 {
   POParser parser(filename, in, dict);
   parser.parse();
 }
-
+
 class POParserError {};
 
 POParser::POParser(const std::string& filename_, std::istream& in_, Dictionary& dict_, bool use_fuzzy_) :

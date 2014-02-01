@@ -19,11 +19,11 @@
 #include "log.hpp"
 
 namespace tinygettext {
-
+
 Log::log_callback_t Log::log_info_callback    = &Log::default_log_callback;
 Log::log_callback_t Log::log_warning_callback = &Log::default_log_callback;
 Log::log_callback_t Log::log_error_callback   = &Log::default_log_callback;
-
+
 void
 Log::default_log_callback(const std::string& str)
 {
@@ -47,7 +47,7 @@ Log::set_log_error_callback(log_callback_t callback)
 {
   log_error_callback = callback;
 }
-
+
 Log::Log(log_callback_t callback_) :
   callback(callback_),
   out()
@@ -64,7 +64,7 @@ Log::get()
 {
   return out; 
 }
-
+
 } // namespace tinygettext
 
 /* EOF */
