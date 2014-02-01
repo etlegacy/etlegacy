@@ -1117,17 +1117,22 @@ static void IN_ProcessEvents(void)
 
 		case SDL_VIDEORESIZE:
 		{
-			char width[32], height[32];
+			// Only do a vid_restart if the size of the window actually changed. On OS X at least, it's possible
+			// to receive a resize event when the window simply moves, or even when Dock shows/hides. No need to
+			// do a vid_restart then.
+			if (cls.glConfig.isFullscreen || cls.glConfig.vidWidth != e.resize.w || cls.glConfig.vidHeight != e.resize.h) {
+				char width[32], height[32];
 
-			Com_sprintf(width, sizeof(width), "%d", e.resize.w);
-			Com_sprintf(height, sizeof(height), "%d", e.resize.h);
-			Cvar_Set("r_customwidth", width);
-			Cvar_Set("r_customheight", height);
-			Cvar_Set("r_mode", "-1");
-			// wait until user stops dragging for 1 second, so
-			// we aren't constantly recreating the GL context while
-			// he tries to drag...
-			vidRestartTime = Sys_Milliseconds() + 1000;
+				Com_sprintf(width, sizeof(width), "%d", e.resize.w);
+				Com_sprintf(height, sizeof(height), "%d", e.resize.h);
+				Cvar_Set("r_customwidth", width);
+				Cvar_Set("r_customheight", height);
+				Cvar_Set("r_mode", "-1");
+				// wait until user stops dragging for 1 second, so
+				// we aren't constantly recreating the GL context while
+				// he tries to drag...
+				vidRestartTime = Sys_Milliseconds() + 1000;
+			}
 		}
 		break;
 		case SDL_ACTIVEEVENT:
