@@ -273,8 +273,11 @@ int G_SwitchBodyPartEntity(gentity_t *ent)
 // Run a trace with players in historical positions.
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
-	int    res;
+	float  maxsBackup[MAX_CLIENTS];
 	vec3_t dir;
+	int    res, clientNum, i;
+
+	memset(&maxsBackup, 0, sizeof(maxsBackup));
 
 	if (!g_antilag.integer || !ent->client)
 	{
@@ -293,7 +296,26 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 
 	G_AttachBodyParts(ent) ;
 
+	for (i = 0; i < level.numConnectedClients; ++i)
+	{
+		clientNum = level.sortedClients[i];
+		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
+		{
+			maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
+			g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
+		}
+	}
+
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
+
+	for (i = 0; i < level.numConnectedClients; ++i)
+	{
+		clientNum = level.sortedClients[i];
+		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage )
+		{
+			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
+		}
+	}
 
 	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
 	POSITION_READJUST
@@ -313,15 +335,35 @@ void G_HistoricalTraceEnd(gentity_t *ent)
 	G_AdjustClientPositions(ent, 0, qfalse);
 }
 
-//bani - Run a trace without fixups (historical fixups will be done externally)
+// Run a trace without fixups (historical fixups will be done externally)
 void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
-	int    res;
+	float  maxsBackup[MAX_CLIENTS];
 	vec3_t dir;
+	int    res, clientNum, i;
 
 	G_AttachBodyParts(ent);
 
+	for( i = 0; i < level.numConnectedClients; ++i )
+	{
+		clientNum = level.sortedClients[i];
+		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
+		{
+			maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
+			g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
+		}
+	}
+
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
+
+	for(i = 0; i < level.numConnectedClients; ++i)
+	{
+		clientNum = level.sortedClients[i];
+		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
+		{
+			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
+		}
+	}
 
 	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
 	POSITION_READJUST
