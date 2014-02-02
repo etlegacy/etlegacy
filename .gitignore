@@ -2,6 +2,7 @@
 # Project specific
 #
 /build
+/project
 /obj
 /doc
 !easybuild.sh
@@ -18,6 +19,9 @@
 /.directory
 *.kdev4
 
+# Mac
+.DS_STORE
+
 # Windows
 Thumbs.db
 
@@ -33,3 +37,5 @@ Thumbs.db
 # CDT-specific
 /.cproject
 
+# CTags
+.tags*
