@@ -327,11 +327,21 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 
 void G_HistoricalTraceBegin(gentity_t *ent)
 {
+	// don't do this with antilag off
+	if(!g_antilag.integer)
+	{
+		return;
+	}
 	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
 }
 
 void G_HistoricalTraceEnd(gentity_t *ent)
 {
+	// don't do this with antilag off
+	if(!g_antilag.integer)
+	{
+		return;
+	}
 	G_AdjustClientPositions(ent, 0, qfalse);
 }
 
