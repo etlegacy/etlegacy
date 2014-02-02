@@ -4542,3 +4542,6 @@ msgstr ""
 #, c-format
 msgid "The %s team is speclocked!"
 msgstr ""
+
+msgid "You cannot switch during a match, please wait until the round ends."
+msgstr ""

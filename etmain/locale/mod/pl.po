@@ -4557,3 +4557,6 @@ msgstr "Server wylaczony\n"
 #, c-format
 msgid "The %s team is speclocked!"
 msgstr "Zespol %s jest nie do obserwowania!"
+
+msgid "You cannot switch during a match, please wait until the round ends."
+msgstr "Nie mozesz przechodzic podczas meczu, prosze poczekaj az runda dobiegnie konca."
