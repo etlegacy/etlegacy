@@ -48,6 +48,7 @@ cvar_t *sv_rconPassword;        // password for remote server commands
 cvar_t *sv_privatePassword;     // password for the privateClient slots
 cvar_t *sv_allowDownload;
 cvar_t *sv_maxclients;
+cvar_t *sv_democlients;         // number of slots reserved for playing a demo
 
 cvar_t *sv_privateClients;      // number of clients reserved for password
 cvar_t *sv_hostname;
@@ -63,6 +64,7 @@ cvar_t *sv_serverid;
 cvar_t *sv_maxRate;
 cvar_t *sv_minPing;
 cvar_t *sv_maxPing;
+cvar_t *sv_gametype;
 cvar_t *sv_pure;
 cvar_t *sv_floodProtect;
 cvar_t *sv_allowAnonymous;
@@ -110,6 +112,10 @@ cvar_t *sv_wh_check_fov;
 #endif
 
 cvar_t *sv_demopath;
+cvar_t *sv_demoState;
+cvar_t *sv_autoDemo;
+cvar_t *cl_freezeDemo;  // to freeze server-side demos
+cvar_t *sv_demoTolerant;
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -221,6 +227,13 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 	if (com_dedicated->integer && !strncmp((char *)message, "print", 5))
 	{
 		Com_Printf("broadcast: %s\n", SV_ExpandNewlines((char *)message));
+	}
+
+	// save broadcasts to demo
+	// note: in the case a command is only issued to a specific client, it is NOT recorded (see above when cl != NULL). If you want to record them, just place this code above, but be warned that it may be dangerous (such as "disconnect" command) because server commands will be replayed to every connected clients!
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoWriteServerCommand((char *)message);
 	}
 
 	// send the data to all relevent clients
@@ -758,8 +771,8 @@ void SVC_Info(netadr_t from)
 	Info_SetValueForKey(infostring, "mapname", sv_mapname->string);
 	Info_SetValueForKey(infostring, "clients", va("%i", players));
 	Info_SetValueForKey(infostring, "humans", va("%i", humans));
-	Info_SetValueForKey(infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer));
-	Info_SetValueForKey(infostring, "gametype", Cvar_VariableString("g_gametype"));
+	Info_SetValueForKey(infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer - sv_democlients->integer));
+	Info_SetValueForKey(infostring, "gametype", va("%i", sv_gametype->integer));
 	Info_SetValueForKey(infostring, "pure", va("%i", sv_pure->integer));
 
 	if (sv_minPing->integer)
@@ -1464,6 +1477,21 @@ void SV_Frame(int msec)
 
 		// let everything in the world think and move
 		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
+
+		// play/record demo frame (if enabled)
+		if (sv.demoState == DS_RECORDING) // Record the frame
+		{
+			SV_DemoWriteFrame();
+		}
+		else if (sv.demoState == DS_WAITINGPLAYBACK || sv_demoState->integer == DS_WAITINGPLAYBACK) // Launch again the playback of the demo (because we needed a restart in order to set some cvars such as sv_maxclients or fs_game)
+		{
+			SV_DemoRestartPlayback();
+		}
+		else if (sv.demoState == DS_PLAYBACK) // Play the next demo frame
+		{
+			Com_DPrintf("Playing back demo frame");
+			SV_DemoReadFrame();
+		}
 	}
 
 	if (com_speeds->integer)

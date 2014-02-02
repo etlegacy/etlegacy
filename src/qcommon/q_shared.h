@@ -68,6 +68,7 @@
 #endif
 
 #define DEMOEXT "dm_"           // standard demo extension
+#define SVDEMOEXT "sv_"        // standard server demo extension
 
 #define MAX_MASTER_SERVERS      5   // number of supported master servers
 
@@ -1870,6 +1871,19 @@ typedef enum
 	FMV_LOOPED,
 	FMV_ID_WAIT
 } e_status;
+
+typedef enum
+{
+	DS_NONE,
+
+	DS_WAITINGPLAYBACK, // demo will play after map_restart)
+	DS_PLAYBACK, // a demo is playing
+	DS_WAITINGSTOP, // demo is stopped but we must move clients over their normal slots
+
+	DS_RECORDING, // a demo is being recorded
+
+	DS_NUM_DEMO_STATES
+} demoState_t;
 
 #define MAX_GLOBAL_SERVERS          4096
 #define MAX_OTHER_SERVERS           128

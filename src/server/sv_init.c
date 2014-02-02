@@ -91,6 +91,12 @@ void SV_SetConfigstring(int index, const char *val)
 	Z_Free(sv.configstrings[index]);
 	sv.configstrings[index]         = CopyString(val);
 	sv.configstringsmodified[index] = qtrue;
+
+	// save config strings to demo
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoWriteConfigString(index, val);
+	}
 }
 
 void SV_UpdateConfigStrings(void)
@@ -225,7 +231,14 @@ void SV_GetUserinfo(int index, char *buffer, int bufferSize)
 	{
 		Com_Error(ERR_DROP, "SV_GetUserinfo: bad index %i", index);
 	}
+
 	Q_strncpyz(buffer, svs.clients[index].userinfo, bufferSize);
+
+	// Save userinfo changes to demo (also in SV_UpdateUserinfo_f() in sv_client.c)
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoWriteClientUserinfo(&svs.clients[index], buffer);
+	}
 }
 
 /*
@@ -454,6 +467,138 @@ void SV_SetExpectedHunkUsage(char *mapname)
 }
 
 /*
+==================
+SV_DemoChangeMaxClients
+change sv_maxclients and move real clients slots when a demo is playing or stopped
+==================
+*/
+void SV_DemoChangeMaxClients(void)
+{
+	int      oldMaxClients, oldDemoClients;
+	int      i, j, k;
+	client_t *oldClients = NULL;
+	int      count;
+	//qboolean firstTime = svs.clients == NULL;
+
+
+	// == Checking the prerequisites
+	// Note: we check  here that we have enough slots to fit all clients, and that it doesn't overflow the MAX_CLIENTS the engine can support. Also, we save the oldMaxClients and oldDemoClients values.
+
+	// -- Get the highest client number in use
+	count = 0;
+	for (i = 0 ; i < sv_maxclients->integer ; i++)
+	{
+		if (svs.clients[i].state >= CS_CONNECTED)
+		{
+			if (i > count)
+			{
+				count = i;
+			}
+		}
+	}
+	count++;
+
+	// -- Save the previous oldMaxClients and oldDemoClients values, and update
+
+	// Save the previous sv_maxclients value before updating it
+	oldMaxClients = sv_maxclients->integer;
+	// update the cvars
+	Cvar_Get("sv_maxclients", "8", 0);
+	Cvar_Get("sv_democlients", "0", 0);   // unnecessary now that sv_democlients is not latched anymore?
+	// Save the previous sv_democlients (since it's updated instantly, we cannot get it directly), we use a trick by computing the difference between the new and previous sv_maxclients (the difference should indeed be the exact value of sv_democlients)
+	oldDemoClients = (oldMaxClients - sv_maxclients->integer);
+	if (oldDemoClients < 0) // if the difference is negative, this means that before it was set to 0 (because the newer sv_maxclients is greater than the old)
+	{
+		oldDemoClients = 0;
+	}
+
+	// -- Check limits
+	// never go below the highest client number in use (make sure we have enough room for all players)
+	SV_BoundMaxClients(count);
+
+	// -- Change check: if still the same, we just quit, there's nothing to do
+	if (sv_maxclients->integer == oldMaxClients)
+	{
+		return;
+	}
+
+
+	// == Memorizing clients
+	// Note: we save in a temporary variables the clients, because after we will wipe completely the svs.clients struct
+
+	// copy the clients to hunk memory
+	oldClients = Hunk_AllocateTempMemory((sv_maxclients->integer - sv_democlients->integer) * sizeof(client_t));   // we allocate just enough memory for the real clients (not counting in the democlients)
+	// For all previous clients slots, we copy the entire client into a temporary var
+	for (i = 0, j = 0, k = sv_privateClients->integer ; i < oldMaxClients ; i++)     // for all the previously connected clients, we copy them to a temporary var
+	{   // If there is a real client in this slot
+		if (svs.clients[i].state >= CS_CONNECTED)
+		{
+			// if the client is in a privateClient reserved slot, we move him on the reserved slots
+			if (i >= oldDemoClients && i < oldDemoClients + sv_privateClients->integer)
+			{
+				oldClients[j++] = svs.clients[i];
+				// else the client is not a privateClient, and we move him to the first available slot after the privateClients slots
+			}
+			else
+			{
+				oldClients[k++] = svs.clients[i];
+			}
+		}
+	}
+
+	// Fill in the remaining clients slots with empty clients (else the engine crash when copying into memory svs.clients)
+	for (i = j; i < sv_privateClients->integer; i++)   // Fill the privateClients empty slots
+	{
+		Com_Memset(&oldClients[i], 0, sizeof(client_t));
+	}
+	for (i = k; i < (sv_maxclients->integer - sv_democlients->integer); i++)   // Fill the other normal clients slots
+	{
+		Com_Memset(&oldClients[i], 0, sizeof(client_t));
+	}
+
+	// free old clients arrays
+	Z_Free(svs.clients);
+
+
+	// == Allocating the new svs.clients and moving the saved clients over from the temporary var
+
+	// allocate new svs.clients
+	svs.clients = Z_Malloc(sv_maxclients->integer * sizeof(client_t));
+	Com_Memset(svs.clients, 0, sv_maxclients->integer * sizeof(client_t));
+
+	// copy the clients over (and move them depending on sv_democlients: if >0, move them upwards, if == 0, move them to their original slots)
+	Com_Memcpy(svs.clients + sv_democlients->integer, oldClients, (sv_maxclients->integer - sv_democlients->integer) * sizeof(client_t));
+
+	// free the old clients on the hunk
+	Hunk_FreeTempMemory(oldClients);
+
+
+	// == Allocating snapshot entities
+
+	// allocate new snapshot entities
+	if (com_dedicated->integer)
+	{
+		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * 64;
+	}
+	else
+	{
+		// we don't need nearly as many when playing locally
+		svs.numSnapshotEntities = sv_maxclients->integer * 4 * 64;
+	}
+
+
+	// == Server-side demos management
+
+	// set demostate to none if it was just waiting to set maxclients and move real clients slots
+	if (sv.demoState == DS_WAITINGSTOP)
+	{
+		sv.demoState = DS_NONE;
+		Cvar_SetValue("sv_demoState", DS_NONE);
+	}
+
+}
+
+/*
 ================
 SV_ClearServer
 ================
@@ -556,7 +701,15 @@ void SV_SpawnServer(char *server)
 		// check for maxclients change
 		if (sv_maxclients->modified)
 		{
-			SV_ChangeMaxClients();
+			// If we are playing/waiting to play/waiting to stop a demo, we use a specialized function that will move real clients slots (so that democlients will be put to their original slots they were affected at the time of the real game)
+			if (sv.demoState == DS_WAITINGPLAYBACK || sv.demoState == DS_PLAYBACK || sv.demoState == DS_WAITINGSTOP)
+			{
+				SV_DemoChangeMaxClients();
+			}
+			else
+			{
+				SV_ChangeMaxClients();
+			}
 		}
 	}
 
@@ -740,6 +893,12 @@ void SV_SpawnServer(char *server)
 	SV_UpdateConfigStrings();
 
 	Com_Printf("-----------------------------------\n");
+
+	// start recording a demo
+	if (sv_autoDemo->integer)
+	{
+		SV_DemoAutoDemoRecord();
+	}
 }
 
 void SV_WriteAttackLog(const char *log)
@@ -812,7 +971,7 @@ void SV_Init(void)
 
 	// serverinfo vars
 	Cvar_Get("timelimit", "0", CVAR_SERVERINFO);
-
+	sv_gametype = Cvar_Get("g_gametype", "0", CVAR_SERVERINFO | CVAR_LATCH);
 	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO); // unused. Kept for GameTracker.com compatibility
 	Cvar_Get("protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO | CVAR_ROM);
 	sv_mapname        = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO | CVAR_ROM);
@@ -956,8 +1115,13 @@ void SV_Init(void)
 	SV_InitAttackLog();
 
 	// init the server side demo recording stuff
-	SV_AddDemoCommands();
-	sv_demopath = Cvar_Get("sv_demopath", "", CVAR_ARCHIVE);
+	// serverside demo recording variables
+	sv_demoState    = Cvar_Get("sv_demoState", "0", CVAR_ROM);
+	sv_democlients  = Cvar_Get("sv_democlients", "0", CVAR_ROM);
+	sv_autoDemo     = Cvar_Get("sv_autoDemo", "0", CVAR_ARCHIVE);
+	cl_freezeDemo   = Cvar_Get("cl_freezeDemo", "0", CVAR_TEMP); // port from client-side to freeze server-side demos
+	sv_demoTolerant = Cvar_Get("sv_demoTolerant", "0", CVAR_ARCHIVE);
+	sv_demopath     = Cvar_Get("sv_demopath", "", CVAR_ARCHIVE);
 
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();
@@ -1034,6 +1198,16 @@ void SV_Shutdown(char *finalmsg)
 	SV_RemoveOperatorCommands();
 	SV_MasterShutdown();
 	SV_ShutdownGameProgs();
+
+	// stop any demos
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoStopRecord();
+	}
+	else if (sv.demoState == DS_PLAYBACK)
+	{
+		SV_DemoStopPlayback();
+	}
 
 	// free current level
 	SV_ClearServer();
