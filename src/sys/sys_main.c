@@ -780,7 +780,7 @@ void *Sys_LoadGameDll(const char *name,
 	gamedir  = Cvar_VariableString("fs_game");
 
 #ifndef DEDICATED
-	// if the server is pure, extract the dlls from the mp_bin.pk3 so
+	// if the server is pure, extract the dlls from the mod_bin.pk3 so
 	// that they can be referenced
 	if (Cvar_VariableValue("sv_pure") && Q_stricmp(name, "qagame"))
 	{
