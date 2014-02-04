@@ -39,3 +39,6 @@ Thumbs.db
 
 # CTags
 .tags*
+
+# SublimeText
+*.sublime-workspace
