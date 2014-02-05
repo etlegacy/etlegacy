@@ -2045,6 +2045,8 @@ extern vmCvar_t cg_shadows;
 extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
+extern vmCvar_t cg_drawPing;
+extern vmCvar_t cg_lagometer;
 extern vmCvar_t cg_drawSnapshot;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairInfo;
@@ -2095,7 +2097,6 @@ extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
 extern vmCvar_t cg_thirdPerson;
 extern vmCvar_t cg_stereoSeparation;
-extern vmCvar_t cg_lagometer;
 #ifdef ALLOW_GSYNC
 extern vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
