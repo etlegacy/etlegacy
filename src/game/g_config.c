@@ -239,7 +239,6 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 	}
 	else if (!Q_stricmp(token.string, mapname))
 	{
-		int          flen = 0;
 		fileHandle_t f;
 		char         *code, *signature;
 		qboolean     res = qfalse;
@@ -249,6 +248,7 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 		if (res && strlen(config->mapscripthash))
 		{
 			char sdir[MAX_QPATH];
+			int  flen = 0;
 
 			trap_Cvar_VariableStringBuffer("g_mapScriptDirectory", sdir, sizeof(sdir));
 
@@ -467,16 +467,12 @@ void G_ConfigCheckLocked()
 		if (Q_stricmp(config->setl[i].value, temp))
 		{
 			G_Printf("Config cvar \"%s\" value: %s does not match the currently set value %s\n", config->setl[i].name, config->setl[i].value, temp);
-			goto configerror;
+			trap_SetConfigstring(CS_CONFIGNAME, "");
+			trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' ^1WAS UNLOADED DUE TO EXTERNAL MANIPULATION\"", config->name));
+			memset(&level.config, 0, sizeof(config_t));
 			break;
 		}
 	}
 
 	return;
-
-configerror:
-	trap_SetConfigstring(CS_CONFIGNAME, "");
-	trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' ^1WAS UNLOADED DUE TO EXTERNAL MANIPULATION\"", config->name));
-
-	memset(&level.config, 0, sizeof(config_t));
 }
