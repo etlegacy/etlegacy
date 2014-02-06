@@ -2454,8 +2454,8 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed);
 
-void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type);     // added 'type'
-void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end);
+void CG_RailTrail(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end, int type);     // added 'type'
+void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end);
 
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);

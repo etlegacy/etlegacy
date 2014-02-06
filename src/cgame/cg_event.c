@@ -2648,7 +2648,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_RAILTRAIL:
 		DEBUGNAME("EV_RAILTRAIL");
-		CG_RailTrail(&cgs.clientinfo[es->otherEntityNum2], es->origin2, es->pos.trBase, es->dmgFlags);     // added 'type' field
+		{
+			//vec3_t color =  {es->angles[0]/255.f, es->angles[1]/255.f, es->angles[2]/255.f};
+			vec3_t color = {0,1,2};
+
+			CG_RailTrail(color, &cgs.clientinfo[es->otherEntityNum2], es->origin2, es->pos.trBase, es->dmgFlags);     // added 'type' field
+		}
 		break;
 
 	// missile impacts
