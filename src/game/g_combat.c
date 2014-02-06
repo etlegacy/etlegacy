@@ -1028,37 +1028,37 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 	traceEnt = &g_entities[tr.entityNum];
 
-	if (g_debugBullets.integer >= 3)     // show hit player head bb
-	{
-		gentity_t *tent;
-		vec3_t    b1, b2;
-
-		VectorCopy(head->r.currentOrigin, b1);
-		VectorCopy(head->r.currentOrigin, b2);
-		VectorAdd(b1, head->r.mins, b1);
-		VectorAdd(b2, head->r.maxs, b2);
-		tent = G_TempEntity(b1, EV_RAILTRAIL);
-		VectorCopy(b2, tent->s.origin2);
-		tent->s.dmgFlags = 1;
-
-		// show headshot trace
-		// end the headshot trace at the head box if it hits
-		if (tr.fraction != 1)
-		{
-			VectorMA(start, (tr.fraction * 64), dir, end);
-		}
-		tent = G_TempEntity(start, EV_RAILTRAIL);
-		VectorCopy(end, tent->s.origin2);
-		tent->s.dmgFlags = 0;
-	}
-
-	G_FreeEntity(head);
-
 	if (traceEnt == head)
 	{
+		if (g_debugBullets.integer >= 3)     // show hit player head bb
+		{
+			gentity_t *tent;
+			vec3_t    b1, b2;
+
+			VectorCopy(head->r.currentOrigin, b1);
+			VectorCopy(head->r.currentOrigin, b2);
+			VectorAdd(b1, head->r.mins, b1);
+			VectorAdd(b2, head->r.maxs, b2);
+			tent = G_TempEntity(b1, EV_RAILTRAIL);
+			VectorCopy(b2, tent->s.origin2);
+			tent->s.dmgFlags = 1;
+
+			// show headshot trace
+			// end the headshot trace at the head box if it hits
+			if (tr.fraction != 1)
+			{
+				VectorMA(start, (tr.fraction * 64), dir, end);
+			}
+			tent = G_TempEntity(start, EV_RAILTRAIL);
+			VectorCopy(end, tent->s.origin2);
+			tent->s.dmgFlags = 0;
+		}
+
+		G_FreeEntity(head);
 		return qtrue;
 	}
 
+	G_FreeEntity(head);
 	return qfalse;
 }
 
@@ -1101,35 +1101,37 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 		traceEnt = &g_entities[tr.entityNum];
 
-		if (g_debugBullets.integer >= 3)     // show hit player head bb
+		if (traceEnt == leg)
 		{
-			gentity_t *tent;
-			vec3_t    b1, b2;
-			VectorCopy(leg->r.currentOrigin, b1);
-			VectorCopy(leg->r.currentOrigin, b2);
-			VectorAdd(b1, leg->r.mins, b1);
-			VectorAdd(b2, leg->r.maxs, b2);
-			tent = G_TempEntity(b1, EV_RAILTRAIL);
-			VectorCopy(b2, tent->s.origin2);
-			tent->s.dmgFlags = 1;
-
-			// show headshot trace
-			// end the headshot trace at the head box if it hits
-			if (tr.fraction != 1)
+			if (g_debugBullets.integer >= 3)     // show hit player head bb
 			{
-				VectorMA(start, (tr.fraction * 64), dir, end);
+				gentity_t *tent;
+				vec3_t    b1, b2;
+
+				VectorCopy(leg->r.currentOrigin, b1);
+				VectorCopy(leg->r.currentOrigin, b2);
+				VectorAdd(b1, leg->r.mins, b1);
+				VectorAdd(b2, leg->r.maxs, b2);
+				tent = G_TempEntity(b1, EV_RAILTRAIL);
+				VectorCopy(b2, tent->s.origin2);
+				tent->s.dmgFlags = 1;
+
+				// show headshot trace
+				// end the headshot trace at the head box if it hits
+				if (tr.fraction != 1)
+				{
+					VectorMA(start, (tr.fraction * 64), dir, end);
+				}
+				tent = G_TempEntity(start, EV_RAILTRAIL);
+				VectorCopy(end, tent->s.origin2);
+				tent->s.dmgFlags = 0;
 			}
-			tent = G_TempEntity(start, EV_RAILTRAIL);
-			VectorCopy(end, tent->s.origin2);
-			tent->s.dmgFlags = 0;
+
+			G_FreeEntity(leg);
+			return qtrue;
 		}
 
 		G_FreeEntity(leg);
-
-		if (traceEnt == leg)
-		{
-			return qtrue;
-		}
 	}
 	else
 	{
@@ -1138,6 +1140,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 		if (height < (theight * 0.4f))
 		{
+			// note: this is a hit we don't draw when g_debugBullets.integer >= 3
 			return qtrue;
 		}
 	}
