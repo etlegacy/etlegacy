@@ -963,11 +963,18 @@ if(BUILD_MOD)
 		OSX_ARCHITECTURES "i386;x86_64"
 	)
 
-	# install bins of cgame, ui and qgame 
-	install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
-		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
-		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
-	)
+	# install bins of cgame, ui and qgame
+	if(BUILD_MOD_PK3)
+		install(TARGETS qagame${LIB_SUFFIX}${ARCH}
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+		)
+	else()
+		install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+		)
+	endif()
 
 	#
 	# etl_bin.pk3
