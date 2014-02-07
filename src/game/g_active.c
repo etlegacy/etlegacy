@@ -1593,6 +1593,9 @@ void ClientThink_real(gentity_t *ent)
 		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 		VectorCopy(b2, bboxEnt->s.origin2);
 		bboxEnt->s.dmgFlags = 1;
+		bboxEnt->s.angles[0] = (int)(0*255);
+		bboxEnt->s.angles[1] = (int)(1*255);
+		bboxEnt->s.angles[2] = (int)(0*255);
 
 		head = G_BuildHead(ent);
 		VectorCopy(head->r.currentOrigin, b1);
@@ -1602,6 +1605,10 @@ void ClientThink_real(gentity_t *ent)
 		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 		VectorCopy(b2, bboxEnt->s.origin2);
 		bboxEnt->s.dmgFlags = 1;
+		bboxEnt->s.angles[0] = (int)(0*255);
+		bboxEnt->s.angles[1] = (int)(0*255);
+		bboxEnt->s.angles[2] = (int)(1*255);
+
 		G_FreeEntity(head);
 	}
 

@@ -2649,8 +2649,15 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_RAILTRAIL:
 		DEBUGNAME("EV_RAILTRAIL");
 		{
-			//vec3_t color =  {es->angles[0]/255.f, es->angles[1]/255.f, es->angles[2]/255.f};
-			vec3_t color = {1,0,0};
+			vec3_t color =  {es->angles[0]/255.f, es->angles[1]/255.f, es->angles[2]/255.f};
+
+			// red is default if there is no color set
+			if (color[0] == 0 && color[1] == 0 && color[2] == 0)
+			{
+				color[0] = 1;
+				color[1] = 0;
+				color[2] = 0;
+			}
 
 			CG_RailTrail(color, &cgs.clientinfo[es->otherEntityNum2], es->origin2, es->pos.trBase, es->dmgFlags);     // added 'type' field
 		}
