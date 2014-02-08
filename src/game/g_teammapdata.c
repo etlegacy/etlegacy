@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -170,7 +170,7 @@ mapEntityData_t *G_FindMapEntityData(mapEntityData_Team_t *teamList, int entNum)
 	}
 
 	// not found
-	return(NULL);
+	return NULL;
 }
 
 /*
@@ -211,7 +211,7 @@ mapEntityData_t *G_FindMapEntityDataSingleClient(mapEntityData_Team_t *teamList,
 	}
 
 	// not found
-	return(NULL);
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -360,9 +360,9 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 
 	trap_Trace(&trace, vieworg, NULL, NULL, origin, viewer->s.number, MASK_SHOT);
 
-/*	if( ent && trace.entityNum != ent-g_entities ) {
-        return qfalse;
-    }*/
+	/*if( ent && trace.entityNum != ent-g_entities ) {
+	    return qfalse;
+	}*/
 
 	if (trace.fraction != 1.f)
 	{

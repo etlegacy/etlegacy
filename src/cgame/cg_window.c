@@ -178,7 +178,7 @@ cg_window_t *CG_windowAlloc(int fx, int startupLength)
 
 	if (wh->numActiveWindows >= MAX_WINDOW_COUNT)
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	for (i = 0; i < MAX_WINDOW_COUNT; i++)
@@ -193,7 +193,7 @@ cg_window_t *CG_windowAlloc(int fx, int startupLength)
 	}
 
 	// Fail if we're a full airplane
-	return(NULL);
+	return NULL;
 }
 
 // Free up a window reservation

@@ -1229,7 +1229,7 @@ void CG_RumbleEfx(float pitch, float yaw)
 }
 
 #define MAX_SMOKESPRITES 512
-#define SMOKEBOMB_DISTANCEBETWEENSPRITES 16.f
+//#define SMOKEBOMB_DISTANCEBETWEENSPRITES 16.f
 #define SMOKEBOMB_SPAWNRATE 10
 #define SMOKEBOMB_SMOKEVELOCITY ((640.f - 16.f) / 8) / 1000.f       // units per msec
 
@@ -1274,7 +1274,7 @@ static smokesprite_t *AllocSmokeSprite(void)
 
 	if (SmokeSpriteCount >= MAX_SMOKESPRITES)
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	alloc = firstfreesmokesprite;

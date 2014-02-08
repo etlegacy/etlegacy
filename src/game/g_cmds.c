@@ -417,11 +417,10 @@ qboolean CheatsOk(gentity_t *ent)
 	return qtrue;
 }
 
-/*
-==================
-ConcatArgs
-==================
-*/
+/**
+ * @brief Concatenates console arguments
+ * @param[in] start concatenate from this argument
+ */
 char *ConcatArgs(int start)
 {
 	int         i, c, tlen;

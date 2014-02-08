@@ -37,7 +37,7 @@
 
 #define SOUND_SELECT    SOUNDEVENT(cgs.media.sndLimboSelect)
 #define SOUND_FILTER    SOUNDEVENT(cgs.media.sndLimboFilter)
-#define SOUND_CANCEL    SOUNDEVENT(cgs.media.sndLimboCancel)
+//#define SOUND_CANCEL    SOUNDEVENT(cgs.media.sndLimboCancel)
 
 void CG_DrawBorder(float x, float y, float w, float h, qboolean fill, qboolean drawMouseOver);
 
@@ -1092,7 +1092,8 @@ qboolean CG_LimboPanel_CancelButton_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		SOUND_CANCEL;
+		//SOUND_CANCEL;
+		SOUND_SELECT;
 
 		if (cgs.limboLoadoutModified)
 		{

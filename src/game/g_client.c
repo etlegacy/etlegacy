@@ -2763,7 +2763,7 @@ static char *G_CheckVersion(gentity_t *ent)
 	{
 		return(s);
 	}
-	return(NULL);
+	return NULL;
 }
 #endif
 

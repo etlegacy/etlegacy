@@ -915,7 +915,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 		doexit_spamguard = qtrue;
 		Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
 	}
-	
+
 	GLimp_Minimize();
 #endif
 }

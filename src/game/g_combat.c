@@ -846,8 +846,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 }
 
-// FIXME: weapon table
-qboolean IsHeadShotWeapon(int mod)
+// FIXME: mod table
+qboolean IsHeadShotMod(int mod)
 {
 	// players are allowed headshots from these weapons
 	switch (mod)
@@ -904,7 +904,11 @@ gentity_t *G_BuildHead(gentity_t *ent)
 
 		if (ent->client->ps.eFlags & EF_PRONE)
 		{
-			height = ent->client->ps.viewheight - 56;
+			height = ent->client->ps.viewheight - 60;
+		}
+		else if ((ent->client->ps.eFlags & EF_DEAD))
+		{
+			height = ent->client->ps.viewheight - 64;
 		}
 		else if (ent->client->ps.pm_flags & PMF_DUCKED)          // closer fake offset for 'head' box when crouching
 		{
@@ -927,10 +931,23 @@ gentity_t *G_BuildHead(gentity_t *ent)
 		}
 		angles[PITCH] = dest;
 
+		// the angles need to be clamped for prone
+		// or the head entity will be underground or
+		// far too tall
+		if ((ent->client->ps.eFlags & EF_PRONE))
+		{
+			angles[PITCH] = -10;
+		}
+
 		AngleVectors(angles, forward, right, up);
 		if (ent->client->ps.eFlags & EF_PRONE)
 		{
 			VectorScale(forward, 24, v);
+		}
+		else if ((ent->client->ps.eFlags & EF_DEAD))
+		{
+			VectorScale(forward, -26, v);
+			VectorMA(v, 5.0f, right, v);
 		}
 		else
 		{
@@ -962,7 +979,7 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 	gentity_t *leg;
 	vec3_t    flatforward, org;
 
-	if (!(ent->client->ps.eFlags & EF_PRONE))
+	if (!(ent->client->ps.eFlags & (EF_PRONE | EF_DEAD)))
 	{
 		return NULL;
 	}
@@ -974,16 +991,24 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 	flatforward[2] = 0;
 	VectorNormalizeFast(flatforward);
 
-	org[0] = ent->r.currentOrigin[0] + flatforward[0] * -32;
-	org[1] = ent->r.currentOrigin[1] + flatforward[1] * -32;
+	if (ent->client->ps.eFlags & EF_PRONE)
+	{
+		org[0] = ent->r.currentOrigin[0] + flatforward[0] * -32;
+		org[1] = ent->r.currentOrigin[1] + flatforward[1] * -32;
+	}
+	else
+	{
+		org[0] = ent->r.currentOrigin[0] + flatforward[0] * 32;
+		org[1] = ent->r.currentOrigin[1] + flatforward[1] * 32;
+	}
 	org[2] = ent->r.currentOrigin[2] + ent->client->pmext.proneLegsOffset;
 
 	G_SetOrigin(leg, org);
 
-	VectorCopy(leg->r.currentOrigin, leg->s.origin);
-	VectorCopy(ent->r.currentAngles, leg->s.angles);
-	VectorCopy(leg->s.angles, leg->s.apos.trBase);
-	VectorCopy(leg->s.angles, leg->s.apos.trDelta);
+	//VectorCopy(leg->r.currentOrigin, leg->s.origin);
+	//VectorCopy(ent->r.currentAngles, leg->s.angles);
+	//VectorCopy(leg->s.angles, leg->s.apos.trBase);
+	//VectorCopy(leg->s.angles, leg->s.apos.trDelta);
 	VectorCopy(playerlegsProneMins, leg->r.mins);
 	VectorCopy(playerlegsProneMaxs, leg->r.maxs);
 	leg->clipmask   = CONTENTS_SOLID;
@@ -1009,12 +1034,12 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	if (targ->health <= 0)
+	if (targ->health <= 0) // no hs for corpses
 	{
 		return qfalse;
 	}
 
-	if (!IsHeadShotWeapon(mod))
+	if (!IsHeadShotMod(mod))
 	{
 		return qfalse;
 	}
@@ -1028,37 +1053,37 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 	traceEnt = &g_entities[tr.entityNum];
 
-	if (g_debugBullets.integer >= 3)     // show hit player head bb
-	{
-		gentity_t *tent;
-		vec3_t    b1, b2;
-
-		VectorCopy(head->r.currentOrigin, b1);
-		VectorCopy(head->r.currentOrigin, b2);
-		VectorAdd(b1, head->r.mins, b1);
-		VectorAdd(b2, head->r.maxs, b2);
-		tent = G_TempEntity(b1, EV_RAILTRAIL);
-		VectorCopy(b2, tent->s.origin2);
-		tent->s.dmgFlags = 1;
-
-		// show headshot trace
-		// end the headshot trace at the head box if it hits
-		if (tr.fraction != 1)
-		{
-			VectorMA(start, (tr.fraction * 64), dir, end);
-		}
-		tent = G_TempEntity(start, EV_RAILTRAIL);
-		VectorCopy(end, tent->s.origin2);
-		tent->s.dmgFlags = 0;
-	}
-
-	G_FreeEntity(head);
-
 	if (traceEnt == head)
 	{
+		if (g_debugBullets.integer >= 3)     // show hit player head bb
+		{
+			gentity_t *tent;
+			vec3_t    b1, b2;
+
+			VectorCopy(head->r.currentOrigin, b1);
+			VectorCopy(head->r.currentOrigin, b2);
+			VectorAdd(b1, head->r.mins, b1);
+			VectorAdd(b2, head->r.maxs, b2);
+			tent = G_TempEntity(b1, EV_RAILTRAIL);
+			VectorCopy(b2, tent->s.origin2);
+			tent->s.dmgFlags = 1;
+
+			// show headshot trace
+			// end the headshot trace at the head box if it hits
+			if (tr.fraction != 1)
+			{
+				VectorMA(start, (tr.fraction * 64), dir, end);
+			}
+			tent = G_TempEntity(start, EV_RAILTRAIL);
+			VectorCopy(end, tent->s.origin2);
+			tent->s.dmgFlags = 0;
+		}
+
+		G_FreeEntity(head);
 		return qtrue;
 	}
 
+	G_FreeEntity(head);
 	return qfalse;
 }
 
@@ -1081,7 +1106,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	if (!IsHeadShotWeapon(mod))
+	if (!IsHeadShotMod(mod))
 	{
 		return qfalse;
 	}
@@ -1101,35 +1126,40 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 		traceEnt = &g_entities[tr.entityNum];
 
-		if (g_debugBullets.integer >= 3)     // show hit player head bb
+		if (traceEnt == leg)
 		{
-			gentity_t *tent;
-			vec3_t    b1, b2;
-			VectorCopy(leg->r.currentOrigin, b1);
-			VectorCopy(leg->r.currentOrigin, b2);
-			VectorAdd(b1, leg->r.mins, b1);
-			VectorAdd(b2, leg->r.maxs, b2);
-			tent = G_TempEntity(b1, EV_RAILTRAIL);
-			VectorCopy(b2, tent->s.origin2);
-			tent->s.dmgFlags = 1;
-
-			// show headshot trace
-			// end the headshot trace at the head box if it hits
-			if (tr.fraction != 1)
+			if (g_debugBullets.integer >= 3)     // show hit player leg bb
 			{
-				VectorMA(start, (tr.fraction * 64), dir, end);
+				gentity_t *tent;
+				vec3_t    b1, b2;
+				vec3_t    maxs;
+
+				VectorCopy(leg->r.currentOrigin, b1);
+				VectorCopy(leg->r.currentOrigin, b2);
+				VectorAdd(b1, leg->r.mins, b1);
+				VectorCopy(leg->r.maxs, maxs);
+				maxs[2] = ClientHitboxMaxZ(traceEnt);
+				VectorAdd(b2, maxs, b2);
+				tent = G_TempEntity(b1, EV_RAILTRAIL);
+				VectorCopy(b2, tent->s.origin2);
+				tent->s.dmgFlags = 1;
+
+				// show headshot trace
+				// end the headshot trace at the head box if it hits
+				if (tr.fraction != 1)
+				{
+					VectorMA(start, (tr.fraction * 64), dir, end);
+				}
+				tent = G_TempEntity(start, EV_RAILTRAIL);
+				VectorCopy(end, tent->s.origin2);
+				tent->s.dmgFlags = 0;
 			}
-			tent = G_TempEntity(start, EV_RAILTRAIL);
-			VectorCopy(end, tent->s.origin2);
-			tent->s.dmgFlags = 0;
+
+			G_FreeEntity(leg);
+			return qtrue;
 		}
 
 		G_FreeEntity(leg);
-
-		if (traceEnt == leg)
-		{
-			return qtrue;
-		}
 	}
 	else
 	{
@@ -1138,6 +1168,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 		if (height < (theight * 0.4f))
 		{
+			// note: this is a hit we don't draw when g_debugBullets.integer >= 3
 			return qtrue;
 		}
 	}
@@ -1160,7 +1191,7 @@ qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	if (!IsHeadShotWeapon(mod))
+	if (!IsHeadShotMod(mod))
 	{
 		return qfalse;
 	}
@@ -1675,7 +1706,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"\n");
 		}
 	}
-	else if (targ->client && targ->health > 0 && IsHeadShotWeapon(mod))
+	else if (targ->client && targ->health > 0 && IsHeadShotMod(mod))
 	{
 		G_LogRegionHit(attacker, HR_BODY);
 		hr = HR_BODY;

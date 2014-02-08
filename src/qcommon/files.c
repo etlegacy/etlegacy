@@ -1082,7 +1082,7 @@ qboolean FS_IsDemoExt(const char *filename, int namelen)
 	char *ext_test;
 
 	ext_test = strrchr(filename, '.');
-	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
+	if (ext_test && (!Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1) || !Q_stricmpn(ext_test + 1, SVDEMOEXT, ARRAY_LEN(SVDEMOEXT) - 1)))
 	{
 		int index;
 		int protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
@@ -3484,12 +3484,6 @@ FS_idPak
 qboolean FS_idPak(char *pak, char *base)
 {
 	int i;
-
-	// ET:L does not need original mp_bin
-	//if (!FS_FilenameCompare(pak, va("%s/mp_bin", base)))
-	//{
-	//	return qtrue;
-	//}
 
 	for (i = 0; i < NUM_ID_PAKS; i++)
 	{

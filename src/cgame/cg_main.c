@@ -119,6 +119,8 @@ vmCvar_t cg_shadows;
 vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
+vmCvar_t cg_drawPing;
+vmCvar_t cg_lagometer;
 vmCvar_t cg_drawSnapshot;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairInfo;
@@ -169,7 +171,6 @@ vmCvar_t cg_thirdPerson;
 vmCvar_t cg_thirdPersonRange;
 vmCvar_t cg_thirdPersonAngle;
 vmCvar_t cg_stereoSeparation;
-vmCvar_t cg_lagometer;
 #ifdef ALLOW_GSYNC
 vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
@@ -346,6 +347,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawSpreadScale,       "cg_drawSpreadScale",       "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawStatus,            "cg_drawStatus",            "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawFPS,               "cg_drawFPS",               "0",     CVAR_ARCHIVE                 },
+	{ &cg_drawPing,              "cg_drawPing",              "0",     CVAR_ARCHIVE                 },
+	{ &cg_lagometer,             "cg_lagometer",             "0",     CVAR_ARCHIVE                 },
 	{ &cg_drawSnapshot,          "cg_drawSnapshot",          "0",     CVAR_ARCHIVE                 },
 	{ &cg_drawCrosshair,         "cg_drawCrosshair",         "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawCrosshairInfo,     "cg_drawCrosshairInfo",     "3",     CVAR_ARCHIVE                 },
@@ -360,7 +363,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_crosshairY,            "cg_crosshairY",            "0",     CVAR_ARCHIVE                 },
 	{ &cg_brassTime,             "cg_brassTime",             "2500",  CVAR_ARCHIVE                 },
 	{ &cg_markTime,              "cg_markTime",              "20000", CVAR_ARCHIVE                 },
-	{ &cg_lagometer,             "cg_lagometer",             "0",     CVAR_ARCHIVE                 },
 	{ &cg_railTrailTime,         "cg_railTrailTime",         "400",   CVAR_ARCHIVE                 },
 	{ &cg_gun_x,                 "cg_gunX",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_y,                 "cg_gunY",                  "0",     CVAR_CHEAT                   },
@@ -1392,7 +1394,7 @@ static void CG_RegisterSounds(void)
 
 	cgs.media.sndLimboSelect = trap_S_RegisterSound("sound/menu/select.wav", qfalse);
 	cgs.media.sndLimboFilter = trap_S_RegisterSound("sound/menu/filter.wav", qfalse);
-	cgs.media.sndLimboCancel = trap_S_RegisterSound("sound/menu/cancel.wav", qfalse);
+	//cgs.media.sndLimboCancel = trap_S_RegisterSound("sound/menu/cancel.wav", qfalse);
 
 	cgs.media.sndRankUp  = trap_S_RegisterSound("sound/misc/rank_up.wav", qfalse);
 	cgs.media.sndSkillUp = trap_S_RegisterSound("sound/misc/skill_up.wav", qfalse);

@@ -269,7 +269,7 @@ return a hash value for the filename
 This function is cloned to many files, should be moved to common->
 ================
 */
-static long generateHashValue(const char *fname)
+static long GLSL_GenerateHashValue(const char *fname)
 {
 	int  i    = 0;
 	long hash = 0;
@@ -321,7 +321,7 @@ unsigned int GLSL_GetAttribByName(const char *name)
 	return -1;
 }
 
-void CopyStringAlloc(char **out, const char *in)
+void GLSL_CopyStringAlloc(char **out, const char *in)
 {
 	size_t size = strlen(in) * sizeof(char) + 1;
 	*out = (char *) Com_Allocate(size);
@@ -329,7 +329,7 @@ void CopyStringAlloc(char **out, const char *in)
 	Q_strncpyz(*out, in, size);
 }
 
-qboolean CopyNextToken(char **text, char **out)
+qboolean GLSL_CopyNextToken(char **text, char **out)
 {
 	char *token;
 	token = COM_ParseExt(text, qtrue);
@@ -344,7 +344,7 @@ qboolean CopyNextToken(char **text, char **out)
 		return qfalse;
 	}
 
-	CopyStringAlloc(out, token);
+	GLSL_CopyStringAlloc(out, token);
 	return qtrue;
 }
 
@@ -365,7 +365,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 	def = (programInfo_t *)Com_Allocate(sizeof(programInfo_t));
 	Com_Memset(def, 0, sizeof(programInfo_t));
 
-	CopyStringAlloc(&def->name, defname);
+	GLSL_CopyStringAlloc(&def->name, defname);
 	def->compiled = qfalse;
 
 	while (1)
@@ -384,11 +384,11 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		}
 		else if (!Q_stricmp(token, "filename"))
 		{
-			CopyNextToken(text, &def->filename);
+			GLSL_CopyNextToken(text, &def->filename);
 		}
 		else if (!Q_stricmp(token, "fragfilename"))
 		{
-			CopyNextToken(text, &def->fragFilename);
+			GLSL_CopyNextToken(text, &def->fragFilename);
 		}
 		else if (!Q_stricmp(token, "macros"))
 		{
@@ -411,7 +411,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		}
 		else if (!Q_stricmp(token, "extramacros"))
 		{
-			CopyNextToken(text, &def->extraMacros);
+			GLSL_CopyNextToken(text, &def->extraMacros);
 		}
 		else if (!Q_stricmp(token, "attribs"))
 		{
@@ -424,11 +424,11 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		}
 		else if (!Q_stricmp(token, "vertexLibraries"))
 		{
-			CopyNextToken(text, &def->vertexLibraries);
+			GLSL_CopyNextToken(text, &def->vertexLibraries);
 		}
 		else if (!Q_stricmp(token, "fragmentLibraries"))
 		{
-			CopyNextToken(text, &def->fragmentLibraries);
+			GLSL_CopyNextToken(text, &def->fragmentLibraries);
 		}
 		else if (!Q_stricmp(token, "uniform"))
 		{
@@ -436,7 +436,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 			if (!Q_stricmp(token, "int"))
 			{
 				def->uniformValues[def->numUniformValues].type.type = GLSL_INT;
-				CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
+				GLSL_CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
 				token                                           = COM_ParseExt(text, qtrue);
 				valptr                                          = Com_Allocate(sizeof(int));
 				*((int *)valptr)                                = atoi(token);
@@ -503,7 +503,7 @@ programInfo_t *GLSL_FindShader(const char *name)
 	COM_StripExtension(name, strippedName, sizeof(strippedName));
 	COM_FixPath(strippedName);
 
-	hash = generateHashValue(strippedName);
+	hash = GLSL_GenerateHashValue(strippedName);
 
 	for (sh = hashTable[hash]; sh; sh = sh->next)
 	{

@@ -420,6 +420,7 @@ typedef enum
 	LE_MOVE_SCALE_FADE,
 	LE_FALL_SCALE_FADE,
 	LE_FADE_RGB,
+	LE_CONST_RGB,
 	LE_SCALE_FADE,
 	LE_SPARK,
 	LE_DEBRIS,
@@ -1492,7 +1493,7 @@ typedef struct
 
 	sfxHandle_t sndLimboSelect;
 	sfxHandle_t sndLimboFilter;
-	sfxHandle_t sndLimboCancel;
+	//sfxHandle_t sndLimboCancel;
 
 	sfxHandle_t sndRankUp;
 	sfxHandle_t sndSkillUp;
@@ -2045,6 +2046,8 @@ extern vmCvar_t cg_shadows;
 extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
+extern vmCvar_t cg_drawPing;
+extern vmCvar_t cg_lagometer;
 extern vmCvar_t cg_drawSnapshot;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairInfo;
@@ -2095,7 +2098,6 @@ extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
 extern vmCvar_t cg_thirdPerson;
 extern vmCvar_t cg_stereoSeparation;
-extern vmCvar_t cg_lagometer;
 #ifdef ALLOW_GSYNC
 extern vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
@@ -2453,8 +2455,8 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed);
 
-void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type);     // added 'type'
-void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end);
+void CG_RailTrail(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end, int type);     // added 'type'
+void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end);
 
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);

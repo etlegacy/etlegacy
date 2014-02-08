@@ -810,12 +810,12 @@ CG_RailTrail
     re-inserted this as a debug mechanism for bullets
 ==========================
 */
-void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end)
+void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end)
 {
 	localEntity_t *le = CG_AllocLocalEntity();
 	refEntity_t   *re = &le->refEntity;
 
-	le->leType    = LE_FADE_RGB;
+	le->leType    = LE_CONST_RGB;
 	le->startTime = cg.time;
 	le->endTime   = cg.time + cg_railTrailTime.value;
 	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
@@ -827,34 +827,24 @@ void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end)
 	VectorCopy(start, re->origin);
 	VectorCopy(end, re->oldorigin);
 
-	// still allow different colors so we can tell AI shots from player shots, etc.
-	/*  if(ci) {
-	        le->color[0] = ci->color[0] * 0.75;
-	        le->color[1] = ci->color[1] * 0.75;
-	        le->color[2] = ci->color[2] * 0.75;
-	    } else {*/
-	le->color[0] = 1;
-	le->color[1] = 0;
-	le->color[2] = 0;
-	//}
+	le->color[0] = color[0];
+	le->color[1] = color[1];
+	le->color[2] = color[2];
 	le->color[3] = 1.0f;
 
 	AxisClear(re->axis);
 }
 
-/*
-==============
-CG_RailTrail
-    modified so we could draw boxes for debugging as well
-==============
-*/
-void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type)      // added 'type'
+/**
+ * @brief draw boxes for debugging
+ */
+void CG_RailTrail(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end, int type)      // added 'type'
 {
 	vec3_t diff, v1, v2, v3, v4, v5, v6;
 
 	if (!type)     // just a line
 	{
-		CG_RailTrail2(ci, start, end);
+		CG_RailTrail2(color, ci, start, end);
 		return;
 	}
 
@@ -868,9 +858,9 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type)      // 
 	v1[0] -= diff[0];
 	v2[1] -= diff[1];
 	v3[2] -= diff[2];
-	CG_RailTrail2(ci, start, v1);
-	CG_RailTrail2(ci, start, v2);
-	CG_RailTrail2(ci, start, v3);
+	CG_RailTrail2(color, ci, start, v1);
+	CG_RailTrail2(color, ci, start, v2);
+	CG_RailTrail2(color, ci, start, v3);
 
 	VectorCopy(end, v4);
 	VectorCopy(end, v5);
@@ -878,17 +868,17 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type)      // 
 	v4[0] += diff[0];
 	v5[1] += diff[1];
 	v6[2] += diff[2];
-	CG_RailTrail2(ci, end, v4);
-	CG_RailTrail2(ci, end, v5);
-	CG_RailTrail2(ci, end, v6);
+	CG_RailTrail2(color, ci, end, v4);
+	CG_RailTrail2(color, ci, end, v5);
+	CG_RailTrail2(color, ci, end, v6);
 
-	CG_RailTrail2(ci, v2, v6);
-	CG_RailTrail2(ci, v6, v1);
-	CG_RailTrail2(ci, v1, v5);
+	CG_RailTrail2(color, ci, v2, v6);
+	CG_RailTrail2(color, ci, v6, v1);
+	CG_RailTrail2(color, ci, v1, v5);
 
-	CG_RailTrail2(ci, v2, v4);
-	CG_RailTrail2(ci, v4, v3);
-	CG_RailTrail2(ci, v3, v5);
+	CG_RailTrail2(color, ci, v2, v4);
+	CG_RailTrail2(color, ci, v4, v3);
+	CG_RailTrail2(color, ci, v3, v5);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -6403,7 +6393,6 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	localEntity_t *le;
 	float dist;
 	vec3_t dir;
-	orientation_t or;
 	vec3_t start, end;
 
 	VectorCopy(pstart, start);
@@ -6429,11 +6418,13 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 		// and offset the start and end accordingly
 		if (!((cg_entities[sourceEnt].currentState.eFlags & EF_MG42_ACTIVE) || (cg_entities[sourceEnt].currentState.eFlags & EF_AAGUN_ACTIVE)))          // not MG42
 		{
-			if (CG_GetWeaponTag(sourceEnt, "tag_flash", &or))
+			orientation_t orientation;
+
+			if (CG_GetWeaponTag(sourceEnt, "tag_flash", &orientation))
 			{
 				vec3_t ofs;
 
-				VectorSubtract(or.origin, start, ofs);
+				VectorSubtract(orientation.origin, start, ofs);
 				if (VectorLength(ofs) < 64)
 				{
 					VectorAdd(start, ofs, start);
@@ -6623,10 +6614,10 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE)
 	{
-		vec3_t forward;
-
 		if (cent->currentState.eType == ET_MG42_BARREL)
 		{
+			vec3_t forward;
+
 			VectorCopy(cent->currentState.pos.trBase, muzzle);
 			AngleVectors(cent->lerpAngles, forward, NULL, NULL);
 			VectorMA(muzzle, 40, forward, muzzle);

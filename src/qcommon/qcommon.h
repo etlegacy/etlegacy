@@ -118,6 +118,9 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityState_s *to, qboolean force);
 void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int number);
 
+void MSG_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force, int number);
+void MSG_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to, int number);
+
 void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct playerState_s *to);
 void MSG_ReadDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct playerState_s *to);
 
@@ -470,6 +473,9 @@ void Cmd_CommandCompletion(void (*callback)(const char *s));
 void Cmd_SetCommandCompletionFunc(const char *command,
                                   completionFunc_t complete);
 void Cmd_CompleteArgument(const char *command, char *args, int argNum);
+
+void Cmd_SaveCmdContext(void);
+void Cmd_RestoreCmdContext(void);
 
 int Cmd_Argc(void);
 char *Cmd_Argv(int arg);

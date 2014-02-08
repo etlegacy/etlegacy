@@ -2030,6 +2030,28 @@ static float CG_DrawDisconnect(float y)
 }
 
 /**
+ * @brief Draw ping
+ */
+static float CG_DrawPing(float y)
+{
+	int  curPing = cg.snap->ping;
+	int  w, w2, x;
+	char *s;
+
+	s = va("Ping %d", curPing < 999 ? curPing : 999);
+	w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+
+	x = (int)(Ccg_WideX(UPPERRIGHT_X)) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+
+	return y + 12 + 4;
+}
+
+/**
  * @brief Draw the lagometer
  */
 static float CG_DrawLagometer(float y)
@@ -2483,6 +2505,11 @@ void CG_DrawUpperRight(void)
 	if ((cg_drawTime.integer & LOCALTIME_ON) && !(cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
 	{
 		y = CG_DrawLocalTime(y);
+	}
+
+	if (cg_drawPing.integer)
+	{
+		y = CG_DrawPing(y);
 	}
 
 	if (cg_lagometer.integer && !cg.cameraMode && !cg.serverRespawning)

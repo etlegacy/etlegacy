@@ -989,7 +989,8 @@ void SV_SendClientMessages(void)
 
 		// changed <= CS_ZOMBIE to < CS_ZOMBIE so that the
 		// disconnect reason is properly sent in the network stream
-		if (c->state < CS_ZOMBIE)
+		// do not send a packet to a democlient, this will cause the engine to crash
+		if (c->state < CS_ZOMBIE || c->demoClient)
 		{
 			continue;       // not connected
 		}

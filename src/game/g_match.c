@@ -459,7 +459,7 @@ char *G_createStats(gentity_t *refEnt)
 
 	if (!refEnt)
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	// Add weapon stats as necessary

@@ -289,12 +289,12 @@ void SV_DirectConnect(netadr_t from)
 	password = Info_ValueForKey(userinfo, "password");
 	if (!strcmp(password, sv_privatePassword->string))
 	{
-		startIndex = 0;
+		startIndex = sv_democlients->integer;
 	}
 	else
 	{
 		// skip past the reserved slots
-		startIndex = sv_privateClients->integer;
+		startIndex = sv_privateClients->integer + sv_democlients->integer;
 	}
 
 	newcl = NULL;
@@ -440,7 +440,7 @@ void SV_DropClient(client_t *drop, const char *reason)
 		}
 	}
 
-	if (!isBot)
+	if (!isBot && !drop->demoClient) // Don't drop bots nor democlients (will make the server crash since there's no network connection to manage with these clients!)
 	{
 		// see if we already have a challenge for this ip
 		challenge = &svs.challenges[0];
@@ -495,7 +495,8 @@ void SV_DropClient(client_t *drop, const char *reason)
 	// if there is already a slot for this ip, reuse it
 	for (i = 0 ; i < sv_maxclients->integer ; i++)
 	{
-		if (svs.clients[i].state >= CS_CONNECTED)
+		// we check real players slots: if real players slots are all empty (not counting democlients), we send an heartbeat to update
+		if (svs.clients[i].state >= CS_CONNECTED && !svs.clients[i].demoClient)
 		{
 			break;
 		}
@@ -595,6 +596,13 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 
 	Com_DPrintf("Going from CS_PRIMED to CS_ACTIVE for %s\n", client->name);
 	client->state = CS_ACTIVE;
+
+	// server-side demo playback: prevent players from joining the game when a demo is replaying (particularly if the gametype is non-team based, by default the gamecode force players to join in)
+	if (sv.demoState == DS_PLAYBACK &&
+	    ((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer))        // check that it's a real player
+	{
+		SV_ExecuteClientCommand(client, "team spectator", qtrue, qfalse);
+	}
 
 	// set up the entity for the client
 	ent             = SV_GentityNum(clientNum);
@@ -1447,6 +1455,12 @@ void SV_UpdateUserinfo_f(client_t *cl)
 	cl->userinfobuffer[0]    = 0;
 	cl->nextReliableUserTime = svs.time + 5000;
 
+	// Save userinfo changes to demo (also in SV_SetUserinfo() in sv_init.c)
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoWriteClientUserinfo(cl, Cmd_Argv(1));
+	}
+
 	Q_strncpyz(cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo));
 
 	SV_UserinfoChanged(cl);
@@ -1504,8 +1518,20 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 	if (clientOK)
 	{
 		// pass unknown strings to the game
-		if (!u->name && sv.state == SS_GAME && (cl->state == CS_ACTIVE || cl->state == CS_PRIMED))
+		if (!u->name && sv.state == SS_GAME && (cl->state == CS_ACTIVE || cl->state == CS_PRIMED || cl->demoClient))   // accept democlients, else you won't be able to make democlients join teams nor say messages!
 		{
+			if (sv.demoState == DS_RECORDING)     // if demo is recording, we store this command and clientid
+			{
+				SV_DemoWriteClientCommand(cl, s);
+			}
+			else if (sv.demoState == DS_PLAYBACK &&
+			         ((cl - svs.clients) >= sv_democlients->integer) && ((cl - svs.clients) < sv_maxclients->integer) && // preventing only real clients commands (not democlients commands replayed)
+			         (!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator"))) // if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
+			{
+				SV_SendServerCommand(cl, "chat \"^3Can't join a team when a demo is replaying!\"");     // issue a chat message only to the player trying to join a team
+				SV_SendServerCommand(cl, "cp \"^3Can't join a team when a demo is replaying!\"");     // issue a chat message only to the player trying to join a team
+				return;
+			}
 			Cmd_Args_Sanitize();
 			VM_Call(gvm, GAME_CLIENT_COMMAND, cl - svs.clients);
 		}
@@ -1658,6 +1684,14 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 		MSG_ReadDeltaUsercmdKey(msg, key, oldcmd, cmd);
 		oldcmd = cmd;
 	}
+
+	// save the data to the server-side demo if recording
+	/*
+	if (sv.demoState == DS_RECORDING)
+	{
+	    SV_DemoWriteClientUsercmd(cl, delta, cmdCount, cmds, key);
+	}
+	*/
 
 	// save time for ping calculation
 	cl->frames[cl->messageAcknowledge & PACKET_MASK].messageAcked = svs.time;

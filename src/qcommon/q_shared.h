@@ -68,6 +68,7 @@
 #endif
 
 #define DEMOEXT "dm_"           // standard demo extension
+#define SVDEMOEXT "sv_"        // standard server demo extension
 
 #define MAX_MASTER_SERVERS      5   // number of supported master servers
 
@@ -631,8 +632,7 @@ extern vec4_t clrBrownLineFull;
 #define FRAMETIME           100                 // msec
 
 #define Q_COLOR_ESCAPE  '^'
-#define Q_IsValidColorChar(c) ((c == '*') || ((toupper(c) - '0') >= 0 && (toupper(c) - '0') < 32))
-#define Q_IsColorString(p)    ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && Q_IsValidColorChar(*((p) + 1)))
+#define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)) && *((p) + 1) != Q_COLOR_ESCAPE)
 
 #define COLOR_BLACK     '0'
 #define COLOR_RED       '1'
@@ -1870,6 +1870,19 @@ typedef enum
 	FMV_LOOPED,
 	FMV_ID_WAIT
 } e_status;
+
+typedef enum
+{
+	DS_NONE,
+
+	DS_WAITINGPLAYBACK, // demo will play after map_restart)
+	DS_PLAYBACK, // a demo is playing
+	DS_WAITINGSTOP, // demo is stopped but we must move clients over their normal slots
+
+	DS_RECORDING, // a demo is being recorded
+
+	DS_NUM_DEMO_STATES
+} demoState_t;
 
 #define MAX_GLOBAL_SERVERS          4096
 #define MAX_OTHER_SERVERS           128

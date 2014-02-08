@@ -51,10 +51,10 @@ extern "C"
 #include <stdlib.h>
 #include <map>
 
-#include "../../libs/tinygettext/po_parser.hpp"
-#include "../../libs/tinygettext/tinygettext.hpp"
-#include "../../libs/tinygettext/log.hpp"
-#include "../../libs/tinygettext/file_system.hpp"
+#include "../tinygettext/po_parser.hpp"
+#include "../tinygettext/tinygettext.hpp"
+#include "../tinygettext/log.hpp"
+#include "../tinygettext/file_system.hpp"
 
 tinygettext::DictionaryManager dictionary;
 tinygettext::DictionaryManager dictionary_mod;

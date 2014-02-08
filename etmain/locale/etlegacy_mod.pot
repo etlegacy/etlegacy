@@ -1680,11 +1680,11 @@ msgstr ""
 msgid "ET Legacy Website"
 msgstr ""
 
-msgid " 2012-2013 ET Legacy developers - under the terms of GPL version 3."
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries. "
@@ -3680,9 +3680,6 @@ msgstr ""
 msgid "http://www.etlegacy.com"
 msgstr ""
 
-msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
-msgstr ""
-
 msgid "HALL OF FAME"
 msgstr ""
 
@@ -4205,7 +4202,7 @@ msgid "\n"
 "\n"
 msgstr ""
 
-msgid "Type ^3\stats <player_id>^7 to see stats on an active player.\n"
+msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
 msgstr ""
 
 msgid "Spectators can't ready a team!\n"
@@ -4541,4 +4538,13 @@ msgstr ""
 #: src/cgame/cg_draw.c:2766
 #, c-format
 msgid "The %s team is speclocked!"
+msgstr ""
+
+msgid "You cannot switch during a match, please wait until the round ends."
+msgstr ""
+
+msgid ""
+"Many thanks to Splash Damage for their release of the source code, ioWolfET "
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
+"their inspirations."
 msgstr ""

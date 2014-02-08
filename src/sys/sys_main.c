@@ -764,7 +764,7 @@ void *Sys_LoadGameDll(const char *name,
 	gamedir  = Cvar_VariableString("fs_game");
 
 #ifndef DEDICATED
-	// if the server is pure, extract the dlls from the mp_bin.pk3 so
+	// if the server is pure, extract the dlls from the mod_bin.pk3 so
 	// that they can be referenced
 	if (Cvar_VariableValue("sv_pure") && Q_stricmp(name, "qagame"))
 	{
@@ -779,6 +779,24 @@ void *Sys_LoadGameDll(const char *name,
 	{
 		libHandle = Sys_TryLibraryLoad(basepath, gamedir, fname);
 	}
+
+#ifndef DEDICATED
+	// According to the code above, if the server is not pure, then the
+	// lib must either already be in the homepath, or in the basepath,
+	// without being in a pak. For a pure server, it always grabs the lib
+	// from within a pak. This means there must be two copies of the lib!
+	//
+	// So now, if connecting to an impure server, and the lib was not
+	// loaded from homepath or the basepath, let's pull it out of the pak.
+	// This means we only *need* the copy that's in the pak, and will use
+	// it if another copy isn't found first.
+	if (!libHandle && !Cvar_VariableValue("sv_pure") && Q_stricmp(name, "qagame"))
+	{
+		Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
+		FS_CL_ExtractFromPakFile(homepath, gamedir, fname);
+		libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
+	}
+#endif
 
 	// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
 	if (!libHandle && strcmp(gamedir, DEFAULT_MODGAME))

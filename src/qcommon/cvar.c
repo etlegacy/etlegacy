@@ -784,16 +784,12 @@ void Cvar_SetCheatState(void)
 	}
 }
 
-/*
-============
-Cvar_Print
-
-Prints the value, default, and latched string of the given variable
-============
-*/
+/**
+ * @brief Prints the value, default, and latched string of the given variable
+ */
 void Cvar_Print(cvar_t *v)
 {
-	Com_Printf("\"%s\" is:\"%s" S_COLOR_WHITE "\"", v->name, v->string);
+	Com_Printf("\"%s\" is: \"%s" S_COLOR_WHITE "\"", v->name, v->string);
 
 	if (!(v->flags & CVAR_ROM))
 	{
