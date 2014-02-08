@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2012 Stephen Larroque <lrq3000@gmail.com>
@@ -77,7 +77,7 @@ static int savedGametype      = -1;
 
 static int savedDoWarmup     = -1;
 static int savedAllowVote    = -1;
-static int savedTeamAutoJoin = -1;
+// static int savedTeamAutoJoin = -1; // unused
 
 static int savedTimelimit    = -1;
 static int savedFraglimit    = -1;
@@ -111,6 +111,7 @@ qboolean SV_CheckClientCommand(client_t *client, const char *cmd)
 	if (strlen(cmd) > 9 && !Q_strncmp(cmd, "userinfo", 8))
 	{
 		char *userinfo = (char *)malloc(MAX_INFO_STRING * sizeof(char));
+
 		Q_strncpyz(userinfo, cmd + 9, MAX_INFO_STRING); // trimming out the "userinfo " substring (because we only need the userinfo string)
 		SV_DemoWriteClientUserinfo(client, (const char *)userinfo); // passing relay to the specialized function for this job
 		free(userinfo);
@@ -264,12 +265,10 @@ Attempts to clean invalid characters from a filename that may prevent the demo t
 */
 char *SV_CleanFilename(char *string)
 {
-	char *d;
-	char *s;
+	char *d = string;
+	char *s = string;
 	int  c;
 
-	s = string;
-	d = string;
 	while ((c = *s) != 0)
 	{
 		if (Q_IsColorString(s))
@@ -300,12 +299,10 @@ Same as Q_CleanStr but also remove any ^s or special empty color created by the 
 */
 char *SV_CleanStrCmd(char *string)
 {
-	char *d;
-	char *s;
+	char *d = string;
+	char *s = string;
 	int  c;
 
-	s = string;
-	d = string;
 	while ((c = *s) != 0)
 	{
 		if (Q_IsColorStringGameCommand(s))
@@ -352,7 +349,6 @@ char *SV_GenerateDateTime(void)
 	          now.tm_sec,
 	          buff);
 }
-
 
 /***********************************************
  * DEMO WRITING FUNCTIONS
@@ -722,8 +718,6 @@ void SV_DemoWriteFrame(void)
 	SV_DemoWriteMessage(&msg);
 }
 
-
-
 /***********************************************
  * DEMO READING FUNCTIONS
  *
@@ -759,6 +753,7 @@ Server command management - except print/cp (dropped at recording because alread
 void SV_DemoReadServerCommand(msg_t *msg)
 {
 	char *cmd;
+
 	cmd = MSG_ReadString(msg);
 	SV_SendServerCommand(NULL, "%s", cmd);
 }
@@ -1286,8 +1281,6 @@ read_next_demo_event: // used to read next demo event
 	}
 }
 
-
-
 /***********************************************
  * DEMO MANAGEMENT FUNCTIONS
  *
@@ -1492,6 +1485,11 @@ void SV_DemoStartPlayback(void)
 	{
 		Com_Error(ERR_DROP, "DEMOERROR: SV_DemoReadFrame: demo is corrupted (not initialized correctly!)\n");
 		SV_DemoStopPlayback();
+		// Free memory
+		free(map);
+		free(fs);
+		free(hostname);
+		free(datetime);
 		return;
 	}
 	msg.cursize = LittleLong(msg.cursize);
@@ -1499,6 +1497,11 @@ void SV_DemoStartPlayback(void)
 	{
 		Com_Error(ERR_DROP, "DEMOERROR: SV_DemoReadFrame: demo is corrupted (demo file is empty?)\n");
 		SV_DemoStopPlayback();
+		// Free memory
+		free(map);
+		free(fs);
+		free(hostname);
+		free(datetime);
 		return;
 	}
 
@@ -1512,6 +1515,11 @@ void SV_DemoStartPlayback(void)
 	{
 		Com_Printf("DEMOERROR: Demo file was truncated.\n");
 		SV_DemoStopPlayback();
+		// Free memory
+		free(map);
+		free(fs);
+		free(hostname);
+		free(datetime);
 		return;
 	}
 
@@ -1566,6 +1574,11 @@ void SV_DemoStartPlayback(void)
 			{
 				Com_Printf("DEMO: Demo time too small: %d.\n", time);
 				SV_DemoStopPlayback();
+				// Free memory
+				free(map);
+				free(fs);
+				free(hostname);
+				free(datetime);
 				return;
 			}
 		}
@@ -1607,6 +1620,11 @@ void SV_DemoStartPlayback(void)
 			{
 				Com_Printf("Map does not exist: %s.\n", map);
 				SV_DemoStopPlayback();
+				// Free memory
+				free(map);
+				free(fs);
+				free(hostname);
+				free(datetime);
 				return;
 			}
 
@@ -1687,8 +1705,6 @@ void SV_DemoStartPlayback(void)
 	// Remove g_allowVote (prevent players to call a vote while a map is replaying)
 	Cvar_SetValue("g_allowVote", 0);
 
-
-
 	// Printing infos about the demo
 	if (!sv_demoTolerant->integer)   // print the meta datas only if we're not in faults tolerance mode (because if there are missing meta datas, the printing will throw an exception! So we'd better avoid it)
 	{
@@ -1741,6 +1757,12 @@ void SV_DemoStartPlayback(void)
 
 		Cbuf_AddText(va("g_gametype %i\ndevmap %s\n", gametype, map)); // Change gametype and map (using devmap to enable cheats)
 
+		// Free memory
+		free(map);
+		free(fs);
+		free(hostname);
+		free(datetime);
+
 		return; // Quit and wait for the next SV_Frame() iteration (when the server/map will have restarted) to retry playing the demo
 
 	}
@@ -1748,6 +1770,7 @@ void SV_DemoStartPlayback(void)
 	{
 		// else if the demo time is still below the server time but we already restarted for the demo playback, we just iterate a few demo frames in the void to catch to until we are above the server time. Note: having a server time below the demo time is CRITICAL, else we may send to the clients a server time that is below the previous, making the time going backward, which should NEVER happen!
 		int timetoreach = svs.time;
+
 		svs.time = time;
 		while (svs.time < timetoreach)
 		{
@@ -1798,12 +1821,15 @@ Close the demo file and restart the map (can be used both when recording or when
 */
 void SV_DemoStopPlayback(void)
 {
-	int olddemostate, i;
+	int olddemostate;
 	olddemostate = sv.demoState;
 
 	// Clear client configstrings
 	if (olddemostate == DS_PLAYBACK)
-	{ // unload democlients only if we were replaying a demo (if not it will produce an error!)
+	{
+		int i;
+
+		// unload democlients only if we were replaying a demo (if not it will produce an error!)
 		for (i = 0; i < sv_democlients->integer; i++)
 		{
 			SV_SetConfigstring(CS_PLAYERS + i, NULL); //qtrue
@@ -1820,7 +1846,6 @@ void SV_DemoStopPlayback(void)
 	// Note: must do it before the map_restart! so that latched values such as sv_maxclients takes effect
 	if (!keepSaved)
 	{
-
 		Cvar_SetValue("sv_democlients", 0);
 
 		if (savedMaxClients >= 0)
