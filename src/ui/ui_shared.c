@@ -881,7 +881,7 @@ itemDef_t *Menu_ClearFocus(menuDef_t *menu)
 
 	if (menu == NULL)
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	for (i = 0; i < menu->itemCount; i++)

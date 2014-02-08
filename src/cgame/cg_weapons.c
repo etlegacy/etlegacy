@@ -6424,7 +6424,7 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 			{
 				vec3_t ofs;
 
-				VectorSubtract(or.origin, start, ofs);
+				VectorSubtract(orientation.origin, start, ofs);
 				if (VectorLength(ofs) < 64)
 				{
 					VectorAdd(start, ofs, start);
