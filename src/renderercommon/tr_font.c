@@ -76,6 +76,7 @@
 #include FT_SYSTEM_H
 #include FT_IMAGE_H
 #include FT_OUTLINE_H
+#include FT_LCD_FILTER_H
 
 #define FONT_SIZE 256
 #define DPI 72
@@ -195,6 +196,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 	static glyphInfo_t glyph;
 	unsigned char      *src, *dst;
 	FT_Bitmap          *bitmap = NULL;
+	FT_Int32		   flags = FT_LOAD_DEFAULT;
 
 	Com_Memset(&glyph, 0, sizeof(glyphInfo_t));
 	// make sure everything is here
@@ -209,7 +211,13 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 			return &glyph; // nothing to render
 		}
 
-		FT_Load_Glyph(face, index, FT_LOAD_DEFAULT);
+		flags |= FT_LOAD_FORCE_AUTOHINT;
+
+		//Test filtering
+		FT_Library_SetLcdFilter(ftLibrary, FT_LCD_FILTER_LIGHT);
+		flags |= FT_LOAD_TARGET_LCD;
+
+		FT_Load_Glyph(face, index, flags);
 		bitmap = R_RenderGlyph(face->glyph, &glyph);
 		if (!bitmap)
 		{
