@@ -1394,7 +1394,7 @@ static void CG_RegisterSounds(void)
 
 	cgs.media.sndLimboSelect = trap_S_RegisterSound("sound/menu/select.wav", qfalse);
 	cgs.media.sndLimboFilter = trap_S_RegisterSound("sound/menu/filter.wav", qfalse);
-	cgs.media.sndLimboCancel = trap_S_RegisterSound("sound/menu/cancel.wav", qfalse);
+	//cgs.media.sndLimboCancel = trap_S_RegisterSound("sound/menu/cancel.wav", qfalse);
 
 	cgs.media.sndRankUp  = trap_S_RegisterSound("sound/misc/rank_up.wav", qfalse);
 	cgs.media.sndSkillUp = trap_S_RegisterSound("sound/misc/skill_up.wav", qfalse);

@@ -1493,7 +1493,7 @@ typedef struct
 
 	sfxHandle_t sndLimboSelect;
 	sfxHandle_t sndLimboFilter;
-	sfxHandle_t sndLimboCancel;
+	//sfxHandle_t sndLimboCancel;
 
 	sfxHandle_t sndRankUp;
 	sfxHandle_t sndSkillUp;

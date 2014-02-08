@@ -6393,7 +6393,6 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	localEntity_t *le;
 	float dist;
 	vec3_t dir;
-	orientation_t or;
 	vec3_t start, end;
 
 	VectorCopy(pstart, start);
@@ -6419,7 +6418,9 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 		// and offset the start and end accordingly
 		if (!((cg_entities[sourceEnt].currentState.eFlags & EF_MG42_ACTIVE) || (cg_entities[sourceEnt].currentState.eFlags & EF_AAGUN_ACTIVE)))          // not MG42
 		{
-			if (CG_GetWeaponTag(sourceEnt, "tag_flash", &or))
+			orientation_t orientation;
+
+			if (CG_GetWeaponTag(sourceEnt, "tag_flash", &orientation))
 			{
 				vec3_t ofs;
 
@@ -6613,10 +6614,10 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE)
 	{
-		vec3_t forward;
-
 		if (cent->currentState.eType == ET_MG42_BARREL)
 		{
+			vec3_t forward;
+
 			VectorCopy(cent->currentState.pos.trBase, muzzle);
 			AngleVectors(cent->lerpAngles, forward, NULL, NULL);
 			VectorMA(muzzle, 40, forward, muzzle);

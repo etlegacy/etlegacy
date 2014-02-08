@@ -245,7 +245,7 @@ cg_window_t *CG_mvClientLocate(int pID)
 		}
 	}
 
-	return(NULL);
+	return NULL;
 }
 
 // Swap a window-view with the main view
@@ -310,7 +310,7 @@ cg_window_t *CG_mvCurrent(void)
 		}
 	}
 
-	return(NULL);
+	return NULL;
 }
 
 // Give handle to any MV window that isnt the mainview
