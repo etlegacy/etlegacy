@@ -526,7 +526,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_simpleItems,           "cg_simpleItems",           "0",     CVAR_ARCHIVE                 }, // Bugged atm
 	{ &cg_automapZoom,           "cg_automapZoom",           "5.159", CVAR_ARCHIVE                 },
 	{ &cg_drawTime,              "cg_drawTime",              "0",     CVAR_ARCHIVE                 },
-	{ &cg_popupTime,             "cg_popupTime",             "1000",  CVAR_ARCHIVE                 },
+	{ &cg_popupTime,             "cg_popupTime",             "0",	  CVAR_ARCHIVE                 },
 	{ &cg_popupFadeTime,         "cg_popupFadeTime",         "2500",  CVAR_ARCHIVE                 },
 	{ &cg_popupStayTime,         "cg_popupStayTime",         "2000",  CVAR_ARCHIVE                 },
 	{ &cg_graphicObituaries,     "cg_graphicObituaries",     "0",     CVAR_ARCHIVE                 },
