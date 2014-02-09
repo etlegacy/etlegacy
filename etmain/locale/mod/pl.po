@@ -3594,9 +3594,6 @@ msgstr "usunac twoje ulubione?"
 msgid "Modify Selected HUD:"
 msgstr "Modyfikuj Wybrany HUD:"
 
-msgid "PopUpTime:"
-msgstr "Wiadomosci Czas:"
-
 msgid "PopUpTimeStay:"
 msgstr "Wiadomosci Pozostanie:"
 
@@ -4576,3 +4573,6 @@ msgstr ""
 "Wielkie podziekowania dla Splash Damage za wydanie kodu zrodklowego,  ioWolfET "
 "& raedwulf-et (w szczegolnosci Ralph Eastwood) za nasz kod bazowy i ioQuake3 za "
 "ich inspiracje."
+
+msgid "Show Ping:"
+msgstr "Pokaz Ping:"
