@@ -143,7 +143,7 @@ void CG_UpdatePMLists(void)
 
 	if ((listItem = cg_pmWaitingList))
 	{
-		int t = cg_popupTime.integer + listItem->time;
+		int t = listItem->time;
 
 		if (cg.time > t)
 		{
@@ -175,7 +175,7 @@ void CG_UpdatePMLists(void)
 	lastItem = NULL;
 	while (listItem)
 	{
-		int t = cg_popupTime.integer + listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer;
+		int t = listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer;
 
 		if (cg.time > t)
 		{
@@ -506,7 +506,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		return;
 	}
 
-	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
+	t = cg_pmWaitingList->time + cg_popupStayTime.integer;
 	if (cg.time > t)
 	{
 		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
@@ -572,7 +572,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 		y -= size + 2;
 
-		t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
+		t = listItem->time + cg_popupStayTime.integer;
 		if (cg.time > t)
 		{
 			colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
