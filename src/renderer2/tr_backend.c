@@ -3042,7 +3042,7 @@ void RB_RenderInteractionsDeferred()
 {
 	interaction_t *ia;
 	int           iaCount;
-	trRefLight_t  *light, *oldLight = NULL;
+	trRefLight_t  *light;
 	shader_t      *lightShader;
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
@@ -3622,8 +3622,6 @@ skipInteraction:
 			ia = ia->next;
 			iaCount++;
 		}
-
-		oldLight = light;
 	}
 
 	// clear shader so we can tell we don't have any unclosed surfaces
