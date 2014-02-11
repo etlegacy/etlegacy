@@ -57,9 +57,9 @@ void G_PushMapEntityToBuffer(char *buffer, int size, mapEntityData_t *mEnt)
 	case ME_CONSTRUCT:
 	case ME_DESTRUCT:
 	case ME_DESTRUCT_2:
-	case ME_COMMANDMAP_MARKER:
 	case ME_TANK:
 	case ME_TANK_DEAD:
+	case ME_COMMANDMAP_MARKER:
 		Q_strcat(buffer, size, va(" %i %s %i", mEnt->type, buf, mEnt->data));
 		break;
 	default:
@@ -361,8 +361,8 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 	trap_Trace(&trace, vieworg, NULL, NULL, origin, viewer->s.number, MASK_SHOT);
 
 	/*if( ent && trace.entityNum != ent-g_entities ) {
-        return qfalse;
-    }*/
+	    return qfalse;
+	}*/
 
 	if (trace.fraction != 1.f)
 	{
@@ -835,7 +835,7 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD)
+		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
 		{
 			continue;
 		}
@@ -853,7 +853,7 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD)
+		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
 		{
 			continue;
 		}
@@ -875,7 +875,7 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
 
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_DESTRUCT_2)
+		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
 		{
 			continue;
 		}
@@ -894,7 +894,7 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
 
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_DESTRUCT_2)
+		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
 		{
 			continue;
 		}

@@ -190,9 +190,9 @@ void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 	case ME_CONSTRUCT:
 	case ME_DESTRUCT:
 	case ME_DESTRUCT_2:
-	case ME_COMMANDMAP_MARKER:
 	case ME_TANK:
 	case ME_TANK_DEAD:
+	case ME_COMMANDMAP_MARKER:
 		trap_Argv((*offset)++, buffer, 16);
 		mEnt->x = atoi(buffer) * 128;
 
@@ -528,7 +528,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 		classInfo = CG_PlayerClassForClientinfo(ci, cent);
 
-		// For these, if availaible, ignore the coordinate data and grab the most up to date pvs data
+		// For these, if available, ignore the coordinate data and grab the most up to date pvs data
 		if (cent - cg_entities == cg.clientNum)
 		{
 			if (!scissor)
@@ -561,7 +561,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		}
 		else
 		{
-			// only see revivables for own team, duh :)
+			// only see revivables for own team
 			if (mEnt->type == ME_PLAYER_REVIVE)
 			{
 				return;
@@ -819,10 +819,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		{
 			pic = 0;
 		}
-		else if (mEnt->type == ME_DESTRUCT_2)
-		{
-			pic = 0;
-		}
 		else
 		{
 			if (mEntFilter & CC_FILTER_DESTRUCTIONS)
@@ -996,14 +992,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 		}
 
-		if (mEnt->data == TEAM_AXIS)
-		{
-			pic = cgs.media.commandCentreAxisMineShader;
-		}
-		else     // TEAM_ALLIES
-		{
-			pic = cgs.media.commandCentreAlliedMineShader;
-		}
+		pic = mEnt->data == TEAM_AXIS ? cgs.media.commandCentreAxisMineShader : cgs.media.commandCentreAlliedMineShader;
 
 		c_clr[3] = 1.0f;
 
@@ -1106,6 +1095,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			t1 = (scissor->br[1]) / (h * scissor->zoomFactor);
 
 			CG_AdjustFrom640(&sc_x, &sc_y, &sc_w, &sc_h);
+
 			if (cgs.ccLayers)
 			{
 				trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[cgs.ccSelectedLayer]);
@@ -1114,9 +1104,9 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			{
 				trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[0]);
 			}
-			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);   // HACK : the code above seems to do weird things to
-			                                                                        // the next trap_R_DrawStretchPic issued. This works
-			                                                                        // around this.
+			// FIXME: the code above seems to do weird things to the next trap_R_DrawStretchPic issued.
+			// This hack works around this.
+			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);
 		}
 		// Draw the grid
 		// FIXME: Disabled on widescreen because this is bugged
@@ -1134,6 +1124,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		Vector4Set(color, 1.f, 1.f, 1.f, alpha);
 		trap_R_SetColor(color);
 		CG_DrawPic(x, y, w, h, cgs.media.blackmask);
+
 		if (cgs.ccLayers)
 		{
 			CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[cgs.ccSelectedLayer]);
@@ -1157,7 +1148,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	exspawn = CG_DrawSpawnPointInfo(x, y, w, h, qfalse, scissor, -1);
 
-	// entnfo data..
+	// entnfo data
 	for (i = 0, mEnt = &mapEntities[0]; i < mapEntityCount; ++i, ++mEnt)
 	{
 		// spectators can see icons of both teams
@@ -1194,7 +1185,7 @@ CG_DrawMap_draw:
 		CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
 	}
 
-	// entnfo2 data.. dra non-players & non-tanks
+	// entnfo2 data, draw non-players & non-tanks
 	//for(i = 0, mEnt = &mapEntities2[0]; i < mapEntityCount2; ++i, ++mEnt ) {
 	//  CG_DrawMapEntity( mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size );
 	//}
@@ -1242,7 +1233,7 @@ CG_DrawMap_draw:
 		if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			// draw a arrow when free-spectating.
-			// don't reuse the ccMortarTargetArrow
+			// FIXME: don't reuse the ccMortarTargetArrow
 			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.ccMortarTargetArrow, (0.625 - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 		else
@@ -1520,7 +1511,6 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 			}
 		}
 
-		// added parens around ambiguity
 		if (((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) &&
 		     (cg.spawnTeams[i] != team)) ||
 		    ((cg.spawnTeams[i] & 256) && !changetime))
@@ -1685,7 +1675,7 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 				point[1] = py + (((cg.mortarImpactPos[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 			}
 
-			// don't return if the marker is culled, just don't draw it.
+			// don't return if the marker is culled, just don't draw it
 			if (!(scissor && CG_ScissorPointIsCulled(point, scissor)))
 			{
 				if (scissor)
@@ -1755,8 +1745,7 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 					point[1] = py + (((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 				}
 
-				// don't return if the marker is culled, just skip
-				// it (so we draw the rest, if any)
+				// don't return if the marker is culled, just skip it (so we draw the rest, if any)
 				if (scissor && CG_ScissorPointIsCulled(point, scissor))
 				{
 					continue;
