@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -286,10 +286,6 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 		G_ClientPrintAndReturn(entityNum, "You are already on a fireteam, leave it first");
 	}
 
-	//if(!name || !*name) {
-	//  G_ClientPrintAndReturn(entityNum, "You must choose a name for your fireteam");
-	//}
-
 	if ((ft = G_FindFreeFireteam()) == NULL)
 	{
 		G_ClientPrintAndReturn(entityNum, "No free fireteams available");
@@ -329,8 +325,6 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 	{
 		ft->priv = qfalse;
 	}
-
-	//Q_strncpyz(ft->name, name, 32);
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_FireTeamCreated(entityNum, ft->ident);
@@ -439,7 +433,7 @@ qboolean G_OnlyBotsInFireteam(fireteamData_t *ft, int excludeEntityNum, int *fir
 void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 {
 	fireteamData_t *ft;
-	int            i, firstHuman;
+	int            i;
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
@@ -448,7 +442,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 
 	if (G_IsOnFireteam(entityNum, &ft))
 	{
-		int j;
+		int j, firstHuman;
 
 		for (i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; ++i)
 		{
@@ -1133,6 +1127,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 	else if (!Q_stricmp(command, "privacy"))
 	{
 		fireteamData_t *ft;
+
 		if (G_IsFireteamLeader(ent - g_entities, &ft))
 		{
 			if (ft->priv)
