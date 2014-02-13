@@ -941,6 +941,46 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
+	
+#if 0 //ifndef DEDICATED
+	HANDLE process = GetCurrentProcess(); 
+	
+	//Set Process priority
+	SetPriorityClass(process,HIGH_PRIORITY_CLASS);
+
+	DWORD_PTR processAffinityMask;
+    DWORD_PTR systemAffinityMask;
+
+    if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask))
+        return -1;
+
+	//set this to the core you want your process to run on
+    int core = 2;
+    DWORD_PTR mask=0x1;
+    for (int bit=0, currentCore=1; bit < 64; bit++)
+    {
+        if (mask & processAffinityMask)
+        {
+            if (currentCore != core)
+            {
+                processAffinityMask &= ~mask;
+            }
+            currentCore++;
+        }
+        mask = mask << 1;
+    }
+
+    BOOL success = SetProcessAffinityMask(process, processAffinityMask);
+	if(success)
+	{
+		//Yup great
+	}
+	else
+	{
+		//Fuck!
+	}
+#endif
+
 #ifdef EXCEPTION_HANDLER
 	WinSetExceptionVersion(Q3_VERSION);
 #endif
