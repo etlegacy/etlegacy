@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -175,6 +175,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	else if ((flags & BAR_BORDER) || (flags & BAR_BORDER_SMALL))
 	{
 		int indent = (flags & BAR_BORDER_SMALL ? 1 : BAR_BORDERSIZE);
+
 		CG_DrawRect_FixedBorder(x, y, w, h, indent, bgColor);
 		x += indent;
 		y += indent;
@@ -467,7 +468,6 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 
 	return color;
 }
-
 
 static vec4_t red = { 1, 0.2, 0.2, 1 };
 static vec4_t blue = { 0.2, 0.2, 1, 1 };
@@ -796,7 +796,6 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 	vec4_t     drawcolor;
 
 	// find the width of the drawn text
-
 	while (*s)
 	{
 		ch = *s;
@@ -995,9 +994,7 @@ char *CG_TranslateString(const char *string)
 	char        *buf;
 
 	// some code expects this to return a copy always, even
-	// if none is needed for translation, so always supply
-	// another buffer
-
+	// if none is needed for translation, so always supply another buffer
 	buf = staticbuf[bufcount++ % 2];
 
 	trap_TranslateString(string, buf);

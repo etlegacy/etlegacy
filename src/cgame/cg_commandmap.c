@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -272,9 +272,13 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 	float  grid_x, grid_y;
 	vec2_t dist;
 	vec4_t gridColour;
+	float  Max0Min0 = cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0];
+	float  Max1Min1 = cg.mapcoordsMaxs[1] - cg.mapcoordsMins[1];
+	float  Min1Max1 = cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1];
+	float  tmp;
 
-	dist[0] = cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0];
-	dist[1] = cg.mapcoordsMaxs[1] - cg.mapcoordsMins[1];
+	dist[0] = Max0Min0;
+	dist[1] = Max1Min1;
 
 	if (!gridInitDone)
 	{
@@ -282,17 +286,19 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 		gridStep[1] = 1200.f;
 
 		// ensure minimal grid density
-		while ((cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0]) / gridStep[0] < 7)
+		while (Max0Min0 / gridStep[0] < 7)
 		{
 			gridStep[0] -= 50.f;
 		}
-		while ((cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1]) / gridStep[1] < 7)
+		while (Min1Max1 / gridStep[1] < 7)
 		{
 			gridStep[1] -= 50.f;
 		}
-
-		gridStartCoord[0] = .5f * ((((cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0]) / gridStep[0]) - ((int)((cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0]) / gridStep[0]))) * gridStep[0]);
-		gridStartCoord[1] = .5f * ((((cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1]) / gridStep[1]) - ((int)((cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1]) / gridStep[1]))) * gridStep[1]);
+		
+		tmp               = Max0Min0 / gridStep[0];
+		gridStartCoord[0] = .5f * (tmp - (int)(tmp)) * gridStep[0];
+		tmp               = Min1Max1 / gridStep[1];
+		gridStartCoord[1] = .5f * (tmp - (int)(tmp)) * gridStep[1];
 
 		gridInitDone = qtrue;
 	}
@@ -342,7 +348,8 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				float xc, yc;
 
 				line[0] = x + grid_x;
-				xc      = (line[0] >= x + .5f * w) ? line[0] - (x + .5f * w) : (x + .5f * w) - line[0];
+				tmp     = x + .5f * w;
+				xc      = line[0] >= tmp ? line[0] - tmp : tmp - line[0];
 				yc      = SQRTFAST(Square(.5f * w) - Square(xc));
 				line[1] = y + (.5f * h) - yc;
 				line[2] = 1.f;
@@ -353,9 +360,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				Vector4Set(line, x + grid_x, y + dim_y[0], 1.f, h);
 			}
 
-			line[0] *= cgs.screenXScale;
-			line[1] *= cgs.screenYScale;
-			line[3] *= cgs.screenYScale;
+			CG_AdjustFrom640(&line[0], &line[1], &line[2], &line[3]);
 
 			trap_R_DrawStretchPic(line[0], line[1], line[2], line[3], 0, 0, 0, 1, cgs.media.whiteShader);
 		}
@@ -366,7 +371,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 			{
 				continue;
 			}
-
+			
 			if (grid_y > h)
 			{
 				break;
@@ -378,7 +383,8 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				float xc, yc;
 
 				line[1] = y + grid_y;
-				yc      = (line[1] >= y + .5f * h) ? line[1] - (y + .5f * h) : (y + .5f * h) - line[1];
+				tmp     = y + .5f * h;
+				yc      = line[1] >= tmp ? line[1] - tmp : tmp - line[1];
 				xc      = SQRTFAST(Square(.5f * h) - Square(yc));
 				line[0] = x + (.5f * w) - xc;
 				line[2] = 2 * xc;
@@ -388,9 +394,8 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 			{
 				Vector4Set(line, x + dim_x[0], y + grid_y, w, 1);
 			}
-			line[0] *= cgs.screenXScale;
-			line[1] *= cgs.screenYScale;
-			line[2] *= cgs.screenXScale;
+			CG_AdjustFrom640(&line[0], &line[1], &line[2], &line[3]);
+
 			trap_R_DrawStretchPic(line[0], line[1], line[2], line[3], 0, 0, 0, 1, cgs.media.whiteShader);
 		}
 		trap_R_SetColor(NULL);
@@ -439,7 +444,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				CG_Text_Paint_Ext((x + grid_x) - (.5f * step[0]) - (.5f * text_width), y + dim_y[0] + textOrigin[1] + 1.5f * text_height, 0.2f, 0.2f, colorBlack, coord_char, 0, 0, 0, &cgs.media.limboFont2);
 			}
 			trap_R_SetColor(gridColour);
-
+			
 			Vector4Set(line, x + grid_x, y + dim_y[0], 1, dim_x[1] - dim_x[0]);
 			CG_AdjustFrom640(&line[0], &line[1], &line[2], &line[3]);
 			trap_R_DrawStretchPic(line[0], line[1], line[2], line[3], 0, 0, 0, 1, cgs.media.whiteShader);
@@ -1108,12 +1113,9 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			// This hack works around this.
 			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);
 		}
+
 		// Draw the grid
-		// FIXME: Disabled on widescreen because this is bugged
-		if (cgs.glconfig.windowAspect <= RATIO43)
-		{
-			CG_DrawGrid(x, y, w, h, scissor);
-		}
+		CG_DrawGrid(x, y, w, h, scissor);
 	}
 	else
 	{
