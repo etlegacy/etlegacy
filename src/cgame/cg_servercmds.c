@@ -1591,7 +1591,7 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 	if (!vchat->voiceOnly && !cg_noVoiceText.integer)
 	{
 		CG_AddToTeamChat(vchat->message, vchat->clientNum);
-		CG_Printf("[skipnotify]: %s\n", vchat->message);
+		CG_Printf("[skipnotify]%s\n", vchat->message);
 		CG_WriteToLog("%s\n", vchat->message);
 	}
 	voiceChatBuffer[cg.voiceChatBufferOut].snd = 0;
