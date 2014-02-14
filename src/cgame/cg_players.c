@@ -199,7 +199,7 @@ void CG_NewClientInfo(int clientNum)
 	v = Info_ValueForKey(configstring, "n");
 	Q_strncpyz(newInfo.name, v, sizeof(newInfo.name));
 	Q_strncpyz(newInfo.cleanname, v, sizeof(newInfo.cleanname));
-	Q_StripColor(newInfo.cleanname);
+	Q_CleanStr(newInfo.cleanname);
 
 	// bot skill
 	v                = Info_ValueForKey(configstring, "skill");
@@ -266,7 +266,7 @@ void CG_NewClientInfo(int clientNum)
 	v = Info_ValueForKey(configstring, "dn");
 	Q_strncpyz(newInfo.disguiseName, v, sizeof(newInfo.disguiseName));
 	Q_strncpyz(newInfo.cleandisguiseName, v, sizeof(newInfo.cleandisguiseName));
-	Q_StripColor(newInfo.cleandisguiseName);
+	Q_CleanStr(newInfo.cleandisguiseName);
 
 	// disguiseRank
 	v                    = Info_ValueForKey(configstring, "dr");

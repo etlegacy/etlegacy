@@ -1528,7 +1528,6 @@ int Q_PrintStrlen(const char *string)
 
 /**
  * @brief Remove special characters and color sequences from string.
- * @todo merge Q_StripColor here?
  */
 char *Q_CleanStr(char *string)
 {
@@ -1551,46 +1550,6 @@ char *Q_CleanStr(char *string)
 	*d = '\0';
 
 	return string;
-}
-
-/**
- * @brief Strip coloured strings in-place using multiple passes ("fgs^^56fds" -> "fgs^6fds" -> "fgsfds").
- * @todo this isn't very efficient
- */
-void Q_StripColor(char *text)
-{
-	qboolean doPass = qtrue;
-	char     *read;
-	char     *write;
-
-	while (doPass)
-	{
-		doPass = qfalse;
-		read   = write = text;
-		while (*read)
-		{
-			if (Q_IsColorString(read))
-			{
-				doPass = qtrue;
-				read  += 2;
-			}
-			else
-			{
-				// avoid writing the same data over itself
-				if (write != read)
-				{
-					*write = *read;
-				}
-				write++;
-				read++;
-			}
-		}
-		if (write < read)
-		{
-			// add trailing NUL byte if string has shortened
-			*write = '\0';
-		}
-	}
 }
 
 // strips whitespaces and bad characters
