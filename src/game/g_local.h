@@ -861,10 +861,10 @@ typedef struct limbo_cam_s
 #define MAX_LIMBO_CAMS 32
 
 // this structure is cleared as each map is entered
-#define MAX_SPAWN_VARS          64
-#define MAX_SPAWN_VARS_CHARS    2048
-#define VOTE_MAXSTRING          256     // Same value as MAX_STRING_TOKENS
-#define MAX_SCRIPT_ACCUM_BUFFERS    8
+#define MAX_SPAWN_VARS           64
+#define MAX_SPAWN_VARS_CHARS     2048
+#define VOTE_MAXSTRING           256     // Same value as MAX_STRING_TOKENS
+#define MAX_SCRIPT_ACCUM_BUFFERS 10      // increased from 8 to 10 for compatability with maps that relied on it before Project: Bug Fix #055
 
 typedef struct voteInfo_s
 {
