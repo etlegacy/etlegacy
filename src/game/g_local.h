@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -861,10 +861,10 @@ typedef struct limbo_cam_s
 #define MAX_LIMBO_CAMS 32
 
 // this structure is cleared as each map is entered
-#define MAX_SPAWN_VARS          64
-#define MAX_SPAWN_VARS_CHARS    2048
-#define VOTE_MAXSTRING          256     // Same value as MAX_STRING_TOKENS
-#define MAX_SCRIPT_ACCUM_BUFFERS    8
+#define MAX_SPAWN_VARS           64
+#define MAX_SPAWN_VARS_CHARS     2048
+#define VOTE_MAXSTRING           256     // Same value as MAX_STRING_TOKENS
+#define MAX_SCRIPT_ACCUM_BUFFERS 10      // increased from 8 to 10 for compatability with maps that relied on it before Project: Bug Fix #055
 
 typedef struct voteInfo_s
 {
@@ -1940,7 +1940,6 @@ qboolean G_SweepForLandmines(vec3_t origin, float radius, int team);
 
 void G_AddClientToFireteam(int entityNum, int leaderNum);
 void G_InviteToFireTeam(int entityNum, int otherEntityNum);
-void GetBotAmmo(int clientNum, int *weapon, int *ammo, int *ammoclip);
 void G_UpdateFireteamConfigString(fireteamData_t *ft);
 void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print);
 

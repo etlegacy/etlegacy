@@ -3350,7 +3350,6 @@ int ExtractInt(char *src)
 	int  destIx = 0;
 	char *tmp   = malloc(srclen);
 	int  result = 0;
-	int  sign   = 1;
 
 	// Go through all the characters in the source string
 	for (i = 0; i < srclen; i++)
@@ -3368,6 +3367,8 @@ int ExtractInt(char *src)
 	// convert temp var to integer
 	if (tmp[0] != 0)
 	{
+		int sign = 1;
+
 		result = sign * atoi(tmp);
 	}
 

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -76,7 +76,7 @@ pmListItemBig_t cg_pmStackBig[NUM_PM_STACK_ITEMS_BIG];
 
 const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 {
-	{ "Binoculars",                               "Improved Physical Fitness",                 "Improved Health",                       "Trap Awareness"           }, // battle sense
+	{ "Binoculars for any Class",                 "Improved Physical Fitness",                 "Improved Health",                       "Trap Awareness"           }, // battle sense
 	{ "Improved use of Explosive Ammunition",     "Improved Dexterity",                        "Improved Construction and Destruction", "a Flak Jacket"            }, // explosives & construction
 	{ "Medic Ammo",                               "Improved Resources",                        "Full Revive",                           "Adrenalin Self"           }, // first aid
 	{ "Improved Resources",                       "Improved Signals",                          "Improved Air and Ground Support",       "Enemy Recognition"        }, // signals

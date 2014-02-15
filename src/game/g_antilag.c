@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -311,7 +311,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 	for (i = 0; i < level.numConnectedClients; ++i)
 	{
 		clientNum = level.sortedClients[i];
-		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage )
+		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
 		{
 			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
 		}
@@ -328,7 +328,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 void G_HistoricalTraceBegin(gentity_t *ent)
 {
 	// don't do this with antilag off
-	if(!g_antilag.integer)
+	if (!g_antilag.integer)
 	{
 		return;
 	}
@@ -338,7 +338,7 @@ void G_HistoricalTraceBegin(gentity_t *ent)
 void G_HistoricalTraceEnd(gentity_t *ent)
 {
 	// don't do this with antilag off
-	if(!g_antilag.integer)
+	if (!g_antilag.integer)
 	{
 		return;
 	}
@@ -354,7 +354,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 
 	G_AttachBodyParts(ent);
 
-	for( i = 0; i < level.numConnectedClients; ++i )
+	for (i = 0; i < level.numConnectedClients; ++i)
 	{
 		clientNum = level.sortedClients[i];
 		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
@@ -366,7 +366,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
 
-	for(i = 0; i < level.numConnectedClients; ++i)
+	for (i = 0; i < level.numConnectedClients; ++i)
 	{
 		clientNum = level.sortedClients[i];
 		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
