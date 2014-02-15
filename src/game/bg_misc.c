@@ -261,7 +261,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_GARAND,               WP_GARAND_SCOPE,        WP_GARAND,            WP_GARAND,            34,  250,  }, // 25
 	{ WP_LANDMINE,             WP_NONE,                WP_LANDMINE,          WP_LANDMINE,          250, 0,    }, // 26
 	{ WP_SATCHEL,              WP_NONE,                WP_SATCHEL,           WP_SATCHEL,           250, 0,    }, // 27
-	{ WP_SATCHEL_DET,          WP_NONE,                WP_SATCHEL,           WP_SATCHEL,           1,   0,    }, // 28
+	{ WP_SATCHEL_DET,          WP_NONE,                WP_SATCHEL_DET,       WP_SATCHEL_DET,       1,   0,    }, // 28
 	{ WP_SMOKE_BOMB,           WP_NONE,                WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        1,   0,    }, // 29
 
 	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_MOBILE_MG42,       WP_MOBILE_MG42,       18,  2500, }, // 30
