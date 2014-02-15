@@ -4106,7 +4106,13 @@ void CG_AltWeapon_f(void)
 		{
 			return;
 		}
-		if (!cg.predictedPlayerState.ammoclip[WP_MORTAR]) // FIXME: WP_MORTAR2
+
+		if (cg.weaponSelect == WP_MORTAR && !cg.predictedPlayerState.ammoclip[WP_MORTAR])
+		{
+			return;
+		}
+
+		if (cg.weaponSelect == WP_MORTAR2 && !cg.predictedPlayerState.ammoclip[WP_MORTAR2])
 		{
 			return;
 		}
