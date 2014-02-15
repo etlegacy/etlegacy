@@ -462,11 +462,8 @@ void CL_ConsolePrint(char *txt)
 
 	if (!con.initialized)
 	{
-		con.color[0]             =
-		    con.color[1]         =
-		        con.color[2]     =
-		            con.color[3] = 1.0f;
-		con.linewidth            = -1;
+		con.color[0]  = con.color[1] = con.color[2] = con.color[3] = 1.0f;
+		con.linewidth = -1;
 		Con_CheckResize();
 		con.initialized = qtrue;
 	}
@@ -599,7 +596,7 @@ void Con_DrawInput(void)
 	SCR_DrawSmallChar(con.xadjust + 1 * SMALLCHAR_WIDTH, y, ']');
 
 	Field_Draw(&g_consoleField, con.xadjust + 2 * SMALLCHAR_WIDTH, y,
-	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qtrue);
+	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qfalse);
 }
 
 /*
