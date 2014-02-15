@@ -1592,7 +1592,7 @@ void ClientThink_real(gentity_t *ent)
 		VectorAdd(b2, maxs, b2);
 		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags = 1;
+		bboxEnt->s.dmgFlags  = 1;
 		bboxEnt->s.angles[0] = 0;
 		bboxEnt->s.angles[1] = 255;
 		bboxEnt->s.angles[2] = 0;
@@ -1604,7 +1604,7 @@ void ClientThink_real(gentity_t *ent)
 		VectorAdd(b2, head->r.maxs, b2);
 		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags = 1;
+		bboxEnt->s.dmgFlags  = 1;
 		bboxEnt->s.angles[0] = 0;
 		bboxEnt->s.angles[1] = 0;
 		bboxEnt->s.angles[2] = 255;
@@ -2229,7 +2229,7 @@ void ClientEndFrame(gentity_t *ent)
 		VectorAdd(b2, maxs, b2);
 		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags = 1;
+		bboxEnt->s.dmgFlags  = 1;
 		bboxEnt->s.angles[0] = 0;
 		bboxEnt->s.angles[1] = 0;
 		bboxEnt->s.angles[2] = 255;
@@ -2241,7 +2241,7 @@ void ClientEndFrame(gentity_t *ent)
 		VectorAdd(b2, head->r.maxs, b2);
 		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags = 1;
+		bboxEnt->s.dmgFlags  = 1;
 		bboxEnt->s.angles[0] = 0;
 		bboxEnt->s.angles[1] = 255;
 		bboxEnt->s.angles[2] = 0;

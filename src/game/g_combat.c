@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -906,7 +906,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 		{
 			height = ent->client->ps.viewheight - 60;
 		}
-		else if((ent->client->ps.eFlags & EF_DEAD))
+		else if ((ent->client->ps.eFlags & EF_DEAD))
 		{
 			height = ent->client->ps.viewheight - 64;
 		}
@@ -934,7 +934,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 		// the angles need to be clamped for prone
 		// or the head entity will be underground or
 		// far too tall
-		if((ent->client->ps.eFlags & EF_PRONE))
+		if ((ent->client->ps.eFlags & EF_PRONE))
 		{
 			angles[PITCH] = -10;
 		}
@@ -944,7 +944,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 		{
 			VectorScale(forward, 24, v);
 		}
-		else if((ent->client->ps.eFlags & EF_DEAD))
+		else if ((ent->client->ps.eFlags & EF_DEAD))
 		{
 			VectorScale(forward, -26, v);
 			VectorMA(v, 5.0f, right, v);
@@ -991,7 +991,7 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 	flatforward[2] = 0;
 	VectorNormalizeFast(flatforward);
 
-	if(ent->client->ps.eFlags & EF_PRONE)
+	if (ent->client->ps.eFlags & EF_PRONE)
 	{
 		org[0] = ent->r.currentOrigin[0] + flatforward[0] * -32;
 		org[1] = ent->r.currentOrigin[1] + flatforward[1] * -32;
