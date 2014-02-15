@@ -2981,8 +2981,8 @@ msgstr "Rozpoznanie Wroga"
 msgid "Medic Ammo"
 msgstr "Amunicja Medyka"
 
-msgid "Binoculars"
-msgstr "Lornetki"
+msgid "Binoculars for any Class"
+msgstr "Lornetki dla kazdej Klasy"
 
 msgid "Full Revive"
 msgstr "Pelne Ozywienie"

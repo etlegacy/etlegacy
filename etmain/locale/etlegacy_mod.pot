@@ -2995,7 +2995,7 @@ msgstr ""
 msgid "Medic Ammo"
 msgstr ""
 
-msgid "Binoculars"
+msgid "Binoculars for any Class"
 msgstr ""
 
 msgid "Full Revive"
