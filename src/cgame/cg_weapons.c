@@ -4244,40 +4244,23 @@ void CG_NextWeap(qboolean switchBanks)
 
 	switch (num)
 	{
-	case WP_SILENCER:
-		curweap = num = WP_LUGER;
+	case WP_LUGER:
+		curweap = num = WP_SILENCER;
 		break;
-	case WP_SILENCED_COLT:
-		curweap = num = WP_COLT;
+	case WP_COLT:
+		curweap = num = WP_SILENCED_COLT;
 		break;
-	case WP_GPG40:
-		curweap = num = WP_KAR98;
+	case WP_KAR98:
+		curweap = num = WP_GPG40;
 		break;
-	case WP_M7:
-		curweap = num = WP_CARBINE;
-		break;
-	case WP_MORTAR_SET: // FIXME: never reached see early return above - num/curweap are same
-		curweap = num = WP_MORTAR;
-		break;
-	case WP_MORTAR2_SET: // FIXME: never reached see early return above - num/curweap are same
-		curweap = num = WP_MORTAR2;
+	case WP_CARBINE:
+		curweap = num = WP_M7;
 		break;
 	default:
 		break;
 	}
 
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
-
-	// if you're using an alt mode weapon, try switching back to the parent first
-	if (IS_RIFLENADE_WEAPON(curweap))
-	{
-		num = getAltWeapon(curweap);      // base any further changes on the parent
-		if (CG_WeaponSelectable(num))        // the parent was selectable, drop back to that
-		{
-			CG_FinishWeaponChange(curweap, num);
-			return;
-		}
-	}
 
 	if (cg_cycleAllWeaps.integer || !switchBanks)
 	{
