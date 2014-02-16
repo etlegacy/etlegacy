@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-09-20 01:16+0100\n"
+"PO-Revision-Date: 2014-02-16 12:11+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
 "Language: cs_CZ\n"
@@ -54,23 +54,23 @@ msgstr "Podat stiznost proti %s^3 za zabiti spoluhrace?"
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
 #: src/cgame/cg_draw.c:2164
 #, c-format
-msgid "Press '%s' for YES, or '%s' for No"
-msgstr "Stiskni '%s' pro ANO nebo '%s' pro Ne"
+msgid "Press '%s' for YES, or '%s' for NO"
+msgstr "Stiskni '%s' pro ANO nebo '%s' pro NE"
 
 #: src/cgame/cg_draw.c:2096
 #, c-format
-msgid "Accept %s's application to join your fireteam?"
-msgstr "Prijmout zadost od %s k pripojeni do vasi cety?"
+msgid "Accept %s^3's application to join your fireteam?"
+msgstr "Prijmout zadost od %s^3 k pripojeni do vasi cety?"
 
 #: src/cgame/cg_draw.c:2109
 #, c-format
-msgid "Accept %s's proposition to invite %s to join your fireteam?"
-msgstr "Prijmout navrh od %s pro pozvani %s do vasi cety?"
+msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
+msgstr "Prijmout navrh od %s^3 pro pozvani %s^3 do vasi cety?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
-msgid "Accept %s's invitation to join their fireteam?"
-msgstr "Prijmout zadost od %s pro pripojeni do vasi cety?"
+msgid "Accept %s^3's invitation to join their fireteam?"
+msgstr "Prijmout zadost od %s^3 pro pripojeni do vasi cety?"
 
 #: src/cgame/cg_draw.c:2218
 #, c-format
@@ -116,7 +116,6 @@ msgid "You are wounded and waiting for a medic."
 msgstr "Jsi ranen a cekas na zdravotnika."
 
 #: src/cgame/cg_draw.c:2540
-#, fuzzy
 msgid "Press %s to go into reinforcement queue."
 msgstr "Stiskni SKOK pro navraceni do fronty posil."
 
@@ -131,8 +130,8 @@ msgstr "Posily prijdou za %d vterin"
 
 #: src/cgame/cg_draw.c:2593
 #, c-format
-msgid "Bonus Life! Deploying in %d seconds"
-msgstr "Zivot navic! Rozmisteni za %d vterin"
+msgid "Bonus Life! Deploying in ^3%d ^7seconds"
+msgstr "Zivot navic! Rozmisteni za ^3%d ^7vterin"
 
 #: src/cgame/cg_draw.c:2597
 msgid "No more deployments this round"
@@ -140,14 +139,19 @@ msgstr "Zadne dalsi rozmisteni toto kolo"
 
 #: src/cgame/cg_draw.c:2602
 #, c-format
-msgid "Deploying in %d seconds"
-msgstr "Rozmisteni za %d vterin"
+msgid "Deploying in ^3%d ^7seconds"
+msgstr "Rozmisteni za ^3%d ^7vterin"
+
+#: src/cgame/cg_draw.c:2613
+#, c-format
+msgid "Deploying in ^3%d ^7second"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
 msgid "Following"
 msgstr "Sledujes"
 
-#: src/cgame/cg_draw.c:2651
+#: src/cgame/cg_draw.c:2732
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr "^3ZAHRIVANI:^7 Ceka se na ^2%i^7 %s"
@@ -221,7 +225,7 @@ msgstr "^3PRIPOJUJE"
 msgid "^3SPECTATOR"
 msgstr "^3POZORUJE"
 
-#: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:683
+#: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
 msgid "AXIS"
 msgstr "OSA"
 
@@ -234,7 +238,7 @@ msgstr "HRACU"
 msgid "FIRST BLOOD"
 msgstr "PRVNI KREV"
 
-#: src/cgame/cg_scoreboard.c:673 src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:814 src/cgame/cg_scoreboard.c:828
 msgid "ALLIES"
 msgstr "SPOJENCI"
 
@@ -328,12 +332,9 @@ msgstr "VYTVORIT PROFIL"
 msgid ""
 "Please choose your initial settings below. You can change these at any time "
 "and access more advanced options by visiting the Options Menu. Should more "
-"than one person wish to play Wolfenstein: Enemy Territory, you can create "
+"than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
 msgstr ""
-"Prosim vyberte svoje pocatecni nastaveni. Pozdeji je mozne vsechna nastaveni "
-"zmenit a provest dalsi upravy v menu Nastaveni. Navic je mozne vytvorit "
-"ruzna nastaveni pro jine hrace pri vytvoreni noveho profilu v menu Profily."
 
 msgid "Player Alias:"
 msgstr "Prezdivka:"
@@ -917,7 +918,7 @@ msgstr "Pulzovani zamerovace:"
 msgid "Crosshair Health Info:"
 msgstr "Ukazatel zdravi na zamerovaci:"
 
-msgid "Crosshair Name Drawing:"
+msgid "Crosshair Info:"
 msgstr "Zobrazovat jmena na zamerovaci:"
 
 msgid "Primary Color:"
@@ -1185,8 +1186,8 @@ msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can "
 "see 16"
 msgstr ""
-"1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud neuvidis "
-"16"
+"1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud "
+"neuvidis 16"
 
 msgid "     separate bars below of equal differing brightness."
 msgstr "     oddelenych mrizi pod stejnymi rozdily v jasu"
@@ -1281,64 +1282,22 @@ msgid "^1PROGRAMMING"
 msgstr "^1PROGRAMOVANI"
 
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
-msgstr "Jan 'Radegast' Simek - zakladatel projektu, programovani a sprava"
+msgstr ""
 
-msgid "IR4T4 - Coding, mod development & bad boy"
-msgstr "IR4T4 - programovani, tvorba modu & ulicnik"
+msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
+msgstr ""
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
-msgstr "Konrad 'morsik' Moson - webhosting, programovani & skripty"
+msgstr ""
 
-msgid "Jere 'Jacker' S - main windows coder, render"
-msgstr "Jere 'Jacker' S - hlavni Windows programator, novy renderer"
+msgid "Jere 'Jacker' S. - Main windows coder & renderer"
+msgstr ""
 
 msgid "^1CONTRIBUTORS"
 msgstr "^1PRISPEVOVATELE"
 
-msgid "Acqu - Bug reports & patches"
-msgstr "Acqu - hlaseni chyb a patche"
-
-msgid "Antman - Map location override databases "
-msgstr "Antman - dalsi jmena lokaci na mape"
-
-msgid "Dragon aka Dragonji - Bug reports & Windows tester"
-msgstr "Dragon aka Dragonji - hlaseni chyb a tester na Windows"
-
-msgid "Lakersforce - Translations, bug reports"
-msgstr "Lakersforce - preklady, hlaseni chyb"
-
-msgid "Mathieu Olivier - Bug fixes and code clean up"
-msgstr "Mathieu Olivier - opravy chyb a procisteni kodu"
-
-msgid "Merlin - Bug reports"
-msgstr "Merlin - hlaseni chyb"
-
-msgid "RaFaL aka ***Rafal*** - Menu scripts and Windows tester"
-msgstr "RaFaL aka ***Rafal*** - uprava menu skriptu a tester na Windows"
-
-msgid "Dusan 'TheDushan' Jocic - Advices, patches"
-msgstr "Dusan 'TheDushan' Jocic - rady a patche"
-
-msgid "Ensiform - Advices, comments"
-msgstr "Ensiform - rady, patche"
-
 msgid "^1GREETINGS"
 msgstr "^1PODEKOVANI"
-
-msgid "ETPub Team"
-msgstr "Tym ETPub"
-
-msgid "NQ Team - core hug goes to C.."
-msgstr "NQ Tym - zvlaste C.."
-
-msgid "Omni-Bot Team - especially crapshot, Dr. Evil & Palota"
-msgstr "Tym Omni-bot - zvlaste crapshoot, Dr. Evil a Palota"
-
-msgid "Splash Damage ET Community"
-msgstr "ET komunita Splash Damage"
-
-msgid "Zynx"
-msgstr "Zynx"
 
 msgid "SPLASH DAMAGE"
 msgstr "SPLASH DAMAGE"
@@ -1485,12 +1444,13 @@ msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
 msgstr ""
-"Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id "
-"Software"
+"Wolfenstein: Enemy Territory pohani Quake III Arena "
+"(TM) technologie od id Software"
 
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr "Produkci, vyvojovou a technickou asistenci poskytlo id Software."
+msgstr ""
+"Produkci, vyvojovou a technickou asistenci poskytlo id Software."
 
 msgid "PRODUCED BY ACTIVISION"
 msgstr "PRODUKOVAL ACTIVISION"
@@ -1561,32 +1521,24 @@ msgstr ""
 msgid "Testers:"
 msgstr "Testeri:"
 
-msgid ""
-"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+msgid "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
 "Kannard, Cory Rice"
-msgstr ""
-"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+msgstr "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
 "Kannard, Cory Rice"
 
-msgid ""
-"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+msgid "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
 "Martin, Jim Call"
-msgstr ""
-"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+msgstr "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
 "Martin, Jim Call"
 
-msgid ""
-"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+msgid "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
 "Lawrence Wong"
-msgstr ""
-"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+msgstr "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
 "Lawrence Wong"
 
-msgid ""
-"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+msgid "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
 "Todd, Mike Restifo"
-msgstr ""
-"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+msgstr "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
 "Todd, Mike Restifo"
 
 msgid "Chris Keim"
@@ -1738,22 +1690,22 @@ msgstr ""
 msgid "ET Legacy Website"
 msgstr "Webova stranka ET: Legacy"
 
-msgid " 2012-2013 ET Legacy developers - under the terms of GPL version 3."
+msgid "@ 2012-2013 ET Legacy Team - under the terms of GPL version 3."
 msgstr " 2012-2013 ET: Legacy vyvojari - pod licenci GPL verze 3."
 
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries. "
 "All other trademarks and trade names are the properties of their respective "
 "owners."
 msgstr ""
-" 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy "
-"Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein "
-"logo, nazev id Software a id logo jsou bud registrovane ochranne znamky nebo "
-"znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny "
-"dalsi ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
+"@ 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy Territory, "
+"Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, "
+"nazev id Software a id logo jsou bud registrovane ochranne znamky nebo "
+"znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny dalsi "
+"ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
 
 msgid "Yeah, right, like YOU have"
 msgstr "Jasne, jako bys mel"
@@ -2213,7 +2165,6 @@ msgstr ""
 msgid "We need Covert Ops!"
 msgstr ""
 
-#, fuzzy
 msgid "Follow me!"
 msgstr "Sledujes"
 
@@ -2265,11 +2216,9 @@ msgstr ""
 msgid "Kein problem."
 msgstr ""
 
-#, fuzzy
 msgid "Sorry!"
 msgstr "S. Promin"
 
-#, fuzzy
 msgid "Oops!"
 msgstr "O. Oops"
 
@@ -2300,7 +2249,6 @@ msgstr ""
 msgid "Bye."
 msgstr ""
 
-#, fuzzy
 msgid "Great shot!"
 msgstr "6. Skvela trefa"
 
@@ -2343,7 +2291,6 @@ msgstr ""
 msgid "Sehr gut!"
 msgstr ""
 
-#, fuzzy
 msgid "Thanks!"
 msgstr "T. Dekuji"
 
@@ -2407,12 +2354,15 @@ msgstr ""
 msgid "I'm a covert ops."
 msgstr ""
 
+#: src/cgame/cg_draw.c:2126
 msgid "Create a Fireteam?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2112
 msgid "Make Fireteam private?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2360
 msgid "Response Sent"
 msgstr ""
 
@@ -2611,33 +2561,27 @@ msgstr "VYKOPNOUT OMNI-BOTa"
 msgid "Yes"
 msgstr "Ano"
 
-#, fuzzy
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
 msgstr "Pouzit doporucene video nastaveni"
 
-#, fuzzy
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
 msgstr "Pouzit doporucene video nastaveni"
 
-#, fuzzy
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
 msgstr "Chces otevrit"
 
-msgid ""
-"^3Thank you for installing ET:Legacy.\n"
-"\n"
-"^3Visit ^1www.etlegacy.com^3 for more information.\n"
-"\n"
-"^3Let's keep ET alive!"
+msgid "^1LET'S KEEP ET ALIVE!"
 msgstr ""
 
-#, fuzzy
+msgid "^3Thank you for installing ET:Legacy"
+msgstr ""
+
 msgid "HOST GAME: EXTENDED"
 msgstr "HOSTOVAT HRU: POKROCILE"
 
@@ -2670,7 +2614,6 @@ msgstr ""
 msgid "ABORT"
 msgstr ""
 
-#, fuzzy
 msgid "SIMPLE CLEAN"
 msgstr "JEDNODUCHE"
 
@@ -2683,18 +2626,15 @@ msgstr ""
 msgid "unknown cmd"
 msgstr ""
 
-#, fuzzy
 msgid "Server:"
 msgstr "IP serveru:"
 
 msgid "changed to"
 msgstr ""
 
-#, fuzzy
 msgid "Auto Map Zoom:"
 msgstr "Priblizeni kompasu:"
 
-#, fuzzy
 msgid "was killed by"
 msgstr "Zabil jsi"
 
@@ -2710,7 +2650,6 @@ msgstr ""
 msgid "Dynamite is set, but NOT armed!"
 msgstr ""
 
-#, fuzzy
 msgid "Arming dynamite..."
 msgstr "Ceka se na nacteni hry..."
 
@@ -2783,6 +2722,7 @@ msgstr ""
 msgid "dynamited himself to pieces"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2797
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr ""
 
@@ -2825,13 +2765,16 @@ msgstr ""
 msgid "'s artillery support"
 msgstr ""
 
-msgid "rediscovered gravity."
+msgid "rediscovered gravity"
 msgstr ""
 
 msgid "'s Landmine"
 msgstr ""
 
 msgid "'s Mobile MG42"
+msgstr ""
+
+msgid "'s Mobile Browning"
 msgstr ""
 
 msgid "'s rifle grenade"
@@ -2909,20 +2852,18 @@ msgstr ""
 msgid "Allied team"
 msgstr ""
 
-#, fuzzy
 msgid "Spectators"
 msgstr "Nemi pozorovatele:"
 
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
 
-msgid "^9You must be alive to use ^3/kill.\n"
+msgid "^9You must be alive to use ^3/kill."
 msgstr ""
 
 msgid "No vote in progress.\n"
 msgstr ""
 
-#, fuzzy
 msgid "Show Clock:"
 msgstr "Zobrazit krev:"
 
@@ -2944,13 +2885,12 @@ msgstr ""
 msgid "Your fireteam is now private"
 msgstr ""
 
-msgid "The Allies have too many players."
+msgid "The Allies have too many players.\n"
 msgstr ""
 
-msgid "The Axis have too many players."
+msgid "The Axis has too many players.\n"
 msgstr ""
 
-#, fuzzy
 msgid "Attack!"
 msgstr "Utok:"
 
@@ -3070,7 +3010,6 @@ msgstr ""
 msgid "Medic Ammo"
 msgstr ""
 
-#, fuzzy
 msgid "Binoculars"
 msgstr "Priblizeni dalekohledu:"
 
@@ -3101,7 +3040,6 @@ msgstr ""
 msgid "Improved use of Light Weapon Ammunition"
 msgstr ""
 
-#, fuzzy
 msgid "Faster Reload"
 msgstr "Atomaticke prebiti:"
 
@@ -3174,9 +3112,7 @@ msgstr ""
 msgid "Allies have destroyed the gun tracking"
 msgstr ""
 
-msgid ""
-"^3All players ready!^7\n"
-"Match starting..."
+msgid "^3All players ready!^7\nMatch starting..."
 msgstr ""
 
 msgid "The Axis North-West MG Nest has been destroyed."
@@ -3386,7 +3322,6 @@ msgstr ""
 msgid "Allied team has destroyed the Axis Fuel Dump!"
 msgstr ""
 
-#, fuzzy
 msgid "was killed"
 msgstr "Zabil jsi"
 
@@ -3543,9 +3478,7 @@ msgstr ""
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr ""
 
-msgid ""
-"^3All players ready!^7\n"
-"Match starting...\n"
+msgid "^3All players ready!^7\nMatch starting...\n"
 msgstr ""
 
 msgid "You are on the Allied team"
@@ -3568,12 +3501,10 @@ msgid "Fireteam: %s"
 msgstr ""
 
 #: src/cgame/cg_info.c:585
-#, fuzzy
 msgid "PLAYER STATS"
 msgstr "HRACU"
 
 #: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
-#, fuzzy
 msgid "Weapon"
 msgstr "Dalsi zbran:"
 
@@ -3594,7 +3525,6 @@ msgid "Deaths"
 msgstr ""
 
 #: src/cgame/cg_info.c:606
-#, fuzzy
 msgid "Headshots"
 msgstr "6. Skvela trefa"
 
@@ -3631,7 +3561,6 @@ msgid "\"TOPSHOT\" ACCURACIES"
 msgstr ""
 
 #: src/cgame/cg_info.c:810
-#, fuzzy
 msgid "Player"
 msgstr "Vykopnuti hrace:"
 
@@ -3665,30 +3594,24 @@ msgstr ""
 msgid "Need paks: %s\n"
 msgstr ""
 
-#, fuzzy
 msgid "Mod filter:"
 msgstr "Splouchance krve:"
 
-#, fuzzy
 msgid "DELETE FAVS"
 msgstr "SMAZAT"
 
-#, fuzzy
 msgid "RESET FILTERS"
 msgstr "FILTRY"
 
-#, fuzzy
 msgid "DELETE SERVER FAVOURITES"
 msgstr "DAT DO OBLIBENYCH"
 
-#, fuzzy
 msgid "Do you really want to"
 msgstr "Jsi si jisty, ze chces spustit"
 
 msgid "delete YOUR favourites?"
 msgstr ""
 
-#, fuzzy
 msgid "Modify Selected HUD:"
 msgstr "Upravit alternativni HUD:"
 
@@ -3703,6 +3626,15 @@ msgstr ""
 
 #: src/cgame/cg_consolecmds.c:1211
 msgid "Allies"
+msgstr ""
+
+msgid "DEMO CONTROLS"
+msgstr ""
+
+msgid "^nBACKSPACE ^mhelp on/off"
+msgstr ""
+
+msgid "^3WARMUP:^7 Match begins in:"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
@@ -3754,8 +3686,883 @@ msgstr ""
 msgid "Added favorite server %s\n"
 msgstr ""
 
-#~ msgid "Can't voice chat as a spectator.\n"
-#~ msgstr "Neni mozne vydavat hlasove prikazy jako pozorovatel.\n"
+msgid "^3See HALL OF FAME below"
+msgstr ""
 
-#~ msgid "^3Thank you for installing ET:Legacy."
-#~ msgstr "^3Dekujeme za instalaci ET: Legacy."
+msgid "^1WEBSITE"
+msgstr ""
+
+msgid "http://www.etlegacy.com"
+msgstr ""
+
+msgid "HALL OF FAME"
+msgstr ""
+
+msgid "^3ET LEGACY HALL OF FAME"
+msgstr ""
+
+msgid "Advices, Bug reports, Patches"
+msgstr ""
+
+msgid "^1TRANSLATIONS"
+msgstr ""
+
+msgid "^1PORTS"
+msgstr ""
+
+msgid "'BSzili' - AROS and MorphOS"
+msgstr ""
+
+msgid "'PtitSeb' - Pandora"
+msgstr ""
+
+msgid "^1PACKAGE MAINTAINERS"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "players"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2749
+msgid "Press ^3%s^7 to start"
+msgstr ""
+
+msgid "Not enough players to start match!\n"
+msgstr ""
+
+msgid "Your invitation has been submitted"
+msgstr ""
+
+msgid "Your invitation was accepted"
+msgstr ""
+
+msgid "Your invitation reply has been sent"
+msgstr ""
+
+msgid "You were team-killed by a bot."
+msgstr ""
+
+msgid "You were team-killed by the Server Host"
+msgstr ""
+
+msgid "Server Host cannot be complained against"
+msgstr ""
+
+msgid "Complaint dismissed"
+msgstr ""
+
+msgid "Your complaint has been filed"
+msgstr ""
+
+msgid "Your application has been submitted"
+msgstr ""
+
+msgid "Your application failed"
+msgstr ""
+
+msgid "Your application has been approved"
+msgstr ""
+
+msgid "Your application reply has been sent"
+msgstr ""
+
+msgid "Your proposition has been submitted"
+msgstr ""
+
+msgid "Your proposition was rejected"
+msgstr ""
+
+msgid "Your proposition was accepted"
+msgstr ""
+
+msgid "Your proposition reply has been sent"
+msgstr ""
+
+msgid "Your invitation was rejected"
+msgstr ""
+
+msgid "'s flamethrower"
+msgstr ""
+
+msgid "'s Satchel Charge"
+msgstr ""
+
+msgid "FONTS"
+msgstr ""
+
+msgid "Top Print:"
+msgstr ""
+
+msgid "Side Print:"
+msgstr ""
+
+msgid "Center Print:"
+msgstr ""
+
+msgid "Crosshair Name:"
+msgstr ""
+
+msgid "Fonts Size:"
+msgstr ""
+
+msgid "Obituaries Icons:"
+msgstr ""
+
+msgid "MATCH BEGINS IN:"
+msgstr ""
+
+msgid "You must be in the game to be ^3ready^7!\n"
+msgstr ""
+
+msgid "ALLIES COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly objective!"
+msgstr ""
+
+msgid "Axis team has destroyed the Bridge!"
+msgstr ""
+
+msgid "^3Aborting, can't see target."
+msgstr ""
+
+msgid "^3Firing for effect!"
+msgstr ""
+
+msgid "'s tank-mounted MG42"
+msgstr ""
+
+msgid "'s dynamite"
+msgstr ""
+
+msgid "Timelimit hit.\n"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:146
+#, c-format
+msgid "Config: ^7%s^7"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2745
+#, c-format
+msgid "^3Config: ^7%s^7"
+msgstr ""
+
+msgid "Landmine revealed"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "disable"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "activate"
+msgstr ""
+
+msgid "^3Insufficient fire support."
+msgstr ""
+
+msgid "'s tank-mounted browning 30cal"
+msgstr ""
+
+msgid "'s grenade"
+msgstr ""
+
+msgid "was crushed"
+msgstr ""
+
+msgid "W. Enemy Weak!"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:322
+#, c-format
+msgid ""
+"Connecting to:\n"
+" %s^*\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:195
+msgid "CONNECTING..."
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:191
+msgid "DOWNLOADING..."
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:250
+msgid "Single Player"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:252
+msgid "Co-op"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:254
+msgid "Objective"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:256
+msgid "Stopwatch"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:258
+msgid "Campaign"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:260
+msgid "Last Man Standing"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:262
+msgid "Map Voting"
+msgstr ""
+
+msgid "Competition Settings Loaded!\n"
+msgstr ""
+
+msgid "Public Settings Loaded!\n"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
+#, c-format
+msgid "MAP %i of %i"
+msgstr ""
+
+msgid "Landmine cannot be armed here..."
+msgstr ""
+
+msgid "Your team has too many landmines placed..."
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly construction!"
+msgstr ""
+
+#: src/cgame/cg_draw.c:402
+#, c-format
+msgid "an %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:381 src/cgame/cg_draw.c:390 src/cgame/cg_draw.c:406
+#, c-format
+msgid "a %s"
+msgstr ""
+
+msgid "Countdown started.... ^3notready^7 ignored!\n"
+msgstr ""
+
+msgid "No complaint filed against you.\n"
+msgstr ""
+
+msgid "You are not the leader of a fireteam\n"
+msgstr ""
+
+msgid "You have been warned by your Fireteam Commander\n"
+msgstr ""
+
+msgid "You have been kicked from the fireteam"
+msgstr ""
+
+msgid "You are now the leader of your fireteam"
+msgstr ""
+
+msgid "The Fireteam you are on has been disbanded"
+msgstr ""
+
+msgid "You have been given fireteam admin rights"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:343
+msgid "FIRETEAMS"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:346
+msgid "JOIN"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:349
+msgid "PROPOSE"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:355
+msgid "INVITE"
+msgstr ""
+	
+#: src/cgame/cg_fireteams.c:364
+msgid "SET ADMIN"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
+#: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
+msgid "Previous"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:709 src/cgame/cg_fireteams.c:713
+#: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
+msgid "Next"
+msgstr ""
+
+msgid "Too many players already on this Fireteam"
+msgstr ""
+
+msgid "The leader has now left the Fireteam you applied to"
+msgstr ""
+
+msgid "The other player is already on a fireteam"
+msgstr ""
+
+msgid "You are not on the same team as the other player"
+msgstr ""
+
+msgid "You are not on the same Fireteam as the other player"
+msgstr ""
+
+msgid "Invalid client selected"
+msgstr ""
+
+msgid "usage: fireteam admin <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam propose <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam kick <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam warn <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam invite <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
+msgstr ""
+
+msgid "usage: fireteam <create|leave|apply|invite>"
+msgstr ""
+
+msgid "You are already on a fireteam, leave it first"
+msgstr ""
+
+msgid "The other player must be on the same fireteam for you to give admin rights to"
+msgstr ""
+
+msgid "You must be a fireteam admin to give admin rights to someone else"
+msgstr ""
+
+msgid "Invalid referee password!\n"
+msgstr ""
+
+msgid "Usage: ref [password]\n"
+msgstr ""
+
+msgid "\n^3Referee commands:^7\n"
+msgstr ""
+
+msgid "Usage: ^3\\ref <cmd> [params]\n\n"
+msgstr ""
+
+msgid "^5pause speclock warmup ^7[value]\n"
+msgstr ""
+
+msgid "Sorry, referee status disabled on this server.\n"
+msgstr ""
+
+msgid "Referee has ^3LOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have LOCKED teams\n"
+msgstr ""
+
+msgid "Referee has ^3UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have UNLOCKED teams\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "^3Referee ^1PAUSED^3 the match^3!\n"
+msgstr ""
+
+msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
+msgstr ""
+
+msgid "The match is already ^1PAUSED!\n"
+msgstr ""
+
+msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
+msgstr ""
+
+msgid "The match is already ^5UNPAUSED!\n"
+msgstr ""
+
+msgid "Bad client slot: "
+msgstr ""
+
+msgid "Client"
+msgstr ""
+
+msgid "is not active\n"
+msgstr ""
+
+msgid "You can only remove people in the game!\n"
+msgstr ""
+
+msgid "User "
+msgstr ""
+
+msgid "is not on the server\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^4Allies^7 team\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^1Axis^7 team\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "usage: ref warn <clientname> [reason].\n"
+msgstr ""
+
+msgid "Client not on server.\n"
+msgstr ""
+
+msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
+msgstr ""
+
+msgid "Cannot mute a referee.\n"
+msgstr ""
+
+msgid "^5You've been muted\n"
+msgstr ""
+
+msgid "Can't chat - you are muted\n"
+msgstr ""
+
+msgid "^5You've been unmuted\n"
+msgstr ""
+
+msgid "\n"
+"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+msgstr ""
+
+msgid "\n"
+"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
+"Snaps\n"
+msgstr ""
+
+msgid "^5\n"
+"Available Game Commands:\n"
+"------------------------\n"
+msgstr ""
+
+msgid "\n"
+"Type: ^3\\command_name ?^7 for more information\n"
+msgstr ""
+
+msgid "Spectators can't lock a team!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is now locked!\n"
+msgstr ""
+
+msgid "^3Your team is already locked!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is now unlocked!\n"
+msgstr ""
+
+msgid "^3Your team is already unlocked!\n"
+msgstr ""
+
+msgid "Spectators can't unlock a team!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is now locked!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is now unlocked!\n"
+msgstr ""
+
+msgid "Team commands not enabled on this server.\n"
+msgstr ""
+
+msgid "\n"
+"^3>>> Unknown vote command: ^7 \n"
+msgstr ""
+
+msgid "\n"
+"Valid ^3callvote^7 commands are:\n"
+"^3----------------------------\n"
+msgstr ""
+
+msgid "\n"
+"Usage: ^3\\callvote <command> <params>\n"
+"^7For current settings/help, use: ^3\\callvote <command> ?\n"
+"\n"
+msgstr ""
+
+msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
+msgstr ""
+
+msgid "Spectators can't ready a team!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is ready!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is ready!\n"
+msgstr ""
+
+msgid "A vote is already in progress.\n"
+msgstr ""
+
+msgid "called a vote.\n"
+msgstr ""
+
+msgid "^5Vote passed!\n"
+msgstr ""
+
+msgid "Spectator team\n"
+msgstr ""
+
+msgid "Allies team\n"
+msgstr ""
+
+msgid "Axis team\n"
+msgstr ""
+
+msgid "Sorry, "
+msgstr ""
+
+msgid "voting has been disabled"
+msgstr ""
+
+msgid "Not allowed to call a vote as a spectator.\n"
+msgstr ""
+
+msgid "called a vote."
+msgstr ""
+
+msgid "Vote cast.\n"
+msgstr ""
+
+msgid "'s KA-BAR"
+msgstr ""
+
+msgid "'s .45ACP 1911"
+msgstr ""
+
+msgid "'s Thompson"
+msgstr ""
+
+msgid "'s MP40"
+msgstr ""
+
+msgid "'s knife"
+msgstr ""
+
+msgid "'s Luger 9mm"
+msgstr ""
+
+msgid "'s Panzerfaust"
+msgstr ""
+
+msgid "'s Garand"
+msgstr ""
+
+msgid "'s Sten"
+msgstr ""
+
+msgid "'s FG42"
+msgstr ""
+
+msgid "'s K43"
+msgstr ""
+
+msgid "SOUND"
+msgstr ""
+
+msgid "AutoScreenshots format:"
+msgstr ""
+
+msgid "Reset Filters"
+msgstr ""
+
+msgid "Binoculars Zoom:"
+msgstr ""
+
+msgid "Slot 8 - Binoculars:"
+msgstr ""
+
+msgid "Remy 'Spyhawk' M. - Coding, mod development"
+msgstr ""
+
+msgid "died"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2250
+#, c-format
+msgid "Press %s to follow previous player"
+msgstr ""
+
+msgid "^9You are frozen - ^3/kill^9 is disabled."
+msgstr ""
+
+msgid "Objectives:"
+msgstr ""
+
+#: src/cgame/cg_info.c:1068
+msgid "OBJECTIVES"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3191
+#, c-format
+msgid "CAMPAIGN STATUS: %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3200
+#, c-format
+msgid "%i SECS TO NEXT MAP"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3130
+msgid "ALLIES WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3132
+msgid "AXIS WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3134
+msgid "IT'S A TIE!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3311
+#, c-format
+msgid "Campaign: %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2614
+msgid "Time:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2626
+msgid "Medals:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2645
+msgid "Rank:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2578
+msgid "ACC:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2765
+msgid "^5TO TEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2768
+msgid "^3TO FIRETEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2771
+msgid "^2TO GLOBAL"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1311
+#, c-format
+msgid "Last Played             : %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1318
+#, c-format
+msgid "Total Accumulated Votes : %d"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1312
+msgid "Never"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1312
+#, c-format
+msgid "%d maps ago"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:208
+#, c-format
+msgid "WAITING ON %i %s"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2005
+#, c-format
+msgid "Damage Given: %-6d  Team Damage Given: %d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2006
+#, c-format
+msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2008
+#, c-format
+msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
+msgstr ""
+
+msgid "'s Bazooka"
+msgstr ""
+
+msgid "'s Akimbo .45ACP 1911s"
+msgstr ""
+
+msgid "^7killed"
+msgstr ""
+
+msgid "^7killed ^1TEAMMATE^7"
+msgstr ""
+
+msgid "Server disconnected"
+msgstr ""
+
+#: src/ui/ui_main.c:5803
+#, c-format
+msgid "^3Filtered/Total: %i/%i"
+msgstr ""
+
+#: src/ui/ui_main.c:5807
+#, c-format
+msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
+msgstr ""
+
+#: src/ui/ui_main.c:5812
+msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
+msgstr ""
+
+msgid "Server connection timed out."
+msgstr ""
+
+msgid "Server disconnected for unknown reason"
+msgstr ""
+
+msgid "Server is full, redirect to: %s\n"
+msgstr ""
+
+msgid "Can't show Server Info (not found, or local server)\n"
+msgstr ""
+
+msgid "%d servers listed in browser with %d players.\n"
+msgstr ""
+
+msgid "%d servers not listed (filtered out by game browser settings)\n"
+msgstr ""
+
+msgid "Can't find campaign '%s'\n"
+msgstr ""
+
+msgid "Corrupted campaign '%s'\n"
+msgstr ""
+
+msgid "%i campaigns found:\n"
+msgstr ""
+
+msgid "No campaigns found.\n"
+msgstr ""
+
+msgid "Show Descriptive Text:"
+msgstr ""
+
+msgid "'s Akimbo Luger 9mms"
+msgstr ""
+
+msgid "Cheats are not enabled on this server.\n"
+msgstr ""
+
+msgid "team: class is not available\n"
+msgstr ""
+
+msgid "^1Soldier^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Medic^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Engineer^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Field Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Covert Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "You must be alive to use this command.\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "Can't follow a player on an enemy team!\n"
+msgstr ""
+
+msgid "Can't follow while not in limbo if on a team!\n"
+msgstr ""
+
+msgid "Partial Name Matches more than 1 Player.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
+msgstr ""
+
+msgid "^1Axis^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
+msgstr ""
+
+msgid "^4Allies^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Server quit\n"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2766
+#, c-format
+msgid "The %s team is speclocked!"
+msgstr ""
+
+msgid "You cannot switch during a match, please wait until the round ends."
+msgstr ""
+
+msgid ""
+"Many thanks to Splash Damage for their release of the source code, ioWolfET "
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
+"their inspirations."
+msgstr ""
+
+msgid "Show Ping:"
+msgstr ""
