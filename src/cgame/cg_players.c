@@ -1623,9 +1623,13 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
 	// Account for ducking
 	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
 	{
-		if (cg.snap->ps.pm_flags & PMF_DUCKED)
+		if (cent->currentState.eFlags & EF_CROUCHING)
 		{
 			ent.origin[2] -= 18;
+		}
+		else if (cent->currentState.eFlags & EF_PRONE)
+		{
+			ent.origin[2] -= 45;
 		}
 	}
 	else
