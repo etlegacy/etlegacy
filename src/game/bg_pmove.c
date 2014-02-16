@@ -3489,7 +3489,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
@@ -3567,7 +3567,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
