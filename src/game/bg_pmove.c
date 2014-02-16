@@ -3285,7 +3285,7 @@ void PM_CoolWeapons(void)
 		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
 		{
 			// floor to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
 		}
 		else
 		{
@@ -3295,7 +3295,7 @@ void PM_CoolWeapons(void)
 			// floor to prevent 8-bit wrap
 			if (maxHeat != 0)
 			{
-				pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[pm->ps->weapon] / (float)maxHeat)) * 255.0f);
+				pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[pm->ps->weapon] / (float)maxHeat) * 255.0f);
 			}
 			else
 			{
