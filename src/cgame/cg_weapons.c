@@ -3461,6 +3461,15 @@ void CG_AddViewWeapon(playerState_t *ps)
 		hand.hModel   = weapon->handsModel;
 		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
+		// adjust bazooka so it has bigger distance to our crosshair
+		if (ps->weapon == WP_BAZOOKA)
+		{
+			hand.axis[0][0]       *= .8f;
+			hand.axis[0][1]       *= .8f;
+			hand.axis[0][2]       *= .8f;
+			hand.nonNormalizedAxes = qtrue;
+		}
+
 		if (cg_gun_fovscale.integer && cg_fov.integer != 0)
 		{
 			if (cg_gun_fovscale.integer > 1 && cg_fov.integer <= 90)
