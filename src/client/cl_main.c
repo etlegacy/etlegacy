@@ -1261,6 +1261,11 @@ void CL_RequestMotd(void)
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
 
+	// ET:Legacy client only: collect gfx card info
+	//Info_SetValueForKey(info, "gl_vendor", cls.glconfig.vendor_string);
+	//Info_SetValueForKey(info, "gl_renderer", cls.glconfig.renderer_string);
+	Info_SetValueForKey(info, "gl_version", cls.glconfig.version_string);
+
 	NET_OutOfBandPrint(NS_CLIENT, autoupdate.motdServer, "getmotd \"%s\"", info);
 }
 
