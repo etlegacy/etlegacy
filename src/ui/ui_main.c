@@ -8306,7 +8306,14 @@ static void UI_StartServerRefresh(qboolean full)
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime + 5000;
 	if (ui_netSource.integer == AS_GLOBAL)
 	{
-		trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", 0, (int)trap_Cvar_VariableValue("protocol")));
+		int i;
+		for (i = 0; i < MAX_MASTER_SERVERS; i++)
+		{
+			if (UI_Cvar_VariableString(va("sv_master%i", i + 1))[0] != '\0')
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", i, (int)trap_Cvar_VariableValue("protocol")));
+			}
+		}
 	}
 }
 
