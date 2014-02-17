@@ -4069,20 +4069,12 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 	char *infoString;
 	int  prot;
 	char *gameName;
-	int  debug_protocol;
-	int  protocol = PROTOCOL_VERSION;
-
-	debug_protocol = Cvar_VariableIntegerValue("debug_protocol");
-	if (debug_protocol)
-	{
-		protocol = debug_protocol;
-	}
 
 	infoString = MSG_ReadString(msg);
 
 	// if this isn't the correct protocol version, ignore it
 	prot = atoi(Info_ValueForKey(infoString, "protocol"));
-	if (prot != protocol)
+	if (prot != PROTOCOL_VERSION)
 	{
 		Com_DPrintf("Different protocol info packet: %s\n", infoString);
 		return;

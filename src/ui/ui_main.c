@@ -7537,8 +7537,6 @@ void _UI_Init(int legacyClient)
 	uiInfo.serverStatus.currentServerCinematic = -1;
 	uiInfo.previewMovie                        = -1;
 
-	trap_Cvar_Register(NULL, "debug_protocol", "", 0);
-
 	// init Yes/No once for cl_language -> server browser (punkbuster)
 	Q_strncpyz(translated_yes, DC->translateString("Yes"), sizeof(translated_yes));
 	Q_strncpyz(translated_no, DC->translateString("NO"), sizeof(translated_no));
@@ -8274,7 +8272,6 @@ static void UI_DoServerRefresh(void)
 
 static void UI_StartServerRefresh(qboolean full)
 {
-	char    *ptr;
 	char    buff[64];
 	qtime_t q;
 
@@ -8309,15 +8306,7 @@ static void UI_StartServerRefresh(qboolean full)
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime + 5000;
 	if (ui_netSource.integer == AS_GLOBAL)
 	{
-		ptr = UI_Cvar_VariableString("debug_protocol");
-		if (*ptr)
-		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %s empty full\n", 0, ptr));
-		}
-		else
-		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", 0, (int)trap_Cvar_VariableValue("protocol")));
-		}
+		trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", 0, (int)trap_Cvar_VariableValue("protocol")));
 	}
 }
 
