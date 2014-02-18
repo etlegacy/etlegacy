@@ -312,9 +312,9 @@ menuDef {
 	// Columns and sort tabs
 
 #define COLUMN_HEIGHT		194
-#define SERVERNAME_WIDTH	250
+#define SERVERNAME_WIDTH	220
 #define MAPNAME_WIDTH		96
-#define PLAYERS_WIDTH		42
+#define PLAYERS_WIDTH		72
 #define GAMETYPE_WIDTH		48
 #define PING_WIDTH			34
 
@@ -405,7 +405,7 @@ menuDef {
 		group		"grpTabs"
 		rect		$evalfloat(12+SERVERNAME_WIDTH+MAPNAME_WIDTH) 180 $evalfloat(PLAYERS_WIDTH+1) 16
 		type		ITEM_TYPE_BUTTON
-		text		"#PLRS"
+		text		"#PLAYERS"
 		textfont	UI_FONT_ARIBLK_27
 		textscale	.19
 		textalignx	4
@@ -429,7 +429,6 @@ menuDef {
 		}
 	}
 
-	// TODO: increase the width of this column to fit players+humans / total players
 	itemDef {
 		name		"playerColumn"
 		group		"grpColumns"

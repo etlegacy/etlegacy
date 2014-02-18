@@ -2336,6 +2336,7 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 {
 	server->adr            = *address;
 	server->clients        = 0;
+	server->humans         = 0;
 	server->hostName[0]    = '\0';
 	server->mapName[0]     = '\0';
 	server->maxClients     = 0;
@@ -4004,7 +4005,6 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 		if (info)
 		{
 			server->clients = atoi(Info_ValueForKey(info, "clients"));
-			server->humans  = atoi(Info_ValueForKey(info, "humans"));
 			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), MAX_NAME_LENGTH);
 			server->load = atoi(Info_ValueForKey(info, "serverload"));
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);

@@ -6551,14 +6551,17 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
-				// TODO: increase the player column width to fit the number humans playing
-				/*
-				Com_sprintf(clientBuff, sizeof(clientBuff), "%s%s/%s",
-				            Info_ValueForKey(info, "clients"),
-				            (atoi(Info_ValueForKey(info, "humans")) ? va("(^W%s^9)", Info_ValueForKey(info, "humans")) : "(?)"),
-				            Info_ValueForKey(info, "sv_maxclients"));
-				*/
-				Com_sprintf(clientBuff, sizeof(clientBuff), "%s/%s", Info_ValueForKey(info, "clients"), Info_ValueForKey(info, "sv_maxclients"));
+				if (Q_stristr(Info_ValueForKey(info, "game"), "legacy") != 0)
+				{
+					Com_sprintf(clientBuff, sizeof(clientBuff), "%s(+%s)/%s",
+					            va("%i", atoi(Info_ValueForKey(info, "humans"))),
+					            va("%i", atoi(Info_ValueForKey(info, "clients")) - atoi(Info_ValueForKey(info, "humans"))),
+					            Info_ValueForKey(info, "sv_maxclients"));
+				}
+				else
+				{
+					Com_sprintf(clientBuff, sizeof(clientBuff), "%s/%s", Info_ValueForKey(info, "clients"), Info_ValueForKey(info, "sv_maxclients"));
+				}
 				return clientBuff;
 			case SORT_GAME:
 				game = atoi(Info_ValueForKey(info, "gametype"));
