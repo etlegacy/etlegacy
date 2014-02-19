@@ -5423,7 +5423,7 @@ UI_BuildServerDisplayList
 */
 static void UI_BuildServerDisplayList(int force)
 {
-	int        i, count, clients, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
+	int        i, count, clients, humans, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
 	char       info[MAX_STRING_CHARS];
 	static int numinvisible;
 
@@ -5557,9 +5557,8 @@ static void UI_BuildServerDisplayList(int force)
 				}
 			}
 
-			// don't show punkbuster servers for ET legacy
+			// don't show punkbuster servers for ET:Legacy
 			punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
-
 			if (punkbuster)
 			{
 				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
@@ -5599,6 +5598,19 @@ static void UI_BuildServerDisplayList(int force)
 
 				if ((balancedteams && ui_browserShowTeamBalanced.integer == 2) ||
 				    (!balancedteams && ui_browserShowTeamBalanced.integer == 1))
+				{
+					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+					continue;
+				}
+			}
+
+			trap_Cvar_Update(&ui_browserShowBots);
+			if (ui_browserShowBots.integer)
+			{
+				humans = atoi(Info_ValueForKey(info, "humans"));
+
+				if ((clients != humans && ui_browserShowBots.integer == 2) ||
+				    (((clients - humans) < clients) && ui_browserShowBots.integer == 1))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -7937,6 +7949,7 @@ vmCvar_t ui_browserShowMaxlives;
 vmCvar_t ui_browserShowAntilag;
 vmCvar_t ui_browserShowWeaponsRestricted;
 vmCvar_t ui_browserShowTeamBalanced;
+vmCvar_t ui_browserShowBots;
 
 vmCvar_t ui_browserModFilter;
 vmCvar_t ui_browserMapFilter;
@@ -8020,6 +8033,7 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",               "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowBots,              "ui_browserShowBots",                  "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_browserModFilter,             "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserMapFilter,             "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE                   },

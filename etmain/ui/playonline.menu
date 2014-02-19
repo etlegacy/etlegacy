@@ -181,8 +181,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	// FIXME: THIS FEATURE IS CURRENTLY NOT WORKING
-	//TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowBots", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Bots", "Includes or excludes servers with bots from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowBots", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Bots", "Includes or excludes servers with bots from the server list" )
 
 	// Buttons
 	BUTTONEXT( 8+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, "REFRESH LIST", .24, 11, uiScript RefreshServers, tooltip "Reset all filters to their defaults")
