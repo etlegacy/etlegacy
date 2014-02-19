@@ -5610,7 +5610,7 @@ static void UI_BuildServerDisplayList(int force)
 				humans = atoi(Info_ValueForKey(info, "humans"));
 
 				if ((clients != humans && ui_browserShowBots.integer == 2) ||
-				    (((clients - humans) < clients) && ui_browserShowBots.integer == 1))
+				    ((clients == 0 || (clients - humans < clients)) && ui_browserShowBots.integer == 1))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
