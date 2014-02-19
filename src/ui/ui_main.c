@@ -6563,7 +6563,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
-				if (Q_stristr(Info_ValueForKey(info, "game"), "legacy") != 0)
+				if (atoi(Info_ValueForKey(info, "humans")))
 				{
 					Com_sprintf(clientBuff, sizeof(clientBuff), "%s(+%s)/%s",
 					            va("%i", atoi(Info_ValueForKey(info, "humans"))),
