@@ -3638,7 +3638,7 @@ void CL_InitRef(void)
 	//ri.Cvar_SetValue = Cvar_SetValue;
 	//ri.Cvar_CheckRange = Cvar_CheckRange;
 	ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
-	ri.Cvar_AssertCvarRange = Cvar_AssertCvarRange;
+	ri.Cvar_AssertCvarRange      = Cvar_AssertCvarRange;
 
 	// cinematic stuff
 	ri.CIN_UploadCinematic = CIN_UploadCinematic;
