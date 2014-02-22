@@ -1282,7 +1282,7 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 
 		if (level.clients[pid].pers.localClient)
 		{
-			G_refPrintf(ent, "[lof]%s's [lon]is the Server Host", level.clients[pid].pers.netname);
+			G_refPrintf(ent, "[lof]%s [lon]is the Server Host", level.clients[pid].pers.netname);
 			return(G_INVALID);
 		}
 
