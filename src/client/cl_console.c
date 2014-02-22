@@ -691,7 +691,7 @@ void Con_DrawNotify(void)
 		}
 
 		Field_BigDraw(&chatField, skip * BIGCHAR_WIDTH, v,
-		              SCREEN_WIDTH - (skip + 1) * BIGCHAR_WIDTH, qtrue, qtrue);
+		              SCREEN_WIDTH - (skip + 1) * BIGCHAR_WIDTH, qtrue, qfalse);
 
 		v += BIGCHAR_HEIGHT;
 	}

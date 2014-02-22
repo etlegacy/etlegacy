@@ -323,8 +323,8 @@ x, y, and width are in pixels
 */
 void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qboolean showCursor, qboolean noColorEscape)
 {
-	int  len     = strlen(edit->buffer); // + 1;
-	int  drawLen = edit->widthInChars - 1; // // - 1 so there is always a space for the cursor
+	int  len     = strlen(edit->buffer);
+	int  drawLen = edit->widthInChars;
 	int  prestep;
 	char str[MAX_STRING_CHARS];
 
@@ -393,19 +393,15 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 			cursorChar = 10;
 		}
 
+		if (!noColorEscape)
+		{
+			Q_CleanStr(str);
+		}
 		i = drawLen - strlen(str);
 
 		if (size == SMALLCHAR_WIDTH)
 		{
-			if (!noColorEscape)
-			{
-				Q_CleanStr(str);
-				SCR_DrawSmallChar(x + strlen(str) * size, y, cursorChar);
-			}
-			else
-			{
-				SCR_DrawSmallChar(x + (edit->cursor - prestep - i) * size, y, cursorChar);
-			}
+			SCR_DrawSmallChar(x + (edit->cursor - prestep - i) * size, y, cursorChar);
 		}
 		else
 		{
