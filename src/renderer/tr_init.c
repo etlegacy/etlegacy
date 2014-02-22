@@ -191,29 +191,6 @@ vec2hack_t     tess_texCoords1[SHADER_MAX_VERTEXES] QALIGN(16);
 glIndex_t      tess_indexes[SHADER_MAX_INDEXES] QALIGN(16);
 color4ubhack_t tess_vertexColors[SHADER_MAX_VERTEXES] QALIGN(16);
 
-static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
-{
-	if (shouldBeIntegral)
-	{
-		if (( int ) cv->value != cv->integer)
-		{
-			ri.Printf(PRINT_WARNING, "WARNING: cvar '%s' must be integral (%f)\n", cv->name, cv->value);
-			ri.Cvar_Set(cv->name, va("%d", cv->integer));
-		}
-	}
-
-	if (cv->value < minVal)
-	{
-		ri.Printf(PRINT_WARNING, "WARNING: cvar '%s' out of range (%f < %f)\n", cv->name, cv->value, minVal);
-		ri.Cvar_Set(cv->name, va("%f", minVal));
-	}
-	else if (cv->value > maxVal)
-	{
-		ri.Printf(PRINT_WARNING, "WARNING: cvar '%s' out of range (%f > %f)\n", cv->name, cv->value, maxVal);
-		ri.Cvar_Set(cv->name, va("%f", maxVal));
-	}
-}
-
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
  *
@@ -1211,10 +1188,10 @@ void R_Register(void)
 	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH); //----(SA)   mod for DM and DK for id build.  was "1" // JPW NERVE pushed back to 1
+	ri.Cvar_AssertCvarRange(r_picmip, 0, 3, qtrue);
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_colorMipLevels = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
-	AssertCvarRange(r_picmip, 0, 3, qtrue);
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_texturebits    = ri.Cvar_Get("r_texturebits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_colorbits      = ri.Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
@@ -1223,9 +1200,9 @@ void R_Register(void)
 	r_depthbits = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
+	ri.Cvar_AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
 	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);    // disable overbrightbits by default
-	AssertCvarRange(r_overBrightBits, 0, 1, qtrue);                                     // limit to overbrightbits 1 (sorry 1337 players)
+	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue);                                     // limit to overbrightbits 1 (sorry 1337 players)
 	r_ignorehwgamma     = ri.Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH);      // use hw gamma by default
 	r_mode              = ri.Cvar_Get("r_mode", "4", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_oldMode           = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);                     // previous "good" video mode
@@ -1245,9 +1222,9 @@ void R_Register(void)
 
 	// temporary latched variables that can only change over a restart
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
-	AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
+	ri.Cvar_AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
-	AssertCvarRange(r_intensity, 0, 1.5, qfalse);
+	ri.Cvar_AssertCvarRange(r_intensity, 0, 1.5, qfalse);
 	r_singleShader = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
 
 	// archived variables that can change at any time
@@ -1255,7 +1232,7 @@ void R_Register(void)
 	r_lodbias       = ri.Cvar_Get("r_lodbias", "0", CVAR_ARCHIVE);
 	r_flares        = ri.Cvar_Get("r_flares", "1", CVAR_ARCHIVE);
 	r_znear         = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // changed it to 3 (from 4) because of lean/fov cheats
-	AssertCvarRange(r_znear, 0.001f, 200, qtrue);
+	ri.Cvar_AssertCvarRange(r_znear, 0.001f, 200, qtrue);
 	r_zfar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
@@ -1276,7 +1253,7 @@ void R_Register(void)
 	r_primitives = ri.Cvar_Get("r_primitives", "0", CVAR_ARCHIVE);
 	// Added this due to invalid values actually causing no drawing
 	// r_primitives == 2 fixes some issues on ATI cards
-	AssertCvarRange(r_primitives, 0, 3, qtrue);
+	ri.Cvar_AssertCvarRange(r_primitives, 0, 3, qtrue);
 
 	r_ambientScale  = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 	r_directedScale = ri.Cvar_Get("r_directedScale", "1", CVAR_CHEAT);
@@ -1346,9 +1323,9 @@ void R_Register(void)
 	//       - but run 20 bots on oasis and you'll see limits reached (developer 1)
 	//       - modern computers can deal with more than our old default values -> users can increase this now to MAX_POLYS/MAX_POLYVERTS
 	r_maxpolys = ri.Cvar_Get("r_maxpolys", va("%d", MIN_POLYS), CVAR_LATCH);     // now latched to check against used r_maxpolys and not MAX_POLYS
-	AssertCvarRange(r_maxpolys, MIN_POLYS, MAX_POLYS, qtrue); // MIN_POLYS was old static value
+	ri.Cvar_AssertCvarRange(r_maxpolys, MIN_POLYS, MAX_POLYS, qtrue); // MIN_POLYS was old static value
 	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MIN_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
-	AssertCvarRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue); // MIN_POLYVERTS was old static value
+	ri.Cvar_AssertCvarRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue); // MIN_POLYVERTS was old static value
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown

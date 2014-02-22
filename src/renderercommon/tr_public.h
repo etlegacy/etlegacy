@@ -195,6 +195,7 @@ typedef struct
 
 	cvar_t * (*Cvar_Get)(const char *name, const char *value, int flags);
 	void (*Cvar_Set)(const char *name, const char *value);
+	void (*Cvar_AssertCvarRange)(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 	int (*Cvar_VariableIntegerValue)(const char *var_name);
 
 	void (*Cmd_AddCommand)(const char *name, void (*cmd)(void));

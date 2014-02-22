@@ -1465,6 +1465,7 @@ void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize)
 
 /**
  * @brief cvar range check - this isn't static so visible to all!
+ * @todo FIXME: change this to ioquake style one day ...
  */
 void Cvar_AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {

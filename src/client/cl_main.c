@@ -3638,7 +3638,8 @@ void CL_InitRef(void)
 	ri.Cvar_Set = Cvar_Set;
 	//ri.Cvar_SetValue = Cvar_SetValue;
 	//ri.Cvar_CheckRange = Cvar_CheckRange;
-	//ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
+	ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
+	ri.Cvar_AssertCvarRange = Cvar_AssertCvarRange;
 
 	// cinematic stuff
 	ri.CIN_UploadCinematic = CIN_UploadCinematic;
@@ -3651,8 +3652,6 @@ void CL_InitRef(void)
 	ri.Sys_GLimpSafeInit = Sys_GLimpSafeInit;
 	ri.Sys_GLimpInit     = Sys_GLimpInit;
 	ri.Sys_SetEnv        = Sys_SetEnv;
-
-	ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
 
 	ri.IN_Init     = IN_Init;
 	ri.IN_Shutdown = IN_Shutdown;
