@@ -288,6 +288,11 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 				{
 					memcpy(color, setColor, sizeof(color));
 				}
+				else if (*(s - 1) == Q_COLOR_ESCAPE && *(s - 2) != Q_COLOR_ESCAPE)
+				{
+					memcpy(color, g_color_table[ColorIndex(*(s - 1))], sizeof(color));
+					color[3] = setColor[3];
+				}
 				else
 				{
 					memcpy(color, g_color_table[ColorIndex(*(s + 1))], sizeof(color));
