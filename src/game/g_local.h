@@ -1356,10 +1356,8 @@ void SetWolfSpawnWeapons(gclient_t *client);
 void limbo(gentity_t *ent, qboolean makeCorpse);
 void reinforce(gentity_t *ent);
 
-#ifdef FEATURE_LUA
-// *LUA* g_sha1.c
+// *LUA* & map configs g_sha1.c
 char *G_SHA1(char *string);
-#endif
 
 #define MAX_COUNTRY_NUM 255
 
