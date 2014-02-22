@@ -1404,7 +1404,7 @@ Resets all cvars to their hardcoded values
 void Cvar_Restart_f(void)
 {
 	Cvar_Restart(qfalse);
-	Com_Printf("Cvars have been reset\n");
+	Com_Printf("Cvars have been reset.\n");
 }
 
 /*
@@ -1463,20 +1463,46 @@ void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize)
 	Q_strncpyz(buff, Cvar_InfoString(bit), buffsize);
 }
 
-/*
-=====================
-Cvar_CheckRange
-=====================
+/**
+ * @brief cvar range check - this isn't static so visible to all!
  */
-void Cvar_CheckRange(cvar_t *var, float min, float max, qboolean integral)
+void Cvar_AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {
-	//var->validate = qtrue;
-	//var->min = min;
-	//var->max = max;
-	//var->integral = integral;
+	if (shouldBeIntegral)
+	{
+		if (cv->value != cv->integer)
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' must be integral (%f)\n", cv->name, cv->value);
+			Cvar_Set(cv->name, va("%d", cv->integer));
+		}
+	}
 
-	// Force an initial range check
-	Cvar_Set(var->name, var->string);
+	if (cv->value < minVal)
+	{
+		if (shouldBeIntegral)
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%i < %i)\n", cv->name, cv->integer, (int) minVal);
+			Cvar_Set(cv->name, va("%i", (int) minVal));
+		}
+		else 
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%f < %f)\n", cv->name, cv->value, minVal);
+			Cvar_Set(cv->name, va("%f", minVal));
+		}
+	}
+	else if (cv->value > maxVal)
+	{
+		if (shouldBeIntegral)
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%i > %i)\n", cv->name, cv->integer, (int) maxVal);
+			Cvar_Set(cv->name, va("%i", (int) maxVal));
+		}
+		else
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%f > %f)\n", cv->name, cv->value, maxVal);
+			Cvar_Set(cv->name, va("%f", maxVal));
+		}
+	}
 }
 
 /*
