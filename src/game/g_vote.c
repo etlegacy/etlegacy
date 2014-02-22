@@ -1270,19 +1270,19 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 
 		if (level.clients[pid].sess.referee == RL_NONE)
 		{
-			G_refPrintf(ent, "[lof]%s [lon]isn't a referee!", level.clients[pid].pers.netname);
+			G_refPrintf(ent, "[lof]%s [lon]^3isn't a referee!", level.clients[pid].pers.netname);
 			return(G_INVALID);
 		}
 
 		if (level.clients[pid].sess.referee == RL_RCON)
 		{
-			G_refPrintf(ent, "[lof]%s's [lon]status cannot be removed", level.clients[pid].pers.netname);
+			G_refPrintf(ent, "[lof]%s's [lon]^3status cannot be removed", level.clients[pid].pers.netname);
 			return(G_INVALID);
 		}
 
 		if (level.clients[pid].pers.localClient)
 		{
-			G_refPrintf(ent, "[lof]%s [lon]is the Server Host", level.clients[pid].pers.netname);
+			G_refPrintf(ent, "[lof]%s [lon]^3is the Server Host", level.clients[pid].pers.netname);
 			return(G_INVALID);
 		}
 
