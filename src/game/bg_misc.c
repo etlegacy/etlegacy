@@ -289,8 +289,8 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_KNIFE_KABAR,          WP_NONE,                WP_KNIFE_KABAR,       WP_KNIFE_KABAR,       10,  0,    }, // 48
 	{ WP_MOBILE_BROWNING,      WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,  2500, }, // 49
 	{ WP_MOBILE_BROWNING_SET,  WP_MOBILE_BROWNING,     WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,  2500, }, // 50
-	{ WP_MORTAR2,              WP_MORTAR2_SET,         WP_MORTAR,            WP_MORTAR,            1,   0,    }, // 51
-	{ WP_MORTAR2_SET,          WP_MORTAR2,             WP_MORTAR,            WP_MORTAR,            400, 0,    }, // 52
+	{ WP_MORTAR2,              WP_MORTAR2_SET,         WP_MORTAR2,           WP_MORTAR2,           1,   0,    }, // 51
+	{ WP_MORTAR2_SET,          WP_MORTAR2,             WP_MORTAR2,           WP_MORTAR2,           400, 0,    }, // 52
 	{ WP_BAZOOKA,              WP_NONE,                WP_BAZOOKA,           WP_BAZOOKA,           400, 0,    }, // 53
 };
 
