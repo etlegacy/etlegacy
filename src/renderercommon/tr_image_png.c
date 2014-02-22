@@ -217,14 +217,14 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 	//  input verification
 	if (!name)
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	//  Allocate control struct.
 	BF = ri.Z_Malloc(sizeof(struct BufferedFile));
 	if (!BF)
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	//  Initialize the structs components.
@@ -243,7 +243,7 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 	{
 		ri.Free(BF);
 
-		return(NULL);
+		return NULL;
 	}
 
 	// Set the pointers and counters.
@@ -279,13 +279,13 @@ static void *BufferedFileRead(struct BufferedFile *BF, unsigned Length)
 	//  input verification
 	if (!(BF && Length))
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	//  not enough bytes left
 	if (Length > BF->BytesLeft)
 	{
-		return(NULL);
+		return NULL;
 	}
 
 	// the pointer to the requested data
