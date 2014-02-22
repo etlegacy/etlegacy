@@ -1200,7 +1200,7 @@ void R_Register(void)
 	r_lodbias       = ri.Cvar_Get("r_lodbias", "0", CVAR_ARCHIVE);
 	r_flares        = ri.Cvar_Get("r_flares", "1", CVAR_ARCHIVE);
 	r_znear         = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // changed it to 3 (from 4) because of lean/fov cheats
-	ri.Cvar_AssertCvarRange(r_znear, 0.001f, 200, qtrue);
+	ri.Cvar_AssertCvarRange(r_znear, 0.001f, 200, qfalse);
 	r_zfar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
