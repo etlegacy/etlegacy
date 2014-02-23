@@ -1561,7 +1561,7 @@ static void Tess_SurfaceMDV(mdvSurface_t *srf)
 	int           i, j;
 	int           numIndexes = 0;
 	int           numVertexes;
-	mdvModel_t    *model;
+	//mdvModel_t    *model;
 	mdvXyz_t      *oldVert, *newVert;
 	mdvSt_t       *st;
 	srfTriangle_t *tri;
@@ -1584,7 +1584,7 @@ static void Tess_SurfaceMDV(mdvSurface_t *srf)
 
 	Tess_CheckOverflow(srf->numVerts, srf->numTriangles * 3);
 
-	model = srf->model;
+	//model = srf->model;
 
 	numIndexes = srf->numTriangles * 3;
 	for (i = 0, tri = srf->triangles; i < srf->numTriangles; i++, tri++)
@@ -1709,7 +1709,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 	int             numVertexes;
 	md5Model_t      *model;
 	md5Vertex_t     *v;
-	md5Bone_t       *bone;
+	//md5Bone_t       *bone;
 	srfTriangle_t   *tri;
 	static matrix_t boneMatrices[MAX_BONES];
 
@@ -1764,7 +1764,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 
 			for (k = 0, w = v->weights[0]; k < v->numWeights; k++, w++)
 			{
-				bone = &model->bones[w->boneIndex];
+				//bone = &model->bones[w->boneIndex];
 
 				MatrixTransformPoint(boneMatrices[w->boneIndex], w->offset, tmpVert);
 				VectorMA(tmpPosition, w->boneWeight, tmpVert, tmpPosition);
@@ -2079,8 +2079,8 @@ Tess_SurfaceVBOMDVMesh
 */
 void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 {
-	mdvModel_t   *mdvModel;
-	mdvSurface_t *mdvSurface;
+	//mdvModel_t   *mdvModel;
+	//mdvSurface_t *mdvSurface;
 	refEntity_t  *refEnt;
 
 	GLimp_LogComment("--- Tess_SurfaceVBOMDVMesh ---\n");
@@ -2098,8 +2098,8 @@ void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 	tess.numIndexes  = surface->numIndexes;
 	tess.numVertexes = surface->numVerts;
 
-	mdvModel   = surface->mdvModel;
-	mdvSurface = surface->mdvSurface;
+	//mdvModel   = surface->mdvModel;
+	//mdvSurface = surface->mdvSurface;
 
 	refEnt = &backEnd.currentEntity->e;
 

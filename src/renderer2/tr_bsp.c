@@ -334,7 +334,6 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	byte     *buf_p;
 	byte     *buffer;
 	float    *floatbuf;
-	int      len;
 	char     *token;
 	int      w, h, c;
 	qboolean formatFound;
@@ -365,7 +364,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	*pic = NULL;
 
 	// load the file
-	len = ri.FS_ReadFile((char *)name, (void **)&buffer);
+	ri.FS_ReadFile((char *)name, (void **)&buffer);
 	if (!buffer)
 	{
 		ri.Error(ERR_DROP, "LoadRGBE: '%s' not found\n", name);

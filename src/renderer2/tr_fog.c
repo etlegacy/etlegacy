@@ -39,7 +39,7 @@ static qboolean fogIsOn = qfalse;
 
 void RB_Fog(glfog_t *curfog)
 {
-	static glfog_t setfog;
+	//static glfog_t setfog;
 
 	GLimp_LogComment("--- RB_Fog() ---\n");
 
@@ -131,12 +131,13 @@ void RB_Fog(glfog_t *curfog)
 		glFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
 	}
 
-	setfog.registered = qtrue;
+	//setfog.registered = qtrue;
 
 	GL_ClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 
 #endif
 }
+
 
 void RB_FogOff()
 {

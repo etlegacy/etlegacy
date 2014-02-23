@@ -1391,7 +1391,6 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 /**
  * @brief DrawNode_r
  * @note Unused
- */
 static void DrawNode_r(bspNode_t *node, int planeBits)
 {
 	do
@@ -1464,6 +1463,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 	}
 	while (1);
 }
+ */
 
 static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMultiQueryLink)
 {

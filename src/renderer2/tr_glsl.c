@@ -351,7 +351,6 @@ qboolean GLSL_CopyNextToken(char **text, char **out)
 programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 {
 	char          *token;
-	int           i = 0;
 	programInfo_t *def;
 	void          *valptr;
 
@@ -393,6 +392,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		else if (!Q_stricmp(token, "macros"))
 		{
 			int macro;
+
 			while ((token = COM_ParseExt(text, qfalse))[0])
 			{
 				macro = GLSL_GetMacroByName(token);
@@ -416,6 +416,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		else if (!Q_stricmp(token, "attribs"))
 		{
 			unsigned int attribs = 0;
+
 			while ((token = COM_ParseExt(text, qfalse))[0])
 			{
 				attribs |= GLSL_GetAttribByName(token);

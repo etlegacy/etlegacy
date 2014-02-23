@@ -912,7 +912,6 @@ static void RB_RenderDrawSurfaces(qboolean opaque, qboolean depthFill, int drawS
 /**
  * @brief RB_RenderOpaqueSurfacesIntoDepth
  * @note Unused
- */
 static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 {
 	trRefEntity_t *entity, *oldEntity;
@@ -1049,6 +1048,7 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 
 	GL_CheckErrors();
 }
+ */
 
 // *INDENT-OFF*
 static void Render_lightVolume(interaction_t *ia)
@@ -2690,6 +2690,8 @@ static void RB_RenderInteractionsShadowMapped()
 				MatrixMultiply2(light->attenuationMatrix, modelToLight);
 				break;
 			}
+			default:
+				break;
 			}
 		}
 
@@ -2873,7 +2875,6 @@ skipInteraction:
 /**
  * @brief RB_RenderDrawSurfacesIntoGeometricBuffer
  * @note Unused
- */
 static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 {
 	trRefEntity_t *entity, *oldEntity;
@@ -2915,7 +2916,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 			break;
 		}
 
-		/*
+#ifdef 0
 		if(DS_PREPASS_LIGHTING_ENABLED())
 		{
 		    if(entity == oldEntity && shader == oldShader)
@@ -2941,7 +2942,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 		    }
 		}
 		else
-		*/
+#endif
 		{
 			if (entity == oldEntity && shader == oldShader && lightmapNum == oldLightmapNum)
 			{
@@ -3037,6 +3038,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 		backEnd.pc.c_deferredGBufferTime = ri.Milliseconds() - startTime;
 	}
 }
+ */
 
 void RB_RenderInteractionsDeferred()
 {

@@ -1535,8 +1535,8 @@ R_SetupProjection
 // *INDENT-OFF*
 static void R_SetupProjection(qboolean infiniteFarClip)
 {
-	float xMin, xMax, yMin, yMax;
-	float width, height, depth;
+	//float xMin, xMax, yMin, yMax;
+	//float width, height, depth;
 	float zNear, zFar;
 
 	float *proj = tr.viewParms.projectionMatrix;
@@ -1561,6 +1561,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 		zFar  = tr.viewParms.zFar = r_zfar->value;
 	}
 
+#if 0
 	yMax = zNear * tan(tr.refdef.fov_y * M_PI / 360.0f);
 	yMin = -yMax;
 
@@ -1571,7 +1572,6 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 	height = yMax - yMin;
 	depth  = zFar - zNear;
 
-#if 0
 	if (zFar <= 0 || infiniteFarClip)
 	{
 		// Tr3B: far plane at infinity, see RobustShadowVolumes.pdf by Nvidia

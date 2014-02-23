@@ -4520,10 +4520,10 @@ static void CollapseStages()
 	shaderStage_t tmpSpecularStage;
 	shaderStage_t tmpReflectionStage;
 
-	int           idxColorStage;
+	//int           idxColorStage;
 	shaderStage_t tmpColorStage;
 
-	int           idxLightmapStage;
+	//int           idxLightmapStage;
 	shaderStage_t tmpLightmapStage;
 
 	shader_t tmpShader;
@@ -4554,10 +4554,10 @@ static void CollapseStages()
 		Com_Memset(&tmpNormalStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
 
-		idxColorStage = -1;
+		//idxColorStage = -1;
 		Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
 
-		idxLightmapStage = -1;
+		//idxLightmapStage = -1;
 		Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
 
 		if (!stages[j].active)
@@ -4966,17 +4966,17 @@ static void GeneratePermanentShaderTable(float *values, int numValues)
 	newTable->numValues = numValues;
 	newTable->values    = (float *)ri.Hunk_Alloc(sizeof(float) * numValues, h_low);
 
-//  ri.Printf(PRINT_ALL, "values: \n");
+	//ri.Printf(PRINT_ALL, "values: \n");
 	for (i = 0; i < numValues; i++)
 	{
 		newTable->values[i] = values[i];
 
-//      ri.Printf(PRINT_ALL, "%f", newTable->values[i]);
+		//ri.Printf(PRINT_ALL, "%f", newTable->values[i]);
 
-//      if(i != numValues -1)
-//          ri.Printf(PRINT_ALL, ", ");
+		//if(i != numValues -1)
+		//  ri.Printf(PRINT_ALL, ", ");
 	}
-//  ri.Printf(PRINT_ALL, "\n");
+	//ri.Printf(PRINT_ALL, "\n");
 
 	hash                       = generateHashValue(newTable->name, MAX_SHADERTABLE_HASH);
 	newTable->next             = shaderTableHashTable[hash];
@@ -5264,7 +5264,6 @@ static shader_t *FinishShader(void)
 
 //========================================================================================
 
-
 // dynamic shader list
 typedef struct dynamicshader dynamicshader_t;
 struct dynamicshader
@@ -5287,7 +5286,6 @@ returns qtrue if request was successful, qfalse if the gods were angered
 */
 qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 {
-#if 1
 	const char      *func_err = "WARNING: RE_LoadDynamicShader";
 	dynamicshader_t *dptr, *lastdptr;
 	char            *q, *token;
@@ -5386,9 +5384,6 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	//ri.Printf( PRINT_ALL, "Loaded dynamic shader [%s] with shadertext [%s]\n", shadername, shadertext );
 
 	return qtrue;
-#else
-	return qfalse;
-#endif
 }
 
 //========================================================================================
@@ -5648,7 +5643,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		}
 	}
 
-	// ydnar: allow implicit mapping ('-' = use shader name)
+	// allow implicit mapping ('-' = use shader name)
 	if (implicitMap[0] == '\0' || implicitMap[0] == '-')
 	{
 		Q_strncpyz(fileName, strippedName, sizeof(fileName));
