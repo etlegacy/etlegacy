@@ -1276,9 +1276,9 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
 	numFields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
 	lc        = MSG_ReadByte(msg);
 
-	if (lc > numFields)     // FIXME: have gotten lc = 76 which is bigger than numFields!
+	if (lc > numFields || lc < 0)
 	{
-		lc = numFields;
+		Com_Error(ERR_DROP, "invalid playerState field count");
 	}
 
 	// shownet 2/3 will interleave with other printed info, -1 will
@@ -1577,6 +1577,11 @@ void MSG_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to, int number)
 
 	numFields = sizeof(entitySharedFields) / sizeof(entitySharedFields[0]);
 	lc        = MSG_ReadByte(msg);
+
+	if (lc > numFields || lc < 0)
+	{
+		Com_Error(ERR_DROP, "invalid playerState field count");
+	}
 
 	for (i = 0, field = entitySharedFields ; i < lc ; i++, field++)
 	{
@@ -2144,6 +2149,11 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 
 	numFields = sizeof(playerStateFields) / sizeof(playerStateFields[0]);
 	lc        = MSG_ReadByte(msg);
+
+	if (lc > numFields || lc < 0)
+	{
+		Com_Error(ERR_DROP, "invalid playerState field count");
+	}
 
 	for (i = 0, field = playerStateFields ; i < lc ; i++, field++)
 	{
