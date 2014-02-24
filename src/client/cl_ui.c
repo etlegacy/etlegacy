@@ -419,7 +419,6 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 		Info_SetValueForKey(info, "gametype", va("%i", server->gameType));
 		Info_SetValueForKey(info, "nettype", va("%i", server->netType));
 		Info_SetValueForKey(info, "addr", NET_AdrToString(server->adr));
-		Info_SetValueForKey(info, "sv_allowAnonymous", va("%i", server->allowAnonymous));
 		Info_SetValueForKey(info, "friendlyFire", va("%i", server->friendlyFire));
 		Info_SetValueForKey(info, "maxlives", va("%i", server->maxlives));
 		Info_SetValueForKey(info, "needpass", va("%i", server->needpass));

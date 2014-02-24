@@ -2649,7 +2649,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_RAILTRAIL:
 		DEBUGNAME("EV_RAILTRAIL");
 		{
-			vec3_t color =  {es->angles[0]/255.f, es->angles[1]/255.f, es->angles[2]/255.f};
+			vec3_t color = { es->angles[0] / 255.f, es->angles[1] / 255.f, es->angles[2] / 255.f };
 
 			// red is default if there is no color set
 			if (color[0] == 0 && color[1] == 0 && color[2] == 0)

@@ -1406,7 +1406,7 @@ entityShared_t communication
 #define CLIENTNUM_BITS  LOG2_8BIT(MAX_CLIENTS)
 
 // using the stringizing operator to save typing...
-#define ESF(x) #x, (size_t)&((entityShared_t *)0)->x
+#define ESF(x) # x, (size_t)&((entityShared_t *)0)->x
 
 netField_t entitySharedFields[] =
 {

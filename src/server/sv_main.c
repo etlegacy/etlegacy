@@ -67,7 +67,6 @@ cvar_t *sv_maxPing;
 cvar_t *sv_gametype;
 cvar_t *sv_pure;
 cvar_t *sv_floodProtect;
-cvar_t *sv_allowAnonymous;
 cvar_t *sv_lanForceRate;        // dedicated 1 (LAN) server forces local client rates to 99999 (bug #491)
 cvar_t *sv_onlyVisibleClients;
 cvar_t *sv_friendlyFire;
@@ -788,7 +787,6 @@ void SVC_Info(netadr_t from)
 	{
 		Info_SetValueForKey(infostring, "game", gamedir);
 	}
-	Info_SetValueForKey(infostring, "sv_allowAnonymous", va("%i", sv_allowAnonymous->integer));
 
 	Info_SetValueForKey(infostring, "friendlyFire", va("%i", sv_friendlyFire->integer));
 	Info_SetValueForKey(infostring, "maxlives", va("%i", sv_maxlives->integer ? 1 : 0));

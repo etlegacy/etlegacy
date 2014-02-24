@@ -1,6 +1,6 @@
 /*
 * Copyright (C) 2012 Stephen Larroque <lrq3000@gmail.com>
-* 
+*
 * ET: Legacy
 * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
 *

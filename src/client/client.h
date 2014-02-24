@@ -297,7 +297,6 @@ typedef struct
 	int maxPing;
 	int ping;
 	qboolean visible;
-	int allowAnonymous;
 	int friendlyFire;
 	int maxlives;
 	int needpass;

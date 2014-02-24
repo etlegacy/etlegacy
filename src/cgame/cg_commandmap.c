@@ -294,7 +294,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 		{
 			gridStep[1] -= 50.f;
 		}
-		
+
 		tmp               = Max0Min0 / gridStep[0];
 		gridStartCoord[0] = .5f * (tmp - (int)(tmp)) * gridStep[0];
 		tmp               = Min1Max1 / gridStep[1];
@@ -371,7 +371,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 			{
 				continue;
 			}
-			
+
 			if (grid_y > h)
 			{
 				break;
@@ -444,7 +444,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				CG_Text_Paint_Ext((x + grid_x) - (.5f * step[0]) - (.5f * text_width), y + dim_y[0] + textOrigin[1] + 1.5f * text_height, 0.2f, 0.2f, colorBlack, coord_char, 0, 0, 0, &cgs.media.limboFont2);
 			}
 			trap_R_SetColor(gridColour);
-			
+
 			Vector4Set(line, x + grid_x, y + dim_y[0], 1, dim_x[1] - dim_x[0]);
 			CG_AdjustFrom640(&line[0], &line[1], &line[2], &line[3]);
 			trap_R_DrawStretchPic(line[0], line[1], line[2], line[3], 0, 0, 0, 1, cgs.media.whiteShader);

@@ -75,8 +75,8 @@ static int savedBotMinPlayers = -1;
 static int savedFPS           = -1;
 static int savedGametype      = -1;
 
-static int savedDoWarmup     = -1;
-static int savedAllowVote    = -1;
+static int savedDoWarmup  = -1;
+static int savedAllowVote = -1;
 // static int savedTeamAutoJoin = -1; // unused
 
 static int savedTimelimit    = -1;
@@ -658,7 +658,7 @@ void SV_DemoWriteAllEntityShared(void)
 
 	// Write entities (gentity_t->entityShared_t or concretely sv.gentities[num].r, in gamecode level. instead of sv.)
 	MSG_WriteByte(&msg, demo_entityShared);
-	
+
 	for (i = 0; i < sv.num_entities; i++)
 	{
 		if (i >= sv_maxclients->integer && i < MAX_CLIENTS)
@@ -1254,7 +1254,7 @@ read_next_demo_event: // used to read next demo event
 			*/
 			case demo_endFrame:     // end of the frame - players and entities game status update: we commit every demo entity to the server, update the server time, then release the demo frame reading here to the next server (and demo) frame
 				Com_DPrintf("END OF FRAME");
-				
+
 				// Update entities
 				SV_DemoReadRefreshEntities();     // load into memory the demo entities (overwriting any change the game may have done)
 				// Update all players' health in HUD
@@ -1691,7 +1691,7 @@ void SV_DemoStartPlayback(void)
 		savedDoWarmup = Cvar_VariableIntegerValue("g_doWarmup");
 	}
 	// Remove g_doWarmup (bugfix: else it will produce a weird bug with all gametypes except CTF and Double Domination because of CheckTournament() in g_main.c which will make the demo stop after the warmup time)
-	
+
 	//FIXME: THIS IS HACKED TO 1 for now (should be 0 or we need to make our own etgame mod bin)
 	Cvar_SetValue("g_doWarmup", 1);
 

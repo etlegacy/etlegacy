@@ -2334,18 +2334,17 @@ CL_InitServerInfo
 */
 void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 {
-	server->adr            = *address;
-	server->clients        = 0;
-	server->hostName[0]    = '\0';
-	server->mapName[0]     = '\0';
-	server->maxClients     = 0;
-	server->maxPing        = 0;
-	server->minPing        = 0;
-	server->ping           = -1;
-	server->game[0]        = '\0';
-	server->gameType       = 0;
-	server->netType        = 0;
-	server->allowAnonymous = 0;
+	server->adr         = *address;
+	server->clients     = 0;
+	server->hostName[0] = '\0';
+	server->mapName[0]  = '\0';
+	server->maxClients  = 0;
+	server->maxPing     = 0;
+	server->minPing     = 0;
+	server->ping        = -1;
+	server->game[0]     = '\0';
+	server->gameType    = 0;
+	server->netType     = 0;
 }
 
 #define MAX_SERVERSPERPACKET    256
@@ -4009,15 +4008,14 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
 			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 			Q_strncpyz(server->game, Info_ValueForKey(info, "game"), MAX_NAME_LENGTH);
-			server->gameType       = atoi(Info_ValueForKey(info, "gametype"));
-			server->netType        = atoi(Info_ValueForKey(info, "nettype"));
-			server->minPing        = atoi(Info_ValueForKey(info, "minping"));
-			server->maxPing        = atoi(Info_ValueForKey(info, "maxping"));
-			server->allowAnonymous = atoi(Info_ValueForKey(info, "sv_allowAnonymous"));
-			server->friendlyFire   = atoi(Info_ValueForKey(info, "friendlyFire"));
-			server->maxlives       = atoi(Info_ValueForKey(info, "maxlives"));
-			server->needpass       = atoi(Info_ValueForKey(info, "needpass"));
-			server->punkbuster     = atoi(Info_ValueForKey(info, "punkbuster"));
+			server->gameType     = atoi(Info_ValueForKey(info, "gametype"));
+			server->netType      = atoi(Info_ValueForKey(info, "nettype"));
+			server->minPing      = atoi(Info_ValueForKey(info, "minping"));
+			server->maxPing      = atoi(Info_ValueForKey(info, "maxping"));
+			server->friendlyFire = atoi(Info_ValueForKey(info, "friendlyFire"));
+			server->maxlives     = atoi(Info_ValueForKey(info, "maxlives"));
+			server->needpass     = atoi(Info_ValueForKey(info, "needpass"));
+			server->punkbuster   = atoi(Info_ValueForKey(info, "punkbuster"));
 			Q_strncpyz(server->gameName, Info_ValueForKey(info, "gamename"), MAX_NAME_LENGTH);
 			server->antilag       = atoi(Info_ValueForKey(info, "g_antilag"));
 			server->weaprestrict  = atoi(Info_ValueForKey(info, "weaprestrict"));
@@ -4150,28 +4148,27 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 	}
 
 	// add this to the list
-	cls.numlocalservers                = i + 1;
-	cls.localServers[i].adr            = from;
-	cls.localServers[i].clients        = 0;
-	cls.localServers[i].hostName[0]    = '\0';
-	cls.localServers[i].load           = -1;
-	cls.localServers[i].mapName[0]     = '\0';
-	cls.localServers[i].maxClients     = 0;
-	cls.localServers[i].maxPing        = 0;
-	cls.localServers[i].minPing        = 0;
-	cls.localServers[i].ping           = -1;
-	cls.localServers[i].game[0]        = '\0';
-	cls.localServers[i].gameType       = 0;
-	cls.localServers[i].netType        = from.type;
-	cls.localServers[i].allowAnonymous = 0;
-	cls.localServers[i].friendlyFire   = 0;
-	cls.localServers[i].maxlives       = 0;
-	cls.localServers[i].needpass       = 0;
-	cls.localServers[i].punkbuster     = 0;
-	cls.localServers[i].antilag        = 0;
-	cls.localServers[i].weaprestrict   = 0;
-	cls.localServers[i].balancedteams  = 0;
-	cls.localServers[i].gameName[0]    = '\0';
+	cls.numlocalservers               = i + 1;
+	cls.localServers[i].adr           = from;
+	cls.localServers[i].clients       = 0;
+	cls.localServers[i].hostName[0]   = '\0';
+	cls.localServers[i].load          = -1;
+	cls.localServers[i].mapName[0]    = '\0';
+	cls.localServers[i].maxClients    = 0;
+	cls.localServers[i].maxPing       = 0;
+	cls.localServers[i].minPing       = 0;
+	cls.localServers[i].ping          = -1;
+	cls.localServers[i].game[0]       = '\0';
+	cls.localServers[i].gameType      = 0;
+	cls.localServers[i].netType       = from.type;
+	cls.localServers[i].friendlyFire  = 0;
+	cls.localServers[i].maxlives      = 0;
+	cls.localServers[i].needpass      = 0;
+	cls.localServers[i].punkbuster    = 0;
+	cls.localServers[i].antilag       = 0;
+	cls.localServers[i].weaprestrict  = 0;
+	cls.localServers[i].balancedteams = 0;
+	cls.localServers[i].gameName[0]   = '\0';
 
 	Q_strncpyz(info, MSG_ReadString(msg), MAX_INFO_STRING);
 	if (strlen(info))
