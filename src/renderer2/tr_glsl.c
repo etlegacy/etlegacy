@@ -129,7 +129,7 @@ static uniformInfo_t uniformsInfo[] =
 	{ "u_SpecularTextureMatrix",        GLSL_MAT16    },
 	{ "u_AlphaTest",                    GLSL_INT      },
 	{ "u_ColorModulate",                GLSL_VEC4     },
-	{ "u_BoneMatrix",                   GLSL_MAT16    },
+	{ "u_BoneMatrix",                   GLSL_MAT16ARR },
 	{ "u_VertexInterpolation",          GLSL_FLOAT    },
 	{ "u_PortalPlane",                  GLSL_VEC4     },
 	{ "u_CurrentMap",                   GLSL_INT      },
@@ -1901,8 +1901,8 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16ARR)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
 		return;
 	}
 
