@@ -6563,9 +6563,9 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
-				if (Info_ValueForKey(info, "humans"))
+				if (strcmp(Info_ValueForKey(info, "version"), PRODUCT_LABEL) == 0)
 				{
-					Com_sprintf(clientBuff, sizeof(clientBuff), "%s(+%s)/%s",
+					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%s^9(+%s)/%s",
 					            Info_ValueForKey(info, "humans"),
 					            va("%i", atoi(Info_ValueForKey(info, "clients")) - atoi(Info_ValueForKey(info, "humans"))),
 					            Info_ValueForKey(info, "sv_maxclients"));

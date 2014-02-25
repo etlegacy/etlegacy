@@ -406,6 +406,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 	if (server && buf)
 	{
 		buf[0] = '\0';
+		Info_SetValueForKey(info, "version", server->version);
 		Info_SetValueForKey(info, "hostname", server->hostName);
 		Info_SetValueForKey(info, "serverload", va("%i", server->load));
 		Info_SetValueForKey(info, "mapname", server->mapName);

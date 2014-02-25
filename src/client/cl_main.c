@@ -4001,6 +4001,7 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 	{
 		if (info)
 		{
+			Q_strncpyz(server->version, Info_ValueForKey(info, "version"), MAX_NAME_LENGTH);
 			server->clients = atoi(Info_ValueForKey(info, "clients"));
 			server->humans  = atoi(Info_ValueForKey(info, "humans"));
 			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), MAX_NAME_LENGTH);

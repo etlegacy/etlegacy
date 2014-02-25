@@ -284,6 +284,7 @@ typedef struct
 typedef struct
 {
 	netadr_t adr;
+	char version[MAX_NAME_LENGTH];
 	char hostName[MAX_NAME_LENGTH];
 	int load;
 	char mapName[MAX_NAME_LENGTH];
