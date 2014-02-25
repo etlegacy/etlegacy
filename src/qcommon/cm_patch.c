@@ -994,19 +994,9 @@ void CM_AddFacetBevels(facet_t *facet)
 			// see if the plane is allready present
 			for (i = 0; i < facet->numBorders; i++)
 			{
-				if (dir > 0)
+				if (CM_PlaneEqual(&planes[facet->borderPlanes[i]], plane, &flipped))
 				{
-					if (planes[facet->borderPlanes[i]].plane[axis] >= 0.9999f)
-					{
-						break;
-					}
-				}
-				else
-				{
-					if (planes[facet->borderPlanes[i]].plane[axis] <= -0.9999f)
-					{
-						break;
-					}
+					break;
 				}
 			}
 
