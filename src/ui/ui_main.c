@@ -2927,7 +2927,6 @@ qboolean UI_OwnerDrawVisible(int flags)
 					if (trap_Cvar_VariableValue("sv_killserver") == 0)
 					{
 						// wait on server to go down before playing sound
-						trap_S_StartLocalSound(uiInfo.newHighScoreSound, CHAN_ANNOUNCER);
 						uiInfo.soundHighScore = qfalse;
 					}
 				}

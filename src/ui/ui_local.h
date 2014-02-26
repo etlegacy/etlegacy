@@ -429,12 +429,11 @@ typedef struct
 typedef struct
 {
 	displayContextDef_t uiDC;
-	int newHighScoreTime;
-	int newBestTime;
-	int showPostGameTime;
-	qboolean newHighScore;
-	qboolean demoAvailable;
-	qboolean soundHighScore;
+	int newHighScoreTime; // FIXME: remove
+	int newBestTime; // FIXME: remove
+	qboolean newHighScore; // FIXME: remove
+	qboolean demoAvailable; // FIXME: remove?
+	qboolean soundHighScore; // FIXME: remove
 
 	int legacyClient;
 
@@ -510,7 +509,6 @@ typedef struct
 
 	int currentCrosshair;
 	int startPostGameTime;
-	sfxHandle_t newHighScoreSound;
 
 	int q3HeadCount;
 	char q3HeadNames[MAX_PLAYERMODELS][64];
