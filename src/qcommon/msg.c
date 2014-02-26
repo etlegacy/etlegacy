@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1278,7 +1278,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
 
 	if (lc > numFields || lc < 0)
 	{
-		Com_Error(ERR_DROP, "invalid playerState field count");
+		Com_Error(ERR_DROP, "invalid entityState field count");
 	}
 
 	// shownet 2/3 will interleave with other printed info, -1 will
@@ -1580,7 +1580,7 @@ void MSG_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to, int number)
 
 	if (lc > numFields || lc < 0)
 	{
-		Com_Error(ERR_DROP, "invalid playerState field count");
+		Com_Error(ERR_DROP, "invalid entityShared field count");
 	}
 
 	for (i = 0, field = entitySharedFields ; i < lc ; i++, field++)
