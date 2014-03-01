@@ -97,12 +97,12 @@ menuDef {
 
 	LABELWHITE( 6, CREDITS_Y+12, .7*(WINDOW_WIDTH-24), 10, "Advices, Bug reports, Patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
-	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "acqu - antman - boutetnico - deki - Dragonji - Ensiform - Harlekin - ilm \n Jonathan Gray - kkthx - lakersforce - Lul3k - MAN-AT-ARMS - Mateos \n Mathieu Olivier - Maverick - merlin - muessli - Odal - RaFaL - Ragnar \n Saukko - StM - Dusan 'TheDushan' Jocic - Unode \n Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "100zherBG - 3togo - acqu - antman - Bill - blaubarschbube - boutetnico\n chriswww - cubs - deki - Das_Fleisch - Dragonji - Ensiform - Harlekin\n ilm - invictus - Jonathan Gray - KeMoN - Kissaki - kkthx - lottin\n lakersforce - Lul3k - MAN-AT-ARMS - Mateos - Mathieu Olivier - Maverick\n mavit - merethan - merlin - muessli - Niek - Odal - otty - pbhj - RaFaL - Ragnar - rurza - S3ti - Saukko - StM - swillits - Dusan 'TheDushan' Jocic\n TunPal - Unode - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 	itemDef {
 		name		"headerTranslations"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+108) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+132) $evalfloat(WINDOW_WIDTH-12) 12
 		text		"^1TRANSLATIONS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -115,13 +115,13 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+120, .8*(WINDOW_WIDTH-24), 10, "Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: ponce - Polish: morsik, RaFal, Lul3k - Portuguese: Zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+144, .8*(WINDOW_WIDTH-24), 10, "Czech: Radegast -  Danish: Runeforce - Dutch: ilm - French: boutetnico, Mateos, ponce - Finnish: Jacker, Saukko - German: deki, Harlekin - Italian: ponce - Polish: morsik, RaFal, Lul3k - Portuguese: Zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 
 	itemDef {
 		name		"headerPM"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+168) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+192) $evalfloat(WINDOW_WIDTH-12) 12
 		text		"^1PACKAGE MAINTAINERS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
