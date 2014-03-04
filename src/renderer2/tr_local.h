@@ -3324,8 +3324,6 @@ extern cvar_t *r_rimExponent;
 
 extern cvar_t *r_uiFullScreen;  // ui is running fullscreen
 
-extern cvar_t *r_logFile;       // number of frames to emit GL logs
-
 extern cvar_t *r_clear;         // force screen clear every frame
 
 extern cvar_t *r_shadows;       // controls shadows: 0 = none, 1 = blur, 2 = black planar projection,

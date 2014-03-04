@@ -225,10 +225,7 @@ void GLimp_Minimize(void)
  */
 void GLimp_LogComment(const char *comment)
 {
-	//if (com_developer->integer)
-	//{
-	//	Com_Printf("%s", comment);
-	//}
+	ri.Printf(PRINT_DEVELOPER,comment);
 }
 
 /* unused - see GLimp_DetectAvailableModes

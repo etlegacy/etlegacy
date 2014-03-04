@@ -910,15 +910,8 @@ void RB_DrawSun(void)
  */
 void Tess_StageIteratorSky(void)
 {
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- Tess_StageIteratorSky( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		                     tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorSky( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+		tess.numVertexes, tess.numIndexes / 3);
 
 	if (r_fastsky->integer)
 	{

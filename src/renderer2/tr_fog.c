@@ -41,7 +41,7 @@ void RB_Fog(glfog_t *curfog)
 {
 	//static glfog_t setfog;
 
-	GLimp_LogComment("--- RB_Fog() ---\n");
+	Ren_LogComment("--- RB_Fog() ---\n");
 
 #if 1
 	if (!r_wolfFog->integer)
@@ -141,7 +141,7 @@ void RB_Fog(glfog_t *curfog)
 
 void RB_FogOff()
 {
-	GLimp_LogComment("--- RB_FogOff() ---\n");
+	Ren_LogComment("--- RB_FogOff() ---\n");
 
 #if 1
 	if (!fogIsOn)
@@ -157,7 +157,7 @@ void RB_FogOff()
 
 void RB_FogOn()
 {
-	GLimp_LogComment("--- RB_FogOn() ---\n");
+	Ren_LogComment("--- RB_FogOn() ---\n");
 
 #if 1
 	if (fogIsOn)

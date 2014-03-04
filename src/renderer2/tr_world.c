@@ -1419,10 +1419,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
             }
         }
 
-        if (r_logFile->integer)
-        {
-            GLimp_LogComment(va("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1));
-        }
+       GLimp_LogComment("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1);
 
         if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
         {
@@ -1468,16 +1465,16 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMultiQueryLink)
 {
 #if defined(DEBUG_CHC)
-	if (r_logFile->integer)
+	if (RENLOG)
 	{
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
-			GLimp_LogComment(va("--- IssueOcclusionQuery( leaf = %i ) ---\n", node - tr.world->nodes));
+			Ren_LogComment("--- IssueOcclusionQuery( leaf = %i ) ---\n", node - tr.world->nodes);
 			gl_genericShader->SetUniform_Color(colorGreen);
 		}
 		else
 		{
-			GLimp_LogComment(va("--- IssueOcclusionQuery( node = %i ) ---\n", node - tr.world->nodes));
+			Ren_LogComment("--- IssueOcclusionQuery( node = %i ) ---\n", node - tr.world->nodes);
 			gl_genericShader->SetUniform_Color(colorMdGrey);
 		}
 	}
@@ -1534,7 +1531,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 
 	GL_CheckErrors();
 
-	GLimp_LogComment("--- IssueOcclusionQuery end ---\n");
+	Ren_LogComment("--- IssueOcclusionQuery end ---\n");
 }
 
 static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQueue)
@@ -1543,17 +1540,17 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	bspNode_t *multiQueryNode;
 	link_t    *l;
 
-	if (r_logFile->integer)
+	if (RENLOG)
 	{
-		GLimp_LogComment("IssueMultiOcclusionQueries([");
+		Ren_LogComment("IssueMultiOcclusionQueries([");
 
 		for (l = multiQueue->prev; l != multiQueue; l = l->prev)
 		{
 			node = (bspNode_t *) l->data;
 
-			GLimp_LogComment(va("%li, ", (long)(node - tr.world->nodes)));
+			Ren_LogComment("%li, ", (long)(node - tr.world->nodes));
 		}
-		GLimp_LogComment("])");
+		Ren_LogComment("])");
 	}
 
 	if (QueueEmpty(multiQueue))
@@ -1578,7 +1575,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 	GL_CheckErrors();
 
-	//GLimp_LogComment("rendering nodes:[");
+	Ren_LogComment("rendering nodes:[");
 	for (l = multiQueue->prev; l != multiQueue; l = l->prev)
 	{
 		node = (bspNode_t *) l->data;
@@ -1592,10 +1589,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
 		}
 
-		//if(r_logFile->integer)
-		//{
-		//	GLimp_LogComment(va("%i, ", node - tr.world->nodes));
-		//}
+		Ren_LogComment("%i, ", node - tr.world->nodes);
 
 		//Tess_EndBegin();
 
@@ -1613,7 +1607,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 		tess.numIndexes  = 0;
 		tess.numVertexes = 0;
 	}
-	//GLimp_LogComment("]\n");
+	Ren_LogComment("]\n");
 
 	multiQueryNode->occlusionQueryNumbers[tr.viewCount] = tr.pc.c_occlusionQueries;
 	tr.pc.c_occlusionQueries++;
@@ -1642,7 +1636,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 	EnQueue(individualQueue, multiQueryNode);
 
-	GLimp_LogComment("--- IssueMultiOcclusionQueries end ---\n");
+	Ren_LogComment("--- IssueMultiOcclusionQueries end ---\n");
 }
 
 static GLint ResultAvailable(bspNode_t *node)
@@ -1667,7 +1661,7 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 	int    ocSamples;
 	GLint  available = 0;
 
-	GLimp_LogComment("--- GetOcclusionQueryResult ---\n");
+	Ren_LogComment("--- GetOcclusionQueryResult ---\n");
 
 	//glFinish();
 
@@ -1690,10 +1684,7 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 	glGetQueryObjectiv(node->occlusionQueryObjects[tr.viewCount], GL_QUERY_RESULT, &ocSamples);
 
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment(va("GetOcclusionQueryResult(%li): available = %i, samples = %i\n", (long)(node - tr.world->nodes), available, ocSamples));
-	}
+	Ren_LogComment("GetOcclusionQueryResult(%li): available = %i, samples = %i\n", (long)(node - tr.world->nodes), available, ocSamples);
 
 	GL_CheckErrors();
 
@@ -1763,11 +1754,8 @@ static void PushNode(link_t * traversalStack, bspNode_t * node)
 
             traversalStack->numElements += 2;
 #endif
-            if(r_logFile->integer)
-            {
-                GLimp_LogComment(va("traversal-stack <-- node %i\n", node->children[0] - tr.world->nodes));
-                GLimp_LogComment(va("traversal-stack <-- node %i\n", node->children[1] - tr.world->nodes));
-            }
+			GLimp_LogComment("traversal-stack <-- node %i\n", node->children[0] - tr.world->nodes);
+			GLimp_LogComment("traversal-stack <-- node %i\n", node->children[1] - tr.world->nodes);
         }
     }
 }
@@ -1776,17 +1764,17 @@ static void PushNode(link_t * traversalStack, bspNode_t * node)
 static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 {
 #if defined(DEBUG_CHC)
-	if (r_logFile->integer)
+	if (RENLOG)
 	{
 		if (node->contents != -1)
 		{
-			GLimp_LogComment(va("--- TraverseNode( leaf = %i ) ---\n", node - tr.world->nodes));
+			Ren_LogComment("--- TraverseNode( leaf = %i ) ---\n", node - tr.world->nodes);
 
 			gl_genericShader->SetUniform_Color(colorGreen);
 		}
 		else
 		{
-			GLimp_LogComment(va("--- TraverseNode( node = %i ) ---\n", node - tr.world->nodes));
+			Ren_LogComment("--- TraverseNode( node = %i ) ---\n", node - tr.world->nodes);
 
 			gl_genericShader->SetUniform_Color(colorMdGrey);
 		}
@@ -1819,11 +1807,8 @@ static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 		EnQueue(distanceQueue, node->children[0]);
 		EnQueue(distanceQueue, node->children[1]);
 
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment(va("distance-queue <-- node %li\n", (long)(node->children[0] - tr.world->nodes)));
-			GLimp_LogComment(va("distance-queue <-- node %li\n", (long)(node->children[1] - tr.world->nodes)));
-		}
+		Ren_LogComment("distance-queue <-- node %li\n", (long)(node->children[0] - tr.world->nodes));
+		Ren_LogComment("distance-queue <-- node %li\n", (long)(node->children[1] - tr.world->nodes));
 	}
 }
 
@@ -1837,15 +1822,15 @@ static void BuildNodeTraversalStackPost_r(bspNode_t *node)
 		}
 
 		#if defined(DEBUG_CHC)
-		if (r_logFile->integer)
+		if (RENLOG)
 		{
 			if (node->contents != -1)
 			{
-				GLimp_LogComment(va("--- BuildNodeTraversalStackPost_r( leaf = %i, visible = %i ) ---\n", node - tr.world->nodes, node->visible[tr.viewCount]));
+				Ren_LogComment("--- BuildNodeTraversalStackPost_r( leaf = %i, visible = %i ) ---\n", node - tr.world->nodes, node->visible[tr.viewCount]);
 			}
 			else
 			{
-				GLimp_LogComment(va("--- BuildNodeTraversalStackPost_r( node = %i, visible = %i ) ---\n", node - tr.world->nodes, node->visible[tr.viewCount]));
+				Ren_LogComment("--- BuildNodeTraversalStackPost_r( node = %i, visible = %i ) ---\n", node - tr.world->nodes, node->visible[tr.viewCount]);
 			}
 		}
 		#endif
@@ -1902,14 +1887,9 @@ static void R_CoherentHierachicalCulling()
 	//link_t		renderQueue;
 	int startTime = 0;
 
-	//ri.Cvar_Set("r_logFile", "1");
+	Ren_LogComment("--- R_CoherentHierachicalCulling ---\n");
 
-	GLimp_LogComment("--- R_CoherentHierachicalCulling ---\n");
-
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment(va("tr.viewCount = %i, tr.viewCountNoReset = %i\n", tr.viewCount, tr.viewCountNoReset));
-	}
+	Ren_LogComment("tr.viewCount = %i, tr.viewCountNoReset = %i\n", tr.viewCount, tr.viewCountNoReset);
 
 	if (r_speeds->integer)
 	{
@@ -1985,7 +1965,7 @@ static void R_CoherentHierachicalCulling()
 	DrawNode_r(&tr.world->nodes[0], FRUSTUM_CLIPALL);
 #endif
 
-	if (r_logFile->integer)
+	if (RENLOG)
 	{
 		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -2023,10 +2003,7 @@ static void R_CoherentHierachicalCulling()
 
 	while (!QueueEmpty(&distanceQueue) || !QueueEmpty(&occlusionQueryQueue) || !QueueEmpty(&invisibleQueue) || !QueueEmpty(&visibleQueue))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment(va("--- (distanceQueue = %i, occlusionQueryQueue = %i, invisibleQueue = %i, visibleQueue = %i)\n", QueueSize(&distanceQueue), QueueSize(&occlusionQueryQueue), QueueSize(&invisibleQueue), QueueSize(&visibleQueue)));
-		}
+		Ren_LogComment("--- (distanceQueue = %i, occlusionQueryQueue = %i, invisibleQueue = %i, visibleQueue = %i)\n", QueueSize(&distanceQueue), QueueSize(&occlusionQueryQueue), QueueSize(&invisibleQueue), QueueSize(&visibleQueue));
 
 		//--PART 1: process finished occlusion queries
 		while (!QueueEmpty(&occlusionQueryQueue) && (ResultAvailable((bspNode_t *) QueueFront(&occlusionQueryQueue)->data) || QueueEmpty(&distanceQueue)))
@@ -2044,10 +2021,7 @@ static void R_CoherentHierachicalCulling()
 					// test all the individual objects ...
 					if (!QueueEmpty(&node->multiQuery))
 					{
-						if (r_logFile->integer)
-						{
-							GLimp_LogComment(va("MULTI query node %li visible\n", (long)(node - tr.world->nodes)));
-						}
+						Ren_LogComment("MULTI query node %li visible\n", (long)(node - tr.world->nodes));
 
 						multiQueryNode = node;
 
@@ -2067,10 +2041,7 @@ static void R_CoherentHierachicalCulling()
 					}
 					else
 					{
-						if (r_logFile->integer)
-						{
-							GLimp_LogComment(va("single query node %li visible\n", (long)(node - tr.world->nodes)));
-						}
+						Ren_LogComment("single query node %li visible\n", (long)(node - tr.world->nodes));
 
 						if (r_dynamicBspOcclusionCulling->integer == 1)
 						{
@@ -2133,10 +2104,7 @@ static void R_CoherentHierachicalCulling()
 			node = (bspNode_t *) top->data;
 			*/
 
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment(va("distance-queue --> node %li\n", (long)(node - tr.world->nodes)));
-			}
+			Ren_LogComment("distance-queue --> node %li\n", (long)(node - tr.world->nodes));
 
 			if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex] && // node was marked as potentially visible
 			    (node->contents == -1 || (node->contents != -1 && node->numMarkSurfaces)) &&
@@ -2229,10 +2197,7 @@ static void R_CoherentHierachicalCulling()
 
 					if (!wasVisible && !clipsNearPlane && leafThatNeedsQuery)
 					{
-						if (r_logFile->integer)
-						{
-							GLimp_LogComment(va("i-queue <-- node %li\n", (long)(node - tr.world->nodes)));
-						}
+						Ren_LogComment("i-queue <-- node %li\n", (long)(node - tr.world->nodes));
 
 						EnQueue(&invisibleQueue, node);
 
@@ -2246,10 +2211,7 @@ static void R_CoherentHierachicalCulling()
 						#if 1
 						if ((node->contents != -1) && !clipsNearPlane && QueryReasonable(node) && leafThatNeedsQuery)
 						{
-							if (r_logFile->integer)
-							{
-								GLimp_LogComment(va("v-queue <-- node %li\n", (long)(node - tr.world->nodes)));
-							}
+							Ren_LogComment("v-queue <-- node %li\n", (long)(node - tr.world->nodes));
 
 							EnQueue(&visibleQueue, node);
 						}

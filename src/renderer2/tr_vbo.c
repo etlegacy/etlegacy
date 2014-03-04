@@ -406,11 +406,7 @@ void R_BindVBO(VBO_t *vbo)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- R_BindVBO( %s ) ---\n", vbo->name));
-	}
+	Ren_LogComment("--- R_BindVBO( %s ) ---\n", vbo->name);
 
 	if (glState.currentVBO != vbo)
 	{
@@ -436,7 +432,7 @@ R_BindNullVBO
 */
 void R_BindNullVBO(void)
 {
-	GLimp_LogComment("--- R_BindNullVBO ---\n");
+	Ren_LogComment("--- R_BindNullVBO ---\n");
 
 	if (glState.currentVBO)
 	{
@@ -461,11 +457,7 @@ void R_BindIBO(IBO_t *ibo)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- R_BindIBO( %s ) ---\n", ibo->name));
-	}
+	Ren_LogComment("--- R_BindIBO( %s ) ---\n", ibo->name);
 
 	if (glState.currentIBO != ibo)
 	{
@@ -484,7 +476,7 @@ R_BindNullIBO
 */
 void R_BindNullIBO(void)
 {
-	GLimp_LogComment("--- R_BindNullIBO ---\n");
+	Ren_LogComment("--- R_BindNullIBO ---\n");
 
 	if (glState.currentIBO)
 	{

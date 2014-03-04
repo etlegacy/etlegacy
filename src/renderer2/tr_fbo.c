@@ -338,11 +338,7 @@ void R_BindFBO(FBO_t *fbo)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- R_BindFBO( %s ) ---\n", fbo->name));
-	}
+	Ren_LogComment("--- R_BindFBO( %s ) ---\n", fbo->name);
 
 	if (glState.currentFBO != fbo)
 	{
@@ -369,10 +365,7 @@ void R_BindFBO(FBO_t *fbo)
 
 void R_BindNullFBO(void)
 {
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- R_BindNullFBO ---\n");
-	}
+	Ren_LogComment("--- R_BindNullFBO ---\n");
 
 	if (glState.currentFBO)
 	{

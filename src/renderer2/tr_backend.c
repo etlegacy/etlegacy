@@ -48,11 +48,7 @@ void GL_Bind(image_t *image)
 	}
 	else
 	{
-		if (r_logFile->integer)
-		{
-			// don't just call LogComment, or we will get a call to va() every frame!
-			GLimp_LogComment(va("--- GL_Bind( %s ) ---\n", image->name));
-		}
+		Ren_LogComment("--- GL_Bind( %s ) ---\n", image->name);
 	}
 
 	texnum = image->texnum;
@@ -73,7 +69,7 @@ void GL_Bind(image_t *image)
 
 void GL_Unbind()
 {
-	GLimp_LogComment("--- GL_Unbind() ---\n");
+	Ren_LogComment("--- GL_Unbind() ---\n");
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -117,11 +113,7 @@ void GL_TextureFilter(image_t *image, filterType_t filterType)
 	}
 	else
 	{
-		if (r_logFile->integer)
-		{
-			// don't just call LogComment, or we will get a call to va() every frame!
-			GLimp_LogComment(va("--- GL_TextureFilter( %s ) ---\n", image->name));
-		}
+		Ren_LogComment("--- GL_TextureFilter( %s ) ---\n", image->name);
 	}
 
 	if (image->filterType == filterType)
@@ -169,10 +161,7 @@ void GL_SelectTexture(int unit)
 	{
 		glActiveTexture(GL_TEXTURE0 + unit);
 
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment(va("glActiveTexture( GL_TEXTURE%i )\n", unit));
-		}
+		Ren_LogComment("glActiveTexture( GL_TEXTURE%i )\n", unit);
 	}
 	else
 	{
@@ -711,7 +700,7 @@ static void RB_SetGL2D(void)
 {
 	matrix_t proj;
 
-	GLimp_LogComment("--- RB_SetGL2D ---\n");
+	Ren_LogComment("--- RB_SetGL2D ---\n");
 
 	// disable offscreen rendering
 	if (glConfig2.framebufferObjectAvailable)
@@ -755,7 +744,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, qboolean depthFill, int drawS
 	int           i;
 	drawSurf_t    *drawSurf;
 
-	GLimp_LogComment("--- RB_RenderDrawSurfaces ---\n");
+	Ren_LogComment("--- RB_RenderDrawSurfaces ---\n");
 
 	// draw everything
 	oldEntity            = NULL;
@@ -922,7 +911,7 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
     int           i;
     drawSurf_t    *drawSurf;
 
-    GLimp_LogComment("--- RB_RenderOpaqueSurfacesIntoDepth ---\n");
+    Ren_LogComment("--- RB_RenderOpaqueSurfacesIntoDepth ---\n");
 
     // draw everything
     oldEntity            = NULL;
@@ -1131,7 +1120,7 @@ static void Render_lightVolume(interaction_t *ia)
 			vec4_t   lightColor;
 			qboolean shadowCompare;
 
-			GLimp_LogComment("--- Render_lightVolume_omni ---\n");
+			Ren_LogComment("--- Render_lightVolume_omni ---\n");
 
 			GLSL_SelectPermutation(gl_volumetricLightingShader);
 			GL_Cull(CT_TWO_SIDED);
@@ -1410,7 +1399,7 @@ static void RB_RenderInteractions()
 	matrix_t      modelToLight;
 	int           startTime = 0;
 
-	GLimp_LogComment("--- RB_RenderInteractions ---\n");
+	Ren_LogComment("--- RB_RenderInteractions ---\n");
 
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
@@ -1462,7 +1451,7 @@ static void RB_RenderInteractions()
 
 		if (light != oldLight)
 		{
-			GLimp_LogComment("----- Rendering new light -----\n");
+			Ren_LogComment("----- Rendering new light -----\n");
 
 			// set light scissor to reduce fillrate
 			GL_Scissor(ia->scissorX, ia->scissorY, ia->scissorWidth, ia->scissorHeight);
@@ -1656,7 +1645,7 @@ static void RB_RenderInteractionsShadowMapped()
 		return;
 	}
 
-	GLimp_LogComment("--- RB_RenderInteractionsShadowMapped ---\n");
+	Ren_LogComment("--- RB_RenderInteractionsShadowMapped ---\n");
 
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
@@ -1723,12 +1712,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 				if (light->l.noShadows || light->shadowLOD < 0)
 				{
-					if (r_logFile->integer)
-					{
-						// don't just call LogComment, or we will get
-						// a call to va() every frame!
-						GLimp_LogComment(va("----- Skipping shadowCube side: %i -----\n", cubeSide));
-					}
+					Ren_LogComment("----- Skipping shadowCube side: %i -----\n", cubeSide);
 
 					goto skipInteraction;
 				}
@@ -1747,12 +1731,7 @@ static void RB_RenderInteractionsShadowMapped()
 						vec3_t   angles;
 						matrix_t rotationMatrix, transformMatrix, viewMatrix;
 
-						if (r_logFile->integer)
-						{
-							// don't just call LogComment, or we will get
-							// a call to va() every frame!
-							GLimp_LogComment(va("----- Rendering shadowCube side: %i -----\n", cubeSide));
-						}
+						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
 
 						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
 						R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeSide,
@@ -1865,7 +1844,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 					case RL_PROJ:
 					{
-						GLimp_LogComment("--- Rendering projective shadowMap ---\n");
+						Ren_LogComment("--- Rendering projective shadowMap ---\n");
 
 						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
 						R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.shadowMapFBOImage[light->shadowLOD]->texnum, 0);
@@ -1906,7 +1885,7 @@ static void RB_RenderInteractionsShadowMapped()
 						vec4_t transf;
 
 
-						GLimp_LogComment("--- Rendering directional shadowMap ---\n");
+						Ren_LogComment("--- Rendering directional shadowMap ---\n");
 
 						R_BindFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
 						if (!r_evsmPostProcess->integer)
@@ -1980,14 +1959,12 @@ static void RB_RenderInteractionsShadowMapped()
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_RIGHT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[6]);
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_LEFT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[7]);
 
-							if (r_logFile->integer)
+							if (RENLOG)
 							{
 								vec3_t rayIntersectionNear, rayIntersectionFar;
 								float  zNear, zFar;
 
-								// don't just call LogComment, or we will get
-								// a call to va() every frame!
-								//GLimp_LogComment(va("----- Skipping shadowCube side: %i -----\n", cubeSide));
+								Ren_LogComment("----- Skipping shadowCube side: %i -----\n", cubeSide);
 
 								PlaneIntersectRay(viewOrigin, viewDirection, splitFrustum[FRUSTUM_FAR], rayIntersectionFar);
 								zFar = Distance(viewOrigin, rayIntersectionFar);
@@ -1999,17 +1976,17 @@ static void RB_RenderInteractionsShadowMapped()
 
 								VectorInverse(viewDirection);
 
-								GLimp_LogComment(va("split frustum %i: near = %5.3f, far = %5.3f\n", splitFrustumIndex, zNear, zFar));
-								GLimp_LogComment(va("pyramid nearCorners\n"));
+								Ren_LogComment("split frustum %i: near = %5.3f, far = %5.3f\n", splitFrustumIndex, zNear, zFar);
+								Ren_LogComment("pyramid nearCorners\n");
 								for (j = 0; j < 4; j++)
 								{
-									GLimp_LogComment(va("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]));
+									Ren_LogComment("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 								}
 
-								GLimp_LogComment(va("pyramid farCorners\n"));
+								Ren_LogComment("pyramid farCorners\n");
 								for (j = 4; j < 8; j++)
 								{
-									GLimp_LogComment(va("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]));
+									Ren_LogComment("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 								}
 							}
 
@@ -2072,16 +2049,13 @@ static void RB_RenderInteractionsShadowMapped()
 							MatrixCrop(cropMatrix, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							//MatrixIdentity(cropMatrix);
 
-							if (r_logFile->integer)
-							{
-								GLimp_LogComment(va("split frustum light view space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
-								                    splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]));
+							Ren_LogComment("split frustum light view space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
+								splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]);
 
-								GLimp_LogComment(va("split frustum light clip space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								                    splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]));
-							}
+							Ren_LogComment("split frustum light clip space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 #else
 
@@ -2130,22 +2104,19 @@ static void RB_RenderInteractionsShadowMapped()
 							}
 
 
-							if (r_logFile->integer)
-							{
-								GLimp_LogComment(va("shadow casters = %i\n", numCasters));
+							Ren_LogComment("shadow casters = %i\n", numCasters);
 
-								GLimp_LogComment(va("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								                    splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]));
+							Ren_LogComment("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
-								GLimp_LogComment(va("shadow caster light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
-								                    casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]));
+							Ren_LogComment("shadow caster light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
+								casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]);
 
-								GLimp_LogComment(va("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
-								                    receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]));
-							}
+							Ren_LogComment("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
+								receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
 
 							// scene-dependent bounding volume
 							cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
@@ -2227,23 +2198,12 @@ static void RB_RenderInteractionsShadowMapped()
 					}
 				}
 
-				if (r_logFile->integer)
-				{
-					// don't just call LogComment, or we will get
-					// a call to va() every frame!
-					GLimp_LogComment(va("----- First Shadow Interaction: %i -----\n", iaCount));
-				}
+				Ren_LogComment("----- First Shadow Interaction: %i -----\n", iaCount);
 			}
 			else
 			{
-				GLimp_LogComment("--- Rendering lighting ---\n");
-
-				if (r_logFile->integer)
-				{
-					// don't just call LogComment, or we will get
-					// a call to va() every frame!
-					GLimp_LogComment(va("----- First Light Interaction: %i -----\n", iaCount));
-				}
+				Ren_LogComment("--- Rendering lighting ---\n");
+				Ren_LogComment("----- First Light Interaction: %i -----\n", iaCount);
 
 				if (r_hdrRendering->integer)
 				{
@@ -2489,12 +2449,7 @@ static void RB_RenderInteractionsShadowMapped()
 			{
 				if (light == oldLight && entity == oldEntity && (alphaTest ? shader == oldShader : alphaTest == oldAlphaTest) && deformType == oldDeformType)
 				{
-					if (r_logFile->integer)
-					{
-						// don't just call LogComment, or we will get
-						// a call to va() every frame!
-						GLimp_LogComment(va("----- Batching Shadow Interaction: %i -----\n", iaCount));
-					}
+					Ren_LogComment("----- Batching Shadow Interaction: %i -----\n", iaCount);
 
 					// fast path, same as previous
 					rb_surfaceTable[*surface] (surface);
@@ -2508,12 +2463,7 @@ static void RB_RenderInteractionsShadowMapped()
 						Tess_End();
 					}
 
-					if (r_logFile->integer)
-					{
-						// don't just call LogComment, or we will get
-						// a call to va() every frame!
-						GLimp_LogComment(va("----- Beginning Shadow Interaction: %i -----\n", iaCount));
-					}
+					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
 					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
@@ -2544,12 +2494,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 			if (light == oldLight && entity == oldEntity && shader == oldShader)
 			{
-				if (r_logFile->integer)
-				{
-					// don't just call LogComment, or we will get
-					// a call to va() every frame!
-					GLimp_LogComment(va("----- Batching Light Interaction: %i -----\n", iaCount));
-				}
+				Ren_LogComment("----- Batching Light Interaction: %i -----\n", iaCount);
 
 				// fast path, same as previous
 				rb_surfaceTable[*surface] (surface);
@@ -2563,12 +2508,7 @@ static void RB_RenderInteractionsShadowMapped()
 					Tess_End();
 				}
 
-				if (r_logFile->integer)
-				{
-					// don't just call LogComment, or we will get
-					// a call to va() every frame!
-					GLimp_LogComment(va("----- Beginning Light Interaction: %i -----\n", iaCount));
-				}
+				Ren_LogComment("----- Beginning Light Interaction: %i -----\n", iaCount);
 
 				// begin a new batch
 				Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, light->l.inverseShadows, qfalse, -1, 0);
@@ -2733,12 +2673,7 @@ skipInteraction:
 			// if ia->next does not point to any other interaction then
 			// this is the last interaction of the current light
 
-			if (r_logFile->integer)
-			{
-				// don't just call LogComment, or we will get
-				// a call to va() every frame!
-				GLimp_LogComment(va("----- Last Interaction: %i -----\n", iaCount));
-			}
+			Ren_LogComment("----- Last Interaction: %i -----\n", iaCount);
 
 			// draw the contents of the last shader batch
 			Tess_End();
@@ -2885,7 +2820,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer()
     drawSurf_t    *drawSurf;
     int           startTime = 0;
 
-    GLimp_LogComment("--- RB_RenderDrawSurfacesIntoGeometricBuffer ---\n");
+    Ren_LogComment("--- RB_RenderDrawSurfacesIntoGeometricBuffer ---\n");
 
     if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
     {
@@ -3058,7 +2993,7 @@ void RB_RenderInteractionsDeferred()
 	vec4_t   lightFrustum[6];
 	int      startTime = 0;
 
-	GLimp_LogComment("--- RB_RenderInteractionsDeferred ---\n");
+	Ren_LogComment("--- RB_RenderInteractionsDeferred ---\n");
 
 	if (r_skipLightBuffer->integer)
 	{
@@ -3116,7 +3051,7 @@ skipInteraction:
 			{
 				GL_CheckErrors();
 
-				GLimp_LogComment("--- Rendering lighting ---\n");
+				Ren_LogComment("--- Rendering lighting ---\n");
 
 				// build world to light space matrix
 				switch (light->l.rlType)
@@ -3688,7 +3623,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 	vec4_t   lightFrustum[6];
 	int      startTime = 0;
 
-	GLimp_LogComment("--- RB_RenderInteractionsDeferredShadowMapped ---\n");
+	Ren_LogComment("--- RB_RenderInteractionsDeferredShadowMapped ---\n");
 
 	if (r_skipLightBuffer->integer)
 	{
@@ -3768,12 +3703,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 				if (light->l.noShadows || light->shadowLOD < 0)
 				{
-					if (r_logFile->integer)
-					{
-						// don't just call LogComment, or we will get
-						// a call to va() every frame!
-						GLimp_LogComment(va("----- Skipping shadowCube side: %i -----\n", cubeSide));
-					}
+					Ren_LogComment("----- Skipping shadowCube side: %i -----\n", cubeSide);
 
 					goto skipInteraction;
 				}
@@ -3790,12 +3720,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						vec3_t   angles;
 						matrix_t rotationMatrix, transformMatrix, viewMatrix;
 
-						if (r_logFile->integer)
-						{
-							// don't just call LogComment, or we will get
-							// a call to va() every frame!
-							GLimp_LogComment(va("----- Rendering shadowCube side: %i -----\n", cubeSide));
-						}
+						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
 
 						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
 						R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + cubeSide,
@@ -3908,7 +3833,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 					case RL_PROJ:
 					{
-						GLimp_LogComment("--- Rendering projective shadowMap ---\n");
+						Ren_LogComment("--- Rendering projective shadowMap ---\n");
 
 						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
 						R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.shadowMapFBOImage[light->shadowLOD]->texnum, 0);
@@ -3947,7 +3872,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						vec4_t point;
 						vec4_t transf;
 
-						GLimp_LogComment("--- Rendering directional shadowMap ---\n");
+						Ren_LogComment("--- Rendering directional shadowMap ---\n");
 
 						R_BindFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
 						R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum, 0);
@@ -4378,14 +4303,12 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_RIGHT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[6]);
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_LEFT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[7]);
 
-							if (r_logFile->integer)
+							if (RENLOG)
 							{
 								vec3_t rayIntersectionNear, rayIntersectionFar;
 								float  zNear, zFar;
 
-								// don't just call LogComment, or we will get
-								// a call to va() every frame!
-								//GLimp_LogComment(va("----- Skipping shadowCube side: %i -----\n", cubeSide));
+								Ren_LogComment("----- Skipping shadowCube side: %i -----\n", cubeSide);
 
 								PlaneIntersectRay(viewOrigin, viewDirection, splitFrustum[FRUSTUM_FAR], rayIntersectionFar);
 								zFar = Distance(viewOrigin, rayIntersectionFar);
@@ -4397,17 +4320,17 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 								VectorInverse(viewDirection);
 
-								GLimp_LogComment(va("split frustum %i: near = %5.3f, far = %5.3f\n", splitFrustumIndex, zNear, zFar));
-								GLimp_LogComment(va("pyramid nearCorners\n"));
+								Ren_LogComment("split frustum %i: near = %5.3f, far = %5.3f\n", splitFrustumIndex, zNear, zFar);
+								Ren_LogComment("pyramid nearCorners\n");
 								for (j = 0; j < 4; j++)
 								{
-									GLimp_LogComment(va("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]));
+									Ren_LogComment("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 								}
 
-								GLimp_LogComment(va("pyramid farCorners\n"));
+								Ren_LogComment("pyramid farCorners\n");
 								for (j = 4; j < 8; j++)
 								{
-									GLimp_LogComment(va("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]));
+									Ren_LogComment("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 								}
 							}
 
@@ -4466,16 +4389,13 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							MatrixCrop(cropMatrix, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							//MatrixIdentity(cropMatrix);
 
-							if (r_logFile->integer)
-							{
-								GLimp_LogComment(va("split frustum light view space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
-								                    splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]));
+							Ren_LogComment("split frustum light view space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
+								splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]);
 
-								GLimp_LogComment(va("split frustum light clip space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								                    splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]));
-							}
+							Ren_LogComment("split frustum light clip space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 #else
 
@@ -4518,22 +4438,19 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 							//ri.Printf(PRINT_ALL, "shadow casters = %i\n", numCasters);
 
-							if (r_logFile->integer)
-							{
-								GLimp_LogComment(va("shadow casters = %i\n", numCasters));
+							Ren_LogComment("shadow casters = %i\n", numCasters);
 
-								GLimp_LogComment(va("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								                    splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]));
+							Ren_LogComment("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
-								GLimp_LogComment(va("shadow caster light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
-								                    casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]));
+							Ren_LogComment("shadow caster light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
+								casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]);
 
-								GLimp_LogComment(va("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								                    receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
-								                    receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]));
-							}
+							Ren_LogComment("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+								receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
+								receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
 
 							// scene-dependent bounding volume
 							cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
@@ -4621,23 +4538,13 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					}
 				}
 
-				if (r_logFile->integer)
-				{
-					// don't just call LogComment, or we will get
-					// a call to va() every frame!
-					GLimp_LogComment(va("----- First Shadow Interaction: %i -----\n", iaCount));
-				}
+				Ren_LogComment("----- First Shadow Interaction: %i -----\n", iaCount);
 			}
 			else
 			{
-				GLimp_LogComment("--- Rendering lighting ---\n");
+				Ren_LogComment("--- Rendering lighting ---\n");
 
-				if (r_logFile->integer)
-				{
-					// don't just call LogComment, or we will get
-					// a call to va() every frame!
-					GLimp_LogComment(va("----- First Light Interaction: %i -----\n", iaCount));
-				}
+				Ren_LogComment("----- First Light Interaction: %i -----\n", iaCount);
 
 				// finally draw light
 				R_BindFBO(tr.geometricRenderFBO);
@@ -4656,7 +4563,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 				GL_CheckErrors();
 
-				GLimp_LogComment("--- Rendering lighting ---\n");
+				Ren_LogComment("--- Rendering lighting ---\n");
 
 				switch (light->l.rlType)
 				{
@@ -5479,12 +5386,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 				    (alphaTest ? shader == oldShader : alphaTest == oldAlphaTest) &&
 				    (deformType == oldDeformType))
 				{
-					if (r_logFile->integer)
-					{
-						// don't just call LogComment, or we will get
-						// a call to va() every frame!
-						GLimp_LogComment(va("----- Batching Shadow Interaction: %i -----\n", iaCount));
-					}
+					Ren_LogComment("----- Batching Shadow Interaction: %i -----\n", iaCount);
 
 					// fast path, same as previous
 					rb_surfaceTable[*surface] (surface);
@@ -5499,12 +5401,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						Tess_End();
 					}
 
-					if (r_logFile->integer)
-					{
-						// don't just call LogComment, or we will get
-						// a call to va() every frame!
-						GLimp_LogComment(va("----- Beginning Shadow Interaction: %i -----\n", iaCount));
-					}
+					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
 					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
@@ -5624,12 +5521,7 @@ skipInteraction:
 			// if ia->next does not point to any other interaction then
 			// this is the last interaction of the current light
 
-			if (r_logFile->integer)
-			{
-				// don't just call LogComment, or we will get
-				// a call to va() every frame!
-				GLimp_LogComment(va("----- Last Interaction: %i -----\n", iaCount));
-			}
+			Ren_LogComment("----- Last Interaction: %i -----\n", iaCount);
 
 			if (drawShadows)
 			{
@@ -5774,7 +5666,7 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 //  matrix_t        projectMatrix;
 	matrix_t ortho;
 
-	GLimp_LogComment("--- RB_RenderScreenSpaceAmbientOcclusion ---\n");
+	Ren_LogComment("--- RB_RenderScreenSpaceAmbientOcclusion ---\n");
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
@@ -5871,7 +5763,7 @@ void RB_RenderDepthOfField()
 {
 	matrix_t ortho;
 
-	GLimp_LogComment("--- RB_RenderDepthOfField ---\n");
+	Ren_LogComment("--- RB_RenderDepthOfField ---\n");
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
@@ -5956,7 +5848,7 @@ void RB_RenderGlobalFog()
 	//vec4_t   fogColor;
 	matrix_t ortho;
 
-	GLimp_LogComment("--- RB_RenderGlobalFog ---\n");
+	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
@@ -5986,10 +5878,7 @@ void RB_RenderGlobalFog()
 
 		fog = &tr.world->fogs[tr.world->globalFog];
 
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment(va("--- RB_RenderGlobalFog( fogNum = %i, originalBrushNumber = %i ) ---\n", tr.world->globalFog, fog->originalBrushNumber));
-		}
+		Ren_LogComment("--- RB_RenderGlobalFog( fogNum = %i, originalBrushNumber = %i ) ---\n", tr.world->globalFog, fog->originalBrushNumber);
 
 		GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 
@@ -6055,7 +5944,7 @@ void RB_RenderBloom()
 	int      i, j;
 	matrix_t ortho;
 
-	GLimp_LogComment("--- RB_RenderBloom ---\n");
+	Ren_LogComment("--- RB_RenderBloom ---\n");
 
 	if ((backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOBLOOM)) || !r_bloom->integer || backEnd.viewParms.isPortal || !glConfig2.framebufferObjectAvailable)
 	{
@@ -6251,7 +6140,7 @@ void RB_RenderRotoscope(void)
 {
 	matrix_t ortho;
 
-	GLimp_LogComment("--- RB_RenderRotoscope ---\n");
+	Ren_LogComment("--- RB_RenderRotoscope ---\n");
 
 	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_rotoscope->integer || backEnd.viewParms.isPortal)
 	{
@@ -6293,7 +6182,7 @@ void RB_CameraPostFX(void)
 	matrix_t ortho;
 	matrix_t grain;
 
-	GLimp_LogComment("--- RB_CameraPostFX ---\n");
+	Ren_LogComment("--- RB_CameraPostFX ---\n");
 
 	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_cameraPostFX->integer || backEnd.viewParms.isPortal ||
 	    !tr.grainImage || !tr.vignetteImage)
@@ -6478,7 +6367,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 {
 	matrix_t ortho;
 
-	GLimp_LogComment("--- RB_RenderDeferredShadingResultToFrameBuffer ---\n");
+	Ren_LogComment("--- RB_RenderDeferredShadingResultToFrameBuffer ---\n");
 
 	R_BindNullFBO();
 
@@ -6566,7 +6455,7 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 {
 	matrix_t ortho;
 
-	GLimp_LogComment("--- RB_RenderDeferredHDRResultToFrameBuffer ---\n");
+	Ren_LogComment("--- RB_RenderDeferredHDRResultToFrameBuffer ---\n");
 
 	if (!r_hdrRendering->integer || !glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
 	{
@@ -6771,7 +6660,7 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 
 static void IssueLightOcclusionQuery(link_t *queue, trRefLight_t *light, qboolean resetMultiQueryLink)
 {
-	GLimp_LogComment("--- IssueLightOcclusionQuery ---\n");
+	Ren_LogComment("--- IssueLightOcclusionQuery ---\n");
 
 	//ri.Printf(PRINT_ALL, "--- IssueOcclusionQuery(%i) ---\n", node - tr.world->nodes);
 
@@ -6824,7 +6713,7 @@ static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individu
 	trRefLight_t *multiQueryLight;
 	link_t       *l;
 
-	GLimp_LogComment("--- IssueLightMultiOcclusionQueries ---\n");
+	Ren_LogComment("--- IssueLightMultiOcclusionQueries ---\n");
 
 #if 0
 	ri.Printf(PRINT_ALL, "IssueLightMultiOcclusionQueries(");
@@ -6930,7 +6819,7 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light)
 	int    ocSamples;
 	GLint  available;
 
-	GLimp_LogComment("--- GetLightOcclusionQueryResult ---\n");
+	Ren_LogComment("--- GetLightOcclusionQueryResult ---\n");
 
 	if (light->occlusionQueryObject > 0)
 	{
@@ -7003,7 +6892,7 @@ static int LightCompare(const void *a, const void *b)
 
 void RB_RenderLightOcclusionQueries()
 {
-	GLimp_LogComment("--- RB_RenderLightOcclusionQueries ---\n");
+	Ren_LogComment("--- RB_RenderLightOcclusionQueries ---\n");
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicLightOcclusionCulling->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
@@ -7365,7 +7254,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 
 static void IssueEntityOcclusionQuery(link_t *queue, trRefEntity_t *entity, qboolean resetMultiQueryLink)
 {
-	GLimp_LogComment("--- IssueEntityOcclusionQuery ---\n");
+	Ren_LogComment("--- IssueEntityOcclusionQuery ---\n");
 
 	//ri.Printf(PRINT_ALL, "--- IssueEntityOcclusionQuery(%i) ---\n", light - backEnd.refdef.lights);
 
@@ -7418,7 +7307,7 @@ static void IssueEntityMultiOcclusionQueries(link_t *multiQueue, link_t *individ
 	trRefEntity_t *multiQueryEntity;
 	link_t        *l;
 
-	GLimp_LogComment("--- IssueEntityMultiOcclusionQueries ---\n");
+	Ren_LogComment("--- IssueEntityMultiOcclusionQueries ---\n");
 
 #if 0
 	ri.Printf(PRINT_ALL, "IssueEntityMultiOcclusionQueries(");
@@ -7524,7 +7413,7 @@ static void GetEntityOcclusionQueryResult(trRefEntity_t *entity)
 	int    ocSamples;
 	GLint  available;
 
-	GLimp_LogComment("--- GetEntityOcclusionQueryResult ---\n");
+	Ren_LogComment("--- GetEntityOcclusionQueryResult ---\n");
 
 	if (entity->occlusionQueryObject > 0)
 	{
@@ -7590,7 +7479,7 @@ static int EntityCompare(const void *a, const void *b)
 
 void RB_RenderEntityOcclusionQueries()
 {
-	GLimp_LogComment("--- RB_RenderEntityOcclusionQueries ---\n");
+	Ren_LogComment("--- RB_RenderEntityOcclusionQueries ---\n");
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
@@ -7791,7 +7680,7 @@ void RB_RenderEntityOcclusionQueries()
 #if 0
 void RB_RenderBspOcclusionQueries()
 {
-	GLimp_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
+	Ren_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
 	{
@@ -7877,7 +7766,7 @@ void RB_RenderBspOcclusionQueries()
 
 void RB_CollectBspOcclusionQueries()
 {
-	GLimp_LogComment("--- RB_CollectBspOcclusionQueries ---\n");
+	Ren_LogComment("--- RB_CollectBspOcclusionQueries ---\n");
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
 	{
@@ -7971,7 +7860,7 @@ void RB_CollectBspOcclusionQueries()
 
 static void RB_RenderDebugUtils()
 {
-	GLimp_LogComment("--- RB_RenderDebugUtils ---\n");
+	Ren_LogComment("--- RB_RenderDebugUtils ---\n");
 
 	if (r_showLightTransforms->integer || r_showShadowLod->integer)
 	{
@@ -9082,7 +8971,7 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		GLimp_LogComment("--- r_showLightGrid > 0: Rendering light grid\n");
+		Ren_LogComment("--- r_showLightGrid > 0: Rendering light grid\n");
 
 		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
 		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
@@ -9598,13 +9487,7 @@ static void RB_RenderDebugUtils()
 
 static void RB_RenderView(void)
 {
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- RB_RenderView( %i surfaces, %i interactions ) ---\n", backEnd.viewParms.numDrawSurfs,
-		                     backEnd.viewParms.numInteractions));
-	}
+	Ren_LogComment("--- RB_RenderView( %i surfaces, %i interactions ) ---\n", backEnd.viewParms.numDrawSurfs, backEnd.viewParms.numInteractions);
 
 	//ri.Error(ERR_FATAL, "test");
 
@@ -10494,7 +10377,7 @@ const void *RB_SetColor(const void *data)
 {
 	const setColorCommand_t *cmd;
 
-	GLimp_LogComment("--- RB_SetColor ---\n");
+	Ren_LogComment("--- RB_SetColor ---\n");
 
 	cmd = (const setColorCommand_t *)data;
 
@@ -10513,7 +10396,7 @@ const void *RB_StretchPic(const void *data)
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 
-	GLimp_LogComment("--- RB_StretchPic ---\n");
+	Ren_LogComment("--- RB_StretchPic ---\n");
 
 	cmd = (const stretchPicCommand_t *)data;
 
@@ -10834,7 +10717,7 @@ const void *RB_DrawView(const void *data)
 {
 	const drawViewCommand_t *cmd;
 
-	GLimp_LogComment("--- RB_DrawView ---\n");
+	Ren_LogComment("--- RB_DrawView ---\n");
 
 	// finish any 2D drawing if needed
 	if (tess.numIndexes)
@@ -10856,7 +10739,7 @@ const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd;
 
-	GLimp_LogComment("--- RB_DrawBuffer ---\n");
+	Ren_LogComment("--- RB_DrawBuffer ---\n");
 
 	cmd = (const drawBufferCommand_t *)data;
 
@@ -10891,7 +10774,7 @@ void RB_ShowImages(void)
 	vec4_t  quadVerts[4];
 	int     start, end;
 
-	GLimp_LogComment("--- RB_ShowImages ---\n");
+	Ren_LogComment("--- RB_ShowImages ---\n");
 
 	if (!backEnd.projection2D)
 	{
@@ -11020,7 +10903,7 @@ const void *RB_SwapBuffers(const void *data)
 		glFinish();
 	}
 
-	GLimp_LogComment("***************** RB_SwapBuffers *****************\n\n\n");
+	Ren_LogComment("***************** RB_SwapBuffers *****************\n\n\n");
 
 	GLimp_EndFrame();
 
@@ -11072,7 +10955,7 @@ void RB_ExecuteRenderCommands(const void *data)
 {
 	int t1, t2;
 
-	GLimp_LogComment("--- RB_ExecuteRenderCommands ---\n");
+	Ren_LogComment("--- RB_ExecuteRenderCommands ---\n");
 
 	t1 = ri.Milliseconds();
 

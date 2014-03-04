@@ -73,6 +73,14 @@ void GLimp_EndFrame(void);
 void GLimp_LogComment(const char *comment);
 void GLimp_Minimize(void);
 
+#if defined(_DEBUG) || defined(DEBUG)
+#define RENLOG r_logFile->integer
+#define Ren_LogComment(...) if (RENLOG) { GLimp_LogComment(va(__VA_ARGS__)); }
+#else
+#define RENLOG 0
+#define Ren_LogComment(...)
+#endif
+
 // NOTE: linux works with float gamma value, not the gamma table
 // the params won't be used, getting the r_gamma cvar directly
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);

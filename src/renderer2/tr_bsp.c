@@ -8599,7 +8599,7 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
 	float          distance, maxDistance;
 	cubemapProbe_t *cubeProbe;
 
-	GLimp_LogComment("--- GL_BindNearestCubeMap ---\n");
+	Ren_LogComment("--- GL_BindNearestCubeMap ---\n");
 
 	maxDistance      = 9999999.0f;
 	tr.autoCubeImage = tr.blackCubeImage;
@@ -8659,7 +8659,7 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
 	unsigned int   hash;
 	vertexHash_t   *vertexHash;
 
-	GLimp_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
+	Ren_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
 
 	*cubeProbeNearest       = NULL;
 	*cubeProbeSecondNearest = NULL;

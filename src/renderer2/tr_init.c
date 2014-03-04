@@ -1012,7 +1012,7 @@ void GL_SetDefaultState(void)
 {
 	int i;
 
-	GLimp_LogComment("--- GL_SetDefaultState ---\n");
+	Ren_LogComment("--- GL_SetDefaultState ---\n");
 
 	GL_ClearDepth(1.0f);
 

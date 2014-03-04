@@ -370,7 +370,7 @@ static void DrawTris(shaderCommands_t *input)
 	if (qglLockArraysEXT)
 	{
 		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment("glLockArraysEXT\n");
+		Ren_LogComment("glLockArraysEXT\n");
 	}
 
 	R_DrawElements(input->numIndexes, input->indexes);
@@ -378,7 +378,7 @@ static void DrawTris(shaderCommands_t *input)
 	if (qglUnlockArraysEXT)
 	{
 		qglUnlockArraysEXT();
-		GLimp_LogComment("glUnlockArraysEXT\n");
+		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 	qglDepthRange(0, 1);
 	qglDisable(GL_POLYGON_OFFSET_LINE);
@@ -1719,13 +1719,7 @@ void RB_StageIteratorGeneric(void)
 
 	RB_DeformTessGeometry();
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va("--- RB_StageIteratorGeneric( %s ) ---\n", tess.shader->name));
-	}
+	Ren_LogComment("--- RB_StageIteratorGeneric( %s ) ---\n", tess.shader->name);
 
 	// set GL fog
 	SetIteratorFog();
@@ -1766,7 +1760,7 @@ void RB_StageIteratorGeneric(void)
 	if (qglLockArraysEXT)
 	{
 		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment("glLockArraysEXT\n");
+		Ren_LogComment("glLockArraysEXT\n");
 	}
 
 	// enable color and texcoord arrays after the lock if necessary
@@ -1805,7 +1799,7 @@ void RB_StageIteratorGeneric(void)
 	if (qglUnlockArraysEXT)
 	{
 		qglUnlockArraysEXT();
-		GLimp_LogComment("glUnlockArraysEXT\n");
+		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 
 	// reset polygon offset
@@ -1828,13 +1822,7 @@ void RB_StageIteratorVertexLitTexture(void)
 	// compute colors
 	RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va("--- RB_StageIteratorVertexLitTexturedUnfogged( %s ) ---\n", tess.shader->name));
-	}
+	Ren_LogComment("--- RB_StageIteratorVertexLitTexturedUnfogged( %s ) ---\n", tess.shader->name);
 
 	// set GL fog
 	SetIteratorFog();
@@ -1853,7 +1841,7 @@ void RB_StageIteratorVertexLitTexture(void)
 	if (qglLockArraysEXT)
 	{
 		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment("glLockArraysEXT\n");
+		Ren_LogComment("glLockArraysEXT\n");
 	}
 
 	// call special shade routine
@@ -1886,7 +1874,7 @@ void RB_StageIteratorVertexLitTexture(void)
 	if (qglUnlockArraysEXT)
 	{
 		qglUnlockArraysEXT();
-		GLimp_LogComment("glUnlockArraysEXT\n");
+		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 }
 
@@ -1902,13 +1890,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	shaderCommands_t *input  = &tess;
 	shader_t         *shader = input->shader;
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va("--- RB_StageIteratorLightmappedMultitexture( %s ) ---\n", tess.shader->name));
-	}
+	Ren_LogComment("--- RB_StageIteratorLightmappedMultitexture( %s ) ---\n", tess.shader->name);
 
 	// set GL fog
 	SetIteratorFog();
@@ -1965,7 +1947,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	if (qglLockArraysEXT)
 	{
 		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment("glLockArraysEXT\n");
+		Ren_LogComment("glLockArraysEXT\n");
 	}
 
 	R_DrawElements(input->numIndexes, input->indexes);
@@ -2005,7 +1987,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	if (qglUnlockArraysEXT)
 	{
 		qglUnlockArraysEXT();
-		GLimp_LogComment("glUnlockArraysEXT\n");
+		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 }
 
@@ -2066,5 +2048,5 @@ void RB_EndSurface(void)
 	// clear shader so we can tell we don't have any unclosed surfaces
 	tess.numIndexes = 0;
 
-	GLimp_LogComment("----------\n");
+	Ren_LogComment("----------\n");
 }
