@@ -920,6 +920,53 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #endif
 }
 
+void Sys_SetProcessProperties(void)
+{
+	DWORD_PTR processAffinityMask;
+	DWORD_PTR systemAffinityMask;
+	DWORD_PTR mask;
+	int core,bit,currentCore;
+	BOOL success;
+	HANDLE process = GetCurrentProcess(); 
+
+	//Set Process priority
+	SetPriorityClass(process,HIGH_PRIORITY_CLASS);
+
+#ifdef 0 //This could be fixed & enabled in the future, but now it just causes input issues
+	if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask))
+	{
+		return;
+	}
+
+	//set this to the core you want your process to run on
+	core = 2;
+	mask=0x1;
+
+	for (bit=0, currentCore=1; bit < 64; bit++)
+	{
+		if (mask & processAffinityMask)
+		{
+			if (currentCore != core)
+			{
+				processAffinityMask &= ~mask;
+			}
+			currentCore++;
+		}
+		mask = mask << 1;
+	}
+
+	success = SetProcessAffinityMask(process, processAffinityMask);
+	if(success)
+	{
+		//Yup great
+	}
+	else
+	{
+		//Fuck!
+	}
+#endif
+}
+
 /*
 ==================
 WinMain
@@ -941,46 +988,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	
-#if 0 //ifndef DEDICATED
-	HANDLE process = GetCurrentProcess(); 
-	
-	//Set Process priority
-	SetPriorityClass(process,HIGH_PRIORITY_CLASS);
-
-	DWORD_PTR processAffinityMask;
-    DWORD_PTR systemAffinityMask;
-
-    if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask))
-        return -1;
-
-	//set this to the core you want your process to run on
-    int core = 2;
-    DWORD_PTR mask=0x1;
-    for (int bit=0, currentCore=1; bit < 64; bit++)
-    {
-        if (mask & processAffinityMask)
-        {
-            if (currentCore != core)
-            {
-                processAffinityMask &= ~mask;
-            }
-            currentCore++;
-        }
-        mask = mask << 1;
-    }
-
-    BOOL success = SetProcessAffinityMask(process, processAffinityMask);
-	if(success)
-	{
-		//Yup great
-	}
-	else
-	{
-		//Fuck!
-	}
-#endif
-
 #ifdef EXCEPTION_HANDLER
 	WinSetExceptionVersion(Q3_VERSION);
 #endif
@@ -989,6 +996,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Q_strncpyz(sys_cmdline, lpCmdLine, sizeof(sys_cmdline));
 
 #ifndef DEDICATED
+	Sys_SetProcessProperties();
+
 	//show the splash screen
 	Sys_Splash(qtrue);
 #endif
@@ -1034,6 +1043,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{
 			Sleep(5);
 		}
+
+		Sleep(0);
 
 		// set low precision every frame, because some system calls
 		// reset it arbitrarily
