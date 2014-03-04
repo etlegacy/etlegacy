@@ -932,7 +932,7 @@ void Sys_SetProcessProperties(void)
 	//Set Process priority
 	SetPriorityClass(process, HIGH_PRIORITY_CLASS);
 
-#ifdef 0 //This could be fixed & enabled in the future, but now it just causes input issues
+#if 0 //This could be fixed & enabled in the future, but now it just causes input issues
 	if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask))
 	{
 		return;
