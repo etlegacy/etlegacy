@@ -41,7 +41,6 @@
 #include "../renderercommon/qgl.h"
 #include "../renderercommon/tr_common.h"
 #include "../renderercommon/tr_public.h"
-#include "tr_growlist.h"
 #include "tr_extra.h"
 
 #if 1
@@ -1187,6 +1186,14 @@ typedef struct shader_s
 
 	struct shader_s *next;
 } shader_t;
+
+typedef struct
+{
+	qboolean frameMemory;
+	int currentElements;
+	int maxElements;                // will reallocate and move when exceeded
+	void **elements;
+} growList_t;
 
 #if 0
 enum
@@ -4347,6 +4354,14 @@ void LoadRGBEToHalfs(const char *name, unsigned short **halfImage, int *width, i
 // fallback shaders
 extern const char *defaultShaderDefinitions;
 const char *GetFallbackShader(const char *name);
+
+//tr_growlist.c
+// you don't need to init the growlist if you don't mind it growing and moving the list as it expands
+void Com_InitGrowList(growList_t *list, int maxElements);
+void Com_DestroyGrowList(growList_t *list);
+int  Com_AddToGrowList(growList_t *list, void *data);
+void *Com_GrowListElement(const growList_t *list, int index);
+int  Com_IndexForGrowListElement(const growList_t *list, const void *element);
 
 //tr_glsl.c
 void GLSL_VertexAttribsState(uint32_t stateBits);
