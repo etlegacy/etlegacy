@@ -1859,14 +1859,23 @@ R_GetImageBuffer
 This is a hack to get the common imageloaders working properly
 =================
 */
-void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
+void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename)
 {
+	void *buf = NULL;
+
 	if (bufferType != BUFFER_IMAGE)
 	{
 		ri.Error(ERR_FATAL, "R_GetImageBuffer in the new renderer is called improperly\n");
 	}
+	
+	buf = ri.Z_Malloc(size);
 
-	return ri.Z_Malloc(size);
+	if(!buf)
+	{
+		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer for image %s with size: %i\n",filename,size);
+	}
+
+	return buf;
 }
 
 /*

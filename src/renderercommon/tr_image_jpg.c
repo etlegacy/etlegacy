@@ -202,7 +202,7 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
 	memcount   = pixelcount * 4;
 	row_stride = cinfo.output_width * cinfo.output_components;
 
-	out = R_GetImageBuffer(memcount, BUFFER_IMAGE);
+	out = R_GetImageBuffer(memcount, BUFFER_IMAGE,filename);
 
 	*width  = cinfo.output_width;
 	*height = cinfo.output_height;

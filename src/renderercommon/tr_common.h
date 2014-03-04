@@ -57,7 +57,7 @@ typedef enum
 	BUFFER_RESAMPLED,
 	BUFFER_MAX_TYPES
 } bufferMemType_t;
-void *R_GetImageBuffer(int size, bufferMemType_t bufferType);
+void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename);
 void R_FreeImageBuffer(void);
 
 /*
