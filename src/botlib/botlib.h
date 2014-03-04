@@ -123,10 +123,6 @@ typedef struct botlib_import_s
 	void (*DebugPolygonDelete)(int id);
 	void (*DebugPolygonDeletePointer)(bot_debugpoly_t *pPoly);
 
-	// Cast AI stuff
-	qboolean (*BotVisibleFromPos)(vec3_t srcpos, int srcnum, vec3_t destpos, int destnum, qboolean updateVisPos);
-	qboolean (*BotCheckAttackAtPos)(int entnum, int enemy, vec3_t pos, qboolean ducking, qboolean allowHitWorld);
-
 	// direct hookup into rendering, stop using this silly debugpoly faff
 	void (*BotDrawPolygon)(int color, int numPoints, float *points);
 } botlib_import_t;
