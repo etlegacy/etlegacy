@@ -196,7 +196,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 	static glyphInfo_t glyph;
 	unsigned char      *src, *dst;
 	FT_Bitmap          *bitmap = NULL;
-	FT_Int32		   flags = FT_LOAD_DEFAULT;
+	FT_Int32           flags   = FT_LOAD_DEFAULT;
 
 	Com_Memset(&glyph, 0, sizeof(glyphInfo_t));
 	// make sure everything is here

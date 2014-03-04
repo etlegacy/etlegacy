@@ -73,7 +73,7 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filenam
 
 	if (!imageBufferPtr[bufferType])
 	{
-		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer for image %s with size: %i\n",filename,size);
+		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer for image %s with size: %i\n", filename, size);
 	}
 
 	return imageBufferPtr[bufferType];
@@ -608,7 +608,7 @@ static void Upload32(unsigned *data,
 
 	if (scaled_width != width || scaled_height != height)
 	{
-		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED,"resample");
+		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED, "resample");
 		ResampleTexture(data, width, height, resampledBuffer, scaled_width, scaled_height);
 		data   = resampledBuffer;
 		width  = scaled_width;
@@ -643,7 +643,7 @@ static void Upload32(unsigned *data,
 	}
 
 	//scaledBuffer = ri.Hunk_AllocateTempMemory( sizeof( unsigned ) * scaled_width * scaled_height );
-	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED,"resample");
+	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED, "resample");
 
 	// scan the texture for each channel's max values
 	// and verify if the alpha channel is being used or not

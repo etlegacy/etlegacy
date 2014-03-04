@@ -1485,7 +1485,7 @@ void Cvar_AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shoul
 			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%i < %i)\n", cv->name, cv->integer, (int) minVal);
 			Cvar_Set(cv->name, va("%i", (int) minVal));
 		}
-		else 
+		else
 		{
 			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%f < %f)\n", cv->name, cv->value, minVal);
 			Cvar_Set(cv->name, va("%f", minVal));

@@ -29,118 +29,123 @@
 namespace tinygettext {
 
 #ifndef tinygettext_ICONV_CONST
-#  define tinygettext_ICONV_CONST 
+#  define tinygettext_ICONV_CONST
 #endif
 
-IConv::IConv() 
-  : to_charset(),
-    from_charset(),
-    cd(0)
-{}
- 
-IConv::IConv(const std::string& from_charset_, const std::string& to_charset_)
-  : to_charset(),
-    from_charset(),
-    cd(0)
+IConv::IConv()
+	: to_charset(),
+	  from_charset(),
+	  cd(0)
 {
-  set_charsets(from_charset_, to_charset_);
 }
- 
+
+IConv::IConv(const std::string& from_charset_, const std::string& to_charset_)
+	: to_charset(),
+	  from_charset(),
+	  cd(0)
+{
+	set_charsets(from_charset_, to_charset_);
+}
+
 IConv::~IConv()
 {
-  if (cd)
-    tinygettext_iconv_close(cd);
+	if (cd)
+	{
+		tinygettext_iconv_close(cd);
+	}
 }
- 
+
 void
 IConv::set_charsets(const std::string& from_charset_, const std::string& to_charset_)
 {
-  if (cd)
-    tinygettext_iconv_close(cd);
+	if (cd)
+	{
+		tinygettext_iconv_close(cd);
+	}
 
-  from_charset = from_charset_;
-  to_charset   = to_charset_;
+	from_charset = from_charset_;
+	to_charset   = to_charset_;
 
-  for(std::string::iterator i = to_charset.begin(); i != to_charset.end(); ++i)
-    *i = static_cast<char>(toupper(*i));
+	for (std::string::iterator i = to_charset.begin(); i != to_charset.end(); ++i)
+		*i = static_cast<char>(toupper(*i));
 
-  for(std::string::iterator i = from_charset.begin(); i != from_charset.end(); ++i)
-    *i = static_cast<char>(toupper(*i));
+	for (std::string::iterator i = from_charset.begin(); i != from_charset.end(); ++i)
+		*i = static_cast<char>(toupper(*i));
 
-  if (to_charset == from_charset)
-  {
-    cd = 0;
-  }
-  else
-  {
-    cd = tinygettext_iconv_open(to_charset.c_str(), from_charset.c_str());
-    if (cd == reinterpret_cast<tinygettext_iconv_t>(-1))
-    {
-      if(errno == EINVAL)
-      {
-        std::ostringstream str;
-        str << "IConv construction failed: conversion from '" << from_charset
-            << "' to '" << to_charset << "' not available";
-        throw std::runtime_error(str.str());
-      }
-      else
-      {
-        std::ostringstream str;
-        str << "IConv: construction failed: " << strerror(errno);
-        throw std::runtime_error(str.str());
-      }
-    }
-  }
+	if (to_charset == from_charset)
+	{
+		cd = 0;
+	}
+	else
+	{
+		cd = tinygettext_iconv_open(to_charset.c_str(), from_charset.c_str());
+		if (cd == reinterpret_cast<tinygettext_iconv_t>(-1))
+		{
+			if (errno == EINVAL)
+			{
+				std::ostringstream str;
+				str << "IConv construction failed: conversion from '" << from_charset
+				    << "' to '" << to_charset << "' not available";
+				throw std::runtime_error(str.str());
+			}
+			else
+			{
+				std::ostringstream str;
+				str << "IConv: construction failed: " << strerror(errno);
+				throw std::runtime_error(str.str());
+			}
+		}
+	}
 }
 
 /// Convert a string from encoding to another.
 std::string
 IConv::convert(const std::string& text)
 {
-  if (!cd)
-  {
-    return text;
-  }
-  else
-  {
-    size_t inbytesleft  = text.size();
-    size_t outbytesleft = 4*inbytesleft; // Worst case scenario: ASCII -> UTF-32?
+	if (!cd)
+	{
+		return text;
+	}
+	else
+	{
+		size_t inbytesleft  = text.size();
+		size_t outbytesleft = 4 * inbytesleft; // Worst case scenario: ASCII -> UTF-32?
 
-    // We try to avoid to much copying around, so we write directly into
-    // a std::string
-    tinygettext_ICONV_CONST char* inbuf = const_cast<char*>(&text[0]);
-    std::string result(outbytesleft, 'X');
-    char* outbuf = &result[0]; 
-  
-    // Try to convert the text.
-    size_t ret = tinygettext_iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
-    if (ret == static_cast<size_t>(-1))
-    {
-      if (errno == EILSEQ || errno == EINVAL)
-      { // invalid multibyte sequence
-        tinygettext_iconv(cd, NULL, NULL, NULL, NULL); // reset state
+		// We try to avoid to much copying around, so we write directly into
+		// a std::string
+		tinygettext_ICONV_CONST char *inbuf = const_cast<char *>(&text[0]);
+		std::string                  result(outbytesleft, 'X');
+		char                         *outbuf = &result[0];
 
-        // FIXME: Could try to skip the invalid byte and continue
-        log_error << "error: tinygettext:iconv: invalid multibyte sequence in:  \"" << text << "\"" << std::endl;
-      }
-      else if (errno == E2BIG)
-      { // output buffer to small
-        assert(!"tinygettext/iconv.cpp: E2BIG: This should never be reached");
-      }
-      else if (errno == EBADF)
-      {
-        assert(!"tinygettext/iconv.cpp: EBADF: This should never be reached");
-      }
-      else
-      {
-        assert(!"tinygettext/iconv.cpp: <unknown>: This should never be reached");
-      }
-    }
+		// Try to convert the text.
+		size_t ret = tinygettext_iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+		if (ret == static_cast<size_t>(-1))
+		{
+			if (errno == EILSEQ || errno == EINVAL)
+			{ // invalid multibyte sequence
+				tinygettext_iconv(cd, NULL, NULL, NULL, NULL); // reset state
 
-    result.resize(4*text.size() - outbytesleft);
+				// FIXME: Could try to skip the invalid byte and continue
+				log_error << "error: tinygettext:iconv: invalid multibyte sequence in:  \"" << text << "\"" << std::endl;
+			}
+			else if (errno == E2BIG)
+			{ // output buffer to small
+				assert(!"tinygettext/iconv.cpp: E2BIG: This should never be reached");
+			}
+			else if (errno == EBADF)
+			{
+				assert(!"tinygettext/iconv.cpp: EBADF: This should never be reached");
+			}
+			else
+			{
+				assert(!"tinygettext/iconv.cpp: <unknown>: This should never be reached");
+			}
+		}
 
-    return result;
-  }
+		result.resize(4 * text.size() - outbytesleft);
+
+		return result;
+	}
 }
 
 } // namespace tinygettext

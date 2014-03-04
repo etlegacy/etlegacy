@@ -3186,12 +3186,12 @@ void Com_Frame(void)
 	{
 		timeBeforeFirstEvents = Sys_Milliseconds();
 	}
-	
+
 	if (!com_dedicated->integer && !com_timedemo->integer && !com_developer->integer)
 	{
 		Cvar_AssertCvarRange(com_maxfps, 20, 333, qtrue);
 	}
-	
+
 	// we may want to spin here if things are going too fast
 	if (!com_dedicated->integer && com_maxfps->integer > 0 && !com_timedemo->integer)
 	{

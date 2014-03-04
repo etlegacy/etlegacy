@@ -202,7 +202,7 @@ void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alpha
 		*height = rows;
 	}
 
-	bmpRGBA = R_GetImageBuffer(numPixels * 4, BUFFER_IMAGE,name);
+	bmpRGBA = R_GetImageBuffer(numPixels * 4, BUFFER_IMAGE, name);
 	*pic    = bmpRGBA;
 
 

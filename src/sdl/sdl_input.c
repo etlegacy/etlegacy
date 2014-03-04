@@ -1120,7 +1120,8 @@ static void IN_ProcessEvents(void)
 			// Only do a vid_restart if the size of the window actually changed. On OS X at least, it's possible
 			// to receive a resize event when the window simply moves, or even when Dock shows/hides. No need to
 			// do a vid_restart then.
-			if (cls.glconfig.isFullscreen || cls.glconfig.vidWidth != e.resize.w || cls.glconfig.vidHeight != e.resize.h) {
+			if (cls.glconfig.isFullscreen || cls.glconfig.vidWidth != e.resize.w || cls.glconfig.vidHeight != e.resize.h)
+			{
 				char width[32], height[32];
 
 				Com_sprintf(width, sizeof(width), "%d", e.resize.w);

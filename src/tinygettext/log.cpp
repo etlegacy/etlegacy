@@ -27,42 +27,42 @@ Log::log_callback_t Log::log_error_callback   = &Log::default_log_callback;
 void
 Log::default_log_callback(const std::string& str)
 {
-  std::cerr << "tinygettext: " << str;
+	std::cerr << "tinygettext: " << str;
 }
 
 void
 Log::set_log_info_callback(log_callback_t callback)
 {
-  log_info_callback = callback;
+	log_info_callback = callback;
 }
 
 void
 Log::set_log_warning_callback(log_callback_t callback)
 {
-  log_warning_callback = callback;
+	log_warning_callback = callback;
 }
 
 void
 Log::set_log_error_callback(log_callback_t callback)
 {
-  log_error_callback = callback;
+	log_error_callback = callback;
 }
 
 Log::Log(log_callback_t callback_) :
-  callback(callback_),
-  out()
+	callback(callback_),
+	out()
 {
 }
 
-Log::~Log() 
+Log::~Log()
 {
-  callback(out.str());
+	callback(out.str());
 }
 
 std::ostream&
-Log::get() 
+Log::get()
 {
-  return out; 
+	return out;
 }
 
 } // namespace tinygettext

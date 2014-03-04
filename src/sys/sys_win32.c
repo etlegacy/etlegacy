@@ -925,12 +925,12 @@ void Sys_SetProcessProperties(void)
 	DWORD_PTR processAffinityMask;
 	DWORD_PTR systemAffinityMask;
 	DWORD_PTR mask;
-	int core,bit,currentCore;
-	BOOL success;
-	HANDLE process = GetCurrentProcess(); 
+	int       core, bit, currentCore;
+	BOOL      success;
+	HANDLE    process = GetCurrentProcess();
 
 	//Set Process priority
-	SetPriorityClass(process,HIGH_PRIORITY_CLASS);
+	SetPriorityClass(process, HIGH_PRIORITY_CLASS);
 
 #ifdef 0 //This could be fixed & enabled in the future, but now it just causes input issues
 	if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask))
@@ -940,9 +940,9 @@ void Sys_SetProcessProperties(void)
 
 	//set this to the core you want your process to run on
 	core = 2;
-	mask=0x1;
+	mask = 0x1;
 
-	for (bit=0, currentCore=1; bit < 64; bit++)
+	for (bit = 0, currentCore = 1; bit < 64; bit++)
 	{
 		if (mask & processAffinityMask)
 		{
@@ -956,7 +956,7 @@ void Sys_SetProcessProperties(void)
 	}
 
 	success = SetProcessAffinityMask(process, processAffinityMask);
-	if(success)
+	if (success)
 	{
 		//Yup great
 	}

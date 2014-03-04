@@ -1133,7 +1133,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 				gentity_t *tent;
 				vec3_t    b1, b2;
 				vec3_t    maxs;
-				
+
 				VectorCopy(leg->r.currentOrigin, b1);
 				VectorCopy(leg->r.currentOrigin, b2);
 				VectorAdd(b1, leg->r.mins, b1);

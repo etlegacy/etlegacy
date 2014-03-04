@@ -1558,9 +1558,9 @@ Tess_SurfaceMDV
 */
 static void Tess_SurfaceMDV(mdvSurface_t *srf)
 {
-	int           i, j;
-	int           numIndexes = 0;
-	int           numVertexes;
+	int i, j;
+	int numIndexes = 0;
+	int numVertexes;
 	//mdvModel_t    *model;
 	mdvXyz_t      *oldVert, *newVert;
 	mdvSt_t       *st;
@@ -1704,11 +1704,11 @@ Tess_SurfaceMD5
 */
 static void Tess_SurfaceMD5(md5Surface_t *srf)
 {
-	int             i, j, k;
-	int             numIndexes = 0;
-	int             numVertexes;
-	md5Model_t      *model;
-	md5Vertex_t     *v;
+	int         i, j, k;
+	int         numIndexes = 0;
+	int         numVertexes;
+	md5Model_t  *model;
+	md5Vertex_t *v;
 	//md5Bone_t       *bone;
 	srfTriangle_t   *tri;
 	static matrix_t boneMatrices[MAX_BONES];
@@ -2081,7 +2081,7 @@ void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 {
 	//mdvModel_t   *mdvModel;
 	//mdvSurface_t *mdvSurface;
-	refEntity_t  *refEnt;
+	refEntity_t *refEnt;
 
 	GLimp_LogComment("--- Tess_SurfaceVBOMDVMesh ---\n");
 

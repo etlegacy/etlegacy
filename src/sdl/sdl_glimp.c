@@ -328,7 +328,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 
 	GLimp_GetCurrentContext();
 
-	ri.Printf(PRINT_ALL,"Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
+	ri.Printf(PRINT_ALL, "Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
 
 	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
 
@@ -487,42 +487,43 @@ static qboolean GLimp_InitOpenGL3xContext()
 		}
 	}
 #elif defined(__APPLE__) && 0
-	CGLPixelFormatObj pix; 
-	GLint npix; 
-	CGLPixelFormatAttribute attribs[] = {
-		/* 
-		kCGLPFAOpenGLProfile, kCGLOGLPVersion_3_2_Core, 
-		0 
+	CGLPixelFormatObj       pix;
+	GLint                   npix;
+	CGLPixelFormatAttribute attribs[] =
+	{
+		/*
+		kCGLPFAOpenGLProfile, kCGLOGLPVersion_3_2_Core,
+		0
 		*/
 		kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_3_2_Core, // This sets the context to 3.2
-	    kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
-	    kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
-	    kCGLPFAAccelerated,
-	    kCGLPFADoubleBuffer,
-	    kCGLPFASampleBuffers, (CGLPixelFormatAttribute)1,
-	    kCGLPFASamples,       (CGLPixelFormatAttribute)4,
-	    (CGLPixelFormatAttribute)0
+		kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
+		kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
+		kCGLPFAAccelerated,
+		kCGLPFADoubleBuffer,
+		kCGLPFASampleBuffers, (CGLPixelFormatAttribute)1,
+		kCGLPFASamples,       (CGLPixelFormatAttribute)4,
+		(CGLPixelFormatAttribute)0
 	};
 
 	CGLDestroyContext(opengl_context);
 
 	//opengl_context = 0;
 
-	CGLChoosePixelFormat(attribs, &pix, &npix);     
-	
-	if(CGLCreateContext(pix, NULL, &opengl_context) != kCGLNoError)
+	CGLChoosePixelFormat(attribs, &pix, &npix);
+
+	if (CGLCreateContext(pix, NULL, &opengl_context) != kCGLNoError)
 	{
-		ri.Error(ERR_FATAL,"Could not create opengl 3.2 core context\n" );
+		ri.Error(ERR_FATAL, "Could not create opengl 3.2 core context\n" );
 	}
-	if(CGLSetCurrentContext(opengl_context) != kCGLNoError)
+	if (CGLSetCurrentContext(opengl_context) != kCGLNoError)
 	{
-		ri.Error(ERR_FATAL,"Could not set the current opengl context\n");
+		ri.Error(ERR_FATAL, "Could not set the current opengl context\n");
 	}
 #else
 	ri.Printf(PRINT_WARNING, "Couldn't initialize opengl 3 context because your systems is not supported\n");
 #endif
 
-	ri.Printf(PRINT_ALL,"Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
+	ri.Printf(PRINT_ALL, "Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
 
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 
@@ -1924,9 +1925,10 @@ void GLimp_EndFrame(void)
 	if ((gammaResetTime != 0) && (gammaResetTime < Sys_Milliseconds()))
 	{
 		// Circuitous way of resetting the gamma to its current value.
-		char old[6] = {0};
+		char old[6] = { 0 };
 		Q_strncpyz(old, Cvar_VariableString("r_gamma"), 5);
-		if (strlen(old)) {
+		if (strlen(old))
+		{
 			Cvar_Set("r_gamma", "1");
 			Cvar_Set("r_gamma", old);
 		}

@@ -143,7 +143,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 		ri.Error(ERR_DROP, "LoadTGA: %s has an invalid image size\n", name);
 	}
 
-	targa_rgba = R_GetImageBuffer(numPixels, BUFFER_IMAGE,name);
+	targa_rgba = R_GetImageBuffer(numPixels, BUFFER_IMAGE, name);
 
 	if (targa_header.id_length != 0)
 	{

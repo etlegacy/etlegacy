@@ -1393,75 +1393,75 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
  * @note Unused
 static void DrawNode_r(bspNode_t *node, int planeBits)
 {
-	do
-	{
-		// if the bounding volume is outside the frustum, nothing
-		// inside can be visible OPTIMIZE: don't do this all the way to leafs?
-		if (!r_nocull->integer)
-		{
-			int i;
-			int r;
+    do
+    {
+        // if the bounding volume is outside the frustum, nothing
+        // inside can be visible OPTIMIZE: don't do this all the way to leafs?
+        if (!r_nocull->integer)
+        {
+            int i;
+            int r;
 
-			for (i = 0; i < FRUSTUM_PLANES; i++)
-			{
-				if (planeBits & (1 << i))
-				{
-					r = BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustums[0][i]);
-					if (r == 2)
-					{
-						return; // culled
-					}
-					if (r == 1)
-					{
-						planeBits &= ~(1 << i); // all descendants will also be in front
-					}
-				}
-			}
-		}
+            for (i = 0; i < FRUSTUM_PLANES; i++)
+            {
+                if (planeBits & (1 << i))
+                {
+                    r = BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustums[0][i]);
+                    if (r == 2)
+                    {
+                        return; // culled
+                    }
+                    if (r == 1)
+                    {
+                        planeBits &= ~(1 << i); // all descendants will also be in front
+                    }
+                }
+            }
+        }
 
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment(va("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1));
-		}
+        if (r_logFile->integer)
+        {
+            GLimp_LogComment(va("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1));
+        }
 
-		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
-		{
-			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
-		}
-		else
-		{
-			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
-		}
+        if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
+        {
+            GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
+        }
+        else
+        {
+            GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
+        }
 
-		// draw bsp leave or node
-		{
-			R_BindVBO(node->volumeVBO);
-			R_BindIBO(node->volumeIBO);
+        // draw bsp leave or node
+        {
+            R_BindVBO(node->volumeVBO);
+            R_BindIBO(node->volumeIBO);
 
-			GLSL_VertexAttribsState(ATTR_POSITION);
+            GLSL_VertexAttribsState(ATTR_POSITION);
 
-			tess.numVertexes = node->volumeVerts;
-			tess.numIndexes  = node->volumeIndexes;
+            tess.numVertexes = node->volumeVerts;
+            tess.numIndexes  = node->volumeIndexes;
 
-			Tess_DrawElements();
+            Tess_DrawElements();
 
-			tess.multiDrawPrimitives = 0;
-			tess.numIndexes          = 0;
-			tess.numVertexes         = 0;
-		}
+            tess.multiDrawPrimitives = 0;
+            tess.numIndexes          = 0;
+            tess.numVertexes         = 0;
+        }
 
-		if (node->contents != -1)
-		{
-			break;
-		}
+        if (node->contents != -1)
+        {
+            break;
+        }
 
-		// recurse down the children, front side first
-		DrawNode_r(node->children[0], planeBits);
+        // recurse down the children, front side first
+        DrawNode_r(node->children[0], planeBits);
 
-		// tail recurse
-		node = node->children[1];
-	}
-	while (1);
+        // tail recurse
+        node = node->children[1];
+    }
+    while (1);
 }
  */
 
