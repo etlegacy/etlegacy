@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -961,8 +961,13 @@ void SP_worldspawn(void)
 	g_entities[ENTITYNUM_WORLD].spawnflags   = atoi(s);
 	g_entities[ENTITYNUM_WORLD].r.worldflags = g_entities[ENTITYNUM_WORLD].spawnflags;
 
-	g_entities[ENTITYNUM_WORLD].s.number  = ENTITYNUM_WORLD;
-	g_entities[ENTITYNUM_WORLD].classname = "worldspawn";
+	g_entities[ENTITYNUM_WORLD].s.number   = ENTITYNUM_WORLD;
+	g_entities[ENTITYNUM_WORLD].r.ownerNum = ENTITYNUM_NONE;
+	g_entities[ENTITYNUM_WORLD].classname  = "worldspawn";
+
+	g_entities[ENTITYNUM_NONE].s.number   = ENTITYNUM_NONE;
+	g_entities[ENTITYNUM_NONE].r.ownerNum = ENTITYNUM_NONE;
+	g_entities[ENTITYNUM_NONE].classname  = "nothing";
 
 	// see if we want a warmup time
 	trap_SetConfigstring(CS_WARMUP, "");
