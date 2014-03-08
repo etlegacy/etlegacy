@@ -239,9 +239,8 @@ Sys_Quit
 */
 void Sys_Quit(void)
 {
-#if defined(__AROS__) || defined(__MORPHOS__)
 	NET_Shutdown();
-#endif
+
 	Sys_Exit(0);
 #if defined (USE_WINDOWS_CONSOLE)
 	Sys_DestroyConsole();
