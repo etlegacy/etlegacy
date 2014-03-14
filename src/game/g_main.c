@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -618,6 +618,9 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 
 		if (g_OmniBotEnable.integer >= 1)
 		{
+			// that's the only way to print the used bot version atm
+			trap_SendConsoleCommand(EXEC_APPEND, va("%s", "bot version\n"));
+
 			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
 		}
 #endif
