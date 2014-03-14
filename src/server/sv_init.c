@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -948,7 +948,7 @@ void SV_CloseAttackLog()
 	if (attHandle > 0)
 	{
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
-		SV_WriteAttackLog("End server attack log\n"); // FIXME: add date & additional info
+		SV_WriteAttackLog("End server attack log\n");
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
 		Com_Printf("Server attack log closed.\n");
 	}

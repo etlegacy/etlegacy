@@ -40,7 +40,6 @@
 
 /***********************************************
  * VARIABLES
- *
  ***********************************************/
 
 // Headers/markers for demo messages (events)
@@ -94,7 +93,6 @@ static qboolean keepSaved = qfalse; // var that memorizes if we keep the new max
 
 /***********************************************
  * AUXILIARY FUNCTIONS: CHECKING, FILTERING AND CLEANING
- *
  * Functions used to either trim unnecessary or privacy concerned data, or to just check if the data should be written in the demo, relayed to a more specialized function or just dropped.
  ***********************************************/
 
@@ -352,7 +350,6 @@ char *SV_GenerateDateTime(void)
 
 /***********************************************
  * DEMO WRITING FUNCTIONS
- *
  * Functions used to construct and write demo events
  ***********************************************/
 
@@ -1283,7 +1280,6 @@ read_next_demo_event: // used to read next demo event
 
 /***********************************************
  * DEMO MANAGEMENT FUNCTIONS
- *
  * Functions to start/stop the recording/playback of a demo file
  ***********************************************/
 
@@ -1522,7 +1518,6 @@ void SV_DemoStartPlayback(void)
 		free(datetime);
 		return;
 	}
-
 
 	// Reading meta-data (infos about the demo)
 	// Note: we read with an if statement, so that if in the future we add more meta datas, older demos which haven't these meta datas will still be replayable

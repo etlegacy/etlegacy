@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -407,10 +407,6 @@ char *Tracker_getGUID(client_t *cl)
 	if (*Info_ValueForKey(cl->userinfo, "cl_guid"))
 	{
 		return Info_ValueForKey(cl->userinfo, "cl_guid");
-	}
-	else if (*Info_ValueForKey(cl->userinfo, "n_guid"))
-	{
-		return Info_ValueForKey(cl->userinfo, "n_guid");
 	}
 	else
 	{

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -306,7 +306,6 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 	{
 		// expand for rotation
 		float max;
-		int   i;
 
 		max = RadiusFromBounds(gEnt->r.mins, gEnt->r.maxs);
 		for (i = 0 ; i < 3 ; i++)
