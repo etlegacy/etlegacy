@@ -829,27 +829,6 @@ void Use_Team_Spawnpoint(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 void DropToFloor(gentity_t *ent);
 
-/*QUAKED team_CTF_redplayer (0.5 0 0) (-16 -16 -16) (16 16 32) INVULNERABLE - STARTDISABLED
-Axis players spawn here at game start.
-*/
-void SP_team_CTF_redplayer(gentity_t *ent)
-{
-	// these are obsolete
-	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
-	G_FreeEntity(ent);
-	return;
-}
-
-/*QUAKED team_CTF_blueplayer (0 0 0.5) (-16 -16 -16) (16 16 32) INVULNERABLE - STARTDISABLED
-Allied players spawn here at game start.
-*/
-void SP_team_CTF_blueplayer(gentity_t *ent)
-{
-	// these are obsolete
-	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
-	G_FreeEntity(ent);
-	return;
-}
 
 // edited quaked def
 /*QUAKED team_CTF_redspawn (1 0 0) (-16 -16 -24) (16 16 32) ? INVULNERABLE STARTACTIVE

@@ -289,9 +289,6 @@ void SP_misc_commandmap_marker(gentity_t *ent);
 void SP_shooter_rocket(gentity_t *ent);
 void SP_shooter_grenade(gentity_t *ent);
 
-void SP_team_CTF_redplayer(gentity_t *ent);
-void SP_team_CTF_blueplayer(gentity_t *ent);
-
 void SP_team_CTF_redspawn(gentity_t *ent);
 void SP_team_CTF_bluespawn(gentity_t *ent);
 
@@ -505,10 +502,6 @@ spawn_t spawns[] =
 
 	{ "shooter_mortar",            SP_shooter_mortar            },
 	{ "alarm_box",                 SP_alarm_box                 },
-
-	// FIXME remove
-	{ "team_CTF_redplayer",        SP_team_CTF_redplayer        },
-	{ "team_CTF_blueplayer",       SP_team_CTF_blueplayer       },
 
 	{ "team_CTF_redspawn",         SP_team_CTF_redspawn         },
 	{ "team_CTF_bluespawn",        SP_team_CTF_bluespawn        },
