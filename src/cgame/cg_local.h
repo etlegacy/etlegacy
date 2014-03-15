@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1872,7 +1872,6 @@ typedef struct cgs_s
 
 	int complaintClient;
 	int complaintEndTime;
-	float smokeWindDir; // for smoke puffs & wind (arty, airstrikes, bullet impacts)
 
 	playerStats_t playerStats;
 	int numOIDtriggers;

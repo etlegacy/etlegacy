@@ -430,20 +430,6 @@ static void CG_General(centity_t *cent)
 			//AnglesToAxis( cg_entities[cent->currentState.otherEntityNum].lerpAngles, ent.axis );
 			AnglesToAxis(cent->lerpAngles, ent.axis);
 		}
-		/*      {
-		            vec3_t v;
-
-		            VectorCopy( cent->lerpOrigin, v );
-		            VectorMA( cent->lerpOrigin, 10, ent.axis[0], v );
-		            CG_RailTrail2( NULL, cent->lerpOrigin, v );
-		            VectorCopy( cent->lerpOrigin, v );
-		            VectorMA( cent->lerpOrigin, 10, ent.axis[1], v );
-		            CG_RailTrail2( NULL, cent->lerpOrigin, v );
-		            VectorCopy( cent->lerpOrigin, v );
-		            VectorMA( cent->lerpOrigin, 10, ent.axis[2], v );
-		            CG_RailTrail2( NULL, cent->lerpOrigin, v );
-		            return;
-		        }*/
 	}
 	else
 	{
@@ -582,8 +568,6 @@ static void CG_Speaker(centity_t *cent)
 
 	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, CG_GetGameSound(cent->currentState.eventParm));
 
-	//ent->s.frame = ent->wait * 10;
-	//ent->s.clientNum = ent->random * 10;
 	cent->miscTime = cg.time + cent->currentState.frame * 100 + cent->currentState.clientNum * 100 * crandom();
 }
 

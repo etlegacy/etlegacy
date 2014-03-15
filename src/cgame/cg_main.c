@@ -2585,8 +2585,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_initStrings();
 	CG_windowInit();
 
-	cgs.smokeWindDir = crandom();
-
 #ifdef _DEBUG
 	DEBUG_INITPROFILE_EXEC("initialization")
 #endif
