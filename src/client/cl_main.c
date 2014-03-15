@@ -923,6 +923,12 @@ void CL_ShutdownAll(void)
 	}
 }
 
+
+qboolean CL_ConnectedToServer(void)
+{
+	return (qboolean)(cls.state >= CA_CONNECTED);
+}
+
 /*
 =================
 CL_FlushMemory

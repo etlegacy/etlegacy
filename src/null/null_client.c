@@ -103,6 +103,11 @@ void CL_InitKeyCommands(void)
 {
 }
 
+qboolean CL_ConnectedToServer(void)
+{
+	return qfalse;
+}
+
 void CL_FlushMemory(void)
 {
 }

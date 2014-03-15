@@ -1042,6 +1042,9 @@ void CL_ShutdownAll(void);
 void CL_FlushMemory(void);
 // dump all memory on an error
 
+qboolean CL_ConnectedToServer(void);
+// returns qtrue if connected to a server
+
 void CL_StartHunkUsers(void);
 // start all the client stuff using the hunk
 
