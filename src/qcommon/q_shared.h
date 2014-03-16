@@ -632,7 +632,7 @@ extern vec4_t clrBrownLineFull;
 #define FRAMETIME           100                 // msec
 
 #define Q_COLOR_ESCAPE  '^'
-#define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)))
+#define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)) && *((p) + 1) != Q_COLOR_ESCAPE)
 
 #define COLOR_BLACK     '0'
 #define COLOR_RED       '1'
@@ -1088,12 +1088,19 @@ int Q_strnicmp(const char *string1, const char *string2, int n);
 
 // strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);
+
+// Encodes a plain un-colored string so that it'll be drawn with the given color code.
+void Q_ColorizeString(char colorCode, const char * inStr, char * outStr, int outBufferLen);
+
 // removes color sequences from string
 char *Q_CleanStr(char *string);
+
 // removes color sequences from string using multiple passes
 void Q_StripColor(char *string);
+
 // Count the number of char tocount encountered in string
 int Q_CountChar(const char *string, char tocount);
+
 // removes whitespaces and other bad directory characters
 char *Q_CleanDirName(char *dirname);
 

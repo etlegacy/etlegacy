@@ -1552,6 +1552,69 @@ char *Q_CleanStr(char *string)
 	return string;
 }
 
+
+/**
+ * @brief Takes a plain "un-colored" string, and then colorizes it so the string is displayed in the given color.
+ * If given a string such as "Bob" and asked to colorize to '1' (red)', the output would be "^1Bob". If given
+ * "John^^7Candy" the output is "^1John^^1^^17Candy"  -- Note that when drawn, this would literally show 
+ * the text "John^^7Candy" in red. 
+ *
+ * If the desired result is to see "John^Candy" in red, then create a clean un-colored string before calling this.
+ *
+ * REQUIREMENTS:
+ *	- Callers must pass in a buffer that is *at least* 3 bytes long.
+ *  - inStr and outStr cannot overlap
+ * 
+ */
+void Q_ColorizeString(char colorCode, const char * inStr, char * outStr, size_t outBufferLen)
+{
+	if (outBufferLen < 3 || inStr == outStr)
+	{
+		// Failure... How do we assert in WET?
+	}
+	else
+	{
+		size_t inLen = strlen(inStr);
+		size_t outOffset = 0;
+		size_t inOffset = 0;
+		
+		outStr[outOffset++] = Q_COLOR_ESCAPE;
+		outStr[outOffset++] = colorCode;
+		
+		if (outOffset + 1 < outBufferLen)
+		{
+			while (inOffset < inLen && outOffset < outBufferLen)
+			{
+				char c = inStr[inOffset];
+				
+				if (c == Q_COLOR_ESCAPE)
+				{
+					if (outOffset + 3 < outBufferLen)
+					{
+						outStr[outOffset++] = c;
+						outStr[outOffset++] = Q_COLOR_ESCAPE;
+						outStr[outOffset++] = colorCode;
+					}
+					else
+					{
+						break;
+					}
+					
+				}
+				else
+				{
+					outStr[outOffset++] = c;
+				}
+				
+				
+				inOffset++;
+			}
+		}
+		
+		outStr[outOffset++] = 0;
+	}
+}
+
 // strips whitespaces and bad characters
 qboolean Q_isBadDirChar(char c)
 {

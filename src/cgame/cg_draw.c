@@ -1510,6 +1510,8 @@ static void CG_DrawCrosshairNames(void)
 	float      *color;
 	float      w;
 	const char *s;
+	size_t     colorizedBufferLength = 32;
+	char       colorized[32] = {0};
 	int        playerHealth = 0;
 	vec4_t     c;
 	qboolean   drawStuff = qfalse;
@@ -1617,11 +1619,14 @@ static void CG_DrawCrosshairNames(void)
 				{
 					if (cg_drawCrosshairNames.integer == 2)
 					{
+						// Draw with full coloring
 						s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
 					}
 					else
 					{
-						s = cgs.clientinfo[cg.crosshairClientNum].cleandisguiseName;
+						// Draw them with a single color (white)
+						Q_ColorizeString('7', cgs.clientinfo[cg.crosshairClientNum].cleandisguiseName, colorized, colorizedBufferLength);
+						s = colorized;
 					}
 					w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 
@@ -1685,11 +1690,14 @@ static void CG_DrawCrosshairNames(void)
 		{
 			if (cg_drawCrosshairNames.integer == 2)
 			{
+				// Draw them with full colors
 				s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
 			}
 			else
 			{
-				s = cgs.clientinfo[cg.crosshairClientNum].cleanname;
+				// Draw them with a single color (white)
+				Q_ColorizeString('7', cgs.clientinfo[cg.crosshairClientNum].cleanname, colorized, colorizedBufferLength);
+				s = colorized;
 			}
 			w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 
