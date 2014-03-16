@@ -708,7 +708,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	w = 360;
 
 	s        = CG_ConfigString(CS_MULTI_INFO);
-	defender = atoi(Info_ValueForKey(s, "defender"));
+	defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 	s      = CG_ConfigString(CS_MULTI_MAPWINNER);
 	winner = atoi(Info_ValueForKey(s, "winner"));

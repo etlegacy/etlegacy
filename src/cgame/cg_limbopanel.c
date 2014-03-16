@@ -1560,7 +1560,7 @@ int CG_LimboPanel_GetMaxObjectives(void)
 		return 0;
 	}
 
-	return atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "numobjectives"));
+	return atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "o")); // numobjectives
 }
 
 qboolean CG_LimboPanel_ObjectiveText_KeyDown(panel_button_t *button, int key)

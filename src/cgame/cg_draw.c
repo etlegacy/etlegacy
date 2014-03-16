@@ -2592,7 +2592,7 @@ static void CG_DrawWarmup(void)
 		s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
 
 		cs       = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(cs, "defender"));
+		defender = atoi(Info_ValueForKey(cs, "d")); // defender
 
 		if (!defender)
 		{

@@ -2345,7 +2345,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 
 	// Clear out spawn target config strings
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
-	Info_SetValueForKey(cs, "numspawntargets", "0");
+	Info_SetValueForKey(cs, "s", "0"); // numspawntargets
 	reset_numobjectives();
 	trap_SetConfigstring(CS_MULTI_INFO, cs);
 
@@ -3506,7 +3506,7 @@ void G_LogExit(const char *string)
 		int  winner, defender;
 
 		trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
-		defender = atoi(Info_ValueForKey(cs, "defender"));
+		defender = atoi(Info_ValueForKey(cs, "d")); // defender
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = atoi(Info_ValueForKey(cs, "winner"));

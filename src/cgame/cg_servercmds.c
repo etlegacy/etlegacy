@@ -409,7 +409,7 @@ void CG_ParseSpawns(void)
 	int        i;
 	int        newteam;
 
-	s = Info_ValueForKey(info, "numspawntargets");
+	s = Info_ValueForKey(info, "s"); // numspawntargets
 
 	if (!s || !strlen(s))
 	{

@@ -1999,7 +1999,7 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 		int defender, winner;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "defender"));
+		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
 		winner = atoi(Info_ValueForKey(s, "winner"));
@@ -3184,7 +3184,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 		int defender, winner;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "defender"));
+		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
 		winner = atoi(Info_ValueForKey(s, "winner"));
@@ -3645,7 +3645,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 		const char *s;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "defender"));
+		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
 		winner = atoi(Info_ValueForKey(s, "winner"));
