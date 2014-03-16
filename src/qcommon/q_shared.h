@@ -1090,7 +1090,7 @@ int Q_strnicmp(const char *string1, const char *string2, int n);
 int Q_PrintStrlen(const char *string);
 
 // Encodes a plain un-colored string so that it'll be drawn with the given color code.
-void Q_ColorizeString(char colorCode, const char * inStr, char * outStr, int outBufferLen);
+void Q_ColorizeString(char colorCode, const char * inStr, char * outStr, size_t outBufferLen);
 
 // removes color sequences from string
 char *Q_CleanStr(char *string);
