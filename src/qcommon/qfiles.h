@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -32,6 +32,7 @@
  * @brief quake file formats
  * This file must be identical in the quake and utils directories
  */
+
 #ifndef __QFILES_H__
 #define __QFILES_H__
 

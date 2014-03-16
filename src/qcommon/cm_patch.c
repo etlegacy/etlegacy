@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -34,10 +34,7 @@
 #include "cm_local.h"
 #include "cm_patch.h"
 
-//#define	CULL_BBOX
-
 /*
-
 This file does not reference any globals, and has these entry points:
 
 void CM_ClearLevelPatches( void );
@@ -1080,7 +1077,7 @@ void CM_AddFacetBevels(facet_t *facet)
 					break;
 				}
 
-				//if it's the surface plane
+				// if it's the surface plane
 				if (CM_PlaneEqual(&planes[facet->surfacePlane], plane, &flipped))
 				{
 					continue;
@@ -1119,7 +1116,7 @@ void CM_AddFacetBevels(facet_t *facet)
 					{
 						VectorNegate(newplane, newplane);
 						newplane[3] = -newplane[3];
-					} //end if
+					}
 					ChopWindingInPlace(&w2, newplane, newplane[3], 0.1f);
 					if (!w2)
 					{
@@ -1469,7 +1466,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
     vec3_t v1, v2, normal, point;
     patchPlane_t *planes;
     facet_t	*facet;
-    //
+    
     facet = pc->facets;
     for ( i = 0 ; i < pc->numFacets ; i++, facet++ )
     {
@@ -1479,13 +1476,13 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
         {
             if (normal[n] > 0) v1[n] = tw->size[0][n];
             else v1[n] = tw->size[1][n];
-        } //end for
+        }
         VectorNegate(normal, v2);
         offset = DotProduct(v1, v2);
         //offset = 0;
-        //
+        
         planedist = planes->plane[3] + offset;
-        //
+        
         d1 = DotProduct( tw->start, normal ) - planedist;
         d2 = DotProduct( tw->end, normal ) - planedist;
 
@@ -1511,7 +1508,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
         else {
             continue;
         }
-        //
+        
         for (j = 0; j < facet->numBorders; j++)
         {
             planes = &pc->planes[ facet->borderPlanes[j] ];
@@ -1519,26 +1516,26 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
             {
                 VectorNegate(planes->plane, normal);
                 planedist = -planes->plane[3];
-            } //end if
+            }
             else
             {
                 VectorCopy(planes->plane, normal);
                 planedist = planes->plane[3];
-            } //end else
+            }
             for (n = 0; n < 3; n++)
             {
                 if (normal[n] > 0) v1[n] = tw->size[0][n];
                 else v1[n] = tw->size[1][n];
-            } //end for
+            }
             VectorNegate(normal, v2);
             offset = DotProduct(v1, v2);
             //offset = 0;
             planedist -= offset;
-            //the hit point should be in front of the (inward facing) border plane
+            // the hit point should be in front of the (inward facing) border plane
             if (DotProduct(point, normal) - planedist < -ON_EPSILON) break;
-        } //end for
+        }
         if (j < facet->numBorders) continue;
-        //
+        
         if (fraction < tw->trace.fraction)
         {
             debugPatchCollide = pc;
@@ -1548,9 +1545,10 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
             planes = &pc->planes[ facet->surfacePlane ];
             VectorCopy( planes->plane, tw->trace.plane.normal );
             tw->trace.plane.dist = planes->plane[3];
-        } //end if
-    } //end for
-} //end of the function CM_TraceThroughPatchCollide*/
+        }
+    }
+}
+*/
 
 /*
 ====================
