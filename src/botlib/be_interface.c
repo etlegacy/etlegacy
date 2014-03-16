@@ -36,13 +36,9 @@
 #include "l_memory.h"
 #include "l_script.h"
 #include "l_precomp.h"
-#include "l_struct.h"
 
 #include "../botlib/botlib.h"
 #include "be_interface.h"
-
-// library globals in a structure
-botlib_globals_t botlibglobals;
 
 botlib_export_t be_botlib_export;
 botlib_import_t botimport;
@@ -56,7 +52,7 @@ int botlibsetup = qfalse;
 
 qboolean BotLibSetup(char *str)
 {
-	if (!botlibglobals.botlibsetup)
+	if (!botlibsetup)
 	{
 		botimport.Print(PRT_ERROR, "%s: bot library used before being setup\n", str);
 		return qfalse;
@@ -74,7 +70,6 @@ int Export_BotLibSetup(qboolean singleplayer)
 	globaldefines = NULL;
 
 	botlibsetup               = qtrue;
-	botlibglobals.botlibsetup = qtrue;
 
 	return BLERR_NOERROR;
 }
@@ -98,7 +93,6 @@ int Export_BotLibShutdown(void)
 	PC_RemoveAllGlobalDefines();
 
 	botlibsetup               = qfalse;
-	botlibglobals.botlibsetup = qfalse;
 	recursive                 = 0;
 	// print any files still open
 	PC_CheckOpenSourceHandles();

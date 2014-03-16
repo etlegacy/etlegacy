@@ -38,16 +38,9 @@
 // global variable structures
 //==========================================================
 
-//FIXME: get rid of this global structure
-typedef struct botlib_globals_s
-{
-	int botlibsetup;                        // true when the bot library has been setup
-	float time;                             // the global time
-} botlib_globals_t;
 
 //==========================================================
 // global variables
 //==========================================================
 
-extern botlib_globals_t botlibglobals;
 extern botlib_import_t  botimport;

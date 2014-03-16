@@ -82,7 +82,6 @@ typedef struct bsp_trace_s
 	int ent;                    // number of entity hit
 } bsp_trace_t;
 
-
 // bot AI library exported functions
 typedef struct botlib_import_s
 {
