@@ -69,23 +69,6 @@ const char *TeamName(int team)
 	return "FREE";
 }
 
-const char *OtherTeamName(int team)
-{
-	if (team == TEAM_AXIS)
-	{
-		return "BLUE";
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		return "RED";
-	}
-	else if (team == TEAM_SPECTATOR)
-	{
-		return "SPECTATOR";
-	}
-	return "FREE";
-}
-
 const char *TeamColorString(int team)
 {
 	if (team == TEAM_AXIS)
@@ -296,6 +279,12 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 void Team_ResetFlag(gentity_t *ent)
 {
+	if (!ent)
+	{
+		G_Printf("Warning: NULL passed to Team_ResetFlag\n");
+		return;
+	}
+
 	if (ent->flags & FL_DROPPED_ITEM)
 	{
 		Team_ResetFlag(&g_entities[ent->s.otherEntityNum]);
@@ -324,7 +313,7 @@ void Team_ReturnFlagSound(gentity_t *ent, int team)
 
 	if (ent == NULL)
 	{
-		G_Printf("Warning:  NULL passed to Team_ReturnFlagSound\n");
+		G_Printf("Warning: NULL passed to Team_ReturnFlagSound\n");
 		return;
 	}
 
@@ -340,7 +329,7 @@ void Team_ReturnFlag(gentity_t *ent)
 
 	Team_ReturnFlagSound(ent, team);
 	Team_ResetFlag(ent);
-	PrintMsg(NULL, "The %s flag has returned!\n", TeamName(team));
+	PrintMsg(NULL, "The %s flag has returned!\n", TeamName(team)); // FIXME: returns RED/BLUE flag ... change to Axis/Allies?
 }
 
 /*
@@ -847,11 +836,11 @@ If target is set, point spawnpoint toward target activation
 */
 void SP_team_CTF_redspawn(gentity_t *ent)
 {
-	vec3_t dir;
-
 	ent->enemy = G_PickTarget(ent->target);
 	if (ent->enemy)
 	{
+		vec3_t dir;
+
 		VectorSubtract(ent->enemy->s.origin, ent->s.origin, dir);
 		vectoangles(dir, ent->s.angles);
 	}
@@ -881,11 +870,11 @@ If target is set, point spawnpoint toward target activation
 */
 void SP_team_CTF_bluespawn(gentity_t *ent)
 {
-	vec3_t dir;
-
 	ent->enemy = G_PickTarget(ent->target);
 	if (ent->enemy)
 	{
+		vec3_t dir;
+
 		VectorSubtract(ent->enemy->s.origin, ent->s.origin, dir);
 		vectoangles(dir, ent->s.angles);
 	}
