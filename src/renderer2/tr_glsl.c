@@ -1568,7 +1568,7 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 	{
 		qglGetActiveUniformARB(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
 
-		ri.Printf(PRINT_DEVELOPER, "active uniform: '%s'\n", uniformName);
+		Ren_LogComment("active uniform: '%s'\n", uniformName)
 	}
 
 	qglUseProgramObjectARB(0);
@@ -1646,7 +1646,6 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 
 	if (uniformsInfo[uniformNum].type != GLSL_BOOL)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1674,7 +1673,6 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 
 	if (uniformsInfo[uniformNum].type != GLSL_INT)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1701,7 +1699,6 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1728,7 +1725,6 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC2)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1756,7 +1752,6 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC3)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1783,7 +1778,6 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1810,7 +1804,6 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT5)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1837,7 +1830,6 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1863,7 +1855,6 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOATARR)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1882,7 +1873,6 @@ void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *ve
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4ARR)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1901,7 +1891,6 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16ARR)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
 		return;
 	}
@@ -2062,12 +2051,11 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 
 		if (location == -1)
 		{
-			//ri.Error(ERR_FATAL,"Cannot find uniform \"%s\" from program: %s",info->uniformValues[i].type.name,info->name);
-			ri.Printf(PRINT_DEVELOPER, "Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
+			Ren_LogComment("Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
 		}
 		else
 		{
-			ri.Printf(PRINT_DEVELOPER, "Setting initial uniform \"%s\" value: %d\n", info->uniformValues[i].type.name, *((int *)info->uniformValues[i].value));
+			Ren_LogComment("Setting initial uniform \"%s\" value: %d\n", info->uniformValues[i].type.name, *((int *)info->uniformValues[i].value));
 		}
 
 		switch (info->uniformValues[i].type.type)
@@ -2113,7 +2101,6 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;
 
-	//info->checkSum = 1;
 	GLSL_GenerateCheckSum(info, vertexShader, fragmentShader);
 
 	info->list = (shaderProgramList_t *)Com_Allocate(sizeof(shaderProgramList_t));
@@ -2274,8 +2261,6 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 
 void GLSL_SelectPermutation(programInfo_t *programlist)
 {
-	//FIXME: implement this
-	//set the selectedProgram
 	shaderProgram_t *prog;
 
 	if (!programlist)
