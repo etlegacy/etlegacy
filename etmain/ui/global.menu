@@ -57,7 +57,7 @@ menuDef {
 
 	itemDef {
 		name		"image"
-		rect		120 140 400 200
+		rect		220 140 200 200
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/etl_logo_huge_dark"
 		visible		1

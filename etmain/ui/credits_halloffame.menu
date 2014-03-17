@@ -39,15 +39,15 @@ menuDef {
 	}
 
 // Logo //
-	itemDef {
-		name		"logoShadow"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-128)+1) $evalfloat(8+1) 128 64
-		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/etl_logo"
-		forecolor	0 0 0 1
-		visible		1
-		decoration
-	}
+//	itemDef {
+//		name		"logoShadow"
+//		rect		$evalfloat(.5*(WINDOW_WIDTH-128)+1) $evalfloat(8+1) 128 64
+//		style		WINDOW_STYLE_SHADER
+//		background	"ui/assets/etl_logo"
+//		forecolor	0 0 0 1
+//		visible		1
+//		decoration
+//	}
 
 	itemDef {
 		name		"logo"
