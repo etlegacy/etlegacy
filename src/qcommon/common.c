@@ -1650,7 +1650,7 @@ void Hunk_SmallLog(void)
 	char        buf[4096];
 	int         size, numBlocks;
 #ifdef HUNK_DEBUG
-	int intlocsize;
+	int locsize;
 #endif
 
 	if (!logfile || !FS_Initialized())
