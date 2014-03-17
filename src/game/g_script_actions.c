@@ -3383,7 +3383,7 @@ qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 
-	Info_SetValueForKey(cs, "winner", token);
+	Info_SetValueForKey(cs, "w", token);
 
 	trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 

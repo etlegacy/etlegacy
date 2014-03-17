@@ -103,7 +103,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		y   += 16 * (rows - 1);
 
 		s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-		buf = Info_ValueForKey(s, "winner");
+		buf = Info_ValueForKey(s, "w");
 
 		if (atoi(buf) == -1)
 		{
@@ -711,7 +711,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 	s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-	winner = atoi(Info_ValueForKey(s, "winner"));
+	winner = atoi(Info_ValueForKey(s, "w"));
 
 	if (cgs.currentRound)
 	{

@@ -1771,7 +1771,7 @@ void CG_Debriefing_Startup(void)
 	cgs.dbAwardsParsed = qfalse;
 
 	s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-	buf = Info_ValueForKey(s, "winner");
+	buf = Info_ValueForKey(s, "w");
 
 	trap_Cvar_Set("chattext", "");
 
@@ -2002,7 +2002,7 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "winner"));
+		winner = atoi(Info_ValueForKey(s, "w"));
 
 		if (cgs.currentRound)
 		{
@@ -2039,7 +2039,7 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 	else
 	{
 		s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-		buf = Info_ValueForKey(s, "winner");
+		buf = Info_ValueForKey(s, "w");
 
 		if (atoi(buf) == -1)
 		{
@@ -3187,7 +3187,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "winner"));
+		winner = atoi(Info_ValueForKey(s, "w"));
 
 		if (cgs.currentRound)
 		{
@@ -3551,7 +3551,7 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 team_t CG_Debriefing_FindWinningTeamForMap(void)
 {
 	const char *s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-	const char *buf = Info_ValueForKey(s, "winner");
+	const char *buf = Info_ValueForKey(s, "w");
 
 	if (atoi(buf) == -1)
 	{
@@ -3600,7 +3600,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 			}
 			/*          } else {
 			                const char* s = CG_ConfigString( CS_MULTI_MAPWINNER );
-			                const char* buf = Info_ValueForKey( s, "winner" );
+			                const char* buf = Info_ValueForKey( s, "w" );
 
 			                if( atoi( buf ) == -1 ) {
 			                } else if( atoi( buf ) ) {
@@ -3625,7 +3625,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 	else if (cg_gameType.integer == GT_WOLF || cg_gameType.integer == GT_WOLF_LMS || cg_gameType.integer == GT_WOLF_MAPVOTE)
 	{
 		const char *s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-		const char *buf = Info_ValueForKey(s, "winner");
+		const char *buf = Info_ValueForKey(s, "w");
 
 		if (atoi(buf) == -1)
 		{
@@ -3648,7 +3648,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "winner"));
+		winner = atoi(Info_ValueForKey(s, "w"));
 
 		if (!cgs.currentRound)
 		{

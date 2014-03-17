@@ -2213,7 +2213,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		Info_SetValueForKey(cs, "winner", "-1");
+		Info_SetValueForKey(cs, "w", "-1");
 		trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 
 		level.firstbloodTeam = -1;
@@ -2978,7 +2978,7 @@ void FindIntermissionPoint(void)
 	}
 
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-	buf    = Info_ValueForKey(cs, "winner");
+	buf    = Info_ValueForKey(cs, "w");
 	winner = atoi(buf);
 
 	// Change from scripting value for winner (0==AXIS, 1==ALLIES) to spawnflag value
@@ -3509,7 +3509,7 @@ void G_LogExit(const char *string)
 		defender = atoi(Info_ValueForKey(cs, "d")); // defender
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "winner"));
+		winner = atoi(Info_ValueForKey(cs, "w"));
 
 		if (!g_currentRound.integer)
 		{
@@ -3542,7 +3542,7 @@ void G_LogExit(const char *string)
 		int  highestskillpointsincrease;
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "winner"));
+		winner = atoi(Info_ValueForKey(cs, "w"));
 
 		if (winner == 0)
 		{
@@ -3657,7 +3657,7 @@ void G_LogExit(const char *string)
 		roundLimit -= 1;    // -1 as it starts at 0
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "winner"));
+		winner = atoi(Info_ValueForKey(cs, "w"));
 
 		if (winner == -1)
 		{
@@ -3809,7 +3809,7 @@ qboolean ScoreIsTied(void)
 	// GT_WOLF checks the current value of
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 
-	buf = Info_ValueForKey(cs, "winner");
+	buf = Info_ValueForKey(cs, "w");
 	a   = atoi(buf);
 
 	return a == -1;
@@ -3867,7 +3867,7 @@ void CheckExitRules(void)
 					if (level.firstbloodTeam == TEAM_AXIS)
 					{
 						trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-						Info_SetValueForKey(cs, "winner", "0");
+						Info_SetValueForKey(cs, "w", "0");
 						trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 						G_LogExit("Axis team wins by drawing First Blood.");
 						trap_SendServerCommand(-1, "print \"Axis team wins by drawing First Blood.\n\"");
@@ -3875,7 +3875,7 @@ void CheckExitRules(void)
 					else if (level.firstbloodTeam == TEAM_ALLIES)
 					{
 						trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-						Info_SetValueForKey(cs, "winner", "1");
+						Info_SetValueForKey(cs, "w", "1");
 						trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 						G_LogExit("Allied team wins by drawing First Blood.");
 						trap_SendServerCommand(-1, "print \"Allied team wins by drawing First Blood.\n\"");
@@ -3889,7 +3889,7 @@ void CheckExitRules(void)
 				else if (axisSurvivors > alliedSurvivors)
 				{
 					trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-					Info_SetValueForKey(cs, "winner", "0");
+					Info_SetValueForKey(cs, "w", "0");
 					trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 					G_LogExit("Axis team has the most survivors.");
 					trap_SendServerCommand(-1, "print \"Axis team has the most survivors.\n\"");
@@ -3898,7 +3898,7 @@ void CheckExitRules(void)
 				else
 				{
 					trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-					Info_SetValueForKey(cs, "winner", "1");
+					Info_SetValueForKey(cs, "w", "1");
 					trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 					G_LogExit("Allied team has the most survivors.");
 					trap_SendServerCommand(-1, "print \"Allied team has the most survivors.\n\"");
@@ -3944,7 +3944,7 @@ void CheckExitRules(void)
 				level.teamEliminateTime = level.time;
 				level.lmsWinningTeam    = TEAM_ALLIES;
 				trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-				Info_SetValueForKey(cs, "winner", "1");
+				Info_SetValueForKey(cs, "w", "1");
 				trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 			}
 			else if (level.numFinalDead[1] >= level.numTeamClients[1] && level.numTeamClients[1] > 0)
@@ -3952,7 +3952,7 @@ void CheckExitRules(void)
 				level.teamEliminateTime = level.time;
 				level.lmsWinningTeam    = TEAM_AXIS;
 				trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-				Info_SetValueForKey(cs, "winner", "0");
+				Info_SetValueForKey(cs, "w", "0");
 				trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 			}
 		}
@@ -3975,14 +3975,14 @@ void CheckExitRules(void)
 			if (level.numFinalDead[0] >= level.numTeamClients[0] && level.numTeamClients[0] > 0)
 			{
 				trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-				Info_SetValueForKey(cs, "winner", "1");
+				Info_SetValueForKey(cs, "w", "1");
 				trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 				G_LogExit("Axis team eliminated.");
 			}
 			else if (level.numFinalDead[1] >= level.numTeamClients[1] && level.numTeamClients[1] > 0)
 			{
 				trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-				Info_SetValueForKey(cs, "winner", "0");
+				Info_SetValueForKey(cs, "w", "0");
 				trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 				G_LogExit("Allied team eliminated.");
 			}
