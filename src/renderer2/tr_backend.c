@@ -6225,12 +6225,7 @@ void RB_CameraPostFX(void)
 	if(glConfig.framebufferObjectAvailable && glConfig.textureFloatAvailable)
 	{
 	    // copy depth of the main context to deferredRenderFBO
-	    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-	    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-	    glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-	                           0, 0, glConfig.vidWidth, glConfig.vidHeight,
-	                           GL_COLOR_BUFFER_BIT,
-	                           GL_NEAREST);
+		R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 	}
 	else
 	*/
@@ -9485,6 +9480,595 @@ static void RB_RenderDebugUtils()
 	GL_CheckErrors();
 }
 
+static void RB_RenderViewDeferred(void)
+{
+	// Deferred shading path
+	int clearBits = 0;
+	int startTime = 0;
+
+	// sync with gl if needed
+	if (r_finish->integer == 1 && !glState.finishCalled)
+	{
+		glFinish();
+		glState.finishCalled = qtrue;
+	}
+	if (r_finish->integer == 0)
+	{
+		glState.finishCalled = qtrue;
+	}
+
+	// we will need to change the projection matrix before drawing
+	// 2D images again
+	backEnd.projection2D = qfalse;
+
+	// set the modelview matrix for the viewer
+	SetViewportAndScissor();
+
+	// ensures that depth writes are enabled for the depth clear
+	GL_State(GLS_DEFAULT);
+
+	// clear frame buffer objects
+	R_BindNullFBO();
+	//R_BindFBO(tr.deferredRenderFBO);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	clearBits = GL_DEPTH_BUFFER_BIT;
+
+	/*
+		if(r_measureOverdraw->integer || r_shadows->integer == SHADOWING_STENCIL)
+		{
+		clearBits |= GL_STENCIL_BUFFER_BIT;
+		}
+		*/
+	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+	{
+		clearBits |= GL_COLOR_BUFFER_BIT;
+		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // FIXME: get color of sky
+	}
+	glClear(clearBits);
+
+	R_BindFBO(tr.geometricRenderFBO);
+	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+	{
+		//clearBits = GL_COLOR_BUFFER_BIT;
+		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // FIXME: get color of sky
+	}
+	else
+	{
+		/*
+		if(glConfig2.framebufferBlitAvailable)
+		{
+			glDrawBuffers(1, geometricRenderTargets);
+
+			// copy color of the main context to geometricRenderFBO
+			R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+			*/
+	}
+	glClear(clearBits);
+
+	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
+	{
+		RB_Hyperspace();
+		return;
+	}
+	else
+	{
+		backEnd.isHyperspace = qfalse;
+	}
+
+	glState.faceCulling = -1;   // force face culling to set next time
+
+	// we will only draw a sun if there was sky rendered in this view
+	backEnd.skyRenderedThisView = qfalse;
+
+	GL_CheckErrors();
+
+	//RB_RenderDrawSurfacesIntoGeometricBuffer();
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		startTime = ri.Milliseconds();
+	}
+
+	// draw everything that is opaque
+	R_BindFBO(tr.geometricRenderFBO);
+	RB_RenderDrawSurfaces(qtrue, qtrue, DRAWSURFACES_ALL);
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		backEnd.pc.c_deferredGBufferTime = ri.Milliseconds() - startTime;
+	}
+
+	// try to cull lights using hardware occlusion queries
+	R_BindFBO(tr.geometricRenderFBO);
+	RB_RenderLightOcclusionQueries();
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		startTime = ri.Milliseconds();
+	}
+
+	if (!r_showDeferredRender->integer)
+	{
+		if (r_shadows->integer >= SHADOWING_ESM16)
+		{
+			// render dynamic shadowing and lighting using shadow mapping
+			RB_RenderInteractionsDeferredShadowMapped();
+		}
+		else
+		{
+			// render dynamic lighting
+			RB_RenderInteractionsDeferred();
+		}
+	}
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		backEnd.pc.c_deferredLightingTime = ri.Milliseconds() - startTime;
+	}
+
+	R_BindFBO(tr.geometricRenderFBO);
+	glDrawBuffers(1, geometricRenderTargets);
+
+	// render global fog
+	RB_RenderGlobalFog();
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		startTime = ri.Milliseconds();
+	}
+
+	// draw everything that is translucent
+	R_BindFBO(tr.geometricRenderFBO);
+	RB_RenderDrawSurfaces(qfalse, qfalse, DRAWSURFACES_ALL);
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		backEnd.pc.c_forwardTranslucentTime = ri.Milliseconds() - startTime;
+	}
+
+	// render debug information
+	R_BindFBO(tr.geometricRenderFBO);
+	RB_RenderDebugUtils();
+
+	// scale down rendered HDR scene to 1 / 4th
+	if (r_hdrRendering->integer)
+	{
+		// FIXME
+
+		/*
+		if(glConfig2.framebufferBlitAvailable)
+		{
+			R_CopyToFBO(tr.geometricRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(tr.geometricRenderFBO,tr.downScaleFBO_64x64,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+		else
+		{
+			// FIXME add non EXT_framebuffer_blit code
+		}
+		*/
+
+		RB_CalculateAdaptation();
+	}
+	else
+	{
+		/*
+		if(glConfig2.framebufferBlitAvailable)
+		{
+			// copy deferredRenderFBO to downScaleFBO_quarter
+			R_CopyToFBO(tr.deferredRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+		else
+		{
+			// FIXME add non EXT_framebuffer_blit code
+		}
+		*/
+	}
+
+	GL_CheckErrors();
+
+	// render bloom post process effect
+	RB_RenderBloom();
+
+	// copy offscreen rendered scene to the current OpenGL context
+	RB_RenderDeferredShadingResultToFrameBuffer();
+
+	if (backEnd.viewParms.isPortal)
+	{
+		/*
+		if(glConfig2.framebufferBlitAvailable)
+		{
+			// copy deferredRenderFBO to portalRenderFBO
+			R_CopyToFBO(tr.deferredRenderFBO,tr.portalRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+		else
+		{
+			// capture current color buffer
+			GL_SelectTexture(0);
+			GL_Bind(tr.portalRenderImage);
+			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
+		}
+		*/
+		backEnd.pc.c_portals++;
+	}
+}
+
+static void RB_RenderViewFront(void)
+{
+	// Forward shading path
+	int clearBits = 0;
+	int startTime = 0;
+
+	// sync with gl if needed
+	if (r_finish->integer == 1 && !glState.finishCalled)
+	{
+		glFinish();
+		glState.finishCalled = qtrue;
+	}
+	if (r_finish->integer == 0)
+	{
+		glState.finishCalled = qtrue;
+	}
+
+	// disable offscreen rendering
+	if (glConfig2.framebufferObjectAvailable)
+	{
+		if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+		{
+			R_BindFBO(tr.deferredRenderFBO);
+		}
+		else
+		{
+			R_BindNullFBO();
+		}
+	}
+
+	// we will need to change the projection matrix before drawing
+	// 2D images again
+	backEnd.projection2D = qfalse;
+
+	// set the modelview matrix for the viewer
+	SetViewportAndScissor();
+
+	// ensures that depth writes are enabled for the depth clear
+	GL_State(GLS_DEFAULT);
+
+	// clear relevant buffers
+	clearBits = GL_DEPTH_BUFFER_BIT;
+
+	if (r_measureOverdraw->integer)
+	{
+		clearBits |= GL_STENCIL_BUFFER_BIT;
+	}
+	// ydnar: global q3 fog volume
+	else if (tr.world && tr.world->globalFog >= 0)
+	{
+		clearBits |= GL_DEPTH_BUFFER_BIT;
+
+		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+		{
+			clearBits |= GL_COLOR_BUFFER_BIT;
+
+			GL_ClearColor(tr.world->fogs[tr.world->globalFog].color[0],
+				            tr.world->fogs[tr.world->globalFog].color[1],
+				            tr.world->fogs[tr.world->globalFog].color[2], 1.0);
+		}
+	}
+	else if (tr.world && tr.world->hasSkyboxPortal)
+	{
+		if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)
+		{
+			// portal scene, clear whatever is necessary
+			clearBits |= GL_DEPTH_BUFFER_BIT;
+
+			if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+			{
+				// fastsky: clear color
+
+				// try clearing first with the portal sky fog color, then the world fog color, then finally a default
+				clearBits |= GL_COLOR_BUFFER_BIT;
+				if (tr.glfogsettings[FOG_PORTALVIEW].registered)
+				{
+					GL_ClearColor(tr.glfogsettings[FOG_PORTALVIEW].color[0], tr.glfogsettings[FOG_PORTALVIEW].color[1],
+						            tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
+				}
+				else if (tr.glfogNum > FOG_NONE && tr.glfogsettings[FOG_CURRENT].registered)
+				{
+					GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
+						            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+				}
+				else
+				{
+					//GL_ClearColor ( 1.0, 0.0, 0.0, 1.0 );   // red clear for testing portal sky clear
+					GL_ClearColor(0.5, 0.5, 0.5, 1.0);
+				}
+			}
+			else
+			{
+				// rendered sky (either clear color or draw quake sky)
+				if (tr.glfogsettings[FOG_PORTALVIEW].registered)
+				{
+					GL_ClearColor(tr.glfogsettings[FOG_PORTALVIEW].color[0], tr.glfogsettings[FOG_PORTALVIEW].color[1],
+						            tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
+
+					if (tr.glfogsettings[FOG_PORTALVIEW].clearscreen)
+					{
+						// portal fog requests a screen clear (distance fog rather than quake sky)
+						clearBits |= GL_COLOR_BUFFER_BIT;
+					}
+				}
+			}
+		}
+		else
+		{
+			// world scene with portal sky, don't clear any buffers, just set the fog color if there is one
+			clearBits |= GL_DEPTH_BUFFER_BIT;   // this will go when I get the portal sky rendering way out in the zbuffer (or not writing to zbuffer at all)
+
+			if (tr.glfogNum > FOG_NONE && tr.glfogsettings[FOG_CURRENT].registered)
+			{
+				if (backEnd.refdef.rdflags & RDF_UNDERWATER)
+				{
+					if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
+					{
+						clearBits |= GL_COLOR_BUFFER_BIT;
+					}
+				}
+				else if (!r_portalSky->integer)
+				{
+					// portal skies have been manually turned off, clear bg color
+					clearBits |= GL_COLOR_BUFFER_BIT;
+				}
+
+				GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
+					            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+			}
+			else if (!r_portalSky->integer)
+			{
+				// ydnar: portal skies have been manually turned off, clear bg color
+				clearBits |= GL_COLOR_BUFFER_BIT;
+				GL_ClearColor(0.5, 0.5, 0.5, 1.0);
+			}
+		}
+	}
+	else
+	{
+		// world scene with no portal sky
+		clearBits |= GL_DEPTH_BUFFER_BIT;
+
+		// NERVE - SMF - we don't want to clear the buffer when no world model is specified
+		if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+		{
+			clearBits &= ~GL_COLOR_BUFFER_BIT;
+		}
+		// -NERVE - SMF
+		else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+		{
+			clearBits |= GL_COLOR_BUFFER_BIT;
+
+			if (tr.glfogsettings[FOG_CURRENT].registered)
+			{
+				// try to clear fastsky with current fog color
+				GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
+					            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+			}
+			else
+			{
+				//              GL_ClearColor ( 0.0, 0.0, 1.0, 1.0 );   // blue clear for testing world sky clear
+				GL_ClearColor(0.05, 0.05, 0.05, 1.0);   // JPW NERVE changed per id req was 0.5s
+			}
+		}
+		else
+		{
+			// world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
+			if (tr.glfogsettings[FOG_CURRENT].registered)
+			{
+				// try to clear fastsky with current fog color
+				GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
+					            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+
+				if (tr.glfogsettings[FOG_CURRENT].clearscreen)
+				{
+					// world fog requests a screen clear (distance fog rather than quake sky)
+					clearBits |= GL_COLOR_BUFFER_BIT;
+				}
+			}
+		}
+
+		if (HDR_ENABLED())
+		{
+			// copy color of the main context to deferredRenderFBO
+			R_CopyToFBO(NULL,tr.deferredRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+	}
+
+	glClear(clearBits);
+
+	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
+	{
+		RB_Hyperspace();
+		return;
+	}
+	else
+	{
+		backEnd.isHyperspace = qfalse;
+	}
+
+	glState.faceCulling = -1;   // force face culling to set next time
+
+	// we will only draw a sun if there was sky rendered in this view
+	backEnd.skyRenderedThisView = qfalse;
+
+	GL_CheckErrors();
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		startTime = ri.Milliseconds();
+	}
+
+	if (r_dynamicEntityOcclusionCulling->integer)
+	{
+		// draw everything from world that is opaque into black so we can benefit from early-z rejections later
+		//RB_RenderOpaqueSurfacesIntoDepth(true);
+		RB_RenderDrawSurfaces(qtrue, qfalse, DRAWSURFACES_WORLD_ONLY);
+
+		// try to cull entities using hardware occlusion queries
+		RB_RenderEntityOcclusionQueries();
+
+		// draw everything that is opaque
+		RB_RenderDrawSurfaces(qtrue, qfalse, DRAWSURFACES_ENTITIES_ONLY);
+	}
+	else
+	{
+		// draw everything that is opaque
+		RB_RenderDrawSurfaces(qtrue, qfalse, DRAWSURFACES_ALL);
+
+		// try to cull entities using hardware occlusion queries
+		//RB_RenderEntityOcclusionQueries();
+	}
+
+	// try to cull bsp nodes for the next frame using hardware occlusion queries
+	//RB_RenderBspOcclusionQueries();
+
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
+	}
+
+	// try to cull lights using hardware occlusion queries
+	RB_RenderLightOcclusionQueries();
+
+	if (r_shadows->integer >= SHADOWING_ESM16)
+	{
+		// render dynamic shadowing and lighting using shadow mapping
+		RB_RenderInteractionsShadowMapped();
+
+		// render player shadows if any
+		//RB_RenderInteractionsDeferredInverseShadows();
+	}
+	else
+	{
+		// render dynamic lighting
+		RB_RenderInteractions();
+	}
+
+	// render ambient occlusion process effect
+	// Tr3B: needs way more work RB_RenderScreenSpaceAmbientOcclusion(qfalse);
+
+	if (HDR_ENABLED())
+	{
+		R_BindFBO(tr.deferredRenderFBO);
+	}
+
+	// render global fog post process effect
+	RB_RenderGlobalFog();
+
+	// draw everything that is translucent
+	RB_RenderDrawSurfaces(qfalse, qfalse, DRAWSURFACES_ALL);
+
+	// scale down rendered HDR scene to 1 / 4th
+	if (HDR_ENABLED())
+	{
+		if (glConfig2.framebufferBlitAvailable)
+		{
+			R_CopyToFBO(tr.deferredRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_LINEAR);
+			R_CopyToFBO(tr.deferredRenderFBO,tr.downScaleFBO_64x64,GL_COLOR_BUFFER_BIT,GL_LINEAR);
+		}
+		else
+		{
+			// FIXME add non EXT_framebuffer_blit code
+		}
+
+		RB_CalculateAdaptation();
+	}
+	else
+	{
+		/*
+		Tr3B: FIXME this causes: caught OpenGL error:
+		GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
+
+		if(glConfig2.framebufferBlitAvailable)
+		{
+			// copy deferredRenderFBO to downScaleFBO_quarter
+			R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+		else
+		{
+			// FIXME add non EXT_framebuffer_blit code
+		}
+		*/
+	}
+
+	GL_CheckErrors();
+#ifdef EXPERIMENTAL
+	// render depth of field post process effect
+	RB_RenderDepthOfField(qfalse);
+#endif
+	// render bloom post process effect
+	RB_RenderBloom();
+
+	// copy offscreen rendered HDR scene to the current OpenGL context
+	RB_RenderDeferredHDRResultToFrameBuffer();
+
+	// render rotoscope post process effect
+	RB_RenderRotoscope();
+
+	// add the sun flare
+	RB_DrawSun();
+
+	// add light flares on lights that aren't obscured
+	RB_RenderFlares();
+
+	// wait until all bsp node occlusion queries are back
+	//RB_CollectBspOcclusionQueries();
+
+	// render debug information
+	RB_RenderDebugUtils();
+
+	if (backEnd.viewParms.isPortal)
+	{
+#if 0
+		if (r_hdrRendering->integer && glConfig.textureFloatAvailable && glConfig.framebufferObjectAvailable && glConfig.framebufferBlitAvailable)
+		{
+			// copy deferredRenderFBO to portalRenderFBO
+			R_CopyToFBO(tr.deferredRenderFBO,tr.portalRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+#endif
+#if 0
+		// FIXME: this trashes the OpenGL context for an unknown reason
+		if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
+		{
+			// copy main context to portalRenderFBO
+			R_CopyToFBO(NULL,tr.portalRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		}
+#endif
+		//else
+		{
+			// capture current color buffer
+			GL_SelectTexture(0);
+			GL_Bind(tr.portalRenderImage);
+			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
+		}
+		backEnd.pc.c_portals++;
+	}
+
+#if 0
+	if (r_dynamicBspOcclusionCulling->integer)
+	{
+		// copy depth of the main context to deferredRenderFBO
+		R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+	}
+#endif
+}
+
 static void RB_RenderView(void)
 {
 	Ren_LogComment("--- RB_RenderView( %i surfaces, %i interactions ) ---\n", backEnd.viewParms.numDrawSurfs, backEnd.viewParms.numInteractions);
@@ -9497,656 +10081,11 @@ static void RB_RenderView(void)
 
 	if (DS_STANDARD_ENABLED())
 	{
-		// Deferred shading path
-
-		int clearBits = 0;
-		int startTime = 0;
-
-		// sync with gl if needed
-		if (r_finish->integer == 1 && !glState.finishCalled)
-		{
-			glFinish();
-			glState.finishCalled = qtrue;
-		}
-		if (r_finish->integer == 0)
-		{
-			glState.finishCalled = qtrue;
-		}
-
-		// we will need to change the projection matrix before drawing
-		// 2D images again
-		backEnd.projection2D = qfalse;
-
-		// set the modelview matrix for the viewer
-		SetViewportAndScissor();
-
-		// ensures that depth writes are enabled for the depth clear
-		GL_State(GLS_DEFAULT);
-
-		// clear frame buffer objects
-		R_BindNullFBO();
-		//R_BindFBO(tr.deferredRenderFBO);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		clearBits = GL_DEPTH_BUFFER_BIT;
-
-		/*
-		   if(r_measureOverdraw->integer || r_shadows->integer == SHADOWING_STENCIL)
-		   {
-		   clearBits |= GL_STENCIL_BUFFER_BIT;
-		   }
-		 */
-		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
-		{
-			clearBits |= GL_COLOR_BUFFER_BIT;
-			GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // FIXME: get color of sky
-		}
-		glClear(clearBits);
-
-		R_BindFBO(tr.geometricRenderFBO);
-		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
-		{
-			//clearBits = GL_COLOR_BUFFER_BIT;
-			GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // FIXME: get color of sky
-		}
-		else
-		{
-			/*
-			if(glConfig2.framebufferBlitAvailable)
-			{
-			    glDrawBuffers(1, geometricRenderTargets);
-
-			    // copy color of the main context to geometricRenderFBO
-
-			    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-			    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			    glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                           0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                           GL_COLOR_BUFFER_BIT,
-			                           GL_NEAREST);
-
-			}
-			 */
-		}
-		glClear(clearBits);
-
-		if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
-		{
-			RB_Hyperspace();
-			return;
-		}
-		else
-		{
-			backEnd.isHyperspace = qfalse;
-		}
-
-		glState.faceCulling = -1;   // force face culling to set next time
-
-		// we will only draw a sun if there was sky rendered in this view
-		backEnd.skyRenderedThisView = qfalse;
-
-		GL_CheckErrors();
-
-		//RB_RenderDrawSurfacesIntoGeometricBuffer();
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			startTime = ri.Milliseconds();
-		}
-
-		// draw everything that is opaque
-		R_BindFBO(tr.geometricRenderFBO);
-		RB_RenderDrawSurfaces(qtrue, qtrue, DRAWSURFACES_ALL);
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			backEnd.pc.c_deferredGBufferTime = ri.Milliseconds() - startTime;
-		}
-
-		// try to cull lights using hardware occlusion queries
-		R_BindFBO(tr.geometricRenderFBO);
-		RB_RenderLightOcclusionQueries();
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			startTime = ri.Milliseconds();
-		}
-
-		if (!r_showDeferredRender->integer)
-		{
-			if (r_shadows->integer >= SHADOWING_ESM16)
-			{
-				// render dynamic shadowing and lighting using shadow mapping
-				RB_RenderInteractionsDeferredShadowMapped();
-			}
-			else
-			{
-				// render dynamic lighting
-				RB_RenderInteractionsDeferred();
-			}
-		}
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			backEnd.pc.c_deferredLightingTime = ri.Milliseconds() - startTime;
-		}
-
-		R_BindFBO(tr.geometricRenderFBO);
-		glDrawBuffers(1, geometricRenderTargets);
-
-		// render global fog
-		RB_RenderGlobalFog();
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			startTime = ri.Milliseconds();
-		}
-
-		// draw everything that is translucent
-		R_BindFBO(tr.geometricRenderFBO);
-		RB_RenderDrawSurfaces(qfalse, qfalse, DRAWSURFACES_ALL);
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			backEnd.pc.c_forwardTranslucentTime = ri.Milliseconds() - startTime;
-		}
-
-		// render debug information
-		R_BindFBO(tr.geometricRenderFBO);
-		RB_RenderDebugUtils();
-
-		// scale down rendered HDR scene to 1 / 4th
-		if (r_hdrRendering->integer)
-		{
-			// FIXME
-
-			/*
-			if(glConfig2.framebufferBlitAvailable)
-			{
-			    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.geometricRenderFBO->frameBuffer);
-			    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_quarter->frameBuffer);
-			    glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                            0, 0, glConfig.vidWidth * 0.25f, glConfig.vidHeight * 0.25f,
-			                            GL_COLOR_BUFFER_BIT,
-			                            GL_LINEAR);
-
-			    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.geometricRenderFBO->frameBuffer);
-			    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_64x64->frameBuffer);
-			    glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                           0, 0, 64, 64,
-			                           GL_COLOR_BUFFER_BIT,
-			                           GL_LINEAR);
-			}
-			else
-			{
-			    // FIXME add non EXT_framebuffer_blit code
-			}
-			*/
-
-			RB_CalculateAdaptation();
-		}
-		else
-		{
-			/*
-			if(glConfig2.framebufferBlitAvailable)
-			{
-			    // copy deferredRenderFBO to downScaleFBO_quarter
-			    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_quarter->frameBuffer);
-			    glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                            0, 0, glConfig.vidWidth * 0.25f, glConfig.vidHeight * 0.25f,
-			                            GL_COLOR_BUFFER_BIT,
-			                            GL_LINEAR);
-			}
-			else
-			{
-			    // FIXME add non EXT_framebuffer_blit code
-			}
-			*/
-		}
-
-		GL_CheckErrors();
-
-		// render bloom post process effect
-		RB_RenderBloom();
-
-		// copy offscreen rendered scene to the current OpenGL context
-		RB_RenderDeferredShadingResultToFrameBuffer();
-
-		if (backEnd.viewParms.isPortal)
-		{
-			/*
-			if(glConfig2.framebufferBlitAvailable)
-			{
-			    // copy deferredRenderFBO to portalRenderFBO
-			    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.portalRenderFBO->frameBuffer);
-			    glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                           0, 0, tr.portalRenderFBO->width, tr.portalRenderFBO->height,
-			                           GL_COLOR_BUFFER_BIT,
-			                           GL_NEAREST);
-			}
-			else
-			{
-			    // capture current color buffer
-			    GL_SelectTexture(0);
-			    GL_Bind(tr.portalRenderImage);
-			    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
-			}
-			*/
-			backEnd.pc.c_portals++;
-		}
+		RB_RenderViewDeferred();
 	}
 	else
 	{
-		// Forward shading path
-
-		int clearBits = 0;
-		int startTime = 0;
-
-		// sync with gl if needed
-		if (r_finish->integer == 1 && !glState.finishCalled)
-		{
-			glFinish();
-			glState.finishCalled = qtrue;
-		}
-		if (r_finish->integer == 0)
-		{
-			glState.finishCalled = qtrue;
-		}
-
-		// disable offscreen rendering
-		if (glConfig2.framebufferObjectAvailable)
-		{
-			if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
-			{
-				R_BindFBO(tr.deferredRenderFBO);
-			}
-			else
-			{
-				R_BindNullFBO();
-			}
-		}
-
-		// we will need to change the projection matrix before drawing
-		// 2D images again
-		backEnd.projection2D = qfalse;
-
-		// set the modelview matrix for the viewer
-		SetViewportAndScissor();
-
-		// ensures that depth writes are enabled for the depth clear
-		GL_State(GLS_DEFAULT);
-
-		// clear relevant buffers
-		clearBits = GL_DEPTH_BUFFER_BIT;
-
-		if (r_measureOverdraw->integer)
-		{
-			clearBits |= GL_STENCIL_BUFFER_BIT;
-		}
-		// ydnar: global q3 fog volume
-		else if (tr.world && tr.world->globalFog >= 0)
-		{
-			clearBits |= GL_DEPTH_BUFFER_BIT;
-
-			if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
-			{
-				clearBits |= GL_COLOR_BUFFER_BIT;
-
-				GL_ClearColor(tr.world->fogs[tr.world->globalFog].color[0],
-				              tr.world->fogs[tr.world->globalFog].color[1],
-				              tr.world->fogs[tr.world->globalFog].color[2], 1.0);
-			}
-		}
-		else if (tr.world && tr.world->hasSkyboxPortal)
-		{
-			if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)
-			{
-				// portal scene, clear whatever is necessary
-				clearBits |= GL_DEPTH_BUFFER_BIT;
-
-				if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
-				{
-					// fastsky: clear color
-
-					// try clearing first with the portal sky fog color, then the world fog color, then finally a default
-					clearBits |= GL_COLOR_BUFFER_BIT;
-					if (tr.glfogsettings[FOG_PORTALVIEW].registered)
-					{
-						GL_ClearColor(tr.glfogsettings[FOG_PORTALVIEW].color[0], tr.glfogsettings[FOG_PORTALVIEW].color[1],
-						              tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
-					}
-					else if (tr.glfogNum > FOG_NONE && tr.glfogsettings[FOG_CURRENT].registered)
-					{
-						GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-						              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
-					}
-					else
-					{
-						//GL_ClearColor ( 1.0, 0.0, 0.0, 1.0 );   // red clear for testing portal sky clear
-						GL_ClearColor(0.5, 0.5, 0.5, 1.0);
-					}
-				}
-				else
-				{
-					// rendered sky (either clear color or draw quake sky)
-					if (tr.glfogsettings[FOG_PORTALVIEW].registered)
-					{
-						GL_ClearColor(tr.glfogsettings[FOG_PORTALVIEW].color[0], tr.glfogsettings[FOG_PORTALVIEW].color[1],
-						              tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
-
-						if (tr.glfogsettings[FOG_PORTALVIEW].clearscreen)
-						{
-							// portal fog requests a screen clear (distance fog rather than quake sky)
-							clearBits |= GL_COLOR_BUFFER_BIT;
-						}
-					}
-				}
-			}
-			else
-			{
-				// world scene with portal sky, don't clear any buffers, just set the fog color if there is one
-				clearBits |= GL_DEPTH_BUFFER_BIT;   // this will go when I get the portal sky rendering way out in the zbuffer (or not writing to zbuffer at all)
-
-				if (tr.glfogNum > FOG_NONE && tr.glfogsettings[FOG_CURRENT].registered)
-				{
-					if (backEnd.refdef.rdflags & RDF_UNDERWATER)
-					{
-						if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
-						{
-							clearBits |= GL_COLOR_BUFFER_BIT;
-						}
-					}
-					else if (!r_portalSky->integer)
-					{
-						// portal skies have been manually turned off, clear bg color
-						clearBits |= GL_COLOR_BUFFER_BIT;
-					}
-
-					GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-					              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
-				}
-				else if (!r_portalSky->integer)
-				{
-					// ydnar: portal skies have been manually turned off, clear bg color
-					clearBits |= GL_COLOR_BUFFER_BIT;
-					GL_ClearColor(0.5, 0.5, 0.5, 1.0);
-				}
-			}
-		}
-		else
-		{
-			// world scene with no portal sky
-			clearBits |= GL_DEPTH_BUFFER_BIT;
-
-			// NERVE - SMF - we don't want to clear the buffer when no world model is specified
-			if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
-			{
-				clearBits &= ~GL_COLOR_BUFFER_BIT;
-			}
-			// -NERVE - SMF
-			else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
-			{
-				clearBits |= GL_COLOR_BUFFER_BIT;
-
-				if (tr.glfogsettings[FOG_CURRENT].registered)
-				{
-					// try to clear fastsky with current fog color
-					GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-					              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
-				}
-				else
-				{
-					//              GL_ClearColor ( 0.0, 0.0, 1.0, 1.0 );   // blue clear for testing world sky clear
-					GL_ClearColor(0.05, 0.05, 0.05, 1.0);   // JPW NERVE changed per id req was 0.5s
-				}
-			}
-			else
-			{
-				// world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
-				if (tr.glfogsettings[FOG_CURRENT].registered)
-				{
-					// try to clear fastsky with current fog color
-					GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-					              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
-
-					if (tr.glfogsettings[FOG_CURRENT].clearscreen)
-					{
-						// world fog requests a screen clear (distance fog rather than quake sky)
-						clearBits |= GL_COLOR_BUFFER_BIT;
-					}
-				}
-			}
-
-			if (HDR_ENABLED())
-			{
-				// copy color of the main context to deferredRenderFBO
-				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-				glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     GL_COLOR_BUFFER_BIT,
-				                     GL_NEAREST);
-			}
-		}
-
-		glClear(clearBits);
-
-		if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
-		{
-			RB_Hyperspace();
-			return;
-		}
-		else
-		{
-			backEnd.isHyperspace = qfalse;
-		}
-
-		glState.faceCulling = -1;   // force face culling to set next time
-
-		// we will only draw a sun if there was sky rendered in this view
-		backEnd.skyRenderedThisView = qfalse;
-
-		GL_CheckErrors();
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			startTime = ri.Milliseconds();
-		}
-
-		if (r_dynamicEntityOcclusionCulling->integer)
-		{
-			// draw everything from world that is opaque into black so we can benefit from early-z rejections later
-			//RB_RenderOpaqueSurfacesIntoDepth(true);
-			RB_RenderDrawSurfaces(qtrue, qfalse, DRAWSURFACES_WORLD_ONLY);
-
-			// try to cull entities using hardware occlusion queries
-			RB_RenderEntityOcclusionQueries();
-
-			// draw everything that is opaque
-			RB_RenderDrawSurfaces(qtrue, qfalse, DRAWSURFACES_ENTITIES_ONLY);
-		}
-		else
-		{
-			// draw everything that is opaque
-			RB_RenderDrawSurfaces(qtrue, qfalse, DRAWSURFACES_ALL);
-
-			// try to cull entities using hardware occlusion queries
-			//RB_RenderEntityOcclusionQueries();
-		}
-
-		// try to cull bsp nodes for the next frame using hardware occlusion queries
-		//RB_RenderBspOcclusionQueries();
-
-		if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-		{
-			glFinish();
-			backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
-		}
-
-		// try to cull lights using hardware occlusion queries
-		RB_RenderLightOcclusionQueries();
-
-		if (r_shadows->integer >= SHADOWING_ESM16)
-		{
-			// render dynamic shadowing and lighting using shadow mapping
-			RB_RenderInteractionsShadowMapped();
-
-			// render player shadows if any
-			//RB_RenderInteractionsDeferredInverseShadows();
-		}
-		else
-		{
-			// render dynamic lighting
-			RB_RenderInteractions();
-		}
-
-		// render ambient occlusion process effect
-		// Tr3B: needs way more work RB_RenderScreenSpaceAmbientOcclusion(qfalse);
-
-		if (HDR_ENABLED())
-		{
-			R_BindFBO(tr.deferredRenderFBO);
-		}
-
-		// render global fog post process effect
-		RB_RenderGlobalFog();
-
-		// draw everything that is translucent
-		RB_RenderDrawSurfaces(qfalse, qfalse, DRAWSURFACES_ALL);
-
-		// scale down rendered HDR scene to 1 / 4th
-		if (HDR_ENABLED())
-		{
-			if (glConfig2.framebufferBlitAvailable)
-			{
-				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_quarter->frameBuffer);
-				glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     0, 0, glConfig.vidWidth * 0.25f, glConfig.vidHeight * 0.25f,
-				                     GL_COLOR_BUFFER_BIT,
-				                     GL_LINEAR);
-
-				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_64x64->frameBuffer);
-				glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     0, 0, 64, 64,
-				                     GL_COLOR_BUFFER_BIT,
-				                     GL_LINEAR);
-			}
-			else
-			{
-				// FIXME add non EXT_framebuffer_blit code
-			}
-
-			RB_CalculateAdaptation();
-		}
-		else
-		{
-			/*
-			Tr3B: FIXME this causes: caught OpenGL error:
-			GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
-
-			if(glConfig2.framebufferBlitAvailable)
-			{
-			    // copy deferredRenderFBO to downScaleFBO_quarter
-			    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-			    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_quarter->frameBuffer);
-			    glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                            0, 0, glConfig.vidWidth * 0.25f, glConfig.vidHeight * 0.25f,
-			                            GL_COLOR_BUFFER_BIT,
-			                            GL_NEAREST);
-			}
-			else
-			{
-			    // FIXME add non EXT_framebuffer_blit code
-			}
-			*/
-		}
-
-		GL_CheckErrors();
-#ifdef EXPERIMENTAL
-		// render depth of field post process effect
-		RB_RenderDepthOfField(qfalse);
-#endif
-		// render bloom post process effect
-		RB_RenderBloom();
-
-		// copy offscreen rendered HDR scene to the current OpenGL context
-		RB_RenderDeferredHDRResultToFrameBuffer();
-
-		// render rotoscope post process effect
-		RB_RenderRotoscope();
-
-		// add the sun flare
-		RB_DrawSun();
-
-		// add light flares on lights that aren't obscured
-		RB_RenderFlares();
-
-		// wait until all bsp node occlusion queries are back
-		//RB_CollectBspOcclusionQueries();
-
-		// render debug information
-		RB_RenderDebugUtils();
-
-		if (backEnd.viewParms.isPortal)
-		{
-#if 0
-			if (r_hdrRendering->integer && glConfig.textureFloatAvailable && glConfig.framebufferObjectAvailable && glConfig.framebufferBlitAvailable)
-			{
-				// copy deferredRenderFBO to portalRenderFBO
-				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.portalRenderFBO->frameBuffer);
-				glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-				                     0, 0, tr.portalRenderFBO->width, tr.portalRenderFBO->height,
-				                     GL_COLOR_BUFFER_BIT,
-				                     GL_NEAREST);
-			}
-#endif
-#if 0
-			// FIXME: this trashes the OpenGL context for an unknown reason
-			if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
-			{
-				// copy main context to portalRenderFBO
-				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.portalRenderFBO->frameBuffer);
-				glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-				                     GL_COLOR_BUFFER_BIT,
-				                     GL_NEAREST);
-			}
-#endif
-			//else
-			{
-				// capture current color buffer
-				GL_SelectTexture(0);
-				GL_Bind(tr.portalRenderImage);
-				glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
-			}
-			backEnd.pc.c_portals++;
-		}
-
-#if 0
-		if (r_dynamicBspOcclusionCulling->integer)
-		{
-			// copy depth of the main context to deferredRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
-		}
-#endif
+		RB_RenderViewFront();
 	}
 
 	// render chromatric aberration

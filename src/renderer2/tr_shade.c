@@ -2294,12 +2294,7 @@ static void Render_heatHaze(int stage)
 		if (DS_STANDARD_ENABLED())
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.geometricRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.geometricRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
 		}
 		else if (HDR_ENABLED())
 		{
@@ -2307,19 +2302,9 @@ static void Render_heatHaze(int stage)
 
 			// copy deferredRenderFBO to occlusionRenderFBO
 #if 0
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
 #else
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
 #endif
 
 			GL_CheckErrors();
@@ -2327,12 +2312,7 @@ static void Render_heatHaze(int stage)
 		else
 		{
 			// copy depth of the main context to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
 		}
 
 		R_BindFBO(tr.occlusionRenderFBO);
@@ -2724,32 +2704,17 @@ static void Render_volumetricFog()
 		    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
 		}
 		else if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
 		}
 		else
 		{
 			// copy depth of the main context to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
 		}
 
 		GLSL_SetMacroState(gl_depthToColorShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);

@@ -330,6 +330,34 @@ void R_AttachFBOTexturePackedDepthStencil(int texId)
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, texId, 0);
 }
 
+void R_CopyToFBO(FBO_t *from,FBO_t *to, GLuint mask, GLuint filter)
+{
+	if (glConfig2.framebufferBlitAvailable)
+	{
+		vec2_t size;
+		if(from)
+		{
+			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, from->frameBuffer);
+			size[0] = from->width;
+			size[1] = from->height;
+		}
+		else
+		{
+			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
+			size[0] = glConfig.vidWidth;
+			size[1] = glConfig.vidHeight;
+		}
+
+		glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, to->frameBuffer);
+		glBlitFramebufferEXT(0, 0, size[0], size[1], 0, 0, to->width, to->height, mask, filter);
+	}
+	else
+	{
+		// FIXME add non EXT_framebuffer_blit code
+		ri.Error(ERR_FATAL,"R_CopyToFBO no framebufferblitting available");
+	}
+}
+
 void R_BindFBO(FBO_t *fbo)
 {
 	if (!fbo)

@@ -3960,6 +3960,8 @@ void R_AttachFBOTexture2D(int target, int texId, int attachmentIndex);
 void R_AttachFBOTexture3D(int texId, int attachmentIndex, int zOffset);
 void R_AttachFBOTextureDepth(int texId);
 
+void R_CopyToFBO(FBO_t *from,FBO_t *to, GLuint mask, GLuint filter);
+
 void R_BindFBO(FBO_t *fbo);
 void R_BindNullFBO(void);
 
