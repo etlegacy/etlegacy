@@ -1093,12 +1093,7 @@ void GL_SetDefaultState(void)
 	   bound.
 	 */
 
-	if (glConfig2.framebufferObjectAvailable)
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-		glState.currentFBO = NULL;
-	}
+	R_SetDefaultFBO();
 
 
 	/*

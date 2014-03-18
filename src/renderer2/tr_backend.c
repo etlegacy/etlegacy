@@ -703,10 +703,7 @@ static void RB_SetGL2D(void)
 	Ren_LogComment("--- RB_SetGL2D ---\n");
 
 	// disable offscreen rendering
-	if (glConfig2.framebufferObjectAvailable)
-	{
-		R_BindNullFBO();
-	}
+	R_BindNullFBO();
 
 	backEnd.projection2D = qtrue;
 
@@ -10797,6 +10794,18 @@ void RB_ShowImages(void)
 	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
 
 	GL_CheckErrors();
+}
+
+static vec4_t *RB_GetScreenQuad(void)
+{
+	static vec4_t quad[4];
+
+	Vector4Set(quad[0], 0, 0, 0, 1);
+	Vector4Set(quad[1], glConfig.vidWidth, 0, 0, 1);
+	Vector4Set(quad[2], glConfig.vidWidth, glConfig.vidHeight, 0, 1);
+	Vector4Set(quad[3], 0, glConfig.vidHeight, 0, 1);
+
+	return quad;
 }
 
 const void *RB_SwapBuffers(const void *data)

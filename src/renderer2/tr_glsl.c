@@ -25,158 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static char *complieMacroNames[] =
 {
-	"USE_ALPHA_TESTING",
-	"USE_PORTAL_CLIPPING",
-	"USE_FRUSTUM_CLIPPING",
-	"USE_VERTEX_SKINNING",
-	"USE_VERTEX_ANIMATION",
-	"USE_DEFORM_VERTEXES",
-	"USE_TCGEN_ENVIRONMENT",
-	"USE_TCGEN_LIGHTMAP",
-	"USE_NORMAL_MAPPING",
-	"USE_PARALLAX_MAPPING",
-	"USE_REFLECTIVE_SPECULAR",
-	"USE_SHADOWING",
-	"TWOSIDED",
-	"EYE_OUTSIDE",
-	"BRIGHTPASS_FILTER",
-	"LIGHT_DIRECTIONAL",
-	"USE_GBUFFER"
+#define MACRO_NAME
+#include "tr_glsldef.h"
+#undef MACRO_NAME
 };
 
 // These must be in the same order as in uniform_t in tr_local.h.
 static uniformInfo_t uniformsInfo[] =
 {
-	{ "u_DiffuseMap",                   GLSL_INT      },
-	{ "u_LightMap",                     GLSL_INT      },
-	{ "u_NormalMap",                    GLSL_INT      },
-	{ "u_DeluxeMap",                    GLSL_INT      },
-	{ "u_SpecularMap",                  GLSL_INT      },
-
-	{ "u_TextureMap",                   GLSL_INT      },
-	{ "u_LevelsMap",                    GLSL_INT      },
-
-	{ "u_ScreenImageMap",               GLSL_INT      },
-	{ "u_ScreenDepthMap",               GLSL_INT      },
-
-	{ "u_ShadowMap",                    GLSL_INT      },
-	{ "u_ShadowMap2",                   GLSL_INT      },
-	{ "u_ShadowMap3",                   GLSL_INT      },
-
-	{ "u_ShadowMvp",                    GLSL_MAT16    },
-	{ "u_ShadowMvp2",                   GLSL_MAT16    },
-	{ "u_ShadowMvp3",                   GLSL_MAT16    },
-
-	{ "u_DiffuseTexMatrix",             GLSL_VEC4     },
-	{ "u_DiffuseTexOffTurb",            GLSL_VEC4     },
-	{ "u_Texture1Env",                  GLSL_INT      },
-
-	{ "u_TCGen0",                       GLSL_INT      },
-	{ "u_TCGen0Vector0",                GLSL_VEC3     },
-	{ "u_TCGen0Vector1",                GLSL_VEC3     },
-
-	{ "u_DeformGen",                    GLSL_INT      },
-	{ "u_DeformParams",                 GLSL_FLOATARR },
-
-	{ "u_ColorGen",                     GLSL_INT      },
-	{ "u_AlphaGen",                     GLSL_INT      },
-	{ "u_Color",                        GLSL_VEC4     },
-	{ "u_BaseColor",                    GLSL_VEC4     },
-	{ "u_VertColor",                    GLSL_VEC4     },
-
-	{ "u_DlightInfo",                   GLSL_VEC4     },
-	{ "u_LightForward",                 GLSL_VEC3     },
-	{ "u_LightUp",                      GLSL_VEC3     },
-	{ "u_LightRight",                   GLSL_VEC3     },
-	{ "u_LightOrigin",                  GLSL_VEC3     },
-	{ "u_LightRadius",                  GLSL_FLOAT    },
-	{ "u_AmbientLight",                 GLSL_VEC3     },
-	{ "u_DirectedLight",                GLSL_VEC3     },
-
-	{ "u_PortalRange",                  GLSL_FLOAT    },
-
-	{ "u_FogDistance",                  GLSL_VEC4     },
-	{ "u_FogDepth",                     GLSL_VEC4     },
-	{ "u_FogEyeT",                      GLSL_FLOAT    },
-	{ "u_FogColorMask",                 GLSL_VEC4     },
-
-	{ "u_ModelMatrix",                  GLSL_MAT16    },
-	{ "u_ModelViewProjectionMatrix",    GLSL_MAT16    },
-
-	{ "u_Time",                         GLSL_FLOAT    },
-	{ "u_VertexLerp",                   GLSL_FLOAT    },
-	{ "u_MaterialInfo",                 GLSL_VEC2     },
-
-	{ "u_ViewInfo",                     GLSL_VEC4     },
-	{ "u_ViewOrigin",                   GLSL_VEC3     },
-	{ "u_ViewForward",                  GLSL_VEC3     },
-	{ "u_ViewLeft",                     GLSL_VEC3     },
-	{ "u_ViewUp",                       GLSL_VEC3     },
-
-	{ "u_InvTexRes",                    GLSL_VEC2     },
-	{ "u_AutoExposureMinMax",           GLSL_VEC2     },
-	{ "u_ToneMinAvgMaxLinear",          GLSL_VEC3     },
-
-	{ "u_PrimaryLightOrigin",           GLSL_VEC4     },
-	{ "u_PrimaryLightColor",            GLSL_VEC3     },
-	{ "u_PrimaryLightAmbient",          GLSL_VEC3     },
-	{ "u_PrimaryLightRadius",           GLSL_FLOAT    },
-
-	//from XREAL
-	{ "u_ColorTextureMatrix",           GLSL_MAT16    },
-	{ "u_DiffuseTextureMatrix",         GLSL_MAT16    },
-	{ "u_NormalTextureMatrix",          GLSL_MAT16    },
-	{ "u_SpecularTextureMatrix",        GLSL_MAT16    },
-	{ "u_AlphaTest",                    GLSL_INT      },
-	{ "u_ColorModulate",                GLSL_VEC4     },
-	{ "u_BoneMatrix",                   GLSL_MAT16ARR },
-	{ "u_VertexInterpolation",          GLSL_FLOAT    },
-	{ "u_PortalPlane",                  GLSL_VEC4     },
-	{ "u_CurrentMap",                   GLSL_INT      },
-	{ "u_ColorMap",                     GLSL_INT      },
-	{ "u_AmbientColor",                 GLSL_VEC3     },
-	{ "u_LightDir",                     GLSL_VEC3     },
-	{ "u_LightColor",                   GLSL_VEC3     },
-	{ "u_LightScale",                   GLSL_FLOAT    },
-	{ "u_LightWrapAround",              GLSL_FLOAT    },
-	{ "u_LightAttenuationMatrix",       GLSL_MAT16    },
-	{ "u_LightFrustum",                 GLSL_VEC4ARR  }, // VEC4 [6]
-	{ "u_ShadowTexelSize",              GLSL_FLOAT    },
-	{ "u_ShadowBlur",                   GLSL_FLOAT    },
-	{ "u_ShadowMatrix",                 GLSL_MAT16ARR }, //MAT16 [5]
-	{ "u_ShadowParallelSplitDistances", GLSL_VEC4     },
-	{ "u_ViewMatrix",                   GLSL_MAT16    },
-	{ "u_ModelViewMatrix",              GLSL_MAT16    },
-	{ "u_ModelViewMatrixTranspose",     GLSL_MAT16    },
-	{ "u_ProjectionMatrixTranspose",    GLSL_MAT16    },
-	{ "u_UnprojectMatrix",              GLSL_MAT16    },
-	{ "u_DepthScale",                   GLSL_FLOAT    },
-	{ "u_EnvironmentInterpolation",     GLSL_FLOAT    },
-	{ "u_DeformParms",                  GLSL_FLOATARR }, // FLOAT [MAX_SHADER_DEFORM_PARMS]
-	{ "u_FogDistanceVector",            GLSL_VEC4     },
-	{ "u_FogDepthVector",               GLSL_VEC4     },
-	{ "u_DeformMagnitude",              GLSL_FLOAT    },
-	{ "u_HDRKey",                       GLSL_FLOAT    },
-	{ "u_HDRAverageLuminance",          GLSL_FLOAT    },
-	{ "u_HDRMaxLuminance",              GLSL_FLOAT    },
-	{ "u_RefractionIndex",              GLSL_FLOAT    },
-	{ "u_FogDensity",                   GLSL_FLOAT    },
-	{ "u_FogColor",                     GLSL_VEC3     },
-	{ "u_FresnelPower",                 GLSL_FLOAT    },
-	{ "u_FresnelScale",                 GLSL_FLOAT    },
-	{ "u_FresnelBias",                  GLSL_FLOAT    },
-	{ "u_BlurMagnitude",                GLSL_FLOAT    },
-	{ "u_NormalScale",                  GLSL_FLOAT    },
-	{ "u_ShadowCompare",                GLSL_FLOAT    },
-	{ "u_EtaRatio",                     GLSL_VEC3     },
-
-	//BOOLEANS
-	{ "SHOW_LIGHTMAP",                  GLSL_BOOL     },
-	{ "SHOW_DELUXEMAP",                 GLSL_BOOL     },
-
-	{ "NORMALMAP",                      GLSL_BOOL     },
-	{ "PARALLAXMAP",                    GLSL_BOOL     }
-
+#define UNIFORM_TYPE
+#include "tr_glsldef.h"
+#undef UNIFORM_TYPE
 };
 
 typedef struct
@@ -259,6 +118,9 @@ programInfo_t *gl_depthToColorShader;
 programInfo_t *gl_volumetricFogShader;
 programInfo_t *gl_volumetricLightingShader;
 programInfo_t *gl_dispersionShader;
+
+//Jacker
+programInfo_t *gl_colorCorrection;
 
 //This is set with the GLSL_SelectPermutation
 shaderProgram_t *selectedProgram;
@@ -2459,6 +2321,9 @@ void GLSL_InitGPUShaders(void)
 	gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
 	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
+
+	//Jacker
+	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
 	endTime = ri.Milliseconds();
 

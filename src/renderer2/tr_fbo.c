@@ -350,6 +350,10 @@ void R_CopyToFBO(FBO_t *from,FBO_t *to, GLuint mask, GLuint filter)
 
 		glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, to->frameBuffer);
 		glBlitFramebufferEXT(0, 0, size[0], size[1], 0, 0, to->width, to->height, mask, filter);
+
+		//Just set the read buffer to the target as well otherwise we might get fucked..
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, to->frameBuffer);
+		glState.currentFBO = to;
 	}
 	else
 	{
@@ -395,7 +399,17 @@ void R_BindNullFBO(void)
 {
 	Ren_LogComment("--- R_BindNullFBO ---\n");
 
-	if (glState.currentFBO)
+	if (glState.currentFBO && glConfig2.framebufferObjectAvailable)
+	{
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+		glState.currentFBO = NULL;
+	}
+}
+
+void R_SetDefaultFBO(void)
+{
+	if (glConfig2.framebufferObjectAvailable)
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
