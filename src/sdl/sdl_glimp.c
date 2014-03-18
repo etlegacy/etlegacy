@@ -1738,6 +1738,13 @@ void GLimp_SetHardware(void)
 	}
 }
 
+void Glimp_ClearScreen(void)
+{
+	qglClearColor(0,0,0,1);
+	qglClear(GL_COLOR_BUFFER_BIT);
+	GLimp_EndFrame();
+}
+
 #ifdef PANDORA
 #define R_MODE_FALLBACK 11 // 800 * 480
 #else
@@ -1796,6 +1803,9 @@ void GLimp_Init(void)
 	ri.Error(ERR_FATAL, "GLimp_Init() - could not load OpenGL subsystem\n");
 
 success:
+
+	//Clear the screen with a black color thanks
+	Glimp_ClearScreen();
 
 #ifdef FEATURE_RENDERER2
 	if (glConfig.driverType != GLDRV_OPENGL3)
