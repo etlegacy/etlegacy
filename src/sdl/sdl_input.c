@@ -92,6 +92,9 @@ http://lists.libsdl.org/pipermail/sdl-libsdl.org/2005-February/048704.html
 
 int rawMouseButtonMap[5] = { K_MOUSE1, K_MOUSE2, K_MOUSE3, K_MOUSE4, K_MOUSE5 };
 
+//Only "spam" the event queue if the gamestate can handle it
+#define RAW_INPUT_QUEUE (mouseActive && clc.state != CA_LOADING)
+
 static LONG WINAPI RawWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -103,7 +106,7 @@ static LONG WINAPI RawWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			unsigned int i = sizeof(ri);
 
 			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &ri, &i, sizeof(RAWINPUTHEADER));
-			if (mouseActive)
+			if (RAW_INPUT_QUEUE)
 			{
 				for (i = 0; i < 5; i++)
 				{
