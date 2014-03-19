@@ -4576,3 +4576,6 @@ msgstr ""
 
 msgid "Show Ping:"
 msgstr "Pokaz Ping:"
+
+msgid "Allied team has constructed the bridge!"
+msgstr "Allianci zbudowali most!"
