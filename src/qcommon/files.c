@@ -1386,6 +1386,7 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 		return FS_fplength(filep);
 	}
 
+	*file = 0;
 	return -1;
 }
 
