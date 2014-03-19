@@ -1051,13 +1051,6 @@ void GL_SetDefaultState(void)
 			{
 				GL_SelectTexture(i);
 				GL_TextureMode(r_textureMode->string);
-
-				/*
-				if(i != 0)
-				    glDisable(GL_TEXTURE_2D);
-				else
-				    glEnable(GL_TEXTURE_2D);
-				*/
 			}
 		}
 	}
@@ -1085,35 +1078,20 @@ void GL_SetDefaultState(void)
 	// arrays are enabled and disabled around the compiled vertex array call
 	glEnableVertexAttribArray(ATTR_INDEX_POSITION);
 
-	/*
-	   OpenGL 3.0 spec: E.1. PROFILES AND DEPRECATED FEATURES OF OPENGL 3.0 405
-	   Calling VertexAttribPointer when no buffer object or no
-	   vertex array object is bound will generate an INVALID OPERATION error,
-	   as will calling any array drawing command when no vertex array object is
-	   bound.
-	 */
-
 	R_SetDefaultFBO();
-
-
-	/*
-	   if(glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
-	   {
-	   // enable all attachments as draw buffers
-	   GLenum drawbuffers[] = {GL_DRAW_BUFFER0_ARB,
-	   GL_DRAW_BUFFER1_ARB,
-	   GL_DRAW_BUFFER2_ARB,
-	   GL_DRAW_BUFFER3_ARB};
-
-	   glDrawBuffersARB(4, drawbuffers);
-	   }
-	 */
 
 	GL_PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	GL_DepthMask(GL_TRUE);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
 	glDisable(GL_BLEND);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearDepth(1.0);
+
+	glDrawBuffer(GL_BACK);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	GL_CheckErrors();
 
