@@ -419,8 +419,8 @@ msgstr "NAZWA SERWERA"
 msgid "MAP NAME"
 msgstr "MAPA"
 
-msgid "#PLRS"
-msgstr "#GRZE"
+msgid "#PLAYERS"
+msgstr "#GRACZY"
 
 msgid "TYPE"
 msgstr "TYP"
