@@ -10796,6 +10796,7 @@ void RB_ShowImages(void)
 	GL_CheckErrors();
 }
 
+/* unused
 static vec4_t *RB_GetScreenQuad(void)
 {
 	static vec4_t quad[4];
@@ -10807,6 +10808,7 @@ static vec4_t *RB_GetScreenQuad(void)
 
 	return quad;
 }
+*/
 
 const void *RB_SwapBuffers(const void *data)
 {
