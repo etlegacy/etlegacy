@@ -63,7 +63,7 @@ menuDef {
 		name		"headerLogo"
 		group		GROUP_NAME
 		rect		6 72 $evalfloat(WINDOW_WIDTH-12) 16
-		text		"DEVELOPED BY ET LEGACY TEAM"
+		text		"DEVELOPED BY ET:LEGACY TEAM"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3

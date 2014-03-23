@@ -74,7 +74,7 @@ menuDef {
 // Credits Sections //
 #define CREDITS_Y	108
 
-	LABELWHITE( 6, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, "Let's keep ET alive!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	//LABELWHITE( 6, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, "Let's keep ET alive!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Original Developers //
 	itemDef {
