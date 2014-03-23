@@ -63,7 +63,7 @@ menuDef {
 		name		"headerLogo"
 		group		GROUP_NAME
 		rect		6 72 $evalfloat(WINDOW_WIDTH-12) 16
-		text		"^3DEVELOPED BY ET LEGACY TEAM"
+		text		"DEVELOPED BY ET LEGACY TEAM"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3
@@ -162,7 +162,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+252, .7*(WINDOW_WIDTH-24), 10, "^3See HALL OF FAME below", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+252, .7*(WINDOW_WIDTH-24), 10, "See HALL OF FAME below", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Website //
 	itemDef {
