@@ -35,21 +35,21 @@ menuDef {
 	}
 
 // Logo //
-	itemDef {
-		name		"logoShadow"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-64)+1) $evalfloat(8+1) 64 64
-		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/logo_sd"
-		forecolor	0 0 0 1
-		visible		1
-		decoration
-	}
+//	itemDef {
+//		name		"logoShadow"
+//		rect		$evalfloat(.5*(WINDOW_WIDTH-200)+1) $evalfloat(92+1) 200 100
+//		style		WINDOW_STYLE_SHADER
+//		background	"ui/assets/etl_logo"
+//		forecolor	0 0 0 1
+//		visible		1
+//		decoration
+//	}
 
 	itemDef {
 		name		"logo"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-64)-1) $evalfloat(8-1) 64 64
+		rect		$evalfloat(.5*(WINDOW_WIDTH-200)-1) $evalfloat(92-1) 200 100
 		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/logo_sd"
+		background	"ui/assets/etl_logo"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
@@ -59,7 +59,7 @@ menuDef {
 		name		"headerLogo"
 		group		GROUP_NAME
 		rect		6 80 $evalfloat(WINDOW_WIDTH-12) 16
-		text		"DEVELOPED BY SPLASH DAMAGE"
+		text		"DEVELOPED BY ET:LEGACY TEAM"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3
@@ -74,17 +74,14 @@ menuDef {
 // Credits Sections //
 #define CREDITS_Y	108
 
-	LABELWHITE( 6, CREDITS_Y, .5*(WINDOW_WIDTH-24), 10, "Paul 'Locki' Wedgwood", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y, .5*(WINDOW_WIDTH-24), 10, "Game Designer / Managing Director", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Francisca 'Freya' Wedgwood", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Business Director", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, "Let's keep ET alive!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
-// Art //
+// Original Developers //
 	itemDef {
-		name		"headerArt"
+		name		"headerDevelopers"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+30) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"ART"
+		rect		6 $evalfloat(CREDITS_Y+100) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1ORIGINAL DEVELOPERS"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -96,19 +93,156 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+46, .5*(WINDOW_WIDTH-24), 10, "Richard 'Fluffy_gIMp' Jolly", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+46, .5*(WINDOW_WIDTH-24), 10, "Lead Artist / Creative Director", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+58, .5*(WINDOW_WIDTH-24), 10, "Francis 'Frankie' Hobbins", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+58, .5*(WINDOW_WIDTH-24), 10, "Artist / Animator", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+70, .5*(WINDOW_WIDTH-24), 10, "Per 'Per128' Abrahamsen", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+70, .5*(WINDOW_WIDTH-24), 10, "Additional Art", .2, ITEM_ALIGN_LEFT, 0, 8 )
+// Logo //
+#define LOGOMAIN_WIDTH 64+16+64+16+144
+#define LOGOBAR_WIDTH 96+16+96+16+64+16+64
 
-// Programming //
 	itemDef {
-		name		"headerProgramming"
+		name		"logoSDShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+1) $evalfloat(212+8+8+1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_sd"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoSD"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+1) $evalfloat(212+8+8+1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_sd"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoiDShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16+1) $evalfloat(212+8+8+1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_id"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoiD"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16+1) $evalfloat(212+8+8+1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_id"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoAtviShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16+64+16+1) $evalfloat(226+8+8+1) 144 36
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_atvi"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoAtvi"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16+64+16+1) $evalfloat(226+8+8+1) 144 36
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_atvi"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoGMShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))+1) $evalfloat(284+8+8+1) 96 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_gm"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoGM"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))-1) $evalfloat(284+8+8-1) 96 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_gm"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoNerveShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))+96+16+1) $evalfloat(284+8+20+1) 96 24
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_nerve"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoNerve"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))+96+16-1) $evalfloat(284+8+20-1) 96 24
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_nerve"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoOSPShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))+96+16+96+16+1) $evalfloat(284+8+1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_osp"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoOSP"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))+96+16+96+16-1) $evalfloat(284+8-1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_osp"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoETProShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))+96+16+96+16+64+16+1) $evalfloat(284+8+1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_etpro"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoETPro"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOBAR_WIDTH))+96+16+96+16+64+16-1) $evalfloat(284+8-1) 64 64
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_etpro"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+// Website //
+	itemDef {
+		name		"headerWebsite"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+88) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"PROGRAMMING"
+		rect		6 $evalfloat(CREDITS_Y+252) $evalfloat(WINDOW_WIDTH-12) 12
+		text		"^1WEBSITE"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -120,66 +254,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+104, .5*(WINDOW_WIDTH-24), 10, "Arnout 'RR2DO2' van Meer", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+104, .5*(WINDOW_WIDTH-24), 10, "Lead Programmer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+116, .5*(WINDOW_WIDTH-24), 10, "Gordon 'digibob' Biggans", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+116, .5*(WINDOW_WIDTH-24), 10, "Programmer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+128, .5*(WINDOW_WIDTH-24), 10, "Randy 'ydnar' Reddig", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+128, .5*(WINDOW_WIDTH-24), 10, "Programmer / Artist", .2, ITEM_ALIGN_LEFT, 0, 8 )
-
-// Design //
-	itemDef {
-		name		"headerDesign"
-		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+146) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"DESIGN"
-		textfont	UI_FONT_ARIBLK_16
-		textstyle	ITEM_TEXTSTYLE_SHADOWED
-		textscale	.19
-		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
-		textaligny	10
-		forecolor	1 1 1 1
-		visible		1
-		decoration
-	}
-
-	LABELWHITE( 6, CREDITS_Y+162, .5*(WINDOW_WIDTH-24), 10, "Tim 'Marauder' Kautz", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+162, .5*(WINDOW_WIDTH-24), 10, "Designer / Audio Engineer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+174, .5*(WINDOW_WIDTH-24), 10, "Ed 'Bongoboy' Stern", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+174, .5*(WINDOW_WIDTH-24), 10, "Designer / Writer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-
-// Level Design //
-	itemDef {
-		name		"headerLevelDesign"
-		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+192) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"LEVEL DESIGN"
-		textfont	UI_FONT_ARIBLK_16
-		textstyle	ITEM_TEXTSTYLE_SHADOWED
-		textscale	.19
-		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
-		textaligny	10
-		forecolor	1 1 1 1
-		visible		1
-		decoration
-	}
-
-	LABELWHITE( 6, CREDITS_Y+208, .5*(WINDOW_WIDTH-24), 10, "Matt 'Wils' Wilson", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+208, .5*(WINDOW_WIDTH-24), 10, "Lead Level Designer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+220, .5*(WINDOW_WIDTH-24), 10, "Simon 'sock' O'Callaghan", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+220, .5*(WINDOW_WIDTH-24), 10, "Senior Level Designer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+232, .5*(WINDOW_WIDTH-24), 10, "Mark 'nakedape' Fry", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+232, .5*(WINDOW_WIDTH-24), 10, "Level Designer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+244, .5*(WINDOW_WIDTH-24), 10, "Thomas 'Q-Fraggel' Creutzenberg", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+244, .5*(WINDOW_WIDTH-24), 10, "Level Designer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+256, .5*(WINDOW_WIDTH-24), 10, "Chris 'SHoD' Farcy", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+256, .5*(WINDOW_WIDTH-24), 10, "Level Designer / Artist", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+268, .5*(WINDOW_WIDTH-24), 10, "Lloyd 'LloydM' Morris", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+268, .5*(WINDOW_WIDTH-24), 10, "Level Designer", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+280, .5*(WINDOW_WIDTH-24), 10, "Lee 'Llama' Mercer", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+280, .5*(WINDOW_WIDTH-24), 10, "Additional Level Design", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+264, .7*(WINDOW_WIDTH-24), 10, "www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Copyright Notices //
 	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, "© 2012-2014 ET Legacy Team - under the terms of GPL version 3.", .15, ITEM_ALIGN_LEFT, 0, 8 )
