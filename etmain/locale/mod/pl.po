@@ -1265,8 +1265,8 @@ msgstr "Rozszerzenie OpenGL:"
 msgid "SET RECOMMENDED"
 msgstr "USTAW REKOMENDOWANE"
 
-msgid "^3DEVELOPED BY ET LEGACY TEAM"
-msgstr "^3WYDANE PRZRZ ZESPOL ET LEGACY"
+msgid "DEVELOPED BY ET:LEGACY TEAM"
+msgstr "WYDANE PRZEZ ZESPOL ET:LEGACY"
 
 msgid "^1PROGRAMMING"
 msgstr "^1PROGRAMISCI"
@@ -2548,8 +2548,8 @@ msgstr ""
 msgid "^1LET'S KEEP ET ALIVE!"
 msgstr "^1UTRZYMAJMY ET PRZY ZYCIU!"
 
-msgid "^3Thank you for installing ET:Legacy"
-msgstr "^3Dzieki za zainstalowanie ET:Legacy."
+msgid "Thank you for installing ET:Legacy"
+msgstr "Dzieki za zainstalowanie ET:Legacy."
 
 msgid "HOST GAME: EXTENDED"
 msgstr "STAWIANIE SERWERA: ROZSZERZONE"
@@ -3674,8 +3674,8 @@ msgstr "http://www.etlegacy.com"
 msgid "HALL OF FAME"
 msgstr "SALA CHWALY"
 
-msgid "^3ET LEGACY HALL OF FAME"
-msgstr "^3SALA CHWALY ET LEGACY"
+msgid "ET:LEGACY HALL OF FAME"
+msgstr "SALA CHWALY ET:LEGACY"
 
 msgid "Advices, Bug reports, Patches"
 msgstr "Porady, Raporty o bledach, Latki"
@@ -4579,3 +4579,6 @@ msgstr "Pokaz Ping:"
 
 msgid "Allied team has constructed the bridge!"
 msgstr "Allianci zbudowali most!"
+
+msgid "Multisampling:"
+msgstr "Probkowanie:"

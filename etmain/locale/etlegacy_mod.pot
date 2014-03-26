@@ -1272,7 +1272,7 @@ msgstr ""
 msgid "SET RECOMMENDED"
 msgstr ""
 
-msgid "^3DEVELOPED BY ET LEGACY TEAM"
+msgid "DEVELOPED BY ET:LEGACY TEAM"
 msgstr ""
 
 msgid "^1PROGRAMMING"
@@ -2564,7 +2564,7 @@ msgstr ""
 msgid "^1LET'S KEEP ET ALIVE!"
 msgstr ""
 
-msgid "^3Thank you for installing ET:Legacy"
+msgid "Thank you for installing ET:Legacy"
 msgstr ""
 
 msgid "HOST GAME: EXTENDED"
@@ -3680,7 +3680,7 @@ msgstr ""
 msgid "HALL OF FAME"
 msgstr ""
 
-msgid "^3ET LEGACY HALL OF FAME"
+msgid "ET:LEGACY HALL OF FAME"
 msgstr ""
 
 msgid "Advices, Bug reports, Patches"
@@ -4550,4 +4550,7 @@ msgid "Show Ping:"
 msgstr ""
 
 msgid "Allied team has constructed the bridge!"
+msgstr ""
+
+msgid "Multisampling:"
 msgstr ""
