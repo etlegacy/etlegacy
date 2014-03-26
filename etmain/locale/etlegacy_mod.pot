@@ -4552,5 +4552,5 @@ msgstr ""
 msgid "Allied team has constructed the bridge!"
 msgstr ""
 
-msgid "Multisampling:"
+msgid "Anti-Aliasing:"
 msgstr ""

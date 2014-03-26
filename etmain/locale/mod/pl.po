@@ -4580,5 +4580,5 @@ msgstr "Pokaz Ping:"
 msgid "Allied team has constructed the bridge!"
 msgstr "Allianci zbudowali most!"
 
-msgid "Multisampling:"
-msgstr "Probkowanie:"
+msgid "Anti-Aliasing:"
+msgstr "Anty-Aliasing:"

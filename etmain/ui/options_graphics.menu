@@ -56,7 +56,7 @@ menuDef {
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Texture Filter:", .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, "Set the GL texture mode" )
 	MULTIACTION( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Anisotropic Filter:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium" 4 "High" 8 }, uiScript glCustom, "Set anisotropic filtering" )
-	MULTIACTION( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Multisampling:", .2, 8, "r_ext_multisample", cvarFloatList { "Low" 0 "Medium" 2 "High" 4 }, uiScript glCustom, "Set multisampling" )
+	MULTIACTION( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Anti-Aliasing:", .2, 8, "r_ext_multisample", cvarFloatList { "Off" 0 "x2" 2 "x4" 4 }, uiScript glCustom, "Set Anti-Aliasing" )
 	MULTIACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "Color Depth:", .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "Set color depth" )
 	YESNOACTION( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "Detail Textures:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "Toogles usage of high detail textures" )
 	MULTIACTION( 8, 300, (SUBWINDOW_WIDTH)-4, 10, "Depth Buffer:", .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "Set the number of desired depth bits" )
