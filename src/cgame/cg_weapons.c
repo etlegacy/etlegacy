@@ -431,7 +431,7 @@ CG_GetWindVector
 void CG_GetWindVector(vec3_t dir)
 {
 	dir[0] = random() * 0.25f;
-	dir[1] = sin(0.00001f*cg.time); // simulate a little wind so it looks natural
+	dir[1] = sin(0.00001f * cg.time); // simulate a little wind so it looks natural
 	dir[2] = random(); // one direction (so smoke goes side-like)
 	VectorNormalize(dir);
 }

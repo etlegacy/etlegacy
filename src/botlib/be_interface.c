@@ -69,7 +69,7 @@ int Export_BotLibSetup(qboolean singleplayer)
 
 	globaldefines = NULL;
 
-	botlibsetup               = qtrue;
+	botlibsetup = qtrue;
 
 	return BLERR_NOERROR;
 }
@@ -92,8 +92,8 @@ int Export_BotLibShutdown(void)
 	// remove all global defines from the pre compiler
 	PC_RemoveAllGlobalDefines();
 
-	botlibsetup               = qfalse;
-	recursive                 = 0;
+	botlibsetup = qfalse;
+	recursive   = 0;
 	// print any files still open
 	PC_CheckOpenSourceHandles();
 

@@ -225,7 +225,7 @@ void GLimp_Minimize(void)
  */
 void GLimp_LogComment(const char *comment)
 {
-	ri.Printf(PRINT_DEVELOPER,comment);
+	ri.Printf(PRINT_DEVELOPER, comment);
 }
 
 /* unused - see GLimp_DetectAvailableModes
@@ -1740,7 +1740,7 @@ void GLimp_SetHardware(void)
 
 void Glimp_ClearScreen(void)
 {
-	qglClearColor(0,0,0,1);
+	qglClearColor(0, 0, 0, 1);
 	qglClear(GL_COLOR_BUFFER_BIT);
 	GLimp_EndFrame();
 }

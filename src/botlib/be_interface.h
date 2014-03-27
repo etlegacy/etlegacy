@@ -43,4 +43,4 @@
 // global variables
 //==========================================================
 
-extern botlib_import_t  botimport;
+extern botlib_import_t botimport;

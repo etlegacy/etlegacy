@@ -1511,8 +1511,8 @@ static void CG_DrawCrosshairNames(void)
 	float      w;
 	const char *s;
 	size_t     colorizedBufferLength = 32;
-	char       colorized[32] = {0};
-	int        playerHealth = 0;
+	char       colorized[32]         = { 0 };
+	int        playerHealth          = 0;
 	vec4_t     c;
 	qboolean   drawStuff = qfalse;
 	qboolean   isTank    = qfalse;
