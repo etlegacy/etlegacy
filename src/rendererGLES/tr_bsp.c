@@ -2041,6 +2041,7 @@ static void R_SetParent(mnode_t *node, mnode_t *parent)
 				    gen->surfaceType != SF_TRIANGLES &&
 				    gen->surfaceType != SF_FOLIAGE)
 				{
+					mark++;
 					continue;
 				}
 				AddPointToBounds(gen->bounds[0], node->surfMins, node->surfMaxs);

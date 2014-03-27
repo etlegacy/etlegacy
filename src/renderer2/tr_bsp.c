@@ -5046,6 +5046,7 @@ static void R_SetParent(bspNode_t *node, bspNode_t *parent)
 				if (gen->surfaceType != SF_FACE &&
 				    gen->surfaceType != SF_GRID && gen->surfaceType != SF_TRIANGLES) // && gen->surfaceType != SF_FOLIAGE)
 				{
+					mark++;
 					continue;
 				}
 				AddPointToBounds(gen->bounds[0], node->surfMins, node->surfMaxs);
