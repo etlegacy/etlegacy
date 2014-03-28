@@ -4582,3 +4582,9 @@ msgstr "Allianci zbudowali most!"
 
 msgid "Anti-Aliasing:"
 msgstr "Anty-Aliasing:"
+
+msgid "The Tank has been repaired"
+msgstr "Czolg zostal naprawiony"
+
+msgid "^1ORIGINAL DEVELOPERS"
+msgstr "^1ORYGINALNI WYDAWCY"

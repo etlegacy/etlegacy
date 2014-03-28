@@ -4554,3 +4554,9 @@ msgstr ""
 
 msgid "Anti-Aliasing:"
 msgstr ""
+
+msgid "The Tank has been repaired"
+msgstr ""
+
+msgid "^1ORIGINAL DEVELOPERS"
+msgstr ""
