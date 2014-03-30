@@ -45,6 +45,13 @@ int  vm_debugLevel;
 #define MAX_VM      3
 vm_t vmTable[MAX_VM];
 
+const char *vmStrs[MAX_VM] =
+{
+	"GameVM",
+	"CGameVM",
+	"UIVM",
+};
+
 void VM_VmInfo_f(void);
 void VM_VmProfile_f(void);
 

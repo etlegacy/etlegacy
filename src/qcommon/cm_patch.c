@@ -1466,7 +1466,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
     vec3_t v1, v2, normal, point;
     patchPlane_t *planes;
     facet_t	*facet;
-    
+
     facet = pc->facets;
     for ( i = 0 ; i < pc->numFacets ; i++, facet++ )
     {
@@ -1480,9 +1480,9 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
         VectorNegate(normal, v2);
         offset = DotProduct(v1, v2);
         //offset = 0;
-        
+
         planedist = planes->plane[3] + offset;
-        
+
         d1 = DotProduct( tw->start, normal ) - planedist;
         d2 = DotProduct( tw->end, normal ) - planedist;
 
@@ -1508,7 +1508,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
         else {
             continue;
         }
-        
+
         for (j = 0; j < facet->numBorders; j++)
         {
             planes = &pc->planes[ facet->borderPlanes[j] ];
@@ -1535,7 +1535,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
             if (DotProduct(point, normal) - planedist < -ON_EPSILON) break;
         }
         if (j < facet->numBorders) continue;
-        
+
         if (fraction < tw->trace.fraction)
         {
             debugPatchCollide = pc;

@@ -1547,7 +1547,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 				}
 			}
 
-			Z_Free(destData);   // TTimo
+			Z_Free(destData);
 		}
 
 		fclose(destHandle);

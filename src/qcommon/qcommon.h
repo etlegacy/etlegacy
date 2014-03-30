@@ -374,6 +374,17 @@ typedef enum
 	VMI_COMPILED
 } vmInterpret_t;
 
+
+typedef enum vmSlots_e
+{
+	VM_GAME = 0,
+	VM_CGAME,
+	VM_UI,
+	MAX_VM
+} vmSlots_t;
+
+extern const char *vmStrs[MAX_VM];
+
 typedef enum
 {
 	TRAP_MEMSET = 100,
