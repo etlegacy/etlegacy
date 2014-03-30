@@ -1754,8 +1754,8 @@ static void PushNode(link_t * traversalStack, bspNode_t * node)
 
             traversalStack->numElements += 2;
 #endif
-			GLimp_LogComment("traversal-stack <-- node %i\n", node->children[0] - tr.world->nodes);
-			GLimp_LogComment("traversal-stack <-- node %i\n", node->children[1] - tr.world->nodes);
+            GLimp_LogComment("traversal-stack <-- node %i\n", node->children[0] - tr.world->nodes);
+            GLimp_LogComment("traversal-stack <-- node %i\n", node->children[1] - tr.world->nodes);
         }
     }
 }

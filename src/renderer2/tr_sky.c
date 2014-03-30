@@ -911,7 +911,7 @@ void RB_DrawSun(void)
 void Tess_StageIteratorSky(void)
 {
 	Ren_LogComment("--- Tess_StageIteratorSky( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		tess.numVertexes, tess.numIndexes / 3);
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	if (r_fastsky->integer)
 	{

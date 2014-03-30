@@ -83,7 +83,7 @@ void Tess_CheckOverflow(int verts, int indexes)
 	}
 
 	Ren_LogComment("--- Tess_CheckOverflow(%i + %i vertices, %i + %i triangles ) ---\n", tess.numVertexes, verts,
-		(tess.numIndexes / 3), indexes);
+	               (tess.numIndexes / 3), indexes);
 
 	Tess_End();
 

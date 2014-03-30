@@ -33,17 +33,17 @@
 */
 
 #if defined(UNIFORM_ENUM)
-#define UNIFORM_DEF(e,n,t) e,
+#define UNIFORM_DEF(e, n, t) e,
 #elif defined(UNIFORM_TYPE)
-#define UNIFORM_DEF(e,n,t) {#n,t},
+#define UNIFORM_DEF(e, n, t) {#n, t },
 #else
-#define UNIFORM_DEF(e,n,t)
+#define UNIFORM_DEF(e, n, t)
 #endif
 
 #if defined(MACRO_ENUM)
 #define MACRO_DEF(n) n,
 #elif defined(MACRO_NAME)
-#define MACRO_DEF(n) #n ,
+#define MACRO_DEF(n) #n,
 #else
 #define MACRO_DEF(n)
 #endif
@@ -119,7 +119,7 @@ UNIFORM_DEF(UNIFORM_TIME, u_Time, GLSL_FLOAT)
 UNIFORM_DEF(UNIFORM_VERTEXLERP, u_VertexLerp, GLSL_FLOAT)
 UNIFORM_DEF(UNIFORM_MATERIALINFO, u_MaterialInfo, GLSL_VEC2)
 
-// znear, zfar, width/2, height/2	
+// znear, zfar, width/2, height/2
 UNIFORM_DEF(UNIFORM_VIEWINFO, u_ViewInfo, GLSL_VEC4)
 UNIFORM_DEF(UNIFORM_VIEWORIGIN, u_ViewOrigin, GLSL_VEC3)
 UNIFORM_DEF(UNIFORM_VIEWFORWARD, u_ViewForward, GLSL_VEC3)

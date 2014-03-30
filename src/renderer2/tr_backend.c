@@ -2047,12 +2047,12 @@ static void RB_RenderInteractionsShadowMapped()
 							//MatrixIdentity(cropMatrix);
 
 							Ren_LogComment("split frustum light view space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
-								splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]);
+							               splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
+							               splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]);
 
 							Ren_LogComment("split frustum light clip space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
+							               splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+							               splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 #else
 
@@ -2104,16 +2104,16 @@ static void RB_RenderInteractionsShadowMapped()
 							Ren_LogComment("shadow casters = %i\n", numCasters);
 
 							Ren_LogComment("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
+							               splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+							               splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 							Ren_LogComment("shadow caster light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
-								casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]);
+							               casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
+							               casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]);
 
 							Ren_LogComment("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
-								receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
+							               receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
+							               receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
 
 							// scene-dependent bounding volume
 							cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
@@ -4387,12 +4387,12 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							//MatrixIdentity(cropMatrix);
 
 							Ren_LogComment("split frustum light view space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
-								splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]);
+							               splitFrustumViewBounds[0][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[0][2],
+							               splitFrustumViewBounds[1][0], splitFrustumViewBounds[1][1], splitFrustumViewBounds[1][2]);
 
 							Ren_LogComment("split frustum light clip space bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
+							               splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+							               splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 #else
 
@@ -4438,16 +4438,16 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							Ren_LogComment("shadow casters = %i\n", numCasters);
 
 							Ren_LogComment("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
-								splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
+							               splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
+							               splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 							Ren_LogComment("shadow caster light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
-								casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]);
+							               casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
+							               casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]);
 
 							Ren_LogComment("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
-								receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
-								receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
+							               receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
+							               receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
 
 							// scene-dependent bounding volume
 							cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
@@ -6222,7 +6222,7 @@ void RB_CameraPostFX(void)
 	if(glConfig.framebufferObjectAvailable && glConfig.textureFloatAvailable)
 	{
 	    // copy depth of the main context to deferredRenderFBO
-		R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+	    R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 	}
 	else
 	*/
@@ -9512,11 +9512,11 @@ static void RB_RenderViewDeferred(void)
 	clearBits = GL_DEPTH_BUFFER_BIT;
 
 	/*
-		if(r_measureOverdraw->integer || r_shadows->integer == SHADOWING_STENCIL)
-		{
-		clearBits |= GL_STENCIL_BUFFER_BIT;
-		}
-		*/
+	    if(r_measureOverdraw->integer || r_shadows->integer == SHADOWING_STENCIL)
+	    {
+	    clearBits |= GL_STENCIL_BUFFER_BIT;
+	    }
+	    */
 	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		clearBits |= GL_COLOR_BUFFER_BIT;
@@ -9535,12 +9535,12 @@ static void RB_RenderViewDeferred(void)
 		/*
 		if(glConfig2.framebufferBlitAvailable)
 		{
-			glDrawBuffers(1, geometricRenderTargets);
+		    glDrawBuffers(1, geometricRenderTargets);
 
-			// copy color of the main context to geometricRenderFBO
-			R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		    // copy color of the main context to geometricRenderFBO
+		    R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 		}
-			*/
+		    */
 	}
 	glClear(clearBits);
 
@@ -9643,12 +9643,12 @@ static void RB_RenderViewDeferred(void)
 		/*
 		if(glConfig2.framebufferBlitAvailable)
 		{
-			R_CopyToFBO(tr.geometricRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
-			R_CopyToFBO(tr.geometricRenderFBO,tr.downScaleFBO_64x64,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		    R_CopyToFBO(tr.geometricRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		    R_CopyToFBO(tr.geometricRenderFBO,tr.downScaleFBO_64x64,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 		}
 		else
 		{
-			// FIXME add non EXT_framebuffer_blit code
+		    // FIXME add non EXT_framebuffer_blit code
 		}
 		*/
 
@@ -9659,12 +9659,12 @@ static void RB_RenderViewDeferred(void)
 		/*
 		if(glConfig2.framebufferBlitAvailable)
 		{
-			// copy deferredRenderFBO to downScaleFBO_quarter
-			R_CopyToFBO(tr.deferredRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		    // copy deferredRenderFBO to downScaleFBO_quarter
+		    R_CopyToFBO(tr.deferredRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 		}
 		else
 		{
-			// FIXME add non EXT_framebuffer_blit code
+		    // FIXME add non EXT_framebuffer_blit code
 		}
 		*/
 	}
@@ -9682,15 +9682,15 @@ static void RB_RenderViewDeferred(void)
 		/*
 		if(glConfig2.framebufferBlitAvailable)
 		{
-			// copy deferredRenderFBO to portalRenderFBO
-			R_CopyToFBO(tr.deferredRenderFBO,tr.portalRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		    // copy deferredRenderFBO to portalRenderFBO
+		    R_CopyToFBO(tr.deferredRenderFBO,tr.portalRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 		}
 		else
 		{
-			// capture current color buffer
-			GL_SelectTexture(0);
-			GL_Bind(tr.portalRenderImage);
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
+		    // capture current color buffer
+		    GL_SelectTexture(0);
+		    GL_Bind(tr.portalRenderImage);
+		    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
 		}
 		*/
 		backEnd.pc.c_portals++;
@@ -9754,8 +9754,8 @@ static void RB_RenderViewFront(void)
 			clearBits |= GL_COLOR_BUFFER_BIT;
 
 			GL_ClearColor(tr.world->fogs[tr.world->globalFog].color[0],
-				            tr.world->fogs[tr.world->globalFog].color[1],
-				            tr.world->fogs[tr.world->globalFog].color[2], 1.0);
+			              tr.world->fogs[tr.world->globalFog].color[1],
+			              tr.world->fogs[tr.world->globalFog].color[2], 1.0);
 		}
 	}
 	else if (tr.world && tr.world->hasSkyboxPortal)
@@ -9774,12 +9774,12 @@ static void RB_RenderViewFront(void)
 				if (tr.glfogsettings[FOG_PORTALVIEW].registered)
 				{
 					GL_ClearColor(tr.glfogsettings[FOG_PORTALVIEW].color[0], tr.glfogsettings[FOG_PORTALVIEW].color[1],
-						            tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
+					              tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
 				}
 				else if (tr.glfogNum > FOG_NONE && tr.glfogsettings[FOG_CURRENT].registered)
 				{
 					GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-						            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+					              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
 				}
 				else
 				{
@@ -9793,7 +9793,7 @@ static void RB_RenderViewFront(void)
 				if (tr.glfogsettings[FOG_PORTALVIEW].registered)
 				{
 					GL_ClearColor(tr.glfogsettings[FOG_PORTALVIEW].color[0], tr.glfogsettings[FOG_PORTALVIEW].color[1],
-						            tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
+					              tr.glfogsettings[FOG_PORTALVIEW].color[2], tr.glfogsettings[FOG_PORTALVIEW].color[3]);
 
 					if (tr.glfogsettings[FOG_PORTALVIEW].clearscreen)
 					{
@@ -9824,7 +9824,7 @@ static void RB_RenderViewFront(void)
 				}
 
 				GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-					            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+				              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
 			}
 			else if (!r_portalSky->integer)
 			{
@@ -9853,7 +9853,7 @@ static void RB_RenderViewFront(void)
 			{
 				// try to clear fastsky with current fog color
 				GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-					            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+				              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
 			}
 			else
 			{
@@ -9868,7 +9868,7 @@ static void RB_RenderViewFront(void)
 			{
 				// try to clear fastsky with current fog color
 				GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1],
-					            tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
+				              tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
 
 				if (tr.glfogsettings[FOG_CURRENT].clearscreen)
 				{
@@ -9881,7 +9881,7 @@ static void RB_RenderViewFront(void)
 		if (HDR_ENABLED())
 		{
 			// copy color of the main context to deferredRenderFBO
-			R_CopyToFBO(NULL,tr.deferredRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(NULL, tr.deferredRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
 	}
 
@@ -9976,8 +9976,8 @@ static void RB_RenderViewFront(void)
 	{
 		if (glConfig2.framebufferBlitAvailable)
 		{
-			R_CopyToFBO(tr.deferredRenderFBO,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_LINEAR);
-			R_CopyToFBO(tr.deferredRenderFBO,tr.downScaleFBO_64x64,GL_COLOR_BUFFER_BIT,GL_LINEAR);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_quarter, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_64x64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 		}
 		else
 		{
@@ -9994,12 +9994,12 @@ static void RB_RenderViewFront(void)
 
 		if(glConfig2.framebufferBlitAvailable)
 		{
-			// copy deferredRenderFBO to downScaleFBO_quarter
-			R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+		    // copy deferredRenderFBO to downScaleFBO_quarter
+		    R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 		}
 		else
 		{
-			// FIXME add non EXT_framebuffer_blit code
+		    // FIXME add non EXT_framebuffer_blit code
 		}
 		*/
 	}
@@ -10036,7 +10036,7 @@ static void RB_RenderViewFront(void)
 		if (r_hdrRendering->integer && glConfig.textureFloatAvailable && glConfig.framebufferObjectAvailable && glConfig.framebufferBlitAvailable)
 		{
 			// copy deferredRenderFBO to portalRenderFBO
-			R_CopyToFBO(tr.deferredRenderFBO,tr.portalRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
 #endif
 #if 0
@@ -10044,7 +10044,7 @@ static void RB_RenderViewFront(void)
 		if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
 		{
 			// copy main context to portalRenderFBO
-			R_CopyToFBO(NULL,tr.portalRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(NULL, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
 #endif
 		//else
@@ -10061,7 +10061,7 @@ static void RB_RenderViewFront(void)
 	if (r_dynamicBspOcclusionCulling->integer)
 	{
 		// copy depth of the main context to deferredRenderFBO
-		R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+		R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 	}
 #endif
 }
@@ -10799,14 +10799,14 @@ void RB_ShowImages(void)
 /* unused
 static vec4_t *RB_GetScreenQuad(void)
 {
-	static vec4_t quad[4];
+    static vec4_t quad[4];
 
-	Vector4Set(quad[0], 0, 0, 0, 1);
-	Vector4Set(quad[1], glConfig.vidWidth, 0, 0, 1);
-	Vector4Set(quad[2], glConfig.vidWidth, glConfig.vidHeight, 0, 1);
-	Vector4Set(quad[3], 0, glConfig.vidHeight, 0, 1);
+    Vector4Set(quad[0], 0, 0, 0, 1);
+    Vector4Set(quad[1], glConfig.vidWidth, 0, 0, 1);
+    Vector4Set(quad[2], glConfig.vidWidth, glConfig.vidHeight, 0, 1);
+    Vector4Set(quad[3], 0, glConfig.vidHeight, 0, 1);
 
-	return quad;
+    return quad;
 }
 */
 

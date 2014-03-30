@@ -629,7 +629,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				interpolate = cubeProbeNearestDistance / (cubeProbeNearestDistance + cubeProbeSecondNearestDistance);
 
 				Ren_LogComment("cubeProbeNearestDistance = %f, cubeProbeSecondNearestDistance = %f, interpolation = %f\n",
-					cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate);
+				               cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate);
 
 				// bind u_EnvironmentMap0
 				GL_SelectTexture(3);
@@ -2294,7 +2294,7 @@ static void Render_heatHaze(int stage)
 		if (DS_STANDARD_ENABLED())
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			R_CopyToFBO(tr.geometricRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(tr.geometricRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 		else if (HDR_ENABLED())
 		{
@@ -2302,9 +2302,9 @@ static void Render_heatHaze(int stage)
 
 			// copy deferredRenderFBO to occlusionRenderFBO
 #if 0
-			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 #else
-			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 #endif
 
 			GL_CheckErrors();
@@ -2312,7 +2312,7 @@ static void Render_heatHaze(int stage)
 		else
 		{
 			// copy depth of the main context to occlusionRenderFBO
-			R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
 		R_BindFBO(tr.occlusionRenderFBO);
@@ -2704,17 +2704,17 @@ static void Render_volumetricFog()
 		    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 		else if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			R_CopyToFBO(tr.deferredRenderFBO,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 		else
 		{
 			// copy depth of the main context to occlusionRenderFBO
-			R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_DEPTH_BUFFER_BIT,GL_NEAREST);
+			R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
 		GLSL_SetMacroState(gl_depthToColorShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
@@ -3347,7 +3347,7 @@ void Tess_StageIteratorGeneric()
 	int stage;
 
 	Ren_LogComment("--- Tess_StageIteratorGeneric( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		tess.numVertexes, tess.numIndexes / 3);
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3553,7 +3553,7 @@ void Tess_StageIteratorGBuffer()
 	qboolean diffuseRendered = qfalse;
 
 	Ren_LogComment("--- Tess_StageIteratorGBuffer( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		tess.numVertexes, tess.numIndexes / 3);
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3754,7 +3754,7 @@ void Tess_StageIteratorGBufferNormalsOnly()
 	int stage;
 
 	Ren_LogComment("--- Tess_StageIteratorGBufferNormalsOnly( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		tess.numVertexes, tess.numIndexes / 3);
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3846,7 +3846,7 @@ void Tess_StageIteratorDepthFill()
 	int stage;
 
 	Ren_LogComment("--- Tess_StageIteratorDepthFill( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		tess.numVertexes, tess.numIndexes / 3);
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3923,7 +3923,7 @@ void Tess_StageIteratorShadowFill()
 	int stage;
 
 	Ren_LogComment("--- Tess_StageIteratorShadowFill( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		tess.numVertexes, tess.numIndexes / 3);
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3998,7 +3998,7 @@ void Tess_StageIteratorLighting()
 	shaderStage_t *attenuationZStage;
 
 	Ren_LogComment("--- Tess_StageIteratorLighting( %s, %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		tess.lightShader->name, tess.numVertexes, tess.numIndexes / 3);
+	               tess.lightShader->name, tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
