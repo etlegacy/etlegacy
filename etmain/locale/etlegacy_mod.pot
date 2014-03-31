@@ -4560,3 +4560,6 @@ msgstr ""
 
 msgid "^1ORIGINAL DEVELOPERS"
 msgstr ""
+
+msgid "The Tank has been damaged"
+msgstr ""
