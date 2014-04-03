@@ -138,7 +138,7 @@ typedef int intptr_t;
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
-#include <sys/stat.h> // rain
+#include <sys/stat.h>
 #include <float.h>
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1600)
@@ -1836,7 +1836,7 @@ typedef struct
 {
 	glyphInfo_t glyphs[GLYPHS_PER_FONT];
 	float glyphScale;
-	char name[MAX_QPATH];
+	char datName[MAX_QPATH];
 } fontInfo_t;
 
 // SQR

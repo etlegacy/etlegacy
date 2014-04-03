@@ -474,8 +474,8 @@ void Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 // if function is NULL, the command will be forwarded to the server
 // as a clc_clientCommand instead of executed locally
 
-void    Cmd_RemoveCommand(const char *cmd_name);
-void    Cmd_RemoveCommandSafe(const char *cmd_name);
+void Cmd_RemoveCommand(const char *cmd_name);
+void Cmd_RemoveCommandSafe(const char *cmd_name);
 
 typedef void (*completionFunc_t)(char *args, int argNum);
 
