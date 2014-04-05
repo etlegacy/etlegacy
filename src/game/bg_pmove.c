@@ -4635,20 +4635,17 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET: // FIXME: see below - see cg_weapons.c
 		if (!pm->ps->ammo[WP_MORTAR])
 		{
 			PM_AddEvent(EV_NOAMMO);
 		}
 		break;
-	/*
 	case WP_MORTAR2_SET:
 	if (!pm->ps->ammo[WP_MORTAR2])
 	{
 	    PM_AddEvent(EV_NOAMMO);
 	}
 	break;
-	*/
 	default:
 		break;
 	}
