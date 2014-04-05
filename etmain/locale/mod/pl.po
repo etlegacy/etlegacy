@@ -3662,8 +3662,8 @@ msgstr "Lista Ulubionych pelna\n"
 msgid "Added favorite server %s\n"
 msgstr "Dodany ulubiony serwer %s\n"
 
-msgid "^3See HALL OF FAME below"
-msgstr "^3Zobacz Sale Chwaly ponizej"
+msgid "See HALL OF FAME below"
+msgstr "Zobacz Sale Chwaly ponizej"
 
 msgid "^1WEBSITE"
 msgstr "^1STRONA"

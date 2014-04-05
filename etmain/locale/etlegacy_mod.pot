@@ -3668,7 +3668,7 @@ msgstr ""
 msgid "Added favorite server %s\n"
 msgstr ""
 
-msgid "^3See HALL OF FAME below"
+msgid "See HALL OF FAME below"
 msgstr ""
 
 msgid "^1WEBSITE"
