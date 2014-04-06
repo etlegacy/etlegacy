@@ -60,8 +60,7 @@ If the start position is targeting an entity, the players camera will start out 
 */
 void SP_info_player_deathmatch(gentity_t *ent)
 {
-	int    i;
-	vec3_t dir;
+	int i;
 
 	G_SpawnInt("nobots", "0", &i);
 	if (i)
@@ -77,6 +76,8 @@ void SP_info_player_deathmatch(gentity_t *ent)
 	ent->enemy = G_PickTarget(ent->target);
 	if (ent->enemy)
 	{
+		vec3_t dir;
+
 		VectorSubtract(ent->enemy->s.origin, ent->s.origin, dir);
 		vectoangles(dir, ent->s.angles);
 	}
@@ -3011,7 +3012,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 	}
 
-	G_UpdateCharacter(client);
+	// no need to update character for revive
+	if (!revived)
+	{
+		G_UpdateCharacter(client);
+	}
 
 	SetWolfSpawnWeapons(client);
 
@@ -3120,6 +3125,13 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	{
 		// call entity scripting event
 		G_Script_ScriptEvent(ent, "playerstart", "");
+	}
+	
+	// when switching teams, reset the commandmap/radar icons,
+	// so your own meanwhile invalid landmine-markers don't show up..
+	if (teamChange && g_landminetimeout.integer)
+	{
+		G_ResetTeamMapData();
 	}
 }
 
