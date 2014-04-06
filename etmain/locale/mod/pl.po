@@ -2512,14 +2512,14 @@ msgstr "Ten serwer ma wlaczone max zycie. Padanie teraz bedzie tracilo zycie. Je
 msgid "In Last Man Standing mode you will not respawn if you tap out now. Are you sure?"
 msgstr "W Ostatni Czlowiek Przetrwaly nie odrodzisz sie jesli padniesz teraz. Jestes pewien?"
 
-msgid "MAX OMNI-BOT"
-msgstr "MAX OMNI-BOTow"
+msgid "Bot count:"
+msgstr "Liczba botow:"
 
-msgid "MIN OMNI-BOT"
-msgstr "MIN OMNI-BOTow"
+msgid "Bot skill:"
+msgstr "Umiejetnosci botow:"
 
-msgid "KICK OMNI-BOT"
-msgstr "WYWAL OMNI-BOTa"
+msgid "KICK ALL BOTS"
+msgstr "WYWAL WSZYSTKIE BOTY"
 
 msgid "Yes"
 msgstr "Tak"

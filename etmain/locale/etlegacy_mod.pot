@@ -2534,13 +2534,13 @@ msgid ""
 "sure?"
 msgstr ""
 
-msgid "MAX OMNI-BOT"
+msgid "Bot count:"
 msgstr ""
 
-msgid "MIN OMNI-BOT"
+msgid "Bot skill:"
 msgstr ""
 
-msgid "KICK OMNI-BOT"
+msgid "KICK ALL BOTS"
 msgstr ""
 
 msgid "Yes"
