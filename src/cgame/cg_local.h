@@ -2070,7 +2070,6 @@ extern vmCvar_t cg_errorDecay;
 extern vmCvar_t cg_nopredict;
 extern vmCvar_t cg_noPlayerAnims;
 extern vmCvar_t cg_showmiss;
-extern vmCvar_t cg_footsteps;
 extern vmCvar_t cg_markTime;
 extern vmCvar_t cg_brassTime;
 extern vmCvar_t cg_gun_frame;

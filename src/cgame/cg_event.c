@@ -2093,10 +2093,7 @@ void CG_MortarMiss(centity_t *cent, vec3_t origin)
 // a convenience function for all footstep sound playing
 static void CG_StartFootStepSound(bg_playerclass_t *classInfo, entityState_t *es, sfxHandle_t sfx)
 {
-	if (cg_footsteps.integer)
-	{
-		trap_S_StartSound(NULL, es->number, CHAN_BODY, sfx);
-	}
+	trap_S_StartSound(NULL, es->number, CHAN_BODY, sfx);
 }
 
 /*
