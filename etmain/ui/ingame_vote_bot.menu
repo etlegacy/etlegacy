@@ -8,8 +8,6 @@
 #define WINDOW_HEIGHT	128
 #define GROUP_NAME		"grpIngameVoteBot"
 
-// This menu can be done more flexible by adding ui cvars and more console commands
-
 // Omni-bot Menu //
 menuDef {
 	name		"ingame_vote_bot"
@@ -19,7 +17,7 @@ menuDef {
 	style		WINDOW_STYLE_FILLED
 
 	onEsc {
-		close ingame_vote_bot ;
+		close ingame_vote_bot;
 		open ingame_vote
 	}
 
@@ -46,7 +44,6 @@ menuDef {
 	BUTTON( 190, 50, .08*(WINDOW_WIDTH-12), 14, "3", .24, 11, exec "bot moveskill 3")
 	BUTTON( 225, 50, .08*(WINDOW_WIDTH-12), 14, "?", .24, 11, exec "bot moveskill 4")
 	
-	//BUTTON( 6, 50, WINDOW_WIDTH-12, 14, "MIN OMNI-BOT", .24, 11, exec "bot minbots -1")
 	BUTTON( 6, 78, WINDOW_WIDTH-12, 14, "KICK ALL BOTS", .24, 11, exec "bot minbots -1;bot maxbots -1;bot kickall" )
 	
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close ingame_vote_bot ; open ingame_vote )
