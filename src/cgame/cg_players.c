@@ -49,7 +49,7 @@ CG_EntOnFire
 */
 qboolean CG_EntOnFire(centity_t *cent)
 {
-	if (cent->currentState.number == cg.snap->ps.clientNum)
+	if (cent->currentState.number == cg.snap->ps.clientNum && cent->currentState.eType != ET_CORPSE)
 	{
 		// the player is always starting out on fire, which is easily seen in cinematics
 		//      so make sure onFireStart is not 0
@@ -1013,6 +1013,170 @@ void CG_ClearLerpFrameRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, i
 	}
 }
 
+/**
+ * @brief similar to CG_RunLerpFrameRate, simplifed, and sets remaining animation, so animation won't be replayed
+ */
+void CG_SetLerpFrameAnimationRateCorpse(centity_t *cent, lerpFrame_t *lf, int newAnimation)
+{
+	animation_t *anim;
+	int         rest;
+
+	bg_character_t *character;
+
+	if (cent->currentState.onFireStart >= 0)
+	{
+		character = cgs.gameCharacters[cent->currentState.onFireStart];
+	}
+	else
+	{
+		if (cent->currentState.modelindex < 4)
+		{
+			character = BG_GetCharacter(cent->currentState.modelindex, cent->currentState.modelindex2);
+		}
+		else
+		{
+			character = BG_GetCharacter(cent->currentState.modelindex - 4, cent->currentState.modelindex2);
+		}
+	}
+
+	if (!character)
+	{
+		return;
+	}
+
+	lf->animationNumber = newAnimation;
+	newAnimation       &= ~ANIM_TOGGLEBIT;
+
+	if (newAnimation < 0 || newAnimation >= character->animModelInfo->numAnimations)
+	{
+		CG_Error("CG_SetLerpFrameAnimationRate: Bad animation number: %i", newAnimation);
+	}
+
+	anim = character->animModelInfo->animations[newAnimation];
+	rest = cent->currentState.effect1Time - cg.time;    // duratiom of remaining animation
+
+	// make sure it is not out of anim
+	if (rest < 0)
+	{
+		rest = 0;
+	}
+
+	if (rest > anim->duration)
+	{
+		rest = anim->duration;
+	}
+
+	lf->animation     = anim;
+	lf->frame         = anim->firstFrame + ((anim->duration - rest) / anim->frameLerp);
+	lf->frameTime     = cg.time - 1;
+	lf->animationTime = cg.time + rest - anim->duration;
+	lf->frameModel    = anim->mdxFile;
+	if (cg_debugAnim.integer)
+	{
+		CG_Printf("Anim: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
+	}
+}
+
+/**
+ * @brief Simplifed code for corpses
+ */
+void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, centity_t *cent, int recursion)
+{
+	animation_t *anim;
+
+	// see if the animation sequence is switching
+	if (newAnimation != lf->animationNumber || !lf->animation)
+	{
+		CG_SetLerpFrameAnimationRateCorpse(cent, lf, newAnimation);
+	}
+
+	// make sure the animation speed is updated when possible
+	anim = lf->animation;
+
+	// animation time gone
+	if (cent->currentState.effect1Time < cg.time)
+	{
+		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
+		lf->oldFrameModel = lf->frameModel = anim->mdxFile;
+		lf->backlerp      = 0;
+		return;
+	}
+
+	// if we have passed the current frame, move it to
+	// oldFrame and calculate a new frame
+	if (cg.time >= lf->frameTime)
+	{
+		int f;
+
+		lf->oldFrame      = lf->frame;
+		lf->oldFrameTime  = lf->frameTime;
+		lf->oldFrameModel = lf->frameModel;
+
+		// get the next frame based on the animation
+		anim = lf->animation;
+		if (!anim->frameLerp)
+		{
+			return;     // shouldn't happen
+		}
+		if (cg.time < lf->animationTime)
+		{
+			lf->frameTime = lf->animationTime;      // initial lerp
+		}
+		else
+		{
+			lf->frameTime = lf->oldFrameTime + anim->frameLerp;
+		}
+		f = (lf->frameTime - lf->animationTime) / anim->frameLerp;
+		if (f >= anim->numFrames)
+		{
+			f -= anim->numFrames;
+			if (anim->loopFrames)
+			{
+				f %= anim->loopFrames;
+				f += anim->numFrames - anim->loopFrames;
+			}
+			else
+			{
+				f = anim->numFrames - 1;
+				// the animation is stuck at the end, so it
+				// can immediately transition to another sequence
+				lf->frameTime = cg.time;
+			}
+		}
+		lf->frame      = anim->firstFrame + f;
+		lf->frameModel = anim->mdxFile;
+		if (cg.time > lf->frameTime)
+		{
+			lf->frameTime = cg.time;
+
+			if (cg_debugAnim.integer)
+			{
+				CG_Printf("Clamp lf->frameTime\n");
+			}
+		}
+	}
+
+	if (lf->frameTime > cg.time + 200)
+	{
+		lf->frameTime = cg.time;
+	}
+
+	if (lf->oldFrameTime > cg.time)
+	{
+		lf->oldFrameTime = cg.time;
+	}
+	// calculate current lerp value
+	if (lf->frameTime == lf->oldFrameTime)
+	{
+		lf->backlerp = 0;
+	}
+	else
+	{
+		lf->backlerp = 1.0 - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
+	}
+}
+
+
 /*
 ===============
 CG_PlayerAnimation
@@ -1052,7 +1216,14 @@ static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 		}
 	}
 	// run the animation
-	CG_RunLerpFrameRate(ci, &cent->pe.legs, animIndex, cent, 0);
+	if (cent->currentState.eType == ET_CORPSE)
+	{
+		CG_RunLerpFrameRateCorpse(ci, &cent->pe.legs, animIndex, cent, 0);
+	}
+	else
+	{
+		CG_RunLerpFrameRate(ci, &cent->pe.legs, animIndex, cent, 0);
+	}
 
 	body->oldframe      = cent->pe.legs.oldFrame;
 	body->frame         = cent->pe.legs.frame;
@@ -1060,7 +1231,14 @@ static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 	body->frameModel    = cent->pe.legs.frameModel;
 	body->oldframeModel = cent->pe.legs.oldFrameModel;
 
-	CG_RunLerpFrameRate(ci, &cent->pe.torso, cent->currentState.torsoAnim, cent, 0);
+	if (cent->currentState.eType == ET_CORPSE)
+	{
+		CG_RunLerpFrameRateCorpse(ci, &cent->pe.torso, cent->currentState.torsoAnim, cent, 0);
+	}
+	else
+	{
+		CG_RunLerpFrameRate(ci, &cent->pe.torso, cent->currentState.torsoAnim, cent, 0);
+	}
 
 	body->oldTorsoFrame      = cent->pe.torso.oldFrame;
 	body->torsoFrame         = cent->pe.torso.frame;
