@@ -4641,11 +4641,11 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR2_SET:
-	if (!pm->ps->ammo[WP_MORTAR2])
-	{
-	    PM_AddEvent(EV_NOAMMO);
-	}
-	break;
+		if (!pm->ps->ammo[WP_MORTAR2])
+		{
+			PM_AddEvent(EV_NOAMMO);
+		}
+		break;
 	default:
 		break;
 	}
