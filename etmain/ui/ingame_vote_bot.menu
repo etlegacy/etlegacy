@@ -33,7 +33,7 @@ menuDef {
 	BUTTON( 85, 32, .08*(WINDOW_WIDTH-12), 14, "2", .24, 11, exec "bot maxbots 2")
 	BUTTON( 120, 32, .08*(WINDOW_WIDTH-12), 14, "4", .24, 11, exec "bot maxbots 4")
 	BUTTON( 155, 32, .08*(WINDOW_WIDTH-12), 14, "8", .24, 11, exec "bot maxbots 8")
-	BUTTON( 190, 32, .08*(WINDOW_WIDTH-12), 14, "14", .24, 11, exec "bot maxbots 14")
+	BUTTON( 190, 32, .08*(WINDOW_WIDTH-12), 14, "16", .24, 11, exec "bot maxbots 16")
 	BUTTON( 225, 32, .08*(WINDOW_WIDTH-12), 14, "20", .24, 11, exec "bot maxbots 20")
 	BUTTON( 260, 32, .08*(WINDOW_WIDTH-12), 14, "32", .24, 11, exec "bot maxbots 32")
 
