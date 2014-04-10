@@ -4591,3 +4591,6 @@ msgstr "^1ORYGINALNI WYDAWCY"
 
 msgid "The Tank has been damaged"
 msgstr "Czolg zostal uszkodzony"
+
+msgid "BOTS"
+msgstr "BOTY"

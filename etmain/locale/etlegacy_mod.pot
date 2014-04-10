@@ -4563,3 +4563,6 @@ msgstr ""
 
 msgid "The Tank has been damaged"
 msgstr ""
+
+msgid "BOTS"
+msgstr ""
