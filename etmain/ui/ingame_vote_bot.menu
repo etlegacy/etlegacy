@@ -4,7 +4,7 @@
 // Defines //
 #define WINDOW_X		16
 #define WINDOW_Y		16
-#define WINDOW_WIDTH	296
+#define WINDOW_WIDTH	310
 #define WINDOW_HEIGHT	128
 #define GROUP_NAME		"grpIngameVoteBot"
 
@@ -30,19 +30,19 @@ menuDef {
 //        - OB 0.83 does no longer use /bot difficulty X
 
 	LABEL( 6, 32, .3*(WINDOW_WIDTH-12), 14, "Bot count:", .24, ITEM_ALIGN_LEFT, 0, 10 )
-	BUTTON( 85, 32, .08*(WINDOW_WIDTH-12), 14, "2", .24, 11, exec "bot maxbots 2")
-	BUTTON( 120, 32, .08*(WINDOW_WIDTH-12), 14, "4", .24, 11, exec "bot maxbots 4")
-	BUTTON( 155, 32, .08*(WINDOW_WIDTH-12), 14, "8", .24, 11, exec "bot maxbots 8")
-	BUTTON( 190, 32, .08*(WINDOW_WIDTH-12), 14, "16", .24, 11, exec "bot maxbots 16")
-	BUTTON( 225, 32, .08*(WINDOW_WIDTH-12), 14, "20", .24, 11, exec "bot maxbots 20")
-	BUTTON( 260, 32, .08*(WINDOW_WIDTH-12), 14, "32", .24, 11, exec "bot maxbots 32")
+	BUTTON( 100, 32, .08*(WINDOW_WIDTH-12), 14, "2", .24, 11, exec "bot maxbots 2")
+	BUTTON( 135, 32, .08*(WINDOW_WIDTH-12), 14, "4", .24, 11, exec "bot maxbots 4")
+	BUTTON( 170, 32, .08*(WINDOW_WIDTH-12), 14, "8", .24, 11, exec "bot maxbots 8")
+	BUTTON( 205, 32, .08*(WINDOW_WIDTH-12), 14, "16", .24, 11, exec "bot maxbots 16")
+	BUTTON( 240, 32, .08*(WINDOW_WIDTH-12), 14, "20", .24, 11, exec "bot maxbots 20")
+	BUTTON( 275, 32, .08*(WINDOW_WIDTH-12), 14, "32", .24, 11, exec "bot maxbots 32")
 
 	LABEL( 6, 50, .3*(WINDOW_WIDTH-12), 14, "Bot skill:", .24, ITEM_ALIGN_LEFT, 0, 10 )
-	BUTTON( 85, 50, .08*(WINDOW_WIDTH-12), 14, "0", .24, 11, exec "bot moveskill 0")
-	BUTTON( 120, 50, .08*(WINDOW_WIDTH-12), 14, "1", .24, 11, exec "bot moveskill 1")
-	BUTTON( 155, 50, .08*(WINDOW_WIDTH-12), 14, "2", .24, 11, exec "bot moveskill 2")
-	BUTTON( 190, 50, .08*(WINDOW_WIDTH-12), 14, "3", .24, 11, exec "bot moveskill 3")
-	BUTTON( 225, 50, .08*(WINDOW_WIDTH-12), 14, "?", .24, 11, exec "bot moveskill 4")
+	BUTTON( 100, 50, .08*(WINDOW_WIDTH-12), 14, "0", .24, 11, exec "bot moveskill 0")
+	BUTTON( 135, 50, .08*(WINDOW_WIDTH-12), 14, "1", .24, 11, exec "bot moveskill 1")
+	BUTTON( 170, 50, .08*(WINDOW_WIDTH-12), 14, "2", .24, 11, exec "bot moveskill 2")
+	BUTTON( 205, 50, .08*(WINDOW_WIDTH-12), 14, "3", .24, 11, exec "bot moveskill 3")
+	BUTTON( 240, 50, .08*(WINDOW_WIDTH-12), 14, "?", .24, 11, exec "bot moveskill 4")
 	
 	BUTTON( 6, 78, WINDOW_WIDTH-12, 14, "KICK ALL BOTS", .24, 11, exec "bot minbots -1;bot maxbots -1;bot kickall" )
 	
