@@ -2516,7 +2516,7 @@ msgid "Bot count:"
 msgstr "Liczba botow:"
 
 msgid "Bot skill:"
-msgstr "Umiejetnosci botow:"
+msgstr "Umiejetnosci:"
 
 msgid "KICK ALL BOTS"
 msgstr "WYWAL WSZYSTKIE BOTY"
