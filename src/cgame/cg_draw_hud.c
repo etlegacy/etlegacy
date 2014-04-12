@@ -1974,7 +1974,18 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	}
 
 	// add this snapshot's info
-	lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
+	if (cg.demoPlayback)
+	{
+		static int lasttime = 0;
+
+		// display snapshot time delta instead of ping
+	    lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->serverTime - lasttime;
+	    lasttime = snap->serverTime;
+	}
+	else
+	{
+		lagometer.snapshotSamples[ lagometer.snapshotCount & (LAG_SAMPLES - 1) ] = snap->ping;
+	}
 	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)]   = snap->snapFlags;
 	lagometer.snapshotCount++;
 }
