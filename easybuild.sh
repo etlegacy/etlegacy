@@ -99,7 +99,7 @@ echo
 # everything looks ok, try to compile!
 
 # cmake varialbes
-[ ! "${RELEASE_TYPE}" ]    && RELEASE_TYPE="Debug"
+[ ! "${RELEASE_TYPE}" ]    && RELEASE_TYPE="Release"
 [ ! "${CROSS_COMPILE32}" ] && CROSS_COMPILE32=1
 [ ! "${BUILD_CLIENT}" ] && BUILD_CLIENT=1
 [ ! "${BUNDLED_LIBS}" ] && BUNDLED_LIBS=1
@@ -159,9 +159,6 @@ _CFGSTRING="
 	-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
 	-DFEATURE_ANTICHEAT=${FEATURE_ANTICHEAT}
 	-DFEATURE_LUA=${FEATURE_LUA}
-	-DFEATURE_RENDERER2=1
-	-DRENDERER_DYNAMIC=1
-	-DFEATURE_FREETYPE=0
 "
 
 if [ "${DEV}" != 1 ]; then
@@ -177,9 +174,9 @@ if [ "${DEV}" != 1 ]; then
 		PREFIX=${HOME}/etlegacy
 		_CFGSTRING="${_CFGSTRING}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
-		-DINSTALL_DEFAULT_MODDIR=/home/olaf/tuttle
-		-DINSTALL_DEFAULT_BINDIR=/home/olaf/tuttle
-		-DINSTALL_DEFAULT_BASEDIR=/home/olaf/tuttle
+		-DINSTALL_DEFAULT_MODDIR=mod
+		-DINSTALL_DEFAULT_BINDIR=bin
+		-DINSTALL_DEFAULT_BASEDIR=${PREFIX}/mod
 		"
 	fi
 fi
