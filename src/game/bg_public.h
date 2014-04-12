@@ -576,7 +576,7 @@ typedef enum
 	PERS_BLEH_3,
 
 	// mg42                // I don't understand these here.  can someone explain?
-	PERS_HWEAPON_USE,
+	PERS_HWEAPON_USE,      // enum 12 - don't change
 	// wolfkick
 	PERS_WOLFKICK
 } persEnum_t;

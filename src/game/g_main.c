@@ -4189,7 +4189,7 @@ void CheckCvars(void)
 }
 
 /**
- * @briefRuns thinking code for this frame if necessary
+ * @brief Runs thinking code for this frame if necessary
  */
 void G_RunThink(gentity_t *ent)
 {
