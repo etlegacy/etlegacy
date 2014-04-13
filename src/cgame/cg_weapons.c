@@ -796,7 +796,7 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 	{
 		BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
 		ent->headJuncIndex = CG_AddSmokeJunc(ent->headJuncIndex,
-		                                     ent,    // rain - zinx's trail fix
+		                                     ent,    // trail fix
 		                                     cgs.media.smokeTrailShader,
 		                                     origin,
 		                                     1000, 0.3, 2, 20);
@@ -4070,6 +4070,11 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 		{
 			cg.switchbackWeapon = lastweap;
 		}
+		// this fixes cg.switchbackWeapon=0 after very first spawn and switching weapon for the first time
+		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastweap)) // ensure last weapon is available
+		{
+			cg.switchbackWeapon = lastweap;
+		}
 	}
 
 	cg.weaponSelect = newweap;
@@ -4713,7 +4718,7 @@ void CG_LastWeaponUsed_f(void)
 	}
 	else        // switchback no longer selectable, reset cycle
 	{
-		cg.switchbackWeapon = 0;
+		cg.switchbackWeapon = WP_NONE;
 	}
 }
 
