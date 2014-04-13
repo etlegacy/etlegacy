@@ -2537,7 +2537,7 @@ msgstr ""
 msgid "Bot count:"
 msgstr ""
 
-msgid "Bot skill:"
+msgid "Move skill:"
 msgstr ""
 
 msgid "KICK ALL BOTS"
@@ -4565,4 +4565,10 @@ msgid "The Tank has been damaged"
 msgstr ""
 
 msgid "BOTS"
+msgstr ""
+
+msgid "Difficulty:"
+msgstr ""
+
+msgid "BOTS ON"
 msgstr ""

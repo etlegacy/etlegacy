@@ -2515,8 +2515,8 @@ msgstr "W Ostatni Czlowiek Przetrwaly nie odrodzisz sie jesli padniesz teraz. Je
 msgid "Bot count:"
 msgstr "Liczba botow:"
 
-msgid "Bot skill:"
-msgstr "Umiejetnosci:"
+msgid "Move skill:"
+msgstr "Poruszanie:"
 
 msgid "KICK ALL BOTS"
 msgstr "WYWAL WSZYSTKIE BOTY"
@@ -4594,3 +4594,9 @@ msgstr "Czolg zostal uszkodzony"
 
 msgid "BOTS"
 msgstr "BOTY"
+
+msgid "Difficulty:"
+msgstr "Trudnosc:"
+
+msgid "BOTS ON"
+msgstr "WLACZ BOTY"
