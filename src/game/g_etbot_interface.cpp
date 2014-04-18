@@ -161,7 +161,7 @@ void SendDeferredGoals()
 
 void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent)
 {
-	if (g_GoalSubmitReady)
+	if (IsOmnibotLoaded() && g_GoalSubmitReady)
 	{
 		g_BotFunctions.pfnUpdateEntity(HandleFromEntity(oldent), HandleFromEntity(newent));
 	}
