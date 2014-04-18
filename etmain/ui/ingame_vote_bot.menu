@@ -52,8 +52,7 @@ menuDef {
 
 	BUTTON( 6, 88, WINDOW_WIDTH-12, 14, "KICK ALL BOTS", .24, 11, exec "bot minbots -1;bot maxbots -1;bot kickall" )
 	
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BOTS ON", .3, 14, exec "omnibot_enable 1; map_restart" )
-	// FIXME: map_restart crashes server
-	//BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "BOTS OFF", .3, 14, exec "omnibot_enable 0; map_restart" )
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BOTS ON", .3, 14, exec "set omnibot_enable 1; map_restart" )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "BOTS OFF", .3, 14, exec "bot minbots -1; bot maxbots -1;bot kickall;set omnibot_enable 0; map_restart" )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close ingame_vote_bot ; open ingame_vote )	
 }
