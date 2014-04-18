@@ -41,7 +41,7 @@ bg_character_t axisClassCharacters[NUM_PLAYER_CLASSES];
 static qboolean BG_PCF_ParseError(int handle, char *format, ...)
 {
 	int         line;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 

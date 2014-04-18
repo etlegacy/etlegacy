@@ -94,7 +94,7 @@ qboolean BG_SS_StoreSpeaker(bg_speaker_t *speaker)
 static qboolean BG_SS_ParseError(int handle, char *format, ...)
 {
 	int         line = 0;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 

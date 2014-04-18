@@ -3835,7 +3835,7 @@ void BG_AdjustAAGunMuzzleForBarrel(vec_t *origin, vec_t *forward, vec_t *right, 
 void PC_SourceWarning(int handle, char *format, ...)
 {
 	int         line;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 
@@ -3853,7 +3853,7 @@ void PC_SourceWarning(int handle, char *format, ...)
 void PC_SourceError(int handle, char *format, ...)
 {
 	int         line;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 
