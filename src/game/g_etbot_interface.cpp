@@ -6708,7 +6708,7 @@ const char *_GetEntityName(gentity_t *_ent)
 //////////////////////////////////////////////////////////////////////////
 qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 {
-	if (ent && ent->client)
+	if (ent && ent->client && IsOmnibotLoaded())
 	{
 		// Omni-bot: used for class changes, bot will /kill 2 seconds before spawn
 		if (ent->client->sess.botSuicide == qtrue)
@@ -7223,6 +7223,8 @@ void Bot_Queue_EntityCreated(gentity_t *pEnt)
 		m_EntityHandles[pEnt - g_entities].m_NewEntity = true;
 	}
 }
+// FIXME: why this is all done when !IsOmnibotLoaded() !?
+// it's called on entity free
 void Bot_Event_EntityDeleted(gentity_t *pEnt)
 {
 	if (pEnt)
@@ -7270,25 +7272,31 @@ void Bot_Util_SendTrigger(gentity_t *_ent, gentity_t *_activator, const char *_t
 
 void Bot_AddDynamiteGoal(gentity_t *_ent, int _team, const char *_tag)
 {
-	if (_team == TEAM_AXIS)
+	if (IsOmnibotLoaded())
 	{
-		Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_ALLIES), _tag);
-	}
-	else
-	{
-		Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_AXIS), _tag);
+		if (_team == TEAM_AXIS)
+		{
+			Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_ALLIES), _tag);
+		}
+		else
+		{
+			Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_AXIS), _tag);
+		}
 	}
 }
 
 void Bot_AddFallenTeammateGoals(gentity_t *_teammate, int _team)
 {
-	if (_team == TEAM_AXIS)
+	if (IsOmnibotLoaded())
 	{
-		Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_AXIS), _GetEntityName(_teammate));
-	}
-	else if (_team == TEAM_ALLIES)
-	{
-		Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_ALLIES), _GetEntityName(_teammate));
+		if (_team == TEAM_AXIS)
+		{
+			Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_AXIS), _GetEntityName(_teammate));
+		}
+		else if (_team == TEAM_ALLIES)
+		{
+			Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_ALLIES), _GetEntityName(_teammate));
+		}
 	}
 }
 };
