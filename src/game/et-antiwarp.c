@@ -87,7 +87,7 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 	    ent->client->ps.weapon == WP_MOBILE_MG42_SET ||
 	    ent->client->ps.weapon == WP_MOBILE_BROWNING ||
 	    ent->client->ps.weapon == WP_MOBILE_BROWNING_SET ||
-	    ent->client->ps.weapon == WP_MORTAR || 
+	    ent->client->ps.weapon == WP_MORTAR ||
 	    ent->client->ps.weapon == WP_MORTAR2)
 	{
 		if (ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 3)

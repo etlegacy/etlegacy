@@ -840,13 +840,14 @@ typedef struct weapontable_s
 	int clipIndex;            // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
 	int damage;               // g
+	qboolean canGib;          // g
 	float spread;             // g
 	int splashDamage;         // g
 	int splashRadius;         // g
 
 	qboolean keepDisguise;    // g
 
-	qboolean isAutoReload;    // bg // move this to ammo table?!
+	qboolean isAutoReload;    // bg
 
 	qboolean isAkimbo;        // bg
 	qboolean isPanzer;        // bg

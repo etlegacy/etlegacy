@@ -227,71 +227,72 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 // [2]  = ammoIndex
 // [3]  = clipIndex
 // [4]  = damage         -
-// [5]  = spread         -
+// [5]  = canGib
+// [6]  = spread         -
 weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 {
-	// weapon                  weapAlts                ammoIndex             clipIndex           damage spread
-	{ WP_NONE,                 WP_NONE,                0,                    0,                    1,   0,    }, // 0
-	{ WP_KNIFE,                WP_NONE,                WP_KNIFE,             WP_KNIFE,             10,  0,    }, // 1
-	{ WP_LUGER,                WP_SILENCER,            WP_LUGER,             WP_LUGER,             18,  600,  }, // 2
-	{ WP_MP40,                 WP_NONE,                WP_MP40,              WP_MP40,              18,  400,  }, // 3
-	{ WP_GRENADE_LAUNCHER,     WP_NONE,                WP_GRENADE_LAUNCHER,  WP_GRENADE_LAUNCHER,  250, 0,    }, // 4
-	{ WP_PANZERFAUST,          WP_NONE,                WP_PANZERFAUST,       WP_PANZERFAUST,       400, 0,    }, // 5
-	{ WP_FLAMETHROWER,         WP_NONE,                WP_FLAMETHROWER,      WP_FLAMETHROWER,      1,   0,    }, // 6
-	{ WP_COLT,                 WP_SILENCED_COLT,       WP_COLT,              WP_COLT,              18,  600,  }, // 7	// equivalent american weapon to german luger
-	{ WP_THOMPSON,             WP_NONE,                WP_THOMPSON,          WP_THOMPSON,          18,  400,  }, // 8	// equivalent american weapon to german mp40
-	{ WP_GRENADE_PINEAPPLE,    WP_NONE,                WP_GRENADE_PINEAPPLE, WP_GRENADE_PINEAPPLE, 250, 0,    }, // 9
+	// weapon                  weapAlts                ammoIndex             clipIndex           damage canGib spread
+	{ WP_NONE,                 WP_NONE,                0,                    0,                    1,   qfalse, 0,    }, // 0
+	{ WP_KNIFE,                WP_NONE,                WP_KNIFE,             WP_KNIFE,             10,  qtrue,  0,    }, // 1
+	{ WP_LUGER,                WP_SILENCER,            WP_LUGER,             WP_LUGER,             18,  qfalse, 600,  }, // 2
+	{ WP_MP40,                 WP_NONE,                WP_MP40,              WP_MP40,              18,  qfalse, 400,  }, // 3
+	{ WP_GRENADE_LAUNCHER,     WP_NONE,                WP_GRENADE_LAUNCHER,  WP_GRENADE_LAUNCHER,  250, qtrue,  0,    }, // 4
+	{ WP_PANZERFAUST,          WP_NONE,                WP_PANZERFAUST,       WP_PANZERFAUST,       400, qtrue,  0,    }, // 5
+	{ WP_FLAMETHROWER,         WP_NONE,                WP_FLAMETHROWER,      WP_FLAMETHROWER,      1,   qfalse, 0,    }, // 6
+	{ WP_COLT,                 WP_SILENCED_COLT,       WP_COLT,              WP_COLT,              18,  qfalse, 600,  }, // 7	// equivalent american weapon to german luger
+	{ WP_THOMPSON,             WP_NONE,                WP_THOMPSON,          WP_THOMPSON,          18,  qfalse, 400,  }, // 8	// equivalent american weapon to german mp40
+	{ WP_GRENADE_PINEAPPLE,    WP_NONE,                WP_GRENADE_PINEAPPLE, WP_GRENADE_PINEAPPLE, 250, qtrue,  0,    }, // 9
 
-	{ WP_STEN,                 WP_NONE,                WP_STEN,              WP_STEN,              14,  200,  }, // 10	// silenced sten sub-machinegun
-	{ WP_MEDIC_SYRINGE,        WP_NONE,                WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     1,   0,    }, // 11	// broken out from CLASS_SPECIAL per Id request
-	{ WP_AMMO,                 WP_NONE,                WP_AMMO,              WP_AMMO,              1,   0,    }, // 12	// likewise
-	{ WP_ARTY,                 WP_NONE,                WP_ARTY,              WP_ARTY,              1,   0,    }, // 13
-	{ WP_SILENCER,             WP_LUGER,               WP_LUGER,             WP_LUGER,             18,  600,  }, // 14	// used to be sp5
-	{ WP_DYNAMITE,             WP_NONE,                WP_DYNAMITE,          WP_DYNAMITE,          400, 0,    }, // 15
-	{ WP_SMOKETRAIL,           WP_NONE,                WP_SMOKETRAIL,        WP_SMOKETRAIL,        1,   0,    }, // 16
-	{ WP_MAPMORTAR,            WP_NONE,                WP_MAPMORTAR,         WP_MAPMORTAR,         250, 0,    }, // 17
-	{ VERYBIGEXPLOSION,        WP_NONE,                0,                    0,                    1,   0,    }, // 18	// explosion effect for airplanes
-	{ WP_MEDKIT,               WP_NONE,                WP_MEDKIT,            WP_MEDKIT,            1,   0,    }, // 19
+	{ WP_STEN,                 WP_NONE,                WP_STEN,              WP_STEN,              14,  qfalse, 200,  }, // 10	// silenced sten sub-machinegun
+	{ WP_MEDIC_SYRINGE,        WP_NONE,                WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     1,   qfalse, 0,    }, // 11	// broken out from CLASS_SPECIAL per Id request
+	{ WP_AMMO,                 WP_NONE,                WP_AMMO,              WP_AMMO,              1,   qfalse, 0,    }, // 12	// likewise
+	{ WP_ARTY,                 WP_NONE,                WP_ARTY,              WP_ARTY,              1,   qtrue,  0,    }, // 13
+	{ WP_SILENCER,             WP_LUGER,               WP_LUGER,             WP_LUGER,             18,  qfalse, 600,  }, // 14	// used to be sp5
+	{ WP_DYNAMITE,             WP_NONE,                WP_DYNAMITE,          WP_DYNAMITE,          400, qtrue,  0,    }, // 15
+	{ WP_SMOKETRAIL,           WP_NONE,                WP_SMOKETRAIL,        WP_SMOKETRAIL,        1,   qfalse, 0,    }, // 16
+	{ WP_MAPMORTAR,            WP_NONE,                WP_MAPMORTAR,         WP_MAPMORTAR,         250, qtrue,  0,    }, // 17
+	{ VERYBIGEXPLOSION,        WP_NONE,                0,                    0,                    1,   qtrue,  0,    }, // 18	// explosion effect for airplanes
+	{ WP_MEDKIT,               WP_NONE,                WP_MEDKIT,            WP_MEDKIT,            1,   qfalse, 0,    }, // 19
 
-	{ WP_BINOCULARS,           WP_NONE,                WP_BINOCULARS,        WP_BINOCULARS,        1,   0,    }, // 20
-	{ WP_PLIERS,               WP_NONE,                WP_PLIERS,            WP_PLIERS,            1,   0,    }, // 21
-	{ WP_SMOKE_MARKER,         WP_NONE,                WP_SMOKE_MARKER,      WP_SMOKE_MARKER,      140, 0,    }, // 22	// changed name to cause less confusion
-	{ WP_KAR98,                WP_GPG40,               WP_KAR98,             WP_KAR98,             34,  250,  }, // 23	// WolfXP weapons
-	{ WP_CARBINE,              WP_M7,                  WP_CARBINE,           WP_CARBINE,           34,  250,  }, // 24
-	{ WP_GARAND,               WP_GARAND_SCOPE,        WP_GARAND,            WP_GARAND,            34,  250,  }, // 25
-	{ WP_LANDMINE,             WP_NONE,                WP_LANDMINE,          WP_LANDMINE,          250, 0,    }, // 26
-	{ WP_SATCHEL,              WP_NONE,                WP_SATCHEL,           WP_SATCHEL,           250, 0,    }, // 27
-	{ WP_SATCHEL_DET,          WP_NONE,                WP_SATCHEL_DET,       WP_SATCHEL_DET,       1,   0,    }, // 28
-	{ WP_SMOKE_BOMB,           WP_NONE,                WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        1,   0,    }, // 29
+	{ WP_BINOCULARS,           WP_NONE,                WP_BINOCULARS,        WP_BINOCULARS,        1,   qfalse, 0,    }, // 20
+	{ WP_PLIERS,               WP_NONE,                WP_PLIERS,            WP_PLIERS,            1,   qfalse, 0,    }, // 21
+	{ WP_SMOKE_MARKER,         WP_NONE,                WP_SMOKE_MARKER,      WP_SMOKE_MARKER,      140, qtrue,  0,    }, // 22	// changed name to cause less confusion
+	{ WP_KAR98,                WP_GPG40,               WP_KAR98,             WP_KAR98,             34,  qfalse, 250,  }, // 23	// WolfXP weapons
+	{ WP_CARBINE,              WP_M7,                  WP_CARBINE,           WP_CARBINE,           34,  qfalse, 250,  }, // 24
+	{ WP_GARAND,               WP_GARAND_SCOPE,        WP_GARAND,            WP_GARAND,            34,  qfalse, 250,  }, // 25
+	{ WP_LANDMINE,             WP_NONE,                WP_LANDMINE,          WP_LANDMINE,          250, qtrue,  0,    }, // 26
+	{ WP_SATCHEL,              WP_NONE,                WP_SATCHEL,           WP_SATCHEL,           250, qtrue,  0,    }, // 27
+	{ WP_SATCHEL_DET,          WP_NONE,                WP_SATCHEL_DET,       WP_SATCHEL_DET,       1,   qtrue,  0,    }, // 28
+	{ WP_SMOKE_BOMB,           WP_NONE,                WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        1,   qfalse, 0,    }, // 29
 
-	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_MOBILE_MG42,       WP_MOBILE_MG42,       18,  2500, }, // 30
-	{ WP_K43,                  WP_K43_SCOPE,           WP_K43,               WP_K43,               34,  250,  }, // 31
-	{ WP_FG42,                 WP_FG42SCOPE,           WP_FG42,              WP_FG42,              16,  500,  }, // 32
-	{ WP_DUMMY_MG42,           WP_NONE,                WP_DUMMY_MG42,        WP_DUMMY_MG42,        1,   0,    }, // 33   // for storing heat on mounted mg42s...
-	{ WP_MORTAR,               WP_MORTAR_SET,          WP_MORTAR,            WP_MORTAR,            1,   0,    }, // 34
-	{ WP_AKIMBO_COLT,          WP_NONE,                WP_COLT,              WP_AKIMBO_COLT,       18,  600,  }, // 35
-	{ WP_AKIMBO_LUGER,         WP_NONE,                WP_LUGER,             WP_AKIMBO_LUGER,      18,  600,  }, // 36
+	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_MOBILE_MG42,       WP_MOBILE_MG42,       18,  qfalse, 2500, }, // 30
+	{ WP_K43,                  WP_K43_SCOPE,           WP_K43,               WP_K43,               34,  qfalse, 250,  }, // 31
+	{ WP_FG42,                 WP_FG42SCOPE,           WP_FG42,              WP_FG42,              16,  qfalse, 500,  }, // 32
+	{ WP_DUMMY_MG42,           WP_NONE,                WP_DUMMY_MG42,        WP_DUMMY_MG42,        1,   qfalse, 0,    }, // 33   // for storing heat on mounted mg42s...
+	{ WP_MORTAR,               WP_MORTAR_SET,          WP_MORTAR,            WP_MORTAR,            1,   qtrue,  0,    }, // 34
+	{ WP_AKIMBO_COLT,          WP_NONE,                WP_COLT,              WP_AKIMBO_COLT,       18,  qfalse, 600,  }, // 35
+	{ WP_AKIMBO_LUGER,         WP_NONE,                WP_LUGER,             WP_AKIMBO_LUGER,      18,  qfalse, 600,  }, // 36
 
-	{ WP_GPG40,                WP_KAR98,               WP_GPG40,             WP_GPG40,             250, 0,    }, // 37
-	{ WP_M7,                   WP_CARBINE,             WP_M7,                WP_M7,                250, 0,    }, // 38
-	{ WP_SILENCED_COLT,        WP_COLT,                WP_COLT,              WP_COLT,              18,  600,  }, // 39
+	{ WP_GPG40,                WP_KAR98,               WP_GPG40,             WP_GPG40,             250, qtrue,  0,    }, // 37
+	{ WP_M7,                   WP_CARBINE,             WP_M7,                WP_M7,                250, qtrue,  0,    }, // 38
+	{ WP_SILENCED_COLT,        WP_COLT,                WP_COLT,              WP_COLT,              18,  qfalse, 600,  }, // 39
 
-	{ WP_GARAND_SCOPE,         WP_GARAND,              WP_GARAND,            WP_GARAND,            50,  700,  }, // 40
-	{ WP_K43_SCOPE,            WP_K43,                 WP_K43,               WP_K43,               50,  700,  }, // 41
-	{ WP_FG42SCOPE,            WP_FG42,                WP_FG42,              WP_FG42,              30,  200,  }, // 42
-	{ WP_MORTAR_SET,           WP_MORTAR,              WP_MORTAR,            WP_MORTAR,            400, 0,    }, // 43
-	{ WP_MEDIC_ADRENALINE,     WP_NONE,                WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     1,   0,    }, // 44
-	{ WP_AKIMBO_SILENCEDCOLT,  WP_NONE,                WP_COLT,              WP_AKIMBO_COLT,       18,  600,  }, // 45
-	{ WP_AKIMBO_SILENCEDLUGER, WP_NONE,                WP_LUGER,             WP_AKIMBO_LUGER,      18,  600,  }, // 46
-	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         WP_MOBILE_MG42,       WP_MOBILE_MG42,       18,  2500, }, // 47
+	{ WP_GARAND_SCOPE,         WP_GARAND,              WP_GARAND,            WP_GARAND,            50,  qfalse, 700,  }, // 40
+	{ WP_K43_SCOPE,            WP_K43,                 WP_K43,               WP_K43,               50,  qfalse, 700,  }, // 41
+	{ WP_FG42SCOPE,            WP_FG42,                WP_FG42,              WP_FG42,              30,  qfalse, 200,  }, // 42
+	{ WP_MORTAR_SET,           WP_MORTAR,              WP_MORTAR,            WP_MORTAR,            400, qtrue,  0,    }, // 43
+	{ WP_MEDIC_ADRENALINE,     WP_NONE,                WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     1,   qfalse, 0,    }, // 44
+	{ WP_AKIMBO_SILENCEDCOLT,  WP_NONE,                WP_COLT,              WP_AKIMBO_COLT,       18,  qfalse, 600,  }, // 45
+	{ WP_AKIMBO_SILENCEDLUGER, WP_NONE,                WP_LUGER,             WP_AKIMBO_LUGER,      18,  qfalse, 600,  }, // 46
+	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         WP_MOBILE_MG42,       WP_MOBILE_MG42,       18,  qfalse, 2500, }, // 47
 
 	// legacy weapons
-	{ WP_KNIFE_KABAR,          WP_NONE,                WP_KNIFE_KABAR,       WP_KNIFE_KABAR,       10,  0,    }, // 48
-	{ WP_MOBILE_BROWNING,      WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,  2500, }, // 49
-	{ WP_MOBILE_BROWNING_SET,  WP_MOBILE_BROWNING,     WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,  2500, }, // 50
-	{ WP_MORTAR2,              WP_MORTAR2_SET,         WP_MORTAR2,           WP_MORTAR2,           1,   0,    }, // 51
-	{ WP_MORTAR2_SET,          WP_MORTAR2,             WP_MORTAR2,           WP_MORTAR2,           400, 0,    }, // 52
-	{ WP_BAZOOKA,              WP_NONE,                WP_BAZOOKA,           WP_BAZOOKA,           400, 0,    }, // 53
+	{ WP_KNIFE_KABAR,          WP_NONE,                WP_KNIFE_KABAR,       WP_KNIFE_KABAR,       10,  qtrue,  0,    }, // 48
+	{ WP_MOBILE_BROWNING,      WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,  qfalse, 2500, }, // 49
+	{ WP_MOBILE_BROWNING_SET,  WP_MOBILE_BROWNING,     WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,  qfalse, 2500, }, // 50
+	{ WP_MORTAR2,              WP_MORTAR2_SET,         WP_MORTAR2,           WP_MORTAR2,           1,   qtrue,  0,    }, // 51
+	{ WP_MORTAR2_SET,          WP_MORTAR2,             WP_MORTAR2,           WP_MORTAR2,           400, qtrue,  0,    }, // 52
+	{ WP_BAZOOKA,              WP_NONE,                WP_BAZOOKA,           WP_BAZOOKA,           400, qtrue,  0,    }, // 53
 };
 
 const char *animStrings[] =

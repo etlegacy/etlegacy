@@ -3295,7 +3295,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		waslinked                               = qtrue;
 	}
 
-	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT);
+	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (waslinked == qtrue)
@@ -3403,7 +3403,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);
 
-		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT);
+		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
 
 		if ((tr.entityNum != tr2.entityNum && tr2.fraction != 1))
 		{

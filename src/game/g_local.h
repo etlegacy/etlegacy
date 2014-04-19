@@ -1828,7 +1828,7 @@ void G_ResetMarkers(gentity_t *ent);
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 void G_HistoricalTraceBegin(gentity_t *ent);
 void G_HistoricalTraceEnd(gentity_t *ent);
-void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses);
 
 #define BODY_VALUE(ENT) ENT->watertype
 #define BODY_TEAM(ENT) ENT->s.modelindex
