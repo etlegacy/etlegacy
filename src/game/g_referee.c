@@ -498,15 +498,14 @@ void G_refMute_cmd(gentity_t *ent, qboolean mute)
 		CPx(pid, "print \"^5You've been muted\n\"");
 		player->client->sess.muted = qtrue;
 		G_Printf("\"%s^*\" has been muted\n", player->client->pers.netname);
-		ClientUserinfoChanged(pid);
 	}
 	else
 	{
 		CPx(pid, "print \"^5You've been unmuted\n\"");
 		player->client->sess.muted = qfalse;
 		G_Printf("\"%s^*\" has been unmuted\n", player->client->pers.netname);
-		ClientUserinfoChanged(pid);
 	}
+	ClientUserinfoChanged(pid);
 }
 
 //////////////////////////////
@@ -581,6 +580,12 @@ void G_MakeReferee()
 			level.clients[cnum].sess.referee = RL_REFEREE;
 			AP(va("cp \"%s\n^3has been made a referee\n\"", cmd));
 			G_Printf("%s has been made a referee.\n", cmd);
+			if (level.clients[cnum].sess.muted)
+			{
+				trap_SendServerCommand(cnum, va("cpm \"^2You have been un-muted\""));
+				level.clients[cnum].sess.muted = qfalse;
+			}
+			ClientUserinfoChanged(cnum);
 		}
 		else
 		{
@@ -610,6 +615,7 @@ void G_RemoveReferee()
 		{
 			level.clients[cnum].sess.referee = RL_NONE;
 			G_Printf("%s is no longer a referee.\n", cmd);
+			ClientUserinfoChanged(cnum);
 		}
 		else
 		{

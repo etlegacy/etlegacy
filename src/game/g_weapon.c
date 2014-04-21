@@ -3499,7 +3499,6 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent, int grenType)
 
 gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 {
-	gentity_t *m;
 	trace_t   tr;
 	vec3_t    launchPos, testPos;
 	vec3_t    angles;
@@ -3527,9 +3526,7 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 		SnapVectorTowards(launchPos, testPos);
 	}
 
-	m = fire_grenade(ent, launchPos, forward, grenType);
-
-	return m;
+	return fire_grenade(ent, launchPos, forward, grenType);
 }
 
 gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
