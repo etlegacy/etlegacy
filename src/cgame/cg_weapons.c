@@ -1044,7 +1044,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 static qboolean CG_RW_ParseError(int handle, char *format, ...)
 {
 	int         line;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 

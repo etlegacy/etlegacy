@@ -222,7 +222,7 @@ static void CG_addHudToList(hudStucture_t hud)
 static qboolean CG_HUD_ParseError(int handle, char *format, ...)
 {
 	int         line;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 
