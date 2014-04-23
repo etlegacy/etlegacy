@@ -510,7 +510,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 
 	if (CGLCreateContext(pix, NULL, &opengl_context) != kCGLNoError)
 	{
-		ri.Error(ERR_FATAL, "Could not create opengl 3.2 core context\n" );
+		ri.Error(ERR_FATAL, "Could not create opengl 3.2 core context\n");
 	}
 	if (CGLSetCurrentContext(opengl_context) != kCGLNoError)
 	{
@@ -1595,7 +1595,7 @@ static void GLimp_InitExtensions(void)
 	GLint glint = 0;
 	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
-	//ri.Printf( PRINT_ALL, "...not using GL_ARB_multitexture, %i texture units\n", glConfig.maxActiveTextures );
+	//ri.Printf( PRINT_ALL, "...not using GL_ARB_multitexture, %i texture units\n", glConfig.maxActiveTextures);
 	//glConfig.maxActiveTextures=4;
 	if (glConfig.maxActiveTextures > 1)
 	{
@@ -1933,6 +1933,7 @@ void GLimp_EndFrame(void)
 	{
 		// Circuitous way of resetting the gamma to its current value.
 		char old[6] = { 0 };
+
 		Q_strncpyz(old, Cvar_VariableString("r_gamma"), 5);
 		if (strlen(old))
 		{
