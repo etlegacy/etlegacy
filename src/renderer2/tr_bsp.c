@@ -8461,20 +8461,7 @@ unsigned int VertexCoordGenerateHash(const vec3_t xyz)
 	hash ^= (*((unsigned int *)&xyz_epsilonspace[1]) >> 6);
 	hash += ~(*((unsigned int *)&xyz_epsilonspace[2]) << 11);
 	hash ^= (*((unsigned int *)&xyz_epsilonspace[2]) >> 16);
-
-/*
-    // strict aliasing... better?
-    hash += ~({floatint_t __f; __f.f = xyz_epsilonspace[0]; __f.i << 15;});
-    hash ^= ({floatint_t __f; __f.f = xyz_epsilonspace[0]; __f.i >> 10;});
-    hash += ({floatint_t __f; __f.f = xyz_epsilonspace[1]; __f.i << 3;});
-    hash ^= ({floatint_t __f; __f.f = xyz_epsilonspace[1]; __f.i >> 6;});
-    hash += ~({floatint_t __f; __f.f = xyz_epsilonspace[2]; __f.i << 11;});
-    hash ^= ({floatint_t __f; __f.f = xyz_epsilonspace[2]; __f.i >> 16;});
-*/
-
 #endif
-
-	hash = (int)fabs(xyz[3]) / 8;
 
 	hash = hash % (HASHTABLE_SIZE);
 	return hash;
