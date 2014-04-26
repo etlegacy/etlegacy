@@ -217,7 +217,6 @@ void SV_UnlinkEntity(sharedEntity_t *gEnt)
 /*
 ===============
 SV_LinkEntity
-
 ===============
 */
 #define MAX_TOTAL_ENT_LEAFS     128
@@ -239,7 +238,9 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 	// sanity check for possible currentOrigin being reset bug
 	if (!gEnt->r.bmodel && VectorCompare(gEnt->r.currentOrigin, vec3_origin))
 	{
-		Com_DPrintf("WARNING: BBOX entity is being linked at world origin, this is probably a bug\n");
+		// I've seen this warning a lot - let map makers know which entity is affected.
+		// FIXME: Clarify if this warning is false positive for some ents
+		Com_DPrintf("WARNING: BBOX entity %i is being linked at world origin, this is probably a bug - see /entitylist cmd\n", gEnt->s.number);
 	}
 
 	if (ent->worldSector)
@@ -359,7 +360,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 			{
 				if (ent->areanum2 != -1 && ent->areanum2 != area && sv.state == SS_LOADING)
 				{
-					Com_DPrintf("Object %i touching 3 areas at %f %f %f\n",
+					Com_DPrintf("Entity %i touching 3 areas at %f %f %f\n",
 					            gEnt->s.number,
 					            gEnt->r.absmin[0], gEnt->r.absmin[1], gEnt->r.absmin[2]);
 				}
@@ -684,10 +685,8 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 
 		if (trace.fraction < clip->trace.fraction)
 		{
-			qboolean oldStart;
-
 			// make sure we keep a startsolid from a previous trace
-			oldStart = clip->trace.startsolid;
+			qboolean oldStart = clip->trace.startsolid;
 
 			trace.entityNum         = touch->s.number;
 			clip->trace             = trace;
@@ -737,7 +736,7 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 
 	clip.contentmask = contentmask;
 	clip.start       = start;
-	//	VectorCopy( clip.trace.endpos, clip.end );
+	//VectorCopy(clip.trace.endpos, clip.end);
 	VectorCopy(end, clip.end);
 	clip.mins          = mins;
 	clip.maxs          = maxs;
