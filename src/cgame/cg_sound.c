@@ -221,7 +221,7 @@ void CG_UpdateBufferedSoundScripts(void)
 ==============
 CG_SoundPlaySoundScript
 
-  returns qtrue is a script is found
+  returns qtrue if a script is found
 ==============
 */
 int CG_SoundPlaySoundScript(const char *name, vec3_t org, int entnum, qboolean buffer)
@@ -310,6 +310,10 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			{
 				CG_Error(S_COLOR_RED  "CG_SoundParseSounds: no concluding '}' in sound %s, file %s\n", sound.name, filename);
 			}
+			if (scriptSound)
+			{
+				CG_Printf("...'%s' loaded - total script sounds: %i\n", filename, numSoundScripts);
+			}
 			return;
 		}
 
@@ -328,7 +332,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			// grab a free scriptSound
 			scriptSound = &soundScriptSounds[numSoundScriptSounds++];
 
-			if (numSoundScripts == MAX_SOUND_SCRIPT_SOUNDS)
+			if (numSoundScripts >= MAX_SOUND_SCRIPT_SOUNDS)
 			{
 				CG_Error(S_COLOR_RED "CG_SoundParseSounds: MAX_SOUND_SCRIPT_SOUNDS exceeded.\nReduce number of sound scripts.\n");
 			}
@@ -539,6 +543,7 @@ static void CG_SoundLoadSoundFiles(void)
 		trap_FS_FCloseFile(f);
 		CG_SoundParseSounds(filename, bigTextBuffer);
 	}
+	CG_Printf("...%i sound scripts files loaded. Total sounds: %i\n", numSounds, numSoundScripts);
 }
 
 /*
@@ -569,7 +574,6 @@ void CG_SoundInit(void)
 		CG_SoundLoadSoundFiles();
 		CG_Printf("done.\n");
 	}
-
 }
 
 // Script Speakers Editing
@@ -2080,13 +2084,11 @@ void CG_SpeakerEditorDraw(void)
 			                      w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
 		}
 
-
 		if (editSpeaker)
 		{
 			// render interface
 			BG_PanelButtonsRender(speakerInfoButtons);
 		}
-
 	}
 	else
 	{
@@ -2113,11 +2115,10 @@ void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 			}
 			else if (editSpeakerHandle.activeAxis == -1)
 			{
-				int    i, closest;
+				int    i, closest = -1;
 				float  dist, minDist, r, u;
 				vec3_t vec, axisOrg, dir;
 
-				closest = -1;
 				minDist = Square(16.f);
 
 				r = -(cg.refdef_current->fov_x / 90.f) * (float)(cgs.cursorX - 320) / 320;
@@ -2300,6 +2301,7 @@ void CG_UndoEditSpeaker(void)
 	else
 	{
 		bg_speaker_t *speaker = BG_GetScriptSpeaker(undoSpeakerIndex);
+
 		memcpy(speaker, &undoSpeaker, sizeof(*speaker));
 		CG_Printf("UNDO: restoring modified settings of speaker at %.2f %.2f %.2f.\n", undoSpeaker.origin[0], undoSpeaker.origin[1], undoSpeaker.origin[2]);
 	}
