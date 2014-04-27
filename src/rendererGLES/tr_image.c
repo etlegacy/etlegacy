@@ -1236,15 +1236,11 @@ R_InitFogTable
 */
 void R_InitFogTable(void)
 {
-	int   i;
-	float d;
-	float exp = 0.5f;
+	int i;
 
 	for (i = 0 ; i < FOG_TABLE_SIZE ; i++)
 	{
-		d = pow((float)i / (FOG_TABLE_SIZE - 1), exp);
-
-		tr.fogTable[i] = d;
+		tr.fogTable[i] = pow((float)i / (FOG_TABLE_SIZE - 1), DEFAULT_FOG_EXP_DENSITY);
 	}
 }
 
