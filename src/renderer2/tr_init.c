@@ -1381,8 +1381,8 @@ void R_Register(void)
 	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
-	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "1", CVAR_CHEAT | CVAR_LATCH);
-	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_CHEAT | CVAR_LATCH);
+	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 
 	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // ydnar: limit to overbrightbits 1 (sorry 1337 players)
 	ri.Cvar_AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
