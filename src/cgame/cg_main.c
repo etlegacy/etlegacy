@@ -1400,6 +1400,7 @@ static void CG_RegisterSounds(void)
 
 	cgs.media.shoveSound = trap_S_RegisterSound("sound/weapons/impact/flesh1.wav", qfalse);
 
+	cgs.cachedSounds[GAMESOUND_BLANK]               = trap_S_RegisterSound("sound/player/default/blank.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_PLAYER_GURP1]        = trap_S_RegisterSound("sound/player/gurp1.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_PLAYER_GURP2]        = trap_S_RegisterSound("sound/player/gurp2.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_PLAYER_BUBBLE]       = trap_S_RegisterSound("sound/world/bubbles.wav", qfalse);

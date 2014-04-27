@@ -2342,6 +2342,7 @@ void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 // Store all sounds used in server engine and send them to client in events only as Enums
 typedef enum
 {
+	GAMESOUND_BLANK,
 	GAMESOUND_PLAYER_GURP1,         // "sound/player/gurp1.wav"                         Player takes damage from drowning
 	GAMESOUND_PLAYER_GURP2,         // "sound/player/gurp2.wav"
 	GAMESOUND_PLAYER_BUBBLE,
