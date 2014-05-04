@@ -6130,22 +6130,23 @@ public:
 		{
 			// et console doesn't support tabs, so
 			const int BufferSize       = 1024;
-			char tmpbuffer[BufferSize] = {};
+			char tmpbuffer[BufferSize];
 			const char *src = _msg;
 			char *dest      = tmpbuffer;
-			while (*src != 0)
+			while(*src != 0 && dest < tmpbuffer + BufferSize - 4)
 			{
 				if (*src == '\t')
 				{
 					for (int i = 0; i < 4; ++i)
 						*dest++ = ' ';
-					src++;
 				}
 				else
 				{
-					*dest++ = *src++;
+					*dest++ = *src;
 				}
+				src++;
 			}
+			*dest = 0;
 			G_Printf("%s%s\n", S_COLOR_GREEN, tmpbuffer);
 		}
 	}
