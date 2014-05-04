@@ -2221,6 +2221,19 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MOVER_AXIS                      64
 #define MOVER_MOUNTEDGUN                128
 
+// func trigger_multiple
+#define MULTI_TRIGGER_AXIS_ONLY         1
+#define MULTI_TRIGGER_ALLIED_ONLY       2
+#define MULTI_TRIGGER_NOBOT             4
+#define MULTI_TRIGGER_BOTONLY           8
+#define MULTI_TRIGGER_SOLDIERONLY       16
+#define MULTI_TRIGGER_FIELDOPSONLY      32
+#define MULTI_TRIGGER_MEDICONLY         64
+#define MULTI_TRIGGER_ENGINEERONLY      128
+#define MULTI_TRIGGER_COVERTOPSONLY     256
+#define MULTI_TRIGGER_DISGUISEDSONLY    512  // legacy only
+#define MULTI_TRIGGER_OBJECTIVEONLY     1024 // legacy only
+
 // Spawnflags end
 
 // MAPVOTE - used when mapvoting is enabled

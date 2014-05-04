@@ -2169,16 +2169,16 @@ qboolean ConsoleCommand(void)
 		return qtrue;
 	}
 
-	if (Q_stricmp (cmd, "mute") == 0)
+	if (Q_stricmp(cmd, "mute") == 0)
 	{
-	    G_MuteClient();
-	    return qtrue;
+		G_MuteClient();
+		return qtrue;
 	}
 
-	if (Q_stricmp (cmd, "unmute") == 0)
+	if (Q_stricmp(cmd, "unmute") == 0)
 	{
-	    G_UnMuteClient();
-	    return qtrue;
+		G_UnMuteClient();
+		return qtrue;
 	}
 
 	if (Q_stricmp(cmd, "ban") == 0)
