@@ -888,7 +888,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 // Server side Flamethrower
 //=============================================================================
 
-// copied from cg_flamethrower.c
+// copied from cg_flamethrower.c - FIXME: move same definitions of cg_flamethrower.c to bg_public.h and remove FLAME_* defs here
 #define FLAME_START_SIZE        1.0
 #define FLAME_START_MAX_SIZE    100.0   // when the flame is spawned, it should endevour to reach this size
 #define FLAME_START_SPEED       1200.0  // speed of flame as it leaves the nozzle
@@ -899,9 +899,6 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 
 #define FLAME_LIFETIME          (int)((FLAME_LENGTH / FLAME_START_SPEED) * 1000)        // life duration in milliseconds
 #define FLAME_FRICTION_PER_SEC  (2.0f * FLAME_START_SPEED)
-#define GET_FLAME_SIZE_SPEED(x) (((float)x / FLAME_LIFETIME) / 0.3)       // x is the current sizeMax
-
-#define FLAME_THRESHOLD 50
 
 void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 {

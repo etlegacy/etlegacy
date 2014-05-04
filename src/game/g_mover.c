@@ -4233,16 +4233,6 @@ EXPLOSIVE
 
 /*
 ==============
-ThrowDebris
-==============
-*/
-void ThrowDebris(gentity_t *self, char *modelname, float speed, vec3_t origin)
-{
-	// probably use le->leType = LE_FRAGMENT like brass and gibs
-}
-
-/*
-==============
 BecomeExplosion
     nuke the original entity and create all the debris entities that need to be synced to clients
 ==============
