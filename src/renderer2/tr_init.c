@@ -1411,7 +1411,7 @@ void R_Register(void)
 	r_lodBias        = ri.Cvar_Get("r_lodBias", "0", CVAR_ARCHIVE);
 	r_flares         = ri.Cvar_Get("r_flares", "0", CVAR_ARCHIVE);
 	r_znear          = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // changed it to 3 (from 4) because of lean/fov cheats
-	r_zfar           = ri.Cvar_Get("r_zfar", "1024", CVAR_CHEAT);
+	r_zfar           = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
 	r_fastsky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
 
@@ -1895,6 +1895,8 @@ void RE_Shutdown(qboolean destroyWindow)
 #endif
 
 		GLimp_Shutdown();
+
+		ri.Tag_Free();
 	}
 
 	tr.registered = qfalse;

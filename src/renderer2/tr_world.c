@@ -2167,16 +2167,6 @@ static void R_CoherentHierachicalCulling()
 				// update node's visited flag
 				node->lastVisited[tr.viewCount] = tr.frameCount;
 
-				// optimization
-				#if 0
-				if ((node->contents != -1) && node->sameAABBAsParent)
-				{
-					node->visible[tr.viewCount] = qtrue;
-					wasVisible                  = qtrue;
-				}
-				#endif
-
-
 				leafThatNeedsQuery = node->contents != -1;
 
 				if (leafThatNeedsQuery)
