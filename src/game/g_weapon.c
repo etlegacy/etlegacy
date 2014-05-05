@@ -3499,9 +3499,9 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent, int grenType)
 
 gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 {
-	trace_t   tr;
-	vec3_t    launchPos, testPos;
-	vec3_t    angles;
+	trace_t tr;
+	vec3_t  launchPos, testPos;
+	vec3_t  angles;
 
 	VectorCopy(ent->client->ps.viewangles, angles);
 	angles[PITCH] -= 60.f;

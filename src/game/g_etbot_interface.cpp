@@ -6129,11 +6129,11 @@ public:
 		if (_msg)
 		{
 			// et console doesn't support tabs, so
-			const int BufferSize       = 1024;
+			const int BufferSize = 1024;
 			char tmpbuffer[BufferSize];
 			const char *src = _msg;
 			char *dest      = tmpbuffer;
-			while(*src != 0 && dest < tmpbuffer + BufferSize - 4)
+			while (*src != 0 && dest < tmpbuffer + BufferSize - 4)
 			{
 				if (*src == '\t')
 				{

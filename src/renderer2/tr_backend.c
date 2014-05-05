@@ -10463,7 +10463,7 @@ const void *RB_RotatedPic(const void *data)
 	const stretchPicCommand_t *cmd;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
-	float		mx, my, cosA, sinA, cw, ch, sw, sh;
+	float                     mx, my, cosA, sinA, cw, ch, sw, sh;
 
 	cmd = (const stretchPicCommand_t *)data;
 
@@ -10502,15 +10502,15 @@ const void *RB_RotatedPic(const void *data)
 	Vector4Copy(backEnd.color2D, tess.colors[numVerts + 2]);
 	Vector4Copy(backEnd.color2D, tess.colors[numVerts + 3]);
 
-	mx = cmd->x + (cmd->w / 2);
-	my = cmd->y + (cmd->h / 2);
+	mx   = cmd->x + (cmd->w / 2);
+	my   = cmd->y + (cmd->h / 2);
 	cosA = cos(DEG2RAD(cmd->angle));
 	sinA = sin(DEG2RAD(cmd->angle));
-	cw = cosA * (cmd->w / 2);
-	ch = cosA * (cmd->h / 2);
-	sw = sinA * (cmd->w / 2);
-	sh = sinA * (cmd->h / 2);
-	
+	cw   = cosA * (cmd->w / 2);
+	ch   = cosA * (cmd->h / 2);
+	sw   = sinA * (cmd->w / 2);
+	sh   = sinA * (cmd->h / 2);
+
 	tess.xyz[numVerts][0] = mx - cw - sh;
 	tess.xyz[numVerts][1] = my + sw - ch;
 	tess.xyz[numVerts][2] = 0;

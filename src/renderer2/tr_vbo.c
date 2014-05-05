@@ -118,7 +118,7 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	int  dataSize;
 	int  dataOfs;
 
-	int glUsage;
+	int          glUsage;
 	unsigned int bits;
 
 	switch (usage)
@@ -174,7 +174,7 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 
 	// size VBO
 	dataSize = 0;
-	bits = stateBits;
+	bits     = stateBits;
 	while (bits)
 	{
 		if (bits & 1)
@@ -184,8 +184,8 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 		bits >>= 1;
 	}
 	dataSize *= numVertexes;
-	data     = (byte *)ri.Hunk_AllocateTempMemory(dataSize);
-	dataOfs  = 0;
+	data      = (byte *)ri.Hunk_AllocateTempMemory(dataSize);
+	dataOfs   = 0;
 
 	// since this is all float, point tmp directly into data
 	// 2-entry -> { memb[0], memb[1], 0, 1 }
