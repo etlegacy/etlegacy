@@ -379,12 +379,20 @@ void GL_PolygonOffset(float factor, float units)
 
 void GL_Cull(int cullType)
 {
+	if (backEnd.viewParms.isMirror)
+	{
+		GL_FrontFace(GL_CW);
+	}
+	else
+	{
+		GL_FrontFace(GL_CCW);
+	}
+
 	if (glState.faceCulling == cullType)
 	{
 		return;
 	}
 
-#if 1
 	glState.faceCulling = cullType;
 
 	if (cullType == CT_TWO_SIDED)
@@ -398,34 +406,12 @@ void GL_Cull(int cullType)
 		if (cullType == CT_BACK_SIDED)
 		{
 			GL_CullFace(GL_BACK);
-
-			if (backEnd.viewParms.isMirror)
-			{
-				GL_FrontFace(GL_CW);
-			}
-			else
-			{
-				GL_FrontFace(GL_CCW);
-			}
 		}
 		else
 		{
 			GL_CullFace(GL_FRONT);
-
-			if (backEnd.viewParms.isMirror)
-			{
-				GL_FrontFace(GL_CW);
-			}
-			else
-			{
-				GL_FrontFace(GL_CCW);
-			}
 		}
 	}
-#else
-	glState.faceCulling = CT_TWO_SIDED;
-	glDisable(GL_CULL_FACE);
-#endif
 }
 
 
@@ -10462,10 +10448,10 @@ const void *RB_Draw2dPolys(const void *data)
 		tess.texCoords[tess.numVertexes][0] = cmd->verts[i].st[0];
 		tess.texCoords[tess.numVertexes][1] = cmd->verts[i].st[1];
 
-		tess.colors[tess.numVertexes][0] = cmd->verts[i].modulate[0];
-		tess.colors[tess.numVertexes][1] = cmd->verts[i].modulate[1];
-		tess.colors[tess.numVertexes][2] = cmd->verts[i].modulate[2];
-		tess.colors[tess.numVertexes][3] = cmd->verts[i].modulate[3];
+		tess.colors[tess.numVertexes][0] = cmd->verts[i].modulate[0] * (1.0 / 255.0f);
+		tess.colors[tess.numVertexes][1] = cmd->verts[i].modulate[1] * (1.0 / 255.0f);
+		tess.colors[tess.numVertexes][2] = cmd->verts[i].modulate[2] * (1.0 / 255.0f);
+		tess.colors[tess.numVertexes][3] = cmd->verts[i].modulate[3] * (1.0 / 255.0f);
 		tess.numVertexes++;
 	}
 
@@ -10607,15 +10593,8 @@ const void *RB_StretchPicGradient(const void *data)
 
 	for (i = 0; i < 4; i++)
 	{
-		tess.colors[numVerts + 2][0] = cmd->gradientColor[0] * (1.0f / 255.0f);
-		tess.colors[numVerts + 2][1] = cmd->gradientColor[0] * (1.0f / 255.0f);
-		tess.colors[numVerts + 2][2] = cmd->gradientColor[0] * (1.0f / 255.0f);
-		tess.colors[numVerts + 2][3] = cmd->gradientColor[0] * (1.0f / 255.0f);
-
-		tess.colors[numVerts + 3][0] = cmd->gradientColor[0] * (1.0f / 255.0f);
-		tess.colors[numVerts + 3][1] = cmd->gradientColor[0] * (1.0f / 255.0f);
-		tess.colors[numVerts + 3][2] = cmd->gradientColor[0] * (1.0f / 255.0f);
-		tess.colors[numVerts + 3][3] = cmd->gradientColor[0] * (1.0f / 255.0f);
+		tess.colors[numVerts + 2][i] = cmd->gradientColor[i] * (1.0f / 255.0f);
+		tess.colors[numVerts + 3][i] = cmd->gradientColor[i] * (1.0f / 255.0f);
 	}
 
 	tess.xyz[numVerts][0] = cmd->x;
