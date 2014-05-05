@@ -422,7 +422,7 @@ void R_InitFBOs(void)
 	int i;
 	int width, height;
 
-	ri.Printf(PRINT_ALL, "------- R_InitFBOs -------\n");
+	ri.Printf(PRINT_DEVELOPER, "------- R_InitFBOs -------\n");
 
 	if (!glConfig2.framebufferObjectAvailable)
 	{
@@ -439,7 +439,7 @@ void R_InitFBOs(void)
 	if (DS_STANDARD_ENABLED())
 	{
 		// geometricRender FBO as G-Buffer for deferred shading
-		ri.Printf(PRINT_ALL, "Deferred Shading enabled\n");
+		ri.Printf(PRINT_DEVELOPER, "Deferred Shading enabled\n");
 
 		if (glConfig2.textureNPOTAvailable)
 		{
@@ -874,7 +874,7 @@ void R_ShutdownFBOs(void)
 	int   i, j;
 	FBO_t *fbo;
 
-	ri.Printf(PRINT_ALL, "------- R_ShutdownFBOs -------\n");
+	ri.Printf(PRINT_DEVELOPER, "------- R_ShutdownFBOs -------\n");
 
 	if (!glConfig2.framebufferObjectAvailable)
 	{
