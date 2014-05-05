@@ -377,8 +377,6 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 		}
 	}
 
-	R_CalcSurfaceTriangleNeighbors(numTriangles, triangles);
-
 	// FIXME: use more elegant way
 	for (i = 0; i < width; i++)
 	{

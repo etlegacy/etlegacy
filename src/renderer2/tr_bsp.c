@@ -1207,7 +1207,6 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 		}
 	}
 
-	R_CalcSurfaceTriangleNeighbors(numTriangles, cv->triangles);
 	R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
 	// take the plane information from the lightmap vector
@@ -1502,7 +1501,6 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		AddPointToBounds(cv->verts[tri->indexes[2]].xyz, cv->bounds[0], cv->bounds[1]);
 	}
 
-	R_CalcSurfaceTriangleNeighbors(numTriangles, cv->triangles);
 	R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
 	// Tr3B - calc tangent spaces
