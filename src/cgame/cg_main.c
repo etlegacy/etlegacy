@@ -2482,7 +2482,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.demoPlayback = demoPlayback;
 
-	cg.legacyClient = legacyClient;
+	cg.legacyClient = (legacyClient == qtrue ? qtrue : qfalse);
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);

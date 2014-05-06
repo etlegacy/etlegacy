@@ -420,3 +420,6 @@
 #define RL_NONE                 0
 #define RL_REFEREE              1
 #define RL_RCON                 2
+
+#define SCREEN_WIDTH			640
+#define SCREEN_HEIGHT			480

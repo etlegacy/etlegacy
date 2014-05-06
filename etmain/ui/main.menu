@@ -33,7 +33,7 @@ menuDef {
 	name		"main"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	rect		WINDOW_X WINDOW_Y 624 464
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
@@ -110,4 +110,10 @@ menuDef {
 	BUTTON( 6, 176, WINDOW_WIDTH-12, 18, "CREDITS", .3, 14, close main ; open credits_etlegacy )
 	BUTTON( 6, 200, WINDOW_WIDTH-12, 18, "ETLEGACY.COM", .3, 14, clearFocus ; open etlegacywebsite )
 	BUTTON( 6, 224, WINDOW_WIDTH-12, 18, "EXIT GAME", .3, 14, clearFocus ; open quit )
+
+	#ifndef LEGACY
+	SUBWINDOWBLACK( SCREEN_WIDTH-215, 10, 195, 75, "^1Attention")
+	LABEL( SCREEN_WIDTH-210, 30, 190, 18, "^7You are running an old client,\n^1UPDATE", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	BUTTON( SCREEN_WIDTH-214, 64, 192, 18, "Join Legacy", .3, 14, clearFocus ; open etlegacywebsite )
+	#endif
 }

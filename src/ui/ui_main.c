@@ -1085,6 +1085,12 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		trap_PC_AddGlobalDefine("FUI");
 	}
 
+	//We can now add elements which only work with legacy client
+	if (uiInfo.legacyClient)
+	{
+		trap_PC_AddGlobalDefine("LEGACY");
+	}
+
 	handle = trap_PC_LoadSource(menuFile);
 	if (!handle)
 	{
@@ -7418,7 +7424,7 @@ void _UI_Init(int legacyClient)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	uiInfo.legacyClient = legacyClient;
+	uiInfo.legacyClient = (legacyClient == qtrue?qtrue:qfalse);
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;
