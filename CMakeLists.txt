@@ -62,7 +62,7 @@ cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the syst
 cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_FREETYPE		"Use bundled Freetype2 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
-cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library."	OFF "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
@@ -99,7 +99,7 @@ option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
 option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"				ON)
 option(FEATURE_CROUCH		"Set to ON if you want Toggle Crouch"					OFF)
 option(FEATURE_GETTEXT		"Enable localization using tinygettext"					ON)
-option(FEATURE_JANSSON		"Enable JSON support (client)"			ON)
+option(FEATURE_JANSSON		"Enable JSON support (client)"			OFF)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
@@ -467,7 +467,7 @@ if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG 
 		message(STATUS "and enable BUNDLED_* in CMake configuration.")
 		message(FATAL_ERROR "Build stopped because of missing libraries.")
 	endif()
-endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_FREETYPE OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
+endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_FREETYPE OR BUNDLED_JANSSON OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
 
 #-----------------------------------------------------------------
 # Client features
