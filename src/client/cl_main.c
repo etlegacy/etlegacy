@@ -1832,6 +1832,22 @@ void CL_WavStopRecord_f(void)
 	clc.waverecording = qfalse;
 }
 
+extern void json_test();
+
+void CL_TestGet_f(void)
+{
+	char *response = NULL;
+	char *url = Cmd_Argv(1);
+
+	response = DL_GetString(url);
+	if (response)
+	{
+		Com_Printf(response);
+		Com_Printf("\n");
+		free(response);
+	}
+}
+
 //====================================================================
 
 /**
@@ -3855,6 +3871,7 @@ void CL_Init(void)
 	Cmd_AddCommand("showip", CL_ShowIP_f);
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f);
 	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
+	Cmd_AddCommand("cl_testget", CL_TestGet_f);
 
 #ifdef FEATURE_IRC_CLIENT
 	Cmd_AddCommand("irc_connect", CL_OW_InitIRC);

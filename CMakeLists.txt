@@ -62,6 +62,7 @@ cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the syst
 cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_FREETYPE		"Use bundled Freetype2 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library."	ON "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
@@ -98,6 +99,7 @@ option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
 option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"				ON)
 option(FEATURE_CROUCH		"Set to ON if you want Toggle Crouch"					OFF)
 option(FEATURE_GETTEXT		"Enable localization using tinygettext"					ON)
+option(FEATURE_JANSSON		"Enable JSON support (client)"			ON)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
@@ -269,6 +271,8 @@ FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
 	"src/qcommon/i18n_*"
+	"src/qcommon/json.c"
+	"src/qcommon/json_stubs.c"
 )
 
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
@@ -449,7 +453,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 # Use bundled libraries
-if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_FREETYPE OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
+if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_GLEW OR BUNDLED_FREETYPE OR BUNDLED_JANSSON OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS)
 	if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 		message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
 		add_subdirectory(libs)
@@ -559,6 +563,14 @@ if(BUILD_CLIENT)
 	else(FEATURE_CURL)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
+	
+	if(FEATURE_JANSSON)
+		list(APPEND CLIENT_LIBRARIES ${BUNDLED_JASSON_LIBRARIES}) # NOTE: LIBRARY not LIBRARIES
+		include_directories(SYSTEM ${BUNDLED_JASSON_INCLUDE_DIR})
+		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/json.c")
+	else(FEATURE_JANSSON)
+		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/json_stubs.c")
+	endif(FEATURE_JANSSON)
 
 	if(FEATURE_GETTEXT)
 		add_definitions(-DFEATURE_GETTEXT)
@@ -892,6 +904,11 @@ if(BUILD_CLIENT)
 	if(BUNDLED_CURL)
 		add_dependencies(etl bundled_curl)
 	endif(BUNDLED_CURL)
+	
+	if(BUNDLED_JANSSON)
+		add_dependencies(etl bundled_jansson)
+	endif(BUNDLED_JANSSON)
+	
 	if(BUNDLED_OGG_VORBIS)
 		add_dependencies(etl bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
 	endif(BUNDLED_OGG_VORBIS)
