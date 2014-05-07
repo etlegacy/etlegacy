@@ -116,7 +116,6 @@ clientActive_t     cl;
 clientConnection_t clc;
 clientStatic_t     cls;
 vm_t               *cgvm;
-autoupdate_t       autoupdate;
 
 netadr_t rcon_address;
 
@@ -1856,48 +1855,10 @@ void CL_TestGet_f(void)
  */
 void CL_DownloadsComplete(void)
 {
-#ifdef FEATURE_AUTOUPDATE
-	// Auto-update
-	if (autoupdate.updateStarted)
+	if (CL_CheckUpdateDownloads())
 	{
-		if (strlen(com_updatefiles->string) > 4)
-		{
-			CL_InitDownloads();
-			return;
-		}
-
-		/*
-		char *fn;
-		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, com_updatefiles->string);
-		#ifndef _WIN32
-		Sys_Chmod(fn, S_IXUSR);
-		#endif
-		// will either exit with a successful process spawn, or will Com_Error ERR_DROP
-		// so we need to clear the disconnected download data if needed
-		if (cls.bWWWDlDisconnected)
-		{
-		    cls.bWWWDlDisconnected = qfalse;
-		    CL_ClearStaticDownload();
-		}
-
-		Sys_StartProcess(fn, qtrue);
-
-		// reinitialize the filesystem if the game directory or checksum has changed
-		// - after Legacy mod update
-		FS_ConditionalRestart(clc.checksumFeed);
-		*/
-
-		autoupdate.updateStarted = qfalse;
-
-		CL_Disconnect(qtrue);
-
-		// we can reset that now
-		cls.bWWWDlDisconnected = qfalse;
-		CL_ClearStaticDownload();
-
 		return;
 	}
-#endif // FEATURE_AUTOUPDATE
 
 	// if we downloaded files we need to restart the file system
 	if (cls.downloadRestart)
@@ -2058,67 +2019,7 @@ void CL_InitDownloads(void)
 	cls.bWWWDlDisconnected = qfalse;
 	CL_ClearStaticDownload();
 
-#ifdef FEATURE_AUTOUPDATE
-	if (autoupdate.updateStarted && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
-	{
-		if (strlen(com_updatefiles->string) > 4)
-		{
-			char *updateFile;
-			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
-
-			clc.bWWWDl             = qtrue;
-			cls.bWWWDlDisconnected = qtrue;
-
-			updateFile = strtok(com_updatefiles->string, ";");
-
-			if (updateFile == NULL)
-			{
-				Com_Error(ERR_AUTOUPDATE, "Could not parse update string.");
-			}
-			else
-			{
-				// download format: @remotename@localname
-				Q_strncpyz(clc.downloadList, va("@%s@%s", updateFile, updateFile), MAX_INFO_STRING);
-				Q_strncpyz(cls.originalDownloadName, updateFile, sizeof(cls.originalDownloadName));
-				Q_strncpyz(cls.downloadName, va("%s/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
-				Q_strncpyz(cls.downloadTempName,
-				           FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)),
-				           sizeof(cls.downloadTempName));
-				// TODO: add file size, so UI can show progress bar
-				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
-
-				if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName))
-				{
-					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"", cls.downloadName);
-					clc.bWWWDlAborting = qtrue;
-				}
-
-				while (1)
-				{
-					updateFile = strtok(NULL, ";");
-
-					if (updateFile == NULL)
-					{
-						break;
-					}
-
-					Q_strcat(updateFilesRemaining, sizeof(updateFilesRemaining), va("%s;", updateFile));
-				}
-
-				if (strlen(updateFilesRemaining) > 4)
-				{
-					Cvar_Set("com_updatefiles", updateFilesRemaining);
-				}
-				else
-				{
-					Cvar_Set("com_updatefiles", "");
-				}
-				return;
-			}
-		}
-	}
-	else
-#endif // FEATURE_AUTOUPDATE
+	if (!CL_InitUpdateDownloads())
 	{
 		// whatever autodownlad configuration, store missing files in a cvar, use later in the ui maybe
 		if (FS_ComparePaks(missingfiles, sizeof(missingfiles), qfalse))
@@ -2670,18 +2571,10 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 {
 	int headerBytes;
 
-#ifdef FEATURE_AUTOUPDATE
-	static qboolean autoupdateRedirected = qfalse;
-
-	// Update server doesn't understand netchan packets
-	if (NET_CompareAdr(autoupdate.autoupdateServer, from)
-	    && autoupdate.updateStarted && !autoupdateRedirected)
+	if (CL_UpdatePacketEvent(from))
 	{
-		autoupdateRedirected = qtrue;
-		CL_InitDownloads();
 		return;
 	}
-#endif /* FEATURE_AUTOUPDATE */
 
 	if (msg->cursize >= 4 && *( int * ) msg->data == -1)
 	{
@@ -3417,119 +3310,6 @@ void CL_StartHunkUsers(void)
 	}
 }
 
-void CL_CheckAutoUpdate(void)
-{
-	char info[MAX_INFO_STRING];
-
-	if (!com_autoupdate->integer)
-	{
-		Com_DPrintf("Updater is disabled by com_autoupdate 0.\n");
-		return;
-	}
-
-	// Only check once per session
-	if (autoupdate.updateChecked)
-	{
-		return;
-	}
-
-	// Resolve update server
-	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
-
-	if (!NET_StringToAdr(va("%s:%i", UPDATE_SERVER_NAME, PORT_UPDATE), &autoupdate.autoupdateServer, NA_UNSPEC))
-	{
-		Com_Printf("couldn't resolve address\n");
-
-		autoupdate.updateChecked = qtrue;
-		return;
-	}
-	else
-	{
-		Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.autoupdateServer));
-	}
-
-	info[0] = 0;
-	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
-	Info_SetValueForKey(info, "platform", CPUSTRING);
-	Info_SetValueForKey(info, va("etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT),
-	                    Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
-	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
-	                    Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
-
-	NET_OutOfBandPrint(NS_CLIENT, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
-
-	autoupdate.updateChecked = qtrue;
-}
-
-#ifdef FEATURE_AUTOUPDATE
-void CL_GetAutoUpdate(void)
-{
-	// Don't try and get an update if we haven't checked for one
-	if (!autoupdate.updateChecked)
-	{
-		return;
-	}
-
-	// Make sure there's a valid update file to request
-	if (strlen(com_updatefiles->string) < 5)
-	{
-		return;
-	}
-
-	Com_DPrintf("Connecting to auto-update server...\n");
-
-	S_StopAllSounds();
-
-	// starting to load a map so we get out of full screen ui mode
-	Cvar_Set("r_uiFullScreen", "0");
-
-	// toggle on all the download related cvars
-	Cvar_Set("cl_allowDownload", "1");  // general flag
-	Cvar_Set("cl_wwwDownload", "1");    // ftp/http support
-
-	// clear any previous "server full" type messages
-	clc.serverMessage[0] = 0;
-
-	if (com_sv_running->integer)
-	{
-		// if running a local server, kill it
-		SV_Shutdown("Server quit\n");
-	}
-
-	// make sure a local server is killed
-	Cvar_Set("sv_killserver", "1");
-	SV_Frame(0);
-
-	CL_Disconnect(qtrue);
-	Con_Close();
-
-	Q_strncpyz(cls.servername, "ET:L Update Server", sizeof(cls.servername));
-
-	if (autoupdate.autoupdateServer.type == NA_BAD)
-	{
-		Com_Printf("Bad server address\n");
-		cls.state = CA_DISCONNECTED;
-		Cvar_Set("ui_connecting", "0");
-		return;
-	}
-
-	// Copy auto-update server address to Server connect address
-	memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
-
-	Com_DPrintf("%s resolved to %s\n", cls.servername,
-	            NET_AdrToString(clc.serverAddress));
-
-	cls.state = CA_CONNECTING;
-
-	cls.keyCatchers        = 0;
-	clc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
-	clc.connectPacketCount = 0;
-
-	// server connection string
-	Cvar_Set("cl_currentServerAddress", "ET:L Update Server");
-}
-#endif /* FEATURE_AUTOUPDATE */
-
 /*
 ============
 CL_RefMalloc
@@ -4202,41 +3982,6 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 			strncat(info, "\n", sizeof(info) - 1);
 		}
 		Com_Printf("%s: %s", NET_AdrToString(from), info);
-	}
-}
-
-/*
-===================
-CL_UpdateInfoPacket
-===================
-*/
-void CL_UpdateInfoPacket(netadr_t from)
-{
-	if (autoupdate.autoupdateServer.type == NA_BAD)
-	{
-		Com_DPrintf("CL_UpdateInfoPacket: Update server has bad address\n");
-		return;
-	}
-
-	Com_DPrintf("Update server resolved to %s\n",
-	            NET_AdrToString(autoupdate.autoupdateServer));
-
-	if (!NET_CompareAdr(from, autoupdate.autoupdateServer))
-	{
-		// TODO: when the updater is server-side as well, write this message to the Attack log
-		Com_DPrintf("CL_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
-		            NET_AdrToString(from), NET_AdrToString(autoupdate.autoupdateServer));
-		return;
-	}
-
-	Cvar_Set("com_updateavailable", Cmd_Argv(1));
-
-	if (!Q_stricmp(com_updateavailable->string, "1"))
-	{
-		Cvar_Set("com_updatefiles", Cmd_Argv(2));
-#ifdef FEATURE_AUTOUPDATE
-		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
-#endif /* FEATURE_AUTOUPDATE */
 	}
 }
 

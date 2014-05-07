@@ -448,8 +448,6 @@ void CL_AddReliableCommand(const char *cmd);
 void CL_StartHunkUsers(void);
 
 void CL_RequestMotd(void);
-void CL_CheckAutoUpdate(void);
-void CL_GetAutoUpdate(void);
 
 void CL_Disconnect_f(void);
 void CL_GetChallengePacket(void);
@@ -571,8 +569,6 @@ void CL_SystemInfoChanged(void);
 void CL_ParseServerMessage(msg_t *msg);
 
 //====================================================================
-
-void CL_UpdateInfoPacket(netadr_t from);
 
 void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
 void CL_LocalServers_f(void);
