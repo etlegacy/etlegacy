@@ -101,6 +101,9 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y);
 #define MEM_POOL_SIZE  1536 * 1024  // was 1024
 #endif
 
+//Is this diffevent in other systems? OSX?
+#define K_CLIPBOARD(x) (tolower(x) == 'v' && DC->keyIsDown(K_CTRL))
+
 static char memoryPool[MEM_POOL_SIZE];
 static int  allocPoint, outOfMemory;
 
@@ -2231,6 +2234,51 @@ void Script_Abort(itemDef_t *item, qboolean *bAbort, char **args)
 	*bAbort = qtrue;
 }
 
+void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
+{
+	char clipbuff[1024];
+	char *temp = NULL;
+
+#define CLIPFAIL *bAbort = qtrue; return;
+
+	memset(clipbuff, 0, sizeof(clipbuff));
+	DC->getClipboardData(clipbuff, sizeof(clipbuff));
+	if (!strlen(clipbuff))
+	{
+		// abort if there is nothing in the clipboard
+		CLIPFAIL;
+	}
+
+	if (!String_Parse(args, &temp))
+	{
+		CLIPFAIL;
+	}
+
+	if (Q_stricmp(temp,"cvar") == 0)
+	{
+		if (!String_Parse(args, &temp))
+		{
+			CLIPFAIL;
+		}
+
+		DC->setCVar(temp, clipbuff);
+	}
+	else if (Q_stricmp(temp, "exec") == 0)
+	{
+		DC->executeText(EXEC_APPEND, va("%s ; ", clipbuff));
+	}
+	else if (Q_stricmp(temp, "eval") == 0)
+	{
+		if (!String_Parse(args, &temp))
+		{
+			CLIPFAIL;
+		}
+
+		// evaluate the string (temp)
+		//TODO: handle
+	}
+}
+
 commandDef_t commandList[] =
 {
 	{ "fadein",             &Script_FadeIn             }, // group/name
@@ -2274,6 +2322,7 @@ commandDef_t commandList[] =
 	{ "execwolfconfig",     &Script_ExecWolfConfig     }, // executes etconfig.cfg
 	{ "setEditFocus",       &Script_SetEditFocus       },
 	{ "abort",              &Script_Abort              },
+	{ "getclipboard",		&Script_GetClipboard	   },
 };
 
 int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);
@@ -3623,26 +3672,34 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		}
 		else
 		{
-			if (tolower(key) == 'v' && DC->keyIsDown(K_CTRL) && item->type != ITEM_TYPE_NUMERICFIELD)  //clipboard paste only on normal textfield
+			if (K_CLIPBOARD(key))  //clipboard paste only on normal textfield
 			{
-				char clipbuff[1024];
-
-				memset(clipbuff, 0, sizeof(clipbuff));
-				DC->getClipboardData(clipbuff, sizeof(clipbuff));
-				if (strlen(clipbuff))
+				if (item->type != ITEM_TYPE_NUMERICFIELD)
 				{
-					int i       = 0;
-					int cliplen = strlen(clipbuff);
-					for (; i < cliplen; i++)
+					char clipbuff[1024];
+
+					memset(clipbuff, 0, sizeof(clipbuff));
+					DC->getClipboardData(clipbuff, sizeof(clipbuff));
+					if (strlen(clipbuff))
 					{
-						if (Item_TextFieldInsertToCursor(&len, buff, clipbuff[i], item, editPtr))
+						int i = 0;
+						int cliplen = strlen(clipbuff);
+						for (; i < cliplen; i++)
 						{
-							break;
+							if (Item_TextFieldInsertToCursor(&len, buff, clipbuff[i], item, editPtr))
+							{
+								break;
+							}
 						}
+						DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 					}
-					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+					return qtrue;
 				}
-				return qtrue;
+				else if (item->onPaste)
+				{
+					//We handle the clipboard action on the script level
+					return qfalse;
+				}
 			}
 
 			if (key == K_DEL || key == K_KP_DEL)
@@ -4034,6 +4091,12 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 		return qtrue;
 	}
 
+	if (K_CLIPBOARD(key) && item->onPaste)
+	{
+		Item_RunScript(item, NULL, item->onPaste);
+		return qtrue;
+	}
+
 	switch (item->type)
 	{
 	case ITEM_TYPE_BUTTON:
@@ -4386,6 +4449,15 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		{
 			item = menu->items[i];
 		}
+	}
+
+	// handle clipboard event if the menu has it set and there is no item selected which has the action
+	if (K_CLIPBOARD(key) && down && menu->onPaste && (item == NULL || (item != NULL && !item->onPaste)) && !g_editingField)
+	{
+		itemDef_t it;
+		it.parent = menu;
+		Item_RunScript(&it, NULL, menu->onPaste);
+		return;
 	}
 
 	if (item != NULL)
@@ -7351,6 +7423,15 @@ qboolean ItemParse_onEnter(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+qboolean ItemParse_onPaste(itemDef_t *item, int handle)
+{
+	if (!PC_Script_Parse(handle, &item->onPaste))
+	{
+		return qfalse;
+	}
+	return qtrue;
+}
+
 qboolean ItemParse_contextMenu(itemDef_t *item, int handle)
 {
 	listBoxDef_t *listPtr;
@@ -7874,6 +7955,7 @@ keywordHash_t itemParseKeywords[] =
 	{ "onTab",             ItemParse_onTab,             NULL },
 	{ "onEsc",             ItemParse_onEsc,             NULL },
 	{ "onEnter",           ItemParse_onEnter,           NULL },
+	{ "onPaste",		   ItemParse_onPaste,			NULL },
 	{ "elementheight",     ItemParse_elementheight,     NULL },
 	{ "elementtype",       ItemParse_elementtype,       NULL },
 	{ "elementwidth",      ItemParse_elementwidth,      NULL },
@@ -8132,6 +8214,16 @@ qboolean MenuParse_onEnter(itemDef_t *item, int handle)
 	menuDef_t *menu = (menuDef_t *)item;
 
 	if (!PC_Script_Parse(handle, &menu->onEnter))
+	{
+		return qfalse;
+	}
+	return qtrue;
+}
+qboolean MenuParse_onPaste(itemDef_t *item, int handle)
+{
+	menuDef_t *menu = (menuDef_t *)item;
+
+	if (!PC_Script_Parse(handle, &menu->onPaste))
 	{
 		return qfalse;
 	}
@@ -8486,6 +8578,7 @@ keywordHash_t menuParseKeywords[] =
 	{ "onTimeout",        MenuParse_onTimeout,       NULL }, // menu timeout function
 	{ "onESC",            MenuParse_onESC,           NULL },
 	{ "onEnter",          MenuParse_onEnter,         NULL },
+	{ "onPaste",		  MenuParse_onPaste,		 NULL },
 	{ "border",           MenuParse_border,          NULL },
 	{ "borderSize",       MenuParse_borderSize,      NULL },
 	{ "backcolor",        MenuParse_backcolor,       NULL },
