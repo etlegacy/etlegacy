@@ -295,7 +295,7 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define MAX_HEADNAME  32
 #define MAX_TEAMS 64
 
-#define MAX_MAPS 128
+#define MAX_MAPS 256
 #define MAX_SPMAPS 16
 #define PLAYERS_PER_TEAM 5
 #define MAX_PINGREQUESTS        16
