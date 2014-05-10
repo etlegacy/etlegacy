@@ -87,8 +87,6 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Next Map:", .2, 24, 8, "vote_allow_nextmap", "Allow players to vote for the next campaign or map" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balanced Teams:", .2, 24, 8, "vote_allow_balancedteams", "Allow players to vote for enforced team balance" )
 
-//Deprecated
-//	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pub Settings:", .2, 24, 8, "vote_allow_pub", "Allow players to vote for public settings" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Referee:", .2, 24, 8, "vote_allow_referee", "Allow players to vote for a referee" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "XP Shuffle:", .2, 24, 8, "vote_allow_shuffleteamsxp", "Allow players to vote for teams to be shuffled" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Swap Teams:", .2, 24, 8, "vote_allow_swapteams", "Allow players to vote for teams to swap sides" )
