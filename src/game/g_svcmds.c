@@ -956,10 +956,15 @@ void Svcmd_SwapTeams_f(void)
 
 /**
  * @brief randomly places players on teams
+ * @param restart
  */
-void Svcmd_ShuffleTeams_f(void)
+void Svcmd_ShuffleTeams_f(qboolean restart)
 {
-	G_resetRoundState();
+	if (restart)
+	{
+		G_resetRoundState();
+	}
+
 	G_shuffleTeams();
 
 	if ((g_gamestate.integer == GS_INITIALIZE) ||
@@ -968,9 +973,11 @@ void Svcmd_ShuffleTeams_f(void)
 	{
 		return;
 	}
-
-	G_resetModeState();
-	Svcmd_ResetMatch_f(qfalse, qtrue);
+	if (restart)
+	{
+		G_resetModeState();
+		Svcmd_ResetMatch_f(qfalse, qtrue);
+	}
 }
 
 void Svcmd_Campaign_f(void)
@@ -2153,7 +2160,13 @@ qboolean ConsoleCommand(void)
 
 	if (Q_stricmp(cmd, "shuffle_teams") == 0)
 	{
-		Svcmd_ShuffleTeams_f();
+		Svcmd_ShuffleTeams_f(qtrue);
+		return qtrue;
+	}
+
+	if (Q_stricmp(cmd, "shuffle_teams_norestart") == 0)
+	{
+		Svcmd_ShuffleTeams_f(qfalse);
 		return qtrue;
 	}
 

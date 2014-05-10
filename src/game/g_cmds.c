@@ -2693,41 +2693,61 @@ Cmd_CallVote_f
 */
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCommand)
 {
-	char *c;
-	int  i;
-	char arg1[MAX_STRING_TOKENS];
-	char arg2[MAX_STRING_TOKENS];
+	int      i;
+	char     arg1[MAX_STRING_TOKENS];
+	char     arg2[MAX_STRING_TOKENS];
+	char     voteDesc[VOTE_MAXSTRING];
+	qboolean sbfNoVoteLimit;
+	qboolean muted = qfalse;
 
+	if (ent->client->sess.muted /*|| G_shrubbot_mute_check(level.clients[ent-g_entities].pers.client_ip, level.clients[ent-g_entities].pers.cl_guid)*/)
+	{
+		muted = qtrue;
+	}
 	// Normal checks, if its not being issued as a referee command
 	if (!fRefCommand)
 	{
-		if (level.voteInfo.voteTime)
+		// added mute check
+		if (muted)
 		{
-			G_printFull("A vote is already in progress.", ent);
+			CP("cp \"You cannot call a vote while muted.\"");
+			return qfalse;
+		}
+		else if (level.voteInfo.voteTime)
+		{
+			CP("cp \"A vote is already in progress.\"");
 			return qfalse;
 		}
 		else if (level.intermissiontime)
 		{
-			G_printFull("Cannot callvote during intermission.", ent);
+			CP("cp \"Cannot callvote during intermission.\"");
 			return qfalse;
 		}
 		else if (!ent->client->sess.referee)
 		{
-			if (voteFlags.integer == VOTING_DISABLED)
+			sbfNoVoteLimit = qfalse; //G_shrubbot_permission( ent, SBF_NO_VOTE_LIMIT );
+
+			if (voteFlags.integer == VOTING_DISABLED && !sbfNoVoteLimit)
 			{
-				G_printFull("Voting not enabled on this server.", ent);
+				CP("cp \"Voting not enabled on this server.\"");
 				return qfalse;
 			}
-			else if (vote_limit.integer > 0 && ent->client->pers.voteCount >= vote_limit.integer)
+			else if (vote_limit.integer > 0 && ent->client->pers.voteCount >= vote_limit.integer &&
+			         !sbfNoVoteLimit)
 			{
-				G_printFull(va("You have already called the maximum number of votes (%d).", vote_limit.integer), ent);
+				CP(va("cp \"You have already called the maximum number of votes (%d).\"", vote_limit.integer));
 				return qfalse;
 			}
 			else if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
 			{
-				G_printFull("Not allowed to call a vote as a spectator.", ent);
+				CP("cp \"Not allowed to call a vote as a spectator.\"");
 				return qfalse;
 			}
+			// flag to control vote permissions
+			//else if ( !sbfNoVoteLimit && G_shrubbot_permission(ent, SBF_NOVOTE) ) {
+			//	CP("cp \"Your adminlevel isn't allowed to call votes.\"");
+			//	return qfalse;
+			//}
 		}
 	}
 
@@ -2735,18 +2755,21 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	trap_Argv(1, arg1, sizeof(arg1));
 	trap_Argv(2, arg2, sizeof(arg2));
 
-	// check for command separators in arg2
-	for (c = arg2; *c; ++c)
+	// quake3 engine callvote bug fix from Luigi Auriemma and/or /dev/humancontroller
+	// http://bugzilla.icculus.org/show_bug.cgi?id=3593
+	// also see http://aluigi.freeforums.org/quake3-engine-callvote-bug-t686-30.html
+	//
+	// NOTE! arguments seem to be tokenized before this function is called.
+	// Result is that no arg1 or arg2 will have ';' in it..
+	// FIXME
+	if (strchr(arg1, ';') || strchr(arg2, ';') ||
+	    strchr(arg1, '\r') || strchr(arg2, '\r') ||
+	    strchr(arg1, '\n') || strchr(arg2, '\n'))
 	{
-		switch (*c)
-		{
-		case '\n':
-		case '\r':
-		case ';':
-			trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
-			return qfalse;
-			break;
-		}
+		char *strCmdBase = (!fRefCommand) ? "vote" : "ref command";
+		G
+		_refPrintf(ent, "Invalid %s string", strCmdBase);
+		return(qfalse);
 	}
 
 	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)
@@ -2755,7 +2778,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		{
 			if (i == G_NOTFOUND)
 			{
-				return qfalse;                 // Command error
+				return qfalse;                  // Command error
 			}
 			else
 			{
@@ -2779,7 +2802,6 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	// If a referee, vote automatically passes.
 	if (fRefCommand)
 	{
-		//level.voteInfo.voteYes = level.voteInfo.numVotingClients + 10;  // JIC :)
 		// Don't announce some votes, as in comp mode, it is generally a ref
 		// who is policing people who shouldn't be joining and players don't want
 		// this sort of spam in the console
@@ -2792,13 +2814,28 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		level.voteInfo.vote_fn(NULL, 0, NULL, NULL, qfalse);
 
 		G_globalSound("sound/misc/referee.wav");
+		// G_globalSoundEnum(GAMESOUND_MISC_REFEREE); // FIXME:
 	}
 	else
 	{
-		level.voteInfo.voteYes = 1;
+		// do not automatically vote yes in polls
+		if (level.voteInfo.vote_fn != G_Poll_v)
+		{
+			level.voteInfo.voteYes = 1;
+		}
+		else
+		{
+			level.voteInfo.voteYes = 0;
+		}
 		AP(va("print \"[lof]%s^7 [lon]called a vote.[lof]  Voting for: %s\n\"", ent->client->pers.netname, level.voteInfo.voteString));
+
+		G_LogPrintf("callvote: %i %s\n", (int)(ent - g_entities), level.voteInfo.voteString);
+
+		level.voteInfo.voteCaller = ent->s.number;
+		level.voteInfo.voteTeam   = ent->client->sess.sessionTeam;
 		AP(va("cp \"[lof]%s\n^7[lon]called a vote.\n\"", ent->client->pers.netname));
 		G_globalSound("sound/misc/vote.wav");
+		// G_globalSoundEnum(GAMESOUND_MISC_VOTE); // FIXME
 	}
 
 	level.voteInfo.voteTime = level.time;
@@ -2813,11 +2850,23 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		}
 
 		ent->client->pers.voteCount++;
-		ent->client->ps.eFlags |= EF_VOTED;
+
+		// allow to vote...
+		if (level.voteInfo.vote_fn != G_Poll_v)
+		{
+			ent->client->ps.eFlags |= EF_VOTED;
+		}
 
 		trap_SetConfigstring(CS_VOTE_YES, va("%i", level.voteInfo.voteYes));
 		trap_SetConfigstring(CS_VOTE_NO, va("%i", level.voteInfo.voteNo));
-		trap_SetConfigstring(CS_VOTE_STRING, level.voteInfo.voteString);
+		Q_strncpyz(voteDesc, level.voteInfo.voteString, sizeof(voteDesc));
+		if ((g_voting.integer & VOTEF_DISP_CALLER))
+		{
+			Q_strcat(voteDesc, sizeof(voteDesc), " (called by ");
+			Q_strcat(voteDesc, sizeof(voteDesc), ent->client->pers.netname);
+			Q_strcat(voteDesc, sizeof(voteDesc), ")");
+		}
+		trap_SetConfigstring(CS_VOTE_STRING, voteDesc);
 		trap_SetConfigstring(CS_VOTE_TIME, va("%i", level.voteInfo.voteTime));
 	}
 
@@ -2858,7 +2907,13 @@ Cmd_Vote_f
 */
 void Cmd_Vote_f(gentity_t *ent)
 {
-	char msg[64];
+	char     msg[64];
+	qboolean muted = qfalse;
+
+	if (ent->client->sess.muted /*|| G_shrubbot_mute_check(ent->client->pers.client_ip, ent->client->pers.cl_guid)*/)
+	{
+		muted = qtrue;
+	}
 
 	// Complaints supercede voting (and share command)
 	if (ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)
@@ -2882,7 +2937,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (tolower(msg[0]) == 'y' || msg[1] == '1')
 		{
 			int num;
 
@@ -2893,12 +2948,9 @@ void Cmd_Vote_f(gentity_t *ent)
 
 			if (!cl->pers.localClient)
 			{
-				const char *value;
-				char       userinfo[MAX_INFO_STRING];
-				ipFilter_t ip;
+				const char *value = level.clients[ent - g_entities].pers.client_ip;
 
-				trap_GetUserinfo(ent - g_entities, userinfo, sizeof(userinfo));
-				value = Info_ValueForKey(userinfo, "ip");
+				ipFilter_t ip;
 
 				StringToFilter(value, &ip);
 
@@ -2910,7 +2962,7 @@ void Cmd_Vote_f(gentity_t *ent)
 				}
 			}
 
-			trap_SendServerCommand(ent->client->pers.complaintClient, va("cpm \"^1Warning^7: Complaint filed against you by %s^* You have Lost XP.\n\"", ent->client->pers.netname));
+			trap_SendServerCommand(ent->client->pers.complaintClient, va("cpm \"^1Warning^7: Complaint filed against you by %s^7 You have Lost XP.\n\"", ent->client->pers.netname));    // ^*
 			trap_SendServerCommand(ent - g_entities, "complaint -1");
 
 			AddScore(other, WOLF_FRIENDLY_PENALTY);
@@ -2932,8 +2984,8 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	if (ent->client->pers.applicationEndTime > level.time)
 	{
-		gclient_t *cl = g_entities[ent->client->pers.applicationClient].client;
 
+		gclient_t *cl = g_entities[ent->client->pers.applicationClient].client;
 		if (!cl)
 		{
 			return;
@@ -2945,7 +2997,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (tolower(msg[0]) == 'y' || msg[1] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "application -4");
 			trap_SendServerCommand(ent->client->pers.applicationClient, "application -3");
@@ -2982,7 +3034,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (tolower(msg[0]) == 'y' || msg[1] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "invitation -4");
 			trap_SendServerCommand(ent->client->pers.invitationClient, "invitation -3");
@@ -3019,7 +3071,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (tolower(msg[0]) == 'y' || msg[1] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "proposition -4");
 			trap_SendServerCommand(ent->client->pers.propositionClient2, "proposition -3");
@@ -3045,14 +3097,13 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (tolower(msg[0]) == 'y' || msg[1] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "aft -2");
 
 			if (G_IsFireteamLeader(ent - g_entities, &ft))
 			{
 				ft->priv = qtrue;
-				G_UpdateFireteamConfigString(ft);
 			}
 		}
 		else
@@ -3069,7 +3120,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	{
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (tolower(msg[0] == 'y') msg[1] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "aftc -2");
 
@@ -3089,11 +3140,12 @@ void Cmd_Vote_f(gentity_t *ent)
 	{
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (tolower(msg[0]) == 'y' || msg[1] == '1')
 		{
 			fireteamData_t *ft;
 
 			trap_SendServerCommand(ent - g_entities, "aftj -2");
+
 
 			ft = G_FindFreePublicFireteam(ent->client->sess.sessionTeam);
 			if (ft)
@@ -3115,6 +3167,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	ent->client->pers.propositionClient  = -1;
 	ent->client->pers.propositionClient2 = -1;
 
+	// dhm
 	// Reset this ent's complainEndTime so they can't send multiple complaints
 	ent->client->pers.complaintEndTime = -1;
 	ent->client->pers.complaintClient  = -1;
@@ -3135,10 +3188,15 @@ void Cmd_Vote_f(gentity_t *ent)
 		return;
 	}
 
+	if (muted)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"Not allowed to vote when muted.\n\"");
+		return;
+	}
+
 	if (level.voteInfo.vote_fn == G_Kick_v)
 	{
 		int pid = atoi(level.voteInfo.vote_value);
-
 		if (!g_entities[pid].client)
 		{
 			return;
@@ -3150,6 +3208,14 @@ void Cmd_Vote_f(gentity_t *ent)
 			return;
 		}
 	}
+	else if (level.voteInfo.vote_fn == G_Surrender_v)
+	{
+		if (ent->client->sess.sessionTeam != level.voteInfo.voteTeam)
+		{
+			CP("cp \"You cannot vote on the other team's surrender\"");
+			return;
+		}
+	}
 
 	trap_SendServerCommand(ent - g_entities, "print \"Vote cast.\n\"");
 
@@ -3157,7 +3223,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	trap_Argv(1, msg, sizeof(msg));
 
-	if (tolower(msg[0]) == 'y' || msg[0] == '1')
+	if (msg[0] == 'y' || msg[1] == 'Y' || msg[1] == '1')
 	{
 		level.voteInfo.voteYes++;
 		trap_SetConfigstring(CS_VOTE_YES, va("%i", level.voteInfo.voteYes));

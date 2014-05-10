@@ -405,7 +405,7 @@
 #define CV_SVF_MATCHRESET       16
 #define CV_SVF_MUTESPECS        32
 #define CV_SVF_NEXTMAP          64
-//#define CV_SVF_PUB              128 //This is freed for reuse
+// #define CV_SVF_PUB              128 //This is freed for reuse
 #define CV_SVF_REFEREE          256
 #define CV_SVF_SHUFFLETEAMS     512
 #define CV_SVF_SWAPTEAMS        1024
@@ -415,6 +415,12 @@
 #define CV_SVF_ANTILAG          16384
 #define CV_SVF_BALANCEDTEAMS    32768
 #define CV_SVF_MUTING           65536
+#define	CV_SVF_SURRENDER		131072
+#define	CV_SVF_RESTARTCAMPAIGN	262144
+#define	CV_SVF_NEXTCAMPAIGN		524288
+#define	CV_SVF_POLL				1048576
+#define	CV_SVF_MAPRESTART		2097152
+#define CV_SVF_SHUFFLETEAMS_NORESTART	4194304
 
 // referee level
 #define RL_NONE                 0

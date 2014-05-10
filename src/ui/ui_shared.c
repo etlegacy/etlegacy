@@ -2254,7 +2254,7 @@ void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 		CLIPFAIL;
 	}
 
-	if (Q_stricmp(temp,"cvar") == 0)
+	if (Q_stricmp(temp, "cvar") == 0)
 	{
 		if (!String_Parse(args, &temp))
 		{
@@ -2322,7 +2322,7 @@ commandDef_t commandList[] =
 	{ "execwolfconfig",     &Script_ExecWolfConfig     }, // executes etconfig.cfg
 	{ "setEditFocus",       &Script_SetEditFocus       },
 	{ "abort",              &Script_Abort              },
-	{ "getclipboard",		&Script_GetClipboard	   },
+	{ "getclipboard",       &Script_GetClipboard       },
 };
 
 int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);
@@ -3682,8 +3682,9 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 					DC->getClipboardData(clipbuff, sizeof(clipbuff));
 					if (strlen(clipbuff))
 					{
-						int i = 0;
+						int i       = 0;
 						int cliplen = strlen(clipbuff);
+
 						for (; i < cliplen; i++)
 						{
 							if (Item_TextFieldInsertToCursor(&len, buff, clipbuff[i], item, editPtr))
@@ -7955,7 +7956,7 @@ keywordHash_t itemParseKeywords[] =
 	{ "onTab",             ItemParse_onTab,             NULL },
 	{ "onEsc",             ItemParse_onEsc,             NULL },
 	{ "onEnter",           ItemParse_onEnter,           NULL },
-	{ "onPaste",		   ItemParse_onPaste,			NULL },
+	{ "onPaste",           ItemParse_onPaste,           NULL },
 	{ "elementheight",     ItemParse_elementheight,     NULL },
 	{ "elementtype",       ItemParse_elementtype,       NULL },
 	{ "elementwidth",      ItemParse_elementwidth,      NULL },
@@ -8578,7 +8579,7 @@ keywordHash_t menuParseKeywords[] =
 	{ "onTimeout",        MenuParse_onTimeout,       NULL }, // menu timeout function
 	{ "onESC",            MenuParse_onESC,           NULL },
 	{ "onEnter",          MenuParse_onEnter,         NULL },
-	{ "onPaste",		  MenuParse_onPaste,		 NULL },
+	{ "onPaste",          MenuParse_onPaste,         NULL },
 	{ "border",           MenuParse_border,          NULL },
 	{ "borderSize",       MenuParse_borderSize,      NULL },
 	{ "backcolor",        MenuParse_backcolor,       NULL },

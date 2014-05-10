@@ -7424,7 +7424,7 @@ void _UI_Init(int legacyClient)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	uiInfo.legacyClient = (legacyClient == qtrue?qtrue:qfalse);
+	uiInfo.legacyClient = (legacyClient == qtrue ? qtrue : qfalse);
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;
@@ -8138,6 +8138,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_config",                   "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_referee",                  "0",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_shuffleteamsxp",           "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_shuffleteamsxp_norestart", "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_swapteams",                "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_friendlyfire",             "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_timelimit",                "0",                          CVAR_ARCHIVE                   },
@@ -8147,6 +8148,10 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_limit",                          "5",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_percent",                        "50",                         CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_surrender",                "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_restartcampaign",          "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_nextcampaign",             "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_poll",                     "1",                          CVAR_ARCHIVE                   },
 
 	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE                   },
 	{ NULL,                             "ui_r_gamma",                          "",                           CVAR_ARCHIVE                   },
