@@ -87,7 +87,6 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "matchreset",               G_MatchReset_v,             "Match Reset",                      "^7\n  Resets the entire match"                                       },
 	{ 0x1ff, "mutespecs",                G_Mutespecs_v,              "Mute Spectators",                  " <0|1>^7\n  Mutes in-game spectator chat"                            },
 	{ 0x1ff, "nextmap",                  G_Nextmap_v,                "Load Next Map",                    "^7\n  Loads the next map or campaign in the map queue"               },
-	{ 0x1ff, "pub",                      G_Pub_v,                    "Load Public Settings",             "^7\n  Loads standard public settings for the current mode"           },
 	{ 0x1ff, "referee",                  G_Referee_v,                "Referee",                          " <player_id>^7\n  Elects a player to have admin abilities"           },
 	{ 0x1ff, "shuffleteamsxp",           G_ShuffleTeams_v,           "Shuffle Teams by XP",              " ^7\n  Randomly place players on each team, based on XP"             },
 	{ 0x1ff, "shuffleteamsxp_norestart", G_ShuffleTeams_NoRestart_v, "Shuffle Teams by XP (No Restart)", " ^7\n  Randomly place players on each team, based on XP"             },

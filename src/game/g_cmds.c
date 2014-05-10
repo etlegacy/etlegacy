@@ -2767,8 +2767,8 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	    strchr(arg1, '\n') || strchr(arg2, '\n'))
 	{
 		char *strCmdBase = (!fRefCommand) ? "vote" : "ref command";
-		G
-		_refPrintf(ent, "Invalid %s string", strCmdBase);
+
+		G_refPrintf(ent, "Invalid %s string", strCmdBase);
 		return(qfalse);
 	}
 
@@ -3120,7 +3120,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	{
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0] == 'y') msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[1] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "aftc -2");
 
