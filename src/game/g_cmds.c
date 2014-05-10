@@ -2937,7 +2937,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
 			int num;
 
@@ -2997,7 +2997,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "application -4");
 			trap_SendServerCommand(ent->client->pers.applicationClient, "application -3");
@@ -3034,7 +3034,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "invitation -4");
 			trap_SendServerCommand(ent->client->pers.invitationClient, "invitation -3");
@@ -3071,7 +3071,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "proposition -4");
 			trap_SendServerCommand(ent->client->pers.propositionClient2, "proposition -3");
@@ -3097,7 +3097,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "aft -2");
 
@@ -3120,7 +3120,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	{
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
 			trap_SendServerCommand(ent - g_entities, "aftc -2");
 
@@ -3140,7 +3140,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	{
 		trap_Argv(1, msg, sizeof(msg));
 
-		if (tolower(msg[0]) == 'y' || msg[1] == '1')
+		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
 			fireteamData_t *ft;
 
@@ -3223,7 +3223,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	trap_Argv(1, msg, sizeof(msg));
 
-	if (msg[0] == 'y' || msg[1] == 'Y' || msg[1] == '1')
+	if (tolower(msg[1]) == 'Y' || msg[0] == '1')
 	{
 		level.voteInfo.voteYes++;
 		trap_SetConfigstring(CS_VOTE_YES, va("%i", level.voteInfo.voteYes));
