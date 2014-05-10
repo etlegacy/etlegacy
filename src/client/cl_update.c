@@ -33,7 +33,7 @@
 
 #include "client.h"
 
-autoupdate_t       autoupdate;
+autoupdate_t autoupdate;
 
 void CL_CheckAutoUpdate(void)
 {
@@ -74,9 +74,9 @@ void CL_CheckAutoUpdate(void)
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
 	Info_SetValueForKey(info, va("etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT),
-		Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
+	                    Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
 	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
-		Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
+	                    Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
 
 	NET_OutOfBandPrint(NS_CLIENT, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
@@ -139,12 +139,12 @@ void CL_GetAutoUpdate(void)
 	memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
 
 	Com_DPrintf("%s resolved to %s\n", cls.servername,
-		NET_AdrToString(clc.serverAddress));
+	            NET_AdrToString(clc.serverAddress));
 
 	cls.state = CA_CONNECTING;
 
-	cls.keyCatchers = 0;
-	clc.connectTime = -99999; // CL_CheckForResend() will fire immediately
+	cls.keyCatchers        = 0;
+	clc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
 	clc.connectPacketCount = 0;
 
 	// server connection string
@@ -209,7 +209,7 @@ qboolean CL_InitUpdateDownloads(void)
 			char *updateFile;
 			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
 
-			clc.bWWWDl = qtrue;
+			clc.bWWWDl             = qtrue;
 			cls.bWWWDlDisconnected = qtrue;
 
 			updateFile = strtok(com_updatefiles->string, ";");
@@ -225,8 +225,8 @@ qboolean CL_InitUpdateDownloads(void)
 				Q_strncpyz(cls.originalDownloadName, updateFile, sizeof(cls.originalDownloadName));
 				Q_strncpyz(cls.downloadName, va("%s/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
 				Q_strncpyz(cls.downloadTempName,
-					FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)),
-					sizeof(cls.downloadTempName));
+				           FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)),
+				           sizeof(cls.downloadTempName));
 				// TODO: add file size, so UI can show progress bar
 				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
 
@@ -272,7 +272,7 @@ qboolean CL_UpdatePacketEvent(netadr_t from)
 
 	// Update server doesn't understand netchan packets
 	if (NET_CompareAdr(autoupdate.autoupdateServer, from)
-		&& autoupdate.updateStarted && !autoupdateRedirected)
+	    && autoupdate.updateStarted && !autoupdateRedirected)
 	{
 		autoupdateRedirected = qtrue;
 		CL_InitDownloads();
@@ -297,13 +297,13 @@ void CL_UpdateInfoPacket(netadr_t from)
 	}
 
 	Com_DPrintf("Update server resolved to %s\n",
-		NET_AdrToString(autoupdate.autoupdateServer));
+	            NET_AdrToString(autoupdate.autoupdateServer));
 
 	if (!NET_CompareAdr(from, autoupdate.autoupdateServer))
 	{
 		// TODO: when the updater is server-side as well, write this message to the Attack log
 		Com_DPrintf("CL_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
-			NET_AdrToString(from), NET_AdrToString(autoupdate.autoupdateServer));
+		            NET_AdrToString(from), NET_AdrToString(autoupdate.autoupdateServer));
 		return;
 	}
 

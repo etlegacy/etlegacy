@@ -1836,7 +1836,7 @@ extern void json_test();
 void CL_TestGet_f(void)
 {
 	char *response = NULL;
-	char *url = Cmd_Argv(1);
+	char *url      = Cmd_Argv(1);
 
 	response = DL_GetString(url);
 	if (response)
