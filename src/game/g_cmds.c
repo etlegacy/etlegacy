@@ -2758,10 +2758,6 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	// quake3 engine callvote bug fix from Luigi Auriemma and/or /dev/humancontroller
 	// http://bugzilla.icculus.org/show_bug.cgi?id=3593
 	// also see http://aluigi.freeforums.org/quake3-engine-callvote-bug-t686-30.html
-	//
-	// NOTE! arguments seem to be tokenized before this function is called.
-	// Result is that no arg1 or arg2 will have ';' in it..
-	// FIXME
 	if (strchr(arg1, ';') || strchr(arg2, ';') ||
 	    strchr(arg1, '\r') || strchr(arg2, '\r') ||
 	    strchr(arg1, '\n') || strchr(arg2, '\n'))
@@ -2769,7 +2765,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		char *strCmdBase = (!fRefCommand) ? "vote" : "ref command";
 
 		G_refPrintf(ent, "Invalid %s string", strCmdBase);
-		return(qfalse);
+		return qfalse;
 	}
 
 	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)
@@ -2984,8 +2980,8 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	if (ent->client->pers.applicationEndTime > level.time)
 	{
-
 		gclient_t *cl = g_entities[ent->client->pers.applicationClient].client;
+
 		if (!cl)
 		{
 			return;
@@ -3167,7 +3163,6 @@ void Cmd_Vote_f(gentity_t *ent)
 	ent->client->pers.propositionClient  = -1;
 	ent->client->pers.propositionClient2 = -1;
 
-	// dhm
 	// Reset this ent's complainEndTime so they can't send multiple complaints
 	ent->client->pers.complaintEndTime = -1;
 	ent->client->pers.complaintClient  = -1;
@@ -3197,6 +3192,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	if (level.voteInfo.vote_fn == G_Kick_v)
 	{
 		int pid = atoi(level.voteInfo.vote_value);
+
 		if (!g_entities[pid].client)
 		{
 			return;
