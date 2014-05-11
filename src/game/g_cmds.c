@@ -2786,7 +2786,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	{
 		if (!fRefCommand)
 		{
-			CP(va("print \"\n^3>>> Unknown vote command: ^7%s %s\n\"", arg1, arg2));
+			CP(va("print \"^3>>> Unknown vote command: ^7%s %s\n\"", arg1, arg2));
 			G_voteHelp(ent, qtrue);
 		}
 		return qfalse;
@@ -2809,8 +2809,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		// just call the stupid thing.... don't bother with the voting faff
 		level.voteInfo.vote_fn(NULL, 0, NULL, NULL, qfalse);
 
-		G_globalSound("sound/misc/referee.wav");
-		// G_globalSoundEnum(GAMESOUND_MISC_REFEREE); // FIXME:
+		G_globalSoundEnum(GAMESOUND_MISC_REFEREE);
 	}
 	else
 	{
@@ -2830,8 +2829,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		level.voteInfo.voteCaller = ent->s.number;
 		level.voteInfo.voteTeam   = ent->client->sess.sessionTeam;
 		AP(va("cp \"[lof]%s\n^7[lon]called a vote.\n\"", ent->client->pers.netname));
-		G_globalSound("sound/misc/vote.wav");
-		// G_globalSoundEnum(GAMESOUND_MISC_VOTE); // FIXME
+		G_globalSoundEnum(GAMESOUND_MISC_VOTE);
 	}
 
 	level.voteInfo.voteTime = level.time;

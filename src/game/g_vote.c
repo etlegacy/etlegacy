@@ -169,31 +169,31 @@ void G_voteHelp(gentity_t *ent, qboolean fShowVote)
 	{
 		if (i + rows * 3 + 1 <= num_cmds)
 		{
-			G_refPrintf(ent, "^5%-17s%-17s%-17s%-17s", aVoteInfo[vi[i]].pszVoteName,
+			G_refPrintf(ent, "^5%-25s%-25s%-25s%-25s", aVoteInfo[vi[i]].pszVoteName,
 			            aVoteInfo[vi[i + rows]].pszVoteName,
 			            aVoteInfo[vi[i + rows * 2]].pszVoteName,
 			            aVoteInfo[vi[i + rows * 3]].pszVoteName);
 		}
 		else if (i + rows * 2 + 1 <= num_cmds)
 		{
-			G_refPrintf(ent, "^5%-17s%-17s%-17s", aVoteInfo[vi[i]].pszVoteName,
+			G_refPrintf(ent, "^5%-25s%-25s%-25s", aVoteInfo[vi[i]].pszVoteName,
 			            aVoteInfo[vi[i + rows]].pszVoteName,
 			            aVoteInfo[vi[i + rows * 2]].pszVoteName);
 		}
 		else if (i + rows + 1 <= num_cmds)
 		{
-			G_refPrintf(ent, "^5%-17s%-17s", aVoteInfo[vi[i]].pszVoteName,
+			G_refPrintf(ent, "^5%-25s%-25s", aVoteInfo[vi[i]].pszVoteName,
 			            aVoteInfo[vi[i + rows]].pszVoteName);
 		}
 		else
 		{
-			G_refPrintf(ent, "^5%-17s", aVoteInfo[vi[i]].pszVoteName);
+			G_refPrintf(ent, "^5%-25s", aVoteInfo[vi[i]].pszVoteName);
 		}
 	}
 
 	if (fShowVote)
 	{
-		CP("print \"\nUsage: ^3\\callvote <command> <params>\n^7For current settings/help, use: ^3\\callvote <command> ?\n\n\"");
+		CP("print \"\nUsage: ^3\\callvote <command> <params>\n^7For current settings/help, use: ^3\\callvote <command> ?\n\"");
 	}
 
 	return;

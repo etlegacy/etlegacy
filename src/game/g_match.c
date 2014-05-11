@@ -105,6 +105,14 @@ void G_globalSound(char *sound)
 	te->r.svFlags  |= SVF_BROADCAST;
 }
 
+void G_globalSoundEnum(int sound)
+{
+	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+
+	te->s.eventParm = sound;
+	te->r.svFlags  |= SVF_BROADCAST;
+}
+
 void G_delayPrint(gentity_t *dpent)
 {
 	int      think_next = 0;

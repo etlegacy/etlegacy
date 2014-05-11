@@ -2036,6 +2036,7 @@ char *G_createStats(gentity_t *refEnt);
 void G_deleteStats(int nClient);
 qboolean G_desiredFollow(gentity_t *ent, int nTeam);
 void G_globalSound(char *sound);
+void G_globalSoundEnum(int sound);
 void G_initMatch(void);
 void G_loadMatchGame(void);
 void G_matchInfoDump(unsigned int dwDumpType);

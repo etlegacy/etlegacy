@@ -2222,11 +2222,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 
 	G_UpdateSkillsToClients();
 
-	G_SoundIndex("sound/misc/referee.wav");
-	G_SoundIndex("sound/misc/vote.wav");
-	G_SoundIndex("sound/player/gurp1.wav");
-	G_SoundIndex("sound/player/gurp2.wav");
-
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));

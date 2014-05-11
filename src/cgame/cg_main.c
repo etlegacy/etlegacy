@@ -1411,6 +1411,13 @@ static void CG_RegisterSounds(void)
 
 	cgs.cachedSounds[GAMESOUND_MISC_REVIVE] = trap_S_RegisterSound("sound/misc/vo_revive.wav", qfalse);
 
+	cgs.cachedSounds[GAMESOUND_MISC_REFEREE] = trap_S_RegisterSound("sound/misc/referee.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_MISC_VOTE]    = trap_S_RegisterSound("sound/misc/vote.wav", qfalse);
+	//cgs.cachedSounds[GAMESOUND_MISC_BANNED] = trap_S_RegisterSound("sound/osp/banned.wav", qfalse);
+	//cgs.cachedSounds[GAMESOUND_MISC_KICKED] = trap_S_RegisterSound("sound/osp/kicked.wav", qfalse);
+
+	cgs.cachedSounds[GAMESOUND_WORLD_CHAIRCREAK] = trap_S_RegisterSound("sound/world/chaircreak.wav", qfalse);
+
 	CG_PrecacheFXSounds();
 }
 

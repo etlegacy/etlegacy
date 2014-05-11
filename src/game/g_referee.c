@@ -279,7 +279,7 @@ void G_refPause_cmd(gentity_t *ent, qboolean fPause)
 	if (fPause)
 	{
 		level.match_pause = 100 + ((ent) ? (1 + ent - g_entities) : 0);
-		G_globalSound("sound/misc/referee.wav");
+		G_globalSoundEnum(GAMESOUND_MISC_REFEREE);
 		G_spawnPrintf(DP_PAUSEINFO, level.time + 15000, NULL);
 		AP(va("print \"^3%s ^1PAUSED^3 the match^3!\n", referee));
 		AP(va("cp \"^3Match is ^1PAUSED^3! (^7%s^3)\n\"", referee));

@@ -33,8 +33,6 @@
 
 #include "g_local.h"
 
-int snd_chaircreak;
-
 void DropToFloorG(gentity_t *ent)
 {
 	vec3_t  dest;
@@ -1360,7 +1358,7 @@ void Props_Chair_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	if (level.time > self->random && has_moved)
 	{
-		G_AddEvent(self, EV_GENERAL_SOUND, snd_chaircreak);
+		G_AddEvent(self, EV_GENERAL_SOUND, GAMESOUND_WORLD_CHAIRCREAK);
 		self->random = level.time + 1000 + (rand() % 200);
 	}
 
@@ -1444,10 +1442,9 @@ void Props_Chair_Animate(gentity_t *ent)
 
 	if (ent->enemy)
 	{
-		float  ratio;
+		float  ratio = 2.5f;
 		vec3_t v;
 
-		ratio = 2.5;
 		VectorSubtract(ent->r.currentOrigin, ent->enemy->r.currentOrigin, v);
 		moveit(ent, vectoyaw(v), (ent->delay * ratio * FRAMETIME) * .001);
 	}
@@ -1602,8 +1599,6 @@ void SP_Props_Chair(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 void SP_Props_ChairHiback(gentity_t *ent)
@@ -1656,8 +1651,6 @@ void SP_Props_ChairHiback(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 void SP_Props_ChairSide(gentity_t *ent)
@@ -1710,8 +1703,6 @@ void SP_Props_ChairSide(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 // can be one of two types, but they have the same animations/etc, so re-use what you can
@@ -1768,8 +1759,6 @@ void SP_Props_ChateauChair(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 /*
@@ -1941,8 +1930,6 @@ void SP_Props_Desklamp(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 /*
