@@ -4576,7 +4576,10 @@ msgstr ""
 msgid "^1Attention: ^3Security Information"
 msgstr ""
 
-msgid "^7You are running old software.\n\nWe do recommend to upgrade your ET client.\nJoin ET Legacy and keep the game alive."
+msgid "^7You are running old software.\n"
+"\n"
+"We do recommend to upgrade your ET client.\n"
+"Join ET Legacy and keep the game alive."
 msgstr ""
 
 msgid "DOWNLOAD LATEST ET CLIENT"
