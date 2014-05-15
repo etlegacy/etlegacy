@@ -4600,3 +4600,15 @@ msgstr "Trudnosc:"
 
 msgid "BOTS ON"
 msgstr "WLACZ BOTY"
+
+msgid "BOTS OFF"
+msgstr "WYLACZ BOTY"
+
+msgid "^1Attention: ^3Security Information"
+msgstr "^1Uwaga: ^3Informacja Bezpieczenstwa"
+
+msgid "^7You are running old software.\n\nWe do recommend to upgrade your ET client.\nJoin ET Legacy and keep the game alive."
+msgstr "^7Dzialasz na starym oprogramowaniu.\n\nZalecamy aktualizaje swojego klienta ET.\nDolacz do ET Legacy i podtrzymuj gre."
+
+msgid "DOWNLOAD LATEST ET CLIENT"
+msgstr "SCIAGNIJ OSTATNIEGO KLIENTA ET"
