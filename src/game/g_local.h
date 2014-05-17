@@ -1284,7 +1284,6 @@ gentity_t *fire_speargun(gentity_t *self, vec3_t start, vec3_t dir);
 
 #define Fire_Lead(ent, activator, spread, damage, muzzle, forward, right, up) Fire_Lead_Ext(ent, activator, spread, damage, muzzle, forward, right, up, MOD_MACHINEGUN)
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, int mod);
-void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage);
 qboolean visible(gentity_t *self, gentity_t *other);
 
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir);
