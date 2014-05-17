@@ -1363,12 +1363,17 @@ static void CG_RegisterSounds(void)
 	for (i = 0; i < 3; i++)
 	{
 		// bouncy shell sounds \o/
-		cgs.media.sfx_brassSound[BRASSSOUND_METAL][i] = trap_S_RegisterSound(va("sound/weapons/misc/shell_metal%i.wav", i + 1), qfalse);
-		cgs.media.sfx_brassSound[BRASSSOUND_SOFT][i]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_soft%i.wav", i + 1), qfalse);
-		cgs.media.sfx_brassSound[BRASSSOUND_STONE][i] = trap_S_RegisterSound(va("sound/weapons/misc/shell_stone%i.wav", i + 1), qfalse);
-		cgs.media.sfx_brassSound[BRASSSOUND_WOOD][i]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_wood%i.wav", i + 1), qfalse);
-		cgs.media.sfx_rubbleBounce[i]                 = trap_S_RegisterSound(va("sound/world/debris%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_METAL][i][0] = trap_S_RegisterSound(va("sound/weapons/misc/shell_metal%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_METAL][i][1] = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_metal%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_SOFT][i][0]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_soft%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_SOFT][i][1]  = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_soft%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_STONE][i][0] = trap_S_RegisterSound(va("sound/weapons/misc/shell_stone%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_STONE][i][1] = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_stone%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_WOOD][i][0]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_wood%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_WOOD][i][1]  = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_wood%i.wav", i + 1), qfalse);
+		cgs.media.sfx_rubbleBounce[i]                    = trap_S_RegisterSound(va("sound/world/debris%i.wav", i + 1), qfalse);
 	}
+
 	cgs.media.sfx_knifehit[0] = trap_S_RegisterSound("sound/weapons/knife/knife_hit1.wav", qfalse);
 	cgs.media.sfx_knifehit[1] = trap_S_RegisterSound("sound/weapons/knife/knife_hit2.wav", qfalse);
 	cgs.media.sfx_knifehit[2] = trap_S_RegisterSound("sound/weapons/knife/knife_hit3.wav", qfalse);

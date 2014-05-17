@@ -573,7 +573,6 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 {
 	int rnd;
 
-	// bleh, has no-one heard of switch statements...
 	switch (le->leBounceSoundType)
 	{
 	// adding machinegun brass bouncy sound for tk
@@ -582,21 +581,45 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 
 		if (trace->surfaceFlags & SURF_METAL)
 		{
-			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_METAL][rnd], 64);
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_METAL][rnd][0], 64);
 		}
 		else if (trace->surfaceFlags & SURF_WOOD)
 		{
-			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_WOOD][rnd], 64);
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_WOOD][rnd][0], 64);
 		}
 		else if (trace->surfaceFlags & (SURF_GRAVEL | SURF_SNOW | SURF_CARPET | SURF_GRASS))
 		{
-			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_SOFT][rnd], 64);
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_SOFT][rnd][0], 64);
 		}
 		else
 		{
-			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_STONE][rnd], 64);
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_STONE][rnd][0], 64);
 		}
 		break;
+
+	case LEBS_SG_BRASS:
+	{
+		int rnd = rand() % 3;
+
+		if (trace->surfaceFlags & SURF_METAL)
+		{
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_METAL][rnd][1], 96);
+		}
+		else if (trace->surfaceFlags & SURF_WOOD)
+		{
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_WOOD][rnd][1], 96);
+		}
+		else if (trace->surfaceFlags & (SURF_GRAVEL | SURF_SNOW | SURF_CARPET | SURF_GRASS))
+		{
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_SOFT][rnd][1], 96);
+		}
+		else
+		{
+			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_STONE][rnd][1], 96);
+		}
+	}
+	break;
+
 	case LEBS_ROCK:
 		rnd = rand() % 3;
 

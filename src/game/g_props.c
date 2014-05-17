@@ -1498,21 +1498,18 @@ void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type)
 	trap_LinkEntity(sfx);
 }
 
+// this should work for all fx types now
 void Prop_Break_Sound(gentity_t *ent)
 {
-	G_AddEvent(ent, EV_FX_SOUND, FXTYPE_WOOD);
-	switch (ent->count)
+	// don't always play the wood sound
+	//G_AddEvent(ent, EV_FX_SOUND, FXTYPE_WOOD);
+
+	// note: props only use 3 types of sounds from the obsolete shard_t enum
+	if (ent->count < FXTYPE_WOOD || ent->count >= FXTYPE_MAX)
 	{
-	case FXTYPE_WOOD:
-		G_AddEvent(ent, EV_FX_SOUND, FXTYPE_WOOD);
-		break;
-	case FXTYPE_GLASS:
-		G_AddEvent(ent, EV_FX_SOUND, FXTYPE_GLASS);
-		break;
-	case FXTYPE_METAL:
-		G_AddEvent(ent, EV_FX_SOUND, FXTYPE_METAL);
-		break;
+		return;
 	}
+	G_AddEvent(ent, EV_FX_SOUND, ent->count);
 }
 
 void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
@@ -1856,7 +1853,7 @@ void SP_props_shard_generator(gentity_t *ent)
 	ent->s.eType   = ET_GENERAL;
 	ent->use       = Use_Props_Shard_Generator;
 
-	if (!ent->count)
+	if (ent->count < FXTYPE_WOOD || ent->count >= FXTYPE_MAX)
 	{
 		ent->count = FXTYPE_WOOD;
 	}
@@ -3912,7 +3909,7 @@ the default sounds are:
   "gibs"    - "sound/player/gibsplit1.wav"
   "brick"   - "sound/world/debris1.wav"
   "stone"   - "sound/world/stonefall.wav"
-  "fabric"  - "sound/world/metalbreak.wav"  // temp
+  "fabric"  - "sound/world/fabricbreak.wav"
 
 "locknoise" the locked sound to play
 "wait"   denotes how long the wait is going to be before the locked sound is played again default is 1 sec
@@ -4030,7 +4027,7 @@ void SP_props_footlocker(gentity_t *self)
 		}
 		else if (!Q_stricmp(type, "fabric"))
 		{
-			self->key = 0;                                  // fixme: not supported
+			self->key = FXTYPE_FABRIC; // FIXME: test this
 		}
 	}
 	else

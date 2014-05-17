@@ -143,7 +143,7 @@ typedef struct forceCvar_s
 // different entity states
 typedef enum
 {
-	STATE_DEFAULT,          // ent is linked, can be used and is solid
+	STATE_DEFAULT = 0,      // ent is linked, can be used and is solid
 	STATE_INVISIBLE,        // ent is unlinked, can't be used, doesn't think and is not solid
 	STATE_UNDERCONSTRUCTION // ent is being constructed
 } entState_t;
@@ -360,13 +360,13 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 
 typedef enum
 {
-	GT_SINGLE_PLAYER,   // obsolete
-	GT_COOP,            // obsolete
+	GT_SINGLE_PLAYER = 0, // obsolete
+	GT_COOP,              // obsolete
 	GT_WOLF,
 	GT_WOLF_STOPWATCH,
-	GT_WOLF_CAMPAIGN,   // Exactly the same as GT_WOLF, but uses campaign roulation (multiple maps form one virtual map)
+	GT_WOLF_CAMPAIGN,     // Exactly the same as GT_WOLF, but uses campaign roulation (multiple maps form one virtual map)
 	GT_WOLF_LMS,
-	GT_WOLF_MAPVOTE,    // ETPub gametype map voting - Credits go to their team. TU!
+	GT_WOLF_MAPVOTE,      // ETPub gametype map voting - Credits go to their team. TU!
 	GT_MAX_GAME_TYPE
 } gametype_t;
 
@@ -385,7 +385,7 @@ movement on the server game.
 
 typedef enum
 {
-	PM_NORMAL,      // can accelerate and turn
+	PM_NORMAL = 0,  // can accelerate and turn
 	PM_NOCLIP,      // noclip movement
 	PM_SPECTATOR,   // still run into walls
 	PM_DEAD,        // no acceleration or turning, but free falling
@@ -395,7 +395,7 @@ typedef enum
 
 typedef enum
 {
-	WEAPON_READY,
+	WEAPON_READY = 0,
 	WEAPON_RAISING,
 	WEAPON_RAISING_TORELOAD,
 	WEAPON_DROPPING,
@@ -409,7 +409,7 @@ typedef enum
 
 typedef enum
 {
-	WSTATE_IDLE,
+	WSTATE_IDLE = 0,
 	WSTATE_SWITCH,
 	WSTATE_FIRE,
 	WSTATE_RELOAD
@@ -544,7 +544,7 @@ int Pmove(pmove_t *pmove);
 // player_state->stats[] indexes
 typedef enum
 {
-	STAT_HEALTH,
+	STAT_HEALTH = 0,
 	STAT_KEYS,                      // 16 bit fields
 	STAT_DEAD_YAW,                  // look this direction when dead (FIXME: get rid of?)
 	STAT_MAX_HEALTH,                // health / armor limit, changable by handicap
@@ -560,7 +560,7 @@ typedef enum
 // cleared on respawn
 typedef enum
 {
-	PERS_SCORE,                     // !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
+	PERS_SCORE = 0,                 // !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
 	PERS_HITS,                      // total points damage inflicted so damage beeps can sound on change
 	PERS_RANK,
 	PERS_TEAM,
@@ -632,7 +632,7 @@ typedef enum
 // !! NOTE: only place flags that don't need to go to the client beyond 0x00800000
 typedef enum
 {
-	PW_NONE,
+	PW_NONE = 0,
 
 	PW_INVULNERABLE,
 	PW_FIRE,
@@ -665,7 +665,7 @@ typedef enum
 	//			id and DM don't want references to 'keys' in the game.
 	//			I'll change to 'INV' as the item becomes 'permanent' and not a test item.
 
-	KEY_NONE,
+	KEY_NONE = 0,
 	KEY_1,      // skull
 	KEY_2,      // chalice
 	KEY_3,      // eye
@@ -766,7 +766,7 @@ typedef struct
 
 typedef enum
 {
-	HR_HEAD,
+	HR_HEAD = 0,
 	HR_ARMS,
 	HR_BODY,
 	HR_LEGS,
@@ -778,7 +778,7 @@ typedef enum
 
 typedef enum
 {
-	SK_BATTLE_SENSE,
+	SK_BATTLE_SENSE = 0,
 	SK_EXPLOSIVES_AND_CONSTRUCTION,
 	SK_FIRST_AID,
 	SK_SIGNALS,
@@ -1068,7 +1068,7 @@ extern const char *eventnames[EV_MAX_EVENTS];
 
 typedef enum
 {
-	BOTH_DEATH1,
+	BOTH_DEATH1 = 0,
 	BOTH_DEAD1,
 	BOTH_DEAD1_WATER,
 	BOTH_DEATH2,
@@ -1230,7 +1230,7 @@ extern const char *animStrings[];     // defined in bg_misc.c
 
 typedef enum
 {
-	WEAP_IDLE1,
+	WEAP_IDLE1 = 0,
 	WEAP_IDLE2,
 	WEAP_ATTACK1,
 	WEAP_ATTACK2,
@@ -1248,7 +1248,7 @@ typedef enum
 
 typedef enum hudHeadAnimNumber_s
 {
-	HD_IDLE1,
+	HD_IDLE1 = 0,
 	HD_IDLE2,
 	HD_IDLE3,
 	HD_IDLE4,
@@ -1297,7 +1297,7 @@ typedef struct animation_s
 // head animations
 typedef enum
 {
-	HEAD_NEUTRAL_CLOSED,
+	HEAD_NEUTRAL_CLOSED = 0,
 	HEAD_NEUTRAL_A,
 	HEAD_NEUTRAL_O,
 	HEAD_NEUTRAL_I,
@@ -1329,7 +1329,7 @@ typedef struct headAnimation_s
 // renamed these to team_axis/allies, it really was awful....
 typedef enum
 {
-	TEAM_FREE,
+	TEAM_FREE = 0,
 	TEAM_AXIS,
 	TEAM_ALLIES,
 	TEAM_SPECTATOR,
@@ -1343,7 +1343,7 @@ typedef enum
 // weapon stat info: mapping between MOD_ and WP_ types (FIXME for new ET weapons)
 typedef enum extWeaponStats_s
 {
-	WS_KNIFE,           // 0
+	WS_KNIFE = 0,       // 0
 	WS_KNIFE_KBAR,      // 1
 	WS_LUGER,           // 2
 	WS_COLT,            // 3
@@ -1479,7 +1479,7 @@ typedef enum
 // gitem_t->type
 typedef enum
 {
-	IT_BAD,
+	IT_BAD = 0,
 	IT_WEAPON,              // EFX: rotate + upscale + minlight
 
 	IT_AMMO,                // EFX: rotate
@@ -1624,7 +1624,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
 
 typedef enum
 {
-	FOOTSTEP_NORMAL,
+	FOOTSTEP_NORMAL = 0,
 	FOOTSTEP_METAL,
 	FOOTSTEP_WOOD,
 	FOOTSTEP_GRASS,
@@ -1653,7 +1653,9 @@ typedef enum
 	FXTYPE_METAL,
 	FXTYPE_GIBS,
 	FXTYPE_BRICK,
-	FXTYPE_STONE
+	FXTYPE_STONE,
+	FXTYPE_FABRIC,
+	FXTYPE_MAX
 } fxType_t;
 
 //==================================================================
@@ -1668,7 +1670,7 @@ typedef enum
 
 typedef enum
 {
-	ANIM_MT_UNUSED,
+	ANIM_MT_UNUSED = 0,
 	ANIM_MT_IDLE,
 	ANIM_MT_IDLECR,
 	ANIM_MT_WALK,
@@ -1699,7 +1701,7 @@ typedef enum
 
 typedef enum
 {
-	ANIM_ET_PAIN,
+	ANIM_ET_PAIN = 0,
 	ANIM_ET_DEATH,
 	ANIM_ET_FIREWEAPON,
 	ANIM_ET_FIREWEAPON2,
@@ -1741,7 +1743,7 @@ typedef enum
 
 typedef enum
 {
-	ANIM_BP_UNUSED,
+	ANIM_BP_UNUSED = 0,
 	ANIM_BP_LEGS,
 	ANIM_BP_TORSO,
 	ANIM_BP_BOTH,
@@ -1751,7 +1753,7 @@ typedef enum
 
 typedef enum
 {
-	ANIM_COND_WEAPON,
+	ANIM_COND_WEAPON = 0,
 	ANIM_COND_ENEMY_POSITION,
 	ANIM_COND_ENEMY_WEAPON,
 	ANIM_COND_UNDERWATER,
@@ -1857,7 +1859,7 @@ typedef struct
 
 typedef enum
 {
-	POSITION_UNUSED,
+	POSITION_UNUSED = 0,
 	POSITION_BEHIND,
 	POSITION_INFRONT,
 	POSITION_RIGHT,
@@ -1868,7 +1870,7 @@ typedef enum
 
 typedef enum
 {
-	MOUNTED_UNUSED,
+	MOUNTED_UNUSED = 0,
 	MOUNTED_MG42,
 	MOUNTED_AAGUN,
 
@@ -1877,7 +1879,7 @@ typedef enum
 
 typedef enum
 {
-	LEANING_UNUSED,
+	LEANING_UNUSED = 0,
 	LEANING_RIGHT,
 	LEANING_LEFT,
 
@@ -1886,7 +1888,7 @@ typedef enum
 
 typedef enum
 {
-	IMPACTPOINT_UNUSED,
+	IMPACTPOINT_UNUSED = 0,
 	IMPACTPOINT_HEAD,
 	IMPACTPOINT_CHEST,
 	IMPACTPOINT_GUT,
@@ -1901,7 +1903,7 @@ typedef enum
 
 typedef enum
 {
-	FLAILING_UNUSED,
+	FLAILING_UNUSED = 0,
 	FLAILING_INAIR,
 	FLAILING_VCRASH,
 	FLAILING_HCRASH,
@@ -1913,24 +1915,24 @@ typedef enum
 {
 	//ANIM_BITFLAG_SNEAKING,
 	//ANIM_BITFLAG_AFTERBATTLE,
-	ANIM_BITFLAG_ZOOMING,
+	ANIM_BITFLAG_ZOOMING = 0,
 
 	NUM_ANIM_COND_BITFLAG
 } animScriptGenBitFlag_t;
 
 typedef enum
 {
-	ACC_BELT_LEFT,  // belt left (lower)
-	ACC_BELT_RIGHT, // belt right (lower)
-	ACC_BELT,       // belt (upper)
-	ACC_BACK,       // back (upper)
-	ACC_WEAPON,     // weapon (upper)
-	ACC_WEAPON2,    // weapon2 (upper)
-	ACC_HAT,        // hat (head)
-	ACC_MOUTH2,     //
-	ACC_MOUTH3,     //
-	ACC_RANK,       //
-	ACC_MAX         // this is bound by network limits, must change network stream to increase this
+	ACC_BELT_LEFT = 0, // belt left (lower)
+	ACC_BELT_RIGHT,    // belt right (lower)
+	ACC_BELT,          // belt (upper)
+	ACC_BACK,          // back (upper)
+	ACC_WEAPON,        // weapon (upper)
+	ACC_WEAPON2,       // weapon2 (upper)
+	ACC_HAT,           // hat (head)
+	ACC_MOUTH2,        //
+	ACC_MOUTH3,        //
+	ACC_RANK,          //
+	ACC_MAX            // this is bound by network limits, must change network stream to increase this
 } accType_t;
 
 #define MAX_GIB_MODELS      16
@@ -2035,7 +2037,7 @@ extern pathCorner_t pathCorners[MAX_PATH_CORNERS];
 
 typedef enum
 {
-	ME_PLAYER,
+	ME_PLAYER = 0,
 	ME_PLAYER_REVIVE,
 	ME_PLAYER_DISGUISED,
 	ME_PLAYER_OBJECTIVE,
@@ -2144,7 +2146,7 @@ qboolean PC_Float_Parse(int handle, float *f);
 
 typedef enum
 {
-	UIMENU_NONE,
+	UIMENU_NONE = 0,
 	UIMENU_MAIN,
 	UIMENU_INGAME,
 	UIMENU_NEED_CD,     // Obsolete
@@ -2244,14 +2246,14 @@ bg_character_t *BG_FindCharacter(const char *characterFile);
 
 typedef enum
 {
-	S_LT_NOT_LOOPED,
+	S_LT_NOT_LOOPED = 0,
 	S_LT_LOOPED_ON,
 	S_LT_LOOPED_OFF
 } speakerLoopType_t;
 
 typedef enum
 {
-	S_BT_LOCAL,
+	S_BT_LOCAL = 0,
 	S_BT_GLOBAL,
 	S_BT_NOPVS
 } speakerBroadcastType_t;
@@ -2325,7 +2327,7 @@ typedef enum popupMessageType_e
 
 typedef enum popupMessageBigType_e
 {
-	PM_SKILL,
+	PM_SKILL = 0,
 	PM_RANK,
 	PM_DISGUISE,
 	PM_BIG_NUM_TYPES
@@ -2342,7 +2344,7 @@ void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 // Store all sounds used in server engine and send them to client in events only as Enums
 typedef enum
 {
-	GAMESOUND_BLANK,
+	GAMESOUND_BLANK = 0,
 	GAMESOUND_PLAYER_GURP1,         // "sound/player/gurp1.wav"                         Player takes damage from drowning
 	GAMESOUND_PLAYER_GURP2,         // "sound/player/gurp2.wav"
 	GAMESOUND_PLAYER_BUBBLE,

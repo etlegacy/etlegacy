@@ -394,7 +394,7 @@ typedef struct markPoly_s
 // moved in from cg_view.c
 typedef enum
 {
-	ZOOM_NONE,
+	ZOOM_NONE = 0,
 	ZOOM_BINOC,
 	ZOOM_SNIPER,
 	ZOOM_SNOOPER,
@@ -405,7 +405,7 @@ typedef enum
 
 typedef enum
 {
-	ZOOM_OUT,   // widest angle
+	ZOOM_OUT = 0, // widest angle
 	ZOOM_IN     // tightest angle (approaching 0)
 } EZoomInOut_t;
 
@@ -413,7 +413,7 @@ extern float zoomTable[ZOOM_MAX_ZOOMS][2];
 
 typedef enum
 {
-	LE_MARK,
+	LE_MARK = 0,
 	LE_EXPLOSION,
 	LE_SPRITE_EXPLOSION,
 	LE_FRAGMENT,
@@ -441,19 +441,20 @@ typedef enum
 
 typedef enum
 {
-	LEMT_NONE,
+	LEMT_NONE = 0,
 	LEMT_BLOOD
 } leMarkType_t;         // fragment local entities can leave marks on walls
 
 typedef enum
 {
-	LEBS_NONE,
+	LEBS_NONE = 0,
 	LEBS_BLOOD,
 	LEBS_ROCK,
 	LEBS_WOOD,
 	LEBS_BRASS,
 	LEBS_METAL,
-	LEBS_BONE
+	LEBS_BONE,
+	LEBS_SG_BRASS
 } leBounceSoundType_t;  // fragment local entities can make sounds on impacts
 
 typedef struct localEntity_s
@@ -1425,7 +1426,7 @@ typedef struct
 	sfxHandle_t sfx_mortarexpDist;
 	sfxHandle_t sfx_grenexp;
 	sfxHandle_t sfx_grenexpDist;
-	sfxHandle_t sfx_brassSound[BRASSSOUND_MAX][3];
+	sfxHandle_t sfx_brassSound[BRASSSOUND_MAX][3][2];
 	sfxHandle_t sfx_rubbleBounce[3];
 
 	sfxHandle_t sfx_bullet_fleshhit[5];
