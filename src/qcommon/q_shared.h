@@ -1421,10 +1421,10 @@ typedef struct playerState_s
 	// gets to 0 while in players hand, it explodes)
 
 	int gravity;
-	float leanf;                // amount of 'lean' when player is looking around corner //----(SA) added
+	float leanf;                // amount of 'lean' when player is looking around corner
 
 	int speed;
-	int delta_angles[3];            // add to command angles to get view direction
+	int delta_angles[3];        // add to command angles to get view direction
 	// changed by spawns, rotating objects, and teleporters
 
 	int groundEntityNum;        // ENTITYNUM_NONE = in air

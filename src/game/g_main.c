@@ -2388,7 +2388,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	// range are NEVER anything but clients
 	level.num_entities = MAX_CLIENTS;
 
-	// let the server system know where the entites are
+	// let the server system know where the entities are
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
 

@@ -213,7 +213,7 @@ qboolean COM_BitCheck(const int array[], int bitNum)
 		bitNum -= 32;
 	}
 
-	return ((array[i] & (1 << bitNum)) != 0);        // (SA) heh, whoops. :)
+	return ((array[i] & (1 << bitNum)) != 0);
 }
 
 /*
@@ -839,7 +839,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 	    (c == '_') ||
 	    (c == '/') ||
 	    (c == '\\') ||
-	    (c == '$') || (c == '*')) // Tr3B - for bad shader strings
+	    (c == '$') || (c == '*')) // for bad shader strings
 	{
 		do
 		{

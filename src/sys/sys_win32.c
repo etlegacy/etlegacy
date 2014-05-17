@@ -494,7 +494,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 
 	do
 	{
-		if ((!wantsubs && flag ^ (findinfo.attrib & _A_SUBDIR)) || (wantsubs && findinfo.attrib & _A_SUBDIR))
+		if ((!wantsubs && (flag ^ (findinfo.attrib & _A_SUBDIR))) || (wantsubs && (findinfo.attrib & _A_SUBDIR)))
 		{
 			if (nfiles == MAX_FOUND_FILES - 1)
 			{
