@@ -1413,6 +1413,93 @@ void Svcmd_Burn(void)
 	return;
 }
 
+// FIXME/note:
+// beside the pip command EV_SPARKS and EV_SPARKS_ELECTRIC
+// aren't used for real ... we may delete these events
+// EV_SPARKS_ELECTRIC doesn't seem to work anyway
+void G_Pip(gentity_t *vic)
+{
+	gentity_t *pip = G_TempEntity(vic->r.currentOrigin, EV_SPARKS);
+
+	VectorCopy(vic->r.currentOrigin, pip->s.origin);
+	VectorCopy(vic->r.currentAngles, pip->s.angles);
+	pip->s.origin[2] -= 6;
+	pip->s.density    = 5000;
+	pip->s.frame      = 6000;
+	pip->s.angles2[0] = 18;
+	pip->s.angles2[1] = 18;
+	pip->s.angles2[2] = .5;
+}
+
+/**
+ * @brief pip command - pips players
+ */
+void Svcmd_Pip(void)
+{
+	int       pids[MAX_CLIENTS];
+	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	gentity_t *vic;
+	qboolean  doAll = qfalse;
+
+	// FIXME: usage
+	//        make all outputs nice - cp with icon?
+	//        reason?
+
+	// ignore in intermission
+	if (level.intermissiontime)
+	{
+		trap_SendServerCommand(-1, va("print \"Pip command not allowed during intermission.\n\""));
+		return;
+	}
+
+	if (trap_Argc() < 2)
+	{
+		doAll = qtrue;
+	}
+
+	trap_Argv(2, name, sizeof(name));
+
+	if (!Q_stricmp(name, "-1") || doAll)
+	{
+		int it, count = 0;
+
+		for (it = 0; it < level.numConnectedClients; it++)
+		{
+			vic = g_entities + level.sortedClients[it];
+			if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+			      vic->client->sess.sessionTeam == TEAM_ALLIES))
+			{
+				continue;
+			}
+
+			G_Pip(vic);
+			count++;
+		}
+		trap_SendServerCommand(-1, va("print \"%d players pipped.\n\"", count));
+		return;
+	}
+
+	if (ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(-1, va("print \"Error - can't pip - %s.\n\"", err));
+		return;
+	}
+	vic = &g_entities[pids[0]];
+	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
+	{
+		trap_SendServerCommand(-1, va("print \"Player must be on a team to be pipped.\n\""));
+		return;
+	}
+
+	G_Pip(vic);
+
+	trap_SendServerCommand(-1, va("print \"^7%s ^7was pipped.\n\"", vic->client->pers.netname));
+
+	CPx(pids[0], va("cp \"^9 You are pipped\""));
+	return;
+}
+
 // change into qfalse if you want to use the qagame banning system
 // which makes it possible to unban IP addresses
 #define USE_ENGINE_BANLIST qtrue
@@ -2084,154 +2171,129 @@ qboolean ConsoleCommand(void)
 		G_LuaStatus(NULL);
 		return qtrue;
 	}
-
 	// *LUA* API callbacks
 	if (G_LuaHook_ConsoleCommand(cmd))
 	{
 		return qtrue;
 	}
 #endif
-
 	if (Q_stricmp(cmd, "entitylist") == 0)
 	{
 		Svcmd_EntityList_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "csinfo") == 0)
 	{
 		Svcmd_CSInfo_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "forceteam") == 0)
 	{
 		Svcmd_ForceTeam_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "game_memory") == 0)
 	{
 		Svcmd_GameMem_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "addip") == 0)
 	{
 		Svcmd_AddIP_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "removeip") == 0)
 	{
 		Svcmd_RemoveIP_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "listip") == 0)
 	{
 		trap_SendConsoleCommand(EXEC_INSERT, "g_banIPs\n");
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "listmaxlivesip") == 0)
 	{
 		PrintMaxLivesGUID();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "start_match") == 0)
 	{
 		Svcmd_StartMatch_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "reset_match") == 0)
 	{
 		Svcmd_ResetMatch_f(qtrue, qtrue);
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "swap_teams") == 0)
 	{
 		Svcmd_SwapTeams_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "shuffle_teams") == 0)
 	{
 		Svcmd_ShuffleTeams_f(qtrue);
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "shuffle_teams_norestart") == 0)
 	{
 		Svcmd_ShuffleTeams_f(qfalse);
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "makeReferee") == 0)
 	{
 		G_MakeReferee();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "removeReferee") == 0)
 	{
 		G_RemoveReferee();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "mute") == 0)
 	{
 		G_MuteClient();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "unmute") == 0)
 	{
 		G_UnMuteClient();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "ban") == 0)
 	{
 		G_PlayerBan();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "campaign") == 0)
 	{
 		Svcmd_Campaign_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "listcampaigns") == 0)
 	{
 		Svcmd_ListCampaigns_f();
 		return qtrue;
 	}
-
 	if (Q_stricmp(cmd, "revive") == 0)
 	{
 		trap_Argv(1, cmd, sizeof(cmd));
 		Svcmd_RevivePlayer(cmd);
 		return qtrue;
 	}
-
 	// moved from engine
 	if (!Q_stricmp(cmd, "kick"))
 	{
 		Svcmd_Kick_f();
 		return qtrue;
 	}
-
 	if (!Q_stricmp(cmd, "clientkick"))
 	{
 		Svcmd_KickNum_f();
 		return qtrue;
 	}
-
 #ifdef FEATURE_OMNIBOT
 	if (!Q_stricmp(cmd, "bot"))
 	{
@@ -2239,13 +2301,11 @@ qboolean ConsoleCommand(void)
 		return qtrue;
 	}
 #endif
-
 	if (!Q_stricmp(cmd, "cp"))
 	{
 		trap_SendServerCommand(-1, va("cp \"%s\"", Q_AddCR(ConcatArgs(1))));
 		return qtrue;
 	}
-
 	if (!Q_stricmp(cmd, "reloadConfig"))
 	{
 		trap_SetConfigstring(CS_CONFIGNAME, "");
@@ -2254,13 +2314,11 @@ qboolean ConsoleCommand(void)
 
 		return qtrue;
 	}
-
 	if (!Q_stricmp(cmd, "loadConfig"))
 	{
 		CC_loadconfig();
 		return qtrue;
 	}
-
 	if (!Q_stricmp(cmd, "sv_cvarempty"))
 	{
 		memset(level.svCvars, 0, sizeof(level.svCvars));
@@ -2268,19 +2326,16 @@ qboolean ConsoleCommand(void)
 		G_UpdateSvCvars();
 		return qtrue;
 	}
-
 	if (!Q_stricmp(cmd, "sv_cvar"))
 	{
 		CC_svcvar();
 		return qtrue;
 	}
-
 	if (!Q_stricmp(cmd, "playsound") || !Q_stricmp(cmd, "playsound_env"))
 	{
 		G_PlaySound_Cmd();
 		return qtrue;
 	}
-
 	//if (g_cheats.integer)
 	//{
 	if (!Q_stricmp(cmd, "gib"))
@@ -2308,8 +2363,12 @@ qboolean ConsoleCommand(void)
 		Svcmd_Burn();
 		return qtrue;
 	}
+	if (!Q_stricmp(cmd, "pip"))
+	{
+		Svcmd_Pip();
+		return qtrue;
+	}
 	//}
-
 	if (g_dedicated.integer)
 	{
 		if (!Q_stricmp(cmd, "say"))
