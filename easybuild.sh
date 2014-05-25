@@ -96,6 +96,12 @@ checkapp git
 checkapp zip
 echo
 
+einfo "Using compilers:"
+
+echo
+echo "  CC  = ${CC}"
+echo "  CXX = ${CXX}"
+
 # everything looks ok, try to compile!
 
 # cmake varialbes
