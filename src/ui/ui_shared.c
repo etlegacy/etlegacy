@@ -5033,8 +5033,6 @@ void Item_TextField_Paint(itemDef_t *item)
 		}
 	}
 
-	parent = (menuDef_t *)item->parent;
-
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		lowLight[0] = 0.8 * parent->focusColor[0];
