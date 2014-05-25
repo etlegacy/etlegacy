@@ -2179,7 +2179,7 @@ qboolean G_EmplacedGunIsMountable(gentity_t *ent, gentity_t *other);
 void G_CheckForCursorHints(gentity_t *ent);
 void G_CalcClientAccuracies(void);
 void G_BuildEndgameStats(void);
-int G_TeamCount(gentity_t *ent, weapon_t weap);
+int G_TeamCount(gentity_t *ent, int weap);
 
 qboolean G_IsFireteamLeader(int entityNum, fireteamData_t **teamNum);
 fireteamData_t *G_FindFreePublicFireteam(team_t team);

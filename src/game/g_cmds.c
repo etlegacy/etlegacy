@@ -1441,7 +1441,11 @@ int G_NumPlayersOnTeam(team_t team)
 	return cnt;
 }
 
-int G_TeamCount(gentity_t *ent, weapon_t weap)
+/**
+ * @param gentity_t *ent
+ * @param weapon_t weapon or -1
+ */
+int G_TeamCount(gentity_t *ent, int weap)
 {
 	int i, j, cnt;
 
