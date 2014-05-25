@@ -2234,10 +2234,11 @@ void Script_Abort(itemDef_t *item, qboolean *bAbort, char **args)
 	*bAbort = qtrue;
 }
 
+// FIXME
 void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 {
-	char clipbuff[1024];
-	char *temp = NULL;
+	char       clipbuff[1024];
+	const char *temp = NULL;
 
 #define CLIPFAIL *bAbort = qtrue; return;
 
@@ -2256,12 +2257,14 @@ void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 
 	if (Q_stricmp(temp, "cvar") == 0)
 	{
-		if (!String_Parse(args, &temp))
+		const char *token = NULL;
+
+		if (!String_Parse(args, &token))
 		{
 			CLIPFAIL;
 		}
 
-		DC->setCVar(temp, clipbuff);
+		DC->setCVar(token, clipbuff);
 	}
 	else if (Q_stricmp(temp, "exec") == 0)
 	{
@@ -2269,7 +2272,9 @@ void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 	else if (Q_stricmp(temp, "eval") == 0)
 	{
-		if (!String_Parse(args, &temp))
+		const char *token = NULL;
+
+		if (!String_Parse(args, &token))
 		{
 			CLIPFAIL;
 		}
