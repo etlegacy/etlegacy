@@ -225,7 +225,7 @@ void GLimp_Minimize(void)
  */
 void GLimp_LogComment(const char *comment)
 {
-	ri.Printf(PRINT_DEVELOPER, comment);
+	ri.Printf(PRINT_DEVELOPER, "%s", comment);
 }
 
 /* unused - see GLimp_DetectAvailableModes
