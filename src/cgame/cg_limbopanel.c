@@ -3285,7 +3285,10 @@ extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void)
 	return BG_WeapStatForWeapon(CG_LimboPanel_GetSelectedWeapon());
 }
 
-int CG_LimboPanel_TeamCount(weapon_t weap)
+/**
+ * @param weapon_t weap or -1
+ */
+int CG_LimboPanel_TeamCount(int weap)
 {
 	int i, cnt;
 
