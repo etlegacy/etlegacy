@@ -1841,8 +1841,7 @@ void CL_TestGet_f(void)
 	response = DL_GetString(url);
 	if (response)
 	{
-		Com_Printf(response);
-		Com_Printf("\n");
+		Com_Printf("%s\n", response);
 		free(response);
 	}
 }
