@@ -1109,7 +1109,7 @@ void SV_Init(void)
 
 	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
 
-	sv_protect    = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
+	sv_protect    = Cvar_Get("sv_protect", "0", CVAR_ARCHIVE);
 	sv_protectLog = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);
 	SV_InitAttackLog();
 
