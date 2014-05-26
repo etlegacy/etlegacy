@@ -841,29 +841,31 @@ typedef struct weapontable_s
 
 	int damage;               // g
 	qboolean canGib;          // g
+
 	float spread;             // g
-	int splashDamage;         // g
-	int splashRadius;         // g
+	//int splashDamage;         // g
+	//int splashRadius;         // g
 
-	qboolean keepDisguise;    // g
+	//qboolean keepDisguise;    // g
 
-	qboolean isAutoReload;    // bg
+	//qboolean isAutoReload;    // bg
 
-	qboolean isAkimbo;        // bg
-	qboolean isPanzer;        // bg
-	qboolean isRiflenade;     // bg
-	qboolean isMortar;        // bg
-	qboolean isMortarSet;     // bg
+	//qboolean isAkimbo;        // bg
+	//qboolean isPanzer;        // bg
+	//qboolean isRiflenade;     // bg
+	//qboolean isMortar;        // bg
+	//qboolean isMortarSet;     // bg
 
-	qboolean isHeavyWeapon;   // bg
-	qboolean isSetWeapon;     // bg
+	//qboolean isHeavyWeapon;   // bg
+	//qboolean isSetWeapon;     // bg
 
-	qboolean isUnderWaterFire; // bg
+	//qboolean isUnderWaterFire; // bg
 
-	qboolean isValidStatWeapon; // bg (just check)
+	//qboolean isValidStatWeapon; // bg (just check)
 
 	// client
 	// icons
+	char *desc; // description for spawn weapons - client only
 
 } weaponTable_t;
 

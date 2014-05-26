@@ -3020,15 +3020,6 @@ void CG_LimboMenu_f(void);
 void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, int time, clientInfo_t *ci, qboolean animatedHead);
 animation_t *CG_GetLimboAnimation(playerInfo_t *pi, const char *name);
 
-typedef struct
-{
-	weapon_t weapindex;
-	const char *desc;
-} weaponType_t;
-
-extern weaponType_t weaponTypes[];
-weaponType_t *WM_FindWeaponTypeForWeapon(weapon_t weapon);
-
 extern qboolean ccInitial;
 
 #define CC_FILTER_AXIS          (1 << 0)

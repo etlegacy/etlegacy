@@ -3425,57 +3425,6 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 	trap_R_RestoreViewParms();
 }
 
-// used for spawn messages and weapon cards
-// FIXME: weapon table
-weaponType_t weaponTypes[] =
-{
-	{ WP_MP40,                 "MP 40"    },
-	{ WP_THOMPSON,             "THOMPSON" },
-	{ WP_STEN,                 "STEN",    },
-	{ WP_PANZERFAUST,          "PANZERFAUST",},
-	{ WP_BAZOOKA,              "BAZOOKA", },
-	{ WP_FLAMETHROWER,         "FLAMETHROWER",},
-	{ WP_KAR98,                "K43",     },
-	{ WP_CARBINE,              "M1 GARAND",},
-	{ WP_FG42,                 "FG42",    },
-	{ WP_GARAND,               "M1 GARAND",},
-	{ WP_MOBILE_MG42,          "MOBILE MG42",},
-	{ WP_MOBILE_BROWNING,      "MOBILE BROWNING",},
-	{ WP_K43,                  "K43",     },
-	{ WP_MORTAR,               "MORTAR",  },
-	{ WP_MORTAR2,              "GRANATWERFER",},
-	{ WP_COLT,                 "COLT",    },
-	{ WP_LUGER,                "LUGER",   },
-	{ WP_AKIMBO_COLT,          "AKIMBO COLTS",},
-	{ WP_AKIMBO_LUGER,         "AKIMBO LUGERS",},
-	{ WP_SILENCED_COLT,        "COLT",    },
-	{ WP_SILENCER,             "LUGER",   },
-	{ WP_AKIMBO_SILENCEDCOLT,  "AKIMBO COLTS",},
-	{ WP_AKIMBO_SILENCEDLUGER, "AKIMBO LUGERS",},
-	{ WP_NONE,                 NULL,      },
-	{ -1,                      NULL,      },
-};
-
-weaponType_t *WM_FindWeaponTypeForWeapon(weapon_t weapon)
-{
-	weaponType_t *w = weaponTypes;
-
-	if (!weapon)
-	{
-		return NULL;
-	}
-
-	while (w->weapindex != -1)
-	{
-		if (w->weapindex == weapon)
-		{
-			return w;
-		}
-		w++;
-	}
-	return NULL;
-}
-
 void CG_SetHudHeadLerpFrameAnimation(bg_character_t *ch, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t *anim;
