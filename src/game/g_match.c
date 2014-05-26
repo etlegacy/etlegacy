@@ -517,7 +517,7 @@ char *G_createStats(gentity_t *refEnt)
 	          ));
 }
 
-// Resets player's current stats
+// Resets player's current stats (session related only)
 void G_deleteStats(int nClient)
 {
 	gclient_t *cl = &level.clients[nClient];
@@ -534,6 +534,14 @@ void G_deleteStats(int nClient)
 	cl->sess.team_kills           = 0;
 	cl->sess.time_axis            = 0;
 	cl->sess.time_allies          = 0;
+
+	cl->sess.startskillpoints[SK_BATTLE_SENSE]                             = 0;
+	cl->sess.startskillpoints[SK_EXPLOSIVES_AND_CONSTRUCTION]              = 0;
+	cl->sess.startskillpoints[SK_FIRST_AID]                                = 0;
+	cl->sess.startskillpoints[SK_SIGNALS]                                  = 0;
+	cl->sess.startskillpoints[SK_LIGHT_WEAPONS]                            = 0;
+	cl->sess.startskillpoints[SK_HEAVY_WEAPONS]                            = 0;
+	cl->sess.startskillpoints[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = 0;
 
 	memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));

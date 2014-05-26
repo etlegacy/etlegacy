@@ -3301,18 +3301,21 @@ void ClientDisconnect(int clientNum)
 	G_LogPrintf("ClientDisconnect: %i\n", clientNum);
 
 	trap_UnlinkEntity(ent);
-	ent->s.modelindex                     = 0;
-	ent->inuse                            = qfalse;
-	ent->classname                        = "disconnected";
-	ent->client->pers.connected           = CON_DISCONNECTED;
-	ent->client->ps.persistant[PERS_TEAM] = TEAM_FREE;
-	i                                     = ent->client->sess.sessionTeam;
-	ent->client->sess.sessionTeam         = TEAM_FREE;
-	ent->active                           = 0;
+	ent->s.modelindex                      = 0;
+	ent->inuse                             = qfalse;
+	ent->classname                         = "disconnected";
+	ent->client->hasaward                  = qfalse;
+	ent->client->medals                    = 0;
+	ent->client->pers.connected            = CON_DISCONNECTED;
+	ent->client->ps.persistant[PERS_TEAM]  = TEAM_FREE;
+	ent->client->ps.persistant[PERS_SCORE] = 0;
+	i                                      = ent->client->sess.sessionTeam;
+	ent->client->sess.sessionTeam          = TEAM_FREE;
+	ent->active                            = 0;
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
 
-	G_deleteStats(clientNum);
+	G_deleteStats(clientNum); // session related
 
 	CalculateRanks();
 

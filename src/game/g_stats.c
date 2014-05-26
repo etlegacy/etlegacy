@@ -483,7 +483,6 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	case MOD_GARAND:
 	case MOD_SILENCER:
 	case MOD_FG42:
-	//case MOD_FG42SCOPE:
 	case MOD_CARBINE:
 	case MOD_KAR98:
 	case MOD_SILENCED_COLT:
@@ -737,11 +736,16 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 	}
 }
 
+// - send name and team when there is a winner - else empty string
+// and TEAM_FREE = 0 (client structure is only used for awards!)
+// - connectedClients have a team but keep the check for TEAM_FREE
+// ... we'll never know for sure, connectedClients are determined in CalculateRanks
+
 #define CHECKSTAT1(XX)                                                        \
 	best = NULL;                                                                \
 	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
+		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
 			continue;                                                           \
 		}                                                                       \
 		if (cl->XX <= 0)                                                    \
@@ -753,13 +757,13 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 		}                                                                       \
 	}                                                                           \
 	if (best) { best->hasaward = qtrue; }                                      \
-	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
 #define CHECKSTATMIN(XX, YY)                                                  \
 	best = NULL;                                                                \
 	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
+		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
 			continue;                                                           \
 		}                                                                       \
 		if (!best || cl->XX > best->XX) {                                  \
@@ -767,13 +771,13 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 		}                                                                       \
 	}                                                                           \
 	if (best) { best->hasaward = qtrue; }                                      \
-	Q_strcat(buffer, 1024, va(";%s; %i ", best && best->XX >= YY ? best->pers.netname : "", best && best->XX >= YY ? best->sess.sessionTeam : -1))
+	Q_strcat(buffer, 1024, va(";%s; %i ", best && best->XX >= YY ? best->pers.netname : "", best && best->XX >= YY ? best->sess.sessionTeam : TEAM_FREE))
 
 #define CHECKSTATSKILL(XX)                                                            \
 	best = NULL;                                                                \
 	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
+		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
 			continue;                                                           \
 		}                                                                       \
 		if ((cl->sess.skillpoints[XX] - cl->sess.startskillpoints[XX]) <= 0)    \
@@ -789,13 +793,13 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 		}                                                                       \
 	}                                                                           \
 	if (best) { best->hasaward = qtrue; }                                      \
-	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
 #define CHECKSTAT3(XX, YY, ZZ)                                                \
 	best = NULL;                                                                \
 	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
+		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
 			continue;                                                           \
 		}                                                                       \
 		if (!best || cl->XX > best->XX) {                                  \
@@ -807,13 +811,13 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 		}                                                                       \
 	}                                                                           \
 	if (best) { best->hasaward = qtrue; }                                      \
-	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
 #define CHECKSTATTIME(XX, YY)                                                 \
 	best = NULL;                                                                \
 	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
+		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
 			continue;                                                           \
 		}                                                                       \
 		if (!best || (cl->XX / (float)(level.time - cl->YY)) > (best->XX / (float)(level.time - best->YY))) { \
@@ -825,7 +829,7 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 			best = NULL;                                                        \
 		}                                                                       \
 	}                                                                           \
-	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
 void G_BuildEndgameStats(void)
 {

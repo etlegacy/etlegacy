@@ -3314,12 +3314,27 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 
 	for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
 	{
-		if (cgs.dbAwardTeams[i] == -1)
+		if (cgs.dbAwardTeams[i] == TEAM_FREE)
 		{
 			continue;
 		}
 
-		CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.dbAwardTeams[i] == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
+		switch (cgs.dbAwardTeams[i])
+		{
+		case TEAM_AXIS:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.axisFlag);
+			break;
+		case TEAM_ALLIES:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.alliedFlag);
+			break;
+		case TEAM_SPECTATOR:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // FIXME
+			break;
+		default:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // FIXME
+			break;
+		}
+
 		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, awardNames[i], 0, 0, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i]), 0, 0, 0, &cgs.media.limboFont2);
 		y += 16;
