@@ -2520,11 +2520,6 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		return;
 	}
 
-	if (voiceonly == 2)
-	{
-		voiceonly = qfalse;
-	}
-
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
 		CPx(other - g_entities, va("%s %d %d %d %s %i %i %i %f %i", cmd, voiceonly, (int)(ent - g_entities), color, id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], randomNum, disguise));
