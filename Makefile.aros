@@ -371,7 +371,6 @@ Q3OBJ = \
 	$(B)/client/l_memory.o \
 	$(B)/client/l_precomp.o \
 	$(B)/client/l_script.o \
-	$(B)/client/l_struct.o \
 	\
 	$(B)/client/tr_animation_mdm.o \
 	$(B)/client/tr_animation_mds.o \

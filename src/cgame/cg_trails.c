@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -501,7 +501,7 @@ void CG_KillTrail(trailJunc_t *t)
 		next = NULL;
 	}
 	t->nextJunc = NULL;
-	if (next->nextJunc && next->nextJunc == t)
+	if (next && next->nextJunc && next->nextJunc == t)
 	{
 		next->nextJunc = NULL;
 	}

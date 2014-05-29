@@ -330,6 +330,38 @@ void R_AttachFBOTexturePackedDepthStencil(int texId)
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, texId, 0);
 }
 
+void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter)
+{
+	if (glConfig2.framebufferBlitAvailable)
+	{
+		vec2_t size;
+		if (from)
+		{
+			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, from->frameBuffer);
+			size[0] = from->width;
+			size[1] = from->height;
+		}
+		else
+		{
+			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
+			size[0] = glConfig.vidWidth;
+			size[1] = glConfig.vidHeight;
+		}
+
+		glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, to->frameBuffer);
+		glBlitFramebufferEXT(0, 0, size[0], size[1], 0, 0, to->width, to->height, mask, filter);
+
+		//Just set the read buffer to the target as well otherwise we might get fucked..
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, to->frameBuffer);
+		glState.currentFBO = to;
+	}
+	else
+	{
+		// FIXME add non EXT_framebuffer_blit code
+		ri.Error(ERR_FATAL, "R_CopyToFBO no framebufferblitting available");
+	}
+}
+
 void R_BindFBO(FBO_t *fbo)
 {
 	if (!fbo)
@@ -338,11 +370,7 @@ void R_BindFBO(FBO_t *fbo)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- R_BindFBO( %s ) ---\n", fbo->name));
-	}
+	Ren_LogComment("--- R_BindFBO( %s ) ---\n", fbo->name);
 
 	if (glState.currentFBO != fbo)
 	{
@@ -369,12 +397,19 @@ void R_BindFBO(FBO_t *fbo)
 
 void R_BindNullFBO(void)
 {
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- R_BindNullFBO ---\n");
-	}
+	Ren_LogComment("--- R_BindNullFBO ---\n");
 
-	if (glState.currentFBO)
+	if (glState.currentFBO && glConfig2.framebufferObjectAvailable)
+	{
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+		glState.currentFBO = NULL;
+	}
+}
+
+void R_SetDefaultFBO(void)
+{
+	if (glConfig2.framebufferObjectAvailable)
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
@@ -387,7 +422,7 @@ void R_InitFBOs(void)
 	int i;
 	int width, height;
 
-	ri.Printf(PRINT_ALL, "------- R_InitFBOs -------\n");
+	ri.Printf(PRINT_DEVELOPER, "------- R_InitFBOs -------\n");
 
 	if (!glConfig2.framebufferObjectAvailable)
 	{
@@ -404,7 +439,7 @@ void R_InitFBOs(void)
 	if (DS_STANDARD_ENABLED())
 	{
 		// geometricRender FBO as G-Buffer for deferred shading
-		ri.Printf(PRINT_ALL, "Deferred Shading enabled\n");
+		ri.Printf(PRINT_DEVELOPER, "Deferred Shading enabled\n");
 
 		if (glConfig2.textureNPOTAvailable)
 		{
@@ -659,7 +694,7 @@ void R_InitFBOs(void)
 				R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[i]->texnum);
 
 				/*
-				Since we don�t have a color attachment the framebuffer will be considered incomplete.
+				Since we don't have a color attachment the framebuffer will be considered incomplete.
 				Consequently, we must inform the driver that we do not wish to render to the color buffer.
 				We do this with a call to set the draw-buffer and read-buffer to GL_NONE:
 				*/
@@ -839,7 +874,7 @@ void R_ShutdownFBOs(void)
 	int   i, j;
 	FBO_t *fbo;
 
-	ri.Printf(PRINT_ALL, "------- R_ShutdownFBOs -------\n");
+	ri.Printf(PRINT_DEVELOPER, "------- R_ShutdownFBOs -------\n");
 
 	if (!glConfig2.framebufferObjectAvailable)
 	{

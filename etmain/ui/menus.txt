@@ -2,6 +2,7 @@
 {	
 	loadMenu { "ui/global.menu" }	
 	loadMenu { "ui/main.menu" }
+	loadMenu { "ui/main_quickconnect.menu" }
 	loadMenu { "ui/profile.menu" }
 	loadMenu { "ui/profile_create.menu" }
 	loadMenu { "ui/profile_create_initial.menu" }

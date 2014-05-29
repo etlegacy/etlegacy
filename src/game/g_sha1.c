@@ -1,5 +1,5 @@
 /*
- * Used for Lua
+ * Used for Lua and map configs
  *
  * This code is taken from ETPub. All credits go to their team especially quad and pheno!
  * http://etpub.org
@@ -8,8 +8,6 @@
  *
  *
 */
-#ifdef FEATURE_LUA
-
 #include "g_local.h"
 
 #include "sha-1/sha1.h"
@@ -36,5 +34,3 @@ char *G_SHA1(char *string)
 		          sha.Message_Digest[4]);
 	}
 }
-
-#endif

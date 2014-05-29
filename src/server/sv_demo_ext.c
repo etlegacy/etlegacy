@@ -1,4 +1,4 @@
-/*
+/**
 * Copyright (C) 2012 Stephen Larroque <lrq3000@gmail.com>
 *
 * ET: Legacy
@@ -51,9 +51,7 @@ Get the value of the gentity_t->health field (only used for testing purposes)
 */
 int SV_GentityGetHealthField(sharedEntity_t *gent)
 {
-	gentity_t *ent;
-
-	ent = (gentity_t *)gent;
+	gentity_t *ent = (gentity_t *)gent;
 
 	//Com_Printf("DEMODEBUG GENGETFIELD: health: %i\n", ent->health);
 	return ent->health;
@@ -68,9 +66,7 @@ Set the value of the gentity_t->health field (only used for testing purposes)
 */
 void SV_GentitySetHealthField(sharedEntity_t *gent, int value)
 {
-	gentity_t *ent;
-
-	ent = (gentity_t *)gent;
+	gentity_t *ent = (gentity_t *)gent;
 
 	ent->health = value;
 }
@@ -89,9 +85,7 @@ Note2: this works pretty simply: sharedEntity_t = gentity_t but with only the fi
 */
 void SV_GentityUpdateHealthField(sharedEntity_t *gent, playerState_t *player)
 {
-	gentity_t *ent;
-
-	ent = (gentity_t *)gent; // convert the sharedEntity_t to a gentity_t by using a simple cast (now that we have included g_local.h that contains the definition of gentity_t, and at the same time we have linked to g_public.h via g_local.h with the definition of sharedEntity_t)
+	gentity_t *ent = (gentity_t *)gent; // convert the sharedEntity_t to a gentity_t by using a simple cast (now that we have included g_local.h that contains the definition of gentity_t, and at the same time we have linked to g_public.h via g_local.h with the definition of sharedEntity_t)
 
 	ent->health = player->stats[STAT_HEALTH]; // update player's health from playerState_t->stats[STAT_HEALTH] field
 

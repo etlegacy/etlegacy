@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
 "PO-Revision-Date: 2014-01-31 23:55+0100\n"
-"Last-Translator: RafaÅ‚ Pawlak <rafal1137@yahoo.pl>\n"
+"Last-Translator: Rafa³ Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
@@ -419,8 +419,8 @@ msgstr "NAZWA SERWERA"
 msgid "MAP NAME"
 msgstr "MAPA"
 
-msgid "#PLRS"
-msgstr "#GRZE"
+msgid "#PLAYERS"
+msgstr "#GRACZY"
 
 msgid "TYPE"
 msgstr "TYP"
@@ -1265,8 +1265,8 @@ msgstr "Rozszerzenie OpenGL:"
 msgid "SET RECOMMENDED"
 msgstr "USTAW REKOMENDOWANE"
 
-msgid "^3DEVELOPED BY ET LEGACY TEAM"
-msgstr "^3WYDANE PRZRZ ZESPOL ET LEGACY"
+msgid "DEVELOPED BY ET:LEGACY TEAM"
+msgstr "WYDANE PRZEZ ZESPOL ET:LEGACY"
 
 msgid "^1PROGRAMMING"
 msgstr "^1PROGRAMISCI"
@@ -1658,17 +1658,17 @@ msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. 
 msgid "ET Legacy Website"
 msgstr "Strona Web ET: Legacy"
 
-msgid "Â© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
 msgstr " 2012-2013 ET: Legacy wykonanie - pod licencja GPL wersja 3."
 
 msgid ""
-"Â© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries. "
 "All other trademarks and trade names are the properties of their respective "
 "owners."
-msgstr "Â© 2003 Id Software, Inc. Wszystkie prawa zastrzezone. Wolfenstein: Enemy Territory, "
+msgstr "© 2003 Id Software, Inc. Wszystkie prawa zastrzezone. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, powrot do zamku Wolfenstein logo, nazwe oprogramowania id "
 "i logo identyfikator sa zarejestrowanymi znakami handlowymi lub "
 "znakami firmy Id Software, Inc. w Stanach Zjednoczonych i/lub innych krajach. "
@@ -2512,14 +2512,14 @@ msgstr "Ten serwer ma wlaczone max zycie. Padanie teraz bedzie tracilo zycie. Je
 msgid "In Last Man Standing mode you will not respawn if you tap out now. Are you sure?"
 msgstr "W Ostatni Czlowiek Przetrwaly nie odrodzisz sie jesli padniesz teraz. Jestes pewien?"
 
-msgid "MAX OMNI-BOT"
-msgstr "MAX OMNI-BOTow"
+msgid "Bot count:"
+msgstr "Liczba botow:"
 
-msgid "MIN OMNI-BOT"
-msgstr "MIN OMNI-BOTow"
+msgid "Move skill:"
+msgstr "Poruszanie:"
 
-msgid "KICK OMNI-BOT"
-msgstr "WYWAL OMNI-BOTa"
+msgid "KICK ALL BOTS"
+msgstr "WYWAL WSZYSTKIE BOTY"
 
 msgid "Yes"
 msgstr "Tak"
@@ -2548,8 +2548,8 @@ msgstr ""
 msgid "^1LET'S KEEP ET ALIVE!"
 msgstr "^1UTRZYMAJMY ET PRZY ZYCIU!"
 
-msgid "^3Thank you for installing ET:Legacy"
-msgstr "^3Dzieki za zainstalowanie ET:Legacy."
+msgid "Thank you for installing ET:Legacy"
+msgstr "Dzieki za zainstalowanie ET:Legacy."
 
 msgid "HOST GAME: EXTENDED"
 msgstr "STAWIANIE SERWERA: ROZSZERZONE"
@@ -2981,8 +2981,8 @@ msgstr "Rozpoznanie Wroga"
 msgid "Medic Ammo"
 msgstr "Amunicja Medyka"
 
-msgid "Binoculars"
-msgstr "Lornetki"
+msgid "Binoculars for any Class"
+msgstr "Lornetki dla kazdej Klasy"
 
 msgid "Full Revive"
 msgstr "Pelne Ozywienie"
@@ -3594,9 +3594,6 @@ msgstr "usunac twoje ulubione?"
 msgid "Modify Selected HUD:"
 msgstr "Modyfikuj Wybrany HUD:"
 
-msgid "PopUpTime:"
-msgstr "Wiadomosci Czas:"
-
 msgid "PopUpTimeStay:"
 msgstr "Wiadomosci Pozostanie:"
 
@@ -3665,8 +3662,8 @@ msgstr "Lista Ulubionych pelna\n"
 msgid "Added favorite server %s\n"
 msgstr "Dodany ulubiony serwer %s\n"
 
-msgid "^3See HALL OF FAME below"
-msgstr "^3Zobacz Sale Chwaly ponizej"
+msgid "See HALL OF FAME below"
+msgstr "Zobacz Sale Chwaly ponizej"
 
 msgid "^1WEBSITE"
 msgstr "^1STRONA"
@@ -3677,8 +3674,8 @@ msgstr "http://www.etlegacy.com"
 msgid "HALL OF FAME"
 msgstr "SALA CHWALY"
 
-msgid "^3ET LEGACY HALL OF FAME"
-msgstr "^3SALA CHWALY ET LEGACY"
+msgid "ET:LEGACY HALL OF FAME"
+msgstr "SALA CHWALY ET:LEGACY"
 
 msgid "Advices, Bug reports, Patches"
 msgstr "Porady, Raporty o bledach, Latki"
@@ -4576,3 +4573,48 @@ msgstr ""
 "Wielkie podziekowania dla Splash Damage za wydanie kodu zrodklowego,  ioWolfET "
 "& raedwulf-et (w szczegolnosci Ralph Eastwood) za nasz kod bazowy i ioQuake3 za "
 "ich inspiracje."
+
+msgid "Show Ping:"
+msgstr "Pokaz Ping:"
+
+msgid "Allied team has constructed the bridge!"
+msgstr "Allianci zbudowali most!"
+
+msgid "Anti-Aliasing:"
+msgstr "Anty-Aliasing:"
+
+msgid "The Tank has been repaired"
+msgstr "Czolg zostal naprawiony"
+
+msgid "^1ORIGINAL DEVELOPERS"
+msgstr "^1ORYGINALNI WYDAWCY"
+
+msgid "The Tank has been damaged"
+msgstr "Czolg zostal uszkodzony"
+
+msgid "BOTS"
+msgstr "BOTY"
+
+msgid "Difficulty:"
+msgstr "Trudnosc:"
+
+msgid "BOTS ON"
+msgstr "WLACZ BOTY"
+
+msgid "BOTS OFF"
+msgstr "WYLACZ BOTY"
+
+msgid "^1Attention: ^3Security Information"
+msgstr "^1Uwaga: ^3Informacja Bezpieczenstwa"
+
+msgid "^7You are running old software.\n"
+"\n"
+"We do recommend to upgrade your ET client.\n"
+"Join ET Legacy and keep the game alive."
+msgstr "^7Dzialasz na starej wersji.\n"
+"\n"
+"Zalecamy aktualizaje klienta ET.\n"
+"Dolacz do ET Legacy i podtrzymuj gre."
+
+msgid "DOWNLOAD LATEST ET CLIENT"
+msgstr "SCIAGNIJ KLIENTA ET"

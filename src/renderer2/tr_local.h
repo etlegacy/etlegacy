@@ -41,7 +41,6 @@
 #include "../renderercommon/qgl.h"
 #include "../renderercommon/tr_common.h"
 #include "../renderercommon/tr_public.h"
-#include "tr_growlist.h"
 #include "tr_extra.h"
 
 #if 1
@@ -1183,6 +1182,14 @@ typedef struct shader_s
 	struct shader_s *next;
 } shader_t;
 
+typedef struct
+{
+	qboolean frameMemory;
+	int currentElements;
+	int maxElements;                // will reallocate and move when exceeded
+	void **elements;
+} growList_t;
+
 #if 0
 enum
 {
@@ -1406,157 +1413,17 @@ enum
 
 enum EGLCompileMacro
 {
-	USE_ALPHA_TESTING,
-	USE_PORTAL_CLIPPING,
-	USE_FRUSTUM_CLIPPING,
-	USE_VERTEX_SKINNING,
-	USE_VERTEX_ANIMATION,
-	USE_DEFORM_VERTEXES,
-	USE_TCGEN_ENVIRONMENT,
-	USE_TCGEN_LIGHTMAP,
-	USE_NORMAL_MAPPING,
-	USE_PARALLAX_MAPPING,
-	USE_REFLECTIVE_SPECULAR,
-	USE_SHADOWING,
-	TWOSIDED,
-	EYE_OUTSIDE,
-	BRIGHTPASS_FILTER,
-	LIGHT_DIRECTIONAL,
-	USE_GBUFFER,
+#define MACRO_ENUM
+#include "tr_glsldef.h"
+#undef MACRO_ENUM
 	MAX_MACROS
 };
 
 typedef enum
 {
-	UNIFORM_DIFFUSEMAP = 0,
-	UNIFORM_LIGHTMAP,
-	UNIFORM_NORMALMAP,
-	UNIFORM_DELUXEMAP,
-	UNIFORM_SPECULARMAP,
-
-	UNIFORM_TEXTUREMAP,
-	UNIFORM_LEVELSMAP,
-
-	UNIFORM_SCREENIMAGEMAP,
-	UNIFORM_SCREENDEPTHMAP,
-
-	UNIFORM_SHADOWMAP,
-	UNIFORM_SHADOWMAP2,
-	UNIFORM_SHADOWMAP3,
-
-	UNIFORM_SHADOWMVP,
-	UNIFORM_SHADOWMVP2,
-	UNIFORM_SHADOWMVP3,
-
-	UNIFORM_DIFFUSETEXMATRIX,
-	UNIFORM_DIFFUSETEXOFFTURB,
-	UNIFORM_TEXTURE1ENV,
-
-	UNIFORM_TCGEN0,
-	UNIFORM_TCGEN0VECTOR0,
-	UNIFORM_TCGEN0VECTOR1,
-
-	UNIFORM_DEFORMGEN,
-	UNIFORM_DEFORMPARAMS,
-
-	UNIFORM_COLORGEN,
-	UNIFORM_ALPHAGEN,
-	UNIFORM_COLOR,
-	UNIFORM_BASECOLOR,
-	UNIFORM_VERTCOLOR,
-
-	UNIFORM_DLIGHTINFO,
-	UNIFORM_LIGHTFORWARD,
-	UNIFORM_LIGHTUP,
-	UNIFORM_LIGHTRIGHT,
-	UNIFORM_LIGHTORIGIN,
-	UNIFORM_LIGHTRADIUS,
-	UNIFORM_AMBIENTLIGHT,
-	UNIFORM_DIRECTEDLIGHT,
-
-	UNIFORM_PORTALRANGE,
-
-	UNIFORM_FOGDISTANCE,
-	UNIFORM_FOGDEPTH,
-	UNIFORM_FOGEYET,
-	UNIFORM_FOGCOLORMASK,
-
-	UNIFORM_MODELMATRIX,
-	UNIFORM_MODELVIEWPROJECTIONMATRIX,
-
-	UNIFORM_TIME,
-	UNIFORM_VERTEXLERP,
-	UNIFORM_MATERIALINFO,
-
-	UNIFORM_VIEWINFO, // znear, zfar, width/2, height/2
-	UNIFORM_VIEWORIGIN,
-	UNIFORM_VIEWFORWARD,
-	UNIFORM_VIEWLEFT,
-	UNIFORM_VIEWUP,
-
-	UNIFORM_INVTEXRES,
-	UNIFORM_AUTOEXPOSUREMINMAX,
-	UNIFORM_TONEMINAVGMAXLINEAR,
-
-	UNIFORM_PRIMARYLIGHTORIGIN,
-	UNIFORM_PRIMARYLIGHTCOLOR,
-	UNIFORM_PRIMARYLIGHTAMBIENT,
-	UNIFORM_PRIMARYLIGHTRADIUS,
-
-	//FROM XREAL
-	UNIFORM_COLORTEXTUREMATRIX,
-	UNIFORM_DIFFUSETEXTUREMATRIX,
-	UNIFORM_NORMALTEXTUREMATRIX,
-	UNIFORM_SPECULARTEXTUREMATRIX,
-	UNIFORM_ALPHATEST,
-	UNIFORM_COLORMODULATE,
-	UNIFORM_BONEMATRIX,
-	UNIFORM_VERTEXINTERPOLATION,
-	UNIFORM_PORTALPLANE,
-	UNIFORM_CURRENTMAP,
-	UNIFORM_COLORMAP,
-	UNIFORM_AMBIENTCOLOR,
-	UNIFORM_LIGHTDIR,
-	UNIFORM_LIGHTCOLOR,
-	UNIFORM_LIGHTSCALE,
-	UNIFORM_LIGHTWRAPAROUND,
-	UNIFORM_LIGHTATTENUATIONMATRIX,
-	UNIFORM_LIGHTFRUSTUM,
-	UNIFORM_SHADOWTEXELSIZE,
-	UNIFORM_SHADOWBLUR,
-	UNIFORM_SHADOWMATRIX,
-	UNIFORM_SHADOWPARALLELSPLITDISTANCES,
-	UNIFORM_VIEWMATRIX,
-	UNIFORM_MODELVIEWMATRIX,
-	UNIFORM_MODELVIEWMATRIXTRANSPOSE,
-	UNIFORM_PROJECTIONMATRIXTRANSPOSE,
-	UNIFORM_UNPROJECTMATRIX,
-	UNIFORM_DEPTHSCALE,
-	UNIFORM_ENVIRONMENTINTERPOLATION,
-	UNIFORM_DEFORMPARMS,
-	UNIFORM_FOGDISTANCEVECTOR,
-	UNIFORM_FOGDEPTHVECTOR,
-	UNIFORM_DEFORMMAGNITUDE,
-	UNIFORM_HDRKEY,
-	UNIFORM_HDRAVERAGELUMINANCE,
-	UNIFORM_HDRMAXLUMINANCE,
-	UNIFORM_REFRACTIONINDEX,
-	UNIFORM_FOGDENSITY,
-	UNIFORM_FOGCOLOR,
-	UNIFORM_FRESNELPOWER,
-	UNIFORM_FRESNELSCALE,
-	UNIFORM_FRESNELBIAS,
-	UNIFORM_BLURMAGNITUDE,
-	UNIFORM_NORMALSCALE,
-	UNIFORM_SHADOWCOMPARE,
-	UNIFORM_ETARATIO,
-
-	//Booleans
-	UNIFORM_B_SHOW_LIGHTMAP,
-	UNIFORM_B_SHOW_DELUXEMAP,
-	UNIFORM_B_NORMALMAP,
-	UNIFORM_B_PARALLAXMAP,
-
+#define UNIFORM_ENUM
+#include "tr_glsldef.h"
+#undef UNIFORM_ENUM
 	UNIFORM_COUNT
 } uniform_t;
 
@@ -1978,7 +1845,6 @@ typedef struct
 typedef struct
 {
 	int indexes[3];
-	int neighbors[3];
 	vec4_t plane;
 	qboolean facingLight;
 	qboolean degenerated;
@@ -2795,6 +2661,9 @@ typedef struct
 } frontEndCounters_t;
 
 #define FOG_TABLE_SIZE      256
+
+#define DEFAULT_FOG_EXP_DENSITY         0.5f
+
 #define FUNCTABLE_SIZE      1024
 #define FUNCTABLE_SIZE2     10
 #define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)
@@ -3185,6 +3054,9 @@ extern programInfo_t *gl_volumetricFogShader;
 extern programInfo_t *gl_volumetricLightingShader;
 extern programInfo_t *gl_dispersionShader;
 
+//Jacker
+extern programInfo_t *gl_colorCorrection;
+
 //This is set with the GLSL_SelectPermutation
 extern shaderProgram_t *selectedProgram;
 
@@ -3315,8 +3187,6 @@ extern cvar_t *r_rimLighting;
 extern cvar_t *r_rimExponent;
 
 extern cvar_t *r_uiFullScreen;  // ui is running fullscreen
-
-extern cvar_t *r_logFile;       // number of frames to emit GL logs
 
 extern cvar_t *r_clear;         // force screen clear every frame
 
@@ -3551,7 +3421,6 @@ void R_CalcTBN(vec3_t tangent, vec3_t binormal, vec3_t normal,
 
 qboolean R_CalcTangentVectors(srfVert_t * dv[3]);
 
-void R_CalcSurfaceTriangleNeighbors(int numTriangles, srfTriangle_t *triangles);
 void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts);
 
 float R_CalcFov(float fovX, float width, float height);
@@ -3943,9 +3812,12 @@ void R_AttachFBOTexture2D(int target, int texId, int attachmentIndex);
 void R_AttachFBOTexture3D(int texId, int attachmentIndex, int zOffset);
 void R_AttachFBOTextureDepth(int texId);
 
+void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter);
+
 void R_BindFBO(FBO_t *fbo);
 void R_BindNullFBO(void);
 
+void R_SetDefaultFBO(void);
 void R_InitFBOs(void);
 void R_ShutdownFBOs(void);
 void R_FBOList_f(void);
@@ -4331,6 +4203,14 @@ void LoadRGBEToHalfs(const char *name, unsigned short **halfImage, int *width, i
 // fallback shaders
 extern const char *defaultShaderDefinitions;
 const char *GetFallbackShader(const char *name);
+
+//tr_growlist.c
+// you don't need to init the growlist if you don't mind it growing and moving the list as it expands
+void Com_InitGrowList(growList_t *list, int maxElements);
+void Com_DestroyGrowList(growList_t *list);
+int  Com_AddToGrowList(growList_t *list, void *data);
+void *Com_GrowListElement(const growList_t *list, int index);
+int  Com_IndexForGrowListElement(const growList_t *list, const void *element);
 
 //tr_glsl.c
 void GLSL_VertexAttribsState(uint32_t stateBits);

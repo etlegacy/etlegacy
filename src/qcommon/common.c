@@ -1648,7 +1648,10 @@ void Hunk_SmallLog(void)
 {
 	hunkblock_t *block, *block2;
 	char        buf[4096];
-	int         size, locsize, numBlocks;
+	int         size, numBlocks;
+#ifdef HUNK_DEBUG
+	int locsize;
+#endif
 
 	if (!logfile || !FS_Initialized())
 	{
@@ -1668,7 +1671,9 @@ void Hunk_SmallLog(void)
 		{
 			continue;
 		}
+#ifdef HUNK_DEBUG
 		locsize = block->size;
+#endif
 		for (block2 = block->next; block2; block2 = block2->next)
 		{
 			if (block->line != block2->line)
@@ -1679,8 +1684,10 @@ void Hunk_SmallLog(void)
 			{
 				continue;
 			}
-			size           += block2->size;
-			locsize        += block2->size;
+			size += block2->size;
+#ifdef HUNK_DEBUG
+			locsize += block2->size;
+#endif
 			block2->printed = qtrue;
 		}
 #ifdef HUNK_DEBUG
@@ -3178,6 +3185,11 @@ void Com_Frame(void)
 	if (com_speeds->integer)
 	{
 		timeBeforeFirstEvents = Sys_Milliseconds();
+	}
+
+	if (!com_dedicated->integer && !com_timedemo->integer && !com_developer->integer)
+	{
+		Cvar_AssertCvarRange(com_maxfps, 20, 333, qtrue);
 	}
 
 	// we may want to spin here if things are going too fast

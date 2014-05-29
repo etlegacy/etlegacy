@@ -33,8 +33,6 @@
 
 #include "g_local.h"
 
-int snd_chaircreak;
-
 void DropToFloorG(gentity_t *ent)
 {
 	vec3_t  dest;
@@ -1360,7 +1358,7 @@ void Props_Chair_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	if (level.time > self->random && has_moved)
 	{
-		G_AddEvent(self, EV_GENERAL_SOUND, snd_chaircreak);
+		G_AddEvent(self, EV_GENERAL_SOUND, GAMESOUND_WORLD_CHAIRCREAK);
 		self->random = level.time + 1000 + (rand() % 200);
 	}
 
@@ -1444,10 +1442,9 @@ void Props_Chair_Animate(gentity_t *ent)
 
 	if (ent->enemy)
 	{
-		float  ratio;
+		float  ratio = 2.5f;
 		vec3_t v;
 
-		ratio = 2.5;
 		VectorSubtract(ent->r.currentOrigin, ent->enemy->r.currentOrigin, v);
 		moveit(ent, vectoyaw(v), (ent->delay * ratio * FRAMETIME) * .001);
 	}
@@ -1501,21 +1498,18 @@ void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type)
 	trap_LinkEntity(sfx);
 }
 
+// this should work for all fx types now
 void Prop_Break_Sound(gentity_t *ent)
 {
-	G_AddEvent(ent, EV_FX_SOUND, FXTYPE_WOOD);
-	switch (ent->count)
+	// don't always play the wood sound
+	//G_AddEvent(ent, EV_FX_SOUND, FXTYPE_WOOD);
+
+	// note: props only use 3 types of sounds from the obsolete shard_t enum
+	if (ent->count < FXTYPE_WOOD || ent->count >= FXTYPE_MAX)
 	{
-	case FXTYPE_WOOD:
-		G_AddEvent(ent, EV_FX_SOUND, FXTYPE_WOOD);
-		break;
-	case FXTYPE_GLASS:
-		G_AddEvent(ent, EV_FX_SOUND, FXTYPE_GLASS);
-		break;
-	case FXTYPE_METAL:
-		G_AddEvent(ent, EV_FX_SOUND, FXTYPE_METAL);
-		break;
+		return;
 	}
+	G_AddEvent(ent, EV_FX_SOUND, ent->count);
 }
 
 void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
@@ -1602,8 +1596,6 @@ void SP_Props_Chair(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 void SP_Props_ChairHiback(gentity_t *ent)
@@ -1656,8 +1648,6 @@ void SP_Props_ChairHiback(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 void SP_Props_ChairSide(gentity_t *ent)
@@ -1710,8 +1700,6 @@ void SP_Props_ChairSide(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 // can be one of two types, but they have the same animations/etc, so re-use what you can
@@ -1768,8 +1756,6 @@ void SP_Props_ChateauChair(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 /*
@@ -1867,7 +1853,7 @@ void SP_props_shard_generator(gentity_t *ent)
 	ent->s.eType   = ET_GENERAL;
 	ent->use       = Use_Props_Shard_Generator;
 
-	if (!ent->count)
+	if (ent->count < FXTYPE_WOOD || ent->count >= FXTYPE_MAX)
 	{
 		ent->count = FXTYPE_WOOD;
 	}
@@ -1941,8 +1927,6 @@ void SP_Props_Desklamp(gentity_t *ent)
 	ent->die        = Props_Chair_Die;
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
-
-	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 /*
@@ -3925,7 +3909,7 @@ the default sounds are:
   "gibs"    - "sound/player/gibsplit1.wav"
   "brick"   - "sound/world/debris1.wav"
   "stone"   - "sound/world/stonefall.wav"
-  "fabric"  - "sound/world/metalbreak.wav"  // temp
+  "fabric"  - "sound/world/fabricbreak.wav"
 
 "locknoise" the locked sound to play
 "wait"   denotes how long the wait is going to be before the locked sound is played again default is 1 sec
@@ -4043,7 +4027,7 @@ void SP_props_footlocker(gentity_t *self)
 		}
 		else if (!Q_stricmp(type, "fabric"))
 		{
-			self->key = 0;                                  // fixme: not supported
+			self->key = FXTYPE_FABRIC; // FIXME: test this
 		}
 	}
 	else

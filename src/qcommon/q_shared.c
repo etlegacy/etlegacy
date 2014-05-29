@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -213,7 +213,7 @@ qboolean COM_BitCheck(const int array[], int bitNum)
 		bitNum -= 32;
 	}
 
-	return ((array[i] & (1 << bitNum)) != 0);        // (SA) heh, whoops. :)
+	return ((array[i] & (1 << bitNum)) != 0);
 }
 
 /*
@@ -839,7 +839,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 	    (c == '_') ||
 	    (c == '/') ||
 	    (c == '\\') ||
-	    (c == '$') || (c == '*')) // Tr3B - for bad shader strings
+	    (c == '$') || (c == '*')) // for bad shader strings
 	{
 		do
 		{
@@ -1218,6 +1218,21 @@ int Q_isalphanumeric(int c)
 	return (0);
 }
 
+qboolean Q_isanumber(const char *s)
+{
+	char              *p;
+	double UNUSED_VAR d;
+
+	if (*s == '\0')
+	{
+		return qfalse;
+	}
+
+	d = strtod(s, &p);
+
+	return *p == '\0';
+}
+
 qboolean Q_isintegral(float f)
 {
 	return (int)f == f;
@@ -1528,7 +1543,6 @@ int Q_PrintStrlen(const char *string)
 
 /**
  * @brief Remove special characters and color sequences from string.
- * @todo merge Q_StripColor here?
  */
 char *Q_CleanStr(char *string)
 {
@@ -1553,43 +1567,64 @@ char *Q_CleanStr(char *string)
 	return string;
 }
 
-/**
- * @brief Strip coloured strings in-place using multiple passes ("fgs^^56fds" -> "fgs^6fds" -> "fgsfds").
- * @todo this isn't very efficient
- */
-void Q_StripColor(char *text)
-{
-	qboolean doPass = qtrue;
-	char     *read;
-	char     *write;
 
-	while (doPass)
+/**
+ * @brief Takes a plain "un-colored" string, and then colorizes it so the string is displayed in the given color.
+ * If given a string such as "Bob" and asked to colorize to '1' (red)', the output would be "^1Bob". If given
+ * "John^^7Candy" the output is "^1John^^1^^17Candy"  -- Note that when drawn, this would literally show
+ * the text "John^^7Candy" in red.
+ *
+ * If the desired result is to see "John^Candy" in red, then create a clean un-colored string before calling this.
+ *
+ * REQUIREMENTS:
+ *	- Callers must pass in a buffer that is *at least* 3 bytes long.
+ *  - inStr and outStr cannot overlap
+ *
+ */
+void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen)
+{
+	if (outBufferLen < 3 || inStr == outStr)
 	{
-		doPass = qfalse;
-		read   = write = text;
-		while (*read)
+		// Failure... How do we assert in WET?
+	}
+	else
+	{
+		size_t inLen     = strlen(inStr);
+		size_t outOffset = 0;
+		size_t inOffset  = 0;
+
+		outStr[outOffset++] = Q_COLOR_ESCAPE;
+		outStr[outOffset++] = colorCode;
+
+		if (outOffset + 1 < outBufferLen)
 		{
-			if (Q_IsColorString(read))
+			while (inOffset < inLen && outOffset < outBufferLen)
 			{
-				doPass = qtrue;
-				read  += 2;
-			}
-			else
-			{
-				// avoid writing the same data over itself
-				if (write != read)
+				char c = inStr[inOffset];
+
+				if (c == Q_COLOR_ESCAPE)
 				{
-					*write = *read;
+					if (outOffset + 3 < outBufferLen)
+					{
+						outStr[outOffset++] = c;
+						outStr[outOffset++] = Q_COLOR_ESCAPE;
+						outStr[outOffset++] = colorCode;
+					}
+					else
+					{
+						break;
+					}
 				}
-				write++;
-				read++;
+				else
+				{
+					outStr[outOffset++] = c;
+				}
+
+				inOffset++;
 			}
 		}
-		if (write < read)
-		{
-			// add trailing NUL byte if string has shortened
-			*write = '\0';
-		}
+
+		outStr[outOffset++] = 0;
 	}
 }
 

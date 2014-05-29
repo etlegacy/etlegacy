@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -289,9 +289,6 @@ void SP_misc_commandmap_marker(gentity_t *ent);
 void SP_shooter_rocket(gentity_t *ent);
 void SP_shooter_grenade(gentity_t *ent);
 
-void SP_team_CTF_redplayer(gentity_t *ent);
-void SP_team_CTF_blueplayer(gentity_t *ent);
-
 void SP_team_CTF_redspawn(gentity_t *ent);
 void SP_team_CTF_bluespawn(gentity_t *ent);
 
@@ -505,10 +502,6 @@ spawn_t spawns[] =
 
 	{ "shooter_mortar",            SP_shooter_mortar            },
 	{ "alarm_box",                 SP_alarm_box                 },
-
-	// FIXME remove
-	{ "team_CTF_redplayer",        SP_team_CTF_redplayer        },
-	{ "team_CTF_blueplayer",       SP_team_CTF_blueplayer       },
 
 	{ "team_CTF_redspawn",         SP_team_CTF_redspawn         },
 	{ "team_CTF_bluespawn",        SP_team_CTF_bluespawn        },
@@ -961,8 +954,13 @@ void SP_worldspawn(void)
 	g_entities[ENTITYNUM_WORLD].spawnflags   = atoi(s);
 	g_entities[ENTITYNUM_WORLD].r.worldflags = g_entities[ENTITYNUM_WORLD].spawnflags;
 
-	g_entities[ENTITYNUM_WORLD].s.number  = ENTITYNUM_WORLD;
-	g_entities[ENTITYNUM_WORLD].classname = "worldspawn";
+	g_entities[ENTITYNUM_WORLD].s.number   = ENTITYNUM_WORLD;
+	g_entities[ENTITYNUM_WORLD].r.ownerNum = ENTITYNUM_NONE;
+	g_entities[ENTITYNUM_WORLD].classname  = "worldspawn";
+
+	g_entities[ENTITYNUM_NONE].s.number   = ENTITYNUM_NONE;
+	g_entities[ENTITYNUM_NONE].r.ownerNum = ENTITYNUM_NONE;
+	g_entities[ENTITYNUM_NONE].classname  = "nothing";
 
 	// see if we want a warmup time
 	trap_SetConfigstring(CS_WARMUP, "");

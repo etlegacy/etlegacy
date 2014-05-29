@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -222,7 +222,7 @@ static void CG_addHudToList(hudStucture_t hud)
 static qboolean CG_HUD_ParseError(int handle, char *format, ...)
 {
 	int         line;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 
@@ -1974,8 +1974,19 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	}
 
 	// add this snapshot's info
-	lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
-	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)]   = snap->snapFlags;
+	if (cg.demoPlayback)
+	{
+		static int lasttime = 0;
+
+		// display snapshot time delta instead of ping
+		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->serverTime - lasttime;
+		lasttime                                                               = snap->serverTime;
+	}
+	else
+	{
+		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
+	}
+	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->snapFlags;
 	lagometer.snapshotCount++;
 }
 

@@ -430,8 +430,8 @@ CG_GetWindVector
 */
 void CG_GetWindVector(vec3_t dir)
 {
-	dir[0] = random() * 0.25;
-	dir[1] = cgs.smokeWindDir; // simulate a little wind so it looks natural
+	dir[0] = random() * 0.25f;
+	dir[1] = sin(0.00001f * cg.time); // simulate a little wind so it looks natural
 	dir[2] = random(); // one direction (so smoke goes side-like)
 	VectorNormalize(dir);
 }
@@ -796,7 +796,7 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 	{
 		BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
 		ent->headJuncIndex = CG_AddSmokeJunc(ent->headJuncIndex,
-		                                     ent,    // rain - zinx's trail fix
+		                                     ent,    // trail fix
 		                                     cgs.media.smokeTrailShader,
 		                                     origin,
 		                                     1000, 0.3, 2, 20);
@@ -1044,7 +1044,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 static qboolean CG_RW_ParseError(int handle, char *format, ...)
 {
 	int         line;
-	char        filename[128];
+	char        filename[MAX_QPATH];
 	va_list     argptr;
 	static char string[4096];
 
@@ -3461,6 +3461,15 @@ void CG_AddViewWeapon(playerState_t *ps)
 		hand.hModel   = weapon->handsModel;
 		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
+		// adjust bazooka so it has bigger distance to our crosshair
+		if (ps->weapon == WP_BAZOOKA)
+		{
+			hand.axis[0][0]       *= .8f;
+			hand.axis[0][1]       *= .8f;
+			hand.axis[0][2]       *= .8f;
+			hand.nonNormalizedAxes = qtrue;
+		}
+
 		if (cg_gun_fovscale.integer && cg_fov.integer != 0)
 		{
 			if (cg_gun_fovscale.integer > 1 && cg_fov.integer <= 90)
@@ -4061,6 +4070,11 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 		{
 			cg.switchbackWeapon = lastweap;
 		}
+		// this fixes cg.switchbackWeapon=0 after very first spawn and switching weapon for the first time
+		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastweap)) // ensure last weapon is available
+		{
+			cg.switchbackWeapon = lastweap;
+		}
 	}
 
 	cg.weaponSelect = newweap;
@@ -4106,7 +4120,13 @@ void CG_AltWeapon_f(void)
 		{
 			return;
 		}
-		if (!cg.predictedPlayerState.ammoclip[WP_MORTAR]) // FIXME: WP_MORTAR2
+
+		if (cg.weaponSelect == WP_MORTAR && !cg.predictedPlayerState.ammoclip[WP_MORTAR])
+		{
+			return;
+		}
+
+		if (cg.weaponSelect == WP_MORTAR2 && !cg.predictedPlayerState.ammoclip[WP_MORTAR2])
 		{
 			return;
 		}
@@ -4238,40 +4258,23 @@ void CG_NextWeap(qboolean switchBanks)
 
 	switch (num)
 	{
-	case WP_SILENCER:
-		curweap = num = WP_LUGER;
+	case WP_LUGER:
+		curweap = num = WP_SILENCER;
 		break;
-	case WP_SILENCED_COLT:
-		curweap = num = WP_COLT;
+	case WP_COLT:
+		curweap = num = WP_SILENCED_COLT;
 		break;
-	case WP_GPG40:
-		curweap = num = WP_KAR98;
+	case WP_KAR98:
+		curweap = num = WP_GPG40;
 		break;
-	case WP_M7:
-		curweap = num = WP_CARBINE;
-		break;
-	case WP_MORTAR_SET: // FIXME: never reached see early return above - num/curweap are same
-		curweap = num = WP_MORTAR;
-		break;
-	case WP_MORTAR2_SET: // FIXME: never reached see early return above - num/curweap are same
-		curweap = num = WP_MORTAR2;
+	case WP_CARBINE:
+		curweap = num = WP_M7;
 		break;
 	default:
 		break;
 	}
 
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
-
-	// if you're using an alt mode weapon, try switching back to the parent first
-	if (IS_RIFLENADE_WEAPON(curweap))
-	{
-		num = getAltWeapon(curweap);      // base any further changes on the parent
-		if (CG_WeaponSelectable(num))        // the parent was selectable, drop back to that
-		{
-			CG_FinishWeaponChange(curweap, num);
-			return;
-		}
-	}
 
 	if (cg_cycleAllWeaps.integer || !switchBanks)
 	{
@@ -4715,7 +4718,7 @@ void CG_LastWeaponUsed_f(void)
 	}
 	else        // switchback no longer selectable, reset cycle
 	{
-		cg.switchbackWeapon = 0;
+		cg.switchbackWeapon = WP_NONE;
 	}
 }
 

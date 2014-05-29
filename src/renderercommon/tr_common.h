@@ -57,7 +57,7 @@ typedef enum
 	BUFFER_RESAMPLED,
 	BUFFER_MAX_TYPES
 } bufferMemType_t;
-void *R_GetImageBuffer(int size, bufferMemType_t bufferType);
+void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename);
 void R_FreeImageBuffer(void);
 
 /*
@@ -72,6 +72,14 @@ void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
 void GLimp_LogComment(const char *comment);
 void GLimp_Minimize(void);
+
+#if defined(_DEBUG) || defined(DEBUG)
+#define RENLOG r_logFile->integer
+#define Ren_LogComment(...) if (RENLOG) { GLimp_LogComment(va(__VA_ARGS__)); }
+#else
+#define RENLOG 0
+#define Ren_LogComment(...)
+#endif
 
 // NOTE: linux works with float gamma value, not the gamma table
 // the params won't be used, getting the r_gamma cvar directly

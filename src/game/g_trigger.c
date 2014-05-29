@@ -128,14 +128,14 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	if (self->spawnflags & 1)
+	if (self->spawnflags & MULTI_TRIGGER_AXIS_ONLY)
 	{
 		if (other->client->sess.sessionTeam != TEAM_AXIS)
 		{
 			return;
 		}
 	}
-	else if (self->spawnflags & 2)
+	else if (self->spawnflags & MULTI_TRIGGER_ALLIED_ONLY)
 	{
 		if (other->client->sess.sessionTeam != TEAM_ALLIES)
 		{
@@ -143,7 +143,7 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	if (self->spawnflags & 4)
+	if (self->spawnflags & MULTI_TRIGGER_NOBOT)
 	{
 		if (other->r.svFlags & SVF_BOT)
 		{
@@ -151,7 +151,7 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	if (self->spawnflags & 8)
+	if (self->spawnflags & MULTI_TRIGGER_BOTONLY)
 	{
 		if (!(other->r.svFlags & SVF_BOT))
 		{
@@ -159,7 +159,7 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	if (self->spawnflags & 16)
+	if (self->spawnflags & MULTI_TRIGGER_SOLDIERONLY)
 	{
 		if (!(other->client->sess.playerType == PC_SOLDIER))
 		{
@@ -167,7 +167,7 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	if (self->spawnflags & 32)
+	if (self->spawnflags & MULTI_TRIGGER_FIELDOPSONLY)
 	{
 		if (!(other->client->sess.playerType == PC_FIELDOPS))
 		{
@@ -175,7 +175,7 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	if (self->spawnflags & 64)
+	if (self->spawnflags & MULTI_TRIGGER_MEDICONLY)
 	{
 		if (!(other->client->sess.playerType == PC_MEDIC))
 		{
@@ -183,7 +183,7 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	if (self->spawnflags & 128)
+	if (self->spawnflags & MULTI_TRIGGER_ENGINEERONLY)
 	{
 		if (!(other->client->sess.playerType == PC_ENGINEER))
 		{
@@ -191,9 +191,27 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	if (self->spawnflags & 256)
+	if (self->spawnflags & MULTI_TRIGGER_COVERTOPSONLY)
 	{
 		if (!(other->client->sess.playerType == PC_COVERTOPS))
+		{
+			return;
+		}
+	}
+
+	// legacy mod only spawnflags
+
+	if (self->spawnflags & MULTI_TRIGGER_DISGUISEDSONLY)
+	{
+		if (!(other->client->ps.powerups[PW_OPS_DISGUISED]))
+		{
+			return;
+		}
+	}
+
+	if (self->spawnflags & MULTI_TRIGGER_OBJECTIVEONLY)
+	{
+		if (!(other->client->ps.powerups[PW_BLUEFLAG] || other->client->ps.powerups[PW_REDFLAG]))
 		{
 			return;
 		}

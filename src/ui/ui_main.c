@@ -1085,6 +1085,12 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		trap_PC_AddGlobalDefine("FUI");
 	}
 
+	//We can now add elements which only work with legacy client
+	if (uiInfo.legacyClient)
+	{
+		trap_PC_AddGlobalDefine("LEGACY");
+	}
+
 	handle = trap_PC_LoadSource(menuFile);
 	if (!handle)
 	{
@@ -2927,7 +2933,6 @@ qboolean UI_OwnerDrawVisible(int flags)
 					if (trap_Cvar_VariableValue("sv_killserver") == 0)
 					{
 						// wait on server to go down before playing sound
-						trap_S_StartLocalSound(uiInfo.newHighScoreSound, CHAN_ANNOUNCER);
 						uiInfo.soundHighScore = qfalse;
 					}
 				}
@@ -5423,7 +5428,7 @@ UI_BuildServerDisplayList
 */
 static void UI_BuildServerDisplayList(int force)
 {
-	int        i, count, clients, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
+	int        i, count, clients, humans, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
 	char       info[MAX_STRING_CHARS];
 	static int numinvisible;
 
@@ -5557,9 +5562,8 @@ static void UI_BuildServerDisplayList(int force)
 				}
 			}
 
-			// don't show punkbuster servers for ET legacy
+			// don't show punkbuster servers for ET:Legacy
 			punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
-
 			if (punkbuster)
 			{
 				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
@@ -5599,6 +5603,19 @@ static void UI_BuildServerDisplayList(int force)
 
 				if ((balancedteams && ui_browserShowTeamBalanced.integer == 2) ||
 				    (!balancedteams && ui_browserShowTeamBalanced.integer == 1))
+				{
+					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+					continue;
+				}
+			}
+
+			trap_Cvar_Update(&ui_browserShowBots);
+			if (ui_browserShowBots.integer)
+			{
+				humans = atoi(Info_ValueForKey(info, "humans"));
+
+				if ((clients != humans && ui_browserShowBots.integer == 2) ||
+				    ((clients == 0 || (clients - humans < clients)) && ui_browserShowBots.integer == 1))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -6551,14 +6568,17 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
-				// TODO: increase the player column width to fit the number humans playing
-				/*
-				Com_sprintf(clientBuff, sizeof(clientBuff), "%s%s/%s",
-				            Info_ValueForKey(info, "clients"),
-				            (atoi(Info_ValueForKey(info, "humans")) ? va("(^W%s^9)", Info_ValueForKey(info, "humans")) : "(?)"),
-				            Info_ValueForKey(info, "sv_maxclients"));
-				*/
-				Com_sprintf(clientBuff, sizeof(clientBuff), "%s/%s", Info_ValueForKey(info, "clients"), Info_ValueForKey(info, "sv_maxclients"));
+				if (strcmp(Info_ValueForKey(info, "version"), PRODUCT_LABEL) == 0)
+				{
+					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%s^9(+%s)/%s",
+					            Info_ValueForKey(info, "humans"),
+					            va("%i", atoi(Info_ValueForKey(info, "clients")) - atoi(Info_ValueForKey(info, "humans"))),
+					            Info_ValueForKey(info, "sv_maxclients"));
+				}
+				else
+				{
+					Com_sprintf(clientBuff, sizeof(clientBuff), "%s/%s", Info_ValueForKey(info, "clients"), Info_ValueForKey(info, "sv_maxclients"));
+				}
 				return clientBuff;
 			case SORT_GAME:
 				game = atoi(Info_ValueForKey(info, "gametype"));
@@ -7404,7 +7424,7 @@ void _UI_Init(int legacyClient)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	uiInfo.legacyClient = legacyClient;
+	uiInfo.legacyClient = (legacyClient == qtrue ? qtrue : qfalse);
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;
@@ -7536,8 +7556,6 @@ void _UI_Init(int legacyClient)
 
 	uiInfo.serverStatus.currentServerCinematic = -1;
 	uiInfo.previewMovie                        = -1;
-
-	trap_Cvar_Register(NULL, "debug_protocol", "", 0);
 
 	// init Yes/No once for cl_language -> server browser (punkbuster)
 	Q_strncpyz(translated_yes, DC->translateString("Yes"), sizeof(translated_yes));
@@ -7936,6 +7954,7 @@ vmCvar_t ui_browserShowMaxlives;
 vmCvar_t ui_browserShowAntilag;
 vmCvar_t ui_browserShowWeaponsRestricted;
 vmCvar_t ui_browserShowTeamBalanced;
+vmCvar_t ui_browserShowBots;
 
 vmCvar_t ui_browserModFilter;
 vmCvar_t ui_browserMapFilter;
@@ -8019,6 +8038,7 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",               "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowBots,              "ui_browserShowBots",                  "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_browserModFilter,             "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserMapFilter,             "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE                   },
@@ -8118,6 +8138,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_config",                   "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_referee",                  "0",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_shuffleteamsxp",           "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_shuffleteamsxp_norestart", "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_swapteams",                "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_friendlyfire",             "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_allow_timelimit",                "0",                          CVAR_ARCHIVE                   },
@@ -8127,6 +8148,10 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_limit",                          "5",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "vote_percent",                        "50",                         CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_surrender",                "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_restartcampaign",          "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_nextcampaign",             "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_poll",                     "1",                          CVAR_ARCHIVE                   },
 
 	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE                   },
 	{ NULL,                             "ui_r_gamma",                          "",                           CVAR_ARCHIVE                   },
@@ -8274,7 +8299,6 @@ static void UI_DoServerRefresh(void)
 
 static void UI_StartServerRefresh(qboolean full)
 {
-	char    *ptr;
 	char    buff[64];
 	qtime_t q;
 
@@ -8309,14 +8333,13 @@ static void UI_StartServerRefresh(qboolean full)
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime + 5000;
 	if (ui_netSource.integer == AS_GLOBAL)
 	{
-		ptr = UI_Cvar_VariableString("debug_protocol");
-		if (*ptr)
+		int i;
+		for (i = 0; i < MAX_MASTER_SERVERS; i++)
 		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %s empty full\n", 0, ptr));
-		}
-		else
-		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", 0, (int)trap_Cvar_VariableValue("protocol")));
+			if (UI_Cvar_VariableString(va("sv_master%i", i + 1))[0] != '\0')
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", i, (int)trap_Cvar_VariableValue("protocol")));
+			}
 		}
 	}
 }

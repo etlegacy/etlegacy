@@ -37,6 +37,15 @@
 #    define ICONV_CONST const
 #  endif
 
+// In FreeBSD, iconv is included in libc starting from version 10.0.
+#  ifdef __FreeBSD__
+#    include <sys/param.h>
+#    if __FreeBSD_version >= 1000100
+#      define HAVE_ICONV_CONST
+#      define ICONV_CONST const
+#    endif
+#  endif
+
 #  ifdef HAVE_ICONV_CONST
 #    define tinygettext_ICONV_CONST ICONV_CONST
 #  else

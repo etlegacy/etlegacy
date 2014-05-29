@@ -386,7 +386,7 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 	float    inv127 = 1.0f / 127.0f;
 	vec3_t   n, n2, n3, n4;
 
-	// NOTE: Tr3B - limitation not needed anymore
+	// NOTE: limitation not needed anymore
 	//if(outwidth > 2048)
 	//  ri.Error(ERR_DROP, "ResampleTexture: max width");
 
@@ -1153,7 +1153,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	{
 		int samples = 3;
 
-		// Tr3B: normalmaps have the displacement maps in the alpha channel
+		// normalmaps have the displacement maps in the alpha channel
 		// samples 3 would cause an opaque alpha channel and odd displacements!
 		if (image->bits & IF_NORMALMAP)
 		{
@@ -1859,14 +1859,23 @@ R_GetImageBuffer
 This is a hack to get the common imageloaders working properly
 =================
 */
-void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
+void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename)
 {
+	void *buf = NULL;
+
 	if (bufferType != BUFFER_IMAGE)
 	{
 		ri.Error(ERR_FATAL, "R_GetImageBuffer in the new renderer is called improperly\n");
 	}
 
-	return ri.Z_Malloc(size);
+	buf = ri.Z_Malloc(size);
+
+	if (!buf)
+	{
+		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer for image %s with size: %i\n", filename, size);
+	}
+
+	return buf;
 }
 
 /*
@@ -1888,7 +1897,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 	token = COM_ParseExt2(buffer, qfalse);
 	if (!token[0])
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: NULL parameter for R_LoadImage\n");
+		ri.Printf(PRINT_WARNING, "WARNING: NULL parameter in R_LoadImage for material/shader '%s'\n", materialName);
 		return;
 	}
 
@@ -1995,7 +2004,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		char *altName;
 		byte alphaByte;
 
-		// Tr3B: clear alpha of normalmaps for displacement mapping
+		// clear alpha of normalmaps for displacement mapping
 		if (*bits & IF_NORMALMAP)
 		{
 			alphaByte = 0x00;
@@ -2241,7 +2250,6 @@ static ID_INLINE void SwapPixel(byte *inout, int x, int y, int x2, int y2, int w
 static void R_Flip(byte *in, int width, int height)
 {
 	int x, y;
-	//byte *out = in;
 
 	for (y = 0; y < height; y++)
 	{
@@ -2255,7 +2263,6 @@ static void R_Flip(byte *in, int width, int height)
 static void R_Flop(byte *in, int width, int height)
 {
 	int x, y;
-	//byte *out = in;
 
 	for (y = 0; y < height / 2; y++)
 	{
@@ -2582,15 +2589,11 @@ R_InitFogTable
 */
 void R_InitFogTable(void)
 {
-	int   i;
-	float d;
-	float exp = 0.5f;
+	int i;
 
 	for (i = 0; i < FOG_TABLE_SIZE; i++)
 	{
-		d = pow((float)i / (FOG_TABLE_SIZE - 1), exp);
-
-		tr.fogTable[i] = d;
+		tr.fogTable[i] = pow((float)i / (FOG_TABLE_SIZE - 1), DEFAULT_FOG_EXP_DENSITY);
 	}
 }
 
@@ -3622,7 +3625,7 @@ void R_InitImages(void)
 	const char *grainImage    = "gfx/2d/camera/grain.png";
 	const char *vignetteImage = "gfx/2d/camera/vignette.png";
 
-	ri.Printf(PRINT_ALL, "------- R_InitImages -------\n");
+	ri.Printf(PRINT_DEVELOPER, "------- R_InitImages -------\n");
 
 	Com_Memset(r_imageHashTable, 0, sizeof(r_imageHashTable));
 	Com_InitGrowList(&tr.images, 4096);
@@ -3664,7 +3667,7 @@ void R_ShutdownImages(void)
 	int     i;
 	image_t *image;
 
-	ri.Printf(PRINT_ALL, "------- R_ShutdownImages -------\n");
+	ri.Printf(PRINT_DEVELOPER, "------- R_ShutdownImages -------\n");
 
 	for (i = 0; i < tr.images.currentElements; i++)
 	{

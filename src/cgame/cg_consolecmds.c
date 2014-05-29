@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1212,7 +1212,6 @@ void CG_Class_f(void)
 	int              weapon1, weapon2, playerclass;
 	bg_playerclass_t *classinfo;
 	team_t           team;
-	weaponType_t     *wt;
 
 	if (cg.demoPlayback)
 	{
@@ -1320,8 +1319,7 @@ void CG_Class_f(void)
 	}
 
 	// Print out the selected class and weapon info
-	wt = WM_FindWeaponTypeForWeapon(classinfo->classWeapons[weapon1 - 1]);
-	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), 400, cg_fontScaleCP.value, -1);
+	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1 - 1].desc), 400, cg_fontScaleCP.value, -1);
 	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 }

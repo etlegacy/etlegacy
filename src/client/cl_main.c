@@ -2329,28 +2329,27 @@ CL_InitServerInfo
 */
 void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 {
-	server->adr            = *address;
-	server->clients        = 0;
-	server->humans         = 0;
-	server->hostName[0]    = '\0';
-	server->mapName[0]     = '\0';
-	server->maxClients     = 0;
-	server->maxPing        = 0;
-	server->minPing        = 0;
-	server->ping           = -1;
-	server->game[0]        = '\0';
-	server->gameType       = 0;
-	server->netType        = 0;
-	server->allowAnonymous = 0;
-	server->punkbuster     = 0;
-	server->load           = -1;
-	server->balancedteams  = 0;
-	server->friendlyFire   = 0;
-	server->maxlives       = 0;
-	server->needpass       = 0;
-	server->antilag        = 0;
-	server->weaprestrict   = 0;
-	server->gameName[0]    = '\0';
+	server->adr           = *address;
+	server->clients       = 0;
+	server->humans        = 0;
+	server->hostName[0]   = '\0';
+	server->mapName[0]    = '\0';
+	server->maxClients    = 0;
+	server->maxPing       = 0;
+	server->minPing       = 0;
+	server->ping          = -1;
+	server->game[0]       = '\0';
+	server->gameType      = 0;
+	server->netType       = 0;
+	server->punkbuster    = 0;
+	server->load          = -1;
+	server->balancedteams = 0;
+	server->friendlyFire  = 0;
+	server->maxlives      = 0;
+	server->needpass      = 0;
+	server->antilag       = 0;
+	server->weaprestrict  = 0;
+	server->gameName[0]   = '\0';
 }
 
 #define MAX_SERVERSPERPACKET    256
@@ -3417,119 +3416,6 @@ void CL_StartHunkUsers(void)
 	}
 }
 
-void CL_CheckAutoUpdate(void)
-{
-	char info[MAX_INFO_STRING];
-
-	if (!com_autoupdate->integer)
-	{
-		Com_DPrintf("Updater is disabled by com_autoupdate 0.\n");
-		return;
-	}
-
-	// Only check once per session
-	if (autoupdate.updateChecked)
-	{
-		return;
-	}
-
-	// Resolve update server
-	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
-
-	if (!NET_StringToAdr(va("%s:%i", UPDATE_SERVER_NAME, PORT_UPDATE), &autoupdate.autoupdateServer, NA_UNSPEC))
-	{
-		Com_Printf("couldn't resolve address\n");
-
-		autoupdate.updateChecked = qtrue;
-		return;
-	}
-	else
-	{
-		Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.autoupdateServer));
-	}
-
-	info[0] = 0;
-	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
-	Info_SetValueForKey(info, "platform", CPUSTRING);
-	Info_SetValueForKey(info, va("etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT),
-	                    Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
-	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
-	                    Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
-
-	NET_OutOfBandPrint(NS_CLIENT, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
-
-	autoupdate.updateChecked = qtrue;
-}
-
-#ifdef FEATURE_AUTOUPDATE
-void CL_GetAutoUpdate(void)
-{
-	// Don't try and get an update if we haven't checked for one
-	if (!autoupdate.updateChecked)
-	{
-		return;
-	}
-
-	// Make sure there's a valid update file to request
-	if (strlen(com_updatefiles->string) < 5)
-	{
-		return;
-	}
-
-	Com_DPrintf("Connecting to auto-update server...\n");
-
-	S_StopAllSounds();
-
-	// starting to load a map so we get out of full screen ui mode
-	Cvar_Set("r_uiFullScreen", "0");
-
-	// toggle on all the download related cvars
-	Cvar_Set("cl_allowDownload", "1");  // general flag
-	Cvar_Set("cl_wwwDownload", "1");    // ftp/http support
-
-	// clear any previous "server full" type messages
-	clc.serverMessage[0] = 0;
-
-	if (com_sv_running->integer)
-	{
-		// if running a local server, kill it
-		SV_Shutdown("Server quit\n");
-	}
-
-	// make sure a local server is killed
-	Cvar_Set("sv_killserver", "1");
-	SV_Frame(0);
-
-	CL_Disconnect(qtrue);
-	Con_Close();
-
-	Q_strncpyz(cls.servername, "ET:L Update Server", sizeof(cls.servername));
-
-	if (autoupdate.autoupdateServer.type == NA_BAD)
-	{
-		Com_Printf("Bad server address\n");
-		cls.state = CA_DISCONNECTED;
-		Cvar_Set("ui_connecting", "0");
-		return;
-	}
-
-	// Copy auto-update server address to Server connect address
-	memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
-
-	Com_DPrintf("%s resolved to %s\n", cls.servername,
-	            NET_AdrToString(clc.serverAddress));
-
-	cls.state = CA_CONNECTING;
-
-	cls.keyCatchers        = 0;
-	clc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
-	clc.connectPacketCount = 0;
-
-	// server connection string
-	Cvar_Set("cl_currentServerAddress", "ET:L Update Server");
-}
-#endif /* FEATURE_AUTOUPDATE */
-
 /*
 ============
 CL_RefMalloc
@@ -3658,7 +3544,7 @@ void CL_InitRef(void)
 	ri.Cvar_Get = Cvar_Get;
 	ri.Cvar_Set = Cvar_Set;
 	//ri.Cvar_SetValue = Cvar_SetValue;
-	ri.Cvar_CheckRange           = Cvar_CheckRange;
+	ri.Cvar_AssertCvarRange      = Cvar_AssertCvarRange;
 	ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
 
 	// cinematic stuff
@@ -4031,15 +3917,14 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
 			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 			Q_strncpyz(server->game, Info_ValueForKey(info, "game"), MAX_NAME_LENGTH);
-			server->gameType       = atoi(Info_ValueForKey(info, "gametype"));
-			server->netType        = atoi(Info_ValueForKey(info, "nettype"));
-			server->minPing        = atoi(Info_ValueForKey(info, "minping"));
-			server->maxPing        = atoi(Info_ValueForKey(info, "maxping"));
-			server->allowAnonymous = atoi(Info_ValueForKey(info, "sv_allowAnonymous"));
-			server->friendlyFire   = atoi(Info_ValueForKey(info, "friendlyFire"));
-			server->maxlives       = atoi(Info_ValueForKey(info, "maxlives"));
-			server->needpass       = atoi(Info_ValueForKey(info, "needpass"));
-			server->punkbuster     = atoi(Info_ValueForKey(info, "punkbuster"));
+			server->gameType     = atoi(Info_ValueForKey(info, "gametype"));
+			server->netType      = atoi(Info_ValueForKey(info, "nettype"));
+			server->minPing      = atoi(Info_ValueForKey(info, "minping"));
+			server->maxPing      = atoi(Info_ValueForKey(info, "maxping"));
+			server->friendlyFire = atoi(Info_ValueForKey(info, "friendlyFire"));
+			server->maxlives     = atoi(Info_ValueForKey(info, "maxlives"));
+			server->needpass     = atoi(Info_ValueForKey(info, "needpass"));
+			server->punkbuster   = atoi(Info_ValueForKey(info, "punkbuster"));
 			Q_strncpyz(server->gameName, Info_ValueForKey(info, "gamename"), MAX_NAME_LENGTH);
 			server->antilag       = atoi(Info_ValueForKey(info, "g_antilag"));
 			server->weaprestrict  = atoi(Info_ValueForKey(info, "weaprestrict"));
@@ -4191,41 +4076,6 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 			strncat(info, "\n", sizeof(info) - 1);
 		}
 		Com_Printf("%s: %s", NET_AdrToString(from), info);
-	}
-}
-
-/*
-===================
-CL_UpdateInfoPacket
-===================
-*/
-void CL_UpdateInfoPacket(netadr_t from)
-{
-	if (autoupdate.autoupdateServer.type == NA_BAD)
-	{
-		Com_DPrintf("CL_UpdateInfoPacket: Update server has bad address\n");
-		return;
-	}
-
-	Com_DPrintf("Update server resolved to %s\n",
-	            NET_AdrToString(autoupdate.autoupdateServer));
-
-	if (!NET_CompareAdr(from, autoupdate.autoupdateServer))
-	{
-		// TODO: when the updater is server-side as well, write this message to the Attack log
-		Com_DPrintf("CL_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
-		            NET_AdrToString(from), NET_AdrToString(autoupdate.autoupdateServer));
-		return;
-	}
-
-	Cvar_Set("com_updateavailable", Cmd_Argv(1));
-
-	if (!Q_stricmp(com_updateavailable->string, "1"))
-	{
-		Cvar_Set("com_updatefiles", Cmd_Argv(2));
-#ifdef FEATURE_AUTOUPDATE
-		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
-#endif /* FEATURE_AUTOUPDATE */
 	}
 }
 

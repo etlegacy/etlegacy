@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -707,8 +707,6 @@ CG_Explode
 ==============
 */
 
-#define POSSIBLE_PIECES 6
-
 typedef struct fxSound_s
 {
 	int max;
@@ -716,7 +714,7 @@ typedef struct fxSound_s
 	const char *soundfile[3];
 } fxSound_t;
 
-static fxSound_t fxSounds[POSSIBLE_PIECES] =
+static fxSound_t fxSounds[FXTYPE_MAX] =
 {
 	// wood
 	{ 1, { -1, -1, -1 }, { "sound/world/boardbreak.wav",  NULL,                          NULL                          } },
@@ -729,14 +727,16 @@ static fxSound_t fxSounds[POSSIBLE_PIECES] =
 	// brick
 	{ 1, { -1, -1, -1 }, { "sound/world/debris1.wav",     NULL,                          NULL                          } },
 	// stone
-	{ 1, { -1, -1, -1 }, { "sound/world/stonefall.wav",   NULL,                          NULL                          } }
+	{ 1, { -1, -1, -1 }, { "sound/world/stonefall.wav",   NULL,                          NULL                          } },
+	// fabric
+	{ 1, { -1, -1, -1 }, { "sound/world/fabricbreak.wav", NULL,                          NULL                          } }
 };
 
 void CG_PrecacheFXSounds(void)
 {
 	int i, j;
 
-	for (i = 0; i < POSSIBLE_PIECES; i++)
+	for (i = FXTYPE_WOOD; i < FXTYPE_MAX; i++)
 	{
 		for (j = 0; j < fxSounds[i].max; j++)
 		{
@@ -774,7 +774,15 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 
 	if (!cent->currentState.dl_intensity)
 	{
-		sfxHandle_t sound = random() * fxSounds[cent->currentState.frame].max;
+		sfxHandle_t sound;
+		int         index = cent->currentState.frame;
+
+		if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
+		{
+			index = FXTYPE_WOOD;
+		}
+
+		sound = random() * fxSounds[index].max;
 
 		if (fxSounds[cent->currentState.frame].sound[sound] == -1)
 		{
@@ -845,7 +853,15 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 
 	if (!cent->currentState.dl_intensity)
 	{
-		sfxHandle_t sound = random() * fxSounds[cent->currentState.frame].max;
+		sfxHandle_t sound;
+		int         index = cent->currentState.frame;
+
+		if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
+		{
+			index = FXTYPE_WOOD;
+		}
+
+		sound = random() * fxSounds[index].max;
 
 		if (fxSounds[cent->currentState.frame].sound[sound] == -1)
 		{
@@ -873,7 +889,7 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 			            dir,
 			            cent->currentState.density,             // mass
 			            cent->currentState.frame,               // type
-			            0,                                  // sound
+			            0,                                      // sound
 			            cent->currentState.weapon,              // forceLowGrav
 			            shader,
 			            cent->currentState.angles2[0],
@@ -966,7 +982,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 		modelshader = shader;
 	}
 
-	for (i = 0; i < POSSIBLE_PIECES; i++)
+	for (i = FXTYPE_WOOD; i < FXTYPE_MAX; i++)
 	{
 		snd    = LEBS_NONE;
 		hmodel = 0;
@@ -978,7 +994,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 
 			switch (type)
 			{
-			case 0:     // "wood"
+			case FXTYPE_WOOD:     // "wood"
 				snd    = LEBS_WOOD;
 				hmodel = cgs.media.debWood[i];
 
@@ -1006,7 +1022,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case 1:     // "glass"
+			case FXTYPE_GLASS:     // "glass"
 				snd = LEBS_NONE;
 				if (i == 5)
 				{
@@ -1031,7 +1047,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case 2:     // "metal"
+			case FXTYPE_METAL:     // "metal"
 				snd = LEBS_METAL;
 				if (i == 5)
 				{
@@ -1056,7 +1072,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case 3:     // "gibs"
+			case FXTYPE_GIBS:     // "gibs"
 				snd = LEBS_BLOOD;
 				if (i == 5)
 				{
@@ -1076,12 +1092,12 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case 4:     // "brick"
+			case FXTYPE_BRICK:     // "brick"
 				snd    = LEBS_ROCK;
 				hmodel = cgs.media.debBlock[i];
 				break;
 
-			case 5:     // "rock"
+			case FXTYPE_STONE:     // "rock"
 				snd = LEBS_ROCK;
 				if (i == 5)
 				{
@@ -1113,7 +1129,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case 6:     // "fabric"
+			case FXTYPE_FABRIC:     // "fabric"
 				if (i == 5)
 				{
 					hmodel = cgs.media.debFabric[0];
@@ -1157,7 +1173,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 
 			le->sizeScale = scale * sizescale;
 
-			if (type == 1)     // glass
+			if (type == FXTYPE_GLASS)     // glass
 			{     // added this because glass looks funky when it fades out
 				  // FIXME: need to look into this so that they fade out correctly
 				re->fadeStartTime = le->endTime;
@@ -1200,7 +1216,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			re->radius = 1000;
 
 			// trying to make this a little more interesting
-			if (type == 6)     // "fabric"
+			if (type == FXTYPE_FABRIC)     // "fabric"
 			{
 				le->pos.trType = TR_GRAVITY_FLOAT;     // the fabric stuff will change to use something that looks better
 			}
@@ -1218,7 +1234,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 
 			switch (type)
 			{
-			case 6:     // fabric
+			case FXTYPE_FABRIC:     // fabric
 				le->bounceFactor = 0.0;
 				materialmul      = 0.3;     // rotation speed
 				break;
@@ -1318,7 +1334,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 		pieces[2] = 10;
 	}
 
-	if (type == 0)        // cap wood even more since it's often grouped, and the small splinters can add up
+	if (type == FXTYPE_WOOD)        // cap wood even more since it's often grouped, and the small splinters can add up
 	{
 		if (pieces[0] > 10)
 		{
@@ -1346,7 +1362,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 		modelshader = shader;
 	}
 
-	for (i = 0; i < POSSIBLE_PIECES; i++)
+	for (i = FXTYPE_WOOD; i < FXTYPE_MAX; i++)
 	{
 		snd    = LEBS_NONE;
 		hmodel = 0;
@@ -1358,7 +1374,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 			switch (type)
 			{
-			case 0:     // "wood"
+			case FXTYPE_WOOD:     // "wood"
 				snd    = LEBS_WOOD;
 				hmodel = cgs.media.debWood[i];
 
@@ -1386,7 +1402,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case 1:     // "glass"
+			case FXTYPE_GLASS:     // "glass"
 				snd = LEBS_NONE;
 				if (i == 5)
 				{
@@ -1411,7 +1427,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case 2:     // "metal"
+			case FXTYPE_METAL:     // "metal"
 				snd = LEBS_BRASS;
 				if (i == 5)
 				{
@@ -1436,7 +1452,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case 3:     // "gibs"
+			case FXTYPE_GIBS:     // "gibs"
 				snd = LEBS_BLOOD;
 				if (i == 5)
 				{
@@ -1456,12 +1472,12 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case 4:     // "brick"
+			case FXTYPE_BRICK:     // "brick"
 				snd    = LEBS_ROCK;
 				hmodel = cgs.media.debBlock[i];
 				break;
 
-			case 5:     // "rock"
+			case FXTYPE_STONE:     // "rock"
 				snd = LEBS_ROCK;
 				if (i == 5)
 				{
@@ -1493,7 +1509,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case 6:     // "fabric"
+			case FXTYPE_FABRIC:     // "fabric"
 				if (i == 5)
 				{
 					hmodel = cgs.media.debFabric[0];
@@ -1537,7 +1553,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 			le->sizeScale = scale;
 
-			if (type == 1)     // glass
+			if (type == FXTYPE_GLASS)     // glass
 			{     // added this because glass looks funky when it fades out
 				  // - need to look into this so that they fade out correctly
 				re->fadeStartTime = le->endTime;
@@ -1580,7 +1596,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			re->radius = 1000;
 
 			// trying to make this a little more interesting
-			if (type == 6)     // "fabric"
+			if (type == FXTYPE_FABRIC)     // "fabric"
 			{
 				le->pos.trType = TR_GRAVITY_FLOAT;     // the fabric stuff will change to use something that looks better
 			}
@@ -1598,7 +1614,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 			switch (type)
 			{
-			case 6:     // fabric
+			case FXTYPE_FABRIC:     // fabric
 				le->bounceFactor = 0.0;
 				materialmul      = 0.3;     // rotation speed
 				break;
@@ -1617,7 +1633,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			le->angles.trDelta[1] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[2] = ((100 + (rand() & 500)) - 300) * materialmul;
 
-			//if(type == 6)   // fabric
+			//if(type == FXTYPE_FABRIC)   // fabric
 			//  materialmul = 1;        // translation speed
 
 			VectorCopy(origin, le->pos.trBase);
@@ -2093,10 +2109,7 @@ void CG_MortarMiss(centity_t *cent, vec3_t origin)
 // a convenience function for all footstep sound playing
 static void CG_StartFootStepSound(bg_playerclass_t *classInfo, entityState_t *es, sfxHandle_t sfx)
 {
-	if (cg_footsteps.integer)
-	{
-		trap_S_StartSound(NULL, es->number, CHAN_BODY, sfx);
-	}
+	trap_S_StartSound(NULL, es->number, CHAN_BODY, sfx);
 }
 
 /*
@@ -2791,10 +2804,17 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_FX_SOUND:
 	{
-		sfxHandle_t sound = random() * fxSounds[es->eventParm].max;
+		sfxHandle_t sound;
+		int         index = es->eventParm;
 
 		DEBUGNAME("EV_FX_SOUND");
 
+		if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
+		{
+			index = 0;
+		}
+
+		sound = (random() * fxSounds[index].max);
 		if (fxSounds[es->eventParm].sound[sound] == -1)
 		{
 			fxSounds[es->eventParm].sound[sound] = trap_S_RegisterSound(fxSounds[es->eventParm].soundfile[sound], qfalse);

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -536,7 +536,7 @@ void SP_worldspawn(void)
 	{
 		cgs.media.fiveMinuteSound_g = 0;
 	}
-	else if (strstr(cg.fiveMinuteSound_g, ".wav"))
+	else if (strstr(cg.fiveMinuteSound_g, ".wav") || strstr(cg.fiveMinuteSound_g, ".ogg"))
 	{
 		cgs.media.fiveMinuteSound_g = trap_S_RegisterSound(cg.fiveMinuteSound_g, qfalse);
 	}
@@ -550,7 +550,7 @@ void SP_worldspawn(void)
 	{
 		cgs.media.fiveMinuteSound_a = 0;
 	}
-	else if (strstr(cg.fiveMinuteSound_a, ".wav"))
+	else if (strstr(cg.fiveMinuteSound_a, ".wav") || strstr(cg.fiveMinuteSound_a, ".ogg"))
 	{
 		cgs.media.fiveMinuteSound_a = trap_S_RegisterSound(cg.fiveMinuteSound_a, qfalse);
 	}
@@ -564,7 +564,7 @@ void SP_worldspawn(void)
 	{
 		cgs.media.twoMinuteSound_g = 0;
 	}
-	else if (strstr(cg.twoMinuteSound_g, ".wav"))
+	else if (strstr(cg.twoMinuteSound_g, ".wav") || strstr(cg.twoMinuteSound_g, ".ogg"))
 	{
 		cgs.media.twoMinuteSound_g = trap_S_RegisterSound(cg.twoMinuteSound_g, qfalse);
 	}
@@ -578,7 +578,7 @@ void SP_worldspawn(void)
 	{
 		cgs.media.twoMinuteSound_a = 0;
 	}
-	else if (strstr(cg.twoMinuteSound_a, ".wav"))
+	else if (strstr(cg.twoMinuteSound_a, ".wav") || strstr(cg.twoMinuteSound_a, ".ogg"))
 	{
 		cgs.media.twoMinuteSound_a = trap_S_RegisterSound(cg.twoMinuteSound_a, qtrue);
 	}
@@ -592,7 +592,7 @@ void SP_worldspawn(void)
 	{
 		cgs.media.thirtySecondSound_g = 0;
 	}
-	else if (strstr(cg.thirtySecondSound_g, ".wav"))
+	else if (strstr(cg.thirtySecondSound_g, ".wav") || strstr(cg.thirtySecondSound_g, ".ogg"))
 	{
 		cgs.media.thirtySecondSound_g = trap_S_RegisterSound(cg.thirtySecondSound_g, qfalse);
 	}
@@ -606,7 +606,7 @@ void SP_worldspawn(void)
 	{
 		cgs.media.thirtySecondSound_a = 0;
 	}
-	else if (strstr(cg.thirtySecondSound_a, ".wav"))
+	else if (strstr(cg.thirtySecondSound_a, ".wav") || strstr(cg.thirtySecondSound_a, ".ogg"))
 	{
 		cgs.media.thirtySecondSound_a = trap_S_RegisterSound(cg.thirtySecondSound_a, qfalse);
 	}

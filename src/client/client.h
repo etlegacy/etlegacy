@@ -284,6 +284,7 @@ typedef struct
 typedef struct
 {
 	netadr_t adr;
+	char version[MAX_NAME_LENGTH];
 	char hostName[MAX_NAME_LENGTH];
 	int load;
 	char mapName[MAX_NAME_LENGTH];
@@ -297,7 +298,6 @@ typedef struct
 	int maxPing;
 	int ping;
 	qboolean visible;
-	int allowAnonymous;
 	int friendlyFire;
 	int maxlives;
 	int needpass;
@@ -448,8 +448,6 @@ void CL_AddReliableCommand(const char *cmd);
 void CL_StartHunkUsers(void);
 
 void CL_RequestMotd(void);
-void CL_CheckAutoUpdate(void);
-void CL_GetAutoUpdate(void);
 
 void CL_Disconnect_f(void);
 void CL_GetChallengePacket(void);
@@ -571,8 +569,6 @@ void CL_SystemInfoChanged(void);
 void CL_ParseServerMessage(msg_t *msg);
 
 //====================================================================
-
-void CL_UpdateInfoPacket(netadr_t from);
 
 void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
 void CL_LocalServers_f(void);

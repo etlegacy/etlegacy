@@ -146,7 +146,6 @@ vmCvar_t cg_errorDecay;
 vmCvar_t cg_nopredict;
 vmCvar_t cg_noPlayerAnims;
 vmCvar_t cg_showmiss;
-vmCvar_t cg_footsteps;
 vmCvar_t cg_markTime;
 vmCvar_t cg_brassTime;
 vmCvar_t cg_letterbox;
@@ -306,7 +305,6 @@ vmCvar_t cg_automapZoom;
 
 vmCvar_t cg_drawTime;
 
-vmCvar_t cg_popupTime;
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
 vmCvar_t cg_graphicObituaries;
@@ -394,7 +392,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_nopredict,             "cg_nopredict",             "0",     CVAR_CHEAT                   },
 	{ &cg_noPlayerAnims,         "cg_noplayeranims",         "0",     CVAR_CHEAT                   },
 	{ &cg_showmiss,              "cg_showmiss",              "0",     0                            },
-	{ &cg_footsteps,             "cg_footsteps",             "1",     CVAR_CHEAT                   },
 	{ &cg_tracerChance,          "cg_tracerchance",          "0.4",   CVAR_CHEAT                   },
 	{ &cg_tracerWidth,           "cg_tracerwidth",           "0.8",   CVAR_CHEAT                   },
 	{ &cg_tracerSpeed,           "cg_tracerSpeed",           "4500",  CVAR_CHEAT                   },
@@ -526,7 +523,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_simpleItems,           "cg_simpleItems",           "0",     CVAR_ARCHIVE                 }, // Bugged atm
 	{ &cg_automapZoom,           "cg_automapZoom",           "5.159", CVAR_ARCHIVE                 },
 	{ &cg_drawTime,              "cg_drawTime",              "0",     CVAR_ARCHIVE                 },
-	{ &cg_popupTime,             "cg_popupTime",             "1000",  CVAR_ARCHIVE                 },
 	{ &cg_popupFadeTime,         "cg_popupFadeTime",         "2500",  CVAR_ARCHIVE                 },
 	{ &cg_popupStayTime,         "cg_popupStayTime",         "2000",  CVAR_ARCHIVE                 },
 	{ &cg_graphicObituaries,     "cg_graphicObituaries",     "0",     CVAR_ARCHIVE                 },
@@ -1367,12 +1363,17 @@ static void CG_RegisterSounds(void)
 	for (i = 0; i < 3; i++)
 	{
 		// bouncy shell sounds \o/
-		cgs.media.sfx_brassSound[BRASSSOUND_METAL][i] = trap_S_RegisterSound(va("sound/weapons/misc/shell_metal%i.wav", i + 1), qfalse);
-		cgs.media.sfx_brassSound[BRASSSOUND_SOFT][i]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_soft%i.wav", i + 1), qfalse);
-		cgs.media.sfx_brassSound[BRASSSOUND_STONE][i] = trap_S_RegisterSound(va("sound/weapons/misc/shell_stone%i.wav", i + 1), qfalse);
-		cgs.media.sfx_brassSound[BRASSSOUND_WOOD][i]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_wood%i.wav", i + 1), qfalse);
-		cgs.media.sfx_rubbleBounce[i]                 = trap_S_RegisterSound(va("sound/world/debris%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_METAL][i][0] = trap_S_RegisterSound(va("sound/weapons/misc/shell_metal%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_METAL][i][1] = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_metal%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_SOFT][i][0]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_soft%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_SOFT][i][1]  = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_soft%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_STONE][i][0] = trap_S_RegisterSound(va("sound/weapons/misc/shell_stone%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_STONE][i][1] = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_stone%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_WOOD][i][0]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_wood%i.wav", i + 1), qfalse);
+		cgs.media.sfx_brassSound[BRASSSOUND_WOOD][i][1]  = trap_S_RegisterSound(va("sound/weapons/misc/sg_shell_wood%i.wav", i + 1), qfalse);
+		cgs.media.sfx_rubbleBounce[i]                    = trap_S_RegisterSound(va("sound/world/debris%i.wav", i + 1), qfalse);
 	}
+
 	cgs.media.sfx_knifehit[0] = trap_S_RegisterSound("sound/weapons/knife/knife_hit1.wav", qfalse);
 	cgs.media.sfx_knifehit[1] = trap_S_RegisterSound("sound/weapons/knife/knife_hit2.wav", qfalse);
 	cgs.media.sfx_knifehit[2] = trap_S_RegisterSound("sound/weapons/knife/knife_hit3.wav", qfalse);
@@ -1404,6 +1405,7 @@ static void CG_RegisterSounds(void)
 
 	cgs.media.shoveSound = trap_S_RegisterSound("sound/weapons/impact/flesh1.wav", qfalse);
 
+	cgs.cachedSounds[GAMESOUND_BLANK]               = trap_S_RegisterSound("sound/player/default/blank.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_PLAYER_GURP1]        = trap_S_RegisterSound("sound/player/gurp1.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_PLAYER_GURP2]        = trap_S_RegisterSound("sound/player/gurp2.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_PLAYER_BUBBLE]       = trap_S_RegisterSound("sound/world/bubbles.wav", qfalse);
@@ -1413,6 +1415,13 @@ static void CG_RegisterSounds(void)
 	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_3] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);
 
 	cgs.cachedSounds[GAMESOUND_MISC_REVIVE] = trap_S_RegisterSound("sound/misc/vo_revive.wav", qfalse);
+
+	cgs.cachedSounds[GAMESOUND_MISC_REFEREE] = trap_S_RegisterSound("sound/misc/referee.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_MISC_VOTE]    = trap_S_RegisterSound("sound/misc/vote.wav", qfalse);
+	//cgs.cachedSounds[GAMESOUND_MISC_BANNED] = trap_S_RegisterSound("sound/osp/banned.wav", qfalse);
+	//cgs.cachedSounds[GAMESOUND_MISC_KICKED] = trap_S_RegisterSound("sound/osp/kicked.wav", qfalse);
+
+	cgs.cachedSounds[GAMESOUND_WORLD_CHAIRCREAK] = trap_S_RegisterSound("sound/world/chaircreak.wav", qfalse);
 
 	CG_PrecacheFXSounds();
 }
@@ -2485,7 +2494,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.demoPlayback = demoPlayback;
 
-	cg.legacyClient = legacyClient;
+	cg.legacyClient = (legacyClient == qtrue ? qtrue : qfalse);
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);
@@ -2586,8 +2595,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_initStrings();
 	CG_windowInit();
-
-	cgs.smokeWindDir = crandom();
 
 #ifdef _DEBUG
 	DEBUG_INITPROFILE_EXEC("initialization")

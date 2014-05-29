@@ -374,6 +374,17 @@ typedef enum
 	VMI_COMPILED
 } vmInterpret_t;
 
+
+typedef enum vmSlots_e
+{
+	VM_GAME = 0,
+	VM_CGAME,
+	VM_UI,
+	MAX_VM
+} vmSlots_t;
+
+extern const char *vmStrs[MAX_VM];
+
 typedef enum
 {
 	TRAP_MEMSET = 100,
@@ -463,8 +474,8 @@ void Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 // if function is NULL, the command will be forwarded to the server
 // as a clc_clientCommand instead of executed locally
 
-void    Cmd_RemoveCommand(const char *cmd_name);
-void    Cmd_RemoveCommandSafe(const char *cmd_name);
+void Cmd_RemoveCommand(const char *cmd_name);
+void Cmd_RemoveCommandSafe(const char *cmd_name);
 
 typedef void (*completionFunc_t)(char *args, int argNum);
 
@@ -588,7 +599,7 @@ char *Cvar_InfoString_Big(int bit);
 // returns an info string containing all the cvars that have the given bit set
 // in their flags ( CVAR_USERINFO, CVAR_SERVERINFO, CVAR_SYSTEMINFO, etc )
 void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize);
-void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
+void Cvar_AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 
 void Cvar_Restart(qboolean unsetVM);
 void Cvar_Restart_f(void);
@@ -796,6 +807,14 @@ DOWNLOAD
 */
 
 #include "dl_public.h"
+
+/*
+==============================================================
+JSON
+==============================================================
+*/
+
+#include "json_public.h"
 
 /*
 ==============================================================
@@ -1042,13 +1061,18 @@ void CL_ShutdownAll(void);
 void CL_FlushMemory(void);
 // dump all memory on an error
 
+qboolean CL_ConnectedToServer(void);
+// returns qtrue if connected to a server
+
 void CL_StartHunkUsers(void);
 // start all the client stuff using the hunk
 
 void CL_CheckAutoUpdate(void);
-#ifdef FEATURE_AUTOUPDATE
 void CL_GetAutoUpdate(void);
-#endif
+qboolean CL_CheckUpdateDownloads(void);
+qboolean CL_InitUpdateDownloads(void);
+qboolean CL_UpdatePacketEvent(netadr_t from);
+void CL_UpdateInfoPacket(netadr_t from);
 
 void Key_KeynameCompletion(void (*callback)(const char *s));
 // for keyname autocompletion

@@ -5,13 +5,13 @@ ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=m
 
 Website: [http://www.etlegacy.com](http://www.etlegacy.com)
 
-Release downloads: [http://dev.etlegacy.com/download] (http://dev.etlegacy.com/download)
+Release downloads: [http://dev.etlegacy.com/download](http://dev.etlegacy.com/download)
 
-Wiki/FAQ: [http://www.dev.etlegacy.com/projects/etlegacy/wiki] (http://www.dev.etlegacy.com/projects/etlegacy/wiki)
+Wiki/FAQ: [http://dev.etlegacy.com/projects/etlegacy/wiki](http://dev.etlegacy.com/projects/etlegacy/wiki)
 
-Forums: [http://www.dev.etlegacy.com/projects/etlegacy/boards] (http://www.dev.etlegacy.com/projects/etlegacy/boards)
+Forums: [http://dev.etlegacy.com/projects/etlegacy/boards](http://dev.etlegacy.com/projects/etlegacy/boards)
 
-Development (bug reports and feature requests): [http://www.dev.etlegacy.com](http://www.dev.etlegacy.com)
+Development (bug reports and feature requests): [http://dev.etlegacy.com](http://dev.etlegacy.com)
 
 Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 
@@ -26,7 +26,7 @@ which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory.
 Its main goals are fixing bugs, cleaning up the codebase and adding useful features while remaining 
 compatible with the ET 2.60b version.
 
-For more information consult our [changelog] (http://www.dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
+For more information consult our [changelog](http://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
 
 GENERAL NOTES
 =============
@@ -37,13 +37,13 @@ Game data and patching:
 Wolfenstein: Enemy Territory is a free release, and can be downloaded from
 http://www.splashdamage.com/content/download-wolfenstein-enemy-territory
 
-This source release contains only the engine and mod code and not any game data, 
-the game data is still covered by the original EULA and must be obeyed as usual.
+This source release contains only the engine and mod code but not any game data,
+which is still covered by the original EULA and must be obeyed as usual.
 
 Compatibility with Enemy Territory 2.60b
 ----------------------------------------------------------------------------
 
-Please remember that only if you compile ET:L on a 32 bits system or crosscompile it
+Please remember that only if you compile ET:Legacy on a 32 bits system or crosscompile it
 for 32 bits architecture on a 64 bits system will you be able to play on 2.60b servers.
 
 In case you are a running a 64 bits system, you probably might want to use the
@@ -52,25 +52,25 @@ can be automatically downloaded using the `git submodule` command. See the next 
 for more details.
 
 NOTE: Even if you have a 64 bits linux distribution which provides 32 bits versions of all
-the required libraries, cURL library also needs source code (package with -devel suffix) 
-configured for the different architecture and it is rarely packaged on 64 bits distributions.
+the required libraries, you will also need the development libraries (-devel packages)
+installed on your system.
 
 Dependencies
 -----------------------------------------------------------------------------
 
 * **CMake** (compile-time only)
-* **libSDL**, version 1.2.14
-* **libjpeg**, version 8, or **libjpeg-turbo**, version 1.3
-* **libGlew**, version 1.10
-* **lua**, either version 5.2 or 5.1 (optional, enabled by default)
-* **libcurl** (optional, enabled by default)
-* **OGG Vorbis File** (optional)
-* **OpenAL** (optional)
 * **OpenGL**
-* **Freetype** (optional)
+* **GLEW**, version 1.10
+* **SDL**, version 1.2
+* **libjpeg**, version 8, or **libjpeg-turbo**, version 1.3
+* **libcurl** (optional, enabled by default)
+* **Lua**, either version 5.1 or 5.2 (optional, enabled by default)
+* **Freetype**, version 2 (optional)
+* **Ogg Vorbis** (optional)
+* **OpenAL** (optional)
 
 To get the latest source code install [git](http://git-scm.com/) and
-clone our repository hosted at Github.com:
+clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):
 
     $ git clone git://github.com/etlegacy/etlegacy.git
 
@@ -79,10 +79,10 @@ If the required dependencies are not installed on your system run:
     $ git submodule init
     $ git submodule update
 
-This downloads the essential dependencies (libjpeg, libSDL and libcurl) into the `libs/`
-directory. You can choose whether to use bundled libraries instead of the system ones by
-changing the `BUNDLED_LIBS` variable in the CMake configuration. You can then select which
-bundled libraries to use by toggling the respective `BUNDLED_XXX` variable.
+This downloads the essential dependencies into the `libs/`directory. You can choose whether
+to use bundled libraries instead of the system ones by changing the `BUNDLED_LIBS` variable
+in the CMakeList.txt configuration file. You can then select which bundled libraries to use
+by toggling the respective `BUNDLED_XXX` variable.
 
 Compile and install
 -----------------------------------------------------------------------------
@@ -95,11 +95,11 @@ In terminal run:
 
     $ mkdir build && cd build && cmake-gui ..
 
-If you do not wish to install ET:L system-wide simply run:
+If you do not wish to install ET:Legacy system-wide simply run:
 
     $ make
 
-To install the binaries system-wide, you need to compile ET:L with hardcoded fs_basepath.
+To install the binaries system-wide, you need to compile ET:Legacy with hardcoded fs_basepath.
 
 First adjust the following variables in CMake:
   * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
@@ -111,7 +111,7 @@ First adjust the following variables in CMake:
   * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
     CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "etmain" is appended to it.
 
-Then compile ET:L:
+Then compile ET:Legacy:
 
 	$ make
 	# make install
@@ -146,7 +146,7 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
 
     1. download the free Visual Studio C++ Express 2010
     2. when installing CMake, make sure it is added into your system PATH
-    3. create a `build` directory inside the directory which contains ET:L sources
+    3. create a `build` directory inside the directory which contains ET:Legacy sources
     4. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu) and `cd` to the newly created build directory
     5. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake`
        ... or `cmake -G "Visual Studio 10" ..` and open the resulting project in VS 2010
@@ -154,16 +154,16 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
 * option B: **QtCreator**
 
     1. download the free [QtCreator](http://qt-project.org/)
-    1. open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
+    1. open the CMakeLists.txt file in QtCreator.
 
 
 NOTES:
 
 In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
 Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows 
-SDK 6 and copy 'win32.mak' to libs\jpeg\.
+SDK 7 and copy 'win32.mak' to libs\jpeg\.
 
-If build fails during libcurl compilation because of missing *sed* utility,
+If the build fails during libcurl compilation because of missing *sed* utility,
 download it from http://gnuwin32.sourceforge.net/packages/sed.htm and place it into
 your system path or copy it into MSVC/VC/bin. It also comes with Git and can be placed
 into your system path automatically if you select that option during Git installation.

@@ -3285,7 +3285,7 @@ void PM_CoolWeapons(void)
 		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
 		{
 			// floor to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
 		}
 		else
 		{
@@ -3295,7 +3295,7 @@ void PM_CoolWeapons(void)
 			// floor to prevent 8-bit wrap
 			if (maxHeat != 0)
 			{
-				pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[pm->ps->weapon] / (float)maxHeat)) * 255.0f);
+				pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[pm->ps->weapon] / (float)maxHeat) * 255.0f);
 			}
 			else
 			{
@@ -3489,7 +3489,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
@@ -3567,7 +3567,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
@@ -4635,20 +4635,17 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET: // FIXME: see below - see cg_weapons.c
 		if (!pm->ps->ammo[WP_MORTAR])
 		{
 			PM_AddEvent(EV_NOAMMO);
 		}
 		break;
-	/*
 	case WP_MORTAR2_SET:
-	if (!pm->ps->ammo[WP_MORTAR2])
-	{
-	    PM_AddEvent(EV_NOAMMO);
-	}
-	break;
-	*/
+		if (!pm->ps->ammo[WP_MORTAR2])
+		{
+			PM_AddEvent(EV_NOAMMO);
+		}
+		break;
 	default:
 		break;
 	}

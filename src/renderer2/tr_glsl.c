@@ -25,158 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static char *complieMacroNames[] =
 {
-	"USE_ALPHA_TESTING",
-	"USE_PORTAL_CLIPPING",
-	"USE_FRUSTUM_CLIPPING",
-	"USE_VERTEX_SKINNING",
-	"USE_VERTEX_ANIMATION",
-	"USE_DEFORM_VERTEXES",
-	"USE_TCGEN_ENVIRONMENT",
-	"USE_TCGEN_LIGHTMAP",
-	"USE_NORMAL_MAPPING",
-	"USE_PARALLAX_MAPPING",
-	"USE_REFLECTIVE_SPECULAR",
-	"USE_SHADOWING",
-	"TWOSIDED",
-	"EYE_OUTSIDE",
-	"BRIGHTPASS_FILTER",
-	"LIGHT_DIRECTIONAL",
-	"USE_GBUFFER"
+#define MACRO_NAME
+#include "tr_glsldef.h"
+#undef MACRO_NAME
 };
 
 // These must be in the same order as in uniform_t in tr_local.h.
 static uniformInfo_t uniformsInfo[] =
 {
-	{ "u_DiffuseMap",                   GLSL_INT      },
-	{ "u_LightMap",                     GLSL_INT      },
-	{ "u_NormalMap",                    GLSL_INT      },
-	{ "u_DeluxeMap",                    GLSL_INT      },
-	{ "u_SpecularMap",                  GLSL_INT      },
-
-	{ "u_TextureMap",                   GLSL_INT      },
-	{ "u_LevelsMap",                    GLSL_INT      },
-
-	{ "u_ScreenImageMap",               GLSL_INT      },
-	{ "u_ScreenDepthMap",               GLSL_INT      },
-
-	{ "u_ShadowMap",                    GLSL_INT      },
-	{ "u_ShadowMap2",                   GLSL_INT      },
-	{ "u_ShadowMap3",                   GLSL_INT      },
-
-	{ "u_ShadowMvp",                    GLSL_MAT16    },
-	{ "u_ShadowMvp2",                   GLSL_MAT16    },
-	{ "u_ShadowMvp3",                   GLSL_MAT16    },
-
-	{ "u_DiffuseTexMatrix",             GLSL_VEC4     },
-	{ "u_DiffuseTexOffTurb",            GLSL_VEC4     },
-	{ "u_Texture1Env",                  GLSL_INT      },
-
-	{ "u_TCGen0",                       GLSL_INT      },
-	{ "u_TCGen0Vector0",                GLSL_VEC3     },
-	{ "u_TCGen0Vector1",                GLSL_VEC3     },
-
-	{ "u_DeformGen",                    GLSL_INT      },
-	{ "u_DeformParams",                 GLSL_FLOATARR },
-
-	{ "u_ColorGen",                     GLSL_INT      },
-	{ "u_AlphaGen",                     GLSL_INT      },
-	{ "u_Color",                        GLSL_VEC4     },
-	{ "u_BaseColor",                    GLSL_VEC4     },
-	{ "u_VertColor",                    GLSL_VEC4     },
-
-	{ "u_DlightInfo",                   GLSL_VEC4     },
-	{ "u_LightForward",                 GLSL_VEC3     },
-	{ "u_LightUp",                      GLSL_VEC3     },
-	{ "u_LightRight",                   GLSL_VEC3     },
-	{ "u_LightOrigin",                  GLSL_VEC3     },
-	{ "u_LightRadius",                  GLSL_FLOAT    },
-	{ "u_AmbientLight",                 GLSL_VEC3     },
-	{ "u_DirectedLight",                GLSL_VEC3     },
-
-	{ "u_PortalRange",                  GLSL_FLOAT    },
-
-	{ "u_FogDistance",                  GLSL_VEC4     },
-	{ "u_FogDepth",                     GLSL_VEC4     },
-	{ "u_FogEyeT",                      GLSL_FLOAT    },
-	{ "u_FogColorMask",                 GLSL_VEC4     },
-
-	{ "u_ModelMatrix",                  GLSL_MAT16    },
-	{ "u_ModelViewProjectionMatrix",    GLSL_MAT16    },
-
-	{ "u_Time",                         GLSL_FLOAT    },
-	{ "u_VertexLerp",                   GLSL_FLOAT    },
-	{ "u_MaterialInfo",                 GLSL_VEC2     },
-
-	{ "u_ViewInfo",                     GLSL_VEC4     },
-	{ "u_ViewOrigin",                   GLSL_VEC3     },
-	{ "u_ViewForward",                  GLSL_VEC3     },
-	{ "u_ViewLeft",                     GLSL_VEC3     },
-	{ "u_ViewUp",                       GLSL_VEC3     },
-
-	{ "u_InvTexRes",                    GLSL_VEC2     },
-	{ "u_AutoExposureMinMax",           GLSL_VEC2     },
-	{ "u_ToneMinAvgMaxLinear",          GLSL_VEC3     },
-
-	{ "u_PrimaryLightOrigin",           GLSL_VEC4     },
-	{ "u_PrimaryLightColor",            GLSL_VEC3     },
-	{ "u_PrimaryLightAmbient",          GLSL_VEC3     },
-	{ "u_PrimaryLightRadius",           GLSL_FLOAT    },
-
-	//from XREAL
-	{ "u_ColorTextureMatrix",           GLSL_MAT16    },
-	{ "u_DiffuseTextureMatrix",         GLSL_MAT16    },
-	{ "u_NormalTextureMatrix",          GLSL_MAT16    },
-	{ "u_SpecularTextureMatrix",        GLSL_MAT16    },
-	{ "u_AlphaTest",                    GLSL_INT      },
-	{ "u_ColorModulate",                GLSL_VEC4     },
-	{ "u_BoneMatrix",                   GLSL_MAT16    },
-	{ "u_VertexInterpolation",          GLSL_FLOAT    },
-	{ "u_PortalPlane",                  GLSL_VEC4     },
-	{ "u_CurrentMap",                   GLSL_INT      },
-	{ "u_ColorMap",                     GLSL_INT      },
-	{ "u_AmbientColor",                 GLSL_VEC3     },
-	{ "u_LightDir",                     GLSL_VEC3     },
-	{ "u_LightColor",                   GLSL_VEC3     },
-	{ "u_LightScale",                   GLSL_FLOAT    },
-	{ "u_LightWrapAround",              GLSL_FLOAT    },
-	{ "u_LightAttenuationMatrix",       GLSL_MAT16    },
-	{ "u_LightFrustum",                 GLSL_VEC4ARR  }, // VEC4 [6]
-	{ "u_ShadowTexelSize",              GLSL_FLOAT    },
-	{ "u_ShadowBlur",                   GLSL_FLOAT    },
-	{ "u_ShadowMatrix",                 GLSL_MAT16ARR }, //MAT16 [5]
-	{ "u_ShadowParallelSplitDistances", GLSL_VEC4     },
-	{ "u_ViewMatrix",                   GLSL_MAT16    },
-	{ "u_ModelViewMatrix",              GLSL_MAT16    },
-	{ "u_ModelViewMatrixTranspose",     GLSL_MAT16    },
-	{ "u_ProjectionMatrixTranspose",    GLSL_MAT16    },
-	{ "u_UnprojectMatrix",              GLSL_MAT16    },
-	{ "u_DepthScale",                   GLSL_FLOAT    },
-	{ "u_EnvironmentInterpolation",     GLSL_FLOAT    },
-	{ "u_DeformParms",                  GLSL_FLOATARR }, // FLOAT [MAX_SHADER_DEFORM_PARMS]
-	{ "u_FogDistanceVector",            GLSL_VEC4     },
-	{ "u_FogDepthVector",               GLSL_VEC4     },
-	{ "u_DeformMagnitude",              GLSL_FLOAT    },
-	{ "u_HDRKey",                       GLSL_FLOAT    },
-	{ "u_HDRAverageLuminance",          GLSL_FLOAT    },
-	{ "u_HDRMaxLuminance",              GLSL_FLOAT    },
-	{ "u_RefractionIndex",              GLSL_FLOAT    },
-	{ "u_FogDensity",                   GLSL_FLOAT    },
-	{ "u_FogColor",                     GLSL_VEC3     },
-	{ "u_FresnelPower",                 GLSL_FLOAT    },
-	{ "u_FresnelScale",                 GLSL_FLOAT    },
-	{ "u_FresnelBias",                  GLSL_FLOAT    },
-	{ "u_BlurMagnitude",                GLSL_FLOAT    },
-	{ "u_NormalScale",                  GLSL_FLOAT    },
-	{ "u_ShadowCompare",                GLSL_FLOAT    },
-	{ "u_EtaRatio",                     GLSL_VEC3     },
-
-	//BOOLEANS
-	{ "SHOW_LIGHTMAP",                  GLSL_BOOL     },
-	{ "SHOW_DELUXEMAP",                 GLSL_BOOL     },
-
-	{ "NORMALMAP",                      GLSL_BOOL     },
-	{ "PARALLAXMAP",                    GLSL_BOOL     }
-
+#define UNIFORM_TYPE
+#include "tr_glsldef.h"
+#undef UNIFORM_TYPE
 };
 
 typedef struct
@@ -259,6 +118,9 @@ programInfo_t *gl_depthToColorShader;
 programInfo_t *gl_volumetricFogShader;
 programInfo_t *gl_volumetricLightingShader;
 programInfo_t *gl_dispersionShader;
+
+//Jacker
+programInfo_t *gl_colorCorrection;
 
 //This is set with the GLSL_SelectPermutation
 shaderProgram_t *selectedProgram;
@@ -351,7 +213,6 @@ qboolean GLSL_CopyNextToken(char **text, char **out)
 programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 {
 	char          *token;
-	int           i = 0;
 	programInfo_t *def;
 	void          *valptr;
 
@@ -393,6 +254,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		else if (!Q_stricmp(token, "macros"))
 		{
 			int macro;
+
 			while ((token = COM_ParseExt(text, qfalse))[0])
 			{
 				macro = GLSL_GetMacroByName(token);
@@ -416,6 +278,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		else if (!Q_stricmp(token, "attribs"))
 		{
 			unsigned int attribs = 0;
+
 			while ((token = COM_ParseExt(text, qfalse))[0])
 			{
 				attribs |= GLSL_GetAttribByName(token);
@@ -1567,7 +1430,7 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 	{
 		qglGetActiveUniformARB(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
 
-		ri.Printf(PRINT_DEVELOPER, "active uniform: '%s'\n", uniformName);
+		Ren_LogComment("active uniform: '%s'\n", uniformName)
 	}
 
 	qglUseProgramObjectARB(0);
@@ -1645,7 +1508,6 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 
 	if (uniformsInfo[uniformNum].type != GLSL_BOOL)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1673,7 +1535,6 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 
 	if (uniformsInfo[uniformNum].type != GLSL_INT)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1700,7 +1561,6 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1727,7 +1587,6 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC2)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1755,7 +1614,6 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC3)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1782,7 +1640,6 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1809,7 +1666,6 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT5)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1836,7 +1692,6 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1862,7 +1717,6 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOATARR)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1881,7 +1735,6 @@ void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *ve
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4ARR)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
@@ -1900,8 +1753,7 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16ARR)
 	{
-		ri.Printf(PRINT_WARNING, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
 		return;
 	}
 
@@ -2061,12 +1913,11 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 
 		if (location == -1)
 		{
-			//ri.Error(ERR_FATAL,"Cannot find uniform \"%s\" from program: %s",info->uniformValues[i].type.name,info->name);
-			ri.Printf(PRINT_DEVELOPER, "Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
+			Ren_LogComment("Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
 		}
 		else
 		{
-			ri.Printf(PRINT_DEVELOPER, "Setting initial uniform \"%s\" value: %d\n", info->uniformValues[i].type.name, *((int *)info->uniformValues[i].value));
+			Ren_LogComment("Setting initial uniform \"%s\" value: %d\n", info->uniformValues[i].type.name, *((int *)info->uniformValues[i].value));
 		}
 
 		switch (info->uniformValues[i].type.type)
@@ -2112,7 +1963,6 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;
 
-	//info->checkSum = 1;
 	GLSL_GenerateCheckSum(info, vertexShader, fragmentShader);
 
 	info->list = (shaderProgramList_t *)Com_Allocate(sizeof(shaderProgramList_t));
@@ -2273,8 +2123,6 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 
 void GLSL_SelectPermutation(programInfo_t *programlist)
 {
-	//FIXME: implement this
-	//set the selectedProgram
 	shaderProgram_t *prog;
 
 	if (!programlist)
@@ -2474,6 +2322,9 @@ void GLSL_InitGPUShaders(void)
 	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
+	//Jacker
+	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
+
 	endTime = ri.Milliseconds();
 
 	ri.Printf(PRINT_ALL, "Created default shaders in %5.2f seconds\n", (endTime - startTime) / 1000.0);
@@ -2520,11 +2371,7 @@ void GLSL_BindProgram(shaderProgram_t *program)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- GL_BindProgram( %s ) ---\n", program->name));
-	}
+	Ren_LogComment("--- GL_BindProgram( %s ) ---\n", program->name);
 
 	if (glState.currentProgram != program)
 	{
@@ -2537,10 +2384,7 @@ void GLSL_BindProgram(shaderProgram_t *program)
 
 void GLSL_BindNullProgram(void)
 {
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- GL_BindNullProgram ---\n");
-	}
+	Ren_LogComment("--- GL_BindNullProgram ---\n");
 
 	if (glState.currentProgram)
 	{
@@ -2696,18 +2540,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_POSITION)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_POSITION);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_POSITION);
 		}
 	}
@@ -2716,18 +2554,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_TEXCOORD)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TEXCOORD )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
 		}
 	}
@@ -2736,18 +2568,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_LIGHTCOORD)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_LIGHTCOORD )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
 		}
 	}
@@ -2756,18 +2582,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_TANGENT)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_TANGENT);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_TANGENT);
 		}
 	}
@@ -2776,18 +2596,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_BINORMAL)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_BINORMAL);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL);
 		}
 	}
@@ -2796,18 +2610,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_NORMAL)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_NORMAL);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_NORMAL);
 		}
 	}
@@ -2816,18 +2624,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_COLOR)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_COLOR )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_COLOR )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_COLOR);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_COLOR )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_COLOR )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		}
 	}
@@ -2836,18 +2638,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_BONE_INDEXES)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_INDEXES )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
 		}
 	}
@@ -2856,18 +2652,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_BONE_WEIGHTS)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BONE_WEIGHTS )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
 		}
 	}
@@ -2876,18 +2666,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_POSITION2)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_POSITION2);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_POSITION2 )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_POSITION2);
 		}
 	}
@@ -2896,18 +2680,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_TANGENT2)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_TANGENT2);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_TANGENT2 )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_TANGENT2);
 		}
 	}
@@ -2916,18 +2694,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_BINORMAL2)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_BINORMAL2);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_BINORMAL2 )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL2);
 		}
 	}
@@ -2936,18 +2708,12 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 	{
 		if (stateBits & ATTR_NORMAL2)
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
-			}
+			Ren_LogComment("glEnableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
 			glEnableVertexAttribArray(ATTR_INDEX_NORMAL2);
 		}
 		else
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
-			}
+			Ren_LogComment("glDisableVertexAttribArray( ATTR_INDEX_NORMAL2 )\n");
 			glDisableVertexAttribArray(ATTR_INDEX_NORMAL2);
 		}
 	}
@@ -2963,11 +2729,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- GL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name));
-	}
+	Ren_LogComment("--- GL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -2976,10 +2738,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_POSITION))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_POSITION, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsXYZ + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeXYZ)));
 		glState.vertexAttribPointersSet |= ATTR_POSITION;
@@ -2987,10 +2746,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_TEXCOORD))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TEXCOORD )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_TEXCOORD )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_TEXCOORD0, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsTexCoords));
 		glState.vertexAttribPointersSet |= ATTR_TEXCOORD;
@@ -2998,10 +2754,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_LIGHTCOORD))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_LIGHTCOORD )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_LIGHTCOORD )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_TEXCOORD1, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsLightCoords));
 		glState.vertexAttribPointersSet |= ATTR_LIGHTCOORD;
@@ -3009,10 +2762,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_TANGENT))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_TANGENT, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsTangents + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeTangents)));
 		glState.vertexAttribPointersSet |= ATTR_TANGENT;
@@ -3020,10 +2770,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_BINORMAL))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_BINORMAL, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsBinormals + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeBinormals)));
 		glState.vertexAttribPointersSet |= ATTR_BINORMAL;
@@ -3031,10 +2778,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_NORMAL))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_NORMAL, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsNormals + (glState.vertexAttribsOldFrame * glState.currentVBO->sizeNormals)));
 		glState.vertexAttribPointersSet |= ATTR_NORMAL;
@@ -3042,10 +2786,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_COLOR))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_COLOR )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_COLOR )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsColors));
 		glState.vertexAttribPointersSet |= ATTR_COLOR;
@@ -3053,10 +2794,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_BONE_INDEXES))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_INDEXES )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_INDEXES )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_BONE_INDEXES, 4, GL_INT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsBoneIndexes));
 		glState.vertexAttribPointersSet |= ATTR_BONE_INDEXES;
@@ -3064,10 +2802,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if ((attribBits & ATTR_BONE_WEIGHTS))
 	{
-		if (r_logFile->integer)
-		{
-			GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_WEIGHTS )\n");
-		}
+		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_WEIGHTS )\n");
 
 		glVertexAttribPointer(ATTR_INDEX_BONE_WEIGHTS, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsBoneWeights));
 		glState.vertexAttribPointersSet |= ATTR_BONE_WEIGHTS;
@@ -3077,10 +2812,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 	{
 		if ((attribBits & ATTR_POSITION2))
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION2 )\n");
-			}
+			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION2 )\n");
 
 			glVertexAttribPointer(ATTR_INDEX_POSITION2, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsXYZ + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeXYZ)));
 			glState.vertexAttribPointersSet |= ATTR_POSITION2;
@@ -3088,10 +2820,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 		if ((attribBits & ATTR_TANGENT2))
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT2 )\n");
-			}
+			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT2 )\n");
 
 			glVertexAttribPointer(ATTR_INDEX_TANGENT2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsTangents + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeTangents)));
 			glState.vertexAttribPointersSet |= ATTR_TANGENT2;
@@ -3099,10 +2828,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 		if ((attribBits & ATTR_BINORMAL2))
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL2 )\n");
-			}
+			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL2 )\n");
 
 			glVertexAttribPointer(ATTR_INDEX_BINORMAL2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsBinormals + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeBinormals)));
 			glState.vertexAttribPointersSet |= ATTR_BINORMAL2;
@@ -3110,10 +2836,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 		if ((attribBits & ATTR_NORMAL2))
 		{
-			if (r_logFile->integer)
-			{
-				GLimp_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL2 )\n");
-			}
+			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL2 )\n");
 
 			glVertexAttribPointer(ATTR_INDEX_NORMAL2, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsNormals + (glState.vertexAttribsNewFrame * glState.currentVBO->sizeNormals)));
 			glState.vertexAttribPointersSet |= ATTR_NORMAL2;

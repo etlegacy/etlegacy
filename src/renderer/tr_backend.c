@@ -89,16 +89,16 @@ void GL_SelectTexture(int unit)
 	if (unit == 0)
 	{
 		qglActiveTextureARB(GL_TEXTURE0_ARB);
-		GLimp_LogComment("glActiveTextureARB( GL_TEXTURE0_ARB )\n");
+		Ren_LogComment("glActiveTextureARB( GL_TEXTURE0_ARB )\n");
 		qglClientActiveTextureARB(GL_TEXTURE0_ARB);
-		GLimp_LogComment("glClientActiveTextureARB( GL_TEXTURE0_ARB )\n");
+		Ren_LogComment("glClientActiveTextureARB( GL_TEXTURE0_ARB )\n");
 	}
 	else if (unit == 1)
 	{
 		qglActiveTextureARB(GL_TEXTURE1_ARB);
-		GLimp_LogComment("glActiveTextureARB( GL_TEXTURE1_ARB )\n");
+		Ren_LogComment("glActiveTextureARB( GL_TEXTURE1_ARB )\n");
 		qglClientActiveTextureARB(GL_TEXTURE1_ARB);
-		GLimp_LogComment("glClientActiveTextureARB( GL_TEXTURE1_ARB )\n");
+		Ren_LogComment("glClientActiveTextureARB( GL_TEXTURE1_ARB )\n");
 	}
 	else
 	{
@@ -1445,7 +1445,7 @@ const void *RB_SwapBuffers(const void *data)
 		qglFinish();
 	}
 
-	GLimp_LogComment("***************** RB_SwapBuffers *****************\n\n\n");
+	Ren_LogComment("***************** RB_SwapBuffers *****************\n\n\n");
 
 	GLimp_EndFrame();
 

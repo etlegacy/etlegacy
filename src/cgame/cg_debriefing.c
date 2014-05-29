@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1771,7 +1771,7 @@ void CG_Debriefing_Startup(void)
 	cgs.dbAwardsParsed = qfalse;
 
 	s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-	buf = Info_ValueForKey(s, "winner");
+	buf = Info_ValueForKey(s, "w");
 
 	trap_Cvar_Set("chattext", "");
 
@@ -1999,10 +1999,10 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 		int defender, winner;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "defender"));
+		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "winner"));
+		winner = atoi(Info_ValueForKey(s, "w"));
 
 		if (cgs.currentRound)
 		{
@@ -2039,7 +2039,7 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 	else
 	{
 		s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-		buf = Info_ValueForKey(s, "winner");
+		buf = Info_ValueForKey(s, "w");
 
 		if (atoi(buf) == -1)
 		{
@@ -3184,10 +3184,10 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 		int defender, winner;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "defender"));
+		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "winner"));
+		winner = atoi(Info_ValueForKey(s, "w"));
 
 		if (cgs.currentRound)
 		{
@@ -3314,12 +3314,27 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 
 	for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
 	{
-		if (cgs.dbAwardTeams[i] == -1)
+		if (cgs.dbAwardTeams[i] == TEAM_FREE)
 		{
 			continue;
 		}
 
-		CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.dbAwardTeams[i] == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
+		switch (cgs.dbAwardTeams[i])
+		{
+		case TEAM_AXIS:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.axisFlag);
+			break;
+		case TEAM_ALLIES:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.alliedFlag);
+			break;
+		case TEAM_SPECTATOR:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // FIXME
+			break;
+		default:
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // FIXME
+			break;
+		}
+
 		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, awardNames[i], 0, 0, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i]), 0, 0, 0, &cgs.media.limboFont2);
 		y += 16;
@@ -3551,7 +3566,7 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 team_t CG_Debriefing_FindWinningTeamForMap(void)
 {
 	const char *s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-	const char *buf = Info_ValueForKey(s, "winner");
+	const char *buf = Info_ValueForKey(s, "w");
 
 	if (atoi(buf) == -1)
 	{
@@ -3600,7 +3615,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 			}
 			/*          } else {
 			                const char* s = CG_ConfigString( CS_MULTI_MAPWINNER );
-			                const char* buf = Info_ValueForKey( s, "winner" );
+			                const char* buf = Info_ValueForKey( s, "w" );
 
 			                if( atoi( buf ) == -1 ) {
 			                } else if( atoi( buf ) ) {
@@ -3625,7 +3640,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 	else if (cg_gameType.integer == GT_WOLF || cg_gameType.integer == GT_WOLF_LMS || cg_gameType.integer == GT_WOLF_MAPVOTE)
 	{
 		const char *s   = CG_ConfigString(CS_MULTI_MAPWINNER);
-		const char *buf = Info_ValueForKey(s, "winner");
+		const char *buf = Info_ValueForKey(s, "w");
 
 		if (atoi(buf) == -1)
 		{
@@ -3645,10 +3660,10 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 		const char *s;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "defender"));
+		defender = atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "winner"));
+		winner = atoi(Info_ValueForKey(s, "w"));
 
 		if (!cgs.currentRound)
 		{

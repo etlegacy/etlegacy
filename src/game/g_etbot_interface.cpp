@@ -161,7 +161,7 @@ void SendDeferredGoals()
 
 void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent)
 {
-	if (g_GoalSubmitReady)
+	if (IsOmnibotLoaded() && g_GoalSubmitReady)
 	{
 		g_BotFunctions.pfnUpdateEntity(HandleFromEntity(oldent), HandleFromEntity(newent));
 	}
@@ -4220,7 +4220,7 @@ public:
 					int iFlagEntNum = pEnt - g_entities;
 					for (int i = 0; i < g_maxclients.integer; ++i)
 					{
-						if (g_entities[i].client && g_entities[i].client->flagParent == iFlagEntNum)
+						if (g_entities[i].inuse && g_entities[i].client && g_entities[i].client->flagParent == iFlagEntNum)
 						{
 							owner = HandleFromEntity(&g_entities[i]);
 						}
@@ -6129,23 +6129,24 @@ public:
 		if (_msg)
 		{
 			// et console doesn't support tabs, so
-			const int BufferSize       = 1024;
-			char tmpbuffer[BufferSize] = {};
+			const int BufferSize = 1024;
+			char tmpbuffer[BufferSize];
 			const char *src = _msg;
 			char *dest      = tmpbuffer;
-			while (*src != 0)
+			while (*src != 0 && dest < tmpbuffer + BufferSize - 4)
 			{
 				if (*src == '\t')
 				{
 					for (int i = 0; i < 4; ++i)
 						*dest++ = ' ';
-					src++;
 				}
 				else
 				{
-					*dest++ = *src++;
+					*dest++ = *src;
 				}
+				src++;
 			}
+			*dest = 0;
 			G_Printf("%s%s\n", S_COLOR_GREEN, tmpbuffer);
 		}
 	}
@@ -6708,7 +6709,7 @@ const char *_GetEntityName(gentity_t *_ent)
 //////////////////////////////////////////////////////////////////////////
 qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 {
-	if (ent && ent->client)
+	if (ent && ent->client && IsOmnibotLoaded())
 	{
 		// Omni-bot: used for class changes, bot will /kill 2 seconds before spawn
 		if (ent->client->sess.botSuicide == qtrue)
@@ -7223,6 +7224,8 @@ void Bot_Queue_EntityCreated(gentity_t *pEnt)
 		m_EntityHandles[pEnt - g_entities].m_NewEntity = true;
 	}
 }
+// FIXME: why this is all done when !IsOmnibotLoaded() !?
+// it's called on entity free
 void Bot_Event_EntityDeleted(gentity_t *pEnt)
 {
 	if (pEnt)
@@ -7270,25 +7273,31 @@ void Bot_Util_SendTrigger(gentity_t *_ent, gentity_t *_activator, const char *_t
 
 void Bot_AddDynamiteGoal(gentity_t *_ent, int _team, const char *_tag)
 {
-	if (_team == TEAM_AXIS)
+	if (IsOmnibotLoaded())
 	{
-		Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_ALLIES), _tag);
-	}
-	else
-	{
-		Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_AXIS), _tag);
+		if (_team == TEAM_AXIS)
+		{
+			Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_ALLIES), _tag);
+		}
+		else
+		{
+			Bot_Util_AddGoal("defuse", _ent, (1 << ET_TEAM_AXIS), _tag);
+		}
 	}
 }
 
 void Bot_AddFallenTeammateGoals(gentity_t *_teammate, int _team)
 {
-	if (_team == TEAM_AXIS)
+	if (IsOmnibotLoaded())
 	{
-		Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_AXIS), _GetEntityName(_teammate));
-	}
-	else if (_team == TEAM_ALLIES)
-	{
-		Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_ALLIES), _GetEntityName(_teammate));
+		if (_team == TEAM_AXIS)
+		{
+			Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_AXIS), _GetEntityName(_teammate));
+		}
+		else if (_team == TEAM_ALLIES)
+		{
+			Bot_Util_AddGoal("revive", _teammate, (1 << ET_TEAM_ALLIES), _GetEntityName(_teammate));
+		}
 	}
 }
 };

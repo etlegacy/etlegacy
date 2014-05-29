@@ -4209,7 +4209,7 @@ void SP_target_effect(gentity_t *ent)
 		}
 		else if (!Q_stricmp(type, "fabric"))
 		{
-			ent->key = 0;                                   // FIXME: not supported
+			ent->key = FXTYPE_FABRIC; // FIXME: test this
 		}
 	}
 	else
@@ -4230,16 +4230,6 @@ EXPLOSIVE
   Will move.
 ===============================================================================
 */
-
-/*
-==============
-ThrowDebris
-==============
-*/
-void ThrowDebris(gentity_t *self, char *modelname, float speed, vec3_t origin)
-{
-	// probably use le->leType = LE_FRAGMENT like brass and gibs
-}
 
 /*
 ==============
@@ -4519,7 +4509,7 @@ void SP_target_explosion(gentity_t *ent)
 		}
 		else if (!Q_stricmp(type, "fabric"))
 		{
-			ent->key = 0;                                   // fixme: not supported
+			ent->key = FXTYPE_FABRIC; // FIXME: test this
 		}
 	}
 	else
@@ -4590,7 +4580,7 @@ the default sounds are:
   "gibs"    - "sound/player/gibsplit1.wav"
   "brick"   - "sound/world/debris1.wav"
   "stone"   - "sound/world/stonefall.wav"
-  "fabric"  - "sound/world/metalbreak.wav"  // temp
+  "fabric"  - "sound/world/metalbreak.wav"
 "fxdensity" size of explosion 1 - 100 (default is 10)
 */
 void SP_func_explosive(gentity_t *ent)
@@ -4718,7 +4708,7 @@ void SP_func_explosive(gentity_t *ent)
 		}
 		else if (!Q_stricmp(type, "fabric"))
 		{
-			ent->key = 0;                                   // FIXME: not supported
+			ent->key = FXTYPE_FABRIC; // FIXME: test this
 		}
 	}
 	else

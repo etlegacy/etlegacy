@@ -56,7 +56,7 @@ menuDef {
 
 	BUTTONEXT( 6, 122, WINDOW_WIDTH-12, 14, "COMPETITION SETTINGS", .24, 11, exec "cmd ref comp"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
 	BUTTONEXT( 6, 140, WINDOW_WIDTH-12, 14, "PUBLIC SETTINGS", .24, 11, exec "cmd ref pub"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
-	BUTTON( 6, 158, WINDOW_WIDTH-12, 14, "OMNI-BOT", .24, 11, close ingame_vote_misc_refrcon ; open ingame_vote_bot )
+	// BUTTON( 6, 158, WINDOW_WIDTH-12, 14, "OMNI-BOT", .24, 11, close ingame_vote_misc_refrcon ; open ingame_vote_bot )
 	MULTILEFT( 8, 176+2, .66*(WINDOW_WIDTH-18), 10, "Warmup Damage:", .2, 8, "ui_voteWarmupDamage", cvarFloatList { "None" 0 "Enemies" 1 "Everyone" 2 } voteFlag CV_SVF_WARMUPDAMAGE, "Enable or disable warmup damage" )
 	NAMEDBUTTONEXT( "bttnextWarmupDamage", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript refWarmupDamage; uiScript closeingame, voteFlag CV_SVF_WARMUPDAMAGE )
 
@@ -74,7 +74,7 @@ menuDef {
 	NUMERICFIELDLEFTEXT( 8, 194+2, .66*(WINDOW_WIDTH-18), 10, "Time Limit:", .2, 8, "ui_voteTimelimit", 6, voteFlag CV_SVF_TIMELIMIT, "Set the time limit for the server" )
 	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 194, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript refTimelimit; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
 
-	MULTILEFT( 8, 212+2, .66*(WINDOW_WIDTH-18), 10, "Game Type:", .2, 8, "ui_voteGameType", cvarFloatList { "Single-Map Objective" 2 "Stopwatch" 3 "Last Man Standing" 5 } voteFlag CV_SVF_GAMETYPE, "Set the game type" )
+	MULTILEFT( 8, 212+2, .66*(WINDOW_WIDTH-18), 10, "Game Type:", .2, 8, "ui_voteGameType", cvarFloatList { "Single-Map Objective" 2 "Stopwatch" 3 "Last Man Standing" 5 "Map Voting" 6 } voteFlag CV_SVF_GAMETYPE, "Set the game type" )
 	NAMEDBUTTONEXT( "bttnextGameType", 6+.80*(WINDOW_WIDTH-18)+6, 212, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript refGame; uiScript closeingame, voteFlag CV_SVF_GAMETYPE )
 
 	BUTTONEXT( 6, 230, WINDOW_WIDTH-12, 14, "PAUSE", .24, 11, exec "cmd ref pause"; uiScript closeingame, settingDisabled CV_SVS_PAUSE cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )

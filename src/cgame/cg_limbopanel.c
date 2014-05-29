@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1219,9 +1219,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	}
 
 	{
-		weaponType_t *wt = WM_FindWeaponTypeForWeapon(weap1);
-
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), wt ? wt->desc : "^1UNKNOWN WEAPON"), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), weaponTable[weap1].desc), 400, cg_fontScaleCP.value, -1);
 	}
 
 	cgs.limboLoadoutSelected = qtrue;
@@ -1560,7 +1558,7 @@ int CG_LimboPanel_GetMaxObjectives(void)
 		return 0;
 	}
 
-	return atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "numobjectives"));
+	return atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "o")); // numobjectives
 }
 
 qboolean CG_LimboPanel_ObjectiveText_KeyDown(panel_button_t *button, int key)
@@ -2117,31 +2115,22 @@ vec4_t clrDrawWeapon = { 1.f, 1.f, 1.f, 0.6f };
 
 void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboolean highlight, const char *ofTxt, qboolean disabled)
 {
-	weaponType_t *wt    = WM_FindWeaponTypeForWeapon(weap);
-	qhandle_t    shader = cgs.media.limboWeaponCard;
-	int          width  = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
-	float        x      = rect->x + rect->w - width - 4;
-	vec4_t       clr;
-
-	if (!wt)
-	{
-		return;
-	}
+	qhandle_t shader = cgs.media.limboWeaponCard;
+	int       width  = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
+	float     x      = rect->x + rect->w - width - 4;
+	vec4_t    clr;
 
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, shader);
 
-	if (wt->desc)
+	if (highlight && BG_CursorInRect(rect))
 	{
-		if (highlight && BG_CursorInRect(rect))
-		{
-			Vector4Copy(weaponPanelNameFont.colour, clr);
-			clr[3] *= 1.5;
-			CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, clr, wt->desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
-		}
-		else
-		{
-			CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, weaponPanelNameFont.colour, wt->desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
-		}
+		Vector4Copy(weaponPanelNameFont.colour, clr);
+		clr[3] *= 1.5;
+		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, clr, weaponTable[weap].desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
+	}
+	else
+	{
+		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, weaponPanelNameFont.colour, weaponTable[weap].desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
 	}
 
 	{
@@ -3285,7 +3274,10 @@ extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void)
 	return BG_WeapStatForWeapon(CG_LimboPanel_GetSelectedWeapon());
 }
 
-int CG_LimboPanel_TeamCount(weapon_t weap)
+/**
+ * @param weapon_t weap or -1
+ */
+int CG_LimboPanel_TeamCount(int weap)
 {
 	int i, cnt;
 
@@ -3350,7 +3342,6 @@ int ExtractInt(char *src)
 	int  destIx = 0;
 	char *tmp   = malloc(srclen);
 	int  result = 0;
-	int  sign   = 1;
 
 	// Go through all the characters in the source string
 	for (i = 0; i < srclen; i++)
@@ -3368,6 +3359,8 @@ int ExtractInt(char *src)
 	// convert temp var to integer
 	if (tmp[0] != 0)
 	{
+		int sign = 1;
+
 		result = sign * atoi(tmp);
 	}
 

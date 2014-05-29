@@ -159,7 +159,7 @@ static ID_INLINE void START_CHUNK(const char *s)
 {
 	if (afd.chunkStackTop == MAX_RIFF_CHUNKS)
 	{
-		Com_Error(ERR_DROP, "ERROR: Top of chunkstack breached");
+		Com_Error(ERR_DROP, "Top of chunkstack breached.");
 	}
 
 	afd.chunkStack[afd.chunkStackTop] = bufIndex;
@@ -179,7 +179,7 @@ static ID_INLINE void END_CHUNK(void)
 
 	if (afd.chunkStackTop <= 0)
 	{
-		Com_Error(ERR_DROP, "ERROR: Bottom of chunkstack breached");
+		Com_Error(ERR_DROP, "Bottom of chunkstack breached.");
 	}
 
 	afd.chunkStackTop--;

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -44,12 +44,20 @@
 #define APP_NAME        "ID_DOWNLOAD"
 #define APP_VERSION     "2.0"
 
+#define GET_BUFFER_SIZE 1024 * 256
+
 // initialize once
 static int dl_initialized = 0;
 
 static CURLM *dl_multi   = NULL;
 static CURL  *dl_request = NULL;
 static FILE  *dl_file    = NULL;
+
+typedef struct write_result_s
+{
+	char *data;
+	int pos;
+} write_result_t;
 
 /*
 ============
@@ -74,6 +82,22 @@ static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ul
 
 	Cvar_SetValue("cl_downloadCount", (float)dlnow);
 	return 0;
+}
+
+size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+	write_result_t *result = (write_result_t *)stream;
+
+	if (result->pos + size * nmemb >= GET_BUFFER_SIZE - 1)
+	{
+		Com_Printf("DL_write_function too small buffer");
+		return 0;
+	}
+
+	memcpy(result->data + result->pos, ptr, size * nmemb);
+	result->pos += size * nmemb;
+
+	return size * nmemb;
 }
 
 void DL_InitDownload(void)
@@ -163,6 +187,77 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 	Cvar_Set("cl_downloadName", remoteName);
 
 	return 1;
+}
+
+char *DL_GetString(const char *url)
+{
+	CURL     *curl = NULL;
+	CURLcode status;
+	char     *data = NULL;
+	long     code;
+
+	write_result_t write_result = { NULL, 0 };
+
+	if (!url)
+	{
+		Com_Printf("Empty download URL\n");
+		return NULL;
+	}
+
+	DL_InitDownload();
+
+	curl = curl_easy_init();
+
+	data = (char *)malloc(GET_BUFFER_SIZE);
+	if (!data)
+	{
+		goto error_get;
+	}
+	else
+	{
+		write_result.data = data;
+	}
+
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
+	curl_easy_setopt(curl, CURLOPT_URL, url);
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DL_write_function);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &write_result);
+
+	status = curl_easy_perform(curl);
+	if (status != 0)
+	{
+		Com_Printf("DL_GetString unable to request data from %s\n", url);
+		Com_Printf("DL_GetString %s\n", curl_easy_strerror(status));
+		goto error_get;
+	}
+
+	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
+	if (code != 200)
+	{
+		Com_Printf("DL_GetString server responded with code %ld\n", code);
+		goto error_get;
+	}
+
+	curl_easy_cleanup(curl);
+	data[write_result.pos] = '\0';
+
+	return data;
+
+error_get:
+
+	if (curl)
+	{
+		curl_easy_cleanup(curl);
+	}
+
+	if (data)
+	{
+		free(data);
+	}
+
+	return NULL;
 }
 
 // (maybe this should be CL_DL_DownloadLoop)

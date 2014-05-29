@@ -75,6 +75,7 @@ extern vmCvar_t ui_browserShowMaxlives;
 extern vmCvar_t ui_browserShowAntilag;
 extern vmCvar_t ui_browserShowWeaponsRestricted;
 extern vmCvar_t ui_browserShowTeamBalanced;
+extern vmCvar_t ui_browserShowBots;
 
 extern vmCvar_t ui_browserModFilter;
 extern vmCvar_t ui_browserMapFilter;
@@ -294,7 +295,7 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define MAX_HEADNAME  32
 #define MAX_TEAMS 64
 
-#define MAX_MAPS 128
+#define MAX_MAPS 256
 #define MAX_SPMAPS 16
 #define PLAYERS_PER_TEAM 5
 #define MAX_PINGREQUESTS        16
@@ -428,12 +429,11 @@ typedef struct
 typedef struct
 {
 	displayContextDef_t uiDC;
-	int newHighScoreTime;
-	int newBestTime;
-	int showPostGameTime;
-	qboolean newHighScore;
-	qboolean demoAvailable;
-	qboolean soundHighScore;
+	int newHighScoreTime; // FIXME: remove
+	int newBestTime; // FIXME: remove
+	qboolean newHighScore; // FIXME: remove
+	qboolean demoAvailable; // FIXME: remove?
+	qboolean soundHighScore; // FIXME: remove
 
 	int legacyClient;
 
@@ -509,7 +509,6 @@ typedef struct
 
 	int currentCrosshair;
 	int startPostGameTime;
-	sfxHandle_t newHighScoreSound;
 
 	int q3HeadCount;
 	char q3HeadNames[MAX_PLAYERMODELS][64];

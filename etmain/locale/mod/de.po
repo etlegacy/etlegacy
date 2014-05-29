@@ -17,488 +17,488 @@ msgstr ""
 #: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
 #: src/cgame/cg_consolecmds.c:568
 msgid "Can't team voice chat as a spectator.\n"
-msgstr "Kein Teamsprachchat als Zuschauer.\n"
+msgstr ""
 
 #: src/cgame/cg_consolecmds.c:593
 msgid "Can't buddy voice chat as a spectator.\n"
-msgstr "Kein Kameradensprachchat als Zuschauer.\n"
+msgstr ""
 
 #: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3106
 #: src/cgame/cg_scoreboard.c:646
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
-msgstr "DIE STOPPUHR IST JETZT AUF %s GESTELLT!"
+msgstr ""
 
 #: src/cgame/cg_draw.c:650
 msgid "Connection Interrupted"
-msgstr "Verbindung unterbrochen"
+msgstr ""
 
 #: src/cgame/cg_draw.c:1902
 msgid "Disguised Enemy!"
-msgstr "Getarnter Feind!"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2074
 msgid "SPECTATOR"
-msgstr "ZUSCHAUER"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
 msgid "File complaint against %s^3 for team-killing?"
-msgstr "Veranlasse eine Beschwerde gegen %s^3 wegen Teambeschuss?"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
 #: src/cgame/cg_draw.c:2164
 #, c-format
-msgid "Press '%s' for YES, or '%s' for No"
-msgstr "Drücke '%s' für JA, oder '%s' für Nein"
+msgid "Press '%s' for YES, or '%s' for NO"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2096
 #, c-format
-msgid "Accept %s's application to join your fireteam?"
-msgstr "Aktzeptiere %ss Anfrage sich deiner Kampfeinheit anzuschließen?"
+msgid "Accept %s^3's application to join your fireteam?"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2109
 #, c-format
-msgid "Accept %s's proposition to invite %s to join your fireteam?"
+msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
 msgstr ""
-"Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
-msgid "Accept %s's invitation to join their fireteam?"
-msgstr "Aktzeptiere %ss Einladung sich deiner Kampfeinheit anzuschliessen?"
+msgid "Accept %s^3's invitation to join their fireteam?"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2218
 #, c-format
 msgid "VOTE(%i): %s"
-msgstr "ABSTIMMUNG(%i): %s"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2223
 msgid "Cannot vote as Spectator"
-msgstr "Als Zuschauer kann nicht abgestimmt werden."
+msgstr ""
 
 #: src/cgame/cg_draw.c:2227
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
-msgstr "JA(%s):%i, NEIN(%s):%i"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2234
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr "DU HAST %s GEWAEHLT"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2237
 #, c-format
 msgid "Y:%i, N:%i"
-msgstr "J:%i, N:%i"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2460
 #, c-format
 msgid "Press %s to open Limbo Menu"
-msgstr "Drücke %s um das Limbo Menü zu öffnen"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2464
 #, c-format
 msgid "Press %s to follow next player"
-msgstr "Drücke %s um dem nächsten Spieler zu folgen"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2469
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr "Drücke %s für %s Multiview Modus"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2530
 msgid "You are wounded and waiting for a medic."
-msgstr "Du bist verwundet und wartest auf einen Sanitäter."
+msgstr ""
 
 #: src/cgame/cg_draw.c:2540
 msgid "Press %s to go into reinforcement queue."
-msgstr "Drücke %s um dich der Verstärkung anzuschließen."
+msgstr ""
 
 #: src/cgame/cg_draw.c:2550
 msgid "No more reinforcements this round."
-msgstr "Keine weitere Verstärkung in dieser Runde."
+msgstr ""
 
 #: src/cgame/cg_draw.c:2550
 #, c-format
 msgid "Reinforcements deploy in %d seconds."
-msgstr "Verstärkung kommt in %d Sekunden."
+msgstr ""
 
 #: src/cgame/cg_draw.c:2593
 #, c-format
-msgid "Bonus Life! Deploying in %d seconds"
-msgstr "Bonusleben! Einsatz in %d Sekunden"
+msgid "Bonus Life! Deploying in ^3%d ^7seconds"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2597
 msgid "No more deployments this round"
-msgstr "Kein weiterer Einsatz diese Runde"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2602
 #, c-format
-msgid "Deploying in %d seconds"
-msgstr "Einsatz in %d Sekunden"
+msgid "Deploying in ^3%d ^7seconds"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2613
+#, c-format
+msgid "Deploying in ^3%d ^7second"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
 msgid "Following"
-msgstr "Du folgst"
+msgstr ""
 
-#: src/cgame/cg_draw.c:2651
+#: src/cgame/cg_draw.c:2732
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
-msgstr "^3AUFWAERMPHASE:^7 warte auf ^2%i^7 %s"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2663
 msgid "Type ^3\\ready^* in the console to start"
-msgstr "Gib ^3\\ready^* in die Konsole ein zum Starten"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2684
 msgid "(WARMUP) Match begins in:"
-msgstr "(AUFWAERMPHASE) Spielbeginn in:"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
 msgid "STOPWATCH ROUND"
-msgstr "STOPPUHR RUNDE"
+msgstr ""
 
 #: src/cgame/cg_draw_hud.c:1535 src/cgame/cg_scoreboard.c:165
 msgid "WARMUP"
-msgstr "AUFWAERMPHASE"
+msgstr ""
 
 #: src/cgame/cg_event.c:189
 msgid "You swapped places with"
-msgstr "Du hast den Platz getauscht mit"
+msgstr ""
 
 #: src/cgame/cg_event.c:193
 msgid "You killed ^1TEAMMATE^7"
-msgstr "Du hast einen ^1KAMERADEN^7 getötet\""
+msgstr ""
 
 #: src/cgame/cg_event.c:198
 msgid "You killed"
-msgstr "Abschuss"
+msgstr ""
 
 #: src/cgame/cg_main.c:893
 msgid "User"
-msgstr "Benutzer"
+msgstr ""
 
 #: src/cgame/cg_main.c:893
 msgid "is not on the server"
-msgstr "ist nicht auf dem Server"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:165 src/cgame/cg_scoreboard.c:171
 #: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:180
 msgid "MISSION TIME:"
-msgstr "MISSIONSZEIT:"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:171
 msgid "GAME STOPPED"
-msgstr "SPIEL GESTOPPT"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:175
 msgid "SUDDEN DEATH"
-msgstr "PLOETZLICHER TOD"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:205
 msgid "REINFORCE TIME:"
-msgstr "VERSTAERKUNGSZEIT:"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:222
 msgid "ROUND"
-msgstr "RUNDE"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:222
 msgid "SCORE"
-msgstr "PUNKTE"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:373 src/cgame/cg_scoreboard.c:536
 msgid "^3CONNECTING"
-msgstr "^3VERBINDE"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:377 src/cgame/cg_scoreboard.c:540
 msgid "^3SPECTATOR"
-msgstr "^3ZUSCHAUER"
+msgstr ""
 
-#: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:683
+#: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
 msgid "AXIS"
-msgstr "ACHSEN"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
 #: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
 msgid "PLAYERS"
-msgstr "SPIELER"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
 msgid "FIRST BLOOD"
-msgstr "ERSTES BLUTVERGIEßEN"
+msgstr ""
 
-#: src/cgame/cg_scoreboard.c:673 src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:814 src/cgame/cg_scoreboard.c:828
 msgid "ALLIES"
-msgstr "ALLIIERTE"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:701
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:704
 msgid "C R"
-msgstr "K R"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:709
 msgid "Score"
-msgstr "PUNKTE"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:714
 msgid "XP"
-msgstr "XP"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:718
 msgid "Ping"
-msgstr "Ping"
+msgstr ""
 
 #: src/cgame/cg_servercmds.c:405
 msgid "Auto Pick"
-msgstr "Automatisches Aufnehmen"
+msgstr ""
 
 #: src/cgame/cg_servercmds.c:2304
 msgid "Map"
-msgstr "Karte"
+msgstr ""
 
 #: src/cgame/cg_servercmds.c:2326
 msgid "Could not create logfile"
-msgstr "Konnte keine Logdatei erzeugen"
+msgstr ""
 
 #: src/cgame/cg_servercmds.c:2866
 msgid "^3Server Restarting"
-msgstr "^3Server startet neu"
+msgstr ""
 
 msgid "^1ET:Legacy"
-msgstr "^1ET:Legacy"
+msgstr ""
 
 msgid "PLAY ONLINE"
-msgstr "SPIELE ONLINE"
+msgstr ""
 
 msgid "HOST GAME"
-msgstr "HOSTE SPIEL"
+msgstr ""
 
 msgid "REPLAYS"
 msgstr ""
 
 msgid "OPTIONS"
-msgstr "OPTIONEN"
+msgstr ""
 
 msgid "PROFILE"
-msgstr "PROFILE"
+msgstr ""
 
 msgid "MODS"
-msgstr "MODIFIKATIONEN"
+msgstr ""
 
 msgid "CREDITS"
 msgstr ""
 
 msgid "ETLEGACY.COM"
-msgstr "ETLEGACY.COM"
+msgstr ""
 
 msgid "EXIT GAME"
-msgstr "SPIEL BEENDEN"
+msgstr ""
 
 msgid "CREATE"
-msgstr "ERSTELLE"
+msgstr ""
 
 msgid "DELETE"
-msgstr "LÖSCHE"
+msgstr ""
 
 msgid "RENAME"
-msgstr "UMBENENNEN"
+msgstr ""
 
 msgid "SET AS DEFAULT"
-msgstr "ALS STANDARD"
+msgstr ""
 
 msgid "BACK"
-msgstr "ZURÜCK"
+msgstr ""
 
 msgid "SELECT PROFILE"
-msgstr "WÄHLE PROFIL"
+msgstr ""
 
 msgid "CREATE PROFILE"
-msgstr "ERSTELLE PROFIL"
+msgstr ""
 
 msgid ""
 "Please choose your initial settings below. You can change these at any time "
 "and access more advanced options by visiting the Options Menu. Should more "
-"than one person wish to play Wolfenstein: Enemy Territory, you can create "
+"than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
 msgstr ""
-"Bitte Grundeinstellungen hier einstellen. Du kannst diese jederzeit ändern "
-"und auf fortgeschrittene Optionen zugreifen. Sollte mehr als eine Person "
-"Wolfenstein: Enemy Territory spielen wollen, kannst Du zusätzliche Profile "
-"erstellen."
 
 msgid "Player Alias:"
-msgstr "Spieler Name:"
+msgstr ""
 
 msgid "Video Quality:"
-msgstr "Video Qualität:"
+msgstr ""
 
 msgid "Resolution:"
-msgstr "Auflösung:"
+msgstr ""
 
 msgid "Brightness:"
-msgstr "Helligkeit:"
+msgstr ""
 
 msgid "Connection:"
-msgstr "Verbindung:"
+msgstr ""
 
 msgid "Mouse Sensitivity:"
-msgstr "Maus Empfindlichkeit:"
+msgstr ""
 
 msgid "Invert Mouse:"
-msgstr "Maus umkehren:"
+msgstr ""
 
 msgid "Handedness:"
-msgstr "Hand:"
+msgstr ""
 
 msgid "DEFAULT SETTINGS"
-msgstr "STANDARD EINSTELLUNGEN"
+msgstr ""
 
 msgid "Language:"
-msgstr "SPRACHE:"
+msgstr ""
 
 msgid "QUIT"
-msgstr "Beenden"
+msgstr ""
 
 msgid "RENAME PROFILE"
-msgstr "PROFIL UMBENENNEN"
+msgstr ""
 
 msgid "New Profile Name:"
-msgstr "Neuer Profil Name:"
+msgstr ""
 
 msgid "DELETE PROFILE"
-msgstr "LÖSCHE PROFIL"
+msgstr ""
 
 msgid "Are you sure?"
-msgstr "Bist du sicher?"
+msgstr ""
 
 msgid "YES"
-msgstr "JA"
+msgstr ""
 
 msgid "NO"
-msgstr "NEIN"
+msgstr ""
 
 msgid "DELETE WARNING"
-msgstr "LÖSCHE WARNUNG"
+msgstr ""
 
 msgid "Can't delete"
-msgstr "Kann aktives Profil"
+msgstr ""
 
 msgid "active profile."
-msgstr "nicht löschen."
+msgstr ""
 
 msgid "CREATION ERROR"
-msgstr "FEHLER BEIM ERSTELLEN"
+msgstr ""
 
 msgid "MESSAGE OF THE DAY"
-msgstr "NACHRICHT DES TAGES"
+msgstr ""
 
 msgid "FILTERS"
-msgstr "FILTER"
+msgstr ""
 
 msgid "Source:"
-msgstr "Quelle:"
+msgstr ""
 
 msgid "Game Type:"
-msgstr "Spiel Typ:"
+msgstr ""
 
 msgid "PREVIEW"
-msgstr "VORSCHAU"
+msgstr ""
 
 msgid "SERVER BROWSER"
 msgstr ""
 
 msgid "SERVER NAME"
-msgstr "SERVER NAME"
+msgstr ""
 
 msgid "MAP NAME"
-msgstr "KARTEN NAME"
+msgstr ""
 
 msgid "#PLRS"
-msgstr "#SP"
+msgstr ""
 
 msgid "TYPE"
-msgstr "TYP"
+msgstr ""
 
 msgid "PING"
-msgstr "PING"
+msgstr ""
 
 msgid "FAV"
-msgstr "FAV"
+msgstr ""
 
 msgid "REFRESH LIST"
-msgstr "LISTE AKTUALISIEREN"
+msgstr ""
 
 msgid "CONNECT TO IP"
-msgstr "VERBINDE ZU IP"
+msgstr ""
 
 msgid "SERVER INFO"
-msgstr "SERVER INFO"
+msgstr ""
 
 msgid "JOIN SERVER"
-msgstr "SPIEL BEITRETEN"
+msgstr ""
 
 msgid "Server IP:"
-msgstr "Server IP:"
+msgstr ""
 
 msgid "CONNECT"
-msgstr "VERBINDE"
+msgstr ""
 
 msgid "REFRESH"
-msgstr "AKTUALISIEREN"
+msgstr ""
 
 msgid "SETTINGS"
-msgstr "EINSTELLUNGEN"
+msgstr ""
 
 msgid "Server Name:"
-msgstr "Server Name:"
+msgstr ""
 
 msgid "Maximum Players:"
-msgstr "Maximum Spieler:"
+msgstr ""
 
 msgid "Auto-Configure Server:"
-msgstr "Auto-Konfig. Server:"
+msgstr ""
 
 msgid "Dedicated Server:"
-msgstr "Dedizierter Server"
+msgstr ""
 
 msgid "Password:"
-msgstr "Passwort:"
+msgstr ""
 
 msgid "FEATURES"
 msgstr ""
 
 msgid "Friendly Fire"
-msgstr "Teambeschuss"
+msgstr ""
 
 msgid "Anti-Lag"
 msgstr ""
 
 msgid "Max Lives"
-msgstr "Max Leben"
+msgstr ""
 
 msgid "Weapon Restrictions"
-msgstr "Waffen Beschränkungen"
+msgstr ""
 
 msgid "Balanced Teams"
-msgstr "Ausgeglichene Teams"
+msgstr ""
 
 msgid "NAME"
-msgstr "NAME"
+msgstr ""
 
 msgid "DETAILS"
-msgstr "DETAILS"
+msgstr ""
 
 msgid "ADVANCED"
 msgstr ""
 
 msgid "START SERVER"
-msgstr "STARTE SERVER"
+msgstr ""
 
 msgid "HOST GAME: ADVANCED"
 msgstr ""
@@ -507,19 +507,19 @@ msgid "GENERAL"
 msgstr ""
 
 msgid "Minimum Ping:"
-msgstr "Minimal Ping:"
+msgstr ""
 
 msgid "Maximum Ping:"
-msgstr "Maximal Ping:"
+msgstr ""
 
 msgid "Maximum Game Rate:"
 msgstr ""
 
 msgid "Player Inactivity:"
-msgstr "Max Spieler Inaktivität:"
+msgstr ""
 
 msgid "Spectator Inactivity:"
-msgstr "Max Zuschauer Inaktivität:"
+msgstr ""
 
 msgid "Intermission Time:"
 msgstr ""
@@ -528,7 +528,7 @@ msgid "Intermission Ready %:"
 msgstr ""
 
 msgid "MATCH"
-msgstr "SPIEL"
+msgstr ""
 
 msgid "Wait for Ready:"
 msgstr ""
@@ -597,37 +597,37 @@ msgid "LMS Locked Teams:"
 msgstr ""
 
 msgid "ADMIN"
-msgstr "ADMIN"
+msgstr ""
 
 msgid "Pure Server:"
 msgstr ""
 
 msgid "Referee Password:"
-msgstr "Referee Passwort:"
+msgstr ""
 
 msgid "RCON Password:"
-msgstr "RCON Passwort:"
+msgstr ""
 
 msgid "VOTING"
-msgstr "ABTIMMUNGEN"
+msgstr ""
 
 msgid "Max Votes per Player:"
-msgstr "Max.Abstimmung/Spieler:"
+msgstr ""
 
 msgid "Successful voting:"
-msgstr "Abstimmung erfolgt ab:"
+msgstr ""
 
 msgid "ALLOW VOTES"
-msgstr "ABSTIMMUNG ERLAUBT"
+msgstr ""
 
-msgid "Comp Settings:"
-msgstr "Wettbewerb Einst.:"
+msgid "Game config:"
+msgstr ""
 
 msgid "Player Kick:"
-msgstr "Spieler Kicken:"
+msgstr ""
 
 msgid "Map:"
-msgstr "Karte:"
+msgstr ""
 
 msgid "Match Reset:"
 msgstr ""
@@ -636,64 +636,64 @@ msgid "Mute Spects:"
 msgstr ""
 
 msgid "Next Map:"
-msgstr "Nächste Karte:"
+msgstr ""
 
 msgid "Balanced Teams:"
-msgstr "Ausg.Teams:"
+msgstr ""
 
 msgid "Pub Settings:"
-msgstr "Offentl.Einstell.:"
+msgstr ""
 
 msgid "Referee:"
-msgstr "Schiedsrichter:"
+msgstr ""
 
 msgid "XP Shuffle:"
-msgstr "XP mischen:"
+msgstr ""
 
 msgid "Swap Teams:"
-msgstr "Teams tauschen:"
+msgstr ""
 
 msgid "Friendly Fire:"
-msgstr "Teambeschuss:"
+msgstr ""
 
 msgid "Timelimit:"
-msgstr "Zeitlimit:"
+msgstr ""
 
 msgid "Anti-Lag:"
 msgstr ""
 
 msgid "Line 1:"
-msgstr "Zeile 1:"
+msgstr ""
 
 msgid "Line 2:"
-msgstr "Zeile 2:"
+msgstr ""
 
 msgid "Line 3:"
-msgstr "Zeile 3:"
+msgstr ""
 
 msgid "Line 4:"
-msgstr "Zeile 4:"
+msgstr ""
 
 msgid "Line 5:"
-msgstr "Zeile 5:"
+msgstr ""
 
 msgid "DOWNLOAD"
-msgstr "DOWNLOAD"
+msgstr ""
 
 msgid "Client Downloads:"
-msgstr "Spieler Download:"
+msgstr ""
 
 msgid "Maximum Download Rate:"
-msgstr "Maximal Download Rate:"
+msgstr ""
 
 msgid "FTP/HTTP Redirects:"
-msgstr "FTP/HTTP Umleitung:"
+msgstr ""
 
 msgid "Base URL:"
-msgstr "FTP/HTTP Adresse:"
+msgstr ""
 
 msgid "EXTENDED"
-msgstr "ERWEITERT"
+msgstr ""
 
 msgid "DEFAULT"
 msgstr ""
@@ -702,160 +702,160 @@ msgid "MISC"
 msgstr ""
 
 msgid "Country Flags:"
-msgstr "Länder Fahnen:"
+msgstr ""
 
 msgid "DEFAULT SERVER SETTINGS"
-msgstr "STANDARD SERVER EINSTELLUNGEN"
+msgstr ""
 
 msgid "Reset server settings to default?"
-msgstr "Server-Einstellungen auf Standardwerte zurücksetzen?"
+msgstr ""
 
 msgid "START DEDICATED SERVER"
-msgstr "START DEDICATED SERVER"
+msgstr ""
 
 msgid "Starting a Dedicated Server will"
-msgstr "der Start eines Dedicated Server schließt"
+msgstr ""
 
 msgid "close the game window and open the"
-msgstr "das Spiel-Fenster und öffnet  die Server-"
+msgstr ""
 
 msgid "server console. It will not be possible"
-msgstr "Konsole. Es wird nicht möglich sein, das"
+msgstr ""
 
 msgid "to play the game on the host machine."
-msgstr "Spiel auf dem Host-Rechner zu spielen."
+msgstr ""
 
 msgid "Are you sure you want to start"
-msgstr "Möchtest Du wirklich einen"
+msgstr ""
 
 msgid "a Dedicated Server?"
-msgstr "dedizierten Server starten?"
+msgstr ""
 
 msgid "LOAD MOD"
-msgstr "LADE MOD"
+msgstr ""
 
 msgid "VIEW"
-msgstr "ANSICHT"
+msgstr ""
 
 msgid "DELETE REPLAY"
 msgstr ""
 
 msgid "GAME"
-msgstr "SPIEL"
+msgstr ""
 
 msgid "CONTROLS"
 msgstr ""
 
 msgid "SYSTEM"
-msgstr "SYSTEM"
+msgstr ""
 
 msgid "GRAPHICS"
-msgstr "GRAFIK"
+msgstr ""
 
 msgid "PLAYER"
-msgstr "SPIELER"
+msgstr ""
 
 msgid "PHYSICS"
 msgstr ""
 
 msgid "Always Run:"
-msgstr "Immer rennen:"
+msgstr ""
 
 msgid "Double-Tap Prone:"
 msgstr ""
 
 msgid "WEAPONS"
-msgstr "WAFFEN"
+msgstr ""
 
 msgid "Automatic Reload:"
-msgstr "Automatisches nachladen"
+msgstr ""
 
 msgid "Autoswitch:"
-msgstr "Automatischer Wechsel:"
+msgstr ""
 
 msgid "Weapon Icon Flash:"
 msgstr ""
 
 msgid "Muzzle Flash:"
-msgstr "Mündungsfeuer"
+msgstr ""
 
 msgid "Bullet Tracers:"
-msgstr "Leuchtspurmunition:"
+msgstr ""
 
 msgid "SCOPE"
-msgstr "ZOOM"
+msgstr ""
 
-msgid "Use Weapon Cycle for Zoom:"
-msgstr "Waffenwechseltaste für Zoom:"
+msgid "Weapon Cycle for Zoom:"
+msgstr ""
 
 msgid "Default Zoom Level:"
-msgstr "Standard-Zoom:"
+msgstr ""
 
 msgid "Zoom Levels:"
-msgstr "Zoomstufen"
+msgstr ""
 
 msgid "CHAT"
-msgstr "CHAT"
+msgstr ""
 
 msgid "Quick Chat Mode:"
-msgstr "Schnell Chat Mode:"
+msgstr ""
 
 msgid "Chat Icon Time:"
-msgstr "Chat Icon Zeit:"
+msgstr ""
 
 msgid "Team chat only:"
-msgstr "Nur Team Chat:"
+msgstr ""
 
 msgid "No voice chat:"
-msgstr "Keinen Voice Chat:"
+msgstr ""
 
 msgid "No voice text:"
-msgstr "Keinen Voice Chat Text:"
+msgstr ""
 
 msgid "MISCELLANEOUS"
-msgstr "VERSCHIEDENES"
+msgstr ""
 
 msgid "Complaint PopUp:"
-msgstr "Beschwerde PopUp:"
+msgstr ""
 
 msgid "Log Important Messages:"
-msgstr "Speichere wichtige Nachrichten:"
+msgstr ""
 
 msgid "Auto-Action:"
-msgstr "Auto-Aktion:"
+msgstr ""
 
 msgid "Use JPEG for AutoScreenshots:"
-msgstr "JPEG für AutoScreenshots:"
+msgstr ""
 
 msgid "Show Tool Tips :"
-msgstr "Zeige Hilfetexte:"
+msgstr ""
 
 msgid "Announcer:"
-msgstr "Ansager:"
+msgstr ""
 
 msgid "HUD DISPLAY"
-msgstr "HUD ANZEIGE"
+msgstr ""
 
 msgid "Draw Gun:"
-msgstr "Waffe anzeigen:"
+msgstr ""
 
 msgid "Show Compass:"
-msgstr "Zeige Kompass"
+msgstr ""
 
 msgid "Mission Timer:"
-msgstr "Missionszeit:"
+msgstr ""
 
 msgid "Reinforcement Timer:"
-msgstr "Vertärkungszeit:"
+msgstr ""
 
 msgid "Cursor Hints:"
-msgstr "Cursor Tipps:"
+msgstr ""
 
 msgid "Show Lagometer:"
-msgstr "Zeige Lagometer:"
+msgstr ""
 
 msgid "Show FPS:"
-msgstr "Zeige FPS:"
+msgstr ""
 
 msgid "Show Locations:"
 msgstr ""
@@ -867,28 +867,28 @@ msgid "Fireteam Latched Class:"
 msgstr ""
 
 msgid "Switch HUD:"
-msgstr "Wechsle HUD:"
+msgstr ""
 
 msgid "Modify Alternate HUD:"
 msgstr ""
 
 msgid "IN-GAME DISPLAY"
-msgstr "SPIEL ANZEIGE"
+msgstr ""
 
 msgid "Ejecting Brass:"
 msgstr ""
 
 msgid "Field Of View:"
-msgstr "Sichtfeld"
+msgstr ""
 
 msgid "Corona Distance:"
-msgstr "Corona Entfernung:"
+msgstr ""
 
 msgid "Particles:"
-msgstr "Explosionen:"
+msgstr ""
 
 msgid "Wall Mark Lifetime:"
-msgstr "Anzeigedauer Wandtreffer:"
+msgstr ""
 
 msgid "Blood Flash:"
 msgstr ""
@@ -897,40 +897,40 @@ msgid "Blood Splatter:"
 msgstr ""
 
 msgid "Show Blood:"
-msgstr "Zeige Blut:"
+msgstr ""
 
 msgid "Atmospheric Effects:"
-msgstr "Regen/Schneeeffekte:"
+msgstr ""
 
 msgid "CROSSHAIR"
-msgstr "FADENKREUZ"
+msgstr ""
 
 msgid "Crosshair Size:"
-msgstr "Fadenkreuz Größe:"
+msgstr ""
 
 msgid "Crosshair Pulsing:"
-msgstr "Pulsierendes Fandenkreuz:"
+msgstr ""
 
 msgid "Crosshair Health Info:"
-msgstr "Fadenkreuz Lebensanzeige:"
+msgstr ""
 
-msgid "Crosshair Name Drawing:"
-msgstr "Fadenkreuz-Namen anzeigen:"
+msgid "Crosshair Info:"
+msgstr ""
 
 msgid "Primary Color:"
-msgstr "Primäre Farbe:"
+msgstr ""
 
 msgid "Primary Alpha:"
-msgstr "Primär Transparenz:"
+msgstr ""
 
 msgid "Secondary Color:"
-msgstr "Sekundäre Farbe:"
+msgstr ""
 
 msgid "Secondary Alpha:"
-msgstr "Sekundär Transparenz:"
+msgstr ""
 
 msgid "MOVEMENT"
-msgstr "BEWEGUNG"
+msgstr ""
 
 msgid "Bob up:"
 msgstr ""
@@ -945,46 +945,46 @@ msgid "Bob yaw:"
 msgstr ""
 
 msgid "MOVE"
-msgstr "BEWEGUNG"
+msgstr ""
 
 msgid "Forward:"
-msgstr "Vor:"
+msgstr ""
 
 msgid "Back:"
-msgstr "Zurück:"
+msgstr ""
 
 msgid "Move Left:"
-msgstr "Lenks:"
+msgstr ""
 
 msgid "Move Right:"
-msgstr "Rechts:"
+msgstr ""
 
 msgid "Lean Left:"
-msgstr "Links lehnen:"
+msgstr ""
 
 msgid "Lean Right:"
-msgstr "Rechts lehnen:"
+msgstr ""
 
 msgid "Jump:"
-msgstr "Springen:"
+msgstr ""
 
 msgid "Crouch:"
-msgstr "Kriechen:"
+msgstr ""
 
 msgid "Prone:"
-msgstr "Hinlegen:"
+msgstr ""
 
 msgid "Walk:"
-msgstr "Gehen:"
+msgstr ""
 
 msgid "Sprint:"
-msgstr "Rennen:"
+msgstr ""
 
 msgid "Use (Activate):"
-msgstr "Aktivieren:"
+msgstr ""
 
 msgid "INPUT"
-msgstr "MAUS"
+msgstr ""
 
 msgid "Smooth Mouse:"
 msgstr ""
@@ -1011,112 +1011,112 @@ msgid "POP-UPS"
 msgstr ""
 
 msgid "Show Scores:"
-msgstr "Punkte anzeigen:"
+msgstr ""
 
 msgid "Show Limbo Menu:"
-msgstr "Wartemenü öffnen:"
+msgstr ""
 
 msgid "Show Command Map:"
-msgstr "Zeige Einsatzkarte:"
+msgstr ""
 
 msgid "Compass Map Zoom In:"
-msgstr "Kompass Karte grösser:"
+msgstr ""
 
 msgid "Compass Map Zoom Out:"
-msgstr "Kompass Karte kleiner:"
+msgstr ""
 
 msgid "Player Stats:"
-msgstr "Spieler Stats:"
+msgstr ""
 
 msgid "Top Shots:"
 msgstr ""
 
 msgid "USE WEAPONS"
-msgstr "WAFFEN BENUTZEN"
+msgstr ""
 
 msgid "Attack:"
-msgstr "Angriff:"
+msgstr ""
 
 msgid "Switch to Alternate:"
-msgstr "2. Feuermodus:"
+msgstr ""
 
 msgid "Reload Weapon:"
-msgstr "Waffe nachladen:"
+msgstr ""
 
 msgid "Binocular Zoom:"
-msgstr "Fernglas:"
+msgstr ""
 
 msgid "SELECT WEAPONS"
-msgstr "WAFFEN AUSWAHL"
+msgstr ""
 
 msgid "Next Weapon:"
-msgstr "Nächste Waffe:"
+msgstr ""
 
 msgid "Previous Weapon:"
-msgstr "Vorherige Waffe"
+msgstr ""
 
 msgid "Slot 1 - Melee:"
-msgstr "Bank 1 - Messer:"
+msgstr ""
 
 msgid "Slot 2 - One Handed:"
-msgstr "Bank 2 - Pistole"
+msgstr ""
 
 msgid "Slot 3 - Two Handed:"
-msgstr "Bank 3 - Zweihandwaffe"
+msgstr ""
 
 msgid "Slot 4 - Grenade:"
-msgstr "Bank 4 - Granaten:"
+msgstr ""
 
 msgid "Slot 5 - Special 1:"
-msgstr "Bank 5 - Special 1:"
+msgstr ""
 
 msgid "Slot 6 - Special 2:"
-msgstr "Bank 6 - Special 2:"
+msgstr ""
 
 msgid "Slot 7 - Special 3:"
-msgstr "Bank 7 - Special 3:"
+msgstr ""
 
 msgid "Vote Yes:"
-msgstr "Wähle Ja:"
+msgstr ""
 
 msgid "Vote No:"
-msgstr "Wähle Nein:"
+msgstr ""
 
 msgid "Take Screenshot:"
-msgstr "Erstelle Bildschrimfoto:"
+msgstr ""
 
 msgid "Record Replay:"
-msgstr "Demo aufnahme:"
+msgstr ""
 
 msgid "FIRE-TEAMS"
-msgstr "Kampfeinheiten"
+msgstr ""
 
 msgid "Select All Members:"
-msgstr "Wähle alle Mitglieder:"
+msgstr ""
 
 msgid "Select Member #1:"
-msgstr "Wähle Mitglied #1:"
+msgstr ""
 
 msgid "Select Member #2:"
-msgstr "Wähle Mitglied #2:"
+msgstr ""
 
 msgid "Select Member #3:"
-msgstr "Wähle Mitglied #3:"
+msgstr ""
 
 msgid "Select Member #4:"
-msgstr "Wähle Mitglied #4:"
+msgstr ""
 
 msgid "Select Member #5:"
-msgstr "Wähle Mitglied #5:"
+msgstr ""
 
 msgid "Select Member #6:"
-msgstr "Wähle Mitglied #6:"
+msgstr ""
 
 msgid "Deselect All:"
-msgstr "Auswahl aufheben:"
+msgstr ""
 
 msgid "Fire-Team Admin:"
-msgstr "Kampfeinheit Admin:"
+msgstr ""
 
 msgid "DEFAULT CONTROLS"
 msgstr ""
@@ -1125,16 +1125,16 @@ msgid "Reset controls to default?"
 msgstr ""
 
 msgid "AUDIO"
-msgstr "AUDIO"
+msgstr ""
 
 msgid "Effects Volume:"
-msgstr "Effekt Lautstärke:"
+msgstr ""
 
 msgid "Music Volume:"
-msgstr "Musik Lautstärke:"
+msgstr ""
 
 msgid "Sound Quality:"
-msgstr "Klang Qualität:"
+msgstr ""
 
 msgid "Doppler FX:"
 msgstr ""
@@ -1152,72 +1152,68 @@ msgid "NETWORKING"
 msgstr ""
 
 msgid "Max Packets:"
-msgstr "Max Pakete:"
+msgstr ""
 
 msgid "Packet Duplication:"
 msgstr ""
 
 msgid "DOWNLOADS"
-msgstr "DOWNLOADS"
+msgstr ""
 
 msgid "Check for Updates on Start-Up:"
-msgstr "Suche nach Updates beim Spielstart:"
+msgstr ""
 
 msgid "Get Missing Files from Server:"
-msgstr "Fehlende Dateien vom Server laden:"
+msgstr ""
 
 msgid "Use HTTP/FTP Downloads:"
-msgstr "Benutze HTTP/FTP Downloads:"
+msgstr ""
 
 msgid "APPLY"
-msgstr "UEBERNEHMEN"
+msgstr ""
 
 msgid "CALIBRATE BRIGHTNESS"
-msgstr "KALIBRIERE HELLIGKEIT"
+msgstr ""
 
 msgid "General Brightness Calibration (All Color Depths)"
-msgstr "Allgemeine Helligkeit Kalibrierung (alle Farbtiefen)"
+msgstr ""
 
 msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can "
 "see 16"
 msgstr ""
-"1. Bewege den Schieberegler und/oder die Helligkeit auf dem Bildschirm, bis "
 
 msgid "     separate bars below of equal differing brightness."
-msgstr "    16 gleiche Balken mit unterschiedlicher Helligkeit zu sehen sind."
+msgstr ""
 
 msgid "2. Click the BACK button."
-msgstr "2. Drücke die ZURUECK  Schaltfläche"
+msgstr ""
 
 msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
-msgstr "Helligkeit Feineinstellung (32 Bit Texturen und Farbtiefe)"
+msgstr ""
 
 msgid "1. Move the slider below until you can see 3 separate bars below."
 msgstr ""
-"1. Bewege den Schieberegler unten, bis unten 3 separate Balken zu sehen sind."
 
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
 msgstr ""
-"2. Verschiebe den Schieberegler, bis das linke und das mittlere Feld "
-"identisch sind."
 
 msgid "3. Click the BACK button."
-msgstr "3. Drücke die ZURUECK  Schaltfläche"
+msgstr ""
 
 msgid "SIMPLE"
-msgstr "EINFACH"
+msgstr ""
 
 msgid "Overall Quality:"
-msgstr "ALLGEMEINE QUALITAET:"
+msgstr ""
 
 msgid "Fullscreen:"
-msgstr "VOLLBILDSCHIRM"
+msgstr ""
 
 msgid "Borderless:"
-msgstr "Rahmenlos"
+msgstr ""
 
 msgid "Intensity:"
 msgstr ""
@@ -1229,37 +1225,37 @@ msgid "Overbright Bits:"
 msgstr ""
 
 msgid "Low Quality Sky:"
-msgstr "Einfacher Himmel:"
+msgstr ""
 
 msgid "Shadow Detail:"
-msgstr "Schatten Detail"
+msgstr ""
 
 msgid "Texture Detail:"
-msgstr "Textur Detail:"
+msgstr ""
 
 msgid "Dynamic Lights:"
-msgstr "Dynamische Lichter:"
+msgstr ""
 
 msgid "Geometric Detail:"
-msgstr "Geometrisches Detail:"
+msgstr ""
 
 msgid "Texture Quality:"
-msgstr "Textur Qualität:"
+msgstr ""
 
 msgid "Texture Filter:"
-msgstr "Textur Filter:"
+msgstr ""
 
 msgid "Anisotropic Filter:"
 msgstr ""
 
 msgid "Color Depth:"
-msgstr "Farbtiefe:"
+msgstr ""
 
 msgid "Detail Textures:"
-msgstr "Detail Texturen:"
+msgstr ""
 
 msgid "Depth Buffer:"
-msgstr "Tiefenpuffer:"
+msgstr ""
 
 msgid "Compress Textures:"
 msgstr ""
@@ -1268,7 +1264,7 @@ msgid "Sync Every Frame:"
 msgstr ""
 
 msgid "GL Extensions:"
-msgstr "GL Erweiterungen"
+msgstr ""
 
 msgid "SET RECOMMENDED"
 msgstr ""
@@ -1277,66 +1273,24 @@ msgid "^3DEVELOPED BY ET LEGACY TEAM"
 msgstr ""
 
 msgid "^1PROGRAMMING"
-msgstr "PROGRAMMIERUNG"
+msgstr ""
 
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
 msgstr ""
 
-msgid "IR4T4 - Coding, mod development & bad boy"
+msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
 msgstr ""
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
 msgstr ""
 
-msgid "Jere 'Jacker' S - main windows coder, render"
+msgid "Jere 'Jacker' S. - Main windows coder & renderer"
 msgstr ""
 
 msgid "^1CONTRIBUTORS"
 msgstr ""
 
-msgid "Acqu - Bug reports & patches"
-msgstr ""
-
-msgid "Antman - Map location override databases "
-msgstr ""
-
-msgid "Dragon aka Dragonji - Bug reports & Windows tester"
-msgstr ""
-
-msgid "Lakersforce - Translations, bug reports"
-msgstr ""
-
-msgid "Mathieu Olivier - Bug fixes and code clean up"
-msgstr ""
-
-msgid "Merlin - Bug reports"
-msgstr ""
-
-msgid "RaFaL aka ***Rafal*** - Menu scripts and Windows tester"
-msgstr ""
-
-msgid "Dusan 'TheDushan' Jocic - Advices, patches"
-msgstr ""
-
-msgid "Ensiform - Advices, comments"
-msgstr ""
-
 msgid "^1GREETINGS"
-msgstr ""
-
-msgid "ETPub Team"
-msgstr ""
-
-msgid "NQ Team - core hug goes to C.."
-msgstr ""
-
-msgid "Omni-Bot Team - especially crapshot, Dr. Evil & Palota"
-msgstr ""
-
-msgid "Splash Damage ET Community"
-msgstr ""
-
-msgid "Zynx"
 msgstr ""
 
 msgid "SPLASH DAMAGE"
@@ -1723,11 +1677,11 @@ msgstr ""
 msgid "ET Legacy Website"
 msgstr ""
 
-msgid " 2012-2013 ET Legacy developers - under the terms of GPL version 3."
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries. "
@@ -1736,37 +1690,37 @@ msgid ""
 msgstr ""
 
 msgid "Yeah, right, like YOU have"
-msgstr "Ja, richtig, als hättest DU"
+msgstr ""
 
 msgid "anything better to do!"
-msgstr "etwas Besseres zu tun!"
+msgstr ""
 
 msgid "ERROR"
-msgstr "FEHLER"
+msgstr ""
 
 msgid "RECONNECT"
-msgstr "WIEDER VERBINDEN"
+msgstr ""
 
 msgid "AUTO UPDATE"
-msgstr "AUTOMATISCHES UPDATE"
+msgstr ""
 
 msgid "New version available. Do you want to update now?"
-msgstr "Neue Version verfügbar. Möchtest do updaten?"
+msgstr ""
 
 msgid "PASSWORD REQUIRED"
-msgstr "BENÖTIGE PASSWORT"
+msgstr ""
 
 msgid "REDIRECTION ADVISED"
 msgstr ""
 
 msgid "Do you want to redirect to:"
-msgstr "Möchtest Du weitergeleitet werden zu:"
+msgstr ""
 
 msgid "CHANGE VIDEO SETTINGS"
 msgstr ""
 
 msgid "Apply new settings?"
-msgstr "Übernehme neue Einstellungen?"
+msgstr ""
 
 msgid "CONFIRM VIDEO CHANGE"
 msgstr ""
@@ -1786,451 +1740,451 @@ msgid "MESSAGE"
 msgstr ""
 
 msgid "S. Statements"
-msgstr "S. Kommentare"
+msgstr ""
 
 msgid "R. Requests"
-msgstr "R. Bitten"
+msgstr ""
 
 msgid "C. Commands"
-msgstr "C. Befehle"
+msgstr ""
 
 msgid "T. Talk"
-msgstr "T. Unterhaltung"
+msgstr ""
 
 msgid "G. Global"
-msgstr "G. Global"
+msgstr ""
 
 msgid "F. Function"
-msgstr "F. Funktion"
+msgstr ""
 
 msgid "O. Objectives"
-msgstr "O. Ziele"
+msgstr ""
 
 msgid "P. Path Cleared."
-msgstr "P. Weg gesichert."
+msgstr ""
 
 msgid "C. All Clear"
-msgstr "C. Alles klar"
+msgstr ""
 
 msgid "I. Incoming"
-msgstr "F. Eindringling!"
+msgstr ""
 
 msgid "F. Fire In The Hole!"
-msgstr "F. Geht in Deckung!"
+msgstr ""
 
 msgid "D. I'm Defending."
-msgstr "D. Ich verteidige."
+msgstr ""
 
 msgid "A. I'm Attacking."
-msgstr "A. Ich greife an."
+msgstr ""
 
 msgid "T. Taking Fire!"
-msgstr "T. Unter Beschuss!"
+msgstr ""
 
 msgid "M. Mines Cleared"
-msgstr "M. Minen entfernt"
+msgstr ""
 
 msgid "E. Enemy Disguised"
-msgstr "E. Getarnter Feind"
+msgstr ""
 
 msgid "M. Need Medic!"
-msgstr "M. Sanitäter!"
+msgstr ""
 
 msgid "A. Need Ammo!"
-msgstr "A. Brauche Munition!"
+msgstr ""
 
 msgid "B. Need Backup!"
-msgstr "B. Ich brauche Unterstützung!"
+msgstr ""
 
 msgid "E. Need Engineer!"
-msgstr "E.  Wir brauchen einen Ingenieur!"
+msgstr ""
 
 msgid "C. Cover Me!"
-msgstr "C. Gib mir Deckung!"
+msgstr ""
 
 msgid "H. Hold Fire!"
-msgstr "H. Feuer einstellen!"
+msgstr ""
 
 msgid "W. Where To?"
-msgstr "W. Wohin?"
+msgstr ""
 
 msgid "O. Need Covert Ops!"
-msgstr "O. Wir brauchen Spione!"
+msgstr ""
 
 msgid "F. Follow Me!"
-msgstr "F. Folge Mir!"
+msgstr ""
 
 msgid "G. Let's Go!"
-msgstr "G. Los gehts!"
+msgstr ""
 
 msgid "M. Move!"
-msgstr "M. Vorwärts!"
+msgstr ""
 
 msgid "C. Clear The Path!"
-msgstr "C. Mach den Weg frei!"
+msgstr ""
 
 msgid "O. Defend Objective!"
-msgstr "O. Verteidige unser Ziel!"
+msgstr ""
 
 msgid "D. Disarm Dynamite!"
-msgstr "D. Entschärfe das Dynamit!"
+msgstr ""
 
 msgid "N. Clear Mines!"
-msgstr "N. Räumt die Minen!"
+msgstr ""
 
 msgid "R. Reinforce Offense"
-msgstr "R. Angriff kordinieren"
+msgstr ""
 
 msgid "E. Reinforce Defense"
-msgstr "E. Verteidigung kordinieren"
+msgstr ""
 
 msgid "Y. Yes"
-msgstr "Y. Ja"
+msgstr ""
 
 msgid "N. No"
-msgstr "N. Nein"
+msgstr ""
 
 msgid "T. Thanks"
-msgstr "t. Danke"
+msgstr ""
 
 msgid "W. Welcome"
-msgstr "W. Kein problem"
+msgstr ""
 
 msgid "S. Sorry"
-msgstr "S. Tschuldigung"
+msgstr ""
 
 msgid "O. Oops"
-msgstr "O. Oops"
+msgstr ""
 
 msgid "W. Enemy Weak"
-msgstr "W. Feind ist angeschlagen"
+msgstr ""
 
 msgid "H. Hi"
-msgstr "H. Hallo"
+msgstr ""
 
 msgid "B. Bye"
-msgstr "B. Auf wiedersehen"
+msgstr ""
 
 msgid "S. Great Shot"
-msgstr "S. Guter Schuss"
+msgstr ""
 
 msgid "C. Cheer"
-msgstr "C. Jubeln"
+msgstr ""
 
 msgid "G. More Globals"
-msgstr "G. Mehr globale Chats"
+msgstr ""
 
 msgid "G. Good Game"
-msgstr "G. Gutes Spiel"
+msgstr ""
 
 msgid "A. Command Acknowledged"
-msgstr "A. Befehl bestädigt"
+msgstr ""
 
 msgid "D. Command Declined"
-msgstr "D. Befehl abgelehnt"
+msgstr ""
 
 msgid "C. Command Completed"
-msgstr "C. Befehl ausgeführt"
+msgstr ""
 
 msgid "P. Destroy Primary Objective"
-msgstr "P. Zerstöre das Primärziel"
+msgstr ""
 
 msgid "S. Destroy Secondary Objective"
-msgstr "S. Zerstöre das sekundärziel"
+msgstr ""
 
 msgid "X. Destroy Construction"
-msgstr "X. Zerstöre die Anlage"
+msgstr ""
 
 msgid "M. Commencing Construction"
-msgstr "M. Beginne die Anlage zu bauen"
+msgstr ""
 
 msgid "R. Repair Vehicle"
-msgstr "R. Repariere das Fahrzeug"
+msgstr ""
 
 msgid "V. Disable Vehicle"
-msgstr "V. Zerstöre das Fahrzeug"
+msgstr ""
 
 msgid "E. Escort Vehicle"
-msgstr "E. Eskortiere das Fahrzeug"
+msgstr ""
 
 msgid "1. Statements"
-msgstr "1. Kommentare"
+msgstr ""
 
 msgid "2. Requests"
-msgstr "2. Bitten"
+msgstr ""
 
 msgid "3. Commands"
-msgstr "3. Befehle"
+msgstr ""
 
 msgid "4. Talk"
-msgstr "4. Unterhaltung"
+msgstr ""
 
 msgid "5. Global"
-msgstr "6. Global"
+msgstr ""
 
 msgid "6. Function"
-msgstr "6. Funktion"
+msgstr ""
 
 msgid "7. Objectives"
-msgstr "7. Ziele"
+msgstr ""
 
 msgid "1. Path Cleared."
-msgstr "1. Weg gesichert."
+msgstr ""
 
 msgid "2. Enemy Weak!"
-msgstr "2. Feind ist angeschlagen!"
+msgstr ""
 
 msgid "3. All Clear"
-msgstr "3. Alles klar"
+msgstr ""
 
 msgid "4. Incoming"
-msgstr "5. Eindringling!"
+msgstr ""
 
 msgid "5. Fire In The Hole!"
-msgstr "5. Geht in Deckung!"
+msgstr ""
 
 msgid "6. I'm Defending."
-msgstr "6. Ich verteidige."
+msgstr ""
 
 msgid "7. I'm Attacking."
-msgstr "7. Ich greife an."
+msgstr ""
 
 msgid "8. Taking Fire!"
-msgstr "8. Unter Beschuss!"
+msgstr ""
 
 msgid "9. Mines Cleared"
-msgstr "9. Minen entfernt"
+msgstr ""
 
 msgid "0. Enemy Disguised"
-msgstr "0. Feindlicher Spion"
+msgstr ""
 
 msgid "1. Need Medic!"
-msgstr "1. Sanitäter!"
+msgstr ""
 
 msgid "2. Need Ammo!"
-msgstr "2. Brauche Munition"
+msgstr ""
 
 msgid "3. Need Backup!"
-msgstr "2. Brauche Munition!"
+msgstr ""
 
 msgid "4. Need Engineer!"
-msgstr "4. Wir brauchen einen Ingenieur!"
+msgstr ""
 
 msgid "5. Cover Me!"
-msgstr "5. Gib mir Deckung!"
+msgstr ""
 
 msgid "6. Hold Fire!"
-msgstr "6. Feuer einstellen!"
+msgstr ""
 
 msgid "7. Where To?"
-msgstr "7. Wohin?"
+msgstr ""
 
 msgid "8. Need Covert Ops!"
-msgstr "8. Wir brauchen Spione!"
+msgstr ""
 
 msgid "1. Follow Me!"
-msgstr "1. Folge Mir!"
+msgstr ""
 
 msgid "2. Let's Go!"
-msgstr "2. Auf gehts!"
+msgstr ""
 
 msgid "3. Move!"
-msgstr "3. Vorwärts!"
+msgstr ""
 
 msgid "4. Clear The Path!"
-msgstr "4. Mach den Weg frei!"
+msgstr ""
 
 msgid "5. Defend Objective!"
-msgstr "5. Verteidige unser Ziel!"
+msgstr ""
 
 msgid "6. Disarm Dynamite!"
-msgstr "6. Entschärft das Dynamit!"
+msgstr ""
 
 msgid "7. Clear Mines!"
-msgstr "7. Räumt die Minen!"
+msgstr ""
 
 msgid "8. Reinforce Offense"
-msgstr "8. Angriff kordinieren"
+msgstr ""
 
 msgid "9. Reinforce Defense"
-msgstr "9. Verteidigung kordinieren"
+msgstr ""
 
 msgid "1. Yes"
-msgstr "1. Ja"
+msgstr ""
 
 msgid "2. No"
-msgstr "2. Nein"
+msgstr ""
 
 msgid "3. Thanks"
-msgstr "3. Danke"
+msgstr ""
 
 msgid "4. Welcome"
-msgstr "4. Kein problem"
+msgstr ""
 
 msgid "5. Sorry"
-msgstr "5. Tschuldigung"
+msgstr ""
 
 msgid "6. Oops"
-msgstr "6. Oops"
+msgstr ""
 
 msgid "3. Enemy Weak"
-msgstr "3. Feind ist angeschlagen"
+msgstr ""
 
 msgid "4. Hi"
-msgstr "4. Hallo"
+msgstr ""
 
 msgid "5. Bye"
-msgstr "5. Auf Wiedersehen"
+msgstr ""
 
 msgid "6. Great Shot"
-msgstr "6. Guter Schuss"
+msgstr ""
 
 msgid "7. Cheer"
-msgstr "7. Jubeln"
+msgstr ""
 
 msgid "8. More Globals"
-msgstr "8. Mehr globale Chats"
+msgstr ""
 
 msgid "1. Thanks"
-msgstr "1. Danke"
+msgstr ""
 
 msgid "2. Welcome"
-msgstr "2. Kein problem"
+msgstr ""
 
 msgid "3. Oops"
-msgstr "3. Oops"
+msgstr ""
 
 msgid "4. Sorry"
-msgstr "4. Entschuldigung"
+msgstr ""
 
 msgid "5. Hold Fire!"
-msgstr "5. Feuer einstellen!"
+msgstr ""
 
 msgid "6. Good Game"
-msgstr "6. Gutes Spiel"
+msgstr ""
 
 msgid "1. Command Acknowledged"
-msgstr "1. Befehl bestädigt"
+msgstr ""
 
 msgid "2. Command Declined"
-msgstr "2. Befehl abgelehnt"
+msgstr ""
 
 msgid "3. Command Completed"
-msgstr "3. Befehl ausgeführt"
+msgstr ""
 
 msgid "4. Destroy Primary Objective"
-msgstr "4. Zerstöre das Primärziel"
+msgstr ""
 
 msgid "5. Destroy Secondary Objective"
-msgstr "5. Zerstöre das Sekundärziel"
+msgstr ""
 
 msgid "6. Destroy Construction"
-msgstr "6. Zerstöre die Anlage"
+msgstr ""
 
 msgid "7. Commencing Construction"
-msgstr "7. Beginne die Anlage zu bauen"
+msgstr ""
 
 msgid "8. Repair Vehicle"
-msgstr "8. Repariere das Fahrzeug"
+msgstr ""
 
 msgid "9. Disable Vehicle"
-msgstr "9. Zerstöre das Fahrzeug"
+msgstr ""
 
 msgid "0. Escort Vehicle"
-msgstr "0. Eskortiere das Fahrzeug"
+msgstr ""
 
 msgid "Path cleared."
-msgstr "Weg gesichert."
+msgstr ""
 
 msgid "The enemy is weakened."
 msgstr ""
 
 msgid "All clear."
-msgstr "Alles gesichert"
+msgstr ""
 
 msgid "Incoming!"
-msgstr "Eindringlinge!"
+msgstr ""
 
 msgid "Fire in the hole!"
-msgstr "Geht in Deckung!"
+msgstr ""
 
 msgid "I'm on defense."
-msgstr "Ich verteidige"
+msgstr ""
 
 msgid "I'm on offense."
-msgstr "Ich greife an"
+msgstr ""
 
 msgid "Taking fire!"
-msgstr "Unter Beschuss!"
+msgstr ""
 
 msgid "Mines cleared."
-msgstr "Minen geräumt."
+msgstr ""
 
 msgid "Enemy in disguise."
-msgstr "Getarnter Feind"
+msgstr ""
 
 msgid "Need a Medic!"
-msgstr "Sanitäter!"
+msgstr ""
 
 msgid "I need ammo!"
-msgstr "Ich brauche Munition!"
+msgstr ""
 
 msgid "I need backup!"
-msgstr "Ich brauche Unterstützung!"
+msgstr ""
 
 msgid "We need an engineer!"
-msgstr "Wir brauchen einen Ingenieur!"
+msgstr ""
 
 msgid "Cover me!"
-msgstr "Gib mir Deckung!"
+msgstr ""
 
 msgid "Hold your fire!"
-msgstr "Feuer einstellen!"
+msgstr ""
 
 msgid "Where to?"
-msgstr "Wohin?"
+msgstr ""
 
 msgid "We need Covert Ops!"
-msgstr "Wir brauchen Spione!"
+msgstr ""
 
 msgid "Follow me!"
-msgstr "Folge Mir!"
+msgstr ""
 
 msgid "Let's go!"
-msgstr "Los gehts!"
+msgstr ""
 
 msgid "Move!"
-msgstr "Vorwärts!"
+msgstr ""
 
 msgid "Clear the path!"
-msgstr "Mach den Weg frei!"
+msgstr ""
 
 msgid "Defend our objective!"
-msgstr "Verteidige unser Ziel!"
+msgstr ""
 
 msgid "Disarm the dynamite!"
-msgstr "Entschärfe das Dynamit!"
+msgstr ""
 
 msgid "Clear the mines!"
-msgstr "Räumt die Minen!"
+msgstr ""
 
 msgid "Reinforce the offense!"
-msgstr "Angriff kordinieren!"
+msgstr ""
 
 msgid "Reinforce the defense!"
-msgstr "Verteidigung kordinieren!"
+msgstr ""
 
 msgid "Affirmative!"
-msgstr "Bestätigt"
+msgstr ""
 
 msgid "No!"
-msgstr "Nein!"
+msgstr ""
 
 msgid "Thank you!"
-msgstr "Danke Dir!"
+msgstr ""
 
 msgid "You're welcome."
-msgstr "Gerne geschehen."
+msgstr ""
 
 msgid "Bitte sehr."
 msgstr ""
@@ -2245,10 +2199,10 @@ msgid "Kein problem."
 msgstr ""
 
 msgid "Sorry!"
-msgstr "Entschuldigung!"
+msgstr ""
 
 msgid "Oops!"
-msgstr "Uups!"
+msgstr ""
 
 msgid "Yes!"
 msgstr ""
@@ -2278,7 +2232,7 @@ msgid "Bye."
 msgstr ""
 
 msgid "Great shot!"
-msgstr "Guter Schuss!"
+msgstr ""
 
 msgid "You got it, man!"
 msgstr ""
@@ -2320,7 +2274,7 @@ msgid "Sehr gut!"
 msgstr ""
 
 msgid "Thanks!"
-msgstr "Danke!"
+msgstr ""
 
 msgid "Danke!"
 msgstr ""
@@ -2332,40 +2286,40 @@ msgid "No problem."
 msgstr ""
 
 msgid "Good game!"
-msgstr "Gutes Spiel!"
+msgstr ""
 
 msgid "Command acknowledged!"
-msgstr "Befehl bestätigt!"
+msgstr ""
 
 msgid "Command declined!"
-msgstr "Befehl verweigert!"
+msgstr ""
 
 msgid "Command completed!"
-msgstr "Befehl ausgeführt!"
+msgstr ""
 
 msgid "Destroy primary objective!"
-msgstr "Zerstöre das Primärziel!"
+msgstr ""
 
 msgid "Destroy secondary objective!"
-msgstr "Zerstöre das Sekundärziel!"
+msgstr ""
 
 msgid "Destroy construction!"
-msgstr "Zerstöre die Anlage!"
+msgstr ""
 
 msgid "I'm constructing!"
 msgstr ""
 
 msgid "Repair the vehicle!"
-msgstr "Repariere das Fahrzeug!"
+msgstr ""
 
 msgid "Disable the vehicle!"
-msgstr "Zerstöre das Fahrzeug!"
+msgstr ""
 
 msgid "Escort the vehicle!"
-msgstr "Eskortiere das Fahrzeug!"
+msgstr ""
 
 msgid "Covering fire!"
-msgstr "Gib mir Feuerschutz!"
+msgstr ""
 
 msgid "I'm a soldier."
 msgstr ""
@@ -2382,12 +2336,15 @@ msgstr ""
 msgid "I'm a covert ops."
 msgstr ""
 
+#: src/cgame/cg_draw.c:2126
 msgid "Create a Fireteam?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2112
 msgid "Make Fireteam private?"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2360
 msgid "Response Sent"
 msgstr ""
 
@@ -2395,25 +2352,25 @@ msgid "^1Legacy"
 msgstr ""
 
 msgid "VOTE"
-msgstr "ABSTIMMUNG"
+msgstr ""
 
 msgid "REFEREE"
-msgstr "SCHIEDSRICHTER"
+msgstr ""
 
 msgid "RCON"
-msgstr "RCON"
+msgstr ""
 
 msgid "DISCONNECT"
-msgstr "TRENNEN"
+msgstr ""
 
 msgid "MAP"
-msgstr "KARTE"
+msgstr ""
 
 msgid "Voting is disabled"
-msgstr "Abstimmen ist auf diesem"
+msgstr ""
 
 msgid "on this server."
-msgstr "Server deaktiviert"
+msgstr ""
 
 msgid "START MATCH"
 msgstr ""
@@ -2425,22 +2382,22 @@ msgid "RESTART MAP"
 msgstr ""
 
 msgid "NEXT MAP"
-msgstr "NAECHSTE KARTE"
+msgstr ""
 
 msgid "NEXT CAMPAIGN"
-msgstr "NAECHSTE KAMPAGNE"
+msgstr ""
 
 msgid "ANTI-LAG ON"
-msgstr "ANTI-LAG AN"
+msgstr ""
 
 msgid "ANTI-LAG OFF"
-msgstr "ANTI-LAG AUS"
+msgstr ""
 
 msgid "XP SHUFFLE"
 msgstr ""
 
 msgid "SWAP TEAMS"
-msgstr "TAUSCHE TEAMS"
+msgstr ""
 
 msgid "MUTE SPECS"
 msgstr ""
@@ -2449,10 +2406,10 @@ msgid "UNMUTE SPECS"
 msgstr ""
 
 msgid "FRIENDLY FIRE ON"
-msgstr "TEAMBESCHUSS AN"
+msgstr ""
 
 msgid "FRIENDLY FIRE OFF"
-msgstr "TEAMBESCHUSS AUS"
+msgstr ""
 
 msgid "BALANCED TEAMS ON"
 msgstr ""
@@ -2467,7 +2424,7 @@ msgid "PUBLIC SETTINGS"
 msgstr ""
 
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 msgid "Time Limit:"
 msgstr ""
@@ -2476,10 +2433,10 @@ msgid "OMNI-BOT"
 msgstr ""
 
 msgid "PAUSE"
-msgstr "PAUSE"
+msgstr ""
 
 msgid "UNPAUSE"
-msgstr "FORTSETZEN"
+msgstr ""
 
 msgid "LOCK TEAMS"
 msgstr ""
@@ -2494,10 +2451,10 @@ msgid "UNLOCK SPECS"
 msgstr ""
 
 msgid "MAPS"
-msgstr "KARTEN"
+msgstr ""
 
 msgid "CAMPAIGNS"
-msgstr "KAMPAGNEN"
+msgstr ""
 
 #: src/cgame/cg_fireteams.c:358
 msgid "KICK"
@@ -2532,34 +2489,34 @@ msgid "BAN"
 msgstr ""
 
 msgid "WARN PLAYER"
-msgstr "VERWARNE SPIELER"
+msgstr ""
 
 msgid "Warning:"
-msgstr "Verwarnung:"
+msgstr ""
 
 msgid "ADD TO FAVORITES"
-msgstr "ZU FAVORITEN HINZUFUEGEN"
+msgstr ""
 
 msgid "Do you want to disconnect"
-msgstr "Willst Du die Verbindung"
+msgstr ""
 
 msgid "from the server?"
-msgstr "zum Server trennen?"
+msgstr ""
 
 msgid "SEND MESSAGE"
-msgstr "SENDE NACHRICHT"
+msgstr ""
 
 msgid "Say:"
-msgstr "Sage:"
+msgstr ""
 
 msgid "To:"
-msgstr "Zu:"
+msgstr ""
 
 msgid "CANCEL"
-msgstr "ABBRECHEN"
+msgstr ""
 
 msgid "SEND"
-msgstr "SENDEN"
+msgstr ""
 
 msgid "RESPAWNING"
 msgstr ""
@@ -2584,7 +2541,7 @@ msgid "KICK OMNI-BOT"
 msgstr ""
 
 msgid "Yes"
-msgstr "JA"
+msgstr ""
 
 msgid ""
 "Set recommended video settings\n"
@@ -2601,17 +2558,14 @@ msgid ""
 " www.etlegacy.com ?"
 msgstr ""
 
-msgid ""
-"^3Thank you for installing ET:Legacy.\n"
-"\n"
-"^3Visit ^1www.etlegacy.com^3 for more information.\n"
-"\n"
-"^3Let's keep ET alive!"
+msgid "^1LET'S KEEP ET ALIVE!"
 msgstr ""
 
-#, fuzzy
+msgid "^3Thank you for installing ET:Legacy"
+msgstr ""
+
 msgid "HOST GAME: EXTENDED"
-msgstr "HOSTE SPIEL"
+msgstr ""
 
 msgid "CLEAN"
 msgstr ""
@@ -2649,20 +2603,19 @@ msgid "FULL CLEAN"
 msgstr ""
 
 msgid "No"
-msgstr "Nein"
+msgstr ""
 
 msgid "unknown cmd"
 msgstr ""
 
 msgid "Server:"
-msgstr "Server:"
+msgstr ""
 
 msgid "changed to"
 msgstr ""
 
-#, fuzzy
 msgid "Auto Map Zoom:"
-msgstr "Kompass Karte grösser:"
+msgstr ""
 
 msgid "was killed by"
 msgstr ""
@@ -2751,6 +2704,7 @@ msgstr ""
 msgid "dynamited himself to pieces"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2797
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr ""
 
@@ -2773,7 +2727,7 @@ msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr ""
 
 msgid "I need a Medic!"
-msgstr "Ich brauche einen Sanitäter!"
+msgstr ""
 
 msgid "entered the game\n"
 msgstr ""
@@ -2793,13 +2747,16 @@ msgstr ""
 msgid "'s artillery support"
 msgstr ""
 
-msgid "rediscovered gravity."
+msgid "rediscovered gravity"
 msgstr ""
 
 msgid "'s Landmine"
 msgstr ""
 
 msgid "'s Mobile MG42"
+msgstr ""
+
+msgid "'s Mobile Browning"
 msgstr ""
 
 msgid "'s rifle grenade"
@@ -2883,14 +2840,14 @@ msgstr ""
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
 
-msgid "^9You must be alive to use ^3/kill.\n"
+msgid "^9You must be alive to use ^3/kill."
 msgstr ""
 
 msgid "No vote in progress.\n"
 msgstr ""
 
 msgid "Show Clock:"
-msgstr "Zeige Uhr:"
+msgstr ""
 
 msgid "No or bad challenge for address.\n"
 msgstr ""
@@ -2910,17 +2867,17 @@ msgstr ""
 msgid "Your fireteam is now private"
 msgstr ""
 
-msgid "The Allies have too many players."
+msgid "The Allies have too many players.\n"
 msgstr ""
 
-msgid "The Axis have too many players."
+msgid "The Axis has too many players.\n"
 msgstr ""
 
 msgid "Attack!"
-msgstr "Angriff!"
+msgstr ""
 
 msgid "Fall back!"
-msgstr "Rückzug!"
+msgstr ""
 
 #: src/cgame/cg_players.c:315
 #, c-format
@@ -3035,8 +2992,8 @@ msgstr ""
 msgid "Medic Ammo"
 msgstr ""
 
-msgid "Binoculars"
-msgstr "Fernglas"
+msgid "Binoculars for any Class"
+msgstr ""
 
 msgid "Full Revive"
 msgstr ""
@@ -3066,7 +3023,7 @@ msgid "Improved use of Light Weapon Ammunition"
 msgstr ""
 
 msgid "Faster Reload"
-msgstr "Schnelles Nachladen"
+msgstr ""
 
 msgid "Improved Light Weapon Handling"
 msgstr ""
@@ -3135,6 +3092,9 @@ msgid "Axis capture the West Bunker!"
 msgstr ""
 
 msgid "Allies have destroyed the gun tracking"
+msgstr ""
+
+msgid "^3All players ready!^7\nMatch starting..."
 msgstr ""
 
 msgid "The Axis North-West MG Nest has been destroyed."
@@ -3345,7 +3305,7 @@ msgid "Allied team has destroyed the Axis Fuel Dump!"
 msgstr ""
 
 msgid "was killed"
-msgstr "ist gefallen"
+msgstr ""
 
 msgid "You are near the Old City Wall\n"
 msgstr ""
@@ -3500,37 +3460,35 @@ msgstr ""
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr ""
 
-msgid ""
-"^3All players ready!^7\n"
-"Match starting...\n"
+msgid "^3All players ready!^7\nMatch starting...\n"
 msgstr ""
 
 msgid "You are on the Allied team"
-msgstr "Du bist nicht im Aliierten Team"
+msgstr ""
 
 msgid "^1*** Match Reset! ***\n"
 msgstr ""
 
 msgid "You are on the Axis team"
-msgstr "Du bist nicht im Axen Team"
+msgstr ""
 
 #: src/cgame/cg_fireteamoverlay.c:446
 #, c-format
 msgid "Private Fireteam: %s"
-msgstr "Private Kampfeinheit: %s"
+msgstr ""
 
 #: src/cgame/cg_fireteamoverlay.c:450
 #, c-format
 msgid "Fireteam: %s"
-msgstr "Kampfeinheit: %s"
+msgstr ""
 
 #: src/cgame/cg_info.c:585
 msgid "PLAYER STATS"
-msgstr "SPIELER STATS"
+msgstr ""
 
 #: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
 msgid "Weapon"
-msgstr "Waffe"
+msgstr ""
 
 #: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804
 msgid "Accuracy"
@@ -3550,15 +3508,15 @@ msgstr ""
 
 #: src/cgame/cg_info.c:606
 msgid "Headshots"
-msgstr "Kopfschuss"
+msgstr ""
 
 #: src/cgame/cg_info.c:615
 msgid "No weapon info available."
-msgstr "Keine Waffe verfügbar."
+msgstr ""
 
 #: src/cgame/cg_info.c:650
 msgid "Rank"
-msgstr "Rang"
+msgstr ""
 
 #: src/cgame/cg_info.c:667
 msgid "Skills"
@@ -3586,7 +3544,7 @@ msgstr ""
 
 #: src/cgame/cg_info.c:810
 msgid "Player"
-msgstr "Spieler"
+msgstr ""
 
 #: src/cgame/cg_info.c:818
 msgid "No qualifying weapon info available."
@@ -3604,10 +3562,10 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:441
 msgid "an Objective"
-msgstr "ein Ziel"
+msgstr ""
 
 msgid "Warning, leave the construction area..."
-msgstr "Warnung, verlasse die Baustelle..."
+msgstr ""
 
 msgid "got caught in"
 msgstr ""
@@ -3619,27 +3577,24 @@ msgid "Need paks: %s\n"
 msgstr ""
 
 msgid "Mod filter:"
-msgstr "Mod Filter:"
-
-msgid "DELETE FAVS"
-msgstr "FAVS LÖSCHEN"
-
-msgid "RESET FILTERS"
-msgstr "FILTER ZURÜCKSETZEN"
-
-msgid "DELETE SERVER FAVOURITES"
-msgstr "FAVORITEN LÖSCHEN"
-
-msgid "Do you really want to"
-msgstr "Möchtest Du wirklich"
-
-msgid "delete YOUR favourites?"
-msgstr "Deine Favoriten löschen?"
-
-msgid "Modify Selected HUD:"
 msgstr ""
 
-msgid "PopUpTime:"
+msgid "DELETE FAVS"
+msgstr ""
+
+msgid "RESET FILTERS"
+msgstr ""
+
+msgid "DELETE SERVER FAVOURITES"
+msgstr ""
+
+msgid "Do you really want to"
+msgstr ""
+
+msgid "delete YOUR favourites?"
+msgstr ""
+
+msgid "Modify Selected HUD:"
 msgstr ""
 
 msgid "PopUpTimeStay:"
@@ -3650,56 +3605,943 @@ msgstr ""
 
 #: src/cgame/cg_consolecmds.c:1211
 msgid "Allies"
-msgstr "Alliierte"
+msgstr ""
+
+msgid "DEMO CONTROLS"
+msgstr ""
+
+msgid "^nBACKSPACE ^mhelp on/off"
+msgstr ""
+
+msgid "^3WARMUP:^7 Match begins in:"
+msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
-msgstr "Warte auf Verbindung...%i"
+msgstr ""
 
 #: src/ui/ui_loadpanel.c:341
 #, c-format
 msgid "Awaiting challenge...%i"
-msgstr "Warte auf Herausforderung...%i"
+msgstr ""
 
 #: src/ui/ui_loadpanel.c:351
 msgid "Awaiting gamestate..."
-msgstr "Warte auf Spielstatus..."
+msgstr ""
 
 #: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637
 msgid "Waiting for new key... Press ESCAPE to cancel"
-msgstr "Warte auf einen neuen Schlüssel... Drücke ESCAPE zum abbrechen"
+msgstr ""
 
 #: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr "Drücke Enter oder Klick zum verändern, Drücke BACKSPACE zum löschen"
+msgstr ""
 
 #: src/ui/ui_main.c:2539
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
-msgstr "Bekomme Informationen für %d Server (Drücke ESC um abzubrechen)"
+msgstr ""
 
 #: src/ui/ui_main.c:2543
 msgid "Waiting for response from Master Server"
-msgstr "Warte auf Antwort vom Hauptserver"
+msgstr ""
 
 #: src/ui/ui_main.c:2551
 #, c-format
 msgid "Refresh Time: %s"
-msgstr "Aktualisierungszeit: %s"
+msgstr ""
 
 #: src/ui/ui_main.c:4330 src/ui/ui_main.c:4378 src/ui/ui_main.c:4413
 msgid "Favorite already in list\n"
-msgstr "Server schon in der Favoritenliste\n"
+msgstr ""
 
 #: src/ui/ui_main.c:4335 src/ui/ui_main.c:4383 src/ui/ui_main.c:4418
 msgid "Favorite list full\n"
-msgstr "Favoritenliste ist voll\n"
+msgstr ""
 
 #: src/ui/ui_main.c:4340 src/ui/ui_main.c:4388 src/ui/ui_main.c:4423
 #, c-format
 msgid "Added favorite server %s\n"
-msgstr "Server %s zu Favoriten hinzugefügt\n"
+msgstr ""
 
-#~ msgid "Can't voice chat as a spectator.\n"
-#~ msgstr "Kein Sprachchat als Zuschauer.\n"
+msgid "^3See HALL OF FAME below"
+msgstr ""
+
+msgid "^1WEBSITE"
+msgstr ""
+
+msgid "http://www.etlegacy.com"
+msgstr ""
+
+msgid "HALL OF FAME"
+msgstr ""
+
+msgid "^3ET LEGACY HALL OF FAME"
+msgstr ""
+
+msgid "Advices, Bug reports, Patches"
+msgstr ""
+
+msgid "^1TRANSLATIONS"
+msgstr ""
+
+msgid "^1PORTS"
+msgstr ""
+
+msgid "'BSzili' - AROS and MorphOS"
+msgstr ""
+
+msgid "'PtitSeb' - Pandora"
+msgstr ""
+
+msgid "^1PACKAGE MAINTAINERS"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2732
+msgid "players"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2749
+msgid "Press ^3%s^7 to start"
+msgstr ""
+
+msgid "Not enough players to start match!\n"
+msgstr ""
+
+msgid "Your invitation has been submitted"
+msgstr ""
+
+msgid "Your invitation was accepted"
+msgstr ""
+
+msgid "Your invitation reply has been sent"
+msgstr ""
+
+msgid "You were team-killed by a bot."
+msgstr ""
+
+msgid "You were team-killed by the Server Host"
+msgstr ""
+
+msgid "Server Host cannot be complained against"
+msgstr ""
+
+msgid "Complaint dismissed"
+msgstr ""
+
+msgid "Your complaint has been filed"
+msgstr ""
+
+msgid "Your application has been submitted"
+msgstr ""
+
+msgid "Your application failed"
+msgstr ""
+
+msgid "Your application has been approved"
+msgstr ""
+
+msgid "Your application reply has been sent"
+msgstr ""
+
+msgid "Your proposition has been submitted"
+msgstr ""
+
+msgid "Your proposition was rejected"
+msgstr ""
+
+msgid "Your proposition was accepted"
+msgstr ""
+
+msgid "Your proposition reply has been sent"
+msgstr ""
+
+msgid "Your invitation was rejected"
+msgstr ""
+
+msgid "'s flamethrower"
+msgstr ""
+
+msgid "'s Satchel Charge"
+msgstr ""
+
+msgid "FONTS"
+msgstr ""
+
+msgid "Top Print:"
+msgstr ""
+
+msgid "Side Print:"
+msgstr ""
+
+msgid "Center Print:"
+msgstr ""
+
+msgid "Crosshair Name:"
+msgstr ""
+
+msgid "Fonts Size:"
+msgstr ""
+
+msgid "Obituaries Icons:"
+msgstr ""
+
+msgid "MATCH BEGINS IN:"
+msgstr ""
+
+msgid "You must be in the game to be ^3ready^7!\n"
+msgstr ""
+
+msgid "ALLIES COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly objective!"
+msgstr ""
+
+msgid "Axis team has destroyed the Bridge!"
+msgstr ""
+
+msgid "^3Aborting, can't see target."
+msgstr ""
+
+msgid "^3Firing for effect!"
+msgstr ""
+
+msgid "'s tank-mounted MG42"
+msgstr ""
+
+msgid "'s dynamite"
+msgstr ""
+
+msgid "Timelimit hit.\n"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:146
+#, c-format
+msgid "Config: ^7%s^7"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2745
+#, c-format
+msgid "^3Config: ^7%s^7"
+msgstr ""
+
+msgid "Landmine revealed"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "disable"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2486
+msgid "activate"
+msgstr ""
+
+msgid "^3Insufficient fire support."
+msgstr ""
+
+msgid "'s tank-mounted browning 30cal"
+msgstr ""
+
+msgid "'s grenade"
+msgstr ""
+
+msgid "was crushed"
+msgstr ""
+
+msgid "W. Enemy Weak!"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:322
+#, c-format
+msgid ""
+"Connecting to:\n"
+" %s^*\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:195
+msgid "CONNECTING..."
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:191
+msgid "DOWNLOADING..."
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:250
+msgid "Single Player"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:252
+msgid "Co-op"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:254
+msgid "Objective"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:256
+msgid "Stopwatch"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:258
+msgid "Campaign"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:260
+msgid "Last Man Standing"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:262
+msgid "Map Voting"
+msgstr ""
+
+msgid "Competition Settings Loaded!\n"
+msgstr ""
+
+msgid "Public Settings Loaded!\n"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
+#, c-format
+msgid "MAP %i of %i"
+msgstr ""
+
+msgid "Landmine cannot be armed here..."
+msgstr ""
+
+msgid "Your team has too many landmines placed..."
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly construction!"
+msgstr ""
+
+#: src/cgame/cg_draw.c:402
+#, c-format
+msgid "an %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:381 src/cgame/cg_draw.c:390 src/cgame/cg_draw.c:406
+#, c-format
+msgid "a %s"
+msgstr ""
+
+msgid "Countdown started.... ^3notready^7 ignored!\n"
+msgstr ""
+
+msgid "No complaint filed against you.\n"
+msgstr ""
+
+msgid "You are not the leader of a fireteam\n"
+msgstr ""
+
+msgid "You have been warned by your Fireteam Commander\n"
+msgstr ""
+
+msgid "You have been kicked from the fireteam"
+msgstr ""
+
+msgid "You are now the leader of your fireteam"
+msgstr ""
+
+msgid "The Fireteam you are on has been disbanded"
+msgstr ""
+
+msgid "You have been given fireteam admin rights"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:343
+msgid "FIRETEAMS"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:346
+msgid "JOIN"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:349
+msgid "PROPOSE"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:355
+msgid "INVITE"
+msgstr ""
+	
+#: src/cgame/cg_fireteams.c:364
+msgid "SET ADMIN"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
+#: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
+msgid "Previous"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:709 src/cgame/cg_fireteams.c:713
+#: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
+msgid "Next"
+msgstr ""
+
+msgid "Too many players already on this Fireteam"
+msgstr ""
+
+msgid "The leader has now left the Fireteam you applied to"
+msgstr ""
+
+msgid "The other player is already on a fireteam"
+msgstr ""
+
+msgid "You are not on the same team as the other player"
+msgstr ""
+
+msgid "You are not on the same Fireteam as the other player"
+msgstr ""
+
+msgid "Invalid client selected"
+msgstr ""
+
+msgid "usage: fireteam admin <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam propose <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam kick <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam warn <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam invite <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
+msgstr ""
+
+msgid "usage: fireteam <create|leave|apply|invite>"
+msgstr ""
+
+msgid "You are already on a fireteam, leave it first"
+msgstr ""
+
+msgid "The other player must be on the same fireteam for you to give admin rights to"
+msgstr ""
+
+msgid "You must be a fireteam admin to give admin rights to someone else"
+msgstr ""
+
+msgid "Invalid referee password!\n"
+msgstr ""
+
+msgid "Usage: ref [password]\n"
+msgstr ""
+
+msgid "\n^3Referee commands:^7\n"
+msgstr ""
+
+msgid "Usage: ^3\\ref <cmd> [params]\n\n"
+msgstr ""
+
+msgid "^5pause speclock warmup ^7[value]\n"
+msgstr ""
+
+msgid "Sorry, referee status disabled on this server.\n"
+msgstr ""
+
+msgid "Referee has ^3LOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have LOCKED teams\n"
+msgstr ""
+
+msgid "Referee has ^3UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have UNLOCKED teams\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "^3Referee ^1PAUSED^3 the match^3!\n"
+msgstr ""
+
+msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
+msgstr ""
+
+msgid "The match is already ^1PAUSED!\n"
+msgstr ""
+
+msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
+msgstr ""
+
+msgid "The match is already ^5UNPAUSED!\n"
+msgstr ""
+
+msgid "Bad client slot: "
+msgstr ""
+
+msgid "Client"
+msgstr ""
+
+msgid "is not active\n"
+msgstr ""
+
+msgid "You can only remove people in the game!\n"
+msgstr ""
+
+msgid "User "
+msgstr ""
+
+msgid "is not on the server\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^4Allies^7 team\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^1Axis^7 team\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "usage: ref warn <clientname> [reason].\n"
+msgstr ""
+
+msgid "Client not on server.\n"
+msgstr ""
+
+msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
+msgstr ""
+
+msgid "Cannot mute a referee.\n"
+msgstr ""
+
+msgid "^5You've been muted\n"
+msgstr ""
+
+msgid "Can't chat - you are muted\n"
+msgstr ""
+
+msgid "^5You've been unmuted\n"
+msgstr ""
+
+msgid "\n"
+"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+msgstr ""
+
+msgid "\n"
+"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
+"Snaps\n"
+msgstr ""
+
+msgid "^5\n"
+"Available Game Commands:\n"
+"------------------------\n"
+msgstr ""
+
+msgid "\n"
+"Type: ^3\\command_name ?^7 for more information\n"
+msgstr ""
+
+msgid "Spectators can't lock a team!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is now locked!\n"
+msgstr ""
+
+msgid "^3Your team is already locked!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is now unlocked!\n"
+msgstr ""
+
+msgid "^3Your team is already unlocked!\n"
+msgstr ""
+
+msgid "Spectators can't unlock a team!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is now locked!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is now unlocked!\n"
+msgstr ""
+
+msgid "Team commands not enabled on this server.\n"
+msgstr ""
+
+msgid "\n"
+"^3>>> Unknown vote command: ^7 \n"
+msgstr ""
+
+msgid "\n"
+"Valid ^3callvote^7 commands are:\n"
+"^3----------------------------\n"
+msgstr ""
+
+msgid "\n"
+"Usage: ^3\\callvote <command> <params>\n"
+"^7For current settings/help, use: ^3\\callvote <command> ?\n"
+"\n"
+msgstr ""
+
+msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
+msgstr ""
+
+msgid "Spectators can't ready a team!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is ready!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is ready!\n"
+msgstr ""
+
+msgid "A vote is already in progress.\n"
+msgstr ""
+
+msgid "called a vote.\n"
+msgstr ""
+
+msgid "^5Vote passed!\n"
+msgstr ""
+
+msgid "Spectator team\n"
+msgstr ""
+
+msgid "Allies team\n"
+msgstr ""
+
+msgid "Axis team\n"
+msgstr ""
+
+msgid "Sorry, "
+msgstr ""
+
+msgid "voting has been disabled"
+msgstr ""
+
+msgid "Not allowed to call a vote as a spectator.\n"
+msgstr ""
+
+msgid "called a vote."
+msgstr ""
+
+msgid "Vote cast.\n"
+msgstr ""
+
+msgid "'s KA-BAR"
+msgstr ""
+
+msgid "'s .45ACP 1911"
+msgstr ""
+
+msgid "'s Thompson"
+msgstr ""
+
+msgid "'s MP40"
+msgstr ""
+
+msgid "'s knife"
+msgstr ""
+
+msgid "'s Luger 9mm"
+msgstr ""
+
+msgid "'s Panzerfaust"
+msgstr ""
+
+msgid "'s Garand"
+msgstr ""
+
+msgid "'s Sten"
+msgstr ""
+
+msgid "'s FG42"
+msgstr ""
+
+msgid "'s K43"
+msgstr ""
+
+msgid "SOUND"
+msgstr ""
+
+msgid "AutoScreenshots format:"
+msgstr ""
+
+msgid "Reset Filters"
+msgstr ""
+
+msgid "Binoculars Zoom:"
+msgstr ""
+
+msgid "Slot 8 - Binoculars:"
+msgstr ""
+
+msgid "Remy 'Spyhawk' M. - Coding, mod development"
+msgstr ""
+
+msgid "died"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2250
+#, c-format
+msgid "Press %s to follow previous player"
+msgstr ""
+
+msgid "^9You are frozen - ^3/kill^9 is disabled."
+msgstr ""
+
+msgid "Objectives:"
+msgstr ""
+
+#: src/cgame/cg_info.c:1068
+msgid "OBJECTIVES"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3191
+#, c-format
+msgid "CAMPAIGN STATUS: %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3200
+#, c-format
+msgid "%i SECS TO NEXT MAP"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3130
+msgid "ALLIES WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3132
+msgid "AXIS WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3134
+msgid "IT'S A TIE!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3311
+#, c-format
+msgid "Campaign: %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2614
+msgid "Time:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2626
+msgid "Medals:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2645
+msgid "Rank:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2578
+msgid "ACC:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2765
+msgid "^5TO TEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2768
+msgid "^3TO FIRETEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2771
+msgid "^2TO GLOBAL"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1311
+#, c-format
+msgid "Last Played             : %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1318
+#, c-format
+msgid "Total Accumulated Votes : %d"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1312
+msgid "Never"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1312
+#, c-format
+msgid "%d maps ago"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:208
+#, c-format
+msgid "WAITING ON %i %s"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2005
+#, c-format
+msgid "Damage Given: %-6d  Team Damage Given: %d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2006
+#, c-format
+msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2008
+#, c-format
+msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
+msgstr ""
+
+msgid "'s Bazooka"
+msgstr ""
+
+msgid "'s Akimbo .45ACP 1911s"
+msgstr ""
+
+msgid "^7killed"
+msgstr ""
+
+msgid "^7killed ^1TEAMMATE^7"
+msgstr ""
+
+msgid "Server disconnected"
+msgstr ""
+
+#: src/ui/ui_main.c:5803
+#, c-format
+msgid "^3Filtered/Total: %i/%i"
+msgstr ""
+
+#: src/ui/ui_main.c:5807
+#, c-format
+msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
+msgstr ""
+
+#: src/ui/ui_main.c:5812
+msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
+msgstr ""
+
+msgid "Server connection timed out."
+msgstr ""
+
+msgid "Server disconnected for unknown reason"
+msgstr ""
+
+msgid "Server is full, redirect to: %s\n"
+msgstr ""
+
+msgid "Can't show Server Info (not found, or local server)\n"
+msgstr ""
+
+msgid "%d servers listed in browser with %d players.\n"
+msgstr ""
+
+msgid "%d servers not listed (filtered out by game browser settings)\n"
+msgstr ""
+
+msgid "Can't find campaign '%s'\n"
+msgstr ""
+
+msgid "Corrupted campaign '%s'\n"
+msgstr ""
+
+msgid "%i campaigns found:\n"
+msgstr ""
+
+msgid "No campaigns found.\n"
+msgstr ""
+
+msgid "Show Descriptive Text:"
+msgstr ""
+
+msgid "'s Akimbo Luger 9mms"
+msgstr ""
+
+msgid "Cheats are not enabled on this server.\n"
+msgstr ""
+
+msgid "team: class is not available\n"
+msgstr ""
+
+msgid "^1Soldier^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Medic^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Engineer^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Field Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Covert Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "You must be alive to use this command.\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "Can't follow a player on an enemy team!\n"
+msgstr ""
+
+msgid "Can't follow while not in limbo if on a team!\n"
+msgstr ""
+
+msgid "Partial Name Matches more than 1 Player.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
+msgstr ""
+
+msgid "^1Axis^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
+msgstr ""
+
+msgid "^4Allies^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Server quit\n"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2766
+#, c-format
+msgid "The %s team is speclocked!"
+msgstr ""
+
+msgid "You cannot switch during a match, please wait until the round ends."
+msgstr ""
+
+msgid ""
+"Many thanks to Splash Damage for their release of the source code, ioWolfET "
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
+"their inspirations."
+msgstr ""
+
+msgid "Show Ping:"
+msgstr ""

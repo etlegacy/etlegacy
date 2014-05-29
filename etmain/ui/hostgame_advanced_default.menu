@@ -55,7 +55,6 @@
 							clearcvar rconPassword ;				\
 							setcvar vote_limit 5 ;					\
 							setcvar vote_percent 50 ;				\
-							setcvar vote_allow_comp 1 ;				\
 							setcvar vote_allow_gametype 1 ;			\
 							setcvar vote_allow_kick 1 ;				\
 							setcvar vote_allow_map 1 ;				\
@@ -63,7 +62,6 @@
 							setcvar vote_allow_mutespecs 1 ;		\
 							setcvar vote_allow_nextmap 1 ;			\
 							setcvar vote_allow_balancedteams 1 ;	\
-							setcvar vote_allow_pub 1 ;				\
 							setcvar vote_allow_referee 0 ;			\
 							setcvar vote_allow_shuffleteamsxp 1 ;	\
 							setcvar vote_allow_swapteams 1 ;		\

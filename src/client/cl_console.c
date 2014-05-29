@@ -462,11 +462,8 @@ void CL_ConsolePrint(char *txt)
 
 	if (!con.initialized)
 	{
-		con.color[0]             =
-		    con.color[1]         =
-		        con.color[2]     =
-		            con.color[3] = 1.0f;
-		con.linewidth            = -1;
+		con.color[0]  = con.color[1] = con.color[2] = con.color[3] = 1.0f;
+		con.linewidth = -1;
 		Con_CheckResize();
 		con.initialized = qtrue;
 	}
@@ -694,7 +691,7 @@ void Con_DrawNotify(void)
 		}
 
 		Field_BigDraw(&chatField, skip * BIGCHAR_WIDTH, v,
-		              SCREEN_WIDTH - (skip + 1) * BIGCHAR_WIDTH, qtrue, qtrue);
+		              SCREEN_WIDTH - (skip + 1) * BIGCHAR_WIDTH, qtrue, qfalse);
 
 		v += BIGCHAR_HEIGHT;
 	}

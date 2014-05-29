@@ -2210,7 +2210,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 	int                lodIndex;
 	IBO_t              *lodIBO;
 
-	GLimp_LogComment("--- Tess_SurfaceVBOMDMMesh ---\n");
+	Ren_LogComment("--- Tess_SurfaceVBOMDMMesh ---\n");
 
 	if (!surface->vbo || !surface->ibo)
 	{

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -861,10 +861,10 @@ typedef struct limbo_cam_s
 #define MAX_LIMBO_CAMS 32
 
 // this structure is cleared as each map is entered
-#define MAX_SPAWN_VARS          64
-#define MAX_SPAWN_VARS_CHARS    2048
-#define VOTE_MAXSTRING          256     // Same value as MAX_STRING_TOKENS
-#define MAX_SCRIPT_ACCUM_BUFFERS    8
+#define MAX_SPAWN_VARS           64
+#define MAX_SPAWN_VARS_CHARS     2048
+#define VOTE_MAXSTRING           256     // Same value as MAX_STRING_TOKENS
+#define MAX_SCRIPT_ACCUM_BUFFERS 10      // increased from 8 to 10 for compatability with maps that relied on it before Project: Bug Fix #055
 
 typedef struct voteInfo_s
 {
@@ -876,6 +876,8 @@ typedef struct voteInfo_s
 	int numVotingTeamClients[2];
 	int (*vote_fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 	char vote_value[VOTE_MAXSTRING];        // Desired vote item setting.
+	int voteCaller;         // id of the vote caller
+	int voteTeam;           // id of the vote caller's team
 } voteInfo_t;
 
 typedef struct cfgCvar_s
@@ -1282,7 +1284,6 @@ gentity_t *fire_speargun(gentity_t *self, vec3_t start, vec3_t dir);
 
 #define Fire_Lead(ent, activator, spread, damage, muzzle, forward, right, up) Fire_Lead_Ext(ent, activator, spread, damage, muzzle, forward, right, up, MOD_MACHINEGUN)
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, int mod);
-void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage);
 qboolean visible(gentity_t *self, gentity_t *other);
 
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir);
@@ -1356,10 +1357,8 @@ void SetWolfSpawnWeapons(gclient_t *client);
 void limbo(gentity_t *ent, qboolean makeCorpse);
 void reinforce(gentity_t *ent);
 
-#ifdef FEATURE_LUA
-// *LUA* g_sha1.c
+// *LUA* & map configs g_sha1.c
 char *G_SHA1(char *string);
-#endif
 
 #define MAX_COUNTRY_NUM 255
 
@@ -1388,7 +1387,7 @@ void AddMaxLivesBan(const char *str);
 void ClearMaxLivesBans(void);
 void AddIPBan(const char *str);
 
-void Svcmd_ShuffleTeams_f(void);
+void Svcmd_ShuffleTeams_f(qboolean restart);
 
 // g_weapon.c
 void FireWeapon(gentity_t *ent);
@@ -1646,6 +1645,7 @@ extern vmCvar_t vote_allow_mutespecs;
 extern vmCvar_t vote_allow_nextmap;
 extern vmCvar_t vote_allow_referee;
 extern vmCvar_t vote_allow_shuffleteamsxp;
+extern vmCvar_t vote_allow_shuffleteamsxp_norestart;
 extern vmCvar_t vote_allow_swapteams;
 extern vmCvar_t vote_allow_friendlyfire;
 extern vmCvar_t vote_allow_timelimit;
@@ -1655,6 +1655,10 @@ extern vmCvar_t vote_allow_balancedteams;
 extern vmCvar_t vote_allow_muting;
 extern vmCvar_t vote_limit;
 extern vmCvar_t vote_percent;
+extern vmCvar_t vote_allow_surrender;
+extern vmCvar_t vote_allow_restartcampaign;
+extern vmCvar_t vote_allow_nextcampaign;
+extern vmCvar_t vote_allow_poll;
 
 extern vmCvar_t g_debugSkills;
 extern vmCvar_t g_heavyWeaponRestriction;
@@ -1731,6 +1735,8 @@ extern vmCvar_t g_customConfig;
 extern vmCvar_t g_moverScale;
 
 extern vmCvar_t g_debugHitboxes;
+
+extern vmCvar_t g_voting; // see VOTEF_* defines
 
 typedef struct GeoIPTag
 {
@@ -1830,7 +1836,7 @@ void G_ResetMarkers(gentity_t *ent);
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 void G_HistoricalTraceBegin(gentity_t *ent);
 void G_HistoricalTraceEnd(gentity_t *ent);
-void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses);
 
 #define BODY_VALUE(ENT) ENT->watertype
 #define BODY_TEAM(ENT) ENT->s.modelindex
@@ -1940,7 +1946,6 @@ qboolean G_SweepForLandmines(vec3_t origin, float radius, int team);
 
 void G_AddClientToFireteam(int entityNum, int leaderNum);
 void G_InviteToFireTeam(int entityNum, int otherEntityNum);
-void GetBotAmmo(int clientNum, int *weapon, int *ammo, int *ammoclip);
 void G_UpdateFireteamConfigString(fireteamData_t *ft);
 void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print);
 
@@ -2030,6 +2035,7 @@ char *G_createStats(gentity_t *refEnt);
 void G_deleteStats(int nClient);
 qboolean G_desiredFollow(gentity_t *ent, int nTeam);
 void G_globalSound(char *sound);
+void G_globalSoundEnum(int sound);
 void G_initMatch(void);
 void G_loadMatchGame(void);
 void G_matchInfoDump(unsigned int dwDumpType);
@@ -2115,7 +2121,6 @@ void G_voteFlags(void);
 void G_voteHelp(gentity_t *ent, qboolean fShowVote);
 void G_playersMessage(gentity_t *ent);
 // Actual voting commands
-int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Gametype_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Mute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
@@ -2126,9 +2131,9 @@ int G_MapRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_ShuffleTeams_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
@@ -2137,6 +2142,10 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_AntiLag_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_Surrender_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_RestartCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_NextCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_Poll_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 
 void G_LinkDebris(void);
@@ -2170,7 +2179,7 @@ qboolean G_EmplacedGunIsMountable(gentity_t *ent, gentity_t *other);
 void G_CheckForCursorHints(gentity_t *ent);
 void G_CalcClientAccuracies(void);
 void G_BuildEndgameStats(void);
-int G_TeamCount(gentity_t *ent, weapon_t weap);
+int G_TeamCount(gentity_t *ent, int weap);
 
 qboolean G_IsFireteamLeader(int entityNum, fireteamData_t **teamNum);
 fireteamData_t *G_FindFreePublicFireteam(team_t team);
@@ -2224,6 +2233,19 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MOVER_AXIS                      64
 #define MOVER_MOUNTEDGUN                128
 
+// func trigger_multiple
+#define MULTI_TRIGGER_AXIS_ONLY         1
+#define MULTI_TRIGGER_ALLIED_ONLY       2
+#define MULTI_TRIGGER_NOBOT             4
+#define MULTI_TRIGGER_BOTONLY           8
+#define MULTI_TRIGGER_SOLDIERONLY       16
+#define MULTI_TRIGGER_FIELDOPSONLY      32
+#define MULTI_TRIGGER_MEDICONLY         64
+#define MULTI_TRIGGER_ENGINEERONLY      128
+#define MULTI_TRIGGER_COVERTOPSONLY     256
+#define MULTI_TRIGGER_DISGUISEDSONLY    512  // legacy only
+#define MULTI_TRIGGER_OBJECTIVEONLY     1024 // legacy only
+
 // Spawnflags end
 
 // MAPVOTE - used when mapvoting is enabled
@@ -2269,5 +2291,10 @@ void G_mapvoteinfo_read(void);
 
 // g_misc flags
 #define G_MISC_SHOVE_NOZ 1
+
+// g_voting flags
+#define VOTEF_USE_TOTAL_VOTERS      1   // use total voters instead of total players to decide if a vote passes
+#define VOTEF_NO_POPULIST_PENALTY   2   // successful votes do not count against vote_limit
+#define VOTEF_DISP_CALLER           4   // append "(called by name)" in vote string
 
 #endif

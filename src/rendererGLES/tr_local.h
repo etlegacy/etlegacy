@@ -1094,6 +1094,8 @@ typedef struct
 
 #define FOG_TABLE_SIZE      256
 
+#define DEFAULT_FOG_EXP_DENSITY         0.5f
+
 #define FUNCTABLE_SIZE      4096    //% 1024
 #define FUNCTABLE_SIZE2     12      //% 10
 #define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)

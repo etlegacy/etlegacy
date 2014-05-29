@@ -76,6 +76,7 @@
 #include FT_SYSTEM_H
 #include FT_IMAGE_H
 #include FT_OUTLINE_H
+#include FT_LCD_FILTER_H
 
 #define FONT_SIZE 256
 #define DPI 72
@@ -195,6 +196,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 	static glyphInfo_t glyph;
 	unsigned char      *src, *dst;
 	FT_Bitmap          *bitmap = NULL;
+	FT_Int32           flags   = FT_LOAD_DEFAULT;
 
 	Com_Memset(&glyph, 0, sizeof(glyphInfo_t));
 	// make sure everything is here
@@ -209,7 +211,13 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 			return &glyph; // nothing to render
 		}
 
-		FT_Load_Glyph(face, index, FT_LOAD_DEFAULT);
+		flags |= FT_LOAD_FORCE_AUTOHINT;
+
+		//Test filtering
+		FT_Library_SetLcdFilter(ftLibrary, FT_LCD_FILTER_LIGHT);
+		flags |= FT_LOAD_TARGET_LCD;
+
+		FT_Load_Glyph(face, index, flags);
 		bitmap = R_RenderGlyph(face->glyph, &glyph);
 		if (!bitmap)
 		{
@@ -330,6 +338,7 @@ static byte *fdFile;
 int readInt(void)
 {
 	int i = fdFile[fdOffset] + (fdFile[fdOffset + 1] << 8) + (fdFile[fdOffset + 2] << 16) + (fdFile[fdOffset + 3] << 24);
+
 	fdOffset += 4;
 	return i;
 }
@@ -389,10 +398,9 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 			fdOffset += sizeof(font->glyphs[i].shaderName);
 		}
 		font->glyphScale = readFloat();
-		Com_Memcpy(font->name, &fdFile[fdOffset], MAX_QPATH);
 
-		//		Com_Memcpy(font, faceData, sizeof(fontInfo_t));
-		Q_strncpyz(font->name, datName, sizeof(font->name));
+		Com_Memcpy(font->datName, datName, sizeof(font->datName));
+
 		for (i = GLYPH_START; i < GLYPH_END; i++)
 		{
 			font->glyphs[i].glyph = RE_RegisterShaderNoMip(font->glyphs[i].shaderName);
@@ -596,6 +604,9 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	registeredFont[registeredFontCount].glyphScale = glyphScale;
 	font->glyphScale                               = glyphScale;
+
+	Com_Memcpy(&font->datName, va("fonts/%s_%i.dat", fontName, pointSize), sizeof(font->datName));
+
 	Com_Memcpy(&registeredFont[registeredFontCount++], font, sizeof(fontInfo_t));
 
 	if (r_saveFontData->integer)
@@ -618,7 +629,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 	Com_sprintf(datName, sizeof(datName), "fonts/%s_%i.dat", fontName, pointSize);
 	for (i = 0; i < registeredFontCount; i++)
 	{
-		if (Q_stricmp(datName, registeredFont[i].name) == 0)
+		if (Q_stricmp(datName, registeredFont[i].datName) == 0)
 		{
 			Com_Memcpy(font, &registeredFont[i], sizeof(fontInfo_t));
 			return qtrue;
@@ -627,7 +638,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 	if (registeredFontCount >= MAX_FONTS)
 	{
-		ri.Printf(PRINT_WARNING, "RE_RegisterFont: Too many fonts registered already.\n");
+		ri.Printf(PRINT_WARNING, "R_GetFont: Too many fonts registered already.\n");
 		return qfalse;
 	}
 
@@ -642,6 +653,8 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 	{
 		return qtrue;
 	}
+
+	ri.Printf(PRINT_WARNING, "R_GetFont: no font available.\n");
 
 	return qfalse;
 }

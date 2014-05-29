@@ -334,7 +334,6 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	byte     *buf_p;
 	byte     *buffer;
 	float    *floatbuf;
-	int      len;
 	char     *token;
 	int      w, h, c;
 	qboolean formatFound;
@@ -365,7 +364,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	*pic = NULL;
 
 	// load the file
-	len = ri.FS_ReadFile((char *)name, (void **)&buffer);
+	ri.FS_ReadFile((char *)name, (void **)&buffer);
 	if (!buffer)
 	{
 		ri.Error(ERR_DROP, "LoadRGBE: '%s' not found\n", name);
@@ -479,11 +478,13 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 
 	if (!formatFound)
 	{
+		ri.FS_FreeFile(buffer);
 		ri.Error(ERR_DROP, "LoadRGBE: %s has no format\n", name);
 	}
 
 	if (!w || !h)
 	{
+		ri.FS_FreeFile(buffer);
 		ri.Error(ERR_DROP, "LoadRGBE: %s has an invalid image size\n", name);
 	}
 
@@ -739,7 +740,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 				return;
 			}
 
-			ri.Printf(PRINT_ALL, "...loading %i HDR lightmaps\n", numLightmaps);
+			ri.Printf(PRINT_DEVELOPER, "...loading %i HDR lightmaps\n", numLightmaps);
 
 			if (r_hdrRendering->integer && r_hdrLightmap->integer && glConfig2.framebufferObjectAvailable &&
 			    glConfig2.framebufferBlitAvailable && glConfig2.textureFloatAvailable && glConfig2.textureHalfFloatAvailable)
@@ -749,7 +750,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 				for (i = 0; i < numLightmaps; i++)
 				{
-					ri.Printf(PRINT_ALL, "...loading external lightmap as RGB 16 bit half HDR '%s/%s'\n", mapName, lightmapFiles[i]);
+					ri.Printf(PRINT_DEVELOPER, "...loading external lightmap as RGB 16 bit half HDR '%s/%s'\n", mapName, lightmapFiles[i]);
 
 					width = height = 0;
 					//LoadRGBEToFloats(va("%s/%s", mapName, lightmapFiles[i]), &hdrImage, &width, &height, qtrue, qfalse, qtrue);
@@ -820,7 +821,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 				for (i = 0; i < numLightmaps; i++)
 				{
-					ri.Printf(PRINT_ALL, "...loading external lightmap as RGB8 LDR '%s/%s'\n", mapName, lightmapFiles[i]);
+					ri.Printf(PRINT_DEVELOPER, "...loading external lightmap as RGB8 LDR '%s/%s'\n", mapName, lightmapFiles[i]);
 
 					width = height = 0;
 					LoadRGBEToBytes(va("%s/%s", mapName, lightmapFiles[i]), &ldrImage, &width, &height);
@@ -852,7 +853,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 				qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
 
-				ri.Printf(PRINT_ALL, "...loading %i deluxemaps\n", numLightmaps);
+				ri.Printf(PRINT_DEVELOPER, "...loading %i deluxemaps\n", numLightmaps);
 
 				for (i = 0; i < numLightmaps; i++)
 				{
@@ -880,7 +881,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 			qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
 
-			ri.Printf(PRINT_ALL, "...loading %i lightmaps\n", numLightmaps);
+			ri.Printf(PRINT_DEVELOPER, "...loading %i lightmaps\n", numLightmaps);
 
 			// we are about to upload textures
 			R_SyncRenderThread();
@@ -926,7 +927,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 		// create all the lightmaps
 		tr.numLightmaps = len / (LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3);
 
-		ri.Printf(PRINT_ALL, "...loading %i lightmaps\n", tr.numLightmaps);
+		ri.Printf(PRINT_DEVELOPER, "...loading %i lightmaps\n", tr.numLightmaps);
 
 		for (i = 0; i < tr.numLightmaps; i++)
 		{
@@ -995,7 +996,7 @@ static void R_LoadVisibility(lump_t *l)
 	int  len;
 	byte *buf;
 
-	ri.Printf(PRINT_ALL, "...loading visibility\n");
+	ri.Printf(PRINT_DEVELOPER, "...loading visibility\n");
 
 	len               = (s_worldData.numClusters + 63) & ~63;
 	s_worldData.novis = (byte *)ri.Hunk_Alloc(len, h_low);
@@ -1206,7 +1207,6 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 		}
 	}
 
-	R_CalcSurfaceTriangleNeighbors(numTriangles, cv->triangles);
 	R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
 	// take the plane information from the lightmap vector
@@ -1501,7 +1501,6 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		AddPointToBounds(cv->verts[tri->indexes[2]].xyz, cv->bounds[0], cv->bounds[1]);
 	}
 
-	R_CalcSurfaceTriangleNeighbors(numTriangles, cv->triangles);
 	R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
 	// Tr3B - calc tangent spaces
@@ -2723,7 +2722,7 @@ void R_StitchAllPatches(void)
 	int           i, stitched, numstitches;
 	srfGridMesh_t *grid1;
 
-	ri.Printf(PRINT_ALL, "...stitching LoD cracks\n");
+	ri.Printf(PRINT_DEVELOPER, "...stitching LoD cracks\n");
 
 	numstitches = 0;
 	do
@@ -2751,7 +2750,7 @@ void R_StitchAllPatches(void)
 		}
 	}
 	while (stitched);
-	ri.Printf(PRINT_ALL, "stitched %d LoD cracks\n", numstitches);
+	ri.Printf(PRINT_DEVELOPER, "stitched %d LoD cracks\n", numstitches);
 }
 
 /*
@@ -2867,1078 +2866,6 @@ static void CopyVert(const srfVert_t *in, srfVert_t *out)
 }
 
 #define EQUAL_EPSILON   0.001
-/*
-static qboolean CompareWorldVert(const srfVert_t * v1, const srfVert_t * v2)
-{
-    int             i;
-
-    for(i = 0; i < 3; i++)
-    {
-        //if(fabs(v1->xyz[i] - v2->xyz[i]) > EQUAL_EPSILON)
-        if(v1->xyz[i] != v2->xyz[i])
-            return qfalse;
-    }
-
-    for(i = 0; i < 2; i++)
-    {
-        if(v1->st[i] != v2->st[i])
-            return qfalse;
-    }
-
-    if(r_precomputedLighting->integer)
-    {
-        for(i = 0; i < 2; i++)
-        {
-            if(v1->lightmap[i] != v2->lightmap[i])
-                return qfalse;
-        }
-    }
-
-    for(i = 0; i < 4; i++)
-    {
-        if(v1->lightColor[i] != v2->lightColor[i])
-            return qfalse;
-    }
-
-    return qtrue;
-}
-
-static qboolean CompareLightVert(const srfVert_t * v1, const srfVert_t * v2)
-{
-    int             i;
-
-    for(i = 0; i < 3; i++)
-    {
-        //if(fabs(v1->xyz[i] - v2->xyz[i]) > EQUAL_EPSILON)
-        if(v1->xyz[i] != v2->xyz[i])
-            return qfalse;
-    }
-
-    for(i = 0; i < 2; i++)
-    {
-        if(v1->st[i] != v2->st[i])
-            return qfalse;
-    }
-
-    for(i = 0; i < 4; i++)
-    {
-        if(v1->paintColor[i] != v2->paintColor[i])
-            return qfalse;
-    }
-
-    return qtrue;
-}
-
-static qboolean CompareShadowVertAlphaTest(const srfVert_t * v1, const srfVert_t * v2)
-{
-    int             i;
-
-    for(i = 0; i < 3; i++)
-    {
-        //if(fabs(v1->xyz[i] - v2->xyz[i]) > EQUAL_EPSILON)
-        if(v1->xyz[i] != v2->xyz[i])
-            return qfalse;
-    }
-
-    for(i = 0; i < 2; i++)
-    {
-        if(v1->st[i] != v2->st[i])
-            return qfalse;
-    }
-
-    return qtrue;
-}
-
-static qboolean CompareShadowVert(const srfVert_t * v1, const srfVert_t * v2)
-{
-    int             i;
-
-    for(i = 0; i < 3; i++)
-    {
-        //if(fabs(v1->xyz[i] - v2->xyz[i]) > EQUAL_EPSILON)
-        if(v1->xyz[i] != v2->xyz[i])
-            return qfalse;
-    }
-
-    return qtrue;
-}
-
-static qboolean CompareShadowVolumeVert(const srfVert_t *v1, const srfVert_t *v2)
-{
-    int i;
-
-    for (i = 0; i < 3; i++)
-    {
-        // don't consider epsilon to avoid shadow volume z-fighting
-        if (v1->xyz[i] != v2->xyz[i])
-        {
-            return qfalse;
-        }
-    }
-
-    return qtrue;
-}
-
-static qboolean CompareWorldVertSmoothNormal(const srfVert_t * v1, const srfVert_t * v2)
-{
-    int             i;
-
-    for(i = 0; i < 3; i++)
-    {
-        if(fabs(v1->xyz[i] - v2->xyz[i]) > EQUAL_EPSILON)
-            return qfalse;
-    }
-
-    return qtrue;
-}
-*/
-
-/* unused
-remove duplicated / redundant vertices from a batch of vertices
-return the new number of vertices
-static int OptimizeVertices(int numVerts, srfVert_t *verts, int numTriangles, srfTriangle_t *triangles, srfVert_t *outVerts,
-                            qboolean (*CompareVert) (const srfVert_t *v1, const srfVert_t *v2))
-{
-    srfTriangle_t *tri;
-    int           i, j, k, l;
-    static int redundantIndex[MAX_MAP_DRAW_VERTS];
-    int        numOutVerts;
-
-    if (r_vboOptimizeVertices->integer)
-    {
-        if (numVerts >= MAX_MAP_DRAW_VERTS)
-        {
-            ri.Printf(PRINT_WARNING, "OptimizeVertices: MAX_MAP_DRAW_VERTS reached\n");
-            for (j = 0; j < numVerts; j++)
-            {
-                CopyVert(&verts[j], &outVerts[j]);
-            }
-            return numVerts;
-        }
-
-        memset(redundantIndex, -1, sizeof(redundantIndex));
-
-        c_redundantVertexes = 0;
-        numOutVerts         = 0;
-        for (i = 0; i < numVerts; i++)
-        {
-#if DEBUG_OPTIMIZEVERTICES
-            verts[i].id = i;
-#endif
-            if (redundantIndex[i] == -1)
-            {
-                for (j = i + 1; j < numVerts; j++)
-                {
-                    if (redundantIndex[i] != -1)
-                    {
-                        continue;
-                    }
-
-                    if (CompareVert(&verts[i], &verts[j]))
-                    {
-                        // mark vertex as redundant
-                        redundantIndex[j] = i;  //numOutVerts;
-                    }
-                }
-            }
-        }
-
-#if DEBUG_OPTIMIZEVERTICES
-        ri.Printf(PRINT_ALL, "input triangles: ");
-        for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-        {
-            ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id, verts[tri->indexes[2]].id);
-        }
-        ri.Printf(PRINT_ALL, "\n");
-#endif
-
-#if DEBUG_OPTIMIZEVERTICES
-        ri.Printf(PRINT_ALL, "input vertices: ");
-        for (i = 0; i < numVerts; i++)
-        {
-            if (redundantIndex[i] != -1)
-            {
-                ri.Printf(PRINT_ALL, "(%i,%i),", i, redundantIndex[i]);
-            }
-            else
-            {
-                ri.Printf(PRINT_ALL, "(%i,-),", i);
-            }
-        }
-        ri.Printf(PRINT_ALL, "\n");
-#endif
-
-        for (i = 0; i < numVerts; i++)
-        {
-            if (redundantIndex[i] != -1)
-            {
-                c_redundantVertexes++;
-            }
-            else
-            {
-                CopyVert(&verts[i], &outVerts[numOutVerts]);
-                numOutVerts++;
-            }
-        }
-
-#if DEBUG_OPTIMIZEVERTICES
-        ri.Printf(PRINT_ALL, "output vertices: ");
-        for (i = 0; i < numOutVerts; i++)
-        {
-            ri.Printf(PRINT_ALL, "(%i),", outVerts[i].id);
-        }
-        ri.Printf(PRINT_ALL, "\n");
-#endif
-
-        for (i = 0; i < numVerts; )
-        {
-            qboolean noIncrement = qfalse;
-
-            if (redundantIndex[i] != -1)
-            {
-#if DEBUG_OPTIMIZEVERTICES
-                ri.Printf(PRINT_ALL, "-------------------------------------------------\n");
-                ri.Printf(PRINT_ALL, "changing triangles for redundant vertex (%i->%i):\n", i, redundantIndex[i]);
-#endif
-
-                // kill redundant vert
-                for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-                {
-                    for (l = 0; l < 3; l++)
-                    {
-                        if (tri->indexes[l] == i)    //redundantIndex[i])
-                        {
-                            // replace duplicated index j with the original vertex index i
-                            tri->indexes[l] = redundantIndex[i];    //numOutVerts;
-
-#if DEBUG_OPTIMIZEVERTICES
-                            ri.Printf(PRINT_ALL, "mapTriangleIndex<%i,%i>(%i->%i)\n", k, l, i, redundantIndex[i]);
-#endif
-                        }
-#if 1
-                        else if (tri->indexes[l] > i)    // && redundantIndex[tri->indexes[l]] == -1)
-                        {
-                            tri->indexes[l]--;
-#if DEBUG_OPTIMIZEVERTICES
-                            ri.Printf(PRINT_ALL, "decTriangleIndex<%i,%i>(%i->%i)\n", k, l, tri->indexes[l] + 1, tri->indexes[l]);
-#endif
-
-                            if (tri->indexes[l] < 0)
-                            {
-                                ri.Printf(PRINT_WARNING, "OptimizeVertices: triangle index < 0\n");
-                                for (j = 0; j < numVerts; j++)
-                                {
-                                    CopyVert(&verts[j], &outVerts[j]);
-                                }
-                                return numVerts;
-                            }
-                        }
-#endif
-                    }
-                }
-
-#if DEBUG_OPTIMIZEVERTICES
-                ri.Printf(PRINT_ALL, "pending redundant vertices: ");
-                for (j = i + 1; j < numVerts; j++)
-                {
-                    if (redundantIndex[j] != -1)
-                    {
-                        ri.Printf(PRINT_ALL, "(%i,%i),", j, redundantIndex[j]);
-                    }
-                    else
-                    {
-                        //ri.Printf(PRINT_ALL, "(%i,-),", j);
-                    }
-                }
-                ri.Printf(PRINT_ALL, "\n");
-#endif
-
-
-                for (j = i + 1; j < numVerts; j++)
-                {
-                    if (redundantIndex[j] != -1) //> i)//== tri->indexes[l])
-                    {
-#if DEBUG_OPTIMIZEVERTICES
-                        ri.Printf(PRINT_ALL, "updateRedundantIndex(%i->%i) to (%i->%i)\n", j, redundantIndex[j], j - 1,
-                                  redundantIndex[j]);
-#endif
-
-                        if (redundantIndex[j] <= i)
-                        {
-                            redundantIndex[j - 1] = redundantIndex[j];
-                            redundantIndex[j]     = -1;
-                        }
-                        else
-                        {
-                            redundantIndex[j - 1] = redundantIndex[j] - 1;
-                            redundantIndex[j]     = -1;
-                        }
-
-                        if ((j - 1) == i)
-                        {
-                            noIncrement = qtrue;
-                        }
-                    }
-                }
-
-#if DEBUG_OPTIMIZEVERTICES
-                ri.Printf(PRINT_ALL, "current triangles: ");
-                for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-                {
-                    ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id,
-                              verts[tri->indexes[2]].id);
-                }
-                ri.Printf(PRINT_ALL, "\n");
-#endif
-            }
-
-            if (!noIncrement)
-            {
-                i++;
-            }
-        }
-
-#if DEBUG_OPTIMIZEVERTICES
-        ri.Printf(PRINT_ALL, "output triangles: ");
-        for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-        {
-            ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id, verts[tri->indexes[2]].id);
-        }
-        ri.Printf(PRINT_ALL, "\n");
-#endif
-
-        if (c_redundantVertexes)
-        {
-            // *numVerts -= c_redundantVertexes;
-
-            //ri.Printf(PRINT_ALL, "removed %i redundant vertices\n", c_redundantVertexes);
-        }
-
-        return numOutVerts;
-    }
-    else
-    {
-        for (j = 0; j < numVerts; j++)
-        {
-            CopyVert(&verts[j], &outVerts[j]);
-        }
-        return numVerts;
-    }
-}
-*/
-
-/*static void OptimizeTriangles(int numVerts, srfVert_t * verts, int numTriangles, srfTriangle_t * triangles,
-                              qboolean(*compareVert) (const srfVert_t * v1, const srfVert_t * v2))
-{
-#if 1
-    srfTriangle_t  *tri;
-    int             i, j, k, l;
-    static int      redundantIndex[MAX_MAP_DRAW_VERTS];
-    static          qboolean(*compareFunction) (const srfVert_t * v1, const srfVert_t * v2) = NULL;
-    //static int      minVertOld = 9999999, maxVertOld = 0;
-    int             minVert, maxVert;
-
-    if(numVerts >= MAX_MAP_DRAW_VERTS)
-    {
-        ri.Printf(PRINT_WARNING, "OptimizeTriangles: MAX_MAP_DRAW_VERTS reached\n");
-        return;
-    }
-
-    // find vertex bounds
-    maxVert = 0;
-    minVert = numVerts - 1;
-    for(k = 0, tri = triangles; k < numTriangles; k++, tri++)
-    {
-        for(l = 0; l < 3; l++)
-        {
-            if(tri->indexes[l] > maxVert)
-                maxVert = tri->indexes[l];
-
-            if(tri->indexes[l] < minVert)
-                minVert = tri->indexes[l];
-        }
-    }
-
-    ri.Printf(PRINT_ALL, "OptimizeTriangles: minVert %i maxVert %i\n", minVert, maxVert);
-
-//  if(compareFunction != compareVert || minVert != minVertOld || maxVert != maxVertOld)
-    {
-        compareFunction = compareVert;
-
-        memset(redundantIndex, -1, sizeof(redundantIndex));
-
-        for(i = minVert; i <= maxVert; i++)
-        {
-            if(redundantIndex[i] == -1)
-            {
-                for(j = i + 1; j <= maxVert; j++)
-                {
-                    if(redundantIndex[i] != -1)
-                        continue;
-
-                    if(compareVert(&verts[i], &verts[j]))
-                    {
-                        // mark vertex as redundant
-                        redundantIndex[j] = i;
-                    }
-                }
-            }
-        }
-    }
-
-    c_redundantVertexes = 0;
-    for(i = minVert; i <= maxVert; i++)
-    {
-        if(redundantIndex[i] != -1)
-        {
-            //ri.Printf(PRINT_ALL, "changing triangles for redundant vertex (%i->%i):\n", i, redundantIndex[i]);
-
-            // kill redundant vert
-            for(k = 0, tri = triangles; k < numTriangles; k++, tri++)
-            {
-                for(l = 0; l < 3; l++)
-                {
-                    if(tri->indexes[l] == i)	//redundantIndex[i])
-                    {
-                        // replace duplicated index j with the original vertex index i
-                        tri->indexes[l] = redundantIndex[i];
-
-                        //ri.Printf(PRINT_ALL, "mapTriangleIndex<%i,%i>(%i->%i)\n", k, l, i, redundantIndex[i]);
-                    }
-                }
-            }
-
-            c_redundantVertexes++;
-        }
-    }
-
-#if 0
-    ri.Printf(PRINT_ALL, "vertices: ");
-    for(i = 0; i < numVerts; i++)
-    {
-        if(redundantIndex[i] != -1)
-        {
-            ri.Printf(PRINT_ALL, "(%i,%i),", i, redundantIndex[i]);
-        }
-        else
-        {
-            ri.Printf(PRINT_ALL, "(%i,-),", i);
-        }
-    }
-    ri.Printf(PRINT_ALL, "\n");
-
-    ri.Printf(PRINT_ALL, "triangles: ");
-    for(k = 0, tri = triangles; k < numTriangles; k++, tri++)
-    {
-        ri.Printf(PRINT_ALL, "(%i,%i,%i),", tri->indexes[0], tri->indexes[1], tri->indexes[2]);
-    }
-    ri.Printf(PRINT_ALL, "\n");
-#endif
-
-    if(c_redundantVertexes)
-    {
-        // *numVerts -= c_redundantVertexes;
-
-        //ri.Printf(PRINT_ALL, "removed %i redundant vertices\n", c_redundantVertexes);
-    }
-#endif
-}
-
-static void OptimizeTrianglesLite(const int *redundantIndex, int numTriangles, srfTriangle_t * triangles)
-{
-    srfTriangle_t  *tri;
-    int             k, l;
-
-    c_redundantVertexes = 0;
-    for(k = 0, tri = triangles; k < numTriangles; k++, tri++)
-    {
-        for(l = 0; l < 3; l++)
-        {
-            if(redundantIndex[tri->indexes[l]] != -1)
-            {
-                // replace duplicated index j with the original vertex index i
-                tri->indexes[l] = redundantIndex[tri->indexes[l]];
-
-                //ri.Printf(PRINT_ALL, "mapTriangleIndex<%i,%i>(%i->%i)\n", k, l, tri->indexes[l], redundantIndex[tri->indexes[l]]);
-
-                c_redundantVertexes++;
-            }
-        }
-    }
-}
-
-static void BuildRedundantIndices(int numVerts, const srfVert_t * verts, int *redundantIndex,
-                                  qboolean(*CompareVert) (const srfVert_t * v1, const srfVert_t * v2))
-{
-    int             i, j;
-
-    memset(redundantIndex, -1, numVerts * sizeof(int));
-
-    for(i = 0; i < numVerts; i++)
-    {
-        if(redundantIndex[i] == -1)
-        {
-            for(j = i + 1; j < numVerts; j++)
-            {
-                if(redundantIndex[j] != -1)
-                    continue;
-
-                if(CompareVert(&verts[i], &verts[j]))
-                {
-                    // mark vertex as redundant
-                    redundantIndex[j] = i;
-                }
-            }
-        }
-    }
-}*/
-
-/*
-static void R_LoadAreaPortals(const char *bspName)
-{
-    int             i, j, k;
-    char            fileName[MAX_QPATH];
-    char           *token;
-    char           *buf_p;
-    byte           *buffer;
-    int             bufferLen;
-    const char     *version = "AREAPRT1";
-    int             numAreas;
-    int             numAreaPortals;
-    int             numPoints;
-
-    bspAreaPortal_t *ap;
-
-    Q_strncpyz(fileName, bspName, sizeof(fileName));
-    COM_StripExtension(fileName, fileName, sizeof(fileName));
-    Q_strcat(fileName, sizeof(fileName), ".areaprt");
-
-    bufferLen = ri.FS_ReadFile(fileName, (void **)&buffer);
-    if(!buffer)
-    {
-        ri.Printf(PRINT_WARNING, "WARNING: could not load area portals file '%s'\n", fileName);
-        return;
-    }
-
-    buf_p = (char *)buffer;
-
-    // check version
-    token = COM_ParseExt2(&buf_p, qfalse);
-    if(strcmp(token, version))
-    {
-        ri.Printf(PRINT_WARNING, "R_LoadAreaPortals: %s has wrong version (%i should be %i)\n", fileName, token, version);
-        return;
-    }
-
-    // load areas num
-    token = COM_ParseExt2(&buf_p, qtrue);
-    numAreas = atoi(token);
-    if(numAreas != s_worldData.numAreas)
-    {
-        ri.Printf(PRINT_WARNING, "R_LoadAreaPortals: %s has wrong number of areas (%i should be %i)\n", fileName, numAreas,
-                  s_worldData.numAreas);
-        return;
-    }
-
-    // load areas portals
-    token = COM_ParseExt2(&buf_p, qtrue);
-    numAreaPortals = atoi(token);
-
-    ri.Printf(PRINT_ALL, "...loading %i area portals\n", numAreaPortals);
-
-    s_worldData.numAreaPortals = numAreaPortals;
-    s_worldData.areaPortals = ri.Hunk_Alloc(numAreaPortals * sizeof(*s_worldData.areaPortals), h_low);
-
-    for(i = 0, ap = s_worldData.areaPortals; i < numAreaPortals; i++, ap++)
-    {
-        token = COM_ParseExt2(&buf_p, qtrue);
-        numPoints = atoi(token);
-
-        if(numPoints != 4)
-        {
-            ri.Printf(PRINT_WARNING, "R_LoadAreaPortals: expected 4 found '%s' in file '%s'\n", token, fileName);
-            return;
-        }
-
-        COM_ParseExt2(&buf_p, qfalse);
-        ap->areas[0] = atoi(token);
-
-        COM_ParseExt2(&buf_p, qfalse);
-        ap->areas[1] = atoi(token);
-
-        for(j = 0; j < numPoints; j++)
-        {
-            // skip (
-            token = COM_ParseExt2(&buf_p, qfalse);
-            if(Q_stricmp(token, "("))
-            {
-                ri.Printf(PRINT_WARNING, "R_LoadAreaPortals: expected '(' found '%s' in file '%s'\n", token, fileName);
-                return;
-            }
-
-            for(k = 0; k < 3; k++)
-            {
-                token = COM_ParseExt2(&buf_p, qfalse);
-                ap->points[j][k] = atof(token);
-            }
-
-            // skip )
-            token = COM_ParseExt2(&buf_p, qfalse);
-            if(Q_stricmp(token, ")"))
-            {
-                ri.Printf(PRINT_WARNING, "R_LoadAreaPortals: expected ')' found '%s' in file '%s'\n", token, fileName);
-                return;
-            }
-        }
-    }
-}
-*/
-
-/*
-=================
-R_CreateAreas
-=================
-*/
-/*
-static void R_CreateAreas()
-{
-    int             i, j;
-    int             numAreas, maxArea;
-    bspNode_t      *node;
-    bspArea_t      *area;
-    growList_t      areaSurfaces;
-    int             c;
-    bspSurface_t   *surface, **mark;
-    int             surfaceNum;
-
-
-    ri.Printf(PRINT_ALL, "...creating BSP areas\n");
-
-    // go through the leaves and count areas
-    maxArea = 0;
-
-    for(i = 0, node = s_worldData.nodes; i < s_worldData.numnodes; i++, node++)
-    {
-        if(node->contents == CONTENTS_NODE)
-            continue;
-
-        if(node->area == -1)
-            continue;
-
-        if(node->area > maxArea)
-            maxArea = node->area;
-    }
-
-    numAreas = maxArea + 1;
-
-    s_worldData.numAreas = numAreas;
-    s_worldData.areas = ri.Hunk_Alloc(numAreas * sizeof(*s_worldData.areas), h_low);
-
-    // reset surfaces' viewCount
-    for(i = 0, surface = s_worldData.surfaces; i < s_worldData.numSurfaces; i++, surface++)
-    {
-        surface->viewCount = -1;
-    }
-
-    // add area surfaces
-    for(i = 0; i < numAreas; i++)
-    {
-        area = &s_worldData.areas[i];
-
-        Com_InitGrowList(&areaSurfaces, 100);
-
-        for(j = 0, node = s_worldData.nodes; j < s_worldData.numnodes; j++, node++)
-        {
-            if(node->contents == CONTENTS_NODE)
-                continue;
-
-            if(node->area != i)
-                continue;
-
-            if(node->cluster < 0)
-                continue;
-
-            // add the individual surfaces
-            mark = node->markSurfaces;
-            c = node->numMarkSurfaces;
-            while(c--)
-            {
-                // the surface may have already been added if it
-                // spans multiple leafs
-                surface = *mark;
-
-                surfaceNum = surface - s_worldData.surfaces;
-
-                if((surface->viewCount != (i + 1)) && (surfaceNum < s_worldData.numWorldSurfaces))
-                {
-                    surface->viewCount = i + 1;
-                    Com_AddToGrowList(&areaSurfaces, surface);
-                }
-
-                mark++;
-            }
-        }
-
-        // move area surfaces list to hunk
-        area->numMarkSurfaces = areaSurfaces.currentElements;
-        area->markSurfaces = ri.Hunk_Alloc(area->numMarkSurfaces * sizeof(*area->markSurfaces), h_low);
-
-        for(j = 0; j < area->numMarkSurfaces; j++)
-        {
-            area->markSurfaces[j] = (bspSurface_t *) Com_GrowListElement(&areaSurfaces, j);
-        }
-
-        Com_DestroyGrowList(&areaSurfaces);
-
-        ri.Printf(PRINT_ALL, "area %i contains %i bsp surfaces\n", i, area->numMarkSurfaces);
-    }
-
-    ri.Printf(PRINT_ALL, "%i world areas created\n", numAreas);
-}
-*/
-
-/*
-===============
-R_CreateVBOWorldSurfaces
-===============
-*/
-/*
-static void R_CreateVBOWorldSurfaces()
-{
-    int             i, j, k, l, a;
-
-    int             numVerts;
-    srfVert_t      *verts;
-
-    srfVert_t      *optimizedVerts;
-
-    int             numTriangles;
-    srfTriangle_t  *triangles;
-
-    shader_t       *shader, *oldShader;
-    int             lightmapNum, oldLightmapNum;
-
-    int             numSurfaces;
-    bspSurface_t   *surface, *surface2;
-    bspSurface_t  **surfacesSorted;
-
-    bspArea_t      *area;
-
-    growList_t      vboSurfaces;
-    srfVBOMesh_t   *vboSurf;
-
-    if(!glConfig.vertexBufferObjectAvailable)
-        return;
-
-    for(a = 0, area = s_worldData.areas; a < s_worldData.numAreas; a++, area++)
-    {
-        // count number of static area surfaces
-        numSurfaces = 0;
-        for(k = 0; k < area->numMarkSurfaces; k++)
-        {
-            surface = area->markSurfaces[k];
-            shader = surface->shader;
-
-            if(shader->isSky)
-                continue;
-
-            if(shader->isPortal || shader->isMirror)
-                continue;
-
-            if(shader->numDeforms)
-                continue;
-
-            numSurfaces++;
-        }
-
-        if(!numSurfaces)
-            continue;
-
-        // build interaction caches list
-        surfacesSorted = ri.Hunk_AllocateTempMemory(numSurfaces * sizeof(surfacesSorted[0]));
-
-        numSurfaces = 0;
-        for(k = 0; k < area->numMarkSurfaces; k++)
-        {
-            surface = area->markSurfaces[k];
-            shader = surface->shader;
-
-            if(shader->isSky)
-                continue;
-
-            if(shader->isPortal || shader->isMirror)
-                continue;
-
-            if(shader->numDeforms)
-                continue;
-
-            surfacesSorted[numSurfaces] = surface;
-            numSurfaces++;
-        }
-
-        Com_InitGrowList(&vboSurfaces, 100);
-
-        // sort surfaces by shader
-        qsort(surfacesSorted, numSurfaces, sizeof(surfacesSorted), BSPSurfaceCompare);
-
-        // create a VBO for each shader
-        shader = oldShader = NULL;
-        lightmapNum = oldLightmapNum = -1;
-
-        for(k = 0; k < numSurfaces; k++)
-        {
-            surface = surfacesSorted[k];
-            shader = surface->shader;
-            lightmapNum = surface->lightmapNum;
-
-            if(shader != oldShader || (r_precomputedLighting->integer ? lightmapNum != oldLightmapNum : 0))
-            {
-                oldShader = shader;
-                oldLightmapNum = lightmapNum;
-
-                // count vertices and indices
-                numVerts = 0;
-                numTriangles = 0;
-
-                for(l = k; l < numSurfaces; l++)
-                {
-                    surface2 = surfacesSorted[l];
-
-                    if(surface2->shader != shader)
-                        continue;
-
-                    if(*surface2->data == SF_FACE)
-                    {
-                        srfSurfaceFace_t *face = (srfSurfaceFace_t *) surface2->data;
-
-                        if(face->numVerts)
-                            numVerts += face->numVerts;
-
-                        if(face->numTriangles)
-                            numTriangles += face->numTriangles;
-                    }
-                    else if(*surface2->data == SF_GRID)
-                    {
-                        srfGridMesh_t  *grid = (srfGridMesh_t *) surface2->data;
-
-                        if(grid->numVerts)
-                            numVerts += grid->numVerts;
-
-                        if(grid->numTriangles)
-                            numTriangles += grid->numTriangles;
-                    }
-                    else if(*surface2->data == SF_TRIANGLES)
-                    {
-                        srfTriangles_t *tri = (srfTriangles_t *) surface2->data;
-
-                        if(tri->numVerts)
-                            numVerts += tri->numVerts;
-
-                        if(tri->numTriangles)
-                            numTriangles += tri->numTriangles;
-                    }
-                }
-
-                if(!numVerts || !numTriangles)
-                    continue;
-
-                ri.Printf(PRINT_DEVELOPER, "...calculating world mesh VBOs ( %s, %i verts %i tris )\n", shader->name, numVerts,
-                          numTriangles);
-
-                // create surface
-                vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
-                Com_AddToGrowList(&vboSurfaces, vboSurf);
-
-                vboSurf->surfaceType = SF_VBO_MESH;
-                vboSurf->numIndexes = numTriangles * 3;
-                vboSurf->numVerts = numVerts;
-
-                vboSurf->shader = shader;
-                vboSurf->lightmapNum = lightmapNum;
-
-                // create arrays
-                verts = ri.Hunk_AllocateTempMemory(numVerts * sizeof(srfVert_t));
-                optimizedVerts = ri.Hunk_AllocateTempMemory(numVerts * sizeof(srfVert_t));
-                numVerts = 0;
-
-                triangles = ri.Hunk_AllocateTempMemory(numTriangles * sizeof(srfTriangle_t));
-                numTriangles = 0;
-
-                ClearBounds(vboSurf->bounds[0], vboSurf->bounds[1]);
-
-                // build triangle indices
-                for(l = k; l < numSurfaces; l++)
-                {
-                    surface2 = surfacesSorted[l];
-
-                    if(surface2->shader != shader)
-                        continue;
-
-                    // set up triangle indices
-                    if(*surface2->data == SF_FACE)
-                    {
-                        srfSurfaceFace_t *srf = (srfSurfaceFace_t *) surface2->data;
-
-                        if(srf->numTriangles)
-                        {
-                            srfTriangle_t  *tri;
-
-                            for(i = 0, tri = srf->triangles; i < srf->numTriangles; i++, tri++)
-                            {
-                                for(j = 0; j < 3; j++)
-                                {
-                                    triangles[numTriangles + i].indexes[j] = numVerts + tri->indexes[j];
-                                }
-                            }
-
-                            numTriangles += srf->numTriangles;
-                        }
-
-                        if(srf->numVerts)
-                            numVerts += srf->numVerts;
-                    }
-                    else if(*surface2->data == SF_GRID)
-                    {
-                        srfGridMesh_t  *srf = (srfGridMesh_t *) surface2->data;
-
-                        if(srf->numTriangles)
-                        {
-                            srfTriangle_t  *tri;
-
-                            for(i = 0, tri = srf->triangles; i < srf->numTriangles; i++, tri++)
-                            {
-                                for(j = 0; j < 3; j++)
-                                {
-                                    triangles[numTriangles + i].indexes[j] = numVerts + tri->indexes[j];
-                                }
-                            }
-
-                            numTriangles += srf->numTriangles;
-                        }
-
-                        if(srf->numVerts)
-                            numVerts += srf->numVerts;
-                    }
-                    else if(*surface2->data == SF_TRIANGLES)
-                    {
-                        srfTriangles_t *srf = (srfTriangles_t *) surface2->data;
-
-                        if(srf->numTriangles)
-                        {
-                            srfTriangle_t  *tri;
-
-                            for(i = 0, tri = srf->triangles; i < srf->numTriangles; i++, tri++)
-                            {
-                                for(j = 0; j < 3; j++)
-                                {
-                                    triangles[numTriangles + i].indexes[j] = numVerts + tri->indexes[j];
-                                }
-                            }
-
-                            numTriangles += srf->numTriangles;
-                        }
-
-                        if(srf->numVerts)
-                            numVerts += srf->numVerts;
-                    }
-                }
-
-                // build vertices
-                numVerts = 0;
-                for(l = k; l < numSurfaces; l++)
-                {
-                    surface2 = surfacesSorted[l];
-
-                    if(surface2->shader != shader)
-                        continue;
-
-                    if(*surface2->data == SF_FACE)
-                    {
-                        srfSurfaceFace_t *cv = (srfSurfaceFace_t *) surface2->data;
-
-                        if(cv->numVerts)
-                        {
-                            for(i = 0; i < cv->numVerts; i++)
-                            {
-                                CopyVert(&cv->verts[i], &verts[numVerts + i]);
-
-                                AddPointToBounds(cv->verts[i].xyz, vboSurf->bounds[0], vboSurf->bounds[1]);
-                            }
-
-                            numVerts += cv->numVerts;
-                        }
-                    }
-                    else if(*surface2->data == SF_GRID)
-                    {
-                        srfGridMesh_t  *cv = (srfGridMesh_t *) surface2->data;
-
-                        if(cv->numVerts)
-                        {
-                            for(i = 0; i < cv->numVerts; i++)
-                            {
-                                CopyVert(&cv->verts[i], &verts[numVerts + i]);
-
-                                AddPointToBounds(cv->verts[i].xyz, vboSurf->bounds[0], vboSurf->bounds[1]);
-                            }
-
-                            numVerts += cv->numVerts;
-                        }
-                    }
-                    else if(*surface2->data == SF_TRIANGLES)
-                    {
-                        srfTriangles_t *cv = (srfTriangles_t *) surface2->data;
-
-                        if(cv->numVerts)
-                        {
-                            for(i = 0; i < cv->numVerts; i++)
-                            {
-                                CopyVert(&cv->verts[i], &verts[numVerts + i]);
-
-                                AddPointToBounds(cv->verts[i].xyz, vboSurf->bounds[0], vboSurf->bounds[1]);
-                            }
-
-                            numVerts += cv->numVerts;
-                        }
-                    }
-                }
-
-                numVerts = OptimizeVertices(numVerts, verts, numTriangles, triangles, optimizedVerts, CompareWorldVert);
-                if(c_redundantVertexes)
-                {
-                    ri.Printf(PRINT_DEVELOPER,
-                              "...removed %i redundant vertices from staticWorldMesh %i ( %s, %i verts %i tris )\n",
-                              c_redundantVertexes, vboSurfaces.currentElements, shader->name, numVerts, numTriangles);
-                }
-
-                vboSurf->vbo = R_CreateVBO2(va("staticWorldMesh_vertices %i", vboSurfaces.currentElements), numVerts, optimizedVerts,
-                                       ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
-                                       | ATTR_COLOR);
-
-                vboSurf->ibo = R_CreateIBO2(va("staticWorldMesh_indices %i", vboSurfaces.currentElements), numTriangles, triangles);
-
-                ri.Hunk_FreeTempMemory(triangles);
-                ri.Hunk_FreeTempMemory(optimizedVerts);
-                ri.Hunk_FreeTempMemory(verts);
-            }
-        }
-
-        ri.Hunk_FreeTempMemory(surfacesSorted);
-
-        // move VBO surfaces list to hunk
-        area->numVBOSurfaces = vboSurfaces.currentElements;
-        area->vboSurfaces = ri.Hunk_Alloc(area->numVBOSurfaces * sizeof(*area->vboSurfaces), h_low);
-
-        for(i = 0; i < area->numVBOSurfaces; i++)
-        {
-            area->vboSurfaces[i] = (srfVBOMesh_t *) Com_GrowListElement(&vboSurfaces, i);
-        }
-
-        Com_DestroyGrowList(&vboSurfaces);
-
-        ri.Printf(PRINT_ALL, "%i VBO surfaces created for area %i\n", area->numVBOSurfaces, a);
-    }
-}
-*/
 
 /*
 =================
@@ -4202,7 +3129,7 @@ static void R_CreateWorldVBO()
 		return;
 	}
 
-	ri.Printf(PRINT_ALL, "...calculating world VBO ( %i verts %i tris )\n", numVerts, numTriangles);
+	ri.Printf(PRINT_DEVELOPER, "...calculating world VBO ( %i verts %i tris )\n", numVerts, numTriangles);
 
 	// create arrays
 
@@ -4374,7 +3301,7 @@ static void R_CreateWorldVBO()
 	s_worldData.ibo = R_CreateIBO2(va("staticBspModel0_IBO %i", 0), numTriangles, triangles, VBO_USAGE_STATIC);
 
 	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "world VBO calculation time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
+	ri.Printf(PRINT_DEVELOPER, "world VBO calculation time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
 
 
 	// point triangle surfaces to world VBO
@@ -4841,7 +3768,7 @@ static void R_CreateSubModelVBOs()
 
 		Com_DestroyGrowList(&vboSurfaces);
 
-		ri.Printf(PRINT_ALL, "%i VBO surfaces created for BSP submodel %i\n", model->numVBOSurfaces, m);
+		ri.Printf(PRINT_DEVELOPER, "%i VBO surfaces created for BSP submodel %i\n", model->numVBOSurfaces, m);
 	}
 }
 
@@ -4923,7 +3850,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 		}
 	}
 
-	ri.Printf(PRINT_ALL, "...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliages\n", numFaces, numMeshes, numTriSurfs,
+	ri.Printf(PRINT_DEVELOPER, "...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliages\n", numFaces, numMeshes, numTriSurfs,
 	          numFlares, numFoliages);
 
 	if (r_stitchCurves->integer)
@@ -5047,6 +3974,7 @@ static void R_SetParent(bspNode_t *node, bspNode_t *parent)
 				if (gen->surfaceType != SF_FACE &&
 				    gen->surfaceType != SF_GRID && gen->surfaceType != SF_TRIANGLES) // && gen->surfaceType != SF_FOLIAGE)
 				{
+					mark++;
 					continue;
 				}
 				AddPointToBounds(gen->bounds[0], node->surfMins, node->surfMaxs);
@@ -5196,53 +4124,8 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 		tess.numIndexes          = 0;
 		tess.numVertexes         = 0;
 
-#if 0
-		out->shrinkedAABB = qfalse;
-		if (out->contents != CONTENTS_NODE && out->numMarkSurfaces)
-		{
-			// BSP leaves don't have an optimal size so shrink them if possible by their surfaces
-			#if 1
-			mins[0] = Q_min(Q_max(out->mins[0], out->surfMins[0]), out->maxs[0]);
-			mins[1] = Q_min(Q_max(out->mins[1], out->surfMins[1]), out->maxs[1]);
-			mins[2] = Q_min(Q_max(out->mins[2], out->surfMins[2]), out->maxs[2]);
-
-			maxs[0] = Q_max(Q_min(out->maxs[0], out->surfMaxs[0]), out->mins[0]);
-			maxs[1] = Q_max(Q_min(out->maxs[1], out->surfMaxs[1]), out->mins[1]);
-			maxs[2] = Q_max(Q_min(out->maxs[2], out->surfMaxs[2]), out->mins[2]);
-			#else
-			mins[0] = Q_max(out->mins[0], out->surfMins[0]);
-			mins[1] = Q_max(out->mins[1], out->surfMins[1]);
-			mins[2] = Q_max(out->mins[2], out->surfMins[2]);
-
-			maxs[0] = Q_min(out->maxs[0], out->surfMaxs[0]);
-			maxs[1] = Q_min(out->maxs[1], out->surfMaxs[1]);
-			maxs[2] = Q_min(out->maxs[2], out->surfMaxs[2]);
-			#endif
-
-			for (i = 0; i < 3; i++)
-			{
-				if (mins[i] > maxs[i])
-				{
-					float tmp = mins[i];
-					mins[i] = maxs[i];
-					maxs[i] = tmp;
-				}
-			}
-
-			VectorCopy(out->surfMins, mins);
-			VectorCopy(out->surfMaxs, maxs);
-
-			if (!VectorCompareEpsilon(out->mins, mins, 1.0) || !VectorCompareEpsilon(out->maxs, maxs, 1.0))
-			{
-				out->shrinkedAABB = qtrue;
-			}
-		}
-		else
-#endif
-		{
-			VectorCopy(out->mins, mins);
-			VectorCopy(out->maxs, maxs);
-		}
+		VectorCopy(out->mins, mins);
+		VectorCopy(out->maxs, maxs);
 
 		for (i = 0; i < 3; i++)
 		{
@@ -5564,7 +4447,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	}
 
 
-	ri.Printf(PRINT_ALL, "%i fog volumes loaded\n", s_worldData.numFogs);
+	ri.Printf(PRINT_DEVELOPER, "%i fog volumes loaded\n", s_worldData.numFogs);
 }
 
 
@@ -5606,9 +4489,9 @@ void R_LoadLightGrid(lump_t *l)
 
 	w->numLightGridPoints = w->lightGridBounds[0] * w->lightGridBounds[1] * w->lightGridBounds[2];
 
-	ri.Printf(PRINT_ALL, "grid size (%i %i %i)\n", (int)w->lightGridSize[0], (int)w->lightGridSize[1],
+	ri.Printf(PRINT_DEVELOPER, "grid size (%i %i %i)\n", (int)w->lightGridSize[0], (int)w->lightGridSize[1],
 	          (int)w->lightGridSize[2]);
-	ri.Printf(PRINT_ALL, "grid bounds (%i %i %i)\n", (int)w->lightGridBounds[0], (int)w->lightGridBounds[1],
+	ri.Printf(PRINT_DEVELOPER, "grid bounds (%i %i %i)\n", (int)w->lightGridBounds[0], (int)w->lightGridBounds[1],
 	          (int)w->lightGridBounds[2]);
 
 	if (l->filelen != w->numLightGridPoints * sizeof(dgridPoint_t))
@@ -5704,7 +4587,7 @@ void R_LoadLightGrid(lump_t *l)
 		}
 	}
 
-	ri.Printf(PRINT_ALL, "%i light grid points created\n", w->numLightGridPoints);
+	ri.Printf(PRINT_DEVELOPER, "%i light grid points created\n", w->numLightGridPoints);
 }
 
 /*
@@ -5841,7 +4724,7 @@ void R_LoadEntities(lump_t *l)
 		// check for deluxe mapping support
 		if (!Q_stricmp(keyname, "deluxeMapping") && !Q_stricmp(value, "1"))
 		{
-			ri.Printf(PRINT_ALL, "map features directional light mapping\n");
+			ri.Printf(PRINT_DEVELOPER, "map features directional light mapping\n");
 			tr.worldDeluxeMapping = qtrue;
 			continue;
 		}
@@ -5857,7 +4740,7 @@ void R_LoadEntities(lump_t *l)
 			s = strstr(value, "-deluxe");
 			if (s)
 			{
-				ri.Printf(PRINT_ALL, "map features directional light mapping\n");
+				ri.Printf(PRINT_DEVELOPER, "map features directional light mapping\n");
 				tr.worldDeluxeMapping = qtrue;
 			}
 			continue;
@@ -5867,7 +4750,7 @@ void R_LoadEntities(lump_t *l)
 		// check for HDR light mapping support
 		if (!Q_stricmp(keyname, "hdrRGBE") && !Q_stricmp(value, "1"))
 		{
-			ri.Printf(PRINT_ALL, "map features HDR light mapping\n");
+			ri.Printf(PRINT_DEVELOPER, "map features HDR light mapping\n");
 			tr.worldHDR_RGBE = qtrue;
 			continue;
 		}
@@ -5956,8 +4839,8 @@ void R_LoadEntities(lump_t *l)
 		numEntities++;
 	}
 
-	ri.Printf(PRINT_ALL, "%i total entities counted\n", numEntities);
-	ri.Printf(PRINT_ALL, "%i total lights counted\n", numLights);
+	ri.Printf(PRINT_DEVELOPER, "%i total entities counted\n", numEntities);
+	ri.Printf(PRINT_DEVELOPER, "%i total lights counted\n", numLights);
 
 	s_worldData.numLights = numLights;
 
@@ -6223,11 +5106,11 @@ void R_LoadEntities(lump_t *l)
 		ri.Error(ERR_DROP, "counted %i lights and parsed %i lights", s_worldData.numLights, (numOmniLights + numProjLights + numParallelLights));
 	}
 
-	ri.Printf(PRINT_ALL, "%i total entities parsed\n", numEntities);
-	ri.Printf(PRINT_ALL, "%i total lights parsed\n", numOmniLights + numProjLights);
-	ri.Printf(PRINT_ALL, "%i omni-directional lights parsed\n", numOmniLights);
-	ri.Printf(PRINT_ALL, "%i projective lights parsed\n", numProjLights);
-	ri.Printf(PRINT_ALL, "%i directional lights parsed\n", numParallelLights);
+	ri.Printf(PRINT_DEVELOPER, "%i total entities parsed\n", numEntities);
+	ri.Printf(PRINT_DEVELOPER, "%i total lights parsed\n", numOmniLights + numProjLights);
+	ri.Printf(PRINT_DEVELOPER, "%i omni-directional lights parsed\n", numOmniLights);
+	ri.Printf(PRINT_DEVELOPER, "%i projective lights parsed\n", numProjLights);
+	ri.Printf(PRINT_DEVELOPER, "%i directional lights parsed\n", numParallelLights);
 }
 
 
@@ -6741,7 +5624,7 @@ static void R_RecursiveAddInteractionNode(bspNode_t *node, trRefLight_t *light)
 		VectorCopy(node->mins, worldBounds[0]);
 		VectorCopy(node->maxs, worldBounds[1]);
 
-		if (R_CullLightWorldBounds(light, worldBounds) != CULL_OUT)
+		if (node->numMarkSurfaces > 0 && R_CullLightWorldBounds(light, worldBounds) != CULL_OUT)
 		{
 			link_t *l;
 
@@ -8321,7 +7204,7 @@ void R_PrecacheInteractions()
 	c_vboLightSurfaces      = 0;
 	c_vboShadowSurfaces     = 0;
 
-	ri.Printf(PRINT_ALL, "...precaching %i lights\n", s_worldData.numLights);
+	ri.Printf(PRINT_DEVELOPER, "...precaching %i lights\n", s_worldData.numLights);
 
 	for (i = 0; i < s_worldData.numLights; i++)
 	{
@@ -8410,21 +7293,21 @@ void R_PrecacheInteractions()
 	Com_DestroyGrowList(&s_interactions);
 
 
-	ri.Printf(PRINT_ALL, "%i interactions precached\n", s_worldData.numInteractions);
-	ri.Printf(PRINT_ALL, "%i interactions were hidden in shadows\n", c_redundantInteractions);
+	ri.Printf(PRINT_DEVELOPER, "%i interactions precached\n", s_worldData.numInteractions);
+	ri.Printf(PRINT_DEVELOPER, "%i interactions were hidden in shadows\n", c_redundantInteractions);
 
 	if (r_shadows->integer >= SHADOWING_ESM16)
 	{
 		// only interesting for omni-directional shadow mapping
-		ri.Printf(PRINT_ALL, "%i omni pyramid tests\n", tr.pc.c_pyramidTests);
-		ri.Printf(PRINT_ALL, "%i omni pyramid surfaces visible\n", tr.pc.c_pyramid_cull_ent_in);
-		ri.Printf(PRINT_ALL, "%i omni pyramid surfaces clipped\n", tr.pc.c_pyramid_cull_ent_clip);
-		ri.Printf(PRINT_ALL, "%i omni pyramid surfaces culled\n", tr.pc.c_pyramid_cull_ent_out);
+		ri.Printf(PRINT_DEVELOPER, "%i omni pyramid tests\n", tr.pc.c_pyramidTests);
+		ri.Printf(PRINT_DEVELOPER, "%i omni pyramid surfaces visible\n", tr.pc.c_pyramid_cull_ent_in);
+		ri.Printf(PRINT_DEVELOPER, "%i omni pyramid surfaces clipped\n", tr.pc.c_pyramid_cull_ent_clip);
+		ri.Printf(PRINT_DEVELOPER, "%i omni pyramid surfaces culled\n", tr.pc.c_pyramid_cull_ent_out);
 	}
 
 	endTime = ri.Milliseconds();
 
-	ri.Printf(PRINT_ALL, "lights precaching time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
+	ri.Printf(PRINT_DEVELOPER, "lights precaching time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
 }
 
 
@@ -8461,20 +7344,7 @@ unsigned int VertexCoordGenerateHash(const vec3_t xyz)
 	hash ^= (*((unsigned int *)&xyz_epsilonspace[1]) >> 6);
 	hash += ~(*((unsigned int *)&xyz_epsilonspace[2]) << 11);
 	hash ^= (*((unsigned int *)&xyz_epsilonspace[2]) >> 16);
-
-/*
-    // strict aliasing... better?
-    hash += ~({floatint_t __f; __f.f = xyz_epsilonspace[0]; __f.i << 15;});
-    hash ^= ({floatint_t __f; __f.f = xyz_epsilonspace[0]; __f.i >> 10;});
-    hash += ({floatint_t __f; __f.f = xyz_epsilonspace[1]; __f.i << 3;});
-    hash ^= ({floatint_t __f; __f.f = xyz_epsilonspace[1]; __f.i >> 6;});
-    hash += ~({floatint_t __f; __f.f = xyz_epsilonspace[2]; __f.i << 11;});
-    hash ^= ({floatint_t __f; __f.f = xyz_epsilonspace[2]; __f.i >> 16;});
-*/
-
 #endif
-
-	hash = (int)fabs(xyz[3]) / 8;
 
 	hash = hash % (HASHTABLE_SIZE);
 	return hash;
@@ -8600,7 +7470,7 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
 	float          distance, maxDistance;
 	cubemapProbe_t *cubeProbe;
 
-	GLimp_LogComment("--- GL_BindNearestCubeMap ---\n");
+	Ren_LogComment("--- GL_BindNearestCubeMap ---\n");
 
 	maxDistance      = 9999999.0f;
 	tr.autoCubeImage = tr.blackCubeImage;
@@ -8660,7 +7530,7 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
 	unsigned int   hash;
 	vertexHash_t   *vertexHash;
 
-	GLimp_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
+	Ren_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
 
 	*cubeProbeNearest       = NULL;
 	*cubeProbeSecondNearest = NULL;
@@ -8879,10 +7749,10 @@ void R_BuildCubeMaps(void)
 		VectorClear(cubeProbe->origin);
 	}
 
-	ri.Printf(PRINT_ALL, "...pre-rendering %d cubemaps\n", tr.cubeProbes.currentElements);
+	ri.Printf(PRINT_DEVELOPER, "...pre-rendering %d cubemaps\n", tr.cubeProbes.currentElements);
 	ri.Cvar_Set("viewlog", "1");
-	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
-	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
+	ri.Printf(PRINT_DEVELOPER, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
+	ri.Printf(PRINT_DEVELOPER, "|----|----|----|----|----|----|----|----|----|----|\n");
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
@@ -9172,7 +8042,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	ri.Printf(PRINT_ALL, "\n");
+	ri.Printf(PRINT_DEVELOPER, "\n");
 
 #if 0
 	// write buffer if theres any still unwritten
@@ -9244,7 +8114,7 @@ void R_BuildCubeMaps(void)
 #endif
 
 	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
+	ri.Printf(PRINT_DEVELOPER, "cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
 	          (endTime - startTime) / 1000.0);
 
 #endif

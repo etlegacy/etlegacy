@@ -888,7 +888,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 // Server side Flamethrower
 //=============================================================================
 
-// copied from cg_flamethrower.c
+// copied from cg_flamethrower.c - FIXME: move same definitions of cg_flamethrower.c to bg_public.h and remove FLAME_* defs here
 #define FLAME_START_SIZE        1.0
 #define FLAME_START_MAX_SIZE    100.0   // when the flame is spawned, it should endevour to reach this size
 #define FLAME_START_SPEED       1200.0  // speed of flame as it leaves the nozzle
@@ -899,9 +899,6 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 
 #define FLAME_LIFETIME          (int)((FLAME_LENGTH / FLAME_START_SPEED) * 1000)        // life duration in milliseconds
 #define FLAME_FRICTION_PER_SEC  (2.0f * FLAME_START_SPEED)
-#define GET_FLAME_SIZE_SPEED(x) (((float)x / FLAME_LIFETIME) / 0.3)       // x is the current sizeMax
-
-#define FLAME_THRESHOLD 50
 
 void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 {
@@ -2049,71 +2046,6 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	VectorCopy(start, bolt->r.currentOrigin);
 
 	return bolt;
-}
-
-// sniper
-
-/*
-=================
-fire_lead
-=================
-*/
-void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage)
-{
-	trace_t   tr;
-	vec3_t    end;
-	gentity_t *tent;
-	gentity_t *traceEnt;
-	vec3_t    forward, right, up;
-	vec3_t    angles;
-	float     r = crandom() * self->random;
-	float     u = crandom() * self->random;
-
-	vectoangles(dir, angles);
-	AngleVectors(angles, forward, right, up);
-
-	VectorMA(start, 8192, forward, end);
-	VectorMA(end, r, right, end);
-	VectorMA(end, u, up, end);
-
-	trap_Trace(&tr, start, NULL, NULL, end, self->s.number, MASK_SHOT);
-	if (tr.surfaceFlags & SURF_NOIMPACT)
-	{
-		return;
-	}
-
-	traceEnt = &g_entities[tr.entityNum];
-
-	// snap the endpos to integers, but nudged towards the line
-	SnapVectorTowards(tr.endpos, start);
-
-	// send bullet impact
-	if (traceEnt->takedamage && traceEnt->client)
-	{
-		tent              = G_TempEntity(tr.endpos, EV_BULLET_HIT_FLESH);
-		tent->s.eventParm = traceEnt->s.number;
-	}
-	else
-	{
-		// Ridah, bullet impact should reflect off surface
-		vec3_t reflect;
-		float  dot;
-
-		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);
-
-		dot = DotProduct(forward, tr.plane.normal);
-		VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
-		VectorNormalize(reflect);
-
-		tent->s.eventParm = DirToByte(reflect);
-	}
-	tent->s.otherEntityNum = self->s.number;
-
-	if (traceEnt->takedamage)
-	{
-		G_Damage(traceEnt, self, self, forward, tr.endpos,
-		         damage, 0, MOD_MACHINEGUN);
-	}
 }
 
 // sniper

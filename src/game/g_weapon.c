@@ -477,8 +477,6 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	usedSyringe = qtrue;
 
 	// sound
-	//te              = G_TempEntity(traceEnt->r.currentOrigin, EV_GENERAL_SOUND);
-	//te->s.eventParm = G_SoundIndex("sound/misc/vo_revive.wav");
 	G_Sound(traceEnt, GAMESOUND_MISC_REVIVE);
 
 	if (g_fastres.integer > 0)
@@ -3295,7 +3293,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		waslinked                               = qtrue;
 	}
 
-	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT);
+	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (waslinked == qtrue)
@@ -3403,7 +3401,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);
 
-		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT);
+		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
 
 		if ((tr.entityNum != tr2.entityNum && tr2.fraction != 1))
 		{
@@ -3499,10 +3497,9 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent, int grenType)
 
 gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 {
-	gentity_t *m;
-	trace_t   tr;
-	vec3_t    launchPos, testPos;
-	vec3_t    angles;
+	trace_t tr;
+	vec3_t  launchPos, testPos;
+	vec3_t  angles;
 
 	VectorCopy(ent->client->ps.viewangles, angles);
 	angles[PITCH] -= 60.f;
@@ -3527,9 +3524,7 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 		SnapVectorTowards(launchPos, testPos);
 	}
 
-	m = fire_grenade(ent, launchPos, forward, grenType);
-
-	return m;
+	return fire_grenade(ent, launchPos, forward, grenType);
 }
 
 gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)

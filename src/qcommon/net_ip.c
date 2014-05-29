@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -620,6 +620,7 @@ const char *NET_AdrToString(netadr_t a)
 #endif
 	default:
 		Com_Printf("NET_AdrToString: Unknown address type: %i\n", a.type);
+		break;
 	}
 
 	return s;
@@ -647,6 +648,7 @@ const char *NET_AdrToStringwPort(netadr_t a)
 #endif
 	default:
 		Com_Printf("NET_AdrToStringwPort: Unknown address type: %i\n", a.type);
+		break;
 	}
 
 	return s;
@@ -1064,13 +1066,13 @@ int NET_IPSocket(char *net_interface, int port, int *err)
 	if ((newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET)
 	{
 		*err = socketError;
-		Com_Printf("WARNING NET_IPSocket: socket: %s\n", NET_ErrorString());
+		Com_Printf("WARNING: NET_IPSocket - socket: %s\n", NET_ErrorString());
 		return newsocket;
 	}
 	// make it non-blocking
 	if (ioctlsocket(newsocket, FIONBIO, &_true) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING NET_IPSocket: ioctl FIONBIO: %s\n", NET_ErrorString());
+		Com_Printf("WARNING: NET_IPSocket - ioctl FIONBIO: %s\n", NET_ErrorString());
 		*err = socketError;
 		closesocket(newsocket);
 		return INVALID_SOCKET;
@@ -1079,7 +1081,7 @@ int NET_IPSocket(char *net_interface, int port, int *err)
 	// make it broadcast capable
 	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *) &i, sizeof(i)) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING NET_IPSocket: setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
+		Com_Printf("WARNING: NET_IPSocket - setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
 	}
 
 	if (!net_interface || !net_interface[0])
@@ -1107,7 +1109,7 @@ int NET_IPSocket(char *net_interface, int port, int *err)
 
 	if (bind(newsocket, (void *)&address, sizeof(address)) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING NET_IPSocket: bind: %s\n", NET_ErrorString());
+		Com_Printf("WARNING: NET_IPSocket - bind: %s\n", NET_ErrorString());
 		*err = socketError;
 		closesocket(newsocket);
 		return INVALID_SOCKET;
@@ -1568,7 +1570,7 @@ static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sock
 	}
 	else
 	{
-		Com_Printf("WARNING NET_AddLocalAddress: numIP >= MAX_IPS\n");
+		Com_Printf("WARNING: NET_AddLocalAddress - numIP >= MAX_IPS\n");
 	}
 }
 
@@ -1741,7 +1743,7 @@ void NET_OpenIP(void)
 		}
 		if (ip6_socket == INVALID_SOCKET)
 		{
-			Com_Printf("WARNING NET_OpenIP: Couldn't bind to a v6 ip address.\n");
+			Com_Printf("WARNING: NET_OpenIP - Couldn't bind to a v6 ip address.\n");
 		}
 	}
 #endif
@@ -1773,7 +1775,7 @@ void NET_OpenIP(void)
 
 		if (ip_socket == INVALID_SOCKET)
 		{
-			Com_Printf("WARNING NET_OpenIP: Couldn't bind to a v4 ip address.\n");
+			Com_Printf("WARNING: NET_OpenIP - Couldn't bind to a v4 ip address.\n");
 		}
 	}
 }
@@ -1972,18 +1974,18 @@ void NET_Init(void)
 	r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
 	if (r)
 	{
-		Com_Printf("WARNING NET_Init: Winsock initialization failed, returned %d\n", r);
+		Com_Printf("WARNING: NET_Init: Winsock initialization failed, returned %d\n", r);
 		return;
 	}
 
 	winsockInitialized = qtrue;
-	Com_Printf("Winsock Initialized\n");
+	Com_Printf("Winsock initialized.\n");
 #endif
 #if defined(__AROS__) || defined(__MORPHOS__)
 	SocketBase = OpenLibrary("bsdsocket.library", 0);
 	if (!SocketBase)
 	{
-		Com_Printf("WARNING NET_Init: Unable to open bsdsocket.library\n");
+		Com_Printf("WARNING: NET_Init - Unable to open bsdsocket.library\n");
 		return;
 	}
 
@@ -1991,7 +1993,7 @@ void NET_Init(void)
 	{
 		CloseLibrary(SocketBase);
 		SocketBase = NULL;
-		Com_Printf("WARNING NET_Init: SocketBaseTags failed\n");
+		Com_Printf("WARNING: NET_Init - SocketBaseTags failed\n");
 		return;
 	}
 #endif
@@ -1999,6 +2001,8 @@ void NET_Init(void)
 	NET_Config(qtrue);
 
 	Cmd_AddCommand("net_restart", NET_Restart_f);
+
+	Com_Printf("Network initialized.\n");
 }
 
 /*
@@ -2026,6 +2030,7 @@ void NET_Shutdown(void)
 		SocketBase = NULL;
 	}
 #endif
+	Com_Printf("Network shutdown.\n");
 }
 
 /*

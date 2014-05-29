@@ -406,6 +406,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 	if (server && buf)
 	{
 		buf[0] = '\0';
+		Info_SetValueForKey(info, "version", server->version);
 		Info_SetValueForKey(info, "hostname", server->hostName);
 		Info_SetValueForKey(info, "serverload", va("%i", server->load));
 		Info_SetValueForKey(info, "mapname", server->mapName);
@@ -419,7 +420,6 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 		Info_SetValueForKey(info, "gametype", va("%i", server->gameType));
 		Info_SetValueForKey(info, "nettype", va("%i", server->netType));
 		Info_SetValueForKey(info, "addr", NET_AdrToString(server->adr));
-		Info_SetValueForKey(info, "sv_allowAnonymous", va("%i", server->allowAnonymous));
 		Info_SetValueForKey(info, "friendlyFire", va("%i", server->friendlyFire));
 		Info_SetValueForKey(info, "maxlives", va("%i", server->maxlives));
 		Info_SetValueForKey(info, "needpass", va("%i", server->needpass));
@@ -1330,9 +1330,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_GET_AUTOUPDATE:
-#ifdef FEATURE_AUTOUPDATE
 		CL_GetAutoUpdate();
-#endif /* FEATURE_AUTOUPDATE */
 		return 0;
 
 	case UI_OPENURL:

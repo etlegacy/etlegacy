@@ -172,7 +172,7 @@ Draws triangle outlines for debugging
 */
 static void DrawTris()
 {
-	GLimp_LogComment("--- DrawTris ---\n");
+	Ren_LogComment("--- DrawTris ---\n");
 
 	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
 	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
@@ -327,12 +327,7 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 	tess.lightmapNum       = lightmapNum;
 	tess.fogNum            = fogNum;
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va("--- Tess_Begin( surfaceShader = %s, lightShader = %s, skipTangentSpaces = %i, lightmapNum = %i, fogNum = %i) ---\n", tess.surfaceShader->name, tess.lightShader ? tess.lightShader->name : NULL, tess.skipTangentSpaces, tess.lightmapNum, tess.fogNum));
-	}
+	Ren_LogComment("--- Tess_Begin( surfaceShader = %s, lightShader = %s, skipTangentSpaces = %i, lightmapNum = %i, fogNum = %i) ---\n", tess.surfaceShader->name, tess.lightShader ? tess.lightShader->name : NULL, tess.skipTangentSpaces, tess.lightmapNum, tess.fogNum);
 }
 // *INDENT-ON*
 
@@ -342,7 +337,7 @@ static void Render_generic(int stage)
 	colorGen_t    rgbGen;
 	alphaGen_t    alphaGen;
 
-	GLimp_LogComment("--- Render_generic ---\n");
+	Ren_LogComment("--- Render_generic ---\n");
 
 	pStage = tess.surfaceStages[stage];
 
@@ -456,7 +451,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	shaderStage_t *pStage       = tess.surfaceStages[stage];
 	qboolean      normalMapping = qfalse;
 
-	GLimp_LogComment("--- Render_vertexLighting_DBS_entity ---\n");
+	Ren_LogComment("--- Render_vertexLighting_DBS_entity ---\n");
 
 	stateBits = pStage->stateBits;
 	GL_State(stateBits);
@@ -579,7 +574,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 			if (cubeProbeNearest == NULL && cubeProbeSecondNearest == NULL)
 			{
-				GLimp_LogComment("cubeProbeNearest && cubeProbeSecondNearest == NULL\n");
+				Ren_LogComment("cubeProbeNearest && cubeProbeSecondNearest == NULL\n");
 
 				// bind u_EnvironmentMap0
 				GL_SelectTexture(3);
@@ -591,7 +586,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 			}
 			else if (cubeProbeNearest == NULL)
 			{
-				GLimp_LogComment("cubeProbeNearest == NULL\n");
+				Ren_LogComment("cubeProbeNearest == NULL\n");
 
 				// bind u_EnvironmentMap0
 				GL_SelectTexture(3);
@@ -602,7 +597,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 			}
 			else if (cubeProbeSecondNearest == NULL)
 			{
-				GLimp_LogComment("cubeProbeSecondNearest == NULL\n");
+				Ren_LogComment("cubeProbeSecondNearest == NULL\n");
 
 				// bind u_EnvironmentMap0
 				GL_SelectTexture(3);
@@ -633,11 +628,8 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 				interpolate = cubeProbeNearestDistance / (cubeProbeNearestDistance + cubeProbeSecondNearestDistance);
 
-				if (r_logFile->integer)
-				{
-					GLimp_LogComment(va("cubeProbeNearestDistance = %f, cubeProbeSecondNearestDistance = %f, interpolation = %f\n",
-					                    cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate));
-				}
+				Ren_LogComment("cubeProbeNearestDistance = %f, cubeProbeSecondNearestDistance = %f, interpolation = %f\n",
+				               cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate);
 
 				// bind u_EnvironmentMap0
 				GL_SelectTexture(3);
@@ -668,7 +660,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	shaderStage_t *pStage       = tess.surfaceStages[stage];
 	qboolean      normalMapping = qfalse;
 
-	GLimp_LogComment("--- Render_vertexLighting_DBS_world ---\n");
+	Ren_LogComment("--- Render_vertexLighting_DBS_world ---\n");
 
 	stateBits = pStage->stateBits;
 
@@ -811,7 +803,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	colorGen_t    rgbGen;
 	alphaGen_t    alphaGen;
 
-	GLimp_LogComment("--- Render_lightMapping ---\n");
+	Ren_LogComment("--- Render_lightMapping ---\n");
 
 	pStage = tess.surfaceStages[stage];
 
@@ -967,7 +959,7 @@ static void Render_geometricFill(int stage, qboolean cmap2black)
 	uint32_t      stateBits;
 	qboolean      normalMapping;
 
-	GLimp_LogComment("--- Render_geometricFill ---\n");
+	Ren_LogComment("--- Render_geometricFill ---\n");
 
 	pStage = tess.surfaceStages[stage];
 
@@ -1135,7 +1127,7 @@ static void Render_depthFill(int stage)
 	vec4_t        ambientColor;
 	uint32_t      stateBits;
 
-	GLimp_LogComment("--- Render_depthFill ---\n");
+	Ren_LogComment("--- Render_depthFill ---\n");
 
 	pStage     = tess.surfaceStages[stage];
 	stateBits  = pStage->stateBits;
@@ -1236,7 +1228,7 @@ static void Render_shadowFill(int stage)
 	shaderStage_t *pStage;
 	uint32_t      stateBits;
 
-	GLimp_LogComment("--- Render_shadowFill ---\n");
+	Ren_LogComment("--- Render_shadowFill ---\n");
 
 	pStage = tess.surfaceStages[stage];
 
@@ -1339,7 +1331,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	qboolean   normalMapping;
 	qboolean   shadowCompare;
 
-	GLimp_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
+	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
 
 	if (r_normalMapping->integer && (diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL))
 	{
@@ -1557,7 +1549,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	qboolean   normalMapping;
 	qboolean   shadowCompare;
 
-	GLimp_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
+	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
 
 	if (r_normalMapping->integer && (diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL))
 	{
@@ -1777,7 +1769,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	qboolean   normalMapping;
 	qboolean   shadowCompare;
 
-	GLimp_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
+	Ren_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
 
 	if (r_normalMapping->integer && (diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL))
 	{
@@ -2008,7 +2000,7 @@ static void Render_reflection_CB(int stage)
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	qboolean      normalMapping;
 
-	GLimp_LogComment("--- Render_reflection_CB ---\n");
+	Ren_LogComment("--- Render_reflection_CB ---\n");
 
 	GL_State(pStage->stateBits);
 
@@ -2079,7 +2071,7 @@ static void Render_refraction_C(int stage)
 	vec3_t        viewOrigin;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
-	GLimp_LogComment("--- Render_refraction_C ---\n");
+	Ren_LogComment("--- Render_refraction_C ---\n");
 
 	GL_State(pStage->stateBits);
 
@@ -2121,7 +2113,7 @@ static void Render_dispersion_C(int stage)
 	float         eta;
 	float         etaDelta;
 
-	GLimp_LogComment("--- Render_dispersion_C ---\n");
+	Ren_LogComment("--- Render_dispersion_C ---\n");
 
 	GL_State(pStage->stateBits);
 
@@ -2166,7 +2158,7 @@ static void Render_skybox(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
-	GLimp_LogComment("--- Render_skybox ---\n");
+	Ren_LogComment("--- Render_skybox ---\n");
 
 	GL_State(pStage->stateBits);
 
@@ -2206,7 +2198,7 @@ static void Render_screen(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
-	GLimp_LogComment("--- Render_screen ---\n");
+	Ren_LogComment("--- Render_screen ---\n");
 
 	GL_State(pStage->stateBits);
 
@@ -2239,7 +2231,7 @@ static void Render_portal(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
-	GLimp_LogComment("--- Render_portal ---\n");
+	Ren_LogComment("--- Render_portal ---\n");
 
 	GL_State(pStage->stateBits);
 
@@ -2277,14 +2269,14 @@ static void Render_heatHaze(int stage)
 	float         deformMagnitude;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
-	GLimp_LogComment("--- Render_heatHaze ---\n");
+	Ren_LogComment("--- Render_heatHaze ---\n");
 
 	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable /*&& glConfig.hardwareType != GLHW_ATI && glConfig.hardwareType != GLHW_ATI_DX10*/ && glConfig.driverType != GLDRV_MESA)
 	{
 		FBO_t    *previousFBO;
 		uint32_t stateBits;
 
-		GLimp_LogComment("--- HEATHAZE FIX BEGIN ---\n");
+		Ren_LogComment("--- HEATHAZE FIX BEGIN ---\n");
 
 		// capture current color buffer for u_CurrentMap
 		/*
@@ -2300,12 +2292,7 @@ static void Render_heatHaze(int stage)
 		if (DS_STANDARD_ENABLED())
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.geometricRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.geometricRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 		else if (HDR_ENABLED())
 		{
@@ -2313,19 +2300,9 @@ static void Render_heatHaze(int stage)
 
 			// copy deferredRenderFBO to occlusionRenderFBO
 #if 0
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 #else
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 #endif
 
 			GL_CheckErrors();
@@ -2333,12 +2310,7 @@ static void Render_heatHaze(int stage)
 		else
 		{
 			// copy depth of the main context to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
 		R_BindFBO(tr.occlusionRenderFBO);
@@ -2411,7 +2383,7 @@ static void Render_heatHaze(int stage)
 
 		GL_CheckErrors();
 
-		GLimp_LogComment("--- HEATHAZE FIX END ---\n");
+		Ren_LogComment("--- HEATHAZE FIX END ---\n");
 	}
 
 	// remove alpha test
@@ -2500,7 +2472,7 @@ static void Render_liquid(int stage)
 	GLfloat       fogColor[3];
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
-	GLimp_LogComment("--- Render_liquid ---\n");
+	Ren_LogComment("--- Render_liquid ---\n");
 
 	GL_State(pStage->stateBits);
 
@@ -2611,10 +2583,7 @@ static void Render_fog()
 	}
 #endif
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment(va("--- Render_fog( fogNum = %i, originalBrushNumber = %i ) ---\n", tess.fogNum, fog->originalBrushNumber));
-	}
+	Ren_LogComment("--- Render_fog( fogNum = %i, originalBrushNumber = %i ) ---\n", tess.fogNum, fog->originalBrushNumber);
 
 	// all fogging distance is based on world Z units
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
@@ -2720,7 +2689,7 @@ static void Render_volumetricFog()
 	vec3_t viewOrigin;
 	vec3_t fogColor;
 
-	GLimp_LogComment("--- Render_volumetricFog---\n");
+	Ren_LogComment("--- Render_volumetricFog---\n");
 
 	if (glConfig2.framebufferBlitAvailable)
 	{
@@ -2733,32 +2702,17 @@ static void Render_volumetricFog()
 		    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 		else if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
 		{
 			// copy deferredRenderFBO to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, tr.deferredRenderFBO->width, tr.deferredRenderFBO->height,
-			                     0, 0, tr.occlusionRenderFBO->width, tr.occlusionRenderFBO->height,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 		else
 		{
 			// copy depth of the main context to occlusionRenderFBO
-			glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
-			glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.occlusionRenderFBO->frameBuffer);
-			glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     0, 0, glConfig.vidWidth, glConfig.vidHeight,
-			                     GL_DEPTH_BUFFER_BIT,
-			                     GL_NEAREST);
+			R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
 		GLSL_SetMacroState(gl_depthToColorShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
@@ -2857,7 +2811,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	float blue;
 	float alpha;
 
-	GLimp_LogComment("--- Tess_ComputeColor ---\n");
+	Ren_LogComment("--- Tess_ComputeColor ---\n");
 
 	// rgbGen
 	switch (pStage->rgbGen)
@@ -3226,7 +3180,7 @@ static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 	int   i;
 	vec_t *matrix;
 
-	GLimp_LogComment("--- Tess_ComputeTexMatrices ---\n");
+	Ren_LogComment("--- Tess_ComputeTexMatrices ---\n");
 
 	for (i = 0; i < MAX_TEXTURE_BUNDLES; i++)
 	{
@@ -3251,7 +3205,7 @@ SetIteratorFog
 */
 static void SetIteratorFog()
 {
-	GLimp_LogComment("--- SetIteratorFog() ---\n");
+	Ren_LogComment("--- SetIteratorFog() ---\n");
 
 	// changed for problem when you start the game with r_fastsky set to '1'
 //  if(r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL ) {
@@ -3301,13 +3255,7 @@ static void SetIteratorFog()
 
 void Tess_StageIteratorDebug()
 {
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va("--- Tess_StageIteratorDebug( %i vertices, %i triangles ) ---\n", tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorDebug( %i vertices, %i triangles ) ---\n", tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3396,15 +3344,8 @@ void Tess_StageIteratorGeneric()
 {
 	int stage;
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- Tess_StageIteratorGeneric( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		                     tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorGeneric( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3609,15 +3550,8 @@ void Tess_StageIteratorGBuffer()
 	int      stage;
 	qboolean diffuseRendered = qfalse;
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- Tess_StageIteratorGBuffer( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		                     tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorGBuffer( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3817,15 +3751,8 @@ void Tess_StageIteratorGBufferNormalsOnly()
 {
 	int stage;
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- Tess_StageIteratorGBufferNormalsOnly( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		                     tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorGBufferNormalsOnly( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -3916,15 +3843,8 @@ void Tess_StageIteratorDepthFill()
 {
 	int stage;
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- Tess_StageIteratorDepthFill( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		                     tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorDepthFill( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -4000,15 +3920,8 @@ void Tess_StageIteratorShadowFill()
 {
 	int stage;
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- Tess_StageIteratorShadowFill( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		                     tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorShadowFill( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+	               tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -4082,15 +3995,8 @@ void Tess_StageIteratorLighting()
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
 
-	// log this call
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get
-		// a call to va() every frame!
-		GLimp_LogComment(va
-		                     ("--- Tess_StageIteratorLighting( %s, %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
-		                     tess.lightShader->name, tess.numVertexes, tess.numIndexes / 3));
-	}
+	Ren_LogComment("--- Tess_StageIteratorLighting( %s, %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+	               tess.lightShader->name, tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
 
@@ -4264,7 +4170,7 @@ void Tess_End()
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
 
-	GLimp_LogComment("--- Tess_End ---\n");
+	Ren_LogComment("--- Tess_End ---\n");
 
 	GL_CheckErrors();
 }

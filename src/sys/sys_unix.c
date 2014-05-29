@@ -974,7 +974,17 @@ void Sys_DoStartProcess(char *cmdline)
 	case 0:
 		if (strchr(cmdline, ' '))
 		{
-			system(cmdline);
+			int ret = system(cmdline);
+
+			// we assume there is a valid command
+			switch (ret)
+			{
+			case -1:
+				printf("execl failed: child process could not be created, or its status could not be retrieved\n");
+				break;
+			default:
+				break;
+			}
 		}
 		else
 		{

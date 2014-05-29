@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -138,7 +138,7 @@ typedef int intptr_t;
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
-#include <sys/stat.h> // rain
+#include <sys/stat.h>
 #include <float.h>
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1600)
@@ -1062,6 +1062,7 @@ int Q_isupper(int c);
 int Q_isalpha(int c);
 int Q_isnumeric(int c);
 int Q_isalphanumeric(int c);
+qboolean Q_isanumber(const char *s);
 qboolean Q_isintegral(float f);
 int Q_isforfilename(int c);
 
@@ -1088,12 +1089,19 @@ int Q_strnicmp(const char *string1, const char *string2, int n);
 
 // strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);
+
+// Encodes a plain un-colored string so that it'll be drawn with the given color code.
+void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen);
+
 // removes color sequences from string
 char *Q_CleanStr(char *string);
+
 // removes color sequences from string using multiple passes
 void Q_StripColor(char *string);
+
 // Count the number of char tocount encountered in string
 int Q_CountChar(const char *string, char tocount);
+
 // removes whitespaces and other bad directory characters
 char *Q_CleanDirName(char *dirname);
 
@@ -1413,10 +1421,10 @@ typedef struct playerState_s
 	// gets to 0 while in players hand, it explodes)
 
 	int gravity;
-	float leanf;                // amount of 'lean' when player is looking around corner //----(SA) added
+	float leanf;                // amount of 'lean' when player is looking around corner
 
 	int speed;
-	int delta_angles[3];            // add to command angles to get view direction
+	int delta_angles[3];        // add to command angles to get view direction
 	// changed by spawns, rotating objects, and teleporters
 
 	int groundEntityNum;        // ENTITYNUM_NONE = in air
@@ -1828,7 +1836,7 @@ typedef struct
 {
 	glyphInfo_t glyphs[GLYPHS_PER_FONT];
 	float glyphScale;
-	char name[MAX_QPATH];
+	char datName[MAX_QPATH];
 } fontInfo_t;
 
 // SQR

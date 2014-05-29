@@ -308,6 +308,7 @@ typedef struct itemDef_s
 	const char *onTab;
 	const char *onEsc;
 	const char *onEnter;
+	const char *onPaste;
 
 	struct itemDef_s *toolTipData;  // Tag an item to this item for auto-help popups
 
@@ -328,6 +329,7 @@ typedef struct
 	const char *onClose;            // run when the menu is closed
 	const char *onESC;              // run when the escape key is hit
 	const char *onEnter;            // run when the enter key is hit
+	const char *onPaste;            // run when the paste action is activated
 
 	int timeout;                    // milliseconds until menu times out
 	int openTime;                   // time menu opened

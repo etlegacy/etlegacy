@@ -1,7 +1,6 @@
 /**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
- * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
@@ -29,27 +28,10 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file tr_growlist.h
+ * @file json.c
  */
+#include <jansson.h>
 
-#ifndef TR_GROWLIST_H
-#define TR_GROWLIST_H
-#include "tr_local.h"
-
-typedef struct
-{
-	qboolean frameMemory;
-	int currentElements;
-	int maxElements;                // will reallocate and move when exceeded
-	void **elements;
-} growList_t;
-
-// you don't need to init the growlist if you don't mind it growing and moving
-// the list as it expands
-void            Com_InitGrowList(growList_t *list, int maxElements);
-void            Com_DestroyGrowList(growList_t *list);
-int             Com_AddToGrowList(growList_t *list, void *data);
-void *Com_GrowListElement(const growList_t *list, int index);
-int             Com_IndexForGrowListElement(const growList_t *list, const void *element);
-
-#endif
+#include "q_shared.h"
+#include "qcommon.h"
+#include "dl_public.h"

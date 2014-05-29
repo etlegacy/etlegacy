@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -42,6 +42,7 @@ typedef enum
 } dlStatus_t;
 
 int DL_BeginDownload(char *localName, const char *remoteName);
+char *DL_GetString(const char *url);
 dlStatus_t DL_DownloadLoop(void);
 
 void DL_Shutdown(void);

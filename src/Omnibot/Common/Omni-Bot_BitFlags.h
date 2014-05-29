@@ -158,6 +158,7 @@ public:
 	{
 		return m_Flags!=r.m_Flags;
 	}
+	obint64 GetRawFlags() const { return m_Flags; }
 	explicit BitFlag64(obint64 flgs = 0) : m_Flags(flgs) {}
 private:
 	obint64	m_Flags;

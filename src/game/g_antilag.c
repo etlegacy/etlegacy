@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -345,14 +345,26 @@ void G_HistoricalTraceEnd(gentity_t *ent)
 	G_AdjustClientPositions(ent, 0, qfalse);
 }
 
-// Run a trace without fixups (historical fixups will be done externally)
-void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
+/**
+ * @brief Run a trace without fixups (historical fixups will be done externally)
+ * @param ignoreCorpses   Skip corpses for bullet tracing (=non gibbing weapons)
+ */
+void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses)
 {
 	float  maxsBackup[MAX_CLIENTS];
 	vec3_t dir;
 	int    res, clientNum, i;
 
 	G_AttachBodyParts(ent);
+
+	if (ignoreCorpses)
+	{
+		// ignore bodies for bullet tracing
+		for (i = 0; i < BODY_QUEUE_SIZE; i++)
+		{
+			G_TempTraceIgnoreEntity(level.bodyQue[i]);
+		}
+	}
 
 	for (i = 0; i < level.numConnectedClients; ++i)
 	{
@@ -379,4 +391,9 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	POSITION_READJUST
 
 	G_DettachBodyParts();
+	// ok let the bodies be traced again
+	if (ignoreCorpses)
+	{
+		G_ResetTempTraceIgnoreEnts();
+	}
 }

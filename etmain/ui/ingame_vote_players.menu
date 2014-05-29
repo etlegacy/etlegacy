@@ -22,7 +22,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( "MISC", 50)
+	WINDOW( "PLAYERS", 50)
 
 // Map Selection //
 	itemDef {

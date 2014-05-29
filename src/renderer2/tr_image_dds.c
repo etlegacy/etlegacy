@@ -215,7 +215,7 @@ typedef struct
 
 #define FOURCC_DDS      MAKEFOURCC('D', 'D', 'S', ' ')
 
-//FOURCC codes for DXTn compressed-texture pixel formats
+// FOURCC codes for DXTn compressed-texture pixel formats
 #define FOURCC_DXT1     MAKEFOURCC('D', 'X', 'T', '1')
 #define FOURCC_DXT2     MAKEFOURCC('D', 'X', 'T', '2')
 #define FOURCC_DXT3     MAKEFOURCC('D', 'X', 'T', '3')
@@ -297,7 +297,7 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 		{
 			rgba[3][3] = 0;
 		}
-	//fallthrough
+	// fallthrough
 
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		if (c0 <= c1)
@@ -312,7 +312,7 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 
 			break;
 		}
-	//fallthrough
+	// fallthrough
 
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
@@ -447,7 +447,7 @@ static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, 
                                                                           int ih, const void *image_base))
 {
 	int  x, y;
-	byte block[4][4][4];            //y, x, rgba
+	byte block[4][4][4];            // y, x, rgba
 
 	glTexImage2D(target, level, int_fmat, width, height, 0, GL_RGBA, GL_BYTE, NULL);
 
@@ -572,22 +572,22 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	byte *buff;
 
-	DDSURFACEDESC2_t *ddsd;     //used to get at the dds header in the read buffer
+	DDSURFACEDESC2_t *ddsd;     // used to get at the dds header in the read buffer
 
-	//based on texture type:
+	// based on texture type:
 	//  cube        width != 0, height == 0, depth == 0
 	//  2D          width != 0, height != 0, depth == 0
 	//  volume      width != 0, height != 0, depth != 0
 	int width, height, depth;
 
-	//mip count and pointers to image data for each mip
-	//level, idx 0 = top level last pointer does not start
-	//a mip level, it's just there to mark off the end of
-	//the final mip data segment (thus the odd + 1)
+	// mip count and pointers to image data for each mip
+	// level, idx 0 = top level last pointer does not start
+	// a mip level, it's just there to mark off the end of
+	// the final mip data segment (thus the odd + 1)
 	//
-	//for cube textures we only find the offsets into the
-	//first face of the cube, subsequent faces will use the
-	//same offsets, just shifted over
+	// for cube textures we only find the offsets into the
+	// first face of the cube, subsequent faces will use the
+	// same offsets, just shifted over
 	int  mipLevels;
 	byte *mipOffsets[R_LoadDDSImage_MAX_MIPS + 1];
 
@@ -601,7 +601,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	vec4_t zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t alphaZeroClampBorder = { 0, 0, 0, 0 };
 
-	//comes from R_CreateImage
+	// comes from R_CreateImage
 	/*
 	if(tr.numImages == MAX_DRAWIMAGES)
 	{
@@ -620,8 +620,8 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	ddsd = (DDSURFACEDESC2_t *) (buff + 4);
 
-	//Byte Swapping for the DDS headers.
-	//beware: we ignore some of the shorts.
+	// Byte Swapping for the DDS headers.
+	// beware: we ignore some of the shorts.
 #ifdef Q3_BIG_ENDIAN
 	{
 		int i;
@@ -697,8 +697,8 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		height = ddsd->dwHeight;
 		depth  = 0;
 
-		//these are allowed to be non power of two, will be dealt with later on
-		//except for compressed images!
+		// these are allowed to be non power of two, will be dealt with later on
+		// except for compressed images!
 		if (compressed && ((width & (width - 1)) || (height & (height - 1))))
 		{
 			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: compressed texture images must be power of two \"%s\"\n", name);
@@ -716,7 +716,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 			goto ret_error;
 		}
 
-		//compressed FOURCC formats
+		// compressed FOURCC formats
 		switch (ddsd->u4.ddpfPixelFormat.dwFourCC)
 		{
 		case FOURCC_DXT1:
@@ -743,7 +743,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 			goto ret_error;
 		}
 
-		//get mip offsets
+		// get mip offsets
 		if (format)
 		{
 			int w      = width;
@@ -771,7 +771,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 					h = 1;
 				}
 
-				//size formula comes from DX docs (August 2005 SDK reference)
+				// size formula comes from DX docs (August 2005 SDK reference)
 				qw = w >> 2;
 				if (qw == 0)
 				{
@@ -789,7 +789,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 				h >>= 1;
 			}
 
-			//put in the trailing offset
+			// put in the trailing offset
 			mipOffsets[i] = buff + 4 + sizeof(DDSURFACEDESC2_t) + offset;
 		}
 		else
@@ -820,13 +820,13 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 			case 16:
 				if (usingAlpha)
 				{
-					//must be A1R5G5B5
+					// must be A1R5G5B5
 					ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported format, 5551 \"%s\"\n", name);
 					goto ret_error;
 				}
 				else
 				{
-					//find out if it's X1R5G5B5 or R5G6B5
+					// find out if it's X1R5G5B5 or R5G6B5
 
 					internal_format = GL_RGB5;
 					format          = GL_RGB;
@@ -911,7 +911,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 				d >>= 1;
 			}
 
-			//put in the trailing offset
+			// put in the trailing offset
 			mipOffsets[i] = buff + 4 + sizeof(DDSURFACEDESC2_t) + offset;
 		}
 		else
@@ -921,18 +921,18 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		}
 	}
 
-	//we now have a full description of our image set up
-	//if we fail after this point we still want our image_t
-	//record in the hash so that we don't go trying to read
-	//the file again - been printing an error and returning
-	//NULL up to this point...
+	// we now have a full description of our image set up
+	// if we fail after this point we still want our image_t
+	// record in the hash so that we don't go trying to read
+	// the file again - been printing an error and returning
+	// NULL up to this point...
 	ret = R_AllocImage(name, qtrue);
 
 	ret->uploadWidth  = ret->width = width;
 	ret->uploadHeight = ret->height = height;
 
 	ret->internalFormat = internal_format;
-//	ret->hasAlpha = usingAlpha;
+	//ret->hasAlpha = usingAlpha;
 
 	ret->filterType = ((filterType == FT_DEFAULT) && (mipLevels > 1)) ? FT_DEFAULT : FT_LINEAR;
 
@@ -948,7 +948,6 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		int w = width;
 		int h = height;
 		int d = depth;
-
 		int i;
 
 		if (!glConfig2.texture3DAvailable)
@@ -1085,10 +1084,9 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		int w = width;
 		int h = height;
-
 		int i;
 
-		GLuint texnum;
+		//GLuint texnum;
 
 		if ((w & (w - 1)) || (h & (h - 1)))
 		{
@@ -1108,7 +1106,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 			ret->type = GL_TEXTURE_2D;
 		}
 
-		texnum = ret->texnum;
+		//texnum = ret->texnum;
 
 		GL_Bind(ret);
 
@@ -1228,7 +1226,6 @@ image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wra
 {
 	image_t *ret;
 	byte    *buff;
-	int     len;
 
 	// comes from R_CreateImage
 	/*
@@ -1239,7 +1236,7 @@ image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wra
 	}
 	*/
 
-	len = ri.FS_ReadFile(name, (void **)&buff);
+	ri.FS_ReadFile(name, (void **)&buff);
 	if (!buff)
 	{
 		return 0;

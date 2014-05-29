@@ -114,7 +114,7 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 		return;
 	}
 
-	pix = pic8 = R_GetImageBuffer(size, BUFFER_IMAGE);
+	pix = pic8 = R_GetImageBuffer(size, BUFFER_IMAGE, filename);
 
 	raw.b = pcx->data;
 	// FIXME: should use bytes_per_line but original q3 didn't do that either

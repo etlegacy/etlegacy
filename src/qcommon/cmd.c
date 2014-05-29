@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -55,15 +55,13 @@ byte  cmd_text_buf[MAX_CMD_BUFFER];
 
 //=============================================================================
 
-/*
-============
-Cmd_Wait_f
-
-Causes execution of the remainder of the command buffer to be delayed until
-next frame.  This allows commands like:
-bind g "cmd use rocket ; +attack ; wait ; -attack ; cmd use blaster"
-============
-*/
+/**
+ * @brief Causes execution of the remainder of the command buffer to be delayed until
+ * next frame.
+ *
+ * This allows commands like:
+ * bind g "cmd use rocket ; +attack ; wait ; -attack ; cmd use blaster"
+ */
 void Cmd_Wait_f(void)
 {
 	if (Cmd_Argc() == 2)
@@ -296,11 +294,9 @@ void Cbuf_Execute(void)
 ==============================================================================
 */
 
-/*
-===============
-Cmd_Exec_f
-===============
-*/
+/**
+ * @brief Executes a script file
+ */
 void Cmd_Exec_f(void)
 {
 	char filename[MAX_QPATH];
@@ -338,13 +334,9 @@ void Cmd_Exec_f(void)
 	FS_FreeFile(f.v);
 }
 
-/*
-===============
-Cmd_Vstr_f
-
-Inserts the current value of a variable as command text
-===============
-*/
+/**
+ * @brief Inserts the current value of a variable as command text
+ */
 void Cmd_Vstr_f(void)
 {
 	char *v;
@@ -360,21 +352,43 @@ void Cmd_Vstr_f(void)
 }
 
 /**
- * @brief Prints the rest of the line to the console
+ * @brief Prints quoted text to the console
  * and shows a notification if connected to a server.
+ *
+ * Example: echo "Hello " vstr name "!"
  */
 void Cmd_Echo_f(void)
 {
+	int      i                  = 1;
+	char     text[MAX_CMD_LINE] = "";
+	qboolean vstr               = qfalse;
+
+	// Print cvar value following vstr
+	while (i < Cmd_Argc())
+	{
+		if (!Q_stricmp(Cmd_Argv(i), "vstr"))
+		{
+			Q_strcat(text, sizeof(text), Cvar_VariableString(Cmd_Argv(i + 1)));
+			vstr = qtrue;
+			i++;
+		}
+		else
+		{
+			Q_strcat(text, sizeof(text), Cmd_Argv(i));
+		}
+		i++;
+	}
+
 #ifndef DEDICATED
 	// "cpm" is a cgame command, so just print the text if disconnected
 	if (cls.state != CA_CONNECTED && cls.state != CA_ACTIVE)
+#endif
 	{
-		Com_Printf("%s\n", Cmd_Args());
+		Com_Printf("%s\n", vstr ? text : Cmd_Args());
 		return;
 	}
-#endif
 
-	Cbuf_AddText(va("cpm \"%s\"\n", Cmd_Args()));
+	Cbuf_AddText(va("cpm \"%s\"\n", vstr ? text : Cmd_Args()));
 }
 
 /*
@@ -980,11 +994,9 @@ void Cmd_ExecuteString(const char *text)
 	CL_ForwardCommandToServer(text);
 }
 
-/*
-============
-Cmd_List_f
-============
-*/
+/**
+ * @brief List available commands
+ */
 void Cmd_List_f(void)
 {
 	cmd_function_t *cmd;

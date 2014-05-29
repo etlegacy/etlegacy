@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -948,7 +948,7 @@ void SV_CloseAttackLog()
 	if (attHandle > 0)
 	{
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
-		SV_WriteAttackLog("End server attack log\n"); // FIXME: add date & additional info
+		SV_WriteAttackLog("End server attack log\n");
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
 		Com_Printf("Server attack log closed.\n");
 	}
@@ -982,7 +982,6 @@ void SV_Init(void)
 	sv_minPing        = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_maxPing        = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_floodProtect   = Cvar_Get("sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
-	sv_allowAnonymous = Cvar_Get("sv_allowAnonymous", "0", CVAR_SERVERINFO);
 	sv_friendlyFire   = Cvar_Get("g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	sv_maxlives       = Cvar_Get("g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO);
 	sv_needpass       = Cvar_Get("g_needpass", "0", CVAR_SERVERINFO | CVAR_ROM);
@@ -1110,7 +1109,7 @@ void SV_Init(void)
 
 	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
 
-	sv_protect    = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
+	sv_protect    = Cvar_Get("sv_protect", "0", CVAR_ARCHIVE);
 	sv_protectLog = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);
 	SV_InitAttackLog();
 

@@ -33,10 +33,12 @@ menuDef {
 	name		"main"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	rect		WINDOW_X WINDOW_Y 624 464
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
+		exec "set cl_noprint 1; exec etlegacy.cfg; set cl_noprint 0"
+	
 		conditionalscript cl_profile 1
 			( "clearFocus" )
 			( "close main ; open profile_create_initial_opener" )	// do we want an abort here?
@@ -56,14 +58,14 @@ menuDef {
 	}
 
 // Background Logo //
-//	itemDef {
-//		name		"etl_logo"
-//		rect		104 124 400 200		// 16, 16 offset!!
-//		style		WINDOW_STYLE_SHADER
-//		background	"ui/assets/etl_logo_huge"
-//		visible		1
-//		decoration
-//	}
+	itemDef {
+		name		"etl_logo"
+		rect		204 124 200 200		// 16, 16 offset!!
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/etl_logo_huge"
+		visible		1
+		decoration
+	}
 
 // Company Logos //
 	itemDef {
@@ -99,6 +101,7 @@ menuDef {
 
 // Window //
 	WINDOW( "^1ET:Legacy", 50 )
+	execKey "c" { close main ; open main_quickconnect }
 
 // Buttons //
 	BUTTON( 6, 32, WINDOW_WIDTH-12, 18, "PLAY ONLINE", .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSortDown 4 ; open playonline )
@@ -110,4 +113,11 @@ menuDef {
 	BUTTON( 6, 176, WINDOW_WIDTH-12, 18, "CREDITS", .3, 14, close main ; open credits_etlegacy )
 	BUTTON( 6, 200, WINDOW_WIDTH-12, 18, "ETLEGACY.COM", .3, 14, clearFocus ; open etlegacywebsite )
 	BUTTON( 6, 224, WINDOW_WIDTH-12, 18, "EXIT GAME", .3, 14, clearFocus ; open quit )
+
+#ifndef LEGACY
+	SUBWINDOWBLACK( SCREEN_WIDTH-265, 0, 245, 105, "^1Attention: ^3Security Information")
+	LABEL( SCREEN_WIDTH-255, 20, 192, 18, "^7You are running old software.\n\nWe do recommend to upgrade your ET client.\nJoin ET Legacy and keep the game alive.", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	//BUTTON( SCREEN_WIDTH-260, 85, 235, 18, "DOWNLOAD LATEST ET CLIENT", .3, 14, clearFocus ; open etlegacywebsite )
+    BUTTON( SCREEN_WIDTH-260, 85, 235, 18, "DOWNLOAD LATEST ET CLIENT", .3, 14, clearFocus; uiScript validate_openURL )
+#endif
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -101,6 +101,11 @@ void CL_JoystickEvent(int axis, int value, int time)
 
 void CL_InitKeyCommands(void)
 {
+}
+
+qboolean CL_ConnectedToServer(void)
+{
+	return qfalse;
 }
 
 void CL_FlushMemory(void)

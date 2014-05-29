@@ -337,29 +337,6 @@ cvar_t *r_allowExtensions;
 
 cvar_t *r_screenshotJpegQuality;
 
-static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
-{
-	if (shouldBeIntegral)
-	{
-		if ((int)cv->value != cv->integer)
-		{
-			ri.Printf(PRINT_WARNING, "WARNING: cvar '%s' must be integral (%f)\n", cv->name, cv->value);
-			ri.Cvar_Set(cv->name, va("%d", cv->integer));
-		}
-	}
-
-	if (cv->value < minVal)
-	{
-		ri.Printf(PRINT_WARNING, "WARNING: cvar '%s' out of range (%f < %f)\n", cv->name, cv->value, minVal);
-		ri.Cvar_Set(cv->name, va("%f", minVal));
-	}
-	else if (cv->value > maxVal)
-	{
-		ri.Printf(PRINT_WARNING, "WARNING: cvar '%s' out of range (%f > %f)\n", cv->name, cv->value, maxVal);
-		ri.Cvar_Set(cv->name, va("%f", maxVal));
-	}
-}
-
 /*
 ** InitOpenGL
 **
@@ -1023,7 +1000,7 @@ void GL_SetDefaultState(void)
 {
 	int i;
 
-	GLimp_LogComment("--- GL_SetDefaultState ---\n");
+	Ren_LogComment("--- GL_SetDefaultState ---\n");
 
 	GL_ClearDepth(1.0f);
 
@@ -1062,13 +1039,6 @@ void GL_SetDefaultState(void)
 			{
 				GL_SelectTexture(i);
 				GL_TextureMode(r_textureMode->string);
-
-				/*
-				if(i != 0)
-				    glDisable(GL_TEXTURE_2D);
-				else
-				    glEnable(GL_TEXTURE_2D);
-				*/
 			}
 		}
 	}
@@ -1096,40 +1066,20 @@ void GL_SetDefaultState(void)
 	// arrays are enabled and disabled around the compiled vertex array call
 	glEnableVertexAttribArray(ATTR_INDEX_POSITION);
 
-	/*
-	   OpenGL 3.0 spec: E.1. PROFILES AND DEPRECATED FEATURES OF OPENGL 3.0 405
-	   Calling VertexAttribPointer when no buffer object or no
-	   vertex array object is bound will generate an INVALID OPERATION error,
-	   as will calling any array drawing command when no vertex array object is
-	   bound.
-	 */
-
-	if (glConfig2.framebufferObjectAvailable)
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-		glState.currentFBO = NULL;
-	}
-
-
-	/*
-	   if(glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
-	   {
-	   // enable all attachments as draw buffers
-	   GLenum drawbuffers[] = {GL_DRAW_BUFFER0_ARB,
-	   GL_DRAW_BUFFER1_ARB,
-	   GL_DRAW_BUFFER2_ARB,
-	   GL_DRAW_BUFFER3_ARB};
-
-	   glDrawBuffersARB(4, drawbuffers);
-	   }
-	 */
+	R_SetDefaultFBO();
 
 	GL_PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	GL_DepthMask(GL_TRUE);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
 	glDisable(GL_BLEND);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearDepth(1.0);
+
+	glDrawBuffer(GL_BACK);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	GL_CheckErrors();
 
@@ -1365,7 +1315,7 @@ void R_Register(void)
 
 	r_collapseStages = ri.Cvar_Get("r_collapseStages", "1", CVAR_LATCH | CVAR_CHEAT);
 	r_picmip         = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_picmip, 0, 3, qtrue);
+	ri.Cvar_AssertCvarRange(r_picmip, 0, 3, qtrue);
 	r_roundImagesDown         = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_colorMipLevels          = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
 	r_colorbits               = ri.Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1394,12 +1344,12 @@ void R_Register(void)
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
 
 	r_forceFog = ri.Cvar_Get("r_forceFog", "0", CVAR_CHEAT /* | CVAR_LATCH */);
-	AssertCvarRange(r_forceFog, 0.0f, 1.0f, qfalse);
+	ri.Cvar_AssertCvarRange(r_forceFog, 0.0f, 1.0f, qfalse);
 	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_CHEAT);
 	r_noFog   = ri.Cvar_Get("r_noFog", "0", CVAR_CHEAT);
 #ifdef EXPERIMENTAL
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
-	//AssertCvarRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
+	//ri.Cvar_AssertCvarRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
 #endif
 #ifdef EXPERIMENTAL
 	r_depthOfField = ri.Cvar_Get("r_depthOfField", "0", CVAR_ARCHIVE);
@@ -1409,17 +1359,17 @@ void R_Register(void)
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0.125", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
+	ri.Cvar_AssertCvarRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
 
 	// temporary latched variables that can only change over a restart
-	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "1", CVAR_CHEAT | CVAR_LATCH);
-	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_CHEAT | CVAR_LATCH);
+	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 
-	AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // ydnar: limit to overbrightbits 1 (sorry 1337 players)
-	AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
+	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // ydnar: limit to overbrightbits 1 (sorry 1337 players)
+	ri.Cvar_AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
 
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
-	AssertCvarRange(r_intensity, 0, 1.5, qfalse);
+	ri.Cvar_AssertCvarRange(r_intensity, 0, 1.5, qfalse);
 
 	r_singleShader            = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_stitchCurves            = ri.Cvar_Get("r_stitchCurves", "1", CVAR_CHEAT | CVAR_LATCH);
@@ -1432,7 +1382,7 @@ void R_Register(void)
 
 	r_parallelShadowSplitWeight = ri.Cvar_Get("r_parallelShadowSplitWeight", "0.9", CVAR_CHEAT);
 	r_parallelShadowSplits      = ri.Cvar_Get("r_parallelShadowSplits", "2", CVAR_LATCH);
-	AssertCvarRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
+	ri.Cvar_AssertCvarRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
 
 	r_lightSpacePerspectiveWarping = ri.Cvar_Get("r_lightSpacePerspectiveWarping", "1", CVAR_CHEAT);
 
@@ -1441,8 +1391,8 @@ void R_Register(void)
 	// archived variables that can change at any time
 	r_lodBias        = ri.Cvar_Get("r_lodBias", "0", CVAR_ARCHIVE);
 	r_flares         = ri.Cvar_Get("r_flares", "0", CVAR_ARCHIVE);
-	r_znear          = ri.Cvar_Get("r_znear", "4", CVAR_CHEAT);
-	r_zfar           = ri.Cvar_Get("r_zfar", "1024", CVAR_CHEAT);
+	r_znear          = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // changed it to 3 (from 4) because of lean/fov cheats
+	r_zfar           = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
 	r_fastsky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
 
@@ -1467,7 +1417,7 @@ void R_Register(void)
 	r_vboLighting         = ri.Cvar_Get("r_vboLighting", "1", CVAR_CHEAT);
 	r_vboModels           = ri.Cvar_Get("r_vboModels", "1", CVAR_CHEAT);
 	r_vboOptimizeVertices = ri.Cvar_Get("r_vboOptimizeVertices", "1", CVAR_CHEAT | CVAR_LATCH);
-	r_vboVertexSkinning   = ri.Cvar_Get("r_vboVertexSkinning", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_vboVertexSkinning   = ri.Cvar_Get("r_vboVertexSkinning", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_vboDeformVertexes   = ri.Cvar_Get("r_vboDeformVertexes", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_vboSmoothNormals    = ri.Cvar_Get("r_vboSmoothNormals", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
@@ -1491,7 +1441,7 @@ void R_Register(void)
 	// HACK turn off HDR for development
 	if (r_deferredShading->integer)
 	{
-		AssertCvarRange(r_hdrRendering, 0, 0, qtrue);
+		ri.Cvar_AssertCvarRange(r_hdrRendering, 0, 0, qtrue);
 	}
 
 	r_hdrMinLuminance        = ri.Cvar_Get("r_hdrMinLuminance", "0.18", CVAR_CHEAT);
@@ -1577,37 +1527,37 @@ void R_Register(void)
 	r_halfLambertLighting = ri.Cvar_Get("r_halfLambertLighting", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_rimLighting         = ri.Cvar_Get("r_rimLighting", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_rimExponent         = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT);
-	AssertCvarRange(r_rimExponent, 0.5, 8.0, qfalse);
+	ri.Cvar_AssertCvarRange(r_rimExponent, 0.5, 8.0, qfalse);
 
 	r_drawBuffer = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);
 	r_lockpvs    = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
 	r_noportals  = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
 
 	r_shadows = ri.Cvar_Get("cg_shadows", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadows, 0, SHADOWING_STENCIL, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadows, 0, SHADOWING_STENCIL, qtrue);
 
 	r_softShadows = ri.Cvar_Get("r_softShadows", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_softShadows, 0, 6, qtrue);
+	ri.Cvar_AssertCvarRange(r_softShadows, 0, 6, qtrue);
 
 	r_shadowBlur = ri.Cvar_Get("r_shadowBlur", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_shadowMapQuality = ri.Cvar_Get("r_shadowMapQuality", "3", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapQuality, 0, 4, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapQuality, 0, 4, qtrue);
 
 	r_shadowMapSizeUltra = ri.Cvar_Get("r_shadowMapSizeUltra", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeUltra, 32, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeUltra, 32, 2048, qtrue);
 
 	r_shadowMapSizeVeryHigh = ri.Cvar_Get("r_shadowMapSizeVeryHigh", "512", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeVeryHigh, 32, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeVeryHigh, 32, 2048, qtrue);
 
 	r_shadowMapSizeHigh = ri.Cvar_Get("r_shadowMapSizeHigh", "256", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeHigh, 32, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeHigh, 32, 2048, qtrue);
 
 	r_shadowMapSizeMedium = ri.Cvar_Get("r_shadowMapSizeMedium", "128", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeMedium, 32, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeMedium, 32, 2048, qtrue);
 
 	r_shadowMapSizeLow = ri.Cvar_Get("r_shadowMapSizeLow", "64", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeLow, 32, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeLow, 32, 2048, qtrue);
 
 	shadowMapResolutions[0] = r_shadowMapSizeUltra->integer;
 	shadowMapResolutions[1] = r_shadowMapSizeVeryHigh->integer;
@@ -1616,19 +1566,19 @@ void R_Register(void)
 	shadowMapResolutions[4] = r_shadowMapSizeLow->integer;
 
 	r_shadowMapSizeSunUltra = ri.Cvar_Get("r_shadowMapSizeSunUltra", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeSunUltra, 32, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeSunUltra, 32, 2048, qtrue);
 
 	r_shadowMapSizeSunVeryHigh = ri.Cvar_Get("r_shadowMapSizeSunVeryHigh", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeSunVeryHigh, 512, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeSunVeryHigh, 512, 2048, qtrue);
 
 	r_shadowMapSizeSunHigh = ri.Cvar_Get("r_shadowMapSizeSunHigh", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeSunHigh, 512, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeSunHigh, 512, 2048, qtrue);
 
 	r_shadowMapSizeSunMedium = ri.Cvar_Get("r_shadowMapSizeSunMedium", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeSunMedium, 512, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeSunMedium, 512, 2048, qtrue);
 
 	r_shadowMapSizeSunLow = ri.Cvar_Get("r_shadowMapSizeSunLow", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_shadowMapSizeSunLow, 512, 2048, qtrue);
+	ri.Cvar_AssertCvarRange(r_shadowMapSizeSunLow, 512, 2048, qtrue);
 
 	sunShadowMapResolutions[0] = r_shadowMapSizeSunUltra->integer;
 	sunShadowMapResolutions[1] = r_shadowMapSizeSunVeryHigh->integer;
@@ -1648,10 +1598,10 @@ void R_Register(void)
 	r_noLightFrustums            = ri.Cvar_Get("r_noLightFrustums", "0", CVAR_CHEAT);
 
 	r_maxpolys = ri.Cvar_Get("r_maxpolys", "10000", 0); // 600 in vanilla Q3A
-	AssertCvarRange(r_maxpolys, 600, 30000, qtrue);
+	ri.Cvar_AssertCvarRange(r_maxpolys, 600, 30000, qtrue);
 
 	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", "100000", 0);    // 3000 in vanilla Q3A
-	AssertCvarRange(r_maxpolyverts, 3000, 200000, qtrue);
+	ri.Cvar_AssertCvarRange(r_maxpolyverts, 3000, 200000, qtrue);
 
 	r_showTris                 = ri.Cvar_Get("r_showTris", "0", CVAR_CHEAT);
 	r_showSky                  = ri.Cvar_Get("r_showSky", "0", CVAR_CHEAT);
@@ -1688,7 +1638,7 @@ void R_Register(void)
 	r_noborder        = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_stereoEnabled   = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
+	ri.Cvar_AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
 	r_ext_multitexture    = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_texture_env_add = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_allowExtensions     = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
@@ -1808,7 +1758,7 @@ void R_Init(void)
 
 	if (glConfig2.textureAnisotropyAvailable)
 	{
-		AssertCvarRange(r_ext_texture_filter_anisotropic, 0, glConfig2.maxTextureAnisotropy, qfalse);
+		ri.Cvar_AssertCvarRange(r_ext_texture_filter_anisotropic, 0, glConfig2.maxTextureAnisotropy, qfalse);
 	}
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA)
@@ -1908,6 +1858,8 @@ void RE_Shutdown(qboolean destroyWindow)
 #endif
 
 		GLimp_Shutdown();
+
+		ri.Tag_Free();
 	}
 
 	tr.registered = qfalse;

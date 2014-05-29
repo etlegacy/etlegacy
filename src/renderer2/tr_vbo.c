@@ -118,7 +118,8 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	int  dataSize;
 	int  dataOfs;
 
-	int glUsage;
+	int          glUsage;
+	unsigned int bits;
 
 	switch (usage)
 	{
@@ -171,10 +172,20 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	vbo->sizeBinormals = 0;
 	vbo->sizeNormals   = 0;
 
-	// create VBO
-	dataSize = numVertexes * (sizeof(vec4_t) * 9);
-	data     = (byte *)ri.Hunk_AllocateTempMemory(dataSize);
-	dataOfs  = 0;
+	// size VBO
+	dataSize = 0;
+	bits     = stateBits;
+	while (bits)
+	{
+		if (bits & 1)
+		{
+			dataSize += sizeof(vec4_t);
+		}
+		bits >>= 1;
+	}
+	dataSize *= numVertexes;
+	data      = (byte *)ri.Hunk_AllocateTempMemory(dataSize);
+	dataOfs   = 0;
 
 	// since this is all float, point tmp directly into data
 	// 2-entry -> { memb[0], memb[1], 0, 1 }
@@ -192,8 +203,11 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 		dataOfs += i * sizeof(vec4_t); \
 	} while (0)
 
-	// set up xyz array
-	VERTEXCOPY(xyz);
+	if (stateBits & ATTR_POSITION)
+	{
+		vbo->ofsXYZ = dataOfs;
+		VERTEXCOPY(xyz);
+	}
 
 	// feed vertex texcoords
 	if (stateBits & ATTR_TEXCOORD)
@@ -406,11 +420,7 @@ void R_BindVBO(VBO_t *vbo)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- R_BindVBO( %s ) ---\n", vbo->name));
-	}
+	Ren_LogComment("--- R_BindVBO( %s ) ---\n", vbo->name);
 
 	if (glState.currentVBO != vbo)
 	{
@@ -436,7 +446,7 @@ R_BindNullVBO
 */
 void R_BindNullVBO(void)
 {
-	GLimp_LogComment("--- R_BindNullVBO ---\n");
+	Ren_LogComment("--- R_BindNullVBO ---\n");
 
 	if (glState.currentVBO)
 	{
@@ -461,11 +471,7 @@ void R_BindIBO(IBO_t *ibo)
 		return;
 	}
 
-	if (r_logFile->integer)
-	{
-		// don't just call LogComment, or we will get a call to va() every frame!
-		GLimp_LogComment(va("--- R_BindIBO( %s ) ---\n", ibo->name));
-	}
+	Ren_LogComment("--- R_BindIBO( %s ) ---\n", ibo->name);
 
 	if (glState.currentIBO != ibo)
 	{
@@ -484,7 +490,7 @@ R_BindNullIBO
 */
 void R_BindNullIBO(void)
 {
-	GLimp_LogComment("--- R_BindNullIBO ---\n");
+	Ren_LogComment("--- R_BindNullIBO ---\n");
 
 	if (glState.currentIBO)
 	{

@@ -3162,7 +3162,7 @@ qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
 
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
 
-	Info_SetValueForKey(cs, "numobjectives", token);
+	Info_SetValueForKey(cs, "o", token); // numobjectives
 
 	trap_SetConfigstring(CS_MULTI_INFO, cs);
 
@@ -3383,7 +3383,7 @@ qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 
-	Info_SetValueForKey(cs, "winner", token);
+	Info_SetValueForKey(cs, "w", token);
 
 	trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 
@@ -3426,7 +3426,7 @@ qboolean G_ScriptAction_SetDefendingTeam(gentity_t *ent, char *params)
 
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
 
-	Info_SetValueForKey(cs, "defender", token);
+	Info_SetValueForKey(cs, "d", token); // defender
 
 	trap_SetConfigstring(CS_MULTI_INFO, cs);
 

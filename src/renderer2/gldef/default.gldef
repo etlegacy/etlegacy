@@ -367,3 +367,9 @@ dispersion
 	attribs ATTR_POSITION ATTR_NORMAL
 	uniform int u_ColorMap 0
 }
+
+colorCorrection
+{
+	filename "color"
+	uniform int u_CurrentMap 0
+}

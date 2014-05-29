@@ -422,7 +422,7 @@ msgstr ""
 msgid "MAP NAME"
 msgstr ""
 
-msgid "#PLRS"
+msgid "#PLAYERS"
 msgstr ""
 
 msgid "TYPE"
@@ -1272,7 +1272,7 @@ msgstr ""
 msgid "SET RECOMMENDED"
 msgstr ""
 
-msgid "^3DEVELOPED BY ET LEGACY TEAM"
+msgid "DEVELOPED BY ET:LEGACY TEAM"
 msgstr ""
 
 msgid "^1PROGRAMMING"
@@ -2534,13 +2534,13 @@ msgid ""
 "sure?"
 msgstr ""
 
-msgid "MAX OMNI-BOT"
+msgid "Bot count:"
 msgstr ""
 
-msgid "MIN OMNI-BOT"
+msgid "Move skill:"
 msgstr ""
 
-msgid "KICK OMNI-BOT"
+msgid "KICK ALL BOTS"
 msgstr ""
 
 msgid "Yes"
@@ -2564,7 +2564,7 @@ msgstr ""
 msgid "^1LET'S KEEP ET ALIVE!"
 msgstr ""
 
-msgid "^3Thank you for installing ET:Legacy"
+msgid "Thank you for installing ET:Legacy"
 msgstr ""
 
 msgid "HOST GAME: EXTENDED"
@@ -2995,7 +2995,7 @@ msgstr ""
 msgid "Medic Ammo"
 msgstr ""
 
-msgid "Binoculars"
+msgid "Binoculars for any Class"
 msgstr ""
 
 msgid "Full Revive"
@@ -3600,9 +3600,6 @@ msgstr ""
 msgid "Modify Selected HUD:"
 msgstr ""
 
-msgid "PopUpTime:"
-msgstr ""
-
 msgid "PopUpTimeStay:"
 msgstr ""
 
@@ -3671,7 +3668,7 @@ msgstr ""
 msgid "Added favorite server %s\n"
 msgstr ""
 
-msgid "^3See HALL OF FAME below"
+msgid "See HALL OF FAME below"
 msgstr ""
 
 msgid "^1WEBSITE"
@@ -3683,7 +3680,7 @@ msgstr ""
 msgid "HALL OF FAME"
 msgstr ""
 
-msgid "^3ET LEGACY HALL OF FAME"
+msgid "ET:LEGACY HALL OF FAME"
 msgstr ""
 
 msgid "Advices, Bug reports, Patches"
@@ -4547,4 +4544,43 @@ msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
 "their inspirations."
+msgstr ""
+
+msgid "Show Ping:"
+msgstr ""
+
+msgid "Allied team has constructed the bridge!"
+msgstr ""
+
+msgid "Anti-Aliasing:"
+msgstr ""
+
+msgid "The Tank has been repaired"
+msgstr ""
+
+msgid "^1ORIGINAL DEVELOPERS"
+msgstr ""
+
+msgid "The Tank has been damaged"
+msgstr ""
+
+msgid "BOTS"
+msgstr ""
+
+msgid "Difficulty:"
+msgstr ""
+
+msgid "BOTS ON"
+msgstr ""
+
+msgid "^1Attention: ^3Security Information"
+msgstr ""
+
+msgid "^7You are running old software.\n"
+"\n"
+"We do recommend to upgrade your ET client.\n"
+"Join ET Legacy and keep the game alive."
+msgstr ""
+
+msgid "DOWNLOAD LATEST ET CLIENT"
 msgstr ""

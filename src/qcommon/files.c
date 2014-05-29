@@ -63,7 +63,7 @@ The "home path" is the path used for all write access. On win32 systems we have 
 == "home path", but this no longer the case for ET: Legacy - it requires "base path"
 != "home path" Any files that are created (demos, screenshots, etc) will be created relative
 to the base path, so home path should usually be writable.
-"home path" points to ~/.etllegacy or c:\<USER>\My Documets\ETLegacy by default.
+"home path" points to ~/.etlegacy or c:\<USER>\My Documets\ETLegacy by default.
 
 The user can also install custom mods and content in "home path", so it should be searched
 along with "home path" and "base path" for game content. Mods downloads from online server games
@@ -1388,6 +1388,7 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 		return FS_fplength(filep);
 	}
 
+	*file = 0;
 	return -1;
 }
 
@@ -1527,8 +1528,10 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 		{
 			destData = (unsigned char *)Z_Malloc(destLength);
 
-			fread(destData, destLength, 1, destHandle);
-
+			if (fread(destData, destLength, 1, destHandle) != 1)
+			{
+				Com_Error(ERR_FATAL, "FS_CL_ExtractFromPakFile: Short read '%s'", filename);
+			}
 			// compare files
 			if (destLength == srcLength)
 			{
@@ -1548,7 +1551,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 				}
 			}
 
-			Z_Free(destData);   // TTimo
+			Z_Free(destData);
 		}
 
 		fclose(destHandle);
@@ -4387,8 +4390,8 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 			return;
 		}
 
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Original game data files not found.\n\nPlease copy pak0.pk3, pak1.pk3 and pak2.pk3 from the Wolfenstein: Enemy Territory installation to one of these locations:\n\n\"%s%c%s\"\n\nor\n\n\"%s%c%s\"\n",
-		          Cvar_VariableString("fs_basepath"), PATH_SEP, BASEGAME, Cvar_VariableString("fs_homepath"), PATH_SEP, BASEGAME);
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Original game data files not found.\n\nPlease copy pak0.pk3, pak1.pk3 and pak2.pk3 from the 'etmain' path of your Wolfenstein: Enemy Territory installation to:\n\n\"%s%c%s\"\n\n",
+		          Cvar_VariableString("fs_basepath"), PATH_SEP, BASEGAME);
 	}
 }
 

@@ -123,7 +123,7 @@ menuDef {
 		( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 	
         LABEL( 6, SUBWINDOW_Y+302, .7*(WINDOW_WIDTH-24), 10, "^1LET'S KEEP ET ALIVE!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-        LABEL( 6, SUBWINDOW_Y+314, .7*(WINDOW_WIDTH-24), 10, "^3Thank you for installing ET:Legacy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+        LABEL( 6, SUBWINDOW_Y+314, .7*(WINDOW_WIDTH-24), 10, "Thank you for installing ET:Legacy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
         LABEL( 6, SUBWINDOW_Y+336, .7*(WINDOW_WIDTH-24), 10, "^1WEBSITE", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
         LABEL( 6, SUBWINDOW_Y+348, .7*(WINDOW_WIDTH-24), 10, "^7www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 

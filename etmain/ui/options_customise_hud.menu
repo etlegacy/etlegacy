@@ -124,13 +124,11 @@ menuDef {
 
 // Misc //
   #define MISC_Y 354
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 52, "MISC" )
-	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTime:", .2, 8, "cg_popupTime" 2500 0 6000, "Set the delay time in which a pop-up appear" )
-	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeStay:", .2, 8, "cg_popupStayTime" 2500 0 6000, "Set the time a pop-up stays visible" )
-	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeFade:", .2, 8, "cg_popupFadeTime" 2500 0 6000, "Set the time a pop-up fades away" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 40, "MISC" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeStay:", .2, 8, "cg_popupStayTime" 2500 0 6000, "Set the time a pop-up stays visible" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeFade:", .2, 8, "cg_popupFadeTime" 2500 0 6000, "Set the time a pop-up fades away" )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close options_customise_hud ; open options )

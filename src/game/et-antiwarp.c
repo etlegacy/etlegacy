@@ -1,14 +1,16 @@
-// et-antiwarp.c: Antiwarp code from etpro thanks to zinx
-// -------------------------
-//
+/**
+  et-antiwarp.c: Antiwarp code from etpro thanks to zinx
+
+  @brief This file is altered and modified by ET: Legacy team - http://www.etlegacy.com
+*/
 
 #include "g_local.h"
 
-// Dens: fixes spectator bugs
+// fixes spectator bugs
 qboolean G_DoAntiwarp(gentity_t *ent)
 {
 	// only antiwarp if requested
-	if (!g_antiwarp.integer)
+	if (!g_antiwarp.integer || g_gamestate.integer == GS_INTERMISSION)
 	{
 		return qfalse;
 	}
@@ -56,7 +58,7 @@ void etpro_AddUsercmd(int clientNum, usercmd_t *cmd)
 	}
 }
 
-// zinx - G_CmdScale is a hack :x
+// G_CmdScale is a hack :x
 static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 {
 	float scale = abs(cmd->forwardmove);
@@ -65,7 +67,7 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 	{
 		scale = abs(cmd->rightmove);
 	}
-	// zinx - don't count crouch/jump; just count moving in water
+	// don't count crouch/jump; just count moving in water
 	if (ent->waterlevel && abs(cmd->upmove) > scale)
 	{
 		scale = abs(cmd->upmove);
@@ -78,15 +80,15 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 // full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
 // back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
 // player if the own the weapon at all.
-//
-#if 0   // zinx - not letting them go at sprint speed for now.
-	if ((ent->client->ps.weapon == WP_PANZERFAUST) ||
-	    (ent->client->ps.weapon == WP_BAZOOKA) ||
-	    (ent->client->ps.weapon == WP_MOBILE_MG42) ||
-	    (ent->client->ps.weapon == WP_MOBILE_MG42_SET) ||
-	    (ent->client->ps.weapon == WP_MOBILE_BROWNING) ||
-	    (ent->client->ps.weapon == WP_MOBILE_BROWNING_SET) ||
-	    (ent->client->ps.weapon == WP_MORTAR))
+#if 0   // not letting them go at sprint speed for now.
+	if (ent->client->ps.weapon == WP_PANZERFAUST ||
+	    ent->client->ps.weapon == WP_BAZOOKA ||
+	    ent->client->ps.weapon == WP_MOBILE_MG42 ||
+	    ent->client->ps.weapon == WP_MOBILE_MG42_SET ||
+	    ent->client->ps.weapon == WP_MOBILE_BROWNING ||
+	    ent->client->ps.weapon == WP_MOBILE_BROWNING_SET ||
+	    ent->client->ps.weapon == WP_MORTAR ||
+	    ent->client->ps.weapon == WP_MORTAR2)
 	{
 		if (ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 3)
 		{
@@ -141,7 +143,7 @@ void DoClientThinks(gentity_t *ent)
 	latestTime = trap_Milliseconds();
 	if (ent->client->lastCmdRealTime > latestTime)
 	{
-		// zinx - stoopid server went backwards in time, reset the delta
+		// stoopid server went backwards in time, reset the delta
 		// instead of giving them even -less- movement ability
 		ent->client->cmddelta = 0;
 	}
@@ -178,7 +180,7 @@ void DoClientThinks(gentity_t *ent)
 
 		if (totalDelta >= drop_threshold)
 		{
-			// zinx - whoops. too lagged.
+			// whoops. too lagged.
 			drop_threshold = LAG_MIN_DROP_THRESHOLD;
 			lastTime       = ent->client->ps.commandTime = cmd->serverTime;
 			goto drop_packet;
@@ -186,13 +188,13 @@ void DoClientThinks(gentity_t *ent)
 
 		if (totalDelta < 0)
 		{
-			// zinx - oro? packet from the future
+			// oro? packet from the future
 			goto drop_packet;
 		}
 
 		if (timeDelta <= 0)
 		{
-			// zinx - packet from the past
+			// packet from the past
 			goto drop_packet;
 		}
 
@@ -251,7 +253,7 @@ void DoClientThinks(gentity_t *ent)
 			savedTime = 0;  // zinx - shut up compiler
 		}
 
-		// zinx - erh.  hack, really. make it run for the proper amount of time.
+		// erh.  hack, really. make it run for the proper amount of time.
 		ent->client->ps.commandTime = lastTime;
 		ClientThink_cmd(ent, cmd);
 		lastTime = ent->client->ps.commandTime;
@@ -280,7 +282,7 @@ drop_packet:
 		continue;
 	}
 
-	// zinx - added ping, packets processed this frame
+	// added ping, packets processed this frame
 	// warning: eats bandwidth like popcorn
 	if (g_antiwarp.integer & 32)
 	{
@@ -290,7 +292,7 @@ drop_packet:
 		    );
 	}
 
-	// zinx - debug; size is added lag (amount above player's network lag)
+	// debug; size is added lag (amount above player's network lag)
 	// rotation is time
 	if ((g_antiwarp.integer & 16) && ent->client->cmdcount)
 	{

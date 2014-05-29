@@ -409,7 +409,7 @@ void CG_ParseSpawns(void)
 	int        i;
 	int        newteam;
 
-	s = Info_ValueForKey(info, "numspawntargets");
+	s = Info_ValueForKey(info, "s"); // numspawntargets
 
 	if (!s || !strlen(s))
 	{
@@ -1591,7 +1591,7 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 	if (!vchat->voiceOnly && !cg_noVoiceText.integer)
 	{
 		CG_AddToTeamChat(vchat->message, vchat->clientNum);
-		CG_Printf("[skipnotify]: %s\n", vchat->message);
+		CG_Printf("[skipnotify]%s\n", vchat->message);
 		CG_WriteToLog("%s\n", vchat->message);
 	}
 	voiceChatBuffer[cg.voiceChatBufferOut].snd = 0;

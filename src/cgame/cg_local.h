@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -394,7 +394,7 @@ typedef struct markPoly_s
 // moved in from cg_view.c
 typedef enum
 {
-	ZOOM_NONE,
+	ZOOM_NONE = 0,
 	ZOOM_BINOC,
 	ZOOM_SNIPER,
 	ZOOM_SNOOPER,
@@ -405,7 +405,7 @@ typedef enum
 
 typedef enum
 {
-	ZOOM_OUT,   // widest angle
+	ZOOM_OUT = 0, // widest angle
 	ZOOM_IN     // tightest angle (approaching 0)
 } EZoomInOut_t;
 
@@ -413,7 +413,7 @@ extern float zoomTable[ZOOM_MAX_ZOOMS][2];
 
 typedef enum
 {
-	LE_MARK,
+	LE_MARK = 0,
 	LE_EXPLOSION,
 	LE_SPRITE_EXPLOSION,
 	LE_FRAGMENT,
@@ -441,19 +441,20 @@ typedef enum
 
 typedef enum
 {
-	LEMT_NONE,
+	LEMT_NONE = 0,
 	LEMT_BLOOD
 } leMarkType_t;         // fragment local entities can leave marks on walls
 
 typedef enum
 {
-	LEBS_NONE,
+	LEBS_NONE = 0,
 	LEBS_BLOOD,
 	LEBS_ROCK,
 	LEBS_WOOD,
 	LEBS_BRASS,
 	LEBS_METAL,
-	LEBS_BONE
+	LEBS_BONE,
+	LEBS_SG_BRASS
 } leBounceSoundType_t;  // fragment local entities can make sounds on impacts
 
 typedef struct localEntity_s
@@ -1425,7 +1426,7 @@ typedef struct
 	sfxHandle_t sfx_mortarexpDist;
 	sfxHandle_t sfx_grenexp;
 	sfxHandle_t sfx_grenexpDist;
-	sfxHandle_t sfx_brassSound[BRASSSOUND_MAX][3];
+	sfxHandle_t sfx_brassSound[BRASSSOUND_MAX][3][2];
 	sfxHandle_t sfx_rubbleBounce[3];
 
 	sfxHandle_t sfx_bullet_fleshhit[5];
@@ -1872,7 +1873,6 @@ typedef struct cgs_s
 
 	int complaintClient;
 	int complaintEndTime;
-	float smokeWindDir; // for smoke puffs & wind (arty, airstrikes, bullet impacts)
 
 	playerStats_t playerStats;
 	int numOIDtriggers;
@@ -2071,7 +2071,6 @@ extern vmCvar_t cg_errorDecay;
 extern vmCvar_t cg_nopredict;
 extern vmCvar_t cg_noPlayerAnims;
 extern vmCvar_t cg_showmiss;
-extern vmCvar_t cg_footsteps;
 extern vmCvar_t cg_markTime;
 extern vmCvar_t cg_brassTime;
 extern vmCvar_t cg_gun_frame;
@@ -2226,7 +2225,6 @@ extern vmCvar_t cg_automapZoom;
 
 extern vmCvar_t cg_drawTime;
 
-extern vmCvar_t cg_popupTime;
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
 extern vmCvar_t cg_graphicObituaries;
@@ -3021,15 +3019,6 @@ void CG_LimboMenu_f(void);
 
 void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, int time, clientInfo_t *ci, qboolean animatedHead);
 animation_t *CG_GetLimboAnimation(playerInfo_t *pi, const char *name);
-
-typedef struct
-{
-	weapon_t weapindex;
-	const char *desc;
-} weaponType_t;
-
-extern weaponType_t weaponTypes[];
-weaponType_t *WM_FindWeaponTypeForWeapon(weapon_t weapon);
 
 extern qboolean ccInitial;
 

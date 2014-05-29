@@ -51,7 +51,7 @@ static image_t *hashTable[FILE_HASH_SIZE];
 int  imageBufferSize[BUFFER_MAX_TYPES] = { 0, 0, 0 };
 void *imageBufferPtr[BUFFER_MAX_TYPES] = { NULL, NULL, NULL };
 
-void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
+void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename)
 {
 	if (imageBufferSize[bufferType] < R_IMAGE_BUFFER_SIZE && size <= imageBufferSize[bufferType])
 	{
@@ -70,9 +70,10 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
 		imageBufferSize[bufferType] = size;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
 	}
+
 	if (!imageBufferPtr[bufferType])
 	{
-		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer\n");
+		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer for image %s with size: %i\n", filename, size);
 	}
 
 	return imageBufferPtr[bufferType];
@@ -607,7 +608,7 @@ static void Upload32(unsigned *data,
 
 	if (scaled_width != width || scaled_height != height)
 	{
-		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED);
+		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED, "resample");
 		ResampleTexture(data, width, height, resampledBuffer, scaled_width, scaled_height);
 		data   = resampledBuffer;
 		width  = scaled_width;
@@ -642,7 +643,7 @@ static void Upload32(unsigned *data,
 	}
 
 	//scaledBuffer = ri.Hunk_AllocateTempMemory( sizeof( unsigned ) * scaled_width * scaled_height );
-	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED);
+	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED, "resample");
 
 	// scan the texture for each channel's max values
 	// and verify if the alpha channel is being used or not
@@ -990,9 +991,9 @@ typedef struct
 static imageExtToLoaderMap_t imageLoaders[] =
 {
 	{ "tga",  R_LoadTGA },
+	{ "png",  R_LoadPNG },
 	{ "jpg",  R_LoadJPG },
 	{ "jpeg", R_LoadJPG },
-	{ "png",  R_LoadPNG },
 	{ "pcx",  R_LoadPCX },
 	{ "bmp",  R_LoadBMP }
 };
@@ -1189,15 +1190,11 @@ R_InitFogTable
 */
 void R_InitFogTable(void)
 {
-	int   i;
-	float d;
-	float exp = 0.5f;
+	int i;
 
 	for (i = 0 ; i < FOG_TABLE_SIZE ; i++)
 	{
-		d = pow((float)i / (FOG_TABLE_SIZE - 1), exp);
-
-		tr.fogTable[i] = d;
+		tr.fogTable[i] = pow((float)i / (FOG_TABLE_SIZE - 1), DEFAULT_FOG_EXP_DENSITY);
 	}
 }
 
