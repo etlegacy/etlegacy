@@ -2993,11 +2993,6 @@ void Com_Init(char *commandLine)
 			Cbuf_AddText("cinematic etintro.roq\n");
 			Cvar_Set("com_introPlayed", "1");
 		}
-#ifdef __APPLE__
-		// HACK: screen size on Mac is not properly set
-		//       on first run in fullscreen for some reason
-		Cbuf_AddText("vid_restart\n");
-#endif //  __APPLE__
 	}
 
 	com_fullyInitialized = qtrue;
