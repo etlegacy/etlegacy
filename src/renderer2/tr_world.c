@@ -1423,11 +1423,11 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 
         if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
         {
-            GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
+            SetUniformVec4(UNIFORM_COLOR, colorGreen);
         }
         else
         {
-            GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
+            SetUniformVec4(UNIFORM_COLOR, colorMdGrey);
         }
 
         // draw bsp leave or node
@@ -1582,11 +1582,11 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
-			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
+			SetUniformVec4(UNIFORM_COLOR, colorGreen);
 		}
 		else
 		{
-			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
+			SetUniformVec4(UNIFORM_COLOR, colorMdGrey);
 		}
 
 		Ren_LogComment("%i, ", node - tr.world->nodes);
@@ -1931,18 +1931,18 @@ static void R_CoherentHierachicalCulling()
 
 	// set uniforms
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
-	GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorWhite);
+	SetUniformVec4(UNIFORM_COLOR, colorWhite);
 
 	// set up the transformation matrix
 	GL_LoadModelViewMatrix(tr.orientation.modelViewMatrix);
 
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 	// bind u_ColorMap
 	GL_SelectTexture(0);
 	GL_Bind(tr.whiteImage);
 
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 #if 0
 	GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);

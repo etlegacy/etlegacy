@@ -800,8 +800,8 @@ void RB_DrawSun(void)
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 	//FIXME: Why would this be here? Select permutation has already been given and no new cmd is given
 	//GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
 
@@ -815,7 +815,7 @@ void RB_DrawSun(void)
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
 
-		GLSL_SetUniformVec4(selectedProgram, UNIFORM_PORTALPLANE, plane);
+		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
 	}
 
 	dist = backEnd.viewParms.skyFar / 1.75; // div sqrt(3)
@@ -979,9 +979,9 @@ void Tess_StageIteratorSky(void)
 			GLSL_SetMacroState(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 			GLSL_SelectPermutation(gl_skyboxShader);
 
-			GLSL_SetUniformVec3(selectedProgram, UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
-			GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-			GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
+			SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 			// u_PortalPlane
 			if (backEnd.viewParms.isPortal)
@@ -994,7 +994,7 @@ void Tess_StageIteratorSky(void)
 				plane[2] = backEnd.viewParms.portalPlane.normal[2];
 				plane[3] = backEnd.viewParms.portalPlane.dist;
 
-				GLSL_SetUniformVec4(selectedProgram, UNIFORM_PORTALPLANE, plane);
+				SetUniformVec4(UNIFORM_PORTALPLANE, plane);
 			}
 
 			GLSL_SetRequiredVertexPointers(gl_skyboxShader);
