@@ -3017,9 +3017,6 @@ void CG_CloseMenus(void);
 
 void CG_LimboMenu_f(void);
 
-void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, int time, clientInfo_t *ci, qboolean animatedHead);
-animation_t *CG_GetLimboAnimation(playerInfo_t *pi, const char *name);
-
 extern qboolean ccInitial;
 
 #define CC_FILTER_AXIS          (1 << 0)
