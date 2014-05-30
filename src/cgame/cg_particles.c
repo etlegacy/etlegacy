@@ -786,7 +786,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		}
 		else if (ratio < 0.0)
 		{
-			// rain - make sure that ratio isn't negative or
+			// make sure that ratio isn't negative or
 			// we'll walk out of bounds when j is calculated below
 			ratio = 0.0001;
 		}
@@ -799,7 +799,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		{
 			// fixme: support arbitrary color
 			trap_R_AddLightToScene(org, 320,    //%	1.5 * (width > height ? width : height),
-			                       1.25 * (1.0 - ratio), 1.0, 0.95, 0.85, 0, 0);
+			                       1.25 * (1.0 - ratio), 1.0f, 0.95f, 0.85f, 0, 0);
 		}
 
 		// if we are "inside" this sprite, don't draw
@@ -1100,10 +1100,6 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 	}
 
 	VectorCopy(cent->currentState.origin, p->org);
-
-	p->org[0] = p->org[0];
-	p->org[1] = p->org[1];
-	p->org[2] = p->org[2];
 
 	p->vel[0] = p->vel[1] = 0;
 
@@ -1552,7 +1548,7 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 	cparticle_t *p;
 	int         anim;
 
-#if 0   // rain - this is arguably not legal...  it seems to mostly be a
+#if 0   // this is arguably not legal...  it seems to mostly be a
 	    // debugging thing anyway, so I'm killing it for now
 	if (animStr < (char *)10)
 	{
