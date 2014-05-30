@@ -149,6 +149,19 @@
 
 #define ISVALIDCLIENTNUM(clientNum) (clientNum >= 0 && clientNum < MAX_CLIENTS)
 
+typedef struct specName_s
+{
+	float x;
+	float y;
+	float scale;
+	const char *text;
+	vec3_t origin;
+	int lastVisibleTime;
+	int lastInvisibleTime;
+	qboolean visible;
+	float alpha;
+}specName_t;
+
 typedef struct
 {
 	vec4_t colorBorder;         // Window border color
@@ -1173,6 +1186,9 @@ typedef struct
 	fileHandle_t logFile;
 	// tracing bullet, predict hitboxes used on server
 	qboolean bulletTrace;
+
+	specName_t specOnScreenNames[MAX_CLIENTS];
+
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS   5

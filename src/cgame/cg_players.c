@@ -1825,6 +1825,121 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
 
 /*
 ===============
+CG_PlayerFloatSprite
+
+Float a sprite over the player's head
+added height parameter
+===============
+*/
+
+qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
+{
+	vec3_t trans;
+	float  xc, yc;
+	float  px, py;
+	float  z;
+
+	px = tan(DEG2RAD(cg.refdef.fov_x) / 2);
+	py = tan(DEG2RAD(cg.refdef.fov_y) / 2);
+
+	VectorSubtract(point, cg.refdef.vieworg, trans);
+
+	xc = 640.0f / 2.0f;
+	yc = 480.0f / 2.0f;
+
+	z = DotProduct(trans, cg.refdef.viewaxis[0]);
+	if (z < 0.1f)
+	{
+		return qfalse;
+	}
+	px *= z;
+	py *= z;
+	if (px == 0 || py == 0)
+	{
+		return qfalse;
+	}
+
+	*x = xc - (DotProduct(trans, cg.refdef.viewaxis[1]) * xc) / px;
+	*y = yc - (DotProduct(trans, cg.refdef.viewaxis[2]) * yc) / py;
+	*x = Ccg_WideX(*x);
+
+	return qtrue;
+}
+
+void CG_AddOnScreenText(const char *text, vec3_t origin, int clientNum)
+{
+	float x, y;
+
+	if (!ISVALIDCLIENTNUM(clientNum))
+	{
+		return;
+	}
+
+	if (CG_WorldCoordToScreenCoordFloat(origin, &x, &y))
+	{
+		float scale, w, h;
+		float dist  = VectorDistance(origin, cg.refdef_current->vieworg);
+		float dist2 = (dist * dist) / (3600.0f);
+
+		if (dist2 > 2.0f)
+		{
+			dist2 = 2.0f;
+		}
+
+		scale = 2.4f - dist2 - dist / 6000.0f;
+		if (scale < 0.05f)
+		{
+			scale = 0.05f;
+		}
+
+		w = CG_Text_Width_Ext(text, scale, 0, &cgs.media.limboFont1);
+		h = CG_Text_Height_Ext(text, scale, 0, &cgs.media.limboFont1);
+
+		x -= w / 2;
+		y -= h / 2;
+
+		// save it
+		cg.specOnScreenNames[clientNum].x     = x;
+		cg.specOnScreenNames[clientNum].y     = y;
+		cg.specOnScreenNames[clientNum].scale = scale;
+		cg.specOnScreenNames[clientNum].text  = text;
+		VectorCopy(origin, cg.specOnScreenNames[clientNum].origin);
+		cg.specOnScreenNames[clientNum].visible = qtrue;
+	}
+	else
+	{
+		memset(&cg.specOnScreenNames[clientNum], 0, sizeof(cg.specOnScreenNames[clientNum]));
+	}
+}
+
+static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
+{
+	vec3_t origin;
+
+	VectorCopy(cent->lerpOrigin, origin);
+	origin[2] += height;
+
+	// Account for ducking
+	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
+	{
+		if (cg.snap->ps.pm_flags & PMF_DUCKED)
+		{
+			origin[2] -= 18;
+		}
+	}
+	else
+	{
+		if ((qboolean)cent->currentState.animMovetype)
+		{
+			origin[2] -= 18;
+		}
+	}
+	CG_AddOnScreenText(text, origin, cent->currentState.clientNum);
+}
+
+
+/*
+===============
 CG_PlayerSprites
 
 Float sprites over the player's head
@@ -1832,7 +1947,8 @@ Float sprites over the player's head
 */
 static void CG_PlayerSprites(centity_t *cent)
 {
-	int team;
+	int          team;
+	clientInfo_t *ci = &cgs.clientinfo[cent->currentState.clientNum];
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) ||
 	    (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
@@ -1844,6 +1960,12 @@ static void CG_PlayerSprites(centity_t *cent)
 	if (cent->currentState.eFlags & EF_CONNECTION)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, 48);
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		CG_PlayerFloatText(cent, ci->name, 56);
 		return;
 	}
 

@@ -3271,6 +3271,75 @@ void CG_DrawDemoRecording(void)
 	CG_Text_Paint_Ext(5, cg_recording_statusline.integer, 0.2f, 0.2f, colorWhite, status, 0, 0, 0, &cgs.media.limboFont2);
 }
 
+void CG_DrawOnScreenNames(void)
+{
+	static vec3_t mins  = { -1, -1, -1 };
+	static vec3_t maxs  = { 1, 1, 1 };
+	vec4_t        white = { 1.0f, 1.0f, 1.0f, 1.0f };
+	int           i;
+	specName_t    *spcNm;
+	trace_t       tr;
+	int           FadeOut = 0;
+	int           FadeIn  = 0;
+
+	for (i = 0; i < cgs.maxclients; ++i)
+	{
+
+		spcNm = &cg.specOnScreenNames[i];
+
+		// Visible checks if information is actually valid
+		if (!spcNm || !spcNm->visible)
+		{
+			continue;
+		}
+
+		CG_Trace(&tr, cg.refdef.vieworg, mins, maxs, spcNm->origin, -1, CONTENTS_SOLID);
+
+		if (tr.fraction < 1.0f)
+		{
+			spcNm->lastInvisibleTime = cg.time;
+		}
+		else
+		{
+			spcNm->lastVisibleTime = cg.time;
+		}
+
+		FadeOut = cg.time - spcNm->lastVisibleTime;
+		FadeIn  = cg.time - spcNm->lastInvisibleTime;
+
+		if (FadeIn)
+		{
+			white[3] = (FadeIn > 500) ? 1.0 : FadeIn / 500.0f;
+			if (white[3] < spcNm->alpha)
+			{
+				white[3] = spcNm->alpha;
+			}
+		}
+		if (FadeOut)
+		{
+			white[3] = (FadeOut > 500) ? 0.0 : 1.0 - FadeOut / 500.0f;
+			if (white[3] > spcNm->alpha)
+			{
+				white[3] = spcNm->alpha;
+			}
+		}
+		if (white[3] > 1.0)
+		{
+			white[3] = 1.0;
+		}
+
+		spcNm->alpha = white[3];
+		if (spcNm->alpha <= 0.0)
+		{
+			continue;                           // no alpha = nothing to draw..
+
+		}
+		CG_Text_Paint_Ext(spcNm->x, spcNm->y, spcNm->scale, spcNm->scale, white, spcNm->text, 0, 0, 0, &cgs.media.limboFont1);
+		// expect update next frame again
+		spcNm->visible = qfalse;
+	}
+}
+
 /*
 =================
 CG_Draw2D
@@ -3303,6 +3372,11 @@ static void CG_Draw2D(void)
 	{
 		CG_SpeakerEditorDraw();
 		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		CG_DrawOnScreenNames();
 	}
 
 	// no longer cheat protected, we draw crosshair/reticle in non demoplayback
