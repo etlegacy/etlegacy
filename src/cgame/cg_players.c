@@ -802,11 +802,11 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		{
 			if (lf->animSpeedScale < 0.01 && isLadderAnim)
 			{
-				lf->animSpeedScale = 0.0;
+				lf->animSpeedScale = 0.0f;
 			}
 			else
 			{
-				lf->animSpeedScale = 0.25;
+				lf->animSpeedScale = 0.25f;
 			}
 		}
 		else if (lf->animSpeedScale > ANIM_SCALEMAX_LOW)
@@ -1503,7 +1503,6 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 		}
 	}
 
-
 	cent->pe.leanDirection = leanofs;
 
 	if (leaning)
@@ -2033,7 +2032,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 
 	if (dist < SHADOW_MAX_DIST)       // show more detail
 	{
-		vec4_t angles;
+		vec3_t angles;
 		int    tagIndex, subIndex;
 
 		// now add shadows for the various body parts
@@ -3412,12 +3411,12 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 	origin[0] -= 100;   // + = behind, - = in front
 	origin[1] += 100;   // + = left, - = right
 	origin[2] += 100;   // + = above, - = below
-	trap_R_AddLightToScene(origin, 1000, 1.0, 1.0, 1.0, 1.0, 0, 0);
+	trap_R_AddLightToScene(origin, 1000, 1.0f, 1.0f, 1.0f, 1.0f, 0, 0);
 
 	origin[0] -= 100;
 	origin[1] -= 100;
 	origin[2] -= 100;
-	trap_R_AddLightToScene(origin, 1000, 1.0, 1.0, 1.0, 1.0, 0, 0);
+	trap_R_AddLightToScene(origin, 1000, 1.0f, 1.0f, 1.0f, 1.0f, 0, 0);
 
 	trap_R_RenderScene(&refdef);
 
