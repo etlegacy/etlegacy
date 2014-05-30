@@ -4245,10 +4245,27 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray, int arraysize);
 void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray, int arraysize);
 void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled);
+void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...);
 void GLSL_SelectPermutation(programInfo_t *programlist);
 void GLSL_SetRequiredVertexPointers(programInfo_t *programlist);
 void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms);
 void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen);
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
+
+#define SetUniformBoolean(uniformNum, value) GLSL_SetUniformBoolean(selectedProgram, uniformNum, value)
+#define SetUniformInt(uniformNum, value) GLSL_SetUniformInt(selectedProgram, uniformNum, value)
+#define SetUniformFloat(uniformNum, value) GLSL_SetUniformFloat(selectedProgram, uniformNum, value)
+#define SetUniformFloat5(uniformNum, value) GLSL_SetUniformFloat5(selectedProgram, uniformNum, value)
+#define SetUniformVec2(uniformNum, value) GLSL_SetUniformVec2(selectedProgram, uniformNum, value)
+#define SetUniformVec3(uniformNum, value) GLSL_SetUniformVec3(selectedProgram, uniformNum, value)
+#define SetUniformVec4(uniformNum, value) GLSL_SetUniformVec4(selectedProgram, uniformNum, value)
+#define SetUniformMatrix16(uniformNum, value) GLSL_SetUniformMatrix16(selectedProgram, uniformNum, value)
+#define SetUniformFloatARR(uniformNum, value, size) GLSL_SetUniformFloatARR(selectedProgram, uniformNum, value, size)
+#define SetUniformVec4ARR(uniformNum, value, size) GLSL_SetUniformVec4ARR(selectedProgram, uniformNum, value, size)
+#define SetUniformMatrix16ARR(uniformNum, value, size) GLSL_SetUniformMatrix16ARR(selectedProgram, uniformNum, value, size)
+
+#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
+#define SetMacrosAndSelectProgram(program, ...) GLSL_SetMacroStates(program, NUMARGS(__VA_ARGS__), __VA_ARGS__); GLSL_SelectPermutation(program)
+#define SelectProgram(program) GLSL_SelectPermutation(program)
 
 #endif // TR_LOCAL_H

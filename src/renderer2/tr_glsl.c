@@ -2121,6 +2121,35 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 	}
 }
 
+void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
+{
+	int macro, value;
+	va_list ap;
+
+	if (numMacros == 0)
+	{
+		return;
+	}
+
+	if (numMacros != numMacros % 2)
+	{
+		ri.Error(ERR_FATAL, "GLSL_SetMacroStates: Trying to set macros with an array which has an invalid size\n");
+		return;
+	}
+
+	va_start(ap, numMacros);
+	do
+	{
+		macro = va_arg(ap, int);
+		value = va_arg(ap, int);
+
+		GLSL_SetMacroState(programlist, macro, value);
+
+		numMacros -= 2;
+	} while (numMacros > 0);
+	va_end(ap);
+}
+
 void GLSL_SelectPermutation(programInfo_t *programlist)
 {
 	shaderProgram_t *prog;
@@ -2490,7 +2519,7 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		break;
 	}
 
-	GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLORMODULATE, temp);
+	SetUniformVec4(UNIFORM_COLORMODULATE, temp);
 }
 
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
@@ -2516,7 +2545,7 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
 		break;
 	}
 
-	GLSL_SetUniformInt(selectedProgram, UNIFORM_ALPHATEST, value);
+	SetUniformInt(UNIFORM_ALPHATEST, value);
 }
 
 void GLSL_VertexAttribsState(uint32_t stateBits)
