@@ -2112,7 +2112,6 @@ extern vmCvar_t cg_predictItems;
 extern vmCvar_t cg_teamChatsOnly;
 extern vmCvar_t cg_noVoiceChats;
 extern vmCvar_t cg_noVoiceText;
-extern vmCvar_t cg_enableBreath;
 extern vmCvar_t cg_autoactivate;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
