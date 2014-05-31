@@ -92,7 +92,7 @@ void Con_ToggleConsole_f(void)
 		// normal half-screen console
 		else
 		{
-			con.desiredFrac = 0.5;
+			con.desiredFrac = 0.5f;
 		}
 	}
 }
@@ -699,9 +699,8 @@ void Con_DrawNotify(void)
 
 void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrollBarY, int rows)
 {
-	vec4_t      color          = { 0.2f, 0.2f, 0.2f, 0.75f };
-	const float scrollBarWidth = 3;
-
+	vec4_t      color                   = { 0.2f, 0.2f, 0.2f, 0.75f };
+	const float scrollBarWidth          = 3;
 	const float scrollHandleLength      = con.totallines ? scrollBarLength *MIN(1.0f, (float) rows / con.totallines) : 0;
 	const float scrollBarLengthPerLine  = (scrollBarLength - scrollHandleLength) / (con.totallines - rows);
 	const float relativeScrollLineIndex = con.current - con.totallines + MIN(rows, con.totallines);
@@ -721,7 +720,8 @@ void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrol
 	}
 	else if (con.totallines)   //this happens when line appending gets us over the top position in a roll-lock situation (scrolling itself won't do that)
 	{
-		color[0] = (-scrollHandlePostition * 5.0f) / 10;
+		//color[0] = (-scrollHandlePostition * 5.0f) / 10;
+		color[0] = 0.5f;
 		color[1] = 0.5f;
 		color[2] = 0.5f;
 		color[3] = 1.0f;
