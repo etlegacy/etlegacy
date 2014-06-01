@@ -916,7 +916,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 		}
 		else
 		{
-			CP("cpm \"Type ^3\\stats <player_id>^7 to see stats on an active player.\n\"");
+			CP("print \"Type ^3\\weaponstats <player_id>^7 to see stats on an active player.\n\"");
 			return;
 		}
 	}
