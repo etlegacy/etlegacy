@@ -175,13 +175,13 @@ static void DrawTris()
 	Ren_LogComment("--- DrawTris ---\n");
 
 	SetMacrosAndSelectProgram(gl_genericShader,
-		USE_ALPHA_TESTING, qfalse,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, qfalse,
-		USE_TCGEN_ENVIRONMENT, qfalse,
-		USE_TCGEN_LIGHTMAP, qfalse);
+	                          USE_ALPHA_TESTING, qfalse,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, qfalse,
+	                          USE_TCGEN_ENVIRONMENT, qfalse,
+	                          USE_TCGEN_LIGHTMAP, qfalse);
 
 	GLSL_SetRequiredVertexPointers(gl_genericShader);
 
@@ -345,13 +345,13 @@ static void Render_generic(int stage)
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(gl_genericShader,
-		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment,
-		USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
+	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment,
+	                          USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
 	// end choose right shader program ------------------------------
 
 	// set uniforms
@@ -459,14 +459,14 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	}
 
 	SetMacrosAndSelectProgram(gl_vertexLightingShader_DBS_entity,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping,
-		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
-		USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping,
+	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL);
 
 	// now we are ready to set the shader program uniforms
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -667,11 +667,11 @@ static void Render_vertexLighting_DBS_world(int stage)
 	}
 
 	SetMacrosAndSelectProgram(gl_vertexLightingShader_DBS_world,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping,
-		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping,
+	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 	// now we are ready to set the shader program uniforms
 
 	// set uniforms
@@ -842,11 +842,11 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(gl_lightMappingShader,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_ALPHA_TESTING, pStage->stateBits & GLS_ATEST_BITS,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping,
-		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, pStage->stateBits & GLS_ATEST_BITS,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping,
+	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
 	if (tess.surfaceShader->numDeforms)
 	{
@@ -974,14 +974,14 @@ static void Render_geometricFill(int stage, qboolean cmap2black)
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(gl_geometricFillShader,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping,
-		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
-		USE_REFLECTIVE_SPECULAR, qfalse);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping,
+	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_REFLECTIVE_SPECULAR, qfalse);
 	// end choose right shader program ------------------------------
 
 	/*
@@ -1131,12 +1131,12 @@ static void Render_depthFill(int stage)
 	GL_State(pStage->stateBits);
 
 	SetMacrosAndSelectProgram(gl_genericShader,
-		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment);
+	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment);
 
 	// set uniforms
 	if (pStage->tcGen_Environment)
@@ -1233,12 +1233,12 @@ static void Render_shadowFill(int stage)
 	GL_State(stateBits);
 
 	SetMacrosAndSelectProgram(gl_shadowFillShader,
-		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		LIGHT_DIRECTIONAL, backEnd.currentLight->l.rlType == RL_DIRECTIONAL);
+	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          LIGHT_DIRECTIONAL, backEnd.currentLight->l.rlType == RL_DIRECTIONAL);
 
 	GLSL_SetRequiredVertexPointers(gl_shadowFillShader);
 
@@ -1346,14 +1346,14 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	}
 
 	SetMacrosAndSelectProgram(gl_forwardLightingShader_omniXYZ,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping,
-		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
-		USE_SHADOWING, shadowCompare);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping,
+	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_SHADOWING, shadowCompare);
 	// end choose right shader program ------------------------------
 
 	// now we are ready to set the shader program uniforms
@@ -1563,14 +1563,14 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(gl_forwardLightingShader_projXYZ,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping,
-		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
-		USE_SHADOWING, shadowCompare);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping,
+	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_SHADOWING, shadowCompare);
 	// end choose right shader program ------------------------------
 
 	// now we are ready to set the shader program uniforms
@@ -1782,14 +1782,14 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(gl_forwardLightingShader_directionalSun,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping,
-		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
-		USE_SHADOWING, shadowCompare);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping,
+	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_SHADOWING, shadowCompare);
 
 	// end choose right shader program ------------------------------
 
@@ -2006,11 +2006,11 @@ static void Render_reflection_CB(int stage)
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(gl_reflectionShader,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		USE_NORMAL_MAPPING, normalMapping);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, normalMapping);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
@@ -2315,12 +2315,12 @@ static void Render_heatHaze(int stage)
 		// choose right shader program ----------------------------------
 		//gl_genericShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS) != 0);
 		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-			USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-			USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-			USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		                          USE_ALPHA_TESTING, qfalse,
+		                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		                          USE_TCGEN_ENVIRONMENT, qfalse);
 		// end choose right shader program ------------------------------
 
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
@@ -2382,10 +2382,10 @@ static void Render_heatHaze(int stage)
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(gl_heatHazeShader,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
 	// end choose right shader program ------------------------------
 
 	// set uniforms
@@ -2613,11 +2613,11 @@ static void Render_fog()
 	}
 
 	SetMacrosAndSelectProgram(gl_fogQuake3Shader,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-		EYE_OUTSIDE, eyeT < 0); // viewpoint is outside when eyeT < 0 - needed for clipping distance even for constant fog
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          EYE_OUTSIDE, eyeT < 0); // viewpoint is outside when eyeT < 0 - needed for clipping distance even for constant fog
 
 	SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 	SetUniformVec4(UNIFORM_FOGDEPTHVECTOR, fogDepthVector);

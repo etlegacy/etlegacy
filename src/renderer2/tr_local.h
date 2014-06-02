@@ -4264,7 +4264,7 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
 #define SetUniformVec4ARR(uniformNum, value, size) GLSL_SetUniformVec4ARR(selectedProgram, uniformNum, value, size)
 #define SetUniformMatrix16ARR(uniformNum, value, size) GLSL_SetUniformMatrix16ARR(selectedProgram, uniformNum, value, size)
 
-#define NUMARGS(...)  (sizeof((int[]){__VA_ARGS__})/sizeof(int))
+#define NUMARGS(...)  (sizeof((int[]) { __VA_ARGS__ }) / sizeof(int))
 #define SelectProgram(program) Ren_LogComment("SelectProgram called: (%s:%d)\n", __FILE__, __LINE__); GLSL_SelectPermutation(program)
 #define SetMacrosAndSelectProgram(program, ...) GLSL_SetMacroStates(program, NUMARGS(__VA_ARGS__), __VA_ARGS__); SelectProgram(program)
 

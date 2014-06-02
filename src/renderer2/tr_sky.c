@@ -783,12 +783,12 @@ void RB_DrawSun(void)
 
 	//FIXME: This is false on the c++ but should be isPortal check right?
 	SetMacrosAndSelectProgram(gl_genericShader,
-		USE_ALPHA_TESTING, qfalse,
-		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-		USE_VERTEX_SKINNING, qfalse,
-		USE_VERTEX_ANIMATION, qfalse,
-		USE_DEFORM_VERTEXES, qfalse,
-		USE_TCGEN_ENVIRONMENT, qfalse);
+	                          USE_ALPHA_TESTING, qfalse,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, qfalse,
+	                          USE_VERTEX_ANIMATION, qfalse,
+	                          USE_DEFORM_VERTEXES, qfalse,
+	                          USE_TCGEN_ENVIRONMENT, qfalse);
 
 	// set uniforms
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
