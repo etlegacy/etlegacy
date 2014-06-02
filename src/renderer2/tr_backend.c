@@ -2273,13 +2273,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 								GL_PushMatrix();
 
-								SetMacrosAndSelectProgram(gl_genericShader,
-									USE_ALPHA_TESTING, qfalse,
-									USE_PORTAL_CLIPPING, qfalse,
-									USE_VERTEX_SKINNING, qfalse,
-									USE_VERTEX_ANIMATION, qfalse,
-									USE_DEFORM_VERTEXES, qfalse,
-									USE_TCGEN_ENVIRONMENT, qfalse);
+								SetMacrosAndSelectProgram(gl_genericShader,0);
 
 								GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 								SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -5176,13 +5170,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 							GL_Cull(CT_TWO_SIDED);
 
-							SetMacrosAndSelectProgram(gl_genericShader,
-								USE_ALPHA_TESTING, qfalse,
-								USE_PORTAL_CLIPPING, qfalse,
-								USE_VERTEX_SKINNING, qfalse,
-								USE_VERTEX_ANIMATION, qfalse,
-								USE_DEFORM_VERTEXES, qfalse,
-								USE_TCGEN_ENVIRONMENT, qfalse);
+							SetMacrosAndSelectProgram(gl_genericShader,0);
 
 							GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 							SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -6890,13 +6878,7 @@ void RB_RenderLightOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GLSL_SetRequiredVertexPointers(gl_genericShader);
 
@@ -7472,13 +7454,7 @@ void RB_RenderEntityOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GLSL_SetRequiredVertexPointers(gl_genericShader);
 
@@ -7848,13 +7824,7 @@ static void RB_RenderDebugUtils()
 		vec3_t minSize = { -2, -2, -2 };
 		vec3_t maxSize = { 2, 2, 2 };
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		//GL_State(GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
@@ -8227,13 +8197,7 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8409,13 +8373,7 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8507,13 +8465,7 @@ static void RB_RenderDebugUtils()
 		static refSkeleton_t skeleton;
 		refSkeleton_t        *skel;
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GL_Cull(CT_TWO_SIDED);
 
@@ -8723,13 +8675,7 @@ static void RB_RenderDebugUtils()
 		matrix_t      ortho;
 		vec4_t        quadVerts[4];
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8861,13 +8807,7 @@ static void RB_RenderDebugUtils()
 			cubemapProbe_t *cubeProbeNearest;
 			cubemapProbe_t *cubeProbeSecondNearest;
 
-			SetMacrosAndSelectProgram(gl_genericShader,
-				USE_ALPHA_TESTING, qfalse,
-				USE_PORTAL_CLIPPING, qfalse,
-				USE_VERTEX_SKINNING, qfalse,
-				USE_VERTEX_ANIMATION, qfalse,
-				USE_DEFORM_VERTEXES, qfalse,
-				USE_TCGEN_ENVIRONMENT, qfalse);
+			SetMacrosAndSelectProgram(gl_genericShader,0);
 
 			GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 			SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -8941,13 +8881,7 @@ static void RB_RenderDebugUtils()
 
 		Ren_LogComment("--- r_showLightGrid > 0: Rendering light grid\n");
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -9030,13 +8964,7 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
@@ -9388,13 +9316,7 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader,
-			USE_ALPHA_TESTING, qfalse,
-			USE_PORTAL_CLIPPING, qfalse,
-			USE_VERTEX_SKINNING, qfalse,
-			USE_VERTEX_ANIMATION, qfalse,
-			USE_DEFORM_VERTEXES, qfalse,
-			USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,0);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -10141,13 +10063,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	glVertexAttrib4f(ATTR_INDEX_NORMAL, 0, 0, 1, 1);
 	glVertexAttrib4f(ATTR_INDEX_COLOR, tr.identityLight, tr.identityLight, tr.identityLight, 1);
 
-	SetMacrosAndSelectProgram(gl_genericShader,
-		USE_ALPHA_TESTING, qfalse,
-		USE_PORTAL_CLIPPING, qfalse,
-		USE_VERTEX_SKINNING, qfalse,
-		USE_VERTEX_ANIMATION, qfalse,
-		USE_DEFORM_VERTEXES, qfalse,
-		USE_TCGEN_ENVIRONMENT, qfalse);
+	SetMacrosAndSelectProgram(gl_genericShader,0);
 
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 	SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -10690,13 +10606,7 @@ void RB_ShowImages(void)
 
 	glFinish();
 
-	SetMacrosAndSelectProgram(gl_genericShader,
-		USE_ALPHA_TESTING, qfalse,
-		USE_PORTAL_CLIPPING, qfalse,
-		USE_VERTEX_SKINNING, qfalse,
-		USE_VERTEX_ANIMATION, qfalse,
-		USE_DEFORM_VERTEXES, qfalse,
-		USE_TCGEN_ENVIRONMENT, qfalse);
+	SetMacrosAndSelectProgram(gl_genericShader,0);
 
 	GL_Cull(CT_TWO_SIDED);
 
