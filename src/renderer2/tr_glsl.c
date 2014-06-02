@@ -2078,6 +2078,31 @@ programInfo_t *GLSL_GetShaderProgram(const char *name)
 	return prog;
 }
 
+void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
+{
+	if (offset < 0)
+	{
+		ri.Error(ERR_FATAL, "Trying to select an negative array cell\n");
+		return;
+	}
+
+	if (offset == 0)
+	{
+		programlist->list->currentPermutation = 0;
+		programlist->list->currentMacros = 0;
+		return;
+	}
+	else
+	{
+		programlist->list->currentPermutation = offset;
+		//TODO: set macro flags
+
+		return;
+	}
+
+
+}
+
 void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 {
 	if (!programlist)
@@ -2131,9 +2156,17 @@ void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
 		return;
 	}
 
-	if (numMacros != numMacros % 2)
+	if (numMacros == 1)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetMacroStates: Trying to set macros with an array which has an invalid size\n");
+		va_start(ap, numMacros);
+		value = va_arg(ap, int);
+		GLSL_SetMacroStatesByOffset(programlist, value);
+		return;
+	}
+
+	if (numMacros % 2 != 0)
+	{
+		ri.Error(ERR_FATAL, "GLSL_SetMacroStates: Trying to set macros with an array which has an invalid size %i\n", numMacros);
 		return;
 	}
 
@@ -2517,6 +2550,19 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 	default:
 		temp[3] = 0.0f;
 		break;
+	}
+
+	if (prog->attributes & ATTR_COLOR && !(glState.vertexAttribsState & ATTR_COLOR))
+	{
+		glEnableVertexAttribArray(ATTR_INDEX_COLOR);
+		glState.vertexAttribsState |= ATTR_COLOR;
+		glVertexAttribPointer(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsColors));
+		glState.vertexAttribPointersSet |= ATTR_COLOR;
+	}
+	else if (!(prog->attributes & ATTR_COLOR) && glState.vertexAttribsState & ATTR_COLOR)
+	{
+		glDisableVertexAttribArray(ATTR_INDEX_COLOR);
+		glState.vertexAttribsState &= ~ATTR_COLOR;
 	}
 
 	SetUniformVec4(UNIFORM_COLORMODULATE, temp);

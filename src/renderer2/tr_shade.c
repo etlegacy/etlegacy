@@ -174,15 +174,15 @@ static void DrawTris()
 {
 	Ren_LogComment("--- DrawTris ---\n");
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_LIGHTMAP, qfalse);
+	SetMacrosAndSelectProgram(gl_genericShader,
+		USE_ALPHA_TESTING, qfalse,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, qfalse,
+		USE_TCGEN_ENVIRONMENT, qfalse,
+		USE_TCGEN_LIGHTMAP, qfalse);
 
-	GLSL_SelectPermutation(gl_genericShader);
 	GLSL_SetRequiredVertexPointers(gl_genericShader);
 
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
@@ -344,16 +344,14 @@ static void Render_generic(int stage)
 	GL_State(pStage->stateBits);
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
-
-	GLSL_SelectPermutation(gl_genericShader);
-
+	SetMacrosAndSelectProgram(gl_genericShader,
+		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment,
+		USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
 	// end choose right shader program ------------------------------
 
 	// set uniforms
@@ -460,16 +458,15 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		normalMapping = qtrue;
 	}
 
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_NORMAL_MAPPING, normalMapping);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_entity, USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL);
-
-	GLSL_SelectPermutation(gl_vertexLightingShader_DBS_entity);
+	SetMacrosAndSelectProgram(gl_vertexLightingShader_DBS_entity,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping,
+		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+		USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL);
 
 	// now we are ready to set the shader program uniforms
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -669,14 +666,12 @@ static void Render_vertexLighting_DBS_world(int stage)
 		normalMapping = qtrue;
 	}
 
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_world, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_world, USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_world, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_world, USE_NORMAL_MAPPING, normalMapping);
-	GLSL_SetMacroState(gl_vertexLightingShader_DBS_world, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-
-	GLSL_SelectPermutation(gl_vertexLightingShader_DBS_world);
-
+	SetMacrosAndSelectProgram(gl_vertexLightingShader_DBS_world,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping,
+		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 	// now we are ready to set the shader program uniforms
 
 	// set uniforms
@@ -846,13 +841,12 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	}
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_lightMappingShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_lightMappingShader, USE_ALPHA_TESTING, pStage->stateBits & GLS_ATEST_BITS);
-	GLSL_SetMacroState(gl_lightMappingShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_lightMappingShader, USE_NORMAL_MAPPING, normalMapping);
-	GLSL_SetMacroState(gl_lightMappingShader, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-
-	GLSL_SelectPermutation(gl_lightMappingShader);
+	SetMacrosAndSelectProgram(gl_lightMappingShader,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_ALPHA_TESTING, pStage->stateBits & GLS_ATEST_BITS,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping,
+		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
 	if (tess.surfaceShader->numDeforms)
 	{
@@ -979,17 +973,15 @@ static void Render_geometricFill(int stage, qboolean cmap2black)
 	}
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_geometricFillShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_geometricFillShader, USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_geometricFillShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_geometricFillShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_geometricFillShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_geometricFillShader, USE_NORMAL_MAPPING, normalMapping);
-	GLSL_SetMacroState(gl_geometricFillShader, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	GLSL_SetMacroState(gl_geometricFillShader, USE_REFLECTIVE_SPECULAR, qfalse);
-
-	GLSL_SelectPermutation(gl_geometricFillShader);
-
+	SetMacrosAndSelectProgram(gl_geometricFillShader,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping,
+		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+		USE_REFLECTIVE_SPECULAR, qfalse);
 	// end choose right shader program ------------------------------
 
 	/*
@@ -1138,13 +1130,13 @@ static void Render_depthFill(int stage)
 
 	GL_State(pStage->stateBits);
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment);
-	GLSL_SelectPermutation(gl_genericShader);
+	SetMacrosAndSelectProgram(gl_genericShader,
+		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment);
 
 	// set uniforms
 	if (pStage->tcGen_Environment)
@@ -1240,14 +1232,14 @@ static void Render_shadowFill(int stage)
 
 	GL_State(stateBits);
 
-	GLSL_SetMacroState(gl_shadowFillShader, USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_shadowFillShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_shadowFillShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_shadowFillShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_shadowFillShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_shadowFillShader, LIGHT_DIRECTIONAL, backEnd.currentLight->l.rlType == RL_DIRECTIONAL);
+	SetMacrosAndSelectProgram(gl_shadowFillShader,
+		USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		LIGHT_DIRECTIONAL, backEnd.currentLight->l.rlType == RL_DIRECTIONAL);
 
-	GLSL_SelectPermutation(gl_shadowFillShader);
 	GLSL_SetRequiredVertexPointers(gl_shadowFillShader);
 
 	if (r_debugShadowMaps->integer)
@@ -1353,17 +1345,15 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 		shadowCompare = qfalse;
 	}
 
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_NORMAL_MAPPING, normalMapping);
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	GLSL_SetMacroState(gl_forwardLightingShader_omniXYZ, USE_SHADOWING, shadowCompare);
-
-	GLSL_SelectPermutation(gl_forwardLightingShader_omniXYZ);
-
+	SetMacrosAndSelectProgram(gl_forwardLightingShader_omniXYZ,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping,
+		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+		USE_SHADOWING, shadowCompare);
 	// end choose right shader program ------------------------------
 
 	// now we are ready to set the shader program uniforms
@@ -1572,16 +1562,15 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	}
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_NORMAL_MAPPING, normalMapping);
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	GLSL_SetMacroState(gl_forwardLightingShader_projXYZ, USE_SHADOWING, shadowCompare);
-
-	GLSL_SelectPermutation(gl_forwardLightingShader_projXYZ);
+	SetMacrosAndSelectProgram(gl_forwardLightingShader_projXYZ,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping,
+		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+		USE_SHADOWING, shadowCompare);
 	// end choose right shader program ------------------------------
 
 	// now we are ready to set the shader program uniforms
@@ -1792,15 +1781,15 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	}
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0);
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_NORMAL_MAPPING, normalMapping);
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	GLSL_SetMacroState(gl_forwardLightingShader_directionalSun, USE_SHADOWING, shadowCompare);
-	GLSL_SelectPermutation(gl_forwardLightingShader_directionalSun);
+	SetMacrosAndSelectProgram(gl_forwardLightingShader_directionalSun,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_ALPHA_TESTING, (diffuseStage->stateBits & GLS_ATEST_BITS) != 0,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping,
+		USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+		USE_SHADOWING, shadowCompare);
 
 	// end choose right shader program ------------------------------
 
@@ -2016,13 +2005,12 @@ static void Render_reflection_CB(int stage)
 	}
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_reflectionShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_reflectionShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_reflectionShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_reflectionShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_reflectionShader, USE_NORMAL_MAPPING, normalMapping);
-
-	GLSL_SelectPermutation(gl_reflectionShader);
+	SetMacrosAndSelectProgram(gl_reflectionShader,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		USE_NORMAL_MAPPING, normalMapping);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
@@ -2077,8 +2065,7 @@ static void Render_refraction_C(int stage)
 
 	GL_State(pStage->stateBits);
 
-	GLSL_SetMacroState(gl_refractionShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SelectPermutation(gl_refractionShader);
+	SetMacrosAndSelectProgram(gl_refractionShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
 
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 
@@ -2120,8 +2107,7 @@ static void Render_dispersion_C(int stage)
 	GL_State(pStage->stateBits);
 
 	// enable shader, set arrays
-	GLSL_SetMacroState(gl_dispersionShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SelectPermutation(gl_dispersionShader);
+	SetMacrosAndSelectProgram(gl_dispersionShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
 
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 
@@ -2164,8 +2150,7 @@ static void Render_skybox(int stage)
 
 	GL_State(pStage->stateBits);
 
-	GLSL_SetMacroState(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SelectPermutation(gl_skyboxShader);
+	SetMacrosAndSelectProgram(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
@@ -2204,7 +2189,7 @@ static void Render_screen(int stage)
 
 	GL_State(pStage->stateBits);
 
-	GLSL_SelectPermutation(gl_screenShader);
+	SelectProgram(gl_screenShader);
 
 	/*
 	if(pStage->vertexColor || pStage->inverseVertexColor)
@@ -2238,7 +2223,7 @@ static void Render_portal(int stage)
 	GL_State(pStage->stateBits);
 
 	// enable shader, set arrays
-	GLSL_SelectPermutation(gl_portalShader);
+	SelectProgram(gl_portalShader);
 
 	/*
 	if(pStage->vertexColor || pStage->inverseVertexColor)
@@ -2329,15 +2314,15 @@ static void Render_heatHaze(int stage)
 
 		// choose right shader program ----------------------------------
 		//gl_genericShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS) != 0);
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-		GLSL_SelectPermutation(gl_genericShader);
-
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+			USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+			USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+			USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 		// end choose right shader program ------------------------------
+
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
 		SetUniformVec4(UNIFORM_COLOR, colorRed);
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
@@ -2396,13 +2381,11 @@ static void Render_heatHaze(int stage)
 	GL_State(stateBits);
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_heatHazeShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_heatHazeShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_heatHazeShader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_heatHazeShader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-
-	GLSL_SelectPermutation(gl_heatHazeShader);
-
+	SetMacrosAndSelectProgram(gl_heatHazeShader,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
 	// end choose right shader program ------------------------------
 
 	// set uniforms
@@ -2479,8 +2462,7 @@ static void Render_liquid(int stage)
 	GL_State(pStage->stateBits);
 
 	// choose right shader program ----------------------------------
-	GLSL_SetMacroState(gl_liquidShader, USE_PARALLAX_MAPPING, r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	GLSL_SelectPermutation(gl_liquidShader);
+	SetMacrosAndSelectProgram(gl_liquidShader, USE_PARALLAX_MAPPING, r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR);
 
@@ -2630,12 +2612,12 @@ static void Render_fog()
 		GL_State(GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 	}
 
-	GLSL_SetMacroState(gl_fogQuake3Shader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_fogQuake3Shader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	GLSL_SetMacroState(gl_fogQuake3Shader, USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0);
-	GLSL_SetMacroState(gl_fogQuake3Shader, USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms);
-	GLSL_SetMacroState(gl_fogQuake3Shader, EYE_OUTSIDE, eyeT < 0); // viewpoint is outside when eyeT < 0 - needed for clipping distance even for constant fog
-	GLSL_SelectPermutation(gl_fogQuake3Shader);
+	SetMacrosAndSelectProgram(gl_fogQuake3Shader,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+		USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+		USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+		EYE_OUTSIDE, eyeT < 0); // viewpoint is outside when eyeT < 0 - needed for clipping distance even for constant fog
 
 	SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 	SetUniformVec4(UNIFORM_FOGDEPTHVECTOR, fogDepthVector);
@@ -2717,8 +2699,7 @@ static void Render_volumetricFog()
 			R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 
-		GLSL_SetMacroState(gl_depthToColorShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-		GLSL_SelectPermutation(gl_depthToColorShader);
+		SetMacrosAndSelectProgram(gl_depthToColorShader, USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
 
 		GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 		GL_State(0); //GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
@@ -2749,7 +2730,7 @@ static void Render_volumetricFog()
 
 		R_BindFBO(previousFBO);
 
-		GLSL_SelectPermutation(gl_volumetricFogShader);
+		SelectProgram(gl_volumetricFogShader);
 		GLSL_VertexAttribsState(ATTR_POSITION);
 
 		//GL_State(GLS_DEPTHTEST_DISABLE);	// | GLS_DEPTHMASK_TRUE);

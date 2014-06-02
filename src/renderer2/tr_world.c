@@ -1910,14 +1910,13 @@ static void R_CoherentHierachicalCulling()
 		R_BindNullFBO();
 	}
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-	GLSL_SelectPermutation(gl_genericShader);
+	SetMacrosAndSelectProgram(gl_genericShader,
+		USE_ALPHA_TESTING, qfalse,
+		USE_PORTAL_CLIPPING, qfalse,
+		USE_VERTEX_SKINNING, qfalse,
+		USE_VERTEX_ANIMATION, qfalse,
+		USE_DEFORM_VERTEXES, qfalse,
+		USE_TCGEN_ENVIRONMENT, qfalse);
 
 	GL_Cull(CT_TWO_SIDED);
 

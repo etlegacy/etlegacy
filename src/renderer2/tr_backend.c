@@ -2273,14 +2273,13 @@ static void RB_RenderInteractionsShadowMapped()
 
 								GL_PushMatrix();
 
-								GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-								GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-								GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-								GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-								GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-								GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-								GLSL_SelectPermutation(gl_genericShader);
+								SetMacrosAndSelectProgram(gl_genericShader,
+									USE_ALPHA_TESTING, qfalse,
+									USE_PORTAL_CLIPPING, qfalse,
+									USE_VERTEX_SKINNING, qfalse,
+									USE_VERTEX_ANIMATION, qfalse,
+									USE_DEFORM_VERTEXES, qfalse,
+									USE_TCGEN_ENVIRONMENT, qfalse);
 
 								GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 								SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -3284,11 +3283,11 @@ skipInteraction:
 
 					if (light->l.rlType == RL_OMNI)
 					{
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_NORMAL_MAPPING, r_normalMapping->integer);
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_SHADOWING, qfalse);
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
-						GLSL_SelectPermutation(gl_deferredLightingShader_omniXYZ);
+						SetMacrosAndSelectProgram(gl_deferredLightingShader_omniXYZ,
+							USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+							USE_NORMAL_MAPPING, r_normalMapping->integer,
+							USE_SHADOWING, qfalse,
+							USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
 
 						SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 						SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
@@ -3440,11 +3439,11 @@ skipInteraction:
 					}
 					else if (light->l.rlType == RL_DIRECTIONAL)
 					{
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_NORMAL_MAPPING, r_normalMapping->integer);
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_SHADOWING, qfalse);
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
-						GLSL_SelectPermutation(gl_deferredLightingShader_directionalSun);
+						SetMacrosAndSelectProgram(gl_deferredLightingShader_directionalSun,
+							USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+							USE_NORMAL_MAPPING, r_normalMapping->integer,
+							USE_SHADOWING, qfalse,
+							USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
 
 						SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 						SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
@@ -4841,11 +4840,11 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 					if (light->l.rlType == RL_OMNI)
 					{
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_NORMAL_MAPPING, r_normalMapping->integer);
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_SHADOWING, shadowCompare);
-						GLSL_SetMacroState(gl_deferredLightingShader_omniXYZ, USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
-						GLSL_SelectPermutation(gl_deferredLightingShader_omniXYZ);
+						SetMacrosAndSelectProgram(gl_deferredLightingShader_omniXYZ,
+							USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+							USE_NORMAL_MAPPING, r_normalMapping->integer,
+							USE_SHADOWING, shadowCompare,
+							USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
 
 						SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 						SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
@@ -4917,11 +4916,11 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					}
 					else if (light->l.rlType == RL_PROJ)
 					{
-						GLSL_SetMacroState(gl_deferredLightingShader_projXYZ, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-						GLSL_SetMacroState(gl_deferredLightingShader_projXYZ, USE_NORMAL_MAPPING, r_normalMapping->integer);
-						GLSL_SetMacroState(gl_deferredLightingShader_projXYZ, USE_SHADOWING, shadowCompare);
-						GLSL_SetMacroState(gl_deferredLightingShader_projXYZ, USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
-						GLSL_SelectPermutation(gl_deferredLightingShader_projXYZ);
+						SetMacrosAndSelectProgram(gl_deferredLightingShader_projXYZ,
+							USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+							USE_NORMAL_MAPPING, r_normalMapping->integer,
+							USE_SHADOWING, shadowCompare,
+							USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
 
 						SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 						SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
@@ -5005,12 +5004,11 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					else if (light->l.rlType == RL_DIRECTIONAL)
 					{
 						shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows); // && light->shadowLOD >= 0);
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_NORMAL_MAPPING, r_normalMapping->integer);
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_SHADOWING, shadowCompare);
-						GLSL_SetMacroState(gl_deferredLightingShader_directionalSun, USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
-
-						GLSL_SelectPermutation(gl_deferredLightingShader_directionalSun);
+						SetMacrosAndSelectProgram(gl_deferredLightingShader_directionalSun,
+							USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+							USE_NORMAL_MAPPING, r_normalMapping->integer,
+							USE_SHADOWING, shadowCompare,
+							USE_FRUSTUM_CLIPPING, light->clipsNearPlane);
 
 						SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 						SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
@@ -5178,14 +5176,13 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 							GL_Cull(CT_TWO_SIDED);
 
-							GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-							GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-							GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-							GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-							GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-							GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-							GLSL_SelectPermutation(gl_genericShader);
+							SetMacrosAndSelectProgram(gl_genericShader,
+								USE_ALPHA_TESTING, qfalse,
+								USE_PORTAL_CLIPPING, qfalse,
+								USE_VERTEX_SKINNING, qfalse,
+								USE_VERTEX_ANIMATION, qfalse,
+								USE_DEFORM_VERTEXES, qfalse,
+								USE_TCGEN_ENVIRONMENT, qfalse);
 
 							GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 							SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -5962,8 +5959,7 @@ void RB_RenderBloom()
 		{
 			if (HDR_ENABLED())
 			{
-				GLSL_SetMacroState(gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
-				GLSL_SelectPermutation(gl_toneMappingShader);
+				SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
 
 				SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 				SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
@@ -5981,8 +5977,8 @@ void RB_RenderBloom()
 		}
 		else if (HDR_ENABLED())
 		{
-			GLSL_SetMacroState(gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
-			GLSL_SelectPermutation(gl_toneMappingShader);
+			SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
+
 			SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 			SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 			SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
@@ -6376,8 +6372,8 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL) && r_hdrRendering->integer)
 	{
 		R_BindNullFBO();
-		GLSL_SetMacroState(gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
-		SelectProgram(gl_toneMappingShader);
+		SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
+
 		SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 		SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 		SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
@@ -6471,8 +6467,8 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 	}
 	else
 	{
-		GLSL_SetMacroState(gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
-		GLSL_SelectPermutation(gl_toneMappingShader);
+		SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
+
 		SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 		SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 		SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
@@ -6894,14 +6890,14 @@ void RB_RenderLightOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
-		GLSL_SelectPermutation(gl_genericShader);
 		GLSL_SetRequiredVertexPointers(gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
@@ -7476,14 +7472,14 @@ void RB_RenderEntityOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
-		GLSL_SelectPermutation(gl_genericShader);
 		GLSL_SetRequiredVertexPointers(gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
@@ -7852,14 +7848,13 @@ static void RB_RenderDebugUtils()
 		vec3_t minSize = { -2, -2, -2 };
 		vec3_t maxSize = { 2, 2, 2 };
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		//GL_State(GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
@@ -8232,14 +8227,13 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8415,14 +8409,13 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8514,14 +8507,13 @@ static void RB_RenderDebugUtils()
 		static refSkeleton_t skeleton;
 		refSkeleton_t        *skel;
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		GL_Cull(CT_TWO_SIDED);
 
@@ -8731,14 +8723,13 @@ static void RB_RenderDebugUtils()
 		matrix_t      ortho;
 		vec4_t        quadVerts[4];
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8832,13 +8823,13 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		GLSL_SetMacroState(gl_reflectionShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-		GLSL_SetMacroState(gl_reflectionShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_reflectionShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_reflectionShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_reflectionShader, USE_NORMAL_MAPPING, qfalse);
+		SetMacrosAndSelectProgram(gl_reflectionShader,
+			USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_NORMAL_MAPPING, qfalse);
 
-		GLSL_SelectPermutation(gl_reflectionShader);
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 
 		GL_State(0);
@@ -8870,14 +8861,13 @@ static void RB_RenderDebugUtils()
 			cubemapProbe_t *cubeProbeNearest;
 			cubemapProbe_t *cubeProbeSecondNearest;
 
-			GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-			GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-			GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-			GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-			GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-			GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-			GLSL_SelectPermutation(gl_genericShader);
+			SetMacrosAndSelectProgram(gl_genericShader,
+				USE_ALPHA_TESTING, qfalse,
+				USE_PORTAL_CLIPPING, qfalse,
+				USE_VERTEX_SKINNING, qfalse,
+				USE_VERTEX_ANIMATION, qfalse,
+				USE_DEFORM_VERTEXES, qfalse,
+				USE_TCGEN_ENVIRONMENT, qfalse);
 
 			GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 			SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -8951,14 +8941,13 @@ static void RB_RenderDebugUtils()
 
 		Ren_LogComment("--- r_showLightGrid > 0: Rendering light grid\n");
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -9041,14 +9030,13 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
@@ -9400,14 +9388,13 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-		GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-		GLSL_SelectPermutation(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader,
+			USE_ALPHA_TESTING, qfalse,
+			USE_PORTAL_CLIPPING, qfalse,
+			USE_VERTEX_SKINNING, qfalse,
+			USE_VERTEX_ANIMATION, qfalse,
+			USE_DEFORM_VERTEXES, qfalse,
+			USE_TCGEN_ENVIRONMENT, qfalse);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -10154,14 +10141,13 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	glVertexAttrib4f(ATTR_INDEX_NORMAL, 0, 0, 1, 1);
 	glVertexAttrib4f(ATTR_INDEX_COLOR, tr.identityLight, tr.identityLight, tr.identityLight, 1);
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-	GLSL_SelectPermutation(gl_genericShader);
+	SetMacrosAndSelectProgram(gl_genericShader,
+		USE_ALPHA_TESTING, qfalse,
+		USE_PORTAL_CLIPPING, qfalse,
+		USE_VERTEX_SKINNING, qfalse,
+		USE_VERTEX_ANIMATION, qfalse,
+		USE_DEFORM_VERTEXES, qfalse,
+		USE_TCGEN_ENVIRONMENT, qfalse);
 
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 	SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -10704,14 +10690,13 @@ void RB_ShowImages(void)
 
 	glFinish();
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-	GLSL_SelectPermutation(gl_genericShader);
+	SetMacrosAndSelectProgram(gl_genericShader,
+		USE_ALPHA_TESTING, qfalse,
+		USE_PORTAL_CLIPPING, qfalse,
+		USE_VERTEX_SKINNING, qfalse,
+		USE_VERTEX_ANIMATION, qfalse,
+		USE_DEFORM_VERTEXES, qfalse,
+		USE_TCGEN_ENVIRONMENT, qfalse);
 
 	GL_Cull(CT_TWO_SIDED);
 

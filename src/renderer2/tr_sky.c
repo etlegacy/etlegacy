@@ -781,15 +781,14 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
 	//FIXME: This is false on the c++ but should be isPortal check right?
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-	GLSL_SelectPermutation(gl_genericShader);
+	SetMacrosAndSelectProgram(gl_genericShader,
+		USE_ALPHA_TESTING, qfalse,
+		USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		USE_VERTEX_SKINNING, qfalse,
+		USE_VERTEX_ANIMATION, qfalse,
+		USE_DEFORM_VERTEXES, qfalse,
+		USE_TCGEN_ENVIRONMENT, qfalse);
 
 	// set uniforms
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
@@ -802,8 +801,6 @@ void RB_DrawSun(void)
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
-	//FIXME: Why would this be here? Select permutation has already been given and no new cmd is given
-	//GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
 
 	if (backEnd.viewParms.isPortal)
 	{
@@ -976,8 +973,7 @@ void Tess_StageIteratorSky(void)
 			R_BindVBO(tess.vbo);
 			R_BindIBO(tess.ibo);
 
-			GLSL_SetMacroState(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-			GLSL_SelectPermutation(gl_skyboxShader);
+			SetMacrosAndSelectProgram(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 
 			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
 			SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
