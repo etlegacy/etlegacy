@@ -31,6 +31,8 @@
  * @file l_precom.h
  * @brief pre compiler
  */
+#ifndef INCLUDE_L_PRECOMP_H
+#define INCLUDE_L_PRECOMP_H
 
 #ifndef _MAX_PATH
 #define MAX_PATH            MAX_QPATH
@@ -159,3 +161,5 @@ int PC_ReadTokenHandle(int handle, struct pc_token_s *pc_token);
 int PC_SourceFileAndLine(int handle, char *filename, int *line);
 void PC_CheckOpenSourceHandles(void);
 void PC_UnreadLastTokenHandle(int handle);
+
+#endif // #ifndef INCLUDE_L_PRECOMP_H

@@ -31,6 +31,8 @@
  * @file botlib.h
  * @brief bot AI library
  */
+#ifndef INCLUDE_BOTLIB_H
+#define INCLUDE_BOTLIB_H
 
 #define BOTLIB_API_VERSION      2
 
@@ -148,3 +150,5 @@ typedef struct botlib_export_s
 
 // linking of bot library
 botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import);
+
+#endif // #ifndef INCLUDE_BOTLIB_H
