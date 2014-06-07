@@ -31,6 +31,9 @@
  * @file cg_public.h
  */
 
+#ifndef INCLUDE_CG_PUBLIC_H
+#define INCLUDE_CG_PUBLIC_H
+
 #define CMD_BACKUP          64
 #define CMD_MASK            (CMD_BACKUP - 1)
 // allow a lot of command backups for very fast systems
@@ -320,3 +323,5 @@ typedef enum
 	//  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
 
 } cgameExport_t;
+
+#endif // #ifndef INCLUDE_CG_PUBLIC_H
