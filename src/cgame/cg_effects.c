@@ -44,26 +44,24 @@ Bullets shot underwater
 */
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
 {
-	vec3_t move;
-	vec3_t vec;
-	float  len;
-	int    i;
+	vec3_t        move;
+	vec3_t        vec;
+	float         len;
+	int           i = rand() % (int)spacing;
+	localEntity_t *le;
+	refEntity_t   *re;
 
 	VectorCopy(start, move);
 	VectorSubtract(end, start, vec);
 	len = VectorNormalize(vec);
 
 	// advance a random amount first
-	i = rand() % (int)spacing;
 	VectorMA(move, i, vec, move);
 
 	VectorScale(vec, spacing, vec);
 
 	for ( ; i < len; i += spacing)
 	{
-		localEntity_t *le;
-		refEntity_t   *re;
-
 		le            = CG_AllocLocalEntity();
 		le->leFlags   = LEF_PUFF_DONT_SCALE;
 		le->leType    = LE_MOVE_SCALE_FADE;
@@ -275,7 +273,7 @@ void CG_AddBloodTrails(vec3_t origin, vec3_t dir, int speed, int duration, int c
 		VectorCopy(velocity, le->pos.trDelta);
 		le->pos.trTime = cg.time;
 
-		le->bounceFactor = 0.9;
+		le->bounceFactor = 0.9f;
 	}
 }
 
@@ -406,7 +404,7 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	le->angles.trDelta[2] = (10 + (rand() & 50)) - 30;
 	//le->angles.trDelta[2] = (100 + (rand()&500)) - 300;	// roll
 
-	le->bounceFactor = 0.3;
+	le->bounceFactor = 0.3f;
 
 	VectorCopy(origin, le->pos.trBase);
 	VectorCopy(velocity, le->pos.trDelta);
@@ -498,7 +496,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 
 		le->angles.trTime = cg.time;
 
-		le->bounceFactor = 0.2;
+		le->bounceFactor = 0.2f;
 
 		// if the player is on fire, then make the hat on fire
 		if (cent && CG_EntOnFire(cent))
@@ -646,8 +644,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		// and spawn the gibs from the correct places (especially the head)
 		for (gibIndex = 0, count = 0, foundtag = qtrue; foundtag && gibIndex < MAX_GIB_MODELS && gibTags[gibIndex]; gibIndex++)
 		{
-			re = 0;
-
+			re       = 0;
 			foundtag = qfalse;
 
 			if (!character->gibModels[gibIndex])
@@ -833,12 +830,12 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 	vec3_t      endCenter;
 	polyVert_t  coreverts[4];
 	trace_t     tr;
-	float       radius = 0.0; // might be used uninitialized
+	float       radius = 0; // might be used uninitialized
 	float       coreEndRadius;
 	qboolean    capStart = qtrue;
 	float       hitDist;    // the actual distance of the trace impact	(0 is no hit)
 	float       beamLen;    // actual distance of the drawn beam
-	float       endAlpha = 0.0;
+	float       endAlpha = 0;
 	vec4_t      colorNorm;  // normalized color vector
 	refEntity_t ent;
 	vec3_t      angles;
@@ -889,7 +886,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 	// first trace to see if anything is hit
 	if (flags & SL_NOTRACE)
 	{
-		tr.fraction = 1.0;  // force no hit
+		tr.fraction = 1.0f;  // force no hit
 	}
 	else
 	{
@@ -1096,7 +1093,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 	{
 		vec3_t dlightLoc;
 		VectorMA(tr.endpos, 0, lightDir, dlightLoc);      // back away from the hit
-		trap_R_AddLightToScene(dlightLoc, radius * 2, 0.3, 1.0, 1.0, 1.0, 0, 0);
+		trap_R_AddLightToScene(dlightLoc, radius * 2, 0.3f, 1.0f, 1.0f, 1.0f, 0, 0);
 	}
 
 	// draw flare at source
@@ -1105,7 +1102,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		qboolean lightInEyes = qfalse;
 		vec3_t   camloc, dirtolight;
 		float    dot, deg, dist;
-		float    flarescale = 0.0;    // TTimo: might be used uninitialized
+		float    flarescale = 0;    // might be used uninitialized
 
 		// get camera position and direction to lightsource
 		VectorCopy(cg.snap->ps.origin, camloc);

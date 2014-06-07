@@ -523,6 +523,7 @@ void SV_UpdateUserinfo_f(client_t *cl);
 void SV_Heartbeat_f(void);
 qboolean SV_TempBanIsBanned(netadr_t address);
 void SV_TempBanNetAddress(netadr_t address, int length);
+void SV_UptimeReset(void);
 
 // sv_snapshot.c
 void SV_AddServerCommand(client_t *client, const char *cmd);

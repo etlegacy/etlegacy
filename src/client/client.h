@@ -573,7 +573,6 @@ void CL_ParseServerMessage(msg_t *msg);
 void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
 void CL_LocalServers_f(void);
 void CL_GlobalServers_f(void);
-//FIXME: void    CL_FavoriteServers_f( void );
 void CL_Ping_f(void);
 qboolean CL_UpdateVisiblePings_f(int source);
 
@@ -581,7 +580,7 @@ qboolean CL_UpdateVisiblePings_f(int source);
 
 #define NUM_CON_TIMES 4
 
-#define CON_TEXTSIZE    65536
+#define CON_TEXTSIZE    131072
 
 typedef struct
 {

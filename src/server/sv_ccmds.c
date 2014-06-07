@@ -36,6 +36,10 @@
 
 #include "server.h"
 
+#include <time.h>
+
+static time_t uptimeSince;
+
 /*
 ==================
 SV_GetPlayerByName
@@ -480,12 +484,16 @@ static void SV_Status_f(void)
 	}
 
 	Com_Printf("cpu server utilization: %i %%\n"
-	           "avg response time: %i ms\n"
-	           "map: %s\n"
+	           "avg response time     : %i ms\n"
+	           "server time           : %i\n"
+	           "internal time         : %i\n"
+	           "map                   : %s\n\n"
 	           "num score ping name            lastmsg address               qport rate\n"
 	           "--- ----- ---- --------------- ------- --------------------- ----- -----\n",
 	           ( int ) svs.stats.cpu,
 	           ( int ) svs.stats.avg,
+	           svs.time,
+	           Sys_Milliseconds(),
 	           sv_mapname->string);
 
 	// FIXME: extend player name lenght (>16 chars) ? - they are printed!
@@ -843,6 +851,30 @@ void SV_GameCompleteStatus_f(void)
 	SV_MasterGameCompleteStatus();
 }
 
+void SV_UptimeReset(void)
+{
+	uptimeSince = time(NULL);
+}
+
+/**
+ * @brief Prints the server uptime
+ */
+void SV_Uptime_f(void)
+{
+	if (Cmd_Argc() == 2)
+	{
+		Com_Printf("uptime       : %f\nserver time  : %i\ninternal time: %i\n",
+		           difftime(time(NULL), uptimeSince), // TODO: format to dd hh ss
+		           svs.time,
+		           Sys_Milliseconds());
+	}
+	else
+	{
+		// TODO: format to dd hh ss
+		Com_Printf("uptime: %f\n", difftime(time(NULL), uptimeSince));
+	}
+}
+
 //===========================================================
 
 /*
@@ -885,6 +917,8 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("sv_demo", SV_Demo_Play_f);
 	Cmd_SetCommandCompletionFunc("sv_demo", SV_CompleteDemoName);
 	Cmd_AddCommand("sv_demostop", SV_Demo_Stop_f);
+
+	Cmd_AddCommand("uptime", SV_Uptime_f);
 }
 
 /*

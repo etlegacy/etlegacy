@@ -3284,7 +3284,6 @@ void CG_DrawOnScreenNames(void)
 
 	for (i = 0; i < cgs.maxclients; ++i)
 	{
-
 		spcNm = &cg.specOnScreenNames[i];
 
 		// Visible checks if information is actually valid

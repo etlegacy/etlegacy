@@ -239,8 +239,9 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 	if (!gEnt->r.bmodel && VectorCompare(gEnt->r.currentOrigin, vec3_origin))
 	{
 		// I've seen this warning a lot - let map makers know which entity is affected.
-		// FIXME: Clarify if this warning is false positive for some ents
-		Com_DPrintf("WARNING: BBOX entity %i is being linked at world origin, this is probably a bug - see /entitylist cmd\n", gEnt->s.number);
+		// FIXME: - Clarify if this warning is false positive for some ents
+		//        - print gEnt->s.eType as string
+		Com_DPrintf("WARNING: BBOX entity %i (type: %i) is being linked at world origin, this is probably a bug - see /entitylist cmd\n", gEnt->s.number, gEnt->s.eType);
 	}
 
 	if (ent->worldSector)
