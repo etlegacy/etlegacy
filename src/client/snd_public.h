@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -30,6 +30,9 @@
  *
  * @file snd_public.h
  */
+
+#ifndef INCLUDE_SND_PUBLIC_H
+#define INCLUDE_SND_PUBLIC_H
 
 // background track queuing
 #define QUEUED_PLAY_ONCE    -1
@@ -103,3 +106,5 @@ void S_Capture(int samples, byte *data);
 void S_StopCapture(void);
 void S_MasterGain(float gain);
 #endif
+
+#endif // #ifndef INCLUDE_SND_PUBLIC_H

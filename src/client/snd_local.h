@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -32,8 +32,8 @@
  * @brief private sound definitions
  */
 
-#ifndef __SND_LOCAL_H__
-#define __SND_LOCAL_H__
+#ifndef INCLUDE_SND_LOCAL_H
+#define INCLUDE_SND_LOCAL_H
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
@@ -312,4 +312,4 @@ qboolean S_AL_Init(soundInterface_t *si);
 
 #endif // FEATURE_OPENAL
 
-#endif // __SND_LOCAL_H__
+#endif // #ifndef INCLUDE_SND_LOCAL_H
