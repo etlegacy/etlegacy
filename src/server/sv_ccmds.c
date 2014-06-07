@@ -480,12 +480,16 @@ static void SV_Status_f(void)
 	}
 
 	Com_Printf("cpu server utilization: %i %%\n"
-	           "avg response time: %i ms\n"
-	           "map: %s\n"
+	           "avg response time     : %i ms\n"
+	           "server time           : %i\n"
+	           "internal time         : %i\n"
+	           "map                   : %s\n\n"
 	           "num score ping name            lastmsg address               qport rate\n"
 	           "--- ----- ---- --------------- ------- --------------------- ----- -----\n",
 	           ( int ) svs.stats.cpu,
 	           ( int ) svs.stats.avg,
+	           svs.time,
+	           Sys_Milliseconds(),
 	           sv_mapname->string);
 
 	// FIXME: extend player name lenght (>16 chars) ? - they are printed!
