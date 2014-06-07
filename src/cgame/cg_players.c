@@ -37,9 +37,6 @@
 #define SWING_RIGHT 1
 #define SWING_LEFT  2
 
-static int   dp_realtime;
-static float jumpHeight;
-
 extern const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1];
 
 /*
@@ -1947,8 +1944,7 @@ Float sprites over the player's head
 */
 static void CG_PlayerSprites(centity_t *cent)
 {
-	int          team;
-	clientInfo_t *ci = &cgs.clientinfo[cent->currentState.clientNum];
+	int team;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) ||
 	    (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
@@ -1965,7 +1961,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-		CG_PlayerFloatText(cent, ci->name, 56);
+		CG_PlayerFloatText(cent, cgs.clientinfo[cent->currentState.clientNum].name, 56);
 		return;
 	}
 

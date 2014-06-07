@@ -1135,6 +1135,8 @@ char *CG_GetStrFromStrArray(const char *in, const int index)
 		s = ptr;
 		i++;
 	}
+
+	return ""; // should never happen
 }
 
 void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
