@@ -187,13 +187,13 @@ typedef struct
 	qboolean isPoint;       // optimized case
 	trace_t trace;          // returned from trace call
 	sphere_t sphere;        // sphere for oriendted capsule collision
-#ifdef MRE_OPTIMIZE
+
 	cplane_t tracePlane1;
 	cplane_t tracePlane2;
 	float traceDist1;
 	float traceDist2;
 	vec3_t dir;
-#endif
+
 } traceWork_t;
 
 typedef struct leafList_s
