@@ -46,19 +46,9 @@ typedef struct
 
 const attrmap attributeMap[] =
 {
-	{ ATTR_POSITION,     "ATTR_POSITION"     },
-	{ ATTR_TEXCOORD,     "ATTR_TEXCOORD"     },
-	{ ATTR_LIGHTCOORD,   "ATTR_LIGHTCOORD"   },
-	{ ATTR_TANGENT,      "ATTR_TANGENT"      },
-	{ ATTR_BINORMAL,     "ATTR_BINORMAL"     },
-	{ ATTR_NORMAL,       "ATTR_NORMAL"       },
-	{ ATTR_COLOR,        "ATTR_COLOR"        },
-	{ ATTR_BONE_INDEXES, "ATTR_BONE_INDEXES" },
-	{ ATTR_BONE_WEIGHTS, "ATTR_BONE_WEIGHTS" },
-	{ ATTR_POSITION2,    "ATTR_POSITION2"    },
-	{ ATTR_TANGENT2,     "ATTR_TANGENT2"     },
-	{ ATTR_BINORMAL2,    "ATTR_BINORMAL2"    },
-	{ ATTR_NORMAL2,      "ATTR_NORMAL2"      }
+#define ATTR_MAP
+#include "tr_glsldef.h"
+#undef ATTR_MAP
 };
 const int numberofAttributes = ARRAY_LEN(attributeMap);
 

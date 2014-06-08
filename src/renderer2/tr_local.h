@@ -1317,44 +1317,11 @@ enum
 };
 // *INDENT-ON*
 
-enum
+enum GLAttrDef
 {
-	ATTR_POSITION   = BIT(0),
-	ATTR_TEXCOORD   = BIT(1),
-	ATTR_LIGHTCOORD = BIT(2),
-	ATTR_TANGENT    = BIT(3),
-	ATTR_BINORMAL   = BIT(4),
-	ATTR_NORMAL     = BIT(5),
-	ATTR_COLOR      = BIT(6),
-
-	//ATTR_PAINTCOLOR     = BIT(7),
-	//ATTR_LIGHTDIRECTION = BIT(8),
-
-	ATTR_BONE_INDEXES = BIT(9),
-	ATTR_BONE_WEIGHTS = BIT(10),
-
-	// for .md3 interpolation
-	ATTR_POSITION2 = BIT(11),
-	ATTR_TANGENT2  = BIT(12),
-	ATTR_BINORMAL2 = BIT(13),
-	ATTR_NORMAL2   = BIT(14),
-
-	// FIXME XBSP format with ATTR_LIGHTDIRECTION and ATTR_PAINTCOLOR
-	//ATTR_DEFAULT = ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_COLOR,
-
-	ATTR_BITS = ATTR_POSITION |
-	            ATTR_TEXCOORD |
-	            ATTR_LIGHTCOORD |
-	            ATTR_TANGENT |
-	            ATTR_BINORMAL |
-	            ATTR_NORMAL |
-	            ATTR_COLOR
-
-	            //|ATTR_PAINTCOLOR |
-	            //ATTR_LIGHTDIRECTION
-
-	            //ATTR_BONE_INDEXES |
-	            //ATTR_BONE_WEIGHTS
+#define ATTR_DECL
+#include "tr_glsldef.h"
+#undef ATTR_DECL
 };
 
 enum
