@@ -1218,9 +1218,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		break;
 	}
 
-	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), weaponTable[weap1].desc), 400, cg_fontScaleCP.value, -1);
-	}
+	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), weaponTable[weap1].desc, weaponTable[weap2].desc), 400, cg_fontScaleCP.value, -1);
 
 	cgs.limboLoadoutSelected = qtrue;
 	cgs.limboLoadoutModified = qtrue;
