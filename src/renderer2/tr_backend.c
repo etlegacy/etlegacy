@@ -10365,7 +10365,9 @@ const void *RB_RotatedPic(const void *data)
 	const stretchPicCommand_t *cmd;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
-	float                     mx, my, cosA, sinA, cw, ch, sw, sh;
+	float                     angle;
+	float					  mx, my, mw, mh;
+	float                     pi2 = M_PI * 2;
 
 	cmd = (const stretchPicCommand_t *)data;
 
@@ -10386,13 +10388,13 @@ const void *RB_RotatedPic(const void *data)
 	}
 
 	Tess_CheckOverflow(4, 6);
-	numVerts   = tess.numVertexes;
+	numVerts = tess.numVertexes;
 	numIndexes = tess.numIndexes;
 
 	tess.numVertexes += 4;
-	tess.numIndexes  += 6;
+	tess.numIndexes += 6;
 
-	tess.indexes[numIndexes]     = numVerts + 3;
+	tess.indexes[numIndexes] = numVerts + 3;
 	tess.indexes[numIndexes + 1] = numVerts + 0;
 	tess.indexes[numIndexes + 2] = numVerts + 2;
 	tess.indexes[numIndexes + 3] = numVerts + 2;
@@ -10404,41 +10406,44 @@ const void *RB_RotatedPic(const void *data)
 	Vector4Copy(backEnd.color2D, tess.colors[numVerts + 2]);
 	Vector4Copy(backEnd.color2D, tess.colors[numVerts + 3]);
 
-	mx   = cmd->x + (cmd->w / 2);
-	my   = cmd->y + (cmd->h / 2);
-	cosA = cos(DEG2RAD(cmd->angle));
-	sinA = sin(DEG2RAD(cmd->angle));
-	cw   = cosA * (cmd->w / 2);
-	ch   = cosA * (cmd->h / 2);
-	sw   = sinA * (cmd->w / 2);
-	sh   = sinA * (cmd->h / 2);
+	mx = cmd->x + (cmd->w / 2);
+	my = cmd->y + (cmd->h / 2);
+	mw = cmd->w * 0.75f;
+	mh = cmd->h * 0.75f;
 
-	tess.xyz[numVerts][0] = mx - cw - sh;
-	tess.xyz[numVerts][1] = my + sw - ch;
+#define COSAN mx + (cos(angle) * mw)
+#define SINAN my + (sin(angle) * mh)
+
+	angle = cmd->angle * pi2;
+	tess.xyz[numVerts][0] = COSAN;
+	tess.xyz[numVerts][1] = SINAN;
 	tess.xyz[numVerts][2] = 0;
 	tess.xyz[numVerts][3] = 1;
 
 	tess.texCoords[numVerts][0] = cmd->s1;
 	tess.texCoords[numVerts][1] = cmd->t1;
 
-	tess.xyz[numVerts + 1][0] = mx + cw - sh;
-	tess.xyz[numVerts + 1][1] = my - sw - ch;
+	angle = cmd->angle * pi2 + 0.25 * pi2;
+	tess.xyz[numVerts + 1][0] = COSAN;
+	tess.xyz[numVerts + 1][1] = SINAN;
 	tess.xyz[numVerts + 1][2] = 0;
 	tess.xyz[numVerts + 1][3] = 1;
 
 	tess.texCoords[numVerts + 1][0] = cmd->s2;
 	tess.texCoords[numVerts + 1][1] = cmd->t1;
 
-	tess.xyz[numVerts + 2][0] = mx + cw + sh;
-	tess.xyz[numVerts + 2][1] = my - sw + ch;
+	angle = cmd->angle * pi2 + 0.50 * pi2;
+	tess.xyz[numVerts + 2][0] = COSAN;
+	tess.xyz[numVerts + 2][1] = SINAN;
 	tess.xyz[numVerts + 2][2] = 0;
 	tess.xyz[numVerts + 2][3] = 1;
 
 	tess.texCoords[numVerts + 2][0] = cmd->s2;
 	tess.texCoords[numVerts + 2][1] = cmd->t2;
 
-	tess.xyz[numVerts + 3][0] = mx - cw + sh;
-	tess.xyz[numVerts + 3][1] = my + sw + ch;
+	angle = cmd->angle * pi2 + 0.75 * pi2;
+	tess.xyz[numVerts + 3][0] = COSAN;
+	tess.xyz[numVerts + 3][1] = SINAN;
 	tess.xyz[numVerts + 3][2] = 0;
 	tess.xyz[numVerts + 3][3] = 1;
 
