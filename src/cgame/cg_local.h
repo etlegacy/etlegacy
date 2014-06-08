@@ -36,8 +36,8 @@
  * in the server stored userinfos, or stashed in a cvar.
  */
 
-#ifndef _CG_LOCAL_H
-#define _CG_LOCAL_H
+#ifndef INCLUDE_CG_LOCAL_H
+#define INCLUDE_CG_LOCAL_H
 
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"
@@ -3371,4 +3371,4 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 #define HITSOUNDS_NOHEADSHOT        0x04
 #define HITSOUNDS_NOBODYSHOT        0x08
 
-#endif
+#endif // #ifndef INCLUDE_CG_LOCAL_H
