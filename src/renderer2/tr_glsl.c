@@ -2089,11 +2089,7 @@ void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
 	programlist->list->currentPermutation = 0;
 	programlist->list->currentMacros = 0;
 
-	if (offset == 0)
-	{
-		return;
-	}
-	else
+	if (offset != 0)
 	{
 		int i = 0;
 		programlist->list->currentPermutation = offset;
@@ -2107,11 +2103,7 @@ void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
 				}
 			}
 		}
-
-		return;
 	}
-
-
 }
 
 void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
