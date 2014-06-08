@@ -1063,7 +1063,8 @@ typedef enum
 	EV_AIRSTRIKEMESSAGE,
 	EV_MEDIC_CALL,  // end of vanilla events
 	EV_SHOVE_SOUND, // 127 - ETL shove
-	EV_MAX_EVENTS   // 128 - just added as an 'endcap'
+	EV_BODY_DP,     // 128
+	EV_MAX_EVENTS   // 129 - just added as an 'endcap'
 } entity_event_t;
 
 extern const char *eventnames[EV_MAX_EVENTS];

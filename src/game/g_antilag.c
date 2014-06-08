@@ -357,12 +357,25 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 
 	G_AttachBodyParts(ent);
 
+	// ignore bodies for bullet tracing
 	if (ignoreCorpses)
 	{
-		// ignore bodies for bullet tracing
-		for (i = 0; i < BODY_QUEUE_SIZE; i++)
+		if (g_dynBQ.integer == 0)
 		{
-			G_TempTraceIgnoreEntity(level.bodyQue[i]);
+			for (i = 0; i < BODY_QUEUE_SIZE; i++)
+			{
+				G_TempTraceIgnoreEntity(level.bodyQue[i]);
+			}
+		}
+		else
+		{
+			for (i = 0; i < level.num_entities; i++)  // // slower way, improve by time
+			{
+				if (g_entities[i].s.eType == ET_CORPSE)
+				{
+					G_TempTraceIgnoreEntity(&g_entities[i]);
+				}
+			}
 		}
 	}
 

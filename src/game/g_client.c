@@ -276,6 +276,12 @@ void InitBodyQue(void)
 	int       i;
 	gentity_t *ent;
 
+	// no need to init when dyn BQ is set
+	if (g_dynBQ.integer > 0)
+	{
+		return;
+	}
+
 	level.bodyQueIndex = 0;
 	for (i = 0; i < BODY_QUEUE_SIZE ; i++)
 	{
@@ -295,8 +301,23 @@ Called by BodySink
 */
 void BodyUnlink(gentity_t *ent)
 {
+	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+
+	tent->s.otherEntityNum2 = ent->s.number;
+	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
+
 	trap_UnlinkEntity(ent);
 	ent->physicsObject = qfalse;
+}
+
+void G_BodyDP(gentity_t *ent)
+{
+	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+
+	tent->s.otherEntityNum2 = ent->s.number;
+	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
+
+	G_FreeEntity(ent);
 }
 
 /*
@@ -309,10 +330,21 @@ After sitting around for five seconds, fall into the ground and dissapear
 void BodySink2(gentity_t *ent)
 {
 	ent->physicsObject = qfalse;
-	ent->nextthink     = level.time + BODY_TIME(BODY_TEAM(ent)) + 1500;
+	ent->nextthink     = level.time + 1800; // BODY_TIME(BODY_TEAM(ent)) + 1500; // FIXME: remove
 	ent->think         = BodyUnlink;
-	ent->s.pos.trType  = TR_LINEAR;
-	ent->s.pos.trTime  = level.time;
+
+	if (g_dynBQ.integer == 0)
+	{
+		ent->think = BodyUnlink;
+	}
+	else
+	{
+		// let's free the dead guy
+		ent->think = G_BodyDP;
+	}
+
+	ent->s.pos.trType = TR_LINEAR;
+	ent->s.pos.trTime = level.time;
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 	VectorSet(ent->s.pos.trDelta, 0, 0, -8);
 }
@@ -364,9 +396,16 @@ void CopyToBodyQue(gentity_t *ent)
 		return;
 	}
 
-	// grab a body que and cycle to the next one
-	body               = level.bodyQue[level.bodyQueIndex];
-	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
+	if (g_dynBQ.integer == 0)
+	{
+		// grab a body que and cycle to the next one
+		body               = level.bodyQue[level.bodyQueIndex];
+		level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
+	}
+	else
+	{
+		body = G_Spawn();
+	}
 
 	body->s        = ent->s;
 	body->s.eFlags = EF_DEAD;       // clear EF_TALK, etc

@@ -1739,6 +1739,8 @@ extern vmCvar_t g_debugHitboxes;
 
 extern vmCvar_t g_voting; // see VOTEF_* defines
 
+extern vmCvar_t g_dynBQ;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;

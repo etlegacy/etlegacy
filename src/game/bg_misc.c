@@ -3213,6 +3213,7 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_AIRSTRIKEMESSAGE",
 	"EV_MEDIC_CALL",
 	"EV_SHOVE_SOUND",
+	"EV_BODY_DP",
 	//"EV_MAX_EVENTS",
 };
 
