@@ -1910,7 +1910,7 @@ static void R_CoherentHierachicalCulling()
 		R_BindNullFBO();
 	}
 
-	SetMacrosAndSelectProgram(gl_genericShader, 0);
+	SetMacrosAndSelectProgram(gl_genericShader);
 
 	GL_Cull(CT_TWO_SIDED);
 

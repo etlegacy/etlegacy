@@ -1105,7 +1105,7 @@ static void Render_lightVolume(interaction_t *ia)
 
 			Ren_LogComment("--- Render_lightVolume_omni ---\n");
 
-			SelectProgram(gl_volumetricLightingShader);
+			SetMacrosAndSelectProgram(gl_volumetricLightingShader);
 			GL_Cull(CT_TWO_SIDED);
 			GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
@@ -2243,7 +2243,7 @@ static void RB_RenderInteractionsShadowMapped()
 							GL_Cull(CT_TWO_SIDED);
 							GL_State(GLS_DEPTHTEST_DISABLE);
 
-							SelectProgram(gl_debugShadowMapShader);
+							SetMacrosAndSelectProgram(gl_debugShadowMapShader);
 							SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 							GL_SelectTexture(0);
@@ -2273,7 +2273,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 								GL_PushMatrix();
 
-								SetMacrosAndSelectProgram(gl_genericShader, 0);
+								SetMacrosAndSelectProgram(gl_genericShader);
 
 								GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 								SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -5136,7 +5136,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_Cull(CT_TWO_SIDED);
 						GL_State(GLS_DEPTHTEST_DISABLE);
 
-						SelectProgram(gl_debugShadowMapShader);
+						SetMacrosAndSelectProgram(gl_debugShadowMapShader);
 						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 						// bind u_ColorMap
@@ -5170,7 +5170,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 							GL_Cull(CT_TWO_SIDED);
 
-							SetMacrosAndSelectProgram(gl_genericShader, 0);
+							SetMacrosAndSelectProgram(gl_genericShader);
 
 							GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 							SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -5838,7 +5838,7 @@ void RB_RenderGlobalFog()
 	// go back to the world modelview matrix
 	backEnd.orientation = backEnd.viewParms.world;
 
-	SelectProgram(gl_fogGlobalShader);
+	SetMacrosAndSelectProgram(gl_fogGlobalShader);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // world space
 
 	{
@@ -5956,7 +5956,7 @@ void RB_RenderBloom()
 			}
 			else
 			{
-				SelectProgram(gl_contrastShader);
+				SetMacrosAndSelectProgram(gl_contrastShader);
 				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 			}
 
@@ -5978,7 +5978,7 @@ void RB_RenderBloom()
 		else
 		{
 			// render contrast downscaled to 1/4th of the screen
-			SelectProgram(gl_contrastShader);
+			SetMacrosAndSelectProgram(gl_contrastShader);
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 			GL_SelectTexture(0);
@@ -5999,7 +5999,7 @@ void RB_RenderBloom()
 
 
 		// render bloom in multiple passes
-		SelectProgram(gl_bloomShader);
+		SetMacrosAndSelectProgram(gl_bloomShader);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 		SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_bloomBlur->value);
 
@@ -6032,12 +6032,12 @@ void RB_RenderBloom()
 
 				if (i == 0)
 				{
-					SelectProgram(gl_blurXShader);
+					SetMacrosAndSelectProgram(gl_blurXShader);
 
 				}
 				else
 				{
-					SelectProgram(gl_blurYShader);
+					SetMacrosAndSelectProgram(gl_blurYShader);
 				}
 
 				SetUniformFloat(UNIFORM_DEFORMMAGNITUDE, r_bloomBlur->value);
@@ -6054,7 +6054,7 @@ void RB_RenderBloom()
 				R_BindFBO(tr.geometricRenderFBO);
 				glDrawBuffers(1, geometricRenderTargets);
 
-				SelectProgram(gl_screenShader);
+				SetMacrosAndSelectProgram(gl_screenShader);
 
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
@@ -6068,7 +6068,7 @@ void RB_RenderBloom()
 			{
 				R_BindFBO(tr.deferredRenderFBO);
 
-				SelectProgram(gl_screenShader);
+				SetMacrosAndSelectProgram(gl_screenShader);
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
@@ -6082,7 +6082,7 @@ void RB_RenderBloom()
 			{
 				R_BindNullFBO();
 
-				SelectProgram(gl_screenShader);
+				SetMacrosAndSelectProgram(gl_screenShader);
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
@@ -6127,7 +6127,7 @@ void RB_RenderRotoscope(void)
 	GL_Cull(CT_TWO_SIDED);
 
 	// enable shader, set arrays
-	SelectProgram(gl_rotoscopeShader);
+	SetMacrosAndSelectProgram(gl_rotoscopeShader);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 	SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_rotoscopeBlur->value);
 
@@ -6170,7 +6170,7 @@ void RB_CameraPostFX(void)
 	GL_Cull(CT_TWO_SIDED);
 
 	// enable shader, set arrays
-	SelectProgram(gl_cameraEffectsShader);
+	SetMacrosAndSelectProgram(gl_cameraEffectsShader);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 	//glUniform1f(tr.cameraEffectsShader.u_BlurMagnitude, r_bloomBlur->value);
 
@@ -6373,7 +6373,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 	}
 	else
 	{
-		SelectProgram(gl_screenShader);
+		SetMacrosAndSelectProgram(gl_screenShader);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
@@ -6449,7 +6449,7 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
-		SelectProgram(gl_screenShader);
+		SetMacrosAndSelectProgram(gl_screenShader);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 	}
@@ -6878,7 +6878,7 @@ void RB_RenderLightOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GLSL_SetRequiredVertexPointers(gl_genericShader);
 
@@ -7454,7 +7454,7 @@ void RB_RenderEntityOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GLSL_SetRequiredVertexPointers(gl_genericShader);
 
@@ -7638,7 +7638,7 @@ void RB_RenderBspOcclusionQueries()
 		bspNode_t *node;
 		link_t    *l, *next, *sentinel;
 
-		SelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(gl_genericShader);
 		GL_Cull(CT_TWO_SIDED);
 
 		GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -7824,7 +7824,7 @@ static void RB_RenderDebugUtils()
 		vec3_t minSize = { -2, -2, -2 };
 		vec3_t maxSize = { 2, 2, 2 };
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		//GL_State(GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
@@ -8197,7 +8197,7 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8373,7 +8373,7 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8465,7 +8465,7 @@ static void RB_RenderDebugUtils()
 		static refSkeleton_t skeleton;
 		refSkeleton_t        *skel;
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
 
@@ -8675,7 +8675,7 @@ static void RB_RenderDebugUtils()
 		matrix_t      ortho;
 		vec4_t        quadVerts[4];
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -8807,7 +8807,7 @@ static void RB_RenderDebugUtils()
 			cubemapProbe_t *cubeProbeNearest;
 			cubemapProbe_t *cubeProbeSecondNearest;
 
-			SetMacrosAndSelectProgram(gl_genericShader, 0);
+			SetMacrosAndSelectProgram(gl_genericShader);
 
 			GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 			SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -8881,7 +8881,7 @@ static void RB_RenderDebugUtils()
 
 		Ren_LogComment("--- r_showLightGrid > 0: Rendering light grid\n");
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -8964,7 +8964,7 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
@@ -9316,7 +9316,7 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader, 0);
+		SetMacrosAndSelectProgram(gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
@@ -10063,7 +10063,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	glVertexAttrib4f(ATTR_INDEX_NORMAL, 0, 0, 1, 1);
 	glVertexAttrib4f(ATTR_INDEX_COLOR, tr.identityLight, tr.identityLight, tr.identityLight, 1);
 
-	SetMacrosAndSelectProgram(gl_genericShader, 0);
+	SetMacrosAndSelectProgram(gl_genericShader);
 
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 	SetUniformVec4(UNIFORM_COLOR, colorBlack);
@@ -10606,7 +10606,7 @@ void RB_ShowImages(void)
 
 	glFinish();
 
-	SetMacrosAndSelectProgram(gl_genericShader, 0);
+	SetMacrosAndSelectProgram(gl_genericShader);
 
 	GL_Cull(CT_TWO_SIDED);
 

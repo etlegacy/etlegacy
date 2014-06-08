@@ -2189,7 +2189,7 @@ static void Render_screen(int stage)
 
 	GL_State(pStage->stateBits);
 
-	SelectProgram(gl_screenShader);
+	SetMacrosAndSelectProgram(gl_screenShader);
 
 	/*
 	if(pStage->vertexColor || pStage->inverseVertexColor)
@@ -2223,7 +2223,7 @@ static void Render_portal(int stage)
 	GL_State(pStage->stateBits);
 
 	// enable shader, set arrays
-	SelectProgram(gl_portalShader);
+	SetMacrosAndSelectProgram(gl_portalShader);
 
 	/*
 	if(pStage->vertexColor || pStage->inverseVertexColor)
@@ -2730,7 +2730,7 @@ static void Render_volumetricFog()
 
 		R_BindFBO(previousFBO);
 
-		SelectProgram(gl_volumetricFogShader);
+		SetMacrosAndSelectProgram(gl_volumetricFogShader);
 		GLSL_VertexAttribsState(ATTR_POSITION);
 
 		//GL_State(GLS_DEPTHTEST_DISABLE);	// | GLS_DEPTHMASK_TRUE);

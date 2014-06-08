@@ -2153,6 +2153,7 @@ void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
 
 	if (numMacros == 0)
 	{
+		GLSL_SetMacroStatesByOffset(programlist, 0);
 		return;
 	}
 
@@ -2565,7 +2566,7 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		glState.vertexAttribsState &= ~ATTR_COLOR;
 	}
-
+	
 	SetUniformVec4(UNIFORM_COLORMODULATE, temp);
 }
 
