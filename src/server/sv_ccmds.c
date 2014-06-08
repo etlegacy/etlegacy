@@ -861,17 +861,22 @@ void SV_UptimeReset(void)
  */
 void SV_Uptime_f(void)
 {
+	const unsigned long uptime = difftime(time(NULL), uptimeSince);
+	const unsigned int  s      = uptime % 60,
+	                    m      = (uptime % 3600) / 60,
+	                    h      = (uptime % 86400) / 3600,
+	                    d      = uptime / 86400;
+
 	if (Cmd_Argc() == 2)
 	{
-		Com_Printf("uptime       : %f\nserver time  : %i\ninternal time: %i\n",
-		           difftime(time(NULL), uptimeSince), // TODO: format to dd hh ss
+		Com_Printf("uptime       : %u days %u hours %u min %u sec\nserver time  : %i\ninternal time: %i\n",
+		           d, h, m, s,
 		           svs.time,
 		           Sys_Milliseconds());
 	}
 	else
 	{
-		// TODO: format to dd hh ss
-		Com_Printf("uptime: %f\n", difftime(time(NULL), uptimeSince));
+		Com_Printf("uptime: %u days %u hours %u min %u sec\n", d, h, m, s);
 	}
 }
 
