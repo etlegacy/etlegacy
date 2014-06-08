@@ -31,8 +31,8 @@
  * @file ui_shared.h
  */
 
-#ifndef __UI_SHARED_H
-#define __UI_SHARED_H
+#ifndef INCLUDE_UI_SHARED_H
+#define INCLUDE_UI_SHARED_H
 
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"
@@ -635,4 +635,4 @@ float Cui_WideX(float x);
 float Cui_WideXoffset(void);
 void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset);      // called from UI & CGAME
 
-#endif
+#endif // #ifndef INCLUDE_UI_SHARED_H

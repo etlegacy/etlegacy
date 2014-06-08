@@ -31,7 +31,7 @@
  * @file json_public.h
  */
 
-#ifndef _JSON_PUBLIC_H_
-#define _JSON_PUBLIC_H_
+#ifndef INCLUDE_JSON_PUBLIC_H
+#define INCLUDE_JSON_PUBLIC_H
 
-#endif
+#endif // #ifndef INCLUDE_JSON_PUBLIC_H

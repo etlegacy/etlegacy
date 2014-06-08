@@ -1,5 +1,5 @@
-#ifndef G_STRPARSE_H
-#define G_STRPARSE_H
+#ifndef INCLUDE_G_STRPARSE_H
+#define INCLUDE_G_STRPARSE_H
 
 typedef enum
 {
@@ -58,4 +58,4 @@ typedef enum
 
 extern g_StringToken_t G_GetTokenForString(char const *str);
 
-#endif  // G_STRPARSE_H
+#endif  // #ifndef INCLUDE_G_STRPARSE_H

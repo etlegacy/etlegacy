@@ -29,8 +29,8 @@ below.
 */
 
 // Hash table interface
-#ifndef __H_HASHTABLE
-#define __H_HASHTABLE
+#ifndef INCLUDE_HTABLE_H
+#define INCLUDE_HTABLE_H
 
 #include "q_shared.h"
 #include "qcommon.h"
@@ -182,6 +182,6 @@ void HT_Apply(
     void *data
     );
 
-#endif // __H_HASHTABLE
+#endif // #ifndef INCLUDE_HTABLE_H
 
-#endif //FEATURE_IRC_CLIENT
+#endif // FEATURE_IRC_CLIENT

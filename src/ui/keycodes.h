@@ -34,8 +34,8 @@
  * @file keycodes.h
  */
 
-#ifndef __KEYCODES_H__
-#define __KEYCODES_H__
+#ifndef INCLUDE_KEYCODES_H
+#define INCLUDE_KEYCODES_H
 
 typedef enum
 {
@@ -293,4 +293,4 @@ typedef enum
  */
 #define K_CHAR_FLAG     1024
 
-#endif
+#endif // #ifndef INCLUDE_KEYCODES_H

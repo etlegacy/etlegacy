@@ -3,8 +3,8 @@
  *
  */
 
-#ifndef __G_ETBOT_INTERFACE_H__
-#define __G_ETBOT_INTERFACE_H__
+#ifndef INCLUDE_G_ETBOT_INTERFACE_H
+#define INLCUDE_G_ETBOT_INTERFACE_H
 
 //#include "q_shared.h"
 #include "g_local.h"
@@ -99,4 +99,4 @@ void Bot_AddFallenTeammateGoals(gentity_t *_teammate, int _team);
 void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent);
 void GetEntityCenter(gentity_t *ent, vec3_t pos);
 
-#endif
+#endif // #ifndef INCLUDE_G_ETBOT_INTERFACE_H

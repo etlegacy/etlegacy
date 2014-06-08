@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,8 +31,8 @@
  * @file g_team.h
  */
 
-#ifndef __G_TEAM_H__
-#define __G_TEAM_H__
+#ifndef INCLUDE_G_TEAM_H
+#define INCLUDE_G_TEAM_H
 
 // more #defs for GT_WOLF gametype
 #define WOLF_CAPTURE_BONUS      15      // capturing major game objective
@@ -100,4 +100,4 @@ void CheckTeamStatus(void);
 
 int Pickup_Team(gentity_t *ent, gentity_t *other);
 
-#endif
+#endif // #ifndef INCLUDE_G_TEAM_H

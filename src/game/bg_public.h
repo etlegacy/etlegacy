@@ -37,8 +37,8 @@
  * second version that must match between game and cgame
  */
 
-#ifndef __BG_PUBLIC_H__
-#define __BG_PUBLIC_H__
+#ifndef INCLUDE_BG_PUBLIC_H
+#define INCLUDE_BG_PUBLIC_H
 
 #define GAME_VERSION        "Enemy Territory"
 #define GAME_VERSION_DATED  (GAME_VERSION ", ET 2.60b")
@@ -2366,4 +2366,5 @@ typedef enum
 
 	GAMESOUND_MAX
 } gameSounds;
-#endif
+
+#endif // #ifndef INCLUDE_BG_PUBLIC_H

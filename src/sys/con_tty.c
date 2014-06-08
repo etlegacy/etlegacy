@@ -12,7 +12,7 @@
 #include <fcntl.h>
 #include <sys/time.h>
 
-/* fallbacks for con_curses.c */
+// fallbacks for con_curses.c
 #ifdef FEATURE_CURSES
 #define CON_Init CON_Init_tty
 #define CON_Shutdown CON_Shutdown_tty

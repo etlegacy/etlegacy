@@ -31,6 +31,9 @@
  * @file cm_public.h
  */
 
+#ifndef INCLUDE_CM_PUBLIC_H
+#define INCLUDE_CM_PUBLIC_H
+
 #include "qfiles.h"
 
 #include "../renderercommon/tr_types.h"
@@ -79,3 +82,5 @@ int CM_WriteAreaBits(byte *buffer, int area);
 
 // cm_patch.c
 void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *points));
+
+#endif // #ifndef INCLUDE_CM_PUBLIC_H

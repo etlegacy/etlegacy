@@ -31,8 +31,9 @@
  * @file bg_local.h
  * @brief local definitions for the bg (both games) files
  */
-#ifndef __BG_LOCAL_H__
-#define __BG_LOCAL_H__
+
+#ifndef INCLUDE_BG_LOCAL_H
+#define INCLUDE_BG_LOCAL_H
 
 #define MIN_WALK_NORMAL 0.7     // can't walk on very steep slopes
 
@@ -106,4 +107,4 @@ void PM_StepSlideMoveProne(qboolean gravity);
 
 void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload);
 
-#endif
+#endif // #ifndef INCLUDE_BG_LOCAL_H

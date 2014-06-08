@@ -31,6 +31,9 @@
  * @file vm_local.h
  */
 
+#ifndef INCLUDE_VM_LOCAL_H
+#define INCLUDE_VM_LOCAL_H
+
 #include "q_shared.h"
 #include "qcommon.h"
 
@@ -188,3 +191,5 @@ vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value);
 int VM_SymbolToValue(vm_t *vm, const char *symbol);
 const char *VM_ValueToSymbol(vm_t *vm, int value);
 void VM_LogSyscalls(int *args);
+
+#endif // #ifndef INCLUDE_VM_LOCAL_H

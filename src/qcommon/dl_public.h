@@ -31,8 +31,8 @@
  * @file dl_public.h
  */
 
-#ifndef _DL_PUBLIC_H_
-#define _DL_PUBLIC_H_
+#ifndef INCLUDE_DL_PUBLIC_H
+#define INCLUDE_DL_PUBLIC_H
 
 typedef enum
 {
@@ -54,4 +54,4 @@ typedef enum
 	DL_FLAG_URL
 } dlFlags_t;
 
-#endif
+#endif // #ifndef INCLUDE_DL_PUBLIC_H

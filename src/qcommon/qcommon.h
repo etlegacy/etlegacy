@@ -33,8 +33,8 @@
  * modules
  */
 
-#ifndef _QCOMMON_H_
-#define _QCOMMON_H_
+#ifndef INCLUDE_QCOMMON_H
+#define INCLUDE_QCOMMON_H
 
 #include "../qcommon/cm_public.h"
 /*
@@ -1338,4 +1338,4 @@ const char *I18N_TranslateMod(const char *msgid);
 #define __(x) x
 #endif
 
-#endif // _QCOMMON_H_
+#endif // #ifndef INCLUDE_QCOMMON_H

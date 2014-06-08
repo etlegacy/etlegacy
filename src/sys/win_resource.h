@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,6 +31,9 @@
  * @file win_resource.h
  */
 
+#ifndef INCLUDE_WIN_RESOURCE_H
+#define INCLUDE_WIN_RESOURCE_H
+
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
 // Used by winquake.rc
@@ -56,3 +59,5 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
+
+#endif // #ifndef INCLUDE_WIN_RESOURCE_H
