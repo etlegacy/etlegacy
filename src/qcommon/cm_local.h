@@ -31,6 +31,9 @@
  * @file cm_local.h
  */
 
+#ifndef INCLUDE_CM_LOAD_H
+#define INCLUDE_CM_LOAD_H
+
 #include "q_shared.h"
 #include "qcommon.h"
 #include "cm_polylib.h"
@@ -221,3 +224,5 @@ struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *po
 void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
 qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
 void CM_ClearLevelPatches(void);
+
+#endif // #ifndef INCLUDE_CM_LOAD_H

@@ -33,8 +33,8 @@
  * This file must be identical in the quake and utils directories
  */
 
-#ifndef __QFILES_H__
-#define __QFILES_H__
+#ifndef INCLUDE_QFILES_H
+#define INCLUDE_QFILES_H
 
 // surface geometry should not exceed these limits
 #define SHADER_MAX_VERTEXES 10000 // Arnout: 1024+1 (1 buffer for RB_EndSurface overflow check) // JPW NERVE was 4000, 1000 in q3ta //Jacker changed from 1025 to 10000
@@ -954,4 +954,4 @@ typedef struct
 	char *lighttarg;
 } drsurfaceInternal_t;
 
-#endif
+#endif // #ifndef INCLUDE_QFILES_H

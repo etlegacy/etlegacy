@@ -31,8 +31,8 @@
  * @file q_platform.h
  */
 
-#ifndef __Q_PLATFORM_H
-#define __Q_PLATFORM_H
+#ifndef INCLUDE_Q_PLATFORM_H
+#define INCLUDE_Q_PLATFORM_H
 
 // this is for determining if we have an asm version of a C function
 #define idx64 0
@@ -456,4 +456,4 @@ float FloatSwap(const float *f);
 
 #endif
 
-#endif
+#endif // #ifndef INCLUDE_Q_PLATFORM_H

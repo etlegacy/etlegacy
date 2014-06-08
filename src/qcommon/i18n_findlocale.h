@@ -1,5 +1,5 @@
-#ifndef __findlocale_h_
-#define __findlocale_h_
+#ifndef INCLUDE_I18N_FINDLOCALE_H
+#define INCLUDE_I18N_FINDLOCALE_H
 
 typedef const char *FL_Lang;
 typedef const char *FL_Country;
@@ -34,4 +34,4 @@ FL_Success FL_FindLocale(FL_Locale **locale);
 // This should be used to free the struct written by FL_FindLocale
 void FL_FreeLocale(FL_Locale **locale);
 
-#endif //__findlocale_h_
+#endif // #ifndef INCLUDE_I18N_FINDLOCALE_H
