@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -32,6 +32,7 @@
  * @file sys_platform.c
  * @brief Contains windows-specific code for console.
  */
+
 #if defined(USE_WINDOWS_CONSOLE)
 #include "../client/client.h"
 #include "win_resource.h"

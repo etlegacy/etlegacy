@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -30,7 +30,6 @@
  *
  * @file sdl_gamma.c
  */
-
 
 #ifdef FEATURE_RENDERER2
 #include "../renderer2/tr_local.h"

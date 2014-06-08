@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -30,6 +30,9 @@
  *
  * @file sys_local.h
  */
+
+#ifndef INCLUDE_SYS_LOCAL_H
+#define INCLUDE_SYS_LOCAL_H
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
@@ -74,3 +77,5 @@ void Sys_DestroyConsole(void);
 #ifdef __APPLE__
 const char *OSX_ApplicationSupportPath(void);
 #endif
+
+#endif // #ifndef INCLUDE_SYS_LOCAL_H

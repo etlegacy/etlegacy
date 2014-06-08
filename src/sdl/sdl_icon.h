@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,6 +31,9 @@
  * @file sdl_icon.h
  * @brief GIMP RGBA C-Source image dump (sdl_icon.h)
  */
+
+#ifndef INCLUDE_SDL_ICON_H
+#define INCLUDE_SDL_ICON_H
 
 static const struct
 {
@@ -577,3 +580,5 @@ static const struct
 	                                                                                                               "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
 	                                                                                                               "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
 };
+
+#endif // #ifndef INCLUDE_SDL_ICON_H
