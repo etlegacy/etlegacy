@@ -31,8 +31,8 @@
  * @file ui_local.h
  */
 
-#ifndef __UI_LOCAL_H__
-#define __UI_LOCAL_H__
+#ifndef INCLUDE_UI_LOCAL_H
+#define INCLUDE_UI_LOCAL_H
 
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"

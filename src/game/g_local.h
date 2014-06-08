@@ -31,8 +31,9 @@
  * @file g_local.h
  * @brief local definitions for game module
  */
-#ifndef __G_LOCAL_H__
-#define __G_LOCAL_H__
+
+#ifndef INCLUDE_G_LOCAL_H
+#define INCLUDE_G_LOCAL_H
 
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
@@ -2297,4 +2298,4 @@ void G_mapvoteinfo_read(void);
 #define VOTEF_NO_POPULIST_PENALTY   2   // successful votes do not count against vote_limit
 #define VOTEF_DISP_CALLER           4   // append "(called by name)" in vote string
 
-#endif
+#endif // #ifndef INCLUDE_G_LOCAL_H
