@@ -10627,14 +10627,6 @@ void RB_ShowImages(void)
 	{
 		image = (image_t *) Com_GrowListElement(&tr.images, i);
 
-		/*
-		   if(image->bits & (IF_RGBA16F | IF_RGBA32F | IF_LA16F | IF_LA32F))
-		   {
-		   // don't render float textures using FFP
-		   continue;
-		   }
-		 */
-
 		w = glConfig.vidWidth / 20;
 		h = glConfig.vidHeight / 15;
 		x = i % 20 * w;
@@ -10656,19 +10648,6 @@ void RB_ShowImages(void)
 		Vector4Set(quadVerts[3], x, y + h, 0, 1);
 
 		Tess_InstantQuad(quadVerts);
-
-		/*
-		   glBegin(GL_QUADS);
-		   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, 0, 0, 0, 1);
-		   glVertexAttrib4f(ATTR_INDEX_POSITION, x, y, 0, 1);
-		   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, 1, 0, 0, 1);
-		   glVertexAttrib4f(ATTR_INDEX_POSITION, x + w, y, 0, 1);
-		   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, 1, 1, 0, 1);
-		   glVertexAttrib4f(ATTR_INDEX_POSITION, x + w, y + h, 0, 1);
-		   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, 0, 1, 0, 1);
-		   glVertexAttrib4f(ATTR_INDEX_POSITION, x, y + h, 0, 1);
-		   glEnd();
-		 */
 	}
 
 	glFinish();
@@ -10679,7 +10658,8 @@ void RB_ShowImages(void)
 	GL_CheckErrors();
 }
 
-/* unused
+#define DRAWSCREENQUAD() Tess_InstantQuad(RB_GetScreenQuad())
+
 static vec4_t *RB_GetScreenQuad(void)
 {
     static vec4_t quad[4];
@@ -10691,7 +10671,73 @@ static vec4_t *RB_GetScreenQuad(void)
 
     return quad;
 }
-*/
+
+
+static void RB_ColorCorrection()
+{
+	Ren_LogComment("--- RB_ColorCorrection ---\n");
+
+	// enable shader, set arrays
+	SetMacrosAndSelectProgram(gl_colorCorrection);
+
+	//glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
+
+	// capture current color buffer for u_CurrentMap
+	GL_SelectTexture(0);
+	ImageCopyBackBuffer(tr.currentRenderImage);
+
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformFloat(UNIFORM_GAMMA, (!r_ignorehwgamma->integer ? r_gamma->value : 1.0f));
+
+	DRAWSCREENQUAD();
+	GL_CheckErrors();
+}
+
+/************************************************************************/
+/* Do all post processing of the back buffer here                       */
+/************************************************************************/
+static void RB_PostProcess()
+{
+	Ren_LogComment("--- RB_PostProcess ---\n");
+
+	if (!backEnd.projection2D)
+	{
+		RB_SetGL2D();
+	}
+
+	// We need to reset these out or otherwise we crash out on map load
+	R_BindNullVBO();
+	R_BindNullIBO();
+
+	GL_State(GLS_DEPTHTEST_DISABLE);    // | GLS_DEPTHMASK_TRUE);
+	GL_Cull(CT_TWO_SIDED);
+
+	RB_ColorCorrection();
+
+	// texture swapping test
+	if (r_showImages->integer)
+	{
+		RB_ShowImages();
+	}
+}
+
+static void RB_CountOverDraw()
+{
+	int           i;
+	long          sum = 0;
+	unsigned char *stencilReadback;
+
+	stencilReadback = (unsigned char *)ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight);
+	glReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencilReadback);
+
+	for (i = 0; i < glConfig.vidWidth * glConfig.vidHeight; i++)
+	{
+		sum += stencilReadback[i];
+	}
+
+	backEnd.pc.c_overDraw += sum;
+	ri.Hunk_FreeTempMemory(stencilReadback);
+}
 
 const void *RB_SwapBuffers(const void *data)
 {
@@ -10703,11 +10749,7 @@ const void *RB_SwapBuffers(const void *data)
 		Tess_End();
 	}
 
-	// texture swapping test
-	if (r_showImages->integer)
-	{
-		RB_ShowImages();
-	}
+	RB_PostProcess();
 
 	cmd = (const swapBuffersCommand_t *)data;
 
@@ -10715,20 +10757,7 @@ const void *RB_SwapBuffers(const void *data)
 	// counting up the number of increments that have happened
 	if (r_measureOverdraw->integer)
 	{
-		int           i;
-		long          sum = 0;
-		unsigned char *stencilReadback;
-
-		stencilReadback = (unsigned char *) ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight);
-		glReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencilReadback);
-
-		for (i = 0; i < glConfig.vidWidth * glConfig.vidHeight; i++)
-		{
-			sum += stencilReadback[i];
-		}
-
-		backEnd.pc.c_overDraw += sum;
-		ri.Hunk_FreeTempMemory(stencilReadback);
+		RB_CountOverDraw();
 	}
 
 	if (!glState.finishCalled)

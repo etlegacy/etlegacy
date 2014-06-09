@@ -172,6 +172,7 @@ Draws triangle outlines for debugging
 */
 static void DrawTris()
 {
+	vec_t *color;
 	Ren_LogComment("--- DrawTris ---\n");
 
 	SetMacrosAndSelectProgram(gl_genericShader,
@@ -189,20 +190,22 @@ static void DrawTris()
 
 	if (r_showBatches->integer || r_showLightBatches->integer)
 	{
-		SetUniformVec4(UNIFORM_COLOR, g_color_table[backEnd.pc.c_batches % 8]);
+		color = g_color_table[backEnd.pc.c_batches % 8];
 	}
 	else if (glState.currentVBO == tess.vbo)
 	{
-		SetUniformVec4(UNIFORM_COLOR, colorRed);
+		color = colorRed;
 	}
 	else if (glState.currentVBO)
 	{
-		SetUniformVec4(UNIFORM_COLOR, colorBlue);
+		color = colorBlue;
 	}
 	else
 	{
-		SetUniformVec4(UNIFORM_COLOR, colorWhite);
+		color = colorWhite;
 	}
+
+	SetUniformVec4(UNIFORM_COLOR, color);
 
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
 
@@ -2454,7 +2457,6 @@ static void Render_liquid(int stage)
 {
 	vec3_t        viewOrigin;
 	float         fogDensity;
-	GLfloat       fogColor[3];
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
 	Ren_LogComment("--- Render_liquid ---\n");
@@ -2470,7 +2472,6 @@ static void Render_liquid(int stage)
 	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
 
 	fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.001);
-	VectorCopy(tess.svars.color, fogColor);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
 	SetUniformFloat(UNIFORM_REFRACTIONINDEX, RB_EvalExpression(&pStage->refractionIndexExp, 1.0));
@@ -2479,10 +2480,7 @@ static void Render_liquid(int stage)
 	SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 0.05));
 	SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.05));
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
-	{
-		vec3_t temp = { fogColor[0], fogColor[1], fogColor[2] };
-		SetUniformVec3(UNIFORM_FOGCOLOR, temp);
-	}
+	SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color);
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);

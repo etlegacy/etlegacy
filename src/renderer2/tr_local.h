@@ -3505,6 +3505,8 @@ IMAGES, tr_image.c
 void R_InitImages(void);
 void R_ShutdownImages(void);
 int R_SumOfUsedImages(void);
+void R_ImageCopyBack(image_t *image, int x, int y, int width, int height);
+#define ImageCopyBackBuffer(image) R_ImageCopyBack(image, 0, 0, image->uploadWidth, image->uploadHeight)
 
 image_t *R_FindImageFile(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
 image_t *R_FindCubeImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);

@@ -2098,6 +2098,40 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 	}
 }
 
+void R_ImageCopyFrameBuffer(image_t *image, int x, int y, int width, int height)
+{
+	GL_Bind(image);
+
+	glReadBuffer(GL_BACK);
+
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, width, height, 0);
+
+	// these shouldn't be necessary if the image was initialized properly
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void R_ImageCopyFrameBufferFast(image_t *image, int x, int y, int width, int height)
+{
+	GL_Bind(image);
+	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, width, height);
+}
+
+void R_ImageCopyBack(image_t *image, int x, int y, int width, int height)
+{
+	if (glIsTexture(image->texnum) == GL_FALSE)
+	{
+		R_ImageCopyFrameBuffer(image, x, y, width, height);
+	}
+	else
+	{
+		R_ImageCopyFrameBufferFast(image, x, y, width, height);
+	}
+}
+
 /*
 ===============
 R_FindImageFile
@@ -3608,10 +3642,12 @@ void R_SetColorMappings(void)
 		s_intensitytable[i] = j;
 	}
 
+	/*
 	if (glConfig.deviceSupportsGamma)
 	{
 		GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}
+	*/
 }
 
 /*
