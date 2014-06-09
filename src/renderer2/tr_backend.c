@@ -5623,15 +5623,8 @@ skipInteraction:
 	}
 }
 
-#ifdef EXPERIMENTAL
 void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 {
-#if 0
-//  int             i;
-//  vec3_t          viewOrigin;
-//  static vec3_t   jitter[32];
-//  static qboolean jitterInit = qfalse;
-//  matrix_t        projectMatrix;
 	matrix_t ortho;
 
 	Ren_LogComment("--- RB_RenderScreenSpaceAmbientOcclusion ---\n");
@@ -5647,62 +5640,26 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 	}
 
 	// enable shader, set arrays
-	GL_BindProgram(&tr.screenSpaceAmbientOcclusionShader);
+	SetMacrosAndSelectProgram(gl_ssao);
 
 	GL_State(GLS_DEPTHTEST_DISABLE);    // | GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);
 
 	glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
-	// set uniforms
-	/*
-	   VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin); // in world space
-
-	   if(!jitterInit)
-	   {
-	   for(i = 0; i < 32; i++)
-	   {
-	   float *jit = &jitter[i][0];
-
-	   float rad = crandom() * 1024.0f; // FIXME radius;
-	   float a = crandom() * M_PI * 2;
-	   float b = crandom() * M_PI * 2;
-
-	   jit[0] = rad * sin(a) * cos(b);
-	   jit[1] = rad * sin(a) * sin(b);
-	   jit[2] = rad * cos(a);
-	   }
-
-	   jitterInit = qtrue;
-	   }
-
-
-	   MatrixCopy(backEnd.viewParms.projectionMatrix, projectMatrix);
-	   MatrixInverse(projectMatrix);
-
-	   glUniform3f(tr.screenSpaceAmbientOcclusionShader.u_ViewOrigin, viewOrigin[0], viewOrigin[1], viewOrigin[2]);
-	   glUniform3fv(tr.screenSpaceAmbientOcclusionShader.u_SSAOJitter, 32, &jitter[0][0]);
-	   glUniform1f(tr.screenSpaceAmbientOcclusionShader.u_SSAORadius, r_screenSpaceAmbientOcclusionRadius->value);
-
-	   glUniformMatrix4fv(tr.screenSpaceAmbientOcclusionShader.u_UnprojectMatrix, 1, GL_FALSE, backEnd.viewParms.unprojectionMatrix);
-	   glUniformMatrix4fv(tr.screenSpaceAmbientOcclusionShader.u_ProjectMatrix, 1, GL_FALSE, projectMatrix);
-	 */
-
 	// capture current color buffer for u_CurrentMap
 	GL_SelectTexture(0);
-	GL_Bind(tr.currentRenderImage);
-	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.currentRenderImage->uploadWidth, tr.currentRenderImage->uploadHeight);
+	ImageCopyBackBuffer(tr.currentRenderImage);
 
 	// bind u_DepthMap
 	GL_SelectTexture(1);
 	if (deferred)
 	{
-		GL_Bind(tr.deferredPositionFBOImage);
+		//GL_Bind(tr.deferredPositionFBOImage);
 	}
 	else
 	{
-		GL_Bind(tr.depthRenderImage);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.depthRenderImage->uploadWidth, tr.depthRenderImage->uploadHeight);
+		ImageCopyBackBuffer(tr.depthRenderImage);
 	}
 
 	// set 2D virtual screen size
@@ -5714,7 +5671,7 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 	GL_LoadProjectionMatrix(ortho);
 	GL_LoadModelViewMatrix(matrixIdentity);
 
-	GLSL_SetUniform_ModelViewProjectionMatrix(&tr.screenSpaceAmbientOcclusionShader, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 	// draw viewport
 	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
@@ -5723,10 +5680,8 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 	GL_PopMatrix();
 
 	GL_CheckErrors();
-#endif
 }
-#endif
-#ifdef EXPERIMENTAL
+
 void RB_RenderDepthOfField()
 {
 	matrix_t ortho;
@@ -5744,14 +5699,12 @@ void RB_RenderDepthOfField()
 	}
 
 	// enable shader, set arrays
-	GLSL_BindProgram(&tr.depthOfFieldShader);
+	SetMacrosAndSelectProgram(gl_depthOfField);
 
 	GL_State(GLS_DEPTHTEST_DISABLE);    // | GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);
 
 	glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
-
-	// set uniforms
 
 	// capture current color buffer for u_CurrentMap
 	GL_SelectTexture(0);
@@ -5766,8 +5719,7 @@ void RB_RenderDepthOfField()
 	}
 	else
 	{
-		GL_Bind(tr.currentRenderImage);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.currentRenderImage->uploadWidth, tr.currentRenderImage->uploadHeight);
+		ImageCopyBackBuffer(tr.currentRenderImage);
 	}
 
 	// bind u_DepthMap
@@ -5784,8 +5736,7 @@ void RB_RenderDepthOfField()
 	else
 	{
 		// depth texture is not bound to a FBO
-		GL_Bind(tr.depthRenderImage);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.depthRenderImage->uploadWidth, tr.depthRenderImage->uploadHeight);
+		ImageCopyBackBuffer(tr.depthRenderImage);
 	}
 
 	// set 2D virtual screen size
@@ -5797,7 +5748,7 @@ void RB_RenderDepthOfField()
 	GL_LoadProjectionMatrix(ortho);
 	GL_LoadModelViewMatrix(matrixIdentity);
 
-	GLSL_SetUniform_ModelViewProjectionMatrix(&tr.depthOfFieldShader, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 	// draw viewport
 	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
@@ -5807,7 +5758,6 @@ void RB_RenderDepthOfField()
 
 	GL_CheckErrors();
 }
-#endif
 
 void RB_RenderGlobalFog()
 {
@@ -9853,7 +9803,8 @@ static void RB_RenderViewFront(void)
 	}
 
 	// render ambient occlusion process effect
-	// Tr3B: needs way more work RB_RenderScreenSpaceAmbientOcclusion(qfalse);
+	// Tr3B: needs way more work
+	RB_RenderScreenSpaceAmbientOcclusion(qfalse);
 
 	if (HDR_ENABLED())
 	{
@@ -9900,10 +9851,10 @@ static void RB_RenderViewFront(void)
 	}
 
 	GL_CheckErrors();
-#ifdef EXPERIMENTAL
+
 	// render depth of field post process effect
 	RB_RenderDepthOfField(qfalse);
-#endif
+
 	// render bloom post process effect
 	RB_RenderBloom();
 
@@ -10366,7 +10317,7 @@ const void *RB_RotatedPic(const void *data)
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 	float                     angle;
-	float					  mx, my, mw, mh;
+	float                     mx, my, mw, mh;
 	float                     pi2 = M_PI * 2;
 
 	cmd = (const stretchPicCommand_t *)data;
@@ -10388,13 +10339,13 @@ const void *RB_RotatedPic(const void *data)
 	}
 
 	Tess_CheckOverflow(4, 6);
-	numVerts = tess.numVertexes;
+	numVerts   = tess.numVertexes;
 	numIndexes = tess.numIndexes;
 
 	tess.numVertexes += 4;
-	tess.numIndexes += 6;
+	tess.numIndexes  += 6;
 
-	tess.indexes[numIndexes] = numVerts + 3;
+	tess.indexes[numIndexes]     = numVerts + 3;
 	tess.indexes[numIndexes + 1] = numVerts + 0;
 	tess.indexes[numIndexes + 2] = numVerts + 2;
 	tess.indexes[numIndexes + 3] = numVerts + 2;
@@ -10406,15 +10357,17 @@ const void *RB_RotatedPic(const void *data)
 	Vector4Copy(backEnd.color2D, tess.colors[numVerts + 2]);
 	Vector4Copy(backEnd.color2D, tess.colors[numVerts + 3]);
 
+#define ROTSCALE 0.725f
+
 	mx = cmd->x + (cmd->w / 2);
 	my = cmd->y + (cmd->h / 2);
-	mw = cmd->w * 0.75f;
-	mh = cmd->h * 0.75f;
+	mw = cmd->w * ROTSCALE;
+	mh = cmd->h * ROTSCALE;
 
 #define COSAN mx + (cos(angle) * mw)
 #define SINAN my + (sin(angle) * mh)
 
-	angle = cmd->angle * pi2;
+	angle                 = cmd->angle * pi2;
 	tess.xyz[numVerts][0] = COSAN;
 	tess.xyz[numVerts][1] = SINAN;
 	tess.xyz[numVerts][2] = 0;
@@ -10423,7 +10376,7 @@ const void *RB_RotatedPic(const void *data)
 	tess.texCoords[numVerts][0] = cmd->s1;
 	tess.texCoords[numVerts][1] = cmd->t1;
 
-	angle = cmd->angle * pi2 + 0.25 * pi2;
+	angle                     = cmd->angle * pi2 + 0.25 * pi2;
 	tess.xyz[numVerts + 1][0] = COSAN;
 	tess.xyz[numVerts + 1][1] = SINAN;
 	tess.xyz[numVerts + 1][2] = 0;
@@ -10432,7 +10385,7 @@ const void *RB_RotatedPic(const void *data)
 	tess.texCoords[numVerts + 1][0] = cmd->s2;
 	tess.texCoords[numVerts + 1][1] = cmd->t1;
 
-	angle = cmd->angle * pi2 + 0.50 * pi2;
+	angle                     = cmd->angle * pi2 + 0.50 * pi2;
 	tess.xyz[numVerts + 2][0] = COSAN;
 	tess.xyz[numVerts + 2][1] = SINAN;
 	tess.xyz[numVerts + 2][2] = 0;
@@ -10441,7 +10394,7 @@ const void *RB_RotatedPic(const void *data)
 	tess.texCoords[numVerts + 2][0] = cmd->s2;
 	tess.texCoords[numVerts + 2][1] = cmd->t2;
 
-	angle = cmd->angle * pi2 + 0.75 * pi2;
+	angle                     = cmd->angle * pi2 + 0.75 * pi2;
 	tess.xyz[numVerts + 3][0] = COSAN;
 	tess.xyz[numVerts + 3][1] = SINAN;
 	tess.xyz[numVerts + 3][2] = 0;
@@ -10662,14 +10615,14 @@ void RB_ShowImages(void)
 
 static vec4_t *RB_GetScreenQuad(void)
 {
-    static vec4_t quad[4];
+	static vec4_t quad[4];
 
-    Vector4Set(quad[0], 0, 0, 0, 1);
-    Vector4Set(quad[1], glConfig.vidWidth, 0, 0, 1);
-    Vector4Set(quad[2], glConfig.vidWidth, glConfig.vidHeight, 0, 1);
-    Vector4Set(quad[3], 0, glConfig.vidHeight, 0, 1);
+	Vector4Set(quad[0], 0, 0, 0, 1);
+	Vector4Set(quad[1], glConfig.vidWidth, 0, 0, 1);
+	Vector4Set(quad[2], glConfig.vidWidth, glConfig.vidHeight, 0, 1);
+	Vector4Set(quad[3], 0, glConfig.vidHeight, 0, 1);
 
-    return quad;
+	return quad;
 }
 
 

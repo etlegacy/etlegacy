@@ -2,11 +2,6 @@
 
 uniform sampler2D u_CurrentMap;
 uniform sampler2D u_DepthMap;
-//uniform vec3		u_ViewOrigin;
-//uniform vec3		u_SSAOJitter[32];
-//uniform float		u_SSAORadius;
-//uniform mat4		u_UnprojectMatrix;
-//uniform mat4		u_ProjectMatrix;
 
 float  ReadDepth(vec2 st)
 {
@@ -14,7 +9,6 @@ float  ReadDepth(vec2 st)
 
 	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D(u_DepthMap, st).x * (camerarange.y - camerarange.x));
 }
-
 
 void    main()
 {

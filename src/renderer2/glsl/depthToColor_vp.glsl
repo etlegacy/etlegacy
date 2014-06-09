@@ -2,8 +2,7 @@
 
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
-
-uniform mat4 u_ModelViewProjectionMatrix;
+uniform mat4   u_ModelViewProjectionMatrix;
 
 void    main()
 {

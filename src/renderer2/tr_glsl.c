@@ -109,6 +109,9 @@ programInfo_t *gl_volumetricFogShader;
 programInfo_t *gl_volumetricLightingShader;
 programInfo_t *gl_dispersionShader;
 
+programInfo_t *gl_depthOfField;
+programInfo_t *gl_ssao;
+
 //Jacker
 programInfo_t *gl_colorCorrection;
 
@@ -1000,37 +1003,6 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 	{
 		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_heatHazeFix\n#define r_heatHazeFix 1\n#endif\n");
 	}
-
-#ifdef EXPERIMENTAL
-
-	if (r_screenSpaceAmbientOcclusion->integer)
-	{
-		int             i;
-		static vec3_t   jitter[32];
-		static qboolean jitterInit = qfalse;
-
-		if (!jitterInit)
-		{
-			for (i = 0; i < 32; i++)
-			{
-				float *jit = &jitter[i][0];
-
-				float rad = crandom() * 1024.0f;     // FIXME radius;
-				float a   = crandom() * M_PI * 2;
-				float b   = crandom() * M_PI * 2;
-
-				jit[0] = rad * sin(a) * cos(b);
-				jit[1] = rad * sin(a) * sin(b);
-				jit[2] = rad * cos(a);
-			}
-
-			jitterInit = qtrue;
-		}
-
-		// TODO
-	}
-
-#endif
 
 	if (glConfig2.vboVertexSkinningAvailable)
 	{
@@ -2077,7 +2049,7 @@ void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
 	}
 
 	programlist->list->currentPermutation = 0;
-	programlist->list->currentMacros = 0;
+	programlist->list->currentMacros      = 0;
 
 	if (offset != 0)
 	{
@@ -2381,6 +2353,9 @@ void GLSL_InitGPUShaders(void)
 	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
+	gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
+	gl_ssao         = GLSL_GetShaderProgram("SSAO");
+
 	//Jacker
 	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
@@ -2561,7 +2536,7 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		glState.vertexAttribsState &= ~ATTR_COLOR;
 	}
-	
+
 	SetUniformVec4(UNIFORM_COLORMODULATE, temp);
 }
 

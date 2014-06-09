@@ -373,3 +373,19 @@ colorCorrection
 	filename "color"
 	uniform int u_CurrentMap 0
 }
+
+depthOfField
+{
+	filename "depthOfField"
+	attribs ATTR_POSITION
+	uniform int u_CurrentMap 0
+	uniform int u_DepthMap 1
+}
+
+SSAO
+{
+	filename "screenSpaceAmbientOcclusion"
+	attribs ATTR_POSITION
+	uniform int u_CurrentMap 0
+	uniform int u_DepthMap 1
+}
