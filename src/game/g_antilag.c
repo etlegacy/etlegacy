@@ -360,7 +360,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	// ignore bodies for bullet tracing
 	if (ignoreCorpses)
 	{
-		if (g_dynBQ.integer == 0)
+		if (g_corpses.integer == 0)
 		{
 			for (i = 0; i < BODY_QUEUE_SIZE; i++)
 			{

@@ -277,7 +277,7 @@ void InitBodyQue(void)
 	gentity_t *ent;
 
 	// no need to init when dyn BQ is set
-	if (g_dynBQ.integer > 0)
+	if (g_corpses.integer > 0)
 	{
 		return;
 	}
@@ -333,7 +333,7 @@ void BodySink2(gentity_t *ent)
 	ent->nextthink     = level.time + 1800; // BODY_TIME(BODY_TEAM(ent)) + 1500; // FIXME: remove
 	ent->think         = BodyUnlink;
 
-	if (g_dynBQ.integer == 0)
+	if (g_corpses.integer == 0)
 	{
 		ent->think = BodyUnlink;
 	}
@@ -396,7 +396,7 @@ void CopyToBodyQue(gentity_t *ent)
 		return;
 	}
 
-	if (g_dynBQ.integer == 0)
+	if (g_corpses.integer == 0)
 	{
 		// grab a body que and cycle to the next one
 		body               = level.bodyQue[level.bodyQueIndex];

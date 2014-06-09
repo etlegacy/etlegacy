@@ -2327,9 +2327,23 @@ void G_TempTraceIgnorePlayersAndBodies(void)
 		G_TempTraceIgnoreEntity(&g_entities[i]);
 	}
 
-	for (i = 0; i < BODY_QUEUE_SIZE; i++)
+	if (g_corpses.integer == 0)
 	{
-		G_TempTraceIgnoreEntity(level.bodyQue[i]);
+		for (i = 0; i < BODY_QUEUE_SIZE; i++)
+		{
+			G_TempTraceIgnoreEntity(level.bodyQue[i]);
+		}
+	}
+	else
+	{
+		// slower way - improve by time
+		for (i = 0; i < MAX_GENTITIES; i++)
+		{
+			if (g_entities[i].s.eType == ET_CORPSE)
+			{
+				G_TempTraceIgnoreEntity(&g_entities[i]);
+			}
+		}
 	}
 }
 

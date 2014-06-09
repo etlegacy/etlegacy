@@ -310,7 +310,7 @@ vmCvar_t g_debugHitboxes;
 
 vmCvar_t g_voting;        // see VOTEF_ defines
 
-vmCvar_t g_dynBQ; // dynamic body que FIXME: limit max bodies by var value
+vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
 
 cvarTable_t gameCvarTable[] =
 {
@@ -578,7 +578,7 @@ cvarTable_t gameCvarTable[] =
 	// Debug
 	{ &g_debugHitboxes,                     "g_debugHitboxes",                     "0",                          CVAR_CHEAT },
 
-	{ &g_dynBQ,                             "g_dynBQ",                             "0",                          CVAR_LATCH | CVAR_ARCHIVE },
+	{ &g_corpses,                           "g_dynBQ",                             "0",                          CVAR_LATCH | CVAR_ARCHIVE },
 };
 
 // made static to avoid aliasing
