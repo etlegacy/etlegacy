@@ -1288,7 +1288,7 @@ void CG_Class_f(void)
 	}
 	else
 	{
-		weapon1 = 1;
+		weapon1 = 1; // FIXME: this will show 'You will spawn with WP_NONE
 	}
 
 	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
@@ -1319,7 +1319,7 @@ void CG_Class_f(void)
 	}
 
 	// Print out the selected class and weapon info
-	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1 - 1].desc), 400, cg_fontScaleCP.value, -1);
+	CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1 - 1].desc, weaponTable[weapon2].desc), 400, cg_fontScaleCP.value, -1);
 	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 }
