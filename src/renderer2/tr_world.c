@@ -1929,7 +1929,7 @@ static void R_CoherentHierachicalCulling()
 	// set up the transformation matrix
 	GL_LoadModelViewMatrix(tr.orientation.modelViewMatrix);
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// bind u_ColorMap
 	GL_SelectTexture(0);

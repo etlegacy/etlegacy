@@ -210,7 +210,7 @@ static void DrawTris()
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
 		SetUniformMatrix16ARR(UNIFORM_BONEMATRIX, tess.boneMatrices, MAX_BONES);
@@ -397,7 +397,7 @@ static void Render_generic(int stage)
 	GLSL_SetUniform_ColorModulate(gl_genericShader, rgbGen, alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -495,7 +495,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, lightColor);
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glState.vertexAttribsInterpolation > 0)
 	{
@@ -729,7 +729,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
 	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
 	if (r_parallaxMapping->integer)
@@ -859,7 +859,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 	GLSL_SetUniform_ColorModulate(gl_lightMappingShader, rgbGen, alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
@@ -1012,7 +1012,7 @@ static void Render_geometricFill(int stage, qboolean cmap2black)
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// u_BoneMatrix
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -1172,7 +1172,7 @@ static void Render_depthFill(int stage)
 	SetUniformVec4(UNIFORM_COLOR, ambientColor);
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -1262,7 +1262,7 @@ static void Render_shadowFill(int stage)
 	}
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// u_BoneMatrix
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -1431,7 +1431,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	GL_CheckErrors();
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// u_BoneMatrix
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -1649,7 +1649,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	GL_CheckErrors();
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// u_BoneMatrix
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -1876,7 +1876,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// u_BoneMatrix
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -2017,7 +2017,7 @@ static void Render_reflection_CB(int stage)
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -2082,7 +2082,7 @@ static void Render_refraction_C(int stage)
 	SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 1.0));
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -2129,7 +2129,7 @@ static void Render_dispersion_C(int stage)
 	SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 1.0f));
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -2157,7 +2157,7 @@ static void Render_skybox(int stage)
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// u_PortalPlane
 	if (backEnd.viewParms.isPortal)
@@ -2206,7 +2206,7 @@ static void Render_screen(int stage)
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, tess.svars.color);
 	}
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// bind u_CurrentMap
 	GL_SelectTexture(0);
@@ -2241,8 +2241,8 @@ static void Render_portal(int stage)
 	}
 
 	SetUniformFloat(UNIFORM_PORTALRANGE, tess.surfaceShader->portalRange);
-	SetUniformMatrix16(UNIFORM_MODELVIEWMATRIX, glState.modelViewMatrix[glState.stackIndex]);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWMATRIX, GLSTACK_MVM);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// bind u_CurrentMap
 	GL_SelectTexture(0);
@@ -2329,7 +2329,7 @@ static void Render_heatHaze(int stage)
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
 		SetUniformVec4(UNIFORM_COLOR, colorRed);
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 		{
@@ -2397,9 +2397,9 @@ static void Render_heatHaze(int stage)
 	deformMagnitude = RB_EvalExpression(&pStage->deformMagnitudeExp, 1.0);
 
 	SetUniformFloat(UNIFORM_DEFORMMAGNITUDE, deformMagnitude);
-	SetUniformMatrix16(UNIFORM_MODELVIEWMATRIXTRANSPOSE, glState.modelViewMatrix[glState.stackIndex]);
-	SetUniformMatrix16(UNIFORM_PROJECTIONMATRIXTRANSPOSE, glState.projectionMatrix[glState.stackIndex]);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWMATRIXTRANSPOSE, GLSTACK_MVM);
+	SetUniformMatrix16(UNIFORM_PROJECTIONMATRIXTRANSPOSE, GLSTACK_PM);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -2483,7 +2483,7 @@ static void Render_liquid(int stage)
 	SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color);
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// capture current color buffer for u_CurrentMap
 	GL_SelectTexture(0);
@@ -2622,7 +2622,7 @@ static void Render_fog()
 	SetUniformFloat(UNIFORM_FOGEYET, eyeT);
 	SetUniformVec4(UNIFORM_COLOR, fog->color);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
@@ -2702,7 +2702,7 @@ static void Render_volumetricFog()
 		GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 		GL_State(0); //GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// Tr3B: might be cool for ghost player effects
 		if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
@@ -2746,7 +2746,7 @@ static void Render_volumetricFog()
 			VectorCopy(tess.surfaceShader->fogParms.color, fogColor);
 		}
 
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 		SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
 		SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);

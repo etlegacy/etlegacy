@@ -281,30 +281,27 @@ void GL_FrontFace(GLenum mode)
 void GL_LoadModelViewMatrix(const matrix_t m)
 {
 #if 1
-	if (MatrixCompare(glState.modelViewMatrix[glState.stackIndex], m))
+	if (MatrixCompare(GLSTACK_MVM, m))
 	{
 		return;
 	}
 #endif
 
-
-	MatrixCopy(m, glState.modelViewMatrix[glState.stackIndex]);
-	MatrixMultiplyMOD(glState.projectionMatrix[glState.stackIndex], glState.modelViewMatrix[glState.stackIndex],
-	                  glState.modelViewProjectionMatrix[glState.stackIndex]);
+	MatrixCopy(m, GLSTACK_MVM);
+	MatrixMultiplyMOD(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
 }
 
 void GL_LoadProjectionMatrix(const matrix_t m)
 {
 #if 1
-	if (MatrixCompare(glState.projectionMatrix[glState.stackIndex], m))
+	if (MatrixCompare(GLSTACK_PM, m))
 	{
 		return;
 	}
 #endif
 
-	MatrixCopy(m, glState.projectionMatrix[glState.stackIndex]);
-	MatrixMultiplyMOD(glState.projectionMatrix[glState.stackIndex], glState.modelViewMatrix[glState.stackIndex],
-	                  glState.modelViewProjectionMatrix[glState.stackIndex]);
+	MatrixCopy(m, GLSTACK_PM);
+	MatrixMultiplyMOD(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
 }
 
 void GL_PushMatrix()
@@ -325,7 +322,7 @@ void GL_PopMatrix()
 	if (glState.stackIndex < 0)
 	{
 		glState.stackIndex = 0;
-		ri.Error(ERR_DROP, "GL_PushMatrix: stack underflow");
+		ri.Error(ERR_DROP, "GL_PopMatrix: stack underflow");
 	}
 }
 
@@ -413,7 +410,6 @@ void GL_Cull(int cullType)
 		}
 	}
 }
-
 
 /**
  * @brief This routine is responsible for setting the most commonly changed state in Q3.
@@ -708,6 +704,32 @@ static void RB_SetGL2D(void)
 	// set time for 2D shaders
 	backEnd.refdef.time      = ri.Milliseconds();
 	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001f;
+}
+
+#define DRAWSCREENQUAD() Tess_InstantQuad(RB_GetScreenQuad())
+
+static vec4_t *RB_GetScreenQuad(void)
+{
+	static vec4_t quad[4];
+
+	Vector4Set(quad[0], 0, 0, 0, 1);
+	Vector4Set(quad[1], glConfig.vidWidth, 0, 0, 1);
+	Vector4Set(quad[2], glConfig.vidWidth, glConfig.vidHeight, 0, 1);
+	Vector4Set(quad[3], 0, glConfig.vidHeight, 0, 1);
+
+	return quad;
+}
+
+// Set the model view projection matrix to match the ingame view
+void RB_SetViewMVPM(void)
+{
+	matrix_t ortho;
+	MatrixOrthogonalProjection(ortho,
+		backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
+		backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
+		-99999, 99999);
+	GL_LoadProjectionMatrix(ortho);
+	GL_LoadModelViewMatrix(matrixIdentity);
 }
 
 enum renderDrawSurfaces_e
@@ -1030,7 +1052,6 @@ static void Render_lightVolume(interaction_t *ia)
 	shader_t      *lightShader;
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
-	matrix_t      ortho;
 	vec4_t        quadVerts[4];
 
 	light = ia->light;
@@ -1044,12 +1065,7 @@ static void Render_lightVolume(interaction_t *ia)
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY,
-	                           backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
 	switch (light->l.rlType)
 	{
@@ -1127,7 +1143,7 @@ static void Render_lightVolume(interaction_t *ia)
 			// FIXME  gl_volumetricLightingShader->SetUniform_ShadowMatrix(light->attenuationMatrix);
 
 			SetUniformFloat(UNIFORM_SHADOWCOMPARE, shadowCompare);
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 			SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 			// bind u_DepthMap
@@ -2226,17 +2242,11 @@ static void RB_RenderInteractionsShadowMapped()
 					{
 						int      frustumIndex;
 						float    x, y, w, h;
-						matrix_t ortho;
 						vec4_t   quadVerts[4];
 
 						// set 2D virtual screen size
 						GL_PushMatrix();
-						MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-						                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-						                           backEnd.viewParms.viewportY,
-						                           backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
-						GL_LoadProjectionMatrix(ortho);
-						GL_LoadModelViewMatrix(matrixIdentity);
+						RB_SetViewMVPM();
 
 						for (frustumIndex = 0; frustumIndex <= r_parallelShadowSplits->integer; frustumIndex++)
 						{
@@ -2244,7 +2254,7 @@ static void RB_RenderInteractionsShadowMapped()
 							GL_State(GLS_DEPTHTEST_DISABLE);
 
 							SetMacrosAndSelectProgram(gl_debugShadowMapShader);
-							SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+							SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 							GL_SelectTexture(0);
 							GL_Bind(tr.sunShadowMapFBOImage[frustumIndex]);
@@ -3291,7 +3301,7 @@ skipInteraction:
 						SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 						SetUniformVec4ARR(UNIFORM_LIGHTFRUSTUM, lightFrustum, 6);
 
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 						SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 						if (backEnd.viewParms.isPortal)
@@ -3369,7 +3379,7 @@ skipInteraction:
 						SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 						SetUniformVec4ARR(UNIFORM_LIGHTFRUSTUM, lightFrustum, 6);
 
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 						SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 						if (backEnd.viewParms.isPortal)
@@ -3447,7 +3457,7 @@ skipInteraction:
 						SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 						SetUniformVec4ARR(UNIFORM_LIGHTFRUSTUM, lightFrustum, 6);
 
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 						SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 						if (backEnd.viewParms.isPortal)
@@ -4848,7 +4858,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 						SetUniformVec4ARR(UNIFORM_LIGHTFRUSTUM, lightFrustum, 6);
 
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 						SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 						if (backEnd.viewParms.isPortal)
@@ -4924,7 +4934,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 						SetUniformVec4ARR(UNIFORM_LIGHTFRUSTUM, lightFrustum, 6);
 
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 						SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 						if (shadowCompare)
@@ -4933,9 +4943,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							SetUniformFloat(UNIFORM_SHADOWBLUR, r_shadowBlur->value);
 							SetUniformMatrix16ARR(UNIFORM_SHADOWMATRIX, light->shadowMatrices, MAX_SHADOWMAPS);
 						}
-
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
-						SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 						if (backEnd.viewParms.isPortal)
 						{
@@ -5137,7 +5144,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_State(GLS_DEPTHTEST_DISABLE);
 
 						SetMacrosAndSelectProgram(gl_debugShadowMapShader);
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 						// bind u_ColorMap
 						GL_SelectTexture(0);
@@ -5625,8 +5632,6 @@ skipInteraction:
 
 void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 {
-	matrix_t ortho;
-
 	Ren_LogComment("--- RB_RenderScreenSpaceAmbientOcclusion ---\n");
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
@@ -5664,14 +5669,9 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// draw viewport
 	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
@@ -5684,8 +5684,6 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 
 void RB_RenderDepthOfField()
 {
-	matrix_t ortho;
-
 	Ren_LogComment("--- RB_RenderDepthOfField ---\n");
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
@@ -5741,14 +5739,9 @@ void RB_RenderDepthOfField()
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// draw viewport
 	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
@@ -5764,7 +5757,6 @@ void RB_RenderGlobalFog()
 	vec3_t local;
 	vec4_t fogDistanceVector;   //, fogDepthVector;
 	//vec4_t   fogColor;
-	matrix_t ortho;
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
@@ -5839,14 +5831,9 @@ void RB_RenderGlobalFog()
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// draw viewport
 	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
@@ -5871,12 +5858,7 @@ void RB_RenderBloom()
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
 	// FIXME
 	//if(glConfig.hardwareType != GLHW_ATI && glConfig.hardwareType != GLHW_ATI_DX10)
@@ -5902,12 +5884,12 @@ void RB_RenderBloom()
 				SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 				SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 				SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 			}
 			else
 			{
 				SetMacrosAndSelectProgram(gl_contrastShader);
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 			}
 
 			GL_SelectTexture(0);
@@ -5920,7 +5902,7 @@ void RB_RenderBloom()
 			SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 			SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 			SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			GL_SelectTexture(0);
 			GL_Bind(tr.downScaleFBOImage_quarter);
@@ -5929,7 +5911,7 @@ void RB_RenderBloom()
 		{
 			// render contrast downscaled to 1/4th of the screen
 			SetMacrosAndSelectProgram(gl_contrastShader);
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			GL_SelectTexture(0);
 			//GL_Bind(tr.downScaleFBOImage_quarter);
@@ -5950,7 +5932,7 @@ void RB_RenderBloom()
 
 		// render bloom in multiple passes
 		SetMacrosAndSelectProgram(gl_bloomShader);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_bloomBlur->value);
 
 		for (i = 0; i < 2; i++)
@@ -5991,7 +5973,7 @@ void RB_RenderBloom()
 				}
 
 				SetUniformFloat(UNIFORM_DEFORMMAGNITUDE, r_bloomBlur->value);
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 				GL_PopMatrix();
 
@@ -6009,7 +5991,7 @@ void RB_RenderBloom()
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 				GL_SelectTexture(0);
 				GL_Bind(tr.bloomRenderFBOImage[j % 2]);
@@ -6022,7 +6004,7 @@ void RB_RenderBloom()
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 				GL_SelectTexture(0);
 				GL_Bind(tr.bloomRenderFBOImage[j % 2]);
@@ -6036,7 +6018,7 @@ void RB_RenderBloom()
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 				GL_SelectTexture(0);
 				GL_Bind(tr.bloomRenderFBOImage[j % 2]);
@@ -6055,8 +6037,6 @@ void RB_RenderBloom()
 
 void RB_RenderRotoscope(void)
 {
-	matrix_t ortho;
-
 	Ren_LogComment("--- RB_RenderRotoscope ---\n");
 
 	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_rotoscope->integer || backEnd.viewParms.isPortal)
@@ -6066,19 +6046,14 @@ void RB_RenderRotoscope(void)
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
 	GL_State(GLS_DEPTHTEST_DISABLE);
 	GL_Cull(CT_TWO_SIDED);
 
 	// enable shader, set arrays
 	SetMacrosAndSelectProgram(gl_rotoscopeShader);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_rotoscopeBlur->value);
 
 	GL_SelectTexture(0);
@@ -6096,7 +6071,6 @@ void RB_RenderRotoscope(void)
 
 void RB_CameraPostFX(void)
 {
-	matrix_t ortho;
 	matrix_t grain;
 
 	Ren_LogComment("--- RB_CameraPostFX ---\n");
@@ -6109,19 +6083,14 @@ void RB_CameraPostFX(void)
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
 	GL_State(GLS_DEPTHTEST_DISABLE);
 	GL_Cull(CT_TWO_SIDED);
 
 	// enable shader, set arrays
 	SetMacrosAndSelectProgram(gl_cameraEffectsShader);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	//glUniform1f(tr.cameraEffectsShader.u_BlurMagnitude, r_bloomBlur->value);
 
 	MatrixIdentity(grain);
@@ -6277,8 +6246,6 @@ static void RB_CalculateAdaptation()
 
 void RB_RenderDeferredShadingResultToFrameBuffer()
 {
-	matrix_t ortho;
-
 	Ren_LogComment("--- RB_RenderDeferredShadingResultToFrameBuffer ---\n");
 
 	R_BindNullFBO();
@@ -6300,12 +6267,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
+	RB_SetViewMVPM();
 
 	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL) && r_hdrRendering->integer)
 	{
@@ -6315,7 +6277,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 		SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 		SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 		SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
 		GL_SelectTexture(0);
@@ -6325,7 +6287,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 	{
 		SetMacrosAndSelectProgram(gl_screenShader);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
 		GL_SelectTexture(0);
@@ -6365,8 +6327,6 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 
 void RB_RenderDeferredHDRResultToFrameBuffer()
 {
-	matrix_t ortho;
-
 	Ren_LogComment("--- RB_RenderDeferredHDRResultToFrameBuffer ---\n");
 
 	if (!r_hdrRendering->integer || !glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
@@ -6389,19 +6349,13 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
-
+	RB_SetViewMVPM();
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		SetMacrosAndSelectProgram(gl_screenShader);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	}
 	else
 	{
@@ -6410,7 +6364,7 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 		SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 		SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 		SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	}
 
 	GL_CheckErrors();
@@ -6437,7 +6391,7 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 		// render in world space
 		backEnd.orientation = backEnd.viewParms.world;
 		GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		R_BindVBO(light->frustumVBO);
 		R_BindIBO(light->frustumIBO);
@@ -6455,7 +6409,7 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 		// render in light space
 		R_RotateLightForViewParms(light, &backEnd.viewParms, &backEnd.orientation);
 		GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		tess.multiDrawPrimitives = 0;
 		tess.numIndexes          = 0;
@@ -7093,7 +7047,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 	// render in entity space
 	R_RotateEntityForViewParms(entity, &backEnd.viewParms, &backEnd.orientation);
 	GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
-	gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
+	gl_genericShader->SetUniform_ModelViewProjectionMatrix(GLSTACK_MVPM);
 
 	tess.multiDrawPrimitives = 0;
 	tess.numIndexes          = 0;
@@ -7136,7 +7090,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 
 	GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	R_BindVBO(tr.unitCubeVBO);
 	R_BindIBO(tr.unitCubeIBO);
@@ -7613,7 +7567,7 @@ void RB_RenderBspOcclusionQueries()
 		// set up the transformation matrix
 		backEnd.orientation = backEnd.viewParms.world;
 		GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
-		gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
+		gl_genericShader->SetUniform_ModelViewProjectionMatrix(GLSTACK_MVPM);
 
 		// bind u_ColorMap
 		GL_SelectTexture(0);
@@ -7888,7 +7842,7 @@ static void RB_RenderDebugUtils()
 					backEnd.orientation = backEnd.viewParms.world;
 					GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
 
-					SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+					SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 					R_BindVBO(light->frustumVBO);
 					R_BindIBO(light->frustumIBO);
@@ -7922,7 +7876,7 @@ static void RB_RenderDebugUtils()
 
 						GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 						Tess_AddCube(vec3_origin, light->localBounds[0], light->localBounds[1], lightColor);
 
@@ -7942,7 +7896,7 @@ static void RB_RenderDebugUtils()
 						GL_LoadModelViewMatrix(transform);
 						//GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 
-						gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
+						gl_genericShader->SetUniform_ModelViewProjectionMatrix(GLSTACK_MVPM);
 
 						R_BindVBO(tr.unitCubeVBO);
 						R_BindIBO(tr.unitCubeIBO);
@@ -7968,7 +7922,7 @@ static void RB_RenderDebugUtils()
 						R_RotateLightForViewParms(light, &backEnd.viewParms, &backEnd.orientation);
 						GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 #if 0
 						// transform frustum from world space to local space
@@ -7982,7 +7936,7 @@ static void RB_RenderDebugUtils()
 						// go back to the world modelview matrix
 						backEnd.orientation = backEnd.viewParms.world;
 						GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
-						GLSL_SetUniform_ModelViewProjectionMatrix(&tr.genericShader, glState.modelViewProjectionMatrix[glState.stackIndex]);
+						GLSL_SetUniform_ModelViewProjectionMatrix(&tr.genericShader, GLSTACK_MVPM);
 #endif
 
 						PlanesGetIntersectionPoint(frustum[FRUSTUM_LEFT], frustum[FRUSTUM_TOP], frustum[FRUSTUM_FAR], farCorners[0]);
@@ -8180,7 +8134,7 @@ static void RB_RenderDebugUtils()
 
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			if (r_shadows->integer >= SHADOWING_ESM16 && light->l.rlType == RL_OMNI)
 			{
@@ -8355,7 +8309,7 @@ static void RB_RenderDebugUtils()
 			R_RotateEntityForViewParms(ent, &backEnd.viewParms, &backEnd.orientation);
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			//R_DebugAxis(vec3_origin, matrixIdentity);
 			//R_DebugBoundingBox(vec3_origin, ent->localBounds[0], ent->localBounds[1], colorMagenta);
@@ -8441,7 +8395,7 @@ static void RB_RenderDebugUtils()
 			R_RotateEntityForViewParms(ent, &backEnd.viewParms, &backEnd.orientation);
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 
 			tess.multiDrawPrimitives = 0;
@@ -8554,7 +8508,7 @@ static void RB_RenderDebugUtils()
 					// go back to the world modelview matrix
 					backEnd.orientation = backEnd.viewParms.world;
 					GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
-					gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
+					gl_genericShader->SetUniform_ModelViewProjectionMatrix(GLSTACK_MVPM);
 
 					// draw names
 					for (j = 0; j < skel->numBones; j++)
@@ -8622,7 +8576,6 @@ static void RB_RenderDebugUtils()
 	{
 		interaction_t *ia;
 		int           iaCount;
-		matrix_t      ortho;
 		vec4_t        quadVerts[4];
 
 		SetMacrosAndSelectProgram(gl_genericShader);
@@ -8641,14 +8594,9 @@ static void RB_RenderDebugUtils()
 
 		// set 2D virtual screen size
 		GL_PushMatrix();
-		MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-		                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-		                           backEnd.viewParms.viewportY,
-		                           backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
-		GL_LoadProjectionMatrix(ortho);
-		GL_LoadModelViewMatrix(matrixIdentity);
+		RB_SetViewMVPM();
 
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		for (iaCount = 0, ia = &backEnd.viewParms.interactions[0]; iaCount < backEnd.viewParms.numInteractions; )
 		{
@@ -8736,7 +8684,7 @@ static void RB_RenderDebugUtils()
 		GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
 
@@ -8773,7 +8721,7 @@ static void RB_RenderDebugUtils()
 			backEnd.orientation = backEnd.viewParms.world;
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			// bind u_ColorMap
 			GL_SelectTexture(0);
@@ -8847,7 +8795,7 @@ static void RB_RenderDebugUtils()
 		backEnd.orientation = backEnd.viewParms.world;
 		GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
 		GL_SelectTexture(0);
@@ -8929,24 +8877,17 @@ static void RB_RenderDebugUtils()
 		for (i = 0; i < 2; i++)
 		{
 			float    x, y, w, h;
-			matrix_t ortho;
 			vec4_t   quadVerts[4];
 
 			if (i == 1)
 			{
 				// set 2D virtual screen size
 				GL_PushMatrix();
-				MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-				                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-				                           backEnd.viewParms.viewportY,
-				                           backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
-				GL_LoadProjectionMatrix(ortho);
-				GL_LoadModelViewMatrix(matrixIdentity);
-
+				RB_SetViewMVPM();
 				GL_Cull(CT_TWO_SIDED);
 				GL_State(GLS_DEPTHTEST_DISABLE);
 
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 				SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 				w = 300;
@@ -9031,7 +8972,7 @@ static void RB_RenderDebugUtils()
 					GL_Bind(tr.whiteImage);
 
 					SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
-					SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+					SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 					tess.multiDrawPrimitives = 0;
 					tess.numIndexes          = 0;
@@ -9095,7 +9036,7 @@ static void RB_RenderDebugUtils()
 				GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 				GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
 
-				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 			}
 
 			// draw BSP nodes
@@ -9279,7 +9220,7 @@ static void RB_RenderDebugUtils()
 		backEnd.orientation = backEnd.viewParms.world;
 		GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
 		GL_SelectTexture(0);
@@ -10019,7 +9960,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 	SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// bind u_ColorMap
 	GL_SelectTexture(0);
@@ -10611,21 +10552,6 @@ void RB_ShowImages(void)
 	GL_CheckErrors();
 }
 
-#define DRAWSCREENQUAD() Tess_InstantQuad(RB_GetScreenQuad())
-
-static vec4_t *RB_GetScreenQuad(void)
-{
-	static vec4_t quad[4];
-
-	Vector4Set(quad[0], 0, 0, 0, 1);
-	Vector4Set(quad[1], glConfig.vidWidth, 0, 0, 1);
-	Vector4Set(quad[2], glConfig.vidWidth, glConfig.vidHeight, 0, 1);
-	Vector4Set(quad[3], 0, glConfig.vidHeight, 0, 1);
-
-	return quad;
-}
-
-
 static void RB_ColorCorrection()
 {
 	Ren_LogComment("--- RB_ColorCorrection ---\n");
@@ -10639,7 +10565,7 @@ static void RB_ColorCorrection()
 	GL_SelectTexture(0);
 	ImageCopyBackBuffer(tr.currentRenderImage);
 
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	SetUniformFloat(UNIFORM_GAMMA, (!r_ignorehwgamma->integer ? r_gamma->value : 1.0f));
 
 	DRAWSCREENQUAD();
