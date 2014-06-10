@@ -3423,8 +3423,12 @@ void GL_PolygonOffset(float factor, float units);
 void GL_CheckErrors_(const char *filename, int line);
 
 #define GL_CheckErrors()    GL_CheckErrors_(__FILE__, __LINE__)
+
+//ModelViewProjectionMatrix
 #define GLSTACK_MVPM glState.modelViewProjectionMatrix[glState.stackIndex]
+//ProjectionMatrix
 #define GLSTACK_PM glState.projectionMatrix[glState.stackIndex]
+//ModelViewMatrix
 #define GLSTACK_MVM glState.modelViewMatrix[glState.stackIndex]
 
 void GL_State(uint32_t stateVector);

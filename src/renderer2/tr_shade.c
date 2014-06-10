@@ -2435,8 +2435,7 @@ static void Render_heatHaze(int stage)
 	}
 	else
 	{
-		GL_Bind(tr.currentRenderImage);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.currentRenderImage->uploadWidth, tr.currentRenderImage->uploadHeight);
+		ImageCopyBackBuffer(tr.currentRenderImage);
 	}
 
 	// bind u_ContrastMap
@@ -2497,8 +2496,7 @@ static void Render_liquid(int stage)
 	}
 	else
 	{
-		GL_Bind(tr.currentRenderImage);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.currentRenderImage->uploadWidth, tr.currentRenderImage->uploadHeight);
+		ImageCopyBackBuffer(tr.currentRenderImage);
 	}
 
 	// bind u_PortalMap
@@ -2518,8 +2516,7 @@ static void Render_liquid(int stage)
 	else
 	{
 		// depth texture is not bound to a FBO
-		GL_Bind(tr.depthRenderImage);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.depthRenderImage->uploadWidth, tr.depthRenderImage->uploadHeight);
+		ImageCopyBackBuffer(tr.depthRenderImage);
 	}
 
 	// bind u_NormalMap
@@ -2766,8 +2763,7 @@ static void Render_volumetricFog()
 		else
 		{
 			// depth texture is not bound to a FBO
-			GL_Bind(tr.depthRenderImage);
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.depthRenderImage->uploadWidth, tr.depthRenderImage->uploadHeight);
+			ImageCopyBackBuffer(tr.depthRenderImage);
 		}
 
 		// bind u_DepthMapBack

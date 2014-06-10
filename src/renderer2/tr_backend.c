@@ -280,12 +280,10 @@ void GL_FrontFace(GLenum mode)
 
 void GL_LoadModelViewMatrix(const matrix_t m)
 {
-#if 1
 	if (MatrixCompare(GLSTACK_MVM, m))
 	{
 		return;
 	}
-#endif
 
 	MatrixCopy(m, GLSTACK_MVM);
 	MatrixMultiplyMOD(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
@@ -293,12 +291,10 @@ void GL_LoadModelViewMatrix(const matrix_t m)
 
 void GL_LoadProjectionMatrix(const matrix_t m)
 {
-#if 1
 	if (MatrixCompare(GLSTACK_PM, m))
 	{
 		return;
 	}
-#endif
 
 	MatrixCopy(m, GLSTACK_PM);
 	MatrixMultiplyMOD(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
@@ -707,6 +703,7 @@ static void RB_SetGL2D(void)
 }
 
 #define DRAWSCREENQUAD() Tess_InstantQuad(RB_GetScreenQuad())
+#define DRAWVIEWQUAD() Tess_InstantQuad(backEnd.viewParms.viewportVerts)
 
 static vec4_t *RB_GetScreenQuad(void)
 {
@@ -1160,8 +1157,7 @@ static void Render_lightVolume(interaction_t *ia)
 			else
 			{
 				// depth texture is not bound to a FBO
-				GL_Bind(tr.depthRenderImage);
-				glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.depthRenderImage->uploadWidth, tr.depthRenderImage->uploadHeight);
+				ImageCopyBackBuffer(tr.depthRenderImage);
 			}
 
 			// bind u_AttenuationMapXY
@@ -3347,7 +3343,7 @@ skipInteraction:
 						if (light->clipsNearPlane)
 						{
 							// draw lighting with a fullscreen quad
-							Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+							DRAWVIEWQUAD();
 
 							/*
 							Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0, 1);
@@ -3425,7 +3421,7 @@ skipInteraction:
 						if (light->clipsNearPlane)
 						{
 							// draw lighting with a fullscreen quad
-							Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+							DRAWVIEWQUAD();
 
 							/*
 							Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0, 1);
@@ -3503,7 +3499,7 @@ skipInteraction:
 						if (light->clipsNearPlane)
 						{
 							// draw lighting with a fullscreen quad
-							Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+							DRAWVIEWQUAD();
 
 							/*
 							Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0, 1);
@@ -4910,7 +4906,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						if (light->clipsNearPlane)
 						{
 							// draw lighting with a fullscreen quad
-							Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+							DRAWVIEWQUAD();
 						}
 						else
 						{
@@ -4994,7 +4990,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						if (light->clipsNearPlane)
 						{
 							// draw lighting with a fullscreen quad
-							Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+							DRAWVIEWQUAD();
 						}
 						else
 						{
@@ -5100,7 +5096,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						if (light->clipsNearPlane)
 						{
 							// draw lighting with a fullscreen quad
-							Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+							DRAWVIEWQUAD();
 						}
 						else
 						{
@@ -5674,7 +5670,7 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// draw viewport
-	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+	DRAWVIEWQUAD();
 
 	// go back to 3D
 	GL_PopMatrix();
@@ -5744,7 +5740,7 @@ void RB_RenderDepthOfField()
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// draw viewport
-	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+	DRAWVIEWQUAD();
 
 	// go back to 3D
 	GL_PopMatrix();
@@ -5825,8 +5821,7 @@ void RB_RenderGlobalFog()
 	else
 	{
 		// depth texture is not bound to a FBO
-		GL_Bind(tr.depthRenderImage);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.depthRenderImage->uploadWidth, tr.depthRenderImage->uploadHeight);
+		ImageCopyBackBuffer(tr.depthRenderImage);
 	}
 
 	// set 2D virtual screen size
@@ -5836,7 +5831,7 @@ void RB_RenderGlobalFog()
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// draw viewport
-	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+	DRAWVIEWQUAD();
 
 	// go back to 3D
 	GL_PopMatrix();
@@ -5915,9 +5910,7 @@ void RB_RenderBloom()
 
 			GL_SelectTexture(0);
 			//GL_Bind(tr.downScaleFBOImage_quarter);
-			GL_Bind(tr.currentRenderImage);
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.currentRenderImage->uploadWidth,
-			                    tr.currentRenderImage->uploadHeight);
+			ImageCopyBackBuffer(tr.currentRenderImage);
 		}
 
 		GL_PopMatrix(); // special 1/4th of the screen contrastRenderFBO ortho
@@ -5927,7 +5920,7 @@ void RB_RenderBloom()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// draw viewport
-		Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+		DRAWVIEWQUAD();
 
 
 		// render bloom in multiple passes
@@ -5977,7 +5970,7 @@ void RB_RenderBloom()
 
 				GL_PopMatrix();
 
-				Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+				DRAWVIEWQUAD();
 			}
 
 			// add offscreen processed bloom to screen
@@ -6025,7 +6018,7 @@ void RB_RenderBloom()
 				//GL_Bind(tr.contrastRenderFBOImage);
 			}
 
-			Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+			DRAWVIEWQUAD();
 		}
 	}
 
@@ -6057,11 +6050,10 @@ void RB_RenderRotoscope(void)
 	SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_rotoscopeBlur->value);
 
 	GL_SelectTexture(0);
-	GL_Bind(tr.currentRenderImage);
-	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.currentRenderImage->uploadWidth, tr.currentRenderImage->uploadHeight);
+	ImageCopyBackBuffer(tr.currentRenderImage);
 
 	// draw viewport
-	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+	DRAWVIEWQUAD();
 
 	// go back to 3D
 	GL_PopMatrix();
@@ -6106,18 +6098,7 @@ void RB_CameraPostFX(void)
 
 	// bind u_CurrentMap
 	GL_SelectTexture(0);
-	GL_Bind(tr.occlusionRenderFBOImage);
-	/*
-	if(glConfig.framebufferObjectAvailable && glConfig.textureFloatAvailable)
-	{
-	    // copy depth of the main context to deferredRenderFBO
-	    R_CopyToFBO(NULL,tr.occlusionRenderFBO,GL_COLOR_BUFFER_BIT,GL_NEAREST);
-	}
-	else
-	*/
-	{
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.occlusionRenderFBOImage->uploadWidth, tr.occlusionRenderFBOImage->uploadHeight);
-	}
+	ImageCopyBackBuffer(tr.occlusionRenderFBOImage);
 
 	// bind u_GrainMap
 	GL_SelectTexture(1);
@@ -6136,7 +6117,7 @@ void RB_CameraPostFX(void)
 	}
 
 	// draw viewport
-	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+	DRAWVIEWQUAD();
 
 	// go back to 3D
 	GL_PopMatrix();
@@ -6320,7 +6301,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 
 	GL_CheckErrors();
 
-	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+	DRAWVIEWQUAD();
 
 	GL_PopMatrix();
 }
@@ -6369,7 +6350,7 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 
 	GL_CheckErrors();
 
-	Tess_InstantQuad(backEnd.viewParms.viewportVerts);
+	DRAWVIEWQUAD();
 
 	GL_PopMatrix();
 }
@@ -9475,8 +9456,7 @@ static void RB_RenderViewDeferred(void)
 		{
 		    // capture current color buffer
 		    GL_SelectTexture(0);
-		    GL_Bind(tr.portalRenderImage);
-		    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
+			ImageCopyBackBuffer(tr.portalRenderImage);
 		}
 		*/
 		backEnd.pc.c_portals++;
@@ -9838,8 +9818,7 @@ static void RB_RenderViewFront(void)
 		{
 			// capture current color buffer
 			GL_SelectTexture(0);
-			GL_Bind(tr.portalRenderImage);
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, tr.portalRenderImage->uploadWidth, tr.portalRenderImage->uploadHeight);
+			ImageCopyBackBuffer(tr.portalRenderImage);
 		}
 		backEnd.pc.c_portals++;
 	}
