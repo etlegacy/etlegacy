@@ -722,9 +722,9 @@ void RB_SetViewMVPM(void)
 {
 	matrix_t ortho;
 	MatrixOrthogonalProjection(ortho,
-		backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-		backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-		-99999, 99999);
+	                           backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
+	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
+	                           -99999, 99999);
 	GL_LoadProjectionMatrix(ortho);
 	GL_LoadModelViewMatrix(matrixIdentity);
 }
@@ -2236,9 +2236,9 @@ static void RB_RenderInteractionsShadowMapped()
 					// draw split frustum shadow maps
 					if (r_showShadowMaps->integer)
 					{
-						int      frustumIndex;
-						float    x, y, w, h;
-						vec4_t   quadVerts[4];
+						int    frustumIndex;
+						float  x, y, w, h;
+						vec4_t quadVerts[4];
 
 						// set 2D virtual screen size
 						GL_PushMatrix();
@@ -2376,7 +2376,7 @@ static void RB_RenderInteractionsShadowMapped()
 						GL_PopMatrix();
 					}
 				}
-
+				break;
 				default:
 					break;
 				}
@@ -8857,8 +8857,8 @@ static void RB_RenderDebugUtils()
 
 		for (i = 0; i < 2; i++)
 		{
-			float    x, y, w, h;
-			vec4_t   quadVerts[4];
+			float  x, y, w, h;
+			vec4_t quadVerts[4];
 
 			if (i == 1)
 			{
@@ -9456,7 +9456,7 @@ static void RB_RenderViewDeferred(void)
 		{
 		    // capture current color buffer
 		    GL_SelectTexture(0);
-			ImageCopyBackBuffer(tr.portalRenderImage);
+		    ImageCopyBackBuffer(tr.portalRenderImage);
 		}
 		*/
 		backEnd.pc.c_portals++;
