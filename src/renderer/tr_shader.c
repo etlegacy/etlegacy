@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1188,8 +1188,8 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				{
 					break;
 				}
-				strcat(buffer, token);
-				strcat(buffer, " ");
+				Q_strcat(buffer, sizeof(buffer), token);
+				Q_strcat(buffer, sizeof(buffer), " ");
 			}
 
 			ParseTexMod(buffer, stage);
