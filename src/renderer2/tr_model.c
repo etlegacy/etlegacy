@@ -478,11 +478,13 @@ static qboolean R_LoadDAE(model_t * mod, void *buffer, int bufferLen, const char
 
 //=============================================================================
 
-/*
-** RE_BeginRegistration
-*/
+/**
+ * RE_BeginRegistration
+ */
 void RE_BeginRegistration(glconfig_t *glconfigOut)
 {
+	int i;
+
 	R_Init();
 
 	*glconfigOut = glConfig;
@@ -490,7 +492,12 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 	R_SyncRenderThread();
 
 	tr.visIndex = 0;
-	memset(tr.visClusters, -2, sizeof(tr.visClusters)); // force markleafs to regenerate
+
+	// force markleafs to regenerate
+	for (i = 0; i < MAX_VISCOUNTS; i++)
+	{
+		tr.visClusters[i] = -2;
+	}
 
 	R_ClearFlares();
 
