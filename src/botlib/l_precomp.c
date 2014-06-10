@@ -2928,7 +2928,7 @@ void PC_SetIncludePath(source_t *source, char *path)
 {
 	size_t len;
 
-	Q_strncpyz(source->includepath, path, MAX_PATH - 1);
+	Q_strncpyz(source->includepath, path, _MAX_PATH - 1);
 
 	len = strlen(source->includepath);
 	// add trailing path seperator
