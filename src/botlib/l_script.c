@@ -956,8 +956,6 @@ int PS_ExpectTokenString(script_t *script, char *string)
 
 int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 {
-	char str[MAX_TOKEN];
-
 	if (!PS_ReadToken(script, token))
 	{
 		ScriptError(script, "couldn't read expected token");
@@ -966,6 +964,9 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 
 	if (token->type != type)
 	{
+		char str[MAX_TOKEN];
+
+		strcpy(str, "");
 		if (type == TT_STRING)
 		{
 			strcpy(str, "string");
@@ -993,6 +994,9 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 	{
 		if ((token->subtype & subtype) != subtype)
 		{
+			char str[MAX_TOKEN];
+
+			strcpy(str, "");
 			if (subtype & TT_DECIMAL)
 			{
 				strcpy(str, "decimal");
@@ -1288,7 +1292,7 @@ script_t *LoadScriptFile(const char *filename)
 	buffer = GetClearedMemory(sizeof(script_t) + length + 1);
 	script = (script_t *) buffer;
 	memset(script, 0, sizeof(script_t));
-	strcpy(script->filename, filename);
+	Q_strncpyz(script->filename, filename, sizeof(script->filename));
 	script->buffer         = (char *) buffer + sizeof(script_t);
 	script->buffer[length] = 0;
 	script->length         = length;
@@ -1320,7 +1324,7 @@ script_t *LoadScriptMemory(char *ptr, int length, char *name)
 	buffer = GetClearedMemory(sizeof(script_t) + length + 1);
 	script = (script_t *) buffer;
 	memset(script, 0, sizeof(script_t));
-	strcpy(script->filename, name);
+	Q_strncpyz(script->filename, name, sizeof(script->filename));
 	script->buffer         = (char *) buffer + sizeof(script_t);
 	script->buffer[length] = 0;
 	script->length         = length;
