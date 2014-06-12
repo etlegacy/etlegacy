@@ -3246,7 +3246,6 @@ extern cvar_t *r_vboLighting;
 extern cvar_t *r_vboModels;
 extern cvar_t *r_vboOptimizeVertices;
 extern cvar_t *r_vboVertexSkinning;
-extern cvar_t *r_vboDeformVertexes;
 extern cvar_t *r_vboSmoothNormals;
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)

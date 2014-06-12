@@ -619,12 +619,6 @@ static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
 			return qtrue;
 		}
 		break;
-	case USE_DEFORM_VERTEXES:
-		if (glConfig.driverType != GLDRV_OPENGL3 || !r_vboDeformVertexes->integer)
-		{
-			return qtrue;
-		}
-		break;
 	case USE_VERTEX_ANIMATION:
 		if (usedmacros & BIT(USE_VERTEX_SKINNING))
 		{
