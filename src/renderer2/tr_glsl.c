@@ -700,16 +700,17 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 	return attr;
 }
 
-static void GLSL_GetShaderExtraDefines(char **defines, int *size)
-{
-	static char bufferExtra[32000];
+static char shaderExtraDef[32000];
+static int shaderExtraDefLen = 0;
 
+static void GLSL_BuildShaderExtraDef()
+{
 	float fbufWidthScale, fbufHeightScale;
 	float npotWidthScale, npotHeightScale;
 
-	Com_Memset(bufferExtra, 0, sizeof(bufferExtra));
+	Com_Memset(shaderExtraDef, 0, sizeof(shaderExtraDef));
 
-#define BUFFEXT(...) Q_strcat(bufferExtra, sizeof(bufferExtra), va(__VA_ARGS__))
+#define BUFFEXT(...) Q_strcat(shaderExtraDef, sizeof(shaderExtraDef), va(__VA_ARGS__))
 	
 	/*
 #define SIMPLEDEF(x, y) BUFFEXT("#ifndef " x "\n#define " y "\n#endif\n")
@@ -994,11 +995,7 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 	// OK we added a lot of stuff but if we do something bad in the GLSL shaders then we want the proper line
 	// so we have to reset the line counting
 	BUFFEXT("#line 0\n");
-
-	*size    = strlen(bufferExtra) + 1;
-	*defines = (char *) Com_Allocate(*size);
-	Com_Memset(*defines, 0, *size);
-	Q_strcat(*defines, *size, bufferExtra);
+	shaderExtraDefLen = strlen(shaderExtraDef) + 1;
 }
 
 static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
@@ -1162,17 +1159,10 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	GLchar *mainBuffer = NULL;
 	int    mainSize    = 0;
 	char   *token;
-
 	int  libsSize    = 0;
 	char *libsBuffer = NULL;        // all libs concatenated
-
 	char **libs = ( char ** ) &libShaderNames;
-
 	char *shaderText = NULL;
-
-	char *shaderExtra = NULL;
-	int  extraSize = 0;
-
 	char *bufferFinal = NULL;
 	int  sizeFinal;
 
@@ -1197,13 +1187,11 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 		ri.Error(ERR_FATAL, "Shader loading failed!\n");
 	}
 	
-	GLSL_GetShaderExtraDefines(&shaderExtra, &extraSize);
-
-	sizeFinal = extraSize + mainSize + libsSize;
+	sizeFinal = shaderExtraDefLen + mainSize + libsSize;
 
 	bufferFinal = (char *)ri.Hunk_AllocateTempMemory(sizeFinal);
 
-	strcpy(bufferFinal, shaderExtra);
+	strcpy(bufferFinal, shaderExtraDef);
 
 	if (libsSize > 0)
 	{
@@ -1215,7 +1203,6 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	shaderText = Com_Allocate(sizeFinal);
 	strcpy(shaderText, bufferFinal);
 	ri.Hunk_FreeTempMemory(bufferFinal);
-	Com_Dealloc(shaderExtra);
 
 	Com_Dealloc(mainBuffer);
 	Com_Dealloc(libsBuffer);
@@ -2215,6 +2202,7 @@ void GLSL_InitGPUShaders(void)
 
 	//Load all definitions
 	GLSL_LoadDefinitions();
+	GLSL_BuildShaderExtraDef();
 
 	gl_genericShader      = GLSL_GetShaderProgram("generic");
 	gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
