@@ -1,12 +1,11 @@
 /* cameraEffects_fp.glsl */
-
 uniform sampler2D u_CurrentMap;
 uniform sampler2D u_GrainMap;
 uniform sampler2D u_VignetteMap;
 
 varying vec2 var_Tex;
 
-void    main()
+void main()
 {
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 stClamped = gl_FragCoord.st * r_FBufScale;

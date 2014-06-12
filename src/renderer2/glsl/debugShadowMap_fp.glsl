@@ -4,7 +4,7 @@ uniform sampler2D u_ShadowMap;
 
 varying vec2 var_TexCoord;
 
-void    main()
+void main()
 {
 #if defined(ESM)
 

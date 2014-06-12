@@ -9,7 +9,7 @@ uniform vec4      u_Color;
 uniform mat4      u_ViewMatrix;
 uniform mat4      u_UnprojectMatrix;
 
-void    main()
+void main()
 {
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 st = gl_FragCoord.st * r_FBufScale;

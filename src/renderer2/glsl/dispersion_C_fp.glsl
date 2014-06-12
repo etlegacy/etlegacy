@@ -10,7 +10,7 @@ uniform float       u_FresnelBias;
 varying vec3 var_Position;
 varying vec3 var_Normal;
 
-void    main()
+void main()
 {
 	// compute incident ray
 	vec3 I = normalize(var_Position - u_ViewOrigin);

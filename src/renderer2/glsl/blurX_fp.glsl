@@ -1,9 +1,8 @@
 /* blurX_fp.glsl */
-
 uniform sampler2D u_ColorMap;
 uniform float     u_DeformMagnitude;
 
-void    main()
+void main()
 {
 	vec2 st = gl_FragCoord.st;
 

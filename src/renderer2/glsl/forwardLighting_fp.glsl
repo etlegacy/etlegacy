@@ -20,7 +20,6 @@ uniform samplerCube u_ShadowMap;
 
 uniform sampler2D u_RandomMap;      // random normals
 
-
 uniform vec3 u_ViewOrigin;
 
 #if defined(LIGHT_DIRECTIONAL)
@@ -58,8 +57,6 @@ varying vec4 var_Binormal;
 #endif
 varying vec4 var_Normal;
 //varying vec4		var_Color;
-
-
 
 /*
 ================
@@ -169,11 +166,6 @@ vec4 ShadowDepthToEVSM(float depth)
 	return vec4(warpedDepth.xy, warpedDepth.xy * warpedDepth.xy);
 }
 #endif // #if defined(EVSM)
-
-
-
-
-
 
 #if defined(LIGHT_DIRECTIONAL)
 

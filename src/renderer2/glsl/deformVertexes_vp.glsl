@@ -128,12 +128,8 @@ float WaveValue(float func, float base, float amplitude, float phase, float freq
 	return 0.0; // GF_NONE
 }
 
-vec4 DeformPosition2(const vec4 pos,
-                     const vec3 normal,
-                     const vec2 st,
-                     float time)
+vec4 DeformPosition2(const vec4 pos, const vec3 normal, const vec2 st, float time)
 {
-
 	int i, deformOfs = 0;
 	int numDeforms = int(u_DeformParms[deformOfs++]);
 

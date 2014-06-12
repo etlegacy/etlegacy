@@ -3,7 +3,7 @@
 uniform sampler2D u_ColorMap;
 uniform float     u_BlurMagnitude;
 
-void    main()
+void main()
 {
 	vec2 st00 = gl_FragCoord.st;
 

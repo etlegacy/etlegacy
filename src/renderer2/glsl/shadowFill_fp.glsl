@@ -31,7 +31,7 @@ vec4 ShadowDepthToEVSM(float depth)
 
 #endif // #if defined(EVSM)
 
-void    main()
+void main()
 {
 #if defined(USE_PORTAL_CLIPPING)
 	{

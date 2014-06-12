@@ -4,7 +4,7 @@ uniform sampler2D u_ColorMap;
 
 const vec4 LUMINANCE_VECTOR = vec4(0.2125, 0.7154, 0.0721, 0.0);
 
-void    main()
+void main()
 {
 	vec2 st = gl_FragCoord.st;
 

@@ -922,11 +922,13 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 void Sys_SetProcessProperties(void)
 {
+#if 0
 	DWORD_PTR processAffinityMask;
 	DWORD_PTR systemAffinityMask;
 	DWORD_PTR mask;
 	int       core, bit, currentCore;
 	BOOL      success;
+#endif
 	HANDLE    process = GetCurrentProcess();
 
 	//Set Process priority

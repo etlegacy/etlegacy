@@ -3,14 +3,14 @@
 uniform sampler2D u_CurrentMap;
 uniform sampler2D u_DepthMap;
 
-float  ReadDepth(vec2 st)
+float ReadDepth(vec2 st)
 {
 	vec2 camerarange = vec2(4.0, 4096.0);
 
 	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D(u_DepthMap, st).x * (camerarange.y - camerarange.x));
 }
 
-void    main()
+void main()
 {
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 st = gl_FragCoord.st * r_FBufScale;

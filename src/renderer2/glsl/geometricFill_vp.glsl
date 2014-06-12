@@ -39,9 +39,7 @@ varying vec3 var_Binormal;
 varying vec3 var_Normal;
 varying vec4 var_Color;
 
-
-
-void    main()
+void main()
 {
 	vec4 position;
 	vec3 tangent;

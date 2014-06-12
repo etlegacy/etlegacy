@@ -8,7 +8,6 @@ uniform float     u_FogDensity;
 uniform vec3      u_FogColor;
 uniform mat4      u_UnprojectMatrix;
 
-
 float DecodeDepth(vec4 color)
 {
 	float depth;
@@ -21,7 +20,7 @@ float DecodeDepth(vec4 color)
 	return depth;
 }
 
-void    main()
+void main()
 {
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 st = gl_FragCoord.st * r_FBufScale;

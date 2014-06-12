@@ -9,7 +9,7 @@ uniform mat4 u_ModelViewProjectionMatrix;
 varying vec3 var_Position;
 varying vec3 var_Normal;
 
-void    main()
+void main()
 {
 	vec4 vertex;
 	vec3 normal;

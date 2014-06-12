@@ -16,7 +16,7 @@ uniform mat4        u_UnprojectMatrix;
 varying vec2 var_TexDiffuse;
 varying vec3 var_TexAttenXYZ;
 
-void    main()
+void main()
 {
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 st = gl_FragCoord.st * r_FBufScale;
