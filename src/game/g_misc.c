@@ -1576,7 +1576,7 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 
 	owner = &g_entities[gun->r.ownerNum];
 
-	if (gun && self->health <= 0)
+	if (self->health <= 0)
 	{
 		gun->s.frame    = 2;
 		gun->takedamage = qfalse;

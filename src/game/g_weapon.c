@@ -536,7 +536,7 @@ void Weapon_Syringe(gentity_t *ent)
 				{
 					ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
 				}
-				if (ent && ent->client)
+				if (ent->client)
 				{
 					G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
@@ -2419,7 +2419,7 @@ evilbanigoto:
 								if (hit->s.teamNum == TEAM_AXIS && (!scored))
 								{
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
-									if (ent && ent->client)
+									if (ent->client)
 									{
 										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									}
@@ -2441,7 +2441,7 @@ evilbanigoto:
 								if (hit->s.teamNum == TEAM_ALLIES && (!scored))
 								{
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
-									if (ent && ent->client)
+									if (ent->client)
 									{
 										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									}
