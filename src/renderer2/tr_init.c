@@ -334,13 +334,11 @@ cvar_t *r_allowExtensions;
 
 cvar_t *r_screenshotJpegQuality;
 
-/*
-** InitOpenGL
-**
-** This function is responsible for initializing a valid OpenGL subsystem.  This
-** is done by calling GLimp_Init (which gives us a working OGL subsystem) then
-** setting variables, checking GL constants, and reporting the gfx system config
-** to the user.
+/**
+* @brief This function is responsible for initializing a valid OpenGL subsystem.  This
+* is done by calling GLimp_Init (which gives us a working OGL subsystem) then
+* setting variables, checking GL constants, and reporting the gfx system config
+* to the user.
 */
 static qboolean InitOpenGL(void)
 {
@@ -683,11 +681,9 @@ const void *RB_TakeScreenshotCmd(const void *data)
 	case SSF_TGA:
 		RB_TakeScreenshot(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 		break;
-
 	case SSF_JPEG:
 		RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 		break;
-
 	case SSF_PNG:
 		ri.Printf(PRINT_ALL, "PNG output is not implemented");
 		break;
@@ -1945,88 +1941,56 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	// the RE_ functions are Renderer Entry points
 
-	// Q3A BEGIN
-	re.Shutdown = RE_Shutdown;
-
-	re.BeginRegistration = RE_BeginRegistration;
-	re.RegisterModel     = RE_RegisterModel;
-
-	re.RegisterSkin        = RE_RegisterSkin;
-	re.RegisterShader      = RE_RegisterShader;
-	re.RegisterShaderNoMip = RE_RegisterShaderNoMip;
-	//re.RegisterShaderLightAttenuation = RE_RegisterShaderLightAttenuation;
-
-	re.LoadWorld       = RE_LoadWorldMap;
-	re.SetWorldVisData = RE_SetWorldVisData;
-	re.EndRegistration = RE_EndRegistration;
-
-	re.BeginFrame = RE_BeginFrame;
-	re.EndFrame   = RE_EndFrame;
-
-	re.MarkFragments = R_MarkFragments;
-
-	re.LerpTag = RE_LerpTagET;
-
-	re.ModelBounds = R_ModelBounds;
-
-	re.ClearScene          = RE_ClearScene;
-	re.AddRefEntityToScene = RE_AddRefEntityToScene;
-
-	re.AddPolyToScene  = RE_AddPolyToSceneET;
-	re.AddPolysToScene = RE_AddPolysToScene;
-
-	re.AddLightToScene = RE_AddDynamicLightToSceneET;
-	//re.AddAdditiveLightToScene = RE_AddDynamicLightToSceneQ3A;
-
-	re.RenderScene = RE_RenderScene;
-
-	re.SetColor = RE_SetColor;
-	//re.SetClipRegion = RE_SetClipRegion;
-	re.DrawStretchPic  = RE_StretchPic;
-	re.DrawStretchRaw  = RE_StretchRaw;
-	re.UploadCinematic = RE_UploadCinematic;
-
+	re.Shutdown               = RE_Shutdown;
+	re.BeginRegistration      = RE_BeginRegistration;
+	re.RegisterModel          = RE_RegisterModel;
+	re.RegisterSkin           = RE_RegisterSkin;
+	re.RegisterShader         = RE_RegisterShader;
+	re.RegisterShaderNoMip    = RE_RegisterShaderNoMip;
+	re.LoadWorld              = RE_LoadWorldMap;
+	re.SetWorldVisData        = RE_SetWorldVisData;
+	re.EndRegistration        = RE_EndRegistration;
+	re.BeginFrame             = RE_BeginFrame;
+	re.EndFrame               = RE_EndFrame;
+	re.MarkFragments          = R_MarkFragments;
+	re.LerpTag                = RE_LerpTagET;
+	re.ModelBounds            = R_ModelBounds;
+	re.ClearScene             = RE_ClearScene;
+	re.AddRefEntityToScene    = RE_AddRefEntityToScene;
+	re.AddPolyToScene         = RE_AddPolyToSceneET;
+	re.AddPolysToScene        = RE_AddPolysToScene;
+	re.AddLightToScene        = RE_AddDynamicLightToSceneET;
+	re.RenderScene            = RE_RenderScene;
+	re.SetColor               = RE_SetColor;
+	re.DrawStretchPic         = RE_StretchPic;
+	re.DrawStretchRaw         = RE_StretchRaw;
+	re.UploadCinematic        = RE_UploadCinematic;
 	re.DrawRotatedPic         = RE_RotatedPic;
 	re.Add2dPolys             = RE_2DPolyies;
 	re.DrawStretchPicGradient = RE_StretchPicGradient;
-
-	re.RegisterFont   = RE_RegisterFont;
-	re.RemapShader    = R_RemapShader;
-	re.GetEntityToken = R_GetEntityToken;
-	re.inPVS          = R_inPVS;
-	// Q3A END
-
-	// ET BEGIN
-	re.GetSkinModel       = RE_GetSkinModel;
-	re.GetShaderFromModel = RE_GetShaderFromModel;
-
-	re.ProjectDecal = RE_ProjectDecal;
-	re.ClearDecals  = RE_ClearDecals;
-
-	re.DrawDebugPolygon = R_DebugPolygon;
-	re.DrawDebugText    = R_DebugText;
-
-	re.SaveViewParms    = RE_SaveViewParms;
-	re.RestoreViewParms = RE_RestoreViewParms;
-
-	re.AddCoronaToScene     = RE_AddCoronaToScene;
-	re.AddPolyBufferToScene = RE_AddPolyBufferToScene;
-
-	re.SetFog       = RE_SetFog;
-	re.SetGlobalFog = RE_SetGlobalFog;
-
-	re.purgeCache = RE_PurgeCache;
-
-	re.LoadDynamicShader = RE_LoadDynamicShader;
-	re.GetTextureId      = RE_GetTextureId;
-	re.RenderToTexture   = RE_RenderToTexture;
-	re.Finish            = RE_Finish;
-	// ET END
-
-	// XreaL BEGIN
-	re.TakeVideoFrame = RE_TakeVideoFrame;
-
-	//re.TakeScreenshotPNG = RB_TakeScreenshotPNG;
+	re.RegisterFont           = RE_RegisterFont;
+	re.RemapShader            = R_RemapShader;
+	re.GetEntityToken         = R_GetEntityToken;
+	re.inPVS                  = R_inPVS;
+	re.GetSkinModel           = RE_GetSkinModel;
+	re.GetShaderFromModel     = RE_GetShaderFromModel;
+	re.ProjectDecal           = RE_ProjectDecal;
+	re.ClearDecals            = RE_ClearDecals;
+	re.DrawDebugPolygon       = R_DebugPolygon;
+	re.DrawDebugText          = R_DebugText;
+	re.SaveViewParms          = RE_SaveViewParms;
+	re.RestoreViewParms       = RE_RestoreViewParms;
+	re.AddCoronaToScene       = RE_AddCoronaToScene;
+	re.AddPolyBufferToScene   = RE_AddPolyBufferToScene;
+	re.SetFog                 = RE_SetFog;
+	re.SetGlobalFog           = RE_SetGlobalFog;
+	re.purgeCache             = RE_PurgeCache;
+	re.LoadDynamicShader      = RE_LoadDynamicShader;
+	re.GetTextureId           = RE_GetTextureId;
+	re.RenderToTexture        = RE_RenderToTexture;
+	re.Finish                 = RE_Finish;
+	re.TakeVideoFrame         = RE_TakeVideoFrame;
+	//re.SetClipRegion = RE_SetClipRegion;
 
 #if defined(USE_REFLIGHT)
 	re.RegisterShaderLightAttenuation = RE_RegisterShaderLightAttenuation;
@@ -2042,7 +2006,6 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.AnimNumFrames     = RE_AnimNumFrames;
 	re.AnimFrameRate     = RE_AnimFrameRate;
 #endif
-	// XreaL END
 
 	return &re;
 }

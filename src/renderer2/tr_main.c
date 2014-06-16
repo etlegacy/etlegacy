@@ -322,23 +322,18 @@ void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
                const vec3_t v1, const vec3_t v2, const vec3_t v3, const vec2_t w1, const vec2_t w2, const vec2_t w3)
 {
 	vec3_t u, v;
-	float  x1, x2, y1, y2, z1, z2;
-	float  s1, s2, t1, t2;
-	float  r, dot;
-
-	x1 = v2[0] - v1[0];
-	x2 = v3[0] - v1[0];
-	y1 = v2[1] - v1[1];
-	y2 = v3[1] - v1[1];
-	z1 = v2[2] - v1[2];
-	z2 = v3[2] - v1[2];
-
-	s1 = w2[0] - w1[0];
-	s2 = w3[0] - w1[0];
-	t1 = w2[1] - w1[1];
-	t2 = w3[1] - w1[1];
-
-	r = 1.0f / (s1 * t2 - s2 * t1);
+	float  x1 = v2[0] - v1[0];
+	float  x2 = v3[0] - v1[0];
+	float  y1 = v2[1] - v1[1];
+	float  y2 = v3[1] - v1[1];
+	float  z1 = v2[2] - v1[2];
+	float  z2 = v3[2] - v1[2];
+	float  s1 = w2[0] - w1[0];
+	float  s2 = w3[0] - w1[0];
+	float  t1 = w2[1] - w1[1];
+	float  t2 = w3[1] - w1[1];
+	float  r  = 1.0f / (s1 * t2 - s2 * t1);
+	float  dot;
 
 	VectorSet(tangent, (t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
 	VectorSet(bitangent, (s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
@@ -462,7 +457,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 	float  bb, s, t;
 	vec3_t bary;
 
-	/* calculate barycentric basis for the triangle */
+	// calculate barycentric basis for the triangle
 	bb = (dv[1]->st[0] - dv[0]->st[0]) * (dv[2]->st[1] - dv[0]->st[1]) - (dv[2]->st[0] - dv[0]->st[0]) * (dv[1]->st[1] - dv[0]->st[1]);
 	if (fabs(bb) < 0.00000001f)
 	{
@@ -1601,12 +1596,11 @@ static void R_SetupFrustum(void)
 {
 	int    i;
 	float  xs, xc;
-	float  ang;
+	float  ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
 	vec3_t planeOrigin;
 
-	ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
-	xs  = sin(ang);
-	xc  = cos(ang);
+	xs = sin(ang);
+	xc = cos(ang);
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][0].normal);
 	VectorMA(tr.viewParms.frustums[0][0].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][0].normal);

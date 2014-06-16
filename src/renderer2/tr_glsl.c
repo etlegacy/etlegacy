@@ -151,6 +151,7 @@ static long GLSL_GenerateHashValue(const char *fname)
 int GLSL_GetMacroByName(const char *name)
 {
 	int i;
+
 	for (i = 0; i < MAX_MACROS; i++)
 	{
 		if (!Q_stricmp(name, complieMacroNames[i]))
@@ -165,6 +166,7 @@ int GLSL_GetMacroByName(const char *name)
 unsigned int GLSL_GetAttribByName(const char *name)
 {
 	int i;
+
 	for (i = 0; i < numberofAttributes; i++)
 	{
 		if (!Q_stricmp(name, attributeMap[i].name))
@@ -179,6 +181,7 @@ unsigned int GLSL_GetAttribByName(const char *name)
 void GLSL_CopyStringAlloc(char **out, const char *in)
 {
 	size_t size = strlen(in) * sizeof(char) + 1;
+
 	*out = (char *) Com_Allocate(size);
 	Com_Memset(*out, '\0', size);
 	Q_strncpyz(*out, in, size);
@@ -187,6 +190,7 @@ void GLSL_CopyStringAlloc(char **out, const char *in)
 qboolean GLSL_CopyNextToken(char **text, char **out)
 {
 	char *token;
+
 	token = COM_ParseExt(text, qtrue);
 	if (!token[0])
 	{
@@ -701,7 +705,7 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 }
 
 static char shaderExtraDef[32000];
-static int shaderExtraDefLen = 0;
+static int  shaderExtraDefLen = 0;
 
 static void GLSL_BuildShaderExtraDef()
 {
@@ -711,15 +715,15 @@ static void GLSL_BuildShaderExtraDef()
 	Com_Memset(shaderExtraDef, 0, sizeof(shaderExtraDef));
 
 #define BUFFEXT(...) Q_strcat(shaderExtraDef, sizeof(shaderExtraDef), va(__VA_ARGS__))
-	
+
 	/*
-#define SIMPLEDEF(x, y) BUFFEXT("#ifndef " x "\n#define " y "\n#endif\n")
-#define BUFFCVARI(x) BUFFEXT("#ifndef " #x "\n#define " #x " %f\n#endif\n", x->integer)
-#define BUFFCVARF(x) BUFFEXT("#ifndef " #x "\n#define " #x " %f\n#endif\n", x->value)
-#define IFCVARI(x) if(x->value) BUFFCVARI(x)
-#define IFCVARF(x) if(x->value) BUFFCVARF(x)
-#define ENABLEIFCVAR(x) if(x->value) BUFFEXT("#ifndef " #x "\n#define " #x " 1\n#endif\n")
-#define SIMPLEDEFV(x,y) BUFFEXT("#ifndef " x "\n#define " x " " y "\n#endif\n")
+	#define SIMPLEDEF(x, y) BUFFEXT("#ifndef " x "\n#define " y "\n#endif\n")
+	#define BUFFCVARI(x) BUFFEXT("#ifndef " #x "\n#define " #x " %f\n#endif\n", x->integer)
+	#define BUFFCVARF(x) BUFFEXT("#ifndef " #x "\n#define " #x " %f\n#endif\n", x->value)
+	#define IFCVARI(x) if(x->value) BUFFCVARI(x)
+	#define IFCVARF(x) if(x->value) BUFFCVARF(x)
+	#define ENABLEIFCVAR(x) if(x->value) BUFFEXT("#ifndef " #x "\n#define " #x " 1\n#endif\n")
+	#define SIMPLEDEFV(x,y) BUFFEXT("#ifndef " x "\n#define " x " " y "\n#endif\n")
 	BUFFCVARF(r_specularExponent);
 	BUFFCVARF(r_specularExponent2);
 	BUFFCVARF(r_specularScale);
@@ -733,37 +737,37 @@ static void GLSL_BuildShaderExtraDef()
 	BUFFEXT("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value);
 	BUFFEXT("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value);
 	//BUFFEXT("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value);
-	
+
 	BUFFEXT("#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
 	BUFFEXT("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS);
 	BUFFEXT("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS);
 	BUFFEXT("#ifndef deform_t\n"
-	            "#define deform_t\n"
-	            "#define DEFORM_WAVE %i\n"
-	            "#define DEFORM_BULGE %i\n"
-	            "#define DEFORM_MOVE %i\n"
-	            "#endif\n",
-	            DEFORM_WAVE,
-	            DEFORM_BULGE,
-	            DEFORM_MOVE);
+	        "#define deform_t\n"
+	        "#define DEFORM_WAVE %i\n"
+	        "#define DEFORM_BULGE %i\n"
+	        "#define DEFORM_MOVE %i\n"
+	        "#endif\n",
+	        DEFORM_WAVE,
+	        DEFORM_BULGE,
+	        DEFORM_MOVE);
 
 	BUFFEXT("#ifndef genFunc_t\n"
-	            "#define genFunc_t\n"
-	            "#define GF_NONE %1.1f\n"
-	            "#define GF_SIN %1.1f\n"
-	            "#define GF_SQUARE %1.1f\n"
-	            "#define GF_TRIANGLE %1.1f\n"
-	            "#define GF_SAWTOOTH %1.1f\n"
-	            "#define GF_INVERSE_SAWTOOTH %1.1f\n"
-	            "#define GF_NOISE %1.1f\n"
-	            "#endif\n",
-	            ( float ) GF_NONE,
-	            ( float ) GF_SIN,
-	            ( float ) GF_SQUARE,
-	            ( float ) GF_TRIANGLE,
-	            ( float ) GF_SAWTOOTH,
-	            ( float ) GF_INVERSE_SAWTOOTH,
-	            ( float ) GF_NOISE);
+	        "#define genFunc_t\n"
+	        "#define GF_NONE %1.1f\n"
+	        "#define GF_SIN %1.1f\n"
+	        "#define GF_SQUARE %1.1f\n"
+	        "#define GF_TRIANGLE %1.1f\n"
+	        "#define GF_SAWTOOTH %1.1f\n"
+	        "#define GF_INVERSE_SAWTOOTH %1.1f\n"
+	        "#define GF_NOISE %1.1f\n"
+	        "#endif\n",
+	        ( float ) GF_NONE,
+	        ( float ) GF_SIN,
+	        ( float ) GF_SQUARE,
+	        ( float ) GF_TRIANGLE,
+	        ( float ) GF_SAWTOOTH,
+	        ( float ) GF_INVERSE_SAWTOOTH,
+	        ( float ) GF_NOISE);
 
 	/*
 	 BUFFEXT("#ifndef deformGen_t\n"
@@ -804,14 +808,14 @@ static void GLSL_BuildShaderExtraDef()
 	 */
 
 	BUFFEXT("#ifndef alphaTest_t\n"
-	            "#define alphaTest_t\n"
-	            "#define ATEST_GT_0 %i\n"
-	            "#define ATEST_LT_128 %i\n"
-	            "#define ATEST_GE_128 %i\n"
-	            "#endif\n",
-	            ATEST_GT_0,
-	            ATEST_LT_128,
-	            ATEST_GE_128);
+	        "#define alphaTest_t\n"
+	        "#define ATEST_GT_0 %i\n"
+	        "#define ATEST_LT_128 %i\n"
+	        "#define ATEST_GE_128 %i\n"
+	        "#endif\n",
+	        ATEST_GT_0,
+	        ATEST_LT_128,
+	        ATEST_GE_128);
 
 	fbufWidthScale  = Q_recip(( float ) glConfig.vidWidth);
 	fbufHeightScale = Q_recip(( float ) glConfig.vidHeight);
@@ -1159,12 +1163,12 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	GLchar *mainBuffer = NULL;
 	int    mainSize    = 0;
 	char   *token;
-	int  libsSize    = 0;
-	char *libsBuffer = NULL;        // all libs concatenated
-	char **libs = ( char ** ) &libShaderNames;
-	char *shaderText = NULL;
-	char *bufferFinal = NULL;
-	int  sizeFinal;
+	int    libsSize     = 0;
+	char   *libsBuffer  = NULL;     // all libs concatenated
+	char   **libs       = ( char ** ) &libShaderNames;
+	char   *shaderText  = NULL;
+	char   *bufferFinal = NULL;
+	int    sizeFinal;
 
 	GL_CheckErrors();
 
@@ -1186,7 +1190,7 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	{
 		ri.Error(ERR_FATAL, "Shader loading failed!\n");
 	}
-	
+
 	sizeFinal = shaderExtraDefLen + mainSize + libsSize;
 
 	bufferFinal = (char *)ri.Hunk_AllocateTempMemory(sizeFinal);
@@ -1323,11 +1327,8 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 
 void GLSL_InitUniforms(shaderProgram_t *program)
 {
-	int i, size;
-
+	int   i, size = 0;
 	GLint *uniforms = program->uniforms;
-
-	size = 0;
 
 	for (i = 0; i < UNIFORM_COUNT; i++)
 	{
@@ -1385,7 +1386,6 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 	GLint     *uniforms = program->uniforms;
 	GLboolean *compare  = (GLboolean *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
 
-
 	if (uniforms[uniformNum] == -1)
 	{
 		return;
@@ -1411,7 +1411,6 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 {
 	GLint *uniforms = program->uniforms;
 	GLint *compare  = (GLint *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
-
 
 	if (uniforms[uniformNum] == -1)
 	{
@@ -1950,6 +1949,7 @@ void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
 	if (offset != 0)
 	{
 		int i = 0;
+
 		programlist->list->currentPermutation = offset;
 		for (; i < MAX_MACROS; i++)
 		{
@@ -2012,7 +2012,7 @@ void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
 	int     macro, value;
 	va_list ap;
 
-	//Reset the macro states
+	// Reset the macro states
 	GLSL_SetMacroStatesByOffset(programlist, 0);
 
 	if (numMacros == 0)
@@ -2240,7 +2240,6 @@ void GLSL_InitGPUShaders(void)
 	gl_blurYShader          = GLSL_GetShaderProgram("blurY");
 	gl_debugShadowMapShader = GLSL_GetShaderProgram("debugShadowMap");
 
-	//Dushan
 	gl_liquidShader             = GLSL_GetShaderProgram("liquid");
 	gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
 	gl_bloomShader              = GLSL_GetShaderProgram("bloom");
@@ -2253,7 +2252,6 @@ void GLSL_InitGPUShaders(void)
 	gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
 	gl_ssao         = GLSL_GetShaderProgram("SSAO");
 
-	//Jacker
 	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
 	endTime = ri.Milliseconds();
@@ -2275,7 +2273,7 @@ void GLSL_ShutdownGPUShaders(void)
 	//GLSL_VertexAttribsState(0);
 	GLSL_BindNullProgram();
 
-	//Clean up programInfo_t:s
+	// Clean up programInfo_t:s
 	for (i = 0; i < FILE_HASH_SIZE; i++)
 	{
 		if (hashTable[i])
@@ -2292,7 +2290,6 @@ void GLSL_ShutdownGPUShaders(void)
 	glState.currentProgram = 0;
 	qglUseProgramObjectARB(0);
 }
-
 
 void GLSL_BindProgram(shaderProgram_t *program)
 {
@@ -2311,7 +2308,6 @@ void GLSL_BindProgram(shaderProgram_t *program)
 		backEnd.pc.c_glslShaderBinds++;
 	}
 }
-
 
 void GLSL_BindNullProgram(void)
 {
@@ -2353,7 +2349,6 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 
 			deformParms[deformOfs++] = ds->deformationSpread;
 			break;
-
 		case DEFORM_BULGE:
 			deformParms[deformOfs++] = DEFORM_BULGE;
 
@@ -2361,7 +2356,6 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 			deformParms[deformOfs++] = ds->bulgeHeight;
 			deformParms[deformOfs++] = ds->bulgeSpeed;
 			break;
-
 		case DEFORM_MOVE:
 			deformParms[deformOfs++] = DEFORM_MOVE;
 
@@ -2375,7 +2369,6 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 			deformParms[deformOfs++] = ds->bulgeHeight;
 			deformParms[deformOfs++] = ds->bulgeSpeed;
 			break;
-
 		default:
 			break;
 		}
@@ -2386,6 +2379,7 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen)
 {
 	vec4_t temp;
+
 	switch (colorGen)
 	{
 	case CGEN_VERTEX:
@@ -2446,15 +2440,12 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
 	case GLS_ATEST_GT_0:
 		value = ATEST_GT_0;
 		break;
-
 	case GLS_ATEST_LT_128:
 		value = ATEST_LT_128;
 		break;
-
 	case GLS_ATEST_GE_128:
 		value = ATEST_GE_128;
 		break;
-
 	default:
 		value = ATEST_NONE;
 		break;
@@ -2493,7 +2484,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_POSITION);
 		}
 	}
-
 	if (diff & ATTR_TEXCOORD)
 	{
 		if (stateBits & ATTR_TEXCOORD)
@@ -2507,7 +2497,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
 		}
 	}
-
 	if (diff & ATTR_LIGHTCOORD)
 	{
 		if (stateBits & ATTR_LIGHTCOORD)
@@ -2521,7 +2510,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
 		}
 	}
-
 	if (diff & ATTR_TANGENT)
 	{
 		if (stateBits & ATTR_TANGENT)
@@ -2535,7 +2523,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TANGENT);
 		}
 	}
-
 	if (diff & ATTR_BINORMAL)
 	{
 		if (stateBits & ATTR_BINORMAL)
@@ -2549,7 +2536,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL);
 		}
 	}
-
 	if (diff & ATTR_NORMAL)
 	{
 		if (stateBits & ATTR_NORMAL)
@@ -2563,7 +2549,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_NORMAL);
 		}
 	}
-
 	if (diff & ATTR_COLOR)
 	{
 		if (stateBits & ATTR_COLOR)
@@ -2577,7 +2562,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		}
 	}
-
 	if (diff & ATTR_BONE_INDEXES)
 	{
 		if (stateBits & ATTR_BONE_INDEXES)
@@ -2591,7 +2575,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
 		}
 	}
-
 	if (diff & ATTR_BONE_WEIGHTS)
 	{
 		if (stateBits & ATTR_BONE_WEIGHTS)
@@ -2605,7 +2588,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
 		}
 	}
-
 	if (diff & ATTR_POSITION2)
 	{
 		if (stateBits & ATTR_POSITION2)
@@ -2619,7 +2601,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_POSITION2);
 		}
 	}
-
 	if (diff & ATTR_TANGENT2)
 	{
 		if (stateBits & ATTR_TANGENT2)
@@ -2633,7 +2614,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TANGENT2);
 		}
 	}
-
 	if (diff & ATTR_BINORMAL2)
 	{
 		if (stateBits & ATTR_BINORMAL2)
@@ -2647,7 +2627,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL2);
 		}
 	}
-
 	if (diff & ATTR_NORMAL2)
 	{
 		if (stateBits & ATTR_NORMAL2)

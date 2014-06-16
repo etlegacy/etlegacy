@@ -1076,7 +1076,7 @@ static void Render_lightVolume(interaction_t *ia)
 	case RL_OMNI:
 	default:
 	{
-		MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
+		MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
 		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
 		break;
 	}
@@ -1535,7 +1535,7 @@ static void RB_RenderInteractions()
 			case RL_OMNI:
 			default:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
+				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
 				break;
 			}
@@ -2053,7 +2053,6 @@ static void RB_RenderInteractionsShadowMapped()
 							               splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 #else
-
 							//
 							// Scene-Dependent Projection
 							//
@@ -2098,17 +2097,13 @@ static void RB_RenderInteractionsShadowMapped()
 								AddPointToBounds(transf, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							}
 
-
 							Ren_LogComment("shadow casters = %i\n", numCasters);
-
 							Ren_LogComment("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							               splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
 							               splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
-
 							Ren_LogComment("shadow caster light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							               casterBounds[0][0], casterBounds[0][1], casterBounds[0][2],
 							               casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]);
-
 							Ren_LogComment("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							               receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
 							               receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
@@ -2134,7 +2129,6 @@ static void RB_RenderInteractionsShadowMapped()
 
 							MatrixCrop(cropMatrix, cropBounds[0], cropBounds[1]);
 #endif
-
 
 							MatrixMultiplyMOD(cropMatrix, projectionMatrix, light->projectionMatrix);
 
@@ -2230,7 +2224,6 @@ static void RB_RenderInteractionsShadowMapped()
 					                 1.0 / light->l.radius[2]);
 					break;
 				}
-
 				case RL_DIRECTIONAL:
 				{
 					// draw split frustum shadow maps
@@ -2584,7 +2577,7 @@ static void RB_RenderInteractionsShadowMapped()
 			{
 			case RL_OMNI:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
+				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
 				MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
 				MatrixMultiply2(light->attenuationMatrix, modelToLight);
@@ -2606,7 +2599,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 			case RL_DIRECTIONAL:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
+				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
 				MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
 				MatrixMultiply2(light->attenuationMatrix, modelToLight);
@@ -3140,7 +3133,6 @@ skipInteraction:
 								#endif
 							break;
 						}
-
 						case RL_PROJ:
 						{
 							vec3_t farCorners[4];
@@ -3190,7 +3182,6 @@ skipInteraction:
 								Vector4Set(quadVerts[2], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1);
 								Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
 								Tess_AddQuadStamp2(quadVerts, colorGreen);
-
 							}
 							else
 							{
@@ -3572,29 +3563,27 @@ skipInteraction:
 
 static void RB_RenderInteractionsDeferredShadowMapped()
 {
-	interaction_t *ia;
-	int           iaCount;
-	int           iaFirst;
-	shader_t      *shader, *oldShader;
-	trRefEntity_t *entity, *oldEntity;
-	trRefLight_t  *light, *oldLight;
-	surfaceType_t *surface;
-	qboolean      depthRange, oldDepthRange;
-	qboolean      alphaTest, oldAlphaTest;
-	deformType_t  deformType, oldDeformType;
-	qboolean      drawShadows;
-	int           cubeSide;
-
+	interaction_t  *ia;
+	int            iaCount;
+	int            iaFirst;
+	shader_t       *shader, *oldShader;
+	trRefEntity_t  *entity, *oldEntity;
+	trRefLight_t   *light, *oldLight;
+	surfaceType_t  *surface;
+	qboolean       depthRange, oldDepthRange;
+	qboolean       alphaTest, oldAlphaTest;
+	deformType_t   deformType, oldDeformType;
+	qboolean       drawShadows;
+	int            cubeSide;
 	int            splitFrustumIndex;
 	const matrix_t bias = { 0.5, 0.0, 0.0, 0.0,
 		                    0.0, 0.5, 0.0, 0.0,
 		                    0.0, 0.0, 0.5, 0.0,
 		                    0.5, 0.5, 0.5, 1.0 };
-
-	shader_t      *lightShader;
-	shaderStage_t *attenuationXYStage;
-	shaderStage_t *attenuationZStage;
-	int           i, j;
+	shader_t       *lightShader;
+	shaderStage_t  *attenuationXYStage;
+	shaderStage_t  *attenuationZStage;
+	int            i, j;
 	//vec3_t          viewOrigin;
 	//vec3_t          lightOrigin;
 	vec3_t lightDirection;
@@ -3730,7 +3719,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							flipY = qfalse;
 							break;
 						}
-
 						case 1:
 						{
 							VectorSet(angles, 0, 180, 90);
@@ -3738,7 +3726,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							flipY = qtrue;
 							break;
 						}
-
 						case 2:
 						{
 							VectorSet(angles, 0, 90, 0);
@@ -3746,7 +3733,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							flipY = qfalse;
 							break;
 						}
-
 						case 3:
 						{
 							VectorSet(angles, 0, -90, 0);
@@ -3754,7 +3740,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							flipY = qtrue;
 							break;
 						}
-
 						case 4:
 						{
 							VectorSet(angles, -90, 90, 0);
@@ -3762,7 +3747,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							flipY = qfalse;
 							break;
 						}
-
 						case 5:
 						{
 							VectorSet(angles, 90, 90, 0);
@@ -3770,7 +3754,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							flipY = qtrue;
 							break;
 						}
-
 						default:
 						{
 							// shut up compiler
@@ -3812,7 +3795,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
 					}
-
 					case RL_PROJ:
 					{
 						Ren_LogComment("--- Rendering projective shadowMap ---\n");
@@ -3833,7 +3815,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
 					}
-
 					case RL_DIRECTIONAL:
 					{
 						vec3_t   angles;
@@ -3868,7 +3849,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_Scissor(0, 0, sunShadowMapResolutions[splitFrustumIndex], sunShadowMapResolutions[splitFrustumIndex]);
 
 						glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
 #if 1
 						VectorCopy(tr.sunDirection, lightDirection);
@@ -3931,7 +3911,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							ri.Printf(PRINT_ALL, "up = (%5.3f, %5.3f, %5.3f)\n", up[0], up[1], up[2]);
 #endif
 
-
 #if 0
 							for (j = 0; j < 6; j++)
 							{
@@ -3944,27 +3923,27 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_RIGHT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_NEAR], splitFrustumCorners[2]);
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_LEFT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_NEAR], splitFrustumCorners[3]);
 
-								#if 0
+#if 0
 							ri.Printf(PRINT_ALL, "split frustum %i\n", splitFrustumIndex);
 							ri.Printf(PRINT_ALL, "pyramid nearCorners\n");
 							for (j = 0; j < 4; j++)
 							{
 								ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 							}
-								#endif
+#endif
 
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_LEFT], splitFrustum[FRUSTUM_TOP], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[4]);
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_RIGHT], splitFrustum[FRUSTUM_TOP], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[5]);
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_RIGHT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[6]);
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_LEFT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[7]);
 
-								#if 0
+#if 0
 							ri.Printf(PRINT_ALL, "pyramid farCorners\n");
 							for (j = 4; j < 8; j++)
 							{
 								ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 							}
-								#endif
+#endif
 #endif
 
 							ClearBounds(splitFrustumBounds[0], splitFrustumBounds[1]);
@@ -3984,7 +3963,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								point[1] = splitFrustumBounds[(j >> 1) & 1][1];
 								point[2] = splitFrustumBounds[(j >> 2) & 1][2];
 								point[3] = 1;
-
 #if 1
 								MatrixTransform4(light->viewMatrix, point, transf);
 								transf[0] /= transf[3];
@@ -3995,7 +3973,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 #endif
 								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 							}
-
 
 #if 0
 							MatrixOrthogonalProjection(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], cropBounds[0][2], cropBounds[1][2]);
@@ -4322,7 +4299,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								AddPointToBounds(splitFrustumCorners[i], splitFrustumBounds[0], splitFrustumBounds[1]);
 							}
 
-
 #if 0
 							// find the bounding box of the current split in the light's view space
 							ClearBounds(splitFrustumViewBounds[0], splitFrustumViewBounds[1]);
@@ -4565,7 +4541,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
 					break;
 				}
-
 				case RL_PROJ:
 				{
 					// build the attenuation matrix
@@ -4577,7 +4552,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
 					break;
 				}
-
 				case RL_DIRECTIONAL:
 				{
 					matrix_t viewMatrix, projectionMatrix;
@@ -4591,7 +4565,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					MatrixMultiply2(light->attenuationMatrix, viewMatrix);
 					break;
 				}
-
 				default:
 					break;
 				}
@@ -4673,7 +4646,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								#endif
 							break;
 						}
-
 						case RL_PROJ:
 						{
 							vec3_t farCorners[4];
@@ -4761,7 +4733,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
 							break;
 						}
-
 						default:
 							break;
 						}
@@ -5379,7 +5350,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 				}
 				break;
 			}
-
 			default:
 				break;
 			}
@@ -6129,18 +6099,16 @@ static void RB_CalculateAdaptation()
 {
 	int          i;
 	static float image[64 * 64 * 4];
-	float        curTime;
+	float        curTime = ri.Milliseconds() / 1000.0f;
 	float        deltaTime;
 	float        luminance;
 	float        avgLuminance;
-	float        maxLuminance;
-	double       sum;
+	float        maxLuminance     = 0.0f;
+	double       sum              = 0.0f;
 	const vec3_t LUMINANCE_VECTOR = { 0.2125f, 0.7154f, 0.0721f };
 	vec4_t       color;
 	float        newAdaptation;
 	float        newMaximum;
-
-	curTime = ri.Milliseconds() / 1000.0f;
 
 	// calculate the average scene luminance
 	R_BindFBO(tr.downScaleFBO_64x64);
@@ -6149,8 +6117,6 @@ static void RB_CalculateAdaptation()
 	//glFinish();
 	glReadPixels(0, 0, 64, 64, GL_RGBA, GL_FLOAT, image);
 
-	sum          = 0.0f;
-	maxLuminance = 0.0f;
 	for (i = 0; i < (64 * 64 * 4); i += 4)
 	{
 		color[0] = image[i + 0];
@@ -6406,7 +6372,6 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 			Tess_DrawElements();
 			break;
 		}
-
 		case RL_PROJ:
 		{
 			vec3_t farCorners[4];
@@ -6492,7 +6457,6 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 			Tess_DrawElements();
 			break;
 		}
-
 		default:
 			break;
 		}
@@ -6716,11 +6680,9 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light)
 
 static int LightCompare(const void *a, const void *b)
 {
-	trRefLight_t *l1, *l2;
 	float        d1, d2;
-
-	l1 = (trRefLight_t *) *(void **)a;
-	l2 = (trRefLight_t *) *(void **)b;
+	trRefLight_t *l1 = (trRefLight_t *) *(void **)a;
+	trRefLight_t *l2 = (trRefLight_t *) *(void **)b;
 
 	d1 = DistanceSquared(backEnd.viewParms.orientation.origin, l1->l.origin);
 	d2 = DistanceSquared(backEnd.viewParms.orientation.origin, l2->l.origin);
@@ -7297,11 +7259,9 @@ static void GetEntityOcclusionQueryResult(trRefEntity_t *entity)
 
 static int EntityCompare(const void *a, const void *b)
 {
-	trRefEntity_t *e1, *e2;
 	float         d1, d2;
-
-	e1 = (trRefEntity_t *) *(void **)a;
-	e2 = (trRefEntity_t *) *(void **)b;
+	trRefEntity_t *e1 = (trRefEntity_t *) *(void **)a;
+	trRefEntity_t *e2 = (trRefEntity_t *) *(void **)b;
 
 	d1 = DistanceSquared(backEnd.viewParms.orientation.origin, e1->e.origin);
 	d2 = DistanceSquared(backEnd.viewParms.orientation.origin, e2->e.origin);
@@ -8377,7 +8337,6 @@ static void RB_RenderDebugUtils()
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
 
 			tess.multiDrawPrimitives = 0;
 			tess.numVertexes         = 0;
@@ -9510,7 +9469,7 @@ static void RB_RenderViewFront(void)
 	{
 		clearBits |= GL_STENCIL_BUFFER_BIT;
 	}
-	// ydnar: global q3 fog volume
+	// global q3 fog volume
 	else if (tr.world && tr.world->globalFog >= 0)
 	{
 		clearBits |= GL_DEPTH_BUFFER_BIT;
@@ -9531,7 +9490,7 @@ static void RB_RenderViewFront(void)
 			// portal scene, clear whatever is necessary
 			clearBits |= GL_DEPTH_BUFFER_BIT;
 
-			if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+			if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 			{
 				// fastsky: clear color
 
@@ -9605,13 +9564,12 @@ static void RB_RenderViewFront(void)
 		// world scene with no portal sky
 		clearBits |= GL_DEPTH_BUFFER_BIT;
 
-		// NERVE - SMF - we don't want to clear the buffer when no world model is specified
+		// we don't want to clear the buffer when no world model is specified
 		if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
 		}
-		// -NERVE - SMF
-		else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+		else if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 		{
 			clearBits |= GL_COLOR_BUFFER_BIT;
 
@@ -9623,8 +9581,8 @@ static void RB_RenderViewFront(void)
 			}
 			else
 			{
-				//              GL_ClearColor ( 0.0, 0.0, 1.0, 1.0 );   // blue clear for testing world sky clear
-				GL_ClearColor(0.05, 0.05, 0.05, 1.0);   // JPW NERVE changed per id req was 0.5s
+				//GL_ClearColor ( 0.0, 0.0, 1.0, 1.0 ); // blue clear for testing world sky clear
+				GL_ClearColor(0.05, 0.05, 0.05, 1.0);   // changed per id req was 0.5s
 			}
 		}
 		else
@@ -10070,11 +10028,9 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 
 const void *RB_SetColor(const void *data)
 {
-	const setColorCommand_t *cmd;
+	const setColorCommand_t *cmd = (const setColorCommand_t *)data;
 
 	Ren_LogComment("--- RB_SetColor ---\n");
-
-	cmd = (const setColorCommand_t *)data;
 
 	backEnd.color2D[0] = cmd->color[0];
 	backEnd.color2D[1] = cmd->color[1];
@@ -10087,13 +10043,11 @@ const void *RB_SetColor(const void *data)
 const void *RB_StretchPic(const void *data)
 {
 	int                       i;
-	const stretchPicCommand_t *cmd;
+	const stretchPicCommand_t *cmd = (const stretchPicCommand_t *)data;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 
 	Ren_LogComment("--- RB_StretchPic ---\n");
-
-	cmd = (const stretchPicCommand_t *)data;
 
 	if (!backEnd.projection2D)
 	{
@@ -10179,11 +10133,9 @@ const void *RB_StretchPic(const void *data)
 
 const void *RB_Draw2dPolys(const void *data)
 {
-	const poly2dCommand_t *cmd;
+	const poly2dCommand_t *cmd = (const poly2dCommand_t *)data;
 	shader_t              *shader;
 	int                   i;
-
-	cmd = (const poly2dCommand_t *)data;
 
 	if (!backEnd.projection2D)
 	{
@@ -10233,14 +10185,12 @@ const void *RB_Draw2dPolys(const void *data)
 
 const void *RB_RotatedPic(const void *data)
 {
-	const stretchPicCommand_t *cmd;
+	const stretchPicCommand_t *cmd = (const stretchPicCommand_t *)data;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 	float                     angle;
 	float                     mx, my, mw, mh;
 	float                     pi2 = M_PI * 2;
-
-	cmd = (const stretchPicCommand_t *)data;
 
 	if (!backEnd.projection2D)
 	{
@@ -10328,12 +10278,10 @@ const void *RB_RotatedPic(const void *data)
 
 const void *RB_StretchPicGradient(const void *data)
 {
-	const stretchPicCommand_t *cmd;
+	const stretchPicCommand_t *cmd = (const stretchPicCommand_t *)data;
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 	int                       i;
-
-	cmd = (const stretchPicCommand_t *)data;
 
 	if (!backEnd.projection2D)
 	{
@@ -10436,11 +10384,9 @@ const void *RB_DrawView(const void *data)
 
 const void *RB_DrawBuffer(const void *data)
 {
-	const drawBufferCommand_t *cmd;
+	const drawBufferCommand_t *cmd = (const drawBufferCommand_t *)data;
 
 	Ren_LogComment("--- RB_DrawBuffer ---\n");
-
-	cmd = (const drawBufferCommand_t *)data;
 
 	GL_DrawBuffer(cmd->buffer);
 
@@ -10634,18 +10580,16 @@ const void *RB_SwapBuffers(const void *data)
 
 const void *RB_RenderToTexture(const void *data)
 {
-	const renderToTextureCommand_t *cmd;
+	const renderToTextureCommand_t *cmd = (const renderToTextureCommand_t *)data;
 
-//  ri.Printf( PRINT_ALL, "RB_RenderToTexture\n" );
-
-	cmd = (const renderToTextureCommand_t *)data;
+	//ri.Printf( PRINT_ALL, "RB_RenderToTexture\n" );
 
 	GL_Bind(cmd->image);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cmd->x, cmd->y, cmd->w, cmd->h, 0);
-//  glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
+	//glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
 
 	return (const void *)(cmd + 1);
 }

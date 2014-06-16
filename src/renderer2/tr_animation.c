@@ -89,9 +89,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 	md5Channel_t   *channel;
 	char           *token;
 	int            version;
-	char           *buf_p;
-
-	buf_p = (char *)buffer;
+	char           *buf_p = (char *)buffer;
 
 	skelAnim->type = AT_MD5;
 	skelAnim->md5  = anim = (md5Animation_t *)ri.Hunk_Alloc(sizeof(*anim), h_low);
@@ -440,15 +438,12 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 	int               numReferenceBones;
 	axReferenceBone_t *refBone;
 	axReferenceBone_t *refBones;
-
 	int               numSequences;
 	axAnimationInfo_t *animInfo;
-
-	axAnimationKey_t *key;
-
-	psaAnimation_t  *psa;
-	skelAnimation_t *extraAnim;
-	growList_t      extraAnims;
+	axAnimationKey_t  *key;
+	psaAnimation_t    *psa;
+	skelAnimation_t   *extraAnim;
+	growList_t        extraAnims;
 
 	stream = AllocMemStream(buffer, bufferSize);
 	GetChunkHeader(stream, &chunkHeader);
@@ -1264,11 +1259,9 @@ int RE_CheckSkeleton(refSkeleton_t *skel, qhandle_t hModel, qhandle_t hAnim)
 
 	if (skelAnim->type == AT_MD5 && skelAnim->md5)
 	{
-		md5Animation_t *md5Animation;
+		md5Animation_t *md5Animation = skelAnim->md5;
 		md5Bone_t      *md5Bone;
 		md5Channel_t   *md5Channel;
-
-		md5Animation = skelAnim->md5;
 
 		if (md5Model->numBones != md5Animation->numChannels)
 		{
@@ -1291,11 +1284,9 @@ int RE_CheckSkeleton(refSkeleton_t *skel, qhandle_t hModel, qhandle_t hAnim)
 	}
 	else if (skelAnim->type == AT_PSA && skelAnim->psa)
 	{
-		psaAnimation_t    *psaAnimation;
+		psaAnimation_t    *psaAnimation = skelAnim->psa;
 		axReferenceBone_t *refBone;
 		md5Bone_t         *md5Bone;
-
-		psaAnimation = skelAnim->psa;
 
 		if (md5Model->numBones != psaAnimation->info.numBones)
 		{
@@ -1336,14 +1327,12 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 	if (skelAnim->type == AT_MD5 && skelAnim->md5)
 	{
 		int            i;
-		md5Animation_t *anim;
+		md5Animation_t *anim = skelAnim->md5;
 		md5Channel_t   *channel;
 		md5Frame_t     *newFrame, *oldFrame;
 		vec3_t         newOrigin, oldOrigin, lerpedOrigin;
 		quat_t         newQuat, oldQuat, lerpedQuat;
 		int            componentsApplied;
-
-		anim = skelAnim->md5;
 
 		// Validate the frames so there is no chance of a crash.
 		// This will write directly into the entity structure, so
@@ -1471,14 +1460,12 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 	else if (skelAnim->type == AT_PSA && skelAnim->psa)
 	{
 		int               i;
-		psaAnimation_t    *anim;
+		psaAnimation_t    *anim = skelAnim->psa;
 		axAnimationKey_t  *newKey, *oldKey;
 		axReferenceBone_t *refBone;
 		vec3_t            newOrigin, oldOrigin, lerpedOrigin;
 		quat_t            newQuat, oldQuat, lerpedQuat;
 		refSkeleton_t     skeleton;
-
-		anim = skelAnim->psa;
 
 		Q_clamp(startFrame, 0, anim->info.numRawFrames - 1);
 		Q_clamp(endFrame, 0, anim->info.numRawFrames - 1);
@@ -1537,11 +1524,8 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 			{
 				vec3_t    rotated;
 				quat_t    quat;
-				refBone_t *parent;
-				refBone_t *bone;
-
-				bone   = &skeleton.bones[i];
-				parent = &skeleton.bones[refBone->parentIndex];
+				refBone_t *bone   = &skeleton.bones[i];
+				refBone_t *parent = &skeleton.bones[refBone->parentIndex];
 
 				QuatTransformVector(parent->rotation, bone->origin, rotated);
 

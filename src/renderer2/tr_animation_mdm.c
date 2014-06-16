@@ -737,6 +737,7 @@ static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 	forward[1] = cp * sy;
 	forward[2] = -sp;
 }
+
 static ID_INLINE void LocalVectorMA(vec3_t org, float dist, vec3_t vec, vec3_t out)
 {
 	out[0] = org[0] + dist * vec[0];
