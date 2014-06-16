@@ -808,14 +808,13 @@ gclient_t *G_GetPlayerByNum(int clientNum)
 		return NULL;
 	}
 
-	if (cl)
+	if (!cl)
 	{
-		return cl;
+		G_Printf("User %d is not on the server\n", clientNum);
+		return NULL;
 	}
 
-	G_Printf("User %d is not on the server\n", clientNum);
-
-	return NULL;
+	return cl;
 }
 
 gclient_t *G_GetPlayerByName(char *name)
