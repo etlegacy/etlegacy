@@ -746,6 +746,9 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	}
 	cmd->commandId = RC_SWAP_BUFFERS;
 
+	R_BindNullVBO();
+	R_BindNullIBO();
+
 	R_IssueRenderCommands(qtrue);
 
 	// use the other buffers next frame, because another CPU

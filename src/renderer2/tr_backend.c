@@ -29,7 +29,7 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file tr_abckend.c
+ * @file tr_backend.c
  */
 
 #include "tr_local.h"
@@ -37,611 +37,8 @@
 backEndData_t  *backEndData[SMP_FRAMES];
 backEndState_t backEnd;
 
-void GL_Bind(image_t *image)
-{
-	int texnum;
-
-	if (!image)
-	{
-		ri.Printf(PRINT_WARNING, "GL_Bind: NULL image\n");
-		image = tr.defaultImage;
-	}
-	else
-	{
-		Ren_LogComment("--- GL_Bind( %s ) ---\n", image->name);
-	}
-
-	texnum = image->texnum;
-
-	if (r_nobind->integer && tr.blackImage)
-	{
-		// performance evaluation option
-		texnum = tr.blackImage->texnum;
-	}
-
-	if (glState.currenttextures[glState.currenttmu] != texnum)
-	{
-		image->frameUsed                            = tr.frameCount;
-		glState.currenttextures[glState.currenttmu] = texnum;
-		glBindTexture(image->type, texnum);
-	}
-}
-
-void GL_Unbind()
-{
-	Ren_LogComment("--- GL_Unbind() ---\n");
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void BindAnimatedImage(textureBundle_t *bundle)
-{
-	int index;
-
-	if (bundle->isVideoMap)
-	{
-		ri.CIN_RunCinematic(bundle->videoMapHandle);
-		ri.CIN_UploadCinematic(bundle->videoMapHandle);
-		return;
-	}
-
-	if (bundle->numImages <= 1)
-	{
-		GL_Bind(bundle->image[0]);
-		return;
-	}
-
-	// it is necessary to do this messy calc to make sure animations line up
-	// exactly with waveforms of the same frequency
-	index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-	index >>= FUNCTABLE_SIZE2;
-
-	if (index < 0)
-	{
-		index = 0;              // may happen with shader time offsets
-	}
-	index %= bundle->numImages;
-
-	GL_Bind(bundle->image[index]);
-}
-
-void GL_TextureFilter(image_t *image, filterType_t filterType)
-{
-	if (!image)
-	{
-		ri.Printf(PRINT_WARNING, "GL_TextureFilter: NULL image\n");
-	}
-	else
-	{
-		Ren_LogComment("--- GL_TextureFilter( %s ) ---\n", image->name);
-	}
-
-	if (image->filterType == filterType)
-	{
-		return;
-	}
-
-	// set filter type
-	switch (image->filterType)
-	{
-	/*
-	   case FT_DEFAULT:
-	   glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-	   glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-
-	   // set texture anisotropy
-	   if(glConfig2.textureAnisotropyAvailable)
-	   glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
-	   break;
-	 */
-
-	case FT_LINEAR:
-		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		break;
-
-	case FT_NEAREST:
-		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		break;
-
-	default:
-		break;
-	}
-}
-
-void GL_SelectTexture(int unit)
-{
-	if (glState.currenttmu == unit)
-	{
-		return;
-	}
-
-	if (unit >= 0 && unit <= 31)
-	{
-		glActiveTexture(GL_TEXTURE0 + unit);
-
-		Ren_LogComment("glActiveTexture( GL_TEXTURE%i )\n", unit);
-	}
-	else
-	{
-		ri.Error(ERR_DROP, "GL_SelectTexture: unit = %i", unit);
-	}
-
-	glState.currenttmu = unit;
-}
-
-void GL_BlendFunc(GLenum sfactor, GLenum dfactor)
-{
-	if (glState.blendSrc != sfactor || glState.blendDst != dfactor)
-	{
-		glState.blendSrc = sfactor;
-		glState.blendDst = dfactor;
-
-		glBlendFunc(sfactor, dfactor);
-	}
-}
-
-void GL_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
-{
-	if (glState.clearColorRed != red || glState.clearColorGreen != green || glState.clearColorBlue != blue || glState.clearColorAlpha != alpha)
-	{
-		glState.clearColorRed   = red;
-		glState.clearColorGreen = green;
-		glState.clearColorBlue  = blue;
-		glState.clearColorAlpha = alpha;
-
-		glClearColor(red, green, blue, alpha);
-	}
-}
-
-void GL_ClearDepth(GLclampd depth)
-{
-	if (glState.clearDepth != depth)
-	{
-		glState.clearDepth = depth;
-
-		glClearDepth(depth);
-	}
-}
-
-void GL_ClearStencil(GLint s)
-{
-	if (glState.clearStencil != s)
-	{
-		glState.clearStencil = s;
-
-		glClearStencil(s);
-	}
-}
-
-void GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha)
-{
-	if (glState.colorMaskRed != red || glState.colorMaskGreen != green || glState.colorMaskBlue != blue || glState.colorMaskAlpha != alpha)
-	{
-		glState.colorMaskRed   = red;
-		glState.colorMaskGreen = green;
-		glState.colorMaskBlue  = blue;
-		glState.colorMaskAlpha = alpha;
-
-		glColorMask(red, green, blue, alpha);
-	}
-}
-
-void GL_CullFace(GLenum mode)
-{
-	if (glState.cullFace != mode)
-	{
-		glState.cullFace = mode;
-
-		glCullFace(mode);
-	}
-}
-
-void GL_DepthFunc(GLenum func)
-{
-	if (glState.depthFunc != func)
-	{
-		glState.depthFunc = func;
-
-		glDepthFunc(func);
-	}
-}
-
-void GL_DepthMask(GLboolean flag)
-{
-	if (glState.depthMask != flag)
-	{
-		glState.depthMask = flag;
-
-		glDepthMask(flag);
-	}
-}
-
-void GL_DrawBuffer(GLenum mode)
-{
-	if (glState.drawBuffer != mode)
-	{
-		glState.drawBuffer = mode;
-
-		glDrawBuffer(mode);
-	}
-}
-
-void GL_FrontFace(GLenum mode)
-{
-	if (glState.frontFace != mode)
-	{
-		glState.frontFace = mode;
-
-		glFrontFace(mode);
-	}
-}
-
-void GL_LoadModelViewMatrix(const matrix_t m)
-{
-	if (MatrixCompare(GLSTACK_MVM, m))
-	{
-		return;
-	}
-
-	MatrixCopy(m, GLSTACK_MVM);
-	MatrixMultiplyMOD(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
-}
-
-void GL_LoadProjectionMatrix(const matrix_t m)
-{
-	if (MatrixCompare(GLSTACK_PM, m))
-	{
-		return;
-	}
-
-	MatrixCopy(m, GLSTACK_PM);
-	MatrixMultiplyMOD(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
-}
-
-void GL_PushMatrix()
-{
-	glState.stackIndex++;
-
-	if (glState.stackIndex >= MAX_GLSTACK)
-	{
-		glState.stackIndex = MAX_GLSTACK - 1;
-		ri.Error(ERR_DROP, "GL_PushMatrix: stack overflow = %i", glState.stackIndex);
-	}
-}
-
-void GL_PopMatrix()
-{
-	glState.stackIndex--;
-
-	if (glState.stackIndex < 0)
-	{
-		glState.stackIndex = 0;
-		ri.Error(ERR_DROP, "GL_PopMatrix: stack underflow");
-	}
-}
-
-void GL_PolygonMode(GLenum face, GLenum mode)
-{
-	if (glState.polygonFace != face || glState.polygonMode != mode)
-	{
-		glState.polygonFace = face;
-		glState.polygonMode = mode;
-
-		glPolygonMode(face, mode);
-	}
-}
-
-void GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-	if (glState.scissorX != x || glState.scissorY != y || glState.scissorWidth != width || glState.scissorHeight != height)
-	{
-		glState.scissorX      = x;
-		glState.scissorY      = y;
-		glState.scissorWidth  = width;
-		glState.scissorHeight = height;
-
-		glScissor(x, y, width, height);
-	}
-}
-
-void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-	if (glState.viewportX != x || glState.viewportY != y || glState.viewportWidth != width || glState.viewportHeight != height)
-	{
-		glState.viewportX      = x;
-		glState.viewportY      = y;
-		glState.viewportWidth  = width;
-		glState.viewportHeight = height;
-
-		glViewport(x, y, width, height);
-	}
-}
-
-void GL_PolygonOffset(float factor, float units)
-{
-	if (glState.polygonOffsetFactor != factor || glState.polygonOffsetUnits != units)
-	{
-		glState.polygonOffsetFactor = factor;
-		glState.polygonOffsetUnits  = units;
-
-		glPolygonOffset(factor, units);
-	}
-}
-
-void GL_Cull(int cullType)
-{
-	if (backEnd.viewParms.isMirror)
-	{
-		GL_FrontFace(GL_CW);
-	}
-	else
-	{
-		GL_FrontFace(GL_CCW);
-	}
-
-	if (glState.faceCulling == cullType)
-	{
-		return;
-	}
-
-	glState.faceCulling = cullType;
-
-	if (cullType == CT_TWO_SIDED)
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	else
-	{
-		glEnable(GL_CULL_FACE);
-
-		if (cullType == CT_BACK_SIDED)
-		{
-			GL_CullFace(GL_BACK);
-		}
-		else
-		{
-			GL_CullFace(GL_FRONT);
-		}
-	}
-}
-
-/**
- * @brief This routine is responsible for setting the most commonly changed state in Q3.
- */
-void GL_State(uint32_t stateBits)
-{
-	uint32_t diff = stateBits ^ glState.glStateBits;
-
-	if (!diff)
-	{
-		return;
-	}
-
-	// check depthFunc bits
-	if (diff & GLS_DEPTHFUNC_BITS)
-	{
-		switch (stateBits & GLS_DEPTHFUNC_BITS)
-		{
-		default:
-			GL_DepthFunc(GL_LEQUAL);
-			break;
-		case GLS_DEPTHFUNC_LESS:
-			GL_DepthFunc(GL_LESS);
-			break;
-		case GLS_DEPTHFUNC_EQUAL:
-			GL_DepthFunc(GL_EQUAL);
-			break;
-		}
-	}
-
-	// check blend bits
-	if (diff & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS))
-	{
-		GLenum srcFactor, dstFactor;
-
-		if (stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS))
-		{
-			switch (stateBits & GLS_SRCBLEND_BITS)
-			{
-			case GLS_SRCBLEND_ZERO:
-				srcFactor = GL_ZERO;
-				break;
-			case GLS_SRCBLEND_ONE:
-				srcFactor = GL_ONE;
-				break;
-			case GLS_SRCBLEND_DST_COLOR:
-				srcFactor = GL_DST_COLOR;
-				break;
-			case GLS_SRCBLEND_ONE_MINUS_DST_COLOR:
-				srcFactor = GL_ONE_MINUS_DST_COLOR;
-				break;
-			case GLS_SRCBLEND_SRC_ALPHA:
-				srcFactor = GL_SRC_ALPHA;
-				break;
-			case GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA:
-				srcFactor = GL_ONE_MINUS_SRC_ALPHA;
-				break;
-			case GLS_SRCBLEND_DST_ALPHA:
-				srcFactor = GL_DST_ALPHA;
-				break;
-			case GLS_SRCBLEND_ONE_MINUS_DST_ALPHA:
-				srcFactor = GL_ONE_MINUS_DST_ALPHA;
-				break;
-			case GLS_SRCBLEND_ALPHA_SATURATE:
-				srcFactor = GL_SRC_ALPHA_SATURATE;
-				break;
-			default:
-				srcFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid src blend state bits\n");
-				break;
-			}
-
-			switch (stateBits & GLS_DSTBLEND_BITS)
-			{
-			case GLS_DSTBLEND_ZERO:
-				dstFactor = GL_ZERO;
-				break;
-			case GLS_DSTBLEND_ONE:
-				dstFactor = GL_ONE;
-				break;
-			case GLS_DSTBLEND_SRC_COLOR:
-				dstFactor = GL_SRC_COLOR;
-				break;
-			case GLS_DSTBLEND_ONE_MINUS_SRC_COLOR:
-				dstFactor = GL_ONE_MINUS_SRC_COLOR;
-				break;
-			case GLS_DSTBLEND_SRC_ALPHA:
-				dstFactor = GL_SRC_ALPHA;
-				break;
-			case GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA:
-				dstFactor = GL_ONE_MINUS_SRC_ALPHA;
-				break;
-			case GLS_DSTBLEND_DST_ALPHA:
-				dstFactor = GL_DST_ALPHA;
-				break;
-			case GLS_DSTBLEND_ONE_MINUS_DST_ALPHA:
-				dstFactor = GL_ONE_MINUS_DST_ALPHA;
-				break;
-			default:
-				dstFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid dst blend state bits\n");
-				break;
-			}
-
-			glEnable(GL_BLEND);
-			GL_BlendFunc(srcFactor, dstFactor);
-		}
-		else
-		{
-			glDisable(GL_BLEND);
-		}
-	}
-
-	// check colormask
-	if (diff & GLS_COLORMASK_BITS)
-	{
-		if (stateBits & GLS_COLORMASK_BITS)
-		{
-			GL_ColorMask((stateBits & GLS_REDMASK_FALSE) ? GL_FALSE : GL_TRUE,
-			             (stateBits & GLS_GREENMASK_FALSE) ? GL_FALSE : GL_TRUE,
-			             (stateBits & GLS_BLUEMASK_FALSE) ? GL_FALSE : GL_TRUE,
-			             (stateBits & GLS_ALPHAMASK_FALSE) ? GL_FALSE : GL_TRUE);
-		}
-		else
-		{
-			GL_ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-		}
-	}
-
-	// check depthmask
-	if (diff & GLS_DEPTHMASK_TRUE)
-	{
-		if (stateBits & GLS_DEPTHMASK_TRUE)
-		{
-			GL_DepthMask(GL_TRUE);
-		}
-		else
-		{
-			GL_DepthMask(GL_FALSE);
-		}
-	}
-
-	// fill/line mode
-	if (diff & GLS_POLYMODE_LINE)
-	{
-		if (stateBits & GLS_POLYMODE_LINE)
-		{
-			GL_PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			GL_PolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-	}
-
-	// depthtest
-	if (diff & GLS_DEPTHTEST_DISABLE)
-	{
-		if (stateBits & GLS_DEPTHTEST_DISABLE)
-		{
-			glDisable(GL_DEPTH_TEST);
-		}
-		else
-		{
-			glEnable(GL_DEPTH_TEST);
-		}
-	}
-
-	// alpha test - deprecated in OpenGL 3.0
-#if 0
-	if (diff & GLS_ATEST_BITS)
-	{
-		switch (stateBits & GLS_ATEST_BITS)
-		{
-		case GLS_ATEST_GT_0:
-		case GLS_ATEST_LT_128:
-		case GLS_ATEST_GE_128:
-			//case GLS_ATEST_GT_CUSTOM:
-			glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-			break;
-
-		default:
-		case 0:
-			glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-			break;
-		}
-	}
-#endif
-
-	/*
-	   if(diff & GLS_ATEST_BITS)
-	   {
-	   switch (stateBits & GLS_ATEST_BITS)
-	   {
-	   case 0:
-	   glDisable(GL_ALPHA_TEST);
-	   break;
-	   case GLS_ATEST_GT_0:
-	   glEnable(GL_ALPHA_TEST);
-	   glAlphaFunc(GL_GREATER, 0.0f);
-	   break;
-	   case GLS_ATEST_LT_80:
-	   glEnable(GL_ALPHA_TEST);
-	   glAlphaFunc(GL_LESS, 0.5f);
-	   break;
-	   case GLS_ATEST_GE_80:
-	   glEnable(GL_ALPHA_TEST);
-	   glAlphaFunc(GL_GEQUAL, 0.5f);
-	   break;
-	   case GLS_ATEST_GT_CUSTOM:
-	   // FIXME
-	   glEnable(GL_ALPHA_TEST);
-	   glAlphaFunc(GL_GREATER, 0.5f);
-	   break;
-	   default:
-	   assert(0);
-	   break;
-	   }
-	   }
-	 */
-
-	// stenciltest
-	if (diff & GLS_STENCILTEST_ENABLE)
-	{
-		if (stateBits & GLS_STENCILTEST_ENABLE)
-		{
-			glEnable(GL_STENCIL_TEST);
-		}
-		else
-		{
-			glDisable(GL_STENCIL_TEST);
-		}
-	}
-
-	glState.glStateBits = stateBits;
-}
+#define DRAWSCREENQUAD() Tess_InstantQuad(RB_GetScreenQuad())
+#define DRAWVIEWQUAD() Tess_InstantQuad(backEnd.viewParms.viewportVerts)
 
 /**
  * @brief A player has predicted a teleport, but hasn't arrived yet
@@ -657,7 +54,7 @@ static void RB_Hyperspace(void)
 
 	c = (backEnd.refdef.time & 255) / 255.0f;
 	GL_ClearColor(c, c, c, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL_Clear(GL_COLOR_BUFFER_BIT);
 
 	backEnd.isHyperspace = qtrue;
 }
@@ -701,9 +98,6 @@ static void RB_SetGL2D(void)
 	backEnd.refdef.time      = ri.Milliseconds();
 	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001f;
 }
-
-#define DRAWSCREENQUAD() Tess_InstantQuad(RB_GetScreenQuad())
-#define DRAWVIEWQUAD() Tess_InstantQuad(backEnd.viewParms.viewportVerts)
 
 static vec4_t *RB_GetScreenQuad(void)
 {
@@ -1660,7 +1054,7 @@ static void RB_RenderInteractionsShadowMapped()
 	splitFrustumIndex = 0;
 
 	// if we need to clear the FBO color buffers then it should be white
-	GL_ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	GL_ClearColor(GLCOLOR_WHITE);
 
 	// render interactions
 	for (iaCount = 0, iaFirst = 0, ia = &backEnd.viewParms.interactions[0]; iaCount < backEnd.viewParms.numInteractions; )
@@ -1740,7 +1134,7 @@ static void RB_RenderInteractionsShadowMapped()
 						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 
-						glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 						switch (cubeSide)
 						{
@@ -1852,7 +1246,7 @@ static void RB_RenderInteractionsShadowMapped()
 						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 
-						glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
@@ -1900,7 +1294,7 @@ static void RB_RenderInteractionsShadowMapped()
 						GL_Viewport(0, 0, sunShadowMapResolutions[splitFrustumIndex], sunShadowMapResolutions[splitFrustumIndex]);
 						GL_Scissor(0, 0, sunShadowMapResolutions[splitFrustumIndex], sunShadowMapResolutions[splitFrustumIndex]);
 
-						glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 							#if 1
 						VectorCopy(tr.sunDirection, lightDirection);
@@ -2771,7 +2165,7 @@ skipInteraction:
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 
 	// reset clear color
-	GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	GL_ClearColor(GLCOLOR_BLACK);
 
 	GL_CheckErrors();
 
@@ -3633,7 +3027,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 	                           -99999, 99999);
 
 	// if we need to clear the FBO color buffers then it should be white
-	GL_ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	GL_ClearColor(GLCOLOR_WHITE);
 
 	// render interactions
 	for (iaCount = 0, iaFirst = 0, ia = &backEnd.viewParms.interactions[0]; iaCount < backEnd.viewParms.numInteractions; )
@@ -3705,7 +3099,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 
-						glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 						switch (cubeSide)
 						{
@@ -3810,7 +3204,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 
-						glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
@@ -3848,7 +3242,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_Viewport(0, 0, sunShadowMapResolutions[splitFrustumIndex], sunShadowMapResolutions[splitFrustumIndex]);
 						GL_Scissor(0, 0, sunShadowMapResolutions[splitFrustumIndex], sunShadowMapResolutions[splitFrustumIndex]);
 
-						glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #if 1
 						VectorCopy(tr.sunDirection, lightDirection);
@@ -5585,7 +4979,7 @@ skipInteraction:
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 
 	// reset clear color
-	GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	GL_ClearColor(GLCOLOR_BLACK);
 
 	GL_CheckErrors();
 
@@ -5886,12 +5280,11 @@ void RB_RenderBloom()
 		GL_PopMatrix(); // special 1/4th of the screen contrastRenderFBO ortho
 
 		R_BindFBO(tr.contrastRenderFBO);
-		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL_ClearColor(GLCOLOR_BLACK);
+		GL_Clear(GL_COLOR_BUFFER_BIT);
 
 		// draw viewport
 		DRAWVIEWQUAD();
-
 
 		// render bloom in multiple passes
 		SetMacrosAndSelectProgram(gl_bloomShader);
@@ -5903,9 +5296,9 @@ void RB_RenderBloom()
 			for (j = 0; j < r_bloomPasses->integer; j++)
 			{
 				R_BindFBO(tr.bloomRenderFBO[(j + 1) % 2]);
-
-				GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-				glClear(GL_COLOR_BUFFER_BIT);
+				
+				GL_ClearColor(GLCOLOR_BLACK);
+				GL_Clear(GL_COLOR_BUFFER_BIT);
 
 				GL_State(GLS_DEPTHTEST_DISABLE);
 
@@ -7471,8 +6864,6 @@ void RB_RenderEntityOcclusionQueries()
 // ================================================================================================
 // BSP OCCLUSION CULLING
 // ================================================================================================
-
-#if 0
 void RB_RenderBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
@@ -7491,29 +6882,18 @@ void RB_RenderBspOcclusionQueries()
 		// set uniforms
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
 		SetUniformVec4(UNIFORM_COLOR, colorBlue);
-
-		GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
-
-		// set uniforms
-		gl_genericShader->SetTCGenEnvironment(qfalse);
-		gl_genericShader->SetUniform_ColorModulate(CGEN_CONST, AGEN_CONST);
-		gl_genericShader->SetUniform_Color(colorBlue);
-		if (glConfig2.vboVertexSkinningAvailable)
-		{
-			gl_genericShader->SetVertexSkinning(qfalse);
-		}
-		gl_genericShader->SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		gl_genericShader->SetUniform_AlphaTest(0);
+		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+		SetUniformInt(UNIFORM_ALPHATEST, 0);
 
 		// set up the transformation matrix
 		backEnd.orientation = backEnd.viewParms.world;
 		GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
-		gl_genericShader->SetUniform_ModelViewProjectionMatrix(GLSTACK_MVPM);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
 		GL_SelectTexture(0);
 		GL_Bind(tr.whiteImage);
-		gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 		// don't write to the color buffer or depth buffer
 		GL_State(GLS_COLORMASK_BITS);
@@ -7651,7 +7031,6 @@ void RB_CollectBspOcclusionQueries()
 		//ri.Printf(PRINT_ALL, "done\n");
 	}
 }
-#endif
 
 static void RB_RenderDebugUtils()
 {
@@ -9233,7 +8612,7 @@ static void RB_RenderViewDeferred(void)
 	// clear frame buffer objects
 	R_BindNullFBO();
 	//R_BindFBO(tr.deferredRenderFBO);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	clearBits = GL_DEPTH_BUFFER_BIT;
 
@@ -9246,15 +8625,15 @@ static void RB_RenderViewDeferred(void)
 	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		clearBits |= GL_COLOR_BUFFER_BIT;
-		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // FIXME: get color of sky
+		GL_ClearColor(GLCOLOR_BLACK);  // FIXME: get color of sky
 	}
-	glClear(clearBits);
+	GL_Clear(clearBits);
 
 	R_BindFBO(tr.geometricRenderFBO);
 	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		//clearBits = GL_COLOR_BUFFER_BIT;
-		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // FIXME: get color of sky
+		GL_ClearColor(GLCOLOR_BLACK);  // FIXME: get color of sky
 	}
 	else
 	{
@@ -9268,7 +8647,7 @@ static void RB_RenderViewDeferred(void)
 		}
 		    */
 	}
-	glClear(clearBits);
+	GL_Clear(clearBits);
 
 	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
 	{
@@ -9508,7 +8887,7 @@ static void RB_RenderViewFront(void)
 				}
 				else
 				{
-					//GL_ClearColor ( 1.0, 0.0, 0.0, 1.0 );   // red clear for testing portal sky clear
+					//GL_ClearColor(GLCOLOR_RED);   // red clear for testing portal sky clear
 					GL_ClearColor(0.5, 0.5, 0.5, 1.0);
 				}
 			}
@@ -9581,7 +8960,7 @@ static void RB_RenderViewFront(void)
 			}
 			else
 			{
-				//GL_ClearColor ( 0.0, 0.0, 1.0, 1.0 ); // blue clear for testing world sky clear
+				//GL_ClearColor(GLCOLOR_BLUE);   // blue clear for testing world sky clear
 				GL_ClearColor(0.05, 0.05, 0.05, 1.0);   // changed per id req was 0.5s
 			}
 		}
@@ -9609,7 +8988,7 @@ static void RB_RenderViewFront(void)
 		}
 	}
 
-	glClear(clearBits);
+	GL_Clear(clearBits);
 
 	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
 	{
@@ -9656,7 +9035,7 @@ static void RB_RenderViewFront(void)
 	}
 
 	// try to cull bsp nodes for the next frame using hardware occlusion queries
-	//RB_RenderBspOcclusionQueries();
+	RB_RenderBspOcclusionQueries();
 
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
@@ -9750,7 +9129,7 @@ static void RB_RenderViewFront(void)
 	RB_RenderFlares();
 
 	// wait until all bsp node occlusion queries are back
-	//RB_CollectBspOcclusionQueries();
+	RB_CollectBspOcclusionQueries();
 
 	// render debug information
 	RB_RenderDebugUtils();
@@ -10393,9 +9772,8 @@ const void *RB_DrawBuffer(const void *data)
 	// clear screen for debugging
 	if (r_clear->integer)
 	{
-		//GL_ClearColor(1, 0, 0.5, 1);
-		GL_ClearColor(0, 0, 0, 1);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GL_ClearColor(GLCOLOR_BLACK);
+		GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	return (const void *)(cmd + 1);
@@ -10426,7 +9804,7 @@ void RB_ShowImages(void)
 		RB_SetGL2D();
 	}
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL_Clear(GL_COLOR_BUFFER_BIT);
 
 	glFinish();
 

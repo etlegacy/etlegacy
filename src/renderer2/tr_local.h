@@ -3388,9 +3388,17 @@ void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, 
 
 /*
 ====================================================================
-OpenGL WRAPPERS, tr_backend.c
+OpenGL WRAPPERS, tr_gl.c
 ====================================================================
 */
+#define GLCOLOR_WHITE 1.0f, 1.0f, 1.0f, 1.0f
+#define GLCOLOR_BLACK 0.0f, 0.0f, 0.0f, 1.0f
+#define GLCOLOR_RED 1.0f, 0.0f, 0.0f, 1.0f
+#define GLCOLOR_GREEN 0.0f, 1.0f, 0.0f, 1.0f
+#define GLCOLOR_BLUE 0.0f, 0.0f, 1.0f, 1.0f
+
+#define GLCOLOR_NONE 0.0f, 0.0f, 0.0f, 0.0f
+
 void GL_Bind(image_t *image);
 void GL_BindNearestCubeMap(const vec3_t xyz);
 void GL_Unbind();
@@ -3418,10 +3426,16 @@ void GL_PolygonMode(GLenum face, GLenum mode);
 void GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
 void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 void GL_PolygonOffset(float factor, float units);
+void GL_Clear(unsigned int bits);
+
+void GL_State(uint32_t stateVector);
+void GL_Cull(int cullType);
 
 void GL_CheckErrors_(const char *filename, int line);
 
-#define GL_CheckErrors()    GL_CheckErrors_(__FILE__, __LINE__)
+#define GL_CheckErrors() GL_CheckErrors_(__FILE__, __LINE__)
+
+
 
 //ModelViewProjectionMatrix
 #define GLSTACK_MVPM glState.modelViewProjectionMatrix[glState.stackIndex]
@@ -3429,9 +3443,6 @@ void GL_CheckErrors_(const char *filename, int line);
 #define GLSTACK_PM glState.projectionMatrix[glState.stackIndex]
 //ModelViewMatrix
 #define GLSTACK_MVM glState.modelViewMatrix[glState.stackIndex]
-
-void GL_State(uint32_t stateVector);
-void GL_Cull(int cullType);
 
 void RB_SetViewMVPM(void);
 

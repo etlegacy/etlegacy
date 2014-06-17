@@ -31,13 +31,7 @@
  * @file sdl_glimp.c
  */
 
-#ifdef BUNDLED_SDL
-#    include "SDL.h"
-#    include "SDL_syswm.h"
-#else
-#    include <SDL/SDL.h>
-#    include <SDL/SDL_syswm.h>
-#endif
+#include "sdl_defs.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -1460,11 +1454,15 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 	SDL_putenv("SDL_DISABLE_LOCK_KEYS=1");
 #endif
 
+#if defined(_WIN32) && defined(_DEBUG)
+	SDL_putenv("SDL_VIDEODRIVER=windib");
+#endif
+
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
 		char driverName[64];
 
-		if (SDL_Init(SDL_INIT_VIDEO) == -1)
+		if (LegacySDL_Init(SDL_INIT_VIDEO) == -1)
 		{
 			ri.Printf(PRINT_ALL, "SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n",
 			          SDL_GetError());

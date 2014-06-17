@@ -1078,11 +1078,11 @@ void GL_SetDefaultState(void)
 	glDisable(GL_BLEND);
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClearDepth(1.0);
+	GL_ClearColor(GLCOLOR_BLACK);
+	GL_ClearDepth(1.0);
 
 	glDrawBuffer(GL_BACK);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	GL_CheckErrors();
 

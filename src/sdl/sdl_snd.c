@@ -31,11 +31,7 @@
  * @file sdl_snd.c
  */
 
-#ifdef BUNDLED_SDL
-#    include "SDL.h"
-#else
-#    include <SDL/SDL.h>
-#endif
+#include "sdl_defs.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -188,7 +184,7 @@ qboolean SNDDMA_Init(void)
 
 	if (!SDL_WasInit(SDL_INIT_AUDIO))
 	{
-		if (SDL_Init(SDL_INIT_AUDIO) == -1)
+		if (LegacySDL_Init(SDL_INIT_AUDIO) == -1)
 		{
 			Com_Printf("FAILED (%s)\n", SDL_GetError());
 			return qfalse;

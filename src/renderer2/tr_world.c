@@ -1938,8 +1938,8 @@ static void R_CoherentHierachicalCulling()
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 #if 0
-	GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL_ClearColor(GLCOLOR_BLACK);
+	GL_Clear(GL_COLOR_BUFFER_BIT);
 
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 
@@ -1949,8 +1949,8 @@ static void R_CoherentHierachicalCulling()
 
 
 #if 0
-	GL_ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	GL_ClearColor(GLCOLOR_NONE);
+	GL_Clear(GL_DEPTH_BUFFER_BIT);
 
 	GL_State(GLS_COLORMASK_BITS | GLS_DEPTHMASK_TRUE);
 
@@ -1960,8 +1960,8 @@ static void R_CoherentHierachicalCulling()
 
 	if (RENLOG)
 	{
-		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL_ClearColor(GLCOLOR_BLACK);
+		GL_Clear(GL_COLOR_BUFFER_BIT);
 
 		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 	}

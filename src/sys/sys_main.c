@@ -52,6 +52,7 @@ struct Library *DynLoadBase = NULL;
 #endif
 
 #ifndef DEDICATED
+//#include "../sdl/sdl_defs.h"
 #    ifdef BUNDLED_SDL
 #        include "SDL.h"
 #        include "SDL_cpuinfo.h"

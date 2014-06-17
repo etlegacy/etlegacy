@@ -494,7 +494,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 			// flash away too briefly on local or lan games
 			//if (!com_sv_running->value || Cvar_VariableIntegerValue("sv_cheats")) // don't draw useless text if not in dev mode
 			VM_Call(uivm, UI_REFRESH, cls.realtime);
-			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qtrue);
+			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
 			break;
 		case CA_ACTIVE:
 			CL_CGameRendering(stereoFrame);

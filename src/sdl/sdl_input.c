@@ -31,19 +31,7 @@
  * @file sdl_input.c
  */
 
-#ifdef BUNDLED_SDL
-	#include "SDL.h"
-#else
-	#include <SDL/SDL.h>
-#endif
-
-#ifdef _WIN32 // USE_RAW_INPUT_MOUSE is not defined yet
-#ifdef BUNDLED_SDL
-#   include "SDL_syswm.h"
-#else
-#   include <SDL/SDL_syswm.h>
-#endif
-#endif
+#include "sdl_defs.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -731,7 +719,7 @@ static void IN_InitJoystick(void)
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
 		Com_Printf("Initializing joystick devices\n");
-		if (SDL_Init(SDL_INIT_JOYSTICK) == -1)
+		if (LegacySDL_Init(SDL_INIT_JOYSTICK) == -1)
 		{
 			Com_Printf("SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
 			return;

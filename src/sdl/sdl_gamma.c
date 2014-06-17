@@ -39,13 +39,7 @@
 
 #include "../qcommon/qcommon.h"
 
-#ifdef BUNDLED_SDL
-#    include "SDL.h"
-//#    include "SDL_opengl.h"
-#else
-#    include <SDL/SDL.h>
-//#    include <SDL/SDL_opengl.h>
-#endif
+#include "sdl_defs.h"
 
 #ifdef _WIN32
 #include <windows.h>

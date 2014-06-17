@@ -2307,7 +2307,7 @@ static void Render_heatHaze(int stage)
 		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.occlusionRenderFBOImage->texnum, 0);
 
 		// clear color buffer
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL_Clear(GL_COLOR_BUFFER_BIT);
 
 		// remove blend mode
 		stateBits  = pStage->stateBits;
@@ -2711,15 +2711,15 @@ static void Render_volumetricFog()
 		R_BindFBO(tr.occlusionRenderFBO);
 		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.depthToColorBackFacesFBOImage->texnum, 0);
 
-		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL_ClearColor(GLCOLOR_BLACK);
+		GL_Clear(GL_COLOR_BUFFER_BIT);
 		GL_Cull(CT_BACK_SIDED);
 		Tess_DrawElements();
 
 		// render front faces
 		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.depthToColorFrontFacesFBOImage->texnum, 0);
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL_Clear(GL_COLOR_BUFFER_BIT);
 		GL_Cull(CT_FRONT_SIDED);
 		Tess_DrawElements();
 
