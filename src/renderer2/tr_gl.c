@@ -58,7 +58,7 @@ void GL_Bind(image_t *image)
 
 	if (glState.currenttextures[glState.currenttmu] != texnum)
 	{
-		image->frameUsed = tr.frameCount;
+		image->frameUsed                            = tr.frameCount;
 		glState.currenttextures[glState.currenttmu] = texnum;
 		glBindTexture(image->type, texnum);
 	}
@@ -90,7 +90,7 @@ void BindAnimatedImage(textureBundle_t *bundle)
 
 	// it is necessary to do this messy calc to make sure animations line up
 	// exactly with waveforms of the same frequency
-	index = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
+	index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	index >>= FUNCTABLE_SIZE2;
 
 	if (index < 0)
@@ -121,16 +121,16 @@ void GL_TextureFilter(image_t *image, filterType_t filterType)
 	// set filter type
 	switch (image->filterType)
 	{
-		/*
-		case FT_DEFAULT:
-		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+	/*
+	case FT_DEFAULT:
+	glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+	glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 
-		// set texture anisotropy
-		if(glConfig2.textureAnisotropyAvailable)
-		glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
-		break;
-		*/
+	// set texture anisotropy
+	if(glConfig2.textureAnisotropyAvailable)
+	glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
+	break;
+	*/
 
 	case FT_LINEAR:
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -183,9 +183,9 @@ void GL_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
 	if (glState.clearColorRed != red || glState.clearColorGreen != green || glState.clearColorBlue != blue || glState.clearColorAlpha != alpha)
 	{
-		glState.clearColorRed = red;
+		glState.clearColorRed   = red;
 		glState.clearColorGreen = green;
-		glState.clearColorBlue = blue;
+		glState.clearColorBlue  = blue;
 		glState.clearColorAlpha = alpha;
 
 		glClearColor(red, green, blue, alpha);
@@ -216,9 +216,9 @@ void GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alph
 {
 	if (glState.colorMaskRed != red || glState.colorMaskGreen != green || glState.colorMaskBlue != blue || glState.colorMaskAlpha != alpha)
 	{
-		glState.colorMaskRed = red;
+		glState.colorMaskRed   = red;
 		glState.colorMaskGreen = green;
-		glState.colorMaskBlue = blue;
+		glState.colorMaskBlue  = blue;
 		glState.colorMaskAlpha = alpha;
 
 		glColorMask(red, green, blue, alpha);
@@ -334,9 +334,9 @@ void GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
 {
 	if (glState.scissorX != x || glState.scissorY != y || glState.scissorWidth != width || glState.scissorHeight != height)
 	{
-		glState.scissorX = x;
-		glState.scissorY = y;
-		glState.scissorWidth = width;
+		glState.scissorX      = x;
+		glState.scissorY      = y;
+		glState.scissorWidth  = width;
 		glState.scissorHeight = height;
 
 		glScissor(x, y, width, height);
@@ -347,9 +347,9 @@ void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
 	if (glState.viewportX != x || glState.viewportY != y || glState.viewportWidth != width || glState.viewportHeight != height)
 	{
-		glState.viewportX = x;
-		glState.viewportY = y;
-		glState.viewportWidth = width;
+		glState.viewportX      = x;
+		glState.viewportY      = y;
+		glState.viewportWidth  = width;
 		glState.viewportHeight = height;
 
 		glViewport(x, y, width, height);
@@ -361,7 +361,7 @@ void GL_PolygonOffset(float factor, float units)
 	if (glState.polygonOffsetFactor != factor || glState.polygonOffsetUnits != units)
 	{
 		glState.polygonOffsetFactor = factor;
-		glState.polygonOffsetUnits = units;
+		glState.polygonOffsetUnits  = units;
 
 		glPolygonOffset(factor, units);
 	}
@@ -527,9 +527,9 @@ void GL_State(uint32_t stateBits)
 		if (stateBits & GLS_COLORMASK_BITS)
 		{
 			GL_ColorMask((stateBits & GLS_REDMASK_FALSE) ? GL_FALSE : GL_TRUE,
-				(stateBits & GLS_GREENMASK_FALSE) ? GL_FALSE : GL_TRUE,
-				(stateBits & GLS_BLUEMASK_FALSE) ? GL_FALSE : GL_TRUE,
-				(stateBits & GLS_ALPHAMASK_FALSE) ? GL_FALSE : GL_TRUE);
+			             (stateBits & GLS_GREENMASK_FALSE) ? GL_FALSE : GL_TRUE,
+			             (stateBits & GLS_BLUEMASK_FALSE) ? GL_FALSE : GL_TRUE,
+			             (stateBits & GLS_ALPHAMASK_FALSE) ? GL_FALSE : GL_TRUE);
 		}
 		else
 		{

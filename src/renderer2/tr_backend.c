@@ -5296,7 +5296,7 @@ void RB_RenderBloom()
 			for (j = 0; j < r_bloomPasses->integer; j++)
 			{
 				R_BindFBO(tr.bloomRenderFBO[(j + 1) % 2]);
-				
+
 				GL_ClearColor(GLCOLOR_BLACK);
 				GL_Clear(GL_COLOR_BUFFER_BIT);
 
