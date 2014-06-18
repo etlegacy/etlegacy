@@ -94,8 +94,6 @@ extern vec3_t playerlegsProneMaxs;
 #define AAGUN_DAMAGE        25
 #define AAGUN_SPREAD        10
 
-// NOTE: use this value, and THEN the cl_input.c scales to tweak the feel
-#define MG42_IDLEYAWSPEED   80.0    // degrees per second (while returning to base)
 #define MG42_SPREAD_MP      100
 
 #define MG42_DAMAGE_MP          20

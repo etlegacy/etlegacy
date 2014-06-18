@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -151,6 +151,7 @@ an info_notnull
 */
 void SP_misc_teleporter_dest(gentity_t *ent)
 {
+	G_Printf("misc_teleporter_dest isn't implemented!\n");
 }
 
 void use_spotlight(gentity_t *ent, gentity_t *other, gentity_t *activator)
@@ -383,7 +384,6 @@ void SP_misc_vis_dummy(gentity_t *ent)
 
 	ent->think     = locateMaster;
 	ent->nextthink = level.time + 1000;
-
 }
 
 /*
@@ -588,7 +588,7 @@ void InitShooter(gentity_t *ent, int weapon)
 
 	if (!ent->random)
 	{
-		ent->random = 1.0;
+		ent->random = 1;
 	}
 
 	ent->random = sin(M_PI * ent->random / 180);
@@ -683,7 +683,6 @@ void SP_corona(gentity_t *ent)
 	}
 
 	ent->s.eType = ET_CORONA;
-
 
 	if (ent->dl_color[0] <= 0 &&                 // if it's black or has no color assigned
 	    ent->dl_color[1] <= 0 &&
@@ -1047,11 +1046,9 @@ void clamp_playerbehindgun(gentity_t *self, gentity_t *other, vec3_t dang)
 void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 {
 	float diff;
-	//float yawspeed;
 
 	// go back to start position
 	VectorCopy(self->s.angles, dang);
-	// yawspeed = MG42_IDLEYAWSPEED;
 
 	if (dang[0] < 0 && dang[0] < -(self->varc))
 	{
@@ -1619,7 +1616,6 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 		gun->active  = qfalse;
 	}
 
-
 	trap_LinkEntity(self);
 }
 
@@ -1994,7 +1990,6 @@ void misc_spawner_think(gentity_t *ent)
 
 	if (!item)
 	{
-		G_Printf("-----> WARNING <-------\n");
 		G_Printf("misc_spawner used and no item found!\n");
 	}
 
@@ -2002,7 +1997,6 @@ void misc_spawner_think(gentity_t *ent)
 
 	if (!drop)
 	{
-		G_Printf("-----> WARNING <-------\n");
 		G_Printf("misc_spawner used at %s failed to drop!\n", vtos(ent->r.currentOrigin));
 	}
 }
@@ -2024,7 +2018,6 @@ void SP_misc_spawner(gentity_t *ent)
 {
 	if (!ent->spawnitem)
 	{
-		G_Printf("-----> WARNING <-------\n");
 		G_Printf("misc_spawner at loc %s has no spawnitem!\n", vtos(ent->s.origin));
 		return;
 	}
@@ -2492,8 +2485,7 @@ char *ClientName(int client, char *name, int size)
 		return "[client out of range]";
 	}
 	trap_GetConfigstring(CS_PLAYERS + client, buf, sizeof(buf));
-	strncpy(name, Info_ValueForKey(buf, "n"), size - 1);
-	name[size - 1] = '\0';
+	Q_strncpyz(name, Info_ValueForKey(buf, "n"), size);
 	Q_CleanStr(name);
 	return name;
 }
