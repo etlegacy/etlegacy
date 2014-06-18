@@ -1392,7 +1392,7 @@ void Svcmd_ShuffleTeams_f(qboolean restart);
 
 // g_weapon.c
 void FireWeapon(gentity_t *ent);
-void G_BurnMeGood(gentity_t *self, gentity_t *body);
+void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk);
 
 // p_hud.c
 void MoveClientToIntermission(gentity_t *client);

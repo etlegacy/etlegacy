@@ -238,7 +238,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_MP40,                 WP_NONE,                WP_MP40,              WP_MP40,              18,  qfalse, 400,  "MP 40",           }, // 3
 	{ WP_GRENADE_LAUNCHER,     WP_NONE,                WP_GRENADE_LAUNCHER,  WP_GRENADE_LAUNCHER,  250, qtrue,  0,    "",                }, // 4
 	{ WP_PANZERFAUST,          WP_NONE,                WP_PANZERFAUST,       WP_PANZERFAUST,       400, qtrue,  0,    "PANZERFAUST",     }, // 5
-	{ WP_FLAMETHROWER,         WP_NONE,                WP_FLAMETHROWER,      WP_FLAMETHROWER,      1,   qfalse, 0,    "FLAMETHROWER",    }, // 6
+	{ WP_FLAMETHROWER,         WP_NONE,                WP_FLAMETHROWER,      WP_FLAMETHROWER,      5,   qfalse, 0,    "FLAMETHROWER",    }, // 6
 	{ WP_COLT,                 WP_SILENCED_COLT,       WP_COLT,              WP_COLT,              18,  qfalse, 600,  "COLT",            }, // 7	// equivalent american weapon to german luger
 	{ WP_THOMPSON,             WP_NONE,                WP_THOMPSON,          WP_THOMPSON,          18,  qfalse, 400,  "THOMPSON",        }, // 8	// equivalent american weapon to german mp40
 	{ WP_GRENADE_PINEAPPLE,    WP_NONE,                WP_GRENADE_PINEAPPLE, WP_GRENADE_PINEAPPLE, 250, qtrue,  0,    "",                }, // 9

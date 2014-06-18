@@ -3712,29 +3712,47 @@ FLAMETHROWER
 ======================================================================
 */
 
-void G_BurnMeGood(gentity_t *self, gentity_t *body)
+/**
+ * @brief BurnMeGood now takes the flamechunk separately, because
+ * the old 'set-self-in-flames' method doesn't have a flamechunk to
+ * pass, and deaths were getting blamed on the world/player 0
+ */
+void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 {
+	vec3_t origin;
+	int    ownerNum = (chunk != NULL) ? chunk->r.ownerNum : self->s.number;
+
 	// add the new damage
 	body->flameQuota    += 5;
 	body->flameQuotaTime = level.time;
 
+	// fill in our own origin if we have no flamechunk
+	if (chunk != NULL)
+	{
+		VectorCopy(chunk->r.currentOrigin, origin);
+	}
+	else
+	{
+		VectorCopy(self->r.currentOrigin, origin);
+	}
+
 	// yet another flamethrower damage model, trying to find a feels-good damage combo that isn't overpowered
 	if (body->lastBurnedFrameNumber != level.framenum)
 	{
-		G_Damage(body, self->parent, self->parent, vec3_origin, self->r.currentOrigin, 5, 0, MOD_FLAMETHROWER);   // was 2 dmg in release ver, hit avg. 2.5 times per frame
+		G_Damage(body, self, self, vec3_origin, origin, GetWeaponTableData(WP_FLAMETHROWER)->damage, 0, MOD_FLAMETHROWER);
 		body->lastBurnedFrameNumber = level.framenum;
 	}
 
 	// make em burn
-	if (body->client && (body->health <= 0 || body->flameQuota > 0))       // was > FLAME_THRESHOLD
+	if (body->client && (body->health <= 0 || body->flameQuota > 0)) // was > FLAME_THRESHOLD
 	{
 		if (body->s.onFireEnd < level.time)
 		{
 			body->s.onFireStart = level.time;
 		}
-
-		body->s.onFireEnd  = level.time + FIRE_FLASH_TIME;
-		body->flameBurnEnt = self->r.ownerNum;
+		body->s.onFireEnd = level.time + FIRE_FLASH_TIME;
+		// use ourself as the attacker if we have no flamechunk
+		body->flameBurnEnt = ownerNum;
 		// add to playerState for client-side effect
 		body->client->ps.onFireStart = level.time;
 	}
@@ -3775,7 +3793,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 			if (trace_start[0] * trace_start[0] + trace_start[1] * trace_start[1] < 441)
 			{
 				// set self in flames
-				G_BurnMeGood(ent, ent);
+				G_BurnMeGood(ent, ent, NULL);
 			}
 		}
 	}

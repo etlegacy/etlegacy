@@ -1382,7 +1382,7 @@ void Svcmd_Burn(void)
 
 			vic->client->ps.eFlags |= EF_SMOKING;
 			// FIXME: add mod param? mod_unknown instead of flamer
-			G_BurnMeGood(vic, vic);
+			G_BurnMeGood(vic, vic, NULL);
 			count++;
 		}
 		trap_SendServerCommand(-1, va("print \"%d players burned.\n\"", count));
@@ -1404,7 +1404,7 @@ void Svcmd_Burn(void)
 
 	vic->client->ps.eFlags |= EF_SMOKINGBLACK;
 	// FIXME: add mod param? mod_unknown instead of flamer
-	G_BurnMeGood(vic, vic);
+	G_BurnMeGood(vic, vic, NULL);
 
 	trap_SendServerCommand(-1, va("print \"^7%s ^7was set ablaze.\n\"", vic->client->pers.netname));
 
