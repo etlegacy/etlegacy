@@ -3493,33 +3493,36 @@ void CG_StartShakeCamera(float p)
 
 void CG_ShakeCamera(void)
 {
-	float x, val;
-
 	if (cg.time > cg.cameraShakeTime)
 	{
 		cg.cameraShakeScale = 0; // all pending explosions resolved, so reset shakescale
 		return;
 	}
 
-	// starts at 1, approaches 0 over time
-	x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
+	{
+		float         x    = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
+		static vec3_t mins = { -16.0f, -16.0f, -16.0f };
+		static vec3_t maxs = { 16.0f, 16.0f, 16.0f };
+		float         valx = sin(M_PI * 8 * 13 + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		float         valy = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		float         valz = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		vec3_t        vec;
+		trace_t       tr;
 
-	// move the camera
-	val                   = sin(M_PI * 7 * x + cg.cameraShakePhase) * x * 4.0f * cg.cameraShakeScale;
-	cg.refdef.vieworg[2] += val;
-	val                   = sin(M_PI * 13 * x + cg.cameraShakePhase) * x * 4.0f * cg.cameraShakeScale;
-	cg.refdef.vieworg[1] += val;
-	val                   = cos(M_PI * 17 * x + cg.cameraShakePhase) * x * 4.0f * cg.cameraShakeScale;
-	cg.refdef.vieworg[0] += val;
-
-	AnglesToAxis(cg.refdefViewAngles, cg.refdef.viewaxis);
+		VectorAdd(cg.refdef.vieworg, tv(valx, valy, valz), vec);
+		CG_Trace(&tr, cg.refdef.vieworg, mins, maxs, vec, cg.predictedPlayerState.clientNum, MASK_SOLID);
+		if (!(tr.allsolid || tr.startsolid))
+		{
+			VectorCopy(tr.endpos, cg.refdef.vieworg);
+		}
+		AnglesToAxis(cg.refdefViewAngles, cg.refdef.viewaxis);
+	}
 }
 
 void CG_DrawMiscGamemodels(void)
 {
 	int         i, j;
 	refEntity_t ent;
-	int         drawn = 0;
 
 	memset(&ent, 0, sizeof(ent));
 
@@ -3548,37 +3551,6 @@ void CG_DrawMiscGamemodels(void)
 		VectorCopy(cgs.miscGameModels[i].org, ent.oldorigin);
 		VectorCopy(cgs.miscGameModels[i].org, ent.lightingOrigin);
 
-		/*      {
-		            vec3_t v;
-		            vec3_t vu = { 0.f, 0.f, 1.f };
-		            vec3_t vl = { 0.f, 1.f, 0.f };
-		            vec3_t vf = { 1.f, 0.f, 0.f };
-
-		            VectorCopy( cgs.miscGameModels[i].org, v );
-		            VectorMA( v, cgs.miscGameModels[i].radius, vu, v );
-		            CG_RailTrail2( NULL, cgs.miscGameModels[i].org, v );
-
-		            VectorCopy( cgs.miscGameModels[i].org, v );
-		            VectorMA( v, cgs.miscGameModels[i].radius, vf, v );
-		            CG_RailTrail2( NULL, cgs.miscGameModels[i].org, v );
-
-		            VectorCopy( cgs.miscGameModels[i].org, v );
-		            VectorMA( v, cgs.miscGameModels[i].radius, vl, v );
-		            CG_RailTrail2( NULL, cgs.miscGameModels[i].org, v );
-
-		            VectorCopy( cgs.miscGameModels[i].org, v );
-		            VectorMA( v, -cgs.miscGameModels[i].radius, vu, v );
-		            CG_RailTrail2( NULL, cgs.miscGameModels[i].org, v );
-
-		            VectorCopy( cgs.miscGameModels[i].org, v );
-		            VectorMA( v, -cgs.miscGameModels[i].radius, vf, v );
-		            CG_RailTrail2( NULL, cgs.miscGameModels[i].org, v );
-
-		            VectorCopy( cgs.miscGameModels[i].org, v );
-		            VectorMA( v, -cgs.miscGameModels[i].radius, vl, v );
-		            CG_RailTrail2( NULL, cgs.miscGameModels[i].org, v );
-		        }*/
-
 		for (j = 0; j < 3; j++)
 		{
 			VectorCopy(cgs.miscGameModels[i].axes[j], ent.axis[j]);
@@ -3586,8 +3558,6 @@ void CG_DrawMiscGamemodels(void)
 		ent.hModel = cgs.miscGameModels[i].model;
 
 		trap_R_AddRefEntityToScene(&ent);
-
-		drawn++;
 	}
 }
 
