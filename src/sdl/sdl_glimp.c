@@ -136,34 +136,6 @@ static void GLimp_GetCurrentContext(void)
 
 #endif
 
-// No SMP - stubs
-void GLimp_RenderThreadWrapper(void *arg)
-{
-}
-
-qboolean GLimp_SpawnRenderThread(void ( *function )(void))
-{
-	ri.Printf(PRINT_WARNING, "ERROR: SMP support was disabled at compile time\n");
-	return qfalse;
-}
-
-void GLimp_ShutdownRenderThread(void)
-{
-}
-
-void *GLimp_RendererSleep(void)
-{
-	return NULL;
-}
-
-void GLimp_FrontEndSleep(void)
-{
-}
-
-void GLimp_WakeRenderer(void *data)
-{
-}
-
 typedef enum
 {
 	RSERR_OK,

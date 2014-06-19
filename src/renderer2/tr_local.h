@@ -53,11 +53,6 @@ typedef unsigned short glIndex_t;
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-// everything that is needed by the backend needs
-// to be double buffered to allow it to run in
-// parallel on a dual cpu machine
-#define SMP_FRAMES      2
-
 #define MAX_SHADERS             (1 << 12)
 #define SHADERS_MASK            (MAX_SHADERS - 1)
 
@@ -1834,7 +1829,7 @@ typedef struct srfGeneric_s
 	cplane_t plane;
 
 	// dynamic lighting information
-//	int             dlightBits[SMP_FRAMES];
+//	int             dlightBits;
 }
 srfGeneric_t;
 
@@ -3962,7 +3957,6 @@ RENDERER BACK END FUNCTIONS
 =============================================================
 */
 
-void RB_RenderThread(void);
 void RB_ExecuteRenderCommands(const void *data);
 
 /*
@@ -4107,9 +4101,7 @@ typedef enum
 #define DECAL_MASK              (MAX_DECALS - 1)
 
 // all of the information needed by the back end must be
-// contained in a backEndData_t.  This entire structure is
-// duplicated so the front and back end can run in parallel
-// on an SMP machine
+// contained in a backEndData_t.
 typedef struct
 {
 	drawSurf_t drawSurfs[MAX_DRAWSURFS];
@@ -4136,11 +4128,6 @@ extern volatile qboolean renderThreadActive;
 
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
-
-void R_InitCommandBuffers(void);
-void R_ShutdownCommandBuffers(void);
-
-void R_SyncRenderThread(void);
 
 void R_IssuePendingRenderCommands(void);
 

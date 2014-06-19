@@ -795,11 +795,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		srfVert_t     *verts;
 		srfTriangle_t *triangles;
 
-		if (glConfig.smpActive)
-		{
-			ri.Error(ERR_FATAL, "R_SetupLightFrustum: FIXME SMP");
-		}
-
 		tess.multiDrawPrimitives = 0;
 		tess.numIndexes          = 0;
 		tess.numVertexes         = 0;

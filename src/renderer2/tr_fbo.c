@@ -434,7 +434,7 @@ void R_InitFBOs(void)
 	GL_CheckErrors();
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	if (DS_STANDARD_ENABLED())
 	{

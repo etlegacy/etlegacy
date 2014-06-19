@@ -2081,12 +2081,6 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	unsigned int pointOr  = 0;
 	unsigned int pointAnd = (unsigned int)~0;
 
-	if (glConfig.smpActive)
-	{
-		// FIXME!  we can't do Tess_Begin/Tess_End stuff with smp!
-		return qfalse;
-	}
-
 	tr.currentEntity = drawSurf->entity;
 	shader           = tr.sortedShaders[drawSurf->shaderNum];
 
@@ -3293,7 +3287,7 @@ static void R_DebugGraphics(void)
 	if (r_debugSurface->integer)
 	{
 		// the render thread can't make callbacks to the main thread
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 
 		GLSL_BindProgram(0);
 		GL_SelectTexture(0);

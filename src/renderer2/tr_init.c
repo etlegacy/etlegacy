@@ -381,10 +381,6 @@ static qboolean InitOpenGL(void)
 
 	GL_CheckErrors();
 
-	// init command buffers and SMP
-	R_InitCommandBuffers();
-	GL_CheckErrors();
-
 	// print info
 	GfxInfo_f();
 	GL_CheckErrors();
@@ -400,12 +396,6 @@ void GL_CheckErrors_(const char *fileName, int line)
 {
 	int  err;
 	char s[128];
-
-	if (glConfig.smpActive)
-	{
-		// we can't print onto the console while rendering in another thread
-		return;
-	}
 
 	if (r_ignoreGLErrors->integer)
 	{
@@ -1267,11 +1257,6 @@ void GfxInfo_f(void)
 		ri.Printf(PRINT_ALL, "Using GPU vertex skinning with max %i bones in a single pass\n", glConfig2.maxVertexSkinningBones);
 	}
 
-	if (glConfig.smpActive)
-	{
-		ri.Printf(PRINT_ALL, "Using dual processor acceleration\n");
-	}
-
 	if (r_finish->integer)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
@@ -1282,7 +1267,7 @@ void GfxInfo_f(void)
 static void GLSL_restart_f(void)
 {
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	GLSL_ShutdownGPUShaders();
 	GLSL_InitGPUShaders();
@@ -1799,9 +1784,8 @@ void RE_Shutdown(qboolean destroyWindow)
 
 	if (tr.registered)
 	{
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 
-		R_ShutdownCommandBuffers();
 		R_ShutdownImages();
 		R_ShutdownVBOs();
 		R_ShutdownFBOs();
@@ -1843,27 +1827,17 @@ void RE_Shutdown(qboolean destroyWindow)
 #if !defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_ShutdownGPUShaders();
 #endif
-
-		//GLimp_ShutdownRenderThread();
 	}
 
 	R_DoneFreeType();
 
 	// shut down platform specific OpenGL stuff
 
-	// Tr3B: this should be always executed if we want to avoid some GLSL problems with SMP
-	// Update: Having the JVM running with all its threads can cause problems with an old OpenGL context.
-	// Maybe an OpenGL driver problem. It is safer to destroy the context in that case or you will get really weird crashes when rendering stuff.
-	//
-
-#if !defined(SMP) // && !defined(USE_JAVA)
 	if (destroyWindow)
-#endif
 	{
 #if defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_ShutdownGPUShaders();
 #endif
-
 		GLimp_Shutdown();
 
 		ri.Tag_Free();
@@ -1881,7 +1855,7 @@ Touch all images to make sure they are resident
 */
 void RE_EndRegistration(void)
 {
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	/*
 	   if(!Sys_LowPhysicalMemory())

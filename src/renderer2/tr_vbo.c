@@ -66,7 +66,7 @@ VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_
 	}
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	vbo = (VBO_t *)ri.Hunk_Alloc(sizeof(*vbo), h_low);
 	Com_AddToGrowList(&tr.vbos, vbo);
@@ -148,7 +148,7 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	}
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	vbo = (VBO_t *)ri.Hunk_Alloc(sizeof(*vbo), h_low);
 	Com_AddToGrowList(&tr.vbos, vbo);
@@ -300,7 +300,7 @@ IBO_t *R_CreateIBO(const char *name, byte *indexes, int indexesSize, vboUsage_t 
 	}
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	ibo = (IBO_t *)ri.Hunk_Alloc(sizeof(*ibo), h_low);
 	Com_AddToGrowList(&tr.ibos, ibo);
@@ -366,7 +366,7 @@ IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles
 	}
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	ibo = (IBO_t *)ri.Hunk_Alloc(sizeof(*ibo), h_low);
 	Com_AddToGrowList(&tr.ibos, ibo);

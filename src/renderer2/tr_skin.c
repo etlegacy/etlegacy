@@ -297,7 +297,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// in thier "skin" or "head" field
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 #if 0
 	// If not a .skin file, load as a single shader

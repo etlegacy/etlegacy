@@ -168,21 +168,6 @@ void R_PerformanceCounters(void)
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-void R_InitCommandBuffers(void)
-{
-	glConfig.smpActive = qfalse;
-}
-
-void R_ShutdownCommandBuffers(void)
-{
-	// kill the rendering thread
-	if (glConfig.smpActive)
-	{
-		GLimp_WakeRenderer(NULL);
-		glConfig.smpActive = qfalse;
-	}
-}
-
 int c_blockedOnRender;
 int c_blockedOnMain;
 
@@ -197,22 +182,6 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
 
-	if (glConfig.smpActive)
-	{
-		// if the render thread is not idle, wait for it
-		if (renderThreadActive)
-		{
-			c_blockedOnRender++;
-		}
-		else
-		{
-			c_blockedOnMain++;
-		}
-
-		// sleep until the renderer has completed
-		GLimp_FrontEndSleep();
-	}
-
 	// at this point, the back end thread is idle, so it is ok
 	// to look at it's performance counters
 	if (runPerformanceCounters)
@@ -224,45 +193,22 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	if (!r_skipBackEnd->integer)
 	{
 		// let it start on the new batch
-		if (!glConfig.smpActive)
-		{
-			RB_ExecuteRenderCommands(cmdList->cmds);
-		}
-		else
-		{
-			GLimp_WakeRenderer(cmdList);
-		}
+
+		RB_ExecuteRenderCommands(cmdList->cmds);
+
 	}
 }
 
-/*
-====================
-R_SyncRenderThread
-
-Issue any pending commands and wait for them to complete.
-After exiting, the render thread will have completed its work
-and will remain idle and the main thread is free to issue
-OpenGL calls until R_IssueRenderCommands is called.
-====================
-*/
-void R_SyncRenderThread(void)
+/**
+ * @brief Issue any pending commands
+ */
+void R_IssuePendingRenderCommands(void)
 {
 	if (!tr.registered)
 	{
 		return;
 	}
 	R_IssueRenderCommands(qfalse);
-
-	if (!glConfig.smpActive)
-	{
-		return;
-	}
-	GLimp_FrontEndSleep();
-}
-
-void R_IssuePendingRenderCommands(void)
-{
-	R_SyncRenderThread();
 }
 
 /*
@@ -578,7 +524,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 		else
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			glEnable(GL_STENCIL_TEST);
 			glStencilMask(~0U);
 			GL_ClearStencil(0U);
@@ -592,7 +538,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		// this is only reached if it was on and is now off
 		if (r_measureOverdraw->modified)
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			glDisable(GL_STENCIL_TEST);
 		}
 		r_measureOverdraw->modified = qfalse;
@@ -601,7 +547,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	// texturemode stuff
 	if (r_textureMode->modified)
 	{
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		GL_TextureMode(r_textureMode->string);
 		r_textureMode->modified = qfalse;
 	}
@@ -610,7 +556,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	if (r_gamma->modified)
 	{
 		r_gamma->modified = qfalse;
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		R_SetColorMappings();
 	}
 
@@ -620,7 +566,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		int  err;
 		char s[128];
 
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 
 		if ((err = glGetError()) != GL_NO_ERROR)
 		{

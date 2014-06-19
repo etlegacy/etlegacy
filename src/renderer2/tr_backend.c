@@ -9241,7 +9241,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	{
 		return;
 	}
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	// we definately want to sync every frame for the cinematics
 	glFinish();
@@ -9974,11 +9974,9 @@ const void *RB_RenderToTexture(const void *data)
 
 const void *RB_Finish(const void *data)
 {
-	const renderFinishCommand_t *cmd;
+	const renderFinishCommand_t *cmd = (const renderFinishCommand_t *)data;
 
-//  ri.Printf( PRINT_ALL, "RB_Finish\n" );
-
-	cmd = (const renderFinishCommand_t *)data;
+	//ri.Printf( PRINT_ALL, "RB_Finish\n" );
 
 	glFinish();
 
@@ -10049,28 +10047,5 @@ void RB_ExecuteRenderCommands(const void *data)
 			backEnd.pc.msec = t2 - t1;
 			return;
 		}
-	}
-}
-
-void RB_RenderThread(void)
-{
-	const void *data;
-
-	// wait for either a rendering command or a quit command
-	while (1)
-	{
-		// sleep until we have work to do
-		data = GLimp_RendererSleep();
-
-		if (!data)
-		{
-			return;             // all done, renderer is shutting down
-		}
-
-		renderThreadActive = qtrue;
-
-		RB_ExecuteRenderCommands(data);
-
-		renderThreadActive = qfalse;
 	}
 }

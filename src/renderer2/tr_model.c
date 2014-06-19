@@ -154,7 +154,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	Q_strncpyz(mod->name, name, sizeof(mod->name));
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	mod->numLods = 0;
 
@@ -489,7 +489,7 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 
 	*glconfigOut = glConfig;
 
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	tr.visIndex = 0;
 

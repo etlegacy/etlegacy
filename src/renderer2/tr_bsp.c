@@ -727,7 +727,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 		if (tr.worldHDR_RGBE)
 		{
 			// we are about to upload textures
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 
 			// load HDR lightmaps
 			lightmapFiles = ri.FS_ListFiles(mapName, ".hdr", &numLightmaps);
@@ -884,7 +884,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 			ri.Printf(PRINT_DEVELOPER, "...loading %i lightmaps\n", numLightmaps);
 
 			// we are about to upload textures
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 
 			for (i = 0; i < numLightmaps; i++)
 			{
@@ -922,7 +922,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 		buf = fileBase + l->fileofs;
 
 		// we are about to upload textures
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 
 		// create all the lightmaps
 		tr.numLightmaps = len / (LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3);

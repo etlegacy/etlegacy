@@ -1134,7 +1134,7 @@ static void R_UpdateClusterSurfaces()
 			VectorCopy(bounds[1], vboSurf->bounds[1]);
 
 			// make sure the render thread is stopped
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 
 			// update IBO
 			Q_strncpyz(ibo->name,
