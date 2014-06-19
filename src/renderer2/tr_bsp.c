@@ -7767,7 +7767,7 @@ void R_BuildCubeMaps(void)
 			do
 			{
 				ri.Printf(PRINT_ALL, "*");
-				ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+				Ren_UpdateScreen();
 			}
 			while (++tics < ticsNeeded);
 
@@ -8216,38 +8216,38 @@ void RE_LoadWorldMap(const char *name)
 	}
 
 	// load into heap
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadEntities(&header->lumps[LUMP_ENTITIES]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadShaders(&header->lumps[LUMP_SHADERS]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadLightmaps(&header->lumps[LUMP_LIGHTMAPS], name);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadPlanes(&header->lumps[LUMP_PLANES]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadSurfaces(&header->lumps[LUMP_SURFACES], &header->lumps[LUMP_DRAWVERTS], &header->lumps[LUMP_DRAWINDEXES]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadMarksurfaces(&header->lumps[LUMP_LEAFSURFACES]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadNodesAndLeafs(&header->lumps[LUMP_NODES], &header->lumps[LUMP_LEAFS]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadSubmodels(&header->lumps[LUMP_MODELS]);
 
 	// moved fog lump loading here, so fogs can be tagged with a model num
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadFogs(&header->lumps[LUMP_FOGS], &header->lumps[LUMP_BRUSHES], &header->lumps[LUMP_BRUSHSIDES]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadVisibility(&header->lumps[LUMP_VISIBILITY]);
 
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadLightGrid(&header->lumps[LUMP_LIGHTGRID]);
 
 	// create static VBOS from the world

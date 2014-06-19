@@ -2720,22 +2720,37 @@ R_CreateDefaultImage
 #define DEFAULT_SIZE    128
 static void R_CreateDefaultImage(void)
 {
-	int  x;
+	int  x, y;
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
 
 	// the default image will be a box, to allow you to see the mapping coordinates
-	Com_Memset(data, 32, sizeof(data));
+	Com_Memset(data, 0, sizeof(data));
 	for (x = 0; x < DEFAULT_SIZE; x++)
 	{
-		data[0][x][0] = data[0][x][1] = data[0][x][2] = data[0][x][3] = 255;
-		data[x][0][0] = data[x][0][1] = data[x][0][2] = data[x][0][3] = 255;
+		for (y = 0; y < 2; y++)
+		{
+			data[y][x][0] = 255;
+			data[y][x][1] = 128;
+			data[y][x][2] = 0;
+			data[y][x][3] = 255;
 
-		data[DEFAULT_SIZE - 1][x][0]     =
-		    data[DEFAULT_SIZE - 1][x][1] = data[DEFAULT_SIZE - 1][x][2] = data[DEFAULT_SIZE - 1][x][3] = 255;
+			data[x][y][0] = 255;
+			data[x][y][1] = 128;
+			data[x][y][2] = 0;
+			data[x][y][3] = 255;
 
-		data[x][DEFAULT_SIZE - 1][0]     =
-		    data[x][DEFAULT_SIZE - 1][1] = data[x][DEFAULT_SIZE - 1][2] = data[x][DEFAULT_SIZE - 1][3] = 255;
+			data[DEFAULT_SIZE - 1 - y][x][0] = 255;
+			data[DEFAULT_SIZE - 1 - y][x][1] = 128;
+			data[DEFAULT_SIZE - 1 - y][x][2] = 0;
+			data[DEFAULT_SIZE - 1 - y][x][3] = 255;
+
+			data[x][DEFAULT_SIZE - 1 - y][0] = 255;
+			data[x][DEFAULT_SIZE - 1 - y][1] = 128;
+			data[x][DEFAULT_SIZE - 1 - y][2] = 0;
+			data[x][DEFAULT_SIZE - 1 - y][3] = 255;
+		}
 	}
+
 	tr.defaultImage = R_CreateImage("_default", (byte *) data, DEFAULT_SIZE, DEFAULT_SIZE, IF_NOPICMIP, FT_DEFAULT, WT_REPEAT);
 }
 

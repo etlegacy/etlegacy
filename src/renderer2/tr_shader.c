@@ -5846,6 +5846,7 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 	// still keep a name allocated for it, so if
 	// something calls RE_RegisterShader again with
 	// the same name, we don't try looking for it again
+	
 	if (sh->defaultShader)
 	{
 		return 0;
