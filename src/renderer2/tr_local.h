@@ -2738,7 +2738,6 @@ typedef struct
 // from the front end state
 typedef struct
 {
-	int smpFrame;
 	trRefdef_t refdef;
 	viewParms_t viewParms;
 	orientationr_t orientation;
@@ -2791,8 +2790,6 @@ typedef struct
 	int viewCountNoReset;
 	int lightCount;             // incremented every time a dlight traverses the world
 	// and every R_MarkFragments call
-
-	int smpFrame;               // toggles from 0 to 1 every endFrame
 
 	int frameSceneNum;          // zeroed at RE_BeginFrame
 
@@ -3301,10 +3298,6 @@ extern cvar_t *r_evsmPostProcess;
 extern cvar_t *r_dynamicLightCastShadows;
 extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
-
-// SMP
-extern cvar_t *r_smp;
-extern cvar_t *r_showSmp;
 
 //====================================================================
 
@@ -3848,7 +3841,7 @@ SCENE GENERATION, tr_scene.c
 ============================================================
 */
 
-void R_ToggleSmpFrame(void);
+void R_InitNextFrame(void);
 
 void RE_ClearScene(void);
 void RE_AddRefEntityToScene(const refEntity_t *ent);
@@ -4137,7 +4130,7 @@ typedef struct
 	renderCommandList_t commands;
 } backEndData_t;
 
-extern backEndData_t *backEndData[SMP_FRAMES];  // the second one may not be allocated
+extern backEndData_t *backEndData;  // the second one may not be allocated
 
 extern volatile qboolean renderThreadActive;
 

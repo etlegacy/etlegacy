@@ -171,19 +171,6 @@ void R_PerformanceCounters(void)
 void R_InitCommandBuffers(void)
 {
 	glConfig.smpActive = qfalse;
-	if (r_smp->integer)
-	{
-		ri.Printf(PRINT_ALL, "Trying SMP acceleration...\n");
-		if (GLimp_SpawnRenderThread(RB_RenderThread))
-		{
-			ri.Printf(PRINT_ALL, "...succeeded.\n");
-			glConfig.smpActive = qtrue;
-		}
-		else
-		{
-			ri.Printf(PRINT_ALL, "...failed.\n");
-		}
-	}
 }
 
 void R_ShutdownCommandBuffers(void)
@@ -201,9 +188,8 @@ int c_blockedOnMain;
 
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
-	renderCommandList_t *cmdList;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
-	cmdList = &backEndData[tr.smpFrame]->commands;
 	assert(cmdList);            // bk001205
 	// add an end-of-list command
 	*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
@@ -217,18 +203,10 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 		if (renderThreadActive)
 		{
 			c_blockedOnRender++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, "R");
-			}
 		}
 		else
 		{
 			c_blockedOnMain++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, ".");
-			}
 		}
 
 		// sleep until the renderer has completed
@@ -297,9 +275,7 @@ render thread if needed.
 */
 void *R_GetCommandBuffer(int bytes)
 {
-	renderCommandList_t *cmdList;
-
-	cmdList = &backEndData[tr.smpFrame]->commands;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
 	// always leave room for the swap buffers and end of list commands
 	// RB: added swapBuffers_t from ET
@@ -499,7 +475,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	}
 
 	cmd->commandId = RC_2DPOLYS;
-	cmd->verts     = &backEndData[tr.smpFrame]->polyVerts[r_numPolyVerts];
+	cmd->verts     = &backEndData->polyVerts[r_numPolyVerts];
 	cmd->numverts  = numverts;
 	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
 	cmd->shader = R_GetShaderByHandle(hShader);
@@ -753,7 +729,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 
 	// use the other buffers next frame, because another CPU
 	// may still be rendering into the current ones
-	R_ToggleSmpFrame();
+	R_InitNextFrame();
 
 	if (frontEndMsec)
 	{

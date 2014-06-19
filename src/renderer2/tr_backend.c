@@ -34,7 +34,7 @@
 
 #include "tr_local.h"
 
-backEndData_t  *backEndData[SMP_FRAMES];
+backEndData_t  *backEndData;
 backEndState_t backEnd;
 
 #define DRAWSCREENQUAD() Tess_InstantQuad(RB_GetScreenQuad())
@@ -10000,15 +10000,6 @@ void RB_ExecuteRenderCommands(const void *data)
 	Ren_LogComment("--- RB_ExecuteRenderCommands ---\n");
 
 	t1 = ri.Milliseconds();
-
-	if (!r_smp->integer || data == backEndData[0]->commands.cmds)
-	{
-		backEnd.smpFrame = 0;
-	}
-	else
-	{
-		backEnd.smpFrame = 1;
-	}
 
 	while (1)
 	{

@@ -68,8 +68,6 @@ cvar_t *r_ignore;
 cvar_t *r_znear;
 cvar_t *r_zfar;
 
-cvar_t *r_smp;
-cvar_t *r_showSmp;
 cvar_t *r_skipBackEnd;
 cvar_t *r_skipLightBuffer;
 
@@ -1366,8 +1364,6 @@ void R_Register(void)
 	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0.125", CVAR_ARCHIVE | CVAR_LATCH);
 	ri.Cvar_AssertCvarRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
 
-	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
-
 	// temporary latched variables that can only change over a restart
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
@@ -1500,7 +1496,6 @@ void R_Register(void)
 	r_flareSize = ri.Cvar_Get("r_flareSize", "40", CVAR_CHEAT);
 	r_flareFade = ri.Cvar_Get("r_flareFade", "7", CVAR_CHEAT);
 
-	r_showSmp         = ri.Cvar_Get("r_showSmp", "0", CVAR_CHEAT);
 	r_skipBackEnd     = ri.Cvar_Get("r_skipBackEnd", "0", CVAR_CHEAT);
 	r_skipLightBuffer = ri.Cvar_Get("r_skipLightBuffer", "0", CVAR_CHEAT);
 
@@ -1733,24 +1728,12 @@ void R_Init(void)
 	GLSL_InitGPUShaders();
 #endif
 
-	backEndData[0]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[0]), h_low);
-	backEndData[0]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
-	backEndData[0]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
-	backEndData[0]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
+	backEndData              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData), h_low);
+	backEndData->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
+	backEndData->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
+	backEndData->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
 
-	if (r_smp->integer)
-	{
-		backEndData[1]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[1]), h_low);
-		backEndData[1]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
-		backEndData[1]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
-		backEndData[1]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
-	}
-	else
-	{
-		backEndData[1] = NULL;
-	}
-
-	R_ToggleSmpFrame();
+	R_InitNextFrame();
 
 	R_InitImages();
 
