@@ -9111,7 +9111,7 @@ static void RB_RenderViewFront(void)
 	GL_CheckErrors();
 
 	// render depth of field post process effect
-	RB_RenderDepthOfField(qfalse);
+	RB_RenderDepthOfField();
 
 	// render bloom post process effect
 	RB_RenderBloom();
@@ -9292,19 +9292,6 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		end = ri.Milliseconds();
 		ri.Printf(PRINT_ALL, "glTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
 	}
-
-	/*
-	   glBegin(GL_QUADS);
-	   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, 0.5f / cols, 0.5f / rows, 0, 1);
-	   glVertexAttrib4f(ATTR_INDEX_POSITION, x, y, 0, 1);
-	   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, (cols - 0.5f) / cols, 0.5f / rows, 0, 1);
-	   glVertexAttrib4f(ATTR_INDEX_POSITION, x + w, y, 0, 1);
-	   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, (cols - 0.5f) / cols, (rows - 0.5f) / rows, 0, 1);
-	   glVertexAttrib4f(ATTR_INDEX_POSITION, x + w, y + h, 0, 1);
-	   glVertexAttrib4f(ATTR_INDEX_TEXCOORD0, 0.5f / cols, (rows - 0.5f) / rows, 0, 1);
-	   glVertexAttrib4f(ATTR_INDEX_POSITION, x, y + h, 0, 1);
-	   glEnd();
-	 */
 
 	tess.multiDrawPrimitives = 0;
 	tess.numVertexes         = 0;

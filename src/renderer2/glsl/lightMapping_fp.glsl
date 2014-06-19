@@ -24,19 +24,24 @@ varying vec3 var_Normal;
 
 varying vec4 var_Color;
 
+#define LIGTMAP_INTENSITY 0.75
+
 void main()
 {
+	vec4 lightmapColor = texture2D(u_LightMap, var_TexLight);
+	vec4 deluxemapColor = texture2D(u_DeluxeMap, var_TexLight);
+
+	//lower the lightmap intensity (this should be done on load)
+	lightmapColor.rgb = pow(lightmapColor.rgb, vec3(1.0 / LIGTMAP_INTENSITY)); 
+
 #if defined(USE_PORTAL_CLIPPING)
+	float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
+	if (dist < 0.0)
 	{
-		float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
-		if (dist < 0.0)
-		{
-			discard;
-			return;
-		}
+		discard;
+		return;
 	}
 #endif
-
 
 #if defined(USE_NORMAL_MAPPING)
 
@@ -129,14 +134,14 @@ void main()
 	N = normalize(tangentToWorldMatrix * N);
 
 	// compute light direction in world space
-	vec3 L = 2.0 * (texture2D(u_DeluxeMap, var_TexLight).xyz - 0.5);
+	vec3 L = 2.0 * (deluxemapColor.xyz - 0.5);
 	//L = normalize(L);
 
 	// compute half angle in world space
 	vec3 H = normalize(L + I);
 
 	// compute light color from world space lightmap
-	vec3 lightColor = texture2D(u_LightMap, var_TexLight).rgb;
+	vec3 lightColor = lightmapColor.rgb;
 
 	// compute the specular term
 	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb;
@@ -201,7 +206,7 @@ void main()
 	vec3 specular = vec3(0.0, 0.0, 0.0);
 
 	// compute light color from object space lightmap
-	vec3 lightColor = texture2D(u_LightMap, var_TexLight).rgb;
+	vec3 lightColor = lightmapColor.rgb;
 
 	vec4 color = diffuse;
 	color.rgb *= lightColor;
@@ -222,25 +227,12 @@ void main()
 
 	if (SHOW_DELUXEMAP)
 	{
-		gl_FragColor = texture2D(u_DeluxeMap, var_TexLight);
+		color = deluxemapColor;
 	}
 	else if (SHOW_LIGHTMAP)
 	{
-		gl_FragColor = texture2D(u_LightMap, var_TexLight);
-	}
-	else
-	{
-		gl_FragColor = color;
+		color = lightmapColor;
 	}
 
-#if 0
-#if defined(USE_PARALLAX_MAPPING)
-	gl_FragColor = vec4(vec3(1.0, 0.0, 0.0), diffuse.a);
-#elif defined(USE_NORMAL_MAPPING)
-	gl_FragColor = vec4(vec3(0.0, 0.0, 1.0), diffuse.a);
-#else
-	gl_FragColor = vec4(vec3(0.0, 1.0, 0.0), diffuse.a);
-#endif
-#endif
-
+	gl_FragColor = color;
 }

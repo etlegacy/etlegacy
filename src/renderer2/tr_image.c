@@ -1394,6 +1394,10 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		break;
 
 	case WT_CLAMP:
+		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		break;
+
 	case WT_EDGE_CLAMP:
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -2237,7 +2241,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 
 	if (bits & IF_LIGHTMAP)
 	{
-		R_ProcessLightmap(&pic, 4, width, height, &pic);
+		R_ProcessLightmap(pic, 4, width, height, pic);
 
 		bits |= IF_NOCOMPRESSION;
 	}
