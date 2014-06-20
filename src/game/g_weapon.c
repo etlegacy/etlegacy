@@ -1640,7 +1640,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 		{
-			ent->client->ps.classWeaponTime += .33f * 150;
+			ent->client->ps.classWeaponTime += .66f * 150;
 		}
 		else
 		{
@@ -1747,7 +1747,6 @@ void Weapon_Engineer(gentity_t *ent)
 			}
 			else if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= team_maxLandmines.integer && G_LandmineTeam(traceEnt) == ent->client->sess.sessionTeam)
 			{
-
 				if (G_LandmineUnarmed(traceEnt))
 				{
 					// should be impossible now
@@ -2085,7 +2084,6 @@ evilbanigoto:
 					}
 					if (hit->s.eType == ET_OID_TRIGGER)
 					{
-
 						if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
 						{
 							continue;
@@ -2269,7 +2267,7 @@ evilbanigoto:
 					traceEnt->health = 255;
 					// Need some kind of event/announcement here
 
-					// Add_Ammo( ent, WP_DYNAMITE, 1, qtrue );
+					//Add_Ammo( ent, WP_DYNAMITE, 1, qtrue );
 
 					traceEnt->think     = G_FreeEntity;
 					traceEnt->nextthink = level.time + FRAMETIME;
@@ -2340,6 +2338,7 @@ evilbanigoto:
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
 
+								//trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\n\"");
 								defusedObj = qtrue;
 							}
 							else         // TEAM_ALLIES
@@ -2363,7 +2362,10 @@ evilbanigoto:
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
+
 								}
+
+								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\n\"");
 
 								defusedObj = qtrue;
 							}
@@ -2431,10 +2433,13 @@ evilbanigoto:
 
 								{
 									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
+
+								//trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\" 2");
 							}
 							else         // TEAM_ALLIES
 							{
@@ -2453,10 +2458,13 @@ evilbanigoto:
 
 								{
 									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
+
+								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\" 2");
 							}
 
 							return;
