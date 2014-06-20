@@ -44,39 +44,28 @@ const float mdmLODResolutions[MD3_MAX_LODS] = { 1.0f, 0.75f, 0.5f, 0.35f };
 
 static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *vboTriangles, mdmModel_t *mdm, mdmSurfaceIntern_t *surf, int skinIndex, int numBoneReferences, int boneReferences[MAX_BONES])
 {
-	int j, k, lod;
-
-	int  vertexesNum;
-	byte *data;
-	int  dataSize;
-	int  dataOfs;
-
-	GLuint ofsTexCoords;
-	GLuint ofsTangents;
-	GLuint ofsBinormals;
-	GLuint ofsNormals;
-	GLuint ofsBoneIndexes;
-	GLuint ofsBoneWeights;
-
-	int  indexesNum;
-	byte *indexes;
-	int  indexesSize;
-	int  indexesOfs;
-
-	skelTriangle_t *tri;
-
-	vec4_t tmp;
-	int    index;
-
+	int             j, k, lod;
+	int             vertexesNum = surf->numVerts;
+	byte            *data;
+	int             dataSize;
+	int             dataOfs;
+	GLuint          ofsTexCoords;
+	GLuint          ofsTangents;
+	GLuint          ofsBinormals;
+	GLuint          ofsNormals;
+	GLuint          ofsBoneIndexes;
+	GLuint          ofsBoneWeights;
+	int             indexesNum = vboTriangles->currentElements * 3;
+	byte            *indexes;
+	int             indexesSize;
+	int             indexesOfs;
+	skelTriangle_t  *tri;
+	vec4_t          tmp;
+	int             index;
 	srfVBOMDMMesh_t *vboSurf;
 	md5Vertex_t     *v;
-
 	//vec4_t          tmpColor = { 1, 1, 1, 1 };
-
 	static int32_t collapse[MDM_MAX_VERTS];
-
-	vertexesNum = surf->numVerts;
-	indexesNum  = vboTriangles->currentElements * 3;
 
 	// create surface
 	vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
@@ -393,9 +382,8 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 
 qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 {
-	int i, j, k;
-
-	mdmHeader_t *mdm;
+	int         i, j, k;
+	mdmHeader_t *mdm = ( mdmHeader_t * ) buffer;
 //    mdmFrame_t            *frame;
 	mdmSurface_t  *mdmSurf;
 	mdmTriangle_t *mdmTri;
@@ -403,16 +391,13 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 	mdmTag_t      *mdmTag;
 	int           version;
 //	int             size;
-	shader_t *sh;
-	int32_t  *collapseMap, *collapseMapOut, *boneref, *bonerefOut;
-
+	shader_t           *sh;
+	int32_t            *collapseMap, *collapseMapOut, *boneref, *bonerefOut;
 	mdmModel_t         *mdmModel;
 	mdmTagIntern_t     *tag;
 	mdmSurfaceIntern_t *surf;
 	srfTriangle_t      *tri;
 	md5Vertex_t        *v;
-
-	mdm = ( mdmHeader_t * ) buffer;
 
 	version = LittleLong(mdm->version);
 
@@ -423,7 +408,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 	}
 
 	mod->type = MOD_MDM;
-//	size = LittleLong(mdm->ofsEnd);
+	//size = LittleLong(mdm->ofsEnd);
 	mod->dataSize += sizeof(mdmModel_t);
 
 	//mdm = mod->mdm = ri.Hunk_Alloc(size, h_low);
@@ -839,14 +824,12 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 			}
 
 #if 1
-
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
 				//VectorNormalize(v->tangent);
 				//VectorNormalize(v->binormal);
 				//VectorNormalize(v->normal);
 			}
-
 #endif
 		}
 #endif
@@ -910,7 +893,6 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 			//qsort(sortedTriangles.elements, sortedTriangles.currentElements, sizeof(void *), CompareTrianglesByBoneReferences);
 
 #if 0
-
 			for (j = 0; j < sortedTriangles.currentElements; j++)
 			{
 				int b[MAX_WEIGHTS * 3];
@@ -930,7 +912,6 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 					//ri.Printf(PRINT_ALL, "bone indices: %i %i %i %i\n", b[k * 3 + 0], b[k * 3 + 1], b[k * 3 + 2], b[k * 3 + 3]);
 				}
 			}
-
 #endif
 
 			numRemaining = sortedTriangles.currentElements;

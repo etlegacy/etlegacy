@@ -342,9 +342,8 @@ R_LoadMDC
 */
 qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const char *modName)
 {
-	int i, j, k;
-
-	mdcHeader_t        *mdcModel;
+	int                i, j, k;
+	mdcHeader_t        *mdcModel = ( mdcHeader_t * ) buffer;
 	md3Frame_t         *mdcFrame;
 	mdcSurface_t       *mdcSurf;
 	md3Shader_t        *mdcShader;
@@ -354,21 +353,17 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 	mdcXyzCompressed_t *mdcxyzComp;
 	mdcTag_t           *mdcTag;
 	mdcTagName_t       *mdcTagName;
-
-	mdvModel_t    *mdvModel;
-	mdvFrame_t    *frame;
-	mdvSurface_t  *surf;      //, *surface; //unused
-	srfTriangle_t *tri;
-	mdvXyz_t      *v;
-	mdvSt_t       *st;
-	mdvTag_t      *tag;
-	mdvTagName_t  *tagName;
-	short         *ps;
-
-	int version;
-	int size;
-
-	mdcModel = ( mdcHeader_t * ) buffer;
+	mdvModel_t         *mdvModel;
+	mdvFrame_t         *frame;
+	mdvSurface_t       *surf; //, *surface; //unused
+	srfTriangle_t      *tri;
+	mdvXyz_t           *v;
+	mdvSt_t            *st;
+	mdvTag_t           *tag;
+	mdvTagName_t       *tagName;
+	short              *ps;
+	int                version;
+	int                size;
 
 	version = LittleLong(mdcModel->version);
 
@@ -411,8 +406,7 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 	for (i = 0; i < mdcModel->numFrames; i++, frame++, mdcFrame++)
 	{
 #if 1
-
-		// RB: ET HACK
+		// ET HACK
 		if (strstr(mod->name, "sherman") || strstr(mod->name, "mg42"))
 		{
 			frame->radius = 256;
@@ -631,9 +625,8 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 				if (mdcSurf->numCompFrames > 0 && compFrame >= 0)
 				{
 					vec3_t ofsVec;
-					//vec3_t    normal;
 
-					R_MDC_DecodeXyzCompressed2(LittleShort(mdcxyzComp->ofsVec), ofsVec /*, normal*/);
+					R_MDC_DecodeXyzCompressed2(LittleShort(mdcxyzComp->ofsVec), ofsVec);
 					VectorAdd(v->xyz, ofsVec, v->xyz);
 
 					mdcxyzComp++;

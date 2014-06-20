@@ -41,8 +41,6 @@ GROWLISTS
 */
 
 // malloc / free all in one place for debugging
-//extern          "C" void *Com_Allocate(int bytes);
-//extern          "C" void Com_Dealloc(void *ptr);
 
 void Com_InitGrowList(growList_t *list, int maxElements)
 {
@@ -84,7 +82,7 @@ int Com_AddToGrowList(growList_t *list, void *data)
 
 	list->maxElements *= 2;
 
-	//  Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
+	//Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
 
 	list->elements = (void **)Com_Allocate(list->maxElements * sizeof(void *));
 

@@ -325,7 +325,7 @@ void MatrixAffineInverse(const matrix_t in, matrix_t out)
 	MatrixCopy(in, out);
 	MatrixInverse(out);
 #else
-	// Tr3B - cleaned up
+	// cleaned up
 	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];
 	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];
 	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];
@@ -910,7 +910,7 @@ void MatrixTransformPlane2(const matrix_t m, vec4_t inout)
 	Vector4Copy(tmp, inout);
 }
 
-// Tr3B: far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
+// far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
 void MatrixPerspectiveProjectionFovXYInfiniteRH(matrix_t m, vec_t fovX, vec_t fovY, vec_t nearvec)
 {
 	vec_t width, height;

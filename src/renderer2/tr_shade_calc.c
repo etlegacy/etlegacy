@@ -65,9 +65,8 @@ static float *TableForFunc(genFunc_t func)
 }
 
 /*
-** EvalWaveForm
-**
-** Evaluates a given waveForm_t, referencing backEnd.refdef.time directly
+ EvalWaveForm
+ Evaluates a given waveForm_t, referencing backEnd.refdef.time directly
 */
 float RB_EvalWaveForm(const waveForm_t *wf)
 {

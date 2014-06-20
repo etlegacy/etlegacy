@@ -530,7 +530,7 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 }
 
 /*
-Tr3B: this function breaks the VC9 compiler for some unknown reason ...
+this function breaks the VC9 compiler for some unknown reason ...
 
 float R_CalcFov(float fovX, float width, float height)
 {
@@ -946,7 +946,7 @@ float R_ProjectRadius(float r, vec3_t location)
 /*
 =================
 R_SetupEntityWorldBounds
-Tr3B - needs R_RotateEntityForViewParms
+- needs R_RotateEntityForViewParms
 =================
 */
 void R_SetupEntityWorldBounds(trRefEntity_t *ent)
@@ -1168,7 +1168,7 @@ void R_RotateForViewer(void)
 	MatrixMultiplyMOD(quakeToOpenGLMatrix, tr.orientation.viewMatrix2, viewMatrix);
 #else
 
-	// Tr3B:  !!! THIS BREAKS MIRRORS !!!
+	// !!! THIS BREAKS MIRRORS !!!
 
 	// http://redmine.xreal-project.net/issues/41
 	// Bug #41 - Mirrors(and possibly portal cameras) are broken
@@ -1201,7 +1201,7 @@ void R_RotateForViewer(void)
 #endif
 
 #if 0
-	// Tr3B: support mirrors
+	// support mirrors
 	if (tr.viewParms.isMirror)
 	{
 		vec4_t   plane;
@@ -1508,7 +1508,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 	if (zFar <= 0 || infiniteFarClip)
 	{
-		// Tr3B: far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
+		// far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
 		proj[0] = 2 * zNear / width;    proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
 		proj[1] = 0;                    proj[5] = 2 * zNear / height;   proj[9] = (yMax + yMin) / height;   proj[13] = 0;
 		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -1;                      proj[14] = -2 * zNear;
@@ -1625,7 +1625,7 @@ static void R_SetupFrustum(void)
 		SetPlaneSignbits(&tr.viewParms.frustums[0][i]);
 	}
 
-	// Tr3B: set extra near plane which is required by the dynamic occlusion culling
+	// set extra near plane which is required by the dynamic occlusion culling
 	tr.viewParms.frustums[0][FRUSTUM_NEAR].type = PLANE_NON_AXIAL;
 	VectorCopy(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[0][FRUSTUM_NEAR].normal);
 
@@ -2099,7 +2099,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qtrue, -1, 0);
 	rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 
-	// Tr3B: former assertion
+	// former assertion
 	if (tess.numVertexes >= 128)
 	{
 		return qfalse;
@@ -2929,7 +2929,7 @@ void R_AddLightInteractions()
 
 			R_AddEntityInteractions(light);
 
-			// Tr3B: fun but slow
+			// fun but slow
 			//R_AddPolygonInteractions(light);
 		}
 
@@ -3160,7 +3160,7 @@ void R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix)
 #endif
 }
 
-// Tr3B - from botlib
+// from botlib
 void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color)
 {
 #if 0

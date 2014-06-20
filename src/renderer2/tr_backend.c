@@ -115,6 +115,7 @@ static vec4_t *RB_GetScreenQuad(void)
 void RB_SetViewMVPM(void)
 {
 	matrix_t ortho;
+
 	MatrixOrthogonalProjection(ortho,
 	                           backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
 	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
@@ -132,23 +133,18 @@ enum renderDrawSurfaces_e
 
 static void RB_RenderDrawSurfaces(qboolean opaque, qboolean depthFill, int drawSurfFilter)
 {
-	trRefEntity_t *entity, *oldEntity;
-	shader_t      *shader, *oldShader;
-	int           lightmapNum, oldLightmapNum;
-	int           fogNum, oldFogNum;
-	qboolean      depthRange, oldDepthRange;
+	trRefEntity_t *entity, *oldEntity = NULL;
+	shader_t      *shader, *oldShader = NULL;
+	int           lightmapNum, oldLightmapNum = -1;
+	int           fogNum, oldFogNum = -1;
+	qboolean      depthRange = qfalse, oldDepthRange = qfalse;
 	int           i;
 	drawSurf_t    *drawSurf;
 
 	Ren_LogComment("--- RB_RenderDrawSurfaces ---\n");
 
 	// draw everything
-	oldEntity            = NULL;
-	oldShader            = NULL;
-	oldLightmapNum       = -1;
-	oldFogNum            = -1;
-	oldDepthRange        = qfalse;
-	depthRange           = qfalse;
+
 	backEnd.currentLight = NULL;
 
 	for (i = 0, drawSurf = backEnd.viewParms.drawSurfs; i < backEnd.viewParms.numDrawSurfs; i++, drawSurf++)
@@ -585,7 +581,6 @@ static void Render_lightVolume(interaction_t *ia)
 }
 // *INDENT-ON*
 
-
 /**
  * @brief helper function for parallel split shadow mapping
  */
@@ -600,13 +595,11 @@ static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, inte
 	//vec3_t		viewBounds[2];
 	//vec3_t		center;
 	//float			radius;
-	int numCasters;
-
+	int       numCasters = 0;
 	frustum_t frustum;
 	cplane_t  *clipPlane;
 	int       r;
 
-	numCasters = 0;
 	ClearBounds(bounds[0], bounds[1]);
 
 	// calculate frustum planes using the modelview projection matrix
@@ -846,7 +839,7 @@ static void RB_RenderInteractions()
 			GL_Scissor(ia->scissorX, ia->scissorY, ia->scissorWidth, ia->scissorHeight);
 		}
 
-		// Tr3B: this should never happen in the first iteration
+		// this should never happen in the first iteration
 		if (light == oldLight && entity == oldEntity && shader == oldShader)
 		{
 			// fast path, same as previous
@@ -1273,7 +1266,6 @@ static void RB_RenderInteractionsShadowMapped()
 						vec4_t point;
 						vec4_t transf;
 
-
 						Ren_LogComment("--- Rendering directional shadowMap ---\n");
 
 						R_BindFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
@@ -1386,9 +1378,7 @@ static void RB_RenderInteractionsShadowMapped()
 							}
 
 #if 0
-							//
 							// Scene-Independent Projection
-							//
 
 							// find the bounding box of the current split in the light's view space
 							ClearBounds(splitFrustumViewBounds[0], splitFrustumViewBounds[1]);
@@ -1447,9 +1437,7 @@ static void RB_RenderInteractionsShadowMapped()
 							               splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]);
 
 #else
-							//
 							// Scene-Dependent Projection
-							//
 
 							// find the bounding box of the current split in the light's view space
 							ClearBounds(cropBounds[0], cropBounds[1]);
@@ -3250,7 +3238,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						VectorCopy(light->direction, lightDirection);
 #endif
 
-
 #if 0
 						if (r_lightSpacePerspectiveWarping->integer)
 						{
@@ -3543,7 +3530,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								//calcCubicHull(min,max,Bcopy.points,Bcopy.size);
 
 #if 0
-
 								VectorSet(forward, 1, 0, 0);
 								VectorSet(side, 0, 1, 0);
 								VectorSet(up, 0, 0, 1);
@@ -3585,7 +3571,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							          cropBounds[1][0], cropBounds[1][1], cropBounds[1][2]);
 #endif
 
-							//
 							//MatrixInverse(cropMatrix);
 
 #if 0
@@ -4168,13 +4153,13 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 					R_ComputeFinalAttenuation(attenuationXYStage, light);
 
-					#if 0 // FIXME support darkening shadows as in HL2
+#if 0 // FIXME support darkening shadows as in HL2
 					if (light->l.inverseShadows)
 					{
 						GL_State(GLS_SRCBLEND_ZERO | GLS_DSTBLEND_ONE_MINUS_SRC_COLOR);
 					}
 					else
-					#endif
+#endif
 					{
 						// set OpenGL state for additive lighting
 						GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
@@ -5115,8 +5100,7 @@ void RB_RenderDepthOfField()
 void RB_RenderGlobalFog()
 {
 	vec3_t local;
-	vec4_t fogDistanceVector;   //, fogDepthVector;
-	//vec4_t   fogColor;
+	vec4_t fogDistanceVector;
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
@@ -5144,9 +5128,7 @@ void RB_RenderGlobalFog()
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // world space
 
 	{
-		fog_t *fog;
-
-		fog = &tr.world->fogs[tr.world->globalFog];
+		fog_t *fog = &tr.world->fogs[tr.world->globalFog];
 
 		Ren_LogComment("--- RB_RenderGlobalFog( fogNum = %i, originalBrushNumber = %i ) ---\n", tr.world->globalFog, fog->originalBrushNumber);
 
@@ -5232,7 +5214,6 @@ void RB_RenderBloom()
 		MatrixOrthogonalProjection(ortho, 0, tr.contrastRenderFBO->width, 0, tr.contrastRenderFBO->height, -99999, 99999);
 		GL_LoadProjectionMatrix(ortho);
 #endif
-
 
 		if (DS_STANDARD_ENABLED())
 		{
@@ -5553,13 +5534,13 @@ static void RB_CalculateAdaptation()
 
 	if (!Q_isnan(newAdaptation) && !Q_isnan(newMaximum))
 	{
-		#if 1
+#if 1
 		backEnd.hdrAverageLuminance = newAdaptation;
 		backEnd.hdrMaxLuminance     = newMaximum;
-		#else
+#else
 		backEnd.hdrAverageLuminance = avgLuminance;
 		backEnd.hdrMaxLuminance     = maxLuminance;
-		#endif
+#endif
 	}
 
 	backEnd.hdrTime = curTime;
@@ -6864,6 +6845,7 @@ void RB_RenderEntityOcclusionQueries()
 // ================================================================================================
 // BSP OCCLUSION CULLING
 // ================================================================================================
+
 void RB_RenderBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
@@ -7044,9 +7026,8 @@ static void RB_RenderDebugUtils()
 		vec3_t        forward, left, up;
 		vec4_t        lightColor;
 		vec4_t        quadVerts[4];
-
-		vec3_t minSize = { -2, -2, -2 };
-		vec3_t maxSize = { 2, 2, 2 };
+		vec3_t        minSize = { -2, -2, -2 };
+		vec3_t        maxSize = { 2, 2, 2 };
 
 		SetMacrosAndSelectProgram(gl_genericShader);
 
@@ -8932,7 +8913,7 @@ static void RB_RenderViewFront(void)
 			}
 			else if (!r_portalSky->integer)
 			{
-				// ydnar: portal skies have been manually turned off, clear bg color
+				// portal skies have been manually turned off, clear bg color
 				clearBits |= GL_COLOR_BUFFER_BIT;
 				GL_ClearColor(0.5, 0.5, 0.5, 1.0);
 			}
@@ -9061,7 +9042,7 @@ static void RB_RenderViewFront(void)
 	}
 
 	// render ambient occlusion process effect
-	// Tr3B: needs way more work
+	// needs way more work
 	RB_RenderScreenSpaceAmbientOcclusion(qfalse);
 
 	if (HDR_ENABLED())
@@ -9093,7 +9074,7 @@ static void RB_RenderViewFront(void)
 	else
 	{
 		/*
-		Tr3B: FIXME this causes: caught OpenGL error:
+		FIXME this causes: caught OpenGL error:
 		GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
 
 		if(glConfig2.framebufferBlitAvailable)

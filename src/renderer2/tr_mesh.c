@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -38,14 +38,12 @@
 
 static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 {
-	mdvFrame_t *oldFrame, *newFrame;
-	int        i;
-	vec3_t     v;
-	vec3_t     transformed;
-
+	int    i;
+	vec3_t v;
+	vec3_t transformed;
 	// compute frame pointers
-	newFrame = model->frames + ent->e.frame;
-	oldFrame = model->frames + ent->e.oldframe;
+	mdvFrame_t *newFrame = model->frames + ent->e.frame;
+	mdvFrame_t *oldFrame = model->frames + ent->e.oldframe;
 
 	// calculate a bounding box in the current coordinate system
 	for (i = 0; i < 3; i++)

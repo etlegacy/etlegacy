@@ -214,7 +214,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		point->point[2] = MemStreamGetFloat(stream);
 
 #if 0
-		// Tr3B: HACK convert from Unreal coordinate system to the Quake one
+		// HACK convert from Unreal coordinate system to the Quake one
 		MatrixTransformPoint2(unrealToQuake, point->point);
 #endif
 	}
@@ -576,7 +576,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			boneOrigin[j] = refBone->bone.position[j];
 		}
 
-		// Tr3B: I have really no idea why the .psk format stores the first quaternion with inverted quats.
+		// I have really no idea why the .psk format stores the first quaternion with inverted quats.
 		// Furthermore only the X and Z components of the first quat are inverted ?!?!
 		if (i == 0)
 		{

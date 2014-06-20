@@ -146,7 +146,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		return qfalse;
 	}
 
-	// ydnar: made surface culling generic, inline with q3map2 surface classification
+	// made surface culling generic, inline with q3map2 surface classification
 	switch (*surface)
 	{
 	case SF_FACE:
@@ -260,7 +260,7 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	interactionType_t iaType       = IA_DEFAULT;
 	byte              cubeSideBits = CUBESIDE_CLIPALL;
 
-	// Tr3B - this surface is maybe not in this view but it may still cast a shadow
+	// this surface is maybe not in this view but it may still cast a shadow
 	// into this view
 	if (surf->viewCount != tr.viewCountNoReset)
 	{
@@ -447,7 +447,7 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	VectorAdd(ent->worldBounds[0], ent->worldBounds[1], boundsCenter);
 	VectorScale(boundsCenter, 0.5f, boundsCenter);
 
-	// Tr3B: BSP inline models should always use vertex lighting
+	// BSP inline models should always use vertex lighting
 	R_SetupEntityLighting(&tr.refdef, ent, boundsCenter);
 
 	fogNum = R_FogWorldBox(ent->worldBounds);
@@ -464,7 +464,7 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 			R_AddDrawSurf((surfaceType_t *) vboSurface, vboSurface->shader, vboSurface->lightmapNum, fogNum);
 		}
 
-		// Tr3B: also add surfaces like deform autosprite
+		// also add surfaces like deform autosprite
 		for (i = 0; i < bspModel->numSurfaces; i++)
 		{
 			bspSurface_t *surf = bspModel->firstSurface + i;
@@ -581,7 +581,7 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 
 		InsertLink(&node->visChain, &tr.traversalStack);
 
-		// ydnar: cull decals
+		// cull decals
 		if (decalBits)
 		{
 			int i;
@@ -615,7 +615,7 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 
 	if (node->numMarkSurfaces)
 	{
-		// ydnar: moved off to separate function
+		// moved off to separate function
 		R_AddLeafSurfaces(node, decalBits);
 	}
 }
@@ -644,7 +644,7 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 		// if the bounding volume is outside the frustum, nothing
 		// inside can be visible OPTIMIZE: don't do this all the way to leafs?
 
-		// Tr3B - even surfaces that belong to nodes that are outside of the view frustum
+		// even surfaces that belong to nodes that are outside of the view frustum
 		// can cast shadows into the view frustum
 		if (!r_nocull->integer && r_shadows->integer <= SHADOWING_BLOB)
 		{
@@ -837,7 +837,7 @@ static void R_UpdateClusterSurfaces()
 
 	if (tr.visClusters[tr.visIndex] < 0 || tr.visClusters[tr.visIndex] >= tr.world->numClusters)
 	{
-		// Tr3B: this is not a bug, the super cluster is the last one in the array
+		// this is not a bug, the super cluster is the last one in the array
 		cluster = &tr.world->clusters[tr.world->numClusters];
 	}
 	else
@@ -1133,7 +1133,6 @@ static void R_UpdateClusterSurfaces()
 			VectorCopy(bounds[0], vboSurf->bounds[0]);
 			VectorCopy(bounds[1], vboSurf->bounds[1]);
 
-			// make sure the render thread is stopped
 			R_IssuePendingRenderCommands();
 
 			// update IBO
@@ -2319,7 +2318,7 @@ void R_AddWorldSurfaces(void)
 			R_RecursiveWorldNode(tr.world->nodes, FRUSTUM_CLIPALL, tr.refdef.decalBits);
 		}
 
-		// ydnar: add decal surfaces
+		// add decal surfaces
 		R_AddDecalSurfaces(tr.world->models);
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
@@ -2462,7 +2461,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 
 			surface = iaCache->surface;
 
-			// Tr3B - this surface is maybe not in this view but it may still cast a shadow
+			// this surface is maybe not in this view but it may still cast a shadow
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{
@@ -2497,7 +2496,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 
 			surface = iaCache->surface;
 
-			// Tr3B - this surface is maybe not in this view but it may still cast a shadow
+			// this surface is maybe not in this view but it may still cast a shadow
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{

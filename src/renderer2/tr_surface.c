@@ -420,7 +420,7 @@ void Tess_AddCubeWithNormals(const vec3_t position, const vec3_t minSize, const 
 ==============
 Tess_UpdateVBOs
 
-Tr3B: update the default VBO to replace the client side vertex arrays
+update the default VBO to replace the client side vertex arrays
 ==============
 */
 void Tess_UpdateVBOs(uint32_t attribBits)
@@ -645,11 +645,10 @@ static void Tess_SurfaceSprite(void)
 	else
 	{
 		float s, c;
-		float ang;
+		float ang = M_PI * backEnd.currentEntity->e.rotation / 180;
 
-		ang = M_PI * backEnd.currentEntity->e.rotation / 180;
-		s   = sin(ang);
-		c   = cos(ang);
+		s = sin(ang);
+		c = cos(ang);
 
 		VectorScale(backEnd.viewParms.orientation.axis[1], c * radius, left);
 		VectorMA(left, -s * radius, backEnd.viewParms.orientation.axis[2], left);
@@ -1201,7 +1200,6 @@ Tess_SurfaceBeam
 static void Tess_SurfaceBeam(void)
 {
 #if 1
-
 	Ren_LogComment("--- Tess_SurfaceBeam ---\n");
 
 	// TODO rewrite without glBegin/glEnd
@@ -1277,13 +1275,9 @@ static void Tess_SurfaceBeam(void)
 
 static void Tess_DoRailCore(const vec3_t start, const vec3_t end, const vec3_t up, float len, float spanWidth)
 {
-	float spanWidth2;
-	int   vbase;
-	float t = len / 256.0f;
-
-	vbase = tess.numVertexes;
-
-	spanWidth2 = -spanWidth;
+	float spanWidth2 = -spanWidth;
+	int   vbase      = tess.numVertexes;
+	float t          = len / 256.0f;
 
 	// FIXME: use quad stamp?
 	VectorMA(start, spanWidth, up, tess.xyz[tess.numVertexes]);

@@ -46,12 +46,10 @@ SKINS
  */
 static char *CommaParse(char **data_p)
 {
-	int         c = 0, len;
-	char        *data;
+	int         c     = 0, len = 0;
+	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
-	data         = *data_p;
-	len          = 0;
 	com_token[0] = 0;
 
 	// make sure incoming data is valid
@@ -165,7 +163,7 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 		}
 		if (!Q_stricmp(skin->models[i]->type, type))
 		{
-			// (SA) whoops, should've been this way
+			// whoops, should've been this way
 			Q_strncpyz(name, skin->models[i]->model, sizeof(skin->models[i]->model));
 			return qtrue;
 		}
@@ -195,7 +193,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		surfnum = 0;
 	}
 
-	model = R_GetModelByHandle(modelid);    // (SA) should be correct now
+	model = R_GetModelByHandle(modelid);    // should be correct now
 
 	if (model)
 	{
@@ -234,7 +232,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			        }
 			    }
 			    shd = R_FindShader(surf->shader->name, LIGHTMAP_NONE, mip);
-			    shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE;	// (SA) new
+			    shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE;	// new
 			}
 			else
 			*/

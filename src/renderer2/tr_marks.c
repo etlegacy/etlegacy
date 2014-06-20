@@ -155,7 +155,6 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 
 void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **list, int listsize, int *listlength, vec3_t dir)
 {
-
 	int          s, c;
 	bspSurface_t *surf, **mark;
 
@@ -230,7 +229,6 @@ void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **
 /*
 =================
 R_AddMarkFragments
-
 =================
 */
 void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POLY],
@@ -297,7 +295,6 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 /*
 =================
 R_MarkFragments
-
 =================
 */
 int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
@@ -326,7 +323,6 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	//increment view count for double check prevention
 	tr.viewCountNoReset++;
 
-	//
 	VectorNormalize2(projection, projectionDir);
 	// find all the brushes that are to be considered
 	ClearBounds(mins, maxs);

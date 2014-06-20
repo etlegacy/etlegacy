@@ -2701,7 +2701,7 @@ static void Render_volumetricFog()
 
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-		// Tr3B: might be cool for ghost player effects
+		// might be cool for ghost player effects
 		if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 		{
 			SetUniformMatrix16ARR(UNIFORM_BONEMATRIX, tess.boneMatrices, MAX_BONES);
@@ -3238,7 +3238,7 @@ void Tess_StageIteratorDebug()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// Tr3B: FIXME analyze required vertex attribs by the current material
+		// FIXME analyze required vertex attribs by the current material
 		Tess_UpdateVBOs(0);
 	}
 
@@ -3330,7 +3330,7 @@ void Tess_StageIteratorGeneric()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// Tr3B: FIXME analyze required vertex attribs by the current material
+		// FIXME analyze required vertex attribs by the current material
 		Tess_UpdateVBOs(0);
 	}
 
@@ -3536,7 +3536,7 @@ void Tess_StageIteratorGBuffer()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// Tr3B: FIXME analyze required vertex attribs by the current material
+		// FIXME analyze required vertex attribs by the current material
 		Tess_UpdateVBOs(0);
 	}
 
@@ -3737,7 +3737,7 @@ void Tess_StageIteratorGBufferNormalsOnly()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// Tr3B: FIXME analyze required vertex attribs by the current material
+		// FIXME analyze required vertex attribs by the current material
 		Tess_UpdateVBOs(0);
 	}
 
@@ -3983,7 +3983,7 @@ void Tess_StageIteratorLighting()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// Tr3B: FIXME analyze required vertex attribs by the current material
+		// FIXME analyze required vertex attribs by the current material
 		Tess_UpdateVBOs(0);
 	}
 

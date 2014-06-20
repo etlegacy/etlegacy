@@ -676,7 +676,7 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 				key->position[k] = MemStreamGetFloat(stream);
 			}
 
-			// Tr3B: see R_LoadPSK ...
+			// see R_LoadPSK ...
 			if ((j % psa->info.numBones) == 0)
 			{
 				key->quat[0] = MemStreamGetFloat(stream);
@@ -906,17 +906,12 @@ R_AddMD5Surfaces
 */
 void R_AddMD5Surfaces(trRefEntity_t *ent)
 {
-	md5Model_t   *model;
+	md5Model_t   *model = tr.currentModel->md5;
 	md5Surface_t *surface;
 	shader_t     *shader;
 	int          i;
-	qboolean     personalModel;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 	int          fogNum;
-
-	model = tr.currentModel->md5;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
 
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum
@@ -1225,7 +1220,7 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light)
 ==============
 RE_CheckSkeleton
 
-Tr3B: check if the skeleton bones are the same in the model and animation
+check if the skeleton bones are the same in the model and animation
 and copy the parentIndex entries into the refSkeleton_t
 ==============
 */

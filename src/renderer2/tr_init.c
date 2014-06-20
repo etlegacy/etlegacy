@@ -1353,7 +1353,7 @@ void R_Register(void)
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 
-	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // ydnar: limit to overbrightbits 1 (sorry 1337 players)
+	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // limit to overbrightbits 1 (sorry 1337 players)
 	ri.Cvar_AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
 
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);

@@ -70,9 +70,8 @@ static int MDXSurfaceCompare(const void *a, const void *b)
 
 qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const char *modName)
 {
-	int i, j, k;            //, l;
-
-	md3Header_t    *md3Model;
+	int            i, j, k; //, l;
+	md3Header_t    *md3Model = ( md3Header_t * ) buffer;
 	md3Frame_t     *md3Frame;
 	md3Surface_t   *md3Surf;
 	md3Shader_t    *md3Shader;
@@ -80,20 +79,16 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 	md3St_t        *md3st;
 	md3XyzNormal_t *md3xyz;
 	md3Tag_t       *md3Tag;
-
-	mdvModel_t    *mdvModel;
-	mdvFrame_t    *frame;
-	mdvSurface_t  *surf;  //, *surface;
-	srfTriangle_t *tri;
-	mdvXyz_t      *v;
-	mdvSt_t       *st;
-	mdvTag_t      *tag;
-	mdvTagName_t  *tagName;
-
-	int version;
-	int size;
-
-	md3Model = ( md3Header_t * ) buffer;
+	mdvModel_t     *mdvModel;
+	mdvFrame_t     *frame;
+	mdvSurface_t   *surf; //, *surface;
+	srfTriangle_t  *tri;
+	mdvXyz_t       *v;
+	mdvSt_t        *st;
+	mdvTag_t       *tag;
+	mdvTagName_t   *tagName;
+	int            version;
+	int            size;
 
 	version = LittleLong(md3Model->version);
 

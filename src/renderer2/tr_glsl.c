@@ -99,7 +99,6 @@ programInfo_t *gl_blurXShader;
 programInfo_t *gl_blurYShader;
 programInfo_t *gl_debugShadowMapShader;
 
-//Dushan
 programInfo_t *gl_liquidShader;
 programInfo_t *gl_rotoscopeShader;
 programInfo_t *gl_bloomShader;
@@ -308,7 +307,6 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		}
 	}
 
-
 	return def;
 
 parseerror:
@@ -399,8 +397,8 @@ programInfo_t *GLSL_FindShader(const char *name)
 
 void GLSL_LoadDefinitions(void)
 {
-	//FIXME: Also load from external files in the future...
-	//For no just copy the existing data to our searchable string
+	// FIXME: Also load from external files in the future...
+	// For no just copy the existing data to our searchable string
 	definitionText = (char *)Com_Allocate(strlen(defaultShaderDefinitions) * sizeof(char) + 1);
 	Com_Memset(definitionText, '\0', strlen(defaultShaderDefinitions) + 1);
 	Q_strncpyz(definitionText, defaultShaderDefinitions, strlen(defaultShaderDefinitions));
@@ -1747,7 +1745,7 @@ static qboolean GLSL_FinnishShaderTextAndCompile(programInfo_t *info, int permut
 
 static qboolean GLSL_GetProgramPermutation(programInfo_t *info, int permutation, const char *vertex, const char *frag, const char *macrostring)
 {
-	//load bin
+	// load bin
 	if (GLSL_LoadShaderBinary(info, permutation) || GLSL_FinnishShaderTextAndCompile(info, permutation, vertex, frag, macrostring))
 	{
 		GLSL_InitUniforms(&info->list->programs[permutation]);
@@ -2415,14 +2413,14 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		break;
 	}
 
-	if (prog->attributes & ATTR_COLOR && !(glState.vertexAttribsState & ATTR_COLOR))
+	if ((prog->attributes & ATTR_COLOR) && !(glState.vertexAttribsState & ATTR_COLOR))
 	{
 		glEnableVertexAttribArray(ATTR_INDEX_COLOR);
 		glState.vertexAttribsState |= ATTR_COLOR;
 		glVertexAttribPointer(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsColors));
 		glState.vertexAttribPointersSet |= ATTR_COLOR;
 	}
-	else if (!(prog->attributes & ATTR_COLOR) && glState.vertexAttribsState & ATTR_COLOR)
+	else if (!(prog->attributes & ATTR_COLOR) && (glState.vertexAttribsState & ATTR_COLOR))
 	{
 		glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		glState.vertexAttribsState &= ~ATTR_COLOR;

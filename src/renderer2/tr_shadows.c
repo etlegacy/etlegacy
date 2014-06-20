@@ -50,7 +50,7 @@ shadowState_t shadowState;
 
 void RB_ProjectionShadowDeform(void)
 {
-	float  *xyz;
+	float  *xyz = (float *)tess.xyz;
 	int    i;
 	float  h;
 	vec3_t ground;
@@ -58,8 +58,6 @@ void RB_ProjectionShadowDeform(void)
 	float  groundDist;
 	float  d;
 	vec3_t lightDir;
-
-	xyz = (float *)tess.xyz;
 
 	ground[0] = backEnd.orientation.axis[0][2];
 	ground[1] = backEnd.orientation.axis[1][2];

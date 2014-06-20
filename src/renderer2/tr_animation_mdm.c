@@ -117,7 +117,6 @@ static float ProjectRadius(float r, vec3_t location)
 	projected[3] = p[0] * tr.viewParms.projectionMatrix[3] +
 	               p[1] * tr.viewParms.projectionMatrix[7] + p[2] * tr.viewParms.projectionMatrix[11] + tr.viewParms.projectionMatrix[15];
 
-
 	pr = projected[1] / projected[3];
 
 	if (pr > 1.0f)
@@ -476,7 +475,7 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 
 void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 {
-	mdmModel_t         *mdm;
+	mdmModel_t         *mdm = tr.currentModel->mdm;
 	mdmSurfaceIntern_t *mdmSurface;
 	shader_t           *shader = 0;
 	int                i, fogNum;
@@ -487,8 +486,6 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 	{
 		personalModel = qtrue;
 	}
-
-	mdm = tr.currentModel->mdm;
 
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
@@ -503,7 +500,6 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 	{
 		R_SetupEntityLighting(&tr.refdef, ent, NULL);
 	}
-
 
 	// see if we are in a fog volume
 	fogNum = R_FogWorldBox(ent->worldBounds);
@@ -1634,7 +1630,8 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 		}
 	}
 	else
-	{                           // interpolated
+	{
+		// interpolated
 		cOldBoneList = (mdxBoneFrameCompressed_t *) ((byte *) mdxOldFrameHeader + mdxOldFrameHeader->ofsFrames +
 		                                             (refent->oldframe + 1) * sizeof(mdxFrame_t) + refent->oldframe * frameSize);
 		cOldBoneListTorso = (mdxBoneFrameCompressed_t *) ((byte *) mdxOldTorsoFrameHeader + mdxOldTorsoFrameHeader->ofsFrames +

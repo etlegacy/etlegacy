@@ -34,7 +34,6 @@
 
 #include "tr_local.h"
 
-
 static qboolean fogIsOn = qfalse;
 
 void RB_Fog(glfog_t *curfog)
@@ -106,7 +105,7 @@ void RB_Fog(glfog_t *curfog)
 //  }
 
 	if (r_zfar->value)
-	{                           // (SA) allow override for helping level designers test fog distances
+	{                           // allow override for helping level designers test fog distances
 //      if(setfog.end != r_zfar->value || !setfog.registered) {
 
 		glFogf(GL_FOG_END, r_zfar->value);
@@ -137,7 +136,6 @@ void RB_Fog(glfog_t *curfog)
 
 #endif
 }
-
 
 void RB_FogOff()
 {
@@ -296,7 +294,7 @@ void R_SetFrameFog()
 		return;
 	}
 
-	// Arnout: new style global fog transitions
+	// new style global fog transitions
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
@@ -358,7 +356,7 @@ void R_SetFrameFog()
 		}
 	}
 
-	// DHM - Nerve :: If fog is not valid, don't use it
+	// If fog is not valid, don't use it
 	if (!tr.glfogsettings[FOG_TARGET].registered)
 	{
 		return;
@@ -386,7 +384,6 @@ void R_SetFrameFog()
 		// transitioning like fog modes
 		else
 		{
-
 			fadeTime = tr.glfogsettings[FOG_TARGET].finishTime - tr.glfogsettings[FOG_TARGET].startTime;
 			if (fadeTime <= 0)
 			{
@@ -442,8 +439,8 @@ void R_SetFrameFog()
 			tr.viewParms.zFar = tr.glfogsettings[FOG_CURRENT].end;
 		}
 	}
-//  else
-//      tr.glfogsettings[FOG_CURRENT].end = 5;
+	//else
+	//tr.glfogsettings[FOG_CURRENT].end = 5;
 
 	if (r_speeds->integer == RSPEEDS_FOG)
 	{

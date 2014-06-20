@@ -48,21 +48,17 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	md5Weight_t   *weight;
 	int           version;
 	shader_t      *sh;
-	char          *buf_p;
+	char          *buf_p = ( char * ) buffer;
 	char          *token;
 	vec3_t        boneOrigin;
 	quat_t        boneQuat;
 	matrix_t      boneMat;
-
-	int        numRemaining;
-	growList_t sortedTriangles;
-	growList_t vboTriangles;
-	growList_t vboSurfaces;
-
-	int numBoneReferences;
-	int boneReferences[MAX_BONES];
-
-	buf_p = ( char * ) buffer;
+	int           numRemaining;
+	growList_t    sortedTriangles;
+	growList_t    vboTriangles;
+	growList_t    vboSurfaces;
+	int           numBoneReferences;
+	int           boneReferences[MAX_BONES];
 
 	// skip MD5Version indent string
 	COM_ParseExt2(&buf_p, qfalse);
@@ -649,20 +645,17 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			}
 
 #if 1
-
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
 				//VectorNormalize(v->tangent);
 				//VectorNormalize(v->binormal);
 				VectorNormalize(v->normal);
 			}
-
 #endif
 		}
 #endif
 
 #if 0
-
 		// do another extra smoothing for normals to avoid flat shading
 		for (j = 0; j < surf->numVerts; j++)
 		{
@@ -681,7 +674,6 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			VectorNormalize(surf->verts[j].normal);
 		}
-
 #endif
 	}
 
@@ -711,7 +703,6 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		//qsort(sortedTriangles.elements, sortedTriangles.currentElements, sizeof(void *), CompareTrianglesByBoneReferences);
 
 #if 0
-
 		for (j = 0; j < sortedTriangles.currentElements; j++)
 		{
 			int b[MAX_WEIGHTS * 3];
@@ -731,7 +722,6 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				//ri.Printf(PRINT_ALL, "bone indices: %i %i %i %i\n", b[k * 3 + 0], b[k * 3 + 1], b[k * 3 + 2], b[k * 3 + 3]);
 			}
 		}
-
 #endif
 
 		numRemaining = sortedTriangles.currentElements;

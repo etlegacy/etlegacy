@@ -111,13 +111,11 @@ R_CreateVBO2
 */
 VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigned int stateBits, vboUsage_t usage)
 {
-	VBO_t *vbo;
-	int   i, j;
-
-	byte *data;
-	int  dataSize;
-	int  dataOfs;
-
+	VBO_t        *vbo;
+	int          i, j;
+	byte         *data;
+	int          dataSize;
+	int          dataOfs;
 	int          glUsage;
 	unsigned int bits;
 
@@ -126,11 +124,9 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	case VBO_USAGE_STATIC:
 		glUsage = GL_STATIC_DRAW;
 		break;
-
 	case VBO_USAGE_DYNAMIC:
 		glUsage = GL_DYNAMIC_DRAW;
 		break;
-
 	default:
 		glUsage = 0;
 		Com_Error(ERR_FATAL, "bad vboUsage_t given: %i", usage);
@@ -283,11 +279,9 @@ IBO_t *R_CreateIBO(const char *name, byte *indexes, int indexesSize, vboUsage_t 
 	case VBO_USAGE_STATIC:
 		glUsage = GL_STATIC_DRAW;
 		break;
-
 	case VBO_USAGE_DYNAMIC:
 		glUsage = GL_DYNAMIC_DRAW;
 		break;
-
 	default:
 		glUsage = 0;
 		Com_Error(ERR_FATAL, "bad vboUsage_t given: %i", usage);
@@ -328,13 +322,11 @@ R_CreateIBO2
 */
 IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles, vboUsage_t usage)
 {
-	IBO_t *ibo;
-	int   i, j;
-
-	byte *indexes;
-	int  indexesSize;
-	int  indexesOfs;
-
+	IBO_t         *ibo;
+	int           i, j;
+	byte          *indexes;
+	int           indexesSize;
+	int           indexesOfs;
 	srfTriangle_t *tri;
 	glIndex_t     index;
 	int           glUsage;
@@ -344,11 +336,9 @@ IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles
 	case VBO_USAGE_STATIC:
 		glUsage = GL_STATIC_DRAW;
 		break;
-
 	case VBO_USAGE_DYNAMIC:
 		glUsage = GL_DYNAMIC_DRAW;
 		break;
-
 	default:
 		glUsage = 0;
 		Com_Error(ERR_FATAL, "bad vboUsage_t given: %i", usage);
@@ -502,11 +492,9 @@ void R_BindNullIBO(void)
 
 static void R_InitUnitCubeVBO()
 {
-	vec3_t mins = { -1, -1, -1 };
-	vec3_t maxs = { 1, 1, 1 };
-
-	int i;
-	//	vec4_t          quadVerts[4];
+	vec3_t        mins = { -1, -1, -1 };
+	vec3_t        maxs = { 1, 1, 1 };
+	int           i;
 	srfVert_t     *verts;
 	srfTriangle_t *triangles;
 

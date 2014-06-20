@@ -388,7 +388,6 @@ static char *ParseExpressionElement(char **data_p)
 	char        *data;
 	const char  **punc;
 	static char token[MAX_TOKEN_CHARS];
-
 	// multiple character punctuation tokens
 	const char *punctuation[] =
 	{
@@ -738,7 +737,6 @@ static void ParseExpression(char **text, expression_t *exp)
 	// http://cis.stvincent.edu/swd/stl/stacks/stacks.html
 	// http://www.qiksearch.com/articles/cs/infix-postfix/
 	// http://www.experts-exchange.com/Programming/Programming_Languages/C/Q_20394130.html
-
 
 	// convert infix representation to postfix
 
@@ -1448,7 +1446,7 @@ static qboolean ParseTexMod(char **text, shaderStage_t *stage)
 		return qfalse;
 	}
 
-	// Tr3B NOTE: some shaders using tcMod are messed up by artists so we need this bugfix
+	// NOTE: some shaders using tcMod are messed up by artists so we need this bugfix
 	while (1)
 	{
 		token = COM_ParseExt2(text, qfalse);
@@ -3139,8 +3137,8 @@ infoParm_t infoParms[] =
 
 	{ "monsterslick",       0, SURF_MONSTERSLICK, 0                         }, // surf only slick for monsters
 
-	{ "glass",              0, SURF_GLASS,        0                         }, //----(SA) added
-	{ "splash",             0, SURF_SPLASH,       0                         }, //----(SA) added
+	{ "glass",              0, SURF_GLASS,        0                         },
+	{ "splash",             0, SURF_SPLASH,       0                         },
 
 	// steps
 	{ "metal",              0, SURF_METAL,        0                         },
@@ -4131,7 +4129,7 @@ static qboolean ParseShader(char *_text)
 
 			fogvar = atof(token);
 
-			//----(SA)  right now allow one water color per map.  I'm sure this will need
+			// right now allow one water color per map.  I'm sure this will need
 			//          to change at some point, but I'm not sure how to track fog parameters
 			//          on a "per-water volume" basis yet.
 			if (fogvar == 0)
@@ -4686,7 +4684,7 @@ static void CollapseStages()
 			}
 		}
 
-		// NOTE: Tr3B - merge as many stages as possible
+		// NOTE: merge as many stages as possible
 
 		// try to merge diffuse/normal/specular
 		if (hasDiffuseStage     &&
@@ -5140,9 +5138,8 @@ static shader_t *FinishShader(void)
 		}
 		}
 
-		//
 		// ditch this stage if it's detail and detail textures are disabled
-		//
+
 		if (pStage->isDetail && !r_detailTextures->integer)
 		{
 			if (stage < (MAX_SHADER_STAGES - 1))
@@ -5306,7 +5303,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		return qfalse;
 	}
 
-	//empty the whole list
+	// empty the whole list
 	if (!shadername && !shadertext)
 	{
 		dptr = dshader;
@@ -5321,7 +5318,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		return qtrue;
 	}
 
-	//walk list for existing shader to delete, or end of the list
+	// walk list for existing shader to delete, or end of the list
 	dptr     = dshader;
 	lastdptr = NULL;
 	while (dptr)
@@ -5354,14 +5351,14 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		dptr     = dptr->next;
 	}
 
-	//cant add a new one with empty shadertext
+	// cant add a new one with empty shadertext
 	if (!shadertext || !strlen(shadertext))
 	{
 		ri.Printf(PRINT_WARNING, "%s new shader %s has NULL shadertext!\n", func_err, shadername);
 		return qfalse;
 	}
 
-	//create a new shader
+	// create a new shader
 	dptr = (dynamicshader_t *) ri.Z_Malloc(sizeof(*dptr));
 	if (!dptr)
 	{
@@ -5606,7 +5603,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		stages[i].bundle[0].texMods = texMods[i];
 	}
 
-	// ydnar: default to no implicit mappings
+	// default to no implicit mappings
 	implicitMap[0]    = '\0';
 	implicitStateBits = GLS_DEFAULT;
 	implicitCullType  = CT_FRONT_SIDED;
@@ -5630,7 +5627,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			return sh;
 		}
 
-		// ydnar: allow implicit mappings
+		// allow implicit mappings
 		if (implicitMap[0] == '\0')
 		{
 			sh = FinishShader();

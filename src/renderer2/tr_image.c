@@ -205,14 +205,12 @@ void R_ImageList_f(void)
 
 			ri.Printf(PRINT_ALL, "2D   ");
 			break;
-
 		case GL_TEXTURE_CUBE_MAP_ARB:
 			texels       += image->uploadWidth * image->uploadHeight * 6;
 			imageDataSize = image->uploadWidth * image->uploadHeight * 6;
 
 			ri.Printf(PRINT_ALL, "CUBE ");
 			break;
-
 		default:
 			ri.Printf(PRINT_ALL, "???? ");
 			imageDataSize = image->uploadWidth * image->uploadHeight;
@@ -225,97 +223,78 @@ void R_ImageList_f(void)
 			ri.Printf(PRINT_ALL, "RGB8     ");
 			imageDataSize *= 3;
 			break;
-
 		case GL_RGBA8:
 			ri.Printf(PRINT_ALL, "RGBA8    ");
 			imageDataSize *= 4;
 			break;
-
 		case GL_RGB16:
 			ri.Printf(PRINT_ALL, "RGB      ");
 			imageDataSize *= 6;
 			break;
-
 		case GL_RGB16F_ARB:
 			ri.Printf(PRINT_ALL, "RGB16F   ");
 			imageDataSize *= 6;
 			break;
-
 		case GL_RGB32F_ARB:
 			ri.Printf(PRINT_ALL, "RGB32F   ");
 			imageDataSize *= 12;
 			break;
-
 		case GL_RGBA16F_ARB:
 			ri.Printf(PRINT_ALL, "RGBA16F  ");
 			imageDataSize *= 8;
 			break;
-
 		case GL_RGBA32F_ARB:
 			ri.Printf(PRINT_ALL, "RGBA32F  ");
 			imageDataSize *= 16;
 			break;
-
 		case GL_ALPHA16F_ARB:
 			ri.Printf(PRINT_ALL, "A16F     ");
 			imageDataSize *= 2;
 			break;
-
 		case GL_ALPHA32F_ARB:
 			ri.Printf(PRINT_ALL, "A32F     ");
 			imageDataSize *= 4;
 			break;
-
 		case GL_LUMINANCE_ALPHA16F_ARB:
 			ri.Printf(PRINT_ALL, "LA16F    ");
 			imageDataSize *= 4;
 			break;
-
 		case GL_LUMINANCE_ALPHA32F_ARB:
 			ri.Printf(PRINT_ALL, "LA32F    ");
 			imageDataSize *= 8;
 			break;
-
 		case GL_COMPRESSED_RGBA_ARB:
 			ri.Printf(PRINT_ALL, "ARB      ");
 			imageDataSize *= 4;     // FIXME
 			break;
-
 		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 			ri.Printf(PRINT_ALL, "DXT1     ");
 			imageDataSize *= 4 / 8;
 			break;
-
 		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 			ri.Printf(PRINT_ALL, "DXT1a    ");
 			imageDataSize *= 4 / 8;
 			break;
-
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 			ri.Printf(PRINT_ALL, "DXT3     ");
 			imageDataSize *= 4 / 4;
 			break;
-
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 			ri.Printf(PRINT_ALL, "DXT5     ");
 			imageDataSize *= 4 / 4;
 			break;
-
 		case GL_DEPTH_COMPONENT16_ARB:
 			ri.Printf(PRINT_ALL, "D16      ");
 			imageDataSize *= 2;
 			break;
-
 		case GL_DEPTH_COMPONENT24_ARB:
 			ri.Printf(PRINT_ALL, "D24      ");
 			imageDataSize *= 3;
 			break;
-
 		case GL_DEPTH_COMPONENT32_ARB:
 			ri.Printf(PRINT_ALL, "D32      ");
 			imageDataSize *= 4;
 			break;
-
 		default:
 			ri.Printf(PRINT_ALL, "????     ");
 			imageDataSize *= 4;
@@ -327,23 +306,18 @@ void R_ImageList_f(void)
 		case WT_REPEAT:
 			ri.Printf(PRINT_ALL, "rept  ");
 			break;
-
 		case WT_CLAMP:
 			ri.Printf(PRINT_ALL, "clmp  ");
 			break;
-
 		case WT_EDGE_CLAMP:
 			ri.Printf(PRINT_ALL, "eclmp ");
 			break;
-
 		case WT_ZERO_CLAMP:
 			ri.Printf(PRINT_ALL, "zclmp ");
 			break;
-
 		case WT_ALPHA_ZERO_CLAMP:
 			ri.Printf(PRINT_ALL, "azclmp");
 			break;
-
 		default:
 			ri.Printf(PRINT_ALL, "%4i  ", image->wrapType);
 			break;
@@ -1365,17 +1339,14 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		break;
-
 	case FT_LINEAR:
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		break;
-
 	case FT_NEAREST:
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		break;
-
 	default:
 		ri.Printf(PRINT_WARNING, "WARNING: unknown filter type for image '%s'\n", image->name);
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1392,29 +1363,24 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		break;
-
 	case WT_CLAMP:
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		break;
-
 	case WT_EDGE_CLAMP:
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		break;
-
 	case WT_ZERO_CLAMP:
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(image->type, GL_TEXTURE_BORDER_COLOR, zeroClampBorder);
 		break;
-
 	case WT_ALPHA_ZERO_CLAMP:
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(image->type, GL_TEXTURE_BORDER_COLOR, alphaZeroClampBorder);
 		break;
-
 	default:
 		ri.Printf(PRINT_WARNING, "WARNING: unknown wrap type for image '%s'\n", image->name);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -2430,17 +2396,16 @@ R_FindCubeImage
 Finds or loads the given image.
 Returns NULL if it fails, not a default image.
 
-Tr3B: fear the use of goto
+fear the use of goto
 ==============
 */
 image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName)
 {
-	int     i;
-	image_t *image = NULL;
-	int     width  = 0, height = 0;
-	byte    *pic[6];
-	long    hash;
-
+	int         i;
+	image_t     *image = NULL;
+	int         width  = 0, height = 0;
+	byte        *pic[6];
+	long        hash;
 	static char *openglSuffices[6] = { "px", "nx", "py", "ny", "pz", "nz" };
 
 	/*
@@ -2473,9 +2438,8 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	static qboolean quakeFlipX[6]     = { qtrue, qtrue, qfalse, qtrue, qtrue, qfalse };
 	static qboolean quakeFlipY[6]     = { qfalse, qfalse, qtrue, qfalse, qfalse, qtrue };
 	static int      quakeRot[6]       = { 90, -90, 0, 0, 90, -90 };
-
-	int  bitsIgnore;
-	char buffer[1024], filename[1024];
+	int             bitsIgnore;
+	char            buffer[1024], filename[1024];
 	//char ddsName[1024];
 	char *filename_p;
 
@@ -3064,7 +3028,7 @@ static void R_CreateDepthToColorFBOImages(void)
 	ri.Hunk_FreeTempMemory(data);
 }
 
-// Tr3B: clean up this mess some day ...
+// clean up this mess some day ...
 static void R_CreateDownScaleFBOImages(void)
 {
 	byte *data;

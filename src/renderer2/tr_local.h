@@ -578,7 +578,7 @@ typedef enum
 
 	SS_OPAQUE,                  // opaque
 
-	SS_ENVIRONMENT_NOFOG,       // Tr3B: moved skybox here so we can fog post process all SS_OPAQUE materials
+	SS_ENVIRONMENT_NOFOG,       // moved skybox here so we can fog post process all SS_OPAQUE materials
 
 	SS_DECAL,                   // scorch marks, etc.
 	SS_SEE_THROUGH,             // ladders, grates, grills that may have small blended edges
@@ -1394,7 +1394,7 @@ typedef enum
 	UNIFORM_COUNT
 } uniform_t;
 
-// Tr3B - shaderProgram_t represents a pair of one
+// shaderProgram_t represents a pair of one
 // GLSL vertex and one GLSL fragment shader
 
 typedef struct shaderProgram_s
@@ -1461,7 +1461,7 @@ typedef struct programInfo_s
 
 //=================================================================================
 
-// ydnar: decal projection
+// decal projection
 typedef struct decalProjector_s
 {
 	shader_t *shader;
@@ -1525,7 +1525,7 @@ typedef struct
 	int numPolybuffers;
 	struct srfPolyBuffer_s *polybuffers;
 
-	int decalBits;              // ydnar: optimization
+	int decalBits;              // optimization
 	int numDecalProjectors;
 	struct decalProjector_s *decalProjectors;
 
@@ -1542,7 +1542,7 @@ typedef struct
 	int pixelTargetWidth;
 	int pixelTargetHeight;
 
-	glfog_t glFog;                      // (SA) added (needed to pass fog infos into the portal sky scene)
+	glfog_t glFog;                      // added (needed to pass fog infos into the portal sky scene)
 } trRefdef_t;
 
 //=================================================================================
@@ -1646,7 +1646,7 @@ typedef enum
 
 	SF_POLY,
 	SF_POLYBUFFER,
-	SF_DECAL,                   // ydnar: decal surfaces
+	SF_DECAL,                   // decal surfaces
 
 	SF_MDV,
 	SF_MDM,
@@ -2123,7 +2123,7 @@ typedef struct
 	uint32_t numVBOSurfaces;
 	srfVBOMesh_t **vboSurfaces;
 
-	// ydnar: decals
+	//decals
 	decal_t *decals;
 } bspModel_t;
 
@@ -2159,7 +2159,7 @@ typedef struct
 	bspNode_t *nodes;
 
 	int numSkyNodes;
-	bspNode_t **skyNodes;       // ydnar: don't walk the entire bsp when rendering sky
+	bspNode_t **skyNodes;       // don't walk the entire bsp when rendering sky
 
 	int numVerts;
 	srfVert_t *verts;
@@ -2448,7 +2448,6 @@ typedef struct mdmModel_s
 
 extern const float mdmLODResolutions[MD3_MAX_LODS];
 
-
 typedef enum
 {
 	AT_BAD,
@@ -2497,7 +2496,6 @@ typedef struct md5Animation_s
 	uint32_t numAnimatedComponents;
 } md5Animation_t;
 
-
 typedef struct
 {
 	axAnimationInfo_t info;
@@ -2526,7 +2524,6 @@ typedef struct
 	md5Vertex_t *vertexes[3];
 	qboolean referenced;
 } skelTriangle_t;
-
 
 //======================================================================
 
@@ -2914,10 +2911,9 @@ typedef struct
 
 	vec4_t clipRegion;              // 2D clipping region
 
-	//
 	// put large tables at the end, so most elements will be
 	// within the +/32K indexed range on risc processors
-	//
+
 	model_t *models[MAX_MOD_KNOWN];
 	int numModels;
 
@@ -2989,7 +2985,6 @@ extern programInfo_t *gl_blurXShader;
 extern programInfo_t *gl_blurYShader;
 extern programInfo_t *gl_debugShadowMapShader;
 
-//Dushan
 extern programInfo_t *gl_liquidShader;
 extern programInfo_t *gl_rotoscopeShader;
 extern programInfo_t *gl_bloomShader;
@@ -3002,7 +2997,6 @@ extern programInfo_t *gl_dispersionShader;
 extern programInfo_t *gl_depthOfField;
 extern programInfo_t *gl_ssao;
 
-//Jacker
 extern programInfo_t *gl_colorCorrection;
 
 //This is set with the GLSL_SelectPermutation
@@ -3029,7 +3023,6 @@ extern glstate_t glState;       // outside of TR since it shouldn't be cleared d
 extern qboolean textureFilterAnisotropic;
 extern int      maxAnisotropy;
 extern float    displayAspect;      //FIXME
-
 
 // cvars
 
@@ -3368,7 +3361,7 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 
 float R_CalcFov(float fovX, float width, float height);
 
-// Tr3B - visualisation tools to help debugging the renderer frontend
+// visualisation tools to help debugging the renderer frontend
 void R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix);
 void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color);
 void R_DebugPolygon(int color, int numPoints, float *points);
@@ -3453,7 +3446,7 @@ qhandle_t RE_RegisterSkin(const char *name);
 void RE_Shutdown(qboolean destroyWindow);
 
 qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
-qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);    //----(SA)
+qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);
 
 qboolean R_GetEntityToken(char *buffer, int size);
 float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *pic_out);
@@ -4123,8 +4116,6 @@ typedef struct
 } backEndData_t;
 
 extern backEndData_t *backEndData;  // the second one may not be allocated
-
-extern volatile qboolean renderThreadActive;
 
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);

@@ -51,7 +51,7 @@ qboolean R_LoadPSK(model_t *mod, byte *buffer, int bufferSize, const char *name)
 model_t *loadmodel;
 
 /*
-** R_GetModelByHandle
+ R_GetModelByHandle
 */
 model_t *R_GetModelByHandle(qhandle_t index)
 {
@@ -71,7 +71,7 @@ model_t *R_GetModelByHandle(qhandle_t index)
 //===============================================================================
 
 /*
-** R_AllocModel
+ R_AllocModel
 */
 model_t *R_AllocModel(void)
 {
@@ -290,9 +290,9 @@ qhandle_t RE_RegisterModel(const char *name)
 			// if we have a valid model and are biased
 			// so that we won't see any higher detail ones,
 			// stop loading them
-//          if ( lod <= r_lodbias->integer ) {
-//              break;
-//          }
+			//if ( lod <= r_lodbias->integer ) {
+			//break;
+			//}
 		}
 	}
 
@@ -338,15 +338,13 @@ R_LoadMDX
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 {
 	int           i, j;
-	mdxHeader_t   *pinmodel, *mdx;
+	mdxHeader_t   *pinmodel = (mdxHeader_t *) buffer, *mdx;
 	mdxFrame_t    *frame;
 	short         *bframe;
 	mdxBoneInfo_t *bi;
 	int           version;
 	int           size;
 	int           frameSize;
-
-	pinmodel = (mdxHeader_t *) buffer;
 
 	version = LittleLong(pinmodel->version);
 	if (version != MDX_VERSION)

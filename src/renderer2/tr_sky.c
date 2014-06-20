@@ -423,10 +423,8 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 {
 	int s, t;
 	int vertexStart = tess.numVertexes;
-	int tHeight, sWidth;
-
-	tHeight = maxs[1] - mins[1] + 1;
-	sWidth  = maxs[0] - mins[0] + 1;
+	int tHeight     = maxs[1] - mins[1] + 1;
+	int sWidth      = maxs[0] - mins[0] + 1;
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
 	{
@@ -700,7 +698,7 @@ static void BuildCloudData()
 		}
 	}
 
-	// Tr3B: FIXME analyze required vertex attribs by the current material
+	// FIXME analyze required vertex attribs by the current material
 	Tess_UpdateVBOs(0);
 }
 
@@ -781,7 +779,7 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-	//FIXME: This is false on the c++ but should be isPortal check right?
+	// FIXME: This is false on the c++ but should be isPortal check right?
 	SetMacrosAndSelectProgram(gl_genericShader,
 	                          USE_ALPHA_TESTING, qfalse,
 	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
@@ -942,7 +940,6 @@ void Tess_StageIteratorSky(void)
 	}
 	else
 	{
-
 		if (tess.stageIteratorFunc2 == &Tess_StageIteratorGBuffer)
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -1012,7 +1009,7 @@ void Tess_StageIteratorSky(void)
 			tess.stageIteratorFunc2();
 		}
 
-		// Tr3B: TODO draw the inner skybox?
+		// TODO draw the inner skybox?
 
 		if (tess.stageIteratorFunc2 == Tess_StageIteratorGBuffer)
 		{

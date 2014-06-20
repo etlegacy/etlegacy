@@ -127,7 +127,6 @@ void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 	}
 	else
 	{
-
 		// set the light bits in all the surfaces
 		for (i = 0; i < bspModel->numSurfaces; i++)
 		{
@@ -162,16 +161,11 @@ void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 	}
 }
 
-
 /*
 =============================================================================
-
 LIGHT SAMPLING
-
 =============================================================================
 */
-
-
 
 /*
 =================
@@ -293,7 +287,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 		ent->ambientLight[2] = r_forceAmbient->value;
 	}
 
-//----(SA)  added
 	// cheats?  check for single player?
 	if (tr.lightGridMulDirected)
 	{
@@ -303,9 +296,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	{
 		VectorScale(ent->ambientLight, tr.lightGridMulAmbient, ent->ambientLight);
 	}
-//----(SA)  end
 }
-
 
 /* unused
 ===============
@@ -421,9 +412,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 			VectorCopy(tr.sunDirection, ent->lightDir);
 		}
 #else
-		//% ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
-		//% ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
-		//% VectorCopy( tr.sunDirection, ent->lightDir );
+		//ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
+		//ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
+		//VectorCopy( tr.sunDirection, ent->lightDir );
 		ent->ambientLight[0] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[1] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[2] = tr.identityLight * (96.0f / 255.0f);
@@ -470,16 +461,16 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
 	}
 
-	// Tr3B: keep it in world space
+	// keep it in world space
 
 	// transform the direction to local space
-	//% d = VectorLength(ent->directedLight);
-	//% VectorScale(ent->lightDir, d, lightDir);
-	//% VectorNormalize(lightDir);
+	//d = VectorLength(ent->directedLight);
+	//VectorScale(ent->lightDir, d, lightDir);
+	//VectorNormalize(lightDir);
 
-	//% ent->lightDir[0] = DotProduct(lightDir, ent->e.axis[0]);
-	//% ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
-	//%	ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
+	//ent->lightDir[0] = DotProduct(lightDir, ent->e.axis[0]);
+	//ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
+	//ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
 }
 
 /*
@@ -491,7 +482,7 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 {
 	trRefEntity_t ent;
 
-	// bk010103 - this segfaults with -nolight maps
+	// this segfaults with -nolight maps
 	if (tr.world->lightGridData == NULL)
 	{
 		return qfalse;
@@ -507,11 +498,10 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 	return qtrue;
 }
 
-
 /*
 =================
 R_SetupLightOrigin
-Tr3B - needs finished transformMatrix
+- needs finished transformMatrix
 =================
 */
 void R_SetupLightOrigin(trRefLight_t *light)
@@ -637,7 +627,7 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 /*
 =================
 R_SetupLightWorldBounds
-Tr3B - needs finished transformMatrix
+- needs finished transformMatrix
 =================
 */
 void R_SetupLightWorldBounds(trRefLight_t *light)
@@ -886,7 +876,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 				Vector4Set(quadVerts[1], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1);
 				Vector4Set(quadVerts[0], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
 				Tess_AddQuadStamp2(quadVerts, colorGreen);
-
 			}
 			else
 			{
@@ -956,7 +945,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		tess.numVertexes         = 0;
 	}
 }
-
 
 /*
 =================
@@ -1317,7 +1305,6 @@ void R_SortInteractions(trRefLight_t *light)
 	}
 }
 
-
 /*
 =================
 R_IntersectRayPlane
@@ -1333,7 +1320,6 @@ static void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plan
 	VectorScale(v, sect, v);
 	VectorAdd(v1, v, res);
 }
-
 
 /*
 =================
@@ -1429,7 +1415,7 @@ static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t l
 R_SetLightScissor
 Recturns the screen space rectangle taken by the box.
     (Clips the box to the near plane to have correct results even if the box intersects the near plane)
-Tr3B - recoded from Tenebrae2
+- recoded from Tenebrae2
 =================
 */
 void R_SetupLightScissor(trRefLight_t *light)
@@ -1586,14 +1572,12 @@ void R_SetupLightScissor(trRefLight_t *light)
 		break;
 	}
 
-
 	Q_clamp(light->scissor.coords[0], tr.viewParms.viewportX, tr.viewParms.viewportX + tr.viewParms.viewportWidth);
 	Q_clamp(light->scissor.coords[2], tr.viewParms.viewportX, tr.viewParms.viewportX + tr.viewParms.viewportWidth);
 
 	Q_clamp(light->scissor.coords[1], tr.viewParms.viewportY, tr.viewParms.viewportY + tr.viewParms.viewportHeight);
 	Q_clamp(light->scissor.coords[3], tr.viewParms.viewportY, tr.viewParms.viewportY + tr.viewParms.viewportHeight);
 }
-
 
 /*
 =================
@@ -1722,37 +1706,31 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 			VectorSet(angles, 0, 0, 0);
 			break;
 		}
-
 		case 1:
 		{
 			VectorSet(angles, 0, 180, 0);
 			break;
 		}
-
 		case 2:
 		{
 			VectorSet(angles, 0, 90, 0);
 			break;
 		}
-
 		case 3:
 		{
 			VectorSet(angles, 0, 270, 0);
 			break;
 		}
-
 		case 4:
 		{
 			VectorSet(angles, -90, 0, 0);
 			break;
 		}
-
 		case 5:
 		{
 			VectorSet(angles, 90, 0, 0);
 			break;
 		}
-
 		default:
 		{
 			// shut up compiler
@@ -1844,7 +1822,6 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 }
 // *INDENT-ON*
 
-
 /*
 =================
 R_SetupLightLOD
@@ -1922,7 +1899,6 @@ void R_SetupLightLOD(trRefLight_t *light)
 
 	light->shadowLOD = lod;
 }
-
 
 /*
 =================
