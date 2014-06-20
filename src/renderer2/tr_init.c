@@ -1261,7 +1261,7 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
 	}
-	ri.Printf(PRINT_ALL, "Renderer: (c)rap\n");
+	ri.Printf(PRINT_ALL, "Renderer: legacy\n");
 }
 
 static void GLSL_restart_f(void)
