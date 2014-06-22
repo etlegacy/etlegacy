@@ -4584,3 +4584,9 @@ msgstr ""
 
 msgid "DOWNLOAD LATEST ET CLIENT"
 msgstr ""
+
+msgid "CONNECT TO SERVER"
+msgstr ""
+
+msgid "Server PW:"
+msgstr ""
