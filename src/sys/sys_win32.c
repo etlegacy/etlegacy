@@ -821,8 +821,6 @@ qboolean Sys_PIDIsRunning(unsigned int pid)
 /*
 ==================
 Sys_StartProcess
-
-NERVE - SMF
 ==================
 */
 void Sys_StartProcess(char *exeName, qboolean doexit)
@@ -836,7 +834,6 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 
 	GetCurrentDirectory(_MAX_PATH, szPathOrig);
 
-	// JPW NERVE swiped from Sherman's SP code
 	if (!CreateProcess(NULL, va("%s\\%s", szPathOrig, exeName), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 	{
 		// couldn't start it, popup error box
