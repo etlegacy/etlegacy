@@ -929,7 +929,7 @@ void Sys_SetProcessProperties(void)
 	int       core, bit, currentCore;
 	BOOL      success;
 #endif
-	HANDLE    process = GetCurrentProcess();
+	HANDLE process = GetCurrentProcess();
 
 	//Set Process priority
 	SetPriorityClass(process, HIGH_PRIORITY_CLASS);

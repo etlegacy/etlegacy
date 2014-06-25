@@ -240,11 +240,11 @@ static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdv
 		}
 		if (shader == tr.defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %s in skin %s\n", mdvSurface->name, skin->name);
+			Ren_Developer("WARNING: no shader for surface %s in skin %s\n", mdvSurface->name, skin->name);
 		}
 		else if (shader->defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+			Ren_Developer("WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 		}
 	}
 	else
@@ -291,8 +291,8 @@ void R_AddMDVSurfaces(trRefEntity_t *ent)
 	if ((ent->e.frame >= tr.currentModel->mdv[lod]->numFrames)
 	    || (ent->e.frame < 0) || (ent->e.oldframe >= tr.currentModel->mdv[lod]->numFrames) || (ent->e.oldframe < 0))
 	{
-		ri.Printf(PRINT_DEVELOPER, "R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
-		          ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
+		Ren_Developer("R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
+		              ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
 		ent->e.frame    = 0;
 		ent->e.oldframe = 0;
 	}

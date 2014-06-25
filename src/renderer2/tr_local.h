@@ -73,8 +73,6 @@ typedef unsigned short glIndex_t;
 #define DEBUG_OPTIMIZEVERTICES 0
 #define CALC_REDUNDANT_SHADOWVERTS 0
 
-#define GLSL_COMPILE_STARTUP_ONLY 1
-
 //#define USE_BSP_CLUSTERSURFACE_MERGING 1
 
 typedef enum
@@ -3588,7 +3586,8 @@ typedef struct shaderCommands_s
 
 extern shaderCommands_t tess;
 
-void GLSL_InitGPUShaders();
+void GLSL_InitGPUShaders(void);
+void GLSL_CompileGPUShaders(void);
 void GLSL_ShutdownGPUShaders();
 void GLSL_BindProgram(shaderProgram_t *program);
 void GLSL_BindNullProgram(void);

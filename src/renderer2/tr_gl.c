@@ -40,7 +40,7 @@ void GL_Bind(image_t *image)
 
 	if (!image)
 	{
-		ri.Printf(PRINT_WARNING, "GL_Bind: NULL image\n");
+		Ren_Warning("GL_Bind: NULL image\n");
 		image = tr.defaultImage;
 	}
 	else
@@ -106,7 +106,7 @@ void GL_TextureFilter(image_t *image, filterType_t filterType)
 {
 	if (!image)
 	{
-		ri.Printf(PRINT_WARNING, "GL_TextureFilter: NULL image\n");
+		Ren_Warning("GL_TextureFilter: NULL image\n");
 	}
 	else
 	{
@@ -162,7 +162,7 @@ void GL_SelectTexture(int unit)
 	}
 	else
 	{
-		ri.Error(ERR_DROP, "GL_SelectTexture: unit = %i", unit);
+		Ren_Drop("GL_SelectTexture: unit = %i", unit);
 	}
 
 	glState.currenttmu = unit;
@@ -304,7 +304,7 @@ void GL_PushMatrix()
 	if (glState.stackIndex >= MAX_GLSTACK)
 	{
 		glState.stackIndex = MAX_GLSTACK - 1;
-		ri.Error(ERR_DROP, "GL_PushMatrix: stack overflow = %i", glState.stackIndex);
+		Ren_Drop("GL_PushMatrix: stack overflow = %i", glState.stackIndex);
 	}
 }
 
@@ -315,7 +315,7 @@ void GL_PopMatrix()
 	if (glState.stackIndex < 0)
 	{
 		glState.stackIndex = 0;
-		ri.Error(ERR_DROP, "GL_PopMatrix: stack underflow");
+		Ren_Drop("GL_PopMatrix: stack underflow");
 	}
 }
 
@@ -476,7 +476,7 @@ void GL_State(uint32_t stateBits)
 				break;
 			default:
 				srcFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid src blend state bits\n");
+				Ren_Drop("GL_State: invalid src blend state bits\n");
 				break;
 			}
 
@@ -508,7 +508,7 @@ void GL_State(uint32_t stateBits)
 				break;
 			default:
 				dstFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid dst blend state bits\n");
+				Ren_Drop("GL_State: invalid dst blend state bits\n");
 				break;
 			}
 

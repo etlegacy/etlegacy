@@ -182,7 +182,7 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 
 	if (!hShader)
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING: RE_AddPolyToScene: NULL poly shader\n");
+		Ren_Developer("WARNING: RE_AddPolyToScene: NULL poly shader\n");
 		return;
 	}
 
@@ -196,7 +196,7 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 			   since we don't plan on changing the const and making for room for those effects
 			   simply cut this message to developer only
 			 */
-			ri.Printf(PRINT_DEVELOPER, "WARNING: RE_AddPolyToScene: r_maxPolyVerts or r_maxPolys reached\n");
+			Ren_Developer("WARNING: RE_AddPolyToScene: r_maxPolyVerts or r_maxPolys reached\n");
 			return;
 		}
 
@@ -353,7 +353,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 
 	if ((unsigned)ent->reType >= RT_MAX_REF_ENTITY_TYPE)
 	{
-		ri.Error(ERR_DROP, "RE_AddRefEntityToScene: bad reType %i", ent->reType);
+		Ren_Drop("RE_AddRefEntityToScene: bad reType %i", ent->reType);
 	}
 
 	Com_Memcpy(&backEndData->entities[r_numEntities].e, ent, sizeof(refEntity_t));
@@ -389,7 +389,7 @@ void RE_AddRefLightToScene(const refLight_t *l)
 
 	if ((unsigned)l->rlType >= RL_MAX_REF_LIGHT_TYPE)
 	{
-		ri.Error(ERR_DROP, "RE_AddRefLightToScene: bad rlType %i", l->rlType);
+		Ren_Drop("RE_AddRefLightToScene: bad rlType %i", l->rlType);
 	}
 
 	light = &backEndData->lights[r_numLights++];
@@ -596,7 +596,7 @@ void RE_RenderScene(const refdef_t *fd)
 
 	if (!tr.world && !(fd->rdflags & RDF_NOWORLDMODEL))
 	{
-		ri.Error(ERR_DROP, "R_RenderScene: NULL worldmodel");
+		Ren_Drop("R_RenderScene: NULL worldmodel");
 	}
 
 	Com_Memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));
@@ -619,7 +619,7 @@ void RE_RenderScene(const refdef_t *fd)
 	/*
 	if(fd->rdflags & RDF_SKYBOXPORTAL)
 	{
-	    ri.Printf(PRINT_ALL, "skyboxportal = 1\n");
+	    Ren_Print("skyboxportal = 1\n");
 	}
 	*/
 

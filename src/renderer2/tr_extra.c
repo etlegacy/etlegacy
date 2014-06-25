@@ -1346,7 +1346,7 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 	lend = strlen(dest);
 	if (lend >= destsize)
 	{
-		Com_Error(ERR_FATAL, "Q_strreplace: already overflowed");
+		Ren_Fatal("Q_strreplace: already overflowed");
 	}
 
 	s = strstr(dest, find);
@@ -1417,7 +1417,7 @@ int MemStreamRead(memStream_t *s, void *buffer, int len)
 		len       = s->buffer + s->bufSize - s->curPos;
 		ret       = 0;
 
-		Com_Error(ERR_FATAL, "MemStreamRead: EOF reached");
+		Ren_Fatal("MemStreamRead: EOF reached");
 	}
 
 	Com_Memcpy(buffer, s->curPos, len);
@@ -1508,7 +1508,7 @@ void printBits(size_t const size, void const *const ptr)
 		{
 			byte   = b[i] & (1 << j);
 			byte >>= j;
-			ri.Printf(PRINT_DEVELOPER, "%u", byte);
+			Ren_Developer("%u", byte);
 		}
 	}
 }

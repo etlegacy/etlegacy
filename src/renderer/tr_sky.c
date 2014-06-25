@@ -201,7 +201,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 
 	if (nump > MAX_CLIP_VERTS - 2)
 	{
-		ri.Error(ERR_DROP, "ClipSkyPolygon: MAX_CLIP_VERTS");
+		Ren_Drop("ClipSkyPolygon: MAX_CLIP_VERTS");
 	}
 	if (stage == 6)     // fully clipped, so draw it
 	{
@@ -662,7 +662,7 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 			if (tess.numVertexes >= tess.maxShaderVerts)
 			{
-				ri.Error(ERR_DROP, "tess.maxShaderVerts(%i) hit in FillCloudySkySide()\n", tess.maxShaderVerts);
+				Ren_Drop("tess.maxShaderVerts(%i) hit in FillCloudySkySide()\n", tess.maxShaderVerts);
 			}
 		}
 	}

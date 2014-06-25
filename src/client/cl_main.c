@@ -3468,7 +3468,7 @@ void CL_InitRef(void)
 
 	if (!ret)
 	{
-		Com_Error(ERR_FATAL, "Couldn't initialize refresh");
+		Com_Error(ERR_FATAL, "Couldn't initialize renderer library");
 	}
 
 	re = *ret;

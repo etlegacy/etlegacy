@@ -56,10 +56,10 @@ static float *TableForFunc(genFunc_t func)
 	}
 
 #if 0
-	ri.Error(ERR_DROP, "TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
+	Ren_Drop("TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
 	return NULL;
 #else
-	// FIXME ri.Printf(PRINT_WARNING, "TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
+	// FIXME Ren_Warning( "TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
 	return tr.sinTable;
 #endif
 }
@@ -259,7 +259,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 		{
 			if (numOps < 1)
 			{
-				ri.Printf(PRINT_ALL, "WARNING: shader %s has numOps < 1 for unary - operator\n", tess.surfaceShader->name);
+				Ren_Print("WARNING: shader %s has numOps < 1 for unary - operator\n", tess.surfaceShader->name);
 				return defaultValue;
 			}
 
@@ -315,7 +315,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 
 			if (numOps < 1)
 			{
-				ri.Printf(PRINT_ALL, "WARNING: shader %s has numOps < 1 for table operator\n", tess.surfaceShader->name);
+				Ren_Print("WARNING: shader %s has numOps < 1 for table operator\n", tess.surfaceShader->name);
 				return defaultValue;
 			}
 
@@ -356,7 +356,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 				value = table->values[oldIndex] + ((table->values[newIndex] - table->values[oldIndex]) * lerp);
 			}
 
-			//ri.Printf(PRINT_ALL, "%s: %i %i %f\n", table->name, oldIndex, newIndex, value);
+			//Ren_Print("%s: %i %i %f\n", table->name, oldIndex, newIndex, value);
 
 			// push result
 			op.type       = OP_NUM;
@@ -369,7 +369,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 		{
 			if (numOps < 2)
 			{
-				ri.Printf(PRINT_ALL, "WARNING: shader %s has numOps < 2 for binary operator %s\n", tess.surfaceShader->name,
+				Ren_Print("WARNING: shader %s has numOps < 2 for binary operator %s\n", tess.surfaceShader->name,
 				          opStrings[op.type].s);
 				return defaultValue;
 			}
@@ -447,7 +447,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 				break;
 			}
 
-			//ri.Printf(PRINT_ALL, "%s: %f %f %f\n", opStrings[op.type].s, value, value1, value2);
+			//Ren_Print("%s: %f %f %f\n", opStrings[op.type].s, value, value1, value2);
 
 			// push result
 			op.type       = OP_NUM;
@@ -782,11 +782,11 @@ static void AutospriteDeform(void)
 
 	if (tess.numVertexes & 3)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite shader %s had odd vertex count\n", tess.surfaceShader->name);
+		Ren_Warning("Autosprite shader %s had odd vertex count\n", tess.surfaceShader->name);
 	}
 	if (tess.numIndexes != (tess.numVertexes >> 2) * 6)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite shader %s had odd index count\n", tess.surfaceShader->name);
+		Ren_Warning("Autosprite shader %s had odd index count\n", tess.surfaceShader->name);
 	}
 
 	oldVerts                 = tess.numVertexes;
@@ -873,11 +873,11 @@ static void Autosprite2Deform(void)
 
 	if (tess.numVertexes & 3)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite2 shader %s had odd vertex count\n", tess.surfaceShader->name);
+		Ren_Warning("Autosprite2 shader %s had odd vertex count\n", tess.surfaceShader->name);
 	}
 	if (tess.numIndexes != (tess.numVertexes >> 2) * 6)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite2 shader %s had odd index count\n", tess.surfaceShader->name);
+		Ren_Warning("Autosprite2 shader %s had odd index count\n", tess.surfaceShader->name);
 	}
 
 	if (backEnd.currentEntity != &tr.worldEntity)

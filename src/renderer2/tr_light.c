@@ -332,7 +332,7 @@ static void LogLight(trRefEntity_t *ent)
         max2 = ent->directedLight[2];
     }
 
-    ri.Printf(PRINT_ALL, "amb:%i  dir:%i\n", max1, max2);
+    Ren_Print("amb:%i  dir:%i\n", max1, max2);
 }
 */
 
@@ -682,7 +682,7 @@ void R_SetupLightView(trRefLight_t *light)
 	*/
 
 	default:
-		ri.Error(ERR_DROP, "R_SetupLightView: Bad rlType");
+		Ren_Drop("R_SetupLightView: Bad rlType");
 		break;
 	}
 }
@@ -1072,15 +1072,15 @@ void R_SetupLightProjection(trRefLight_t *light)
 		frustum[FRUSTUM_FAR][3] = -lightProject[3][3] - 1.0f;
 
 #if 0
-		ri.Printf(PRINT_ALL, "light_target: (%5.3f, %5.3f, %5.3f)\n", light->l.projTarget[0], light->l.projTarget[1], light->l.projTarget[2]);
-		ri.Printf(PRINT_ALL, "light_right: (%5.3f, %5.3f, %5.3f)\n", light->l.projRight[0], light->l.projRight[1], light->l.projRight[2]);
-		ri.Printf(PRINT_ALL, "light_up: (%5.3f, %5.3f, %5.3f)\n", light->l.projUp[0], light->l.projUp[1], light->l.projUp[2]);
-		ri.Printf(PRINT_ALL, "light_start: (%5.3f, %5.3f, %5.3f)\n", light->l.projStart[0], light->l.projStart[1], light->l.projStart[2]);
-		ri.Printf(PRINT_ALL, "light_end: (%5.3f, %5.3f, %5.3f)\n", light->l.projEnd[0], light->l.projEnd[1], light->l.projEnd[2]);
+		Ren_Print("light_target: (%5.3f, %5.3f, %5.3f)\n", light->l.projTarget[0], light->l.projTarget[1], light->l.projTarget[2]);
+		Ren_Print("light_right: (%5.3f, %5.3f, %5.3f)\n", light->l.projRight[0], light->l.projRight[1], light->l.projRight[2]);
+		Ren_Print("light_up: (%5.3f, %5.3f, %5.3f)\n", light->l.projUp[0], light->l.projUp[1], light->l.projUp[2]);
+		Ren_Print("light_start: (%5.3f, %5.3f, %5.3f)\n", light->l.projStart[0], light->l.projStart[1], light->l.projStart[2]);
+		Ren_Print("light_end: (%5.3f, %5.3f, %5.3f)\n", light->l.projEnd[0], light->l.projEnd[1], light->l.projEnd[2]);
 
-		ri.Printf(PRINT_ALL, "unnormalized frustum:\n");
+		Ren_Print("unnormalized frustum:\n");
 		for (i = 0; i < 6; i++)
-			ri.Printf(PRINT_ALL, "(%5.6f, %5.6f, %5.6f, %5.6f)\n", frustum[i][0], frustum[i][1], frustum[i][2], frustum[i][3]);
+			Ren_Print("(%5.6f, %5.6f, %5.6f, %5.6f)\n", frustum[i][0], frustum[i][1], frustum[i][2], frustum[i][3]);
 #endif
 
 		// calculate the new projection matrix from the frustum planes
@@ -1101,15 +1101,15 @@ void R_SetupLightProjection(trRefLight_t *light)
 		}
 
 #if 0
-		ri.Printf(PRINT_ALL, "normalized frustum:\n");
+		Ren_Print("normalized frustum:\n");
 		for (i = 0; i < 6; i++)
-			ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f, %5.3f)\n", light->frustum[i].normal[0], frustum[i][1], frustum[i][2], frustum[i][3]);
+			Ren_Print("(%5.3f, %5.3f, %5.3f, %5.3f)\n", light->frustum[i].normal[0], frustum[i][1], frustum[i][2], frustum[i][3]);
 #endif
 		break;
 	}
 
 	default:
-		ri.Error(ERR_DROP, "R_SetupLightProjection: Bad rlType");
+		Ren_Drop("R_SetupLightProjection: Bad rlType");
 		break;
 	}
 }

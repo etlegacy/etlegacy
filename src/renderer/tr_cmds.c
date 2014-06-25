@@ -50,7 +50,7 @@ void R_PerformanceCounters(void)
 
 	if (r_speeds->integer)
 	{
-		ri.Printf(PRINT_ALL, "%i/%i shaders/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n",
+		Ren_Print("%i/%i shaders/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n",
 		          backEnd.pc.c_shaders, backEnd.pc.c_surfaces, tr.pc.c_leafs, backEnd.pc.c_vertexes,
 		          backEnd.pc.c_indexes / 3, backEnd.pc.c_totalIndexes / 3,
 		          R_SumOfUsedImages() / (1000000.0f), backEnd.pc.c_overDraw / (float)(glConfig.vidWidth * glConfig.vidHeight));
@@ -58,34 +58,34 @@ void R_PerformanceCounters(void)
 
 	if (r_speeds->integer == 2)
 	{
-		ri.Printf(PRINT_ALL, "(patch) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n",
+		Ren_Print("(patch) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n",
 		          tr.pc.c_sphere_cull_patch_in, tr.pc.c_sphere_cull_patch_clip, tr.pc.c_sphere_cull_patch_out,
 		          tr.pc.c_box_cull_patch_in, tr.pc.c_box_cull_patch_clip, tr.pc.c_box_cull_patch_out);
-		ri.Printf(PRINT_ALL, "(md3) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n",
+		Ren_Print("(md3) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n",
 		          tr.pc.c_sphere_cull_md3_in, tr.pc.c_sphere_cull_md3_clip, tr.pc.c_sphere_cull_md3_out,
 		          tr.pc.c_box_cull_md3_in, tr.pc.c_box_cull_md3_clip, tr.pc.c_box_cull_md3_out);
-		ri.Printf(PRINT_ALL, "(gen) %i sin %i sout %i pin %i pout\n",
+		Ren_Print("(gen) %i sin %i sout %i pin %i pout\n",
 		          tr.pc.c_sphere_cull_in, tr.pc.c_sphere_cull_out,
 		          tr.pc.c_plane_cull_in, tr.pc.c_plane_cull_out);
 	}
 	else if (r_speeds->integer == 3)
 	{
-		ri.Printf(PRINT_ALL, "viewcluster: %i\n", tr.viewCluster);
+		Ren_Print("viewcluster: %i\n", tr.viewCluster);
 	}
 	else if (r_speeds->integer == 4)
 	{
-		ri.Printf(PRINT_ALL, "dlight srf:%i  culled:%i  verts:%i  tris:%i\n",
+		Ren_Print("dlight srf:%i  culled:%i  verts:%i  tris:%i\n",
 		          tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled,
 		          backEnd.pc.c_dlightVertexes, backEnd.pc.c_dlightIndexes / 3);
 	}
 	else if (r_speeds->integer == 6)
 	{
-		ri.Printf(PRINT_ALL, "flare adds:%i tests:%i renders:%i\n",
+		Ren_Print("flare adds:%i tests:%i renders:%i\n",
 		          backEnd.pc.c_flareAdds, backEnd.pc.c_flareTests, backEnd.pc.c_flareRenders);
 	}
 	else if (r_speeds->integer == 7)
 	{
-		ri.Printf(PRINT_ALL, "decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
+		Ren_Print("decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
 		          tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces, tr.pc.c_decalSurfacesCreated);
 	}
 
@@ -158,7 +158,7 @@ void *R_GetCommandBuffer(int bytes)
 	{
 		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
 		{
-			ri.Error(ERR_FATAL, "R_GetCommandBuffer: bad size %i", bytes);
+			Ren_Fatal("R_GetCommandBuffer: bad size %i", bytes);
 		}
 		// if we run out of room, just start dropping commands
 		return NULL;
@@ -262,7 +262,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 
 	if (r_numpolyverts + numverts >= r_maxpolyverts->integer)
 	{
-		ri.Printf(PRINT_ALL, "Warning RE_2DPolyies: r_maxpolyverts reached\n");
+		Ren_Print("Warning RE_2DPolyies: r_maxpolyverts reached\n");
 		return;
 	}
 
@@ -443,13 +443,13 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		if (glConfig.stencilBits < 4)
 		{
-			ri.Printf(PRINT_ALL, "Warning: not enough stencil bits to measure overdraw: %d\n", glConfig.stencilBits);
+			Ren_Print("Warning: not enough stencil bits to measure overdraw: %d\n", glConfig.stencilBits);
 			ri.Cvar_Set("r_measureOverdraw", "0");
 			r_measureOverdraw->modified = qfalse;
 		}
 		else if (r_shadows->integer == 2)
 		{
-			ri.Printf(PRINT_ALL, "Warning: stencil shadows and overdraw measurement are mutually exclusive\n");
+			Ren_Print("Warning: stencil shadows and overdraw measurement are mutually exclusive\n");
 			ri.Cvar_Set("r_measureOverdraw", "0");
 			r_measureOverdraw->modified = qfalse;
 		}
@@ -500,7 +500,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		R_IssuePendingRenderCommands();
 		if ((err = qglGetError()) != GL_NO_ERROR)
 		{
-			ri.Error(ERR_FATAL, "RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
+			Ren_Fatal("RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
 		}
 	}
 
@@ -524,14 +524,14 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 		else
 		{
-			ri.Error(ERR_FATAL, "RE_BeginFrame: Stereo is enabled, but stereoFrame was %i", stereoFrame);
+			Ren_Fatal("RE_BeginFrame: Stereo is enabled, but stereoFrame was %i", stereoFrame);
 		}
 	}
 	else
 	{
 		if (stereoFrame != STEREO_CENTER)
 		{
-			ri.Error(ERR_FATAL, "RE_BeginFrame: Stereo is disabled, but stereoFrame was %i", stereoFrame);
+			Ren_Fatal("RE_BeginFrame: Stereo is disabled, but stereoFrame was %i", stereoFrame);
 		}
 		if (!Q_stricmp(r_drawBuffer->string, "GL_FRONT"))
 		{
@@ -598,7 +598,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 
 	if (textureid > tr.numImages || textureid < 0)
 	{
-		ri.Printf(PRINT_ALL, "Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
+		Ren_Print("Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
 		return;
 	}
 
@@ -624,7 +624,7 @@ void RE_Finish(void)
 {
 	renderFinishCommand_t *cmd;
 
-	ri.Printf(PRINT_ALL, "RE_Finish\n");
+	Ren_Print("RE_Finish\n");
 
 	cmd = R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)

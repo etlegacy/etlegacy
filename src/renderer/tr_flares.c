@@ -133,8 +133,8 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 	R_TransformModelToClip(point, backEnd.orientation.modelMatrix,
 	                       backEnd.viewParms.projectionMatrix, eye, clip);
 
-	//ri.Printf(PRINT_ALL, "src:  %f  %f  %f  \n", point[0], point[1], point[2]);
-	//ri.Printf(PRINT_ALL, "eye:  %f  %f  %f  %f\n", eye[0], eye[1], eye[2], eye[3]);
+	//Ren_Print("src:  %f  %f  %f  \n", point[0], point[1], point[2]);
+	//Ren_Print("eye:  %f  %f  %f  %f\n", eye[0], eye[1], eye[2], eye[3]);
 
 	// check to see if the point is completely off screen
 	for (i = 0 ; i < 3 ; i++)
@@ -147,7 +147,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 
 	R_TransformClipToWindow(clip, &backEnd.viewParms, normalized, window);
 
-	//ri.Printf(PRINT_ALL, "window:  %f  %f  %f  \n", window[0], window[1], window[2]);
+	//Ren_Print("window:  %f  %f  %f  \n", window[0], window[1], window[2]);
 
 	if (window[0] < 0 || window[0] >= backEnd.viewParms.viewportWidth
 	    || window[1] < 0 || window[1] >= backEnd.viewParms.viewportHeight)

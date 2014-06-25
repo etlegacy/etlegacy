@@ -458,11 +458,11 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 
 		if (shader == tr.defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "GetMDMSurfaceShader WARNING: no shader for surface %s in skin %s\n", mdmSurface->name, skin->name);
+			Ren_Developer("GetMDMSurfaceShader WARNING: no shader for surface %s in skin %s\n", mdmSurface->name, skin->name);
 		}
 		else if (shader->defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "GetMDMSurfaceShader WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+			Ren_Developer("GetMDMSurfaceShader WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 		}
 	}
 	else
@@ -1548,7 +1548,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 		// print stats for the complete model (not per-surface)
 		if (r_showSkeleton->integer == 4 && totalrt)
 		{
-			ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
+			Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
 			          lodScale, totalrv, totalv, totalrt, totalt, (float)(100.0 * totalrt) / (float)totalt);
 		}
 		totalrv = totalrt = totalv = totalt = 0;
@@ -1714,7 +1714,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 }
 
 #ifdef DBG_PROFILE_BONES
-#define DBG_SHOWTIME    Com_Printf("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
+#define DBG_SHOWTIME    Ren_Print("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
 #else
 #define DBG_SHOWTIME    ;
 #endif
@@ -2086,7 +2086,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 
 			if (r_showSkeleton->integer == 3)
 			{
-				ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count,
+				Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count,
 				          surface->numVerts, render_indexes / 3, surface->numTriangles,
 				          (float)(100.0 * render_indexes / 3) / (float)surface->numTriangles);
 			}
@@ -2192,7 +2192,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 	}
 
 #ifdef DBG_PROFILE_BONES
-	Com_Printf("\n");
+	Ren_Print("\n");
 #endif
 
 #endif // entire function block
@@ -2268,7 +2268,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 	{
 		lodIBO = surface->ibo[0];
 	}
-	//ri.Printf(PRINT_ALL, "LOD index = '%i', IBO = '%s'\n", lodIndex, lodIBO->name);
+	//Ren_Print("LOD index = '%i', IBO = '%s'\n", lodIndex, lodIBO->name);
 
 	R_BindIBO(lodIBO);
 

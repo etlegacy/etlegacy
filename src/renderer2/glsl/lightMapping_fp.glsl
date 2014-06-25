@@ -28,11 +28,11 @@ varying vec4 var_Color;
 
 void main()
 {
-	vec4 lightmapColor = texture2D(u_LightMap, var_TexLight);
+	vec4 lightmapColor  = texture2D(u_LightMap, var_TexLight);
 	vec4 deluxemapColor = texture2D(u_DeluxeMap, var_TexLight);
 
 	//lower the lightmap intensity (this should be done on load)
-	lightmapColor.rgb = pow(lightmapColor.rgb, vec3(1.0 / LIGTMAP_INTENSITY)); 
+	lightmapColor.rgb = pow(lightmapColor.rgb, vec3(1.0 / LIGTMAP_INTENSITY));
 
 #if defined(USE_PORTAL_CLIPPING)
 	float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;

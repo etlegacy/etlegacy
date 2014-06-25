@@ -374,9 +374,7 @@ static qboolean InitOpenGL(void)
 			glConfig.maxTextureSize = 0;
 		}
 
-#if defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_InitGPUShaders();
-#endif
 	}
 
 	GL_CheckErrors();
@@ -439,7 +437,7 @@ void GL_CheckErrors_(const char *fileName, int line)
 		break;
 	}
 
-	ri.Error(ERR_FATAL, "caught OpenGL error: %s in file %s line %i", s, fileName, line);
+	Ren_Fatal("caught OpenGL error: %s in file %s line %i", s, fileName, line);
 }
 
 typedef struct vidmode_s
@@ -513,14 +511,14 @@ static void R_ModeList_f(void)
 {
 	int i;
 
-	ri.Printf(PRINT_ALL, "\n");
+	Ren_Print("\n");
 
 	for (i = 0; i < s_numVidModes; i++)
 	{
-		ri.Printf(PRINT_ALL, "Mode %-2d: %s\n", i, r_vidModes[i].description);
+		Ren_Print("Mode %-2d: %s\n", i, r_vidModes[i].description);
 	}
 
-	ri.Printf(PRINT_ALL, "\n");
+	Ren_Print("\n");
 }
 
 /*
@@ -673,7 +671,7 @@ const void *RB_TakeScreenshotCmd(const void *data)
 		RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 		break;
 	case SSF_PNG:
-		ri.Printf(PRINT_ALL, "PNG output is not implemented");
+		Ren_Print("PNG output is not implemented");
 		break;
 	}
 
@@ -721,13 +719,13 @@ void R_TakeScreenshot(const char *name, ssFormat_t format)
 
 		if (lastNumber == 1000)
 		{
-			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
+			Ren_Print("ScreenShot: Couldn't create a file\n");
 			return;
 		}
 
 		lastNumber++;
 	}
-	ri.Printf(PRINT_ALL, "Wrote %s\n", fileName);
+	Ren_Print("Wrote %s\n", fileName);
 
 	cmd->commandId = RC_SCREENSHOT;
 	cmd->x         = 0;
@@ -828,7 +826,7 @@ static void R_GenerateMaterialFile_f(void)
 
     if(Cmd_Argc() < 3)
     {
-        Com_Printf("usage: generatemtr <directory> [image extension]\n");
+        Ren_Print("usage: generatemtr <directory> [image extension]\n");
         return;
     }
 
@@ -839,11 +837,11 @@ static void R_GenerateMaterialFile_f(void)
 
     Q_strncpyz(fileName, ri.Cmd_Argv(1), sizeof(fileName));
     Com_DefaultExtension(fileName, sizeof(fileName), ".mtr");
-    Com_Printf("Writing %s.\n", fileName);
+    Ren_Print("Writing %s.\n", fileName);
     f = FS_FOpenFileWrite(fileName);
     if(!f)
     {
-        Com_Printf("Couldn't write %s.\n", fileName);
+        Ren_Print("Couldn't write %s.\n", fileName);
         return;
     }
 
@@ -868,7 +866,7 @@ static void R_GenerateMaterialFile_f(void)
             Com_sprintf(fileName2, sizeof(fileName2), "%s/%s", path, fileName);
             Com_sprintf(cleanName2, sizeof(cleanName2), "%s/%s", path, cleanName);
 
-            Com_Printf("renaming '%s' into '%s'\n", fileName2, cleanName2);
+            Ren_Print("renaming '%s' into '%s'\n", fileName2, cleanName2);
             FS_Rename(fileName2, cleanName2);
         }
 
@@ -1101,7 +1099,7 @@ void R_PrintLongString(const char *string)
 	while (size > 0)
 	{
 		Q_strncpyz(buffer, p, sizeof(buffer));
-		ri.Printf(PRINT_ALL, "%s", buffer);
+		Ren_Print("%s", buffer);
 		p    += 1023;
 		size -= 1023;
 	}
@@ -1124,144 +1122,144 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
-	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
-	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
+	Ren_Print("\nGL_VENDOR: %s\n", glConfig.vendor_string);
+	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
+	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
 
 	//Lets not do this on gl3.2 context as the functionality is not supported.
 	/*
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
+	Ren_Print("GL_EXTENSIONS: ");
 	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
 	*/
 
-	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
+	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 
 	if (glConfig.driverType != GLDRV_OPENGL3)
 	{
-		ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_UNITS_ARB: %d\n", glConfig.maxActiveTextures);
+		Ren_Print("GL_MAX_TEXTURE_UNITS_ARB: %d\n", glConfig.maxActiveTextures);
 	}
 
 	/*
 	   if(glConfig.fragmentProgramAvailable)
 	   {
-	   ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_IMAGE_UNITS_ARB: %d\n", glConfig.maxTextureImageUnits);
+	   Ren_Print("GL_MAX_TEXTURE_IMAGE_UNITS_ARB: %d\n", glConfig.maxTextureImageUnits);
 	   }
 	 */
 
-	ri.Printf(PRINT_ALL, "GL_SHADING_LANGUAGE_VERSION_ARB: %s\n", glConfig2.shadingLanguageVersion);
+	Ren_Print("GL_SHADING_LANGUAGE_VERSION_ARB: %s\n", glConfig2.shadingLanguageVersion);
 
-	ri.Printf(PRINT_ALL, "GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB %d\n", glConfig2.maxVertexUniforms);
-	//ri.Printf(PRINT_ALL, "GL_MAX_VARYING_FLOATS_ARB %d\n", glConfig2.maxVaryingFloats);
-	ri.Printf(PRINT_ALL, "GL_MAX_VERTEX_ATTRIBS_ARB %d\n", glConfig2.maxVertexAttribs);
+	Ren_Print("GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB %d\n", glConfig2.maxVertexUniforms);
+	//Ren_Print("GL_MAX_VARYING_FLOATS_ARB %d\n", glConfig2.maxVaryingFloats);
+	Ren_Print("GL_MAX_VERTEX_ATTRIBS_ARB %d\n", glConfig2.maxVertexAttribs);
 
 	if (glConfig2.occlusionQueryAvailable)
 	{
-		ri.Printf(PRINT_ALL, "%d occlusion query bits\n", glConfig2.occlusionQueryBits);
+		Ren_Print("%d occlusion query bits\n", glConfig2.occlusionQueryBits);
 	}
 
 	if (glConfig2.drawBuffersAvailable)
 	{
-		ri.Printf(PRINT_ALL, "GL_MAX_DRAW_BUFFERS_ARB: %d\n", glConfig2.maxDrawBuffers);
+		Ren_Print("GL_MAX_DRAW_BUFFERS_ARB: %d\n", glConfig2.maxDrawBuffers);
 	}
 
 	if (glConfig2.textureAnisotropyAvailable)
 	{
-		ri.Printf(PRINT_ALL, "GL_TEXTURE_MAX_ANISOTROPY_EXT: %f\n", glConfig2.maxTextureAnisotropy);
+		Ren_Print("GL_TEXTURE_MAX_ANISOTROPY_EXT: %f\n", glConfig2.maxTextureAnisotropy);
 	}
 
 	if (glConfig2.framebufferObjectAvailable)
 	{
-		ri.Printf(PRINT_ALL, "GL_MAX_RENDERBUFFER_SIZE_EXT: %d\n", glConfig2.maxRenderbufferSize);
-		ri.Printf(PRINT_ALL, "GL_MAX_COLOR_ATTACHMENTS_EXT: %d\n", glConfig2.maxColorAttachments);
+		Ren_Print("GL_MAX_RENDERBUFFER_SIZE_EXT: %d\n", glConfig2.maxRenderbufferSize);
+		Ren_Print("GL_MAX_COLOR_ATTACHMENTS_EXT: %d\n", glConfig2.maxColorAttachments);
 	}
 
-	ri.Printf(PRINT_ALL, "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits,
+	Ren_Print("\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits,
 	          glConfig.depthBits, glConfig.stencilBits);
-	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight,
+	Ren_Print("MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight,
 	          fsstrings[r_fullscreen->integer == 1]);
 
 	if (glConfig.displayFrequency)
 	{
-		ri.Printf(PRINT_ALL, "%d\n", glConfig.displayFrequency);
+		Ren_Print("%d\n", glConfig.displayFrequency);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "N/A\n");
+		Ren_Print("N/A\n");
 	}
 
-	ri.Printf(PRINT_ALL, "ASPECT RATIO: %.4f\n", glConfig.windowAspect);
+	Ren_Print("ASPECT RATIO: %.4f\n", glConfig.windowAspect);
 
 	if (glConfig.deviceSupportsGamma)
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
 	}
 
-	ri.Printf(PRINT_ALL, "texturemode: %s\n", r_textureMode->string);
-	ri.Printf(PRINT_ALL, "picmip: %d\n", r_picmip->integer);
+	Ren_Print("texturemode: %s\n", r_textureMode->string);
+	Ren_Print("picmip: %d\n", r_picmip->integer);
 
 	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
 		int contextFlags, profile;
 
-		ri.Printf(PRINT_ALL, S_COLOR_GREEN "Using OpenGL 3.x context\n");
+		Ren_Print(S_COLOR_GREEN "Using OpenGL 3.x context\n");
 
 		// check if we have a core-profile
 		glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
 		if (profile == GL_CONTEXT_CORE_PROFILE_BIT)
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_GREEN "Having a core profile\n");
+			Ren_Print(S_COLOR_GREEN "Having a core profile\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_RED "Having a compatibility profile\n");
+			Ren_Print(S_COLOR_RED "Having a compatibility profile\n");
 		}
 
 		// check if context is forward compatible
 		glGetIntegerv(GL_CONTEXT_FLAGS, &contextFlags);
 		if (contextFlags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT)
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_GREEN "Context is forward compatible\n");
+			Ren_Print(S_COLOR_GREEN "Context is forward compatible\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_RED "Context is NOT forward compatible\n");
+			Ren_Print(S_COLOR_RED "Context is NOT forward compatible\n");
 		}
 	}
 
 	if (glConfig.hardwareType == GLHW_ATI)
 	{
-		ri.Printf(PRINT_ALL, "HACK: ATI approximations\n");
+		Ren_Print("HACK: ATI approximations\n");
 	}
 
 	if (glConfig.textureCompression != TC_NONE)
 	{
-		ri.Printf(PRINT_ALL, "Using S3TC (DXTC) texture compression\n");
+		Ren_Print("Using S3TC (DXTC) texture compression\n");
 	}
 
 	if (glConfig.hardwareType == GLHW_ATI_DX10)
 	{
-		ri.Printf(PRINT_ALL, "Using ATI DirectX 10 hardware features\n");
+		Ren_Print("Using ATI DirectX 10 hardware features\n");
 	}
 
 	if (glConfig.hardwareType == GLHW_NV_DX10)
 	{
-		ri.Printf(PRINT_ALL, "Using NVIDIA DirectX 10 hardware features\n");
+		Ren_Print("Using NVIDIA DirectX 10 hardware features\n");
 	}
 
 	if (glConfig2.vboVertexSkinningAvailable)
 	{
-		ri.Printf(PRINT_ALL, "Using GPU vertex skinning with max %i bones in a single pass\n", glConfig2.maxVertexSkinningBones);
+		Ren_Print("Using GPU vertex skinning with max %i bones in a single pass\n", glConfig2.maxVertexSkinningBones);
 	}
 
 	if (r_finish->integer)
 	{
-		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
+		Ren_Print("Forcing glFinish\n");
 	}
-	ri.Printf(PRINT_ALL, "Renderer: legacy\n");
+	Ren_Print("Renderer: legacy\n");
 }
 
 static void GLSL_restart_f(void)
@@ -1271,6 +1269,7 @@ static void GLSL_restart_f(void)
 
 	GLSL_ShutdownGPUShaders();
 	GLSL_InitGPUShaders();
+	GLSL_CompileGPUShaders();
 }
 
 void R_Register(void)
@@ -1659,7 +1658,7 @@ void R_Init(void)
 {
 	int i;
 
-	ri.Printf(PRINT_ALL, "----- R_Init -----\n");
+	Ren_Print("----- R_Init -----\n");
 
 	//Swap_Init();
 
@@ -1670,7 +1669,7 @@ void R_Init(void)
 
 	if ((intptr_t) tess.xyz & 15)
 	{
-		Com_Printf("WARNING: tess.xyz not 16 byte aligned\n");
+		Ren_Print("WARNING: tess.xyz not 16 byte aligned\n");
 	}
 
 	// init function tables
@@ -1708,10 +1707,6 @@ void R_Init(void)
 	{
 		ri.Error(ERR_VID_FATAL, "OpenGL initialization failed!");
 	}
-
-#if !defined(GLSL_COMPILE_STARTUP_ONLY)
-	GLSL_InitGPUShaders();
-#endif
 
 	backEndData              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData), h_low);
 	backEndData->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
@@ -1755,14 +1750,16 @@ void R_Init(void)
 		glGenQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
 	}
 
+	GLSL_CompileGPUShaders();
+
 	GL_CheckErrors();
 
-	ri.Printf(PRINT_ALL, "----- finished R_Init -----\n");
+	Ren_Print("----- finished R_Init -----\n");
 }
 
 void RE_Shutdown(qboolean destroyWindow)
 {
-	ri.Printf(PRINT_ALL, "RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
+	Ren_Print("RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
 
 	ri.Cmd_RemoveCommand("modellist");
 	ri.Cmd_RemoveCommand("screenshotPNG");
@@ -1823,10 +1820,6 @@ void RE_Shutdown(qboolean destroyWindow)
 				*/
 			}
 		}
-
-#if !defined(GLSL_COMPILE_STARTUP_ONLY)
-		GLSL_ShutdownGPUShaders();
-#endif
 	}
 
 	R_DoneFreeType();
@@ -1835,9 +1828,7 @@ void RE_Shutdown(qboolean destroyWindow)
 
 	if (destroyWindow)
 	{
-#if defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_ShutdownGPUShaders();
-#endif
 		GLimp_Shutdown();
 
 		ri.Tag_Free();
@@ -1867,7 +1858,7 @@ void RE_EndRegistration(void)
 
 static void RE_PurgeCache(void)
 {
-	ri.Printf(PRINT_ALL, S_COLOR_RED "TODO RE_PurgeCache\n");
+	Ren_Print(S_COLOR_RED "TODO RE_PurgeCache\n");
 
 	/*
 	R_PurgeShaders(9999999);
@@ -1886,13 +1877,11 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	ri = *rimp;
 
-	ri.Printf(PRINT_ALL, "GetRefAPI()\n");
-
 	Com_Memset(&re, 0, sizeof(re));
 
 	if (apiVersion != REF_API_VERSION)
 	{
-		ri.Printf(PRINT_ALL, "Mismatched REF_API_VERSION: expected %i, got %i\n", REF_API_VERSION, apiVersion);
+		Ren_Print("Mismatched REF_API_VERSION: expected %i, got %i\n", REF_API_VERSION, apiVersion);
 		return NULL;
 	}
 
@@ -1966,43 +1955,3 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	return &re;
 }
-
-#ifdef USE_RENDERER_DLOPEN
-void QDECL Com_Printf(const char *msg, ...)
-{
-	va_list argptr;
-	char    text[1024];
-
-	va_start(argptr, msg);
-	Q_vsnprintf(text, sizeof(text), msg, argptr);
-	va_end(argptr);
-
-	ri.Printf(PRINT_ALL, "%s", text);
-}
-
-/*
-void QDECL Com_DPrintf(const char *msg, ...)
-{
-    va_list argptr;
-    char    text[1024];
-
-    va_start(argptr, msg);
-    Q_vsnprintf(text, sizeof(text), msg, argptr);
-    va_end(argptr);
-
-    ri.Printf(PRINT_DEVELOPER, "%s", text);
-}
-*/
-
-void QDECL Com_Error(int level, const char *error, ...)
-{
-	va_list argptr;
-	char    text[1024];
-
-	va_start(argptr, error);
-	Q_vsnprintf(text, sizeof(text), error, argptr);
-	va_end(argptr);
-
-	ri.Error(level, "%s", text);
-}
-#endif

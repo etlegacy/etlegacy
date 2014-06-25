@@ -636,7 +636,7 @@ static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, inte
 		{
 			srfVBOMesh_t *srf = (srfVBOMesh_t *) surface;
 
-			//ri.Printf(PRINT_ALL, "merging vbo mesh bounds\n");
+			//Ren_Print("merging vbo mesh bounds\n");
 
 			VectorCopy(srf->bounds[0], worldBounds[0]);
 			VectorCopy(srf->bounds[1], worldBounds[1]);
@@ -3287,9 +3287,9 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							MatrixLookAtRH(light->viewMatrix, viewOrigin, lightDirection, up);
 
 #if 0
-							ri.Printf(PRINT_ALL, "light = (%5.3f, %5.3f, %5.3f)\n", lightDirection[0], lightDirection[1], lightDirection[2]);
-							ri.Printf(PRINT_ALL, "side = (%5.3f, %5.3f, %5.3f)\n", side[0], side[1], side[2]);
-							ri.Printf(PRINT_ALL, "up = (%5.3f, %5.3f, %5.3f)\n", up[0], up[1], up[2]);
+							Ren_Print("light = (%5.3f, %5.3f, %5.3f)\n", lightDirection[0], lightDirection[1], lightDirection[2]);
+							Ren_Print("side = (%5.3f, %5.3f, %5.3f)\n", side[0], side[1], side[2]);
+							Ren_Print("up = (%5.3f, %5.3f, %5.3f)\n", up[0], up[1], up[2]);
 #endif
 
 #if 0
@@ -3305,11 +3305,11 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_LEFT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_NEAR], splitFrustumCorners[3]);
 
 #if 0
-							ri.Printf(PRINT_ALL, "split frustum %i\n", splitFrustumIndex);
-							ri.Printf(PRINT_ALL, "pyramid nearCorners\n");
+							Ren_Print("split frustum %i\n", splitFrustumIndex);
+							Ren_Print("pyramid nearCorners\n");
 							for (j = 0; j < 4; j++)
 							{
-								ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
+								Ren_Print("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 							}
 #endif
 
@@ -3319,10 +3319,10 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							PlanesGetIntersectionPoint(splitFrustum[FRUSTUM_LEFT], splitFrustum[FRUSTUM_BOTTOM], splitFrustum[FRUSTUM_FAR], splitFrustumCorners[7]);
 
 #if 0
-							ri.Printf(PRINT_ALL, "pyramid farCorners\n");
+							Ren_Print("pyramid farCorners\n");
 							for (j = 4; j < 8; j++)
 							{
-								ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
+								Ren_Print("(%5.3f, %5.3f, %5.3f)\n", splitFrustumCorners[j][0], splitFrustumCorners[j][1], splitFrustumCorners[j][2]);
 							}
 #endif
 #endif
@@ -3371,16 +3371,16 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 #endif
 
 #if 0
-							ri.Printf(PRINT_ALL, "light space crop bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+							Ren_Print("light space crop bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							          cropBounds[0][0], cropBounds[0][1], cropBounds[0][2],
 							          cropBounds[1][0], cropBounds[1][1], cropBounds[1][2]);
 #endif
 
 #if 0
-							ri.Printf(PRINT_ALL, "cropMatrix =\n(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-							                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-							                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-							                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n\n",
+							Ren_Print("cropMatrix =\n(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+							          "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+							          "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+							          "(%5.3f, %5.3f, %5.3f, %5.3f)\n\n",
 							          cropMatrix[0], cropMatrix[4], cropMatrix[8], cropMatrix[12],
 							          cropMatrix[1], cropMatrix[5], cropMatrix[9], cropMatrix[13],
 							          cropMatrix[2], cropMatrix[6], cropMatrix[10], cropMatrix[14],
@@ -3424,7 +3424,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 #endif
 								f = n + depth;
 
-								ri.Printf(PRINT_ALL, "gamma = %5.3f, sin(gamma) = %5.3f, n = %5.3f, f = %5.3f\n", gamma, sinGamma, n, f);
+								Ren_Print("gamma = %5.3f, sin(gamma) = %5.3f, n = %5.3f, f = %5.3f\n", gamma, sinGamma, n, f);
 
 								// new observer point n-1 behind eye position:  pos = eyePos-up*(n-nearDist)
 #if 1
@@ -3487,10 +3487,10 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 									//MatrixPerspectiveProjectionRH(lispMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -f, -n);
 
 #if 0
-									ri.Printf(PRINT_ALL, "lispMatrix =\n(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-									                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-									                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-									                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n\n",
+									Ren_Print("lispMatrix =\n(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+									          "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+									          "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+									          "(%5.3f, %5.3f, %5.3f, %5.3f)\n\n",
 									          m[0], m[4], m[8], m[12],
 									          m[1], m[5], m[9], m[13],
 									          m[2], m[6], m[10], m[14],
@@ -3538,9 +3538,9 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								MatrixTransformNormal2(viewProjectionMatrix, side);
 								MatrixTransformNormal2(viewProjectionMatrix, up);
 
-								ri.Printf(PRINT_ALL, "forward = (%5.3f, %5.3f, %5.3f)\n", forward[0], forward[1], forward[2]);
-								ri.Printf(PRINT_ALL, "side = (%5.3f, %5.3f, %5.3f)\n", side[0], side[1], side[2]);
-								ri.Printf(PRINT_ALL, "up = (%5.3f, %5.3f, %5.3f)\n", up[0], up[1], up[2]);
+								Ren_Print("forward = (%5.3f, %5.3f, %5.3f)\n", forward[0], forward[1], forward[2]);
+								Ren_Print("side = (%5.3f, %5.3f, %5.3f)\n", side[0], side[1], side[2]);
+								Ren_Print("up = (%5.3f, %5.3f, %5.3f)\n", up[0], up[1], up[2]);
 #endif
 
 #if 1
@@ -3566,7 +3566,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							}
 
 #if 0
-							ri.Printf(PRINT_ALL, "light space post crop bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
+							Ren_Print("light space post crop bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							          cropBounds[0][0], cropBounds[0][1], cropBounds[0][2],
 							          cropBounds[1][0], cropBounds[1][1], cropBounds[1][2]);
 #endif
@@ -3574,10 +3574,10 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							//MatrixInverse(cropMatrix);
 
 #if 0
-							ri.Printf(PRINT_ALL, "cropMatrix =\n(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-							                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-							                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-							                     "(%5.3f, %5.3f, %5.3f, %5.3f)\n\n",
+							Ren_Print("cropMatrix =\n(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+							          "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+							          "(%5.3f, %5.3f, %5.3f, %5.3f)\n"
+							          "(%5.3f, %5.3f, %5.3f, %5.3f)\n\n",
 							          cropMatrix[0], cropMatrix[4], cropMatrix[8], cropMatrix[12],
 							          cropMatrix[1], cropMatrix[5], cropMatrix[9], cropMatrix[13],
 							          cropMatrix[2], cropMatrix[6], cropMatrix[10], cropMatrix[14],
@@ -3773,7 +3773,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								AddPointToBounds(transf, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							}
 
-							//ri.Printf(PRINT_ALL, "shadow casters = %i\n", numCasters);
+							//Ren_Print("shadow casters = %i\n", numCasters);
 
 							Ren_LogComment("shadow casters = %i\n", numCasters);
 
@@ -5558,7 +5558,7 @@ static void RB_CalculateAdaptation()
 
 	if (r_hdrDebug->integer)
 	{
-		ri.Printf(PRINT_ALL, "HDR luminance avg = %f, max = %f, key = %f\n", backEnd.hdrAverageLuminance, backEnd.hdrMaxLuminance, backEnd.hdrKey);
+		Ren_Print("HDR luminance avg = %f, max = %f, key = %f\n", backEnd.hdrAverageLuminance, backEnd.hdrMaxLuminance, backEnd.hdrKey);
 	}
 
 	GL_CheckErrors();
@@ -5847,7 +5847,7 @@ static void IssueLightOcclusionQuery(link_t *queue, trRefLight_t *light, qboolea
 {
 	Ren_LogComment("--- IssueLightOcclusionQuery ---\n");
 
-	//ri.Printf(PRINT_ALL, "--- IssueOcclusionQuery(%i) ---\n", node - tr.world->nodes);
+	//Ren_Print("--- IssueOcclusionQuery(%i) ---\n", node - tr.world->nodes);
 
 	if (tr.numUsedOcclusionQueryObjects < (MAX_OCCLUSION_QUERIES - 1))
 	{
@@ -5882,7 +5882,7 @@ static void IssueLightOcclusionQuery(link_t *queue, trRefLight_t *light, qboolea
 
 		if (!glIsQuery(light->occlusionQueryObject))
 		{
-			ri.Error(ERR_FATAL, "IssueLightOcclusionQuery: light %i has no occlusion query object in slot %i: %i", light - tr.world->lights, backEnd.viewParms.viewCount, light->occlusionQueryObject);
+			Ren_Fatal("IssueLightOcclusionQuery: light %i has no occlusion query object in slot %i: %i", light - tr.world->lights, backEnd.viewParms.viewCount, light->occlusionQueryObject);
 		}
 
 		//light->occlusionQueryNumbers[backEnd.viewParms.viewCount] = backEnd.pc.c_occlusionQueries;
@@ -5901,14 +5901,14 @@ static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individu
 	Ren_LogComment("--- IssueLightMultiOcclusionQueries ---\n");
 
 #if 0
-	ri.Printf(PRINT_ALL, "IssueLightMultiOcclusionQueries(");
+	Ren_Print("IssueLightMultiOcclusionQueries(");
 	for (l = multiQueue->prev; l != multiQueue; l = l->prev)
 	{
 		light = (trRefLight_t *) l->data;
 
-		ri.Printf(PRINT_ALL, "%i, ", light - backEnd.refdef.lights);
+		Ren_Print("%i, ", light - backEnd.refdef.lights);
 	}
-	ri.Printf(PRINT_ALL, ")\n");
+	Ren_Print(")\n");
 #endif
 
 	if (QueueEmpty(multiQueue))
@@ -5936,16 +5936,16 @@ static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individu
 
 		GL_CheckErrors();
 
-		//ri.Printf(PRINT_ALL, "rendering nodes:[");
+		//Ren_Print("rendering nodes:[");
 		for (l = multiQueue->prev; l != multiQueue; l = l->prev)
 		{
 			light = (trRefLight_t *) l->data;
 
-			//ri.Printf(PRINT_ALL, "%i, ", light - backEnd.refdef.lights);
+			//Ren_Print("%i, ", light - backEnd.refdef.lights);
 
 			RenderLightOcclusionVolume(light);
 		}
-		//ri.Printf(PRINT_ALL, "]\n");
+		//Ren_Print("]\n");
 
 		backEnd.pc.c_occlusionQueries++;
 		backEnd.pc.c_occlusionQueriesMulti++;
@@ -5958,7 +5958,7 @@ static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individu
 #if 0
 		if (!glIsQuery(multiQueryNode->occlusionQueryObjects[backEnd.viewParms.viewCount]))
 		{
-			ri.Error(ERR_FATAL, "IssueMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, backEnd.viewParms.viewCount, multiQueryNode->occlusionQueryObjects[backEnd.viewParms.viewCount]);
+			Ren_Fatal("IssueMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, backEnd.viewParms.viewCount, multiQueryNode->occlusionQueryObjects[backEnd.viewParms.viewCount]);
 		}
 #endif
 	}
@@ -5974,7 +5974,7 @@ static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individu
 
 	EnQueue(individualQueue, multiQueryLight);
 
-	//ri.Printf(PRINT_ALL, "--- IssueMultiOcclusionQueries end ---\n");
+	//Ren_Print("--- IssueMultiOcclusionQueries end ---\n");
 }
 
 static int LightOcclusionResultAvailable(trRefLight_t *light)
@@ -6013,7 +6013,7 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light)
 #if 0
 		if (!glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
 		{
-			ri.Error(ERR_FATAL, "GetOcclusionQueryResult: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, backEnd.viewParms.viewCount, node->occlusionQueryObjects[backEnd.viewParms.viewCount]);
+			Ren_Fatal("GetOcclusionQueryResult: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, backEnd.viewParms.viewCount, node->occlusionQueryObjects[backEnd.viewParms.viewCount]);
 		}
 #endif
 
@@ -6031,7 +6031,7 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light)
 
 		glGetQueryObjectiv(light->occlusionQueryObject, GL_QUERY_RESULT, &ocSamples);
 
-		//ri.Printf(PRINT_ALL, "GetOcclusionQueryResult(%i): available = %i, samples = %i\n", node - tr.world->nodes, available, ocSamples);
+		//Ren_Print("GetOcclusionQueryResult(%i): available = %i, samples = %i\n", node - tr.world->nodes, available, ocSamples);
 
 		GL_CheckErrors();
 	}
@@ -6197,7 +6197,7 @@ void RB_RenderLightOcclusionQueries()
 			// remaining previously invisible node queries
 			IssueLightMultiOcclusionQueries(&invisibleQueue, &occlusionQueryQueue);
 
-			//ri.Printf(PRINT_ALL, "occlusionQueryQueue.empty() = %i\n", QueueEmpty(&occlusionQueryQueue));
+			//Ren_Print("occlusionQueryQueue.empty() = %i\n", QueueEmpty(&occlusionQueryQueue));
 		}
 
 		// go back to the world modelview matrix
@@ -6433,7 +6433,7 @@ static void IssueEntityOcclusionQuery(link_t *queue, trRefEntity_t *entity, qboo
 {
 	Ren_LogComment("--- IssueEntityOcclusionQuery ---\n");
 
-	//ri.Printf(PRINT_ALL, "--- IssueEntityOcclusionQuery(%i) ---\n", light - backEnd.refdef.lights);
+	//Ren_Print("--- IssueEntityOcclusionQuery(%i) ---\n", light - backEnd.refdef.lights);
 
 	if (tr.numUsedOcclusionQueryObjects < (MAX_OCCLUSION_QUERIES - 1))
 	{
@@ -6469,7 +6469,7 @@ static void IssueEntityOcclusionQuery(link_t *queue, trRefEntity_t *entity, qboo
 #if 0
 		if (!glIsQuery(entity->occlusionQueryObject))
 		{
-			ri.Error(ERR_FATAL, "IssueOcclusionQuery: entity %i has no occlusion query object in slot %i: %i", light - tr.world->lights, backEnd.viewParms.viewCount, light->occlusionQueryObject);
+			Ren_Fatal("IssueOcclusionQuery: entity %i has no occlusion query object in slot %i: %i", light - tr.world->lights, backEnd.viewParms.viewCount, light->occlusionQueryObject);
 		}
 #endif
 		backEnd.pc.c_occlusionQueries++;
@@ -6487,14 +6487,14 @@ static void IssueEntityMultiOcclusionQueries(link_t *multiQueue, link_t *individ
 	Ren_LogComment("--- IssueEntityMultiOcclusionQueries ---\n");
 
 #if 0
-	ri.Printf(PRINT_ALL, "IssueEntityMultiOcclusionQueries(");
+	Ren_Print("IssueEntityMultiOcclusionQueries(");
 	for (l = multiQueue->prev; l != multiQueue; l = l->prev)
 	{
 		light = (trRefEntity_t *) l->data;
 
-		ri.Printf(PRINT_ALL, "%i, ", light - backEnd.refdef.entities);
+		Ren_Print("%i, ", light - backEnd.refdef.entities);
 	}
-	ri.Printf(PRINT_ALL, ")\n");
+	Ren_Print(")\n");
 #endif
 
 	if (QueueEmpty(multiQueue))
@@ -6522,16 +6522,16 @@ static void IssueEntityMultiOcclusionQueries(link_t *multiQueue, link_t *individ
 
 		GL_CheckErrors();
 
-		//ri.Printf(PRINT_ALL, "rendering nodes:[");
+		//Ren_Print("rendering nodes:[");
 		for (l = multiQueue->prev; l != multiQueue; l = l->prev)
 		{
 			entity = (trRefEntity_t *) l->data;
 
-			//ri.Printf(PRINT_ALL, "%i, ", light - backEnd.refdef.lights);
+			//Ren_Print("%i, ", light - backEnd.refdef.lights);
 
 			RenderEntityOcclusionVolume(entity);
 		}
-		//ri.Printf(PRINT_ALL, "]\n");
+		//Ren_Print("]\n");
 
 		backEnd.pc.c_occlusionQueries++;
 		backEnd.pc.c_occlusionQueriesMulti++;
@@ -6544,7 +6544,7 @@ static void IssueEntityMultiOcclusionQueries(link_t *multiQueue, link_t *individ
 #if 0
 		if (!glIsQuery(multiQueryNode->occlusionQueryObjects[backEnd.viewParms.viewCount]))
 		{
-			ri.Error(ERR_FATAL, "IssueEntityMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, backEnd.viewParms.viewCount, multiQueryNode->occlusionQueryObjects[backEnd.viewParms.viewCount]);
+			Ren_Fatal("IssueEntityMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, backEnd.viewParms.viewCount, multiQueryNode->occlusionQueryObjects[backEnd.viewParms.viewCount]);
 		}
 #endif
 	}
@@ -6560,7 +6560,7 @@ static void IssueEntityMultiOcclusionQueries(link_t *multiQueue, link_t *individ
 
 	EnQueue(individualQueue, multiQueryEntity);
 
-	//ri.Printf(PRINT_ALL, "--- IssueMultiOcclusionQueries end ---\n");
+	//Ren_Print("--- IssueMultiOcclusionQueries end ---\n");
 }
 
 static int EntityOcclusionResultAvailable(trRefEntity_t *entity)
@@ -6610,7 +6610,7 @@ static void GetEntityOcclusionQueryResult(trRefEntity_t *entity)
 
 		glGetQueryObjectiv(entity->occlusionQueryObject, GL_QUERY_RESULT, &ocSamples);
 
-		//ri.Printf(PRINT_ALL, "GetOcclusionQueryResult(%i): available = %i, samples = %i\n", node - tr.world->nodes, available, ocSamples);
+		//Ren_Print("GetOcclusionQueryResult(%i): available = %i, samples = %i\n", node - tr.world->nodes, available, ocSamples);
 
 		GL_CheckErrors();
 	}
@@ -6766,7 +6766,7 @@ void RB_RenderEntityOcclusionQueries()
 			// remaining previously invisible node queries
 			IssueEntityMultiOcclusionQueries(&invisibleQueue, &occlusionQueryQueue);
 
-			//ri.Printf(PRINT_ALL, "occlusionQueryQueue.empty() = %i\n", QueueEmpty(&occlusionQueryQueue));
+			//Ren_Print("occlusionQueryQueue.empty() = %i\n", QueueEmpty(&occlusionQueryQueue));
 		}
 
 		// go back to the world modelview matrix
@@ -6906,7 +6906,7 @@ void RB_RenderBspOcclusionQueries()
 #if 0
 			if (!glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
 			{
-				ri.Error(ERR_FATAL, "node %i has no occlusion query object in slot %i: %i", j, 0, node->occlusionQueryObjects[backEnd.viewParms.viewCount]);
+				Ren_Fatal("node %i has no occlusion query object in slot %i: %i", j, 0, node->occlusionQueryObjects[backEnd.viewParms.viewCount]);
 			}
 #endif
 
@@ -6947,7 +6947,7 @@ void RB_CollectBspOcclusionQueries()
 			}
 		}
 
-		//ri.Printf(PRINT_ALL, "waiting for %i queries...\n", ocCount);
+		//Ren_Print("waiting for %i queries...\n", ocCount);
 
 		do
 		{
@@ -6971,7 +6971,7 @@ void RB_CollectBspOcclusionQueries()
 
 						//if(//avCount % oc)
 
-						//ri.Printf(PRINT_ALL, "%i queries...\n", avCount);
+						//Ren_Print("%i queries...\n", avCount);
 					}
 				}
 			}
@@ -7010,7 +7010,7 @@ void RB_CollectBspOcclusionQueries()
 			GL_CheckErrors();
 		}
 
-		//ri.Printf(PRINT_ALL, "done\n");
+		//Ren_Print("done\n");
 	}
 }
 
@@ -7247,10 +7247,10 @@ static void RB_RenderDebugUtils()
 
 						// the planes of the frustum are measured at world 0,0,0 so we have to position the intersection points relative to the light origin
 	#if 0
-						ri.Printf(PRINT_ALL, "pyramid farCorners\n");
+						Ren_Print("pyramid farCorners\n");
 						for (j = 0; j < 4; j++)
 						{
-							ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f)\n", farCorners[j][0], farCorners[j][1], farCorners[j][2]);
+							Ren_Print("(%5.3f, %5.3f, %5.3f)\n", farCorners[j][0], farCorners[j][1], farCorners[j][2]);
 						}
 	#endif
 
@@ -7269,10 +7269,10 @@ static void RB_RenderDebugUtils()
 							PlanesGetIntersectionPoint(frustum[FRUSTUM_LEFT], frustum[FRUSTUM_BOTTOM], frustum[FRUSTUM_NEAR], nearCorners[3]);
 
 	#if 0
-							ri.Printf(PRINT_ALL, "pyramid nearCorners\n");
+							Ren_Print("pyramid nearCorners\n");
 							for (j = 0; j < 4; j++)
 							{
-								ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f)\n", nearCorners[j][0], nearCorners[j][1], nearCorners[j][2]);
+								Ren_Print("(%5.3f, %5.3f, %5.3f)\n", nearCorners[j][0], nearCorners[j][1], nearCorners[j][2]);
 							}
 	#endif
 
@@ -9154,7 +9154,7 @@ static void RB_RenderView(void)
 {
 	Ren_LogComment("--- RB_RenderView( %i surfaces, %i interactions ) ---\n", backEnd.viewParms.numDrawSurfs, backEnd.viewParms.numInteractions);
 
-	//ri.Error(ERR_FATAL, "test");
+	//Ren_Fatal( "test");
 
 	GL_CheckErrors();
 
@@ -9243,7 +9243,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	}
 	if ((1 << i) != cols || (1 << j) != rows)
 	{
-		ri.Error(ERR_DROP, "Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+		Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
 	}
 
 
@@ -9271,7 +9271,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	{
 		glFinish();
 		end = ri.Milliseconds();
-		ri.Printf(PRINT_ALL, "glTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
+		Ren_Print("glTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
 	}
 
 	tess.multiDrawPrimitives = 0;
@@ -9818,7 +9818,7 @@ void RB_ShowImages(void)
 	glFinish();
 
 	end = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
+	Ren_Print("%i msec to draw all images\n", end - start);
 
 	GL_CheckErrors();
 }

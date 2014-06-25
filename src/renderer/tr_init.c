@@ -362,17 +362,17 @@ static void R_ModeList_f(void)
 {
 	int i;
 
-	ri.Printf(PRINT_ALL, "\n");
-	ri.Printf(PRINT_ALL, (r_mode->integer == -2) ? "%s ^2(current)\n" : "%s\n",
+	Ren_Print("\n");
+	Ren_Print((r_mode->integer == -2) ? "%s ^2(current)\n" : "%s\n",
 	          "Mode -2: desktop resolution");
-	ri.Printf(PRINT_ALL, (r_mode->integer == -1) ? "%s ^2(current)\n" : "%s\n",
+	Ren_Print((r_mode->integer == -1) ? "%s ^2(current)\n" : "%s\n",
 	          "Mode -1: custom resolution");
 	for (i = 0; i < s_numVidModes; i++)
 	{
-		ri.Printf(PRINT_ALL, (i == r_mode->integer) ? "%s ^2(current)\n" : "%s\n",
+		Ren_Print((i == r_mode->integer) ? "%s ^2(current)\n" : "%s\n",
 		          r_vidModes[i].description);
 	}
-	ri.Printf(PRINT_ALL, "\n");
+	Ren_Print("\n");
 }
 
 /*
@@ -850,7 +850,7 @@ void R_LevelShot(void)
 	ri.Hunk_FreeTempMemory(buffer);
 	ri.Hunk_FreeTempMemory(allsource);
 
-	ri.Printf(PRINT_ALL, "Wrote %s\n", checkname);
+	Ren_Print("Wrote %s\n", checkname);
 }
 
 /*
@@ -915,7 +915,7 @@ void R_ScreenShot_f(void)
 
 		if (lastNumber >= 99999)
 		{
-			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
+			Ren_Print("ScreenShot: Couldn't create a file\n");
 			return;
 		}
 
@@ -926,7 +926,7 @@ void R_ScreenShot_f(void)
 
 	if (!silent)
 	{
-		ri.Printf(PRINT_ALL, "Wrote %s\n", checkname);
+		Ren_Print("Wrote %s\n", checkname);
 	}
 }
 
@@ -980,7 +980,7 @@ void R_ScreenShotJPEG_f(void)
 
 		if (lastNumber == 100000)
 		{
-			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
+			Ren_Print("ScreenShot: Couldn't create a file\n");
 			return;
 		}
 
@@ -991,7 +991,7 @@ void R_ScreenShotJPEG_f(void)
 
 	if (!silent)
 	{
-		ri.Printf(PRINT_ALL, "Wrote %s\n", checkname);
+		Ren_Print("Wrote %s\n", checkname);
 	}
 }
 
@@ -1059,7 +1059,7 @@ void R_PrintLongString(const char *string)
 	while (size > 0)
 	{
 		Q_strncpyz(buffer, p, sizeof(buffer));
-		ri.Printf(PRINT_ALL, "%s", buffer);
+		Ren_Print("%s", buffer);
 		p    += 1023;
 		size -= 1023;
 	}
@@ -1083,36 +1083,36 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
-	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
-	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
+	Ren_Print("\nGL_VENDOR: %s\n", glConfig.vendor_string);
+	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
+	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
 
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
+	Ren_Print("GL_EXTENSIONS: ");
 	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
 
-	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
-	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
-	ri.Printf(PRINT_ALL, "PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
-	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
+	Ren_Print("\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
+	Ren_Print("GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
+	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
+	Ren_Print("MODE: %d, %d x %d %s Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
 
 	if (glConfig.displayFrequency)
 	{
-		ri.Printf(PRINT_ALL, "%d\n", glConfig.displayFrequency);
+		Ren_Print("%d\n", glConfig.displayFrequency);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "N/A\n");
+		Ren_Print("N/A\n");
 	}
 
-	ri.Printf(PRINT_ALL, "ASPECT RATIO: %.4f\n", glConfig.windowAspect);
+	Ren_Print("ASPECT RATIO: %.4f\n", glConfig.windowAspect);
 
 	if (glConfig.deviceSupportsGamma)
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
 	}
 
 	// rendering primitives
@@ -1120,7 +1120,7 @@ void GfxInfo_f(void)
 		int primitives;
 
 		// default is to use triangles if compiled vertex arrays are present
-		ri.Printf(PRINT_ALL, "rendering primitives: ");
+		Ren_Print("rendering primitives: ");
 		primitives = r_primitives->integer;
 		if (primitives == 0)
 		{
@@ -1135,35 +1135,35 @@ void GfxInfo_f(void)
 		}
 		if (primitives == -1)
 		{
-			ri.Printf(PRINT_ALL, "none\n");
+			Ren_Print("none\n");
 		}
 		else if (primitives == 2)
 		{
-			ri.Printf(PRINT_ALL, "single glDrawElements\n");
+			Ren_Print("single glDrawElements\n");
 		}
 		else if (primitives == 1)
 		{
-			ri.Printf(PRINT_ALL, "multiple glArrayElement\n");
+			Ren_Print("multiple glArrayElement\n");
 		}
 		else if (primitives == 3)
 		{
-			ri.Printf(PRINT_ALL, "multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n");
+			Ren_Print("multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n");
 		}
 	}
 
-	ri.Printf(PRINT_ALL, "texturemode: %s\n", r_textureMode->string);
-	ri.Printf(PRINT_ALL, "picmip: %d\n", r_picmip->integer);
-	ri.Printf(PRINT_ALL, "texture bits: %d\n", r_texturebits->integer);
-	ri.Printf(PRINT_ALL, "multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
-	ri.Printf(PRINT_ALL, "compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0]);
-	ri.Printf(PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
-	ri.Printf(PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
+	Ren_Print("texturemode: %s\n", r_textureMode->string);
+	Ren_Print("picmip: %d\n", r_picmip->integer);
+	Ren_Print("texture bits: %d\n", r_texturebits->integer);
+	Ren_Print("multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
+	Ren_Print("compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0]);
+	Ren_Print("texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
+	Ren_Print("compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
 	if (r_finish->integer)
 	{
-		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
+		Ren_Print("Forcing glFinish\n");
 	}
-	ri.Printf(PRINT_ALL, "Renderer: vanilla\n");
+	Ren_Print("Renderer: vanilla\n");
 }
 
 /*
@@ -1352,7 +1352,7 @@ void R_Init(void)
 	int  i;
 	byte *ptr;
 
-	ri.Printf(PRINT_ALL, "----- R_Init -----\n");
+	Ren_Print("----- R_Init -----\n");
 
 	// clear all our internal state
 	Com_Memset(&tr, 0, sizeof(tr));
@@ -1371,7 +1371,7 @@ void R_Init(void)
 
 	if ((intptr_t) tess.xyz & 15)
 	{
-		ri.Printf(PRINT_WARNING, "tess.xyz not 16 byte aligned\n");
+		Ren_Warning("tess.xyz not 16 byte aligned\n");
 	}
 	Com_Memset(tess.constantColor255, 255, sizeof(tess.constantColor255));
 
@@ -1432,10 +1432,10 @@ void R_Init(void)
 	err = qglGetError();
 	if (err != GL_NO_ERROR)
 	{
-		ri.Printf(PRINT_ALL, "glGetError() = 0x%x\n", err);
+		Ren_Print("glGetError() = 0x%x\n", err);
 	}
 
-	ri.Printf(PRINT_ALL, "----- finished R_Init -----\n");
+	Ren_Print("----- finished R_Init -----\n");
 }
 
 void R_PurgeCache(void)
@@ -1452,7 +1452,7 @@ RE_Shutdown
 */
 void RE_Shutdown(qboolean destroyWindow)
 {
-	ri.Printf(PRINT_ALL, "RE_Shutdown( %i )\n", destroyWindow);
+	Ren_Print("RE_Shutdown( %i )\n", destroyWindow);
 
 	ri.Cmd_RemoveCommand("imagelist");
 	ri.Cmd_RemoveCommand("shaderlist");
@@ -1545,8 +1545,7 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	if (apiVersion != REF_API_VERSION)
 	{
-		ri.Printf(PRINT_ALL, "Mismatched REF_API_VERSION: expected %i, got %i\n",
-		          REF_API_VERSION, apiVersion);
+		Ren_Print("Mismatched REF_API_VERSION: expected %i, got %i\n", REF_API_VERSION, apiVersion);
 		return NULL;
 	}
 
@@ -1623,43 +1622,3 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	return &re;
 }
-
-#ifdef USE_RENDERER_DLOPEN
-void QDECL Com_Printf(const char *msg, ...)
-{
-	va_list argptr;
-	char    text[1024];
-
-	va_start(argptr, msg);
-	Q_vsnprintf(text, sizeof(text), msg, argptr);
-	va_end(argptr);
-
-	ri.Printf(PRINT_ALL, "%s", text);
-}
-
-/*
-void QDECL Com_DPrintf(const char *msg, ...)
-{
-    va_list argptr;
-    char    text[1024];
-
-    va_start(argptr, msg);
-    Q_vsnprintf(text, sizeof(text), msg, argptr);
-    va_end(argptr);
-
-    ri.Printf(PRINT_DEVELOPER, "%s", text);
-}
-*/
-
-void QDECL Com_Error(int level, const char *error, ...)
-{
-	va_list argptr;
-	char    text[1024];
-
-	va_start(argptr, error);
-	Q_vsnprintf(text, sizeof(text), error, argptr);
-	va_end(argptr);
-
-	ri.Error(level, "%s", text);
-}
-#endif

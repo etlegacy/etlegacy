@@ -115,17 +115,17 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	if (!name || !name[0])
 	{
-		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: NULL name\n");
+		Ren_Developer("RE_RegisterModel: NULL name\n");
 		return 0;
 	}
 	else
 	{
-		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel model: %s\n", name);
+		Ren_Developer("RE_RegisterModel model: %s\n", name);
 	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Model name exceeds MAX_QPATH\n");
+		Ren_Print("Model name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -146,7 +146,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	// allocate a new model_t
 	if ((mod = R_AllocModel()) == NULL)
 	{
-		ri.Printf(PRINT_WARNING, "RE_RegisterModel: R_AllocModel() failed for '%s'\n", name);
+		Ren_Warning("RE_RegisterModel: R_AllocModel() failed for '%s'\n", name);
 		return 0;
 	}
 
@@ -252,7 +252,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		ident = LittleLong(*(unsigned *)buffer);
 		if (ident != MD3_IDENT && ident != MDC_IDENT)
 		{
-			ri.Printf(PRINT_WARNING, "RE_RegisterModel: unknown fileid for %s\n", name);
+			Ren_Warning("RE_RegisterModel: unknown fileid for %s\n", name);
 			ri.FS_FreeFile(buffer);
 			goto fail;
 		}
@@ -314,7 +314,7 @@ qhandle_t RE_RegisterModel(const char *name)
 #ifdef _DEBUG
 	else
 	{
-		ri.Printf(PRINT_WARNING, "couldn't load '%s'\n", name);
+		Ren_Warning("couldn't load '%s'\n", name);
 	}
 #endif
 
@@ -349,7 +349,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 	version = LittleLong(pinmodel->version);
 	if (version != MDX_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDX: %s has wrong version (%i should be %i)\n", mod_name, version, MDX_VERSION);
+		Ren_Warning("R_LoadMDX: %s has wrong version (%i should be %i)\n", mod_name, version, MDX_VERSION);
 		return qfalse;
 	}
 
@@ -422,7 +422,7 @@ void R_XMLError(void *ctx, const char *fmt, ...)
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
 	va_end(argptr);
 
-	ri.Printf(PRINT_WARNING, "%s", msg);
+	Ren_Warning("%s", msg);
 }
 
 /*
@@ -440,26 +440,26 @@ static qboolean R_LoadDAE(model_t * mod, void *buffer, int bufferLen, const char
     xmlInitParser();
     xmlSetGenericErrorFunc(NULL, R_XMLError);
 
-    ri.Printf(PRINT_ALL, "...loading DAE '%s'\n", modName);
+    Ren_Print("...loading DAE '%s'\n", modName);
 
     doc = xmlParseMemory(buffer, bufferLen);
     if(doc == NULL)
     {
-        ri.Printf(PRINT_WARNING, "R_LoadDAE: '%s' xmlParseMemory returned NULL\n", modName);
+        Ren_Warning( "R_LoadDAE: '%s' xmlParseMemory returned NULL\n", modName);
         return qfalse;
     }
     node = xmlDocGetRootElement(doc);
 
     if(node == NULL)
     {
-        ri.Printf(PRINT_WARNING, "R_LoadDAE: '%s' empty document\n", modName);
+        Ren_Warning( "R_LoadDAE: '%s' empty document\n", modName);
         xmlFreeDoc(doc);
         return qfalse;
     }
 
     if(xmlStrcmp(node->name, (const xmlChar *) "COLLADA"))
     {
-        ri.Printf(PRINT_WARNING, "R_LoadDAE: '%s' document of the wrong type, root node != COLLADA", modName);
+        Ren_Warning( "R_LoadDAE: '%s' document of the wrong type, root node != COLLADA", modName);
         xmlFreeDoc(doc);
         return qfalse;
     }
@@ -468,7 +468,7 @@ static qboolean R_LoadDAE(model_t * mod, void *buffer, int bufferLen, const char
 
     xmlFreeDoc(doc);
 
-    ri.Printf(PRINT_ALL, "...finished DAE '%s'\n", modName);
+    Ren_Print("...finished DAE '%s'\n", modName);
 
     return qfalse;
 }
@@ -578,34 +578,34 @@ void R_Modellist_f(void)
 					mdvModel = mod->mdv[j];
 
 					total++;
-					ri.Printf(PRINT_ALL, "%d.%02d MB '%s' LOD = %i\n", mod->dataSize / (1024 * 1024),
+					Ren_Print("%d.%02d MB '%s' LOD = %i\n", mod->dataSize / (1024 * 1024),
 					          (mod->dataSize % (1024 * 1024)) * 100 / (1024 * 1024),
 					          mod->name, j);
 
 					if (showFrames && mdvModel->numFrames > 1)
 					{
-						ri.Printf(PRINT_ALL, "\tnumSurfaces = %i\n", mdvModel->numSurfaces);
-						ri.Printf(PRINT_ALL, "\tnumFrames = %i\n", mdvModel->numFrames);
+						Ren_Print("\tnumSurfaces = %i\n", mdvModel->numSurfaces);
+						Ren_Print("\tnumFrames = %i\n", mdvModel->numFrames);
 
 						for (k = 0, mdvSurface = mdvModel->surfaces; k < mdvModel->numSurfaces; k++, mdvSurface++)
 						{
-							ri.Printf(PRINT_ALL, "\t\tmesh = '%s'\n", mdvSurface->name);
-							ri.Printf(PRINT_ALL, "\t\t\tnumVertexes = %i\n", mdvSurface->numVerts);
-							ri.Printf(PRINT_ALL, "\t\t\tnumTriangles = %i\n", mdvSurface->numTriangles);
+							Ren_Print("\t\tmesh = '%s'\n", mdvSurface->name);
+							Ren_Print("\t\t\tnumVertexes = %i\n", mdvSurface->numVerts);
+							Ren_Print("\t\t\tnumTriangles = %i\n", mdvSurface->numTriangles);
 						}
 					}
 
-					ri.Printf(PRINT_ALL, "\t\tnumTags = %i\n", mdvModel->numTags);
+					Ren_Print("\t\tnumTags = %i\n", mdvModel->numTags);
 					for (k = 0, mdvTagName = mdvModel->tagNames; k < mdvModel->numTags; k++, mdvTagName++)
 					{
-						ri.Printf(PRINT_ALL, "\t\t\ttagName = '%s'\n", mdvTagName->name);
+						Ren_Print("\t\t\ttagName = '%s'\n", mdvTagName->name);
 					}
 				}
 			}
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "%d.%02d MB '%s'\n", mod->dataSize / (1024 * 1024),
+			Ren_Print("%d.%02d MB '%s'\n", mod->dataSize / (1024 * 1024),
 			          (mod->dataSize % (1024 * 1024)) * 100 / (1024 * 1024),
 			          mod->name);
 			total++;
@@ -614,14 +614,14 @@ void R_Modellist_f(void)
 		totalDataSize += mod->dataSize;
 	}
 
-	ri.Printf(PRINT_ALL, " %d.%02d MB total model memory\n", totalDataSize / (1024 * 1024),
+	Ren_Print(" %d.%02d MB total model memory\n", totalDataSize / (1024 * 1024),
 	          (totalDataSize % (1024 * 1024)) * 100 / (1024 * 1024));
-	ri.Printf(PRINT_ALL, " %i total models\n\n", total);
+	Ren_Print(" %i total models\n\n", total);
 
 #if 0                           // not working right with new hunk
 	if (tr.world)
 	{
-		ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
+		Ren_Print("\n%8i : %s\n", tr.world->dataSize, tr.world->name);
 	}
 #endif
 }

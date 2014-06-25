@@ -297,7 +297,7 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 	if (!tess.stageIteratorFunc)
 	{
 		//tess.stageIteratorFunc = &Tess_StageIteratorGeneric;
-		ri.Error(ERR_FATAL, "tess.stageIteratorFunc == NULL");
+		Ren_Fatal("tess.stageIteratorFunc == NULL");
 	}
 
 	if (tess.stageIteratorFunc == &Tess_StageIteratorGeneric)
@@ -2537,7 +2537,7 @@ static void Render_fog()
 	vec3_t local;
 	vec4_t fogDistanceVector, fogDepthVector;
 
-	//ri.Printf(PRINT_ALL, "--- Render_fog ---\n");
+	//Ren_Print("--- Render_fog ---\n");
 
 	// no fog pass in snooper
 	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog || !r_wolfFog->integer)
@@ -4109,11 +4109,11 @@ void Tess_End()
 
 	if (tess.indexes[SHADER_MAX_INDEXES - 1] != 0)
 	{
-		ri.Error(ERR_DROP, "Tess_End() - SHADER_MAX_INDEXES hit");
+		Ren_Drop("Tess_End() - SHADER_MAX_INDEXES hit");
 	}
 	if (tess.xyz[SHADER_MAX_VERTEXES - 1][0] != 0)
 	{
-		ri.Error(ERR_DROP, "Tess_End() - SHADER_MAX_VERTEXES hit");
+		Ren_Drop("Tess_End() - SHADER_MAX_VERTEXES hit");
 	}
 
 	// for debugging of sort order issues, stop rendering after a given sort value

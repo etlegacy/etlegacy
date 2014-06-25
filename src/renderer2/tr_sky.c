@@ -197,7 +197,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 
 	if (nump > MAX_CLIP_VERTS - 2)
 	{
-		ri.Error(ERR_DROP, "ClipSkyPolygon: MAX_CLIP_VERTS");
+		Ren_Drop("ClipSkyPolygon: MAX_CLIP_VERTS");
 	}
 	if (stage == 6)
 	{                           // fully clipped, so draw it
@@ -442,7 +442,7 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 			if (tess.numVertexes >= SHADER_MAX_VERTEXES)
 			{
-				ri.Error(ERR_DROP, "SHADER_MAX_VERTEXES hit in FillCloudySkySide()\n");
+				Ren_Drop("SHADER_MAX_VERTEXES hit in FillCloudySkySide()\n");
 			}
 		}
 	}
@@ -914,11 +914,8 @@ void Tess_StageIteratorSky(void)
 	}
 
 	// trebor: HACK why does this happen with cg_draw2D 0 ?
-	if (tess.stageIteratorFunc2 == NULL)
-	{
-		//tess.stageIteratorFunc2 = Tess_StageIteratorGeneric;
-		ri.Error(ERR_FATAL, "tess.stageIteratorFunc == NULL");
-	}
+	//tess.stageIteratorFunc2 = Tess_StageIteratorGeneric;
+	Ren_Assert(tess.stageIteratorFunc2 == NULL);
 
 	GL_Cull(CT_TWO_SIDED);
 

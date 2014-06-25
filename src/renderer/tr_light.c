@@ -359,7 +359,7 @@ static void LogLight(trRefEntity_t *ent)
 		max2 = ent->directedLight[2];
 	}
 
-	ri.Printf(PRINT_ALL, "amb:%i  dir:%i\n", max1, max2);
+	Ren_Print("amb:%i  dir:%i\n", max1, max2);
 }
 
 /*

@@ -83,20 +83,20 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	data     = ri.Hunk_AllocateTempMemory(dataSize);
 	dataOfs  = 0;
 
-	//ri.Printf(PRINT_ALL, "AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
+	//Ren_Print("AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
 
 	vboSurf->numBoneRemap = 0;
 	Com_Memset(vboSurf->boneRemap, 0, sizeof(vboSurf->boneRemap));
 	Com_Memset(vboSurf->boneRemapInverse, 0, sizeof(vboSurf->boneRemapInverse));
 
-	//ri.Printf(PRINT_ALL, "original referenced bones: [ ");
+	//Ren_Print("original referenced bones: [ ");
 	//for(j = 0; j < surf->numBoneReferences; j++)
 	//{
-	//  ri.Printf(PRINT_ALL, "%i, ", surf->boneReferences[j]);
+	//  Ren_Print("%i, ", surf->boneReferences[j]);
 	//}
-	//ri.Printf(PRINT_ALL, "]\n");
+	//Ren_Print("]\n");
 
-	//ri.Printf(PRINT_ALL, "new referenced bones: ");
+	//Ren_Print("new referenced bones: ");
 	for (j = 0; j < MAX_BONES; j++)
 	{
 		if (boneReferences[j] > 0)
@@ -106,11 +106,11 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 
 			vboSurf->numBoneRemap++;
 
-			//ri.Printf(PRINT_ALL, "(%i -> %i) ", j, vboSurf->boneRemap[j]);
+			//Ren_Print("(%i -> %i) ", j, vboSurf->boneRemap[j]);
 		}
 	}
 
-	//ri.Printf(PRINT_ALL, "\n");
+	//Ren_Print("\n");
 
 	// feed vertex XYZ
 	for (j = 0; j < vertexesNum; j++)
@@ -360,7 +360,7 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 
 		if (vboTriangles->currentElements != surf->numTriangles)
 		{
-			ri.Printf(PRINT_WARNING, "Can't calculate LOD IBOs\n");
+			Ren_Warning("Can't calculate LOD IBOs\n");
 			break;
 		}
 
@@ -373,9 +373,9 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	// megs
 
 	/*
-	   ri.Printf(PRINT_ALL, "md5 mesh data VBO size: %d.%02d MB\n", dataSize / (1024 * 1024),
+	   Ren_Print("md5 mesh data VBO size: %d.%02d MB\n", dataSize / (1024 * 1024),
 	   (dataSize % (1024 * 1024)) * 100 / (1024 * 1024));
-	   ri.Printf(PRINT_ALL, "md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
+	   Ren_Print("md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
 	   (indexesSize % (1024 * 1024)) * 100 / (1024 * 1024));
 	 */
 }
@@ -403,7 +403,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 	if (version != MDM_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDM: %s has wrong version (%i should be %i)\n", modName, version, MDM_VERSION);
+		Ren_Warning("R_LoadMDM: %s has wrong version (%i should be %i)\n", modName, version, MDM_VERSION);
 		return qfalse;
 	}
 
@@ -526,13 +526,13 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 		if (mdmSurf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDM: %s has more than %i verts on a surface (%i)",
+			Ren_Drop("R_LoadMDM: %s has more than %i verts on a surface (%i)",
 			         modName, SHADER_MAX_VERTEXES, mdmSurf->numVerts);
 		}
 
 		if (mdmSurf->numTriangles > SHADER_MAX_TRIANGLES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDM: %s has more than %i triangles on a surface (%i)",
+			Ren_Drop("R_LoadMDM: %s has more than %i triangles on a surface (%i)",
 			         modName, SHADER_MAX_TRIANGLES, mdmSurf->numTriangles);
 		}
 
@@ -590,11 +590,11 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 			if (v->numWeights > MAX_WEIGHTS)
 			{
 #if 0
-				ri.Error(ERR_DROP, "R_LoadMDM: vertex %i requires %i instead of maximum %i weights on surface (%i) in model '%s'",
+				Ren_Drop("R_LoadMDM: vertex %i requires %i instead of maximum %i weights on surface (%i) in model '%s'",
 				         j, v->numWeights, MAX_WEIGHTS, i, modName);
 #else
-				ri.Printf(PRINT_WARNING, "WARNING: R_LoadMDM: vertex %i requires %i instead of maximum %i weights on surface (%i) in model '%s'\n",
-				          j, v->numWeights, MAX_WEIGHTS, i, modName);
+				Ren_Warning("WARNING: R_LoadMDM: vertex %i requires %i instead of maximum %i weights on surface (%i) in model '%s'\n",
+				            j, v->numWeights, MAX_WEIGHTS, i, modName);
 #endif
 			}
 
@@ -621,27 +621,27 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 		collapseMap = ( int32_t * )(( byte * ) mdmSurf + mdmSurf->ofsCollapseMap);
 
-		//ri.Printf(PRINT_ALL, "collapse map for mdm surface '%s': ", surf->name);
+		//Ren_Print("collapse map for mdm surface '%s': ", surf->name);
 		for (j = 0, collapseMapOut = surf->collapseMap; j < mdmSurf->numVerts; j++, collapseMap++, collapseMapOut++)
 		{
 			int32_t value = LittleLong(*collapseMap);
 			//surf->collapseMap[j] = value;
 			*collapseMapOut = value;
 
-			//ri.Printf(PRINT_ALL, "(%i -> %i) ", j, value);
+			//Ren_Print("(%i -> %i) ", j, value);
 		}
 
-		//ri.Printf(PRINT_ALL, "\n");
+		//Ren_Print("\n");
 
 #if 0
-		ri.Printf(PRINT_ALL, "collapse map for mdm surface '%s': ", surf->name);
+		Ren_Print("collapse map for mdm surface '%s': ", surf->name);
 
 		for (j = 0, collapseMap = surf->collapseMap; j < mdmSurf->numVerts; j++, collapseMap++)
 		{
-			ri.Printf(PRINT_ALL, "(%i -> %i) ", j, *collapseMap);
+			Ren_Print("(%i -> %i) ", j, *collapseMap);
 		}
 
-		ri.Printf(PRINT_ALL, "\n");
+		Ren_Print("\n");
 #endif
 
 		// swap the bone references
@@ -909,7 +909,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 					}
 
 					qsort(b, MAX_WEIGHTS * 3, sizeof(int), CompareBoneIndices);
-					//ri.Printf(PRINT_ALL, "bone indices: %i %i %i %i\n", b[k * 3 + 0], b[k * 3 + 1], b[k * 3 + 2], b[k * 3 + 3]);
+					//Ren_Print("bone indices: %i %i %i %i\n", b[k * 3 + 0], b[k * 3 + 1], b[k * 3 + 2], b[k * 3 + 3]);
 				}
 			}
 #endif
@@ -940,7 +940,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 				if (!vboTriangles.currentElements)
 				{
-					ri.Printf(PRINT_WARNING, "R_LoadMDM: could not add triangles to a remaining VBO surface for model '%s'\n", modName);
+					Ren_Warning("R_LoadMDM: could not add triangles to a remaining VBO surface for model '%s'\n", modName);
 					break;
 				}
 

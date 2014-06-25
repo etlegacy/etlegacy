@@ -65,7 +65,7 @@ static void R_JPGErrorExit(j_common_ptr cinfo)
 	my_jpeg_error_mgr *mgr = (my_jpeg_error_mgr *)cinfo->err;
 
 	(*cinfo->err->format_message)(cinfo, buffer);
-	Com_Printf(S_COLOR_YELLOW "WARNING: (libjpeg) %s\n", buffer);
+	Ren_Print(S_COLOR_YELLOW "WARNING: (libjpeg) %s\n", buffer);
 
 	/* Let the memory manager delete any temp files before we die */
 	jpeg_destroy(cinfo);
@@ -82,7 +82,7 @@ static void R_JPGOutputMessage(j_common_ptr cinfo)
 	(*cinfo->err->format_message)(cinfo, buffer);
 
 	/* Send it to stderr, adding a newline */
-	ri.Printf(PRINT_ALL, "%s\n", buffer);
+	Ren_Print("%s\n", buffer);
 }
 
 void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *height, byte alphaByte)
@@ -195,7 +195,7 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
 		ri.FS_FreeFile(fbuffer.v);
 		jpeg_destroy_decompress(&cinfo);
 
-		ri.Error(ERR_DROP, "LoadJPG: %s has an invalid image format: %dx%d*4=%d, components: %d", filename,
+		Ren_Drop("LoadJPG: %s has an invalid image format: %dx%d*4=%d, components: %d", filename,
 		         cinfo.output_width, cinfo.output_height, pixelcount * 4, cinfo.output_components);
 	}
 
@@ -327,8 +327,8 @@ static boolean empty_output_buffer(j_compress_ptr cinfo)
 	jpeg_destroy_compress(cinfo);
 
 	// Make crash fatal or we would probably leak memory.
-	ri.Error(ERR_FATAL, "Output buffer for encoded JPEG image has insufficient size of %d bytes",
-	         dest->size);
+	Ren_Fatal("Output buffer for encoded JPEG image has insufficient size of %d bytes",
+	          dest->size);
 
 	return FALSE;
 }

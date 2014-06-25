@@ -89,11 +89,11 @@ void Tess_CheckOverflow(int verts, int indexes)
 
 	if (verts >= SHADER_MAX_VERTEXES)
 	{
-		ri.Error(ERR_DROP, "Tess_CheckOverflow: verts > MAX (%d > %d)", verts, SHADER_MAX_VERTEXES);
+		Ren_Drop("Tess_CheckOverflow: verts > MAX (%d > %d)", verts, SHADER_MAX_VERTEXES);
 	}
 	if (indexes >= SHADER_MAX_INDEXES)
 	{
-		ri.Error(ERR_DROP, "Tess_CheckOverflow: indices > MAX (%d > %d)", indexes, SHADER_MAX_INDEXES);
+		Ren_Drop("Tess_CheckOverflow: indices > MAX (%d > %d)", indexes, SHADER_MAX_INDEXES);
 	}
 
 	Tess_Begin(tess.stageIteratorFunc, tess.stageIteratorFunc2, tess.surfaceShader, tess.lightShader, tess.skipTangentSpaces, tess.skipVBO,
@@ -1978,7 +1978,7 @@ static void Tess_SurfaceBad(surfaceType_t *surfType)
 {
 	Ren_LogComment("--- Tess_SurfaceBad ---\n");
 
-	ri.Printf(PRINT_ALL, "Bad surface tesselated.\n");
+	Ren_Print("Bad surface tesselated.\n");
 }
 
 static void Tess_SurfaceFlare(srfFlare_t *surf)

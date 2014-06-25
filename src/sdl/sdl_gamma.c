@@ -57,7 +57,7 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 	if (!glConfig.deviceSupportsGamma || r_ignorehwgamma->integer > 0)
 	{
-		ri.Printf(PRINT_WARNING, "Device doesn't support gamma or r_ignorehwgamma is set.\n");
+		Ren_Warning("Device doesn't support gamma or r_ignorehwgamma is set.\n");
 		return;
 	}
 
@@ -78,7 +78,7 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 		GetVersionEx(&vinfo);
 		if (vinfo.dwMajorVersion >= 5 && vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
 		{
-			ri.Printf(PRINT_DEVELOPER, "performing gamma clamp.\n");
+			Ren_Developer("performing gamma clamp.\n");
 			for (j = 0 ; j < 3 ; j++)
 			{
 				for (i = 0 ; i < 128 ; i++)

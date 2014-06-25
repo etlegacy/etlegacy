@@ -369,7 +369,7 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 
 	if (version != MDC_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD3: %s has wrong version (%i should be %i)\n", modName, version, MDC_VERSION);
+		Ren_Warning("R_LoadMD3: %s has wrong version (%i should be %i)\n", modName, version, MDC_VERSION);
 		return qfalse;
 	}
 
@@ -393,7 +393,7 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 
 	if (mdcModel->numFrames < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDC: '%s' has no frames\n", modName);
+		Ren_Warning("R_LoadMDC: '%s' has no frames\n", modName);
 		return qfalse;
 	}
 
@@ -487,13 +487,13 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 
 		if (mdcSurf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDC: %s has more than %i verts on a surface (%i)",
+			Ren_Drop("R_LoadMDC: %s has more than %i verts on a surface (%i)",
 			         modName, SHADER_MAX_VERTEXES, mdcSurf->numVerts);
 		}
 
 		if (mdcSurf->numTriangles > SHADER_MAX_TRIANGLES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDC: %s has more than %i triangles on a surface (%i)",
+			Ren_Drop("R_LoadMDC: %s has more than %i triangles on a surface (%i)",
 			         modName, SHADER_MAX_TRIANGLES, mdcSurf->numTriangles);
 		}
 
@@ -743,7 +743,7 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 				}
 			}
 
-			//ri.Printf(PRINT_ALL, "...calculating MDC mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);
+			//Ren_Print("...calculating MDC mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);
 
 			// create surface
 			vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);

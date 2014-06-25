@@ -166,13 +166,13 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 
 	if (!hShader)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolyToScene: NULL poly shader\n");
+		Ren_Warning("WARNING RE_AddPolyToScene: NULL poly shader\n");
 		return;
 	}
 
 	if (((r_numpolyverts + numVerts) >= r_maxpolys->integer) || (r_numpolys >= r_maxpolyverts->integer))
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolyToScene: r_maxpolyverts or r_maxpolys reached\n");
+		Ren_Developer("WARNING RE_AddPolyToScene: r_maxpolyverts or r_maxpolys reached\n");
 		return;
 	}
 
@@ -245,7 +245,7 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 
 	if (!hShader)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolysToScene: NULL poly shader\n");
+		Ren_Warning("WARNING RE_AddPolysToScene: NULL poly shader\n");
 		return;
 	}
 
@@ -253,12 +253,12 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 	{
 		if (r_numpolyverts + numVerts >= r_maxpolys->integer)
 		{
-			ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolysToScene: r_maxpolys[%i] reached. r_numpolyverts: %i - numVerts: %i\n", r_maxpolys->integer, r_numpolyverts, numVerts);
+			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolys[%i] reached. r_numpolyverts: %i - numVerts: %i\n", r_maxpolys->integer, r_numpolyverts, numVerts);
 			return;
 		}
 		if (r_numpolys >= r_maxpolyverts->integer)
 		{
-			ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolysToScene: r_maxpolyverts[%i] reached. r_numpolys: %i\n", r_maxpolyverts->integer, r_numpolys);
+			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolyverts[%i] reached. r_numpolys: %i\n", r_maxpolyverts->integer, r_numpolys);
 			return;
 		}
 
@@ -353,7 +353,7 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 
 	if (r_numpolybuffers >= r_maxpolys->integer)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolyBufferToScene: r_maxpolys reached\n");
+		Ren_Warning("WARNING RE_AddPolyBufferToScene: r_maxpolys reached\n");
 		return;
 	}
 
@@ -411,7 +411,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 
 	if ((int)ent->reType < 0 || ent->reType >= RT_MAX_REF_ENTITY_TYPE)
 	{
-		ri.Error(ERR_DROP, "RE_AddRefEntityToScene: bad reType %i", ent->reType);
+		Ren_Drop("RE_AddRefEntityToScene: bad reType %i", ent->reType);
 	}
 
 	backEndData->entities[r_numentities].e                  = *ent;
@@ -525,7 +525,7 @@ void RE_RenderScene(const refdef_t *fd)
 
 	if (!tr.world && !(fd->rdflags & RDF_NOWORLDMODEL))
 	{
-		ri.Error(ERR_DROP, "R_RenderScene: NULL worldmodel");
+		Ren_Drop("R_RenderScene: NULL worldmodel");
 	}
 
 	memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));

@@ -1,6 +1,6 @@
 /* blurX_vp.glsl */
 attribute vec4 attr_Position;
-uniform mat4 u_ModelViewProjectionMatrix;
+uniform mat4   u_ModelViewProjectionMatrix;
 
 void    main()
 {

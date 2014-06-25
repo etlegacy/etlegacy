@@ -406,11 +406,11 @@ void R_AddAnimSurfaces(trRefEntity_t *ent)
 
 			if (shader == tr.defaultShader)
 			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %s in skin %s\n", surface->name, skin->name);
+				Ren_Developer("WARNING: no shader for surface %s in skin %s\n", surface->name, skin->name);
 			}
 			else if (shader->defaultShader)
 			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+				Ren_Developer("WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 			}
 		}
 		else
@@ -1132,7 +1132,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 		//----(SA)	print stats for the complete model (not per-surface)
 		if (r_bonesDebug->integer == 4 && totalrt)
 		{
-			ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
+			Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
 			          lodScale,
 			          totalrv,
 			          totalv,
@@ -1291,7 +1291,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 }
 
 #ifdef DBG_PROFILE_BONES
-#define DBG_SHOWTIME    Com_Printf("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
+#define DBG_SHOWTIME    Ren_Print("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
 #else
 #define DBG_SHOWTIME    ;
 #endif
@@ -1545,7 +1545,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 			if (r_bonesDebug->integer == 3)
 			{
-				ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
+				Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
 				          ( float )(100.0 * render_indexes / 3) / (float) surface->numTriangles);
 			}
 		}
@@ -1560,7 +1560,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 	}
 
 #ifdef DBG_PROFILE_BONES
-	Com_Printf("\n");
+	Ren_Print("\n");
 #endif
 }
 

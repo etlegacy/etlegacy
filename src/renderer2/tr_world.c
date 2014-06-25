@@ -725,7 +725,7 @@ static bspNode_t *R_PointInLeaf(const vec3_t p)
 
 	if (!tr.world)
 	{
-		ri.Error(ERR_DROP, "R_PointInLeaf: bad model");
+		Ren_Drop("R_PointInLeaf: bad model");
 	}
 
 	node = tr.world->nodes;
@@ -1121,7 +1121,7 @@ static void R_UpdateClusterSurfaces()
 				Com_AddToGrowList(&tr.world->clusterVBOSurfaces[tr.visIndex], vboSurf);
 			}
 
-			//ri.Printf(PRINT_ALL, "creating VBO cluster surface for shader '%s'\n", shader->name);
+			//Ren_Print("creating VBO cluster surface for shader '%s'\n", shader->name);
 
 			// update surface properties
 			vboSurf->numIndexes = numTriangles * 3;
@@ -1162,7 +1162,7 @@ static void R_UpdateClusterSurfaces()
 		r_showcluster->modified = qfalse;
 		if (r_showcluster->integer)
 		{
-			ri.Printf(PRINT_ALL, "  surfaces:%i\n", tr.world->numClusterVBOSurfaces[tr.visIndex]);
+			Ren_Print("  surfaces:%i\n", tr.world->numClusterVBOSurfaces[tr.visIndex]);
 		}
 	}
 }
@@ -1201,7 +1201,7 @@ static void R_MarkLeaves(void)
 			{
 				if (tr.visClusters[i] != tr.visClusters[tr.visIndex] && r_showcluster->integer)
 				{
-					ri.Printf(PRINT_ALL, "found cluster:%i  area:%i  index:%i\n", cluster, leaf->area, i);
+					Ren_Print("found cluster:%i  area:%i  index:%i\n", cluster, leaf->area, i);
 				}
 				tr.visIndex = i;
 				return;
@@ -1224,7 +1224,7 @@ static void R_MarkLeaves(void)
 		r_showcluster->modified = qfalse;
 		if (r_showcluster->integer)
 		{
-			ri.Printf(PRINT_ALL, "update cluster:%i  area:%i  index:%i\n", cluster, leaf->area, tr.visIndex);
+			Ren_Print("update cluster:%i  area:%i  index:%i\n", cluster, leaf->area, tr.visIndex);
 		}
 	}
 
@@ -1492,7 +1492,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 #if 0
 	if (glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueOcclusionQuery: node %i has already an occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueOcclusionQuery: node %i has already an occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1517,7 +1517,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 #if 1
 	if (!glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueOcclusionQuery: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueOcclusionQuery: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1566,7 +1566,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 #if 0
 	if (!glIsQuery(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueMultiOcclusionQueries: node %i has already occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueMultiOcclusionQueries: node %i has already occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1620,7 +1620,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 #if 0
 	if (!glIsQuery(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1667,7 +1667,7 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 #if 0
 	if (!glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "GetOcclusionQueryResult: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("GetOcclusionQueryResult: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1738,8 +1738,8 @@ static void PushNode(link_t * traversalStack, bspNode_t * node)
             StackPush(traversalStack, node->children[0]);
             StackPush(traversalStack, node->children[1]);
 
-            ri.Printf(PRINT_ALL, "--> %i\n", node->children[0] - tr.world->nodes);
-            ri.Printf(PRINT_ALL, "--> %i\n", node->children[1] - tr.world->nodes);
+            Ren_Print("--> %i\n", node->children[0] - tr.world->nodes);
+            Ren_Print("--> %i\n", node->children[1] - tr.world->nodes);
         }
         else
 #endif
@@ -2248,7 +2248,7 @@ static void R_CoherentHierachicalCulling()
 				}
 			}
 		}
-		//ri.Printf(PRINT_ALL, "--- (%i, %i, %i)\n", !StackEmpty(&traversalStack), !QueueEmpty(&occlusionQueryQueue), !QueueEmpty(&invisibleQueue));
+		//Ren_Print("--- (%i, %i, %i)\n", !StackEmpty(&traversalStack), !QueueEmpty(&occlusionQueryQueue), !QueueEmpty(&invisibleQueue));
 	}
 
 	ClearLink(&tr.traversalStack);
@@ -2261,7 +2261,7 @@ static void R_CoherentHierachicalCulling()
 
 	GL_CheckErrors();
 
-	//ri.Printf(PRINT_ALL, "--- R_CHC++ end ---\n");
+	//Ren_Print("--- R_CHC++ end ---\n");
 
 	if (r_speeds->integer)
 	{

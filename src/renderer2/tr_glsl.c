@@ -215,7 +215,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 	token = COM_ParseExt(text, qtrue);
 	if (token[0] != '{')
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: expecting '{', found '%s' instead in shader definition '%s'\n", token, defname);
+		Ren_Warning("WARNING: expecting '{', found '%s' instead in shader definition '%s'\n", token, defname);
 		return NULL;
 	}
 
@@ -230,7 +230,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		token = COM_ParseExt(text, qtrue);
 		if (!token[0])
 		{
-			ri.Printf(PRINT_WARNING, "WARNING: no concluding '}' in shader definition %s\n", defname);
+			Ren_Warning("WARNING: no concluding '}' in shader definition %s\n", defname);
 			goto parseerror;
 		}
 
@@ -261,8 +261,8 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 				}
 				else
 				{
-					ri.Error(ERR_FATAL, "PERKELE: %s", token);
-					ri.Printf(PRINT_WARNING, "WARNING: Macro '%s' for shaderdef '%s' was not recognized\n", token, defname);
+					Ren_Fatal("PERKELE: %s", token);
+					Ren_Warning("WARNING: Macro '%s' for shaderdef '%s' was not recognized\n", token, defname);
 					goto parseerror;
 				}
 			}
@@ -300,7 +300,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 				valptr                                          = Com_Allocate(sizeof(int));
 				*((int *)valptr)                                = atoi(token);
 				def->uniformValues[def->numUniformValues].value = valptr;
-				//Com_Printf("%d\n",*((int*)valptr));
+				//Ren_Print("%d\n",*((int*)valptr));
 			}
 			//FIXME: implement other formats
 			def->numUniformValues++;
@@ -321,7 +321,7 @@ static char *GLSL_FindDefinitionInText(const char *shadername)
 
 	if (!p)
 	{
-		ri.Error(ERR_FATAL, "GLSL_FindDefinitionInText: Definition text is null");
+		Ren_Fatal("GLSL_FindDefinitionInText: Definition text is null");
 	}
 
 	// look for label
@@ -377,14 +377,14 @@ programInfo_t *GLSL_FindShader(const char *name)
 	shaderText = GLSL_FindDefinitionInText(strippedName);
 	if (!shaderText)
 	{
-		ri.Printf(PRINT_ALL, "Shader definition find failed: %s\n", name);
+		Ren_Print("Shader definition find failed: %s\n", name);
 		return DEFAULT_SHADER_DEF;
 	}
 
 	sh = GLSL_ParseDefinition(&shaderText, strippedName);
 	if (!sh)
 	{
-		ri.Printf(PRINT_ALL, "Shader definition parsing failed: %s\n", name);
+		Ren_Print("Shader definition parsing failed: %s\n", name);
 		return DEFAULT_SHADER_DEF;
 	}
 	else
@@ -462,7 +462,7 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 	for (i = 0; i < maxLength; i += 1024)
 	{
 		Q_strncpyz(msgPart, msg + i, sizeof(msgPart));
-		ri.Printf(PRINT_ALL, "%s\n", msgPart);
+		Ren_Print("%s\n", msgPart);
 	}
 
 	ri.Hunk_FreeTempMemory(msg);
@@ -1049,7 +1049,7 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 		ri.FS_WriteFile(va("debug/%s_%s.debug", name, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), buffer, size);
 		GLSL_PrintShaderSource(shader);
 		GLSL_PrintInfoLog(shader, qfalse);
-		ri.Error(ERR_FATAL, "Couldn't compile shader");
+		Ren_Fatal("Couldn't compile shader");
 		return 0;
 	}
 
@@ -1079,12 +1079,12 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 	if (shaderType == GL_VERTEX_SHADER)
 	{
 		Com_sprintf(fullname, sizeof(fullname), "%s_vp", name);
-		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
+		Ren_Print("...loading vertex shader '%s'\n", fullname);
 	}
 	else
 	{
 		Com_sprintf(fullname, sizeof(fullname), "%s_fp", name);
-		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
+		Ren_Print("...loading vertex shader '%s'\n", fullname);
 	}
 
 	if (ri.FS_FOpenFileRead(va("glsl/%s.glsl", fullname), NULL, qfalse))
@@ -1125,7 +1125,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		}
 		else
 		{
-			ri.Error(ERR_FATAL, "Couldn't load shader %s", fullname);
+			Ren_Fatal("Couldn't load shader %s", fullname);
 		}
 	}
 	else
@@ -1153,7 +1153,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		ri.FS_FreeFile(dataBuffer);
 	}
 
-	Com_Printf("Loaded shader '%s'\n", fullname);
+	Ren_Print("Loaded shader '%s'\n", fullname);
 }
 
 static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *libShaderNames, GLenum shaderType)
@@ -1186,7 +1186,7 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 
 	if (!libsBuffer && !mainBuffer)
 	{
-		ri.Error(ERR_FATAL, "Shader loading failed!\n");
+		Ren_Fatal("Shader loading failed!\n");
 	}
 
 	sizeFinal = shaderExtraDefLen + mainSize + libsSize;
@@ -1278,8 +1278,8 @@ static void GLSL_LinkProgram(GLhandleARB program)
 	if (!linked)
 	{
 		GLSL_PrintInfoLog(program, qfalse);
-		ri.Printf(PRINT_ALL, "\n");
-		ri.Error(ERR_DROP, "shaders failed to link");
+		Ren_Print("\n");
+		Ren_Drop("shaders failed to link");
 	}
 }
 
@@ -1293,8 +1293,8 @@ static void GLSL_ValidateProgram(GLhandleARB program)
 	if (!validated)
 	{
 		GLSL_PrintInfoLog(program, qfalse);
-		ri.Printf(PRINT_ALL, "\n");
-		ri.Error(ERR_DROP, "shaders failed to validate");
+		Ren_Print("\n");
+		Ren_Drop("shaders failed to validate");
 	}
 }
 
@@ -1391,7 +1391,7 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 
 	if (uniformsInfo[uniformNum].type != GLSL_BOOL)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1417,7 +1417,7 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 
 	if (uniformsInfo[uniformNum].type != GLSL_INT)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1443,7 +1443,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1469,7 +1469,7 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC2)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1496,7 +1496,7 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC3)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1522,7 +1522,7 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1548,7 +1548,7 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT5)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1574,7 +1574,7 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1599,7 +1599,7 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOATARR)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1617,7 +1617,7 @@ void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *ve
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4ARR)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1635,7 +1635,7 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16ARR)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
+		Ren_Fatal("GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
 		return;
 	}
 
@@ -1670,7 +1670,7 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Error(ERR_DROP, "GLSL_InitGPUShader2: \"%s\" is too long", name);
+		Ren_Drop("GLSL_InitGPUShader2: \"%s\" is too long", name);
 	}
 
 	Q_strncpyz(program->name, name, sizeof(program->name));
@@ -1679,7 +1679,7 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 
 	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER_ARB, name)))
 	{
-		ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
+		Ren_Print("GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
 		qglDeleteObjectARB(program->program);
 		return qfalse;
 	}
@@ -1688,7 +1688,7 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 	{
 		if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER_ARB, name)))
 		{
-			ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
+			Ren_Print("GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
 			qglDeleteObjectARB(program->program);
 			return qfalse;
 		}
@@ -1782,7 +1782,7 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 			glUniform1i(location, *((int *)info->uniformValues[i].value));
 			break;
 		default:
-			ri.Error(ERR_FATAL, "Only INT supported atm");
+			Ren_Fatal("Only INT supported atm");
 			break;
 		}
 	}
@@ -1851,9 +1851,9 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 	info->list->permutations = numPermutations;
 
-	ri.Printf(PRINT_ALL, "...compiling %s shaders\n", info->name);
-	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
-	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
+	Ren_Print("...compiling %s shaders\n", info->name);
+	Ren_Print("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
+	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n");
 
 	startTime = ri.Milliseconds();
 
@@ -1870,7 +1870,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 			do
 			{
-				ri.Printf(PRINT_ALL, "*");
+				Ren_Print("*");
 			}
 			while (++tics < ticsNeeded);
 
@@ -1880,10 +1880,10 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 			{
 				if (tics < 51)
 				{
-					ri.Printf(PRINT_ALL, "*");
+					Ren_Print("*");
 				}
 
-				ri.Printf(PRINT_ALL, "\n");
+				Ren_Print("\n");
 			}
 		}
 
@@ -1898,7 +1898,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 			}
 			else
 			{
-				ri.Error(ERR_FATAL, "Failed to compile shader: %s permutation %d\n", info->name, i);
+				Ren_Fatal("Failed to compile shader: %s permutation %d\n", info->name, i);
 			}
 
 			numCompiled++;
@@ -1912,7 +1912,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	}
 
 	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
+	Ren_Print("...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
 	info->compiled                 = qtrue;
 	info->list->currentPermutation = 0;
 	return qtrue;
@@ -1937,7 +1937,7 @@ void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
 {
 	if (offset < 0)
 	{
-		ri.Error(ERR_FATAL, "Trying to select an negative array cell\n");
+		Ren_Fatal("Trying to select an negative array cell\n");
 		return;
 	}
 
@@ -1966,12 +1966,12 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 {
 	if (!programlist)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetMacroState: NULL programinfo");
+		Ren_Fatal("GLSL_SetMacroState: NULL programinfo");
 	}
 
 	if (!programlist->compiled)
 	{
-		ri.Error(ERR_FATAL, "Trying to set macro state of shader \"%s\" but it is not compiled\n", programlist->name);
+		Ren_Fatal("Trying to set macro state of shader \"%s\" but it is not compiled\n", programlist->name);
 	}
 
 	if (programlist->list->macromap[macro] == -1)
@@ -2001,7 +2001,7 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 
 	if (programlist->list->permutations < programlist->list->currentPermutation)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetMacroState: Trying to set macro state to impossible result for shader: %s with macro: %i permutation number %i", programlist->name, macro, programlist->list->permutations);
+		Ren_Fatal("GLSL_SetMacroState: Trying to set macro state to impossible result for shader: %s with macro: %i permutation number %i", programlist->name, macro, programlist->list->permutations);
 	}
 }
 
@@ -2028,7 +2028,7 @@ void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
 
 	if (numMacros % 2 != 0)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetMacroStates: Trying to set macros with an array which has an invalid size %i\n", numMacros);
+		Ren_Fatal("GLSL_SetMacroStates: Trying to set macros with an array which has an invalid size %i\n", numMacros);
 		return;
 	}
 
@@ -2052,19 +2052,19 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 
 	if (!programlist)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SelectPermutation: NULL programinfo");
+		Ren_Fatal("GLSL_SelectPermutation: NULL programinfo");
 	}
 
 	if (!programlist->compiled)
 	{
-		ri.Error(ERR_FATAL, "Trying to select permutation of shader \"%s\" but the list is not compiled\n", programlist->name);
+		Ren_Fatal("Trying to select permutation of shader \"%s\" but the list is not compiled\n", programlist->name);
 	}
 
 	prog = &programlist->list->programs[programlist->list->currentPermutation];
 
 	if (!prog || !prog->compiled)
 	{
-		ri.Error(ERR_FATAL, "Trying to select uncompiled shader permutation: %d of shader \"%s\"\n", programlist->list->currentPermutation, programlist->name);
+		Ren_Fatal("Trying to select uncompiled shader permutation: %d of shader \"%s\"\n", programlist->list->currentPermutation, programlist->name);
 	}
 	else
 	{
@@ -2192,7 +2192,7 @@ void GLSL_InitGPUShaders(void)
 {
 	int startTime, endTime;
 
-	ri.Printf(PRINT_ALL, "------- GLSL_InitGPUShaders -------\n");
+	Ren_LogComment("------- GLSL_InitGPUShaders -------\n");
 
 	R_IssuePendingRenderCommands();
 
@@ -2202,59 +2202,75 @@ void GLSL_InitGPUShaders(void)
 	GLSL_LoadDefinitions();
 	GLSL_BuildShaderExtraDef();
 
-	gl_genericShader      = GLSL_GetShaderProgram("generic");
+	endTime = ri.Milliseconds();
+
+	Ren_Developer("Initialized GLSL system in %5.2f seconds\n", (endTime - startTime) / 1000.0);
+}
+
+void GLSL_CompileGPUShaders(void)
+{
+	int startTime, endTime;
+
+	Ren_LogComment("------- GLSL_CompileGPUShaders -------\n");
+
+	R_IssuePendingRenderCommands();
+
+	//Init simple shader and draw loading screen
+
+	startTime = ri.Milliseconds();
+
+	gl_genericShader = GLSL_GetShaderProgram("generic");
 	gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
 
 	gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
-
 	gl_vertexLightingShader_DBS_world = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 
 	if (DS_STANDARD_ENABLED())
 	{
-		gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
-		gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
-		gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
+		gl_geometricFillShader = GLSL_GetShaderProgram("geometricFill");
+		gl_deferredLightingShader_omniXYZ = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
+		gl_deferredLightingShader_projXYZ = GLSL_GetShaderProgram("deferredLighting_projXYZ");
 		gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
 	}
 	else
 	{
-		gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
-		gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
+		gl_forwardLightingShader_omniXYZ = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
+		gl_forwardLightingShader_projXYZ = GLSL_GetShaderProgram("forwardLighting_projXYZ");
 		gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");
 	}
 
-	gl_shadowFillShader     = GLSL_GetShaderProgram("shadowFill");
-	gl_reflectionShader     = GLSL_GetShaderProgram("reflection");
-	gl_skyboxShader         = GLSL_GetShaderProgram("skybox");
-	gl_fogQuake3Shader      = GLSL_GetShaderProgram("fogQuake3");
-	gl_fogGlobalShader      = GLSL_GetShaderProgram("fogGlobal");
-	gl_heatHazeShader       = GLSL_GetShaderProgram("heatHaze");
-	gl_screenShader         = GLSL_GetShaderProgram("screen");
-	gl_portalShader         = GLSL_GetShaderProgram("portal");
-	gl_toneMappingShader    = GLSL_GetShaderProgram("toneMapping");
-	gl_contrastShader       = GLSL_GetShaderProgram("contrast");
-	gl_cameraEffectsShader  = GLSL_GetShaderProgram("cameraEffects");
-	gl_blurXShader          = GLSL_GetShaderProgram("blurX");
-	gl_blurYShader          = GLSL_GetShaderProgram("blurY");
+	gl_shadowFillShader = GLSL_GetShaderProgram("shadowFill");
+	gl_reflectionShader = GLSL_GetShaderProgram("reflection");
+	gl_skyboxShader = GLSL_GetShaderProgram("skybox");
+	gl_fogQuake3Shader = GLSL_GetShaderProgram("fogQuake3");
+	gl_fogGlobalShader = GLSL_GetShaderProgram("fogGlobal");
+	gl_heatHazeShader = GLSL_GetShaderProgram("heatHaze");
+	gl_screenShader = GLSL_GetShaderProgram("screen");
+	gl_portalShader = GLSL_GetShaderProgram("portal");
+	gl_toneMappingShader = GLSL_GetShaderProgram("toneMapping");
+	gl_contrastShader = GLSL_GetShaderProgram("contrast");
+	gl_cameraEffectsShader = GLSL_GetShaderProgram("cameraEffects");
+	gl_blurXShader = GLSL_GetShaderProgram("blurX");
+	gl_blurYShader = GLSL_GetShaderProgram("blurY");
 	gl_debugShadowMapShader = GLSL_GetShaderProgram("debugShadowMap");
 
-	gl_liquidShader             = GLSL_GetShaderProgram("liquid");
-	gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
-	gl_bloomShader              = GLSL_GetShaderProgram("bloom");
-	gl_refractionShader         = GLSL_GetShaderProgram("refraction");
-	gl_depthToColorShader       = GLSL_GetShaderProgram("depthToColor");
-	gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
+	gl_liquidShader = GLSL_GetShaderProgram("liquid");
+	gl_rotoscopeShader = GLSL_GetShaderProgram("rotoscope");
+	gl_bloomShader = GLSL_GetShaderProgram("bloom");
+	gl_refractionShader = GLSL_GetShaderProgram("refraction");
+	gl_depthToColorShader = GLSL_GetShaderProgram("depthToColor");
+	gl_volumetricFogShader = GLSL_GetShaderProgram("volumetricFog");
 	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
-	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
+	gl_dispersionShader = GLSL_GetShaderProgram("dispersion");
 
 	gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
-	gl_ssao         = GLSL_GetShaderProgram("SSAO");
+	gl_ssao = GLSL_GetShaderProgram("SSAO");
 
 	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
 	endTime = ri.Milliseconds();
 
-	ri.Printf(PRINT_ALL, "Created default shaders in %5.2f seconds\n", (endTime - startTime) / 1000.0);
+	Ren_Developer("Compiled default shader programs in %5.2f seconds\n", (endTime - startTime) / 1000.0);
 
 	if (r_recompileShaders->integer)
 	{
@@ -2266,7 +2282,7 @@ void GLSL_ShutdownGPUShaders(void)
 {
 	int i;
 
-	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
+	Ren_LogComment("------- GLSL_ShutdownGPUShaders -------\n");
 
 	//GLSL_VertexAttribsState(0);
 	GLSL_BindNullProgram();
@@ -2646,7 +2662,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 {
 	if (!glState.currentVBO)
 	{
-		ri.Error(ERR_FATAL, "GL_VertexAttribPointers: no VBO bound");
+		Ren_Fatal("GL_VertexAttribPointers: no VBO bound");
 		return;
 	}
 

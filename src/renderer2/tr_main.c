@@ -1144,7 +1144,7 @@ void R_RotateForViewer(void)
 	MatrixIdentity(tr.orientation.transformMatrix);
 
 #if 0
-	ri.Printf(PRINT_ALL, "transform forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
+	Ren_Print("transform forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
 	          tr.viewParms.orientation.axis[0][0], tr.viewParms.orientation.axis[0][1], tr.viewParms.orientation.axis[0][2],
 	          tr.viewParms.orientation.axis[1][0], tr.viewParms.orientation.axis[1][1], tr.viewParms.orientation.axis[1][2],
 	          tr.viewParms.orientation.axis[2][0], tr.viewParms.orientation.axis[2][1], tr.viewParms.orientation.axis[2][2]);
@@ -1181,7 +1181,7 @@ void R_RotateForViewer(void)
 #if 0
 	MatrixToVectorsFLU(viewMatrix, viewAxis[0], viewAxis[1], viewAxis[2]);
 
-	ri.Printf(PRINT_ALL, "view forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
+	Ren_Print("view forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
 	          viewAxis[0][0], viewAxis[0][1], viewAxis[0][2],
 	          viewAxis[1][0], viewAxis[1][1], viewAxis[1][2],
 	          viewAxis[2][0], viewAxis[2][1], viewAxis[2][2]);
@@ -1194,7 +1194,7 @@ void R_RotateForViewer(void)
 	MatrixTransformNormal2(viewMatrix, right);
 	MatrixTransformNormal2(viewMatrix, up);
 
-	ri.Printf(PRINT_ALL, "transformed forward = (%5.3f, %5.3f, %5.3f), right = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
+	Ren_Print("transformed forward = (%5.3f, %5.3f, %5.3f), right = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
 	          forward[0], forward[1], forward[2],
 	          right[0], right[1], right[2],
 	          up[0], up[1], up[2]);
@@ -1556,7 +1556,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 		trans[1] /= trans[3];
 		trans[2] /= trans[3];
 
-		ri.Printf(PRINT_ALL, "transformed[%i] = (%5.3f, %5.3f, %5.3f)\n", i, trans[0], trans[1], trans[2]);
+		Ren_Print("transformed[%i] = (%5.3f, %5.3f, %5.3f)\n", i, trans[0], trans[1], trans[2]);
 	}
 #endif
 }
@@ -1868,7 +1868,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 	// create plane axis for the portal we are seeing
 	R_PlaneForSurface(drawSurf->surface, &originalPlane);
 
-	//ri.Printf(PRINT_ALL, "R_GetPortalOrientations: original plane = (%5.3f, %5.3f, %5.3f)\n", originalPlane.normal[0], originalPlane.normal[1], originalPlane.normal[2]);
+	//Ren_Print("R_GetPortalOrientations: original plane = (%5.3f, %5.3f, %5.3f)\n", originalPlane.normal[0], originalPlane.normal[1], originalPlane.normal[2]);
 
 	// rotate the plane if necessary
 	if (drawSurf->entity != &tr.worldEntity)
@@ -1900,7 +1900,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 	shader = tr.sortedShaders[drawSurf->shaderNum];
 	if (shader->isMirror)
 	{
-		//ri.Printf(PRINT_ALL, "Portal surface with a mirror\n");
+		//Ren_Print("Portal surface with a mirror\n");
 
 		VectorScale(plane.normal, plane.dist, surface->origin);
 		VectorCopy(surface->origin, camera->origin);
@@ -1936,7 +1936,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 		// if the entity is just a mirror, don't use as a camera point
 		if (e->e.oldorigin[0] == e->e.origin[0] && e->e.oldorigin[1] == e->e.origin[1] && e->e.oldorigin[2] == e->e.origin[2])
 		{
-			//ri.Printf(PRINT_ALL, "Portal surface with a mirror entity\n");
+			//Ren_Print("Portal surface with a mirror entity\n");
 
 			VectorScale(plane.normal, plane.dist, surface->origin);
 			VectorCopy(surface->origin, camera->origin);
@@ -1989,7 +1989,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 			CrossProduct(camera->axis[0], camera->axis[1], camera->axis[2]);
 		}
 
-		//ri.Printf(PRINT_ALL, "Portal surface with a portal entity\n");
+		//Ren_Print("Portal surface with a portal entity\n");
 
 		*mirror = qfalse;
 		return qtrue;
@@ -2004,7 +2004,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 	// to see a surface before the server has communicated the matching
 	// portal surface entity, so we don't want to print anything here...
 
-	//ri.Printf(PRINT_ALL, "Portal surface without a portal entity\n");
+	//Ren_Print("Portal surface without a portal entity\n");
 
 	return qfalse;
 }
@@ -2087,12 +2087,12 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	// rotate if necessary
 	if (tr.currentEntity != &tr.worldEntity)
 	{
-		//ri.Printf(PRINT_ALL, "entity portal surface\n");
+		//Ren_Print("entity portal surface\n");
 		R_RotateEntityForViewParms(tr.currentEntity, &tr.viewParms, &tr.orientation);
 	}
 	else
 	{
-		//ri.Printf(PRINT_ALL, "world portal surface\n");
+		//Ren_Print("world portal surface\n");
 		tr.orientation = tr.viewParms.world;
 	}
 
@@ -2161,7 +2161,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	}
 	if (!numTriangles)
 	{
-		//ri.Printf(PRINT_ALL, "entity portal surface triangles culled\n");
+		//Ren_Print("entity portal surface triangles culled\n");
 		return qtrue;
 	}
 
@@ -2197,7 +2197,7 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf)
 	// don't recursively mirror
 	if (tr.viewParms.isPortal)
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING: recursive mirror/portal found\n");
+		Ren_Developer("WARNING: recursive mirror/portal found\n");
 		return qfalse;
 	}
 
@@ -2209,7 +2209,7 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf)
 	// trivially reject portal/mirror
 	if (SurfIsOffscreen(drawSurf, clipDest))
 	{
-		//ri.Printf(PRINT_ALL, "WARNING: offscreen mirror/portal surface\n");
+		//Ren_Print("WARNING: offscreen mirror/portal surface\n");
 		return qfalse;
 	}
 
@@ -2441,12 +2441,12 @@ static void R_SortDrawSurfs(void)
 		}
 #endif
 
-		//ri.Printf(PRINT_ALL, "portal or mirror surface\n");
+		//Ren_Print("portal or mirror surface\n");
 
 		// no shader should ever have this sort type
 		if (shader->sort == SS_BAD)
 		{
-			ri.Error(ERR_DROP, "Shader '%s'with sort == SS_BAD", shader->name);
+			Ren_Drop("Shader '%s'with sort == SS_BAD", shader->name);
 		}
 
 		// if the mirror was completely clipped away, we may need to check another surface
@@ -2565,14 +2565,14 @@ void R_AddEntitySurfaces(void)
 					break;
 
 				default:
-					ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad modeltype");
+					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
 					break;
 				}
 			}
 			break;
 
 		default:
-			ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad reType");
+			Ren_Drop("R_AddEntitySurfaces: Bad reType");
 			break;
 		}
 	}
@@ -2656,14 +2656,14 @@ void R_AddEntityInteractions(trRefLight_t *light)
 					break;
 
 				default:
-					ri.Error(ERR_DROP, "R_AddEntityInteractions: Bad modeltype");
+					Ren_Drop("R_AddEntityInteractions: Bad modeltype");
 					break;
 				}
 			}
 			break;
 
 		default:
-			ri.Error(ERR_DROP, "R_AddEntityInteractions: Bad reType");
+			Ren_Drop("R_AddEntityInteractions: Bad reType");
 			break;
 		}
 	}
@@ -2772,7 +2772,7 @@ void R_AddLightInteractions()
 
 						leaf = (bspNode_t *) l->data;
 
-						//ri.Printf(PRINT_ALL, "leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
+						//Ren_Print("leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
 
 						if (leaf->visible[tr.viewCount] && (tr.frameCount - leaf->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer)
 						{
@@ -3008,7 +3008,7 @@ void R_AddLightBoundsToVisBounds()
 
 						leaf = (bspNode_t *) l->data;
 
-						//ri.Printf(PRINT_ALL, "leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
+						//Ren_Print("leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
 
 						if (leaf->visible[tr.viewCount] && (tr.frameCount - leaf->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer)
 						{
@@ -3321,7 +3321,7 @@ void R_RenderView(viewParms_t *parms)
 
 	if (tr.viewCount >= MAX_VIEWS)
 	{
-		ri.Printf(PRINT_ALL, "MAX_VIEWS (%i) hit. Don't add more mirrors or portals. Skipping view ...\n", MAX_VIEWS);
+		Ren_Print("MAX_VIEWS (%i) hit. Don't add more mirrors or portals. Skipping view ...\n", MAX_VIEWS);
 		return;
 	}
 
