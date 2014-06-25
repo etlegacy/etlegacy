@@ -2219,52 +2219,52 @@ void GLSL_CompileGPUShaders(void)
 
 	startTime = ri.Milliseconds();
 
-	gl_genericShader = GLSL_GetShaderProgram("generic");
+	gl_genericShader      = GLSL_GetShaderProgram("generic");
 	gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
 
 	gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
-	gl_vertexLightingShader_DBS_world = GLSL_GetShaderProgram("vertexLighting_DBS_world");
+	gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 
 	if (DS_STANDARD_ENABLED())
 	{
-		gl_geometricFillShader = GLSL_GetShaderProgram("geometricFill");
-		gl_deferredLightingShader_omniXYZ = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
-		gl_deferredLightingShader_projXYZ = GLSL_GetShaderProgram("deferredLighting_projXYZ");
+		gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
+		gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
+		gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
 		gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
 	}
 	else
 	{
-		gl_forwardLightingShader_omniXYZ = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
-		gl_forwardLightingShader_projXYZ = GLSL_GetShaderProgram("forwardLighting_projXYZ");
+		gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
+		gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
 		gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");
 	}
 
-	gl_shadowFillShader = GLSL_GetShaderProgram("shadowFill");
-	gl_reflectionShader = GLSL_GetShaderProgram("reflection");
-	gl_skyboxShader = GLSL_GetShaderProgram("skybox");
-	gl_fogQuake3Shader = GLSL_GetShaderProgram("fogQuake3");
-	gl_fogGlobalShader = GLSL_GetShaderProgram("fogGlobal");
-	gl_heatHazeShader = GLSL_GetShaderProgram("heatHaze");
-	gl_screenShader = GLSL_GetShaderProgram("screen");
-	gl_portalShader = GLSL_GetShaderProgram("portal");
-	gl_toneMappingShader = GLSL_GetShaderProgram("toneMapping");
-	gl_contrastShader = GLSL_GetShaderProgram("contrast");
-	gl_cameraEffectsShader = GLSL_GetShaderProgram("cameraEffects");
-	gl_blurXShader = GLSL_GetShaderProgram("blurX");
-	gl_blurYShader = GLSL_GetShaderProgram("blurY");
+	gl_shadowFillShader     = GLSL_GetShaderProgram("shadowFill");
+	gl_reflectionShader     = GLSL_GetShaderProgram("reflection");
+	gl_skyboxShader         = GLSL_GetShaderProgram("skybox");
+	gl_fogQuake3Shader      = GLSL_GetShaderProgram("fogQuake3");
+	gl_fogGlobalShader      = GLSL_GetShaderProgram("fogGlobal");
+	gl_heatHazeShader       = GLSL_GetShaderProgram("heatHaze");
+	gl_screenShader         = GLSL_GetShaderProgram("screen");
+	gl_portalShader         = GLSL_GetShaderProgram("portal");
+	gl_toneMappingShader    = GLSL_GetShaderProgram("toneMapping");
+	gl_contrastShader       = GLSL_GetShaderProgram("contrast");
+	gl_cameraEffectsShader  = GLSL_GetShaderProgram("cameraEffects");
+	gl_blurXShader          = GLSL_GetShaderProgram("blurX");
+	gl_blurYShader          = GLSL_GetShaderProgram("blurY");
 	gl_debugShadowMapShader = GLSL_GetShaderProgram("debugShadowMap");
 
-	gl_liquidShader = GLSL_GetShaderProgram("liquid");
-	gl_rotoscopeShader = GLSL_GetShaderProgram("rotoscope");
-	gl_bloomShader = GLSL_GetShaderProgram("bloom");
-	gl_refractionShader = GLSL_GetShaderProgram("refraction");
-	gl_depthToColorShader = GLSL_GetShaderProgram("depthToColor");
-	gl_volumetricFogShader = GLSL_GetShaderProgram("volumetricFog");
+	gl_liquidShader             = GLSL_GetShaderProgram("liquid");
+	gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
+	gl_bloomShader              = GLSL_GetShaderProgram("bloom");
+	gl_refractionShader         = GLSL_GetShaderProgram("refraction");
+	gl_depthToColorShader       = GLSL_GetShaderProgram("depthToColor");
+	gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
 	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
-	gl_dispersionShader = GLSL_GetShaderProgram("dispersion");
+	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
 	gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
-	gl_ssao = GLSL_GetShaderProgram("SSAO");
+	gl_ssao         = GLSL_GetShaderProgram("SSAO");
 
 	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
