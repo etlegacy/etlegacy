@@ -247,12 +247,10 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		blocksize = 8;
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		blocksize = 16;
 		break;
-
 	default:
 		Ren_Warning("invalid compressed image format\n");
 		return;
@@ -267,7 +265,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 		color_base = block_base;
 		alpha_base = NULL;
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		alpha_base = block_base;
@@ -294,7 +291,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			rgba[3][3] = 0;
 		}
 	// fallthrough
-
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		if (c0 <= c1)
 		{
@@ -309,7 +305,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			break;
 		}
 	// fallthrough
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		rgba[2][0] = (byte) ((rgba[0][0] * 2 + rgba[1][0]) / 3);
@@ -340,7 +335,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 		for (y = 0; y < 4; y++)
 		{
@@ -352,7 +346,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			}
 		}
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 	{
 		byte a[8];
@@ -486,13 +479,11 @@ static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GL
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		int_fmat = GL_RGB;
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		int_fmat = GL_RGBA;
 		break;
-
 	default:
 		Ren_Warning("invalid compressed image format\n");
 		return;
@@ -794,12 +785,10 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 				internal_format = usingAlpha ? GL_RGBA8 : GL_RGB8;
 				format          = GL_BGRA_EXT;
 				break;
-
 			case 24:
 				internal_format = GL_RGB8;
 				format          = GL_BGR_EXT;
 				break;
-
 			case 16:
 				if (usingAlpha)
 				{
@@ -825,7 +814,6 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 					}
 				}
 				break;
-
 			default:
 				Ren_Warning("R_LoadDDSImage: unsupported RGB bit depth \"%s\"\n", name);
 				goto ret_error;

@@ -829,11 +829,9 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspMode
 	case SF_TRIANGLES:
 		ProjectDecalOntoTriangles(dp, surf, bmodel);
 		break;
-
 	case SF_GRID:
 		ProjectDecalOntoGrid(dp, surf, bmodel);
 		break;
-
 	default:
 		break;
 	}

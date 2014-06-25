@@ -131,17 +131,14 @@ void GL_TextureFilter(image_t *image, filterType_t filterType)
 	glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
 	break;
 	*/
-
 	case FT_LINEAR:
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		break;
-
 	case FT_NEAREST:
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		break;
-
 	default:
 		break;
 	}

@@ -2516,7 +2516,6 @@ void R_AddEntitySurfaces(void)
 			shader = R_GetShaderByHandle(ent->e.customShader);
 			R_AddDrawSurf(&entitySurface, shader, -1, R_SpriteFogNum(ent));
 			break;
-
 		case RT_MODEL:
 			// we must set up parts of tr.or for model culling
 			R_RotateEntityForViewParms(ent, &tr.viewParms, &tr.orientation);
@@ -2536,21 +2535,17 @@ void R_AddEntitySurfaces(void)
 				case MOD_MDX:
 					// not a model, just a skeleton
 					break;
-
 				case MOD_MDM:
 					R_MDM_AddAnimSurfaces(ent);
 					break;
-
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 				case MOD_MD5:
 					R_AddMD5Surfaces(ent);
 					break;
 #endif
-
 				case MOD_BSP:
 					R_AddBSPModelSurfaces(ent);
 					break;
-
 				case MOD_BAD:           // null model axis
 					if ((ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal)
 					{
@@ -2563,14 +2558,12 @@ void R_AddEntitySurfaces(void)
 					shader = R_GetShaderByHandle(ent->e.customShader);
 					R_AddDrawSurf(&entitySurface, tr.defaultShader, -1, 0);
 					break;
-
 				default:
 					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
 					break;
 				}
 			}
 			break;
-
 		default:
 			Ren_Drop("R_AddEntitySurfaces: Bad reType");
 			break;
@@ -2619,7 +2612,6 @@ void R_AddEntityInteractions(trRefLight_t *light)
 		case RT_RAIL_CORE_TAPER:
 		case RT_RAIL_RINGS:
 			break;
-
 		case RT_MODEL:
 			tr.currentModel = R_GetModelByHandle(ent->e.hModel);
 			if (!tr.currentModel)
@@ -2633,35 +2625,28 @@ void R_AddEntityInteractions(trRefLight_t *light)
 				case MOD_MESH:
 					R_AddMDVInteractions(ent, light);
 					break;
-
 				case MOD_MDX:
 					// not a model, just a skeleton
 					break;
-
 				case MOD_MDM:
 					R_AddMDMInteractions(ent, light);
 					break;
-
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 				case MOD_MD5:
 					R_AddMD5Interactions(ent, light);
 					break;
 #endif
-
 				case MOD_BSP:
 					R_AddBrushModelInteractions(ent, light);
 					break;
-
 				case MOD_BAD:           // null model axis
 					break;
-
 				default:
 					Ren_Drop("R_AddEntityInteractions: Bad modeltype");
 					break;
 				}
 			}
 			break;
-
 		default:
 			Ren_Drop("R_AddEntityInteractions: Bad reType");
 			break;
@@ -2822,12 +2807,10 @@ void R_AddLightInteractions()
 				tr.pc.c_box_cull_light_in++;
 				light->cull = CULL_IN;
 				break;
-
 			case CULL_CLIP:
 				tr.pc.c_box_cull_light_clip++;
 				light->cull = CULL_CLIP;
 				break;
-
 			case CULL_OUT:
 				// light is not visible so skip other light setup stuff to save speed
 				tr.pc.c_box_cull_light_out++;
@@ -2861,12 +2844,10 @@ void R_AddLightInteractions()
 				tr.pc.c_box_cull_light_in++;
 				light->cull = CULL_IN;
 				break;
-
 			case CULL_CLIP:
 				tr.pc.c_box_cull_light_clip++;
 				light->cull = CULL_CLIP;
 				break;
-
 			case CULL_OUT:
 				// light is not visible so skip other light setup stuff to save speed
 				tr.pc.c_box_cull_light_out++;
@@ -3057,10 +3038,8 @@ void R_AddLightBoundsToVisBounds()
 			case CULL_IN:
 			default:
 				break;
-
 			case CULL_CLIP:
 				break;
-
 			case CULL_OUT:
 				continue;
 			}
@@ -3088,10 +3067,8 @@ void R_AddLightBoundsToVisBounds()
 			case CULL_IN:
 			default:
 				break;
-
 			case CULL_CLIP:
 				break;
-
 			case CULL_OUT:
 				continue;
 			}

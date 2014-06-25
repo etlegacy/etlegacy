@@ -183,11 +183,9 @@ static int R_CullModel(trRefEntity_t *ent)
 			case CULL_OUT:
 				tr.pc.c_sphere_cull_mdx_out++;
 				return CULL_OUT;
-
 			case CULL_IN:
 				tr.pc.c_sphere_cull_mdx_in++;
 				return CULL_IN;
-
 			case CULL_CLIP:
 				tr.pc.c_sphere_cull_mdx_clip++;
 				break;

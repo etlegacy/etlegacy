@@ -4991,15 +4991,12 @@ void R_LoadEntities(lump_t *l)
 				case RL_OMNI:
 					numOmniLights++;
 					break;
-
 				case RL_PROJ:
 					numProjLights++;
 					break;
-
 				case RL_DIRECTIONAL:
 					numParallelLights++;
 					break;
-
 				default:
 					break;
 				}
@@ -5438,11 +5435,9 @@ static void R_RecursivePrecacheInteractionNode(bspNode_t *node, trRefLight_t *li
 		case 1:
 			node = node->children[0];
 			break;
-
 		case 2:
 			node = node->children[1];
 			break;
-
 		case 3:
 		default:
 			// recurse down the children, front side first
@@ -5507,11 +5502,9 @@ static void R_RecursiveAddInteractionNode(bspNode_t *node, trRefLight_t *light)
 		case 1:
 			node = node->children[0];
 			break;
-
 		case 2:
 			node = node->children[1];
 			break;
-
 		case 3:
 		default:
 			// recurse down the children, front side first
@@ -6202,11 +6195,9 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 	{
 	case RL_OMNI:
 		return;
-
 	case RL_DIRECTIONAL:
 	case RL_PROJ:
 		break;
-
 	default:
 		return;
 	}

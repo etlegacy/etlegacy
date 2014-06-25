@@ -4126,7 +4126,7 @@ void R_AddDrawViewCmd(void);
 void RE_SetColor(const float *rgba);
 void RE_SetClipRegion(const float *region);
 void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
-void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);  // NERVE - SMF
+void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void RE_StretchPicGradient(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
                            int gradientType);

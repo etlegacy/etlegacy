@@ -171,10 +171,8 @@ CON_HistNext
 */
 static void CON_HistNext(void)
 {
-	int pos;
-
-	pos = (qconsole_history_pos >= QCONSOLE_HISTORY - 1) ?
-	      0 : (qconsole_history_pos + 1);
+	int pos = (qconsole_history_pos >= QCONSOLE_HISTORY - 1) ?
+	          0 : (qconsole_history_pos + 1);
 
 	// clear the edit buffer if they try to advance to a future command
 	if (pos == qconsole_history_oldest)
