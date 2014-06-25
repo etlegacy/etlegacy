@@ -559,7 +559,6 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 		light->localBounds[1][2] = light->l.radius[2];
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    j;
@@ -616,7 +615,6 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 		}
 		break;
 	}
-
 	default:
 		break;
 	}
@@ -666,7 +664,6 @@ void R_SetupLightView(trRefLight_t *light)
 		MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
 		break;
 	}
-
 	/*
 	case RL_PROJ:
 	{
@@ -680,7 +677,6 @@ void R_SetupLightView(trRefLight_t *light)
 	    break;
 	}
 	*/
-
 	default:
 		Ren_Drop("R_SetupLightView: Bad rlType");
 		break;
@@ -747,7 +743,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		}
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    i;
@@ -773,7 +768,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		}
 		break;
 	}
-
 	default:
 		break;
 	}
@@ -826,7 +820,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 			light->frustumIndexes = tess.numIndexes;
 			break;
 		}
-
 		case RL_PROJ:
 		{
 			vec3_t farCorners[4];
@@ -935,7 +928,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 			light->frustumIndexes = tess.numIndexes;
 			break;
 		}
-
 		default:
 			break;
 		}
@@ -962,7 +954,6 @@ void R_SetupLightProjection(trRefLight_t *light)
 		MatrixSetupScale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1], 1.0 / light->l.radius[2]);
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    i;
@@ -1164,11 +1155,9 @@ qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shad
 	case IA_SHADOWONLY:
 		light->numShadowOnlyInteractions++;
 		break;
-
 	case IA_LIGHTONLY:
 		light->numLightOnlyInteractions++;
 		break;
-
 	default:
 		break;
 	}
@@ -1514,7 +1503,6 @@ void R_SetupLightScissor(trRefLight_t *light)
 		R_AddEdgeToLightScissor(light, v1, v2);
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    j;
@@ -1567,7 +1555,6 @@ void R_SetupLightScissor(trRefLight_t *light)
 		}
 		break;
 	}
-
 	default:
 		break;
 	}
@@ -1917,7 +1904,6 @@ void R_SetupLightShader(trRefLight_t *light)
 			case RL_OMNI:
 				light->shader = tr.defaultPointLightShader;
 				break;
-
 			case RL_PROJ:
 				light->shader = tr.defaultProjectedLightShader;
 				break;
@@ -1931,7 +1917,6 @@ void R_SetupLightShader(trRefLight_t *light)
 			case RL_OMNI:
 				light->shader = tr.defaultDynamicLightShader;
 				break;
-
 			case RL_PROJ:
 				light->shader = tr.defaultProjectedLightShader;
 				break;

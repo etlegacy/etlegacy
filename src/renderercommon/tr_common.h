@@ -89,7 +89,7 @@ void GLimp_Minimize(void);
 #define Ren_Drop(...) ri.Error(ERR_DROP, __VA_ARGS__)
 #define Ren_Fatal(...) ri.Error(ERR_FATAL, __VA_ARGS__)
 
-#define Ren_Assert(x) if(x) { Ren_Fatal("Ren_Assert: %s failed at %s (%s:%d)\n", #x, __FUNCTION__, __FILE__, __LINE__); }
+#define Ren_Assert(x) if (x) { Ren_Fatal("Ren_Assert: %s failed at %s (%s:%d)\n", #x, __FUNCTION__, __FILE__, __LINE__); }
 
 // NOTE: linux works with float gamma value, not the gamma table
 // the params won't be used, getting the r_gamma cvar directly

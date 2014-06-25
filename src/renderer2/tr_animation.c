@@ -885,12 +885,10 @@ static void R_CullMD5(trRefEntity_t *ent)
 		tr.pc.c_box_cull_md5_in++;
 		ent->cull = CULL_IN;
 		return;
-
 	case CULL_CLIP:
 		tr.pc.c_box_cull_md5_clip++;
 		ent->cull = CULL_CLIP;
 		return;
-
 	case CULL_OUT:
 	default:
 		tr.pc.c_box_cull_md5_out++;

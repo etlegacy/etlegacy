@@ -55,41 +55,32 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 	{
 	case GL_FRAMEBUFFER_COMPLETE_EXT:
 		break;
-
 	case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Unsupported framebuffer format\n", fbo->name);
 		break;
-
 	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete attachment\n", fbo->name);
 		break;
-
 	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, missing attachment\n", fbo->name);
 		break;
-
 	//case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
 	//  Ren_Warning( "R_CheckFBO: (%s) Framebuffer incomplete, duplicate attachment\n", fbo->name);
 	//  break;
-
 	case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same dimensions\n",
 		            fbo->name);
 		break;
-
 	case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same format\n",
 		            fbo->name);
 		break;
-
 	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, missing draw buffer\n", fbo->name);
 		break;
-
 	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, missing read buffer\n", fbo->name);
 		break;
-
 	default:
 		Ren_Warning("R_CheckFBO: (%s) unknown error 0x%X\n", fbo->name, code);
 		//Ren_Fatal( "R_CheckFBO: (%s) unknown error 0x%X", fbo->name, code);

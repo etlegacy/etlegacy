@@ -1054,7 +1054,6 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	case GL_TEXTURE_CUBE_MAP_ARB:
 		target = GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB;
 		break;
-
 	default:
 		target = GL_TEXTURE_2D;
 		break;
@@ -1240,7 +1239,6 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 			glTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE,
 			             scaledBuffer);
 			break;
-
 		default:
 			if (image->bits & IF_PACKED_DEPTH24_STENCIL8)
 			{
@@ -1313,7 +1311,6 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 						glTexImage2D(target + i, mipLevel, internalFormat, mipWidth, mipHeight, 0, format, GL_UNSIGNED_BYTE,
 						             scaledBuffer);
 						break;
-
 					default:
 						glTexImage2D(target, mipLevel, internalFormat, mipWidth, mipHeight, 0, format, GL_UNSIGNED_BYTE,
 						             scaledBuffer);

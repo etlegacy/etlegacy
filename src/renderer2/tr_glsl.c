@@ -2400,12 +2400,10 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		prog->attributes |= ATTR_COLOR;
 		VectorSet(temp, 1, 1, 1);
 		break;
-
 	case CGEN_ONE_MINUS_VERTEX:
 		prog->attributes |= ATTR_COLOR;
 		VectorSet(temp, -1, -1, -1);
 		break;
-
 	default:
 		prog->attributes &= ~ATTR_COLOR;
 		VectorSet(temp, 0, 0, 0);
@@ -2418,12 +2416,10 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		prog->attributes |= ATTR_COLOR;
 		temp[3]           = 1.0f;
 		break;
-
 	case AGEN_ONE_MINUS_VERTEX:
 		prog->attributes |= ATTR_COLOR;
 		temp[3]           = -1.0f;
 		break;
-
 	default:
 		temp[3] = 0.0f;
 		break;

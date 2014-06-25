@@ -170,9 +170,9 @@ static void RB_RenderDrawSurfaces(qboolean opaque, qboolean depthFill, int drawS
 			}
 			break;
 		case DRAWSURFACES_ALL:
+		default: // unknown filter
 			break;
 		}
-		;
 
 		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
 		{
@@ -462,7 +462,6 @@ static void Render_lightVolume(interaction_t *ia)
 		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));        // scale
 		break;
 	}
-
 	case RL_OMNI:
 	default:
 	{
@@ -914,16 +913,15 @@ static void RB_RenderInteractions()
 			{
 			case RL_PROJ:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));        // scale
+				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);            // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));            // scale
 				break;
 			}
-
 			case RL_OMNI:
 			default:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
+				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);           // scale
 				break;
 			}
 			}
@@ -1141,7 +1139,6 @@ static void RB_RenderInteractionsShadowMapped()
 							flipY = qfalse;
 							break;
 						}
-
 						case 1:
 						{
 							VectorSet(angles, 0, 180, 90);
@@ -1149,7 +1146,6 @@ static void RB_RenderInteractionsShadowMapped()
 							flipY = qtrue;
 							break;
 						}
-
 						case 2:
 						{
 							VectorSet(angles, 0, 90, 0);
@@ -1157,7 +1153,6 @@ static void RB_RenderInteractionsShadowMapped()
 							flipY = qfalse;
 							break;
 						}
-
 						case 3:
 						{
 							VectorSet(angles, 0, -90, 0);
@@ -1165,7 +1160,6 @@ static void RB_RenderInteractionsShadowMapped()
 							flipY = qtrue;
 							break;
 						}
-
 						case 4:
 						{
 							VectorSet(angles, -90, 90, 0);
@@ -1173,7 +1167,6 @@ static void RB_RenderInteractionsShadowMapped()
 							flipY = qfalse;
 							break;
 						}
-
 						case 5:
 						{
 							VectorSet(angles, 90, 90, 0);
@@ -1181,7 +1174,6 @@ static void RB_RenderInteractionsShadowMapped()
 							flipY = qtrue;
 							break;
 						}
-
 						default:
 						{
 							// shut up compiler
@@ -1223,7 +1215,6 @@ static void RB_RenderInteractionsShadowMapped()
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
 					}
-
 					case RL_PROJ:
 					{
 						Ren_LogComment("--- Rendering projective shadowMap ---\n");
@@ -1244,7 +1235,6 @@ static void RB_RenderInteractionsShadowMapped()
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
 					}
-
 					case RL_DIRECTIONAL:
 					{
 						int      j;
@@ -1827,7 +1817,6 @@ static void RB_RenderInteractionsShadowMapped()
 				}
 				break;
 			}
-
 			default:
 				break;
 			}
@@ -1967,7 +1956,6 @@ static void RB_RenderInteractionsShadowMapped()
 				MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
-
 			case RL_PROJ:
 			{
 				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
@@ -1978,7 +1966,6 @@ static void RB_RenderInteractionsShadowMapped()
 				MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
-
 			case RL_DIRECTIONAL:
 			{
 				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
@@ -2004,7 +1991,6 @@ static void RB_RenderInteractionsShadowMapped()
 				rb_surfaceTable[*surface] (surface);
 				break;
 			}
-
 			default:
 				break;
 			}
@@ -2056,7 +2042,6 @@ skipInteraction:
 					iaCount = iaFirst;
 					break;
 				}
-
 				case RL_PROJ:
 				{
 					// jump back to first interaction of this light and start lighting
@@ -2065,7 +2050,6 @@ skipInteraction:
 					drawShadows = qfalse;
 					break;
 				}
-
 				case RL_DIRECTIONAL:
 				{
 					// set shadow matrix including scale + offset
@@ -2100,7 +2084,6 @@ skipInteraction:
 					}
 					break;
 				}
-
 				default:
 					break;
 				}
@@ -2423,7 +2406,6 @@ skipInteraction:
 					MatrixMultiply2(light->attenuationMatrix, light->viewMatrix);
 					break;
 				}
-
 				case RL_PROJ:
 				{
 					// build the attenuation matrix
@@ -2433,7 +2415,6 @@ skipInteraction:
 					MatrixMultiply2(light->attenuationMatrix, light->viewMatrix);
 					break;
 				}
-
 				default:
 					break;
 				}
@@ -3994,7 +3975,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						case RL_OMNI:
 						case RL_DIRECTIONAL:
 						{
-								#if 1
+#if 1
 							// render in light space
 							R_RotateLightForViewParms(light, &backEnd.viewParms, &backEnd.orientation);
 
@@ -4004,7 +3985,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							Tess_AddCube(vec3_origin, light->localBounds[0], light->localBounds[1], colorWhite);
 
 							Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
-								#else
+#else
 							matrix_t transform, scale, rot;
 							axis_t   axis;
 
@@ -4022,7 +4003,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							tess.multiDrawPrimitives = 0;
 							tess.numVertexes         = tr.unitCubeVBO->vertexesNum;
 							tess.numIndexes          = tr.unitCubeIBO->indexesNum;
-								#endif
+#endif
 							break;
 						}
 						case RL_PROJ:
@@ -4815,7 +4796,6 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 				rb_surfaceTable[*surface] (surface);
 				break;
 			}
-
 			default:
 				break;
 			}
@@ -4867,7 +4847,6 @@ skipInteraction:
 					iaCount = iaFirst;
 					break;
 				}
-
 				case RL_PROJ:
 				{
 					// jump back to first interaction of this light and start lighting
@@ -4876,7 +4855,6 @@ skipInteraction:
 					drawShadows = qfalse;
 					break;
 				}
-
 				case RL_DIRECTIONAL:
 				{
 					// set shadow matrix including scale + offset
@@ -4911,7 +4889,6 @@ skipInteraction:
 					}
 					break;
 				}
-
 				default:
 					break;
 				}
@@ -7212,7 +7189,6 @@ static void RB_RenderDebugUtils()
 #endif
 						break;
 					}
-
 					case RL_PROJ:
 					{
 						vec3_t farCorners[4];
@@ -7246,13 +7222,13 @@ static void RB_RenderDebugUtils()
 						PlanesGetIntersectionPoint(frustum[FRUSTUM_LEFT], frustum[FRUSTUM_BOTTOM], frustum[FRUSTUM_FAR], farCorners[3]);
 
 						// the planes of the frustum are measured at world 0,0,0 so we have to position the intersection points relative to the light origin
-	#if 0
+#if 0
 						Ren_Print("pyramid farCorners\n");
 						for (j = 0; j < 4; j++)
 						{
 							Ren_Print("(%5.3f, %5.3f, %5.3f)\n", farCorners[j][0], farCorners[j][1], farCorners[j][2]);
 						}
-	#endif
+#endif
 
 						tess.numVertexes         = 0;
 						tess.numIndexes          = 0;
@@ -7268,13 +7244,13 @@ static void RB_RenderDebugUtils()
 							PlanesGetIntersectionPoint(frustum[FRUSTUM_RIGHT], frustum[FRUSTUM_BOTTOM], frustum[FRUSTUM_NEAR], nearCorners[2]);
 							PlanesGetIntersectionPoint(frustum[FRUSTUM_LEFT], frustum[FRUSTUM_BOTTOM], frustum[FRUSTUM_NEAR], nearCorners[3]);
 
-	#if 0
+#if 0
 							Ren_Print("pyramid nearCorners\n");
 							for (j = 0; j < 4; j++)
 							{
 								Ren_Print("(%5.3f, %5.3f, %5.3f)\n", nearCorners[j][0], nearCorners[j][1], nearCorners[j][2]);
 							}
-	#endif
+#endif
 
 							// draw outer surfaces
 							for (j = 0; j < 4; j++)
@@ -7349,12 +7325,10 @@ static void RB_RenderDebugUtils()
 							Tess_AddCube(light->l.projEnd, minSize, maxSize, colorMagenta);
 						}
 
-
 						Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
 						Tess_DrawElements();
 						break;
 					}
-
 					default:
 						break;
 					}
@@ -7736,7 +7710,6 @@ static void RB_RenderDebugUtils()
 						skel = &skeleton;
 						break;
 					}
-
 					default:
 						break;
 					}

@@ -4836,9 +4836,8 @@ static void FixRenderCommandList(int newShader)
 			}
 			case RC_DRAW_VIEW:
 			{
-				int        i;
-				drawSurf_t *drawSurf;
-
+				int                     i;
+				drawSurf_t              *drawSurf;
 				const drawViewCommand_t *dv_cmd = (const drawViewCommand_t *)curCmd;
 
 				for (i = 0, drawSurf = dv_cmd->viewParms.drawSurfs; i < dv_cmd->viewParms.numDrawSurfs; i++, drawSurf++)

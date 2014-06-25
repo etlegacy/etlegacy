@@ -375,7 +375,6 @@ static void Render_generic(int stage)
 	case CGEN_ONE_MINUS_VERTEX:
 		rgbGen = pStage->rgbGen;
 		break;
-
 	default:
 		rgbGen = CGEN_CONST;
 		break;
@@ -388,7 +387,6 @@ static void Render_generic(int stage)
 	case AGEN_ONE_MINUS_VERTEX:
 		alphaGen = pStage->alphaGen;
 		break;
-
 	default:
 		alphaGen = AGEN_CONST;
 		break;
@@ -696,7 +694,6 @@ static void Render_vertexLighting_DBS_world(int stage)
 	case CGEN_ONE_MINUS_VERTEX:
 		colorGen = pStage->rgbGen;
 		break;
-
 	default:
 		colorGen = CGEN_CONST;
 		break;
@@ -707,7 +704,6 @@ static void Render_vertexLighting_DBS_world(int stage)
 	case AGEN_VERTEX:
 		alphaGen = pStage->alphaGen;
 		break;
-
 	case AGEN_ONE_MINUS_VERTEX:
 		alphaGen = pStage->alphaGen;
 
@@ -717,7 +713,6 @@ static void Render_vertexLighting_DBS_world(int stage)
 		stateBits |= (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 		*/
 		break;
-
 	default:
 		alphaGen = AGEN_CONST;
 		break;
@@ -813,7 +808,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	case CGEN_ONE_MINUS_VERTEX:
 		rgbGen = pStage->rgbGen;
 		break;
-
 	default:
 		rgbGen = CGEN_CONST;
 		break;
@@ -825,7 +819,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	case AGEN_ONE_MINUS_VERTEX:
 		alphaGen = pStage->alphaGen;
 		break;
-
 	default:
 		alphaGen = AGEN_CONST;
 		break;
@@ -1368,7 +1361,6 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	case CGEN_ONE_MINUS_VERTEX:
 		colorGen = diffuseStage->rgbGen;
 		break;
-
 	default:
 		colorGen = CGEN_CONST;
 		break;
@@ -1380,7 +1372,6 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	case AGEN_ONE_MINUS_VERTEX:
 		alphaGen = diffuseStage->alphaGen;
 		break;
-
 	default:
 		alphaGen = AGEN_CONST;
 		break;
@@ -1585,7 +1576,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	case CGEN_ONE_MINUS_VERTEX:
 		colorGen = diffuseStage->rgbGen;
 		break;
-
 	default:
 		colorGen = CGEN_CONST;
 		break;
@@ -1597,7 +1587,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	case AGEN_ONE_MINUS_VERTEX:
 		alphaGen = diffuseStage->alphaGen;
 		break;
-
 	default:
 		alphaGen = AGEN_CONST;
 		break;
@@ -1805,7 +1794,6 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	case CGEN_ONE_MINUS_VERTEX:
 		colorGen = diffuseStage->rgbGen;
 		break;
-
 	default:
 		colorGen = CGEN_CONST;
 		break;
@@ -1817,7 +1805,6 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	case AGEN_ONE_MINUS_VERTEX:
 		alphaGen = diffuseStage->alphaGen;
 		break;
-
 	default:
 		alphaGen = AGEN_CONST;
 		break;
@@ -2801,7 +2788,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[3] = 1.0;
 		break;
 	}
-
 	case CGEN_VERTEX:
 	case CGEN_ONE_MINUS_VERTEX:
 	{
@@ -2811,7 +2797,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[3] = 0.0;
 		break;
 	}
-
 	default:
 	case CGEN_IDENTITY_LIGHTING:
 	{
@@ -2821,7 +2806,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[3] = tr.identityLight;
 		break;
 	}
-
 	case CGEN_CONST:
 	{
 		tess.svars.color[0] = pStage->constantColor[0] * (1.0 / 255.0);
@@ -2830,7 +2814,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[3] = pStage->constantColor[3] * (1.0 / 255.0);
 		break;
 	}
-
 	case CGEN_ENTITY:
 	{
 		if (backEnd.currentLight)
@@ -2856,7 +2839,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		}
 		break;
 	}
-
 	case CGEN_ONE_MINUS_ENTITY:
 	{
 		if (backEnd.currentLight)
@@ -2882,7 +2864,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		}
 		break;
 	}
-
 	case CGEN_WAVEFORM:
 	{
 		float      glow;
@@ -2914,7 +2895,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[3] = 1.0;
 		break;
 	}
-
 	case CGEN_CUSTOM_RGB:
 	{
 		rgb = Q_bound(0.0, RB_EvalExpression(&pStage->rgbExp, 1.0), 1.0);
@@ -2924,7 +2904,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[2] = rgb;
 		break;
 	}
-
 	case CGEN_CUSTOM_RGBs:
 	{
 		if (backEnd.currentLight)
@@ -2973,14 +2952,12 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		}
 		break;
 	}
-
 	case AGEN_VERTEX:
 	case AGEN_ONE_MINUS_VERTEX:
 	{
 		tess.svars.color[3] = 0.0;
 		break;
 	}
-
 	case AGEN_CONST:
 	{
 		if (pStage->rgbGen != CGEN_CONST)
@@ -2989,7 +2966,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		}
 		break;
 	}
-
 	case AGEN_ENTITY:
 	{
 		if (backEnd.currentLight)
@@ -3006,7 +2982,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		}
 		break;
 	}
-
 	case AGEN_ONE_MINUS_ENTITY:
 	{
 		if (backEnd.currentLight)
@@ -3135,7 +3110,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[3] = glow;
 		break;
 	}
-
 	case AGEN_CUSTOM:
 	{
 		alpha = Q_bound(0.0, RB_EvalExpression(&pStage->alphaExp, 1.0), 1.0);
@@ -3399,13 +3373,11 @@ void Tess_StageIteratorGeneric()
 			Render_generic(stage);
 			break;
 		}
-
 		case ST_LIGHTMAP:
 		{
 			Render_lightMapping(stage, qtrue, qfalse);
 			break;
 		}
-
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
@@ -3441,7 +3413,6 @@ void Tess_StageIteratorGeneric()
 			}
 			break;
 		}
-
 		case ST_COLLAPSE_reflection_CB:
 		case ST_REFLECTIONMAP:
 		{
@@ -3451,50 +3422,41 @@ void Tess_StageIteratorGeneric()
 			}
 			break;
 		}
-
 		case ST_REFRACTIONMAP:
 		{
 			Render_refraction_C(stage);
 			break;
 		}
-
 		case ST_DISPERSIONMAP:
 		{
 			Render_dispersion_C(stage);
 			break;
 		}
-
 		case ST_SKYBOXMAP:
 		{
 			Render_skybox(stage);
 			break;
 		}
-
 		case ST_SCREENMAP:
 		{
 			Render_screen(stage);
 			break;
 		}
-
 		case ST_PORTALMAP:
 		{
 			Render_portal(stage);
 			break;
 		}
-
-
 		case ST_HEATHAZEMAP:
 		{
 			Render_heatHaze(stage);
 			break;
 		}
-
 		case ST_LIQUIDMAP:
 		{
 			Render_liquid(stage);
 			break;
 		}
-
 		default:
 			break;
 		}
@@ -3587,7 +3549,6 @@ void Tess_StageIteratorGBuffer()
 			}
 			break;
 		}
-
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
@@ -3631,7 +3592,6 @@ void Tess_StageIteratorGBuffer()
 			}
 			break;
 		}
-
 		case ST_COLLAPSE_reflection_CB:
 		case ST_REFLECTIONMAP:
 		{
@@ -3641,7 +3601,6 @@ void Tess_StageIteratorGBuffer()
 			Render_reflection_CB(stage);
 			break;
 		}
-
 		case ST_REFRACTIONMAP:
 		{
 			if (r_deferredShading->integer == DS_STANDARD)
@@ -3652,7 +3611,6 @@ void Tess_StageIteratorGBuffer()
 			}
 			break;
 		}
-
 		case ST_DISPERSIONMAP:
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -3661,7 +3619,6 @@ void Tess_StageIteratorGBuffer()
 			Render_dispersion_C(stage);
 			break;
 		}
-
 		case ST_SKYBOXMAP:
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -3670,7 +3627,6 @@ void Tess_StageIteratorGBuffer()
 			Render_skybox(stage);
 			break;
 		}
-
 		case ST_SCREENMAP:
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -3679,7 +3635,6 @@ void Tess_StageIteratorGBuffer()
 			Render_screen(stage);
 			break;
 		}
-
 		case ST_PORTALMAP:
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -3688,7 +3643,6 @@ void Tess_StageIteratorGBuffer()
 			Render_portal(stage);
 			break;
 		}
-
 		case ST_HEATHAZEMAP:
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -3697,7 +3651,6 @@ void Tess_StageIteratorGBuffer()
 			Render_heatHaze(stage);
 			break;
 		}
-
 		case ST_LIQUIDMAP:
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -3706,7 +3659,6 @@ void Tess_StageIteratorGBuffer()
 			Render_liquid(stage);
 			break;
 		}
-
 		default:
 			break;
 		}
@@ -3789,7 +3741,6 @@ void Tess_StageIteratorGBufferNormalsOnly()
 #endif
 			break;
 		}
-
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
@@ -3803,7 +3754,6 @@ void Tess_StageIteratorGBufferNormalsOnly()
 			Render_geometricFill(stage, qfalse);
 			break;
 		}
-
 		default:
 			break;
 		}
@@ -3869,13 +3819,11 @@ void Tess_StageIteratorDepthFill()
 			}
 			break;
 		}
-
 		case ST_LIGHTMAP:
 		{
 			Render_depthFill(stage);
 			break;
 		}
-
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
@@ -3883,7 +3831,6 @@ void Tess_StageIteratorDepthFill()
 			Render_depthFill(stage);
 			break;
 		}
-
 		default:
 			break;
 		}

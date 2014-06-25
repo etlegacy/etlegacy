@@ -1971,6 +1971,7 @@ static void Tess_SurfaceEntity(surfaceType_t *surfType)
 		Tess_SurfaceAxis();
 		break;
 	}
+
 	return;
 }
 

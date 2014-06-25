@@ -49,11 +49,9 @@ VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_
 	case VBO_USAGE_STATIC:
 		glUsage = GL_STATIC_DRAW;
 		break;
-
 	case VBO_USAGE_DYNAMIC:
 		glUsage = GL_DYNAMIC_DRAW;
 		break;
-
 	default:
 		glUsage = 0; //Prevents warning
 		Ren_Fatal("bad vboUsage_t given: %i", usage);

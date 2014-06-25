@@ -294,7 +294,6 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	case SF_TRIANGLES:
 		intersects = R_LightSurfaceGeneric((srfGeneric_t *) surf->data, light, &cubeSideBits);
 		break;
-
 	default:
 		intersects = qfalse;
 		break;
@@ -681,11 +680,9 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 		case 1:
 			node = node->children[0];
 			break;
-
 		case 2:
 			node = node->children[1];
 			break;
-
 		case 3:
 		default:
 			// recurse down the children, front side first
@@ -2420,12 +2417,10 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 			case RL_OMNI:
 				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_LIGHTONLY);
 				break;
-
 			case RL_DIRECTIONAL:
 			case RL_PROJ:
 				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_LIGHTONLY);
 				break;
-
 			default:
 				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_DEFAULT);
 				break;
