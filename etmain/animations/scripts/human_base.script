@@ -1417,142 +1417,142 @@ STATE COMBAT
 		}
 	}
 	idleprone
+	{
+		weapons Mounted Mortar AND Mounted Granatwerfer
 		{
-			weapons Mounted Mortar AND Mounted Granatwerfer
-			{
-				legs prone_legs torso mortar_deployed
-			}
-			weapons Mortar AND Granatwerfer
-			{
-				legs prone_legs torso e_prone_mortar_stand
-			}
-			weapons Satchel Charge
-			{
-				legs prone_legs torso prone_grenade_idle
-			}
-			weapons satchel charge detonator
-			{
-				legs prone_legs torso prone_poke_idle
-			}
-			weapons medicheal
-			{
-				legs prone_legs torso prone_poke_idle
-			}
-			weapons Mobile MG42 Bipod AND Mobile Browning Bipod
-			{
-				legs prone_legs torso prone_mg42_idle
-			}
-			weapons Mobile MG42 AND Mobile Browning
-			{
-				legs prone_legs torso prone_mg42_idle
-			}
-			weapons bazooka
-			{
-				legs prone_legs torso e_prone_rifle_snipeidle
-			}
-			weapons panzerfaust
-			{
-				legs prone_legs torso prone_panzor_idle
-			}
-			weapons machineguns
-			{
-				legs prone_legs torso prone_mg_idle
-			}
-			weapons binoculars
-			{
-				legs prone_legs torso e_prone_binocs_idle
-			}
-			weapons binoculars, gen_bitflag zooming
-			{
-				legs prone_legs torso e_prone_binocs_lie
-			}
-			weapons smokeGrenade
-			{
-				legs prone_legs torso prone_grenade_idle
-			}
-			weapons Ammo Pack
-			{
-				legs prone_legs torso prone_grenade_idle
-			}
-			weapons Landmine
-			{
-				legs prone_legs torso prone_grenade_idle
-			}
-			weapons medicheal
-			{
-				legs prone_legs torso prone_poke_idle
-			}
-			weapons special
-			{
-				legs prone_legs torso prone_poke_idle
-			}
-			weapons syringe AND Adrenaline Syringe
-			{
-				legs prone_legs torso prone_poke_idle
-			}
-			weapons throwables AND throwables_underhand
-			{
-				legs prone_legs torso prone_grenade_idle
-			}
-			weapons knives
-			{
-				legs prone_legs torso prone_knife_attack
-			}
-			weapons pistols
-			{
-				legs prone_legs torso prone_pistol_idle
-			}
-			weapons akimbo_pistols
-			{
-				legs prone_legs torso e_prone_pistols_idle	// FIXME
-			}
-			weapons Garand
-			{
-				legs prone_legs torso prone_rifle_idle
-			}
-			weapons FG42 Paratroop Rifle
-			{
-				legs prone_legs torso prone_rifle_idle
-			}
-			weapons K43
-			{
-				legs prone_legs torso prone_rifle_idle
-			}
-			weapons gpg40
-			{
-				legs prone_legs torso e_prone_rifle_altidle
-			}
-			weapons gpg40a
-			{
-				legs prone_legs torso e_prone_rifle_altidle
-			}
-			weapons m1 garand
-			{
-				legs prone_legs torso prone_rifle_idle
-			}
-			weapons K43 Rifle
-			{
-				legs prone_legs torso prone_rifle_idle
-			}
-			weapons K43 Rifle Scope
-			{
-				legs prone_legs torso e_prone_rifle_snipeidle
-			}
-			weapons M1 Garand Scope
-			{
-				legs prone_legs torso e_prone_rifle_snipeidle
-			}
-			weapons FG42 Scope
-			{
-				legs prone_legs torso e_prone_rifle_snipeidle
-			}
-			weapons rifles
-			{
-				legs prone_legs torso prone_rifle_idle
-			}
-			default
-			{
-				legs prone_legs torso Prone_Pistol_idle
+			legs prone_legs torso mortar_deployed
+		}
+		weapons Mortar AND Granatwerfer
+		{
+			legs prone_legs torso e_prone_mortar_stand
+		}
+		weapons Satchel Charge
+		{
+			legs prone_legs torso prone_grenade_idle
+		}
+		weapons satchel charge detonator
+		{
+			legs prone_legs torso prone_poke_idle
+		}
+		weapons medicheal
+		{
+			legs prone_legs torso prone_poke_idle
+		}
+		weapons Mobile MG42 Bipod AND Mobile Browning Bipod
+		{
+			legs prone_legs torso prone_mg42_idle
+		}
+		weapons Mobile MG42 AND Mobile Browning
+		{
+			legs prone_legs torso prone_mg42_idle
+		}
+		weapons bazooka
+		{
+			legs prone_legs torso e_prone_rifle_snipeidle
+		}
+		weapons panzerfaust
+		{
+			legs prone_legs torso prone_panzor_idle
+		}
+		weapons machineguns
+		{
+			legs prone_legs torso prone_mg_idle
+		}
+		weapons binoculars
+		{
+			legs prone_legs torso e_prone_binocs_idle
+		}
+		weapons binoculars, gen_bitflag zooming
+		{
+			legs prone_legs torso e_prone_binocs_lie
+		}
+		weapons smokeGrenade
+		{
+			legs prone_legs torso prone_grenade_idle
+		}
+		weapons Ammo Pack
+		{
+			legs prone_legs torso prone_grenade_idle
+		}
+		weapons Landmine
+		{
+			legs prone_legs torso prone_grenade_idle
+		}
+		weapons medicheal
+		{
+			legs prone_legs torso prone_poke_idle
+		}
+		weapons special
+		{
+			legs prone_legs torso prone_poke_idle
+		}
+		weapons syringe AND Adrenaline Syringe
+		{
+			legs prone_legs torso prone_poke_idle
+		}
+		weapons throwables AND throwables_underhand
+		{
+			legs prone_legs torso prone_grenade_idle
+		}
+		weapons knives
+		{
+			legs prone_legs torso prone_knife_attack
+		}
+		weapons pistols
+		{
+			legs prone_legs torso prone_pistol_idle
+		}
+		weapons akimbo_pistols
+		{
+			legs prone_legs torso e_prone_pistols_idle	// FIXME
+		}
+		weapons Garand
+		{
+			legs prone_legs torso prone_rifle_idle
+		}
+		weapons FG42 Paratroop Rifle
+		{
+			legs prone_legs torso prone_rifle_idle
+		}
+		weapons K43
+		{
+			legs prone_legs torso prone_rifle_idle
+		}
+		weapons gpg40
+		{
+			legs prone_legs torso e_prone_rifle_altidle
+		}
+		weapons gpg40a
+		{
+			legs prone_legs torso e_prone_rifle_altidle
+		}
+		weapons m1 garand
+		{
+			legs prone_legs torso prone_rifle_idle
+		}
+		weapons K43 Rifle
+		{
+			legs prone_legs torso prone_rifle_idle
+		}
+		weapons K43 Rifle Scope
+		{
+			legs prone_legs torso e_prone_rifle_snipeidle
+		}
+		weapons M1 Garand Scope
+		{
+			legs prone_legs torso e_prone_rifle_snipeidle
+		}
+		weapons FG42 Scope
+		{
+			legs prone_legs torso e_prone_rifle_snipeidle
+		}
+		weapons rifles
+		{
+			legs prone_legs torso prone_rifle_idle
+		}
+		default
+		{
+			legs prone_legs torso Prone_Pistol_idle
 		}
 	}
 	prone
@@ -1569,7 +1569,7 @@ STATE COMBAT
 			both prone_crawl_bk
 		}
 	}
-/* ETPro - FIXME: implement keyword 'NOT'
+
 	turnright
 	{
 		// - fixed movetype condition, so reenabled crouch
@@ -1591,42 +1591,15 @@ STATE COMBAT
 		// - fixed movetype condition, so reenabled crouch
 		// - nixing 'weapons machineguns' because we don't
 		// want to just slide with any weapon
-		movetype idlecr
+		movetype idlecr, NOT mounted mg42
 		{
 			legs turn_crch_L
 		}
-		movetype idle
+		movetype idle, NOT mounted mg42
 		{
 			legs turn_machinegun_R
 		}
 	}
-*/
-	turnright
-	{
-//JB 06/12/01
-//		weapons machineguns, movetype idlecr
-//		{
-//			legs turn_crch_machinegun_R
-//		}
-		weapons machineguns, movetype idle
-		{
-			legs turn_machinegun_R
-		}
-
-	}
-	turnleft
-	{
-//JB 06/12/01
-//		weapons machineguns, movetype idlecr
-//		{
-//			legs turn_crch_machinegun_L
-//		}
-		weapons machineguns, movetype idle
-		{
-			legs turn_machinegun_R
-		}
-	}
-// DHM - 07/30/01  (even clients play #1, odd clients play #2)
 
 	fallen
 	{

@@ -2320,7 +2320,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		if (item->giTag == WP_AMMO)
 		{
 			// magic ammo for any two-handed weapon
-			// xkan, 11/21/2002 - only pick up if ammo is not full, numClips is 0, so ps will
+			// - only pick up if ammo is not full, numClips is 0, so ps will
 			// NOT be changed (I know, it places the burden on the programmer, rather than the
 			// compiler, to ensure that).
 			return BG_AddMagicAmmo((playerState_t *)ps, skill, teamNum, 0);      // had to cast const away
@@ -2414,7 +2414,6 @@ void BG_CalculateSpline_r(splinePath_t *spline, vec3_t out1, vec3_t out2, float 
 		//Com_Error( ERR_DROP, "Spline (%s) with no target referenced", spline->point.name );
 	}
 	VectorCopy(spline->next->point.origin, points[i + 1]);
-
 
 	while (count > 2)
 	{

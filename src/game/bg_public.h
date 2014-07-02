@@ -1789,8 +1789,9 @@ typedef struct
 
 typedef struct
 {
-	int index;      // reference into the table of possible conditionals
-	int value[2];   // can store anything from weapon bits, to position enums, etc
+	int index;           // reference into the table of possible conditionals
+	int value[2];        // can store anything from weapon bits, to position enums, etc
+	qboolean negative;   // (,)NOT <condition>
 } animScriptCondition_t;
 
 typedef struct
