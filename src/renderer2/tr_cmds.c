@@ -34,7 +34,6 @@
 
 #include "tr_local.h"
 
-
 void R_PerformanceCounters(void)
 {
 	if (!r_speeds->integer)
@@ -45,6 +44,7 @@ void R_PerformanceCounters(void)
 		return;
 	}
 
+	// FIXME: do a switch
 	if (r_speeds->integer == RSPEEDS_GENERAL)
 	{
 		Ren_Print("%i views %i portals %i batches %i surfs %i leafs %i verts %i tris\n",
@@ -194,7 +194,6 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 		// let it start on the new batch
 
 		RB_ExecuteRenderCommands(cmdList->cmds);
-
 	}
 }
 
@@ -660,6 +659,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	{
 		return;
 	}
+
 	cmd = (swapBuffersCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
@@ -716,6 +716,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
 
+	// note: see also Com_GrowListElement checking against tr.images->currentElements
 	if (textureid > tr.numImages || textureid < 0)
 	{
 		Ren_Print("Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
@@ -728,7 +729,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 		return;
 	}
 	cmd->commandId = RC_RENDERTOTEXTURE;
-	cmd->image     = (image_t *)tr.images.currentElements;
+	cmd->image     = (image_t *) Com_GrowListElement(&tr.images, textureid);
 	cmd->x         = x;
 	cmd->y         = y;
 	cmd->w         = w;
