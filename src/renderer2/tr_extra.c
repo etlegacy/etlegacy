@@ -415,35 +415,6 @@ void MatrixCrop(matrix_t m, const vec3_t mins, const vec3_t maxs)
 	m[3] = 0;          m[7] = 0;          m[11] = 0;          m[15] = 1;
 }
 
-void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
-{
-	if (mins2[0] < mins[0])
-	{
-		mins[0] = mins2[0];
-	}
-	if (mins2[1] < mins[1])
-	{
-		mins[1] = mins2[1];
-	}
-	if (mins2[2] < mins[2])
-	{
-		mins[2] = mins2[2];
-	}
-
-	if (maxs2[0] > maxs[0])
-	{
-		maxs[0] = maxs2[0];
-	}
-	if (maxs2[1] > maxs[1])
-	{
-		maxs[1] = maxs2[1];
-	}
-	if (maxs2[2] > maxs[2])
-	{
-		maxs[2] = maxs2[2];
-	}
-}
-
 // *INDENT-OFF*
 void MatrixIdentity(matrix_t m)
 {

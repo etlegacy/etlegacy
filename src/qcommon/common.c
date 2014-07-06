@@ -2715,7 +2715,7 @@ static void Com_DetectAltivec(void)
 		if (!detected)
 		{
 #ifndef DEDICATED
-			altivec  = SDL_HasAltiVec();
+			altivec = SDL_HasAltiVec();
 #endif
 			detected = qtrue;
 		}
