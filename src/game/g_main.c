@@ -4070,7 +4070,6 @@ void CheckVote(void)
 	    level.voteInfo.vote_fn == NULL ||
 	    level.time - level.voteInfo.voteTime < 1000)
 	{
-
 		return;
 	}
 
@@ -4099,6 +4098,7 @@ void CheckVote(void)
 		{
 
 			gentity_t *other = &g_entities[level.voteInfo.voteCaller];
+
 			if (!other->client ||
 			    other->client->sess.sessionTeam == TEAM_SPECTATOR)
 			{
@@ -4131,8 +4131,8 @@ void CheckVote(void)
 			}
 			else
 			{
-				AP("cpm \"^5Vote passed!\n\"");
-				G_LogPrintf("Vote Passed: %s\n", level.voteInfo.voteString);
+				AP(va("cpm \"^5Vote passed! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
+				G_LogPrintf("Vote Passed: (Y:%d-N:%d) %s\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString);
 			}
 
 			// Perform the passed vote
@@ -4141,9 +4141,8 @@ void CheckVote(void)
 			// don't penalize player if the vote passes.
 			if ((g_voting.integer & VOTEF_NO_POPULIST_PENALTY))
 			{
-				gentity_t *ent;
+				gentity_t *ent = &g_entities[level.voteInfo.voteCaller];
 
-				ent = &g_entities[level.voteInfo.voteCaller];
 				if (ent->client)
 				{
 					ent->client->pers.voteCount--;
@@ -4155,10 +4154,9 @@ void CheckVote(void)
 		          level.voteInfo.voteNo >= (100 - pcnt) * total / 100) ||
 		         level.time - level.voteInfo.voteTime >= VOTE_TIME)
 		{
-
 			// same behavior as a no response vote
-			AP(va("cpm \"^2Vote FAILED! ^3(%s)\n\"", level.voteInfo.voteString));
-			G_LogPrintf("Vote Failed: %s\n", level.voteInfo.voteString);
+			AP(va("cpm \"^1Vote FAILED! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
+			G_LogPrintf("Vote Failed: (Y:%d-N:%d) %s\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString);
 		}
 		else
 		{
