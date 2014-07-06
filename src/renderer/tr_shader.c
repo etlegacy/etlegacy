@@ -418,7 +418,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 		tmi->type = TMOD_SWAP;
 	}
 	// turb
-	// (SA) added 'else' so it wouldn't claim 'swap' was unknown.
+	// added 'else' so it wouldn't claim 'swap' was unknown.
 	else if (!Q_stricmp(token, "turb"))
 	{
 		token = COM_ParseExt(text, qfalse);
@@ -1475,7 +1475,6 @@ static void ParseSkyParms(char **text)
 	}
 	R_InitSkyTexCoords(shader.sky.cloudHeight);
 
-
 	// innerbox
 	token = COM_ParseExt(text, qfalse);
 	if (token[0] == 0)
@@ -1974,7 +1973,6 @@ static qboolean ParseShader(char **text)
 				Ren_Warning("WARNING: missing density value for the fog\n");
 				continue;
 			}
-
 
 			// NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
 			//         density (so old maps or maps that just need softening fog don't have to care about farclip)
@@ -2705,7 +2703,6 @@ static void SetImplicitShaderStages(image_t *image)
 		stages[0].rgbGen             = CGEN_LIGHTING_DIFFUSE;
 		stages[0].stateBits          = implicitStateBits;
 		break;
-
 	// gui elements (note state bits are overridden)
 	case LIGHTMAP_2D:
 		stages[0].bundle[0].image[0] = image;
@@ -2714,10 +2711,8 @@ static void SetImplicitShaderStages(image_t *image)
 		stages[0].alphaGen           = AGEN_SKIP;
 		stages[0].stateBits          = GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
 		break;
-
 	// fullbright is disabled per atvi request
 	case LIGHTMAP_WHITEIMAGE:
-
 	// explicit colors at vertexes
 	case LIGHTMAP_BY_VERTEX:
 		stages[0].bundle[0].image[0] = image;
@@ -2726,7 +2721,6 @@ static void SetImplicitShaderStages(image_t *image)
 		stages[0].alphaGen           = AGEN_SKIP;
 		stages[0].stateBits          = implicitStateBits;
 		break;
-
 	// use lightmap pass
 	default:
 		// masked or blended implicit shaders need texture first
@@ -3627,7 +3621,7 @@ shader_t *R_GetShaderByHandle(qhandle_t hShader)
 {
 	if (hShader < 0)
 	{
-		Ren_Developer("R_GetShaderByHandle: out of range hShader '%d'\n", hShader);    // bk: FIXME name
+		Ren_Developer("R_GetShaderByHandle: out of range hShader '%d'\n", hShader); // FIXME name
 		return tr.defaultShader;
 	}
 	if (hShader >= tr.numShaders)
