@@ -1891,7 +1891,7 @@ void GLimp_EndFrame(void)
 		// short delay. This little fix simply causes the gamma to be reset
 		// again after a hopefully-long-enough-delay of 3 seconds.
 		// Radar 15961845
-		gammaResetTime = Sys_Milliseconds() + 3000;
+		gammaResetTime = ri.Milliseconds() + 3000;
 #endif
 
 		r_fullscreen->modified = qfalse;
@@ -1899,16 +1899,16 @@ void GLimp_EndFrame(void)
 
 
 #ifdef MACOS_X_GAMMA_RESET_FIX
-	if ((gammaResetTime != 0) && (gammaResetTime < Sys_Milliseconds()))
+	if ((gammaResetTime != 0) && (gammaResetTime < ri.Milliseconds()))
 	{
 		// Circuitous way of resetting the gamma to its current value.
 		char old[6] = { 0 };
 
-		Q_strncpyz(old, Cvar_VariableString("r_gamma"), 5);
+		Q_strncpyz(old, va("%i", ri.Cvar_VariableIntegerValue("r_gamma")), 5);
 		if (strlen(old))
 		{
-			Cvar_Set("r_gamma", "1");
-			Cvar_Set("r_gamma", old);
+			ri.Cvar_Set("r_gamma", "1");
+			ri.Cvar_Set("r_gamma", old);
 		}
 
 		gammaResetTime = 0;

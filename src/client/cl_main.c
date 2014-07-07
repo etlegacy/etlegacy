@@ -3365,16 +3365,20 @@ void CL_InitRef(void)
 	cl_renderer = Cvar_Get("cl_renderer", "opengl1", CVAR_ARCHIVE | CVAR_LATCH);
 
 
-#ifdef _WIN32
+#if defined(_WIN32)
 	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
+#elif defined(__APPLE__)
+	Com_sprintf(dllName, sizeof(dllName), "librenderer_%s_", cl_renderer->string);
 #else // *nix
 	Com_sprintf(dllName, sizeof(dllName), "librenderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
 #endif
 	if (!(rendererLib = Sys_LoadDll(dllName, qfalse)) && strcmp(cl_renderer->string, cl_renderer->resetString))
 	{
 		Cvar_ForceReset("cl_renderer");
-#ifdef _WIN32
+#if defined(_WIN32)
 		Com_sprintf(dllName, sizeof(dllName), "renderer_opengl1_" ARCH_STRING DLL_EXT);
+#elif defined(__APPLE__)
+		Com_sprintf(dllName, sizeof(dllName), "renderer_opengl1_");
 #else // *nix
 		Com_sprintf(dllName, sizeof(dllName), "librenderer_opengl1_" ARCH_STRING DLL_EXT);
 #endif
