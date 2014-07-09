@@ -83,12 +83,6 @@ typedef struct ipGUID_s
 
 #define MAX_IPFILTERS   1024
 
-#define MAX_XPSTORAGEITEMS  MAX_CLIENTS
-typedef struct ipXPStorageList_s
-{
-	ipXPStorage_t ipFilters[MAX_XPSTORAGEITEMS];
-} ipXPStorageList_t;
-
 typedef struct ipFilterList_s
 {
 	ipFilter_t ipFilters[MAX_IPFILTERS];
@@ -209,46 +203,6 @@ void PrintMaxLivesGUID(void)
 		G_LogPrintf("%i. %s\n", i, guidMaxLivesFilters[i].compare);
 	}
 	G_LogPrintf("--- End of list\n");
-}
-
-ipXPStorage_t *G_FindIpData(ipXPStorageList_t *ipXPStorageList, char *from)
-{
-	int      i = 0;
-	unsigned in;
-	byte     m[4];
-	char     *p = from;
-
-	while (*p && i < 4)
-	{
-		m[i] = 0;
-		while (*p >= '0' && *p <= '9')
-		{
-			m[i] = m[i] * 10 + (*p - '0');
-			p++;
-		}
-		if (!*p || *p == ':')
-		{
-			break;
-		}
-		i++, p++;
-	}
-
-	in = *(unsigned *)m;
-
-	for (i = 0; i < MAX_XPSTORAGEITEMS; i++)
-	{
-		if (!ipXPStorageList->ipFilters[i].timeadded || level.time - ipXPStorageList->ipFilters[i].timeadded > (5 * 60000))
-		{
-			continue;
-		}
-
-		if ((in & ipXPStorageList->ipFilters[i].filter.mask) == ipXPStorageList->ipFilters[i].filter.compare)
-		{
-			return &ipXPStorageList->ipFilters[i];
-		}
-	}
-
-	return NULL;
 }
 
 qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)

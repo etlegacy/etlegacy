@@ -597,13 +597,6 @@ typedef struct ipFilter_s
 	unsigned compare;
 } ipFilter_t;
 
-typedef struct ipXPStorage_s
-{
-	ipFilter_t filter;
-	float skills[SK_NUM_SKILLS];
-	int timeadded;
-} ipXPStorage_t;
-
 #define MAX_COMPLAINTIPS 5
 
 // client data that stays across multiple respawns, but is cleared
