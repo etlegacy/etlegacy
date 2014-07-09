@@ -2189,12 +2189,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
-
-#ifdef USEXPSTORAGE
-	ipXPStorage_t *xpBackup;
-	int           i;
-#endif // USEXPSTORAGE
-
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
 	// grab the values we need in just one pass
@@ -2416,18 +2410,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		client->sess.uci = 255; //Don't draw anything if DB error
 	} // end GeoIP
-
-#ifdef USEXPSTORAGE
-	value = Info_ValueForKey(userinfo, "ip");
-	if (xpBackup = G_FindXPBackup(value))
-	{
-		for (i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			client->sess.skillpoints[i] = xpBackup->skills[i];
-		}
-		G_CalcRank(client);
-	}
-#endif // USEXPSTORAGE
 
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -3207,10 +3189,6 @@ void ClientDisconnect(int clientNum)
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_ClientDisConnected(clientNum);
 #endif
-
-#ifdef USEXPSTORAGE
-	G_AddXPBackup(ent);
-#endif // USEXPSTORAGE
 
 	G_RemoveClientFromFireteams(clientNum, qtrue, qfalse);
 	G_RemoveFromAllIgnoreLists(clientNum);

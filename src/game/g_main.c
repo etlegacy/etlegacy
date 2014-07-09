@@ -2408,14 +2408,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	numSplinePaths = 0 ;
 	numPathCorners = 0;
 
-#ifdef USEXPSTORAGE
-	G_ClearXPBackup();
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN && !level.newCampaign)
-	{
-		G_ReadXPBackup();
-	}
-#endif // USEXPSTORAGE
-
 	// MAPVOTE
 	// FIXME merge with XP code
 	level.mapsSinceLastXPReset = 0;
