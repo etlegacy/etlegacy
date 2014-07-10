@@ -392,7 +392,7 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 
 	{ MOD_DYNAMITE,                           WS_DYNAMITE        },
 	{ MOD_AIRSTRIKE,                          WS_AIRSTRIKE       },
-	{ MOD_SYRINGE,                            WS_SYRINGE         },
+	{ MOD_SYRINGE,                            WS_MAX             },
 	{ MOD_AMMO,                               WS_MAX             },
 	{ MOD_ARTY,                               WS_ARTILLERY       },
 

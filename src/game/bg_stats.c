@@ -53,7 +53,7 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 	{ WP_GRENADE_PINEAPPLE,    WS_GRENADE         },
 
 	{ WP_STEN,                 WS_STEN            }, // 10
-	{ WP_MEDIC_SYRINGE,        WS_SYRINGE         },
+	{ WP_MEDIC_SYRINGE,        WS_MAX             },
 	{ WP_AMMO,                 WS_MAX             },
 	{ WP_ARTY,                 WS_ARTILLERY       },
 	{ WP_SILENCER,             WS_LUGER           },

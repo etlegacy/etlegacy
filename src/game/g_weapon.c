@@ -532,10 +532,12 @@ void Weapon_Syringe(gentity_t *ent)
 				usedSyringe = ReviveEntity(ent, traceEnt);
 
 				// syringe "hit"
-				if (g_gamestate.integer == GS_PLAYING)
-				{
-					ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
-				}
+				// FIXME: we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
+				// - add a new award 'most revives'?
+				//if (g_gamestate.integer == GS_PLAYING)
+				//{
+				//ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
+				//}
 				if (ent->client)
 				{
 					G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
@@ -665,7 +667,7 @@ int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList)
 		}
 	}
 
-	return(numDamaged);
+	return numDamaged;
 }
 
 extern void G_LandminePrime(gentity_t *self);
