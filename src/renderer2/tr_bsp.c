@@ -3918,12 +3918,8 @@ static void R_SetParent(bspNode_t *node, bspNode_t *parent)
 	R_SetParent(node->children[1], node);
 
 	// surface bounds
-#if 1
-	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
-	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
-	AddPointToBounds(node->children[1]->surfMins, node->surfMins, node->surfMaxs);
-	AddPointToBounds(node->children[1]->surfMaxs, node->surfMins, node->surfMaxs);
-#endif
+	BoundsAdd(node->surfMins, node->surfMaxs, node->children[0]->surfMins, node->children[0]->surfMaxs);
+	BoundsAdd(node->surfMins, node->surfMaxs, node->children[1]->surfMins, node->children[1]->surfMaxs);
 }
 
 /*

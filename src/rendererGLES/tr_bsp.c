@@ -2061,7 +2061,7 @@ static void R_SetParent(mnode_t *node, mnode_t *parent)
 	// surface bounds
 	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
 	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
-	AddPointToBounds(node->children[1]->surfMins, node->surfMins, node->surfMaxs);
+	AddPointToBounds(node->children[1]->surfMaxs, node->surfMins, node->surfMaxs);
 	AddPointToBounds(node->children[1]->surfMaxs, node->surfMins, node->surfMaxs);
 }
 
