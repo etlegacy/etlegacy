@@ -45,9 +45,6 @@ qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 
 qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 {
-	gclient_t *cl;
-	int       *p;
-
 	err[0] = '\0';
 
 	if (plist[0] == -1)
@@ -57,7 +54,9 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 	}
 	if (plist[1] != -1)
 	{
-		char line[MAX_NAME_LENGTH + 10];
+		char      line[MAX_NAME_LENGTH + 10];
+		gclient_t *cl;
+		int       *p;
 
 		line[0] = '\0';
 
@@ -555,6 +554,7 @@ int GetSkillPointUntilLevelUp(gentity_t *ent, int skill)
 	{
 		int i = ent->client->sess.skill[skill] + 1;
 		int x = 1;
+
 		for (; i < NUM_SKILL_LEVELS; i++, x++)
 		{
 			if (skillLevels[skill][ent->client->sess.skill[skill] + x] >= 0)
@@ -720,7 +720,7 @@ void Cmd_Give_f(gentity_t *ent)
 		}
 		else
 		{
-			for (i = 1 ; i < WP_NUM_WEAPONS ; i++)
+			for (i = WP_KNIFE ; i < WP_NUM_WEAPONS ; i++)
 			{
 				if (COM_BitCheck(ent->client->ps.weapons, i) && i != WP_SATCHEL && i != WP_SATCHEL_DET)
 				{
@@ -739,7 +739,7 @@ void Cmd_Give_f(gentity_t *ent)
 	// allowing "give ammo <n>" to only give to the selected weap.
 	if (Q_stricmpn(name, "allammo", 7) == 0 && amount)
 	{
-		for (i = 1 ; i < WP_NUM_WEAPONS; i++)
+		for (i = WP_KNIFE ; i < WP_NUM_WEAPONS; i++)
 			Add_Ammo(ent, i, amount, qtrue);
 
 		if (!give_all)
@@ -4085,7 +4085,7 @@ void Cmd_IntermissionWeaponStats_f(gentity_t *ent)
 	trap_Argv(1, buffer, sizeof(buffer));
 
 	clientNum = atoi(buffer);
-	if (clientNum < 0 || clientNum > MAX_CLIENTS)
+	if (clientNum < 0 || clientNum > g_maxclients.integer)
 	{
 		return;
 	}
@@ -4140,7 +4140,7 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent)
 	}
 
 	Q_strncpyz(buffer, "impkd ", sizeof(buffer));
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < g_maxclients.integer; i++)
 	{
 		if (g_entities[i].inuse)
 		{
@@ -4166,7 +4166,7 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
 	}
 
 	Q_strncpyz(buffer, "impt ", sizeof(buffer));
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < g_maxclients.integer; i++)
 	{
 		if (g_entities[i].inuse)
 		{
@@ -4186,7 +4186,7 @@ void G_CalcClientAccuracies(void)
 	int i, j;
 	int shots, hits;
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < g_maxclients.integer; i++)
 	{
 		shots = 0;
 		hits  = 0;
@@ -4221,7 +4221,7 @@ void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
 	G_CalcClientAccuracies();
 
 	Q_strncpyz(buffer, "imwa ", sizeof(buffer));
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < g_maxclients.integer; i++)
 	{
 		Q_strcat(buffer, sizeof(buffer), va("%i ", (int)level.clients[i].acc));
 	}
@@ -4247,7 +4247,6 @@ void Cmd_SelectedObjective_f(gentity_t *ent)
 	}
 	trap_Argv(1, buffer, 16);
 	val = atoi(buffer) + 1;
-
 
 	for (i = 0; i < level.numLimboCams; i++)
 	{
