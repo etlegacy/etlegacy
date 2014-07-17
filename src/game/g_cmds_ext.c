@@ -275,6 +275,13 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 		return;
 	}
 
+	if (g_gamestate.integer != GS_PLAYING)
+	{
+		// generic output for pause/unpause/timeouts ...
+		CP("print \"Command not available - match isn't in progress!\n\"");
+		return;
+	}
+
 	if ((PAUSE_UNPAUSING >= level.match_pause && !fPause) || (PAUSE_NONE != level.match_pause && fPause))
 	{
 		CP(va("print \"The match is already %sPAUSED^7!\n\"", status[fPause]));
