@@ -29,11 +29,6 @@ lightMapping
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_LIGHTCOORD ATTR_NORMAL
 	vertexLibraries "deformVertexes"
 	fragmentLibraries "reliefMapping"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_LightMap 3
-	uniform int u_DeluxeMap 4
 }
 
 vertexLighting_DBS_entity
@@ -301,17 +296,12 @@ liquid
 	filename "liquid"
 	macros USE_PARALLAX_MAPPING
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_TANGENT ATTR_BINORMAL ATTR_NORMAL ATTR_COLOR
-	uniform int u_CurrentMap 0
-	uniform int u_PortalMap 1
-	uniform int u_DepthMap 2
-	uniform int u_NormalMap 3
 }
 
 rotoscope
 {
 	filename "rotoscope"
 	attribs ATTR_POSITION ATTR_TEXCOORD
-	uniform int u_ColorMap 0
 	uniform int u_BlurMagnitude 1
 }
 
@@ -371,21 +361,16 @@ dispersion
 colorCorrection
 {
 	filename "color"
-	uniform int u_CurrentMap 0
 }
 
 depthOfField
 {
 	filename "depthOfField"
 	attribs ATTR_POSITION
-	uniform int u_CurrentMap 0
-	uniform int u_DepthMap 1
 }
 
 SSAO
 {
 	filename "screenSpaceAmbientOcclusion"
 	attribs ATTR_POSITION
-	uniform int u_CurrentMap 0
-	uniform int u_DepthMap 1
 }

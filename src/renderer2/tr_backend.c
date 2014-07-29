@@ -4975,11 +4975,11 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 	glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
 	// capture current color buffer for u_CurrentMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_CURRENT);
 	ImageCopyBackBuffer(tr.currentRenderImage);
 
 	// bind u_DepthMap
-	GL_SelectTexture(1);
+	SelectTexture(TEX_DEPTH);
 	if (deferred)
 	{
 		//GL_Bind(tr.deferredPositionFBOImage);
@@ -5027,7 +5027,7 @@ void RB_RenderDepthOfField()
 	glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
 	// capture current color buffer for u_CurrentMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_CURRENT);
 	if (r_deferredShading->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable &&
 	    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
 	{
@@ -5043,7 +5043,7 @@ void RB_RenderDepthOfField()
 	}
 
 	// bind u_DepthMap
-	GL_SelectTexture(1);
+	SelectTexture(TEX_DEPTH);
 	if (r_deferredShading->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable &&
 	    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
 	{
@@ -5370,7 +5370,7 @@ void RB_RenderRotoscope(void)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_rotoscopeBlur->value);
 
-	GL_SelectTexture(0);
+	SelectTexture(TEX_COLOR);
 	ImageCopyBackBuffer(tr.currentRenderImage);
 
 	// draw viewport
@@ -9806,7 +9806,7 @@ static void RB_ColorCorrection()
 	//glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
 	// capture current color buffer for u_CurrentMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_CURRENT);
 	ImageCopyBackBuffer(tr.currentRenderImage);
 
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);

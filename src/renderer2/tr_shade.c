@@ -879,7 +879,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	}
 
 	// bind u_DiffuseMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_DIFFUSE);
 	if (asColorMap)
 	{
 		GL_Bind(tr.whiteImage);
@@ -897,7 +897,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	if (normalMapping)
 	{
 		// bind u_NormalMap
-		GL_SelectTexture(1);
+		SelectTexture(TEX_NORMAL);
 		if (pStage->bundle[TB_NORMALMAP].image[0])
 		{
 			GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
@@ -910,7 +910,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 
 		// bind u_SpecularMap
-		GL_SelectTexture(2);
+		SelectTexture(TEX_SPECULAR);
 		if (pStage->bundle[TB_SPECULARMAP].image[0])
 		{
 			GL_Bind(pStage->bundle[TB_SPECULARMAP].image[0]);
@@ -923,17 +923,17 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 
 		// bind u_DeluxeMap
-		GL_SelectTexture(4);
+		SelectTexture(TEX_DELUXE);
 		BindDeluxeMap();
 	}
 	else if (r_showDeluxeMaps->integer == 1)
 	{
-		GL_SelectTexture(4);
+		SelectTexture(TEX_DELUXE);
 		BindDeluxeMap();
 	}
 
 	// bind u_LightMap
-	GL_SelectTexture(3);
+	SelectTexture(TEX_LIGHTMAP);
 	BindLightMap();
 
 	GLSL_SetRequiredVertexPointers(gl_lightMappingShader);
@@ -2472,7 +2472,7 @@ static void Render_liquid(int stage)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// capture current color buffer for u_CurrentMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_CURRENT);
 	if (DS_STANDARD_ENABLED())
 	{
 		GL_Bind(tr.deferredRenderFBOImage);
@@ -2487,11 +2487,11 @@ static void Render_liquid(int stage)
 	}
 
 	// bind u_PortalMap
-	GL_SelectTexture(1);
+	SelectTexture(TEX_PORTAL);
 	GL_Bind(tr.portalRenderImage);
 
 	// bind u_DepthMap
-	GL_SelectTexture(2);
+	SelectTexture(TEX_DEPTH);
 	if (DS_STANDARD_ENABLED())
 	{
 		GL_Bind(tr.depthRenderImage);
@@ -2507,7 +2507,7 @@ static void Render_liquid(int stage)
 	}
 
 	// bind u_NormalMap
-	GL_SelectTexture(3);
+	SelectTexture(TEX_NORMAL);
 	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
 
 	SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
