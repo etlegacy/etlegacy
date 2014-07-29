@@ -71,6 +71,17 @@ static void SetViewportAndScissor(void)
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 }
 
+static void RB_SafeState(void)
+{
+	// HACK: bring OpenGL into a safe state or strange FBO update problems will occur
+	GLSL_BindProgram(NULL);
+	GL_State(GLS_DEFAULT);
+	//GL_VertexAttribsState(ATTR_POSITION);
+
+	GL_SelectTexture(0);
+	GL_Bind(tr.whiteImage);
+}
+
 static void RB_SetGL2D(void)
 {
 	matrix_t proj;
@@ -533,7 +544,7 @@ static void Render_lightVolume(interaction_t *ia)
 			SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 			// bind u_DepthMap
-			GL_SelectTexture(0);
+			SelectTexture(TEX_DEPTH);
 			if (r_deferredShading->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable &&
 			    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
 			{
@@ -550,17 +561,17 @@ static void Render_lightVolume(interaction_t *ia)
 			}
 
 			// bind u_AttenuationMapXY
-			GL_SelectTexture(1);
+			SelectTexture(TEX_ATTEXY);
 			BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
 
 			// bind u_AttenuationMapZ
-			GL_SelectTexture(2);
+			SelectTexture(TEX_ATTEZ);
 			BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
 
 			// bind u_ShadowMap
 			if (shadowCompare)
 			{
-				GL_SelectTexture(3);
+				SelectTexture(TEX_SHADOWMAP);
 				GL_Bind(tr.shadowCubeFBOImage[light->shadowLOD]);
 			}
 
@@ -1082,13 +1093,7 @@ static void RB_RenderInteractionsShadowMapped()
 		{
 			if (drawShadows)
 			{
-				// HACK: bring OpenGL into a safe state or strange FBO update problems will occur
-				GLSL_BindProgram(NULL);
-				GL_State(GLS_DEFAULT);
-				//GL_VertexAttribsState(ATTR_POSITION);
-
-				GL_SelectTexture(0);
-				GL_Bind(tr.whiteImage);
+				RB_SafeState();
 
 				if (light->l.noShadows || light->shadowLOD < 0)
 				{
@@ -1617,7 +1622,7 @@ static void RB_RenderInteractionsShadowMapped()
 							SetMacrosAndSelectProgram(gl_debugShadowMapShader);
 							SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-							GL_SelectTexture(0);
+							SelectTexture(TEX_CURRENT);
 							GL_Bind(tr.sunShadowMapFBOImage[frustumIndex]);
 
 							w = 200;
@@ -1653,7 +1658,7 @@ static void RB_RenderInteractionsShadowMapped()
 								GL_Cull(CT_TWO_SIDED);
 
 								// bind u_ColorMap
-								GL_SelectTexture(0);
+								SelectTexture(TEX_COLOR);
 								GL_Bind(tr.whiteImage);
 
 								SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -2668,30 +2673,30 @@ skipInteraction:
 						}
 
 						// bind u_DiffuseMap
-						GL_SelectTexture(0);
+						SelectTexture(TEX_DIFFUSE);
 						GL_Bind(tr.deferredDiffuseFBOImage);
 
 						// bind u_NormalMap
-						GL_SelectTexture(1);
+						SelectTexture(TEX_NORMAL);
 						GL_Bind(tr.deferredNormalFBOImage);
 
 						if (r_normalMapping->integer)
 						{
 							// bind u_SpecularMap
-							GL_SelectTexture(2);
+							SelectTexture(TEX_SPECULAR);
 							GL_Bind(tr.deferredSpecularFBOImage);
 						}
 
 						// bind u_DepthMap
-						GL_SelectTexture(3);
+						SelectTexture(TEX_DEPTH);
 						GL_Bind(tr.depthRenderImage);
 
 						// bind u_AttenuationMapXY
-						GL_SelectTexture(4);
+						SelectTexture(TEX_ATTEXY);
 						BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
 
 						// bind u_AttenuationMapZ
-						GL_SelectTexture(5);
+						SelectTexture(TEX_ATTEZ);
 						BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
 
 						if (light->clipsNearPlane)
@@ -2746,30 +2751,30 @@ skipInteraction:
 						}
 
 						// bind u_DiffuseMap
-						GL_SelectTexture(0);
+						SelectTexture(TEX_DIFFUSE);
 						GL_Bind(tr.deferredDiffuseFBOImage);
 
 						// bind u_NormalMap
-						GL_SelectTexture(1);
+						SelectTexture(TEX_NORMAL);
 						GL_Bind(tr.deferredNormalFBOImage);
 
 						if (r_normalMapping->integer)
 						{
 							// bind u_SpecularMap
-							GL_SelectTexture(2);
+							SelectTexture(TEX_SPECULAR);
 							GL_Bind(tr.deferredSpecularFBOImage);
 						}
 
 						// bind u_DepthMap
-						GL_SelectTexture(3);
+						SelectTexture(TEX_DEPTH);
 						GL_Bind(tr.depthRenderImage);
 
 						// bind u_AttenuationMapXY
-						GL_SelectTexture(4);
+						SelectTexture(TEX_ATTEXY);
 						BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
 
 						// bind u_AttenuationMapZ
-						GL_SelectTexture(5);
+						SelectTexture(TEX_ATTEZ);
 						BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
 
 						if (light->clipsNearPlane)
@@ -2824,30 +2829,30 @@ skipInteraction:
 						}
 
 						// bind u_DiffuseMap
-						GL_SelectTexture(0);
+						SelectTexture(TEX_DIFFUSE);
 						GL_Bind(tr.deferredDiffuseFBOImage);
 
 						// bind u_NormalMap
-						GL_SelectTexture(1);
+						SelectTexture(TEX_NORMAL);
 						GL_Bind(tr.deferredNormalFBOImage);
 
 						if (r_normalMapping->integer)
 						{
 							// bind u_SpecularMap
-							GL_SelectTexture(2);
+							SelectTexture(TEX_SPECULAR);
 							GL_Bind(tr.deferredSpecularFBOImage);
 						}
 
 						// bind u_DepthMap
-						GL_SelectTexture(3);
+						SelectTexture(TEX_DEPTH);
 						GL_Bind(tr.depthRenderImage);
 
 						// bind u_AttenuationMapXY
-						//GL_SelectTexture(4);
+						//SelectTexture(TEX_ATTEXY);
 						//BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
 
 						// bind u_AttenuationMapZ
-						//GL_SelectTexture(5);
+						//SelectTexture(TEX_ATTEZ);
 						//BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
 
 						if (light->clipsNearPlane)
@@ -3027,13 +3032,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 		{
 			if (drawShadows)
 			{
-				// HACK: bring OpenGL into a safe state or strange FBO update problems will occur
-				GLSL_BindProgram(NULL);
-				GL_State(GLS_DEFAULT);
-				//GL_VertexAttribsState(ATTR_POSITION);
-
-				GL_SelectTexture(0);
-				GL_Bind(tr.whiteImage);
+				RB_SafeState();
 
 				if (light->l.noShadows || light->shadowLOD < 0)
 				{
@@ -4201,36 +4200,36 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						}
 
 						// bind u_DiffuseMap
-						GL_SelectTexture(0);
+						SelectTexture(TEX_DIFFUSE);
 						GL_Bind(tr.deferredDiffuseFBOImage);
 
 						// bind u_NormalMap
-						GL_SelectTexture(1);
+						SelectTexture(TEX_NORMAL);
 						GL_Bind(tr.deferredNormalFBOImage);
 
 						if (r_normalMapping->integer)
 						{
 							// bind u_SpecularMap
-							GL_SelectTexture(2);
+							SelectTexture(TEX_SPECULAR);
 							GL_Bind(tr.deferredSpecularFBOImage);
 						}
 
 						// bind u_DepthMap
-						GL_SelectTexture(3);
+						SelectTexture(TEX_DEPTH);
 						GL_Bind(tr.depthRenderImage);
 
 						// bind u_AttenuationMapXY
-						GL_SelectTexture(4);
+						SelectTexture(TEX_ATTEXY);
 						BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
 
 						// bind u_AttenuationMapZ
-						GL_SelectTexture(5);
+						SelectTexture(TEX_ATTEZ);
 						BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
 
 						// bind u_ShadowMap
 						if (shadowCompare)
 						{
-							GL_SelectTexture(6);
+							SelectTexture(TEX_SHADOWMAP);
 							GL_Bind(tr.shadowCubeFBOImage[light->shadowLOD]);
 						}
 
@@ -4285,36 +4284,36 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						}
 
 						// bind u_DiffuseMap
-						GL_SelectTexture(0);
+						SelectTexture(TEX_DIFFUSE);
 						GL_Bind(tr.deferredDiffuseFBOImage);
 
 						// bind u_NormalMap
-						GL_SelectTexture(1);
+						SelectTexture(TEX_NORMAL);
 						GL_Bind(tr.deferredNormalFBOImage);
 
 						if (r_normalMapping->integer)
 						{
 							// bind u_SpecularMap
-							GL_SelectTexture(2);
+							SelectTexture(TEX_SPECULAR);
 							GL_Bind(tr.deferredSpecularFBOImage);
 						}
 
 						// bind u_DepthMap
-						GL_SelectTexture(3);
+						SelectTexture(TEX_DEPTH);
 						GL_Bind(tr.depthRenderImage);
 
 						// bind u_AttenuationMapXY
-						GL_SelectTexture(4);
+						SelectTexture(TEX_ATTEXY);
 						BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
 
 						// bind u_AttenuationMapZ
-						GL_SelectTexture(5);
+						SelectTexture(TEX_ATTEZ);
 						BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
 
 						// bind u_ShadowMap
 						if (shadowCompare)
 						{
-							GL_SelectTexture(6);
+							SelectTexture(TEX_SHADOWMAP);
 							GL_Bind(tr.shadowMapFBOImage[light->shadowLOD]);
 						}
 
@@ -4367,59 +4366,59 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						}
 
 						// bind u_DiffuseMap
-						GL_SelectTexture(0);
+						SelectTexture(TEX_DIFFUSE);
 						GL_Bind(tr.deferredDiffuseFBOImage);
 
 						// bind u_NormalMap
-						GL_SelectTexture(1);
+						SelectTexture(TEX_NORMAL);
 						GL_Bind(tr.deferredNormalFBOImage);
 
 						if (r_normalMapping->integer)
 						{
 							// bind u_SpecularMap
-							GL_SelectTexture(2);
+							SelectTexture(TEX_SPECULAR);
 							GL_Bind(tr.deferredSpecularFBOImage);
 						}
 
 						// bind u_DepthMap
-						GL_SelectTexture(3);
+						SelectTexture(TEX_DEPTH);
 						GL_Bind(tr.depthRenderImage);
 
 						// bind u_AttenuationMapXY
-						//GL_SelectTexture(4);
+						//SelectTexture(TEX_ATTEXY);
 						//BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
 
 						// bind u_AttenuationMapZ
-						//GL_SelectTexture(5);
+						//SelectTexture(TEX_ATTEZ);
 						//BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
 
 						// bind shadow maps
 						if (shadowCompare)
 						{
-							GL_SelectTexture(6);
+							SelectTexture(TEX_SHADOWMAP0);
 							GL_Bind(tr.sunShadowMapFBOImage[0]);
 
 							if (r_parallelShadowSplits->integer >= 1)
 							{
-								GL_SelectTexture(7);
+								SelectTexture(TEX_SHADOWMAP1);
 								GL_Bind(tr.sunShadowMapFBOImage[1]);
 							}
 
 							if (r_parallelShadowSplits->integer >= 2)
 							{
-								GL_SelectTexture(8);
+								SelectTexture(TEX_SHADOWMAP2);
 								GL_Bind(tr.sunShadowMapFBOImage[2]);
 							}
 
 							if (r_parallelShadowSplits->integer >= 3)
 							{
-								GL_SelectTexture(9);
+								SelectTexture(TEX_SHADOWMAP3);
 								GL_Bind(tr.sunShadowMapFBOImage[3]);
 							}
 
 							if (r_parallelShadowSplits->integer >= 4)
 							{
-								GL_SelectTexture(10);
+								SelectTexture(TEX_SHADOWMAP4);
 								GL_Bind(tr.sunShadowMapFBOImage[4]);
 							}
 						}
@@ -4474,7 +4473,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 						// bind u_ColorMap
-						GL_SelectTexture(0);
+						SelectTexture(TEX_COLOR);
 						GL_Bind(tr.sunShadowMapFBOImage[frustumIndex]);
 
 						w = 200;
@@ -4511,7 +4510,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 							SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, light->shadowMatrices[frustumIndex]);
 							// bind u_ColorMap
-							GL_SelectTexture(0);
+							SelectTexture(TEX_COLOR);
 							GL_Bind(tr.whiteImage);
 
 							SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -5132,11 +5131,11 @@ void RB_RenderGlobalFog()
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 	// bind u_ColorMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.fogImage);
 
 	// bind u_DepthMap
-	GL_SelectTexture(1);
+	SelectTexture(TEX_DEPTH);
 	if (DS_STANDARD_ENABLED() || HDR_ENABLED())
 	{
 		GL_Bind(tr.depthRenderImage);
@@ -5202,14 +5201,14 @@ void RB_RenderBloom()
 				SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 				SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
 				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+				SelectTexture(TEX_CURRENT);
 			}
 			else
 			{
 				SetMacrosAndSelectProgram(gl_contrastShader);
 				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+				SelectTexture(TEX_COLOR);
 			}
-
-			GL_SelectTexture(0);
 			GL_Bind(tr.downScaleFBOImage_quarter);
 		}
 		else if (HDR_ENABLED())
@@ -5221,7 +5220,7 @@ void RB_RenderBloom()
 			SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-			GL_SelectTexture(0);
+			SelectTexture(TEX_CURRENT);
 			GL_Bind(tr.downScaleFBOImage_quarter);
 		}
 		else
@@ -5230,7 +5229,7 @@ void RB_RenderBloom()
 			SetMacrosAndSelectProgram(gl_contrastShader);
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-			GL_SelectTexture(0);
+			SelectTexture(TEX_COLOR);
 			//GL_Bind(tr.downScaleFBOImage_quarter);
 			ImageCopyBackBuffer(tr.currentRenderImage);
 		}
@@ -5260,16 +5259,6 @@ void RB_RenderBloom()
 
 				GL_State(GLS_DEPTHTEST_DISABLE);
 
-				GL_SelectTexture(0);
-				if (j == 0)
-				{
-					GL_Bind(tr.contrastRenderFBOImage);
-				}
-				else
-				{
-					GL_Bind(tr.bloomRenderFBOImage[j % 2]);
-				}
-
 				GL_PushMatrix();
 				GL_LoadModelViewMatrix(matrixIdentity);
 
@@ -5284,6 +5273,16 @@ void RB_RenderBloom()
 				else
 				{
 					SetMacrosAndSelectProgram(gl_blurYShader);
+				}
+
+				SelectTexture(TEX_COLOR);
+				if (j == 0)
+				{
+					GL_Bind(tr.contrastRenderFBOImage);
+				}
+				else
+				{
+					GL_Bind(tr.bloomRenderFBOImage[j % 2]);
 				}
 
 				SetUniformFloat(UNIFORM_DEFORMMAGNITUDE, r_bloomBlur->value);
@@ -5307,7 +5306,7 @@ void RB_RenderBloom()
 
 				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-				GL_SelectTexture(0);
+				SelectTexture(TEX_CURRENT);
 				GL_Bind(tr.bloomRenderFBOImage[j % 2]);
 			}
 			else if (HDR_ENABLED())
@@ -5320,7 +5319,7 @@ void RB_RenderBloom()
 
 				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-				GL_SelectTexture(0);
+				SelectTexture(TEX_CURRENT);
 				GL_Bind(tr.bloomRenderFBOImage[j % 2]);
 				//GL_Bind(tr.contrastRenderFBOImage);
 			}
@@ -5334,7 +5333,7 @@ void RB_RenderBloom()
 
 				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-				GL_SelectTexture(0);
+				SelectTexture(TEX_CURRENT);
 				GL_Bind(tr.bloomRenderFBOImage[j % 2]);
 				//GL_Bind(tr.contrastRenderFBOImage);
 			}
@@ -5418,16 +5417,16 @@ void RB_CameraPostFX(void)
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, grain);
 
 	// bind u_CurrentMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_CURRENT);
 	ImageCopyBackBuffer(tr.occlusionRenderFBOImage);
 
 	// bind u_GrainMap
-	GL_SelectTexture(1);
+	SelectTexture(TEX_GRAIN);
 	GL_Bind(tr.grainImage);
 	//GL_Bind(tr.defaultImage);
 
 	// bind u_VignetteMap
-	GL_SelectTexture(2);
+	SelectTexture(TEX_VIGNETTE);
 	if (r_cameraVignette->integer)
 	{
 		GL_Bind(tr.vignetteImage);
@@ -5578,7 +5577,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.deferredRenderFBOImage);
 	}
 	else
@@ -5588,7 +5587,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 
 		if (r_showDeferredDiffuse->integer)
 		{
@@ -5637,7 +5636,7 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 	R_BindNullFBO();
 
 	// bind u_CurrentMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_CURRENT);
 	GL_Bind(tr.deferredRenderFBOImage);
 
 	GL_State(GLS_DEPTHTEST_DISABLE);
@@ -6089,7 +6088,7 @@ void RB_RenderLightOcclusionQueries()
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -6663,7 +6662,7 @@ void RB_RenderEntityOcclusionQueries()
 		SetUniformVec4(UNIFORM_COLOR, colorBlue);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -6850,7 +6849,7 @@ void RB_RenderBspOcclusionQueries()
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
@@ -7016,7 +7015,7 @@ static void RB_RenderDebugUtils()
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -7386,7 +7385,7 @@ static void RB_RenderDebugUtils()
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -7562,7 +7561,7 @@ static void RB_RenderDebugUtils()
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -7653,7 +7652,7 @@ static void RB_RenderDebugUtils()
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.charsetImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -7860,7 +7859,7 @@ static void RB_RenderDebugUtils()
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -7966,7 +7965,7 @@ static void RB_RenderDebugUtils()
 			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
 
 			// bind u_ColorMap
-			GL_SelectTexture(0);
+			SelectTexture(TEX_COLOR);
 			GL_Bind(cubeProbe->cubemap);
 
 			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
@@ -7997,7 +7996,7 @@ static void RB_RenderDebugUtils()
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			// bind u_ColorMap
-			GL_SelectTexture(0);
+			SelectTexture(TEX_COLOR);
 			GL_Bind(tr.whiteImage);
 
 			SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -8071,7 +8070,7 @@ static void RB_RenderDebugUtils()
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -8140,7 +8139,7 @@ static void RB_RenderDebugUtils()
 		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -8241,7 +8240,7 @@ static void RB_RenderDebugUtils()
 					GL_Cull(CT_TWO_SIDED);
 
 					// bind u_ColorMap
-					GL_SelectTexture(0);
+					SelectTexture(TEX_COLOR);
 					GL_Bind(tr.whiteImage);
 
 					SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -8496,7 +8495,7 @@ static void RB_RenderDebugUtils()
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 		// bind u_ColorMap
-		GL_SelectTexture(0);
+		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
 
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -9233,7 +9232,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// bind u_ColorMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.scratchImage[client]);
 
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
@@ -9757,7 +9756,7 @@ void RB_ShowImages(void)
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
-	GL_SelectTexture(0);
+	SelectTexture(TEX_COLOR);
 
 	start = ri.Milliseconds();
 

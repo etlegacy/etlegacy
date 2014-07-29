@@ -39,11 +39,6 @@ vertexLighting_DBS_entity
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
 	fragmentLibraries "reliefMapping"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_EnvironmentMap0 3
-	uniform int u_EnvironmentMap1 4
 }
 
 vertexLighting_DBS_world
@@ -54,9 +49,6 @@ vertexLighting_DBS_world
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL ATTR_COLOR
 	vertexLibraries "deformVertexes"
 	fragmentLibraries "reliefMapping"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
 }
 
 forwardLighting_omniXYZ
@@ -67,13 +59,6 @@ forwardLighting_omniXYZ
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
 	fragmentLibraries "reliefMapping"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_AttenuationMapXY 3
-	uniform int u_AttenuationMapZ 4
-	uniform int u_ShadowMap 5
-	uniform int u_RandomMap 6
 }
 
 forwardLighting_projXYZ
@@ -84,13 +69,6 @@ forwardLighting_projXYZ
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
 	fragmentLibraries "reliefMapping"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_AttenuationMapXY 3
-	uniform int u_AttenuationMapZ 4
-	uniform int u_ShadowMap 5
-	uniform int u_RandomMap 6
 }
 
 forwardLighting_directionalSun
@@ -101,16 +79,6 @@ forwardLighting_directionalSun
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
 	fragmentLibraries "reliefMapping"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_AttenuationMapXY 3
-	uniform int u_AttenuationMapZ 4
-	uniform int u_ShadowMap0 5
-	uniform int u_ShadowMap1 6
-	uniform int u_ShadowMap2 7
-	uniform int u_ShadowMap3 8
-	uniform int u_ShadowMap4 9
 }
 
 deferredLighting_omniXYZ
@@ -118,13 +86,6 @@ deferredLighting_omniXYZ
 	filename "deferredLighting"
 	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
 	attribs ATTR_POSITION
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_DepthMap 3
-	uniform int u_AttenuationMapXY 4
-	uniform int u_AttenuationMapZ 5
-	uniform int u_ShadowMap 6
 }
 
 deferredLighting_projXYZ
@@ -133,13 +94,6 @@ deferredLighting_projXYZ
 	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
 	attribs ATTR_POSITION
 	extramacros "LIGHT_PROJ"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_DepthMap 3
-	uniform int u_AttenuationMapXY 4
-	uniform int u_AttenuationMapZ 5
-	uniform int u_ShadowMap0 6
 }
 
 deferredLighting_directionalSun
@@ -148,17 +102,6 @@ deferredLighting_directionalSun
 	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
 	extramacros "LIGHT_DIRECTIONAL"
 	attribs ATTR_POSITION
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_DepthMap 3
-	uniform int u_AttenuationMapXY 4
-	uniform int u_AttenuationMapZ 5
-	uniform int u_ShadowMap0 6
-	uniform int u_ShadowMap1 7
-	uniform int u_ShadowMap2 8
-	uniform int u_ShadowMap3 9
-	uniform int u_ShadowMap4 10
 }
 
 geometricFill
@@ -169,11 +112,6 @@ geometricFill
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
 	fragmentLibraries "reliefMapping"
-	uniform int u_DiffuseMap 0
-	uniform int u_NormalMap 1
-	uniform int u_SpecularMap 2
-	uniform int u_EnvironmentMap0 3
-	uniform int u_EnvironmentMap1 4
 }
 
 shadowFill
@@ -182,7 +120,6 @@ shadowFill
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES LIGHT_DIRECTIONAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	uniform int u_ColorMap 0
 }
 
 reflection
@@ -192,8 +129,6 @@ reflection
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	uniform int u_ColorMap 0
-	uniform int u_NormalMap 1
 }
 
 skybox
@@ -201,7 +136,6 @@ skybox
 	filename "skybox"
 	macros USE_PORTAL_CLIPPING
 	attribs ATTR_POSITION
-	uniform int u_ColorMap 0
 }
 
 fogQuake3
@@ -210,15 +144,12 @@ fogQuake3
 	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES EYE_OUTSIDE
 	attribs ATTR_POSITION ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	uniform int u_ColorMap 0
 }
 
 fogGlobal
 {
 	filename "fogGlobal"
 	attribs ATTR_POSITION
-	uniform int u_ColorMap 0
-	uniform int u_DepthMap 1
 }
 
 heatHaze
@@ -227,23 +158,18 @@ heatHaze
 	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	uniform int u_ColorMap 0
-	uniform int u_CurrentMap 1
-	uniform int u_ContrastMap 2
 }
 
 screen
 {
 	filename "screen"
 	attribs ATTR_POSITION
-	uniform int u_CurrentMap 0
 }
 
 portal
 {
 	filename "portal"
 	attribs ATTR_POSITION
-	uniform int u_CurrentMap 0
 }
 
 toneMapping
@@ -251,44 +177,36 @@ toneMapping
 	filename "toneMapping"
 	macros BRIGHTPASS_FILTER
 	attribs ATTR_POSITION
-	uniform int u_CurrentMap 0
 }
 
 contrast
 {
 	filename "contrast"
 	attribs ATTR_POSITION
-	uniform int u_ColorMap 0
 }
 
 cameraEffects
 {
 	filename "cameraEffects"
 	attribs ATTR_POSITION ATTR_TEXCOORD
-	uniform int u_CurrentMap 0
-	uniform int u_GrainMap 1
-	uniform int u_VignetteMap 2
 }
 
 blurX
 {
 	filename "blurX"
 	attribs ATTR_POSITION
-	uniform int u_ColorMap 0
 }
 
 blurY
 {
 	filename "blurY"
 	attribs ATTR_POSITION
-	uniform int u_ColorMap 0
 }
 
 debugShadowMap
 {
 	filename "debugShadowMap"
 	attribs ATTR_POSITION
-	uniform int u_CurrentMap 0
 }
 
 liquid
@@ -309,8 +227,6 @@ bloom
 {
 	filename "bloom"
 	attribs ATTR_POSITION
-	uniform int u_ColorMap 0
-	uniform int u_ContrastMap 1
 	uniform int u_BlurMagnitude 2
 }
 
@@ -320,7 +236,6 @@ refraction
 	macros USE_VERTEX_SKINNING
 	attribs ATTR_POSITION ATTR_NORMAL
 	vertexLibraries "vertexSkinning"
-	uniform int u_ColorMap 0
 }
 
 depthToColor
@@ -335,19 +250,12 @@ volumetricFog
 {
 	filename "volumetricFog"
 	attribs ATTR_POSITION
-	uniform int u_DepthMap 0
-	uniform int u_DepthMapBack 1
-	uniform int u_DepthMapFront 2
 }
 
 lightVolume_omni
 {
 	filename "lightVolume_omni"
 	attribs ATTR_POSITION
-	uniform int u_DepthMap 0
-	uniform int u_AttenuationMapXY 1
-	uniform int u_AttenuationMapZ 2
-	uniform int u_ShadowMap 3
 }
 
 dispersion
@@ -355,7 +263,6 @@ dispersion
 	filename "dispersion_C"
 	macros USE_VERTEX_SKINNING
 	attribs ATTR_POSITION ATTR_NORMAL
-	uniform int u_ColorMap 0
 }
 
 colorCorrection

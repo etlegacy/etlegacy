@@ -1253,8 +1253,8 @@ static void Tess_SurfaceBeam(void)
 		VectorAdd(start_points[i], direction, end_points[i]);
 	}
 
-	GLSL_BindProgram(0);
-	GL_SelectTexture(0);
+	SetMacrosAndSelectProgram(gl_genericShader);
+	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.whiteImage);
 
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
@@ -1903,27 +1903,6 @@ static void Tess_SurfaceAxis(void)
 		tess.numVertexes++;
 	}
 #endif
-
-	/*
-	   GL_BindProgram(0);
-	   GL_SelectTexture(0);
-	   GL_State( GLS_DEFAULT );
-	   GL_Bind(tr.whiteImage);
-
-	   glLineWidth(3);
-	   glBegin(GL_LINES);
-	   glColor3f(1, 0, 0);
-	   glVertex3f(0, 0, 0);
-	   glVertex3f(16, 0, 0);
-	   glColor3f(0, 1, 0);
-	   glVertex3f(0, 0, 0);
-	   glVertex3f(0, 16, 0);
-	   glColor3f(0, 0, 1);
-	   glVertex3f(0, 0, 0);
-	   glVertex3f(0, 0, 16);
-	   glEnd();
-	   glLineWidth(1);
-	 */
 }
 
 //===========================================================================

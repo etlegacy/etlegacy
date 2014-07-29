@@ -1928,7 +1928,7 @@ static void R_CoherentHierachicalCulling()
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// bind u_ColorMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.whiteImage);
 
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
