@@ -50,6 +50,14 @@ const attrmap attributeMap[] =
 #include "tr_glsldef.h"
 #undef ATTR_MAP
 };
+
+const int textureMap[] = 
+{
+#define TEX_MAP
+#include "tr_glsldef.h"
+#undef TEX_MAP
+};
+
 const int numberofAttributes = ARRAY_LEN(attributeMap);
 
 #define FILE_HASH_SIZE      4096
@@ -1379,6 +1387,17 @@ void GLSL_FinishGPUShader(shaderProgram_t *program)
 	GL_CheckErrors();
 }
 
+void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex)
+{
+	if (program->textureBinds[tex] == -1)
+	{
+		Ren_Fatal("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
+		return;
+	}
+
+	GL_SelectTexture(program->textureBinds[tex]);
+}
+
 void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean value)
 {
 	GLint     *uniforms = program->uniforms;
@@ -1757,10 +1776,29 @@ static qboolean GLSL_GetProgramPermutation(programInfo_t *info, int permutation,
 	}
 }
 
+static void GLSL_SetTextureUnitBindings(programInfo_t *info, int permutation)
+{
+	int i,j;
+	shaderProgram_t *program = &info->list->programs[permutation];
+
+	for (i = 0, j = 0; i < TEX_COUNT; i++)
+	{
+		if (program->uniforms[textureMap[i]] == -1)
+		{
+			program->textureBinds[i] = -1;
+		}
+		else
+		{
+			program->textureBinds[i] = j;
+			qglUniform1iARB(program->uniforms[textureMap[i]], j);
+			j++;
+		}
+	}
+}
+
 static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 {
 	int i, location;
-	GLSL_BindProgram(&info->list->programs[permutation]);
 
 	for (i = 0; i < info->numUniformValues; i++)
 	{
@@ -1786,8 +1824,6 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 			break;
 		}
 	}
-
-	GLSL_BindNullProgram();
 }
 
 void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *fragment)
@@ -1891,8 +1927,12 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 		{
 			if (GLSL_GetProgramPermutation(info, i, vertexShader, fragmentShader, tempString))
 			{
+				GLSL_BindProgram(&info->list->programs[i]);
 				//Set uniform values
+				GLSL_SetTextureUnitBindings(info, i);
 				GLSL_SetInitialUniformValues(info, i);
+				GLSL_BindNullProgram();
+
 				GLSL_FinishGPUShader(&info->list->programs[i]);
 				info->list->programs[i].compiled = qtrue;
 			}

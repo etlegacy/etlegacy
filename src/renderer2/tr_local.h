@@ -1392,6 +1392,14 @@ typedef enum
 	UNIFORM_COUNT
 } uniform_t;
 
+typedef enum
+{
+#define TEX_DECL
+#include "tr_glsldef.h"
+#undef TEX_DECL
+	TEX_COUNT
+} texture_def_t;
+
 // shaderProgram_t represents a pair of one
 // GLSL vertex and one GLSL fragment shader
 
@@ -1409,6 +1417,9 @@ typedef struct shaderProgram_s
 	GLint uniforms[UNIFORM_COUNT];
 	short uniformBufferOffsets[UNIFORM_COUNT]; // max 32767/64=511 uniforms
 	char *uniformBuffer;
+
+	//texture binds
+	int textureBinds[TEX_COUNT];
 
 	qboolean compiled;
 } shaderProgram_t;
@@ -4168,6 +4179,7 @@ int  Com_IndexForGrowListElement(const growList_t *list, const void *element);
 //tr_glsl.c
 void GLSL_VertexAttribsState(uint32_t stateBits);
 void GLSL_VertexAttribPointers(uint32_t attribBits);
+void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex);
 void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean value);
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value);
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value);
@@ -4187,6 +4199,7 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms);
 void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen);
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
 
+#define SelectTexture(tex) GLSL_SelectTexture(selectedProgram, tex)
 #define SetUniformBoolean(uniformNum, value) GLSL_SetUniformBoolean(selectedProgram, uniformNum, value)
 #define SetUniformInt(uniformNum, value) GLSL_SetUniformInt(selectedProgram, uniformNum, value)
 #define SetUniformFloat(uniformNum, value) GLSL_SetUniformFloat(selectedProgram, uniformNum, value)
