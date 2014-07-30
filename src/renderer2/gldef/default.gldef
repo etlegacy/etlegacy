@@ -19,7 +19,7 @@ generic
 	filename "generic"
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_TCGEN_ENVIRONMENT USE_TCGEN_LIGHTMAP
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 }
 
 lightMapping
@@ -28,8 +28,8 @@ lightMapping
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_LIGHTCOORD ATTR_NORMAL
-	vertexLibraries "deformVertexes"
-	fragmentLibraries "reliefMapping"
+	vertexLibraries "lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping"
 }
 
 vertexLighting_DBS_entity
@@ -38,8 +38,8 @@ vertexLighting_DBS_entity
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIVE_SPECULAR
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	fragmentLibraries "reliefMapping"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping"
 }
 
 vertexLighting_DBS_world
@@ -48,8 +48,8 @@ vertexLighting_DBS_world
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL ATTR_COLOR
-	vertexLibraries "deformVertexes"
-	fragmentLibraries "reliefMapping"
+	vertexLibraries "lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping"
 }
 
 forwardLighting_omniXYZ
@@ -58,8 +58,8 @@ forwardLighting_omniXYZ
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	fragmentLibraries "reliefMapping"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping"
 }
 
 forwardLighting_projXYZ
@@ -68,8 +68,8 @@ forwardLighting_projXYZ
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING
 	extramacros "LIGHT_PROJ TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	fragmentLibraries "reliefMapping"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping"
 }
 
 forwardLighting_directionalSun
@@ -78,8 +78,8 @@ forwardLighting_directionalSun
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING
 	extramacros "LIGHT_DIRECTIONAL TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	fragmentLibraries "reliefMapping"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping"
 }
 
 deferredLighting_omniXYZ
@@ -114,15 +114,15 @@ geometricFill
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_PARALLAX_MAPPING USE_REFLECTIVE_SPECULAR
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
-	fragmentLibraries "reliefMapping"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping"
 }
 
 shadowFill
 {
 	filename "shadowFill"
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES LIGHT_DIRECTIONAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 }
 
@@ -132,7 +132,7 @@ reflection
 	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 }
 
 skybox
@@ -147,7 +147,7 @@ fogQuake3
 	filename "fogQuake3"
 	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES EYE_OUTSIDE
 	attribs ATTR_POSITION ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 }
 
 fogGlobal
@@ -162,7 +162,7 @@ heatHaze
 	filename "heatHaze"
 	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "vertexSkinning vertexAnimation deformVertexes"
+	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 }
 
 screen
@@ -202,14 +202,14 @@ blurX
 {
 	filename "simple"
 	attribs ATTR_POSITION
-	fragfilename "blurX"
+	fragfilename "blur/blurX"
 }
 
 blurY
 {
 	filename "simple"
 	attribs ATTR_POSITION
-	fragfilename "blurY"
+	fragfilename "blur/blurY"
 }
 
 debugShadowMap
@@ -246,7 +246,7 @@ refraction
 	filename "refraction_C"
 	macros USE_VERTEX_SKINNING
 	attribs ATTR_POSITION ATTR_NORMAL
-	vertexLibraries "vertexSkinning"
+	vertexLibraries "lib/vertexSkinning"
 }
 
 depthToColor
@@ -254,7 +254,7 @@ depthToColor
 	filename "depthToColor"
 	macros USE_VERTEX_SKINNING
 	attribs ATTR_POSITION ATTR_NORMAL
-	vertexLibraries "vertexSkinning"
+	vertexLibraries "lib/vertexSkinning"
 }
 
 volumetricFog
