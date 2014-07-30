@@ -7,6 +7,7 @@ sample
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING
 	extramacros "LIGHT_PROJ"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
+	fragfilename "samplefrag"
 	vertexLibraries "sample_vertex_lib sample_vertex_lib2"
 	fragmentLibraries "sample_fragment_lib sample_fragment_lib2"
 	uniform int u_ColorMap 0
@@ -83,14 +84,16 @@ forwardLighting_directionalSun
 
 deferredLighting_omniXYZ
 {
-	filename "deferredLighting"
+	filename "simple"
+	fragfilename "deferredLighting"
 	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
 	attribs ATTR_POSITION
 }
 
 deferredLighting_projXYZ
 {
-	filename "deferredLighting"
+	filename "simple"
+	fragfilename "deferredLighting"
 	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
 	attribs ATTR_POSITION
 	extramacros "LIGHT_PROJ"
@@ -98,7 +101,8 @@ deferredLighting_projXYZ
 
 deferredLighting_directionalSun
 {
-	filename "deferredLighting"
+	filename "simple"
+	fragfilename "deferredLighting"
 	macros USE_PORTAL_CLIPPING USE_FRUSTUM_CLIPPING USE_NORMAL_MAPPING USE_SHADOWING
 	extramacros "LIGHT_DIRECTIONAL"
 	attribs ATTR_POSITION
@@ -148,7 +152,8 @@ fogQuake3
 
 fogGlobal
 {
-	filename "fogGlobal"
+	filename "simple"
+	fragfilename "fogGlobal"
 	attribs ATTR_POSITION
 }
 
@@ -174,15 +179,17 @@ portal
 
 toneMapping
 {
-	filename "toneMapping"
+	filename "simple"
+	fragfilename "toneMapping"
 	macros BRIGHTPASS_FILTER
 	attribs ATTR_POSITION
 }
 
 contrast
 {
-	filename "contrast"
+	filename "simple"
 	attribs ATTR_POSITION
+	fragfilename "contrast"
 }
 
 cameraEffects
@@ -193,14 +200,16 @@ cameraEffects
 
 blurX
 {
-	filename "blurX"
+	filename "simple"
 	attribs ATTR_POSITION
+	fragfilename "blurX"
 }
 
 blurY
 {
-	filename "blurY"
+	filename "simple"
 	attribs ATTR_POSITION
+	fragfilename "blurY"
 }
 
 debugShadowMap
@@ -218,15 +227,17 @@ liquid
 
 rotoscope
 {
-	filename "rotoscope"
+	filename "simple"
+	fragfilename "rotoscope"
 	attribs ATTR_POSITION ATTR_TEXCOORD
 	uniform int u_BlurMagnitude 1
 }
 
 bloom
 {
-	filename "bloom"
+	filename "simple"
 	attribs ATTR_POSITION
+	fragfilename "bloom"
 	uniform int u_BlurMagnitude 2
 }
 
@@ -248,13 +259,15 @@ depthToColor
 
 volumetricFog
 {
-	filename "volumetricFog"
+	filename "simple"
+	fragfilename "volumetricFog"
 	attribs ATTR_POSITION
 }
 
 lightVolume_omni
 {
-	filename "lightVolume_omni"
+	filename "simple"
+	fragfilename "lightVolume_omni"
 	attribs ATTR_POSITION
 }
 
@@ -267,17 +280,20 @@ dispersion
 
 colorCorrection
 {
-	filename "color"
+	filename "simple"
+	fragfilename "color"
 }
 
 depthOfField
 {
-	filename "depthOfField"
+	filename "simple"
+	fragfilename "depthOfField"
 	attribs ATTR_POSITION
 }
 
 SSAO
 {
-	filename "screenSpaceAmbientOcclusion"
+	filename "simple"
+	fragfilename "screenSpaceAmbientOcclusion"
 	attribs ATTR_POSITION
 }
