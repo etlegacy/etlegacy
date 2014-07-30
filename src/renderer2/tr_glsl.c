@@ -1220,6 +1220,113 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	return shaderText;
 }
 
+#define GLSL_BUFF 64000
+#define GLSL_BUFF_CHAR (sizeof(char)* GLSL_BUFF)
+
+static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
+{
+	static char shaderBuffer[GLSL_BUFF];
+	GLchar *mainBuffer = NULL;
+	int    mainBufferSize = 0;
+	GLchar *ref = NULL;
+	char *filename = NULL;
+	char   *token = NULL;
+	int c = 0, offset = 0;
+	char *output = NULL;
+
+	Com_Memset(shaderBuffer, '\0', GLSL_BUFF_CHAR);
+
+	switch (shadertype)
+	{
+	case GL_VERTEX_SHADER:
+		filename = info->filename;
+		break;
+	case GL_FRAGMENT_SHADER:
+		filename = (info->fragFilename ? info->fragFilename : info->filename);
+		break;
+	//case GL_TESS_CONTROL_SHADER:
+		//break;
+	default:
+		return NULL;
+	}
+
+	GLSL_GetShaderText(filename, shadertype, &mainBuffer, &mainBufferSize, qfalse);
+	ref = mainBuffer;
+
+	while (c = *ref)
+	{
+		// skip double slash comments
+		if (c == '/' && ref[1] == '/')
+		{
+			ref += 2;
+			while (*ref && *ref != '\n')
+			{
+				ref++;
+			}
+		}
+
+		// skip /* */ comments
+		else if (c == '/' && ref[1] == '*')
+		{
+			ref += 2;
+			while (*ref && (*ref != '*' || ref[1] != '/'))
+			{
+				ref++;
+			}
+			if (*ref)
+			{
+				ref += 2;
+			}
+		}
+
+		//We found a # command
+		else if (c == '#')
+		{
+			char *ref2 = ref;
+
+			ref++;
+			token = COM_ParseExt2(&ref, qfalse);
+
+			if (!Q_stricmp(token, "include"))
+			{
+				//handle include
+				GLchar *libBuffer = NULL;
+				int    libBufferSize = 0;
+
+				token = COM_ParseExt2(&ref, qfalse);
+				GLSL_GetShaderText(token, shadertype, &libBuffer, &libBufferSize, qfalse);
+				Q_strcat(shaderBuffer, libBufferSize, libBuffer);
+				Com_Dealloc(libBuffer);
+				token = NULL;
+			}
+			else
+			{
+				ref = ref2;
+				shaderBuffer[offset] = c;
+			}
+
+			offset = strlen(shaderBuffer);
+		}
+
+		//Just add the char to the buffer
+		else
+		{
+			shaderBuffer[offset] = c;
+			offset++;
+		}
+
+		ref++;
+	}
+
+	Com_Dealloc(mainBuffer);
+	Ren_Print(shaderBuffer);
+	Ren_Fatal("JEPAJEPA %i",strlen(shaderBuffer));
+
+	output = Com_Allocate(strlen(shaderBuffer) * sizeof(char) + 1);
+	strcpy(output, shaderBuffer);
+	return output;
+}
+
 /*
 This whole method is stupid, clean this shit up
 */
@@ -1391,7 +1498,9 @@ void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex)
 {
 	if (program->textureBinds[tex] == -1)
 	{
-		Ren_Fatal("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
+		//Ren_Fatal("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
+		Ren_Warning("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
+		GL_SelectTexture(0);
 		return;
 	}
 
@@ -1848,6 +1957,7 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 
 qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
+	//char *testike = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
 	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
 	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename ? info->fragFilename : info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
 	int    startTime, endTime;
@@ -1948,13 +2058,16 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 			info->list->programs[i].program  = 0;
 			info->list->programs[i].compiled = qfalse;
 		}
-
 	}
 
 	endTime = ri.Milliseconds();
 	Ren_Print("...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
 	info->compiled                 = qtrue;
 	info->list->currentPermutation = 0;
+
+	Com_Dealloc(vertexShader);
+	Com_Dealloc(fragmentShader);
+
 	return qtrue;
 }
 

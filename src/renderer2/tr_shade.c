@@ -2516,7 +2516,7 @@ static void Render_fog()
 	vec3_t local;
 	vec4_t fogDistanceVector, fogDepthVector;
 
-	//Ren_Print("--- Render_fog ---\n");
+	Ren_LogComment("--- Render_fog ---\n");
 
 	// no fog pass in snooper
 	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog || !r_wolfFog->integer)

@@ -287,8 +287,12 @@ void R_AddMDVSurfaces(trRefEntity_t *ent)
 	if ((ent->e.frame >= tr.currentModel->mdv[lod]->numFrames)
 	    || (ent->e.frame < 0) || (ent->e.oldframe >= tr.currentModel->mdv[lod]->numFrames) || (ent->e.oldframe < 0))
 	{
-		Ren_Developer("R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
-		              ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
+		//Only spam if the lod level is 0 (lods usually don't have animation frames as they are only seen from a far)
+		if (lod == 0)
+		{
+			Ren_Developer("R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
+				ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
+		}
 		ent->e.frame    = 0;
 		ent->e.oldframe = 0;
 	}
