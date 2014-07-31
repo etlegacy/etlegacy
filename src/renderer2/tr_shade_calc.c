@@ -60,7 +60,7 @@ static float *TableForFunc(genFunc_t func)
 	return NULL;
 #else
 	// FIXME
-	Ren_Warning("TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
+	//Ren_Warning("TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
 	return tr.sinTable;
 #endif
 }

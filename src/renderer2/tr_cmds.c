@@ -192,7 +192,6 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	if (!r_skipBackEnd->integer)
 	{
 		// let it start on the new batch
-
 		RB_ExecuteRenderCommands(cmdList->cmds);
 	}
 }
@@ -222,7 +221,7 @@ void *R_GetCommandBuffer(int bytes)
 	renderCommandList_t *cmdList = &backEndData->commands;
 
 	// always leave room for the swap buffers and end of list commands
-	// RB: added swapBuffers_t from ET
+	// - added swapBuffers_t from ET
 	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)
 	{
 		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
@@ -379,6 +378,7 @@ void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float
 	{
 		return;
 	}
+
 	if (R_ClipRegion(&x, &y, &w, &h, &s1, &t1, &s2, &t2))
 	{
 		return;
@@ -389,6 +389,7 @@ void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float
 	{
 		return;
 	}
+
 	cmd->commandId = RC_STRETCH_PIC;
 	cmd->shader    = R_GetShaderByHandle(hShader);
 	cmd->x         = x;
@@ -436,6 +437,7 @@ void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float
 	{
 		return;
 	}
+
 	cmd->commandId = RC_ROTATED_PIC;
 	cmd->shader    = R_GetShaderByHandle(hShader);
 	cmd->x         = x;
@@ -610,6 +612,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_DRAW_BUFFER;
 
 	if (glConfig.stereoEnabled)
@@ -665,6 +668,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_SWAP_BUFFERS;
 
 	R_BindNullVBO();
@@ -728,6 +732,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_RENDERTOTEXTURE;
 	cmd->image     = (image_t *) Com_GrowListElement(&tr.images, textureid);
 	cmd->x         = x;
@@ -747,5 +752,6 @@ void RE_Finish(void)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_FINISH;
 }

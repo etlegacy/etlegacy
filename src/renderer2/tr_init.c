@@ -45,7 +45,6 @@ float displayAspect = 0.0f;
 
 static void GfxInfo_f(void);
 
-cvar_t *r_glCoreProfile;
 cvar_t *r_glMajorVersion;
 cvar_t *r_glMinorVersion;
 cvar_t *r_glDebugProfile;
@@ -62,7 +61,6 @@ cvar_t *r_railWidth;
 cvar_t *r_railCoreWidth;
 cvar_t *r_railSegmentLength;
 
-cvar_t *r_verbose;
 cvar_t *r_ignore;
 
 cvar_t *r_znear;
@@ -91,7 +89,6 @@ cvar_t *r_nocull;
 cvar_t *r_facePlaneCull;
 cvar_t *r_showcluster;
 cvar_t *r_nocurves;
-cvar_t *r_nobatching;
 cvar_t *r_noLightScissors;
 cvar_t *r_noLightVisCull;
 cvar_t *r_noInteractionSort;
@@ -219,7 +216,6 @@ cvar_t *r_simpleMipMaps;
 
 cvar_t *r_showImages;
 
-cvar_t *r_forceFog;
 cvar_t *r_wolfFog;
 cvar_t *r_noFog;
 
@@ -317,7 +313,6 @@ cvar_t *r_rotoscope;
 cvar_t *r_rotoscopeBlur;
 cvar_t *r_cameraPostFX;
 cvar_t *r_cameraVignette;
-cvar_t *r_cameraFilmGrain;
 cvar_t *r_cameraFilmGrainScale;
 
 cvar_t *r_evsmPostProcess;
@@ -1014,17 +1009,22 @@ void GL_SetDefaultState(void)
 	// in a multitexture environment
 	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
-		i = 31;
+		for (i = 31; i >= 0; i--)
+		{
+			GL_SelectTexture(i);
+			GL_TextureMode(r_textureMode->string);
+		}
 	}
-	else if (GLEW_ARB_multitexture)
+	else
 	{
-		i = glConfig.maxActiveTextures - 1;
-	}
-
-	for (; i >= 0; i--)
-	{
-		GL_SelectTexture(i);
-		GL_TextureMode(r_textureMode->string);
+		if (GLEW_ARB_multitexture)
+		{
+			for (i = glConfig.maxActiveTextures - 1; i >= 0; i--)
+			{
+				GL_SelectTexture(i);
+				GL_TextureMode(r_textureMode->string);
+			}
+		}
 	}
 
 	GL_CheckErrors();
@@ -1272,7 +1272,6 @@ void R_Register(void)
 	// OpenGL context selection
 	r_glMajorVersion = ri.Cvar_Get("r_glMajorVersion", "", CVAR_LATCH);
 	r_glMinorVersion = ri.Cvar_Get("r_glMinorVersion", "", CVAR_LATCH);
-	r_glCoreProfile  = ri.Cvar_Get("r_glCoreProfile", "", CVAR_LATCH);
 	r_glDebugProfile = ri.Cvar_Get("r_glDebugProfile", "", CVAR_LATCH);
 
 #ifdef USE_GLSL_OPTIMIZER
@@ -1328,9 +1327,7 @@ void R_Register(void)
 	r_noMarksOnTrisurfs       = ri.Cvar_Get("r_noMarksOnTrisurfs", "1", CVAR_CHEAT);
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
 
-	r_forceFog = ri.Cvar_Get("r_forceFog", "0", CVAR_CHEAT /* | CVAR_LATCH */);
-	ri.Cvar_AssertCvarRange(r_forceFog, 0.0f, 1.0f, qfalse);
-	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_CHEAT);
+	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_ARCHIVE);
 	r_noFog   = ri.Cvar_Get("r_noFog", "0", CVAR_CHEAT);
 
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
@@ -1452,7 +1449,6 @@ void R_Register(void)
 
 	r_cameraPostFX         = ri.Cvar_Get("r_cameraPostFX", "0", CVAR_ARCHIVE);
 	r_cameraVignette       = ri.Cvar_Get("r_cameraVignette", "1", CVAR_ARCHIVE);
-	r_cameraFilmGrain      = ri.Cvar_Get("r_cameraFilmGrain", "1", CVAR_ARCHIVE);
 	r_cameraFilmGrainScale = ri.Cvar_Get("r_cameraFilmGrainScale", "3", CVAR_ARCHIVE);
 
 	// temporary variables that can change at any time
@@ -1462,7 +1458,6 @@ void R_Register(void)
 	r_debugSort  = ri.Cvar_Get("r_debugSort", "0", CVAR_CHEAT);
 
 	r_nocurves          = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
-	r_nobatching        = ri.Cvar_Get("r_nobatching", "0", CVAR_CHEAT);
 	r_noLightScissors   = ri.Cvar_Get("r_noLightScissors", "0", CVAR_CHEAT);
 	r_noLightVisCull    = ri.Cvar_Get("r_noLightVisCull", "0", CVAR_CHEAT);
 	r_noInteractionSort = ri.Cvar_Get("r_noInteractionSort", "0", CVAR_CHEAT);
@@ -1489,7 +1484,6 @@ void R_Register(void)
 	r_novis              = ri.Cvar_Get("r_novis", "0", CVAR_CHEAT);
 	r_showcluster        = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
 	r_speeds             = ri.Cvar_Get("r_speeds", "0", 0);
-	r_verbose            = ri.Cvar_Get("r_verbose", "0", CVAR_CHEAT);
 	r_logFile            = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
 	r_debugSurface       = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
 	r_nobind             = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);

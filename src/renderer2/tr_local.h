@@ -1418,7 +1418,7 @@ typedef struct shaderProgram_s
 	short uniformBufferOffsets[UNIFORM_COUNT]; // max 32767/64=511 uniforms
 	char *uniformBuffer;
 
-	//texture binds
+	// texture binds
 	int textureBinds[TEX_COUNT];
 
 	qboolean compiled;
@@ -3035,13 +3035,7 @@ extern float    displayAspect;      //FIXME
 
 // cvars
 
-extern cvar_t *r_glCoreProfile;
-extern cvar_t *r_glMinMajorVersion;
-extern cvar_t *r_glMinMinorVersion;
-
 extern cvar_t *r_railCoreWidth;
-
-extern cvar_t *r_verbose;       // used for verbose debug spew
 
 extern cvar_t *r_stencilbits;   // number of desired stencil bits
 extern cvar_t *r_depthbits;     // number of desired depth bits
@@ -3054,7 +3048,6 @@ extern cvar_t *r_lodBias;       // push/pull LOD transitions
 extern cvar_t *r_lodScale;
 extern cvar_t *r_lodTest;
 
-extern cvar_t *r_forceFog;
 extern cvar_t *r_wolfFog;
 extern cvar_t *r_noFog;
 
@@ -3081,15 +3074,11 @@ extern cvar_t *r_drawentities;  // disable/enable entity rendering
 extern cvar_t *r_drawworld;     // disable/enable world rendering
 extern cvar_t *r_drawpolies;    // disable/enable world rendering
 extern cvar_t *r_speeds;        // various levels of information display
+
 extern cvar_t *r_novis;         // disable/enable usage of PVS
-extern cvar_t *r_nocull;
-extern cvar_t *r_facePlaneCull; // enables culling of planar surfaces with back side test
-extern cvar_t *r_nocurves;
-extern cvar_t *r_nobatching;
 extern cvar_t *r_noLightScissors;
 extern cvar_t *r_noLightVisCull;
 extern cvar_t *r_noInteractionSort;
-extern cvar_t *r_showcluster;
 
 extern cvar_t *r_mode;          // video mode
 extern cvar_t *r_fullscreen;
@@ -3287,7 +3276,6 @@ extern cvar_t *r_bloomPasses;
 extern cvar_t *r_rotoscope;
 extern cvar_t *r_cameraPostFX;
 extern cvar_t *r_cameraVignette;
-extern cvar_t *r_cameraFilmGrain;
 extern cvar_t *r_cameraFilmGrainScale;
 
 extern cvar_t *r_evsmPostProcess;
