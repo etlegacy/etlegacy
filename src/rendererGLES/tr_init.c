@@ -1371,8 +1371,6 @@ void R_Init(void)
 	// init the virtual memory
 	R_Hunk_Begin();
 
-	R_InitFogTable();
-
 	R_NoiseInit();
 
 	R_Register();

@@ -866,7 +866,6 @@ void RB_CalcModulateAlphasByFog(unsigned char *colors)
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		//%	float f = 1.0 - R_FogFactor( texCoords[i][0], texCoords[i][1] );'
 		if (texCoords[i][0] <= 0.0f || texCoords[i][1] <= 0.0f)
 		{
 			continue;
@@ -907,7 +906,6 @@ void RB_CalcModulateColorsByFog(unsigned char *colors)
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		//%	float f = 1.0 - R_FogFactor( texCoords[i][0], texCoords[i][1] );
 		if (texCoords[i][0] <= 0.0f || texCoords[i][1] <= 0.0f)
 		{
 			continue;
@@ -952,7 +950,6 @@ void RB_CalcModulateRGBAsByFog(unsigned char *colors)
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		//%	float f = 1.0 - R_FogFactor( texCoords[i][0], texCoords[i][1] );
 		if (texCoords[i][0] <= 0.0f || texCoords[i][1] <= 0.0f)
 		{
 			continue;
