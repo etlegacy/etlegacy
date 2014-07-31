@@ -51,7 +51,7 @@ const attrmap attributeMap[] =
 #undef ATTR_MAP
 };
 
-const int textureMap[] = 
+const int textureMap[] =
 {
 #define TEX_MAP
 #include "tr_glsldef.h"
@@ -1221,18 +1221,18 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 }
 
 #define GLSL_BUFF 64000
-#define GLSL_BUFF_CHAR (sizeof(char)* GLSL_BUFF)
+#define GLSL_BUFF_CHAR (sizeof(char) *GLSL_BUFF)
 
 static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 {
 	static char shaderBuffer[GLSL_BUFF];
-	GLchar *mainBuffer = NULL;
-	int    mainBufferSize = 0;
-	GLchar *ref = NULL;
-	char *filename = NULL;
-	char   *token = NULL;
-	int c = 0, offset = 0;
-	char *output = NULL;
+	GLchar      *mainBuffer    = NULL;
+	int         mainBufferSize = 0;
+	GLchar      *ref           = NULL;
+	char        *filename      = NULL;
+	char        *token         = NULL;
+	int         c              = 0, offset = 0;
+	char        *output        = NULL;
 
 	Com_Memset(shaderBuffer, '\0', GLSL_BUFF_CHAR);
 
@@ -1245,7 +1245,7 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 		filename = (info->fragFilename ? info->fragFilename : info->filename);
 		break;
 	//case GL_TESS_CONTROL_SHADER:
-		//break;
+	//break;
 	default:
 		return NULL;
 	}
@@ -1264,7 +1264,6 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 				ref++;
 			}
 		}
-
 		// skip /* */ comments
 		else if (c == '/' && ref[1] == '*')
 		{
@@ -1278,7 +1277,6 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 				ref += 2;
 			}
 		}
-
 		//We found a # command
 		else if (c == '#')
 		{
@@ -1290,7 +1288,7 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 			if (!Q_stricmp(token, "include"))
 			{
 				//handle include
-				GLchar *libBuffer = NULL;
+				GLchar *libBuffer    = NULL;
 				int    libBufferSize = 0;
 
 				token = COM_ParseExt2(&ref, qfalse);
@@ -1301,13 +1299,12 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 			}
 			else
 			{
-				ref = ref2;
+				ref                  = ref2;
 				shaderBuffer[offset] = c;
 			}
 
 			offset = strlen(shaderBuffer);
 		}
-
 		//Just add the char to the buffer
 		else
 		{
@@ -1320,7 +1317,7 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 
 	Com_Dealloc(mainBuffer);
 	Ren_Print(shaderBuffer);
-	Ren_Fatal("JEPAJEPA %i",strlen(shaderBuffer));
+	Ren_Fatal("JEPAJEPA %i", strlen(shaderBuffer));
 
 	output = Com_Allocate(strlen(shaderBuffer) * sizeof(char) + 1);
 	strcpy(output, shaderBuffer);
@@ -1887,7 +1884,7 @@ static qboolean GLSL_GetProgramPermutation(programInfo_t *info, int permutation,
 
 static void GLSL_SetTextureUnitBindings(programInfo_t *info, int permutation)
 {
-	int i,j;
+	int             i, j;
 	shaderProgram_t *program = &info->list->programs[permutation];
 
 	for (i = 0, j = 0; i < TEX_COUNT; i++)
