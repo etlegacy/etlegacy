@@ -1009,22 +1009,17 @@ void GL_SetDefaultState(void)
 	// in a multitexture environment
 	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
-		for (i = 31; i >= 0; i--)
-		{
-			GL_SelectTexture(i);
-			GL_TextureMode(r_textureMode->string);
-		}
+		i = 31;
 	}
-	else
+	else if (GLEW_ARB_multitexture)
 	{
-		if (GLEW_ARB_multitexture)
-		{
-			for (i = glConfig.maxActiveTextures - 1; i >= 0; i--)
-			{
-				GL_SelectTexture(i);
-				GL_TextureMode(r_textureMode->string);
-			}
-		}
+		i = glConfig.maxActiveTextures - 1;
+	}
+
+	for (; i >= 0; i--)
+	{
+		GL_SelectTexture(i);
+		GL_TextureMode(r_textureMode->string);
 	}
 
 	GL_CheckErrors();
