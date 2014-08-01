@@ -1908,8 +1908,6 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.ClearDecals            = RE_ClearDecals;
 	re.DrawDebugPolygon       = R_DebugPolygon;
 	re.DrawDebugText          = R_DebugText;
-	re.SaveViewParms          = RE_SaveViewParms;
-	re.RestoreViewParms       = RE_RestoreViewParms;
 	re.AddCoronaToScene       = RE_AddCoronaToScene;
 	re.AddPolyBufferToScene   = RE_AddPolyBufferToScene;
 	re.SetFog                 = RE_SetFog;
