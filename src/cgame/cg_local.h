@@ -2903,13 +2903,6 @@ void trap_R_RemapShader(const char *oldShader, const char *newShader, const char
 
 // Save out the old render info so we don't kill the LOD system here
 void trap_R_SaveViewParms(void);
-
-// Reset the view parameters
-void trap_R_RestoreViewParms(void);
-
-// Save out the old render info so we don't kill the LOD system here
-void trap_R_SaveViewParms(void);
-
 // Reset the view parameters
 void trap_R_RestoreViewParms(void);
 
