@@ -812,10 +812,8 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		re.RenderScene(VMA(1));
 		return 0;
 	case CG_R_SAVEVIEWPARMS:
-		re.SaveViewParms();
 		return 0;
 	case CG_R_RESTOREVIEWPARMS:
-		re.RestoreViewParms();
 		return 0;
 	case CG_R_SETCOLOR:
 		re.SetColor(VMA(1));

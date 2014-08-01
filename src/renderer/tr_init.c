@@ -1585,8 +1585,6 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.SetFog           = R_SetFog;
 
 	re.RenderScene      = RE_RenderScene;
-	re.SaveViewParms    = RE_SaveViewParms;
-	re.RestoreViewParms = RE_RestoreViewParms;
 
 	re.SetColor               = RE_SetColor;
 	re.DrawStretchPic         = RE_StretchPic;

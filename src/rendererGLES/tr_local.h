@@ -1605,8 +1605,6 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
 
 void RE_RenderScene(const refdef_t *fd);
-void RE_SaveViewParms(void);
-void RE_RestoreViewParms(void);
 
 /*
 =============================================================
