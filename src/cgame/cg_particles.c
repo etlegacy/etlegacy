@@ -1319,33 +1319,29 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 	}
 	else   // black smoke
 	{
-		int rval = rand() % 6;
-
 		p->rotate    = qtrue;
 		p->height    = cent->currentState.angles2[0];
 		p->width     = cent->currentState.angles2[0];
 		p->endheight = cent->currentState.angles2[1];
 		p->endwidth  = cent->currentState.angles2[1];
 
-		if (rval == 1)
+		switch (rand() % 6)
 		{
+		case 1:
 			p->pshader = cgs.media.smokePuffShaderb1;
-		}
-		else if (rval == 2)
-		{
+			break;
+		case 2:
 			p->pshader = cgs.media.smokePuffShaderb2;
-		}
-		else if (rval == 3)
-		{
+			break;
+		case 3:
 			p->pshader = cgs.media.smokePuffShaderb3;
-		}
-		else if (rval == 4)
-		{
+			break;
+		case 4:
 			p->pshader = cgs.media.smokePuffShaderb4;
-		}
-		else
-		{
+			break;
+		default:
 			p->pshader = cgs.media.smokePuffShaderb5;
+			break;
 		}
 	}
 
