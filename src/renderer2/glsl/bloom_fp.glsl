@@ -27,7 +27,7 @@ void main()
 	discard;
 }
 #else
-void    main()
+void main()
 {
 	vec2 st = gl_FragCoord.st;
 

@@ -1015,6 +1015,10 @@ void GL_SetDefaultState(void)
 	{
 		i = glConfig.maxActiveTextures - 1;
 	}
+    else
+    {
+        i = 0;
+    }
 
 	for (; i >= 0; i--)
 	{
@@ -1734,7 +1738,7 @@ void R_Init(void)
 		glGenQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
 	}
 
-	GLSL_CompileGPUShaders();
+    GLSL_CompileGPUShaders();
 
 	GL_CheckErrors();
 

@@ -452,13 +452,11 @@ static qboolean GLimp_InitOpenGL3xContext()
 #elif defined(__APPLE__) && 0
 	CGLPixelFormatObj       pix;
 	GLint                   npix;
+
+    //Create a 3.2 or newer context
 	CGLPixelFormatAttribute attribs[] =
 	{
-		/*
-		kCGLPFAOpenGLProfile, kCGLOGLPVersion_3_2_Core,
-		0
-		*/
-		kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_3_2_Core, // This sets the context to 3.2
+        kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_GL3_Core,
 		kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
 		kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
 		kCGLPFAAccelerated,
@@ -469,8 +467,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 	};
 
 	CGLDestroyContext(opengl_context);
-
-	//opengl_context = 0;
+    opengl_context = 0;
 
 	CGLChoosePixelFormat(attribs, &pix, &npix);
 
@@ -1822,6 +1819,10 @@ success:
 #ifdef FEATURE_RENDERER2
 	GLimp_SetHardware();
 	GLimp_InitExtensions2(); // renderer2
+
+    //Initialize glew with the new contextes pointers
+    glewExperimental = GL_TRUE;
+    glewInit();
 #else
 	// initialize extensions
 	GLimp_InitExtensions(); // vanilla renderer
