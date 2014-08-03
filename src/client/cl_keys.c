@@ -32,12 +32,7 @@
  */
 
 #include "client.h"
-
-#ifdef BUNDLED_SDL
-#    include "SDL_video.h"
-#else
-#    include <SDL2/SDL_video.h>
-#endif
+#include "../sdl/sdl_defs.h"
 
 // @todo SDL 2.0 window pointer from sdl_glimp.c
 extern SDL_Window *screen;

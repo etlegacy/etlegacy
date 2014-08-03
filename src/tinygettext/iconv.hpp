@@ -19,8 +19,8 @@
 
 #include <string>
 
-#ifdef BUNDLED_SDL // Using SDL iconv
-#  include "SDL.h"
+#if defined(BUNDLED_SDL) || __APPLE__ // Using SDL iconv
+#  include "../sdl/sdl_defs.h"
 
 #  define tinygettext_ICONV_CONST const
 #  define tinygettext_iconv_t     SDL_iconv_t
