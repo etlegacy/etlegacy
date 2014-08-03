@@ -111,8 +111,13 @@ cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			
 IF(NOT CMAKE_BUILD_TYPE)
     #SET(CMAKE_BUILD_TYPE "Debug")
     SET(CMAKE_BUILD_TYPE "Release")
-    MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}") 
+    MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}")
 ENDIF(NOT CMAKE_BUILD_TYPE)
+
+STRING(TOLOWER "${CMAKE_BUILD_TYPE}" buildtype_lower)
+IF(buildtype_lower STREQUAL "debug")
+	add_definitions(-DLEGACY_DEBUG=1)
+ENDIF(buildtype_lower STREQUAL "debug")
 
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -888,7 +893,7 @@ if(BUILD_CLIENT)
 		
 		# increased default hunkmegs value
 		add_definitions(-DFEATURE_INC_HUNKMEGS)
-		add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON})
+		add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
 		if(BUNDLED_SDL)
 			add_dependencies(renderer_opengl2_${ARCH} bundled_sdl)
 		endif(BUNDLED_SDL)
