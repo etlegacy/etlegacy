@@ -1504,8 +1504,7 @@ static qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	int          imageBits = 0;
 	filterType_t filterType;
 	wrapType_t   wrapType;
-	//qboolean     uncompressed;
-	char *buffer_p = &buffer[0];
+	char         *buffer_p = &buffer[0];
 
 	if (!buffer || !buffer[0])
 	{
@@ -1642,7 +1641,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		{
 			if (!ParseMap(stage, text, buffer, sizeof(buffer)))
 			{
-				//Ren_Warning( "WARNING: ParseMap could not create '%s' in shader '%s'\n", token, shader.name);
+				Ren_Warning("WARNING: ParseMap could not create '%s' in shader '%s'\n", token, shader.name);
 				return qfalse;
 			}
 			else
@@ -1655,7 +1654,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		{
 			if (!ParseMap(stage, text, buffer, sizeof(buffer)))
 			{
-				//Ren_Warning( "WARNING: ParseMap could not create '%s' in shader '%s'\n", token, shader.name);
+				Ren_Warning("WARNING: ParseMap could not create '%s' in shader '%s'\n", token, shader.name);
 				return qfalse;
 			}
 			else
@@ -3740,6 +3739,7 @@ static qboolean ParseShader(char *_text)
 
 			if (!ParseStage(&stages[s], text))
 			{
+				Ren_Warning("WARNING: can't parse stages of shader %s @[%.50s ...]\n", shader.name, _text);
 				return qfalse;
 			}
 			stages[s].active = qtrue;
