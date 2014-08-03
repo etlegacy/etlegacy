@@ -742,12 +742,22 @@ void *Sys_LoadGameDll(const char *name,
 	}
 #endif
 
-	libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
+#ifdef LEGACY_DEBUG
+    //If we are doing a debug build, then load the game libraries from the build directory (basepath)
+    libHandle = Sys_TryLibraryLoad(basepath, gamedir, fname);
 
-	if (!libHandle && basepath)
-	{
-		libHandle = Sys_TryLibraryLoad(basepath, gamedir, fname);
-	}
+    if (!libHandle && homepath)
+    {
+        libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
+    }
+#else
+    libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
+
+    if (!libHandle && basepath)
+    {
+        libHandle = Sys_TryLibraryLoad(basepath, gamedir, fname);
+    }
+#endif
 
 #ifndef DEDICATED
 	// According to the code above, if the server is not pure, then the
