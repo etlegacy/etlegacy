@@ -20,7 +20,7 @@
 #include <string>
 
 #if defined(BUNDLED_SDL) || __APPLE__ // Using SDL iconv
-#  include "../sdl/sdl_defs.h"
+#  include "SDL.h"
 
 #  define tinygettext_ICONV_CONST const
 #  define tinygettext_iconv_t     SDL_iconv_t

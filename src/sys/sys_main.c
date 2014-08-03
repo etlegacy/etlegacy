@@ -441,8 +441,6 @@ void Sys_Error(const char *error, ...)
 	Sys_SetErrorText(string);
 	Sys_ShowConsole(1, qtrue);
 
-	timeEndPeriod(1);
-
 	IN_Shutdown();
 
 	// wait for the user to quit

@@ -267,9 +267,10 @@ static void GLimp_InitExtensions2(void)
 	static char missingExts[60000];
 	missingExts[0] = 0;
 
-#define MissingEXT(x) Ren_Print("Line: %i\n",__LINE__);Q_strcat(missingExts, sizeof(missingExts), x)
+#define MissingEXT(x) Q_strcat(missingExts, sizeof(missingExts), x)
 
 	Ren_Print("Initializing OpenGL extensions\n");
+	Ren_Print("Extensions %s\n", glConfig.extensions_string);
 
 	// GL_ARB_multitexture
 	if (glConfig.driverType != GLDRV_OPENGL3)
@@ -1584,6 +1585,22 @@ success:
 	if (glConfig.driverType != GLDRV_OPENGL3)
 	{
 		Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+	}
+	else
+	{
+		int i = 0, exts = 0;
+		glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
+		glConfig.extensions_string[0] = 0;
+		for (i = 0; i < exts; i++)
+		{
+			if (strlen(glConfig.extensions_string) + 100 >= sizeof(glConfig.extensions_string))
+			{
+				//Just so we wont error out when there are really a lot of extensions
+				break;
+			}
+
+			Q_strcat(glConfig.extensions_string, sizeof(glConfig.extensions_string), va("%s ", glGetStringi(GL_EXTENSIONS, i)));
+		}
 	}
 
 #ifdef FEATURE_RENDERER2

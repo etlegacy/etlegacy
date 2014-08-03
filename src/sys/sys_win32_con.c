@@ -822,6 +822,11 @@ Sys_ShowConsole
 */
 void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 {
+	if (quitOnClose)
+	{
+		timeEndPeriod(1);
+	}
+
 	s_wcd.quitOnClose = quitOnClose;
 
 	if (visLevel == s_wcd.visLevel)
