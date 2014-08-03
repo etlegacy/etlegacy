@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -52,6 +52,7 @@ struct Library *DynLoadBase = NULL;
 #endif
 
 #ifndef DEDICATED
+//#include "../sdl/sdl_defs.h"
 #    ifdef BUNDLED_SDL
 #        include "SDL.h"
 #        include "SDL_cpuinfo.h"
@@ -245,37 +246,6 @@ void Sys_Quit(void)
 #if defined (USE_WINDOWS_CONSOLE)
 	Sys_DestroyConsole();
 #endif
-}
-
-/*
-=================
-Sys_GetProcessorFeatures
-=================
-*/
-cpuFeatures_t Sys_GetProcessorFeatures(void)
-{
-	cpuFeatures_t features = 0;
-
-#ifndef DEDICATED
-	if (SDL_HasRDTSC())
-	{
-		features |= CF_RDTSC;
-	}
-	if (SDL_HasMMX())
-	{
-		features |= CF_MMX;
-	}
-	if (SDL_HasSSE())
-	{
-		features |= CF_SSE;
-	}
-	if (SDL_HasSSE2())
-	{
-		features |= CF_SSE2;
-	}
-#endif
-
-	return features;
 }
 
 /*

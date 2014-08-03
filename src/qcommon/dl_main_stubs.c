@@ -49,6 +49,11 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 	return 1;
 }
 
+char *DL_GetString(const char *url)
+{
+	return 0;
+}
+
 // (maybe this should be CL_DL_DownloadLoop)
 dlStatus_t DL_DownloadLoop(void)
 {

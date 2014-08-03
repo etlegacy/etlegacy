@@ -54,11 +54,11 @@ static void GetChunkHeader(memStream_t *s, axChunkHeader_t *chunkHeader)
 static void PrintChunkHeader(axChunkHeader_t *chunkHeader)
 {
 #if 0
-	ri.Printf(PRINT_ALL, "----------------------\n");
-	ri.Printf(PRINT_ALL, "R_LoadPSK: chunk header ident: '%s'\n", chunkHeader->ident);
-	ri.Printf(PRINT_ALL, "R_LoadPSK: chunk header flags: %i\n", chunkHeader->flags);
-	ri.Printf(PRINT_ALL, "R_LoadPSK: chunk header data size: %i\n", chunkHeader->dataSize);
-	ri.Printf(PRINT_ALL, "R_LoadPSK: chunk header num items: %i\n", chunkHeader->numData);
+	Ren_Print("----------------------\n");
+	Ren_Print("R_LoadPSK: chunk header ident: '%s'\n", chunkHeader->ident);
+	Ren_Print("R_LoadPSK: chunk header flags: %i\n", chunkHeader->flags);
+	Ren_Print("R_LoadPSK: chunk header data size: %i\n", chunkHeader->dataSize);
+	Ren_Print("R_LoadPSK: chunk header num items: %i\n", chunkHeader->numData);
 #endif
 }
 
@@ -174,7 +174,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// check indent again
 	if (Q_strnicmp(chunkHeader.ident, "ACTRHEAD", 8))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "ACTRHEAD");
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "ACTRHEAD");
 		DeallocAll();
 		return qfalse;
 	}
@@ -190,14 +190,14 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_strnicmp(chunkHeader.ident, "PNTS0000", 8))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "PNTS0000");
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "PNTS0000");
 		DeallocAll();
 		return qfalse;
 	}
 
 	if (chunkHeader.dataSize != sizeof(axPoint_t))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axPoint_t));
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axPoint_t));
 		DeallocAll();
 		return qfalse;
 	}
@@ -214,7 +214,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		point->point[2] = MemStreamGetFloat(stream);
 
 #if 0
-		// Tr3B: HACK convert from Unreal coordinate system to the Quake one
+		// HACK convert from Unreal coordinate system to the Quake one
 		MatrixTransformPoint2(unrealToQuake, point->point);
 #endif
 	}
@@ -224,14 +224,14 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_strnicmp(chunkHeader.ident, "VTXW0000", 8))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "VTXW0000");
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "VTXW0000");
 		DeallocAll();
 		return qfalse;
 	}
 
 	if (chunkHeader.dataSize != sizeof(axVertex_t))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axVertex_t));
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axVertex_t));
 		DeallocAll();
 		return qfalse;
 	}
@@ -259,50 +259,50 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			tmpVertexInt = MemStreamGetShort(stream);
 			if (tmpVertexInt < 0)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->unknownA)\n");
+				Ren_Warning("R_LoadPSK: MemStream NULL or empty (vertex->unknownA)\n");
 			}
 			vertex->unknownA = tmpVertexInt;
 
 			vertex->st[0] = MemStreamGetFloat(stream);
 			if (vertex->st[0] == -1)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream possibly NULL or empty (vertex->st[0])\n");
+				Ren_Warning("R_LoadPSK: MemStream possibly NULL or empty (vertex->st[0])\n");
 			}
 
 			vertex->st[1] = MemStreamGetFloat(stream);
 			if (vertex->st[1] == -1)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream possibly NULL or empty (vertex->st[1])\n");
+				Ren_Warning("R_LoadPSK: MemStream possibly NULL or empty (vertex->st[1])\n");
 			}
 
 			tmpVertexInt = MemStreamGetC(stream);
 			if (tmpVertexInt < 0)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
+				Ren_Warning("R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
 			}
 			vertex->materialIndex = tmpVertexInt;
 
 			tmpVertexInt = MemStreamGetC(stream);
 			if (tmpVertexInt < 0)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
+				Ren_Warning("R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
 			}
 			vertex->reserved = tmpVertexInt;
 
 			tmpVertexInt = MemStreamGetShort(stream);
 			if (tmpVertexInt < 0)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
+				Ren_Warning("R_LoadPSK: MemStream NULL or empty (vertex->materialIndex)\n");
 			}
 			vertex->unknownB = tmpVertexInt;
 #if 0
-			ri.Printf(PRINT_ALL, "R_LoadPSK: axVertex_t(%i):\n"
-			                     "axVertex:pointIndex: %i\n"
-			                     "axVertex:unknownA: %i\n"
-			                     "axVertex::st: %f %f\n"
-			                     "axVertex:materialIndex: %i\n"
-			                     "axVertex:reserved: %d\n"
-			                     "axVertex:unknownB: %d\n",
+			Ren_Print("R_LoadPSK: axVertex_t(%i):\n"
+			          "axVertex:pointIndex: %i\n"
+			          "axVertex:unknownA: %i\n"
+			          "axVertex::st: %f %f\n"
+			          "axVertex:materialIndex: %i\n"
+			          "axVertex:reserved: %d\n"
+			          "axVertex:unknownB: %d\n",
 			          i,
 			          vertex->pointIndex,
 			          vertex->unknownA,
@@ -319,14 +319,14 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_strnicmp(chunkHeader.ident, "FACE0000", 8))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "FACE0000");
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "FACE0000");
 		DeallocAll();
 		return qfalse;
 	}
 
 	if (chunkHeader.dataSize != sizeof(axTriangle_t))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axTriangle_t));
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axTriangle_t));
 		DeallocAll();
 		return qfalse;
 	}
@@ -345,7 +345,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (triangle->indexes[j] < 0 || triangle->indexes[j] >= numVertexes)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has triangle with vertex index out of range (%i while max %i)\n", modName, triangle->indexes[j], numVertexes);
+				Ren_Warning("R_LoadPSK: '%s' has triangle with vertex index out of range (%i while max %i)\n", modName, triangle->indexes[j], numVertexes);
 				DeallocAll();
 				return qfalse;
 			}
@@ -361,14 +361,14 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_strnicmp(chunkHeader.ident, "MATT0000", 8))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "MATT0000");
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "MATT0000");
 		DeallocAll();
 		return qfalse;
 	}
 
 	if (chunkHeader.dataSize != sizeof(axMaterial_t))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axMaterial_t));
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axMaterial_t));
 		DeallocAll();
 		return qfalse;
 	}
@@ -382,7 +382,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	{
 		MemStreamRead(stream, material->name, sizeof(material->name));
 
-		ri.Printf(PRINT_ALL, "R_LoadPSK: material name: '%s'\n", material->name);
+		Ren_Print("R_LoadPSK: material name: '%s'\n", material->name);
 
 		material->shaderIndex = MemStreamGetLong(stream);
 		material->polyFlags   = MemStreamGetLong(stream);
@@ -396,7 +396,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	{
 		if (vertex->materialIndex < 0 || vertex->materialIndex >= numMaterials)
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has vertex with material index out of range (%i while max %i)\n", modName, vertex->materialIndex, numMaterials);
+			Ren_Warning("R_LoadPSK: '%s' has vertex with material index out of range (%i while max %i)\n", modName, vertex->materialIndex, numMaterials);
 			DeallocAll();
 			return qfalse;
 		}
@@ -406,7 +406,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	{
 		if (triangle->materialIndex < 0 || triangle->materialIndex >= numMaterials)
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has triangle with material index out of range (%i while max %i)\n", modName, triangle->materialIndex, numMaterials);
+			Ren_Warning("R_LoadPSK: '%s' has triangle with material index out of range (%i while max %i)\n", modName, triangle->materialIndex, numMaterials);
 			DeallocAll();
 			return qfalse;
 		}
@@ -417,14 +417,14 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_strnicmp(chunkHeader.ident, "REFSKELT", 8))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "REFSKELT");
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "REFSKELT");
 		DeallocAll();
 		return qfalse;
 	}
 
 	if (chunkHeader.dataSize != sizeof(axReferenceBone_t))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axReferenceBone_t));
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axReferenceBone_t));
 		DeallocAll();
 		return qfalse;
 	}
@@ -438,7 +438,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	{
 		MemStreamRead(stream, refBone->name, sizeof(refBone->name));
 
-		//ri.Printf(PRINT_ALL, "R_LoadPSK: reference bone name: '%s'\n", refBone->name);
+		//Ren_Print("R_LoadPSK: reference bone name: '%s'\n", refBone->name);
 
 		refBone->flags       = MemStreamGetLong(stream);
 		refBone->numChildren = MemStreamGetLong(stream);
@@ -447,17 +447,17 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		GetBone(stream, &refBone->bone);
 
 #if 0
-		ri.Printf(PRINT_ALL, "R_LoadPSK: axReferenceBone_t(%i):\n"
-		                     "axReferenceBone_t::name: '%s'\n"
-		                     "axReferenceBone_t::flags: %i\n"
-		                     "axReferenceBone_t::numChildren %i\n"
-		                     "axReferenceBone_t::parentIndex: %i\n"
-		                     "axReferenceBone_t::quat: %f %f %f %f\n"
-		                     "axReferenceBone_t::position: %f %f %f\n"
-		                     "axReferenceBone_t::length: %f\n"
-		                     "axReferenceBone_t::xSize: %f\n"
-		                     "axReferenceBone_t::ySize: %f\n"
-		                     "axReferenceBone_t::zSize: %f\n",
+		Ren_Print("R_LoadPSK: axReferenceBone_t(%i):\n"
+		          "axReferenceBone_t::name: '%s'\n"
+		          "axReferenceBone_t::flags: %i\n"
+		          "axReferenceBone_t::numChildren %i\n"
+		          "axReferenceBone_t::parentIndex: %i\n"
+		          "axReferenceBone_t::quat: %f %f %f %f\n"
+		          "axReferenceBone_t::position: %f %f %f\n"
+		          "axReferenceBone_t::length: %f\n"
+		          "axReferenceBone_t::xSize: %f\n"
+		          "axReferenceBone_t::ySize: %f\n"
+		          "axReferenceBone_t::zSize: %f\n",
 		          i,
 		          refBone->name,
 		          refBone->flags,
@@ -477,14 +477,14 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_strnicmp(chunkHeader.ident, "RAWWEIGHTS", 10))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "RAWWEIGHTS");
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "RAWWEIGHTS");
 		DeallocAll();
 		return qfalse;
 	}
 
 	if (chunkHeader.dataSize != sizeof(axBoneWeight_t))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axBoneWeight_t));
+		Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axBoneWeight_t));
 		DeallocAll();
 		return qfalse;
 	}
@@ -501,10 +501,10 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		axWeight->boneIndex  = MemStreamGetLong(stream);
 
 #if 0
-		ri.Printf(PRINT_ALL, "R_LoadPSK: axBoneWeight_t(%i):\n"
-		                     "axBoneWeight_t::weight: %f\n"
-		                     "axBoneWeight_t::pointIndex %i\n"
-		                     "axBoneWeight_t::boneIndex: %i\n",
+		Ren_Print("R_LoadPSK: axBoneWeight_t(%i):\n"
+		          "axBoneWeight_t::weight: %f\n"
+		          "axBoneWeight_t::pointIndex %i\n"
+		          "axBoneWeight_t::boneIndex: %i\n",
 		          i,
 		          axWeight->weight,
 		          axWeight->pointIndex,
@@ -532,19 +532,19 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (md5->numBones < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has no bones\n", modName);
+		Ren_Warning("R_LoadPSK: '%s' has no bones\n", modName);
 		DeallocAll();
 		return qfalse;
 	}
 
 	if (md5->numBones > MAX_BONES)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadPSK: '%s' has more than %i bones (%i)\n", modName, MAX_BONES, md5->numBones);
+		Ren_Warning("R_LoadPSK: '%s' has more than %i bones (%i)\n", modName, MAX_BONES, md5->numBones);
 		DeallocAll();
 		return qfalse;
 	}
 
-	//ri.Printf(PRINT_ALL, "R_LoadPSK: '%s' has %i bones\n", modName, md5->numBones);
+	//Ren_Print("R_LoadPSK: '%s' has %i bones\n", modName, md5->numBones);
 
 	// copy all reference bones
 	md5->bones = ri.Hunk_Alloc(sizeof(*md5Bone) * md5->numBones, h_low);
@@ -562,12 +562,12 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			md5Bone->parentIndex = refBone->parentIndex;
 		}
 
-		//ri.Printf(PRINT_ALL, "R_LoadPSK: '%s' has bone '%s' with parent index %i\n", modName, md5Bone->name, md5Bone->parentIndex);
+		//Ren_Print("R_LoadPSK: '%s' has bone '%s' with parent index %i\n", modName, md5Bone->name, md5Bone->parentIndex);
 
 		if (md5Bone->parentIndex >= md5->numBones)
 		{
 			DeallocAll();
-			ri.Error(ERR_DROP, "R_LoadPSK: '%s' has bone '%s' with bad parent index %i while numBones is %i", modName,
+			Ren_Drop("R_LoadPSK: '%s' has bone '%s' with bad parent index %i while numBones is %i", modName,
 			         md5Bone->name, md5Bone->parentIndex, md5->numBones);
 		}
 
@@ -576,7 +576,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			boneOrigin[j] = refBone->bone.position[j];
 		}
 
-		// Tr3B: I have really no idea why the .psk format stores the first quaternion with inverted quats.
+		// I have really no idea why the .psk format stores the first quaternion with inverted quats.
 		// Furthermore only the X and Z components of the first quat are inverted ?!?!
 		if (i == 0)
 		{
@@ -601,11 +601,11 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		//QuatClear(md5Bone->rotation);
 
 #if 0
-		ri.Printf(PRINT_ALL, "R_LoadPSK: md5Bone_t(%i):\n"
-		                     "md5Bone_t::name: '%s'\n"
-		                     "md5Bone_t::parentIndex: %i\n"
-		                     "md5Bone_t::quat: %f %f %f %f\n"
-		                     "md5bone_t::position: %f %f %f\n",
+		Ren_Print("R_LoadPSK: md5Bone_t(%i):\n"
+		          "md5Bone_t::name: '%s'\n"
+		          "md5Bone_t::parentIndex: %i\n"
+		          "md5Bone_t::quat: %f %f %f %f\n"
+		          "md5bone_t::position: %f %f %f\n",
 		          i,
 		          md5Bone->name,
 		          md5Bone->parentIndex,
@@ -635,11 +635,11 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		MatrixInverse(md5Bone->inverseTransform);
 
 #if 0
-		ri.Printf(PRINT_ALL, "R_LoadPSK: md5Bone_t(%i):\n"
-		                     "md5Bone_t::name: '%s'\n"
-		                     "md5Bone_t::parentIndex: %i\n"
-		                     "md5Bone_t::quat: %f %f %f %f\n"
-		                     "md5bone_t::position: %f %f %f\n",
+		Ren_Print("R_LoadPSK: md5Bone_t(%i):\n"
+		          "md5Bone_t::name: '%s'\n"
+		          "md5Bone_t::parentIndex: %i\n"
+		          "md5Bone_t::quat: %f %f %f %f\n"
+		          "md5bone_t::position: %f %f %f\n",
 		          i,
 		          md5Bone->name,
 		          md5Bone->parentIndex,
@@ -676,8 +676,8 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		if (vboVert->numWeights > MAX_WEIGHTS)
 		{
 			DeallocAll();
-			ri.Error(ERR_DROP, "R_LoadPSK: vertex %i requires more weights %i than the maximum of %i in model '%s'", i, vboVert->numWeights, MAX_WEIGHTS, modName);
-			//ri.Printf(PRINT_WARNING, "R_LoadPSK: vertex %i requires more weights %i than the maximum of %i in model '%s'\n", i, vboVert->numWeights, MAX_WEIGHTS, modName);
+			Ren_Drop("R_LoadPSK: vertex %i requires more weights %i than the maximum of %i in model '%s'", i, vboVert->numWeights, MAX_WEIGHTS, modName);
+			//Ren_Warning( "R_LoadPSK: vertex %i requires more weights %i than the maximum of %i in model '%s'\n", i, vboVert->numWeights, MAX_WEIGHTS, modName);
 		}
 
 		vboVert->weights = ri.Hunk_Alloc(sizeof(*vboVert->weights) * vboVert->numWeights, h_low);
@@ -711,7 +711,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 
 #if 0
-	ri.Printf(PRINT_ALL, "R_LoadPSK: AABB (%i %i %i) (%i %i %i)\n",
+	Ren_Print("R_LoadPSK: AABB (%i %i %i) (%i %i %i)\n",
 	          ( int ) md5->bounds[0][0],
 	          ( int ) md5->bounds[0][1],
 	          ( int ) md5->bounds[0][2],
@@ -983,13 +983,13 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				{
 					if (boneReferences[j] > 0)
 					{
-						ri.Printf(PRINT_ALL, "R_LoadPSK: referenced bone: '%s'\n", (j < numReferenceBones) ? refBones[j].name : NULL);
+						Ren_Print("R_LoadPSK: referenced bone: '%s'\n", (j < numReferenceBones) ? refBones[j].name : NULL);
 					}
 				}
 
 				if (!vboTriangles.currentElements)
 				{
-					ri.Printf(PRINT_WARNING, "R_LoadPSK: could not add triangles to a remaining VBO surface for model '%s'\n", modName);
+					Ren_Warning("R_LoadPSK: could not add triangles to a remaining VBO surface for model '%s'\n", modName);
 					break;
 				}
 
@@ -1035,7 +1035,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	Com_Dealloc(triangles);
 	Com_Dealloc(materials);
 
-	ri.Printf(PRINT_DEVELOPER, "%i VBO surfaces created for PSK model '%s'\n", md5->numVBOSurfaces, modName);
+	Ren_Developer("%i VBO surfaces created for PSK model '%s'\n", md5->numVBOSurfaces, modName);
 
 	return qtrue;
 }

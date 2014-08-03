@@ -101,7 +101,7 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y);
 #define MEM_POOL_SIZE  1536 * 1024  // was 1024
 #endif
 
-//Is this diffevent in other systems? OSX?
+// Is this diffevent in other systems? OSX?
 #define K_CLIPBOARD(x) (tolower(x) == 'v' && DC->keyIsDown(K_CTRL))
 
 static char memoryPool[MEM_POOL_SIZE];
@@ -2678,7 +2678,7 @@ float Item_Slider_ThumbPosition(itemDef_t *item)
 		x = item->window.rect.x;
 	}
 
-	if (editDef == NULL && item->cvar)
+	if (!editDef || !item->cvar)
 	{
 		return x;
 	}

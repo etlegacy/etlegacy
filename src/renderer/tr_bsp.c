@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -251,7 +251,7 @@ static void R_LoadLightmaps(lump_t *l)
 
 	if (r_lightmap->integer > 1)
 	{
-		ri.Printf(PRINT_ALL, "Brightest lightmap value: %d\n", ( int ) (maxIntensity * 255));
+		Ren_Print("Brightest lightmap value: %d\n", ( int ) (maxIntensity * 255));
 	}
 }
 
@@ -325,7 +325,7 @@ static shader_t *ShaderForShaderNum(int shaderNum, int lightmapNum)
 
 	if (shaderNum < 0 || shaderNum >= s_worldData.numShaders)
 	{
-		ri.Error(ERR_DROP, "ShaderForShaderNum: bad num %i", shaderNum);
+		Ren_Drop("ShaderForShaderNum: bad num %i", shaderNum);
 	}
 	dsh = &s_worldData.shaders[shaderNum];
 
@@ -560,7 +560,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 		tri->indexes[i] = LittleLong(indexes[i]);
 		if (tri->indexes[i] < 0 || tri->indexes[i] >= numVerts)
 		{
-			ri.Error(ERR_DROP, "Bad index in triangle surface");
+			Ren_Drop("Bad index in triangle surface");
 		}
 	}
 
@@ -667,7 +667,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 		foliage->indexes[i] = LittleLong(indexes[i]);
 		if (foliage->indexes[i] >= numVerts)
 		{
-			ri.Error(ERR_DROP, "Bad index in triangle surface");
+			Ren_Drop("Bad index in triangle surface");
 		}
 	}
 
@@ -1829,7 +1829,7 @@ void R_StitchAllPatches(void)
 		}
 	}
 	while (stitched);
-	ri.Printf(PRINT_ALL, "stitched %d LoD cracks\n", numstitches);
+	Ren_Print("stitched %d LoD cracks\n", numstitches);
 }
 
 /*
@@ -1886,20 +1886,20 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	in = ( void * )(fileBase + surfs->fileofs);
 	if (surfs->filelen % sizeof(*in))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	count = surfs->filelen / sizeof(*in);
 
 	dv = ( void * )(fileBase + verts->fileofs);
 	if (verts->filelen % sizeof(*dv))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 
 	indexes = ( void * )(fileBase + indexLump->fileofs);
 	if (indexLump->filelen % sizeof(*indexes))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 
 	out = ri.Hunk_Alloc(count * sizeof(*out), h_low);
@@ -1938,7 +1938,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			numFoliage++;
 			break;
 		default:
-			ri.Error(ERR_DROP, "Bad surfaceType");
+			Ren_Drop("Bad surfaceType");
 			break;
 		}
 	}
@@ -1953,7 +1953,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	R_MovePatchSurfacesToHunk();
 #endif
 
-	ri.Printf(PRINT_ALL, "...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliage\n",
+	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliage\n",
 	          numFaces, numMeshes, numTriSurfs, numFlares, numFoliage);
 }
 
@@ -1971,7 +1971,7 @@ static void R_LoadSubmodels(lump_t *l)
 	in = ( void * )(fileBase + l->fileofs);
 	if (l->filelen % sizeof(*in))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	count = l->filelen / sizeof(*in);
 
@@ -2062,10 +2062,8 @@ static void R_SetParent(mnode_t *node, mnode_t *parent)
 	R_SetParent(node->children[1], node);
 
 	// surface bounds
-	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
-	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
-	AddPointToBounds(node->children[1]->surfMins, node->surfMins, node->surfMaxs);
-	AddPointToBounds(node->children[1]->surfMaxs, node->surfMins, node->surfMaxs);
+	BoundsAdd(node->surfMins, node->surfMaxs, node->children[0]->surfMins, node->children[0]->surfMaxs);
+	BoundsAdd(node->surfMins, node->surfMaxs, node->children[1]->surfMins, node->children[1]->surfMaxs);
 }
 
 /*
@@ -2085,7 +2083,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 	if (nodeLump->filelen % sizeof(dnode_t) ||
 	    leafLump->filelen % sizeof(dleaf_t))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	numNodes = nodeLump->filelen / sizeof(dnode_t);
 	numLeafs = leafLump->filelen / sizeof(dleaf_t);
@@ -2177,7 +2175,7 @@ static void R_LoadShaders(lump_t *l)
 	in = ( void * )(fileBase + l->fileofs);
 	if (l->filelen % sizeof(*in))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	count = l->filelen / sizeof(*in);
 	out   = ri.Hunk_Alloc(count * sizeof(*out), h_low);
@@ -2208,7 +2206,7 @@ static void R_LoadMarksurfaces(lump_t *l)
 	in = ( void * )(fileBase + l->fileofs);
 	if (l->filelen % sizeof(*in))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	count = l->filelen / sizeof(*in);
 	out   = ri.Hunk_Alloc(count * sizeof(*out), h_low);
@@ -2239,7 +2237,7 @@ static void R_LoadPlanes(lump_t *l)
 	in = ( void * )(fileBase + l->fileofs);
 	if (l->filelen % sizeof(*in))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	count = l->filelen / sizeof(*in);
 	out   = ri.Hunk_Alloc(count * 2 * sizeof(*out), h_low);
@@ -2286,7 +2284,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	fogs = ( void * )(fileBase + l->fileofs);
 	if (l->filelen % sizeof(*fogs))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	count = l->filelen / sizeof(*fogs);
 
@@ -2306,14 +2304,14 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	brushes = ( void * )(fileBase + brushesLump->fileofs);
 	if (brushesLump->filelen % sizeof(*brushes))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	brushesCount = brushesLump->filelen / sizeof(*brushes);
 
 	sides = ( void * )(fileBase + sidesLump->fileofs);
 	if (sidesLump->filelen % sizeof(*sides))
 	{
-		ri.Error(ERR_DROP, "LoadMap: funny lump size in %s", s_worldData.name);
+		Ren_Drop("LoadMap: funny lump size in %s", s_worldData.name);
 	}
 	sidesCount = sidesLump->filelen / sizeof(*sides);
 
@@ -2331,7 +2329,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		{
 			if ((unsigned)out->originalBrushNumber >= brushesCount)
 			{
-				ri.Error(ERR_DROP, "fog brushNumber out of range");
+				Ren_Drop("fog brushNumber out of range");
 			}
 
 			// find which bsp submodel the fog volume belongs to
@@ -2351,7 +2349,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 
 			if ((unsigned)firstSide > sidesCount - 6)
 			{
-				ri.Error(ERR_DROP, "fog brush sideNumber out of range");
+				Ren_Drop("fog brush sideNumber out of range");
 			}
 
 			// brushes are always sorted with the axial sides first
@@ -2447,7 +2445,7 @@ void R_LoadLightGrid(lump_t *l)
 
 	if (l->filelen != numGridPoints * 8)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: light grid mismatch\n");
+		Ren_Warning("WARNING: light grid mismatch\n");
 		w->lightGridData = NULL;
 		return;
 	}
@@ -2520,7 +2518,7 @@ void R_LoadEntities(lump_t *l)
 			s = strchr(value, ';');
 			if (!s)
 			{
-				ri.Printf(PRINT_WARNING, "WARNING: no semi colon in shaderremap '%s'\n", value);
+				Ren_Warning("WARNING: no semi colon in shaderremap '%s'\n", value);
 				break;
 			}
 			*s++ = 0;
@@ -2592,7 +2590,7 @@ void RE_LoadWorldMap(const char *name)
 
 	if (tr.worldMapLoaded)
 	{
-		ri.Error(ERR_DROP, "ERROR: attempted to redundantly load world map\n");
+		Ren_Drop("ERROR: attempted to redundantly load world map\n");
 	}
 
 	// set default sun direction to be used if it isn't
@@ -2625,7 +2623,7 @@ void RE_LoadWorldMap(const char *name)
 	ri.FS_ReadFile(name, (void **)&buffer);
 	if (!buffer)
 	{
-		ri.Error(ERR_DROP, "RE_LoadWorldMap: %s not found", name);
+		Ren_Drop("RE_LoadWorldMap: %s not found", name);
 	}
 
 	// set map meta dir for lightmaps
@@ -2654,7 +2652,7 @@ void RE_LoadWorldMap(const char *name)
 	i = LittleLong(header->version);
 	if (i != BSP_VERSION)
 	{
-		ri.Error(ERR_DROP, "RE_LoadWorldMap: %s has wrong version number (%i should be %i)",
+		Ren_Drop("RE_LoadWorldMap: %s has wrong version number (%i should be %i)",
 		         name, i, BSP_VERSION);
 	}
 
@@ -2665,34 +2663,34 @@ void RE_LoadWorldMap(const char *name)
 	}
 
 	// load into heap
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadShaders(&header->lumps[LUMP_SHADERS]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadLightmaps(&header->lumps[LUMP_LIGHTMAPS]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadPlanes(&header->lumps[LUMP_PLANES]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	//% R_LoadFogs( &header->lumps[LUMP_FOGS], &header->lumps[LUMP_BRUSHES], &header->lumps[LUMP_BRUSHSIDES] );
-	//% ri.Cmd_ExecuteText( EXEC_NOW, "updatescreen\n" );
+	//% Ren_UpdateScreen();
 	R_LoadSurfaces(&header->lumps[LUMP_SURFACES], &header->lumps[LUMP_DRAWVERTS], &header->lumps[LUMP_DRAWINDEXES]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadMarksurfaces(&header->lumps[LUMP_LEAFSURFACES]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadNodesAndLeafs(&header->lumps[LUMP_NODES], &header->lumps[LUMP_LEAFS]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadSubmodels(&header->lumps[LUMP_MODELS]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 
 	// moved fog lump loading here, so fogs can be tagged with a model num
 	R_LoadFogs(&header->lumps[LUMP_FOGS], &header->lumps[LUMP_BRUSHES], &header->lumps[LUMP_BRUSHSIDES]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 
 	R_LoadVisibility(&header->lumps[LUMP_VISIBILITY]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadEntities(&header->lumps[LUMP_ENTITIES]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 	R_LoadLightGrid(&header->lumps[LUMP_LIGHTGRID]);
-	ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
+	Ren_UpdateScreen();
 
 	s_worldData.dataSize = (byte *)ri.Hunk_Alloc(0, h_low) - startMarker;
 

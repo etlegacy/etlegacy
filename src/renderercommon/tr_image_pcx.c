@@ -89,7 +89,7 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 
 	if ((unsigned)len < sizeof(pcx_t))
 	{
-		ri.Printf(PRINT_ALL, "PCX truncated: %s\n", filename);
+		Ren_Print("PCX truncated: %s\n", filename);
 		ri.FS_FreeFile(raw.v);
 		return;
 	}
@@ -110,7 +110,7 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 	    || w >= 1024
 	    || h >= 1024)
 	{
-		ri.Printf(PRINT_ALL, "Bad or unsupported pcx file %s (%dx%d@%d)\n", filename, w, h, pcx->bits_per_pixel);
+		Ren_Print("Bad or unsupported pcx file %s (%dx%d@%d)\n", filename, w, h, pcx->bits_per_pixel);
 		return;
 	}
 
@@ -150,14 +150,14 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 
 	if (pix < pic8 + size)
 	{
-		ri.Printf(PRINT_ALL, "PCX file truncated: %s\n", filename);
+		Ren_Print("PCX file truncated: %s\n", filename);
 		ri.FS_FreeFile(pcx);
 		ri.Free(pic8);
 	}
 
 	if (raw.b - (byte *)pcx >= end - (byte *)769 || end[-769] != 0x0c)
 	{
-		ri.Printf(PRINT_ALL, "PCX missing palette: %s\n", filename);
+		Ren_Print("PCX missing palette: %s\n", filename);
 		ri.FS_FreeFile(pcx);
 		ri.Free(pic8);
 		return;

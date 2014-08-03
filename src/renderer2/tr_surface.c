@@ -89,11 +89,11 @@ void Tess_CheckOverflow(int verts, int indexes)
 
 	if (verts >= SHADER_MAX_VERTEXES)
 	{
-		ri.Error(ERR_DROP, "Tess_CheckOverflow: verts > MAX (%d > %d)", verts, SHADER_MAX_VERTEXES);
+		Ren_Drop("Tess_CheckOverflow: verts > MAX (%d > %d)", verts, SHADER_MAX_VERTEXES);
 	}
 	if (indexes >= SHADER_MAX_INDEXES)
 	{
-		ri.Error(ERR_DROP, "Tess_CheckOverflow: indices > MAX (%d > %d)", indexes, SHADER_MAX_INDEXES);
+		Ren_Drop("Tess_CheckOverflow: indices > MAX (%d > %d)", indexes, SHADER_MAX_INDEXES);
 	}
 
 	Tess_Begin(tess.stageIteratorFunc, tess.stageIteratorFunc2, tess.surfaceShader, tess.lightShader, tess.skipTangentSpaces, tess.skipVBO,
@@ -420,7 +420,7 @@ void Tess_AddCubeWithNormals(const vec3_t position, const vec3_t minSize, const 
 ==============
 Tess_UpdateVBOs
 
-Tr3B: update the default VBO to replace the client side vertex arrays
+update the default VBO to replace the client side vertex arrays
 ==============
 */
 void Tess_UpdateVBOs(uint32_t attribBits)
@@ -645,11 +645,10 @@ static void Tess_SurfaceSprite(void)
 	else
 	{
 		float s, c;
-		float ang;
+		float ang = M_PI * backEnd.currentEntity->e.rotation / 180;
 
-		ang = M_PI * backEnd.currentEntity->e.rotation / 180;
-		s   = sin(ang);
-		c   = cos(ang);
+		s = sin(ang);
+		c = cos(ang);
 
 		VectorScale(backEnd.viewParms.orientation.axis[1], c * radius, left);
 		VectorMA(left, -s * radius, backEnd.viewParms.orientation.axis[2], left);
@@ -1201,7 +1200,6 @@ Tess_SurfaceBeam
 static void Tess_SurfaceBeam(void)
 {
 #if 1
-
 	Ren_LogComment("--- Tess_SurfaceBeam ---\n");
 
 	// TODO rewrite without glBegin/glEnd
@@ -1255,8 +1253,8 @@ static void Tess_SurfaceBeam(void)
 		VectorAdd(start_points[i], direction, end_points[i]);
 	}
 
-	GLSL_BindProgram(0);
-	GL_SelectTexture(0);
+	SetMacrosAndSelectProgram(gl_genericShader);
+	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.whiteImage);
 
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
@@ -1277,13 +1275,9 @@ static void Tess_SurfaceBeam(void)
 
 static void Tess_DoRailCore(const vec3_t start, const vec3_t end, const vec3_t up, float len, float spanWidth)
 {
-	float spanWidth2;
-	int   vbase;
-	float t = len / 256.0f;
-
-	vbase = tess.numVertexes;
-
-	spanWidth2 = -spanWidth;
+	float spanWidth2 = -spanWidth;
+	int   vbase      = tess.numVertexes;
+	float t          = len / 256.0f;
 
 	// FIXME: use quad stamp?
 	VectorMA(start, spanWidth, up, tess.xyz[tess.numVertexes]);
@@ -1909,27 +1903,6 @@ static void Tess_SurfaceAxis(void)
 		tess.numVertexes++;
 	}
 #endif
-
-	/*
-	   GL_BindProgram(0);
-	   GL_SelectTexture(0);
-	   GL_State( GLS_DEFAULT );
-	   GL_Bind(tr.whiteImage);
-
-	   glLineWidth(3);
-	   glBegin(GL_LINES);
-	   glColor3f(1, 0, 0);
-	   glVertex3f(0, 0, 0);
-	   glVertex3f(16, 0, 0);
-	   glColor3f(0, 1, 0);
-	   glVertex3f(0, 0, 0);
-	   glVertex3f(0, 16, 0);
-	   glColor3f(0, 0, 1);
-	   glVertex3f(0, 0, 0);
-	   glVertex3f(0, 0, 16);
-	   glEnd();
-	   glLineWidth(1);
-	 */
 }
 
 //===========================================================================
@@ -1977,6 +1950,7 @@ static void Tess_SurfaceEntity(surfaceType_t *surfType)
 		Tess_SurfaceAxis();
 		break;
 	}
+
 	return;
 }
 
@@ -1984,7 +1958,7 @@ static void Tess_SurfaceBad(surfaceType_t *surfType)
 {
 	Ren_LogComment("--- Tess_SurfaceBad ---\n");
 
-	ri.Printf(PRINT_ALL, "Bad surface tesselated.\n");
+	Ren_Print("Bad surface tesselated.\n");
 }
 
 static void Tess_SurfaceFlare(srfFlare_t *surf)

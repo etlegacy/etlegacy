@@ -530,8 +530,6 @@ CG_FragmentBounceMark
 */
 void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 {
-	vec4_t projection;
-
 	if (le->leMarkType == LEMT_BLOOD)
 	{
 		static int lastBloodMark;
@@ -539,7 +537,7 @@ void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 		// don't drop too many blood marks
 		if (!(lastBloodMark > cg.time || lastBloodMark > cg.time - 100))
 		{
-			vec4_t color;
+			vec4_t projection, color;
 			int    radius = 16 + (rand() & 31);
 			//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace->endpos, trace->plane.normal, random()*360,
 			//  1,1,1,1, qtrue, radius, qfalse, cg_bloodTime.integer * 1000 );
@@ -571,13 +569,12 @@ CG_FragmentBounceSound
 */
 void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 {
-	int rnd;
-
 	switch (le->leBounceSoundType)
 	{
 	// adding machinegun brass bouncy sound for tk
 	case LEBS_BRASS:
-		rnd = rand() % 3;
+	{
+		int rnd = rand() % 3;
 
 		if (trace->surfaceFlags & SURF_METAL)
 		{
@@ -596,7 +593,7 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 			trap_S_StartSoundVControl(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_brassSound[BRASSSOUND_STONE][rnd][0], 64);
 		}
 		break;
-
+	}
 	case LEBS_SG_BRASS:
 	{
 		int rnd = rand() % 3;
@@ -621,9 +618,7 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 	break;
 
 	case LEBS_ROCK:
-		rnd = rand() % 3;
-
-		trap_S_StartSound(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_rubbleBounce[rnd]);
+		trap_S_StartSound(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_rubbleBounce[(rand() % 3)]);
 		break;
 	case LEBS_BONE:
 		trap_S_StartSound(trace->endpos, -1, CHAN_AUTO, cgs.media.boneBounceSound);
@@ -646,10 +641,10 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace)
 {
 	vec3_t velocity;
 	float  dot;
-	int    hitTime;
+	int    hitTime = cg.time - cg.frametime + cg.frametime * trace->fraction;
 
 	// reflect the velocity on the trace plane
-	hitTime = cg.time - cg.frametime + cg.frametime * trace->fraction;
+
 	BG_EvaluateTrajectoryDelta(&le->pos, hitTime, velocity, qfalse, -1);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, le->pos.trDelta);
@@ -1013,7 +1008,6 @@ void CG_AddFragment(localEntity_t *le)
 
 	if (le->pos.trType == TR_STATIONARY && le->leMarkType == LEMT_BLOOD)
 	{
-
 		// leave a mark
 		if (le->leMarkType)
 		{

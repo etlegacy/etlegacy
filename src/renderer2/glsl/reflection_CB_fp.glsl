@@ -11,7 +11,7 @@ varying vec4 var_Tangent;
 varying vec4 var_Binormal;
 varying vec4 var_Normal;
 
-void    main()
+void main()
 {
 	// compute incident ray in world space
 	vec3 I = normalize(var_Position - u_ViewOrigin);

@@ -19,8 +19,6 @@ uniform sampler2D u_ShadowMap0;
 uniform samplerCube u_ShadowMap;
 #endif
 
-
-
 uniform vec3 u_ViewOrigin;
 
 #if defined(LIGHT_DIRECTIONAL)
@@ -44,9 +42,6 @@ uniform mat4 u_ViewMatrix;
 uniform mat4 u_UnprojectMatrix;
 
 uniform vec4 u_PortalPlane;
-
-
-
 
 /*
 ================

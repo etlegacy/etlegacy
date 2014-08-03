@@ -60,6 +60,34 @@ int r_numDecalProjectors;
 int r_firstSceneDecal;
 int r_numDecals;
 
+void R_InitNextFrame(void)
+{
+	backEndData->commands.used = 0;
+
+	r_firstSceneDrawSurf    = 0;
+	r_firstSceneInteraction = 0;
+
+	r_numLights       = 0;
+	r_firstSceneLight = 0;
+
+	r_numEntities      = 0;
+	r_firstSceneEntity = 0;
+
+	r_numPolys       = 0;
+	r_firstScenePoly = 0;
+
+	r_numPolyVerts = 0;
+
+	r_numPolybuffers       = 0;
+	r_firstScenePolybuffer = 0;
+
+	// decals
+	r_numDecalProjectors       = 0;
+	r_firstSceneDecalProjector = 0;
+	r_numDecals                = 0;
+	r_firstSceneDecal          = 0;
+}
+
 /*
 ====================
 RE_ClearScene
@@ -154,7 +182,7 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 
 	if (!hShader)
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING: RE_AddPolyToScene: NULL poly shader\n");
+		Ren_Developer("WARNING: RE_AddPolyToScene: NULL poly shader\n");
 		return;
 	}
 
@@ -168,7 +196,7 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 			   since we don't plan on changing the const and making for room for those effects
 			   simply cut this message to developer only
 			 */
-			ri.Printf(PRINT_DEVELOPER, "WARNING: RE_AddPolyToScene: r_maxPolyVerts or r_maxPolys reached\n");
+			Ren_Developer("WARNING: RE_AddPolyToScene: r_maxPolyVerts or r_maxPolys reached\n");
 			return;
 		}
 
@@ -317,7 +345,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 		return;
 	}
 
-	// Tr3B: fixed was ENTITYNUM_WORLD
+	// fixed was ENTITYNUM_WORLD
 	if (r_numEntities >= MAX_REF_ENTITIES)
 	{
 		return;
@@ -325,7 +353,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 
 	if ((unsigned)ent->reType >= RT_MAX_REF_ENTITY_TYPE)
 	{
-		ri.Error(ERR_DROP, "RE_AddRefEntityToScene: bad reType %i", ent->reType);
+		Ren_Drop("RE_AddRefEntityToScene: bad reType %i", ent->reType);
 	}
 
 	Com_Memcpy(&backEndData->entities[r_numEntities].e, ent, sizeof(refEntity_t));
@@ -361,7 +389,7 @@ void RE_AddRefLightToScene(const refLight_t *l)
 
 	if ((unsigned)l->rlType >= RL_MAX_REF_LIGHT_TYPE)
 	{
-		ri.Error(ERR_DROP, "RE_AddRefLightToScene: bad rlType %i", l->rlType);
+		Ren_Drop("RE_AddRefLightToScene: bad rlType %i", l->rlType);
 	}
 
 	light = &backEndData->lights[r_numLights++];
@@ -568,7 +596,7 @@ void RE_RenderScene(const refdef_t *fd)
 
 	if (!tr.world && !(fd->rdflags & RDF_NOWORLDMODEL))
 	{
-		ri.Error(ERR_DROP, "R_RenderScene: NULL worldmodel");
+		Ren_Drop("R_RenderScene: NULL worldmodel");
 	}
 
 	Com_Memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));
@@ -591,7 +619,7 @@ void RE_RenderScene(const refdef_t *fd)
 	/*
 	if(fd->rdflags & RDF_SKYBOXPORTAL)
 	{
-	    ri.Printf(PRINT_ALL, "skyboxportal = 1\n");
+	    Ren_Print("skyboxportal = 1\n");
 	}
 	*/
 
@@ -659,7 +687,7 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.frameSceneNum++;
 	tr.sceneCount++;
 
-	// Tr3B: a scene can have multiple views caused by mirrors or portals
+	// a scene can have multiple views caused by mirrors or portals
 	// the number of views is restricted so we can use hardware occlusion queries
 	// and put them into the BSP nodes for each view
 	tr.viewCount = -1;
@@ -724,36 +752,4 @@ void RE_RenderScene(const refdef_t *fd)
 	r_firstScenePolybuffer  = r_numPolybuffers;
 
 	tr.frontEndMsec += ri.Milliseconds() - startTime;
-}
-
-// Temp storage for saving view paramters.  Drawing the animated head in the corner
-// was creaming important view info.
-static viewParms_t g_oldViewParms;
-
-/*
-================
-RE_SaveViewParms
-
-Save out the old render info to a temp place so we don't kill the LOD system
-when we do a second render.
-================
-*/
-void RE_SaveViewParms()
-{
-	// save old viewParms so we can return to it after the mirror view
-	g_oldViewParms = tr.viewParms;
-}
-
-/*
-================
-RE_RestoreViewParms
-
-Restore the old render info so we don't kill the LOD system
-when we do a second render.
-================
-*/
-void RE_RestoreViewParms()
-{
-	// This was killing the LOD computation
-	tr.viewParms = g_oldViewParms;
 }

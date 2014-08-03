@@ -20,7 +20,7 @@ varying vec3 var_Normal;
 varying vec4 var_LightColor;
 varying vec3 var_LightDirection;
 
-void    main()
+void main()
 {
 	// transform vertex position into homogenous clip-space
 	gl_Position = u_ModelViewProjectionMatrix * attr_Position;

@@ -31,16 +31,15 @@
  * @file be_interface.h
  * @brief bot library interface
  */
+#ifndef INCLUDE_BE_INTERFACE_H
+#define INCLUDE_BE_INTERFACE_H
 
 //#define DEBUG         //debug code
-
-//==========================================================
-// global variable structures
-//==========================================================
-
 
 //==========================================================
 // global variables
 //==========================================================
 
 extern botlib_import_t botimport;
+
+#endif // #ifndef INCLUDE_BE_INTERFACE_H

@@ -81,8 +81,7 @@ float RayIntersectDisplaceMap(vec2 dp, vec2 ds)
 }
 #endif //USE_PARALLAX_MAPPING
 
-
-void    main()
+void main()
 {
 	// compute incident ray
 	vec3 I = normalize(u_ViewOrigin - var_Position);

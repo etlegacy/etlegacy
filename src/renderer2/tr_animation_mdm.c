@@ -85,7 +85,7 @@ static int totalrv, totalrt, totalv, totalt;
 
 //-----------------------------------------------------------------------------
 
-static float ProjectRadius(float r, vec3_t location)
+static float RB_ProjectRadius(float r, vec3_t location)
 {
 	float  pr;
 	float  dist;
@@ -93,8 +93,8 @@ static float ProjectRadius(float r, vec3_t location)
 	vec3_t p;
 	float  projected[4];
 
-	c    = DotProduct(tr.viewParms.orientation.axis[0], tr.viewParms.orientation.origin);
-	dist = DotProduct(tr.viewParms.orientation.axis[0], location) - c;
+	c    = DotProduct(backEnd.viewParms.orientation.axis[0], backEnd.viewParms.orientation.origin);
+	dist = DotProduct(backEnd.viewParms.orientation.axis[0], location) - c;
 
 	if (dist <= 0)
 	{
@@ -105,18 +105,17 @@ static float ProjectRadius(float r, vec3_t location)
 	p[1] = Q_fabs(r);
 	p[2] = -dist;
 
-	projected[0] = p[0] * tr.viewParms.projectionMatrix[0] +
-	               p[1] * tr.viewParms.projectionMatrix[4] + p[2] * tr.viewParms.projectionMatrix[8] + tr.viewParms.projectionMatrix[12];
+	projected[0] = p[0] * backEnd.viewParms.projectionMatrix[0] +
+	               p[1] * backEnd.viewParms.projectionMatrix[4] + p[2] * backEnd.viewParms.projectionMatrix[8] + backEnd.viewParms.projectionMatrix[12];
 
-	projected[1] = p[0] * tr.viewParms.projectionMatrix[1] +
-	               p[1] * tr.viewParms.projectionMatrix[5] + p[2] * tr.viewParms.projectionMatrix[9] + tr.viewParms.projectionMatrix[13];
+	projected[1] = p[0] * backEnd.viewParms.projectionMatrix[1] +
+	               p[1] * backEnd.viewParms.projectionMatrix[5] + p[2] * backEnd.viewParms.projectionMatrix[9] + backEnd.viewParms.projectionMatrix[13];
 
-	projected[2] = p[0] * tr.viewParms.projectionMatrix[2] +
-	               p[1] * tr.viewParms.projectionMatrix[6] + p[2] * tr.viewParms.projectionMatrix[10] + tr.viewParms.projectionMatrix[14];
+	projected[2] = p[0] * backEnd.viewParms.projectionMatrix[2] +
+	               p[1] * backEnd.viewParms.projectionMatrix[6] + p[2] * backEnd.viewParms.projectionMatrix[10] + backEnd.viewParms.projectionMatrix[14];
 
-	projected[3] = p[0] * tr.viewParms.projectionMatrix[3] +
-	               p[1] * tr.viewParms.projectionMatrix[7] + p[2] * tr.viewParms.projectionMatrix[11] + tr.viewParms.projectionMatrix[15];
-
+	projected[3] = p[0] * backEnd.viewParms.projectionMatrix[3] +
+	               p[1] * backEnd.viewParms.projectionMatrix[7] + p[2] * backEnd.viewParms.projectionMatrix[11] + backEnd.viewParms.projectionMatrix[15];
 
 	pr = projected[1] / projected[3];
 
@@ -184,11 +183,9 @@ static int R_CullModel(trRefEntity_t *ent)
 			case CULL_OUT:
 				tr.pc.c_sphere_cull_mdx_out++;
 				return CULL_OUT;
-
 			case CULL_IN:
 				tr.pc.c_sphere_cull_mdx_in++;
 				return CULL_IN;
-
 			case CULL_CLIP:
 				tr.pc.c_sphere_cull_mdx_clip++;
 				break;
@@ -245,14 +242,14 @@ static int R_CullModel(trRefEntity_t *ent)
 	}
 }
 
-static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, float modelBias, float modelScale)
+static float RB_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, float modelBias, float modelScale)
 {
 	float flod;
 	float projectedRadius;
 
 	// compute projected bounding sphere and use that as a criteria for selecting LOD
 
-	projectedRadius = ProjectRadius(radius, origin);
+	projectedRadius = RB_ProjectRadius(radius, origin);
 	if (projectedRadius != 0)
 	{
 		//ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
@@ -288,12 +285,12 @@ static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, floa
 	return flod;
 }
 
-static int R_CalcMDMLodIndex(refEntity_t *ent, vec3_t origin, float radius, float modelBias, float modelScale, mdmSurfaceIntern_t *mdmSurface)
+static int RB_CalcMDMLodIndex(refEntity_t *ent, vec3_t origin, float radius, float modelBias, float modelScale, mdmSurfaceIntern_t *mdmSurface)
 {
 	float flod;
 	int   lod;
 
-	flod = R_CalcMDMLod(ent, origin, radius, modelBias, modelScale);
+	flod = RB_CalcMDMLod(ent, origin, radius, modelBias, modelScale);
 
 	//flod = r_lodTest->value;
 
@@ -459,11 +456,11 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 
 		if (shader == tr.defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "GetMDMSurfaceShader WARNING: no shader for surface %s in skin %s\n", mdmSurface->name, skin->name);
+			Ren_Developer("GetMDMSurfaceShader WARNING: no shader for surface %s in skin %s\n", mdmSurface->name, skin->name);
 		}
 		else if (shader->defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "GetMDMSurfaceShader WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+			Ren_Developer("GetMDMSurfaceShader WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 		}
 	}
 	else
@@ -476,7 +473,7 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 
 void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 {
-	mdmModel_t         *mdm;
+	mdmModel_t         *mdm = tr.currentModel->mdm;
 	mdmSurfaceIntern_t *mdmSurface;
 	shader_t           *shader = 0;
 	int                i, fogNum;
@@ -487,8 +484,6 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 	{
 		personalModel = qtrue;
 	}
-
-	mdm = tr.currentModel->mdm;
 
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
@@ -503,7 +498,6 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 	{
 		R_SetupEntityLighting(&tr.refdef, ent, NULL);
 	}
-
 
 	// see if we are in a fog volume
 	fogNum = R_FogWorldBox(ent->worldBounds);
@@ -737,6 +731,7 @@ static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 	forward[1] = cp * sy;
 	forward[2] = -sp;
 }
+
 static ID_INLINE void LocalVectorMA(vec3_t org, float dist, vec3_t vec, vec3_t out)
 {
 	out[0] = org[0] + dist * vec[0];
@@ -1551,7 +1546,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 		// print stats for the complete model (not per-surface)
 		if (r_showSkeleton->integer == 4 && totalrt)
 		{
-			ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
+			Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
 			          lodScale, totalrv, totalv, totalrt, totalt, (float)(100.0 * totalrt) / (float)totalt);
 		}
 		totalrv = totalrt = totalv = totalt = 0;
@@ -1633,7 +1628,8 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 		}
 	}
 	else
-	{                           // interpolated
+	{
+		// interpolated
 		cOldBoneList = (mdxBoneFrameCompressed_t *) ((byte *) mdxOldFrameHeader + mdxOldFrameHeader->ofsFrames +
 		                                             (refent->oldframe + 1) * sizeof(mdxFrame_t) + refent->oldframe * frameSize);
 		cOldBoneListTorso = (mdxBoneFrameCompressed_t *) ((byte *) mdxOldTorsoFrameHeader + mdxOldTorsoFrameHeader->ofsFrames +
@@ -1716,7 +1712,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 }
 
 #ifdef DBG_PROFILE_BONES
-#define DBG_SHOWTIME    Com_Printf("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
+#define DBG_SHOWTIME    Ren_Print("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
 #else
 #define DBG_SHOWTIME    ;
 #endif
@@ -1753,7 +1749,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 	// TODO: lerp the radius and origin
 	VectorAdd(refent->origin, frame->localOrigin, vec);
 	lodRadius = frame->radius;
-	lodScale  = R_CalcMDMLod(refent, vec, lodRadius, mdm->lodBias, mdm->lodScale);
+	lodScale  = RB_CalcMDMLod(refent, vec, lodRadius, mdm->lodBias, mdm->lodScale);
 
 	// debug code
 	// lodScale = r_lodTest->value;
@@ -2088,7 +2084,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 
 			if (r_showSkeleton->integer == 3)
 			{
-				ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count,
+				Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count,
 				          surface->numVerts, render_indexes / 3, surface->numTriangles,
 				          (float)(100.0 * render_indexes / 3) / (float)surface->numTriangles);
 			}
@@ -2194,7 +2190,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 	}
 
 #ifdef DBG_PROFILE_BONES
-	Com_Printf("\n");
+	Ren_Print("\n");
 #endif
 
 #endif // entire function block
@@ -2263,14 +2259,14 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 
 	// TODO: lerp the radius and origin
 	VectorAdd(refent->origin, frame->localOrigin, vec);
-	lodIndex = R_CalcMDMLodIndex(refent, vec, frame->radius, mdmModel->lodBias, mdmModel->lodScale, mdmSurface);
+	lodIndex = RB_CalcMDMLodIndex(refent, vec, frame->radius, mdmModel->lodBias, mdmModel->lodScale, mdmSurface);
 	lodIBO   = surface->ibo[lodIndex];
 
 	if (lodIBO == NULL)
 	{
 		lodIBO = surface->ibo[0];
 	}
-	//ri.Printf(PRINT_ALL, "LOD index = '%i', IBO = '%s'\n", lodIndex, lodIBO->name);
+	//Ren_Print("LOD index = '%i', IBO = '%s'\n", lodIndex, lodIBO->name);
 
 	R_BindIBO(lodIBO);
 

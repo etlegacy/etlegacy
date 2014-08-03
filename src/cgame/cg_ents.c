@@ -122,7 +122,7 @@ void CG_AddLightstyle(centity_t *cent)
 {
 	float lightval;
 	int   cl;
-	int   r, g, b;
+	float r;
 	int   stringlength;
 	float offset;
 	int   otime;
@@ -154,7 +154,7 @@ void CG_AddLightstyle(centity_t *cent)
 		cent->dl_frame    = cent->dl_oldframe + 1;
 		if (cent->dl_oldframe >= stringlength)
 		{
-			cent->dl_oldframe = (cent->dl_oldframe) % stringlength;
+			cent->dl_oldframe = cent->dl_oldframe % stringlength;
 			if (cent->dl_oldframe < 3 && cent->dl_sound)     // < 3 so if an alarm comes back into the pvs it will only start a sound if it's going to be closely synced with the light, otherwise wait till the next cycle
 			{
 				trap_S_StartSound(NULL, cent->currentState.number, CHAN_AUTO, CG_GetGameSound(cent->dl_sound));
@@ -186,9 +186,7 @@ void CG_AddLightstyle(centity_t *cent)
 #endif
 
 	cl = cent->currentState.constantLight;
-	r  = cl & 255;
-	g  = (cl >> 8) & 255;
-	b  = (cl >> 16) & 255;
+	r  = (cl & 0xFF) / 255.0f;
 
 	// if the dlight has angles, then it is a directional global dlight
 	if (cent->currentState.angles[0] || cent->currentState.angles[1] || cent->currentState.angles[2])
@@ -196,14 +194,15 @@ void CG_AddLightstyle(centity_t *cent)
 		vec3_t normal;
 
 		AngleVectors(cent->currentState.angles, normal, NULL, NULL);
-		trap_R_AddLightToScene(normal, 256, lightval,
-		                       (float) r / 255.0f, (float) r / 255.0f, (float) r / 255.0f, 0, REF_DIRECTED_DLIGHT);
+		trap_R_AddLightToScene(normal, 256, lightval, r, r, r, 0, REF_DIRECTED_DLIGHT);
 	}
 	// normal global dlight
 	else
 	{
-		trap_R_AddLightToScene(cent->lerpOrigin, 256, lightval,
-		                       (float) r / 255.0f, (float) g / 255.0f, (float) b / 255.0f, 0, 0);
+		int g = ((cl >> 8) & 0xFF) / 255.0f;
+		int b = ((cl >> 16) & 0xFF) / 255.0f;
+
+		trap_R_AddLightToScene(cent->lerpOrigin, 256, lightval, r, g, b, 0, 0);
 	}
 }
 
@@ -230,15 +229,13 @@ static void CG_EntityEffects(centity_t *cent)
 
 		if (cent->currentState.eType == ET_SPEAKER)
 		{
-			int volume = cent->currentState.onFireStart;
-
 			if (cent->currentState.dmgFlags)      // range is set
 			{
-				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), cent->currentState.dmgFlags, volume, cent->soundTime);
+				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), cent->currentState.dmgFlags, cent->currentState.onFireStart, cent->soundTime);
 			}
 			else
 			{
-				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), 1250, volume, cent->soundTime);
+				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), 1250, cent->currentState.onFireStart, cent->soundTime);
 			}
 		}
 		else if (cent->currentState.eType == ET_MOVER)
@@ -272,13 +269,13 @@ static void CG_EntityEffects(centity_t *cent)
 		}
 		else
 		{
-			int cl = cent->currentState.constantLight;
-			int r  = cl & 255;
-			int g  = (cl >> 8) & 255;
-			int b  = (cl >> 16) & 255;
-			int i  = ((cl >> 24) & 255) * 4;
+			int   cl = cent->currentState.constantLight;
+			float r  = (cl & 0xFF) / 255.0f;
+			float g  = ((cl >> 8) & 0xFF) / 255.0f;
+			float b  = ((cl >> 16) & 0xFF) / 255.0f;
+			float i  = ((cl >> 24) & 0xFF) * 4;
 
-			trap_R_AddLightToScene(cent->lerpOrigin, i, 1.0, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, 0, 0);
+			trap_R_AddLightToScene(cent->lerpOrigin, i, 1.0f, r, g, b, 0, 0);
 		}
 	}
 
@@ -313,8 +310,7 @@ static void CG_EntityEffects(centity_t *cent)
 			}
 			alpha  = 1.0f - ((float) (cg.time - cent->overheatTime) / 3000.0f);
 			alpha *= 0.25f;
-			CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle,
-			                                   1000, 8, 20, 30, alpha, 8.f);
+			CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);
 		}
 	}
 	// If EF_SMOKING is set, emit smoke
@@ -670,15 +666,9 @@ static void CG_Item(centity_t *cent)
 
 	if (item->giType == IT_WEAPON)
 	{
-		qboolean     hasStand    = qfalse;
 		weaponInfo_t *weaponInfo = &cg_weapons[item->giTag];
 
-		if (weaponInfo->standModel)
-		{
-			hasStand = qtrue;
-		}
-
-		if (hasStand)                              // first try to put the weapon on it's 'stand'
+		if (weaponInfo->standModel)                              // first try to put the weapon on it's 'stand'
 		{
 			refEntity_t stand;
 
@@ -1170,14 +1160,15 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
-	// FIXME: do a switch
-	if (cent->currentState.weapon == WP_MORTAR_SET
-	    || cent->currentState.weapon == WP_MORTAR2_SET
-	    || cent->currentState.weapon == WP_PANZERFAUST
-	    || cent->currentState.weapon == WP_BAZOOKA
-	    || cent->currentState.weapon == WP_MAPMORTAR
-	    || cent->currentState.weapon == WP_GPG40
-	    || cent->currentState.weapon == WP_M7)
+	switch (cent->currentState.weapon)
+	{
+	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
+	case WP_PANZERFAUST:
+	case  WP_BAZOOKA:
+	case  WP_MAPMORTAR:
+	case WP_GPG40:
+	case WP_M7:
 	{
 		vec3_t delta;
 
@@ -1199,9 +1190,13 @@ static void CG_Missile(centity_t *cent)
 			ent.axis[0][2] = 1;
 		}
 	}
-	else if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0)
-	{
-		ent.axis[0][2] = 1;
+	break;
+	default:
+		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0)
+		{
+			ent.axis[0][2] = 1;
+		}
+		break;
 	}
 
 	AxisToAngles(ent.axis, cent->lerpAngles);
@@ -1310,11 +1305,11 @@ static void CG_Trap(centity_t *cent)
 
 static void CG_Corona(centity_t *cent)
 {
-	int      r, g, b;
+	float    r, g, b;
 	int      dli;
-	qboolean behind = qfalse, toofar = qfalse;
 	float    dot, dist;
 	vec3_t   dir;
+	qboolean behind = qfalse, toofar = qfalse;
 
 	if (cg_coronas.integer == 0)       // if set to '0' no coronas
 	{
@@ -1322,9 +1317,9 @@ static void CG_Corona(centity_t *cent)
 	}
 
 	dli = cent->currentState.dl_intensity;
-	r   = dli & 255;
-	g   = (dli >> 8) & 255;
-	b   = (dli >> 16) & 255;
+	r   = (dli & 0xFF) / 255.0f;
+	g   = ((dli >> 8) & 0xFF) / 255.0f;
+	b   = ((dli >> 16) & 0xFF) / 255.0f;
 
 	// only coronas that are in your PVS are being added
 
@@ -1363,7 +1358,7 @@ static void CG_Corona(centity_t *cent)
 			visible = qtrue;
 		}
 
-		trap_R_AddCoronaToScene(cent->lerpOrigin, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, (float)cent->currentState.density / 255.0f, cent->currentState.number, visible);
+		trap_R_AddCoronaToScene(cent->lerpOrigin, r, g, b, (float)cent->currentState.density / 255.0f, cent->currentState.number, visible);
 	}
 }
 

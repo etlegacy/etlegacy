@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -88,7 +88,7 @@ static int totalrv, totalrt, totalv, totalt;
 
 //-----------------------------------------------------------------------------
 
-static float ProjectRadius(float r, vec3_t location)
+static float RB_ProjectRadius(float r, vec3_t location)
 {
 	float  pr;
 	float  dist;
@@ -96,8 +96,8 @@ static float ProjectRadius(float r, vec3_t location)
 	vec3_t p;
 	float  projected[4];
 
-	c    = DotProduct(tr.viewParms.orientation.axis[0], tr.viewParms.orientation.origin);
-	dist = DotProduct(tr.viewParms.orientation.axis[0], location) - c;
+	c    = DotProduct(backEnd.viewParms.orientation.axis[0], backEnd.viewParms.orientation.origin);
+	dist = DotProduct(backEnd.viewParms.orientation.axis[0], location) - c;
 
 	if (dist <= 0)
 	{
@@ -108,25 +108,25 @@ static float ProjectRadius(float r, vec3_t location)
 	p[1] = Q_fabs(r);
 	p[2] = -dist;
 
-	projected[0] = p[0] * tr.viewParms.projectionMatrix[0] +
-	               p[1] * tr.viewParms.projectionMatrix[4] +
-	               p[2] * tr.viewParms.projectionMatrix[8] +
-	               tr.viewParms.projectionMatrix[12];
+	projected[0] = p[0] * backEnd.viewParms.projectionMatrix[0] +
+	               p[1] * backEnd.viewParms.projectionMatrix[4] +
+	               p[2] * backEnd.viewParms.projectionMatrix[8] +
+	               backEnd.viewParms.projectionMatrix[12];
 
-	projected[1] = p[0] * tr.viewParms.projectionMatrix[1] +
-	               p[1] * tr.viewParms.projectionMatrix[5] +
-	               p[2] * tr.viewParms.projectionMatrix[9] +
-	               tr.viewParms.projectionMatrix[13];
+	projected[1] = p[0] * backEnd.viewParms.projectionMatrix[1] +
+	               p[1] * backEnd.viewParms.projectionMatrix[5] +
+	               p[2] * backEnd.viewParms.projectionMatrix[9] +
+	               backEnd.viewParms.projectionMatrix[13];
 
-	projected[2] = p[0] * tr.viewParms.projectionMatrix[2] +
-	               p[1] * tr.viewParms.projectionMatrix[6] +
-	               p[2] * tr.viewParms.projectionMatrix[10] +
-	               tr.viewParms.projectionMatrix[14];
+	projected[2] = p[0] * backEnd.viewParms.projectionMatrix[2] +
+	               p[1] * backEnd.viewParms.projectionMatrix[6] +
+	               p[2] * backEnd.viewParms.projectionMatrix[10] +
+	               backEnd.viewParms.projectionMatrix[14];
 
-	projected[3] = p[0] * tr.viewParms.projectionMatrix[3] +
-	               p[1] * tr.viewParms.projectionMatrix[7] +
-	               p[2] * tr.viewParms.projectionMatrix[11] +
-	               tr.viewParms.projectionMatrix[15];
+	projected[3] = p[0] * backEnd.viewParms.projectionMatrix[3] +
+	               p[1] * backEnd.viewParms.projectionMatrix[7] +
+	               p[2] * backEnd.viewParms.projectionMatrix[11] +
+	               backEnd.viewParms.projectionMatrix[15];
 
 
 	pr = projected[1] / projected[3];
@@ -245,18 +245,18 @@ static int R_CullModel(trRefEntity_t *ent)
 
 /*
 =================
-R_CalcMDMLod
+RB_CalcMDMLod
 
 =================
 */
-static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, float modelBias, float modelScale)
+static float RB_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, float modelBias, float modelScale)
 {
 	float flod;
 	float projectedRadius;
 
 	// compute projected bounding sphere and use that as a criteria for selecting LOD
 
-	projectedRadius = ProjectRadius(radius, origin);
+	projectedRadius = RB_ProjectRadius(radius, origin);
 	if (projectedRadius != 0)
 	{
 		// ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
@@ -432,11 +432,11 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 
 			if (shader == tr.defaultShader)
 			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %s in skin %s\n", surface->name, skin->name);
+				Ren_Developer("WARNING: no shader for surface %s in skin %s\n", surface->name, skin->name);
 			}
 			else if (shader->defaultShader)
 			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+				Ren_Developer("WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 			}
 		}
 		else
@@ -1329,7 +1329,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 
 		if (r_bonesDebug->integer == 4 && totalrt) //----(SA)	print stats for the complete model (not per-surface)
 		{
-			ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
+			Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
 			          lodScale,
 			          totalrv,
 			          totalv,
@@ -1498,7 +1498,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 }
 
 #ifdef DBG_PROFILE_BONES
-#define DBG_SHOWTIME    Com_Printf("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
+#define DBG_SHOWTIME    Ren_Print("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
 #else
 #define DBG_SHOWTIME    ;
 #endif
@@ -1530,7 +1530,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 	// TODO: lerp the radius and origin
 	VectorAdd(refent->origin, frame->localOrigin, vec);
 	lodRadius = frame->radius;
-	lodScale  = R_CalcMDMLod(refent, vec, lodRadius, header->lodBias, header->lodScale);
+	lodScale  = RB_CalcMDMLod(refent, vec, lodRadius, header->lodBias, header->lodScale);
 
 	// debug code
 	//%	lodScale = 0.15;
@@ -1861,7 +1861,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 
 			if (r_bonesDebug->integer == 3)
 			{
-				ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
+				Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
 				          ( float )(100.0 * render_indexes / 3) / (float) surface->numTriangles);
 			}
 		}
@@ -1965,7 +1965,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 	}
 
 #ifdef DBG_PROFILE_BONES
-	Com_Printf("\n");
+	Ren_Print("\n");
 #endif
 }
 

@@ -31,10 +31,9 @@
  * @file dl_local.h
  */
 
-#ifndef _DL_LOCAL_H_
-#define _DL_LOCAL_H_
+#ifndef INCLUDE_DL_LOCAL_H
+#define INCLUDE_DL_LOCAL_H
 
-//bani
 #ifdef __GNUC__
 #define _attribute(x) __attribute__(x)
 #else
@@ -48,8 +47,8 @@ int Com_VPrintf(const char *fmt, va_list pArgs) _attribute((format(printf, 1, 0)
 int Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 int Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));       // watch out, we don't define ERR_FATAL and stuff
-void    Cvar_SetValue(const char *var_name, float value);
-void    Cvar_Set(const char *var_name, const char *value);
+void Cvar_SetValue(const char *var_name, float value);
+void Cvar_Set(const char *var_name, const char *value);
 char *va(char *format, ...) _attribute((format(printf, 1, 2)));
 
 #ifdef _WIN32
@@ -60,4 +59,4 @@ char *va(char *format, ...) _attribute((format(printf, 1, 2)));
 
 extern int com_errorEntered;
 
-#endif
+#endif // #ifndef INCLUDE_DL_LOCAL_H

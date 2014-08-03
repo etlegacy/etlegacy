@@ -31,13 +31,7 @@
  * @file sdl_glimp.c
  */
 
-#ifdef BUNDLED_SDL
-#    include "SDL.h"
-#    include "SDL_syswm.h"
-#else
-#    include <SDL2/SDL.h>
-#    include <SDL2/SDL_syswm.h>
-#endif
+#include "sdl_defs.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -52,6 +46,15 @@
 
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
+
+/* HACK: Just hack it for now. */
+#if defined(WIN32)
+#include <GL/wglew.h>
+#else
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__AROS__) && !defined(__MORPHOS__)
+#include <GL/glxew.h>
+#endif
+#endif
 
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 
@@ -127,10 +130,7 @@ void GLimp_Minimize(void)
  */
 void GLimp_LogComment(const char *comment)
 {
-	//if (com_developer->integer)
-	//{
-	//	Com_Printf("%s", comment);
-	//}
+	Ren_Developer("%s", comment);
 }
 
 static int GLimp_CompareModes(const void *a, const void *b)
@@ -223,7 +223,7 @@ static void GLimp_DetectAvailableModes(void)
 	if (*buf)
 	{
 		buf[strlen(buf) - 1] = 0;
-		ri.Printf(PRINT_ALL, "Available modes: '%s'\n", buf);
+		Ren_Print("Available modes: '%s'\n", buf);
 		ri.Cvar_Set("r_availableModes", buf);
 	}
 }
@@ -233,7 +233,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 {
 	int GLmajor, GLminor;
 
-	ri.Printf(PRINT_ALL, "Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
+	Ren_Print("Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
 
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 
@@ -246,11 +246,11 @@ static qboolean GLimp_InitOpenGL3xContext()
 	if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
 	{
 		// shaders are supported, but not all GL3.x features
-		ri.Printf(PRINT_ALL, "Using enhanced (GL3) Renderer in GL 2.x mode...\n");
+		Ren_Print("Using enhanced (GL3) Renderer in GL 2.x mode...\n");
 		return qtrue;
 	}
 
-	ri.Printf(PRINT_ALL, "Using enhanced (GL3) Renderer in GL 3.x mode...\n");
+	Ren_Print("Using enhanced (GL3) Renderer in GL 3.x mode...\n");
 	glConfig.driverType = GLDRV_OPENGL3;
 
 	return qtrue;
@@ -263,9 +263,13 @@ static qboolean GLimp_InitOpenGL3xContext()
 
 static void GLimp_InitExtensions2(void)
 {
-	char missingExts[4096];
+	//>char missingExts[4096];
+	static char missingExts[60000];
+	missingExts[0] = 0;
 
-	ri.Printf(PRINT_ALL, "Initializing OpenGL extensions\n");
+#define MissingEXT(x) Ren_Print("Line: %i\n",__LINE__);Q_strcat(missingExts, sizeof(missingExts), x)
+
+	Ren_Print("Initializing OpenGL extensions\n");
 
 	// GL_ARB_multitexture
 	if (glConfig.driverType != GLDRV_OPENGL3)
@@ -276,65 +280,65 @@ static void GLimp_InitExtensions2(void)
 
 			if (glConfig.maxActiveTextures > 1)
 			{
-				ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_multitexture\n");
+				Ren_Print("...found OpenGL extension - GL_ARB_multitexture\n");
 			}
 			else
 			{
-				Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_multitexture\n");
-				ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture, < 2 texture units");
+				MissingEXT("GL_ARB_multitexture\n");
+				Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture, < 2 texture units");
 			}
 		}
 		else
 		{
-			Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_multitexture\n");
-			ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture");
+			MissingEXT("GL_ARB_multitexture\n");
+			Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture");
 		}
 	}
 
 	// GL_ARB_depth_texture
 	if (GLEW_ARB_depth_texture)
 	{
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_depth_texture\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_depth_texture\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_depth_texture\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_depth_texture");
+		MissingEXT("GL_ARB_depth_texture\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_depth_texture");
 	}
 
 	// GL_ARB_texture_cube_map
 	if (GLEW_ARB_texture_cube_map)
 	{
 		glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &glConfig2.maxCubeMapTextureSize);
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_texture_cube_map\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_texture_cube_map\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_texture_cube_map\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_texture_cube_map");
+		MissingEXT("GL_ARB_texture_cube_map\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_texture_cube_map");
 	}
 	GL_CheckErrors();
 
 	// GL_ARB_vertex_program
 	if (GLEW_ARB_vertex_program)
 	{
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_vertex_program\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_vertex_program\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_vertex_program\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_program");
+		MissingEXT("GL_ARB_vertex_program\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_program");
 	}
 
 	// GL_ARB_vertex_buffer_object
 	if (GLEW_ARB_vertex_buffer_object)
 	{
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_vertex_buffer_object\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_vertex_buffer_object\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_vertex_buffer_object\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_buffer_object");
+		MissingEXT("GL_ARB_vertex_buffer_object\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_buffer_object");
 	}
 
 	// GL_ARB_occlusion_query
@@ -346,28 +350,28 @@ static void GLimp_InitExtensions2(void)
 		{
 			glConfig2.occlusionQueryAvailable = qtrue;
 			glGetQueryivARB(GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS, &glConfig2.occlusionQueryBits);
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_occlusion_query\n");
+			Ren_Print("...found OpenGL extension - GL_ARB_occlusion_query\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_occlusion_query\n");
+			Ren_Print("...ignoring GL_ARB_occlusion_query\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_occlusion_query not found\n");
+		Ren_Print("...GL_ARB_occlusion_query not found\n");
 	}
 	GL_CheckErrors();
 
 	// GL_ARB_shader_objects
 	if (GLEW_ARB_shader_objects)
 	{
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_shader_objects\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_shader_objects\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_shader_objects\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shader_objects");
+		MissingEXT("GL_ARB_shader_objects\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shader_objects");
 	}
 
 	// GL_ARB_vertex_shader
@@ -396,24 +400,24 @@ static void GLimp_InitExtensions2(void)
 		glConfig2.maxVertexSkinningBones     = (int) Q_bound(0.0, (Q_max(glConfig2.maxVertexUniforms - reservedComponents, 0) / 16), MAX_BONES);
 		glConfig2.vboVertexSkinningAvailable = (qboolean)(r_vboVertexSkinning->integer && ((glConfig2.maxVertexSkinningBones >= 12) ? qtrue : qfalse));
 
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_vertex_shader\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_vertex_shader\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_vertex_shader\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_shader");
+		MissingEXT("GL_ARB_vertex_shader\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_shader");
 	}
 	GL_CheckErrors();
 
 	// GL_ARB_fragment_shader
 	if (GLEW_ARB_fragment_shader)
 	{
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_fragment_shader\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_fragment_shader\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_fragment_shader\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_fragment_shader");
+		MissingEXT("GL_ARB_fragment_shader\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_fragment_shader");
 	}
 
 	// GL_ARB_shading_language_100
@@ -421,12 +425,12 @@ static void GLimp_InitExtensions2(void)
 	{
 		Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig2.shadingLanguageVersion));
 		sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_shading_language_100\n");
+		Ren_Print("...found OpenGL extension - GL_ARB_shading_language_100\n");
 	}
 	else
 	{
-		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_shading_language_100\n");
-		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shading_language_100");
+		MissingEXT("GL_ARB_shading_language_100\n");
+		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shading_language_100");
 	}
 	GL_CheckErrors();
 
@@ -437,16 +441,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_texture_non_power_of_two->integer)
 		{
 			glConfig2.textureNPOTAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_texture_non_power_of_two\n");
+			Ren_Print("...found OpenGL extension - GL_ARB_texture_non_power_of_two\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_texture_non_power_of_two\n");
+			Ren_Print("...ignoring GL_ARB_texture_non_power_of_two\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_texture_non_power_of_two not found\n");
+		Ren_Print("...GL_ARB_texture_non_power_of_two not found\n");
 	}
 
 	// GL_ARB_draw_buffers
@@ -458,16 +462,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_draw_buffers->integer)
 		{
 			glConfig2.drawBuffersAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_draw_buffers\n");
+			Ren_Print("...found OpenGL extension - GL_ARB_draw_buffers\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_draw_buffers\n");
+			Ren_Print("...ignoring GL_ARB_draw_buffers\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_draw_buffers not found\n");
+		Ren_Print("...GL_ARB_draw_buffers not found\n");
 	}
 
 	// GL_ARB_half_float_pixel
@@ -477,16 +481,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_half_float_pixel->integer)
 		{
 			glConfig2.textureHalfFloatAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_half_float_pixel\n");
+			Ren_Print("...found OpenGL extension - GL_ARB_half_float_pixel\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_half_float_pixel\n");
+			Ren_Print("...ignoring GL_ARB_half_float_pixel\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_half_float_pixel not found\n");
+		Ren_Print("...GL_ARB_half_float_pixel not found\n");
 	}
 
 	// GL_ARB_texture_float
@@ -496,16 +500,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_texture_float->integer)
 		{
 			glConfig2.textureFloatAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_texture_float\n");
+			Ren_Print("...found OpenGL extension - GL_ARB_texture_float\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_texture_float\n");
+			Ren_Print("...ignoring GL_ARB_texture_float\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_texture_float not found\n");
+		Ren_Print("...GL_ARB_texture_float not found\n");
 	}
 
 	// GL_ARB_texture_compression
@@ -515,16 +519,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_compressed_textures->integer)
 		{
 			glConfig2.ARBTextureCompressionAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_texture_compression\n");
+			Ren_Print("...found OpenGL extension - GL_ARB_texture_compression\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_texture_compression\n");
+			Ren_Print("...ignoring GL_ARB_texture_compression\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_texture_compression not found\n");
+		Ren_Print("...GL_ARB_texture_compression not found\n");
 	}
 
 	// GL_ARB_vertex_array_object
@@ -534,16 +538,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_vertex_array_object->integer)
 		{
 			glConfig2.vertexArrayObjectAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_vertex_array_object\n");
+			Ren_Print("...found OpenGL extension - GL_ARB_vertex_array_object\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_vertex_array_object\n");
+			Ren_Print("...ignoring GL_ARB_vertex_array_object\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_vertex_array_object not found\n");
+		Ren_Print("...GL_ARB_vertex_array_object not found\n");
 	}
 
 	// GL_EXT_texture_compression_s3tc
@@ -552,16 +556,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_compressed_textures->integer)
 		{
 			glConfig.textureCompression = TC_S3TC;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_texture_compression_s3tc\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_texture_compression_s3tc\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_texture_compression_s3tc\n");
+			Ren_Print("...ignoring GL_EXT_texture_compression_s3tc\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_texture_compression_s3tc not found\n");
+		Ren_Print("...GL_EXT_texture_compression_s3tc not found\n");
 	}
 
 	// GL_EXT_texture3D
@@ -571,18 +575,18 @@ static void GLimp_InitExtensions2(void)
 		//if(r_ext_texture3d->value)
 		{
 			glConfig2.texture3DAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_texture3D\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_texture3D\n");
 		}
 		/*
 		else
 		{
-		    ri.Printf(PRINT_ALL, "...ignoring GL_EXT_texture3D\n");
+		    Ren_Print("...ignoring GL_EXT_texture3D\n");
 		}
 		*/
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_texture3D not found\n");
+		Ren_Print("...GL_EXT_texture3D not found\n");
 	}
 
 	// GL_EXT_stencil_wrap
@@ -592,16 +596,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_stencil_wrap->value)
 		{
 			glConfig2.stencilWrapAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_stencil_wrap\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_stencil_wrap\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_stencil_wrap\n");
+			Ren_Print("...ignoring GL_EXT_stencil_wrap\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_stencil_wrap not found\n");
+		Ren_Print("...GL_EXT_stencil_wrap not found\n");
 	}
 
 	// GL_EXT_texture_filter_anisotropic
@@ -613,16 +617,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_texture_filter_anisotropic->value)
 		{
 			glConfig2.textureAnisotropyAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_texture_filter_anisotropic\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_texture_filter_anisotropic\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_texture_filter_anisotropic\n");
+			Ren_Print("...ignoring GL_EXT_texture_filter_anisotropic\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_texture_filter_anisotropic not found\n");
+		Ren_Print("...GL_EXT_texture_filter_anisotropic not found\n");
 	}
 	GL_CheckErrors();
 
@@ -631,16 +635,16 @@ static void GLimp_InitExtensions2(void)
 	{
 		if (r_ext_stencil_two_side->value)
 		{
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_stencil_two_side\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_stencil_two_side\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_stencil_two_side\n");
+			Ren_Print("...ignoring GL_EXT_stencil_two_side\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_stencil_two_side not found\n");
+		Ren_Print("...GL_EXT_stencil_two_side not found\n");
 	}
 
 	// GL_EXT_depth_bounds_test
@@ -648,16 +652,16 @@ static void GLimp_InitExtensions2(void)
 	{
 		if (r_ext_depth_bounds_test->value)
 		{
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_depth_bounds_test\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_depth_bounds_test\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_depth_bounds_test\n");
+			Ren_Print("...ignoring GL_EXT_depth_bounds_test\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_depth_bounds_test not found\n");
+		Ren_Print("...GL_EXT_depth_bounds_test not found\n");
 	}
 
 	// GL_EXT_framebuffer_object
@@ -670,16 +674,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_framebuffer_object->value)
 		{
 			glConfig2.framebufferObjectAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_framebuffer_object\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_framebuffer_object\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_framebuffer_object\n");
+			Ren_Print("...ignoring GL_EXT_framebuffer_object\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_framebuffer_object not found\n");
+		Ren_Print("...GL_EXT_framebuffer_object not found\n");
 	}
 	GL_CheckErrors();
 
@@ -690,16 +694,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_packed_depth_stencil->integer)
 		{
 			glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_packed_depth_stencil\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_packed_depth_stencil\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_packed_depth_stencil\n");
+			Ren_Print("...ignoring GL_EXT_packed_depth_stencil\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_packed_depth_stencil not found\n");
+		Ren_Print("...GL_EXT_packed_depth_stencil not found\n");
 	}
 
 	// GL_EXT_framebuffer_blit
@@ -709,16 +713,16 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_framebuffer_blit->integer)
 		{
 			glConfig2.framebufferBlitAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_framebuffer_blit\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_framebuffer_blit\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_framebuffer_blit\n");
+			Ren_Print("...ignoring GL_EXT_framebuffer_blit\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_framebuffer_blit not found\n");
+		Ren_Print("...GL_EXT_framebuffer_blit not found\n");
 	}
 
 	// GL_EXTX_framebuffer_mixed_formats
@@ -730,16 +734,16 @@ static void GLimp_InitExtensions2(void)
 	    if(r_extx_framebuffer_mixed_formats->integer)
 	    {
 	        glConfig2.framebufferMixedFormatsAvailable = qtrue;
-	        ri.Printf(PRINT_ALL, "...using GL_EXTX_framebuffer_mixed_formats\n");
+	        Ren_Print("...using GL_EXTX_framebuffer_mixed_formats\n");
 	    }
 	    else
 	    {
-	        ri.Printf(PRINT_ALL, "...ignoring GL_EXTX_framebuffer_mixed_formats\n");
+	        Ren_Print("...ignoring GL_EXTX_framebuffer_mixed_formats\n");
 	    }
 	}
 	else
 	{
-	    ri.Printf(PRINT_ALL, "...GL_EXTX_framebuffer_mixed_formats not found\n");
+	    Ren_Print("...GL_EXTX_framebuffer_mixed_formats not found\n");
 	}
 	*/
 
@@ -748,16 +752,16 @@ static void GLimp_InitExtensions2(void)
 	{
 		if (r_ext_separate_stencil->value)
 		{
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ATI_separate_stencil\n");
+			Ren_Print("...found OpenGL extension - GL_ATI_separate_stencil\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ATI_separate_stencil\n");
+			Ren_Print("...ignoring GL_ATI_separate_stencil\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ATI_separate_stencil not found\n");
+		Ren_Print("...GL_ATI_separate_stencil not found\n");
 	}
 
 	// GL_SGIS_generate_mipmap
@@ -767,26 +771,26 @@ static void GLimp_InitExtensions2(void)
 		if (r_ext_generate_mipmap->value)
 		{
 			glConfig2.generateMipmapAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_SGIS_generate_mipmap\n");
+			Ren_Print("...found OpenGL extension - GL_SGIS_generate_mipmap\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_SGIS_generate_mipmap\n");
+			Ren_Print("...ignoring GL_SGIS_generate_mipmap\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_SGIS_generate_mipmap not found\n");
+		Ren_Print("...GL_SGIS_generate_mipmap not found\n");
 	}
 
 	// GL_GREMEDY_string_marker
 	if (GLEW_GREMEDY_string_marker)
 	{
-		ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_GREMEDY_string_marker\n");
+		Ren_Print("...found OpenGL extension - GL_GREMEDY_string_marker\n");
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_GREMEDY_string_marker not found\n");
+		Ren_Print("...GL_GREMEDY_string_marker not found\n");
 	}
 
 #ifdef GLEW_ARB_get_program_binary
@@ -798,19 +802,19 @@ static void GLimp_InitExtensions2(void)
 
 		if (!formats)
 		{
-			ri.Printf(PRINT_ALL, "...GL_ARB_get_program_binary found, but with no binary formats\n");
+			Ren_Print("...GL_ARB_get_program_binary found, but with no binary formats\n");
 			glConfig2.getProgramBinaryAvailable = qfalse;
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...using GL_ARB_get_program_binary\n");
+			Ren_Print("...using GL_ARB_get_program_binary\n");
 			glConfig2.getProgramBinaryAvailable = qtrue;
 		}
 	}
 	else
 #endif
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_get_program_binary not found\n");
+		Ren_Print("...GL_ARB_get_program_binary not found\n");
 		glConfig2.getProgramBinaryAvailable = qfalse;
 	}
 }
@@ -833,7 +837,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 #endif
 	GLenum glewResult;
 
-	ri.Printf(PRINT_ALL, "Initializing OpenGL display\n");
+	Ren_Print("Initializing OpenGL display\n");
 
 	if (r_allowResize->integer)
 	{
@@ -875,7 +879,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	GLimp_DetectAvailableModes();
 
-	ri.Printf(PRINT_ALL, "...setting mode %d: ", mode);
+	Ren_Print("...setting mode %d: ", mode);
 
 #ifdef PANDORA
 	glConfig.vidWidth     = 800;
@@ -894,19 +898,19 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		{
 			glConfig.vidWidth  = 640;
 			glConfig.vidHeight = 480;
-			ri.Printf(PRINT_ALL,
-			          "Cannot determine display resolution, assuming 640x480\n");
+			Ren_Print(
+			    "Cannot determine display resolution, assuming 640x480\n");
 		}
 
 		glConfig.windowAspect = (float)glConfig.vidWidth / (float)glConfig.vidHeight;
 	}
 	else if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
 	{
-		ri.Printf(PRINT_ALL, "invalid mode\n");
+		Ren_Print("invalid mode\n");
 		return RSERR_INVALID_MODE;
 	}
 #endif
-	ri.Printf(PRINT_ALL, "%dx%d\n", glConfig.vidWidth, glConfig.vidHeight);
+	Ren_Print("%dx%d\n", glConfig.vidWidth, glConfig.vidHeight);
 
 #ifdef PANDORA
 	flags                |= SDL_FULLSCREEN;
@@ -1153,6 +1157,14 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		testStencilBits = eglStencilbits;
 #endif
 
+#ifdef FEATURE_RENDERER2
+		glewExperimental = GL_TRUE;
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+
 		if ((SDL_glContext = SDL_GL_CreateContext(screen)) == NULL)
 		{
 			ri.Printf(PRINT_DEVELOPER, "SDL_GL_CreateContext failed: %s\n", SDL_GetError());
@@ -1176,11 +1188,11 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	if (GLEW_OK != glewResult)
 	{
 		// glewInit failed, something is seriously wrong
-		ri.Error(ERR_FATAL, "GLW_StartOpenGL() - could not load OpenGL subsystem: %s", glewGetErrorString(glewResult));
+		Ren_Fatal("GLW_StartOpenGL() - could not load OpenGL subsystem: %s", glewGetErrorString(glewResult));
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
+		Ren_Print("Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
 #endif
 
@@ -1193,7 +1205,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	if (!screen || !renderer)
 	{
-		ri.Printf(PRINT_ALL, "Couldn't get a visual\n");
+		Ren_Print("Couldn't get a visual\n");
 		return RSERR_INVALID_MODE;
 	}
 
@@ -1214,21 +1226,21 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 	{
 		const char *driverName;
 
-		if (SDL_Init(SDL_INIT_VIDEO) == -1)
+		if (LegacySDL_Init(SDL_INIT_VIDEO) == -1)
 		{
-			ri.Printf(PRINT_ALL, "SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n",
+			Ren_Print("SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n",
 			          SDL_GetError());
 			return qfalse;
 		}
 
 		driverName = SDL_GetCurrentVideoDriver();
-		ri.Printf(PRINT_ALL, "SDL using driver \"%s\"\n", driverName);
+		Ren_Print("SDL using driver \"%s\"\n", driverName);
 		ri.Cvar_Set("r_sdlDriver", driverName);
 	}
 
 	if (fullscreen && ri.Cvar_VariableIntegerValue("in_nograb"))
 	{
-		ri.Printf(PRINT_ALL, "Fullscreen not allowed with in_nograb 1\n");
+		Ren_Print("Fullscreen not allowed with in_nograb 1\n");
 		ri.Cvar_Set("r_fullscreen", "0");
 		r_fullscreen->modified = qfalse;
 		fullscreen             = qfalse;
@@ -1239,10 +1251,10 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 	switch (err)
 	{
 	case RSERR_INVALID_FULLSCREEN:
-		ri.Printf(PRINT_ALL, "...WARNING: fullscreen unavailable in this mode\n");
+		Ren_Print("...WARNING: fullscreen unavailable in this mode\n");
 		return qfalse;
 	case RSERR_INVALID_MODE:
-		ri.Printf(PRINT_ALL, "...WARNING: could not set the given mode (%d)\n", mode);
+		Ren_Print("...WARNING: could not set the given mode (%d)\n", mode);
 		return qfalse;
 	case RSERR_OLD_GL:
 		ri.Error(ERR_VID_FATAL, "Could not create opengl 3 context");
@@ -1260,11 +1272,11 @@ static void GLimp_InitExtensions(void)
 {
 	if (!r_allowExtensions->integer)
 	{
-		ri.Printf(PRINT_ALL, "* IGNORING OPENGL EXTENSIONS *\n");
+		Ren_Print("* IGNORING OPENGL EXTENSIONS *\n");
 		return;
 	}
 
-	ri.Printf(PRINT_ALL, "Initializing OpenGL extensions\n");
+	Ren_Print("Initializing OpenGL extensions\n");
 
 	glConfig.textureCompression = TC_NONE;
 
@@ -1276,17 +1288,17 @@ static void GLimp_InitExtensions(void)
 		if (r_ext_compressed_textures->value)
 		{
 			glConfig.textureCompression = TC_S3TC_ARB;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_texture_compression_s3tc\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_texture_compression_s3tc\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_texture_compression_s3tc\n");
+			Ren_Print("...ignoring GL_EXT_texture_compression_s3tc\n");
 		}
 	}
 	else
 #endif
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_texture_compression_s3tc not found\n");
+		Ren_Print("...GL_EXT_texture_compression_s3tc not found\n");
 	}
 
 #if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
@@ -1298,16 +1310,16 @@ static void GLimp_InitExtensions(void)
 			if (r_ext_compressed_textures->value)
 			{
 				glConfig.textureCompression = TC_S3TC;
-				ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_S3_s3tc\n");
+				Ren_Print("...found OpenGL extension - GL_S3_s3tc\n");
 			}
 			else
 			{
-				ri.Printf(PRINT_ALL, "...ignoring GL_S3_s3tc\n");
+				Ren_Print("...ignoring GL_S3_s3tc\n");
 			}
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...GL_S3_s3tc not found\n");
+			Ren_Print("...GL_S3_s3tc not found\n");
 		}
 	}
 #endif
@@ -1315,9 +1327,9 @@ static void GLimp_InitExtensions(void)
 	// GL_EXT_texture_env_add
 #ifdef FEATURE_RENDERER_GLES
 	glConfig.textureEnvAddAvailable = qtrue;
-	ri.Printf(PRINT_ALL, "...using GL_EXT_texture_env_add\n");
+	Ren_Print("...using GL_EXT_texture_env_add\n");
 #elif defined(__MORPHOS__)
-	ri.Printf(PRINT_ALL, "...GL_EXT_texture_env_add not found\n");
+	Ren_Print("...GL_EXT_texture_env_add not found\n");
 #else
 	glConfig.textureEnvAddAvailable = qfalse;
 	if (GLEW_EXT_texture_env_add)
@@ -1325,17 +1337,17 @@ static void GLimp_InitExtensions(void)
 		if (r_ext_texture_env_add->integer)
 		{
 			glConfig.textureEnvAddAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_EXT_texture_env_add\n");
+			Ren_Print("...found OpenGL extension - GL_EXT_texture_env_add\n");
 		}
 		else
 		{
 			glConfig.textureEnvAddAvailable = qfalse;
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_texture_env_add\n");
+			Ren_Print("...ignoring GL_EXT_texture_env_add\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_EXT_texture_env_add not found\n");
+		Ren_Print("...GL_EXT_texture_env_add not found\n");
 	}
 #endif
 
@@ -1349,11 +1361,11 @@ static void GLimp_InitExtensions(void)
 	//glConfig.maxActiveTextures=4;
 	if (glConfig.maxActiveTextures > 1)
 	{
-		ri.Printf(PRINT_ALL, "...using GL_ARB_multitexture (%i texture units)\n", glConfig.maxActiveTextures);
+		Ren_Print("...using GL_ARB_multitexture (%i texture units)\n", glConfig.maxActiveTextures);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...not using GL_ARB_multitexture, < 2 texture units\n");
+		Ren_Print("...not using GL_ARB_multitexture, < 2 texture units\n");
 	}
 #else
 	if (GLEW_ARB_multitexture)
@@ -1368,21 +1380,21 @@ static void GLimp_InitExtensions(void)
 
 			if (glConfig.maxActiveTextures > 1)
 			{
-				ri.Printf(PRINT_ALL, "...found OpenGL extension - GL_ARB_multitexture\n");
+				Ren_Print("...found OpenGL extension - GL_ARB_multitexture\n");
 			}
 			else
 			{
-				ri.Printf(PRINT_ALL, "...not using GL_ARB_multitexture, < 2 texture units\n");
+				Ren_Print("...not using GL_ARB_multitexture, < 2 texture units\n");
 			}
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_multitexture\n");
+			Ren_Print("...ignoring GL_ARB_multitexture\n");
 		}
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "...GL_ARB_multitexture not found\n");
+		Ren_Print("...GL_ARB_multitexture not found\n");
 	}
 #endif
 }
@@ -1531,7 +1543,7 @@ void GLimp_Init(void)
 	// Finally, try the default screen resolution
 	if (r_mode->integer != R_MODE_FALLBACK)
 	{
-		ri.Printf(PRINT_ALL, "Setting r_mode %d failed, falling back on r_mode %d\n",
+		Ren_Print("Setting r_mode %d failed, falling back on r_mode %d\n",
 		          r_mode->integer, R_MODE_FALLBACK);
 
 		if (GLimp_StartDriverAndSetMode(R_MODE_FALLBACK, qfalse, qfalse))
@@ -1541,7 +1553,7 @@ void GLimp_Init(void)
 	}
 
 	// Nothing worked, give up
-	ri.Error(ERR_FATAL, "GLimp_Init() - could not load OpenGL subsystem\n");
+	Ren_Fatal("GLimp_Init() - could not load OpenGL subsystem\n");
 
 success:
 
@@ -1640,7 +1652,7 @@ void GLimp_EndFrame(void)
 		// short delay. This little fix simply causes the gamma to be reset
 		// again after a hopefully-long-enough-delay of 3 seconds.
 		// Radar 15961845
-		gammaResetTime = Sys_Milliseconds() + 3000;
+		gammaResetTime = ri.Milliseconds() + 3000;
 #endif
 
 		r_fullscreen->modified = qfalse;
@@ -1648,15 +1660,15 @@ void GLimp_EndFrame(void)
 
 
 #ifdef MACOS_X_GAMMA_RESET_FIX
-	if ((gammaResetTime != 0) && (gammaResetTime < Sys_Milliseconds()))
+	if ((gammaResetTime != 0) && (gammaResetTime < ri.Milliseconds()))
 	{
 		// Circuitous way of resetting the gamma to its current value.
 		char old[6] = { 0 };
-		Q_strncpyz(old, Cvar_VariableString("r_gamma"), 5);
+		Q_strncpyz(old, va("%i", ri.Cvar_VariableIntegerValue("r_gamma")), 5);
 		if (strlen(old))
 		{
-			Cvar_Set("r_gamma", "1");
-			Cvar_Set("r_gamma", old);
+			ri.Cvar_Set("r_gamma", "1");
+			ri.Cvar_Set("r_gamma", old);
 		}
 
 		gammaResetTime = 0;

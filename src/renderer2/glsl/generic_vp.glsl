@@ -26,7 +26,7 @@ varying vec3 var_Position;
 varying vec2 var_Tex;
 varying vec4 var_Color;
 
-void    main()
+void main()
 {
 	vec4 position;
 	vec3 normal;

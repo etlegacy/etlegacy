@@ -325,7 +325,7 @@ void MatrixAffineInverse(const matrix_t in, matrix_t out)
 	MatrixCopy(in, out);
 	MatrixInverse(out);
 #else
-	// Tr3B - cleaned up
+	// cleaned up
 	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];
 	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];
 	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];
@@ -413,35 +413,6 @@ void MatrixCrop(matrix_t m, const vec3_t mins, const vec3_t maxs)
 	m[1] = 0;          m[5] = scaleY;     m[9] = 0;          m[13] = offsetY;
 	m[2] = 0;          m[6] = 0;          m[10] = scaleZ;     m[14] = offsetZ;
 	m[3] = 0;          m[7] = 0;          m[11] = 0;          m[15] = 1;
-}
-
-void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
-{
-	if (mins2[0] < mins[0])
-	{
-		mins[0] = mins2[0];
-	}
-	if (mins2[1] < mins[1])
-	{
-		mins[1] = mins2[1];
-	}
-	if (mins2[2] < mins[2])
-	{
-		mins[2] = mins2[2];
-	}
-
-	if (maxs2[0] > maxs[0])
-	{
-		maxs[0] = maxs2[0];
-	}
-	if (maxs2[1] > maxs[1])
-	{
-		maxs[1] = maxs2[1];
-	}
-	if (maxs2[2] > maxs[2])
-	{
-		maxs[2] = maxs2[2];
-	}
 }
 
 // *INDENT-OFF*
@@ -910,7 +881,7 @@ void MatrixTransformPlane2(const matrix_t m, vec4_t inout)
 	Vector4Copy(tmp, inout);
 }
 
-// Tr3B: far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
+// far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
 void MatrixPerspectiveProjectionFovXYInfiniteRH(matrix_t m, vec_t fovX, vec_t fovY, vec_t nearvec)
 {
 	vec_t width, height;
@@ -1346,7 +1317,7 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 	lend = strlen(dest);
 	if (lend >= destsize)
 	{
-		Com_Error(ERR_FATAL, "Q_strreplace: already overflowed");
+		Ren_Fatal("Q_strreplace: already overflowed");
 	}
 
 	s = strstr(dest, find);
@@ -1417,7 +1388,7 @@ int MemStreamRead(memStream_t *s, void *buffer, int len)
 		len       = s->buffer + s->bufSize - s->curPos;
 		ret       = 0;
 
-		Com_Error(ERR_FATAL, "MemStreamRead: EOF reached");
+		Ren_Fatal("MemStreamRead: EOF reached");
 	}
 
 	Com_Memcpy(buffer, s->curPos, len);
@@ -1508,7 +1479,7 @@ void printBits(size_t const size, void const *const ptr)
 		{
 			byte   = b[i] & (1 << j);
 			byte >>= j;
-			ri.Printf(PRINT_DEVELOPER, "%u", byte);
+			Ren_Developer("%u", byte);
 		}
 	}
 }

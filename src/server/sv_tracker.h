@@ -34,13 +34,12 @@
  */
 #ifdef FEATURE_TRACKER
 
-#ifndef _TRACKER_H
-#define _TRACKER_H
+#ifndef INCLUDE_TRACKER_H
+#define INCLUDE_TRACKER_H
 
 #define TRACKER_ADDR "et-tracker.trackbase.net:4444"
 
 #include "server.h"
-//#include "../qcommon/q_shared.h"
 
 void Tracker_Init(void);
 void Tracker_ServerStart(void);
@@ -59,6 +58,6 @@ qboolean Tracker_catchServerCommand(int clientNum, char *msg);
 
 void Tracker_requestWeaponStats(void);
 
-#endif // _TRACKER_H
+#endif // #ifndef INCLUDE_TRACKER_H
 
 #endif // FEATURE_TRACKER

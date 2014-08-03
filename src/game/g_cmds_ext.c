@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -272,6 +272,13 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 	if (team_nocontrols.integer)
 	{
 		G_noTeamControls(ent);
+		return;
+	}
+
+	if (g_gamestate.integer != GS_PLAYING)
+	{
+		// generic output for pause/unpause/timeouts ...
+		CP("print \"Command not available - match isn't in progress!\n\"");
 		return;
 	}
 
@@ -752,15 +759,14 @@ const unsigned int cQualifyingShots[WS_MAX] =
 	5,      // 14 WS_DYNAMITE
 	3,      // 15 WS_AIRSTRIKE
 	3,      // 16 WS_ARTILLERY
-	5,      // 17 WS_SYRINGE
-	3,      // 18 WS_SMOKE
-	3,      // 19 WS_SATCHEL
-	5,      // 20 WS_GRENADELAUNCHER
-	10,     // 21 WS_LANDMINE
-	100,    // 22 WS_MG42
-	100,    // 23 WS_BROWNING
-	30,     // 24 WS_GARAND
-	30,     // 25 WS_K43
+	3,      // 17 WS_SMOKE
+	3,      // 18 WS_SATCHEL
+	5,      // 19 WS_GRENADELAUNCHER
+	10,     // 20 WS_LANDMINE
+	100,    // 21 WS_MG42
+	100,    // 22 WS_BROWNING
+	30,     // 23 WS_GARAND
+	30,     // 24 WS_K43
 };
 
 // Gives back overall or specific weapon rankings
@@ -775,29 +781,29 @@ int QDECL SortStats(const void *a, const void *b)
 	// then connecting clients
 	if (ca->pers.connected == CON_CONNECTING)
 	{
-		return(1);
+		return 1;
 	}
 	if (cb->pers.connected == CON_CONNECTING)
 	{
-		return(-1);
+		return -1;
 	}
 
 	if (ca->sess.sessionTeam == TEAM_SPECTATOR)
 	{
-		return(1);
+		return 1;
 	}
 	if (cb->sess.sessionTeam == TEAM_SPECTATOR)
 	{
-		return(-1);
+		return -1;
 	}
 
 	if ((ca->sess.aWeaponStats[iWeap].atts) < cQualifyingShots[iWeap])
 	{
-		return(1);
+		return 1;
 	}
 	if ((cb->sess.aWeaponStats[iWeap].atts) < cQualifyingShots[iWeap])
 	{
-		return(-1);
+		return -1;
 	}
 
 	accA = (float)(ca->sess.aWeaponStats[iWeap].hits * 100.0) / (float)(ca->sess.aWeaponStats[iWeap].atts);
@@ -806,9 +812,9 @@ int QDECL SortStats(const void *a, const void *b)
 	// then sort by accuracy
 	if (accA > accB)
 	{
-		return(-1);
+		return -1;
 	}
-	return(1);
+	return 1;
 }
 
 // Shows the most accurate players for each weapon to the requesting client
@@ -895,7 +901,7 @@ void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state
 	trap_Argv(1, z, sizeof(z));
 	if ((iWeap = atoi(z)) == 0 || iWeap < WS_KNIFE || iWeap >= WS_MAX)
 	{
-		for (iWeap = WS_SYRINGE; iWeap >= WS_KNIFE; iWeap--)
+		for (iWeap = WS_MAX - 1; iWeap >= WS_KNIFE; iWeap--)
 		{
 			if (!Q_stricmp(z, aWeaponInfo[iWeap].pszCode))
 			{

@@ -45,7 +45,6 @@ float displayAspect = 0.0f;
 
 static void GfxInfo_f(void);
 
-cvar_t *r_glCoreProfile;
 cvar_t *r_glMajorVersion;
 cvar_t *r_glMinorVersion;
 cvar_t *r_glDebugProfile;
@@ -62,7 +61,6 @@ cvar_t *r_railWidth;
 cvar_t *r_railCoreWidth;
 cvar_t *r_railSegmentLength;
 
-cvar_t *r_verbose;
 cvar_t *r_ignore;
 
 cvar_t *r_znear;
@@ -91,7 +89,6 @@ cvar_t *r_nocull;
 cvar_t *r_facePlaneCull;
 cvar_t *r_showcluster;
 cvar_t *r_nocurves;
-cvar_t *r_nobatching;
 cvar_t *r_noLightScissors;
 cvar_t *r_noLightVisCull;
 cvar_t *r_noInteractionSort;
@@ -219,7 +216,6 @@ cvar_t *r_simpleMipMaps;
 
 cvar_t *r_showImages;
 
-cvar_t *r_forceFog;
 cvar_t *r_wolfFog;
 cvar_t *r_noFog;
 
@@ -271,7 +267,6 @@ cvar_t *r_vboLighting;
 cvar_t *r_vboModels;
 cvar_t *r_vboOptimizeVertices;
 cvar_t *r_vboVertexSkinning;
-cvar_t *r_vboDeformVertexes;
 cvar_t *r_vboSmoothNormals;
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
@@ -307,12 +302,8 @@ cvar_t *r_hdrToneMappingOperator;
 cvar_t *r_hdrGamma;
 cvar_t *r_hdrDebug;
 
-#ifdef EXPERIMENTAL
 cvar_t *r_screenSpaceAmbientOcclusion;
-#endif
-#ifdef EXPERIMENTAL
 cvar_t *r_depthOfField;
-#endif
 cvar_t *r_reflectionMapping;
 cvar_t *r_highQualityNormalMapping;
 cvar_t *r_bloom;
@@ -322,7 +313,6 @@ cvar_t *r_rotoscope;
 cvar_t *r_rotoscopeBlur;
 cvar_t *r_cameraPostFX;
 cvar_t *r_cameraVignette;
-cvar_t *r_cameraFilmGrain;
 cvar_t *r_cameraFilmGrainScale;
 
 cvar_t *r_evsmPostProcess;
@@ -337,13 +327,11 @@ cvar_t *r_allowExtensions;
 
 cvar_t *r_screenshotJpegQuality;
 
-/*
-** InitOpenGL
-**
-** This function is responsible for initializing a valid OpenGL subsystem.  This
-** is done by calling GLimp_Init (which gives us a working OGL subsystem) then
-** setting variables, checking GL constants, and reporting the gfx system config
-** to the user.
+/**
+* @brief This function is responsible for initializing a valid OpenGL subsystem.  This
+* is done by calling GLimp_Init (which gives us a working OGL subsystem) then
+* setting variables, checking GL constants, and reporting the gfx system config
+* to the user.
 */
 static qboolean InitOpenGL(void)
 {
@@ -381,9 +369,7 @@ static qboolean InitOpenGL(void)
 			glConfig.maxTextureSize = 0;
 		}
 
-#if defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_InitGPUShaders();
-#endif
 	}
 
 	GL_CheckErrors();
@@ -446,7 +432,7 @@ void GL_CheckErrors_(const char *fileName, int line)
 		break;
 	}
 
-	ri.Error(ERR_FATAL, "caught OpenGL error: %s in file %s line %i", s, fileName, line);
+	Ren_Fatal("caught OpenGL error: %s in file %s line %i", s, fileName, line);
 }
 
 typedef struct vidmode_s
@@ -520,14 +506,14 @@ static void R_ModeList_f(void)
 {
 	int i;
 
-	ri.Printf(PRINT_ALL, "\n");
+	Ren_Print("\n");
 
 	for (i = 0; i < s_numVidModes; i++)
 	{
-		ri.Printf(PRINT_ALL, "Mode %-2d: %s\n", i, r_vidModes[i].description);
+		Ren_Print("Mode %-2d: %s\n", i, r_vidModes[i].description);
 	}
 
-	ri.Printf(PRINT_ALL, "\n");
+	Ren_Print("\n");
 }
 
 /*
@@ -676,13 +662,11 @@ const void *RB_TakeScreenshotCmd(const void *data)
 	case SSF_TGA:
 		RB_TakeScreenshot(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 		break;
-
 	case SSF_JPEG:
 		RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 		break;
-
 	case SSF_PNG:
-		ri.Printf(PRINT_ALL, "PNG output is not implemented");
+		Ren_Print("PNG output is not implemented");
 		break;
 	}
 
@@ -730,13 +714,13 @@ void R_TakeScreenshot(const char *name, ssFormat_t format)
 
 		if (lastNumber == 1000)
 		{
-			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
+			Ren_Print("ScreenShot: Couldn't create a file\n");
 			return;
 		}
 
 		lastNumber++;
 	}
-	ri.Printf(PRINT_ALL, "Wrote %s\n", fileName);
+	Ren_Print("Wrote %s\n", fileName);
 
 	cmd->commandId = RC_SCREENSHOT;
 	cmd->x         = 0;
@@ -837,7 +821,7 @@ static void R_GenerateMaterialFile_f(void)
 
     if(Cmd_Argc() < 3)
     {
-        Com_Printf("usage: generatemtr <directory> [image extension]\n");
+        Ren_Print("usage: generatemtr <directory> [image extension]\n");
         return;
     }
 
@@ -848,11 +832,11 @@ static void R_GenerateMaterialFile_f(void)
 
     Q_strncpyz(fileName, ri.Cmd_Argv(1), sizeof(fileName));
     Com_DefaultExtension(fileName, sizeof(fileName), ".mtr");
-    Com_Printf("Writing %s.\n", fileName);
+    Ren_Print("Writing %s.\n", fileName);
     f = FS_FOpenFileWrite(fileName);
     if(!f)
     {
-        Com_Printf("Couldn't write %s.\n", fileName);
+        Ren_Print("Couldn't write %s.\n", fileName);
         return;
     }
 
@@ -877,7 +861,7 @@ static void R_GenerateMaterialFile_f(void)
             Com_sprintf(fileName2, sizeof(fileName2), "%s/%s", path, fileName);
             Com_sprintf(cleanName2, sizeof(cleanName2), "%s/%s", path, cleanName);
 
-            Com_Printf("renaming '%s' into '%s'\n", fileName2, cleanName2);
+            Ren_Print("renaming '%s' into '%s'\n", fileName2, cleanName2);
             FS_Rename(fileName2, cleanName2);
         }
 
@@ -1025,22 +1009,21 @@ void GL_SetDefaultState(void)
 	// in a multitexture environment
 	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
-		for (i = 31; i >= 0; i--)
-		{
-			GL_SelectTexture(i);
-			GL_TextureMode(r_textureMode->string);
-		}
+		i = 31;
 	}
-	else
+	else if (GLEW_ARB_multitexture)
 	{
-		if (GLEW_ARB_multitexture)
-		{
-			for (i = glConfig.maxActiveTextures - 1; i >= 0; i--)
-			{
-				GL_SelectTexture(i);
-				GL_TextureMode(r_textureMode->string);
-			}
-		}
+		i = glConfig.maxActiveTextures - 1;
+	}
+    else
+    {
+        i = 0;
+    }
+
+	for (; i >= 0; i--)
+	{
+		GL_SelectTexture(i);
+		GL_TextureMode(r_textureMode->string);
 	}
 
 	GL_CheckErrors();
@@ -1075,11 +1058,11 @@ void GL_SetDefaultState(void)
 	glDisable(GL_BLEND);
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClearDepth(1.0);
+	GL_ClearColor(GLCOLOR_BLACK);
+	GL_ClearDepth(1.0);
 
 	glDrawBuffer(GL_BACK);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	GL_CheckErrors();
 
@@ -1110,7 +1093,7 @@ void R_PrintLongString(const char *string)
 	while (size > 0)
 	{
 		Q_strncpyz(buffer, p, sizeof(buffer));
-		ri.Printf(PRINT_ALL, "%s", buffer);
+		Ren_Print("%s", buffer);
 		p    += 1023;
 		size -= 1023;
 	}
@@ -1133,153 +1116,154 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
-	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
-	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
+	Ren_Print("\nGL_VENDOR: %s\n", glConfig.vendor_string);
+	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
+	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
 
 	//Lets not do this on gl3.2 context as the functionality is not supported.
 	/*
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
+	Ren_Print("GL_EXTENSIONS: ");
 	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
 	*/
 
-	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
+	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 
 	if (glConfig.driverType != GLDRV_OPENGL3)
 	{
-		ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_UNITS_ARB: %d\n", glConfig.maxActiveTextures);
+		Ren_Print("GL_MAX_TEXTURE_UNITS_ARB: %d\n", glConfig.maxActiveTextures);
 	}
 
 	/*
 	   if(glConfig.fragmentProgramAvailable)
 	   {
-	   ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_IMAGE_UNITS_ARB: %d\n", glConfig.maxTextureImageUnits);
+	   Ren_Print("GL_MAX_TEXTURE_IMAGE_UNITS_ARB: %d\n", glConfig.maxTextureImageUnits);
 	   }
 	 */
 
-	ri.Printf(PRINT_ALL, "GL_SHADING_LANGUAGE_VERSION_ARB: %s\n", glConfig2.shadingLanguageVersion);
+	Ren_Print("GL_SHADING_LANGUAGE_VERSION_ARB: %s\n", glConfig2.shadingLanguageVersion);
 
-	ri.Printf(PRINT_ALL, "GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB %d\n", glConfig2.maxVertexUniforms);
-	//ri.Printf(PRINT_ALL, "GL_MAX_VARYING_FLOATS_ARB %d\n", glConfig2.maxVaryingFloats);
-	ri.Printf(PRINT_ALL, "GL_MAX_VERTEX_ATTRIBS_ARB %d\n", glConfig2.maxVertexAttribs);
+	Ren_Print("GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB %d\n", glConfig2.maxVertexUniforms);
+	//Ren_Print("GL_MAX_VARYING_FLOATS_ARB %d\n", glConfig2.maxVaryingFloats);
+	Ren_Print("GL_MAX_VERTEX_ATTRIBS_ARB %d\n", glConfig2.maxVertexAttribs);
 
 	if (glConfig2.occlusionQueryAvailable)
 	{
-		ri.Printf(PRINT_ALL, "%d occlusion query bits\n", glConfig2.occlusionQueryBits);
+		Ren_Print("%d occlusion query bits\n", glConfig2.occlusionQueryBits);
 	}
 
 	if (glConfig2.drawBuffersAvailable)
 	{
-		ri.Printf(PRINT_ALL, "GL_MAX_DRAW_BUFFERS_ARB: %d\n", glConfig2.maxDrawBuffers);
+		Ren_Print("GL_MAX_DRAW_BUFFERS_ARB: %d\n", glConfig2.maxDrawBuffers);
 	}
 
 	if (glConfig2.textureAnisotropyAvailable)
 	{
-		ri.Printf(PRINT_ALL, "GL_TEXTURE_MAX_ANISOTROPY_EXT: %f\n", glConfig2.maxTextureAnisotropy);
+		Ren_Print("GL_TEXTURE_MAX_ANISOTROPY_EXT: %f\n", glConfig2.maxTextureAnisotropy);
 	}
 
 	if (glConfig2.framebufferObjectAvailable)
 	{
-		ri.Printf(PRINT_ALL, "GL_MAX_RENDERBUFFER_SIZE_EXT: %d\n", glConfig2.maxRenderbufferSize);
-		ri.Printf(PRINT_ALL, "GL_MAX_COLOR_ATTACHMENTS_EXT: %d\n", glConfig2.maxColorAttachments);
+		Ren_Print("GL_MAX_RENDERBUFFER_SIZE_EXT: %d\n", glConfig2.maxRenderbufferSize);
+		Ren_Print("GL_MAX_COLOR_ATTACHMENTS_EXT: %d\n", glConfig2.maxColorAttachments);
 	}
 
-	ri.Printf(PRINT_ALL, "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits,
+	Ren_Print("\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits,
 	          glConfig.depthBits, glConfig.stencilBits);
-	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight,
+	Ren_Print("MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight,
 	          fsstrings[r_fullscreen->integer == 1]);
 
 	if (glConfig.displayFrequency)
 	{
-		ri.Printf(PRINT_ALL, "%d\n", glConfig.displayFrequency);
+		Ren_Print("%d\n", glConfig.displayFrequency);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "N/A\n");
+		Ren_Print("N/A\n");
 	}
 
-	ri.Printf(PRINT_ALL, "ASPECT RATIO: %.4f\n", glConfig.windowAspect);
+	Ren_Print("ASPECT RATIO: %.4f\n", glConfig.windowAspect);
 
 	if (glConfig.deviceSupportsGamma)
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
 	}
 
-	ri.Printf(PRINT_ALL, "texturemode: %s\n", r_textureMode->string);
-	ri.Printf(PRINT_ALL, "picmip: %d\n", r_picmip->integer);
+	Ren_Print("texturemode: %s\n", r_textureMode->string);
+	Ren_Print("picmip: %d\n", r_picmip->integer);
 
 	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
 		int contextFlags, profile;
 
-		ri.Printf(PRINT_ALL, S_COLOR_GREEN "Using OpenGL 3.x context\n");
+		Ren_Print(S_COLOR_GREEN "Using OpenGL 3.x context\n");
 
 		// check if we have a core-profile
 		glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
 		if (profile == GL_CONTEXT_CORE_PROFILE_BIT)
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_GREEN "Having a core profile\n");
+			Ren_Print(S_COLOR_GREEN "Having a core profile\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_RED "Having a compatibility profile\n");
+			Ren_Print(S_COLOR_RED "Having a compatibility profile\n");
 		}
 
 		// check if context is forward compatible
 		glGetIntegerv(GL_CONTEXT_FLAGS, &contextFlags);
 		if (contextFlags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT)
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_GREEN "Context is forward compatible\n");
+			Ren_Print(S_COLOR_GREEN "Context is forward compatible\n");
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, S_COLOR_RED "Context is NOT forward compatible\n");
+			Ren_Print(S_COLOR_RED "Context is NOT forward compatible\n");
 		}
 	}
 
 	if (glConfig.hardwareType == GLHW_ATI)
 	{
-		ri.Printf(PRINT_ALL, "HACK: ATI approximations\n");
+		Ren_Print("HACK: ATI approximations\n");
 	}
 
 	if (glConfig.textureCompression != TC_NONE)
 	{
-		ri.Printf(PRINT_ALL, "Using S3TC (DXTC) texture compression\n");
+		Ren_Print("Using S3TC (DXTC) texture compression\n");
 	}
 
 	if (glConfig.hardwareType == GLHW_ATI_DX10)
 	{
-		ri.Printf(PRINT_ALL, "Using ATI DirectX 10 hardware features\n");
+		Ren_Print("Using ATI DirectX 10 hardware features\n");
 	}
 
 	if (glConfig.hardwareType == GLHW_NV_DX10)
 	{
-		ri.Printf(PRINT_ALL, "Using NVIDIA DirectX 10 hardware features\n");
+		Ren_Print("Using NVIDIA DirectX 10 hardware features\n");
 	}
 
 	if (glConfig2.vboVertexSkinningAvailable)
 	{
-		ri.Printf(PRINT_ALL, "Using GPU vertex skinning with max %i bones in a single pass\n", glConfig2.maxVertexSkinningBones);
+		Ren_Print("Using GPU vertex skinning with max %i bones in a single pass\n", glConfig2.maxVertexSkinningBones);
 	}
 
 	if (r_finish->integer)
 	{
-		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
+		Ren_Print("Forcing glFinish\n");
 	}
-	ri.Printf(PRINT_ALL, "Renderer: (c)rap\n");
+	Ren_Print("Renderer: legacy\n");
 }
 
 static void GLSL_restart_f(void)
 {
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	GLSL_ShutdownGPUShaders();
 	GLSL_InitGPUShaders();
+	GLSL_CompileGPUShaders();
 }
 
 void R_Register(void)
@@ -1287,7 +1271,6 @@ void R_Register(void)
 	// OpenGL context selection
 	r_glMajorVersion = ri.Cvar_Get("r_glMajorVersion", "", CVAR_LATCH);
 	r_glMinorVersion = ri.Cvar_Get("r_glMinorVersion", "", CVAR_LATCH);
-	r_glCoreProfile  = ri.Cvar_Get("r_glCoreProfile", "", CVAR_LATCH);
 	r_glDebugProfile = ri.Cvar_Get("r_glDebugProfile", "", CVAR_LATCH);
 
 #ifdef USE_GLSL_OPTIMIZER
@@ -1343,17 +1326,12 @@ void R_Register(void)
 	r_noMarksOnTrisurfs       = ri.Cvar_Get("r_noMarksOnTrisurfs", "1", CVAR_CHEAT);
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
 
-	r_forceFog = ri.Cvar_Get("r_forceFog", "0", CVAR_CHEAT /* | CVAR_LATCH */);
-	ri.Cvar_AssertCvarRange(r_forceFog, 0.0f, 1.0f, qfalse);
-	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_CHEAT);
+	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_ARCHIVE);
 	r_noFog   = ri.Cvar_Get("r_noFog", "0", CVAR_CHEAT);
-#ifdef EXPERIMENTAL
+
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
-	//ri.Cvar_AssertCvarRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
-#endif
-#ifdef EXPERIMENTAL
+	ri.Cvar_AssertCvarRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
 	r_depthOfField = ri.Cvar_Get("r_depthOfField", "0", CVAR_ARCHIVE);
-#endif
 
 	r_reflectionMapping        = ri.Cvar_Get("r_reflectionMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1365,7 +1343,7 @@ void R_Register(void)
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 
-	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // ydnar: limit to overbrightbits 1 (sorry 1337 players)
+	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // limit to overbrightbits 1 (sorry 1337 players)
 	ri.Cvar_AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
 
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
@@ -1418,7 +1396,6 @@ void R_Register(void)
 	r_vboModels           = ri.Cvar_Get("r_vboModels", "1", CVAR_CHEAT);
 	r_vboOptimizeVertices = ri.Cvar_Get("r_vboOptimizeVertices", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_vboVertexSkinning   = ri.Cvar_Get("r_vboVertexSkinning", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_vboDeformVertexes   = ri.Cvar_Get("r_vboDeformVertexes", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_vboSmoothNormals    = ri.Cvar_Get("r_vboSmoothNormals", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
@@ -1471,7 +1448,6 @@ void R_Register(void)
 
 	r_cameraPostFX         = ri.Cvar_Get("r_cameraPostFX", "0", CVAR_ARCHIVE);
 	r_cameraVignette       = ri.Cvar_Get("r_cameraVignette", "1", CVAR_ARCHIVE);
-	r_cameraFilmGrain      = ri.Cvar_Get("r_cameraFilmGrain", "1", CVAR_ARCHIVE);
 	r_cameraFilmGrainScale = ri.Cvar_Get("r_cameraFilmGrainScale", "3", CVAR_ARCHIVE);
 
 	// temporary variables that can change at any time
@@ -1481,7 +1457,6 @@ void R_Register(void)
 	r_debugSort  = ri.Cvar_Get("r_debugSort", "0", CVAR_CHEAT);
 
 	r_nocurves          = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
-	r_nobatching        = ri.Cvar_Get("r_nobatching", "0", CVAR_CHEAT);
 	r_noLightScissors   = ri.Cvar_Get("r_noLightScissors", "0", CVAR_CHEAT);
 	r_noLightVisCull    = ri.Cvar_Get("r_noLightVisCull", "0", CVAR_CHEAT);
 	r_noInteractionSort = ri.Cvar_Get("r_noInteractionSort", "0", CVAR_CHEAT);
@@ -1508,11 +1483,10 @@ void R_Register(void)
 	r_novis              = ri.Cvar_Get("r_novis", "0", CVAR_CHEAT);
 	r_showcluster        = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
 	r_speeds             = ri.Cvar_Get("r_speeds", "0", 0);
-	r_verbose            = ri.Cvar_Get("r_verbose", "0", CVAR_CHEAT);
 	r_logFile            = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
 	r_debugSurface       = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
 	r_nobind             = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);
-	r_clear              = ri.Cvar_Get("r_clear", "1", CVAR_CHEAT);
+	r_clear              = ri.Cvar_Get("r_clear", "0", CVAR_CHEAT);
 	r_offsetFactor       = ri.Cvar_Get("r_offsetFactor", "-1", CVAR_CHEAT);
 	r_offsetUnits        = ri.Cvar_Get("r_offsetUnits", "-2", CVAR_CHEAT);
 	r_forceSpecular      = ri.Cvar_Get("r_forceSpecular", "0", CVAR_CHEAT);
@@ -1672,7 +1646,7 @@ void R_Init(void)
 {
 	int i;
 
-	ri.Printf(PRINT_ALL, "----- R_Init -----\n");
+	Ren_Print("----- R_Init -----\n");
 
 	//Swap_Init();
 
@@ -1683,7 +1657,7 @@ void R_Init(void)
 
 	if ((intptr_t) tess.xyz & 15)
 	{
-		Com_Printf("WARNING: tess.xyz not 16 byte aligned\n");
+		Ren_Print("WARNING: tess.xyz not 16 byte aligned\n");
 	}
 
 	// init function tables
@@ -1722,14 +1696,12 @@ void R_Init(void)
 		ri.Error(ERR_VID_FATAL, "OpenGL initialization failed!");
 	}
 
-#if !defined(GLSL_COMPILE_STARTUP_ONLY)
-	GLSL_InitGPUShaders();
-#endif
-
 	backEndData              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData), h_low);
 	backEndData->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
 	backEndData->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
 	backEndData->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
+
+	R_InitNextFrame();
 
 	R_InitImages();
 
@@ -1766,14 +1738,16 @@ void R_Init(void)
 		glGenQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
 	}
 
+    GLSL_CompileGPUShaders();
+
 	GL_CheckErrors();
 
-	ri.Printf(PRINT_ALL, "----- finished R_Init -----\n");
+	Ren_Print("----- finished R_Init -----\n");
 }
 
 void RE_Shutdown(qboolean destroyWindow)
 {
-	ri.Printf(PRINT_ALL, "RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
+	Ren_Print("RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
 
 	ri.Cmd_RemoveCommand("modellist");
 	ri.Cmd_RemoveCommand("screenshotPNG");
@@ -1795,7 +1769,7 @@ void RE_Shutdown(qboolean destroyWindow)
 
 	if (tr.registered)
 	{
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 
 		R_ShutdownImages();
 		R_ShutdownVBOs();
@@ -1834,29 +1808,15 @@ void RE_Shutdown(qboolean destroyWindow)
 				*/
 			}
 		}
-
-#if !defined(GLSL_COMPILE_STARTUP_ONLY)
-		GLSL_ShutdownGPUShaders();
-#endif
 	}
 
 	R_DoneFreeType();
 
 	// shut down platform specific OpenGL stuff
 
-	// Tr3B: this should be always executed if we want to avoid some GLSL problems with SMP
-	// Update: Having the JVM running with all its threads can cause problems with an old OpenGL context.
-	// Maybe an OpenGL driver problem. It is safer to destroy the context in that case or you will get really weird crashes when rendering stuff.
-	//
-
-#if !defined(SMP) // && !defined(USE_JAVA)
 	if (destroyWindow)
-#endif
 	{
-#if defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_ShutdownGPUShaders();
-#endif
-
 		GLimp_Shutdown();
 
 		ri.Tag_Free();
@@ -1874,7 +1834,7 @@ Touch all images to make sure they are resident
 */
 void RE_EndRegistration(void)
 {
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	/*
 	   if(!Sys_LowPhysicalMemory())
@@ -1886,7 +1846,7 @@ void RE_EndRegistration(void)
 
 static void RE_PurgeCache(void)
 {
-	ri.Printf(PRINT_ALL, S_COLOR_RED "TODO RE_PurgeCache\n");
+	Ren_Print(S_COLOR_RED "TODO RE_PurgeCache\n");
 
 	/*
 	R_PurgeShaders(9999999);
@@ -1905,100 +1865,64 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	ri = *rimp;
 
-	ri.Printf(PRINT_ALL, "GetRefAPI()\n");
-
 	Com_Memset(&re, 0, sizeof(re));
 
 	if (apiVersion != REF_API_VERSION)
 	{
-		ri.Printf(PRINT_ALL, "Mismatched REF_API_VERSION: expected %i, got %i\n", REF_API_VERSION, apiVersion);
+		Ren_Print("Mismatched REF_API_VERSION: expected %i, got %i\n", REF_API_VERSION, apiVersion);
 		return NULL;
 	}
 
 	// the RE_ functions are Renderer Entry points
 
-	// Q3A BEGIN
-	re.Shutdown = RE_Shutdown;
-
-	re.BeginRegistration = RE_BeginRegistration;
-	re.RegisterModel     = RE_RegisterModel;
-
-	re.RegisterSkin        = RE_RegisterSkin;
-	re.RegisterShader      = RE_RegisterShader;
-	re.RegisterShaderNoMip = RE_RegisterShaderNoMip;
-	//re.RegisterShaderLightAttenuation = RE_RegisterShaderLightAttenuation;
-
-	re.LoadWorld       = RE_LoadWorldMap;
-	re.SetWorldVisData = RE_SetWorldVisData;
-	re.EndRegistration = RE_EndRegistration;
-
-	re.BeginFrame = RE_BeginFrame;
-	re.EndFrame   = RE_EndFrame;
-
-	re.MarkFragments = R_MarkFragments;
-
-	re.LerpTag = RE_LerpTagET;
-
-	re.ModelBounds = R_ModelBounds;
-
-	re.ClearScene          = RE_ClearScene;
-	re.AddRefEntityToScene = RE_AddRefEntityToScene;
-
-	re.AddPolyToScene  = RE_AddPolyToSceneET;
-	re.AddPolysToScene = RE_AddPolysToScene;
-
-	re.AddLightToScene = RE_AddDynamicLightToSceneET;
-	//re.AddAdditiveLightToScene = RE_AddDynamicLightToSceneQ3A;
-
-	re.RenderScene = RE_RenderScene;
-
-	re.SetColor = RE_SetColor;
-	//re.SetClipRegion = RE_SetClipRegion;
-	re.DrawStretchPic  = RE_StretchPic;
-	re.DrawStretchRaw  = RE_StretchRaw;
-	re.UploadCinematic = RE_UploadCinematic;
-
+	re.Shutdown               = RE_Shutdown;
+	re.BeginRegistration      = RE_BeginRegistration;
+	re.RegisterModel          = RE_RegisterModel;
+	re.RegisterSkin           = RE_RegisterSkin;
+	re.RegisterShader         = RE_RegisterShader;
+	re.RegisterShaderNoMip    = RE_RegisterShaderNoMip;
+	re.LoadWorld              = RE_LoadWorldMap;
+	re.SetWorldVisData        = RE_SetWorldVisData;
+	re.EndRegistration        = RE_EndRegistration;
+	re.BeginFrame             = RE_BeginFrame;
+	re.EndFrame               = RE_EndFrame;
+	re.MarkFragments          = R_MarkFragments;
+	re.LerpTag                = RE_LerpTagET;
+	re.ModelBounds            = R_ModelBounds;
+	re.ClearScene             = RE_ClearScene;
+	re.AddRefEntityToScene    = RE_AddRefEntityToScene;
+	re.AddPolyToScene         = RE_AddPolyToSceneET;
+	re.AddPolysToScene        = RE_AddPolysToScene;
+	re.AddLightToScene        = RE_AddDynamicLightToSceneET;
+	re.RenderScene            = RE_RenderScene;
+	re.SetColor               = RE_SetColor;
+	re.DrawStretchPic         = RE_StretchPic;
+	re.DrawStretchRaw         = RE_StretchRaw;
+	re.UploadCinematic        = RE_UploadCinematic;
 	re.DrawRotatedPic         = RE_RotatedPic;
 	re.Add2dPolys             = RE_2DPolyies;
 	re.DrawStretchPicGradient = RE_StretchPicGradient;
-
-	re.RegisterFont   = RE_RegisterFont;
-	re.RemapShader    = R_RemapShader;
-	re.GetEntityToken = R_GetEntityToken;
-	re.inPVS          = R_inPVS;
-	// Q3A END
-
-	// ET BEGIN
-	re.GetSkinModel       = RE_GetSkinModel;
-	re.GetShaderFromModel = RE_GetShaderFromModel;
-
-	re.ProjectDecal = RE_ProjectDecal;
-	re.ClearDecals  = RE_ClearDecals;
-
-	re.DrawDebugPolygon = R_DebugPolygon;
-	re.DrawDebugText    = R_DebugText;
-
-	re.SaveViewParms    = RE_SaveViewParms;
-	re.RestoreViewParms = RE_RestoreViewParms;
-
-	re.AddCoronaToScene     = RE_AddCoronaToScene;
-	re.AddPolyBufferToScene = RE_AddPolyBufferToScene;
-
-	re.SetFog       = RE_SetFog;
-	re.SetGlobalFog = RE_SetGlobalFog;
-
-	re.purgeCache = RE_PurgeCache;
-
-	re.LoadDynamicShader = RE_LoadDynamicShader;
-	re.GetTextureId      = RE_GetTextureId;
-	re.RenderToTexture   = RE_RenderToTexture;
-	re.Finish            = RE_Finish;
-	// ET END
-
-	// XreaL BEGIN
-	re.TakeVideoFrame = RE_TakeVideoFrame;
-
-	//re.TakeScreenshotPNG = RB_TakeScreenshotPNG;
+	re.RegisterFont           = RE_RegisterFont;
+	re.RemapShader            = R_RemapShader;
+	re.GetEntityToken         = R_GetEntityToken;
+	re.inPVS                  = R_inPVS;
+	re.GetSkinModel           = RE_GetSkinModel;
+	re.GetShaderFromModel     = RE_GetShaderFromModel;
+	re.ProjectDecal           = RE_ProjectDecal;
+	re.ClearDecals            = RE_ClearDecals;
+	re.DrawDebugPolygon       = R_DebugPolygon;
+	re.DrawDebugText          = R_DebugText;
+	re.AddCoronaToScene       = RE_AddCoronaToScene;
+	re.AddPolyBufferToScene   = RE_AddPolyBufferToScene;
+	re.SetFog                 = RE_SetFog;
+	re.SetGlobalFog           = RE_SetGlobalFog;
+	re.purgeCache             = RE_PurgeCache;
+	re.LoadDynamicShader      = RE_LoadDynamicShader;
+	re.GetTextureId           = RE_GetTextureId;
+	re.RenderToTexture        = RE_RenderToTexture;
+	re.Finish                 = RE_Finish;
+	re.TakeVideoFrame         = RE_TakeVideoFrame;
+	//re.SetClipRegion = RE_SetClipRegion;
 
 #if defined(USE_REFLIGHT)
 	re.RegisterShaderLightAttenuation = RE_RegisterShaderLightAttenuation;
@@ -2014,47 +1938,6 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.AnimNumFrames     = RE_AnimNumFrames;
 	re.AnimFrameRate     = RE_AnimFrameRate;
 #endif
-	// XreaL END
 
 	return &re;
 }
-
-#ifdef USE_RENDERER_DLOPEN
-void QDECL Com_Printf(const char *msg, ...)
-{
-	va_list argptr;
-	char    text[1024];
-
-	va_start(argptr, msg);
-	Q_vsnprintf(text, sizeof(text), msg, argptr);
-	va_end(argptr);
-
-	ri.Printf(PRINT_ALL, "%s", text);
-}
-
-/*
-void QDECL Com_DPrintf(const char *msg, ...)
-{
-    va_list argptr;
-    char    text[1024];
-
-    va_start(argptr, msg);
-    Q_vsnprintf(text, sizeof(text), msg, argptr);
-    va_end(argptr);
-
-    ri.Printf(PRINT_DEVELOPER, "%s", text);
-}
-*/
-
-void QDECL Com_Error(int level, const char *error, ...)
-{
-	va_list argptr;
-	char    text[1024];
-
-	va_start(argptr, error);
-	Q_vsnprintf(text, sizeof(text), error, argptr);
-	va_end(argptr);
-
-	ri.Error(level, "%s", text);
-}
-#endif

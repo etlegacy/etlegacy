@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,6 +31,9 @@
  * @file sys_loadlib.h
  */
 
+#ifndef INCLUDE_SYS_LOADLIB_H
+#define INCLUDE_SYS_LOADLIB_H
+
 #if defined (DEDICATED) || defined (__AROS__) || defined (__MORPHOS__)
 #   ifdef _WIN32
 #       include <windows.h>
@@ -58,3 +61,5 @@
 #   define Sys_LoadFunction(h, fn)   SDL_LoadFunction(h, fn)
 #   define Sys_LibraryError()   SDL_GetError()
 #endif
+
+#endif // #ifndef INCLUDE_SYS_LOADLIB_H

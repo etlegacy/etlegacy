@@ -33,8 +33,8 @@
  * modules
  */
 
-#ifndef _QCOMMON_H_
-#define _QCOMMON_H_
+#ifndef INCLUDE_QCOMMON_H
+#define INCLUDE_QCOMMON_H
 
 #include "../qcommon/cm_public.h"
 /*
@@ -860,7 +860,7 @@ typedef enum
 } cpuFeatures_t;
 
 char *CopyString(const char *in);
-void        Info_Print(const char *s);
+void Info_Print(const char *s);
 
 void Com_BeginRedirect(char *buffer, int buffersize, void (*flush)(char *));
 void Com_EndRedirect(void);
@@ -1141,18 +1141,18 @@ typedef struct
 	void *evPtr;                    // this must be manually freed if not NULL
 } sysEvent_t;
 
-void        Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr);
-int         Com_EventLoop(void);
-sysEvent_t  Com_GetSystemEvent(void);
+void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr);
+int Com_EventLoop(void);
+sysEvent_t Com_GetSystemEvent(void);
 
-void    Sys_Init(void);
+void Sys_Init(void);
 qboolean Sys_IsNumLockDown(void);
 
 #ifdef _WIN32
 #define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT
-#elif __OpenBSD__ //TODO: detect the *BSD variant
+#elif __OpenBSD__ // TODO: detect the *BSD variant
 #define Sys_GetDLLName(x) x ".mp.obsd." ARCH_STRING DLL_EXT
-#elif __FreeBSD__ //TODO: detect the *BSD variant
+#elif __FreeBSD__ // TODO: detect the *BSD variant
 #define Sys_GetDLLName(x) x ".mp.fbsd." ARCH_STRING DLL_EXT
 #elif __APPLE__
 #define Sys_GetDLLName(x) x DLL_EXT
@@ -1184,8 +1184,6 @@ void Sys_SnapVector(float *v);
 
 // the system console is shown when a dedicated server is running
 void Sys_DisplaySystemConsole(qboolean show);
-
-cpuFeatures_t Sys_GetProcessorFeatures(void);
 
 void Sys_SendPacket(int length, const void *data, netadr_t to);
 qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message);
@@ -1258,7 +1256,8 @@ void CON_Print_tty(const char *message);
 void CON_Clear_tty(void);
 #endif
 
-/* This is based on the Adaptive Huffman algorithm described in Sayood's Data
+/*
+ * This is based on the Adaptive Huffman algorithm described in Sayood's Data
  * Compression book.  The ranks are not actually stored, but implicitly defined
  * by the location of a node within a doubly-linked list
  */
@@ -1268,14 +1267,14 @@ void CON_Clear_tty(void);
 
 typedef struct nodetype
 {
-	struct  nodetype *left, *right, *parent; /* tree structure */
-	struct  nodetype *next, *prev; /* doubly-linked list */
-	struct  nodetype **head; /* highest ranked node in block */
+	struct  nodetype *left, *right, *parent; // tree structure
+	struct  nodetype *next, *prev; // doubly-linked list
+	struct  nodetype **head; // highest ranked node in block
 	int weight;
 	int symbol;
 } node_t;
 
-#define HMAX 256 /* Maximum symbol */
+#define HMAX 256 // Maximum symbol
 
 typedef struct
 {
@@ -1338,4 +1337,4 @@ const char *I18N_TranslateMod(const char *msgid);
 #define __(x) x
 #endif
 
-#endif // _QCOMMON_H_
+#endif // #ifndef INCLUDE_QCOMMON_H

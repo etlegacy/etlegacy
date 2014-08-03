@@ -183,7 +183,6 @@ vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
 
-vmCvar_t cg_enableBreath;
 vmCvar_t cg_autoactivate;
 
 vmCvar_t pmove_fixed;
@@ -406,7 +405,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_predictItems,          "cg_predictItems",          "1",     CVAR_ARCHIVE                 },
 	{ &cg_stats,                 "cg_stats",                 "0",     0                            },
 
-	{ &cg_enableBreath,          "cg_enableBreath",          "1",     CVAR_ARCHIVE                 },
 	{ &cg_timescale,             "timescale",                "1",     0                            },
 
 	{ &pmove_fixed,              "pmove_fixed",              "0",     CVAR_SYSTEMINFO              },

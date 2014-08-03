@@ -358,7 +358,7 @@ void CG_windowDraw(void)
 			{
 				if (tmp > 0)
 				{
-					y += (480 - y) * tmp / w->targetTime;   //(100 * tmp / w->targetTime) / 100;
+					y += (SCREEN_HEIGHT - y) * tmp / w->targetTime;   //(100 * tmp / w->targetTime) / 100;
 				}
 				else
 				{
@@ -386,9 +386,9 @@ void CG_windowDraw(void)
 			{
 				if (tmp > 0)
 				{
-					y = w->curY + (480 - w->y) * t_offset / w->targetTime;        //(100 * t_offset / w->targetTime) / 100;
+					y = w->curY + (SCREEN_HEIGHT - w->y) * t_offset / w->targetTime;        //(100 * t_offset / w->targetTime) / 100;
 				}
-				if (tmp < 0 || y >= 480)
+				if (tmp < 0 || y >= SCREEN_HEIGHT)
 				{
 					w->state = WSTATE_OFF;
 					fCleanup = qtrue;

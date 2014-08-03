@@ -2149,26 +2149,23 @@ EVENT LOOP
 #define MASK_QUEUED_EVENTS (MAX_QUEUED_EVENTS - 1)
 
 static sysEvent_t eventQueue[MAX_QUEUED_EVENTS];
-static int        eventHead = 0;
-static int        eventTail = 0;
-static byte       sys_packetReceived[MAX_MSGLEN];
+// keep in mind: both event vars are never reset
+static int  eventHead = 0;
+static int  eventTail = 0;
+static byte sys_packetReceived[MAX_MSGLEN];
 
-/*
-================
-Com_QueueEvent
-
-A time of 0 will get the current time
-Ptr should either be null, or point to a block of data that can
-be freed by the game later.
-================
-*/
+/**
+ * @brief A time of 0 will get the current time
+ *        Ptr should either be null, or point to a block of data that can
+ *        be freed by the game later.
+ */
 void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr)
 {
 	sysEvent_t *ev = &eventQueue[eventHead & MASK_QUEUED_EVENTS];
 
 	if (eventHead - eventTail >= MAX_QUEUED_EVENTS)
 	{
-		Com_Printf("Com_QueueEvent: overflow\n");
+		Com_Printf("Com_QueueEvent: event type [%i] overflow\n", type);
 		// we are discarding an event, but don't leak memory
 		if (ev->evPtr)
 		{
@@ -2523,13 +2520,12 @@ int Com_EventLoop(void)
 	return 0;   // never reached
 }
 
-/*
-================
-Com_Milliseconds
-
-Can be used for profiling, but will be journaled accurately
-================
-*/
+/**
+ * @brief Can be used for profiling, but will be journaled accurately - see com_journal
+ *        Com_Milliseconds also processes system events
+ *
+ * @return Sys_Milliseconds (finally)
+ */
 int Com_Milliseconds(void)
 {
 	sysEvent_t ev;
@@ -2718,7 +2714,9 @@ static void Com_DetectAltivec(void)
 		static qboolean detected = qfalse;
 		if (!detected)
 		{
-			altivec  = (Sys_GetProcessorFeatures() & CF_ALTIVEC);
+#ifndef DEDICATED
+			altivec = SDL_HasAltiVec();
+#endif
 			detected = qtrue;
 		}
 

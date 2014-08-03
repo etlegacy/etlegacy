@@ -342,9 +342,8 @@ R_LoadMDC
 */
 qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const char *modName)
 {
-	int i, j, k;
-
-	mdcHeader_t        *mdcModel;
+	int                i, j, k;
+	mdcHeader_t        *mdcModel = ( mdcHeader_t * ) buffer;
 	md3Frame_t         *mdcFrame;
 	mdcSurface_t       *mdcSurf;
 	md3Shader_t        *mdcShader;
@@ -354,27 +353,23 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 	mdcXyzCompressed_t *mdcxyzComp;
 	mdcTag_t           *mdcTag;
 	mdcTagName_t       *mdcTagName;
-
-	mdvModel_t    *mdvModel;
-	mdvFrame_t    *frame;
-	mdvSurface_t  *surf;      //, *surface; //unused
-	srfTriangle_t *tri;
-	mdvXyz_t      *v;
-	mdvSt_t       *st;
-	mdvTag_t      *tag;
-	mdvTagName_t  *tagName;
-	short         *ps;
-
-	int version;
-	int size;
-
-	mdcModel = ( mdcHeader_t * ) buffer;
+	mdvModel_t         *mdvModel;
+	mdvFrame_t         *frame;
+	mdvSurface_t       *surf; //, *surface; //unused
+	srfTriangle_t      *tri;
+	mdvXyz_t           *v;
+	mdvSt_t            *st;
+	mdvTag_t           *tag;
+	mdvTagName_t       *tagName;
+	short              *ps;
+	int                version;
+	int                size;
 
 	version = LittleLong(mdcModel->version);
 
 	if (version != MDC_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD3: %s has wrong version (%i should be %i)\n", modName, version, MDC_VERSION);
+		Ren_Warning("R_LoadMD3: %s has wrong version (%i should be %i)\n", modName, version, MDC_VERSION);
 		return qfalse;
 	}
 
@@ -398,7 +393,7 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 
 	if (mdcModel->numFrames < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDC: '%s' has no frames\n", modName);
+		Ren_Warning("R_LoadMDC: '%s' has no frames\n", modName);
 		return qfalse;
 	}
 
@@ -411,8 +406,7 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 	for (i = 0; i < mdcModel->numFrames; i++, frame++, mdcFrame++)
 	{
 #if 1
-
-		// RB: ET HACK
+		// ET HACK
 		if (strstr(mod->name, "sherman") || strstr(mod->name, "mg42"))
 		{
 			frame->radius = 256;
@@ -493,13 +487,13 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 
 		if (mdcSurf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDC: %s has more than %i verts on a surface (%i)",
+			Ren_Drop("R_LoadMDC: %s has more than %i verts on a surface (%i)",
 			         modName, SHADER_MAX_VERTEXES, mdcSurf->numVerts);
 		}
 
 		if (mdcSurf->numTriangles > SHADER_MAX_TRIANGLES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDC: %s has more than %i triangles on a surface (%i)",
+			Ren_Drop("R_LoadMDC: %s has more than %i triangles on a surface (%i)",
 			         modName, SHADER_MAX_TRIANGLES, mdcSurf->numTriangles);
 		}
 
@@ -631,9 +625,8 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 				if (mdcSurf->numCompFrames > 0 && compFrame >= 0)
 				{
 					vec3_t ofsVec;
-					//vec3_t    normal;
 
-					R_MDC_DecodeXyzCompressed2(LittleShort(mdcxyzComp->ofsVec), ofsVec /*, normal*/);
+					R_MDC_DecodeXyzCompressed2(LittleShort(mdcxyzComp->ofsVec), ofsVec);
 					VectorAdd(v->xyz, ofsVec, v->xyz);
 
 					mdcxyzComp++;
@@ -750,7 +743,7 @@ qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 				}
 			}
 
-			//ri.Printf(PRINT_ALL, "...calculating MDC mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);
+			//Ren_Print("...calculating MDC mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);
 
 			// create surface
 			vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);

@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,6 +31,9 @@
  * @file client.h
  * @brief primary header for client
  */
+
+#ifndef INCLUDE_CLIENT_H
+#define INCLUDE_CLIENT_H
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
@@ -573,7 +576,6 @@ void CL_ParseServerMessage(msg_t *msg);
 void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
 void CL_LocalServers_f(void);
 void CL_GlobalServers_f(void);
-//FIXME: void    CL_FavoriteServers_f( void );
 void CL_Ping_f(void);
 qboolean CL_UpdateVisiblePings_f(int source);
 
@@ -581,7 +583,7 @@ qboolean CL_UpdateVisiblePings_f(int source);
 
 #define NUM_CON_TIMES 4
 
-#define CON_TEXTSIZE    65536
+#define CON_TEXTSIZE    131072
 
 typedef struct
 {
@@ -688,3 +690,5 @@ void LAN_LoadCachedServers(void);
 void CL_Netchan_Transmit(netchan_t *chan, msg_t *msg);   //int length, const byte *data );
 void CL_Netchan_TransmitNextFragment(netchan_t *chan);
 qboolean CL_Netchan_Process(netchan_t *chan, msg_t *msg);
+
+#endif // #ifndef INCLUDE_CLIENT_H

@@ -1,9 +1,8 @@
-/* blurY_fp.glsl */
-
+/* blurX_fp.glsl */
 uniform sampler2D u_ColorMap;
 uniform float     u_DeformMagnitude;
 
-void    main()
+void main()
 {
 	vec2 st = gl_FragCoord.st;
 
@@ -33,22 +32,22 @@ void    main()
 	float mu09 = 0.66840732;
 
 	// fragment offsets for blur samples
-	vec2 offset01 = vec2(0.0, -8.0);
-	vec2 offset02 = vec2(0.0, -7.0);
-	vec2 offset03 = vec2(0.0, -6.0);
-	vec2 offset04 = vec2(0.0, -5.0);
-	vec2 offset05 = vec2(0.0, -4.0);
-	vec2 offset06 = vec2(0.0, -3.0);
-	vec2 offset07 = vec2(0.0, -2.0);
-	vec2 offset08 = vec2(0.0, -1.0);
-	vec2 offset09 = vec2(0.0, 1.0);
-	vec2 offset10 = vec2(0.0, 2.0);
-	vec2 offset11 = vec2(0.0, 3.0);
-	vec2 offset12 = vec2(0.0, 4.0);
-	vec2 offset13 = vec2(0.0, 5.0);
-	vec2 offset14 = vec2(0.0, 6.0);
-	vec2 offset15 = vec2(0.0, 7.0);
-	vec2 offset16 = vec2(0.0, 8.0);
+	vec2 offset01 = vec2(-8.0, 0.0);
+	vec2 offset02 = vec2(-7.0, 0.0);
+	vec2 offset03 = vec2(-6.0, 0.0);
+	vec2 offset04 = vec2(-5.0, 0.0);
+	vec2 offset05 = vec2(-4.0, 0.0);
+	vec2 offset06 = vec2(-3.0, 0.0);
+	vec2 offset07 = vec2(-2.0, 0.0);
+	vec2 offset08 = vec2(-1.0, 0.0);
+	vec2 offset09 = vec2(1.0, 0.0);
+	vec2 offset10 = vec2(2.0, 0.0);
+	vec2 offset11 = vec2(3.0, 0.0);
+	vec2 offset12 = vec2(4.0, 0.0);
+	vec2 offset13 = vec2(5.0, 0.0);
+	vec2 offset14 = vec2(6.0, 0.0);
+	vec2 offset15 = vec2(7.0, 0.0);
+	vec2 offset16 = vec2(8.0, 0.0);
 
 	// calculate our offset texture coordinates
 	vec2 st01 = st + offset01 * deform;
@@ -127,7 +126,7 @@ void    main()
 	for (int i = -tap; i < tap; i++)
 	{
 		float weight = gaussFact[i + 2];
-		vec4  color  = texture2D(u_ColorMap, st + vec2(0, i) * u_DeformMagnitude * r_FBufScale) * weight;
+		vec4  color  = texture2D(u_ColorMap, st + vec2(i, 0) * u_DeformMagnitude * r_FBufScale) * weight;
 
 		sumColors += color;
 	}

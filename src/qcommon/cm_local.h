@@ -31,6 +31,9 @@
  * @file cm_local.h
  */
 
+#ifndef INCLUDE_CM_LOAD_H
+#define INCLUDE_CM_LOAD_H
+
 #include "q_shared.h"
 #include "qcommon.h"
 #include "cm_polylib.h"
@@ -187,13 +190,13 @@ typedef struct
 	qboolean isPoint;       // optimized case
 	trace_t trace;          // returned from trace call
 	sphere_t sphere;        // sphere for oriendted capsule collision
-#ifdef MRE_OPTIMIZE
+
 	cplane_t tracePlane1;
 	cplane_t tracePlane2;
 	float traceDist1;
 	float traceDist2;
 	vec3_t dir;
-#endif
+
 } traceWork_t;
 
 typedef struct leafList_s
@@ -221,3 +224,5 @@ struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *po
 void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
 qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
 void CM_ClearLevelPatches(void);
+
+#endif // #ifndef INCLUDE_CM_LOAD_H

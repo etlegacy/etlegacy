@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -339,9 +339,9 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 	    || (ent->e.oldframe >= tr.currentModel->model.mdc[0]->numFrames)
 	    || (ent->e.oldframe < 0))
 	{
-		ri.Printf(PRINT_DEVELOPER, "R_AddMDCSurfaces: no such frame %d to %d for '%s'\n",
-		          ent->e.oldframe, ent->e.frame,
-		          tr.currentModel->name);
+		Ren_Developer("R_AddMDCSurfaces: no such frame %d to %d for '%s'\n",
+		              ent->e.oldframe, ent->e.frame,
+		              tr.currentModel->name);
 		ent->e.frame    = 0;
 		ent->e.oldframe = 0;
 	}

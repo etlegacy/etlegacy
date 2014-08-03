@@ -830,7 +830,7 @@ void G_FreeEntity(gentity_t *ed)
 	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
 	// - when enabled g_debughitboxes or g_debugbullets 3 we want visible trace effects - don't free immediately
 	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
-	if ((ed->s.eType == ET_TEMPHEAD || ed->s.eType == ET_TEMPLEGS || ed->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0 && trap_Cvar_VariableIntegerValue("g_debughitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
+	if ((ed->s.eType == ET_TEMPHEAD || ed->s.eType == ET_TEMPLEGS || ed->s.eType == ET_CORPSE || ed->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0 && trap_Cvar_VariableIntegerValue("g_debughitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
 	{
 		// debug
 		//if (ed->s.eType >= ET_EVENTS)

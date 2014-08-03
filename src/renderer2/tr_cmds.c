@@ -34,8 +34,6 @@
 
 #include "tr_local.h"
 
-volatile qboolean renderThreadActive;
-
 void R_PerformanceCounters(void)
 {
 	if (!r_speeds->integer)
@@ -46,77 +44,78 @@ void R_PerformanceCounters(void)
 		return;
 	}
 
+	// FIXME: do a switch
 	if (r_speeds->integer == RSPEEDS_GENERAL)
 	{
-		ri.Printf(PRINT_ALL, "%i views %i portals %i batches %i surfs %i leafs %i verts %i tris\n",
+		Ren_Print("%i views %i portals %i batches %i surfs %i leafs %i verts %i tris\n",
 		          backEnd.pc.c_views, backEnd.pc.c_portals, backEnd.pc.c_batches, backEnd.pc.c_surfaces, tr.pc.c_leafs,
 		          backEnd.pc.c_vertexes, backEnd.pc.c_indexes / 3);
 
-		ri.Printf(PRINT_ALL, "%i lights %i bout %i pvsout %i queryout %i interactions\n",
+		Ren_Print("%i lights %i bout %i pvsout %i queryout %i interactions\n",
 		          tr.pc.c_dlights + tr.pc.c_slights - backEnd.pc.c_occlusionQueriesLightsCulled,
 		          tr.pc.c_box_cull_light_out,
 		          tr.pc.c_pvs_cull_light_out,
 		          backEnd.pc.c_occlusionQueriesLightsCulled,
 		          tr.pc.c_dlightInteractions + tr.pc.c_slightInteractions - backEnd.pc.c_occlusionQueriesInteractionsCulled);
 
-		ri.Printf(PRINT_ALL, "%i draws %i queries %i CHC++ ms %i vbos %i ibos %i verts %i tris\n",
+		Ren_Print("%i draws %i queries %i CHC++ ms %i vbos %i ibos %i verts %i tris\n",
 		          backEnd.pc.c_drawElements,
 		          tr.pc.c_occlusionQueries,
 		          tr.pc.c_CHCTime,
 		          backEnd.pc.c_vboVertexBuffers, backEnd.pc.c_vboIndexBuffers,
 		          backEnd.pc.c_vboVertexes, backEnd.pc.c_vboIndexes / 3);
 
-		ri.Printf(PRINT_ALL, "%i multidraws %i primitives %i tris\n",
+		Ren_Print("%i multidraws %i primitives %i tris\n",
 		          backEnd.pc.c_multiDrawElements,
 		          backEnd.pc.c_multiDrawPrimitives,
 		          backEnd.pc.c_multiVboIndexes / 3);
 	}
 	else if (r_speeds->integer == RSPEEDS_CULLING)
 	{
-		ri.Printf(PRINT_ALL, "(gen) %i sin %i sout %i pin %i pout\n",
+		Ren_Print("(gen) %i sin %i sout %i pin %i pout\n",
 		          tr.pc.c_sphere_cull_in, tr.pc.c_sphere_cull_out, tr.pc.c_plane_cull_in, tr.pc.c_plane_cull_out);
 
-		ri.Printf(PRINT_ALL, "(patch) %i sin %i sclip %i sout %i bin %i bclip %i bout\n",
+		Ren_Print("(patch) %i sin %i sclip %i sout %i bin %i bclip %i bout\n",
 		          tr.pc.c_sphere_cull_patch_in, tr.pc.c_sphere_cull_patch_clip,
 		          tr.pc.c_sphere_cull_patch_out, tr.pc.c_box_cull_patch_in,
 		          tr.pc.c_box_cull_patch_clip, tr.pc.c_box_cull_patch_out);
 
-		ri.Printf(PRINT_ALL, "(mdx) %i sin %i sclip %i sout %i bin %i bclip %i bout\n",
+		Ren_Print("(mdx) %i sin %i sclip %i sout %i bin %i bclip %i bout\n",
 		          tr.pc.c_sphere_cull_mdx_in, tr.pc.c_sphere_cull_mdx_clip,
 		          tr.pc.c_sphere_cull_mdx_out, tr.pc.c_box_cull_mdx_in, tr.pc.c_box_cull_mdx_clip, tr.pc.c_box_cull_mdx_out);
 
-		ri.Printf(PRINT_ALL, "(md5) %i bin %i bclip %i bout\n",
+		Ren_Print("(md5) %i bin %i bclip %i bout\n",
 		          tr.pc.c_box_cull_md5_in, tr.pc.c_box_cull_md5_clip, tr.pc.c_box_cull_md5_out);
 	}
 	else if (r_speeds->integer == RSPEEDS_VIEWCLUSTER)
 	{
-		ri.Printf(PRINT_ALL, "viewcluster: %i\n", tr.visClusters[tr.visIndex]);
+		Ren_Print("viewcluster: %i\n", tr.visClusters[tr.visIndex]);
 	}
 	else if (r_speeds->integer == RSPEEDS_LIGHTS)
 	{
-		ri.Printf(PRINT_ALL, "dlight srf:%i culled:%i\n", tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled);
+		Ren_Print("dlight srf:%i culled:%i\n", tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled);
 
-		ri.Printf(PRINT_ALL, "dlights:%i interactions:%i\n", tr.pc.c_dlights, tr.pc.c_dlightInteractions);
+		Ren_Print("dlights:%i interactions:%i\n", tr.pc.c_dlights, tr.pc.c_dlightInteractions);
 
-		ri.Printf(PRINT_ALL, "slights:%i interactions:%i\n", tr.pc.c_slights, tr.pc.c_slightInteractions);
+		Ren_Print("slights:%i interactions:%i\n", tr.pc.c_slights, tr.pc.c_slightInteractions);
 	}
 	else if (r_speeds->integer == RSPEEDS_SHADOWCUBE_CULLING)
 	{
-		ri.Printf(PRINT_ALL, "omni pyramid tests:%i bin:%i bclip:%i bout:%i\n",
+		Ren_Print("omni pyramid tests:%i bin:%i bclip:%i bout:%i\n",
 		          tr.pc.c_pyramidTests, tr.pc.c_pyramid_cull_ent_in, tr.pc.c_pyramid_cull_ent_clip, tr.pc.c_pyramid_cull_ent_out);
 	}
 	else if (r_speeds->integer == RSPEEDS_FOG)
 	{
-		ri.Printf(PRINT_ALL, "fog srf:%i batches:%i\n", backEnd.pc.c_fogSurfaces, backEnd.pc.c_fogBatches);
+		Ren_Print("fog srf:%i batches:%i\n", backEnd.pc.c_fogSurfaces, backEnd.pc.c_fogBatches);
 	}
 	else if (r_speeds->integer == RSPEEDS_FLARES)
 	{
-		ri.Printf(PRINT_ALL, "flare adds:%i tests:%i renders:%i\n",
+		Ren_Print("flare adds:%i tests:%i renders:%i\n",
 		          backEnd.pc.c_flareAdds, backEnd.pc.c_flareTests, backEnd.pc.c_flareRenders);
 	}
 	else if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
 	{
-		ri.Printf(PRINT_ALL, "occlusion queries:%i multi:%i saved:%i culled lights:%i culled entities:%i culled leafs:%i response time:%i fetch time:%i\n",
+		Ren_Print("occlusion queries:%i multi:%i saved:%i culled lights:%i culled entities:%i culled leafs:%i response time:%i fetch time:%i\n",
 		          backEnd.pc.c_occlusionQueries,
 		          backEnd.pc.c_occlusionQueriesMulti,
 		          backEnd.pc.c_occlusionQueriesSaved,
@@ -129,25 +128,25 @@ void R_PerformanceCounters(void)
 #if 0
 	else if (r_speeds->integer == RSPEEDS_DEPTH_BOUNDS_TESTS)
 	{
-		ri.Printf(PRINT_ALL, "depth bounds tests:%i rejected:%i\n", tr.pc.c_depthBoundsTests, tr.pc.c_depthBoundsTestsRejected);
+		Ren_Print("depth bounds tests:%i rejected:%i\n", tr.pc.c_depthBoundsTests, tr.pc.c_depthBoundsTestsRejected);
 	}
 #endif
 	else if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		if (DS_STANDARD_ENABLED())
 		{
-			ri.Printf(PRINT_ALL, "deferred shading times: g-buffer:%i lighting:%i translucent:%i\n", backEnd.pc.c_deferredGBufferTime,
+			Ren_Print("deferred shading times: g-buffer:%i lighting:%i translucent:%i\n", backEnd.pc.c_deferredGBufferTime,
 			          backEnd.pc.c_deferredLightingTime, backEnd.pc.c_forwardTranslucentTime);
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
+			Ren_Print("forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
 			          backEnd.pc.c_forwardLightingTime);
 		}
 	}
 	else if (r_speeds->integer == RSPEEDS_CHC)
 	{
-		ri.Printf(PRINT_ALL, "%i CHC++ ms %i queries %i multi queries %i saved\n",
+		Ren_Print("%i CHC++ ms %i queries %i multi queries %i saved\n",
 		          tr.pc.c_CHCTime,
 		          tr.pc.c_occlusionQueries,
 		          tr.pc.c_occlusionQueriesMulti,
@@ -155,11 +154,11 @@ void R_PerformanceCounters(void)
 	}
 	else if (r_speeds->integer == RSPEEDS_NEAR_FAR)
 	{
-		ri.Printf(PRINT_ALL, "zNear: %.0f zFar: %.0f\n", tr.viewParms.zNear, tr.viewParms.zFar);
+		Ren_Print("zNear: %.0f zFar: %.0f\n", tr.viewParms.zNear, tr.viewParms.zFar);
 	}
 	else if (r_speeds->integer == RSPEEDS_DECALS)
 	{
-		ri.Printf(PRINT_ALL, "decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
+		Ren_Print("decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
 		          tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces,
 		          tr.pc.c_decalSurfacesCreated);
 	}
@@ -173,10 +172,9 @@ int c_blockedOnMain;
 
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
-	renderCommandList_t *cmdList;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
-	cmdList = &backEndData->commands;
-	assert(cmdList);            // bk001205
+	assert(cmdList);
 	// add an end-of-list command
 	*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
@@ -189,30 +187,25 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	{
 		R_PerformanceCounters();
 	}
+
+	// actually start the commands going
+	if (!r_skipBackEnd->integer)
+	{
+		// let it start on the new batch
+		RB_ExecuteRenderCommands(cmdList->cmds);
+	}
 }
 
-/*
-====================
-R_SyncRenderThread
-
-Issue any pending commands and wait for them to complete.
-After exiting, the render thread will have completed its work
-and will remain idle and the main thread is free to issue
-OpenGL calls until R_IssueRenderCommands is called.
-====================
-*/
-void R_SyncRenderThread(void)
+/**
+ * @brief Issue any pending commands
+ */
+void R_IssuePendingRenderCommands(void)
 {
 	if (!tr.registered)
 	{
 		return;
 	}
 	R_IssueRenderCommands(qfalse);
-}
-
-void R_IssuePendingRenderCommands(void)
-{
-	R_SyncRenderThread();
 }
 
 /*
@@ -225,17 +218,15 @@ render thread if needed.
 */
 void *R_GetCommandBuffer(int bytes)
 {
-	renderCommandList_t *cmdList;
-
-	cmdList = &backEndData->commands;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
 	// always leave room for the swap buffers and end of list commands
-	// RB: added swapBuffers_t from ET
+	// - added swapBuffers_t from ET
 	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)
 	{
 		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
 		{
-			ri.Error(ERR_FATAL, "R_GetCommandBuffer: bad size %i", bytes);
+			Ren_Fatal("R_GetCommandBuffer: bad size %i", bytes);
 		}
 		// if we run out of room, just start dropping commands
 		return NULL;
@@ -387,6 +378,7 @@ void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float
 	{
 		return;
 	}
+
 	if (R_ClipRegion(&x, &y, &w, &h, &s1, &t1, &s2, &t2))
 	{
 		return;
@@ -397,6 +389,7 @@ void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float
 	{
 		return;
 	}
+
 	cmd->commandId = RC_STRETCH_PIC;
 	cmd->shader    = R_GetShaderByHandle(hShader);
 	cmd->x         = x;
@@ -444,6 +437,7 @@ void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float
 	{
 		return;
 	}
+
 	cmd->commandId = RC_ROTATED_PIC;
 	cmd->shader    = R_GetShaderByHandle(hShader);
 	cmd->x         = x;
@@ -524,13 +518,13 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		if (glConfig.stencilBits < 4)
 		{
-			ri.Printf(PRINT_ALL, "Warning: not enough stencil bits to measure overdraw: %d\n", glConfig.stencilBits);
+			Ren_Print("Warning: not enough stencil bits to measure overdraw: %d\n", glConfig.stencilBits);
 			ri.Cvar_Set("r_measureOverdraw", "0");
 			r_measureOverdraw->modified = qfalse;
 		}
 		else
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			glEnable(GL_STENCIL_TEST);
 			glStencilMask(~0U);
 			GL_ClearStencil(0U);
@@ -544,7 +538,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		// this is only reached if it was on and is now off
 		if (r_measureOverdraw->modified)
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			glDisable(GL_STENCIL_TEST);
 		}
 		r_measureOverdraw->modified = qfalse;
@@ -553,7 +547,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	// texturemode stuff
 	if (r_textureMode->modified)
 	{
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		GL_TextureMode(r_textureMode->string);
 		r_textureMode->modified = qfalse;
 	}
@@ -562,16 +556,8 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	if (r_gamma->modified)
 	{
 		r_gamma->modified = qfalse;
-
-		if (!glConfig.deviceSupportsGamma)
-		{
-			Com_Printf("r_gamma will be changed upon restarting.\n");
-		}
-		else
-		{
-			R_SyncRenderThread();
-			R_SetColorMappings();
-		}
+		R_IssuePendingRenderCommands();
+		R_SetColorMappings();
 	}
 
 	// check for errors
@@ -580,7 +566,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		int  err;
 		char s[128];
 
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 
 		if ((err = glGetError()) != GL_NO_ERROR)
 		{
@@ -615,8 +601,8 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 				break;
 			}
 
-			//ri.Error(ERR_FATAL, "caught OpenGL error: %s in file %s line %i", s, filename, line);
-			ri.Error(ERR_FATAL, "RE_BeginFrame() - glGetError() failed (%s)!\n", s);
+			//Ren_Fatal( "caught OpenGL error: %s in file %s line %i", s, filename, line);
+			Ren_Fatal("RE_BeginFrame() - glGetError() failed (%s)!\n", s);
 		}
 	}
 
@@ -626,6 +612,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_DRAW_BUFFER;
 
 	if (glConfig.stereoEnabled)
@@ -640,14 +627,14 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 		else
 		{
-			ri.Error(ERR_FATAL, "RE_BeginFrame: Stereo is enabled, but stereoFrame was %i", stereoFrame);
+			Ren_Fatal("RE_BeginFrame: Stereo is enabled, but stereoFrame was %i", stereoFrame);
 		}
 	}
 	else
 	{
 		if (stereoFrame != STEREO_CENTER)
 		{
-			ri.Error(ERR_FATAL, "RE_BeginFrame: Stereo is disabled, but stereoFrame was %i", stereoFrame);
+			Ren_Fatal("RE_BeginFrame: Stereo is disabled, but stereoFrame was %i", stereoFrame);
 		}
 		if (!Q_stricmp(r_drawBuffer->string, "GL_FRONT"))
 		{
@@ -675,14 +662,23 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	{
 		return;
 	}
+
 	cmd = (swapBuffersCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_SWAP_BUFFERS;
 
+	R_BindNullVBO();
+	R_BindNullIBO();
+
 	R_IssueRenderCommands(qtrue);
+
+	// use the other buffers next frame, because another CPU
+	// may still be rendering into the current ones
+	R_InitNextFrame();
 
 	if (frontEndMsec)
 	{
@@ -724,9 +720,10 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
 
+	// note: see also Com_GrowListElement checking against tr.images->currentElements
 	if (textureid > tr.numImages || textureid < 0)
 	{
-		ri.Printf(PRINT_ALL, "Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
+		Ren_Print("Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
 		return;
 	}
 
@@ -735,8 +732,9 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_RENDERTOTEXTURE;
-	cmd->image     = (image_t *)tr.images.currentElements;
+	cmd->image     = (image_t *) Com_GrowListElement(&tr.images, textureid);
 	cmd->x         = x;
 	cmd->y         = y;
 	cmd->w         = w;
@@ -747,12 +745,13 @@ void RE_Finish(void)
 {
 	renderFinishCommand_t *cmd;
 
-	ri.Printf(PRINT_ALL, "RE_Finish\n");
+	Ren_Print("RE_Finish\n");
 
 	cmd = (renderFinishCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
 	}
+
 	cmd->commandId = RC_FINISH;
 }

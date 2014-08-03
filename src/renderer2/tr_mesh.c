@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -38,14 +38,12 @@
 
 static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 {
-	mdvFrame_t *oldFrame, *newFrame;
-	int        i;
-	vec3_t     v;
-	vec3_t     transformed;
-
+	int    i;
+	vec3_t v;
+	vec3_t transformed;
 	// compute frame pointers
-	newFrame = model->frames + ent->e.frame;
-	oldFrame = model->frames + ent->e.oldframe;
+	mdvFrame_t *newFrame = model->frames + ent->e.frame;
+	mdvFrame_t *oldFrame = model->frames + ent->e.oldframe;
 
 	// calculate a bounding box in the current coordinate system
 	for (i = 0; i < 3; i++)
@@ -82,12 +80,10 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 				tr.pc.c_sphere_cull_mdx_out++;
 				ent->cull = CULL_OUT;
 				return;
-
 			case CULL_IN:
 				tr.pc.c_sphere_cull_mdx_in++;
 				ent->cull = CULL_IN;
 				return;
-
 			case CULL_CLIP:
 				tr.pc.c_sphere_cull_mdx_clip++;
 				break;
@@ -135,12 +131,10 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 		tr.pc.c_box_cull_mdx_in++;
 		ent->cull = CULL_IN;
 		return;
-
 	case CULL_CLIP:
 		tr.pc.c_box_cull_mdx_clip++;
 		ent->cull = CULL_CLIP;
 		return;
-
 	case CULL_OUT:
 	default:
 		tr.pc.c_box_cull_mdx_out++;
@@ -242,11 +236,11 @@ static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdv
 		}
 		if (shader == tr.defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %s in skin %s\n", mdvSurface->name, skin->name);
+			Ren_Developer("WARNING: no shader for surface %s in skin %s\n", mdvSurface->name, skin->name);
 		}
 		else if (shader->defaultShader)
 		{
-			ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+			Ren_Developer("WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 		}
 	}
 	else
@@ -293,8 +287,12 @@ void R_AddMDVSurfaces(trRefEntity_t *ent)
 	if ((ent->e.frame >= tr.currentModel->mdv[lod]->numFrames)
 	    || (ent->e.frame < 0) || (ent->e.oldframe >= tr.currentModel->mdv[lod]->numFrames) || (ent->e.oldframe < 0))
 	{
-		ri.Printf(PRINT_DEVELOPER, "R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
-		          ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
+		//Only spam if the lod level is 0 (lods usually don't have animation frames as they are only seen from a far)
+		if (lod == 0)
+		{
+			Ren_Developer("R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
+				ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
+		}
 		ent->e.frame    = 0;
 		ent->e.oldframe = 0;
 	}

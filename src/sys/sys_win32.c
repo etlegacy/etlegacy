@@ -821,8 +821,6 @@ qboolean Sys_PIDIsRunning(unsigned int pid)
 /*
 ==================
 Sys_StartProcess
-
-NERVE - SMF
 ==================
 */
 void Sys_StartProcess(char *exeName, qboolean doexit)
@@ -836,7 +834,6 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 
 	GetCurrentDirectory(_MAX_PATH, szPathOrig);
 
-	// JPW NERVE swiped from Sherman's SP code
 	if (!CreateProcess(NULL, va("%s\\%s", szPathOrig, exeName), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 	{
 		// couldn't start it, popup error box
@@ -922,12 +919,14 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 void Sys_SetProcessProperties(void)
 {
+#if 0
 	DWORD_PTR processAffinityMask;
 	DWORD_PTR systemAffinityMask;
 	DWORD_PTR mask;
 	int       core, bit, currentCore;
 	BOOL      success;
-	HANDLE    process = GetCurrentProcess();
+#endif
+	HANDLE process = GetCurrentProcess();
 
 	//Set Process priority
 	SetPriorityClass(process, HIGH_PRIORITY_CLASS);

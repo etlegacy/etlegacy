@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -533,10 +533,6 @@ void G_WriteSessionData(qboolean restart)
     int  i;
     char strServerInfo[MAX_INFO_STRING];
     int  j;
-
-#ifdef USEXPSTORAGE
-    G_StoreXPBackup();
-#endif // USEXPSTORAGE
 
     trap_GetServerinfo(strServerInfo, sizeof(strServerInfo));
     trap_Cvar_Set("session", va("%i %i %s", g_gametype.integer,

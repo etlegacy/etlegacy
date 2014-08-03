@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -55,7 +55,7 @@ void GL_Bind(image_t *image)
 
 	if (!image)
 	{
-		ri.Printf(PRINT_WARNING, "GL_Bind: NULL image\n");
+		Ren_Warning("GL_Bind: NULL image\n");
 		texnum = tr.defaultImage->texnum;
 	}
 	else
@@ -102,7 +102,7 @@ void GL_SelectTexture(int unit)
 	}
 	else
 	{
-		ri.Error(ERR_DROP, "GL_SelectTexture: unit = %i", unit);
+		Ren_Drop("GL_SelectTexture: unit = %i", unit);
 	}
 
 	glState.currenttmu = unit;
@@ -212,7 +212,7 @@ void GL_TexEnv(int env)
 		qglTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 		break;
 	default:
-		ri.Error(ERR_DROP, "GL_TexEnv: invalid env '%d' passed\n", env);
+		Ren_Drop("GL_TexEnv: invalid env '%d' passed\n", env);
 		break;
 	}
 }
@@ -282,7 +282,7 @@ void GL_State(unsigned long stateBits)
 				break;
 			default:
 				srcFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid src blend state bits\n");
+				Ren_Drop("GL_State: invalid src blend state bits\n");
 				break;
 			}
 
@@ -314,7 +314,7 @@ void GL_State(unsigned long stateBits)
 				break;
 			default:
 				dstFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid dst blend state bits\n");
+				Ren_Drop("GL_State: invalid dst blend state bits\n");
 				break;
 			}
 
@@ -858,7 +858,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	}
 	if ((1 << i) != cols || (1 << j) != rows)
 	{
-		ri.Error(ERR_DROP, "Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+		Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
 	}
 
 	GL_Bind(tr.scratchImage[client]);
@@ -888,7 +888,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	{
 		int end = ri.Milliseconds();
 
-		ri.Printf(PRINT_ALL, "qglTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
+		Ren_Print("qglTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
 	}
 
 	RB_SetGL2D();
@@ -1347,7 +1347,7 @@ void RB_ShowImages(void)
 	qglFinish();
 
 	end = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
+	Ren_Print("%i msec to draw all images\n", end - start);
 }
 
 /**

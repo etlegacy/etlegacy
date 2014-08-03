@@ -106,9 +106,9 @@ static char *shaderAnimNames[MAX_SHADER_ANIMS] =
 	"blacksmokeanim",
 	"twiltb2",
 	"blacksmokeanimc",
-//	"expblue",
-//	"blacksmokeanimb",	// uses 'explode1' sequence // JPW NERVE pulled
-//	"blood",
+	//"expblue",
+	//"blacksmokeanimb",	// uses 'explode1' sequence // pulled
+	//"blood",
 	NULL
 };
 
@@ -137,7 +137,7 @@ static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
 };
 static int numShaderAnims;
 
-#define     PARTICLE_GRAVITY    40
+
 #define     MAX_PARTICLES   1024 * 8
 
 cparticle_t *active_particles, *free_particles;
@@ -198,18 +198,16 @@ CG_AddParticleToScene
 */
 void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 {
-	vec3_t     point;
 	polyVert_t verts[4];
-	float      width;
-	float      height;
-	float      time, time2;
-	float      ratio;
-	vec3_t     color;
 	polyVert_t TRIverts[3];
-	vec3_t     rright2;
 
-	if (p->type == P_WEATHER || p->type == P_WEATHER_TURBULENT || p->type == P_WEATHER_FLURRY
-	    || p->type == P_BUBBLE || p->type == P_BUBBLE_TURBULENT)     // create a front facing polygon
+	switch (p->type)
+	{
+	case P_WEATHER:
+	case P_WEATHER_TURBULENT:
+	case P_WEATHER_FLURRY:
+	case P_BUBBLE:
+	case P_BUBBLE_TURBULENT:  // create a front facing polygon
 	{
 		if (p->type != P_WEATHER_FLURRY)
 		{
@@ -266,6 +264,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 		if (p->type == P_BUBBLE || p->type == P_BUBBLE_TURBULENT)
 		{
+			vec3_t point;
+
 			VectorMA(org, -p->height, vup, point);
 			VectorMA(point, -p->width, vright, point);
 			VectorCopy(point, verts[0].xyz);
@@ -308,6 +308,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		}
 		else
 		{
+			vec3_t point;
+
 			VectorMA(org, -p->height, vup, point);
 			VectorMA(point, -p->width, vright, point);
 			VectorCopy(point, TRIverts[0].xyz);
@@ -339,18 +341,17 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			TRIverts[2].modulate[3] = 255 * p->alpha;
 		}
 	}
-	else if (p->type == P_SPRITE)
+	break;
+	case P_SPRITE:
 	{
-		vec3_t rr, ru;
-		vec3_t rotate_ang;
+		vec3_t point, color, rr, ru, rotate_ang;
+		float  time   = cg.time - p->time;
+		float  time2  = p->endtime - p->time;
+		float  ratio  = time / time2;
+		float  width  = p->width + (ratio * (p->endwidth - p->width));
+		float  height = p->height + (ratio * (p->endheight - p->height));
 
 		VectorSet(color, 1.0, 1.0, 1.0);
-		time  = cg.time - p->time;
-		time2 = p->endtime - p->time;
-		ratio = time / time2;
-
-		width  = p->width + (ratio * (p->endwidth - p->width));
-		height = p->height + (ratio * (p->endheight - p->height));
 
 		if (p->roll)
 		{
@@ -425,10 +426,12 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[2] = 255;
 		verts[3].modulate[3] = 255;
 	}
-	else if (p->type == P_SMOKE || p->type == P_SMOKE_IMPACT)           // create a front rotating facing polygon
+	break;
+	case P_SMOKE:
+	case P_SMOKE_IMPACT: // create a front rotating facing polygon
 	{
-		vec3_t rup2;
-		float  invratio;
+		vec3_t point, rup2, rright2, color;
+		float  invratio, time, time2, ratio, width, height;
 
 		if (p->type == P_SMOKE_IMPACT && VectorDistanceSquared(cg.snap->ps.origin, org) > Square(1024))
 		{
@@ -437,21 +440,19 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 		if (p->color == MUSTARD)
 		{
-			VectorSet(color, 0.42, 0.33, 0.19);
+			VectorSet(color, 0.42f, 0.33f, 0.19f);
 		}
 		else if (p->color == BLOODRED)
 		{
-			VectorSet(color, 0.22, 0, 0);
+			VectorSet(color, 0.22f, 0, 0);
 		}
 		else if (p->color == ZOMBIE)
 		{
-			VectorSet(color, 0.4, 0.28, 0.23);
+			VectorSet(color, 0.4f, 0.28f, 0.23f);
 		}
 		else if (p->color == GREY75)
 		{
-			float len;
-			float greyit;
-			float val;
+			float len, greyit, val, ratio;
 
 			len = Distance(cg.snap->ps.origin, org);
 			if (!len)
@@ -461,16 +462,16 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 			val    = 4096 / len;
 			greyit = 0.25 * val;
-			if (greyit > 0.5)
+			if (greyit > 0.5f)
 			{
-				greyit = 0.5;
+				greyit = 0.5f;
 			}
 
 			VectorSet(color, greyit, greyit, greyit);
 		}
 		else
 		{
-			VectorSet(color, 1.0, 1.0, 1.0);
+			VectorSet(color, 1.0f, 1.0f, 1.0f);
 		}
 
 		time  = cg.time - p->time;
@@ -506,21 +507,21 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		width  = p->width + (ratio * (p->endwidth - p->width));
 		height = p->height + (ratio * (p->endheight - p->height));
 
-//		if (p->type != P_SMOKE_IMPACT)
+		//if (p->type != P_SMOKE_IMPACT)
 		{
 			vec3_t temp;
 
 			vectoangles(rforward, temp);
 			p->accumroll += p->roll;
 			temp[ROLL]   += p->accumroll * 0.1;
-//			temp[ROLL] += p->roll * 0.1;
+			//temp[ROLL] += p->roll * 0.1;
 			AngleVectors(temp, NULL, rright2, rup2);
 		}
-//		else
-//		{
-//			VectorCopy (rright, rright2);
-//			VectorCopy (rup, rup2);
-//		}
+		//else
+		//{
+		//VectorCopy (rright, rright2);
+		//VectorCopy (rup, rup2);
+		//}
 
 		if (p->rotate)
 		{
@@ -595,10 +596,10 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[3] = 255  * invratio;
 
 	}
-	else if (p->type == P_BLEED)
+	break;
+	case P_BLEED:
 	{
-		vec3_t rr, ru;
-		vec3_t rotate_ang;
+		vec3_t point, rr, ru, rotate_ang;
 		float  alpha = p->alpha;
 
 		if (p->roll)
@@ -652,12 +653,16 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[1] = 19;
 		verts[3].modulate[2] = 9;
 		verts[3].modulate[3] = 255 * alpha;
-
 	}
-	else if (p->type == P_FLAT_SCALEUP)
+	break;
+	case P_FLAT_SCALEUP:
 	{
-		float width, height;
-		float sinR, cosR;
+		vec3_t color;
+		float  width, height;
+		float  sinR, cosR;
+		float  time  = cg.time - p->time;
+		float  time2 = p->endtime - p->time;
+		float  ratio = time / time2;
 
 		if (p->color == BLOODRED)
 		{
@@ -665,12 +670,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		}
 		else
 		{
-			VectorSet(color, 0.5, 0.5, 0.5);
+			VectorSet(color, 0.5f, 0.5f, 0.5f);
 		}
-
-		time  = cg.time - p->time;
-		time2 = p->endtime - p->time;
-		ratio = time / time2;
 
 		width  = p->width + (ratio * (p->endwidth - p->width));
 		height = p->height + (ratio * (p->endheight - p->height));
@@ -728,7 +729,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[2] = verts[0].modulate[2];
 		verts[3].modulate[3] = verts[0].modulate[3];
 	}
-	else if (p->type == P_FLAT)
+	break;
+	case P_FLAT:
 	{
 		VectorCopy(org, verts[0].xyz);
 		verts[0].xyz[0]     -= p->height;
@@ -769,26 +771,27 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[1] = 255;
 		verts[3].modulate[2] = 255;
 		verts[3].modulate[3] = 255;
-
 	}
-	else if (p->type == P_ANIM || p->type == P_DLIGHT_ANIM)
+	break;
+	case P_ANIM:
+	case P_DLIGHT_ANIM:
 	{
-		vec3_t rr, ru;
-		vec3_t rotate_ang;
+		vec3_t point, rr, ru, rotate_ang;
+		float  width, height;
+		float  time  = cg.time - p->time;
+		float  time2 = p->endtime - p->time;
+		float  ratio = time / time2;
 		int    i, j;
 
-		time  = cg.time - p->time;
-		time2 = p->endtime - p->time;
-		ratio = time / time2;
-		if (ratio >= 1.0)
+		if (ratio >= 1)
 		{
-			ratio = 0.9999;
+			ratio = 0.9999f;
 		}
-		else if (ratio < 0.0)
+		else if (ratio < 0)
 		{
-			// rain - make sure that ratio isn't negative or
+			// make sure that ratio isn't negative or
 			// we'll walk out of bounds when j is calculated below
-			ratio = 0.0001;
+			ratio = 0.0001f;
 		}
 
 		width  = p->width + (ratio * (p->endwidth - p->width));
@@ -798,8 +801,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		if (p->type == P_DLIGHT_ANIM)
 		{
 			// fixme: support arbitrary color
-			trap_R_AddLightToScene(org, 320,    //%	1.5 * (width > height ? width : height),
-			                       1.25 * (1.0 - ratio), 1.0, 0.95, 0.85, 0, 0);
+			trap_R_AddLightToScene(org, 320,        //%	1.5 * (width > height ? width : height),
+			                       1.25 * (1.0 - ratio), 1.0f, 0.95f, 0.85f, 0, 0);
 		}
 
 		// if we are "inside" this sprite, don't draw
@@ -885,6 +888,10 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[2] = 255;
 		verts[3].modulate[3] = 255;
 	}
+	break;
+	default:
+		break;
+	}
 
 	if (!cg_wolfparticles.integer)
 	{
@@ -893,8 +900,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 	if (!p->pshader)
 	{
-		// FIXME: temp commented out for DM again.  FIXME: TODO: this needs to be addressed
-		//		CG_Printf ("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);
+		CG_Printf("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);
 		return;
 	}
 
@@ -906,11 +912,10 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	{
 		trap_R_AddPolyToScene(p->pshader, 4, verts);
 	}
-
 }
 
 // made this static so it doesn't interfere with other files
-static float roll = 0.0;
+static float roll = 0.0f;
 
 /*
 ===============
@@ -959,37 +964,15 @@ void CG_AddParticles(void)
 			continue;
 		}
 
-		// FIXME: change to switch (p->type) ... muuuch faster
-		if (p->type == P_SMOKE || p->type == P_ANIM || p->type == P_DLIGHT_ANIM || p->type == P_BLEED || p->type == P_SMOKE_IMPACT)
+		switch (p->type)
 		{
-			if (cg.time > p->endtime)
-			{
-				p->next        = free_particles;
-				free_particles = p;
-				p->type        = 0;
-				p->color       = 0;
-				p->alpha       = 0;
-
-				continue;
-			}
-		}
-
-		if (p->type == P_WEATHER_FLURRY)
-		{
-			if (cg.time > p->endtime)
-			{
-				p->next        = free_particles;
-				free_particles = p;
-				p->type        = 0;
-				p->color       = 0;
-				p->alpha       = 0;
-
-				continue;
-			}
-		}
-
-		if (p->type == P_FLAT_SCALEUP_FADE)
-		{
+		case P_SMOKE:
+		case P_ANIM:
+		case P_DLIGHT_ANIM:
+		case P_BLEED:
+		case P_SMOKE_IMPACT:
+		case P_WEATHER_FLURRY:
+		case P_FLAT_SCALEUP_FADE:
 			if (cg.time > p->endtime)
 			{
 				p->next        = free_particles;
@@ -999,18 +982,30 @@ void CG_AddParticles(void)
 				p->alpha       = 0;
 				continue;
 			}
-		}
-
-		if (p->type == P_SPRITE && p->endtime < 0)
-		{
-			// temporary sprite
-			CG_AddParticleToScene(p, p->org, alpha);
-			p->next        = free_particles;
-			free_particles = p;
-			p->type        = 0;
-			p->color       = 0;
-			p->alpha       = 0;
-			continue;
+			break;
+		case P_SPRITE:
+			if (p->endtime < 0)
+			{
+				// temporary sprite
+				CG_AddParticleToScene(p, p->org, alpha);
+				p->next        = free_particles;
+				free_particles = p;
+				p->type        = 0;
+				p->color       = 0;
+				p->alpha       = 0;
+				continue;
+			}
+			break;
+		default:
+			// P_NONE
+			// P_WEATHER
+			// P_FLAT
+			// P_ROTATE
+			// P_WEATHER_TURBULENT
+			// P_FLAT_SCALEUP
+			// P_BUBBLE
+			// P_BUBBLE_TURBULENT
+			break;
 		}
 
 		p->next = NULL;
@@ -1067,7 +1062,7 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 	active_particles = p;
 	p->time          = cg.time;
 	p->color         = 0;
-	p->alpha         = 0.90;
+	p->alpha         = 0.9f;
 	p->alphavel      = 0;
 
 	p->start = cent->currentState.origin2[0];
@@ -1082,7 +1077,7 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 	{
 		p->height = 32;
 		p->width  = 32;
-		p->alpha  = 0.10;
+		p->alpha  = 0.1f;
 	}
 	else
 	{
@@ -1100,10 +1095,6 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 	}
 
 	VectorCopy(cent->currentState.origin, p->org);
-
-	p->org[0] = p->org[0];
-	p->org[1] = p->org[1];
-	p->org[2] = p->org[2];
 
 	p->vel[0] = p->vel[1] = 0;
 
@@ -1140,7 +1131,7 @@ void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb,
 	active_particles = p;
 	p->time          = cg.time;
 	p->color         = 0;
-	p->alpha         = 0.40;
+	p->alpha         = 0.4f;
 	p->alphavel      = 0;
 	p->start         = origin[2];
 	p->end           = origin2[2];
@@ -1202,7 +1193,7 @@ void CG_ParticleBubble(qhandle_t pshader, vec3_t origin, vec3_t origin2, int tur
 	active_particles = p;
 	p->time          = cg.time;
 	p->color         = 0;
-	p->alpha         = 0.40;
+	p->alpha         = 0.4f;
 	p->alphavel      = 0;
 	p->start         = origin[2];
 	p->end           = origin2[2];
@@ -1249,7 +1240,7 @@ void CG_ParticleBubble(qhandle_t pshader, vec3_t origin, vec3_t origin2, int tur
 void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 {
 	// using cent->density = enttime
-	//		 cent->frame = startfade
+	//cent->frame = startfade
 	cparticle_t *p;
 	vec3_t      dir;
 
@@ -1324,7 +1315,7 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 		p->endheight = cent->currentState.angles2[1];
 		p->endwidth  = cent->currentState.angles2[1];
 		p->color     = MUSTARD;
-		p->alpha     = 0.75;
+		p->alpha     = 0.75f;
 	}
 	else   // black smoke
 	{
@@ -1334,29 +1325,23 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 		p->endheight = cent->currentState.angles2[1];
 		p->endwidth  = cent->currentState.angles2[1];
 
+		switch (rand() % 6)
 		{
-			int rval = rand() % 6;
-
-			if (rval == 1)
-			{
-				p->pshader = cgs.media.smokePuffShaderb1;
-			}
-			else if (rval == 2)
-			{
-				p->pshader = cgs.media.smokePuffShaderb2;
-			}
-			else if (rval == 3)
-			{
-				p->pshader = cgs.media.smokePuffShaderb3;
-			}
-			else if (rval == 4)
-			{
-				p->pshader = cgs.media.smokePuffShaderb4;
-			}
-			else
-			{
-				p->pshader = cgs.media.smokePuffShaderb5;
-			}
+		case 1:
+			p->pshader = cgs.media.smokePuffShaderb1;
+			break;
+		case 2:
+			p->pshader = cgs.media.smokePuffShaderb2;
+			break;
+		case 3:
+			p->pshader = cgs.media.smokePuffShaderb3;
+			break;
+		case 4:
+			p->pshader = cgs.media.smokePuffShaderb4;
+			break;
+		default:
+			p->pshader = cgs.media.smokePuffShaderb5;
+			break;
 		}
 	}
 
@@ -1424,13 +1409,13 @@ void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration)
 	p->startfade = cg.time + duration / 2;
 
 	p->color    = EMISIVEFADE;
-	p->alpha    = 1.0;
+	p->alpha    = 1.0f;
 	p->alphavel = 0;
 
-	p->height    = 0.5;
-	p->width     = 0.5;
-	p->endheight = 0.5;
-	p->endwidth  = 0.5;
+	p->height    = 0.5f;
+	p->width     = 0.5f;
+	p->endheight = 0.5f;
+	p->endwidth  = 0.5f;
 
 	p->pshader = cgs.media.tracerShader;
 
@@ -1469,13 +1454,13 @@ void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration)
 	p->startfade = cg.time + duration / 2;
 
 	p->color    = EMISIVEFADE;
-	p->alpha    = 1.0;
+	p->alpha    = 1.0f;
 	p->alphavel = 0;
 
-	p->height    = 1.2;
-	p->width     = 1.2;
-	p->endheight = 4.5;
-	p->endwidth  = 4.5;
+	p->height    = 1.2f;
+	p->width     = 1.2f;
+	p->endheight = 4.5f;
+	p->endwidth  = 4.5f;
 
 	if (r == 0)
 	{
@@ -1552,7 +1537,7 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 	cparticle_t *p;
 	int         anim;
 
-#if 0   // rain - this is arguably not legal...  it seems to mostly be a
+#if 0   // this is arguably not legal...  it seems to mostly be a
 	    // debugging thing anyway, so I'm killing it for now
 	if (animStr < (char *)10)
 	{
@@ -1584,7 +1569,7 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 	p->next          = active_particles;
 	active_particles = p;
 	p->time          = cg.time;
-	p->alpha         = 1.0;
+	p->alpha         = 1.0f;
 	p->alphavel      = 0;
 
 	if (duration < 0)
@@ -1628,7 +1613,7 @@ int CG_NewParticleArea(int num)
 	int    type;
 	vec3_t origin, origin2;
 	int    i;
-	float  range = 0;
+	float  range;
 	int    turb;
 	int    numparticles;
 	int    snum;
@@ -1643,40 +1628,32 @@ int CG_NewParticleArea(int num)
 	token = COM_Parse(&str);
 	type  = atoi(token);
 
-	// FIXME: do a switch!
-	if (type == 1)
+	switch (type)
 	{
-		range = 128;
-	}
-	else if (type == 2)
-	{
-		range = 64;
-	}
-	else if (type == 3)
-	{
-		range = 32;
-	}
-	else if (type == 0)
-	{
+	case 0:
 		range = 256;
-	}
-	else if (type == 4)
-	{
-		range = 8;
-	}
-	else if (type == 5)
-	{
-		range = 16;
-	}
-	else if (type == 6)
-	{
-		range = 32;
-	}
-	else if (type == 7)
-	{
+		break;
+	case 1:
+		range = 128;
+		break;
+	case 2:
+	case 7:
 		range = 64;
+		break;
+	case 3:
+	case 6:
+		range = 32;
+		break;
+	case 4:
+		range = 8;
+		break;
+	case 5:
+		range = 16;
+		break;
+	default:
+		range = 0;
+		break;
 	}
-
 
 	for (i = 0; i < 3; i++)
 	{
@@ -1785,7 +1762,7 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 	p->next          = active_particles;
 	active_particles = p;
 	p->time          = cg.time;
-	p->alpha         = 1.0;
+	p->alpha         = 1.0f;
 	p->alphavel      = 0;
 	p->roll          = 0;
 
@@ -1828,16 +1805,15 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 	{
 		p->color = BLOODRED;
 	}
-	p->alpha = 0.75;
+	p->alpha = 0.75f;
 }
 
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int ptime, int snum)      // snum is parent ent number?
 {
 	cparticle_t *p;
-	int         time     = cg.time;
-	int         time2    = cg.time + ptime;
-	float       duration = 2000;
-	float       ratio    = (float)1 - ((float)time / (float)time2);
+	int         time  = cg.time;
+	int         time2 = cg.time + ptime;
+	float       ratio = (float)1 - ((float)time / (float)time2);
 
 	if (!pshader)
 	{
@@ -1859,7 +1835,7 @@ void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int p
 
 	p->pshader = pshader;
 
-	p->endtime = cg.time + duration;
+	p->endtime = cg.time + 2000;
 
 	p->startfade = p->endtime;
 
@@ -1887,7 +1863,7 @@ void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int p
 
 	p->roll = rand() % 179;
 
-	p->alpha = 0.5;
+	p->alpha = 0.5f;
 
 	p->color = BLOODRED;
 }
@@ -1923,7 +1899,7 @@ void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent)
 
 	p->startfade = p->endtime;
 
-	p->alpha    = 1.0;
+	p->alpha    = 1.0f;
 	p->alphavel = 0;
 	p->roll     = 0;
 
@@ -1963,7 +1939,7 @@ void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent)
 
 	p->roll = rand() % 179;
 
-	p->alpha = 0.75;
+	p->alpha = 0.75f;
 }
 
 void CG_OilSlickRemove(centity_t *cent)
@@ -1993,10 +1969,10 @@ void CG_OilSlickRemove(centity_t *cent)
 	}
 }
 
-qboolean ValidBloodPool(vec3_t start)
-{
 #define EXTRUDE_DIST    0.5
 
+qboolean ValidBloodPool(vec3_t start)
+{
 	vec3_t  angles;
 	vec3_t  right, up;
 	vec3_t  this_pos, x_pos, center_pos, end_pos;
@@ -2154,13 +2130,13 @@ void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, f
 	p->startfade = cg.time + duration / 2;
 
 	p->color    = EMISIVEFADE;
-	p->alpha    = 0.4;
+	p->alpha    = 0.4f;
 	p->alphavel = 0;
 
-	p->height    = 0.5;
-	p->width     = 0.5;
-	p->endheight = 0.5;
-	p->endwidth  = 0.5;
+	p->height    = 0.5f;
+	p->width     = 0.5f;
+	p->endheight = 0.5f;
+	p->endwidth  = 0.5f;
 
 	p->pshader = cgs.media.tracerShader;
 
@@ -2184,6 +2160,8 @@ void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, f
 	p->accel[0] = crandom() * 4;
 	p->accel[1] = crandom() * 4;
 }
+
+#define PARTICLE_GRAVITY 16
 
 void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 {
@@ -2236,13 +2214,13 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 		active_particles = p;
 
 		p->time     = cg.time;
-		p->alpha    = 5.0;
+		p->alpha    = 5.0f;
 		p->alphavel = 0;
 		p->roll     = 0;
 
 		p->pshader = cgs.media.bloodCloudShader;
 
-		// RF, stay around for long enough to expand and dissipate naturally
+		// stay around for long enough to expand and dissipate naturally
 		if (length)
 		{
 			p->endtime = cg.time + 4500 + (crandom() * 3500);
@@ -2293,7 +2271,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 		// add some gravity/randomness
 		p->accel[0] = crandom() * 3;
 		p->accel[1] = crandom() * 3;
-		p->accel[2] = -PARTICLE_GRAVITY * 0.4;
+		p->accel[2] = -PARTICLE_GRAVITY;
 
 		VectorClear(p->accel);
 
@@ -2310,7 +2288,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 			p->color = MUSTARD;
 		}
 
-		p->alpha = 0.75;
+		p->alpha = 0.75f;
 	}
 }
 
@@ -2333,7 +2311,7 @@ void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, f
 	p->next          = active_particles;
 	active_particles = p;
 	p->time          = cg.time;
-	p->alpha         = 1.0;
+	p->alpha         = 1.0f;
 	p->alphavel      = 0;
 	p->roll          = rand() % 179;
 

@@ -8,8 +8,8 @@
  */
 #ifdef FEATURE_LUA
 
-#ifndef _G_LUA_H
-#define _G_LUA_H
+#ifndef INCLUDE_G_LUA_H
+#define INCLUDE_G_LUA_H
 
 #include "../qcommon/q_shared.h"
 #include "g_local.h"
@@ -135,6 +135,6 @@ void G_LuaHook_Print(printMessageType_t category, char *text);
 qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath);
 qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int mod);
 
-#endif /* ifndef _G_LUA_H */
+#endif // #ifndef INCLUDE_G_LUA_H
 
 #endif // FEATURE_LUA

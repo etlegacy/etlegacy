@@ -121,7 +121,6 @@ static void Transpose(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_G
 			}
 		}
 	}
-
 }
 
 /*
@@ -255,7 +254,7 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 			}
 			if (count == 0)
 			{
-//printf("bad normal\n");
+				//printf("bad normal\n");
 				count = 1;
 			}
 			VectorNormalize2(sum, dv->normal);
@@ -345,14 +344,11 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
                              srfTriangle_t triangles[SHADER_MAX_TRIANGLES])
 {
 	int              i, j;
-	int              numTriangles;
-	int              w, h;
+	int              numTriangles = 0;
+	int              w            = width - 1, h = height - 1;
 	srfVert_t        *dv;
 	static srfVert_t ctrl2[MAX_GRID_SIZE * MAX_GRID_SIZE];
 
-	h            = height - 1;
-	w            = width - 1;
-	numTriangles = 0;
 	for (i = 0; i < h; i++)
 	{
 		for (j = 0; j < w; j++)
@@ -534,7 +530,6 @@ static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int 
 	{
 		errorTable[0][i] = copy[1][height - 1 - i];
 	}
-
 }
 
 static void PutPointsOnCurve(srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE], int width, int height)
@@ -551,7 +546,6 @@ static void PutPointsOnCurve(srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE], int w
 			LerpSurfaceVert(&prev, &next, &ctrl[j][i]);
 		}
 	}
-
 
 	for (j = 0; j < height; j++)
 	{
@@ -636,7 +630,7 @@ static srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height,
 
 	VectorCopy(grid->origin, grid->lodOrigin);
 	grid->lodRadius = grid->radius;
-	//
+
 	return grid;
 }
 
@@ -839,7 +833,7 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3_t point, float loderror)
 {
 	int                  i, j;
-	int                  width, height, oldwidth;
+	int                  width = grid->width + 1, height, oldwidth = 0;
 	static srfVert_t     ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	float                errorTable[2][MAX_GRID_SIZE];
 	float                lodRadius;
@@ -847,8 +841,6 @@ srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3
 	int                  numTriangles;
 	static srfTriangle_t triangles[SHADER_MAX_TRIANGLES];
 
-	oldwidth = 0;
-	width    = grid->width + 1;
 	if (width > MAX_GRID_SIZE)
 	{
 		return NULL;
@@ -909,7 +901,7 @@ srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3
 srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t point, float loderror)
 {
 	int                  i, j;
-	int                  width, height, oldheight;
+	int                  width = grid->width, height = grid->height + 1, oldheight = 0;
 	static srfVert_t     ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	float                errorTable[2][MAX_GRID_SIZE];
 	float                lodRadius;
@@ -917,9 +909,6 @@ srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t 
 	int                  numTriangles;
 	static srfTriangle_t triangles[SHADER_MAX_TRIANGLES];
 
-	oldheight = 0;
-	width     = grid->width;
-	height    = grid->height + 1;
 	if (height > MAX_GRID_SIZE)
 	{
 		return NULL;

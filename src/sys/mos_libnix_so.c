@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2006 Sigbjørn Skjæret <cisc@c2i.net>
+/**
+ * Copyright (C) 2006 Sigbjï¿½rn Skjï¿½ret <cisc@c2i.net>
  * Copyright (C) 2006, 2010 Mark Olsen <bigfoot@private.dk>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com

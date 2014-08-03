@@ -276,6 +276,12 @@ void InitBodyQue(void)
 	int       i;
 	gentity_t *ent;
 
+	// no need to init when dyn BQ is set
+	if (g_corpses.integer > 0)
+	{
+		return;
+	}
+
 	level.bodyQueIndex = 0;
 	for (i = 0; i < BODY_QUEUE_SIZE ; i++)
 	{
@@ -295,8 +301,23 @@ Called by BodySink
 */
 void BodyUnlink(gentity_t *ent)
 {
+	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+
+	tent->s.otherEntityNum2 = ent->s.number;
+	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
+
 	trap_UnlinkEntity(ent);
 	ent->physicsObject = qfalse;
+}
+
+void G_BodyDP(gentity_t *ent)
+{
+	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+
+	tent->s.otherEntityNum2 = ent->s.number;
+	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
+
+	G_FreeEntity(ent);
 }
 
 /*
@@ -309,10 +330,21 @@ After sitting around for five seconds, fall into the ground and dissapear
 void BodySink2(gentity_t *ent)
 {
 	ent->physicsObject = qfalse;
-	ent->nextthink     = level.time + BODY_TIME(BODY_TEAM(ent)) + 1500;
+	ent->nextthink     = level.time + 1800; // BODY_TIME(BODY_TEAM(ent)) + 1500; // FIXME: remove
 	ent->think         = BodyUnlink;
-	ent->s.pos.trType  = TR_LINEAR;
-	ent->s.pos.trTime  = level.time;
+
+	if (g_corpses.integer == 0)
+	{
+		ent->think = BodyUnlink;
+	}
+	else
+	{
+		// let's free the dead guy
+		ent->think = G_BodyDP;
+	}
+
+	ent->s.pos.trType = TR_LINEAR;
+	ent->s.pos.trTime = level.time;
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 	VectorSet(ent->s.pos.trDelta, 0, 0, -8);
 }
@@ -364,9 +396,16 @@ void CopyToBodyQue(gentity_t *ent)
 		return;
 	}
 
-	// grab a body que and cycle to the next one
-	body               = level.bodyQue[level.bodyQueIndex];
-	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
+	if (g_corpses.integer == 0)
+	{
+		// grab a body que and cycle to the next one
+		body               = level.bodyQue[level.bodyQueIndex];
+		level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
+	}
+	else
+	{
+		body = G_Spawn();
+	}
 
 	body->s        = ent->s;
 	body->s.eFlags = EF_DEAD;       // clear EF_TALK, etc
@@ -2150,12 +2189,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
-
-#ifdef USEXPSTORAGE
-	ipXPStorage_t *xpBackup;
-	int           i;
-#endif // USEXPSTORAGE
-
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
 	// grab the values we need in just one pass
@@ -2377,18 +2410,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		client->sess.uci = 255; //Don't draw anything if DB error
 	} // end GeoIP
-
-#ifdef USEXPSTORAGE
-	value = Info_ValueForKey(userinfo, "ip");
-	if (xpBackup = G_FindXPBackup(value))
-	{
-		for (i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			client->sess.skillpoints[i] = xpBackup->skills[i];
-		}
-		G_CalcRank(client);
-	}
-#endif // USEXPSTORAGE
 
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -3168,10 +3189,6 @@ void ClientDisconnect(int clientNum)
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_ClientDisConnected(clientNum);
 #endif
-
-#ifdef USEXPSTORAGE
-	G_AddXPBackup(ent);
-#endif // USEXPSTORAGE
 
 	G_RemoveClientFromFireteams(clientNum, qtrue, qfalse);
 	G_RemoveFromAllIgnoreLists(clientNum);

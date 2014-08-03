@@ -1272,6 +1272,39 @@ qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
 	return qtrue;
 }
 
+void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
+{
+	if (mins2[0] < mins[0])
+	{
+		mins[0] = mins2[0];
+	}
+
+	if (mins2[1] < mins[1])
+	{
+		mins[1] = mins2[1];
+	}
+
+	if (mins2[2] < mins[2])
+	{
+		mins[2] = mins2[2];
+	}
+
+	if (maxs2[0] > maxs[0])
+	{
+		maxs[0] = maxs2[0];
+	}
+
+	if (maxs2[1] > maxs[1])
+	{
+		maxs[1] = maxs2[1];
+	}
+
+	if (maxs2[2] > maxs[2])
+	{
+		maxs[2] = maxs2[2];
+	}
+}
+
 int VectorCompare(const vec3_t v1, const vec3_t v2)
 {
 	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2])

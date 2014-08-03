@@ -37,8 +37,8 @@
  * second version that must match between game and cgame
  */
 
-#ifndef __BG_PUBLIC_H__
-#define __BG_PUBLIC_H__
+#ifndef INCLUDE_BG_PUBLIC_H
+#define INCLUDE_BG_PUBLIC_H
 
 #define GAME_VERSION        "Enemy Territory"
 #define GAME_VERSION_DATED  (GAME_VERSION ", ET 2.60b")
@@ -94,8 +94,6 @@ extern vec3_t playerlegsProneMaxs;
 #define AAGUN_DAMAGE        25
 #define AAGUN_SPREAD        10
 
-// NOTE: use this value, and THEN the cl_input.c scales to tweak the feel
-#define MG42_IDLEYAWSPEED   80.0    // degrees per second (while returning to base)
 #define MG42_SPREAD_MP      100
 
 #define MG42_DAMAGE_MP          20
@@ -635,10 +633,8 @@ typedef enum
 	PW_NONE = 0,
 
 	PW_INVULNERABLE,
-	PW_FIRE,
-	PW_ELECTRIC,
-	PW_BREATHER, // obsolete
-	PW_NOFATIGUE,
+
+	PW_NOFATIGUE = 4,
 
 	PW_REDFLAG,
 	PW_BLUEFLAG,
@@ -1063,7 +1059,8 @@ typedef enum
 	EV_AIRSTRIKEMESSAGE,
 	EV_MEDIC_CALL,  // end of vanilla events
 	EV_SHOVE_SOUND, // 127 - ETL shove
-	EV_MAX_EVENTS   // 128 - just added as an 'endcap'
+	EV_BODY_DP,     // 128
+	EV_MAX_EVENTS   // 129 - just added as an 'endcap'
 } entity_event_t;
 
 extern const char *eventnames[EV_MAX_EVENTS];
@@ -1362,15 +1359,14 @@ typedef enum extWeaponStats_s
 	WS_DYNAMITE,        // 14
 	WS_AIRSTRIKE,       // 15   -- Fieldops smoke grenade attack
 	WS_ARTILLERY,       // 16   -- Fieldops binocular attack
-	WS_SYRINGE,         // 17   -- Medic syringe uses/successes
-	WS_SMOKE,           // 18
-	WS_SATCHEL,         // 19
-	WS_GRENADELAUNCHER, // 20
-	WS_LANDMINE,        // 21
-	WS_MG42,            // 22
-	WS_BROWNING,        // 23
-	WS_GARAND,          // 24   -- carbine and garand
-	WS_K43,             // 25   -- kar98 and k43
+	WS_SMOKE,           // 17
+	WS_SATCHEL,         // 18
+	WS_GRENADELAUNCHER, // 19
+	WS_LANDMINE,        // 20
+	WS_MG42,            // 21
+	WS_BROWNING,        // 22
+	WS_GARAND,          // 23   -- carbine and garand
+	WS_K43,             // 24   -- kar98 and k43
 
 	WS_MAX
 } extWeaponStats_t;
@@ -1790,8 +1786,9 @@ typedef struct
 
 typedef struct
 {
-	int index;      // reference into the table of possible conditionals
-	int value[2];   // can store anything from weapon bits, to position enums, etc
+	int index;           // reference into the table of possible conditionals
+	int value[2];        // can store anything from weapon bits, to position enums, etc
+	qboolean negative;   // (,)NOT <condition>
 } animScriptCondition_t;
 
 typedef struct
@@ -2366,4 +2363,5 @@ typedef enum
 
 	GAMESOUND_MAX
 } gameSounds;
-#endif
+
+#endif // #ifndef INCLUDE_BG_PUBLIC_H

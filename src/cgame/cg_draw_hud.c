@@ -872,29 +872,26 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	vec4_t   color;
 
 	// Draw power bar
-	// FIXME: do a switch
-	if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+	switch (cg.snap->ps.stats[STAT_PLAYER_CLASS])
 	{
+	case PC_ENGINEER:
 		chargeTime = cg.engineerChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
-	}
-	else if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC)
-	{
+		break;
+	case PC_MEDIC:
 		chargeTime = cg.medicChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
-	}
-	else if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
-	{
+		break;
+	case PC_FIELDOPS:
 		chargeTime = cg.fieldopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
-	}
-	else if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
-	{
+		break;
+	case PC_COVERTOPS:
 		chargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
-	}
-	else
-	{
+		break;
+	default:
 		chargeTime = cg.soldierChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+		break;
 	}
 
-	barFrac = (float)(cg.time - cg.snap->ps.classWeaponTime) / chargeTime;
+	barFrac = (cg.time - cg.snap->ps.classWeaponTime) / chargeTime; // FIXME: potential DIV 0 when charge times are set to 0!
 	if (barFrac > 1.0)
 	{
 		barFrac = 1.0;

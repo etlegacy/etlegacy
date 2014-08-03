@@ -1131,7 +1131,7 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
 	}
-	ri.Printf(PRINT_ALL, "Renderer: vanilla\n");
+	ri.Printf(PRINT_ALL, "Renderer: vanilla GLES\n");
 }
 
 /*
@@ -1155,7 +1155,7 @@ void R_Register(void)
 	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH); //----(SA)   mod for DM and DK for id build.  was "1" // JPW NERVE pushed back to 1
+	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_colorMipLevels = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
@@ -1371,8 +1371,6 @@ void R_Init(void)
 	// init the virtual memory
 	R_Hunk_Begin();
 
-	R_InitFogTable();
-
 	R_NoiseInit();
 
 	R_Register();
@@ -1556,8 +1554,6 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.SetFog           = R_SetFog;
 
 	re.RenderScene      = RE_RenderScene;
-	re.SaveViewParms    = RE_SaveViewParms;
-	re.RestoreViewParms = RE_RestoreViewParms;
 
 	re.SetColor               = RE_SetColor;
 	re.DrawStretchPic         = RE_StretchPic;

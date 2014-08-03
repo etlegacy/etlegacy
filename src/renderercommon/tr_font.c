@@ -118,7 +118,7 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 
 	if (glyph->format != FT_GLYPH_FORMAT_OUTLINE)
 	{
-		ri.Printf(PRINT_ALL, "Non-outline fonts are not supported\n");
+		Ren_Print("Non-outline fonts are not supported\n");
 		return NULL;
 	}
 
@@ -433,7 +433,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	if (ftLibrary == NULL)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType not initialized.\n");
+		Ren_Warning("R_LoadScalableFont: FreeType not initialized.\n");
 		return qfalse;
 	}
 
@@ -450,7 +450,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	if (!formatFound)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: Unable to find any supported font files by the name of %s\n", fontName);
+		Ren_Warning("R_LoadScalableFont: Unable to find any supported font files by the name of %s\n", fontName);
 		return qfalse;
 	}
 
@@ -459,7 +459,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	len = ri.FS_ReadFile(name, (void **)&faceData);
 	if (len <= 0)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: Unable to read font file '%s'\n", name);
+		Ren_Warning("R_LoadScalableFont: Unable to read font file '%s'\n", name);
 		return qfalse;
 	}
 
@@ -467,7 +467,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	if (FT_New_Memory_Face(ftLibrary, faceData, len, 0, &face))
 	{
 		ri.FS_FreeFile(faceData);
-		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType, unable to allocate new face.\n");
+		Ren_Warning("R_LoadScalableFont: FreeType, unable to allocate new face.\n");
 		return qfalse;
 	}
 
@@ -478,7 +478,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	if (FT_Set_Char_Size(face, pointSize << 6, pointSize << 6, dpi, dpi))
 	{
 		ri.FS_FreeFile(faceData);
-		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: FreeType, unable to set face char size.\n");
+		Ren_Warning("R_LoadScalableFont: FreeType, unable to set face char size.\n");
 		return qfalse;
 	}
 
@@ -501,7 +501,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	if (out == NULL)
 	{
 		ri.FS_FreeFile(faceData);
-		ri.Printf(PRINT_WARNING, "R_LoadScalableFont: ri.Z_Malloc failure during output image creation.\n");
+		Ren_Warning("R_LoadScalableFont: ri.Z_Malloc failure during output image creation.\n");
 		return qfalse;
 	}
 	Com_Memset(out, 0, imageSize * imageSize);
@@ -528,7 +528,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 		if (!glyph)
 		{
 			//ri.FS_FreeFile(faceData);
-			ri.Printf(PRINT_WARNING, "R_LoadScalableFont: glyph is NULL!\n");
+			Ren_Warning("R_LoadScalableFont: glyph is NULL!\n");
 		}
 
 		if (xOut == -1 || yOut == -1 || i == GLYPH_END)
@@ -638,7 +638,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 	if (registeredFontCount >= MAX_FONTS)
 	{
-		ri.Printf(PRINT_WARNING, "R_GetFont: Too many fonts registered already.\n");
+		Ren_Warning("R_GetFont: Too many fonts registered already.\n");
 		return qfalse;
 	}
 
@@ -654,7 +654,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 		return qtrue;
 	}
 
-	ri.Printf(PRINT_WARNING, "R_GetFont: no font available.\n");
+	Ren_Warning("R_GetFont: no font available.\n");
 
 	return qfalse;
 }
@@ -663,7 +663,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	if (!fontName)
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: called with empty name\n");
+		Ren_Print("RE_RegisterFont: called with empty name\n");
 		return;
 	}
 
@@ -677,7 +677,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 	if (!R_GetFont(fontName, pointSize, font))
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: failed to register font with name '%s'\n", fontName);
+		Ren_Print("RE_RegisterFont: failed to register font with name '%s'\n", fontName);
 	}
 }
 
@@ -686,7 +686,7 @@ void R_InitFreeType(void)
 #ifdef FEATURE_FREETYPE
 	if (FT_Init_FreeType(&ftLibrary))
 	{
-		ri.Printf(PRINT_WARNING, "R_InitFreeType: Unable to initialize FreeType.\n");
+		Ren_Warning("R_InitFreeType: Unable to initialize FreeType.\n");
 	}
 #endif
 	registeredFontCount = 0;

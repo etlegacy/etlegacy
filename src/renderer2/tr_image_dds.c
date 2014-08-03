@@ -176,9 +176,7 @@ typedef struct
 #define DDSD_LINEARSIZE                         0x00080000l // For compressed formats
 #define DDSD_DEPTH                              0x00800000l // Volume Textures
 
-//
 // DDPIXELFORMAT flags
-//
 #define DDPF_ALPHAPIXELS                        0x00000001l
 #define DDPF_FOURCC                             0x00000004l // Compressed formats
 #define DDPF_RGB                                0x00000040l // Uncompressed formats
@@ -189,9 +187,7 @@ typedef struct
 #define DDPF_PALETTEINDEXEDTO8                  0x00000010l
 #define DDPF_PALETTEINDEXED8                    0x00000020l
 
-//
 // DDSCAPS flags
-//
 #define DDSCAPS_COMPLEX                         0x00000008l
 #define DDSCAPS_TEXTURE                         0x00001000l // default
 #define DDSCAPS_MIPMAP                          0x00400000l
@@ -251,14 +247,12 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		blocksize = 8;
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		blocksize = 16;
 		break;
-
 	default:
-		ri.Printf(PRINT_WARNING, "invalid compressed image format\n");
+		Ren_Warning("invalid compressed image format\n");
 		return;
 	}
 
@@ -271,7 +265,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 		color_base = block_base;
 		alpha_base = NULL;
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		alpha_base = block_base;
@@ -298,7 +291,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			rgba[3][3] = 0;
 		}
 	// fallthrough
-
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		if (c0 <= c1)
 		{
@@ -313,7 +305,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			break;
 		}
 	// fallthrough
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		rgba[2][0] = (byte) ((rgba[0][0] * 2 + rgba[1][0]) / 3);
@@ -344,7 +335,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 		for (y = 0; y < 4; y++)
 		{
@@ -356,7 +346,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			}
 		}
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 	{
 		byte a[8];
@@ -490,15 +479,13 @@ static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GL
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		int_fmat = GL_RGB;
 		break;
-
 	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		int_fmat = GL_RGBA;
 		break;
-
 	default:
-		ri.Printf(PRINT_WARNING, "invalid compressed image format\n");
+		Ren_Warning("invalid compressed image format\n");
 		return;
 	}
 
@@ -568,18 +555,14 @@ static void R_UploadImage2D(image_t *img, GLenum target, int level, GLenum int_f
 
 image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filterType_t filterType, wrapType_t wrapType)
 {
-	image_t *ret = NULL;
-
-	byte *buff;
-
+	image_t          *ret = NULL;
+	byte             *buff;
 	DDSURFACEDESC2_t *ddsd;     // used to get at the dds header in the read buffer
-
 	// based on texture type:
 	//  cube        width != 0, height == 0, depth == 0
 	//  2D          width != 0, height != 0, depth == 0
 	//  volume      width != 0, height != 0, depth != 0
 	int width, height, depth;
-
 	// mip count and pointers to image data for each mip
 	// level, idx 0 = top level last pointer does not start
 	// a mip level, it's just there to mark off the end of
@@ -588,24 +571,21 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	// for cube textures we only find the offsets into the
 	// first face of the cube, subsequent faces will use the
 	// same offsets, just shifted over
-	int  mipLevels;
-	byte *mipOffsets[R_LoadDDSImage_MAX_MIPS + 1];
-
+	int      mipLevels;
+	byte     *mipOffsets[R_LoadDDSImage_MAX_MIPS + 1];
 	qboolean usingAlpha;
-
 	qboolean compressed;
-	GLuint   format          = 0;
-	GLuint   internal_format = 0;
-	GLenum   type            = GL_UNSIGNED_BYTE;
-
-	vec4_t zeroClampBorder      = { 0, 0, 0, 1 };
-	vec4_t alphaZeroClampBorder = { 0, 0, 0, 0 };
+	GLuint   format               = 0;
+	GLuint   internal_format      = 0;
+	GLenum   type                 = GL_UNSIGNED_BYTE;
+	vec4_t   zeroClampBorder      = { 0, 0, 0, 1 };
+	vec4_t   alphaZeroClampBorder = { 0, 0, 0, 0 };
 
 	// comes from R_CreateImage
 	/*
 	if(tr.numImages == MAX_DRAWIMAGES)
 	{
-	    ri.Printf(PRINT_WARNING, "R_LoadDDSImage: MAX_DRAWIMAGES hit\n");
+	    Ren_Warning( "R_LoadDDSImage: MAX_DRAWIMAGES hit\n");
 	    return NULL;
 	}
 	*/
@@ -614,7 +594,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	if (strncmp((const char *)buff, "DDS ", 4) != 0)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadDDSImage: invalid dds header \"%s\"\n", name);
+		Ren_Warning("R_LoadDDSImage: invalid dds header \"%s\"\n", name);
 		goto ret_error;
 	}
 
@@ -638,7 +618,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	if (ddsd->dwSize != sizeof(DDSURFACEDESC2_t) || ddsd->u4.ddpfPixelFormat.dwSize != sizeof(DDPIXELFORMAT_t))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadDDSImage: invalid dds header \"%s\"\n", name);
+		Ren_Warning("R_LoadDDSImage: invalid dds header \"%s\"\n", name);
 		goto ret_error;
 	}
 
@@ -647,7 +627,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	if (mipLevels > R_LoadDDSImage_MAX_MIPS)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadDDSImage: dds image has too many mip levels \"%s\"\n", name);
+		Ren_Warning("R_LoadDDSImage: dds image has too many mip levels \"%s\"\n", name);
 		goto ret_error;
 	}
 
@@ -657,10 +637,9 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	if (ddsd->ddsCaps.dwCaps2 & DDSCAPS2_CUBEMAP)
 	{
 		// cube texture
-
 		if (ddsd->dwWidth != ddsd->dwHeight)
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: invalid dds image \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: invalid dds image \"%s\"\n", name);
 			goto ret_error;
 		}
 
@@ -671,28 +650,26 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		if (width & (width - 1))
 		{
 			//cubes must be a power of two
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: cube images must be power of two \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: cube images must be power of two \"%s\"\n", name);
 			goto ret_error;
 		}
 	}
 	else if ((ddsd->ddsCaps.dwCaps2 & DDSCAPS2_VOLUME) && (ddsd->dwFlags & DDSD_DEPTH))
 	{
 		// 3D texture
-
 		width  = ddsd->dwWidth;
 		height = ddsd->dwHeight;
 		depth  = ddsd->u1.dwDepth;
 
 		if ((width & (width - 1)) || (height & (height - 1)) || (depth & (depth - 1)))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: volume images must be power of two \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: volume images must be power of two \"%s\"\n", name);
 			goto ret_error;
 		}
 	}
 	else
 	{
 		// 2D texture
-
 		width  = ddsd->dwWidth;
 		height = ddsd->dwHeight;
 		depth  = 0;
@@ -701,7 +678,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		// except for compressed images!
 		if (compressed && ((width & (width - 1)) || (height & (height - 1))))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: compressed texture images must be power of two \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: compressed texture images must be power of two \"%s\"\n", name);
 			goto ret_error;
 		}
 	}
@@ -712,7 +689,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		if (depth != 0)
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: compressed volume textures are not supported \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: compressed volume textures are not supported \"%s\"\n", name);
 			goto ret_error;
 		}
 
@@ -724,22 +701,19 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 			usingAlpha = qtrue;
 			format     = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 			break;
-
 		case FOURCC_DXT3:
 			blockSize  = 16;
 			usingAlpha = qtrue;
 			format     = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
 			break;
-
 		case FOURCC_DXT5:
 			blockSize  = 16;
 			usingAlpha = qtrue;
 			format     = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 			break;
-
 		default:
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported FOURCC 0x%16x, \"%s\"\n",
-			          ddsd->u4.ddpfPixelFormat.dwFourCC, name);
+			Ren_Warning("R_LoadDDSImage: unsupported FOURCC 0x%16x, \"%s\"\n",
+			            ddsd->u4.ddpfPixelFormat.dwFourCC, name);
 			goto ret_error;
 		}
 
@@ -794,7 +768,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		}
 		else
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: error reading DDS image \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: error reading DDS image \"%s\"\n", name);
 			goto ret_error;
 		}
 
@@ -811,17 +785,15 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 				internal_format = usingAlpha ? GL_RGBA8 : GL_RGB8;
 				format          = GL_BGRA_EXT;
 				break;
-
 			case 24:
 				internal_format = GL_RGB8;
 				format          = GL_BGR_EXT;
 				break;
-
 			case 16:
 				if (usingAlpha)
 				{
 					// must be A1R5G5B5
-					ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported format, 5551 \"%s\"\n", name);
+					Ren_Warning("R_LoadDDSImage: unsupported format, 5551 \"%s\"\n", name);
 					goto ret_error;
 				}
 				else
@@ -837,14 +809,13 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 					}
 					else
 					{
-						ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported format, 5551 \"%s\"\n", name);
+						Ren_Warning("R_LoadDDSImage: unsupported format, 5551 \"%s\"\n", name);
 						goto ret_error;
 					}
 				}
 				break;
-
 			default:
-				ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported RGB bit depth \"%s\"\n", name);
+				Ren_Warning("R_LoadDDSImage: unsupported RGB bit depth \"%s\"\n", name);
 				goto ret_error;
 			}
 		}
@@ -870,7 +841,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		}
 		else
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported DDS image type \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: unsupported DDS image type \"%s\"\n", name);
 			goto ret_error;
 		}
 
@@ -916,7 +887,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		}
 		else
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: Unexpected error reading DDS image \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: Unexpected error reading DDS image \"%s\"\n", name);
 			goto ret_error;
 		}
 	}
@@ -952,7 +923,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		if (!glConfig2.texture3DAvailable)
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: Tried to load 3D texture but missing hardware support \"%s\"\n", name);
+			Ren_Warning("R_LoadDDSImage: Tried to load 3D texture but missing hardware support \"%s\"\n", name);
 			goto ret_error;
 		}
 
@@ -1001,7 +972,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		/*
 		if(!GARB_texture_cube_map && !GLEW_EXT_texture_cube_map && !GLEW_VERSION_1_2)
 		{
-		    ri.Printf(PRINT_WARNING, "R_LoadDDSImage: Tried to load Cube texture but missing hardware support \"%s\"\n", name);
+		    Ren_Warning( "R_LoadDDSImage: Tried to load Cube texture but missing hardware support \"%s\"\n", name);
 		    goto ret_error;
 		}
 		*/
@@ -1158,19 +1129,16 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		glTexParameterf(ret->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 		glTexParameterf(ret->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		break;
-
 	case FT_LINEAR:
 		glTexParameterf(ret->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(ret->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		break;
-
 	case FT_NEAREST:
 		glTexParameterf(ret->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameterf(ret->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		break;
-
 	default:
-		ri.Printf(PRINT_WARNING, "WARNING: unknown filter type for image '%s'\n", ret->name);
+		Ren_Warning("WARNING: unknown filter type for image '%s'\n", ret->name);
 		glTexParameterf(ret->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(ret->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		break;
@@ -1186,27 +1154,23 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		break;
-
 	case WT_CLAMP:
 	case WT_EDGE_CLAMP:
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		break;
-
 	case WT_ZERO_CLAMP:
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(ret->type, GL_TEXTURE_BORDER_COLOR, zeroClampBorder);
 		break;
-
 	case WT_ALPHA_ZERO_CLAMP:
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(ret->type, GL_TEXTURE_BORDER_COLOR, alphaZeroClampBorder);
 		break;
-
 	default:
-		ri.Printf(PRINT_WARNING, "WARNING: unknown wrap type for image '%s'\n", ret->name);
+		Ren_Warning("WARNING: unknown wrap type for image '%s'\n", ret->name);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		break;
@@ -1231,7 +1195,7 @@ image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wra
 	/*
 	if(tr.numImages == MAX_DRAWIMAGES)
 	{
-	    ri.Printf(PRINT_WARNING, "R_LoadDDSImage: MAX_DRAWIMAGES hit\n");
+	    Ren_Warning( "R_LoadDDSImage: MAX_DRAWIMAGES hit\n");
 	    return NULL;
 	}
 	*/

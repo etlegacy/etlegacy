@@ -46,12 +46,10 @@ SKINS
  */
 static char *CommaParse(char **data_p)
 {
-	int         c = 0, len;
-	char        *data;
+	int         c     = 0, len = 0;
+	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
-	data         = *data_p;
-	len          = 0;
 	com_token[0] = 0;
 
 	// make sure incoming data is valid
@@ -140,7 +138,7 @@ static char *CommaParse(char **data_p)
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-		//Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+		//Ren_Print ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -165,7 +163,7 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 		}
 		if (!Q_stricmp(skin->models[i]->type, type))
 		{
-			// (SA) whoops, should've been this way
+			// whoops, should've been this way
 			Q_strncpyz(name, skin->models[i]->model, sizeof(skin->models[i]->model));
 			return qtrue;
 		}
@@ -195,7 +193,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		surfnum = 0;
 	}
 
-	model = R_GetModelByHandle(modelid);    // (SA) should be correct now
+	model = R_GetModelByHandle(modelid);    // should be correct now
 
 	if (model)
 	{
@@ -234,7 +232,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			        }
 			    }
 			    shd = R_FindShader(surf->shader->name, LIGHTMAP_NONE, mip);
-			    shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE;	// (SA) new
+			    shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE;	// new
 			}
 			else
 			*/
@@ -261,13 +259,13 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	if (!name || !name[0])
 	{
-		Com_Printf("Empty name passed to RE_RegisterSkin\n");
+		Ren_Print("Empty name passed to RE_RegisterSkin\n");
 		return 0;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Skin name exceeds MAX_QPATH\n");
+		Ren_Print("Skin name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -288,7 +286,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// allocate a new skin
 	if (tr.numSkins == MAX_SKINS)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: RE_RegisterSkin( '%s' ) MAX_SKINS hit\n", name);
+		Ren_Warning("WARNING: RE_RegisterSkin( '%s' ) MAX_SKINS hit\n", name);
 		return 0;
 	}
 
@@ -297,7 +295,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// in thier "skin" or "head" field
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 #if 0
 	// If not a .skin file, load as a single shader
@@ -352,7 +350,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 		{
 			if (skin->numModels >= MAX_PART_MODELS)
 			{
-				ri.Printf(PRINT_WARNING, "WARNING: Ignoring models in '%s', the max is %d!\n", name, MAX_PART_MODELS);
+				Ren_Warning("WARNING: Ignoring models in '%s', the max is %d!\n", name, MAX_PART_MODELS);
 				break;
 			}
 
@@ -375,7 +373,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 		if (skin->numSurfaces >= MD3_MAX_SURFACES)
 		{
-			ri.Printf(PRINT_WARNING, "WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
+			Ren_Warning("WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
 			break;
 		}
 
@@ -427,17 +425,17 @@ void R_SkinList_f(void)
 	int    i, j;
 	skin_t *skin;
 
-	ri.Printf(PRINT_ALL, "------------------\n");
+	Ren_Print("------------------\n");
 
 	for (i = 0; i < tr.numSkins; i++)
 	{
 		skin = tr.skins[i];
 
-		ri.Printf(PRINT_ALL, "%3i:%s\n", i, skin->name);
+		Ren_Print("%3i:%s\n", i, skin->name);
 		for (j = 0; j < skin->numSurfaces; j++)
 		{
-			ri.Printf(PRINT_ALL, "       %s = %s\n", skin->surfaces[j]->name, skin->surfaces[j]->shader->name);
+			Ren_Print("       %s = %s\n", skin->surfaces[j]->name, skin->surfaces[j]->shader->name);
 		}
 	}
-	ri.Printf(PRINT_ALL, "------------------\n");
+	Ren_Print("------------------\n");
 }

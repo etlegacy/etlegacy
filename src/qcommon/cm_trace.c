@@ -469,8 +469,6 @@ static void CM_TraceThroughPatch(traceWork_t *tw, cPatch_t *patch)
 	}
 }
 
-#ifdef MRE_OPTIMIZE
-
 /*
 ================
 CM_CalcTraceBounds
@@ -587,8 +585,6 @@ static int CM_TraceThroughBounds(traceWork_t *tw, vec3_t mins, vec3_t maxs)
 	// trace might go through the bounds
 	return qtrue;
 }
-
-#endif
 
 /*
 ================
@@ -808,10 +804,7 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 	int      brushnum;
 	cbrush_t *brush;
 	cPatch_t *patch;
-
-#ifdef MRE_OPTIMIZE
-	float fraction;
-#endif
+	float    fraction;
 
 	// trace line against all brushes in the leaf
 	for (k = 0 ; k < leaf->numLeafBrushes ; k++)
@@ -830,7 +823,6 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 			continue;
 		}
 
-#ifdef MRE_OPTIMIZE
 		if (cm_optimize->integer)
 		{
 			if (!CM_TraceThroughBounds(tw, brush->bounds[0], brush->bounds[1]))
@@ -840,7 +832,6 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 		}
 
 		fraction = tw->trace.fraction;
-#endif
 
 		CM_TraceThroughBrush(tw, brush);
 
@@ -849,12 +840,10 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 			return;
 		}
 
-#ifdef MRE_OPTIMIZE
 		if (tw->trace.fraction < fraction)
 		{
 			CM_CalcTraceBounds(tw, qtrue);
 		}
-#endif
 	}
 
 	// trace line against all patches in the leaf
@@ -878,7 +867,6 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 				continue;
 			}
 
-#ifdef MRE_OPTIMIZE
 			if (cm_optimize->integer)
 			{
 				if (!CM_TraceThroughBounds(tw, patch->pc->bounds[0], patch->pc->bounds[1]))
@@ -888,7 +876,6 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 			}
 
 			fraction = tw->trace.fraction;
-#endif
 
 			CM_TraceThroughPatch(tw, patch);
 
@@ -897,12 +884,10 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 				return;
 			}
 
-#ifdef MRE_OPTIMIZE
 			if (tw->trace.fraction < fraction)
 			{
 				CM_CalcTraceBounds(tw, qtrue);
 			}
-#endif
 		}
 	}
 }
@@ -1309,12 +1294,8 @@ static void CM_TraceThroughTree(traceWork_t *tw, int num, float p1f, float p2f, 
 			offset *= 2;
 			offset = tw->maxOffset;
 			*/
-#ifdef MRE_OPTIMIZE
+
 			offset = tw->maxOffset;
-#else
-			// this is silly
-			offset = 2048;
-#endif
 		}
 	}
 
@@ -1406,10 +1387,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 	vec3_t      offset;
 	cmodel_t    *cmod;
 	qboolean    positionTest;
-
-#ifdef MRE_OPTIMIZE
-	vec3_t dir;
-#endif
+	vec3_t      dir;
 
 	cmod = CM_ClipHandleToModel(model);
 
@@ -1518,8 +1496,6 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 		tw.extents[2] = tw.size[1][2];
 	}
 
-#ifdef MRE_OPTIMIZE
-
 	if (positionTest)
 	{
 		CM_CalcTraceBounds(&tw, qfalse);
@@ -1561,42 +1537,6 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 
 		CM_CalcTraceBounds(&tw, qtrue);
 	}
-
-#else // !MRE_OPTIMIZE
-	  // calculate bounds
-	if (tw.sphere.use)
-	{
-		for (i = 0; i < 3; i++)
-		{
-			if (tw.start[i] < tw.end[i])
-			{
-				tw.bounds[0][i] = tw.start[i] - Q_fabs(tw.sphere.offset[i]) - tw.sphere.radius;
-				tw.bounds[1][i] = tw.end[i] + Q_fabs(tw.sphere.offset[i]) + tw.sphere.radius;
-			}
-			else
-			{
-				tw.bounds[0][i] = tw.end[i] - Q_fabs(tw.sphere.offset[i]) - tw.sphere.radius;
-				tw.bounds[1][i] = tw.start[i] + Q_fabs(tw.sphere.offset[i]) + tw.sphere.radius;
-			}
-		}
-	}
-	else
-	{
-		for (i = 0 ; i < 3 ; i++)
-		{
-			if (tw.start[i] < tw.end[i])
-			{
-				tw.bounds[0][i] = tw.start[i] + tw.size[0][i];
-				tw.bounds[1][i] = tw.end[i] + tw.size[1][i];
-			}
-			else
-			{
-				tw.bounds[0][i] = tw.end[i] + tw.size[0][i];
-				tw.bounds[1][i] = tw.start[i] + tw.size[1][i];
-			}
-		}
-	}
-#endif
 
 	// check for position test special case
 	if (positionTest)

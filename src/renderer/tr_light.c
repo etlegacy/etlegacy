@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -359,7 +359,7 @@ static void LogLight(trRefEntity_t *ent)
 		max2 = ent->directedLight[2];
 	}
 
-	ri.Printf(PRINT_ALL, "amb:%i  dir:%i\n", max1, max2);
+	Ren_Print("amb:%i  dir:%i\n", max1, max2);
 }
 
 /*

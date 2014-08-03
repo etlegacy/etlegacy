@@ -532,11 +532,13 @@ void Weapon_Syringe(gentity_t *ent)
 				usedSyringe = ReviveEntity(ent, traceEnt);
 
 				// syringe "hit"
-				if (g_gamestate.integer == GS_PLAYING)
-				{
-					ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
-				}
-				if (ent && ent->client)
+				// FIXME: we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
+				// - add a new award 'most revives'?
+				//if (g_gamestate.integer == GS_PLAYING)
+				//{
+				//ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
+				//}
+				if (ent->client)
 				{
 					G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
@@ -665,7 +667,7 @@ int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList)
 		}
 	}
 
-	return(numDamaged);
+	return numDamaged;
 }
 
 extern void G_LandminePrime(gentity_t *self);
@@ -1640,7 +1642,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 		{
-			ent->client->ps.classWeaponTime += .33f * 150;
+			ent->client->ps.classWeaponTime += .66f * 150;
 		}
 		else
 		{
@@ -1747,7 +1749,6 @@ void Weapon_Engineer(gentity_t *ent)
 			}
 			else if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= team_maxLandmines.integer && G_LandmineTeam(traceEnt) == ent->client->sess.sessionTeam)
 			{
-
 				if (G_LandmineUnarmed(traceEnt))
 				{
 					// should be impossible now
@@ -2085,7 +2086,6 @@ evilbanigoto:
 					}
 					if (hit->s.eType == ET_OID_TRIGGER)
 					{
-
 						if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
 						{
 							continue;
@@ -2269,7 +2269,7 @@ evilbanigoto:
 					traceEnt->health = 255;
 					// Need some kind of event/announcement here
 
-					// Add_Ammo( ent, WP_DYNAMITE, 1, qtrue );
+					//Add_Ammo( ent, WP_DYNAMITE, 1, qtrue );
 
 					traceEnt->think     = G_FreeEntity;
 					traceEnt->nextthink = level.time + FRAMETIME;
@@ -2340,6 +2340,7 @@ evilbanigoto:
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
 
+								//trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\n\"");
 								defusedObj = qtrue;
 							}
 							else         // TEAM_ALLIES
@@ -2363,7 +2364,10 @@ evilbanigoto:
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
+
 								}
+
+								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\n\"");
 
 								defusedObj = qtrue;
 							}
@@ -2419,7 +2423,7 @@ evilbanigoto:
 								if (hit->s.teamNum == TEAM_AXIS && (!scored))
 								{
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
-									if (ent && ent->client)
+									if (ent->client)
 									{
 										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									}
@@ -2431,17 +2435,20 @@ evilbanigoto:
 
 								{
 									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
+
+								//trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\" 2");
 							}
 							else         // TEAM_ALLIES
 							{
 								if (hit->s.teamNum == TEAM_ALLIES && (!scored))
 								{
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
-									if (ent && ent->client)
+									if (ent->client)
 									{
 										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									}
@@ -2453,10 +2460,13 @@ evilbanigoto:
 
 								{
 									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
+
+								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\" 2");
 							}
 
 							return;
@@ -3712,29 +3722,47 @@ FLAMETHROWER
 ======================================================================
 */
 
-void G_BurnMeGood(gentity_t *self, gentity_t *body)
+/**
+ * @brief BurnMeGood now takes the flamechunk separately, because
+ * the old 'set-self-in-flames' method doesn't have a flamechunk to
+ * pass, and deaths were getting blamed on the world/player 0
+ */
+void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 {
+	vec3_t origin;
+	int    ownerNum = (chunk != NULL) ? chunk->r.ownerNum : self->s.number;
+
 	// add the new damage
 	body->flameQuota    += 5;
 	body->flameQuotaTime = level.time;
 
+	// fill in our own origin if we have no flamechunk
+	if (chunk != NULL)
+	{
+		VectorCopy(chunk->r.currentOrigin, origin);
+	}
+	else
+	{
+		VectorCopy(self->r.currentOrigin, origin);
+	}
+
 	// yet another flamethrower damage model, trying to find a feels-good damage combo that isn't overpowered
 	if (body->lastBurnedFrameNumber != level.framenum)
 	{
-		G_Damage(body, self->parent, self->parent, vec3_origin, self->r.currentOrigin, 5, 0, MOD_FLAMETHROWER);   // was 2 dmg in release ver, hit avg. 2.5 times per frame
+		G_Damage(body, self, self, vec3_origin, origin, GetWeaponTableData(WP_FLAMETHROWER)->damage, 0, MOD_FLAMETHROWER);
 		body->lastBurnedFrameNumber = level.framenum;
 	}
 
 	// make em burn
-	if (body->client && (body->health <= 0 || body->flameQuota > 0))       // was > FLAME_THRESHOLD
+	if (body->client && (body->health <= 0 || body->flameQuota > 0)) // was > FLAME_THRESHOLD
 	{
 		if (body->s.onFireEnd < level.time)
 		{
 			body->s.onFireStart = level.time;
 		}
-
-		body->s.onFireEnd  = level.time + FIRE_FLASH_TIME;
-		body->flameBurnEnt = self->r.ownerNum;
+		body->s.onFireEnd = level.time + FIRE_FLASH_TIME;
+		// use ourself as the attacker if we have no flamechunk
+		body->flameBurnEnt = ownerNum;
 		// add to playerState for client-side effect
 		body->client->ps.onFireStart = level.time;
 	}
@@ -3775,7 +3803,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 			if (trace_start[0] * trace_start[0] + trace_start[1] * trace_start[1] < 441)
 			{
 				// set self in flames
-				G_BurnMeGood(ent, ent);
+				G_BurnMeGood(ent, ent, NULL);
 			}
 		}
 	}

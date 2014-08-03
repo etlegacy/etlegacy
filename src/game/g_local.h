@@ -31,8 +31,9 @@
  * @file g_local.h
  * @brief local definitions for game module
  */
-#ifndef __G_LOCAL_H__
-#define __G_LOCAL_H__
+
+#ifndef INCLUDE_G_LOCAL_H
+#define INCLUDE_G_LOCAL_H
 
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
@@ -595,13 +596,6 @@ typedef struct ipFilter_s
 	unsigned mask;
 	unsigned compare;
 } ipFilter_t;
-
-typedef struct ipXPStorage_s
-{
-	ipFilter_t filter;
-	float skills[SK_NUM_SKILLS];
-	int timeadded;
-} ipXPStorage_t;
 
 #define MAX_COMPLAINTIPS 5
 
@@ -1377,11 +1371,6 @@ void G_ProcessIPBans(void);
 qboolean G_FilterIPBanPacket(char *from);
 qboolean G_FilterMaxLivesPacket(char *from);
 qboolean G_FilterMaxLivesIPPacket(char *from);
-ipXPStorage_t *G_FindXPBackup(char *from);
-void G_AddXPBackup(gentity_t *ent);
-void G_StoreXPBackup(void);
-void G_ClearXPBackup(void);
-void G_ReadXPBackup(void);
 void AddMaxLivesGUID(char *str);
 void AddMaxLivesBan(const char *str);
 void ClearMaxLivesBans(void);
@@ -1391,7 +1380,7 @@ void Svcmd_ShuffleTeams_f(qboolean restart);
 
 // g_weapon.c
 void FireWeapon(gentity_t *ent);
-void G_BurnMeGood(gentity_t *self, gentity_t *body);
+void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk);
 
 // p_hud.c
 void MoveClientToIntermission(gentity_t *client);
@@ -1737,6 +1726,8 @@ extern vmCvar_t g_moverScale;
 extern vmCvar_t g_debugHitboxes;
 
 extern vmCvar_t g_voting; // see VOTEF_* defines
+
+extern vmCvar_t g_corpses;
 
 typedef struct GeoIPTag
 {
@@ -2297,4 +2288,4 @@ void G_mapvoteinfo_read(void);
 #define VOTEF_NO_POPULIST_PENALTY   2   // successful votes do not count against vote_limit
 #define VOTEF_DISP_CALLER           4   // append "(called by name)" in vote string
 
-#endif
+#endif // #ifndef INCLUDE_G_LOCAL_H

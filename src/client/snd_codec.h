@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,8 +31,8 @@
  * @file snd_codec.h
  */
 
-#ifndef _SND_CODEC_H_
-#define _SND_CODEC_H_
+#ifndef INCLUDE_SND_CODEC_H
+#define INCLUDE_SND_CODEC_H
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
@@ -105,4 +105,4 @@ void S_OGG_CodecCloseStream(snd_stream_t *stream);
 int S_OGG_CodecReadStream(snd_stream_t *stream, int bytes, void *buffer);
 #endif // FEATURE_OGG_VORBIS
 
-#endif // !_SND_CODEC_H_
+#endif // #ifndef INCLUDE_SND_CODEC_H

@@ -6,7 +6,7 @@ uniform vec4        u_PortalPlane;
 
 varying vec3 var_Position;
 
-void    main()
+void main()
 {
 	#if defined(USE_PORTAL_CLIPPING)
 	{

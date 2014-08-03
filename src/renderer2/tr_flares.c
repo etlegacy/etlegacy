@@ -485,7 +485,6 @@ void RB_RenderFlares(void)
 	flare_t  *f;
 	flare_t  **prev;
 	qboolean draw;
-	matrix_t ortho;
 
 	if (!r_flares->integer)
 	{
@@ -554,13 +553,7 @@ void RB_RenderFlares(void)
 	GL_CheckErrors();
 
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-	                           backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
-	GL_LoadProjectionMatrix(ortho);
-	GL_LoadModelViewMatrix(matrixIdentity);
-
+	RB_SetViewMVPM();
 
 	for (f = r_activeFlares; f; f = f->next)
 	{

@@ -25,8 +25,8 @@
 
 #ifdef FEATURE_RENDERER_GLES
 
-#ifndef EGLPORT_H
-#define EGLPORT_H
+#ifndef INCLUDE_EGLPORT_H
+#define INCLUDE_EGLPORT_H
 
 #include <stdint.h>
 #include "EGL/egl.h"
@@ -107,6 +107,6 @@ extern int8_t eglStencilbits;
 }
 #endif
 
-#endif /* EGLPORT_H */
+#endif // #ifndef INCLUDE_EGLPORT_H
 
 #endif // FEATURE_RENDERER_GLES

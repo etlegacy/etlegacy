@@ -65,9 +65,10 @@ Dependencies
 * **libjpeg**, version 8, or **libjpeg-turbo**, version 1.3
 * **libcurl** (optional, enabled by default)
 * **Lua**, either version 5.1 or 5.2 (optional, enabled by default)
+* **Ogg Vorbis** (optional, enabled by default)
 * **Freetype**, version 2 (optional)
-* **Ogg Vorbis** (optional)
 * **OpenAL** (optional)
+* **Jansson** (optional)
 
 To get the latest source code install [git](http://git-scm.com/) and
 clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):

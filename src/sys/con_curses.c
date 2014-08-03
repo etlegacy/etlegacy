@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2008 Amanieu d'Antras
  *
  * This file is part of ET: Legacy.

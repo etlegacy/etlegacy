@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -32,8 +32,8 @@
  * @brief dynamically loads OpenAL
  */
 
-#ifndef __QAL_H__
-#define __QAL_H__
+#ifndef INCLUDE_QAL_H
+#define INCLUDE_QAL_H
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
@@ -257,4 +257,4 @@ extern LPALCCAPTURESAMPLES     qalcCaptureSamples;
 qboolean QAL_Init(const char *libname);
 void QAL_Shutdown(void);
 
-#endif  // __QAL_H__
+#endif  // #ifndef INCLUDE_QAL_H

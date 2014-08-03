@@ -310,6 +310,8 @@ vmCvar_t g_debugHitboxes;
 
 vmCvar_t g_voting;        // see VOTEF_ defines
 
+vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -575,6 +577,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_pronedelay,                        "g_pronedelay",                        "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 	// Debug
 	{ &g_debugHitboxes,                     "g_debugHitboxes",                     "0",                          CVAR_CHEAT },
+
+	{ &g_corpses,                           "g_dynBQ",                             "0",                          CVAR_LATCH | CVAR_ARCHIVE },
 };
 
 // made static to avoid aliasing
@@ -2404,14 +2408,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	numSplinePaths = 0 ;
 	numPathCorners = 0;
 
-#ifdef USEXPSTORAGE
-	G_ClearXPBackup();
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN && !level.newCampaign)
-	{
-		G_ReadXPBackup();
-	}
-#endif // USEXPSTORAGE
-
 	// MAPVOTE
 	// FIXME merge with XP code
 	level.mapsSinceLastXPReset = 0;
@@ -4066,7 +4062,6 @@ void CheckVote(void)
 	    level.voteInfo.vote_fn == NULL ||
 	    level.time - level.voteInfo.voteTime < 1000)
 	{
-
 		return;
 	}
 
@@ -4095,6 +4090,7 @@ void CheckVote(void)
 		{
 
 			gentity_t *other = &g_entities[level.voteInfo.voteCaller];
+
 			if (!other->client ||
 			    other->client->sess.sessionTeam == TEAM_SPECTATOR)
 			{
@@ -4127,8 +4123,8 @@ void CheckVote(void)
 			}
 			else
 			{
-				AP("cpm \"^5Vote passed!\n\"");
-				G_LogPrintf("Vote Passed: %s\n", level.voteInfo.voteString);
+				AP(va("cpm \"^5Vote passed! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
+				G_LogPrintf("Vote Passed: (Y:%d-N:%d) %s\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString);
 			}
 
 			// Perform the passed vote
@@ -4137,9 +4133,8 @@ void CheckVote(void)
 			// don't penalize player if the vote passes.
 			if ((g_voting.integer & VOTEF_NO_POPULIST_PENALTY))
 			{
-				gentity_t *ent;
+				gentity_t *ent = &g_entities[level.voteInfo.voteCaller];
 
-				ent = &g_entities[level.voteInfo.voteCaller];
 				if (ent->client)
 				{
 					ent->client->pers.voteCount--;
@@ -4151,10 +4146,9 @@ void CheckVote(void)
 		          level.voteInfo.voteNo >= (100 - pcnt) * total / 100) ||
 		         level.time - level.voteInfo.voteTime >= VOTE_TIME)
 		{
-
 			// same behavior as a no response vote
-			AP(va("cpm \"^2Vote FAILED! ^3(%s)\n\"", level.voteInfo.voteString));
-			G_LogPrintf("Vote Failed: %s\n", level.voteInfo.voteString);
+			AP(va("cpm \"^1Vote FAILED! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
+			G_LogPrintf("Vote Failed: (Y:%d-N:%d) %s\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString);
 		}
 		else
 		{

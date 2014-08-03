@@ -322,23 +322,18 @@ void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
                const vec3_t v1, const vec3_t v2, const vec3_t v3, const vec2_t w1, const vec2_t w2, const vec2_t w3)
 {
 	vec3_t u, v;
-	float  x1, x2, y1, y2, z1, z2;
-	float  s1, s2, t1, t2;
-	float  r, dot;
-
-	x1 = v2[0] - v1[0];
-	x2 = v3[0] - v1[0];
-	y1 = v2[1] - v1[1];
-	y2 = v3[1] - v1[1];
-	z1 = v2[2] - v1[2];
-	z2 = v3[2] - v1[2];
-
-	s1 = w2[0] - w1[0];
-	s2 = w3[0] - w1[0];
-	t1 = w2[1] - w1[1];
-	t2 = w3[1] - w1[1];
-
-	r = 1.0f / (s1 * t2 - s2 * t1);
+	float  x1 = v2[0] - v1[0];
+	float  x2 = v3[0] - v1[0];
+	float  y1 = v2[1] - v1[1];
+	float  y2 = v3[1] - v1[1];
+	float  z1 = v2[2] - v1[2];
+	float  z2 = v3[2] - v1[2];
+	float  s1 = w2[0] - w1[0];
+	float  s2 = w3[0] - w1[0];
+	float  t1 = w2[1] - w1[1];
+	float  t2 = w3[1] - w1[1];
+	float  r  = 1.0f / (s1 * t2 - s2 * t1);
+	float  dot;
 
 	VectorSet(tangent, (t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
 	VectorSet(bitangent, (s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
@@ -462,7 +457,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 	float  bb, s, t;
 	vec3_t bary;
 
-	/* calculate barycentric basis for the triangle */
+	// calculate barycentric basis for the triangle
 	bb = (dv[1]->st[0] - dv[0]->st[0]) * (dv[2]->st[1] - dv[0]->st[1]) - (dv[2]->st[0] - dv[0]->st[0]) * (dv[1]->st[1] - dv[0]->st[1]);
 	if (fabs(bb) < 0.00000001f)
 	{
@@ -535,7 +530,7 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 }
 
 /*
-Tr3B: this function breaks the VC9 compiler for some unknown reason ...
+this function breaks the VC9 compiler for some unknown reason ...
 
 float R_CalcFov(float fovX, float width, float height)
 {
@@ -951,7 +946,7 @@ float R_ProjectRadius(float r, vec3_t location)
 /*
 =================
 R_SetupEntityWorldBounds
-Tr3B - needs R_RotateEntityForViewParms
+- needs R_RotateEntityForViewParms
 =================
 */
 void R_SetupEntityWorldBounds(trRefEntity_t *ent)
@@ -1149,7 +1144,7 @@ void R_RotateForViewer(void)
 	MatrixIdentity(tr.orientation.transformMatrix);
 
 #if 0
-	ri.Printf(PRINT_ALL, "transform forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
+	Ren_Print("transform forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
 	          tr.viewParms.orientation.axis[0][0], tr.viewParms.orientation.axis[0][1], tr.viewParms.orientation.axis[0][2],
 	          tr.viewParms.orientation.axis[1][0], tr.viewParms.orientation.axis[1][1], tr.viewParms.orientation.axis[1][2],
 	          tr.viewParms.orientation.axis[2][0], tr.viewParms.orientation.axis[2][1], tr.viewParms.orientation.axis[2][2]);
@@ -1173,7 +1168,7 @@ void R_RotateForViewer(void)
 	MatrixMultiplyMOD(quakeToOpenGLMatrix, tr.orientation.viewMatrix2, viewMatrix);
 #else
 
-	// Tr3B:  !!! THIS BREAKS MIRRORS !!!
+	// !!! THIS BREAKS MIRRORS !!!
 
 	// http://redmine.xreal-project.net/issues/41
 	// Bug #41 - Mirrors(and possibly portal cameras) are broken
@@ -1186,7 +1181,7 @@ void R_RotateForViewer(void)
 #if 0
 	MatrixToVectorsFLU(viewMatrix, viewAxis[0], viewAxis[1], viewAxis[2]);
 
-	ri.Printf(PRINT_ALL, "view forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
+	Ren_Print("view forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
 	          viewAxis[0][0], viewAxis[0][1], viewAxis[0][2],
 	          viewAxis[1][0], viewAxis[1][1], viewAxis[1][2],
 	          viewAxis[2][0], viewAxis[2][1], viewAxis[2][2]);
@@ -1199,14 +1194,14 @@ void R_RotateForViewer(void)
 	MatrixTransformNormal2(viewMatrix, right);
 	MatrixTransformNormal2(viewMatrix, up);
 
-	ri.Printf(PRINT_ALL, "transformed forward = (%5.3f, %5.3f, %5.3f), right = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
+	Ren_Print("transformed forward = (%5.3f, %5.3f, %5.3f), right = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
 	          forward[0], forward[1], forward[2],
 	          right[0], right[1], right[2],
 	          up[0], up[1], up[2]);
 #endif
 
 #if 0
-	// Tr3B: support mirrors
+	// support mirrors
 	if (tr.viewParms.isMirror)
 	{
 		vec4_t   plane;
@@ -1513,7 +1508,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 	if (zFar <= 0 || infiniteFarClip)
 	{
-		// Tr3B: far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
+		// far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
 		proj[0] = 2 * zNear / width;    proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
 		proj[1] = 0;                    proj[5] = 2 * zNear / height;   proj[9] = (yMax + yMin) / height;   proj[13] = 0;
 		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -1;                      proj[14] = -2 * zNear;
@@ -1561,7 +1556,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 		trans[1] /= trans[3];
 		trans[2] /= trans[3];
 
-		ri.Printf(PRINT_ALL, "transformed[%i] = (%5.3f, %5.3f, %5.3f)\n", i, trans[0], trans[1], trans[2]);
+		Ren_Print("transformed[%i] = (%5.3f, %5.3f, %5.3f)\n", i, trans[0], trans[1], trans[2]);
 	}
 #endif
 }
@@ -1601,12 +1596,11 @@ static void R_SetupFrustum(void)
 {
 	int    i;
 	float  xs, xc;
-	float  ang;
+	float  ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
 	vec3_t planeOrigin;
 
-	ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
-	xs  = sin(ang);
-	xc  = cos(ang);
+	xs = sin(ang);
+	xc = cos(ang);
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][0].normal);
 	VectorMA(tr.viewParms.frustums[0][0].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][0].normal);
@@ -1631,7 +1625,7 @@ static void R_SetupFrustum(void)
 		SetPlaneSignbits(&tr.viewParms.frustums[0][i]);
 	}
 
-	// Tr3B: set extra near plane which is required by the dynamic occlusion culling
+	// set extra near plane which is required by the dynamic occlusion culling
 	tr.viewParms.frustums[0][FRUSTUM_NEAR].type = PLANE_NON_AXIAL;
 	VectorCopy(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[0][FRUSTUM_NEAR].normal);
 
@@ -1874,7 +1868,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 	// create plane axis for the portal we are seeing
 	R_PlaneForSurface(drawSurf->surface, &originalPlane);
 
-	//ri.Printf(PRINT_ALL, "R_GetPortalOrientations: original plane = (%5.3f, %5.3f, %5.3f)\n", originalPlane.normal[0], originalPlane.normal[1], originalPlane.normal[2]);
+	//Ren_Print("R_GetPortalOrientations: original plane = (%5.3f, %5.3f, %5.3f)\n", originalPlane.normal[0], originalPlane.normal[1], originalPlane.normal[2]);
 
 	// rotate the plane if necessary
 	if (drawSurf->entity != &tr.worldEntity)
@@ -1906,7 +1900,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 	shader = tr.sortedShaders[drawSurf->shaderNum];
 	if (shader->isMirror)
 	{
-		//ri.Printf(PRINT_ALL, "Portal surface with a mirror\n");
+		//Ren_Print("Portal surface with a mirror\n");
 
 		VectorScale(plane.normal, plane.dist, surface->origin);
 		VectorCopy(surface->origin, camera->origin);
@@ -1942,7 +1936,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 		// if the entity is just a mirror, don't use as a camera point
 		if (e->e.oldorigin[0] == e->e.origin[0] && e->e.oldorigin[1] == e->e.origin[1] && e->e.oldorigin[2] == e->e.origin[2])
 		{
-			//ri.Printf(PRINT_ALL, "Portal surface with a mirror entity\n");
+			//Ren_Print("Portal surface with a mirror entity\n");
 
 			VectorScale(plane.normal, plane.dist, surface->origin);
 			VectorCopy(surface->origin, camera->origin);
@@ -1995,7 +1989,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 			CrossProduct(camera->axis[0], camera->axis[1], camera->axis[2]);
 		}
 
-		//ri.Printf(PRINT_ALL, "Portal surface with a portal entity\n");
+		//Ren_Print("Portal surface with a portal entity\n");
 
 		*mirror = qfalse;
 		return qtrue;
@@ -2010,7 +2004,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 	// to see a surface before the server has communicated the matching
 	// portal surface entity, so we don't want to print anything here...
 
-	//ri.Printf(PRINT_ALL, "Portal surface without a portal entity\n");
+	//Ren_Print("Portal surface without a portal entity\n");
 
 	return qfalse;
 }
@@ -2093,19 +2087,19 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	// rotate if necessary
 	if (tr.currentEntity != &tr.worldEntity)
 	{
-		//ri.Printf(PRINT_ALL, "entity portal surface\n");
+		//Ren_Print("entity portal surface\n");
 		R_RotateEntityForViewParms(tr.currentEntity, &tr.viewParms, &tr.orientation);
 	}
 	else
 	{
-		//ri.Printf(PRINT_ALL, "world portal surface\n");
+		//Ren_Print("world portal surface\n");
 		tr.orientation = tr.viewParms.world;
 	}
 
 	Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qtrue, -1, 0);
 	rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 
-	// Tr3B: former assertion
+	// former assertion
 	if (tess.numVertexes >= 128)
 	{
 		return qfalse;
@@ -2167,7 +2161,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	}
 	if (!numTriangles)
 	{
-		//ri.Printf(PRINT_ALL, "entity portal surface triangles culled\n");
+		//Ren_Print("entity portal surface triangles culled\n");
 		return qtrue;
 	}
 
@@ -2203,7 +2197,7 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf)
 	// don't recursively mirror
 	if (tr.viewParms.isPortal)
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING: recursive mirror/portal found\n");
+		Ren_Developer("WARNING: recursive mirror/portal found\n");
 		return qfalse;
 	}
 
@@ -2215,7 +2209,7 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf)
 	// trivially reject portal/mirror
 	if (SurfIsOffscreen(drawSurf, clipDest))
 	{
-		//ri.Printf(PRINT_ALL, "WARNING: offscreen mirror/portal surface\n");
+		//Ren_Print("WARNING: offscreen mirror/portal surface\n");
 		return qfalse;
 	}
 
@@ -2447,12 +2441,12 @@ static void R_SortDrawSurfs(void)
 		}
 #endif
 
-		//ri.Printf(PRINT_ALL, "portal or mirror surface\n");
+		//Ren_Print("portal or mirror surface\n");
 
 		// no shader should ever have this sort type
 		if (shader->sort == SS_BAD)
 		{
-			ri.Error(ERR_DROP, "Shader '%s'with sort == SS_BAD", shader->name);
+			Ren_Drop("Shader '%s'with sort == SS_BAD", shader->name);
 		}
 
 		// if the mirror was completely clipped away, we may need to check another surface
@@ -2522,7 +2516,6 @@ void R_AddEntitySurfaces(void)
 			shader = R_GetShaderByHandle(ent->e.customShader);
 			R_AddDrawSurf(&entitySurface, shader, -1, R_SpriteFogNum(ent));
 			break;
-
 		case RT_MODEL:
 			// we must set up parts of tr.or for model culling
 			R_RotateEntityForViewParms(ent, &tr.viewParms, &tr.orientation);
@@ -2542,21 +2535,17 @@ void R_AddEntitySurfaces(void)
 				case MOD_MDX:
 					// not a model, just a skeleton
 					break;
-
 				case MOD_MDM:
 					R_MDM_AddAnimSurfaces(ent);
 					break;
-
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 				case MOD_MD5:
 					R_AddMD5Surfaces(ent);
 					break;
 #endif
-
 				case MOD_BSP:
 					R_AddBSPModelSurfaces(ent);
 					break;
-
 				case MOD_BAD:           // null model axis
 					if ((ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal)
 					{
@@ -2569,16 +2558,14 @@ void R_AddEntitySurfaces(void)
 					shader = R_GetShaderByHandle(ent->e.customShader);
 					R_AddDrawSurf(&entitySurface, tr.defaultShader, -1, 0);
 					break;
-
 				default:
-					ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad modeltype");
+					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
 					break;
 				}
 			}
 			break;
-
 		default:
-			ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad reType");
+			Ren_Drop("R_AddEntitySurfaces: Bad reType");
 			break;
 		}
 	}
@@ -2625,7 +2612,6 @@ void R_AddEntityInteractions(trRefLight_t *light)
 		case RT_RAIL_CORE_TAPER:
 		case RT_RAIL_RINGS:
 			break;
-
 		case RT_MODEL:
 			tr.currentModel = R_GetModelByHandle(ent->e.hModel);
 			if (!tr.currentModel)
@@ -2639,37 +2625,30 @@ void R_AddEntityInteractions(trRefLight_t *light)
 				case MOD_MESH:
 					R_AddMDVInteractions(ent, light);
 					break;
-
 				case MOD_MDX:
 					// not a model, just a skeleton
 					break;
-
 				case MOD_MDM:
 					R_AddMDMInteractions(ent, light);
 					break;
-
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 				case MOD_MD5:
 					R_AddMD5Interactions(ent, light);
 					break;
 #endif
-
 				case MOD_BSP:
 					R_AddBrushModelInteractions(ent, light);
 					break;
-
 				case MOD_BAD:           // null model axis
 					break;
-
 				default:
-					ri.Error(ERR_DROP, "R_AddEntityInteractions: Bad modeltype");
+					Ren_Drop("R_AddEntityInteractions: Bad modeltype");
 					break;
 				}
 			}
 			break;
-
 		default:
-			ri.Error(ERR_DROP, "R_AddEntityInteractions: Bad reType");
+			Ren_Drop("R_AddEntityInteractions: Bad reType");
 			break;
 		}
 	}
@@ -2778,7 +2757,7 @@ void R_AddLightInteractions()
 
 						leaf = (bspNode_t *) l->data;
 
-						//ri.Printf(PRINT_ALL, "leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
+						//Ren_Print("leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
 
 						if (leaf->visible[tr.viewCount] && (tr.frameCount - leaf->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer)
 						{
@@ -2828,12 +2807,10 @@ void R_AddLightInteractions()
 				tr.pc.c_box_cull_light_in++;
 				light->cull = CULL_IN;
 				break;
-
 			case CULL_CLIP:
 				tr.pc.c_box_cull_light_clip++;
 				light->cull = CULL_CLIP;
 				break;
-
 			case CULL_OUT:
 				// light is not visible so skip other light setup stuff to save speed
 				tr.pc.c_box_cull_light_out++;
@@ -2867,12 +2844,10 @@ void R_AddLightInteractions()
 				tr.pc.c_box_cull_light_in++;
 				light->cull = CULL_IN;
 				break;
-
 			case CULL_CLIP:
 				tr.pc.c_box_cull_light_clip++;
 				light->cull = CULL_CLIP;
 				break;
-
 			case CULL_OUT:
 				// light is not visible so skip other light setup stuff to save speed
 				tr.pc.c_box_cull_light_out++;
@@ -2935,7 +2910,7 @@ void R_AddLightInteractions()
 
 			R_AddEntityInteractions(light);
 
-			// Tr3B: fun but slow
+			// fun but slow
 			//R_AddPolygonInteractions(light);
 		}
 
@@ -3014,7 +2989,7 @@ void R_AddLightBoundsToVisBounds()
 
 						leaf = (bspNode_t *) l->data;
 
-						//ri.Printf(PRINT_ALL, "leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
+						//Ren_Print("leaf %i: visible = %i, %i\n", leaf - tr.world->nodes, leaf->visible[tr.viewCount], tr.viewCount);
 
 						if (leaf->visible[tr.viewCount] && (tr.frameCount - leaf->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer)
 						{
@@ -3063,10 +3038,8 @@ void R_AddLightBoundsToVisBounds()
 			case CULL_IN:
 			default:
 				break;
-
 			case CULL_CLIP:
 				break;
-
 			case CULL_OUT:
 				continue;
 			}
@@ -3094,10 +3067,8 @@ void R_AddLightBoundsToVisBounds()
 			case CULL_IN:
 			default:
 				break;
-
 			case CULL_CLIP:
 				break;
-
 			case CULL_OUT:
 				continue;
 			}
@@ -3166,7 +3137,7 @@ void R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix)
 #endif
 }
 
-// Tr3B - from botlib
+// from botlib
 void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color)
 {
 #if 0
@@ -3293,7 +3264,7 @@ static void R_DebugGraphics(void)
 	if (r_debugSurface->integer)
 	{
 		// the render thread can't make callbacks to the main thread
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 
 		GLSL_BindProgram(0);
 		GL_SelectTexture(0);
@@ -3327,7 +3298,7 @@ void R_RenderView(viewParms_t *parms)
 
 	if (tr.viewCount >= MAX_VIEWS)
 	{
-		ri.Printf(PRINT_ALL, "MAX_VIEWS (%i) hit. Don't add more mirrors or portals. Skipping view ...\n", MAX_VIEWS);
+		Ren_Print("MAX_VIEWS (%i) hit. Don't add more mirrors or portals. Skipping view ...\n", MAX_VIEWS);
 		return;
 	}
 

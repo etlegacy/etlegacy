@@ -18,7 +18,7 @@ uniform float u_Time;
 varying vec2 var_Tex;
 varying vec4 var_Color;
 
-void    main()
+void main()
 {
 #if defined(USE_VERTEX_SKINNING)
 	vec4 position = vec4(0.0);

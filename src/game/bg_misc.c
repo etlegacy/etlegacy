@@ -238,7 +238,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_MP40,                 WP_NONE,                WP_MP40,              WP_MP40,              18,  qfalse, 400,  "MP 40",           }, // 3
 	{ WP_GRENADE_LAUNCHER,     WP_NONE,                WP_GRENADE_LAUNCHER,  WP_GRENADE_LAUNCHER,  250, qtrue,  0,    "",                }, // 4
 	{ WP_PANZERFAUST,          WP_NONE,                WP_PANZERFAUST,       WP_PANZERFAUST,       400, qtrue,  0,    "PANZERFAUST",     }, // 5
-	{ WP_FLAMETHROWER,         WP_NONE,                WP_FLAMETHROWER,      WP_FLAMETHROWER,      1,   qfalse, 0,    "FLAMETHROWER",    }, // 6
+	{ WP_FLAMETHROWER,         WP_NONE,                WP_FLAMETHROWER,      WP_FLAMETHROWER,      5,   qfalse, 0,    "FLAMETHROWER",    }, // 6
 	{ WP_COLT,                 WP_SILENCED_COLT,       WP_COLT,              WP_COLT,              18,  qfalse, 600,  "COLT",            }, // 7	// equivalent american weapon to german luger
 	{ WP_THOMPSON,             WP_NONE,                WP_THOMPSON,          WP_THOMPSON,          18,  qfalse, 400,  "THOMPSON",        }, // 8	// equivalent american weapon to german mp40
 	{ WP_GRENADE_PINEAPPLE,    WP_NONE,                WP_GRENADE_PINEAPPLE, WP_GRENADE_PINEAPPLE, 250, qtrue,  0,    "",                }, // 9
@@ -2320,7 +2320,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		if (item->giTag == WP_AMMO)
 		{
 			// magic ammo for any two-handed weapon
-			// xkan, 11/21/2002 - only pick up if ammo is not full, numClips is 0, so ps will
+			// - only pick up if ammo is not full, numClips is 0, so ps will
 			// NOT be changed (I know, it places the burden on the programmer, rather than the
 			// compiler, to ensure that).
 			return BG_AddMagicAmmo((playerState_t *)ps, skill, teamNum, 0);      // had to cast const away
@@ -2414,7 +2414,6 @@ void BG_CalculateSpline_r(splinePath_t *spline, vec3_t out1, vec3_t out2, float 
 		//Com_Error( ERR_DROP, "Spline (%s) with no target referenced", spline->point.name );
 	}
 	VectorCopy(spline->next->point.origin, points[i + 1]);
-
 
 	while (count > 2)
 	{
@@ -3213,6 +3212,7 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_AIRSTRIKEMESSAGE",
 	"EV_MEDIC_CALL",
 	"EV_SHOVE_SOUND",
+	"EV_BODY_DP",
 	//"EV_MAX_EVENTS",
 };
 
@@ -4080,15 +4080,14 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, "DYNA", "Dynamite"   },  // 14 WS_DYNAMITE
 	{ qfalse, "ARST", "Airstrike"  },  // 15 WS_AIRSTRIKE
 	{ qfalse, "ARTY", "Artillery"  },  // 16 WS_ARTILLERY
-	{ qfalse, "SRNG", "Syringe"    },  // 17 WS_SYRINGE
-	{ qfalse, "SMOK", "SmokeScrn"  },  // 18 WS_SMOKE
-	{ qfalse, "STCH", "Satchel"    },  // 19 WS_SATCHEL
-	{ qfalse, "GRLN", "G.Launchr"  },  // 20 WS_GRENADELAUNCHER
-	{ qfalse, "LNMN", "Landmine"   },  // 21 WS_LANDMINE
-	{ qtrue,  "MG42", "MG-42 Gun"  },  // 22 WS_MG42
-	{ qtrue,  "BRNG", "Browning"   },  // 23 WS_BROWNING
-	{ qtrue,  "GARN", "Garand"     },  // 24 WS_GARAND
-	{ qtrue,  "K-43", "K43 Rifle"  }   // 25 WS_K43
+	{ qfalse, "SMOK", "SmokeScrn"  },  // 17 WS_SMOKE
+	{ qfalse, "STCH", "Satchel"    },  // 18 WS_SATCHEL
+	{ qfalse, "GRLN", "G.Launchr"  },  // 19 WS_GRENADELAUNCHER
+	{ qfalse, "LNMN", "Landmine"   },  // 20 WS_LANDMINE
+	{ qtrue,  "MG42", "MG-42 Gun"  },  // 21 WS_MG42
+	{ qtrue,  "BRNG", "Browning"   },  // 22 WS_BROWNING
+	{ qtrue,  "GARN", "Garand"     },  // 23 WS_GARAND
+	{ qtrue,  "K-43", "K43 Rifle"  }   // 24 WS_K43
 };
 
 // Multiview: Convert weaponstate to simpler format

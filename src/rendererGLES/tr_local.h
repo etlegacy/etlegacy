@@ -1092,10 +1092,6 @@ typedef struct
 	int c_decalProjectors, c_decalTestSurfaces, c_decalClipSurfaces, c_decalSurfaces, c_decalSurfacesCreated;
 } frontEndCounters_t;
 
-#define FOG_TABLE_SIZE      256
-
-#define DEFAULT_FOG_EXP_DENSITY         0.5f
-
 #define FUNCTABLE_SIZE      4096    //% 1024
 #define FUNCTABLE_SIZE2     12      //% 10
 #define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)
@@ -1243,7 +1239,6 @@ typedef struct
 	float triangleTable[FUNCTABLE_SIZE];
 	float sawToothTable[FUNCTABLE_SIZE];
 	float inverseSawToothTable[FUNCTABLE_SIZE];
-	float fogTable[FOG_TABLE_SIZE];
 
 	int allowCompress; // temp var used while parsing shader only
 } trGlobals_t;
@@ -1370,8 +1365,6 @@ const void *RB_TakeScreenshotCmd(const void *data);
 void R_ScreenShot_f(void);
 void R_ScreenShotJPEG_f(void);
 
-void R_InitFogTable(void);
-float R_FogFactor(float s, float t);
 void R_InitImages(void);
 void R_DeleteTextures(void);
 int R_SumOfUsedImages(void);
@@ -1612,8 +1605,6 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
 
 void RE_RenderScene(const refdef_t *fd);
-void RE_SaveViewParms(void);
-void RE_RestoreViewParms(void);
 
 /*
 =============================================================

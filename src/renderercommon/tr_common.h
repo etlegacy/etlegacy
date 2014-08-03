@@ -28,7 +28,7 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file tr_public.h
+ * @file tr_common.h
  */
 
 #ifndef __TR_COMMON_H
@@ -80,6 +80,16 @@ void GLimp_Minimize(void);
 #define RENLOG 0
 #define Ren_LogComment(...)
 #endif
+
+#define Ren_UpdateScreen() ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n")
+#define Ren_Developer(...) ri.Printf(PRINT_DEVELOPER, __VA_ARGS__)
+#define Ren_Print(...) ri.Printf(PRINT_ALL, __VA_ARGS__)
+#define Ren_Warning(...) ri.Printf(PRINT_WARNING, __VA_ARGS__)
+
+#define Ren_Drop(...) ri.Error(ERR_DROP, __VA_ARGS__)
+#define Ren_Fatal(...) ri.Error(ERR_FATAL, __VA_ARGS__)
+
+#define Ren_Assert(x) if (x) { Ren_Fatal("Ren_Assert: %s failed at %s (%s:%d)\n", #x, __FUNCTION__, __FILE__, __LINE__); }
 
 // NOTE: linux works with float gamma value, not the gamma table
 // the params won't be used, getting the r_gamma cvar directly

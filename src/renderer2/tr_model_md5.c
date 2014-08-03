@@ -48,21 +48,17 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	md5Weight_t   *weight;
 	int           version;
 	shader_t      *sh;
-	char          *buf_p;
+	char          *buf_p = ( char * ) buffer;
 	char          *token;
 	vec3_t        boneOrigin;
 	quat_t        boneQuat;
 	matrix_t      boneMat;
-
-	int        numRemaining;
-	growList_t sortedTriangles;
-	growList_t vboTriangles;
-	growList_t vboSurfaces;
-
-	int numBoneReferences;
-	int boneReferences[MAX_BONES];
-
-	buf_p = ( char * ) buffer;
+	int           numRemaining;
+	growList_t    sortedTriangles;
+	growList_t    vboTriangles;
+	growList_t    vboSurfaces;
+	int           numBoneReferences;
+	int           boneReferences[MAX_BONES];
 
 	// skip MD5Version indent string
 	COM_ParseExt2(&buf_p, qfalse);
@@ -73,7 +69,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (version != MD5_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: %s has wrong version (%i should be %i)\n", modName, version, MD5_VERSION);
+		Ren_Warning("R_LoadMD5: %s has wrong version (%i should be %i)\n", modName, version, MD5_VERSION);
 		return qfalse;
 	}
 
@@ -84,14 +80,14 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// skip commandline <arguments string>
 	token = COM_ParseExt2(&buf_p, qtrue);
 	token = COM_ParseExt2(&buf_p, qtrue);
-	//  ri.Printf(PRINT_ALL, "%s\n", token);
+	//  Ren_Print("%s\n", token);
 
 	// parse numJoints <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
 
 	if (Q_stricmp(token, "numJoints"))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'numJoints' found '%s' in model '%s'\n", token, modName);
+		Ren_Warning("R_LoadMD5: expected 'numJoints' found '%s' in model '%s'\n", token, modName);
 		return qfalse;
 	}
 
@@ -103,27 +99,27 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_stricmp(token, "numMeshes"))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'numMeshes' found '%s' in model '%s'\n", token, modName);
+		Ren_Warning("R_LoadMD5: expected 'numMeshes' found '%s' in model '%s'\n", token, modName);
 		return qfalse;
 	}
 
 	token            = COM_ParseExt2(&buf_p, qfalse);
 	md5->numSurfaces = atoi(token);
-	//ri.Printf(PRINT_ALL, "R_LoadMD5: '%s' has %i surfaces\n", modName, md5->numSurfaces);
+	//Ren_Print("R_LoadMD5: '%s' has %i surfaces\n", modName, md5->numSurfaces);
 
 	if (md5->numBones < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: '%s' has no bones\n", modName);
+		Ren_Warning("R_LoadMD5: '%s' has no bones\n", modName);
 		return qfalse;
 	}
 
 	if (md5->numBones > MAX_BONES)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: '%s' has more than %i bones (%i)\n", modName, MAX_BONES, md5->numBones);
+		Ren_Warning("R_LoadMD5: '%s' has more than %i bones (%i)\n", modName, MAX_BONES, md5->numBones);
 		return qfalse;
 	}
 
-	//ri.Printf(PRINT_ALL, "R_LoadMD5: '%s' has %i bones\n", modName, md5->numBones);
+	//Ren_Print("R_LoadMD5: '%s' has %i bones\n", modName, md5->numBones);
 
 	// parse all the bones
 	md5->bones = ri.Hunk_Alloc(sizeof(*bone) * md5->numBones, h_low);
@@ -133,7 +129,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_stricmp(token, "joints"))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'joints' found '%s' in model '%s'\n", token, modName);
+		Ren_Warning("R_LoadMD5: expected 'joints' found '%s' in model '%s'\n", token, modName);
 		return qfalse;
 	}
 
@@ -141,7 +137,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_stricmp(token, "{"))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '{' found '%s' in model '%s'\n", token, modName);
+		Ren_Warning("R_LoadMD5: expected '{' found '%s' in model '%s'\n", token, modName);
 		return qfalse;
 	}
 
@@ -150,16 +146,16 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		token = COM_ParseExt2(&buf_p, qtrue);
 		Q_strncpyz(bone->name, token, sizeof(bone->name));
 
-		//ri.Printf(PRINT_ALL, "R_LoadMD5: '%s' has bone '%s'\n", modName, bone->name);
+		//Ren_Print("R_LoadMD5: '%s' has bone '%s'\n", modName, bone->name);
 
 		token             = COM_ParseExt2(&buf_p, qfalse);
 		bone->parentIndex = atoi(token);
 
-		//ri.Printf(PRINT_ALL, "R_LoadMD5: '%s' has bone '%s' with parent index %i\n", modName, bone->name, bone->parentIndex);
+		//Ren_Print("R_LoadMD5: '%s' has bone '%s' with parent index %i\n", modName, bone->name, bone->parentIndex);
 
 		if (bone->parentIndex >= md5->numBones)
 		{
-			ri.Error(ERR_DROP, "R_LoadMD5: '%s' has bone '%s' with bad parent index %i while numBones is %i", modName,
+			Ren_Drop("R_LoadMD5: '%s' has bone '%s' with bad parent index %i while numBones is %i", modName,
 			         bone->name, bone->parentIndex, md5->numBones);
 		}
 
@@ -168,7 +164,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "("))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -183,7 +179,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, ")"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected ')' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected ')' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -192,7 +188,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "("))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -216,7 +212,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, ")"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 	}
@@ -226,18 +222,18 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	if (Q_stricmp(token, "}"))
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '}' found '%s' in model '%s'\n", token, modName);
+		Ren_Warning("R_LoadMD5: expected '}' found '%s' in model '%s'\n", token, modName);
 		return qfalse;
 	}
 
 	// parse all the surfaces
 	if (md5->numSurfaces < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD5: '%s' has no surfaces\n", modName);
+		Ren_Warning("R_LoadMD5: '%s' has no surfaces\n", modName);
 		return qfalse;
 	}
 
-	//ri.Printf(PRINT_ALL, "R_LoadMD5: '%s' has %i surfaces\n", modName, md5->numSurfaces);
+	//Ren_Print("R_LoadMD5: '%s' has %i surfaces\n", modName, md5->numSurfaces);
 
 	md5->surfaces = ri.Hunk_Alloc(sizeof(*surf) * md5->numSurfaces, h_low);
 
@@ -248,7 +244,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "mesh"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'mesh' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected 'mesh' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -256,7 +252,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "{"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '{' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected '{' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -271,19 +267,19 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "shader"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'shader' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected 'shader' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
 		token = COM_ParseExt2(&buf_p, qfalse);
 		Q_strncpyz(surf->shader, token, sizeof(surf->shader));
 
-		//ri.Printf(PRINT_ALL, "R_LoadMD5: '%s' uses shader '%s'\n", modName, surf->shader);
+		//Ren_Print("R_LoadMD5: '%s' uses shader '%s'\n", modName, surf->shader);
 
 		// FIXME .md5mesh meshes don't have surface names
 		// lowercase the surface name so skin compares are faster
 		//Q_strlwr(surf->name);
-		//ri.Printf(PRINT_ALL, "R_LoadMD5: '%s' has surface '%s'\n", modName, surf->name);
+		//Ren_Print("R_LoadMD5: '%s' has surface '%s'\n", modName, surf->name);
 
 		// register the shaders
 		sh = R_FindShader(surf->shader, SHADER_3D_DYNAMIC, qtrue);
@@ -302,7 +298,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "numVerts"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'numVerts' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected 'numVerts' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -311,7 +307,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMD5: '%s' has more than %i verts on a surface (%i)",
+			Ren_Drop("R_LoadMD5: '%s' has more than %i verts on a surface (%i)",
 			         modName, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
 
@@ -324,7 +320,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (Q_stricmp(token, "vert"))
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'vert' found '%s' in model '%s'\n", token, modName);
+				Ren_Warning("R_LoadMD5: expected 'vert' found '%s' in model '%s'\n", token, modName);
 				return qfalse;
 			}
 
@@ -335,7 +331,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (Q_stricmp(token, "("))
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
+				Ren_Warning("R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
 				return qfalse;
 			}
 
@@ -350,7 +346,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (Q_stricmp(token, ")"))
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: expected ')' found '%s' in model '%s'\n", token, modName);
+				Ren_Warning("R_LoadMD5: expected ')' found '%s' in model '%s'\n", token, modName);
 				return qfalse;
 			}
 
@@ -362,7 +358,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (v->numWeights > MAX_WEIGHTS)
 			{
-				ri.Error(ERR_DROP, "R_LoadMD5: vertex %i requires more than %i weights on surface (%i) in model '%s'",
+				Ren_Drop("R_LoadMD5: vertex %i requires more than %i weights on surface (%i) in model '%s'",
 				         j, MAX_WEIGHTS, i, modName);
 			}
 		}
@@ -372,7 +368,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "numTris"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'numTris' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected 'numTris' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -381,7 +377,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (surf->numTriangles > SHADER_MAX_TRIANGLES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMD5: '%s' has more than %i triangles on a surface (%i)",
+			Ren_Drop("R_LoadMD5: '%s' has more than %i triangles on a surface (%i)",
 			         modName, SHADER_MAX_TRIANGLES, surf->numTriangles);
 		}
 
@@ -394,7 +390,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (Q_stricmp(token, "tri"))
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'tri' found '%s' in model '%s'\n", token, modName);
+				Ren_Warning("R_LoadMD5: expected 'tri' found '%s' in model '%s'\n", token, modName);
 				return qfalse;
 			}
 
@@ -412,7 +408,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "numWeights"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'numWeights' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected 'numWeights' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -428,7 +424,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (Q_stricmp(token, "weight"))
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: expected 'weight' found '%s' in model '%s'\n", token, modName);
+				Ren_Warning("R_LoadMD5: expected 'weight' found '%s' in model '%s'\n", token, modName);
 				return qfalse;
 			}
 
@@ -445,7 +441,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (Q_stricmp(token, "("))
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
+				Ren_Warning("R_LoadMD5: expected '(' found '%s' in model '%s'\n", token, modName);
 				return qfalse;
 			}
 
@@ -460,7 +456,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (Q_stricmp(token, ")"))
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: expected ')' found '%s' in model '%s'\n", token, modName);
+				Ren_Warning("R_LoadMD5: expected ')' found '%s' in model '%s'\n", token, modName);
 				return qfalse;
 			}
 		}
@@ -470,7 +466,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 		if (Q_stricmp(token, "}"))
 		{
-			ri.Printf(PRINT_WARNING, "R_LoadMD5: expected '}' found '%s' in model '%s'\n", token, modName);
+			Ren_Warning("R_LoadMD5: expected '}' found '%s' in model '%s'\n", token, modName);
 			return qfalse;
 		}
 
@@ -649,20 +645,17 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			}
 
 #if 1
-
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
 				//VectorNormalize(v->tangent);
 				//VectorNormalize(v->binormal);
 				VectorNormalize(v->normal);
 			}
-
 #endif
 		}
 #endif
 
 #if 0
-
 		// do another extra smoothing for normals to avoid flat shading
 		for (j = 0; j < surf->numVerts; j++)
 		{
@@ -681,7 +674,6 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			VectorNormalize(surf->verts[j].normal);
 		}
-
 #endif
 	}
 
@@ -711,7 +703,6 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		//qsort(sortedTriangles.elements, sortedTriangles.currentElements, sizeof(void *), CompareTrianglesByBoneReferences);
 
 #if 0
-
 		for (j = 0; j < sortedTriangles.currentElements; j++)
 		{
 			int b[MAX_WEIGHTS * 3];
@@ -728,10 +719,9 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				}
 
 				qsort(b, MAX_WEIGHTS * 3, sizeof(int), CompareBoneIndices);
-				//ri.Printf(PRINT_ALL, "bone indices: %i %i %i %i\n", b[k * 3 + 0], b[k * 3 + 1], b[k * 3 + 2], b[k * 3 + 3]);
+				//Ren_Print("bone indices: %i %i %i %i\n", b[k * 3 + 0], b[k * 3 + 1], b[k * 3 + 2], b[k * 3 + 3]);
 			}
 		}
-
 #endif
 
 		numRemaining = sortedTriangles.currentElements;
@@ -760,7 +750,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			if (!vboTriangles.currentElements)
 			{
-				ri.Printf(PRINT_WARNING, "R_LoadMD5: could not add triangles to a remaining VBO surfaces for model '%s'\n", modName);
+				Ren_Warning("R_LoadMD5: could not add triangles to a remaining VBO surfaces for model '%s'\n", modName);
 				Com_DestroyGrowList(&vboTriangles);
 				break;
 			}

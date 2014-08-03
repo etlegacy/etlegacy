@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,11 +31,7 @@
  * @file sdl_snd.c
  */
 
-#ifdef BUNDLED_SDL
-#    include "SDL.h"
-#else
-#    include <SDL2/SDL.h>
-#endif
+#include "sdl_defs.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -187,7 +183,7 @@ qboolean SNDDMA_Init(void)
 
 	if (!SDL_WasInit(SDL_INIT_AUDIO))
 	{
-		if (SDL_Init(SDL_INIT_AUDIO) == -1)
+		if (LegacySDL_Init(SDL_INIT_AUDIO) == -1)
 		{
 			Com_Printf("FAILED (%s)\n", SDL_GetError());
 			return qfalse;

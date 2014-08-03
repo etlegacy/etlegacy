@@ -70,9 +70,8 @@ static int MDXSurfaceCompare(const void *a, const void *b)
 
 qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const char *modName)
 {
-	int i, j, k;            //, l;
-
-	md3Header_t    *md3Model;
+	int            i, j, k; //, l;
+	md3Header_t    *md3Model = ( md3Header_t * ) buffer;
 	md3Frame_t     *md3Frame;
 	md3Surface_t   *md3Surf;
 	md3Shader_t    *md3Shader;
@@ -80,26 +79,22 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 	md3St_t        *md3st;
 	md3XyzNormal_t *md3xyz;
 	md3Tag_t       *md3Tag;
-
-	mdvModel_t    *mdvModel;
-	mdvFrame_t    *frame;
-	mdvSurface_t  *surf;  //, *surface;
-	srfTriangle_t *tri;
-	mdvXyz_t      *v;
-	mdvSt_t       *st;
-	mdvTag_t      *tag;
-	mdvTagName_t  *tagName;
-
-	int version;
-	int size;
-
-	md3Model = ( md3Header_t * ) buffer;
+	mdvModel_t     *mdvModel;
+	mdvFrame_t     *frame;
+	mdvSurface_t   *surf; //, *surface;
+	srfTriangle_t  *tri;
+	mdvXyz_t       *v;
+	mdvSt_t        *st;
+	mdvTag_t       *tag;
+	mdvTagName_t   *tagName;
+	int            version;
+	int            size;
 
 	version = LittleLong(md3Model->version);
 
 	if (version != MD3_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD3: %s has wrong version (%i should be %i)\n", modName, version, MD3_VERSION);
+		Ren_Warning("R_LoadMD3: %s has wrong version (%i should be %i)\n", modName, version, MD3_VERSION);
 		return qfalse;
 	}
 
@@ -122,7 +117,7 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 
 	if (md3Model->numFrames < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD3: %s has no frames\n", modName);
+		Ren_Warning("R_LoadMD3: %s has no frames\n", modName);
 		return qfalse;
 	}
 
@@ -192,13 +187,13 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 
 		if (md3Surf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMD3: %s has more than %i verts on a surface (%i)",
+			Ren_Drop("R_LoadMD3: %s has more than %i verts on a surface (%i)",
 			         modName, SHADER_MAX_VERTEXES, md3Surf->numVerts);
 		}
 
 		if (md3Surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMD3: %s has more than %i triangles on a surface (%i)",
+			Ren_Drop("R_LoadMD3: %s has more than %i triangles on a surface (%i)",
 			         modName, SHADER_MAX_INDEXES / 3, md3Surf->numTriangles);
 		}
 
@@ -385,7 +380,7 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 				}
 			}
 
-			//ri.Printf(PRINT_ALL, "...calculating MD3 mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);
+			//Ren_Print("...calculating MD3 mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);
 
 			// create surface
 			vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);

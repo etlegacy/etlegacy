@@ -21,7 +21,7 @@ uniform float u_DeformMagnitude;
 varying vec2  var_TexNormal;
 varying float var_Deform;
 
-void    main()
+void main()
 {
 	vec4  deformVec;
 	float d1, d2;
@@ -30,27 +30,16 @@ void    main()
 	vec3 normal;
 
 #if defined(USE_VERTEX_SKINNING)
-
-	VertexSkinning_P_N(attr_Position, attr_Normal,
-	                   position, normal);
-
+	VertexSkinning_P_N(attr_Position, attr_Normal, position, normal);
 #elif defined(USE_VERTEX_ANIMATION)
-
-	VertexAnimation_P_N(attr_Position, attr_Position2,
-	                    attr_Normal, attr_Normal2,
-	                    u_VertexInterpolation,
-	                    position, normal);
-
+	VertexAnimation_P_N(attr_Position, attr_Position2, attr_Normal, attr_Normal2, u_VertexInterpolation, position, normal);
 #else
 	position = attr_Position;
 	normal   = attr_Normal;
 #endif
 
 #if defined(USE_DEFORM_VERTEXES)
-	position = DeformPosition2(position,
-	                           normal,
-	                           attr_TexCoord0.st,
-	                           u_Time);
+	position = DeformPosition2(position, normal, attr_TexCoord0.st, u_Time);
 #endif
 
 	// transform vertex position into homogenous clip-space

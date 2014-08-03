@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1519,7 +1519,7 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 				break;
 
 			default:
-				ri.Error(ERR_DROP, "ERROR: unknown texmod '%d' in shader '%s'\n", pStage->bundle[b].texMods[tm].type, tess.shader->name);
+				Ren_Drop("ERROR: unknown texmod '%d' in shader '%s'\n", pStage->bundle[b].texMods[tm].type, tess.shader->name);
 				break;
 			}
 		}
@@ -2007,11 +2007,11 @@ void RB_EndSurface(void)
 
 	if (input->indexes[input->maxShaderIndicies - 1] != 0)
 	{
-		ri.Error(ERR_DROP, "RB_EndSurface() - input->maxShaderIndicies(%i) hit", input->maxShaderIndicies);
+		Ren_Drop("RB_EndSurface() - input->maxShaderIndicies(%i) hit", input->maxShaderIndicies);
 	}
 	if (input->xyz[input->maxShaderVerts - 1].v[0] != 0)
 	{
-		ri.Error(ERR_DROP, "RB_EndSurface() - input->maxShaderVerts(%i) hit", input->maxShaderVerts);
+		Ren_Drop("RB_EndSurface() - input->maxShaderVerts(%i) hit", input->maxShaderVerts);
 	}
 
 	if (tess.shader == tr.shadowShader)

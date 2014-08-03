@@ -1,7 +1,6 @@
 /* depthToColor_fp.glsl */
 
-
-void    main()
+void main()
 {
 	// compute depth instead of world vertex position in a [0..1] range
 	float depth = gl_FragCoord.z;

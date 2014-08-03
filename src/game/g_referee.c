@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -114,8 +114,7 @@ void G_refHelp_cmd(gentity_t *ent)
 	// List commands only for enabled refs.
 	if (ent)
 	{
-		CP("print \"\n^3Referee commands:^7\n\"");
-		CP("print \"------------------------------------------\n\"");
+		CP("print \"^3Referee commands:^7\n------------------------------------------\n\"");
 
 		G_voteHelp(ent, qfalse);
 
@@ -130,8 +129,7 @@ void G_refHelp_cmd(gentity_t *ent)
 	}
 	else
 	{
-		G_Printf("\nAdditional console commands:\n");
-		G_Printf("----------------------------------------------\n");
+		G_Printf("\nAdditional console commands:\n----------------------------------------------\n");
 		G_Printf("allready putallies <pid> unpause\n");
 		G_Printf("help putaxis <pid> warmup [value]\n");
 		G_Printf("lock speclock warn <pid>\n");
@@ -272,6 +270,13 @@ void G_refPause_cmd(gentity_t *ent, qboolean fPause)
 
 	if (ent && !G_cmdDebounce(ent, ((fPause) ? "pause" : "unpause")))
 	{
+		return;
+	}
+
+	if (g_gamestate.integer != GS_PLAYING)
+	{
+		// generic output for pause/unpause/timeouts ...
+		G_refPrintf(ent, "Command not available - match isn't in progress!");
 		return;
 	}
 

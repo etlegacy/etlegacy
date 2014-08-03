@@ -31,6 +31,8 @@
  * @file l_memory.h
  * @brief memory allocation
  */
+#ifndef INCLUDE_L_MEMORY_H
+#define INCLUDE_L_MEMORY_H
 
 #ifdef _DEBUG
 //  #define MEMDEBUG
@@ -72,3 +74,5 @@ void PrintMemoryLabels(void);
 int MemoryByteSize(void *ptr);
 // free all allocated memory
 void DumpMemory(void);
+
+#endif // #ifndef INCLUDE_L_MEMORY_H

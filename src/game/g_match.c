@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -392,7 +392,7 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 
 	{ MOD_DYNAMITE,                           WS_DYNAMITE        },
 	{ MOD_AIRSTRIKE,                          WS_AIRSTRIKE       },
-	{ MOD_SYRINGE,                            WS_SYRINGE         },
+	{ MOD_SYRINGE,                            WS_MAX             },
 	{ MOD_AMMO,                               WS_MAX             },
 	{ MOD_ARTY,                               WS_ARTILLERY       },
 
@@ -916,7 +916,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 		}
 		else
 		{
-			CP("cpm \"Type ^3\\stats <player_id>^7 to see stats on an active player.\n\"");
+			CP("print \"Type ^3\\weaponstats <player_id>^7 to see stats on an active player.\n\"");
 			return;
 		}
 	}

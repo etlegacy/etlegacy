@@ -10,7 +10,7 @@ uniform int u_AlphaTest;
 varying vec2  var_TexNormal;
 varying float var_Deform;
 
-void    main()
+void main()
 {
 	vec4 color0, color1;
 

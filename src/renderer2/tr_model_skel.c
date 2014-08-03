@@ -121,13 +121,10 @@ qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *
 	int         i, j, k;
 	md5Vertex_t *v;
 	int         boneIndex;
-	int         numNewReferences;
+	int         numNewReferences = 0;
 	int         newReferences[MAX_WEIGHTS * 3];   // a single triangle can have up to 12 new bone references !
-	qboolean    hasWeights;
+	qboolean    hasWeights = qfalse;
 
-	hasWeights = qfalse;
-
-	numNewReferences = 0;
 	Com_Memset(newReferences, -1, sizeof(newReferences));
 
 	for (i = 0; i < 3; i++)
@@ -182,10 +179,9 @@ qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *
 	}
 
 #if 0
-
 	if (numNewReferences)
 	{
-		ri.Printf(PRINT_ALL, "bone indices: %i %i %i %i %i %i %i %i %i %i %i %i\n",
+		Ren_Print("bone indices: %i %i %i %i %i %i %i %i %i %i %i %i\n",
 		          newReferences[0],
 		          newReferences[1],
 		          newReferences[2],
@@ -199,7 +195,6 @@ qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *
 		          newReferences[10],
 		          newReferences[11]);
 	}
-
 #endif
 
 	if (hasWeights)
@@ -213,35 +208,26 @@ qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *
 
 void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangles, md5Model_t *md5, md5Surface_t *surf, int skinIndex, int numBoneReferences, int boneReferences[MAX_BONES])
 {
-	int j, k;
-
-	int  vertexesNum;
-	byte *data;
-	int  dataSize;
-	int  dataOfs;
-
-	GLuint ofsTexCoords;
-	GLuint ofsTangents;
-	GLuint ofsBinormals;
-	GLuint ofsNormals;
-	GLuint ofsBoneIndexes;
-	GLuint ofsBoneWeights;
-
-	int  indexesNum;
-	byte *indexes;
-	int  indexesSize;
-	int  indexesOfs;
-
-	skelTriangle_t *tri;
-
-	vec4_t tmp;
-	int    index;
-
+	int             j, k;
+	int             vertexesNum = surf->numVerts;
+	byte            *data;
+	int             dataSize;
+	int             dataOfs;
+	GLuint          ofsTexCoords;
+	GLuint          ofsTangents;
+	GLuint          ofsBinormals;
+	GLuint          ofsNormals;
+	GLuint          ofsBoneIndexes;
+	GLuint          ofsBoneWeights;
+	int             indexesNum = vboTriangles->currentElements * 3;
+	byte            *indexes;
+	int             indexesSize;
+	int             indexesOfs;
+	skelTriangle_t  *tri;
+	vec4_t          tmp;
+	int             index;
 	srfVBOMD5Mesh_t *vboSurf;
 	md5Vertex_t     *v;
-
-	vertexesNum = surf->numVerts;
-	indexesNum  = vboTriangles->currentElements * 3;
 
 	// create surface
 	vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
@@ -262,13 +248,13 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 	indexes     = ri.Hunk_AllocateTempMemory(indexesSize);
 	indexesOfs  = 0;
 
-	//ri.Printf(PRINT_ALL, "AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
+	//Ren_Print("AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
 
 	vboSurf->numBoneRemap = 0;
 	Com_Memset(vboSurf->boneRemap, 0, sizeof(vboSurf->boneRemap));
 	Com_Memset(vboSurf->boneRemapInverse, 0, sizeof(vboSurf->boneRemapInverse));
 
-	//ri.Printf(PRINT_ALL, "referenced bones: ");
+	//Ren_Print("referenced bones: ");
 	for (j = 0; j < MAX_BONES; j++)
 	{
 		if (boneReferences[j] > 0)
@@ -278,11 +264,11 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 
 			vboSurf->numBoneRemap++;
 
-			//ri.Printf(PRINT_ALL, "(%i -> %i) ", j, vboSurf->boneRemap[j]);
+			//Ren_Print("(%i -> %i) ", j, vboSurf->boneRemap[j]);
 		}
 	}
 
-	//ri.Printf(PRINT_ALL, "\n");
+	//Ren_Print("\n");
 
 	//for(j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 	for (j = 0; j < vboTriangles->currentElements; j++)
@@ -432,47 +418,37 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 	// megs
 
 	/*
-	   ri.Printf(PRINT_ALL, "md5 mesh data VBO size: %d.%02d MB\n", dataSize / (1024 * 1024),
+	   Ren_Print("md5 mesh data VBO size: %d.%02d MB\n", dataSize / (1024 * 1024),
 	   (dataSize % (1024 * 1024)) * 100 / (1024 * 1024));
-	   ri.Printf(PRINT_ALL, "md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
+	   Ren_Print("md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
 	   (indexesSize % (1024 * 1024)) * 100 / (1024 * 1024));
 	 */
 }
 
 void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriangles, growList_t *vboVertexes, md5Model_t *md5, int skinIndex, const char *materialName, int numBoneReferences, int boneReferences[MAX_BONES])
 {
-	int j, k;
-
-	int  vertexesNum;
-	byte *data;
-	int  dataSize;
-	int  dataOfs;
-
-	GLuint ofsTexCoords;
-	GLuint ofsTangents;
-	GLuint ofsBinormals;
-	GLuint ofsNormals;
-	GLuint ofsBoneIndexes;
-	GLuint ofsBoneWeights;
-
-	int  indexesNum;
-	byte *indexes;
-	int  indexesSize;
-	int  indexesOfs;
-
-	skelTriangle_t *tri;
-
-	vec4_t tmp;
-	int    index;
-
+	int             j, k;
+	int             vertexesNum = vboVertexes->currentElements;
+	byte            *data;
+	int             dataSize;
+	int             dataOfs;
+	GLuint          ofsTexCoords;
+	GLuint          ofsTangents;
+	GLuint          ofsBinormals;
+	GLuint          ofsNormals;
+	GLuint          ofsBoneIndexes;
+	GLuint          ofsBoneWeights;
+	int             indexesNum = vboTriangles->currentElements * 3;
+	byte            *indexes;
+	int             indexesSize;
+	int             indexesOfs;
+	skelTriangle_t  *tri;
+	vec4_t          tmp;
+	int             index;
 	srfVBOMD5Mesh_t *vboSurf;
 	md5Vertex_t     *v;
-
-	shader_t *shader;
-	int      shaderIndex;
-
-	vertexesNum = vboVertexes->currentElements;
-	indexesNum  = vboTriangles->currentElements * 3;
+	shader_t        *shader;
+	int             shaderIndex;
 
 	// create surface
 	vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
@@ -481,7 +457,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	vboSurf->surfaceType = SF_VBO_MD5MESH;
 	vboSurf->md5Model    = md5;
 
-	ri.Printf(PRINT_ALL, "AddSurfaceToVBOSurfacesList2: loading shader '%s'\n", materialName);
+	Ren_Print("AddSurfaceToVBOSurfacesList2: loading shader '%s'\n", materialName);
 	shader = R_FindShader(materialName, SHADER_3D_DYNAMIC, qtrue);
 
 	if (shader->defaultShader)
@@ -507,13 +483,13 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	indexes     = ri.Hunk_AllocateTempMemory(indexesSize);
 	indexesOfs  = 0;
 
-	//ri.Printf(PRINT_ALL, "AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
+	//Ren_Print("AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
 
 	vboSurf->numBoneRemap = 0;
 	Com_Memset(vboSurf->boneRemap, 0, sizeof(vboSurf->boneRemap));
 	Com_Memset(vboSurf->boneRemapInverse, 0, sizeof(vboSurf->boneRemapInverse));
 
-	//ri.Printf(PRINT_ALL, "referenced bones: ");
+	//Ren_Print("referenced bones: ");
 	for (j = 0; j < MAX_BONES; j++)
 	{
 		if (boneReferences[j] > 0)
@@ -523,11 +499,11 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 
 			vboSurf->numBoneRemap++;
 
-			//ri.Printf(PRINT_ALL, "(%i -> %i) ", j, vboSurf->boneRemap[j]);
+			//Ren_Print("(%i -> %i) ", j, vboSurf->boneRemap[j]);
 		}
 	}
 
-	//ri.Printf(PRINT_ALL, "\n");
+	//Ren_Print("\n");
 
 	//for(j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 	for (j = 0; j < vboTriangles->currentElements; j++)
@@ -691,11 +667,11 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	// megs
 
 	/*
-	   ri.Printf(PRINT_ALL, "md5 mesh data VBO size: %d.%02d MB\n", dataSize / (1024 * 1024),
+	   Ren_Print("md5 mesh data VBO size: %d.%02d MB\n", dataSize / (1024 * 1024),
 	   (dataSize % (1024 * 1024)) * 100 / (1024 * 1024));
-	   ri.Printf(PRINT_ALL, "md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
+	   Ren_Print("md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
 	   (indexesSize % (1024 * 1024)) * 100 / (1024 * 1024));
 	 */
 
-	ri.Printf(PRINT_ALL, "created VBO surface %i with %i vertices and %i triangles\n", vboSurfaces->currentElements, vboSurf->numVerts, vboSurf->numIndexes / 3);
+	Ren_Print("created VBO surface %i with %i vertices and %i triangles\n", vboSurfaces->currentElements, vboSurf->numVerts, vboSurf->numIndexes / 3);
 }

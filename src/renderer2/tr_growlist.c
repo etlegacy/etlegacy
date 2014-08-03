@@ -41,8 +41,6 @@ GROWLISTS
 */
 
 // malloc / free all in one place for debugging
-//extern          "C" void *Com_Allocate(int bytes);
-//extern          "C" void Com_Dealloc(void *ptr);
 
 void Com_InitGrowList(growList_t *list, int maxElements)
 {
@@ -72,7 +70,7 @@ int Com_AddToGrowList(growList_t *list, void *data)
 
 	if (list->maxElements < 0)
 	{
-		Com_Error(ERR_FATAL, "Com_AddToGrowList: maxElements = %i", list->maxElements);
+		Ren_Fatal("Com_AddToGrowList: maxElements = %i", list->maxElements);
 	}
 
 	if (list->maxElements == 0)
@@ -84,13 +82,13 @@ int Com_AddToGrowList(growList_t *list, void *data)
 
 	list->maxElements *= 2;
 
-	//  Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
+	//Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
 
 	list->elements = (void **)Com_Allocate(list->maxElements * sizeof(void *));
 
 	if (!list->elements)
 	{
-		Com_Error(ERR_DROP, "Growlist alloc failed");
+		Ren_Drop("Growlist alloc failed");
 	}
 
 	Com_Memcpy(list->elements, old, list->currentElements * sizeof(void *));
@@ -104,7 +102,7 @@ void *Com_GrowListElement(const growList_t *list, int index)
 {
 	if (index < 0 || index >= list->currentElements)
 	{
-		Com_Error(ERR_DROP, "Com_GrowListElement: %i out of range of %i", index, list->currentElements);
+		Ren_Drop("Com_GrowListElement: %i out of range of %i", index, list->currentElements);
 	}
 	return list->elements[index];
 }

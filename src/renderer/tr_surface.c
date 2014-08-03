@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -61,11 +61,11 @@ void RB_CheckOverflow(int verts, int indexes)
 
 	if (verts >= tess.maxShaderVerts)
 	{
-		ri.Error(ERR_DROP, "RB_CheckOverflow: verts > MAX (%d > %d)", verts, tess.maxShaderVerts);
+		Ren_Drop("RB_CheckOverflow: verts > MAX (%d > %d)", verts, tess.maxShaderVerts);
 	}
 	if (indexes >= tess.maxShaderIndicies)
 	{
-		ri.Error(ERR_DROP, "RB_CheckOverflow: indices > MAX (%d > %d)", indexes, tess.maxShaderIndicies);
+		Ren_Drop("RB_CheckOverflow: indices > MAX (%d > %d)", indexes, tess.maxShaderIndicies);
 	}
 
 	RB_BeginSurface(tess.shader, tess.fogNum);
@@ -514,7 +514,7 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 			srcColor = *((int *) instance->color);
 		}
 
-		//Com_Printf( "Color: %d %d %d %d\n", srf->colors[ o ][ 0 ], srf->colors[ o ][ 1 ], srf->colors[ o ][ 2 ], alpha );
+		//Ren_Print("Color: %d %d %d %d\n", srf->colors[ o ][ 0 ], srf->colors[ o ][ 1 ], srf->colors[ o ][ 2 ], alpha );
 
 		RB_CHECKOVERFLOW(numVerts, numIndexes);
 
@@ -1733,7 +1733,7 @@ void RB_SurfaceEntity(surfaceType_t *surfType)
 
 void RB_SurfaceBad(surfaceType_t *surfType)
 {
-	ri.Printf(PRINT_ALL, "Bad surface tesselated.\n");
+	Ren_Print("Bad surface tesselated.\n");
 }
 
 #if 0

@@ -4618,3 +4618,9 @@ msgstr "^7Dzialasz na starej wersji.\n"
 
 msgid "DOWNLOAD LATEST ET CLIENT"
 msgstr "SCIAGNIJ KLIENTA ET"
+
+msgid "CONNECT TO SERVER"
+msgstr "POLACZ Z SERWEREM"
+
+msgid "Server PW:"
+msgstr "Haslo:"

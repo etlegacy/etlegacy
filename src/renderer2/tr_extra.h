@@ -163,7 +163,6 @@ void MatrixLookAtRH(matrix_t m, const vec3_t eye, const vec3_t dir, const vec3_t
 void PlaneIntersectRay(const vec3_t rayPos, const vec3_t rayDir, const vec4_t plane, vec3_t res);
 void MatrixOrthogonalProjectionRH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec);
 void MatrixCrop(matrix_t m, const vec3_t mins, const vec3_t maxs);
-void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2);
 void MatrixIdentity(matrix_t m);
 void MatrixMultiplyTranslation(matrix_t m, vec_t x, vec_t y, vec_t z);
 void MatrixMultiplyZRotation(matrix_t m, vec_t degrees);

@@ -25,10 +25,7 @@ varying vec3 var_Tangent;
 varying vec3 var_Binormal;
 varying vec3 var_Normal;
 
-
-
-
-void    main()
+void main()
 {
 	vec4 position = attr_Position;
 #if defined(USE_DEFORM_VERTEXES)

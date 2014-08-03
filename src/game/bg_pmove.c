@@ -6283,10 +6283,11 @@ int Pmove(pmove_t *pmove)
 {
 	int msec;
 	int finalTime = pmove->cmd.serverTime;
+	int gravity   = pmove->ps->gravity;
 
 	if (finalTime < pmove->ps->commandTime)
 	{
-		return (0);   // should not happen
+		return 0;   // should not happen
 	}
 
 	if (finalTime > pmove->ps->commandTime + 1000)
@@ -6306,7 +6307,6 @@ int Pmove(pmove_t *pmove)
 	pmove->ps->pmove_framecount = (pmove->ps->pmove_framecount + 1) & ((1 << PS_PMOVEFRAMECOUNTBITS) - 1);
 
 	pm = pmove;
-	PM_AdjustAimSpreadScale();
 
 	// chop the move up if it is too long, to prevent framerate
 	// dependent behavior
@@ -6334,6 +6334,9 @@ int Pmove(pmove_t *pmove)
 			}
 		}
 		pmove->cmd.serverTime = pmove->ps->commandTime + msec;
+
+		pmove->ps->gravity = gravity;
+		PM_AdjustAimSpreadScale();
 		PmoveSingle(pmove);
 
 		if (pmove->ps->pm_flags & PMF_JUMP_HELD)
@@ -6359,5 +6362,41 @@ int Pmove(pmove_t *pmove)
 	else
 	{
 		return 0;
+	}
+}
+
+/**
+ * @brief Used to calculate player movement for g_skipCorrection.
+ *
+ *  Before calling PmovePredict() the following player state
+ *  values should be backed up and then restored after the
+ *  new values have been copied to the entity state.
+ *
+ *  PM_GroundTrace() and friends modify
+ *      ps->groundEntityNum
+ *  ps->pm_flags
+ *      ps->pm_time
+ *      ps->eFlags
+ *
+ *  PM_StepSlideMove() and friends modify
+ *      ps->origin
+ *      ps->velocity
+ */
+void PmovePredict(pmove_t *pmove, float frametime)
+{
+	pm = pmove;
+	memset(&pml, 0, sizeof(pml));
+	pml.frametime = frametime;
+	PM_GroundTrace();
+
+	// don't bother to figure out gravity if already on the ground
+	//      or moving on a ladder.
+	if (pml.groundPlane || (pm->ps->pm_flags & PMF_LADDER))
+	{
+		PM_StepSlideMove(qfalse);
+	}
+	else
+	{
+		PM_StepSlideMove(qtrue);
 	}
 }

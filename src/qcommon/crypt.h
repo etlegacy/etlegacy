@@ -27,6 +27,9 @@
    Encryption is not supported.
 */
 
+#ifndef INCLUDE_CRYPT_H
+#define INCLUDE_CRYPT_H
+
 #define CRC32(c, b) ((*(pcrc_32_tab + (((int)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
 
 /***********************************************************************
@@ -133,3 +136,5 @@ unsigned long       crcForCrypting;
 }
 
 #endif
+
+#endif // #ifndef INCLUDE_CRYPT_H

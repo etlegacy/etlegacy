@@ -31,6 +31,9 @@
  * @file cm_public.h
  */
 
+#ifndef INCLUDE_CM_PUBLIC_H
+#define INCLUDE_CM_PUBLIC_H
+
 #include "qfiles.h"
 
 #include "../renderercommon/tr_types.h"
@@ -40,7 +43,7 @@ void CM_ClearMap(void);
 
 clipHandle_t CM_InlineModel(int index);         // 0 = world, 1 + are bmodels
 clipHandle_t CM_TempBoxModel(const vec3_t mins, const vec3_t maxs, int capsule);
-void CM_SetTempBoxModelContents(int contents);       // DHM - Nerve
+void CM_SetTempBoxModelContents(int contents);
 
 void CM_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
 
@@ -79,3 +82,5 @@ int CM_WriteAreaBits(byte *buffer, int area);
 
 // cm_patch.c
 void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *points));
+
+#endif // #ifndef INCLUDE_CM_PUBLIC_H

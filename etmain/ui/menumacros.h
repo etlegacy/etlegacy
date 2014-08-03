@@ -31,6 +31,9 @@
  * @file menumacros.h
  */
 
+#ifndef INCLUDE_MENUMACROS_H
+#define INCLUDE_MENUMACROS_H
+
 #define WINDOW_FUI(WINDOW_TEXT, GRADIENT_START_OFFSET)                                                        \
     itemDef {                                                                                                   \
 		name        "window"                                                                                    \
@@ -1092,3 +1095,5 @@
 		decoration                                                      \
 		textasfloat                                                     \
 	}
+
+#endif // #ifndef INCLUDE_MENUMACROS_H

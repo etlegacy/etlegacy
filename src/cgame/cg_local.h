@@ -36,8 +36,8 @@
  * in the server stored userinfos, or stashed in a cvar.
  */
 
-#ifndef _CG_LOCAL_H
-#define _CG_LOCAL_H
+#ifndef INCLUDE_CG_LOCAL_H
+#define INCLUDE_CG_LOCAL_H
 
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"
@@ -148,6 +148,19 @@
 #endif
 
 #define ISVALIDCLIENTNUM(clientNum) (clientNum >= 0 && clientNum < MAX_CLIENTS)
+
+typedef struct specName_s
+{
+	float x;
+	float y;
+	float scale;
+	const char *text;
+	vec3_t origin;
+	int lastVisibleTime;
+	int lastInvisibleTime;
+	qboolean visible;
+	float alpha;
+}specName_t;
 
 typedef struct
 {
@@ -1173,6 +1186,9 @@ typedef struct
 	fileHandle_t logFile;
 	// tracing bullet, predict hitboxes used on server
 	qboolean bulletTrace;
+
+	specName_t specOnScreenNames[MAX_CLIENTS];
+
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS   5
@@ -2112,7 +2128,6 @@ extern vmCvar_t cg_predictItems;
 extern vmCvar_t cg_teamChatsOnly;
 extern vmCvar_t cg_noVoiceChats;
 extern vmCvar_t cg_noVoiceText;
-extern vmCvar_t cg_enableBreath;
 extern vmCvar_t cg_autoactivate;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
@@ -2888,13 +2903,6 @@ void trap_R_RemapShader(const char *oldShader, const char *newShader, const char
 
 // Save out the old render info so we don't kill the LOD system here
 void trap_R_SaveViewParms(void);
-
-// Reset the view parameters
-void trap_R_RestoreViewParms(void);
-
-// Save out the old render info so we don't kill the LOD system here
-void trap_R_SaveViewParms(void);
-
 // Reset the view parameters
 void trap_R_RestoreViewParms(void);
 
@@ -3016,9 +3024,6 @@ const char *CG_NameForCampaign(void);
 void CG_CloseMenus(void);
 
 void CG_LimboMenu_f(void);
-
-void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, int time, clientInfo_t *ci, qboolean animatedHead);
-animation_t *CG_GetLimboAnimation(playerInfo_t *pi, const char *name);
 
 extern qboolean ccInitial;
 
@@ -3359,4 +3364,4 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 #define HITSOUNDS_NOHEADSHOT        0x04
 #define HITSOUNDS_NOBODYSHOT        0x08
 
-#endif
+#endif // #ifndef INCLUDE_CG_LOCAL_H

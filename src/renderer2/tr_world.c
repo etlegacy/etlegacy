@@ -146,7 +146,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		return qfalse;
 	}
 
-	// ydnar: made surface culling generic, inline with q3map2 surface classification
+	// made surface culling generic, inline with q3map2 surface classification
 	switch (*surface)
 	{
 	case SF_FACE:
@@ -260,7 +260,7 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	interactionType_t iaType       = IA_DEFAULT;
 	byte              cubeSideBits = CUBESIDE_CLIPALL;
 
-	// Tr3B - this surface is maybe not in this view but it may still cast a shadow
+	// this surface is maybe not in this view but it may still cast a shadow
 	// into this view
 	if (surf->viewCount != tr.viewCountNoReset)
 	{
@@ -294,7 +294,6 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	case SF_TRIANGLES:
 		intersects = R_LightSurfaceGeneric((srfGeneric_t *) surf->data, light, &cubeSideBits);
 		break;
-
 	default:
 		intersects = qfalse;
 		break;
@@ -447,7 +446,7 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	VectorAdd(ent->worldBounds[0], ent->worldBounds[1], boundsCenter);
 	VectorScale(boundsCenter, 0.5f, boundsCenter);
 
-	// Tr3B: BSP inline models should always use vertex lighting
+	// BSP inline models should always use vertex lighting
 	R_SetupEntityLighting(&tr.refdef, ent, boundsCenter);
 
 	fogNum = R_FogWorldBox(ent->worldBounds);
@@ -464,7 +463,7 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 			R_AddDrawSurf((surfaceType_t *) vboSurface, vboSurface->shader, vboSurface->lightmapNum, fogNum);
 		}
 
-		// Tr3B: also add surfaces like deform autosprite
+		// also add surfaces like deform autosprite
 		for (i = 0; i < bspModel->numSurfaces; i++)
 		{
 			bspSurface_t *surf = bspModel->firstSurface + i;
@@ -581,7 +580,7 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 
 		InsertLink(&node->visChain, &tr.traversalStack);
 
-		// ydnar: cull decals
+		// cull decals
 		if (decalBits)
 		{
 			int i;
@@ -615,7 +614,7 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 
 	if (node->numMarkSurfaces)
 	{
-		// ydnar: moved off to separate function
+		// moved off to separate function
 		R_AddLeafSurfaces(node, decalBits);
 	}
 }
@@ -644,7 +643,7 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 		// if the bounding volume is outside the frustum, nothing
 		// inside can be visible OPTIMIZE: don't do this all the way to leafs?
 
-		// Tr3B - even surfaces that belong to nodes that are outside of the view frustum
+		// even surfaces that belong to nodes that are outside of the view frustum
 		// can cast shadows into the view frustum
 		if (!r_nocull->integer && r_shadows->integer <= SHADOWING_BLOB)
 		{
@@ -681,11 +680,9 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 		case 1:
 			node = node->children[0];
 			break;
-
 		case 2:
 			node = node->children[1];
 			break;
-
 		case 3:
 		default:
 			// recurse down the children, front side first
@@ -725,7 +722,7 @@ static bspNode_t *R_PointInLeaf(const vec3_t p)
 
 	if (!tr.world)
 	{
-		ri.Error(ERR_DROP, "R_PointInLeaf: bad model");
+		Ren_Drop("R_PointInLeaf: bad model");
 	}
 
 	node = tr.world->nodes;
@@ -837,7 +834,7 @@ static void R_UpdateClusterSurfaces()
 
 	if (tr.visClusters[tr.visIndex] < 0 || tr.visClusters[tr.visIndex] >= tr.world->numClusters)
 	{
-		// Tr3B: this is not a bug, the super cluster is the last one in the array
+		// this is not a bug, the super cluster is the last one in the array
 		cluster = &tr.world->clusters[tr.world->numClusters];
 	}
 	else
@@ -1121,7 +1118,7 @@ static void R_UpdateClusterSurfaces()
 				Com_AddToGrowList(&tr.world->clusterVBOSurfaces[tr.visIndex], vboSurf);
 			}
 
-			//ri.Printf(PRINT_ALL, "creating VBO cluster surface for shader '%s'\n", shader->name);
+			//Ren_Print("creating VBO cluster surface for shader '%s'\n", shader->name);
 
 			// update surface properties
 			vboSurf->numIndexes = numTriangles * 3;
@@ -1133,8 +1130,7 @@ static void R_UpdateClusterSurfaces()
 			VectorCopy(bounds[0], vboSurf->bounds[0]);
 			VectorCopy(bounds[1], vboSurf->bounds[1]);
 
-			// make sure the render thread is stopped
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 
 			// update IBO
 			Q_strncpyz(ibo->name,
@@ -1163,7 +1159,7 @@ static void R_UpdateClusterSurfaces()
 		r_showcluster->modified = qfalse;
 		if (r_showcluster->integer)
 		{
-			ri.Printf(PRINT_ALL, "  surfaces:%i\n", tr.world->numClusterVBOSurfaces[tr.visIndex]);
+			Ren_Print("  surfaces:%i\n", tr.world->numClusterVBOSurfaces[tr.visIndex]);
 		}
 	}
 }
@@ -1202,7 +1198,7 @@ static void R_MarkLeaves(void)
 			{
 				if (tr.visClusters[i] != tr.visClusters[tr.visIndex] && r_showcluster->integer)
 				{
-					ri.Printf(PRINT_ALL, "found cluster:%i  area:%i  index:%i\n", cluster, leaf->area, i);
+					Ren_Print("found cluster:%i  area:%i  index:%i\n", cluster, leaf->area, i);
 				}
 				tr.visIndex = i;
 				return;
@@ -1225,7 +1221,7 @@ static void R_MarkLeaves(void)
 		r_showcluster->modified = qfalse;
 		if (r_showcluster->integer)
 		{
-			ri.Printf(PRINT_ALL, "update cluster:%i  area:%i  index:%i\n", cluster, leaf->area, tr.visIndex);
+			Ren_Print("update cluster:%i  area:%i  index:%i\n", cluster, leaf->area, tr.visIndex);
 		}
 	}
 
@@ -1423,11 +1419,11 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 
         if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
         {
-            GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
+            SetUniformVec4(UNIFORM_COLOR, colorGreen);
         }
         else
         {
-            GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
+            SetUniformVec4(UNIFORM_COLOR, colorMdGrey);
         }
 
         // draw bsp leave or node
@@ -1493,7 +1489,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 #if 0
 	if (glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueOcclusionQuery: node %i has already an occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueOcclusionQuery: node %i has already an occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1518,7 +1514,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 #if 1
 	if (!glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueOcclusionQuery: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueOcclusionQuery: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1567,7 +1563,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 #if 0
 	if (!glIsQuery(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueMultiOcclusionQueries: node %i has already occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueMultiOcclusionQueries: node %i has already occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1582,11 +1578,11 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
-			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorGreen);
+			SetUniformVec4(UNIFORM_COLOR, colorGreen);
 		}
 		else
 		{
-			GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorMdGrey);
+			SetUniformVec4(UNIFORM_COLOR, colorMdGrey);
 		}
 
 		Ren_LogComment("%i, ", node - tr.world->nodes);
@@ -1621,7 +1617,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 #if 0
 	if (!glIsQuery(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "IssueMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1668,7 +1664,7 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 #if 0
 	if (!glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		ri.Error(ERR_FATAL, "GetOcclusionQueryResult: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("GetOcclusionQueryResult: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
@@ -1739,8 +1735,8 @@ static void PushNode(link_t * traversalStack, bspNode_t * node)
             StackPush(traversalStack, node->children[0]);
             StackPush(traversalStack, node->children[1]);
 
-            ri.Printf(PRINT_ALL, "--> %i\n", node->children[0] - tr.world->nodes);
-            ri.Printf(PRINT_ALL, "--> %i\n", node->children[1] - tr.world->nodes);
+            Ren_Print("--> %i\n", node->children[0] - tr.world->nodes);
+            Ren_Print("--> %i\n", node->children[1] - tr.world->nodes);
         }
         else
 #endif
@@ -1910,14 +1906,7 @@ static void R_CoherentHierachicalCulling()
 		R_BindNullFBO();
 	}
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-	GLSL_SelectPermutation(gl_genericShader);
+	SetMacrosAndSelectProgram(gl_genericShader);
 
 	GL_Cull(CT_TWO_SIDED);
 
@@ -1931,22 +1920,22 @@ static void R_CoherentHierachicalCulling()
 
 	// set uniforms
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
-	GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLOR, colorWhite);
+	SetUniformVec4(UNIFORM_COLOR, colorWhite);
 
 	// set up the transformation matrix
 	GL_LoadModelViewMatrix(tr.orientation.modelViewMatrix);
 
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	// bind u_ColorMap
-	GL_SelectTexture(0);
+	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.whiteImage);
 
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 #if 0
-	GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL_ClearColor(GLCOLOR_BLACK);
+	GL_Clear(GL_COLOR_BUFFER_BIT);
 
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 
@@ -1956,8 +1945,8 @@ static void R_CoherentHierachicalCulling()
 
 
 #if 0
-	GL_ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	GL_ClearColor(GLCOLOR_NONE);
+	GL_Clear(GL_DEPTH_BUFFER_BIT);
 
 	GL_State(GLS_COLORMASK_BITS | GLS_DEPTHMASK_TRUE);
 
@@ -1967,8 +1956,8 @@ static void R_CoherentHierachicalCulling()
 
 	if (RENLOG)
 	{
-		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL_ClearColor(GLCOLOR_BLACK);
+		GL_Clear(GL_COLOR_BUFFER_BIT);
 
 		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 	}
@@ -2256,7 +2245,7 @@ static void R_CoherentHierachicalCulling()
 				}
 			}
 		}
-		//ri.Printf(PRINT_ALL, "--- (%i, %i, %i)\n", !StackEmpty(&traversalStack), !QueueEmpty(&occlusionQueryQueue), !QueueEmpty(&invisibleQueue));
+		//Ren_Print("--- (%i, %i, %i)\n", !StackEmpty(&traversalStack), !QueueEmpty(&occlusionQueryQueue), !QueueEmpty(&invisibleQueue));
 	}
 
 	ClearLink(&tr.traversalStack);
@@ -2269,7 +2258,7 @@ static void R_CoherentHierachicalCulling()
 
 	GL_CheckErrors();
 
-	//ri.Printf(PRINT_ALL, "--- R_CHC++ end ---\n");
+	//Ren_Print("--- R_CHC++ end ---\n");
 
 	if (r_speeds->integer)
 	{
@@ -2326,7 +2315,7 @@ void R_AddWorldSurfaces(void)
 			R_RecursiveWorldNode(tr.world->nodes, FRUSTUM_CLIPALL, tr.refdef.decalBits);
 		}
 
-		// ydnar: add decal surfaces
+		// add decal surfaces
 		R_AddDecalSurfaces(tr.world->models);
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
@@ -2428,12 +2417,10 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 			case RL_OMNI:
 				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_LIGHTONLY);
 				break;
-
 			case RL_DIRECTIONAL:
 			case RL_PROJ:
 				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_LIGHTONLY);
 				break;
-
 			default:
 				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_DEFAULT);
 				break;
@@ -2469,7 +2456,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 
 			surface = iaCache->surface;
 
-			// Tr3B - this surface is maybe not in this view but it may still cast a shadow
+			// this surface is maybe not in this view but it may still cast a shadow
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{
@@ -2504,7 +2491,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 
 			surface = iaCache->surface;
 
-			// Tr3B - this surface is maybe not in this view but it may still cast a shadow
+			// this surface is maybe not in this view but it may still cast a shadow
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{

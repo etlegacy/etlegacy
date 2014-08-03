@@ -73,8 +73,6 @@ typedef unsigned short glIndex_t;
 #define DEBUG_OPTIMIZEVERTICES 0
 #define CALC_REDUNDANT_SHADOWVERTS 0
 
-#define GLSL_COMPILE_STARTUP_ONLY 1
-
 //#define USE_BSP_CLUSTERSURFACE_MERGING 1
 
 typedef enum
@@ -578,7 +576,7 @@ typedef enum
 
 	SS_OPAQUE,                  // opaque
 
-	SS_ENVIRONMENT_NOFOG,       // Tr3B: moved skybox here so we can fog post process all SS_OPAQUE materials
+	SS_ENVIRONMENT_NOFOG,       // moved skybox here so we can fog post process all SS_OPAQUE materials
 
 	SS_DECAL,                   // scorch marks, etc.
 	SS_SEE_THROUGH,             // ladders, grates, grills that may have small blended edges
@@ -1312,44 +1310,11 @@ enum
 };
 // *INDENT-ON*
 
-enum
+enum GLAttrDef
 {
-	ATTR_POSITION   = BIT(0),
-	ATTR_TEXCOORD   = BIT(1),
-	ATTR_LIGHTCOORD = BIT(2),
-	ATTR_TANGENT    = BIT(3),
-	ATTR_BINORMAL   = BIT(4),
-	ATTR_NORMAL     = BIT(5),
-	ATTR_COLOR      = BIT(6),
-
-	//ATTR_PAINTCOLOR     = BIT(7),
-	//ATTR_LIGHTDIRECTION = BIT(8),
-
-	ATTR_BONE_INDEXES = BIT(9),
-	ATTR_BONE_WEIGHTS = BIT(10),
-
-	// for .md3 interpolation
-	ATTR_POSITION2 = BIT(11),
-	ATTR_TANGENT2  = BIT(12),
-	ATTR_BINORMAL2 = BIT(13),
-	ATTR_NORMAL2   = BIT(14),
-
-	// FIXME XBSP format with ATTR_LIGHTDIRECTION and ATTR_PAINTCOLOR
-	//ATTR_DEFAULT = ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_COLOR,
-
-	ATTR_BITS = ATTR_POSITION |
-	            ATTR_TEXCOORD |
-	            ATTR_LIGHTCOORD |
-	            ATTR_TANGENT |
-	            ATTR_BINORMAL |
-	            ATTR_NORMAL |
-	            ATTR_COLOR
-
-	            //|ATTR_PAINTCOLOR |
-	            //ATTR_LIGHTDIRECTION
-
-	            //ATTR_BONE_INDEXES |
-	            //ATTR_BONE_WEIGHTS
+#define ATTR_DECL
+#include "tr_glsldef.h"
+#undef ATTR_DECL
 };
 
 enum
@@ -1427,7 +1392,15 @@ typedef enum
 	UNIFORM_COUNT
 } uniform_t;
 
-// Tr3B - shaderProgram_t represents a pair of one
+typedef enum
+{
+#define TEX_DECL
+#include "tr_glsldef.h"
+#undef TEX_DECL
+	TEX_COUNT
+} texture_def_t;
+
+// shaderProgram_t represents a pair of one
 // GLSL vertex and one GLSL fragment shader
 
 typedef struct shaderProgram_s
@@ -1444,6 +1417,9 @@ typedef struct shaderProgram_s
 	GLint uniforms[UNIFORM_COUNT];
 	short uniformBufferOffsets[UNIFORM_COUNT]; // max 32767/64=511 uniforms
 	char *uniformBuffer;
+
+	// texture binds
+	int textureBinds[TEX_COUNT];
 
 	qboolean compiled;
 } shaderProgram_t;
@@ -1494,7 +1470,7 @@ typedef struct programInfo_s
 
 //=================================================================================
 
-// ydnar: decal projection
+// decal projection
 typedef struct decalProjector_s
 {
 	shader_t *shader;
@@ -1558,7 +1534,7 @@ typedef struct
 	int numPolybuffers;
 	struct srfPolyBuffer_s *polybuffers;
 
-	int decalBits;              // ydnar: optimization
+	int decalBits;              // optimization
 	int numDecalProjectors;
 	struct decalProjector_s *decalProjectors;
 
@@ -1575,7 +1551,7 @@ typedef struct
 	int pixelTargetWidth;
 	int pixelTargetHeight;
 
-	glfog_t glFog;                      // (SA) added (needed to pass fog infos into the portal sky scene)
+	glfog_t glFog;                      // added (needed to pass fog infos into the portal sky scene)
 } trRefdef_t;
 
 //=================================================================================
@@ -1679,7 +1655,7 @@ typedef enum
 
 	SF_POLY,
 	SF_POLYBUFFER,
-	SF_DECAL,                   // ydnar: decal surfaces
+	SF_DECAL,                   // decal surfaces
 
 	SF_MDV,
 	SF_MDM,
@@ -2156,7 +2132,7 @@ typedef struct
 	uint32_t numVBOSurfaces;
 	srfVBOMesh_t **vboSurfaces;
 
-	// ydnar: decals
+	//decals
 	decal_t *decals;
 } bspModel_t;
 
@@ -2192,7 +2168,7 @@ typedef struct
 	bspNode_t *nodes;
 
 	int numSkyNodes;
-	bspNode_t **skyNodes;       // ydnar: don't walk the entire bsp when rendering sky
+	bspNode_t **skyNodes;       // don't walk the entire bsp when rendering sky
 
 	int numVerts;
 	srfVert_t *verts;
@@ -2481,7 +2457,6 @@ typedef struct mdmModel_s
 
 extern const float mdmLODResolutions[MD3_MAX_LODS];
 
-
 typedef enum
 {
 	AT_BAD,
@@ -2530,7 +2505,6 @@ typedef struct md5Animation_s
 	uint32_t numAnimatedComponents;
 } md5Animation_t;
 
-
 typedef struct
 {
 	axAnimationInfo_t info;
@@ -2559,7 +2533,6 @@ typedef struct
 	md5Vertex_t *vertexes[3];
 	qboolean referenced;
 } skelTriangle_t;
-
 
 //======================================================================
 
@@ -2920,28 +2893,6 @@ typedef struct
 	// render lights
 	trRefLight_t *currentLight;
 
-	//
-	// GPU shader programs
-	//
-
-#if !defined(GLSL_COMPILE_STARTUP_ONLY)
-	// environment mapping effects
-	shaderProgram_t refractionShader_C;
-	shaderProgram_t dispersionShader_C;
-
-	// post process effects
-#ifdef EXPERIMENTAL
-	shaderProgram_t screenSpaceAmbientOcclusionShader;
-#endif
-#ifdef EXPERIMENTAL
-	shaderProgram_t depthOfFieldShader;
-#endif
-
-#endif // GLSL_COMPILE_STARTUP_ONLY
-
-
-	// -----------------------------------------
-
 	viewParms_t viewParms;
 
 	float identityLight;            // 1.0 / ( 1 << overbrightBits )
@@ -2969,10 +2920,9 @@ typedef struct
 
 	vec4_t clipRegion;              // 2D clipping region
 
-	//
 	// put large tables at the end, so most elements will be
 	// within the +/32K indexed range on risc processors
-	//
+
 	model_t *models[MAX_MOD_KNOWN];
 	int numModels;
 
@@ -3044,7 +2994,6 @@ extern programInfo_t *gl_blurXShader;
 extern programInfo_t *gl_blurYShader;
 extern programInfo_t *gl_debugShadowMapShader;
 
-//Dushan
 extern programInfo_t *gl_liquidShader;
 extern programInfo_t *gl_rotoscopeShader;
 extern programInfo_t *gl_bloomShader;
@@ -3054,7 +3003,9 @@ extern programInfo_t *gl_volumetricFogShader;
 extern programInfo_t *gl_volumetricLightingShader;
 extern programInfo_t *gl_dispersionShader;
 
-//Jacker
+extern programInfo_t *gl_depthOfField;
+extern programInfo_t *gl_ssao;
+
 extern programInfo_t *gl_colorCorrection;
 
 //This is set with the GLSL_SelectPermutation
@@ -3082,16 +3033,9 @@ extern qboolean textureFilterAnisotropic;
 extern int      maxAnisotropy;
 extern float    displayAspect;      //FIXME
 
-
 // cvars
 
-extern cvar_t *r_glCoreProfile;
-extern cvar_t *r_glMinMajorVersion;
-extern cvar_t *r_glMinMinorVersion;
-
 extern cvar_t *r_railCoreWidth;
-
-extern cvar_t *r_verbose;       // used for verbose debug spew
 
 extern cvar_t *r_stencilbits;   // number of desired stencil bits
 extern cvar_t *r_depthbits;     // number of desired depth bits
@@ -3104,7 +3048,6 @@ extern cvar_t *r_lodBias;       // push/pull LOD transitions
 extern cvar_t *r_lodScale;
 extern cvar_t *r_lodTest;
 
-extern cvar_t *r_forceFog;
 extern cvar_t *r_wolfFog;
 extern cvar_t *r_noFog;
 
@@ -3131,15 +3074,11 @@ extern cvar_t *r_drawentities;  // disable/enable entity rendering
 extern cvar_t *r_drawworld;     // disable/enable world rendering
 extern cvar_t *r_drawpolies;    // disable/enable world rendering
 extern cvar_t *r_speeds;        // various levels of information display
+
 extern cvar_t *r_novis;         // disable/enable usage of PVS
-extern cvar_t *r_nocull;
-extern cvar_t *r_facePlaneCull; // enables culling of planar surfaces with back side test
-extern cvar_t *r_nocurves;
-extern cvar_t *r_nobatching;
 extern cvar_t *r_noLightScissors;
 extern cvar_t *r_noLightVisCull;
 extern cvar_t *r_noInteractionSort;
-extern cvar_t *r_showcluster;
 
 extern cvar_t *r_mode;          // video mode
 extern cvar_t *r_fullscreen;
@@ -3290,7 +3229,6 @@ extern cvar_t *r_vboLighting;
 extern cvar_t *r_vboModels;
 extern cvar_t *r_vboOptimizeVertices;
 extern cvar_t *r_vboVertexSkinning;
-extern cvar_t *r_vboDeformVertexes;
 extern cvar_t *r_vboSmoothNormals;
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
@@ -3326,12 +3264,8 @@ extern cvar_t *r_hdrToneMappingOperator;
 extern cvar_t *r_hdrGamma;
 extern cvar_t *r_hdrDebug;
 
-#ifdef EXPERIMENTAL
 extern cvar_t *r_screenSpaceAmbientOcclusion;
-#endif
-#ifdef EXPERIMENTAL
 extern cvar_t *r_depthOfField;
-#endif
 
 extern cvar_t *r_reflectionMapping;
 extern cvar_t *r_highQualityNormalMapping;
@@ -3342,7 +3276,6 @@ extern cvar_t *r_bloomPasses;
 extern cvar_t *r_rotoscope;
 extern cvar_t *r_cameraPostFX;
 extern cvar_t *r_cameraVignette;
-extern cvar_t *r_cameraFilmGrain;
 extern cvar_t *r_cameraFilmGrainScale;
 
 extern cvar_t *r_evsmPostProcess;
@@ -3425,7 +3358,7 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 
 float R_CalcFov(float fovX, float width, float height);
 
-// Tr3B - visualisation tools to help debugging the renderer frontend
+// visualisation tools to help debugging the renderer frontend
 void R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix);
 void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color);
 void R_DebugPolygon(int color, int numPoints, float *points);
@@ -3433,9 +3366,17 @@ void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, 
 
 /*
 ====================================================================
-OpenGL WRAPPERS, tr_backend.c
+OpenGL WRAPPERS, tr_gl.c
 ====================================================================
 */
+#define GLCOLOR_WHITE 1.0f, 1.0f, 1.0f, 1.0f
+#define GLCOLOR_BLACK 0.0f, 0.0f, 0.0f, 1.0f
+#define GLCOLOR_RED 1.0f, 0.0f, 0.0f, 1.0f
+#define GLCOLOR_GREEN 0.0f, 1.0f, 0.0f, 1.0f
+#define GLCOLOR_BLUE 0.0f, 0.0f, 1.0f, 1.0f
+
+#define GLCOLOR_NONE 0.0f, 0.0f, 0.0f, 0.0f
+
 void GL_Bind(image_t *image);
 void GL_BindNearestCubeMap(const vec3_t xyz);
 void GL_Unbind();
@@ -3463,13 +3404,25 @@ void GL_PolygonMode(GLenum face, GLenum mode);
 void GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
 void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 void GL_PolygonOffset(float factor, float units);
-
-void GL_CheckErrors_(const char *filename, int line);
-
-#define GL_CheckErrors()    GL_CheckErrors_(__FILE__, __LINE__)
+void GL_Clear(unsigned int bits);
 
 void GL_State(uint32_t stateVector);
 void GL_Cull(int cullType);
+
+void GL_CheckErrors_(const char *filename, int line);
+
+#define GL_CheckErrors() GL_CheckErrors_(__FILE__, __LINE__)
+
+
+
+//ModelViewProjectionMatrix
+#define GLSTACK_MVPM glState.modelViewProjectionMatrix[glState.stackIndex]
+//ProjectionMatrix
+#define GLSTACK_PM glState.projectionMatrix[glState.stackIndex]
+//ModelViewMatrix
+#define GLSTACK_MVM glState.modelViewMatrix[glState.stackIndex]
+
+void RB_SetViewMVPM(void);
 
 /*
 ====================================================================
@@ -3490,10 +3443,10 @@ qhandle_t RE_RegisterSkin(const char *name);
 void RE_Shutdown(qboolean destroyWindow);
 
 qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
-qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);    //----(SA)
+qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);
 
 qboolean R_GetEntityToken(char *buffer, int size);
-float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out);   // Arnout
+float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *pic_out);
 
 model_t *R_AllocModel(void);
 
@@ -3526,6 +3479,8 @@ IMAGES, tr_image.c
 void R_InitImages(void);
 void R_ShutdownImages(void);
 int R_SumOfUsedImages(void);
+void R_ImageCopyBack(image_t *image, int x, int y, int width, int height);
+#define ImageCopyBackBuffer(image) R_ImageCopyBack(image, 0, 0, image->uploadWidth, image->uploadHeight)
 
 image_t *R_FindImageFile(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
 image_t *R_FindCubeImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
@@ -3630,7 +3585,8 @@ typedef struct shaderCommands_s
 
 extern shaderCommands_t tess;
 
-void GLSL_InitGPUShaders();
+void GLSL_InitGPUShaders(void);
+void GLSL_CompileGPUShaders(void);
 void GLSL_ShutdownGPUShaders();
 void GLSL_BindProgram(shaderProgram_t *program);
 void GLSL_BindNullProgram(void);
@@ -3871,6 +3827,8 @@ SCENE GENERATION, tr_scene.c
 ============================================================
 */
 
+void R_InitNextFrame(void);
+
 void RE_ClearScene(void);
 void RE_AddRefEntityToScene(const refEntity_t *ent);
 void RE_AddRefLightToScene(const refLight_t *light);
@@ -3886,8 +3844,6 @@ void RE_AddDynamicLightToSceneQ3A(const vec3_t org, float intensity, float r, fl
 
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
 void RE_RenderScene(const refdef_t *fd);
-void RE_SaveViewParms(void);
-void RE_RestoreViewParms(void);
 
 /*
 =============================================================
@@ -4134,9 +4090,7 @@ typedef enum
 #define DECAL_MASK              (MAX_DECALS - 1)
 
 // all of the information needed by the back end must be
-// contained in a backEndData_t.  This entire structure is
-// duplicated so the front and back end can run in parallel
-// on an SMP machine
+// contained in a backEndData_t.
 typedef struct
 {
 	drawSurf_t drawSurfs[MAX_DRAWSURFS];
@@ -4159,12 +4113,8 @@ typedef struct
 
 extern backEndData_t *backEndData;  // the second one may not be allocated
 
-extern volatile qboolean renderThreadActive;
-
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
-
-void R_SyncRenderThread(void);
 
 void R_IssuePendingRenderCommands(void);
 
@@ -4173,7 +4123,7 @@ void R_AddDrawViewCmd(void);
 void RE_SetColor(const float *rgba);
 void RE_SetClipRegion(const float *region);
 void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
-void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);  // NERVE - SMF
+void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void RE_StretchPicGradient(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
                            int gradientType);
@@ -4215,6 +4165,7 @@ int  Com_IndexForGrowListElement(const growList_t *list, const void *element);
 //tr_glsl.c
 void GLSL_VertexAttribsState(uint32_t stateBits);
 void GLSL_VertexAttribPointers(uint32_t attribBits);
+void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex);
 void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean value);
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value);
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value);
@@ -4227,10 +4178,55 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray, int arraysize);
 void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray, int arraysize);
 void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled);
+void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...);
 void GLSL_SelectPermutation(programInfo_t *programlist);
 void GLSL_SetRequiredVertexPointers(programInfo_t *programlist);
 void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms);
 void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen);
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
+
+#define SelectTexture(tex) GLSL_SelectTexture(selectedProgram, tex)
+#define SetUniformBoolean(uniformNum, value) GLSL_SetUniformBoolean(selectedProgram, uniformNum, value)
+#define SetUniformInt(uniformNum, value) GLSL_SetUniformInt(selectedProgram, uniformNum, value)
+#define SetUniformFloat(uniformNum, value) GLSL_SetUniformFloat(selectedProgram, uniformNum, value)
+#define SetUniformFloat5(uniformNum, value) GLSL_SetUniformFloat5(selectedProgram, uniformNum, value)
+#define SetUniformVec2(uniformNum, value) GLSL_SetUniformVec2(selectedProgram, uniformNum, value)
+#define SetUniformVec3(uniformNum, value) GLSL_SetUniformVec3(selectedProgram, uniformNum, value)
+#define SetUniformVec4(uniformNum, value) GLSL_SetUniformVec4(selectedProgram, uniformNum, value)
+#define SetUniformMatrix16(uniformNum, value) GLSL_SetUniformMatrix16(selectedProgram, uniformNum, value)
+#define SetUniformFloatARR(uniformNum, value, size) GLSL_SetUniformFloatARR(selectedProgram, uniformNum, value, size)
+#define SetUniformVec4ARR(uniformNum, value, size) GLSL_SetUniformVec4ARR(selectedProgram, uniformNum, value, size)
+#define SetUniformMatrix16ARR(uniformNum, value, size) GLSL_SetUniformMatrix16ARR(selectedProgram, uniformNum, value, size)
+
+#if defined(_MSC_VER) && (_MSC_VER < 1800) //c99 issue pre 2013 VS do not have support for this
+// source http://smackerelofopinion.blogspot.fi/2011/10/determining-number-of-arguments-in-c.html
+#define NUMARGS PP_NARG
+#define PP_NARG(...)  (PP_NARG_(__VA_ARGS__, PP_RSEQ_N()) - \
+	                   (sizeof(#__VA_ARGS__) == 1))
+#define PP_NARG_(...)  PP_ARG_N(__VA_ARGS__)
+
+#define PP_ARG_N( \
+	    _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
+	    _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
+	    _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, \
+	    _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, \
+	    _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, \
+	    _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, \
+	    _61, _62, _63, N, ...) N
+
+#define PP_RSEQ_N() \
+	63, 62, 61, 60,          \
+	59, 58, 57, 56, 55, 54, 53, 52, 51, 50, \
+	49, 48, 47, 46, 45, 44, 43, 42, 41, 40, \
+	39, 38, 37, 36, 35, 34, 33, 32, 31, 30, \
+	29, 28, 27, 26, 25, 24, 23, 22, 21, 20, \
+	19, 18, 17, 16, 15, 14, 13, 12, 11, 10, \
+	9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+#else
+#define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
+#endif
+
+#define SelectProgram(program) Ren_LogComment("SelectProgram called: (%s:%d)\n", __FILE__, __LINE__); GLSL_SelectPermutation(program)
+#define SetMacrosAndSelectProgram(program, ...) GLSL_SetMacroStates(program, NUMARGS(__VA_ARGS__), ## __VA_ARGS__); SelectProgram(program)
 
 #endif // TR_LOCAL_H

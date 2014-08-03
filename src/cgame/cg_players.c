@@ -37,9 +37,6 @@
 #define SWING_RIGHT 1
 #define SWING_LEFT  2
 
-static int   dp_realtime;
-static float jumpHeight;
-
 extern const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1];
 
 /*
@@ -802,11 +799,11 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		{
 			if (lf->animSpeedScale < 0.01 && isLadderAnim)
 			{
-				lf->animSpeedScale = 0.0;
+				lf->animSpeedScale = 0.0f;
 			}
 			else
 			{
-				lf->animSpeedScale = 0.25;
+				lf->animSpeedScale = 0.25f;
 			}
 		}
 		else if (lf->animSpeedScale > ANIM_SCALEMAX_LOW)
@@ -1503,7 +1500,6 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 		}
 	}
 
-
 	cent->pe.leanDirection = leanofs;
 
 	if (leaning)
@@ -1726,11 +1722,6 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 	int          contents;
 	vec3_t       mang, morg, maxis[3];
 
-	if (!cg_enableBreath.integer)
-	{
-		return;
-	}
-
 	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson)
 	{
 		return;
@@ -1741,7 +1732,7 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 		return;
 	}
 
-	// allow cg_enableBreath to force everyone to have breath
+	// see bg_pmove.c pml.groundTrace.surfaceFlags
 	if (!(cent->currentState.eFlags & EF_BREATH))
 	{
 		return;
@@ -1831,6 +1822,121 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
 
 /*
 ===============
+CG_PlayerFloatSprite
+
+Float a sprite over the player's head
+added height parameter
+===============
+*/
+
+qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
+{
+	vec3_t trans;
+	float  xc, yc;
+	float  px, py;
+	float  z;
+
+	px = tan(DEG2RAD(cg.refdef.fov_x) / 2);
+	py = tan(DEG2RAD(cg.refdef.fov_y) / 2);
+
+	VectorSubtract(point, cg.refdef.vieworg, trans);
+
+	xc = 640.0f / 2.0f;
+	yc = 480.0f / 2.0f;
+
+	z = DotProduct(trans, cg.refdef.viewaxis[0]);
+	if (z < 0.1f)
+	{
+		return qfalse;
+	}
+	px *= z;
+	py *= z;
+	if (px == 0 || py == 0)
+	{
+		return qfalse;
+	}
+
+	*x = xc - (DotProduct(trans, cg.refdef.viewaxis[1]) * xc) / px;
+	*y = yc - (DotProduct(trans, cg.refdef.viewaxis[2]) * yc) / py;
+	*x = Ccg_WideX(*x);
+
+	return qtrue;
+}
+
+void CG_AddOnScreenText(const char *text, vec3_t origin, int clientNum)
+{
+	float x, y;
+
+	if (!ISVALIDCLIENTNUM(clientNum))
+	{
+		return;
+	}
+
+	if (CG_WorldCoordToScreenCoordFloat(origin, &x, &y))
+	{
+		float scale, w, h;
+		float dist  = VectorDistance(origin, cg.refdef_current->vieworg);
+		float dist2 = (dist * dist) / (3600.0f);
+
+		if (dist2 > 2.0f)
+		{
+			dist2 = 2.0f;
+		}
+
+		scale = 2.4f - dist2 - dist / 6000.0f;
+		if (scale < 0.05f)
+		{
+			scale = 0.05f;
+		}
+
+		w = CG_Text_Width_Ext(text, scale, 0, &cgs.media.limboFont1);
+		h = CG_Text_Height_Ext(text, scale, 0, &cgs.media.limboFont1);
+
+		x -= w / 2;
+		y -= h / 2;
+
+		// save it
+		cg.specOnScreenNames[clientNum].x     = x;
+		cg.specOnScreenNames[clientNum].y     = y;
+		cg.specOnScreenNames[clientNum].scale = scale;
+		cg.specOnScreenNames[clientNum].text  = text;
+		VectorCopy(origin, cg.specOnScreenNames[clientNum].origin);
+		cg.specOnScreenNames[clientNum].visible = qtrue;
+	}
+	else
+	{
+		memset(&cg.specOnScreenNames[clientNum], 0, sizeof(cg.specOnScreenNames[clientNum]));
+	}
+}
+
+static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
+{
+	vec3_t origin;
+
+	VectorCopy(cent->lerpOrigin, origin);
+	origin[2] += height;
+
+	// Account for ducking
+	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
+	{
+		if (cg.snap->ps.pm_flags & PMF_DUCKED)
+		{
+			origin[2] -= 18;
+		}
+	}
+	else
+	{
+		if ((qboolean)cent->currentState.animMovetype)
+		{
+			origin[2] -= 18;
+		}
+	}
+	CG_AddOnScreenText(text, origin, cent->currentState.clientNum);
+}
+
+
+/*
+===============
 CG_PlayerSprites
 
 Float sprites over the player's head
@@ -1850,6 +1956,12 @@ static void CG_PlayerSprites(centity_t *cent)
 	if (cent->currentState.eFlags & EF_CONNECTION)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, 48);
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		CG_PlayerFloatText(cent, cgs.clientinfo[cent->currentState.clientNum].name, 56);
 		return;
 	}
 
@@ -2033,7 +2145,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 
 	if (dist < SHADOW_MAX_DIST)       // show more detail
 	{
-		vec4_t angles;
+		vec3_t angles;
 		int    tagIndex, subIndex;
 
 		// now add shadows for the various body parts
@@ -3019,410 +3131,6 @@ qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *or)
 	memcpy(or->axis, tempAxis, sizeof(vec3_t) * 3);
 
 	return qtrue;
-}
-
-// =============
-// Menu Versions
-// =============
-
-/*
-==================
-CG_SwingAngles_Limbo
-==================
-*/
-static void CG_SwingAngles_Limbo(float destination, float swingTolerance, float clampTolerance,
-                                 float speed, float *angle, qboolean *swinging)
-{
-	float swing;
-	float move;
-	float scale;
-
-	if (!*swinging)
-	{
-		// see if a swing should be started
-		swing = AngleSubtract(*angle, destination);
-		if (swing > swingTolerance || swing < -swingTolerance)
-		{
-			*swinging = qtrue;
-		}
-	}
-
-	if (!*swinging)
-	{
-		return;
-	}
-
-	// modify the speed depending on the delta
-	// so it doesn't seem so linear
-	swing = AngleSubtract(destination, *angle);
-	scale = fabs(swing);
-	if (scale < swingTolerance * 0.5)
-	{
-		scale = 0.5;
-	}
-	else if (scale < swingTolerance)
-	{
-		scale = 1.0;
-	}
-	else
-	{
-		scale = 2.0;
-	}
-
-	// swing towards the destination angle
-	if (swing >= 0)
-	{
-		move = cg.frametime * scale * speed;
-		if (move >= swing)
-		{
-			move      = swing;
-			*swinging = qfalse;
-		}
-		*angle = AngleMod(*angle + move);
-	}
-	else if (swing < 0)
-	{
-		move = cg.frametime * scale * -speed;
-		if (move <= swing)
-		{
-			move      = swing;
-			*swinging = qfalse;
-		}
-		*angle = AngleMod(*angle + move);
-	}
-
-	// clamp to no more than tolerance
-	swing = AngleSubtract(destination, *angle);
-	if (swing > clampTolerance)
-	{
-		*angle = AngleMod(destination - (clampTolerance - 1));
-	}
-	else if (swing < -clampTolerance)
-	{
-		*angle = AngleMod(destination + (clampTolerance - 1));
-	}
-}
-
-/*
-===============
-CG_PlayerAngles_Limbo
-===============
-*/
-void CG_PlayerAngles_Limbo(playerInfo_t *pi, vec3_t legs[3], vec3_t torso[3], vec3_t head[3])
-{
-	vec3_t legsAngles, torsoAngles, headAngles;
-	float  dest;
-
-	VectorCopy(pi->viewAngles, headAngles);
-	headAngles[YAW] = AngleMod(headAngles[YAW]);
-	VectorClear(legsAngles);
-	VectorClear(torsoAngles);
-
-	torsoAngles[YAW] = 180;
-	legsAngles[YAW]  = 180;
-	headAngles[YAW]  = 180;
-
-	// --------- pitch -------------
-
-	// only show a fraction of the pitch angle in the torso
-	if (headAngles[PITCH] > 180)
-	{
-		dest = (-360 + headAngles[PITCH]) * 0.75;
-	}
-	else
-	{
-		dest = headAngles[PITCH] * 0.75;
-	}
-	CG_SwingAngles_Limbo(dest, 15, 30, 0.1, &pi->torso.pitchAngle, &pi->torso.pitching);
-	torsoAngles[PITCH] = pi->torso.pitchAngle;
-
-	// pull the angles back out of the hierarchial chain
-	AnglesSubtract(headAngles, torsoAngles, headAngles);
-	AnglesSubtract(torsoAngles, legsAngles, torsoAngles);
-
-	AnglesSubtract(legsAngles, pi->moveAngles, legsAngles);
-
-	AnglesToAxis(legsAngles, legs);
-	AnglesToAxis(torsoAngles, torso);
-	AnglesToAxis(headAngles, head);
-}
-
-animation_t *CG_GetLimboAnimation(playerInfo_t *pi, const char *name)
-{
-	int            i;
-	bg_character_t *character = BG_GetCharacter(pi->teamNum, pi->classNum);
-
-	if (!character)
-	{
-		return NULL;
-	}
-
-	for (i = 0; i < character->animModelInfo->numAnimations; i++)
-	{
-		if (!Q_stricmp(character->animModelInfo->animations[i]->name, name))
-		{
-			return character->animModelInfo->animations[i];
-		}
-	}
-
-	return character->animModelInfo->animations[0]; // safe fallback so we never end up without an animation (which will crash the game)
-}
-
-int CG_GetSelectedWeapon(void)
-{
-	return 0;
-}
-
-void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, int time, clientInfo_t *ci, qboolean animatedHead)
-{
-	refdef_t       refdef;
-	refEntity_t    body;
-	refEntity_t    head;
-	refEntity_t    gun;
-	refEntity_t    barrel;
-	refEntity_t    acc;
-	vec3_t         origin;
-	int            renderfx;
-	vec3_t         mins = { -16, -16, -24 };
-	vec3_t         maxs = { 16, 16, 32 };
-	float          len;
-	vec4_t         hcolor     = { 1, 0, 0, 0.5 };
-	bg_character_t *character = BG_GetCharacter(pi->teamNum, pi->classNum);
-	int            i;
-
-	dp_realtime = time;
-
-	CG_AdjustFrom640(&x, &y, &w, &h);
-	y -= jumpHeight;
-
-	memset(&refdef, 0, sizeof(refdef));
-	memset(&body, 0, sizeof(body));
-	memset(&head, 0, sizeof(head));
-	memset(&acc, 0, sizeof(acc));
-
-	refdef.rdflags = RDF_NOWORLDMODEL;
-
-	AxisClear(refdef.viewaxis);
-
-	refdef.x      = x;
-	refdef.y      = y;
-	refdef.width  = w;
-	refdef.height = h;
-	refdef.fov_x  = 35;
-	refdef.fov_y  = 35;
-
-	// calculate distance so the player nearly fills the box
-
-	// for "talking heads", we calc the origin differently
-	// FIXME - this is stupid - should all be character driven - NO CODE HACKS FOR SPECIFIC THINGS THAT CAN BE DONE CLEANLY
-	if (animatedHead == qfalse)
-	{
-		len       = 0.9 * (maxs[2] - mins[2]); // changed from 0.7
-		origin[0] = pi->y - 70 + (len / tan(DEG2RAD(refdef.fov_x) * 0.5));
-		origin[1] = 0.5 * (mins[1] + maxs[1]);
-		origin[2] = pi->z - 23 + (-0.5 * (mins[2] + maxs[2]));
-	}
-	else
-	{
-		// for "talking head" animations, we want to center just below the face
-		// we precalculated this elsewhere
-		VectorCopy(pi->headOrigin, origin);
-	}
-
-	refdef.time = dp_realtime;
-
-	trap_R_SetColor(hcolor);
-	trap_R_ClearScene();
-	trap_R_SetColor(NULL);
-
-	// get the rotation information
-	CG_PlayerAngles_Limbo(pi, body.axis, body.torsoAxis, head.axis);
-
-	renderfx = RF_LIGHTING_ORIGIN | RF_NOSHADOW;
-
-	acc.renderfx = renderfx;
-
-	// add the body
-	body.hModel     = character->mesh;
-	body.customSkin = character->skin;
-
-	body.renderfx = renderfx;
-
-	VectorCopy(origin, body.origin);
-	VectorCopy(origin, body.lightingOrigin);
-	VectorCopy(body.origin, body.oldorigin);
-
-	if (cg.time >= pi->torso.frameTime)
-	{
-		pi->torso.oldFrameTime  = pi->torso.frameTime;
-		pi->torso.oldFrame      = pi->torso.frame;
-		pi->torso.oldFrameModel = pi->torso.frameModel = pi->torso.animation->mdxFile;
-
-		while (cg.time >= pi->torso.frameTime)
-		{
-			pi->torso.frameTime += (pi->torso.animation->duration / (float)(pi->torso.animation->numFrames));
-			pi->torso.frame++;
-
-			if (pi->torso.frame >= pi->torso.animation->firstFrame + pi->torso.animation->numFrames)
-			{
-				pi->torso.frame = pi->torso.animation->firstFrame;
-			}
-		}
-	}
-
-	if (pi->torso.frameTime == pi->torso.oldFrameTime)
-	{
-		pi->torso.backlerp = 0;
-	}
-	else
-	{
-		pi->torso.backlerp = 1.0 - (float)(cg.time - pi->torso.oldFrameTime) / (pi->torso.frameTime - pi->torso.oldFrameTime);
-	}
-
-	if (cg.time >= pi->legs.frameTime)
-	{
-		pi->legs.oldFrameTime  = pi->legs.frameTime;
-		pi->legs.oldFrame      = pi->legs.frame;
-		pi->legs.oldFrameModel = pi->legs.frameModel = pi->legs.animation->mdxFile;
-
-		while (cg.time >= pi->legs.frameTime)
-		{
-			pi->legs.frameTime += (pi->legs.animation->duration / (float)(pi->legs.animation->numFrames));
-			pi->legs.frame++;
-
-			if (pi->legs.frame >= pi->legs.animation->firstFrame + pi->legs.animation->numFrames)
-			{
-				pi->legs.frame = pi->legs.animation->firstFrame;
-			}
-		}
-	}
-
-	if (pi->legs.frameTime == pi->legs.oldFrameTime)
-	{
-		pi->legs.backlerp = 0;
-	}
-	else
-	{
-		pi->legs.backlerp = 1.0 - (float)(cg.time - pi->legs.oldFrameTime) / (pi->legs.frameTime - pi->legs.oldFrameTime);
-	}
-
-	body.oldTorsoFrame      = pi->torso.oldFrame;
-	body.torsoFrame         = pi->torso.frame;
-	body.torsoBacklerp      = pi->torso.backlerp;
-	body.torsoFrameModel    = pi->torso.frameModel;
-	body.oldTorsoFrameModel = pi->torso.oldFrameModel;
-
-	body.oldframe      = pi->legs.oldFrame;
-	body.frame         = pi->legs.frame;
-	body.backlerp      = pi->legs.backlerp;
-	body.frameModel    = pi->legs.frameModel;
-	body.oldframeModel = pi->legs.oldFrameModel;
-
-	trap_R_AddRefEntityToScene(&body);
-
-	// add the head
-	head.hModel = character->hudhead;
-	if (!head.hModel)
-	{
-		return;
-	}
-	head.customSkin = character->headSkin;
-
-	VectorCopy(origin, head.lightingOrigin);
-
-	CG_PositionRotatedEntityOnTag(&head, &body, "tag_head");
-
-	head.renderfx = renderfx;
-
-	head.frame    = 0;
-	head.oldframe = 0;
-	head.backlerp = 0.f;
-
-	trap_R_AddRefEntityToScene(&head);
-
-	AxisCopy(body.torsoAxis, acc.axis);
-	VectorCopy(origin, acc.lightingOrigin);
-
-	for (i = ACC_BELT_LEFT; i < ACC_MAX; i++)
-	{
-		if (!(character->accModels[i]))
-		{
-			continue;
-		}
-		acc.hModel     = character->accModels[i];
-		acc.customSkin = character->accSkins[i];
-
-		switch (i)
-		{
-		case ACC_BELT_LEFT:
-			CG_PositionEntityOnTag(&acc, &body, "tag_bright", 0, NULL);
-			break;
-		case ACC_BELT_RIGHT:
-			CG_PositionEntityOnTag(&acc, &body, "tag_bleft", 0, NULL);
-			break;
-
-		case ACC_BELT:
-			CG_PositionEntityOnTag(&acc, &body, "tag_ubelt", 0, NULL);
-			break;
-		case ACC_BACK:
-			CG_PositionEntityOnTag(&acc, &body, "tag_back", 0, NULL);
-			break;
-
-		case ACC_HAT:               // hat
-		case ACC_MOUTH2:            // hat2
-		case ACC_MOUTH3:            // hat3
-			CG_PositionEntityOnTag(&acc, &head, "tag_mouth", 0, NULL);
-			break;
-
-		// weapon and weapon2
-		// these are used by characters who have permanent weapons attached to their character in the skin
-		case ACC_WEAPON:        // weap
-			CG_PositionEntityOnTag(&acc, &body, "tag_weapon", 0, NULL);
-			break;
-		case ACC_WEAPON2:       // weap2
-			CG_PositionEntityOnTag(&acc, &body, "tag_weapon2", 0, NULL);
-			break;
-
-		default:
-			continue;
-		}
-
-		trap_R_AddRefEntityToScene(&acc);
-	}
-
-	// add the gun
-	{
-		int weap = CG_GetSelectedWeapon();
-
-		memset(&gun, 0, sizeof(gun));
-		memset(&barrel, 0, sizeof(barrel));
-
-		gun.hModel = cg_weapons[weap].weaponModel[W_TP_MODEL].model;
-
-		VectorCopy(origin, gun.lightingOrigin);
-		CG_PositionEntityOnTag(&gun, &body, "tag_weapon", 0, NULL);
-		gun.renderfx = renderfx;
-		trap_R_AddRefEntityToScene(&gun);
-	}
-
-	// Save out the old render info so we don't kill the LOD system here
-	trap_R_SaveViewParms();
-
-	// add an accent light
-	origin[0] -= 100;   // + = behind, - = in front
-	origin[1] += 100;   // + = left, - = right
-	origin[2] += 100;   // + = above, - = below
-	trap_R_AddLightToScene(origin, 1000, 1.0, 1.0, 1.0, 1.0, 0, 0);
-
-	origin[0] -= 100;
-	origin[1] -= 100;
-	origin[2] -= 100;
-	trap_R_AddLightToScene(origin, 1000, 1.0, 1.0, 1.0, 1.0, 0, 0);
-
-	trap_R_RenderScene(&refdef);
-
-	// Reset the view parameters
-	trap_R_RestoreViewParms();
 }
 
 void CG_SetHudHeadLerpFrameAnimation(bg_character_t *ch, lerpFrame_t *lf, int newAnimation)

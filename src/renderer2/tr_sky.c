@@ -197,7 +197,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 
 	if (nump > MAX_CLIP_VERTS - 2)
 	{
-		ri.Error(ERR_DROP, "ClipSkyPolygon: MAX_CLIP_VERTS");
+		Ren_Drop("ClipSkyPolygon: MAX_CLIP_VERTS");
 	}
 	if (stage == 6)
 	{                           // fully clipped, so draw it
@@ -423,10 +423,8 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 {
 	int s, t;
 	int vertexStart = tess.numVertexes;
-	int tHeight, sWidth;
-
-	tHeight = maxs[1] - mins[1] + 1;
-	sWidth  = maxs[0] - mins[0] + 1;
+	int tHeight     = maxs[1] - mins[1] + 1;
+	int sWidth      = maxs[0] - mins[0] + 1;
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
 	{
@@ -444,7 +442,7 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 			if (tess.numVertexes >= SHADER_MAX_VERTEXES)
 			{
-				ri.Error(ERR_DROP, "SHADER_MAX_VERTEXES hit in FillCloudySkySide()\n");
+				Ren_Drop("SHADER_MAX_VERTEXES hit in FillCloudySkySide()\n");
 			}
 		}
 	}
@@ -700,7 +698,7 @@ static void BuildCloudData()
 		}
 	}
 
-	// Tr3B: FIXME analyze required vertex attribs by the current material
+	// FIXME analyze required vertex attribs by the current material
 	Tess_UpdateVBOs(0);
 }
 
@@ -781,15 +779,14 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-	GLSL_SetMacroState(gl_genericShader, USE_ALPHA_TESTING, qfalse);
-	//FIXME: This is false on the c++ but should be isPortal check right?
-	GLSL_SetMacroState(gl_genericShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_SKINNING, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_VERTEX_ANIMATION, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_DEFORM_VERTEXES, qfalse);
-	GLSL_SetMacroState(gl_genericShader, USE_TCGEN_ENVIRONMENT, qfalse);
-
-	GLSL_SelectPermutation(gl_genericShader);
+	// FIXME: This is false on the c++ but should be isPortal check right?
+	SetMacrosAndSelectProgram(gl_genericShader,
+	                          USE_ALPHA_TESTING, qfalse,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, qfalse,
+	                          USE_VERTEX_ANIMATION, qfalse,
+	                          USE_DEFORM_VERTEXES, qfalse,
+	                          USE_TCGEN_ENVIRONMENT, qfalse);
 
 	// set uniforms
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
@@ -800,10 +797,8 @@ void RB_DrawSun(void)
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
-	//FIXME: Why would this be here? Select permutation has already been given and no new cmd is given
-	//GLSL_SetMacroState(gl_genericShader,USE_PORTAL_CLIPPING,backEnd.viewParms.isPortal);
+	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (backEnd.viewParms.isPortal)
 	{
@@ -815,7 +810,7 @@ void RB_DrawSun(void)
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
 
-		GLSL_SetUniformVec4(selectedProgram, UNIFORM_PORTALPLANE, plane);
+		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
 	}
 
 	dist = backEnd.viewParms.skyFar / 1.75; // div sqrt(3)
@@ -919,11 +914,8 @@ void Tess_StageIteratorSky(void)
 	}
 
 	// trebor: HACK why does this happen with cg_draw2D 0 ?
-	if (tess.stageIteratorFunc2 == NULL)
-	{
-		//tess.stageIteratorFunc2 = Tess_StageIteratorGeneric;
-		ri.Error(ERR_FATAL, "tess.stageIteratorFunc == NULL");
-	}
+	//tess.stageIteratorFunc2 = Tess_StageIteratorGeneric;
+	Ren_Assert(tess.stageIteratorFunc2 == NULL);
 
 	GL_Cull(CT_TWO_SIDED);
 
@@ -945,7 +937,6 @@ void Tess_StageIteratorSky(void)
 	}
 	else
 	{
-
 		if (tess.stageIteratorFunc2 == &Tess_StageIteratorGBuffer)
 		{
 			R_BindFBO(tr.geometricRenderFBO);
@@ -976,12 +967,11 @@ void Tess_StageIteratorSky(void)
 			R_BindVBO(tess.vbo);
 			R_BindIBO(tess.ibo);
 
-			GLSL_SetMacroState(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-			GLSL_SelectPermutation(gl_skyboxShader);
+			SetMacrosAndSelectProgram(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 
-			GLSL_SetUniformVec3(selectedProgram, UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
-			GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-			GLSL_SetUniformMatrix16(selectedProgram, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelViewProjectionMatrix[glState.stackIndex]);
+			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
+			SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			// u_PortalPlane
 			if (backEnd.viewParms.isPortal)
@@ -994,13 +984,13 @@ void Tess_StageIteratorSky(void)
 				plane[2] = backEnd.viewParms.portalPlane.normal[2];
 				plane[3] = backEnd.viewParms.portalPlane.dist;
 
-				GLSL_SetUniformVec4(selectedProgram, UNIFORM_PORTALPLANE, plane);
+				SetUniformVec4(UNIFORM_PORTALPLANE, plane);
 			}
 
 			GLSL_SetRequiredVertexPointers(gl_skyboxShader);
 
 			// bind u_ColorMap
-			GL_SelectTexture(0);
+			SelectTexture(TEX_COLOR);
 			GL_Bind(tess.surfaceShader->sky.outerbox);
 
 			DrawSkyBox(tess.surfaceShader);
@@ -1016,7 +1006,7 @@ void Tess_StageIteratorSky(void)
 			tess.stageIteratorFunc2();
 		}
 
-		// Tr3B: TODO draw the inner skybox?
+		// TODO draw the inner skybox?
 
 		if (tess.stageIteratorFunc2 == Tess_StageIteratorGBuffer)
 		{

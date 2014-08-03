@@ -41,11 +41,9 @@ varying vec4 var_Tangent;
 varying vec4 var_Binormal;
 #endif
 varying vec4 var_Normal;
-//varying vec4		var_Color;	// Tr3B - maximum vars reached
+//varying vec4		var_Color;	// maximum vars reached
 
-
-
-void    main()
+void main()
 {
 	vec4 position;
 	vec3 tangent;

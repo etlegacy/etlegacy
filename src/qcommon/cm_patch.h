@@ -31,6 +31,9 @@
  * @file cm_patch.h
  */
 
+#ifndef INCLUDE_CM_PATCH_H
+#define INCLUDE_CM_PATCH_H
+
 /*
 
 This file does not reference any globals, and has these entry points:
@@ -111,3 +114,5 @@ typedef struct
 #define WRAP_POINT_EPSILON  0.1
 
 struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *points, qboolean addBevels);
+
+#endif // #ifndef INCLUDE_CM_PATCH_H

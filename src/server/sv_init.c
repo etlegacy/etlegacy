@@ -967,6 +967,8 @@ void SV_Init(void)
 {
 	int index;
 
+	SV_UptimeReset();
+
 	SV_AddOperatorCommands();
 
 	// serverinfo vars

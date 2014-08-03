@@ -4,8 +4,6 @@ uniform sampler2D u_ColorMap;
 uniform sampler2D u_ContrastMap;
 uniform float     u_BlurMagnitude;
 
-
-
 #if defined(GLHW_ATI) || defined(GLHW_ATI_DX10) || defined(MESA)
 
 /*
@@ -29,7 +27,7 @@ void main()
 	discard;
 }
 #else
-void    main()
+void main()
 {
 	vec2 st = gl_FragCoord.st;
 

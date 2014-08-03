@@ -8,7 +8,7 @@ uniform float     u_HDRMaxLuminance;
 const vec4 LUMINANCE_VECTOR  = vec4(0.2125, 0.7154, 0.0721, 0.0);
 const vec3 BLUE_SHIFT_VECTOR = vec3(1.05, 0.97, 1.27);
 
-void    main()
+void main()
 {
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 st = gl_FragCoord.st * r_FBufScale;

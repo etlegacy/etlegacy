@@ -46,20 +46,18 @@ typedef struct
 
 const attrmap attributeMap[] =
 {
-	{ ATTR_POSITION,     "ATTR_POSITION"     },
-	{ ATTR_TEXCOORD,     "ATTR_TEXCOORD"     },
-	{ ATTR_LIGHTCOORD,   "ATTR_LIGHTCOORD"   },
-	{ ATTR_TANGENT,      "ATTR_TANGENT"      },
-	{ ATTR_BINORMAL,     "ATTR_BINORMAL"     },
-	{ ATTR_NORMAL,       "ATTR_NORMAL"       },
-	{ ATTR_COLOR,        "ATTR_COLOR"        },
-	{ ATTR_BONE_INDEXES, "ATTR_BONE_INDEXES" },
-	{ ATTR_BONE_WEIGHTS, "ATTR_BONE_WEIGHTS" },
-	{ ATTR_POSITION2,    "ATTR_POSITION2"    },
-	{ ATTR_TANGENT2,     "ATTR_TANGENT2"     },
-	{ ATTR_BINORMAL2,    "ATTR_BINORMAL2"    },
-	{ ATTR_NORMAL2,      "ATTR_NORMAL2"      }
+#define ATTR_MAP
+#include "tr_glsldef.h"
+#undef ATTR_MAP
 };
+
+const int textureMap[] =
+{
+#define TEX_MAP
+#include "tr_glsldef.h"
+#undef TEX_MAP
+};
+
 const int numberofAttributes = ARRAY_LEN(attributeMap);
 
 #define FILE_HASH_SIZE      4096
@@ -109,7 +107,6 @@ programInfo_t *gl_blurXShader;
 programInfo_t *gl_blurYShader;
 programInfo_t *gl_debugShadowMapShader;
 
-//Dushan
 programInfo_t *gl_liquidShader;
 programInfo_t *gl_rotoscopeShader;
 programInfo_t *gl_bloomShader;
@@ -118,6 +115,9 @@ programInfo_t *gl_depthToColorShader;
 programInfo_t *gl_volumetricFogShader;
 programInfo_t *gl_volumetricLightingShader;
 programInfo_t *gl_dispersionShader;
+
+programInfo_t *gl_depthOfField;
+programInfo_t *gl_ssao;
 
 //Jacker
 programInfo_t *gl_colorCorrection;
@@ -158,6 +158,7 @@ static long GLSL_GenerateHashValue(const char *fname)
 int GLSL_GetMacroByName(const char *name)
 {
 	int i;
+
 	for (i = 0; i < MAX_MACROS; i++)
 	{
 		if (!Q_stricmp(name, complieMacroNames[i]))
@@ -172,6 +173,7 @@ int GLSL_GetMacroByName(const char *name)
 unsigned int GLSL_GetAttribByName(const char *name)
 {
 	int i;
+
 	for (i = 0; i < numberofAttributes; i++)
 	{
 		if (!Q_stricmp(name, attributeMap[i].name))
@@ -186,6 +188,7 @@ unsigned int GLSL_GetAttribByName(const char *name)
 void GLSL_CopyStringAlloc(char **out, const char *in)
 {
 	size_t size = strlen(in) * sizeof(char) + 1;
+
 	*out = (char *) Com_Allocate(size);
 	Com_Memset(*out, '\0', size);
 	Q_strncpyz(*out, in, size);
@@ -194,6 +197,7 @@ void GLSL_CopyStringAlloc(char **out, const char *in)
 qboolean GLSL_CopyNextToken(char **text, char **out)
 {
 	char *token;
+
 	token = COM_ParseExt(text, qtrue);
 	if (!token[0])
 	{
@@ -219,7 +223,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 	token = COM_ParseExt(text, qtrue);
 	if (token[0] != '{')
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: expecting '{', found '%s' instead in shader definition '%s'\n", token, defname);
+		Ren_Warning("WARNING: expecting '{', found '%s' instead in shader definition '%s'\n", token, defname);
 		return NULL;
 	}
 
@@ -234,7 +238,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		token = COM_ParseExt(text, qtrue);
 		if (!token[0])
 		{
-			ri.Printf(PRINT_WARNING, "WARNING: no concluding '}' in shader definition %s\n", defname);
+			Ren_Warning("WARNING: no concluding '}' in shader definition %s\n", defname);
 			goto parseerror;
 		}
 
@@ -265,8 +269,8 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 				}
 				else
 				{
-					ri.Error(ERR_FATAL, "PERKELE: %s", token);
-					ri.Printf(PRINT_WARNING, "WARNING: Macro '%s' for shaderdef '%s' was not recognized\n", token, defname);
+					Ren_Fatal("PERKELE: %s", token);
+					Ren_Warning("WARNING: Macro '%s' for shaderdef '%s' was not recognized\n", token, defname);
 					goto parseerror;
 				}
 			}
@@ -304,13 +308,12 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 				valptr                                          = Com_Allocate(sizeof(int));
 				*((int *)valptr)                                = atoi(token);
 				def->uniformValues[def->numUniformValues].value = valptr;
-				//Com_Printf("%d\n",*((int*)valptr));
+				//Ren_Print("%d\n",*((int*)valptr));
 			}
 			//FIXME: implement other formats
 			def->numUniformValues++;
 		}
 	}
-
 
 	return def;
 
@@ -326,7 +329,7 @@ static char *GLSL_FindDefinitionInText(const char *shadername)
 
 	if (!p)
 	{
-		ri.Error(ERR_FATAL, "GLSL_FindDefinitionInText: Definition text is null");
+		Ren_Fatal("GLSL_FindDefinitionInText: Definition text is null");
 	}
 
 	// look for label
@@ -382,14 +385,14 @@ programInfo_t *GLSL_FindShader(const char *name)
 	shaderText = GLSL_FindDefinitionInText(strippedName);
 	if (!shaderText)
 	{
-		ri.Printf(PRINT_ALL, "Shader definition find failed: %s\n", name);
+		Ren_Print("Shader definition find failed: %s\n", name);
 		return DEFAULT_SHADER_DEF;
 	}
 
 	sh = GLSL_ParseDefinition(&shaderText, strippedName);
 	if (!sh)
 	{
-		ri.Printf(PRINT_ALL, "Shader definition parsing failed: %s\n", name);
+		Ren_Print("Shader definition parsing failed: %s\n", name);
 		return DEFAULT_SHADER_DEF;
 	}
 	else
@@ -402,14 +405,14 @@ programInfo_t *GLSL_FindShader(const char *name)
 
 void GLSL_LoadDefinitions(void)
 {
-	//FIXME: Also load from external files in the future...
-	//For no just copy the existing data to our searchable string
+	// FIXME: Also load from external files in the future...
+	// For no just copy the existing data to our searchable string
 	definitionText = (char *)Com_Allocate(strlen(defaultShaderDefinitions) * sizeof(char) + 1);
 	Com_Memset(definitionText, '\0', strlen(defaultShaderDefinitions) + 1);
 	Q_strncpyz(definitionText, defaultShaderDefinitions, strlen(defaultShaderDefinitions));
 }
 
-static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
+static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly, qboolean isProgram)
 {
 	char        *msg;
 	static char msgPart[1024];
@@ -417,7 +420,14 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 	int         i;
 	int         printLevel = developerOnly ? PRINT_DEVELOPER : PRINT_ALL;
 
-	qglGetObjectParameterivARB(object, GL_OBJECT_INFO_LOG_LENGTH_ARB, &maxLength);
+    if(isProgram)
+    {
+        glGetProgramiv(object, GL_INFO_LOG_LENGTH, &maxLength);
+    }
+    else
+    {
+        glGetShaderiv(object, GL_INFO_LOG_LENGTH, &maxLength);
+    }
 
 	if (maxLength <= 0)
 	{
@@ -429,7 +439,14 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 
 	if (maxLength < 1023)
 	{
-		qglGetInfoLogARB(object, maxLength, &maxLength, msgPart);
+        if(isProgram)
+        {
+            glGetProgramInfoLog(object, maxLength, &maxLength, msgPart);
+        }
+        else
+        {
+            glGetShaderInfoLog(object, maxLength, &maxLength, msgPart);
+        }
 
 		msgPart[maxLength + 1] = '\0';
 
@@ -439,7 +456,14 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly)
 	{
 		msg = ri.Hunk_AllocateTempMemory(maxLength);
 
-		qglGetInfoLogARB(object, maxLength, &maxLength, msg);
+        if(isProgram)
+        {
+            glGetProgramInfoLog(object, maxLength, &maxLength, msg);
+        }
+        else
+        {
+            glGetShaderInfoLog(object, maxLength, &maxLength, msg);
+        }
 
 		for (i = 0; i < maxLength; i += 1024)
 		{
@@ -458,16 +482,16 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 	int         maxLength = 0;
 	int         i;
 
-	qglGetObjectParameterivARB(object, GL_OBJECT_SHADER_SOURCE_LENGTH_ARB, &maxLength);
+    glGetShaderiv(object, GL_SHADER_SOURCE_LENGTH, &maxLength);
 
 	msg = ri.Hunk_AllocateTempMemory(maxLength);
 
-	qglGetShaderSourceARB(object, maxLength, &maxLength, msg);
+    glGetShaderSource(object, maxLength, &maxLength, msg);
 
 	for (i = 0; i < maxLength; i += 1024)
 	{
 		Q_strncpyz(msgPart, msg + i, sizeof(msgPart));
-		ri.Printf(PRINT_ALL, "%s\n", msgPart);
+		Ren_Print("%s\n", msgPart);
 	}
 
 	ri.Hunk_FreeTempMemory(msg);
@@ -475,7 +499,6 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 
 qboolean GLSL_LoadShaderBinary(programInfo_t *info, size_t programNum)
 {
-#ifdef GLEW_ARB_get_program_binary
 	GLint            success;
 	GLint            fileLength;
 	void             *binary;
@@ -543,27 +566,23 @@ qboolean GLSL_LoadShaderBinary(programInfo_t *info, size_t programNum)
 
 	// load the shader
 	shaderProgram          = &info->list->programs[programNum];
-	shaderProgram->program = qglCreateProgramObjectARB();
+    shaderProgram->program = glCreateProgram();
 	glProgramBinary(shaderProgram->program, shaderHeader.binaryFormat, binaryptr, shaderHeader.binaryLength);
 	glGetProgramiv(shaderProgram->program, GL_LINK_STATUS, &success);
 
 	if (!success)
 	{
 		ri.FS_FreeFile(binary);
-		qglDeleteObjectARB(shaderProgram->program);
+        glDeleteProgram(shaderProgram->program);
 		return qfalse;
 	}
 
 	ri.FS_FreeFile(binary);
 	return qtrue;
-#else
-	return qfalse;
-#endif
 }
 
 void GLSL_SaveShaderBinary(programInfo_t *info, size_t programNum)
 {
-#ifdef GLEW_ARB_get_program_binary
 	GLint            binaryLength;
 	GLuint           binarySize = 0;
 	byte             *binary;
@@ -613,7 +632,6 @@ void GLSL_SaveShaderBinary(programInfo_t *info, size_t programNum)
 	ri.FS_WriteFile(va("glsl/%s/%s_%u.bin", info->name, info->name, ( unsigned int ) programNum), binary, binarySize);
 
 	ri.Hunk_FreeTempMemory(binary);
-#endif
 }
 
 static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
@@ -622,12 +640,6 @@ static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
 	{
 	case USE_VERTEX_SKINNING:
 		if (usedmacros & BIT(USE_VERTEX_ANIMATION))
-		{
-			return qtrue;
-		}
-		break;
-	case USE_DEFORM_VERTEXES:
-		if (glConfig.driverType != GLDRV_OPENGL3 || !r_vboDeformVertexes->integer)
 		{
 			return qtrue;
 		}
@@ -713,119 +725,122 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 	return attr;
 }
 
-static void GLSL_GetShaderExtraDefines(char **defines, int *size)
-{
-	static char bufferExtra[32000];
+static char shaderExtraDef[32000];
+static int  shaderExtraDefLen = 0;
 
+static void GLSL_BuildShaderExtraDef()
+{
 	float fbufWidthScale, fbufHeightScale;
 	float npotWidthScale, npotHeightScale;
 
-	Com_Memset(bufferExtra, 0, sizeof(bufferExtra));
+	Com_Memset(shaderExtraDef, 0, sizeof(shaderExtraDef));
+
+#define BUFFEXT(...) Q_strcat(shaderExtraDef, sizeof(shaderExtraDef), va(__VA_ARGS__))
+
+	/*
+	#define SIMPLEDEF(x, y) BUFFEXT("#ifndef " x "\n#define " y "\n#endif\n")
+	#define BUFFCVARI(x) BUFFEXT("#ifndef " #x "\n#define " #x " %f\n#endif\n", x->integer)
+	#define BUFFCVARF(x) BUFFEXT("#ifndef " #x "\n#define " #x " %f\n#endif\n", x->value)
+	#define IFCVARI(x) if(x->value) BUFFCVARI(x)
+	#define IFCVARF(x) if(x->value) BUFFCVARF(x)
+	#define ENABLEIFCVAR(x) if(x->value) BUFFEXT("#ifndef " #x "\n#define " #x " 1\n#endif\n")
+	#define SIMPLEDEFV(x,y) BUFFEXT("#ifndef " x "\n#define " x " " y "\n#endif\n")
+	BUFFCVARF(r_specularExponent);
+	BUFFCVARF(r_specularExponent2);
+	BUFFCVARF(r_specularScale);
+	BUFFCVARF(r_normalScale);
+	SIMPLEDEFV("M_PI", "3.14159265358979323846f");
+	*/
+
 
 	// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value));
+	BUFFEXT("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value);
+	BUFFEXT("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value);
+	BUFFEXT("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value);
+	//BUFFEXT("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value);
 
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value));
+	BUFFEXT("#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
+	BUFFEXT("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS);
+	BUFFEXT("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS);
+	BUFFEXT("#ifndef deform_t\n"
+	        "#define deform_t\n"
+	        "#define DEFORM_WAVE %i\n"
+	        "#define DEFORM_BULGE %i\n"
+	        "#define DEFORM_MOVE %i\n"
+	        "#endif\n",
+	        DEFORM_WAVE,
+	        DEFORM_BULGE,
+	        DEFORM_MOVE);
 
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value));
-	//Q_strcat(bufferExtra, sizeof(bufferExtra),
-	//       va("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value));
-
-	Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
-
-	Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS));
-
-	Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS));
-
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef deform_t\n"
-	            "#define deform_t\n"
-	            "#define DEFORM_WAVE %i\n"
-	            "#define DEFORM_BULGE %i\n"
-	            "#define DEFORM_MOVE %i\n"
-	            "#endif\n",
-	            DEFORM_WAVE,
-	            DEFORM_BULGE,
-	            DEFORM_MOVE));
-
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef genFunc_t\n"
-	            "#define genFunc_t\n"
-	            "#define GF_NONE %1.1f\n"
-	            "#define GF_SIN %1.1f\n"
-	            "#define GF_SQUARE %1.1f\n"
-	            "#define GF_TRIANGLE %1.1f\n"
-	            "#define GF_SAWTOOTH %1.1f\n"
-	            "#define GF_INVERSE_SAWTOOTH %1.1f\n"
-	            "#define GF_NOISE %1.1f\n"
-	            "#endif\n",
-	            ( float ) GF_NONE,
-	            ( float ) GF_SIN,
-	            ( float ) GF_SQUARE,
-	            ( float ) GF_TRIANGLE,
-	            ( float ) GF_SAWTOOTH,
-	            ( float ) GF_INVERSE_SAWTOOTH,
-	            ( float ) GF_NOISE));
+	BUFFEXT("#ifndef genFunc_t\n"
+	        "#define genFunc_t\n"
+	        "#define GF_NONE %1.1f\n"
+	        "#define GF_SIN %1.1f\n"
+	        "#define GF_SQUARE %1.1f\n"
+	        "#define GF_TRIANGLE %1.1f\n"
+	        "#define GF_SAWTOOTH %1.1f\n"
+	        "#define GF_INVERSE_SAWTOOTH %1.1f\n"
+	        "#define GF_NOISE %1.1f\n"
+	        "#endif\n",
+	        ( float ) GF_NONE,
+	        ( float ) GF_SIN,
+	        ( float ) GF_SQUARE,
+	        ( float ) GF_TRIANGLE,
+	        ( float ) GF_SAWTOOTH,
+	        ( float ) GF_INVERSE_SAWTOOTH,
+	        ( float ) GF_NOISE);
 
 	/*
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	                                 va("#ifndef deformGen_t\n"
-	                                        "#define deformGen_t\n"
-	                                        "#define DGEN_WAVE_SIN %1.1f\n"
-	                                        "#define DGEN_WAVE_SQUARE %1.1f\n"
-	                                        "#define DGEN_WAVE_TRIANGLE %1.1f\n"
-	                                        "#define DGEN_WAVE_SAWTOOTH %1.1f\n"
-	                                        "#define DGEN_WAVE_INVERSE_SAWTOOTH %1.1f\n"
-	                                        "#define DGEN_BULGE %i\n"
-	                                        "#define DGEN_MOVE %i\n"
-	                                        "#endif\n",
-	                                        (float)DGEN_WAVE_SIN,
-	                                        (float)DGEN_WAVE_SQUARE,
-	                                        (float)DGEN_WAVE_TRIANGLE,
-	                                        (float)DGEN_WAVE_SAWTOOTH,
-	                                        (float)DGEN_WAVE_INVERSE_SAWTOOTH,
-	                                        DGEN_BULGE,
-	                                        DGEN_MOVE));
-	                                */
+	 BUFFEXT("#ifndef deformGen_t\n"
+	 "#define deformGen_t\n"
+	 "#define DGEN_WAVE_SIN %1.1f\n"
+	 "#define DGEN_WAVE_SQUARE %1.1f\n"
+	 "#define DGEN_WAVE_TRIANGLE %1.1f\n"
+	 "#define DGEN_WAVE_SAWTOOTH %1.1f\n"
+	 "#define DGEN_WAVE_INVERSE_SAWTOOTH %1.1f\n"
+	 "#define DGEN_BULGE %i\n"
+	 "#define DGEN_MOVE %i\n"
+	 "#endif\n",
+	 (float)DGEN_WAVE_SIN,
+	 (float)DGEN_WAVE_SQUARE,
+	 (float)DGEN_WAVE_TRIANGLE,
+	 (float)DGEN_WAVE_SAWTOOTH,
+	 (float)DGEN_WAVE_INVERSE_SAWTOOTH,
+	 DGEN_BULGE,
+	 DGEN_MOVE);
+	*/
 
 	/*
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	                                 va("#ifndef colorGen_t\n"
-	                                        "#define colorGen_t\n"
-	                                        "#define CGEN_VERTEX %i\n"
-	                                        "#define CGEN_ONE_MINUS_VERTEX %i\n"
-	                                        "#endif\n",
-	                                        CGEN_VERTEX,
-	                                        CGEN_ONE_MINUS_VERTEX));
+	 BUFFEXT("#ifndef colorGen_t\n"
+	 "#define colorGen_t\n"
+	 "#define CGEN_VERTEX %i\n"
+	 "#define CGEN_ONE_MINUS_VERTEX %i\n"
+	 "#endif\n",
+	 CGEN_VERTEX,
+	 CGEN_ONE_MINUS_VERTEX);
 
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	                                                 va("#ifndef alphaGen_t\n"
-	                                                        "#define alphaGen_t\n"
-	                                                        "#define AGEN_VERTEX %i\n"
-	                                                        "#define AGEN_ONE_MINUS_VERTEX %i\n"
-	                                                        "#endif\n",
-	                                                        AGEN_VERTEX,
-	                                                        AGEN_ONE_MINUS_VERTEX));
-	                                                        */
+	 BUFFEXT("#ifndef alphaGen_t\n"
+	 "#define alphaGen_t\n"
+	 "#define AGEN_VERTEX %i\n"
+	 "#define AGEN_ONE_MINUS_VERTEX %i\n"
+	 "#endif\n",
+	 AGEN_VERTEX,
+	 AGEN_ONE_MINUS_VERTEX);
+	 */
 
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef alphaTest_t\n"
-	            "#define alphaTest_t\n"
-	            "#define ATEST_GT_0 %i\n"
-	            "#define ATEST_LT_128 %i\n"
-	            "#define ATEST_GE_128 %i\n"
-	            "#endif\n",
-	            ATEST_GT_0,
-	            ATEST_LT_128,
-	            ATEST_GE_128));
+	BUFFEXT("#ifndef alphaTest_t\n"
+	        "#define alphaTest_t\n"
+	        "#define ATEST_GT_0 %i\n"
+	        "#define ATEST_LT_128 %i\n"
+	        "#define ATEST_GE_128 %i\n"
+	        "#endif\n",
+	        ATEST_GT_0,
+	        ATEST_LT_128,
+	        ATEST_GE_128);
 
 	fbufWidthScale  = Q_recip(( float ) glConfig.vidWidth);
 	fbufHeightScale = Q_recip(( float ) glConfig.vidHeight);
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef r_FBufScale\n#define r_FBufScale vec2(%f, %f)\n#endif\n", fbufWidthScale, fbufHeightScale));
+	BUFFEXT("#ifndef r_FBufScale\n#define r_FBufScale vec2(%f, %f)\n#endif\n", fbufWidthScale, fbufHeightScale);
 
 	if (glConfig2.textureNPOTAvailable)
 	{
@@ -838,135 +853,102 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 		npotHeightScale = ( float ) glConfig.vidHeight / ( float ) NearestPowerOfTwo(glConfig.vidHeight);
 	}
 
-	Q_strcat(bufferExtra, sizeof(bufferExtra),
-	         va("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale));
+	BUFFEXT("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale);
 
 	if (glConfig.driverType == GLDRV_MESA)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLDRV_MESA\n#define GLDRV_MESA 1\n#endif\n");
+		BUFFEXT("#ifndef GLDRV_MESA\n#define GLDRV_MESA 1\n#endif\n");
 	}
 
 	if (glConfig.hardwareType == GLHW_ATI)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI\n#define GLHW_ATI 1\n#endif\n");
+		BUFFEXT("#ifndef GLHW_ATI\n#define GLHW_ATI 1\n#endif\n");
 	}
 	else if (glConfig.hardwareType == GLHW_ATI_DX10)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI_DX10\n#define GLHW_ATI_DX10 1\n#endif\n");
+		BUFFEXT("#ifndef GLHW_ATI_DX10\n#define GLHW_ATI_DX10 1\n#endif\n");
 	}
 	else if (glConfig.hardwareType == GLHW_NV_DX10)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_NV_DX10\n#define GLHW_NV_DX10 1\n#endif\n");
+		BUFFEXT("#ifndef GLHW_NV_DX10\n#define GLHW_NV_DX10 1\n#endif\n");
 	}
 
 	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
 	{
 		if (r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef ESM\n#define ESM 1\n#endif\n");
+			BUFFEXT("#ifndef ESM\n#define ESM 1\n#endif\n");
 		}
 		else if (r_shadows->integer == SHADOWING_EVSM32)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef EVSM\n#define EVSM 1\n#endif\n");
+			BUFFEXT("#ifndef EVSM\n#define EVSM 1\n#endif\n");
 
 			// The exponents for the EVSM techniques should be less than ln(FLT_MAX/FILTER_SIZE)/2 {ln(FLT_MAX/1)/2 ~44.3}
 			//         42.9 is the maximum possible value for FILTER_SIZE=15
 			//         42.0 is the truncated value that we pass into the sample
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0f, 42.0f));
+			BUFFEXT("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0f, 42.0f);
 
 			if (r_evsmPostProcess->integer)
 			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_EVSMPostProcess\n#define r_EVSMPostProcess 1\n#endif\n");
+				BUFFEXT("#ifndef r_EVSMPostProcess\n#define r_EVSMPostProcess 1\n#endif\n");
 			}
 		}
 		else
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM\n#define VSM 1\n#endif\n");
+			BUFFEXT("#ifndef VSM\n#define VSM 1\n#endif\n");
 
 			if (glConfig.hardwareType == GLHW_ATI)
 			{
-				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
+				BUFFEXT("#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
 			}
 		}
 
 		if ((glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10) && r_shadows->integer == SHADOWING_VSM32)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.000001\n#endif\n");
+			BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.000001\n#endif\n");
 		}
 		else
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n");
+			BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n");
 		}
 
 		if (r_lightBleedReduction->value)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n",
-			            r_lightBleedReduction->value));
+			BUFFEXT("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n", r_lightBleedReduction->value);
 		}
 
 		if (r_overDarkeningFactor->value)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n",
-			            r_overDarkeningFactor->value));
+			BUFFEXT("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n", r_overDarkeningFactor->value);
 		}
 
 		if (r_shadowMapDepthScale->value)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n",
-			            r_shadowMapDepthScale->value));
+			BUFFEXT("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n", r_shadowMapDepthScale->value);
 		}
 
 		if (r_debugShadowMaps->integer)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer));
+			BUFFEXT("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer);
 		}
 
-		/*
-		if(r_softShadows->integer == 1)
+		if (r_softShadows->integer == 1)
 		{
-		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_2X2\n#define PCF_2X2 1\n#endif\n");
-		}
-		else if(r_softShadows->integer == 2)
-		{
-		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_3X3\n#define PCF_3X3 1\n#endif\n");
-		}
-		else if(r_softShadows->integer == 3)
-		{
-		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_4X4\n#define PCF_4X4 1\n#endif\n");
-		}
-		else if(r_softShadows->integer == 4)
-		{
-		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_5X5\n#define PCF_5X5 1\n#endif\n");
-		}
-		else if(r_softShadows->integer == 5)
-		{
-		        Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_6X6\n#define PCF_6X6 1\n#endif\n");
-		}
-		*/
-		if (r_softShadows->integer == 6)
-		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCSS\n#define PCSS 1\n#endif\n");
+			BUFFEXT("#ifndef PCSS\n#define PCSS 1\n#endif\n");
 		}
 		else if (r_softShadows->integer)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f));
+			BUFFEXT("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f);
 		}
 
 		if (r_parallelShadowSplits->integer)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-			         va("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer));
+			BUFFEXT("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer);
 		}
 
 		if (r_showParallelShadowSplits->integer)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_ShowParallelShadowSplits\n#define r_ShowParallelShadowSplits 1\n#endif\n");
+			BUFFEXT("#ifndef r_ShowParallelShadowSplits\n#define r_ShowParallelShadowSplits 1\n#endif\n");
 		}
 	}
 
@@ -975,132 +957,70 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 	{
 		if (r_deferredShading->integer == DS_STANDARD)
 		{
-			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_DeferredShading\n#define r_DeferredShading 1\n#endif\n");
+			BUFFEXT("#ifndef r_DeferredShading\n#define r_DeferredShading 1\n#endif\n");
 		}
 	}
 
 	if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_HDRRendering\n#define r_HDRRendering 1\n#endif\n");
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_HDRContrastThreshold\n#define r_HDRContrastThreshold %f\n#endif\n",
-		            r_hdrContrastThreshold->value));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_HDRContrastOffset\n#define r_HDRContrastOffset %f\n#endif\n",
-		            r_hdrContrastOffset->value));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_HDRToneMappingOperator\n#define r_HDRToneMappingOperator_%i\n#endif\n",
-		            r_hdrToneMappingOperator->integer));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_HDRGamma\n#define r_HDRGamma %f\n#endif\n",
-		            r_hdrGamma->value));
+		BUFFEXT("#ifndef r_HDRRendering\n#define r_HDRRendering 1\n#endif\n");
+		BUFFEXT("#ifndef r_HDRContrastThreshold\n#define r_HDRContrastThreshold %f\n#endif\n", r_hdrContrastThreshold->value);
+		BUFFEXT("#ifndef r_HDRContrastOffset\n#define r_HDRContrastOffset %f\n#endif\n", r_hdrContrastOffset->value);
+		BUFFEXT("#ifndef r_HDRToneMappingOperator\n#define r_HDRToneMappingOperator_%i\n#endif\n", r_hdrToneMappingOperator->integer);
+		BUFFEXT("#ifndef r_HDRGamma\n#define r_HDRGamma %f\n#endif\n", r_hdrGamma->value);
 	}
 
 	if (r_precomputedLighting->integer)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         "#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
+		BUFFEXT("#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
 	}
 
 	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable && /*glConfig.hardwareType != GLHW_ATI && glConfig.hardwareType != GLHW_ATI_DX10 &&*/ glConfig.driverType != GLDRV_MESA)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_heatHazeFix\n#define r_heatHazeFix 1\n#endif\n");
+		BUFFEXT("#ifndef r_heatHazeFix\n#define r_heatHazeFix 1\n#endif\n");
 	}
-
-#ifdef EXPERIMENTAL
-
-	if (r_screenSpaceAmbientOcclusion->integer)
-	{
-		int             i;
-		static vec3_t   jitter[32];
-		static qboolean jitterInit = qfalse;
-
-		if (!jitterInit)
-		{
-			for (i = 0; i < 32; i++)
-			{
-				float *jit = &jitter[i][0];
-
-				float rad = crandom() * 1024.0f;     // FIXME radius;
-				float a   = crandom() * M_PI * 2;
-				float b   = crandom() * M_PI * 2;
-
-				jit[0] = rad * sin(a) * cos(b);
-				jit[1] = rad * sin(a) * sin(b);
-				jit[2] = rad * cos(a);
-			}
-
-			jitterInit = qtrue;
-		}
-
-		// TODO
-	}
-
-#endif
 
 	if (glConfig2.vboVertexSkinningAvailable)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_VertexSkinning\n#define r_VertexSkinning 1\n#endif\n");
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", glConfig2.maxVertexSkinningBones));
+		BUFFEXT("#ifndef r_VertexSkinning\n#define r_VertexSkinning 1\n#endif\n");
+		BUFFEXT("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", glConfig2.maxVertexSkinningBones);
 	}
 	else
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", 4));
+		BUFFEXT("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", 4);
 	}
-
-	/*
-	   if(glConfig.drawBuffersAvailable && glConfig.maxDrawBuffers >= 4)
-	   {
-	   //Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GL_ARB_draw_buffers\n#define GL_ARB_draw_buffers 1\n#endif\n");
-	   Q_strcat(bufferExtra, sizeof(bufferExtra), "#extension GL_ARB_draw_buffers : enable\n");
-	   }
-	 */
 
 	if (r_normalMapping->integer)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_NormalMapping\n#define r_NormalMapping 1\n#endif\n");
+		BUFFEXT("#ifndef r_NormalMapping\n#define r_NormalMapping 1\n#endif\n");
 	}
 
 	if (/* TODO: check for shader model 3 hardware  && */ r_normalMapping->integer && r_parallaxMapping->integer)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_ParallaxMapping\n#define r_ParallaxMapping 1\n#endif\n");
+		BUFFEXT("#ifndef r_ParallaxMapping\n#define r_ParallaxMapping 1\n#endif\n");
 	}
 
 	if (r_wrapAroundLighting->value)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-		         va("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %f\n#endif\n",
-		            r_wrapAroundLighting->value));
+		BUFFEXT("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %f\n#endif\n", r_wrapAroundLighting->value);
 	}
 
 	if (r_halfLambertLighting->integer)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_HalfLambertLighting\n#define r_HalfLambertLighting 1\n#endif\n");
+		BUFFEXT("#ifndef r_HalfLambertLighting\n#define r_HalfLambertLighting 1\n#endif\n");
 	}
 
 	if (r_rimLighting->integer)
 	{
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimLighting\n#define r_RimLighting 1\n#endif\n");
-		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimColor\n#define r_RimColor vec4(0.26, 0.19, 0.16, 0.0)\n#endif\n");
-		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_RimExponent\n#define r_RimExponent %f\n#endif\n",
-		                                              r_rimExponent->value));
+		BUFFEXT("#ifndef r_RimLighting\n#define r_RimLighting 1\n#endif\n");
+		BUFFEXT("#ifndef r_RimColor\n#define r_RimColor vec4(0.26, 0.19, 0.16, 0.0)\n#endif\n");
+		BUFFEXT("#ifndef r_RimExponent\n#define r_RimExponent %f\n#endif\n", r_rimExponent->value);
 	}
 
 	// OK we added a lot of stuff but if we do something bad in the GLSL shaders then we want the proper line
 	// so we have to reset the line counting
-	Q_strcat(bufferExtra, sizeof(bufferExtra), "#line 0\n");
-
-	*size    = strlen(bufferExtra) + 1;
-	*defines = (char *) Com_Allocate(*size);
-	Com_Memset(*defines, 0, *size);
-	Q_strcat(*defines, *size, bufferExtra);
+	BUFFEXT("#line 0\n");
+	shaderExtraDefLen = strlen(shaderExtraDef) + 1;
 }
 
 static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
@@ -1110,7 +1030,7 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 	// HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.30 ones
 	if (glConfig2.glslMajorVersion > 1 || (glConfig2.glslMajorVersion == 1 && glConfig2.glslMinorVersion >= 30))
 	{
-		Q_strcat(dest, size, "#version 130\n");
+        Q_strcat(dest, size, "#version 150 core\n");
 
 		if (shaderType == GL_VERTEX_SHADER)
 		{
@@ -1120,12 +1040,13 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 		else
 		{
 			Q_strcat(dest, size, "#define varying in\n");
-
 			Q_strcat(dest, size, "out vec4 out_Color;\n");
 			Q_strcat(dest, size, "#define gl_FragColor out_Color\n");
 		}
 
 		Q_strcat(dest, size, "#define textureCube texture\n");
+        Q_strcat(dest, size, "#define texture2D texture\n");
+        Q_strcat(dest, size, "#define texture2DProj textureProj\n");
 	}
 	else
 	{
@@ -1138,21 +1059,21 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 	GLint       compiled;
 	GLhandleARB shader;
 
-	shader = qglCreateShaderObjectARB(shaderType);
+    shader = glCreateShader(shaderType);
 
-	qglShaderSourceARB(shader, 1, (const GLcharARB **)&buffer, &size);
+    glShaderSource(shader, 1, (const GLcharARB **)&buffer, &size);
 
 	// compile shader
-	qglCompileShaderARB(shader);
+    glCompileShader(shader);
 
 	// check if shader compiled
-	qglGetObjectParameterivARB(shader, GL_OBJECT_COMPILE_STATUS_ARB, &compiled);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
 		ri.FS_WriteFile(va("debug/%s_%s.debug", name, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), buffer, size);
 		GLSL_PrintShaderSource(shader);
-		GLSL_PrintInfoLog(shader, qfalse);
-		ri.Error(ERR_FATAL, "Couldn't compile shader");
+        GLSL_PrintInfoLog(shader, qfalse, qfalse);
+		Ren_Fatal("Couldn't compile shader");
 		return 0;
 	}
 
@@ -1161,12 +1082,12 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 
 	if (*prevShader)
 	{
-		qglDetachObjectARB(program, *prevShader);
-		qglDeleteObjectARB(*prevShader);
+        glDetachShader(program, *prevShader);
+        glDeleteShader(*prevShader);
 	}
 
 	// attach shader to program
-	qglAttachObjectARB(program, shader);
+    glAttachShader(program, shader);
 
 	*prevShader = shader;
 
@@ -1182,12 +1103,12 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 	if (shaderType == GL_VERTEX_SHADER)
 	{
 		Com_sprintf(fullname, sizeof(fullname), "%s_vp", name);
-		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
+		Ren_Print("...loading vertex shader '%s'\n", fullname);
 	}
 	else
 	{
 		Com_sprintf(fullname, sizeof(fullname), "%s_fp", name);
-		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
+		Ren_Print("...loading vertex shader '%s'\n", fullname);
 	}
 
 	if (ri.FS_FOpenFileRead(va("glsl/%s.glsl", fullname), NULL, qfalse))
@@ -1228,7 +1149,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		}
 		else
 		{
-			ri.Error(ERR_FATAL, "Couldn't load shader %s", fullname);
+			Ren_Fatal("Couldn't load shader %s", fullname);
 		}
 	}
 	else
@@ -1256,7 +1177,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		ri.FS_FreeFile(dataBuffer);
 	}
 
-	Com_Printf("Loaded shader '%s'\n", fullname);
+	Ren_Print("Loaded shader '%s'\n", fullname);
 }
 
 static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *libShaderNames, GLenum shaderType)
@@ -1264,13 +1185,12 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	GLchar *mainBuffer = NULL;
 	int    mainSize    = 0;
 	char   *token;
-
-	int  libsSize    = 0;
-	char *libsBuffer = NULL;        // all libs concatenated
-
-	char **libs = ( char ** ) &libShaderNames;
-
-	char *shaderText = NULL;
+	int    libsSize     = 0;
+	char   *libsBuffer  = NULL;     // all libs concatenated
+	char   **libs       = ( char ** ) &libShaderNames;
+	char   *shaderText  = NULL;
+	char   *bufferFinal = NULL;
+	int    sizeFinal;
 
 	GL_CheckErrors();
 
@@ -1290,39 +1210,134 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 
 	if (!libsBuffer && !mainBuffer)
 	{
-		ri.Error(ERR_FATAL, "Shader loading failed!\n");
+		Ren_Fatal("Shader loading failed!\n");
 	}
+
+	sizeFinal = shaderExtraDefLen + mainSize + libsSize;
+
+	bufferFinal = (char *)ri.Hunk_AllocateTempMemory(sizeFinal);
+
+	strcpy(bufferFinal, shaderExtraDef);
+
+	if (libsSize > 0)
 	{
-		char *shaderExtra = NULL;
-		int  extraSize    = 0;
-
-		char *bufferFinal = NULL;
-		int  sizeFinal;
-
-		GLSL_GetShaderExtraDefines(&shaderExtra, &extraSize);
-
-		sizeFinal = extraSize + mainSize + libsSize;
-
-		bufferFinal = ( char * ) ri.Hunk_AllocateTempMemory(sizeFinal);
-
-		strcpy(bufferFinal, shaderExtra);
-
-		if (libsSize > 0)
-		{
-			Q_strcat(bufferFinal, sizeFinal, libsBuffer);
-		}
-
-		Q_strcat(bufferFinal, sizeFinal, mainBuffer);
-
-		shaderText = Com_Allocate(sizeFinal);
-		strcpy(shaderText, bufferFinal);
-		ri.Hunk_FreeTempMemory(bufferFinal);
-		Com_Dealloc(shaderExtra);
+		Q_strcat(bufferFinal, sizeFinal, libsBuffer);
 	}
+
+	Q_strcat(bufferFinal, sizeFinal, mainBuffer);
+
+	shaderText = Com_Allocate(sizeFinal);
+	strcpy(shaderText, bufferFinal);
+	ri.Hunk_FreeTempMemory(bufferFinal);
+
 	Com_Dealloc(mainBuffer);
 	Com_Dealloc(libsBuffer);
 
 	return shaderText;
+}
+
+#define GLSL_BUFF 64000
+#define GLSL_BUFF_CHAR (sizeof(char) *GLSL_BUFF)
+
+static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
+{
+	static char shaderBuffer[GLSL_BUFF];
+	GLchar      *mainBuffer    = NULL;
+	int         mainBufferSize = 0;
+	GLchar      *ref           = NULL;
+	char        *filename      = NULL;
+	char        *token         = NULL;
+	int         c              = 0, offset = 0;
+	char        *output        = NULL;
+
+	Com_Memset(shaderBuffer, '\0', GLSL_BUFF_CHAR);
+
+	switch (shadertype)
+	{
+	case GL_VERTEX_SHADER:
+		filename = info->filename;
+		break;
+	case GL_FRAGMENT_SHADER:
+		filename = (info->fragFilename ? info->fragFilename : info->filename);
+		break;
+	//case GL_TESS_CONTROL_SHADER:
+	//break;
+	default:
+		return NULL;
+	}
+
+	GLSL_GetShaderText(filename, shadertype, &mainBuffer, &mainBufferSize, qfalse);
+	ref = mainBuffer;
+
+	while (c = *ref)
+	{
+		// skip double slash comments
+		if (c == '/' && ref[1] == '/')
+		{
+			ref += 2;
+			while (*ref && *ref != '\n')
+			{
+				ref++;
+			}
+		}
+		// skip /* */ comments
+		else if (c == '/' && ref[1] == '*')
+		{
+			ref += 2;
+			while (*ref && (*ref != '*' || ref[1] != '/'))
+			{
+				ref++;
+			}
+			if (*ref)
+			{
+				ref += 2;
+			}
+		}
+		//We found a # command
+		else if (c == '#')
+		{
+			char *ref2 = ref;
+
+			ref++;
+			token = COM_ParseExt2(&ref, qfalse);
+
+			if (!Q_stricmp(token, "include"))
+			{
+				//handle include
+				GLchar *libBuffer    = NULL;
+				int    libBufferSize = 0;
+
+				token = COM_ParseExt2(&ref, qfalse);
+				GLSL_GetShaderText(token, shadertype, &libBuffer, &libBufferSize, qfalse);
+				Q_strcat(shaderBuffer, libBufferSize, libBuffer);
+				Com_Dealloc(libBuffer);
+				token = NULL;
+			}
+			else
+			{
+				ref                  = ref2;
+				shaderBuffer[offset] = c;
+			}
+
+			offset = strlen(shaderBuffer);
+		}
+		//Just add the char to the buffer
+		else
+		{
+			shaderBuffer[offset] = c;
+			offset++;
+		}
+
+		ref++;
+	}
+
+	Com_Dealloc(mainBuffer);
+	Ren_Print(shaderBuffer);
+	Ren_Fatal("JEPAJEPA %i", strlen(shaderBuffer));
+
+	output = Com_Allocate(strlen(shaderBuffer) * sizeof(char) + 1);
+	strcpy(output, shaderBuffer);
+	return output;
 }
 
 /*
@@ -1377,22 +1392,20 @@ static void GLSL_LinkProgram(GLhandleARB program)
 {
 	GLint linked;
 
-#ifdef GLEW_ARB_get_program_binary
 	// Apparently, this is necessary to get the binary program via glGetProgramBinary
 	if (glConfig2.getProgramBinaryAvailable)
 	{
 		glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	}
-#endif
 
-	qglLinkProgramARB(program);
+    glLinkProgram(program);
 
-	qglGetObjectParameterivARB(program, GL_OBJECT_LINK_STATUS_ARB, &linked);
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
 	if (!linked)
 	{
-		GLSL_PrintInfoLog(program, qfalse);
-		ri.Printf(PRINT_ALL, "\n");
-		ri.Error(ERR_DROP, "shaders failed to link");
+        GLSL_PrintInfoLog(program, qfalse, qtrue);
+		Ren_Print("\n");
+		Ren_Drop("shaders failed to link");
 	}
 }
 
@@ -1400,14 +1413,14 @@ static void GLSL_ValidateProgram(GLhandleARB program)
 {
 	GLint validated;
 
-	qglValidateProgramARB(program);
+    glValidateProgram(program);
 
-	qglGetObjectParameterivARB(program, GL_OBJECT_VALIDATE_STATUS_ARB, &validated);
+    glGetProgramiv(program, GL_VALIDATE_STATUS, &validated);
 	if (!validated)
 	{
-		GLSL_PrintInfoLog(program, qfalse);
-		ri.Printf(PRINT_ALL, "\n");
-		ri.Error(ERR_DROP, "shaders failed to validate");
+        GLSL_PrintInfoLog(program, qfalse, qtrue);
+		Ren_Print("\n");
+		Ren_Drop("shaders failed to validate");
 	}
 }
 
@@ -1418,35 +1431,32 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 	char   uniformName[1000];
 
 	// install the executables in the program object as part of current state.
-	qglUseProgramObjectARB(program);
+    glUseProgram(program);
 
 	// check for GL Errors
 
 	// query the number of active uniforms
-	qglGetObjectParameterivARB(program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &count);
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
 
 	// Loop over each of the active uniforms, and set their value
 	for (i = 0; i < count; i++)
 	{
-		qglGetActiveUniformARB(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
+        glGetActiveUniform(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
 
 		Ren_LogComment("active uniform: '%s'\n", uniformName)
 	}
 
-	qglUseProgramObjectARB(0);
+    glUseProgram(0);
 }
 
 void GLSL_InitUniforms(shaderProgram_t *program)
 {
-	int i, size;
-
+	int   i, size = 0;
 	GLint *uniforms = program->uniforms;
-
-	size = 0;
 
 	for (i = 0; i < UNIFORM_COUNT; i++)
 	{
-		uniforms[i] = qglGetUniformLocationARB(program->program, uniformsInfo[i].name);
+        uniforms[i] = glGetUniformLocation(program->program, uniformsInfo[i].name);
 
 		if (uniforms[i] == -1)
 		{
@@ -1464,7 +1474,7 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 			break;
 		case GLSL_FLOAT:
 			size += sizeof(GLfloat);
-			break;
+            break;
 		case GLSL_FLOAT5:
 			size += sizeof(vec_t) * 5;
 			break;
@@ -1495,11 +1505,23 @@ void GLSL_FinishGPUShader(shaderProgram_t *program)
 	GL_CheckErrors();
 }
 
+void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex)
+{
+	if (program->textureBinds[tex] == -1)
+	{
+		//Ren_Fatal("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
+		Ren_Warning("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
+		GL_SelectTexture(0);
+		return;
+	}
+
+	GL_SelectTexture(program->textureBinds[tex]);
+}
+
 void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean value)
 {
 	GLint     *uniforms = program->uniforms;
 	GLboolean *compare  = (GLboolean *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
-
 
 	if (uniforms[uniformNum] == -1)
 	{
@@ -1508,7 +1530,7 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 
 	if (uniformsInfo[uniformNum].type != GLSL_BOOL)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1519,14 +1541,13 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 
 	*compare = value;
 
-	qglUniform1iARB(uniforms[uniformNum], value);
+    glUniform1i(uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 {
 	GLint *uniforms = program->uniforms;
 	GLint *compare  = (GLint *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
-
 
 	if (uniforms[uniformNum] == -1)
 	{
@@ -1535,7 +1556,7 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 
 	if (uniformsInfo[uniformNum].type != GLSL_INT)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1546,7 +1567,7 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 
 	*compare = value;
 
-	qglUniform1iARB(uniforms[uniformNum], value);
+    glUniform1i(uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value)
@@ -1561,7 +1582,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1572,7 +1593,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	*compare = value;
 
-	qglUniform1fARB(uniforms[uniformNum], value);
+    glUniform1f(uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t v)
@@ -1587,7 +1608,7 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC2)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1599,7 +1620,7 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 	compare[0] = v[0];
 	compare[1] = v[1];
 
-	qglUniform2fARB(uniforms[uniformNum], v[0], v[1]);
+    glUniform2f(uniforms[uniformNum], v[0], v[1]);
 }
 
 void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t v)
@@ -1614,7 +1635,7 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC3)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1625,7 +1646,7 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 
 	VectorCopy(v, compare);
 
-	qglUniform3fARB(uniforms[uniformNum], v[0], v[1], v[2]);
+    glUniform3f(uniforms[uniformNum], v[0], v[1], v[2]);
 }
 
 void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t v)
@@ -1640,7 +1661,7 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1651,7 +1672,7 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 
 	Vector4Copy(v, compare);
 
-	qglUniform4fARB(uniforms[uniformNum], v[0], v[1], v[2], v[3]);
+    glUniform4f(uniforms[uniformNum], v[0], v[1], v[2], v[3]);
 }
 
 void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_t v)
@@ -1666,7 +1687,7 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT5)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1677,7 +1698,7 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 
 	Vector5Copy(v, compare);
 
-	qglUniform1fvARB(uniforms[uniformNum], 5, v);
+    glUniform1fv(uniforms[uniformNum], 5, v);
 }
 
 void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const matrix_t matrix)
@@ -1692,7 +1713,7 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1703,7 +1724,7 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 
 	MatrixCopy(matrix, compare);
 
-	qglUniformMatrix4fvARB(uniforms[uniformNum], 1, GL_FALSE, matrix);
+    glUniformMatrix4fv(uniforms[uniformNum], 1, GL_FALSE, matrix);
 }
 
 void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray, int arraysize)
@@ -1717,7 +1738,7 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 
 	if (uniformsInfo[uniformNum].type != GLSL_FLOATARR)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1735,7 +1756,7 @@ void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *ve
 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4ARR)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+		Ren_Fatal("GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
 		return;
 	}
 
@@ -1753,7 +1774,7 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16ARR)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
+		Ren_Fatal("GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
 		return;
 	}
 
@@ -1763,78 +1784,51 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix
 
 static void GLSL_BindAttribLocations(GLuint program)
 {
-	//if(attribs & ATTR_POSITION)
 	glBindAttribLocation(program, ATTR_INDEX_POSITION, "attr_Position");
-
-	//if(attribs & ATTR_TEXCOORD)
 	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD0, "attr_TexCoord0");
-
-	//if(attribs & ATTR_LIGHTCOORD)
 	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD1, "attr_TexCoord1");
 
-	//  if(attribs & ATTR_TEXCOORD2)
-	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
+	//glBindAttribLocation(program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
+	//glBindAttribLocation(program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
 
-	//  if(attribs & ATTR_TEXCOORD3)
-	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
-
-	//if(attribs & ATTR_TANGENT)
 	glBindAttribLocation(program, ATTR_INDEX_TANGENT, "attr_Tangent");
-
-	//if(attribs & ATTR_BINORMAL)
 	glBindAttribLocation(program, ATTR_INDEX_BINORMAL, "attr_Binormal");
-
-	//if(attribs & ATTR_NORMAL)
 	glBindAttribLocation(program, ATTR_INDEX_NORMAL, "attr_Normal");
-
-	//if(attribs & ATTR_COLOR)
 	glBindAttribLocation(program, ATTR_INDEX_COLOR, "attr_Color");
-
-	//if(glConfig2.vboVertexSkinningAvailable)
-	{
-		glBindAttribLocation(program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
-		glBindAttribLocation(program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
-	}
-
-	//if(attribs & ATTR_POSITION2)
+	glBindAttribLocation(program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
+	glBindAttribLocation(program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
 	glBindAttribLocation(program, ATTR_INDEX_POSITION2, "attr_Position2");
-
-	//if(attribs & ATTR_TANGENT2)
 	glBindAttribLocation(program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
-
-	//if(attribs & ATTR_BINORMAL2)
 	glBindAttribLocation(program, ATTR_INDEX_BINORMAL2, "attr_Binormal2");
-
-	//if(attribs & ATTR_NORMAL2)
 	glBindAttribLocation(program, ATTR_INDEX_NORMAL2, "attr_Normal2");
 }
 
 static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, const char *vpCode, const char *fpCode)
 {
-	//ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
+	Ren_LogComment("------- GLSL_InitGPUShader2 -------\n");
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Error(ERR_DROP, "GLSL_InitGPUShader2: \"%s\" is too long", name);
+		Ren_Drop("GLSL_InitGPUShader2: \"%s\" is too long", name);
 	}
 
 	Q_strncpyz(program->name, name, sizeof(program->name));
 
-	program->program = qglCreateProgramObjectARB();
+    program->program = glCreateProgram();
 
-	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER_ARB, name)))
+    if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER, name)))
 	{
-		ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
-		qglDeleteObjectARB(program->program);
+		Ren_Print("GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
+        glDeleteProgram(program->program);
 		return qfalse;
 	}
 
 	if (fpCode)
 	{
-		if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER_ARB, name)))
+        if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER, name)))
 		{
-			ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
-			qglDeleteObjectARB(program->program);
+			Ren_Print("GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
+            glDeleteProgram(program->program);
 			return qfalse;
 		}
 	}
@@ -1890,7 +1884,7 @@ static qboolean GLSL_FinnishShaderTextAndCompile(programInfo_t *info, int permut
 
 static qboolean GLSL_GetProgramPermutation(programInfo_t *info, int permutation, const char *vertex, const char *frag, const char *macrostring)
 {
-	//load bin
+	// load bin
 	if (GLSL_LoadShaderBinary(info, permutation) || GLSL_FinnishShaderTextAndCompile(info, permutation, vertex, frag, macrostring))
 	{
 		GLSL_InitUniforms(&info->list->programs[permutation]);
@@ -1902,14 +1896,33 @@ static qboolean GLSL_GetProgramPermutation(programInfo_t *info, int permutation,
 	}
 }
 
+static void GLSL_SetTextureUnitBindings(programInfo_t *info, int permutation)
+{
+	int             i, j;
+	shaderProgram_t *program = &info->list->programs[permutation];
+
+	for (i = 0, j = 0; i < TEX_COUNT; i++)
+	{
+		if (program->uniforms[textureMap[i]] == -1)
+		{
+			program->textureBinds[i] = -1;
+		}
+		else
+		{
+			program->textureBinds[i] = j;
+            glUniform1i(program->uniforms[textureMap[i]], j);
+			j++;
+		}
+	}
+}
+
 static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 {
 	int i, location;
-	GLSL_BindProgram(&info->list->programs[permutation]);
 
 	for (i = 0; i < info->numUniformValues; i++)
 	{
-		location = qglGetUniformLocationARB(info->list->programs[permutation].program, info->uniformValues[i].type.name);
+        location = glGetUniformLocation(info->list->programs[permutation].program, info->uniformValues[i].type.name);
 
 		if (location == -1)
 		{
@@ -1927,12 +1940,10 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 			glUniform1i(location, *((int *)info->uniformValues[i].value));
 			break;
 		default:
-			ri.Error(ERR_FATAL, "Only INT supported atm");
+			Ren_Fatal("Only INT supported atm");
 			break;
 		}
 	}
-
-	GLSL_BindNullProgram();
 }
 
 void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *fragment)
@@ -1957,6 +1968,7 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 
 qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
+	//char *testike = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
 	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
 	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename ? info->fragFilename : info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
 	int    startTime, endTime;
@@ -1996,9 +2008,9 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 	info->list->permutations = numPermutations;
 
-	ri.Printf(PRINT_ALL, "...compiling %s shaders\n", info->name);
-	ri.Printf(PRINT_ALL, "0%%  10   20   30   40   50   60   70   80   90   100%%\n");
-	ri.Printf(PRINT_ALL, "|----|----|----|----|----|----|----|----|----|----|\n");
+	Ren_Print("...compiling %s shaders\n", info->name);
+	Ren_Print("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
+	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n");
 
 	startTime = ri.Milliseconds();
 
@@ -2015,7 +2027,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 			do
 			{
-				ri.Printf(PRINT_ALL, "*");
+				Ren_Print("*");
 			}
 			while (++tics < ticsNeeded);
 
@@ -2025,10 +2037,10 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 			{
 				if (tics < 51)
 				{
-					ri.Printf(PRINT_ALL, "*");
+					Ren_Print("*");
 				}
 
-				ri.Printf(PRINT_ALL, "\n");
+				Ren_Print("\n");
 			}
 		}
 
@@ -2036,14 +2048,18 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 		{
 			if (GLSL_GetProgramPermutation(info, i, vertexShader, fragmentShader, tempString))
 			{
+				GLSL_BindProgram(&info->list->programs[i]);
 				//Set uniform values
+				GLSL_SetTextureUnitBindings(info, i);
 				GLSL_SetInitialUniformValues(info, i);
+				GLSL_BindNullProgram();
+
 				GLSL_FinishGPUShader(&info->list->programs[i]);
 				info->list->programs[i].compiled = qtrue;
 			}
 			else
 			{
-				ri.Error(ERR_FATAL, "Failed to compile shader: %s permutation %d\n", info->name, i);
+				Ren_Fatal("Failed to compile shader: %s permutation %d\n", info->name, i);
 			}
 
 			numCompiled++;
@@ -2053,13 +2069,16 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 			info->list->programs[i].program  = 0;
 			info->list->programs[i].compiled = qfalse;
 		}
-
 	}
 
 	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
+	Ren_Print("...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
 	info->compiled                 = qtrue;
 	info->list->currentPermutation = 0;
+
+	Com_Dealloc(vertexShader);
+	Com_Dealloc(fragmentShader);
+
 	return qtrue;
 }
 
@@ -2078,16 +2097,45 @@ programInfo_t *GLSL_GetShaderProgram(const char *name)
 	return prog;
 }
 
+void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
+{
+	if (offset < 0)
+	{
+		Ren_Fatal("Trying to select an negative array cell\n");
+		return;
+	}
+
+	programlist->list->currentPermutation = 0;
+	programlist->list->currentMacros      = 0;
+
+	if (offset != 0)
+	{
+		int i = 0;
+
+		programlist->list->currentPermutation = offset;
+		for (; i < MAX_MACROS; i++)
+		{
+			if (BIT(programlist->list->macromap[i]) != -1)
+			{
+				if (offset & BIT(programlist->list->macromap[i]))
+				{
+					programlist->list->currentMacros |= BIT(i);
+				}
+			}
+		}
+	}
+}
+
 void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 {
 	if (!programlist)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetMacroState: NULL programinfo");
+		Ren_Fatal("GLSL_SetMacroState: NULL programinfo");
 	}
 
 	if (!programlist->compiled)
 	{
-		ri.Error(ERR_FATAL, "Trying to set macro state of shader \"%s\" but it is not compiled\n", programlist->name);
+		Ren_Fatal("Trying to set macro state of shader \"%s\" but it is not compiled\n", programlist->name);
 	}
 
 	if (programlist->list->macromap[macro] == -1)
@@ -2117,8 +2165,49 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 
 	if (programlist->list->permutations < programlist->list->currentPermutation)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SetMacroState: Trying to set macro state to impossible result for shader: %s with macro: %i permutation number %i", programlist->name, macro, programlist->list->permutations);
+		Ren_Fatal("GLSL_SetMacroState: Trying to set macro state to impossible result for shader: %s with macro: %i permutation number %i", programlist->name, macro, programlist->list->permutations);
 	}
+}
+
+void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
+{
+	int     macro, value;
+	va_list ap;
+
+	// Reset the macro states
+	GLSL_SetMacroStatesByOffset(programlist, 0);
+
+	if (numMacros == 0)
+	{
+		return;
+	}
+
+	if (numMacros == 1)
+	{
+		va_start(ap, numMacros);
+		value = va_arg(ap, int);
+		GLSL_SetMacroStatesByOffset(programlist, value);
+		return;
+	}
+
+	if (numMacros % 2 != 0)
+	{
+		Ren_Fatal("GLSL_SetMacroStates: Trying to set macros with an array which has an invalid size %i\n", numMacros);
+		return;
+	}
+
+	va_start(ap, numMacros);
+	do
+	{
+		macro = va_arg(ap, int);
+		value = va_arg(ap, int);
+
+		GLSL_SetMacroState(programlist, macro, value);
+
+		numMacros -= 2;
+	}
+	while (numMacros > 0);
+	va_end(ap);
 }
 
 void GLSL_SelectPermutation(programInfo_t *programlist)
@@ -2127,19 +2216,19 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 
 	if (!programlist)
 	{
-		ri.Error(ERR_FATAL, "GLSL_SelectPermutation: NULL programinfo");
+		Ren_Fatal("GLSL_SelectPermutation: NULL programinfo");
 	}
 
 	if (!programlist->compiled)
 	{
-		ri.Error(ERR_FATAL, "Trying to select permutation of shader \"%s\" but the list is not compiled\n", programlist->name);
+		Ren_Fatal("Trying to select permutation of shader \"%s\" but the list is not compiled\n", programlist->name);
 	}
 
 	prog = &programlist->list->programs[programlist->list->currentPermutation];
 
 	if (!prog || !prog->compiled)
 	{
-		ri.Error(ERR_FATAL, "Trying to select uncompiled shader permutation: %d of shader \"%s\"\n", programlist->list->currentPermutation, programlist->name);
+		Ren_Fatal("Trying to select uncompiled shader permutation: %d of shader \"%s\"\n", programlist->list->currentPermutation, programlist->name);
 	}
 	else
 	{
@@ -2192,17 +2281,17 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 	{
 		if (program->vertexShader)
 		{
-			qglDetachObjectARB(program->program, program->vertexShader);
-			qglDeleteObjectARB(program->vertexShader);
+            glDetachShader(program->program, program->vertexShader);
+            glDeleteShader(program->vertexShader);
 		}
 
 		if (program->fragmentShader)
 		{
-			qglDetachObjectARB(program->program, program->fragmentShader);
-			qglDeleteObjectARB(program->fragmentShader);
+            glDetachShader(program->program, program->fragmentShader);
+            glDeleteShader(program->fragmentShader);
 		}
 
-		qglDeleteObjectARB(program->program);
+        glDeleteProgram(program->program);
 
 		if (program->uniformBuffer)
 		{
@@ -2267,7 +2356,7 @@ void GLSL_InitGPUShaders(void)
 {
 	int startTime, endTime;
 
-	ri.Printf(PRINT_ALL, "------- GLSL_InitGPUShaders -------\n");
+	Ren_LogComment("------- GLSL_InitGPUShaders -------\n");
 
 	R_IssuePendingRenderCommands();
 
@@ -2275,13 +2364,32 @@ void GLSL_InitGPUShaders(void)
 
 	//Load all definitions
 	GLSL_LoadDefinitions();
+	GLSL_BuildShaderExtraDef();
+
+	endTime = ri.Milliseconds();
+
+	Ren_Developer("Initialized GLSL system in %5.2f seconds\n", (endTime - startTime) / 1000.0);
+}
+
+void GLSL_CompileGPUShaders(void)
+{
+	int startTime, endTime;
+
+	Ren_LogComment("------- GLSL_CompileGPUShaders -------\n");
+
+	R_IssuePendingRenderCommands();
+
+    //R_BindFBO(tr.deferredRenderFBO);
+
+	//Init simple shader and draw loading screen
+
+	startTime = ri.Milliseconds();
 
 	gl_genericShader      = GLSL_GetShaderProgram("generic");
 	gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
 
 	gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
-
-	gl_vertexLightingShader_DBS_world = GLSL_GetShaderProgram("vertexLighting_DBS_world");
+	gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 
 	if (DS_STANDARD_ENABLED())
 	{
@@ -2312,7 +2420,6 @@ void GLSL_InitGPUShaders(void)
 	gl_blurYShader          = GLSL_GetShaderProgram("blurY");
 	gl_debugShadowMapShader = GLSL_GetShaderProgram("debugShadowMap");
 
-	//Dushan
 	gl_liquidShader             = GLSL_GetShaderProgram("liquid");
 	gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
 	gl_bloomShader              = GLSL_GetShaderProgram("bloom");
@@ -2322,12 +2429,14 @@ void GLSL_InitGPUShaders(void)
 	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
 	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
-	//Jacker
+	gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
+	gl_ssao         = GLSL_GetShaderProgram("SSAO");
+
 	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
 	endTime = ri.Milliseconds();
 
-	ri.Printf(PRINT_ALL, "Created default shaders in %5.2f seconds\n", (endTime - startTime) / 1000.0);
+	Ren_Developer("Compiled default shader programs in %5.2f seconds\n", (endTime - startTime) / 1000.0);
 
 	if (r_recompileShaders->integer)
 	{
@@ -2339,12 +2448,12 @@ void GLSL_ShutdownGPUShaders(void)
 {
 	int i;
 
-	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
+	Ren_LogComment("------- GLSL_ShutdownGPUShaders -------\n");
 
 	//GLSL_VertexAttribsState(0);
 	GLSL_BindNullProgram();
 
-	//Clean up programInfo_t:s
+	// Clean up programInfo_t:s
 	for (i = 0; i < FILE_HASH_SIZE; i++)
 	{
 		if (hashTable[i])
@@ -2359,9 +2468,8 @@ void GLSL_ShutdownGPUShaders(void)
 	Com_Dealloc(definitionText);
 
 	glState.currentProgram = 0;
-	qglUseProgramObjectARB(0);
+    glUseProgram(0);
 }
-
 
 void GLSL_BindProgram(shaderProgram_t *program)
 {
@@ -2375,12 +2483,11 @@ void GLSL_BindProgram(shaderProgram_t *program)
 
 	if (glState.currentProgram != program)
 	{
-		qglUseProgramObjectARB(program->program);
+        glUseProgram(program->program);
 		glState.currentProgram = program;
 		backEnd.pc.c_glslShaderBinds++;
 	}
 }
-
 
 void GLSL_BindNullProgram(void)
 {
@@ -2388,7 +2495,7 @@ void GLSL_BindNullProgram(void)
 
 	if (glState.currentProgram)
 	{
-		qglUseProgramObjectARB(0);
+        glUseProgram(0);
 		glState.currentProgram = NULL;
 	}
 }
@@ -2422,7 +2529,6 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 
 			deformParms[deformOfs++] = ds->deformationSpread;
 			break;
-
 		case DEFORM_BULGE:
 			deformParms[deformOfs++] = DEFORM_BULGE;
 
@@ -2430,7 +2536,6 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 			deformParms[deformOfs++] = ds->bulgeHeight;
 			deformParms[deformOfs++] = ds->bulgeSpeed;
 			break;
-
 		case DEFORM_MOVE:
 			deformParms[deformOfs++] = DEFORM_MOVE;
 
@@ -2444,7 +2549,6 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 			deformParms[deformOfs++] = ds->bulgeHeight;
 			deformParms[deformOfs++] = ds->bulgeSpeed;
 			break;
-
 		default:
 			break;
 		}
@@ -2455,18 +2559,17 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen)
 {
 	vec4_t temp;
+
 	switch (colorGen)
 	{
 	case CGEN_VERTEX:
 		prog->attributes |= ATTR_COLOR;
 		VectorSet(temp, 1, 1, 1);
 		break;
-
 	case CGEN_ONE_MINUS_VERTEX:
 		prog->attributes |= ATTR_COLOR;
 		VectorSet(temp, -1, -1, -1);
 		break;
-
 	default:
 		prog->attributes &= ~ATTR_COLOR;
 		VectorSet(temp, 0, 0, 0);
@@ -2479,18 +2582,29 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		prog->attributes |= ATTR_COLOR;
 		temp[3]           = 1.0f;
 		break;
-
 	case AGEN_ONE_MINUS_VERTEX:
 		prog->attributes |= ATTR_COLOR;
 		temp[3]           = -1.0f;
 		break;
-
 	default:
 		temp[3] = 0.0f;
 		break;
 	}
 
-	GLSL_SetUniformVec4(selectedProgram, UNIFORM_COLORMODULATE, temp);
+	if ((prog->attributes & ATTR_COLOR) && !(glState.vertexAttribsState & ATTR_COLOR))
+	{
+		glEnableVertexAttribArray(ATTR_INDEX_COLOR);
+		glState.vertexAttribsState |= ATTR_COLOR;
+		glVertexAttribPointer(ATTR_INDEX_COLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsColors));
+		glState.vertexAttribPointersSet |= ATTR_COLOR;
+	}
+	else if (!(prog->attributes & ATTR_COLOR) && (glState.vertexAttribsState & ATTR_COLOR))
+	{
+		glDisableVertexAttribArray(ATTR_INDEX_COLOR);
+		glState.vertexAttribsState &= ~ATTR_COLOR;
+	}
+
+	SetUniformVec4(UNIFORM_COLORMODULATE, temp);
 }
 
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
@@ -2502,21 +2616,18 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits)
 	case GLS_ATEST_GT_0:
 		value = ATEST_GT_0;
 		break;
-
 	case GLS_ATEST_LT_128:
 		value = ATEST_LT_128;
 		break;
-
 	case GLS_ATEST_GE_128:
 		value = ATEST_GE_128;
 		break;
-
 	default:
 		value = ATEST_NONE;
 		break;
 	}
 
-	GLSL_SetUniformInt(selectedProgram, UNIFORM_ALPHATEST, value);
+	SetUniformInt(UNIFORM_ALPHATEST, value);
 }
 
 void GLSL_VertexAttribsState(uint32_t stateBits)
@@ -2549,7 +2660,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_POSITION);
 		}
 	}
-
 	if (diff & ATTR_TEXCOORD)
 	{
 		if (stateBits & ATTR_TEXCOORD)
@@ -2563,7 +2673,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD0);
 		}
 	}
-
 	if (diff & ATTR_LIGHTCOORD)
 	{
 		if (stateBits & ATTR_LIGHTCOORD)
@@ -2577,7 +2686,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TEXCOORD1);
 		}
 	}
-
 	if (diff & ATTR_TANGENT)
 	{
 		if (stateBits & ATTR_TANGENT)
@@ -2591,7 +2699,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TANGENT);
 		}
 	}
-
 	if (diff & ATTR_BINORMAL)
 	{
 		if (stateBits & ATTR_BINORMAL)
@@ -2605,7 +2712,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL);
 		}
 	}
-
 	if (diff & ATTR_NORMAL)
 	{
 		if (stateBits & ATTR_NORMAL)
@@ -2619,7 +2725,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_NORMAL);
 		}
 	}
-
 	if (diff & ATTR_COLOR)
 	{
 		if (stateBits & ATTR_COLOR)
@@ -2633,7 +2738,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		}
 	}
-
 	if (diff & ATTR_BONE_INDEXES)
 	{
 		if (stateBits & ATTR_BONE_INDEXES)
@@ -2647,7 +2751,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BONE_INDEXES);
 		}
 	}
-
 	if (diff & ATTR_BONE_WEIGHTS)
 	{
 		if (stateBits & ATTR_BONE_WEIGHTS)
@@ -2661,7 +2764,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BONE_WEIGHTS);
 		}
 	}
-
 	if (diff & ATTR_POSITION2)
 	{
 		if (stateBits & ATTR_POSITION2)
@@ -2675,7 +2777,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_POSITION2);
 		}
 	}
-
 	if (diff & ATTR_TANGENT2)
 	{
 		if (stateBits & ATTR_TANGENT2)
@@ -2689,7 +2790,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_TANGENT2);
 		}
 	}
-
 	if (diff & ATTR_BINORMAL2)
 	{
 		if (stateBits & ATTR_BINORMAL2)
@@ -2703,7 +2803,6 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_BINORMAL2);
 		}
 	}
-
 	if (diff & ATTR_NORMAL2)
 	{
 		if (stateBits & ATTR_NORMAL2)
@@ -2725,7 +2824,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 {
 	if (!glState.currentVBO)
 	{
-		ri.Error(ERR_FATAL, "GL_VertexAttribPointers: no VBO bound");
+		Ren_Fatal("GL_VertexAttribPointers: no VBO bound");
 		return;
 	}
 

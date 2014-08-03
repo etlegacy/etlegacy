@@ -742,13 +742,13 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 	if (ent->currentState.teamNum < 4)
 	{
 		mult = 0.004f * (cg.time - ent->currentState.effect1Time) / 30000.0f;
-		trap_R_AddLightToScene(origin, 320, fabs(sin((cg.time - ent->currentState.effect1Time) * mult)), 1.0, 0.0, 0.0, 0, REF_FORCE_DLIGHT);
+		trap_R_AddLightToScene(origin, 320, fabs(sin((cg.time - ent->currentState.effect1Time) * mult)), 1.0f, 0, 0, 0, REF_FORCE_DLIGHT);
 	}
 	else
 	{
 		mult = 1 - ((cg.time - ent->trailTime) / 15500.0f);
 		//trap_R_AddLightToScene( origin, 10 + 300 * mult, 1.f, 1.f, 0, REF_FORCE_DLIGHT);
-		trap_R_AddLightToScene(origin, 320, mult, 1.0, 1.0, 0, 0, REF_FORCE_DLIGHT);
+		trap_R_AddLightToScene(origin, 320, mult, 1.0f, 1.0f, 0, 0, REF_FORCE_DLIGHT);
 	}
 }
 
@@ -799,7 +799,7 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 		                                     ent,    // trail fix
 		                                     cgs.media.smokeTrailShader,
 		                                     origin,
-		                                     1000, 0.3, 2, 20);
+		                                     1000, 0.3f, 2, 20);
 		ent->lastTrailTime = cg.time;
 	}
 }
@@ -2509,7 +2509,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			trap_R_AddRefEntityToScene(&flash);
 
 			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128, 1.0, 0.6, 0.23, 0, 0);
+			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128, 1.0f, 0.6f, 0.23f, 0, 0);
 		}
 		return;
 	}
@@ -5324,7 +5324,7 @@ void CG_MG42EFX(centity_t *cent)
 
 			// add dynamic light
 			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128,
-			                       1.0, 0.6, 0.23, 0, 0);
+			                       1.0f, 0.6f, 0.23f, 0, 0);
 			return;
 		}
 	}
@@ -5349,7 +5349,7 @@ void CG_MortarEFX(centity_t *cent)
 		refEntity_t flash;
 
 		// light
-		trap_R_AddLightToScene(cent->currentState.origin, 256, 0.75 + 8.0 / (rand() & 31), 1.0, 1.0, 1.0, 0, 0);
+		trap_R_AddLightToScene(cent->currentState.origin, 256, 0.75 + 8.0 / (rand() & 31), 1.0f, 1.0f, 1.0f, 0, 0);
 
 		// muzzle flash
 		memset(&flash, 0, sizeof(flash));

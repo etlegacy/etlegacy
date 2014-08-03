@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -30,6 +30,9 @@
  *
  * @file keys.h
  */
+
+#ifndef INCLUDE_KEYS_H
+#define INCLUDE_KEYS_H
 
 #include "../ui/keycodes.h"
 
@@ -69,3 +72,5 @@ qboolean Key_GetOverstrikeMode(void);
 void Key_SetOverstrikeMode(qboolean state);
 void Key_ClearStates(void);
 int Key_GetKey(const char *binding);
+
+#endif // #ifndef INCLUDE_CLIENT_H

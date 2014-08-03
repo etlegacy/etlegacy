@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -31,7 +31,6 @@
  * @file sdl_gamma.c
  */
 
-
 #ifdef FEATURE_RENDERER2
 #include "../renderer2/tr_local.h"
 #else
@@ -40,13 +39,7 @@
 
 #include "../qcommon/qcommon.h"
 
-#ifdef BUNDLED_SDL
-#    include "SDL.h"
-//#    include "SDL_opengl.h"
-#else
-#    include <SDL2/SDL.h>
-//#    include <SDL2/SDL_opengl.h>
-#endif
+#include "sdl_defs.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -67,7 +60,7 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 	if (!glConfig.deviceSupportsGamma || r_ignorehwgamma->integer > 0)
 	{
-		ri.Printf(PRINT_WARNING, "Device doesn't support gamma or r_ignorehwgamma is set.\n");
+		Ren_Warning("Device doesn't support gamma or r_ignorehwgamma is set.\n");
 		return;
 	}
 
@@ -88,7 +81,7 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 		GetVersionEx(&vinfo);
 		if (vinfo.dwMajorVersion >= 5 && vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
 		{
-			ri.Printf(PRINT_DEVELOPER, "performing gamma clamp.\n");
+			Ren_Developer("performing gamma clamp.\n");
 			for (j = 0 ; j < 3 ; j++)
 			{
 				for (i = 0 ; i < 128 ; i++)

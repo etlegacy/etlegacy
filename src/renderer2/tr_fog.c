@@ -34,7 +34,6 @@
 
 #include "tr_local.h"
 
-
 static qboolean fogIsOn = qfalse;
 
 void RB_Fog(glfog_t *curfog)
@@ -106,7 +105,7 @@ void RB_Fog(glfog_t *curfog)
 //  }
 
 	if (r_zfar->value)
-	{                           // (SA) allow override for helping level designers test fog distances
+	{                           // allow override for helping level designers test fog distances
 //      if(setfog.end != r_zfar->value || !setfog.registered) {
 
 		glFogf(GL_FOG_END, r_zfar->value);
@@ -137,7 +136,6 @@ void RB_Fog(glfog_t *curfog)
 
 #endif
 }
-
 
 void RB_FogOff()
 {
@@ -220,8 +218,8 @@ RE_SetFog
 */
 void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density)
 {
-	ri.Printf(PRINT_DEVELOPER, "RE_SetFog( fogvar = %i, var1 = %i, var2 = %i, r = %f, g = %f, b = %f, density = %f )\n",
-	          fogvar, var1, var2, r, g, b, density);
+	Ren_Developer("RE_SetFog( fogvar = %i, var1 = %i, var2 = %i, r = %f, g = %f, b = %f, density = %f )\n",
+	              fogvar, var1, var2, r, g, b, density);
 
 	if (fogvar != FOG_CMD_SWITCHFOG)
 	{
@@ -296,7 +294,7 @@ void R_SetFrameFog()
 		return;
 	}
 
-	// Arnout: new style global fog transitions
+	// new style global fog transitions
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
@@ -353,12 +351,12 @@ void R_SetFrameFog()
 	{
 		if (!tr.glfogsettings[FOG_TARGET].registered)
 		{
-			ri.Printf(PRINT_ALL, "no fog - calc zFar: %0.1f\n", tr.viewParms.zFar);
+			Ren_Print("no fog - calc zFar: %0.1f\n", tr.viewParms.zFar);
 			return;
 		}
 	}
 
-	// DHM - Nerve :: If fog is not valid, don't use it
+	// If fog is not valid, don't use it
 	if (!tr.glfogsettings[FOG_TARGET].registered)
 	{
 		return;
@@ -386,7 +384,6 @@ void R_SetFrameFog()
 		// transitioning like fog modes
 		else
 		{
-
 			fadeTime = tr.glfogsettings[FOG_TARGET].finishTime - tr.glfogsettings[FOG_TARGET].startTime;
 			if (fadeTime <= 0)
 			{
@@ -442,19 +439,19 @@ void R_SetFrameFog()
 			tr.viewParms.zFar = tr.glfogsettings[FOG_CURRENT].end;
 		}
 	}
-//  else
-//      tr.glfogsettings[FOG_CURRENT].end = 5;
+	//else
+	//tr.glfogsettings[FOG_CURRENT].end = 5;
 
 	if (r_speeds->integer == RSPEEDS_FOG)
 	{
 		if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 		{
-			ri.Printf(PRINT_ALL, "farclip fog - den: %0.1f  calc zFar: %0.1f  fog zfar: %0.1f\n",
+			Ren_Print("farclip fog - den: %0.1f  calc zFar: %0.1f  fog zfar: %0.1f\n",
 			          tr.glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, tr.glfogsettings[FOG_CURRENT].end);
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "density fog - den: %0.4f  calc zFar: %0.1f  fog zFar: %0.1f\n",
+			Ren_Print("density fog - den: %0.4f  calc zFar: %0.1f  fog zFar: %0.1f\n",
 			          tr.glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, tr.glfogsettings[FOG_CURRENT].end);
 		}
 	}
@@ -472,8 +469,8 @@ RE_SetGlobalFog
 */
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque)
 {
-	ri.Printf(PRINT_DEVELOPER, "RE_SetGlobalFog( restore = %i, duration = %i, r = %f, g = %f, b = %f, depthForOpaque = %f )\n",
-	          restore, duration, r, g, b, depthForOpaque);
+	Ren_Developer("RE_SetGlobalFog( restore = %i, duration = %i, r = %f, g = %f, b = %f, depthForOpaque = %f )\n",
+	              restore, duration, r, g, b, depthForOpaque);
 
 	if (restore)
 	{

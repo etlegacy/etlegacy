@@ -156,7 +156,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// dummy check
 	if (numPoints != 1 && numPoints != 3 && numPoints != 4)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: Invalid number of decal points (%d)\n", numPoints);
+		Ren_Warning("WARNING: Invalid number of decal points (%d)\n", numPoints);
 		return;
 	}
 
@@ -538,7 +538,6 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	decal_t    *decal, *oldest;
 	polyVert_t *vert;
 
-
 	// make a plane from the winding
 	if (!PlaneFromPoints(plane, points[0][0], points[0][1], points[0][2]))
 	{
@@ -734,12 +733,9 @@ projects a decal onto a grid (patch) surface
 static void ProjectDecalOntoGrid(decalProjector_t *dp, bspSurface_t *surf, bspModel_t *bmodel)
 {
 	int           x, y;
-	srfGridMesh_t *srf;
+	srfGridMesh_t *srf = (srfGridMesh_t *) surf->data; // get surface
 	srfVert_t     *dv;
 	vec3_t        points[2][MAX_DECAL_VERTS];
-
-	// get surface
-	srf = (srfGridMesh_t *) surf->data;
 
 	// walk mesh rows
 	for (y = 0; y < (srf->height - 1); y++)
@@ -833,11 +829,9 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspMode
 	case SF_TRIANGLES:
 		ProjectDecalOntoTriangles(dp, surf, bmodel);
 		break;
-
 	case SF_GRID:
 		ProjectDecalOntoGrid(dp, surf, bmodel);
 		break;
-
 	default:
 		break;
 	}
@@ -915,14 +909,11 @@ adds decal surfaces to the scene
 */
 void R_AddDecalSurfaces(bspModel_t *bmodel)
 {
-	int     i, count;
-	decal_t *decal;
-
-	// get decal count
-	count = (bmodel == tr.world->models ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+	int     i, count = (bmodel == tr.world->models ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS); // get decal count
+	decal_t *decal = bmodel->decals;
 
 	// iterate through decals
-	decal = bmodel->decals;
+
 	for (i = 0; i < count; i++, decal++)
 	{
 		R_AddDecalSurface(decal);

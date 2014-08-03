@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -32,8 +32,8 @@
  * @brief game module information visible to server (server.h includes this)
  */
 
-#ifndef __G_PUBLIC_H__
-#define __G_PUBLIC_H__
+#ifndef INCLUDE_G_PUBLIC_H
+#define INCLUDE_G_PUBLIC_H
 
 #define GAME_API_VERSION    8
 
@@ -321,4 +321,4 @@ typedef enum
 
 } gameExport_t;
 
-#endif
+#endif // #ifndef INCLUDE_G_PUBLIC_H

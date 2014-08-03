@@ -839,14 +839,14 @@ int PC_Directive_include(source_t *source)
 		script = LoadScriptFile(token.string);
 		if (!script)
 		{
-			strcpy(path, source->includepath);
-			strcat(path, token.string);
+			Q_strncpyz(path, source->includepath, sizeof(path));
+			Q_strcat(path, sizeof(path), token.string);
 			script = LoadScriptFile(path);
 		}
 	}
 	else if (token.type == TT_PUNCTUATION && *token.string == '<')
 	{
-		strcpy(path, source->includepath);
+		Q_strncpyz(path, source->includepath, sizeof(path));
 		while (PC_ReadSourceToken(source, &token))
 		{
 			if (token.linescrossed > 0)
@@ -858,7 +858,7 @@ int PC_Directive_include(source_t *source)
 			{
 				break;
 			}
-			strncat(path, token.string, sizeof(path) - strlen(path) - 1);
+			Q_strcat(path, sizeof(path), token.string);
 		}
 		if (*token.string != '>')
 		{
@@ -2761,8 +2761,6 @@ int PC_ExpectTokenString(source_t *source, char *string)
 
 int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 {
-	char str[MAX_TOKEN];
-
 	if (!PC_ReadToken(source, token))
 	{
 		SourceError(source, "couldn't read expected token");
@@ -2771,6 +2769,8 @@ int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 
 	if (token->type != type)
 	{
+		char str[MAX_TOKEN];
+
 		strcpy(str, "");
 		if (type == TT_STRING)
 		{
@@ -2799,6 +2799,9 @@ int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 	{
 		if ((token->subtype & subtype) != subtype)
 		{
+			char str[MAX_TOKEN];
+
+			strcpy(str, "");
 			if (subtype & TT_DECIMAL)
 			{
 				strcpy(str, "decimal");
@@ -2817,19 +2820,19 @@ int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 			}
 			if (subtype & TT_LONG)
 			{
-				strcat(str, " long");
+				strcat(str, "long");
 			}
 			if (subtype & TT_UNSIGNED)
 			{
-				strcat(str, " unsigned");
+				strcat(str, "unsigned");
 			}
 			if (subtype & TT_FLOAT)
 			{
-				strcat(str, " float");
+				strcat(str, "float");
 			}
 			if (subtype & TT_INTEGER)
 			{
-				strcat(str, " integer");
+				strcat(str, "integer");
 			}
 			SourceError(source, "expected %s, found %s", str, token->string);
 			return qfalse;
@@ -2923,10 +2926,14 @@ void PC_UnreadToken(source_t *source, token_t *token)
 
 void PC_SetIncludePath(source_t *source, char *path)
 {
-	strncpy(source->includepath, path, _MAX_PATH);
+	size_t len;
+
+	Q_strncpyz(source->includepath, path, _MAX_PATH - 1);
+
+	len = strlen(source->includepath);
 	// add trailing path seperator
-	if (source->includepath[strlen(source->includepath) - 1] != '\\' &&
-	    source->includepath[strlen(source->includepath) - 1] != '/')
+	if (len > 0 && source->includepath[len - 1] != '\\' &&
+	    source->includepath[len - 1] != '/')
 	{
 		strcat(source->includepath, PATHSEPERATOR_STR);
 	}

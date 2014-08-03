@@ -2054,7 +2054,6 @@ void WolfReviveBbox(gentity_t *self)
 void ClientEndFrame(gentity_t *ent)
 {
 	int i;
-	int frames;
 
 	// don't count skulled player time
 	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
@@ -2084,15 +2083,15 @@ void ClientEndFrame(gentity_t *ent)
 	for (i = 0 ; i < PW_NUM_POWERUPS ; i++)
 	{
 		// FIXME: do a switch
-		if (i == PW_FIRE ||                 // these aren't dependant on level.time
-		    i == PW_ELECTRIC ||
-		    i == PW_BREATHER ||
-		    i == PW_NOFATIGUE ||
+		// these aren't dependant on level.time
+		if (i == PW_NOFATIGUE ||
 		    ent->client->ps.powerups[i] == 0
 		    || i == PW_OPS_CLASS_1
 		    || i == PW_OPS_CLASS_2
 		    || i == PW_OPS_CLASS_3
 		    || i == PW_OPS_DISGUISED
+		    //|| i == PW_REDFLAG // FIXME - not dependant to level time?
+		    //|| i == PW_BLUEFLAG
 		    )
 		{
 			continue;
@@ -2104,7 +2103,6 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			ent->client->ps.powerups[i] += level.time - level.previousTime;
 		}
-
 
 		if (ent->client->ps.powerups[i] < level.time)
 		{
@@ -2206,9 +2204,9 @@ void ClientEndFrame(gentity_t *ent)
 	// run entity scripting
 	G_Script_ScriptRun(ent);
 
-	// zinx etpro antiwarp
-	frames = level.framenum - ent->client->lastUpdateFrame - 1;
-	if (g_maxWarp.integer && frames > g_maxWarp.integer && G_DoAntiwarp(ent))
+	// etpro antiwarp
+	// frames = level.framenum - ent->client->lastUpdateFrame - 1)
+	if (g_maxWarp.integer && (level.framenum - ent->client->lastUpdateFrame - 1) > g_maxWarp.integer && G_DoAntiwarp(ent))
 	{
 		ent->client->warping = qtrue;
 	}

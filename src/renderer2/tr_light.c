@@ -127,7 +127,6 @@ void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 	}
 	else
 	{
-
 		// set the light bits in all the surfaces
 		for (i = 0; i < bspModel->numSurfaces; i++)
 		{
@@ -162,16 +161,11 @@ void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 	}
 }
 
-
 /*
 =============================================================================
-
 LIGHT SAMPLING
-
 =============================================================================
 */
-
-
 
 /*
 =================
@@ -293,7 +287,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 		ent->ambientLight[2] = r_forceAmbient->value;
 	}
 
-//----(SA)  added
 	// cheats?  check for single player?
 	if (tr.lightGridMulDirected)
 	{
@@ -303,9 +296,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	{
 		VectorScale(ent->ambientLight, tr.lightGridMulAmbient, ent->ambientLight);
 	}
-//----(SA)  end
 }
-
 
 /* unused
 ===============
@@ -341,7 +332,7 @@ static void LogLight(trRefEntity_t *ent)
         max2 = ent->directedLight[2];
     }
 
-    ri.Printf(PRINT_ALL, "amb:%i  dir:%i\n", max1, max2);
+    Ren_Print("amb:%i  dir:%i\n", max1, max2);
 }
 */
 
@@ -421,9 +412,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 			VectorCopy(tr.sunDirection, ent->lightDir);
 		}
 #else
-		//% ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
-		//% ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
-		//% VectorCopy( tr.sunDirection, ent->lightDir );
+		//ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
+		//ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
+		//VectorCopy( tr.sunDirection, ent->lightDir );
 		ent->ambientLight[0] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[1] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[2] = tr.identityLight * (96.0f / 255.0f);
@@ -470,16 +461,16 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
 	}
 
-	// Tr3B: keep it in world space
+	// keep it in world space
 
 	// transform the direction to local space
-	//% d = VectorLength(ent->directedLight);
-	//% VectorScale(ent->lightDir, d, lightDir);
-	//% VectorNormalize(lightDir);
+	//d = VectorLength(ent->directedLight);
+	//VectorScale(ent->lightDir, d, lightDir);
+	//VectorNormalize(lightDir);
 
-	//% ent->lightDir[0] = DotProduct(lightDir, ent->e.axis[0]);
-	//% ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
-	//%	ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
+	//ent->lightDir[0] = DotProduct(lightDir, ent->e.axis[0]);
+	//ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
+	//ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
 }
 
 /*
@@ -491,7 +482,7 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 {
 	trRefEntity_t ent;
 
-	// bk010103 - this segfaults with -nolight maps
+	// this segfaults with -nolight maps
 	if (tr.world->lightGridData == NULL)
 	{
 		return qfalse;
@@ -507,11 +498,10 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 	return qtrue;
 }
 
-
 /*
 =================
 R_SetupLightOrigin
-Tr3B - needs finished transformMatrix
+- needs finished transformMatrix
 =================
 */
 void R_SetupLightOrigin(trRefLight_t *light)
@@ -569,7 +559,6 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 		light->localBounds[1][2] = light->l.radius[2];
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    j;
@@ -626,7 +615,6 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 		}
 		break;
 	}
-
 	default:
 		break;
 	}
@@ -637,7 +625,7 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 /*
 =================
 R_SetupLightWorldBounds
-Tr3B - needs finished transformMatrix
+- needs finished transformMatrix
 =================
 */
 void R_SetupLightWorldBounds(trRefLight_t *light)
@@ -676,7 +664,6 @@ void R_SetupLightView(trRefLight_t *light)
 		MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
 		break;
 	}
-
 	/*
 	case RL_PROJ:
 	{
@@ -690,9 +677,8 @@ void R_SetupLightView(trRefLight_t *light)
 	    break;
 	}
 	*/
-
 	default:
-		ri.Error(ERR_DROP, "R_SetupLightView: Bad rlType");
+		Ren_Drop("R_SetupLightView: Bad rlType");
 		break;
 	}
 }
@@ -757,7 +743,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		}
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    i;
@@ -783,7 +768,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		}
 		break;
 	}
-
 	default:
 		break;
 	}
@@ -836,7 +820,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 			light->frustumIndexes = tess.numIndexes;
 			break;
 		}
-
 		case RL_PROJ:
 		{
 			vec3_t farCorners[4];
@@ -886,7 +869,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 				Vector4Set(quadVerts[1], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1);
 				Vector4Set(quadVerts[0], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
 				Tess_AddQuadStamp2(quadVerts, colorGreen);
-
 			}
 			else
 			{
@@ -946,7 +928,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 			light->frustumIndexes = tess.numIndexes;
 			break;
 		}
-
 		default:
 			break;
 		}
@@ -956,7 +937,6 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		tess.numVertexes         = 0;
 	}
 }
-
 
 /*
 =================
@@ -974,7 +954,6 @@ void R_SetupLightProjection(trRefLight_t *light)
 		MatrixSetupScale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1], 1.0 / light->l.radius[2]);
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    i;
@@ -1084,15 +1063,15 @@ void R_SetupLightProjection(trRefLight_t *light)
 		frustum[FRUSTUM_FAR][3] = -lightProject[3][3] - 1.0f;
 
 #if 0
-		ri.Printf(PRINT_ALL, "light_target: (%5.3f, %5.3f, %5.3f)\n", light->l.projTarget[0], light->l.projTarget[1], light->l.projTarget[2]);
-		ri.Printf(PRINT_ALL, "light_right: (%5.3f, %5.3f, %5.3f)\n", light->l.projRight[0], light->l.projRight[1], light->l.projRight[2]);
-		ri.Printf(PRINT_ALL, "light_up: (%5.3f, %5.3f, %5.3f)\n", light->l.projUp[0], light->l.projUp[1], light->l.projUp[2]);
-		ri.Printf(PRINT_ALL, "light_start: (%5.3f, %5.3f, %5.3f)\n", light->l.projStart[0], light->l.projStart[1], light->l.projStart[2]);
-		ri.Printf(PRINT_ALL, "light_end: (%5.3f, %5.3f, %5.3f)\n", light->l.projEnd[0], light->l.projEnd[1], light->l.projEnd[2]);
+		Ren_Print("light_target: (%5.3f, %5.3f, %5.3f)\n", light->l.projTarget[0], light->l.projTarget[1], light->l.projTarget[2]);
+		Ren_Print("light_right: (%5.3f, %5.3f, %5.3f)\n", light->l.projRight[0], light->l.projRight[1], light->l.projRight[2]);
+		Ren_Print("light_up: (%5.3f, %5.3f, %5.3f)\n", light->l.projUp[0], light->l.projUp[1], light->l.projUp[2]);
+		Ren_Print("light_start: (%5.3f, %5.3f, %5.3f)\n", light->l.projStart[0], light->l.projStart[1], light->l.projStart[2]);
+		Ren_Print("light_end: (%5.3f, %5.3f, %5.3f)\n", light->l.projEnd[0], light->l.projEnd[1], light->l.projEnd[2]);
 
-		ri.Printf(PRINT_ALL, "unnormalized frustum:\n");
+		Ren_Print("unnormalized frustum:\n");
 		for (i = 0; i < 6; i++)
-			ri.Printf(PRINT_ALL, "(%5.6f, %5.6f, %5.6f, %5.6f)\n", frustum[i][0], frustum[i][1], frustum[i][2], frustum[i][3]);
+			Ren_Print("(%5.6f, %5.6f, %5.6f, %5.6f)\n", frustum[i][0], frustum[i][1], frustum[i][2], frustum[i][3]);
 #endif
 
 		// calculate the new projection matrix from the frustum planes
@@ -1113,15 +1092,15 @@ void R_SetupLightProjection(trRefLight_t *light)
 		}
 
 #if 0
-		ri.Printf(PRINT_ALL, "normalized frustum:\n");
+		Ren_Print("normalized frustum:\n");
 		for (i = 0; i < 6; i++)
-			ri.Printf(PRINT_ALL, "(%5.3f, %5.3f, %5.3f, %5.3f)\n", light->frustum[i].normal[0], frustum[i][1], frustum[i][2], frustum[i][3]);
+			Ren_Print("(%5.3f, %5.3f, %5.3f, %5.3f)\n", light->frustum[i].normal[0], frustum[i][1], frustum[i][2], frustum[i][3]);
 #endif
 		break;
 	}
 
 	default:
-		ri.Error(ERR_DROP, "R_SetupLightProjection: Bad rlType");
+		Ren_Drop("R_SetupLightProjection: Bad rlType");
 		break;
 	}
 }
@@ -1176,11 +1155,9 @@ qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shad
 	case IA_SHADOWONLY:
 		light->numShadowOnlyInteractions++;
 		break;
-
 	case IA_LIGHTONLY:
 		light->numLightOnlyInteractions++;
 		break;
-
 	default:
 		break;
 	}
@@ -1317,7 +1294,6 @@ void R_SortInteractions(trRefLight_t *light)
 	}
 }
 
-
 /*
 =================
 R_IntersectRayPlane
@@ -1333,7 +1309,6 @@ static void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plan
 	VectorScale(v, sect, v);
 	VectorAdd(v1, v, res);
 }
-
 
 /*
 =================
@@ -1429,7 +1404,7 @@ static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t l
 R_SetLightScissor
 Recturns the screen space rectangle taken by the box.
     (Clips the box to the near plane to have correct results even if the box intersects the near plane)
-Tr3B - recoded from Tenebrae2
+- recoded from Tenebrae2
 =================
 */
 void R_SetupLightScissor(trRefLight_t *light)
@@ -1528,7 +1503,6 @@ void R_SetupLightScissor(trRefLight_t *light)
 		R_AddEdgeToLightScissor(light, v1, v2);
 		break;
 	}
-
 	case RL_PROJ:
 	{
 		int    j;
@@ -1581,11 +1555,9 @@ void R_SetupLightScissor(trRefLight_t *light)
 		}
 		break;
 	}
-
 	default:
 		break;
 	}
-
 
 	Q_clamp(light->scissor.coords[0], tr.viewParms.viewportX, tr.viewParms.viewportX + tr.viewParms.viewportWidth);
 	Q_clamp(light->scissor.coords[2], tr.viewParms.viewportX, tr.viewParms.viewportX + tr.viewParms.viewportWidth);
@@ -1593,7 +1565,6 @@ void R_SetupLightScissor(trRefLight_t *light)
 	Q_clamp(light->scissor.coords[1], tr.viewParms.viewportY, tr.viewParms.viewportY + tr.viewParms.viewportHeight);
 	Q_clamp(light->scissor.coords[3], tr.viewParms.viewportY, tr.viewParms.viewportY + tr.viewParms.viewportHeight);
 }
-
 
 /*
 =================
@@ -1722,37 +1693,31 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 			VectorSet(angles, 0, 0, 0);
 			break;
 		}
-
 		case 1:
 		{
 			VectorSet(angles, 0, 180, 0);
 			break;
 		}
-
 		case 2:
 		{
 			VectorSet(angles, 0, 90, 0);
 			break;
 		}
-
 		case 3:
 		{
 			VectorSet(angles, 0, 270, 0);
 			break;
 		}
-
 		case 4:
 		{
 			VectorSet(angles, -90, 0, 0);
 			break;
 		}
-
 		case 5:
 		{
 			VectorSet(angles, 90, 0, 0);
 			break;
 		}
-
 		default:
 		{
 			// shut up compiler
@@ -1844,7 +1809,6 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 }
 // *INDENT-ON*
 
-
 /*
 =================
 R_SetupLightLOD
@@ -1923,7 +1887,6 @@ void R_SetupLightLOD(trRefLight_t *light)
 	light->shadowLOD = lod;
 }
 
-
 /*
 =================
 R_SetupLightShader
@@ -1941,7 +1904,6 @@ void R_SetupLightShader(trRefLight_t *light)
 			case RL_OMNI:
 				light->shader = tr.defaultPointLightShader;
 				break;
-
 			case RL_PROJ:
 				light->shader = tr.defaultProjectedLightShader;
 				break;
@@ -1955,7 +1917,6 @@ void R_SetupLightShader(trRefLight_t *light)
 			case RL_OMNI:
 				light->shader = tr.defaultDynamicLightShader;
 				break;
-
 			case RL_PROJ:
 				light->shader = tr.defaultProjectedLightShader;
 				break;

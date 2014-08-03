@@ -8,6 +8,8 @@ env:
   native:
     - BUNDLED_LIBS=0
     - CROSS_COMPILE32=0
+    - FEATURE_RENDERER2=1
+    - RENDERER_DYNAMIC=1
 
 before_install:
   - sudo add-apt-repository -y ppa:zoogie/sdl2-snapshots

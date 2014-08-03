@@ -31,8 +31,8 @@
  * @file ui_public.h
  */
 
-#ifndef __UI_PUBLIC_H__
-#define __UI_PUBLIC_H__
+#ifndef INCLUDE_UI_PUBLIC_H
+#define INCLUDE_UI_PUBLIC_H
 
 #define UI_API_VERSION  4
 
@@ -229,4 +229,4 @@ typedef enum
 
 } uiExport_t;
 
-#endif
+#endif // #ifndef INCLUDE_UI_PUBLIC_H

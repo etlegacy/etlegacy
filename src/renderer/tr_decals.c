@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -152,7 +152,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// dummy check
 	if (numPoints != 1 && numPoints != 3 && numPoints != 4)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: Invalid number of decal points (%d)\n", numPoints);
+		Ren_Warning("WARNING: Invalid number of decal points (%d)\n", numPoints);
 		return;
 	}
 

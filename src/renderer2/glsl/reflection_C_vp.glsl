@@ -15,7 +15,7 @@ uniform mat4 u_ModelViewProjectionMatrix;
 varying vec3 var_Position;
 varying vec3 var_Normal;
 
-void    main()
+void main()
 {
 #if defined(r_VertexSkinning)
 	if (bool(u_VertexSkinning))

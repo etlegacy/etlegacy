@@ -1010,7 +1010,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		}
 	}
 
-	G_BurnMeGood(self, body);
+	G_BurnMeGood(self, body, self);
 }
 
 void G_FlameDamage(gentity_t *self, gentity_t *ignoreent)
