@@ -228,6 +228,30 @@ static void GLimp_DetectAvailableModes(void)
 	}
 }
 
+qboolean GL_CheckForExtension(const char *ext)
+{
+#ifdef FEATURE_RENDERER2
+	int i = 0, exts = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
+	for (i = 0; i < exts; i++)
+	{
+		if(!Q_stricmp(ext, glGetStringi(GL_EXTENSIONS, i)))
+		{
+			return qtrue;
+		}
+	}
+	return qfalse;
+#else
+	const char *ptr = Q_stristr(glConfig.extensions_string, ext);
+	if (ptr == NULL)
+	{
+		return qfalse;
+	}
+	ptr += strlen(ext);
+	return ((*ptr == ' ') || (*ptr == '\0'));  // verify it's complete string.
+#endif
+}
+
 #ifdef FEATURE_RENDERER2
 static qboolean GLimp_InitOpenGL3xContext()
 {
@@ -296,19 +320,9 @@ static void GLimp_InitExtensions2(void)
 		}
 	}
 
-	// GL_ARB_depth_texture
-	if (GLEW_ARB_depth_texture)
-	{
-		Ren_Print("...found OpenGL extension - GL_ARB_depth_texture\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_depth_texture\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_depth_texture");
-	}
+	// GL_ARB_depth_texture in core
 
-	// GL_ARB_texture_cube_map
-	if (GLEW_ARB_texture_cube_map)
+	if (GL_CheckForExtension("GL_ARB_texture_cube_map"))
 	{
 		glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &glConfig2.maxCubeMapTextureSize);
 		Ren_Print("...found OpenGL extension - GL_ARB_texture_cube_map\n");
@@ -320,19 +334,9 @@ static void GLimp_InitExtensions2(void)
 	}
 	GL_CheckErrors();
 
-	// GL_ARB_vertex_program
-	if (GLEW_ARB_vertex_program)
-	{
-		Ren_Print("...found OpenGL extension - GL_ARB_vertex_program\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_vertex_program\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_program");
-	}
+	// GL_ARB_vertex_program duh
 
-	// GL_ARB_vertex_buffer_object
-	if (GLEW_ARB_vertex_buffer_object)
+	if (GL_CheckForExtension("GL_ARB_vertex_buffer_object"))
 	{
 		Ren_Print("...found OpenGL extension - GL_ARB_vertex_buffer_object\n");
 	}
@@ -345,7 +349,7 @@ static void GLimp_InitExtensions2(void)
 	// GL_ARB_occlusion_query
 	glConfig2.occlusionQueryAvailable = qfalse;
 	glConfig2.occlusionQueryBits      = 0;
-	if (GLEW_ARB_occlusion_query)
+	if (GL_CheckForExtension("GL_ARB_occlusion_query"))
 	{
 		if (r_ext_occlusion_query->value)
 		{
@@ -365,7 +369,7 @@ static void GLimp_InitExtensions2(void)
 	GL_CheckErrors();
 
 	// GL_ARB_shader_objects
-	if (GLEW_ARB_shader_objects)
+	if (GL_CheckForExtension("GL_ARB_shader_objects"))
 	{
 		Ren_Print("...found OpenGL extension - GL_ARB_shader_objects\n");
 	}
@@ -376,7 +380,7 @@ static void GLimp_InitExtensions2(void)
 	}
 
 	// GL_ARB_vertex_shader
-	if (GLEW_ARB_vertex_shader)
+	if (GL_CheckForExtension("GL_ARB_vertex_shader"))
 	{
 		int reservedComponents;
 
@@ -411,7 +415,7 @@ static void GLimp_InitExtensions2(void)
 	GL_CheckErrors();
 
 	// GL_ARB_fragment_shader
-	if (GLEW_ARB_fragment_shader)
+	if (GL_CheckForExtension("GL_ARB_fragment_shader"))
 	{
 		Ren_Print("...found OpenGL extension - GL_ARB_fragment_shader\n");
 	}
@@ -422,7 +426,7 @@ static void GLimp_InitExtensions2(void)
 	}
 
 	// GL_ARB_shading_language_100
-	if (GLEW_ARB_shading_language_100)
+	if (GL_CheckForExtension("GL_ARB_shading_language_100"))
 	{
 		Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig2.shadingLanguageVersion));
 		sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
@@ -437,7 +441,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_ARB_texture_non_power_of_two
 	glConfig2.textureNPOTAvailable = qfalse;
-	if (GLEW_ARB_texture_non_power_of_two)
+	if (GL_CheckForExtension("GL_ARB_texture_non_power_of_two"))
 	{
 		if (r_ext_texture_non_power_of_two->integer)
 		{
@@ -456,7 +460,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_ARB_draw_buffers
 	glConfig2.drawBuffersAvailable = qfalse;
-	if (GLEW_ARB_draw_buffers)
+	if (GL_CheckForExtension("GL_ARB_draw_buffers"))
 	{
 		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ARB, &glConfig2.maxDrawBuffers);
 
@@ -477,7 +481,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_ARB_half_float_pixel
 	glConfig2.textureHalfFloatAvailable = qfalse;
-	if (GLEW_ARB_half_float_pixel)
+	if (GL_CheckForExtension("GL_ARB_half_float_pixel"))
 	{
 		if (r_ext_half_float_pixel->integer)
 		{
@@ -496,7 +500,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_ARB_texture_float
 	glConfig2.textureFloatAvailable = qfalse;
-	if (GLEW_ARB_texture_float)
+	if (GL_CheckForExtension("GL_ARB_texture_float"))
 	{
 		if (r_ext_texture_float->integer)
 		{
@@ -515,7 +519,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_ARB_texture_compression
 	glConfig.textureCompression = TC_NONE;
-	if (GLEW_ARB_texture_compression)
+	if (GL_CheckForExtension("GL_ARB_texture_compression"))
 	{
 		if (r_ext_compressed_textures->integer)
 		{
@@ -534,7 +538,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_ARB_vertex_array_object
 	glConfig2.vertexArrayObjectAvailable = qfalse;
-	if (GLEW_ARB_vertex_array_object)
+	if (GL_CheckForExtension("GL_ARB_vertex_array_object"))
 	{
 		if (r_ext_vertex_array_object->integer)
 		{
@@ -552,7 +556,7 @@ static void GLimp_InitExtensions2(void)
 	}
 
 	// GL_EXT_texture_compression_s3tc
-	if (GLEW_EXT_texture_compression_s3tc)
+	if (GL_CheckForExtension("GL_EXT_texture_compression_s3tc"))
 	{
 		if (r_ext_compressed_textures->integer)
 		{
@@ -571,7 +575,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_EXT_texture3D
 	glConfig2.texture3DAvailable = qfalse;
-	if (GLEW_EXT_texture3D)
+	if (GL_CheckForExtension("GL_EXT_texture3D"))
 	{
 		//if(r_ext_texture3d->value)
 		{
@@ -592,7 +596,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_EXT_stencil_wrap
 	glConfig2.stencilWrapAvailable = qfalse;
-	if (GLEW_EXT_stencil_wrap)
+	if (GL_CheckForExtension("GL_EXT_stencil_wrap"))
 	{
 		if (r_ext_stencil_wrap->value)
 		{
@@ -611,7 +615,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_EXT_texture_filter_anisotropic
 	glConfig2.textureAnisotropyAvailable = qfalse;
-	if (GLEW_EXT_texture_filter_anisotropic)
+	if (GL_CheckForExtension("GL_EXT_texture_filter_anisotropic"))
 	{
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glConfig2.maxTextureAnisotropy);
 
@@ -632,7 +636,7 @@ static void GLimp_InitExtensions2(void)
 	GL_CheckErrors();
 
 	// GL_EXT_stencil_two_side
-	if (GLEW_EXT_stencil_two_side)
+	if (GL_CheckForExtension("GL_EXT_stencil_two_side"))
 	{
 		if (r_ext_stencil_two_side->value)
 		{
@@ -649,7 +653,7 @@ static void GLimp_InitExtensions2(void)
 	}
 
 	// GL_EXT_depth_bounds_test
-	if (GLEW_EXT_depth_bounds_test)
+	if (GL_CheckForExtension("GL_EXT_depth_bounds_test"))
 	{
 		if (r_ext_depth_bounds_test->value)
 		{
@@ -667,7 +671,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_EXT_framebuffer_object
 	glConfig2.framebufferObjectAvailable = qfalse;
-	if (GLEW_EXT_framebuffer_object)
+	if (GL_CheckForExtension("GL_EXT_framebuffer_object"))
 	{
 		glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE_EXT, &glConfig2.maxRenderbufferSize);
 		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &glConfig2.maxColorAttachments);
@@ -690,7 +694,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_EXT_packed_depth_stencil
 	glConfig2.framebufferPackedDepthStencilAvailable = qfalse;
-	if (GLEW_EXT_packed_depth_stencil && glConfig.driverType != GLDRV_MESA)
+	if (GL_CheckForExtension("GL_EXT_packed_depth_stencil") && glConfig.driverType != GLDRV_MESA)
 	{
 		if (r_ext_packed_depth_stencil->integer)
 		{
@@ -709,7 +713,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_EXT_framebuffer_blit
 	glConfig2.framebufferBlitAvailable = qfalse;
-	if (GLEW_EXT_framebuffer_blit)
+	if (GL_CheckForExtension("GL_EXT_framebuffer_blit"))
 	{
 		if (r_ext_framebuffer_blit->integer)
 		{
@@ -749,7 +753,7 @@ static void GLimp_InitExtensions2(void)
 	*/
 
 	// GL_ATI_separate_stencil
-	if (GLEW_ATI_separate_stencil)
+	if (GL_CheckForExtension("GL_ATI_separate_stencil"))
 	{
 		if (r_ext_separate_stencil->value)
 		{
@@ -767,7 +771,7 @@ static void GLimp_InitExtensions2(void)
 
 	// GL_SGIS_generate_mipmap
 	glConfig2.generateMipmapAvailable = qfalse;
-	if (GLEW_SGIS_generate_mipmap)
+	if (GL_CheckForExtension("GL_SGIS_generate_mipmap"))
 	{
 		if (r_ext_generate_mipmap->value)
 		{
@@ -785,7 +789,7 @@ static void GLimp_InitExtensions2(void)
 	}
 
 	// GL_GREMEDY_string_marker
-	if (GLEW_GREMEDY_string_marker)
+	if (GL_CheckForExtension("GL_GREMEDY_string_marker"))
 	{
 		Ren_Print("...found OpenGL extension - GL_GREMEDY_string_marker\n");
 	}
@@ -794,8 +798,7 @@ static void GLimp_InitExtensions2(void)
 		Ren_Print("...GL_GREMEDY_string_marker not found\n");
 	}
 
-#ifdef GLEW_ARB_get_program_binary
-	if (GLEW_ARB_get_program_binary)
+	if (GL_CheckForExtension("GL_ARB_get_program_binary"))
 	{
 		int formats = 0;
 
@@ -813,7 +816,6 @@ static void GLimp_InitExtensions2(void)
 		}
 	}
 	else
-#endif
 	{
 		Ren_Print("...GL_ARB_get_program_binary not found\n");
 		glConfig2.getProgramBinaryAvailable = qfalse;
@@ -1164,6 +1166,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 #endif
 
 		if ((SDL_glContext = SDL_GL_CreateContext(screen)) == NULL)
