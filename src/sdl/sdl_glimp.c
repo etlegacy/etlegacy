@@ -257,7 +257,53 @@ qboolean GL_CheckForExtension(const char *ext)
 #endif
 }
 
+
+#define MSG_ERR_OLD_VIDEO_DRIVER                                                       \
+    "\nET:Legacy with OpenGL 3.x renderer can not run on this "                             \
+    "machine since it is missing one or more required OpenGL "                             \
+    "extensions. Please update your video card drivers and try again.\n"
+
 #ifdef FEATURE_RENDERER2
+static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, qboolean required, cvar_t *var)
+{
+    qboolean result = qfalse;
+
+    if(coresince <= glConfig2.contextCombined || GL_CheckForExtension(ext))
+    {
+        if(var && var->integer)
+        {
+            result = qtrue;
+        }
+        else if(!var)
+        {
+            result = qtrue;
+        }
+    }
+
+    if(required && !result)
+    {
+        Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: %s\n", ext);
+    }
+
+    if(result)
+    {
+        Ren_Print("...found OpenGL extension - %s\n", ext);
+    }
+    else
+    {
+        if(var)
+        {
+            Ren_Print("...ignoring %s\n", ext);
+        }
+        else
+        {
+            Ren_Print("...%s not found\n", ext);
+        }
+    }
+
+    return result;
+}
+
 static qboolean GLimp_InitOpenGL3xContext()
 {
 	int GLmajor, GLminor;
@@ -265,6 +311,9 @@ static qboolean GLimp_InitOpenGL3xContext()
 	Ren_Print("Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
 
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
+    glConfig2.contextMajorVersion = GLmajor;
+    glConfig2.contextMinorVersion = GLminor;
+    glConfig2.contextCombined = (GLmajor * 100) + (GLminor * 10);
 
 	if (GLmajor < 2)
 	{
@@ -284,11 +333,6 @@ static qboolean GLimp_InitOpenGL3xContext()
 
 	return qtrue;
 }
-
-#define MSG_ERR_OLD_VIDEO_DRIVER                                                       \
-	"\nET:Legacy with OpenGL 3.x renderer can not run on this "                             \
-	"machine since it is missing one or more required OpenGL "                             \
-	"extensions. Please update your video card drivers and try again.\n"
 
 static void GLimp_InitExtensions2(void)
 {
