@@ -394,7 +394,7 @@ static void Render_generic(int stage)
 
 	GLSL_SetUniform_ColorModulate(gl_genericShader, rgbGen, alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
-	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+	SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
