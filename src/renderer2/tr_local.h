@@ -1625,7 +1625,6 @@ typedef struct
 	// and the other ones are for PSSM
 
 	vec3_t visBounds[2];
-	float skyFar;
 	float zNear;
 	float zFar;
 
@@ -3421,6 +3420,8 @@ void GL_CheckErrors_(const char *filename, int line);
 #define GLSTACK_PM glState.projectionMatrix[glState.stackIndex]
 //ModelViewMatrix
 #define GLSTACK_MVM glState.modelViewMatrix[glState.stackIndex]
+
+#define MODEL_MATRIX backEnd.orientation.transformMatrix
 
 void RB_SetViewMVPM(void);
 

@@ -765,7 +765,6 @@ void RB_DrawSun(void)
 	float    dist;
 	vec3_t   origin, vec1, vec2;
 	vec3_t   temp;
-	vec4_t	 color;
 	matrix_t transformMatrix;
 	matrix_t modelViewMatrix;
 
@@ -780,41 +779,13 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-	// FIXME: This is false on the c++ but should be isPortal check right?
-	SetMacrosAndSelectProgram(gl_genericShader,
-	                          USE_ALPHA_TESTING, qfalse,
-	                          USE_PORTAL_CLIPPING, qfalse,//backEnd.viewParms.isPortal,
-	                          USE_VERTEX_SKINNING, qfalse,
-	                          USE_VERTEX_ANIMATION, qfalse,
-	                          USE_DEFORM_VERTEXES, qfalse,
-	                          USE_TCGEN_ENVIRONMENT, qfalse);
-
-	// set uniforms
-	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
-
 	MatrixSetupTranslationByVec(transformMatrix, backEnd.viewParms.orientation.origin);
 	MatrixMultiplyMOD(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
 
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
-	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
-	if (backEnd.viewParms.isPortal)
-	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
-	}
-
-	dist = backEnd.viewParms.skyFar / 1.75; // div sqrt(3)
+	dist = backEnd.viewParms.zFar / 1.75; // div sqrt(3)
 	size = dist * 0.4;
 
 	VectorScale(tr.sunDirection, dist, origin);
@@ -826,96 +797,9 @@ void RB_DrawSun(void)
 
 	// farthest depth range
 	glDepthRange(1.0, 1.0);
-
-	VectorSet(color, 1.0f, 1.0f, 1.0f);
-
-#define NEW_SKY_CODE 1
-
-	// FIXME: use quad stamp
-#if NEW_SKY_CODE
-	tess.multiDrawPrimitives = 0;
-	tess.numVertexes         = 0;
-	tess.numIndexes          = 0;
-#else
 	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, -1, tess.fogNum);
-#endif
-
-#if 0
-	Tess_AddQuadStamp(origin, vec1, vec2, color);
-#else
-	VectorCopy(origin, temp);
-	VectorSubtract(temp, vec1, temp);
-	VectorSubtract(temp, vec2, temp);
-	VectorCopy(temp, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 0;
-	tess.texCoords[tess.numVertexes][1] = 0;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.numVertexes++;
-
-	VectorCopy(origin, temp);
-	VectorAdd(temp, vec1, temp);
-	VectorSubtract(temp, vec2, temp);
-	VectorCopy(temp, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 0;
-	tess.texCoords[tess.numVertexes][1] = 1;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.numVertexes++;
-
-	VectorCopy(origin, temp);
-	VectorAdd(temp, vec1, temp);
-	VectorAdd(temp, vec2, temp);
-	VectorCopy(temp, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 1;
-	tess.texCoords[tess.numVertexes][1] = 1;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.numVertexes++;
-
-	VectorCopy(origin, temp);
-	VectorSubtract(temp, vec1, temp);
-	VectorAdd(temp, vec2, temp);
-	VectorCopy(temp, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 1;
-	tess.texCoords[tess.numVertexes][1] = 0;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.numVertexes++;
-
-	tess.indexes[tess.numIndexes++] = 0;
-	tess.indexes[tess.numIndexes++] = 1;
-	tess.indexes[tess.numIndexes++] = 2;
-	tess.indexes[tess.numIndexes++] = 0;
-	tess.indexes[tess.numIndexes++] = 2;
-	tess.indexes[tess.numIndexes++] = 3;
-#endif
-
-#if NEW_SKY_CODE
-	Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR);
-	Tess_DrawElements();
-	tess.multiDrawPrimitives = 0;
-	tess.numVertexes = 0;
-	tess.numIndexes = 0;
-#else
+	Tess_AddQuadStamp(origin, vec1, vec2, colorWhite);
 	Tess_End();
-#endif
 
 	// back to normal depth range
 	glDepthRange(0.0, 1.0);
