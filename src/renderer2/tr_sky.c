@@ -827,7 +827,7 @@ void RB_DrawSun(void)
 	// farthest depth range
 	glDepthRange(1.0, 1.0);
 
-	VectorSet(color, 1, 1, 1, 1);
+	VectorSet(color, 1.0f, 1.0f, 1.0f);
 
 #define NEW_SKY_CODE 1
 
