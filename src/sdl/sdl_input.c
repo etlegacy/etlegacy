@@ -1114,13 +1114,14 @@ static void IN_InitKeyLockStates(void)
 void IN_Init(void)
 {
 	int appState;
-	screen = (SDL_Window *)re.MainWindow();
-
+	
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
 		Com_Error(ERR_FATAL, "IN_Init called before SDL_Init( SDL_INIT_VIDEO )");
 		return;
 	}
+
+	screen = (SDL_Window *)re.MainWindow();
 
 	Com_DPrintf("\n------- Input Initialization -------\n");
 
