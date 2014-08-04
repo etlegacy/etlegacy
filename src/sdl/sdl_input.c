@@ -40,9 +40,6 @@
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
-// TODO: SDL 2.0 window pointer from SDL_glimp.c
-extern SDL_Window *screen;
-
 #ifdef DISABLE_DINGY
 void IN_EnableDingFilter();
 #endif
@@ -63,6 +60,7 @@ static cvar_t       *in_joystickNo        = NULL;
 static cvar_t       *in_joystickUseAnalog = NULL;
 
 static int vidRestartTime = 0;
+SDL_Window *screen = NULL;
 
 #define CTRL(a) ((a) - 'a' + 1)
 
@@ -997,6 +995,12 @@ static void IN_ProcessEvents(void)
 			{
 				Cvar_SetValue("com_unfocused", 0);
 
+				//TODO: fix this maybe?
+				if (qtrue)//SDL_GetWindowFlags(screen) & SDL_WINDOW_MINIMIZED)
+				{
+					SDL_RestoreWindow(screen);
+				}
+
 #ifdef DISABLE_DINGY
 				IN_EnableDingFilter();
 #endif
@@ -1110,6 +1114,7 @@ static void IN_InitKeyLockStates(void)
 void IN_Init(void)
 {
 	int appState;
+	screen = (SDL_Window *)re.MainWindow();
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{

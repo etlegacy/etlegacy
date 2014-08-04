@@ -1876,6 +1876,7 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	// the RE_ functions are Renderer Entry points
 
 	re.Shutdown               = RE_Shutdown;
+	re.MainWindow			  = GLimp_MainWindow;
 	re.BeginRegistration      = RE_BeginRegistration;
 	re.RegisterModel          = RE_RegisterModel;
 	re.RegisterSkin           = RE_RegisterSkin;

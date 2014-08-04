@@ -34,9 +34,6 @@
 #include "client.h"
 #include "../sdl/sdl_defs.h"
 
-// @todo SDL 2.0 window pointer from sdl_glimp.c
-extern SDL_Window *screen;
-
 /*
 key up events are sent even if in console mode
 */
@@ -1476,7 +1473,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			if (keys[K_ALT].down)
 			{
 				Key_ClearStates();
-				SDL_MinimizeWindow(screen);
+				Cbuf_ExecuteText(EXEC_NOW, "minimize");
 				return;
 			}
 		}

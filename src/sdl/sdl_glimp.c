@@ -117,6 +117,11 @@ void GLimp_Shutdown(void)
 	Com_Memset(&glState, 0, sizeof(glState));
 }
 
+void *GLimp_MainWindow(void)
+{
+	return screen;
+}
+
 /**
  * @brief Minimize the game so that user is back at the desktop
  */

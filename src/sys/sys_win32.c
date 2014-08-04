@@ -915,7 +915,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 		Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
 	}
 
-	GLimp_Minimize();
+	Cbuf_ExecuteText(EXEC_NOW, "minimize");
 #endif
 }
 

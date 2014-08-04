@@ -46,6 +46,8 @@ typedef struct
 	// which will keep the screen from flashing to the desktop.
 	void (*Shutdown)(qboolean destroyWindow);
 
+	void *(*MainWindow)(void);
+
 	// All data that will be used in a level should be
 	// registered before rendering any frames to prevent disk hits,
 	// but they can still be registered at a later time
