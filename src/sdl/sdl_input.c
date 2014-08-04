@@ -60,7 +60,7 @@ static cvar_t       *in_joystickNo        = NULL;
 static cvar_t       *in_joystickUseAnalog = NULL;
 
 static int vidRestartTime = 0;
-SDL_Window *screen = NULL;
+SDL_Window *mainScreen = NULL;
 
 #define CTRL(a) ((a) - 'a' + 1)
 
@@ -387,7 +387,7 @@ static void IN_ActivateMouse(void)
 	if (!mouseActive)
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
-		SDL_SetWindowGrab(screen, SDL_TRUE);
+		SDL_SetWindowGrab(mainScreen, SDL_TRUE);
 
 		IN_GobbleMotionEvents();
 	}
@@ -399,11 +399,11 @@ static void IN_ActivateMouse(void)
 		{
 			if (in_nograb->integer)
 			{
-				SDL_SetWindowGrab(screen, SDL_FALSE);
+				SDL_SetWindowGrab(mainScreen, SDL_FALSE);
 			}
 			else
 			{
-				SDL_SetWindowGrab(screen, SDL_TRUE);
+				SDL_SetWindowGrab(mainScreen, SDL_TRUE);
 			}
 
 			in_nograb->modified = qfalse;
@@ -447,13 +447,13 @@ static void IN_DeactivateMouse(void)
 	{
 		IN_GobbleMotionEvents();
 
-		SDL_SetWindowGrab(screen, SDL_FALSE);
+		SDL_SetWindowGrab(mainScreen, SDL_FALSE);
 		SDL_SetRelativeMouseMode(SDL_FALSE);
 
 		// Don't warp the mouse unless the cursor is within the window
-		if (SDL_GetWindowFlags(screen) & SDL_WINDOW_MOUSE_FOCUS)
+		if (SDL_GetWindowFlags(mainScreen) & SDL_WINDOW_MOUSE_FOCUS)
 		{
-			SDL_WarpMouseInWindow(screen, cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2);
+			SDL_WarpMouseInWindow(mainScreen, cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2);
 		}
 
 		mouseActive = qfalse;
@@ -998,7 +998,7 @@ static void IN_ProcessEvents(void)
 				//TODO: fix this maybe?
 				if (qtrue)//SDL_GetWindowFlags(screen) & SDL_WINDOW_MINIMIZED)
 				{
-					SDL_RestoreWindow(screen);
+					SDL_RestoreWindow(mainScreen);
 				}
 
 #ifdef DISABLE_DINGY
@@ -1035,7 +1035,7 @@ void IN_Frame(void)
 		// Loading in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (!(SDL_GetWindowFlags(screen) & SDL_WINDOW_INPUT_FOCUS))
+	else if (!(SDL_GetWindowFlags(mainScreen) & SDL_WINDOW_INPUT_FOCUS))
 	{
 		// Window not got focus
 		IN_DeactivateMouse();
@@ -1078,7 +1078,7 @@ void IN_DisableDingFilter()
 	{
 		SDL_SysWMinfo wmInfo;
 		SDL_GetVersion(&wmInfo.version);
-		SDL_GetWindowWMInfo(screen, &wmInfo);
+		SDL_GetWindowWMInfo(mainScreen, &wmInfo);
 		SetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
 		LegacyWndProc = NULL;
 	}
@@ -1095,7 +1095,7 @@ void IN_EnableDingFilter()
 	{
 		SDL_SysWMinfo wmInfo;
 		SDL_GetVersion(&wmInfo.version);
-		SDL_GetWindowWMInfo(screen, &wmInfo);
+		SDL_GetWindowWMInfo(mainScreen, &wmInfo);
 		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC);
 		SetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
 	}
@@ -1121,7 +1121,7 @@ void IN_Init(void)
 		return;
 	}
 
-	screen = (SDL_Window *)re.MainWindow();
+	mainScreen = (SDL_Window *)re.MainWindow();
 
 	Com_DPrintf("\n------- Input Initialization -------\n");
 
@@ -1140,7 +1140,7 @@ void IN_Init(void)
 	mouseAvailable = (in_mouse->value != 0);
 	IN_DeactivateMouse();
 
-	appState = SDL_GetWindowFlags(screen);
+	appState = SDL_GetWindowFlags(mainScreen);
 	Cvar_SetValue("com_unfocused", !(appState & SDL_WINDOW_INPUT_FOCUS));
 	Cvar_SetValue("com_minimized", appState & SDL_WINDOW_MINIMIZED);
 
@@ -1168,7 +1168,7 @@ void IN_Shutdown(void)
 
 	//IN_ShutdownJoystick();
 
-	screen = NULL;
+	mainScreen = NULL;
 }
 
 void IN_Restart(void)
