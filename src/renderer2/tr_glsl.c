@@ -842,6 +842,8 @@ static void GLSL_BuildShaderExtraDef()
 	fbufHeightScale = Q_recip(( float ) glConfig.vidHeight);
 	BUFFEXT("#ifndef r_FBufScale\n#define r_FBufScale vec2(%f, %f)\n#endif\n", fbufWidthScale, fbufHeightScale);
 
+	BUFFEXT("#define ScreenWidth %i\n#define ScreenHeight %i\n", glConfig.vidWidth, glConfig.vidHeight);
+
 	if (glConfig2.textureNPOTAvailable)
 	{
 		npotWidthScale  = 1;
