@@ -765,6 +765,7 @@ void RB_DrawSun(void)
 	float    dist;
 	vec3_t   origin, vec1, vec2;
 	vec3_t   temp;
+	vec4_t	 color;
 	matrix_t transformMatrix;
 	matrix_t modelViewMatrix;
 
@@ -782,7 +783,7 @@ void RB_DrawSun(void)
 	// FIXME: This is false on the c++ but should be isPortal check right?
 	SetMacrosAndSelectProgram(gl_genericShader,
 	                          USE_ALPHA_TESTING, qfalse,
-	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_PORTAL_CLIPPING, qfalse,//backEnd.viewParms.isPortal,
 	                          USE_VERTEX_SKINNING, qfalse,
 	                          USE_VERTEX_ANIMATION, qfalse,
 	                          USE_DEFORM_VERTEXES, qfalse,
@@ -791,7 +792,7 @@ void RB_DrawSun(void)
 	// set uniforms
 	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 
-	MatrixSetupTranslation(transformMatrix, backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
+	MatrixSetupTranslationByVec(transformMatrix, backEnd.viewParms.orientation.origin);
 	MatrixMultiplyMOD(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
 
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -826,8 +827,22 @@ void RB_DrawSun(void)
 	// farthest depth range
 	glDepthRange(1.0, 1.0);
 
+	VectorSet(color, 1, 1, 1, 1);
+
+#define NEW_SKY_CODE 1
+
 	// FIXME: use quad stamp
+#if NEW_SKY_CODE
+	tess.multiDrawPrimitives = 0;
+	tess.numVertexes         = 0;
+	tess.numIndexes          = 0;
+#else
 	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, -1, tess.fogNum);
+#endif
+
+#if 0
+	Tess_AddQuadStamp(origin, vec1, vec2, color);
+#else
 	VectorCopy(origin, temp);
 	VectorSubtract(temp, vec1, temp);
 	VectorSubtract(temp, vec2, temp);
@@ -890,8 +905,17 @@ void RB_DrawSun(void)
 	tess.indexes[tess.numIndexes++] = 0;
 	tess.indexes[tess.numIndexes++] = 2;
 	tess.indexes[tess.numIndexes++] = 3;
+#endif
 
+#if NEW_SKY_CODE
+	Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR);
+	Tess_DrawElements();
+	tess.multiDrawPrimitives = 0;
+	tess.numVertexes = 0;
+	tess.numIndexes = 0;
+#else
 	Tess_End();
+#endif
 
 	// back to normal depth range
 	glDepthRange(0.0, 1.0);

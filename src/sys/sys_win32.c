@@ -848,6 +848,7 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 	}
 }
 
+#ifdef USE_WINDOWS_CONSOLE
 void Sys_Splash(qboolean show)
 {
 	if (show)
@@ -871,6 +872,7 @@ void Sys_Splash(qboolean show)
 		g_wv.hWndSplash = NULL;
 	}
 }
+#endif
 
 /*
 ==================

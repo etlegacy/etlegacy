@@ -166,6 +166,11 @@ void MatrixSetupTranslation(matrix_t m, vec_t x, vec_t y, vec_t z)
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
 }
 
+void MatrixSetupTranslationByVec(matrix_t m, vec3_t position)
+{
+	MatrixSetupTranslation(m, position[0], position[1], position[2]);
+}
+
 void MatrixSetupScale(matrix_t m, vec_t x, vec_t y, vec_t z)
 {
 	m[0] = x;      m[4] = 0;      m[8] = 0;      m[12] = 0;

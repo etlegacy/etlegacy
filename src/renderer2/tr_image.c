@@ -3333,9 +3333,7 @@ void R_CreateBuiltinImages(void)
 		}
 	}
 
-	tr.quadraticImage =
-	    R_CreateImage("_quadratic", (byte *) data, DEFAULT_SIZE, DEFAULT_SIZE, IF_NOPICMIP | IF_NOCOMPRESSION, FT_LINEAR,
-	                  WT_CLAMP);
+	tr.quadraticImage = R_CreateImage("_quadratic", (byte *) data, DEFAULT_SIZE, DEFAULT_SIZE, IF_NOPICMIP | IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP);
 
 	R_CreateRandomNormalsImage();
 	R_CreateFogImage();
