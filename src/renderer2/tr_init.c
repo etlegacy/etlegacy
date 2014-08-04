@@ -1314,7 +1314,7 @@ void R_Register(void)
 	r_simpleMipMaps           = ri.Cvar_Get("r_simpleMipMaps", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen            = ri.Cvar_Get("r_uifullscreen", "0", 0);
 	r_subdivisions            = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
-	r_deferredShading         = ri.Cvar_Get("r_deferredShading", "0", CVAR_CHEAT);
+    r_deferredShading         = ri.Cvar_Get("r_deferredShading", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_parallaxMapping         = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_dynamicLightCastShadows = ri.Cvar_Get("r_dynamicLightCastShadows", "1", CVAR_ARCHIVE);
 	r_precomputedLighting     = ri.Cvar_Get("r_precomputedLighting", "1", CVAR_ARCHIVE | CVAR_LATCH);

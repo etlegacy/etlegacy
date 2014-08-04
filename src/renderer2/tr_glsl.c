@@ -1029,8 +1029,8 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 {
 	dest[0] = '\0';
 
-	// HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.30 ones
-	if (glConfig2.glslMajorVersion > 1 || (glConfig2.glslMajorVersion == 1 && glConfig2.glslMinorVersion >= 30))
+    // HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.50 ones
+    if (glConfig2.glslMajorVersion > 1 || (glConfig2.glslMajorVersion == 1 && glConfig2.glslMinorVersion >= 50))
 	{
         Q_strcat(dest, size, "#version 150 core\n");
 
@@ -1042,8 +1042,9 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 		else
 		{
 			Q_strcat(dest, size, "#define varying in\n");
-			Q_strcat(dest, size, "out vec4 out_Color;\n");
-			Q_strcat(dest, size, "#define gl_FragColor out_Color\n");
+            Q_strcat(dest, size, "out vec4 out_Color[4];\n");
+            Q_strcat(dest, size, "#define gl_FragColor out_Color[0]\n");
+            Q_strcat(dest, size, "#define gl_FragData out_Color\n");
 		}
 
 		Q_strcat(dest, size, "#define textureCube texture\n");

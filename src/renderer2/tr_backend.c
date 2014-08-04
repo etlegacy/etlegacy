@@ -5576,8 +5576,8 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 		SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-		// bind u_ColorMap
-		SelectTexture(TEX_COLOR);
+        // bind u_CurrentMap
+        SelectTexture(TEX_CURRENT);
 		GL_Bind(tr.deferredRenderFBOImage);
 	}
 	else
@@ -5586,8 +5586,8 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-		// bind u_ColorMap
-		SelectTexture(TEX_COLOR);
+        // bind u_CurrentMap
+        SelectTexture(TEX_CURRENT);
 
 		if (r_showDeferredDiffuse->integer)
 		{
