@@ -1272,7 +1272,7 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 	GLSL_GetShaderText(filename, shadertype, &mainBuffer, &mainBufferSize, qfalse);
 	ref = mainBuffer;
 
-	while (c = *ref)
+    while ((c = *ref))
 	{
 		// skip double slash comments
 		if (c == '/' && ref[1] == '/')

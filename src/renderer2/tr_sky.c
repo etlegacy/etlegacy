@@ -764,7 +764,6 @@ void RB_DrawSun(void)
 	float    size;
 	float    dist;
 	vec3_t   origin, vec1, vec2;
-	vec3_t   temp;
 	matrix_t transformMatrix;
 	matrix_t modelViewMatrix;
 

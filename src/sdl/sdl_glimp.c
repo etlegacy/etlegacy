@@ -240,7 +240,7 @@ qboolean GL_CheckForExtension(const char *ext)
 	glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
 	for (i = 0; i < exts; i++)
 	{
-		if(!Q_stricmp(ext, glGetStringi(GL_EXTENSIONS, i)))
+        if(!Q_stricmp(ext, (char *)glGetStringi(GL_EXTENSIONS, i)))
 		{
 			return qtrue;
 		}
@@ -268,7 +268,7 @@ static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, q
 {
     qboolean result = qfalse;
 
-    if(coresince <= glConfig2.contextCombined || GL_CheckForExtension(ext))
+    if((coresince >= 0 && coresince <= glConfig2.contextCombined) || GL_CheckForExtension(ext))
     {
         if(var && var->integer)
         {
@@ -321,7 +321,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 		return qfalse;
 	}
 
-	if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
+    if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
 	{
 		// shaders are supported, but not all GL3.x features
 		Ren_Print("Using enhanced (GL3) Renderer in GL 2.x mode...\n");
@@ -334,16 +334,9 @@ static qboolean GLimp_InitOpenGL3xContext()
 	return qtrue;
 }
 
-static void GLimp_InitExtensions2(void)
+static void GLimp_InitExtensionsR2(void)
 {
-	//>char missingExts[4096];
-	static char missingExts[60000];
-	missingExts[0] = 0;
-
-#define MissingEXT(x) Q_strcat(missingExts, sizeof(missingExts), x)
-
 	Ren_Print("Initializing OpenGL extensions\n");
-	Ren_Print("Extensions %s\n", glConfig.extensions_string);
 
 	// GL_ARB_multitexture
 	if (glConfig.driverType != GLDRV_OPENGL3)
@@ -358,78 +351,40 @@ static void GLimp_InitExtensions2(void)
 			}
 			else
 			{
-				MissingEXT("GL_ARB_multitexture\n");
 				Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture, < 2 texture units");
 			}
 		}
 		else
 		{
-			MissingEXT("GL_ARB_multitexture\n");
 			Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture");
 		}
 	}
 
-	// GL_ARB_depth_texture in core
+    // GL_ARB_depth_texture
+    GLimp_CheckForVersionExtension("GL_ARB_depth_texture", 130, qtrue, NULL);
 
-	if (GL_CheckForExtension("GL_ARB_texture_cube_map"))
+    if (GLimp_CheckForVersionExtension("GL_ARB_texture_cube_map", 130, qtrue, NULL))
 	{
 		glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &glConfig2.maxCubeMapTextureSize);
-		Ren_Print("...found OpenGL extension - GL_ARB_texture_cube_map\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_texture_cube_map\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_texture_cube_map");
-	}
+    }
 	GL_CheckErrors();
 
-	// GL_ARB_vertex_program duh
-
-	if (GL_CheckForExtension("GL_ARB_vertex_buffer_object"))
-	{
-		Ren_Print("...found OpenGL extension - GL_ARB_vertex_buffer_object\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_vertex_buffer_object\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_buffer_object");
-	}
+    GLimp_CheckForVersionExtension("GL_ARB_vertex_program", 210, qtrue, NULL);
+    GLimp_CheckForVersionExtension("GL_ARB_vertex_buffer_object", 300, qtrue, NULL);
 
 	// GL_ARB_occlusion_query
 	glConfig2.occlusionQueryAvailable = qfalse;
 	glConfig2.occlusionQueryBits      = 0;
-	if (GL_CheckForExtension("GL_ARB_occlusion_query"))
+    if (GLimp_CheckForVersionExtension("GL_ARB_occlusion_query", 150, qfalse, r_ext_occlusion_query))
 	{
-		if (r_ext_occlusion_query->value)
-		{
-			glConfig2.occlusionQueryAvailable = qtrue;
-			glGetQueryivARB(GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS, &glConfig2.occlusionQueryBits);
-			Ren_Print("...found OpenGL extension - GL_ARB_occlusion_query\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ARB_occlusion_query\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_occlusion_query not found\n");
+        glConfig2.occlusionQueryAvailable = qtrue;
+        glGetQueryivARB(GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS, &glConfig2.occlusionQueryBits);
 	}
 	GL_CheckErrors();
 
-	// GL_ARB_shader_objects
-	if (GL_CheckForExtension("GL_ARB_shader_objects"))
-	{
-		Ren_Print("...found OpenGL extension - GL_ARB_shader_objects\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_shader_objects\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shader_objects");
-	}
+    GLimp_CheckForVersionExtension("GL_ARB_shader_objects", 210, qtrue, NULL);
 
-	// GL_ARB_vertex_shader
-	if (GL_CheckForExtension("GL_ARB_vertex_shader"))
+    if (GLimp_CheckForVersionExtension("GL_ARB_vertex_shader", 210, qtrue, NULL))
 	{
 		int reservedComponents;
 
@@ -440,434 +395,129 @@ static void GLimp_InitExtensions2(void)
 
 		reservedComponents = 16 * 10; // approximation how many uniforms we have besides the bone matrices
 
-		/*
-		if(glConfig.driverType == GLDRV_MESA)
-		{
-		    // HACK
-		    // restrict to number of vertex uniforms to 512 because of:
-		    // xreal.x86_64: nv50_program.c:4181: nv50_program_validate_data: Assertion `p->param_nr <= 512' failed
-
-		    glConfig2.maxVertexUniforms = Q_bound(0, glConfig2.maxVertexUniforms, 512);
-		}
-		*/
-
 		glConfig2.maxVertexSkinningBones     = (int) Q_bound(0.0, (Q_max(glConfig2.maxVertexUniforms - reservedComponents, 0) / 16), MAX_BONES);
 		glConfig2.vboVertexSkinningAvailable = (qboolean)(r_vboVertexSkinning->integer && ((glConfig2.maxVertexSkinningBones >= 12) ? qtrue : qfalse));
-
-		Ren_Print("...found OpenGL extension - GL_ARB_vertex_shader\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_vertex_shader\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_vertex_shader");
 	}
 	GL_CheckErrors();
 
-	// GL_ARB_fragment_shader
-	if (GL_CheckForExtension("GL_ARB_fragment_shader"))
-	{
-		Ren_Print("...found OpenGL extension - GL_ARB_fragment_shader\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_fragment_shader\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_fragment_shader");
-	}
+    GLimp_CheckForVersionExtension("GL_ARB_fragment_shader", 210, qtrue, NULL);
 
 	// GL_ARB_shading_language_100
-	if (GL_CheckForExtension("GL_ARB_shading_language_100"))
+    if (GLimp_CheckForVersionExtension("GL_ARB_shading_language_100", 210, qtrue, NULL))
 	{
 		Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig2.shadingLanguageVersion));
 		sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
-		Ren_Print("...found OpenGL extension - GL_ARB_shading_language_100\n");
-	}
-	else
-	{
-		MissingEXT("GL_ARB_shading_language_100\n");
-		Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_shading_language_100");
 	}
 	GL_CheckErrors();
 
-	// GL_ARB_texture_non_power_of_two
-	glConfig2.textureNPOTAvailable = qfalse;
-	if (GL_CheckForExtension("GL_ARB_texture_non_power_of_two"))
+    glConfig2.textureNPOTAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_ARB_texture_non_power_of_two", 300, qfalse, r_ext_texture_non_power_of_two))
 	{
-		if (r_ext_texture_non_power_of_two->integer)
-		{
-			glConfig2.textureNPOTAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_ARB_texture_non_power_of_two\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ARB_texture_non_power_of_two\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_texture_non_power_of_two not found\n");
-	}
+        glConfig2.textureNPOTAvailable = qtrue;
+    }
 
-	// GL_ARB_draw_buffers
-	glConfig2.drawBuffersAvailable = qfalse;
-	if (GL_CheckForExtension("GL_ARB_draw_buffers"))
+    glConfig2.drawBuffersAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_ARB_draw_buffers", /* -1 */ 300, qfalse, r_ext_draw_buffers))
 	{
 		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ARB, &glConfig2.maxDrawBuffers);
-
-		if (r_ext_draw_buffers->integer)
-		{
-			glConfig2.drawBuffersAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_ARB_draw_buffers\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ARB_draw_buffers\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_draw_buffers not found\n");
+        glConfig2.drawBuffersAvailable = qtrue;
 	}
 
-	// GL_ARB_half_float_pixel
-	glConfig2.textureHalfFloatAvailable = qfalse;
-	if (GL_CheckForExtension("GL_ARB_half_float_pixel"))
+    glConfig2.textureHalfFloatAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_ARB_half_float_pixel", 300, qfalse, r_ext_half_float_pixel))
 	{
-		if (r_ext_half_float_pixel->integer)
-		{
-			glConfig2.textureHalfFloatAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_ARB_half_float_pixel\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ARB_half_float_pixel\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_half_float_pixel not found\n");
+        glConfig2.textureHalfFloatAvailable = qtrue;
 	}
 
-	// GL_ARB_texture_float
-	glConfig2.textureFloatAvailable = qfalse;
-	if (GL_CheckForExtension("GL_ARB_texture_float"))
+    glConfig2.textureFloatAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_ARB_texture_float", 300, qfalse, r_ext_texture_float))
 	{
-		if (r_ext_texture_float->integer)
-		{
-			glConfig2.textureFloatAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_ARB_texture_float\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ARB_texture_float\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_texture_float not found\n");
+        glConfig2.textureFloatAvailable = qtrue;
 	}
 
-	// GL_ARB_texture_compression
-	glConfig.textureCompression = TC_NONE;
-	if (GL_CheckForExtension("GL_ARB_texture_compression"))
+    glConfig2.ARBTextureCompressionAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_ARB_texture_compression", 300, qfalse, r_ext_compressed_textures))
 	{
-		if (r_ext_compressed_textures->integer)
-		{
-			glConfig2.ARBTextureCompressionAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_ARB_texture_compression\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ARB_texture_compression\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_texture_compression not found\n");
+        glConfig2.ARBTextureCompressionAvailable = qtrue;
+        glConfig.textureCompression = TC_NONE;
 	}
 
-	// GL_ARB_vertex_array_object
-	glConfig2.vertexArrayObjectAvailable = qfalse;
-	if (GL_CheckForExtension("GL_ARB_vertex_array_object"))
+    glConfig2.vertexArrayObjectAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_ARB_vertex_array_object", 300, qfalse, r_ext_vertex_array_object))
 	{
-		if (r_ext_vertex_array_object->integer)
-		{
-			glConfig2.vertexArrayObjectAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_ARB_vertex_array_object\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ARB_vertex_array_object\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_vertex_array_object not found\n");
+        glConfig2.vertexArrayObjectAvailable = qtrue;
 	}
 
 	// GL_EXT_texture_compression_s3tc
-	if (GL_CheckForExtension("GL_EXT_texture_compression_s3tc"))
+    if (GLimp_CheckForVersionExtension("GL_EXT_texture_compression_s3tc", -1, qfalse, r_ext_compressed_textures))
 	{
-		if (r_ext_compressed_textures->integer)
-		{
-			glConfig.textureCompression = TC_S3TC;
-			Ren_Print("...found OpenGL extension - GL_EXT_texture_compression_s3tc\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_texture_compression_s3tc\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_texture_compression_s3tc not found\n");
+        glConfig.textureCompression = TC_S3TC;
 	}
 
-	// GL_EXT_texture3D
-	glConfig2.texture3DAvailable = qfalse;
-	if (GL_CheckForExtension("GL_EXT_texture3D"))
+    glConfig2.texture3DAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_EXT_texture3D", 170, qfalse, NULL))
 	{
-		//if(r_ext_texture3d->value)
-		{
-			glConfig2.texture3DAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_EXT_texture3D\n");
-		}
-		/*
-		else
-		{
-		    Ren_Print("...ignoring GL_EXT_texture3D\n");
-		}
-		*/
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_texture3D not found\n");
+        glConfig2.texture3DAvailable = qtrue;
 	}
 
-	// GL_EXT_stencil_wrap
-	glConfig2.stencilWrapAvailable = qfalse;
-	if (GL_CheckForExtension("GL_EXT_stencil_wrap"))
+    glConfig2.stencilWrapAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_EXT_stencil_wrap", 210, qfalse, r_ext_stencil_wrap))
 	{
-		if (r_ext_stencil_wrap->value)
-		{
-			glConfig2.stencilWrapAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_EXT_stencil_wrap\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_stencil_wrap\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_stencil_wrap not found\n");
+        glConfig2.stencilWrapAvailable = qtrue;
 	}
 
-	// GL_EXT_texture_filter_anisotropic
-	glConfig2.textureAnisotropyAvailable = qfalse;
-	if (GL_CheckForExtension("GL_EXT_texture_filter_anisotropic"))
+    glConfig2.textureAnisotropyAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_EXT_texture_filter_anisotropic", -1, qfalse, r_ext_texture_filter_anisotropic))
 	{
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glConfig2.maxTextureAnisotropy);
-
-		if (r_ext_texture_filter_anisotropic->value)
-		{
-			glConfig2.textureAnisotropyAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_EXT_texture_filter_anisotropic\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_texture_filter_anisotropic\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_texture_filter_anisotropic not found\n");
-	}
+        glConfig2.textureAnisotropyAvailable = qtrue;
+    }
 	GL_CheckErrors();
 
-	// GL_EXT_stencil_two_side
-	if (GL_CheckForExtension("GL_EXT_stencil_two_side"))
-	{
-		if (r_ext_stencil_two_side->value)
-		{
-			Ren_Print("...found OpenGL extension - GL_EXT_stencil_two_side\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_stencil_two_side\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_stencil_two_side not found\n");
-	}
+    GLimp_CheckForVersionExtension("GL_EXT_stencil_two_side", 210, qfalse, r_ext_stencil_two_side);
+    GLimp_CheckForVersionExtension("GL_EXT_depth_bounds_test", 170, qfalse, r_ext_depth_bounds_test);
 
-	// GL_EXT_depth_bounds_test
-	if (GL_CheckForExtension("GL_EXT_depth_bounds_test"))
-	{
-		if (r_ext_depth_bounds_test->value)
-		{
-			Ren_Print("...found OpenGL extension - GL_EXT_depth_bounds_test\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_depth_bounds_test\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_depth_bounds_test not found\n");
-	}
-
-	// GL_EXT_framebuffer_object
-	glConfig2.framebufferObjectAvailable = qfalse;
-	if (GL_CheckForExtension("GL_EXT_framebuffer_object"))
+    glConfig2.framebufferObjectAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_EXT_framebuffer_object", 300, qfalse, r_ext_packed_depth_stencil))
 	{
 		glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE_EXT, &glConfig2.maxRenderbufferSize);
 		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &glConfig2.maxColorAttachments);
 
-		if (r_ext_framebuffer_object->value)
-		{
-			glConfig2.framebufferObjectAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_EXT_framebuffer_object\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_framebuffer_object\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_framebuffer_object not found\n");
+        glConfig2.framebufferObjectAvailable = qtrue;
 	}
 	GL_CheckErrors();
 
-	// GL_EXT_packed_depth_stencil
-	glConfig2.framebufferPackedDepthStencilAvailable = qfalse;
-	if (GL_CheckForExtension("GL_EXT_packed_depth_stencil") && glConfig.driverType != GLDRV_MESA)
+    glConfig2.framebufferPackedDepthStencilAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_EXT_packed_depth_stencil", 300, qfalse, r_ext_packed_depth_stencil) && glConfig.driverType != GLDRV_MESA)
 	{
-		if (r_ext_packed_depth_stencil->integer)
-		{
-			glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_EXT_packed_depth_stencil\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_packed_depth_stencil\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_packed_depth_stencil not found\n");
+        glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
 	}
 
-	// GL_EXT_framebuffer_blit
-	glConfig2.framebufferBlitAvailable = qfalse;
-	if (GL_CheckForExtension("GL_EXT_framebuffer_blit"))
+    glConfig2.framebufferBlitAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_EXT_framebuffer_blit", 300, qfalse, r_ext_framebuffer_blit))
 	{
-		if (r_ext_framebuffer_blit->integer)
-		{
-			glConfig2.framebufferBlitAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_EXT_framebuffer_blit\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_EXT_framebuffer_blit\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_EXT_framebuffer_blit not found\n");
+        glConfig2.framebufferBlitAvailable = qtrue;
 	}
 
-	// GL_EXTX_framebuffer_mixed_formats
-	/*
-	glConfig2.framebufferMixedFormatsAvailable = qfalse;
-	if(Q_stristr(glConfig.extensions_string, "GL_EXTX_framebuffer_mixed_formats")) // note: if you activate this use (char *) qglGetString(GL_EXTENSIONS)
-	                                                                                        glConfig.extensions_string is unsafe
-	{
-	    if(r_extx_framebuffer_mixed_formats->integer)
-	    {
-	        glConfig2.framebufferMixedFormatsAvailable = qtrue;
-	        Ren_Print("...using GL_EXTX_framebuffer_mixed_formats\n");
-	    }
-	    else
-	    {
-	        Ren_Print("...ignoring GL_EXTX_framebuffer_mixed_formats\n");
-	    }
-	}
-	else
-	{
-	    Ren_Print("...GL_EXTX_framebuffer_mixed_formats not found\n");
-	}
-	*/
+    // GL_EXTX_framebuffer_mixed_formats not used
 
-	// GL_ATI_separate_stencil
-	if (GL_CheckForExtension("GL_ATI_separate_stencil"))
+    glConfig2.generateMipmapAvailable = qfalse;
+    if (GLimp_CheckForVersionExtension("GL_SGIS_generate_mipmap", 140, qfalse, r_ext_generate_mipmap))
 	{
-		if (r_ext_separate_stencil->value)
-		{
-			Ren_Print("...found OpenGL extension - GL_ATI_separate_stencil\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_ATI_separate_stencil\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ATI_separate_stencil not found\n");
+        glConfig2.generateMipmapAvailable = qtrue;
 	}
 
-	// GL_SGIS_generate_mipmap
-	glConfig2.generateMipmapAvailable = qfalse;
-	if (GL_CheckForExtension("GL_SGIS_generate_mipmap"))
-	{
-		if (r_ext_generate_mipmap->value)
-		{
-			glConfig2.generateMipmapAvailable = qtrue;
-			Ren_Print("...found OpenGL extension - GL_SGIS_generate_mipmap\n");
-		}
-		else
-		{
-			Ren_Print("...ignoring GL_SGIS_generate_mipmap\n");
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_SGIS_generate_mipmap not found\n");
-	}
-
-	// GL_GREMEDY_string_marker
-	if (GL_CheckForExtension("GL_GREMEDY_string_marker"))
-	{
-		Ren_Print("...found OpenGL extension - GL_GREMEDY_string_marker\n");
-	}
-	else
-	{
-		Ren_Print("...GL_GREMEDY_string_marker not found\n");
-	}
-
-	if (GL_CheckForExtension("GL_ARB_get_program_binary"))
+    glConfig2.getProgramBinaryAvailable = qfalse;
+    if(GLimp_CheckForVersionExtension("GL_ARB_get_program_binary", 410, qfalse, NULL))
 	{
 		int formats = 0;
 
 		glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
 
-		if (!formats)
+        if (formats)
 		{
-			Ren_Print("...GL_ARB_get_program_binary found, but with no binary formats\n");
-			glConfig2.getProgramBinaryAvailable = qfalse;
+            glConfig2.getProgramBinaryAvailable = qtrue;
 		}
-		else
-		{
-			Ren_Print("...using GL_ARB_get_program_binary\n");
-			glConfig2.getProgramBinaryAvailable = qtrue;
-		}
-	}
-	else
-	{
-		Ren_Print("...GL_ARB_get_program_binary not found\n");
-		glConfig2.getProgramBinaryAvailable = qfalse;
 	}
 }
 #endif
@@ -1655,11 +1305,11 @@ success:
 		}
 	}
 
+    // initialize extensions
 #ifdef FEATURE_RENDERER2
 	GLimp_SetHardware();
-	GLimp_InitExtensions2(); // renderer2
+    GLimp_InitExtensionsR2(); // renderer2
 #else
-	// initialize extensions
 	GLimp_InitExtensions(); // vanilla renderer
 #endif
 
