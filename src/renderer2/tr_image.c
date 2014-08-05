@@ -1592,17 +1592,13 @@ static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *heigh
 	{
 		Ren_Warning("WARNING: images for displaceMap have different dimensions (%i x %i != %i x %i)\n",
 		            *width, *height, width2, height2);
-
-		//ri.Free(*pic);
-		//*pic = NULL;
-
-		ri.Free(pic2);
+        Com_Dealloc(pic2);
 		return qfalse;
 	}
 
 	R_DisplaceMap(*pic, pic2, *width, *height);
 
-	ri.Free(pic2);
+    Com_Dealloc(pic2);
 
 	*bits &= ~IF_ALPHA;
 	*bits |= IF_NORMALMAP;
@@ -1656,16 +1652,13 @@ static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height
 		Ren_Warning("WARNING: images for addNormals have different dimensions (%i x %i != %i x %i)\n",
 		            *width, *height, width2, height2);
 
-		//ri.Free(*pic);
-		//*pic = NULL;
-
-		ri.Free(pic2);
+        Com_Dealloc(pic2);
 		return qfalse;
 	}
 
 	R_AddNormals(*pic, pic2, *width, *height);
 
-	ri.Free(pic2);
+    Com_Dealloc(pic2);
 
 	*bits &= ~IF_ALPHA;
 	*bits |= IF_NORMALMAP;
@@ -1835,7 +1828,7 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filenam
 		Ren_Fatal("R_GetImageBuffer in the new renderer is called improperly\n");
 	}
 
-	buf = ri.Z_Malloc(size);
+    buf = Com_Allocate(size);
 
 	if (!buf)
 	{
@@ -2208,7 +2201,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 #endif
 
 	image = R_CreateImage((char *)buffer, pic, width, height, bits, filterType, wrapType);
-	ri.Free(pic);
+    Com_Dealloc(pic);
 	return image;
 }
 
@@ -2565,7 +2558,7 @@ skipCubeImage:
 	{
 		if (pic[i])
 		{
-			ri.Free(pic[i]);
+            Com_Dealloc(pic[i]);
 		}
 	}
 	return image;
@@ -2640,7 +2633,7 @@ static void R_CreateFogImage(void)
 	float d;
 	float borderColor[4];
 
-	data = (byte *)ri.Hunk_AllocateTempMemory(FOG_S * FOG_T * 4);
+    data = (byte *)ri.Hunk_AllocateTempMemory(FOG_S * FOG_T * 4);
 
 	// S is distance, T is depth
 	for (x = 0; x < FOG_S; x++)
