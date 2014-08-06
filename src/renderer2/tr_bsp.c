@@ -1591,6 +1591,132 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 }
 
 /*
+ParseFoliage()
+
+parses a foliage drawsurface
+*/
+static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int *indexes)
+{
+	srfFoliage_t *foliage;
+	int          i, j, numVerts, numIndexes, numInstances, size;
+	vec3_t       bounds[2], boundsTranslated[2];
+	float        scale;
+
+	// get fog volume
+	surf->fogIndex = LittleLong(ds->fogNum) + 1;
+
+	// get shader
+	surf->shader = ShaderForShaderNum(ds->shaderNum);
+	if (r_singleShader->integer && !surf->shader->isSky)
+	{
+		surf->shader = tr.defaultShader;
+	}
+
+	// foliage surfaces have their actual vert count in patchHeight
+	// and the instance count in patchWidth
+	// the instances are just additional drawverts
+
+	// get counts
+	numVerts = LittleLong(ds->patchHeight);
+	numIndexes = LittleLong(ds->numIndexes);
+	numInstances = LittleLong(ds->patchWidth);
+
+	// calculate size
+	size = sizeof(*foliage) +
+		numVerts * (sizeof(foliage->xyz[0]) + sizeof(foliage->normal[0]) + sizeof(foliage->texCoords[0]) + sizeof(foliage->lmTexCoords[0])) +
+		numIndexes * sizeof(foliage->indexes[0]) +
+		numInstances * sizeof(foliage->instances[0]);
+
+	// get memory
+	foliage = ri.Hunk_Alloc(size, h_low);
+
+	// set up surface
+	foliage->surfaceType = SF_FOLIAGE;
+	foliage->numVerts = numVerts;
+	foliage->numIndexes = numIndexes;
+	foliage->numInstances = numInstances;
+	foliage->xyz = (vec4_t *)(foliage + 1);
+	foliage->normal = (vec4_t *)(foliage->xyz + foliage->numVerts);
+	foliage->texCoords = (vec2_t *)(foliage->normal + foliage->numVerts);
+	foliage->lmTexCoords = (vec2_t *)(foliage->texCoords + foliage->numVerts);
+	foliage->indexes = (unsigned int *)(foliage->lmTexCoords + foliage->numVerts);
+	foliage->instances = (foliageInstance_t *)(foliage->indexes + foliage->numIndexes);
+
+	surf->data = (surfaceType_t *)foliage;
+
+	// get foliage drawscale
+	scale = r_drawfoliage->value;
+	if (scale < 0.0f)
+	{
+		scale = 1.0f;
+	}
+	else if (scale > 2.0f)
+	{
+		scale = 2.0f;
+	}
+
+	// copy vertexes
+	ClearBounds(bounds[0], bounds[1]);
+	verts += LittleLong(ds->firstVert);
+	for (i = 0; i < numVerts; i++)
+	{
+		// copy xyz and normal
+		for (j = 0; j < 3; j++)
+		{
+			foliage->xyz[i][j] = LittleFloat(verts[i].xyz[j]);
+			foliage->normal[i][j] = LittleFloat(verts[i].normal[j]);
+		}
+
+		// scale height
+		foliage->xyz[i][2] *= scale;
+
+		// finish
+		foliage->xyz[i][3] = foliage->normal[i][3] = 0;
+		AddPointToBounds(foliage->xyz[i], bounds[0], bounds[1]);
+
+		// copy texture coordinates
+		for (j = 0; j < 2; j++)
+		{
+			foliage->texCoords[i][j] = LittleFloat(verts[i].st[j]);
+			foliage->lmTexCoords[i][j] = LittleFloat(verts[i].lightmap[j]);
+		}
+	}
+
+	// copy indexes
+	indexes += LittleLong(ds->firstIndex);
+	for (i = 0; i < numIndexes; i++)
+	{
+		foliage->indexes[i] = LittleLong(indexes[i]);
+		if (foliage->indexes[i] >= numVerts)
+		{
+			Ren_Drop("Bad index in triangle surface");
+		}
+	}
+
+	// copy origins and colors
+	ClearBounds(foliage->bounds[0], foliage->bounds[1]);
+	verts += numVerts;
+	for (i = 0; i < numInstances; i++)
+	{
+		// copy xyz
+		for (j = 0; j < 3; j++)
+		{
+			foliage->instances[i].origin[j] = LittleFloat(verts[i].xyz[j]);
+		}
+		VectorAdd(bounds[0], foliage->instances[i].origin, boundsTranslated[0]);
+		VectorAdd(bounds[1], foliage->instances[i].origin, boundsTranslated[1]);
+		AddPointToBounds(boundsTranslated[0], foliage->bounds[0], foliage->bounds[1]);
+		AddPointToBounds(boundsTranslated[1], foliage->bounds[0], foliage->bounds[1]);
+
+		// copy color
+		R_ColorShiftLightingBytes(verts[i].color, foliage->instances[i].color);
+	}
+
+	// finish surface
+	FinishGenericSurface(ds, (srfGeneric_t *)foliage, foliage->xyz[0]);
+}
+
+/*
 ===============
 ParseFlare
 ===============
@@ -3765,8 +3891,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			numFlares++;
 			break;
 		case MST_FOLIAGE:
-			// TODO ParseFoliage
-			ParseTriSurf(in, dv, out, indexes);
+			ParseFoliage(in, dv, out, indexes);
 			numFoliages++;
 			break;
 		default:
@@ -3893,7 +4018,9 @@ static void R_SetParent(bspNode_t *node, bspNode_t *parent)
 			{
 				gen = (srfGeneric_t *) (**mark).data;
 				if (gen->surfaceType != SF_FACE &&
-				    gen->surfaceType != SF_GRID && gen->surfaceType != SF_TRIANGLES) // && gen->surfaceType != SF_FOLIAGE)
+				    gen->surfaceType != SF_GRID &&
+					gen->surfaceType != SF_TRIANGLES &&
+					gen->surfaceType != SF_FOLIAGE)
 				{
 					mark++;
 					continue;

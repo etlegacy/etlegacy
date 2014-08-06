@@ -158,15 +158,12 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 			return qtrue;
 		}
 		break;
-	/*
 	case SF_FOLIAGE:
-	if(!r_drawfoliage->value)
-	{
-	    return qtrue;
-	}
-	break;
-	*/
-
+		if(!r_drawfoliage->value)
+		{
+			return qtrue;
+		}
+		break;
 	default:
 		return qtrue;
 	}
@@ -292,6 +289,7 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	case SF_FACE:
 	case SF_GRID:
 	case SF_TRIANGLES:
+	case SF_FOLIAGE:
 		intersects = R_LightSurfaceGeneric((srfGeneric_t *) surf->data, light, &cubeSideBits);
 		break;
 	default:

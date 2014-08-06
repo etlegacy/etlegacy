@@ -1150,8 +1150,7 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 	lightCoords = tess.lightCoords[tess.numVertexes];
 	color       = tess.colors[tess.numVertexes];
 
-	for (i = 0; i < srf->numVerts;
-	     i++, dv++, xyz += 4, tangent += 4, binormal += 4, normal += 4, texCoords += 4, lightCoords += 4, color += 4)
+	for (i = 0; i < srf->numVerts; i++, dv++, xyz += 4, tangent += 4, binormal += 4, normal += 4, texCoords += 4, lightCoords += 4, color += 4)
 	{
 		xyz[0] = dv->xyz[0];
 		xyz[1] = dv->xyz[1];
@@ -1190,6 +1189,141 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 	}
 
 	tess.numVertexes += srf->numVerts;
+}
+
+static void Tess_SurfaceFoliage(srfFoliage_t *srf)
+{
+#if 0
+	int               o, i, a;
+	int               numVerts = srf->numVerts, numIndexes = srf->numIndexes;   // basic setup
+	vec4_t            distanceCull, distanceVector;
+	float             alpha, z, dist, fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
+	vec3_t            local;
+	vec_t             *xyz;
+	int               srcColor, *color;
+	int               dlightBits;
+	foliageInstance_t *instance;
+
+#if 0
+	// calculate distance vector
+	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
+	distanceVector[0] = -backEnd.orientation.transformMatrix[2];
+	distanceVector[1] = -backEnd.orientation.transformMatrix[6];
+	distanceVector[2] = -backEnd.orientation.transformMatrix[10];
+	distanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
+
+	// attempt distance cull
+	Vector4Copy(tess.surfaceShader->distanceCull, distanceCull);
+	if (distanceCull[1] > 0)
+	{
+		z = fovScale * (DotProduct(srf->origin, distanceVector) + distanceVector[3] - srf->radius);
+		alpha = (distanceCull[1] - z) * distanceCull[3];
+		if (alpha < distanceCull[2])
+		{
+			return;
+		}
+	}
+#endif
+
+	// set dlight bits
+	dlightBits = srf->dlightBits;
+	//tess.dlightBits |= dlightBits;
+
+	// iterate through origin list
+	instance = srf->instances;
+	for (o = 0; o < srf->numInstances; o++, instance++)
+	{
+#if 0
+		// fade alpha based on distance between inner and outer radii
+		if (distanceCull[1] > 0.0f)
+		{
+			// calculate z distance
+			z = fovScale * (DotProduct(instance->origin, distanceVector) + distanceVector[3]);
+			if (z < -64.0f)      // epsilon so close-by foliage doesn't pop in and out
+			{
+				continue;
+			}
+
+			// check against frustum planes
+			for (i = 0; i < 5; i++)
+			{
+				dist = DotProduct(instance->origin, backEnd.viewParms.frustums[0][i].normal) - backEnd.viewParms.frustums[0][i].dist;
+				if (dist < -64.0)
+				{
+					break;
+				}
+			}
+			if (i != 5)
+			{
+				continue;
+			}
+
+			// radix
+			if (o & 1)
+			{
+				z *= 1.25;
+				if (o & 2)
+				{
+					z *= 1.25;
+				}
+			}
+
+			// calculate alpha
+			alpha = (distanceCull[1] - z) * distanceCull[3];
+			if (alpha < distanceCull[2])
+			{
+				continue;
+			}
+
+			// set color
+			a = alpha > 1.0f ? 255 : alpha * 255;
+			srcColor = (*((int *)instance->color) & 0xFFFFFF) | (a << 24);
+		}
+		else
+#endif
+		{
+			srcColor = *((int *)instance->color);
+		}
+
+		//Ren_Print("Color: %d %d %d %d\n", srf->colors[ o ][ 0 ], srf->colors[ o ][ 1 ], srf->colors[ o ][ 2 ], alpha );
+
+		Tess_CheckOverflow(numVerts, numIndexes);
+
+		// set after overflow check so dlights work properly
+		//tess.dlightBits |= dlightBits;
+
+		// copy indexes
+		memcpy(&tess.indexes[tess.numIndexes], srf->indexes, numIndexes * sizeof(srf->indexes[0]));
+		for (i = 0; i < numIndexes; i++)
+		{
+			tess.indexes[tess.numIndexes + i] += tess.numVertexes;
+		}
+
+		// copy xyz, normal and st
+		xyz = tess.xyz[tess.numVertexes];
+		memcpy(xyz, srf->xyz, numVerts * sizeof(srf->xyz[0]));
+		memcpy(&tess.normals[tess.numVertexes], srf->normal, numVerts * sizeof(srf->xyz[0]));
+		memcpy(&tess.texCoords[tess.numVertexes], srf->texCoords, numVerts * sizeof(srf->texCoords[0]));
+		memcpy(&tess.lightCoords[tess.numVertexes], srf->lmTexCoords, numVerts * sizeof(srf->lmTexCoords[0]));
+
+		// offset xyz
+		for (i = 0; i < numVerts; i++, xyz += 4)
+		{
+			VectorAdd(xyz, instance->origin, xyz);
+		}
+
+		// copy color
+		color = (int *)tess.colors[tess.numVertexes];
+		for (i = 0; i < numVerts; i++)
+		{
+			color[i] = srcColor;
+		}
+
+		// increment
+		tess.numIndexes += numIndexes;
+		tess.numVertexes += numVerts;
+	}
+#endif
 }
 
 /*
@@ -2152,6 +2286,7 @@ void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
 	(void (*)(void *))Tess_SurfaceFace,         // SF_FACE,
 	(void (*)(void *))Tess_SurfaceGrid,         // SF_GRID,
 	(void (*)(void *))Tess_SurfaceTriangles,    // SF_TRIANGLES,
+	(void (*)(void *))Tess_SurfaceFoliage,      // SF_FOLIAGE,
 	(void (*)(void *))Tess_SurfacePolychain,    // SF_POLY,
 	(void (*)(void *))Tess_SurfacePolybuffer,   // SF_POLYBUFFER,
 	(void (*)(void *))Tess_SurfaceDecal,        // SF_DECAL
