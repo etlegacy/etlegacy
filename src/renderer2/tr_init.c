@@ -173,6 +173,7 @@ cvar_t *r_mode;
 cvar_t *r_collapseStages;
 cvar_t *r_nobind;
 cvar_t *r_singleShader;
+cvar_t *r_drawfoliage;
 cvar_t *r_roundImagesDown;
 cvar_t *r_colorMipLevels;
 cvar_t *r_picmip;
@@ -1350,6 +1351,7 @@ void R_Register(void)
 	ri.Cvar_AssertCvarRange(r_intensity, 0, 1.5, qfalse);
 
 	r_singleShader            = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
+	r_drawfoliage			  = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_stitchCurves            = ri.Cvar_Get("r_stitchCurves", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_debugShadowMaps         = ri.Cvar_Get("r_debugShadowMaps", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_shadowMapLuminanceAlpha = ri.Cvar_Get("r_shadowMapLuminanceAlpha", "1", CVAR_ARCHIVE | CVAR_LATCH);

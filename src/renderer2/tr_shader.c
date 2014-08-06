@@ -4274,11 +4274,10 @@ static qboolean ParseShader(char *_text)
 				}
 				else
 				{
-					//shader.distanceCull[i] = atof(token);
+					shader.distanceCull[i] = atof(token);
 				}
 			}
 
-			/*
 			if (shader.distanceCull[1] - shader.distanceCull[0] > 0)
 			{
 			    // distanceCull[ 3 ] is an optimization
@@ -4291,10 +4290,6 @@ static qboolean ParseShader(char *_text)
 			    shader.distanceCull[2] = 0;
 			    shader.distanceCull[3] = 0;
 			}
-			*/
-
-			Ren_Warning("WARNING: shader parameter 'distanceCull' in shader '%s' not implemented.\n", shader.name);
-
 			continue;
 		}
 		// twoSided
