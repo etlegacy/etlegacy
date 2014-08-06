@@ -668,7 +668,6 @@ typedef struct weaponInfo_s
 	sfxHandle_t lastShotSound[4];       // sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
 
 	qhandle_t weaponIcon[2];            // [0] is weap icon, [1] is highlight icon
-	qhandle_t ammoIcon;
 
 	qhandle_t missileModel;
 	qhandle_t missileAlliedSkin;
