@@ -386,6 +386,7 @@ static void IN_ActivateMouse(void)
 
 	if (!mouseActive)
 	{
+		SDL_ShowCursor(0);
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_SetWindowGrab(mainScreen, SDL_TRUE);
 
