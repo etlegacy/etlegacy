@@ -1105,7 +1105,7 @@ void IN_EnableDingFilter()
 
 static void IN_InitKeyLockStates(void)
 {
-	unsigned char *keystate = SDL_GetKeyboardState(NULL);
+	unsigned const char *keystate = SDL_GetKeyboardState(NULL);
 
 	keys[K_SCROLLOCK].down  = keystate[SDL_SCANCODE_SCROLLLOCK];
 	keys[K_KP_NUMLOCK].down = keystate[SDL_SCANCODE_NUMLOCKCLEAR];
