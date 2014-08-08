@@ -377,6 +377,28 @@ static void IN_GobbleMotionEvents(void)
 	}
 }
 
+static void IN_GrabMouse(qboolean grab, qboolean relative)
+{
+	static qboolean mouse_grabbed = qfalse, mouse_relative = qfalse;
+
+	if (relative == !mouse_relative)
+	{
+		SDL_ShowCursor(!relative);
+		if (SDL_SetRelativeMouseMode((SDL_bool)relative) == -1)
+		{
+			//FIXME: this happens on some systems (IR4)
+			Com_Error(ERR_FATAL, "Setting relative mouse location fails\n");
+		}
+		mouse_relative = relative;
+	}
+
+	if (grab == !mouse_grabbed)
+	{
+		SDL_SetWindowGrab(mainScreen, (SDL_bool)grab);
+		mouse_grabbed = grab;
+	}
+}
+
 static void IN_ActivateMouse(void)
 {
 	if (!mouseAvailable || !SDL_WasInit(SDL_INIT_VIDEO))
@@ -386,25 +408,23 @@ static void IN_ActivateMouse(void)
 
 	if (!mouseActive)
 	{
-		SDL_ShowCursor(0);
-		SDL_SetRelativeMouseMode(SDL_TRUE);
-		SDL_SetWindowGrab(mainScreen, SDL_TRUE);
+		IN_GrabMouse(qtrue, qtrue);
 
 		IN_GobbleMotionEvents();
 	}
 
 	// in_nograb makes no sense in fullscreen mode
-	if (!Cvar_VariableIntegerValue("r_fullscreen"))
+	if (!cls.glconfig.isFullscreen)
 	{
 		if (in_nograb->modified || !mouseActive)
 		{
 			if (in_nograb->integer)
 			{
-				SDL_SetWindowGrab(mainScreen, SDL_FALSE);
+				IN_GrabMouse(qfalse, qtrue);
 			}
 			else
 			{
-				SDL_SetWindowGrab(mainScreen, SDL_TRUE);
+				IN_GrabMouse(qtrue, qtrue);
 			}
 
 			in_nograb->modified = qfalse;
@@ -423,19 +443,19 @@ static void IN_DeactivateMouse(void)
 
 	// Always show the cursor when the mouse is disabled,
 	// but not when fullscreen
-	if (!Cvar_VariableIntegerValue("r_fullscreen"))
+	if (!cls.glconfig.isFullscreen)
 	{
 #if 0
 		if ((Key_GetCatcher() == KEYCATCH_UI) &&
 		    screen == SDL_GetMouseFocus())
 		{
 			// @todo (SDL_GetAppState() & SDL_APPMOUSEFOCUS))
-			SDL_ShowCursor(0);
+			IN_GrabMouse(qtrue, qtrue);
 		}
 		else
 #endif
 		{
-			SDL_ShowCursor(1);
+			IN_GrabMouse(qfalse, qfalse);
 		}
 	}
 
@@ -447,9 +467,7 @@ static void IN_DeactivateMouse(void)
 	if (mouseActive)
 	{
 		IN_GobbleMotionEvents();
-
-		SDL_SetWindowGrab(mainScreen, SDL_FALSE);
-		SDL_SetRelativeMouseMode(SDL_FALSE);
+		IN_GrabMouse(qfalse, qfalse);
 
 		// Don't warp the mouse unless the cursor is within the window
 		if (SDL_GetWindowFlags(mainScreen) & SDL_WINDOW_MOUSE_FOCUS)
@@ -986,8 +1004,12 @@ static void IN_ProcessEvents(void)
 				Cvar_SetValue("com_minimized", 0);
 				break;
 
-			case SDL_WINDOWEVENT_LEAVE:
 			case SDL_WINDOWEVENT_FOCUS_LOST:
+				if (cls.glconfig.isFullscreen)
+				{
+					Cbuf_ExecuteText(EXEC_NOW, "minimize");
+				}
+			case SDL_WINDOWEVENT_LEAVE:
 				Cvar_SetValue("com_unfocused", 1);
 				break;
 
@@ -1019,12 +1041,14 @@ static void IN_ProcessEvents(void)
 void IN_Frame(void)
 {
 	qboolean loading;
+	Uint32 sdlScreenFlags;
 
 	//IN_JoyMove();
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
 	loading = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
+	sdlScreenFlags = SDL_GetWindowFlags(mainScreen);
 
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
@@ -1036,13 +1060,19 @@ void IN_Frame(void)
 		// Loading in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (!(SDL_GetWindowFlags(mainScreen) & SDL_WINDOW_INPUT_FOCUS))
+	else if (!(sdlScreenFlags & SDL_WINDOW_INPUT_FOCUS))
 	{
 		// Window not got focus
 		IN_DeactivateMouse();
 	}
 	else
 	{
+		if (loading)
+		{
+			//Just eat up all the mouse events that are not used anyway
+			IN_GobbleMotionEvents();
+		}
+
 		IN_ActivateMouse();
 	}
 
