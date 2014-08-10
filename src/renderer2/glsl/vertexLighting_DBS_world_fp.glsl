@@ -1,4 +1,5 @@
 /* vertexLighting_DBS_world_fp.glsl */
+#include "lib/reliefMapping"
 
 uniform sampler2D u_DiffuseMap;
 uniform sampler2D u_NormalMap;

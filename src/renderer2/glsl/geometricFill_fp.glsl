@@ -2,6 +2,8 @@
 
 #extension GL_ARB_draw_buffers : enable
 
+#include "lib/reliefMapping"
+
 uniform sampler2D u_DiffuseMap;
 uniform sampler2D u_NormalMap;
 uniform sampler2D u_SpecularMap;

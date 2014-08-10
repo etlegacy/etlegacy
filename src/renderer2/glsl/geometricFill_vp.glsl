@@ -1,4 +1,7 @@
 /* geometricFill_DBS_vp.glsl */
+#include "lib/vertexSkinning"
+#include "lib/vertexAnimation"
+#include "lib/deformVertexes"
 
 attribute vec4 attr_Position;
 attribute vec4 attr_TexCoord0;

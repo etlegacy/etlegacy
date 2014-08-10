@@ -1,4 +1,5 @@
 /* lightMapping_fp.glsl */
+#include "lib/reliefMapping"
 
 uniform bool SHOW_LIGHTMAP;
 uniform bool SHOW_DELUXEMAP;

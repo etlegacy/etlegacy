@@ -1355,6 +1355,10 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 			    !FS_IsExt(filename, ".menu", len) &&    // menu files
 			    !FS_IsExt(filename, ".game", len) &&    // menu files
 			    !FS_IsExt(filename, ".dat", len) &&     // for journal files
+				!FS_IsExt(filename, ".bin", len) &&     // glsl shader binary
+#ifdef _DEBUG
+				!FS_IsExt(filename, ".glsl", len) &&
+#endif
 			    !FS_IsDemoExt(filename, len))           // demos
 			{
 				*file = 0;

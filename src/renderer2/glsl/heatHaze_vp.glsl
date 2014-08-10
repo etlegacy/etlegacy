@@ -1,4 +1,7 @@
 /* heatHaze_vp.glsl */
+#include "lib/vertexSkinning" 
+#include "lib/vertexAnimation"
+#include "lib/deformVertexes"
 
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
