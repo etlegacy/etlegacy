@@ -862,6 +862,11 @@ static void IN_ProcessEvents(void)
 			if ((key = IN_TranslateSDLToQ3Key(&e.key.keysym, qtrue)))
 			{
 				Com_QueueEvent(0, SE_KEY, key, qtrue, 0, NULL);
+				if (key == K_BACKSPACE)
+				{
+					//This was added to keep mod comp, mods do not check K_BACKSPACE but instead use char 8 which is backspace in ascii
+					Com_QueueEvent(0, SE_CHAR, 8, 0, 0, NULL); // 8 == BS aka Backspace from ascii table
+				}
 			}
 			lastKeyDown = key;
 			break;

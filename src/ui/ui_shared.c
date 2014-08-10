@@ -3712,22 +3712,6 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				}
 			}
 
-			if (key == K_BACKSPACE)
-			{
-				if (item->cursorPos > 0)
-				{
-					memmove(&buff[item->cursorPos - 1], &buff[item->cursorPos], len + 1 - item->cursorPos);
-					item->cursorPos--;
-					if (item->cursorPos < editPtr->paintOffset)
-					{
-						editPtr->paintOffset--;
-					}
-					buff[len] = '\0';
-				}
-				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
-				return qtrue;
-			}
-
 			if (key == K_DEL || key == K_KP_DEL || (tolower(key) == 'd' && DC->keyIsDown(K_CTRL)))
 			{
 				if (item->cursorPos < len)
