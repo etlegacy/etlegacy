@@ -57,8 +57,6 @@ cvar_t *r_ignoreFastPath;
 
 cvar_t *r_ignore;
 
-cvar_t *r_displayRefresh;
-
 cvar_t *r_detailTextures;
 
 cvar_t *r_znear;
@@ -1223,8 +1221,7 @@ void R_Register(void)
 	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
-	r_displayRefresh = ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
-	ri.Cvar_AssertCvarRange(r_displayRefresh, 0, 200, qtrue);
+	ri.Cvar_AssertCvarRange(ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH), 0, 200, qtrue);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 	ri.Cvar_AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);

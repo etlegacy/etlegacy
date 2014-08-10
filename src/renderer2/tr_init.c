@@ -1325,6 +1325,8 @@ void R_Register(void)
 	r_noMarksOnTrisurfs       = ri.Cvar_Get("r_noMarksOnTrisurfs", "1", CVAR_CHEAT);
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
 
+	ri.Cvar_AssertCvarRange(ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH), 0, 200, qtrue);
+
 	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_ARCHIVE);
 	r_noFog   = ri.Cvar_Get("r_noFog", "0", CVAR_CHEAT);
 
