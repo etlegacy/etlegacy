@@ -859,6 +859,10 @@ static void IN_ProcessEvents(void)
 					//This was added to keep mod comp, mods do not check K_BACKSPACE but instead use char 8 which is backspace in ascii
 					Com_QueueEvent(0, SE_CHAR, 8, 0, 0, NULL); // 8 == BS aka Backspace from ascii table
 				}
+				else if (keys[K_CTRL].down && key >= 'a' && key <= 'z')
+				{
+					Com_QueueEvent(0, SE_CHAR, CTRL(key), 0, 0, NULL);
+				}
 			}
 			lastKeyDown = key;
 			break;
