@@ -183,6 +183,8 @@ cvar_t *r_screenshotJpegQuality;
 cvar_t *r_maxpolys;
 cvar_t *r_maxpolyverts;
 
+cvar_t *r_gfxInfo;
+
 // TODO: check if this crazy stuff is needed
 vec4hack_t     tess_xyz[SHADER_MAX_VERTEXES] QALIGN(16);
 vec4hack_t     tess_normal[SHADER_MAX_VERTEXES] QALIGN(16);
@@ -1084,16 +1086,19 @@ void GfxInfo_f(void)
 	};
 
 	Ren_Print("\nGL_VENDOR: %s\n", glConfig.vendor_string);
-	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
 	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
 
-	Ren_Print("GL_EXTENSIONS: ");
-	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
+	if (r_gfxInfo->integer > 0)
+	{
+		Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string); // GLEW already reports this
+		Ren_Print("GL_EXTENSIONS: ");
+		R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
+	}
 
 	Ren_Print("\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	Ren_Print("GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
 	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
-	Ren_Print("MODE: %d, %d x %d %s Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
+	Ren_Print("MODE: %d, SCREEN: %d x %d %s (ratio %.4f) Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1], glConfig.windowAspect, glConfig);
 
 	if (glConfig.displayFrequency)
 	{
@@ -1103,8 +1108,6 @@ void GfxInfo_f(void)
 	{
 		Ren_Print("N/A\n");
 	}
-
-	Ren_Print("ASPECT RATIO: %.4f\n", glConfig.windowAspect);
 
 	if (glConfig.deviceSupportsGamma)
 	{
@@ -1163,7 +1166,7 @@ void GfxInfo_f(void)
 	{
 		Ren_Print("Forcing glFinish\n");
 	}
-	Ren_Print("Renderer: vanilla\n");
+	Ren_Print("Renderer: vanilla+\n");
 }
 
 /*
@@ -1187,7 +1190,7 @@ void R_Register(void)
 	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_picmip = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);          //----(SA)   mod for DM and DK for id build.  was "1" // JPW NERVE pushed back to 1
+	r_picmip = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);          // mod for DM and DK for id build.  was "1" - pushed back to 1
 	ri.Cvar_AssertCvarRange(r_picmip, 0, 3, qtrue);
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
@@ -1201,11 +1204,11 @@ void R_Register(void)
 
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	ri.Cvar_AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
-	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);    // disable overbrightbits by default
-	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue);                                     // limit to overbrightbits 1 (sorry 1337 players)
+	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);        // disable overbrightbits by default
+	ri.Cvar_AssertCvarRange(r_overBrightBits, 0, 1, qtrue);                                    // limit to overbrightbits 1 (sorry 1337 players)
 	r_ignorehwgamma     = ri.Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH);      // use hw gamma by default
 	r_mode              = ri.Cvar_Get("r_mode", "4", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_oldMode           = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);                     // previous "good" video mode
+	r_oldMode           = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);                          // previous "good" video mode
 	r_fullscreen        = ri.Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_noborder          = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customwidth       = ri.Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1326,6 +1329,8 @@ void R_Register(void)
 	ri.Cvar_AssertCvarRange(r_maxpolys, MIN_POLYS, MAX_POLYS, qtrue); // MIN_POLYS was old static value
 	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MIN_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
 	ri.Cvar_AssertCvarRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue); // MIN_POLYVERTS was old static value
+
+	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
@@ -1584,7 +1589,7 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.AddCoronaToScene = RE_AddCoronaToScene;
 	re.SetFog           = R_SetFog;
 
-	re.RenderScene      = RE_RenderScene;
+	re.RenderScene = RE_RenderScene;
 
 	re.SetColor               = RE_SetColor;
 	re.DrawStretchPic         = RE_StretchPic;
