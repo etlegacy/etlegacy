@@ -1,4 +1,5 @@
 /* lightMapping_vp.glsl */
+#include "lib/deformVertexes"
 
 attribute vec4 attr_Position;
 attribute vec4 attr_TexCoord0;

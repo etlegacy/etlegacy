@@ -81,6 +81,34 @@ typedef struct GLShaderHeader_s
 	GLint binaryLength;  // argument to glProgramBinary
 }GLShaderHeader_t;
 
+enum GLShaderTypeEnum
+{
+	LEGACY_VERTEX,
+	LEGACY_FRAGMENT,
+	LEGACY_GEOMETRY,
+	LEGACY_TESS_CONTROL,
+	LEGACY_TESS_EVAL,
+};
+
+typedef struct GLShaderType_s
+{
+	unsigned int type;
+	unsigned int gltype;
+	char *typetext;
+    char *extension;
+} GLShaderType_t;
+
+const GLShaderType_t shaderTypes[] =
+{
+    { LEGACY_VERTEX, GL_VERTEX_SHADER, "vert", "_vp.glsl" },
+    { LEGACY_FRAGMENT, GL_FRAGMENT_SHADER, "frag", "_fp.glsl" },
+    { LEGACY_GEOMETRY, GL_GEOMETRY_SHADER, "geom", "_gm.glsl" },
+    { LEGACY_TESS_CONTROL, GL_TESS_CONTROL_SHADER, "tesscont", "_tsc.glsl" },
+    { LEGACY_TESS_EVAL, GL_TESS_EVALUATION_SHADER, "tesseval" "_tse.glsl" },
+};
+
+const int numberofshaderTypes = ARRAY_LEN(shaderTypes);
+
 programInfo_t *gl_genericShader;
 programInfo_t *gl_lightMappingShader;
 programInfo_t *gl_vertexLightingShader_DBS_entity;
@@ -1239,40 +1267,14 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	return shaderText;
 }
 
-#define GLSL_BUFF 64000
-#define GLSL_BUFF_CHAR (sizeof(char) *GLSL_BUFF)
-
-static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
+static void GLSL_PreprocessShaderText(char *shaderBuffer, const char *filetext, GLenum shadertype)
 {
-	static char shaderBuffer[GLSL_BUFF];
-	GLchar      *mainBuffer    = NULL;
-	int         mainBufferSize = 0;
-	GLchar      *ref           = NULL;
-	char        *filename      = NULL;
-	char        *token         = NULL;
-	int         c              = 0, offset = 0;
-	char        *output        = NULL;
+	GLchar      *ref = NULL;
+	char        *token = NULL;
+	int         c = 0, offset = 0;
 
-	Com_Memset(shaderBuffer, '\0', GLSL_BUFF_CHAR);
-
-	switch (shadertype)
-	{
-	case GL_VERTEX_SHADER:
-		filename = info->filename;
-		break;
-	case GL_FRAGMENT_SHADER:
-		filename = (info->fragFilename ? info->fragFilename : info->filename);
-		break;
-	//case GL_TESS_CONTROL_SHADER:
-	//break;
-	default:
-		return NULL;
-	}
-
-	GLSL_GetShaderText(filename, shadertype, &mainBuffer, &mainBufferSize, qfalse);
-	ref = mainBuffer;
-
-    while ((c = *ref))
+	ref = filetext;
+	while (c = *ref)
 	{
 		// skip double slash comments
 		if (c == '/' && ref[1] == '/')
@@ -1307,18 +1309,30 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 			if (!Q_stricmp(token, "include"))
 			{
 				//handle include
-				GLchar *libBuffer    = NULL;
+				GLchar *libBuffer = NULL;
 				int    libBufferSize = 0;
+				int currentOffset = strlen(shaderBuffer);
+				char *shaderBufferPoint = NULL;
+				
+				if (!currentOffset)
+				{
+					shaderBufferPoint = shaderBuffer;
+				}
+				else
+				{
+					shaderBufferPoint  = &shaderBuffer[currentOffset];
+				}
 
 				token = COM_ParseExt2(&ref, qfalse);
 				GLSL_GetShaderText(token, shadertype, &libBuffer, &libBufferSize, qfalse);
-				Q_strcat(shaderBuffer, libBufferSize, libBuffer);
+				GLSL_PreprocessShaderText(shaderBufferPoint, libBuffer, shadertype);
+				//Q_strcat(shaderBuffer, libBufferSize, libBuffer);
 				Com_Dealloc(libBuffer);
 				token = NULL;
 			}
 			else
 			{
-				ref                  = ref2;
+				ref = ref2;
 				shaderBuffer[offset] = c;
 			}
 
@@ -1333,10 +1347,50 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 
 		ref++;
 	}
+}
+
+#define GLSL_BUFF 64000
+#define GLSL_BUFF_CHAR (sizeof(char) *GLSL_BUFF)
+
+static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
+{
+	static char shaderBuffer[GLSL_BUFF];
+	GLchar      *mainBuffer    = NULL;
+	int         mainBufferSize = 0;
+	char        *filename      = NULL;
+	char        *output        = NULL;
+
+	Com_Memset(shaderBuffer, '\0', GLSL_BUFF_CHAR);
+
+	switch (shadertype)
+	{
+	case GL_VERTEX_SHADER:
+		filename = info->filename;
+		break;
+	case GL_FRAGMENT_SHADER:
+		filename = (info->fragFilename ? info->fragFilename : info->filename);
+		break;
+	case GL_GEOMETRY_SHADER:
+		//TODO: handle
+		//break;
+	case GL_TESS_CONTROL_SHADER:
+		//TODO: handle
+		//break;
+	case GL_TESS_EVALUATION_SHADER:
+		//TODO: handle
+		//break;
+	default:
+		Ren_Fatal("WTF");
+		return NULL;
+	}
+
+	strcpy(shaderBuffer, shaderExtraDef);
+
+	GLSL_GetShaderText(filename, shadertype, &mainBuffer, &mainBufferSize, qfalse);
+	GLSL_PreprocessShaderText(&shaderBuffer[strlen(shaderBuffer)], mainBuffer, shadertype);
 
 	Com_Dealloc(mainBuffer);
 	Ren_Print(shaderBuffer);
-	Ren_Fatal("JEPAJEPA %i", strlen(shaderBuffer));
 
 	output = Com_Allocate(strlen(shaderBuffer) * sizeof(char) + 1);
 	strcpy(output, shaderBuffer);
@@ -1972,8 +2026,10 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
 	//char *testike = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
-	char   *vertexShader   = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
-	char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename ? info->fragFilename : info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
+	//char   *vertexShader = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
+	//char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename ? info->fragFilename : info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
+	char   *vertexShader = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
+	char   *fragmentShader = GLSL_BuildGPUShaderTextNew(info, GL_FRAGMENT_SHADER);
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;

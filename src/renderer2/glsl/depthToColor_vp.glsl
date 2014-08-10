@@ -1,4 +1,5 @@
 /* depthToColor_vp.glsl */
+#include "lib/vertexSkinning"
 
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
