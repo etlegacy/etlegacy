@@ -95,16 +95,16 @@ typedef struct GLShaderType_s
 	unsigned int type;
 	unsigned int gltype;
 	char *typetext;
-    char *extension;
+	char *extension;
 } GLShaderType_t;
 
 const GLShaderType_t shaderTypes[] =
 {
-    { LEGACY_VERTEX, GL_VERTEX_SHADER, "vert", "_vp.glsl" },
-    { LEGACY_FRAGMENT, GL_FRAGMENT_SHADER, "frag", "_fp.glsl" },
-    { LEGACY_GEOMETRY, GL_GEOMETRY_SHADER, "geom", "_gm.glsl" },
-    { LEGACY_TESS_CONTROL, GL_TESS_CONTROL_SHADER, "tesscont", "_tsc.glsl" },
-    { LEGACY_TESS_EVAL, GL_TESS_EVALUATION_SHADER, "tesseval" "_tse.glsl" },
+	{ LEGACY_VERTEX,       GL_VERTEX_SHADER,          "vert",     "_vp.glsl"  },
+	{ LEGACY_FRAGMENT,     GL_FRAGMENT_SHADER,        "frag",     "_fp.glsl"  },
+	{ LEGACY_GEOMETRY,     GL_GEOMETRY_SHADER,        "geom",     "_gm.glsl"  },
+	{ LEGACY_TESS_CONTROL, GL_TESS_CONTROL_SHADER,    "tesscont", "_tsc.glsl" },
+	{ LEGACY_TESS_EVAL,    GL_TESS_EVALUATION_SHADER, "tesseval" "_tse.glsl" },
 };
 
 const int numberofshaderTypes = ARRAY_LEN(shaderTypes);
@@ -448,14 +448,14 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly, qboole
 	int         i;
 	int         printLevel = developerOnly ? PRINT_DEVELOPER : PRINT_ALL;
 
-    if(isProgram)
-    {
-        glGetProgramiv(object, GL_INFO_LOG_LENGTH, &maxLength);
-    }
-    else
-    {
-        glGetShaderiv(object, GL_INFO_LOG_LENGTH, &maxLength);
-    }
+	if (isProgram)
+	{
+		glGetProgramiv(object, GL_INFO_LOG_LENGTH, &maxLength);
+	}
+	else
+	{
+		glGetShaderiv(object, GL_INFO_LOG_LENGTH, &maxLength);
+	}
 
 	if (maxLength <= 0)
 	{
@@ -467,14 +467,14 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly, qboole
 
 	if (maxLength < 1023)
 	{
-        if(isProgram)
-        {
-            glGetProgramInfoLog(object, maxLength, &maxLength, msgPart);
-        }
-        else
-        {
-            glGetShaderInfoLog(object, maxLength, &maxLength, msgPart);
-        }
+		if (isProgram)
+		{
+			glGetProgramInfoLog(object, maxLength, &maxLength, msgPart);
+		}
+		else
+		{
+			glGetShaderInfoLog(object, maxLength, &maxLength, msgPart);
+		}
 
 		msgPart[maxLength + 1] = '\0';
 
@@ -484,14 +484,14 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly, qboole
 	{
 		msg = ri.Hunk_AllocateTempMemory(maxLength);
 
-        if(isProgram)
-        {
-            glGetProgramInfoLog(object, maxLength, &maxLength, msg);
-        }
-        else
-        {
-            glGetShaderInfoLog(object, maxLength, &maxLength, msg);
-        }
+		if (isProgram)
+		{
+			glGetProgramInfoLog(object, maxLength, &maxLength, msg);
+		}
+		else
+		{
+			glGetShaderInfoLog(object, maxLength, &maxLength, msg);
+		}
 
 		for (i = 0; i < maxLength; i += 1024)
 		{
@@ -510,11 +510,11 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 	int         maxLength = 0;
 	int         i;
 
-    glGetShaderiv(object, GL_SHADER_SOURCE_LENGTH, &maxLength);
+	glGetShaderiv(object, GL_SHADER_SOURCE_LENGTH, &maxLength);
 
 	msg = ri.Hunk_AllocateTempMemory(maxLength);
 
-    glGetShaderSource(object, maxLength, &maxLength, msg);
+	glGetShaderSource(object, maxLength, &maxLength, msg);
 
 	for (i = 0; i < maxLength; i += 1024)
 	{
@@ -594,14 +594,14 @@ qboolean GLSL_LoadShaderBinary(programInfo_t *info, size_t programNum)
 
 	// load the shader
 	shaderProgram          = &info->list->programs[programNum];
-    shaderProgram->program = glCreateProgram();
+	shaderProgram->program = glCreateProgram();
 	glProgramBinary(shaderProgram->program, shaderHeader.binaryFormat, binaryptr, shaderHeader.binaryLength);
 	glGetProgramiv(shaderProgram->program, GL_LINK_STATUS, &success);
 
 	if (!success)
 	{
 		ri.FS_FreeFile(binary);
-        glDeleteProgram(shaderProgram->program);
+		glDeleteProgram(shaderProgram->program);
 		return qfalse;
 	}
 
@@ -1057,10 +1057,10 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 {
 	dest[0] = '\0';
 
-    // HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.50 ones
-    if (glConfig2.glslMajorVersion > 1 || (glConfig2.glslMajorVersion == 1 && glConfig2.glslMinorVersion >= 50))
+	// HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.50 ones
+	if (glConfig2.glslMajorVersion > 1 || (glConfig2.glslMajorVersion == 1 && glConfig2.glslMinorVersion >= 50))
 	{
-        Q_strcat(dest, size, "#version 150 core\n");
+		Q_strcat(dest, size, "#version 150 core\n");
 
 		if (shaderType == GL_VERTEX_SHADER)
 		{
@@ -1070,14 +1070,14 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 		else
 		{
 			Q_strcat(dest, size, "#define varying in\n");
-            Q_strcat(dest, size, "out vec4 out_Color[4];\n");
-            Q_strcat(dest, size, "#define gl_FragColor out_Color[0]\n");
-            Q_strcat(dest, size, "#define gl_FragData out_Color\n");
+			Q_strcat(dest, size, "out vec4 out_Color[4];\n");
+			Q_strcat(dest, size, "#define gl_FragColor out_Color[0]\n");
+			Q_strcat(dest, size, "#define gl_FragData out_Color\n");
 		}
 
 		Q_strcat(dest, size, "#define textureCube texture\n");
-        Q_strcat(dest, size, "#define texture2D texture\n");
-        Q_strcat(dest, size, "#define texture2DProj textureProj\n");
+		Q_strcat(dest, size, "#define texture2D texture\n");
+		Q_strcat(dest, size, "#define texture2DProj textureProj\n");
 	}
 	else
 	{
@@ -1090,20 +1090,20 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 	GLint       compiled;
 	GLhandleARB shader;
 
-    shader = glCreateShader(shaderType);
+	shader = glCreateShader(shaderType);
 
-    glShaderSource(shader, 1, (const GLcharARB **)&buffer, &size);
+	glShaderSource(shader, 1, (const GLcharARB **)&buffer, &size);
 
 	// compile shader
-    glCompileShader(shader);
+	glCompileShader(shader);
 
 	// check if shader compiled
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
 		ri.FS_WriteFile(va("debug/%s_%s.debug", name, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), buffer, size);
 		GLSL_PrintShaderSource(shader);
-        GLSL_PrintInfoLog(shader, qfalse, qfalse);
+		GLSL_PrintInfoLog(shader, qfalse, qfalse);
 		Ren_Fatal("Couldn't compile shader");
 		return 0;
 	}
@@ -1113,12 +1113,12 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 
 	if (*prevShader)
 	{
-        glDetachShader(program, *prevShader);
-        glDeleteShader(*prevShader);
+		glDetachShader(program, *prevShader);
+		glDeleteShader(*prevShader);
 	}
 
 	// attach shader to program
-    glAttachShader(program, shader);
+	glAttachShader(program, shader);
 
 	*prevShader = shader;
 
@@ -1267,11 +1267,11 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	return shaderText;
 }
 
-static void GLSL_PreprocessShaderText(char *shaderBuffer, const char *filetext, GLenum shadertype)
+static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum shadertype)
 {
-	GLchar      *ref = NULL;
-	char        *token = NULL;
-	int         c = 0, offset = 0;
+	GLchar *ref   = NULL;
+	char   *token = NULL;
+	int    c      = 0, offset = 0;
 
 	ref = filetext;
 	while (c = *ref)
@@ -1309,18 +1309,18 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, const char *filetext, 
 			if (!Q_stricmp(token, "include"))
 			{
 				//handle include
-				GLchar *libBuffer = NULL;
-				int    libBufferSize = 0;
-				int currentOffset = strlen(shaderBuffer);
-				char *shaderBufferPoint = NULL;
-				
+				GLchar *libBuffer         = NULL;
+				int    libBufferSize      = 0;
+				int    currentOffset      = strlen(shaderBuffer);
+				char   *shaderBufferPoint = NULL;
+
 				if (!currentOffset)
 				{
 					shaderBufferPoint = shaderBuffer;
 				}
 				else
 				{
-					shaderBufferPoint  = &shaderBuffer[currentOffset];
+					shaderBufferPoint = &shaderBuffer[currentOffset];
 				}
 
 				token = COM_ParseExt2(&ref, qfalse);
@@ -1332,7 +1332,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, const char *filetext, 
 			}
 			else
 			{
-				ref = ref2;
+				ref                  = ref2;
 				shaderBuffer[offset] = c;
 			}
 
@@ -1371,14 +1371,14 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 		filename = (info->fragFilename ? info->fragFilename : info->filename);
 		break;
 	case GL_GEOMETRY_SHADER:
-		//TODO: handle
-		//break;
+	//TODO: handle
+	//break;
 	case GL_TESS_CONTROL_SHADER:
-		//TODO: handle
-		//break;
+	//TODO: handle
+	//break;
 	case GL_TESS_EVALUATION_SHADER:
-		//TODO: handle
-		//break;
+	//TODO: handle
+	//break;
 	default:
 		Ren_Fatal("WTF");
 		return NULL;
@@ -1455,12 +1455,12 @@ static void GLSL_LinkProgram(GLhandleARB program)
 		glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	}
 
-    glLinkProgram(program);
+	glLinkProgram(program);
 
-    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+	glGetProgramiv(program, GL_LINK_STATUS, &linked);
 	if (!linked)
 	{
-        GLSL_PrintInfoLog(program, qfalse, qtrue);
+		GLSL_PrintInfoLog(program, qfalse, qtrue);
 		Ren_Print("\n");
 		Ren_Drop("shaders failed to link");
 	}
@@ -1470,12 +1470,12 @@ static void GLSL_ValidateProgram(GLhandleARB program)
 {
 	GLint validated;
 
-    glValidateProgram(program);
+	glValidateProgram(program);
 
-    glGetProgramiv(program, GL_VALIDATE_STATUS, &validated);
+	glGetProgramiv(program, GL_VALIDATE_STATUS, &validated);
 	if (!validated)
 	{
-        GLSL_PrintInfoLog(program, qfalse, qtrue);
+		GLSL_PrintInfoLog(program, qfalse, qtrue);
 		Ren_Print("\n");
 		Ren_Drop("shaders failed to validate");
 	}
@@ -1488,22 +1488,22 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 	char   uniformName[1000];
 
 	// install the executables in the program object as part of current state.
-    glUseProgram(program);
+	glUseProgram(program);
 
 	// check for GL Errors
 
 	// query the number of active uniforms
-    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
+	glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
 
 	// Loop over each of the active uniforms, and set their value
 	for (i = 0; i < count; i++)
 	{
-        glGetActiveUniform(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
+		glGetActiveUniform(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
 
 		Ren_LogComment("active uniform: '%s'\n", uniformName)
 	}
 
-    glUseProgram(0);
+	glUseProgram(0);
 }
 
 void GLSL_InitUniforms(shaderProgram_t *program)
@@ -1513,7 +1513,7 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 
 	for (i = 0; i < UNIFORM_COUNT; i++)
 	{
-        uniforms[i] = glGetUniformLocation(program->program, uniformsInfo[i].name);
+		uniforms[i] = glGetUniformLocation(program->program, uniformsInfo[i].name);
 
 		if (uniforms[i] == -1)
 		{
@@ -1531,7 +1531,7 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 			break;
 		case GLSL_FLOAT:
 			size += sizeof(GLfloat);
-            break;
+			break;
 		case GLSL_FLOAT5:
 			size += sizeof(vec_t) * 5;
 			break;
@@ -1598,7 +1598,7 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 
 	*compare = value;
 
-    glUniform1i(uniforms[uniformNum], value);
+	glUniform1i(uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
@@ -1624,7 +1624,7 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 
 	*compare = value;
 
-    glUniform1i(uniforms[uniformNum], value);
+	glUniform1i(uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value)
@@ -1650,7 +1650,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	*compare = value;
 
-    glUniform1f(uniforms[uniformNum], value);
+	glUniform1f(uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t v)
@@ -1677,7 +1677,7 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 	compare[0] = v[0];
 	compare[1] = v[1];
 
-    glUniform2f(uniforms[uniformNum], v[0], v[1]);
+	glUniform2f(uniforms[uniformNum], v[0], v[1]);
 }
 
 void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t v)
@@ -1703,7 +1703,7 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 
 	VectorCopy(v, compare);
 
-    glUniform3f(uniforms[uniformNum], v[0], v[1], v[2]);
+	glUniform3f(uniforms[uniformNum], v[0], v[1], v[2]);
 }
 
 void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t v)
@@ -1729,7 +1729,7 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 
 	Vector4Copy(v, compare);
 
-    glUniform4f(uniforms[uniformNum], v[0], v[1], v[2], v[3]);
+	glUniform4f(uniforms[uniformNum], v[0], v[1], v[2], v[3]);
 }
 
 void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_t v)
@@ -1755,7 +1755,7 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 
 	Vector5Copy(v, compare);
 
-    glUniform1fv(uniforms[uniformNum], 5, v);
+	glUniform1fv(uniforms[uniformNum], 5, v);
 }
 
 void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const matrix_t matrix)
@@ -1781,7 +1781,7 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 
 	MatrixCopy(matrix, compare);
 
-    glUniformMatrix4fv(uniforms[uniformNum], 1, GL_FALSE, matrix);
+	glUniformMatrix4fv(uniforms[uniformNum], 1, GL_FALSE, matrix);
 }
 
 void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray, int arraysize)
@@ -1871,21 +1871,21 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 
 	Q_strncpyz(program->name, name, sizeof(program->name));
 
-    program->program = glCreateProgram();
+	program->program = glCreateProgram();
 
-    if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER, name)))
+	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER, name)))
 	{
 		Ren_Print("GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER_ARB\n", name);
-        glDeleteProgram(program->program);
+		glDeleteProgram(program->program);
 		return qfalse;
 	}
 
 	if (fpCode)
 	{
-        if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER, name)))
+		if (!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER, name)))
 		{
 			Ren_Print("GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER_ARB\n", name);
-            glDeleteProgram(program->program);
+			glDeleteProgram(program->program);
 			return qfalse;
 		}
 	}
@@ -1967,7 +1967,7 @@ static void GLSL_SetTextureUnitBindings(programInfo_t *info, int permutation)
 		else
 		{
 			program->textureBinds[i] = j;
-            glUniform1i(program->uniforms[textureMap[i]], j);
+			glUniform1i(program->uniforms[textureMap[i]], j);
 			j++;
 		}
 	}
@@ -1979,7 +1979,7 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 
 	for (i = 0; i < info->numUniformValues; i++)
 	{
-        location = glGetUniformLocation(info->list->programs[permutation].program, info->uniformValues[i].type.name);
+		location = glGetUniformLocation(info->list->programs[permutation].program, info->uniformValues[i].type.name);
 
 		if (location == -1)
 		{
@@ -2028,7 +2028,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	//char *testike = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
 	//char   *vertexShader = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
 	//char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename ? info->fragFilename : info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
-	char   *vertexShader = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
+	char   *vertexShader   = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
 	char   *fragmentShader = GLSL_BuildGPUShaderTextNew(info, GL_FRAGMENT_SHADER);
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
@@ -2340,17 +2340,17 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 	{
 		if (program->vertexShader)
 		{
-            glDetachShader(program->program, program->vertexShader);
-            glDeleteShader(program->vertexShader);
+			glDetachShader(program->program, program->vertexShader);
+			glDeleteShader(program->vertexShader);
 		}
 
 		if (program->fragmentShader)
 		{
-            glDetachShader(program->program, program->fragmentShader);
-            glDeleteShader(program->fragmentShader);
+			glDetachShader(program->program, program->fragmentShader);
+			glDeleteShader(program->fragmentShader);
 		}
 
-        glDeleteProgram(program->program);
+		glDeleteProgram(program->program);
 
 		if (program->uniformBuffer)
 		{
@@ -2438,7 +2438,7 @@ void GLSL_CompileGPUShaders(void)
 
 	R_IssuePendingRenderCommands();
 
-    //R_BindFBO(tr.deferredRenderFBO);
+	//R_BindFBO(tr.deferredRenderFBO);
 
 	//Init simple shader and draw loading screen
 
@@ -2527,7 +2527,7 @@ void GLSL_ShutdownGPUShaders(void)
 	Com_Dealloc(definitionText);
 
 	glState.currentProgram = 0;
-    glUseProgram(0);
+	glUseProgram(0);
 }
 
 void GLSL_BindProgram(shaderProgram_t *program)
@@ -2542,7 +2542,7 @@ void GLSL_BindProgram(shaderProgram_t *program)
 
 	if (glState.currentProgram != program)
 	{
-        glUseProgram(program->program);
+		glUseProgram(program->program);
 		glState.currentProgram = program;
 		backEnd.pc.c_glslShaderBinds++;
 	}
@@ -2554,7 +2554,7 @@ void GLSL_BindNullProgram(void)
 
 	if (glState.currentProgram)
 	{
-        glUseProgram(0);
+		glUseProgram(0);
 		glState.currentProgram = NULL;
 	}
 }
