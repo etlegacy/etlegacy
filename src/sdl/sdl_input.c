@@ -51,7 +51,6 @@ static cvar_t *in_nograb;
 
 static qboolean mouseAvailable   = qfalse;
 static qboolean mouseActive      = qfalse;
-static qboolean keyRepeatEnabled = qfalse;
 
 static SDL_Joystick *stick                = NULL;
 static cvar_t       *in_joystick          = NULL;
@@ -841,24 +840,17 @@ static void IN_ProcessEvents(void)
 	{
 		return;
 	}
-/*
-    if (Key_GetCatcher() == 0 && keyRepeatEnabled)
-    {
-        // @todo SDL_EnableKeyRepeat(0, 0);
-        keyRepeatEnabled = qfalse;
-    }
-    else if (!keyRepeatEnabled)
-    {
-        // @todo SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,
-        //                    SDL_DEFAULT_REPEAT_INTERVAL);
-        keyRepeatEnabled = qtrue;
-    }
-*/
+
 	while (SDL_PollEvent(&e))
 	{
 		switch (e.type)
 		{
 		case SDL_KEYDOWN:
+			if (e.key.repeat && Key_GetCatcher() == 0)
+			{
+				break;
+			}
+
 			if ((key = IN_TranslateSDLToQ3Key(&e.key.keysym, qtrue)))
 			{
 				Com_QueueEvent(0, SE_KEY, key, qtrue, 0, NULL);
@@ -866,6 +858,10 @@ static void IN_ProcessEvents(void)
 				{
 					//This was added to keep mod comp, mods do not check K_BACKSPACE but instead use char 8 which is backspace in ascii
 					Com_QueueEvent(0, SE_CHAR, 8, 0, 0, NULL); // 8 == BS aka Backspace from ascii table
+				}
+				else if (keys[K_CTRL].down && key >= 'a' && key <= 'z')
+				{
+					Com_QueueEvent(0, SE_CHAR, CTRL(key), 0, 0, NULL);
 				}
 			}
 			lastKeyDown = key;
