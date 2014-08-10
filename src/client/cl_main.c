@@ -116,7 +116,6 @@ clientActive_t     cl;
 clientConnection_t clc;
 clientStatic_t     cls;
 vm_t               *cgvm;
-autoupdate_t       autoupdate;
 
 netadr_t rcon_address;
 
@@ -923,6 +922,11 @@ void CL_ShutdownAll(void)
 	}
 }
 
+qboolean CL_ConnectedToServer(void)
+{
+	return (qboolean)(cls.state >= CA_CONNECTED);
+}
+
 /*
 =================
 CL_FlushMemory
@@ -1260,6 +1264,11 @@ void CL_RequestMotd(void)
 	Info_SetValueForKey(info, "challenge", autoupdate.motdChallenge);
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
+
+	// ET:Legacy client only: collect gfx card info
+	//Info_SetValueForKey(info, "gl_vendor", cls.glconfig.vendor_string);
+	//Info_SetValueForKey(info, "gl_renderer", cls.glconfig.renderer_string);
+	Info_SetValueForKey(info, "gl_version", cls.glconfig.version_string);
 
 	NET_OutOfBandPrint(NS_CLIENT, autoupdate.motdServer, "getmotd \"%s\"", info);
 }
@@ -1829,48 +1838,10 @@ void CL_WavStopRecord_f(void)
  */
 void CL_DownloadsComplete(void)
 {
-#ifdef FEATURE_AUTOUPDATE
-	// Auto-update
-	if (autoupdate.updateStarted)
+	if (CL_CheckUpdateDownloads())
 	{
-		if (strlen(com_updatefiles->string) > 4)
-		{
-			CL_InitDownloads();
-			return;
-		}
-
-		/*
-		char *fn;
-		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, com_updatefiles->string);
-		#ifndef _WIN32
-		Sys_Chmod(fn, S_IXUSR);
-		#endif
-		// will either exit with a successful process spawn, or will Com_Error ERR_DROP
-		// so we need to clear the disconnected download data if needed
-		if (cls.bWWWDlDisconnected)
-		{
-		    cls.bWWWDlDisconnected = qfalse;
-		    CL_ClearStaticDownload();
-		}
-
-		Sys_StartProcess(fn, qtrue);
-
-		// reinitialize the filesystem if the game directory or checksum has changed
-		// - after Legacy mod update
-		FS_ConditionalRestart(clc.checksumFeed);
-		*/
-
-		autoupdate.updateStarted = qfalse;
-
-		CL_Disconnect(qtrue);
-
-		// we can reset that now
-		cls.bWWWDlDisconnected = qfalse;
-		CL_ClearStaticDownload();
-
 		return;
 	}
-#endif // FEATURE_AUTOUPDATE
 
 	// if we downloaded files we need to restart the file system
 	if (cls.downloadRestart)
@@ -2031,67 +2002,7 @@ void CL_InitDownloads(void)
 	cls.bWWWDlDisconnected = qfalse;
 	CL_ClearStaticDownload();
 
-#ifdef FEATURE_AUTOUPDATE
-	if (autoupdate.updateStarted && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
-	{
-		if (strlen(com_updatefiles->string) > 4)
-		{
-			char *updateFile;
-			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
-
-			clc.bWWWDl             = qtrue;
-			cls.bWWWDlDisconnected = qtrue;
-
-			updateFile = strtok(com_updatefiles->string, ";");
-
-			if (updateFile == NULL)
-			{
-				Com_Error(ERR_AUTOUPDATE, "Could not parse update string.");
-			}
-			else
-			{
-				// download format: @remotename@localname
-				Q_strncpyz(clc.downloadList, va("@%s@%s", updateFile, updateFile), MAX_INFO_STRING);
-				Q_strncpyz(cls.originalDownloadName, updateFile, sizeof(cls.originalDownloadName));
-				Q_strncpyz(cls.downloadName, va("%s/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
-				Q_strncpyz(cls.downloadTempName,
-				           FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)),
-				           sizeof(cls.downloadTempName));
-				// TODO: add file size, so UI can show progress bar
-				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
-
-				if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName))
-				{
-					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"", cls.downloadName);
-					clc.bWWWDlAborting = qtrue;
-				}
-
-				while (1)
-				{
-					updateFile = strtok(NULL, ";");
-
-					if (updateFile == NULL)
-					{
-						break;
-					}
-
-					Q_strcat(updateFilesRemaining, sizeof(updateFilesRemaining), va("%s;", updateFile));
-				}
-
-				if (strlen(updateFilesRemaining) > 4)
-				{
-					Cvar_Set("com_updatefiles", updateFilesRemaining);
-				}
-				else
-				{
-					Cvar_Set("com_updatefiles", "");
-				}
-				return;
-			}
-		}
-	}
-	else
-#endif // FEATURE_AUTOUPDATE
+	if (!CL_InitUpdateDownloads())
 	{
 		// whatever autodownlad configuration, store missing files in a cvar, use later in the ui maybe
 		if (FS_ComparePaks(missingfiles, sizeof(missingfiles), qfalse))
@@ -2669,18 +2580,10 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 {
 	int headerBytes;
 
-#ifdef FEATURE_AUTOUPDATE
-	static qboolean autoupdateRedirected = qfalse;
-
-	// Update server doesn't understand netchan packets
-	if (NET_CompareAdr(autoupdate.autoupdateServer, from)
-	    && autoupdate.updateStarted && !autoupdateRedirected)
+	if (CL_UpdatePacketEvent(from))
 	{
-		autoupdateRedirected = qtrue;
-		CL_InitDownloads();
 		return;
 	}
-#endif /* FEATURE_AUTOUPDATE */
 
 	if (msg->cursize >= 4 && *( int * ) msg->data == -1)
 	{
@@ -3914,6 +3817,7 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 	{
 		if (info)
 		{
+			Q_strncpyz(server->version, Info_ValueForKey(info, "version"), MAX_NAME_LENGTH);
 			server->clients = atoi(Info_ValueForKey(info, "clients"));
 			server->humans  = atoi(Info_ValueForKey(info, "humans"));
 			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), MAX_NAME_LENGTH);
@@ -3979,20 +3883,12 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 	char *infoString;
 	int  prot;
 	char *gameName;
-	int  debug_protocol;
-	int  protocol = PROTOCOL_VERSION;
-
-	debug_protocol = Cvar_VariableIntegerValue("debug_protocol");
-	if (debug_protocol)
-	{
-		protocol = debug_protocol;
-	}
 
 	infoString = MSG_ReadString(msg);
 
 	// if this isn't the correct protocol version, ignore it
 	prot = atoi(Info_ValueForKey(infoString, "protocol"));
-	if (prot != protocol)
+	if (prot != PROTOCOL_VERSION)
 	{
 		Com_DPrintf("Different protocol info packet: %s\n", infoString);
 		return;
@@ -4369,34 +4265,38 @@ void CL_LocalServers_f(void)
 	}
 }
 
-/*
-==================
-CL_GlobalServers_f
-
-FIXME/TODO: ADD MULTIPLE MASTER SUPPORT
-==================
+/**
+* @brief Sends a request for server list to the chosen master server
 */
 void CL_GlobalServers_f(void)
 {
 	netadr_t to;
-	int      i;
-	int      count;
-	char     command[1024];
+	int      count, i;
+	char     command[1024], *masteraddress;
 
-	if ((count = Cmd_Argc()) < 3 || (cls.masterNum = atoi(Cmd_Argv(1))) < 0 || cls.masterNum > 1)
+	if ((count = Cmd_Argc()) < 3 || (cls.masterNum = atoi(Cmd_Argv(1))) < 0 || cls.masterNum > MAX_MASTER_SERVERS - 1)
 	{
-		Com_Printf("usage: globalservers <master# 0-1> <protocol> [keywords]\n");
+		Com_Printf("usage: globalservers <master# 0-%i> <protocol> [keywords]\n", MAX_MASTER_SERVERS - 1);
+		return;
+	}
+
+	sprintf(command, "sv_master%d", cls.masterNum + 1);
+	masteraddress = Cvar_VariableString(command);
+
+	if (!*masteraddress)
+	{
+		Com_Printf("CL_GlobalServers_f: Error: No master server address given.\n");
 		return;
 	}
 
 	// reset the list, waiting for response
 	// -1 is used to distinguish a "no response"
 
-	i = NET_StringToAdr(MASTER_SERVER_NAME, &to, NA_UNSPEC);
+	i = NET_StringToAdr(masteraddress, &to, NA_UNSPEC);
 
 	if (!i)
 	{
-		Com_Printf("CL_GlobalServers_f: Error: could not resolve address of master %s\n", MASTER_SERVER_NAME);
+		Com_Printf("CL_GlobalServers_f: Error: could not resolve address of master %s\n", masteraddress);
 		return;
 	}
 	else if (i == 2)
@@ -4404,8 +4304,8 @@ void CL_GlobalServers_f(void)
 		to.port = BigShort(PORT_MASTER);
 	}
 
-	// FIXME @IP6 NET_AdrToString doesn't deal with port
-	Com_Printf("Requesting servers from the master %s (%s)...\n", MASTER_SERVER_NAME, NET_AdrToString(to));
+	// FIXME: NET_AdrToString doesn't deal with port for IPv6
+	Com_Printf("Requesting servers from the master %s (%s)...\n", masteraddress, NET_AdrToString(to));
 
 	cls.numglobalservers = -1;
 	cls.pingUpdateSource = AS_GLOBAL;
