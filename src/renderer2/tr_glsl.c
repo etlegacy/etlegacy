@@ -1390,7 +1390,6 @@ static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
 	GLSL_PreprocessShaderText(&shaderBuffer[strlen(shaderBuffer)], mainBuffer, shadertype);
 
 	Com_Dealloc(mainBuffer);
-	Ren_Print(shaderBuffer);
 
 	output = Com_Allocate(strlen(shaderBuffer) * sizeof(char) + 1);
 	strcpy(output, shaderBuffer);
