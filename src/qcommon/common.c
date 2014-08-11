@@ -103,6 +103,8 @@ cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *con_drawnotify;
 cvar_t *com_introPlayed;
 cvar_t *com_ansiColor;
+cvar_t *com_unfocused;
+cvar_t *com_minimized;
 #if idppc
 cvar_t *com_altivec;
 #endif
@@ -2907,6 +2909,9 @@ void Com_Init(char *commandLine)
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
 #endif
+
+	com_unfocused = Cvar_Get("com_unfocused", "0", 0);
+	com_minimized = Cvar_Get("com_minimized", "0", 0);
 
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
 

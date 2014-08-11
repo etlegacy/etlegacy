@@ -857,7 +857,8 @@ static void IN_ProcessEvents(void)
 				if (key == K_BACKSPACE)
 				{
 					//This was added to keep mod comp, mods do not check K_BACKSPACE but instead use char 8 which is backspace in ascii
-					Com_QueueEvent(0, SE_CHAR, 8, 0, 0, NULL); // 8 == BS aka Backspace from ascii table
+					// 8 == CTRL('h') == BS aka Backspace from ascii table
+					Com_QueueEvent(0, SE_CHAR, CTRL('h'), 0, 0, NULL);
 				}
 				else if (keys[K_CTRL].down && key >= 'a' && key <= 'z')
 				{
@@ -1019,8 +1020,7 @@ static void IN_ProcessEvents(void)
 			{
 				Cvar_SetValue("com_unfocused", 0);
 
-				//TODO: fix this maybe?
-				if (qtrue)//SDL_GetWindowFlags(screen) & SDL_WINDOW_MINIMIZED)
+				if (com_minimized->integer)
 				{
 					SDL_RestoreWindow(mainScreen);
 				}
@@ -1042,14 +1042,12 @@ static void IN_ProcessEvents(void)
 void IN_Frame(void)
 {
 	qboolean loading;
-	Uint32 sdlScreenFlags;
 
 	//IN_JoyMove();
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
 	loading = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
-	sdlScreenFlags = SDL_GetWindowFlags(mainScreen);
 
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
@@ -1061,7 +1059,7 @@ void IN_Frame(void)
 		// Loading in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (!(sdlScreenFlags & SDL_WINDOW_INPUT_FOCUS))
+	else if (com_minimized->integer || com_unfocused->integer)
 	{
 		// Window not got focus
 		IN_DeactivateMouse();
@@ -1173,7 +1171,7 @@ void IN_Init(void)
 	IN_DeactivateMouse();
 
 	appState = SDL_GetWindowFlags(mainScreen);
-	Cvar_SetValue("com_unfocused", !(appState & SDL_WINDOW_INPUT_FOCUS));
+	Cvar_SetValue("com_unfocused", !(appState & SDL_WINDOW_INPUT_FOCUS && appState & SDL_WINDOW_MOUSE_FOCUS));
 	Cvar_SetValue("com_minimized", appState & SDL_WINDOW_MINIMIZED);
 
 	IN_InitKeyLockStates();
