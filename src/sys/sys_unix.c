@@ -232,52 +232,6 @@ char *Sys_GetCurrentUser(void)
 	return "player";
 }
 
-char *Sys_GetClipboardData(void)
-{
-#if defined(__AROS__) || defined(__MORPHOS__)
-	struct IFFHandle   *IFFHandle;
-	struct ContextNode *cn;
-	char               *data = NULL;
-
-	if ((IFFHandle = AllocIFF()))
-	{
-		if ((IFFHandle->iff_Stream = (IPTR) OpenClipboard(0)))
-		{
-			InitIFFasClip(IFFHandle);
-			if (!OpenIFF(IFFHandle, IFFF_READ))
-			{
-				if (!StopChunk(IFFHandle, ID_FTXT, ID_CHRS))
-				{
-					if (!ParseIFF(IFFHandle, IFFPARSE_SCAN))
-					{
-						cn = CurrentChunk(IFFHandle);
-						if (cn && (cn->cn_Type == ID_FTXT) && (cn->cn_ID == ID_CHRS) && (cn->cn_Size > 0))
-						{
-							data = (char *) Z_Malloc(cn->cn_Size + 1);
-							if (ReadChunkBytes(IFFHandle, data, cn->cn_Size))
-							{
-								data[cn->cn_Size] = '\0';
-							}
-							else
-							{
-								data[0] = '\0';
-							}
-						}
-					}
-				}
-				CloseIFF(IFFHandle);
-			}
-			CloseClipboard((struct ClipboardHandle *) IFFHandle->iff_Stream);
-		}
-		FreeIFF(IFFHandle);
-	}
-
-	return data;
-#else
-	return NULL;
-#endif
-}
-
 /**
  * @todo
  */

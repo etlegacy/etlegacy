@@ -63,6 +63,38 @@ SDL_Window *mainScreen = NULL;
 
 #define CTRL(a) ((a) - 'a' + 1)
 
+char *IN_GetClipboardData(void)
+{
+	if (SDL_HasClipboardText())
+	{
+		char *data = NULL, *temp = NULL;
+		int len = 0;
+
+		temp = SDL_GetClipboardText();
+		if (!temp || !temp[0])
+		{
+			return NULL;
+		}
+
+		//len = u8_strlen(temp) + 1;
+		len = strlen(temp) + 1;
+
+		data = Z_Malloc(len);
+		
+		//u8_escape(data, len, temp, qfalse);
+		Q_strncpyz(data, temp, len);
+		
+		strtok(data, "\n\r\b");
+		SDL_free(temp);
+
+		return data;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
 /**
  * @brief Prints keyboard identifiers in the console
  */

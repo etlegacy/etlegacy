@@ -816,7 +816,7 @@ static void GetClipboardData(char *buf, int buflen)
 {
 	char *cbd;
 
-	cbd = Sys_GetClipboardData();
+	cbd = IN_GetClipboardData();
 
 	if (!cbd)
 	{
