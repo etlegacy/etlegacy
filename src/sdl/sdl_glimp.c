@@ -81,7 +81,6 @@ typedef enum
 	RSERR_UNKNOWN
 } rserr_t;
 
-// @todo SDL 2.0 howto make screen available to cl_keys.c, etc. without extern
 SDL_Window           *screen       = NULL;
 static SDL_Renderer  *renderer     = NULL;
 static SDL_GLContext SDL_glContext = NULL;
