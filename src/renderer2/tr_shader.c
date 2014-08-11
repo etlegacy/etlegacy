@@ -4280,15 +4280,15 @@ static qboolean ParseShader(char *_text)
 
 			if (shader.distanceCull[1] - shader.distanceCull[0] > 0)
 			{
-			    // distanceCull[ 3 ] is an optimization
-			    shader.distanceCull[3] = 1.0 / (shader.distanceCull[1] - shader.distanceCull[0]);
+				// distanceCull[ 3 ] is an optimization
+				shader.distanceCull[3] = 1.0 / (shader.distanceCull[1] - shader.distanceCull[0]);
 			}
 			else
 			{
-			    shader.distanceCull[0] = 0;
-			    shader.distanceCull[1] = 0;
-			    shader.distanceCull[2] = 0;
-			    shader.distanceCull[3] = 0;
+				shader.distanceCull[0] = 0;
+				shader.distanceCull[1] = 0;
+				shader.distanceCull[2] = 0;
+				shader.distanceCull[3] = 0;
 			}
 			continue;
 		}

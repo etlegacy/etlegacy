@@ -1016,10 +1016,10 @@ void GL_SetDefaultState(void)
 	{
 		i = glConfig.maxActiveTextures - 1;
 	}
-    else
-    {
-        i = 0;
-    }
+	else
+	{
+		i = 0;
+	}
 
 	for (; i >= 0; i--)
 	{
@@ -1313,7 +1313,7 @@ void R_Register(void)
 	r_simpleMipMaps           = ri.Cvar_Get("r_simpleMipMaps", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen            = ri.Cvar_Get("r_uifullscreen", "0", 0);
 	r_subdivisions            = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
-    r_deferredShading         = ri.Cvar_Get("r_deferredShading", "0", CVAR_CHEAT | CVAR_LATCH);
+	r_deferredShading         = ri.Cvar_Get("r_deferredShading", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_parallaxMapping         = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_dynamicLightCastShadows = ri.Cvar_Get("r_dynamicLightCastShadows", "1", CVAR_ARCHIVE);
 	r_precomputedLighting     = ri.Cvar_Get("r_precomputedLighting", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1351,7 +1351,7 @@ void R_Register(void)
 	ri.Cvar_AssertCvarRange(r_intensity, 0, 1.5, qfalse);
 
 	r_singleShader            = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
-	r_drawfoliage			  = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT | CVAR_LATCH);
+	r_drawfoliage             = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_stitchCurves            = ri.Cvar_Get("r_stitchCurves", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_debugShadowMaps         = ri.Cvar_Get("r_debugShadowMaps", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_shadowMapLuminanceAlpha = ri.Cvar_Get("r_shadowMapLuminanceAlpha", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1740,7 +1740,7 @@ void R_Init(void)
 		glGenQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
 	}
 
-    GLSL_CompileGPUShaders();
+	GLSL_CompileGPUShaders();
 
 	GL_CheckErrors();
 
@@ -1878,7 +1878,7 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	// the RE_ functions are Renderer Entry points
 
 	re.Shutdown               = RE_Shutdown;
-	re.MainWindow			  = GLimp_MainWindow;
+	re.MainWindow             = GLimp_MainWindow;
 	re.BeginRegistration      = RE_BeginRegistration;
 	re.RegisterModel          = RE_RegisterModel;
 	re.RegisterSkin           = RE_RegisterSkin;

@@ -1553,7 +1553,7 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.AddCoronaToScene = RE_AddCoronaToScene;
 	re.SetFog           = R_SetFog;
 
-	re.RenderScene      = RE_RenderScene;
+	re.RenderScene = RE_RenderScene;
 
 	re.SetColor               = RE_SetColor;
 	re.DrawStretchPic         = RE_StretchPic;

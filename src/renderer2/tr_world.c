@@ -159,7 +159,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		}
 		break;
 	case SF_FOLIAGE:
-		if(!r_drawfoliage->value)
+		if (!r_drawfoliage->value)
 		{
 			return qtrue;
 		}

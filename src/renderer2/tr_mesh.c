@@ -291,7 +291,7 @@ void R_AddMDVSurfaces(trRefEntity_t *ent)
 		if (lod == 0)
 		{
 			Ren_Developer("R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
-				ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
+			              ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
 		}
 		ent->e.frame    = 0;
 		ent->e.oldframe = 0;

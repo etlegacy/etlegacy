@@ -2004,7 +2004,7 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 
 void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *fragment)
 {
-	char *fullSource;
+	char *fullSource = NULL;
 	int  size = 0;
 
 	size += strlen(vertex);
@@ -2013,6 +2013,11 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 	size += 1;
 
 	fullSource = (char *)ri.Hunk_AllocateTempMemory(size);
+	if (!fullSource)
+	{
+		Ren_Fatal("Failed to allocate memory for checksum string\n");
+		return;
+	}
 
 	Q_strcat(fullSource, size, vertex);
 	Q_strcat(fullSource, size, fragment);

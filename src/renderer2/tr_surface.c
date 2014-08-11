@@ -1216,7 +1216,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 	Vector4Copy(tess.surfaceShader->distanceCull, distanceCull);
 	if (distanceCull[1] > 0)
 	{
-		z = fovScale * (DotProduct(srf->origin, distanceVector) + distanceVector[3] - srf->radius);
+		z     = fovScale * (DotProduct(srf->origin, distanceVector) + distanceVector[3] - srf->radius);
 		alpha = (distanceCull[1] - z) * distanceCull[3];
 		if (alpha < distanceCull[2])
 		{
@@ -1276,7 +1276,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 			}
 
 			// set color
-			a = alpha > 1.0f ? 255 : alpha * 255;
+			a        = alpha > 1.0f ? 255 : alpha * 255;
 			srcColor = (*((int *)instance->color) & 0xFFFFFF) | (a << 24);
 		}
 		else
@@ -1320,7 +1320,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		}
 
 		// increment
-		tess.numIndexes += numIndexes;
+		tess.numIndexes  += numIndexes;
 		tess.numVertexes += numVerts;
 	}
 #endif

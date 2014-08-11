@@ -39,46 +39,46 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 	int code;
 	int id;
 
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &id);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &id);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
 
-    code = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	code = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
-    if (code == GL_FRAMEBUFFER_COMPLETE)
+	if (code == GL_FRAMEBUFFER_COMPLETE)
 	{
-        glBindFramebuffer(GL_FRAMEBUFFER_EXT, id);
+		glBindFramebuffer(GL_FRAMEBUFFER_EXT, id);
 		return qtrue;
 	}
 
 	// an error occured
 	switch (code)
 	{
-    case GL_FRAMEBUFFER_COMPLETE:
+	case GL_FRAMEBUFFER_COMPLETE:
 		break;
-    case GL_FRAMEBUFFER_UNSUPPORTED:
+	case GL_FRAMEBUFFER_UNSUPPORTED:
 		Ren_Warning("R_CheckFBO: (%s) Unsupported framebuffer format\n", fbo->name);
 		break;
-    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete attachment\n", fbo->name);
 		break;
-    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, missing attachment\n", fbo->name);
 		break;
 	//case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
 	//  Ren_Warning( "R_CheckFBO: (%s) Framebuffer incomplete, duplicate attachment\n", fbo->name);
 	//  break;
-    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+	case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same dimensions\n",
 		            fbo->name);
 		break;
-    case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+	case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same format\n",
 		            fbo->name);
 		break;
-    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, missing draw buffer\n", fbo->name);
 		break;
-    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, missing read buffer\n", fbo->name);
 		break;
 	default:
@@ -88,7 +88,7 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 		break;
 	}
 
-    glBindFramebuffer(GL_FRAMEBUFFER, id);
+	glBindFramebuffer(GL_FRAMEBUFFER, id);
 
 	return qfalse;
 }
@@ -123,7 +123,7 @@ FBO_t *R_CreateFBO(const char *name, int width, int height)
 	fbo->width  = width;
 	fbo->height = height;
 
-    glGenFramebuffers(1, &fbo->frameBuffer);
+	glGenFramebuffers(1, &fbo->frameBuffer);
 
 	return fbo;
 }
@@ -160,15 +160,15 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 	absent = fbo->colorBuffers[index] == 0;
 	if (absent)
 	{
-        glGenRenderbuffers(1, &fbo->colorBuffers[index]);
+		glGenRenderbuffers(1, &fbo->colorBuffers[index]);
 	}
 
-    glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[index]);
-    glRenderbufferStorage(GL_RENDERBUFFER, format, fbo->width, fbo->height);
+	glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[index]);
+	glRenderbufferStorage(GL_RENDERBUFFER, format, fbo->width, fbo->height);
 
 	if (absent)
 	{
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_RENDERBUFFER, fbo->colorBuffers[index]);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_RENDERBUFFER, fbo->colorBuffers[index]);
 	}
 
 	GL_CheckErrors();
@@ -190,15 +190,15 @@ void R_CreateFBODepthBuffer(FBO_t *fbo, int format)
 	absent = fbo->depthBuffer == 0;
 	if (absent)
 	{
-        glGenRenderbuffers(1, &fbo->depthBuffer);
+		glGenRenderbuffers(1, &fbo->depthBuffer);
 	}
 
-    glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, fbo->depthFormat, fbo->width, fbo->height);
+	glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, fbo->depthFormat, fbo->width, fbo->height);
 
 	if (absent)
 	{
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer);
 	}
 
 	GL_CheckErrors();
@@ -209,9 +209,9 @@ void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 	qboolean absent;
 
 	if (format != GL_STENCIL_INDEX &&
-        //format != GL_STENCIL_INDEX &&
-        format != GL_STENCIL_INDEX1 &&
-        format != GL_STENCIL_INDEX4 && format != GL_STENCIL_INDEX8 && format != GL_STENCIL_INDEX16)
+	    //format != GL_STENCIL_INDEX &&
+	    format != GL_STENCIL_INDEX1 &&
+	    format != GL_STENCIL_INDEX4 && format != GL_STENCIL_INDEX8 && format != GL_STENCIL_INDEX16)
 	{
 		Ren_Warning("R_CreateFBOStencilBuffer: format %i is not stencil-renderable\n", format);
 		return;
@@ -222,16 +222,16 @@ void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 	absent = fbo->stencilBuffer == 0;
 	if (absent)
 	{
-        glGenRenderbuffers(1, &fbo->stencilBuffer);
+		glGenRenderbuffers(1, &fbo->stencilBuffer);
 	}
 
-    glBindRenderbuffer(GL_RENDERBUFFER, fbo->stencilBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, fbo->stencilFormat, fbo->width, fbo->height);
+	glBindRenderbuffer(GL_RENDERBUFFER, fbo->stencilBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, fbo->stencilFormat, fbo->width, fbo->height);
 	GL_CheckErrors();
 
 	if (absent)
 	{
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->stencilBuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->stencilBuffer);
 	}
 
 	GL_CheckErrors();
@@ -241,7 +241,7 @@ void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 {
 	qboolean absent;
 
-    if (format != GL_DEPTH_STENCIL && format != GL_DEPTH24_STENCIL8)
+	if (format != GL_DEPTH_STENCIL && format != GL_DEPTH24_STENCIL8)
 	{
 		Ren_Warning("R_CreateFBOPackedDepthStencilBuffer: format %i is not depth-stencil-renderable\n", format);
 		return;
@@ -252,17 +252,17 @@ void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 	absent = fbo->packedDepthStencilBuffer == 0;
 	if (absent)
 	{
-        glGenRenderbuffers(1, &fbo->packedDepthStencilBuffer);
+		glGenRenderbuffers(1, &fbo->packedDepthStencilBuffer);
 	}
 
-    glBindRenderbuffer(GL_RENDERBUFFER, fbo->packedDepthStencilBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, fbo->packedDepthStencilFormat, fbo->width, fbo->height);
+	glBindRenderbuffer(GL_RENDERBUFFER, fbo->packedDepthStencilBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, fbo->packedDepthStencilFormat, fbo->width, fbo->height);
 	GL_CheckErrors();
 
 	if (absent)
 	{
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->packedDepthStencilBuffer);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->packedDepthStencilBuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->packedDepthStencilBuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo->packedDepthStencilBuffer);
 	}
 
 	GL_CheckErrors();
@@ -276,12 +276,12 @@ void R_AttachFBOTexture1D(int texId, int index)
 		return;
 	}
 
-    glFramebufferTexture1D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_1D, texId, 0);
+	glFramebufferTexture1D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_1D, texId, 0);
 }
 
 void R_AttachFBOTexture2D(int target, int texId, int index)
 {
-    if (target != GL_TEXTURE_2D && (target < GL_TEXTURE_CUBE_MAP_POSITIVE_X || target > GL_TEXTURE_CUBE_MAP_NEGATIVE_Z))
+	if (target != GL_TEXTURE_2D && (target < GL_TEXTURE_CUBE_MAP_POSITIVE_X || target > GL_TEXTURE_CUBE_MAP_NEGATIVE_Z))
 	{
 		Ren_Warning("R_AttachFBOTexture2D: invalid target %i\n", target);
 		return;
@@ -293,7 +293,7 @@ void R_AttachFBOTexture2D(int target, int texId, int index)
 		return;
 	}
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, target, texId, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, target, texId, 0);
 }
 
 void R_AttachFBOTexture3D(int texId, int index, int zOffset)
@@ -304,18 +304,18 @@ void R_AttachFBOTexture3D(int texId, int index, int zOffset)
 		return;
 	}
 
-    glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_3D, texId, 0, zOffset);
+	glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_3D, texId, 0, zOffset);
 }
 
 void R_AttachFBOTextureDepth(int texId)
 {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
 }
 
 void R_AttachFBOTexturePackedDepthStencil(int texId)
 {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
 }
 
 void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter)
@@ -325,22 +325,22 @@ void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter)
 		vec2_t size;
 		if (from)
 		{
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, from->frameBuffer);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, from->frameBuffer);
 			size[0] = from->width;
 			size[1] = from->height;
 		}
 		else
 		{
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 			size[0] = glConfig.vidWidth;
 			size[1] = glConfig.vidHeight;
 		}
 
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, to->frameBuffer);
-        glBlitFramebuffer(0, 0, size[0], size[1], 0, 0, to->width, to->height, mask, filter);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, to->frameBuffer);
+		glBlitFramebuffer(0, 0, size[0], size[1], 0, 0, to->width, to->height, mask, filter);
 
 		//Just set the read buffer to the target as well otherwise we might get fucked..
-        glBindFramebuffer(GL_FRAMEBUFFER, to->frameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, to->frameBuffer);
 		glState.currentFBO = to;
 	}
 	else
@@ -362,20 +362,20 @@ void R_BindFBO(FBO_t *fbo)
 
 	if (glState.currentFBO != fbo)
 	{
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
 
 		/*
 		   if(fbo->colorBuffers[0])
 		   {
-           glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0]);
+		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0]);
 		   }
 		 */
 
 		/*
 		   if(fbo->depthBuffer)
 		   {
-           glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer);
-           glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer);
+		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer);
+		   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer);
 		   }
 		 */
 
@@ -389,8 +389,8 @@ void R_BindNullFBO(void)
 
 	if (glState.currentFBO && glConfig2.framebufferObjectAvailable)
 	{
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		glState.currentFBO = NULL;
 	}
 }
@@ -399,32 +399,32 @@ void R_SetDefaultFBO(void)
 {
 	if (glConfig2.framebufferObjectAvailable)
 	{
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		glState.currentFBO = NULL;
 	}
 }
 
 static void R_CheckDefaultBuffer()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glState.currentFBO = NULL;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glState.currentFBO = NULL;
 
-    {
-        unsigned int fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-        if(fbostatus != GL_FRAMEBUFFER_COMPLETE)
-        {
-            if(fbostatus == GL_FRAMEBUFFER_UNDEFINED)
-            {
-                Ren_Fatal("Default framebuffer is undefined!");
-            }
-            else
-            {
-                Ren_Fatal("There is an issue with the opengl context:s default framebuffer...%i", fbostatus);
-            }
-        }
-    }
+	{
+		unsigned int fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+		if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
+		{
+			if (fbostatus == GL_FRAMEBUFFER_UNDEFINED)
+			{
+				Ren_Fatal("Default framebuffer is undefined!");
+			}
+			else
+			{
+				Ren_Fatal("There is an issue with the opengl context:s default framebuffer...%i", fbostatus);
+			}
+		}
+	}
 }
 
 void R_InitFBOs(void)
@@ -439,7 +439,7 @@ void R_InitFBOs(void)
 		return;
 	}
 
-    R_CheckDefaultBuffer();
+	R_CheckDefaultBuffer();
 
 	tr.numFBOs = 0;
 
@@ -471,7 +471,7 @@ void R_InitFBOs(void)
 		#if 0
 		if (glConfig2.framebufferPackedDepthStencilAvailable)
 		{
-            R_CreateFBOPackedDepthStencilBuffer(tr.geometricRenderFBO, GL_DEPTH24_STENCIL8);
+			R_CreateFBOPackedDepthStencilBuffer(tr.geometricRenderFBO, GL_DEPTH24_STENCIL8);
 			R_AttachFBOTexturePackedDepthStencil(tr.depthRenderImage->texnum);
 		}
 		else if (glConfig.hardwareType == GLHW_ATI || glConfig.hardwareType == GLHW_ATI_DX10) // || glConfig.hardwareType == GLHW_NV_DX10)
@@ -535,7 +535,7 @@ void R_InitFBOs(void)
 #if 0
 		if (glConfig2.framebufferPackedDepthStencilAvailable)
 		{
-            R_CreateFBOPackedDepthStencilBuffer(tr.deferredRenderFBO, GL_DEPTH24_STENCIL8);
+			R_CreateFBOPackedDepthStencilBuffer(tr.deferredRenderFBO, GL_DEPTH24_STENCIL8);
 			R_AttachFBOTexturePackedDepthStencil(tr.depthRenderImage->texnum);
 		}
 		else if (glConfig.hardwareType == GLHW_ATI || glConfig.hardwareType == GLHW_ATI_DX10) // || glConfig.hardwareType == GLHW_NV_DX10)
@@ -581,7 +581,7 @@ void R_InitFBOs(void)
 		else if (glConfig2.framebufferPackedDepthStencilAvailable)
 		{
 			//R_CreateFBOColorBuffer(tr.occlusionRenderFBO, GL_ALPHA32F_ARB, 0);
-            R_CreateFBOPackedDepthStencilBuffer(tr.occlusionRenderFBO, GL_DEPTH24_STENCIL8);
+			R_CreateFBOPackedDepthStencilBuffer(tr.occlusionRenderFBO, GL_DEPTH24_STENCIL8);
 		}
 		else
 		{
@@ -903,23 +903,23 @@ void R_ShutdownFBOs(void)
 		{
 			if (fbo->colorBuffers[j])
 			{
-                glDeleteRenderbuffers(1, &fbo->colorBuffers[j]);
+				glDeleteRenderbuffers(1, &fbo->colorBuffers[j]);
 			}
 		}
 
 		if (fbo->depthBuffer)
 		{
-            glDeleteRenderbuffers(1, &fbo->depthBuffer);
+			glDeleteRenderbuffers(1, &fbo->depthBuffer);
 		}
 
 		if (fbo->stencilBuffer)
 		{
-            glDeleteRenderbuffers(1, &fbo->stencilBuffer);
+			glDeleteRenderbuffers(1, &fbo->stencilBuffer);
 		}
 
 		if (fbo->frameBuffer)
 		{
-            glDeleteFramebuffers(1, &fbo->frameBuffer);
+			glDeleteFramebuffers(1, &fbo->frameBuffer);
 		}
 	}
 }

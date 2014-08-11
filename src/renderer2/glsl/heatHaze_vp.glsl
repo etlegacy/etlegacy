@@ -1,5 +1,5 @@
 /* heatHaze_vp.glsl */
-#include "lib/vertexSkinning" 
+#include "lib/vertexSkinning"
 #include "lib/vertexAnimation"
 #include "lib/deformVertexes"
 

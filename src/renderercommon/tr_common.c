@@ -72,6 +72,6 @@ void QDECL Com_Error(int level, const char *error, ...)
 #else
 void make_osx_happy(void)
 {
-    //This is here just so that osx:s compiler is happy and does not whine about not having anything to link
+	//This is here just so that osx:s compiler is happy and does not whine about not having anything to link
 }
 #endif

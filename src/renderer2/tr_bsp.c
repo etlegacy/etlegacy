@@ -1617,30 +1617,30 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	// the instances are just additional drawverts
 
 	// get counts
-	numVerts = LittleLong(ds->patchHeight);
-	numIndexes = LittleLong(ds->numIndexes);
+	numVerts     = LittleLong(ds->patchHeight);
+	numIndexes   = LittleLong(ds->numIndexes);
 	numInstances = LittleLong(ds->patchWidth);
 
 	// calculate size
 	size = sizeof(*foliage) +
-		numVerts * (sizeof(foliage->xyz[0]) + sizeof(foliage->normal[0]) + sizeof(foliage->texCoords[0]) + sizeof(foliage->lmTexCoords[0])) +
-		numIndexes * sizeof(foliage->indexes[0]) +
-		numInstances * sizeof(foliage->instances[0]);
+	       numVerts * (sizeof(foliage->xyz[0]) + sizeof(foliage->normal[0]) + sizeof(foliage->texCoords[0]) + sizeof(foliage->lmTexCoords[0])) +
+	       numIndexes * sizeof(foliage->indexes[0]) +
+	       numInstances * sizeof(foliage->instances[0]);
 
 	// get memory
 	foliage = ri.Hunk_Alloc(size, h_low);
 
 	// set up surface
-	foliage->surfaceType = SF_FOLIAGE;
-	foliage->numVerts = numVerts;
-	foliage->numIndexes = numIndexes;
+	foliage->surfaceType  = SF_FOLIAGE;
+	foliage->numVerts     = numVerts;
+	foliage->numIndexes   = numIndexes;
 	foliage->numInstances = numInstances;
-	foliage->xyz = (vec4_t *)(foliage + 1);
-	foliage->normal = (vec4_t *)(foliage->xyz + foliage->numVerts);
-	foliage->texCoords = (vec2_t *)(foliage->normal + foliage->numVerts);
-	foliage->lmTexCoords = (vec2_t *)(foliage->texCoords + foliage->numVerts);
-	foliage->indexes = (unsigned int *)(foliage->lmTexCoords + foliage->numVerts);
-	foliage->instances = (foliageInstance_t *)(foliage->indexes + foliage->numIndexes);
+	foliage->xyz          = (vec4_t *)(foliage + 1);
+	foliage->normal       = (vec4_t *)(foliage->xyz + foliage->numVerts);
+	foliage->texCoords    = (vec2_t *)(foliage->normal + foliage->numVerts);
+	foliage->lmTexCoords  = (vec2_t *)(foliage->texCoords + foliage->numVerts);
+	foliage->indexes      = (unsigned int *)(foliage->lmTexCoords + foliage->numVerts);
+	foliage->instances    = (foliageInstance_t *)(foliage->indexes + foliage->numIndexes);
 
 	surf->data = (surfaceType_t *)foliage;
 
@@ -1663,7 +1663,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		// copy xyz and normal
 		for (j = 0; j < 3; j++)
 		{
-			foliage->xyz[i][j] = LittleFloat(verts[i].xyz[j]);
+			foliage->xyz[i][j]    = LittleFloat(verts[i].xyz[j]);
 			foliage->normal[i][j] = LittleFloat(verts[i].normal[j]);
 		}
 
@@ -1677,7 +1677,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		// copy texture coordinates
 		for (j = 0; j < 2; j++)
 		{
-			foliage->texCoords[i][j] = LittleFloat(verts[i].st[j]);
+			foliage->texCoords[i][j]   = LittleFloat(verts[i].st[j]);
 			foliage->lmTexCoords[i][j] = LittleFloat(verts[i].lightmap[j]);
 		}
 	}
@@ -4019,8 +4019,8 @@ static void R_SetParent(bspNode_t *node, bspNode_t *parent)
 				gen = (srfGeneric_t *) (**mark).data;
 				if (gen->surfaceType != SF_FACE &&
 				    gen->surfaceType != SF_GRID &&
-					gen->surfaceType != SF_TRIANGLES &&
-					gen->surfaceType != SF_FOLIAGE)
+				    gen->surfaceType != SF_TRIANGLES &&
+				    gen->surfaceType != SF_FOLIAGE)
 				{
 					mark++;
 					continue;

@@ -49,8 +49,8 @@ static cvar_t *in_keyboardDebug = NULL;
 static cvar_t *in_mouse = NULL;
 static cvar_t *in_nograb;
 
-static qboolean mouseAvailable   = qfalse;
-static qboolean mouseActive      = qfalse;
+static qboolean mouseAvailable = qfalse;
+static qboolean mouseActive    = qfalse;
 
 static SDL_Joystick *stick                = NULL;
 static cvar_t       *in_joystick          = NULL;
@@ -59,7 +59,7 @@ static cvar_t       *in_joystickNo        = NULL;
 static cvar_t       *in_joystickUseAnalog = NULL;
 
 static int vidRestartTime = 0;
-SDL_Window *mainScreen = NULL;
+SDL_Window *mainScreen    = NULL;
 
 #define CTRL(a) ((a) - 'a' + 1)
 
@@ -68,7 +68,7 @@ char *IN_GetClipboardData(void)
 	if (SDL_HasClipboardText())
 	{
 		char *data = NULL, *temp = NULL;
-		int len = 0;
+		int  len   = 0;
 
 		temp = SDL_GetClipboardText();
 		if (!temp || !temp[0])
@@ -80,10 +80,10 @@ char *IN_GetClipboardData(void)
 		len = strlen(temp) + 1;
 
 		data = Z_Malloc(len);
-		
+
 		//u8_escape(data, len, temp, qfalse);
 		Q_strncpyz(data, temp, len);
-		
+
 		strtok(data, "\n\r\b");
 		SDL_free(temp);
 
@@ -1176,7 +1176,7 @@ static void IN_InitKeyLockStates(void)
 void IN_Init(void)
 {
 	int appState;
-	
+
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
 		Com_Error(ERR_FATAL, "IN_Init called before SDL_Init( SDL_INIT_VIDEO )");

@@ -733,7 +733,7 @@ void *Sys_LoadGameDll(const char *name,
 	}
 #endif
 
-   //When doing an debug build just load the mod lib from the basepath as that will have the debug pointers
+	//When doing an debug build just load the mod lib from the basepath as that will have the debug pointers
 #if defined(_DEBUG) || defined(DEBUG)
 #define SEARCHPATH1 basepath
 #define SEARCHPATH2 homepath
@@ -742,12 +742,12 @@ void *Sys_LoadGameDll(const char *name,
 #define SEARCHPATH2 basepath
 #endif
 
-    libHandle = Sys_TryLibraryLoad(SEARCHPATH1, gamedir, fname);
+	libHandle = Sys_TryLibraryLoad(SEARCHPATH1, gamedir, fname);
 
-    if (!libHandle && SEARCHPATH2)
-    {
-        libHandle = Sys_TryLibraryLoad(SEARCHPATH2, gamedir, fname);
-    }
+	if (!libHandle && SEARCHPATH2)
+	{
+		libHandle = Sys_TryLibraryLoad(SEARCHPATH2, gamedir, fname);
+	}
 
 #ifndef DEDICATED
 	// According to the code above, if the server is not pure, then the
