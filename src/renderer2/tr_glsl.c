@@ -1211,62 +1211,6 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 	Ren_Print("Loaded shader '%s'\n", fullname);
 }
 
-static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *libShaderNames, GLenum shaderType)
-{
-	GLchar *mainBuffer = NULL;
-	int    mainSize    = 0;
-	char   *token;
-	int    libsSize     = 0;
-	char   *libsBuffer  = NULL;     // all libs concatenated
-	char   **libs       = ( char ** ) &libShaderNames;
-	char   *shaderText  = NULL;
-	char   *bufferFinal = NULL;
-	int    sizeFinal;
-
-	GL_CheckErrors();
-
-	while (1)
-	{
-		token = COM_ParseExt2(libs, qfalse);
-
-		if (!token[0])
-		{
-			break;
-		}
-		GLSL_GetShaderText(token, shaderType, &libsBuffer, &libsSize, qtrue);
-	}
-
-	// load main() program
-	GLSL_GetShaderText(mainShaderName, shaderType, &mainBuffer, &mainSize, qfalse);
-
-	if (!libsBuffer && !mainBuffer)
-	{
-		Ren_Fatal("Shader loading failed!\n");
-	}
-
-	sizeFinal = shaderExtraDefLen + mainSize + libsSize;
-
-	bufferFinal = (char *)ri.Hunk_AllocateTempMemory(sizeFinal);
-
-	strcpy(bufferFinal, shaderExtraDef);
-
-	if (libsSize > 0)
-	{
-		Q_strcat(bufferFinal, sizeFinal, libsBuffer);
-	}
-
-	Q_strcat(bufferFinal, sizeFinal, mainBuffer);
-
-	shaderText = Com_Allocate(sizeFinal);
-	strcpy(shaderText, bufferFinal);
-	ri.Hunk_FreeTempMemory(bufferFinal);
-
-	Com_Dealloc(mainBuffer);
-	Com_Dealloc(libsBuffer);
-
-	return shaderText;
-}
-
 static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum shadertype)
 {
 	GLchar *ref   = NULL;
@@ -1352,13 +1296,15 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 #define GLSL_BUFF 64000
 #define GLSL_BUFF_CHAR (sizeof(char) *GLSL_BUFF)
 
-static char *GLSL_BuildGPUShaderTextNew(programInfo_t *info, GLenum shadertype)
+static char *GLSL_BuildGPUShaderText(programInfo_t *info, GLenum shadertype)
 {
 	static char shaderBuffer[GLSL_BUFF];
 	GLchar      *mainBuffer    = NULL;
 	int         mainBufferSize = 0;
 	char        *filename      = NULL;
 	char        *output        = NULL;
+
+	GL_CheckErrors();
 
 	Com_Memset(shaderBuffer, '\0', GLSL_BUFF_CHAR);
 
@@ -2029,11 +1975,8 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 
 qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
-	//char *testike = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
-	//char   *vertexShader = GLSL_BuildGPUShaderText(info->filename, info->vertexLibraries, GL_VERTEX_SHADER);
-	//char   *fragmentShader = GLSL_BuildGPUShaderText((info->fragFilename ? info->fragFilename : info->filename), info->fragmentLibraries, GL_FRAGMENT_SHADER);
-	char   *vertexShader   = GLSL_BuildGPUShaderTextNew(info, GL_VERTEX_SHADER);
-	char   *fragmentShader = GLSL_BuildGPUShaderTextNew(info, GL_FRAGMENT_SHADER);
+	char   *vertexShader   = GLSL_BuildGPUShaderText(info, GL_VERTEX_SHADER);
+	char   *fragmentShader = GLSL_BuildGPUShaderText(info, GL_FRAGMENT_SHADER);
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;
