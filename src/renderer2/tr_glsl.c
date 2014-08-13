@@ -1951,7 +1951,7 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *fragment)
 {
 	char *fullSource = NULL;
-	int  size = 0;
+	int  size        = 0;
 
 	size += strlen(vertex);
 	size += strlen(fragment);
