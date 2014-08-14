@@ -99,18 +99,7 @@ RE_ClearScene
 */
 void RE_ClearScene(void)
 {
-	// clear model stuff for dynamic fog
-	if (tr.world != NULL)
-	{
-		int i;
-
-		for (i = 0; i < tr.world->numBModels; i++)
-		{
-			tr.world->bmodels[i].visible = qfalse;
-		}
-	}
-
-	// everything else
+	// clear everything else
 	r_firstSceneDlight = r_numdlights;
 	r_firstSceneCorona = r_numcoronas;
 	r_firstSceneEntity = r_numentities;

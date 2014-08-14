@@ -357,8 +357,6 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 	VectorCopy(ent->e.axis[0], bmodel->orientation.axis[0]);
 	VectorCopy(ent->e.axis[1], bmodel->orientation.axis[1]);
 	VectorCopy(ent->e.axis[2], bmodel->orientation.axis[2]);
-	bmodel->visible   = qtrue;
-	bmodel->entityNum = tr.currentEntityNum;
 
 	R_DlightBmodel(bmodel);
 

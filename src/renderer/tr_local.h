@@ -904,8 +904,8 @@ typedef struct bmodel_s
 	int firstBrush;
 	int numBrushes;
 	orientation_t orientation;
-	qboolean visible;
-	int entityNum;
+	//qboolean visible;
+	//int entityNum;
 } bmodel_t;
 
 // optimization

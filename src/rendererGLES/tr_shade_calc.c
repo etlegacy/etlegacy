@@ -1009,10 +1009,6 @@ void RB_CalcFogTexCoords(float *st)
 	fog    = tr.world->fogs + tess.fogNum;
 	bmodel = tr.world->bmodels + fog->modelNum;
 
-	// if the brush model containing the fog volume wasn't in the scene, then don't bother rendering the fog
-	//	if( bmodel->visible == qfalse )
-	//		return;
-
 	// all fogging distance is based on world Z units
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
 	//VectorSubtract( local, bmodel->origin, local );
