@@ -911,7 +911,7 @@ typedef struct bmodel_s
 	// for fog volumes
 	int firstBrush;
 	int numBrushes;
-	orientation_t orientation;;
+	orientation_t orientation;
 } bmodel_t;
 
 // optimization
