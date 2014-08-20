@@ -2995,37 +2995,9 @@ void PM_CheckForReload(int weapon)
 	}
 
 	// some weapons don't reload
-	// FIXME: weapon table
-	switch (weapon)
+	if (!weaponTable[weapon].isReload)
 	{
-	case WP_GPG40:
-	case WP_M7:
-	case WP_FLAMETHROWER:
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
-	case WP_GRENADE_LAUNCHER:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_MEDIC_SYRINGE:
-	case WP_AMMO:
-	case WP_ARTY:
-	case WP_DYNAMITE:
-	case WP_SMOKETRAIL:
-	case WP_MEDKIT:
-	case WP_BINOCULARS:
-	case WP_PLIERS:
-	case WP_SMOKE_MARKER:
-	case WP_LANDMINE:
-	case WP_SATCHEL:
-	case WP_SATCHEL_DET:
-	case WP_SMOKE_BOMB:
-	case WP_DUMMY_MG42:
-	case WP_MEDIC_ADRENALINE:
-	case WP_NONE:
 		return;
-	default:
-		break;
 	}
 
 	switch (pm->ps->weaponstate)
@@ -3348,10 +3320,10 @@ void PM_AdjustAimSpreadScale(void)
 		wpnScale = 0.4f;        // doesn't fire as fast, but easier to handle than luger
 		break;
 	case WP_MP40:
+	case WP_THOMPSON:
+	case WP_FG42:
+	case WP_STEN:
 		wpnScale = 0.6f;        // 2 handed, but not as long as mauser, so harder to keep aim
-		break;
-	case WP_GARAND:
-		wpnScale = 0.5f;
 		break;
 	case WP_K43_SCOPE:
 	case WP_GARAND_SCOPE:
@@ -3365,26 +3337,16 @@ void PM_AdjustAimSpreadScale(void)
 			wpnScale = 10.f;
 		}
 		break;
-	case WP_K43:
-		wpnScale = 0.5f;
-		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING:
 	case WP_MOBILE_BROWNING_SET:
 		wpnScale = 0.9f;
 		break;
-	case WP_FG42:
-		wpnScale = 0.6f;
-		break;
-	case WP_THOMPSON:
-		wpnScale = 0.6f;
-		break;
-	case WP_STEN:
-		wpnScale = 0.6f;
-		break;
 	case WP_KAR98:
 	case WP_CARBINE:
+	case WP_GARAND:
+	case WP_K43:
 		wpnScale = 0.5f;
 		break;
 	default:
@@ -3936,34 +3898,26 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	// FIXME: do a switch
-
-	if (pm->ps->weaponstate == WEAPON_RELOADING)
+	switch (pm->ps->weaponstate)
 	{
+	case WEAPON_RELOADING:
+
 		PM_FinishWeaponReload();
-	}
-
-	// change weapon if time
-	if (pm->ps->weaponstate == WEAPON_DROPPING || pm->ps->weaponstate == WEAPON_DROPPING_TORELOAD)
-	{
+		break;
+	case WEAPON_DROPPING:
+	case WEAPON_DROPPING_TORELOAD:
 		PM_FinishWeaponChange();
 		return;
-	}
-
-	if (pm->ps->weaponstate == WEAPON_RAISING)
-	{
+	case WEAPON_RAISING:
 		pm->ps->weaponstate = WEAPON_READY;
-
 		PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 		return;
-	}
-	else if (pm->ps->weaponstate == WEAPON_RAISING_TORELOAD)
-	{
+	case WEAPON_RAISING_TORELOAD:
 		pm->ps->weaponstate = WEAPON_READY;
-
 		PM_BeginWeaponReload(pm->ps->weapon);
-
 		return;
+	default:
+		break;
 	}
 
 	// in multiplayer, don't allow some weapons to fire if charge bar isn't full
@@ -4306,7 +4260,6 @@ static void PM_Weapon(void)
 			}
 		}
 		break;
-
 	// melee
 	case WP_KNIFE:
 	case WP_KNIFE_KABAR:
@@ -4322,7 +4275,6 @@ static void PM_Weapon(void)
 			}
 		}
 		break;
-
 	// throw
 	case WP_DYNAMITE:
 	case WP_GRENADE_LAUNCHER:
@@ -4437,7 +4389,6 @@ static void PM_Weapon(void)
 			case WP_SMOKE_BOMB:
 				playswitchsound = qfalse;
 				break;
-
 			// some weapons not allowed to reload.  must switch back to primary first
 			case WP_FG42SCOPE:
 			case WP_GARAND_SCOPE:
@@ -4699,39 +4650,14 @@ static void PM_Weapon(void)
 		break;
 	case WP_LUGER:
 	case WP_SILENCER:
+	case WP_COLT:
+	case WP_SILENCED_COLT:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		// colt and luger are supposed to be balanced
 		aimSpreadScaleAdd = 20;
 		break;
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 20;
-		break;
 	case WP_AKIMBO_COLT:
 	case WP_AKIMBO_SILENCEDCOLT:
-		// if you're firing an akimbo weapon, and your other gun is dry,
-		// nextshot needs to take 2x time
-		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-
-		// added check for last shot in both guns so there's no delay for the last shot
-		if (!pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)])
-		{
-			if (!akimboFire)
-			{
-				addTime = 2 * GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-			}
-		}
-		else if (!pm->ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(pm->ps->weapon))])
-		{
-			if (akimboFire)
-			{
-				addTime = 2 * GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-			}
-		}
-
-		aimSpreadScaleAdd = 20;
-		break;
 	case WP_AKIMBO_LUGER:
 	case WP_AKIMBO_SILENCEDLUGER:
 		// if you're firing an akimbo weapon, and your other gun is dry,
@@ -4777,12 +4703,9 @@ static void PM_Weapon(void)
 		break;
 	case WP_MP40:
 	case WP_THOMPSON:
-		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 15 + rand() % 10;   // new values for DM
-		break;
 	case WP_STEN:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 15 + rand() % 10;   // new values for DM
+		aimSpreadScaleAdd = 15 + rand() % 10;
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:

@@ -166,7 +166,6 @@ g_script_stack_action_t gScriptActions[] =
 	{ "attachtotag",                    G_ScriptAction_TagConnect                    },
 	{ "halt",                           G_ScriptAction_Halt                          },
 	{ "stopsound",                      G_ScriptAction_StopSound                     },
-	//{"startcam",                        G_ScriptAction_StartCam},
 	{ "entityscriptname",               G_ScriptAction_EntityScriptName              },
 	{ "aiscriptname",                   G_ScriptAction_AIScriptName                  },
 	{ "wm_axis_respawntime",            G_ScriptAction_AxisRespawntime               },

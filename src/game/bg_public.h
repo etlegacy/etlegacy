@@ -837,6 +837,7 @@ typedef struct weapontable_s
 
 	int damage;               // g
 	qboolean canGib;          // g
+	qboolean isReload;        // g
 
 	float spread;             // g
 	//int splashDamage;         // g

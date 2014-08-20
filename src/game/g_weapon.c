@@ -2944,7 +2944,7 @@ void Weapon_Artillery(gentity_t *ent)
 	bomboffset[2] += 4096;
 
 	trap_Trace(&trace, pos, NULL, NULL, bomboffset, ent->s.number, MASK_SHOT);
-	if ((trace.fraction < 1.0) && (!(trace.surfaceFlags & SURF_NOIMPACT))) // was SURF_SKY
+	if (trace.fraction < 1.0 && !(trace.surfaceFlags & SURF_NOIMPACT)) // was SURF_SKY
 	{
 		G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Aborting, can't see target.", qtrue);
 
