@@ -1965,6 +1965,7 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 		return;
 	}
 
+	Com_Memset(fullSource, '\0', size);
 	Q_strcat(fullSource, size, vertex);
 	Q_strcat(fullSource, size, fragment);
 
