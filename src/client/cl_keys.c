@@ -1330,31 +1330,6 @@ qboolean consoleButtonWasPressed = qfalse;
 
 qboolean CL_NumPadEvent(int key)
 {
-#ifdef _WIN32
-	switch (key)
-	{
-	case K_KP_INS:
-		CL_CharEvent(48); return qtrue;
-	case K_KP_END:
-		CL_CharEvent(49); return qtrue;
-	case K_KP_DOWNARROW:
-		CL_CharEvent(50); return qtrue;
-	case K_KP_PGDN:
-		CL_CharEvent(51); return qtrue;
-	case K_KP_LEFTARROW:
-		CL_CharEvent(52); return qtrue;
-	case K_KP_5:
-		CL_CharEvent(53); return qtrue;
-	case K_KP_RIGHTARROW:
-		CL_CharEvent(54); return qtrue;
-	case K_KP_HOME:
-		CL_CharEvent(55); return qtrue;
-	case K_KP_UPARROW:
-		CL_CharEvent(56); return qtrue;
-	case K_KP_PGUP:
-		CL_CharEvent(57); return qtrue;
-	}
-#else
 	switch (key)
 	{
 	case K_KP_INS:        // 0
@@ -1369,7 +1344,7 @@ qboolean CL_NumPadEvent(int key)
 	case K_KP_PGUP:       // 9
 		return qtrue;
 	}
-#endif
+
 	return qfalse;
 }
 
