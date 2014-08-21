@@ -1654,21 +1654,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			if (key >= 200)
 			{
-#ifdef __linux__
-				// We don't want annoying prints for keys which are not used and bound per default in the mod code
-				// but used by the engine (hardcoded).
-				// Linux is especially affected, the ALT Gr key is part to open the console.
-				// These keys can still be bound - we just avoid the message.
-				switch (key)
-				{
-				//case 329: // WINDOWS
-				case K_MODE:   // 331 - ALT Gr (MODE)
-					//case 337: // MENU
-					return;
-				default:
-					break;
-				}
-#endif
 				Com_Printf("%s (key %i) is unbound, use controls menu to set.\n"
 				           , Key_KeynumToString(key), key);
 			}
