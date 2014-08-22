@@ -3223,7 +3223,7 @@ void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 	r = crandom() * spread;
 	u = crandom() * spread;
 
-	if (BG_IsScopedWeapon(ent->s.weapon))
+	if (weaponTable[ent->s.weapon].isScoped)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
 		dist      *= 2;
@@ -3954,7 +3954,7 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 
 	// non ai's take into account scoped weapon 'sway' (just another way aimspread is visualized/utilized)
 
-	if (BG_IsScopedWeapon(weapon))
+	if (weaponTable[weapon].isScoped)
 	{
 		//float pitchAmp, yawAmp;
 		float pitchMinAmp, yawMinAmp, phase;
