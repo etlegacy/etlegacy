@@ -397,7 +397,8 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 		case SDLK_BACKSPACE:    key = K_BACKSPACE;     break;
 
 		case SDLK_DELETE:       key = K_DEL;           break;
-		case SDLK_PAUSE:        key = K_PAUSE;         break; // @todo SDL 2.0 maps PAUSE to PAUSE as well as BREAK (key = K_BREAK;         break;)
+		case SDLK_PAUSE:        key = K_PAUSE;         break; // FIXME: SDL 2.0 maps PAUSE to PAUSE as well as BREAK
+			                                                  // (key = K_BREAK;         break;)
 
 #ifdef PANDORA
 		case SDLK_LSHIFT:       key = K_SHIFT;         break;
@@ -416,7 +417,8 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 #endif
 
 		case SDLK_RGUI:
-		case SDLK_LGUI:         key = K_COMMAND;       break; // FIXME: SDL 2.0 maps GUI to SUPER as well as COMMAND (key = K_SUPER;         break;)
+		case SDLK_LGUI:         key = K_COMMAND;       break; // FIXME: SDL 2.0 maps GUI to SUPER as well as COMMAND
+		// (key = K_SUPER;         break;)
 
 		case SDLK_RALT:
 		case SDLK_LALT:         key = K_ALT;           break;
@@ -437,9 +439,36 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 		case SDLK_CAPSLOCK:     key = K_CAPSLOCK;      break;
 
 		default:
-			// TODO: SDL 2.0
-			//if (keysym->sym >= SDLK_WORLD_0 && keysym->sym <= SDLK_WORLD_95)
-			//key = (keysym->sym - SDLK_WORLD_0) + K_WORLD_0;
+
+			// physical key mapped to a non-ascii character
+			switch (keysym->scancode)
+			{
+			case SDL_SCANCODE_1: key = K_1; break;
+			case SDL_SCANCODE_2: key = K_2; break;
+			case SDL_SCANCODE_3: key = K_3; break;
+			case SDL_SCANCODE_4: key = K_4; break;
+			case SDL_SCANCODE_5: key = K_5; break;
+			case SDL_SCANCODE_6: key = K_6; break;
+			case SDL_SCANCODE_7: key = K_7; break;
+			case SDL_SCANCODE_8: key = K_8; break;
+			case SDL_SCANCODE_9: key = K_9; break;
+			case SDL_SCANCODE_0: key = K_0; break;
+
+			case SDL_SCANCODE_MINUS: key          = K_MINUS; break;
+			case SDL_SCANCODE_EQUALS: key         = K_EQUALS; break;
+			case SDL_SCANCODE_LEFTBRACKET: key    = K_LEFTBRACKET; break;
+			case SDL_SCANCODE_RIGHTBRACKET: key   = K_RIGHTBRACKET; break;
+			case SDL_SCANCODE_BACKSLASH: key      = K_BACKSLASH; break;
+			case SDL_SCANCODE_SEMICOLON: key      = K_SEMICOLON; break;
+			case SDL_SCANCODE_APOSTROPHE: key     = K_APOSTROPHE; break;
+			case SDL_SCANCODE_GRAVE: key          = K_GRAVE; break;
+			case SDL_SCANCODE_COMMA: key          = K_COMMA; break;
+			case SDL_SCANCODE_PERIOD: key         = K_PERIOD; break;
+			case SDL_SCANCODE_SLASH: key          = K_SLASH; break;
+			case SDL_SCANCODE_NONUSBACKSLASH: key = K_NONUSBACKSLASH; break;
+
+			default: break;
+			}
 			break;
 		}
 	}
