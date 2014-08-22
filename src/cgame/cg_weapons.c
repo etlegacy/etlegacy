@@ -6335,16 +6335,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	}
 
 	// impact mark
-	// testing omnidirectional marks
-#if 0
-	VectorSubtract(vec3_origin, dir, projection);
-	projection[3] = radius * 3;
-	VectorMA(origin, -4.0f, projection, markOrigin);
-
-	CG_ImpactMark(mark, markOrigin, projection, radius, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, cg_markTime.integer);
-#else
 	trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, colorWhite, cg_markTime.integer, (cg_markTime.integer >> 4));
-#endif
 }
 
 /*
@@ -6361,6 +6352,7 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 	switch (weapon)
 	{
 	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
 	case WP_PANZERFAUST:
 	case WP_BAZOOKA:
 		CG_MissileHitWall(weapon, 0, origin, dir, 0);   // like the old one
