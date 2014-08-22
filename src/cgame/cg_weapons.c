@@ -85,6 +85,24 @@ static void CG_ContinueWeaponAnim(int anim)
 
 /*
 ==============
+AddLean
+    add leaning offset
+==============
+*/
+void AddLean(vec3_t viewAngle, vec3_t point, float ammount)
+{
+	if (ammount)
+	{
+		vec3_t up, right;
+		AngleVectors(viewAngle, up, right, NULL);
+		VectorMA(point, ammount, right, point);
+		// to match client's view
+		point[2] -= fabs(ammount / 3.5);
+	}
+}
+
+/*
+==============
 CG_MachineGunEjectBrassNew
 ==============
 */
@@ -94,7 +112,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
 	float         waterScale = 1.0f;
-	vec3_t        v[3];
+	vec3_t        v[3], end;
 
 	if (cg_brassTime.integer <= 0)
 	{
@@ -147,21 +165,16 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 
 	le->leFlags = LEF_TUMBLE;
 
-	{
-		int    contents;
-		vec3_t end;
+	VectorCopy(cent->lerpOrigin, end);
+	end[2] -= 24;
 
-		VectorCopy(cent->lerpOrigin, end);
-		end[2]  -= 24;
-		contents = CG_PointContents(end, 0);
-		if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
-		{
-			le->leBounceSoundType = LEBS_NONE;
-		}
-		else
-		{
-			le->leBounceSoundType = LEBS_BRASS;
-		}
+	if (CG_PointContents(end, 0) & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
+	{
+		le->leBounceSoundType = LEBS_NONE;
+	}
+	else
+	{
+		le->leBounceSoundType = LEBS_BRASS;
 	}
 
 	le->leMarkType = LEMT_NONE;
@@ -6595,6 +6608,8 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			{
 				VectorMA(muzzle, 14, forward, muzzle);
 			}
+
+			AddLean(cg.snap->ps.viewangles, muzzle, cg.snap->ps.leanf);
 		}
 		return qtrue;
 	}
@@ -6661,6 +6676,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		{
 			muzzle[2] += DEFAULT_VIEWHEIGHT;
 			VectorMA(muzzle, 14, forward, muzzle);
+			AddLean(cent->lerpAngles, muzzle, cent->pe.leanDirection);
 		}
 	}
 
