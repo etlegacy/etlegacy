@@ -3367,7 +3367,7 @@ void PM_AdjustAimSpreadScale(void)
 
 		// take player movement into account (even if only for the scoped weapons)
 		// TODO: also check for jump/crouch and adjust accordingly
-		if (BG_IsScopedWeapon(pm->ps->weapon))
+		if (weaponTable[pm->ps->weapon].isScoped)
 		{
 			for (i = 0; i < 2; i++)
 			{
@@ -3383,7 +3383,7 @@ void PM_AdjustAimSpreadScale(void)
 			}
 		}
 
-		viewchange  = (float)viewchange / cmdTime;  // convert into this movement for a second
+		viewchange  = viewchange / cmdTime;  // convert into this movement for a second
 		viewchange -= AIMSPREAD_VIEWRATE_MIN / wpnScale;
 		if (viewchange <= 0)
 		{
@@ -3395,7 +3395,7 @@ void PM_AdjustAimSpreadScale(void)
 		}
 
 		// now give us a scale from 0.0 to 1.0 to apply the spread increase
-		viewchange = viewchange / (float)(AIMSPREAD_VIEWRATE_RANGE / wpnScale);
+		viewchange = viewchange / (AIMSPREAD_VIEWRATE_RANGE / wpnScale);
 
 		increase = (int)(cmdTime * viewchange * AIMSPREAD_INCREASE_RATE);
 	}
@@ -5854,7 +5854,7 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))          // binoculars are an inventory item (inventory==keys)
 		{
-			if (!BG_IsScopedWeapon(pm->ps->weapon) &&          // don't allow binocs if using the sniper scope
+			if (!weaponTable[pm->ps->weapon].isScoped &&          // don't allow binocs if using the sniper scope
 			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
 			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
 			    pm->ps->weapon != WP_MOBILE_MG42_SET &&

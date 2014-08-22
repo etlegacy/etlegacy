@@ -835,6 +835,8 @@ typedef struct weapontable_s
 	int ammoIndex;            // bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
 	int clipIndex;            // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
+	qboolean isScoped;        // bg
+
 	int damage;               // g
 	qboolean canGib;          // g
 	qboolean isReload;        // g
@@ -862,7 +864,7 @@ typedef struct weapontable_s
 
 	// client
 	// icons
-	char *desc; // description for spawn weapons - client only
+	char *desc; // c - description for spawn weapons
 
 } weaponTable_t;
 
@@ -2176,7 +2178,6 @@ int BG_ClassTextToClass(char *token);
 skillType_t BG_ClassSkillForClass(int classnum);
 
 qboolean BG_isLightWeaponSupportingFastReload(int weapon);
-qboolean BG_IsScopedWeapon(int weapon);
 
 int BG_FootstepForSurface(int surfaceFlags);
 
