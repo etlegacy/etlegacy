@@ -2452,17 +2452,19 @@ Called after every level change or subsystem restart
 Will perform callbacks to make the loading info screen update.
 =================
 */
-#ifdef _DEBUG
+#ifdef LEGACY_DEBUG
 #define DEBUG_INITPROFILE_INIT int elapsed, dbgTime = trap_Milliseconds();
 #define DEBUG_INITPROFILE_EXEC(f) if (developer.integer) { CG_Printf("^5%s passed in %i msec\n", f, elapsed = trap_Milliseconds() - dbgTime);  dbgTime += elapsed; }
-#endif // _DEBUG
+#else
+#define DEBUG_INITPROFILE_INIT
+#define DEBUG_INITPROFILE_EXEC(f)
+#endif // LEGACY_DEBUG
+
 void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient)
 {
 	const char *s;
 	int        i;
-#ifdef _DEBUG
 	DEBUG_INITPROFILE_INIT
-#endif
 
 	//int startat = trap_Milliseconds();
 
@@ -2594,18 +2596,14 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_initStrings();
 	CG_windowInit();
 
-#ifdef _DEBUG
-	DEBUG_INITPROFILE_EXEC("initialization")
-#endif
+	DEBUG_INITPROFILE_EXEC("initialization");
 
 	// load the new map
 	CG_LoadingString(" - collision map -");
 
 	trap_CM_LoadMap(cgs.mapname);
 
-#ifdef _DEBUG
-	DEBUG_INITPROFILE_EXEC("loadmap")
-#endif // DEBUG
+	DEBUG_INITPROFILE_EXEC("loadmap");
 
 	String_Init();
 
@@ -2615,9 +2613,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_RegisterSounds();
 
-#ifdef _DEBUG
-	DEBUG_INITPROFILE_EXEC("sounds")
-#endif // DEBUG
+	DEBUG_INITPROFILE_EXEC("sounds");
 
 	CG_LoadingString(" - graphics -");
 
@@ -2627,17 +2623,13 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_InitFlameChunks();       // register and clear all flamethrower resources
 
-#ifdef _DEBUG
-	DEBUG_INITPROFILE_EXEC("graphics")
-#endif // DEBUG
+	DEBUG_INITPROFILE_EXEC("graphics");
 
 	CG_LoadingString(" - clients -");
 
 	CG_RegisterClients();       // if low on memory, some clients will be deferred
 
-#ifdef _DEBUG
-	DEBUG_INITPROFILE_EXEC("clients")
-#endif // DEBUG
+	DEBUG_INITPROFILE_EXEC("clients");
 
 	cg.loading = qfalse;    // future players will be deferred
 
@@ -2685,9 +2677,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_ParseTagConnects();
 
-#ifdef _DEBUG
-	DEBUG_INITPROFILE_EXEC("misc")
-#endif // DEBUG
+	DEBUG_INITPROFILE_EXEC("misc");
 
 	CG_ParseSkyBox();
 

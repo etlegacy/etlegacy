@@ -1942,12 +1942,12 @@ void CG_ProcessCvars()
 #define DEBUGTIME
 #endif
 
-#ifdef _DEBUG
+#ifdef LEGACY_DEBUG
 //#define FAKELAG
 #ifdef FAKELAG
 extern int snapshotDelayTime;
 #endif // FAKELAG
-#endif // _DEBUG
+#endif // LEGACY_DEBUG
 
 extern void CG_SetupDlightstyles(void);
 

@@ -4324,7 +4324,7 @@ void Cmd_UnIgnore_f(gentity_t *ent)
 	}
 }
 
-#ifdef DEBUG
+#ifdef LEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
 /*
 =================
@@ -4383,7 +4383,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	client->sess.playerWeapon  = ent->client->sess.latchPlayerWeapon = cl.sess.playerWeapon;
 	client->sess.playerWeapon2 = ent->client->sess.latchPlayerWeapon2 = cl.sess.playerWeapon2;
 	// spawn them in
-	ClientSpawn(ent, qtrue);
+	ClientSpawn(ent, qfalse, qtrue, qtrue);
 	// restore items
 	client->pers = saved;
 	memcpy(ent->client->ps.persistant, persistant, sizeof(persistant));

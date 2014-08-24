@@ -3224,7 +3224,7 @@ const char *eventnames[EV_MAX_EVENTS] =
  */
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps)
 {
-#ifdef _DEBUG
+#ifdef LEGACY_DEBUG
 	{
 		char buf[256];
 		trap_Cvar_VariableStringBuffer("showevents", buf, sizeof(buf));

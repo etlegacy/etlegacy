@@ -482,7 +482,7 @@ void trap_GetGameState(gameState_t *gamestate)
 	syscall(CG_GETGAMESTATE, gamestate);
 }
 
-#ifdef _DEBUG
+#ifdef LEGACY_DEBUG
 //#define FAKELAG
 #ifdef FAKELAG
 #define MAX_SNAPSHOT_BACKUP 256
@@ -493,7 +493,7 @@ static int        curSnapshotNumber;
 int               snapshotDelayTime;
 static qboolean   skiponeget;
 #endif // FAKELAG
-#endif // _DEBUG
+#endif // LEGACY_DEBUG
 
 void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
 {
@@ -801,9 +801,9 @@ void trap_TranslateString(const char *string, char *buf)
 // Media register functions
 
 // FIXME: unique debug marcos
-//#define _DEBUG
+//#define LEGACY_DEBUG
 
-#ifdef _DEBUG
+#ifdef LEGACY_DEBUG
 #define DEBUG_REGISTERPROFILE_INIT int dbgTime = trap_Milliseconds();
 #define DEBUG_REGISTERPROFILE_EXEC(f, n) if (developer.integer) { CG_Printf("%s : loaded %s in %i msec\n", f, n, trap_Milliseconds() - dbgTime); }
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
@@ -992,7 +992,7 @@ void trap_R_LoadWorldMap(const char *mapname)
 	CG_DrawInformation(qtrue);
 	syscall(CG_R_LOADWORLDMAP, mapname);
 }
-#endif // _DEBUG
+#endif // LEGACY_DEBUG
 
 qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2)
 {

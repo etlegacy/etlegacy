@@ -74,7 +74,7 @@ void GLimp_EndFrame(void);
 void GLimp_LogComment(const char *comment);
 void GLimp_Minimize(void);
 
-#if defined(_DEBUG) || defined(DEBUG)
+#ifdef LEGACY_DEBUG
 #define RENLOG r_logFile->integer
 #define Ren_LogComment(...) if (RENLOG) { GLimp_LogComment(va(__VA_ARGS__)); }
 #else

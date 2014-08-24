@@ -735,13 +735,13 @@ CG_AddFlameSpriteToScene
 static vec3_t vright, vup;
 static vec3_t rright, rup;
 
-#ifdef _DEBUG   // just in case we forget about it, but it should be disabled at all times (only enabled to generate updated shaders)
+#ifdef LEGACY_DEBUG   // just in case we forget about it, but it should be disabled at all times (only enabled to generate updated shaders)
 #ifdef ALLOW_GEN_SHADERS    // secondary security measure
 
 //#define   GEN_FLAME_SHADER
 
 #endif  // ALLOW_GEN_SHADERS
-#endif  // _DEBUG
+#endif  // LEGACY_DEBUG
 
 #define FLAME_BLEND_SRC     "GL_ONE"
 #define FLAME_BLEND_DST     "GL_ONE_MINUS_SRC_COLOR"

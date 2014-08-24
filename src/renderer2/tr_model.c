@@ -311,7 +311,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		}
 		return mod->index;
 	}
-#ifdef _DEBUG
+#ifdef LEGACY_DEBUG
 	else
 	{
 		Ren_Warning("couldn't load '%s'\n", name);

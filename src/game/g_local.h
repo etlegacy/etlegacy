@@ -1492,7 +1492,7 @@ extern vmCvar_t g_OmniBotPath;
 extern vmCvar_t g_OmniBotEnable;
 extern vmCvar_t g_OmniBotFlags;
 extern vmCvar_t g_OmniBotPlaying;
-#ifdef DEBUG
+#ifdef LEGACY_DEBUG
 extern vmCvar_t g_allowBotSwap;
 #endif
 #endif

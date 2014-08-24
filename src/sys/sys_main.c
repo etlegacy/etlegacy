@@ -734,7 +734,7 @@ void *Sys_LoadGameDll(const char *name,
 #endif
 
 	//When doing an debug build just load the mod lib from the basepath as that will have the debug pointers
-#if defined(_DEBUG) || defined(DEBUG)
+#ifdef LEGACY_DEBUG
 #define SEARCHPATH1 basepath
 #define SEARCHPATH2 homepath
 #else
