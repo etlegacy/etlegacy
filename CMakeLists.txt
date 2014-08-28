@@ -114,7 +114,7 @@ IF(NOT CMAKE_BUILD_TYPE)
     MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}")
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
-# This is not used anymore but could be handy in the future?
+# set LEGACY_DEBUG definition for debug build type
 STRING(TOLOWER "${CMAKE_BUILD_TYPE}" buildtype_lower)
 IF(buildtype_lower STREQUAL "debug")
 	add_definitions(-DLEGACY_DEBUG=1)
