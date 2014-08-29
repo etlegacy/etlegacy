@@ -171,12 +171,18 @@ static void GLimp_DetectAvailableModes(void)
 	SDL_Rect modes[128];
 	int      numModes = 0;
 
+	if (!screen)
+	{
+		Ren_Warning("Couldn't get display mode, screen is not initialized\n");
+		return;
+	}
+
 	int             display = SDL_GetWindowDisplayIndex(screen);
 	SDL_DisplayMode windowMode;
 
 	if (SDL_GetWindowDisplayMode(screen, &windowMode) < 0)
 	{
-		ri.Printf(PRINT_WARNING, "Couldn't get window display mode, no resolutions detected\n");
+		Ren_Warning("Couldn't get window display mode, no resolutions detected\n");
 		return;
 	}
 
@@ -191,7 +197,7 @@ static void GLimp_DetectAvailableModes(void)
 
 		if (!mode.w || !mode.h)
 		{
-			ri.Printf(PRINT_ALL, "Display supports any resolution\n");
+			Ren_Print("Display supports any resolution\n");
 			return;
 		}
 
@@ -220,7 +226,7 @@ static void GLimp_DetectAvailableModes(void)
 		}
 		else
 		{
-			ri.Printf(PRINT_WARNING, "Skipping mode %ux%x, buffer too small\n", modes[i].w, modes[i].h);
+			Ren_Warning("Skipping mode %ux%x, buffer too small\n", modes[i].w, modes[i].h);
 		}
 	}
 
@@ -568,14 +574,13 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	{
 		displayAspect = (float)desktopMode.w / (float)desktopMode.h;
 
-		ri.Printf(PRINT_ALL, "Estimated display aspect: %.3f\n", displayAspect);
+		Ren_Print("Estimated display aspect: %.3f\n", displayAspect);
 	}
 	else
 	{
 		Com_Memset(&desktopMode, 0, sizeof(SDL_DisplayMode));
 
-		ri.Printf(PRINT_ALL,
-		          "Cannot estimate display aspect, assuming 1.333\n");
+		Ren_Print("Cannot estimate display aspect, assuming 1.333\n");
 	}
 
 	GLimp_DetectAvailableModes();
@@ -635,7 +640,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	if (screen != NULL)
 	{
 		SDL_GetWindowPosition(screen, &x, &y);
-		ri.Printf(PRINT_DEVELOPER, "Existing window at %dx%d before being destroyed\n", x, y);
+		Ren_Developer("Existing window at %dx%d before being destroyed\n", x, y);
 		SDL_DestroyWindow(screen);
 		screen = NULL;
 	}
@@ -811,7 +816,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		if ((screen = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y,
 		                               glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN)) == 0)
 		{
-			ri.Printf(PRINT_DEVELOPER, "SDL_CreateWindow failed: %s\n", SDL_GetError());
+			Ren_Developer("SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;
 		}
 
@@ -822,7 +827,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		if (!renderer)
 		{
-			ri.Printf(PRINT_DEVELOPER, "SDL_CreateRenderer failed: %s\n", SDL_GetError());
+			Ren_Developer("SDL_CreateRenderer failed: %s\n", SDL_GetError());
 			continue;
 		}
 
@@ -834,7 +839,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			{
 			case 16: mode.format = SDL_PIXELFORMAT_RGB565; break;
 			case 24: mode.format = SDL_PIXELFORMAT_RGB24;  break;
-			default: ri.Printf(PRINT_DEVELOPER, "testColorBits is %d, can't fullscreen\n", testColorBits); continue;
+			default: Ren_Developer("testColorBits is %d, can't fullscreen\n", testColorBits); continue;
 			}
 
 			mode.w            = glConfig.vidWidth;
@@ -844,7 +849,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 			if (SDL_SetWindowDisplayMode(screen, &mode) < 0)
 			{
-				ri.Printf(PRINT_DEVELOPER, "SDL_SetWindowDisplayMode failed: %s\n", SDL_GetError());
+				Ren_Developer("SDL_SetWindowDisplayMode failed: %s\n", SDL_GetError());
 				continue;
 			}
 		}
@@ -869,7 +874,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		if ((SDL_glContext = SDL_GL_CreateContext(screen)) == NULL)
 		{
-			ri.Printf(PRINT_DEVELOPER, "SDL_GL_CreateContext failed: %s\n", SDL_GetError());
+			Ren_Developer("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
 			continue;
 		}
 
@@ -915,7 +920,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	GLimp_DetectAvailableModes();
 
-	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
+	Ren_Print("GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
 
 	return RSERR_OK;
 }
@@ -1059,7 +1064,7 @@ static void GLimp_InitExtensions(void)
 	GLint glint = 0;
 	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
-	//ri.Printf( PRINT_ALL, "...not using GL_ARB_multitexture, %i texture units\n", glConfig.maxActiveTextures );
+	//Ren_Print("...not using GL_ARB_multitexture, %i texture units\n", glConfig.maxActiveTextures );
 	//glConfig.maxActiveTextures=4;
 	if (glConfig.maxActiveTextures > 1)
 	{
@@ -1353,7 +1358,7 @@ void GLimp_EndFrame(void)
 
 		if (r_fullscreen->integer && ri.Cvar_VariableIntegerValue("in_nograb"))
 		{
-			ri.Printf(PRINT_ALL, "Fullscreen not allowed with in_nograb 1\n");
+			Ren_Print("Fullscreen not allowed with in_nograb 1\n");
 			ri.Cvar_Set("r_fullscreen", "0");
 			r_fullscreen->modified = qfalse;
 		}
