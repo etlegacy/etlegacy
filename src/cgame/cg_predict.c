@@ -88,28 +88,29 @@ void CG_BuildSolidList(void)
 			continue;
 		}
 
-		if (ent->eType == ET_ITEM ||
-		    ent->eType == ET_PUSH_TRIGGER ||
-		    ent->eType == ET_TELEPORT_TRIGGER ||
-		    ent->eType == ET_CONCUSSIVE_TRIGGER ||
-		    ent->eType == ET_OID_TRIGGER
-#ifdef VISIBLE_TRIGGERS
-		    || ent->eType == ET_TRIGGER_MULTIPLE
-		    || ent->eType == ET_TRIGGER_FLAGONLY
-		    || ent->eType == ET_TRIGGER_FLAGONLY_MULTIPLE
-#endif // VISIBLE_TRIGGERS
-		    )
-		{
 
+		switch (ent->eType)
+		{
+		case ET_ITEM:
+		case ET_PUSH_TRIGGER:
+		case ET_TELEPORT_TRIGGER:
+		case ET_CONCUSSIVE_TRIGGER:
+		case ET_OID_TRIGGER:
+#ifdef VISIBLE_TRIGGERS
+		case ET_TRIGGER_MULTIPLE:
+		case ET_TRIGGER_FLAGONLY:
+		case ET_TRIGGER_FLAGONLY_MULTIPLE:
+#endif // VISIBLE_TRIGGERS
 			cg_triggerEntities[cg_numTriggerEntities] = cent;
 			cg_numTriggerEntities++;
 			continue;
-		}
-
-		if (ent->eType == ET_CONSTRUCTIBLE)
-		{
+			break;
+		case ET_CONSTRUCTIBLE:
 			cg_triggerEntities[cg_numTriggerEntities] = cent;
 			cg_numTriggerEntities++;
+			break;
+		default:
+			break;
 		}
 
 		if (cent->nextState.solid)
