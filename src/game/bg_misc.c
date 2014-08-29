@@ -3219,6 +3219,10 @@ const char *eventnames[EV_MAX_EVENTS] =
 	//"EV_MAX_EVENTS",
 };
 
+#ifdef LEGACY_DEBUG
+void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+#endif
+
 /**
  * @brief Handles the sequence numbers
  */
