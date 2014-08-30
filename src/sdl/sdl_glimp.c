@@ -81,8 +81,8 @@ typedef enum
 	RSERR_UNKNOWN
 } rserr_t;
 
-SDL_Window           *screen       = NULL;
-static SDL_Renderer  *renderer     = NULL;
+SDL_Window           *main_window       = NULL;
+static SDL_Renderer  *main_renderer     = NULL;
 static SDL_GLContext SDL_glContext = NULL;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
@@ -94,16 +94,16 @@ void GLimp_Shutdown(void)
 {
 	ri.IN_Shutdown();
 
-	if (renderer)
+	if (main_renderer)
 	{
-		SDL_DestroyRenderer(renderer);
-		renderer = NULL;
+		SDL_DestroyRenderer(main_renderer);
+		main_renderer = NULL;
 	}
 
-	if (screen)
+	if (main_window)
 	{
-		SDL_DestroyWindow(screen);
-		screen = NULL;
+		SDL_DestroyWindow(main_window);
+		main_window = NULL;
 	}
 
 #ifdef FEATURE_RENDERER_GLES
@@ -118,7 +118,7 @@ void GLimp_Shutdown(void)
 
 void *GLimp_MainWindow(void)
 {
-	return screen;
+	return main_window;
 }
 
 /**
@@ -126,7 +126,7 @@ void *GLimp_MainWindow(void)
  */
 void GLimp_Minimize(void)
 {
-	SDL_MinimizeWindow(screen);
+	SDL_MinimizeWindow(main_window);
 }
 
 /**
@@ -170,19 +170,30 @@ static void GLimp_DetectAvailableModes(void)
 	char     buf[MAX_STRING_CHARS] = { 0 };
 	SDL_Rect modes[128];
 	int      numModes = 0;
-
-	if (!screen)
-	{
-		Ren_Warning("Couldn't get display mode, screen is not initialized\n");
-		return;
-	}
-
-	int             display = SDL_GetWindowDisplayIndex(screen);
+	int      display = 0;
 	SDL_DisplayMode windowMode;
 
-	if (SDL_GetWindowDisplayMode(screen, &windowMode) < 0)
+	if (!main_window)
 	{
-		Ren_Warning("Couldn't get window display mode, no resolutions detected\n");
+		if (!SDL_GetNumVideoDisplays())
+		{
+			Ren_Fatal("There is no available displays to which to open a game screen");
+			return;
+		}
+
+		//Use the zero display index
+		display = 0;
+	}
+	else
+	{
+		//Detect the used display
+		display = SDL_GetWindowDisplayIndex(main_window);
+	}
+
+	//was SDL_GetWindowDisplayMode
+	if (SDL_GetDesktopDisplayMode(display, &windowMode) < 0)
+	{
+		Ren_Warning("Couldn't get desktop display mode, no resolutions detected\n");
 		return;
 	}
 
@@ -540,7 +551,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 #ifdef FEATURE_RENDERER_GLES
 	Uint32 flags = 0;
 #else
-	Uint32 flags = SDL_WINDOW_OPENGL;
+	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED;
 #endif
 	GLenum glewResult;
 
@@ -565,9 +576,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	    );
 
 	// If a window exists, note its display index
-	if (screen != NULL)
+	if (main_window != NULL)
 	{
-		display = SDL_GetWindowDisplayIndex(screen);
+		display = SDL_GetWindowDisplayIndex(main_window);
 	}
 
 	if (SDL_GetDesktopDisplayMode(display, &desktopMode) == 0)
@@ -637,12 +648,12 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		SDL_glContext = NULL;
 	}
 
-	if (screen != NULL)
+	if (main_window != NULL)
 	{
-		SDL_GetWindowPosition(screen, &x, &y);
+		SDL_GetWindowPosition(main_window, &x, &y);
 		Ren_Developer("Existing window at %dx%d before being destroyed\n", x, y);
-		SDL_DestroyWindow(screen);
-		screen = NULL;
+		SDL_DestroyWindow(main_window);
+		main_window = NULL;
 	}
 
 	if (fullscreen)
@@ -813,7 +824,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		}
 
-		if ((screen = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y,
+		if ((main_window = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y,
 		                               glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN)) == 0)
 		{
 			Ren_Developer("SDL_CreateWindow failed: %s\n", SDL_GetError());
@@ -823,9 +834,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 #endif // FEATURE_RENDERER_GLES
 
 		// We must call SDL_CreateRenderer in order for draw calls to affect this window.
-		renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
+		main_renderer = SDL_CreateRenderer(main_window, -1, SDL_RENDERER_ACCELERATED);
 
-		if (!renderer)
+		if (!main_renderer)
 		{
 			Ren_Developer("SDL_CreateRenderer failed: %s\n", SDL_GetError());
 			continue;
@@ -847,14 +858,14 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			mode.refresh_rate = glConfig.displayFrequency = ri.Cvar_VariableIntegerValue("r_displayRefresh");
 			mode.driverdata   = NULL;
 
-			if (SDL_SetWindowDisplayMode(screen, &mode) < 0)
+			if (SDL_SetWindowDisplayMode(main_window, &mode) < 0)
 			{
 				Ren_Developer("SDL_SetWindowDisplayMode failed: %s\n", SDL_GetError());
 				continue;
 			}
 		}
 
-		SDL_SetWindowIcon(screen, icon);
+		SDL_SetWindowIcon(main_window, icon);
 
 #ifdef FEATURE_RENDERER_GLES
 		EGL_Open(glConfig.vidWidth, glConfig.vidHeight);
@@ -872,7 +883,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 #endif
 
-		if ((SDL_glContext = SDL_GL_CreateContext(screen)) == NULL)
+		if ((SDL_glContext = SDL_GL_CreateContext(main_window)) == NULL)
 		{
 			Ren_Developer("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
 			continue;
@@ -910,7 +921,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 #endif
 
-	if (!screen || !renderer)
+	if (!main_window || !main_renderer)
 	{
 		Ren_Print("Couldn't get a visual\n");
 		return RSERR_INVALID_MODE;
@@ -921,7 +932,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	GLimp_DetectAvailableModes();
 
 	Ren_Print("GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
-
+	
 	return RSERR_OK;
 }
 
@@ -1287,7 +1298,7 @@ success:
 
 	// Only using SDL_SetWindowBrightness to determine if hardware gamma is supported
 	glConfig.deviceSupportsGamma = !r_ignorehwgamma->integer &&
-	                               SDL_SetWindowBrightness(screen, 1.0f) >= 0;
+	                               SDL_SetWindowBrightness(main_window, 1.0f) >= 0;
 
 	// get our config strings
 
@@ -1344,7 +1355,7 @@ void GLimp_EndFrame(void)
 	// don't flip if drawing to front buffer
 	if (Q_stricmp(r_drawBuffer->string, "GL_FRONT") != 0)
 	{
-		SDL_GL_SwapWindow(screen);
+		SDL_GL_SwapWindow(main_window);
 	}
 #endif
 
@@ -1354,7 +1365,7 @@ void GLimp_EndFrame(void)
 		qboolean needToToggle, sdlToggled = qfalse;
 
 		// Find out the current state
-		fullscreen = !!(SDL_GetWindowFlags(screen) & SDL_WINDOW_FULLSCREEN);
+		fullscreen = !!(SDL_GetWindowFlags(main_window) & SDL_WINDOW_FULLSCREEN);
 
 		if (r_fullscreen->integer && ri.Cvar_VariableIntegerValue("in_nograb"))
 		{
@@ -1368,7 +1379,7 @@ void GLimp_EndFrame(void)
 
 		if (needToToggle)
 		{
-			sdlToggled = SDL_SetWindowFullscreen(screen, r_fullscreen->integer) >= 0;
+			sdlToggled = SDL_SetWindowFullscreen(main_window, r_fullscreen->integer) >= 0;
 
 			// SDL_WM_ToggleFullScreen didn't work, so do it the slow way
 			if (!sdlToggled)
