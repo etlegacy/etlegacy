@@ -1098,7 +1098,7 @@ void GfxInfo_f(void)
 	Ren_Print("\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	Ren_Print("GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
 	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
-	Ren_Print("MODE: %d, SCREEN: %d x %d %s (ratio %.4f) Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1], glConfig.windowAspect, glConfig);
+	Ren_Print("MODE: %d, SCREEN: %d x %d %s (ratio %.4f) Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1], glConfig.windowAspect);
 
 	if (glConfig.displayFrequency)
 	{
