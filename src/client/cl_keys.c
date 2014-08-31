@@ -945,7 +945,7 @@ Key_SetBinding
 */
 void Key_SetBinding(int keynum, const char *binding)
 {
-	char *lcbinding;    // fretn - make a copy of our binding lowercase
+	char *lcbinding;    // make a copy of our binding lowercase
 	                    // so name toggle scripts work again: bind x name BzZIfretn?
 	                    // resulted into bzzifretn?
 
@@ -1104,6 +1104,7 @@ void Key_Bind_f(void)
 
 	if (c == 2)
 	{
+		// FIXME: keyboard translations
 		if (keys[b].binding && keys[b].binding[0])
 		{
 			Com_Printf("\"%s\" = \"%s\"\n", Key_KeynumToString(b), keys[b].binding);
@@ -1328,11 +1329,10 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		}
 	}
 
-	/*
-	 * Switch from / to fullscreen on Alt+Enter.
-	 * No need to restart video if the game's
-	 * resolution matches the desktop resolution.
-	 */
+
+	// Switch from / to fullscreen on Alt+Enter.
+	// No need to restart video if the game's
+	// resolution matches the desktop resolution.
 	if (key == K_ENTER)
 	{
 		if (down)
@@ -1477,17 +1477,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	// a button command (leading + sign).  These will be processed even in
 	// console mode and menu mode, to keep the character from continuing
 	// an action started before a mode switch.
-
-	//This was due to sdl_input.c IN_TranslateSDLToQ3Key nulling them as they did not have unicode value (bug)
-	//This fix *should* not be needed anymore.
-	/*
-	#ifdef _WIN32 //If the control is down the the num keys are activated incorrectly this should be fixed better later.
-	if (keys[K_CTRL].down && !down && (key >= 48 && key <= 57))
-	{
-	    down = 1;
-	}
-	#endif // _WIN32
-	*/
 
 	if (!down)
 	{
