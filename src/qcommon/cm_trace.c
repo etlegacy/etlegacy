@@ -554,34 +554,32 @@ CM_BoxDistanceFromPlane
 */
 static int CM_TraceThroughBounds(traceWork_t *tw, vec3_t mins, vec3_t maxs)
 {
-	int    i;
-	vec3_t center, extents;
-
-	for (i = 0; i < 3; i++)
-	{
-		if (mins[i] > tw->bounds[1][i])
-		{
-			return qfalse;
-		}
-		if (maxs[i] < tw->bounds[0][i])
-		{
-			return qfalse;
-		}
-	}
-
-	VectorAdd(mins, maxs, center);
-	VectorScale(center, 0.5f, center);
-	VectorSubtract(maxs, center, extents);
-
-	if (Q_fabs(CM_BoxDistanceFromPlane(center, extents, &tw->tracePlane1)) > tw->traceDist1)
-	{
-		return qfalse;
-	}
-	if (Q_fabs(CM_BoxDistanceFromPlane(center, extents, &tw->tracePlane2)) > tw->traceDist2)
+	if (mins[0] > tw->bounds[1][0] ||
+	    maxs[0] < tw->bounds[0][0] ||
+	    mins[1] > tw->bounds[1][1] ||
+	    maxs[1] < tw->bounds[0][1] ||
+	    mins[2] > tw->bounds[1][2] ||
+	    maxs[2] < tw->bounds[0][2])
 	{
 		return qfalse;
 	}
 
+	{
+		vec3_t center, extents;
+
+		VectorAdd(mins, maxs, center);
+		VectorScale(center, 0.5f, center);
+		VectorSubtract(maxs, center, extents);
+
+		if (Q_fabs(CM_BoxDistanceFromPlane(center, extents, &tw->tracePlane1)) > tw->traceDist1)
+		{
+			return qfalse;
+		}
+		if (Q_fabs(CM_BoxDistanceFromPlane(center, extents, &tw->tracePlane2)) > tw->traceDist2)
+		{
+			return qfalse;
+		}
+	}
 	// trace might go through the bounds
 	return qtrue;
 }
@@ -801,17 +799,14 @@ CM_TraceThroughLeaf
 static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 {
 	int      k;
-	int      brushnum;
 	cbrush_t *brush;
-	cPatch_t *patch;
 	float    fraction;
 
 	// trace line against all brushes in the leaf
 	for (k = 0 ; k < leaf->numLeafBrushes ; k++)
 	{
-		brushnum = cm.leafbrushes[leaf->firstLeafBrush + k];
-
-		brush = &cm.brushes[brushnum];
+		// brushnum = cm.leafbrushes[leaf->firstLeafBrush + k];
+		brush = &cm.brushes[cm.leafbrushes[leaf->firstLeafBrush + k]];
 		if (brush->checkcount == cm.checkcount)
 		{
 			continue;   // already checked this brush in another leaf
@@ -849,6 +844,8 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 	// trace line against all patches in the leaf
 	if (!cm_noCurves->integer)
 	{
+		cPatch_t *patch;
+
 		for (k = 0 ; k < leaf->numLeafSurfaces ; k++)
 		{
 			patch = cm.surfaces[cm.leafsurfaces[leaf->firstLeafSurface + k]];
