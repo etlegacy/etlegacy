@@ -383,9 +383,7 @@ static void blitVQQuad32fs(byte **status, unsigned char *data)
 {
 	unsigned short newd  = 0, celdata = 0, code;
 	unsigned int   index = 0, i;
-	int            spl;
-
-	spl = cinTable[currentHandle].samplesPerLine;
+	int            spl   = cinTable[currentHandle].samplesPerLine;
 
 	do
 	{
@@ -405,12 +403,12 @@ static void blitVQQuad32fs(byte **status, unsigned char *data)
 
 		switch (code)
 		{
-		case    0x8000:                                                 // vq code
+		case 0x8000:                                                 // vq code
 			blit8_32((byte *)&vq8[(*data) * 128], status[index], spl);
 			data++;
 			index += 5;
 			break;
-		case    0xc000:                                                 // drop
+		case 0xc000:                                                 // drop
 			index++;                                                    // skip 8x8
 			for (i = 0; i < 4; i++)
 			{
@@ -430,11 +428,11 @@ static void blitVQQuad32fs(byte **status, unsigned char *data)
 
 				switch (code)                                           // code in top two bits of code
 				{
-				case    0x8000:                                     // 4x4 vq code
+				case 0x8000:                                     // 4x4 vq code
 					blit4_32((byte *)&vq4[(*data) * 32], status[index], spl);
 					data++;
 					break;
-				case    0xc000:                                     // 2x2 vq code
+				case 0xc000:                                     // 2x2 vq code
 					blit2_32((byte *)&vq2[(*data) * 8], status[index], spl);
 					data++;
 					blit2_32((byte *)&vq2[(*data) * 8], status[index] + 8, spl);
@@ -444,7 +442,7 @@ static void blitVQQuad32fs(byte **status, unsigned char *data)
 					blit2_32((byte *)&vq2[(*data) * 8], status[index] + spl * 2 + 8, spl);
 					data++;
 					break;
-				case    0x4000:                                     // motion compensation
+				case 0x4000:                                     // motion compensation
 					move4_32(status[index] + cin.mcomp[(*data)], status[index], spl);
 					data++;
 					break;
@@ -452,12 +450,12 @@ static void blitVQQuad32fs(byte **status, unsigned char *data)
 				index++;
 			}
 			break;
-		case    0x4000:                                                 // motion compensation
+		case 0x4000:                                                 // motion compensation
 			move8_32(status[index] + cin.mcomp[(*data)], status[index], spl);
 			data++;
 			index += 5;
 			break;
-		case    0x0000:
+		case 0x0000:
 			index += 5;
 			break;
 		}
@@ -523,14 +521,12 @@ static void ROQ_GenYUVTables(void)
 		*d++ = *b;  \
 		a++; b++; }
 
-
 static unsigned short yuv_to_rgb(long y, long u, long v)
 {
-	long r, g, b, YY = (long)(ROQ_YY_tab[(y)]);
-
-	r = (YY + ROQ_VR_tab[v]) >> 9;
-	g = (YY + ROQ_UG_tab[u] + ROQ_VG_tab[v]) >> 8;
-	b = (YY + ROQ_UB_tab[u]) >> 9;
+	long YY = ROQ_YY_tab[y];
+	long r  = (YY + ROQ_VR_tab[v]) >> 9;
+	long g  = (YY + ROQ_UG_tab[u] + ROQ_VG_tab[v]) >> 8;
+	long b  = (YY + ROQ_UB_tab[u]) >> 9;
 
 	if (r < 0)
 	{
@@ -562,11 +558,10 @@ static unsigned short yuv_to_rgb(long y, long u, long v)
 
 static unsigned int yuv_to_rgb24(long y, long u, long v)
 {
-	long r, g, b, YY = (long)(ROQ_YY_tab[(y)]);
-
-	r = (YY + ROQ_VR_tab[v]) >> 6;
-	g = (YY + ROQ_UG_tab[u] + ROQ_VG_tab[v]) >> 6;
-	b = (YY + ROQ_UB_tab[u]) >> 6;
+	long YY = ROQ_YY_tab[y];
+	long r  = (YY + ROQ_VR_tab[v]) >> 6;
+	long g  = (YY + ROQ_UG_tab[u] + ROQ_VG_tab[v]) >> 6;
+	long b  = (YY + ROQ_UB_tab[u]) >> 6;
 
 	if (r < 0)
 	{
@@ -657,7 +652,9 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 					aptr = (unsigned short *)vq2 + (*input++) * 4;
 					bptr = (unsigned short *)vq2 + (*input++) * 4;
 					for (j = 0; j < 2; j++)
+					{
 						VQ2TO4(aptr, bptr, cptr, dptr);
+					}
 				}
 			}
 			else if (cinTable[currentHandle].samplesPerPixel == 4)
@@ -687,7 +684,9 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 					ibptr.s  = vq2;
 					ibptr.i += (*input++) * 4;
 					for (j = 0; j < 2; j++)
+					{
 						VQ2TO4(iaptr.i, ibptr.i, icptr.i, idptr.i);
+					}
 				}
 			}
 			else if (cinTable[currentHandle].samplesPerPixel == 1)
@@ -710,7 +709,9 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 					baptr = (byte *)vq2 + (*input++) * 4;
 					bbptr = (byte *)vq2 + (*input++) * 4;
 					for (j = 0; j < 2; j++)
+					{
 						VQ2TO4(baptr, bbptr, bcptr, bdptr);
+					}
 				}
 			}
 		}
@@ -1131,7 +1132,7 @@ static void RoQInterrupt(void)
 redump:
 	switch (cinTable[currentHandle].roq_id)
 	{
-	case    ROQ_QUAD_VQ:
+	case ROQ_QUAD_VQ:
 		if ((cinTable[currentHandle].numQuads & 1))
 		{
 			cinTable[currentHandle].normalBuffer0 = cinTable[currentHandle].t[1];
@@ -1153,17 +1154,17 @@ redump:
 		cinTable[currentHandle].numQuads++;
 		cinTable[currentHandle].dirty = qtrue;
 		break;
-	case    ROQ_CODEBOOK:
+	case ROQ_CODEBOOK:
 		decodeCodeBook(framedata, (unsigned short)cinTable[currentHandle].roq_flags);
 		break;
-	case    ZA_SOUND_MONO:
+	case ZA_SOUND_MONO:
 		if (!cinTable[currentHandle].silent)
 		{
 			ssize = RllDecodeMonoToStereo(framedata, sbuf, cinTable[currentHandle].RoQFrameSize, 0, (unsigned short)cinTable[currentHandle].roq_flags);
 			S_RawSamples(0, ssize, 22050, 2, 1, (byte *)sbuf, 1.0f, 1.0f);
 		}
 		break;
-	case    ZA_SOUND_STEREO:
+	case ZA_SOUND_STEREO:
 		if (!cinTable[currentHandle].silent)
 		{
 			if (cinTable[currentHandle].numQuads == -1)
@@ -1175,26 +1176,26 @@ redump:
 			S_RawSamples(0, ssize, 22050, 2, 2, (byte *)sbuf, 1.0f, 1.0f);
 		}
 		break;
-	case    ROQ_QUAD_INFO:
+	case ROQ_QUAD_INFO:
 		if (cinTable[currentHandle].numQuads == -1)
 		{
 			readQuadInfo(framedata);
 			setupQuad(0, 0);
-			cinTable[currentHandle].startTime = cinTable[currentHandle].lastTime = CL_ScaledMilliseconds() * com_timescale->value;
+			cinTable[currentHandle].startTime = cinTable[currentHandle].lastTime = CL_ScaledMilliseconds();
 		}
 		if (cinTable[currentHandle].numQuads != 1)
 		{
 			cinTable[currentHandle].numQuads = 0;
 		}
 		break;
-	case    ROQ_PACKET:
+	case ROQ_PACKET:
 		cinTable[currentHandle].inMemory     = cinTable[currentHandle].roq_flags;
 		cinTable[currentHandle].RoQFrameSize = 0;           // for header
 		break;
-	case    ROQ_QUAD_HANG:
+	case ROQ_QUAD_HANG:
 		cinTable[currentHandle].RoQFrameSize = 0;
 		break;
-	case    ROQ_QUAD_JPEG:
+	case ROQ_QUAD_JPEG:
 		break;
 	default:
 		cinTable[currentHandle].status = FMV_EOF;
@@ -1256,7 +1257,7 @@ redump:
 
 static void RoQ_init(void)
 {
-	cinTable[currentHandle].startTime = cinTable[currentHandle].lastTime = CL_ScaledMilliseconds() * com_timescale->value;
+	cinTable[currentHandle].startTime = cinTable[currentHandle].lastTime = CL_ScaledMilliseconds();
 	cinTable[currentHandle].RoQPlayed = 24;
 	//  get frame rate
 	cinTable[currentHandle].roqFPS = cin.file[6] + cin.file[7] * 256;
@@ -1280,8 +1281,6 @@ static void RoQ_init(void)
 
 static void RoQShutdown(void)
 {
-	const char *s;
-
 	if (!cinTable[currentHandle].buf)
 	{
 		return;
@@ -1302,6 +1301,8 @@ static void RoQShutdown(void)
 
 	if (cinTable[currentHandle].alterGameState)
 	{
+		const char *s;
+
 		cls.state = CA_DISCONNECTED;
 		// we can't just do a vstr nextmap, because
 		// if we are aborting the intro cinematic with
@@ -1388,12 +1389,12 @@ e_status CIN_RunCinematic(int handle)
 		return cinTable[currentHandle].status;
 	}
 
-	thisTime = CL_ScaledMilliseconds() * com_timescale->value;
+	thisTime = CL_ScaledMilliseconds();
 	if (cinTable[currentHandle].shader && (abs(thisTime - cinTable[currentHandle].lastTime)) > 100)
 	{
 		cinTable[currentHandle].startTime += thisTime - cinTable[currentHandle].lastTime;
 	}
-	cinTable[currentHandle].tfps = ((((CL_ScaledMilliseconds() * com_timescale->value) - cinTable[currentHandle].startTime) * 3) / 100);
+	cinTable[currentHandle].tfps = (((CL_ScaledMilliseconds() - cinTable[currentHandle].startTime) * 3) / 100);
 
 	start = cinTable[currentHandle].startTime;
 	while ((cinTable[currentHandle].tfps != cinTable[currentHandle].numQuads)
@@ -1402,9 +1403,8 @@ e_status CIN_RunCinematic(int handle)
 		RoQInterrupt();
 		if (start != cinTable[currentHandle].startTime)
 		{
-			cinTable[currentHandle].tfps = ((((CL_ScaledMilliseconds() * com_timescale->value)
-			                                  - cinTable[currentHandle].startTime) * 3) / 100);
-			start = cinTable[currentHandle].startTime;
+			cinTable[currentHandle].tfps = (((CL_ScaledMilliseconds() - cinTable[currentHandle].startTime) * 3) / 100);
+			start                        = cinTable[currentHandle].startTime;
 		}
 	}
 
