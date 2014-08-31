@@ -81,9 +81,9 @@ typedef enum
 	RSERR_UNKNOWN
 } rserr_t;
 
-SDL_Window           *main_window       = NULL;
-static SDL_Renderer  *main_renderer     = NULL;
-static SDL_GLContext SDL_glContext = NULL;
+SDL_Window           *main_window   = NULL;
+static SDL_Renderer  *main_renderer = NULL;
+static SDL_GLContext SDL_glContext  = NULL;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
@@ -166,11 +166,11 @@ static int GLimp_CompareModes(const void *a, const void *b)
 
 static void GLimp_DetectAvailableModes(void)
 {
-	int      i;
-	char     buf[MAX_STRING_CHARS] = { 0 };
-	SDL_Rect modes[128];
-	int      numModes = 0;
-	int      display = 0;
+	int             i;
+	char            buf[MAX_STRING_CHARS] = { 0 };
+	SDL_Rect        modes[128];
+	int             numModes = 0;
+	int             display  = 0;
 	SDL_DisplayMode windowMode;
 
 	if (!main_window)
@@ -825,7 +825,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		}
 
 		if ((main_window = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y,
-		                               glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN)) == 0)
+		                                    glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN)) == 0)
 		{
 			Ren_Developer("SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;
@@ -932,7 +932,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	GLimp_DetectAvailableModes();
 
 	Ren_Print("GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
-	
+
 	return RSERR_OK;
 }
 
