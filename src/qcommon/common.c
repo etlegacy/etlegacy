@@ -44,6 +44,19 @@
 #   include <unistd.h> // getpid()
 #endif
 
+#ifndef DEDICATED
+	#include "../sdl/sdl_defs.h"
+	#define Com_Sleep(x) SDL_Delay(x)
+#else
+#if defined(WIN32)
+	#define Com_Sleep(x) Sleep(x)
+#elif defined(__linux__) || defined(__APPLE__)
+	#define Com_Sleep(x) usleep(1000 * x)
+#else
+	#define Com_Sleep(x)
+#endif
+#endif
+
 // NOTE: if protocol gets bumped please add 84 to the list before 0
 // 2.55 82, 2.56 83, 2.6 84
 int demo_protocols[] =
@@ -3198,6 +3211,18 @@ void Com_Frame(void)
 	else
 	{
 		minMsec = 1;
+	}
+
+	// If we are running as dedicated or on minimized mode then sleep a bit
+	if (com_dedicated->integer || com_minimized->integer)
+	{
+		Com_Sleep(5);
+	}
+	else
+	{
+		// Fixes 100% cpu usage on windows (should we set to 1 on other os's?)
+		// A delay of 0 or 1 should be safe
+		Com_Sleep(0);
 	}
 
 	do

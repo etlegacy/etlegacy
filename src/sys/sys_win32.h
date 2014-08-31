@@ -54,7 +54,6 @@ typedef struct
 	HWND hWndSplash;
 	HINSTANCE hInstance;
 	qboolean activeApp;
-	qboolean isMinimized;
 	OSVERSIONINFO osversion;
 	// when we get a windows message, we store the time off so keyboard processing
 	// can know the exact time of an event
