@@ -1,0 +1,9 @@
+# Copyright (C) YEAR Jan Simek
+# This file is distributed under the same license as the PACKAGE package.
+#
+
+msgid "MOUSE1"
+msgstr "MAUS1"
+
+msgid "MOUSE2"
+msgstr "MAUS2"

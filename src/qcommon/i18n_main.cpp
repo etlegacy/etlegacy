@@ -191,6 +191,7 @@ void I18N_Init(void)
 {
 	FL_Locale                       *locale;
 	std::set<tinygettext::Language> languages;
+	std::set<tinygettext::Language> languages_mod;
 
 	cl_language      = Cvar_Get("cl_language", "en", CVAR_ARCHIVE);
 	cl_languageDebug = Cvar_Get("cl_languagedebug", "0", CVAR_ARCHIVE);
@@ -223,12 +224,20 @@ void I18N_Init(void)
 	dictionary_mod.add_directory("locale/mod");
 
 	languages = dictionary.get_languages();
-
-	Com_Printf("Available translations:");
+	Com_Printf("Available client translations:");
 	for (std::set<tinygettext::Language>::iterator p = languages.begin(); p != languages.end(); p++)
 	{
 		Com_Printf(" %s", p->get_name().c_str());
 	}
+	Com_Printf("\n");
+
+	languages_mod = dictionary_mod.get_languages();
+	Com_Printf("Available mod translations:");
+	for (std::set<tinygettext::Language>::iterator p = languages_mod.begin(); p != languages_mod.end(); p++)
+	{
+		Com_Printf(" %s", p->get_name().c_str());
+	}
+	Com_Printf("\n");
 
 	I18N_SetLanguage(cl_language->string);
 	FL_FreeLocale(&locale);
@@ -243,7 +252,7 @@ void I18N_SetLanguage(const char *language)
 	dictionary.set_language(tinygettext::Language::from_env(std::string(language)));
 	dictionary_mod.set_language(tinygettext::Language::from_env(std::string(language)));
 
-	Com_Printf("\nLanguage set to %s\n", dictionary.get_language().get_name().c_str());
+	Com_Printf("Language set to %s\n", dictionary.get_language().get_name().c_str());
 	Com_sprintf(cl_language_last, sizeof(cl_language_last), "%s", language);
 
 	strings.clear();
