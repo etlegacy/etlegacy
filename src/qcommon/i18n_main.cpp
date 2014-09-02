@@ -193,8 +193,8 @@ void I18N_Init(void)
 	std::set<tinygettext::Language> languages;
 	std::set<tinygettext::Language> languages_mod;
 
-	cl_language      = Cvar_Get("cl_language", "en", CVAR_ARCHIVE);
-	cl_languageDebug = Cvar_Get("cl_languagedebug", "0", CVAR_ARCHIVE);
+	cl_language      = Cvar_Get("cl_lang", "en", CVAR_ARCHIVE);
+	cl_languageDebug = Cvar_Get("cl_langDebug", "0", CVAR_ARCHIVE);
 
 	tinygettext::Log::set_log_error_callback(&Tinygettext_Error);
 	tinygettext::Log::set_log_info_callback(&Tinygettext_Info);
@@ -208,12 +208,12 @@ void I18N_Init(void)
 		// locale->country is also supported for 'en_US' format
 		if (locale->lang && locale->lang[0])
 		{
-			Cvar_Set("cl_language", va("%s", locale->lang));
+			Cvar_Set("cl_lang", va("%s", locale->lang));
 		}
 		else
 		{
 			// Language detection failed. Fallback to English
-			Cvar_Set("cl_language", "en");
+			Cvar_Set("cl_lang", "en");
 		}
 	}
 
@@ -321,7 +321,7 @@ static void TranslationMissing(const char *msgid)
 {
 	fileHandle_t file;
 
-	FS_FOpenFileByMode(va("missing_translations_%s.txt", Cvar_VariableString("cl_language")), &file, FS_APPEND);
+	FS_FOpenFileByMode(va("missing_translations_%s.txt", Cvar_VariableString("cl_lang")), &file, FS_APPEND);
 	FS_Write(va("TRANSLATE(\"%s\");\n", msgid), strlen(msgid) + 15, file);
 
 	FS_FCloseFile(file);
