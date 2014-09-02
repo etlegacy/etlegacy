@@ -4817,13 +4817,25 @@ qboolean CL_GetLimboString(int index, char *buf)
 }
 
 /**
+ * @brief Called by engine to handle translation.
+ *
+ * @param[in] string to be translated
+ * @param[out] dest_buffer translated text
+ * @note for mod translations use __(x) macro instead.
+ */
+void CL_TranslateString(const char *string, char *dest_buffer)
+{
+	Com_sprintf(dest_buffer, MAX_STRING_CHARS, "%s", _(string));
+}
+
+/**
  * @brief Called by mod libs to handle translation.
  *
  * @param[in] string to be translated
  * @param[out] dest_buffer translated text
  * @note for client translations use _(x) macro instead.
  */
-void CL_TranslateString(const char *string, char *dest_buffer)
+void CL_TranslateStringMod(const char *string, char *dest_buffer)
 {
 	Com_sprintf(dest_buffer, MAX_STRING_CHARS, "%s", __(string));
 }

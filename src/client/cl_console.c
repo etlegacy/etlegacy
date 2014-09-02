@@ -671,21 +671,21 @@ void Con_DrawNotify(void)
 		if (chat_team)
 		{
 			char buf[128];
-			CL_TranslateString("say_team:", buf);
+			CL_TranslateString("say_team:", buf); // FIXME: do we want translations for Con_DrawNotify?
 			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
 			skip = strlen(buf) + 2;
 		}
 		else if (chat_buddy)
 		{
 			char buf[128];
-			CL_TranslateString("say_fireteam:", buf);
+			CL_TranslateString("say_fireteam:", buf); // FIXME: do we want translations for Con_DrawNotify?
 			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
 			skip = strlen(buf) + 2;
 		}
 		else
 		{
 			char buf[128];
-			CL_TranslateString("say:", buf);
+			CL_TranslateString("say:", buf); // FIXME: do we want translations for Con_DrawNotify?
 			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
 			skip = strlen(buf) + 1;
 		}

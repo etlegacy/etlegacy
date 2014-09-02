@@ -35,11 +35,11 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1902
 msgid "Disguised Enemy!"
-msgstr ""
+msgstr "Getarnter Feind!"
 
 #: src/cgame/cg_draw.c:2074
 msgid "SPECTATOR"
-msgstr ""
+msgstr "ZUSCHAUER"
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
@@ -80,7 +80,7 @@ msgstr ""
 #: src/cgame/cg_draw.c:2227
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
-msgstr ""
+msgstr "Ja(%s):%i, NEIN(%s):%i"
 
 #: src/cgame/cg_draw.c:2234
 #, c-format
@@ -90,7 +90,7 @@ msgstr ""
 #: src/cgame/cg_draw.c:2237
 #, c-format
 msgid "Y:%i, N:%i"
-msgstr ""
+msgstr "J:%i, N:%i"
 
 #: src/cgame/cg_draw.c:2460
 #, c-format
@@ -145,7 +145,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
 msgid "Following"
-msgstr ""
+msgstr "Du folgst"
 
 #: src/cgame/cg_draw.c:2732
 #, c-format
@@ -240,7 +240,7 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:701
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: src/cgame/cg_scoreboard.c:704
 msgid "C R"
@@ -248,11 +248,11 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:709
 msgid "Score"
-msgstr ""
+msgstr "Punkte"
 
 #: src/cgame/cg_scoreboard.c:714
 msgid "XP"
-msgstr ""
+msgstr "XP"
 
 #: src/cgame/cg_scoreboard.c:718
 msgid "Ping"
@@ -264,7 +264,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:2304
 msgid "Map"
-msgstr ""
+msgstr "Karte"
 
 #: src/cgame/cg_servercmds.c:2326
 msgid "Could not create logfile"
@@ -323,7 +323,7 @@ msgid "SELECT PROFILE"
 msgstr ""
 
 msgid "CREATE PROFILE"
-msgstr ""
+msgstr "PROFIL ERSTELLEN"
 
 msgid ""
 "Please choose your initial settings below. You can change these at any time "
@@ -345,7 +345,7 @@ msgid "Brightness:"
 msgstr ""
 
 msgid "Connection:"
-msgstr ""
+msgstr "Verbindung"
 
 msgid "Mouse Sensitivity:"
 msgstr ""
@@ -360,28 +360,28 @@ msgid "DEFAULT SETTINGS"
 msgstr ""
 
 msgid "Language:"
-msgstr ""
+msgstr "Sprache"
 
 msgid "QUIT"
-msgstr ""
+msgstr "BEENDEN"
 
 msgid "RENAME PROFILE"
 msgstr ""
 
 msgid "New Profile Name:"
-msgstr ""
+msgstr "Neuer Profil Name:"
 
 msgid "DELETE PROFILE"
 msgstr ""
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Bist Du sicher"
 
 msgid "YES"
-msgstr ""
+msgstr "JA"
 
 msgid "NO"
-msgstr ""
+msgstr "NEIN"
 
 msgid "DELETE WARNING"
 msgstr ""
@@ -3868,7 +3868,7 @@ msgstr ""
 
 #: src/ui/ui_loadpanel.c:195
 msgid "CONNECTING..."
-msgstr ""
+msgstr "VERBINDEN..."
 
 #: src/ui/ui_loadpanel.c:191
 msgid "DOWNLOADING..."
@@ -4330,7 +4330,7 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:3134
 msgid "IT'S A TIE!"
-msgstr ""
+msgstr "UNENTSCHIEDEN!"
 
 #: src/cgame/cg_debriefing.c:3311
 #, c-format
@@ -4339,7 +4339,7 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:2614
 msgid "Time:"
-msgstr ""
+msgstr "Zeit:"
 
 #: src/cgame/cg_debriefing.c:2626
 msgid "Medals:"
@@ -4544,4 +4544,4 @@ msgid ""
 msgstr ""
 
 msgid "Show Ping:"
-msgstr ""
+msgstr "Zeige Ping:"

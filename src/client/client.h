@@ -477,6 +477,7 @@ qboolean CL_GetLimboString(int index, char *buf);
 
 void CL_TranslateString(const char *string, char *dest_buffer);
 const char *CL_TranslateStringBuf(const char *string);
+void CL_TranslateStringMod(const char *string, char *dest_buffer);
 
 void CL_OpenURL(const char *url);
 
