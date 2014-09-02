@@ -87,7 +87,6 @@ option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"					OFF)
 option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"				OFF)
 option(FEATURE_TRACKER		"Enable extended server statistics (server)"				ON)
 option(FEATURE_LUA		"Enable Lua support in game code"					ON)
-option(FEATURE_SDL2		"Experimental support for SDL 2"					ON)
 option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken)"			OFF)
 option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"			ON)
 option(FEATURE_CURSES		"Enable PDCurses console"						OFF)
@@ -528,19 +527,10 @@ if(BUILD_CLIENT)
 		endif()
 	endif()
 
-	if(NOT BUNDLED_SDL)
-		if(FEATURE_SDL2)
-			find_package(SDL2 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
-			list(APPEND SDL_LIBRARIES ${SDL2_LIBRARY})
-			include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
-		else(FEATURE_SDL2) # SDL 1.3
-			find_package(SDL32 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
-			if(WIN32)
-				list(APPEND SDL_LIBRARIES ${SDL32MAIN_LIBRARY})
-			endif()
-			list(APPEND SDL_LIBRARIES ${SDL32_LIBRARIES})
-			include_directories(SYSTEM ${SDL32_INCLUDE_DIR})
-		endif(FEATURE_SDL2)
+        if(NOT BUNDLED_SDL)
+		find_package(SDL2 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
+		list(APPEND SDL_LIBRARIES ${SDL2_LIBRARY})
+		include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
 	else() # BUNDLED_SDL
 		list(APPEND SDL_LIBRARIES ${SDL32_BUNDLED_LIBRARIES})
 		include_directories(SYSTEM ${SDL32_BUNDLED_INCLUDE_DIR})
