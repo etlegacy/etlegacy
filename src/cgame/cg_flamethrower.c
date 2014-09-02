@@ -126,20 +126,18 @@ static vec3_t flameChunkMins = { 0, 0, 0 };
 static vec3_t flameChunkMaxs = { 0, 0, 0 };
 
 // these define how the flame looks
-#define FLAME_START_SIZE        1.0
-#define FLAME_START_MAX_SIZE    140.0   // when the flame is spawned, it should endevour to reach this size
-#define FLAME_START_MAX_SIZE_RAND   60.0
-#define FLAME_MAX_SIZE          200.0   // flame sprites cannot be larger than this
-#define FLAME_MIN_MAXSIZE       40.0    // don't ever let the sizeMax go less than this
-#define FLAME_START_SPEED       1200.0  //1200.0 // speed of flame as it leaves the nozzle
-#define FLAME_MIN_SPEED         60.0    //200.0
-#define FLAME_CHUNK_DIST        8.0     // space in between chunks when fired
+// FIXME: sort out bg/cg and put these into header files
+#define FLAME_START_SIZE        1.0     // bg
+#define FLAME_START_MAX_SIZE    140.0   // bg FIXME: g_missile defines this again with a value of 100
+#define FLAME_MAX_SIZE          200.0   // cg flame sprites cannot be larger than this
+#define FLAME_START_SPEED       1200.0  // cg speed of flame as it leaves the nozzle
+#define FLAME_MIN_SPEED         60.0    // bg 200.0
+#define FLAME_CHUNK_DIST        8.0     // cg space in between chunks when fired
 
-#define FLAME_BLUE_LENGTH       130.0
-#define FLAME_BLUE_MAX_ALPHA    1.0
+#define FLAME_BLUE_LENGTH       130.0   // cg
+#define FLAME_BLUE_MAX_ALPHA    1.0     // cg
 
 #define FLAME_FUEL_LENGTH       48.0
-#define FLAME_FUEL_MAX_ALPHA    0.35
 #define FLAME_FUEL_MIN_WIDTH    1.0
 
 // these are calculated (don't change)
@@ -155,14 +153,6 @@ static vec3_t flameChunkMaxs = { 0, 0, 0 };
 #define FLAME_BLUE_FADEOUT_TIME(x)      (0.05 * x)
 #define GET_FLAME_BLUE_SIZE_SPEED(x)    (((float)x / FLAME_LIFETIME) / 1.0)       // x is the current sizeMax
 #define GET_FLAME_SIZE_SPEED(x)         (((float)x / FLAME_LIFETIME) / 0.3)       // x is the current sizeMax
-
-//#define   FLAME_MIN_DRAWSIZE      20
-
-// enable this for the fuel stream
-//#define FLAME_ENABLE_FUEL_STREAM
-
-// enable this for dynamic lighting around flames
-//#define FLAMETHROW_LIGHTS
 
 // disable this to stop rotating flames (this is variable so we can change it at run-time)
 int rotatingFlames = qtrue;
