@@ -94,6 +94,7 @@ void AddLean(vec3_t viewAngle, vec3_t point, float ammount)
 	if (ammount)
 	{
 		vec3_t up, right;
+
 		AngleVectors(viewAngle, up, right, NULL);
 		VectorMA(point, ammount, right, point);
 		// to match client's view
@@ -294,7 +295,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	VectorCopy(re->origin, le->pos.trBase);
 
 	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME)) // modified since slime is no longer deadly
-	{ //  if ( CG_PointContents( re->origin, -1 ) & CONTENTS_WATER ) {
+	{
 		waterScale = 0.10;
 	}
 
@@ -313,13 +314,12 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	le->leFlags = LEF_TUMBLE;
 
 	{
-		int    contents;
 		vec3_t end;
 
 		VectorCopy(cent->lerpOrigin, end);
-		end[2]  -= 24;
-		contents = CG_PointContents(end, 0);
-		if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
+		end[2] -= 24;
+
+		if (CG_PointContents(end, 0) & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
 		{
 			le->leBounceSoundType = LEBS_NONE;
 		}
@@ -343,7 +343,8 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	localEntity_t *le      = CG_AllocLocalEntity();
 	refEntity_t   *re      = &le->refEntity;
 	vec3_t        velocity = { 16, -200, 0 };
-	vec3_t        offset, xoffset, xvelocity;
+	vec3_t        offset   = { -24, -4, 24 }; // forward, left, up
+	vec3_t        xoffset, xvelocity;
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
 
@@ -357,10 +358,6 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	AnglesToAxis(cent->lerpAngles, v);
 
-	offset[0] = -24; // forward
-	offset[1] = -4; // left
-	offset[2] = 24; // up
-
 	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
 	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
 	xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
@@ -370,7 +367,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME))
 	{
-		waterScale = 0.10;
+		waterScale = 0.1f;
 	}
 
 	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];

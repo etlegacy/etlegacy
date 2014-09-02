@@ -344,14 +344,12 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	break;
 	case P_SPRITE:
 	{
-		vec3_t point, color, rr, ru, rotate_ang;
+		vec3_t point, rr, ru, rotate_ang;
 		float  time   = cg.time - p->time;
 		float  time2  = p->endtime - p->time;
 		float  ratio  = time / time2;
 		float  width  = p->width + (ratio * (p->endwidth - p->width));
 		float  height = p->height + (ratio * (p->endheight - p->height));
-
-		VectorSet(color, 1.0, 1.0, 1.0);
 
 		if (p->roll)
 		{
@@ -452,7 +450,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		}
 		else if (p->color == GREY75)
 		{
-			float len, greyit, val, ratio;
+			float len, greyit;
 
 			len = Distance(cg.snap->ps.origin, org);
 			if (!len)
@@ -460,8 +458,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 				len = 1;
 			}
 
-			val    = 4096 / len;
-			greyit = 0.25 * val;
+			//val    = 4096 / len;
+			greyit = 0.25 * (4096 / len);
 			if (greyit > 0.5f)
 			{
 				greyit = 0.5f;
@@ -1472,7 +1470,7 @@ void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration)
 	}
 	else
 	{  // r = 2 - no shader ...
-		p->pshader = 0;
+		p->pshader = 0; // cgs.media.dirtParticle3Shader; FIXME: activate this?
 	}
 
 	p->type = P_SMOKE;
