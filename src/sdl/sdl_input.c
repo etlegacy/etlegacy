@@ -252,7 +252,6 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character)
 				return qtrue;
 			}
 			break;
-
 		case CHARACTER:
 			if (c->u.character == character)
 			{
@@ -299,7 +298,6 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 
 		switch (keysym->sym)
 		{
-
 		// keypad
 		case SDLK_KP_0:
 			if (!(keysym->mod & KMOD_NUM))
@@ -439,7 +437,6 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 		case SDLK_CAPSLOCK:     key = K_CAPSLOCK;      break;
 
 		default:
-
 			// physical key mapped to a non-ascii character
 			switch (keysym->scancode)
 			{
@@ -461,7 +458,7 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 			case SDL_SCANCODE_BACKSLASH: key      = K_BACKSLASH; break;
 			case SDL_SCANCODE_SEMICOLON: key      = K_SEMICOLON; break;
 			case SDL_SCANCODE_APOSTROPHE: key     = K_APOSTROPHE; break;
-			case SDL_SCANCODE_GRAVE: key          = K_GRAVE; break;
+			case SDL_SCANCODE_GRAVE: key          = K_GRAVE; break; // note: this is console toogle key!
 			case SDL_SCANCODE_COMMA: key          = K_COMMA; break;
 			case SDL_SCANCODE_PERIOD: key         = K_PERIOD; break;
 			case SDL_SCANCODE_SLASH: key          = K_SLASH; break;
@@ -516,7 +513,7 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 		SDL_ShowCursor(!relative);
 		if (SDL_SetRelativeMouseMode((SDL_bool)relative) == -1)
 		{
-			//FIXME: this happens on some systems (IR4)
+			// FIXME: this happens on some systems (IR4)
 			Com_Error(ERR_FATAL, "Setting relative mouse location fails\n");
 		}
 		mouse_relative = relative;
@@ -645,255 +642,259 @@ struct
 	unsigned int oldhats;
 } stick_state;
 
-/*
 static void IN_InitJoystick(void)
 {
-    int  i          = 0;
-    int  total      = 0;
-    char buf[16384] = "";
+	int  i          = 0;
+	int  total      = 0;
+	char buf[16384] = "";
 
-    if (stick != NULL)
-    {
-        SDL_JoystickClose(stick);
-    }
+	if (stick != NULL)
+	{
+		SDL_JoystickClose(stick);
+	}
 
-    stick = NULL;
-    memset(&stick_state, '\0', sizeof(stick_state));
+	stick = NULL;
+	memset(&stick_state, '\0', sizeof(stick_state));
 
-    if (!SDL_WasInit(SDL_INIT_JOYSTICK))
-    {
-        Com_Printf("Initializing joystick devices\n");
-        if (SDL_Init(SDL_INIT_JOYSTICK) == -1)
-        {
-            Com_Printf("SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
-            return;
-        }
-        Com_Printf("...joysticks initialized\n");
-    }
+	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
+	{
+		Com_Printf("Initializing joystick devices\n");
+		if (SDL_Init(SDL_INIT_JOYSTICK) == -1)
+		{
+			Com_Printf("SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
+			return;
+		}
+		Com_Printf("...joysticks initialized\n");
+	}
 
-    total = SDL_NumJoysticks();
-    Com_Printf("...available joysticks: %d\n", total);
+	total = SDL_NumJoysticks();
+	Com_Printf("...available joysticks: %d\n", total);
 
-    // Print list and build cvar to allow ui to select joystick.
-    for (i = 0; i < total; i++)
-    {
-        Q_strcat(buf, sizeof(buf), SDL_JoystickName(i));
-        Q_strcat(buf, sizeof(buf), "\n");
-    }
+	// Print list and build cvar to allow ui to select joystick.
+	for (i = 0; i < total; i++)
+	{
+		Q_strcat(buf, sizeof(buf), SDL_JoystickNameForIndex(i));
+		Q_strcat(buf, sizeof(buf), "\n");
+	}
 
-    Cvar_Get("in_availableJoysticks", buf, CVAR_ROM);
+	Cvar_Get("in_availableJoysticks", buf, CVAR_ROM);
 
-    if (!in_joystick->integer)
-    {
-        Com_Printf("...no active joystick set\n");
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-        return;
-    }
+	if (!in_joystick->integer)
+	{
+		Com_Printf("...no active joystick set\n");
+		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+		return;
+	}
 
-    in_joystickNo = Cvar_Get("in_joystickNo", "0", CVAR_ARCHIVE);
-    if (in_joystickNo->integer < 0 || in_joystickNo->integer >= total)
-    {
-        Cvar_Set("in_joystickNo", "0");
-    }
+	in_joystickNo = Cvar_Get("in_joystickNo", "0", CVAR_ARCHIVE);
+	if (in_joystickNo->integer < 0 || in_joystickNo->integer >= total)
+	{
+		Cvar_Set("in_joystickNo", "0");
+	}
 
-    in_joystickUseAnalog = Cvar_Get("in_joystickUseAnalog", "0", CVAR_ARCHIVE);
+	in_joystickUseAnalog = Cvar_Get("in_joystickUseAnalog", "0", CVAR_ARCHIVE);
 
-    stick = SDL_JoystickOpen(in_joystickNo->integer);
+	stick = SDL_JoystickOpen(in_joystickNo->integer);
 
-    if (stick == NULL)
-    {
-        Com_Printf("No joystick opened.\n");
-        return;
-    }
+	if (stick == NULL)
+	{
+		Com_Printf("No joystick opened.\n");
+		return;
+	}
 
-    Com_DPrintf("Joystick %d opened\n", in_joystickNo->integer);
-    Com_DPrintf("Name:       %s\n", SDL_JoystickName(in_joystickNo->integer));
-    Com_DPrintf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
-    Com_DPrintf("Hats:       %d\n", SDL_JoystickNumHats(stick));
-    Com_DPrintf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
-    Com_DPrintf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
-    Com_DPrintf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
+	Com_DPrintf("Joystick %d opened\n", in_joystickNo->integer);
+	Com_DPrintf("Name:       %s\n", SDL_JoystickNameForIndex(in_joystickNo->integer));
+	Com_DPrintf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
+	Com_DPrintf("Hats:       %d\n", SDL_JoystickNumHats(stick));
+	Com_DPrintf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
+	Com_DPrintf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
+	Com_DPrintf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
 
-    SDL_JoystickEventState(SDL_QUERY);
+	SDL_JoystickEventState(SDL_QUERY);
 }
 
 static void IN_ShutdownJoystick(void)
 {
-    if (stick)
-    {
-        SDL_JoystickClose(stick);
-        stick = NULL;
-    }
+	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
+	{
+		return;
+	}
 
-    SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+	if (stick)
+	{
+		SDL_JoystickClose(stick);
+		stick = NULL;
+	}
+
+	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
 static void IN_JoyMove(void)
 {
-    qboolean     joy_pressed[ARRAY_LEN(joy_keys)];
-    unsigned int axes  = 0;
-    unsigned int hats  = 0;
-    int          total = 0;
-    int          i     = 0;
+	qboolean     joy_pressed[ARRAY_LEN(joy_keys)];
+	unsigned int axes  = 0;
+	unsigned int hats  = 0;
+	int          total = 0;
+	int          i     = 0;
 
-    if (!stick)
-    {
-        return;
-    }
+	if (!stick)
+	{
+		return;
+	}
 
-    SDL_JoystickUpdate();
+	SDL_JoystickUpdate();
 
-    memset(joy_pressed, '\0', sizeof(joy_pressed));
+	memset(joy_pressed, '\0', sizeof(joy_pressed));
 
-    // update the ball state.
-    total = SDL_JoystickNumBalls(stick);
-    if (total > 0)
-    {
-        int balldx = 0;
-        int balldy = 0;
-        int dx;
-        int dy;
+	// update the ball state.
+	total = SDL_JoystickNumBalls(stick);
+	if (total > 0)
+	{
+		int balldx = 0;
+		int balldy = 0;
+		int dx;
+		int dy;
 
-        for (i = 0; i < total; i++)
-        {
-            dx = 0;
-            dy = 0;
+		for (i = 0; i < total; i++)
+		{
+			dx = 0;
+			dy = 0;
 
-            SDL_JoystickGetBall(stick, i, &dx, &dy);
-            balldx += dx;
-            balldy += dy;
-        }
-        if (balldx || balldy)
-        {
-            // !!! FIXME: is this good for stick balls, or just mice?
-            // Scale like the mouse input...
-            if (abs(balldx) > 1)
-            {
-                balldx *= 2;
-            }
-            if (abs(balldy) > 1)
-            {
-                balldy *= 2;
-            }
-            Com_QueueEvent(0, SE_MOUSE, balldx, balldy, 0, NULL);
-        }
-    }
+			SDL_JoystickGetBall(stick, i, &dx, &dy);
+			balldx += dx;
+			balldy += dy;
+		}
+		if (balldx || balldy)
+		{
+			// !!! FIXME: is this good for stick balls, or just mice?
+			// Scale like the mouse input...
+			if (abs(balldx) > 1)
+			{
+				balldx *= 2;
+			}
+			if (abs(balldy) > 1)
+			{
+				balldy *= 2;
+			}
+			Com_QueueEvent(0, SE_MOUSE, balldx, balldy, 0, NULL);
+		}
+	}
 
-    // now query the stick buttons...
-    total = SDL_JoystickNumButtons(stick);
-    if (total > 0)
-    {
-        if (total > ARRAY_LEN(stick_state.buttons))
-        {
-            total = ARRAY_LEN(stick_state.buttons);
-        }
-        for (i = 0; i < total; i++)
-        {
-            qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
+	// now query the stick buttons...
+	total = SDL_JoystickNumButtons(stick);
+	if (total > 0)
+	{
+		if (total > ARRAY_LEN(stick_state.buttons))
+		{
+			total = ARRAY_LEN(stick_state.buttons);
+		}
+		for (i = 0; i < total; i++)
+		{
+			qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
 
-            if (pressed != stick_state.buttons[i])
-            {
-                Com_QueueEvent(0, SE_KEY, K_JOY1 + i, pressed, 0, NULL);
-                stick_state.buttons[i] = pressed;
-            }
-        }
-    }
+			if (pressed != stick_state.buttons[i])
+			{
+				Com_QueueEvent(0, SE_KEY, K_JOY1 + i, pressed, 0, NULL);
+				stick_state.buttons[i] = pressed;
+			}
+		}
+	}
 
-    // look at the hats...
-    total = SDL_JoystickNumHats(stick);
-    if (total > 0)
-    {
-        if (total > 4)
-        {
-            total = 4;
-        }
-        for (i = 0; i < total; i++)
-        {
-            ((Uint8 *)&hats)[i] = SDL_JoystickGetHat(stick, i);
-        }
-    }
+	// look at the hats...
+	total = SDL_JoystickNumHats(stick);
+	if (total > 0)
+	{
+		if (total > 4)
+		{
+			total = 4;
+		}
+		for (i = 0; i < total; i++)
+		{
+			((Uint8 *)&hats)[i] = SDL_JoystickGetHat(stick, i);
+		}
+	}
 
-    // update hat state
-    if (hats != stick_state.oldhats)
-    {
-        for (i = 0; i < 4; i++)
-        {
-            if (((Uint8 *)&hats)[i] != ((Uint8 *)&stick_state.oldhats)[i])
-            {
-                // release event
-                switch (((Uint8 *)&stick_state.oldhats)[i])
-                {
-                case SDL_HAT_UP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_DOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_LEFT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
-                    break;
-                default:
-                    break;
-                }
-                // press event
-                switch (((Uint8 *)&hats)[i])
-                {
-                case SDL_HAT_UP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_DOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_LEFT:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_RIGHTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTUP:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-                    break;
-                case SDL_HAT_LEFTDOWN:
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
-                    Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
+	// update hat state
+	if (hats != stick_state.oldhats)
+	{
+		for (i = 0; i < 4; i++)
+		{
+			if (((Uint8 *)&hats)[i] != ((Uint8 *)&stick_state.oldhats)[i])
+			{
+				// release event
+				switch (((Uint8 *)&stick_state.oldhats)[i])
+				{
+				case SDL_HAT_UP:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
+					break;
+				case SDL_HAT_RIGHT:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
+					break;
+				case SDL_HAT_DOWN:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
+					break;
+				case SDL_HAT_LEFT:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
+					break;
+				case SDL_HAT_RIGHTUP:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
+					break;
+				case SDL_HAT_RIGHTDOWN:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qfalse, 0, NULL);
+					break;
+				case SDL_HAT_LEFTUP:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qfalse, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
+					break;
+				case SDL_HAT_LEFTDOWN:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qfalse, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qfalse, 0, NULL);
+					break;
+				default:
+					break;
+				}
+				// press event
+				switch (((Uint8 *)&hats)[i])
+				{
+				case SDL_HAT_UP:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
+					break;
+				case SDL_HAT_RIGHT:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
+					break;
+				case SDL_HAT_DOWN:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
+					break;
+				case SDL_HAT_LEFT:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
+					break;
+				case SDL_HAT_RIGHTUP:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
+					break;
+				case SDL_HAT_RIGHTDOWN:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 1], qtrue, 0, NULL);
+					break;
+				case SDL_HAT_LEFTUP:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 0], qtrue, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
+					break;
+				case SDL_HAT_LEFTDOWN:
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 2], qtrue, 0, NULL);
+					Com_QueueEvent(0, SE_KEY, hat_keys[4 * i + 3], qtrue, 0, NULL);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
 
-    // save hat state
-    stick_state.oldhats = hats;
+	// save hat state
+	stick_state.oldhats = hats;
 
     // finally, look at the axes...
     total = SDL_JoystickNumAxes(stick);
@@ -938,27 +939,26 @@ static void IN_JoyMove(void)
         }
     }
 
-    // Time to update axes state based on old vs. new.
-    if (axes != stick_state.oldaxes)
-    {
-        for (i = 0; i < 16; i++)
-        {
-            if ((axes & (1 << i)) && !(stick_state.oldaxes & (1 << i)))
-            {
-                Com_QueueEvent(0, SE_KEY, joy_keys[i], qtrue, 0, NULL);
-            }
+	// Time to update axes state based on old vs. new.
+	if (axes != stick_state.oldaxes)
+	{
+		for (i = 0; i < 16; i++)
+		{
+			if ((axes & (1 << i)) && !(stick_state.oldaxes & (1 << i)))
+			{
+				Com_QueueEvent(0, SE_KEY, joy_keys[i], qtrue, 0, NULL);
+			}
 
-            if (!(axes & (1 << i)) && (stick_state.oldaxes & (1 << i)))
-            {
-                Com_QueueEvent(0, SE_KEY, joy_keys[i], qfalse, 0, NULL);
-            }
-        }
-    }
+			if (!(axes & (1 << i)) && (stick_state.oldaxes & (1 << i)))
+			{
+				Com_QueueEvent(0, SE_KEY, joy_keys[i], qfalse, 0, NULL);
+			}
+		}
+	}
 
-    // Save for future generations.
-    stick_state.oldaxes = axes;
+	// Save for future generations.
+	stick_state.oldaxes = axes;
 }
-*/
 
 static void IN_ProcessEvents(void)
 {
@@ -998,7 +998,6 @@ static void IN_ProcessEvents(void)
 			}
 			lastKeyDown = key;
 			break;
-
 		case SDL_KEYUP:
 			if ((key = IN_TranslateSDLToQ3Key(&e.key.keysym, qfalse)))
 			{
@@ -1006,7 +1005,6 @@ static void IN_ProcessEvents(void)
 			}
 			lastKeyDown = 0;
 			break;
-
 		case SDL_TEXTINPUT:
 			if (lastKeyDown != K_CONSOLE)
 			{
@@ -1060,7 +1058,6 @@ static void IN_ProcessEvents(void)
 				}
 			}
 			break;
-
 		case SDL_MOUSEMOTION:
 			if (mouseActive)
 			{
@@ -1084,7 +1081,6 @@ static void IN_ProcessEvents(void)
 			Com_QueueEvent(0, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
 		}
 		break;
-
 		case SDL_MOUSEWHEEL:
 			if (e.wheel.y > 0)
 			{
@@ -1098,11 +1094,9 @@ static void IN_ProcessEvents(void)
 			}
 
 			break;
-
 		case SDL_QUIT:
 			Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
 			break;
-
 		case SDL_WINDOWEVENT:
 			switch (e.window.event)
 			{
@@ -1127,25 +1121,21 @@ static void IN_ProcessEvents(void)
 				}
 			}
 			break;
-
 			case SDL_WINDOWEVENT_MINIMIZED:
 				Cvar_SetValue("com_minimized", 1);
 				break;
-
 			case SDL_WINDOWEVENT_RESTORED:
 			case SDL_WINDOWEVENT_MAXIMIZED:
 				Cvar_SetValue("com_minimized", 0);
 				break;
-
 			case SDL_WINDOWEVENT_FOCUS_LOST:
 				if (cls.glconfig.isFullscreen)
 				{
 					Cbuf_ExecuteText(EXEC_NOW, "minimize");
-				}
+				} // fall through
 			case SDL_WINDOWEVENT_LEAVE:
 				Cvar_SetValue("com_unfocused", 1);
 				break;
-
 			case SDL_WINDOWEVENT_ENTER:
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
@@ -1163,7 +1153,6 @@ static void IN_ProcessEvents(void)
 			break;
 			}
 			break;
-
 		default:
 			break;
 		}
@@ -1174,7 +1163,7 @@ void IN_Frame(void)
 {
 	qboolean loading;
 
-	//IN_JoyMove();
+	IN_JoyMove();
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
@@ -1302,12 +1291,12 @@ void IN_Init(void)
 	IN_DeactivateMouse();
 
 	appState = SDL_GetWindowFlags(mainScreen);
-	Cvar_SetValue("com_unfocused", !(appState & SDL_WINDOW_INPUT_FOCUS && appState & SDL_WINDOW_MOUSE_FOCUS));
+	Cvar_SetValue("com_unfocused", !((appState & SDL_WINDOW_INPUT_FOCUS) && (appState & SDL_WINDOW_MOUSE_FOCUS)));
 	Cvar_SetValue("com_minimized", appState & SDL_WINDOW_MINIMIZED);
 
 	IN_InitKeyLockStates();
 
-	//IN_InitJoystick(); // FIXME: Joystick initialization crashes some Mac OS X clients
+	IN_InitJoystick(); // FIXME: Joystick initialization crashes some Mac OS X clients
 
 #ifdef DISABLE_DINGY
 	IN_EnableDingFilter();
@@ -1327,13 +1316,13 @@ void IN_Shutdown(void)
 	IN_DeactivateMouse();
 	mouseAvailable = qfalse;
 
-	//IN_ShutdownJoystick();
+	IN_ShutdownJoystick();
 
 	mainScreen = NULL;
 }
 
 void IN_Restart(void)
 {
-	//IN_ShutdownJoystick();
+	IN_ShutdownJoystick();
 	IN_Init();
 }
