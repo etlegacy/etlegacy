@@ -1282,26 +1282,16 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	char     cmd[1024];
 	qboolean bypassMenu = qfalse;
 	qboolean onlybinds  = qfalse;
-	qboolean qnumlock   = qfalse;
 
 	if (!key)
 	{
 		return;
 	}
 
-	//used to be qnumlock = keys[K_KP_NUMLOCK].down;
-	qnumlock = IN_IsNumLockDown();
-
 	// special handling for numbers of numeric keypad & NUM pressed
-	if (qnumlock && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)
+	if (IN_IsNumLockDown() && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)
 	{
 		onlybinds = CL_NumPadEvent(key);
-		/*
-		if(CL_NumPadEvent(key))
-		{
-		    return;
-		}
-		*/
 	}
 
 	// update auto-repeat status and BUTTON_ANY status

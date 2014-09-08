@@ -110,6 +110,7 @@ qboolean IN_IsNumLockDown(void)
 		return qtrue;
 	}
 #else
+	//if(keys[K_KP_NUMLOCK].down)
 	if(SDL_GetModState() & KMOD_NUM)
 	{
 		return qtrue;
