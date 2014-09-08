@@ -95,6 +95,30 @@ char *IN_GetClipboardData(void)
 	}
 }
 
+/*
+==============
+Sys_IsNumLockDown
+==============
+*/
+qboolean IN_IsNumLockDown(void)
+{
+#ifdef _WIN32
+	SHORT state = GetKeyState(VK_NUMLOCK);
+
+	if (state & 0x01)
+	{
+		return qtrue;
+	}
+#else
+	if(SDL_GetModState() & KMOD_NUM)
+	{
+		return qtrue;
+	}
+#endif
+
+	return qfalse;
+}
+
 /**
  * @brief Prints keyboard identifiers in the console
  */

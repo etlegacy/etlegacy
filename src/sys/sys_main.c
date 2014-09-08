@@ -873,30 +873,6 @@ void Sys_SigHandler(int signal)
 }
 
 /*
-==============
-Sys_IsNumLockDown
-==============
-*/
-qboolean Sys_IsNumLockDown(void)
-{
-#ifdef _WIN32
-	SHORT state = GetKeyState(VK_NUMLOCK);
-
-	if (state & 0x01)
-	{
-		return qtrue;
-	}
-#else
-	if(SDL_GetModState() & KMOD_NUM)
-	{
-		return qtrue;
-	}
-#endif
-
-	return qfalse;
-}
-
-/*
 =================
 Sys_GameLoop
 Main game loop

@@ -1133,7 +1133,7 @@ int Com_EventLoop(void);
 sysEvent_t Com_GetSystemEvent(void);
 
 void Sys_Init(void);
-qboolean Sys_IsNumLockDown(void);
+qboolean IN_IsNumLockDown(void);
 
 #ifdef _WIN32
 #define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT

@@ -1290,7 +1290,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	}
 
 	//used to be qnumlock = keys[K_KP_NUMLOCK].down;
-	qnumlock = Sys_IsNumLockDown();
+	qnumlock = IN_IsNumLockDown();
 
 	// special handling for numbers of numeric keypad & NUM pressed
 	if (qnumlock && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)

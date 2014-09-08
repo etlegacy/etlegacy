@@ -3218,11 +3218,15 @@ void Com_Frame(void)
 	{
 		Com_Sleep(5);
 	}
-	else
+	else if(!com_timedemo->integer)
 	{
 		// Fixes 100% cpu usage on windows (should we set to 1 on other os's?)
 		// A delay of 0 or 1 should be safe
+#ifdef _WIN32
 		Com_Sleep(0);
+#else
+		Com_Sleep(1);
+#endif
 	}
 
 	do
