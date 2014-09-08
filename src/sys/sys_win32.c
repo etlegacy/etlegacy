@@ -676,7 +676,7 @@ void Sys_GLimpSafeInit(void)
 	{
 		// Here, we want to let SDL decide what do to unless
 		// explicitly requested otherwise
-		_putenv("SDL_VIDEODRIVER=");
+		Sys_SetEnv("SDL_VIDEODRIVER","");
 	}
 #endif
 }
@@ -700,12 +700,12 @@ void Sys_GLimpInit(void)
 		{
 			// Use the windib SDL backend, which is closest to
 			// the behaviour of idq3 with in_mouse set to -1
-			_putenv("SDL_VIDEODRIVER=windib");
+			Sys_SetEnv("SDL_VIDEODRIVER", "windib");
 		}
 		else
 		{
 			// Use the DirectX SDL backend
-			_putenv("SDL_VIDEODRIVER=directx");
+			Sys_SetEnv("SDL_VIDEODRIVER", "directx");
 		}
 	}
 #endif
