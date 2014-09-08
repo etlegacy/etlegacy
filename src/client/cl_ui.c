@@ -898,7 +898,7 @@ static int GetConfigString(int index, char *buf, int size)
 
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Printf("Config string index out of range\n");
+		Com_DPrintf("Config string index out of range\n");
 		return qfalse;
 	}
 
@@ -910,7 +910,7 @@ static int GetConfigString(int index, char *buf, int size)
 			buf[0] = 0;
 		}
 
-		Com_Printf("Config string zero offset\n");
+		Com_DPrintf("Config string zero offset\n");
 		return qfalse;
 	}
 

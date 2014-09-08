@@ -46,7 +46,13 @@
 #define GAMENAME_FOR_MASTER     PRODUCT_NAME
 
 #define Q3_VERSION              PRODUCT_LABEL " " ETLEGACY_VERSION
+
+#ifdef LEGACY_DEBUG
+#define ET_VERSION              "DEBUG " Q3_VERSION " " CPUSTRING " " __DATE__
+#else
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
+#endif
+
 #ifdef __APPLE__
 #define FAKE_VERSION            "ET 2.60d OSX-universal JAN 20 2007" // ET 2.60c OSX-universal JAN 16 2007
 #else
