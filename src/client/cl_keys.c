@@ -1289,12 +1289,8 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		return;
 	}
 
-	// Check if the numlock is set for some reason keys[K_KP_NUMLOCK].down is reversed windows<->unix
-#ifdef _WIN32
+	//used to be qnumlock = keys[K_KP_NUMLOCK].down;
 	qnumlock = Sys_IsNumLockDown();
-#else
-	qnumlock = keys[K_KP_NUMLOCK].down;
-#endif // _WIN32
 
 	// special handling for numbers of numeric keypad & NUM pressed
 	if (qnumlock && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)

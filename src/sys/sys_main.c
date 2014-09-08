@@ -873,6 +873,73 @@ void Sys_SigHandler(int signal)
 }
 
 /*
+==============
+Sys_IsNumLockDown
+==============
+*/
+qboolean Sys_IsNumLockDown(void)
+{
+#ifdef _WIN32
+	SHORT state = GetKeyState(VK_NUMLOCK);
+
+	if (state & 0x01)
+	{
+		return qtrue;
+	}
+#else
+	if(SDL_GetModState() & KMOD_NUM)
+	{
+		return qtrue;
+	}
+#endif
+
+	return qfalse;
+}
+
+/*
+=================
+Sys_GameLoop
+Main game loop
+=================
+*/
+void Sys_GameLoop(void)
+{
+#ifdef LEGACY_DEBUG
+	int startTime, endTime, totalMsec, countMsec;
+	startTime = endTime = totalMsec = countMsec = 0;
+#endif
+
+	while (qtrue)
+	{
+#if defined(_WIN32) && defined(LEGACY_DEBUG)
+		// set low precision every frame, because some system calls
+		// reset it arbitrarily
+		_controlfp( _PC_24, _MCW_PC );
+		_controlfp( -1, _MCW_EM  );	// no exceptions, even if some crappy
+		// syscall turns them back on!
+#endif
+
+#ifdef LEGACY_DEBUG
+		startTime = Sys_Milliseconds();
+#endif
+
+		IN_Frame();
+		Com_Frame();
+
+#ifdef LEGACY_DEBUG
+		endTime = Sys_Milliseconds();
+		totalMsec += endTime - startTime;
+		countMsec++;
+
+		if (com_speeds->integer)
+		{
+			Com_Printf("frame:%i total used:%i frame time:%i\n", countMsec, totalMsec, endTime - startTime);
+		}
+#endif
+	}
+}
+
+/*
 =================
 main
 =================
@@ -1018,11 +1085,7 @@ int main(int argc, char **argv)
 	signal(SIGTERM, Sys_SigHandler);
 	signal(SIGINT, Sys_SigHandler);
 
-	while (1)
-	{
-		IN_Frame();
-		Com_Frame();
-	}
+	Sys_GameLoop();
 
 	return 0;
 }

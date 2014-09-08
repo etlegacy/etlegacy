@@ -74,6 +74,8 @@ void Conbuf_AppendText(const char *msg);
 void Sys_DestroyConsole(void);
 #endif
 
+void Sys_GameLoop(void);
+
 #ifdef __APPLE__
 const char *OSX_ApplicationSupportPath(void);
 #endif

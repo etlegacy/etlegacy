@@ -946,17 +946,15 @@ WinMain
 #ifdef USE_WINDOWS_CONSOLE
 WinVars_t   g_wv;
 static char sys_cmdline[MAX_STRING_CHARS];
-int         totalMsec, countMsec;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	char cwd[MAX_OSPATH];
-	int  startTime, endTime;
 
 	// should never get a previous instance in Win32
 	if (hPrevInstance)
 	{
-		return 0;
+		return EXIT_FAILURE;
 	}
 
 #ifdef EXCEPTION_HANDLER
@@ -1003,49 +1001,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 #endif
 
-	//Jacker: We should not set the focus here as the focus gets lost to the console window
-	//SetFocus(g_wv.hWnd);
-
 	// main game loop
-	while (1)
-	{
-		// set low precision every frame, because some system calls
-		// reset it arbitrarily
-		//_controlfp( _PC_24, _MCW_PC );
-		//_controlfp( -1, _MCW_EM  );	// no exceptions, even if some crappy
-		// syscall turns them back on!
-
-		startTime = Sys_Milliseconds();
-
-		// make sure mouse and joystick are only called once a frame
-		IN_Frame();
-
-		// run the game
-		//Com_FrameExt();
-		Com_Frame();
-
-		endTime    = Sys_Milliseconds();
-		totalMsec += endTime - startTime;
-		countMsec++;
-	}
+	Sys_GameLoop();
 
 	// never gets here
+	return EXIT_SUCCESS;
 }
 #endif
-
-/*
-==============
-Sys_IsNumLockDown
-==============
-*/
-qboolean Sys_IsNumLockDown(void)
-{
-	SHORT state = GetKeyState(VK_NUMLOCK);
-
-	if (state & 0x01)
-	{
-		return qtrue;
-	}
-
-	return qfalse;
-}
