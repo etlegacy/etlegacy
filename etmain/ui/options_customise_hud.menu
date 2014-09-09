@@ -103,14 +103,13 @@ menuDef {
 
 // Movement //
   #define MOVEMENT_Y 202
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 64, "MOVEMENT" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 52, "MOVEMENT" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, "Enable/Disable the vertical bob effect when moving" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Bob pitch:", .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob pitch (forwards/backwards) effect when moving" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob roll:", .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, "Enable/Disable the bob roll (left/right) effect when moving" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob yaw (turn left/right) effect when moving" )
 
 // Fonts //
-  #define FONTS_Y 272
+  #define FONTS_Y 260
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 76, "FONTS" )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Fonts Size:", .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, "Sets the size of the in-game fonts" )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -123,7 +122,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Crosshair Name:", .2, 8, "cg_fontScaleCN" 0.15 0 0.5, "Set font size for Crosshair Name label" )
 
 // Misc //
-  #define MISC_Y 354
+  #define MISC_Y 342
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 40, "MISC" )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeStay:", .2, 8, "cg_popupStayTime" 2500 0 6000, "Set the time a pop-up stays visible" )

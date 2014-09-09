@@ -1423,7 +1423,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			return;
 		}
 		
-
 		if (cls.keyCatchers & KEYCATCH_MESSAGE)
 		{
 			// clear message mode
