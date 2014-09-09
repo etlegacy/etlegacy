@@ -1416,6 +1416,14 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	// escape is always handled special
 	if (key == K_ESCAPE && down)
 	{
+		if (cls.keyCatchers & KEYCATCH_CONSOLE)
+		{
+			Con_ToggleConsole_f();
+			Key_ClearStates();
+			return;
+		}
+		
+
 		if (cls.keyCatchers & KEYCATCH_MESSAGE)
 		{
 			// clear message mode
@@ -1435,16 +1443,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			if (cls.state == CA_ACTIVE && !clc.demoplaying)
 			{
-				// on request
-				if (cls.keyCatchers & KEYCATCH_CONSOLE)      // get rid of the console
-				{
-					Con_ToggleConsole_f();
-					Key_ClearStates();
-				}
-				else
-				{
-					VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_INGAME);
-				}
+				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_INGAME);
 			}
 			else
 			{
