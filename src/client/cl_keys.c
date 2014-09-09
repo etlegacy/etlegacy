@@ -1418,8 +1418,20 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	{
 		if (cls.keyCatchers & KEYCATCH_CONSOLE)
 		{
-			Con_ToggleConsole_f();
-			Key_ClearStates();
+			//First time you press escape it will clear the written command (reset the line)
+			//if the commandline is empty then we close the console
+			if (strlen(g_consoleField.buffer))
+			{
+				con.acLength = 0;
+				g_consoleField.cursor = 0;
+				memset(g_consoleField.buffer, 0, sizeof(char) * MAX_EDIT_LINE);
+			}
+			else
+			{
+				Con_ToggleConsole_f();
+				Key_ClearStates();
+			}
+
 			return;
 		}
 		
