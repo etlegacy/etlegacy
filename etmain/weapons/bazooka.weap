@@ -11,7 +11,7 @@ weaponDef
 		
 		flashDlightColor	0.75 0.3 0.0
 		flashSound			"sound/weapons/rocket/rocket_fire.wav"	// supports up to 4 flash sounds
-//		flashEchoSound		"sound/weapons/rocket/rocket_expl_far.wav"	// supports up to 4 flash echo sounds
+		//flashEchoSound		"sound/weapons/rocket/rocket_expl_far.wav"	// supports up to 4 flash echo sounds
 		//lastShotSound		""										// supports up to 4 last shot sounds
 		
 		//readySound		""
@@ -32,7 +32,7 @@ weaponDef
 		missileDlight		200
 		missileDlightColor	0.75 0.3 0.0
 		
-		ejectBrassFunc		"PanzerFaustEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//ejectBrassFunc		"PanzerFaustEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		
 		//modModel 1		""
 		
