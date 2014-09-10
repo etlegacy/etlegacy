@@ -3107,6 +3107,7 @@ void CG_mvUpdateClientInfo(int pID);
 void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, float s, int wState, qboolean fSelected);
 void CG_mvZoomBinoc(float x, float y, float w, float h);
 void CG_mvZoomSniper(float x, float y, float w, float h);
+void CG_mv_KeyHandling(int _key, qboolean down);
 #endif
 
 // cg_window.c

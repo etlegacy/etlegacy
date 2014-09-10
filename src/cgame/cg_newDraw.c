@@ -660,6 +660,7 @@ void CG_MouseEvent(int x, int y)
 
 		break;
 	case CGAME_EVENT_DEMO:
+	case CGAME_EVENT_MULTIVIEW:
 		cgs.cursorX += x;
 		if (cgs.cursorX < 0)
 		{
@@ -685,8 +686,6 @@ void CG_MouseEvent(int x, int y)
 			cgs.cursorUpdate = cg.time + 5000;
 		}
 		break;
-
-
 	default:
 		if (cg.snap->ps.pm_type == PM_INTERMISSION)
 		{
@@ -739,6 +738,7 @@ void CG_EventHandling(int type, qboolean fForced)
 	case CGAME_EVENT_NONE:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
 	case CGAME_EVENT_FIRETEAMMSG:
+	case CGAME_EVENT_MULTIVIEW:
 	default:
 		// default handling (cleanup mostly)
 		if (cgs.eventHandling == CGAME_EVENT_GAMEVIEW)
@@ -757,6 +757,18 @@ void CG_EventHandling(int type, qboolean fForced)
 
 					cgs.limboLoadoutSelected = qfalse;
 				}
+			}
+		}
+		else if (cgs.eventHandling == CGAME_EVENT_MULTIVIEW)
+		{
+			if (type == -CGAME_EVENT_MULTIVIEW)
+			{
+				type = CGAME_EVENT_NONE;
+			}
+			else
+			{
+				trap_Key_SetCatcher(KEYCATCH_CGAME);
+				return;
 			}
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
@@ -805,6 +817,10 @@ void CG_EventHandling(int type, qboolean fForced)
 		CG_LimboPanel_Setup();
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
+	else if (type == CGAME_EVENT_MULTIVIEW)
+	{
+		trap_Key_SetCatcher(KEYCATCH_CGAME);
+	}
 	else if (type == CGAME_EVENT_FIRETEAMMSG)
 	{
 		cgs.ftMenuPos       = -1;
@@ -842,6 +858,10 @@ void CG_KeyEvent(int key, qboolean down)
 
 	case CGAME_EVENT_SPEAKEREDITOR:
 		CG_SpeakerEditor_KeyHandling(key, down);
+		break;
+
+	case CGAME_EVENT_MULTIVIEW:
+		CG_mv_KeyHandling(key, down);
 		break;
 
 	default:

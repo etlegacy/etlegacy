@@ -75,7 +75,6 @@ qboolean G_smvCommands(gentity_t *ent, char *cmd)
 	return qtrue;
 }
 
-
 void G_smvAdd_cmd(gentity_t *ent)
 {
 	int  pID;
@@ -106,7 +105,6 @@ void G_smvAdd_cmd(gentity_t *ent)
 	G_smvAddView(ent, pID);
 }
 
-
 void G_smvAddTeam_cmd(gentity_t *ent, int nTeam)
 {
 	int i, pID;
@@ -134,7 +132,6 @@ void G_smvAddTeam_cmd(gentity_t *ent, int nTeam)
 	}
 }
 
-
 void G_smvDel_cmd(gentity_t *ent)
 {
 	int  pID;
@@ -148,7 +145,6 @@ void G_smvDel_cmd(gentity_t *ent)
 		CP(va("print \"[lof]** [lon]Client[lof] %s^7 [lon]is not currently viewed[lof]!\n\"", level.clients[pID].pers.netname));
 	}
 }
-
 
 // Add a player entity to another player's multiview list
 void G_smvAddView(gentity_t *ent, int pID)
@@ -217,7 +213,6 @@ void G_smvAddView(gentity_t *ent, int pID)
 	G_smvUpdateClientCSList(ent);
 }
 
-
 // Find, and optionally delete an entity in a player's MV list
 qboolean G_smvLocateEntityInMVList(gentity_t *ent, int pID, qboolean fRemove)
 {
@@ -241,7 +236,6 @@ qboolean G_smvLocateEntityInMVList(gentity_t *ent, int pID, qboolean fRemove)
 	return qfalse;
 }
 
-
 // Explicitly shutdown a camera and update global list
 void G_smvRemoveEntityInMVList(gentity_t *ent, mview_t *ref)
 {
@@ -253,7 +247,6 @@ void G_smvRemoveEntityInMVList(gentity_t *ent, mview_t *ref)
 
 	G_smvUpdateClientCSList(ent);
 }
-
 
 // Calculates a given client's MV player list
 unsigned int G_smvGenerateClientList(gentity_t *ent)
@@ -271,7 +264,6 @@ unsigned int G_smvGenerateClientList(gentity_t *ent)
 	return(mClients);
 }
 
-
 // Calculates a given client's MV player list
 void G_smvRegenerateClients(gentity_t *ent, int clientList)
 {
@@ -286,13 +278,11 @@ void G_smvRegenerateClients(gentity_t *ent, int clientList)
 	}
 }
 
-
 // Update global MV list for a given client
 void G_smvUpdateClientCSList(gentity_t *ent)
 {
 	ent->client->ps.powerups[PW_MVCLIENTLIST] = G_smvGenerateClientList(ent);
 }
-
 
 // Remove all clients from a team we can't watch (due to updated speclock)
 // or if the viewer enters the game
@@ -334,7 +324,6 @@ void G_smvAllRemoveSingleClient(int pID)
 		G_smvLocateEntityInMVList(ent, pID, qtrue);
 	}
 }
-
 
 // Set up snapshot merge based on this portal
 qboolean G_smvRunCamera(gentity_t *ent)

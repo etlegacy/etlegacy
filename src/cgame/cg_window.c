@@ -664,35 +664,11 @@ void CG_cursorUpdate(void)
 	qboolean           fSelect, fResize;
 
 	// Get cursor current position (when connected to a server)
-	if (!cg.demoPlayback)
-	{
-		// Allow for limbo'd updates as well
-		trap_GetUserCmd(trap_GetCurrentCmdNumber(), &cg_pmove.cmd);
-
-		nx = 640.0 * (65536.0 - cg_pmove.cmd.angles[1]) / 65536.0;
-		ny = 480.0 / 65536.0 * ((int_m_pitch.value < 0.0) ? (65536.0 - cg_pmove.cmd.angles[0]) : cg_pmove.cmd.angles[0]);
-
-		fSelect = ((cg_pmove.cmd.buttons & BUTTON_ATTACK) != 0);
-
-		if (cgs.cursorX == (int)nx  && cgs.cursorY == (int)ny && !fSelect)
-		{
-			return;
-		}
-
-		fResize = ((cg_pmove.cmd.buttons & BUTTON_SPRINT) != 0);
-
-		cgs.cursorUpdate = cg.time + 5000;
-		cgs.cursorX      = nx;
-		cgs.cursorY      = ny;
-	}
-	else
-	{
-		// Already updated in the keycatcher
-		nx      = cgs.cursorX;
-		ny      = cgs.cursorY;
-		fSelect = cgs.fSelect;
-		fResize = cgs.fResize;
-	}
+	// Already updated in the keycatcher
+	nx = cgs.cursorX;
+	ny = cgs.cursorY;
+	fSelect = cgs.fSelect;
+	fResize = cgs.fResize;
 
 	// For mm4
 	cg.mvCurrentActive = cg.mvCurrentMainview;

@@ -41,6 +41,9 @@
 void CG_CalcVrect(void);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor);
 
+qhandle_t axis_flag = 0;
+qhandle_t allies_flag = 0;
+
 // Explicit server command to add a view to the client's snapshot
 void CG_mvNew_f(void)
 {
@@ -165,6 +168,11 @@ void CG_mvToggleAll_f(void)
 	if (!cg.demoPlayback)
 	{
 		trap_SendClientCommand((cg.mvTotalClients > 0) ? "mvnone\n" : "mvall\n");
+		
+		if (cg.mvTotalClients > 0)
+		{
+			CG_EventHandling(-CGAME_EVENT_MULTIVIEW, qfalse);
+		}
 	}
 }
 
@@ -208,6 +216,7 @@ void CG_mvCreate(int pID)
 		if (cg_specHelp.integer > 0 && !cg.demoPlayback)
 		{
 			CG_ShowHelp_On(&cg.spechelpWindow);
+			CG_EventHandling(CGAME_EVENT_MULTIVIEW, qfalse);
 		}
 	}
 
@@ -921,9 +930,30 @@ void CG_mvOverlayDisplay(void)
 
 			if (cg.mvTotalTeam[j] == 0)
 			{
-				char *flag = (j == TEAM_AXIS) ? "ui/assets/ger_flag.tga" : "ui/assets/usa_flag.tga";
+				qhandle_t flag_used = 0;
+
+				//change these, were "ui/assets/ger_flag.tga" : "ui/assets/usa_flag.tga" but they are missing
+				switch (j)
+				{
+				case TEAM_AXIS:
+					if (!axis_flag)
+					{
+						axis_flag = trap_R_RegisterShaderNoMip("gfx/limbo/filter_axis.tga");
+					}
+					flag_used = axis_flag;
+					break;
+				case TEAM_ALLIES:
+				default:
+					if (!allies_flag)
+					{
+						allies_flag = trap_R_RegisterShaderNoMip("gfx/limbo/filter_allied.tga");
+					}
+					flag_used = allies_flag;
+					break;
+				}
+
 				y += 2 * (MVINFO_TEXTSIZE + 1);
-				CG_DrawPic(MVINFO_RIGHT - (2 * MVINFO_TEXTSIZE), y, 2 * MVINFO_TEXTSIZE, MVINFO_TEXTSIZE, trap_R_RegisterShaderNoMip(flag));
+				CG_DrawPic(MVINFO_RIGHT - (2 * MVINFO_TEXTSIZE), y, 2 * MVINFO_TEXTSIZE, MVINFO_TEXTSIZE, flag_used);
 			}
 
 			// Update team list info for mouse detection
@@ -1003,6 +1033,148 @@ void CG_mvZoomBinoc(float x, float y, float w, float h)
 	CG_FillRect(x + 360.0f * ws, y + 234.0f * hs, 1, 13.0f * hs, colorBlack);     // rl
 	CG_FillRect(x + 406.0f * ws, y + 226.0f * hs, 1, 29.0f * hs, colorBlack);     // r
 	CG_FillRect(x + 452.0f * ws, y + 234.0f * hs, 1, 13.0f * hs, colorBlack);     // rr
+}
+
+void CG_mv_KeyHandling(int _key, qboolean down) {
+	int milli = trap_Milliseconds();
+	int key = _key;
+	// Avoid active console keypress issues
+	if (!down && !cgs.fKeyPressed[key])
+	{
+		return;
+	}
+
+	cgs.fKeyPressed[key] = down;
+
+	switch (key)
+	{
+	case K_TAB:
+		if (down)
+		{
+			CG_ScoresDown_f();
+		}
+		else
+		{
+			CG_ScoresUp_f();
+		}
+		return;
+		// Help info
+	case K_BACKSPACE:
+		if (!down)
+		{
+			// Dushan - fixed comiler warning
+			CG_toggleSpecHelp_f();
+		}
+		return;
+		// Screenshot keys
+	case K_F11:
+		if (!down)
+		{
+			trap_SendConsoleCommand(va("screenshot%s\n", ((cg_useScreenshotJPEG.integer) ? "JPEG" : "")));
+		}
+		return;
+	case K_F12:
+		if (!down)
+		{
+			CG_autoScreenShot_f();
+		}
+		return;
+		// Window controls
+	case K_SHIFT:
+	case K_CTRL:
+	case K_MOUSE4:
+		cgs.fResize = down;
+		return;
+	case K_MOUSE1:
+		cgs.fSelect = down;
+		return;
+	case K_MOUSE2:
+		if (!down)
+		{
+			CG_mvSwapViews_f();	// Swap the window with the main view
+		}
+		return;
+	case K_INS:
+	case K_KP_PGUP:
+	case K_MWHEELDOWN:
+		if (!down)
+		{
+			CG_mvShowView_f();	// Make a window for the client
+		}
+		return;
+	case K_DEL:
+	case K_KP_PGDN:
+	case K_MWHEELUP:
+		if (!down)
+		{
+			CG_mvHideView_f();	// Delete the window for the client
+		}
+		return;
+	case K_MOUSE3:
+		if (!down)
+		{
+			CG_mvToggleView_f();	// Toggle a window for the client
+		}
+		return;
+	case 'm':
+	case 'M':
+		if (!down)
+		{
+			CG_mvToggleAll_f();
+		}
+		return;
+	case K_ESCAPE: // K_ESCAPE only fires on Key Up
+	case K_ESCAPE | K_CHAR_FLAG:
+		CG_mvToggleAll_f();
+		return;
+		// Third-person controls
+	case K_ENTER:
+		if (!down)
+		{
+			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_UPARROW:
+		if (milli > cgs.thirdpersonUpdate)
+		{
+			float range = cg_thirdPersonRange.value;
+
+			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+			range -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
+			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
+		}
+		return;
+	case K_DOWNARROW:
+		if (milli > cgs.thirdpersonUpdate)
+		{
+			float range = cg_thirdPersonRange.value;
+
+			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+			range += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
+			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
+		}
+		return;
+	case K_RIGHTARROW:
+		if (milli > cgs.thirdpersonUpdate)
+		{
+			float angle = cg_thirdPersonAngle.value - DEMO_ANGLEDELTA;
+
+			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+			if (angle < 0) angle += 360.0f;
+			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
+		}
+		return;
+	case K_LEFTARROW:
+		if (milli > cgs.thirdpersonUpdate)
+		{
+			float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
+
+			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+			if (angle >= 360.0f) angle -= 360.0f;
+			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
+		}
+		return;
+	}
 }
 
 #endif
