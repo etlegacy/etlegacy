@@ -3555,7 +3555,7 @@ msgstr ""
 
 #: src/cgame/cg_consolecmds.c:1289
 #, c-format
-msgid "You will spawn as a %s %s with a %s."
+msgid "You will spawn as a %s %s with a %s and a %s."
 msgstr ""
 
 #: src/cgame/cg_limbopanel.c:1223
@@ -4043,7 +4043,7 @@ msgstr ""
 msgid "Usage: ref [password]\n"
 msgstr ""
 
-msgid "\n^3Referee commands:^7\n"
+msgid "^3Referee commands:^7\n------------------------------------------\n"
 msgstr ""
 
 msgid "Usage: ^3\\ref <cmd> [params]\n\n"
@@ -4589,4 +4589,10 @@ msgid "CONNECT TO SERVER"
 msgstr ""
 
 msgid "Server PW:"
+msgstr ""
+
+msgid "joined the Axis team\n"
+msgstr ""
+
+msgid "joined the Allies team\n"
 msgstr ""
