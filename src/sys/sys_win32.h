@@ -36,7 +36,9 @@
 #ifndef INCLUDE_SYS_WIN_H
 #define INCLUDE_SYS_WIN_H
 
-#if defined(USE_WINDOWS_CONSOLE)
+void Sys_CreateConsoleWindow(void);
+void Sys_Splash(qboolean show);
+
 #if defined (_MSC_VER) && (_MSC_VER >= 1200)
 #pragma warning(disable : 4201)
 #pragma warning( push )
@@ -60,17 +62,19 @@ typedef struct
 	unsigned sysMsgTime;
 } WinVars_t;
 
-
 extern WinVars_t g_wv;
 
+#ifdef USE_WINDOWS_CONSOLE
 void    Sys_CreateConsole(void);
-void    Sys_Splash(qboolean show);
 void    Sys_ShowConsole(int visLevel, qboolean quitOnClose);
 int     Game_Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
 void    Com_FrameExt(void);
 void    WinSetExceptionWnd(HWND wnd);
 void    Sys_SetErrorText(const char *text);
 void    Sys_PumpConsoleEvents(void);
+#define Sys_ShowConsoleWindow(x, y) Sys_ShowConsole(x, y)
+#else
+#define Sys_ShowConsoleWindow(x ,y) if(x) { Sys_CreateConsoleWindow(); }
 #endif
 
 #endif // #ifndef INCLUDE_SYS_WIN_H

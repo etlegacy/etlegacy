@@ -33,7 +33,7 @@
  * @brief Contains windows-specific code for console.
  */
 
-#if defined(USE_WINDOWS_CONSOLE)
+#ifdef USE_WINDOWS_CONSOLE
 #include "../client/client.h"
 #include "win_resource.h"
 #include "sys_win32.h"

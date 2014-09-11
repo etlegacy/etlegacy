@@ -818,9 +818,9 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 	}
 }
 
-#ifdef USE_WINDOWS_CONSOLE
 void Sys_Splash(qboolean show)
 {
+#ifndef DEDICATED
 	if (show)
 	{
 		if (g_wv.hWndSplash)
@@ -841,8 +841,8 @@ void Sys_Splash(qboolean show)
 		DestroyWindow(g_wv.hWndSplash);
 		g_wv.hWndSplash = NULL;
 	}
-}
 #endif
+}
 
 /*
 ==================
@@ -886,6 +886,66 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 	}
 
 	Cbuf_ExecuteText(EXEC_NOW, "minimize");
+#endif
+}
+
+void Sys_CreateConsoleWindow(void)
+{
+#ifndef DEDICATED
+	int hConHandle;
+	long lStdHandle;
+	CONSOLE_SCREEN_BUFFER_INFO coninfo;
+	FILE *fp;
+
+	static qboolean consoleIsOpen = qfalse;
+
+	if (consoleIsOpen)
+	{
+		FreeConsole();
+		consoleIsOpen = qtrue;
+		return;
+	}
+	else
+	{
+		consoleIsOpen = qtrue;
+	}
+
+	// allocate a console for this app
+	AllocConsole();
+
+	// set the screen buffer to be big enough to let us scroll text
+	if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo))
+	{
+		coninfo.dwSize.Y = 9999;
+		SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+	}
+
+	// redirect unbuffered STDOUT to the console
+	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "w");
+	*stdout = *fp;
+	setvbuf(stdout, NULL, _IONBF, 0);
+
+	// redirect unbuffered STDIN to the console
+	lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "r");
+	*stdin = *fp;
+
+	setvbuf(stdin, NULL, _IONBF, 0);
+
+	// redirect unbuffered STDERR to the console
+	lStdHandle = (long)GetStdHandle(STD_ERROR_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "w");
+	*stderr = *fp;
+
+	setvbuf(stderr, NULL, _IONBF, 0);
+
+	//SetConsoleTitle(WINDOWNAME);
+
+	Sys_SetUpConsoleAndSignals();
 #endif
 }
 
@@ -943,14 +1003,12 @@ void Sys_SetProcessProperties(void)
 WinMain
 ==================
 */
-#ifdef USE_WINDOWS_CONSOLE
 WinVars_t   g_wv;
 static char sys_cmdline[MAX_STRING_CHARS];
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	char cwd[MAX_OSPATH];
-
 	// should never get a previous instance in Win32
 	if (hPrevInstance)
 	{
@@ -971,11 +1029,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Sys_Splash(qtrue);
 #endif
 
+#ifdef USE_WINDOWS_CONSOLE
 	// done before Com/Sys_Init since we need this for error output
 	Sys_CreateConsole();
+#endif
 
 #ifdef DEDICATED
-	Sys_ShowConsole(1, qtrue);
+	Sys_ShowConsoleWindow(1, qtrue);
 #endif
 
 	// no abort/retry/fail errors
@@ -994,10 +1054,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// hide the early console since we've reached the point where we
 	// have a working graphics subsystems
-#if defined (_WIN32) && !defined (LEGACY_DEBUG)
+#ifndef LEGACY_DEBUG
 	if (!com_dedicated->integer && !com_viewlog->integer)
 	{
-		Sys_ShowConsole(0, qfalse);
+		Sys_ShowConsoleWindow(0, qfalse);
 	}
 #endif
 
@@ -1007,4 +1067,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// never gets here
 	return EXIT_SUCCESS;
 }
-#endif

@@ -325,7 +325,9 @@ void CON_Init(void)
 
 	// initialize history
 	for (i = 0; i < QCONSOLE_HISTORY; i++)
+	{
 		qconsole_history[i][0] = '\0';
+	}
 
 	// set text color to white
 	SetConsoleTextAttribute(qconsole_hout, CON_ColorCharToAttrib(COLOR_WHITE));

@@ -61,7 +61,7 @@ struct Library *DynLoadBase = NULL;
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
-#ifdef USE_WINDOWS_CONSOLE
+#ifdef _WIN32
 #include <windows.h>
 #include "sys_win32.h"
 #endif
@@ -140,7 +140,7 @@ void Sys_In_Restart_f(void)
 /**
  * @brief Handle new console input
  */
-#if !defined (USE_WINDOWS_CONSOLE)
+#ifndef USE_WINDOWS_CONSOLE
 char *Sys_ConsoleInput(void)
 {
 	return CON_Input();
@@ -236,7 +236,7 @@ void Sys_Quit(void)
 	NET_Shutdown();
 
 	Sys_Exit(0);
-#if defined (USE_WINDOWS_CONSOLE)
+#ifdef USE_WINDOWS_CONSOLE
 	Sys_DestroyConsole();
 #endif
 }
@@ -246,14 +246,14 @@ void Sys_Quit(void)
 Sys_Init
 =================
 */
-#if defined (USE_WINDOWS_CONSOLE)
+#ifdef USE_WINDOWS_CONSOLE
 extern void Sys_ClearViewlog_f(void);
 #endif
 
 void Sys_Init(void)
 {
 	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
-#if defined (USE_WINDOWS_CONSOLE)
+#ifdef USE_WINDOWS_CONSOLE
 	Cmd_AddCommand("clearviewlog", Sys_ClearViewlog_f);
 #endif
 
@@ -408,11 +408,15 @@ Sys_Print
 */
 void Sys_Print(const char *msg)
 {
-#if defined (USE_WINDOWS_CONSOLE)
+#ifdef USE_WINDOWS_CONSOLE
 	Conbuf_AppendText(msg);
 #else
 	CON_LogWrite(msg);
 	CON_Print(msg);
+#endif
+
+#if defined(LEGACY_DEBUG) && defined(_WIN32)
+	OutputDebugString(msg);
 #endif
 }
 
@@ -425,7 +429,7 @@ void Sys_Error(const char *error, ...)
 {
 	va_list argptr;
 	char    string[1024];
-#if defined (USE_WINDOWS_CONSOLE)
+#ifdef USE_WINDOWS_CONSOLE
 	MSG msg;
 #endif
 
@@ -433,13 +437,16 @@ void Sys_Error(const char *error, ...)
 	Q_vsnprintf(string, sizeof(string), error, argptr);
 	va_end(argptr);
 
-#if defined (USE_WINDOWS_CONSOLE)
+#ifdef _WIN32
+	Sys_Splash(qfalse);
+#endif
+
+#ifdef USE_WINDOWS_CONSOLE
 	Conbuf_AppendText(string);
 	Conbuf_AppendText("\n");
 
-	Sys_Splash(qfalse);
 	Sys_SetErrorText(string);
-	Sys_ShowConsole(1, qtrue);
+	Sys_ShowConsoleWindow(1, qtrue);
 
 	IN_Shutdown();
 
@@ -872,6 +879,30 @@ void Sys_SigHandler(int signal)
 	}
 }
 
+void Sys_SetUpConsoleAndSignals(void)
+{
+#ifndef USE_WINDOWS_CONSOLE
+#ifdef FEATURE_CURSES
+	if (nocurses)
+	{
+		CON_Init_tty();
+	}
+	else
+	{
+		CON_Init();
+	}
+#else
+	CON_Init();
+#endif
+#endif
+
+	signal(SIGILL, Sys_SigHandler);
+	signal(SIGFPE, Sys_SigHandler);
+	signal(SIGSEGV, Sys_SigHandler);
+	signal(SIGTERM, Sys_SigHandler);
+	signal(SIGINT, Sys_SigHandler);
+}
+
 /*
 =================
 Sys_GameLoop
@@ -1042,24 +1073,7 @@ int main(int argc, char **argv)
 	Com_Init(commandLine);
 	NET_Init();
 
-#ifdef FEATURE_CURSES
-	if (nocurses)
-	{
-		CON_Init_tty();
-	}
-	else
-	{
-		CON_Init();
-	}
-#else
-	CON_Init();
-#endif
-
-	signal(SIGILL, Sys_SigHandler);
-	signal(SIGFPE, Sys_SigHandler);
-	signal(SIGSEGV, Sys_SigHandler);
-	signal(SIGTERM, Sys_SigHandler);
-	signal(SIGINT, Sys_SigHandler);
+	Sys_SetUpConsoleAndSignals();
 
 	Sys_GameLoop();
 

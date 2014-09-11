@@ -38,7 +38,7 @@
 
 #include "../qcommon/cm_public.h"
 /*
-#if defined(USE_WINDOWS_CONSOLE)
+#ifdef USE_WINDOWS_CONSOLE
 #include "../sys/sys_win32.h"
 #endif
 */
