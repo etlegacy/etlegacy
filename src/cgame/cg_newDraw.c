@@ -860,9 +860,11 @@ void CG_KeyEvent(int key, qboolean down)
 		CG_SpeakerEditor_KeyHandling(key, down);
 		break;
 
+#ifdef FEATURE_MULTIVIEW
 	case CGAME_EVENT_MULTIVIEW:
 		CG_mv_KeyHandling(key, down);
 		break;
+#endif
 
 	default:
 		if (cg.snap->ps.pm_type == PM_INTERMISSION)
