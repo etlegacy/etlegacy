@@ -2950,7 +2950,7 @@ void Com_Init(char *commandLine)
 	}
 	else
 	{
-		Sys_ShowConsoleWindow(com_viewlog->integer, qfalse);
+		Win_ShowConsole(com_viewlog->integer, qfalse);
 	}
 
 	Cmd_AddCommand("quit", Com_Quit_f);
