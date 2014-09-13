@@ -346,7 +346,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 	}
 
 	// fixed was ENTITYNUM_WORLD
-	if (r_numEntities >= MAX_REF_ENTITIES)
+	if (r_numEntities >= MAX_REFENTITIES)
 	{
 		return;
 	}

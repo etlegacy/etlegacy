@@ -4138,7 +4138,7 @@ typedef struct
 	corona_t coronas[MAX_CORONAS];
 
 	trRefLight_t lights[MAX_REF_LIGHTS];
-	trRefEntity_t entities[MAX_REF_ENTITIES];
+	trRefEntity_t entities[MAX_REFENTITIES];
 
 	srfPoly_t *polys;           //[MAX_POLYS];
 	polyVert_t *polyVerts;      //[MAX_POLYVERTS];

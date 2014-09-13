@@ -39,14 +39,13 @@
 
 // renderer2 BEGIN
 #define MAX_REF_LIGHTS      1024
-#define MAX_REF_ENTITIES    1023    // can't be increased without changing drawsurf bit packing
 #define MAX_BONES           128     // RB: same as MDX_MAX_BONES
 #define MAX_WEIGHTS         4       // GPU vertex skinning limit, never change this without rewriting many GLSL shaders
 // renderer2 END
 
 #define MAX_CORONAS     32          // unused - not really a reason to limit this other than trying to keep a reasonable count
 #define MAX_DLIGHTS     32          // can't be increased, because bit flags are used on surfaces
-#define MAX_ENTITIES    1023        // can't be increased without changing drawsurf bit packing
+#define MAX_ENTITIES    1023        // can't be increased without changing drawsurf bit packing - keep this for the mod
 
 // renderfx flags
 #define RF_MINLIGHT         0x000001    // allways have some light (viewmodel, some items)
