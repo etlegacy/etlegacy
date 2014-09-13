@@ -37,8 +37,6 @@
 #ifndef __TR_TYPES_H
 #define __TR_TYPES_H
 
-#define COMPAT_ET 1
-
 // renderer2 BEGIN
 #define MAX_REF_LIGHTS      1024
 #define MAX_REF_ENTITIES    1023    // can't be increased without changing drawsurf bit packing
