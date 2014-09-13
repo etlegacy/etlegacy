@@ -1795,7 +1795,7 @@ typedef struct
 	drawSurf_t drawSurfs[MAX_DRAWSURFS];
 	dlight_t dlights[MAX_DLIGHTS];
 	corona_t coronas[MAX_CORONAS];
-	trRefEntity_t entities[MAX_ENTITIES];
+	trRefEntity_t entities[MAX_REFENTITIES];
 	srfPoly_t *polys; // [MAX_POLYS];
 	srfPolyBuffer_t polybuffers[MAX_POLYS];
 	polyVert_t *polyVerts; // [MAX_POLYVERTS];
