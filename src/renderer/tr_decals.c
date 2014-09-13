@@ -146,23 +146,26 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// first frame rendered does not have a valid decals list
 	if (tr.refdef.decalProjectors == NULL)
 	{
+		Ren_Print("WARNING: RE_ProjectDecal() tr.refdef.decalProjectors == NULL\n");
 		return;
 	}
 
 	// dummy check
 	if (numPoints != 1 && numPoints != 3 && numPoints != 4)
 	{
-		Ren_Warning("WARNING: Invalid number of decal points (%d)\n", numPoints);
+		Ren_Print("WARNING: RE_ProjectDecal() Invalid number of decal points (%d)\n", numPoints);
 		return;
 	}
 
 	// early outs
 	if (lifeTime == 0)
 	{
+		Ren_Print("WARNING: RE_ProjectDecal() lifeTime == 0\n");
 		return;
 	}
 	if (projection[3] <= 0.0f)
 	{
+		Ren_Print("WARNING: RE_ProjectDecal() projection[3] <= 0.0f\n");
 		return;
 	}
 
@@ -249,6 +252,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		// make texture matrix
 		if (!MakeTextureMatrix(temp.texMat[0], projection, &dv[0], &dv[1], &dv[2]))
 		{
+			Ren_Print("WARNING: RE_ProjectDecal() MakeTextureMatrix returns NULL\n");
 			return;
 		}
 	}
@@ -272,12 +276,14 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// frustum cull the projector (fixme: this uses a stale frustum!)
 	if (R_CullPointAndRadius(temp.center, temp.radius) == CULL_OUT)
 	{
+		Ren_Print("WARNING: RE_ProjectDecal() R_CullPointAndRadius fails\n");
 		return;
 	}
 
 	// make the front plane
 	if (!PlaneFromPoints(temp.planes[0], dv[0].xyz, dv[1].xyz, dv[2].xyz))
 	{
+		Ren_Print("WARNING: RE_ProjectDecal() PlaneFromPoints is NULL\n");
 		return;
 	}
 
@@ -292,6 +298,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		VectorMA(dv[i].xyz, projection[3], projection, xyz);
 		if (!PlaneFromPoints(temp.planes[i + 2], dv[(i + 1) % numPoints].xyz, dv[i].xyz, xyz))
 		{
+			Ren_Print("WARNING: RE_ProjectDecal() a side plane is NULL\n");
 			return;
 		}
 	}
