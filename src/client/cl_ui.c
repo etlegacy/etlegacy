@@ -898,7 +898,7 @@ static int GetConfigString(int index, char *buf, int size)
 
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_DPrintf("Config string index out of range\n");
+		Com_DPrintf("Config string [%i] index out of range\n", index);
 		return qfalse;
 	}
 
@@ -910,7 +910,8 @@ static int GetConfigString(int index, char *buf, int size)
 			buf[0] = 0;
 		}
 
-		Com_DPrintf("Config string zero offset\n");
+		// this happens when ui calls for player configstrings which might be empty
+		Com_DPrintf("Config string [%i] zero offset\n", index);
 		return qfalse;
 	}
 
