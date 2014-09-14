@@ -4069,6 +4069,10 @@ void Cmd_WeaponStat_f(gentity_t *ent)
 	trap_Argv(1, buffer, 16);
 	stat = atoi(buffer);
 
+	if(stat < WS_KNIFE || stat >= WS_MAX) {
+		return;
+	}
+
 	trap_SendServerCommand(ent - g_entities, va("rws %i %i", ent->client->sess.aWeaponStats[stat].atts, ent->client->sess.aWeaponStats[stat].hits));
 }
 
