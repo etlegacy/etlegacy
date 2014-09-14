@@ -41,7 +41,7 @@
 void CG_CalcVrect(void);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor);
 
-qhandle_t axis_flag = 0;
+qhandle_t axis_flag   = 0;
 qhandle_t allies_flag = 0;
 
 // Explicit server command to add a view to the client's snapshot
@@ -168,7 +168,7 @@ void CG_mvToggleAll_f(void)
 	if (!cg.demoPlayback)
 	{
 		trap_SendClientCommand((cg.mvTotalClients > 0) ? "mvnone\n" : "mvall\n");
-		
+
 		if (cg.mvTotalClients > 0)
 		{
 			CG_EventHandling(-CGAME_EVENT_MULTIVIEW, qfalse);
@@ -1035,9 +1035,12 @@ void CG_mvZoomBinoc(float x, float y, float w, float h)
 	CG_FillRect(x + 452.0f * ws, y + 234.0f * hs, 1, 13.0f * hs, colorBlack);     // rr
 }
 
-void CG_mv_KeyHandling(int _key, qboolean down) {
+extern void CG_toggleSpecHelp_f(void);
+
+void CG_mv_KeyHandling(int _key, qboolean down)
+{
 	int milli = trap_Milliseconds();
-	int key = _key;
+	int key   = _key;
 	// Avoid active console keypress issues
 	if (!down && !cgs.fKeyPressed[key])
 	{
@@ -1058,7 +1061,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 			CG_ScoresUp_f();
 		}
 		return;
-		// Help info
+	// Help info
 	case K_BACKSPACE:
 		if (!down)
 		{
@@ -1066,7 +1069,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 			CG_toggleSpecHelp_f();
 		}
 		return;
-		// Screenshot keys
+	// Screenshot keys
 	case K_F11:
 		if (!down)
 		{
@@ -1079,7 +1082,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 			CG_autoScreenShot_f();
 		}
 		return;
-		// Window controls
+	// Window controls
 	case K_SHIFT:
 	case K_CTRL:
 	case K_MOUSE4:
@@ -1091,7 +1094,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 	case K_MOUSE2:
 		if (!down)
 		{
-			CG_mvSwapViews_f();	// Swap the window with the main view
+			CG_mvSwapViews_f(); // Swap the window with the main view
 		}
 		return;
 	case K_INS:
@@ -1099,7 +1102,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 	case K_MWHEELDOWN:
 		if (!down)
 		{
-			CG_mvShowView_f();	// Make a window for the client
+			CG_mvShowView_f();  // Make a window for the client
 		}
 		return;
 	case K_DEL:
@@ -1107,13 +1110,13 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 	case K_MWHEELUP:
 		if (!down)
 		{
-			CG_mvHideView_f();	// Delete the window for the client
+			CG_mvHideView_f();  // Delete the window for the client
 		}
 		return;
 	case K_MOUSE3:
 		if (!down)
 		{
-			CG_mvToggleView_f();	// Toggle a window for the client
+			CG_mvToggleView_f();    // Toggle a window for the client
 		}
 		return;
 	case 'm':
@@ -1127,7 +1130,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 	case K_ESCAPE | K_CHAR_FLAG:
 		CG_mvToggleAll_f();
 		return;
-		// Third-person controls
+	// Third-person controls
 	case K_ENTER:
 		if (!down)
 		{
@@ -1140,7 +1143,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 			float range = cg_thirdPersonRange.value;
 
 			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			range -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
+			range                -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
 			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
 		}
 		return;
@@ -1150,7 +1153,7 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 			float range = cg_thirdPersonRange.value;
 
 			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			range += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
+			range                += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
 			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
 		}
 		return;
@@ -1160,7 +1163,10 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 			float angle = cg_thirdPersonAngle.value - DEMO_ANGLEDELTA;
 
 			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			if (angle < 0) angle += 360.0f;
+			if (angle < 0)
+			{
+				angle += 360.0f;
+			}
 			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
 		}
 		return;
@@ -1170,7 +1176,10 @@ void CG_mv_KeyHandling(int _key, qboolean down) {
 			float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
 
 			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			if (angle >= 360.0f) angle -= 360.0f;
+			if (angle >= 360.0f)
+			{
+				angle -= 360.0f;
+			}
 			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
 		}
 		return;
