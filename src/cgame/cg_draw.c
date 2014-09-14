@@ -408,95 +408,6 @@ const char *CG_PickupItemText(int item)
 }
 
 /*
-=================
-CG_DrawNotify
-=================
-*/
-#define NOTIFYLOC_Y 42 // bottom end
-#define NOTIFYLOC_X 0
-#define NOTIFYLOC_Y_SP 128
-
-static void CG_DrawNotify(void)
-{
-	return; // FIXME: remove? early return ... commented the code
-
-/*
-    int    w, h;
-    int    i, len;
-    vec4_t hcolor;
-    int    chatHeight;
-    float  alphapercent;
-    char   var[MAX_TOKEN_CHARS];
-    float  notifytime = 1.0f;
-    int    yLoc;
-
-    yLoc = NOTIFYLOC_Y;
-
-    trap_Cvar_VariableStringBuffer("con_notifytime", var, sizeof(var));
-    notifytime = atof(var) * 1000;
-
-    if (notifytime <= 100.f)
-    {
-        notifytime = 100.0f;
-    }
-
-    chatHeight = NOTIFY_HEIGHT;
-
-    if (cgs.notifyLastPos != cgs.notifyPos)
-    {
-        if (cg.time - cgs.notifyMsgTimes[cgs.notifyLastPos % chatHeight] > notifytime)
-        {
-            cgs.notifyLastPos++;
-        }
-
-        h = (cgs.notifyPos - cgs.notifyLastPos) * TINYCHAR_HEIGHT;
-
-        w = 0;
-
-        for (i = cgs.notifyLastPos; i < cgs.notifyPos; i++)
-        {
-            len = CG_Text_Width_Ext(cgs.notifyMsgs[i % chatHeight], cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
-            if (len > w)
-            {
-                w = len;
-            }
-        }
-        w *= TINYCHAR_WIDTH;
-        w += TINYCHAR_WIDTH * 2;
-
-        if (maxCharsBeforeOverlay <= 0)
-        {
-            maxCharsBeforeOverlay = 80;
-        }
-
-        for (i = cgs.notifyPos - 1; i >= cgs.notifyLastPos; i--)
-        {
-            alphapercent = 1.0f - ((cg.time - cgs.notifyMsgTimes[i % chatHeight]) / notifytime);
-            if (alphapercent > 0.5f)
-            {
-                alphapercent = 1.0f;
-            }
-            else
-            {
-                alphapercent *= 2;
-            }
-
-            if (alphapercent < 0.f)
-            {
-                alphapercent = 0.f;
-            }
-
-            hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
-            hcolor[3] = alphapercent;
-            trap_R_SetColor(hcolor);
-
-            CG_Text_Paint_Ext(NOTIFYLOC_X + TINYCHAR_WIDTH, yLoc - (cgs.notifyPos - i) * TINYCHAR_HEIGHT, cg_fontScaleSP.value, cg_fontScaleSP.value, hColor, cgs.notifyMsgs[i % chatHeight], 0, maxCharsBeforeOverlay, 0, &cgs.media.limboFont2);
-        }
-    }
-*/
-}
-
-/*
 ===============================================================================
 CENTER PRINTING
 ===============================================================================
@@ -1113,8 +1024,6 @@ static void CG_DrawBinocReticle(void)
 	CG_FillRect(406 + cgs.wideXoffset, 226, 1, 29, colorBlack);     // r
 	CG_FillRect(452 + cgs.wideXoffset, 234, 1, 13, colorBlack);     // rr
 }
-
-void CG_FinishWeaponChange(int lastweap, int newweap);
 
 /*
 =================
@@ -3444,7 +3353,6 @@ static void CG_Draw2D(void)
 		CG_DrawCenterString();
 		CG_DrawFollow();
 		CG_DrawWarmup();
-		CG_DrawNotify();
 		CG_DrawGlobalHud();
 		CG_DrawObjectiveInfo();
 		CG_DrawSpectatorMessage();
