@@ -1422,7 +1422,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			//if the commandline is empty then we close the console
 			if (strlen(g_consoleField.buffer))
 			{
-				con.acLength = 0;
+				con.acLength          = 0;
 				g_consoleField.cursor = 0;
 				memset(g_consoleField.buffer, 0, sizeof(char) * MAX_EDIT_LINE);
 			}
@@ -1434,7 +1434,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 
 			return;
 		}
-		
+
 		if (cls.keyCatchers & KEYCATCH_MESSAGE)
 		{
 			// clear message mode
