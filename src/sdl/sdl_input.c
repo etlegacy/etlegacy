@@ -439,9 +439,13 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 		case SDLK_RCTRL:        key = K_CTRL;          break;
 #endif
 
+#ifdef MACOS_X
 		case SDLK_RGUI:
-		case SDLK_LGUI:         key = K_COMMAND;       break; // FIXME: SDL 2.0 maps GUI to SUPER as well as COMMAND
-		// (key = K_SUPER;         break;)
+		case SDLK_LGUI:         key = K_COMMAND;       break;
+#else
+		case SDLK_RGUI:
+		case SDLK_LGUI:         key = K_SUPER;         break;
+#endif
 
 		case SDLK_RALT:
 		case SDLK_LALT:         key = K_ALT;           break;
