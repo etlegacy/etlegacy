@@ -1218,7 +1218,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 	int    c      = 0, offset = 0;
 
 	ref = filetext;
-	while (c = *ref)
+	while ((c = *ref))
 	{
 		// skip double slash comments
 		if (c == '/' && ref[1] == '/')

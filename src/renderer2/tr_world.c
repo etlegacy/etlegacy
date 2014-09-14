@@ -1512,7 +1512,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 #if 1
 	if (!glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		Ren_Fatal("IssueOcclusionQuery: node %i has no occlusion query object in slot %i: %d", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
+		Ren_Fatal("IssueOcclusionQuery: node %i has no occlusion query object in slot %i: %zu", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
