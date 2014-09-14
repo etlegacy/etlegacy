@@ -2385,8 +2385,8 @@ void CG_SetHud(void)
 		if (!activehud)
 		{
 			Com_Printf("^1ERROR hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
-			activehud         = &hud0;
-			cg_altHud.integer = 0;
+			activehud = &hud0;
+			trap_Cvar_Set("cg_altHud", "0");
 			return;
 		}
 
