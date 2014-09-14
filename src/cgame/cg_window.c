@@ -665,8 +665,8 @@ void CG_cursorUpdate(void)
 
 	// Get cursor current position (when connected to a server)
 	// Already updated in the keycatcher
-	nx = cgs.cursorX;
-	ny = cgs.cursorY;
+	nx      = cgs.cursorX;
+	ny      = cgs.cursorY;
 	fSelect = cgs.fSelect;
 	fResize = cgs.fResize;
 
