@@ -38,12 +38,12 @@
 #if defined (_WIN32)
 #   include "../sys/sys_win32.h"
 #   include <winsock.h>
-#	define Win_ShowConsole(x, y) Sys_ShowConsoleWindow(x, y)
+#   define Win_ShowConsole(x, y) Sys_ShowConsoleWindow(x, y)
 #else
 #   include <netinet/in.h>
 #   include <sys/stat.h> // umask
 #   include <unistd.h> // getpid()
-#	define Win_ShowConsole(x, y)
+#   define Win_ShowConsole(x, y)
 #endif
 
 #ifndef DEDICATED
@@ -2819,7 +2819,7 @@ void Com_Init(char *commandLine)
 			if (defaultProfile)
 			{
 				char *text_p = defaultProfile;
-				char *token = COM_Parse(&text_p);
+				char *token  = COM_Parse(&text_p);
 
 				if (token && *token)
 				{
@@ -2892,23 +2892,23 @@ void Com_Init(char *commandLine)
 	com_maxfps = Cvar_Get("com_maxfps", "85", CVAR_ARCHIVE /*|CVAR_LATCH*/);
 
 	com_developer = Cvar_Get("developer", "0", CVAR_TEMP);
-	com_logfile = Cvar_Get("logfile", "0", CVAR_TEMP);
+	com_logfile   = Cvar_Get("logfile", "0", CVAR_TEMP);
 
 	com_timescale = Cvar_Get("timescale", "1", CVAR_CHEAT | CVAR_SYSTEMINFO);
 	com_fixedtime = Cvar_Get("fixedtime", "0", CVAR_CHEAT);
 	com_showtrace = Cvar_Get("com_showtrace", "0", CVAR_CHEAT);
-	com_dropsim = Cvar_Get("com_dropsim", "0", CVAR_CHEAT);
-	com_viewlog = Cvar_Get("viewlog", "0", CVAR_CHEAT);
-	com_speeds = Cvar_Get("com_speeds", "0", 0);
-	com_timedemo = Cvar_Get("timedemo", "0", CVAR_CHEAT);
+	com_dropsim   = Cvar_Get("com_dropsim", "0", CVAR_CHEAT);
+	com_viewlog   = Cvar_Get("viewlog", "0", CVAR_CHEAT);
+	com_speeds    = Cvar_Get("com_speeds", "0", 0);
+	com_timedemo  = Cvar_Get("timedemo", "0", CVAR_CHEAT);
 
-	com_watchdog = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE);
+	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE);
 	com_watchdog_cmd = Cvar_Get("com_watchdog_cmd", "", CVAR_ARCHIVE);
 
-	cl_paused = Cvar_Get("cl_paused", "0", CVAR_ROM);
-	sv_paused = Cvar_Get("sv_paused", "0", CVAR_ROM);
-	com_sv_running = Cvar_Get("sv_running", "0", CVAR_ROM);
-	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
+	cl_paused       = Cvar_Get("cl_paused", "0", CVAR_ROM);
+	sv_paused       = Cvar_Get("sv_paused", "0", CVAR_ROM);
+	com_sv_running  = Cvar_Get("sv_running", "0", CVAR_ROM);
+	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM);
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
 
 	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
@@ -2930,7 +2930,7 @@ void Com_Init(char *commandLine)
 
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
 
-	com_hunkused = Cvar_Get("com_hunkused", "0", 0);
+	com_hunkused      = Cvar_Get("com_hunkused", "0", 0);
 	com_hunkusedvalue = 0;
 
 	if (com_dedicated->integer)
@@ -3208,7 +3208,7 @@ void Com_Frame(void)
 	{
 		Com_Sleep(5);
 	}
-	else if(!com_timedemo->integer)
+	else if (!com_timedemo->integer)
 	{
 		// Fixes 100% cpu usage on windows (should we set to 1 on other os's?)
 		// A delay of 0 or 1 should be safe
