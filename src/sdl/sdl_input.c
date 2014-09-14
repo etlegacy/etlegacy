@@ -111,7 +111,7 @@ qboolean IN_IsNumLockDown(void)
 	}
 #else
 	//if(keys[K_KP_NUMLOCK].down)
-	if(SDL_GetModState() & KMOD_NUM)
+	if (SDL_GetModState() & KMOD_NUM)
 	{
 		return qtrue;
 	}
@@ -921,48 +921,48 @@ static void IN_JoyMove(void)
 	// save hat state
 	stick_state.oldhats = hats;
 
-    // finally, look at the axes...
-    total = SDL_JoystickNumAxes(stick);
-    if (total > 0)
-    {
-        if (total > 16)
-        {
-            total = 16;
-        }
-        for (i = 0; i < total; i++)
-        {
-            Sint16 axis = SDL_JoystickGetAxis(stick, i);
+	// finally, look at the axes...
+	total = SDL_JoystickNumAxes(stick);
+	if (total > 0)
+	{
+		if (total > 16)
+		{
+			total = 16;
+		}
+		for (i = 0; i < total; i++)
+		{
+			Sint16 axis = SDL_JoystickGetAxis(stick, i);
 
-            if (in_joystickUseAnalog->integer)
-            {
-                float f = ((float) abs(axis)) / 32767.0f;
+			if (in_joystickUseAnalog->integer)
+			{
+				float f = ((float) abs(axis)) / 32767.0f;
 
-                if (f < in_joystickThreshold->value)
-                {
-                    axis = 0;
-                }
+				if (f < in_joystickThreshold->value)
+				{
+					axis = 0;
+				}
 
-                if (axis != stick_state.oldaaxes[i])
-                {
-                    Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis, 0, NULL);
-                    stick_state.oldaaxes[i] = axis;
-                }
-            }
-            else
-            {
-                float f = ((float) axis) / 32767.0f;
+				if (axis != stick_state.oldaaxes[i])
+				{
+					Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis, 0, NULL);
+					stick_state.oldaaxes[i] = axis;
+				}
+			}
+			else
+			{
+				float f = ((float) axis) / 32767.0f;
 
-                if (f < -in_joystickThreshold->value)
-                {
-                    axes |= (1 << (i * 2));
-                }
-                else if (f > in_joystickThreshold->value)
-                {
-                    axes |= (1 << ((i * 2) + 1));
-                }
-            }
-        }
-    }
+				if (f < -in_joystickThreshold->value)
+				{
+					axes |= (1 << (i * 2));
+				}
+				else if (f > in_joystickThreshold->value)
+				{
+					axes |= (1 << ((i * 2) + 1));
+				}
+			}
+		}
+	}
 
 	// Time to update axes state based on old vs. new.
 	if (axes != stick_state.oldaxes)

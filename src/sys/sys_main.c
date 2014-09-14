@@ -921,8 +921,8 @@ void Sys_GameLoop(void)
 #if defined(_WIN32) && defined(LEGACY_DEBUG)
 		// set low precision every frame, because some system calls
 		// reset it arbitrarily
-		_controlfp( _PC_24, _MCW_PC );
-		_controlfp( -1, _MCW_EM  );	// no exceptions, even if some crappy
+		_controlfp(_PC_24, _MCW_PC);
+		_controlfp(-1, _MCW_EM);    // no exceptions, even if some crappy
 		// syscall turns them back on!
 #endif
 
@@ -934,7 +934,7 @@ void Sys_GameLoop(void)
 		Com_Frame();
 
 #ifdef LEGACY_DEBUG
-		endTime = Sys_Milliseconds();
+		endTime    = Sys_Milliseconds();
 		totalMsec += endTime - startTime;
 		countMsec++;
 

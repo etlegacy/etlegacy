@@ -676,7 +676,7 @@ void Sys_GLimpSafeInit(void)
 	{
 		// Here, we want to let SDL decide what do to unless
 		// explicitly requested otherwise
-		Sys_SetEnv("SDL_VIDEODRIVER","");
+		Sys_SetEnv("SDL_VIDEODRIVER", "");
 	}
 #endif
 }
@@ -892,10 +892,10 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 void Sys_CreateConsoleWindow(void)
 {
 #ifndef DEDICATED
-	int hConHandle;
-	long lStdHandle;
+	int                        hConHandle;
+	long                       lStdHandle;
 	CONSOLE_SCREEN_BUFFER_INFO coninfo;
-	FILE *fp;
+	FILE                       *fp;
 
 	static qboolean consoleIsOpen = qfalse;
 
@@ -923,23 +923,23 @@ void Sys_CreateConsoleWindow(void)
 	// redirect unbuffered STDOUT to the console
 	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-	fp = _fdopen(hConHandle, "w");
-	*stdout = *fp;
+	fp         = _fdopen(hConHandle, "w");
+	*stdout    = *fp;
 	setvbuf(stdout, NULL, _IONBF, 0);
 
 	// redirect unbuffered STDIN to the console
 	lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-	fp = _fdopen(hConHandle, "r");
-	*stdin = *fp;
+	fp         = _fdopen(hConHandle, "r");
+	*stdin     = *fp;
 
 	setvbuf(stdin, NULL, _IONBF, 0);
 
 	// redirect unbuffered STDERR to the console
 	lStdHandle = (long)GetStdHandle(STD_ERROR_HANDLE);
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-	fp = _fdopen(hConHandle, "w");
-	*stderr = *fp;
+	fp         = _fdopen(hConHandle, "w");
+	*stderr    = *fp;
 
 	setvbuf(stderr, NULL, _IONBF, 0);
 

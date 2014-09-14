@@ -74,7 +74,7 @@ void    Sys_SetErrorText(const char *text);
 void    Sys_PumpConsoleEvents(void);
 #define Sys_ShowConsoleWindow(x, y) Sys_ShowConsole(x, y)
 #else
-#define Sys_ShowConsoleWindow(x ,y) if(x) { Sys_CreateConsoleWindow(); }
+#define Sys_ShowConsoleWindow(x, y) if (x) { Sys_CreateConsoleWindow(); }
 #endif
 
 #endif // #ifndef INCLUDE_SYS_WIN_H
