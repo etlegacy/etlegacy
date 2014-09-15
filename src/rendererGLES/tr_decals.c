@@ -150,6 +150,12 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		return;
 	}
 
+	if (r_numDecalProjectors >= MAX_DECAL_PROJECTORS)
+	{
+		ri.Printf(PRINT_WARNING, "WARNING: RE_ProjectDecal() Max decal projectors reached (%d)\n", MAX_DECAL_PROJECTORS);
+		return;
+	}
+
 	/* dummy check */
 	if (numPoints != 1 && numPoints != 3 && numPoints != 4)
 	{
@@ -267,12 +273,6 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	temp.radius  = VectorLength(xyz);
 	temp.radius2 = temp.radius * temp.radius;
 
-	/* frustum cull the projector (fixme: this uses a stale frustum!) */
-	if (R_CullPointAndRadius(temp.center, temp.radius) == CULL_OUT)
-	{
-		return;
-	}
-
 	/* make the front plane */
 	if (!PlaneFromPoints(temp.planes[0], dv[0].xyz, dv[1].xyz, dv[2].xyz))
 	{
@@ -295,7 +295,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	}
 
 	/* create a new projector */
-	dp = &tr.refdef.decalProjectors[r_numDecalProjectors & DECAL_PROJECTOR_MASK];
+	dp = &tr.refdef.decalProjectors[r_numDecalProjectors];
 	Com_Memcpy(dp, &temp, sizeof(*dp));
 
 	/* we have a winner */
@@ -951,12 +951,6 @@ void R_CullDecalProjectors(void)
 	int              i, numDecalProjectors, decalBits;
 	decalProjector_t *dp;
 
-	/* limit */
-	if (tr.refdef.numDecalProjectors > MAX_DECAL_PROJECTORS)
-	{
-		tr.refdef.numDecalProjectors = MAX_DECAL_PROJECTORS;
-	}
-
 	/* walk decal projector list */
 	numDecalProjectors = 0;
 	decalBits          = 0;
@@ -968,8 +962,20 @@ void R_CullDecalProjectors(void)
 		}
 		else
 		{
-			numDecalProjectors = i + 1;
-			decalBits         |= (1 << i);
+			if (dp != &tr.refdef.decalProjectors[numDecalProjectors])
+			{
+				/* put all active projectors at the beginning */
+				tr.refdef.decalProjectors[numDecalProjectors] = *dp;
+			}
+
+			decalBits |= (1 << numDecalProjectors);
+			numDecalProjectors++;
+
+			/* bitmask limit */
+			if (numDecalProjectors == 32)
+			{
+				break;
+			}
 		}
 	}
 
