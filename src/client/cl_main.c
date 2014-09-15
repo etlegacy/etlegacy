@@ -2135,7 +2135,7 @@ void CL_CheckTimeout(void)
 	if ((!cl_paused->integer || !sv_paused->integer)
 	    && cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
 	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
-		&& !(clc.demoplaying && cl_freezeDemo->integer))
+	    && !(clc.demoplaying && cl_freezeDemo->integer))
 	{
 		if (++cl.timeoutcount > 5)        // timeoutcount saves debugger
 		{

@@ -59,7 +59,8 @@ extern qboolean CL_GetServerCommand(int serverCommandNumber);
 #define NEW_DEMOFUNC 0
 
 #if NEW_DEMOFUNC
-typedef struct {
+typedef struct
+{
 	int numSnaps;
 	int lastServerTime;
 	int firstServerTime;
@@ -86,7 +87,8 @@ typedef struct {
 	int firstNonDeltaMessageNumWritten;
 } demoInfo_t;
 
-typedef struct {
+typedef struct
+{
 	qboolean valid;
 	int seekPoint;
 	clientActive_t cl;
@@ -97,10 +99,10 @@ typedef struct {
 
 cvar_t *cl_maxRewindBackups;
 
-demoInfo_t di;
-rewindBackups_t *rewindBackups = NULL;
-int maxRewindBackups = 0;
-double Overf = 0.0;
+demoInfo_t      di;
+rewindBackups_t *rewindBackups   = NULL;
+int             maxRewindBackups = 0;
+double          Overf            = 0.0;
 #endif
 
 //REWIND AND FASTFORWARD
@@ -108,22 +110,22 @@ double Overf = 0.0;
 #if NEW_DEMOFUNC
 qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 {
-	clSnapshot_t	*clSnap;
-	clSnapshot_t    csn;
-	int				i, count;
-	int origPosition;
-	int cmd;
-	char *s;
-	char buffer[16];
-	qboolean success = qfalse;
-	int r;
-	msg_t buf;
-	byte bufData[MAX_MSGLEN];
-	int j;
-	int lastPacketTimeOrig;
-	int parseEntitiesNumOrig;
-	int currentSnapNum;
-	int serverMessageSequence;
+	clSnapshot_t *clSnap;
+	clSnapshot_t csn;
+	int          i, count;
+	int          origPosition;
+	int          cmd;
+	char         *s;
+	char         buffer[16];
+	qboolean     success = qfalse;
+	int          r;
+	msg_t        buf;
+	byte         bufData[MAX_MSGLEN];
+	int          j;
+	int          lastPacketTimeOrig;
+	int          parseEntitiesNumOrig;
+	int          currentSnapNum;
+	int          serverMessageSequence;
 
 	clSnap = &csn;
 
@@ -150,7 +152,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	}
 
 	parseEntitiesNumOrig = cl.parseEntitiesNum;
-	lastPacketTimeOrig = clc.lastPacketTime;
+	lastPacketTimeOrig   = clc.lastPacketTime;
 	// CL_ReadDemoMessage()
 	origPosition = FS_FTell(clc.demofile);
 
@@ -165,7 +167,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		{
 			Com_FuncPrinf("couldn't read sequence number\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
-			clc.lastPacketTime = lastPacketTimeOrig;
+			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
 		}
@@ -181,7 +183,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		{
 			Com_FuncPrinf("couldn't get length\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
-			clc.lastPacketTime = lastPacketTimeOrig;
+			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
 		}
@@ -191,7 +193,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		{
 			Com_FuncPrinf("buf.cursize == -1\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
-			clc.lastPacketTime = lastPacketTimeOrig;
+			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
 		}
@@ -206,13 +208,13 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		{
 			Com_FuncPrinf("Demo file was truncated.\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
-			clc.lastPacketTime = lastPacketTimeOrig;
+			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
 		}
 
 		clc.lastPacketTime = cls.realtime;
-		buf.readcount = 0;
+		buf.readcount      = 0;
 
 		MSG_Bitstream(&buf);
 		// get the reliable sequence acknowledge number
@@ -265,13 +267,13 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 			}
 		}
 
-	alldone:
+alldone:
 
 		if (!success)
 		{
 			Com_FuncPrinf("failed\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
-			clc.lastPacketTime = lastPacketTimeOrig;
+			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return success;
 		}
@@ -284,19 +286,19 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		{
 			Com_FuncPrinf("cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
-			clc.lastPacketTime = lastPacketTimeOrig;
+			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qtrue;  //FIXME if you fix other ents
 		}
 
 		// write the snapshot
-		snapshot->snapFlags = clSnap->snapFlags;
+		snapshot->snapFlags             = clSnap->snapFlags;
 		snapshot->serverCommandSequence = clSnap->serverCommandNum;
-		snapshot->ping = clSnap->ping;
-		snapshot->serverTime = clSnap->serverTime;
+		snapshot->ping                  = clSnap->ping;
+		snapshot->serverTime            = clSnap->serverTime;
 		Com_Memcpy(snapshot->areamask, clSnap->areamask, sizeof(snapshot->areamask));
 		snapshot->ps = clSnap->ps;
-		count = clSnap->numEntities;
+		count        = clSnap->numEntities;
 
 		if (count > MAX_ENTITIES_IN_SNAPSHOT)
 		{
@@ -313,7 +315,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	}
 
 	FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
-	clc.lastPacketTime = lastPacketTimeOrig;
+	clc.lastPacketTime  = lastPacketTimeOrig;
 	cl.parseEntitiesNum = parseEntitiesNumOrig;
 	// TODO: configstring changes and server commands!!!
 
@@ -339,9 +341,9 @@ static void CL_DemoFastForward(double wantedTime)
 	if (wantedTime >= (double)cl.serverTime  &&  wantedTime < (double)cl.snap.serverTime)
 	{
 		//Com_Printf("stay\n");
-		cl.serverTime = floor(wantedTime);
-		cls.realtime = floor(wantedTime);
-		Overf = wantedTime - floor(wantedTime);
+		cl.serverTime      = floor(wantedTime);
+		cls.realtime       = floor(wantedTime);
+		Overf              = wantedTime - floor(wantedTime);
 		cl.serverTimeDelta = 0;
 		return;
 	}
@@ -384,24 +386,24 @@ static void CL_DemoFastForward(double wantedTime)
 		}
 		loopCount++;
 	}
-	
+
 	DEMODEBUG("read %d demo messages, cl.snap.serverTime %d, wantedTime %f\n", loopCount, cl.snap.serverTime, wantedTime);
 
-	cl.serverTime = floor(wantedTime);
-	cls.realtime = floor(wantedTime);
-	Overf = wantedTime - floor(wantedTime);
+	cl.serverTime      = floor(wantedTime);
+	cls.realtime       = floor(wantedTime);
+	Overf              = wantedTime - floor(wantedTime);
 	cl.serverTimeDelta = 0;
 
 	//TODO: fix this
 	//VM_Call(cgvm, CG_TIME_CHANGE, cl.serverTime, (int)(Overf * SUBTIME_RESOLUTION));
 
-	di.seeking = qtrue;
+	di.seeking                        = qtrue;
 	di.firstNonDeltaMessageNumWritten = -1;
 }
 
 static void CL_RewindDemo(double wantedTime)
 {
-	int i;
+	int             i;
 	rewindBackups_t *rb;
 
 	if (wantedTime < (double)di.firstServerTime)
@@ -432,21 +434,21 @@ static void CL_RewindDemo(double wantedTime)
 			Com_FuncPrinf("FIXME rewind couldn't find valid snap  rb:%p  i:%d  rb serverTime %d   wanted %f\n", rb, i, rewindBackups[0].cl.snap.serverTime, wantedTime);
 		}
 		rb = &rewindBackups[0];
-		i = 0;
+		i  = 0;
 	}
 
 	DEMODEBUG("seeking to index %d %d   cl.serverTime:%d  cl.snap.serverTime:%d, new clc.lastExecutedServercommand %d  clc.serverCommandSequence %d\n", i, rb->seekPoint, cl.serverTime, cl.snap.serverTime, rb->clc.lastExecutedServerCommand, rb->clc.serverCommandSequence);
 	FS_Seek(clc.demofile, rb->seekPoint, FS_SEEK_SET);
 
 	//TODO: take a look at these hacks
-	di.numSnaps = rb->numSnaps;
+	di.numSnaps  = rb->numSnaps;
 	di.snapCount = i + 1;
 
 	memcpy(&cl, &rb->cl, sizeof(clientActive_t));
 	memcpy(&clc, &rb->clc, sizeof(clientConnection_t));
 	memcpy(&cls, &rb->cls, sizeof(clientStatic_t));
 	Overf = 0;
-	
+
 	//TODO: this is a hack to set the state to something valid
 	cls.state = CA_ACTIVE;
 
@@ -484,25 +486,25 @@ static void CL_DemoSeekMs(double ms, int exactServerTime)  // server time in mil
 
 static void CL_ParseDemo(void)
 {
-	int msec;
-	int fps;
-	int demofile;
-	int tstart;
-	int serverTime;
-	int lastMessageNum = -1;
-	clSnapshot_t *oldSnap = NULL;
+	int          msec;
+	int          fps;
+	int          demofile;
+	int          tstart;
+	int          serverTime;
+	int          lastMessageNum = -1;
+	clSnapshot_t *oldSnap       = NULL;
 
-	tstart = Sys_Milliseconds();
+	tstart           = Sys_Milliseconds();
 	di.gameStartTime = -1;
-	di.gameEndTime = -1;
+	di.gameEndTime   = -1;
 
 	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
-	cls.state = CA_CONNECTED;
+	cls.state       = CA_CONNECTED;
 	clc.demoplaying = qtrue;
-	di.testParse = qtrue;
+	di.testParse    = qtrue;
 
 	di.demoPos = FS_FTell(clc.demofile);
-	
+
 	// get gameState
 	CL_ReadDemoMessage();
 
@@ -515,14 +517,14 @@ static void CL_ParseDemo(void)
 
 	clc.firstDemoFrameSkipped = qfalse;
 
-	fps = 125;
+	fps  = 125;
 	msec = 0;
 	while (qtrue)
 	{
-		msec = 1000 / fps;
+		msec              = 1000 / fps;
 		cls.realFrametime = msec;
-		cls.frametime = msec;
-		cls.realtime += cls.frametime;
+		cls.frametime     = msec;
+		cls.realtime     += cls.frametime;
 
 		di.demoPos = FS_FTell(clc.demofile);
 		CL_SetCGameTime();
@@ -536,19 +538,19 @@ static void CL_ParseDemo(void)
 
 		if (cls.state == CA_PRIMED || cls.state == CA_ACTIVE)
 		{
-			int lastServerTime;
+			int          lastServerTime;
 			clSnapshot_t *snap;
 
-			snap = &cl.snap;
+			snap           = &cl.snap;
 			lastServerTime = serverTime;
-			serverTime = snap->serverTime;
-			
+			serverTime     = snap->serverTime;
+
 			if (serverTime  &&  serverTime == lastServerTime)
 			{
 				//goto newloop;
 				//continue;
 			}
-			
+
 			if (!snap->valid)
 			{
 				Com_Printf("invalid snap %d  serverTime %d\n", snap->messageNum, snap->serverTime);
@@ -593,7 +595,7 @@ static void CL_ParseDemo(void)
 
 		lastMessageNum = cl.snap.messageNum;
 
-	newloop:
+newloop:
 		cls.framecount++;
 	}
 
@@ -602,13 +604,13 @@ static void CL_ParseDemo(void)
 	Com_Printf("parse time %f seconds\n", (float)(Sys_Milliseconds() - tstart) / 1000.0);
 	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
 	clc.demoplaying = qfalse;
-	di.testParse = qfalse;
+	di.testParse    = qfalse;
 	// CL_Disconnect(qtrue);
 	demofile = clc.demofile;
 	CL_ClearState();
 	Com_Memset(&clc, 0, sizeof(clc));
-	clc.demofile = demofile;
-	cls.state = CA_DISCONNECTED;
+	clc.demofile             = demofile;
+	cls.state                = CA_DISCONNECTED;
 	cl_connectedToPureServer = qfalse;
 }
 
@@ -669,12 +671,12 @@ void CL_WriteDemoMessage(msg_t *msg, int headerBytes)
 	int len, swlen;
 
 	// write the packet sequence
-	len = clc.serverMessageSequence;
+	len   = clc.serverMessageSequence;
 	swlen = LittleLong(len);
 	FS_Write(&swlen, 4, clc.demofile);
 
 	// skip the packet sequencing information
-	len = msg->cursize - headerBytes;
+	len   = msg->cursize - headerBytes;
 	swlen = LittleLong(len);
 	FS_Write(&swlen, 4, clc.demofile);
 	FS_Write(msg->data + headerBytes, len, clc.demofile);
@@ -910,7 +912,7 @@ void CL_DemoCompleted(void)
 		if (time > 0)
 		{
 			Com_Printf("%i frames, %3.1f seconds: %3.1f fps\n", clc.timeDemoFrames,
-				time / 1000.0, clc.timeDemoFrames * 1000.0 / time);
+			           time / 1000.0, clc.timeDemoFrames * 1000.0 / time);
 		}
 	}
 
@@ -931,8 +933,8 @@ void CL_DemoCompleted(void)
 
 void CL_DemoRun(void)
 {
-	int loopCount = 0;
-	int startTime;
+	int        loopCount = 0;
+	int        startTime;
 	static int lastTime = -1;
 
 	// if we are playing a demo back, we can just keep reading
@@ -953,7 +955,8 @@ void CL_DemoRun(void)
 		cl.serverTime = clc.timeDemoBaseTime + clc.timeDemoFrames * 50;
 	}
 
-	if (cl_freezeDemo->integer) {
+	if (cl_freezeDemo->integer)
+	{
 		return;
 	}
 
@@ -970,10 +973,11 @@ void CL_DemoRun(void)
 
 		if (!di.testParse  &&  cls.state == CA_ACTIVE  &&  cl.serverTime > cl.snap.serverTime)
 		{
-			if (com_timescale->value > 1.0) {
+			if (com_timescale->value > 1.0)
+			{
 				if (startTime == cl.snap.serverTime || lastTime == cl.snap.serverTime)
 				{  // offline demo
-					lastTime = cl.snap.serverTime;
+					lastTime         = cl.snap.serverTime;
 					cl.oldServerTime = lastTime;
 					continue;
 				}
@@ -981,10 +985,10 @@ void CL_DemoRun(void)
 				{
 					if (cl.serverTime > cl.snap.serverTime)
 					{
-						cl.serverTime = cl.snap.serverTime;
-						cls.realtime = cl.snap.serverTime;
+						cl.serverTime      = cl.snap.serverTime;
+						cls.realtime       = cl.snap.serverTime;
 						cl.serverTimeDelta = 0;
-						cl.oldServerTime = lastTime;
+						cl.oldServerTime   = lastTime;
 
 					}
 				}
@@ -1031,8 +1035,8 @@ void CL_ReadDemoMessage(void)
 	}
 
 	if (!di.testParse  &&  di.snapCount < maxRewindBackups &&
-		((!di.gotFirstSnap  &&  !(cls.state >= CA_CONNECTED && cls.state < CA_PRIMED))
-		|| (di.gotFirstSnap  &&  di.numSnaps % (di.snapsInDemo / maxRewindBackups) == 0)))
+	    ((!di.gotFirstSnap  &&  !(cls.state >= CA_CONNECTED && cls.state < CA_PRIMED))
+	     || (di.gotFirstSnap  &&  di.numSnaps % (di.snapsInDemo / maxRewindBackups) == 0)))
 	{
 		rewindBackups_t *rb;
 
@@ -1044,12 +1048,12 @@ void CL_ReadDemoMessage(void)
 		}
 
 		di.gotFirstSnap = qtrue;
-		rb = &rewindBackups[di.snapCount];
+		rb              = &rewindBackups[di.snapCount];
 
 		if (!rb->valid)
 		{
-			rb->valid = qtrue;
-			rb->numSnaps = di.numSnaps;
+			rb->valid     = qtrue;
+			rb->numSnaps  = di.numSnaps;
 			rb->seekPoint = FS_FTell(clc.demofile);
 
 			memcpy(&rb->cl, &cl, sizeof(clientActive_t));
@@ -1105,7 +1109,7 @@ keep_reading:
 	}
 
 	clc.lastPacketTime = cls.realtime;
-	buf.readcount = 0;
+	buf.readcount      = 0;
 	CL_ParseServerMessage(&buf);
 }
 
@@ -1227,7 +1231,7 @@ void CL_PlayDemo_f(void)
 
 			Q_strncpyz(retry, arg, len + 1);
 			retry[len] = '\0';
-			protocol = CL_WalkDemoExt(retry, name, &clc.demofile);
+			protocol   = CL_WalkDemoExt(retry, name, &clc.demofile);
 		}
 	}
 	else
@@ -1243,13 +1247,13 @@ void CL_PlayDemo_f(void)
 	Q_strncpyz(clc.demoName, arg, sizeof(clc.demoName));
 
 	Con_Close();
-	
+
 #if NEW_DEMOFUNC
 	CL_AllocateDemoPoints();
 	CL_ParseDemo();
 #endif
 
-	cls.state = CA_CONNECTED;
+	cls.state       = CA_CONNECTED;
 	clc.demoplaying = qtrue;
 
 	if (Cvar_VariableValue("cl_wavefilerecord"))
@@ -1451,8 +1455,8 @@ void CL_SeekEnd_f(void)
 void CL_SeekNext_f(void)
 {
 	snapshot_t snapshot;
-	qboolean r;
-	int i;
+	qboolean   r;
+	int        i;
 
 	if (cl.snap.serverTime == di.lastServerTime)
 	{
@@ -1490,7 +1494,7 @@ void CL_SeekNext_f(void)
 void CL_SeekPrev_f(void)
 {
 	clSnapshot_t *clSnap;
-	int i = 0;
+	int          i = 0;
 
 	if (cl.snap.serverTime == di.firstServerTime)
 	{

@@ -4069,7 +4069,8 @@ void Cmd_WeaponStat_f(gentity_t *ent)
 	trap_Argv(1, buffer, 16);
 	stat = atoi(buffer);
 
-	if(stat < WS_KNIFE || stat >= WS_MAX) {
+	if (stat < WS_KNIFE || stat >= WS_MAX)
+	{
 		return;
 	}
 

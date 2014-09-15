@@ -457,7 +457,7 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 		if (!cg.demoPlayback)
 		{
 			CG_Printf("[skipnotify]WARNING: CG_ReadNextSnapshot: way out of range, %i > %i\n",
-				cg.latestSnapshotNum, cgs.processedSnapshotNum);
+			          cg.latestSnapshotNum, cgs.processedSnapshotNum);
 		}
 	}
 
@@ -558,10 +558,10 @@ void CG_ProcessSnapshots(void)
 			{
 				// These are here so we dont actually need to have
 				// the client call a timereset or something similar to the cgame
-				cg.snap = 0;
-				cg.nextSnap = 0;
+				cg.snap                  = 0;
+				cg.nextSnap              = 0;
 				cgs.processedSnapshotNum = -2;
-				cg.time = 0;
+				cg.time                  = 0;
 			}
 		}
 		cg.latestSnapshotNum = n;
