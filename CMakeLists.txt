@@ -114,10 +114,27 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 # set LEGACY_DEBUG definition for debug build type
-STRING(TOLOWER "${CMAKE_BUILD_TYPE}" buildtype_lower)
-IF(buildtype_lower STREQUAL "debug")
+# and set up properties to check if the build is visual studio or nmake on windows
+string(TOUPPER "${CMAKE_BUILD_TYPE}" buildtype_upper)
+string(TOUPPER "${CMAKE_GENERATOR}" buildgen_upper)
+if(WIN32 AND buildgen_upper MATCHES "NMAKE MAKEFILES")
+	SET(NMAKE_BUILD ON CACHE BOOL "NMake build")
+else(WIN32 AND buildgen_upper MATCHES "NMAKE MAKEFILES")
+	SET(NMAKE_BUILD OFF CACHE BOOL "NMake build")
+endif(WIN32 AND buildgen_upper MATCHES "NMAKE MAKEFILES")
+
+if(buildtype_upper MATCHES DEBUG)
+	SET(DEBUG_BUILD ON CACHE BOOL "Debug build")
 	add_definitions(-DLEGACY_DEBUG=1)
-ENDIF(buildtype_lower STREQUAL "debug")
+else(buildtype_upper MATCHES DEBUG)
+	SET(DEBUG_BUILD OFF CACHE BOOL "Debug build")
+endif(buildtype_upper MATCHES DEBUG)
+
+if(MSVC AND NOT NMAKE_BUILD)
+	SET(VSTUDIO ON CACHE BOOL "Visual studio build")
+else(MSVC AND NOT NMAKE_BUILD)
+	SET(VSTUDIO OFF CACHE BOOL "Visual studio build")
+endif(MSVC AND NOT NMAKE_BUILD)
 
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -801,6 +818,13 @@ if(BUILD_CLIENT)
 
 		# install the dynamic lib only
 		if(RENDERER_DYNAMIC)
+			set_target_properties(renderer_opengl1_${ARCH}
+				PROPERTIES
+				LIBRARY_OUTPUT_DIRECTORY ""
+				LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
+				LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
+			)
+
 			install(TARGETS renderer_opengl1_${ARCH}
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
@@ -897,6 +921,9 @@ if(BUILD_CLIENT)
 
 		set_target_properties(renderer_opengl2_${ARCH}
 			PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"
+			LIBRARY_OUTPUT_DIRECTORY ""
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
 		)
 		install(TARGETS renderer_opengl2_${ARCH}
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
@@ -907,33 +934,29 @@ if(BUILD_CLIENT)
 		endif()
 	endif(FEATURE_RENDERER2)
 	
-	if(FEATURE_WINDOWS_CONSOLE AND WIN32)
+	if(WIN32)
 		add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
-	else(FEATURE_WINDOWS_CONSOLE AND WIN32)
+	elseif(APPLE)
+		# These are vars used in the misc/Info.plist template file
+		# See set_target_properties( ... MACOSX_BUNDLE_INFO_PLIST ...)
+		set(MACOSX_BUNDLE_INFO_STRING            "Enemy Territory: Legacy")
+		set(MACOSX_BUNDLE_ICON_FILE              "etl.icns")
+		set(MACOSX_BUNDLE_GUI_IDENTIFIER         "com.etlegacy.etl")
+		set(MACOSX_BUNDLE_LONG_VERSION_STRING    "${ETL_CMAKE_VERSION}")
+		set(MACOSX_BUNDLE_BUNDLE_NAME            "ETLegacy")
+		set(MACOSX_BUNDLE_SHORT_VERSION_STRING   "${ETL_CMAKE_VERSION_SHORT}")
+		set(MACOSX_BUNDLE_COPYRIGHT              "etlegacy.com")
 		
-		if (APPLE)
-			
-			# These are vars used in the misc/Info.plist template file
-			# See set_target_properties( ... MACOSX_BUNDLE_INFO_PLIST ...)
-			set(MACOSX_BUNDLE_INFO_STRING            "Enemy Territory: Legacy")
-			set(MACOSX_BUNDLE_ICON_FILE              "etl.icns")
-			set(MACOSX_BUNDLE_GUI_IDENTIFIER         "com.etlegacy.etl")
-			set(MACOSX_BUNDLE_LONG_VERSION_STRING    "${ETL_CMAKE_VERSION}")
-			set(MACOSX_BUNDLE_BUNDLE_NAME            "ETLegacy")
-			set(MACOSX_BUNDLE_SHORT_VERSION_STRING   "${ETL_CMAKE_VERSION_SHORT}")
-			set(MACOSX_BUNDLE_COPYRIGHT              "etlegacy.com")
-			
-			# Specify files to be copied into the .app's Resources folder
-			set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/misc")
-			set(MACOSX_RESOURCES "${RESOURCES_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
-			set_source_files_properties(${CMAKE_SOURCE_DIR}/misc/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-			
-			# Create the .app bundle
-			add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
-		else()
-			add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
-		endif()
-	endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		# Specify files to be copied into the .app's Resources folder
+		set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/misc")
+		set(MACOSX_RESOURCES "${RESOURCES_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
+		set_source_files_properties(${CMAKE_SOURCE_DIR}/misc/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+		
+		# Create the .app bundle
+		add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
+	else()
+		add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	endif(WIN32)
 	
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
@@ -964,7 +987,11 @@ if(BUILD_CLIENT)
 
 	set_target_properties(etl PROPERTIES
 		COMPILE_DEFINITIONS "${ETL_COMPILE_DEF}"
-		MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist)
+		RUNTIME_OUTPUT_DIRECTORY ""
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG ""
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE ""
+		MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist
+	)
 
 	install(TARGETS etl
 		BUNDLE  DESTINATION "${INSTALL_DEFAULT_BINDIR}"
@@ -974,7 +1001,12 @@ endif(BUILD_CLIENT)
 if(BUILD_SERVER)
 	add_executable(etlded ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
-	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
+	set_target_properties(etlded 
+		PROPERTIES COMPILE_DEFINITIONS "DEDICATED"
+		RUNTIME_OUTPUT_DIRECTORY ""
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG ""
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE ""
+	)
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
 endif(BUILD_SERVER)
 
@@ -987,6 +1019,8 @@ if(BUILD_MOD)
 		PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
 		OSX_ARCHITECTURES "i386;x86_64"
 	)
 
@@ -1005,6 +1039,8 @@ if(BUILD_MOD)
 		PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
 	)
 
 	#
@@ -1015,6 +1051,8 @@ if(BUILD_MOD)
 		PROPERTIES
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
 		OSX_ARCHITECTURES "i386;x86_64"
 	)
 
