@@ -4128,6 +4128,8 @@ typedef enum
 #define MAX_DECALS              1024
 #define DECAL_MASK              (MAX_DECALS - 1)
 
+#define MAX_POLYBUFFERS	4096
+
 // all of the information needed by the back end must be
 // contained in a backEndData_t.
 typedef struct
@@ -4142,7 +4144,7 @@ typedef struct
 
 	srfPoly_t *polys;           //[MAX_POLYS];
 	polyVert_t *polyVerts;      //[MAX_POLYVERTS];
-	srfPolyBuffer_t *polybuffers; //[MAX_POLYS];
+	srfPolyBuffer_t polybuffers[MAX_POLYBUFFERS];
 
 	decalProjector_t decalProjectors[MAX_DECAL_PROJECTORS];
 	srfDecal_t decals[MAX_DECALS];
