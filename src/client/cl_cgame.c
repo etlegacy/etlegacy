@@ -1465,38 +1465,9 @@ void CL_SetCGameTime(void)
 		CL_AdjustTimeDelta();
 	}
 
-	if (!clc.demoplaying)
+	if (clc.demoplaying)
 	{
-		return;
-	}
-
-	// if we are playing a demo back, we can just keep reading
-	// messages from the demo file until the cgame definately
-	// has valid snapshots to interpolate between
-
-	// a timedemo will always use a deterministic set of time samples
-	// no matter what speed machine it is run on,
-	// while a normal demo may have different time samples
-	// each time it is played back
-	if (cl_timedemo->integer)
-	{
-		if (!clc.timeDemoStart)
-		{
-			clc.timeDemoStart = Sys_Milliseconds();
-		}
-		clc.timeDemoFrames++;
-		cl.serverTime = clc.timeDemoBaseTime + clc.timeDemoFrames * 50;
-	}
-
-	while (cl.serverTime >= cl.snap.serverTime)
-	{
-		// feed another message, which should change the contents of cl.snap
-		CL_ReadDemoMessage();
-		if (cls.state != CA_ACTIVE)
-		{
-			Cvar_Set("timescale", "1");
-			return;     // end of demo
-		}
+		CL_DemoRun();
 	}
 }
 

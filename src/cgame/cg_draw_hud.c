@@ -2183,7 +2183,7 @@ static float CG_DrawLagometer(float y)
 	}
 
 	// don't draw if a demo and we're running at a different timescale, or if the server is respawning
-	if ((cg.demoPlayback && cg_timescale.value == 1.0f) || !cg.serverRespawning)
+	if (!cg.demoPlayback && !cg.serverRespawning)
 	{
 		CG_DrawDisconnect(y);
 	}

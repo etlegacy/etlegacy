@@ -1,0 +1,1559 @@
+/**
+* Wolfenstein: Enemy Territory GPL Source Code
+* Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+*
+* ET: Legacy
+* Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
+*
+* This file is part of ET: Legacy - http://www.etlegacy.com
+*
+* ET: Legacy is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* ET: Legacy is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+*
+* In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+* subject to certain additional terms. You should have received a copy
+* of these additional terms immediately following the terms and conditions
+* of the GNU General Public License which accompanied the source code.
+* If not, please request a copy in writing from id Software at the address below.
+*
+* id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+*
+* @file cl_demo.c
+*/
+
+#include "client.h"
+
+#define Com_FuncPrinf(msg, ...) Com_Printf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+#define Com_FuncDPrinf(msg, ...) Com_DPrintf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+#define Com_FuncError(msg, ...) Com_Error(ERR_FATAL, "%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+
+#ifdef LEGACY_DEBUG
+#define DEMODEBUG(msg, ...) if (Cvar_VariableIntegerValue("demo_debug")) { Com_Printf("^1%s()^2: DEBUG " msg, __FUNCTION__, ## __VA_ARGS__); }
+#else
+#define DEMODEBUG(msg, ...)
+#endif
+
+#define MEGABYTES(x) x / 1024.0 / 1024.0
+
+#define MAX_DEMO_FILES 64
+#define MAX_REWIND_BACKUPS 20
+
+#define MAX_DEMO_OBITS (1024 * 2)
+#define MAX_ITEM_PICKUPS (1024 * 4)
+#define MAX_TIMEOUTS (256)
+
+extern qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
+extern void CL_ParseSnapshot(msg_t *msg);
+extern qboolean CL_GetServerCommand(int serverCommandNumber);
+
+#define NEW_DEMOFUNC 0
+
+#if NEW_DEMOFUNC
+typedef struct {
+	int numSnaps;
+	int lastServerTime;
+	int firstServerTime;
+	int gameStartTime;
+	int gameEndTime;
+	int serverFrameTime;
+
+	double wantedTime;
+	int snapCount;
+
+	int demoPos;
+	int snapsInDemo;
+
+	qboolean gotFirstSnap;
+	qboolean skipSnap;
+
+	qboolean endOfDemo;
+	qboolean testParse;
+
+	qboolean offlineDemo;
+	qboolean hasWarmup;
+	qboolean seeking;
+
+	int firstNonDeltaMessageNumWritten;
+} demoInfo_t;
+
+typedef struct {
+	qboolean valid;
+	int seekPoint;
+	clientActive_t cl;
+	clientConnection_t clc;
+	clientStatic_t cls;
+	int numSnaps;
+} rewindBackups_t;
+
+cvar_t *cl_maxRewindBackups;
+
+demoInfo_t di;
+rewindBackups_t *rewindBackups = NULL;
+int maxRewindBackups = 0;
+double Overf = 0.0;
+#endif
+
+//REWIND AND FASTFORWARD
+
+#if NEW_DEMOFUNC
+qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
+{
+	clSnapshot_t	*clSnap;
+	clSnapshot_t    csn;
+	int				i, count;
+	int origPosition;
+	int cmd;
+	char *s;
+	char buffer[16];
+	qboolean success = qfalse;
+	int r;
+	msg_t buf;
+	byte bufData[MAX_MSGLEN];
+	int j;
+	int lastPacketTimeOrig;
+	int parseEntitiesNumOrig;
+	int currentSnapNum;
+	int serverMessageSequence;
+
+	clSnap = &csn;
+
+	if (!clc.demoplaying)
+	{
+		return qfalse;
+	}
+
+	if (snapshotNumber <= cl.snap.messageNum)
+	{
+		success = CL_GetSnapshot(snapshotNumber, snapshot);
+		if (!success)
+		{
+			Com_FuncPrinf("snapshot number outside of backup buffer\n");
+			return qfalse;
+		}
+		return qtrue;
+	}
+
+	if (snapshotNumber > cl.snap.messageNum + 1)
+	{
+		Com_FuncDPrinf("FIXME CL_PeekSnapshot  %d >  cl.snap.messageNum + 1 (%d)\n", snapshotNumber, cl.snap.messageNum);
+		//return qfalse;
+	}
+
+	parseEntitiesNumOrig = cl.parseEntitiesNum;
+	lastPacketTimeOrig = clc.lastPacketTime;
+	// CL_ReadDemoMessage()
+	origPosition = FS_FTell(clc.demofile);
+
+	currentSnapNum = cl.snap.messageNum;
+
+	for (j = 0; j < snapshotNumber - currentSnapNum; j++)
+	{
+		// get the sequence number
+		memset(buffer, 0, sizeof(buffer));
+		r = FS_Read(&buffer, 4, clc.demofile);
+		if (r != 4)
+		{
+			Com_FuncPrinf("couldn't read sequence number\n");
+			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			clc.lastPacketTime = lastPacketTimeOrig;
+			cl.parseEntitiesNum = parseEntitiesNumOrig;
+			return qfalse;
+		}
+		serverMessageSequence = LittleLong(*((int *)buffer));
+
+		// init the message
+		memset(&buf, 0, sizeof(msg_t));
+		MSG_Init(&buf, bufData, sizeof(bufData));
+
+		// get the length
+		r = FS_Read(&buf.cursize, 4, clc.demofile);
+		if (r != 4)
+		{
+			Com_FuncPrinf("couldn't get length\n");
+			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			clc.lastPacketTime = lastPacketTimeOrig;
+			cl.parseEntitiesNum = parseEntitiesNumOrig;
+			return qfalse;
+		}
+
+		buf.cursize = LittleLong(buf.cursize);
+		if (buf.cursize == -1)
+		{
+			Com_FuncPrinf("buf.cursize == -1\n");
+			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			clc.lastPacketTime = lastPacketTimeOrig;
+			cl.parseEntitiesNum = parseEntitiesNumOrig;
+			return qfalse;
+		}
+
+		if (buf.cursize > buf.maxsize)
+		{
+			Com_Error(ERR_DROP, "CL_PeekSnapshot: demoMsglen > MAX_MSGLEN");
+		}
+
+		r = FS_Read(buf.data, buf.cursize, clc.demofile);
+		if (r != buf.cursize)
+		{
+			Com_FuncPrinf("Demo file was truncated.\n");
+			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			clc.lastPacketTime = lastPacketTimeOrig;
+			cl.parseEntitiesNum = parseEntitiesNumOrig;
+			return qfalse;
+		}
+
+		clc.lastPacketTime = cls.realtime;
+		buf.readcount = 0;
+
+		MSG_Bitstream(&buf);
+		// get the reliable sequence acknowledge number
+		MSG_ReadLong(&buf);
+
+		// parse the message
+		while (qtrue)
+		{
+			if (buf.readcount > buf.cursize)
+			{
+				Com_Error(ERR_DROP, "CL_PeekSnapshot: read past end of server message");
+				break;
+			}
+
+			cmd = MSG_ReadByte(&buf);
+
+			if (cmd == svc_EOF)
+			{
+				break;
+			}
+			success = qfalse;
+
+			switch (cmd)
+			{
+			default:
+				Com_Error(ERR_DROP, "CL_PeekSnapshot: Illegible server message");
+				break;
+			case svc_nop:
+				break;
+			case svc_serverCommand:
+				MSG_ReadLong(&buf);  // seq
+				s = MSG_ReadString(&buf);
+				break;
+			case svc_gamestate:
+				Com_FuncPrinf("FIXME gamestate\n");
+				goto alldone;
+				break;
+			case svc_snapshot:
+				//TODO: changed this check if it works
+				CL_ParseSnapshot(&buf);
+				if (cl.snap.valid)
+				{
+					success = qtrue;
+				}
+				break;
+			case svc_download:
+				Com_FuncPrinf("FIXME download\n");
+				goto alldone;
+				break;
+			}
+		}
+
+	alldone:
+
+		if (!success)
+		{
+			Com_FuncPrinf("failed\n");
+			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			clc.lastPacketTime = lastPacketTimeOrig;
+			cl.parseEntitiesNum = parseEntitiesNumOrig;
+			return success;
+		}
+
+		//FIXME other ents not supported yet
+
+		// if the entities in the frame have fallen out of their
+		// circular buffer, we can't return it
+		if (cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES)
+		{
+			Com_FuncPrinf("cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES");
+			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			clc.lastPacketTime = lastPacketTimeOrig;
+			cl.parseEntitiesNum = parseEntitiesNumOrig;
+			return qtrue;  //FIXME if you fix other ents
+		}
+
+		// write the snapshot
+		snapshot->snapFlags = clSnap->snapFlags;
+		snapshot->serverCommandSequence = clSnap->serverCommandNum;
+		snapshot->ping = clSnap->ping;
+		snapshot->serverTime = clSnap->serverTime;
+		Com_Memcpy(snapshot->areamask, clSnap->areamask, sizeof(snapshot->areamask));
+		snapshot->ps = clSnap->ps;
+		count = clSnap->numEntities;
+
+		if (count > MAX_ENTITIES_IN_SNAPSHOT)
+		{
+			Com_FuncPrinf("truncated %i entities to %i\n", count, MAX_ENTITIES_IN_SNAPSHOT);
+			count = MAX_ENTITIES_IN_SNAPSHOT;
+		}
+
+		snapshot->numEntities = count;
+		for (i = 0; i < count; i++)
+		{
+			snapshot->entities[i] = cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
+		}
+
+	}
+
+	FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+	clc.lastPacketTime = lastPacketTimeOrig;
+	cl.parseEntitiesNum = parseEntitiesNumOrig;
+	// TODO: configstring changes and server commands!!!
+
+	return qtrue;
+}
+
+static void CL_DemoFastForward(double wantedTime)
+{
+	int loopCount;
+
+	if (cls.state < CA_CONNECTED)
+	{
+		return;
+	}
+
+	if (wantedTime >= di.lastServerTime)
+	{
+		return;
+	}
+
+	DEMODEBUG("fast_forward %f\n", wantedTime);
+
+	if (wantedTime >= (double)cl.serverTime  &&  wantedTime < (double)cl.snap.serverTime)
+	{
+		//Com_Printf("stay\n");
+		cl.serverTime = floor(wantedTime);
+		cls.realtime = floor(wantedTime);
+		Overf = wantedTime - floor(wantedTime);
+		cl.serverTimeDelta = 0;
+		return;
+	}
+
+	if (wantedTime < (double)cl.snap.serverTime)
+	{
+		Com_FuncPrinf("This should not happen %f < %d\n", wantedTime, cl.snap.serverTime);
+		return;
+	}
+
+	if (wantedTime > (double)di.lastServerTime)
+	{
+		Com_FuncPrinf("would seek past end of demo (%f > %d)\n", wantedTime, di.lastServerTime);
+		return;
+	}
+
+	DEMODEBUG("fastfowarding from %f to %f\n", (double)cl.serverTime + Overf, wantedTime);
+
+	loopCount = 0;
+	while ((double)cl.snap.serverTime <= wantedTime)
+	{
+		DEMODEBUG("Servertime: %d wanted time %d\n", cl.snap.serverTime, wantedTime);
+		CL_ReadDemoMessage();
+		while (clc.lastExecutedServerCommand < clc.serverCommandSequence)
+		{
+			if (clc.lastExecutedServerCommand + 1 <= clc.serverCommandSequence - MAX_RELIABLE_COMMANDS)
+			{
+				if (cl.snap.serverTime <= di.firstServerTime)
+				{
+					clc.lastExecutedServerCommand = clc.serverCommandSequence - 1;
+					Com_FuncPrinf("setting clc.lastExecutedServerCommand %d (%d)\n", clc.lastExecutedServerCommand, loopCount);
+				}
+				else
+				{
+					Com_FuncPrinf("FIXME %s  (%d) + 1 <= (%d) - MAX_RELIABLE_COMMANDS (%d %d)\n", clc.lastExecutedServerCommand, clc.serverCommandSequence, cl.snap.serverTime, di.firstServerTime);
+					break;
+				}
+			}
+			CL_GetServerCommand(clc.lastExecutedServerCommand + 1);
+		}
+		loopCount++;
+	}
+	
+	DEMODEBUG("read %d demo messages, cl.snap.serverTime %d, wantedTime %f\n", loopCount, cl.snap.serverTime, wantedTime);
+
+	cl.serverTime = floor(wantedTime);
+	cls.realtime = floor(wantedTime);
+	Overf = wantedTime - floor(wantedTime);
+	cl.serverTimeDelta = 0;
+
+	//TODO: fix this
+	//VM_Call(cgvm, CG_TIME_CHANGE, cl.serverTime, (int)(Overf * SUBTIME_RESOLUTION));
+
+	di.seeking = qtrue;
+	di.firstNonDeltaMessageNumWritten = -1;
+}
+
+static void CL_RewindDemo(double wantedTime)
+{
+	int i;
+	rewindBackups_t *rb;
+
+	if (wantedTime < (double)di.firstServerTime)
+	{
+		wantedTime = di.firstServerTime;
+	}
+
+	if (!rewindBackups[0].valid || di.snapCount == 0)
+	{
+		CL_DemoFastForward(wantedTime);
+		return;
+	}
+
+	rb = NULL;
+	for (i = di.snapCount - 1; i >= 0; i--)
+	{
+		rb = &rewindBackups[i];
+		// go back a second before wanted time in order to have snapshot backups available for screen matching
+		if ((double)rb->cl.snap.serverTime < wantedTime - 1000.0)
+		{
+			break;
+		}
+	}
+	if (rb == NULL || i < 0)
+	{
+		if (rb == NULL)
+		{
+			Com_FuncPrinf("FIXME rewind couldn't find valid snap  rb:%p  i:%d  rb serverTime %d   wanted %f\n", rb, i, rewindBackups[0].cl.snap.serverTime, wantedTime);
+		}
+		rb = &rewindBackups[0];
+		i = 0;
+	}
+
+	DEMODEBUG("seeking to index %d %d   cl.serverTime:%d  cl.snap.serverTime:%d, new clc.lastExecutedServercommand %d  clc.serverCommandSequence %d\n", i, rb->seekPoint, cl.serverTime, cl.snap.serverTime, rb->clc.lastExecutedServerCommand, rb->clc.serverCommandSequence);
+	FS_Seek(clc.demofile, rb->seekPoint, FS_SEEK_SET);
+
+	//TODO: take a look at these hacks
+	di.numSnaps = rb->numSnaps;
+	di.snapCount = i + 1;
+
+	memcpy(&cl, &rb->cl, sizeof(clientActive_t));
+	memcpy(&clc, &rb->clc, sizeof(clientConnection_t));
+	memcpy(&cls, &rb->cls, sizeof(clientStatic_t));
+	Overf = 0;
+	
+	//TODO: this is a hack to set the state to something valid
+	cls.state = CA_ACTIVE;
+
+	CL_DemoFastForward(wantedTime);
+}
+
+static void CL_DemoSeekMs(double ms, int exactServerTime)  // server time in milliseconds
+{
+	double wantedTime;
+
+	if (!clc.demoplaying)
+	{
+		Com_FuncPrinf("not playing demo can't seek\n");
+		return;
+	}
+
+	wantedTime = ms;
+
+	if (exactServerTime > 0)
+	{
+		wantedTime = exactServerTime;
+	}
+
+	DEMODEBUG("seek want %f\n", wantedTime);
+
+	if (wantedTime > (double)cl.serverTime + Overf)
+	{
+		CL_DemoFastForward(wantedTime);
+	}
+	else
+	{
+		CL_RewindDemo(wantedTime);
+	}
+}
+
+static void CL_ParseDemo(void)
+{
+	int msec;
+	int fps;
+	int demofile;
+	int tstart;
+	int serverTime;
+	int lastMessageNum = -1;
+	clSnapshot_t *oldSnap = NULL;
+
+	tstart = Sys_Milliseconds();
+	di.gameStartTime = -1;
+	di.gameEndTime = -1;
+
+	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
+	cls.state = CA_CONNECTED;
+	clc.demoplaying = qtrue;
+	di.testParse = qtrue;
+
+	di.demoPos = FS_FTell(clc.demofile);
+	
+	// get gameState
+	CL_ReadDemoMessage();
+
+	if (!cl.gameState.dataCount)
+	{
+		Com_Printf("couldn't get gameState\n");
+	}
+
+	cls.state = CA_PRIMED;
+
+	clc.firstDemoFrameSkipped = qfalse;
+
+	fps = 125;
+	msec = 0;
+	while (qtrue)
+	{
+		msec = 1000 / fps;
+		cls.realFrametime = msec;
+		cls.frametime = msec;
+		cls.realtime += cls.frametime;
+
+		di.demoPos = FS_FTell(clc.demofile);
+		CL_SetCGameTime();
+
+		if (di.endOfDemo)
+		{
+			break;
+		}
+
+		serverTime = 0;
+
+		if (cls.state == CA_PRIMED || cls.state == CA_ACTIVE)
+		{
+			int lastServerTime;
+			clSnapshot_t *snap;
+
+			snap = &cl.snap;
+			lastServerTime = serverTime;
+			serverTime = snap->serverTime;
+			
+			if (serverTime  &&  serverTime == lastServerTime)
+			{
+				//goto newloop;
+				//continue;
+			}
+			
+			if (!snap->valid)
+			{
+				Com_Printf("invalid snap %d  serverTime %d\n", snap->messageNum, snap->serverTime);
+				goto newloop;
+			}
+
+			if (di.lastServerTime  &&  di.lastServerTime == snap->serverTime)
+			{
+				di.offlineDemo = qtrue;
+			}
+
+			if (di.firstServerTime  &&  serverTime - di.lastServerTime > 0 && (serverTime - di.lastServerTime < di.serverFrameTime || !di.serverFrameTime))
+			{
+				di.serverFrameTime = serverTime - di.lastServerTime;
+				Com_Printf("parse demo serverFrameTime %d ms\n", di.serverFrameTime);
+			}
+
+			di.lastServerTime = serverTime;
+
+			if (di.firstServerTime == 0)
+			{
+				di.firstServerTime = serverTime;
+				Com_Printf("firstServerTime %d\n", serverTime);
+			}
+
+			if (snap->deltaNum <= 0)
+			{
+				DEMODEBUG("uncompressed serverTime %d   demoPos %d   snap %d\n", serverTime, di.demoPos, di.snapsInDemo);
+			}
+
+			if (lastMessageNum != snap->messageNum)
+			{
+				oldSnap = &cl.snapshots[(cl.snap.messageNum - 1) & PACKET_MASK];
+				if (cl.parseEntitiesNum - snap->parseEntitiesNum >= MAX_PARSE_ENTITIES)
+				{
+					DEMODEBUG("cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES");
+				}
+
+				//TODO: we could parse the snap and oldSnap here..
+			}
+		}
+
+		lastMessageNum = cl.snap.messageNum;
+
+	newloop:
+		cls.framecount++;
+	}
+
+	Com_Printf("last serverTime %d   total %f minutes\n", cl.snap.serverTime, (cl.snap.serverTime - di.firstServerTime) / 1000.0 / 60.0);
+	Com_Printf("%d snaps in demo\n", di.snapsInDemo);
+	Com_Printf("parse time %f seconds\n", (float)(Sys_Milliseconds() - tstart) / 1000.0);
+	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
+	clc.demoplaying = qfalse;
+	di.testParse = qfalse;
+	// CL_Disconnect(qtrue);
+	demofile = clc.demofile;
+	CL_ClearState();
+	Com_Memset(&clc, 0, sizeof(clc));
+	clc.demofile = demofile;
+	cls.state = CA_DISCONNECTED;
+	cl_connectedToPureServer = qfalse;
+}
+
+void CL_FreeDemoPoints(void)
+{
+	if (rewindBackups)
+	{
+		/*
+		int i = 0;
+		for (; i < maxRewindBackups; i++)
+		{
+		rewindBackups[i].valid = qfalse;
+		}
+
+		memset(&di, 0, sizeof(demoInfo_t));
+		*/
+		Com_Dealloc(rewindBackups);
+	}
+}
+
+void CL_AllocateDemoPoints(void)
+{
+	CL_FreeDemoPoints();
+
+	maxRewindBackups = cl_maxRewindBackups->integer;
+	if (maxRewindBackups <= 0)
+	{
+		maxRewindBackups = MAX_REWIND_BACKUPS;
+	}
+
+	rewindBackups = (rewindBackups_t *)Com_Allocate(sizeof(rewindBackups_t) * maxRewindBackups);
+	if (!rewindBackups)
+	{
+		Com_FuncError("couldn't allocate %.2f MB for rewind backups\n", MEGABYTES(sizeof(rewindBackups_t) * maxRewindBackups));
+		return;
+	}
+	Com_Printf("allocated %.2f MB for rewind backups\n", MEGABYTES(sizeof(rewindBackups_t) * maxRewindBackups));
+	Com_Memset(rewindBackups, 0, sizeof(rewindBackups_t) * maxRewindBackups);
+}
+
+#endif
+
+/*
+=======================================================================
+CLIENT SIDE DEMO RECORDING
+=======================================================================
+*/
+
+/*
+====================
+CL_WriteDemoMessage
+
+Dumps the current net message, prefixed by the length
+====================
+*/
+void CL_WriteDemoMessage(msg_t *msg, int headerBytes)
+{
+	int len, swlen;
+
+	// write the packet sequence
+	len = clc.serverMessageSequence;
+	swlen = LittleLong(len);
+	FS_Write(&swlen, 4, clc.demofile);
+
+	// skip the packet sequencing information
+	len = msg->cursize - headerBytes;
+	swlen = LittleLong(len);
+	FS_Write(&swlen, 4, clc.demofile);
+	FS_Write(msg->data + headerBytes, len, clc.demofile);
+}
+
+/*
+====================
+CL_StopRecording_f
+
+stop recording a demo
+====================
+*/
+void CL_StopRecord_f(void)
+{
+	int len;
+
+	if (!clc.demorecording)
+	{
+		Com_Printf("Not recording a demo.\n");
+		return;
+	}
+
+	// finish up
+	len = -1;
+	FS_Write(&len, 4, clc.demofile);
+	FS_Write(&len, 4, clc.demofile);
+	FS_FCloseFile(clc.demofile);
+	clc.demofile = 0;
+
+	clc.demorecording = qfalse;
+	Cvar_Set("cl_demorecording", "0");
+	Cvar_Set("cl_demofilename", "");
+	Cvar_Set("cl_demooffset", "0");
+	Com_Printf("Stopped demo.\n");
+}
+
+/*
+==================
+CL_DemoFilename
+==================
+*/
+void CL_DemoFilename(int number, char *fileName)
+{
+	if (number < 0 || number > 9999)
+	{
+		Com_sprintf(fileName, MAX_OSPATH, "demo9999");
+		return;
+	}
+
+	Com_sprintf(fileName, MAX_OSPATH, "demo%04i", number);
+}
+
+/*
+====================
+CL_Record_f
+
+record <demoname>
+
+Begins recording a demo from the current position
+====================
+*/
+
+static char demoName[MAX_QPATH];        // compiler bug workaround
+void CL_Record_f(void)
+{
+	char name[MAX_OSPATH];
+	char *s;
+
+	if (Cmd_Argc() > 2)
+	{
+		Com_Printf("record <demoname>\n");
+		return;
+	}
+
+	if (clc.demorecording)
+	{
+		Com_Printf("Already recording.\n");
+		return;
+	}
+
+	if (cls.state != CA_ACTIVE)
+	{
+		Com_Printf("You must be in a level to record.\n");
+		return;
+	}
+
+	if (Cmd_Argc() == 2)
+	{
+		s = Cmd_Argv(1);
+		Q_strncpyz(demoName, s, sizeof(demoName));
+		Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
+	}
+	else
+	{
+		int number, len;
+
+		// scan for a free demo name
+		for (number = 0; number <= 9999; number++)
+		{
+			CL_DemoFilename(number, demoName);
+			Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
+
+			len = FS_ReadFile(name, NULL);
+			if (len <= 0)
+			{
+				break;  // file doesn't exist
+			}
+		}
+	}
+
+	CL_Record(name);
+}
+
+void CL_Record(const char *name)
+{
+	int           i;
+	msg_t         buf;
+	byte          bufData[MAX_MSGLEN];
+	entityState_t *ent;
+	entityState_t nullstate;
+	char          *s;
+	int           len;
+
+	// open the demo file
+	Com_Printf("Recording to %s.\n", name);
+	clc.demofile = FS_FOpenFileWrite(name);
+	if (!clc.demofile)
+	{
+		Com_Printf("ERROR: couldn't open.\n");
+		return;
+	}
+
+	clc.demorecording = qtrue;
+	Cvar_Set("cl_demorecording", "1");    // fretn
+	Q_strncpyz(clc.demoName, demoName, sizeof(clc.demoName));
+	Cvar_Set("cl_demofilename", clc.demoName);    // bani
+	Cvar_Set("cl_demooffset", "0");    // bani
+
+	// don't start saving messages until a non-delta compressed message is received
+	clc.demowaiting = qtrue;
+
+	// write out the gamestate message
+	MSG_Init(&buf, bufData, sizeof(bufData));
+	MSG_Bitstream(&buf);
+
+	// NOTE: all server->client messages now acknowledge
+	MSG_WriteLong(&buf, clc.reliableSequence);
+
+	MSG_WriteByte(&buf, svc_gamestate);
+	MSG_WriteLong(&buf, clc.serverCommandSequence);
+
+	// configstrings
+	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
+	{
+		if (!cl.gameState.stringOffsets[i])
+		{
+			continue;
+		}
+		s = cl.gameState.stringData + cl.gameState.stringOffsets[i];
+		MSG_WriteByte(&buf, svc_configstring);
+		MSG_WriteShort(&buf, i);
+		MSG_WriteBigString(&buf, s);
+	}
+
+	// baselines
+	memset(&nullstate, 0, sizeof(nullstate));
+	for (i = 0; i < MAX_GENTITIES; i++)
+	{
+		ent = &cl.entityBaselines[i];
+		if (!ent->number)
+		{
+			continue;
+		}
+		MSG_WriteByte(&buf, svc_baseline);
+		MSG_WriteDeltaEntity(&buf, &nullstate, ent, qtrue);
+	}
+
+	MSG_WriteByte(&buf, svc_EOF);
+
+	// finished writing the gamestate stuff
+
+	// write the client num
+	MSG_WriteLong(&buf, clc.clientNum);
+	// write the checksum feed
+	MSG_WriteLong(&buf, clc.checksumFeed);
+
+	// finished writing the client packet
+	MSG_WriteByte(&buf, svc_EOF);
+
+	// write it to the demo file
+	len = LittleLong(clc.serverMessageSequence - 1);
+	FS_Write(&len, 4, clc.demofile);
+
+	len = LittleLong(buf.cursize);
+	FS_Write(&len, 4, clc.demofile);
+	FS_Write(buf.data, buf.cursize, clc.demofile);
+
+	// the rest of the demo file will be copied from net messages
+}
+
+/*
+=======================================================================
+CLIENT SIDE DEMO PLAYBACK
+=======================================================================
+*/
+
+/*
+=================
+CL_DemoCompleted
+=================
+*/
+void CL_DemoCompleted(void)
+{
+#if NEW_DEMOFUNC
+	if (di.testParse)
+	{
+		di.endOfDemo = qtrue;
+		Com_FuncPrinf("end of demo\n");
+		cls.state = CA_UNINITIALIZED;
+		return;
+	}
+	else
+	{
+		CL_FreeDemoPoints();
+	}
+#endif
+
+	if (cl_timedemo && cl_timedemo->integer)
+	{
+		int time;
+
+		time = Sys_Milliseconds() - clc.timeDemoStart;
+		if (time > 0)
+		{
+			Com_Printf("%i frames, %3.1f seconds: %3.1f fps\n", clc.timeDemoFrames,
+				time / 1000.0, clc.timeDemoFrames * 1000.0 / time);
+		}
+	}
+
+	if (CL_VideoRecording())
+	{
+		Cmd_ExecuteString("stopvideo");
+	}
+
+	if (clc.waverecording)
+	{
+		CL_WriteWaveClose();
+		clc.waverecording = qfalse;
+	}
+
+	CL_Disconnect(qtrue);
+	CL_NextDemo();
+}
+
+void CL_DemoRun(void)
+{
+	int loopCount = 0;
+	int startTime;
+	static int lastTime = -1;
+
+	// if we are playing a demo back, we can just keep reading
+	// messages from the demo file until the cgame definately
+	// has valid snapshots to interpolate between
+
+	// a timedemo will always use a deterministic set of time samples
+	// no matter what speed machine it is run on,
+	// while a normal demo may have different time samples
+	// each time it is played back
+	if (cl_timedemo->integer)
+	{
+		if (!clc.timeDemoStart)
+		{
+			clc.timeDemoStart = Sys_Milliseconds();
+		}
+		clc.timeDemoFrames++;
+		cl.serverTime = clc.timeDemoBaseTime + clc.timeDemoFrames * 50;
+	}
+
+	if (cl_freezeDemo->integer) {
+		return;
+	}
+
+	loopCount = 0;
+	startTime = cl.snap.serverTime;
+
+	while (cl.serverTime >= cl.snap.serverTime)
+	{
+		// feed another message, which should change the contents of cl.snap
+		CL_ReadDemoMessage();
+
+#if NEW_DEMOFUNC
+		DEMODEBUG("cl.serverTime >= cl.snap.serverTime   %d  %d  %d\n", cl.serverTime, cl.snap.serverTime, loopCount);
+
+		if (!di.testParse  &&  cls.state == CA_ACTIVE  &&  cl.serverTime > cl.snap.serverTime)
+		{
+			if (com_timescale->value > 1.0) {
+				if (startTime == cl.snap.serverTime || lastTime == cl.snap.serverTime)
+				{  // offline demo
+					lastTime = cl.snap.serverTime;
+					cl.oldServerTime = lastTime;
+					continue;
+				}
+				else
+				{
+					if (cl.serverTime > cl.snap.serverTime)
+					{
+						cl.serverTime = cl.snap.serverTime;
+						cls.realtime = cl.snap.serverTime;
+						cl.serverTimeDelta = 0;
+						cl.oldServerTime = lastTime;
+
+					}
+				}
+			}
+		}
+#endif
+
+		if (cls.state != CA_ACTIVE)
+		{
+			Cvar_Set("timescale", "1");
+			return;     // end of demo
+		}
+
+		loopCount++;
+	}
+}
+
+/*
+=================
+CL_ReadDemoMessage
+=================
+*/
+void CL_ReadDemoMessage(void)
+{
+	int   r;
+	msg_t buf;
+	byte  bufData[MAX_MSGLEN];
+	int   s;
+
+	if (!clc.demofile)
+	{
+		CL_DemoCompleted();
+		return;
+	}
+
+#if NEW_DEMOFUNC
+	if (di.testParse)
+	{
+		di.snapsInDemo++;
+	}
+	else
+	{
+		di.numSnaps++;
+	}
+
+	if (!di.testParse  &&  di.snapCount < maxRewindBackups &&
+		((!di.gotFirstSnap  &&  !(cls.state >= CA_CONNECTED && cls.state < CA_PRIMED))
+		|| (di.gotFirstSnap  &&  di.numSnaps % (di.snapsInDemo / maxRewindBackups) == 0)))
+	{
+		rewindBackups_t *rb;
+
+		if (!di.skipSnap)
+		{
+			// first snap triggers loading screen when rewinding
+			di.skipSnap = qtrue;
+			goto keep_reading;
+		}
+
+		di.gotFirstSnap = qtrue;
+		rb = &rewindBackups[di.snapCount];
+
+		if (!rb->valid)
+		{
+			rb->valid = qtrue;
+			rb->numSnaps = di.numSnaps;
+			rb->seekPoint = FS_FTell(clc.demofile);
+
+			memcpy(&rb->cl, &cl, sizeof(clientActive_t));
+			memcpy(&rb->clc, &clc, sizeof(clientConnection_t));
+			memcpy(&rb->cls, &cls, sizeof(clientStatic_t));
+		}
+		di.snapCount++;
+	}
+
+keep_reading:
+
+#endif
+
+	// get the sequence number
+	r = FS_Read(&s, 4, clc.demofile);
+	if (r != 4)
+	{
+		CL_DemoCompleted();
+		return;
+	}
+
+	clc.serverMessageSequence = LittleLong(s);
+
+	// init the message
+	MSG_Init(&buf, bufData, sizeof(bufData));
+
+	// get the length
+	r = FS_Read(&buf.cursize, 4, clc.demofile);
+
+	if (r != 4)
+	{
+		CL_DemoCompleted();
+		return;
+	}
+	buf.cursize = LittleLong(buf.cursize);
+	if (buf.cursize == -1)
+	{
+		CL_DemoCompleted();
+		return;
+	}
+
+	if (buf.cursize > buf.maxsize)
+	{
+		Com_Error(ERR_DROP, "CL_ReadDemoMessage: demoMsglen > MAX_MSGLEN");
+	}
+
+	r = FS_Read(buf.data, buf.cursize, clc.demofile);
+	if (r != buf.cursize)
+	{
+		Com_Printf("Demo file was truncated.\n");
+		CL_DemoCompleted();
+		return;
+	}
+
+	clc.lastPacketTime = cls.realtime;
+	buf.readcount = 0;
+	CL_ParseServerMessage(&buf);
+}
+
+/*
+====================
+CL_WalkDemoExt
+====================
+*/
+static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
+{
+	int i = 0;
+	*demofile = 0;
+
+	Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, PROTOCOL_VERSION);
+	FS_FOpenFileRead(name, demofile, qtrue);
+
+	if (*demofile)
+	{
+		Com_Printf("Demo file: %s\n", name);
+		return PROTOCOL_VERSION;
+	}
+
+	Com_Printf("Not found: %s\n", name);
+
+	while (demo_protocols[i])
+	{
+		if (demo_protocols[i] == PROTOCOL_VERSION)
+		{
+			continue;
+		}
+
+		Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, demo_protocols[i]);
+		FS_FOpenFileRead(name, demofile, qtrue);
+		if (*demofile)
+		{
+			Com_Printf("Demo file: %s\n", name);
+
+			return demo_protocols[i];
+		}
+		else
+		{
+			Com_Printf("Not found: %s\n", name);
+		}
+		i++;
+	}
+
+	return -1;
+}
+
+/*
+====================
+CL_CompleteDemoName
+====================
+*/
+static void CL_CompleteDemoName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		char demoExt[16];
+
+		Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", DEMOEXT, PROTOCOL_VERSION);
+		Field_CompleteFilename("demos", demoExt, qtrue, qtrue);
+	}
+}
+
+/**
+* @brief Usage: demo <demoname>
+*/
+void CL_PlayDemo_f(void)
+{
+	char name[MAX_OSPATH], retry[MAX_OSPATH];
+	char *arg, *ext_test;
+	int  protocol, i;
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf("playdemo <demoname>\n");
+		return;
+	}
+
+	// make sure a local server is killed
+	Cvar_Set("sv_killserver", "1");
+
+	CL_Disconnect(qtrue);
+
+	// open the demo file
+	arg = Cmd_Argv(1);
+	// check for an extension .DEMOEXT_?? (?? is protocol)
+	ext_test = strrchr(arg, '.');
+
+	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
+	{
+		protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
+
+		for (i = 0; demo_protocols[i]; i++)
+		{
+			if (demo_protocols[i] == protocol)
+			{
+				break;
+			}
+		}
+
+		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
+		{
+			Com_sprintf(name, sizeof(name), "demos/%s", arg);
+			FS_FOpenFileRead(name, &clc.demofile, qtrue);
+		}
+		else
+		{
+			int len;
+
+			Com_Printf("Protocol %d not supported for demos\n", protocol);
+			len = ext_test - arg;
+
+			if (len >= ARRAY_LEN(retry))
+			{
+				len = ARRAY_LEN(retry) - 1;
+			}
+
+			Q_strncpyz(retry, arg, len + 1);
+			retry[len] = '\0';
+			protocol = CL_WalkDemoExt(retry, name, &clc.demofile);
+		}
+	}
+	else
+	{
+		protocol = CL_WalkDemoExt(arg, name, &clc.demofile);
+	}
+
+	if (!clc.demofile)
+	{
+		Com_Error(ERR_DROP, "couldn't open %s", name);
+		return;
+	}
+	Q_strncpyz(clc.demoName, arg, sizeof(clc.demoName));
+
+	Con_Close();
+	
+#if NEW_DEMOFUNC
+	CL_AllocateDemoPoints();
+	CL_ParseDemo();
+#endif
+
+	cls.state = CA_CONNECTED;
+	clc.demoplaying = qtrue;
+
+	if (Cvar_VariableValue("cl_wavefilerecord"))
+	{
+		CL_WriteWaveOpen();
+	}
+
+	Q_strncpyz(cls.servername, arg, sizeof(cls.servername));
+
+	// read demo messages until connected
+	while (cls.state >= CA_CONNECTED && cls.state < CA_PRIMED)
+	{
+		CL_ReadDemoMessage();
+	}
+	// don't get the first snapshot this frame, to prevent the long
+	// time from the gamestate load from messing causing a time skip
+	clc.firstDemoFrameSkipped = qfalse;
+}
+
+/*
+==================
+CL_NextDemo
+
+Called when a demo or cinematic finishes
+If the "nextdemo" cvar is set, that command will be issued
+==================
+*/
+void CL_NextDemo(void)
+{
+	char v[MAX_STRING_CHARS];
+
+	Q_strncpyz(v, Cvar_VariableString("nextdemo"), sizeof(v));
+	v[MAX_STRING_CHARS - 1] = 0;
+	Com_DPrintf("CL_NextDemo: %s\n", v);
+	if (!v[0])
+	{
+		return;
+	}
+
+	Cvar_Set("nextdemo", "");
+	Cbuf_AddText(v);
+	Cbuf_AddText("\n");
+	Cbuf_Execute();
+}
+
+#if NEW_DEMOFUNC
+void CL_Rewind_f(void)
+{
+	double t;
+
+	if (!clc.demoplaying)
+	{
+		Com_Printf("not playing demo can't rewind\n");
+		return;
+	}
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("usage:  rewind <time in seconds>\n");
+		return;
+	}
+
+	if (!Q_isnumeric(Cmd_Argv(1)[0]))
+	{
+		t = Cvar_VariableValue(Cmd_Argv(1)) * 1000.0;
+	}
+	else
+	{
+		t = atof(Cmd_Argv(1)) * 1000.0;
+	}
+
+	if (cl.serverTime <= 0)
+	{
+		Com_Error(ERR_DROP, "Servertime was unacceptable: %i\n", cl.serverTime);
+		return;
+	}
+
+	DEMODEBUG("Servertime: %d snaptime: %d\n", cl.serverTime, cl.snap.serverTime);
+
+	CL_RewindDemo((double)cl.serverTime + Overf - t);
+}
+
+void CL_FastForward_f(void)
+{
+	double t;
+	double wantedTime;
+
+	if (!clc.demoplaying)
+	{
+		Com_Printf("not playing demo can't fast forward\n");
+		return;
+	}
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("usage:  fastforward <time in seconds>\n");
+		return;
+	}
+
+	if (!Q_isnumeric(Cmd_Argv(1)[0]))
+	{
+		t = Cvar_VariableValue(Cmd_Argv(1)) * 1000.0;
+	}
+	else
+	{
+		t = atof(Cmd_Argv(1)) * 1000.0;
+	}
+
+	if (cl.snap.serverTime)
+	{
+		wantedTime = (double)cl.serverTime + Overf + t;
+	}
+	else
+	{
+		wantedTime = (double)di.firstServerTime + t;
+	}
+
+	CL_DemoFastForward(wantedTime);
+}
+
+void CL_SeekServerTime_f(void)
+{
+	double f;
+
+	if (!clc.demoplaying)
+	{
+		Com_Printf("not playing demo can't seek\n");
+		return;
+	}
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("usage:  seekservertime <time in milliseconds>\n");
+		return;
+	}
+
+	f = atof(Cmd_Argv(1));
+	DEMODEBUG("%f\n", f);
+
+	CL_DemoSeekMs(f, -1);
+}
+
+void CL_Seek_f(void)
+{
+	double t;
+
+	if (!clc.demoplaying)
+	{
+		Com_Printf("not playing demo can't seek\n");
+		return;
+	}
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("usage:  seek <time in seconds>\n");
+		return;
+	}
+
+	if (!Q_isnumeric(Cmd_Argv(1)[0]))
+	{
+		t = Cvar_VariableValue(Cmd_Argv(1)) * 1000.0;
+	}
+	else
+	{
+		t = atof(Cmd_Argv(1)) * 1000.0;
+	}
+
+	CL_DemoSeekMs((double)di.firstServerTime + t, -1);
+}
+
+void CL_SeekEnd_f(void)
+{
+	double t;
+
+	if (!clc.demoplaying)
+	{
+		Com_Printf("not playing demo can't seek\n");
+		return;
+	}
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("usage:  seek <time in seconds>\n");
+		return;
+	}
+
+	if (!Q_isnumeric(Cmd_Argv(1)[0]))
+	{
+		t = Cvar_VariableValue(Cmd_Argv(1)) * 1000.0;
+	}
+	else
+	{
+		t = atof(Cmd_Argv(1)) * 1000.0;
+	}
+
+	CL_DemoSeekMs((double)di.lastServerTime - t, -1);
+}
+
+void CL_SeekNext_f(void)
+{
+	snapshot_t snapshot;
+	qboolean r;
+	int i;
+
+	if (cl.snap.serverTime == di.lastServerTime)
+	{
+		Com_FuncPrinf("at last snap\n");
+		return;
+	}
+
+	// takes into account offline demos with snaps with same server time
+	if (cl.serverTime < cl.snap.serverTime)
+	{
+		CL_DemoSeekMs(0, cl.snap.serverTime);
+		return;
+	}
+
+	i = 1;
+	while (1)
+	{
+		r = CL_PeekSnapshot(cl.snap.messageNum + i, &snapshot);
+		if (!r)
+		{
+			Com_FuncPrinf("couldn't get next snapshot\n");
+			return;
+		}
+
+		if (snapshot.serverTime > cl.serverTime)
+		{
+			break;
+		}
+		i++;
+	}
+
+	CL_DemoSeekMs(0, snapshot.serverTime);
+}
+
+void CL_SeekPrev_f(void)
+{
+	clSnapshot_t *clSnap;
+	int i = 0;
+
+	if (cl.snap.serverTime == di.firstServerTime)
+	{
+		Com_FuncPrinf("at first snap\n");
+		return;
+	}
+
+	// takes into account offline demos with snapshots having same server time
+	while (qtrue)
+	{
+		clSnap = &cl.snapshots[(cl.snap.messageNum - i) & PACKET_MASK];
+		if (clSnap->serverTime < cl.serverTime)
+		{
+			break;
+		}
+		i++;
+	}
+
+	CL_DemoSeekMs(0, clSnap->serverTime);
+}
+#endif
+
+void CL_Pause_f(void)
+{
+	static int pauseTime = 0;
+
+	if (!clc.demoplaying)
+	{
+		return;
+	}
+
+#if NEW_DEMOFUNC
+	if (!cl_freezeDemo->integer)
+	{
+		pauseTime = cl.serverTime;
+	}
+	else
+	{
+		//TODO: this is just a hack, actually fix the cl_freezeDemo instead of this
+		CL_DemoSeekMs(0, pauseTime);
+	}
+#endif
+
+	Cvar_SetValue("cl_freezeDemo", !cl_freezeDemo->integer);
+}
+
+void CL_DemoInit(void)
+{
+	Cmd_AddCommand("record", CL_Record_f);
+	Cmd_AddCommand("stoprecord", CL_StopRecord_f);
+	Cmd_AddCommand("demo", CL_PlayDemo_f);
+	Cmd_SetCommandCompletionFunc("demo", CL_CompleteDemoName);
+	Cmd_AddCommand("pausedemo", CL_Pause_f);
+
+#if NEW_DEMOFUNC
+	Cmd_AddCommand("rewind", CL_Rewind_f);
+	Cmd_AddCommand("fastforward", CL_FastForward_f);
+	Cmd_AddCommand("seekservertime", CL_SeekServerTime_f);
+	Cmd_AddCommand("seek", CL_Seek_f);
+	Cmd_AddCommand("seekend", CL_SeekEnd_f);
+	Cmd_AddCommand("seeknext", CL_SeekNext_f);
+	Cmd_AddCommand("seekprev", CL_SeekPrev_f);
+
+	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE | CVAR_LATCH);
+#endif
+}

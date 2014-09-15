@@ -292,11 +292,16 @@ void CG_DemoClick(int key, qboolean down)
 	// Timescale controls
 	case K_KP_5:
 	case K_KP_INS:
-	case K_SPACE:
 		if (!down)
 		{
 			trap_Cvar_Set("timescale", "1");
 			cgs.timescaleUpdate = cg.time + 1000;
+		}
+		return;
+	case K_SPACE:
+		if (!down)
+		{
+			trap_SendConsoleCommand("pausedemo");
 		}
 		return;
 	case K_KP_DOWNARROW:

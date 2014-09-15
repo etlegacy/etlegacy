@@ -442,7 +442,8 @@ extern cvar_t *cl_consoleKeys;
 //=================================================
 
 // cl_main
-
+void CL_WriteWaveOpen(void);
+void CL_WriteWaveClose(void);
 void CL_Init(void);
 void CL_FlushMemory(void);
 void CL_ShutdownAll(void);
@@ -457,6 +458,7 @@ void CL_GetChallengePacket(void);
 void CL_Vid_Restart_f(void);
 void CL_Snd_Restart_f(void);
 void CL_NextDemo(void);
+void CL_DemoRun(void);
 void CL_ReadDemoMessage(void);
 
 void CL_InitDownloads(void);
@@ -491,6 +493,11 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size);
 void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size);
 qboolean CL_CloseAVI(void);
 qboolean CL_VideoRecording(void);
+
+// cl_demo
+void CL_WriteDemoMessage(msg_t *msg, int headerBytes);
+void CL_StopRecord_f(void);
+void CL_DemoInit(void);
 
 // cl_input
 

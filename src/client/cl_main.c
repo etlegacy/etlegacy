@@ -206,332 +206,6 @@ void CL_AddReliableCommand(const char *cmd)
 }
 
 /*
-=======================================================================
-CLIENT SIDE DEMO RECORDING
-=======================================================================
-*/
-
-/*
-====================
-CL_WriteDemoMessage
-
-Dumps the current net message, prefixed by the length
-====================
-*/
-void CL_WriteDemoMessage(msg_t *msg, int headerBytes)
-{
-	int len, swlen;
-
-	// write the packet sequence
-	len   = clc.serverMessageSequence;
-	swlen = LittleLong(len);
-	FS_Write(&swlen, 4, clc.demofile);
-
-	// skip the packet sequencing information
-	len   = msg->cursize - headerBytes;
-	swlen = LittleLong(len);
-	FS_Write(&swlen, 4, clc.demofile);
-	FS_Write(msg->data + headerBytes, len, clc.demofile);
-}
-
-/*
-====================
-CL_StopRecording_f
-
-stop recording a demo
-====================
-*/
-void CL_StopRecord_f(void)
-{
-	int len;
-
-	if (!clc.demorecording)
-	{
-		Com_Printf("Not recording a demo.\n");
-		return;
-	}
-
-	// finish up
-	len = -1;
-	FS_Write(&len, 4, clc.demofile);
-	FS_Write(&len, 4, clc.demofile);
-	FS_FCloseFile(clc.demofile);
-	clc.demofile = 0;
-
-	clc.demorecording = qfalse;
-	Cvar_Set("cl_demorecording", "0");
-	Cvar_Set("cl_demofilename", "");
-	Cvar_Set("cl_demooffset", "0");
-	Com_Printf("Stopped demo.\n");
-}
-
-/*
-==================
-CL_DemoFilename
-==================
-*/
-void CL_DemoFilename(int number, char *fileName)
-{
-	if (number < 0 || number > 9999)
-	{
-		Com_sprintf(fileName, MAX_OSPATH, "demo9999");
-		return;
-	}
-
-	Com_sprintf(fileName, MAX_OSPATH, "demo%04i", number);
-}
-
-/*
-====================
-CL_Record_f
-
-record <demoname>
-
-Begins recording a demo from the current position
-====================
-*/
-
-static char demoName[MAX_QPATH];        // compiler bug workaround
-void CL_Record_f(void)
-{
-	char name[MAX_OSPATH];
-	char *s;
-
-	if (Cmd_Argc() > 2)
-	{
-		Com_Printf("record <demoname>\n");
-		return;
-	}
-
-	if (clc.demorecording)
-	{
-		Com_Printf("Already recording.\n");
-		return;
-	}
-
-	if (cls.state != CA_ACTIVE)
-	{
-		Com_Printf("You must be in a level to record.\n");
-		return;
-	}
-
-	if (Cmd_Argc() == 2)
-	{
-		s = Cmd_Argv(1);
-		Q_strncpyz(demoName, s, sizeof(demoName));
-		Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
-	}
-	else
-	{
-		int number, len;
-
-		// scan for a free demo name
-		for (number = 0 ; number <= 9999 ; number++)
-		{
-			CL_DemoFilename(number, demoName);
-			Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
-
-			len = FS_ReadFile(name, NULL);
-			if (len <= 0)
-			{
-				break;  // file doesn't exist
-			}
-		}
-	}
-
-	CL_Record(name);
-}
-
-void CL_Record(const char *name)
-{
-	int           i;
-	msg_t         buf;
-	byte          bufData[MAX_MSGLEN];
-	entityState_t *ent;
-	entityState_t nullstate;
-	char          *s;
-	int           len;
-
-	// open the demo file
-	Com_Printf("Recording to %s.\n", name);
-	clc.demofile = FS_FOpenFileWrite(name);
-	if (!clc.demofile)
-	{
-		Com_Printf("ERROR: couldn't open.\n");
-		return;
-	}
-
-	clc.demorecording = qtrue;
-	Cvar_Set("cl_demorecording", "1");    // fretn
-	Q_strncpyz(clc.demoName, demoName, sizeof(clc.demoName));
-	Cvar_Set("cl_demofilename", clc.demoName);    // bani
-	Cvar_Set("cl_demooffset", "0");    // bani
-
-	// don't start saving messages until a non-delta compressed message is received
-	clc.demowaiting = qtrue;
-
-	// write out the gamestate message
-	MSG_Init(&buf, bufData, sizeof(bufData));
-	MSG_Bitstream(&buf);
-
-	// NOTE: all server->client messages now acknowledge
-	MSG_WriteLong(&buf, clc.reliableSequence);
-
-	MSG_WriteByte(&buf, svc_gamestate);
-	MSG_WriteLong(&buf, clc.serverCommandSequence);
-
-	// configstrings
-	for (i = 0 ; i < MAX_CONFIGSTRINGS ; i++)
-	{
-		if (!cl.gameState.stringOffsets[i])
-		{
-			continue;
-		}
-		s = cl.gameState.stringData + cl.gameState.stringOffsets[i];
-		MSG_WriteByte(&buf, svc_configstring);
-		MSG_WriteShort(&buf, i);
-		MSG_WriteBigString(&buf, s);
-	}
-
-	// baselines
-	memset(&nullstate, 0, sizeof(nullstate));
-	for (i = 0; i < MAX_GENTITIES ; i++)
-	{
-		ent = &cl.entityBaselines[i];
-		if (!ent->number)
-		{
-			continue;
-		}
-		MSG_WriteByte(&buf, svc_baseline);
-		MSG_WriteDeltaEntity(&buf, &nullstate, ent, qtrue);
-	}
-
-	MSG_WriteByte(&buf, svc_EOF);
-
-	// finished writing the gamestate stuff
-
-	// write the client num
-	MSG_WriteLong(&buf, clc.clientNum);
-	// write the checksum feed
-	MSG_WriteLong(&buf, clc.checksumFeed);
-
-	// finished writing the client packet
-	MSG_WriteByte(&buf, svc_EOF);
-
-	// write it to the demo file
-	len = LittleLong(clc.serverMessageSequence - 1);
-	FS_Write(&len, 4, clc.demofile);
-
-	len = LittleLong(buf.cursize);
-	FS_Write(&len, 4, clc.demofile);
-	FS_Write(buf.data, buf.cursize, clc.demofile);
-
-	// the rest of the demo file will be copied from net messages
-}
-
-/*
-=======================================================================
-CLIENT SIDE DEMO PLAYBACK
-=======================================================================
-*/
-
-/*
-=================
-CL_DemoCompleted
-=================
-*/
-void CL_DemoCompleted(void)
-{
-	if (cl_timedemo && cl_timedemo->integer)
-	{
-		int time;
-
-		time = Sys_Milliseconds() - clc.timeDemoStart;
-		if (time > 0)
-		{
-			Com_Printf("%i frames, %3.1f seconds: %3.1f fps\n", clc.timeDemoFrames,
-			           time / 1000.0, clc.timeDemoFrames * 1000.0 / time);
-		}
-	}
-
-	if (CL_VideoRecording())
-	{
-		Cmd_ExecuteString("stopvideo");
-	}
-
-	if (clc.waverecording)
-	{
-		CL_WriteWaveClose();
-		clc.waverecording = qfalse;
-	}
-
-	CL_Disconnect(qtrue);
-	CL_NextDemo();
-}
-
-/*
-=================
-CL_ReadDemoMessage
-=================
-*/
-void CL_ReadDemoMessage(void)
-{
-	int   r;
-	msg_t buf;
-	byte  bufData[MAX_MSGLEN];
-	int   s;
-
-	if (!clc.demofile)
-	{
-		CL_DemoCompleted();
-		return;
-	}
-
-	// get the sequence number
-	r = FS_Read(&s, 4, clc.demofile);
-	if (r != 4)
-	{
-		CL_DemoCompleted();
-		return;
-	}
-
-	clc.serverMessageSequence = LittleLong(s);
-
-	// init the message
-	MSG_Init(&buf, bufData, sizeof(bufData));
-
-	// get the length
-	r = FS_Read(&buf.cursize, 4, clc.demofile);
-
-	if (r != 4)
-	{
-		CL_DemoCompleted();
-		return;
-	}
-	buf.cursize = LittleLong(buf.cursize);
-	if (buf.cursize == -1)
-	{
-		CL_DemoCompleted();
-		return;
-	}
-	if (buf.cursize > buf.maxsize)
-	{
-		Com_Error(ERR_DROP, "CL_ReadDemoMessage: demoMsglen > MAX_MSGLEN");
-	}
-	r = FS_Read(buf.data, buf.cursize, clc.demofile);
-	if (r != buf.cursize)
-	{
-		Com_Printf("Demo file was truncated.\n");
-		CL_DemoCompleted();
-		return;
-	}
-
-	clc.lastPacketTime = cls.realtime;
-	buf.readcount      = 0;
-	CL_ParseServerMessage(&buf);
-}
-
-/*
 ====================
   Wave file saving functions
 
@@ -541,7 +215,7 @@ void CL_ReadDemoMessage(void)
 
 /*
 ==================
-CL_DemoFilename
+CL_WavFilename
 ==================
 */
 void CL_WavFilename(int number, char *fileName)
@@ -689,191 +363,6 @@ void CL_WriteWaveClose()
 	// and we're outta here
 	FS_FCloseFile(clc.wavefile);
 	clc.wavefile = 0;
-}
-
-/*
-====================
-CL_WalkDemoExt
-====================
-*/
-static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
-{
-	int i = 0;
-	*demofile = 0;
-
-	Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, PROTOCOL_VERSION);
-	FS_FOpenFileRead(name, demofile, qtrue);
-
-	if (*demofile)
-	{
-		Com_Printf("Demo file: %s\n", name);
-		return PROTOCOL_VERSION;
-	}
-
-	Com_Printf("Not found: %s\n", name);
-
-	while (demo_protocols[i])
-	{
-		if (demo_protocols[i] == PROTOCOL_VERSION)
-		{
-			continue;
-		}
-
-		Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, demo_protocols[i]);
-		FS_FOpenFileRead(name, demofile, qtrue);
-		if (*demofile)
-		{
-			Com_Printf("Demo file: %s\n", name);
-
-			return demo_protocols[i];
-		}
-		else
-		{
-			Com_Printf("Not found: %s\n", name);
-		}
-		i++;
-	}
-
-	return -1;
-}
-
-/*
-====================
-CL_CompleteDemoName
-====================
-*/
-static void CL_CompleteDemoName(char *args, int argNum)
-{
-	if (argNum == 2)
-	{
-		char demoExt[16];
-
-		Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", DEMOEXT, PROTOCOL_VERSION);
-		Field_CompleteFilename("demos", demoExt, qtrue, qtrue);
-	}
-}
-
-/**
- * @brief Usage: demo <demoname>
- */
-void CL_PlayDemo_f(void)
-{
-	char name[MAX_OSPATH], retry[MAX_OSPATH];
-	char *arg, *ext_test;
-	int  protocol, i;
-
-	if (Cmd_Argc() != 2)
-	{
-		Com_Printf("playdemo <demoname>\n");
-		return;
-	}
-
-	// make sure a local server is killed
-	Cvar_Set("sv_killserver", "1");
-
-	CL_Disconnect(qtrue);
-
-	// open the demo file
-	arg = Cmd_Argv(1);
-	// check for an extension .DEMOEXT_?? (?? is protocol)
-	ext_test = strrchr(arg, '.');
-
-	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
-	{
-		protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
-
-		for (i = 0; demo_protocols[i]; i++)
-		{
-			if (demo_protocols[i] == protocol)
-			{
-				break;
-			}
-		}
-
-		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
-		{
-			Com_sprintf(name, sizeof(name), "demos/%s", arg);
-			FS_FOpenFileRead(name, &clc.demofile, qtrue);
-		}
-		else
-		{
-			int len;
-
-			Com_Printf("Protocol %d not supported for demos\n", protocol);
-			len = ext_test - arg;
-
-			if (len >= ARRAY_LEN(retry))
-			{
-				len = ARRAY_LEN(retry) - 1;
-			}
-
-			Q_strncpyz(retry, arg, len + 1);
-			retry[len] = '\0';
-			protocol   = CL_WalkDemoExt(retry, name, &clc.demofile);
-		}
-	}
-	else
-	{
-		protocol = CL_WalkDemoExt(arg, name, &clc.demofile);
-	}
-
-	if (!clc.demofile)
-	{
-		Com_Error(ERR_DROP, "couldn't open %s", name);
-		return;
-	}
-	Q_strncpyz(clc.demoName, arg, sizeof(clc.demoName));
-
-	Con_Close();
-
-	cls.state       = CA_CONNECTED;
-	clc.demoplaying = qtrue;
-
-	if (Cvar_VariableValue("cl_wavefilerecord"))
-	{
-		CL_WriteWaveOpen();
-	}
-
-	Q_strncpyz(cls.servername, arg, sizeof(cls.servername));
-
-	// read demo messages until connected
-	while (cls.state >= CA_CONNECTED && cls.state < CA_PRIMED)
-	{
-		CL_ReadDemoMessage();
-	}
-	// don't get the first snapshot this frame, to prevent the long
-	// time from the gamestate load from messing causing a time skip
-	clc.firstDemoFrameSkipped = qfalse;
-	//if (clc.waverecording) {
-	//  CL_WriteWaveClose();
-	//  clc.waverecording = qfalse;
-	//}
-}
-
-/*
-==================
-CL_NextDemo
-
-Called when a demo or cinematic finishes
-If the "nextdemo" cvar is set, that command will be issued
-==================
-*/
-void CL_NextDemo(void)
-{
-	char v[MAX_STRING_CHARS];
-
-	Q_strncpyz(v, Cvar_VariableString("nextdemo"), sizeof(v));
-	v[MAX_STRING_CHARS - 1] = 0;
-	Com_DPrintf("CL_NextDemo: %s\n", v);
-	if (!v[0])
-	{
-		return;
-	}
-
-	Cvar_Set("nextdemo", "");
-	Cbuf_AddText(v);
-	Cbuf_AddText("\n");
-	Cbuf_Execute();
 }
 
 //======================================================================
@@ -1119,6 +608,8 @@ void CL_Disconnect(qboolean showMainMenu)
 
 	// shutting down the client so enter full screen ui mode
 	Cvar_Set("r_uiFullScreen", "1");
+
+	Cvar_Set("cl_freezeDemo", "0");
 
 	if (clc.demorecording)
 	{
@@ -1614,10 +1105,6 @@ void CL_Vid_Restart_f(void)
 		//Stop recording and close the avi file before vid_restart
 		Cmd_ExecuteString("stopvideo");
 	}
-
-	// Do we want to stop the recording of demos on vid_restart?
-	//if(clc.demorecording)
-	//  CL_StopRecord_f();
 
 	// don't let them loop during the restart
 	S_StopAllSounds();
@@ -2647,7 +2134,8 @@ void CL_CheckTimeout(void)
 	// check timeout
 	if ((!cl_paused->integer || !sv_paused->integer)
 	    && cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
-	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000)
+	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
+		&& !(clc.demoplaying && cl_freezeDemo->integer))
 	{
 		if (++cl.timeoutcount > 5)        // timeoutcount saves debugger
 		{
@@ -3648,11 +3136,7 @@ void CL_Init(void)
 	Cmd_AddCommand("vid_restart", CL_Vid_Restart_f);
 	Cmd_AddCommand("ui_restart", CL_UI_Restart_f);
 	Cmd_AddCommand("disconnect", CL_Disconnect_f);
-	Cmd_AddCommand("record", CL_Record_f);
-	Cmd_AddCommand("demo", CL_PlayDemo_f);
-	Cmd_SetCommandCompletionFunc("demo", CL_CompleteDemoName);
 	Cmd_AddCommand("cinematic", CL_PlayCinematic_f);
-	Cmd_AddCommand("stoprecord", CL_StopRecord_f);
 	Cmd_AddCommand("connect", CL_Connect_f);
 	Cmd_AddCommand("reconnect", CL_Reconnect_f);
 	Cmd_AddCommand("localservers", CL_LocalServers_f);
@@ -3693,6 +3177,8 @@ void CL_Init(void)
 	// Avi recording
 	Cmd_AddCommand("video", CL_Video_f);
 	Cmd_AddCommand("stopvideo", CL_StopVideo_f);
+
+	CL_DemoInit();
 
 	CL_InitRef();
 
