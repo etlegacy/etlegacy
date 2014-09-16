@@ -278,7 +278,6 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 	}
 	else
 	{
-
 		G_Printf("Ignoring rules for map: %s\n", token.string);
 		return G_ParseSettings(handle, qfalse, config);
 	}
