@@ -1701,6 +1701,7 @@ void R_Init(void)
 	backEndData              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData), h_low);
 	backEndData->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
 	backEndData->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
+	backEndData->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
 
 	R_InitNextFrame();
 
