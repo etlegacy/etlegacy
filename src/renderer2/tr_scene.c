@@ -296,7 +296,7 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 		return;
 	}
 
-	if (r_numPolybuffers >= MAX_POLYBUFFERS)
+	if (r_numPolybuffers >= r_maxpolyverts->integer)
 	{
 		return;
 	}

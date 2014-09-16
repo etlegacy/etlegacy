@@ -340,9 +340,9 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 	vec3_t          bounds[2];
 	int             i;
 
-	if (r_numpolybuffers >= MAX_POLYBUFFERS)
+	if (r_numpolybuffers >= r_maxpolys->integer)
 	{
-		Ren_Warning("WARNING RE_AddPolyBufferToScene: MAX_POLYBUFFERS (%d) reached\n", MAX_POLYBUFFERS);
+		Ren_Warning("WARNING RE_AddPolyBufferToScene: r_maxpolys reached\n");
 		return;
 	}
 
