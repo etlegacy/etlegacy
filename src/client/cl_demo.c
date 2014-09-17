@@ -36,6 +36,9 @@
 #define Com_FuncPrinf(msg, ...) Com_Printf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
 #define Com_FuncDPrinf(msg, ...) Com_DPrintf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
 #define Com_FuncError(msg, ...) Com_Error(ERR_FATAL, "%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+#define Com_FuncDrop(msg, ...) Com_Error(ERR_DROP, "%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+
+#define IS_LEGACY_MOD (Q_stricmp(Cvar_VariableString("fs_game"), DEFAULT_MODGAME) == 0)
 
 #ifdef LEGACY_DEBUG
 #define DEMODEBUG(msg, ...) if (Cvar_VariableIntegerValue("demo_debug")) { Com_Printf("^1%s()^2: DEBUG " msg, __FUNCTION__, ## __VA_ARGS__); }
@@ -44,19 +47,18 @@
 #endif
 
 #define MEGABYTES(x) x / 1024.0 / 1024.0
-
-#define MAX_DEMO_FILES 64
 #define MAX_REWIND_BACKUPS 20
-
-#define MAX_DEMO_OBITS (1024 * 2)
-#define MAX_ITEM_PICKUPS (1024 * 4)
-#define MAX_TIMEOUTS (256)
 
 extern qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
 extern void CL_ParseSnapshot(msg_t *msg);
 extern qboolean CL_GetServerCommand(int serverCommandNumber);
+extern void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe);
+extern void CL_AdjustTimeDelta(void);
 
-#define NEW_DEMOFUNC 0
+int CL_WalkDemoExt(char *arg, char *name, int *demofile);
+void CL_DemoCompleted(void);
+
+#define NEW_DEMOFUNC 1
 
 #if NEW_DEMOFUNC
 typedef struct
@@ -77,10 +79,6 @@ typedef struct
 	qboolean gotFirstSnap;
 	qboolean skipSnap;
 
-	qboolean endOfDemo;
-	qboolean testParse;
-
-	qboolean offlineDemo;
 	qboolean hasWarmup;
 	qboolean seeking;
 
@@ -406,6 +404,12 @@ static void CL_RewindDemo(double wantedTime)
 	int             i;
 	rewindBackups_t *rb;
 
+	if (!IS_LEGACY_MOD)
+	{
+		Com_Printf("Rewind is only supported on legacy mod, sorry\n");
+		return;
+	}
+
 	if (wantedTime < (double)di.firstServerTime)
 	{
 		wantedTime = di.firstServerTime;
@@ -484,133 +488,320 @@ static void CL_DemoSeekMs(double ms, int exactServerTime)  // server time in mil
 	}
 }
 
-static void CL_ParseDemo(void)
+static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 {
-	int          msec;
-	int          fps;
-	int          demofile;
-	int          tstart;
-	int          serverTime;
-	int          lastMessageNum = -1;
-	clSnapshot_t *oldSnap       = NULL;
+	int          len;
+	clSnapshot_t *old;
+	clSnapshot_t newSnap;
+	int          deltaNum;
+	int          oldMessageNum;
+	int          i, packetNum;
 
-	tstart           = Sys_Milliseconds();
-	di.gameStartTime = -1;
-	di.gameEndTime   = -1;
-
-	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
-	cls.state       = CA_CONNECTED;
-	clc.demoplaying = qtrue;
-	di.testParse    = qtrue;
-
-	di.demoPos = FS_FTell(clc.demofile);
-
-	// get gameState
-	CL_ReadDemoMessage();
-
-	if (!cl.gameState.dataCount)
+	memset(&newSnap, 0, sizeof(newSnap));
+	newSnap.serverCommandNum = clc.serverCommandSequence;
+	newSnap.serverTime = MSG_ReadLong(msg);
+	newSnap.messageNum = clc.serverMessageSequence;
+	deltaNum = MSG_ReadByte(msg);
+	if (!deltaNum)
 	{
-		Com_Printf("couldn't get gameState\n");
+		newSnap.deltaNum = -1;
+	}
+	else
+	{
+		newSnap.deltaNum = newSnap.messageNum - deltaNum;
+	}
+	newSnap.snapFlags = MSG_ReadByte(msg);
+
+	if (newSnap.deltaNum <= 0)
+	{
+		newSnap.valid = qtrue;      // uncompressed frame
+		old = NULL;
+	}
+	else
+	{
+		old = &cl.snapshots[newSnap.deltaNum & PACKET_MASK];
+		if (!old->valid)
+		{
+			// should never happen
+			Com_Printf("Delta from invalid frame (not supposed to happen!).\n");
+		}
+		else if (old->messageNum != newSnap.deltaNum)
+		{
+			// The frame that the server did the delta from
+			// is too old, so we can't reconstruct it properly.
+			Com_DPrintf("Delta frame too old.\n");
+		}
+		else if (cl.parseEntitiesNum - old->parseEntitiesNum > MAX_PARSE_ENTITIES - 128)
+		{
+			Com_DPrintf("Delta parseEntitiesNum too old.\n");
+		}
+		else
+		{
+			newSnap.valid = qtrue;  // valid delta parse
+		}
 	}
 
-	cls.state = CA_PRIMED;
+	// read areamask
+	len = MSG_ReadByte(msg);
 
-	clc.firstDemoFrameSkipped = qfalse;
+	if (len > sizeof(newSnap.areamask))
+	{
+		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.", len);
+		return;
+	}
 
-	fps  = 125;
-	msec = 0;
+	MSG_ReadData(msg, &newSnap.areamask, len);
+
+	if (old)
+	{
+		MSG_ReadDeltaPlayerstate(msg, &old->ps, &newSnap.ps);
+	}
+	else
+	{
+		MSG_ReadDeltaPlayerstate(msg, NULL, &newSnap.ps);
+	}
+
+	// read packet entities
+	CL_ParsePacketEntities(msg, old, &newSnap);
+
+	// if not valid, dump the entire thing now that it has
+	// been properly read
+	if (!newSnap.valid)
+	{
+		return;
+	}
+
+	// clear the valid flags of any snapshots between the last
+	// received and this one, so if there was a dropped packet
+	// it won't look like something valid to delta from next
+	// time we wrap around in the buffer
+	oldMessageNum = cl.snap.messageNum + 1;
+
+	if (newSnap.messageNum - oldMessageNum >= PACKET_BACKUP)
+	{
+		oldMessageNum = newSnap.messageNum - (PACKET_BACKUP - 1);
+	}
+	for (; oldMessageNum < newSnap.messageNum; oldMessageNum++)
+	{
+		cl.snapshots[oldMessageNum & PACKET_MASK].valid = qfalse;
+	}
+
+	// copy to the current good spot
+	cl.snap = newSnap;
+	cl.snap.ping = 999;
+	// calculate ping time
+	for (i = 0; i < PACKET_BACKUP; i++)
+	{
+		packetNum = (clc.netchan.outgoingSequence - 1 - i) & PACKET_MASK;
+		if (cl.snap.ps.commandTime >= cl.outPackets[packetNum].p_serverTime)
+		{
+			cl.snap.ping = cls.realtime - cl.outPackets[packetNum].p_realtime;
+			break;
+		}
+	}
+	// save the frame off in the backup array for later delta comparisons
+	cl.snapshots[cl.snap.messageNum & PACKET_MASK] = cl.snap;
+	cl.newSnapshots = qtrue;
+}
+
+//Do very shallow parse of the demo (could be extended) just to get times and snapshot count
+static void CL_ParseDemo(void)
+{
+	int tstart = 0;
+	int demofile = 0;
+
+	//Reset our demo data
+	memset(&di, 0, sizeof(di));
+
+	//Parse start
+	di.gameStartTime = -1;
+	di.gameEndTime = -1;
+	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
+	tstart = Sys_Milliseconds();
+
 	while (qtrue)
 	{
-		msec              = 1000 / fps;
-		cls.realFrametime = msec;
-		cls.frametime     = msec;
-		cls.realtime     += cls.frametime;
+		int   r;
+		msg_t buf;
+		msg_t *msg;
+		byte  bufData[MAX_MSGLEN];
+		int   s;
+		int cmd;
 
 		di.demoPos = FS_FTell(clc.demofile);
-		CL_SetCGameTime();
 
-		if (di.endOfDemo)
+		// get the sequence number
+		r = FS_Read(&s, 4, clc.demofile);
+		if (r != 4)
+		{
+			CL_DemoCompleted();
+			return;
+		}
+
+		clc.serverMessageSequence = LittleLong(s);
+
+		// init the message
+		MSG_Init(&buf, bufData, sizeof(bufData));
+
+		// get the length
+		r = FS_Read(&buf.cursize, 4, clc.demofile);
+
+		if (r != 4)
 		{
 			break;
 		}
 
-		serverTime = 0;
-
-		if (cls.state == CA_PRIMED || cls.state == CA_ACTIVE)
+		buf.cursize = LittleLong(buf.cursize);
+		if (buf.cursize == -1)
 		{
-			int          lastServerTime;
-			clSnapshot_t *snap;
+			break;
+		}
 
-			snap           = &cl.snap;
-			lastServerTime = serverTime;
-			serverTime     = snap->serverTime;
+		if (buf.cursize > buf.maxsize)
+		{
+			Com_FuncPrinf("demoMsglen > MAX_MSGLEN");
+			break;
+		}
 
-			if (serverTime  &&  serverTime == lastServerTime)
+		r = FS_Read(buf.data, buf.cursize, clc.demofile);
+		if (r != buf.cursize)
+		{
+			Com_FuncPrinf("Demo file was truncated.\n");
+			break;
+		}
+
+		clc.lastPacketTime = cls.realtime;
+		buf.readcount = 0;
+
+		//parse
+		msg = &buf;
+		MSG_Bitstream(msg);
+
+		// get the reliable sequence acknowledge number
+		clc.reliableAcknowledge = MSG_ReadLong(msg);
+
+		if (clc.reliableAcknowledge < clc.reliableSequence - MAX_RELIABLE_COMMANDS)
+		{
+			clc.reliableAcknowledge = clc.reliableSequence;
+		}
+
+		// parse the message
+		while (qtrue)
+		{
+			if (msg->readcount > msg->cursize)
 			{
-				//goto newloop;
-				//continue;
+				Com_FuncDrop("read past end of server message");
+				break;
 			}
 
-			if (!snap->valid)
+			cmd = MSG_ReadByte(msg);
+
+			if (cmd == svc_EOF)
 			{
-				Com_Printf("invalid snap %d  serverTime %d\n", snap->messageNum, snap->serverTime);
-				goto newloop;
+				break;
 			}
 
-			if (di.lastServerTime  &&  di.lastServerTime == snap->serverTime)
+			// other commands
+			switch (cmd)
 			{
-				di.offlineDemo = qtrue;
-			}
-
-			if (di.firstServerTime  &&  serverTime - di.lastServerTime > 0 && (serverTime - di.lastServerTime < di.serverFrameTime || !di.serverFrameTime))
-			{
-				di.serverFrameTime = serverTime - di.lastServerTime;
-				Com_Printf("parse demo serverFrameTime %d ms\n", di.serverFrameTime);
-			}
-
-			di.lastServerTime = serverTime;
-
-			if (di.firstServerTime == 0)
-			{
-				di.firstServerTime = serverTime;
-				Com_Printf("firstServerTime %d\n", serverTime);
-			}
-
-			if (snap->deltaNum <= 0)
-			{
-				DEMODEBUG("uncompressed serverTime %d   demoPos %d   snap %d\n", serverTime, di.demoPos, di.snapsInDemo);
-			}
-
-			if (lastMessageNum != snap->messageNum)
-			{
-				oldSnap = &cl.snapshots[(cl.snap.messageNum - 1) & PACKET_MASK];
-				if (cl.parseEntitiesNum - snap->parseEntitiesNum >= MAX_PARSE_ENTITIES)
+			default:
+				Com_FuncDrop("Illegible server message %d", cmd);
+				break;
+			case svc_nop:
+				break;
+			case svc_serverCommand:
+				MSG_ReadLong(msg);
+				MSG_ReadString(msg);
+				break;
+			case svc_gamestate:
+				clc.serverCommandSequence = MSG_ReadLong(msg);
+				cl.gameState.dataCount = 1;
+				while (qtrue)
 				{
-					DEMODEBUG("cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES");
+					int cmd2 = MSG_ReadByte(msg);
+					if (cmd2 == svc_EOF)
+					{
+						break;
+					}
+					if (cmd2 == svc_configstring)
+					{
+						MSG_ReadShort(msg);
+						MSG_ReadBigString(msg);
+					}
+					else if (cmd2 == svc_baseline)
+					{
+						entityState_t s1, s2;
+						memset(&s1, 0, sizeof(s1));
+						memset(&s2, 0, sizeof(s2));
+						MSG_ReadBits(msg, GENTITYNUM_BITS);
+						MSG_ReadDeltaEntity(msg, &s1, &s2, 0);
+					}
+					else
+					{
+						Com_FuncDrop("bad command byte");
+					}
 				}
+				MSG_ReadLong(msg);
+				MSG_ReadLong(msg);
+				break;
+			case svc_snapshot:
+				CL_ParseDemoSnapShotSimple(msg);
+				break;
+			case svc_download:
+				MSG_ReadShort(msg);
 
-				//TODO: we could parse the snap and oldSnap here..
+				break;
 			}
 		}
 
-		lastMessageNum = cl.snap.messageNum;
+		if (!cl.snap.valid)
+		{
+			Com_FuncPrinf("!cl.snap.valid\n");
+			continue;
+		}
 
-newloop:
-		cls.framecount++;
+		if (cl.snap.serverTime < cl.oldFrameServerTime)
+		{
+			// ignore snapshots that don't have entities
+			if (cl.snap.snapFlags & SNAPFLAG_NOT_ACTIVE)
+			{
+				continue;
+			}
+			cls.state = CA_ACTIVE;
+
+			// set the timedelta so we are exactly on this first frame
+			cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
+			cl.oldServerTime = cl.snap.serverTime;
+
+			clc.timeDemoBaseTime = cl.snap.serverTime;
+		}
+		cl.oldFrameServerTime = cl.snap.serverTime;
+
+		if (cl.newSnapshots)
+		{
+			CL_AdjustTimeDelta();
+		}
+
+		di.lastServerTime = cl.snap.serverTime;
+		if (di.firstServerTime == 0)
+		{
+			di.firstServerTime = cl.snap.serverTime;
+			Com_Printf("firstServerTime %d\n", di.firstServerTime);
+		}
+
+		di.snapsInDemo++;
 	}
 
+	Com_FuncPrinf("Snaps in demo: %i\n", di.snapsInDemo);
 	Com_Printf("last serverTime %d   total %f minutes\n", cl.snap.serverTime, (cl.snap.serverTime - di.firstServerTime) / 1000.0 / 60.0);
-	Com_Printf("%d snaps in demo\n", di.snapsInDemo);
 	Com_Printf("parse time %f seconds\n", (float)(Sys_Milliseconds() - tstart) / 1000.0);
 	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
 	clc.demoplaying = qfalse;
-	di.testParse    = qfalse;
-	// CL_Disconnect(qtrue);
 	demofile = clc.demofile;
 	CL_ClearState();
 	Com_Memset(&clc, 0, sizeof(clc));
-	clc.demofile             = demofile;
-	cls.state                = CA_DISCONNECTED;
+	clc.demofile = demofile;
+	cls.state = CA_DISCONNECTED;
 	cl_connectedToPureServer = qfalse;
 }
 
@@ -618,16 +809,8 @@ void CL_FreeDemoPoints(void)
 {
 	if (rewindBackups)
 	{
-		/*
-		int i = 0;
-		for (; i < maxRewindBackups; i++)
-		{
-		rewindBackups[i].valid = qfalse;
-		}
-
-		memset(&di, 0, sizeof(demoInfo_t));
-		*/
 		Com_Dealloc(rewindBackups);
+		rewindBackups = NULL;
 	}
 }
 
@@ -891,17 +1074,7 @@ CL_DemoCompleted
 void CL_DemoCompleted(void)
 {
 #if NEW_DEMOFUNC
-	if (di.testParse)
-	{
-		di.endOfDemo = qtrue;
-		Com_FuncPrinf("end of demo\n");
-		cls.state = CA_UNINITIALIZED;
-		return;
-	}
-	else
-	{
-		CL_FreeDemoPoints();
-	}
+	CL_FreeDemoPoints();
 #endif
 
 	if (cl_timedemo && cl_timedemo->integer)
@@ -975,7 +1148,7 @@ void CL_DemoRun(void)
 #if NEW_DEMOFUNC
 		DEMODEBUG("cl.serverTime >= cl.snap.serverTime   %d  %d  %d\n", cl.serverTime, cl.snap.serverTime, loopCount);
 
-		if (!di.testParse  &&  cls.state == CA_ACTIVE  &&  cl.serverTime > cl.snap.serverTime)
+		if (cls.state == CA_ACTIVE  &&  cl.serverTime > cl.snap.serverTime)
 		{
 			if (com_timescale->value > 1.0)
 			{
@@ -1029,16 +1202,9 @@ void CL_ReadDemoMessage(void)
 	}
 
 #if NEW_DEMOFUNC
-	if (di.testParse)
-	{
-		di.snapsInDemo++;
-	}
-	else
-	{
-		di.numSnaps++;
-	}
+	di.numSnaps++;
 
-	if (!di.testParse  &&  di.snapCount < maxRewindBackups &&
+	if (di.snapCount < maxRewindBackups &&
 	    ((!di.gotFirstSnap  &&  !(cls.state >= CA_CONNECTED && cls.state < CA_PRIMED))
 	     || (di.gotFirstSnap  &&  di.numSnaps % (di.snapsInDemo / maxRewindBackups) == 0)))
 	{
@@ -1521,7 +1687,7 @@ void CL_SeekPrev_f(void)
 }
 #endif
 
-void CL_Pause_f(void)
+void CL_PauseDemo_f(void)
 {
 #if NEW_DEMOFUNC
 	static int pauseTime = 0;
@@ -1529,6 +1695,12 @@ void CL_Pause_f(void)
 
 	if (!clc.demoplaying)
 	{
+		return;
+	}
+
+	if (!IS_LEGACY_MOD)
+	{
+		Com_Printf("Demo pausing is only supported on legacy mod, sorry\n");
 		return;
 	}
 
@@ -1553,7 +1725,7 @@ void CL_DemoInit(void)
 	Cmd_AddCommand("stoprecord", CL_StopRecord_f);
 	Cmd_AddCommand("demo", CL_PlayDemo_f);
 	Cmd_SetCommandCompletionFunc("demo", CL_CompleteDemoName);
-	Cmd_AddCommand("pausedemo", CL_Pause_f);
+	Cmd_AddCommand("pausedemo", CL_PauseDemo_f);
 
 #if NEW_DEMOFUNC
 	Cmd_AddCommand("rewind", CL_Rewind_f);
