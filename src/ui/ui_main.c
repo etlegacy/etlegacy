@@ -624,7 +624,6 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 			               glyph2->s2,
 			               glyph2->t2,
 			               glyph2->glyph);
-
 		}
 
 		trap_R_SetColor(NULL);
@@ -977,7 +976,6 @@ qboolean Asset_Parse(int handle)
 			uiInfo.uiDC.Assets.shadowFadeClamp = uiInfo.uiDC.Assets.shadowColor[3];
 			continue;
 		}
-
 	}
 	return qfalse;
 }

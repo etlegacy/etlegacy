@@ -247,8 +247,8 @@ void CL_WriteAVIHeader(void)
 					else
 					{
 						WRITE_4BYTES(0);    // BI_RGB
-
 					}
+					
 					WRITE_4BYTES(0);    //dwFlags
 					WRITE_4BYTES(0);    //dwPriority
 					WRITE_4BYTES(0);    //dwInitialFrame
