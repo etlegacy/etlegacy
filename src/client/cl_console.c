@@ -579,15 +579,13 @@ void Con_DrawInput(void)
 	// hightlight the current autocompleted part
 	if (con.acLength)
 	{
-		Cmd_TokenizeString(g_consoleField.buffer);
-
-		if (strlen(Cmd_Argv(0)) - con.acLength > 0)
+		if (strlen(g_consoleField.buffer) > 0)
 		{
 			re.SetColor(console_highlightcolor);
 			re.DrawStretchPic(con.xadjust + (2 + con.acLength) * SMALLCHAR_WIDTH,
-			                  y + 2,
-			                  (strlen(Cmd_Argv(0)) - con.acLength) * SMALLCHAR_WIDTH,
-			                  SMALLCHAR_HEIGHT - 2, 0, 0, 0, 0, cls.whiteShader);
+				y + 2,
+				(strlen(g_consoleField.buffer) - con.acLength) * SMALLCHAR_WIDTH,
+				SMALLCHAR_HEIGHT - 2, 0, 0, 0, 0, cls.whiteShader);
 		}
 	}
 
@@ -718,7 +716,8 @@ void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrol
 
 		SCR_FillRect(scrollBarX, scrollBarY + scrollHandlePostition, scrollBarWidth, scrollHandleLength, color);
 	}
-	else if (con.totallines)   //this happens when line appending gets us over the top position in a roll-lock situation (scrolling itself won't do that)
+	//this happens when line appending gets us over the top position in a roll-lock situation (scrolling itself won't do that)
+	else if (con.totallines)
 	{
 		//color[0] = (-scrollHandlePostition * 5.0f) / 10;
 		color[0] = 0.5f;

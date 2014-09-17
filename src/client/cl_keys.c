@@ -645,7 +645,7 @@ void Console_Key(int key)
 
 	if (key == K_TAB)
 	{
-		Console_AutoCompelete(&g_consoleField, &con.acLength);
+		Console_AutoComplete(&g_consoleField, &con.acLength);
 		return;
 	}
 

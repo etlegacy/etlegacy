@@ -3627,8 +3627,7 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 		//completionString = Cmd_Argv(completionArgument - 1);
 	}
 
-#if SLASH_COMMAND
-#ifndef DEDICATED
+#if defined(SLASH_COMMAND) && !defined(DEDICATED)
 	// Unconditionally add a '\' to the start of the buffer
 	if (completionField->buffer[0] &&
 	    completionField->buffer[0] != '\\')
@@ -3650,7 +3649,6 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 
 		completionField->buffer[0] = '\\';
 	}
-#endif // DEDICATED
 #endif // SLASH_COMMAND
 
 	if (completionArgument > 1)
@@ -3658,14 +3656,12 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 		const char *baseCmd = Cmd_Argv(0);
 		char       *p;
 
-#if SLASH_COMMAND
-#ifndef DEDICATED
+#if defined(SLASH_COMMAND) && !defined(DEDICATED)
 		// This should always be true
 		if (baseCmd[0] == '\\' || baseCmd[0] == '/')
 		{
 			baseCmd++;
 		}
-#endif // DEDICATED
 #endif // SLASH_COMMAND
 
 		if ((p = Field_FindFirstSeparator(cmd)))
@@ -3727,15 +3723,57 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 	*hunkexpected = com_expectedhunkusage;
 }
 
-void Console_AutoCompelete(field_t *field, int *comletionlen)
+static int Field_LastWhiteSpace(field_t *field)
 {
-	//int completionOffset = 0;
+	int i = 0, lastSpace = 0;
+	qboolean insideQuotes = qfalse;
 
-	if (!*comletionlen)
+	for (; i < strlen(field->buffer); i++)
 	{
+		if (field->buffer[i] == ' ' && !insideQuotes)
+		{
+			lastSpace = i;
+		}
+		if (field->buffer[i] == '\"')
+		{
+			insideQuotes = !insideQuotes;
+		}
+		else if (field->buffer[i] == 0)
+		{
+			break;
+		}
+	}
+
+	if (insideQuotes)
+	{
+		return -1;
+	}
+
+	return lastSpace;
+}
+
+void Console_AutoComplete(field_t *field, int *completionlen)
+{
+	int lastSpace = 0;
+
+	Cmd_TokenizeStringIgnoreQuotes(field->buffer);
+
+	if (!*completionlen)
+	{
+		int completionArgument = 0;
 		matchCount       = 0;
 		matchIndex       = 0;
 		shortestMatch[0] = 0;
+
+		//Multiple matches
+		//Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
+		completionArgument = Cmd_Argc();
+		
+		// If there is trailing whitespace on the cmd
+		if (*(field->buffer + strlen(field->buffer) - 1) == ' ')
+		{
+			completionArgument++;
+		}
 
 		Field_AutoComplete(field);
 
@@ -3743,71 +3781,56 @@ void Console_AutoCompelete(field_t *field, int *comletionlen)
 		{
 			return;
 		}
-		//Multiple matches
-#if 1
+		
+		//We will skip this hightlight method if theres more than one command given
+		if (completionArgument > 1)
 		{
-			//Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
-			int completionArgument = 0;
-
-			completionArgument = Cmd_Argc();
-
-			// If there is trailing whitespace on the cmd
-			if (*(field->buffer + strlen(field->buffer) - 1) == ' ')
-			{
-				completionArgument++;
-			}
-
-			//We will skip this hightlight method if theres more than one command given
-			if (completionArgument > 1)
-			{
-				return;
-			}
+			return;
 		}
-#endif
-		/*
-		completionOffset = strlen(field->buffer) - strlen(completionString);
+		
+		lastSpace = Field_LastWhiteSpace(field);
+		if (lastSpace < 0)
+		{
+			return;
+		}
 
-		Q_strncpyz(&field->buffer[completionOffset], shortestMatch,
-		           sizeof(field->buffer) - completionOffset);
+		Com_sprintf(field->buffer + lastSpace + 1, sizeof(field->buffer) - lastSpace - 1, "%s", shortestMatch);
+		*completionlen = field->cursor = strlen(field->buffer);
+	}
+	else if (*completionlen && matchCount > 1)
+	{
+		// get the next match and show instead
+		matchIndex++;
+		if (matchIndex == matchCount)
+		{
+			matchIndex = 0;
+		}
+		findMatchIndex = 0;
 
-		*comletionlen = field->cursor = strlen(field->buffer);
-		*/
+#if SLASH_COMMAND
+		if (completionString[0] == '\\' || completionString[0] == '/')
+		{
+			memmove(completionString, completionString + 1, sizeof(completionString)-1);
+		}
+#endif // SLASH_COMMAND
 
-		Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
-		//completionOffset = strlen(field->buffer) - strlen(completionString);
-		*comletionlen = field->cursor = strlen(field->buffer);
+		Cmd_CommandCompletion(FindIndexMatch);
+		Cvar_CommandCompletion(FindIndexMatch);
+
+		lastSpace = Field_LastWhiteSpace(field);
+		if (lastSpace < 0)
+		{
+			*completionlen = 0;
+			return;
+		}
+
+		Com_sprintf(field->buffer + lastSpace + 1, sizeof(field->buffer) - lastSpace - 1, "%s", shortestMatch);
+		field->cursor = strlen(field->buffer);
 	}
 	else
 	{
-		if (matchCount != 1)
-		{
-			// get the next match and show instead
-			matchIndex++;
-			if (matchIndex == matchCount)
-			{
-				matchIndex = 0;
-			}
-			findMatchIndex = 0;
-
-#if SLASH_COMMAND
-			if (completionString[0] == '\\' || completionString[0] == '/')
-			{
-				memmove(completionString, completionString + 1, sizeof(completionString) - 1);
-			}
-#endif // SLASH_COMMAND
-			Cmd_CommandCompletion(FindIndexMatch);
-			Cvar_CommandCompletion(FindIndexMatch);
-
-			Com_sprintf(field->buffer, sizeof(field->buffer), "\\%s", shortestMatch);
-			field->cursor = strlen(field->buffer);
-
-			/*
-			completionOffset = strlen(field->buffer) - strlen(completionString);
-			Q_strncpyz(&field->buffer[completionOffset], shortestMatch,
-			    sizeof(field->buffer) - completionOffset);
-			field->cursor = strlen( field->buffer );
-			*/
-		}
+		*completionlen = 0;
+		Field_AutoComplete(field);
 	}
 }
 
