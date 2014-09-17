@@ -242,7 +242,7 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 	{
 		if (r_numpolyverts + numVerts >= r_maxpolys->integer)
 		{
-			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolys[%i] reached. r_numpolyverts: %i - numVerts: %i\n", r_maxpolys->integer, r_numpolyverts, numVerts);
+			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolys[%i] reached. r_numpolyverts: %i - numVerts: %i - numPolys %i - shader %i\n", r_maxpolys->integer, r_numpolyverts, numVerts, numPolys, hShader);
 			return;
 		}
 		if (r_numpolys >= r_maxpolyverts->integer)
