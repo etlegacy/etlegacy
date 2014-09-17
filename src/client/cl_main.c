@@ -630,11 +630,7 @@ void CL_Disconnect(qboolean showMainMenu)
 		// TODO: clean autoupdate cvars
 	}
 
-	if (clc.demofile)
-	{
-		FS_FCloseFile(clc.demofile);
-		clc.demofile = 0;
-	}
+	CL_DemoCleanUp();
 
 	if (uivm && showMainMenu)
 	{

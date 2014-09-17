@@ -49,14 +49,6 @@
 #define MEGABYTES(x) x / 1024.0 / 1024.0
 #define MAX_REWIND_BACKUPS 20
 
-extern qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
-extern void CL_ParseSnapshot(msg_t *msg);
-extern qboolean CL_GetServerCommand(int serverCommandNumber);
-extern void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe);
-extern void CL_AdjustTimeDelta(void);
-
-void CL_DemoCompleted(void);
-
 #define NEW_DEMOFUNC 1
 
 #if NEW_DEMOFUNC
@@ -81,6 +73,8 @@ typedef struct
 	qboolean hasWarmup;
 	qboolean seeking;
 
+	double Overf;
+
 	int firstNonDeltaMessageNumWritten;
 } demoInfo_t;
 
@@ -99,7 +93,6 @@ cvar_t *cl_maxRewindBackups;
 demoInfo_t      di;
 rewindBackups_t *rewindBackups   = NULL;
 int             maxRewindBackups = 0;
-double          Overf            = 0.0;
 #endif
 
 /*
@@ -386,7 +379,7 @@ static void CL_DemoFastForward(double wantedTime)
 		//Com_Printf("stay\n");
 		cl.serverTime      = floor(wantedTime);
 		cls.realtime       = floor(wantedTime);
-		Overf              = wantedTime - floor(wantedTime);
+		di.Overf              = wantedTime - floor(wantedTime);
 		cl.serverTimeDelta = 0;
 		return;
 	}
@@ -403,7 +396,7 @@ static void CL_DemoFastForward(double wantedTime)
 		return;
 	}
 
-	DEMODEBUG("fastfowarding from %f to %f\n", (double)cl.serverTime + Overf, wantedTime);
+	DEMODEBUG("fastfowarding from %f to %f\n", (double)cl.serverTime + di.Overf, wantedTime);
 
 	loopCount = 0;
 	while ((double)cl.snap.serverTime <= wantedTime)
@@ -434,7 +427,7 @@ static void CL_DemoFastForward(double wantedTime)
 
 	cl.serverTime      = floor(wantedTime);
 	cls.realtime       = floor(wantedTime);
-	Overf              = wantedTime - floor(wantedTime);
+	di.Overf              = wantedTime - floor(wantedTime);
 	cl.serverTimeDelta = 0;
 
 	//TODO: fix this
@@ -496,7 +489,7 @@ static void CL_RewindDemo(double wantedTime)
 	memcpy(&cl, &rb->cl, sizeof(clientActive_t));
 	memcpy(&clc, &rb->clc, sizeof(clientConnection_t));
 	memcpy(&cls, &rb->cls, sizeof(clientStatic_t));
-	Overf = 0;
+	di.Overf = 0;
 
 	//TODO: this is a hack to set the state to something valid
 	cls.state = CA_ACTIVE;
@@ -523,7 +516,7 @@ static void CL_DemoSeekMs(double ms, int exactServerTime)  // server time in mil
 
 	DEMODEBUG("seek want %f\n", wantedTime);
 
-	if (wantedTime > (double)cl.serverTime + Overf)
+	if (wantedTime > (double)cl.serverTime + di.Overf)
 	{
 		CL_DemoFastForward(wantedTime);
 	}
@@ -1111,6 +1104,19 @@ CLIENT SIDE DEMO PLAYBACK
 =======================================================================
 */
 
+void CL_DemoCleanUp(void)
+{
+	if (clc.demofile)
+	{
+		FS_FCloseFile(clc.demofile);
+		clc.demofile = 0;
+	}
+
+#if NEW_DEMOFUNC
+	CL_FreeDemoPoints();
+#endif
+}
+
 /*
 =================
 CL_DemoCompleted
@@ -1502,7 +1508,7 @@ void CL_Rewind_f(void)
 
 	DEMODEBUG("Servertime: %d snaptime: %d\n", cl.serverTime, cl.snap.serverTime);
 
-	CL_RewindDemo((double)cl.serverTime + Overf - t);
+	CL_RewindDemo((double)cl.serverTime + di.Overf - t);
 }
 
 void CL_FastForward_f(void)
@@ -1533,7 +1539,7 @@ void CL_FastForward_f(void)
 
 	if (cl.snap.serverTime)
 	{
-		wantedTime = (double)cl.serverTime + Overf + t;
+		wantedTime = (double)cl.serverTime + di.Overf + t;
 	}
 	else
 	{

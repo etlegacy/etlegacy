@@ -495,6 +495,8 @@ qboolean CL_CloseAVI(void);
 qboolean CL_VideoRecording(void);
 
 // cl_demo
+void CL_DemoCleanUp(void);
+void CL_DemoCompleted(void);
 void CL_WriteDemoMessage(msg_t *msg, int headerBytes);
 void CL_StopRecord_f(void);
 void CL_DemoInit(void);
@@ -576,6 +578,8 @@ qboolean CL_OW_IRCIsRunning(void);
 extern int cl_connectedToPureServer;
 extern int cl_connectedToCheatServer;
 
+void CL_ParseSnapshot(msg_t *msg);
+void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe);
 void CL_SystemInfoChanged(void);
 void CL_ParseServerMessage(msg_t *msg);
 
@@ -684,6 +688,9 @@ void CL_FirstSnapshot(void);
 void CL_ShaderStateChanged(void);
 void CL_UpdateLevelHunkUsage(void);
 void CL_CGameBinaryMessageReceived(const byte *buf, int buflen, int serverTime);
+qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
+qboolean CL_GetServerCommand(int serverCommandNumber);
+void CL_AdjustTimeDelta(void);
 
 // cl_ui.c
 
