@@ -4122,8 +4122,20 @@ typedef enum
 	RC_FINISH
 } renderCommand_t;
 
+// these are sort of arbitrary limits.
+// the limits apply to the sum of all scenes in a frame --
+// the main view, all the 3D icons, etc
+// Heavily increased compared to ioquake
+// FIXME: move this to rendercommon for all renderers
+#define MIN_POLYS       4096
+#define MIN_POLYVERTS   8192
+
+// modern computers can deal with more than our old MAX (now MIN)
+#define MAX_POLYS       16384 // was 4096
+#define MAX_POLYVERTS   32768 // was 8192
+
 // max decal projectors per frame, each can generate lots of polys
-#define MAX_DECAL_PROJECTORS    512 // includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
+#define MAX_DECAL_PROJECTORS    128 // includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
 #define MAX_DECALS              1024
 #define DECAL_MASK              (MAX_DECALS - 1)
 
