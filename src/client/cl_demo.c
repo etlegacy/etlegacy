@@ -933,9 +933,11 @@ void CL_DemoCompleted(void)
 
 void CL_DemoRun(void)
 {
-	int        loopCount = 0;
+	int loopCount = 0;
+#if NEW_DEMOFUNC
 	int        startTime;
 	static int lastTime = -1;
+#endif
 
 	// if we are playing a demo back, we can just keep reading
 	// messages from the demo file until the cgame definately
@@ -961,7 +963,9 @@ void CL_DemoRun(void)
 	}
 
 	loopCount = 0;
+#if NEW_DEMOFUNC
 	startTime = cl.snap.serverTime;
+#endif
 
 	while (cl.serverTime >= cl.snap.serverTime)
 	{
@@ -1519,7 +1523,9 @@ void CL_SeekPrev_f(void)
 
 void CL_Pause_f(void)
 {
+#if NEW_DEMOFUNC
 	static int pauseTime = 0;
+#endif
 
 	if (!clc.demoplaying)
 	{
