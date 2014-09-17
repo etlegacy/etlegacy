@@ -1333,7 +1333,6 @@ void CG_DemoHelpDraw(void)
 
 		float diff = cg.fadeTime - trap_Milliseconds();
 
-
 		// FIXME: Should compute this beforehand
 		w = DH_W + (
 #ifdef FEATURE_MULTIVIEW
@@ -1341,13 +1340,14 @@ void CG_DemoHelpDraw(void)
 #endif
 		    0);
 		x = SCREEN_WIDTH + DH_X - w;
-		h = 2 + tSpacing + 2 +                                  // Header
-		    2 + 1 +
-		    tSpacing * (2 + (sizeof(help) +
+		h = tSpacing + 9 +
+			tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
-		                     (cg.mvTotalClients > 1) ? sizeof(mvhelp) :
+			((cg.mvTotalClients > 1) ? ARRAY_LEN(mvhelp) : ARRAY_LEN(help))
+#else
+			ARRAY_LEN(help)
 #endif
-		                     0) / sizeof(char *)) + 2;
+			);
 
 		// Fade-in effects
 		if (diff > 0.0f)
@@ -1382,17 +1382,28 @@ void CG_DemoHelpDraw(void)
 		if (cg.legacyClient && cg.demoinfo)
 		{
 			float demoStatus = (float)((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
-			y -= 40;
+#define BOFF(i) (x + (i * (w / 4)) - 15)
+			y -= 60;
 
-			CG_DrawRect(x, y, w, 30, 1, borderColor);
-			CG_FillRect(x, y, w, 30, bgColor);
+			CG_DrawRect(x, y, w, 50, 1, borderColor);
+			CG_FillRect(x, y, w, 50, bgColor);
 
 			// Header
 			CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
 			CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
 			CG_Text_Paint_Ext(x + 4, y + 1 + tSpacing, hScale, hScaleY, hdrColor2, CG_TranslateString("DEMO STATUS"), 0.0f, 0, hStyle, hFont);
 			CG_FilledBar(x + 2, y + 15, w - 4, 12, colorGreen, NULL, borderColor, demoStatus, BAR_BORDER);
-			y += 40;
+
+			CG_DrawRect(BOFF(1), y + 30, 30, 15, 1, borderColor);
+			CG_FillRect(BOFF(1), y + 30, 30, 15, bgColorTitle);
+
+			CG_DrawRect(BOFF(2), y + 30, 30, 15, 1, borderColor);
+			CG_FillRect(BOFF(2), y + 30, 30, 15, bgColorTitle);
+
+			CG_DrawRect(BOFF(3), y + 30, 30, 15, 1, borderColor);
+			CG_FillRect(BOFF(3), y + 30, 30, 15, bgColorTitle);
+
+			y += 70;
 		}
 
 		CG_DrawRect(x, y, w, h, 1, borderColor);
@@ -1409,7 +1420,7 @@ void CG_DemoHelpDraw(void)
 		y += 3;
 
 		// Control info
-		for (i = 0; i < sizeof(help) / sizeof(char *); i++)
+		for (i = 0; i < ARRAY_LEN(help); i++)
 		{
 			y += tSpacing;
 			if (help[i] != NULL)
@@ -1421,7 +1432,7 @@ void CG_DemoHelpDraw(void)
 #if FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 1)
 		{
-			for (i = 0; i < sizeof(mvhelp) / sizeof(char *); i++)
+			for (i = 0; i < ARRAY_LEN(mvhelp); i++)
 			{
 				y += tSpacing;
 				if (mvhelp[i] != NULL)
