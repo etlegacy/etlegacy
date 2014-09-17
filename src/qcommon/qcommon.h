@@ -831,7 +831,7 @@ typedef struct
 	char buffer[MAX_EDIT_LINE];
 } field_t;
 
-void Console_AutoComplete(field_t *field, int *completionlen);
+void Console_AutoComplete(field_t *field, int *completionOffset);
 void Field_Clear(field_t *edit);
 void Field_AutoComplete(field_t *edit);
 void Field_CompleteKeyname(void);

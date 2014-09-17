@@ -577,7 +577,7 @@ void Console_Key(int key)
 	// enter finishes the line
 	if (key == K_ENTER || key == K_KP_ENTER)
 	{
-		con.acLength = 0;
+		con.highlightOffset = 0;
 
 #if SLASH_COMMAND
 		// if not in the game explicitly prepend a slash if needed
@@ -645,7 +645,7 @@ void Console_Key(int key)
 
 	if (key == K_TAB)
 	{
-		Console_AutoComplete(&g_consoleField, &con.acLength);
+		Console_AutoComplete(&g_consoleField, &con.highlightOffset);
 		return;
 	}
 
@@ -654,7 +654,7 @@ void Console_Key(int key)
 	    (key >= K_KP_LEFTARROW && key <= K_KP_RIGHTARROW) ||
 	    (key >= K_KP_SLASH && key <= K_KP_PLUS) || (key >= K_KP_STAR && key <= K_KP_EQUALS))
 	{
-		con.acLength = 0;
+		con.highlightOffset = 0;
 	}
 
 	// command history (ctrl-p ctrl-n for unix style)
@@ -669,7 +669,7 @@ void Console_Key(int key)
 			historyLine--;
 		}
 		g_consoleField = historyEditLines[historyLine % COMMAND_HISTORY];
-		con.acLength   = 0;
+		con.highlightOffset   = 0;
 		return;
 	}
 
@@ -683,7 +683,7 @@ void Console_Key(int key)
 		}
 		historyLine++;
 		g_consoleField = historyEditLines[historyLine % COMMAND_HISTORY];
-		con.acLength   = 0;
+		con.highlightOffset   = 0;
 		return;
 	}
 
@@ -1422,7 +1422,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			//if the commandline is empty then we close the console
 			if (strlen(g_consoleField.buffer))
 			{
-				con.acLength          = 0;
+				con.highlightOffset          = 0;
 				g_consoleField.cursor = 0;
 				memset(g_consoleField.buffer, 0, sizeof(char) * MAX_EDIT_LINE);
 			}

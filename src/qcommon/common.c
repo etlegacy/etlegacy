@@ -3752,13 +3752,13 @@ static int Field_LastWhiteSpace(field_t *field)
 	return lastSpace;
 }
 
-void Console_AutoComplete(field_t *field, int *completionlen)
+void Console_AutoComplete(field_t *field, int *completionOffset)
 {
 	int lastSpace = 0;
 
 	Cmd_TokenizeStringIgnoreQuotes(field->buffer);
 
-	if (!*completionlen)
+	if (!*completionOffset)
 	{
 		int completionArgument = 0;
 		matchCount       = 0;
@@ -3795,9 +3795,9 @@ void Console_AutoComplete(field_t *field, int *completionlen)
 		}
 
 		Com_sprintf(field->buffer + lastSpace + 1, sizeof(field->buffer) - lastSpace - 1, "%s", shortestMatch);
-		*completionlen = field->cursor = strlen(field->buffer);
+		*completionOffset = field->cursor = strlen(field->buffer);
 	}
-	else if (*completionlen && matchCount > 1)
+	else if (*completionOffset && matchCount > 1)
 	{
 		// get the next match and show instead
 		matchIndex++;
@@ -3820,7 +3820,7 @@ void Console_AutoComplete(field_t *field, int *completionlen)
 		lastSpace = Field_LastWhiteSpace(field);
 		if (lastSpace < 0)
 		{
-			*completionlen = 0;
+			*completionOffset = 0;
 			return;
 		}
 
@@ -3829,7 +3829,7 @@ void Console_AutoComplete(field_t *field, int *completionlen)
 	}
 	else
 	{
-		*completionlen = 0;
+		*completionOffset = 0;
 		Field_AutoComplete(field);
 	}
 }

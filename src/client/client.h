@@ -617,7 +617,7 @@ typedef struct
 	// for transparent notify lines
 	vec4_t color;
 
-	int acLength;           // utocomplete buffer length
+	int highlightOffset;           // highligting start offset (if == 0) then no hightlight
 } console_t;
 
 extern console_t con;

@@ -57,7 +57,7 @@ Con_ToggleConsole_f
 */
 void Con_ToggleConsole_f(void)
 {
-	con.acLength = 0;
+	con.highlightOffset = 0;
 
 	// persistent console input is more useful (added cvar)
 	if (con_autoclear->integer)
@@ -577,14 +577,14 @@ void Con_DrawInput(void)
 	y = con.vislines - (SMALLCHAR_HEIGHT * 2);
 
 	// hightlight the current autocompleted part
-	if (con.acLength)
+	if (con.highlightOffset)
 	{
 		if (strlen(g_consoleField.buffer) > 0)
 		{
 			re.SetColor(console_highlightcolor);
-			re.DrawStretchPic(con.xadjust + (2 + con.acLength) * SMALLCHAR_WIDTH,
+			re.DrawStretchPic(con.xadjust + (2 + con.highlightOffset) * SMALLCHAR_WIDTH,
 				y + 2,
-				(strlen(g_consoleField.buffer) - con.acLength) * SMALLCHAR_WIDTH,
+				(strlen(g_consoleField.buffer) - con.highlightOffset) * SMALLCHAR_WIDTH,
 				SMALLCHAR_HEIGHT - 2, 0, 0, 0, 0, cls.whiteShader);
 		}
 	}
