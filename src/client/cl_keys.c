@@ -654,7 +654,14 @@ void Console_Key(int key)
 	    (key >= K_KP_LEFTARROW && key <= K_KP_RIGHTARROW) ||
 	    (key >= K_KP_SLASH && key <= K_KP_PLUS) || (key >= K_KP_STAR && key <= K_KP_EQUALS))
 	{
-		con.highlightOffset = 0;
+		if (key == K_BACKSPACE && con.highlightOffset)
+		{
+			Console_RemoveHighlighted(&g_consoleField, &con.highlightOffset);
+		}
+		else
+		{
+			con.highlightOffset = 0;
+		}
 	}
 
 	// command history (ctrl-p ctrl-n for unix style)

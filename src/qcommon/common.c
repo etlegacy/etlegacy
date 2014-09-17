@@ -3752,6 +3752,22 @@ static int Field_LastWhiteSpace(field_t *field)
 	return lastSpace;
 }
 
+void Console_RemoveHighlighted(field_t *field, int *completionOffset)
+{
+	if (!*completionOffset)
+	{
+		return;
+	}
+
+	if (strlen(field->buffer) > *completionOffset + 1)
+	{
+		field->buffer[*completionOffset + 1] = '\0';
+		field->cursor = *completionOffset + 1;
+	}
+
+	*completionOffset = 0;
+}
+
 void Console_AutoComplete(field_t *field, int *completionOffset)
 {
 	int lastSpace = 0;
