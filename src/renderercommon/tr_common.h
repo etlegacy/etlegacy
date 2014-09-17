@@ -77,13 +77,15 @@ void GLimp_Minimize(void);
 #ifdef LEGACY_DEBUG
 #define RENLOG r_logFile->integer
 #define Ren_LogComment(...) if (RENLOG) { GLimp_LogComment(va(__VA_ARGS__)); }
+#define Ren_Developer(...) ri.Printf(PRINT_DEVELOPER, __VA_ARGS__)
 #else
 #define RENLOG 0
 #define Ren_LogComment(...)
+#define Ren_Developer(...)
 #endif
 
 #define Ren_UpdateScreen() ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n")
-#define Ren_Developer(...) ri.Printf(PRINT_DEVELOPER, __VA_ARGS__)
+
 #define Ren_Print(...) ri.Printf(PRINT_ALL, __VA_ARGS__)
 #define Ren_Warning(...) ri.Printf(PRINT_WARNING, __VA_ARGS__)
 

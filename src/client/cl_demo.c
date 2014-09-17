@@ -33,17 +33,18 @@
 
 #include "client.h"
 
-#define Com_FuncPrinf(msg, ...) Com_Printf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
-#define Com_FuncDPrinf(msg, ...) Com_DPrintf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
-#define Com_FuncError(msg, ...) Com_Error(ERR_FATAL, "%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
-#define Com_FuncDrop(msg, ...) Com_Error(ERR_DROP, "%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
-
-#define IS_LEGACY_MOD (Q_stricmp(Cvar_VariableString("fs_game"), DEFAULT_MODGAME) == 0)
-
 #ifdef LEGACY_DEBUG
 #define DEMODEBUG(msg, ...) if (Cvar_VariableIntegerValue("demo_debug")) { Com_Printf("^1%s()^2: DEBUG " msg, __FUNCTION__, ## __VA_ARGS__); }
+#define Com_FuncDPrinf(msg, ...) Com_DPrintf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+#define Com_FuncPrinf(msg, ...) Com_Printf("%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+#define Com_FuncError(msg, ...) Com_Error(ERR_FATAL, "%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
+#define Com_FuncDrop(msg, ...) Com_Error(ERR_DROP, "%s(): " msg, __FUNCTION__, ## __VA_ARGS__)
 #else
 #define DEMODEBUG(msg, ...)
+#define Com_FuncDPrinf(msg, ...)
+#define Com_FuncPrinf Com_Printf
+#define Com_FuncError(...) Com_Error(ERR_FATAL, __VA_ARGS__)
+#define Com_FuncDrop(...) Com_Error(ERR_DROP, __VA_ARGS__)
 #endif
 
 #define MEGABYTES(x) x / 1024.0 / 1024.0
@@ -110,11 +111,11 @@ static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
 
 	if (*demofile)
 	{
-		Com_Printf("Demo file: %s\n", name);
+		Com_FuncPrinf("Demo file: %s\n", name);
 		return PROTOCOL_VERSION;
 	}
 
-	Com_Printf("Not found: %s\n", name);
+	Com_FuncPrinf("Not found: %s\n", name);
 
 	while (demo_protocols[i])
 	{
@@ -127,13 +128,13 @@ static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
 		FS_FOpenFileRead(name, demofile, qtrue);
 		if (*demofile)
 		{
-			Com_Printf("Demo file: %s\n", name);
+			Com_FuncPrinf("Demo file: %s\n", name);
 
 			return demo_protocols[i];
 		}
 		else
 		{
-			Com_Printf("Not found: %s\n", name);
+			Com_FuncPrinf("Not found: %s\n", name);
 		}
 		i++;
 	}
@@ -175,7 +176,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		success = CL_GetSnapshot(snapshotNumber, snapshot);
 		if (!success)
 		{
-			Com_FuncPrinf("snapshot number outside of backup buffer\n");
+			Com_FuncDPrinf("snapshot number outside of backup buffer\n");
 			return qfalse;
 		}
 		return qtrue;
@@ -201,7 +202,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		r = FS_Read(&buffer, 4, clc.demofile);
 		if (r != 4)
 		{
-			Com_FuncPrinf("couldn't read sequence number\n");
+			Com_FuncDPrinf("couldn't read sequence number\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
@@ -217,7 +218,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		r = FS_Read(&buf.cursize, 4, clc.demofile);
 		if (r != 4)
 		{
-			Com_FuncPrinf("couldn't get length\n");
+			Com_FuncDPrinf("couldn't get length\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
@@ -227,7 +228,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		buf.cursize = LittleLong(buf.cursize);
 		if (buf.cursize == -1)
 		{
-			Com_FuncPrinf("buf.cursize == -1\n");
+			Com_FuncDPrinf("buf.cursize == -1\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
@@ -236,13 +237,13 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 
 		if (buf.cursize > buf.maxsize)
 		{
-			Com_Error(ERR_DROP, "CL_PeekSnapshot: demoMsglen > MAX_MSGLEN");
+			Com_FuncDrop("demoMsglen > MAX_MSGLEN");
 		}
 
 		r = FS_Read(buf.data, buf.cursize, clc.demofile);
 		if (r != buf.cursize)
 		{
-			Com_FuncPrinf("Demo file was truncated.\n");
+			Com_FuncDPrinf("Demo file was truncated.\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
@@ -261,7 +262,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		{
 			if (buf.readcount > buf.cursize)
 			{
-				Com_Error(ERR_DROP, "CL_PeekSnapshot: read past end of server message");
+				Com_FuncDrop("read past end of server message");
 				break;
 			}
 
@@ -276,7 +277,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 			switch (cmd)
 			{
 			default:
-				Com_Error(ERR_DROP, "CL_PeekSnapshot: Illegible server message");
+				Com_FuncDrop("Illegible server message");
 				break;
 			case svc_nop:
 				break;
@@ -286,7 +287,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 				MSG_ReadString(&buf);
 				break;
 			case svc_gamestate:
-				Com_FuncPrinf("FIXME gamestate\n");
+				Com_FuncDPrinf("FIXME gamestate\n");
 				goto alldone;
 				break;
 			case svc_snapshot:
@@ -298,7 +299,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 				}
 				break;
 			case svc_download:
-				Com_FuncPrinf("FIXME download\n");
+				Com_FuncDPrinf("FIXME download\n");
 				goto alldone;
 				break;
 			}
@@ -308,7 +309,7 @@ alldone:
 
 		if (!success)
 		{
-			Com_FuncPrinf("failed\n");
+			Com_FuncDPrinf("failed\n");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
@@ -321,7 +322,7 @@ alldone:
 		// circular buffer, we can't return it
 		if (cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES)
 		{
-			Com_FuncPrinf("cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES");
+			Com_FuncDPrinf("cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES");
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
@@ -339,7 +340,7 @@ alldone:
 
 		if (count > MAX_ENTITIES_IN_SNAPSHOT)
 		{
-			Com_FuncPrinf("truncated %i entities to %i\n", count, MAX_ENTITIES_IN_SNAPSHOT);
+			Com_FuncDPrinf("truncated %i entities to %i\n", count, MAX_ENTITIES_IN_SNAPSHOT);
 			count = MAX_ENTITIES_IN_SNAPSHOT;
 		}
 
@@ -377,7 +378,6 @@ static void CL_DemoFastForward(double wantedTime)
 
 	if (wantedTime >= (double)cl.serverTime  &&  wantedTime < (double)cl.snap.serverTime)
 	{
-		//Com_Printf("stay\n");
 		cl.serverTime      = floor(wantedTime);
 		cls.realtime       = floor(wantedTime);
 		di.Overf           = wantedTime - floor(wantedTime);
@@ -387,7 +387,7 @@ static void CL_DemoFastForward(double wantedTime)
 
 	if (wantedTime < (double)cl.snap.serverTime)
 	{
-		Com_FuncPrinf("This should not happen %f < %d\n", wantedTime, cl.snap.serverTime);
+		Com_FuncDPrinf("This should not happen %f < %d\n", wantedTime, cl.snap.serverTime);
 		return;
 	}
 
@@ -411,11 +411,11 @@ static void CL_DemoFastForward(double wantedTime)
 				if (cl.snap.serverTime <= di.firstServerTime)
 				{
 					clc.lastExecutedServerCommand = clc.serverCommandSequence - 1;
-					Com_FuncPrinf("setting clc.lastExecutedServerCommand %d (%d)\n", clc.lastExecutedServerCommand, loopCount);
+					Com_FuncDPrinf("setting clc.lastExecutedServerCommand %d (%d)\n", clc.lastExecutedServerCommand, loopCount);
 				}
 				else
 				{
-					Com_FuncPrinf("FIXME %i  (%i) + 1 <= (%i) - MAX_RELIABLE_COMMANDS (%i)\n", clc.lastExecutedServerCommand, clc.serverCommandSequence, cl.snap.serverTime, di.firstServerTime);
+					Com_FuncDPrinf("FIXME %i  (%i) + 1 <= (%i) - MAX_RELIABLE_COMMANDS (%i)\n", clc.lastExecutedServerCommand, clc.serverCommandSequence, cl.snap.serverTime, di.firstServerTime);
 					break;
 				}
 			}
@@ -445,7 +445,7 @@ static void CL_RewindDemo(double wantedTime)
 
 	if (!IS_LEGACY_MOD)
 	{
-		Com_Printf("Rewind is only supported on legacy mod, sorry\n");
+		Com_FuncPrinf("Rewind is only supported on legacy mod, sorry\n");
 		return;
 	}
 
@@ -474,7 +474,7 @@ static void CL_RewindDemo(double wantedTime)
 	{
 		if (rb == NULL)
 		{
-			Com_FuncPrinf("FIXME rewind couldn't find valid snap  rb:%p  i:%d  rb serverTime %d   wanted %f\n", rb, i, rewindBackups[0].cl.snap.serverTime, wantedTime);
+			Com_FuncDPrinf("FIXME rewind couldn't find valid snap  rb:%p  i:%d  rb serverTime %d   wanted %f\n", rb, i, rewindBackups[0].cl.snap.serverTime, wantedTime);
 		}
 		rb = &rewindBackups[0];
 		i  = 0;
@@ -504,7 +504,7 @@ static void CL_DemoSeekMs(double ms, int exactServerTime)  // server time in mil
 
 	if (!clc.demoplaying)
 	{
-		Com_FuncPrinf("not playing demo can't seek\n");
+		Com_FuncDPrinf("not playing demo can't seek\n");
 		return;
 	}
 
@@ -562,17 +562,17 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 		if (!old->valid)
 		{
 			// should never happen
-			Com_Printf("Delta from invalid frame (not supposed to happen!).\n");
+			Com_FuncPrinf("Delta from invalid frame (not supposed to happen!).\n");
 		}
 		else if (old->messageNum != newSnap.deltaNum)
 		{
 			// The frame that the server did the delta from
 			// is too old, so we can't reconstruct it properly.
-			Com_DPrintf("Delta frame too old.\n");
+			Com_FuncDPrinf("Delta frame too old.\n");
 		}
 		else if (cl.parseEntitiesNum - old->parseEntitiesNum > MAX_PARSE_ENTITIES - 128)
 		{
-			Com_DPrintf("Delta parseEntitiesNum too old.\n");
+			Com_FuncDPrinf("Delta parseEntitiesNum too old.\n");
 		}
 		else
 		{
@@ -585,7 +585,7 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 
 	if (len > sizeof(newSnap.areamask))
 	{
-		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.", len);
+		Com_FuncDrop("Invalid size %d for areamask.", len);
 		return;
 	}
 
@@ -698,14 +698,14 @@ static void CL_ParseDemo(void)
 
 		if (buf.cursize > buf.maxsize)
 		{
-			Com_FuncPrinf("demoMsglen > MAX_MSGLEN");
+			Com_FuncDPrinf("demoMsglen > MAX_MSGLEN");
 			break;
 		}
 
 		r = FS_Read(buf.data, buf.cursize, clc.demofile);
 		if (r != buf.cursize)
 		{
-			Com_FuncPrinf("Demo file was truncated.\n");
+			Com_FuncDPrinf("Demo file was truncated.\n");
 			break;
 		}
 
@@ -795,7 +795,7 @@ static void CL_ParseDemo(void)
 
 		if (!cl.snap.valid)
 		{
-			Com_FuncPrinf("!cl.snap.valid\n");
+			Com_FuncDPrinf("!cl.snap.valid\n");
 			continue;
 		}
 
@@ -825,15 +825,15 @@ static void CL_ParseDemo(void)
 		if (di.firstServerTime == 0)
 		{
 			di.firstServerTime = cl.snap.serverTime;
-			Com_Printf("firstServerTime %d\n", di.firstServerTime);
+			Com_FuncPrinf("firstServerTime %d\n", di.firstServerTime);
 		}
 
 		di.snapsInDemo++;
 	}
 
-	Com_FuncPrinf("Snaps in demo: %i\n", di.snapsInDemo);
-	Com_Printf("last serverTime %d   total %f minutes\n", cl.snap.serverTime, (cl.snap.serverTime - di.firstServerTime) / 1000.0 / 60.0);
-	Com_Printf("parse time %f seconds\n", (float)(Sys_Milliseconds() - tstart) / 1000.0);
+	Com_FuncDPrinf("Snaps in demo: %i\n", di.snapsInDemo);
+	Com_FuncDPrinf("last serverTime %d   total %f minutes\n", cl.snap.serverTime, (cl.snap.serverTime - di.firstServerTime) / 1000.0 / 60.0);
+	Com_FuncDPrinf("parse time %f seconds\n", (float)(Sys_Milliseconds() - tstart) / 1000.0);
 	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
 	clc.demoplaying = qfalse;
 	demofile        = clc.demofile;
@@ -869,7 +869,7 @@ void CL_AllocateDemoPoints(void)
 		Com_FuncError("couldn't allocate %.2f MB for rewind backups\n", MEGABYTES(sizeof(rewindBackups_t) * maxRewindBackups));
 		return;
 	}
-	Com_Printf("allocated %.2f MB for rewind backups\n", MEGABYTES(sizeof(rewindBackups_t) * maxRewindBackups));
+	Com_FuncPrinf("allocated %.2f MB for rewind backups\n", MEGABYTES(sizeof(rewindBackups_t) * maxRewindBackups));
 	Com_Memset(rewindBackups, 0, sizeof(rewindBackups_t) * maxRewindBackups);
 }
 
@@ -917,7 +917,7 @@ void CL_StopRecord_f(void)
 
 	if (!clc.demorecording)
 	{
-		Com_Printf("Not recording a demo.\n");
+		Com_FuncPrinf("Not recording a demo.\n");
 		return;
 	}
 
@@ -932,7 +932,7 @@ void CL_StopRecord_f(void)
 	Cvar_Set("cl_demorecording", "0");
 	Cvar_Set("cl_demofilename", "");
 	Cvar_Set("cl_demooffset", "0");
-	Com_Printf("Stopped demo.\n");
+	Com_FuncPrinf("Stopped demo.\n");
 }
 
 /*
@@ -969,19 +969,19 @@ void CL_Record_f(void)
 
 	if (Cmd_Argc() > 2)
 	{
-		Com_Printf("record <demoname>\n");
+		Com_FuncPrinf("record <demoname>\n");
 		return;
 	}
 
 	if (clc.demorecording)
 	{
-		Com_Printf("Already recording.\n");
+		Com_FuncPrinf("Already recording.\n");
 		return;
 	}
 
 	if (cls.state != CA_ACTIVE)
 	{
-		Com_Printf("You must be in a level to record.\n");
+		Com_FuncPrinf("You must be in a level to record.\n");
 		return;
 	}
 
@@ -1023,11 +1023,11 @@ void CL_Record(const char *name)
 	int           len;
 
 	// open the demo file
-	Com_Printf("Recording to %s.\n", name);
+	Com_FuncPrinf("Recording to %s.\n", name);
 	clc.demofile = FS_FOpenFileWrite(name);
 	if (!clc.demofile)
 	{
-		Com_Printf("ERROR: couldn't open.\n");
+		Com_FuncPrinf("ERROR: couldn't open.\n");
 		return;
 	}
 
@@ -1136,7 +1136,7 @@ void CL_DemoCompleted(void)
 		time = Sys_Milliseconds() - clc.timeDemoStart;
 		if (time > 0)
 		{
-			Com_Printf("%i frames, %3.1f seconds: %3.1f fps\n", clc.timeDemoFrames,
+			Com_FuncPrinf("%i frames, %3.1f seconds: %3.1f fps\n", clc.timeDemoFrames,
 			           time / 1000.0, clc.timeDemoFrames * 1000.0 / time);
 		}
 	}
@@ -1319,13 +1319,13 @@ keep_reading:
 
 	if (buf.cursize > buf.maxsize)
 	{
-		Com_Error(ERR_DROP, "CL_ReadDemoMessage: demoMsglen > MAX_MSGLEN");
+		Com_FuncDrop("demoMsglen > MAX_MSGLEN");
 	}
 
 	r = FS_Read(buf.data, buf.cursize, clc.demofile);
 	if (r != buf.cursize)
 	{
-		Com_Printf("Demo file was truncated.\n");
+		Com_FuncPrinf("Demo file was truncated.\n");
 		CL_DemoCompleted();
 		return;
 	}
@@ -1362,7 +1362,7 @@ void CL_PlayDemo_f(void)
 
 	if (Cmd_Argc() != 2)
 	{
-		Com_Printf("playdemo <demoname>\n");
+		Com_FuncPrinf("playdemo <demoname>\n");
 		return;
 	}
 
@@ -1397,7 +1397,7 @@ void CL_PlayDemo_f(void)
 		{
 			int len;
 
-			Com_Printf("Protocol %d not supported for demos\n", protocol);
+			Com_FuncPrinf("Protocol %d not supported for demos\n", protocol);
 			len = ext_test - arg;
 
 			if (len >= ARRAY_LEN(retry))
@@ -1417,7 +1417,7 @@ void CL_PlayDemo_f(void)
 
 	if (!clc.demofile)
 	{
-		Com_Error(ERR_DROP, "couldn't open %s", name);
+		Com_FuncDrop("couldn't open %s", name);
 		return;
 	}
 	Q_strncpyz(clc.demoName, arg, sizeof(clc.demoName));
@@ -1463,7 +1463,7 @@ void CL_NextDemo(void)
 
 	Q_strncpyz(v, Cvar_VariableString("nextdemo"), sizeof(v));
 	v[MAX_STRING_CHARS - 1] = 0;
-	Com_DPrintf("CL_NextDemo: %s\n", v);
+	Com_FuncDPrinf("CL_NextDemo: %s\n", v);
 	if (!v[0])
 	{
 		return;
@@ -1482,13 +1482,13 @@ void CL_Rewind_f(void)
 
 	if (!clc.demoplaying)
 	{
-		Com_Printf("not playing demo can't rewind\n");
+		Com_FuncPrinf("not playing demo can't rewind\n");
 		return;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
-		Com_Printf("usage:  rewind <time in seconds>\n");
+		Com_FuncPrinf("usage:  rewind <time in seconds>\n");
 		return;
 	}
 
@@ -1503,7 +1503,7 @@ void CL_Rewind_f(void)
 
 	if (cl.serverTime <= 0)
 	{
-		Com_Error(ERR_DROP, "Servertime was unacceptable: %i\n", cl.serverTime);
+		Com_FuncDrop("Servertime was unacceptable: %i\n", cl.serverTime);
 		return;
 	}
 
@@ -1519,13 +1519,13 @@ void CL_FastForward_f(void)
 
 	if (!clc.demoplaying)
 	{
-		Com_Printf("not playing demo can't fast forward\n");
+		Com_FuncPrinf("not playing demo can't fast forward\n");
 		return;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
-		Com_Printf("usage:  fastforward <time in seconds>\n");
+		Com_FuncPrinf("usage:  fastforward <time in seconds>\n");
 		return;
 	}
 
@@ -1556,13 +1556,13 @@ void CL_SeekServerTime_f(void)
 
 	if (!clc.demoplaying)
 	{
-		Com_Printf("not playing demo can't seek\n");
+		Com_FuncPrinf("not playing demo can't seek\n");
 		return;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
-		Com_Printf("usage:  seekservertime <time in milliseconds>\n");
+		Com_FuncPrinf("usage:  seekservertime <time in milliseconds>\n");
 		return;
 	}
 
@@ -1578,13 +1578,13 @@ void CL_Seek_f(void)
 
 	if (!clc.demoplaying)
 	{
-		Com_Printf("not playing demo can't seek\n");
+		Com_FuncPrinf("not playing demo can't seek\n");
 		return;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
-		Com_Printf("usage:  seek <time in seconds>\n");
+		Com_FuncPrinf("usage:  seek <time in seconds>\n");
 		return;
 	}
 
@@ -1606,13 +1606,13 @@ void CL_SeekEnd_f(void)
 
 	if (!clc.demoplaying)
 	{
-		Com_Printf("not playing demo can't seek\n");
+		Com_FuncPrinf("not playing demo can't seek\n");
 		return;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
-		Com_Printf("usage:  seek <time in seconds>\n");
+		Com_FuncPrinf("usage:  seek <time in seconds>\n");
 		return;
 	}
 
@@ -1636,7 +1636,7 @@ void CL_SeekNext_f(void)
 
 	if (cl.snap.serverTime == di.lastServerTime)
 	{
-		Com_FuncPrinf("at last snap\n");
+		Com_FuncDPrinf("at last snap\n");
 		return;
 	}
 
@@ -1653,7 +1653,7 @@ void CL_SeekNext_f(void)
 		r = CL_PeekSnapshot(cl.snap.messageNum + i, &snapshot);
 		if (!r)
 		{
-			Com_FuncPrinf("couldn't get next snapshot\n");
+			Com_FuncDPrinf("couldn't get next snapshot\n");
 			return;
 		}
 
@@ -1674,7 +1674,7 @@ void CL_SeekPrev_f(void)
 
 	if (cl.snap.serverTime == di.firstServerTime)
 	{
-		Com_FuncPrinf("at first snap\n");
+		Com_FuncDPrinf("at first snap\n");
 		return;
 	}
 
@@ -1706,7 +1706,7 @@ void CL_PauseDemo_f(void)
 
 	if (!IS_LEGACY_MOD)
 	{
-		Com_Printf("Demo pausing is only supported on legacy mod, sorry\n");
+		Com_FuncPrinf("Demo pausing is only supported on legacy mod, sorry\n");
 		return;
 	}
 
