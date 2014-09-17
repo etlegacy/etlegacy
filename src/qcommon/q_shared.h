@@ -1924,4 +1924,10 @@ float rint(float v);
 // FIXME optimize this and use asm
 #define ROUND_INT(x) (x >= 0 ? (int)(x + 0.5) : (int)(x - 0.5))
 
+typedef struct demoPlayInfo_s
+{
+	int firstTime;
+	int lastTime;
+} demoPlayInfo_t;
+
 #endif  // #ifndef INCLUDE_Q_SHARED_H

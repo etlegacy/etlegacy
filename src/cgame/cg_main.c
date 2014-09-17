@@ -36,7 +36,7 @@
 
 displayContextDef_t cgDC;
 
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient);
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient, demoPlayInfo_t *info);
 void CG_Shutdown(void);
 qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
@@ -51,7 +51,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	switch (command)
 	{
 	case CG_INIT:
-		CG_Init(arg0, arg1, arg2, arg3, arg4);
+		CG_Init(arg0, arg1, arg2, arg3, arg4, (demoPlayInfo_t *)arg5);
 		cgs.initing = qfalse;
 		return 0;
 	case CG_SHUTDOWN:
@@ -2460,7 +2460,7 @@ Will perform callbacks to make the loading info screen update.
 #define DEBUG_INITPROFILE_EXEC(f)
 #endif // LEGACY_DEBUG
 
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient)
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient, demoPlayInfo_t *info)
 {
 	const char *s;
 	int        i;
@@ -2479,6 +2479,11 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	memset(cg_items, 0, sizeof(cg_items));
 
 	cgs.initing = qtrue;
+
+	if (demoPlayback && info)
+	{
+		cg.demoinfo = info;
+	}
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{

@@ -92,6 +92,7 @@ typedef struct
 cvar_t *cl_maxRewindBackups;
 
 demoInfo_t      di;
+demoPlayInfo_t	dpi;
 rewindBackups_t *rewindBackups   = NULL;
 int             maxRewindBackups = 0;
 #endif
@@ -129,7 +130,6 @@ static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
 		if (*demofile)
 		{
 			Com_FuncPrinf("Demo file: %s\n", name);
-
 			return demo_protocols[i];
 		}
 		else
@@ -842,6 +842,9 @@ static void CL_ParseDemo(void)
 	clc.demofile             = demofile;
 	cls.state                = CA_DISCONNECTED;
 	cl_connectedToPureServer = qfalse;
+
+	dpi.firstTime = di.firstServerTime;
+	dpi.lastTime = di.lastServerTime;
 }
 
 void CL_FreeDemoPoints(void)

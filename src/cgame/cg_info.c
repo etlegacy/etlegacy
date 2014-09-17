@@ -1379,6 +1379,22 @@ void CG_DemoHelpDraw(void)
 			y += DH_Y - h;
 		}
 
+		if (cg.legacyClient && cg.demoinfo)
+		{
+			float demoStatus = (float)((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
+			y -= 40;
+
+			CG_DrawRect(x, y, w, 30, 1, borderColor);
+			CG_FillRect(x, y, w, 30, bgColor);
+
+			// Header
+			CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
+			CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
+			CG_Text_Paint_Ext(x + 4, y + 1 + tSpacing, hScale, hScaleY, hdrColor2, CG_TranslateString("DEMO STATUS"), 0.0f, 0, hStyle, hFont);
+			CG_FilledBar(x + 2, y + 15, w - 4, 12, colorGreen, NULL, borderColor, demoStatus, BAR_BORDER);
+			y += 40;
+		}
+
 		CG_DrawRect(x, y, w, h, 1, borderColor);
 		CG_FillRect(x, y, w, h, bgColor);
 

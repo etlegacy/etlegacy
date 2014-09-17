@@ -458,7 +458,6 @@ void CL_GetChallengePacket(void);
 void CL_Vid_Restart_f(void);
 void CL_Snd_Restart_f(void);
 void CL_NextDemo(void);
-void CL_DemoRun(void);
 void CL_ReadDemoMessage(void);
 
 void CL_InitDownloads(void);
@@ -495,10 +494,13 @@ qboolean CL_CloseAVI(void);
 qboolean CL_VideoRecording(void);
 
 // cl_demo
+extern demoPlayInfo_t	dpi;
+
 void CL_DemoCleanUp(void);
 void CL_DemoCompleted(void);
 void CL_WriteDemoMessage(msg_t *msg, int headerBytes);
 void CL_StopRecord_f(void);
+void CL_DemoRun(void);
 void CL_DemoInit(void);
 
 // cl_input
