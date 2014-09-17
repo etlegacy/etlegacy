@@ -374,8 +374,6 @@ extern cvar_t *sv_onlyVisibleClients;
 
 extern cvar_t *sv_showAverageBPS;           // net debugging
 
-extern cvar_t *g_gameType;
-
 // autodl
 extern cvar_t *sv_dl_maxRate;
 extern cvar_t *sv_dl_timeout;

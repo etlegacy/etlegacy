@@ -973,7 +973,7 @@ void SV_Init(void)
 
 	// serverinfo vars
 	Cvar_Get("timelimit", "0", CVAR_SERVERINFO);
-	sv_gametype = Cvar_Get("g_gametype", "0", CVAR_SERVERINFO | CVAR_LATCH);
+	sv_gametype       = Cvar_Get("g_gametype", "4", CVAR_SERVERINFO | CVAR_LATCH);
 	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO); // unused. Kept for GameTracker.com compatibility
 	Cvar_Get("protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO | CVAR_ROM);
 	sv_mapname        = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO | CVAR_ROM);
@@ -1092,8 +1092,6 @@ void SV_Init(void)
 	Cvar_Get("g_antilag", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
 
 	Cvar_Get("g_needpass", "0", CVAR_SERVERINFO);
-
-	g_gameType = Cvar_Get("g_gametype", "4", CVAR_SERVERINFO | CVAR_LATCH);
 
 	// the download netcode tops at 18/20 kb/s, no need to make you think you can go above
 	sv_dl_maxRate = Cvar_Get("sv_dl_maxRate", "42000", CVAR_ARCHIVE);

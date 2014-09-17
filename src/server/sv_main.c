@@ -76,8 +76,6 @@ cvar_t *sv_needpass;
 cvar_t *sv_dl_maxRate;
 cvar_t *sv_dl_timeout;          // seconds without any message when cl->state != CS_ACTIVE
 
-cvar_t *g_gameType;
-
 cvar_t *sv_showAverageBPS;      // net debugging
 
 cvar_t *sv_wwwDownload;         // server does a www dl redirect
