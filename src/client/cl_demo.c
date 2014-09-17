@@ -55,7 +55,6 @@ extern qboolean CL_GetServerCommand(int serverCommandNumber);
 extern void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe);
 extern void CL_AdjustTimeDelta(void);
 
-int CL_WalkDemoExt(char *arg, char *name, int *demofile);
 void CL_DemoCompleted(void);
 
 #define NEW_DEMOFUNC 1
@@ -102,6 +101,52 @@ rewindBackups_t *rewindBackups   = NULL;
 int             maxRewindBackups = 0;
 double          Overf            = 0.0;
 #endif
+
+/*
+====================
+CL_WalkDemoExt
+====================
+*/
+static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
+{
+	int i = 0;
+	*demofile = 0;
+
+	Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, PROTOCOL_VERSION);
+	FS_FOpenFileRead(name, demofile, qtrue);
+
+	if (*demofile)
+	{
+		Com_Printf("Demo file: %s\n", name);
+		return PROTOCOL_VERSION;
+	}
+
+	Com_Printf("Not found: %s\n", name);
+
+	while (demo_protocols[i])
+	{
+		if (demo_protocols[i] == PROTOCOL_VERSION)
+		{
+			continue;
+		}
+
+		Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, demo_protocols[i]);
+		FS_FOpenFileRead(name, demofile, qtrue);
+		if (*demofile)
+		{
+			Com_Printf("Demo file: %s\n", name);
+
+			return demo_protocols[i];
+		}
+		else
+		{
+			Com_Printf("Not found: %s\n", name);
+		}
+		i++;
+	}
+
+	return -1;
+}
 
 //REWIND AND FASTFORWARD
 
@@ -1281,52 +1326,6 @@ keep_reading:
 	clc.lastPacketTime = cls.realtime;
 	buf.readcount      = 0;
 	CL_ParseServerMessage(&buf);
-}
-
-/*
-====================
-CL_WalkDemoExt
-====================
-*/
-static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
-{
-	int i = 0;
-	*demofile = 0;
-
-	Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, PROTOCOL_VERSION);
-	FS_FOpenFileRead(name, demofile, qtrue);
-
-	if (*demofile)
-	{
-		Com_Printf("Demo file: %s\n", name);
-		return PROTOCOL_VERSION;
-	}
-
-	Com_Printf("Not found: %s\n", name);
-
-	while (demo_protocols[i])
-	{
-		if (demo_protocols[i] == PROTOCOL_VERSION)
-		{
-			continue;
-		}
-
-		Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, demo_protocols[i]);
-		FS_FOpenFileRead(name, demofile, qtrue);
-		if (*demofile)
-		{
-			Com_Printf("Demo file: %s\n", name);
-
-			return demo_protocols[i];
-		}
-		else
-		{
-			Com_Printf("Not found: %s\n", name);
-		}
-		i++;
-	}
-
-	return -1;
 }
 
 /*
