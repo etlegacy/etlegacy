@@ -583,9 +583,9 @@ void Con_DrawInput(void)
 		{
 			re.SetColor(console_highlightcolor);
 			re.DrawStretchPic(con.xadjust + (2 + con.highlightOffset) * SMALLCHAR_WIDTH,
-				y + 2,
-				(strlen(g_consoleField.buffer) - con.highlightOffset) * SMALLCHAR_WIDTH,
-				SMALLCHAR_HEIGHT - 2, 0, 0, 0, 0, cls.whiteShader);
+			                  y + 2,
+			                  (strlen(g_consoleField.buffer) - con.highlightOffset) * SMALLCHAR_WIDTH,
+			                  SMALLCHAR_HEIGHT - 2, 0, 0, 0, 0, cls.whiteShader);
 		}
 	}
 

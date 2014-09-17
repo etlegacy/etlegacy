@@ -675,8 +675,8 @@ void Console_Key(int key)
 		{
 			historyLine--;
 		}
-		g_consoleField = historyEditLines[historyLine % COMMAND_HISTORY];
-		con.highlightOffset   = 0;
+		g_consoleField      = historyEditLines[historyLine % COMMAND_HISTORY];
+		con.highlightOffset = 0;
 		return;
 	}
 
@@ -689,8 +689,8 @@ void Console_Key(int key)
 			return;
 		}
 		historyLine++;
-		g_consoleField = historyEditLines[historyLine % COMMAND_HISTORY];
-		con.highlightOffset   = 0;
+		g_consoleField      = historyEditLines[historyLine % COMMAND_HISTORY];
+		con.highlightOffset = 0;
 		return;
 	}
 
@@ -1429,7 +1429,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			//if the commandline is empty then we close the console
 			if (strlen(g_consoleField.buffer))
 			{
-				con.highlightOffset          = 0;
+				con.highlightOffset   = 0;
 				g_consoleField.cursor = 0;
 				memset(g_consoleField.buffer, 0, sizeof(char) * MAX_EDIT_LINE);
 			}

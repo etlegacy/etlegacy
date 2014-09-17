@@ -151,17 +151,17 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	int          i, count;
 	int          origPosition;
 	int          cmd;
-	char         *s;
-	char         buffer[16];
-	qboolean     success = qfalse;
-	int          r;
-	msg_t        buf;
-	byte         bufData[MAX_MSGLEN];
-	int          j;
-	int          lastPacketTimeOrig;
-	int          parseEntitiesNumOrig;
-	int          currentSnapNum;
-	int          serverMessageSequence;
+	//char         *s;
+	char     buffer[16];
+	qboolean success = qfalse;
+	int      r;
+	msg_t    buf;
+	byte     bufData[MAX_MSGLEN];
+	int      j;
+	int      lastPacketTimeOrig;
+	int      parseEntitiesNumOrig;
+	int      currentSnapNum;
+	//int      serverMessageSequence;
 
 	clSnap = &csn;
 
@@ -207,7 +207,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
 		}
-		serverMessageSequence = LittleLong(*((int *)buffer));
+		//serverMessageSequence = LittleLong(*((int *)buffer));
 
 		// init the message
 		memset(&buf, 0, sizeof(msg_t));
@@ -282,7 +282,8 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 				break;
 			case svc_serverCommand:
 				MSG_ReadLong(&buf);  // seq
-				s = MSG_ReadString(&buf);
+				//s = MSG_ReadString(&buf);
+				MSG_ReadString(&buf);
 				break;
 			case svc_gamestate:
 				Com_FuncPrinf("FIXME gamestate\n");
@@ -379,7 +380,7 @@ static void CL_DemoFastForward(double wantedTime)
 		//Com_Printf("stay\n");
 		cl.serverTime      = floor(wantedTime);
 		cls.realtime       = floor(wantedTime);
-		di.Overf              = wantedTime - floor(wantedTime);
+		di.Overf           = wantedTime - floor(wantedTime);
 		cl.serverTimeDelta = 0;
 		return;
 	}
@@ -401,7 +402,7 @@ static void CL_DemoFastForward(double wantedTime)
 	loopCount = 0;
 	while ((double)cl.snap.serverTime <= wantedTime)
 	{
-		DEMODEBUG("Servertime: %d wanted time %d\n", cl.snap.serverTime, wantedTime);
+		DEMODEBUG("Servertime: %d wanted time %lf\n", cl.snap.serverTime, wantedTime);
 		CL_ReadDemoMessage();
 		while (clc.lastExecutedServerCommand < clc.serverCommandSequence)
 		{
@@ -414,7 +415,7 @@ static void CL_DemoFastForward(double wantedTime)
 				}
 				else
 				{
-					Com_FuncPrinf("FIXME %s  (%d) + 1 <= (%d) - MAX_RELIABLE_COMMANDS (%d %d)\n", clc.lastExecutedServerCommand, clc.serverCommandSequence, cl.snap.serverTime, di.firstServerTime);
+					Com_FuncPrinf("FIXME %i  (%i) + 1 <= (%i) - MAX_RELIABLE_COMMANDS (%i)\n", clc.lastExecutedServerCommand, clc.serverCommandSequence, cl.snap.serverTime, di.firstServerTime);
 					break;
 				}
 			}
@@ -427,7 +428,7 @@ static void CL_DemoFastForward(double wantedTime)
 
 	cl.serverTime      = floor(wantedTime);
 	cls.realtime       = floor(wantedTime);
-	di.Overf              = wantedTime - floor(wantedTime);
+	di.Overf           = wantedTime - floor(wantedTime);
 	cl.serverTimeDelta = 0;
 
 	//TODO: fix this
@@ -537,9 +538,9 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 
 	memset(&newSnap, 0, sizeof(newSnap));
 	newSnap.serverCommandNum = clc.serverCommandSequence;
-	newSnap.serverTime = MSG_ReadLong(msg);
-	newSnap.messageNum = clc.serverMessageSequence;
-	deltaNum = MSG_ReadByte(msg);
+	newSnap.serverTime       = MSG_ReadLong(msg);
+	newSnap.messageNum       = clc.serverMessageSequence;
+	deltaNum                 = MSG_ReadByte(msg);
 	if (!deltaNum)
 	{
 		newSnap.deltaNum = -1;
@@ -553,7 +554,7 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 	if (newSnap.deltaNum <= 0)
 	{
 		newSnap.valid = qtrue;      // uncompressed frame
-		old = NULL;
+		old           = NULL;
 	}
 	else
 	{
@@ -625,7 +626,7 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 	}
 
 	// copy to the current good spot
-	cl.snap = newSnap;
+	cl.snap      = newSnap;
 	cl.snap.ping = 999;
 	// calculate ping time
 	for (i = 0; i < PACKET_BACKUP; i++)
@@ -639,13 +640,13 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 	}
 	// save the frame off in the backup array for later delta comparisons
 	cl.snapshots[cl.snap.messageNum & PACKET_MASK] = cl.snap;
-	cl.newSnapshots = qtrue;
+	cl.newSnapshots                                = qtrue;
 }
 
 //Do very shallow parse of the demo (could be extended) just to get times and snapshot count
 static void CL_ParseDemo(void)
 {
-	int tstart = 0;
+	int tstart   = 0;
 	int demofile = 0;
 
 	//Reset our demo data
@@ -653,7 +654,7 @@ static void CL_ParseDemo(void)
 
 	//Parse start
 	di.gameStartTime = -1;
-	di.gameEndTime = -1;
+	di.gameEndTime   = -1;
 	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
 	tstart = Sys_Milliseconds();
 
@@ -664,7 +665,7 @@ static void CL_ParseDemo(void)
 		msg_t *msg;
 		byte  bufData[MAX_MSGLEN];
 		int   s;
-		int cmd;
+		int   cmd;
 
 		di.demoPos = FS_FTell(clc.demofile);
 
@@ -709,7 +710,7 @@ static void CL_ParseDemo(void)
 		}
 
 		clc.lastPacketTime = cls.realtime;
-		buf.readcount = 0;
+		buf.readcount      = 0;
 
 		//parse
 		msg = &buf;
@@ -753,7 +754,7 @@ static void CL_ParseDemo(void)
 				break;
 			case svc_gamestate:
 				clc.serverCommandSequence = MSG_ReadLong(msg);
-				cl.gameState.dataCount = 1;
+				cl.gameState.dataCount    = 1;
 				while (qtrue)
 				{
 					int cmd2 = MSG_ReadByte(msg);
@@ -809,7 +810,7 @@ static void CL_ParseDemo(void)
 
 			// set the timedelta so we are exactly on this first frame
 			cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
-			cl.oldServerTime = cl.snap.serverTime;
+			cl.oldServerTime   = cl.snap.serverTime;
 
 			clc.timeDemoBaseTime = cl.snap.serverTime;
 		}
@@ -835,11 +836,11 @@ static void CL_ParseDemo(void)
 	Com_Printf("parse time %f seconds\n", (float)(Sys_Milliseconds() - tstart) / 1000.0);
 	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
 	clc.demoplaying = qfalse;
-	demofile = clc.demofile;
+	demofile        = clc.demofile;
 	CL_ClearState();
 	Com_Memset(&clc, 0, sizeof(clc));
-	clc.demofile = demofile;
-	cls.state = CA_DISCONNECTED;
+	clc.demofile             = demofile;
+	cls.state                = CA_DISCONNECTED;
 	cl_connectedToPureServer = qfalse;
 }
 
