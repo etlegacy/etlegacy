@@ -2156,7 +2156,7 @@ CL_CheckUserinfo
 void CL_CheckUserinfo(void)
 {
 	// don't add reliable commands when not yet connected
-	if (cls.state < CA_CHALLENGING)
+	if (cls.state < CA_CONNECTED)
 	{
 		return;
 	}
@@ -3165,7 +3165,7 @@ void CL_Init(void)
 	Cmd_AddCommand("setRecommended", CL_SetRecommended_f);
 
 	// we eat these commands to prevent exploits
-	Cmd_AddCommand("userinfo", CL_EatMe_f);
+	//Cmd_AddCommand("userinfo", CL_EatMe_f);
 
 	Cmd_AddCommand("wav_record", CL_WavRecord_f);
 	Cmd_AddCommand("wav_stoprecord", CL_WavStopRecord_f);

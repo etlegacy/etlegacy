@@ -1446,9 +1446,16 @@ void SV_UserinfoChanged(client_t *cl)
 
 void SV_UpdateUserinfo_f(client_t *cl)
 {
+	char *arg = Cmd_Argv(1);
+	// Stop random empty /userinfo calls without hurting anything
+	if (!arg || !*arg)
+	{
+		return;
+	}
+
 	if ((sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime))
 	{
-		Q_strncpyz(cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer));
+		Q_strncpyz(cl->userinfobuffer, arg, sizeof(cl->userinfobuffer));
 		SV_SendServerCommand(cl, "print \"^7Command ^1delayed^7 due to sv_floodprotect.\"");
 		return;
 	}
@@ -1458,10 +1465,10 @@ void SV_UpdateUserinfo_f(client_t *cl)
 	// Save userinfo changes to demo (also in SV_SetUserinfo() in sv_init.c)
 	if (sv.demoState == DS_RECORDING)
 	{
-		SV_DemoWriteClientUserinfo(cl, Cmd_Argv(1));
+		SV_DemoWriteClientUserinfo(cl, arg);
 	}
 
-	Q_strncpyz(cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo));
+	Q_strncpyz(cl->userinfo, arg, sizeof(cl->userinfo));
 
 	SV_UserinfoChanged(cl);
 	// call prog code to allow overrides
