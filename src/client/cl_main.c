@@ -3455,7 +3455,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 	{
 		if (info[strlen(info) - 1] != '\n')
 		{
-			strncat(info, "\n", sizeof(info) - 1);
+			Q_strcat(info, sizeof(info), "\n")
 		}
 		Com_Printf("%s: %s", NET_AdrToString(from), info);
 	}
