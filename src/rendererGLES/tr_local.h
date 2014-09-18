@@ -1816,6 +1816,8 @@ typedef enum
 #define MAX_DECAL_PROJECTORS    128 // includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
 #define MAX_DECALS              1024
 
+#define MAX_POLYBUFFERS 4096
+
 // all of the information needed by the back end must be
 // contained in a backEndData_t.
 typedef struct
@@ -1825,7 +1827,7 @@ typedef struct
 	corona_t coronas[MAX_CORONAS];
 	trRefEntity_t entities[MAX_ENTITIES];
 	srfPoly_t *polys; // [MAX_POLYS];
-	srfPolyBuffer_t polybuffers[MAX_POLYS];
+	srfPolyBuffer_t polybuffers[MAX_POLYBUFFERS];
 	polyVert_t *polyVerts; // [MAX_POLYVERTS];
 	decalProjector_t decalProjectors[MAX_DECAL_PROJECTORS];
 	srfDecal_t decals[MAX_DECALS];

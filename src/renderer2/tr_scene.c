@@ -296,8 +296,9 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 		return;
 	}
 
-	if (r_numPolybuffers >= r_maxpolyverts->integer)
+	if (r_numPolybuffers >= MAX_POLYBUFFERS)
 	{
+		Ren_Warning("WARNING RE_AddPolyBufferToScene: MAX_POLYBUFFERS (%d) reached\n", MAX_POLYBUFFERS);
 		return;
 	}
 
