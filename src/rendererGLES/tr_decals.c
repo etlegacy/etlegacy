@@ -181,7 +181,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	}
 
 	/* basic setup */
-	temp.shader        = R_GetShaderByHandle(hShader); /* debug code */ temp.numPlanes = temp.shader->entityMergable;
+	temp.shader        = R_GetShaderByHandle(hShader);
 	temp.color[0]      = color[0] * 255;
 	temp.color[1]      = color[1] * 255;
 	temp.color[2]      = color[2] * 255;
