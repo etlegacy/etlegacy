@@ -35,6 +35,7 @@
 #include "tr_local.h"
 
 extern int r_numDecalProjectors;
+extern int r_firstSceneDecal;
 
 typedef struct decalVert_s
 {
@@ -866,7 +867,7 @@ void R_AddDecalSurface(decal_t *decal)
 	srfGeneric_t *gen;
 
 	/* early outs */
-	if (decal->shader == NULL || decal->parent->viewCount != tr.viewCount || tr.refdef.numDecals >= MAX_DECALS)
+	if (decal->shader == NULL || decal->parent->viewCount != tr.viewCount || r_firstSceneDecal + tr.refdef.numDecals >= MAX_DECALS)
 	{
 		return;
 	}

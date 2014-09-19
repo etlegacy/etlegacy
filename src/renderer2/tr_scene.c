@@ -58,7 +58,6 @@ int r_numPolybuffers;
 int r_firstSceneDecalProjector;
 int r_numDecalProjectors;
 int r_firstSceneDecal;
-int r_numDecals;
 
 void R_InitNextFrame(void)
 {
@@ -84,7 +83,6 @@ void R_InitNextFrame(void)
 	// decals
 	r_numDecalProjectors       = 0;
 	r_firstSceneDecalProjector = 0;
-	r_numDecals                = 0;
 	r_firstSceneDecal          = 0;
 }
 
@@ -676,7 +674,7 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.numDecalProjectors = r_numDecalProjectors - r_firstSceneDecalProjector;
 	tr.refdef.decalProjectors    = &backEndData->decalProjectors[r_firstSceneDecalProjector];
 
-	tr.refdef.numDecals = r_numDecals - r_firstSceneDecal;
+	tr.refdef.numDecals = 0;
 	tr.refdef.decals    = &backEndData->decals[r_firstSceneDecal];
 
 
@@ -747,6 +745,7 @@ void RE_RenderScene(const refdef_t *fd)
 	// the next scene rendered in this frame will tack on after this one
 	r_firstSceneDrawSurf    = tr.refdef.numDrawSurfs;
 	r_firstSceneInteraction = tr.refdef.numInteractions;
+	r_firstSceneDecal       += tr.refdef.numDecals;
 	r_firstSceneEntity      = r_numEntities;
 	r_firstSceneLight       = r_numLights;
 	r_firstScenePoly        = r_numPolys;
