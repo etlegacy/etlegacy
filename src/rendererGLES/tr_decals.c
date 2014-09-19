@@ -139,6 +139,7 @@ RE_ProjectDecal()
 */
 void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime)
 {
+	static int       totalProjectors = 0;
 	int              i;
 	float            radius, iDist;
 	vec3_t           xyz;
@@ -292,6 +293,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	/* create a new projector */
 	dp = &backEndData->decalProjectors[r_numDecalProjectors];
 	Com_Memcpy(dp, &temp, sizeof(*dp));
+	dp->projectorNum = totalProjectors++;
 
 	/* we have a winner */
 	r_numDecalProjectors++;
@@ -380,6 +382,7 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 	out->fadeEndTime      = in->fadeEndTime;
 	out->omnidirectional  = in->omnidirectional;
 	out->numPlanes        = in->numPlanes;
+	out->projectorNum     = in->projectorNum;
 
 	/* translate bounding box and sphere (note: rotated projector bounding box will be invalid!) */
 	VectorSubtract(in->mins, origin, out->mins);
@@ -647,7 +650,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	for (i = 0; i < count; i++, decal++)
 	{
 		/* try to find an empty decal slot */
-		if (decal->shader == NULL)
+		if (decal->shader == NULL && decal->frameAdded != tr.frameCount)
 		{
 			break;
 		}
@@ -674,6 +677,8 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	decal->fadeStartTime = dp->fadeStartTime;
 	decal->fadeEndTime   = dp->fadeEndTime;
 	decal->fogIndex      = surf->fogIndex;
+	decal->projectorNum  = dp->projectorNum;
+	decal->frameAdded    = tr.frameCount;
 
 	/* add points */
 	decal->numVerts = numPoints;
@@ -784,6 +789,8 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 {
 	float        d;
 	srfGeneric_t *gen;
+	int          i, count;
+	decal_t      *decal;
 
 	/* early outs */
 	if (dp->shader == NULL)
@@ -795,6 +802,15 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 	if ((surf->shader->surfaceFlags & (SURF_NOIMPACT | SURF_NOMARKS)) || (surf->shader->contentFlags & CONTENTS_FOG))
 	{
 		return;
+	}
+
+	/* check if this projector already has a decal on this surface */
+	count = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+	decal = bmodel->decals;
+	for ( i = 0; i < count; i++, decal++ ) {
+		if ( decal->parent == surf && decal->projectorNum == dp->projectorNum ) {
+			return;
+		}
 	}
 
 	/* add to counts */
@@ -944,7 +960,7 @@ R_CullDecalProjectors()
 void R_CullDecalProjectors(void)
 {
 	int              i, numDecalProjectors, decalBits;
-	decalProjector_t *dp;
+	decalProjector_t *dp, temp;
 
 	/* walk decal projector list */
 	numDecalProjectors = 0;
@@ -952,25 +968,24 @@ void R_CullDecalProjectors(void)
 	for (i = 0, dp = tr.refdef.decalProjectors; i < tr.refdef.numDecalProjectors; i++, dp++)
 	{
 		if (R_CullPointAndRadius(dp->center, dp->radius) == CULL_OUT)
+			continue;
+
+		/* put all active projectors at the beginning */
+		if (tr.refdef.numDecalProjectors > 32 && dp != &tr.refdef.decalProjectors[numDecalProjectors])
 		{
-			dp->shader = NULL;
+			/* swap them */
+			temp = tr.refdef.decalProjectors[numDecalProjectors];
+			tr.refdef.decalProjectors[numDecalProjectors] = *dp;
+			*dp = temp;
 		}
-		else
+
+		decalBits |= (1 << numDecalProjectors);
+		numDecalProjectors++;
+
+		/* bitmask limit */
+		if (numDecalProjectors == 32)
 		{
-			if (dp != &tr.refdef.decalProjectors[numDecalProjectors])
-			{
-				/* put all active projectors at the beginning */
-				tr.refdef.decalProjectors[numDecalProjectors] = *dp;
-			}
-
-			decalBits |= (1 << numDecalProjectors);
-			numDecalProjectors++;
-
-			/* bitmask limit */
-			if (numDecalProjectors == 32)
-			{
-				break;
-			}
+			break;
 		}
 	}
 
