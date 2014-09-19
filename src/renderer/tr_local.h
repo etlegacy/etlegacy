@@ -463,6 +463,7 @@ typedef struct decalProjector_s
 	int numPlanes;                  // either 5 or 6, for quad or triangle projectors
 	vec4_t planes[6];
 	vec4_t texMat[3][2];
+	int projectorNum;				// global identifier
 }
 decalProjector_t;
 
@@ -866,6 +867,8 @@ typedef struct decal_s
 	int fogIndex;
 	int numVerts;
 	polyVert_t verts[MAX_DECAL_VERTS];
+	int projectorNum;
+	int frameAdded; // need to keep decal for at least one frame so we know not to reproject it in later views
 }
 decal_t;
 

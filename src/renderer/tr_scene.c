@@ -57,7 +57,6 @@ int r_numpolybuffers;
 int r_firstSceneDecalProjector;
 int r_numDecalProjectors;
 int r_firstSceneDecal;
-int r_numDecals;
 
 int skyboxportal;
 
@@ -88,7 +87,6 @@ void R_InitNextFrame(void)
 	// decals
 	r_numDecalProjectors       = 0;
 	r_firstSceneDecalProjector = 0;
-	r_numDecals                = 0;
 	r_firstSceneDecal          = 0;
 }
 
@@ -589,7 +587,7 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.numDecalProjectors = r_numDecalProjectors - r_firstSceneDecalProjector;
 	tr.refdef.decalProjectors    = &backEndData->decalProjectors[r_firstSceneDecalProjector];
 
-	tr.refdef.numDecals = r_numDecals - r_firstSceneDecal;
+	tr.refdef.numDecals = 0;
 	tr.refdef.decals    = &backEndData->decals[r_firstSceneDecal];
 
 	// a single frame may have multiple scenes draw inside it --
@@ -625,6 +623,7 @@ void RE_RenderScene(const refdef_t *fd)
 
 	// the next scene rendered in this frame will tack on after this one
 	r_firstSceneDrawSurf   = tr.refdef.numDrawSurfs;
+	r_firstSceneDecal      += tr.refdef.numDecals;
 	r_firstSceneEntity     = r_numentities;
 	r_firstSceneDlight     = r_numdlights;
 	r_firstScenePoly       = r_numpolys;
