@@ -2302,10 +2302,8 @@ void CG_TestModelNextFrame_f(void);
 void CG_TestModelPrevFrame_f(void);
 void CG_TestModelNextSkin_f(void);
 void CG_TestModelPrevSkin_f(void);
-void CG_ZoomDown_f(void);
 void CG_ZoomIn_f(void);
 void CG_ZoomOut_f(void);
-void CG_ZoomUp_f(void);
 
 void CG_SetupFrustum(void);
 qboolean CG_CullPoint(vec3_t pt);
