@@ -1485,7 +1485,7 @@ typedef struct decalProjector_s
 	int numPlanes;              // either 5 or 6, for quad or triangle projectors
 	vec4_t planes[6];
 	vec4_t texMat[3][2];
-	int projectorNum;				// global identifier
+	int projectorNum;               // global identifier
 }
 decalProjector_t;
 
@@ -3325,11 +3325,6 @@ extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
 
 //====================================================================
-
-#define IMAGE_FILE_HASH_SIZE      4096
-extern image_t *r_imageHashTable[IMAGE_FILE_HASH_SIZE];
-
-extern long GenerateImageHashValue(const char *fname);
 
 float R_NoiseGet4f(float x, float y, float z, float t);
 void R_NoiseInit(void);

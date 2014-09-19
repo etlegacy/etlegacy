@@ -1684,6 +1684,52 @@ int Q_CountChar(const char *string, char tocount)
 	return count;
 }
 
+long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolean ignoreCase)
+{
+	int  i    = 0;
+	long hash = 0;
+	char letter;
+
+	if (!fname)
+	{
+		Com_Error(ERR_DROP, "Q_GenerateHashValue: null name");
+		return 0;
+	}
+
+	while (fname[i] != '\0')
+	{
+		if (ignoreCase)
+		{
+			letter = tolower(fname[i]);
+		}
+		else
+		{
+			letter = fname[i];
+		}
+
+		if (!fullPath)
+		{
+			if (letter == '.')
+			{
+				break; // don't include extension
+
+			}
+		}
+
+		if (letter == '\\')
+		{
+			letter = '/'; // damn path names
+
+		}
+
+		hash += (long)(letter) * (i + 119);
+		i++;
+	}
+	hash  = (hash ^ (hash >> 10) ^ (hash >> 20));
+	hash &= (size - 1);
+	return hash;
+}
+
 int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
 {
 	int     len;

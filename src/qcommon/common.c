@@ -3725,7 +3725,7 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 
 static int Field_LastWhiteSpace(field_t *field)
 {
-	int i = 0, lastSpace = 0;
+	int      i            = 0, lastSpace = 0;
 	qboolean insideQuotes = qfalse;
 
 	for (; i < strlen(field->buffer); i++)
@@ -3762,7 +3762,7 @@ void Console_RemoveHighlighted(field_t *field, int *completionOffset)
 	if (strlen(field->buffer) > *completionOffset + 1)
 	{
 		field->buffer[*completionOffset + 1] = '\0';
-		field->cursor = *completionOffset + 1;
+		field->cursor                        = *completionOffset + 1;
 	}
 
 	*completionOffset = 0;
@@ -3784,7 +3784,7 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 		//Multiple matches
 		//Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
 		completionArgument = Cmd_Argc();
-		
+
 		// If there is trailing whitespace on the cmd
 		if (*(field->buffer + strlen(field->buffer) - 1) == ' ')
 		{
@@ -3797,13 +3797,13 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 		{
 			return;
 		}
-		
+
 		//We will skip this hightlight method if theres more than one command given
 		if (completionArgument > 1)
 		{
 			return;
 		}
-		
+
 		lastSpace = Field_LastWhiteSpace(field);
 		if (lastSpace < 0)
 		{
@@ -3826,7 +3826,7 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 #if SLASH_COMMAND
 		if (completionString[0] == '\\' || completionString[0] == '/')
 		{
-			memmove(completionString, completionString + 1, sizeof(completionString)-1);
+			memmove(completionString, completionString + 1, sizeof(completionString) - 1);
 		}
 #endif // SLASH_COMMAND
 

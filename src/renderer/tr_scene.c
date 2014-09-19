@@ -623,7 +623,7 @@ void RE_RenderScene(const refdef_t *fd)
 
 	// the next scene rendered in this frame will tack on after this one
 	r_firstSceneDrawSurf   = tr.refdef.numDrawSurfs;
-	r_firstSceneDecal      += tr.refdef.numDecals;
+	r_firstSceneDecal     += tr.refdef.numDecals;
 	r_firstSceneEntity     = r_numentities;
 	r_firstSceneDlight     = r_numdlights;
 	r_firstScenePoly       = r_numpolys;

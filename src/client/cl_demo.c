@@ -92,7 +92,7 @@ typedef struct
 cvar_t *cl_maxRewindBackups;
 
 demoInfo_t      di;
-demoPlayInfo_t	dpi;
+demoPlayInfo_t  dpi;
 rewindBackups_t *rewindBackups   = NULL;
 int             maxRewindBackups = 0;
 #endif
@@ -844,7 +844,7 @@ static void CL_ParseDemo(void)
 	cl_connectedToPureServer = qfalse;
 
 	dpi.firstTime = di.firstServerTime;
-	dpi.lastTime = di.lastServerTime;
+	dpi.lastTime  = di.lastServerTime;
 }
 
 void CL_FreeDemoPoints(void)
@@ -1140,7 +1140,7 @@ void CL_DemoCompleted(void)
 		if (time > 0)
 		{
 			Com_FuncPrinf("%i frames, %3.1f seconds: %3.1f fps\n", clc.timeDemoFrames,
-			           time / 1000.0, clc.timeDemoFrames * 1000.0 / time);
+			              time / 1000.0, clc.timeDemoFrames * 1000.0 / time);
 		}
 	}
 

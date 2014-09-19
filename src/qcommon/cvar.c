@@ -45,33 +45,7 @@ int    cvar_numIndexes;
 
 #define FILE_HASH_SIZE      512
 static cvar_t *hashTable[FILE_HASH_SIZE];
-
-/*
-================
-return a hash value for the filename
-================
-*/
-static long generateHashValue(const char *fname)
-{
-	int  i;
-	long hash;
-	char letter;
-
-	if (!fname)
-	{
-		Com_Error(ERR_DROP, "generateHashValue: null name");
-	}
-	hash = 0;
-	i    = 0;
-	while (fname[i] != '\0')
-	{
-		letter = tolower(fname[i]);
-		hash  += (long)(letter) * (i + 119);
-		i++;
-	}
-	hash &= (FILE_HASH_SIZE - 1);
-	return hash;
-}
+#define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qtrue, qtrue)
 
 /*
 ============

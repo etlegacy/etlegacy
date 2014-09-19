@@ -1115,6 +1115,9 @@ char *Q_CleanDirName(char *dirname);
 // replace all occuraces in haystack if needle with new
 char *Q_StrReplace(char *haystack, char *needle, char *newVal);
 
+// generate hashvalue from filename for set hashmap size
+long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolean ignoreCase);
+
 //=============================================
 
 float *tv(float x, float y, float z);

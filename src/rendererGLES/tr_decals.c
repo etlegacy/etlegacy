@@ -807,8 +807,10 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 	/* check if this projector already has a decal on this surface */
 	count = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
 	decal = bmodel->decals;
-	for ( i = 0; i < count; i++, decal++ ) {
-		if ( decal->parent == surf && decal->projectorNum == dp->projectorNum ) {
+	for (i = 0; i < count; i++, decal++)
+	{
+		if (decal->parent == surf && decal->projectorNum == dp->projectorNum)
+		{
 			return;
 		}
 	}
@@ -968,15 +970,17 @@ void R_CullDecalProjectors(void)
 	for (i = 0, dp = tr.refdef.decalProjectors; i < tr.refdef.numDecalProjectors; i++, dp++)
 	{
 		if (R_CullPointAndRadius(dp->center, dp->radius) == CULL_OUT)
+		{
 			continue;
+		}
 
 		/* put all active projectors at the beginning */
 		if (tr.refdef.numDecalProjectors > 32 && dp != &tr.refdef.decalProjectors[numDecalProjectors])
 		{
 			/* swap them */
-			temp = tr.refdef.decalProjectors[numDecalProjectors];
+			temp                                          = tr.refdef.decalProjectors[numDecalProjectors];
 			tr.refdef.decalProjectors[numDecalProjectors] = *dp;
-			*dp = temp;
+			*dp                                           = temp;
 		}
 
 		decalBits |= (1 << numDecalProjectors);

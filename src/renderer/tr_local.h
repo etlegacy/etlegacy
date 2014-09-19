@@ -463,7 +463,7 @@ typedef struct decalProjector_s
 	int numPlanes;                  // either 5 or 6, for quad or triangle projectors
 	vec4_t planes[6];
 	vec4_t texMat[3][2];
-	int projectorNum;				// global identifier
+	int projectorNum;               // global identifier
 }
 decalProjector_t;
 

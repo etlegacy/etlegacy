@@ -494,7 +494,7 @@ qboolean CL_CloseAVI(void);
 qboolean CL_VideoRecording(void);
 
 // cl_demo
-extern demoPlayInfo_t	dpi;
+extern demoPlayInfo_t dpi;
 
 void CL_DemoCleanUp(void);
 void CL_DemoCompleted(void);

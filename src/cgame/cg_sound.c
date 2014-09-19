@@ -38,6 +38,7 @@
 
 #define FILE_HASH_SIZE          1024
 static soundScript_t *hashTable[FILE_HASH_SIZE];
+#define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qfalse, qtrue)
 
 #define MAX_SOUND_SCRIPTS       1024 // decreased from 4096  - we never reach more than 500 sounds
 static soundScript_t soundScripts[MAX_SOUND_SCRIPTS];
@@ -46,35 +47,6 @@ int                  numSoundScripts = 0;
 #define MAX_SOUND_SCRIPT_SOUNDS 4096 // decreased from 8096 - engine hashes 4096 total sounds - see MAX_SFX
 static soundScriptSound_t soundScriptSounds[MAX_SOUND_SCRIPT_SOUNDS];
 int                       numSoundScriptSounds = 0;
-
-/*
-================
-return a hash value for the filename
-================
-*/
-static long generateHashValue(const char *fname)
-{
-	int  i    = 0;
-	long hash = 0;
-	char letter;
-
-	while (fname[i] != '\0')
-	{
-		letter = tolower(fname[i]);
-		if (letter == '.')
-		{
-			break;                          // don't include extension
-		}
-		if (letter == '\\')
-		{
-			letter = '/';                   // damn path names
-		}
-		hash += (long)(letter) * (i + 119);
-		i++;
-	}
-	hash &= (FILE_HASH_SIZE - 1);
-	return hash;
-}
 
 /*
 ==============

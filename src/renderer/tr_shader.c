@@ -48,6 +48,7 @@ static cullType_t implicitCullType;
 
 #define FILE_HASH_SIZE      4096
 static shader_t *hashTable[FILE_HASH_SIZE];
+#define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qfalse, qtrue)
 
 // Table containing string indexes for each shader found in the scripts, referenced by their checksum
 // values.
@@ -58,39 +59,6 @@ typedef struct shaderStringPointer_s
 } shaderStringPointer_t;
 
 shaderStringPointer_t shaderChecksumLookup[FILE_HASH_SIZE];
-
-/*
-================
-return a hash value for the filename
-================
-*/
-static long generateHashValue(const char *fname)
-{
-	int  i    = 0;
-	long hash = 0;
-	char letter;
-
-	while (fname[i] != '\0')
-	{
-		letter = tolower(fname[i]);
-		if (letter == '.')
-		{
-			break;                          // don't include extension
-		}
-		if (letter == '\\')
-		{
-			letter = '/';                   // damn path names
-		}
-		if (letter == PATH_SEP)
-		{
-			letter = '/';                   // damn path names
-		}
-		hash += (long)(letter) * (i + 119);
-		i++;
-	}
-	hash &= (FILE_HASH_SIZE - 1);
-	return hash;
-}
 
 void R_RemapShader(const char *shaderName, const char *newShaderName, const char *timeOffset)
 {

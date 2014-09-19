@@ -40,7 +40,11 @@ static unsigned char s_gammatable[256];
 int gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
 int gl_filter_max = GL_LINEAR;
 
+#define IMAGE_FILE_HASH_SIZE 4096
 image_t *r_imageHashTable[IMAGE_FILE_HASH_SIZE];
+// In r2 we use full filename hashes!? well mkay
+// TODO: check if this fullpath shit is really needed for anything
+#define generateHashValue(fname) Q_GenerateHashValue(fname, IMAGE_FILE_HASH_SIZE, qtrue, qtrue)
 
 void R_GammaCorrect(byte *buffer, int bufSize)
 {
@@ -67,38 +71,6 @@ textureMode_t modes[] =
 	{ "GL_NEAREST_MIPMAP_LINEAR",  GL_NEAREST_MIPMAP_LINEAR,  GL_NEAREST },
 	{ "GL_LINEAR_MIPMAP_LINEAR",   GL_LINEAR_MIPMAP_LINEAR,   GL_LINEAR  }
 };
-
-/*
-================
-return a hash value for the filename
-================
-*/
-long GenerateImageHashValue(const char *fname)
-{
-	int  i    = 0;
-	long hash = 0;
-	char letter;
-
-	//Ren_Print("tr_image::GenerateImageHashValue: '%s'\n", fname);
-
-	while (fname[i] != '\0')
-	{
-		letter = tolower(fname[i]);
-
-		//if(letter == '.')
-		//  break;              // don't include extension
-
-		if (letter == '\\')
-		{
-			letter = '/';       // damn path names
-
-		}
-		hash += (long)(letter) * (i + 119);
-		i++;
-	}
-	hash &= (IMAGE_FILE_HASH_SIZE - 1);
-	return hash;
-}
 
 void GL_TextureMode(const char *string)
 {
@@ -1423,7 +1395,7 @@ image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable)
 	if (linkIntoHashTable)
 	{
 		Q_strncpyz(buffer, name, sizeof(buffer));
-		hash                   = GenerateImageHashValue(buffer);
+		hash                   = generateHashValue(buffer);
 		image->next            = r_imageHashTable[hash];
 		r_imageHashTable[hash] = image;
 	}
@@ -2107,7 +2079,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	}
 
 	Q_strncpyz(buffer, imageName, sizeof(buffer));
-	hash = GenerateImageHashValue(buffer);
+	hash = generateHashValue(buffer);
 
 	//Ren_Print("R_FindImageFile: buffer '%s'\n", buffer);
 
@@ -2429,7 +2401,7 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	}
 
 	Q_strncpyz(buffer, imageName, sizeof(buffer));
-	hash = GenerateImageHashValue(buffer);
+	hash = generateHashValue(buffer);
 
 	// see if the image is already loaded
 	for (image = r_imageHashTable[hash]; image; image = image->next)

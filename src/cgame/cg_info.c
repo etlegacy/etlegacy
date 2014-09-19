@@ -1341,13 +1341,13 @@ void CG_DemoHelpDraw(void)
 		    0);
 		x = SCREEN_WIDTH + DH_X - w;
 		h = tSpacing + 9 +
-			tSpacing * (2 +
+		    tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
-			((cg.mvTotalClients > 1) ? ARRAY_LEN(mvhelp) : ARRAY_LEN(help))
+		                ((cg.mvTotalClients > 1) ? ARRAY_LEN(mvhelp) : ARRAY_LEN(help))
 #else
-			ARRAY_LEN(help)
+		                ARRAY_LEN(help)
 #endif
-			);
+		                );
 
 		// Fade-in effects
 		if (diff > 0.0f)
@@ -1501,8 +1501,8 @@ void CG_SpecHelpDraw(void)
 			{ "spechelp", "help on/off"        }
 		};
 
-		int  i, x, y = SCREEN_HEIGHT, w, h;
-		int  len, maxlen = 0;
+		int i, x, y = SCREEN_HEIGHT, w, h;
+		int len, maxlen = 0;
 		char format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
 		char *lines[16];
 
@@ -1513,18 +1513,18 @@ void CG_SpecHelpDraw(void)
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int        hStyle    = ITEM_TEXTSTYLE_SHADOWED;
-		float      hScale    = 0.16f;
-		float      hScaleY   = 0.21f;
-		fontInfo_t *hFont    = FONT_HEADER;
-		vec4_t     hdrColor2 = COLOR_HDR2;  // text
+		int hStyle        = ITEM_TEXTSTYLE_SHADOWED;
+		float hScale      = 0.16f;
+		float hScaleY     = 0.21f;
+		fontInfo_t *hFont = FONT_HEADER;
+		vec4_t hdrColor2  = COLOR_HDR2;     // text
 
 		// Text settings
-		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
-		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
-		float      tScale   = 0.19f;
-		fontInfo_t *tFont   = FONT_TEXT;
-		vec4_t     tColor   = COLOR_TEXT;   // text
+		int tStyle        = ITEM_TEXTSTYLE_SHADOWED;
+		int tSpacing      = 9;          // Should derive from CG_Text_Height_Ext
+		float tScale      = 0.19f;
+		fontInfo_t *tFont = FONT_TEXT;
+		vec4_t tColor     = COLOR_TEXT;     // text
 
 		float diff = cg.fadeTime - trap_Milliseconds();
 

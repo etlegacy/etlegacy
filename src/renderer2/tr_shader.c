@@ -48,6 +48,8 @@ static shader_t *shaderHashTable[FILE_HASH_SIZE];
 #define MAX_SHADERTEXT_HASH     2048
 static char **shaderTextHashTable[MAX_SHADERTEXT_HASH];
 
+#define generateHashValue(fname, size) Q_GenerateHashValue(fname, size, qfalse, qtrue)
+
 static char *s_guideText;
 static char *s_shaderText;
 
@@ -63,48 +65,6 @@ static qboolean      deferLoad;
 static char       implicitMap[MAX_QPATH];
 static unsigned   implicitStateBits;
 static cullType_t implicitCullType;
-
-/*
-================
-return a hash value for the filename
-================
-*/
-static long generateHashValue(const char *fname, const int size)
-{
-	int i = 0;
-	//int len;
-	long hash = 0;
-	char letter;
-
-	//len = strlen(fname);
-
-	while (fname[i] != '\0')
-	//for(i = 0; i < len; i++)
-	{
-		letter = tolower(fname[i]);
-
-		if (letter == '.')
-		{
-			break;              // don't include extension
-
-		}
-		if (letter == '\\')
-		{
-			letter = '/';       // damn path names
-
-		}
-		if (letter == PATH_SEP)
-		{
-			letter = '/';       // damn path names
-
-		}
-		hash += (long)(letter) * (i + 119);
-		i++;
-	}
-	hash  = (hash ^ (hash >> 10) ^ (hash >> 20));
-	hash &= (size - 1);
-	return hash;
-}
 
 void R_RemapShader(const char *shaderName, const char *newShaderName, const char *timeOffset)
 {

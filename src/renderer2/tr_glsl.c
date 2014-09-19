@@ -153,36 +153,6 @@ programInfo_t *gl_colorCorrection;
 //This is set with the GLSL_SelectPermutation
 shaderProgram_t *selectedProgram;
 
-/*
-================
-return a hash value for the filename
-This function is cloned to many files, should be moved to common->
-================
-*/
-static long GLSL_GenerateHashValue(const char *fname)
-{
-	int  i    = 0;
-	long hash = 0;
-	char letter;
-
-	while (fname[i] != '\0')
-	{
-		letter = tolower(fname[i]);
-		if (letter == '.')
-		{
-			break;                          // don't include extension
-		}
-		if (letter == PATH_SEP)
-		{
-			letter = '/';                   // damn path names
-		}
-		hash += (long)(letter) * (i + 119);
-		i++;
-	}
-	hash &= (FILE_HASH_SIZE - 1);
-	return hash;
-}
-
 int GLSL_GetMacroByName(const char *name)
 {
 	int i;
@@ -397,7 +367,7 @@ programInfo_t *GLSL_FindShader(const char *name)
 	COM_StripExtension(name, strippedName, sizeof(strippedName));
 	COM_FixPath(strippedName);
 
-	hash = GLSL_GenerateHashValue(strippedName);
+	hash = Q_GenerateHashValue(strippedName, FILE_HASH_SIZE, qfalse, qtrue);
 
 	for (sh = hashTable[hash]; sh; sh = sh->next)
 	{

@@ -41,6 +41,7 @@ int gl_filter_max = GL_LINEAR;
 
 #define FILE_HASH_SIZE      4096
 static image_t *hashTable[FILE_HASH_SIZE];
+#define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qfalse, qtrue);
 
 // in order to prevent zone fragmentation, all images will
 // be read into this buffer. In order to keep things as fast as possible,
@@ -124,35 +125,6 @@ textureMode_t modes[] =
 	{ "GL_NEAREST_MIPMAP_LINEAR",  GL_NEAREST_MIPMAP_LINEAR,  GL_NEAREST },
 	{ "GL_LINEAR_MIPMAP_LINEAR",   GL_LINEAR_MIPMAP_LINEAR,   GL_LINEAR  }
 };
-
-/*
-================
-return a hash value for the filename
-================
-*/
-static long generateHashValue(const char *fname)
-{
-	int  i    = 0;
-	long hash = 0;
-	char letter;
-
-	while (fname[i] != '\0')
-	{
-		letter = tolower(fname[i]);
-		if (letter == '.')
-		{
-			break;                              // don't include extension
-		}
-		if (letter == '\\')
-		{
-			letter = '/';                       // damn path names
-		}
-		hash += (long)(letter) * (i + 119);
-		i++;
-	}
-	hash &= (FILE_HASH_SIZE - 1);
-	return hash;
-}
 
 /*
 ===============

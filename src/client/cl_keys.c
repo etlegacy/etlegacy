@@ -925,25 +925,7 @@ char *Key_KeynumToString(int keynum)
 }
 
 #define BIND_HASH_SIZE 1024
-
-static long generateHashValue(const char *fname)
-{
-	int  i    = 0;
-	long hash = 0;
-
-	if (!fname)
-	{
-		return 0;
-	}
-
-	while (fname[i] != '\0')
-	{
-		hash += (long)(fname[i]) * (i + 119);
-		i++;
-	}
-	hash &= (BIND_HASH_SIZE - 1);
-	return hash;
-}
+#define generateHashValue(fname) Q_GenerateHashValue(fname, BIND_HASH_SIZE, qtrue, qfalse)
 
 /*
 ===================
