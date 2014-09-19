@@ -143,13 +143,6 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	int              i;
 	decalProjector_t *dp, temp;
 
-	// first frame rendered does not have a valid decals list
-	if (tr.refdef.decalProjectors == NULL)
-	{
-		Ren_Print("WARNING: RE_ProjectDecal() tr.refdef.decalProjectors == NULL\n");
-		return;
-	}
-
 	if (r_numDecalProjectors >= MAX_DECAL_PROJECTORS)
 	{
 		Ren_Print("WARNING: RE_ProjectDecal() Max decal projectors reached (%d)\n", MAX_DECAL_PROJECTORS);
@@ -189,7 +182,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	temp.color[2]      = color[2] * 255;
 	temp.color[3]      = color[3] * 255;
 	temp.numPlanes     = numPoints + 2;
-	temp.fadeStartTime = tr.refdef.time + lifeTime - fadeTime;
+	temp.fadeStartTime = tr.refdef.time + lifeTime - fadeTime; // fixme: stale refdef time
 	temp.fadeEndTime   = temp.fadeStartTime + fadeTime;
 
 	// set up decal texcoords (fixme: support arbitrary projector st coordinates in trapcall)
@@ -302,7 +295,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	}
 
 	// create a new projector
-	dp = &tr.refdef.decalProjectors[r_numDecalProjectors];
+	dp = &backEndData->decalProjectors[r_numDecalProjectors];
 	Com_Memcpy(dp, &temp, sizeof(*dp));
 
 	// we have a winner
