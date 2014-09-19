@@ -45,10 +45,6 @@ void IN_Shutdown(void)
 {
 }
 
-void Sys_SendKeyEvents(void)
-{
-}
-
 void IN_MouseEvent(int mstate)
 {
 }
