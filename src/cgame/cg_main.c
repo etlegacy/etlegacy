@@ -1378,9 +1378,9 @@ static void CG_RegisterSounds(void)
 	cgs.media.sfx_knifehit[3] = trap_S_RegisterSound("sound/weapons/knife/knife_hit4.wav", qfalse);
 	cgs.media.sfx_knifehit[4] = trap_S_RegisterSound("sound/weapons/knife/knife_hitwall1.wav", qfalse);
 
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < MAX_IMPACT_SOUNDS; i++)
 	{
-		cgs.media.sfx_bullet_fleshhit[i] = trap_S_RegisterSound(va("sound/weapons/impact/flesh%i.wav", i + 1), qfalse);
+		//cgs.media.sfx_bullet_fleshhit[i] = trap_S_RegisterSound(va("sound/weapons/impact/flesh%i.wav", i + 1), qfalse); // terrible sounds, stonehit is used instead
 		cgs.media.sfx_bullet_metalhit[i] = trap_S_RegisterSound(va("sound/weapons/impact/metal%i.wav", i + 1), qfalse);
 		cgs.media.sfx_bullet_woodhit[i]  = trap_S_RegisterSound(va("sound/weapons/impact/wood%i.wav", i + 1), qfalse);
 		cgs.media.sfx_bullet_glasshit[i] = trap_S_RegisterSound(va("sound/weapons/impact/glass%i.wav", i + 1), qfalse);

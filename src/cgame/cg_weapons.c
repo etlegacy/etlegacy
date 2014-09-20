@@ -5963,7 +5963,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				mark   = cgs.media.bulletMarkShader;    // default
 				radius = 1.0f + 0.5f * (rand() % 2);
 
-#define MAX_IMPACT_SOUNDS 5
 				if ((surfFlags & SURF_METAL) || (surfFlags & SURF_ROOF))
 				{
 					sfx  = cgs.media.sfx_bullet_metalhit[rand() % MAX_IMPACT_SOUNDS];
@@ -6270,7 +6269,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	if (sfx2)      // distant sounds for weapons with a broadcast fire sound (so you /always/ hear dynamite explosions)
 	{
 		vec3_t porg, gorg, norm;    // player/gun origin
-		float gdist;
+		float  gdist;
 
 		VectorCopy(origin, gorg);
 		VectorCopy(cg.refdef_current->vieworg, porg);
@@ -6323,7 +6322,7 @@ CG_MissileHitWallSmall
 */
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir)
 {
-	vec3_t sprOrg, sprVel;
+	vec3_t        sprOrg, sprVel;
 	static vec4_t projection = { 0, 0, -1.0f, 80.0f };     // {x,y,x,radius}
 
 	// explosion sprite animation
@@ -6390,9 +6389,9 @@ CG_SpawnTracer
 void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 {
 	localEntity_t *le;
-	float dist;
-	vec3_t dir;
-	vec3_t start, end;
+	float         dist;
+	vec3_t        dir;
+	vec3_t        start, end;
 
 	VectorCopy(pstart, start);
 	VectorCopy(pend, end);
@@ -6454,9 +6453,9 @@ CG_DrawTracer
 */
 void CG_DrawTracer(vec3_t start, vec3_t finish)
 {
-	vec3_t forward, right;
+	vec3_t     forward, right;
 	polyVert_t verts[4];
-	vec3_t line;
+	vec3_t     line;
 
 	VectorSubtract(finish, start, forward);
 
@@ -6509,7 +6508,7 @@ CG_Tracer
 */
 void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 {
-	float len, begin, end;
+	float  len, begin, end;
 	vec3_t start, finish;
 	vec3_t forward;
 
@@ -6541,7 +6540,7 @@ CG_CalcMuzzlePoint
 */
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 {
-	vec3_t forward, right, up;
+	vec3_t    forward, right, up;
 	centity_t *cent;
 
 	if (entityNum == cg.snap->ps.clientNum)
@@ -6550,7 +6549,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		if (cg.snap->ps.eFlags & EF_MG42_ACTIVE)
 		{
 			centity_t *mg42 = &cg_entities[cg.snap->ps.viewlocked_entNum];
-			vec3_t forward;
+			vec3_t    forward;
 
 			AngleVectors(cg.snap->ps.viewangles, forward, NULL, NULL);
 			VectorMA(mg42->currentState.pos.trBase, 40, forward, muzzle);       // was -36, made 40 to be in sync with the actual muzzleflash drawing
@@ -6559,7 +6558,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		else if (cg.snap->ps.eFlags & EF_AAGUN_ACTIVE)
 		{
 			centity_t *aagun = &cg_entities[cg.snap->ps.viewlocked_entNum];
-			vec3_t forward, right, up;
+			vec3_t    forward, right, up;
 
 			AngleVectors(cg.snap->ps.viewangles, forward, right, up);
 			VectorCopy(aagun->lerpOrigin, muzzle);                      // modelindex2 will already have been incremented on the server, so work out what it WAS then
@@ -6635,7 +6634,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 	else if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 	{
 		centity_t *aagun;
-		int num;
+		int       num;
 
 		// find the mg42 we're attached to
 		for (num = 0; num < cg.snap->numEntities; num++)
@@ -6740,9 +6739,9 @@ Renders bullet effects.
 */
 void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
 {
-	trace_t trace, trace2;
-	vec3_t dir;
-	vec3_t start;
+	trace_t    trace, trace2;
+	vec3_t     dir;
+	vec3_t     start;
 	static int lastBloodSpat;
 
 	// don't ever shoot if we're binoced in
@@ -6754,8 +6753,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	// snap tracers for MG42 to viewangle of client when antilag is enabled
 	if (cgs.antilag && otherEntNum2 == cg.snap->ps.clientNum && (cg_entities[otherEntNum2].currentState.eFlags & EF_MG42_ACTIVE))
 	{
-		vec3_t muzzle, forward, right, up;
-		float r, u;
+		vec3_t  muzzle, forward, right, up;
+		float   r, u;
 		trace_t tr;
 
 		AngleVectors(cg.predictedPlayerState.viewangles, forward, right, up);
@@ -6830,10 +6829,10 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	// impact splash and mark
 	if (flesh)
 	{
-		vec3_t origin;
-		float rnd, tmpf;
-		vec3_t smokedir, tmpv, tmpv2;
-		int i, headshot;
+		vec3_t    origin;
+		float     rnd, tmpf;
+		vec3_t    smokedir, tmpv, tmpv2;
+		int       i, headshot;
 		centity_t *cent = &cg_entities[fleshEntityNum];
 
 		if (fleshEntityNum < MAX_CLIENTS)
@@ -6891,9 +6890,9 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		}
 
 		// play the bullet hit flesh sound
-		// HACK, if this is not us getting hit, make it quieter // JPW NERVE pulled hack, we like loud impact sounds for MP
 		if (fleshEntityNum == cg.snap->ps.clientNum)
 		{
+			//trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY, cgs.media.sfx_bullet_fleshhit[rand() % MAX_IMPACT_SOUNDS]);
 			trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY, cgs.media.sfx_bullet_stonehit[rand() % MAX_IMPACT_SOUNDS]);
 		}
 		else

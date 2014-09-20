@@ -1195,6 +1195,8 @@ typedef struct
 
 #define CG_NUM_ITEMS 81 // keep in sync with bg_numItems! FIXME: make this non static one day
 
+#define MAX_IMPACT_SOUNDS   5
+
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t
 // Other media that can be tied to clients, weapons, or items are
@@ -1445,12 +1447,12 @@ typedef struct
 	sfxHandle_t sfx_brassSound[BRASSSOUND_MAX][3][2];
 	sfxHandle_t sfx_rubbleBounce[3];
 
-	sfxHandle_t sfx_bullet_fleshhit[5];
-	sfxHandle_t sfx_bullet_metalhit[5];
-	sfxHandle_t sfx_bullet_woodhit[5];
-	sfxHandle_t sfx_bullet_glasshit[5];
-	sfxHandle_t sfx_bullet_stonehit[5];
-	sfxHandle_t sfx_bullet_waterhit[5];
+	//sfxHandle_t sfx_bullet_fleshhit[MAX_IMPACT_SOUNDS];
+	sfxHandle_t sfx_bullet_metalhit[MAX_IMPACT_SOUNDS];
+	sfxHandle_t sfx_bullet_woodhit[MAX_IMPACT_SOUNDS];
+	sfxHandle_t sfx_bullet_glasshit[MAX_IMPACT_SOUNDS];
+	sfxHandle_t sfx_bullet_stonehit[MAX_IMPACT_SOUNDS];
+	sfxHandle_t sfx_bullet_waterhit[MAX_IMPACT_SOUNDS];
 
 	sfxHandle_t sfx_dynamiteexp;
 	sfxHandle_t sfx_dynamiteexpDist;
