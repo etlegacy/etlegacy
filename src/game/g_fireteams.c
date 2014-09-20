@@ -81,7 +81,7 @@
 // Configstring for each fireteam "\\n\\%NAME%\\l\\%LEADERNUM%\\c\\%CLIENTS%"
 // clients "compressed" using hex
 
-#define G_ClientPrintAndReturn(entityNum, text) trap_SendServerCommand(entityNum, "cpm \"" text "\"\n"); return;
+#define G_ClientPrint(entityNum, text) trap_SendServerCommand(entityNum, "cpm \"" text "\"\n");
 
 // Utility functions
 fireteamData_t *G_FindFreeFireteam(void)
@@ -283,29 +283,34 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 
 	if (G_IsOnFireteam(entityNum, NULL))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are already on a fireteam, leave it first");
+		G_ClientPrint(entityNum, "You are already on a fireteam, leave it first");
+		return;
 	}
 
 	if ((ft = G_FindFreeFireteam()) == NULL)
 	{
-		G_ClientPrintAndReturn(entityNum, "No free fireteams available");
+		G_ClientPrint(entityNum, "No free fireteams available");
+		return;
 	}
 
 	if (leader->client->sess.sessionTeam != TEAM_AXIS && leader->client->sess.sessionTeam != TEAM_ALLIES)
 	{
-		G_ClientPrintAndReturn(entityNum, "Only players on a team can create a fireteam");
+		G_ClientPrint(entityNum, "Only players on a team can create a fireteam");
+		return;
 	}
 
 	count = G_CountTeamFireteams(leader->client->sess.sessionTeam);
 	if (count >= MAX_FIRETEAMS / 2)
 	{
-		G_ClientPrintAndReturn(entityNum, "Your team already has the maximum number of fireteams allowed");
+		G_ClientPrint(entityNum, "Your team already has the maximum number of fireteams allowed");
+		return;
 	}
 
 	ident = G_FindFreeFireteamIdent(leader->client->sess.sessionTeam) + 1;
 	if (ident == 0)
 	{
-		G_ClientPrintAndReturn(entityNum, "Um, something is broken, spoink Gordon");
+		G_ClientPrint(entityNum, "Um, something is broken, spoink Gordon");
+		return;
 	}
 
 	// good to go now, i hope!
@@ -352,24 +357,27 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 
 	if (g_entities[leaderNum].client->sess.sessionTeam != g_entities[entityNum].client->sess.sessionTeam)
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not on the same team as that fireteam");
+		G_ClientPrint(entityNum, "You are not on the same team as that fireteam");
+		return;
 	}
 
 	if (!G_IsFireteamLeader(leaderNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "The leader has now left the Fireteam you applied to");
+		G_ClientPrint(entityNum, "The leader has now left the Fireteam you applied to");
+		return;
 	}
 
 	if (G_IsOnFireteam(entityNum, NULL))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are already on a fireteam");
+		G_ClientPrint(entityNum, "You are already on a fireteam");
+		return;
 	}
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (i >= MAX_FIRETEAM_MEMBERS)
 		{
-			G_ClientPrintAndReturn(entityNum, "Too many players already on this Fireteam");
+			G_ClientPrint(entityNum, "Too many players already on this Fireteam");
 			return;
 		}
 
@@ -554,17 +562,20 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not the leader of a fireteam");
+		G_ClientPrint(entityNum, "You are not the leader of a fireteam");
+		return;
 	}
 
 	if (g_entities[entityNum].client->sess.sessionTeam != g_entities[otherEntityNum].client->sess.sessionTeam)
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not on the same team as the other player");
+		G_ClientPrint(entityNum, "You are not on the same team as the other player");
+		return;
 	}
 
 	if (G_IsOnFireteam(otherEntityNum, NULL))
 	{
-		G_ClientPrintAndReturn(entityNum, "The other player is already on a fireteam");
+		G_ClientPrint(entityNum, "The other player is already on a fireteam");
+		return;
 	}
 
 	if (g_entities[otherEntityNum].r.svFlags & SVF_BOT)
@@ -596,7 +607,8 @@ void G_DestroyFireteam(int entityNum)
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not the leader of a fireteam\n");
+		G_ClientPrint(entityNum, "You are not the leader of a fireteam\n");
+		return;
 	}
 
 	while (ft->joinOrder[0] != -1)
@@ -636,12 +648,14 @@ void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not the leader of a fireteam");
+		G_ClientPrint(entityNum, "You are not the leader of a fireteam");
+		return;
 	}
 
 	if ((!G_IsOnFireteam(otherEntityNum, &ft2)) || ft != ft2)
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not on the same Fireteam as the other player");
+		G_ClientPrint(entityNum, "You are not on the same Fireteam as the other player");
+		return;
 	}
 
 	trap_SendServerCommand(otherEntityNum, "cpm \"You have been warned by your Fireteam Commander\n\"");
@@ -672,12 +686,14 @@ void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not the leader of a fireteam");
+		G_ClientPrint(entityNum, "You are not the leader of a fireteam");
+		return;
 	}
 
 	if ((!G_IsOnFireteam(otherEntityNum, &ft2)) || ft != ft2)
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not on the same Fireteam as the other player");
+		G_ClientPrint(entityNum, "You are not on the same Fireteam as the other player");
+		return;
 	}
 
 #ifdef FEATURE_OMNIBOT
@@ -686,7 +702,7 @@ void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	G_RemoveClientFromFireteams(otherEntityNum, qtrue, qfalse);
 
-	G_ClientPrintAndReturn(otherEntityNum, "You have been kicked from the fireteam");
+	G_ClientPrint(otherEntityNum, "You have been kicked from the fireteam");
 }
 
 // The only way a client should ever apply to join a team
@@ -702,13 +718,15 @@ void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 
 	if (G_IsOnFireteam(entityNum, NULL))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are already on a fireteam");
+		G_ClientPrint(entityNum, "You are already on a fireteam");
+		return;
 	}
 
 	ft = &level.fireTeams[fireteamNum];
 	if (!ft->inuse)
 	{
-		G_ClientPrintAndReturn(entityNum, "The Fireteam you requested does not exist");
+		G_ClientPrint(entityNum, "The Fireteam you requested does not exist");
+		return;
 	}
 
 	if (ft->joinOrder[0] < 0 || ft->joinOrder[0] >= MAX_CLIENTS)
@@ -753,12 +771,14 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	if (G_IsOnFireteam(otherEntityNum, NULL))
 	{
-		G_ClientPrintAndReturn(entityNum, "The other player is already on a fireteam");
+		G_ClientPrint(entityNum, "The other player is already on a fireteam");
+		return;
 	}
 
 	if (!G_IsOnFireteam(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not on a fireteam");
+		G_ClientPrint(entityNum, "You are not on a fireteam");
+		return;
 	}
 
 	if (ft->joinOrder[0] == entityNum)
@@ -784,7 +804,6 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 	Bot_Event_FireTeam_Proposal(leader - g_entities, otherEntityNum);
 #endif
 }
-
 
 int G_FireteamNumberForString(const char *name, team_t team)
 {
@@ -882,12 +901,14 @@ void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You must be a fireteam admin to give admin rights to someone else");
+		G_ClientPrint(entityNum, "You must be a fireteam admin to give admin rights to someone else");
+		return;
 	}
 
 	if ((!G_IsOnFireteam(otherEntityNum, &ft2)) || ft != ft2)
 	{
-		G_ClientPrintAndReturn(entityNum, "The other player must be on the same fireteam for you to give admin rights to");
+		G_ClientPrint(entityNum, "The other player must be on the same fireteam for you to give admin rights to");
+		return;
 	}
 
 	tempArray[0] = otherEntityNum;
@@ -910,10 +931,9 @@ void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 	ft->leader = otherEntityNum;
 
 	G_UpdateFireteamConfigString(ft);
-	G_ClientPrintAndReturn(otherEntityNum, "You have been given fireteam admin rights");
-	G_ClientPrintAndReturn(entityNum, "You have been been stripped of fireteam admin rights");
+	G_ClientPrint(otherEntityNum, "You have been given fireteam admin rights");
+	G_ClientPrint(entityNum, "You have been been stripped of fireteam admin rights");
 }
-
 
 // Command handler
 void Cmd_FireTeam_MP_f(gentity_t *ent)
@@ -923,7 +943,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 	if (trap_Argc() < 2)
 	{
-		G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam <create|leave|apply|invite>");
+		G_ClientPrint(ent - g_entities, "usage: fireteam <create|leave|apply|invite>");
+		return;
 	}
 
 	trap_Argv(1, command, 32);
@@ -947,7 +968,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (trap_Argc() < 3)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam apply <fireteamname|fireteamnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam apply <fireteamname|fireteamnumber>");
+			return;
 		}
 
 		trap_Argv(2, namebuffer, 32);
@@ -955,7 +977,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (fireteam <= 0)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam apply <fireteamname|fireteamnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam apply <fireteamname|fireteamnumber>");
+			return;
 		}
 
 		G_ApplyToFireTeam(ent - g_entities, fireteam - 1);
@@ -967,7 +990,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (trap_Argc() < 3)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam invite <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam invite <clientname|clientnumber>");
+			return;
 		}
 
 		trap_Argv(2, namebuffer, 32);
@@ -990,13 +1014,15 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
-				G_ClientPrintAndReturn(ent - g_entities, "Invalid client selected");
+				G_ClientPrint(ent - g_entities, "Invalid client selected");
+				return;
 			}
 		}
 
 		if (clientnum <= 0)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam invite <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam invite <clientname|clientnumber>");
+			return;
 		}
 
 		G_InviteToFireTeam(ent - g_entities, clientnum - 1);
@@ -1008,7 +1034,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (trap_Argc() < 3)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam warn <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam warn <clientname|clientnumber>");
+			return;
 		}
 
 		trap_Argv(2, namebuffer, 32);
@@ -1031,13 +1058,15 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
-				G_ClientPrintAndReturn(ent - g_entities, "Invalid client selected");
+				G_ClientPrint(ent - g_entities, "Invalid client selected");
+				return;
 			}
 		}
 
 		if (clientnum <= 0)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam warn <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam warn <clientname|clientnumber>");
+			return;
 		}
 
 		G_WarnFireTeamPlayer(ent - g_entities, clientnum - 1);
@@ -1049,7 +1078,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (trap_Argc() < 3)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam kick <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam kick <clientname|clientnumber>");
+			return;
 		}
 
 		trap_Argv(2, namebuffer, 32);
@@ -1072,13 +1102,15 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
-				G_ClientPrintAndReturn(ent - g_entities, "Invalid client selected");
+				G_ClientPrint(ent - g_entities, "Invalid client selected");
+				return;
 			}
 		}
 
 		if (clientnum <= 0)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam kick <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam kick <clientname|clientnumber>");
+			return;
 		}
 
 		G_KickFireTeamPlayer(ent - g_entities, clientnum - 1);
@@ -1090,7 +1122,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (trap_Argc() < 3)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam propose <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam propose <clientname|clientnumber>");
+			return;
 		}
 
 		trap_Argv(2, namebuffer, 32);
@@ -1113,13 +1146,15 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
-				G_ClientPrintAndReturn(ent - g_entities, "Invalid client selected");
+				G_ClientPrint(ent - g_entities, "Invalid client selected");
+				return;
 			}
 		}
 
 		if (clientnum <= 0)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam propose <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam propose <clientname|clientnumber>");
+			return;
 		}
 
 		G_ProposeFireTeamPlayer(ent - g_entities, clientnum - 1);
@@ -1134,18 +1169,21 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 			{
 				ft->priv = qfalse;
 				G_UpdateFireteamConfigString(ft);
-				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now public");
+				G_ClientPrint(ent - g_entities, "Your fireteam is now public");
+				return;
 			}
 			else
 			{
 				ft->priv = qtrue;
 				G_UpdateFireteamConfigString(ft);
-				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now private");
+				G_ClientPrint(ent - g_entities, "Your fireteam is now private");
+				return;
 			}
 		}
 		else
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "You are not an fireteam admin");
+			G_ClientPrint(ent - g_entities, "You are not an fireteam admin");
+			return;
 		}
 	}
 	else if (!Q_stricmp(command, "admin"))
@@ -1155,7 +1193,8 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (trap_Argc() < 3)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+			return;
 		}
 
 		trap_Argv(2, namebuffer, 32);
@@ -1178,13 +1217,15 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
-				G_ClientPrintAndReturn(ent - g_entities, "Invalid client selected");
+				G_ClientPrint(ent - g_entities, "Invalid client selected");
+				return;
 			}
 		}
 
 		if (clientnum <= 0)
 		{
-			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+			G_ClientPrint(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+			return;
 		}
 
 		G_GiveAdminOfFireTeam(ent - g_entities, clientnum - 1);
