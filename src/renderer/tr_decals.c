@@ -291,7 +291,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		VectorMA(dv[i].xyz, projection[3], projection, xyz);
 		if (!PlaneFromPoints(temp.planes[i + 2], dv[(i + 1) % numPoints].xyz, dv[i].xyz, xyz))
 		{
-			Ren_Print("WARNING: RE_ProjectDecal() a side plane is NULL\n");
+			Ren_Developer("WARNING: RE_ProjectDecal() a side plane is NULL\n"); // occurs on map venice
 			return;
 		}
 	}
