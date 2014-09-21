@@ -843,50 +843,6 @@ const char *CG_Argv(int arg)
 	return buffer;
 }
 
-// Cleans a string for filesystem compatibility
-void CG_nameCleanFilename(const char *pszIn, char *pszOut, unsigned int dwOutSize)
-{
-	unsigned int dwCurrLength = 0;
-
-	while (*pszIn && dwCurrLength < dwOutSize)
-	{
-		if (*pszIn == 27 || *pszIn == '^')
-		{
-			pszIn++;
-			dwCurrLength++;
-
-			if (*pszIn)
-			{
-				pszIn++;        // skip color code
-				dwCurrLength++;
-				continue;
-			}
-		}
-
-		// Illegal Windows characters
-		if (*pszIn == '\\' || *pszIn == '/' || *pszIn == ':' || *pszIn == '"' ||
-		    *pszIn == '*'  || *pszIn == '?' || *pszIn == '<' || *pszIn == '>' ||
-		    *pszIn == '|'  || *pszIn == '.')
-		{
-			pszIn++;
-			dwCurrLength++;
-			continue;
-		}
-
-		if (*pszIn <= 32)
-		{
-			pszIn++;
-			dwCurrLength++;
-			continue;
-		}
-
-		*pszOut++ = *pszIn++;
-		dwCurrLength++;
-	}
-
-	*pszOut = 0;
-}
-
 // Standard naming for screenshots/demos
 char *CG_generateFilename(void)
 {

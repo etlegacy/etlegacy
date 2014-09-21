@@ -933,39 +933,43 @@ void CG_dumpStats_f(void)
 	}
 }
 
+/* unused
 void CG_wStatsDown_f(void)
 {
-	if (
+    if (
 #ifdef FEATURE_MULTIVIEW
-	    cg.mvTotalClients < 1 &&
+        cg.mvTotalClients < 1 &&
 #endif
-	    cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
-	{
-		Pri("You must be a player or following a player to use +wstats\n");
-		return;
-	}
+        cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+    {
+        Pri("You must be a player or following a player to use +wstats\n");
+        return;
+    }
 
-	if (cg.statsRequestTime < cg.time)
-	{
-		int i =
+    if (cg.statsRequestTime < cg.time)
+    {
+        int i =
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
+            (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
 #endif
-		    cg.snap->ps.clientNum;
+            cg.snap->ps.clientNum;
 
-		cg.statsRequestTime = cg.time + 500;
-		trap_SendClientCommand(va("wstats %d", i));
-	}
+        cg.statsRequestTime = cg.time + 500;
+        trap_SendClientCommand(va("wstats %d", i));
+    }
 
-	cg.showStats = qtrue;
+    cg.showStats = qtrue;
 }
+*/
 
+/* unused
 void CG_wStatsUp_f(void)
 {
-	cg.showStats = qfalse;
-	CG_windowFree(cg.statsWindow);
-	cg.statsWindow = NULL;
+    cg.showStats = qfalse;
+    CG_windowFree(cg.statsWindow);
+    cg.statsWindow = NULL;
 }
+*/
 
 void CG_toggleSpecHelp_f(void)
 {

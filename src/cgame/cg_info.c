@@ -1472,6 +1472,7 @@ char *CG_getBindKeyName(const char *cmd, char *buf, int len)
 	return(buf);
 }
 
+#ifdef FEATURE_MULTIVIEW
 typedef struct
 {
 	char *cmd;
@@ -1619,6 +1620,7 @@ void CG_SpecHelpDraw(void)
 		}
 	}
 }
+#endif
 
 void CG_DrawOverlays(void)
 {

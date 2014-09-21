@@ -1440,58 +1440,6 @@ void CG_LoadVoiceChats(void)
 
 /*
 =================
-CG_HeadModelVoiceChats
-=================
-*/
-int CG_HeadModelVoiceChats(char *filename)
-{
-	int          len, i;
-	fileHandle_t f;
-	char         buf[MAX_VOICEFILESIZE];
-	char         **p, *ptr;
-	char         *token;
-
-	len = trap_FS_FOpenFile(filename, &f, FS_READ);
-	if (!f)
-	{
-		trap_Print(va("voice chat file not found: %s\n", filename));
-		return -1;
-	}
-	if (len >= MAX_VOICEFILESIZE)
-	{
-		trap_Print(va(S_COLOR_RED "voice chat file too large: %s is %i, max allowed is %i", filename, len, MAX_VOICEFILESIZE));
-		trap_FS_FCloseFile(f);
-		return -1;
-	}
-
-	trap_FS_Read(buf, len, f);
-	buf[len] = 0;
-	trap_FS_FCloseFile(f);
-
-	ptr = buf;
-	p   = &ptr;
-
-	token = COM_ParseExt(p, qtrue);
-	if (!token || token[0] == 0)
-	{
-		return -1;
-	}
-
-	for (i = 0; i < MAX_VOICEFILES; i++)
-	{
-		if (!Q_stricmp(token, voiceChatLists[i].name))
-		{
-			return i;
-		}
-	}
-
-	//FIXME: maybe try to load the .voice file which name is stored in token?
-
-	return -1;
-}
-
-/*
-=================
 CG_GetVoiceChat
 =================
 */

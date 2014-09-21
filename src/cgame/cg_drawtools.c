@@ -98,16 +98,17 @@ CG_FillRectGradient
 
 @brief unused
 ==============
-*/
+
 void CG_FillRectGradient(float x, float y, float width, float height, const float *color, const float *gradcolor, int gradientType)
 {
-	trap_R_SetColor(color);
+    trap_R_SetColor(color);
 
-	CG_AdjustFrom640(&x, &y, &width, &height);
-	trap_R_DrawStretchPicGradient(x, y, width, height, 0, 0, 0, 0, cgs.media.whiteShader, gradcolor, gradientType);
+    CG_AdjustFrom640(&x, &y, &width, &height);
+    trap_R_DrawStretchPicGradient(x, y, width, height, 0, 0, 0, 0, cgs.media.whiteShader, gradcolor, gradientType);
 
-	trap_R_SetColor(NULL);
+    trap_R_SetColor(NULL);
 }
+*/
 
 /*
 ==============

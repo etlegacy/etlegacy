@@ -1164,6 +1164,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 	}
 }
 
+#ifdef GEN_FLAME_SHADER
 /*
 =============
 CG_GenerateShaders
@@ -1200,6 +1201,7 @@ void CG_GenerateShaders(char *filename, char *shaderName, char *dir, int numFram
 	}
 	trap_FS_FCloseFile(f);
 }
+#endif
 
 /*
 ===============

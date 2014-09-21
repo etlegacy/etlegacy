@@ -890,20 +890,6 @@ void CG_KeyEvent(int key, qboolean down)
 	}
 }
 
-int CG_ClientNumFromName(const char *p)
-{
-	int i;
-
-	for (i = 0; i < cgs.maxclients; i++)
-	{
-		if (cgs.clientinfo[i].infoValid && Q_stricmp(cgs.clientinfo[i].name, p) == 0)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
 void CG_GetTeamColor(vec4_t *color)
 {
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)

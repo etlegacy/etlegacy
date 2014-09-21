@@ -115,12 +115,14 @@ vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
 vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
 vec4_t HUD_Text = { 0.625f, 0.625f, 0.6f, 1.0f };
 
+/* unused
 rectDef_t CG_getRect(float x, float y, float w, float h)
 {
-	rectDef_t rect = { x, y, w, h };
+    rectDef_t rect = { x, y, w, h };
 
-	return rect;
+    return rect;
 }
+*/
 
 hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style)
 {

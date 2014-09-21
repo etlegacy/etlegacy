@@ -1869,10 +1869,6 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 	mrank.shaderRGBA[2] = 255;
 	mrank.shaderRGBA[3] = 255;
 
-	/*if( spectator ) {
-	    head.customShader = cgs.media.limboSpectator;
-	    head.customSkin = 0;
-	}*/
 	trap_R_AddRefEntityToScene(&head);
 
 	if (painSkin)
@@ -1884,10 +1880,6 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 
 	if (drawHat)
 	{
-		/*if( spectator ) {
-		    hat.customShader = cgs.media.limboSpectator;
-		    hat.customSkin = 0;
-		}*/
 		trap_R_AddRefEntityToScene(&hat);
 
 		if (rank)

@@ -2036,8 +2036,8 @@ typedef struct
 {
 	char *tagname;
 	float size;
-	float maxdist;  // unused
-	float maxalpha; // unused
+	//float maxdist;  // unused, related code is disabled
+	//float maxalpha; // unused, related code is disabled
 	qhandle_t shader;
 } shadowPart_t;
 
@@ -2050,9 +2050,12 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 	vec4_t       projection    = { 0, 0, -1, 64 };
 	shadowPart_t shadowParts[] =
 	{
-		{ "tag_footleft",  10, 4,  1.0, 0 },
-		{ "tag_footright", 10, 4,  1.0, 0 },
-		{ "tag_torso",     18, 96, 0.8, 0 },
+		//{ "tag_footleft",  10, 4,  1.0, 0 },
+		//{ "tag_footright", 10, 4,  1.0, 0 },
+		//{ "tag_torso",     18, 96, 0.8, 0 },
+		{ "tag_footleft",  10, 0 },
+		{ "tag_footright", 10, 0 },
+		{ "tag_torso",     18, 0 },
 		{ NULL,            0 }
 	};
 
@@ -2366,19 +2369,6 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 	}
 
 	*ent = backupRefEnt;
-}
-
-char *vtosf(const vec3_t v)
-{
-	static int  index;
-	static char str[8][64];
-	char        *s = str[index];     // use an array so that multiple vtos won't collide
-
-	index = (index + 1) & 7;
-
-	Com_sprintf(s, 64, "(%f %f %f)", v[0], v[1], v[2]);
-
-	return s;
 }
 
 /*
