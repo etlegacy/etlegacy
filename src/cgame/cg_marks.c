@@ -75,7 +75,7 @@ CG_FreeMarkPoly
 */
 void CG_FreeMarkPoly(markPoly_t *le)
 {
-	if (!le->prevMark)
+	if (!le->prevMark || !le->nextMark)
 	{
 		CG_Error("CG_FreeLocalEntity: not active\n");
 	}
@@ -87,48 +87,6 @@ void CG_FreeMarkPoly(markPoly_t *le)
 	// the free list is only singly linked
 	le->nextMark     = cg_freeMarkPolys;
 	cg_freeMarkPolys = le;
-}
-
-/*
-===================
-CG_AllocMark
-
-Will allways succeed, even if it requires freeing an old active mark
-===================
-*/
-markPoly_t *CG_AllocMark(int endTime)
-{
-	markPoly_t *le;  //, *trav, *lastTrav;
-
-	if (!cg_freeMarkPolys)
-	{
-		int time = cg_activeMarkPolys.prevMark->time;
-
-		// no free entities, so free the one at the end of the chain
-		// remove the oldest active entity
-		while (cg_activeMarkPolys.prevMark && time == cg_activeMarkPolys.prevMark->time)
-		{
-			CG_FreeMarkPoly(cg_activeMarkPolys.prevMark);
-		}
-	}
-
-	le               = cg_freeMarkPolys;
-	cg_freeMarkPolys = cg_freeMarkPolys->nextMark;
-
-	memset(le, 0, sizeof(*le));
-
-	// TODO: sort this, so the list is always sorted by longest duration -> shortest duration,
-	// this way the shortest duration mark will always get overwritten first
-	//for (trav = cg_activeMarkPolys.nextMark; (trav->duration + trav->time > endTime) && (trav != cg_activeMarkPolys.prevMark) ; lastTrav = trav, trav++ ) {
-	// Respect the FOR loop
-	//}
-
-	// link into the active list
-	le->nextMark                          = cg_activeMarkPolys.nextMark;
-	le->prevMark                          = &cg_activeMarkPolys;
-	cg_activeMarkPolys.nextMark->prevMark = le;
-	cg_activeMarkPolys.nextMark           = le;
-	return le;
 }
 
 /*
