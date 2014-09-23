@@ -3940,13 +3940,12 @@ static void FS_Startup(const char *gameName)
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
 
-#ifdef DEDICATED
-	// don't start if base == home, so downloads won't overwrite original files
+#ifndef DEDICATED
+	// clients: don't start if base == home, so downloads won't overwrite original files! DO NOT CHANGE!
 	//if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))
 	{
 		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are identical - set different paths!");
-		// NOTE: if both are same - crashlog.txt is written into (fs_homepath)
 	}
 #endif
 }
