@@ -276,7 +276,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// make the front plane
 	if (!PlaneFromPoints(temp.planes[0], dv[0].xyz, dv[1].xyz, dv[2].xyz))
 	{
-		Ren_Print("WARNING: RE_ProjectDecal() PlaneFromPoints is NULL\n");
+		Ren_Developer("WARNING: RE_ProjectDecal() PlaneFromPoints is NULL\n"); // occurs on UJE_fueldump
 		return;
 	}
 

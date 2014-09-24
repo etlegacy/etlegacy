@@ -1786,6 +1786,10 @@ typedef enum
 #define MAX_POLYS       16384 // was 4096
 #define MAX_POLYVERTS   32768 // was 8192
 
+// default values for R_Register
+#define DEFAULT_POLYS       4096  // ET default: 4096
+#define DEFAULT_POLYVERTS   12288 // ET default: 8192
+
 // max decal projectors per frame, each can generate lots of polys
 #define MAX_DECAL_PROJECTORS    128 // includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
 #define MAX_DECALS              1024
