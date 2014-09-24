@@ -177,23 +177,23 @@ static void GLimp_DetectAvailableModes(void)
 	{
 		if (!SDL_GetNumVideoDisplays())
 		{
-			Ren_Fatal("There is no available displays to which to open a game screen");
+			Ren_Fatal("There is no available display to open a game screen - %s", SDL_GetError());
 			return;
 		}
 
-		//Use the zero display index
+		// Use the zero display index
 		display = 0;
 	}
 	else
 	{
-		//Detect the used display
+		// Detect the used display
 		display = SDL_GetWindowDisplayIndex(main_window);
 	}
 
-	//was SDL_GetWindowDisplayMode
+	// was SDL_GetWindowDisplayMode
 	if (SDL_GetDesktopDisplayMode(display, &windowMode) < 0)
 	{
-		Ren_Warning("Couldn't get desktop display mode, no resolutions detected\n");
+		Ren_Warning("Couldn't get desktop display mode, no resolutions detected - %s\n", SDL_GetError());
 		return;
 	}
 
@@ -244,7 +244,7 @@ static void GLimp_DetectAvailableModes(void)
 	if (*buf)
 	{
 		buf[strlen(buf) - 1] = 0;
-		Ren_Print("Available modes: '%s'\n", buf);
+		Ren_Print("Available modes [%i]: '%s'\n", numModes, buf);
 		ri.Cvar_Set("r_availableModes", buf);
 	}
 }
@@ -615,8 +615,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		{
 			glConfig.vidWidth  = 640;
 			glConfig.vidHeight = 480;
-			Ren_Print(
-			    "Cannot determine display resolution, assuming 640x480\n");
+			Ren_Print("Cannot determine display resolution, assuming 640x480\n");
 		}
 
 		glConfig.windowAspect = (float)glConfig.vidWidth / (float)glConfig.vidHeight;
@@ -783,13 +782,13 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		}
 
 #ifndef FEATURE_RENDERER_GLES
-#ifdef __sgi /* Fix for SGIs grabbing too many bits of color */
+#ifdef __sgi // Fix for SGIs grabbing too many bits of color
 		if (perChannelColorBits == 4)
 		{
 			perChannelColorBits = 0; /* Use minimum size for 16-bit color */
 
 		}
-		/* Need alpha or else SGIs choose 36+ bit RGB mode */
+		// Need alpha or else SGIs choose 36+ bit RGB mode
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 #endif
 
@@ -802,7 +801,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
 
-		// SDL 2 uses opengl by default, if we want opengl es we need to set this attribute
+		// SDL2 uses opengl by default, if we want opengl es we need to set this attribute
 		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 
 		if (r_stereoEnabled->integer)
