@@ -4222,7 +4222,7 @@ void CheckCvars(void)
  */
 void G_RunThink(gentity_t *ent)
 {
-	float thinktime;
+	int thinktime;
 
 	// If paused, push nextthink
 	if (level.match_pause != PAUSE_NONE && (ent - g_entities) >= g_maxclients.integer &&
