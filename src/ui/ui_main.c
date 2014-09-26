@@ -5560,7 +5560,7 @@ static void UI_BuildServerDisplayList(int force)
 				}
 			}
 
-			// don't show punkbuster servers for ET:Legacy
+			// don't show PunkBuster servers for ET: Legacy
 			punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
 			if (punkbuster)
 			{

@@ -658,13 +658,13 @@ void Sys_CreateConsole(void)
 	WNDCLASS wc;
 	RECT     rect;
 
-	const char *DEDCLASS = "ET:Legacy WinConsole";
+	const char *DEDCLASS = "ET: Legacy WinConsole";
 #if defined (UPDATE_SERVER)
-	const char *WINDOWNAME = "ET:Legacy Update Server";
+	const char *WINDOWNAME = "ET: Legacy Update Server";
 #elif defined(DEDICATED)
-	const char *WINDOWNAME = "ET:Legacy Dedicated Server";
+	const char *WINDOWNAME = "ET: Legacy Dedicated Server";
 #else
-	const char *WINDOWNAME = "ET:Legacy Console";
+	const char *WINDOWNAME = "ET: Legacy Console";
 #endif
 
 	int nHeight;
