@@ -853,8 +853,8 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 	loopSounds[numLoopSounds].active          = qtrue;
 	loopSounds[numLoopSounds].kill            = qtrue;
 	loopSounds[numLoopSounds].doppler         = qfalse;
-	loopSounds[numLoopSounds].oldDopplerScale = 1.0;
-	loopSounds[numLoopSounds].dopplerScale    = 1.0;
+	loopSounds[numLoopSounds].oldDopplerScale = 1;
+	loopSounds[numLoopSounds].dopplerScale    = 1;
 	loopSounds[numLoopSounds].sfx             = sfx;
 	loopSounds[numLoopSounds].range           = range ? range : SOUND_RANGE_DEFAULT;
 	loopSounds[numLoopSounds].loudUnderWater  = (volume & 1 << UNDERWATER_BIT) != 0;
@@ -868,7 +868,7 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 	}
 	loopSounds[numLoopSounds].volume = (int)((float)volume * s_volCurrent);
 
-	if (s_doppler->integer && VectorLengthSquared(velocity) > 0.0)
+	if (s_doppler->integer && VectorLengthSquared(velocity) > 0)
 	{
 		vec3_t out;
 		float  lena, lenb;
@@ -891,15 +891,23 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 
 		if ((loopSounds[numLoopSounds].framenum + 1) != cls.framecount)
 		{
-			loopSounds[numLoopSounds].oldDopplerScale = 1.0;
+			loopSounds[numLoopSounds].oldDopplerScale = 1;
 		}
 		else
 		{
 			loopSounds[numLoopSounds].oldDopplerScale = loopSounds[numLoopSounds].dopplerScale;
 		}
 
-		loopSounds[numLoopSounds].dopplerScale = lenb / (lena * 100);
-		if (loopSounds[numLoopSounds].dopplerScale <= 1.0)
+		if (lena == 0) // div/0
+		{
+			loopSounds[numLoopSounds].dopplerScale = 1; // no doppler
+		}
+		else
+		{
+			loopSounds[numLoopSounds].dopplerScale = lenb / (lena * 100);
+		}
+
+		if (loopSounds[numLoopSounds].dopplerScale <= 1)
 		{
 			loopSounds[numLoopSounds].doppler = qfalse;         // don't bother doing the math
 		}
@@ -955,6 +963,8 @@ void S_Base_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int 
 	loopSounds[numLoopSounds].active         = qtrue;
 	loopSounds[numLoopSounds].kill           = qfalse;
 	loopSounds[numLoopSounds].doppler        = qfalse;
+	loopSounds[numLoopSounds].oldDopplerScale = 1;
+	loopSounds[numLoopSounds].dopplerScale   = 1;
 	loopSounds[numLoopSounds].range          = range ? range : SOUND_RANGE_DEFAULT;
 	loopSounds[numLoopSounds].loudUnderWater = (volume & 1 << UNDERWATER_BIT) != 0;
 	if (volume > 65535)
