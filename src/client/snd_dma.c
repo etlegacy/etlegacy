@@ -959,14 +959,14 @@ void S_Base_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int 
 
 	VectorCopy(origin, loopSounds[numLoopSounds].origin);
 	VectorCopy(velocity, loopSounds[numLoopSounds].velocity);
-	loopSounds[numLoopSounds].sfx            = sfx;
-	loopSounds[numLoopSounds].active         = qtrue;
-	loopSounds[numLoopSounds].kill           = qfalse;
-	loopSounds[numLoopSounds].doppler        = qfalse;
+	loopSounds[numLoopSounds].sfx             = sfx;
+	loopSounds[numLoopSounds].active          = qtrue;
+	loopSounds[numLoopSounds].kill            = qfalse;
+	loopSounds[numLoopSounds].doppler         = qfalse;
 	loopSounds[numLoopSounds].oldDopplerScale = 1;
-	loopSounds[numLoopSounds].dopplerScale   = 1;
-	loopSounds[numLoopSounds].range          = range ? range : SOUND_RANGE_DEFAULT;
-	loopSounds[numLoopSounds].loudUnderWater = (volume & 1 << UNDERWATER_BIT) != 0;
+	loopSounds[numLoopSounds].dopplerScale    = 1;
+	loopSounds[numLoopSounds].range           = range ? range : SOUND_RANGE_DEFAULT;
+	loopSounds[numLoopSounds].loudUnderWater  = (volume & 1 << UNDERWATER_BIT) != 0;
 	if (volume > 65535)
 	{
 		volume = 65535;
