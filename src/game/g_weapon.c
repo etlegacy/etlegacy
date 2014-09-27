@@ -1042,7 +1042,7 @@ static qboolean TryConstructing(gentity_t *ent)
 				VectorScale(mid, 0.5f, mid);
 
 				te              = G_TempEntity(mid, EV_GENERAL_SOUND);
-				te->s.eventParm = G_SoundIndex("sound/world/build.wav");
+				te->s.eventParm = GAMESOUND_WORLD_BUILD;
 			}
 
 			if (ent->client->touchingTOI->chain && ent->client->touchingTOI->count2)

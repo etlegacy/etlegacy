@@ -2355,12 +2355,13 @@ typedef enum
 	GAMESOUND_WPN_ARTILLERY_FLY_3,  // "sound/weapons/artillery/artillery_fly_3.wav"
 
 	GAMESOUND_MISC_REVIVE,          // "sound/misc/vo_revive.wav"                       Used by revival Needle
-
 	GAMESOUND_MISC_REFEREE,         // "sound/misc/referee.wav"                         Game Referee performs action
 	GAMESOUND_MISC_VOTE,            // "sound/misc/vote.wav"                            Vote is issued
+
 	//GAMESOUND_MISC_BANNED,        // "sound/osp/banned.wav"                           Player is banned
 	//GAMESOUND_MISC_KICKED,        // "sound/osp/kicked.wav"                           Player is kicked
 
+	GAMESOUND_WORLD_BUILD,          // "sound/world/build.wav"
 	GAMESOUND_WORLD_CHAIRCREAK,     // "sound/world/chaircreak.wav"                     Common code
 
 	GAMESOUND_MAX
