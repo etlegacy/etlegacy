@@ -988,7 +988,6 @@ static qboolean TryConstructing(gentity_t *ent)
 			if (level.time - constructible->lastHintCheckTime < CONSTRUCT_POSTDECAY_TIME)
 			{
 				return qtrue;      // likely will come back soon - so override other plier bits anyway
-
 			}
 
 			// swap brushmodels if staged
@@ -1034,16 +1033,8 @@ static qboolean TryConstructing(gentity_t *ent)
 				}
 			}
 
-			{
-				vec3_t    mid;
-				gentity_t *te;
-
-				VectorAdd(constructible->parent->r.absmin, constructible->parent->r.absmax, mid);
-				VectorScale(mid, 0.5f, mid);
-
-				te              = G_TempEntity(mid, EV_GENERAL_SOUND);
-				te->s.eventParm = GAMESOUND_WORLD_BUILD;
-			}
+			// construction sound sent as event (was temp entity)
+			G_AddEvent(ent, EV_GENERAL_SOUND, GAMESOUND_WORLD_BUILD);
 
 			if (ent->client->touchingTOI->chain && ent->client->touchingTOI->count2)
 			{
@@ -1688,11 +1679,10 @@ void Weapon_Engineer(gentity_t *ent)
 		}
 		else
 		{
-			float xpperround;
+			float xpperround = 0.03529f;
 
 			traceEnt->health += 3;
 			// constructible xp sharing - repairing an emplaced mg42
-			xpperround = 0.03529f;
 			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround);
 			G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing a MG42");
 		}
@@ -1848,9 +1838,11 @@ evilbanigoto:
 
 					if (traceEnt->health >= 250)
 					{
-						/*                      traceEnt->health = 255;
-						                        traceEnt->think = G_FreeEntity;
-						                        traceEnt->nextthink = level.time + FRAMETIME;*/
+						mapEntityData_t *mEnt;
+
+						//traceEnt->health = 255;
+						//traceEnt->think = G_FreeEntity;
+						//traceEnt->nextthink = level.time + FRAMETIME;
 
 						trap_SendServerCommand(ent - g_entities, "cp \"Landmine defused...\" 1");
 
@@ -1863,21 +1855,17 @@ evilbanigoto:
 						}
 
 						// update our map
+						if ((mEnt = G_FindMapEntityData(&mapEntityData[0], traceEnt - g_entities)) != NULL)
 						{
-							mapEntityData_t *mEnt;
-
-							if ((mEnt = G_FindMapEntityData(&mapEntityData[0], traceEnt - g_entities)) != NULL)
-							{
-								G_FreeMapEntityData(&mapEntityData[0], mEnt);
-							}
-
-							if ((mEnt = G_FindMapEntityData(&mapEntityData[1], traceEnt - g_entities)) != NULL)
-							{
-								G_FreeMapEntityData(&mapEntityData[1], mEnt);
-							}
-
-							G_FreeEntity(traceEnt);
+							G_FreeMapEntityData(&mapEntityData[0], mEnt);
 						}
+
+						if ((mEnt = G_FindMapEntityData(&mapEntityData[1], traceEnt - g_entities)) != NULL)
+						{
+							G_FreeMapEntityData(&mapEntityData[1], mEnt);
+						}
+
+						G_FreeEntity(traceEnt);
 					}
 					else
 					{
@@ -2364,7 +2352,6 @@ evilbanigoto:
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
-
 								}
 
 								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\n\"");
@@ -3513,8 +3500,8 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 
 	VectorCopy(ent->client->ps.viewangles, angles);
 	angles[PITCH] -= 60.f;
-	/*  if( angles[PITCH] < -89.f )
-	        angles[PITCH] = -89.f;*/
+	//if( angles[PITCH] < -89.f )
+	//  angles[PITCH] = -89.f;
 	AngleVectors(angles, forward, NULL, NULL);
 
 	VectorCopy(muzzleEffect, launchPos);
@@ -3650,10 +3637,8 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		SnapVectorTowards(tosspos, viewpos);
 	}
 
-	m = fire_grenade(ent, tosspos, forward, grenType);
-
+	m         = fire_grenade(ent, tosspos, forward, grenType);
 	m->damage = 0;  // grenade's don't explode on contact
-
 
 	switch (grenType)
 	{
@@ -3956,21 +3941,15 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 
 	if (weaponTable[weapon].isScoped)
 	{
-		//float pitchAmp, yawAmp;
 		float pitchMinAmp, yawMinAmp, phase;
-		//float spreadfrac = ent->client->currentAimSpreadScale;
 
 		if (weapon == WP_FG42SCOPE)
 		{
-			//pitchAmp    = 4 * ZOOM_PITCH_AMPLITUDE;
-			//yawAmp      = 4 * ZOOM_YAW_AMPLITUDE;
 			pitchMinAmp = 4 * ZOOM_PITCH_MIN_AMPLITUDE;
 			yawMinAmp   = 4 * ZOOM_YAW_MIN_AMPLITUDE;
 		}
 		else
 		{
-			//pitchAmp    = ZOOM_PITCH_AMPLITUDE;
-			//yawAmp      = ZOOM_YAW_AMPLITUDE;
 			pitchMinAmp = ZOOM_PITCH_MIN_AMPLITUDE;
 			yawMinAmp   = ZOOM_YAW_MIN_AMPLITUDE;
 		}
@@ -3982,7 +3961,6 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 		phase         = level.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_PI * 2;
 		viewang[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (ent->client->currentAimSpreadScale + yawMinAmp);
 	}
-
 
 	// set aiming directions
 	AngleVectors(viewang, forward, right, up);
