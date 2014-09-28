@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	310
-#define WINDOW_HEIGHT	128
+#define WINDOW_HEIGHT	196
 #define GROUP_NAME		"grpIngameVoteBot"
 
 // Omni-bot Menu //
@@ -51,6 +51,10 @@ menuDef {
 	BUTTON( 275, 68, .08*(WINDOW_WIDTH-12), 14, "D6", .24, 11, exec "bot difficulty 6")
 
 	BUTTON( 6, 88, WINDOW_WIDTH-12, 14, "KICK ALL BOTS", .24, 11, exec "bot minbots -1;bot maxbots -1;bot kickall" )
+	
+	BUTTON( 6, 104, .33*(WINDOW_WIDTH-24), 14, "AXIS BOTS", .24, 11, exec "set g_teamForceBalance 0; bot balanceteams 0; bot botteam 1; bot humanteam 2; bot kickall" )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, 104, .34*(WINDOW_WIDTH-24), 14, "ALLIED BOTS", .24, 11, exec "set g_teamForceBalance 0; bot balanceteams 0; bot botteam 2; bot humanteam 1; bot kickall" )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, 104, .33*(WINDOW_WIDTH-24), 14, "BALANCED", .24, 11, exec "set g_teamForceBalance 1; bot balanceteams 1; bot botteam -1" )	
 	
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BOTS ON", .3, 14, exec "set omnibot_enable 1; map_restart" )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "BOTS OFF", .3, 14, exec "bot minbots -1; bot maxbots -1;bot kickall;set omnibot_enable 0; map_restart" )
