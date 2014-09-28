@@ -331,20 +331,20 @@ static sfx_t *S_FindName(const char *name)
 
 /**
  * @note Unused
- */
 void S_DefaultSound(sfx_t *sfx)
 {
-	int i;
+    int i;
 
-	sfx->soundLength     = 512;
-	sfx->soundData       = SND_malloc();
-	sfx->soundData->next = NULL;
+    sfx->soundLength     = 512;
+    sfx->soundData       = SND_malloc();
+    sfx->soundData->next = NULL;
 
-	for (i = 0 ; i < sfx->soundLength ; i++)
-	{
-		sfx->soundData->sndChunk[i] = i;
-	}
+    for (i = 0 ; i < sfx->soundLength ; i++)
+    {
+        sfx->soundData->sndChunk[i] = i;
+    }
 }
+*/
 
 void S_Base_Reload(void)
 {

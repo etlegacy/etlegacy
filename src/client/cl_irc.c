@@ -1467,19 +1467,16 @@ static int IRCH_ServerError()
 	return IRC_CMD_RETRY;
 }
 
-/*
-==================
-IRCH_FatalError
-
-Some fatal error was received, the IRC thread must die.
-==================
-*/
+/**
+ * @brief Some fatal error was received, the IRC thread must die.
+ * @note unused
 static int IRCH_FatalError()
 {
-	IRC_Display(IRC_MakeEvent(QUIT, 1), "", "fatal error");
-	IRC_Send("QUIT :Something went wrong\n");
-	return IRC_CMD_RETRY;
+    IRC_Display(IRC_MakeEvent(QUIT, 1), "", "fatal error");
+    IRC_Send("QUIT :Something went wrong\n");
+    return IRC_CMD_RETRY;
 }
+*/
 
 /**
  * @brief Nickname error.

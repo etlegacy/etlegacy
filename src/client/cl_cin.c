@@ -185,27 +185,27 @@ static void RllSetupTable(void)
  * @return Number of samples placed in output buffer
  *
  * @note Unused
- */
 long RllDecodeMonoToMono(unsigned char *from, short *to, unsigned int size, char signedOutput, unsigned short flag)
 {
-	unsigned int z;
-	int          prev;
+    unsigned int z;
+    int          prev;
 
-	if (signedOutput)
-	{
-		prev = flag - 0x8000;
-	}
-	else
-	{
-		prev = flag;
-	}
+    if (signedOutput)
+    {
+        prev = flag - 0x8000;
+    }
+    else
+    {
+        prev = flag;
+    }
 
-	for (z = 0; z < size; z++)
-	{
-		prev = to[z] = (short)(prev + cin.sqrTable[from[z]]);
-	}
-	return size;    //*sizeof(short));
+    for (z = 0; z < size; z++)
+    {
+        prev = to[z] = (short)(prev + cin.sqrTable[from[z]]);
+    }
+    return size;    // *sizeof(short));
 }
+*/
 
 //-----------------------------------------------------------------------------
 // RllDecodeMonoToStereo
@@ -285,45 +285,42 @@ long RllDecodeStereoToStereo(unsigned char *from, short *to, unsigned int size, 
 	return (size >> 1);   //*sizeof(short));
 }
 
-//-----------------------------------------------------------------------------
-// RllDecodeStereoToMono
-//
-// Decode stereo source data into a mono buffer.
-//
-// Parameters:  from -> buffer holding encoded data
-//              to ->   buffer to hold decoded data
-//              size =  number of bytes of input (= # of bytes of output)
-//              signedOutput = 0 for unsigned output, non-zero for signed output
-//              flag = flags from asset header
-//
-// Returns:     Number of samples placed in output buffer
-//-----------------------------------------------------------------------------
-// @note Unused
+/**
+ * @brief Decode stereo source data into a mono buffer.
+ * @param from -> buffer holding encoded data
+ * @param to ->   buffer to hold decoded data
+ * @param size =  number of bytes of input (= # of bytes of output)
+ * @param signedOutput = 0 for unsigned output, non-zero for signed output
+ * @param flag = flags from asset header
+ *
+ * @Return Number of samples placed in output buffer
+ * @note Unused
 long RllDecodeStereoToMono(unsigned char *from, short *to, unsigned int size, char signedOutput, unsigned short flag)
 {
-	unsigned int z;
-	int          prevL, prevR;
+    unsigned int z;
+    int          prevL, prevR;
 
-	if (signedOutput)
-	{
-		prevL = (flag & 0xff00) - 0x8000;
-		prevR = ((flag & 0x00ff) << 8) - 0x8000;
-	}
-	else
-	{
-		prevL = flag & 0xff00;
-		prevR = (flag & 0x00ff) << 8;
-	}
+    if (signedOutput)
+    {
+        prevL = (flag & 0xff00) - 0x8000;
+        prevR = ((flag & 0x00ff) << 8) - 0x8000;
+    }
+    else
+    {
+        prevL = flag & 0xff00;
+        prevR = (flag & 0x00ff) << 8;
+    }
 
-	for (z = 0; z < size; z += 1)
-	{
-		prevL = prevL + cin.sqrTable[from[z * 2]];
-		prevR = prevR + cin.sqrTable[from[z * 2 + 1]];
-		to[z] = (short)((prevL + prevR) / 2);
-	}
+    for (z = 0; z < size; z += 1)
+    {
+        prevL = prevL + cin.sqrTable[from[z * 2]];
+        prevR = prevR + cin.sqrTable[from[z * 2 + 1]];
+        to[z] = (short)((prevL + prevR) / 2);
+    }
 
-	return size;
+    return size;
 }
+*/
 
 static void move8_32(byte *src, byte *dst, int spl)
 {

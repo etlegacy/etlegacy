@@ -477,14 +477,20 @@ void IN_Button3Up(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS3]);
 }
+
+/* @note unused
 void IN_Button4Down(void)
 {
-	IN_KeyDown(&kb[KB_BUTTONS4]);
+    IN_KeyDown(&kb[KB_BUTTONS4]);
 }
+*/
+
+/* @note unused
 void IN_Button4Up(void)
 {
-	IN_KeyUp(&kb[KB_BUTTONS4]);
+    IN_KeyUp(&kb[KB_BUTTONS4]);
 }
+*/
 
 void IN_ActivateDown(void)
 {
@@ -557,14 +563,19 @@ void IN_ProneUp(void)
 	IN_KeyUp(&kb[KB_WBUTTONS7]);
 }
 
+/* @note unused
 void IN_ButtonDown(void)
 {
-	IN_KeyDown(&kb[KB_BUTTONS1]);
+    IN_KeyDown(&kb[KB_BUTTONS1]);
 }
+*/
+
+/* @note unused
 void IN_ButtonUp(void)
 {
-	IN_KeyUp(&kb[KB_BUTTONS1]);
+    IN_KeyUp(&kb[KB_BUTTONS1]);
 }
+*/
 
 void IN_Help(void)
 {
