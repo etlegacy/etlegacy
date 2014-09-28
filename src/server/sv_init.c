@@ -99,16 +99,27 @@ void SV_SetConfigstring(int index, const char *val)
 	}
 }
 
+/**
+ * @brief Updates the configstring
+ * @note it's nice to know this function sends several server commands when a configstring is greater 1000 usually BIG_INFO_STRINGs
+ * FIXME: ENSURE
+ */
 void SV_UpdateConfigStrings(void)
 {
 	client_t *client;
-	int      len, i, index, sent, remaining;
+	int      len, i, index, sent, remaining, cstotal = 0;
 	int      maxChunkSize = MAX_STRING_CHARS - 24;
 	char     *cmd;
 	char     buf[MAX_STRING_CHARS];
 
 	for (index = 0; index < MAX_CONFIGSTRINGS; index++)
 	{
+		if (sv.configstrings[index][0])
+		{
+			// get total CS length
+			cstotal += strlen(sv.configstrings[index]);
+		}
+
 		if (!sv.configstringsmodified[index])
 		{
 			continue;
@@ -167,6 +178,12 @@ void SV_UpdateConfigStrings(void)
 					SV_SendServerCommand(client, "cs %i \"%s\"\n", index, sv.configstrings[index]);
 				}
 			}
+		}
+
+		// warn admins
+		if (cstotal < MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
+		{
+			Com_Printf("WARNING: Your clients might be disconneted by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", MAX_GAMESTATE_CHARS - cstotal);
 		}
 	}
 }
