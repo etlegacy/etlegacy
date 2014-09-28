@@ -647,21 +647,6 @@ char *vtos(const vec3_t v)
 	return s;
 }
 
-char *vtosf(const vec3_t v)
-{
-	static int  index;
-	static char str[8][64];
-	char        *s;
-
-	// use an array so that multiple vtos won't collide
-	s     = str[index];
-	index = (index + 1) & 7;
-
-	Com_sprintf(s, 64, "(%f %f %f)", v[0], v[1], v[2]);
-
-	return s;
-}
-
 /**
  * @brief The editor only specifies a single value for angles (yaw),
  * but we have special constants to generate an up or down direction.
@@ -1172,7 +1157,7 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 {
 	if (ent->entstate == state)
 	{
-		G_DPrintf("G_SetEntState: entity %i already in desired state [%i]\n", ent->s.number, state);
+		G_DPrintf("G_SetEntState: entity %i [%s] already in desired state [%i]\n", ent->s.number, ent->classname, state);
 		return;
 	}
 
