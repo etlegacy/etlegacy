@@ -101,8 +101,7 @@ void SV_SetConfigstring(int index, const char *val)
 
 /**
  * @brief Updates the configstring
- * @note it's nice to know this function sends several server commands when a configstring is greater 1000 usually BIG_INFO_STRINGs
- * FIXME: ENSURE
+ * @note it's nice to know this function sends several server commands when a configstring is greater than 1000 usually BIG_INFO_STRINGs
  */
 void SV_UpdateConfigStrings(void)
 {
@@ -183,7 +182,7 @@ void SV_UpdateConfigStrings(void)
 		// warn admins
 		if (cstotal < MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
 		{
-			Com_Printf("WARNING: Your clients might be disconneted by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", MAX_GAMESTATE_CHARS - cstotal);
+			Com_Printf("WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", MAX_GAMESTATE_CHARS - cstotal);
 		}
 	}
 }
@@ -404,7 +403,7 @@ void SV_ChangeMaxClients(void)
 	free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 
 	// allocate new clients
-	// RF, avoid trying to allocate large chunk on a fragmented zone
+	// avoid trying to allocate large chunk on a fragmented zone
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
@@ -539,7 +538,6 @@ void SV_DemoChangeMaxClients(void)
 		return;
 	}
 
-
 	// == Memorizing clients
 	// Note: we save in a temporary variables the clients, because after we will wipe completely the svs.clients struct
 
@@ -576,7 +574,6 @@ void SV_DemoChangeMaxClients(void)
 	// free old clients arrays
 	Z_Free(svs.clients);
 
-
 	// == Allocating the new svs.clients and moving the saved clients over from the temporary var
 
 	// allocate new svs.clients
@@ -588,7 +585,6 @@ void SV_DemoChangeMaxClients(void)
 
 	// free the old clients on the hunk
 	Hunk_FreeTempMemory(oldClients);
-
 
 	// == Allocating snapshot entities
 
@@ -603,7 +599,6 @@ void SV_DemoChangeMaxClients(void)
 		svs.numSnapshotEntities = sv_maxclients->integer * 4 * 64;
 	}
 
-
 	// == Server-side demos management
 
 	// set demostate to none if it was just waiting to set maxclients and move real clients slots
@@ -612,7 +607,6 @@ void SV_DemoChangeMaxClients(void)
 		sv.demoState = DS_NONE;
 		Cvar_SetValue("sv_demoState", DS_NONE);
 	}
-
 }
 
 /*
@@ -652,8 +646,7 @@ void SV_TouchCGameDLL(void)
 	else if (sv_pure->integer)
 	{
 		Com_Error(ERR_DROP, "Failed to locate %s for pure server mode. "
-		                    "You'll probably need cgame for other platforms too.",
-		          filename);
+		                    "You'll probably need cgame for other platforms too.", filename);
 	}
 }
 
