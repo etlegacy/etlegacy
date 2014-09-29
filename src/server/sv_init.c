@@ -117,6 +117,17 @@ void SV_UpdateConfigStrings(void)
 		{
 			// get total CS length
 			cstotal += strlen(sv.configstrings[index]);
+
+			if (index == CS_SYSTEMINFO)
+			{
+				// about 10% of BIG_INFO_VALUE - this grants the server will start properly
+				// but total CS limit might be reached soon when CS_SYSTEMINFO uses nearly half of total CS
+				// warn admins
+				if (strlen(sv.configstrings[index]) > BIG_INFO_VALUE - 800)
+				{
+					Com_Printf("WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", BIG_INFO_VALUE - strlen(sv.configstrings[index]));
+				}
+			}
 		}
 
 		if (!sv.configstringsmodified[index])
@@ -180,7 +191,7 @@ void SV_UpdateConfigStrings(void)
 		}
 
 		// warn admins
-		if (cstotal < MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
+		if (cstotal > MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
 		{
 			Com_Printf("WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", MAX_GAMESTATE_CHARS - cstotal);
 		}
