@@ -16,3 +16,9 @@
  */
 #define ETLEGACY_VERSION_SHORT "@ETL_CMAKE_VERSION_SHORT@"
 
+/**
+* @def PRODUCT_VERSION
+* @brief Version data used for windows RC compiler
+*/
+#define PRODUCT_VERSION @ETL_CMAKE_PROD_VERSION@
+#define PRODUCT_VERSIONSTR "@ETL_CMAKE_PROD_VERSIONSTR@"
