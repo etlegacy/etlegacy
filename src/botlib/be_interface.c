@@ -37,7 +37,7 @@
 #include "l_script.h"
 #include "l_precomp.h"
 
-#include "../botlib/botlib.h"
+#include "botlib.h"
 #include "be_interface.h"
 
 botlib_export_t be_botlib_export;

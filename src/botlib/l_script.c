@@ -32,7 +32,7 @@
  * @brief lexicographical parser
  */
 
-//include files for usage in the bot library
+// include files for usage in the bot library
 #include "../qcommon/q_shared.h"
 #include "botlib.h"
 #include "be_interface.h"
@@ -747,53 +747,55 @@ int PS_ReadNumber(script_t *script, token_t *token)
 	return 1;
 }
 
+/* unused
 int PS_ReadLiteral(script_t *script, token_t *token)
 {
-	token->type = TT_LITERAL;
-	// first quote
-	token->string[0] = *script->script_p++;
-	// check for end of file
-	if (!*script->script_p)
-	{
-		ScriptError(script, "end of file before trailing \'");
-		return 0;
-	}
-	// if it is an escape character
-	if (*script->script_p == '\\')
-	{
-		if (!PS_ReadEscapeCharacter(script, &token->string[1]))
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		token->string[1] = *script->script_p++;
-	}
-	// check for trailing quote
-	if (*script->script_p != '\'')
-	{
-		ScriptWarning(script, "too many characters in literal, ignored");
-		while (*script->script_p &&
-		       *script->script_p != '\'' &&
-		       *script->script_p != '\n')
-		{
-			script->script_p++;
-		}
-		if (*script->script_p == '\'')
-		{
-			script->script_p++;
-		}
-	}
-	// store the trailing quote
-	token->string[2] = *script->script_p++;
-	// store trailing zero to end the string
-	token->string[3] = '\0';
-	// the sub type is the integer literal value
-	token->subtype = token->string[1];
+    token->type = TT_LITERAL;
+    // first quote
+    token->string[0] = *script->script_p++;
+    // check for end of file
+    if (!*script->script_p)
+    {
+        ScriptError(script, "end of file before trailing \'");
+        return 0;
+    }
+    // if it is an escape character
+    if (*script->script_p == '\\')
+    {
+        if (!PS_ReadEscapeCharacter(script, &token->string[1]))
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        token->string[1] = *script->script_p++;
+    }
+    // check for trailing quote
+    if (*script->script_p != '\'')
+    {
+        ScriptWarning(script, "too many characters in literal, ignored");
+        while (*script->script_p &&
+               *script->script_p != '\'' &&
+               *script->script_p != '\n')
+        {
+            script->script_p++;
+        }
+        if (*script->script_p == '\'')
+        {
+            script->script_p++;
+        }
+    }
+    // store the trailing quote
+    token->string[2] = *script->script_p++;
+    // store trailing zero to end the string
+    token->string[3] = '\0';
+    // the sub type is the integer literal value
+    token->subtype = token->string[1];
 
-	return 1;
+    return 1;
 }
+*/
 
 int PS_ReadPunctuation(script_t *script, token_t *token)
 {
@@ -1235,37 +1237,41 @@ int EndOfScript(script_t *script)
 	return script->script_p >= script->end_p;
 }
 
+/* unused
 int NumLinesCrossed(script_t *script)
 {
-	return script->line - script->lastline;
+    return script->line - script->lastline;
 }
+*/
 
+/* unused
 int ScriptSkipTo(script_t *script, char *value)
 {
-	int  len;
-	char firstchar;
+    int  len;
+    char firstchar;
 
-	firstchar = *value;
-	len       = strlen(value);
-	do
-	{
-		if (!PS_ReadWhiteSpace(script))
-		{
-			return 0;
-		}
-		if (*script->script_p == firstchar)
-		{
-			if (!strncmp(script->script_p, value, len))
-			{
-				return 1;
-			}
-		}
-		script->script_p++;
-	}
-	while (1);
+    firstchar = *value;
+    len       = strlen(value);
+    do
+    {
+        if (!PS_ReadWhiteSpace(script))
+        {
+            return 0;
+        }
+        if (*script->script_p == firstchar)
+        {
+            if (!strncmp(script->script_p, value, len))
+            {
+                return 1;
+            }
+        }
+        script->script_p++;
+    }
+    while (1);
 
-	return 0; // never reached
+    return 0; // never reached
 }
+*/
 
 script_t *LoadScriptFile(const char *filename)
 {

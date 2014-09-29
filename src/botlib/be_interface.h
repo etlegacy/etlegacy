@@ -31,6 +31,7 @@
  * @file be_interface.h
  * @brief bot library interface
  */
+
 #ifndef INCLUDE_BE_INTERFACE_H
 #define INCLUDE_BE_INTERFACE_H
 

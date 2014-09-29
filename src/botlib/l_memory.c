@@ -33,7 +33,7 @@
  */
 
 #include "../qcommon/q_shared.h"
-#include "../botlib/botlib.h"
+#include "botlib.h"
 #include "be_interface.h"
 
 #ifdef LEGACY_DEBUG

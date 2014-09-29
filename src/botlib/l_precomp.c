@@ -35,7 +35,7 @@
 // Notes:            FIXME: PC_StringizeTokens ?!
 
 #include "../qcommon/q_shared.h"
-#include "../botlib/botlib.h"
+#include "botlib.h"
 #include "be_interface.h"
 #include "l_memory.h"
 #include "l_script.h"
@@ -381,28 +381,30 @@ void PC_PrintDefine(define_t *define)
     printf("define->flags = %d\n", define->flags);
     printf("define->builtin = %d\n", define->builtin);
     printf("define->numparms = %d\n", define->numparms);
-//  token_t *parms;                 //define parameters
-//  token_t *tokens;                    //macro tokens (possibly containing parm tokens)
-//  struct define_s *next;          //next defined macro in a list
+    //token_t *parms;                 //define parameters
+    //token_t *tokens;                    //macro tokens (possibly containing parm tokens)
+    //struct define_s *next;          //next defined macro in a list
 }
 */
 #if DEFINEHASHING
 
+/* unused
 void PC_PrintDefineHashTable(define_t **definehash)
 {
-	int      i;
-	define_t *d;
+    int      i;
+    define_t *d;
 
-	for (i = 0; i < DEFINEHASHSIZE; i++)
-	{
-		Com_Printf("%4d:", i);
-		for (d = definehash[i]; d; d = d->hashnext)
-		{
-			Com_Printf(" %s", d->name);
-		}
-		Com_Printf("\n");
-	}
+    for (i = 0; i < DEFINEHASHSIZE; i++)
+    {
+        Com_Printf("%4d:", i);
+        for (d = definehash[i]; d; d = d->hashnext)
+        {
+            Com_Printf(" %s", d->name);
+        }
+        Com_Printf("\n");
+    }
 }
+*/
 
 //char primes[16] = {1, 3, 5, 7, 11, 13, 17, 19, 23, 27, 29, 31, 37, 41, 43, 47};
 
