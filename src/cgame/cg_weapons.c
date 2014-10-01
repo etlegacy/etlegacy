@@ -1322,11 +1322,22 @@ static qboolean CG_RW_ParseModModel(int handle, weaponInfo_t *weaponInfo)
 	}
 	else
 	{
-		weaponInfo->modModels[mod] = trap_R_RegisterModel(filename);
+		// maybe it's a shader ...
+		// check extensions of file name and register shader OR model
+		if (!strstr(filename, ".md3") && !strstr(filename, ".mdc")) // FIXME: add more model formats?
+		{   // we assume it's a shader
+			weaponInfo->modModels[mod] = trap_R_RegisterShader(filename);
+		}
+		else
+		{
+			weaponInfo->modModels[mod] = trap_R_RegisterModel(filename);
+		}
+
+		// still no q_handle_t
 		if (!weaponInfo->modModels[mod])
 		{
-			// maybe it's a shader
-			weaponInfo->modModels[mod] = trap_R_RegisterShader(filename);
+			Com_Printf(S_COLOR_RED "ERROR: CG_RW_ParseModModel() no model or shader for %s registered.\n", filename);
+			return qfalse; // this isn't vanilla behaviour
 		}
 	}
 
@@ -1403,7 +1414,7 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				if (!CG_ParseWeaponConfig(filename, weaponInfo))
 				{
-					//CG_Error( "Couldn't register weapon %i (failed to parse %s)", weaponNum, filename );
+					CG_Error("Couldn't register weapon (failed to parse %s)", filename);
 				}
 			}
 		}
