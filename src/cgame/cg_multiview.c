@@ -39,7 +39,6 @@
 #include "../game/bg_local.h"
 
 void CG_CalcVrect(void);
-void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor);
 
 qhandle_t axis_flag   = 0;
 qhandle_t allies_flag = 0;
@@ -87,6 +86,7 @@ void CG_mvDelete_f(void)
 		else
 		{
 			cg_window_t *w = cg.mvCurrentActive;
+
 			if (w != NULL)
 			{
 				pID = (w->mvInfo & MV_PID);
@@ -176,7 +176,6 @@ void CG_mvToggleAll_f(void)
 	}
 }
 
-////////////////////////////////////////////////
 //
 // Multiview Primitives
 //
@@ -223,7 +222,6 @@ void CG_mvCreate(int pID)
 	cg.mv_cnt++;
 }
 
-///////////////////////////
 // Delete a view window
 //
 void CG_mvFree(int pID)
@@ -268,7 +266,6 @@ void CG_mvMainviewSwap(cg_window_t *av)
 	CG_mvOverlayUpdate();
 }
 
-/////////////////////////////////////////////
 // Track our list of merged clients
 //
 void CG_mvProcessClientList(void)
@@ -356,15 +353,9 @@ cg_window_t *CG_mvFindNonMainview(void)
 	return(cg.mvCurrentMainview);
 }
 
-//////////////////////////////////////////////
-//
 //    Rendering/Display Management
-//
-//////////////////////////////////////////////
 
-///////////////////////////////////////////////////
 // Update all info for a merged client
-//
 void CG_mvUpdateClientInfo(int pID)
 {
 
@@ -420,9 +411,7 @@ void CG_mvUpdateClientInfo(int pID)
 	}
 }
 
-////////////////////////////////
 // Updates for main view
-//
 void CG_mvTransitionPlayerState(playerState_t *ps)
 {
 	int          x, mult, pID = (cg.mvCurrentMainview->mvInfo & MV_PID);
@@ -489,9 +478,7 @@ void CG_mvTransitionPlayerState(playerState_t *ps)
 
 void CG_OffsetThirdPersonView(void);
 
-///////////////////////////////////
 // Draw the client view window
-//
 void CG_mvDraw(cg_window_t *sw)
 {
 	int       pID = (sw->mvInfo & MV_PID);
@@ -676,7 +663,6 @@ void CG_mvDraw(cg_window_t *sw)
 
 	cg.refdef_current = &cg.refdef;
 
-
 #if 0
 	cg.refdef_current = &refdef;
 	CG_Text_Paint_Ext(1, 1, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -692,10 +678,7 @@ void CG_mvDraw(cg_window_t *sw)
 	cg.snap->ps.clientNum = base_pID;
 }
 
-
-////////////////////////////////////////////
 // Simpler overlay for windows
-//
 void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, float s, int wState, qboolean fSelected)
 {
 	int          w, x;
@@ -828,11 +811,7 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	}
 }
 
-////////////////////////////////////////////////////
-//
 //            MV Text Overlay Handling
-//
-////////////////////////////////////////////////////
 
 char *strClassHighlights[] =
 {
@@ -906,7 +885,6 @@ void CG_mvOverlayDisplay(void)
 {
 	int         j, i, x, y, pID;
 	cg_mvinfo_t *o;
-
 
 	if (cg.mvTotalClients < 1)
 	{
@@ -986,11 +964,8 @@ void CG_mvOverlayDisplay(void)
 	}
 }
 
-//////////////////////////////////////
-//
 // Wolf-specific utilities
-//
-//////////////////////////////////////
+
 void CG_mvZoomSniper(float x, float y, float w, float h)
 {
 	float ws = w / 640;
