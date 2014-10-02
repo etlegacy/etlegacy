@@ -662,20 +662,20 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// drop flag regardless
 	if (self->client->ps.powerups[PW_REDFLAG])
 	{
-		item = BG_FindItem("Red Flag");
+		item = BG_GetItem(ITEM_RED_FLAG);
 		if (!item)
 		{
-			item = BG_FindItem("Objective");
+			item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
 		}
 
 		self->client->ps.powerups[PW_REDFLAG] = 0;
 	}
 	if (self->client->ps.powerups[PW_BLUEFLAG])
 	{
-		item = BG_FindItem("Blue Flag");
+		item = BG_GetItem(ITEM_BLUE_FLAG);
 		if (!item)
 		{
-			item = BG_FindItem("Objective");
+			item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
 		}
 
 		self->client->ps.powerups[PW_BLUEFLAG] = 0;

@@ -3283,20 +3283,20 @@ void ClientDisconnect(int clientNum)
 		// New code for tossing flags
 		if (ent->client->ps.powerups[PW_REDFLAG])
 		{
-			item = BG_FindItem("Red Flag");
+			item = BG_GetItem(ITEM_RED_FLAG);
 			if (!item)
 			{
-				item = BG_FindItem("Objective");
+				item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
 			}
 
 			ent->client->ps.powerups[PW_REDFLAG] = 0;
 		}
 		if (ent->client->ps.powerups[PW_BLUEFLAG])
 		{
-			item = BG_FindItem("Blue Flag");
+			item = BG_GetItem(ITEM_BLUE_FLAG);
 			if (!item)
 			{
-				item = BG_FindItem("Objective");
+				item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
 			}
 
 			ent->client->ps.powerups[PW_BLUEFLAG] = 0;

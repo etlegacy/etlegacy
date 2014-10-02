@@ -2310,6 +2310,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
 	{
 		int pronemovingtime = cg.time - cg.proneMovingTime;
+
 		if (pronemovingtime > 0)     // div by 0
 		{
 			float factor = pronemovingtime > 200 ? 1.f : 1.f / (200.f / (float)pronemovingtime);
@@ -3094,7 +3095,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	cent->pe.gunRefEnt      = gun;
 	cent->pe.gunRefEntFrame = cg.clientFrame;
 
-	if ((weaponNum == WP_FLAMETHROWER) && (nonPredictedCent->currentState.eFlags & EF_FIRING))
+	if (weaponNum == WP_FLAMETHROWER && (nonPredictedCent->currentState.eFlags & EF_FIRING))
 	{
 		// continuous flash
 	}
@@ -3221,10 +3222,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				vec3_t angles;
 				AxisToAngles(flash.axis, angles);
 
-				weaponNum = BG_FindAmmoForWeapon(WP_FLAMETHROWER);
 				if (ps)
 				{
-					if (ps->ammoclip[weaponNum])
+					if (ps->ammoclip[BG_FindAmmoForWeapon(WP_FLAMETHROWER)])
 					{
 						CG_FireFlameChunks(cent, flash.origin, angles, 1.0, qfalse);
 					}

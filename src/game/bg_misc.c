@@ -474,7 +474,8 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
 */
 
-// Important note: whenever you add new items update CG_NUM_ITEMS
+// Important note:
+// whenever you add new items update ITEM_MAX_ITEMS, FIRST_WEAPON_ITEM, ITEM_AMMO_PACK, ITEM_MEGA_AMMO_PACK, ITEM_RED_FLAG, ITEM_BLUE_FLAG
 gitem_t bg_itemlist[] =
 {
 	{
@@ -1988,14 +1989,13 @@ gitem_t bg_itemlist[] =
 	{ NULL }
 };
 
-int bg_numItems     = ARRAY_LEN(bg_itemlist) - 1; // keep in sync with CG_NUM_ITEMS!
-int firstWeaponItem = 9; // bg_itemlist is sorted and weapons start at 9
+int bg_numItems = ARRAY_LEN(bg_itemlist) - 1;     // keep in sync with ITEM_MAX_ITEMS!
 
 gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 {
 	gitem_t *it;
 
-	for (it = bg_itemlist + firstWeaponItem ; it->classname ; it++)
+	for (it = bg_itemlist + FIRST_WEAPON_ITEM ; it->classname ; it++)
 	{
 		if (it->giType == IT_WEAPON && it->giTag == weapon)
 		{
@@ -2068,6 +2068,11 @@ int BG_AkimboSidearm(int weaponNum)
 		break;
 	}
 	return WP_NONE;
+}
+
+gitem_t *BG_GetItem(int index)
+{
+	return &bg_itemlist[index];
 }
 
 gitem_t *BG_FindItem(const char *pickupName)

@@ -1517,9 +1517,21 @@ typedef struct gitem_s
 extern gitem_t bg_itemlist[];
 extern int     bg_numItems;
 
+#define FIRST_WEAPON_ITEM 9 // bg_itemlist is sorted and weapons start at 9
+
+// FIXME create enum for this with all items so we don't have to adjust this for item changes ... see note@bg_itemlist
+#define ITEM_HEALTH 3
+#define ITEM_HEALTH_CABINET 5
+#define ITEM_AMMO_PACK 35
+#define ITEM_MEGA_AMMO_PACK 36
+#define ITEM_RED_FLAG 79
+#define ITEM_BLUE_FLAG 80
+#define ITEM_MAX_ITEMS 81 // keep in sync with bg_numItems!
+
 gitem_t *BG_FindItem(const char *pickupName);
 gitem_t *BG_FindItemForClassName(const char *className);
 gitem_t *BG_FindItemForWeapon(weapon_t weapon);
+gitem_t *BG_GetItem(int index);
 
 weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
 weapon_t BG_FindClipForWeapon(weapon_t weapon);

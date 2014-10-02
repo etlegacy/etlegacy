@@ -1193,8 +1193,6 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define CG_NUM_ITEMS 81 // keep in sync with bg_numItems! FIXME: make this non static one day
-
 #define MAX_IMPACT_SOUNDS   5
 
 // all of the model, shader, and sound references that are
@@ -1521,7 +1519,7 @@ typedef struct
 
 	sfxHandle_t shoveSound;
 
-	sfxHandle_t itemPickUpSounds[CG_NUM_ITEMS];
+	sfxHandle_t itemPickUpSounds[ITEM_MAX_ITEMS];
 
 	qhandle_t ccStamps[2];
 	qhandle_t ccFilterPics[8]; // was 10, set to 8 (we init 0-7)

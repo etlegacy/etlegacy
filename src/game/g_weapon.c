@@ -246,7 +246,6 @@ void Weapon_Medic(gentity_t *ent)
 
 void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity)
 {
-	gitem_t   *item;
 	gentity_t *ent2;
 	vec3_t    mins, maxs;
 	trace_t   tr;
@@ -264,8 +263,6 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 	{
 		ent->client->ps.classWeaponTime += level.medicChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
 	}
-
-	item = BG_FindItemForClassName("item_health");
 
 	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
 	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
@@ -287,7 +284,7 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 		SnapVectorTowards(tosspos, viewpos);
 	}
 
-	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
+	ent2            = LaunchItem(BG_GetItem(ITEM_HEALTH), tosspos, velocity, ent->s.number);
 	ent2->think     = MagicSink;
 	ent2->nextthink = level.time + 30000;
 
@@ -337,7 +334,6 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 {
 	vec3_t    mins, maxs;
 	trace_t   tr;
-	gitem_t   *item;
 	gentity_t *ent2;
 
 	if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
@@ -353,8 +349,6 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 	{
 		ent->client->ps.classWeaponTime += level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
 	}
-
-	item = BG_FindItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? "Mega Ammo Pack" : "Ammo Pack");
 
 	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
 	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
@@ -376,7 +370,7 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 		SnapVectorTowards(tosspos, viewpos);
 	}
 
-	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
+	ent2            = LaunchItem(BG_GetItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? ITEM_MEGA_AMMO_PACK : ITEM_AMMO_PACK), tosspos, velocity, ent->s.number);
 	ent2->think     = MagicSink;
 	ent2->nextthink = level.time + 30000;
 
