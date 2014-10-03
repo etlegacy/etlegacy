@@ -706,136 +706,137 @@ static int propMap[128][3] =
 	{ 0,   0,   -1               } // DEL
 };
 
+/*
 static int propMapB[26][3] =
 {
-	{ 11,  12,  33 },
-	{ 49,  12,  31 },
-	{ 85,  12,  31 },
-	{ 120, 12,  30 },
-	{ 156, 12,  21 },
-	{ 183, 12,  21 },
-	{ 207, 12,  32 },
+    { 11,  12,  33 },
+    { 49,  12,  31 },
+    { 85,  12,  31 },
+    { 120, 12,  30 },
+    { 156, 12,  21 },
+    { 183, 12,  21 },
+    { 207, 12,  32 },
 
-	{ 13,  55,  30 },
-	{ 49,  55,  13 },
-	{ 66,  55,  29 },
-	{ 101, 55,  31 },
-	{ 135, 55,  21 },
-	{ 158, 55,  40 },
-	{ 204, 55,  32 },
+    { 13,  55,  30 },
+    { 49,  55,  13 },
+    { 66,  55,  29 },
+    { 101, 55,  31 },
+    { 135, 55,  21 },
+    { 158, 55,  40 },
+    { 204, 55,  32 },
 
-	{ 12,  97,  31 },
-	{ 48,  97,  31 },
-	{ 82,  97,  30 },
-	{ 118, 97,  30 },
-	{ 153, 97,  30 },
-	{ 185, 97,  25 },
-	{ 213, 97,  30 },
+    { 12,  97,  31 },
+    { 48,  97,  31 },
+    { 82,  97,  30 },
+    { 118, 97,  30 },
+    { 153, 97,  30 },
+    { 185, 97,  25 },
+    { 213, 97,  30 },
 
-	{ 11,  139, 32 },
-	{ 42,  139, 51 },
-	{ 93,  139, 32 },
-	{ 126, 139, 31 },
-	{ 158, 139, 25 },
+    { 11,  139, 32 },
+    { 42,  139, 51 },
+    { 93,  139, 32 },
+    { 126, 139, 31 },
+    { 158, 139, 25 },
 };
 
 #define PROPB_GAP_WIDTH     4
 #define PROPB_SPACE_WIDTH   12
 #define PROPB_HEIGHT        36
-
-/*
-=================
-UI_DrawBannerString
-=================
 */
+
+/* @note unused
 static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 {
-	const char    *s = str;
-	unsigned char ch;
-	float         ax = x * cgs.screenXScale + cgs.screenXBias;
-	float         ay = y * cgs.screenYScale;
-	float         aw;
-	float         ah;
-	float         frow;
-	float         fcol;
-	float         fwidth;
-	float         fheight;
+    const char    *s = str;
+    unsigned char ch;
+    float         ax = x * cgs.screenXScale + cgs.screenXBias;
+    float         ay = y * cgs.screenYScale;
+    float         aw;
+    float         ah;
+    float         frow;
+    float         fcol;
+    float         fwidth;
+    float         fheight;
 
-	// draw the colored text
-	trap_R_SetColor(color);
+    // draw the colored text
+    trap_R_SetColor(color);
 
-	while (*s)
-	{
-		ch = *s & 127;
-		if (ch == ' ')
-		{
-			ax += ((float)PROPB_SPACE_WIDTH + (float)PROPB_GAP_WIDTH) * cgs.screenXScale;
-		}
-		else if (ch >= 'A' && ch <= 'Z')
-		{
-			ch     -= 'A';
-			fcol    = (float)propMapB[ch][0] / 256.0f;
-			frow    = (float)propMapB[ch][1] / 256.0f;
-			fwidth  = (float)propMapB[ch][2] / 256.0f;
-			fheight = (float)PROPB_HEIGHT / 256.0f;
-			aw      = (float)propMapB[ch][2] * cgs.screenXScale;
-			ah      = (float)PROPB_HEIGHT * cgs.screenYScale;
-			trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, cgs.media.charsetPropB);
-			ax += (aw + (float)PROPB_GAP_WIDTH * cgs.screenXScale);
-		}
-		s++;
-	}
+    while (*s)
+    {
+        ch = *s & 127;
+        if (ch == ' ')
+        {
+            ax += ((float)PROPB_SPACE_WIDTH + (float)PROPB_GAP_WIDTH) * cgs.screenXScale;
+        }
+        else if (ch >= 'A' && ch <= 'Z')
+        {
+            ch     -= 'A';
+            fcol    = (float)propMapB[ch][0] / 256.0f;
+            frow    = (float)propMapB[ch][1] / 256.0f;
+            fwidth  = (float)propMapB[ch][2] / 256.0f;
+            fheight = (float)PROPB_HEIGHT / 256.0f;
+            aw      = (float)propMapB[ch][2] * cgs.screenXScale;
+            ah      = (float)PROPB_HEIGHT * cgs.screenYScale;
+            trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, cgs.media.charsetPropB);
+            ax += (aw + (float)PROPB_GAP_WIDTH * cgs.screenXScale);
+        }
+        s++;
+    }
 
-	trap_R_SetColor(NULL);
+    trap_R_SetColor(NULL);
 }
+*/
 
+/* @note unused
 void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 {
-	const char *s = str;
-	int        ch;
-	int        width = 0;
-	vec4_t     drawcolor;
+    const char *s = str;
+    int        ch;
+    int        width = 0;
+    vec4_t     drawcolor;
 
-	// find the width of the drawn text
-	while (*s)
-	{
-		ch = *s;
-		if (ch == ' ')
-		{
-			width += PROPB_SPACE_WIDTH;
-		}
-		else if (ch >= 'A' && ch <= 'Z')
-		{
-			width += propMapB[ch - 'A'][2] + PROPB_GAP_WIDTH;
-		}
-		s++;
-	}
-	width -= PROPB_GAP_WIDTH;
+    // find the width of the drawn text
+    while (*s)
+    {
+        ch = *s;
+        if (ch == ' ')
+        {
+            width += PROPB_SPACE_WIDTH;
+        }
+        else if (ch >= 'A' && ch <= 'Z')
+        {
+            width += propMapB[ch - 'A'][2] + PROPB_GAP_WIDTH;
+        }
+        s++;
+    }
+    width -= PROPB_GAP_WIDTH;
 
-	switch (style & UI_FORMATMASK)
-	{
-	case UI_CENTER:
-		x -= width / 2;
-		break;
+    switch (style & UI_FORMATMASK)
+    {
+    case UI_CENTER:
+        x -= width / 2;
+        break;
 
-	case UI_RIGHT:
-		x -= width;
-		break;
+    case UI_RIGHT:
+        x -= width;
+        break;
 
-	case UI_LEFT:
-	default:
-		break;
-	}
+    case UI_LEFT:
+    default:
+        break;
+    }
 
-	if (style & UI_DROPSHADOW)
-	{
-		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
-		drawcolor[3] = color[3];
-		UI_DrawBannerString2(x + 2, y + 2, str, drawcolor);
-	}
+    if (style & UI_DROPSHADOW)
+    {
+        drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
+        drawcolor[3] = color[3];
+        UI_DrawBannerString2(x + 2, y + 2, str, drawcolor);
+    }
 
-	UI_DrawBannerString2(x, y, str, color);
+    UI_DrawBannerString2(x, y, str, color);
 }
+*/
 
 int UI_ProportionalStringWidth(const char *str)
 {
