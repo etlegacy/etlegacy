@@ -4430,23 +4430,19 @@ static void PM_Weapon(void)
 	if (!(pm->ps->eFlags & EF_PRONE) && (pml.groundTrace.surfaceFlags & SURF_SLICK))
 	{
 		float fwdmove_knockback = 0.f;
-		//float bckmove_knockback = 0.f; // FIXME: backward move
 
 		switch (pm->ps->weapon)
 		{
 		case WP_MOBILE_MG42:
 		case WP_MOBILE_BROWNING:
 			fwdmove_knockback = 4000.f;
-			//bckmove_knockback = 400.f;
 			break;
 		case WP_PANZERFAUST:
 		case WP_BAZOOKA:
 			fwdmove_knockback = 32000.f;
-			//bckmove_knockback = 1200.f;
 			break;
 		case WP_FLAMETHROWER:
 			fwdmove_knockback = 2000.f;
-			//bckmove_knockback = 40.f;
 			break;
 		}
 
@@ -4454,18 +4450,8 @@ static void PM_Weapon(void)
 		{
 			// Add some knockback on slick
 			vec3_t kvel;
-			float  mass = 200;
 
-			if (DotProduct(pml.forward, pm->ps->velocity) > 0)
-			{
-				VectorScale(pml.forward, -1.f * (fwdmove_knockback / mass), kvel);        // -1 as we get knocked backwards
-			}
-			else
-			{
-				// FIXME: same as forward move - change to backward
-				VectorScale(pml.forward, -1.f * (fwdmove_knockback / mass), kvel);        // -1 as we get knocked backwards
-			}
-
+			VectorScale(pml.forward, -1.f * (fwdmove_knockback / 200), kvel);        // -1 as we get knocked backwards
 			VectorAdd(pm->ps->velocity, kvel, pm->ps->velocity);
 
 			if (!pm->ps->pm_time)
@@ -4848,14 +4834,6 @@ static void PM_Weapon(void)
 
 /*
 ================
-PM_Animate
-================
-*/
-#define MYTIMER_SALUTE   1133   // 17 frames, 15 fps
-#define MYTIMER_DISMOUNT 667    // 10 frames, 15 fps
-
-/*
-================
 PM_DropTimers
 ================
 */
@@ -4905,7 +4883,7 @@ static void PM_DropTimers(void)
 	}
 }
 
-#define LEAN_MAX    28.0f
+#define LEAN_MAX        28.0f
 #define LEAN_TIME_TO    200.0f  // time to get to/from full lean
 #define LEAN_TIME_FR    300.0f  // time to get to/from full lean
 
