@@ -577,6 +577,10 @@ typedef int fixed16_t;
 #define M_PI        3.14159265358979323846f // matches value in gcc v2 math.h
 #endif
 
+// Tau = 2 * pi
+// calculated 2*M_PI=6.28318530717958623200
+#define M_TAU_F      6.28318530717958647693f // 6. 2831853071 7958647692 5286766559 0057683943
+
 #ifndef M_SQRT2
 #define M_SQRT2     1.41421356237309504880f
 #endif
