@@ -3379,7 +3379,15 @@ Com_Shutdown
 void Com_Shutdown(qboolean badProfile)
 {
 	Cmd_RemoveCommand("meminfo");
-	// FIXME: common defines more cmds - remove all
+#ifdef ZONE_DEBUG
+	Cmd_RemoveCommand("zonelog");
+#endif
+#ifdef HUNK_DEBUG
+	Cmd_RemoveCommand("hunklog");
+	Cmd_RemoveCommand("hunksmalllog");
+#endif
+
+	// FIXME: common defines more cmds - remove all see Cmd_AddCommand()
 
 	// delete pid file
 	if (!badProfile && FS_FileExists(Cvar_VariableString("com_pidfile")))
