@@ -237,13 +237,13 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
  * @brief UI_DrawRotatedPic
  * Coordinates are 640*480 virtual values
  * @note Unused (cool stuff for ETL logo?!)
- */
 void UI_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle)
 {
-	UI_AdjustFrom640(&x, &y, &width, &height);
+    UI_AdjustFrom640(&x, &y, &width, &height);
 
-	trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
+    trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
 }
+*/
 
 /**
  * @brief UI_FillRect
