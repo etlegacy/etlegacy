@@ -125,7 +125,7 @@ void SV_UpdateConfigStrings(void)
 				// warn admins
 				if (strlen(sv.configstrings[index]) > BIG_INFO_VALUE - 800)
 				{
-					Com_Printf("WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", BIG_INFO_VALUE - strlen(sv.configstrings[index]));
+					Com_Printf("WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", (int) (BIG_INFO_VALUE - strlen(sv.configstrings[index])));
 				}
 			}
 		}
