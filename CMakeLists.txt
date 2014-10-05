@@ -126,10 +126,15 @@ endif(WIN32 AND buildgen_upper MATCHES "NMAKE MAKEFILES")
 
 if(buildtype_upper MATCHES DEBUG)
 	SET(DEBUG_BUILD ON CACHE BOOL "Debug build")
-	add_definitions(-DLEGACY_DEBUG=1)
 else(buildtype_upper MATCHES DEBUG)
 	SET(DEBUG_BUILD OFF CACHE BOOL "Debug build")
 endif(buildtype_upper MATCHES DEBUG)
+
+if(DEBUG_BUILD AND FORCE_DEBUG)
+	add_definitions(-DLEGACY_DEBUG=1)
+else()
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DLEGACY_DEBUG=1")
+endif()
 
 if(MSVC AND NOT NMAKE_BUILD)
 	SET(VSTUDIO ON CACHE BOOL "Visual studio build")
@@ -234,7 +239,7 @@ if(UNIX)
 	
 elseif(WIN32)
 	add_definitions(-DWINVER=0x501)
-	set(OS_LIBRARIES ws2_32 psapi winmm)
+	set(OS_LIBRARIES wsock32 ws2_32 psapi winmm)
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
@@ -502,6 +507,8 @@ else() # Not using source from git repo
 	set(ETL_CMAKE_PROD_VERSION ${ETLEGACY_VERSIONPLAIN})
 	set(ETL_CMAKE_PROD_VERSIONSTR ${ETLEGACY_VERSION})
 endif()
+#This is for NSIS
+string(REPLACE "," "." ETL_CMAKE_PROD_VERSIONDOT ${ETL_CMAKE_PROD_VERSION})
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h" @ONLY)
 list(APPEND COMMON_SRC "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h")
 
@@ -846,8 +853,8 @@ if(BUILD_CLIENT)
 			)
 
 			install(TARGETS renderer_opengl1_${ARCH}
-				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 			)
 		endif(RENDERER_DYNAMIC)
 		if(NOT RENDERER_DYNAMIC)
@@ -946,8 +953,8 @@ if(BUILD_CLIENT)
 			LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
 		)
 		install(TARGETS renderer_opengl2_${ARCH}
-			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 		)
 		if(NOT RENDERER_DYNAMIC)
 			list(APPEND CLIENT_LIBRARIES renderer_opengl2_${ARCH})
@@ -1277,32 +1284,4 @@ add_custom_target(uninstall
 )
 
 # Packaging support
-# TODO: move this to include(EtlegacyCPack)
-# CPack general configuration
-set(CPACK_PACKAGE_NAME				"etlegacy")
-set(CPACK_BUNDLE_NAME				"etlegacy")
-set(CPACK_PACKAGE_FILE_NAME			"etlegacy")
-set(CPACK_BUNDLE_STARTUP_COMMAND		"etl")
-set(CPACK_PACKAGE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.icns")
-set(CPACK_BUNDLE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.icns")
-set(CPACK_BUNDLE_PLIST				"${CMAKE_SOURCE_DIR}/misc/Info.plist")
-set(CPACK_PACKAGE_CONTACT			"mail@etlegacy.com")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY		"ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
-set(CPACK_PACKAGE_DESCRIPTION			${CPACK_PACKAGE_DESCRIPTION_SUMMARY}) # TODO: expand
-set(CPACK_PACKAGE_DESCRIPTION_FILE		"${CMAKE_SOURCE_DIR}/README.md")
-#set(CPACK_RESOURCE_FILE_LICENSE		"${CMAKE_SOURCE_DIR}/COPYING.txt") # FIXME: breaks bundle generator
-set(CPACK_PACKAGE_VERSION_MAJOR			${ETLEGACY_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR			${ETLEGACY_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH			${ETLEGACY_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION			${ETLEGACY_VERSION})
-set(CPACK_PACKAGE_FILE_NAME			"${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
-set(CPACK_PROJECT_CONFIG_FILE			"${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake")
-
-# CPack generator-specific configuration
-configure_file(
-	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPackOptions.cmake.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake"
-	IMMEDIATE @ONLY
-)
-
-include(CPack) # Has to be included after the package configuration!
+include(cmake/EtlegacyCPack.cmake)
