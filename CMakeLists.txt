@@ -130,17 +130,23 @@ else(buildtype_upper MATCHES DEBUG)
 	SET(DEBUG_BUILD OFF CACHE BOOL "Debug build")
 endif(buildtype_upper MATCHES DEBUG)
 
-if(DEBUG_BUILD AND FORCE_DEBUG)
-	add_definitions(-DLEGACY_DEBUG=1)
-else()
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DLEGACY_DEBUG=1")
-endif()
-
 if(MSVC AND NOT NMAKE_BUILD)
 	SET(VSTUDIO ON CACHE BOOL "Visual studio build")
 else(MSVC AND NOT NMAKE_BUILD)
 	SET(VSTUDIO OFF CACHE BOOL "Visual studio build")
 endif(MSVC AND NOT NMAKE_BUILD)
+
+if(DEBUG_BUILD AND FORCE_DEBUG)
+	add_definitions(-DLEGACY_DEBUG=1)
+else()
+	if(MSVC)
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /DLEGACY_DEBUG=1")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DLEGACY_DEBUG=1")
+	else()
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DLEGACY_DEBUG=1")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DLEGACY_DEBUG=1")
+	endif()
+endif()
 
 #-----------------------------------------------------------------
 # Platform-specific settings
