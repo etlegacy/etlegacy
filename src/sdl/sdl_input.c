@@ -1155,10 +1155,13 @@ static void IN_ProcessEvents(void)
 				Cvar_SetValue("com_minimized", 0);
 				break;
 			case SDL_WINDOWEVENT_FOCUS_LOST:
-				if (cls.glconfig.isFullscreen)
+				// disabled for now (causes issues with vid_restart
+				/*
+				if (cls.rendererStarted && cls.glconfig.isFullscreen)
 				{
 					Cbuf_ExecuteText(EXEC_NOW, "minimize");
-				} // fall through
+				}
+				*/
 			case SDL_WINDOWEVENT_LEAVE:
 				Cvar_SetValue("com_unfocused", 1);
 				break;

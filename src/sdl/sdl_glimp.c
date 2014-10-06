@@ -657,7 +657,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	if (fullscreen)
 	{
-		flags                |= SDL_WINDOW_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		glConfig.isFullscreen = qtrue;
 	}
 	else
@@ -823,8 +823,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		}
 
-		if ((main_window = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y,
-		                                    glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN)) == 0)
+		main_window = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y, glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN);
+
+		if (!main_window)
 		{
 			Ren_Developer("SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;

@@ -2780,8 +2780,8 @@ void CL_StartHunkUsers(void)
 
 	if (!cls.rendererStarted)
 	{
-		cls.rendererStarted = qtrue;
 		CL_InitRenderer();
+		cls.rendererStarted = qtrue;
 	}
 
 	if (!cls.soundStarted)
