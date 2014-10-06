@@ -4626,3 +4626,12 @@ msgstr "dolaczyl do Zespolu Osi\n"
 
 msgid "joined the Allies team\n"
 msgstr "dolaczyl do Zespolu Aliantow\n"
+
+msgid "AXIS BOTS"
+msgstr "BOTY OSI"
+
+msgid "ALLIED BOTS"
+msgstr "BOTY ALIANTOW"
+
+msgid "BALANCED"
+msgstr "ZBALANSOWANE"
