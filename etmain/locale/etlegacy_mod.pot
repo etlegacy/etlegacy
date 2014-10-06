@@ -4596,3 +4596,12 @@ msgstr ""
 
 msgid "joined the Allies team\n"
 msgstr ""
+
+msgid "AXIS BOTS"
+msgstr ""
+
+msgid "ALLIED BOTS"
+msgstr ""
+
+msgid "BALANCED"
+msgstr ""
