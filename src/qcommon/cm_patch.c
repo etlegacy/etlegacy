@@ -704,7 +704,7 @@ static int CM_GridPlane(int gridPlanes[MAX_GRID_SIZE][MAX_GRID_SIZE][2], int i, 
 		return p;
 	}
 
-	// should never happen
+	// should never happen (occures on collision map loading of 'cortex_who')
 	Com_Printf("WARNING: CM_GridPlane unresolvable\n");
 	return -1;
 }
