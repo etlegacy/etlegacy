@@ -797,7 +797,7 @@ if(WIN32 AND MSVC)
 			source_group("Header Files\\${SHAD_FOLDER_WIN}" FILES ${SRCFILE})
 		endif()
 	ENDFOREACH(SRCFILE)
-endif(WIN32)
+endif(WIN32 AND MSVC)
 
 #-----------------------------------------------------------------
 # Build
