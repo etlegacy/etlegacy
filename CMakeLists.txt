@@ -371,8 +371,6 @@ FILE(GLOB CLIENT_SRC
 	"src/botlib/l_*.h"
 	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
-#	"src/renderer/*.c"
-#	"src/renderer/*.h"
 	"src/sdl/*.c"
 	"src/sdl/*.h"
 )
@@ -776,40 +774,29 @@ endif(FEATURE_CURSES)
 #-----------------------------------------------------------------
 # Groups for Visual Studio (Windows) and win32 definitions
 #-----------------------------------------------------------------
-if(WIN32)
-	if(MSVC)
-		FILE(GLOB CLIENT_SRC_GROUP
-			"src/client/cl_*.h"
-			"src/client/cl_*.c"
-		)
+if(WIN32 AND MSVC)
+	# Group the files based on their source path
+	SET(SRC_PATH "src")
+	FILE(GLOB ALL_SOURCES
+		"${SRC_PATH}/*.*"
+		"${SRC_PATH}/*/*.*"
+	)
+	GET_FILENAME_COMPONENT(SRC_FULLPATH ${SRC_PATH} ABSOLUTE)
+	FOREACH (SRCFILE ${ALL_SOURCES})
+		GET_FILENAME_COMPONENT(FILE_NAME ${SRCFILE} NAME_WE)
+		GET_FILENAME_COMPONENT(FILE_FOLDER ${SRCFILE} PATH)
+		GET_FILENAME_COMPONENT(FILE_EXT ${SRCFILE} EXT)
 
-		FILE(GLOB CLIENT_SND_SRC_GROUP
-			"src/client/qal.c"
-			"src/client/qal.h"
-			"src/client/snd_*.c"
-			"src/client/snd_*.h"
-		)
+		string(REPLACE "${SRC_FULLPATH}/" "" FILE_FOLDER "${FILE_FOLDER}")
+		string(REPLACE "${SRC_FULLPATH}" "" FILE_FOLDER "${FILE_FOLDER}")
+		string(REPLACE "/" "\\" SHAD_FOLDER_WIN "${FILE_FOLDER}")
 
-		FILE(GLOB TINY_GETTEXT_SRC_GROUP
-			"src/tinygettext/*.cpp"
-			"src/tinygettext/*.hpp"
-		)
-
-		source_group("Source Files\\Client" FILES ${CLIENT_SRC_GROUP})
-		source_group("Source Files\\Sound" FILES ${CLIENT_SND_SRC_GROUP})
-		source_group("Source Files\\Server" FILES ${SERVER_FILES})
-		source_group("Source Files\\System" FILES ${SYSTEM_FILES})
-		source_group("Source Files\\SDL" FILES ${SDL_FILES})
-		source_group("Source Files\\Botlib" FILES ${BOTLIB_FILES})
-		source_group("Source Files\\Common" FILES ${COMMON_SRC})
-		source_group("Source Files\\Platform" FILES ${PLATFORM_SRC})
-		source_group("Source Files\\zlib" FILES ${ZLIB_SRC})
-		source_group("Source Files\\GetText" FILES ${TINY_GETTEXT_SRC_GROUP})
-		source_group("Source Files\\Renderer" FILES ${RENDERER1_FILES})
-		source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
-		source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
-		#source_group("Shaders" FILES ${RENDERER2_SHADERS})
-	endif(MSVC)
+		if(FILE_EXT STREQUAL ".cpp" OR FILE_EXT STREQUAL ".c" OR FILE_EXT STREQUAL ".rc")
+			source_group("Source Files\\${SHAD_FOLDER_WIN}" FILES ${SRCFILE})
+		elseif(FILE_EXT STREQUAL ".hpp" OR FILE_EXT STREQUAL ".h")
+			source_group("Header Files\\${SHAD_FOLDER_WIN}" FILES ${SRCFILE})
+		endif()
+	ENDFOREACH(SRCFILE)
 endif(WIN32)
 
 #-----------------------------------------------------------------
