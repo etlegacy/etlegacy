@@ -69,9 +69,8 @@ COM_SkipPath
 */
 char *COM_SkipPath(char *pathname)
 {
-	char *last;
+	char *last = pathname;
 
-	last = pathname;
 	while (*pathname)
 	{
 		if (*pathname == '/')
@@ -113,7 +112,7 @@ void COM_StripExtension(const char *in, char *out, int destsize)
 
 	if (dot && (!(slash = strrchr(in, '/')) || slash < dot))
 	{
-		destsize = (destsize < dot - in + 1 ? destsize : dot - in + 1);
+		destsize = (destsize < (dot - in + 1) ? destsize : (dot - in + 1));
 	}
 
 	if (in == out && destsize > 1)
@@ -1591,13 +1590,14 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 	{
 		size_t inLen     = strlen(inStr);
 		size_t outOffset = 0;
-		size_t inOffset  = 0;
 
 		outStr[outOffset++] = Q_COLOR_ESCAPE;
 		outStr[outOffset++] = colorCode;
 
 		if (outOffset + 1 < outBufferLen)
 		{
+			size_t inOffset = 0;
+
 			while (inOffset < inLen && outOffset < outBufferLen)
 			{
 				char c = inStr[inOffset];

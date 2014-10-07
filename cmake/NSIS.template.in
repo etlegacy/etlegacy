@@ -45,8 +45,7 @@ InstallDir "$PROGRAMFILES\Enemy Territory - Legacy\"
 !define MUI_UNCOMPONENTSPAGE_SMALLDESC
 
 ; Pages
-!define MUI_FINISHPAGE_TEXT "ET:Legacy ${VERSION} has been installed on your computer.$\n$\n\
-You will find your ETKEY, profile folder and all downloaded files in the $DOCUMENTS\ETLegacy directory."
+!define MUI_FINISHPAGE_TEXT $(DESC_Section1)
 !define MUI_FINISHPAGE_RUN "$INSTDIR\etl.exe"
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "${RESOURCE_PATH}\wininstaller\COPYING.txt"
@@ -63,7 +62,65 @@ You will find your ETKEY, profile folder and all downloaded files in the $DOCUME
 
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "Polish"
+;!insertmacro MUI_LANGUAGE "German"
+;!insertmacro MUI_LANGUAGE "Spanish"
+;!insertmacro MUI_LANGUAGE "Japanese"
+;!insertmacro MUI_LANGUAGE "Korean"
+;!insertmacro MUI_LANGUAGE "Italian"
+;!insertmacro MUI_LANGUAGE "Dutch"
+;!insertmacro MUI_LANGUAGE "Danish"
+;!insertmacro MUI_LANGUAGE "Swedish"
+;!insertmacro MUI_LANGUAGE "Norwegian"
+;!insertmacro MUI_LANGUAGE "NorwegianNynorsk"
+;!insertmacro MUI_LANGUAGE "Finnish"
+;!insertmacro MUI_LANGUAGE "Greek"
+;!insertmacro MUI_LANGUAGE "Russian"
+;!insertmacro MUI_LANGUAGE "Portuguese"
+;!insertmacro MUI_LANGUAGE "PortugueseBR"
+;!insertmacro MUI_LANGUAGE "Ukrainian"
+;!insertmacro MUI_LANGUAGE "Czech"
+;!insertmacro MUI_LANGUAGE "Slovak"
+;!insertmacro MUI_LANGUAGE "Croatian"
+;!insertmacro MUI_LANGUAGE "Bulgarian"
+;!insertmacro MUI_LANGUAGE "Hungarian"
+;!insertmacro MUI_LANGUAGE "Romanian"
+;!insertmacro MUI_LANGUAGE "Latvian"
+;!insertmacro MUI_LANGUAGE "Macedonian"
+;!insertmacro MUI_LANGUAGE "Estonian"
+;!insertmacro MUI_LANGUAGE "Turkish"
+;!insertmacro MUI_LANGUAGE "Lithuanian"
+;!insertmacro MUI_LANGUAGE "Slovenian"
+;!insertmacro MUI_LANGUAGE "Serbian"
 
+; ---------------------
+; Lang Strings
+; ---------------------
+
+; English
+LangString DESC_Section1 ${LANG_ENGLISH} "ET:Legacy ${VERSION} has been installed on your computer.$\n$\n\
+You will find your ETKEY, profile folder and all downloaded files in the $DOCUMENTS\ETLegacy directory."
+LangString DESC_Section2 ${LANG_ENGLISH} "Download Error: Couldn't fetch Installer file."
+LangString DESC_Section3 ${LANG_ENGLISH} "Integrity Error: Installer MD5 checksum failed."
+LangString DESC_Section4 ${LANG_ENGLISH} "During extraction of W:ET assets the screen will get black for a few seconds."
+LangString DESC_Section5 ${LANG_ENGLISH} "Fatal Error: Installer extraction failed."
+LangString DESC_Section6 ${LANG_ENGLISH} "Fatal Error: Copy failed (pak0.pk3)."
+LangString DESC_Section7 ${LANG_ENGLISH} "Download Error: Couldn't fetch Patch file."
+LangString DESC_Section8 ${LANG_ENGLISH} "Integrity Error: Patch MD5 checksum failed."
+LangString DESC_Section9 ${LANG_ENGLISH} "Fatal Error: Patch extraction failed."
+LangString DESC_Section10 ${LANG_ENGLISH} "Fatal Error: Copy failed (pak1.pk3)."
+LangString DESC_Section11 ${LANG_ENGLISH} "Fatal Error: Copy failed (pak2.pk3)."
+LangString DESC_Section12 ${LANG_ENGLISH} "Make sure to copy W:ET assets files (pak0.pk3, pak1.pk3, pak2.pk3) into $INSTDIR\etmain before you run ET:Legacy."
+LangString DESC_Section13 ${LANG_ENGLISH} "Download Error: Couldn't fetch Omni-bot files."
+LangString DESC_Section14 ${LANG_ENGLISH} "Fatal Error: Omni-bot extraction failed."
+LangString DESC_Section15 ${LANG_ENGLISH} "No ETKEY found. ET:Legacy will create a new ETKEY upon start. If you got a Backup of your own ETKEY copy it to $DOCUMENTS\ETLegacy\etmain."
+LangString DESC_Section16 ${LANG_ENGLISH} "Install Enemy Territory: Legacy files."
+LangString DESC_Section17 ${LANG_ENGLISH} "Retrieve Wolfenstein: Enemy Territory .pk3 assets. Data files will be downloaded if not found locally."
+LangString DESC_Section18 ${LANG_ENGLISH} "Install Omni-bot files for your server or offline training. The latest version will be downloaded."
+LangString DESC_Section19 ${LANG_ENGLISH} "Uninstall Enemy Territory: Legacy and Omni-bot files."
+LangString DESC_Section20 ${LANG_ENGLISH} "Uninstall Wolfenstein: Enemy Territory .pk3 assets (pak0.pk3, pak1.pk3, pak2.pk3)."
+LangString DESC_Section21 ${LANG_ENGLISH} "Delete ETKEY and all created or downloaded files inside the $DOCUMENTS\ETLegacy folder."
+LangString DESC_Section22 ${LANG_ENGLISH} "ET:Legacy requires MS VC++ 2013 Redistributable, do you want to install it?"
 VIProductVersion "@FILE_VERSION@"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Enemy Territory Legacy Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "ETL game installer"
@@ -72,6 +129,38 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "© 2011-2014 Legacy Tea
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© 2011-2014 Legacy Team"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "ETL Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@FILE_VERSION@"
+
+; Polish
+LangString DESC_Section1 ${LANG_POLISH} "ET:Legacy ${VERSION} zostało zainstalowane na twoim komputerze.$\n$\n\
+Znajdziesz ETKEY, folder profilu i wszystkie sciagnięte pliki w katalogu $DOCUMENTS\ETLegacy."
+LangString DESC_Section2 ${LANG_POLISH} "Błąd Ściagania: Nie mozna pobrać pliku Instalacyjnego."
+LangString DESC_Section3 ${LANG_POLISH} "Błąd Integrarności: Brak MD5 checksum Instalatora."
+LangString DESC_Section4 ${LANG_POLISH} "Podczas wypakowywania plików W:ET ekran zrobi się czarny na kilka sekund."
+LangString DESC_Section5 ${LANG_POLISH} "Błąd Krytyczny: Wypakowywanie Instalatora nie powiodło się."
+LangString DESC_Section6 ${LANG_POLISH} "Błąd Krytyczny: Kopiowanie nie powiodło się (pak0.pk3)."
+LangString DESC_Section7 ${LANG_POLISH} "Błąd Ściagania: Nie mozna pobrać pliku Patchującego."
+LangString DESC_Section8 ${LANG_POLISH} "Błąd Integrarności: Brak MD5 checksum Patchu."
+LangString DESC_Section9 ${LANG_ENGLISH} "Błąd Krytyczny: Wypakowywanie Patchu nie powiodło się."
+LangString DESC_Section10 ${LANG_POLISH} "Błąd Krytyczny: Kopiowanie nie powiodło się (pak1.pk3)."
+LangString DESC_Section11 ${LANG_POLISH} "Błąd Krytyczny: Kopiowanie nie powiodło się (pak2.pk3)."
+LangString DESC_Section12 ${LANG_POLISH} "Upewnij się aby skopiować pliki W:ET (pak0.pk3, pak1.pk3, pak2.pk3) do $INSTDIR\etmain przed uruchomieniem ET:Legacy."
+LangString DESC_Section13 ${LANG_POLISH} "Błąd Ściagania: Nie mozna pobrać plików Omni-bot."
+LangString DESC_Section14 ${LANG_POLISH} "Błąd Krytyczny: Wypakowywanie Omni-bot nie powiodło się."
+LangString DESC_Section15 ${LANG_POLISH} "Nie znaleziono ETKEY-a. ET:Legacy stworzy nowy ETKEY na starcie. Jeśli masz kopie zapasową swojego własnego ETKEY-a skopiuj go do $DOCUMENTS\ETLegacy\etmain."
+LangString DESC_Section16 ${LANG_POLISH} "Zainstaluj pliki Enemy Territory: Legacy."
+LangString DESC_Section17 ${LANG_POLISH} "Pobierz pliki .pk3 Wolfenstein: Enemy Territory. Pliki będą pobrane jeśli nie znalezione lokalnie."
+LangString DESC_Section18 ${LANG_POLISH} "Zainstaluj pliki Omni-Bot dla twojego serwera lub dla treningu offline. Ostatnia wersja zostanie ściagnięta."
+LangString DESC_Section19 ${LANG_POLISH} "Odinstaluj Enemy Territory: Legacy i pliki Omni-bot."
+LangString DESC_Section20 ${LANG_POLISH} "Odinstaluj pliki .pk3 Wolfenstein: Enemy Territory .pk3 (pak0.pk3, pak1.pk3, pak2.pk3)."
+LangString DESC_Section21 ${LANG_POLISH} "Usuń ETKEY i wszystkie lub ściągnięte pliki z folderu $DOCUMENTS\ETLegacy."
+LangString DESC_Section22 ${LANG_POLISH} "ET:Legacy potrzebuje MS VC++ 2013 Redistributable, czy chcesz to zaintalować?"
+VIAddVersionKey /LANG=${LANG_POLISH} "NazwaProduktu" "Instalator Enemy Territory Legacy"
+VIAddVersionKey /LANG=${LANG_POLISH} "Komentarze" "ETL instalator gry"
+VIAddVersionKey /LANG=${LANG_POLISH} "NazwaFirmy" "Legacy Team"
+VIAddVersionKey /LANG=${LANG_POLISH} "ZnakTowarowy" "© 2011-2014 Legacy Team"
+VIAddVersionKey /LANG=${LANG_POLISH} "PrawaAutorskie" "© 2011-2014 Legacy Team"
+VIAddVersionKey /LANG=${LANG_POLISH} "OpisPliku" "ETL Installer"
+VIAddVersionKey /LANG=${LANG_POLISH} "WersjaPliku" "@FILE_VERSION@"
 
 ; ------------------------
 ; INSTALL
@@ -145,7 +234,7 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
         IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
         NSISdl::download "http://download.hirntot.org/misc/WolfET.exe" WolfET.exe
         IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Download Error: Couldn't fetch Installer file." \
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section2) \
         IDCANCEL USERCANCEL IDRETRY GET_INSTALL
 
     CHECK_INSTALL:
@@ -155,18 +244,18 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
         GOTO UNPACK_INSTALL
         ${Else}
         Delete "$TEMP\WolfET.exe"
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Integrity Error: Installer MD5 checksum failed." \
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section3) \
         IDCANCEL USERCANCEL IDRETRY GET_INSTALL
         ${EndIf}
 
     UNPACK_INSTALL:
-        MessageBox MB_ICONINFORMATION|MB_OK "During extraction of W:ET assets the screen will get black for a few seconds."
+        MessageBox MB_ICONINFORMATION|MB_OK $(DESC_Section4)
         ExecWait "$TEMP\WolfET.exe /x $TEMP\etl_install"
         IfFileExists "$TEMP\etl_install\pak0.pk3" +2
-        MessageBox MB_ICONEXCLAMATION|MB_OK "Fatal Error: Installer extraction failed."
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section5)
         copyfiles "$TEMP\etl_install\pak0.pk3" "$INSTDIR\etmain"
         IfFileExists "$INSTDIR\etmain\pak0.pk3" COPY_PAK1
-        MessageBox MB_ICONEXCLAMATION|MB_OK "Fatal Error: Copy failed (pak0.pk3)."
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section6)
 
     GET_PATCH:
         IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
@@ -178,7 +267,7 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
         IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
         NSISdl::download "http://download.hirntot.org/misc/ET_Patch_2_60.exe" ET_Patch_2_60.exe
         IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Download Error: Couldn't fetch Patch file." \
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section7) \
         IDCANCEL USERCANCEL IDRETRY GET_PATCH
 
     CHECK_PATCH:
@@ -188,24 +277,24 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
         GOTO UNPACK_PATCH
         ${Else}
         Delete "$TEMP\ET_Patch_2_60.exe"
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Integrity Error: Patch MD5 checksum failed." \
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section8) \
         IDCANCEL USERCANCEL IDRETRY GET_PATCH
         ${EndIf}
 
     UNPACK_PATCH:
         ExecWait "$TEMP\ET_Patch_2_60.exe /x $TEMP\etl_install"
         IfFileExists "$TEMP\etl_install\pak1.pk3" +2
-        MessageBox MB_ICONEXCLAMATION|MB_OK "Fatal Error: Patch extraction failed."
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section10)
         copyfiles "$TEMP\etl_install\pak1.pk3" "$INSTDIR\etmain\"
         IfFileExists "$INSTDIR\etmain\pak1.pk3" +2
-        MessageBox MB_ICONEXCLAMATION|MB_OK "Fatal Error: Copy failed (pak1.pk3)."
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section9)
         copyfiles "$TEMP\etl_install\pak2.pk3" "$INSTDIR\etmain\"
         IfFileExists "$INSTDIR\etmain\pak2.pk3" +2
-        MessageBox MB_ICONEXCLAMATION|MB_OK "Fatal Error: Copy failed (pak2.pk3)."
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section11)
         GOTO END
 
     USERCANCEL:
-        Messagebox MB_OK|MB_ICONEXCLAMATION "Make sure to copy W:ET assets files (pak0.pk3, pak1.pk3, pak2.pk3) into $INSTDIR\etmain before you run ET:Legacy."
+        Messagebox MB_OK|MB_ICONEXCLAMATION $(DESC_Section12)
 
     END:
 SectionEnd
@@ -219,13 +308,13 @@ Section "Omni-bot" OMNIBOT
         IfFileExists "$TEMP\omnibot-windows-latest.zip" UNPACK_BOT
         NSISdl::download "http://mirror.etlegacy.com/omnibot/omnibot-windows-latest.zip" omnibot-windows-latest.zip
         IfFileExists "$TEMP\omnibot-windows-latest.zip" UNPACK_BOT
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Download Error: Couldn't fetch Omni-bot files." \
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section13) \
         IDCANCEL END IDRETRY GET_BOT
 
     UNPACK_BOT:
         ZipDLL::extractall "$TEMP\omnibot-windows-latest.zip" "$INSTDIR\legacy\omni-bot"
         IfFileExists "$INSTDIR\legacy\omni-bot\*.*" END
-        MessageBox MB_ICONEXCLAMATION|MB_OK "Fatal Error: Omni-bot extraction failed."
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section14)
 
     END:
         SetOutPath $INSTDIR
@@ -260,7 +349,7 @@ Section -ETKEY
         GOTO END
 
     NOKEY:
-        Messagebox MB_OK|MB_ICONINFORMATION "No ETKEY found. ET:Legacy will create a new ETKEY upon start. If you got a Backup of your own ETKEY copy it to $DOCUMENTS\ETLegacy\etmain."
+        Messagebox MB_OK|MB_ICONINFORMATION $(DESC_Section15)
         GOTO END
 
     END:
@@ -301,7 +390,7 @@ Function InstallVC
     ReadRegDword $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F8CFEB22-A2E7-3971-9EDA-4B11EDEFC185}" "Version"
     IfErrors 0 VSRedistInstalled
     ; Maybe we should just install it and not even comfirm?
-    MessageBox MB_ICONQUESTION|MB_YESNO "ET:Legacy requires MS VC++ 2013 Redistributable, do you want to install it?" IDNO VSRedistMissing
+    MessageBox MB_ICONQUESTION|MB_YESNO $(DESC_Section22) IDNO VSRedistMissing
     File /nonfatal "vcredist\vcredist_x86.exe"
     ; we either use /quiet or /passive, quiet shows nothing and passive show minimal UI with no user interactions
     ; /nostart do not popup a restart window, we does not want it and we does not need it my precious!
@@ -321,9 +410,9 @@ FunctionEnd
 
 ; Section descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${FILES} "Install Enemy Territory: Legacy files."
-    !insertmacro MUI_DESCRIPTION_TEXT ${ASSETS} "Retrieve Wolfenstein: Enemy Territory .pk3 assets. Data files will be downloaded if not found locally."
-    !insertmacro MUI_DESCRIPTION_TEXT ${OMNIBOT} "Install Omni-bot files for your server or offline training. The latest version will be downloaded."
+    !insertmacro MUI_DESCRIPTION_TEXT ${FILES} $(DESC_Section16)
+    !insertmacro MUI_DESCRIPTION_TEXT ${ASSETS} $(DESC_Section17)
+    !insertmacro MUI_DESCRIPTION_TEXT ${OMNIBOT} $(DESC_Section18)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; ------------------------
@@ -356,7 +445,7 @@ SectionEND
 
 ; Section descriptions
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${UNFILES} "Uninstall Enemy Territory: Legacy and Omni-bot files."
-    !insertmacro MUI_DESCRIPTION_TEXT ${UNASSETS} "Uninstall Wolfenstein: Enemy Territory .pk3 assets (pak0.pk3, pak1.pk3, pak2.pk3)."
-    !insertmacro MUI_DESCRIPTION_TEXT ${WOLFETL} "Delete ETKEY and all created or downloaded files inside the $DOCUMENTS\ETLegacy folder."
+    !insertmacro MUI_DESCRIPTION_TEXT ${UNFILES} $(DESC_Section19)
+    !insertmacro MUI_DESCRIPTION_TEXT ${UNASSETS} $(DESC_Section20)
+    !insertmacro MUI_DESCRIPTION_TEXT ${WOLFETL} $(DESC_Section21)
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_END
