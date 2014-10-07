@@ -2082,6 +2082,12 @@ void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 		switch (key)
 		{
 		case K_MOUSE1:
+			if (editSpeaker && !editSpeakerActive)
+			{
+				CG_ModifyEditSpeaker();
+				break;
+			}
+
 			if (!down)
 			{
 				editSpeakerHandle.activeAxis = -1;
@@ -2130,7 +2136,6 @@ void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 				{
 					VectorCopy(editSpeakerHandle.origin, editSpeakerHandle.oldOrigin);
 				}
-				;
 			}
 			break;
 		case K_ESCAPE:
