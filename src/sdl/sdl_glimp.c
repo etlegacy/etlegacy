@@ -538,20 +538,22 @@ static void GLimp_InitExtensionsR2(void)
 }
 #endif
 
-//TODO: remove the whole 2D rendering code from here?
+/* unused
+// TODO: remove the whole 2D rendering code from here?
 static int Glimp_Create2DRenderer(SDL_Window *window)
 {
-	// We must call SDL_CreateRenderer in order for draw calls to affect this window.
-	main_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    // We must call SDL_CreateRenderer in order for draw calls to affect this window.
+    main_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	if (!main_renderer)
-	{
-		Ren_Developer("SDL_CreateRenderer failed: %s\n", SDL_GetError());
-		return qfalse;
-	}
+    if (!main_renderer)
+    {
+        Ren_Developer("SDL_CreateRenderer failed: %s\n", SDL_GetError());
+        return qfalse;
+    }
 
-	return qtrue;
+    return qtrue;
 }
+*/
 
 static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
@@ -680,7 +682,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
-		
+
 		glConfig.isFullscreen = qtrue;
 	}
 	else
@@ -847,7 +849,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		}
 
 		main_window = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y, glConfig.vidWidth, glConfig.vidHeight, flags | SDL_WINDOW_SHOWN);
-		
+
 		if (!main_window)
 		{
 			Ren_Developer("SDL_CreateWindow failed: %s\n", SDL_GetError());
@@ -860,10 +862,10 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		/*
 		if (!Glimp_Create2DRenderer(main_window))
 		{
-			continue;
+		    continue;
 		}
 		*/
-		
+
 		if (fullscreen)
 		{
 			SDL_DisplayMode mode;
@@ -944,7 +946,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 #endif
 
-	if (!main_window )//|| !main_renderer)
+	if (!main_window) //|| !main_renderer)
 	{
 		Ren_Print("Couldn't get a visual\n");
 		return RSERR_INVALID_MODE;
