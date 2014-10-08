@@ -291,42 +291,37 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	ent2 = LaunchItem(item, org, velocity, client->ps.clientNum);
 	COM_BitClear(client->ps.weapons, weapon);
 
-	// FIXME: do a switch
-	if (weapon == WP_KAR98)
+	switch (weapon)
 	{
+	case WP_KAR98:
 		COM_BitClear(client->ps.weapons, WP_GPG40);
-	}
-	else if (weapon == WP_CARBINE)
-	{
+		break;
+	case WP_CARBINE:
 		COM_BitClear(client->ps.weapons, WP_M7);
-	}
-	else if (weapon == WP_FG42)
-	{
+		break;
+	case WP_FG42:
 		COM_BitClear(client->ps.weapons, WP_FG42SCOPE);
-	}
-	else if (weapon == WP_K43)
-	{
+		break;
+	case WP_K43:
 		COM_BitClear(client->ps.weapons, WP_K43_SCOPE);
-	}
-	else if (weapon == WP_GARAND)
-	{
+		break;
+	case WP_GARAND:
 		COM_BitClear(client->ps.weapons, WP_GARAND_SCOPE);
-	}
-	else if (weapon == WP_MORTAR)
-	{
+		break;
+	case WP_MORTAR:
 		COM_BitClear(client->ps.weapons, WP_MORTAR_SET);
-	}
-	else if (weapon == WP_MORTAR2)
-	{
+		break;
+	case WP_MORTAR2:
 		COM_BitClear(client->ps.weapons, WP_MORTAR2_SET);
-	}
-	else if (weapon == WP_MOBILE_MG42)
-	{
+		break;
+	case WP_MOBILE_MG42:
 		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
-	}
-	else if (weapon == WP_MOBILE_BROWNING)
-	{
+		break;
+	case WP_MOBILE_BROWNING:
 		COM_BitClear(client->ps.weapons, WP_MOBILE_BROWNING_SET);
+		break;
+	default:
+		break;
 	}
 
 	// Clear out empty weapon, change to next best weapon
@@ -733,7 +728,6 @@ void Touch_Item_Auto(gentity_t *ent, gentity_t *other, trace_t *trace)
 void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
 	int respawn;
-	int makenoise = EV_ITEM_PICKUP;
 
 	// only activated items can be picked up
 	if (!ent->active)
@@ -808,11 +802,13 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		// a sound was specified in the entity, so play that sound
 		// (this G_AddEvent) and send the pickup as "EV_ITEM_PICKUP_QUIET"
 		// so it doesn't make the default pickup sound when the pickup event is received
-		makenoise = EV_ITEM_PICKUP_QUIET;
 		G_AddEvent(other, EV_GENERAL_SOUND, ent->noise_index);
+		G_AddEvent(other, EV_ITEM_PICKUP_QUIET, ent->s.modelindex);
 	}
-
-	G_AddEvent(other, makenoise, ent->s.modelindex);
+	else
+	{
+		G_AddEvent(other, EV_ITEM_PICKUP, ent->s.modelindex);
+	}
 
 	// powerup pickups are global broadcasts
 	if (ent->item->giType == IT_TEAM)
