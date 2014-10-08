@@ -657,7 +657,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	if (fullscreen)
 	{
-		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		flags                |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		glConfig.isFullscreen = qtrue;
 	}
 	else
@@ -1362,7 +1362,7 @@ void GLimp_EndFrame(void)
 	if (r_fullscreen->modified)
 	{
 		qboolean fullscreen;
-		qboolean needToToggle, sdlToggled = qfalse;
+		qboolean needToToggle;
 
 		// Find out the current state
 		fullscreen = !!(SDL_GetWindowFlags(main_window) & SDL_WINDOW_FULLSCREEN);
@@ -1379,10 +1379,8 @@ void GLimp_EndFrame(void)
 
 		if (needToToggle)
 		{
-			sdlToggled = SDL_SetWindowFullscreen(main_window, r_fullscreen->integer) >= 0;
-
 			// SDL_WM_ToggleFullScreen didn't work, so do it the slow way
-			if (!sdlToggled)
+			if (!(SDL_SetWindowFullscreen(main_window, r_fullscreen->integer) >= 0)) // !sdlToggled
 			{
 				ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
 			}
@@ -1398,10 +1396,8 @@ void GLimp_EndFrame(void)
 		// Radar 15961845
 		gammaResetTime = ri.Milliseconds() + 3000;
 #endif
-
 		r_fullscreen->modified = qfalse;
 	}
-
 
 #ifdef MACOS_X_GAMMA_RESET_FIX
 	if ((gammaResetTime != 0) && (gammaResetTime < ri.Milliseconds()))
