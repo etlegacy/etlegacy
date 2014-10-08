@@ -384,8 +384,20 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	qboolean  nogib           = qtrue;
 	qboolean  killedintank    = qfalse;
 	qboolean  dieFromSameTeam = OnSameTeam(self, attacker) || (attacker->client && self->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor));
+	qboolean  attackerClient  = (attacker && attacker->client) ? qtrue : qfalse;
 
 	//G_Printf( "player_die\n" );
+
+	if (!self->client)
+	{
+		return;
+	}
+
+	if (attackerClient)
+	{
+		self->client->pers.lastkiller_client     = attacker->s.clientNum;
+		attacker->client->pers.lastkilled_client = self->s.clientNum;
+	}
 
 	switch (meansOfDeath)
 	{
@@ -396,7 +408,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			attacker     = &g_entities[self->client->pmext.pusher];
 			meansOfDeath = MOD_SHOVE;
 		}
-
 		break;
 	}
 
@@ -581,8 +592,10 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 	}
 
-	if (attacker && attacker->client)
+	if (attackerClient)
 	{
+		attacker->client->pers.lastkilled_client = self->s.clientNum;
+
 		if (attacker == self || dieFromSameTeam)
 		{
 			// Complaint lodging
@@ -1242,7 +1255,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	gclient_t   *client;
 	int         take;
 	int         knockback;
-	qboolean    wasAlive;
+	qboolean    wasAlive, onSameTeam;
 	hitRegion_t hr = HR_NUM_HITREGIONS;
 
 	if (!targ->takedamage)
@@ -1278,7 +1291,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// was the bot alive before applying any damage?
-	wasAlive = (targ->health > 0);
+	wasAlive   = (targ->health > 0);
+	onSameTeam = OnSameTeam(attacker, targ);
 
 	// combatstate
 	if (targ->client && attacker && attacker->client && attacker != targ)
@@ -1311,7 +1325,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 		if (g_gamestate.integer == GS_PLAYING)
 		{
-			if (!OnSameTeam(attacker, targ))
+			if (!onSameTeam)
 			{
 				targ->client->combatState |= (1 << COMBATSTATE_DAMAGERECEIVED);
 				if (attacker->client->sess.sessionTeam != TEAM_SPECTATOR)
@@ -1488,7 +1502,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		knockback *= 0.5;
 	}
 
-	if (targ->client && g_friendlyFire.integer && (OnSameTeam(targ, attacker) || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
+	if (targ->client && g_friendlyFire.integer && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
 	{
 		knockback = 0;
 	}
@@ -1546,7 +1560,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	{
 		// if TF_NO_FRIENDLY_FIRE is set, don't do damage to the target
 		// if the attacker was on the same team
-		if (targ != attacker && (OnSameTeam(targ, attacker) || (targ->client && attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
+		if (targ != attacker && (onSameTeam || (targ->client && attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
 		{
 			if ((g_gamestate.integer != GS_PLAYING && match_warmupDamage.integer == 1))
 			{
@@ -1562,7 +1576,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// add to the attacker's hit counter (but only if target is a client)
 	if (targ->client && attacker->client && targ != attacker && targ->health > 0)
 	{
-		if (OnSameTeam(targ, attacker) || targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))
+		if (onSameTeam || targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))
 		{
 			attacker->client->ps.persistant[PERS_HITS] -= damage;
 		}
@@ -1756,6 +1770,12 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		// set the last client who damaged the target
 		targ->client->lasthurt_client = attacker->s.number;
 		targ->client->lasthurt_mod    = mod;
+		targ->client->lasthurt_time   = level.time;
+		if (onSameTeam && wasAlive && attacker != targ)
+		{
+			targ->client->pers.lastteambleed_client = attacker->s.number;
+			targ->client->pers.lastteambleed_dmg    = take;
+		}
 	}
 
 	// do the damage

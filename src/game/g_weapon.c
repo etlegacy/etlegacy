@@ -407,7 +407,9 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	// heal the dude
 	// copy some stuff out that we'll wanna restore
 	VectorCopy(traceEnt->client->ps.origin, org);
+
 	headshot = traceEnt->client->ps.eFlags & EF_HEADSHOT;
+
 	if (ent->client->sess.skill[SK_FIRST_AID] >= 3)
 	{
 		healamt = traceEnt->client->ps.stats[STAT_MAX_HEALTH];
@@ -465,6 +467,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 
 	// Let the person being revived know about it
 	trap_SendServerCommand(traceEnt - g_entities, va("cp \"You have been revived by [lof]%s[lon] [lof]%s^7!\"", ent->client->sess.sessionTeam == TEAM_ALLIES ? rankNames_Allies[ent->client->sess.rank] : rankNames_Axis[ent->client->sess.rank], ent->client->pers.netname));
+
 	traceEnt->props_frame_state = ent->s.number;
 
 	// Mark that the medicine was indeed dispensed
@@ -472,6 +475,9 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 
 	// sound
 	G_Sound(traceEnt, GAMESOUND_MISC_REVIVE);
+
+	traceEnt->client->pers.lastrevive_client = ent->s.clientNum;
+	traceEnt->client->pers.lasthealth_client = ent->s.clientNum;
 
 	if (g_fastres.integer > 0)
 	{

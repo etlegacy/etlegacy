@@ -2577,8 +2577,15 @@ void ClientBegin(int clientNum)
 	client->ps.persistant[PERS_SPAWN_COUNT]   = spawn_count;
 	client->ps.persistant[PERS_RESPAWNS_LEFT] = lives_left;
 
-	client->pers.complaintClient  = -1;
-	client->pers.complaintEndTime = -1;
+	client->pers.complaintClient      = -1;
+	client->pers.complaintEndTime     = -1;
+	client->pers.lastkilled_client    = -1;
+	client->pers.lastammo_client      = -1;
+	client->pers.lasthealth_client    = -1;
+	client->pers.lastrevive_client    = -1;
+	client->pers.lastkiller_client    = -1;
+	client->pers.lastteambleed_client = -1;
+	client->pers.lastteambleed_dmg    = -1;
 
 #ifdef FEATURE_OMNIBOT
 	// Omni-bot

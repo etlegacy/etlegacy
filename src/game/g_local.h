@@ -679,6 +679,15 @@ typedef struct
 	int characterIndex;
 
 	ipFilter_t complaintips[MAX_COMPLAINTIPS];
+
+	int lastkilled_client;
+	int lastrevive_client;
+	int lastkiller_client;
+	int lastammo_client;
+	int lasthealth_client;
+	int lastteambleed_client;
+	int lastteambleed_dmg;
+
 } clientPersistant_t;
 
 typedef struct
@@ -743,10 +752,10 @@ struct gclient_s
 	//int         accuracy_shots;     // total number of shots
 	//int         accuracy_hits;      // total number of hits
 
-	//
-	int lastkilled_client;          // last client that this client killed
+	// ingame status
 	int lasthurt_client;            // last client that damaged this client
 	int lasthurt_mod;               // type of damage the client did
+	int lasthurt_time;              // level.time of last damage
 
 	// timers
 	int respawnTime;                // can respawn when time > this, force after g_forcerespwan

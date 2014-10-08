@@ -1030,7 +1030,7 @@ void Cmd_Kill_f(gentity_t *ent)
 
 	ent->flags                                  &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH]           = ent->health = 0;
-	ent->client->ps.persistant[PERS_HWEAPON_USE] = 0; // TTimo - if using /kill while at MG42
+	ent->client->ps.persistant[PERS_HWEAPON_USE] = 0; // if using /kill while at MG42
 
 	player_die(ent, ent, ent, (g_gamestate.integer == GS_PLAYING) ? 100000 : 135, MOD_SUICIDE);
 }
@@ -2696,7 +2696,6 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	char     arg1[MAX_STRING_TOKENS];
 	char     arg2[MAX_STRING_TOKENS];
 	char     voteDesc[VOTE_MAXSTRING];
-	qboolean sbfNoVoteLimit;
 	qboolean muted = qfalse;
 
 	if (ent->client->sess.muted /*|| G_shrubbot_mute_check(level.clients[ent-g_entities].pers.client_ip, level.clients[ent-g_entities].pers.cl_guid)*/)
@@ -2724,7 +2723,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		}
 		else if (!ent->client->sess.referee)
 		{
-			sbfNoVoteLimit = qfalse; //G_shrubbot_permission( ent, SBF_NO_VOTE_LIMIT );
+			qboolean sbfNoVoteLimit = qfalse; //G_shrubbot_permission( ent, SBF_NO_VOTE_LIMIT ); // FIXME this is Lua/game manager stuff
 
 			if (voteFlags.integer == VOTING_DISABLED && !sbfNoVoteLimit)
 			{
