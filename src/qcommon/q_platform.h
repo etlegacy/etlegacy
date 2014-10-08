@@ -109,7 +109,7 @@
 #define ID_INLINE __inline
 #define PATH_SEP '\\'
 
-#if defined(__WIN64__)
+#if defined(_WIN64)
 #define ARCH_STRING "x64"
 #elif defined _M_ALPHA
 #define ARCH_STRING "AXP"

@@ -226,6 +226,18 @@ if(FEATURE_ANTICHEAT)
 	add_definitions(-DFEATURE_ANTICHEAT)
 endif(FEATURE_ANTICHEAT)
 
+if(PANDORA)
+	add_definitions(-DPANDORA -DARM -DNEON -DAUTOAIM)
+endif()
+
+if (FEATURE_RENDERER_GLES)
+	add_definitions(-DFEATURE_RENDERER_GLES)
+endif()
+
+if (FEATURE_CROUCH)
+	add_definitions(-DFEATURE_CROUCH)
+endif()
+
 if(FEATURE_CURSES)
 	find_package(Curses REQUIRED)
 	set(CURSES_NEED_NCURSES 1) # Tells FindCurses that ncurses is required

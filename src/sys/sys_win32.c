@@ -67,15 +67,6 @@ static jmp_buf sys_exitframe;
 static int     sys_retcode;
 static char    sys_exitstr[MAX_STRING_CHARS];
 
-#ifdef __WIN64__
-void Sys_SnapVector(float *v)
-{
-	v[0] = rint(v[0]);
-	v[1] = rint(v[1]);
-	v[2] = rint(v[2]);
-}
-#endif
-
 /*
  * @return homepath pointing to "My Documents\ETLegacy"
  */
