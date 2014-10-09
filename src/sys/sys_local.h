@@ -40,7 +40,7 @@
 // Require a minimum version of SDL
 #define MINSDL_MAJOR 2
 #define MINSDL_MINOR 0
-#define MINSDL_PATCH 0
+#define MINSDL_PATCH 3
 
 // Input subsystem
 void IN_Init(void);
