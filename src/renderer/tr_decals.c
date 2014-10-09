@@ -161,7 +161,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// early outs
 	if (lifeTime == 0)
 	{
-		Ren_Print("WARNING: RE_ProjectDecal() lifeTime == 0\n");
+		Ren_DPrint("WARNING: RE_ProjectDecal() lifeTime == 0\n"); // modders should have a look at this - vanilla does these calls
 		return;
 	}
 	if (projection[3] <= 0.0f)
