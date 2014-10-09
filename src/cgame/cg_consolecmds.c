@@ -35,25 +35,6 @@
 
 #include "cg_local.h"
 
-void CG_TargetCommand_f(void)
-{
-	int  targetNum;
-	char test[4];
-
-	targetNum = CG_CrosshairPlayer();
-	if (targetNum < 0) // targetNum != -1
-	{
-		return;
-	}
-
-	trap_Argv(1, test, 4);
-
-	// gc command was forwarded to server after if wasn't recognized locally, but let's just send straight to server.
-	// trap_SendConsoleCommand should of had a \n at end, but using trap_SendClientCommand makes more sense.
-	//trap_SendConsoleCommand(va("gc %i %i", targetNum, atoi(test)));
-	trap_SendClientCommand(va("gc %i %i", targetNum, atoi(test)));
-}
-
 /**
  * @brief Debugging command to print the current position
  */
@@ -250,40 +231,6 @@ void CG_ScoresUp_f(void)
 		cg.showScores    = qfalse;
 		cg.scoreFadeTime = cg.time;
 	}
-}
-
-static void CG_TellTarget_f(void)
-{
-	int  clientNum;
-	char command[128];
-	char message[128];
-
-	clientNum = CG_CrosshairPlayer();
-	if (clientNum == -1)
-	{
-		return;
-	}
-
-	trap_Args(message, 128);
-	Com_sprintf(command, 128, "tell %i %s", clientNum, message);
-	trap_SendClientCommand(command);
-}
-
-static void CG_TellAttacker_f(void)
-{
-	int  clientNum;
-	char command[128];
-	char message[128];
-
-	clientNum = CG_LastAttacker();
-	if (clientNum == -1)
-	{
-		return;
-	}
-
-	trap_Args(message, 128);
-	Com_sprintf(command, 128, "tell %i %s", clientNum, message);
-	trap_SendClientCommand(command);
 }
 
 /////////// cameras
@@ -1354,9 +1301,6 @@ static consoleCommand_t commands[] =
 	{ "weapalt",             CG_AltWeapon_f          },
 	{ "weapon",              CG_Weapon_f             },
 	{ "weaponbank",          CG_WeaponBank_f         },
-	{ "tell_target",         CG_TellTarget_f         },
-	{ "tell_attacker",       CG_TellAttacker_f       },
-	{ "tcmd",                CG_TargetCommand_f      },
 	{ "fade",                CG_Fade_f               },
 
 	{ "mp_QuickMessage",     CG_QuickMessage_f       },
