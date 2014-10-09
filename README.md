@@ -61,7 +61,7 @@ Dependencies
 * **CMake** (compile-time only)
 * **OpenGL**
 * **GLEW**, version 1.10
-* **SDL**, version 1.2
+* **SDL**, version 2.0
 * **libjpeg**, version 8, or **libjpeg-turbo**, version 1.3
 * **libcurl** (optional, enabled by default)
 * **Lua**, either version 5.1 or 5.2 (optional, enabled by default)
