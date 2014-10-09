@@ -4299,11 +4299,12 @@ void Cmd_Ignore_f(gentity_t *ent)
 		return;
 	}
 
-	cnum = G_refClientnumForName(ent, cmd);
+	cnum = G_refClientnumForName(ent, cmd); // prints not on server message
 
 	if (cnum != MAX_CLIENTS)
 	{
 		COM_BitSet(ent->client->sess.ignoreClients, cnum);
+		trap_SendServerCommand(ent - g_entities, va("print \"You are ignoring [lof]%s[lon]^7.\n\"\n", level.clients[cnum].pers.netname));
 	}
 }
 
@@ -4320,11 +4321,12 @@ void Cmd_UnIgnore_f(gentity_t *ent)
 		return;
 	}
 
-	cnum = G_refClientnumForName(ent, cmd);
+	cnum = G_refClientnumForName(ent, cmd); // prints not on server message
 
 	if (cnum != MAX_CLIENTS)
 	{
 		COM_BitClear(ent->client->sess.ignoreClients, cnum);
+		trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"\n", level.clients[cnum].pers.netname));
 	}
 }
 
