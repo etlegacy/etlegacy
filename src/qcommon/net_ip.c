@@ -62,6 +62,7 @@ static qboolean winsockInitialized = qfalse;
 
 #include <errno.h>
 #include <netdb.h>
+#include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
@@ -94,7 +95,7 @@ struct Library *SocketBase;
 #   endif
 
 #   include <sys/socket.h>
-#	include <netinet/tcp.h>
+#   include <netinet/tcp.h>
 #   include <errno.h>
 #   include <netdb.h>
 #   include <netinet/in.h>
