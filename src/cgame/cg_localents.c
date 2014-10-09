@@ -530,7 +530,7 @@ CG_FragmentBounceMark
 */
 void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 {
-	if (le->leMarkType == LEMT_BLOOD)
+	if (le->leMarkType == LEMT_BLOOD && cg_bloodTime.integer)
 	{
 		static int lastBloodMark;
 

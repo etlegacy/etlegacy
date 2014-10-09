@@ -5848,7 +5848,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	qhandle_t   mod      = 0, mark = 0, shader = 0;
 	sfxHandle_t sfx      = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
-	int         duration = 600, lightOverdraw = 0, i, j, markDuration = -1, volume = 127;
+	int         duration = 600, lightOverdraw = 0, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
 	float       radius     = 32, light = 0, sfx2range = 0;
@@ -6303,26 +6303,29 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		VectorCopy(lightColor, le->lightColor);
 	}
 
-	// omnidirectional explosion marks
-	if (mark == cgs.media.burnMarkShader)
+	if (markDuration) // markDuration = cg_markTime.integer * x
 	{
-		VectorSet(projection, 0, 0, -1);
-		projection[3] = radius;
+		// omnidirectional explosion marks
+		if (mark == cgs.media.burnMarkShader)
+		{
+			VectorSet(projection, 0, 0, -1);
+			projection[3] = radius;
 
-		trap_R_ProjectDecal(mark, 1, (vec3_t *) origin, projection, colorWhite, markDuration, (markDuration >> 4));
-	}
-	else if (mark)
-	{
-		vec3_t markOrigin;
+			trap_R_ProjectDecal(mark, 1, (vec3_t *) origin, projection, colorWhite, markDuration, (markDuration >> 4));
+		}
+		else if (mark)
+		{
+			vec3_t markOrigin;
 
-		VectorSubtract(vec3_origin, dir, projection);
-		projection[3] = radius * 32;
-		VectorMA(origin, -16.0f, projection, markOrigin);
-		// jitter markorigin a bit so they don't end up on an ordered grid
-		markOrigin[0] += (random() - 0.5f);
-		markOrigin[1] += (random() - 0.5f);
-		markOrigin[2] += (random() - 0.5f);
-		CG_ImpactMark(mark, markOrigin, projection, radius, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, markDuration);
+			VectorSubtract(vec3_origin, dir, projection);
+			projection[3] = radius * 32;
+			VectorMA(origin, -16.0f, projection, markOrigin);
+			// jitter markorigin a bit so they don't end up on an ordered grid
+			markOrigin[0] += (random() - 0.5f);
+			markOrigin[1] += (random() - 0.5f);
+			markOrigin[2] += (random() - 0.5f);
+			CG_ImpactMark(mark, markOrigin, projection, radius, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, markDuration);
+		}
 	}
 }
 
@@ -6355,7 +6358,10 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	}
 
 	// impact mark
-	trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, colorWhite, cg_markTime.integer, (cg_markTime.integer >> 4));
+	if (cg_markTime.integer)
+	{
+		trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, colorWhite, cg_markTime.integer, (cg_markTime.integer >> 4));
+	}
 }
 
 /*
@@ -6912,7 +6918,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		}
 
 		// if we haven't dropped a blood spat in a while, check if this is a good scenario
-		if (cg_blood.integer && (lastBloodSpat > cg.time || lastBloodSpat < cg.time - 500))
+		if (cg_blood.integer && cg_bloodTime.integer && (lastBloodSpat > cg.time || lastBloodSpat < cg.time - 500))
 		{
 			vec3_t trend;
 

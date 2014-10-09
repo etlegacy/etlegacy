@@ -617,7 +617,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		NULL
 	};
 
-	if (cg_blood.integer)
+	if (cg_blood.integer && cg_bloodTime.integer)
 	{
 		vec4_t      color;
 		vec3_t      velocity, dir, angles;
