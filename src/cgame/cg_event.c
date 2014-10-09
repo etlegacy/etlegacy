@@ -1683,7 +1683,6 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 	localEntity_t *le;
 	refEntity_t   *re;
 	//int             large, small;
-	vec4_t projection;
 
 	VectorSet(dir, 0, 0, 1);      // straight up.
 
@@ -1719,7 +1718,6 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 	if (cent->currentState.eventParm & 2)      // explode
 	{
-		vec4_t color;
 		vec3_t sprVel, sprOrg;
 
 		trap_S_StartSound(origin, -1, CHAN_AUTO, cgs.media.sfx_rockexp);
@@ -1741,10 +1739,16 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		//                      7 + rand()%2 ); // count
 
 		//CG_ImpactMark( cgs.media.burnMarkShader, origin, dir, random()*360, 1,1,1,1, qfalse, 64, qfalse, 0xffffffff );
-		VectorSet(projection, 0, 0, -1);
-		projection[3] = 64.0f;
-		Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-		trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, color, cg_markTime.integer, (cg_markTime.integer >> 4));
+
+		if (cg_markTime.integer)
+		{
+			vec4_t color, projection;
+
+			VectorSet(projection, 0, 0, -1);
+			projection[3] = 64.0f;
+			Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
+			trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, color, cg_markTime.integer, (cg_markTime.integer >> 4));
+		}
 	}
 
 	if (cent->currentState.eventParm & 8)     // rubble
