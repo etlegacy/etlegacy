@@ -1163,6 +1163,7 @@ static void IN_ProcessEvents(void)
 			}
 			*/
 			case SDL_WINDOWEVENT_LEAVE:
+				Key_ClearStates();
 				Cvar_SetValue("com_unfocused", 1);
 				break;
 			case SDL_WINDOWEVENT_ENTER:
