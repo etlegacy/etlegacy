@@ -3555,7 +3555,7 @@ msgstr ""
 
 #: src/cgame/cg_consolecmds.c:1289
 #, c-format
-msgid "You will spawn as a %s %s with a %s and a %s."
+msgid "You will spawn as an %s %s with a %s and a %s."
 msgstr ""
 
 #: src/cgame/cg_limbopanel.c:1223
