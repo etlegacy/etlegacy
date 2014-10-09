@@ -116,9 +116,9 @@ qboolean SV_CheckClientCommand(client_t *client, const char *cmd)
 
 		return qfalse; // we return false if the check wasn't right (meaning that this function does not need to process anything)
 	}
-	else if (!Q_strncmp(cmd, "tell", 4) || !Q_strncmp(cmd, "say_team", 8))
+	else if (!Q_strncmp(cmd, "say_team", 8))
 	{
-		// Privacy check: if the command is tell or say_team, we just drop it
+		// Privacy check: if the command is say_team, we just drop it
 		return qfalse;
 	}
 
