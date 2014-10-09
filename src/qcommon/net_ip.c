@@ -1341,6 +1341,7 @@ void NET_OpenSocks(int port)
 	int                len;
 	qboolean           rfc1929;
 	unsigned char      buf[64];
+	int i = 1;
 
 	usingSocks = qfalse;
 
@@ -1349,6 +1350,13 @@ void NET_OpenSocks(int port)
 	if ((socks_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
 	{
 		Com_Printf("WARNING: NET_OpenSocks: socket: %s\n", NET_ErrorString());
+		return;
+	}
+	
+	// Disable Nagle for this TCP socket
+	if (setsockopt(socks_socket, IPPROTO_TCP, TCP_NODELAY, (char *)&i, sizeof(i)) == SOCKET_ERROR)
+	{
+		Com_Printf("WARNING: NET_OpenSocks: setsockopt: %s\n", NET_ErrorString());
 		return;
 	}
 
