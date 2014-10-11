@@ -1334,7 +1334,6 @@ void CG_AddDebrisElements(localEntity_t *le)
 ===============
 CG_AddShrapnel
 ===============
-// unused - use this somehow?
  */
 void CG_AddShrapnel(localEntity_t *le)
 {
@@ -1371,6 +1370,7 @@ void CG_AddShrapnel(localEntity_t *le)
 	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
 
 	// trace a line from previous position to new position
+	// FIXME: don't bounce at sky
 	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
 	if (trace.fraction == 1.0)
 	{
@@ -1700,13 +1700,16 @@ void CG_AddLocalEntities(void)
 			CG_AddDebrisElements(le);
 
 			// WIP
+			// this hack reuses debris le for shards as well
+			// FIXME: spawn own local ents? some shards are lost in the air ... hmm no big deal for real but also more ents are required
+			// TODO: find better models ...
 			if (le->refEntity.hModel == 0)
 			{
 				int i = rand() % 5;
 
 				if (i == 0)
 				{
-					le->refEntity.hModel  = cgs.media.flamebarrel;
+					le->refEntity.hModel  = cgs.media.gibLeg;
 					le->leBounceSoundType = LEBS_BONE;
 				}
 				else if (i == 1)
