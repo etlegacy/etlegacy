@@ -1344,12 +1344,11 @@ void CG_AddShrapnel(localEntity_t *le)
 	if (le->pos.trType == TR_STATIONARY)
 	{
 		// sink into the ground if near the removal time
-		int   t;
-		float oldZ;
+		int t = le->endTime - cg.time;
 
-		t = le->endTime - cg.time;
 		if (t < SINK_TIME)
 		{
+			float oldZ;
 			// we must use an explicit lighting origin, otherwise the
 			// lighting would be lost as soon as the origin went
 			// into the ground
@@ -1398,9 +1397,6 @@ void CG_AddShrapnel(localEntity_t *le)
 		CG_FreeLocalEntity(le);
 		return;
 	}
-
-	// leave a mark
-	CG_FragmentBounceMark(le, &trace);
 
 	// do a bouncy sound
 	CG_FragmentBounceSound(le, &trace);
@@ -1710,27 +1706,33 @@ void CG_AddLocalEntities(void)
 
 				if (i == 0)
 				{
-					le->refEntity.hModel = cgs.media.flamebarrel;
+					le->refEntity.hModel  = cgs.media.flamebarrel;
+					le->leBounceSoundType = LEBS_BONE;
 				}
 				else if (i == 1)
 				{
-					le->refEntity.hModel = cgs.media.shardMetal1;
+					le->refEntity.hModel  = cgs.media.shardMetal1;
+					le->leBounceSoundType = LEBS_METAL;
 				}
 				else if (i == 2)
 				{
-					le->refEntity.hModel = cgs.media.shardMetal2;
+					le->refEntity.hModel  = cgs.media.shardMetal2;
+					le->leBounceSoundType = LEBS_METAL;
 				}
 				else if (i == 3)
 				{
-					le->refEntity.hModel = cgs.media.debRock[2];
+					le->refEntity.hModel  = cgs.media.debRock[2];
+					le->leBounceSoundType = LEBS_ROCK;
 				}
 				else if (i == 4)
 				{
-					le->refEntity.hModel = cgs.media.debRock[0];
+					le->refEntity.hModel  = cgs.media.debRock[0];
+					le->leBounceSoundType = LEBS_ROCK;
 				}
 				else
 				{
-					le->refEntity.hModel = cgs.media.debRock[1];
+					le->refEntity.hModel  = cgs.media.debRock[1];
+					le->leBounceSoundType = LEBS_ROCK;
 				}
 			}
 
