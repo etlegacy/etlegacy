@@ -59,7 +59,7 @@
 #define PAIN_TWITCH_TIME    200
 #define ZOOM_TIME           150
 #define MUZZLE_FLASH_TIME   30
-#define SINK_TIME           1000        // time for fragments to sink into ground before going away
+#define SINK_TIME           3000        // time for fragments to sink into ground before going away
 
 #define PRONE_TIME          500
 

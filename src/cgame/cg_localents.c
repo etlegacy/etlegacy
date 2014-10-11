@@ -40,7 +40,6 @@
 #define MAX_LOCAL_ENTITIES  768     // renderer can only handle 1024 entities max, so we should avoid
 // overwriting game entities
 
-
 localEntity_t cg_localEntities[MAX_LOCAL_ENTITIES];
 localEntity_t cg_activeLocalEntities;       // double linked list
 localEntity_t *cg_freeLocalEntities;        // single linked list
@@ -616,7 +615,6 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 		}
 	}
 	break;
-
 	case LEBS_ROCK:
 		trap_S_StartSound(trace->endpos, -1, CHAN_AUTO, cgs.media.sfx_rubbleBounce[(rand() % 3)]);
 		break;
@@ -1081,15 +1079,13 @@ void CG_AddSparkElements(localEntity_t *le)
 
 		// moved some distance
 		VectorCopy(trace.endpos, le->refEntity.origin);
-		/*
-		} else
-		{   // just move it there
 
-		    VectorCopy( newOrigin, le->refEntity.origin );
-		    trace.fraction = 1.0;
+		//} else
+		//{   // just move it there
+		// VectorCopy( newOrigin, le->refEntity.origin );
+		// trace.fraction = 1.0;
+		//}
 
-		}
-		*/
 		time += cg.frametime * trace.fraction;
 
 		lifeFrac = (float)(cg.time - le->startTime) / (float)(le->endTime - le->startTime);
@@ -1108,11 +1104,12 @@ void CG_AddSparkElements(localEntity_t *le)
 		// if it is in a nodrop zone, remove it
 		// this keeps gibs from waiting at the bottom of pits of death
 		// and floating levels
-// for some reason SFM1.BSP is one big NODROP zone
-//      if ( CG_PointContents( le->refEntity.origin, 0 ) & CONTENTS_NODROP ) {
-//          CG_FreeLocalEntity( le );
-//          return;
-//      }
+
+		// for some reason SFM1.BSP is one big NODROP zone
+		//if ( CG_PointContents( le->refEntity.origin, 0 ) & CONTENTS_NODROP ) {
+		// CG_FreeLocalEntity( le );
+		//return;
+		//}
 
 		if (trace.fraction < 1.0)
 		{
@@ -1338,79 +1335,81 @@ void CG_AddDebrisElements(localEntity_t *le)
 CG_AddShrapnel
 ===============
 // unused - use this somehow?
+ */
 void CG_AddShrapnel(localEntity_t *le)
 {
-    vec3_t  newOrigin;
-    trace_t trace;
+	vec3_t  newOrigin;
+	trace_t trace;
 
-    if (le->pos.trType == TR_STATIONARY)
-    {
-        // sink into the ground if near the removal time
-        float oldZ;
+	if (le->pos.trType == TR_STATIONARY)
+	{
+		// sink into the ground if near the removal time
+		int   t;
+		float oldZ;
 
-        if (t < SINK_TIME)
-        {
-            // we must use an explicit lighting origin, otherwise the
-            // lighting would be lost as soon as the origin went
-            // into the ground
-            VectorCopy(le->refEntity.origin, le->refEntity.lightingOrigin);
-            le->refEntity.renderfx  |= RF_LIGHTING_ORIGIN;
-            oldZ                     = le->refEntity.origin[2];
-            le->refEntity.origin[2] -= 16 * (1.0 - (float)t / SINK_TIME);
-            trap_R_AddRefEntityToScene(&le->refEntity);
-            le->refEntity.origin[2] = oldZ;
-        }
-        else
-        {
-            trap_R_AddRefEntityToScene(&le->refEntity);
-        }
+		t = le->endTime - cg.time;
+		if (t < SINK_TIME)
+		{
+			// we must use an explicit lighting origin, otherwise the
+			// lighting would be lost as soon as the origin went
+			// into the ground
+			VectorCopy(le->refEntity.origin, le->refEntity.lightingOrigin);
+			le->refEntity.renderfx  |= RF_LIGHTING_ORIGIN;
+			oldZ                     = le->refEntity.origin[2];
+			le->refEntity.origin[2] -= 16 * (1.0 - (float)t / SINK_TIME);
+			trap_R_AddRefEntityToScene(&le->refEntity);
+			le->refEntity.origin[2] = oldZ;
+		}
+		else
+		{
+			trap_R_AddRefEntityToScene(&le->refEntity);
+		}
 
-        return;
-    }
+		return;
+	}
 
-    // calculate new position
-    BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
+	// calculate new position
+	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
 
-    // trace a line from previous position to new position
-    CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
-    if (trace.fraction == 1.0)
-    {
-        // still in free fall
-        VectorCopy(newOrigin, le->refEntity.origin);
+	// trace a line from previous position to new position
+	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
+	if (trace.fraction == 1.0)
+	{
+		// still in free fall
+		VectorCopy(newOrigin, le->refEntity.origin);
 
-        if (le->leFlags & LEF_TUMBLE)
-        {
-            vec3_t angles;
+		if (le->leFlags & LEF_TUMBLE)
+		{
+			vec3_t angles;
 
-            BG_EvaluateTrajectory(&le->angles, cg.time, angles, qtrue, -1);
-            AnglesToAxis(angles, le->refEntity.axis);
-        }
+			BG_EvaluateTrajectory(&le->angles, cg.time, angles, qtrue, -1);
+			AnglesToAxis(angles, le->refEntity.axis);
+		}
 
-        trap_R_AddRefEntityToScene(&le->refEntity);
-        return;
-    }
+		trap_R_AddRefEntityToScene(&le->refEntity);
+		return;
+	}
 
-    // if it is in a nodrop zone, remove it
-    // this keeps gibs from waiting at the bottom of pits of death
-    // and floating levels
-    if (CG_PointContents(trace.endpos, 0) & CONTENTS_NODROP)
-    {
-        CG_FreeLocalEntity(le);
-        return;
-    }
+	// if it is in a nodrop zone, remove it
+	// this keeps gibs from waiting at the bottom of pits of death
+	// and floating levels
+	if (CG_PointContents(trace.endpos, 0) & CONTENTS_NODROP)
+	{
+		CG_FreeLocalEntity(le);
+		return;
+	}
 
-    // leave a mark
-    CG_FragmentBounceMark(le, &trace);
+	// leave a mark
+	CG_FragmentBounceMark(le, &trace);
 
-    // do a bouncy sound
-    CG_FragmentBounceSound(le, &trace);
+	// do a bouncy sound
+	CG_FragmentBounceSound(le, &trace);
 
-    // reflect the velocity on the trace plane
-    CG_ReflectVelocity(le, &trace);
+	// reflect the velocity on the trace plane
+	CG_ReflectVelocity(le, &trace);
 
-    trap_R_AddRefEntityToScene(&le->refEntity);
+	trap_R_AddRefEntityToScene(&le->refEntity);
 }
-*/
 
 /*
 =====================================================================
@@ -1674,6 +1673,7 @@ void CG_AddLocalEntities(void)
 	// walk the list backwards, so any new local entities generated
 	// (trails, marks, etc) will be present this frame
 	le = cg_activeLocalEntities.prev;
+
 	for ( ; le != &cg_activeLocalEntities ; le = next)
 	{
 		// grab next now, so if the local entity is freed we
@@ -1690,7 +1690,6 @@ void CG_AddLocalEntities(void)
 		default:
 			CG_Error("Bad leType: %i\n", le->leType);
 			break;
-
 		case LE_MOVING_TRACER:
 			CG_AddMovingTracer(le);
 			break;
@@ -1701,47 +1700,73 @@ void CG_AddLocalEntities(void)
 			CG_AddFuseSparkElements(le);
 			break;
 		case LE_DEBRIS:
+		{
 			CG_AddDebrisElements(le);
-			break;
+
+			// WIP
+			if (le->refEntity.hModel == 0)
+			{
+				int i = rand() % 5;
+
+				if (i == 0)
+				{
+					le->refEntity.hModel = cgs.media.flamebarrel;
+				}
+				else if (i == 1)
+				{
+					le->refEntity.hModel = cgs.media.shardMetal1;
+				}
+				else if (i == 2)
+				{
+					le->refEntity.hModel = cgs.media.shardMetal2;
+				}
+				else if (i == 3)
+				{
+					le->refEntity.hModel = cgs.media.debRock[2];
+				}
+				else if (i == 4)
+				{
+					le->refEntity.hModel = cgs.media.debRock[0];
+				}
+				else
+				{
+					le->refEntity.hModel = cgs.media.debRock[1];
+				}
+			}
+
+			CG_AddShrapnel(le);
+			// WIP END
+		}
+		break;
 		case LE_BLOOD:
 			CG_AddBloodElements(le);
 			break;
-
 		case LE_MARK:
 			break;
-
 		case LE_SPRITE_EXPLOSION:
 			CG_AddSpriteExplosion(le);
 			break;
-
 		case LE_EXPLOSION:
 			CG_AddExplosion(le);
 			break;
-
 		case LE_FRAGMENT:               // gibs and brass
 			CG_AddFragment(le);
 			break;
-
 		case LE_MOVE_SCALE_FADE:        // water bubbles
 			CG_AddMoveScaleFade(le);
 			break;
-
 		case LE_FADE_RGB:               // teleporters, railtrails
 			CG_AddFadeRGB(le);
 			break;
-
 		case LE_CONST_RGB:
 			CG_AddConstRGB(le);         // debug lines
 			break;
-
 		case LE_FALL_SCALE_FADE:        // gib blood trails
 			CG_AddFallScaleFade(le);
 			break;
-
 		case LE_SCALE_FADE:             // rocket trails
 			CG_AddScaleFade(le);
 			break;
-
 		case LE_EMITTER:
 			CG_AddEmitter(le);
 			break;
