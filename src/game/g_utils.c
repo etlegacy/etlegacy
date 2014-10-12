@@ -510,7 +510,7 @@ gentity_t *G_PickTarget(char *targetname)
 
 	if (!num_choices)
 	{
-		G_Printf(S_COLOR_YELLOW "WARNING G_PickTarget: target %s not found - returning NULL\n", targetname);
+		G_DPrintf(S_COLOR_YELLOW "WARNING G_PickTarget: target %s not found or isn't in use - this might be a bug (returning NULL)\n", targetname);
 		return NULL;
 	}
 
