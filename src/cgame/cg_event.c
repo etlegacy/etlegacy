@@ -201,6 +201,7 @@ static void CG_Obituary(entityState_t *ent)
 			switch (mod) // deal with icon specials
 			{
 			// FIXME:
+			//case MOD_UNKNOWN:
 			//case MOD_FALLING:
 			//case MOD_CRUSH:
 			//case MOD_WATER:
@@ -1712,7 +1713,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 				sprOrg[j] = origin[j] + 64 * dir[j] + 24 * crandom();
 			}
 			sprVel[2] += rand() % 50;
-			CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, 3500 + rand() % 250, 10, 250 + rand() % 60, qfalse);     // JPW NERVE was smokeanimb
+			CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, 3500 + rand() % 250, 10, 250 + rand() % 60, qfalse);     // was smokeanimb
 		}
 	}
 
@@ -1727,18 +1728,6 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		VectorScale(dir, 100, sprVel);
 		CG_ParticleExplosion("explode1", sprOrg, sprVel, 500, 20, 160, qtrue);
 		//CG_ParticleExplosion( "blueexp", sprOrg, sprVel, 1200, 9, 300 );
-
-		// this is done only if the level designer has it marked in the entity.
-		// (see "cent->currentState.eventParm & 64" below)
-
-		// throw some debris
-		//CG_AddDebris( origin, dir,
-		//                      280,    // speed
-		//                      1400,   // duration
-		//                      // 15 + rand()%5 ); // count
-		//                      7 + rand()%2 ); // count
-
-		//CG_ImpactMark( cgs.media.burnMarkShader, origin, dir, random()*360, 1,1,1,1, qfalse, 64, qfalse, 0xffffffff );
 
 		if (cg_markTime.integer)
 		{
@@ -1806,11 +1795,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 	if (cent->currentState.eventParm & 64)     // debris trails (the black strip that Ryan did)
 	{
-		CG_AddDebris(origin, dir,
-		             280,       // speed
-		             1400,      // duration
-		             // 15 + rand()%5 );   // count
-		             7 + rand() % 2);     // count
+		CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2);
 	}
 }
 
@@ -2110,12 +2095,6 @@ void CG_MortarMiss(centity_t *cent, vec3_t origin)
 	}
 }
 
-// a convenience function for all footstep sound playing
-static void CG_StartFootStepSound(bg_playerclass_t *classInfo, entityState_t *es, sfxHandle_t sfx)
-{
-	trap_S_StartSound(NULL, es->number, CHAN_BODY, sfx);
-}
-
 /*
 ==============
 CG_EntityEvent
@@ -2130,13 +2109,9 @@ extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int dura
 
 void CG_EntityEvent(centity_t *cent, vec3_t position)
 {
-	entityState_t    *es   = &cent->currentState;
-	int              event = es->event & ~EV_EVENT_BITS;
-	vec3_t           dir;
-	int              clientNum;
-	clientInfo_t     *ci;
-	bg_playerclass_t *classInfo;
-	bg_character_t   *character;
+	entityState_t *es   = &cent->currentState;
+	int           event = es->event & ~EV_EVENT_BITS;
+	int           clientNum;
 
 	static int footstepcnt       = 0;
 	static int splashfootstepcnt = 0;
@@ -2157,37 +2132,35 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	{
 		clientNum = 0;
 	}
-	ci        = &cgs.clientinfo[clientNum];
-	classInfo = CG_PlayerClassForClientinfo(ci, cent);
-	character = CG_CharacterForClientinfo(ci, cent);
 
 	switch (event)
 	{
 	// movement generated events
-
 	case EV_FOOTSTEP:
 		DEBUGNAME("EV_FOOTSTEP");
 		if (es->eventParm != FOOTSTEP_TOTAL)
 		{
 			if (es->eventParm)
 			{
-				CG_StartFootStepSound(classInfo, es, cgs.media.footsteps[es->eventParm][footstepcnt]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[es->eventParm][footstepcnt]);
 			}
 			else
 			{
-				CG_StartFootStepSound(classInfo, es, cgs.media.footsteps[character->animModelInfo->footsteps][footstepcnt]);
+				bg_character_t *character;
+
+				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[character->animModelInfo->footsteps][footstepcnt]);
 			}
 		}
 		break;
 	case EV_FOOTSPLASH:
 		DEBUGNAME("EV_FOOTSPLASH");
-		CG_StartFootStepSound(classInfo, es, cgs.media.footsteps[FOOTSTEP_SPLASH][splashfootstepcnt]);
+		trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_SPLASH][splashfootstepcnt]);
 		break;
 	case EV_SWIM:
 		DEBUGNAME("EV_SWIM");
-		CG_StartFootStepSound(classInfo, es, cgs.media.footsteps[FOOTSTEP_SPLASH][footstepcnt]);
+		trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_SPLASH][footstepcnt]);
 		break;
-
 	case EV_FALL_SHORT:
 		DEBUGNAME("EV_FALL_SHORT");
 		if (es->eventParm != FOOTSTEP_TOTAL)
@@ -2198,6 +2171,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
+				bg_character_t *character;
+
+				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
 				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
 			}
 		}
@@ -2208,14 +2184,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			cg.landTime   = cg.time;
 		}
 		break;
-
 	case EV_BODY_DP:
 		if (&cg_entities[es->otherEntityNum2] && &cg_entities[es->otherEntityNum2].pe)
 		{
 			memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
 		}
 		break;
-
 	case EV_FALL_DMG_10:
 		DEBUGNAME("EV_FALL_DMG_10");
 		if (es->eventParm != FOOTSTEP_TOTAL)
@@ -2226,6 +2200,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
+				bg_character_t *character;
+				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
+
 				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
 			}
 		}
@@ -2248,6 +2225,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
+				bg_character_t *character;
+
+				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
 				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
 			}
 		}
@@ -2270,6 +2250,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
+				bg_character_t *character;
+
+				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
 				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
 			}
 		}
@@ -2292,6 +2275,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
+				bg_character_t *character;
+
+				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
 				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
 			}
 		}
@@ -2314,6 +2300,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
+				bg_character_t *character;
+
+				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
 				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
 			}
 		}
@@ -2321,7 +2310,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		cent->pe.painTime = cg.time;     // don't play a pain sound right after this
 		// splat
 		break;
-
 	case EV_STEP_4:
 	case EV_STEP_8:
 	case EV_STEP_12:
@@ -2367,7 +2355,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			cg.stepTime = cg.time;
 			break;
 		}
-
 	case EV_WATER_TOUCH:
 		DEBUGNAME("EV_WATER_TOUCH");
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrInSound);
@@ -2399,19 +2386,16 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrGaspSound);
 		}
 		break;
-
 	case EV_ITEM_PICKUP:
 	case EV_ITEM_PICKUP_QUIET:
 		DEBUGNAME("EV_ITEM_PICKUP");
 		{
-			//gitem_t *item;
 			int index = es->eventParm;          // player predicted
 
 			if (index < 1 || index >= bg_numItems)
 			{
 				break;
 			}
-			//item = &bg_itemlist[index];
 
 			if (event == EV_ITEM_PICKUP)     // not quiet
 			{
@@ -2451,7 +2435,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 
 	// weapon events
-
 	case EV_WEAP_OVERHEAT:
 		DEBUGNAME("EV_WEAP_OVERHEAT");
 		// start weapon idle animation
@@ -2481,12 +2464,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].overheatSound);
 		}
 		break;
-
 	case EV_SPINUP:
 		DEBUGNAME("EV_SPINUP");
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].spinupSound);
 		break;
-
 	case EV_FILL_CLIP:
 		DEBUGNAME("EV_FILL_CLIP");
 		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 2 && BG_isLightWeaponSupportingFastReload(es->weapon) && cg_weapons[es->weapon].reloadFastSound)
@@ -2498,17 +2479,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadSound);     // JPW NERVE following sherman's SP fix, should allow killing reload sound when player dies
 		}
 		break;
-
 	case EV_MG42_FIXED:
 		DEBUGNAME("EV_MG42_FIXED");
 		// FIXME? play a sound when engineer fixes MG42
 		//trap_S_StartSound(NULL,es->number,CHAN_WEAPON,cg_weapons[WP_MAUSER].reloadSound); // Arnout: needs updating
 		break;
-
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
 		DEBUGNAME("EV_NOAMMO");
-
 		// FIXME: do a switch
 		if ((es->weapon != WP_GRENADE_LAUNCHER) &&
 		    (es->weapon != WP_GRENADE_PINEAPPLE) &&
@@ -2553,7 +2531,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_CHANGE_WEAPON_2:
 		DEBUGNAME("EV_CHANGE_WEAPON_2");
-
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.selectSound);
 
 		if (es->number == cg.snap->ps.clientNum)
@@ -2576,7 +2553,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 		}
 		break;
-
 	case EV_FIRE_WEAPON_MOUNTEDMG42:
 	case EV_FIRE_WEAPON_MG42:
 		DEBUGNAME("EV_FIRE_WEAPON_MG42");
@@ -2629,7 +2605,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_FIRE_WEAPON_LASTSHOT");
 		CG_FireWeapon(cent);
 		break;
-
 	case EV_NOFIRE_UNDERWATER:
 		DEBUGNAME("EV_NOFIRE_UNDERWATER");
 		if (cgs.media.noFireUnderwater)
@@ -2637,7 +2612,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cgs.media.noFireUnderwater);
 		}
 		break;
-
 	case EV_GRENADE_BOUNCE:
 		DEBUGNAME("EV_GRENADE_BOUNCE");
 
@@ -2669,7 +2643,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 		}
 		break;
-
 	case EV_RAILTRAIL:
 		DEBUGNAME("EV_RAILTRAIL");
 		{
@@ -2688,60 +2661,72 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 
 	// missile impacts
-
 	case EV_MISSILE_HIT:
 		DEBUGNAME("EV_MISSILE_HIT");
-		ByteToDir(es->eventParm, dir);
-		CG_MissileHitPlayer(cent, es->weapon, position, dir, es->otherEntityNum);
-		if (IS_MORTAR_WEAPON_SET(es->weapon))
 		{
-			if (!es->legsAnim)
+			vec3_t dir;
+
+			ByteToDir(es->eventParm, dir);
+			CG_MissileHitPlayer(cent, es->weapon, position, dir, es->otherEntityNum);
+			if (IS_MORTAR_WEAPON_SET(es->weapon))
 			{
-				CG_MortarImpact(cent, position, 3, qtrue);
-			}
-			else
-			{
-				CG_MortarImpact(cent, position, -1, qtrue);
+				if (!es->legsAnim)
+				{
+					CG_MortarImpact(cent, position, 3, qtrue);
+				}
+				else
+				{
+					CG_MortarImpact(cent, position, -1, qtrue);
+				}
 			}
 		}
 		break;
-
 	case EV_MISSILE_MISS_SMALL:
 		DEBUGNAME("EV_MISSILE_MISS");
-		ByteToDir(es->eventParm, dir);
-		CG_MissileHitWallSmall(es->weapon, 0, position, dir);
-		break;
+		{
+			vec3_t dir;
 
+			ByteToDir(es->eventParm, dir);
+
+			CG_MissileHitWallSmall(es->weapon, 0, position, dir);
+		}
+		break;
 	case EV_MISSILE_MISS:
 		DEBUGNAME("EV_MISSILE_MISS");
-		ByteToDir(es->eventParm, dir);
-		CG_MissileHitWall(es->weapon, 0, position, dir, 0);     // modified to send missilehitwall surface parameters
-		if (IS_MORTAR_WEAPON_SET(es->weapon))
 		{
-			if (!es->legsAnim)
+			vec3_t dir;
+
+			ByteToDir(es->eventParm, dir);
+			CG_MissileHitWall(es->weapon, 0, position, dir, 0);     // modified to send missilehitwall surface parameters
+			if (IS_MORTAR_WEAPON_SET(es->weapon))
 			{
-				CG_MortarImpact(cent, position, 3, qtrue);
+				if (!es->legsAnim)
+				{
+					CG_MortarImpact(cent, position, 3, qtrue);
+				}
+				else
+				{
+					CG_MortarImpact(cent, position, -1, qtrue);
+				}
+			}
+		}
+		break;
+	case EV_MISSILE_MISS_LARGE:
+		DEBUGNAME("EV_MISSILE_MISS_LARGE");
+		{
+			vec3_t dir;
+
+			ByteToDir(es->eventParm, dir);
+			if (es->weapon == WP_ARTY || es->weapon == WP_SMOKE_MARKER)
+			{
+				CG_MissileHitWall(es->weapon, 0, position, dir, 0);      // modified to send missilehitwall surface parameters
 			}
 			else
 			{
-				CG_MortarImpact(cent, position, -1, qtrue);
+				CG_MissileHitWall(VERYBIGEXPLOSION, 0, position, dir, 0);     // modified to send missilehitwall surface parameters
 			}
 		}
 		break;
-
-	case EV_MISSILE_MISS_LARGE:
-		DEBUGNAME("EV_MISSILE_MISS_LARGE");
-		ByteToDir(es->eventParm, dir);
-		if (es->weapon == WP_ARTY || es->weapon == WP_SMOKE_MARKER)
-		{
-			CG_MissileHitWall(es->weapon, 0, position, dir, 0);      // modified to send missilehitwall surface parameters
-		}
-		else
-		{
-			CG_MissileHitWall(VERYBIGEXPLOSION, 0, position, dir, 0);     // modified to send missilehitwall surface parameters
-		}
-		break;
-
 	case EV_MORTAR_IMPACT:
 		DEBUGNAME("EV_MORTAR_IMPACT");
 		CG_MortarImpact(cent, position, rand() % 3, qfalse);
@@ -2750,7 +2735,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_MORTAR_MISS");
 		CG_MortarMiss(cent, position);
 		break;
-
 	case EV_SHOVE_SOUND:
 		DEBUGNAME("EV_SHOVE_SOUND");
 		//if ( cg_shoveSounds.integer ) {
@@ -2758,29 +2742,30 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.shoveSound, 255);
 		//}
 		break;
-
 	case EV_MG42BULLET_HIT_WALL:
 		DEBUGNAME("EV_MG42BULLET_HIT_WALL");
-		ByteToDir(es->eventParm, dir);
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, dir, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
+		{
+			CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
+		}
 		break;
-
 	case EV_MG42BULLET_HIT_FLESH:
 		DEBUGNAME("EV_MG42BULLET_HIT_FLESH");
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, dir, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
+		{
+			CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
+		}
 		break;
-
 	case EV_BULLET_HIT_WALL:
 		DEBUGNAME("EV_BULLET_HIT_WALL");
-		ByteToDir(es->eventParm, dir);
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, dir, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
+		{
+			CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
+		}
 		break;
-
 	case EV_BULLET_HIT_FLESH:
 		DEBUGNAME("EV_BULLET_HIT_FLESH");
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, dir, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
+		{
+			CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
+		}
 		break;
-
 	case EV_GENERAL_SOUND:
 		DEBUGNAME("EV_GENERAL_SOUND");
 		{
@@ -2812,30 +2797,30 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 		}
 		break;
-
 	case EV_FX_SOUND:
-	{
-		sfxHandle_t sound;
-		int         index = es->eventParm;
-
 		DEBUGNAME("EV_FX_SOUND");
-
-		if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
 		{
-			index = 0;
+			sfxHandle_t sound;
+			int         index = es->eventParm;
+
+
+
+			if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
+			{
+				index = 0;
+			}
+
+			sound = (random() * fxSounds[index].max);
+			if (fxSounds[es->eventParm].sound[sound] == -1)
+			{
+				fxSounds[es->eventParm].sound[sound] = trap_S_RegisterSound(fxSounds[es->eventParm].soundfile[sound], qfalse);
+			}
+
+			sound = fxSounds[es->eventParm].sound[sound];
+
+			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, 255);
 		}
-
-		sound = (random() * fxSounds[index].max);
-		if (fxSounds[es->eventParm].sound[sound] == -1)
-		{
-			fxSounds[es->eventParm].sound[sound] = trap_S_RegisterSound(fxSounds[es->eventParm].soundfile[sound], qfalse);
-		}
-
-		sound = fxSounds[es->eventParm].sound[sound];
-
-		trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, 255);
-	}
-	break;
+		break;
 	case EV_GENERAL_SOUND_VOLUME:
 		DEBUGNAME("EV_GENERAL_SOUND_VOLUME");
 		{
@@ -2866,7 +2851,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 		}
 		break;
-
 	case EV_GLOBAL_TEAM_SOUND:
 		DEBUGNAME("EV_GLOBAL_TEAM_SOUND");
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team != es->teamNum)
@@ -2918,7 +2902,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 		}
 		break;
-
 	case EV_GLOBAL_CLIENT_SOUND:
 		DEBUGNAME("EV_GLOBAL_CLIENT_SOUND");
 		{
@@ -2964,7 +2947,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 		}
 		break;
-
 	case EV_PAIN:
 		// local player sounds are triggered in CG_CheckLocalSounds,
 		// so ignore events on the player
@@ -2974,31 +2956,34 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			CG_PainEvent(cent, es->eventParm, qfalse);
 		}
 		break;
-
 	case EV_OBITUARY:
 		DEBUGNAME("EV_OBITUARY");
 		CG_Obituary(es);
 		break;
-
 	case EV_STOPSTREAMINGSOUND:
 		DEBUGNAME("EV_STOPSTREAMINGSOUND");
 		//trap_S_StopStreamingSound( es->number );
 		trap_S_StartSoundEx(NULL, es->number, CHAN_WEAPON, 0, SND_CUTOFF_ALL);      // kill weapon sound (could be reloading)
 		break;
-
 	case EV_LOSE_HAT:
 		DEBUGNAME("EV_LOSE_HAT");
-		ByteToDir(es->eventParm, dir);
-		CG_LoseHat(cent, dir);
-		break;
+		{
+			vec3_t dir;
 
+			ByteToDir(es->eventParm, dir);
+			CG_LoseHat(cent, dir);
+		}
+		break;
 	case EV_GIB_PLAYER:
 		DEBUGNAME("EV_GIB_PLAYER");
-		trap_S_StartSound(es->pos.trBase, -1, CHAN_AUTO, cgs.media.gibSound);
-		ByteToDir(es->eventParm, dir);
-		CG_GibPlayer(cent, cent->lerpOrigin, dir);
-		break;
+		{
+			vec3_t dir;
 
+			trap_S_StartSound(es->pos.trBase, -1, CHAN_AUTO, cgs.media.gibSound);
+			ByteToDir(es->eventParm, dir);
+			CG_GibPlayer(cent, cent->lerpOrigin, dir);
+		}
+		break;
 	case EV_STOPLOOPINGSOUND:
 		DEBUGNAME("EV_STOPLOOPINGSOUND");
 		es->loopSound = 0;
@@ -3016,28 +3001,23 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			CG_ParticleSmoke(cgs.media.smokePuffShader, cent);
 		}
 		break;
-
 	case EV_FLAMETHROWER_EFFECT:
 		DEBUGNAME("EV_FLAMETHROWER_EFFECT");
 		CG_FireFlameChunks(cent, cent->currentState.origin, cent->currentState.apos.trBase, 0.6, 2);
 		break;
-
 	case EV_DUST:
 		DEBUGNAME("EV_DUST");
 		CG_ParticleDust(cent, cent->currentState.origin, cent->currentState.angles);
 		break;
-
 	case EV_RUMBLE_EFX:
 	{
 		DEBUGNAME("EV_RUMBLE_EFX");
 		CG_RumbleEfx(cent->currentState.angles[0], cent->currentState.angles[1]);
 	}
 	break;
-
 	case EV_EMITTER:
 	{
 		localEntity_t *le = CG_AllocLocalEntity();
-
 		DEBUGNAME("EV_EMITTER");
 
 		le->leType     = LE_EMITTER;
@@ -3049,7 +3029,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		le->ownerNum = 0;
 	}
 	break;
-
 	case EV_OILPARTICLES:
 		DEBUGNAME("EV_OILPARTICLES");
 		CG_Particle_OilParticle(cgs.media.oilParticle, cent->currentState.origin, cent->currentState.origin2, cent->currentState.time, cent->currentState.density);
@@ -3062,7 +3041,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_OILSLICKREMOVE");
 		CG_OilSlickRemove(cent);
 		break;
-
 	case EV_SPARKS_ELECTRIC:
 	case EV_SPARKS:
 	{
@@ -3102,7 +3080,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 	}
 	break;
-
 	case EV_GUNSPARKS:
 	{
 		DEBUGNAME("EV_GUNSPARKS");
@@ -3110,7 +3087,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_AddBulletParticles(cent->currentState.origin, cent->currentState.angles, cent->currentState.angles2[2], 800, cent->currentState.density, 1.0f);
 	}
 	break;
-
 	case EV_SNOWFLURRY:
 		DEBUGNAME("EV_SNOWFLURRY");
 		CG_ParticleSnowFlurry(cgs.media.snowShader, cent);
@@ -3119,40 +3095,53 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	// for func_exploding
 	case EV_EXPLODE:
 		DEBUGNAME("EV_EXPLODE");
-		ByteToDir(es->eventParm, dir);
-		CG_Explode(cent, position, dir, 0);
-		break;
+		{
+			vec3_t dir;
 
+			ByteToDir(es->eventParm, dir);
+			CG_Explode(cent, position, dir, 0);
+		}
+		break;
 	case EV_RUBBLE:
 		DEBUGNAME("EV_RUBBLE");
-		ByteToDir(es->eventParm, dir);
-		CG_Rubble(cent, position, dir, 0);
+		{
+			vec3_t dir;
+
+			ByteToDir(es->eventParm, dir);
+			CG_Rubble(cent, position, dir, 0);
+		}
 		break;
 
 	// for target_effect
 	case EV_EFFECT:
 		DEBUGNAME("EV_EFFECT");
-		ByteToDir(es->eventParm, dir);
-		CG_Effect(cent, position, dir);
+		{
+			vec3_t dir;
+			ByteToDir(es->eventParm, dir);
+			CG_Effect(cent, position, dir);
+		}
 		break;
-
 	case EV_MORTAREFX:     // mortar firing
 		DEBUGNAME("EV_MORTAREFX");
 		CG_MortarEFX(cent);
 		break;
-
 	case EV_SHARD:
 		DEBUGNAME("EV_SHARD");
-		ByteToDir(es->eventParm, dir);
-		CG_Shard(cent, position, dir);
-		break;
+		{
+			vec3_t dir;
 
+			ByteToDir(es->eventParm, dir);
+			CG_Shard(cent, position, dir);
+		}
+		break;
 	case EV_JUNK:
 		DEBUGNAME("EV_JUNK");
-		ByteToDir(es->eventParm, dir);
 		{
-			int i;
-			int rval = rand() % 3 + 3;
+			vec3_t dir;
+			int    i;
+			int    rval = rand() % 3 + 3;
+
+			ByteToDir(es->eventParm, dir);
 
 			for (i = 0; i < rval; i++)
 			{
@@ -3160,7 +3149,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 		}
 		break;
-
 	case EV_DISGUISE_SOUND:
 		DEBUGNAME("EV_DISGUISE_SOUND");
 		trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.uniformPickup);
@@ -3175,7 +3163,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_DEBRIS");
 		CG_Debris(cent, position, cent->currentState.origin2);
 		break;
-	// ===================
 
 	case EV_SHAKE:
 	{
@@ -3228,7 +3215,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_PlayPMItemSound(cent);
 	}
 	break;
-
 	case EV_AIRSTRIKEMESSAGE:
 	{
 		const char *wav = NULL;
@@ -3274,7 +3260,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 	}
 	break;
-
 	case EV_ARTYMESSAGE:
 	{
 		const char *wav = NULL;
@@ -3320,7 +3305,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 	}
 	break;
-
 	case EV_MEDIC_CALL:
 		DEBUGNAME("EV_MEDIC_CALL");
 		switch (cgs.clientinfo[cent->currentState.number].team)

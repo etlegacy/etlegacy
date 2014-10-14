@@ -6346,11 +6346,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	CG_ParticleExplosion("explode1", sprOrg, sprVel, 600, 6, 50, qtrue);
 
 	// throw some debris
-	CG_AddDebris(origin, dir,
-	             280,           // speed
-	             1400,          // duration
-	             // 15 + rand()%5 );   // count
-	             7 + rand() % 2);       // count
+	CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2);
 
 	if (cgs.media.sfx_rockexp)
 	{
@@ -6754,7 +6750,7 @@ CG_Bullet
 Renders bullet effects.
 ======================
 */
-void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
+void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
 {
 	trace_t    trace, trace2;
 	vec3_t     dir;
@@ -7006,7 +7002,6 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 				trap_S_StartSound(end, -1, CHAN_AUTO, cgs.media.sfx_bullet_waterhit[rand() % 5]);
 
 				CG_MissileHitWall(fromweap, 2, end2, dir, 0);
-				//CG_MissileHitWall( fromweap, 1, end, normal, trace.surfaceFlags);
 				CG_MissileHitWall(fromweap, 1, end, trace.plane.normal, 0);
 			}
 			else
