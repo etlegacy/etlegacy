@@ -1535,14 +1535,6 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 	cparticle_t *p;
 	int         anim;
 
-#if 0   // this is arguably not legal...  it seems to mostly be a
-	    // debugging thing anyway, so I'm killing it for now
-	if (animStr < (char *)10)
-	{
-		CG_Error("CG_ParticleExplosion: animStr is probably an index rather than a string\n");
-	}
-#endif
-
 	// find the animation string
 	for (anim = 0; shaderAnimNames[anim]; anim++)
 	{

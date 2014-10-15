@@ -737,7 +737,7 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		VectorMA(p, -1 * j->width, up, p);
 		VectorCopy(p, verts[i].xyz);
 		verts[i].st[0] = s;
-		verts[i].st[1] = 0.0;
+		verts[i].st[1] = 0;
 		for (k = 0; k < 3; k++)
 		{
 			verts[i].modulate[k] = ( unsigned char )(j->color[k] * 255.0);
@@ -765,7 +765,7 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		else
 		{
 			//s += sInc;
-			s += VectorDistance(j->pos, jNext->pos) / sInc;
+			s += VectorDistance(j->pos, jNext->pos) / sInc; // FIXME: div/0!?
 			if (s > 1.0)
 			{
 				s = 1.0;

@@ -5773,8 +5773,11 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count)
 		VectorSet(unitvel, dir[0] + crandom() * 0.9, dir[1] + crandom() * 0.9, fabs(dir[2]) > 0.5 ? dir[2] * (0.2 + 0.8 * random()) : random() * 0.6);
 		VectorScale(unitvel, (float)speed + (float)speed * 0.5 * crandom(), velocity);
 
-		le->leType        = LE_DEBRIS;
-		le->startTime     = cg.time;
+		le->leType    = LE_DEBRIS;
+		le->startTime = cg.time;
+		// FIXME: this is such a waste - change to (or even drop the multiplicator *2)
+		// le->endTime       = le->startTime + 2 * duration;
+		// functions calling CG_AddDebris already creating randomnesses - adjust these and do a clean duration param
 		le->endTime       = le->startTime + duration + (int)((float)duration * 0.8 * crandom());
 		le->lastTrailTime = cg.time;
 
@@ -5790,17 +5793,50 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count)
 		BG_EvaluateTrajectory(&le->pos, cg.time + (int)timeAdd, le->pos.trBase, qfalse, -1);
 
 		le->bounceFactor = 0.5;
-
-		//if (!rand()%2)
-		//  le->effectWidth = 0;    // no flame
-		//else
-		le->effectWidth = 5 + random() * 5;
-
-		//if (rand()%3)
+		le->effectWidth  = 5 + random() * 5;
 		le->effectFlags |= 1;       // smoke trail
 
-		//le->leBounceSoundType = LEBS_BLOOD;
 		//le->leMarkType = LEMT_BLOOD;
+
+		// WIP
+		// add model & properties of shrapnels
+		// TODO: find better models and/or extend ...
+		// TODO: make dependant from surface (snow etc and use related models/sounds) and don't add this for sky explosions!!!
+		// TODO: find a client cvar so purists can disable (see CG_AddLocalEntities)
+		{
+			int i = rand() % 5;
+
+			if (i == 0)
+			{
+				le->refEntity.hModel  = cgs.media.debFabric[1];
+				le->leBounceSoundType = LEBS_BONE;
+			}
+			else if (i == 1)
+			{
+				le->refEntity.hModel  = cgs.media.shardMetal1;
+				le->leBounceSoundType = LEBS_METAL;
+			}
+			else if (i == 2)
+			{
+				le->refEntity.hModel  = cgs.media.shardMetal2;
+				le->leBounceSoundType = LEBS_METAL;
+			}
+			else if (i == 3)
+			{
+				le->refEntity.hModel  = cgs.media.debRock[1];
+				le->leBounceSoundType = LEBS_ROCK;
+			}
+			else if (i == 4)
+			{
+				le->refEntity.hModel  = cgs.media.debRock[0];
+				le->leBounceSoundType = LEBS_ROCK;
+			}
+			else
+			{
+				le->refEntity.hModel  = cgs.media.debRock[2];
+				le->leBounceSoundType = LEBS_ROCK;
+			}
+		}
 	}
 }
 
@@ -6065,7 +6101,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		lightColor[0] = 0.75;
 		lightColor[1] = 0.5;
 		lightColor[2] = 0.1;
-
 
 		// biggie dynamite explosions that mean it -- dynamite is biggest explode, so it gets extra crap thrown on
 		// check for water/dirt spurt

@@ -2744,27 +2744,19 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_MG42BULLET_HIT_WALL:
 		DEBUGNAME("EV_MG42BULLET_HIT_WALL");
-		{
-			CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
-		}
+		CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
 		break;
 	case EV_MG42BULLET_HIT_FLESH:
 		DEBUGNAME("EV_MG42BULLET_HIT_FLESH");
-		{
-			CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
-		}
+		CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
 		break;
 	case EV_BULLET_HIT_WALL:
 		DEBUGNAME("EV_BULLET_HIT_WALL");
-		{
-			CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
-		}
+		CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
 		break;
 	case EV_BULLET_HIT_FLESH:
 		DEBUGNAME("EV_BULLET_HIT_FLESH");
-		{
-			CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
-		}
+		CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
 		break;
 	case EV_GENERAL_SOUND:
 		DEBUGNAME("EV_GENERAL_SOUND");
@@ -2802,8 +2794,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			sfxHandle_t sound;
 			int         index = es->eventParm;
-
-
 
 			if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
 			{
