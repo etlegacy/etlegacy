@@ -258,6 +258,13 @@ void trap_R_ClearDecals(void)
 	syscall(CG_R_CLEARDECALS);
 }
 
+/**
+ * @brief starts a sound
+ * @param origin position or NULL for position of player entity (see entityNum)
+ * @param entityNum
+ * @param entchannel
+ * @param sfx
+ */
 void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx)
 {
 	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, 127 /* default volume always for the moment*/);
