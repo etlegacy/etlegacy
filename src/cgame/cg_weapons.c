@@ -501,7 +501,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		team = ent->currentState.teamNum;
 	}
 
-	step      = 30;
+	step      = 50;
 	es        = &ent->currentState;
 	startTime = ent->trailTime;
 	t         = step * ((startTime + step) / step);
@@ -524,8 +524,6 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	{
 		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
 		rnd = random();
-
-		//VectorCopy (ent->lerpOrigin, lastPos);
 
 		if (ent->currentState.density)     // corkscrew effect
 		{
@@ -558,24 +556,24 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		if (team == TEAM_ALLIES)     // allied team, generate blue smoke
 		{
 			CG_SmokePuff(origin, dir,
-			             25 + rnd * 110,       // width
-			             rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 1, 0.5,
-			             4800 + (rand() % 2800),         // duration was 2800+
-			             t,
-			             0,
-			             0,
-			             cgs.media.smokePuffShader);
+						 25 + rnd * 110,       // width
+						 rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 1, 0.5,
+						 4800 + (rand() % 2800),         // duration was 2800+
+						 t,
+						 0,
+						 0,
+						 cgs.media.smokePuffShader);
 		}
 		else
 		{
 			CG_SmokePuff(origin, dir,
-			             25 + rnd * 110,       // width
-			             1.0, rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 0.5,
-			             4800 + (rand() % 2800),         // duration was 2800+
-			             t,
-			             0,
-			             0,
-			             cgs.media.smokePuffShader);
+						 25 + rnd * 110,       // width
+						 1.0, rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 0.5,
+						 4800 + (rand() % 2800),         // duration was 2800+
+						 t,
+						 0,
+						 0,
+						 cgs.media.smokePuffShader);
 		}
 	}
 }
@@ -757,7 +755,6 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 	else
 	{
 		mult = 1 - ((cg.time - ent->trailTime) / 15500.0f);
-		//trap_R_AddLightToScene( origin, 10 + 300 * mult, 1.f, 1.f, 0, REF_FORCE_DLIGHT);
 		trap_R_AddLightToScene(origin, 320, mult, 1.0f, 1.0f, 0, 0, REF_FORCE_DLIGHT);
 	}
 }
@@ -3867,9 +3864,9 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 	default:
 		return;     // no sniper zoom, get out.
 	case WP_FG42SCOPE:
-		cg.zoomval     = cg_zoomDefaultSniper.value; // JPW NERVE changed from defaultFG per atvi req
+		cg.zoomval     = cg_zoomDefaultSniper.value; // changed from defaultFG per atvi req
 		cg.zoomedScope = 1;         // TODO: add to zoomTable
-		zoomindex      = ZOOM_SNIPER; // JPW NERVE was FG42SCOPE
+		zoomindex      = ZOOM_SNIPER; //  was FG42SCOPE
 		break;
 	case WP_GARAND_SCOPE:
 	// fall through
@@ -4245,7 +4242,7 @@ void CG_AltWeapon_f(void)
 
 	if (reload && cg_weapaltReloads.integer)
 	{
-		//FIXME: This is a horrible way of doing it but theres not other way atm.
+		// FIXME: This is a horrible way of doing it but theres not other way atm.
 		trap_SendConsoleCommand("+reload\n");
 		trap_SendConsoleCommand("-reload\n");
 	}
@@ -4418,9 +4415,9 @@ void CG_NextWeap(qboolean switchBanks)
 			{
 				num = getNextWeapInBank(newbank, j);
 
-				/*              if(num == WP_BINOCULARS) {
-				                    continue;
-				                }*/
+				//if(num == WP_BINOCULARS) {
+				// continue;
+				//}
 
 				if (CG_WeaponSelectable(num))       // found selectable weapon
 				{
