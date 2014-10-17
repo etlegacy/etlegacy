@@ -888,24 +888,20 @@ static animStringItem_t animParseModesStr[] =
 #define MAX_INDENT_LEVELS   3
 
 /**
- * @ brief Parse the animation script for this model, converting it into run-time structures
+ * @brief Parse the animation script for this model, converting it into run-time structures
  */
 void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *scriptData, const char *filename, char *input)
 {
-	// FIXME: change this to use the botlib parser
-	char                  *text_p, *token;
-	animScriptParseMode_t parseMode;
-	animScript_t          *currentScript;
+	char                  *text_p        = input, *token;
+	animScriptParseMode_t parseMode      = PARSEMODE_DEFINES; // start at the defines
+	animScript_t          *currentScript = NULL;
 	animScriptItem_t      tempScriptItem;
 	animScriptItem_t      *currentScriptItem = NULL;
-	int                   indexes[MAX_INDENT_LEVELS], indentLevel, /*oldState,*/ newParseMode;
+	int                   indexes[MAX_INDENT_LEVELS], indentLevel = 0, /*oldState,*/ newParseMode;
 	int                   i, defineType;
 
 	// the scriptData passed into here must be the one this binary is using
 	globalScriptData = scriptData;
-
-	// start at the defines
-	parseMode = PARSEMODE_DEFINES;
 
 	// init the global defines
 	globalFilename = (char *)filename;
@@ -918,10 +914,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 	{
 		indexes[i] = -1;
 	}
-	indentLevel   = 0;
-	currentScript = NULL;
 
-	text_p = input;
 	COM_BeginParseSession("BG_AnimParseAnimScript");
 
 	// read in the weapon defines
@@ -995,7 +988,6 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				memcpy(&defineBits[ANIM_COND_ENEMY_WEAPON][0], &defineBits[ANIM_COND_WEAPON][0], sizeof(defineBits[ANIM_COND_ENEMY_WEAPON][0]) * MAX_ANIM_DEFINES);
 				numDefines[ANIM_COND_ENEMY_WEAPON] = numDefines[ANIM_COND_WEAPON];
 			}
-
 			break;
 		case PARSEMODE_ANIMATION:
 		case PARSEMODE_CANNED_ANIMATIONS:
@@ -1027,7 +1019,6 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				}
 				// make sure we read a new index before next indent
 				indexes[indentLevel] = -1;
-
 			}
 			else if (indentLevel == 0 && (indexes[indentLevel] < 0))
 			{
@@ -1066,7 +1057,6 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 					currentScript = &animModelInfo->scriptCannedAnims[indexes[1]];
 				}
 				memset(currentScript, 0, sizeof(*currentScript));
-
 			}
 			else if ((indentLevel == 2) && (indexes[indentLevel] < 0))
 			{

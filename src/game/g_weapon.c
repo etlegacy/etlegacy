@@ -3125,8 +3125,6 @@ void weapon_smokeBombExplode(gentity_t *ent)
 	}
 }
 
-gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum);
-
 /*
 ======================================================================
 MACHINEGUN
@@ -3348,7 +3346,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	}
 
 	// send bullet impact
-	if (traceEnt->takedamage && traceEnt->client /*&& !(traceEnt->flags & FL_DEFENSE_GUARD)*/)
+	if (traceEnt->takedamage && traceEnt->client)
 	{
 		tent              = G_TempEntity(tr.endpos, EV_BULLET_HIT_FLESH);
 		tent->s.eventParm = traceEnt->s.number;

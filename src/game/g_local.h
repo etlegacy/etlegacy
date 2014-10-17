@@ -69,7 +69,7 @@
 #define FL_TOGGLE               0x00020000  // ent is toggling (doors use this for ex.)
 #define FL_KICKACTIVATE         0x00040000  // ent has been activated by a kick (doors use this too for ex.)
 #define FL_SOFTACTIVATE         0x00000040  // ent has been activated while 'walking' (doors use this too for ex.)
-#define FL_DEFENSE_GUARD        0x00080000  // warzombie defense pose
+//#define FL_DEFENSE_GUARD        0x00080000  // warzombie defense pose
 
 #define FL_NODRAW               0x01000000
 
