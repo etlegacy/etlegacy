@@ -523,7 +523,6 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	for ( ; t <= ent->trailTime ; t += step)
 	{
 		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
-		rnd = random();
 
 		if (ent->currentState.density)     // corkscrew effect
 		{
@@ -541,8 +540,6 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		dir[2] = 0;
 		VectorAdd(lastPos, dir, origin); // store in origin
 
-		rnd = random();
-
 		CG_GetWindVector(dir);
 		if (ent->currentState.weapon == WP_LANDMINE)
 		{
@@ -553,27 +550,29 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 			VectorScale(dir, 65, dir);
 		}
 
+		rnd = random();
+
 		if (team == TEAM_ALLIES)     // allied team, generate blue smoke
 		{
 			CG_SmokePuff(origin, dir,
-						 25 + rnd * 110,       // width
-						 rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 1, 0.5,
-						 4800 + (rand() % 2800),         // duration was 2800+
-						 t,
-						 0,
-						 0,
-						 cgs.media.smokePuffShader);
+			             25 + rnd * 110,       // width
+			             rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 1, 0.5,
+			             4800 + (rand() % 2800),         // duration was 2800+
+			             t,
+			             0,
+			             0,
+			             cgs.media.smokePuffShader);
 		}
 		else
 		{
 			CG_SmokePuff(origin, dir,
-						 25 + rnd * 110,       // width
-						 1.0, rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 0.5,
-						 4800 + (rand() % 2800),         // duration was 2800+
-						 t,
-						 0,
-						 0,
-						 cgs.media.smokePuffShader);
+			             25 + rnd * 110,       // width
+			             1.0, rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 0.5,
+			             4800 + (rand() % 2800),         // duration was 2800+
+			             t,
+			             0,
+			             0,
+			             cgs.media.smokePuffShader);
 		}
 	}
 }
@@ -6759,6 +6758,7 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
 		return; // Only others tracers
 
 	}
+
 	if (otherEntityNum >= 0 && otherEntityNum != ENTITYNUM_NONE)
 	{
 		if (cg_tracers.integer == 1 || cg_tracers.integer == 3)
