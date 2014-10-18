@@ -435,8 +435,14 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 	dlight_t *dl;
 
 	// early out
-	if (!tr.registered || r_numdlights >= MAX_DLIGHTS || radius <= 0 || intensity <= 0)
+	if (!tr.registered  || radius <= 0 || intensity <= 0)
 	{
+		return;
+	}
+
+	if (r_numdlights >= MAX_DLIGHTS)
+	{
+		Ren_Print("WARNING RE_AddLightToScene: Dropping dlight, reached MAX_DLIGHTS\n");
 		return;
 	}
 
@@ -483,6 +489,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	}
 	if (r_numcoronas >= MAX_CORONAS)
 	{
+		Ren_Print("WARNING RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n");
 		return;
 	}
 

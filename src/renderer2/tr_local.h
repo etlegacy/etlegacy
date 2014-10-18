@@ -3870,14 +3870,12 @@ void RE_ClearScene(void);
 void RE_AddRefEntityToScene(const refEntity_t *ent);
 void RE_AddRefLightToScene(const refLight_t *light);
 
-void RE_AddPolyToSceneQ3A(qhandle_t hShader, int numVerts, const polyVert_t *verts, int num);
-void RE_AddPolyToSceneET(qhandle_t hShader, int numVerts, const polyVert_t *verts);
+void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
 void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
 
 void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
 
-void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
-void RE_AddDynamicLightToSceneQ3A(const vec3_t org, float intensity, float r, float g, float b);
+void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
 
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
 void RE_RenderScene(const refdef_t *fd);

@@ -256,12 +256,7 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 RE_AddPolyToScene
 =====================
 */
-void RE_AddPolyToSceneQ3A(qhandle_t hShader, int numVerts, const polyVert_t *verts, int num)
-{
-	R_AddPolysToScene(hShader, numVerts, verts, num);
-}
-
-void RE_AddPolyToSceneET(qhandle_t hShader, int numVerts, const polyVert_t *verts)
+void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 {
 	R_AddPolysToScene(hShader, numVerts, verts, 1);
 }
@@ -392,6 +387,7 @@ void RE_AddRefLightToScene(const refLight_t *l)
 
 	if (r_numLights >= MAX_REF_LIGHTS)
 	{
+		Ren_Print("WARNING RE_AddRefLightToScene: Dropping light, reached MAX_REF_LIGHTS\n");
 		return;
 	}
 
@@ -484,7 +480,7 @@ RE_AddDynamicLightToScene
 modified dlight system to support seperate radius and intensity
 =====================
 */
-void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
+void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	trRefLight_t *light;
 
@@ -495,6 +491,7 @@ void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity
 
 	if (r_numLights >= MAX_REF_LIGHTS)
 	{
+		Ren_Print("WARNING RE_AddDynamicLightToScene: Dropping light, reached MAX_REF_LIGHTS\n");
 		return;
 	}
 
@@ -545,11 +542,6 @@ void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity
 #endif
 }
 
-void RE_AddDynamicLightToSceneQ3A(const vec3_t org, float radius, float r, float g, float b)
-{
-	RE_AddDynamicLightToSceneET(org, radius, r_lightScale->value, r, g, b, 0, 0);
-}
-
 /*
 ==============
 RE_AddCoronaToScene
@@ -565,6 +557,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	}
 	if (r_numcoronas >= MAX_CORONAS)
 	{
+		Ren_Print("WARNING RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n");
 		return;
 	}
 
