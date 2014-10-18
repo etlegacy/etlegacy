@@ -394,6 +394,20 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 	// fixed was ENTITYNUM_WORLD
 	if (r_numentities >= MAX_REFENTITIES)
 	{
+		// we may change this to developer print
+		Ren_Print("WARNING RE_AddRefEntityToScene: Dropping refEntity, reached MAX_REFENTITIES\n");
+		return;
+	}
+
+	if (Q_isnan(ent->origin[0]) || Q_isnan(ent->origin[1]) || Q_isnan(ent->origin[2]))
+	{
+		static qboolean firstTime = qtrue;
+
+		if (firstTime)
+		{
+			firstTime = qfalse;
+			Ren_Print("WARNING RE_AddRefEntityToScene passed a refEntity which has an origin with a NaN component\n");
+		}
 		return;
 	}
 
