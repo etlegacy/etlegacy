@@ -589,7 +589,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	Ren_Print("Initializing OpenGL display\n");
 
-	if (r_allowResize->integer && !r_fullscreen->integer)
+	if (r_allowResize->integer && !fullscreen)
 	{
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
