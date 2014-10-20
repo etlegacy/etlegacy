@@ -986,8 +986,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 		if (LegacySDL_Init(SDL_INIT_VIDEO) == -1)
 		{
-			Ren_Print("SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n",
-			          SDL_GetError());
+			Ren_Print("SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n", SDL_GetError());
 			return qfalse;
 		}
 

@@ -693,11 +693,13 @@ void Sys_GLimpInit(void)
 			// the behaviour of idq3 with in_mouse set to -1
 			Sys_SetEnv("SDL_VIDEODRIVER", "windib");
 		}
+#if 0
 		else
 		{
 			// Use the DirectX SDL backend
 			Sys_SetEnv("SDL_VIDEODRIVER", "directx");
 		}
+#endif
 	}
 #endif
 }
