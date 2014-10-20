@@ -986,6 +986,27 @@ static void IN_JoyMove(void)
 	stick_state.oldaxes = axes;
 }
 
+static void IN_WindowResize(SDL_Event *e)
+{
+	// Only do a vid_restart if the size of the window actually changed. On OS X at least, it's possible
+	// to receive a resize event when the window simply moves, or even when Dock shows/hides. No need to
+	// do a vid_restart then.
+	if (!cls.glconfig.isFullscreen && (cls.glconfig.vidWidth != e->window.data1 || cls.glconfig.vidHeight != e->window.data2))
+	{
+		char width[32], height[32];
+
+		Com_sprintf(width, sizeof(width), "%d", e->window.data1);
+		Com_sprintf(height, sizeof(height), "%d", e->window.data2);
+		Cvar_Set("r_customwidth", width);
+		Cvar_Set("r_customheight", height);
+		Cvar_Set("r_mode", "-1");
+		// wait until user stops dragging for 1 second, so
+		// we aren't constantly recreating the GL context while
+		// he tries to drag...
+		vidRestartTime = Sys_Milliseconds() + 1000;
+	}
+}
+
 static void IN_ProcessEvents(void)
 {
 	SDL_Event       e;
@@ -1128,23 +1149,8 @@ static void IN_ProcessEvents(void)
 			{
 			case SDL_WINDOWEVENT_RESIZED:
 			{
-				// Only do a vid_restart if the size of the window actually changed. On OS X at least, it's possible
-				// to receive a resize event when the window simply moves, or even when Dock shows/hides. No need to
-				// do a vid_restart then.
-				if (cls.glconfig.isFullscreen || cls.glconfig.vidWidth != e.window.data1 || cls.glconfig.vidHeight != e.window.data2)
-				{
-					char width[32], height[32];
+				IN_WindowResize(&e);
 
-					Com_sprintf(width, sizeof(width), "%d", e.window.data1);
-					Com_sprintf(height, sizeof(height), "%d", e.window.data2);
-					Cvar_Set("r_customwidth", width);
-					Cvar_Set("r_customheight", height);
-					Cvar_Set("r_mode", "-1");
-					// wait until user stops dragging for 1 second, so
-					// we aren't constantly recreating the GL context while
-					// he tries to drag...
-					vidRestartTime = Sys_Milliseconds() + 1000;
-				}
 			}
 			break;
 			case SDL_WINDOWEVENT_MINIMIZED:
