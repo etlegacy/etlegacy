@@ -103,9 +103,7 @@ Sys_IsNumLockDown
 qboolean IN_IsNumLockDown(void)
 {
 #ifdef _WIN32
-	SHORT state = GetKeyState(VK_NUMLOCK);
-
-	if (state & 0x01)
+	if (GetKeyState(VK_NUMLOCK) & 0x01)
 	{
 		return qtrue;
 	}
@@ -1007,6 +1005,15 @@ static void IN_WindowResize(SDL_Event *e)
 	}
 }
 
+static void IN_WindowFocusLost()
+{
+	// disabled for now (causes issues with vid_restart
+	if (cls.rendererStarted && cls.glconfig.isFullscreen)
+	{
+		Cbuf_ExecuteText(EXEC_NOW, "minimize");
+	}
+}
+
 static void IN_ProcessEvents(void)
 {
 	SDL_Event       e;
@@ -1148,11 +1155,8 @@ static void IN_ProcessEvents(void)
 			switch (e.window.event)
 			{
 			case SDL_WINDOWEVENT_RESIZED:
-			{
 				IN_WindowResize(&e);
-
-			}
-			break;
+				break;
 			case SDL_WINDOWEVENT_MINIMIZED:
 				Cvar_SetValue("com_minimized", 1);
 				break;
@@ -1161,13 +1165,7 @@ static void IN_ProcessEvents(void)
 				Cvar_SetValue("com_minimized", 0);
 				break;
 			case SDL_WINDOWEVENT_FOCUS_LOST:
-			// disabled for now (causes issues with vid_restart
-			/*
-			if (cls.rendererStarted && cls.glconfig.isFullscreen)
-			{
-			    Cbuf_ExecuteText(EXEC_NOW, "minimize");
-			}
-			*/
+				//IN_WindowFocusLost();
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
 				Cvar_SetValue("com_unfocused", 1);
