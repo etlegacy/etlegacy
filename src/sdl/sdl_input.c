@@ -1021,7 +1021,6 @@ static void IN_ProcessEvents(void)
 	keyNum_t        key         = 0;
 	static keyNum_t lastKeyDown = 0;
 
-
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
 		return;
@@ -1042,7 +1041,7 @@ static void IN_ProcessEvents(void)
 				Com_QueueEvent(0, SE_KEY, key, qtrue, 0, NULL);
 				if (key == K_BACKSPACE)
 				{
-					//This was added to keep mod comp, mods do not check K_BACKSPACE but instead use char 8 which is backspace in ascii
+					// This was added to keep mod comp, mods do not check K_BACKSPACE but instead use char 8 which is backspace in ascii
 					// 8 == CTRL('h') == BS aka Backspace from ascii table
 					Com_QueueEvent(0, SE_CHAR, CTRL('h'), 0, 0, NULL);
 				}
@@ -1224,7 +1223,7 @@ void IN_Frame(void)
 	{
 		if (loading)
 		{
-			//Just eat up all the mouse events that are not used anyway
+			// Just eat up all the mouse events that are not used anyway
 			IN_GobbleMotionEvents();
 		}
 
