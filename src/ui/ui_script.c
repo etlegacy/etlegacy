@@ -966,7 +966,7 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 	{
 		itemDef_t *editItem = Menu_FindItemByName(item->parent, name);
 
-		if (editItem && (editItem->type == ITEM_TYPE_EDITFIELD || editItem->type == ITEM_TYPE_NUMERICFIELD))
+		if (editItem && TEXTFIELD(editItem->type))
 		{
 			editFieldDef_t *editPtr = (editFieldDef_t *)editItem->typeData;
 

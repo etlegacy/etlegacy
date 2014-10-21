@@ -1219,6 +1219,19 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+void Item_ComboSelect(itemDef_t *item)
+{
+	if (item)
+	{
+		SET_EDITITEM(item);
+	}
+}
+
+void Item_ComboDeSelect(itemDef_t *item)
+{
+	CLEAR_EDITITEM();
+}
+
 void Item_CalcTextFieldCursor(itemDef_t *item)
 {
 	if (item->cvar)
@@ -1243,8 +1256,7 @@ void Item_HandleTextFieldSelect(itemDef_t *item)
 	if (item)
 	{
 		Item_CalcTextFieldCursor(item);
-		g_editingField = qtrue;
-		g_editItem = item;
+		SET_EDITITEM(item);
 	}
 }
 
@@ -1257,13 +1269,12 @@ void Item_HandleTextFieldDeSelect(itemDef_t *item)
 		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 		DC->setCVar(item->cvar, buff);
 	}
-	g_editingField = qfalse;
-	g_editItem = NULL;
+	CLEAR_EDITITEM();
 }
 
 void Item_HandleSaveValue(void)
 {
-	if (g_editItem)
+	if (g_editItem && TEXTFIELD(g_editItem->type))
 	{
 		itemDef_t *temp = g_editItem;
 		Item_HandleTextFieldDeSelect(temp);
@@ -1300,6 +1311,24 @@ qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *
 		}
 	}
 	*len += 1;
+	return qfalse;
+}
+
+qboolean Item_Combo_HandleKey(itemDef_t *item, int key)
+{
+	multiDef_t *multi = NULL;
+
+	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
+	{
+		if (item->cursorPos >= 0)
+		{
+			multi = (multiDef_t *)item->typeData;
+			DC->setCVar(item->cvar, va("%.0f",multi->cvarValue[item->cursorPos]));
+			Item_RunScript(item, NULL, item->onAccept);
+			return qtrue;
+		}
+	}
+
 	return qfalse;
 }
 
@@ -1468,7 +1497,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW)
 		{
 			newItem = Menu_SetNextCursorItem(item->parent);
-			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
+			if (newItem && TEXTFIELD(newItem->type))
 			{
 				Item_HandleTextFieldDeSelect(item);
 				Item_HandleTextFieldSelect(newItem);
@@ -1488,7 +1517,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		if (key == K_UPARROW || key == K_KP_UPARROW)
 		{
 			newItem = Menu_SetPrevCursorItem(item->parent);
-			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
+			if (newItem && TEXTFIELD(newItem->type))
 			{
 				Item_HandleTextFieldDeSelect(item);
 				Item_HandleTextFieldSelect(newItem);
@@ -2298,7 +2327,7 @@ void Item_TextField_Paint(itemDef_t *item)
 		screen_offset = 0;
 	}
 
-	if ((item->window.flags & WINDOW_HASFOCUS) && g_editingField)
+	if (IS_EDITMODE(item))
 	{
 		char cursor = DC->getOverstrikeMode() ? '_' : '|';
 		DC->drawTextWithCursor(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, buff + editPtr->paintOffset + field_offset, item->cursorPos - editPtr->paintOffset - field_offset, cursor, editPtr->maxPaintChars, item->textStyle);
@@ -2452,6 +2481,111 @@ void Item_Multi_Paint(itemDef_t *item)
 	else
 	{
 		DC->drawText(item->textRect.x, item->textRect.y, item->textscale, newColor, text, 0, 0, item->textStyle);
+	}
+}
+
+void Item_Combo_Paint(itemDef_t *item)
+{
+	vec4_t     itemColor;
+	const char *text = "";
+	int offset1 = 0, offset2 = 0;
+	menuDef_t  *parent = (menuDef_t *)item->parent;
+	static int diudiu = 0;
+
+	if (item->window.flags & WINDOW_HASFOCUS)
+	{
+		//Com_Printf("COmmer haar %i\n", diudiu++);
+	}
+
+	text = Item_Multi_Setting(item);
+
+	memcpy(&itemColor, &item->window.foreColor, sizeof(vec4_t));
+
+	if (item->text)
+	{
+		Item_Text_Paint(item);
+		offset1 = item->textRect.x + item->textRect.w + 8;
+	}
+	else
+	{
+		offset1 = item->textRect.x;
+	}
+
+	offset2 = DC->textWidth(text, item->textscale, 0) + offset1 + 8;
+
+	if (IS_EDITMODE(item))
+	{
+		int i = 0;
+		float borderSize = 4.f;
+		float value = 0;
+		float width = 0, height = 0, temp = 0;
+		multiDef_t *multiPtr;
+		vec4_t lowColor, redishColor;
+		vec4_t *currentColor = NULL;
+		rectDef_t textRect = { offset1, 0.f, 0.f, 12.f };
+
+		lowColor[0] = 0.8 * itemColor[0];
+		lowColor[1] = 0.8 * itemColor[1];
+		lowColor[2] = 0.8 * itemColor[2];
+		lowColor[3] = 0.8 * itemColor[3];
+
+		memcpy(&redishColor, &lowColor, sizeof(vec4_t));
+		redishColor[0] = 1.f;
+
+		multiPtr = (multiDef_t *)item->typeData;
+		if (multiPtr->strDef)
+		{
+			return;
+		}
+		else
+		{
+			value = DC->getCVarValue(item->cvar);
+		}
+
+		for (i = 0; i < multiPtr->count; i++)
+		{
+			temp = DC->textWidth(multiPtr->cvarList[i], item->textscale, 0) + borderSize;
+			if (temp > width)
+			{
+				width = temp;
+			}
+		}
+
+		textRect.w = width;
+
+		height = (i * 12.f) + 1.f;
+
+		DC->fillRect(offset1, item->textRect.y - item->textRect.h, width + 8, height, item->window.backColor);
+
+		item->cursorPos = -1;
+
+		for (i = 0; i < multiPtr->count; i++)
+		{
+			textRect.y = item->textRect.y + (i * 12.f) + .5f - item->textRect.h;
+
+			if (Rect_ContainsPoint(&textRect, DC->cursorx, DC->cursory))
+			{
+				currentColor = &itemColor;
+				item->cursorPos = i;
+			}
+			else if (multiPtr->cvarValue[i] == value)
+			{
+				currentColor = &redishColor;
+			}
+			else
+			{
+				currentColor = &lowColor;
+			}
+
+			DC->drawText(offset1 + borderSize, item->textRect.y + (i * 12.f) + .5f, item->textscale, *currentColor, multiPtr->cvarList[i], 0, 0, item->textStyle);
+		}
+
+		DC->drawRect(offset1, item->textRect.y - item->textRect.h, width + 8, height, 1, item->window.borderColor);
+	}
+	else
+	{
+		DC->drawText(offset1, item->textRect.y, item->textscale, itemColor, text, 0, 0, item->textStyle);
+		DC->drawText(offset2, item->textRect.y, item->textscale, itemColor, "V", 0, 0, item->textStyle);
 	}
 }
 
@@ -3302,6 +3436,7 @@ void Item_Paint(itemDef_t *item)
 		Item_TextField_Paint(item);
 		break;
 	case ITEM_TYPE_COMBO:
+		Item_Combo_Paint(item);
 		break;
 	case ITEM_TYPE_LISTBOX:
 		Item_ListBox_Paint(item);
@@ -3337,7 +3472,7 @@ void Item_KeyboardActivate(itemDef_t *item)
 		return;
 	}
 
-	if (item->type == ITEM_TYPE_EDITFIELD || item->type == ITEM_TYPE_NUMERICFIELD)
+	if (TEXTFIELD(item->type))
 	{
 		Item_HandleTextFieldSelect(item);
 	}
@@ -3362,7 +3497,7 @@ void Item_MouseActivate(itemDef_t *item)
 			Item_Action(item);
 		}
 	}
-	else if (item->type == ITEM_TYPE_EDITFIELD || item->type == ITEM_TYPE_NUMERICFIELD)
+	else if (TEXTFIELD(item->type))
 	{
 		if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory))
 		{
@@ -3380,6 +3515,14 @@ void Item_MouseActivate(itemDef_t *item)
 
 			// see elsewhere for venomous comment about this particular piece of "functionality"
 			//DC->setOverstrikeMode(qtrue);
+		}
+	}
+	else if (item->type == ITEM_TYPE_COMBO)
+	{
+		if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory))
+		{
+			Item_Action(item);
+			Item_ComboSelect(item);
 		}
 	}
 	else

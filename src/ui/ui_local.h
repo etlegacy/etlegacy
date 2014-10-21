@@ -273,6 +273,10 @@ extern int lastListBoxClickTime;
 
 extern qboolean debugMode;
 
+#define SET_EDITITEM(x) g_editingField = qtrue; g_editItem = x;
+#define CLEAR_EDITITEM() g_editingField = qfalse; g_editItem = NULL;
+#define IS_EDITMODE(x) (x->window.flags & WINDOW_HASFOCUS && g_editingField) 
+
 // ui_main.c
 void UI_Report(void);
 void UI_Load(void);

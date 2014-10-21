@@ -1096,4 +1096,43 @@
 		textasfloat                                                     \
 	}
 
+#define COMBO(COMBO_X, COMBO_Y, COMBO_W, COMBO_H, COMBO_TEXT, COMBO_TEXT_SCALE, COMBO_TEXT_ALIGN_Y, COMBO_CVAR, COMBO_CVARLIST, COMBO_ACTION, COMBO_TOOLTIP)  \
+    itemDef {                                                           \
+		name            "combo" ## COMBO_TEXT                             \
+		group GROUP_NAME                                      \
+		rect $evalfloat(COMBO_X) $evalfloat(COMBO_Y) $evalfloat(COMBO_W) $evalfloat(COMBO_H) \
+		type ITEM_TYPE_COMBO                                 \
+		text COMBO_TEXT                                \
+		textfont UI_FONT_COURBD_21                               \
+		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
+		textscale COMBO_TEXT_SCALE                          \
+		textalign ITEM_ALIGN_RIGHT                                \
+		textalignx $evalfloat(0.5 * (COMBO_W))                 \
+		textaligny COMBO_TEXT_ALIGN_Y                        \
+		forecolor       .6 .6 .6 1                                      \
+		cvar COMBO_CVAR                                \
+		COMBO_CVARLIST                                            \
+		visible         1                                               \
+		backcolor   0 0 0 .8                             \
+		bordercolor .5 .5 .5 .5                             \
+		tooltip COMBO_TOOLTIP                             \
+                                                                        \
+		mouseEnter {                                                    \
+			setitemcolor "combo" ## COMBO_TEXT forecolor .9 .9 .9 1 ;     \
+		}                                                               \
+                                                                        \
+		mouseExit {                                                     \
+			setitemcolor "combo" ## COMBO_TEXT forecolor .6 .6 .6 1 ;     \
+		}                                                               \
+                                                                        \
+		accept {                                                        \
+			play "sound/menu/filter.wav" ;                              \
+			COMBO_ACTION                                          \
+		}                                                               \
+                                                                        \
+		action {                                                        \
+			play "sound/menu/filter.wav" ;                              \
+		}                                                               \
+	}
+
 #endif // #ifndef INCLUDE_MENUMACROS_H

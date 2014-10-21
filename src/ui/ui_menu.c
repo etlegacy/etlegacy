@@ -855,19 +855,28 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 
 	if (g_editingField && down)
 	{
-		if (!Item_TextField_HandleKey(g_editItem, key))
+		if (g_editItem->type == ITEM_TYPE_COMBO)
 		{
-			Item_HandleTextFieldDeSelect(g_editItem);
+			Item_Combo_HandleKey(g_editItem, key);
+			Item_ComboDeSelect(g_editItem);
 			return;
 		}
-		else if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3)
+		else
 		{
-			Item_HandleTextFieldDeSelect(g_editItem);
-			Display_MouseMove(NULL, DC->cursorx, DC->cursory);
-		}
-		else if (key == K_TAB || key == K_UPARROW || key == K_DOWNARROW)
-		{
-			return;
+			if (!Item_TextField_HandleKey(g_editItem, key))
+			{
+				Item_HandleTextFieldDeSelect(g_editItem);
+				return;
+			}
+			else if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3)
+			{
+				Item_HandleTextFieldDeSelect(g_editItem);
+				Display_MouseMove(NULL, DC->cursorx, DC->cursory);
+			}
+			else if (key == K_TAB || key == K_UPARROW || key == K_DOWNARROW)
+			{
+				return;
+			}
 		}
 	}
 
@@ -1174,15 +1183,27 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 
 	for (i = 0; i < menu->itemCount; i++)
 	{
-		Item_Paint(menu->items[i]);
 		if (menu->items[i]->window.flags & WINDOW_MOUSEOVER)
 		{
 			item = menu->items[i];
+			if (!IS_EDITMODE(menu->items[i]))
+			{
+				Item_Paint(menu->items[i]);
+			}
+		}
+		else
+		{
+			Item_Paint(menu->items[i]);
 		}
 	}
 
+	// Draw the active item last and dont draw tooltop at this point..
+	if (item && IS_EDITMODE(item))
+	{
+		Item_Paint(item);
+	}
 	// draw tooltip data if we have it
-	if (DC->getCVarValue("ui_showtooltips") &&
+	else if (DC->getCVarValue("ui_showtooltips") &&
 		item != NULL &&
 		item->toolTipData != NULL &&
 		item->toolTipData->text != NULL &&

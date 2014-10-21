@@ -84,6 +84,8 @@
 #define CURSOR_ARROW            0x00000002
 #define CURSOR_SIZER            0x00000004
 
+#define TEXTFIELD(x) (x == ITEM_TYPE_EDITFIELD || x == ITEM_TYPE_NUMERICFIELD)
+
 #ifdef CGAME
 #define STRING_POOL_SIZE    128 * 1024
 #else
@@ -572,6 +574,8 @@ qboolean Menu_Parse(int handle, menuDef_t *menu);
 // Item
 void Item_Init(itemDef_t *item);
 qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down);
+qboolean Item_Combo_HandleKey(itemDef_t *item, int key);
+void Item_ComboDeSelect(itemDef_t *item);
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key);
 void Item_HandleTextFieldDeSelect(itemDef_t *item);
 qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down);
