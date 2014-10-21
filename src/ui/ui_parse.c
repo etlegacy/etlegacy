@@ -1586,7 +1586,7 @@ void Item_SetupKeywordHash(void)
 {
 	int i;
 
-	memset(itemParseKeywordHash, 0, sizeof(itemParseKeywordHash));
+	memset(itemParseKeywordHash, 0, sizeof(keywordHash_t *) * KEYWORDHASH_SIZE);
 	for (i = 0; itemParseKeywords[i].keyword; i++)
 	{
 		KeywordHash_Add(itemParseKeywordHash, &itemParseKeywords[i]);
@@ -2181,7 +2181,7 @@ void Menu_SetupKeywordHash(void)
 {
 	int i;
 
-	memset(menuParseKeywordHash, 0, sizeof(menuParseKeywordHash));
+	memset(menuParseKeywordHash, 0, sizeof(keywordHash_t *) * KEYWORDHASH_SIZE);
 	for (i = 0; menuParseKeywords[i].keyword; i++)
 	{
 		KeywordHash_Add(menuParseKeywordHash, &menuParseKeywords[i]);
