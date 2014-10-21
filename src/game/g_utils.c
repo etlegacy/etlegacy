@@ -406,8 +406,8 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 
 	if (hash == -1) // if there is no name (not empty string!) BG_StringHashValue returns -1
 	{
-		G_Printf("G_FindByTargetname WARNING: invalid match pointer");
-		//return NULL; ?!
+		G_Printf("G_FindByTargetname WARNING: invalid match pointer\n");
+		//return NULL; ?! - won't be found - NULL is returned anyway
 	}
 
 	if (!from)
@@ -510,7 +510,7 @@ gentity_t *G_PickTarget(char *targetname)
 
 	if (!num_choices)
 	{
-		G_DPrintf(S_COLOR_YELLOW "WARNING G_PickTarget: target %s not found or isn't in use - this might be a bug (returning NULL)\n", targetname);
+		G_Printf(S_COLOR_YELLOW "WARNING G_PickTarget: target %s not found or isn't in use - this might be a bug (returning NULL)\n", targetname);
 		return NULL;
 	}
 

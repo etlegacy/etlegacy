@@ -597,6 +597,10 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	Com_DPrintf("Going from CS_PRIMED to CS_ACTIVE for %s\n", client->name);
 	client->state = CS_ACTIVE;
 
+	// don't timeout when client enters the world (after bigger download times > sv_timeout->integer and SV_Netchan_Process inactivity)
+	// actually this resets sv_timeout/_dl vars on map changes
+	client->lastPacketTime = svs.time;
+
 	// server-side demo playback: prevent players from joining the game when a demo is replaying (particularly if the gametype is non-team based, by default the gamecode force players to join in)
 	if (sv.demoState == DS_PLAYBACK &&
 	    ((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer))        // check that it's a real player
