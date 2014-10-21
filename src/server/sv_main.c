@@ -233,7 +233,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 		SV_DemoWriteServerCommand((char *)message);
 	}
 
-	// send the data to all relevent clients
+	// send the data to all relevant clients
 	for (j = 0, client = svs.clients; j < sv_maxclients->integer ; j++, client++)
 	{
 		if (client->state < CS_PRIMED)
@@ -1211,7 +1211,7 @@ static void SV_CalcPings(void)
 
 /**
  * @brief If a packet has not been received from a client for timeout->integer
- * seconds, drop the conneciton.
+ * seconds, drop the connection.
  *
  * Server time is used instead of realtime to avoid dropping the local client
  * while debugging.
