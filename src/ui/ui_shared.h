@@ -493,23 +493,6 @@ typedef struct
 	float FPS;
 } displayContextDef_t;
 
-const char *String_Alloc(const char *p);
-void String_Init(void);
-void String_Report(void);
-void Init_Display(displayContextDef_t *dc);
-void Menu_Init(menuDef_t *menu);
-void Item_Init(itemDef_t *item);
-void Menu_PostParse(menuDef_t *menu);
-menuDef_t *Menu_GetFocused(void);
-void Menu_HandleKey(menuDef_t *menu, int key, qboolean down);
-void Menu_HandleMouseMove(menuDef_t *menu, float x, float y);
-void Menu_ScrollFeeder(menuDef_t *menu, int feeder, qboolean down);
-qboolean Float_Parse(char **p, float *f);
-qboolean Color_Parse(char **p, vec4_t *c);
-qboolean Int_Parse(char **p, int *i);
-qboolean Rect_Parse(char **p, rectDef_t *r);
-qboolean String_Parse(char **p, const char **out);
-qboolean Script_Parse(char **p, const char **out);
 void PC_SourceError(int handle, char *format, ...);
 void PC_SourceWarning(int handle, char *format, ...);
 qboolean PC_Float_Parse(int handle, float *f);
@@ -519,6 +502,43 @@ qboolean PC_Rect_Parse(int handle, rectDef_t *r);
 qboolean PC_String_Parse(int handle, const char **out);
 qboolean PC_Script_Parse(int handle, const char **out);
 qboolean PC_Char_Parse(int handle, char *out);
+
+// Window
+void Window_Init(Window *w);
+void Window_CloseCinematic(windowDef_t *window);
+void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle);
+
+// Display
+void Init_Display(displayContextDef_t *dc);
+int Display_VisibleMenuCount(void);
+void Display_CloseCinematics(void);
+displayContextDef_t *Display_GetContext(void);
+void *Display_CaptureItem(int x, int y);
+qboolean Display_MouseMove(void *p, int x, int y);
+int Display_CursorType(int x, int y);
+qboolean Display_KeyBindPending(void);
+void Display_CacheAll(void);
+void Display_HandleKey(int key, qboolean down, int x, int y);
+
+// Script
+qboolean Float_Parse(char **p, float *f);
+qboolean Color_Parse(char **p, vec4_t *c);
+qboolean Int_Parse(char **p, int *i);
+qboolean Rect_Parse(char **p, rectDef_t *r);
+qboolean String_Parse(char **p, const char **out);
+qboolean Script_Parse(char **p, const char **out);
+
+// Menu
+void Menu_Init(menuDef_t *menu);
+void Menu_PostParse(menuDef_t *menu);
+menuDef_t *Menu_GetFocused(void);
+void Menus_OpenByName(const char *p);
+menuDef_t *Menus_FindByName(const char *p);
+void Menus_ShowByName(const char *p);
+void Menus_CloseByName(const char *p);
+void Menu_HandleKey(menuDef_t *menu, int key, qboolean down);
+void Menu_HandleMouseMove(menuDef_t *menu, float x, float y);
+void Menu_ScrollFeeder(menuDef_t *menu, int feeder, qboolean down);
 int Menu_Count(void);
 menuDef_t *Menu_Get(int handle);
 void Menu_New(int handle);
@@ -528,24 +548,64 @@ void Menu_Reset(void);
 qboolean Menus_AnyFullScreenVisible(void);
 void  Menus_Activate(menuDef_t *menu);
 qboolean Menus_CaptureFuncActive(void);
-
-displayContextDef_t *Display_GetContext(void);
-void *Display_CaptureItem(int x, int y);
-qboolean Display_MouseMove(void *p, int x, int y);
-int Display_CursorType(int x, int y);
-qboolean Display_KeyBindPending(void);
-void Menus_OpenByName(const char *p);
-menuDef_t *Menus_FindByName(const char *p);
-void Menus_ShowByName(const char *p);
-void Menus_CloseByName(const char *p);
-void Display_HandleKey(int key, qboolean down, int x, int y);
-void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
+void Menu_UpdatePosition(menuDef_t *menu);
+itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu);
+itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu);
+void Menu_CloseCinematics(menuDef_t *menu);
+void Menu_FadeMenuByName(const char *p, qboolean *bAbort, qboolean fadeOut);
+void Menu_TransitionItemByName(menuDef_t *menu, const char *p, rectDef_t rectFrom, rectDef_t rectTo, int time, float amt);
+void Menu_OrbitItemByName(menuDef_t *menu, const char *p, float x, float y, float cx, float cy, int time);
+void Menu_RunCloseScript(menuDef_t *menu);
+int Menu_ItemsMatchingGroup(menuDef_t *menu, const char *name);
+itemDef_t *Menu_GetMatchingItemByNumber(menuDef_t *menu, int index, const char *name);
+void Menu_FadeItemByName(menuDef_t *menu, const char *p, qboolean fadeOut);
+itemDef_t *Menu_FindItemByName(menuDef_t *menu, const char *p);
+itemDef_t *Menu_ClearFocus(menuDef_t *menu);
+void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
+void Menu_SetupKeywordHash(void);
+qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y);
 void Menus_CloseAll(void);
 void Menu_Paint(menuDef_t *menu, qboolean forcePaint);
 void Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char *name);
-void Display_CacheAll(void);
+qboolean Menu_Parse(int handle, menuDef_t *menu);
 
-void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
+// Item
+void Item_Init(itemDef_t *item);
+qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down);
+qboolean Item_TextField_HandleKey(itemDef_t *item, int key);
+void Item_HandleTextFieldDeSelect(itemDef_t *item);
+qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down);
+void Item_Action(itemDef_t *item);
+qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag);
+void Item_HandleTextFieldSelect(itemDef_t *item);
+rectDef_t *Item_CorrectedTextRect(itemDef_t *item);
+qboolean Item_SettingShow(itemDef_t *item, qboolean fVoteTest);
+void Item_MouseEnter(itemDef_t *item, float x, float y);
+void Item_MouseLeave(itemDef_t *item);
+void Item_SetMouseOver(itemDef_t *item, qboolean focus);
+void Item_Paint(itemDef_t *item);
+void Item_SetupKeywordHash(void);
+void Item_SetScreenCoords(itemDef_t *item, float x, float y);
+qboolean Item_SetFocus(itemDef_t *item, float x, float y);
+void Item_HandleSaveValue(void);
+qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolean force);
+void Item_UpdatePosition(itemDef_t *item);
+void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s);
+void Item_Tooltip_Initialize(itemDef_t *item);
+void Item_MouseActivate(itemDef_t *item);
+void Item_KeyboardActivate(itemDef_t *item);
+
+// Generic
+const char *String_Alloc(const char *p);
+void String_Init(void);
+void String_Report(void);
+qboolean IsVisible(int flags);
+void ToWindowCoords(float *x, float *y, windowDef_t *window);
+void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, qboolean bFlags, float fadeAmount);
+qboolean FileExists(char *filename);
+void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
+qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y);
+qboolean Rect_ContainsPointN(rectDef_t *rect, float x, float y);
 
 void *UI_Alloc(int size);
 void UI_InitMemory(void);

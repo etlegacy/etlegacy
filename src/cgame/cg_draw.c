@@ -35,7 +35,7 @@
 
 #include "cg_local.h"
 
-char *BindingFromName(const char *cvar);
+char *Binding_FromName(const char *cvar);
 void Controls_GetConfig(void);
 void CG_DrawOverlays(void);
 int activeFont;
@@ -1743,8 +1743,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
 	{
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		str = va(CG_TranslateString("File complaint against %s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1757,8 +1757,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.applicationEndTime > cg.time && cgs.applicationClient >= 0)
 	{
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		str = va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1771,8 +1771,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.propositionEndTime > cg.time && cgs.propositionClient >= 0)
 	{
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		str = va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1785,8 +1785,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.invitationEndTime > cg.time && cgs.invitationClient >= 0)
 	{
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		str = va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1799,8 +1799,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -1)
 	{
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		str = CG_TranslateString("Make Fireteam private?");
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1813,8 +1813,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -1)
 	{
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		str = CG_TranslateString("Create a Fireteam?");
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1827,8 +1827,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -1)
 	{
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		str = "Join a Fireteam?";
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1843,8 +1843,8 @@ static void CG_DrawVote(void)
 	{
 		int sec;
 
-		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
-		Q_strncpyz(str2, BindingFromName("vote no"), 32);
+		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
 		// play a talk beep whenever it is modified
 		if (cgs.voteModified)
@@ -2149,7 +2149,7 @@ static void CG_DrawSpectatorMessage(void)
 		lastconfigGet = cg.time;
 	}
 
-	str2 = BindingFromName("openlimbomenu");
+	str2 = Binding_FromName("openlimbomenu");
 	if (!Q_stricmp(str2, "(openlimbomenu)"))
 	{
 		str2 = "ESCAPE";
@@ -2158,18 +2158,18 @@ static void CG_DrawSpectatorMessage(void)
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
 
-	str2 = BindingFromName("+attack");
+	str2 = Binding_FromName("+attack");
 	str  = va(CG_TranslateString("Press %s to follow next player"), str2);
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
 
-	str2 = BindingFromName("weapalt");
+	str2 = Binding_FromName("weapalt");
 	str  = va(CG_TranslateString("Press %s to follow previous player"), str2);
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
 
 #ifdef FEATURE_MULTIVIEW
-	str2 = BindingFromName("mvactivate");
+	str2 = Binding_FromName("mvactivate");
 	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2.0f;
@@ -2242,7 +2242,7 @@ static void CG_DrawLimboMessage(void)
 			return;
 		}
 
-		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), BindingFromName("+moveup"));
+		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), Binding_FromName("+moveup"));
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y + 2 * charHeight * 2.0f, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
@@ -2447,7 +2447,7 @@ static void CG_DrawWarmup(void)
 			{
 				char str1[32];
 
-				Q_strncpyz(str1, BindingFromName("ready"), 32);
+				Q_strncpyz(str1, Binding_FromName("ready"), 32);
 				if (!Q_stricmp(str1, "(?" "?" "?)"))
 				{
 					s2 = CG_TranslateString("Type ^3\\ready^7 in the console to start");

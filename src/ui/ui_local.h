@@ -253,6 +253,26 @@ extern vec4_t text_color_disabled;
 extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
 
+extern menuDef_t Menus[MAX_MENUS];      // defined menus
+extern int       menuCount;         // how many
+
+extern menuDef_t *modalMenuStack[MAX_MODAL_MENUS];
+extern int       modalMenuCount;
+
+extern qboolean g_waitingForKey;
+extern qboolean g_editingField;
+extern itemDef_t *g_editItem;
+extern itemDef_t *g_bindItem;
+
+extern void(*captureFunc)(void *p);
+extern void      *captureData;
+extern itemDef_t *itemCapture;
+
+#define DOUBLE_CLICK_DELAY 300
+extern int lastListBoxClickTime;
+
+extern qboolean debugMode;
+
 // ui_main.c
 void UI_Report(void);
 void UI_Load(void);
@@ -289,6 +309,9 @@ extern void UI_DrawConnectScreen(qboolean overlay);
 // ui_loadpanel.c
 extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 
+// Is this diffevent in other systems? OSX?
+#define K_CLIPBOARD(x) (tolower(x) == 'v' && DC->keyIsDown(K_CTRL))
+
 // new ui stuff
 #define MAX_HEADS 64
 #define MAX_ALIASES 64
@@ -321,6 +344,25 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define MAX_PBWIDTH     42
 
 #define MAX_PROFILES 64
+
+#define SCROLL_TIME_START           500
+#define SCROLL_TIME_ADJUST          150
+#define SCROLL_TIME_ADJUSTOFFSET    40
+#define SCROLL_TIME_FLOOR           20
+
+typedef struct scrollInfo_s
+{
+	int nextScrollTime;
+	int nextAdjustTime;
+	int adjustValue;
+	int scrollKey;
+	float xStart;
+	float yStart;
+	itemDef_t *item;
+	qboolean scrollDir;
+} scrollInfo_t;
+
+extern scrollInfo_t scrollInfo;
 
 typedef struct
 {
@@ -553,6 +595,8 @@ typedef struct
 
 extern uiInfo_t uiInfo;
 
+extern displayContextDef_t *DC;
+
 extern void UI_Init(void);
 extern void UI_Shutdown(void);
 extern void UI_KeyEvent(int key);
@@ -584,6 +628,14 @@ extern char *UI_Argv(int arg);
 extern char *UI_Cvar_VariableString(const char *var_name);
 extern void UI_Refresh(int time);
 extern void UI_KeyEvent(int key);
+
+// ui_shared.c
+int Binding_IDFromName(const char *name);
+void Binding_Set(int id, int b1, int b2);
+qboolean Binding_Check(int id, qboolean b1, int key);
+int Binding_Get(int id, qboolean b1);
+int Binding_Count(void);
+char *Binding_FromName(const char *cvar);
 
 // ui_syscalls.c
 void trap_Print(const char *string);
@@ -693,5 +745,7 @@ const char *UI_NameForCampaign(void);
 // 4:3 aspectratio is the default for this game engine..
 #define RATIO43     (4.0f / 3.0f)
 #define RPRATIO43   (1 / RATIO43)
+
+#define EDITFIELD_TEMP_CVAR         "ui_textfield_temp"
 
 #endif

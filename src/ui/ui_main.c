@@ -33,9 +33,6 @@
 
 #include "ui_local.h"
 
-extern qboolean g_waitingForKey;
-extern qboolean g_editingField;
-
 uiInfo_t uiInfo;
 
 static const char *MonthAbbrev[] =
@@ -86,10 +83,6 @@ static void UI_ParseGameInfo(const char *teamFile);
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 static char translated_yes[4], translated_no[4];
-
-extern displayContextDef_t *DC;
-
-extern itemDef_t *g_bindItem;
 
 void _UI_Init(int legacyClient);
 void _UI_Shutdown(void);

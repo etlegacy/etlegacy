@@ -75,14 +75,24 @@ FILE(GLOB CLIENT_SRC_REMOVE
 
 LIST(REMOVE_ITEM CLIENT_SRC ${CLIENT_SRC_REMOVE})
 
+# These files are shared with the CGAME from the UI library
+FILE(GLOB UI_SHARED
+	"src/ui/ui_shared.c"
+	"src/ui/ui_parse.c"
+	"src/ui/ui_script.c"
+	"src/ui/ui_menu.c"
+	"src/ui/ui_menuitem.c"
+)
+
 FILE(GLOB CGAME_SRC
 	"src/cgame/*.c"
 	"src/cgame/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
-	"src/ui/ui_shared.c"
 	"src/game/bg_*.c"
 )
+
+LIST(APPEND CGAME_SRC ${UI_SHARED})
 
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"

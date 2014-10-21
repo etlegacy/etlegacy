@@ -9,9 +9,7 @@
 #define GROUP_NAME		"grpMessageMode"
 
 // Ingame MessageMode Menu //
-
-menuDef
-{
+menuDef {
 	name		"ingame_messagemode"
 	visible		0
 	fullscreen	0
