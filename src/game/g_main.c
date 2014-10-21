@@ -357,7 +357,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_warmupLatch,                       "g_warmupLatch",                       "1",                          0,                                               0, qfalse},
 
 	{ &g_nextTimeLimit,                     "g_nextTimeLimit",                     "0",                          CVAR_WOLFINFO,                                   0, qfalse},
-	{ &g_currentRound,                      "g_currentRound",                      "0",                          CVAR_WOLFINFO,                                   0, qfalse, qtrue},
+	{ &g_currentRound,                      "g_currentRound",                      "0",                          CVAR_WOLFINFO,                                   0, qfalse, qfalse},
 	{ &g_altStopwatchMode,                  "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue, qtrue},
 	{ &g_gamestate,                         "gamestate",                           "-1",                         CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse},
 
@@ -1960,18 +1960,6 @@ void G_wipeCvars(void)
 
 	for (i = 0, pCvars = gameCvarTable; i < gameCvarTableSize; i++, pCvars++)
 	{
-		if (g_gametype.integer == GT_WOLF_STOPWATCH && strcmp(pCvars->cvarName, "g_currentRound"))
-		{
-			continue;
-		}
-
-		if (g_gametype.integer == GT_WOLF_LMS && (strcmp(pCvars->cvarName, "g_lms_currentMatch") ||
-		                                          strcmp(pCvars->cvarName, "g_lms_roundlimit") ||
-		                                          strcmp(pCvars->cvarName, "g_lms_matchlimit")))
-		{
-			continue;
-		}
-
 		if (pCvars->vmCvar && pCvars->fConfigReset)
 		{
 			G_Printf("set %s %s\n", pCvars->cvarName, pCvars->defaultString);
