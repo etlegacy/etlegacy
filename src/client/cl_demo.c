@@ -142,7 +142,7 @@ static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
 	return -1;
 }
 
-//REWIND AND FASTFORWARD
+// REWIND AND FASTFORWARD
 
 #if NEW_DEMOFUNC
 qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
@@ -291,7 +291,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 				goto alldone;
 				break;
 			case svc_snapshot:
-				//TODO: changed this check if it works
+				// TODO: changed this check if it works
 				CL_ParseSnapshot(&buf);
 				if (cl.snap.valid)
 				{
@@ -316,7 +316,7 @@ alldone:
 			return success;
 		}
 
-		//FIXME other ents not supported yet
+		// FIXME other ents not supported yet
 
 		// if the entities in the frame have fallen out of their
 		// circular buffer, we can't return it
@@ -326,7 +326,7 @@ alldone:
 			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
-			return qtrue;  //FIXME if you fix other ents
+			return qtrue;  // FIXME if you fix other ents
 		}
 
 		// write the snapshot
@@ -431,7 +431,7 @@ static void CL_DemoFastForward(double wantedTime)
 	di.Overf           = wantedTime - floor(wantedTime);
 	cl.serverTimeDelta = 0;
 
-	//TODO: fix this
+	// TODO: fix this
 	//VM_Call(cgvm, CG_TIME_CHANGE, cl.serverTime, (int)(Overf * SUBTIME_RESOLUTION));
 
 	di.seeking                        = qtrue;
@@ -483,7 +483,7 @@ static void CL_RewindDemo(double wantedTime)
 	DEMODEBUG("seeking to index %d %d   cl.serverTime:%d  cl.snap.serverTime:%d, new clc.lastExecutedServercommand %d  clc.serverCommandSequence %d\n", i, rb->seekPoint, cl.serverTime, cl.snap.serverTime, rb->clc.lastExecutedServerCommand, rb->clc.serverCommandSequence);
 	FS_Seek(clc.demofile, rb->seekPoint, FS_SEEK_SET);
 
-	//TODO: take a look at these hacks
+	// TODO: take a look at these hacks
 	di.numSnaps  = rb->numSnaps;
 	di.snapCount = i + 1;
 
@@ -492,7 +492,7 @@ static void CL_RewindDemo(double wantedTime)
 	memcpy(&cls, &rb->cls, sizeof(clientStatic_t));
 	di.Overf = 0;
 
-	//TODO: this is a hack to set the state to something valid
+	// TODO: this is a hack to set the state to something valid
 	cls.state = CA_ACTIVE;
 
 	CL_DemoFastForward(wantedTime);
@@ -643,16 +643,16 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 	cl.newSnapshots                                = qtrue;
 }
 
-//Do very shallow parse of the demo (could be extended) just to get times and snapshot count
+// Do very shallow parse of the demo (could be extended) just to get times and snapshot count
 static void CL_ParseDemo(void)
 {
 	int tstart   = 0;
 	int demofile = 0;
 
-	//Reset our demo data
+	// Reset our demo data
 	memset(&di, 0, sizeof(di));
 
-	//Parse start
+	// Parse start
 	di.gameStartTime = -1;
 	di.gameEndTime   = -1;
 	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
@@ -712,7 +712,7 @@ static void CL_ParseDemo(void)
 		clc.lastPacketTime = cls.realtime;
 		buf.readcount      = 0;
 
-		//parse
+		// parse
 		msg = &buf;
 		MSG_Bitstream(msg);
 
@@ -1720,7 +1720,7 @@ void CL_PauseDemo_f(void)
 	}
 	else
 	{
-		//TODO: this is just a hack, actually fix the cl_freezeDemo instead of this
+		// TODO: this is just a hack, actually fix the cl_freezeDemo instead of this
 		CL_DemoSeekMs(0, pauseTime);
 	}
 #endif
