@@ -367,7 +367,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_userAlliedRespawnTime,             "g_userAlliedRespawnTime",             "0",                          0,                                               0, qfalse, qtrue},
 	{ &g_userAxisRespawnTime,               "g_userAxisRespawnTime",               "0",                          0,                                               0, qfalse, qtrue},
 
-	{ &g_swapteams,                         "g_swapteams",                         "0",                          CVAR_ROM,                                        0, qfalse, qtrue},
+	{ &g_swapteams,                         "g_swapteams",                         "0",                          CVAR_ROM,                                        0, qfalse, qfalse},
 
 	{ &g_log,                               "g_log",                               "",                           CVAR_ARCHIVE,                                    0, qfalse},
 	{ &g_logSync,                           "g_logSync",                           "0",                          CVAR_ARCHIVE,                                    0, qfalse},
@@ -490,13 +490,13 @@ cvarTable_t gameCvarTable[] =
 	{ &g_lms_teamForceBalance,              "g_lms_teamForceBalance",              "1",                          CVAR_ARCHIVE },
 	{ &g_lms_roundlimit,                    "g_lms_roundlimit",                    "3",                          CVAR_ARCHIVE },
 	{ &g_lms_matchlimit,                    "g_lms_matchlimit",                    "2",                          CVAR_ARCHIVE },
-	{ &g_lms_currentMatch,                  "g_lms_currentMatch",                  "0",                          CVAR_ROM,                                        0, qfalse, qtrue},
+	{ &g_lms_currentMatch,                  "g_lms_currentMatch",                  "0",                          CVAR_ROM,                                        0, qfalse, qfalse},
 	{ &g_lms_lockTeams,                     "g_lms_lockTeams",                     "0",                          CVAR_ARCHIVE },
 	{ &g_lms_followTeamOnly,                "g_lms_followTeamOnly",                "1",                          CVAR_ARCHIVE },
-	{ &g_axiswins,                          "g_axiswins",                          "0",                          CVAR_ROM,                                        0, qfalse, qtrue},
-	{ &g_alliedwins,                        "g_alliedwins",                        "0",                          CVAR_ROM,                                        0, qfalse, qtrue},
-	{ &g_axismapxp,                         "g_axismapxp",                         "0",                          CVAR_ROM,                                        0, qfalse, qtrue},
-	{ &g_alliedmapxp,                       "g_alliedmapxp",                       "0",                          CVAR_ROM,                                        0, qfalse, qtrue},
+	{ &g_axiswins,                          "g_axiswins",                          "0",                          CVAR_ROM,                                        0, qfalse, qfalse},
+	{ &g_alliedwins,                        "g_alliedwins",                        "0",                          CVAR_ROM,                                        0, qfalse, qfalse},
+	{ &g_axismapxp,                         "g_axismapxp",                         "0",                          CVAR_ROM,                                        0, qfalse, qfalse},
+	{ &g_alliedmapxp,                       "g_alliedmapxp",                       "0",                          CVAR_ROM,                                        0, qfalse, qfalse},
 
 	{ &g_currentCampaign,                   "g_currentCampaign",                   "",                           CVAR_WOLFINFO | CVAR_ROM,                        0,     },
 	{ &g_currentCampaignMap,                "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,                        0,     },
