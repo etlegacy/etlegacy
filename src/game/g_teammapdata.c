@@ -1200,7 +1200,6 @@ void G_UpdateTeamMapData(void)
 												ent->client->landmineSpotted->count2 += 50;
 												if (ent->client->landmineSpotted->count2 >= 250)
 												{
-													//int k;
 													ent->client->landmineSpotted->count2 = 250;
 
 													ent->client->landmineSpotted->s.modelindex2 = 1;
@@ -1217,12 +1216,6 @@ void G_UpdateTeamMapData(void)
 														pm->s.effect2Time = TEAM_AXIS;
 														pm->s.effect3Time = ent - g_entities;
 													}
-
-													/*	for( k = 0; k < MAX_CLIENTS; k++ ) {
-													    if(g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam) {
-													        trap_SendServerCommand( k, va( "tt \"LANDMINES SPOTTED BY %s^0<STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n", ent->client->pers.netname));
-													    }
-													}*/
 
 													trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
 
@@ -1244,7 +1237,6 @@ void G_UpdateTeamMapData(void)
 												ent->client->landmineSpotted->count2 += 50;
 												if (ent->client->landmineSpotted->count2 >= 250)
 												{
-													//int k;
 													ent->client->landmineSpotted->count2 = 250;
 
 													ent->client->landmineSpotted->s.modelindex2 = 1;
@@ -1261,12 +1253,6 @@ void G_UpdateTeamMapData(void)
 														pm->s.effect2Time = TEAM_ALLIES;
 														pm->s.effect3Time = ent - g_entities;
 													}
-
-													/*for( k = 0; k < MAX_CLIENTS; k++ ) {
-													    if(g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam) {
-													        trap_SendServerCommand( k, va( "tt \"LANDMINES SPOTTED BY %s^0<STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n", ent->client->pers.netname));
-													    }
-													}*/
 
 													trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
 
@@ -1292,51 +1278,6 @@ void G_UpdateTeamMapData(void)
 							break;
 						}
 					}
-
-/*					if(ent->client->landmineSpotted && !ent->client->landmineSpotted->s.modelindex2) {
-                        ent->client->landmineSpotted->count2 += 10;
-                        if(ent->client->landmineSpotted->count2 >= 250) {
-                            int k;
-                            ent->client->landmineSpotted->count2 = 250;
-
-                            ent->client->landmineSpotted->s.modelindex2 = 1;
-
-                            // for marker
-                            ent->client->landmineSpotted->s.frame = rand() % 20;
-
-                            for( k = 0; k < MAX_CLIENTS; k++ ) {
-                                if(g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam) {
-                                    trap_SendServerCommand( k, va( "tt \"LANDMINES SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n" ));
-                                }
-                            }
-                            trap_SendServerCommand( ent-g_entities, "cp \"Landmine Revealed\n\"" );
-
-                            AddScore( ent, 1 );
-
-                            G_AddSkillPoints( ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f );
-                            G_DebugAddSkillPoints( ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine" );
-                        }
-                    }*/
-
-/*					{
-                        // find any landmines that don't actually exist anymore, see if the covert ops can see the spot and if so - wipe them
-                        mapEntityData_Team_t *teamList = ent->client->sess.sessionTeam == TEAM_AXIS ? &mapEntityData[0] : &mapEntityData[1];
-
-                        mEnt = teamList->activeMapEntityData.next;
-                        while( mEnt && mEnt != &teamList->activeMapEntityData ) {
-                            if( mEnt->type == ME_LANDMINE && mEnt->entNum == -1 ) {
-                                if( G_VisibleFromBinoculars( ent, NULL, mEnt->org ) ) {
-                                    mEnt = G_FreeMapEntityData( teamList, mEnt );
-
-                                    trap_SendServerCommand( ent-g_entities, "print \"Old Landmine Cleared\n\"" );
-                                    AddScore( ent, 1 );
-                                    continue;
-                                }
-                            }
-
-                            mEnt = mEnt->next;
-                        }
-                    }*/
 				}
 			}
 		}
