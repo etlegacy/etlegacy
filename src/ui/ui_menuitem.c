@@ -2487,14 +2487,14 @@ void Item_Multi_Paint(itemDef_t *item)
 
 void Item_Combo_Paint(itemDef_t *item)
 {
-	vec4_t     itemColor;
-	const char *text = "";
-	int selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
-	menuDef_t  *parent = (menuDef_t *)item->parent;
-	rectDef_t rect, selectorRect;
-	multiDef_t *multiPtr;
-	float textboxW = 0.f, value = 0;
-	int i;
+	vec4_t       itemColor;
+	const char   *text              = "";
+	int          selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
+	menuDef_t    *parent            = (menuDef_t *)item->parent;
+	rectDef_t    rect, selectorRect;
+	multiDef_t   *multiPtr;
+	float        textboxW = 0.f, value = 0;
+	int          i;
 	static float borderOffset = 4.f;
 
 	text = Item_Multi_Setting(item);
@@ -2554,10 +2554,10 @@ void Item_Combo_Paint(itemDef_t *item)
 
 	if (IS_EDITMODE(item))
 	{
-		float height = 0;
-		vec4_t lowColor, redishColor;
-		vec4_t *currentColor = NULL;
-		rectDef_t textRect = { selectedTextOffset, 0.f, 0.f, 12.f };
+		float     height = 0;
+		vec4_t    lowColor, redishColor;
+		vec4_t    *currentColor = NULL;
+		rectDef_t textRect      = { selectedTextOffset, 0.f, 0.f, 12.f };
 
 		lowColor[0] = 0.8 * itemColor[0];
 		lowColor[1] = 0.8 * itemColor[1];
@@ -2581,7 +2581,7 @@ void Item_Combo_Paint(itemDef_t *item)
 
 			if (Rect_ContainsPoint(&textRect, DC->cursorx, DC->cursory))
 			{
-				currentColor = &itemColor;
+				currentColor    = &itemColor;
 				item->cursorPos = i;
 			}
 			else if (multiPtr->cvarValue[i] == value)

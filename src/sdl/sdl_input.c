@@ -1008,10 +1008,10 @@ static void IN_WindowResize(SDL_Event *e)
 /*
 static void IN_WindowFocusLost()
 {
-	if (cls.rendererStarted && cls.glconfig.isFullscreen)
-	{
-		Cbuf_ExecuteText(EXEC_NOW, "minimize");
-	}
+    if (cls.rendererStarted && cls.glconfig.isFullscreen)
+    {
+        Cbuf_ExecuteText(EXEC_NOW, "minimize");
+    }
 }
 */
 
@@ -1165,8 +1165,8 @@ static void IN_ProcessEvents(void)
 				Cvar_SetValue("com_minimized", 0);
 				break;
 			case SDL_WINDOWEVENT_FOCUS_LOST:
-				// disabled for now (causes issues with vid_restart
-				//IN_WindowFocusLost();
+			// disabled for now (causes issues with vid_restart
+			//IN_WindowFocusLost();
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
 				Cvar_SetValue("com_unfocused", 1);
