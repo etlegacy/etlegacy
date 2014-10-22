@@ -34,6 +34,36 @@
 
 #include "cg_local.h"
 
+// Color/font info used for all overlays (below)
+#define COLOR_BG            { 0.0f, 0.0f, 0.0f, 0.6f }
+#define COLOR_BORDER        { 0.5f, 0.5f, 0.5f, 0.5f }
+#define COLOR_BG_TITLE      { 0.16, 0.2f, 0.17f, 0.8f }
+#define COLOR_BG_VIEW       { 0.16, 0.2f, 0.17f, 0.8f }
+#define COLOR_BORDER_TITLE  { 0.1f, 0.1f, 0.1f, 0.2f }
+#define COLOR_BORDER_VIEW   { 0.2f, 0.2f, 0.2f, 0.4f }
+#define COLOR_HDR           { 0.6f, 0.6f, 0.6f, 1.0f }
+#define COLOR_HDR2          { 0.6f, 0.6f, 0.4f, 1.0f }
+#define COLOR_TEXT          { 0.625f, 0.625f, 0.6f, 1.0f }
+
+#define FONT_HEADER         &cgs.media.limboFont1
+#define FONT_SUBHEADER      &cgs.media.limboFont1_lo
+#define FONT_TEXT           &cgs.media.limboFont2
+
+vec4_t color_bg_title = COLOR_BG_TITLE;
+vec4_t color_border1  = COLOR_BORDER;
+vec4_t color_bg       = COLOR_BG_VIEW;
+vec4_t color_border   = COLOR_BORDER_VIEW;
+vec4_t color_hdr      = COLOR_HDR2;
+vec4_t color_name     = COLOR_TEXT;
+
+#ifdef FEATURE_MULTIVIEW
+#define VD_X    4
+#define VD_Y    78
+#define VD_SCALE_X_HDR  0.25f
+#define VD_SCALE_Y_HDR  0.30f
+#define VD_SCALE_X_NAME 0.30f
+#define VD_SCALE_Y_NAME 0.30f
+
 /*
 ======================
 CG_LoadingString
@@ -138,6 +168,123 @@ void CG_ShowHelp_Off(int *status)
 	}
 }
 
+void CG_DemoControlButtonRender(panel_button_t *button)
+{
+	if (button->data[0])
+	{
+		CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, color_bg_title);
+		CG_DrawRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, color_border);
+		//BG_PanelButtonsRender_Text(button);
+
+		CG_Text_Paint_Ext(button->rect.x + button->rect.w * 0.4f, button->rect.y + button->rect.h * 0.7f, button->font->scalex, button->font->scaley, button->font->colour, button->text, 0.0f, 0, button->font->style, button->font->font);
+	}
+	else
+	{
+		float demoStatus = (float)((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
+		//borderColor
+		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorGreen, NULL, color_border1, demoStatus, BAR_BORDER);
+	}
+}
+
+qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
+{
+	if (key != K_MOUSE1 && key != K_MOUSE2)
+	{
+		return qfalse;
+	}
+
+	switch (button->data[0])
+	{
+	case 0:
+	{
+		int   result = -1;
+		float offset = cgDC.cursorx - button->rect.x;
+		offset = offset / button->rect.w;
+		result = (int)(cg.demoinfo->firstTime + ((cg.demoinfo->lastTime - cg.demoinfo->firstTime) * offset));
+		trap_SendConsoleCommand(va("seekservertime %i", result));
+	}
+	break;
+	case 1:
+		trap_SendConsoleCommand("rewind 5");
+		break;
+	case 2:
+		trap_SendConsoleCommand("pausedemo");
+		break;
+	case 3:
+		trap_SendConsoleCommand("fastforward 5");
+		break;
+	default:
+		break;
+	}
+	return qtrue;
+}
+
+qboolean CG_DemoControlButtonUp(panel_button_t *button, int key)
+{
+	return qfalse;
+}
+
+panel_button_t demoSliderButton =
+{
+	NULL,
+	NULL,
+	{ 0,                       0,  0, 0 },
+	{ 0,                       0,  0, 0, 0, 0, 0, 0},
+	NULL,                      /* font     */
+	CG_DemoControlButtonDown,  /* keyDown  */
+	CG_DemoControlButtonUp,    /* keyUp    */
+	CG_DemoControlButtonRender,
+	NULL,
+};
+
+panel_button_t demoRewindButton =
+{
+	NULL,
+	"<<",
+	{ 0,                       0,  0, 0 },
+	{ 1,                       0,  0, 0, 0, 0, 0, 0},
+	NULL,                      /* font     */
+	CG_DemoControlButtonDown,  /* keyDown  */
+	CG_DemoControlButtonUp,    /* keyUp    */
+	CG_DemoControlButtonRender,
+	NULL,
+};
+
+panel_button_t demoPauseButton =
+{
+	NULL,
+	"||",
+	{ 0,                       0,  0, 0 },
+	{ 2,                       0,  0, 0, 0, 0, 0, 0},
+	NULL,                      /* font     */
+	CG_DemoControlButtonDown,  /* keyDown  */
+	CG_DemoControlButtonUp,    /* keyUp    */
+	CG_DemoControlButtonRender,
+	NULL,
+};
+
+panel_button_t demoFFButton =
+{
+	NULL,
+	">>",
+	{ 0,                       0,  0, 0 },
+	{ 3,                       0,  0, 0, 0, 0, 0, 0},
+	NULL,                      /* font     */
+	CG_DemoControlButtonDown,  /* keyDown  */
+	CG_DemoControlButtonUp,    /* keyUp    */
+	CG_DemoControlButtonRender,
+	NULL,
+};
+
+static panel_button_t *demoControlButtons[] =
+{
+	&demoSliderButton,
+	&demoRewindButton,
+	&demoPauseButton,
+	&demoFFButton,
+	NULL
+};
+
 // Demo playback key catcher support
 void CG_DemoClick(int key, qboolean down)
 {
@@ -150,6 +297,11 @@ void CG_DemoClick(int key, qboolean down)
 	}
 
 	cgs.fKeyPressed[key] = down;
+
+	if (BG_PanelButtonsKeyEvent(key, down, demoControlButtons))
+	{
+		return;
+	}
 
 	switch (key)
 	{
@@ -417,34 +569,6 @@ void CG_DemoClick(int key, qboolean down)
 		return;
 	}
 }
-
-// Color/font info used for all overlays (below)
-#define COLOR_BG            { 0.0f, 0.0f, 0.0f, 0.6f }
-#define COLOR_BORDER        { 0.5f, 0.5f, 0.5f, 0.5f }
-#define COLOR_BG_TITLE      { 0.16, 0.2f, 0.17f, 0.8f }
-#define COLOR_BG_VIEW       { 0.16, 0.2f, 0.17f, 0.8f }
-#define COLOR_BORDER_TITLE  { 0.1f, 0.1f, 0.1f, 0.2f }
-#define COLOR_BORDER_VIEW   { 0.2f, 0.2f, 0.2f, 0.4f }
-#define COLOR_HDR           { 0.6f, 0.6f, 0.6f, 1.0f }
-#define COLOR_HDR2          { 0.6f, 0.6f, 0.4f, 1.0f }
-#define COLOR_TEXT          { 0.625f, 0.625f, 0.6f, 1.0f }
-
-#define FONT_HEADER         &cgs.media.limboFont1
-#define FONT_SUBHEADER      &cgs.media.limboFont1_lo
-#define FONT_TEXT           &cgs.media.limboFont2
-
-vec4_t color_bg     = COLOR_BG_VIEW;
-vec4_t color_border = COLOR_BORDER_VIEW;
-vec4_t color_hdr    = COLOR_HDR2;
-vec4_t color_name   = COLOR_TEXT;
-
-#ifdef FEATURE_MULTIVIEW
-#define VD_X    4
-#define VD_Y    78
-#define VD_SCALE_X_HDR  0.25f
-#define VD_SCALE_Y_HDR  0.30f
-#define VD_SCALE_X_NAME 0.30f
-#define VD_SCALE_Y_NAME 0.30f
 
 qboolean CG_ViewingDraw()
 {
@@ -1271,6 +1395,65 @@ void CG_ObjectivesDraw()
 #define DH_Y    -60     // spacing from bottom
 #define DH_W    148
 
+void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor, int tSpacing, vec4_t bgColorTitle, vec4_t borderColorTitle, float hScale, float hScaleY, vec4_t hdrColor2, int hStyle, fontInfo_t *hFont)
+{
+	static panel_button_text_t demoControlTxt;
+	int                        i;
+	/*
+	{
+	0.2f, 0.2f,
+	{ 1.0f, 1.0f, 1.0f, 0.5f },
+	ITEM_TEXTSTYLE_SHADOWED, 0,
+	&cgs.media.limboFont2,
+	};
+	*/
+	demoControlTxt.scalex = hScale;
+	demoControlTxt.scaley = hScaleY;
+	Vector4Copy(hdrColor2, demoControlTxt.colour);
+	demoControlTxt.style = ITEM_ALIGN_CENTER;
+	demoControlTxt.align = 0;
+	demoControlTxt.font  = hFont;
+
+	CG_DrawRect(x, y, w, 50, 1, borderColor);
+	CG_FillRect(x, y, w, 50, bgColor);
+
+	// Header
+	CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
+	CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
+	CG_Text_Paint_Ext(x + 4, y + 1 + tSpacing, hScale, hScaleY, hdrColor2, CG_TranslateString("DEMO STATUS"), 0.0f, 0, hStyle, hFont);
+
+
+	for (i = 0; i < 4; i++)
+	{
+		if (i)
+		{
+			Vector4Set(demoControlButtons[i]->rect.rect, (x + (i * (w / 4)) - 15), y + 30, 30, 15);
+		}
+		else
+		{
+			Vector4Set(demoControlButtons[i]->rect.rect, x + 2, y + 15, w - 4, 12);
+		}
+
+		demoControlButtons[i]->font = &demoControlTxt;
+	}
+	BG_PanelButtonsRender(demoControlButtons);
+
+	// render cursor
+	trap_R_SetColor(NULL);
+	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+
+	/*
+	CG_DrawRect(BOFF(1), y + 30, 30, 15, 1, borderColor);
+	CG_FillRect(BOFF(1), y + 30, 30, 15, bgColorTitle);
+
+	CG_DrawRect(BOFF(2), y + 30, 30, 15, 1, borderColor);
+	CG_FillRect(BOFF(2), y + 30, 30, 15, bgColorTitle);
+
+	CG_DrawRect(BOFF(3), y + 30, 30, 15, 1, borderColor);
+	CG_FillRect(BOFF(3), y + 30, 30, 15, bgColorTitle);
+	*/
+}
+
 void CG_DemoHelpDraw(void)
 {
 	if (cg.demohelpWindow == SHOW_OFF)
@@ -1339,7 +1522,7 @@ void CG_DemoHelpDraw(void)
 		    (cg.mvTotalClients > 1) ? 12 :
 #endif
 		    0);
-		x = SCREEN_WIDTH + DH_X - w;
+		x = Ccg_WideX(SCREEN_WIDTH) + DH_X - w;
 		h = tSpacing + 9 +
 		    tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
@@ -1381,29 +1564,8 @@ void CG_DemoHelpDraw(void)
 
 		if (cg.legacyClient && cg.demoinfo)
 		{
-			float demoStatus = (float)((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
-#define BOFF(i) (x + (i * (w / 4)) - 15)
-			y -= 60;
-
-			CG_DrawRect(x, y, w, 50, 1, borderColor);
-			CG_FillRect(x, y, w, 50, bgColor);
-
-			// Header
-			CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
-			CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
-			CG_Text_Paint_Ext(x + 4, y + 1 + tSpacing, hScale, hScaleY, hdrColor2, CG_TranslateString("DEMO STATUS"), 0.0f, 0, hStyle, hFont);
-			CG_FilledBar(x + 2, y + 15, w - 4, 12, colorGreen, NULL, borderColor, demoStatus, BAR_BORDER);
-
-			CG_DrawRect(BOFF(1), y + 30, 30, 15, 1, borderColor);
-			CG_FillRect(BOFF(1), y + 30, 30, 15, bgColorTitle);
-
-			CG_DrawRect(BOFF(2), y + 30, 30, 15, 1, borderColor);
-			CG_FillRect(BOFF(2), y + 30, 30, 15, bgColorTitle);
-
-			CG_DrawRect(BOFF(3), y + 30, 30, 15, 1, borderColor);
-			CG_FillRect(BOFF(3), y + 30, 30, 15, bgColorTitle);
-
-			y += 70;
+			CG_DrawDemoControls(x, y - 60, w, borderColor, bgColor, tSpacing, bgColorTitle, borderColorTitle, hScale, hScaleY, hdrColor2, hStyle, hFont);
+			y += 10;
 		}
 
 		CG_DrawRect(x, y, w, h, 1, borderColor);
@@ -1502,8 +1664,8 @@ void CG_SpecHelpDraw(void)
 			{ "spechelp", "help on/off"        }
 		};
 
-		int i, x, y = SCREEN_HEIGHT, w, h;
-		int len, maxlen = 0;
+		int  i, x, y = SCREEN_HEIGHT, w, h;
+		int  len, maxlen = 0;
 		char format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
 		char *lines[16];
 
@@ -1514,18 +1676,18 @@ void CG_SpecHelpDraw(void)
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int hStyle        = ITEM_TEXTSTYLE_SHADOWED;
-		float hScale      = 0.16f;
-		float hScaleY     = 0.21f;
-		fontInfo_t *hFont = FONT_HEADER;
-		vec4_t hdrColor2  = COLOR_HDR2;     // text
+		int        hStyle    = ITEM_TEXTSTYLE_SHADOWED;
+		float      hScale    = 0.16f;
+		float      hScaleY   = 0.21f;
+		fontInfo_t *hFont    = FONT_HEADER;
+		vec4_t     hdrColor2 = COLOR_HDR2;  // text
 
 		// Text settings
-		int tStyle        = ITEM_TEXTSTYLE_SHADOWED;
-		int tSpacing      = 9;          // Should derive from CG_Text_Height_Ext
-		float tScale      = 0.19f;
-		fontInfo_t *tFont = FONT_TEXT;
-		vec4_t tColor     = COLOR_TEXT;     // text
+		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
+		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
+		float      tScale   = 0.19f;
+		fontInfo_t *tFont   = FONT_TEXT;
+		vec4_t     tColor   = COLOR_TEXT;   // text
 
 		float diff = cg.fadeTime - trap_Milliseconds();
 

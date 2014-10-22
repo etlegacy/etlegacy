@@ -2487,9 +2487,9 @@ void Item_Multi_Paint(itemDef_t *item)
 
 void Item_Combo_Paint(itemDef_t *item)
 {
-	vec4_t       itemColor, backColor;
-	const char   *text              = "";
-	int          selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
+	vec4_t     itemColor, backColor;
+	const char *text              = "";
+	int        selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
 	//menuDef_t    *parent            = (menuDef_t *)item->parent;
 	rectDef_t    rect, selectorRect;
 	multiDef_t   *multiPtr;
@@ -2551,7 +2551,7 @@ void Item_Combo_Paint(itemDef_t *item)
 
 	DC->fillRect(rect.x, rect.y, rect.w, rect.h, backColor);
 	DC->drawRect(rect.x, rect.y, rect.w, rect.h, item->window.borderSize, item->window.borderColor);
-	
+
 	//DC->fillRect(selectorRect.x, selectorRect.y, selectorRect.w, selectorRect.h, backColor);
 	DC->drawRect(selectorRect.x, selectorRect.y, selectorRect.w, selectorRect.h, item->window.borderSize, item->window.borderColor);
 

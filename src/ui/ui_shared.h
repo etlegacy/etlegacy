@@ -123,12 +123,16 @@
 #define SLIDER_THUMB_HEIGHT 12.0    // 20.0
 #define NUM_CROSSHAIRS      16
 
-typedef struct rectDef_s
+typedef union rectDef_s
 {
-	float x;    // horiz position
-	float y;    // vert position
-	float w;    // width
-	float h;    // height;
+	struct
+	{
+		float x;    // horiz position
+		float y;    // vert position
+		float w;    // width
+		float h;    // height;
+	};
+	vec4_t rect;
 } rectDef_t;
 
 typedef rectDef_t Rectangle;
