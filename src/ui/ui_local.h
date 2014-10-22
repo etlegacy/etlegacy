@@ -275,7 +275,8 @@ extern qboolean debugMode;
 
 #define SET_EDITITEM(x) g_editingField = qtrue; g_editItem = x;
 #define CLEAR_EDITITEM() g_editingField = qfalse; g_editItem = NULL;
-#define IS_EDITMODE(x) (x->window.flags & WINDOW_HASFOCUS && g_editingField) 
+#define IS_EDITMODE(x) (x->window.flags & WINDOW_HASFOCUS && g_editingField)
+#define COMBO_SELECTORCHAR "V"
 
 // ui_main.c
 void UI_Report(void);

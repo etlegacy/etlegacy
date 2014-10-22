@@ -2488,14 +2488,13 @@ void Item_Combo_Paint(itemDef_t *item)
 {
 	vec4_t     itemColor;
 	const char *text = "";
-	int offset1 = 0, offset2 = 0;
+	int selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
 	menuDef_t  *parent = (menuDef_t *)item->parent;
-	static int diudiu = 0;
-
-	if (item->window.flags & WINDOW_HASFOCUS)
-	{
-		//Com_Printf("COmmer haar %i\n", diudiu++);
-	}
+	rectDef_t rect, selectorRect;
+	multiDef_t *multiPtr;
+	float textboxW = 0.f, value = 0;
+	int i;
+	static float borderOffset = 4.f;
 
 	text = Item_Multi_Setting(item);
 
@@ -2504,25 +2503,60 @@ void Item_Combo_Paint(itemDef_t *item)
 	if (item->text)
 	{
 		Item_Text_Paint(item);
-		offset1 = item->textRect.x + item->textRect.w + 8;
+		selectedTextOffset = item->textRect.x + item->textRect.w + 8;
 	}
 	else
 	{
-		offset1 = item->textRect.x;
+		selectedTextOffset = item->textRect.x;
 	}
 
-	offset2 = DC->textWidth(text, item->textscale, 0) + offset1 + 8;
+
+	multiPtr = (multiDef_t *)item->typeData;
+	if (!multiPtr || multiPtr->strDef)
+	{
+		return;
+	}
+	else
+	{
+		value = DC->getCVarValue(item->cvar);
+	}
+
+	for (i = 0; i < multiPtr->count; i++)
+	{
+		temp = DC->textWidth(multiPtr->cvarList[i], item->textscale, 0) + borderOffset;
+		if (temp > widestText)
+		{
+			widestText = temp;
+		}
+	}
+
+	selectorOffset = widestText + selectedTextOffset + 8 + borderOffset;
+
+	selectorSize = DC->textWidth(COMBO_SELECTORCHAR, item->textscale, 0);
+
+	rect.x = selectedTextOffset;
+	rect.y = item->textRect.y - item->textRect.h - borderOffset;
+	rect.w = widestText + 16 + selectorSize + borderOffset;
+	rect.h = item->textRect.h + (borderOffset * 2);
+
+	DC->fillRect(rect.x, rect.y, rect.w, rect.h, item->window.backColor);
+	DC->drawRect(rect.x, rect.y, rect.w, rect.h, item->window.borderSize, item->window.borderColor);
+
+	selectorRect.x = rect.x - (rect.w - selectorSize - 8 - (borderOffset * 2));
+	selectorRect.y = rect.y;
+	selectorRect.w = selectorSize + 8 + (borderOffset * 2);
+	selectorRect.h = rect.h;
+	DC->drawRect(selectorRect.x, selectorRect.y, selectorRect.w, selectorRect.h, item->window.borderSize, item->window.borderColor);
+
+	DC->drawText(selectedTextOffset + borderOffset, item->textRect.y, item->textscale, itemColor, text, 0, 0, item->textStyle);
+	DC->drawText(selectorOffset, item->textRect.y, item->textscale, itemColor, COMBO_SELECTORCHAR, 0, 0, item->textStyle);
 
 	if (IS_EDITMODE(item))
 	{
-		int i = 0;
-		float borderSize = 4.f;
-		float value = 0;
-		float width = 0, height = 0, temp = 0;
-		multiDef_t *multiPtr;
+		float height = 0;
 		vec4_t lowColor, redishColor;
 		vec4_t *currentColor = NULL;
-		rectDef_t textRect = { offset1, 0.f, 0.f, 12.f };
+		rectDef_t textRect = { selectedTextOffset, 0.f, 0.f, 12.f };
 
 		lowColor[0] = 0.8 * itemColor[0];
 		lowColor[1] = 0.8 * itemColor[1];
@@ -2532,36 +2566,17 @@ void Item_Combo_Paint(itemDef_t *item)
 		memcpy(&redishColor, &lowColor, sizeof(vec4_t));
 		redishColor[0] = 1.f;
 
-		multiPtr = (multiDef_t *)item->typeData;
-		if (multiPtr->strDef)
-		{
-			return;
-		}
-		else
-		{
-			value = DC->getCVarValue(item->cvar);
-		}
-
-		for (i = 0; i < multiPtr->count; i++)
-		{
-			temp = DC->textWidth(multiPtr->cvarList[i], item->textscale, 0) + borderSize;
-			if (temp > width)
-			{
-				width = temp;
-			}
-		}
-
-		textRect.w = width;
+		textRect.w = widestText;
 
 		height = (i * 12.f) + 1.f;
 
-		DC->fillRect(offset1, item->textRect.y - item->textRect.h, width + 8, height, item->window.backColor);
+		DC->fillRect(rect.x, item->textRect.y + borderOffset, rect.w, height, item->window.backColor);
 
 		item->cursorPos = -1;
 
 		for (i = 0; i < multiPtr->count; i++)
 		{
-			textRect.y = item->textRect.y + (i * 12.f) + .5f - item->textRect.h;
+			textRect.y = item->textRect.y + (i * 12.f) + 2.f + borderOffset;
 
 			if (Rect_ContainsPoint(&textRect, DC->cursorx, DC->cursory))
 			{
@@ -2577,15 +2592,10 @@ void Item_Combo_Paint(itemDef_t *item)
 				currentColor = &lowColor;
 			}
 
-			DC->drawText(offset1 + borderSize, item->textRect.y + (i * 12.f) + .5f, item->textscale, *currentColor, multiPtr->cvarList[i], 0, 0, item->textStyle);
+			DC->drawText(selectedTextOffset + borderOffset, item->textRect.y + (i * 12.f) + 2.f + item->textRect.h + borderOffset, item->textscale, *currentColor, multiPtr->cvarList[i], 0, 0, item->textStyle);
 		}
 
-		DC->drawRect(offset1, item->textRect.y - item->textRect.h, width + 8, height, 1, item->window.borderColor);
-	}
-	else
-	{
-		DC->drawText(offset1, item->textRect.y, item->textscale, itemColor, text, 0, 0, item->textStyle);
-		DC->drawText(offset2, item->textRect.y, item->textscale, itemColor, "V", 0, 0, item->textStyle);
+		DC->drawRect(rect.x, item->textRect.y + borderOffset, rect.w, height, item->window.borderSize, item->window.borderColor);
 	}
 }
 
