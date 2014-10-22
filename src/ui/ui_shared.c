@@ -58,8 +58,8 @@ int       menuCount = 0;         // how many
 menuDef_t *modalMenuStack[MAX_MODAL_MENUS];
 int       modalMenuCount = 0;
 
-qboolean debugMode = qfalse;
-int lastListBoxClickTime = 0;
+qboolean debugMode            = qfalse;
+int      lastListBoxClickTime = 0;
 
 #ifdef CGAME
 #define MEM_POOL_SIZE  128 * 1024

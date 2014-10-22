@@ -57,12 +57,12 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 
 		if (Q_stricmp(name, "backcolor") == 0)
 		{
-			out = &item->window.backColor;
+			out                 = &item->window.backColor;
 			item->window.flags |= WINDOW_BACKCOLORSET;
 		}
 		else if (Q_stricmp(name, "forecolor") == 0)
 		{
-			out = &item->window.foreColor;
+			out                 = &item->window.foreColor;
 			item->window.flags |= WINDOW_FORECOLORSET;
 		}
 		else if (Q_stricmp(name, "bordercolor") == 0)
@@ -116,7 +116,7 @@ void Script_SetTeamColor(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_SetItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *itemname = NULL;
-	const char *name = NULL;
+	const char *name     = NULL;
 
 	// expecting type of color to set and 4 args for the color
 	if (String_Parse(args, &itemname) && String_Parse(args, &name))
@@ -145,7 +145,7 @@ void Script_SetItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 				}
 				else if (Q_stricmp(name, "forecolor") == 0)
 				{
-					out = &item2->window.foreColor;
+					out                  = &item2->window.foreColor;
 					item2->window.flags |= WINDOW_FORECOLORSET;
 				}
 				else if (Q_stricmp(name, "bordercolor") == 0)
@@ -169,7 +169,7 @@ void Script_SetMenuItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *menuname = NULL;
 	const char *itemname = NULL;
-	const char *name = NULL;
+	const char *name     = NULL;
 
 	// expecting type of color to set and 4 args for the color
 	if (String_Parse(args, &menuname) && String_Parse(args, &itemname) && String_Parse(args, &name))
@@ -205,7 +205,7 @@ void Script_SetMenuItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 				}
 				else if (Q_stricmp(name, "forecolor") == 0)
 				{
-					out = &item2->window.foreColor;
+					out                  = &item2->window.foreColor;
 					item2->window.flags |= WINDOW_FORECOLORSET;
 				}
 				else if (Q_stricmp(name, "bordercolor") == 0)
@@ -287,7 +287,7 @@ void Script_FadeOutMenu(itemDef_t *item, qboolean *bAbort, char **args)
 
 void Script_ConditionalOpen(itemDef_t *item, qboolean *bAbort, char **args)
 {
-	const char *cvar = NULL;
+	const char *cvar  = NULL;
 	const char *name1 = NULL;
 	const char *name2 = NULL;
 	int        testtype;  // 0: check val not 0
@@ -325,7 +325,7 @@ void Script_ConditionalOpen(itemDef_t *item, qboolean *bAbort, char **args)
 				Menus_OpenByName(name1);
 			}
 		}
-			break;
+		break;
 		}
 	}
 }
@@ -341,13 +341,13 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 	int testval;
 
 	if (String_Parse(args, &cvar) &&
-		Int_Parse(args, &testtype) &&
-		String_Parse(args, &token) && (token && *token == '(') &&
-		String_Parse(args, &script1) &&
-		String_Parse(args, &token) && (token && *token == ')') &&
-		String_Parse(args, &token) && (token && *token == '(') &&
-		String_Parse(args, &script2) &&
-		String_Parse(args, &token) && (token && *token == ')'))
+	    Int_Parse(args, &testtype) &&
+	    String_Parse(args, &token) && (token && *token == '(') &&
+	    String_Parse(args, &script1) &&
+	    String_Parse(args, &token) && (token && *token == ')') &&
+	    String_Parse(args, &token) && (token && *token == '(') &&
+	    String_Parse(args, &script2) &&
+	    String_Parse(args, &token) && (token && *token == ')'))
 	{
 		float val;
 
@@ -379,7 +379,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				Item_RunScript(item, bAbort, script1);
 			}
 		}
-			break;
+		break;
 		case 3:
 			if (Int_Parse(args, &testval))
 			{
@@ -518,50 +518,50 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			else if (!Q_stricmp(cvar, "vidrestartIsRequired"))
 			{
-				int  ui_r_mode = DC->getCVarValue("ui_r_mode");
-				int  ui_r_colorbits = DC->getCVarValue("ui_r_colorbits");
-				int  ui_r_fullscreen = DC->getCVarValue("ui_r_fullscreen");
-				int  ui_r_texturebits = DC->getCVarValue("ui_r_texturebits");
-				int  ui_r_depthbits = DC->getCVarValue("ui_r_depthbits");
-				int  ui_r_ext_compressed_textures = DC->getCVarValue("ui_r_ext_compressed_textures");
-				int  ui_r_allowextensions = DC->getCVarValue("ui_r_allowextensions");
-				int  ui_s_khz = DC->getCVarValue("ui_s_khz");
-				int  ui_r_detailtextures = DC->getCVarValue("ui_r_detailtextures");
-				int  ui_r_subdivisions = DC->getCVarValue("ui_r_subdivisions");
+				int  ui_r_mode                           = DC->getCVarValue("ui_r_mode");
+				int  ui_r_colorbits                      = DC->getCVarValue("ui_r_colorbits");
+				int  ui_r_fullscreen                     = DC->getCVarValue("ui_r_fullscreen");
+				int  ui_r_texturebits                    = DC->getCVarValue("ui_r_texturebits");
+				int  ui_r_depthbits                      = DC->getCVarValue("ui_r_depthbits");
+				int  ui_r_ext_compressed_textures        = DC->getCVarValue("ui_r_ext_compressed_textures");
+				int  ui_r_allowextensions                = DC->getCVarValue("ui_r_allowextensions");
+				int  ui_s_khz                            = DC->getCVarValue("ui_s_khz");
+				int  ui_r_detailtextures                 = DC->getCVarValue("ui_r_detailtextures");
+				int  ui_r_subdivisions                   = DC->getCVarValue("ui_r_subdivisions");
 				int  ui_r_ext_texture_filter_anisotropic = DC->getCVarValue("ui_r_ext_texture_filter_anisotropic");
-				int  ui_cg_shadows = DC->getCVarValue("ui_cg_shadows");
+				int  ui_cg_shadows                       = DC->getCVarValue("ui_cg_shadows");
 				char ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
-				int  r_mode = DC->getCVarValue("r_mode");
-				int  r_colorbits = DC->getCVarValue("r_colorbits");
-				int  r_fullscreen = DC->getCVarValue("r_fullscreen");
-				int  r_texturebits = DC->getCVarValue("r_texturebits");
-				int  r_depthbits = DC->getCVarValue("r_depthbits");
-				int  r_ext_compressed_textures = DC->getCVarValue("r_ext_compressed_textures");
-				int  r_allowextensions = DC->getCVarValue("r_allowextensions");
-				int  s_khz = DC->getCVarValue("s_khz");
-				int  r_detailtextures = DC->getCVarValue("r_detailtextures");
-				int  r_subdivisions = DC->getCVarValue("r_subdivisions");
+				int  r_mode                           = DC->getCVarValue("r_mode");
+				int  r_colorbits                      = DC->getCVarValue("r_colorbits");
+				int  r_fullscreen                     = DC->getCVarValue("r_fullscreen");
+				int  r_texturebits                    = DC->getCVarValue("r_texturebits");
+				int  r_depthbits                      = DC->getCVarValue("r_depthbits");
+				int  r_ext_compressed_textures        = DC->getCVarValue("r_ext_compressed_textures");
+				int  r_allowextensions                = DC->getCVarValue("r_allowextensions");
+				int  s_khz                            = DC->getCVarValue("s_khz");
+				int  r_detailtextures                 = DC->getCVarValue("r_detailtextures");
+				int  r_subdivisions                   = DC->getCVarValue("r_subdivisions");
 				int  r_ext_texture_filter_anisotropic = DC->getCVarValue("r_ext_texture_filter_anisotropic");
-				int  cg_shadows = DC->getCVarValue("cg_shadows");
+				int  cg_shadows                       = DC->getCVarValue("cg_shadows");
 				char r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 				trap_Cvar_VariableStringBuffer("r_texturemode", r_texturemode, sizeof(r_texturemode));
 
 				if (ui_r_subdivisions != r_subdivisions ||
-					ui_r_mode != r_mode ||
-					ui_r_colorbits != r_colorbits ||
-					ui_r_fullscreen != r_fullscreen ||
-					ui_r_texturebits != r_texturebits ||
-					ui_r_depthbits != r_depthbits ||
-					ui_r_ext_compressed_textures != r_ext_compressed_textures ||
-					ui_r_allowextensions != r_allowextensions ||
-					ui_s_khz != s_khz ||
-					ui_r_detailtextures != r_detailtextures ||
-					ui_r_ext_texture_filter_anisotropic != r_ext_texture_filter_anisotropic ||
-					ui_cg_shadows != cg_shadows ||
-					Q_stricmp(r_texturemode, ui_r_texturemode))
+				    ui_r_mode != r_mode ||
+				    ui_r_colorbits != r_colorbits ||
+				    ui_r_fullscreen != r_fullscreen ||
+				    ui_r_texturebits != r_texturebits ||
+				    ui_r_depthbits != r_depthbits ||
+				    ui_r_ext_compressed_textures != r_ext_compressed_textures ||
+				    ui_r_allowextensions != r_allowextensions ||
+				    ui_s_khz != s_khz ||
+				    ui_r_detailtextures != r_detailtextures ||
+				    ui_r_ext_texture_filter_anisotropic != r_ext_texture_filter_anisotropic ||
+				    ui_cg_shadows != cg_shadows ||
+				    Q_stricmp(r_texturemode, ui_r_texturemode))
 				{
 					Item_RunScript(item, bAbort, script1);
 				}
@@ -671,7 +671,7 @@ void Script_Transition(itemDef_t *item, qboolean *bAbort, char **args)
 	if (String_Parse(args, &name))
 	{
 		rectDef_t rectFrom, rectTo;
-		float     amt = 0.0f;
+		float     amt  = 0.0f;
 		int       time = 0;
 
 		if (Rect_Parse(args, &rectFrom) && Rect_Parse(args, &rectTo) && Int_Parse(args, &time) && Float_Parse(args, &amt))
@@ -687,7 +687,7 @@ void Script_Orbit(itemDef_t *item, qboolean *bAbort, char **args)
 
 	if (String_Parse(args, &name))
 	{
-		float cx = 0.0f, cy = 0.0f, x = 0.0f, y = 0.0f;
+		float cx   = 0.0f, cy = 0.0f, x = 0.0f, y = 0.0f;
 		int   time = 0;
 
 		if (Float_Parse(args, &x) && Float_Parse(args, &y) && Float_Parse(args, &cx) && Float_Parse(args, &cy) && Int_Parse(args, &time))
@@ -877,7 +877,7 @@ qboolean Script_CheckProfile(char *profile_path)
 		return qtrue;
 	}
 
-	trap_FS_Read(&f_data, sizeof(f_data)-1, f);
+	trap_FS_Read(&f_data, sizeof(f_data) - 1, f);
 
 	DC->getCVarString("com_pid", com_pid, sizeof(com_pid));
 	pid = atoi(com_pid);
@@ -989,8 +989,8 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 
 			DC->setCVar(EDITFIELD_TEMP_CVAR, "");
 			editItem->cursorPos = 0;
-			g_editingField = qtrue;
-			g_editItem = editItem;
+			g_editingField      = qtrue;
+			g_editItem          = editItem;
 
 			// the stupidest idea ever, let's just override the console, every ui element, user choice, etc
 			// nuking this
@@ -1056,48 +1056,48 @@ void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 
 commandDef_t commandList[] =
 {
-	{ "fadein", &Script_FadeIn }, // group/name
-	{ "fadeout", &Script_FadeOut }, // group/name
-	{ "show", &Script_Show }, // group/name
-	{ "hide", &Script_Hide }, // group/name
-	{ "setcolor", &Script_SetColor }, // works on this
-	{ "open", &Script_Open }, // menu
-	{ "fadeinmenu", &Script_FadeInMenu }, // menu
-	{ "fadeoutmenu", &Script_FadeOutMenu }, // menu
+	{ "fadein",             &Script_FadeIn             }, // group/name
+	{ "fadeout",            &Script_FadeOut            }, // group/name
+	{ "show",               &Script_Show               }, // group/name
+	{ "hide",               &Script_Hide               }, // group/name
+	{ "setcolor",           &Script_SetColor           }, // works on this
+	{ "open",               &Script_Open               }, // menu
+	{ "fadeinmenu",         &Script_FadeInMenu         }, // menu
+	{ "fadeoutmenu",        &Script_FadeOutMenu        }, // menu
 
-	{ "conditionalopen", &Script_ConditionalOpen }, // cvar menu menu
+	{ "conditionalopen",    &Script_ConditionalOpen    }, // cvar menu menu
 	// opens first menu if cvar is true[non-zero], second if false
-	{ "conditionalscript", &Script_ConditionalScript }, // as conditonalopen, but then executes scripts
+	{ "conditionalscript",  &Script_ConditionalScript  }, // as conditonalopen, but then executes scripts
 
-	{ "close", &Script_Close }, // menu
-	{ "closeall", &Script_CloseAll },
+	{ "close",              &Script_Close              }, // menu
+	{ "closeall",           &Script_CloseAll           },
 	{ "closeallothermenus", &Script_CloseAllOtherMenus },
 
-	{ "setbackground", &Script_SetBackground }, // works on this
-	{ "setitemcolor", &Script_SetItemColor }, // group/name
-	{ "setmenuitemcolor", &Script_SetMenuItemColor }, // group/name
-	{ "setteamcolor", &Script_SetTeamColor }, // sets this background color to team color
-	{ "setfocus", &Script_SetFocus }, // sets this background color to team color
-	{ "clearfocus", &Script_ClearFocus },
-	{ "setplayermodel", &Script_SetPlayerModel }, // sets this background color to team color
-	{ "setplayerhead", &Script_SetPlayerHead }, // sets this background color to team color
-	{ "transition", &Script_Transition }, // group/name
-	{ "setcvar", &Script_SetCvar }, // group/name
-	{ "clearcvar", &Script_ClearCvar },
-	{ "copycvar", &Script_CopyCvar },
-	{ "exec", &Script_Exec }, // group/name
-	{ "execnow", &Script_ExecNOW }, // group/name
-	{ "play", &Script_Play }, // group/name
-	{ "playlooped", &Script_playLooped }, // group/name
-	{ "orbit", &Script_Orbit }, // group/name
-	{ "addlistitem", &Script_AddListItem }, // special command to add text items to list box
-	{ "checkautoupdate", &Script_CheckAutoUpdate }, //
-	{ "getautoupdate", &Script_GetAutoUpdate }, //
-	{ "setmenufocus", &Script_SetMenuFocus }, // focus menu
-	{ "execwolfconfig", &Script_ExecWolfConfig }, // executes etconfig.cfg
-	{ "setEditFocus", &Script_SetEditFocus },
-	{ "abort", &Script_Abort },
-	{ "getclipboard", &Script_GetClipboard },
+	{ "setbackground",      &Script_SetBackground      }, // works on this
+	{ "setitemcolor",       &Script_SetItemColor       }, // group/name
+	{ "setmenuitemcolor",   &Script_SetMenuItemColor   }, // group/name
+	{ "setteamcolor",       &Script_SetTeamColor       }, // sets this background color to team color
+	{ "setfocus",           &Script_SetFocus           }, // sets this background color to team color
+	{ "clearfocus",         &Script_ClearFocus         },
+	{ "setplayermodel",     &Script_SetPlayerModel     }, // sets this background color to team color
+	{ "setplayerhead",      &Script_SetPlayerHead      }, // sets this background color to team color
+	{ "transition",         &Script_Transition         }, // group/name
+	{ "setcvar",            &Script_SetCvar            }, // group/name
+	{ "clearcvar",          &Script_ClearCvar          },
+	{ "copycvar",           &Script_CopyCvar           },
+	{ "exec",               &Script_Exec               }, // group/name
+	{ "execnow",            &Script_ExecNOW            }, // group/name
+	{ "play",               &Script_Play               }, // group/name
+	{ "playlooped",         &Script_playLooped         }, // group/name
+	{ "orbit",              &Script_Orbit              }, // group/name
+	{ "addlistitem",        &Script_AddListItem        }, // special command to add text items to list box
+	{ "checkautoupdate",    &Script_CheckAutoUpdate    }, //
+	{ "getautoupdate",      &Script_GetAutoUpdate      }, //
+	{ "setmenufocus",       &Script_SetMenuFocus       }, // focus menu
+	{ "execwolfconfig",     &Script_ExecWolfConfig     }, // executes etconfig.cfg
+	{ "setEditFocus",       &Script_SetEditFocus       },
+	{ "abort",              &Script_Abort              },
+	{ "getclipboard",       &Script_GetClipboard       },
 };
 
 int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);

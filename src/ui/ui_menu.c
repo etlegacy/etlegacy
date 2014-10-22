@@ -73,7 +73,7 @@ void Menu_TransitionItemByName(menuDef_t *menu, const char *p, rectDef_t rectFro
 		item = Menu_GetMatchingItemByNumber(menu, i, p);
 		if (item != NULL)
 		{
-			item->window.flags |= (WINDOW_INTRANSITION | WINDOW_VISIBLE);
+			item->window.flags     |= (WINDOW_INTRANSITION | WINDOW_VISIBLE);
 			item->window.offsetTime = time;
 			memcpy(&item->window.rectClient, &rectFrom, sizeof(rectDef_t));
 			memcpy(&item->window.rectEffects, &rectTo, sizeof(rectDef_t));
@@ -97,12 +97,12 @@ void Menu_OrbitItemByName(menuDef_t *menu, const char *p, float x, float y, floa
 		item = Menu_GetMatchingItemByNumber(menu, i, p);
 		if (item != NULL)
 		{
-			item->window.flags |= (WINDOW_ORBITING | WINDOW_VISIBLE);
-			item->window.offsetTime = time;
+			item->window.flags        |= (WINDOW_ORBITING | WINDOW_VISIBLE);
+			item->window.offsetTime    = time;
 			item->window.rectEffects.x = cx;
 			item->window.rectEffects.y = cy;
-			item->window.rectClient.x = x;
-			item->window.rectClient.y = y;
+			item->window.rectClient.x  = x;
+			item->window.rectClient.y  = y;
 			Item_UpdatePosition(item);
 		}
 	}
@@ -113,8 +113,8 @@ void Menu_Init(menuDef_t *menu)
 	memset(menu, 0, sizeof(menuDef_t));
 	menu->cursorItem = -1;
 	menu->fadeAmount = DC->Assets.fadeAmount;
-	menu->fadeClamp = DC->Assets.fadeClamp;
-	menu->fadeCycle = DC->Assets.fadeCycle;
+	menu->fadeClamp  = DC->Assets.fadeClamp;
+	menu->fadeCycle  = DC->Assets.fadeCycle;
 	// by default, do NOT use item hotkey mode
 	menu->itemHotkeyMode = qfalse;
 	Window_Init(&menu->window);
@@ -196,7 +196,7 @@ void Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char 
 					listBoxDef_t *listPtr = (listBoxDef_t *)menu->items[i]->typeData;
 
 					listPtr->cursorPos = 0;
-					listPtr->startPos = 0;
+					listPtr->startPos  = 0;
 				}
 				menu->items[i]->cursorPos = index;
 				DC->feederSelection(menu->items[i]->special, menu->items[i]->cursorPos);
@@ -223,7 +223,7 @@ qboolean Menus_AnyFullScreenVisible(void)
 menuDef_t *Menus_ActivateByName(const char *p, qboolean modalStack)
 {
 	int       i;
-	menuDef_t *m = NULL;
+	menuDef_t *m     = NULL;
 	menuDef_t *focus = Menu_GetFocused();
 
 	for (i = 0; i < menuCount; i++)
@@ -260,9 +260,9 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	Rectangle  *r;
 	qboolean   fullscreenItem = qfalse;
 	qboolean   fullscreenMenu = qfalse;
-	qboolean   centered = qfalse;
-	const char *menuName = NULL;
-	const char *itemName = NULL;
+	qboolean   centered       = qfalse;
+	const char *menuName      = NULL;
+	const char *itemName      = NULL;
 
 	if (menu == NULL)
 	{
@@ -272,10 +272,10 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	x = menu->window.rect.x;
 	y = menu->window.rect.y;
 
-	r = &menu->window.rect;
+	r              = &menu->window.rect;
 	fullscreenMenu = (r->x == 0 && r->y == 0 && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
-	centered = (r->x == 16 && r->w == 608);
-	menuName = menu->window.name;
+	centered       = (r->x == 16 && r->w == 608);
+	menuName       = menu->window.name;
 
 	Cui_WideRect(&menu->window.rect);
 
@@ -283,7 +283,7 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	{
 		itemName = menu->items[i]->window.name;
 		// fullscreen menu/item..
-		r = &menu->items[i]->window.rectClient;
+		r              = &menu->items[i]->window.rectClient;
 		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
 
 		// exclude background clouds as fullscreen item from Cui_WideRect(r) and adjust rect width
@@ -304,13 +304,13 @@ void Menu_UpdatePosition(menuDef_t *menu)
 		{
 			// align to right of screen..
 			if (!Q_stricmp(itemName, "atvi_logo") ||
-				!Q_stricmp(itemName, "id_logo"))
+			    !Q_stricmp(itemName, "id_logo"))
 			{
 				Item_SetScreenCoords(menu->items[i], x + 2 * xoffset, y);
 			}
 			// horizontally centered..
 			else if (!Q_stricmp(itemName, "etl_logo") ||
-				!Q_stricmp(itemName, "credits_etlegacy"))
+			         !Q_stricmp(itemName, "credits_etlegacy"))
 			{
 				Item_SetScreenCoords(menu->items[i], x + xoffset, y);
 			}
@@ -364,7 +364,7 @@ itemDef_t *Menu_ClearFocus(menuDef_t *menu)
 	{
 		if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
 		{
-			ret = menu->items[i];
+			ret                           = menu->items[i];
 			menu->items[i]->window.flags &= ~WINDOW_HASFOCUS;
 		}
 
@@ -593,7 +593,7 @@ void Menus_CloseByName(const char *p)
 			if (g_editItem == menu->items[i])
 			{
 				g_editingField = qfalse;
-				g_editItem = NULL;
+				g_editItem     = NULL;
 			}
 		}
 
@@ -648,13 +648,13 @@ itemDef_t *Menu_HitTest(menuDef_t *menu, float x, float y)
 
 itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu)
 {
-	qboolean wrapped = qfalse;
+	qboolean wrapped   = qfalse;
 	int      oldCursor = menu->cursorItem;
 
 	if (menu->cursorItem < 0)
 	{
 		menu->cursorItem = menu->itemCount - 1;
-		wrapped = qtrue;
+		wrapped          = qtrue;
 	}
 
 	while (menu->cursorItem > -1)
@@ -662,7 +662,7 @@ itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu)
 		menu->cursorItem--;
 		if (menu->cursorItem < 0 && !wrapped)
 		{
-			wrapped = qtrue;
+			wrapped          = qtrue;
 			menu->cursorItem = menu->itemCount - 1;
 		}
 
@@ -698,7 +698,7 @@ itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu)
 	if (menu->cursorItem == -1)
 	{
 		menu->cursorItem = 0;
-		wrapped = qtrue;
+		wrapped          = qtrue;
 	}
 
 	while (menu->cursorItem < menu->itemCount)
@@ -708,7 +708,7 @@ itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu)
 		{
 			if (!wrapped)
 			{
-				wrapped = qtrue;
+				wrapped          = qtrue;
 				menu->cursorItem = 0;
 			}
 			else
@@ -810,7 +810,7 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 				//Menu_RunCloseScript(menu);          // why do we close the calling menu instead of just removing the focus?
 				//menu->window.flags &= ~(WINDOW_HASFOCUS | WINDOW_VISIBLE | WINDOW_MOUSEOVER);
 
-				menu->window.flags &= ~(WINDOW_HASFOCUS | WINDOW_MOUSEOVER);
+				menu->window.flags    &= ~(WINDOW_HASFOCUS | WINDOW_MOUSEOVER);
 				Menus[i].window.flags |= (WINDOW_HASFOCUS | WINDOW_VISIBLE);
 
 				//Menus_Activate(&Menus[i]);
@@ -953,8 +953,8 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 
 			// is the hotkey for this the same as what was pressed?
 			if (it->hotkey == key
-				// and is this item visible?
-				&& Item_EnableShowViaCvar(it, CVAR_SHOW))
+			    // and is this item visible?
+			    && Item_EnableShowViaCvar(it, CVAR_SHOW))
 			{
 				Item_RunScript(it, NULL, it->onKey);
 				return;
@@ -1204,10 +1204,10 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 	}
 	// draw tooltip data if we have it
 	else if (DC->getCVarValue("ui_showtooltips") &&
-		item != NULL &&
-		item->toolTipData != NULL &&
-		item->toolTipData->text != NULL &&
-		*item->toolTipData->text)
+	         item != NULL &&
+	         item->toolTipData != NULL &&
+	         item->toolTipData->text != NULL &&
+	         *item->toolTipData->text)
 	{
 		Item_Paint(item->toolTipData);
 	}
@@ -1218,8 +1218,8 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 		menu->openTime = DC->realTime;
 	}
 	else if ((menu->window.flags & WINDOW_VISIBLE) &&
-		menu->timeout > 0 && menu->onTimeout != NULL &&
-		menu->openTime + menu->timeout <= DC->realTime)
+	         menu->timeout > 0 && menu->onTimeout != NULL &&
+	         menu->openTime + menu->timeout <= DC->realTime)
 	{
 		itemDef_t it;
 		it.parent = menu;

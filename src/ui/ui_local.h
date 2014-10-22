@@ -259,12 +259,12 @@ extern int       menuCount;         // how many
 extern menuDef_t *modalMenuStack[MAX_MODAL_MENUS];
 extern int       modalMenuCount;
 
-extern qboolean g_waitingForKey;
-extern qboolean g_editingField;
+extern qboolean  g_waitingForKey;
+extern qboolean  g_editingField;
 extern itemDef_t *g_editItem;
 extern itemDef_t *g_bindItem;
 
-extern void(*captureFunc)(void *p);
+extern void      (*captureFunc)(void *p);
 extern void      *captureData;
 extern itemDef_t *itemCapture;
 
@@ -273,9 +273,9 @@ extern int lastListBoxClickTime;
 
 extern qboolean debugMode;
 
-#define SET_EDITITEM(x) g_editingField = qtrue; g_editItem = x;
+#define SET_EDITITEM(x) g_editingField  = qtrue; g_editItem = x;
 #define CLEAR_EDITITEM() g_editingField = qfalse; g_editItem = NULL;
-#define IS_EDITMODE(x) (x->window.flags & WINDOW_HASFOCUS && g_editingField) 
+#define IS_EDITMODE(x) (x->window.flags & WINDOW_HASFOCUS && g_editingField)
 
 // ui_main.c
 void UI_Report(void);
