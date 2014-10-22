@@ -2487,7 +2487,7 @@ void Item_Multi_Paint(itemDef_t *item)
 
 void Item_Combo_Paint(itemDef_t *item)
 {
-	vec4_t       itemColor;
+	vec4_t       itemColor, backColor;
 	const char   *text              = "";
 	int          selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
 	menuDef_t    *parent            = (menuDef_t *)item->parent;
@@ -2499,7 +2499,9 @@ void Item_Combo_Paint(itemDef_t *item)
 
 	text = Item_Multi_Setting(item);
 
+	memcpy(&backColor, &item->window.backColor, sizeof(vec4_t));
 	memcpy(&itemColor, &item->window.foreColor, sizeof(vec4_t));
+	backColor[3] *= 0.8f;
 
 	if (item->text)
 	{
@@ -2540,13 +2542,17 @@ void Item_Combo_Paint(itemDef_t *item)
 	rect.w = widestText + 16 + selectorSize + borderOffset;
 	rect.h = item->textRect.h + (borderOffset * 2);
 
-	DC->fillRect(rect.x, rect.y, rect.w, rect.h, item->window.backColor);
-	DC->drawRect(rect.x, rect.y, rect.w, rect.h, item->window.borderSize, item->window.borderColor);
-
 	selectorRect.x = rect.x + (rect.w - selectorSize - 8 - (borderOffset * 2));
 	selectorRect.y = rect.y;
 	selectorRect.w = selectorSize + 8 + (borderOffset * 2);
 	selectorRect.h = rect.h;
+
+	//rect.w = rect.w - selectorRect.w - 1;
+
+	DC->fillRect(rect.x, rect.y, rect.w, rect.h, backColor);
+	DC->drawRect(rect.x, rect.y, rect.w, rect.h, item->window.borderSize, item->window.borderColor);
+	
+	//DC->fillRect(selectorRect.x, selectorRect.y, selectorRect.w, selectorRect.h, backColor);
 	DC->drawRect(selectorRect.x, selectorRect.y, selectorRect.w, selectorRect.h, item->window.borderSize, item->window.borderColor);
 
 	DC->drawText(selectedTextOffset + borderOffset, item->textRect.y, item->textscale, itemColor, text, 0, 0, item->textStyle);
@@ -2571,7 +2577,7 @@ void Item_Combo_Paint(itemDef_t *item)
 
 		height = (i * 12.f) + 1.f;
 
-		DC->fillRect(rect.x, item->textRect.y + borderOffset, rect.w, height, item->window.backColor);
+		DC->fillRect(rect.x, item->textRect.y + borderOffset, rect.w, height, backColor);
 
 		item->cursorPos = -1;
 
