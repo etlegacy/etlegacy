@@ -3683,20 +3683,17 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 
 /*
 ======================================================================
-ROCKET
+ANTI TANK ROCKETS
 ======================================================================
 */
 
-gentity_t *Weapon_Panzerfaust_Fire(gentity_t *ent)
+/**
+ * @brief fires a rocket of type WP_BAZOOKA or WP_PANZERFAUST
+ */
+gentity_t *weapon_antitank_fire(gentity_t *ent)
 {
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
-	return fire_rocket(ent, muzzleEffect, forward, WP_PANZERFAUST);
-}
-
-gentity_t *Weapon_Bazooka_Fire(gentity_t *ent)
-{
-	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
-	return fire_rocket(ent, muzzleEffect, forward, WP_BAZOOKA);
+	return fire_rocket(ent, muzzleEffect, forward, ent->s.weapon);
 }
 
 /*
@@ -4208,29 +4205,6 @@ void FireWeapon(gentity_t *ent)
 		}
 		break;
 	case WP_PANZERFAUST:
-		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
-		{
-			ent->client->ps.classWeaponTime = level.time - level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-
-		if (ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 1)
-		{
-			ent->client->ps.classWeaponTime += .66f * level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-		else
-		{
-			ent->client->ps.classWeaponTime = level.time;
-		}
-
-		pFiredShot = Weapon_Panzerfaust_Fire(ent);
-		if (ent->client)
-		{
-			vec3_t forward;
-
-			AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
-			VectorMA(ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
-		}
-		break;
 	case WP_BAZOOKA:
 		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
 		{
@@ -4246,7 +4220,7 @@ void FireWeapon(gentity_t *ent)
 			ent->client->ps.classWeaponTime = level.time;
 		}
 
-		pFiredShot = Weapon_Bazooka_Fire(ent);
+		pFiredShot = weapon_antitank_fire(ent);
 		if (ent->client)
 		{
 			vec3_t forward;
