@@ -2894,11 +2894,11 @@ void Weapon_Artillery(gentity_t *ent)
 
 	// FIXME: decide if we want to do charge costs for 'Insufficient fire support' calls
 	//        and remove ReadyToCallArtillery() function
-	// moved energy check into a func, so I can use same check in bot code
-	//if (!ReadyToCallArtillery(ent))
-	//{
-	//	return;
-	//}
+	// FIXME: check omnibot legacy mod interface to deal with this
+	if (!ReadyToCallArtillery(ent))
+	{
+		return;
+	}
 
 	if (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
