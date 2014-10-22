@@ -47,15 +47,6 @@
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
-/* HACK: Just hack it for now. */
-#if defined(WIN32)
-#include <GL/wglew.h>
-#else
-#if !defined(FEATURE_RENDERER_GLES) && !defined(__AROS__) && !defined(__MORPHOS__)
-#include <GL/glxew.h>
-#endif
-#endif
-
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 
 #ifdef __APPLE__
