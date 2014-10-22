@@ -2474,7 +2474,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 void CG_OutOfAmmoChange(qboolean allowforceswitch);
 
 // added to header to access from outside cg_weapons.c
-void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count);
+void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count, trace_t *trace);
 
 // cg_marks.c
 void CG_InitMarkPolys(void);

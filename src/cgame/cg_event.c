@@ -1795,7 +1795,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 	if (cent->currentState.eventParm & 64)     // debris trails (the black strip that Ryan did)
 	{
-		CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2);
+		CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, NULL); // FIXME: add eventParm & 64 and throw extended debris
 	}
 }
 
