@@ -5753,7 +5753,7 @@ void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duratio
 CG_AddDebris
 =================
 */
-void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count)
+void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count, trace_t *trace)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
@@ -5795,43 +5795,137 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count)
 		//le->leMarkType = LEMT_BLOOD;
 
 		// WIP
-		// add model & properties of shrapnels
+		// add model & properties of extended debris elements
 		// TODO: find better models and/or extend ...
-		// TODO: make dependant from surface (snow etc and use related models/sounds) and don't add this for sky explosions!!!
+		// TODO: make dependant from surface (snow etc and use related models/sounds)
 		// TODO: find a client cvar so purists can disable (see CG_AddLocalEntities)
+		if (trace) // && user enabled
 		{
-			int i = rand() % 5;
+			// airborn or solid with no surface set - just throw projectile fragments
+			if (trace->fraction == 1.0 || ((trace->contents & CONTENTS_SOLID) && !trace->surfaceFlags))
+			{
+				if (rand() % 2)
+				{
+					le->refEntity.hModel = cgs.media.shardMetal1;  // FIXME: find other models
+				}
+				else
+				{
+					le->refEntity.hModel = cgs.media.shardMetal2;
+				}
 
-			if (i == 0)
-			{
-				le->refEntity.hModel  = cgs.media.debFabric[1];
-				le->leBounceSoundType = LEBS_BONE;
-			}
-			else if (i == 1)
-			{
-				le->refEntity.hModel  = cgs.media.shardMetal1;
 				le->leBounceSoundType = LEBS_METAL;
+				continue;
 			}
-			else if (i == 2)
+
+			if (trace->surfaceFlags & SURF_WOOD)
 			{
-				le->refEntity.hModel  = cgs.media.shardMetal2;
-				le->leBounceSoundType = LEBS_METAL;
+				le->refEntity.hModel  = cgs.media.debWood[rand() % 6];
+				le->leBounceSoundType = LEBS_WOOD;
+				continue;
 			}
-			else if (i == 3)
+
+			/*
+			CG_Printf("--> c:%i sf:%i\n", trace->contents, trace->surfaceFlags);
+
+			if (trace->surfaceFlags & SURF_GRAVEL)
 			{
-				le->refEntity.hModel  = cgs.media.debRock[1];
-				le->leBounceSoundType = LEBS_ROCK;
+			    CG_Printf("ON GRAVEL\n");
 			}
-			else if (i == 4)
+
+			if (trace->surfaceFlags & SURF_SNOW)
 			{
-				le->refEntity.hModel  = cgs.media.debRock[0];
-				le->leBounceSoundType = LEBS_ROCK;
+			    CG_Printf("ON SNOW\n");
 			}
-			else
+
+			if (trace->surfaceFlags & SURF_GRASS)
 			{
-				le->refEntity.hModel  = cgs.media.debRock[2];
-				le->leBounceSoundType = LEBS_ROCK;
+			    CG_Printf("ON GRASS\n");
 			}
+
+			if (trace->surfaceFlags & SURF_WOOD)
+			{
+			    CG_Printf("ON WOOD\n");
+			}
+
+			if (trace->surfaceFlags & SURF_CERAMIC)
+			{
+			    CG_Printf("ON CERAMIC\n");
+			}
+
+			// ---
+
+			if (trace->surfaceFlags & SURF_GLASS)
+			{
+			    CG_Printf("ON GLASS\n");
+			}
+
+			if (trace->surfaceFlags & SURF_METAL)
+			{
+			    CG_Printf("ON METAL\n");
+			}
+
+			if (trace->surfaceFlags & SURF_ROOF)
+			{
+			    CG_Printf("ON ROOF\n");
+			}
+
+			if (trace->surfaceFlags & SURF_CARPET)
+			{
+			    CG_Printf("ON CARPET\n");
+			}
+
+			// --
+
+			if (trace->contents & CONTENTS_WATER)
+			{
+			    CG_Printf("ON WATER\n");
+			}
+
+			if (trace->contents & CONTENTS_BODY)
+			{
+			    CG_Printf("ON BODY\n");
+			}
+			if (trace->contents & CONTENTS_CORPSE)
+			{
+			    CG_Printf("ON CORPSE\n");
+			}
+			*/
+
+			{
+				int i = rand() % 5;
+
+				if (i == 0)
+				{
+					le->refEntity.hModel  = cgs.media.debFabric[1];
+					le->leBounceSoundType = LEBS_BONE;
+				}
+				else if (i == 1)
+				{
+					le->refEntity.hModel  = cgs.media.shardMetal1;
+					le->leBounceSoundType = LEBS_METAL;
+				}
+				else if (i == 2)
+				{
+					le->refEntity.hModel  = cgs.media.shardMetal2;
+					le->leBounceSoundType = LEBS_METAL;
+				}
+				else if (i == 3)
+				{
+					le->refEntity.hModel  = cgs.media.debRock[1];
+					le->leBounceSoundType = LEBS_ROCK;
+				}
+				else if (i == 4)
+				{
+					le->refEntity.hModel  = cgs.media.debRock[0];
+					le->leBounceSoundType = LEBS_ROCK;
+				}
+				else
+				{
+					le->refEntity.hModel  = cgs.media.debRock[2];
+					le->leBounceSoundType = LEBS_ROCK;
+				}
+			}
+
 		}
 	}
 }
@@ -6142,7 +6236,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				VectorScale(sprVel, random() * 100 + 300, sprVel);
 				CG_ParticleExplosion("explode1", sprOrg, sprVel, 1000 + rand() % 1450, 40, 400 + random() * 200, (i == 0 ? qtrue : qfalse));
 			}
-			CG_AddDebris(origin, dir, 400 + random() * 200, rand() % 2000 + 1400, 12 + rand() % 12);
+			CG_AddDebris(origin, dir, 400 + random() * 200, rand() % 2000 + 1400, 12 + rand() % 12, &trace);
 		}
 		break;
 	case WP_GRENADE_LAUNCHER:
@@ -6222,7 +6316,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				CG_AddDirtBulletParticles(origin, dir, 400, 2000, 10, 0.5, 200, 75, 0.25, cgs.media.dirtParticle1Shader);
 			}
 			CG_ParticleExplosion("explode1", sprOrg, sprVel, 700, 60, 240, qtrue);
-			CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2);
+			CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, &trace);
 		}
 		break;
 	case WP_PANZERFAUST:
@@ -6294,7 +6388,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				VectorScale(sprVel, 300, sprVel);
 				CG_ParticleExplosion("explode1", sprOrg, sprVel, 1600, 40, 260 + rand() % 120, qfalse);
 			}
-			CG_AddDebris(origin, dir, 400 + random() * 200, rand() % 2000 + 1000, 5 + rand() % 5);
+			CG_AddDebris(origin, dir, 400 + random() * 200, rand() % 2000 + 1000, 5 + rand() % 5, &trace);
 		}
 		break;
 	default:
@@ -6377,7 +6471,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	CG_ParticleExplosion("explode1", sprOrg, sprVel, 600, 6, 50, qtrue);
 
 	// throw some debris
-	CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2);
+	CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, NULL);
 
 	if (cgs.media.sfx_rockexp)
 	{

@@ -392,7 +392,7 @@ void CG_FreeLocalEntity(localEntity_t *le)
 
 	// debugging
 	localEntCount--;
-	//trap_Print(va("FreeLocalEntity: locelEntCount = %d\n", localEntCount));
+	//trap_Print(va("FreeLocalEntity: locelEntCount = %d type = %i\n", localEntCount, le->leType));
 
 	// remove from the doubly linked active list
 	le->prev->next = le->next;
@@ -1330,12 +1330,7 @@ void CG_AddDebrisElements(localEntity_t *le)
 	}
 }
 
-/*
-===============
-CG_AddShrapnel
-===============
- */
-void CG_AddShrapnel(localEntity_t *le)
+void CG_AddDebrisElementsExtended(localEntity_t *le)
 {
 	vec3_t  newOrigin;
 	trace_t trace;
@@ -1699,9 +1694,9 @@ void CG_AddLocalEntities(void)
 		{
 			CG_AddDebrisElements(le);
 
-			// reuses debris le for shrapnels as well - we don't allocate extra local ents for this
+			// reuses debris le for more debris - we don't allocate extra local ents for this
 			// setup is done in CG_AddDebris
-			CG_AddShrapnel(le);
+			CG_AddDebrisElementsExtended(le); // TODO merge with CG_AddDebrisElements
 		}
 		break;
 		case LE_BLOOD:
