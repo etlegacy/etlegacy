@@ -541,8 +541,8 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_countryflags,                      "g_countryflags",                      "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse},
 
-	{ &team_airstrikeTime,                  "team_airstrikeTime",                  "10",                         0 },
-	{ &team_artyTime,                       "team_artyTime",                       "10",                         0 },
+	{ &team_airstrikeTime,                  "team_airstrikeTime",                  "20",                         0 },
+	{ &team_artyTime,                       "team_artyTime",                       "20",                         0 },
 	// team class/weapon limiting
 	//classes
 	{ &team_maxSoldiers,                    "team_maxSoldiers",                    "-1",                         0,                                               0, qfalse, qfalse},
