@@ -39,7 +39,7 @@
 void Tooltip_ComputePosition(itemDef_t *item)
 {
 	Rectangle *itemRect = &item->window.rectClient;
-	Rectangle *tipRect = &item->toolTipData->window.rectClient;
+	Rectangle *tipRect  = &item->toolTipData->window.rectClient;
 
 	DC->textFont(item->toolTipData->font);
 
@@ -53,9 +53,9 @@ void Tooltip_ComputePosition(itemDef_t *item)
 		tipRect->x -= (tipRect->w + tipRect->x) - 635.0f;
 	}
 
-	item->toolTipData->parent = item->parent;
-	item->toolTipData->type = ITEM_TYPE_TEXT;
-	item->toolTipData->window.style = WINDOW_STYLE_FILLED;
+	item->toolTipData->parent        = item->parent;
+	item->toolTipData->type          = ITEM_TYPE_TEXT;
+	item->toolTipData->window.style  = WINDOW_STYLE_FILLED;
 	item->toolTipData->window.flags |= WINDOW_VISIBLE;
 }
 
@@ -292,7 +292,7 @@ Keyword Hash
 typedef struct keywordHash_s
 {
 	char *keyword;
-	qboolean(*func)(itemDef_t *item, int handle);
+	qboolean (*func)(itemDef_t *item, int handle);
 	struct keywordHash_s *next;
 } keywordHash_t;
 
@@ -323,7 +323,7 @@ void KeywordHash_Add(keywordHash_t *table[], keywordHash_t *key)
 	int collision = qtrue;
 	}
 	*/
-	key->next = table[hash];
+	key->next   = table[hash];
 	table[hash] = key;
 }
 
@@ -393,7 +393,7 @@ qboolean ItemParse_textfile(itemDef_t *item, int handle)
 		return qfalse;
 	}
 
-	newtext = DC->fileText(token.string);
+	newtext    = DC->fileText(token.string);
 	item->text = String_Alloc(newtext);
 
 	return qtrue;
@@ -541,9 +541,9 @@ qboolean ItemParse_model_animplay(itemDef_t *item, int handle)
 		return qfalse;
 	}
 
-	modelPtr->frame = modelPtr->startframe + 1;
-	modelPtr->oldframe = modelPtr->startframe;
-	modelPtr->backlerp = 0.0f;
+	modelPtr->frame     = modelPtr->startframe + 1;
+	modelPtr->oldframe  = modelPtr->startframe;
+	modelPtr->backlerp  = 0.0f;
 	modelPtr->frameTime = DC->realTime;
 	return qtrue;
 }
@@ -736,8 +736,8 @@ qboolean ItemParse_columns(itemDef_t *item, int handle)
 
 			if (PC_Int_Parse(handle, &pos) && PC_Int_Parse(handle, &width) && PC_Int_Parse(handle, &maxChars))
 			{
-				listPtr->columnInfo[i].pos = pos;
-				listPtr->columnInfo[i].width = width;
+				listPtr->columnInfo[i].pos      = pos;
+				listPtr->columnInfo[i].width    = width;
 				listPtr->columnInfo[i].maxChars = maxChars;
 			}
 			else
@@ -888,7 +888,7 @@ qboolean ItemParse_forecolor(itemDef_t *item, int handle)
 			return qfalse;
 		}
 		item->window.foreColor[i] = f;
-		item->window.flags |= WINDOW_FORECOLORSET;
+		item->window.flags       |= WINDOW_FORECOLORSET;
 	}
 	return qtrue;
 }
@@ -1115,7 +1115,7 @@ qboolean ItemParse_cvar(itemDef_t *item, int handle)
 	Q_strlwr((char *)item->cvar);
 	if (item->typeData)
 	{
-		editPtr = (editFieldDef_t *)item->typeData;
+		editPtr         = (editFieldDef_t *)item->typeData;
 		editPtr->minVal = -1;
 		editPtr->maxVal = -1;
 		editPtr->defVal = -1;
@@ -1138,7 +1138,7 @@ qboolean ItemParse_maxChars(itemDef_t *item, int handle)
 	{
 		return qfalse;
 	}
-	editPtr = (editFieldDef_t *)item->typeData;
+	editPtr           = (editFieldDef_t *)item->typeData;
 	editPtr->maxChars = maxChars;
 	return qtrue;
 }
@@ -1158,7 +1158,7 @@ qboolean ItemParse_maxPaintChars(itemDef_t *item, int handle)
 	{
 		return qfalse;
 	}
-	editPtr = (editFieldDef_t *)item->typeData;
+	editPtr                = (editFieldDef_t *)item->typeData;
 	editPtr->maxPaintChars = maxChars;
 	return qtrue;
 }
@@ -1174,9 +1174,9 @@ qboolean ItemParse_cvarFloat(itemDef_t *item, int handle)
 	}
 	editPtr = (editFieldDef_t *)item->typeData;
 	if (PC_String_Parse(handle, &item->cvar) &&
-		PC_Float_Parse(handle, &editPtr->defVal) &&
-		PC_Float_Parse(handle, &editPtr->minVal) &&
-		PC_Float_Parse(handle, &editPtr->maxVal))
+	    PC_Float_Parse(handle, &editPtr->defVal) &&
+	    PC_Float_Parse(handle, &editPtr->minVal) &&
+	    PC_Float_Parse(handle, &editPtr->maxVal))
 	{
 		return qtrue;
 	}
@@ -1194,8 +1194,8 @@ qboolean ItemParse_cvarStrList(itemDef_t *item, int handle)
 	{
 		return qfalse;
 	}
-	multiPtr = (multiDef_t *)item->typeData;
-	multiPtr->count = 0;
+	multiPtr         = (multiDef_t *)item->typeData;
+	multiPtr->count  = 0;
 	multiPtr->strDef = qtrue;
 
 	if (!trap_PC_ReadToken(handle, &token))
@@ -1229,12 +1229,12 @@ qboolean ItemParse_cvarStrList(itemDef_t *item, int handle)
 		if (pass == 0)
 		{
 			multiPtr->cvarList[multiPtr->count] = String_Alloc(token.string);
-			pass = 1;
+			pass                                = 1;
 		}
 		else
 		{
 			multiPtr->cvarStr[multiPtr->count] = String_Alloc(token.string);
-			pass = 0;
+			pass                               = 0;
 			multiPtr->count++;
 			if (multiPtr->count >= MAX_MULTI_CVARS)
 			{
@@ -1256,8 +1256,8 @@ qboolean ItemParse_cvarFloatList(itemDef_t *item, int handle)
 	{
 		return qfalse;
 	}
-	multiPtr = (multiDef_t *)item->typeData;
-	multiPtr->count = 0;
+	multiPtr         = (multiDef_t *)item->typeData;
+	multiPtr->count  = 0;
 	multiPtr->strDef = qfalse;
 
 	if (!trap_PC_ReadToken(handle, &token))
@@ -1340,8 +1340,8 @@ qboolean ParseColorRange(itemDef_t *item, int handle, int type)
 	item->colorRangeType = type;
 
 	if (PC_Float_Parse(handle, &color.low) &&
-		PC_Float_Parse(handle, &color.high) &&
-		PC_Color_Parse(handle, &color.color))
+	    PC_Float_Parse(handle, &color.high) &&
+	    PC_Color_Parse(handle, &color.color))
 	{
 		if (item->numColors < MAX_COLOR_RANGES)
 		{
@@ -1487,92 +1487,92 @@ qboolean ItemParse_voteFlag(itemDef_t *item, int handle)
 
 keywordHash_t itemParseKeywords[] =
 {
-	{ "accept", ItemParse_accept, NULL },
-	{ "action", ItemParse_action, NULL },
-	{ "addColorRange", ItemParse_addColorRange, NULL },
-	{ "addColorRangeRel", ItemParse_addColorRangeRel, NULL },
-	{ "align", ItemParse_align, NULL },
-	{ "asset_model", ItemParse_asset_model, NULL },
-	{ "asset_shader", ItemParse_asset_shader, NULL },
-	{ "autowrapped", ItemParse_autowrapped, NULL },
-	{ "backcolor", ItemParse_backcolor, NULL },
-	{ "background", ItemParse_background, NULL },
-	{ "border", ItemParse_border, NULL },
-	{ "bordercolor", ItemParse_bordercolor, NULL },
-	{ "bordersize", ItemParse_bordersize, NULL },
-	{ "cinematic", ItemParse_cinematic, NULL },
-	{ "columns", ItemParse_columns, NULL },
-	{ "contextmenu", ItemParse_contextMenu, NULL },
-	{ "cvar", ItemParse_cvar, NULL },
-	{ "cvarFloat", ItemParse_cvarFloat, NULL },
-	{ "cvarFloatList", ItemParse_cvarFloatList, NULL },
-	{ "cvarStrList", ItemParse_cvarStrList, NULL },
+	{ "accept",            ItemParse_accept,            NULL },
+	{ "action",            ItemParse_action,            NULL },
+	{ "addColorRange",     ItemParse_addColorRange,     NULL },
+	{ "addColorRangeRel",  ItemParse_addColorRangeRel,  NULL },
+	{ "align",             ItemParse_align,             NULL },
+	{ "asset_model",       ItemParse_asset_model,       NULL },
+	{ "asset_shader",      ItemParse_asset_shader,      NULL },
+	{ "autowrapped",       ItemParse_autowrapped,       NULL },
+	{ "backcolor",         ItemParse_backcolor,         NULL },
+	{ "background",        ItemParse_background,        NULL },
+	{ "border",            ItemParse_border,            NULL },
+	{ "bordercolor",       ItemParse_bordercolor,       NULL },
+	{ "bordersize",        ItemParse_bordersize,        NULL },
+	{ "cinematic",         ItemParse_cinematic,         NULL },
+	{ "columns",           ItemParse_columns,           NULL },
+	{ "contextmenu",       ItemParse_contextMenu,       NULL },
+	{ "cvar",              ItemParse_cvar,              NULL },
+	{ "cvarFloat",         ItemParse_cvarFloat,         NULL },
+	{ "cvarFloatList",     ItemParse_cvarFloatList,     NULL },
+	{ "cvarStrList",       ItemParse_cvarStrList,       NULL },
 	{ "cvarListUndefined", ItemParse_cvarListUndefined, NULL },
-	{ "cvarTest", ItemParse_cvarTest, NULL },
-	{ "decoration", ItemParse_decoration, NULL },
-	{ "textasint", ItemParse_textasint, NULL },
-	{ "textasfloat", ItemParse_textasfloat, NULL },
-	{ "disableCvar", ItemParse_disableCvar, NULL },
-	{ "doubleclick", ItemParse_doubleClick, NULL },
-	{ "onTab", ItemParse_onTab, NULL },
-	{ "onEsc", ItemParse_onEsc, NULL },
-	{ "onEnter", ItemParse_onEnter, NULL },
-	{ "onPaste", ItemParse_onPaste, NULL },
-	{ "elementheight", ItemParse_elementheight, NULL },
-	{ "elementtype", ItemParse_elementtype, NULL },
-	{ "elementwidth", ItemParse_elementwidth, NULL },
-	{ "enableCvar", ItemParse_enableCvar, NULL },
-	{ "execKey", ItemParse_execKey, NULL },
-	{ "feeder", ItemParse_feeder, NULL },
-	{ "focusSound", ItemParse_focusSound, NULL },
-	{ "forecolor", ItemParse_forecolor, NULL },
-	{ "group", ItemParse_group, NULL },
-	{ "hideCvar", ItemParse_hideCvar, NULL },
-	{ "horizontalscroll", ItemParse_horizontalscroll, NULL },
-	{ "leaveFocus", ItemParse_leaveFocus, NULL },
-	{ "maxChars", ItemParse_maxChars, NULL },
-	{ "maxPaintChars", ItemParse_maxPaintChars, NULL },
-	{ "model_angle", ItemParse_model_angle, NULL },
-	{ "model_animplay", ItemParse_model_animplay, NULL },
-	{ "model_fovx", ItemParse_model_fovx, NULL },
-	{ "model_fovy", ItemParse_model_fovy, NULL },
-	{ "model_origin", ItemParse_model_origin, NULL },
-	{ "model_rotation", ItemParse_model_rotation, NULL },
-	{ "mouseEnter", ItemParse_mouseEnter, NULL },
-	{ "mouseEnterText", ItemParse_mouseEnterText, NULL },
-	{ "mouseExit", ItemParse_mouseExit, NULL },
-	{ "mouseExitText", ItemParse_mouseExitText, NULL },
-	{ "name", ItemParse_name, NULL },
-	{ "noToggle", ItemParse_noToggle, NULL }, // use with ITEM_TYPE_YESNO and an action script (see sv_punkbuster)
-	{ "notselectable", ItemParse_notselectable, NULL },
-	{ "onFocus", ItemParse_onFocus, NULL },
-	{ "origin", ItemParse_origin, NULL },
-	{ "outlinecolor", ItemParse_outlinecolor, NULL },
-	{ "ownerdraw", ItemParse_ownerdraw, NULL },
-	{ "ownerdrawFlag", ItemParse_ownerdrawFlag, NULL },
-	{ "rect", ItemParse_rect, NULL },
-	{ "settingDisabled", ItemParse_settingDisabled, NULL },
-	{ "settingEnabled", ItemParse_settingEnabled, NULL },
-	{ "showCvar", ItemParse_showCvar, NULL },
-	{ "special", ItemParse_special, NULL },
-	{ "style", ItemParse_style, NULL },
-	{ "text", ItemParse_text, NULL },
-	{ "textalign", ItemParse_textalign, NULL },
-	{ "textalignx", ItemParse_textalignx, NULL },
-	{ "textaligny", ItemParse_textaligny, NULL },
-	{ "textfile", ItemParse_textfile, NULL },
-	{ "textfont", ItemParse_textfont, NULL },
-	{ "textscale", ItemParse_textscale, NULL },
-	{ "textstyle", ItemParse_textstyle, NULL },
-	{ "tooltip", ItemParse_tooltip, NULL },
-	{ "tooltipalignx", ItemParse_tooltipalignx, NULL },
-	{ "tooltipaligny", ItemParse_tooltipaligny, NULL },
-	{ "type", ItemParse_type, NULL },
-	{ "visible", ItemParse_visible, NULL },
-	{ "voteFlag", ItemParse_voteFlag, NULL }, // vote check
-	{ "wrapped", ItemParse_wrapped, NULL },
+	{ "cvarTest",          ItemParse_cvarTest,          NULL },
+	{ "decoration",        ItemParse_decoration,        NULL },
+	{ "textasint",         ItemParse_textasint,         NULL },
+	{ "textasfloat",       ItemParse_textasfloat,       NULL },
+	{ "disableCvar",       ItemParse_disableCvar,       NULL },
+	{ "doubleclick",       ItemParse_doubleClick,       NULL },
+	{ "onTab",             ItemParse_onTab,             NULL },
+	{ "onEsc",             ItemParse_onEsc,             NULL },
+	{ "onEnter",           ItemParse_onEnter,           NULL },
+	{ "onPaste",           ItemParse_onPaste,           NULL },
+	{ "elementheight",     ItemParse_elementheight,     NULL },
+	{ "elementtype",       ItemParse_elementtype,       NULL },
+	{ "elementwidth",      ItemParse_elementwidth,      NULL },
+	{ "enableCvar",        ItemParse_enableCvar,        NULL },
+	{ "execKey",           ItemParse_execKey,           NULL },
+	{ "feeder",            ItemParse_feeder,            NULL },
+	{ "focusSound",        ItemParse_focusSound,        NULL },
+	{ "forecolor",         ItemParse_forecolor,         NULL },
+	{ "group",             ItemParse_group,             NULL },
+	{ "hideCvar",          ItemParse_hideCvar,          NULL },
+	{ "horizontalscroll",  ItemParse_horizontalscroll,  NULL },
+	{ "leaveFocus",        ItemParse_leaveFocus,        NULL },
+	{ "maxChars",          ItemParse_maxChars,          NULL },
+	{ "maxPaintChars",     ItemParse_maxPaintChars,     NULL },
+	{ "model_angle",       ItemParse_model_angle,       NULL },
+	{ "model_animplay",    ItemParse_model_animplay,    NULL },
+	{ "model_fovx",        ItemParse_model_fovx,        NULL },
+	{ "model_fovy",        ItemParse_model_fovy,        NULL },
+	{ "model_origin",      ItemParse_model_origin,      NULL },
+	{ "model_rotation",    ItemParse_model_rotation,    NULL },
+	{ "mouseEnter",        ItemParse_mouseEnter,        NULL },
+	{ "mouseEnterText",    ItemParse_mouseEnterText,    NULL },
+	{ "mouseExit",         ItemParse_mouseExit,         NULL },
+	{ "mouseExitText",     ItemParse_mouseExitText,     NULL },
+	{ "name",              ItemParse_name,              NULL },
+	{ "noToggle",          ItemParse_noToggle,          NULL }, // use with ITEM_TYPE_YESNO and an action script (see sv_punkbuster)
+	{ "notselectable",     ItemParse_notselectable,     NULL },
+	{ "onFocus",           ItemParse_onFocus,           NULL },
+	{ "origin",            ItemParse_origin,            NULL },
+	{ "outlinecolor",      ItemParse_outlinecolor,      NULL },
+	{ "ownerdraw",         ItemParse_ownerdraw,         NULL },
+	{ "ownerdrawFlag",     ItemParse_ownerdrawFlag,     NULL },
+	{ "rect",              ItemParse_rect,              NULL },
+	{ "settingDisabled",   ItemParse_settingDisabled,   NULL },
+	{ "settingEnabled",    ItemParse_settingEnabled,    NULL },
+	{ "showCvar",          ItemParse_showCvar,          NULL },
+	{ "special",           ItemParse_special,           NULL },
+	{ "style",             ItemParse_style,             NULL },
+	{ "text",              ItemParse_text,              NULL },
+	{ "textalign",         ItemParse_textalign,         NULL },
+	{ "textalignx",        ItemParse_textalignx,        NULL },
+	{ "textaligny",        ItemParse_textaligny,        NULL },
+	{ "textfile",          ItemParse_textfile,          NULL },
+	{ "textfont",          ItemParse_textfont,          NULL },
+	{ "textscale",         ItemParse_textscale,         NULL },
+	{ "textstyle",         ItemParse_textstyle,         NULL },
+	{ "tooltip",           ItemParse_tooltip,           NULL },
+	{ "tooltipalignx",     ItemParse_tooltipalignx,     NULL },
+	{ "tooltipaligny",     ItemParse_tooltipaligny,     NULL },
+	{ "type",              ItemParse_type,              NULL },
+	{ "visible",           ItemParse_visible,           NULL },
+	{ "voteFlag",          ItemParse_voteFlag,          NULL }, // vote check
+	{ "wrapped",           ItemParse_wrapped,           NULL },
 
-	{ NULL, NULL, NULL }
+	{ NULL,                NULL,                        NULL }
 };
 
 keywordHash_t *itemParseKeywordHash[KEYWORDHASH_SIZE];
@@ -1655,8 +1655,8 @@ void Item_InitControls(itemDef_t *item)
 		if (listPtr)
 		{
 			listPtr->cursorPos = 0;
-			listPtr->startPos = 0;
-			listPtr->endPos = 0;
+			listPtr->startPos  = 0;
+			listPtr->endPos    = 0;
 		}
 	}
 
@@ -1725,7 +1725,7 @@ qboolean MenuParse_style(itemDef_t *item, int handle)
 
 qboolean MenuParse_visible(itemDef_t *item, int handle)
 {
-	int       i = 0;
+	int       i     = 0;
 	menuDef_t *menu = (menuDef_t *)item;
 
 	if (!PC_Int_Parse(handle, &i))
@@ -1833,7 +1833,7 @@ qboolean MenuParse_borderSize(itemDef_t *item, int handle)
 qboolean MenuParse_backcolor(itemDef_t *item, int handle)
 {
 	int       i;
-	float     f = 0.0f;
+	float     f     = 0.0f;
 	menuDef_t *menu = (menuDef_t *)item;
 
 	for (i = 0; i < 4; i++)
@@ -1850,7 +1850,7 @@ qboolean MenuParse_backcolor(itemDef_t *item, int handle)
 qboolean MenuParse_forecolor(itemDef_t *item, int handle)
 {
 	int       i;
-	float     f = 0.0f;
+	float     f     = 0.0f;
 	menuDef_t *menu = (menuDef_t *)item;
 
 	for (i = 0; i < 4; i++)
@@ -1860,7 +1860,7 @@ qboolean MenuParse_forecolor(itemDef_t *item, int handle)
 			return qfalse;
 		}
 		menu->window.foreColor[i] = f;
-		menu->window.flags |= WINDOW_FORECOLORSET;
+		menu->window.flags       |= WINDOW_FORECOLORSET;
 	}
 	return qtrue;
 }
@@ -1868,7 +1868,7 @@ qboolean MenuParse_forecolor(itemDef_t *item, int handle)
 qboolean MenuParse_bordercolor(itemDef_t *item, int handle)
 {
 	int       i;
-	float     f = 0.0f;
+	float     f     = 0.0f;
 	menuDef_t *menu = (menuDef_t *)item;
 
 	for (i = 0; i < 4; i++)
@@ -1885,7 +1885,7 @@ qboolean MenuParse_bordercolor(itemDef_t *item, int handle)
 qboolean MenuParse_focuscolor(itemDef_t *item, int handle)
 {
 	int       i;
-	float     f = 0.0f;
+	float     f     = 0.0f;
 	menuDef_t *menu = (menuDef_t *)item;
 
 	for (i = 0; i < 4; i++)
@@ -1903,7 +1903,7 @@ qboolean MenuParse_focuscolor(itemDef_t *item, int handle)
 qboolean MenuParse_disablecolor(itemDef_t *item, int handle)
 {
 	int       i;
-	float     f = 0.0f;
+	float     f     = 0.0f;
 	menuDef_t *menu = (menuDef_t *)item;
 
 	for (i = 0; i < 4; i++)
@@ -1954,7 +1954,7 @@ qboolean MenuParse_cinematic(itemDef_t *item, int handle)
 
 qboolean MenuParse_ownerdrawFlag(itemDef_t *item, int handle)
 {
-	int       i = 0;
+	int       i     = 0;
 	menuDef_t *menu = (menuDef_t *)item;
 
 	if (!PC_Int_Parse(handle, &i))
@@ -2067,7 +2067,7 @@ qboolean MenuParse_itemDef(itemDef_t *item, int handle)
 
 qboolean MenuParse_execKey(itemDef_t *item, int handle)
 {
-	menuDef_t *menu = (menuDef_t *)item;
+	menuDef_t *menu   = (menuDef_t *)item;
 	char      keyname = 0;
 	short int keyindex;
 
@@ -2087,7 +2087,7 @@ qboolean MenuParse_execKey(itemDef_t *item, int handle)
 
 qboolean MenuParse_execKeyInt(itemDef_t *item, int handle)
 {
-	menuDef_t *menu = (menuDef_t *)item;
+	menuDef_t *menu   = (menuDef_t *)item;
 	int       keyname = 0;
 
 	if (!PC_Int_Parse(handle, &keyname))
@@ -2130,44 +2130,44 @@ qboolean MenuParse_modal(itemDef_t *item, int handle)
 
 keywordHash_t menuParseKeywords[] =
 {
-	{ "name", MenuParse_name, NULL },
-	{ "fullscreen", MenuParse_fullscreen, NULL },
-	{ "rect", MenuParse_rect, NULL },
-	{ "style", MenuParse_style, NULL },
-	{ "visible", MenuParse_visible, NULL },
-	{ "onOpen", MenuParse_onOpen, NULL },
-	{ "onClose", MenuParse_onClose, NULL },
-	{ "onTimeout", MenuParse_onTimeout, NULL }, // menu timeout function
-	{ "onESC", MenuParse_onESC, NULL },
-	{ "onEnter", MenuParse_onEnter, NULL },
-	{ "onPaste", MenuParse_onPaste, NULL },
-	{ "border", MenuParse_border, NULL },
-	{ "borderSize", MenuParse_borderSize, NULL },
-	{ "backcolor", MenuParse_backcolor, NULL },
-	{ "forecolor", MenuParse_forecolor, NULL },
-	{ "bordercolor", MenuParse_bordercolor, NULL },
-	{ "focuscolor", MenuParse_focuscolor, NULL },
-	{ "disablecolor", MenuParse_disablecolor, NULL },
-	{ "outlinecolor", MenuParse_outlinecolor, NULL },
-	{ "background", MenuParse_background, NULL },
-	{ "ownerdraw", MenuParse_ownerdraw, NULL },
-	{ "ownerdrawFlag", MenuParse_ownerdrawFlag, NULL },
-	{ "outOfBoundsClick", MenuParse_outOfBounds, NULL },
-	{ "soundLoop", MenuParse_soundLoop, NULL },
-	{ "itemDef", MenuParse_itemDef, NULL },
-	{ "cinematic", MenuParse_cinematic, NULL },
-	{ "popup", MenuParse_popup, NULL },
-	{ "fadeClamp", MenuParse_fadeClamp, NULL },
-	{ "fadeCycle", MenuParse_fadeCycle, NULL },
-	{ "fadeAmount", MenuParse_fadeAmount, NULL },
-	{ "execKey", MenuParse_execKey, NULL },
-	{ "execKeyInt", MenuParse_execKeyInt, NULL },
-	{ "alwaysontop", MenuParse_drawAlwaysOnTop, NULL },
-	{ "modal", MenuParse_modal, NULL },
+	{ "name",             MenuParse_name,            NULL },
+	{ "fullscreen",       MenuParse_fullscreen,      NULL },
+	{ "rect",             MenuParse_rect,            NULL },
+	{ "style",            MenuParse_style,           NULL },
+	{ "visible",          MenuParse_visible,         NULL },
+	{ "onOpen",           MenuParse_onOpen,          NULL },
+	{ "onClose",          MenuParse_onClose,         NULL },
+	{ "onTimeout",        MenuParse_onTimeout,       NULL }, // menu timeout function
+	{ "onESC",            MenuParse_onESC,           NULL },
+	{ "onEnter",          MenuParse_onEnter,         NULL },
+	{ "onPaste",          MenuParse_onPaste,         NULL },
+	{ "border",           MenuParse_border,          NULL },
+	{ "borderSize",       MenuParse_borderSize,      NULL },
+	{ "backcolor",        MenuParse_backcolor,       NULL },
+	{ "forecolor",        MenuParse_forecolor,       NULL },
+	{ "bordercolor",      MenuParse_bordercolor,     NULL },
+	{ "focuscolor",       MenuParse_focuscolor,      NULL },
+	{ "disablecolor",     MenuParse_disablecolor,    NULL },
+	{ "outlinecolor",     MenuParse_outlinecolor,    NULL },
+	{ "background",       MenuParse_background,      NULL },
+	{ "ownerdraw",        MenuParse_ownerdraw,       NULL },
+	{ "ownerdrawFlag",    MenuParse_ownerdrawFlag,   NULL },
+	{ "outOfBoundsClick", MenuParse_outOfBounds,     NULL },
+	{ "soundLoop",        MenuParse_soundLoop,       NULL },
+	{ "itemDef",          MenuParse_itemDef,         NULL },
+	{ "cinematic",        MenuParse_cinematic,       NULL },
+	{ "popup",            MenuParse_popup,           NULL },
+	{ "fadeClamp",        MenuParse_fadeClamp,       NULL },
+	{ "fadeCycle",        MenuParse_fadeCycle,       NULL },
+	{ "fadeAmount",       MenuParse_fadeAmount,      NULL },
+	{ "execKey",          MenuParse_execKey,         NULL },
+	{ "execKeyInt",       MenuParse_execKeyInt,      NULL },
+	{ "alwaysontop",      MenuParse_drawAlwaysOnTop, NULL },
+	{ "modal",            MenuParse_modal,           NULL },
 
 	// parse the command to set if we're looping through all items to find the current hotkey
-	{ "itemHotkeyMode", MenuParse_itemHotkeyMode, NULL },
-	{ NULL, NULL, NULL }
+	{ "itemHotkeyMode",   MenuParse_itemHotkeyMode,  NULL },
+	{ NULL,               NULL,                      NULL }
 };
 
 keywordHash_t *menuParseKeywordHash[KEYWORDHASH_SIZE];
