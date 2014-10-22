@@ -2018,8 +2018,7 @@ void CG_RegisterItemVisuals(int itemNum)
 		// some items don't have world models see (bg_itemlist) - we don't have to register
 		if (!item->world_model[i] || !item->world_model[i][0])
 		{
-			// FIXME: add DEBUG macro
-			//CG_Printf("CG_RegisterItemVisuals: NULL or empty world_model[%i] for item classname %s\n", i, item->classname);
+			CG_DPrintf("CG_RegisterItemVisuals: NULL or empty world_model[%i] for item classname %s\n", i, item->classname);
 			itemInfo->models[i] = 0;
 		}
 		else
@@ -2296,8 +2295,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		angles[PITCH] = cg.refdefViewAngles[PITCH] / 1.2;
 	}
 
-	if (!cg.renderingThirdPerson &&
-	    (IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET || cg.predictedPlayerState.weapon == WP_MOBILE_BROWNING_SET) &&
+	if (!cg.renderingThirdPerson && (IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) || IS_MG_WEAPON_SET(cg.predictedPlayerState.weapon)) &&
 	    cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		angles[PITCH] = cg.pmext.mountedWeaponAngles[PITCH];
@@ -3008,14 +3006,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
-		else if (weaponNum == WP_MOBILE_MG42 || weaponNum == WP_MOBILE_BROWNING)
+		else if (IS_MG_WEAPON(weaponNum))
 		{
 			barrel.hModel = weapon->modModels[0];
 			barrel.frame  = 1;
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
-		else if (weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING_SET)
+		else if (IS_MG_WEAPON_SET(weaponNum))
 		{
 			barrel.hModel = weapon->modModels[0];
 			barrel.frame  = 0;
@@ -3100,7 +3098,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// continuous smoke after firing
 		if (ps || cg.renderingThirdPerson || !isPlayer)
 		{
-			if (weaponNum == WP_STEN || weaponNum == WP_MOBILE_MG42 || weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING || weaponNum == WP_MOBILE_BROWNING_SET)
+			if (weaponNum == WP_STEN || IS_MG_WEAPON(weaponNum) || IS_MG_WEAPON_SET(weaponNum))
 			{
 				// hot smoking gun
 				if (cg.time - cent->overheatTime < 3000)
@@ -3337,9 +3335,6 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// mounted gun drawing
 	if (ps->eFlags & EF_MOUNTEDTANK)
 	{
-		// FIXME: HACK dummy model to just draw _something_
-		refEntity_t flash;
-
 		memset(&hand, 0, sizeof(hand));
 		CG_CalculateWeaponPosition(hand.origin, angles);
 		AnglesToAxis(angles, hand.axis);
@@ -3381,6 +3376,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 		}
 
 		{
+			// FIXME: HACK dummy model to just draw _something_
+			refEntity_t flash;
+
 			memset(&flash, 0, sizeof(flash));
 			flash.renderfx = (RF_LIGHTING_ORIGIN | RF_DEPTHHACK);
 			flash.hModel   = cgs.media.mg42muzzleflash;
@@ -4121,7 +4119,6 @@ void CG_AltWeapon_f(void)
 	}
 
 	// Need ground for this
-	// FIXME: do a switch
 	if (cg.weaponSelect == WP_MORTAR || cg.weaponSelect == WP_MORTAR2)
 	{
 		int    contents;
@@ -4168,7 +4165,7 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 	}
-	else if (cg.weaponSelect == WP_MOBILE_MG42 || cg.weaponSelect == WP_MOBILE_BROWNING)
+	else if (IS_MG_WEAPON(cg.weaponSelect))
 	{
 		if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
 		{
@@ -4262,7 +4259,7 @@ void CG_NextWeap(qboolean switchBanks)
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (IS_MORTAR_WEAPON_SET(curweap) || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(curweap) || IS_MG_WEAPON_SET(curweap))
 	{
 		return;
 	}
@@ -4478,7 +4475,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (IS_MORTAR_WEAPON_SET(curweap) || curweap == WP_MOBILE_MG42_SET || curweap == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(curweap) || IS_MG_WEAPON_SET(curweap))
 	{
 		return;
 	}
@@ -4703,8 +4700,8 @@ void CG_LastWeaponUsed_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
-	// FIXME: do a switch or macro
-	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+
+	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || IS_MG_WEAPON_SET(cg.weaponSelect))
 	{
 		return;
 	}
@@ -4979,8 +4976,8 @@ void CG_WeaponBank_f(void)
 		return; // force pause so holding it down won't go too fast
 
 	}
-	// FIXME: do a switch or macro
-	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+
+	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || IS_MG_WEAPON_SET(cg.weaponSelect))
 	{
 		return;
 	}
@@ -5095,8 +5092,7 @@ void CG_Weapon_f(void)
 		return;
 	}
 
-	// FIXME: do a switch or macro
-	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || IS_MG_WEAPON_SET(cg.weaponSelect))
 	{
 		return;
 	}
@@ -5748,6 +5744,43 @@ void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duratio
 	}
 }
 
+
+void CG_RandomDebris(localEntity_t *le)
+{
+	int i = rand() % 5;
+
+	if (i == 0)
+	{
+		le->refEntity.hModel  = cgs.media.debFabric[1];
+		le->leBounceSoundType = LEBS_BONE;
+	}
+	else if (i == 1)
+	{
+		le->refEntity.hModel  = cgs.media.shardMetal1;
+		le->leBounceSoundType = LEBS_METAL;
+	}
+	else if (i == 2)
+	{
+		le->refEntity.hModel  = cgs.media.shardMetal2;
+		le->leBounceSoundType = LEBS_METAL;
+	}
+	else if (i == 3)
+	{
+		le->refEntity.hModel  = cgs.media.debRock[1];
+		le->leBounceSoundType = LEBS_ROCK;
+	}
+	else if (i == 4)
+	{
+		le->refEntity.hModel  = cgs.media.debRock[0];
+		le->leBounceSoundType = LEBS_ROCK;
+	}
+	else
+	{
+		le->refEntity.hModel  = cgs.media.debRock[2];
+		le->leBounceSoundType = LEBS_ROCK;
+	}
+}
+
 /*
 =================
 CG_AddDebris
@@ -5806,7 +5839,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 			{
 				if (rand() % 2)
 				{
-					le->refEntity.hModel = cgs.media.shardMetal1;  // FIXME: find other models
+					le->refEntity.hModel = cgs.media.shardMetal1;  // FIXME: find other models or scale them
 				}
 				else
 				{
@@ -5840,11 +5873,6 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 			if (trace->surfaceFlags & SURF_GRASS)
 			{
 			    CG_Printf("ON GRASS\n");
-			}
-
-			if (trace->surfaceFlags & SURF_WOOD)
-			{
-			    CG_Printf("ON WOOD\n");
 			}
 
 			if (trace->surfaceFlags & SURF_CERAMIC)
@@ -5891,41 +5919,14 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 			}
 			*/
 
-			{
-				int i = rand() % 5;
+			// FIXME: replace with surface related models
+			CG_RandomDebris(le);
 
-				if (i == 0)
-				{
-					le->refEntity.hModel  = cgs.media.debFabric[1];
-					le->leBounceSoundType = LEBS_BONE;
-				}
-				else if (i == 1)
-				{
-					le->refEntity.hModel  = cgs.media.shardMetal1;
-					le->leBounceSoundType = LEBS_METAL;
-				}
-				else if (i == 2)
-				{
-					le->refEntity.hModel  = cgs.media.shardMetal2;
-					le->leBounceSoundType = LEBS_METAL;
-				}
-				else if (i == 3)
-				{
-					le->refEntity.hModel  = cgs.media.debRock[1];
-					le->leBounceSoundType = LEBS_ROCK;
-				}
-				else if (i == 4)
-				{
-					le->refEntity.hModel  = cgs.media.debRock[0];
-					le->leBounceSoundType = LEBS_ROCK;
-				}
-				else
-				{
-					le->refEntity.hModel  = cgs.media.debRock[2];
-					le->leBounceSoundType = LEBS_ROCK;
-				}
-			}
-
+		}
+		else
+		{
+			// if there is no trace just throw random debris
+			CG_RandomDebris(le);
 		}
 	}
 }
@@ -6032,7 +6033,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		volume = 64;
 
 		// clientNum is a dummy field used to define what sort of effect to spawn
-
 		if (!clientNum)
 		{
 			// RF, why is this here? we need sparks if clientNum = 0, used for warzombie
@@ -6734,7 +6734,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			VectorCopy(cg.snap->ps.origin, muzzle);
 			muzzle[2] += cg.snap->ps.viewheight;
 			AngleVectors(cg.snap->ps.viewangles, forward, NULL, NULL);
-			if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET || cg.snap->ps.weapon == WP_MOBILE_BROWNING_SET)
+			if (IS_MG_WEAPON_SET(cg.snap->ps.weapon))
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}
@@ -6797,7 +6797,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		if (cent->currentState.eFlags & EF_PRONE)
 		{
 			muzzle[2] += PRONE_VIEWHEIGHT;
-			if (cent->currentState.weapon == WP_MOBILE_MG42_SET || cent->currentState.weapon == WP_MOBILE_BROWNING_SET)
+			if (IS_MG_WEAPON_SET(cent->currentState.weapon))
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}

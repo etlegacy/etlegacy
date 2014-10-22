@@ -902,6 +902,12 @@ extern int weapAlts[];  // defined in bg_misc.c
 	 w == WP_MOBILE_BROWNING || w == WP_MOBILE_BROWNING_SET || \
 	 w == WP_MORTAR2         || w == WP_MORTAR2_SET)
 
+#define IS_MG_WEAPON(w) \
+	(w == WP_MOBILE_MG42          || w == WP_MOBILE_BROWNING)
+
+#define IS_MG_WEAPON_SET(w) \
+	(w == WP_MOBILE_MG42_SET          || w == WP_MOBILE_BROWNING_SET)
+
 // FIXME: weapon table
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
