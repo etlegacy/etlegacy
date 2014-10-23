@@ -3808,6 +3808,24 @@ void UI_Update(const char *name)
 	}
 }
 
+//uiscript glCustom
+void UI_GLCustom()
+{
+	int ui_r_fullscreen = DC->getCVarValue("ui_r_fullscreen");
+
+	if (ui_r_fullscreen == 1)
+	{
+		DC->setCVar("ui_r_noborder", "0");
+	}
+	else if (ui_r_fullscreen == 2)
+	{
+		DC->setCVar("ui_r_mode", "-2");
+		DC->setCVar("ui_r_noborder", "1");
+	}
+	trap_Cvar_Set("ui_glCustom", "4");
+}
+
+
 /*
 ==============
 UI_RunMenuScript
@@ -4507,7 +4525,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "glCustom") == 0)
 		{
-			trap_Cvar_Set("ui_glCustom", "4");
+			UI_GLCustom();
 		}
 		else if (Q_stricmp(name, "update") == 0)
 		{
@@ -4997,6 +5015,7 @@ void UI_RunMenuScript(char **args)
 			float ui_sensitivity                      = trap_Cvar_VariableValue("sensitivity");
 			int   ui_r_colorbits                      = trap_Cvar_VariableValue("r_colorbits");
 			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("r_fullscreen");
+			int   ui_r_noborder = trap_Cvar_VariableValue("r_noborder");
 			int   ui_r_lodbias                        = trap_Cvar_VariableValue("r_lodbias");
 			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("r_subdivisions");
 			int   ui_r_picmip                         = trap_Cvar_VariableValue("r_picmip");
@@ -5022,7 +5041,15 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_cl_packetdup", va("%i", ui_cl_packetdup));
 			trap_Cvar_Set("ui_sensitivity", va("%f", ui_sensitivity));
 			trap_Cvar_Set("ui_r_colorbits", va("%i", ui_r_colorbits));
+
+			if (ui_r_noborder && !ui_r_fullscreen && ui_r_mode == -2)
+			{
+				ui_r_fullscreen = 2;
+			}
+
 			trap_Cvar_Set("ui_r_fullscreen", va("%i", ui_r_fullscreen));
+			trap_Cvar_Set("ui_r_noborder", va("%i", ui_r_noborder));
+
 			trap_Cvar_Set("ui_r_lodbias", va("%i", ui_r_lodbias));
 			trap_Cvar_Set("ui_r_subdivisions", va("%i", ui_r_subdivisions));
 			trap_Cvar_Set("ui_r_picmip", va("%i", ui_r_picmip));
@@ -5074,6 +5101,7 @@ void UI_RunMenuScript(char **args)
 			float ui_sensitivity                      = trap_Cvar_VariableValue("ui_sensitivity");
 			int   ui_r_colorbits                      = trap_Cvar_VariableValue("ui_r_colorbits");
 			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("ui_r_fullscreen");
+			int   ui_r_noborder						  = trap_Cvar_VariableValue("ui_r_noborder");
 			int   ui_r_lodbias                        = trap_Cvar_VariableValue("ui_r_lodbias");
 			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("ui_r_subdivisions");
 			int   ui_r_picmip                         = trap_Cvar_VariableValue("ui_r_picmip");
@@ -5106,7 +5134,17 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("cl_packetdup", va("%i", ui_cl_packetdup));
 			trap_Cvar_Set("sensitivity", va("%f", ui_sensitivity));
 			trap_Cvar_Set("r_colorbits", va("%i", ui_r_colorbits));
-			trap_Cvar_Set("r_fullscreen", va("%i", ui_r_fullscreen));
+
+			if (ui_r_fullscreen == 2)
+			{
+				trap_Cvar_Set("r_fullscreen", "0");
+			}
+			else
+			{
+				trap_Cvar_Set("r_fullscreen", va("%i", !!ui_r_fullscreen));
+			}
+			
+			trap_Cvar_Set("r_noborder", va("%i", ui_r_noborder));
 			trap_Cvar_Set("r_lodbias", va("%i", ui_r_lodbias));
 			trap_Cvar_Set("r_subdivisions", va("%i", ui_r_subdivisions));
 			trap_Cvar_Set("r_picmip", va("%i", ui_r_picmip));
@@ -5131,6 +5169,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_sensitivity", "");
 			trap_Cvar_Set("ui_r_colorbits", "");
 			trap_Cvar_Set("ui_r_fullscreen", "");
+			trap_Cvar_Set("ui_r_noborder", "");
 			trap_Cvar_Set("ui_r_lodbias", "");
 			trap_Cvar_Set("ui_r_subdivisions", "");
 			trap_Cvar_Set("ui_r_picmip", "");
