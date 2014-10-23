@@ -56,7 +56,6 @@ vec4_t color_border   = COLOR_BORDER_VIEW;
 vec4_t color_hdr      = COLOR_HDR2;
 vec4_t color_name     = COLOR_TEXT;
 
-#ifdef FEATURE_MULTIVIEW
 #define VD_X    4
 #define VD_Y    78
 #define VD_SCALE_X_HDR  0.25f
@@ -570,6 +569,7 @@ void CG_DemoClick(int key, qboolean down)
 	}
 }
 
+#ifdef FEATURE_MULTIVIEW
 qboolean CG_ViewingDraw()
 {
 	if (cg.mvTotalClients < 1)
