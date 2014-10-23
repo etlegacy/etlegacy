@@ -344,33 +344,33 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	int       user_rate, user_snaps;
 	gclient_t *cl;
 	gentity_t *cl_ent;
-	char      n2[MAX_NETNAME], ready[16], ref[16], rate[256];
-	char      *s, *tc, *coach, userinfo[MAX_INFO_STRING];
+	char      n2[MAX_NETNAME], ready[16], ref[8], rate[256];
+	char      *s, *tc, *coach, *ign, *muted, userinfo[MAX_INFO_STRING];
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
 		if (ent)
 		{
-			CP("print \"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps\n\"");
-			CP("print \"^7-----------------------------------------------------------\n\"");
+			CP("print \"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n\"");
+			CP("print \"^7----------------------------------------------------------------------\n\"");
 		}
 		else
 		{
-			G_Printf(" ID : Player                    Nudge  Rate  MaxPkts  Snaps\n");
-			G_Printf("-----------------------------------------------------------\n");
+			G_Printf(" ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n");
+			G_Printf("---------------------------------------------------------------------\n");
 		}
 	}
 	else
 	{
 		if (ent)
 		{
-			CP("print \"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps\n\"");
-			CP("print \"^7---------------------------------------------------------------------\n\"");
+			CP("print \"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n\"");
+			CP("print \"^7-------------------------------------------------------------------------------\n\"");
 		}
 		else
 		{
-			G_Printf("Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps\n");
-			G_Printf("---------------------------------------------------------------------\n");
+			G_Printf("Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n");
+			G_Printf("-------------------------------------------------------------------------------\n");
 		}
 	}
 
@@ -423,9 +423,27 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 			}
 		}
 
-		if (cl->sess.referee)
+		if (cl->sess.referee && !(cl_ent->r.svFlags & SVF_BOT))
 		{
-			strcpy(ref, "REF");
+			strcpy(ref, "REF ");
+		}
+
+		if (ent && COM_BitCheck(ent->client->sess.ignoreClients, idnum))
+		{
+			ign = "IGN ";
+		}
+		else
+		{
+			ign = "";
+		}
+
+		if (cl->sess.muted)
+		{
+			muted = "MUT ";
+		}
+		else
+		{
+			muted = "";
 		}
 
 		if (cl->sess.coach_team)
@@ -454,11 +472,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 		if (ent)
 		{
-			CP(va("print \"%s%s%2d%s:%s %-26s^7%s  ^3%s^7\n\"", ready, tc, idnum, coach, ((ref[0]) ? "^3" : "^7"), n2, rate, ref));
+			CP(va("print \"%s%s%2d%s:%s %-26s^7%s  ^3%s%s%s^7\n\"", ready, tc, idnum, coach, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, ign, muted));
 		}
 		else
 		{
-			G_Printf("%s%s%2d%s: %-26s%s  %s\n", ready, tc, idnum, coach, n2, rate, ref);
+			G_Printf("%s%s%2d%s: %-26s%s  %s%s\n", ready, tc, idnum, coach, n2, rate, ref, muted);
 		}
 
 		cnt++;

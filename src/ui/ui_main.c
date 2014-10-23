@@ -5726,7 +5726,7 @@ static void UI_BuildServerDisplayList(int force)
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if (Q_stristr(gamename, "etmain") == 0 && ui_browserModFilter.integer == 12)
+				if ((Q_stristr(gamename, "etmain") == 0 || gamename[0] == 0) && ui_browserModFilter.integer == 12)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -5745,7 +5745,8 @@ static void UI_BuildServerDisplayList(int force)
 				     Q_stristr(gamename, "etrun") != 0 ||
 				     Q_stristr(gamename, "etjump") != 0 ||
 				     Q_stristr(gamename, "tjmod") != 0 ||
-				     Q_stristr(gamename, "etmain") != 0))
+				     Q_stristr(gamename, "etmain") != 0 ||
+				     gamename[0] == 0))
 				{
 
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
@@ -6751,7 +6752,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 						{
 							handles[3] = uiInfo.modFilter_tjmod;
 						}
-						else if (Q_stristr(gamename, "etmain") != 0)
+						else if (Q_stristr(gamename, "etmain") != 0 || gamename[0] == 0)
 						{
 							handles[3] = uiInfo.modFilter_etmain;
 						}

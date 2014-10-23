@@ -43,7 +43,9 @@
 #define MAX_WEIGHTS         4       // GPU vertex skinning limit, never change this without rewriting many GLSL shaders
 // renderer2 END
 
-#define MAX_CORONAS     32          // unused - not really a reason to limit this other than trying to keep a reasonable count
+#define MAX_CORONAS     64          // not really a reason to limit this other than trying to keep a reasonable count
+                                    // increased from 32 to 64 for ETL
+                                    // mods compiling against vanilla engine don't use it and/or use the lower value which doesn't affect us
 #define MAX_DLIGHTS     32          // can't be increased, because bit flags are used on surfaces
 #define MAX_ENTITIES    1023        // can't be increased without changing drawsurf bit packing - keep this for the mod
 
