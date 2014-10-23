@@ -521,7 +521,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  ui_r_mode                           = DC->getCVarValue("ui_r_mode");
 				int  ui_r_colorbits                      = DC->getCVarValue("ui_r_colorbits");
 				int  ui_r_fullscreen                     = DC->getCVarValue("ui_r_fullscreen");
-				int  ui_r_noborder						 = DC->getCVarValue("ui_r_noborder");
+				int  ui_r_noborder                       = DC->getCVarValue("ui_r_noborder");
 				int  ui_r_texturebits                    = DC->getCVarValue("ui_r_texturebits");
 				int  ui_r_depthbits                      = DC->getCVarValue("ui_r_depthbits");
 				int  ui_r_ext_compressed_textures        = DC->getCVarValue("ui_r_ext_compressed_textures");
@@ -536,7 +536,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  r_mode                           = DC->getCVarValue("r_mode");
 				int  r_colorbits                      = DC->getCVarValue("r_colorbits");
 				int  r_fullscreen                     = DC->getCVarValue("r_fullscreen");
-				int  r_noborder						  = DC->getCVarValue("r_noborder");
+				int  r_noborder                       = DC->getCVarValue("r_noborder");
 				int  r_texturebits                    = DC->getCVarValue("r_texturebits");
 				int  r_depthbits                      = DC->getCVarValue("r_depthbits");
 				int  r_ext_compressed_textures        = DC->getCVarValue("r_ext_compressed_textures");
@@ -555,7 +555,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_mode != r_mode ||
 				    ui_r_colorbits != r_colorbits ||
 				    ui_r_fullscreen != r_fullscreen ||
-					ui_r_noborder != r_noborder ||
+				    ui_r_noborder != r_noborder ||
 				    ui_r_texturebits != r_texturebits ||
 				    ui_r_depthbits != r_depthbits ||
 				    ui_r_ext_compressed_textures != r_ext_compressed_textures ||

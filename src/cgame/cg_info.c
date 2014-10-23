@@ -179,7 +179,7 @@ void CG_DemoControlButtonRender(panel_button_t *button)
 	}
 	else
 	{
-		float demoStatus = (float)((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
+		float  demoStatus = (float)((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
 		vec4_t barColor;
 		Vector4Copy(colorGreen, barColor);
 		barColor[3] = button->font->colour[3];

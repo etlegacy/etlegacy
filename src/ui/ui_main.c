@@ -5015,7 +5015,7 @@ void UI_RunMenuScript(char **args)
 			float ui_sensitivity                      = trap_Cvar_VariableValue("sensitivity");
 			int   ui_r_colorbits                      = trap_Cvar_VariableValue("r_colorbits");
 			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("r_fullscreen");
-			int   ui_r_noborder = trap_Cvar_VariableValue("r_noborder");
+			int   ui_r_noborder                       = trap_Cvar_VariableValue("r_noborder");
 			int   ui_r_lodbias                        = trap_Cvar_VariableValue("r_lodbias");
 			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("r_subdivisions");
 			int   ui_r_picmip                         = trap_Cvar_VariableValue("r_picmip");
@@ -5101,7 +5101,7 @@ void UI_RunMenuScript(char **args)
 			float ui_sensitivity                      = trap_Cvar_VariableValue("ui_sensitivity");
 			int   ui_r_colorbits                      = trap_Cvar_VariableValue("ui_r_colorbits");
 			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("ui_r_fullscreen");
-			int   ui_r_noborder						  = trap_Cvar_VariableValue("ui_r_noborder");
+			int   ui_r_noborder                       = trap_Cvar_VariableValue("ui_r_noborder");
 			int   ui_r_lodbias                        = trap_Cvar_VariableValue("ui_r_lodbias");
 			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("ui_r_subdivisions");
 			int   ui_r_picmip                         = trap_Cvar_VariableValue("ui_r_picmip");
@@ -5143,7 +5143,7 @@ void UI_RunMenuScript(char **args)
 			{
 				trap_Cvar_Set("r_fullscreen", va("%i", !!ui_r_fullscreen));
 			}
-			
+
 			trap_Cvar_Set("r_noborder", va("%i", ui_r_noborder));
 			trap_Cvar_Set("r_lodbias", va("%i", ui_r_lodbias));
 			trap_Cvar_Set("r_subdivisions", va("%i", ui_r_subdivisions));
