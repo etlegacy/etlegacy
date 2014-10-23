@@ -3811,17 +3811,25 @@ void UI_Update(const char *name)
 //uiscript glCustom
 void UI_GLCustom()
 {
-	int ui_r_fullscreen = DC->getCVarValue("ui_r_fullscreen");
+	int ui_r_windowmode = DC->getCVarValue("ui_r_windowmode");
 
-	if (ui_r_fullscreen == 1)
+	switch (ui_r_windowmode)
 	{
+	case 1:
+		DC->setCVar("ui_r_fullscreen", "1");
 		DC->setCVar("ui_r_noborder", "0");
-	}
-	else if (ui_r_fullscreen == 2)
-	{
+		break;
+	case 2:
+		DC->setCVar("ui_r_fullscreen", "0");
 		DC->setCVar("ui_r_mode", "-2");
 		DC->setCVar("ui_r_noborder", "1");
+		break;
+	case 0:
+	default:
+		DC->setCVar("ui_r_fullscreen", "0");
+		break;
 	}
+
 	trap_Cvar_Set("ui_glCustom", "4");
 }
 
@@ -5044,7 +5052,11 @@ void UI_RunMenuScript(char **args)
 
 			if (ui_r_noborder && !ui_r_fullscreen && ui_r_mode == -2)
 			{
-				ui_r_fullscreen = 2;
+				trap_Cvar_Set("ui_r_windowmode", "2");
+			}
+			else
+			{
+				trap_Cvar_Set("ui_r_windowmode", va("%i", !!ui_r_fullscreen));
 			}
 
 			trap_Cvar_Set("ui_r_fullscreen", va("%i", ui_r_fullscreen));
