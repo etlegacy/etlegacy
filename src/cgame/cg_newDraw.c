@@ -629,6 +629,12 @@ void CG_MouseEvent(int x, int y)
 {
 	switch (cgs.eventHandling)
 	{
+	case CGAME_EVENT_DEMO:
+	case CGAME_EVENT_MULTIVIEW:
+		if (x != 0 || y != 0)
+		{
+			cgs.cursorUpdate = cg.time + 5000;
+		}
 	case CGAME_EVENT_SPEAKEREDITOR:
 	case CGAME_EVENT_GAMEVIEW:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
@@ -638,9 +644,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorX = 0;
 		}
-		else if (cgs.cursorX > SCREEN_WIDTH)
+		else if (cgs.cursorX > SCREEN_WIDTH_SAFE)
 		{
-			cgs.cursorX = SCREEN_WIDTH;
+			cgs.cursorX = SCREEN_WIDTH_SAFE;
 		}
 
 		cgs.cursorY += y;
@@ -648,42 +654,14 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorY = 0;
 		}
-		else if (cgs.cursorY > SCREEN_HEIGHT)
+		else if (cgs.cursorY > SCREEN_HEIGHT_SAFE)
 		{
-			cgs.cursorY = SCREEN_HEIGHT;
+			cgs.cursorY = SCREEN_HEIGHT_SAFE;
 		}
 
 		if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
 		{
 			CG_SpeakerEditorMouseMove_Handling(x, y);
-		}
-
-		break;
-	case CGAME_EVENT_DEMO:
-	case CGAME_EVENT_MULTIVIEW:
-		cgs.cursorX += x;
-		if (cgs.cursorX < 0)
-		{
-			cgs.cursorX = 0;
-		}
-		else if (cgs.cursorX > SCREEN_WIDTH)
-		{
-			cgs.cursorX = SCREEN_WIDTH;
-		}
-
-		cgs.cursorY += y;
-		if (cgs.cursorY < 0)
-		{
-			cgs.cursorY = 0;
-		}
-		else if (cgs.cursorY > SCREEN_HEIGHT)
-		{
-			cgs.cursorY = SCREEN_HEIGHT;
-		}
-
-		if (x != 0 || y != 0)
-		{
-			cgs.cursorUpdate = cg.time + 5000;
 		}
 		break;
 	default:

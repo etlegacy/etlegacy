@@ -3362,4 +3362,8 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 #define HITSOUNDS_NOHEADSHOT        0x04
 #define HITSOUNDS_NOBODYSHOT        0x08
 
+// Safe screenwidth and screenheight defines
+#define SCREEN_WIDTH_SAFE Ccg_WideX(SCREEN_WIDTH)
+#define SCREEN_HEIGHT_SAFE SCREEN_HEIGHT
+
 #endif // #ifndef INCLUDE_CG_LOCAL_H

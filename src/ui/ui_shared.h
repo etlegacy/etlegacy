@@ -123,19 +123,17 @@
 #define SLIDER_THUMB_HEIGHT 12.0    // 20.0
 #define NUM_CROSSHAIRS      16
 
-typedef union rectDef_s
+typedef struct rectDef_s
 {
-	struct
-	{
-		float x;    // horiz position
-		float y;    // vert position
-		float w;    // width
-		float h;    // height;
-	};
-	vec4_t rect;
+	float x;    // horiz position
+	float y;    // vert position
+	float w;    // width
+	float h;    // height;
 } rectDef_t;
 
 typedef rectDef_t Rectangle;
+
+#define RectangleSet(rect, v1, v2, v3, v4) ((rect.x) = (v1), (rect.y) = (v2), (rect.w) = (v3), (rect.h) = (v4))
 
 // FIXME: do something to separate text vs window stuff
 typedef struct

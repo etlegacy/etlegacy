@@ -1399,14 +1399,7 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 {
 	static panel_button_text_t demoControlTxt;
 	int                        i;
-	/*
-	{
-	0.2f, 0.2f,
-	{ 1.0f, 1.0f, 1.0f, 0.5f },
-	ITEM_TEXTSTYLE_SHADOWED, 0,
-	&cgs.media.limboFont2,
-	};
-	*/
+
 	demoControlTxt.scalex = hScale;
 	demoControlTxt.scaley = hScaleY;
 	Vector4Copy(hdrColor2, demoControlTxt.colour);
@@ -1427,31 +1420,23 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 	{
 		if (i)
 		{
-			Vector4Set(demoControlButtons[i]->rect.rect, (x + (i * (w / 4)) - 15), y + 30, 30, 15);
+			RectangleSet(demoControlButtons[i]->rect, (x + (i * (w / 4)) - 15), y + 30, 30, 15);
 		}
 		else
 		{
-			Vector4Set(demoControlButtons[i]->rect.rect, x + 2, y + 15, w - 4, 12);
+			RectangleSet(demoControlButtons[i]->rect, x + 2, y + 15, w - 4, 12);
 		}
 
 		demoControlButtons[i]->font = &demoControlTxt;
 	}
 	BG_PanelButtonsRender(demoControlButtons);
 
-	// render cursor
-	trap_R_SetColor(NULL);
-	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
-
-	/*
-	CG_DrawRect(BOFF(1), y + 30, 30, 15, 1, borderColor);
-	CG_FillRect(BOFF(1), y + 30, 30, 15, bgColorTitle);
-
-	CG_DrawRect(BOFF(2), y + 30, 30, 15, 1, borderColor);
-	CG_FillRect(BOFF(2), y + 30, 30, 15, bgColorTitle);
-
-	CG_DrawRect(BOFF(3), y + 30, 30, 15, 1, borderColor);
-	CG_FillRect(BOFF(3), y + 30, 30, 15, bgColorTitle);
-	*/
+	if (cg.time < cgs.cursorUpdate)
+	{
+		// render cursor
+		trap_R_SetColor(NULL);
+		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+	}
 }
 
 void CG_DemoHelpDraw(void)
