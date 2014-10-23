@@ -1215,7 +1215,7 @@ msgstr ""
 msgid "Fullscreen:"
 msgstr ""
 
-msgid "Borderless:"
+msgid "Window mode:"
 msgstr ""
 
 msgid "Intensity:"

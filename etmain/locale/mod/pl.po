@@ -1208,8 +1208,8 @@ msgstr "Ogolna Jakosc:"
 msgid "Fullscreen:"
 msgstr "Pelny Obraz:"
 
-msgid "Borderless:"
-msgstr "Obramowanie:"
+msgid "Window mode:"
+msgstr "Tryb okna:"
 
 msgid "Intensity:"
 msgstr "Intensywnosc:"
