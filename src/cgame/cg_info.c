@@ -180,8 +180,12 @@ void CG_DemoControlButtonRender(panel_button_t *button)
 	else
 	{
 		float demoStatus = (float)((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
+		vec4_t barColor;
+		Vector4Copy(colorGreen, barColor);
+		barColor[3] = button->font->colour[3];
+
 		//borderColor
-		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorGreen, NULL, color_border1, demoStatus, BAR_BORDER);
+		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, barColor, NULL, color_border1, demoStatus, BAR_BORDER);
 	}
 }
 
