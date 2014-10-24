@@ -33,6 +33,98 @@
 
 #include "tr_common.h"
 
+/*
+==================
+R_GetModeInfo
+==================
+*/
+typedef struct vidmode_s
+{
+	const char *description;
+	int width, height;
+	float pixelAspect;              // pixel width / height
+} vidmode_t;
+
+vidmode_t r_vidModes[] =
+{
+	{ "Mode  0: 320x240",           320,  240,  1 },
+	{ "Mode  1: 400x300",           400,  300,  1 },
+	{ "Mode  2: 512x384",           512,  384,  1 },
+	{ "Mode  3: 640x480",           640,  480,  1 },
+	{ "Mode  4: 800x600",           800,  600,  1 },
+	{ "Mode  5: 960x720",           960,  720,  1 },
+	{ "Mode  6: 1024x768",          1024, 768,  1 },
+	{ "Mode  7: 1152x864",          1152, 864,  1 },
+	{ "Mode  8: 1280x1024",         1280, 1024, 1 },
+	{ "Mode  9: 1600x1200",         1600, 1200, 1 },
+	{ "Mode 10: 2048x1536",         2048, 1536, 1 },
+	{ "Mode 11: 856x480 (wide)",    856,  480,  1 },
+	{ "Mode 12: 1366x768 (16:9)",   1366, 768,  1 },
+	{ "Mode 13: 1440x900 (16:10)",  1440, 900,  1 },
+	{ "Mode 14: 1680x1050 (16:10)", 1680, 1050, 1 },
+	{ "Mode 15: 1600x1200",         1600, 1200, 1 },
+	{ "Mode 16: 1920x1080 (16:9)",  1920, 1080, 1 },
+	{ "Mode 17: 1920x1200 (16:10)", 1920, 1200, 1 },
+	{ "Mode 18: 2560x1440 (16:9)",  2560, 1440, 1 },
+	{ "Mode 19: 2560x1600 (16:10)", 2560, 1600, 1 },
+};
+static int s_numVidModes = ARRAY_LEN(r_vidModes);
+
+qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
+{
+	vidmode_t *vm;
+	float     pixelAspect;
+
+	if (mode < -1)
+	{
+		return qfalse;
+	}
+	if (mode >= s_numVidModes)
+	{
+		return qfalse;
+	}
+
+	if (mode == -1)
+	{
+		*width      = r_customwidth->integer;
+		*height     = r_customheight->integer;
+		pixelAspect = r_customaspect->value;
+	}
+	else
+	{
+		vm = &r_vidModes[mode];
+
+		*width      = vm->width;
+		*height     = vm->height;
+		pixelAspect = vm->pixelAspect;
+	}
+
+	*windowAspect = (float)*width / (*height * pixelAspect);
+
+	return qtrue;
+}
+
+/**
+* @brief Prints hardcoded screen resolutions
+* @see r_availableModes for supported resolutions
+*/
+void R_ModeList_f(void)
+{
+	int i;
+
+	Ren_Print("\n");
+	Ren_Print((r_mode->integer == -2) ? "%s ^2(current)\n" : "%s\n",
+	          "Mode -2: desktop resolution");
+	Ren_Print((r_mode->integer == -1) ? "%s ^2(current)\n" : "%s\n",
+	          "Mode -1: custom resolution");
+	for (i = 0; i < s_numVidModes; i++)
+	{
+		Ren_Print((i == r_mode->integer) ? "%s ^2(current)\n" : "%s\n",
+		          r_vidModes[i].description);
+	}
+	Ren_Print("\n");
+}
+
 #ifdef USE_RENDERER_DLOPEN
 void QDECL Com_Printf(const char *msg, ...)
 {
