@@ -1040,11 +1040,11 @@ usercmd_t CL_CreateCmd(void)
 	{
 		if (cl_debugMove->integer == 1)
 		{
-			SCR_DebugGraph(abs(cl.viewangles[YAW] - oldAngles[YAW]));
+			SCR_DebugGraph(fabsf(cl.viewangles[YAW] - oldAngles[YAW]));
 		}
 		if (cl_debugMove->integer == 2)
 		{
-			SCR_DebugGraph(abs(cl.viewangles[PITCH] - oldAngles[PITCH]));
+			SCR_DebugGraph(fabsf(cl.viewangles[PITCH] - oldAngles[PITCH]));
 		}
 	}
 
