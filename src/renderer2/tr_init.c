@@ -1224,8 +1224,8 @@ void R_Register(void)
 	r_stencilbits             = ri.Cvar_Get("r_stencilbits", "8", CVAR_ARCHIVE | CVAR_LATCH);
 	r_depthbits               = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ignorehwgamma           = ri.Cvar_Get("r_ignorehwgamma", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_mode                    = ri.Cvar_Get("r_mode", "3", CVAR_ARCHIVE | CVAR_LATCH);
-	r_fullscreen              = ri.Cvar_Get("r_fullscreen", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_mode                    = ri.Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH);
+	r_fullscreen              = ri.Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customwidth             = ri.Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customheight            = ri.Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customaspect            = ri.Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);

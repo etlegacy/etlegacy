@@ -617,8 +617,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		Ren_Print("Cannot estimate display aspect, assuming 1.333\n");
 	}
 
-	GLimp_DetectAvailableModes();
-
 	Ren_Print("...setting mode %d: ", mode);
 
 #ifdef PANDORA
@@ -931,6 +929,8 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		break;
 	}
 
+	GLimp_DetectAvailableModes();
+
 #if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
 	glewResult = glewInit();
 
@@ -959,8 +959,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 
 	SDL_FreeSurface(icon);
-
-	GLimp_DetectAvailableModes();
 
 	Ren_Print("GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
 
