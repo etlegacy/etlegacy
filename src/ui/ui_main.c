@@ -5854,22 +5854,20 @@ static void UI_BuildServerDisplayList(int force)
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime;
 
 	// Set the filter text
-	// this zone flickers when total count hasn't got 3 digits but we don't know before ...
-	// FIXME: add another tmp cvar for message only or use delimter and parse ... -> new menu item for message
 	if (count > 0)
 	{
 		if (numinvisible > 0)
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Filtered/Total: %i/%i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Filtered/Total: %04i/%04i"), numinvisible, count));
 		}
 		else
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!        Filtered/Total: %i/%i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              Filtered/Total: %04i/%04i"), numinvisible, count));
 		}
 	}
 	else
 	{
-		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1Check your connection - no servers found!      Filtered/Total: 0/000"));
+		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1No Connection or master down - no servers found!    Filtered/Total: 0000/0000"));
 	}
 }
 
