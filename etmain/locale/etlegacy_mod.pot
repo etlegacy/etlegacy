@@ -4424,16 +4424,16 @@ msgstr ""
 
 #: src/ui/ui_main.c:5803
 #, c-format
-msgid "^3Filtered/Total: %i/%i"
+msgid "^3Filtered/Total: %04i/%04i"
 msgstr ""
 
 #: src/ui/ui_main.c:5807
 #, c-format
-msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
+msgid "^3Check your filters - no servers found!        Filtered/Total: %04i/%04i"
 msgstr ""
 
 #: src/ui/ui_main.c:5812
-msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
+msgid "^1No Connection or master down - no servers found!    Filtered/Total: 0000/0000"
 msgstr ""
 
 msgid "Server connection timed out."

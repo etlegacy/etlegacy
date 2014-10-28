@@ -4448,8 +4448,8 @@ msgstr "Serwer rozlaczony"
 
 #: src/ui/ui_main.c:5803
 #, c-format
-msgid "^3Filtered/Total: %i/%i"
-msgstr "^3Zfiltrowanych/Lacznie: %i/%i"
+msgid "^3Filtered/Total: %04i/%04i"
+msgstr "^3Zfiltrowanych/Lacznie: %04i/%04i"
 
 #: src/ui/ui_main.c:5807
 #, c-format
@@ -4457,8 +4457,8 @@ msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
 msgstr "^3Sprawdz swoje filtry - brak serwerow!  Zfiltrowanych/Lacznie: %i/%i"
 
 #: src/ui/ui_main.c:5812
-msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
-msgstr "^3Sprawdz swoje filtry - brak serwerow!   Zfiltrowanych/Lacznie: 0/000"
+msgid "^1No Connection or master down - no servers found!    Filtered/Total: 0000/0000"
+msgstr "^1Brak Polaczenia lub serwer padl - brak znalezionych serwerow!    Filtered/Total: 0000/0000"
 
 msgid "Server connection timed out."
 msgstr "Polaczenie z serwerem przerwane."
