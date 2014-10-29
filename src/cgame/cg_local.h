@@ -692,21 +692,6 @@ typedef struct weaponInfo_s
 	sfxHandle_t switchSound;
 } weaponInfo_t;
 
-// each IT_* item has an associated itemInfo_t
-// that constains media references necessary to present the
-// item and its effects
-typedef struct
-{
-	qboolean registered;
-	qhandle_t models[MAX_ITEM_MODELS];
-	qhandle_t icons[MAX_ITEM_ICONS];
-} itemInfo_t;
-
-typedef struct
-{
-	int itemNum;
-} powerupInfo_t;
-
 #define MAX_VIEWDAMAGE  8
 typedef struct
 {
@@ -1198,7 +1183,7 @@ typedef struct
 // all of the model, shader, and sound references that are
 // loaded at gamestate time are stored in cgMedia_t
 // Other media that can be tied to clients, weapons, or items are
-// stored in the clientInfo_t, itemInfo_t, weaponInfo_t, and powerupInfo_t
+// stored in the clientInfo_t, itemInfo_t, and weaponInfo_t
 typedef struct
 {
 	qhandle_t charsetShader;
@@ -2047,7 +2032,6 @@ extern cgs_t        cgs;
 extern cg_t         cg;
 extern centity_t    cg_entities[MAX_GENTITIES];
 extern weaponInfo_t cg_weapons[MAX_WEAPONS];
-extern itemInfo_t   cg_items[MAX_ITEMS];
 extern markPoly_t   cg_markPolys[MAX_MARK_POLYS];
 
 extern vmCvar_t cg_centertime;

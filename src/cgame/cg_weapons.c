@@ -1993,9 +1993,16 @@ CG_RegisterItemVisuals
 The server says this item is used on this level
 =================
 */
+
+/**
+ * @brief Registers models and icons for items of bg_itemlist (except weapons which are registered from *.weap file data)
+ * @param int itemNum
+ *
+ * @note Actually IT_AMMO & IT_TEAM have no visuals
+ */
 void CG_RegisterItemVisuals(int itemNum)
 {
-	itemInfo_t *itemInfo = &cg_items[itemNum];
+	itemInfo_t *itemInfo = &bg_itemlist[itemNum].itemInfo;
 	gitem_t    *item;
 	int        i;
 
@@ -2006,12 +2013,13 @@ void CG_RegisterItemVisuals(int itemNum)
 
 	item = &bg_itemlist[itemNum];
 
-	memset(itemInfo, 0, sizeof(&itemInfo));
 
 	if (item->giType == IT_WEAPON)
 	{
 		return;
 	}
+
+	memset(itemInfo, 0, sizeof(&itemInfo));
 
 	for (i = 0; i < MAX_ITEM_MODELS; i++)
 	{
@@ -2034,8 +2042,7 @@ void CG_RegisterItemVisuals(int itemNum)
 	}
 	else
 	{
-		// FIXME: add DEBUG macro
-		//CG_Printf("CG_RegisterItemVisuals: NULL or empty item icon shader [%s] for classname %s\n", item->icon, item->classname);
+		CG_DPrintf("CG_RegisterItemVisuals: NULL or empty item icon shader [%s] for classname %s\n", item->icon, item->classname);
 		itemInfo->icons[0] = 0;
 	}
 

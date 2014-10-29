@@ -639,7 +639,7 @@ static void CG_Item(centity_t *cent)
 		//ent.origin[0] += 7;
 		//ent.origin[1] += 7;
 		ent.origin[2] += 7;
-		//ent.customShader = cg_items[es->modelindex].icons[0];
+
 		if (item->giType == IT_AMMO)
 		{
 			ent.customShader = cg_weapons[WP_AMMO].weaponIcon[1];
@@ -759,8 +759,6 @@ static void CG_Item(centity_t *cent)
 	}
 	else
 	{
-		//if( item->giType == IT_WEAPON && cg_items[es->modelindex].models[2])  // check if there's a specific model for weapon pickup placement
-		//  ent.hModel = cg_items[es->modelindex].models[2];
 		if (item->giType == IT_WEAPON)
 		{
 			ent.hModel = cg_weapons[item->giTag].weaponModel[W_PU_MODEL].model;
@@ -775,7 +773,8 @@ static void CG_Item(centity_t *cent)
 		}
 		else
 		{
-			ent.hModel = cg_items[es->modelindex].models[0];
+			//ent.hModel = cg_items[es->modelindex].models[0];
+			ent.hModel = bg_itemlist[es->modelindex].itemInfo.models[0];
 		}
 	}
 

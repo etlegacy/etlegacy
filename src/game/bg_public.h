@@ -61,8 +61,6 @@
 
 #define HOLDBREATHTIME      12000
 
-#define MAX_ITEMS           256
-
 #define RANK_TIED_FLAG      0x4000
 
 #define ITEM_RADIUS         10      // item sizes are needed for client side pickup detection
@@ -1499,8 +1497,21 @@ typedef enum
 	IT_TEAM,
 } itemType_t;
 
+#ifdef CGAMEDLL
+
 #define MAX_ITEM_MODELS 3
 #define MAX_ITEM_ICONS 4
+
+// each IT_* item has an associated itemInfo_t
+// that constains media references necessary to present the
+// item and its effects
+typedef struct
+{
+	qboolean registered;
+	qhandle_t models[MAX_ITEM_MODELS];
+	qhandle_t icons[MAX_ITEM_ICONS];
+} itemInfo_t;
+#endif
 
 typedef struct gitem_s
 {
@@ -1516,6 +1527,10 @@ typedef struct gitem_s
 	itemType_t giType;          // IT_* flags
 
 	int giTag;
+
+#ifdef CGAMEDLL
+	itemInfo_t itemInfo; // FIXME: fix default value in bg_itemlist
+#endif
 
 } gitem_t;
 

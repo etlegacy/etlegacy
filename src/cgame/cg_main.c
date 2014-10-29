@@ -105,7 +105,6 @@ cg_t         cg;
 cgs_t        cgs;
 centity_t    cg_entities[MAX_GENTITIES];
 weaponInfo_t cg_weapons[MAX_WEAPONS];
-itemInfo_t   cg_items[MAX_ITEMS];
 
 vmCvar_t cg_railTrailTime;
 vmCvar_t cg_centertime;
@@ -1773,7 +1772,6 @@ static void CG_RegisterGraphics(void)
 	CG_LoadingString(" - heads-up display -");
 	CG_Hud_Setup();
 
-	memset(cg_items, 0, sizeof(cg_items));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
 
 	CG_LoadingString(" - weapons -");
@@ -2433,7 +2431,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	memset(&cg, 0, sizeof(cg));
 	memset(cg_entities, 0, sizeof(cg_entities));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
-	memset(cg_items, 0, sizeof(cg_items));
 
 	cgs.initing = qtrue;
 

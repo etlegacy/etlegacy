@@ -474,8 +474,9 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
 */
 
-// Important note:
-// whenever you add new items update ITEM_MAX_ITEMS, FIRST_WEAPON_ITEM, ITEM_AMMO_PACK, ITEM_MEGA_AMMO_PACK, ITEM_RED_FLAG, ITEM_BLUE_FLAG
+// Important notes:
+// - whenever you add new items update ITEM_MAX_ITEMS, FIRST_WEAPON_ITEM, ITEM_AMMO_PACK, ITEM_MEGA_AMMO_PACK, ITEM_RED_FLAG, ITEM_BLUE_FLAG
+// - bg_itemlist has additional client members
 gitem_t bg_itemlist[] =
 {
 	{
@@ -929,8 +930,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_BAZOOKA,
 	},
-// removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
-//          by virtue of getting grenade ammo.  So we don't need to have them in maps
+
+	// removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
+	//         by virtue of getting grenade ammo.  So we don't need to have them in maps
 
 	// weapon_grenadelauncher
 	{
