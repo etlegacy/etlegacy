@@ -1497,9 +1497,10 @@ typedef enum
 	IT_TEAM,
 } itemType_t;
 
+#define MAX_ITEM_MODELS 3
+
 #ifdef CGAMEDLL
 
-#define MAX_ITEM_MODELS 3
 #define MAX_ITEM_ICONS 4
 
 // each IT_* item has an associated itemInfo_t
