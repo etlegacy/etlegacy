@@ -172,7 +172,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	GetChunkHeader(stream, &chunkHeader);
 
 	// check indent again
-	if (Q_strnicmp(chunkHeader.ident, "ACTRHEAD", 8))
+	if (Q_stricmpn(chunkHeader.ident, "ACTRHEAD", 8))
 	{
 		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "ACTRHEAD");
 		DeallocAll();
@@ -188,7 +188,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// read points
 	GetChunkHeader(stream, &chunkHeader);
 
-	if (Q_strnicmp(chunkHeader.ident, "PNTS0000", 8))
+	if (Q_stricmpn(chunkHeader.ident, "PNTS0000", 8))
 	{
 		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "PNTS0000");
 		DeallocAll();
@@ -222,7 +222,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// read vertices
 	GetChunkHeader(stream, &chunkHeader);
 
-	if (Q_strnicmp(chunkHeader.ident, "VTXW0000", 8))
+	if (Q_stricmpn(chunkHeader.ident, "VTXW0000", 8))
 	{
 		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "VTXW0000");
 		DeallocAll();
@@ -317,7 +317,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// read triangles
 	GetChunkHeader(stream, &chunkHeader);
 
-	if (Q_strnicmp(chunkHeader.ident, "FACE0000", 8))
+	if (Q_stricmpn(chunkHeader.ident, "FACE0000", 8))
 	{
 		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "FACE0000");
 		DeallocAll();
@@ -359,7 +359,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// read materials
 	GetChunkHeader(stream, &chunkHeader);
 
-	if (Q_strnicmp(chunkHeader.ident, "MATT0000", 8))
+	if (Q_stricmpn(chunkHeader.ident, "MATT0000", 8))
 	{
 		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "MATT0000");
 		DeallocAll();
@@ -415,7 +415,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// read reference bones
 	GetChunkHeader(stream, &chunkHeader);
 
-	if (Q_strnicmp(chunkHeader.ident, "REFSKELT", 8))
+	if (Q_stricmpn(chunkHeader.ident, "REFSKELT", 8))
 	{
 		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "REFSKELT");
 		DeallocAll();
@@ -475,7 +475,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// read  bone weights
 	GetChunkHeader(stream, &chunkHeader);
 
-	if (Q_strnicmp(chunkHeader.ident, "RAWWEIGHTS", 10))
+	if (Q_stricmpn(chunkHeader.ident, "RAWWEIGHTS", 10))
 	{
 		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "RAWWEIGHTS");
 		DeallocAll();

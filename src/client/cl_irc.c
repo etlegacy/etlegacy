@@ -1933,7 +1933,7 @@ void CL_OW_IRCSay()
 		return;
 	}
 
-	if ((m_sendstring[0] == '/' || m_sendstring[0] == '.') && !Q_strnicmp(m_sendstring + 1, "me ", 3) && m_sendstring[4] != 0)
+	if ((m_sendstring[0] == '/' || m_sendstring[0] == '.') && !Q_stricmpn(m_sendstring + 1, "me ", 3) && m_sendstring[4] != 0)
 	{
 		send_result = IRC_AddSendItem(qtrue, m_sendstring + 4);
 	}
@@ -2139,7 +2139,7 @@ static int IRC_AttemptConnection()
 
 	// Force players to use a non-default name
 	strcpy(name, Cvar_VariableString("name"));
-	if (!Q_strnicmp(name, "player", 7))
+	if (!Q_stricmpn(name, "player", 7))
 	{
 		Com_Printf("...IRC: rejected due to unset player name\n");
 		return IRC_CMD_FATAL;

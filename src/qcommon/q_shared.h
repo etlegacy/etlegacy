@@ -1100,7 +1100,6 @@ const char *Q_stristr(const char *s, const char *find);
 // buffer size safe library replacements
 void Q_strncpyz(char *dest, const char *src, int destsize);
 void Q_strcat(char *dest, int size, const char *src);
-int Q_strnicmp(const char *string1, const char *string2, int n);
 
 // strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);

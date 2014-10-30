@@ -1301,6 +1301,9 @@ void Q_strncpyz(char *dest, const char *src, int destsize)
 	dest[destsize - 1] = 0;
 }
 
+/**
+ * @brief Compare strings without case sensitivity up to n characters
+ */
 int Q_stricmpn(const char *s1, const char *s2, int n)
 {
 	int c1, c2;
@@ -1352,6 +1355,9 @@ int Q_stricmpn(const char *s1, const char *s2, int n)
 	return 0;       // strings are equal
 }
 
+/**
+ * @brief Compare strings up to n characters
+ */
 int Q_strncmp(const char *s1, const char *s2, int n)
 {
 	int c1, c2;
@@ -1376,6 +1382,9 @@ int Q_strncmp(const char *s1, const char *s2, int n)
 	return 0;       // strings are equal
 }
 
+/**
+ * @brief Compare whole strings without case sensitivity
+ */
 int Q_stricmp(const char *s1, const char *s2)
 {
 	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
@@ -1409,58 +1418,6 @@ char *Q_strupr(char *s1)
 	}
 
 	return s1;
-}
-
-int Q_strnicmp(const char *string1, const char *string2, int n)
-{
-	int c1, c2;
-
-	if (string1 == NULL)
-	{
-		if (string2 == NULL)
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
-	}
-	else if (string2 == NULL)
-	{
-		return 1;
-	}
-
-	do
-	{
-		c1 = *string1++;
-		c2 = *string2++;
-
-		if (!n--)
-		{
-			return 0; // Strings are equal until end point
-
-		}
-		if (c1 != c2)
-		{
-			if (c1 >= 'a' && c1 <= 'z')
-			{
-				c1 -= ('a' - 'A');
-			}
-			if (c2 >= 'a' && c2 <= 'z')
-			{
-				c2 -= ('a' - 'A');
-			}
-
-			if (c1 != c2)
-			{
-				return c1 < c2 ? -1 : 1;
-			}
-		}
-	}
-	while (c1);
-
-	return 0; // Strings are equal
 }
 
 // never goes past bounds or leaves without a terminating 0
