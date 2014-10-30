@@ -5352,7 +5352,7 @@ public:
 		case GEN_MSG_GOTOWAYPOINT:
 		{
 			OB_GETMSG(Msg_GotoWaypoint);
-			if (pMsg && pMsg->m_Origin && g_cheats.integer)
+			if (pMsg && pMsg->m_Origin[0] && g_cheats.integer)
 			{
 				char *cmd = va("setviewpos %f %f %f %f", pMsg->m_Origin[0], pMsg->m_Origin[1], pMsg->m_Origin[2], 0.f);
 				trap_SendConsoleCommand(EXEC_NOW, cmd);

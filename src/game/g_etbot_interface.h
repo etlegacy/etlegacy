@@ -4,7 +4,7 @@
  */
 
 #ifndef INCLUDE_G_ETBOT_INTERFACE_H
-#define INLCUDE_G_ETBOT_INTERFACE_H
+#define INCLUDE_G_ETBOT_INTERFACE_H
 
 //#include "q_shared.h"
 #include "g_local.h"
