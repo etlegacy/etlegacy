@@ -817,76 +817,70 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	qboolean            tried[NUM_DIALOG_PROGRAMS] = { qfalse };
 	dialogCommandType_t preferredCommandType       = NONE;
 
-	// This may not be the best way
-	if (!Q_stricmp(session, "gnome"))
+	// first check the obsolete DESKTOP_SESSION
+	if (!Q_stricmp(session, "default") || !Q_stricmp(session, ""))
+	{
+		// try the standard
+		session = getenv("XDG_CURRENT_DESKTOP");
+	}
+
+	if (!Q_stricmpn(session, "gnome", 5)
+	    || !Q_stricmpn(session, "unity", 5)
+	    || !Q_stricmpn(session, "xfce", 4))
 	{
 		preferredCommandType = ZENITY;
 	}
-	else if (!Q_stricmp(session, "kde") || !Q_stricmp(session, "kde-4"))
+	else if (!Q_stricmpn(session, "kde", 3))
 	{
 		preferredCommandType = KDIALOG;
 	}
 
-	while (1)
+	for (i = ZENITY; i < NUM_DIALOG_PROGRAMS; i++)
 	{
-		for (i = ZENITY; i < NUM_DIALOG_PROGRAMS; i++)
+		if (preferredCommandType != NONE && preferredCommandType != i)
 		{
-			if (preferredCommandType != NONE && preferredCommandType != i)
-			{
-				continue;
-			}
-
-			if (!tried[i])
-			{
-				switch (i)
-				{
-				case ZENITY:
-					Sys_ZenityCommand(type, message, title);
-					break;
-				case KDIALOG:
-					Sys_KdialogCommand(type, message, title);
-					break;
-				case XMESSAGE:
-					Sys_XmessageCommand(type, message, title);
-					break;
-				}
-
-				exitCode = Sys_Exec();
-
-				if (exitCode >= 0)
-				{
-					switch (type)
-					{
-					case DT_YES_NO:
-						return exitCode ? DR_NO : DR_YES;
-					case DT_OK_CANCEL:
-						return exitCode ? DR_CANCEL : DR_OK;
-					default:
-						return DR_OK;
-					}
-				}
-
-				tried[i] = qtrue;
-
-				// The preference failed, so start again in order
-				if (preferredCommandType != NONE)
-				{
-					preferredCommandType = NONE;
-					break;
-				}
-			}
+			continue;
 		}
 
-		// What is this for ??? ... looks like relic
-		for (i = NONE + 1; i < NUM_DIALOG_PROGRAMS; i++)
+		if (!tried[i])
 		{
-			if (!tried[i])
+			switch (i)
 			{
-				continue;
+			case ZENITY:
+				Sys_ZenityCommand(type, message, title);
+				break;
+			case KDIALOG:
+				Sys_KdialogCommand(type, message, title);
+				break;
+			case XMESSAGE:
+				Sys_XmessageCommand(type, message, title);
+				break;
+			}
+
+			exitCode = Sys_Exec();
+
+			if (exitCode >= 0)
+			{
+				switch (type)
+				{
+				case DT_YES_NO:
+					return exitCode ? DR_NO : DR_YES;
+				case DT_OK_CANCEL:
+					return exitCode ? DR_CANCEL : DR_OK;
+				default:
+					return DR_OK;
+				}
+			}
+
+			tried[i] = qtrue;
+
+			// The preference failed, so start again in order
+			if (preferredCommandType != NONE)
+			{
+				preferredCommandType = NONE;
+				i                    = NONE;
 			}
 		}
-
-		break;
 	}
 
 	Com_Printf(S_COLOR_YELLOW "WARNING: failed to show a system dialog\n");
