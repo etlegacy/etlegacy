@@ -46,34 +46,28 @@
 // define HOSTARCH and EXTENSION depending on host architecture
 
 #if defined WIN32
-
-#define HOSTARCH    "WIN32"
-#define EXTENSION   "dll"
-
+  #define HOSTARCH    "WIN32"
+  #define EXTENSION   "dll"
 #elif defined __APPLE__
-
-#define HOSTARCH    "MACOS"
-#define EXTENSION   "so"
-
+  #define HOSTARCH    "MACOS"
+  #define EXTENSION   "so"
 #else
-
-#define HOSTARCH    "UNIX"
-#define EXTENSION   "so"
-
+  #define HOSTARCH    "UNIX"
+  #define EXTENSION   "so"
 #endif
 
 // macros to register predefined constants
 #define lua_registerglobal(L, n, v) (lua_pushstring(L, v), lua_setglobal(L, n))
-#define lua_regconstinteger(L, n) (lua_pushstring(L, # n), lua_pushinteger(L, n), lua_settable(L, -3))
-//#define lua_regconstinteger(L, n) (lua_pushinteger(L, n), lua_setfield(L, -2, # n))
-#define lua_regconststring(L, n) (lua_pushstring(L, # n), lua_pushstring(L, n), lua_settable(L, -3))
-//#define lua_regconststring(L, n) (lua_pushstring(L, n), lua_setfield(L, -2, # n))
+#define lua_regconstinteger(L, n) (lua_pushstring(L, #n), lua_pushinteger(L, n), lua_settable(L, -3))
+//#define lua_regconstinteger(L, n) (lua_pushinteger(L, n), lua_setfield(L, -2, #n))
+#define lua_regconststring(L, n) (lua_pushstring(L, #n), lua_pushstring(L, n), lua_settable(L, -3))
+//#define lua_regconststring(L, n) (lua_pushstring(L, n), lua_setfield(L, -2, #n))
 
 // macros to add gentity and gclient fields
-#define _et_gentity_addfield(n, t, f) { # n, t, offsetof(struct gentity_s, n), FIELD_FLAG_GENTITY + f }
-#define _et_gentity_addfieldalias(n, a, t, f) { # n, t, offsetof(struct gentity_s, a), FIELD_FLAG_GENTITY + f }
-#define _et_gclient_addfield(n, t, f) { # n, t, offsetof(struct gclient_s, n), FIELD_FLAG_GCLIENT + f }
-#define _et_gclient_addfieldalias(n, a, t, f) { # n, t, offsetof(struct gclient_s, a), FIELD_FLAG_GCLIENT + f }
+#define _et_gentity_addfield(n, t, f) { #n, t, offsetof(struct gentity_s, n), FIELD_FLAG_GENTITY + f }
+#define _et_gentity_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gentity_s, a), FIELD_FLAG_GENTITY + f }
+#define _et_gclient_addfield(n, t, f) { #n, t, offsetof(struct gclient_s, n), FIELD_FLAG_GCLIENT + f }
+#define _et_gclient_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gclient_s, a), FIELD_FLAG_GCLIENT + f }
 
 typedef struct
 {
