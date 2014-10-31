@@ -1821,6 +1821,41 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 	#define luaL_newlib(L, l) (lua_newtable(L), luaL_register(L, NULL, l))
 #endif
 
+// TODO: added for testing.
+//       To be removed later
+static void stackDump(lua_State *L)
+{
+	int i;
+	int top = lua_gettop(L);
+	for (i = 1; i <= top; i++)  /* repeat for each level */
+	{
+		int t = lua_type(L, i);
+		switch (t)
+		{
+
+		case LUA_TSTRING: /* strings */
+			G_Printf("`%s'", lua_tostring(L, i));
+			break;
+
+		case LUA_TBOOLEAN: /* booleans */
+			G_Printf(lua_toboolean(L, i) ? "true" : "false");
+			break;
+
+		case LUA_TNUMBER: /* numbers */
+			G_Printf("%g", lua_tonumber(L, i));
+			break;
+
+		default: /* other values */
+			G_Printf("%s", lua_typename(L, t));
+			break;
+
+		}
+		G_Printf("  "); /* put a separator */
+	}
+	G_Printf("\n"); /* end the listing */
+}
+
+
 /*
  * G_LuaStartVM( vm )
  * Starts one individual virtual machine.
@@ -1884,8 +1919,12 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 
 	lua_registerglobal(vm->L, "LUA_DIRSEP", LUA_DIRSEP);
 
-	// register predefined constants
 	lua_newtable(vm->L);
+
+	// register functions
+	luaL_newlib(vm->L, etlib);
+
+	// register predefined constants
 	lua_regconstinteger(vm->L, CS_PLAYERS);
 	lua_regconstinteger(vm->L, EXEC_NOW);
 	lua_regconstinteger(vm->L, EXEC_INSERT);
@@ -1900,8 +1939,6 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, SAY_TEAMNL);
 	lua_regconststring(vm->L, HOSTARCH);
 
-	// register functions
-	luaL_newlib(vm->L, etlib);
 	lua_pushvalue(vm->L, -1);
 	lua_setglobal(vm->L, "et");
 
