@@ -829,6 +829,7 @@ typedef struct weapontable_s
 {
 	int weapon;               // reference
 	int weapAlts;             // bg
+	int akimboSideram;        // bg
 
 	int ammoIndex;            // bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
 	int clipIndex;            // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
@@ -1559,7 +1560,6 @@ weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
 weapon_t BG_FindClipForWeapon(weapon_t weapon);
 
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
-int BG_AkimboSidearm(int weaponNum); // FIXME: weapon table
 
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
 
