@@ -1821,40 +1821,41 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 	#define luaL_newlib(L, l) (lua_newtable(L), luaL_register(L, NULL, l))
 #endif
 
-// TODO: added for testing.
-//       To be removed later
+/* added for testing.
 static void stackDump(lua_State *L)
 {
-	int i;
-	int top = lua_gettop(L);
-	for (i = 1; i <= top; i++)  /* repeat for each level */
-	{
-		int t = lua_type(L, i);
-		switch (t)
-		{
+    int i;
+    int top = lua_gettop(L);
 
-		case LUA_TSTRING: /* strings */
-			G_Printf("`%s'", lua_tostring(L, i));
-			break;
+    for (i = 1; i <= top; i++)  // repeat for each level
+    {
+        int t = lua_type(L, i);
 
-		case LUA_TBOOLEAN: /* booleans */
-			G_Printf(lua_toboolean(L, i) ? "true" : "false");
-			break;
+        switch (t)
+        {
 
-		case LUA_TNUMBER: /* numbers */
-			G_Printf("%g", lua_tonumber(L, i));
-			break;
+        case LUA_TSTRING: // strings
+            G_Printf("`%s'", lua_tostring(L, i));
+            break;
 
-		default: /* other values */
-			G_Printf("%s", lua_typename(L, t));
-			break;
+        case LUA_TBOOLEAN: // booleans
+            G_Printf(lua_toboolean(L, i) ? "true" : "false");
+            break;
 
-		}
-		G_Printf("  "); /* put a separator */
-	}
-	G_Printf("\n"); /* end the listing */
+        case LUA_TNUMBER: // numbers
+            G_Printf("%g", lua_tonumber(L, i));
+            break;
+
+        default: // other values
+            G_Printf("%s", lua_typename(L, t));
+            break;
+
+        }
+        G_Printf("  "); // put a separator
+    }
+    G_Printf("\n"); // end the listing
 }
-
+*/
 
 /*
  * G_LuaStartVM( vm )
@@ -1925,18 +1926,115 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	luaL_newlib(vm->L, etlib);
 
 	// register predefined constants
+
+	// from q_shared.h
+	lua_regconstinteger(vm->L, MAX_CLIENTS);
+	lua_regconstinteger(vm->L, MAX_MODELS);
+	lua_regconstinteger(vm->L, MAX_SOUNDS);
+	lua_regconstinteger(vm->L, MAX_CS_SKINS);
+	lua_regconstinteger(vm->L, MAX_CSSTRINGS);
+
+	lua_regconstinteger(vm->L, MAX_CS_SHADERS);
+	lua_regconstinteger(vm->L, MAX_SERVER_TAGS);
+	lua_regconstinteger(vm->L, MAX_TAG_FILES);
+	lua_regconstinteger(vm->L, MAX_MULTI_SPAWNTARGETS);
+	lua_regconstinteger(vm->L, MAX_DLIGHT_CONFIGSTRINGS);
+	lua_regconstinteger(vm->L, MAX_SPLINE_CONFIGSTRINGS);
+
+	// misc bg_public.h
+	lua_regconstinteger(vm->L, MAX_OID_TRIGGERS);
+	lua_regconstinteger(vm->L, MAX_CHARACTERS);
+	lua_regconstinteger(vm->L, MAX_TAGCONNECTS);
+	lua_regconstinteger(vm->L, MAX_FIRETEAMS);
+	lua_regconstinteger(vm->L, MAX_MOTDLINES);
+
+	// Config string:
+	// q_shared.h
+	lua_regconstinteger(vm->L, CS_SERVERINFO); // an info string with all the serverinfo cvars
+	lua_regconstinteger(vm->L, CS_SYSTEMINFO); // an info string for server system to client system configuration (timescale, etc)
+
+	// bg_public.h
+	lua_regconstinteger(vm->L, CS_MUSIC);      // g_motd string for server message of the day
+	lua_regconstinteger(vm->L, CS_MESSAGE);    // from the map worldspawn's message field
+	lua_regconstinteger(vm->L, CS_MOTD);
+	lua_regconstinteger(vm->L, CS_WARMUP);     // server time when the match will be restarted
+	lua_regconstinteger(vm->L, CS_VOTE_TIME);
+	lua_regconstinteger(vm->L, CS_VOTE_STRING);
+	lua_regconstinteger(vm->L, CS_VOTE_YES);
+	lua_regconstinteger(vm->L, CS_VOTE_NO);
+	lua_regconstinteger(vm->L, CS_GAME_VERSION);
+
+	lua_regconstinteger(vm->L, CS_LEVEL_START_TIME); // so the timer only shows the current level
+	lua_regconstinteger(vm->L, CS_INTERMISSION);     // when 1, intermission will start in a second or two
+	lua_regconstinteger(vm->L, CS_MULTI_INFO);
+	lua_regconstinteger(vm->L, CS_MULTI_MAPWINNER);
+	lua_regconstinteger(vm->L, CS_MULTI_OBJECTIVE);
+
+	lua_regconstinteger(vm->L, CS_SCREENFADE); // used to tell clients to fade their screen to black/normal
+	lua_regconstinteger(vm->L, CS_FOGVARS);    // used for saving the current state/settings of the fog
+	lua_regconstinteger(vm->L, CS_SKYBOXORG);  // this is where we should view the skybox from
+
+	lua_regconstinteger(vm->L, CS_TARGETEFFECT);
+	lua_regconstinteger(vm->L, CS_WOLFINFO);
+	lua_regconstinteger(vm->L, CS_FIRSTBLOOD);            // Team that has first blood
+	lua_regconstinteger(vm->L, CS_ROUNDSCORES1);          // Axis round wins
+	lua_regconstinteger(vm->L, CS_ROUNDSCORES2);          // Allied round wins
+	lua_regconstinteger(vm->L, CS_MAIN_AXIS_OBJECTIVE);
+	lua_regconstinteger(vm->L, CS_MAIN_ALLIES_OBJECTIVE); // Most important current objective
+	lua_regconstinteger(vm->L, CS_MUSIC_QUEUE);
+	lua_regconstinteger(vm->L, CS_SCRIPT_MOVER_NAMES);
+	lua_regconstinteger(vm->L, CS_CONSTRUCTION_NAMES);
+
+	lua_regconstinteger(vm->L, CS_VERSIONINFO);           // Versioning info for demo playback compatibility
+	lua_regconstinteger(vm->L, CS_REINFSEEDS);            // Reinforcement
+	lua_regconstinteger(vm->L, CS_SERVERTOGGLES);         // Shows current enable/disabled settings (for voting UI)
+	lua_regconstinteger(vm->L, CS_GLOBALFOGVARS);
+	lua_regconstinteger(vm->L, CS_AXIS_MAPS_XP);
+	lua_regconstinteger(vm->L, CS_ALLIED_MAPS_XP);
+	lua_regconstinteger(vm->L, CS_INTERMISSION_START_TIME);
+	lua_regconstinteger(vm->L, CS_ENDGAME_STATS);
+	lua_regconstinteger(vm->L, CS_CHARGETIMES);
+	lua_regconstinteger(vm->L, CS_FILTERCAMS);
+
+	lua_regconstinteger(vm->L, CS_LEGACYINFO);
+	lua_regconstinteger(vm->L, CS_SVCVAR);
+	lua_regconstinteger(vm->L, CS_CONFIGNAME);
+
+	lua_regconstinteger(vm->L, CS_TEAMRESTRICTIONS);
+	lua_regconstinteger(vm->L, CS_UPGRADERANGE);
+
+	lua_regconstinteger(vm->L, CS_MODELS);
+	lua_regconstinteger(vm->L, CS_SOUNDS);
+	lua_regconstinteger(vm->L, CS_SHADERS);
+	lua_regconstinteger(vm->L, CS_SHADERSTATE);
+	lua_regconstinteger(vm->L, CS_SKINS);
+	lua_regconstinteger(vm->L, CS_CHARACTERS);
 	lua_regconstinteger(vm->L, CS_PLAYERS);
+	lua_regconstinteger(vm->L, CS_MULTI_SPAWNTARGETS);
+	lua_regconstinteger(vm->L, CS_OID_TRIGGERS);
+	lua_regconstinteger(vm->L, CS_OID_DATA);
+	lua_regconstinteger(vm->L, CS_DLIGHTS);
+	lua_regconstinteger(vm->L, CS_SPLINES);
+	lua_regconstinteger(vm->L, CS_TAGCONNECTS);
+	lua_regconstinteger(vm->L, CS_FIRETEAMS);
+	lua_regconstinteger(vm->L, CS_CUSTMOTD);
+	lua_regconstinteger(vm->L, CS_STRINGS);
+	lua_regconstinteger(vm->L, CS_MAX);
+
 	lua_regconstinteger(vm->L, EXEC_NOW);
 	lua_regconstinteger(vm->L, EXEC_INSERT);
 	lua_regconstinteger(vm->L, EXEC_APPEND);
+
 	lua_regconstinteger(vm->L, FS_READ);
 	lua_regconstinteger(vm->L, FS_WRITE);
 	lua_regconstinteger(vm->L, FS_APPEND);
 	lua_regconstinteger(vm->L, FS_APPEND_SYNC);
+
 	lua_regconstinteger(vm->L, SAY_ALL);
 	lua_regconstinteger(vm->L, SAY_TEAM);
 	lua_regconstinteger(vm->L, SAY_BUDDY);
 	lua_regconstinteger(vm->L, SAY_TEAMNL);
+
 	lua_regconststring(vm->L, HOSTARCH);
 
 	lua_pushvalue(vm->L, -1);
