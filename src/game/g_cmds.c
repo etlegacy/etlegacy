@@ -4432,6 +4432,12 @@ void ClientCommand(int clientNum)
 		G_LuaStatus(ent);
 		return;
 	}
+
+	if (Q_stricmp(cmd, "lua_api") == 0)
+	{
+		G_LuaStackDump(ent);
+		return;
+	}
 #endif
 
 	if (Q_stricmp(cmd, "say") == 0)

@@ -1821,41 +1821,53 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 	#define luaL_newlib(L, l) (lua_newtable(L), luaL_register(L, NULL, l))
 #endif
 
-/* added for testing.
-static void stackDump(lua_State *L)
+/**
+ * @brief Dump the lua stack to console
+ *        Executed by the ingame "lua_api" command
+ * @todo color code, order by type, add globals
+ */
+void G_LuaStackDump(gentity_t *ent)
 {
-    int i;
-    int top = lua_gettop(L);
+	lua_vm_t *vm = (lua_vm_t *) malloc(sizeof(lua_vm_t));
 
-    for (i = 1; i <= top; i++)  // repeat for each level
-    {
-        int t = lua_type(L, i);
+	if (vm == NULL)
+	{
+		G_refPrintf(ent, "ERROR Lua API: memory allocation error");
+		return;
+	}
 
-        switch (t)
-        {
+	Q_strncpyz(vm->file_name, "current API available to scripts", sizeof(vm->file_name));
 
-        case LUA_TSTRING: // strings
-            G_Printf("`%s'", lua_tostring(L, i));
-            break;
+	// Start lua virtual machine
+	if (G_LuaStartVM(vm))
+	{
+		lua_State *L = vm->L;
 
-        case LUA_TBOOLEAN: // booleans
-            G_Printf(lua_toboolean(L, i) ? "true" : "false");
-            break;
+		lua_getglobal(L, "et");
+		if (!lua_istable(L, -1))
+		{
+			G_refPrintf(ent, "ERROR Lua API: et prefix is not correctly registered");
+			return;
+		}
+		else
+		{
+			G_refPrintf(ent, "---------------------------------------------------");
+			G_refPrintf(ent, "%-30s%-15s%-10s", "Name", "Type", "Value");
+			G_refPrintf(ent, "---------------------------------------------------");
 
-        case LUA_TNUMBER: // numbers
-            G_Printf("%g", lua_tonumber(L, i));
-            break;
-
-        default: // other values
-            G_Printf("%s", lua_typename(L, t));
-            break;
-
-        }
-        G_Printf("  "); // put a separator
-    }
-    G_Printf("\n"); // end the listing
+			lua_pushnil(L); // stack now contains: -1 => nil; -2 => table
+			while (lua_next(L, -2))
+			{
+				G_refPrintf(ent, "et.%-27s%-15s%-10s", lua_tostring(L, -2), lua_typename(L, lua_type(L, -1)), (lua_isfunction(L, -1) ? "N/A" : lua_tostring(L, -1)));
+				lua_pop(L, 1);
+			}
+		}
+	}
+	lua_close(vm->L);
+	vm->L = NULL;
+	free(vm);
 }
-*/
+
 
 /*
  * G_LuaStartVM( vm )

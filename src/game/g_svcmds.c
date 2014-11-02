@@ -2000,6 +2000,11 @@ qboolean ConsoleCommand(void)
 		G_LuaStatus(NULL);
 		return qtrue;
 	}
+	if (Q_stricmp(cmd, "lua_api") == 0)
+	{
+		G_LuaStackDump(NULL);
+		return qtrue;
+	}
 	// *LUA* API callbacks
 	if (G_LuaHook_ConsoleCommand(cmd))
 	{
