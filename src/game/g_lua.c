@@ -1920,8 +1920,6 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 
 	lua_registerglobal(vm->L, "LUA_DIRSEP", LUA_DIRSEP);
 
-	lua_newtable(vm->L);
-
 	// register functions
 	luaL_newlib(vm->L, etlib);
 
