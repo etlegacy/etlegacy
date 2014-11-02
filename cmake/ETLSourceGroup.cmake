@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------
 # Groups for Visual Studio (Windows) and win32 definitions
 #-----------------------------------------------------------------
-if(WIN32 AND MSVC)
+if(MSVC OR XCODE)
 	# Group the files based on their source path
 	SET(SRC_PATH "src")
 	FILE(GLOB ALL_SOURCES
@@ -24,4 +24,4 @@ if(WIN32 AND MSVC)
 			source_group("Header Files\\${SHAD_FOLDER_WIN}" FILES ${SRCFILE})
 		endif()
 	ENDFOREACH(SRCFILE)
-endif(WIN32 AND MSVC)
+endif()

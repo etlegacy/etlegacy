@@ -30,6 +30,12 @@ else(MSVC AND NOT NMAKE_BUILD)
 	SET(VSTUDIO OFF CACHE BOOL "Visual studio build")
 endif(MSVC AND NOT NMAKE_BUILD)
 
+if(APPLE AND CMAKE_GENERATOR STREQUAL Xcode)
+	SET(XCODE ON CACHE BOOL "Xcode build")
+else()
+	SET(XCODE OFF CACHE BOOL "Xcode build")
+endif()
+
 if(DEBUG_BUILD AND FORCE_DEBUG)
 	add_definitions(-DLEGACY_DEBUG=1)
 else()

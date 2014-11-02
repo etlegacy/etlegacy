@@ -72,10 +72,10 @@ if(FEATURE_RENDERER2)
 			string(REPLACE "${GLSL_FULLPATH}/" "" SHAD_FOLDER "${SHAD_FOLDER}")
 			string(REPLACE "${GLSL_FULLPATH}" "" SHAD_FOLDER "${SHAD_FOLDER}")
 
-			if(MSVC)
+			if(MSVC OR XCODE)
 				string(REPLACE "/" "\\" SHAD_FOLDER_WIN "${SHAD_FOLDER}")
 				source_group("Shaders\\${SHAD_FOLDER_WIN}" FILES ${SHAD})
-			endif(MSVC)
+			endif()
 
 			string(LENGTH "${SHAD_FOLDER}" FOLDER_LEN)
 
