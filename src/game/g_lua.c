@@ -1837,6 +1837,8 @@ void G_LuaStackDump(gentity_t *ent)
 	}
 
 	Q_strncpyz(vm->file_name, "current API available to scripts", sizeof(vm->file_name));
+	vm->code      = "";
+	vm->code_size = 0;
 
 	// Start lua virtual machine
 	if (G_LuaStartVM(vm))
