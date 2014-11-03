@@ -1081,7 +1081,7 @@ void aagun_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		ent->s.otherEntityNum = ent->s.number;
 
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
-		owner->client->ps.viewlocked                   = 0;
+		owner->client->ps.viewlocked                   = VIEWLOCK_NONE;
 		owner->active                                  = qfalse;
 	}
 
@@ -1160,7 +1160,7 @@ void aagun_think(gentity_t *self)
 			}
 
 			// now tell the client to lock the view in the direction of the gun
-			owner->client->ps.viewlocked        = 3;
+			owner->client->ps.viewlocked        = VIEWLOCK_MG42;
 			owner->client->ps.viewlocked_entNum = self->s.number;
 
 			clamp_playerbehindgun(self, owner, dang);
@@ -1173,7 +1173,7 @@ void aagun_think(gentity_t *self)
 	if (owner->client)
 	{
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
-		owner->client->ps.viewlocked                   = 0; // let them look around
+		owner->client->ps.viewlocked                   = VIEWLOCK_NONE; // let them look around
 		owner->active                                  = qfalse;
 	}
 
@@ -1207,7 +1207,7 @@ void aagun_stopusing(gentity_t *self)
 	{
 		owner->client->ps.eFlags                      &= ~EF_AAGUN_ACTIVE;
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
-		owner->client->ps.viewlocked                   = 0;
+		owner->client->ps.viewlocked                   = VIEWLOCK_NONE;
 		owner->active                                  = qfalse;
 
 		self->r.ownerNum = self->s.number;
@@ -1250,7 +1250,7 @@ void aagun_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	        }
 
 	        // now tell the client to lock the view in the direction of the gun
-	        other->client->ps.viewlocked = 3;
+	        other->client->ps.viewlocked = VIEWLOCK_MG42;
 	        other->client->ps.viewlocked_entNum = self->s.number;
 
 	        clamp_playerbehindgun (self, other, dang);
@@ -1323,7 +1323,7 @@ void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 			dang[i] = SHORT2ANGLE(other->client->pers.cmd.angles[i]);
 		}
 		// now tell the client to lock the view in the direction of the gun
-		other->client->ps.viewlocked        = 3;
+		other->client->ps.viewlocked        = VIEWLOCK_MG42;
 		other->client->ps.viewlocked_entNum = self->s.number;
 
 		// clamp player behind the gun
@@ -1467,7 +1467,7 @@ void mg42_think(gentity_t *self)
 	if (owner->client)
 	{
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
-		owner->client->ps.viewlocked                   = 0; // let them look around
+		owner->client->ps.viewlocked                   = VIEWLOCK_NONE; // let them look around
 		owner->active                                  = qfalse;
 
 		// need this here for players that get killed while on the MG42
@@ -1528,7 +1528,7 @@ void mg42_stopusing(gentity_t *self)
 		owner->client->ps.eFlags                      &= ~EF_MG42_ACTIVE; // unset flag
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
 		self->r.ownerNum                               = self->s.number;
-		owner->client->ps.viewlocked                   = 0; // let them look around
+		owner->client->ps.viewlocked                   = VIEWLOCK_NONE; // let them look around
 		owner->active                                  = qfalse;
 
 		//owner->client->ps.weapHeat[WP_DUMMY_MG42] = 0;
@@ -1594,7 +1594,7 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 
 		self->r.ownerNum             = self->s.number;
 		self->s.otherEntityNum       = self->s.number;
-		owner->client->ps.viewlocked = 0;   // let them look around
+		owner->client->ps.viewlocked = VIEWLOCK_NONE;   // let them look around
 
 		gun->mg42weapHeat     = 0;
 		gun->backupWeaponTime = 0;
@@ -1617,7 +1617,7 @@ void mg42_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
 		ent->r.ownerNum                                = ent->s.number;
 		ent->s.otherEntityNum                          = ent->s.number;
-		owner->client->ps.viewlocked                   = 0; // let them look around
+		owner->client->ps.viewlocked                   = VIEWLOCK_NONE; // let them look around
 		owner->active                                  = qfalse;
 
 		other->client->ps.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;

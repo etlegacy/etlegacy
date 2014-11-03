@@ -6428,7 +6428,9 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 	if (mod)
 	{
-		localEntity_t *le = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
+		localEntity_t *le;
+
+		le = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
 
 		le->light         = light;
 		le->lightOverdraw = lightOverdraw;

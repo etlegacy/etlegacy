@@ -292,7 +292,7 @@ void CG_OffsetThirdPersonView(void)
 	    && !(cg.predictedPlayerState.pm_flags & PMF_LIMBO))
 	{
 		// Force yaw to 0 if we're tracking a medic
-		if (cg.snap->ps.viewlocked != 7)
+		if (cg.snap->ps.viewlocked != VIEWLOCK_MEDIC)
 		{
 			// Do short2angle AFTER the network part
 			focusAngles[YAW]         = SHORT2ANGLE(cg.predictedPlayerState.stats[STAT_DEAD_YAW]);
@@ -597,7 +597,7 @@ static void CG_OffsetFirstPersonView(void)
 
 		// rain - #254 - force yaw to 0 if we're tracking a medic
 		// rain - medic tracking doesn't seem to happen in this case?
-		if (cg.snap->ps.viewlocked == 7)
+		if (cg.snap->ps.viewlocked == VIEWLOCK_MEDIC)
 		{
 			angles[YAW] = 0;
 		}
@@ -1358,22 +1358,13 @@ int CG_CalcViewValues(void)
 		// lock the viewangles if the game has told us to
 		if (ps->viewlocked)
 		{
-			/*
-			if (ps->viewlocked == 4)
-			{
-			    centity_t *tent;
-			    tent = &cg_entities[ps->viewlocked_entNum];
-			    VectorCopy (tent->currentState.apos.trBase, cg.refdefViewAngles);
-			}
-			else
-			*/
 			// don't bother evaluating if set to 7 (look at medic)
-			if (ps->viewlocked != 7 && ps->viewlocked != 3 && ps->viewlocked != 2)
+			if (ps->viewlocked != VIEWLOCK_MEDIC && ps->viewlocked != VIEWLOCK_MG42 && ps->viewlocked != VIEWLOCK_JITTER)
 			{
 				BG_EvaluateTrajectory(&cg_entities[ps->viewlocked_entNum].currentState.apos, cg.time, cg.refdefViewAngles, qtrue, cg_entities[ps->viewlocked_entNum].currentState.effect2Time);
 			}
 
-			if (ps->viewlocked == 2)
+			if (ps->viewlocked == VIEWLOCK_JITTER)
 			{
 				cg.refdefViewAngles[0] += crandom();
 				cg.refdefViewAngles[1] += crandom();
@@ -1397,7 +1388,7 @@ int CG_CalcViewValues(void)
 		}
 
 		// lock the viewangles if the game has told us to
-		if (ps->viewlocked == 7)
+		if (ps->viewlocked == VIEWLOCK_MEDIC)
 		{
 			centity_t *tent = &cg_entities[ps->viewlocked_entNum];
 			vec3_t    vec;

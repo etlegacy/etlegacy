@@ -1058,7 +1058,7 @@ void WolfFindMedic(gentity_t *self)
 	float     bestdist = 1024, dist;
 
 	self->client->ps.viewlocked_entNum    = 0;
-	self->client->ps.viewlocked           = 0;
+	self->client->ps.viewlocked           = VIEWLOCK_NONE;
 	self->client->ps.stats[STAT_DEAD_YAW] = 999;
 
 	VectorCopy(self->s.pos.trBase, start);
@@ -1114,11 +1114,7 @@ void WolfFindMedic(gentity_t *self)
 
 		if (dist < bestdist)
 		{
-			medic = cl->ps.clientNum;
-#if 0 // FIXME: not sure what the point of this is
-			vectoangles(end, temp);
-			self->client->ps.stats[STAT_DEAD_YAW] = temp[YAW];
-#endif
+			medic    = cl->ps.clientNum;
 			bestdist = dist;
 		}
 	}
@@ -1126,7 +1122,7 @@ void WolfFindMedic(gentity_t *self)
 	if (medic >= 0)
 	{
 		self->client->ps.viewlocked_entNum = medic;
-		self->client->ps.viewlocked        = 7;
+		self->client->ps.viewlocked        = VIEWLOCK_MEDIC;
 	}
 }
 
@@ -1388,15 +1384,18 @@ void ClientThink_real(gentity_t *ent)
 		{
 			if ((client->combatState & (1 << COMBATSTATE_KILLEDPLAYER)) && (client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED)))
 			{
-				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
+				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f);
+				G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
 			}
 			else if ((client->combatState & (1 << COMBATSTATE_DAMAGEDEALT)) && (client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED)))
 			{
-				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
+				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f);
+				G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
 			}
 			else
 			{
-				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
+				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f);
+				G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
 			}
 		}
 

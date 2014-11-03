@@ -696,7 +696,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		}
 
 		// reset these values
-		ent->client->ps.viewlocked        = 0;
+		ent->client->ps.viewlocked        = VIEWLOCK_NONE;
 		ent->client->ps.viewlocked_entNum = 0;
 
 		ent->r.maxs[2]           = 0;

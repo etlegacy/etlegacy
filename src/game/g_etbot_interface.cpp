@@ -5390,7 +5390,7 @@ public:
 				if (pEnt && pEnt->inuse && pEnt->client &&
 				    pEnt->client->ps.pm_type == PM_DEAD && !(pEnt->client->ps.pm_flags & PMF_LIMBO))
 				{
-					pMsg->m_MedicNear = (pEnt->client->ps.viewlocked == 7) ? True : False;
+					pMsg->m_MedicNear = (pEnt->client->ps.viewlocked == VIEWLOCK_MEDIC) ? True : False;
 				}
 				else
 				{

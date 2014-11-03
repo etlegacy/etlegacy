@@ -2401,4 +2401,10 @@ typedef enum
 	GAMESOUND_MAX
 } gameSounds;
 
+// defines for viewlocking (mg/medics etc)
+#define VIEWLOCK_NONE               0   // disabled, let them look around
+#define VIEWLOCK_JITTER             2   // this enable screen jitter when firing
+#define VIEWLOCK_MG42               3   // tell the client to lock the view in the direction of the gun
+#define VIEWLOCK_MEDIC              7   // look at the nearest medic
+
 #endif // #ifndef INCLUDE_BG_PUBLIC_H
