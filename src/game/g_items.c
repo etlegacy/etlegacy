@@ -44,7 +44,7 @@
 #include "g_etbot_interface.h"
 #endif
 
-#define RESPAWN_SP           -1
+#define RESPAWN_NEVER       -1
 #define RESPAWN_KEY          4
 #define RESPAWN_ARMOR        25
 #define RESPAWN_TEAM_WEAPON  30
@@ -125,7 +125,6 @@ int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 	int maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
 	int originalCount = ent->client->ps.ammo[ammoweap];
 
-	// FIXME: do a switch
 	if (ammoweap == WP_GRENADE_LAUNCHER)             // make sure if he picks up a grenade that he get's the "launcher" too
 	{
 		COM_BitSet(ent->client->ps.weapons, WP_GRENADE_LAUNCHER);
@@ -469,7 +468,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				// extracted code originally here into AddMagicAmmo
 				// add 1 clip of magic ammo for any two-handed weapon
 			}
-			return RESPAWN_SP;
+			return RESPAWN_NEVER;
 		}
 	}
 
@@ -496,8 +495,8 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			return 0;
 		}
 
-		if (other->client->ps.weapon == WP_MORTAR_SET || other->client->ps.weapon == WP_MORTAR2_SET ||
-		    other->client->ps.weapon == WP_MOBILE_MG42_SET || other->client->ps.weapon == WP_MOBILE_BROWNING_SET)
+		// don't pick up when MG or mortar is set
+		if (IS_MORTAR_WEAPON_SET(other->client->ps.weapon) || IS_MG_WEAPON_SET(other->client->ps.weapon))
 		{
 			return 0;
 		}
@@ -524,42 +523,37 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				COM_BitSet(other->client->ps.weapons, ent->item->giTag);
 
 				// Fixup mauser/sniper issues
-				// FIXME: do a switch
-				if (ent->item->giTag == WP_FG42)
+				switch (ent->item->giTag)
 				{
+				case WP_FG42:
 					COM_BitSet(other->client->ps.weapons, WP_FG42SCOPE);
-				}
-				else if (ent->item->giTag == WP_GARAND)
-				{
+					break;
+				case  WP_GARAND:
 					COM_BitSet(other->client->ps.weapons, WP_GARAND_SCOPE);
-				}
-				else if (ent->item->giTag == WP_K43)
-				{
+					break;
+				case  WP_K43:
 					COM_BitSet(other->client->ps.weapons, WP_K43_SCOPE);
-				}
-				else if (ent->item->giTag == WP_MORTAR)
-				{
+					break;
+				case  WP_MORTAR:
 					COM_BitSet(other->client->ps.weapons, WP_MORTAR_SET);
-				}
-				else if (ent->item->giTag == WP_MORTAR2)
-				{
+					break;
+				case  WP_MORTAR2:
 					COM_BitSet(other->client->ps.weapons, WP_MORTAR2_SET);
-				}
-				else if (ent->item->giTag == WP_MOBILE_MG42)
-				{
+					break;
+				case  WP_MOBILE_MG42:
 					COM_BitSet(other->client->ps.weapons, WP_MOBILE_MG42_SET);
-				}
-				else if (ent->item->giTag == WP_MOBILE_BROWNING)
-				{
+					break;
+				case WP_MOBILE_BROWNING:
 					COM_BitSet(other->client->ps.weapons, WP_MOBILE_BROWNING_SET);
-				}
-				else if (ent->item->giTag == WP_CARBINE)
-				{
+					break;
+				case  WP_CARBINE:
 					COM_BitSet(other->client->ps.weapons, WP_M7);
-				}
-				else if (ent->item->giTag == WP_KAR98)
-				{
+					break;
+				case WP_KAR98:
 					COM_BitSet(other->client->ps.weapons, WP_GPG40);
+					break;
+				default:
+					break;
 				}
 
 				other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giTag)] = 0;
@@ -597,7 +591,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	Bot_Event_AddWeapon(other->client->ps.clientNum, Bot_WeaponGameToBot(ent->item->giTag));
 #endif
 
-	return -1;
+	return RESPAWN_NEVER;
 }
 
 /**
@@ -814,6 +808,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	if (ent->item->giType == IT_TEAM)
 	{
 		gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_ITEM_PICKUP);
+
 		te->s.eventParm = ent->s.modelindex;
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
@@ -973,7 +968,7 @@ void Use_Item(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 /**
 * @brief Traces down to find where an item should rest, instead of letting them
-free fall from their spawn points.
+*        free fall from their spawn points.
 */
 void FinishSpawningItem(gentity_t *ent)
 {
