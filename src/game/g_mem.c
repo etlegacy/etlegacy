@@ -33,7 +33,7 @@
 
 #include "g_local.h"
 
-#define POOLSIZE    (4 * 1024 * 1024)
+#define POOLSIZE    (8 * 1024 * 1024) // up to 32 if required
 
 static char memoryPool[POOLSIZE];
 static int  allocPoint;
