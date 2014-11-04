@@ -1149,7 +1149,6 @@ static void CG_UnderwaterSounds(void)
 /*
 ===============
 CG_DamageBlendBlob
-
 ===============
 */
 static void CG_DamageBlendBlob(void)
@@ -1396,13 +1395,6 @@ int CG_CalcViewValues(void)
 			VectorCopy(tent->lerpOrigin, vec);
 			VectorSubtract(vec, cg.refdef_current->vieworg, vec);
 			vectoangles(vec, cg.refdefViewAngles);
-		}
-		else if (ps->viewlocked == 4)
-		{
-			vec3_t fwd;
-
-			AngleVectors(cg.refdefViewAngles, fwd, NULL, NULL);
-			VectorMA(cg_entities[ps->viewlocked_entNum].lerpOrigin, 16, fwd, cg.refdef_current->vieworg);
 		}
 		else if (ps->viewlocked)
 		{
