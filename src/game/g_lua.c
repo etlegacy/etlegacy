@@ -1824,7 +1824,6 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 /**
  * @brief Dump the lua stack to console
  *        Executed by the ingame "lua_api" command
- * @todo color code, order by type, add globals
  */
 void G_LuaStackDump(gentity_t *ent)
 {
@@ -1849,18 +1848,38 @@ void G_LuaStackDump(gentity_t *ent)
 		if (!lua_istable(L, -1))
 		{
 			G_refPrintf(ent, "ERROR Lua API: et prefix is not correctly registered");
-			return;
 		}
 		else
 		{
-			G_refPrintf(ent, "---------------------------------------------------");
-			G_refPrintf(ent, "%-30s%-15s%-10s", "Name", "Type", "Value");
-			G_refPrintf(ent, "---------------------------------------------------");
+			int i, types[] = { LUA_TSTRING, LUA_TTABLE, LUA_TBOOLEAN, LUA_TNUMBER, LUA_TFUNCTION };
 
-			lua_pushnil(L); // stack now contains: -1 => nil; -2 => table
+			G_refPrintf(ent, "---------------------------------------------------------------");
+			G_refPrintf(ent, "%-42s%-17s%-10s", "Name", "Type", "Value");
+			G_refPrintf(ent, "---------------------------------------------------------------");
+
+			// et namespace
+			for (i = 0; i < ARRAY_LEN(types); i++)
+			{
+				lua_pushnil(L); // stack now contains: -1 => nil; -2 => table
+				while (lua_next(L, -2))
+				{
+					// order by variable data type
+					if (lua_type(L, -1) == types[i])
+					{
+						G_refPrintf(ent, "et.%-39s^%i%-17s^7%-10s", lua_tostring(L, -2), i, lua_typename(L, lua_type(L, -1)), (lua_isfunction(L, -1) ? "N/A" : lua_tostring(L, -1)));
+					}
+					lua_pop(L, 1);
+				}
+			}
+			// globals
+			lua_pushglobaltable(L);
+			lua_pushnil(L);
 			while (lua_next(L, -2))
 			{
-				G_refPrintf(ent, "et.%-27s%-15s%-10s", lua_tostring(L, -2), lua_typename(L, lua_type(L, -1)), (lua_isfunction(L, -1) ? "N/A" : lua_tostring(L, -1)));
+				if (lua_type(L, -1) == LUA_TSTRING)
+				{
+					G_refPrintf(ent, "%-42s^8%-17s^7%-10s", lua_tostring(L, -2), "global string", lua_tostring(L, -1));
+				}
 				lua_pop(L, 1);
 			}
 		}
