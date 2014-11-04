@@ -1497,7 +1497,6 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("where");
 #ifdef FEATURE_LUA
 	trap_AddCommand("lua_status");
-	trap_AddCommand("lua_api");
 #endif
 
 	// remove engine commands to avoid abuse

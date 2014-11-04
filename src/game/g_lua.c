@@ -1825,13 +1825,13 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
  * @brief Dump the lua stack to console
  *        Executed by the ingame "lua_api" command
  */
-void G_LuaStackDump(gentity_t *ent)
+void G_LuaStackDump()
 {
 	lua_vm_t *vm = (lua_vm_t *) malloc(sizeof(lua_vm_t));
 
 	if (vm == NULL)
 	{
-		G_refPrintf(ent, "ERROR Lua API: memory allocation error");
+		G_Printf("ERROR Lua API: memory allocation error");
 		return;
 	}
 
@@ -1847,15 +1847,15 @@ void G_LuaStackDump(gentity_t *ent)
 		lua_getglobal(L, "et");
 		if (!lua_istable(L, -1))
 		{
-			G_refPrintf(ent, "ERROR Lua API: et prefix is not correctly registered");
+			G_Printf("ERROR Lua API: et prefix is not correctly registered");
 		}
 		else
 		{
 			int i, types[] = { LUA_TSTRING, LUA_TTABLE, LUA_TBOOLEAN, LUA_TNUMBER, LUA_TFUNCTION };
 
-			G_refPrintf(ent, "---------------------------------------------------------------");
-			G_refPrintf(ent, "%-42s%-17s%-10s", "Name", "Type", "Value");
-			G_refPrintf(ent, "---------------------------------------------------------------");
+			G_Printf("---------------------------------------------------------------\n");
+			G_Printf("%-42s%-17s%-10s\n", "Name", "Type", "Value");
+			G_Printf("---------------------------------------------------------------\n");
 
 			// et namespace
 			for (i = 0; i < ARRAY_LEN(types); i++)
@@ -1866,7 +1866,7 @@ void G_LuaStackDump(gentity_t *ent)
 					// order by variable data type
 					if (lua_type(L, -1) == types[i])
 					{
-						G_refPrintf(ent, "et.%-39s^%i%-17s^7%-10s", lua_tostring(L, -2), i, lua_typename(L, lua_type(L, -1)), (lua_isfunction(L, -1) ? "N/A" : lua_tostring(L, -1)));
+						G_Printf("et.%-39s^%i%-17s^7%-10s\n", lua_tostring(L, -2), i, lua_typename(L, lua_type(L, -1)), (lua_isfunction(L, -1) ? "N/A" : lua_tostring(L, -1)));
 					}
 					lua_pop(L, 1);
 				}
@@ -1878,7 +1878,7 @@ void G_LuaStackDump(gentity_t *ent)
 			{
 				if (lua_type(L, -1) == LUA_TSTRING)
 				{
-					G_refPrintf(ent, "%-42s^8%-17s^7%-10s", lua_tostring(L, -2), "global string", lua_tostring(L, -1));
+					G_Printf("%-42s^8%-17s^7%-10s\n", lua_tostring(L, -2), "global string", lua_tostring(L, -1));
 				}
 				lua_pop(L, 1);
 			}

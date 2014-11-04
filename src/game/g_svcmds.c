@@ -2002,7 +2002,7 @@ qboolean ConsoleCommand(void)
 	}
 	if (Q_stricmp(cmd, "lua_api") == 0)
 	{
-		G_LuaStackDump(NULL);
+		G_LuaStackDump();
 		return qtrue;
 	}
 	// *LUA* API callbacks
