@@ -2017,6 +2017,19 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		}
 	}
 
+	// The very first frame
+	if (cg.clientFrame == 0)
+	{
+		// autorecord on late joins
+		if (!cg.demoPlayback && cgs.gamestate == GS_PLAYING && (cg_autoAction.integer & AA_DEMORECORD))
+		{
+			if (!cl_demorecording.integer)
+			{
+				CG_autoRecord_f();
+			}
+		}
+	}
+
 	DEBUGTIME
 
 	if (!cg.lightstylesInited)
