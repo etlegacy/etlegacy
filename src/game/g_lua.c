@@ -1870,96 +1870,8 @@ void G_LuaStackDump(gentity_t *ent)
 	free(vm);
 }
 
-
-/*
- * G_LuaStartVM( vm )
- * Starts one individual virtual machine.
- */
-qboolean G_LuaStartVM(lua_vm_t *vm)
+void registerConfigstringConstants(lua_vm_t *vm)
 {
-	int        res = 0;
-	char       basepath[MAX_QPATH];
-	char       homepath[MAX_QPATH];
-	char       gamepath[MAX_QPATH];
-	const char *luaPath, *luaCPath;
-
-	// Open a new lua state
-	vm->L = luaL_newstate();
-	if (!vm->L)
-	{
-		G_Printf("%s API: Lua failed to initialise.\n", LUA_VERSION);
-		return qfalse;
-	}
-
-	// Initialise the lua state
-	luaL_openlibs(vm->L);
-
-	// set LUA_PATH and LUA_CPATH
-	trap_Cvar_VariableStringBuffer("fs_basepath", basepath, sizeof(basepath));
-	trap_Cvar_VariableStringBuffer("fs_homepath", homepath, sizeof(homepath));
-	trap_Cvar_VariableStringBuffer("fs_game", gamepath, sizeof(gamepath));
-
-	luaPath = va("%s%s%s%s?.lua;%s%s%s%slualibs%s?.lua",
-	             homepath, LUA_DIRSEP, gamepath, LUA_DIRSEP,
-	             homepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP);
-
-	luaCPath = va("%s%s%s%slualibs%s?.%s",
-	              homepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP, EXTENSION);
-
-	// add fs_basepath if different from fs_homepath
-	if (Q_stricmp(basepath, homepath))
-	{
-		luaPath = va("%s%s%s%s?.lua;%s%s%s%slualibs%s?.lua;%s",
-		             basepath, LUA_DIRSEP, gamepath, LUA_DIRSEP,
-		             basepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP, luaPath);
-
-		luaCPath = va("%s%s%s%slualibs%s?.%s;%s",
-		              basepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP, EXTENSION,
-		              luaCPath);
-	}
-
-	lua_getglobal(vm->L, LUA_LOADLIBNAME);
-	if (lua_istable(vm->L, -1))
-	{
-		lua_pushstring(vm->L, luaPath);
-		lua_setfield(vm->L, -2, "path");
-		lua_pushstring(vm->L, luaCPath);
-		lua_setfield(vm->L, -2, "cpath");
-	}
-	lua_pop(vm->L, 1);
-
-	// register globals
-	lua_registerglobal(vm->L, "LUA_PATH", luaPath);
-	lua_registerglobal(vm->L, "LUA_CPATH", luaCPath);
-
-	lua_registerglobal(vm->L, "LUA_DIRSEP", LUA_DIRSEP);
-
-	// register functions
-	luaL_newlib(vm->L, etlib);
-
-	// register predefined constants
-
-	// from q_shared.h
-	lua_regconstinteger(vm->L, MAX_CLIENTS);
-	lua_regconstinteger(vm->L, MAX_MODELS);
-	lua_regconstinteger(vm->L, MAX_SOUNDS);
-	lua_regconstinteger(vm->L, MAX_CS_SKINS);
-	lua_regconstinteger(vm->L, MAX_CSSTRINGS);
-
-	lua_regconstinteger(vm->L, MAX_CS_SHADERS);
-	lua_regconstinteger(vm->L, MAX_SERVER_TAGS);
-	lua_regconstinteger(vm->L, MAX_TAG_FILES);
-	lua_regconstinteger(vm->L, MAX_MULTI_SPAWNTARGETS);
-	lua_regconstinteger(vm->L, MAX_DLIGHT_CONFIGSTRINGS);
-	lua_regconstinteger(vm->L, MAX_SPLINE_CONFIGSTRINGS);
-
-	// misc bg_public.h
-	lua_regconstinteger(vm->L, MAX_OID_TRIGGERS);
-	lua_regconstinteger(vm->L, MAX_CHARACTERS);
-	lua_regconstinteger(vm->L, MAX_TAGCONNECTS);
-	lua_regconstinteger(vm->L, MAX_FIRETEAMS);
-	lua_regconstinteger(vm->L, MAX_MOTDLINES);
-
 	// Config string:
 	// q_shared.h
 	lua_regconstinteger(vm->L, CS_SERVERINFO); // an info string with all the serverinfo cvars
@@ -2032,22 +1944,281 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_CUSTMOTD);
 	lua_regconstinteger(vm->L, CS_STRINGS);
 	lua_regconstinteger(vm->L, CS_MAX);
+}
 
+void registerWeaponConstants(lua_vm_t *vm)
+{
+	lua_regconstinteger(vm->L, WP_NONE);                 // 0
+	lua_regconstinteger(vm->L, WP_KNIFE);                // 1
+	lua_regconstinteger(vm->L, WP_LUGER);                // 2
+	lua_regconstinteger(vm->L, WP_MP40);                 // 3
+	lua_regconstinteger(vm->L, WP_GRENADE_LAUNCHER);     // 4
+	lua_regconstinteger(vm->L, WP_PANZERFAUST);          // 5
+	lua_regconstinteger(vm->L, WP_FLAMETHROWER);         // 6
+	lua_regconstinteger(vm->L, WP_COLT);                 // 7 - equivalent american weapon to german luger
+	lua_regconstinteger(vm->L, WP_THOMPSON);             // 8 - equivalent american weapon to german mp40
+	lua_regconstinteger(vm->L, WP_GRENADE_PINEAPPLE);    // 9
+
+	lua_regconstinteger(vm->L, WP_STEN);                 // 10 - silenced sten sub-machinegun
+	lua_regconstinteger(vm->L, WP_MEDIC_SYRINGE);        // 11 - broken out from CLASS_SPECIAL per Id request
+	lua_regconstinteger(vm->L, WP_AMMO);                 // 12 - likewise
+	lua_regconstinteger(vm->L, WP_ARTY);                 // 13
+	lua_regconstinteger(vm->L, WP_SILENCER);             // 14 - used to be sp5
+	lua_regconstinteger(vm->L, WP_DYNAMITE);             // 15
+	lua_regconstinteger(vm->L, WP_SMOKETRAIL);           // 16
+	lua_regconstinteger(vm->L, WP_MAPMORTAR);            // 17
+	lua_regconstinteger(vm->L, VERYBIGEXPLOSION);        // 18 - explosion effect for airplanes
+	lua_regconstinteger(vm->L, WP_MEDKIT);               // 19
+
+	lua_regconstinteger(vm->L, WP_BINOCULARS);           // 20
+	lua_regconstinteger(vm->L, WP_PLIERS);               // 21
+	lua_regconstinteger(vm->L, WP_SMOKE_MARKER);         // 22 - changed name to cause less confusion
+	lua_regconstinteger(vm->L, WP_KAR98);                // 23 - WolfXP weapons
+	lua_regconstinteger(vm->L, WP_CARBINE);              // 24
+	lua_regconstinteger(vm->L, WP_GARAND);               // 25
+	lua_regconstinteger(vm->L, WP_LANDMINE);             // 26
+	lua_regconstinteger(vm->L, WP_SATCHEL);              // 27
+	lua_regconstinteger(vm->L, WP_SATCHEL_DET);          // 28
+	lua_regconstinteger(vm->L, WP_SMOKE_BOMB);           // 29
+
+	lua_regconstinteger(vm->L, WP_MOBILE_MG42);          // 30
+	lua_regconstinteger(vm->L, WP_K43);                  // 31
+	lua_regconstinteger(vm->L, WP_FG42);                 // 32
+	lua_regconstinteger(vm->L, WP_DUMMY_MG42);           // 33 - for storing heat on mounted mg42s...
+	lua_regconstinteger(vm->L, WP_MORTAR);               // 34
+	lua_regconstinteger(vm->L, WP_AKIMBO_COLT);          // 35
+	lua_regconstinteger(vm->L, WP_AKIMBO_LUGER);         // 36
+
+	lua_regconstinteger(vm->L, WP_GPG40);                // 37
+	lua_regconstinteger(vm->L, WP_M7);                   // 38
+	lua_regconstinteger(vm->L, WP_SILENCED_COLT);        // 39
+
+	lua_regconstinteger(vm->L, WP_GARAND_SCOPE);         // 40
+	lua_regconstinteger(vm->L, WP_K43_SCOPE);            // 41
+	lua_regconstinteger(vm->L, WP_FG42SCOPE);            // 42
+	lua_regconstinteger(vm->L, WP_MORTAR_SET);           // 43
+	lua_regconstinteger(vm->L, WP_MEDIC_ADRENALINE);     // 44
+	lua_regconstinteger(vm->L, WP_AKIMBO_SILENCEDCOLT);  // 45
+	lua_regconstinteger(vm->L, WP_AKIMBO_SILENCEDLUGER); // 46
+	lua_regconstinteger(vm->L, WP_MOBILE_MG42_SET);      // 47
+
+	// legacy weapons
+	lua_regconstinteger(vm->L, WP_KNIFE_KABAR);          // 48
+	lua_regconstinteger(vm->L, WP_MOBILE_BROWNING);      // 49
+	lua_regconstinteger(vm->L, WP_MOBILE_BROWNING_SET);  // 50
+	lua_regconstinteger(vm->L, WP_MORTAR2);              // 51
+	lua_regconstinteger(vm->L, WP_MORTAR2_SET);          // 52
+	lua_regconstinteger(vm->L, WP_BAZOOKA);              // 53
+
+	lua_regconstinteger(vm->L, WP_NUM_WEAPONS);
+}
+
+void registerModConstants(lua_vm_t *vm)
+{
+	lua_regconstinteger(vm->L, MOD_UNKNOWN);
+	lua_regconstinteger(vm->L, MOD_MACHINEGUN);
+	lua_regconstinteger(vm->L, MOD_BROWNING);
+	lua_regconstinteger(vm->L, MOD_MG42);
+	lua_regconstinteger(vm->L, MOD_GRENADE);
+
+	// modified wolf weap mods
+	lua_regconstinteger(vm->L, MOD_KNIFE);
+	lua_regconstinteger(vm->L, MOD_LUGER);
+	lua_regconstinteger(vm->L, MOD_COLT);
+	lua_regconstinteger(vm->L, MOD_MP40);
+	lua_regconstinteger(vm->L, MOD_THOMPSON);
+	lua_regconstinteger(vm->L, MOD_STEN);
+	lua_regconstinteger(vm->L, MOD_GARAND);
+
+	lua_regconstinteger(vm->L, MOD_SILENCER);
+	lua_regconstinteger(vm->L, MOD_FG42);
+	lua_regconstinteger(vm->L, MOD_FG42SCOPE);
+	lua_regconstinteger(vm->L, MOD_PANZERFAUST);
+	lua_regconstinteger(vm->L, MOD_GRENADE_LAUNCHER);
+	lua_regconstinteger(vm->L, MOD_FLAMETHROWER);
+	lua_regconstinteger(vm->L, MOD_GRENADE_PINEAPPLE);
+
+	lua_regconstinteger(vm->L, MOD_MAPMORTAR);
+	lua_regconstinteger(vm->L, MOD_MAPMORTAR_SPLASH);
+
+	lua_regconstinteger(vm->L, MOD_KICKED);
+
+	lua_regconstinteger(vm->L, MOD_DYNAMITE);
+	lua_regconstinteger(vm->L, MOD_AIRSTRIKE);
+	lua_regconstinteger(vm->L, MOD_SYRINGE);
+	lua_regconstinteger(vm->L, MOD_AMMO);
+	lua_regconstinteger(vm->L, MOD_ARTY);
+
+	lua_regconstinteger(vm->L, MOD_WATER);
+	lua_regconstinteger(vm->L, MOD_SLIME);
+	lua_regconstinteger(vm->L, MOD_LAVA);
+	lua_regconstinteger(vm->L, MOD_CRUSH);
+	lua_regconstinteger(vm->L, MOD_TELEFRAG);
+	lua_regconstinteger(vm->L, MOD_FALLING);
+	lua_regconstinteger(vm->L, MOD_SUICIDE);
+	lua_regconstinteger(vm->L, MOD_TARGET_LASER);
+	lua_regconstinteger(vm->L, MOD_TRIGGER_HURT);
+	lua_regconstinteger(vm->L, MOD_EXPLOSIVE);
+
+	lua_regconstinteger(vm->L, MOD_CARBINE);
+	lua_regconstinteger(vm->L, MOD_KAR98);
+	lua_regconstinteger(vm->L, MOD_GPG40);
+	lua_regconstinteger(vm->L, MOD_M7);
+	lua_regconstinteger(vm->L, MOD_LANDMINE);
+	lua_regconstinteger(vm->L, MOD_SATCHEL);
+
+	lua_regconstinteger(vm->L, MOD_SMOKEBOMB);
+	lua_regconstinteger(vm->L, MOD_MOBILE_MG42);
+	lua_regconstinteger(vm->L, MOD_SILENCED_COLT);
+	lua_regconstinteger(vm->L, MOD_GARAND_SCOPE);
+
+	lua_regconstinteger(vm->L, MOD_CRUSH_CONSTRUCTION);
+	lua_regconstinteger(vm->L, MOD_CRUSH_CONSTRUCTIONDEATH);
+	lua_regconstinteger(vm->L, MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER);
+
+	lua_regconstinteger(vm->L, MOD_K43);
+	lua_regconstinteger(vm->L, MOD_K43_SCOPE);
+
+	lua_regconstinteger(vm->L, MOD_MORTAR);
+
+	lua_regconstinteger(vm->L, MOD_AKIMBO_COLT);
+	lua_regconstinteger(vm->L, MOD_AKIMBO_LUGER);
+	lua_regconstinteger(vm->L, MOD_AKIMBO_SILENCEDCOLT);
+	lua_regconstinteger(vm->L, MOD_AKIMBO_SILENCEDLUGER);
+
+	lua_regconstinteger(vm->L, MOD_SMOKEGRENADE);
+
+	lua_regconstinteger(vm->L, MOD_SWAP_PLACES);
+
+	// keep these 2 entries last
+	lua_regconstinteger(vm->L, MOD_SWITCHTEAM);
+
+	lua_regconstinteger(vm->L, MOD_SHOVE);
+
+	lua_regconstinteger(vm->L, MOD_KNIFE_KABAR);
+	lua_regconstinteger(vm->L, MOD_MOBILE_BROWNING);
+	lua_regconstinteger(vm->L, MOD_MORTAR2);
+	lua_regconstinteger(vm->L, MOD_BAZOOKA);
+
+	lua_regconstinteger(vm->L, MOD_NUM_MODS);
+}
+
+void registerConstants(lua_vm_t *vm)
+{
+	// max constants
+	// from q_shared.h
+	lua_regconstinteger(vm->L, MAX_CLIENTS);
+	lua_regconstinteger(vm->L, MAX_MODELS);
+	lua_regconstinteger(vm->L, MAX_SOUNDS);
+	lua_regconstinteger(vm->L, MAX_CS_SKINS);
+	lua_regconstinteger(vm->L, MAX_CSSTRINGS);
+
+	lua_regconstinteger(vm->L, MAX_CS_SHADERS);
+	lua_regconstinteger(vm->L, MAX_SERVER_TAGS);
+	lua_regconstinteger(vm->L, MAX_TAG_FILES);
+	lua_regconstinteger(vm->L, MAX_MULTI_SPAWNTARGETS);
+	lua_regconstinteger(vm->L, MAX_DLIGHT_CONFIGSTRINGS);
+	lua_regconstinteger(vm->L, MAX_SPLINE_CONFIGSTRINGS);
+	// misc bg_public.h
+	lua_regconstinteger(vm->L, MAX_OID_TRIGGERS);
+	lua_regconstinteger(vm->L, MAX_CHARACTERS);
+	lua_regconstinteger(vm->L, MAX_TAGCONNECTS);
+	lua_regconstinteger(vm->L, MAX_FIRETEAMS);
+	lua_regconstinteger(vm->L, MAX_MOTDLINES);
+
+	// EXEC constants
 	lua_regconstinteger(vm->L, EXEC_NOW);
 	lua_regconstinteger(vm->L, EXEC_INSERT);
 	lua_regconstinteger(vm->L, EXEC_APPEND);
 
+	// FS constants
 	lua_regconstinteger(vm->L, FS_READ);
 	lua_regconstinteger(vm->L, FS_WRITE);
 	lua_regconstinteger(vm->L, FS_APPEND);
 	lua_regconstinteger(vm->L, FS_APPEND_SYNC);
 
+	// chat/message constants
 	lua_regconstinteger(vm->L, SAY_ALL);
 	lua_regconstinteger(vm->L, SAY_TEAM);
 	lua_regconstinteger(vm->L, SAY_BUDDY);
 	lua_regconstinteger(vm->L, SAY_TEAMNL);
 
 	lua_regconststring(vm->L, HOSTARCH);
+
+	// cs, weapon and MOD constants
+	registerConfigstringConstants(vm);
+	registerWeaponConstants(vm);
+	registerModConstants(vm);
+}
+
+/*
+ * G_LuaStartVM( vm )
+ * Starts one individual virtual machine.
+ */
+qboolean G_LuaStartVM(lua_vm_t *vm)
+{
+	int        res = 0;
+	char       basepath[MAX_QPATH];
+	char       homepath[MAX_QPATH];
+	char       gamepath[MAX_QPATH];
+	const char *luaPath, *luaCPath;
+
+	// Open a new lua state
+	vm->L = luaL_newstate();
+	if (!vm->L)
+	{
+		G_Printf("%s API: Lua failed to initialise.\n", LUA_VERSION);
+		return qfalse;
+	}
+
+	// Initialise the lua state
+	luaL_openlibs(vm->L);
+
+	// set LUA_PATH and LUA_CPATH
+	trap_Cvar_VariableStringBuffer("fs_basepath", basepath, sizeof(basepath));
+	trap_Cvar_VariableStringBuffer("fs_homepath", homepath, sizeof(homepath));
+	trap_Cvar_VariableStringBuffer("fs_game", gamepath, sizeof(gamepath));
+
+	luaPath = va("%s%s%s%s?.lua;%s%s%s%slualibs%s?.lua",
+	             homepath, LUA_DIRSEP, gamepath, LUA_DIRSEP,
+	             homepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP);
+
+	luaCPath = va("%s%s%s%slualibs%s?.%s",
+	              homepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP, EXTENSION);
+
+	// add fs_basepath if different from fs_homepath
+	if (Q_stricmp(basepath, homepath))
+	{
+		luaPath = va("%s%s%s%s?.lua;%s%s%s%slualibs%s?.lua;%s",
+		             basepath, LUA_DIRSEP, gamepath, LUA_DIRSEP,
+		             basepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP, luaPath);
+
+		luaCPath = va("%s%s%s%slualibs%s?.%s;%s",
+		              basepath, LUA_DIRSEP, gamepath, LUA_DIRSEP, LUA_DIRSEP, EXTENSION,
+		              luaCPath);
+	}
+
+	lua_getglobal(vm->L, LUA_LOADLIBNAME);
+	if (lua_istable(vm->L, -1))
+	{
+		lua_pushstring(vm->L, luaPath);
+		lua_setfield(vm->L, -2, "path");
+		lua_pushstring(vm->L, luaCPath);
+		lua_setfield(vm->L, -2, "cpath");
+	}
+	lua_pop(vm->L, 1);
+
+	// register globals
+	lua_registerglobal(vm->L, "LUA_PATH", luaPath);
+	lua_registerglobal(vm->L, "LUA_CPATH", luaCPath);
+
+	lua_registerglobal(vm->L, "LUA_DIRSEP", LUA_DIRSEP);
+
+	// register functions
+	luaL_newlib(vm->L, etlib);
+
+	// register predefined constants
+	registerConstants(vm);
 
 	lua_pushvalue(vm->L, -1);
 	lua_setglobal(vm->L, "et");
