@@ -551,6 +551,7 @@ static void GLimp_InitExtensionsR2(void)
 	// If we are in developer mode, then we will print out messages from the gfx driver
 	if (GLimp_CheckForVersionExtension("GL_ARB_debug_output", 410, qfalse, NULL) && ri.Cvar_VariableIntegerValue("developer"))
 	{
+#ifdef GL_DEBUG_OUTPUT
 		glEnable(GL_DEBUG_OUTPUT);
 
 		if (410 <= glConfig2.contextCombined)
@@ -563,6 +564,7 @@ static void GLimp_InitExtensionsR2(void)
 			glDebugMessageCallbackARB(Glimp_DebugCallback, NULL);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 		}
+#endif
 	}
 }
 #endif
