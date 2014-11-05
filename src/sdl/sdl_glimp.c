@@ -286,6 +286,12 @@ qboolean GL_CheckForExtension(const char *ext)
 	"extensions. Please update your video card drivers and try again.\n"
 
 #ifdef FEATURE_RENDERER2
+
+void APIENTRY Glimp_DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
+{
+	Ren_Warning("Driver message: %s\n", message);
+}
+
 static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, qboolean required, cvar_t *var)
 {
 	qboolean result = qfalse;
@@ -539,6 +545,23 @@ static void GLimp_InitExtensionsR2(void)
 		if (formats)
 		{
 			glConfig2.getProgramBinaryAvailable = qtrue;
+		}
+	}
+
+	// If we are in developer mode, then we will print out messages from the gfx driver
+	if (GLimp_CheckForVersionExtension("GL_ARB_debug_output", 410, qfalse, NULL) && ri.Cvar_VariableIntegerValue("developer"))
+	{
+		glEnable(GL_DEBUG_OUTPUT);
+
+		if (410 <= glConfig2.contextCombined)
+		{
+			glDebugMessageCallback(Glimp_DebugCallback, NULL);
+			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		}
+		else
+		{
+			glDebugMessageCallbackARB(Glimp_DebugCallback, NULL);
+			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 		}
 	}
 }
