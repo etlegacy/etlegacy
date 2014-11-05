@@ -287,7 +287,7 @@ qboolean GL_CheckForExtension(const char *ext)
 
 #ifdef FEATURE_RENDERER2
 
-void APIENTRY Glimp_DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
+void GLAPIENTRY Glimp_DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
 {
 	Ren_Warning("Driver message: %s\n", message);
 }
