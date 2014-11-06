@@ -162,7 +162,7 @@ NOTES:
 
 In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
 Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows 
-SDK 7 and copy 'win32.mak' to libs\jpeg\.
+SDK 7 and copy 'win32.mak' to libs/jpeg/.
 
 If the build fails during libcurl compilation because of missing *sed* utility,
 download it from http://gnuwin32.sourceforge.net/packages/sed.htm and place it into
