@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,7 +27,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file sv_main.c
  */
 
@@ -636,7 +637,7 @@ qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
 
 /**
  * @brief Send serverinfo cvars, etc to master servers when game complete or
- * by request of getstatus calls.
+ *        by request of getstatus calls.
  * Useful for tracking global player stats.
  * @param force toogles rate limit checks
  */

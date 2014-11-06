@@ -1,35 +1,36 @@
+/*
+ * Copyright (C) 2012 Stephen Larroque <lrq3000@gmail.com>
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
+ *
+ * This file is part of ET: Legacy - http://www.etlegacy.com
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ */
 /**
-* Copyright (C) 2012 Stephen Larroque <lrq3000@gmail.com>
-*
-* ET: Legacy
-* Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
-*
-* This file is part of ET: Legacy - http://www.etlegacy.com
-*
-* ET: Legacy is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* ET: Legacy is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
-*
-* In addition, Wolfenstein: Enemy Territory GPL Source Code is also
-* subject to certain additional terms. You should have received a copy
-* of these additional terms immediately following the terms and conditions
-* of the GNU General Public License which accompanied the source code.
-* If not, please request a copy in writing from id Software at the address below.
-*
-* id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-*
-* Server side demo recording (supplementary functions)
-* @file sv_demo_ext.c
-*/
+ * @file sv_demo_ext.c
+ * @brief Server side demo recording (supplementary functions)
+ */
 
 #include "../game/g_local.h" // get both the definitions of gentity_t (to get gentity_t->health field) AND sharedEntity_t, so that we can convert a sharedEntity_t into a gentity_t (see more details in SV_GentityUpdateHealthField() notes)
 #include "../qcommon/q_shared.h" // needed so that the public declarations in server.h can access these functions (because server.h links to qcommon.h, so that it does server.h->qcommon.h->sv_demo_ext.c -- in the end, no includes redundancy conflicts and every server files can access these functions!)

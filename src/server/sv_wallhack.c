@@ -1,11 +1,17 @@
 /*
-  sv_wallhack.c -- functions to prevent wallhack cheats
-
-  Copyright (C) 2012 Laszlo Menczel
-
-  This is free software distributed under the terms of the GNU
-  General Public License version 2. NO WARRANTY, see 'LICENSE.TXT'.
-*/
+ * Copyright (C) 2012 Laszlo Menczel
+ *
+ * This is a free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * @file sv_wallhack.c
+ * @brief Functions to prevent wallhack cheats
+ */
 
 #ifdef FEATURE_ANTICHEAT
 
