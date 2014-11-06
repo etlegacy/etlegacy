@@ -1,12 +1,13 @@
-/*
-* ET <-> *Lua* interface source file.
-*
-* This code is taken from ETPub and partially from NQ. All credits go to the teams especially to quad and pheno!
-* http://etpub.org
-* http://shitstorm.org
-*
-* Find the Lua code by doing a text seach for "FEATURE_LUA"
-*/
+/**
+ * @file g_lua.c
+ * @brief ET <-> *Lua* interface source file.
+ *
+ * @copyright This code is taken from ETPub.
+ * All credits go to their team especially to quad and pheno!
+ * http://etpub.org
+ * http://shitstorm.org
+ * @endcopyright
+ */
 #ifdef FEATURE_LUA
 
 #include "g_lua.h"
@@ -23,7 +24,7 @@ lua_vm_t *lVM[LUA_NUM_VM];
 // output: the entity number.
 //         if (input==0) return = -1
 //         if (input address is out of g_entities[] memory range) return -1;
-int C_gentity_ptr_to_entNum(unsigned long addr)
+static int C_gentity_ptr_to_entNum(unsigned long addr)
 {
 	// no NULL address,
 	// address must also be in the range of the g_entities array memory space..
@@ -1889,7 +1890,7 @@ void G_LuaStackDump()
 	free(vm);
 }
 
-void registerConfigstringConstants(lua_vm_t *vm)
+static void registerConfigstringConstants(lua_vm_t *vm)
 {
 	// Config string:
 	// q_shared.h
@@ -1897,9 +1898,9 @@ void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_SYSTEMINFO); // an info string for server system to client system configuration (timescale, etc)
 
 	// bg_public.h
-	lua_regconstinteger(vm->L, CS_MUSIC);      // g_motd string for server message of the day
+	lua_regconstinteger(vm->L, CS_MUSIC);
 	lua_regconstinteger(vm->L, CS_MESSAGE);    // from the map worldspawn's message field
-	lua_regconstinteger(vm->L, CS_MOTD);
+	lua_regconstinteger(vm->L, CS_MOTD);       // g_motd string for server message of the day
 	lua_regconstinteger(vm->L, CS_WARMUP);     // server time when the match will be restarted
 	lua_regconstinteger(vm->L, CS_VOTE_TIME);
 	lua_regconstinteger(vm->L, CS_VOTE_STRING);
@@ -1965,7 +1966,7 @@ void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_MAX);
 }
 
-void registerWeaponConstants(lua_vm_t *vm)
+static void registerWeaponConstants(lua_vm_t *vm)
 {
 	lua_regconstinteger(vm->L, WP_NONE);                 // 0
 	lua_regconstinteger(vm->L, WP_KNIFE);                // 1
@@ -2032,7 +2033,7 @@ void registerWeaponConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, WP_NUM_WEAPONS);
 }
 
-void registerModConstants(lua_vm_t *vm)
+static void registerModConstants(lua_vm_t *vm)
 {
 	lua_regconstinteger(vm->L, MOD_UNKNOWN);
 	lua_regconstinteger(vm->L, MOD_MACHINEGUN);
@@ -2122,7 +2123,7 @@ void registerModConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, MOD_NUM_MODS);
 }
 
-void registerConstants(lua_vm_t *vm)
+static void registerConstants(lua_vm_t *vm)
 {
 	// max constants
 	// from q_shared.h
@@ -2925,9 +2926,9 @@ qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath)
 			}
 			// Arguments
 			lua_pushinteger(vm->L, victim);
-
 			lua_pushinteger(vm->L, killer);
 			lua_pushinteger(vm->L, meansOfDeath);
+
 			// Call
 			if (!G_LuaCall(vm, "et_Obituary", 3, 1))
 			{

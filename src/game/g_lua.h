@@ -1,10 +1,14 @@
-/*
- * ET <-> *Lua* interface header file.
+/**
+ * @file g_lua.h
+ * @brief ET <-> *Lua* interface header file.
  *
- * This code is taken from ETPub. All credits go to their team especially to quad and pheno!
+ * @copyright This code is taken from ETPub.
+ * All credits go to their team especially to quad and pheno!
  * http://etpub.org
+ * http://shitstorm.org
+ * @endcopyright
  *
- * Find the Lua code by doing a text seach for "FEATURE_LUA"
+ * @defgroup lua_api Lua module API
  */
 #ifdef FEATURE_LUA
 
