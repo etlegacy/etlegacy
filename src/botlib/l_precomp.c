@@ -808,7 +808,7 @@ void PC_ConvertPath(char *path)
 	{
 		if (*ptr == '/' || *ptr == '\\')
 		{
-			*ptr = PATHSEPERATOR_CHAR;
+			*ptr = PATH_SEP;
 		}
 		ptr++;
 	}
@@ -2927,6 +2927,9 @@ void PC_UnreadToken(source_t *source, token_t *token)
 	PC_UnreadSourceToken(source, token);
 }
 
+/**
+ * @note Unused. Keep it here for the time being.
+ */
 void PC_SetIncludePath(source_t *source, char *path)
 {
 	size_t len;
@@ -2938,10 +2941,13 @@ void PC_SetIncludePath(source_t *source, char *path)
 	if (len > 0 && source->includepath[len - 1] != '\\' &&
 	    source->includepath[len - 1] != '/')
 	{
-		strcat(source->includepath, PATHSEPERATOR_STR);
+		strcat(source->includepath, va("%s", PATH_SEP));
 	}
 }
 
+/**
+ * @note Unused. Keep it here for the time being.
+ */
 void PC_SetPunctuations(source_t *source, punctuation_t *p)
 {
 	source->punctuations = p;

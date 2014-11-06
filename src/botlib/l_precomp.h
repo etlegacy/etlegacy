@@ -40,21 +40,6 @@
 #define MAX_PATH            MAX_QPATH
 #endif
 
-#ifndef PATH_SEPERATORSTR
-#if defined(WIN32) | defined(_WIN32) | defined(__NT__) | defined(__WINDOWS__) | defined(__WINDOWS_386__)
-#define PATHSEPERATOR_STR       "\\"
-#else
-#define PATHSEPERATOR_STR       "/"
-#endif
-#endif
-#ifndef PATH_SEPERATORCHAR
-#if defined(WIN32) | defined(_WIN32) | defined(__NT__) | defined(__WINDOWS__) | defined(__WINDOWS_386__)
-#define PATHSEPERATOR_CHAR      '\\'
-#else
-#define PATHSEPERATOR_CHAR      '/'
-#endif
-#endif
-
 #define DEFINE_FIXED            0x0001
 
 #define BUILTIN_LINE            1
