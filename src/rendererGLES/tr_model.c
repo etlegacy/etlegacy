@@ -394,7 +394,7 @@ fail:
 // mesh compression
 float r_anormals[NUMMDCVERTEXNORMALS][3] =
 {
-#include "anorms256.h"
+#include "../renderercommon/anorms256.h"
 };
 
 /*

@@ -27,8 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file anorms256.h
+ * @brief Contents of float r_anormals[NUMMDCVERTEXNORMALS][3]
+ * @note Used by the OpenGL ES and first generation renderers
  */
 
 { 1.000000, 0.000000, 0.000000 },
