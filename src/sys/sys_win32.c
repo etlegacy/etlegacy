@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file sys_platform.c
+ */
+/**
+ * @file sys_win32.c
  * @brief Contains windows-specific code for console.
  */
 
@@ -786,7 +787,7 @@ qboolean Sys_PIDIsRunning(unsigned int pid)
 Sys_StartProcess
 ==================
 */
-void Sys_StartProcess(char *exeName, qboolean doexit)
+void Sys_StartProcess(char *cmdline, qboolean doexit)
 {
 	TCHAR               szPathOrig[_MAX_PATH];
 	STARTUPINFO         si;
@@ -797,10 +798,10 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 
 	GetCurrentDirectory(_MAX_PATH, szPathOrig);
 
-	if (!CreateProcess(NULL, va("%s\\%s", szPathOrig, exeName), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+	if (!CreateProcess(NULL, va("%s\\%s", szPathOrig, cmdline), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 	{
 		// couldn't start it, popup error box
-		Com_Error(ERR_DROP, "Could not start process: '%s\\%s'", szPathOrig, exeName);
+		Com_Error(ERR_DROP, "Could not start process: '%s\\%s'", szPathOrig, cmdline);
 		return;
 	}
 

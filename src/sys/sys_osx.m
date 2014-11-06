@@ -27,9 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file sys_osx.m
  * @brief This file is just some Mac-specific bits.
+ *
  * Most of the Mac OS X code is shared with other Unix platforms in sys_unix.c
  */
 
@@ -105,12 +107,10 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 /**
  * @brief Returns the path to the user's Application Support folder.
  */
-const char * OSX_ApplicationSupportPath()
+const char *OSX_ApplicationSupportPath()
 {
-	static char path[1024] = {0};
-	const char * tempPath = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) lastObject] UTF8String];
+	static char path[1024] = { 0 };
+	const char  *tempPath  = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) lastObject] UTF8String];
 	Q_strncpyz(path, tempPath, sizeof(path));
 	return (const char *)path;
 }
-
-
