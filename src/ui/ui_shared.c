@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,10 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @brief string allocation/managment
- *
+ */
+/**
  * @file ui_shared.c
+ * @brief String allocation/managment
  */
 
 #include "ui_shared.h"
@@ -270,7 +270,7 @@ void String_Init(void)
 }
 
 /**
- * @brief Lerp and clamp each component of <a> and <b> into <c> by the fraction <t>
+ * @brief Lerp and clamp each component of @p a and @p b into @p c by the fraction @p t
  */
 void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t)
 {
