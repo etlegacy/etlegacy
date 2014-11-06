@@ -1,6 +1,4 @@
-/* crypt.h -- base code for crypt/uncrypt ZIPfile
-
-
+/*
    Version 1.01h, December 28th, 2009
 
    Copyright (C) 1998-2009 Gilles Vollant
@@ -26,6 +24,10 @@
    http://www.winzip.com/aes_info.htm ) and PKWare PKZip 5.x Strong
    Encryption is not supported.
 */
+/**
+ * @file crypt.h
+ * @brief Base code for crypt/uncrypt ZIPfile
+ */
 
 #ifndef INCLUDE_CRYPT_H
 #define INCLUDE_CRYPT_H

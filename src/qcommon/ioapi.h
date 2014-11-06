@@ -1,10 +1,12 @@
-/* ioapi.h -- IO base function header for compress/uncompress .zip
-   files using zlib + zip or unzip API
+/**
+ * @file ioapi.h
+ * @brief IO base function header for compress/uncompress .zip
+ *
+ * files using zlib + zip or unzip API
+ * Version 1.01h, December 28th, 2009
+ * @copyright Copyright (C) 1998-2009 Gilles Vollant
+ */
 
-   Version 1.01h, December 28th, 2009
-
-   Copyright (C) 1998-2009 Gilles Vollant
-*/
 
 #ifndef INCLUDE_IOAPI_H
 #define INCLUDE_IOAPI_H

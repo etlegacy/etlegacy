@@ -1,16 +1,15 @@
-/*
- *  This is a modified version of Mark Adlers work,
- *  see below for the original copyright.
- *  2006 - Joerg Dietrich <dietrich_joerg@gmx.de>
- */
-
-/*
- * puff.c
+/**
+ * @file puff.c
+ *
+ * @copyright
  * Copyright (C) 2002-2004 Mark Adler
+ * Copyright (C) 2006 Joerg Dietrich <dietrich_joerg@gmx.de>
+ *
  * For conditions of distribution and use, see copyright notice in puff.h
  * version 1.8, 9 Jan 2004
+ * @endcopyright
  *
- * puff.c is a simple inflate written to be an unambiguous way to specify the
+ * Simple inflate written to be an unambiguous way to specify the
  * deflate format.  It is not written for speed but rather simplicity.  As a
  * side benefit, this code might actually be useful when small code is more
  * important than speed, such as bootstrap applications.  For typical deflate

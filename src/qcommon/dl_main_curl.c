@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,12 +27,13 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file dl_main_curl.c
  *
- * Additional features that would be nice for this code:
- *  Only display <gamepath>/<file>, i.e., etpro/etpro-3_0_1.pk3 in the UI.
- *  Add server as referring URL
+ * @todo Additional features that would be nice for this code:
+ *           Only display \<gamepath\>/\<file\>, e.g., etpro/etpro-3_0_1.pk3 in the UI.
+ *           Add server as referring URL
  */
 
 #include <curl/curl.h>

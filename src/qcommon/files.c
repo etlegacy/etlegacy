@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file files.c
- * @brief handle based filesystem for Quake III Arena
+ * @brief Handle based filesystem for Quake III Arena
  */
 
 #include "q_shared.h"
@@ -45,7 +46,7 @@
 =============================================================================
 ET: Legacy (QUAKE3) FILESYSTEM
 
-FIXME/Note: This docu needs an update - the following lines aren't fully valid for ET: Legacy
+FIXME: This docu needs an update - the following lines aren't fully valid for ET: Legacy
 
 All of ET: Legacy'S (Quake's) data access is through a hierarchical file system, but the contents of
 the file system can be transparently merged from several sources.
@@ -3093,15 +3094,13 @@ int FS_PathCmp(const char *s1, const char *s2)
 }
 
 /**
- * FS_IsSamePath
+ * @brief Similar to FS_PathCmp() but real path name comparison.
+ *        It deals with trailing slashes and relative paths.
  *
- * @brief Similar to FS_PathCmp but based on the real path name comparison.
- *        It deals with trailing slashes and relative pathes.
+ * @warning Do not use this with quake game paths - only real filesystem paths!
  *
- * Important: Don't use this with quake game pathes - only real filesystem pathes!
- *
- * @param[in] path A
- * @param[in] path B
+ * @param[in] s1 path A
+ * @param[in] s2 path B
  */
 qboolean FS_IsSamePath(const char *s1, const char *s2)
 {
@@ -3111,7 +3110,7 @@ qboolean FS_IsSamePath(const char *s1, const char *s2)
 	res2 = realpath(s2, NULL);
 
 	// realpath() returns NULL if there are issues with the file
-	// so the function returns true (only) if there are no errors and pathes are equal
+	// so the function returns true (only) if there are no errors and paths are equal
 	if (res1 && res2 && !Q_stricmp(res1, res2))
 	{
 		free(res1);
@@ -4644,7 +4643,7 @@ qboolean FS_VerifyPak(const char *pak)
 /**
  * @brief Extracts zipped file into the current gamedir
  * @param[in] filename to extract
- * @param[in] qboolean whether to inform if unzipping fails
+ * @param[in] quiet whether to inform if unzipping fails
  * @retval qtrue    if successfully extracted
  * @retval qfalse   if extraction failed
  */

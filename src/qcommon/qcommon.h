@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,10 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file qcommon.h
- * @brief definitions common between client and server, but not game or ref
- * modules
+ * @brief Definitions common between client and server, but not game or ref
+ *        modules
  */
 
 #ifndef INCLUDE_QCOMMON_H
@@ -1225,7 +1226,7 @@ typedef enum
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
 
 // NOTE: on win32 the cwd is prepended .. non portable behaviour
-void Sys_StartProcess(char *exeName, qboolean doexit);
+void Sys_StartProcess(char *cmdline, qboolean doexit);
 void Sys_OpenURL(const char *url, qboolean doexit);
 
 #ifndef _WIN32

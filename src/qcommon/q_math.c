@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file q_math.c
- * @brief stateless support routines that are included in each code module
+ * @brief Stateless support routines that are included in each code module
  */
 
 #include "q_shared.h"
@@ -1826,9 +1827,11 @@ int Q_isnan(float x)
 /**
  * @brief The msvc acos doesn't always return a value between -PI and PI:
  *
+ * <code>
  * int i;
  * i = 1065353246;
- * acos(*(float*) &i) == -1.#IND0
+ * acos(*(float*) &i) == -1.\#IND0
+ * </code>
  */
 float Q_acos(float c)
 {

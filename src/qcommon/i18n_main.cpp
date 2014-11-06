@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -30,7 +30,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file i18n_main.cpp
  * @brief Glue for findlocale and tinygettext
  */
@@ -315,7 +316,6 @@ const char *I18N_TranslateMod(const char *msgid)
  * @brief A dumb function which saves missing strings for the current language and mod
  * passed to it
  * @param msgid original text
- * @param filename where to save the missing strings
  */
 static void TranslationMissing(const char *msgid)
 {

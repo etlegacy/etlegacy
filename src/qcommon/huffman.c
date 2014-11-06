@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,11 +27,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file files.c
+ */
+/**
+ * @file huffman.c
  * @brief This is based on the Adaptive Huffman algorithm described in Sayood's
- * Data Compression book.  The ranks are not actually stored, but implicitly
- * defined by the location of a node within a doubly-linked list
+ *        Data Compression book.  The ranks are not actually stored, but implicitly
+ *        defined by the location of a node within a doubly-linked list
  */
 
 #include "q_shared.h"
