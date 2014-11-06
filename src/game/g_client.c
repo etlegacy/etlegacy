@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_client.c
- * @brief client functions that don't happen every frame
+ * @brief Client functions that don't happen every frame
  */
 
 #include "g_local.h"
@@ -1529,7 +1530,7 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 }
 
 // courtesy of Dens
-// FIXME: @IP6
+// FIXME: IP6
 const char *GetParsedIP(const char *ipadd)
 {
 	// code by Dan Pop, http://bytes.com/forum/thread212174.html
@@ -1562,7 +1563,7 @@ const char *GetParsedIP(const char *ipadd)
 }
 
 // based on userinfocheck.lua and combinedfixes.lua
-// FIXME: @IP6
+// FIXME: IP6
 char *CheckUserinfo(int clientNum, char *userinfo)
 {
 	char *value;

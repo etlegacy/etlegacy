@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,7 +27,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_antilag.c
  */
 
@@ -347,7 +348,7 @@ void G_HistoricalTraceEnd(gentity_t *ent)
 
 /**
  * @brief Run a trace without fixups (historical fixups will be done externally)
- * @param ignoreCorpses   Skip corpses for bullet tracing (=non gibbing weapons)
+ * @param ignoreCorpses Skip corpses for bullet tracing (=non gibbing weapons)
  */
 void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses)
 {

@@ -1,8 +1,8 @@
 /**
-  et-antiwarp.c: Antiwarp code from etpro thanks to zinx
-
-  @brief This file is altered and modified by ET: Legacy team - http://www.etlegacy.com
-*/
+ * @file et-antiwarp.c
+ * @brief Antiwarp code from etpro thanks to zinx
+ * @copyright ETPro
+ */
 
 #include "g_local.h"
 

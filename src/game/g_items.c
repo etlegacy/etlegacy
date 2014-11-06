@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,10 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_items.c
- *
  * @brief Items are any object that a player can touch to gain some effect.
+ *
  * Pickup will return the number of seconds until they should respawn.
  * all items should pop when dropped in lava or slime.
  * Respawnable items don't actually go away when picked up, they are just made
@@ -57,13 +58,13 @@
 #define RESPAWN_PARTIAL_DONE 999    // for multi-stage ammo/health
 
 /**
-* @brief Add the specified ammount of ammo into the clip.
-* @param which player
-* @param weapon to add ammo for
-* @param amount to add. 0 means fill the clip if possible
-* @param amount to be added out of reserve
-* @return whether ammo was added to the clip.
-*/
+ * @brief Add the specified ammount of ammo into the clip.
+ * @param ps which player
+ * @param weapon to add ammo for
+ * @param ammomove amount to add. 0 means fill the clip if possible
+ * @param outOfReserve amount to be added out of reserve
+ * @return qboolean whether ammo was added to the clip.
+ */
 int AddToClip(playerState_t *ps, int weapon, int ammomove, int outOfReserve)
 {
 	int inclip, maxclip;

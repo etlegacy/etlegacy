@@ -1,41 +1,39 @@
 /*
- *  sha1.c
- *
  *	Copyright (C) 1998
  *	Paul E. Jones <paulej@arid.us>
  *	All Rights Reserved
+ */
+/**
+ * @file sha1.c
+ * @brief This file implements the Secure Hashing Standard as defined
+ *        in FIPS PUB 180-1 published April 17, 1995.
  *
- *****************************************************************************
- *	$Id: sha1.c,v 1.2 2004/03/27 18:00:33 paulej Exp $
- *****************************************************************************
+ * The Secure Hashing Standard, which uses the Secure Hashing
+ * Algorithm (SHA), produces a 160-bit message digest for a
+ * given data stream.  In theory, it is highly improbable that
+ * two messages will produce the same message digest.  Therefore,
+ * this algorithm can serve as a means of providing a "fingerprint"
+ * for a message.
  *
- *  Description:
- *      This file implements the Secure Hashing Standard as defined
- *      in FIPS PUB 180-1 published April 17, 1995.
+ * Portability Issues
+ * ------------------
  *
- *      The Secure Hashing Standard, which uses the Secure Hashing
- *      Algorithm (SHA), produces a 160-bit message digest for a
- *      given data stream.  In theory, it is highly improbable that
- *      two messages will produce the same message digest.  Therefore,
- *      this algorithm can serve as a means of providing a "fingerprint"
- *      for a message.
+ * SHA-1 is defined in terms of 32-bit "words".  This code was
+ * written with the expectation that the processor has at least
+ * a 32-bit machine word size.  If the machine word size is larger,
+ * the code should still function properly.  One caveat to that
+ * is that the input functions taking characters and character
+ * arrays assume that only 8 bits of information are stored in each
+ * character.
  *
- *  Portability Issues:
- *      SHA-1 is defined in terms of 32-bit "words".  This code was
- *      written with the expectation that the processor has at least
- *      a 32-bit machine word size.  If the machine word size is larger,
- *      the code should still function properly.  One caveat to that
- *      is that the input functions taking characters and character
- *      arrays assume that only 8 bits of information are stored in each
- *      character.
+ * Caveats
+ * -------
  *
- *  Caveats:
- *      SHA-1 is designed to work with messages less than 2^64 bits
- *      long. Although SHA-1 allows a message digest to be generated for
- *      messages of any number of bits less than 2^64, this
- *      implementation only works with messages with a length that is a
- *      multiple of the size of an 8-bit character.
- *
+ * SHA-1 is designed to work with messages less than 2^64 bits
+ * long. Although SHA-1 allows a message digest to be generated for
+ * messages of any number of bits less than 2^64, this
+ * implementation only works with messages with a length that is a
+ * multiple of the size of an 8-bit character.
  */
 
 #include "sha1.h"

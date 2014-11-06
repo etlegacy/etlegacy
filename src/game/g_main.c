@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,7 +27,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_main.c
  */
 
@@ -1854,7 +1855,6 @@ void G_UpdateCvars(void)
 					cs[0] = '\0';
 
 					Info_SetValueForKey(cs, "X", va("%i", (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ? 0 : level.mapsSinceLastXPReset));
-					// Info_SetValueForKey(cs, "Y", ((g_XPSave.integer & XPSF_NR_EVER) ? "0" :va("%i", g_resetXPMapCount.integer)));
 					Info_SetValueForKey(cs, "Y", (va("%i", g_resetXPMapCount.integer)));
 					trap_SetConfigstring(CS_LEGACYINFO, cs);
 				}
@@ -2397,19 +2397,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 	numPathCorners = 0;
 
 	// MAPVOTE
-	// FIXME merge with XP code
 	level.mapsSinceLastXPReset = 0;
-	/*
-	if (!(g_XPSave.integer & XPSF_NR_EVER) && g_gametype.integer == GT_WOLF_MAPVOTE ) {
-	    if ( g_resetXPMapCount.integer &&
-	        (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer || level.mapsSinceLastXPReset == 0) ) {
-	            if( g_gamestate.integer == GS_PLAYING ) {
-	                level.mapsSinceLastXPReset = 0;
-	            }
-	            G_xpsave_resetxp();
-	        }
-	}
-	*/
 
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();

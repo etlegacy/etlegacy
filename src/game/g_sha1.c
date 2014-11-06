@@ -1,13 +1,10 @@
-/*
- * Used for Lua and map configs
- *
- * This code is taken from ETPub. All credits go to their team especially quad and pheno!
+/**
+ * @file g_sha1.c
+ * @brief Used for Lua and map configs
+ * @copyright This code is taken from ETPub. All credits go to their team especially quad and pheno!
  * http://etpub.org
- *
- * Find the ETPub Lua code by doing a text seach for "FEATURE_LUA"
- *
- *
-*/
+ * @endcopyright
+ */
 #include "g_local.h"
 
 #include "sha-1/sha1.h"

@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file bg_public.h
- * @brief definitions shared by both the server game and client game modules. (server.h includes this)
+ * @brief Definitions shared by both the server game and client game modules. (server.h includes this)
  */
 
 /*
@@ -283,40 +284,44 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 // from the server to all connected clients.
 
 // CS_SERVERINFO and CS_SYSTEMINFO are defined in q_shared.h
+/**
+ * @addtogroup lua_etvars
+ * @{
+ */
 #define CS_MUSIC                        2
-#define CS_MESSAGE                      3       // from the map worldspawn's message field
-#define CS_MOTD                         4       // g_motd string for server message of the day
-#define CS_WARMUP                       5       // server time when the match will be restarted
+#define CS_MESSAGE                      3       //!< from the map worldspawn's message field
+#define CS_MOTD                         4       //!< g_motd string for server message of the day
+#define CS_WARMUP                       5       //!< server time when the match will be restarted
 #define CS_VOTE_TIME                    6
 #define CS_VOTE_STRING                  7
 #define CS_VOTE_YES                     8
 #define CS_VOTE_NO                      9
 #define CS_GAME_VERSION                 10
 
-#define CS_LEVEL_START_TIME             11      // so the timer only shows the current level
-#define CS_INTERMISSION                 12      // when 1, intermission will start in a second or two
+#define CS_LEVEL_START_TIME             11      //!< so the timer only shows the current level
+#define CS_INTERMISSION                 12      //!< when 1, intermission will start in a second or two
 #define CS_MULTI_INFO                   13
 #define CS_MULTI_MAPWINNER              14
 #define CS_MULTI_OBJECTIVE              15
-//
-#define CS_SCREENFADE                   17      // used to tell clients to fade their screen to black/normal
-#define CS_FOGVARS                      18      // used for saving the current state/settings of the fog
-#define CS_SKYBOXORG                    19      // this is where we should view the skybox from
+
+#define CS_SCREENFADE                   17      //!< used to tell clients to fade their screen to black/normal
+#define CS_FOGVARS                      18      //!< used for saving the current state/settings of the fog
+#define CS_SKYBOXORG                    19      //!< this is where we should view the skybox from
 
 #define CS_TARGETEFFECT                 20
 #define CS_WOLFINFO                     21
-#define CS_FIRSTBLOOD                   22      // Team that has first blood
-#define CS_ROUNDSCORES1                 23      // Axis round wins
-#define CS_ROUNDSCORES2                 24      // Allied round wins
-#define CS_MAIN_AXIS_OBJECTIVE          25      // unused - Most important current objective
-#define CS_MAIN_ALLIES_OBJECTIVE        26      // unused - Most important current objective
+#define CS_FIRSTBLOOD                   22      //!< Team that has first blood
+#define CS_ROUNDSCORES1                 23      //!< Axis round wins
+#define CS_ROUNDSCORES2                 24      //!< Allied round wins
+#define CS_MAIN_AXIS_OBJECTIVE          25      //!< unused - Most important current objective
+#define CS_MAIN_ALLIES_OBJECTIVE        26      //!< unused - Most important current objective
 #define CS_MUSIC_QUEUE                  27
 #define CS_SCRIPT_MOVER_NAMES           28
 #define CS_CONSTRUCTION_NAMES           29
 
-#define CS_VERSIONINFO                  30      // Versioning info for demo playback compatibility
-#define CS_REINFSEEDS                   31      // Reinforcement seeds
-#define CS_SERVERTOGGLES                32      // Shows current enable/disabled settings (for voting UI)
+#define CS_VERSIONINFO                  30      //!< Versioning info for demo playback compatibility
+#define CS_REINFSEEDS                   31      //!< Reinforcement seeds
+#define CS_SERVERTOGGLES                32      //!< Shows current enable/disabled settings (for voting UI)
 #define CS_GLOBALFOGVARS                33
 #define CS_AXIS_MAPS_XP                 34
 #define CS_ALLIED_MAPS_XP               35
@@ -329,8 +334,8 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_SVCVAR                       41
 #define CS_CONFIGNAME                   42
 
-#define CS_TEAMRESTRICTIONS             43      // Class restrictions have been changed
-#define CS_UPGRADERANGE                 44      // Upgrade range levels have been changed
+#define CS_TEAMRESTRICTIONS             43      //!< Class restrictions have been changed
+#define CS_UPGRADERANGE                 44      //!< Upgrade range levels have been changed
 
 #define CS_MODELS                       64
 #define CS_SOUNDS                       (CS_MODELS +               MAX_MODELS)               // 320 (256)
@@ -349,6 +354,7 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_CUSTMOTD                     (CS_FIRETEAMS +            MAX_FIRETEAMS)            // 905 (12)
 #define CS_STRINGS                      (CS_CUSTMOTD +             MAX_MOTDLINES)            // 911 (6)
 #define CS_MAX                          (CS_STRINGS +              MAX_CSSTRINGS)            // 943 (32)
+/** @}*/ // doxygen addtogroup lua_etvars
 
 #if (CS_MAX) > MAX_CONFIGSTRINGS
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
@@ -1542,7 +1548,7 @@ extern int     bg_numItems;
 
 #define FIRST_WEAPON_ITEM 9 // bg_itemlist is sorted and weapons start at 9
 
-// FIXME create enum for this with all items so we don't have to adjust this for item changes ... see note@bg_itemlist
+// FIXME: create enum for this with all items so we don't have to adjust this for item changes ... see bg_itemlist
 #define ITEM_HEALTH 3
 #define ITEM_HEALTH_CABINET 5
 #define ITEM_AMMO_PACK 35

@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,10 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_svcmds.c
- * @brief this file holds commands that can be executed by the server console,
- * but not remote clients
+ * @brief Holds commands that can be executed by the server console,
+ *        but not remote clients
  */
 
 #include "g_local.h"
@@ -688,7 +689,7 @@ gclient_t *G_GetPlayerByName(char *name)
 }
 
 /**
- * @brief forceteam <player> <team>
+ * <code>forceteam \<player\> \<team\></code>
  */
 void Svcmd_ForceTeam_f(void)
 {

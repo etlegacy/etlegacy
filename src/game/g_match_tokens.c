@@ -1,6 +1,12 @@
-/* ANSI-C code produced by gperf version 3.0.3 (dirty) */
-/* Command-line: gperf -t7C --language=ANSI-C input_tokens.gperf  */
-/* Computed positions: -k'1-2' */
+/**
+ * @file g_match_tokens.c
+ * @brief ANSI-C code produced by gperf version 3.0.3 (dirty)
+ *
+ * <pre>
+ * Command-line: gperf -t7C --language=ANSI-C input_tokens.gperf
+ * Computed positions: -k'1-2'
+ * </pre>
+ */
 
 	#if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
     && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \

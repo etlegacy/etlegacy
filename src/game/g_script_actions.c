@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,7 +27,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_script_actions.c
  * @author Ridah
  * @brief Wolfenstein Entity Scripting
@@ -888,7 +889,7 @@ qboolean G_ScriptAction_AbortMove(gentity_t *ent, char *params)
 }
 
 /**
- * @brief syntax: setchargetimefactor <team> <class> <factor>
+ * @brief syntax: setchargetimefactor \<team\> \<class\> \<factor\>
  *        team: 0 = axis, 1 = allies
  */
 qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)

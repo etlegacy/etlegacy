@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,7 +27,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_cmds.c
  */
 
@@ -1442,8 +1443,8 @@ int G_NumPlayersOnTeam(team_t team)
 }
 
 /**
- * @param gentity_t *ent
- * @param weapon_t weapon or -1
+ * @param ent
+ * @param weap weapon or -1
  */
 int G_TeamCount(gentity_t *ent, int weap)
 {
@@ -2236,13 +2237,13 @@ qboolean G_FollowSame(gentity_t *ent)
 
 /**
  * @brief Plays a sound (wav file or sound script) on this entity
- * @param[in] entity to play the sound on
- * @param[in] sound file name or sound script ID
- * @param[in] sound volume, only applies to sound file name call
+ * @param[in] ent entity to play the sound on
+ * @param[in] soundId sound file name or sound script ID
+ * @param[in] volume sound volume, only applies to sound file name call
  *
- * @note Unused. Keep this see note.
+ * @note Unused. Keep this.
  *
- * Note that calling G_AddEvent(..., EV_GENERAL_SOUND, ...) has the danger of
+ * @note Calling G_AddEvent(..., EV_GENERAL_SOUND, ...) has the danger of
  * the event never getting through to the client because the entity might not
  * be visible (unless it has the SVF_BROADCAST flag), so if you want to make sure
  * the sound is heard, call this function instead.
@@ -2256,11 +2257,11 @@ void G_EntitySound(gentity_t *ent, const char *soundId, int volume)
 
 /**
  * @brief Similar to G_EntitySound, but do not cut this sound off
- * @param[in] entity to play the sound on
- * @param[in] sound file name or sound script ID
- * @param[in] sound volume, only applies to sound file name call
+ * @param[in] ent entity to play the sound on
+ * @param[in] soundId sound file name or sound script ID
+ * @param[in] volume sound volume, only applies to sound file name call
  *
- * @note Unused. See G_EntitySound
+ * @note Unused. See G_EntitySound()
  */
 void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume)
 {

@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,8 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file g_session.c
+ * @brief Session data is the only data that stays persistant across level loads
+ *        and tournament restarts.
  */
 
 #include "g_local.h"
@@ -37,9 +40,6 @@
 /*
 =======================================================================
   SESSION DATA
-
-Session data is the only data that stays persistant across level loads
-and tournament restarts.
 =======================================================================
 */
 
