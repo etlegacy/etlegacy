@@ -1,10 +1,10 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
- *
+ * Copyright (C) 2013 Jere "Jacker" S
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
  * ET: Legacy is free software: you can redistribute it and/or modify
@@ -27,11 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file cl_avi.c
- *
- *This is a backported Avi recording from ioquake by Jere <Jacker> S
- *Still work in progress
+ * @brief Backported AVI recording from ioquake
  */
 
 #include "client.h"
