@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,12 +27,13 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file cg_servercmds.c
- * @brief reliably sequenced text commands sent by the server
+ * @brief Reliably sequenced text commands sent by the server
  *
- * these are processed at snapshot transition time, so there will definately be
- * a valid snapshot this frame
+ * These are processed at snapshot transition time, so there will definately be
+ * a valid snapshot this frame.
  */
 
 #include "cg_local.h"

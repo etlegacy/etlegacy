@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file cg_weapons.c
- * @brief events and effects dealing with weapons
+ * @brief Events and effects dealing with weapons
  */
 
 #include "cg_local.h"
@@ -1986,17 +1987,8 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	}
 }
 
-/*
-=================
-CG_RegisterItemVisuals
-
-The server says this item is used on this level
-=================
-*/
-
 /**
  * @brief Registers models and icons for items of bg_itemlist (except weapons which are registered from *.weap file data)
- * @param int itemNum
  *
  * @note Actually IT_AMMO & IT_TEAM have no visuals
  */

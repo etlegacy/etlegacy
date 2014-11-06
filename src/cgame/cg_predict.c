@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,10 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file cg_predict.c
  *
- * this file generates cg.predictedPlayerState by either interpolating between
+ * This file generates cg.predictedPlayerState by either interpolating between
  * snapshots from the server or locally predicting ahead the client's movement.
  * It also handles local physics interaction, like fragments bouncing off walls.
  */

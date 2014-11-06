@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,14 +27,15 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file cg_flamethrower.c
- * @brief special code for the flamethrower effects
+ * @brief Special code for the flamethrower effects
  *
- * the flameChunks behave similarly to the trailJunc's, except they are rendered
- * differently, and also interact with the environment
+ * The flameChunks behave similarly to the trailJunc's, except they are rendered
+ * differently, and also interact with the environment.
  *
- * NOTE: some AI's are treated different, mostly for aesthetical reasons.
+ * @note Some AI's are treated different, mostly for aesthetical reasons.
  */
 
 #include "cg_local.h"
