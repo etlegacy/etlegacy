@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_curve.c
+ */
+/**
+ * @file renderer/tr_curve.c
  * @brief This file does all of the processing necessary to turn a raw grid of
  * points read from the map file into a srfGridMesh_t ready for rendering.
  *

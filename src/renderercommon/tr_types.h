@@ -27,11 +27,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file tr_types.h
  *
- * NOTE: Never ever change existing members of structs in this file, it'll break 2.60 mod compatibility
- *       when they are referenced in cgame or ui
+ * @warning Never ever change existing members of structs in this file, it'll break 2.60 mod compatibility
+ *          when they are referenced in cgame or ui
  */
 
 #ifndef __TR_TYPES_H

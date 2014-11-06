@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,10 +28,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @brief handles projection of decals (nee marks) onto brush model surfaces
- *
- * @file tr_decals.c
+ */
+/**
+ * @file renderer2/tr_decals.c
+ * @brief Handles projection of decals (nee marks) onto brush model surfaces
  */
 
 #include "tr_local.h"

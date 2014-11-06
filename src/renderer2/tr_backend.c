@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
@@ -28,8 +28,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_backend.c
+ */
+/**
+ * @file renderer2/tr_backend.c
  */
 
 #include "tr_local.h"
@@ -304,6 +305,8 @@ static void RB_RenderDrawSurfaces(qboolean opaque, qboolean depthFill, int drawS
 /**
  * @brief RB_RenderOpaqueSurfacesIntoDepth
  * @note Unused
+ */
+/*
 static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 {
     trRefEntity_t *entity, *oldEntity;
@@ -331,12 +334,12 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
         shader    = tr.sortedShaders[drawSurf->shaderNum];
         alphaTest = shader->alphaTest;
 
-#if 0
-        if (onlyWorld && (entity != &tr.worldEntity))
-        {
-            continue;
-        }
-#endif
+//#if 0
+//        if (onlyWorld && (entity != &tr.worldEntity))
+//        {
+//            continue;
+//        }
+//#endif
 
         // skip all translucent surfaces that don't matter for this pass
         if (shader->sort > SS_OPAQUE)
@@ -440,7 +443,7 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 
     GL_CheckErrors();
 }
- */
+*/
 
 // *INDENT-OFF*
 static void Render_lightVolume(interaction_t *ia)
@@ -2155,170 +2158,172 @@ skipInteraction:
 /**
  * @brief RB_RenderDrawSurfacesIntoGeometricBuffer
  * @note Unused
+ */
+#if 0
 static void RB_RenderDrawSurfacesIntoGeometricBuffer()
 {
-    trRefEntity_t *entity, *oldEntity;
-    shader_t      *shader, *oldShader;
-    int           lightmapNum, oldLightmapNum;
-    qboolean      depthRange, oldDepthRange;
-    int           i;
-    drawSurf_t    *drawSurf;
-    int           startTime = 0;
+	trRefEntity_t *entity, *oldEntity;
+	shader_t      *shader, *oldShader;
+	int           lightmapNum, oldLightmapNum;
+	qboolean      depthRange, oldDepthRange;
+	int           i;
+	drawSurf_t    *drawSurf;
+	int           startTime = 0;
 
-    Ren_LogComment("--- RB_RenderDrawSurfacesIntoGeometricBuffer ---\n");
+	Ren_LogComment("--- RB_RenderDrawSurfacesIntoGeometricBuffer ---\n");
 
-    if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-    {
-        glFinish();
-        startTime = ri.Milliseconds();
-    }
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		startTime = ri.Milliseconds();
+	}
 
-    // draw everything
-    oldEntity            = NULL;
-    oldShader            = NULL;
-    oldLightmapNum       = -1;
-    oldDepthRange        = qfalse;
-    depthRange           = qfalse;
-    backEnd.currentLight = NULL;
+	// draw everything
+	oldEntity            = NULL;
+	oldShader            = NULL;
+	oldLightmapNum       = -1;
+	oldDepthRange        = qfalse;
+	depthRange           = qfalse;
+	backEnd.currentLight = NULL;
 
-    GL_CheckErrors();
+	GL_CheckErrors();
 
-    for (i = 0, drawSurf = backEnd.viewParms.drawSurfs; i < backEnd.viewParms.numDrawSurfs; i++, drawSurf++)
-    {
-        // update locals
-        entity      = drawSurf->entity;
-        shader      = tr.sortedShaders[drawSurf->shaderNum];
-        lightmapNum = drawSurf->lightmapNum;
+	for (i = 0, drawSurf = backEnd.viewParms.drawSurfs; i < backEnd.viewParms.numDrawSurfs; i++, drawSurf++)
+	{
+		// update locals
+		entity      = drawSurf->entity;
+		shader      = tr.sortedShaders[drawSurf->shaderNum];
+		lightmapNum = drawSurf->lightmapNum;
 
-        // skip all translucent surfaces that don't matter for this pass
-        if (shader->sort > SS_OPAQUE)
-        {
-            break;
-        }
+		// skip all translucent surfaces that don't matter for this pass
+		if (shader->sort > SS_OPAQUE)
+		{
+			break;
+		}
 
 #ifdef 0
-        if(DS_PREPASS_LIGHTING_ENABLED())
-        {
-            if(entity == oldEntity && shader == oldShader)
-            {
-                // fast path, same as previous sort
-                rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
-                continue;
-            }
+		if (DS_PREPASS_LIGHTING_ENABLED())
+		{
+			if (entity == oldEntity && shader == oldShader)
+			{
+				// fast path, same as previous sort
+				rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
+				continue;
+			}
 
-            // change the tess parameters if needed
-            // a "entityMergable" shader is a shader that can have surfaces from seperate
-            // entities merged into a single batch, like smoke and blood puff sprites
-            if(shader != oldShader || (entity != oldEntity && !shader->entityMergable))
-            {
-                if(oldShader != NULL)
-                {
-                    Tess_End();
-                }
+			// change the tess parameters if needed
+			// a "entityMergable" shader is a shader that can have surfaces from seperate
+			// entities merged into a single batch, like smoke and blood puff sprites
+			if (shader != oldShader || (entity != oldEntity && !shader->entityMergable))
+			{
+				if (oldShader != NULL)
+				{
+					Tess_End();
+				}
 
-                Tess_Begin(Tess_StageIteratorGBufferNormalsOnly, NULL, shader, NULL, qfalse, qfalse, -1, 0);
-                oldShader = shader;
-                oldLightmapNum = lightmapNum;
-            }
-        }
-        else
+				Tess_Begin(Tess_StageIteratorGBufferNormalsOnly, NULL, shader, NULL, qfalse, qfalse, -1, 0);
+				oldShader      = shader;
+				oldLightmapNum = lightmapNum;
+			}
+		}
+		else
 #endif
-        {
-            if (entity == oldEntity && shader == oldShader && lightmapNum == oldLightmapNum)
-            {
-                // fast path, same as previous sort
-                rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
-                continue;
-            }
+		{
+			if (entity == oldEntity && shader == oldShader && lightmapNum == oldLightmapNum)
+			{
+				// fast path, same as previous sort
+				rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
+				continue;
+			}
 
-            // change the tess parameters if needed
-            // a "entityMergable" shader is a shader that can have surfaces from seperate
-            // entities merged into a single batch, like smoke and blood puff sprites
-            if (shader != oldShader || (entity != oldEntity && !shader->entityMergable))
-            {
-                if (oldShader != NULL)
-                {
-                    Tess_End();
-                }
+			// change the tess parameters if needed
+			// a "entityMergable" shader is a shader that can have surfaces from seperate
+			// entities merged into a single batch, like smoke and blood puff sprites
+			if (shader != oldShader || (entity != oldEntity && !shader->entityMergable))
+			{
+				if (oldShader != NULL)
+				{
+					Tess_End();
+				}
 
-                Tess_Begin(Tess_StageIteratorGBuffer, NULL, shader, NULL, qfalse, qfalse, lightmapNum, 0);
-                oldShader      = shader;
-                oldLightmapNum = lightmapNum;
-            }
-        }
+				Tess_Begin(Tess_StageIteratorGBuffer, NULL, shader, NULL, qfalse, qfalse, lightmapNum, 0);
+				oldShader      = shader;
+				oldLightmapNum = lightmapNum;
+			}
+		}
 
-        // change the modelview matrix if needed
-        if (entity != oldEntity)
-        {
-            depthRange = qfalse;
+		// change the modelview matrix if needed
+		if (entity != oldEntity)
+		{
+			depthRange = qfalse;
 
-            if (entity != &tr.worldEntity)
-            {
-                backEnd.currentEntity = entity;
+			if (entity != &tr.worldEntity)
+			{
+				backEnd.currentEntity = entity;
 
-                // set up the transformation matrix
-                R_RotateEntityForViewParms(backEnd.currentEntity, &backEnd.viewParms, &backEnd.orientation);
+				// set up the transformation matrix
+				R_RotateEntityForViewParms(backEnd.currentEntity, &backEnd.viewParms, &backEnd.orientation);
 
-                if (backEnd.currentEntity->e.renderfx & RF_DEPTHHACK)
-                {
-                    // hack the depth range to prevent view model from poking into walls
-                    depthRange = qtrue;
-                }
-            }
-            else
-            {
-                backEnd.currentEntity = &tr.worldEntity;
-                backEnd.orientation   = backEnd.viewParms.world;
-            }
+				if (backEnd.currentEntity->e.renderfx & RF_DEPTHHACK)
+				{
+					// hack the depth range to prevent view model from poking into walls
+					depthRange = qtrue;
+				}
+			}
+			else
+			{
+				backEnd.currentEntity = &tr.worldEntity;
+				backEnd.orientation   = backEnd.viewParms.world;
+			}
 
-            GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
+			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
-            // change depthrange if needed
-            if (oldDepthRange != depthRange)
-            {
-                if (depthRange)
-                {
-                    glDepthRange(0, 0.3);
-                }
-                else
-                {
-                    glDepthRange(0, 1);
-                }
-                oldDepthRange = depthRange;
-            }
+			// change depthrange if needed
+			if (oldDepthRange != depthRange)
+			{
+				if (depthRange)
+				{
+					glDepthRange(0, 0.3);
+				}
+				else
+				{
+					glDepthRange(0, 1);
+				}
+				oldDepthRange = depthRange;
+			}
 
-            oldEntity = entity;
-        }
+			oldEntity = entity;
+		}
 
-        // add the triangles for this surface
-        rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
-    }
+		// add the triangles for this surface
+		rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
+	}
 
-    // draw the contents of the last shader batch
-    if (oldShader != NULL)
-    {
-        Tess_End();
-    }
+	// draw the contents of the last shader batch
+	if (oldShader != NULL)
+	{
+		Tess_End();
+	}
 
-    // go back to the world modelview matrix
-    GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
-    if (depthRange)
-    {
-        glDepthRange(0, 1);
-    }
+	// go back to the world modelview matrix
+	GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
+	if (depthRange)
+	{
+		glDepthRange(0, 1);
+	}
 
-    // disable offscreen rendering
-    R_BindNullFBO();
+	// disable offscreen rendering
+	R_BindNullFBO();
 
-    GL_CheckErrors();
+	GL_CheckErrors();
 
-    if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-    {
-        glFinish();
-        backEnd.pc.c_deferredGBufferTime = ri.Milliseconds() - startTime;
-    }
+	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	{
+		glFinish();
+		backEnd.pc.c_deferredGBufferTime = ri.Milliseconds() - startTime;
+	}
 }
- */
+#endif // 0
 
 void RB_RenderInteractionsDeferred()
 {

@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_cmesh.c
- * @brief compressed triangle model functions
+ */
+/**
+ * @file renderer/tr_cmesh.c
+ * @brief Compressed triangle model functions
  *
  * This is ripped from tr_mesh.c, and converted to use the compressed mesh format
  */

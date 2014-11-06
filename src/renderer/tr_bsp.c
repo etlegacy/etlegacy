@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_bsp.c
+ */
+/**
+ * @file renderer/tr_bsp.c
  * @brief Loads and prepares a map file for scene rendering.
  *
  * A single entry point: void RE_LoadWorldMap( const char *name );

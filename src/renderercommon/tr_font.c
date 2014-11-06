@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,7 +27,8 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file tr_font.c
  * @brief Handles ingame fonts and can also generate new font files
  *
@@ -40,6 +41,7 @@
  *
  * How to generate new font data files
  * ===================================
+ *
  * 1. Compile ET: Legacy with Freetype support by enabling FEATURE_FREETYPE in CMake
  * 2. Delete the fontname_x_xx.tga files and fontname_xx.dat files from the fonts
  *    path.

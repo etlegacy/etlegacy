@@ -27,12 +27,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file tr_image_png.c
  */
 
 #include "tr_common.h"
-
 #include "../qcommon/puff.h"
 
 // we could limit the png size to a lower value here
