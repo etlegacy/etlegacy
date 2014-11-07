@@ -811,7 +811,6 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 		XMESSAGE,
 		NUM_DIALOG_PROGRAMS
 	} dialogCommandType_t;
-	typedef int (*dialogCommandBuilder_t)(dialogType_t, const char *, const char *);
 
 	const char          *session = getenv("DESKTOP_SESSION");
 	int                 i, exitCode;

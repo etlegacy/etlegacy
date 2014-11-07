@@ -2941,7 +2941,7 @@ void PC_SetIncludePath(source_t *source, char *path)
 	if (len > 0 && source->includepath[len - 1] != '\\' &&
 	    source->includepath[len - 1] != '/')
 	{
-		strcat(source->includepath, va("%s", PATH_SEP));
+		strcat(source->includepath, va("%c", PATH_SEP));
 	}
 }
 
