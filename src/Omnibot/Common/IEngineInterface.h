@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: ken.nickel $
-// $LastChangedDate: 2011-08-16 06:47:44 +0200 (Di, 16 Aug 2011) $
-// $LastChangedRevision: 351 $
+// $LastChangedBy$
+// $LastChangedDate$
+// $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -388,6 +388,137 @@ public:
 
 	IEngineInterface() {}
 	virtual ~IEngineInterface() {}
+};
+
+class IEngineInterface71
+{
+public:
+	virtual int AddBot(const MessageHelper &_data) = 0;
+	virtual void RemoveBot(const MessageHelper &_data) = 0;
+	virtual obResult ChangeTeam(int _client, int _newteam, const MessageHelper *_data) = 0;
+	virtual obResult ChangeClass(int _client, int _newclass, const MessageHelper *_data) = 0;
+	virtual void UpdateBotInput(int _client, const ClientInput &_input) = 0;
+	virtual void BotCommand(int _client, const char *_cmd) = 0;
+	virtual obBool IsInPVS(const float _pos[3], const float _target[3]) = 0;
+	virtual obResult TraceLine(obTraceResult &_result, const float _start[3], const float _end[3], const AABB *_pBBox, int _mask, int _user, obBool _bUsePVS) = 0;
+	virtual int GetPointContents(const float _pos[3]) = 0;
+	virtual GameEntity GetLocalGameEntity() = 0;
+	virtual GameEntity FindEntityInSphere(const float _pos[3], float _radius, GameEntity _pStart, int classId) = 0;
+	virtual int GetEntityClass(const GameEntity _ent) = 0;
+	virtual obResult  GetEntityCategory(const GameEntity _ent, BitFlag32 &_category) = 0;
+	virtual obResult GetEntityFlags(const GameEntity _ent, BitFlag64 &_flags) = 0;
+	virtual obResult GetEntityPowerups(const GameEntity _ent, BitFlag64 &_flags) = 0;
+	virtual obResult GetEntityEyePosition(const GameEntity _ent, float _pos[3]) = 0;
+	virtual obResult GetEntityBonePosition(const GameEntity _ent, int _boneid, float _pos[3]) = 0;
+	virtual obResult GetEntityOrientation(const GameEntity _ent, float _fwd[3], float _right[3], float _up[3]) = 0;
+	virtual obResult GetEntityVelocity(const GameEntity _ent, float _velocity[3]) = 0;
+	virtual obResult GetEntityPosition(const GameEntity _ent, float _pos[3]) = 0;
+	virtual obResult GetEntityWorldAABB(const GameEntity _ent, AABB &_aabb) = 0;
+	virtual obResult GetEntityGroundEntity(const GameEntity _ent, GameEntity &moveent) = 0;
+	virtual GameEntity GetEntityOwner(const GameEntity _ent) = 0;
+	virtual int GetEntityTeam(const GameEntity _ent) = 0;
+	virtual const char *GetEntityName(const GameEntity _ent) = 0;
+	virtual obResult GetCurrentWeaponClip(const GameEntity _ent, FireMode _mode, int &_curclip, int &_maxclip) = 0;
+	virtual obResult GetCurrentAmmo(const GameEntity _ent, int _weaponId, int &_cur, int &_max) = 0;
+	virtual int GetGameTime() = 0;
+	virtual void GetGoals() = 0;
+	virtual void GetPlayerInfo(obPlayerInfo &info) = 0;
+	virtual obResult InterfaceSendMessage(const MessageHelper &_data, const GameEntity _ent) = 0;
+	virtual bool DebugLine(const float _start[3], const float _end[3], const obColor &_color, float _time) = 0;
+	virtual bool DebugRadius(const float _pos[3], const float _radius, const obColor &_color, float _time) = 0;
+	virtual bool DebugPolygon(const obVec3 *_verts, const int _numverts, const obColor &_color, float _time, int _flags) = 0;
+	virtual void PrintError(const char *_error) = 0;
+	virtual void PrintMessage(const char *_msg) = 0;
+	virtual bool PrintScreenText(const float _pos[3], float _duration, const obColor &_color, const char *_msg) = 0;
+	virtual const char *GetMapName() = 0;
+	virtual void GetMapExtents(AABB &_aabb) = 0;
+	virtual GameEntity EntityFromID(const int _gameId) = 0;
+	virtual GameEntity EntityByName(const char *_name) = 0;
+	virtual int IDFromEntity(const GameEntity _ent) = 0;
+	virtual bool DoesEntityStillExist(const GameEntity &_hndl) = 0;
+	virtual int GetAutoNavFeatures(AutoNavFeature *_feature, int _max) = 0;
+	virtual const char *GetGameName() = 0;
+	virtual const char *GetModName() = 0;
+	virtual const char *GetModVers() = 0;
+	virtual const char *GetBotPath() = 0;
+	virtual const char *GetLogPath() = 0;
+}; 
+
+class IEngineInterface71wrapper : public IEngineInterface
+{
+public:
+	IEngineInterface71* base;
+
+	int AddBot(const MessageHelper &_data){ return base->AddBot(_data); }
+	void RemoveBot(const MessageHelper &_data){ base->RemoveBot(_data); }
+	obResult ChangeTeam(int _client, int _newteam, const MessageHelper *_data){ return base->ChangeTeam(_client, _newteam, _data); }
+	obResult ChangeClass(int _client, int _newclass, const MessageHelper *_data){ return base->ChangeClass(_client,_newclass,_data); }
+	void UpdateBotInput(int _client, const ClientInput &_input){ base->UpdateBotInput(_client,_input); }
+	void BotCommand(int _client, const char *_cmd){ base->BotCommand(_client,_cmd); }
+	obBool IsInPVS(const float _pos[3], const float _target[3]){ return base->IsInPVS(_pos,_target); }
+	obResult TraceLine(obTraceResult &_result, const float _start[3], const float _end[3], const AABB *_pBBox, int _mask, int _user, obBool _bUsePVS);
+	int GetPointContents(const float _pos[3]){ return base->GetPointContents(_pos); }
+	GameEntity GetLocalGameEntity(){ return base->GetLocalGameEntity(); }
+	GameEntity FindEntityInSphere(const float _pos[3], float _radius, GameEntity _pStart, int classId){ return base->FindEntityInSphere(_pos,_radius,_pStart,classId); }
+	int GetEntityClass(const GameEntity _ent){ return base->GetEntityClass(_ent); }
+	static void FixEntityCategory(BitFlag32& category);
+	obResult GetEntityCategory(const GameEntity _ent, BitFlag32 &_category);
+	obResult GetEntityFlags(const GameEntity _ent, BitFlag64 &_flags){ return base->GetEntityFlags(_ent,_flags); }
+	obResult GetEntityPowerups(const GameEntity _ent, BitFlag64 &_flags){ return base->GetEntityPowerups(_ent,_flags); }
+	obResult GetEntityEyePosition(const GameEntity _ent, float _pos[3]){ return base->GetEntityEyePosition(_ent,_pos); }
+	obResult GetEntityBonePosition(const GameEntity _ent, int _boneid, float _pos[3]){ return base->GetEntityBonePosition(_ent,_boneid,_pos); }
+	obResult GetEntityOrientation(const GameEntity _ent, float _fwd[3], float _right[3], float _up[3]){ return base->GetEntityOrientation(_ent,_fwd,_right,_up); }
+	obResult GetEntityVelocity(const GameEntity _ent, float _velocity[3]){ return base->GetEntityVelocity(_ent,_velocity); }
+	obResult GetEntityPosition(const GameEntity _ent, float _pos[3]){ return base->GetEntityPosition(_ent,_pos); }
+	obResult GetEntityLocalAABB(const GameEntity _ent, AABB &_aabb);
+	obResult GetEntityWorldAABB(const GameEntity _ent, AABB &_aabb){ return base->GetEntityWorldAABB(_ent,_aabb); }
+	obResult GetEntityWorldOBB(const GameEntity _ent, float *_center, float *_axis0, float *_axis1, float *_axis2, float *_extents);
+	obResult GetEntityGroundEntity(const GameEntity _ent, GameEntity &moveent){ return base->GetEntityGroundEntity(_ent,moveent); }
+	GameEntity GetEntityOwner(const GameEntity _ent){ return base->GetEntityOwner(_ent); }
+	int GetEntityTeam(const GameEntity _ent){ return base->GetEntityTeam(_ent); }
+	const char *GetEntityName(const GameEntity _ent){ return base->GetEntityName(_ent); }
+	obResult GetCurrentWeaponClip(const GameEntity _ent, FireMode _mode, int &_curclip, int &_maxclip){ return base->GetCurrentWeaponClip(_ent,_mode,_curclip,_maxclip); }
+	obResult GetCurrentAmmo(const GameEntity _ent, int _weaponId, FireMode _mode, int &_cur, int &_max){ _UNUSED(_mode); return base->GetCurrentAmmo(_ent, _weaponId, _cur, _max); }
+	int GetGameTime(){ return base->GetGameTime(); }
+	void GetGoals(){ base->GetGoals(); }
+	void GetPlayerInfo(obPlayerInfo &info){ base->GetPlayerInfo(info); }
+	obResult InterfaceSendMessage(const MessageHelper &_data, const GameEntity _ent);
+	bool PrintScreenText(const float _pos[3], float _duration, const obColor &_color, const char *_msg){ return base->PrintScreenText(_pos,_duration,_color,_msg); }
+	void PrintError(const char *_error){ base->PrintError(_error); }
+	void PrintMessage(const char *_msg){ base->PrintMessage(_msg); }
+	const char *GetMapName(){ return base->GetMapName(); }
+	void GetMapExtents(AABB &_aabb){ base->GetMapExtents(_aabb); }
+	GameEntity EntityFromID(const int _gameId){ return base->EntityFromID(_gameId); }
+	GameEntity EntityByName(const char *_name){ return base->EntityByName(_name); }
+	int IDFromEntity(const GameEntity _ent){ return base->IDFromEntity(_ent); }
+	bool DoesEntityStillExist(const GameEntity &_hndl){ return base->DoesEntityStillExist(_hndl); }
+	int GetAutoNavFeatures(AutoNavFeature *_feature, int _max){ return base->GetAutoNavFeatures(_feature,_max); }
+	const char *GetGameName(){ return base->GetGameName(); }
+	const char *GetModName(){ return base->GetModName(); }
+	const char *GetModVers(){ return base->GetModVers(); }
+	const char *GetBotPath(){ return base->GetBotPath(); }
+	const char *GetLogPath(){ return base->GetLogPath(); }
+};
+
+class IClientInterface {
+public:
+	// Adds a line to immediately display between 2 positions, with a specific color
+	virtual void DrawLine(const float _start[3], const float _end[3], int _color, int _time) = 0;
+
+	// Adds a AABB to immediately display, with a specific color
+	virtual void DrawAABB(const float _mins[3], const float _maxs[3], int _color, int _time, AABB::Direction _dir) = 0;
+
+	// Adds a radius indicator to be displayed at a certain position with radius and color
+	virtual void DrawRadius(const float _pos[3], const float _radius, int _color, int _time) = 0;
+
+	// Draws a shaded polygon
+	virtual void DrawPolygon(const float *_verts, const int _numverts, int _color, int _time) = 0;
+
+	// Displays a text at 3D position, or shows info message if _pos is (0,0,0)
+	virtual void PrintScreenText(const float _pos[3], int _duration, int _color, const char *_msg) = 0;
+
+	// Removes all currently visible objects
+	virtual void ClearView() = 0;
 };
 
 //class SkeletonInterface : public IEngineInterface

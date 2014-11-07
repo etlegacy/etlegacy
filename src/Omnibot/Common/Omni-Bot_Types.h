@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: jswigart $
-// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
-// $LastChangedRevision: 32 $
+// $LastChangedBy$
+// $LastChangedDate$
+// $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -524,6 +524,7 @@ typedef enum eButtonFlags
 	BOT_BUTTON_AIM,
 	BOT_BUTTON_RESPAWN,
 	BOT_BUTTON_TAUNT,
+	BOT_BUTTON_THROWKNIFE,
 
 	// THIS MUST BE LAST
 	BOT_BUTTON_FIRSTUSER
@@ -1088,6 +1089,31 @@ typedef struct MapGoalDef_t
 	MapGoalDef_t() { Reset(); }
 #endif
 } MapGoalDef;
+
+// struct: MapGoalDef71
+typedef struct MapGoalDef71_t
+{
+	enum { BufferSize = 64 };
+
+	GameEntity		m_Entity;
+	int				m_GoalType;
+	int				m_Team;
+	char			m_TagName[BufferSize];
+	obUserData		m_UserData;
+
+#ifdef __cplusplus
+
+	void Reset()
+	{
+		m_Entity.Reset();
+		m_GoalType = 0;
+		m_Team = 0;
+		m_TagName[0] = 0;
+		m_UserData = obUserData();
+	}
+	MapGoalDef71_t() { Reset(); }
+#endif
+} MapGoalDef71;
 
 // struct: AutoNavFeature
 typedef struct AutoNavFeature_t

@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: jswigart $
-// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
-// $LastChangedRevision: 32 $
+// $LastChangedBy$
+// $LastChangedDate$
+// $LastChangedRevision$
 //
 // Title: BotExports
 //		In order for the game to call functions from the bot, we must export
@@ -28,6 +28,8 @@
 
 // Typedef for the only exported bot function.
 typedef eomnibot_error (*pfnGetFunctionsFromDLL)(Bot_EngineFuncs_t *_pBotFuncs, int _size);
+
+typedef eomnibot_error(*pfnGetClientFunctionsFromDLL)(IClientInterface **_pClientFuncs, int _version);
 
 // note: Export Functions with C Linkage
 //	Export with C Linkage so the game interface can acccess it easier.
@@ -56,7 +58,7 @@ extern IEngineInterface		*g_InterfaceFunctions;
 extern "C" const char *OB_VA(const char* _msg, ...);
 //////////////////////////////////////////////////////////////////////////
 
-eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path, const char *mod);
+eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path);
 void Omnibot_FreeLibrary();
 bool IsOmnibotLoaded();
 const char *Omnibot_ErrorString(eomnibot_error err);

@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: jswigart $
-// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
-// $LastChangedRevision: 32 $
+// $LastChangedBy$
+// $LastChangedDate$
+// $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -61,8 +61,9 @@ public:
 	{
 	}
 	~MessageHelper() {};
-private:
+
 	mutable int m_MessageId;
+private:
 	void		*m_pVoid;
 	obuint32	m_BlockSize;
 

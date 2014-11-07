@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: jswigart $
-// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
-// $LastChangedRevision: 32 $
+// $LastChangedBy$
+// $LastChangedDate$
+// $LastChangedRevision$
 //
 // about: Exported function definitions
 //		In order for the game to call functions from the bot, we must export
@@ -23,6 +23,7 @@
 //		Initializes the bot library and sets the bot up with the callbacks to 
 //		the game in the form of function pointers to functions within the game.
 omnibot_error BotInitialise(IEngineInterface *_pEngineFuncs, int _version);
+omnibot_error BotInitialise71(IEngineInterface71 *_pEngineFuncs, int _version);
 // function: BotShutdown
 //		Shuts down and frees memory from the bot system
 void BotShutdown();
@@ -36,6 +37,7 @@ void BotConsoleCommand(const Arguments &_args);
 // function: BotAddGoal
 //		Allows the game to register a goal with the bot that the bots can use
 void BotAddGoal(const MapGoalDef &goaldef);
+void BotAddGoal71(const MapGoalDef71 &goaldef);
 // function: BotAddBBRecord
 //		Allows the game to enter blackboard records into the bots knowledge database.
 void BotAddBBRecord(BlackBoard_Key _type, int _posterID, int _targetID, obUserData *_data);
@@ -45,9 +47,11 @@ void BotSendTrigger(const TriggerInfo &_triggerInfo);
 // function: BotSendEvent
 //		New Messagehelper based event handler.
 void BotSendEvent(int _dest, const MessageHelper &_message);
+void BotSendEvent71(int _dest, const MessageHelper &_message);
 // function: BotSendGlobalEvent
 //		New Messagehelper based event handler.
 void BotSendGlobalEvent(const MessageHelper &_message);
+void BotSendGlobalEvent71(const MessageHelper &_message);
 // function: BotUpdateEntity
 //		Update map goal entity
 void BotUpdateEntity(GameEntity oldent,GameEntity newent);

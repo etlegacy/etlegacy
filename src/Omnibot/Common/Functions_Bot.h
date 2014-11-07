@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: jswigart $
-// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
-// $LastChangedRevision: 32 $
+// $LastChangedBy$
+// $LastChangedDate$
+// $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +40,23 @@ typedef struct
 	void (*pfnDeleteGoal)(const char *goalname);
 	void (*pfnUpdateEntity)(GameEntity oldent,GameEntity newent);
 } Bot_EngineFuncs_t;
+
+typedef struct
+{
+	omnibot_error(*pfnInitialize)(IEngineInterface71 *_pEngineFuncs, int _version);
+	void(*pfnUpdate)();
+	void(*pfnShutdown)();
+	void(*pfnConsoleCommand)(const Arguments &_args);
+	void(*pfnAddGoal)(const MapGoalDef71 &goaldef);
+	void(*pfnSendTrigger)(const TriggerInfo &_triggerInfo);
+	void(*pfnAddBlackboardRecord)(BlackBoard_Key _type, int _posterID, int _targetID, obUserData *_data);
+	void(*pfnBotEntityAdded)(GameEntity _ent, EntityInfo *_info);
+	void(*pfnSendEvent)(int _dest, const MessageHelper &_message);
+	void(*pfnSendGlobalEvent)(const MessageHelper &_message);
+	void(*pfnUpdateEntity)(GameEntity oldent, GameEntity newent);
+	void(*pfnDeleteGoal)(const char *goalname);
+} Bot_EngineFuncs71_t;
+
 
 //#define DllExport __declspec( dllexport )
 //

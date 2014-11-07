@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
-//
-// $LastChangedBy: jswigart@gmail.com $
-// $LastChangedDate: 2011-04-10 12:06:32 +0200 (So, 10 Apr 2011) $
-// $LastChangedRevision: 319 $
+// 
+// $LastChangedBy$
+// $LastChangedDate$
+// $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -92,7 +92,7 @@ struct Msg_PlayerMaxSpeed
 };
 
 struct Msg_IsAlive
-{
+{	
 	obBool		m_IsAlive;
 
 	Msg_IsAlive() : m_IsAlive(False) {}
@@ -135,7 +135,7 @@ struct Msg_PointContents
 struct Msg_ReadyToFire
 {
 	obBool		m_Ready;
-
+	
 	Msg_ReadyToFire() : m_Ready(False) {}
 };
 
@@ -370,7 +370,7 @@ struct Event_SystemClientConnected
 	int			m_DesiredClass;
 	int			m_DesiredTeam;
 
-	Event_SystemClientConnected()
+	Event_SystemClientConnected() 
 		: m_GameId(-1)
 		, m_IsBot(False)
 		, m_DesiredClass(RANDOM_CLASS_IF_NO_CLASS)
@@ -398,7 +398,7 @@ struct Event_EntityCreated
 {
 	GameEntity		m_Entity;
 	BitFlag32		m_EntityCategory;
-	int				m_EntityClass;
+	int				m_EntityClass;	
 };
 
 struct Event_EntityDeleted

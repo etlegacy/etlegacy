@@ -6385,8 +6385,7 @@ int Bot_Interface_Init()
 	}
 
 	g_InterfaceFunctions = new ETInterface;
-	eomnibot_error err = Omnibot_LoadLibrary(ET_VERSION_LATEST,
-	                                         "omnibot_et", Omnibot_FixPath(g_OmniBotPath.string), OMNIBOT_MOD_DEFAULT_SEARCH_PATH);
+	eomnibot_error err = Omnibot_LoadLibrary(ET_VERSION_LATEST, "omnibot_et", Omnibot_FixPath(g_OmniBotPath.string));
 	if (err == BOT_ERROR_NONE)
 	{
 		return true;
