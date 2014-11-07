@@ -747,16 +747,6 @@ void QDECL G_Error(const char *fmt, ...)
 
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
-#define CH_LADDER_DIST      100
-#define CH_WATER_DIST       100
-#define CH_BREAKABLE_DIST   64
-#define CH_DOOR_DIST        96
-#define CH_ACTIVATE_DIST    96
-#define CH_REVIVE_DIST      48
-
-#define CH_MAX_DIST         1024    // use the largest value from above
-#define CH_MAX_DIST_ZOOM    8192    // max dist for zooming hints
-
 /*
 ==============
 G_CursorHintIgnoreEnt: returns whether the ent should be ignored
@@ -878,7 +868,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 	vec3_t        forward, right, up, offset, end;
 	trace_t       *tr;
 	float         dist;
-	float         chMaxDist = CH_MAX_DIST;
 	gentity_t     *checkEnt, *traceEnt = 0;
 	playerState_t *ps;
 	static int    hintValMax = 255;     // Breakable damage indicator can wrap when the entity has a lot of health
@@ -913,7 +902,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 	else
 	{
-		VectorMA(offset, chMaxDist, forward, end);
+		VectorMA(offset, CH_MAX_DIST, forward, end);
 	}
 
 	tr = &ps->serverCursorHintTrace;
@@ -933,13 +922,14 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 	else
 	{
-		hintDist = chMaxDist;
+		hintDist = CH_MAX_DIST;
 	}
 
 	// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
 	if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 	{
 		gentity_t *constructible;
+
 		if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
 		{
 			ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
@@ -1105,7 +1095,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					}
 					else
 					{
-						hintDist = 0;
+						hintDist = CH_NONE_DIST;
 						hintType = ps->serverCursorHint = HINT_FORCENONE;
 						hintVal  = ps->serverCursorHintVal = 0;
 					}
@@ -1141,7 +1131,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 						hintVal  = ps->serverCursorHintVal = 0;     // no health for satchel charges
 						break;
 					case 2:
-						hintDist = 0;
+						hintDist = CH_NONE_DIST;
 						hintType = ps->serverCursorHint = HINT_FORCENONE;
 						hintVal  = ps->serverCursorHintVal = 0;
 
@@ -1172,7 +1162,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 						}
 						else
 						{
-							hintDist = 0;
+							hintDist = CH_NONE_DIST;
 							hintType = ps->serverCursorHint = HINT_FORCENONE;
 							hintVal  = ps->serverCursorHintVal = 0;
 						}
@@ -1213,7 +1203,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 							hintVal  = ps->serverCursorHintVal = 0;         // no health for dynamite
 							break;
 						default:
-							hintDist = 0;
+							hintDist = CH_NONE_DIST;
 							hintType = ps->serverCursorHint = HINT_FORCENONE;
 							hintVal  = ps->serverCursorHintVal = 0;
 							break;
@@ -1221,7 +1211,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					}
 					else
 					{
-						hintDist = 0;
+						hintDist = CH_NONE_DIST;
 						hintType = ps->serverCursorHint = HINT_FORCENONE;
 						hintVal  = ps->serverCursorHintVal = 0;
 						return;
@@ -1400,7 +1390,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 				case HINT_PLYR_ENEMY:
 				case HINT_PLYR_UNKNOWN:
 					break;
-
 				default:
 					return;
 				}
@@ -1430,12 +1419,10 @@ void G_SetTargetName(gentity_t *ent, char *targetname)
 
 void G_SetSkillLevels(int skill, const char *string)
 {
-	char **temp;
+	char **temp = (char **) &string;
 	char *nextLevel;
 	int  levels[4];
 	int  count;
-
-	temp = (char **) &string;
 
 	for (count = 0; count < 4; count++)
 	{

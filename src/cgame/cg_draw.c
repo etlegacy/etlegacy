@@ -1305,13 +1305,6 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	return dist;
 }
 
-#define CH_KNIFE_DIST       48  // from g_weapon.c
-#define CH_LADDER_DIST      100
-#define CH_WATER_DIST       100
-#define CH_BREAKABLE_DIST   64
-#define CH_DOOR_DIST        96
-#define CH_DIST             100 //128       // use the largest value from above
-
 /*
 ==============
 CG_CheckForCursorHints

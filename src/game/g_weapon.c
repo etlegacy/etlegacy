@@ -113,8 +113,6 @@ KNIFE
 ======================================================================
 */
 
-#define KNIFE_DIST 48
-
 /*
 ==============
 Weapon_Knife
@@ -129,7 +127,7 @@ void Weapon_Knife(gentity_t *ent, int modnum)
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePoint(ent, ent->s.weapon, forward, right, up, muzzleTrace);
-	VectorMA(muzzleTrace, KNIFE_DIST, forward, end);
+	VectorMA(muzzleTrace, CH_KNIFE_DIST, forward, end);
 	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
 	// ignore hits on NOIMPACT surfaces or no contact
@@ -511,7 +509,7 @@ void Weapon_Syringe(gentity_t *ent)
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
-	VectorMA(muzzleTrace, 48, forward, end);             // CH_ACTIVATE_DIST
+	VectorMA(muzzleTrace, CH_REVIVE_DIST, forward, end);
 	//VectorMA (muzzleTrace, -16, forward, muzzleTrace);    // Back up the start point in case medic is
 	// right on top of intended revivee.
 	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
@@ -1215,6 +1213,7 @@ static qboolean TryConstructing(gentity_t *ent)
 			{
 				gentity_t *tent = NULL;
 				gentity_t *e;
+
 				e = G_Spawn();
 
 				e->r.svFlags    = SVF_BROADCAST;
@@ -1536,25 +1535,26 @@ void AutoBuildConstruction(gentity_t *constructible)
 
 qboolean G_LandmineTriggered(gentity_t *ent)
 {
-	switch (ent->s.teamNum)
+	if (ent->s.teamNum == (TEAM_AXIS + 8) || ent->s.teamNum == (TEAM_ALLIES + 8))
 	{
-	case TEAM_AXIS + 8:
-	case TEAM_ALLIES + 8:
 		return qtrue;
 	}
-
-	return qfalse;
+	else
+	{
+		return qfalse;
+	}
 }
 
 qboolean G_LandmineArmed(gentity_t *ent)
 {
-	switch (ent->s.teamNum)
+	if (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES)
 	{
-	case TEAM_AXIS:
-	case TEAM_ALLIES:
 		return qtrue;
 	}
-	return qfalse;
+	else
+	{
+		return qfalse;
+	}
 }
 
 qboolean G_LandmineUnarmed(gentity_t *ent)
@@ -2576,7 +2576,9 @@ void weapon_checkAirStrikeThink2(gentity_t *ent)
 
 void weapon_callSecondPlane(gentity_t *ent)
 {
-	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+	gentity_t *te;
+
+	te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
 	te->s.eventParm = GAMESOUND_WPN_AIRSTRIKE_PLANE;
 	te->r.svFlags  |= SVF_BROADCAST;
@@ -2864,7 +2866,9 @@ void artillerySpotterThink(gentity_t *ent)
 
 void G_GlobalClientEvent(int event, int param, int client)
 {
-	gentity_t *tent = G_TempEntity(vec3_origin, event);
+	gentity_t *tent;
+
+	tent = G_TempEntity(vec3_origin, event);
 
 	tent->s.density      = param;
 	tent->r.singleClient = client;
