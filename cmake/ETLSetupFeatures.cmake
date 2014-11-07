@@ -204,14 +204,10 @@ if(BUILD_MOD)
 		add_definitions(-DFEATURE_LUA)
 	endif(FEATURE_LUA)
 
-	if(FEATURE_OMNIBOT) # 32bit Windows, Linux and OS X only
-		if("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86")
-			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
-			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
-			add_definitions(-DFEATURE_OMNIBOT)
-		else()
-			message(STATUS "Warning: Omni-bot support is 32bit only - build skipped")
-		endif()
+	if(FEATURE_OMNIBOT)
+		LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
+		LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
+		add_definitions(-DFEATURE_OMNIBOT)
 	endif(FEATURE_OMNIBOT)
 endif(BUILD_MOD)
 
