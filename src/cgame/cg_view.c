@@ -1452,16 +1452,16 @@ void CG_ParseSkyBox(void)
 		return;
 	}
 
-	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring\n");
+	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[0]\n");
 	cg.skyboxViewOrg[0] = atof(token);
 
-	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring\n");
+	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No forskyboxViewOrg[1]\n");
 	cg.skyboxViewOrg[1] = atof(token);
 
-	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring\n");
+	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[2]\n");
 	cg.skyboxViewOrg[2] = atof(token);
 
-	token            = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring\n");
+	token            = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewFov\n");
 	cg.skyboxViewFov = atoi(token);
 
 	if (!cg.skyboxViewFov)
@@ -1470,19 +1470,19 @@ void CG_ParseSkyBox(void)
 	}
 
 	// setup fog the first time, ignore this part of the configstring after that
-	token = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring.  No fog state\n");
+	token = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No fog state\n");
 	if (atoi(token))         // this camera has fog
 	{
 		vec4_t fogColor;
 		int    fogStart, fogEnd;
 
-		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring.  No fog[0]\n");
+		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[0]\n");
 		fogColor[0] = atof(token);
 
-		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring.  No fog[1]\n");
+		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[1]\n");
 		fogColor[1] = atof(token);
 
-		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring.  No fog[2]\n");
+		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[2]\n");
 		fogColor[2] = atof(token);
 
 		token    = COM_ParseExt(&cstr, qfalse);
@@ -2006,16 +2006,6 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 	{
 		cg.weaponSelect     = cg.snap->ps.weapon;
 		cg.weaponSelectTime = cg.time;
-	}
-
-	if (cg.weaponSelect == WP_FG42SCOPE)
-	{
-		float spd = VectorLength(cg.snap->ps.velocity);
-
-		if (spd > 180.0f)
-		{
-			CG_FinishWeaponChange(WP_FG42SCOPE, WP_FG42);
-		}
 	}
 
 	// The very first frame

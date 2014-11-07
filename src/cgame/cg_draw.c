@@ -1077,7 +1077,7 @@ static void CG_DrawCrosshair(void)
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
 			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
-			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(127))
+			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160))
 			{
 				if (cg.snap->ps.weapon == WP_FG42SCOPE)
 				{
