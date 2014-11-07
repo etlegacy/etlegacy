@@ -1455,7 +1455,7 @@ void CG_ParseSkyBox(void)
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[0]\n");
 	cg.skyboxViewOrg[0] = atof(token);
 
-	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No forskyboxViewOrg[1]\n");
+	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[1]\n");
 	cg.skyboxViewOrg[1] = atof(token);
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[2]\n");
