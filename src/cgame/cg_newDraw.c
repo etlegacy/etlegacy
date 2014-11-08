@@ -234,15 +234,16 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		return;
 	}
 
-	if (drawHighlighted)
-	{
-		// we don't have icon[0];
-		icon = cg_weapons[realweap].weaponIcon[1];
-	}
-	else
-	{
-		icon = cg_weapons[realweap].weaponIcon[1];
-	}
+	// we don't have icon[0];
+	//if (drawHighlighted)
+	//{
+	//icon = cg_weapons[realweap].weaponIcon[0];
+	//}
+	//else
+	//{
+	//	icon = cg_weapons[realweap].weaponIcon[1];
+	//}
+	icon = cg_weapons[realweap].weaponIcon[1];
 
 	// pulsing grenade icon to help the player 'count' in their head
 	if (cg.predictedPlayerState.grenadeTimeLeft)       // grenades and dynamite set this
