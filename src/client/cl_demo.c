@@ -61,9 +61,9 @@ typedef struct
 	int firstServerTime;
 	int gameStartTime;
 	int gameEndTime;
-	int serverFrameTime;
+	//int serverFrameTime;
 
-	double wantedTime;
+	//double wantedTime;
 	int snapCount;
 
 	int demoPos;
@@ -72,7 +72,7 @@ typedef struct
 	qboolean gotFirstSnap;
 	qboolean skipSnap;
 
-	qboolean hasWarmup;
+	//qboolean hasWarmup;
 	qboolean seeking;
 
 	double Overf;
