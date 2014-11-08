@@ -70,6 +70,7 @@ menuDef {
 							90	40	10
 							135	40	30
 		visible			1
+		notselectable	1
 	}
 
 	BUTTON( (SUBWINDOW_X)+6, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .33*((SUBWINDOW_WIDTH)-24), 18, "BACK", .3, 14, close playonline_serverinfo ; open playonline )
