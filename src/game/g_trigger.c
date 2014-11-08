@@ -615,7 +615,7 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	gentity_t *touchClients[MAX_CLIENTS];
 	int       healvalue;
 
-	memset(touchClients, 0, sizeof(touchClients));
+	memset(touchClients, 0, sizeof(gentity_t *) * MAX_CLIENTS);
 
 	if (!other->client)
 	{
@@ -806,7 +806,7 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	int       i, j, clientcount = 0, count;
 	gentity_t *touchClients[MAX_CLIENTS];
 
-	memset(touchClients, 0, sizeof(touchClients));
+	memset(touchClients, 0, sizeof(gentity_t *) * MAX_CLIENTS);
 
 	if (other->client == NULL)
 	{
