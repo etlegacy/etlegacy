@@ -494,75 +494,130 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	return usedSyringe;
 }
 
-/*
-======================
-  Weapon_Syringe
-    shoot the syringe, do the old lazarus bit
-======================
+/**
+* @brief Shoot the syringe, do the old lazarus bit
+* @note  Currently medic player can get out of syringe ammo when G_MISC_MEDIC_SYRINGE_HEAL is set
 */
 void Weapon_Syringe(gentity_t *ent)
 {
 	vec3_t    end;
 	trace_t   tr;
-	qboolean  usedSyringe = qfalse;
 	gentity_t *traceEnt;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
 	VectorMA(muzzleTrace, CH_REVIVE_DIST, forward, end);
-	//VectorMA (muzzleTrace, -16, forward, muzzleTrace);    // Back up the start point in case medic is
 	// right on top of intended revivee.
 	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
 	if (tr.startsolid)
 	{
-		VectorMA(muzzleTrace, 8, forward, end);              // CH_ACTIVATE_DIST
+		VectorMA(muzzleTrace, 8, forward, end);
 		trap_Trace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 	}
 
-	if (tr.fraction < 1.0)
+	if (tr.fraction == 1.0f) // no hit
 	{
-		traceEnt = &g_entities[tr.entityNum];
-		if (traceEnt->client != NULL)
-		{
-			if ((traceEnt->client->ps.pm_type == PM_DEAD) && (traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam))
-			{
-				// moved all the revive stuff into its own function
-				usedSyringe = ReviveEntity(ent, traceEnt);
-
-				// syringe "hit"
-				// FIXME: we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
-				// - add a new award 'most revives'?
-				//if (g_gamestate.integer == GS_PLAYING)
-				//{
-				//ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
-				//}
-				if (ent->client)
-				{
-					G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
-
-				}
-				if (!traceEnt->isProp)     // flag for if they were teamkilled or not
-				{
-					AddScore(ent, WOLF_MEDIC_BONUS);   // props to the medic for the swift and dexterous bit o healitude
-
-					G_AddSkillPoints(ent, SK_FIRST_AID, 4.f);
-					G_DebugAddSkillPoints(ent, SK_FIRST_AID, 4.f, "reviving a player");
-				}
-
-				// calculate ranks to update numFinalDead arrays. Have to do it manually as addscore has an early out
-				if (g_gametype.integer == GT_WOLF_LMS)
-				{
-					CalculateRanks();
-				}
-			}
-		}
+		// give back ammo
+		ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+		return;
 	}
 
-	// If the medicine wasn't used, give back the ammo
-	if (!usedSyringe)
+	traceEnt = &g_entities[tr.entityNum];
+
+	if (!traceEnt->client)
 	{
+		// give back ammo
 		ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+		return;
+	}
+
+	if (traceEnt->client->ps.pm_type == PM_DEAD)
+	{
+		qboolean usedSyringe = qfalse;
+
+		if (traceEnt->client->sess.sessionTeam != ent->client->sess.sessionTeam)
+		{
+			return;
+		}
+
+		// moved all the revive stuff into its own function
+		usedSyringe = ReviveEntity(ent, traceEnt);
+
+		// syringe "hit"
+		// FIXME: we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
+		// - add a new award 'most revives'?
+		//if (g_gamestate.integer == GS_PLAYING)
+		//{
+		//ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
+		//}
+		if (ent && ent->client)
+		{
+			G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
+
+		}
+		if (!traceEnt->isProp)     // flag for if they were teamkilled or not
+		{
+			AddScore(ent, WOLF_MEDIC_BONUS);   // props to the medic for the swift and dexterous bit o healitude
+
+			G_AddSkillPoints(ent, SK_FIRST_AID, 4.f);
+			G_DebugAddSkillPoints(ent, SK_FIRST_AID, 4.f, "reviving a player");
+		}
+
+		// calculate ranks to update numFinalDead arrays. Have to do it manually as addscore has an early out
+		if (g_gametype.integer == GT_WOLF_LMS)
+		{
+			CalculateRanks();
+		}
+
+		// If the medicine wasn't used, give back the ammo
+		if (!usedSyringe)
+		{
+			ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+		}
+	}
+	else if (g_misc.integer & G_MISC_MEDIC_SYRINGE_HEAL) //  FIXME: clarify ammo restore
+	{
+		if (traceEnt->client->sess.sessionTeam != ent->client->sess.sessionTeam)
+		{
+			// this doesn't heal enemy but ammo is gone :D FIXME?
+			return;
+		}
+
+		if (traceEnt->health > (traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.25f))
+		{
+			// this doesn't heal enemy but ammo is gone :D FIXME?
+			return;
+		}
+
+		{
+			int healamt;
+
+			// check the skill of the needle-bearer
+			if (ent->client->sess.skill[SK_FIRST_AID] >= 3) // full revive
+			{
+				healamt = traceEnt->client->ps.stats[STAT_MAX_HEALTH];
+			}
+			else
+			{
+				healamt = traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.5f;
+			}
+
+			traceEnt->health = healamt;
+		}
+		G_Sound(traceEnt, GAMESOUND_MISC_REVIVE);
+
+		//ent->client->sess.team_hits -= 2.f;
+
+		// set lasthealth_client also when a player was healed with syringe
+		traceEnt->client->pers.lasthealth_client = ent->s.clientNum;
+
+		if (!traceEnt->isProp)      // flag for if they were teamkilled or not
+		{
+			AddScore(ent, WOLF_HEALTH_UP);
+			G_AddSkillPoints(ent, SK_MEDIC, 2.f);
+			G_DebugAddSkillPoints(ent, SK_MEDIC, 2.f, "syringe heal a player");
+		}
 	}
 }
 
