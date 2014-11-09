@@ -1584,7 +1584,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 			SetUniformVec4(UNIFORM_COLOR, colorMdGrey);
 		}
 
-		Ren_LogComment("%i, ", node - tr.world->nodes);
+		Ren_LogComment("%li, ", node - tr.world->nodes);
 
 		//Tess_EndBegin();
 
