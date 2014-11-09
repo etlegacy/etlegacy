@@ -491,7 +491,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	}
 	if (r_numcoronas >= MAX_CORONAS)
 	{
-		ri.Printf(PRINT_WARNING, "RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n");
+		ri.Printf(PRINT_DEVELOPER, "RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n");
 		return;
 	}
 
