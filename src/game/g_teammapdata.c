@@ -440,7 +440,9 @@ void G_UpdateTeamMapData_Tank(gentity_t *ent)
 {
 	int                  num       = ent - g_entities;
 	mapEntityData_Team_t *teamList = &mapEntityData[0];
-	mapEntityData_t      *mEnt     = G_FindMapEntityData(teamList, num);
+	mapEntityData_t      *mEnt;
+
+	mEnt = G_FindMapEntityData(teamList, num);
 
 	if (!mEnt)
 	{
@@ -578,16 +580,13 @@ void G_UpdateTeamMapData_Player(gentity_t *ent, qboolean forceAllied, qboolean f
 		return;
 	}
 
-	switch (ent->client->sess.sessionTeam)
+	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-	case TEAM_AXIS:
 		forceAxis = qtrue;
-		break;
-	case TEAM_ALLIES:
+	}
+	else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
+	{
 		forceAllied = qtrue;
-		break;
-	default:
-		break;
 	}
 
 	if (forceAxis)
@@ -957,6 +956,19 @@ void G_SendMapEntityInfo(gentity_t *e)
 	trap_SendServerCommand(e - g_entities, buffer);
 }
 
+
+void G_PopupMessageForMines(gentity_t *player) // int sound
+{
+	gentity_t *pm;
+
+	pm = G_PopupMessage(PM_MINES);
+
+	VectorCopy(player->client->landmineSpotted->r.currentOrigin, pm->s.origin);
+	pm->s.effect2Time = (player->client->sess.sessionTeam == TEAM_AXIS) ? TEAM_ALLIES : TEAM_AXIS;
+	pm->s.effect3Time = player - g_entities;
+	//pm->s.loopSound   = sound;
+}
+
 void G_UpdateTeamMapData(void)
 {
 	int             i, j /*, k*/;
@@ -1191,42 +1203,6 @@ void G_UpdateTeamMapData(void)
 										switch (ent2->s.teamNum % 4)
 										{
 										case TEAM_AXIS:
-											if (!ent2->s.modelindex2)
-											{
-												ent->client->landmineSpottedTime = level.time;
-												ent->client->landmineSpotted     = ent2;
-												ent2->s.density                  = ent - g_entities + 1;
-												ent2->missionLevel               = level.time;
-
-												ent->client->landmineSpotted->count2 += 50;
-												if (ent->client->landmineSpotted->count2 >= 250)
-												{
-													ent->client->landmineSpotted->count2 = 250;
-
-													ent->client->landmineSpotted->s.modelindex2 = 1;
-
-													// for marker
-													ent->client->landmineSpotted->s.frame    = rand() % 20;
-													ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
-													trap_LinkEntity(ent->client->landmineSpotted);
-
-													{
-														gentity_t *pm = G_PopupMessage(PM_MINES);
-
-														VectorCopy(ent->client->landmineSpotted->r.currentOrigin, pm->s.origin);
-														pm->s.effect2Time = TEAM_AXIS;
-														pm->s.effect3Time = ent - g_entities;
-													}
-
-													trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
-
-													AddScore(ent, 1);
-
-													G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
-													G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
-												}
-											}
-											break;
 										case TEAM_ALLIES:
 											if (!ent2->s.modelindex2)
 											{
@@ -1243,17 +1219,16 @@ void G_UpdateTeamMapData(void)
 													ent->client->landmineSpotted->s.modelindex2 = 1;
 
 													// for marker
-													ent->client->landmineSpotted->s.frame    = rand() % 20;
-													ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
-													trap_LinkEntity(ent->client->landmineSpotted);
-
+													// Landmine flags shouldn't block our view
+													// don't do this if the mine has been triggered.
+													if (!G_LandmineTriggered(ent->client->landmineSpotted))
 													{
-														gentity_t *pm = G_PopupMessage(PM_MINES);
-														VectorCopy(ent->client->landmineSpotted->r.currentOrigin, pm->s.origin);
-
-														pm->s.effect2Time = TEAM_ALLIES;
-														pm->s.effect3Time = ent - g_entities;
+														ent->client->landmineSpotted->s.frame    = rand() % 20;
+														ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
+														trap_LinkEntity(ent->client->landmineSpotted);
 													}
+
+													G_PopupMessageForMines(ent);
 
 													trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
 
@@ -1264,7 +1239,9 @@ void G_UpdateTeamMapData(void)
 												}
 											}
 											break;
-										} // end switch
+										default:
+											break;
+										}
 									} // end (G_VisibleFromBinoculars( ent, ent2, ent2->r.currentOrigin ))
 									else
 									{
