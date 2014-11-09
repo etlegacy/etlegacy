@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __OMNICOLOR_H__
-#define __OMNICOLOR_H__
+#ifndef INCLUDE_OMNICOLOR_H
+#define INCLUDE_OMNICOLOR_H
 
 #include "Omni-Bot_BasicTypes.h"
 

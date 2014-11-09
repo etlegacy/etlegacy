@@ -35,8 +35,8 @@
  *          when they are referenced in cgame or ui
  */
 
-#ifndef __TR_TYPES_H
-#define __TR_TYPES_H
+#ifndef INCLUDE_TR_TYPES_H
+#define INCLUDE_TR_TYPES_H
 
 // renderer2 BEGIN
 #define MAX_REF_LIGHTS      1024
@@ -462,4 +462,4 @@ typedef struct polyBuffer_s
 } polyBuffer_t;
 // =========================================
 
-#endif  // __TR_TYPES_H
+#endif  // INCLUDE_TR_TYPES_H

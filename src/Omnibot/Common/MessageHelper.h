@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __MESSAGEHELPER_H__
-#define __MESSAGEHELPER_H__
+#ifndef INCLUDE_MESSAGEHELPER_H
+#define INCLUDE_MESSAGEHELPER_H
 
 #include <assert.h>
 

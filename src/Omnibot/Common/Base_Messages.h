@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __BASE_MESSAGES_H__
-#define __BASE_MESSAGES_H__
+#ifndef INCLUDE_BASE_MESSAGES_H
+#define INCLUDE_BASE_MESSAGES_H
 
 #include "Omni-Bot_Types.h"
 
@@ -568,4 +568,4 @@ struct Event_EntLeaveRadius
 
 #pragma pack(pop)
 
-#endif
+#endif // INCLUDE_BASE_MESSAGES_H

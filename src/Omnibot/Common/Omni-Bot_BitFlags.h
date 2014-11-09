@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __USERFLAGS_H__
-#define __USERFLAGS_H__
+#ifndef INCLUDE_USERFLAGS_H
+#define INCLUDE_USERFLAGS_H
 
 #include "Omni-Bot_BasicTypes.h"
 

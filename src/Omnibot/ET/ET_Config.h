@@ -8,8 +8,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ET_CONFIG_H__
-#define __ET_CONFIG_H__
+#ifndef INCLUDE_ET_CONFIG_H
+#define INCLUDE_ET_CONFIG_H
 
 #include "../Common/Omni-Bot_Events.h"
 

@@ -32,8 +32,8 @@
  * @file tr_publish.c
  */
 
-#ifndef __TR_PUBLIC_H
-#define __TR_PUBLIC_H
+#ifndef INCLUDE_TR_PUBLIC_H
+#define INCLUDE_TR_PUBLIC_H
 
 #include "tr_types.h"
 
@@ -251,4 +251,4 @@ typedef refexport_t * (QDECL * GetRefAPI_t)(int apiVersion, refimport_t *rimp);
 //refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
 #endif
 
-#endif  // __TR_PUBLIC_H
+#endif  // INCLUDE_TR_PUBLIC_H

@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __OMNIBOT_TYPES_H__
-#define __OMNIBOT_TYPES_H__
+#ifndef INCLUDE_OMNIBOT_TYPES_H
+#define INCLUDE_OMNIBOT_TYPES_H
 
 #include "Omni-Bot_BasicTypes.h"
 

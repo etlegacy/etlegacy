@@ -10,8 +10,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __OMNIBOT_H__
-#define __OMNIBOT_H__
+#ifndef INCLUDE_OMNIBOT_H
+#define INCLUDE_OMNIBOT_H
 
 #include "Functions_Bot.h"
 #include "Omni-Bot_Types.h"
@@ -66,4 +66,4 @@ void BotDeleteMapGoal(const char *goalname);
 //void Message_EndMessage(const MessageHelper &_helper);
 //void Message_EndMessageEx(const MessageHelper &_helper);
 
-#endif
+#endif // INCLUDE_OMNIBOT_H

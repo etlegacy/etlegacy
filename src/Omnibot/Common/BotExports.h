@@ -10,8 +10,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __BOTEXPORTS_H__
-#define __BOTEXPORTS_H__
+#ifndef INCLUDE_BOTEXPORTS_H
+#define INCLUDE_BOTEXPORTS_H
 
 #include "Functions_Bot.h"
 #include "Omni-Bot_Types.h"

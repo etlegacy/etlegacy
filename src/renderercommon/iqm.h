@@ -32,8 +32,8 @@
  * @file iqm.h
  */
 
-#ifndef __IQM_H__
-#define __IQM_H__
+#ifndef INCLUDE_IQM_H
+#define INCLUDE_IQM_H
 
 #define IQM_MAGIC "INTERQUAKEMODEL"
 #define IQM_VERSION 2
@@ -161,4 +161,4 @@ typedef struct iqmextension
 	unsigned int ofs_extensions; // pointer to next extension
 } iqmExtension_t;
 
-#endif
+#endif // INCLUDE_IQM_H

@@ -32,8 +32,8 @@
  * @file qgl.h
  */
 
-#ifndef __QGL_H__
-#define __QGL_H__
+#ifndef INCLUDE_QGL_H
+#define INCLUDE_QGL_H
 
 #ifdef FEATURE_RENDERER_GLES
 #   include <GLES/gl.h>
@@ -602,4 +602,4 @@ extern void (*glUnlockArraysEXT)(void);
 #define GL_TEXTURE3_ARB GL_TEXTURE3
 #endif
 
-#endif
+#endif // INCLUDE_QGL_H

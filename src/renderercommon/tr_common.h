@@ -32,8 +32,9 @@
  * @file tr_common.h
  */
 
-#ifndef __TR_COMMON_H
-#define __TR_COMMON_H
+#ifndef INCLUDE_TR_COMMON_H
+#define INCLUDE_TR_COMMON_H
+
 #include "../qcommon/q_shared.h"
 #include "tr_public.h"
 #include "iqm.h"
@@ -256,4 +257,4 @@ extern cvar_t *r_wolffog;
 extern cvar_t *r_maxpolys;
 extern cvar_t *r_maxpolyverts;
 
-#endif  // __TR_COMMON_H
+#endif  // INCLUDE_TR_COMMON_H

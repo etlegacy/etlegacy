@@ -8,8 +8,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __OMNIBOT_EVENTS_H__
-#define __OMNIBOT_EVENTS_H__
+#ifndef INCLUDE_OMNIBOT_EVENTS_H
+#define INCLUDE_OMNIBOT_EVENTS_H
 
 // typedef: EventId
 //		Readable identifier for various events that can be sent to the bot
