@@ -2847,11 +2847,14 @@ void Com_Init(char *commandLine)
 			// check existing pid file and make sure it's ok
 			if (!Com_CheckProfile())
 			{
-#ifdef NDEBUG
-				Com_Printf("^3WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
-				// set crashed state
-				Cbuf_AddText("set com_crashed 1\n");
+#ifndef DEDICATED
+				if (Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?", "Reset settings") == DR_YES)
 #endif
+				{
+					Com_Printf("WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
+					// set crashed state
+					Cbuf_AddText("set com_crashed 1\n");
+				}
 			}
 
 			// write a new one
