@@ -478,7 +478,7 @@ cvarTable_t gameCvarTable[] =
 
 #ifdef FEATURE_OMNIBOT
 	// Omni-bot user defined path to load bot library from.
-	{ &g_OmniBotPath,                       "omnibot_path",                        "",                           CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
+	{ &g_OmniBotPath,                       "omnibot_path",                        GAMEVERSION "/omni-bot",      CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
 	{ &g_OmniBotEnable,                     "omnibot_enable",                      "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
 	{ &g_OmniBotPlaying,                    "omnibot_playing",                     "0",                          CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,             0, qfalse},
 	{ &g_OmniBotFlags,                      "omnibot_flags",                       "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
