@@ -7,9 +7,6 @@
 #------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.3)
 
-# FIXME: currently eglport.c and eglport.h are disabled by macro FEATURE_RENDERER_GLES for non GLES builds
-#        -> adjust the FILE sources and remove the macro from above files
-
 project(ETLEGACY C CXX)
 set(ETLEGACY_VERSION "2.71rc4-dirty")
 set(ETLEGACY_VERSIONPLAIN "2,71,4,0")

@@ -1307,7 +1307,12 @@ void IN_Init(void)
 		return;
 	}
 
+#ifdef FEATURE_RENDERER_GLES
+	// FIXME: something is seriously wrong with the OpenGL ES renderer
+	mainScreen = GLimp_MainWindow();
+#else
 	mainScreen = (SDL_Window *)re.MainWindow();
+#endif
 
 	Com_DPrintf("\n------- Input Initialization -------\n");
 

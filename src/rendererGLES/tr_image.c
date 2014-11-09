@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_image.c
+ */
+/**
+ * @file rendererGLES/tr_image.c
  */
 
 #include "tr_local.h"
@@ -52,13 +53,14 @@ static image_t *hashTable[FILE_HASH_SIZE];
 int  imageBufferSize[BUFFER_MAX_TYPES] = { 0, 0, 0 };
 void *imageBufferPtr[BUFFER_MAX_TYPES] = { NULL, NULL, NULL };
 
-void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
+void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename)
 {
 	if (imageBufferSize[bufferType] < R_IMAGE_BUFFER_SIZE && size <= imageBufferSize[bufferType])
 	{
 		imageBufferSize[bufferType] = R_IMAGE_BUFFER_SIZE;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
-//DAJ TEST		imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] );
+		// TEST
+		//imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] );
 	}
 	if (size > imageBufferSize[bufferType])       // it needs to grow
 	{
@@ -70,9 +72,10 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
 		imageBufferSize[bufferType] = size;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
 	}
+
 	if (!imageBufferPtr[bufferType])
 	{
-		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer\n");
+		Ren_Drop("R_GetImageBuffer: unable to allocate buffer for image %s with size: %i\n", filename, size);
 	}
 
 	return imageBufferPtr[bufferType];
@@ -674,7 +677,7 @@ static void Upload32(unsigned *data,
 
 	if (scaled_width != width || scaled_height != height)
 	{
-		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED);
+		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED, "resample");
 		ResampleTexture(data, width, height, resampledBuffer, scaled_width, scaled_height);
 		data   = resampledBuffer;
 		width  = scaled_width;
@@ -709,7 +712,7 @@ static void Upload32(unsigned *data,
 	}
 
 	//scaledBuffer = ri.Hunk_AllocateTempMemory( sizeof( unsigned ) * scaled_width * scaled_height );
-	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED);
+	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED, "resample");
 
 	// scan the texture for each channel's max values
 	// and verify if the alpha channel is being used or not
@@ -816,34 +819,34 @@ static void Upload32(unsigned *data,
 	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, (mipmap) ? GL_TRUE : GL_FALSE);
 
 	// and now, convert if needed and upload
-	// GLES doesn't do convertion itself, so we have to handle that
+	// GLES doesn't do conversion itself, so we have to handle that
 	byte *temp;
 	switch (internalFormat)
 	{
 	case GL_RGB5:
 		temp = gles_convertRGB5((byte *)scaledBuffer, scaled_width, scaled_height);
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, scaled_width, scaled_height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, temp);
-		Z_Free(temp);
+		ri.Free(temp);
 		break;
 	case GL_RGBA4:
 		temp = gles_convertRGBA4((byte *)scaledBuffer, scaled_width, scaled_height);
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, temp);
-		Z_Free(temp);
+		ri.Free(temp);
 		break;
 	case GL_RGB:
 		temp = gles_convertRGB((byte *)scaledBuffer, scaled_width, scaled_height);
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, scaled_width, scaled_height, 0, GL_RGB, GL_UNSIGNED_BYTE, temp);
-		Z_Free(temp);
+		ri.Free(temp);
 		break;
 	case 1:
 		temp = gles_convertLuminance((byte *)data, width, height);
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, temp);
-		Z_Free(temp);
+		ri.Free(temp);
 		break;
 	case 2:
 		temp = gles_convertLuminanceAlpha((byte *)data, width, height);
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, temp);
-		Z_Free(temp);
+		ri.Free(temp);
 		break;
 	default:
 		internalFormat = GL_RGBA;

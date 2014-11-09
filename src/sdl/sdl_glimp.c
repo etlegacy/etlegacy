@@ -39,11 +39,13 @@
 #include <stdlib.h>
 #include <math.h>
 
-#ifdef FEATURE_RENDERER2
-#include "../renderer2/tr_local.h"
-#else
-#include "../renderer/tr_local.h"
-#endif
+#if defined(FEATURE_RENDERER2)
+#   include "../renderer2/tr_local.h"
+#elif defined(FEATURE_RENDERER_GLES)
+#   include "../rendererGLES/tr_local.h"
+#else // OpenGL 2 renderer
+#   include "../renderer/tr_local.h"
+ #endif
 
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
@@ -56,10 +58,6 @@
 static int gammaResetTime = 0;
 #endif
 #endif // __APPLE__
-
-#ifdef FEATURE_RENDERER_GLES
-#include "eglport.h"
-#endif
 
 typedef enum
 {
@@ -97,10 +95,6 @@ void GLimp_Shutdown(void)
 		SDL_DestroyWindow(main_window);
 		main_window = NULL;
 	}
-
-#ifdef FEATURE_RENDERER_GLES
-	EGL_Close();
-#endif
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
@@ -597,12 +591,12 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	SDL_DisplayMode desktopMode;
 	int             display = 0;
 	int             x       = SDL_WINDOWPOS_UNDEFINED, y = SDL_WINDOWPOS_UNDEFINED;
-#ifdef FEATURE_RENDERER_GLES
-	Uint32 flags = 0;
-#else
+
 	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED;
-#endif
+
+#ifndef FEATURE_RENDERER_GLES
 	GLenum glewResult;
+#endif
 
 	Ren_Print("Initializing OpenGL display\n");
 
@@ -836,7 +830,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			perChannelColorBits = 4;
 		}
 
-#ifndef FEATURE_RENDERER_GLES
 #ifdef __sgi // Fix for SGIs grabbing too many bits of color
 		if (perChannelColorBits == 4)
 		{
@@ -886,8 +879,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			continue;
 		}
 
-#endif // FEATURE_RENDERER_GLES
-
 		//This is disabled since at least now we have no use for this
 		/*
 		if (!Glimp_Create2DRenderer(main_window))
@@ -921,14 +912,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		SDL_SetWindowIcon(main_window, icon);
 
-#ifdef FEATURE_RENDERER_GLES
-		EGL_Open(glConfig.vidWidth, glConfig.vidHeight);
-		sdlcolorbits    = eglColorbits;
-		testDepthBits   = eglDepthbits;
-		testStencilBits = eglStencilbits;
-#endif
-
-#ifdef FEATURE_RENDERER2
+#if defined(FEATURE_RENDERER2)
 		glewExperimental = GL_TRUE;
 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -1129,8 +1113,7 @@ static void GLimp_InitExtensions(void)
 	GLint glint = 0;
 	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
-	//Ren_Print("...not using GL_ARB_multitexture, %i texture units\n", glConfig.maxActiveTextures );
-	//glConfig.maxActiveTextures=4;
+
 	if (glConfig.maxActiveTextures > 1)
 	{
 		Ren_Print("...using GL_ARB_multitexture (%i texture units)\n", glConfig.maxActiveTextures);
@@ -1367,6 +1350,7 @@ success:
 	{
 		Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
 	}
+#ifndef FEATURE_RENDERER_GLES
 	else
 	{
 		int i = 0, exts = 0;
@@ -1383,6 +1367,7 @@ success:
 			Q_strcat(glConfig.extensions_string, sizeof(glConfig.extensions_string), va("%s ", glGetStringi(GL_EXTENSIONS, i)));
 		}
 	}
+#endif // FEATURE_RENDERER_GLES
 
 	// initialize extensions
 #ifdef FEATURE_RENDERER2
@@ -1403,15 +1388,11 @@ success:
  */
 void GLimp_EndFrame(void)
 {
-#ifdef FEATURE_RENDERER_GLES
-	EGL_SwapBuffers();
-#else
 	// don't flip if drawing to front buffer
 	if (Q_stricmp(r_drawBuffer->string, "GL_FRONT") != 0)
 	{
 		SDL_GL_SwapWindow(main_window);
 	}
-#endif
 
 	if (r_fullscreen->modified)
 	{

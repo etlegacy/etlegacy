@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_decals.c
- * @brief handles projection of decals (nee marks) onto brush model surfaces
+ */
+/**
+ * @file rendererGLES/tr_decals.c
+ * @brief Handles projection of decals (nee marks) onto brush model surfaces
  */
 
 #include "tr_local.h"

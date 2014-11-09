@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_animation_mds.c
+ */
+/**
+ * @file rendererGLES/tr_animation_mds.c
  */
 
 #include "tr_local.h"
@@ -143,15 +144,12 @@ R_CullModel
 */
 static int R_CullModel(mdsHeader_t *header, trRefEntity_t *ent)
 {
-	vec3_t     bounds[2];
-	mdsFrame_t *oldFrame, *newFrame;
-	int        i, frameSize;
-
-	frameSize = (int) (sizeof(mdsFrame_t) - sizeof(mdsBoneFrameCompressed_t) + header->numBones * sizeof(mdsBoneFrameCompressed_t));
-
+	vec3_t bounds[2];
+	int    i;
+	int    frameSize = (int) (sizeof(mdsFrame_t) - sizeof(mdsBoneFrameCompressed_t) + header->numBones * sizeof(mdsBoneFrameCompressed_t));
 	// compute frame pointers
-	newFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.frame * frameSize);
-	oldFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.oldframe * frameSize);
+	mdsFrame_t *newFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.frame * frameSize);
+	mdsFrame_t *oldFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.oldframe * frameSize);
 
 	// cull bounding sphere ONLY if this is not an upscaled entity
 	if (!ent->e.nonNormalizedAxes)
@@ -329,16 +327,11 @@ R_AddAnimSurfaces
 */
 void R_AddAnimSurfaces(trRefEntity_t *ent)
 {
-	mdsHeader_t  *header;
+	mdsHeader_t  *header = tr.currentModel->model.mds;
 	mdsSurface_t *surface;
 	shader_t     *shader = 0;
 	int          i, fogNum, cull;
-	qboolean     personalModel;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
-
-	header = tr.currentModel->model.mds;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
@@ -414,11 +407,11 @@ void R_AddAnimSurfaces(trRefEntity_t *ent)
 
 			if (shader == tr.defaultShader)
 			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %s in skin %s\n", surface->name, skin->name);
+				Ren_Developer("WARNING: no shader for surface %s in skin %s\n", surface->name, skin->name);
 			}
 			else if (shader->defaultShader)
 			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+				Ren_Developer("WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 			}
 		}
 		else
@@ -443,12 +436,12 @@ static ID_INLINE void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_
 	out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2];
 }
 
-static ID_INLINE void LocalMatrixTransformVectorTranslate(vec3_t in, vec3_t mat[3], vec3_t tr, vec3_t out)
-{
-	out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0];
-	out[1] = in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1];
-	out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2];
-}
+// static ID_INLINE void LocalMatrixTransformVectorTranslate(vec3_t in, vec3_t mat[3], vec3_t tr, vec3_t out)
+// {
+//  out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0];
+//  out[1] = in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1];
+//  out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2];
+// }
 
 static ID_INLINE void LocalScaledMatrixTransformVector(vec3_t in, float s, vec3_t mat[3], vec3_t out)
 {
@@ -457,26 +450,26 @@ static ID_INLINE void LocalScaledMatrixTransformVector(vec3_t in, float s, vec3_
 	out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]);
 }
 
-static ID_INLINE void LocalScaledMatrixTransformVectorTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
-{
-	out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0]);
-	out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1]);
-	out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2]);
-}
+// static ID_INLINE void LocalScaledMatrixTransformVectorTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
+// {
+//  out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0]);
+//  out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1]);
+//  out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2]);
+// }
 
-static ID_INLINE void LocalScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
-{
-	out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
-	out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
-	out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
-}
+// static ID_INLINE void LocalScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
+// {
+//  out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
+//  out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
+//  out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
+// }
 
-static ID_INLINE void LocalAddScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
-{
-	out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
-	out[1] += s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
-	out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
-}
+// static ID_INLINE void LocalAddScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
+// {
+//  out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
+//  out[1] += s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
+//  out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
+// }
 
 static ID_INLINE void LocalAddScaledMatrixTransformVectorTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
 {
@@ -485,12 +478,12 @@ static ID_INLINE void LocalAddScaledMatrixTransformVectorTranslate(vec3_t in, fl
 	out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2]);
 }
 
-static ID_INLINE void LocalAddScaledMatrixTransformVector(vec3_t in, float s, vec3_t mat[3], vec3_t out)
-{
-	out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]);
-	out[1] += s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]);
-	out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]);
-}
+// static ID_INLINE void LocalAddScaledMatrixTransformVector(vec3_t in, float s, vec3_t mat[3], vec3_t out)
+// {
+//  out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]);
+//  out[1] += s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]);
+//  out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]);
+// }
 
 static float LAVangle;
 static float sp, sy, cp, cy;
@@ -535,28 +528,28 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 ===============================================================================
 */
 
-static ID_INLINE void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4_t dst[4])
-{
-	dst[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
-	dst[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1] + a[0][3] * b[3][1];
-	dst[0][2] = a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2] + a[0][3] * b[3][2];
-	dst[0][3] = a[0][0] * b[0][3] + a[0][1] * b[1][3] + a[0][2] * b[2][3] + a[0][3] * b[3][3];
+// static ID_INLINE void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4_t dst[4])
+// {
+//  dst[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
+//  dst[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1] + a[0][3] * b[3][1];
+//  dst[0][2] = a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2] + a[0][3] * b[3][2];
+//  dst[0][3] = a[0][0] * b[0][3] + a[0][1] * b[1][3] + a[0][2] * b[2][3] + a[0][3] * b[3][3];
 
-	dst[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0] + a[1][3] * b[3][0];
-	dst[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1] + a[1][3] * b[3][1];
-	dst[1][2] = a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2] + a[1][3] * b[3][2];
-	dst[1][3] = a[1][0] * b[0][3] + a[1][1] * b[1][3] + a[1][2] * b[2][3] + a[1][3] * b[3][3];
+//  dst[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0] + a[1][3] * b[3][0];
+//  dst[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1] + a[1][3] * b[3][1];
+//  dst[1][2] = a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2] + a[1][3] * b[3][2];
+//  dst[1][3] = a[1][0] * b[0][3] + a[1][1] * b[1][3] + a[1][2] * b[2][3] + a[1][3] * b[3][3];
 
-	dst[2][0] = a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0] + a[2][3] * b[3][0];
-	dst[2][1] = a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1] + a[2][3] * b[3][1];
-	dst[2][2] = a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2] + a[2][3] * b[3][2];
-	dst[2][3] = a[2][0] * b[0][3] + a[2][1] * b[1][3] + a[2][2] * b[2][3] + a[2][3] * b[3][3];
+//  dst[2][0] = a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0] + a[2][3] * b[3][0];
+//  dst[2][1] = a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1] + a[2][3] * b[3][1];
+//  dst[2][2] = a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2] + a[2][3] * b[3][2];
+//  dst[2][3] = a[2][0] * b[0][3] + a[2][1] * b[1][3] + a[2][2] * b[2][3] + a[2][3] * b[3][3];
 
-	dst[3][0] = a[3][0] * b[0][0] + a[3][1] * b[1][0] + a[3][2] * b[2][0] + a[3][3] * b[3][0];
-	dst[3][1] = a[3][0] * b[0][1] + a[3][1] * b[1][1] + a[3][2] * b[2][1] + a[3][3] * b[3][1];
-	dst[3][2] = a[3][0] * b[0][2] + a[3][1] * b[1][2] + a[3][2] * b[2][2] + a[3][3] * b[3][2];
-	dst[3][3] = a[3][0] * b[0][3] + a[3][1] * b[1][3] + a[3][2] * b[2][3] + a[3][3] * b[3][3];
-}
+//  dst[3][0] = a[3][0] * b[0][0] + a[3][1] * b[1][0] + a[3][2] * b[2][0] + a[3][3] * b[3][0];
+//  dst[3][1] = a[3][0] * b[0][1] + a[3][1] * b[1][1] + a[3][2] * b[2][1] + a[3][3] * b[3][1];
+//  dst[3][2] = a[3][0] * b[0][2] + a[3][1] * b[1][2] + a[3][2] * b[2][2] + a[3][3] * b[3][2];
+//  dst[3][3] = a[3][0] * b[0][3] + a[3][1] * b[1][3] + a[3][2] * b[2][3] + a[3][3] * b[3][3];
+// }
 
 // const usage would require an explicit cast, non ANSI C
 // see unix/const-arg.c
@@ -578,77 +571,77 @@ static ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const*/ vec4_t a[4]
 	t[2]      = a[2][0] * b[0][3] + a[2][1] * b[1][3] + a[2][2] * b[2][3] + a[2][3] * b[3][3];
 }
 
-static ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
-{
-	int i, j;
+// static ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
+// {
+//  int i, j;
 
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
-			transpose[i][j] = matrix[j][i];
-		}
-	}
-}
+//  for (i = 0; i < 4; i++)
+//  {
+//      for (j = 0; j < 4; j++)
+//      {
+//          transpose[i][j] = matrix[j][i];
+//      }
+//  }
+// }
 
-static ID_INLINE void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
-{
-	int i, j;
+// static ID_INLINE void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
+// {
+//  int i, j;
 
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			dst[i][j] = axis[i][j];
-		}
-		dst[3][i] = 0;
-		dst[i][3] = 0;
-	}
-	dst[3][3] = 1;
-}
+//  for (i = 0; i < 3; i++)
+//  {
+//      for (j = 0; j < 3; j++)
+//      {
+//          dst[i][j] = axis[i][j];
+//      }
+//      dst[3][i] = 0;
+//      dst[i][3] = 0;
+//  }
+//  dst[3][3] = 1;
+// }
 
-static ID_INLINE void Matrix4FromScaledAxis(const vec3_t axis[3], const float scale, vec4_t dst[4])
-{
-	int i, j;
+// static ID_INLINE void Matrix4FromScaledAxis(const vec3_t axis[3], const float scale, vec4_t dst[4])
+// {
+//  int i, j;
 
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			dst[i][j] = scale * axis[i][j];
-			if (i == j)
-			{
-				dst[i][j] += 1.0f - scale;
-			}
-		}
-		dst[3][i] = 0;
-		dst[i][3] = 0;
-	}
-	dst[3][3] = 1;
-}
+//  for (i = 0; i < 3; i++)
+//  {
+//      for (j = 0; j < 3; j++)
+//      {
+//          dst[i][j] = scale * axis[i][j];
+//          if (i == j)
+//          {
+//              dst[i][j] += 1.0f - scale;
+//          }
+//      }
+//      dst[3][i] = 0;
+//      dst[i][3] = 0;
+//  }
+//  dst[3][3] = 1;
+// }
 
-static ID_INLINE void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
-{
-	int i, j;
+// static ID_INLINE void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
+// {
+//  int i, j;
 
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			if (i == j)
-			{
-				dst[i][j] = 1;
-			}
-			else
-			{
-				dst[i][j] = 0;
-			}
-		}
-		dst[i][3] = t[i];
-		dst[3][i] = 0;
-	}
-	dst[3][3] = 1;
-}
+//  for (i = 0; i < 3; i++)
+//  {
+//      for (j = 0; j < 3; j++)
+//      {
+//          if (i == j)
+//          {
+//              dst[i][j] = 1;
+//          }
+//          else
+//          {
+//              dst[i][j] = 0;
+//          }
+//      }
+//      dst[i][3] = t[i];
+//      dst[3][i] = 0;
+//  }
+//  dst[3][3] = 1;
+// }
 
 // can put an axis rotation followed by a translation directly into one matrix
 // const usage would require an explicit cast, non ANSI C
@@ -692,33 +685,33 @@ static ID_INLINE void Matrix4FromScaledAxisPlusTranslation(/*const*/ vec3_t axis
 	dst[3][3] = 1;
 }
 
-static ID_INLINE void Matrix4FromScale(const float scale, vec4_t dst[4])
-{
-	int i, j;
+// static ID_INLINE void Matrix4FromScale(const float scale, vec4_t dst[4])
+// {
+//  int i, j;
 
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
-			if (i == j)
-			{
-				dst[i][j] = scale;
-			}
-			else
-			{
-				dst[i][j] = 0;
-			}
-		}
-	}
-	dst[3][3] = 1;
-}
+//  for (i = 0; i < 4; i++)
+//  {
+//      for (j = 0; j < 4; j++)
+//      {
+//          if (i == j)
+//          {
+//              dst[i][j] = scale;
+//          }
+//          else
+//          {
+//              dst[i][j] = 0;
+//          }
+//      }
+//  }
+//  dst[3][3] = 1;
+// }
 
-static ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src, vec3_t dst)
-{
-	dst[0] = m[0][0] * src[0] + m[0][1] * src[1] + m[0][2] * src[2] + m[0][3];
-	dst[1] = m[1][0] * src[0] + m[1][1] * src[1] + m[1][2] * src[2] + m[1][3];
-	dst[2] = m[2][0] * src[0] + m[2][1] * src[1] + m[2][2] * src[2] + m[2][3];
-}
+// static ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src, vec3_t dst)
+// {
+//  dst[0] = m[0][0] * src[0] + m[0][1] * src[1] + m[0][2] * src[2] + m[0][3];
+//  dst[1] = m[1][0] * src[0] + m[1][1] * src[1] + m[1][2] * src[2] + m[1][3];
+//  dst[2] = m[2][0] * src[0] + m[2][1] * src[1] + m[2][2] * src[2] + m[2][3];
+// }
 
 /*
 ===============================================================================
@@ -1140,7 +1133,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 		//----(SA)	print stats for the complete model (not per-surface)
 		if (r_bonesDebug->integer == 4 && totalrt)
 		{
-			ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
+			Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
 			          lodScale,
 			          totalrv,
 			          totalv,
@@ -1299,7 +1292,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 }
 
 #ifdef DBG_PROFILE_BONES
-#define DBG_SHOWTIME    Com_Printf("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
+#define DBG_SHOWTIME    Ren_Print("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
 #else
 #define DBG_SHOWTIME    ;
 #endif
@@ -1391,9 +1384,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 	if (render_count == surface->numVerts)
 	{
-		int ii;
-		for (ii = 0; ii < indexes; ii++)
-			pIndexes[ii] = triangles[ii];
+		memcpy(pIndexes, triangles, sizeof(triangles[0]) * indexes);
 		if (baseVertex)
 		{
 			glIndex_t *indexesEnd;
@@ -1489,30 +1480,32 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 				GL_Bind(tr.whiteImage);
 				qglLineWidth(1);
-				//*TODO
-/*				qglBegin(GL_LINES);
-                for (j = 0; j < 3; j++)
-                {
-                    VectorClear(vec);
-                    vec[j] = 1;
-                    qglColor3fv(vec);
-                    qglVertex3fv(bonePtr->translation);
-                    VectorMA(bonePtr->translation, 5, bonePtr->matrix[j], vec);
-                    qglVertex3fv(vec);
-                }
-                qglEnd();
-*/
+#if 0
+                // TODO: OpenGL ES renderer
+				qglBegin(GL_LINES);
+				for (j = 0; j < 3; j++)
+				{
+					VectorClear(vec);
+					vec[j] = 1;
+					qglColor3fv(vec);
+					qglVertex3fv(bonePtr->translation);
+					VectorMA(bonePtr->translation, 5, bonePtr->matrix[j], vec);
+					qglVertex3fv(vec);
+				}
+				qglEnd();
+#endif // 0
 				// connect to our parent if it's valid
 				if (validBones[boneInfo[*boneRefs].parent])
 				{
 					qglLineWidth(2);
-					//*TODO
-/*					qglBegin(GL_LINES);
-                    qglColor3f(.6, .6, .6);
-                    qglVertex3fv(bonePtr->translation);
-                    qglVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
-                    qglEnd();
-*/
+#if 0
+                        // TODO: OpenGL ES renderer
+					qglBegin(GL_LINES);
+					qglColor3f(.6, .6, .6);
+					qglVertex3fv(bonePtr->translation);
+					qglVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
+					qglEnd();
+#endif
 				}
 
 				qglLineWidth(1);
@@ -1529,25 +1522,27 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 			GL_Bind(tr.whiteImage);
 			qglLineWidth(1);
-			//*TODO
-/*			qglBegin(GL_LINES);
-            qglColor3f(.0, .0, .8);
+#if 0
+            // TODO: OpenGL ES renderer
+			qglBegin(GL_LINES);
+			qglColor3f(.0, .0, .8);
 
-            pIndexes = &tess.indexes[oldIndexes];
-            for (j = 0; j < render_indexes / 3; j++, pIndexes += 3)
-            {
-                qglVertex3fv(tempVert + 4 * pIndexes[0]);
-                qglVertex3fv(tempVert + 4 * pIndexes[1]);
+			pIndexes = &tess.indexes[oldIndexes];
+			for (j = 0; j < render_indexes / 3; j++, pIndexes += 3)
+			{
+				qglVertex3fv(tempVert + 4 * pIndexes[0]);
+				qglVertex3fv(tempVert + 4 * pIndexes[1]);
 
-                qglVertex3fv(tempVert + 4 * pIndexes[1]);
-                qglVertex3fv(tempVert + 4 * pIndexes[2]);
+				qglVertex3fv(tempVert + 4 * pIndexes[1]);
+				qglVertex3fv(tempVert + 4 * pIndexes[2]);
 
-                qglVertex3fv(tempVert + 4 * pIndexes[2]);
-                qglVertex3fv(tempVert + 4 * pIndexes[0]);
-            }
+				qglVertex3fv(tempVert + 4 * pIndexes[2]);
+				qglVertex3fv(tempVert + 4 * pIndexes[0]);
+			}
 
-            qglEnd();
-*/
+			qglEnd();
+#endif // 0
+
 			// track debug stats
 			if (r_bonesDebug->integer == 4)
 			{
@@ -1559,7 +1554,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 			if (r_bonesDebug->integer == 3)
 			{
-				ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
+				Ren_Print("Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
 				          ( float )(100.0 * render_indexes / 3) / (float) surface->numTriangles);
 			}
 		}
@@ -1574,7 +1569,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 	}
 
 #ifdef DBG_PROFILE_BONES
-	Com_Printf("\n");
+	Ren_Print("\n");
 #endif
 }
 

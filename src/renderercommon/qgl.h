@@ -37,7 +37,6 @@
 
 #ifdef FEATURE_RENDERER_GLES
 #   include <GLES/gl.h>
-#   include <EGL/egl.h>
 #elif defined(__MORPHOS__)
 #   include <proto/tinygl.h>
 #   include <tgl/gl.h>

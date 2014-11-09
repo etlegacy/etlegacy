@@ -68,7 +68,7 @@ static jmp_buf sys_exitframe;
 static int     sys_retcode;
 static char    sys_exitstr[MAX_STRING_CHARS];
 
-/*
+/**
  * @return homepath pointing to "My Documents\ETLegacy"
  */
 char *Sys_DefaultHomePath(void)
@@ -654,13 +654,9 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 #endif
 
-/*
-==============
-Sys_GLimpSafeInit
-
-Windows specific "safe" GL implementation initialisation
-==============
-*/
+/**
+ * @brief Windows specific "safe" GL implementation initialisation
+ */
 void Sys_GLimpSafeInit(void)
 {
 #ifndef DEDICATED
@@ -673,13 +669,9 @@ void Sys_GLimpSafeInit(void)
 #endif
 }
 
-/*
-==============
-Sys_GLimpInit
-
-Windows specific GL implementation initialisation
-==============
-*/
+/**
+ * @brief Windows specific GL implementation initialisation
+ */
 void Sys_GLimpInit(void)
 {
 #ifndef DEDICATED

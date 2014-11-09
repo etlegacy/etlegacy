@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_local.h
+ */
+/**
+ * @file rendererGLES/tr_local.h
  */
 
 #ifndef TR_LOCAL_H
@@ -1404,18 +1405,6 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 */
 
 extern int gl_NormalFontBase;
-
-void GLimp_Init(void);
-void GLimp_Shutdown(void);
-void GLimp_EndFrame(void);
-void GLimp_LogComment(char *comment);
-void GLimp_Minimize(void);
-
-// NOTE: linux works with float gamma value, not the gamma table
-// the params won't be used, getting the r_gamma cvar directly
-void GLimp_SetGamma(unsigned char red[256],
-                    unsigned char green[256],
-                    unsigned char blue[256]);
 
 /*
 ====================================================================

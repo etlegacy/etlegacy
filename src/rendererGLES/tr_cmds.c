@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_cmds.c
+ */
+/**
+ * @file rendererGLES/tr_cmds.c
  */
 
 #include "tr_local.h"

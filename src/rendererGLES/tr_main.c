@@ -27,9 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_main.c
- * @brief main control flow for each frame
+ */
+/**
+ * @file rendererGLES/tr_main.c
+ * @brief Main control flow for each frame
  */
 
 #include "tr_local.h"
@@ -1437,7 +1438,7 @@ DRAWSURF SORTING
 R_Radix
 ===============
 */
-static ID_NONSTATIC_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t *dest)
+static ID_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t *dest)
 {
 	int           count[256] = { 0 };
 	int           index[256];

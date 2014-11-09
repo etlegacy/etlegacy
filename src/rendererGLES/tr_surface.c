@@ -27,8 +27,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_surface.c
+ */
+/**
+ * @file rendererGLES/tr_surface.c
  *
  * THIS ENTIRE FILE IS BACK END
  * b ackEnd.currentEntity *will be valid.

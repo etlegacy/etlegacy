@@ -14,7 +14,7 @@ endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
 	if(FEATURE_RENDERER_GLES)
-		list(APPEND RENDERER_LIBRARIES -lEGL -lGLES_CM)
+		list(APPEND RENDERER_LIBRARIES -lGLESv1_CM)
 		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
 	else()
 		find_package(OpenGL REQUIRED)

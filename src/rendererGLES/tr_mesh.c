@@ -27,11 +27,11 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ */
+/**
+ * @file rendererGLES/tr_mesh.c
  *
- * @file tr_mesh.c
- * @brief  tr_mesh.c
- *
- * NOTE: Any changes made here must be duplicated in tr_cmesh.c for MDC support
+ * @warning Any changes made here must be duplicated in tr_cmesh.c for MDC support
  */
 
 #include "tr_local.h"
