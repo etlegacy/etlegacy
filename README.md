@@ -20,10 +20,10 @@ IRC: \#etlegacy on irc.freenode.net
 INTRODUCTION
 ============
 
-ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/) 
-which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory. 
+ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/)
+which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory.
 
-Its main goals are fixing bugs, cleaning up the codebase and adding useful features while remaining 
+Its main goals are fixing bugs, cleaning up the codebase and adding useful features while remaining
 compatible with the ET 2.60b version.
 
 For more information consult our [changelog](http://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
@@ -48,7 +48,7 @@ for 32 bits architecture on a 64 bits system will you be able to play on 2.60b s
 
 In case you are a running a 64 bits system, you probably might want to use the
 **bundled libraries** which are located in a separate *etlegacy-libs* repository and
-can be automatically downloaded using the `git submodule` command. See the next section 
+can be automatically downloaded using the `git submodule` command. See the next section
 for more details.
 
 NOTE: Even if you have a 64 bits linux distribution which provides 32 bits versions of all
@@ -61,10 +61,10 @@ Dependencies
 * **CMake** (compile-time only)
 * **OpenGL**
 * **GLEW**, version 1.10
-* **SDL**, version 2.0 (we do recommend 2.0.3 - see SDL2 changelog!)
+* **SDL**, version 2.0.3
 * **libjpeg**, version 8, or **libjpeg-turbo**, version 1.3
 * **libcurl** (optional, enabled by default)
-* **Lua**, either version 5.1 or 5.2 (optional, enabled by default)
+* **Lua**, either version 5.2 (optional, enabled by default)
 * **Ogg Vorbis** (optional, enabled by default)
 * **Freetype**, version 2 (optional)
 * **OpenAL** (optional)
@@ -122,7 +122,7 @@ Then compile ET:Legacy:
 In terminal run:
 
  $ ./easybuild.sh
- 
+
 Install:
 
  $ cd build
@@ -161,7 +161,7 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
 NOTES:
 
 In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
-Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows 
+Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows
 SDK 7 and copy 'win32.mak' to libs/jpeg/.
 
 If the build fails during libcurl compilation because of missing *sed* utility,
@@ -195,17 +195,17 @@ LICENSE
 
 See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
 
-ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also 
-subject to certain additional terms. You should have received a copy of these 
-additional terms immediately following the terms and conditions of the GNU GPL 
-which accompanied the Wolf ET Source Code.  If not, please request a copy in 
-writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, 
+ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also
+subject to certain additional terms. You should have received a copy of these
+additional terms immediately following the terms and conditions of the GNU GPL
+which accompanied the Wolf ET Source Code.  If not, please request a copy in
+writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120,
 Rockville, Maryland 20850 USA.
 
-EXCLUDED CODE:  The code described below and contained in the Wolfenstein: 
-Enemy Territory GPL Source Code release is not part of the Program covered by 
-the GPL and is expressly excluded from its terms.  You are solely responsible 
-for obtaining from the copyright holder a license for such code and complying 
+EXCLUDED CODE:  The code described below and contained in the Wolfenstein:
+Enemy Territory GPL Source Code release is not part of the Program covered by
+the GPL and is expressly excluded from its terms.  You are solely responsible
+for obtaining from the copyright holder a license for such code and complying
 with the applicable license terms.
 
 IO on .zip files using portions of zlib
