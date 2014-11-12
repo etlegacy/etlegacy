@@ -52,10 +52,6 @@ struct Library *DynLoadBase = NULL;
 #endif
 #endif
 
-#ifndef DEDICATED
-#include "../sdl/sdl_defs.h"
-#endif
-
 #include "sys_local.h"
 #include "sys_loadlib.h"
 
@@ -956,34 +952,6 @@ int main(int argc, char **argv)
 {
 	int  i;
 	char commandLine[MAX_STRING_CHARS] = { 0 };
-
-#ifndef DEDICATED
-	// SDL version check
-
-	// Compile time
-#   if !SDL_VERSION_ATLEAST(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)
-#       error A more recent version of SDL is required
-#   endif
-
-	// Run time
-	SDL_version ver;
-	SDL_GetVersion(&ver);
-
-#define MINSDL_VERSION \
-	XSTRING(MINSDL_MAJOR) "." \
-	XSTRING(MINSDL_MINOR) "." \
-	XSTRING(MINSDL_PATCH)
-
-	if (SDL_VERSIONNUM(ver.major, ver.minor, ver.patch) <
-	    SDL_VERSIONNUM(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH))
-	{
-		Sys_Dialog(DT_ERROR, va("SDL version " MINSDL_VERSION " or greater is required, "
-		                                                      "but only version %d.%d.%d was found. You may be able to obtain a more recent copy "
-		                                                      "from http://www.libsdl.org/.", ver.major, ver.minor, ver.patch), "SDL Library Too Old");
-
-		Sys_Exit(1);
-	}
-#endif
 
 #ifdef __MORPHOS__
 	// don't let locales with decimal comma screw up the string to float conversions
