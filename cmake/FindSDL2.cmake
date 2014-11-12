@@ -3,6 +3,7 @@
 # SDL2_LIBRARY, the name of the library to link against
 # SDL2_FOUND, if false, do not try to link to SDL2
 # SDL2_INCLUDE_DIR, where to find SDL.h
+# SDL2_VERSION_STRING, the version of SDL2 found
 #
 # This module responds to the the flag:
 # SDL2_BUILDING_LIBRARY
@@ -171,10 +172,21 @@ IF(SDL2_LIBRARY_TEMP)
   # Set the temp variable to INTERNAL so it is not seen in the CMake GUI
   SET(SDL2_LIBRARY_TEMP "${SDL2_LIBRARY_TEMP}" CACHE INTERNAL "")
 
-  SET(SDL2_FOUND "YES")
 ENDIF(SDL2_LIBRARY_TEMP)
 
-INCLUDE(FindPackageHandleStandardArgs)
+# Determine SDL2 version
+IF(SDL2_INCLUDE_DIR AND EXISTS "${SDL2_INCLUDE_DIR}/SDL_version.h")
+  FILE(STRINGS "${SDL2_INCLUDE_DIR}/SDL_version.h" sdl_version_str REGEX "^#define SDL_([A-Z]*(_VERSION|PATCHLEVEL))[ ]+[0-9]+")
+  STRING(REGEX REPLACE ".*#define SDL_MAJOR_VERSION[ ]+([0-9]+).*" "\\1" SDL_MAJOR_VERSION ${sdl_version_str})
+  STRING(REGEX REPLACE ".*#define SDL_MINOR_VERSION[ ]+([0-9]+).*" "\\1" SDL_MINOR_VERSION ${sdl_version_str})
+  STRING(REGEX REPLACE ".*#define SDL_PATCHLEVEL[ ]+([0-9]+).*" "\\1" SDL_PATCHLEVEL ${sdl_version_str})
+  SET(SDL2_VERSION_STRING ${SDL_MAJOR_VERSION}.${SDL_MINOR_VERSION}.${SDL_PATCHLEVEL})
+  UNSET(sdl_version_str)
+ENDIF()
 
+INCLUDE(FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set SDL2_FOUND to TRUE if
+# all listed variables are TRUE
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2
-                                  REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)
+                                  REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR
+                                  VERSION_VAR SDL2_VERSION_STRING)

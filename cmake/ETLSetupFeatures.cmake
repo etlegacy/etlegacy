@@ -40,8 +40,8 @@ if(BUILD_CLIENT)
 		endif()
 	endif()
 
-        if(NOT BUNDLED_SDL)
-		find_package(SDL2 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
+	if(NOT BUNDLED_SDL)
+		find_package(SDL2 2.0.3 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
 		list(APPEND SDL_LIBRARIES ${SDL2_LIBRARY})
 		include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
 	else() # BUNDLED_SDL
@@ -100,7 +100,7 @@ if(BUILD_CLIENT)
 	else(FEATURE_CURL)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
-	
+
 	if(FEATURE_JANSSON)
 		list(APPEND CLIENT_LIBRARIES ${BUNDLED_JASSON_LIBRARIES}) # NOTE: LIBRARY not LIBRARIES
 		include_directories(SYSTEM ${BUNDLED_JASSON_INCLUDE_DIR})
@@ -176,7 +176,7 @@ if(BUILD_CLIENT)
 		endif()
 		add_definitions(-DFEATURE_OGG_VORBIS)
 	endif(FEATURE_OGG_VORBIS)
-	
+
 	if(FEATURE_IRC_CLIENT)
 		add_definitions(-DFEATURE_IRC_CLIENT)
 		list(APPEND CLIENT_SRC ${IRC_CLIENT_FILES})
