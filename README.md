@@ -64,7 +64,7 @@ Dependencies
 * **SDL**, version 2.0.3
 * **libjpeg**, version 8, or **libjpeg-turbo**, version 1.3
 * **libcurl** (optional, enabled by default)
-* **Lua**, either version 5.2 (optional, enabled by default)
+* **Lua**, version 5.2 (optional, enabled by default)
 * **Ogg Vorbis** (optional, enabled by default)
 * **Freetype**, version 2 (optional)
 * **OpenAL** (optional)
