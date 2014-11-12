@@ -3357,6 +3357,16 @@ void Tess_StageIteratorGeneric()
 			RB_SetStencil(GL_BACK, &pStage->backStencil);
 		}
 
+		if (pStage->bundle[0].isTcGen == qtrue)
+		{
+			vec3_t vec;
+
+			VectorCopy(pStage->bundle[0].tcGenVectors[0], vec);
+			SetUniformVec3(UNIFORM_TCGEN0VECTOR0, vec);
+			VectorCopy(pStage->bundle[0].tcGenVectors[1], vec);
+			SetUniformVec3(UNIFORM_TCGEN0VECTOR1, vec);
+		}
+
 		switch (pStage->type)
 		{
 		case ST_COLORMAP:

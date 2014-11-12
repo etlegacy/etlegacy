@@ -908,6 +908,9 @@ typedef struct
 	float imageAnimationSpeed;
 	image_t *image[MAX_IMAGE_ANIMATIONS];
 
+	qboolean isTcGen;
+	vec3_t tcGenVectors[2];
+
 	uint8_t numTexMods;
 	texModInfo_t *texMods;
 

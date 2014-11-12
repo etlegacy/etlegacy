@@ -2394,7 +2394,10 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "vector"))
 			{
-				Ren_Warning("WARNING: texGen vector keyword not supported in shader '%s'\n", shader.name);
+				ParseVector(text, 3, stage->bundle[0].tcGenVectors[0]);
+				ParseVector(text, 3, stage->bundle[0].tcGenVectors[1]);
+
+				stage->bundle[0].isTcGen = qtrue;
 			}
 			else if (!Q_stricmp(token, "reflect"))
 			{
