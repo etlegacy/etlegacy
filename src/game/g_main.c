@@ -98,7 +98,6 @@ vmCvar_t g_synchronousClients;
 #endif // ALLOW_GSYNC
 vmCvar_t g_warmup;
 
-vmCvar_t g_warmupLatch;
 vmCvar_t g_nextTimeLimit;
 
 vmCvar_t g_userTimeLimit;
@@ -354,8 +353,6 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_warmup,                            "g_warmup",                            "60",                         CVAR_ARCHIVE,                                    0, qtrue},
 	{ &g_doWarmup,                          "g_doWarmup",                          "0",                          CVAR_ARCHIVE,                                    0, qtrue},
-
-	{ &g_warmupLatch,                       "g_warmupLatch",                       "1",                          0,                                               0, qfalse},
 
 	{ &g_nextTimeLimit,                     "g_nextTimeLimit",                     "0",                          CVAR_WOLFINFO,                                   0, qfalse},
 	{ &g_currentRound,                      "g_currentRound",                      "0",                          CVAR_WOLFINFO,                                   0, qfalse, qfalse},
