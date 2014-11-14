@@ -1213,6 +1213,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 	if (key == K_MOUSE1)
 	{
 		int pos = ((cgs.cursorY - DB_MAPVOTE_Y - 2) / 12) + cgs.dbMapVoteListOffset;
+
 		if (pos < 0 || pos >= cgs.dbNumMaps)
 		{
 			return qfalse;
@@ -1913,6 +1914,7 @@ qboolean CG_DebriefingPlayerList_KeyDown(panel_button_t *button, int key)
 	if (key == K_MOUSE1)
 	{
 		int pos = ((cgs.cursorY - DH_HEADING_Y) / 12) + cgs.dbPlayerListOffset;
+
 		if (pos < 0 || pos >= cgs.maxclients)
 		{
 			return qfalse;
@@ -2299,7 +2301,7 @@ int CG_Debriefing_ScrollGetMax(panel_button_t *button)
 
 int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 {
-	int i, cnt = 0;
+	int i;
 
 	switch (button->data[0])
 	{
@@ -2313,6 +2315,9 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 		}
 		return cgs.maxclients;
 	case 1:
+	{
+		int cnt = 0;
+
 		if (!cgs.dbWeaponStatsRecieved)
 		{
 			return 0;
@@ -2325,6 +2330,7 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 			}
 		}
 		return cnt;
+	}
 	case 2:
 		if (cgs.campaignInfoLoaded)
 		{
@@ -3202,22 +3208,22 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 			{
 				if (winner != defender)
 				{
-					s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!";
+					s = CG_TranslateString("ALLIES SUCCESSFULLY BEAT THE CLOCK!");
 				}
 				else
 				{
-					s = "ALLIES COULDN'T BEAT THE CLOCK!";
+					s = CG_TranslateString("ALLIES COULDN'T BEAT THE CLOCK!");
 				}
 			}
 			else
 			{
 				if (winner != defender)
 				{
-					s = "AXIS SUCCESSFULLY BEAT THE CLOCK!";
+					s = CG_TranslateString("AXIS SUCCESSFULLY BEAT THE CLOCK!");
 				}
 				else
 				{
-					s = "AXIS COULDN'T BEAT THE CLOCK!";
+					s = CG_TranslateString("AXIS COULDN'T BEAT THE CLOCK!");
 				}
 			}
 		}
