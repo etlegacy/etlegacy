@@ -1307,8 +1307,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 
 
 	// Switch from / to fullscreen on Alt+Enter.
-	// No need to restart video if the game's
-	// resolution matches the desktop resolution.
 	if (key == K_ENTER)
 	{
 		if (down)
@@ -1326,7 +1324,8 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 					Com_Printf("Switching to fullscreen rendering\n");
 					Cvar_Set("r_fullscreen", "1");
 				}
-				//Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
+				// some desktops might freeze without restarting the video subsystem
+				Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");
 				return;
 			}
 		}
