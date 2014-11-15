@@ -2270,7 +2270,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "const"))
 			{
-				token                   = COM_ParseExt(text, qfalse);
+				token                   = COM_ParseExt2(text, qfalse);
 				stage->constantColor[3] = 255 * atof(token);
 				stage->alphaGen         = AGEN_CONST;
 			}
