@@ -44,13 +44,14 @@ menuDef {
 
 // Subwindows //
 #define SUBWINDOW_WIDTH		192
-#define SUBWINDOW_HEIGHT	80
+#define SUBWINDOW_HEIGHT	100
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5*(WINDOW_HEIGHT-SUBWINDOW_HEIGHT)
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "AUTO UPDATE" )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-4, 10, "New version available. Do you want to update now?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "UPDATE AVAILABLE" )
+	CVARLABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-4, 10, "com_updatemessage", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, close wm_autoupdate_modal ; getautoupdate )
+	//getautoupdate removed so we only open the legacy page
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, close wm_autoupdate_modal ; uiScript validate_openURL "http://www.etlegacy.com/index.php?r=etlcontrol/release/download"; uiScript quit )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, close wm_autoupdate_modal )
 }

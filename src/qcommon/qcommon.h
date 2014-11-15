@@ -322,7 +322,7 @@ extern int demo_protocols[];
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
-#define PORT_UPDATE         27952
+#define PORT_UPDATE         27951
 #define PORT_SERVER         27960
 
 /*
@@ -907,6 +907,7 @@ extern cvar_t *com_altivec;
 // updater and motd
 extern cvar_t *com_autoupdate;
 extern cvar_t *com_updateavailable;
+extern cvar_t *com_updatemessage;
 extern cvar_t *com_updatefiles;
 extern cvar_t *com_motd;
 extern cvar_t *com_motdString;

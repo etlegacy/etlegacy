@@ -4947,9 +4947,16 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "validate_openURL") == 0)
 		{
-			// this is the only one that effectively triggers the URL, after the disclaimers are done with
-			// we use ui_finalURL as an auxiliary variable to gather URLs from various sources
-			trap_openURL(UI_Cvar_VariableString("ui_finalURL"));
+			if (String_Parse(args, &name2))
+			{
+				trap_openURL(name2);
+			}
+			else
+			{
+				// this is the only one that effectively triggers the URL, after the disclaimers are done with
+				// we use ui_finalURL as an auxiliary variable to gather URLs from various sources
+				trap_openURL(UI_Cvar_VariableString("ui_finalURL"));
+			}
 		}
 		else if (Q_stricmp(name, "clientCheckVote") == 0)
 		{

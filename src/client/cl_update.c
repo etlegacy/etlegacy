@@ -312,7 +312,8 @@ void CL_UpdateInfoPacket(netadr_t from)
 
 	if (!Q_stricmp(com_updateavailable->string, "1"))
 	{
-		Cvar_Set("com_updatefiles", Cmd_Argv(2));
+		Cvar_Set("com_updatemessage", Cmd_Argv(2));
+		Cvar_Set("com_updatefiles", Cmd_Argv(3));
 #ifdef FEATURE_AUTOUPDATE
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
 #endif /* FEATURE_AUTOUPDATE */

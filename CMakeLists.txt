@@ -94,7 +94,7 @@ endif(BUNDLED_LIBS)
 # Set up includes and libraries based on feature options
 include(cmake/ETLSetupFeatures.cmake)
 
-# Group the sources (only msvc now)
+# Group the sources (only msvc and xcode now)
 include(cmake/ETLSourceGroup.cmake)
 
 #-----------------------------------------------------------------

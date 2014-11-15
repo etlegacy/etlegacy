@@ -1068,8 +1068,8 @@
 		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
 		textscale CVARLABEL_TEXT_SCALE                            \
 		textalign CVARLABEL_TEXT_ALIGN                            \
-		textalignx CVARLABEL_TEXT_ALIGN_X                          \
-		textaligny CVARLABEL_TEXT_ALIGN_Y                          \
+		textalignx $evalfloat(CVARLABEL_TEXT_ALIGN_X)                          \
+		textaligny $evalfloat(CVARLABEL_TEXT_ALIGN_Y)                          \
 		forecolor       .6 .6 .6 1                                      \
 		cvar CVARLABEL_CVAR                                  \
 		visible         1                                               \

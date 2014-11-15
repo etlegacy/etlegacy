@@ -4625,6 +4625,372 @@ void R_LoadLightGrid(lump_t *l)
 	Ren_Developer("%i light grid points created\n", w->numLightGridPoints);
 }
 
+void R_LoadLights(char *lightDefs)
+{
+	char         *p, *token, *s;
+	char         keyname[MAX_TOKEN_CHARS];
+	char         value[MAX_TOKEN_CHARS];
+	qboolean     isLight = qfalse;
+	int          numEntities = 0;
+	int          numLights = 0;
+	int          numOmniLights = 0;
+	int          numProjLights = 0;
+	int          numParallelLights = 0;
+	trRefLight_t *light;
+	int i = 0;
+
+	p = lightDefs;
+	numEntities = 1;            // parsed worldspawn so far
+
+	// count lights
+	while (1)
+	{
+		// parse {
+		token = COM_ParseExt2(&p, qtrue);
+
+		if (!*token)
+		{
+			// end of entities string
+			break;
+		}
+
+		if (*token != '{')
+		{
+			Ren_Warning("WARNING: expected { found '%s'\n", token);
+			break;
+		}
+
+		// new entity
+		isLight = qfalse;
+
+		// parse epairs
+		while (1)
+		{
+			// parse key
+			token = COM_ParseExt2(&p, qtrue);
+
+			if (*token == '}')
+			{
+				break;
+			}
+
+			if (!*token)
+			{
+				Ren_Warning("WARNING: EOF without closing bracket\n");
+				break;
+			}
+
+			Q_strncpyz(keyname, token, sizeof(keyname));
+
+			// parse value
+			token = COM_ParseExt2(&p, qfalse);
+
+			if (!*token)
+			{
+				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
+				continue;
+			}
+
+			Q_strncpyz(value, token, sizeof(value));
+
+			// check if this entity is a light
+			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "light"))
+			{
+				isLight = qtrue;
+			}
+		}
+
+		if (*token != '}')
+		{
+			Ren_Warning("WARNING: expected } found '%s'\n", token);
+			break;
+		}
+
+		if (isLight)
+		{
+			numLights++;
+		}
+
+		numEntities++;
+	}
+
+	Ren_Developer("%i total entities counted\n", numEntities);
+	Ren_Developer("%i total lights counted\n", numLights);
+
+	s_worldData.numLights = numLights;
+
+	if (!numLights)
+	{
+		s_worldData.lights = NULL;
+		return;
+	}
+
+	// FIXME add 1 dummy light so we don't trash the hunk memory system ...
+	s_worldData.lights = (trRefLight_t *)ri.Hunk_Alloc((s_worldData.numLights + 1) * sizeof(trRefLight_t), h_low);
+
+	// basic light setup
+	for (i = 0, light = s_worldData.lights; i < s_worldData.numLights; i++, light++)
+	{
+		QuatClear(light->l.rotation);
+		VectorClear(light->l.center);
+
+		light->l.color[0] = 1;
+		light->l.color[1] = 1;
+		light->l.color[2] = 1;
+
+		light->l.scale = r_lightScale->value;
+
+		light->l.radius[0] = 300;
+		light->l.radius[1] = 300;
+		light->l.radius[2] = 300;
+
+		VectorClear(light->l.projTarget);
+		VectorClear(light->l.projRight);
+		VectorClear(light->l.projUp);
+		VectorClear(light->l.projStart);
+		VectorClear(light->l.projEnd);
+
+		light->l.inverseShadows = qfalse;
+
+		light->isStatic = qtrue;
+		light->noRadiosity = qfalse;
+		light->additive = qtrue;
+
+		light->shadowLOD = 0;
+	}
+
+	// parse lights
+	p = lightDefs;
+	numEntities = 1;
+	light = &s_worldData.lights[0];
+
+	while (1)
+	{
+		// parse {
+		token = COM_ParseExt2(&p, qtrue);
+
+		if (!*token)
+		{
+			// end of entities string
+			break;
+		}
+
+		if (*token != '{')
+		{
+			Ren_Warning("WARNING: expected { found '%s'\n", token);
+			break;
+		}
+
+		// new entity
+		isLight = qfalse;
+
+		// parse epairs
+		while (1)
+		{
+			// parse key
+			token = COM_ParseExt2(&p, qtrue);
+
+			if (*token == '}')
+			{
+				break;
+			}
+
+			if (!*token)
+			{
+				Ren_Warning("WARNING: EOF without closing bracket\n");
+				break;
+			}
+
+			Q_strncpyz(keyname, token, sizeof(keyname));
+
+			// parse value
+			token = COM_ParseExt2(&p, qfalse);
+
+			if (!*token)
+			{
+				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
+				continue;
+			}
+
+			Q_strncpyz(value, token, sizeof(value));
+
+			// check if this entity is a light
+			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "light"))
+			{
+				isLight = qtrue;
+			}
+			// check for origin
+			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin"))
+			{
+				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
+				s = &value[0];
+				//COM_Parse1DMatrix(&s, 3, light->l.origin, qfalse);
+			}
+			// check for center
+			else if (!Q_stricmp(keyname, "light_center"))
+			{
+				sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.center, qfalse);
+			}
+			// check for color
+			else if (!Q_stricmp(keyname, "_color"))
+			{
+				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.color, qfalse);
+			}
+			// check for radius
+			else if (!Q_stricmp(keyname, "light_radius"))
+			{
+				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.radius, qfalse);
+			}
+			// check for light_target
+			else if (!Q_stricmp(keyname, "light_target"))
+			{
+				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.projTarget, qfalse);
+				light->l.rlType = RL_PROJ;
+			}
+			// check for light_right
+			else if (!Q_stricmp(keyname, "light_right"))
+			{
+				sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.projRight, qfalse);
+				light->l.rlType = RL_PROJ;
+			}
+			// check for light_up
+			else if (!Q_stricmp(keyname, "light_up"))
+			{
+				sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.projUp, qfalse);
+				light->l.rlType = RL_PROJ;
+			}
+			// check for light_start
+			else if (!Q_stricmp(keyname, "light_start"))
+			{
+				sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.projStart, qfalse);
+				light->l.rlType = RL_PROJ;
+			}
+			// check for light_end
+			else if (!Q_stricmp(keyname, "light_end"))
+			{
+				sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
+				s = &value[0];
+				//Com_Parse1DMatrix(&s, 3, light->l.projEnd, qfalse);
+				light->l.rlType = RL_PROJ;
+			}
+			// check for radius
+			else if (!Q_stricmp(keyname, "light") || !Q_stricmp(keyname, "_light"))
+			{
+				vec_t value2;
+
+				value2 = atof(value);
+				light->l.radius[0] = value2;
+				light->l.radius[1] = value2;
+				light->l.radius[2] = value2;
+			}
+			// check for scale
+			else if (!Q_stricmp(keyname, "light_scale"))
+			{
+				light->l.scale = atof(value);
+
+				if (!r_hdrRendering->integer || !glConfig2.textureFloatAvailable || !glConfig2.framebufferObjectAvailable || !glConfig2.framebufferBlitAvailable)
+				{
+					if (light->l.scale >= r_lightScale->value)
+					{
+						light->l.scale = r_lightScale->value;
+					}
+				}
+			}
+			// check for light shader
+			else if (!Q_stricmp(keyname, "texture"))
+			{
+				light->l.attenuationShader = RE_RegisterShaderLightAttenuation(value);
+			}
+			// check for rotation
+			else if (!Q_stricmp(keyname, "rotation") || !Q_stricmp(keyname, "light_rotation"))
+			{
+				matrix_t rotation;
+
+				sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
+					&rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
+
+				QuatFromMatrix(light->l.rotation, rotation);
+			}
+			// check if this light does not cast any shadows
+			else if (!Q_stricmp(keyname, "noshadows") && !Q_stricmp(value, "1"))
+			{
+				light->l.noShadows = qtrue;
+			}
+			// check if this light does not contribute to the global lightmapping
+			else if (!Q_stricmp(keyname, "noradiosity") && !Q_stricmp(value, "1"))
+			{
+				light->noRadiosity = qtrue;
+			}
+			// check if this light is a parallel sun light
+			else if (!Q_stricmp(keyname, "parallel") && !Q_stricmp(value, "1"))
+			{
+				light->l.rlType = RL_DIRECTIONAL;
+			}
+		}
+
+		if (*token != '}')
+		{
+			Ren_Warning("WARNING: expected } found '%s'\n", token);
+			break;
+		}
+
+		if (!isLight)
+		{
+			// reset rotation because it may be set to the rotation of other entities
+			QuatClear(light->l.rotation);
+		}
+		else
+		{
+			if ((numOmniLights + numProjLights + numParallelLights) < s_worldData.numLights)
+			{
+				switch (light->l.rlType)
+				{
+				case RL_OMNI:
+					numOmniLights++;
+					break;
+				case RL_PROJ:
+					numProjLights++;
+					break;
+				case RL_DIRECTIONAL:
+					numParallelLights++;
+					break;
+				default:
+					break;
+				}
+
+				light++;
+			}
+		}
+
+		numEntities++;
+	}
+
+	if ((numOmniLights + numProjLights + numParallelLights) != s_worldData.numLights)
+	{
+		Ren_Drop("counted %i lights and parsed %i lights", s_worldData.numLights, (numOmniLights + numProjLights + numParallelLights));
+	}
+
+	Ren_Developer("%i total entities parsed\n", numEntities);
+	Ren_Developer("%i total lights parsed\n", numOmniLights + numProjLights);
+	Ren_Developer("%i omni-directional lights parsed\n", numOmniLights);
+	Ren_Developer("%i projective lights parsed\n", numProjLights);
+	Ren_Developer("%i directional lights parsed\n", numParallelLights);
+}
+
 /*
 ================
 R_LoadEntities
@@ -4632,19 +4998,11 @@ R_LoadEntities
 */
 void R_LoadEntities(lump_t *l)
 {
-	int          i;
-	char         *p, *pOld, *token, *s;
+	char         *p, *token, *s;
 	char         keyname[MAX_TOKEN_CHARS];
 	char         value[MAX_TOKEN_CHARS];
 	world_t      *w                = &s_worldData;
-	qboolean     isLight           = qfalse;
-	int          numEntities       = 0;
-	int          numLights         = 0;
-	int          numOmniLights     = 0;
-	int          numProjLights     = 0;
-	int          numParallelLights = 0;
-	trRefLight_t *light;
-
+	
 	Ren_Print("...loading entities\n");
 
 	w->lightGridSize[0] = 64;
@@ -4798,350 +5156,7 @@ void R_LoadEntities(lump_t *l)
 
 	//Ren_Print("-----------\n%s\n----------\n", p);
 
-	pOld        = p;
-	numEntities = 1;            // parsed worldspawn so far
-
-	// count lights
-	while (1)
-	{
-		// parse {
-		token = COM_ParseExt2(&p, qtrue);
-
-		if (!*token)
-		{
-			// end of entities string
-			break;
-		}
-
-		if (*token != '{')
-		{
-			Ren_Warning("WARNING: expected { found '%s'\n", token);
-			break;
-		}
-
-		// new entity
-		isLight = qfalse;
-
-		// parse epairs
-		while (1)
-		{
-			// parse key
-			token = COM_ParseExt2(&p, qtrue);
-
-			if (*token == '}')
-			{
-				break;
-			}
-
-			if (!*token)
-			{
-				Ren_Warning("WARNING: EOF without closing bracket\n");
-				break;
-			}
-
-			Q_strncpyz(keyname, token, sizeof(keyname));
-
-			// parse value
-			token = COM_ParseExt2(&p, qfalse);
-
-			if (!*token)
-			{
-				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
-				continue;
-			}
-
-			Q_strncpyz(value, token, sizeof(value));
-
-			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "light"))
-			{
-				isLight = qtrue;
-			}
-		}
-
-		if (*token != '}')
-		{
-			Ren_Warning("WARNING: expected } found '%s'\n", token);
-			break;
-		}
-
-		if (isLight)
-		{
-			numLights++;
-		}
-
-		numEntities++;
-	}
-
-	Ren_Developer("%i total entities counted\n", numEntities);
-	Ren_Developer("%i total lights counted\n", numLights);
-
-	s_worldData.numLights = numLights;
-
-	// FIXME add 1 dummy light so we don't trash the hunk memory system ...
-	s_worldData.lights = (trRefLight_t *)ri.Hunk_Alloc((s_worldData.numLights + 1) * sizeof(trRefLight_t), h_low);
-
-	// basic light setup
-	for (i = 0, light = s_worldData.lights; i < s_worldData.numLights; i++, light++)
-	{
-		QuatClear(light->l.rotation);
-		VectorClear(light->l.center);
-
-		light->l.color[0] = 1;
-		light->l.color[1] = 1;
-		light->l.color[2] = 1;
-
-		light->l.scale = r_lightScale->value;
-
-		light->l.radius[0] = 300;
-		light->l.radius[1] = 300;
-		light->l.radius[2] = 300;
-
-		VectorClear(light->l.projTarget);
-		VectorClear(light->l.projRight);
-		VectorClear(light->l.projUp);
-		VectorClear(light->l.projStart);
-		VectorClear(light->l.projEnd);
-
-		light->l.inverseShadows = qfalse;
-
-		light->isStatic    = qtrue;
-		light->noRadiosity = qfalse;
-		light->additive    = qtrue;
-
-		light->shadowLOD = 0;
-	}
-
-	// parse lights
-	p           = pOld;
-	numEntities = 1;
-	light       = &s_worldData.lights[0];
-
-	while (1)
-	{
-		// parse {
-		token = COM_ParseExt2(&p, qtrue);
-
-		if (!*token)
-		{
-			// end of entities string
-			break;
-		}
-
-		if (*token != '{')
-		{
-			Ren_Warning("WARNING: expected { found '%s'\n", token);
-			break;
-		}
-
-		// new entity
-		isLight = qfalse;
-
-		// parse epairs
-		while (1)
-		{
-			// parse key
-			token = COM_ParseExt2(&p, qtrue);
-
-			if (*token == '}')
-			{
-				break;
-			}
-
-			if (!*token)
-			{
-				Ren_Warning("WARNING: EOF without closing bracket\n");
-				break;
-			}
-
-			Q_strncpyz(keyname, token, sizeof(keyname));
-
-			// parse value
-			token = COM_ParseExt2(&p, qfalse);
-
-			if (!*token)
-			{
-				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
-				continue;
-			}
-
-			Q_strncpyz(value, token, sizeof(value));
-
-			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "light"))
-			{
-				isLight = qtrue;
-			}
-			// check for origin
-			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin"))
-			{
-				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
-				s = &value[0];
-				//COM_Parse1DMatrix(&s, 3, light->l.origin, qfalse);
-			}
-			// check for center
-			else if (!Q_stricmp(keyname, "light_center"))
-			{
-				sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.center, qfalse);
-			}
-			// check for color
-			else if (!Q_stricmp(keyname, "_color"))
-			{
-				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.color, qfalse);
-			}
-			// check for radius
-			else if (!Q_stricmp(keyname, "light_radius"))
-			{
-				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.radius, qfalse);
-			}
-			// check for light_target
-			else if (!Q_stricmp(keyname, "light_target"))
-			{
-				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projTarget, qfalse);
-				light->l.rlType = RL_PROJ;
-			}
-			// check for light_right
-			else if (!Q_stricmp(keyname, "light_right"))
-			{
-				sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projRight, qfalse);
-				light->l.rlType = RL_PROJ;
-			}
-			// check for light_up
-			else if (!Q_stricmp(keyname, "light_up"))
-			{
-				sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projUp, qfalse);
-				light->l.rlType = RL_PROJ;
-			}
-			// check for light_start
-			else if (!Q_stricmp(keyname, "light_start"))
-			{
-				sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projStart, qfalse);
-				light->l.rlType = RL_PROJ;
-			}
-			// check for light_end
-			else if (!Q_stricmp(keyname, "light_end"))
-			{
-				sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
-				s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projEnd, qfalse);
-				light->l.rlType = RL_PROJ;
-			}
-			// check for radius
-			else if (!Q_stricmp(keyname, "light") || !Q_stricmp(keyname, "_light"))
-			{
-				vec_t value2;
-
-				value2             = atof(value);
-				light->l.radius[0] = value2;
-				light->l.radius[1] = value2;
-				light->l.radius[2] = value2;
-			}
-			// check for scale
-			else if (!Q_stricmp(keyname, "light_scale"))
-			{
-				light->l.scale = atof(value);
-
-				if (!r_hdrRendering->integer || !glConfig2.textureFloatAvailable || !glConfig2.framebufferObjectAvailable || !glConfig2.framebufferBlitAvailable)
-				{
-					if (light->l.scale >= r_lightScale->value)
-					{
-						light->l.scale = r_lightScale->value;
-					}
-				}
-			}
-			// check for light shader
-			else if (!Q_stricmp(keyname, "texture"))
-			{
-				light->l.attenuationShader = RE_RegisterShaderLightAttenuation(value);
-			}
-			// check for rotation
-			else if (!Q_stricmp(keyname, "rotation") || !Q_stricmp(keyname, "light_rotation"))
-			{
-				matrix_t rotation;
-
-				sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
-				       &rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
-
-				QuatFromMatrix(light->l.rotation, rotation);
-			}
-			// check if this light does not cast any shadows
-			else if (!Q_stricmp(keyname, "noshadows") && !Q_stricmp(value, "1"))
-			{
-				light->l.noShadows = qtrue;
-			}
-			// check if this light does not contribute to the global lightmapping
-			else if (!Q_stricmp(keyname, "noradiosity") && !Q_stricmp(value, "1"))
-			{
-				light->noRadiosity = qtrue;
-			}
-			// check if this light is a parallel sun light
-			else if (!Q_stricmp(keyname, "parallel") && !Q_stricmp(value, "1"))
-			{
-				light->l.rlType = RL_DIRECTIONAL;
-			}
-		}
-
-		if (*token != '}')
-		{
-			Ren_Warning("WARNING: expected } found '%s'\n", token);
-			break;
-		}
-
-		if (!isLight)
-		{
-			// reset rotation because it may be set to the rotation of other entities
-			QuatClear(light->l.rotation);
-		}
-		else
-		{
-			if ((numOmniLights + numProjLights + numParallelLights) < s_worldData.numLights)
-			{
-				switch (light->l.rlType)
-				{
-				case RL_OMNI:
-					numOmniLights++;
-					break;
-				case RL_PROJ:
-					numProjLights++;
-					break;
-				case RL_DIRECTIONAL:
-					numParallelLights++;
-					break;
-				default:
-					break;
-				}
-
-				light++;
-			}
-		}
-
-		numEntities++;
-	}
-
-	if ((numOmniLights + numProjLights + numParallelLights) != s_worldData.numLights)
-	{
-		Ren_Drop("counted %i lights and parsed %i lights", s_worldData.numLights, (numOmniLights + numProjLights + numParallelLights));
-	}
-
-	Ren_Developer("%i total entities parsed\n", numEntities);
-	Ren_Developer("%i total lights parsed\n", numOmniLights + numProjLights);
-	Ren_Developer("%i omni-directional lights parsed\n", numOmniLights);
-	Ren_Developer("%i projective lights parsed\n", numProjLights);
-	Ren_Developer("%i directional lights parsed\n", numParallelLights);
+	R_LoadLights(p);
 }
 
 
@@ -8260,7 +8275,7 @@ void RE_LoadWorldMap(const char *name)
 	// set the sun shader if there is one
 	if (tr.sunShaderName)
 	{
-		tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qtrue);
+		tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qfalse);
 	}
 
 	// build cubemaps after the necessary vbo stuff is done
