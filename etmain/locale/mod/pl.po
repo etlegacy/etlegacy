@@ -1686,11 +1686,8 @@ msgstr "BLAD"
 msgid "RECONNECT"
 msgstr "PONOW"
 
-msgid "AUTO UPDATE"
-msgstr "AKTUALIZACJA"
-
-msgid "New version available. Do you want to update now?"
-msgstr "Nowa wersja dostepna, Chesz zaktualizowac teraz?"
+msgid "UPDATE AVAILABLE"
+msgstr "AKTUALIZACJA DOSTEPNA"
 
 msgid "PASSWORD REQUIRED"
 msgstr "POTRZEBNE HASLO"

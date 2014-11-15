@@ -1704,10 +1704,7 @@ msgstr ""
 msgid "RECONNECT"
 msgstr ""
 
-msgid "AUTO UPDATE"
-msgstr ""
-
-msgid "New version available. Do you want to update now?"
+msgid "UPDATE AVAILABLE"
 msgstr ""
 
 msgid "PASSWORD REQUIRED"
