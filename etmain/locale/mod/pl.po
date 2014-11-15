@@ -3794,6 +3794,7 @@ msgstr "MECZ ZACZNIE SIE ZA:"
 msgid "You must be in the game to be ^3ready^7!\n"
 msgstr "Musisz byc w grze aby ^3gotowy^7!\n"
 
+#: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
 msgstr "ALLIANCI NIE MOGLI POKONAC CZASU!"
 
@@ -4635,3 +4636,15 @@ msgstr "BOTY ALIANTOW"
 
 msgid "BALANCED"
 msgstr "ZBALANSOWANE"
+
+#: src/cgame/cg_debriefing.c:3211
+msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
+msgstr "ALLIANCI POMYSLNIE POKONALI CZAS!"
+
+#: src/cgame/cg_debriefing.c:3222
+msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
+msgstr "OS POMYSLNIE POKONALI CZAS!"
+
+#: src/cgame/cg_debriefing.c:3226
+msgid "AXIS COULDN'T BEAT THE CLOCK!"
+msgstr "OS NIE MOGLI POKONAC CZASU!"

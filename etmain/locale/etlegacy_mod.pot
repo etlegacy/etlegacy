@@ -3800,6 +3800,7 @@ msgstr ""
 msgid "You must be in the game to be ^3ready^7!\n"
 msgstr ""
 
+#: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
 msgstr ""
 
@@ -4604,4 +4605,16 @@ msgid "ALLIED BOTS"
 msgstr ""
 
 msgid "BALANCED"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3211
+msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3222
+msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3226
+msgid "AXIS COULDN'T BEAT THE CLOCK!"
 msgstr ""
