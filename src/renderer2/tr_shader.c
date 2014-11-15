@@ -131,7 +131,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 	token = COM_ParseExt2(text, qfalse);
 	if (strcmp(token, "("))
 	{
-		Ren_Warning("WARNING: missing parenthesis in shader '%s'\n", shader.name);
+		Ren_Warning("WARNING: missing parenthesis '(' in shader '%s' of token '%s'\n", shader.name, token);
 		return qfalse;
 	}
 
@@ -140,7 +140,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 		token = COM_ParseExt2(text, qfalse);
 		if (!token[0])
 		{
-			Ren_Warning("WARNING: missing vector element in shader '%s'\n", shader.name);
+			Ren_Warning("WARNING: missing vector element in shader '%s' - no token\n", shader.name);
 			return qfalse;
 		}
 		v[i] = atof(token);
@@ -149,7 +149,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 	token = COM_ParseExt2(text, qfalse);
 	if (strcmp(token, ")"))
 	{
-		Ren_Warning("WARNING: missing parenthesis in shader '%s'\n", shader.name);
+		Ren_Warning("WARNING: missing parenthesis ')' in shader '%s' of token '%s'\n", shader.name, token);
 		return qfalse;
 	}
 
@@ -2270,7 +2270,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "const"))
 			{
-				token                   = COM_ParseExt2(text, qfalse);
+				token                   = COM_ParseExt(text, qfalse);
 				stage->constantColor[3] = 255 * atof(token);
 				stage->alphaGen         = AGEN_CONST;
 			}
@@ -6401,7 +6401,7 @@ static void ScanAndLoadShaderFiles(void)
 
 	if (!shaderFiles || !numShaderFiles)
 	{
-		Ren_Warning("WARNING: no shader files found\n");
+		Ren_Warning("WARNING: ScanAndLoadShaderFiles: no shader files found\n");
 		return;
 	}
 
