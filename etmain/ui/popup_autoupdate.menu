@@ -27,8 +27,8 @@ menuDef {
 	}
 
 	onESC {
-		close quit ;
-		open main
+		close wm_autoupdate_modal ;
+		open wm_autoupdate_modal // open main
 	}
 
 // Background //
@@ -43,8 +43,8 @@ menuDef {
 	}
 
 // Subwindows //
-#define SUBWINDOW_WIDTH		200
-#define SUBWINDOW_HEIGHT	100
+#define SUBWINDOW_WIDTH		216
+#define SUBWINDOW_HEIGHT	96
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5*(WINDOW_HEIGHT-SUBWINDOW_HEIGHT)
 

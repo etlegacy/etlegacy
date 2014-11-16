@@ -7869,8 +7869,12 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 			return;
 
 		case UIMENU_WM_AUTOUPDATE:
-			// changing the auto-update strategy to a modal prompt
-			Menus_OpenByName("wm_autoupdate_modal");
+			// skip when vid_confirm popup appears on startup
+			if (!trap_Cvar_VariableValue("r_oldMode"))
+			{
+				// changing the auto-update strategy to a modal prompt
+				Menus_OpenByName("wm_autoupdate_modal");
+			}
 			return;
 
 		// say, team say, etc

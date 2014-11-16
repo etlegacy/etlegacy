@@ -1,8 +1,3 @@
-// vid_restart menu for ET-XreaL - editted vid_restart menu from ET
-// Editted for use with options_graphics.menu which adds controls for xreal's
-// new features.
-// Joshua 'ethr' England - the_england@hotmail.com
-
 #include "ui/menudef.h"
 #include "ui/menumacros.h"
 
