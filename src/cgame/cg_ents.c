@@ -2108,7 +2108,7 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 	}
 
 	CreateRotationMatrix(deltaAngles, transpose);
-	TransposeMatrix(transpose, matrix);
+	TransposeMatrix(matrix, transpose);
 
 	VectorSubtract(cg.snap->ps.origin, cent->lerpOrigin, org);
 
