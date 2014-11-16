@@ -472,7 +472,7 @@ cvarTable_t cvarTable[] =
 #endif
 
 	// Engine mappings
-	{ &int_cl_maxpackets,        "cl_maxpackets",            "30",    CVAR_ARCHIVE                 },
+	{ &int_cl_maxpackets,        "cl_maxpackets",            "100",   CVAR_ARCHIVE                 },
 	{ &int_cl_timenudge,         "cl_timenudge",             "0",     CVAR_ARCHIVE                 },
 	{ &int_m_pitch,              "m_pitch",                  "0.022", CVAR_ARCHIVE                 },
 	{ &int_sensitivity,          "sensitivity",              "5",     CVAR_ARCHIVE                 },
