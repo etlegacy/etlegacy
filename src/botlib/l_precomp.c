@@ -796,7 +796,7 @@ void PC_ConvertPath(char *path)
 		if ((*ptr == '\\' || *ptr == '/') &&
 		    (*(ptr + 1) == '\\' || *(ptr + 1) == '/'))
 		{
-			strcpy(ptr, ptr + 1);
+			memmove(ptr, ptr+1, strlen(ptr));
 		}
 		else
 		{
@@ -1045,12 +1045,6 @@ int PC_Directive_define(source_t *source)
 		{
 			return qfalse;
 		}
-		// if the define was not removed (define->flags & DEFINE_FIXED)
-#if DEFINEHASHING
-		define = PC_FindHashedDefine(source->definehash, token.string);
-#else
-		define = PC_FindDefine(source->defines, token.string);
-#endif //DEFINEHASHING
 	}
 	// allocate define
 	define = (define_t *) GetMemory(sizeof(define_t) + strlen(token.string) + 1);
