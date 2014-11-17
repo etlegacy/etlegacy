@@ -143,6 +143,14 @@ qboolean UI_ConsoleCommand(int realTime)
 		UI_RemoveAllFavourites_f();
 		return qtrue;
 	}
+	else if (Q_stricmp(cmd, "show_menu") == 0 && DC->getCVarValue("developer"))
+	{
+		char *menu_name = UI_Argv(1);
+		if (menu_name)
+		{
+			Menus_OpenByName(menu_name);
+		}
+	}
 
 	trap_GetClientState(&cstate);
 	if (cstate.connState == CA_DISCONNECTED)
