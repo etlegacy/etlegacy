@@ -870,7 +870,7 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 			fxSounds[index].sound[sound] = trap_S_RegisterSound(fxSounds[index].soundfile[sound], qfalse);
 		}
 
-		sound = fxSounds[cent->currentState.frame].sound[sound];
+		sound = fxSounds[index].sound[sound];
 
 		CG_RubbleFx(origin,
 		            dir,
