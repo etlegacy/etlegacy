@@ -860,39 +860,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 }
 
-// FIXME: mod table
-qboolean IsHeadShotMod(int mod)
-{
-	// players are allowed headshots from these weapons
-	switch (mod)
-	{
-	case MOD_LUGER:
-	case MOD_COLT:
-	case MOD_AKIMBO_COLT:
-	case MOD_AKIMBO_LUGER:
-	case MOD_AKIMBO_SILENCEDCOLT:
-	case MOD_AKIMBO_SILENCEDLUGER:
-	case MOD_MP40:
-	case MOD_THOMPSON:
-	case MOD_STEN:
-	case MOD_KAR98:
-	case MOD_K43:
-	case MOD_K43_SCOPE:
-	case MOD_CARBINE:
-	case MOD_GARAND:
-	case MOD_GARAND_SCOPE:
-	case MOD_SILENCER:
-	case MOD_SILENCED_COLT:
-	case MOD_FG42:
-	case MOD_FG42SCOPE:
-		return qtrue;
-	default:
-		break;
-	}
-
-	return qfalse;
-}
-
 gentity_t *G_BuildHead(gentity_t *ent)
 {
 	gentity_t     *head;
@@ -1053,7 +1020,7 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	if (!IsHeadShotMod(mod))
+	if (!modTable[mod].isHeadshot)
 	{
 		return qfalse;
 	}
@@ -1120,7 +1087,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	if (!IsHeadShotMod(mod))
+	if (!modTable[mod].isHeadshot)
 	{
 		return qfalse;
 	}
@@ -1205,7 +1172,7 @@ qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	if (!IsHeadShotMod(mod))
+	if (!modTable[mod].isHeadshot)
 	{
 		return qfalse;
 	}
@@ -1721,7 +1688,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"\n");
 		}
 	}
-	else if (targ->client && targ->health > 0 && IsHeadShotMod(mod))
+	else if (targ->client && targ->health > 0 && modTable[mod].isHeadshot)
 	{
 		G_LogRegionHit(attacker, HR_BODY);
 		hr = HR_BODY;

@@ -47,6 +47,7 @@ vec3_t muzzleTrace;
 void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_falloff);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, float spread, int damage, qboolean distance_falloff);
 
+// FIXME: mod table
 qboolean G_WeaponIsExplosive(meansOfDeath_t mod)
 {
 	switch (mod)
@@ -77,6 +78,7 @@ qboolean G_WeaponIsExplosive(meansOfDeath_t mod)
 	}
 }
 
+// FIXME: mod table
 int G_GetWeaponClassForMOD(meansOfDeath_t mod)
 {
 	switch (mod)
@@ -1141,8 +1143,6 @@ static qboolean TryConstructing(gentity_t *ent)
 			return qtrue;      // properly constructed
 		}
 
-		// eeeh no point in doing this twice
-		//HandleEntsThatBlockConstructible( ent, constructible, qtrue, qfalse );
 		if (constructible->count2)
 		{
 			// backup...
@@ -1186,19 +1186,6 @@ static qboolean TryConstructing(gentity_t *ent)
 
 			constructible->s.angles2[1] = 1;
 		}
-
-		// removing messages for now
-		/*      if( ent->client->touchingTOI->spawnflags & 4 ) { // MESSAGE_OVERRIDE
-		            gentity_t* pm = G_PopupMessage( PM_CONSTRUCTION );
-		            pm->s.effect3Time = G_StringIndex( ent->client->touchingTOI->spawnitem );
-		            pm->s.effect2Time = TEAM_AXIS;
-		            pm->s.density = -1; // -1 = built (custom msg)
-		        } else {
-		            gentity_t* pm = G_PopupMessage( PM_CONSTRUCTION );
-		            pm->s.density = ent->client->sess.sessionTeam;
-		            pm->s.effect2Time = 0; // 0 = built
-		            pm->s.effect3Time = ent->client->touchingTOI->s.teamNum;
-		        }*/
 
 		AddScore(ent, constructible->accuracy);   // give drop score to guy who built it
 
@@ -2163,7 +2150,9 @@ evilbanigoto:
 #ifdef FEATURE_OMNIBOT
 							const char *Goalname = _GetEntityName(hit);
 #endif
-							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+							gentity_t *pm;
+
+							pm = G_PopupMessage(PM_DYNAMITE);
 
 							pm->s.effect2Time = 0;
 							pm->s.effect3Time = hit->s.teamNum;
@@ -2249,7 +2238,9 @@ evilbanigoto:
 #ifdef FEATURE_OMNIBOT
 							const char *Goalname = _GetEntityName(hit->parent);
 #endif
-							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+							gentity_t *pm;
+
+							pm = G_PopupMessage(PM_DYNAMITE);
 
 							pm->s.effect2Time = 0;     // 0 = planted
 							pm->s.effect3Time = hit->parent->s.teamNum;
@@ -2377,7 +2368,9 @@ evilbanigoto:
 								}
 
 								{
-									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+									gentity_t *pm;
+
+									pm = G_PopupMessage(PM_DYNAMITE);
 
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->s.teamNum;
@@ -2403,7 +2396,9 @@ evilbanigoto:
 								}
 
 								{
-									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+									gentity_t *pm;
+
+									pm = G_PopupMessage(PM_DYNAMITE);
 
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->s.teamNum;
@@ -3244,7 +3239,9 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
 	}
 	else if (Q_stricmp(ent->classname, "func_leaky") == 0)
 	{
-		gentity_t *tent = G_TempEntity(origin, EV_EMITTER);
+		gentity_t *tent;
+
+		tent = G_TempEntity(origin, EV_EMITTER);
 
 		VectorCopy(origin, tent->s.origin);
 		tent->s.time    = 1234;
@@ -3731,7 +3728,6 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		break;
 	default:
 		break;
-
 	}
 
 	// adjust for movement of character.  TODO: Probably comment in later, but only for forward/back not strafing

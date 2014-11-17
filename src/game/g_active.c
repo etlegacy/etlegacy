@@ -175,8 +175,7 @@ void P_WorldEffects(gentity_t *ent)
 		{
 			if (ent->watertype & CONTENTS_LAVA)
 			{
-				G_Damage(ent, NULL, NULL, NULL, NULL,
-				         30 * ent->waterlevel, 0, MOD_LAVA);
+				G_Damage(ent, NULL, NULL, NULL, NULL, 30 * ent->waterlevel, 0, MOD_LAVA);
 			}
 		}
 	}
