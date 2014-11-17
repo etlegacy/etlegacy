@@ -1791,7 +1791,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 
 	// commented out bolt->damage and bolt->splashdamage, override with GetWeaponTableData(WP_X)->damage()
 	// so it works with different netgame balance.  didn't uncomment bolt->damage on dynamite 'cause its so *special*
-	bolt->damage       = GetWeaponTableData(grenadeWPID)->damage; // overridden for dynamite
+	bolt->damage       = GetWeaponTableData(grenadeWPID)->damage; // overridden for dynamite, satchel, landmine
 	bolt->splashDamage = GetWeaponTableData(grenadeWPID)->damage;
 
 	switch (grenadeWPID)
@@ -1801,7 +1801,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashRadius        = 300;
 		bolt->methodOfDeath       = MOD_GPG40;
 		bolt->splashMethodOfDeath = MOD_GPG40;
-		bolt->s.eFlags            = /*0;*/ EF_BOUNCE_HALF | EF_BOUNCE;
+		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		bolt->nextthink           = level.time + 4000;
 		break;
 	case WP_M7:
@@ -1809,7 +1809,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashRadius        = 300;
 		bolt->methodOfDeath       = MOD_M7;
 		bolt->splashMethodOfDeath = MOD_M7;
-		bolt->s.eFlags            = /*0;*/ EF_BOUNCE_HALF | EF_BOUNCE;
+		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		bolt->nextthink           = level.time + 4000;
 		break;
 	case WP_SMOKE_BOMB:
@@ -1857,7 +1857,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->s.teamNum           = self->client->sess.sessionTeam + 4;
 		bolt->classname           = "landmine";
 		bolt->damage              = 0;
-		bolt->splashRadius        = 225;        // was: 400
+		bolt->splashRadius        = 225;
 		bolt->methodOfDeath       = MOD_LANDMINE;
 		bolt->splashMethodOfDeath = MOD_LANDMINE;
 		bolt->s.eFlags            = (EF_BOUNCE | EF_BOUNCE_HALF);
