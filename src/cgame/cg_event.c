@@ -989,7 +989,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 		snd    = LEBS_NONE;
 		hmodel = 0;
 
-		for (howmany = 0; howmany < pieces[i]; howmany++)
+		for (howmany = 0; howmany < i; howmany++)
 		{
 			scale   = 1.0f;
 			endtime = 0;     // set endtime offset for faster/slower fadeouts
@@ -1369,7 +1369,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 		snd    = LEBS_NONE;
 		hmodel = 0;
 
-		for (howmany = 0; howmany < pieces[i]; howmany++)
+		for (howmany = 0; howmany < i; howmany++)
 		{
 			scale   = 1.0f;
 			endtime = 0;     // set endtime offset for faster/slower fadeouts
