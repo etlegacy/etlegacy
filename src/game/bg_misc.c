@@ -300,6 +300,95 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_BAZOOKA,              WP_NONE,                WP_NONE,  WP_BAZOOKA,           WP_BAZOOKA,           qfalse, 400, qtrue,  qfalse, 0,    "BAZOOKA",         }, // 53
 };
 
+// [0]  = mod         -
+// [1]  = isHeadshot
+// [2]  = isExplosive
+modTable_t modTable[MOD_NUM_MODS] =
+{
+	{ MOD_UNKNOWN,                            qfalse },
+	{ MOD_MACHINEGUN,                         qfalse },
+	{ MOD_BROWNING,                           qfalse },
+	{ MOD_MG42,                               qfalse },
+	{ MOD_GRENADE,                            qfalse },
+
+	{ MOD_KNIFE,                              qfalse },
+	{ MOD_LUGER,                              qtrue  },
+	{ MOD_COLT,                               qtrue  },
+	{ MOD_MP40,                               qtrue  },
+	{ MOD_THOMPSON,                           qtrue  },
+	{ MOD_STEN,                               qtrue  },
+	{ MOD_GARAND,                             qtrue  },
+
+	{ MOD_SILENCER,                           qtrue  },
+	{ MOD_FG42,                               qtrue  },
+	{ MOD_FG42SCOPE,                          qtrue  },
+	{ MOD_PANZERFAUST,                        qfalse },
+	{ MOD_GRENADE_LAUNCHER,                   qfalse },
+	{ MOD_FLAMETHROWER,                       qfalse },
+	{ MOD_GRENADE_PINEAPPLE,                  qfalse },
+
+	{ MOD_MAPMORTAR,                          qfalse },
+	{ MOD_MAPMORTAR_SPLASH,                   qfalse },
+
+	{ MOD_KICKED,                             qfalse },
+
+	{ MOD_DYNAMITE,                           qfalse },
+	{ MOD_AIRSTRIKE,                          qfalse },
+	{ MOD_SYRINGE,                            qfalse },
+	{ MOD_AMMO,                               qfalse },
+	{ MOD_ARTY,                               qfalse },
+
+	{ MOD_WATER,                              qfalse },
+	{ MOD_SLIME,                              qfalse },
+	{ MOD_LAVA,                               qfalse },
+	{ MOD_CRUSH,                              qfalse },
+	{ MOD_TELEFRAG,                           qfalse },
+	{ MOD_FALLING,                            qfalse },
+	{ MOD_SUICIDE,                            qfalse },
+	{ MOD_TARGET_LASER,                       qfalse },
+	{ MOD_TRIGGER_HURT,                       qfalse },
+	{ MOD_EXPLOSIVE,                          qfalse },
+
+	{ MOD_CARBINE,                            qtrue  },
+	{ MOD_KAR98,                              qtrue  },
+	{ MOD_GPG40,                              qfalse },
+	{ MOD_M7,                                 qfalse },
+	{ MOD_LANDMINE,                           qfalse },
+	{ MOD_SATCHEL,                            qfalse },
+
+	{ MOD_SMOKEBOMB,                          qfalse },
+	{ MOD_MOBILE_MG42,                        qfalse },
+	{ MOD_SILENCED_COLT,                      qtrue  },
+	{ MOD_GARAND_SCOPE,                       qtrue  },
+
+	{ MOD_CRUSH_CONSTRUCTION,                 qfalse },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH,            qfalse },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER, qfalse },
+
+	{ MOD_K43,                                qtrue  },
+	{ MOD_K43_SCOPE,                          qtrue  },
+
+	{ MOD_MORTAR,                             qfalse },
+
+	{ MOD_AKIMBO_COLT,                        qtrue  },
+	{ MOD_AKIMBO_LUGER,                       qtrue  },
+	{ MOD_AKIMBO_SILENCEDCOLT,                qtrue  },
+	{ MOD_AKIMBO_SILENCEDLUGER,               qtrue  },
+
+	{ MOD_SMOKEGRENADE,                       qfalse },
+
+	{ MOD_SWAP_PLACES,                        qfalse },
+
+	{ MOD_SWITCHTEAM,                         qfalse },
+
+	{ MOD_SHOVE,                              qfalse },
+
+	{ MOD_KNIFE_KABAR,                        qfalse },
+	{ MOD_MOBILE_BROWNING,                    qfalse },
+	{ MOD_MORTAR2,                            qfalse },
+	{ MOD_BAZOOKA,                            qfalse },
+};
+
 const char *animStrings[] =
 {
 	"BOTH_DEATH1",

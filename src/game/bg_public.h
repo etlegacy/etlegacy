@@ -873,6 +873,13 @@ typedef struct weapontable_s
 
 } weaponTable_t;
 
+typedef struct modtable_s
+{
+	int mod;               // reference
+	qboolean isHeadshot;   // g
+
+} modTable_t;
+
 extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 
 extern int weapAlts[];  // defined in bg_misc.c
@@ -2334,6 +2341,9 @@ extern ammotable_t ammoTableMP[WP_NUM_WEAPONS];
 // Lookup table to find weapon table entry
 extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
 #define GetWeaponTableData(weaponIndex) ((weaponTable_t *)(&weaponTable[weaponIndex]))
+
+// Lookup table to find mod properties
+extern modTable_t modTable[MOD_NUM_MODS];
 
 #define MAX_MAP_SIZE 65536
 
