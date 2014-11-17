@@ -1325,6 +1325,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 					Cvar_Set("r_fullscreen", "1");
 				}
 				// suckage - some desktops might freeze without restarting the video subsystem
+				// note: this might not allow to set r_mode properly in game
 				if (cls.glconfig.driverType == GLDRV_MESA)
 				{
 					Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");
@@ -1410,8 +1411,8 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	{
 		if (cls.keyCatchers & KEYCATCH_CONSOLE)
 		{
-			//First time you press escape it will clear the written command (reset the line)
-			//if the commandline is empty then we close the console
+			// First time you press escape it will clear the written command (reset the line)
+			// if the commandline is empty then we close the console
 			if (strlen(g_consoleField.buffer))
 			{
 				con.highlightOffset   = 0;

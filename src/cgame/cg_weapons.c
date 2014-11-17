@@ -2936,6 +2936,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
 			{
 				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
+
 				if (anim == PM_AltSwitchFromForWeapon(weaponNum) || anim == PM_AltSwitchToForWeapon(weaponNum) || anim == PM_IdleAnimForWeapon(weaponNum))
 				{
 					barrel.hModel = weapon->modModels[0];
@@ -5388,6 +5389,10 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_SILENCED_COLT:
 	case WP_AKIMBO_COLT:
 	case WP_AKIMBO_SILENCEDCOLT:
+		// FIXME: add recoil for secondary weapons?
+		//pitchAdd = 2 + rand() % 3;
+		//yawRandom = 2;
+		break;
 	case WP_PANZERFAUST: // push the player back instead
 	case WP_BAZOOKA:
 		break;
