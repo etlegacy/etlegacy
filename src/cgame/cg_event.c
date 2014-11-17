@@ -786,12 +786,12 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 
 		sound = random() * fxSounds[index].max;
 
-		if (fxSounds[cent->currentState.frame].sound[sound] == -1)
+		if (fxSounds[index].sound[sound] == -1)
 		{
-			fxSounds[cent->currentState.frame].sound[sound] = trap_S_RegisterSound(fxSounds[cent->currentState.frame].soundfile[sound], qfalse);
+			fxSounds[index].sound[sound] = trap_S_RegisterSound(fxSounds[index].soundfile[sound], qfalse);
 		}
 
-		sound = fxSounds[cent->currentState.frame].sound[sound];
+		sound = fxSounds[index].sound[sound];
 
 		CG_Explodef(origin,
 		            dir,
@@ -865,9 +865,9 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 
 		sound = random() * fxSounds[index].max;
 
-		if (fxSounds[cent->currentState.frame].sound[sound] == -1)
+		if (fxSounds[index].sound[sound] == -1)
 		{
-			fxSounds[cent->currentState.frame].sound[sound] = trap_S_RegisterSound(fxSounds[cent->currentState.frame].soundfile[sound], qfalse);
+			fxSounds[index].sound[sound] = trap_S_RegisterSound(fxSounds[index].soundfile[sound], qfalse);
 		}
 
 		sound = fxSounds[cent->currentState.frame].sound[sound];
@@ -2798,16 +2798,16 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
 			{
-				index = 0;
+				index = FXTYPE_WOOD ;
 			}
 
 			sound = (random() * fxSounds[index].max);
-			if (fxSounds[es->eventParm].sound[sound] == -1)
+			if (fxSounds[index].sound[sound] == -1)
 			{
-				fxSounds[es->eventParm].sound[sound] = trap_S_RegisterSound(fxSounds[es->eventParm].soundfile[sound], qfalse);
+				fxSounds[index].sound[sound] = trap_S_RegisterSound(fxSounds[index].soundfile[sound], qfalse);
 			}
 
-			sound = fxSounds[es->eventParm].sound[sound];
+			sound = fxSounds[index].sound[sound];
 
 			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, 255);
 		}
