@@ -347,9 +347,6 @@ msgstr ""
 msgid "Brightness:"
 msgstr ""
 
-msgid "Connection:"
-msgstr ""
-
 msgid "Mouse Sensitivity:"
 msgstr ""
 

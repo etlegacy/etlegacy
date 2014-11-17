@@ -344,9 +344,6 @@ msgstr "Rozdzielczosc:"
 msgid "Brightness:"
 msgstr "Jasnosc:"
 
-msgid "Connection:"
-msgstr "Polaczenie:"
-
 msgid "Mouse Sensitivity:"
 msgstr "Czulosc myszy:"
 
