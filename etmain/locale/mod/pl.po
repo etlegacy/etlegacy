@@ -1205,9 +1205,6 @@ msgstr "PROSTE"
 msgid "Overall Quality:"
 msgstr "Ogolna Jakosc:"
 
-msgid "Fullscreen:"
-msgstr "Pelny Obraz:"
-
 msgid "Window mode:"
 msgstr "Tryb okna:"
 
