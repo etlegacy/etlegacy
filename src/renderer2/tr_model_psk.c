@@ -30,7 +30,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 /**
- * @file renderer2/tr_model_psk
+ * @file renderer2/tr_model_psk.c
  * @brief Unreal Engine 3 .psk model loading and caching
  */
 

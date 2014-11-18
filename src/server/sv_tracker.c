@@ -224,16 +224,16 @@ void Tracker_MapEnd(void)
 	maprunning = qfalse;
 }
 
+#if 0
 /**
  * @brief Send info when player changes his team
  * @param[in] cl Client
  */
-/* unused
 void Tracker_TeamSwitch(client_t *cl)
 {
-    Tracker_Send("team %i", (int)(cl - svs.clients));
+	Tracker_Send("team %i", (int)(cl - svs.clients));
 }
-*/
+#endif // 0
 
 /**
  * @brief Creates client information for other functions

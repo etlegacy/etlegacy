@@ -3,7 +3,6 @@
  * @brief Used for Lua and map configs
  * @copyright This code is taken from ETPub. All credits go to their team especially quad and pheno!
  * http://etpub.org
- * @endcopyright
  */
 #include "g_local.h"
 

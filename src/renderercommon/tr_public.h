@@ -29,7 +29,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 /**
- * @file tr_publish.c
+ * @file tr_public.h
  */
 
 #ifndef INCLUDE_TR_PUBLIC_H

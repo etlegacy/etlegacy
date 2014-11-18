@@ -6,9 +6,15 @@
  * All credits go to their team especially to quad and pheno!
  * http://etpub.org
  * http://shitstorm.org
- * @endcopyright
  *
- * @defgroup lua_api Lua module API
+ * @defgroup lua_api Lua API for the Legacy mod
+ * @{
+ * Most exported variables and function can be accessed from the *et* namespace.
+ *
+ * @defgroup lua_etvars    Lua variables
+ * @defgroup lua_etfncs    Lua functions
+ * @defgroup lua_etevents  Lua callbacks
+ * @}
  */
 #ifdef FEATURE_LUA
 
@@ -48,7 +54,6 @@
 #define FIELD_FLAG_READONLY 8 // read-only access
 
 // define HOSTARCH and EXTENSION depending on host architecture
-
 #if defined WIN32
   #define HOSTARCH    "WIN32"
   #define EXTENSION   "dll"

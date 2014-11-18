@@ -6,7 +6,10 @@
  * All credits go to their team especially to quad and pheno!
  * http://etpub.org
  * http://shitstorm.org
- * @endcopyright
+ *
+ * Goal: aiming for compatibility with [ETPro lua mods]
+ *
+ * [ETPro lua mods]: http://wolfwiki.anime.net/index.php/Lua_Mod_API "ETPro Lua API"
  */
 #ifdef FEATURE_LUA
 
@@ -14,16 +17,14 @@
 
 extern field_t fields[];
 
-// Goal: aiming for compatibility with ETPro lua mods
-// http://wolfwiki.anime.net/index.php/Lua_Mod_API
-
 lua_vm_t *lVM[LUA_NUM_VM];
 
-// gentity number = C_gentity_ptr_to_entNum( pointer-value )
-// input:  pointer to a gentity (gentity*)
-// output: the entity number.
-//         if (input==0) return = -1
-//         if (input address is out of g_entities[] memory range) return -1;
+/**
+ * @param addr pointer to a gentity (gentity*)
+ * @returns the entity number.
+ *          if (input==0) return = -1
+ *          if (input address is out of g_entities[] memory range) return -1;
+ */
 static int C_gentity_ptr_to_entNum(unsigned long addr)
 {
 	// no NULL address,
@@ -38,12 +39,18 @@ static int C_gentity_ptr_to_entNum(unsigned long addr)
 	return ((gentity_t *)addr - g_entities);
 }
 
-/***************************/
-/* Lua et library handlers */
-/***************************/
+/**
+ * -------------------------------------
+ * ET Legacy mod function calls from lua
+ * -------------------------------------
+ * @addtogroup lua_etfncs
+ * @{
+ */
 
-// ET Library Calls
-// et.RegisterModname( modname )
+/**
+ * @brief Registers a name for this Lua module
+ * @lua et.RegisterModname( modname ) @endlua
+ */
 static int _et_RegisterModname(lua_State *L)
 {
 	const char *modname = luaL_checkstring(L, 1);
@@ -59,7 +66,11 @@ static int _et_RegisterModname(lua_State *L)
 	return 0;
 }
 
-// vmnumber = et.FindSelf()
+/**
+ * @brief Gets slot number assigned to this lua VM
+ * @lua vmnumber = et.FindSelf() @endlua
+ * @returns Slot number between 0 and #LUA_NUM_VM
+ */
 static int _et_FindSelf(lua_State *L)
 {
 	lua_vm_t *vm = G_LuaGetVM(L);
@@ -75,7 +86,11 @@ static int _et_FindSelf(lua_State *L)
 	return 1;
 }
 
-// modname, signature = et.FindMod( vmnumber )
+/**
+ * @brief Gets name of lua module at slot @p vmnumber and its signature hash
+ * @lua modname, signature = et.FindMod( vmnumber ) @endlua
+ * @returns VM name registered by _et_RegisterModname() and SHA-1 signature of the VM
+ */
 static int _et_FindMod(lua_State *L)
 {
 	int      vmnumber = luaL_checkint(L, 1);
@@ -381,9 +396,12 @@ static int _et_ClientUserinfoChanged(lua_State *L)
 	return 0;
 }
 
-// clientnum = et.ClientNumberFromString( string )
-// searches for one partial match with 'string', if one is found the clientnum
-// is returned, if there is none or more than one match nil is returned
+/**
+ * @brief Searches for one partial match with @p string, if one is found the clientnum
+ *        is returned, if there is none or more than one match nil is returned.
+ * @lua clientnum = et.ClientNumberFromString( string ) @endlua
+ * @see ClientNumbersFromString()
+ */
 static int _et_ClientNumberFromString(lua_State *L)
 {
 	const char *search = luaL_checkstring(L, 1);
@@ -1541,8 +1559,9 @@ static int _et_G_XP_Set(lua_State *L)
 }
 
 /**
- * @brief Reset XP
- * et.ResetXP ( clientNum )
+ * @brief Reset XP of the player in slot number @p clientNum
+ *
+ * @lua et.ResetXP ( clientNum )
  */
 static int _et_G_ResetXP(lua_State *L)
 {
@@ -1556,6 +1575,8 @@ static int _et_G_ResetXP(lua_State *L)
 	G_ResetXP(ent);
 	return 1;
 }
+
+/** @}*/ // doxygen addtogroup lua_etfncs
 
 // et library initialisation array
 static const luaL_Reg etlib[] =
@@ -2384,9 +2405,14 @@ lua_vm_t *G_LuaGetVM(lua_State *L)
 	return NULL;
 }
 
-/*****************************/
-/* Lua API hooks / callbacks */
-/*****************************/
+
+/**
+ * -------------------------------------
+ * Lua API hooks / callbacks
+ * -------------------------------------
+ * @addtogroup lua_etevents
+ * @{
+ */
 
 /*
  * G_LuaHook_InitGame
@@ -2986,5 +3012,8 @@ qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int 
 	}
 	return qfalse;
 }
+
+/** @} */ // doxygen addtogroup lua_etevents
+
 
 #endif // FEATURE_LUA

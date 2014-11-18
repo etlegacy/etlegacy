@@ -4,7 +4,6 @@
  * @copyright
  * Copyright (C) 2002-2004 Mark Adler <madler@alumni.caltech.edu>
  * Copyright (C) 2006 Joerg Dietrich <dietrich_joerg@gmx.de>
- *
  * For conditions of distribution and use, see copyright notice in puff.h
  * version 1.8, 9 Jan 2004
  *
@@ -22,7 +21,6 @@
  * 2. Altered source versions must be plainly marked as such, and must not be
  *    misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
- * @endcopyright
  */
 
 #ifndef INCLUDE_PUFF_H
