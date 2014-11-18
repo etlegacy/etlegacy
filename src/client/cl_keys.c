@@ -1324,8 +1324,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 					Com_Printf("Switching to fullscreen rendering\n");
 					Cvar_Set("r_fullscreen", "1");
 				}
-				// suckage - some desktops might freeze without restarting the video subsystem
-				// note: this might not allow to set r_mode properly in game
+				// some desktops might freeze without restarting the video subsystem
 				if (cls.glconfig.driverType == GLDRV_MESA)
 				{
 					Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");

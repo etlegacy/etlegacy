@@ -1174,7 +1174,6 @@ void GLimp_SetHardware(void)
 	    Q_stristr(glConfig.vendor_string, "nouveau") ||
 	    Q_stristr(glConfig.vendor_string, "mesa"))
 	{
-		// suckage
 		glConfig.driverType = GLDRV_MESA;
 	}
 
@@ -1370,8 +1369,8 @@ success:
 #endif // FEATURE_RENDERER_GLES
 
 	// initialize extensions
-#ifdef FEATURE_RENDERER2
 	GLimp_SetHardware();
+#ifdef FEATURE_RENDERER2
 	GLimp_InitExtensionsR2(); // renderer2
 #else
 	GLimp_InitExtensions(); // vanilla renderer
