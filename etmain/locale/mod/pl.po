@@ -2872,7 +2872,7 @@ msgstr "Zwiekszona %s umiejetnosc do poziomu %i!"
 #: src/cgame/cg_players.c:367
 #, c-format
 msgid "You have been rewarded with %s"
-msgstr "Zostales nagrodzony z %s"
+msgstr "Zostales nagrodzony %s"
 
 #: src/cgame/cg_popupmessages.c:585
 #, c-format
@@ -2934,82 +2934,82 @@ msgid "%s^7 disconnected"
 msgstr "%s^7 rozlaczyl sie"
 
 msgid "Improved use of Explosive Ammunition"
-msgstr "Lepsze uzycie Amunicji Wybuchowej"
+msgstr "Lepszym uzyciem Amunicji Wybuchowej"
 
 msgid "Improved Dexterity"
-msgstr "Lepsza Zrecznosc"
+msgstr "Lepsza Zrecznoscia"
 
 msgid "Improved Construction and Destruction"
-msgstr "Ulepszona Budowa i Rozbudowa"
+msgstr "Ulepszonym Budowaniem i Niszczeniem"
 
 msgid "a Flak Jacket"
 msgstr "Kamizelka Kuloodporna"
 
 msgid "Improved use of Scoped Weapon Ammunition"
-msgstr "Lepsze uzycie Amunicji do Snajperki"
+msgstr "Lepszym uzyciem Amunicji do Snajperki"
 
 msgid "Improved use of Sabotage and Misdirection"
-msgstr "Lepsze uzycie Sabotazu i Odwrocenia Uwagi"
+msgstr "Lepszym uzyciem Sabotazu i Odwrocenia Uwagi"
 
 msgid "Breath Control"
 msgstr "Kontrola Oddechu"
 
 msgid "Assassin"
-msgstr "Zabojstwo"
+msgstr "Zabojstwem"
 
 msgid "Improved Resources"
-msgstr "Ulepszone Zasoby"
+msgstr "Ulepszonymi Zasobami"
 
 msgid "Improved Signals"
-msgstr "Ulepszone Sygnaly"
+msgstr "Ulepszonymi Sygnalami"
 
 msgid "Improved Air and Ground Support"
-msgstr "Lepsze naloty i Ladowe Wsparcia"
+msgstr "Lepszymi Nalotami i Wsparciem Naziemnym"
 
 msgid "Enemy Recognition"
-msgstr "Rozpoznanie Wroga"
+msgstr "Rozpoznaniem Wroga"
 
 msgid "Medic Ammo"
 msgstr "Amunicja Medyka"
 
 msgid "Binoculars for any Class"
-msgstr "Lornetki dla kazdej Klasy"
+msgstr "Lornetkami dla kazdej Klasy"
 
 msgid "Full Revive"
-msgstr "Pelne Ozywienie"
+msgstr "Pelnym Ozywieniem"
 
 msgid "Adrenalin Self"
 msgstr "Wlasna Adrelanina"
 
 msgid "Improved Projectile Resources"
-msgstr "Lepszy Zasob Pociskow"
+msgstr "Lepszym Zasobem Pociskow"
 
 msgid "Heavy Weapon Proficiency"
-msgstr "Bieglosc Ciezkiej Bronii"
+msgstr "Biegloscia Obslugi Ciezkiej Bronii"
 
 msgid "Improved Physical Fitness"
-msgstr "Poprawa Sprawnosci Fizycznej"
+msgstr "Poprawna Sprawnoscia Fizyczna"
 
 msgid "Improved Health"
-msgstr "Ulepszome Zycie"
+msgstr "Ulepszonym Zyciem"
 
 msgid "Improved Weapon Handling"
 msgstr "Ulepszona Obsluga Bronii"
 
 msgid "Trap Awareness"
-msgstr "Pulapka Swiadomosci"
+msgstr "Wykrywaniem Pulapek"
 
 msgid "Improved use of Light Weapon Ammunition"
-msgstr "Lepsze uzycie Amunicji do Bronii Lekkiej"
+msgstr "Lepszym uzyciem Amunicji do Bronii Lekkiej"
 
 msgid "Faster Reload"
-msgstr "Szybsze Przeladowanie"
+msgstr "Szybszym Przeladowaniem"
 
 msgid "Improved Light Weapon Handling"
 msgstr "Lepsza Obsluga Bronii Lekkiej"
 
 msgid "Dual-Wield Pistols"
-msgstr "Podwojne Pistolety"
+msgstr "Podwojnymi Pistoletami"
 
 msgid "Allies have destroyed the North Anti-Tank Gun!"
 msgstr "Allianci zniszczyli Polnocne Dzialo Przeciwczolgowe!"
@@ -4445,8 +4445,8 @@ msgstr "^3Zfiltrowanych/Lacznie: %04i/%04i"
 
 #: src/ui/ui_main.c:5807
 #, c-format
-msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
-msgstr "^3Sprawdz swoje filtry - brak serwerow!  Zfiltrowanych/Lacznie: %i/%i"
+msgid "^3Check your filters - no servers found!              Filtered/Total: %04i/%04i"
+msgstr "^3Sprawdz swoje filtry - brak serwerow!              Zfiltrowanych/Lacznie: %i/%i"
 
 #: src/ui/ui_main.c:5812
 msgid "^1No Connection or master down - no servers found!    Filtered/Total: 0000/0000"
