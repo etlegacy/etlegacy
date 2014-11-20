@@ -349,7 +349,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 
 	// figure movement due to the pusher's amove
 	CreateRotationMatrix(amove, transpose);
-	TransposeMatrix(matrix, transpose);
+	TransposeMatrix(transpose, matrix);
 	if (check->client)
 	{
 		VectorSubtract(check->client->ps.origin, pusher->r.currentOrigin, org);
