@@ -47,66 +47,16 @@ vec3_t muzzleTrace;
 void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_falloff);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, float spread, int damage, qboolean distance_falloff);
 
-// FIXME: mod table
-qboolean G_WeaponIsExplosive(meansOfDeath_t mod)
+qboolean G_ModIsExplosive(meansOfDeath_t mod)
 {
-	switch (mod)
-	{
-	case MOD_GRENADE_LAUNCHER:
-	case MOD_GRENADE_PINEAPPLE:
-	case MOD_PANZERFAUST:
-	case MOD_BAZOOKA:
-	case MOD_LANDMINE:
-	case MOD_GPG40:
-	case MOD_M7:
-	case MOD_ARTY:
-	case MOD_AIRSTRIKE:
-	case MOD_MORTAR:
-	case MOD_MORTAR2:
-	case MOD_SATCHEL:
-	case MOD_DYNAMITE:
-	// map entity based explosions
-	case MOD_GRENADE:
-	case MOD_MAPMORTAR:
-	case MOD_MAPMORTAR_SPLASH:
-	case MOD_EXPLOSIVE:
-	case MOD_TELEFRAG:     //  yes this _SHOULD_ be here, kthxbye
-	case MOD_CRUSH:
-		return qtrue;
-	default:
-		return qfalse;
-	}
+	// do a sanity check?
+	return modTable[mod].isExplosive;
 }
 
-// FIXME: mod table
 int G_GetWeaponClassForMOD(meansOfDeath_t mod)
 {
-	switch (mod)
-	{
-	case MOD_GRENADE_LAUNCHER:
-	case MOD_GRENADE_PINEAPPLE:
-	case MOD_PANZERFAUST:
-	case MOD_BAZOOKA:
-	case MOD_LANDMINE:
-	case MOD_GPG40:
-	case MOD_M7:
-	case MOD_ARTY:
-	case MOD_AIRSTRIKE:
-	case MOD_MORTAR:
-	case MOD_MORTAR2:
-	// map entity based explosions
-	case MOD_GRENADE:
-	case MOD_MAPMORTAR:
-	case MOD_MAPMORTAR_SPLASH:
-	case MOD_EXPLOSIVE:
-		return 0;
-	case MOD_SATCHEL:
-		return 1;
-	case MOD_DYNAMITE:
-		return 2;
-	default:
-		return -1;
-	}
+	// do a sanity check?
+	return modTable[mod].weaponClassForMOD;
 }
 
 /*

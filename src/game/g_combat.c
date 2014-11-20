@@ -1325,7 +1325,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 		if ((targ->spawnflags & 4) && !targ->isProp)
 		{
-			if (!G_WeaponIsExplosive(mod))
+			if (!G_ModIsExplosive(mod))
 			{
 				return;
 			}
@@ -1373,7 +1373,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 			if (targ->s.modelindex2)
 			{
-				if (G_WeaponIsExplosive(mod))
+				if (G_ModIsExplosive(mod))
 				{
 					mapEntityData_t *mEnt;
 
@@ -1485,7 +1485,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
 
 		// are we pushed? Do not count when already flying ...
-		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || G_WeaponIsExplosive(mod)))
+		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || G_ModIsExplosive(mod)))
 		{
 			targ->client->pmext.shoved = qtrue;
 			targ->client->pmext.pusher = attacker - g_entities;
@@ -1542,13 +1542,14 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// add to the attacker's hit counter (but only if target is a client)
-	if (targ->client && attacker->client && targ != attacker && targ->health > 0)
+	if (attacker && attacker->client && targ->client  && targ != attacker && targ->health > 0 &&
+	    mod != MOD_SWITCHTEAM && mod != MOD_SWAP_PLACES && mod != MOD_SUICIDE)
 	{
-		if (onSameTeam || targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))
+		if (onSameTeam || (targ->client->ps.powerups[PW_OPS_DISGUISED] && (g_friendlyFire.integer & 1)))
 		{
 			attacker->client->ps.persistant[PERS_HITS] -= damage;
 		}
-		else
+		else if (!targ->client->ps.powerups[PW_OPS_DISGUISED])
 		{
 			attacker->client->ps.persistant[PERS_HITS] += damage;
 		}
@@ -1756,7 +1757,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		//if ( attacker == inflictor && targ->health <= GIB_HEALTH) {
 		if (targ->health <= GIB_HEALTH)
 		{
-			if (!G_WeaponIsExplosive(mod))
+			if (!G_ModIsExplosive(mod))
 			{
 				targ->health = GIB_HEALTH + 1;
 			}

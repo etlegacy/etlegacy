@@ -873,11 +873,19 @@ typedef struct weapontable_s
 
 } weaponTable_t;
 
+#define WEAPON_CLASS_FOR_MOD_NO       -1
+#define WEAPON_CLASS_FOR_MOD_EXPLOSIVE 0
+#define WEAPON_CLASS_FOR_MOD_SATCHEL   1
+#define WEAPON_CLASS_FOR_MOD_DYNAMITE  2
+
 typedef struct modtable_s
 {
-	int mod;               // reference
-	qboolean isHeadshot;   // g
+	int mod;    // reference
 
+	qboolean isHeadshot;   // g
+	qboolean isExplosive;  // g
+
+	int weaponClassForMOD; // g
 } modTable_t;
 
 extern weaponTable_t *GetWeaponTableData(int weaponIndex);
@@ -919,9 +927,6 @@ extern int weapAlts[];  // defined in bg_misc.c
 
 #define IS_MG_WEAPON_SET(w) \
 	(w == WP_MOBILE_MG42_SET          || w == WP_MOBILE_BROWNING_SET)
-
-// FIXME: weapon table
-#define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_KNIFE_KABAR) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
 #define IS_AUTORELOAD_WEAPON(w) \
 	(w == WP_LUGER    || w == WP_COLT          || w == WP_MP40          || \

@@ -667,7 +667,6 @@ void G_RunMissile(gentity_t *ent)
 				ent->count2     = 2;
 				ent->s.legsAnim = 1;
 
-
 				/*{
 				    gentity_t *tent;
 

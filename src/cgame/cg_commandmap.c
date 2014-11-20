@@ -206,7 +206,6 @@ void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 			mEnt->z = atoi(buffer) * 128;
 		}
 		break;
-
 	default:
 		trap_Argv((*offset)++, buffer, 16);
 		mEnt->x = atoi(buffer) * 128;

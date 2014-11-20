@@ -2,8 +2,8 @@
  * @file g_lua.c
  * @brief ET <-> *Lua* interface source file.
  *
- * @copyright This code is taken from ETPub.
- * All credits go to their team especially to quad and pheno!
+ * @copyright This code is taken from ETPub and NQ.
+ * All credits go to their teams especially to quad and pheno!
  * http://etpub.org
  * http://shitstorm.org
  *
