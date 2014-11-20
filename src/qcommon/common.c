@@ -2186,7 +2186,7 @@ void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int pt
 
 	if (eventHead - eventTail >= MAX_QUEUED_EVENTS)
 	{
-		Com_Printf("Com_QueueEvent: event type [%i] overflow\n", type);
+		Com_DPrintf("Com_QueueEvent: event type [%i] overflow\n", type);
 		// we are discarding an event, but don't leak memory
 		if (ev->evPtr)
 		{
