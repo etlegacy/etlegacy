@@ -1146,7 +1146,7 @@ void StripDoubleQuotes(char *string)
 {
 	if (*string == '\"')
 	{
-		memmove(string, string+1, strlen(string));
+		memmove(string, string + 1, strlen(string));
 	}
 	if (string[strlen(string) - 1] == '\"')
 	{
@@ -1158,7 +1158,7 @@ void StripSingleQuotes(char *string)
 {
 	if (*string == '\'')
 	{
-		memmove(string, string+1, strlen(string));
+		memmove(string, string + 1, strlen(string));
 	}
 	if (string[strlen(string) - 1] == '\'')
 	{
