@@ -4421,7 +4421,7 @@ msgstr ""
 
 #: src/ui/ui_main.c:5807
 #, c-format
-msgid "^3Check your filters - no servers found!        Filtered/Total: %04i/%04i"
+msgid "^3Check your filters - no servers found!              Filtered/Total: %04i/%04i"
 msgstr ""
 
 #: src/ui/ui_main.c:5812
