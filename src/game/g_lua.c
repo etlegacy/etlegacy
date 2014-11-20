@@ -1838,11 +1838,6 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 	return qfalse;
 }
 
-// Compatibility with Lua 5.1
-#if LUA_VERSION_NUM < 502
-	#define luaL_newlib(L, l) (lua_newtable(L), luaL_register(L, NULL, l))
-#endif
-
 /**
  * @brief Dump the lua stack to console
  *        Executed by the ingame "lua_api" command
