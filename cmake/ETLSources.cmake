@@ -97,7 +97,7 @@ LIST(APPEND CGAME_SRC ${UI_SHARED})
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"
 	"src/game/*.h"
-	"src/game/sha-1/sha1.c"
+	"src/qcommon/crypto/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 )
