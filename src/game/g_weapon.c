@@ -4089,7 +4089,8 @@ void FireWeapon(gentity_t *ent)
 	if (ent->client->ps.powerups[PW_OPS_DISGUISED] &&
 	    ent->s.weapon != WP_SMOKE_BOMB &&
 	    ent->s.weapon != WP_SATCHEL &&
-	    ent->s.weapon != WP_SATCHEL_DET)
+	    ent->s.weapon != WP_SATCHEL_DET &&
+	    ent->s.weapon != WP_BINOCULARS)
 	{
 		if (!(ent->s.weapon == WP_KNIFE || // FIXME: do a switch
 		      ent->s.weapon == WP_KNIFE_KABAR ||
