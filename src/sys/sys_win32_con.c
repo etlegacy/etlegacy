@@ -221,6 +221,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				SetTextColor(( HDC ) wParam, COLOR_TEXT_ERROR2);
 			}
+
 			return ( long ) s_wcd.hbrErrorBackground;
 		}
 		break;
@@ -275,6 +276,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				InvalidateRect(s_wcd.hwndErrorBox, NULL, FALSE);
 			}
 		}
+
 		break;
 	}
 
@@ -345,6 +347,7 @@ static void Win_FindMatches(const char *s)
 			win_currentMatch[i] = 0;
 		}
 	}
+
 	win_currentMatch[i] = 0;
 }
 
@@ -369,6 +372,7 @@ static void Win_KeyConcatArgs(void)
 				Q_strcat(win_consoleField.buffer, sizeof(win_consoleField.buffer), "\"");
 				break;
 			}
+
 			arg++;
 		}
 		Q_strcat(win_consoleField.buffer, sizeof(win_consoleField.buffer), Cmd_Argv(i));
@@ -478,6 +482,7 @@ static void Win_CompleteCommand(qboolean showMatches)
 			{
 				Win_ConcatRemaining(temp.buffer, win_completionString);
 			}
+
 			edit->cursor = strlen(edit->buffer);
 		}
 		else
@@ -501,6 +506,7 @@ static void Win_CompleteCommand(qboolean showMatches)
 		{
 			win_matchIndex = 0;
 		}
+
 		win_findMatchIndex = 0;
 		Cmd_CommandCompletion(Win_FindIndexMatch);
 		Cvar_CommandCompletion(Win_FindIndexMatch);
@@ -572,6 +578,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				SetWindowText(s_wcd.hwndInputLine, win_consoleField.buffer);
 				SendMessage(s_wcd.hwndInputLine, EM_SETSEL, win_consoleField.cursor, win_consoleField.cursor);
 			}
+
 			win_acLength = 0;
 			return 0;
 		}
@@ -641,6 +648,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			win_acLength = 0;
 		}
+
 		break;
 	}
 
@@ -869,7 +877,6 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 		Sys_Error("Invalid visLevel %d sent to Sys_ShowConsole\n", visLevel);
 		break;
 	}
-
 }
 
 /*
@@ -945,6 +952,7 @@ void Conbuf_AppendText(const char *pMsg)
 			*b = msg[i];
 			b++;
 		}
+
 		i++;
 	}
 	*b     = 0;

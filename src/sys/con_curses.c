@@ -154,6 +154,7 @@ static void CON_DrawScrollBar(void)
 	{
 		wbkgdset(scrollwin, SCRLBAR_LINE | COLOR_PAIR(6));
 	}
+
 	werase(scrollwin);
 	wbkgdset(scrollwin, ' ');
 	CON_SetColor(scrollwin, 1);
@@ -212,6 +213,7 @@ static void CON_ColorPrint(WINDOW *win, const char *msg, qboolean stripcodes)
 					{
 						break;
 					}
+
 					buffer[length] = *msg;
 					length++;
 					msg++;
@@ -437,8 +439,10 @@ void CON_Init(void)
 		{
 			input_field.scroll = input_field.cursor - input_field.widthInChars + 1;
 		}
+
 		CON_ColorPrint(inputwin, input_field.buffer + input_field.scroll, qfalse);
 	}
+
 	CON_UpdateCursor();
 	wnoutrefresh(inputwin);
 
@@ -515,6 +519,7 @@ char *CON_Input(void)
 				{
 					input_field.scroll = input_field.cursor - input_field.widthInChars + INPUT_SCROLL;
 				}
+
 				CON_ColorPrint(inputwin, input_field.buffer + input_field.scroll, qfalse);
 #ifdef _WIN32
 				wrefresh(inputwin); // If this is not done the cursor moves strangely
@@ -561,12 +566,14 @@ char *CON_Input(void)
 			{
 				input_field.cursor--;
 			}
+
 			continue;
 		case KEY_RIGHT:
 			if (input_field.cursor < strlen(input_field.buffer))
 			{
 				input_field.cursor++;
 			}
+
 			continue;
 		case KEY_UP:
 		{
@@ -575,6 +582,7 @@ char *CON_Input(void)
 			{
 				strcpy(input_field.buffer, field);
 			}
+
 			continue;
 		}
 		case KEY_DOWN:
@@ -588,6 +596,7 @@ char *CON_Input(void)
 			{
 				Field_Clear(&input_field);
 			}
+
 			continue;
 		}
 		case KEY_HOME:
@@ -604,6 +613,7 @@ char *CON_Input(void)
 				{
 					scrollline = lastline - LOG_LINES;
 				}
+
 				pnoutrefresh(logwin, scrollline, 0, 2, 1, LOG_LINES + 1, LOG_COLS + 1);
 				CON_DrawScrollBar();
 			}
@@ -616,6 +626,7 @@ char *CON_Input(void)
 				{
 					scrollline = 0;
 				}
+
 				pnoutrefresh(logwin, scrollline, 0, 2, 1, LOG_LINES + 1, LOG_COLS + 1);
 				CON_DrawScrollBar();
 			}
@@ -636,6 +647,7 @@ char *CON_Input(void)
 				        input_field.buffer + input_field.cursor + 1,
 				        strlen(input_field.buffer) - input_field.cursor);
 			}
+
 			continue;
 		}
 
@@ -681,6 +693,7 @@ void CON_Print(const char *msg)
 		{
 			scrollline = 0;
 		}
+
 		pnoutrefresh(logwin, scrollline, 0, 2, 1, LOG_LINES + 1, LOG_COLS + 1);
 	}
 
@@ -691,6 +704,7 @@ void CON_Print(const char *msg)
 		memset(logbuf + sizeof(logbuf) / 2, 0, sizeof(logbuf) / 2);
 		insert -= sizeof(logbuf) / 2;
 	}
+
 	strcpy(insert, msg);
 	insert += strlen(msg);
 

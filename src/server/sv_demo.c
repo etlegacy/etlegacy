@@ -91,7 +91,6 @@ static char *savedPlaybackDemoname              = savedPlaybackDemonameVal;
 
 static qboolean keepSaved = qfalse; // var that memorizes if we keep the new maxclients and democlients values (in the case that we restart the map/server for these cvars to be affected since they are latched, we need to stop the playback meanwhile we restart, and using this var we can know if the stop is a restart procedure or a real demo end) or if we can restore them (at the end of the demo)
 
-
 /***********************************************
  * AUXILIARY FUNCTIONS: CHECKING, FILTERING AND CLEANING
  * Functions used to either trim unnecessary or privacy concerned data, or to just check if the data should be written in the demo, relayed to a more specialized function or just dropped.
@@ -140,6 +139,7 @@ qboolean SV_CheckServerCommand(const char *cmd)
 		// If that's a print/cp command, it's already handled by gameCommand (here it's a redundancy). FIXME? possibly some print/cp are not handled by gameCommand? From my tests it was ok, but if someday a few prints are missing, try to delete this check... For security, we also drop disconnect (even if it should not be recorded anyway in the first place), because server commands will be sent to every connected clients, and so it will disconnect everyone.
 		return qfalse; // we return false if the check wasn't right
 	}
+
 	return qtrue; // else, the check is OK and we continue to process with the original function
 }
 
@@ -208,6 +208,7 @@ qboolean SV_CheckGameCommand(const char *cmd)
 			SV_DemoWriteConfigString(atoi(Cmd_Argv(1)), Cmd_Argv(2)); // relay to the specialized write configstring function
 			return qfalse; // drop it with the processing of the game command
 		}
+
 		return qtrue; // else, the check is OK and we continue to process with the original function
 	}
 }
@@ -282,8 +283,10 @@ char *SV_CleanFilename(char *string)
 		{
 			*d++ = c; // keep if this character is not forbidden (contained inside the above whitelist)
 		}
+
 		s++; // go to next character
 	}
+
 	*d = '\0';
 
 	return string;
@@ -312,8 +315,10 @@ char *SV_CleanStrCmd(char *string)
 		{
 			*d++ = c;
 		}
+
 		s++;
 	}
+
 	*d = '\0';
 
 	return string;
@@ -557,6 +562,7 @@ void SV_DemoWriteClientUsercmd( client_t *cl, qboolean delta, int cmdCount, user
         MSG_WriteDeltaUsercmdKey( &msg, key, oldcmd, cmd );
         oldcmd = cmd;
     }
+
     SV_DemoWriteMessage(&msg);
 }
 */
@@ -630,6 +636,7 @@ void SV_DemoWriteAllEntityState(void)
 		MSG_WriteDeltaEntity(&msg, &sv.demoEntities[i].s, &entity->s, qfalse);
 		sv.demoEntities[i].s = entity->s;
 	}
+
 	MSG_WriteBits(&msg, ENTITYNUM_NONE, GENTITYNUM_BITS); // End marker/Condition to break: since we don't know prior how many entities we store, when reading  the demo we will use an empty entity to break from our while loop
 
 	// Commit all these datas to the demo file
@@ -1530,7 +1537,6 @@ void SV_DemoStartPlayback(void)
 		if (!Q_stricmp(metadata, "endMeta"))     // if the string is the special endMeta string, we already break
 		{
 			break;
-
 		}
 		else if (!Q_stricmp(metadata, "clients"))
 		{ // democlients
@@ -1560,7 +1566,6 @@ void SV_DemoStartPlayback(void)
 				sv_maxclients->modified = qfalse;
 				*/
 			}
-
 		}
 		else if (!Q_stricmp(metadata, "time"))
 		{ // server time
@@ -1606,7 +1611,6 @@ void SV_DemoStartPlayback(void)
 			{
 				Com_Printf("DEMO: Warning: this demo was recorded for the following mod: %s\n", fs);
 			}
-
 		}
 		else if (!Q_stricmp(metadata, "map"))
 		{
@@ -1623,7 +1627,6 @@ void SV_DemoStartPlayback(void)
 				free(datetime);
 				return;
 			}
-
 		}
 		else if (!Q_stricmp(metadata, "timelimit"))
 		{
@@ -1634,9 +1637,9 @@ void SV_DemoStartPlayback(void)
 			{
 				savedTimelimit = Cvar_VariableIntegerValue("timelimit");
 			}
+
 			// set the demo setting
 			Cvar_SetValue("timelimit", timelimit); // Note: setting the timelimit is NOT necessary for the demo to be replayed (in fact even if the timelimit is reached, the demo will still continue to feed new frames and thus force the game to continue, without any bug - also to the opposite, if the timelimit is too high, the game will be finished when the demo will replay the events, even if the timelimit is not reached but was in the demo, it will be when replaying the demo), but setting it allows for timelimit warning and suddenDeath voice announcement to happen. FIXME: if the timelimit is changed during the game, it won't be reflected in the demo (but the demo will still continue to play, or stop if the game is won).
-
 		}
 		else if (!Q_stricmp(metadata, "fraglimit"))
 		{
@@ -1647,9 +1650,9 @@ void SV_DemoStartPlayback(void)
 			{
 				savedFraglimit = Cvar_VariableIntegerValue("fraglimit");
 			}
+
 			// set the demo setting
 			Cvar_SetValue("fraglimit", fraglimit); // Note: unnecessary for the demo to be replayed, but allows to show the limit in the HUD. FIXME: if the limit is changed during the game, the new value won't be reflected in the demo (but the demo will continue to play to its integrality)
-
 		}
 		else if (!Q_stricmp(metadata, "capturelimit"))
 		{
@@ -1660,6 +1663,7 @@ void SV_DemoStartPlayback(void)
 			{
 				savedCapturelimit = Cvar_VariableIntegerValue("capturelimit");
 			}
+
 			// set the demo setting
 			Cvar_SetValue("capturelimit", capturelimit); // Note: unnecessary for the demo to be replayed, but allows to show the limit in the HUD. FIXME: if the limit is changed during the game, the new value won't be reflected in the demo (but the demo will continue to play to its integrality)
 
@@ -1760,7 +1764,6 @@ void SV_DemoStartPlayback(void)
 		free(datetime);
 
 		return; // Quit and wait for the next SV_Frame() iteration (when the server/map will have restarted) to retry playing the demo
-
 	}
 	else if (time < svs.time && keepSaved)
 	{

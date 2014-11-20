@@ -255,6 +255,7 @@ void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg)
 		MSG_WriteLong(msg, i);
 		MSG_WriteString(msg, client->reliableCommands[i & (MAX_RELIABLE_COMMANDS - 1)]);
 	}
+
 	client->reliableSent = client->reliableSequence;
 }
 
@@ -444,6 +445,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 			{
 				SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
 			}
+
 			continue;
 		}
 
@@ -516,6 +518,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 				SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
 			}
+
 			continue;   // master needs to be added, but not this dummy ent
 		}
 		else if (ent->r.svFlags & SVF_VISDUMMY_MULTIPLE)
@@ -568,6 +571,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 					SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
 				}
 			}
+
 			continue;
 		}
 
@@ -741,6 +745,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 		{
 			Com_Error(ERR_FATAL, "SV_BuildClientSnapshot: svs.nextSnapshotEntities wrapped");
 		}
+
 		frame->num_entities++;
 	}
 }
@@ -788,6 +793,7 @@ static int SV_RateMsec(client_t *client, int messageSize)
 			rate = maxRate;
 		}
 	}
+
 	rateMsec = (messageSize + HEADER_RATE_BYTES) * 1000 / rate;
 
 	return rateMsec;

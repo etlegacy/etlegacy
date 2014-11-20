@@ -373,6 +373,7 @@ void Sys_AnsiColorPrint(const char *msg)
 						}
 					}
 				}
+
 				fputs(buffer, stderr);
 				msg += 2;
 			}
@@ -454,6 +455,7 @@ void Sys_Error(const char *error, ...)
 		{
 			Com_Quit_f();
 		}
+
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
@@ -585,7 +587,6 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	void (*morphos_so_deinit)(void);
 #endif
 
-
 #ifdef __APPLE__
 	Com_Printf("Sys_LoadDll -> Sys_TryLibraryLoad(%s, %s, %s)... \n", base, gamedir, fname);
 	libHandle = NULL;
@@ -666,7 +667,6 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 
 	return libHandle;
 
-
 #else // __APPLE__
 
 	fn = FS_BuildOSPath(base, gamedir, fname);
@@ -681,8 +681,6 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	}
 
 #endif // __APPLE__
-
-
 
 #ifdef __MORPHOS__
 	morphos_so_init   = dlsym(libHandle, "morphos_so_init");
@@ -987,7 +985,6 @@ int main(int argc, char **argv)
 
 	Sys_ParseArgs(argc, argv);
 
-
 #if defined(__APPLE__) && !defined(DEDICATED)
 	// argv[0] would be /Users/seth/etlegacy/etl.app/Contents/MacOS
 	// But on OS X we want to pretend the binary path is the .app's parent
@@ -1018,7 +1015,6 @@ int main(int argc, char **argv)
 #endif
 
 	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
-
 
 	// Concatenate the command line for passing to Com_Init
 	for (i = 1; i < argc; i++)

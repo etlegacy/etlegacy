@@ -358,6 +358,7 @@ void *BotImport_HunkAlloc(int size)
 	{
 		Com_Error(ERR_DROP, "SV_Bot_HunkAlloc: Alloc with marks already set");
 	}
+
 	return Hunk_Alloc(size, h_high);
 }
 
@@ -382,6 +383,7 @@ int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points)
 	{
 		return 0;
 	}
+
 	poly            = &debugpolygons[i];
 	poly->inuse     = qtrue;
 	poly->color     = color;
@@ -407,6 +409,7 @@ bot_debugpoly_t *BotImport_GetFreeDebugPolygon(void)
 			return &debugpolygons[i];
 		}
 	}
+
 	return NULL;
 }
 

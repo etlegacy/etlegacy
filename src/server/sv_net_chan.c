@@ -90,6 +90,7 @@ static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 		{
 			key ^= string[index] << (i & 1);
 		}
+
 		index++;
 		// encode the data with this key
 		*(msg->data + i) = *(msg->data + i) ^ key;
@@ -144,6 +145,7 @@ static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 		{
 			key ^= string[index] << (i & 1);
 		}
+
 		index++;
 		// decode the data with this key
 		*(msg->data + i) = *(msg->data + i) ^ key;
@@ -247,6 +249,7 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)       //int length, const
 		{
 			client->netchan_end_queue->next = netbuf;
 		}
+
 		client->netchan_end_queue = netbuf;
 
 		// emit the next fragment of the current message for now

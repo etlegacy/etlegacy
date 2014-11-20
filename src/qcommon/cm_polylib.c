@@ -82,6 +82,7 @@ void FreeWinding(winding_t *w)
 	{
 		Com_Error(ERR_FATAL, "FreeWinding: freed a freed winding");
 	}
+
 	*(unsigned *)w = 0xdeaddead;
 
 	c_active_windings--;
@@ -161,6 +162,7 @@ vec_t WindingArea(winding_t *w)
 		CrossProduct(d1, d2, cross);
 		total += 0.5 * VectorLength(cross);
 	}
+
 	return total;
 }
 
@@ -311,6 +313,7 @@ winding_t *ReverseWinding(winding_t *w)
 	{
 		VectorCopy(w->p[w->numpoints - 1 - i], c->p[i]);
 	}
+
 	c->numpoints = w->numpoints;
 	return c;
 }
@@ -351,6 +354,7 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 		{
 			sides[i] = SIDE_ON;
 		}
+
 		counts[sides[i]]++;
 	}
 	sides[i] = sides[0];
@@ -476,6 +480,7 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 		{
 			sides[i] = SIDE_ON;
 		}
+
 		counts[sides[i]]++;
 	}
 	sides[i] = sides[0];
@@ -574,13 +579,13 @@ winding_t *ChopWinding(winding_t *in, vec3_t normal, vec_t dist)
 	{
 		FreeWinding(b);
 	}
+
 	return f;
 }
 
 /*
 =================
 CheckWinding
-
 =================
 */
 void CheckWinding(winding_t *w)
@@ -674,6 +679,7 @@ int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 			{
 				return SIDE_CROSS;
 			}
+
 			back = qtrue;
 			continue;
 		}
@@ -683,6 +689,7 @@ int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 			{
 				return SIDE_CROSS;
 			}
+
 			front = qtrue;
 			continue;
 		}
@@ -696,6 +703,7 @@ int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 	{
 		return SIDE_FRONT;
 	}
+
 	return SIDE_ON;
 }
 
@@ -794,6 +802,7 @@ void AddWindingToConvexHull(winding_t *w, winding_t **hull, vec3_t normal)
 			{
 				continue;
 			}
+
 			copy = hullPoints[(j + k + 1) % numHullPoints];
 			VectorCopy(copy, newHullPoints[numNew]);
 			numNew++;
