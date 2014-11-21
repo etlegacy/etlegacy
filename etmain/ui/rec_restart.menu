@@ -30,7 +30,7 @@ menuDef
 	{
 		close rec_restart ;
 		open background_1 ;
-		open options_system
+		open options_graphics
 	}
 
 // Background //
