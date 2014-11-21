@@ -3549,7 +3549,7 @@ msgstr ""
 msgid "You will spawn as a %s %s with a %s and a %s."
 msgstr ""
 
-#: src/cgame/cg_limbopanel.c:1223
+#: src/cgame/cg_limbopanel.c:1228
 #, c-format
 msgid "You will spawn as an %s %s with a %s and a %s."
 msgstr ""
@@ -4608,4 +4608,9 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_limbopanel.c:1224
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
 msgstr ""
