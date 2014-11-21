@@ -35,13 +35,10 @@
 
 #include "cg_local.h"
 
-/*
-================
-CG_AdjustFrom640
-
-Adjusted for resolution and screen aspect ratio
-================
-*/
+/**
+ * @brief CG_AdjustFrom640
+ * Adjusted for resolution and screen aspect ratio
+ */
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
 	// scale for screen sizes
@@ -57,6 +54,9 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 	}
 }
 
+/**
+ * @brief Ccg_Is43Screen
+ */
 qboolean Ccg_Is43Screen(void)
 {
 	if (cgs.glconfig.windowAspect <= RATIO43)
@@ -66,23 +66,26 @@ qboolean Ccg_Is43Screen(void)
 	return qfalse;
 }
 
+/**
+ * @brief Ccg_WideX
+ */
 float Ccg_WideX(float x)
 {
 	return (Ccg_Is43Screen()) ? x : x *cgs.adr43; // * (aspectratio / (4/3))
 }
 
+/**
+ * @brief Ccg_WideXoffset
+ */
 float Ccg_WideXoffset(void)
 {
 	return (Ccg_Is43Screen()) ? 0.0f : ((640.0f * cgs.adr43) - 640.0f) * 0.5f;
 }
 
-/*
-================
-CG_FillRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief CG_FillRect
+ * Coordinates are 640*480 virtual values
+ */
 void CG_FillRect(float x, float y, float width, float height, const float *color)
 {
 	trap_R_SetColor(color);
@@ -93,13 +96,10 @@ void CG_FillRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
-/*
-==============
-CG_FillRectGradient
-
-@brief unused
-==============
-
+/**
+ * @brief CG_FillRectGradient
+ * @note unused
+ *
 void CG_FillRectGradient(float x, float y, float width, float height, const float *color, const float *gradcolor, int gradientType)
 {
     trap_R_SetColor(color);
@@ -111,16 +111,11 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
 }
 */
 
-/*
-==============
-CG_HorizontalPercentBar
-    Generic routine for pretty much all status indicators that show a fractional
-    value to the palyer by virtue of how full a drawn box is.
-==============
-*/
-
 #define BAR_BORDERSIZE 2
 
+/**
+ * @brief CG_FilledBar
+ */
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
@@ -228,11 +223,11 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	}
 }
 
-/*
-=================
-CG_HorizontalPercentBar
-=================
-*/
+/**
+ * @brief CG_HorizontalPercentBar
+ * Generic routine for pretty much all status indicators that show a fractional
+ * value to the palyer by virtue of how full a drawn box is.
+ */
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent)
 {
 	vec4_t bgcolor = { 0.5f, 0.5f, 0.5f, 0.3f },
@@ -240,13 +235,10 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA);
 }
 
-/*
-================
-CG_DrawSides
-
-Coords are virtual 640x480
-================
-*/
+/**
+ * @brief CG_DrawSides
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawSides(float x, float y, float w, float h, float size)
 {
 	CG_AdjustFrom640(&x, &y, &w, &h);
@@ -255,6 +247,10 @@ void CG_DrawSides(float x, float y, float w, float h, float size)
 	trap_R_DrawStretchPic(x + w - size, y, size, h, 0, 0, 0, 0, cgs.media.whiteShader);
 }
 
+/**
+ * @brief CG_DrawTopBottom
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawTopBottom(float x, float y, float w, float h, float size)
 {
 	CG_AdjustFrom640(&x, &y, &w, &h);
@@ -263,6 +259,10 @@ void CG_DrawTopBottom(float x, float y, float w, float h, float size)
 	trap_R_DrawStretchPic(x, y + h - size, w, size, 0, 0, 0, 0, cgs.media.whiteShader);
 }
 
+/**
+ * @brief CG_DrawSides_NoScale
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawSides_NoScale(float x, float y, float w, float h, float size)
 {
 	CG_AdjustFrom640(&x, &y, &w, &h);
@@ -270,6 +270,10 @@ void CG_DrawSides_NoScale(float x, float y, float w, float h, float size)
 	trap_R_DrawStretchPic(x + w - size, y, size, h, 0, 0, 0, 0, cgs.media.whiteShader);
 }
 
+/**
+ * @brief CG_DrawTopBottom_NoScale
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size)
 {
 	CG_AdjustFrom640(&x, &y, &w, &h);
@@ -277,19 +281,20 @@ void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size)
 	trap_R_DrawStretchPic(x, y + h - size, w, size, 0, 0, 0, 0, cgs.media.whiteShader);
 }
 
+/**
+ * @brief CG_DrawBottom_NoScale
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size)
 {
 	CG_AdjustFrom640(&x, &y, &w, &h);
 	trap_R_DrawStretchPic(x, y + h - size, w, size, 0, 0, 0, 0, cgs.media.whiteShader);
 }
 
-/*
-================
-UI_DrawRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief CG_DrawRect
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color)
 {
 	trap_R_SetColor(color);
@@ -300,6 +305,9 @@ void CG_DrawRect(float x, float y, float width, float height, float size, const 
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief CG_DrawRect_FixedBorder
+ */
 void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int border, const float *color)
 {
 	trap_R_SetColor(color);
@@ -310,28 +318,21 @@ void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int bo
 	trap_R_SetColor(NULL);
 }
 
-/*
-================
-CG_DrawPicST
-
-Allows passing of st co-ords
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief CG_DrawPicST
+ * Allows passing of st co-ords
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader)
 {
 	CG_AdjustFrom640(&x, &y, &width, &height);
 	trap_R_DrawStretchPic(x, y, width, height, s0, t0, s1, t1, hShader);
 }
 
-/*
-================
-CG_DrawPic
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief CG_DrawPic
+ * Coordinates are 640*480 virtual values
+ */
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 {
 	float s0;
@@ -367,27 +368,21 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 	trap_R_DrawStretchPic(x, y, width, height, s0, t0, s1, t1, hShader);
 }
 
-/*
-================
-CG_DrawRotatedPic
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief CG_DrawRotatedPic
+ * Clear around a sized down screen
+ */
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle)
 {
 	CG_AdjustFrom640(&x, &y, &width, &height);
 	trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
 }
 
-/*
-=============
-CG_TileClearBox
-
-This repeats a 64*64 tile graphic to fill the screen around a sized down
-refresh window.
-=============
-*/
+/**
+ * @brief CG_TileClearBox
+ * This repeats a 64*64 tile graphic to fill the screen around a sized down
+ * refresh window.
+ */
 static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader)
 {
 	float s1 = x / 64.0;
@@ -398,13 +393,10 @@ static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader)
 	trap_R_DrawStretchPic(x, y, w, h, s1, t1, s2, t2, hShader);
 }
 
-/*
-==============
-CG_TileClear
-
-Clear around a sized down screen
-==============
-*/
+/**
+ * @brief CG_TileClear
+ * Clear around a sized down screen
+ */
 void CG_TileClear(void)
 {
 	int top, bottom, left, right;
@@ -435,11 +427,9 @@ void CG_TileClear(void)
 	CG_TileClearBox(right, top, w - right, bottom - top + 1, cgs.media.backTileShader);
 }
 
-/*
-================
-CG_FadeColor
-================
-*/
+/**
+ * @brief CG_FadeColor
+ */
 float *CG_FadeColor(int startMsec, int totalMsec)
 {
 	static vec4_t color;
@@ -476,11 +466,9 @@ static vec4_t blue = { 0.2, 0.2, 1, 1 };
 static vec4_t other = { 1, 1, 1, 1 };
 static vec4_t spectator = { 0.7, 0.7, 0.7, 1 };
 
-/*
-================
-CG_TeamColor
-================
-*/
+/**
+ * @brief G_TeamColor
+ */
 float *CG_TeamColor(int team)
 {
 	switch (team)
@@ -496,11 +484,9 @@ float *CG_TeamColor(int team)
 	}
 }
 
-/*
-=================
-CG_GetColorForHealth
-=================
-*/
+/**
+ * @brief CG_GetColorForHealth
+ */
 void CG_GetColorForHealth(int health, vec4_t hcolor)
 {
 	// calculate the total points of damage that can
@@ -542,11 +528,9 @@ void CG_GetColorForHealth(int health, vec4_t hcolor)
 	}
 }
 
-/*
-=================
-CG_ColorForHealth
-=================
-*/
+/**
+ * @brief CG_ColorForHealth
+ */
 void CG_ColorForHealth(vec4_t hcolor)
 {
 	int health;
@@ -591,123 +575,142 @@ void CG_ColorForHealth(vec4_t hcolor)
 	}
 }
 
-/*
-=================
-UI_DrawProportionalString2
-=================
-*/
+/**
+ * @brief CG_TranslateString
+ */
+char *CG_TranslateString(const char *string)
+{
+	static char staticbuf[2][MAX_VA_STRING];
+	static int  bufcount = 0;
+	char        *buf;
+
+	// some code expects this to return a copy always, even
+	// if none is needed for translation, so always supply another buffer
+	buf = staticbuf[bufcount++ % 2];
+
+	trap_TranslateString(string, buf);
+
+	return buf;
+}
+
+/**
+ * @note Unused.
+ *
 static int propMap[128][3] =
 {
-	{ 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
-	{ 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
+    { 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
+    { 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
 
-	{ 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
-	{ 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
+    { 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
+    { 0,   0,   -1               }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 }, { 0, 0, -1 },
 
-	{ 0,   0,   PROP_SPACE_WIDTH }, // SPACE
-	{ 11,  122, 7                }, // !
-	{ 154, 181, 14               }, // "
-	{ 55,  122, 17               }, // #
-	{ 79,  122, 18               }, // $
-	{ 101, 122, 23               }, // %
-	{ 153, 122, 18               }, // &
-	{ 9,   93,  7                }, // '
-	{ 207, 122, 8                }, // (
-	{ 230, 122, 9                }, // )
-	{ 177, 122, 18               }, // *
-	{ 30,  152, 18               }, // +
-	{ 85,  181, 7                }, // ,
-	{ 34,  93,  11               }, // -
-	{ 110, 181, 6                }, // .
-	{ 130, 152, 14               }, // /
+    { 0,   0,   PROP_SPACE_WIDTH }, // SPACE
+    { 11,  122, 7                }, // !
+    { 154, 181, 14               }, // "
+    { 55,  122, 17               }, // #
+    { 79,  122, 18               }, // $
+    { 101, 122, 23               }, // %
+    { 153, 122, 18               }, // &
+    { 9,   93,  7                }, // '
+    { 207, 122, 8                }, // (
+    { 230, 122, 9                }, // )
+    { 177, 122, 18               }, // *
+    { 30,  152, 18               }, // +
+    { 85,  181, 7                }, // ,
+    { 34,  93,  11               }, // -
+    { 110, 181, 6                }, // .
+    { 130, 152, 14               }, // /
 
-	{ 22,  64,  17               }, // 0
-	{ 41,  64,  12               }, // 1
-	{ 58,  64,  17               }, // 2
-	{ 78,  64,  18               }, // 3
-	{ 98,  64,  19               }, // 4
-	{ 120, 64,  18               }, // 5
-	{ 141, 64,  18               }, // 6
-	{ 204, 64,  16               }, // 7
-	{ 162, 64,  17               }, // 8
-	{ 182, 64,  18               }, // 9
-	{ 59,  181, 7                }, // :
-	{ 35,  181, 7                }, // ;
-	{ 203, 152, 14               }, // <
-	{ 56,  93,  14               }, // =
-	{ 228, 152, 14               }, // >
-	{ 177, 181, 18               }, // ?
+    { 22,  64,  17               }, // 0
+    { 41,  64,  12               }, // 1
+    { 58,  64,  17               }, // 2
+    { 78,  64,  18               }, // 3
+    { 98,  64,  19               }, // 4
+    { 120, 64,  18               }, // 5
+    { 141, 64,  18               }, // 6
+    { 204, 64,  16               }, // 7
+    { 162, 64,  17               }, // 8
+    { 182, 64,  18               }, // 9
+    { 59,  181, 7                }, // :
+    { 35,  181, 7                }, // ;
+    { 203, 152, 14               }, // <
+    { 56,  93,  14               }, // =
+    { 228, 152, 14               }, // >
+    { 177, 181, 18               }, // ?
 
-	{ 28,  122, 22               }, // @
-	{ 5,   4,   18               }, // A
-	{ 27,  4,   18               }, // B
-	{ 48,  4,   18               }, // C
-	{ 69,  4,   17               }, // D
-	{ 90,  4,   13               }, // E
-	{ 106, 4,   13               }, // F
-	{ 121, 4,   18               }, // G
-	{ 143, 4,   17               }, // H
-	{ 164, 4,   8                }, // I
-	{ 175, 4,   16               }, // J
-	{ 195, 4,   18               }, // K
-	{ 216, 4,   12               }, // L
-	{ 230, 4,   23               }, // M
-	{ 6,   34,  18               }, // N
-	{ 27,  34,  18               }, // O
+    { 28,  122, 22               }, // @
+    { 5,   4,   18               }, // A
+    { 27,  4,   18               }, // B
+    { 48,  4,   18               }, // C
+    { 69,  4,   17               }, // D
+    { 90,  4,   13               }, // E
+    { 106, 4,   13               }, // F
+    { 121, 4,   18               }, // G
+    { 143, 4,   17               }, // H
+    { 164, 4,   8                }, // I
+    { 175, 4,   16               }, // J
+    { 195, 4,   18               }, // K
+    { 216, 4,   12               }, // L
+    { 230, 4,   23               }, // M
+    { 6,   34,  18               }, // N
+    { 27,  34,  18               }, // O
 
-	{ 48,  34,  18               }, // P
-	{ 68,  34,  18               }, // Q
-	{ 90,  34,  17               }, // R
-	{ 110, 34,  18               }, // S
-	{ 130, 34,  14               }, // T
-	{ 146, 34,  18               }, // U
-	{ 166, 34,  19               }, // V
-	{ 185, 34,  29               }, // W
-	{ 215, 34,  18               }, // X
-	{ 234, 34,  18               }, // Y
-	{ 5,   64,  14               }, // Z
-	{ 60,  152, 7                }, // [
-	{ 106, 151, 13               }, // '\'
-	{ 83,  152, 7                }, // ]
-	{ 128, 122, 17               }, // ^
-	{ 4,   152, 21               }, // _
+    { 48,  34,  18               }, // P
+    { 68,  34,  18               }, // Q
+    { 90,  34,  17               }, // R
+    { 110, 34,  18               }, // S
+    { 130, 34,  14               }, // T
+    { 146, 34,  18               }, // U
+    { 166, 34,  19               }, // V
+    { 185, 34,  29               }, // W
+    { 215, 34,  18               }, // X
+    { 234, 34,  18               }, // Y
+    { 5,   64,  14               }, // Z
+    { 60,  152, 7                }, // [
+    { 106, 151, 13               }, // '\'
+    { 83,  152, 7                }, // ]
+    { 128, 122, 17               }, // ^
+    { 4,   152, 21               }, // _
 
-	{ 134, 181, 5                }, // '
-	{ 5,   4,   18               }, // A
-	{ 27,  4,   18               }, // B
-	{ 48,  4,   18               }, // C
-	{ 69,  4,   17               }, // D
-	{ 90,  4,   13               }, // E
-	{ 106, 4,   13               }, // F
-	{ 121, 4,   18               }, // G
-	{ 143, 4,   17               }, // H
-	{ 164, 4,   8                }, // I
-	{ 175, 4,   16               }, // J
-	{ 195, 4,   18               }, // K
-	{ 216, 4,   12               }, // L
-	{ 230, 4,   23               }, // M
-	{ 6,   34,  18               }, // N
-	{ 27,  34,  18               }, // O
+    { 134, 181, 5                }, // '
+    { 5,   4,   18               }, // A
+    { 27,  4,   18               }, // B
+    { 48,  4,   18               }, // C
+    { 69,  4,   17               }, // D
+    { 90,  4,   13               }, // E
+    { 106, 4,   13               }, // F
+    { 121, 4,   18               }, // G
+    { 143, 4,   17               }, // H
+    { 164, 4,   8                }, // I
+    { 175, 4,   16               }, // J
+    { 195, 4,   18               }, // K
+    { 216, 4,   12               }, // L
+    { 230, 4,   23               }, // M
+    { 6,   34,  18               }, // N
+    { 27,  34,  18               }, // O
 
-	{ 48,  34,  18               }, // P
-	{ 68,  34,  18               }, // Q
-	{ 90,  34,  17               }, // R
-	{ 110, 34,  18               }, // S
-	{ 130, 34,  14               }, // T
-	{ 146, 34,  18               }, // U
-	{ 166, 34,  19               }, // V
-	{ 185, 34,  29               }, // W
-	{ 215, 34,  18               }, // X
-	{ 234, 34,  18               }, // Y
-	{ 5,   64,  14               }, // Z
-	{ 153, 152, 13               }, // {
-	{ 11,  181, 5                }, // |
-	{ 180, 152, 13               }, // }
-	{ 79,  93,  17               }, // ~
-	{ 0,   0,   -1               } // DEL
+    { 48,  34,  18               }, // P
+    { 68,  34,  18               }, // Q
+    { 90,  34,  17               }, // R
+    { 110, 34,  18               }, // S
+    { 130, 34,  14               }, // T
+    { 146, 34,  18               }, // U
+    { 166, 34,  19               }, // V
+    { 185, 34,  29               }, // W
+    { 215, 34,  18               }, // X
+    { 234, 34,  18               }, // Y
+    { 5,   64,  14               }, // Z
+    { 153, 152, 13               }, // {
+    { 11,  181, 5                }, // |
+    { 180, 152, 13               }, // }
+    { 79,  93,  17               }, // ~
+    { 0,   0,   -1               } // DEL
 };
+*/
 
-/*
+/**
+ * @note Unused.
+ *
 static int propMapB[26][3] =
 {
     { 11,  12,  33 },
@@ -746,7 +749,10 @@ static int propMapB[26][3] =
 #define PROPB_HEIGHT        36
 */
 
-/* @note unused
+/**
+ * @brief UI_DrawBannerString2
+ * @note Unused.
+ *
 static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 {
     const char    *s = str;
@@ -789,7 +795,10 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 }
 */
 
-/* @note unused
+/**
+ * @brief UI_DrawBannerString
+ * @note Unused.
+ *
 void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 {
     const char *s = str;
@@ -839,168 +848,163 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 }
 */
 
+/**
+ * @brief UI_ProportionalStringWidth
+ * @note Unused.
+ *
 int UI_ProportionalStringWidth(const char *str)
 {
-	const char *s = str;
-	int        ch;
-	int        charWidth;
-	int        width = 0;
+    const char *s = str;
+    int        ch;
+    int        charWidth;
+    int        width = 0;
 
-	while (*s)
-	{
-		ch        = *s & 127;
-		charWidth = propMap[ch][2];
-		if (charWidth != -1)
-		{
-			width += charWidth;
-			width += PROP_GAP_WIDTH;
-		}
-		s++;
-	}
+    while (*s)
+    {
+        ch        = *s & 127;
+        charWidth = propMap[ch][2];
+        if (charWidth != -1)
+        {
+            width += charWidth;
+            width += PROP_GAP_WIDTH;
+        }
+        s++;
+    }
 
-	width -= PROP_GAP_WIDTH;
-	return width;
+    width -= PROP_GAP_WIDTH;
+    return width;
 }
+*/
 
+/**
+ * @brief UI_DrawProportionalString2
+ * @note Unused.
+ *
 static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t color, float sizeScale, qhandle_t charset)
 {
-	const char    *s = str;
-	unsigned char ch;
-	float         ax = x * cgs.screenXScale + cgs.screenXBias;
-	float         ay = y * cgs.screenYScale;
-	float         aw;
-	float         ah;
-	float         frow;
-	float         fcol;
-	float         fwidth;
-	float         fheight;
+    const char    *s = str;
+    unsigned char ch;
+    float         ax = x * cgs.screenXScale + cgs.screenXBias;
+    float         ay = y * cgs.screenYScale;
+    float         aw;
+    float         ah;
+    float         frow;
+    float         fcol;
+    float         fwidth;
+    float         fheight;
 
-	// draw the colored text
-	trap_R_SetColor(color);
+    // draw the colored text
+    trap_R_SetColor(color);
 
-	while (*s)
-	{
-		ch = *s & 127;
-		if (ch == ' ')
-		{
-			aw = (float)PROP_SPACE_WIDTH * cgs.screenXScale * sizeScale;
-		}
-		else if (propMap[ch][2] != -1)
-		{
-			fcol    = (float)propMap[ch][0] / 256.0f;
-			frow    = (float)propMap[ch][1] / 256.0f;
-			fwidth  = (float)propMap[ch][2] / 256.0f;
-			fheight = (float)PROP_HEIGHT / 256.0f;
-			aw      = (float)propMap[ch][2] * cgs.screenXScale * sizeScale;
-			ah      = (float)PROP_HEIGHT * cgs.screenYScale * sizeScale;
-			trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, charset);
-		}
-		else
-		{
-			aw = 0;
-		}
+    while (*s)
+    {
+        ch = *s & 127;
+        if (ch == ' ')
+        {
+            aw = (float)PROP_SPACE_WIDTH * cgs.screenXScale * sizeScale;
+        }
+        else if (propMap[ch][2] != -1)
+        {
+            fcol    = (float)propMap[ch][0] / 256.0f;
+            frow    = (float)propMap[ch][1] / 256.0f;
+            fwidth  = (float)propMap[ch][2] / 256.0f;
+            fheight = (float)PROP_HEIGHT / 256.0f;
+            aw      = (float)propMap[ch][2] * cgs.screenXScale * sizeScale;
+            ah      = (float)PROP_HEIGHT * cgs.screenYScale * sizeScale;
+            trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, charset);
+        }
+        else
+        {
+            aw = 0;
+        }
 
-		ax += (aw + (float)PROP_GAP_WIDTH * cgs.screenXScale * sizeScale);
-		s++;
-	}
+        ax += (aw + (float)PROP_GAP_WIDTH * cgs.screenXScale * sizeScale);
+        s++;
+    }
 
-	trap_R_SetColor(NULL);
+    trap_R_SetColor(NULL);
 }
-
-/*
-=================
-UI_ProportionalSizeScale
-=================
 */
+
+/**
+ * @brief UI_ProportionalSizeScale
+ * @note Unused.
+ *
 float UI_ProportionalSizeScale(int style)
 {
-	if (style & UI_SMALLFONT)
-	{
-		return 0.75;
-	}
-	if (style & UI_EXSMALLFONT)
-	{
-		return 0.4;
-	}
+    if (style & UI_SMALLFONT)
+    {
+        return 0.75;
+    }
+    if (style & UI_EXSMALLFONT)
+    {
+        return 0.4;
+    }
 
-	return 1.0f;
+    return 1.0f;
 }
-
-/*
-=================
-UI_DrawProportionalString
-=================
 */
+
+/**
+ * @brief UI_DrawProportionalString
+ * @note Unused.
+ *
 void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color)
 {
-	vec4_t drawcolor;
-	int    width;
-	float  sizeScale = UI_ProportionalSizeScale(style);
+    vec4_t drawcolor;
+    int    width;
+    float  sizeScale = UI_ProportionalSizeScale(style);
 
-	switch (style & UI_FORMATMASK)
-	{
-	case UI_CENTER:
-		width = UI_ProportionalStringWidth(str) * sizeScale;
-		x    -= width / 2;
-		break;
+    switch (style & UI_FORMATMASK)
+    {
+    case UI_CENTER:
+        width = UI_ProportionalStringWidth(str) * sizeScale;
+        x    -= width / 2;
+        break;
 
-	case UI_RIGHT:
-		width = UI_ProportionalStringWidth(str) * sizeScale;
-		x    -= width;
-		break;
+    case UI_RIGHT:
+        width = UI_ProportionalStringWidth(str) * sizeScale;
+        x    -= width;
+        break;
 
-	case UI_LEFT:
-	default:
-		break;
-	}
+    case UI_LEFT:
+    default:
+        break;
+    }
 
-	if (style & UI_DROPSHADOW)
-	{
-		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x + 2, y + 2, str, drawcolor, sizeScale, cgs.media.charsetProp);
-	}
+    if (style & UI_DROPSHADOW)
+    {
+        drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
+        drawcolor[3] = color[3];
+        UI_DrawProportionalString2(x + 2, y + 2, str, drawcolor, sizeScale, cgs.media.charsetProp);
+    }
 
-	if (style & UI_INVERSE)
-	{
-		drawcolor[0] = color[0] * 0.8;
-		drawcolor[1] = color[1] * 0.8;
-		drawcolor[2] = color[2] * 0.8;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, cgs.media.charsetProp);
-		return;
-	}
+    if (style & UI_INVERSE)
+    {
+        drawcolor[0] = color[0] * 0.8;
+        drawcolor[1] = color[1] * 0.8;
+        drawcolor[2] = color[2] * 0.8;
+        drawcolor[3] = color[3];
+        UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, cgs.media.charsetProp);
+        return;
+    }
 
-	if (style & UI_PULSE)
-	{
-		//drawcolor[0] = color[0] * 0.8;
-		//drawcolor[1] = color[1] * 0.8;
-		//drawcolor[2] = color[2] * 0.8;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x, y, str, color, sizeScale, cgs.media.charsetProp);
+    if (style & UI_PULSE)
+    {
+        //drawcolor[0] = color[0] * 0.8;
+        //drawcolor[1] = color[1] * 0.8;
+        //drawcolor[2] = color[2] * 0.8;
+        drawcolor[3] = color[3];
+        UI_DrawProportionalString2(x, y, str, color, sizeScale, cgs.media.charsetProp);
 
-		drawcolor[0] = color[0];
-		drawcolor[1] = color[1];
-		drawcolor[2] = color[2];
-		drawcolor[3] = 0.5 + 0.5 * sin(cg.time / PULSE_DIVISOR);
-		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, cgs.media.charsetPropGlow);
-		return;
-	}
+        drawcolor[0] = color[0];
+        drawcolor[1] = color[1];
+        drawcolor[2] = color[2];
+        drawcolor[3] = 0.5 + 0.5 * sin(cg.time / PULSE_DIVISOR);
+        UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, cgs.media.charsetPropGlow);
+        return;
+    }
 
-	UI_DrawProportionalString2(x, y, str, color, sizeScale, cgs.media.charsetProp);
+    UI_DrawProportionalString2(x, y, str, color, sizeScale, cgs.media.charsetProp);
 }
-
-char *CG_TranslateString(const char *string)
-{
-	static char staticbuf[2][MAX_VA_STRING];
-	static int  bufcount = 0;
-	char        *buf;
-
-	// some code expects this to return a copy always, even
-	// if none is needed for translation, so always supply another buffer
-	buf = staticbuf[bufcount++ % 2];
-
-	trap_TranslateString(string, buf);
-
-	return buf;
-}
+*/
