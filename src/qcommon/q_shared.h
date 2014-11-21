@@ -49,7 +49,7 @@
 #define Q3_VERSION              PRODUCT_LABEL " " ETLEGACY_VERSION
 
 #ifdef LEGACY_DEBUG
-#define ET_VERSION              "DEBUG " Q3_VERSION " " CPUSTRING " " __DATE__
+#define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__ " DEBUG"
 #else
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
 #endif
