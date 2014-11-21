@@ -262,6 +262,7 @@ void CMod_LoadBrushes(lump_t *l)
 		{
 			Com_Error(ERR_DROP, "CMod_LoadBrushes: bad shaderNum: %i", out->shaderNum);
 		}
+
 		out->contents = cm.shaders[out->shaderNum].contentFlags;
 
 		CM_BoundBrush(out);
@@ -461,6 +462,7 @@ void CMod_LoadBrushSides(lump_t *l)
 		{
 			Com_Error(ERR_DROP, "CMod_LoadBrushSides: bad shaderNum: %i", out->shaderNum);
 		}
+
 		out->surfaceFlags = cm.shaders[out->shaderNum].surfaceFlags;
 	}
 }
@@ -495,6 +497,7 @@ void CMod_LoadVisibility(lump_t *l)
 		memset(cm.visibility, 255, cm.clusterBytes);
 		return;
 	}
+
 	buf = cmod_base + l->fileofs;
 
 	cm.vised        = qtrue;
@@ -741,6 +744,7 @@ cmodel_t *CM_ClipHandleToModel(clipHandle_t handle)
 		Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i < %i < %i",
 		          cm.numSubModels, handle, MAX_SUBMODELS);
 	}
+
 	Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i", handle + MAX_SUBMODELS);
 
 	return NULL;
@@ -757,6 +761,7 @@ clipHandle_t CM_InlineModel(int index)
 	{
 		Com_Error(ERR_DROP, "CM_InlineModel: bad number");
 	}
+
 	return index;
 }
 
@@ -781,6 +786,7 @@ int CM_LeafCluster(int leafnum)
 	{
 		Com_Error(ERR_DROP, "CM_LeafCluster: bad number");
 	}
+
 	return cm.leafs[leafnum].cluster;
 }
 
@@ -790,6 +796,7 @@ int CM_LeafArea(int leafnum)
 	{
 		Com_Error(ERR_DROP, "CM_LeafArea: bad number");
 	}
+
 	return cm.leafs[leafnum].area;
 }
 

@@ -110,6 +110,7 @@ void SV_GameSendServerCommand(int clientNum, const char *text)
 		{
 			return;
 		}
+
 		SV_SendServerCommand(svs.clients + clientNum, "%s", text);
 	}
 }
@@ -199,6 +200,7 @@ qboolean SV_inPVS(const vec3_t p1, const vec3_t p2)
 	{
 		return qfalse;      // a door blocks sight
 	}
+
 	return qtrue;
 }
 
@@ -243,6 +245,7 @@ void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
 	{
 		return;
 	}
+
 	CM_AdjustAreaPortalState(svEnt->areanum, svEnt->areanum2, open);
 }
 
@@ -299,7 +302,6 @@ void SV_LocateGameData(sharedEntity_t *gEnts, int numGEntities, int sizeofGEntit
 /*
 ===============
 SV_GetUsercmd
-
 ===============
 */
 void SV_GetUsercmd(int clientNum, usercmd_t *cmd)
@@ -634,6 +636,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
 		break;
 	}
+
 	return -1;
 }
 
@@ -650,6 +653,7 @@ void SV_ShutdownGameProgs(void)
 	{
 		return;
 	}
+
 	VM_Call(gvm, GAME_SHUTDOWN, qfalse);
 	VM_Free(gvm);
 	gvm = NULL;

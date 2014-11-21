@@ -74,9 +74,9 @@ them, which prevents having to deal with multiple fragments of a single entity.
 
 typedef struct worldSector_s
 {
-	int axis;           // -1 = leaf node
+	int axis;                         // -1 = leaf node
 	float dist;
-	struct worldSector_s *children[2];
+	struct     worldSector_s *children[2];
 	svEntity_t *entities;
 } worldSector_t;
 
@@ -106,6 +106,7 @@ void SV_SectorList_f(void)
 		{
 			c++;
 		}
+
 		Com_Printf("sector %i: %i entities\n", i, c);
 	}
 }
@@ -366,6 +367,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 					            gEnt->s.number,
 					            gEnt->r.absmin[0], gEnt->r.absmin[1], gEnt->r.absmin[2]);
 				}
+
 				ent->areanum2 = area;
 			}
 			else
@@ -526,9 +528,9 @@ int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int m
 
 typedef struct
 {
-	vec3_t boxmins, boxmaxs;     // enclose the test object along entire move
+	vec3_t boxmins, boxmaxs;            // enclose the test object along entire move
 	const float *mins;
-	const float *maxs;  // size of the moving object
+	const float *maxs;                  // size of the moving object
 	const float *start;
 	vec3_t end;
 	trace_t trace;

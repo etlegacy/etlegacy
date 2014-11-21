@@ -37,7 +37,6 @@
 /*
 ==================
 CM_PointLeafnum_r
-
 ==================
 */
 int CM_PointLeafnum_r(const vec3_t p, int num)
@@ -80,6 +79,7 @@ int CM_PointLeafnum(const vec3_t p)
 	{
 		return 0;
 	}
+
 	return CM_PointLeafnum_r(p, 0);
 }
 
@@ -104,6 +104,7 @@ void CM_StoreLeafs(leafList_t *ll, int nodenum)
 		ll->overflowed = qtrue;
 		return;
 	}
+
 	ll->list[ll->count++] = leafNum;
 }
 
@@ -140,6 +141,7 @@ void CM_StoreBrushes(leafList_t *ll, int nodenum)
 			ll->overflowed = qtrue;
 			return;
 		}
+
 		((cbrush_t **)ll->list)[ll->count++] = b;
 	}
 #if 0
@@ -374,6 +376,7 @@ void CM_FloodArea_r(int areaNum, int floodnum)
 		{
 			return;
 		}
+
 		Com_Error(ERR_DROP, "CM_FloodArea_r: reflooded");
 	}
 
@@ -409,6 +412,7 @@ void CM_FloodAreaConnections(void)
 		{
 			continue;       // already flooded into
 		}
+
 		floodnum++;
 		CM_FloodArea_r(i, floodnum);
 	}
@@ -475,6 +479,7 @@ qboolean CM_AreasConnected(int area1, int area2)
 	{
 		return qtrue;
 	}
+
 	return qfalse;
 }
 

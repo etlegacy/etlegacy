@@ -275,6 +275,7 @@ void Tracker_requestWeaponStats(void)
 				onlybots = qfalse;
 				querycl  = i;
 			}
+
 			expectnum++;
 		}
 	}
@@ -373,6 +374,7 @@ qboolean Tracker_catchServerCommand(int clientNum, char *msg)
 			strcpy(expect, "");
 			querycl = -1;
 		}
+
 		slot = 0;
 		sscanf(msg, "ws %i", &slot);
 		Tracker_Send("%s\\%s", msg, Tracker_createClientInfo(slot));

@@ -160,6 +160,7 @@ static void CON_Hide(void)
 		{
 			CON_Back();
 		}
+
 		ttycon_hide++;
 	}
 }
@@ -244,6 +245,7 @@ void Hist_Add(field_t *field)
 	{
 		hist_count++;
 	}
+
 	hist_current = -1; // re-init
 }
 
@@ -265,6 +267,7 @@ field_t *Hist_Prev(void)
 	{
 		return NULL;
 	}
+
 	hist_current++;
 	return &(ttyEditLines[hist_current]);
 }
@@ -288,6 +291,7 @@ field_t *Hist_Next(void)
 	{
 		return NULL;
 	}
+
 	return &(ttyEditLines[hist_current]);
 }
 
@@ -393,6 +397,7 @@ char *CON_Input(void)
 					TTY_con.buffer[TTY_con.cursor] = '\0';
 					CON_Back();
 				}
+
 				return NULL;
 			}
 			// check if this is a control char
@@ -493,6 +498,7 @@ char *CON_Input(void)
 						}
 					}
 				}
+
 				Com_DPrintf("droping ISCTL sequence: %d, TTY_erase: %d\n", key, TTY_erase);
 				CON_FlushIn();
 				return NULL;
@@ -501,6 +507,7 @@ char *CON_Input(void)
 			{
 				return NULL;
 			}
+
 			// push regular character
 			TTY_con.buffer[TTY_con.cursor] = key;
 			TTY_con.cursor++; // next char will always be '\0'
@@ -536,10 +543,12 @@ char *CON_Input(void)
 		{
 			return NULL;
 		}
+
 		text[len - 1] = 0;  // rip off the /n and terminate
 
 		return text;
 	}
+
 	return NULL;
 }
 

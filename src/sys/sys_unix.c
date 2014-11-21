@@ -137,6 +137,7 @@ void Sys_Chmod(char *file, int mode)
 	{
 		Com_Printf("chmod('%s', %d) failed: errno %d\n", file, perm, errno);
 	}
+
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 }
 
@@ -354,6 +355,7 @@ void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, cha
 				{
 					Com_sprintf(newsubdirs, sizeof(newsubdirs), "%s", d->d_name);
 				}
+
 				Sys_ListFilteredFiles(basedir, newsubdirs, filter, list, numfiles);
 			}
 		}
@@ -366,6 +368,7 @@ void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, cha
 		{
 			continue;
 		}
+
 		list[*numfiles] = CopyString(filename);
 		(*numfiles)++;
 	}
@@ -413,6 +416,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 		{
 			listCopy[i] = list[i];
 		}
+
 		listCopy[i] = NULL;
 
 		return listCopy;
@@ -468,6 +472,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 		{
 			break;
 		}
+
 		list[nfiles] = CopyString(d->d_name);
 		nfiles++;
 	}
@@ -489,6 +494,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	{
 		listCopy[i] = list[i];
 	}
+
 	listCopy[i] = NULL;
 
 	return listCopy;
@@ -786,9 +792,12 @@ static void Sys_XmessageCommand(dialogType_t type, const char *message, const ch
 
 	switch (type)
 	{
-	default:           Sys_AppendToExecBuffer("OK:0"); break;
-	case DT_YES_NO:    Sys_AppendToExecBuffer("Yes:0,No:1"); break;
-	case DT_OK_CANCEL: Sys_AppendToExecBuffer("OK:0,Cancel:1"); break;
+	default:           Sys_AppendToExecBuffer("OK:0");
+		break;
+	case DT_YES_NO:    Sys_AppendToExecBuffer("Yes:0,No:1");
+		break;
+	case DT_OK_CANCEL: Sys_AppendToExecBuffer("OK:0,Cancel:1");
+		break;
 	}
 
 	Sys_AppendToExecBuffer("-center");
@@ -933,6 +942,7 @@ void Sys_DoStartProcess(char *cmdline)
 			execl(cmdline, cmdline, NULL);
 			printf("execl failed: %s\n", strerror(errno));
 		}
+
 		_exit(0);
 		break;
 	}

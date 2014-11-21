@@ -89,6 +89,7 @@ char *Sys_DefaultHomePath(void)
 			Com_Printf("Unable to detect CSIDL_PERSONAL\n");
 			return NULL;
 		}
+
 		Q_strncpyz(homePath, szPath, sizeof(homePath));
 		Q_strcat(homePath, sizeof(homePath), "\\ETLegacy");
 	}
@@ -112,6 +113,7 @@ int Sys_Milliseconds(void)
 		sys_timeBase = timeGetTime();
 		initialized  = qtrue;
 	}
+
 	sys_curtime = timeGetTime() - sys_timeBase;
 
 	return sys_curtime;
@@ -149,6 +151,7 @@ qboolean Sys_RandomBytes(byte *string, int len)
 		CryptReleaseContext(prov, 0);
 		return qfalse;
 	}
+
 	CryptReleaseContext(prov, 0);
 	return qtrue;
 }
@@ -336,6 +339,7 @@ void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, cha
 				{
 					Com_sprintf(newsubdirs, sizeof(newsubdirs), "%s", findinfo.name);
 				}
+
 				Sys_ListFilteredFiles(basedir, newsubdirs, filter, list, numfiles);
 			}
 		}
@@ -348,6 +352,7 @@ void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, cha
 		{
 			continue;
 		}
+
 		list[*numfiles] = CopyString(filename);
 		(*numfiles)++;
 	}
@@ -384,6 +389,7 @@ static qboolean strgtr(const char *s0, const char *s1)
 			return qfalse;
 		}
 	}
+
 	return qfalse;
 }
 
@@ -421,6 +427,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 		{
 			listCopy[i] = list[i];
 		}
+
 		listCopy[i] = NULL;
 
 		return listCopy;
@@ -462,6 +469,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 			{
 				break;
 			}
+
 			list[nfiles] = CopyString(findinfo.name);
 			nfiles++;
 		}
@@ -967,8 +975,10 @@ void Sys_SetProcessProperties(void)
 			{
 				processAffinityMask &= ~mask;
 			}
+
 			currentCore++;
 		}
+
 		mask = mask << 1;
 	}
 
