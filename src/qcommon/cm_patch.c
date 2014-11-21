@@ -1701,7 +1701,7 @@ CM_CheckFacetPlane
 */
 int CM_CheckFacetPlane(float *plane, vec3_t start, vec3_t end, float *enterFrac, float *leaveFrac, int *hit)
 {
-	float d1, d2, f;
+	float d1, d2;
 
 	*hit = qfalse;
 
@@ -1723,7 +1723,8 @@ int CM_CheckFacetPlane(float *plane, vec3_t start, vec3_t end, float *enterFrac,
 	// crosses face
 	if (d1 > d2)      // enter
 	{
-		f = (d1 - SURFACE_CLIP_EPSILON) / (d1 - d2);
+		float f = (d1 - SURFACE_CLIP_EPSILON) / (d1 - d2);
+
 		if (f < 0)
 		{
 			f = 0;
@@ -1737,7 +1738,8 @@ int CM_CheckFacetPlane(float *plane, vec3_t start, vec3_t end, float *enterFrac,
 	}
 	else        // leave
 	{
-		f = (d1 + SURFACE_CLIP_EPSILON) / (d1 - d2);
+		float f = (d1 + SURFACE_CLIP_EPSILON) / (d1 - d2);
+
 		if (f > 1)
 		{
 			f = 1;

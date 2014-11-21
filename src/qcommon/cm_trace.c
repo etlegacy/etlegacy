@@ -134,7 +134,6 @@ void CM_TestBoxInBrush(traceWork_t *tw, cbrush_t *brush)
 	float        dist;
 	float        d1;
 	cbrushside_t *side;
-	vec3_t       startp;
 
 	if (!brush->numsides)
 	{
@@ -156,7 +155,8 @@ void CM_TestBoxInBrush(traceWork_t *tw, cbrush_t *brush)
 
 	if (tw->sphere.use)
 	{
-		float t;
+		vec3_t startp;
+		float  t;
 
 		// the first six planes are the axial planes, so we only
 		// need to test the remainder
@@ -223,7 +223,6 @@ void CM_TestInLeaf(traceWork_t *tw, cLeaf_t *leaf)
 	int      k;
 	int      brushnum;
 	cbrush_t *b;
-	cPatch_t *patch;
 
 	// test box position against all brushes in the leaf
 	for (k = 0 ; k < leaf->numLeafBrushes ; k++)
@@ -251,6 +250,8 @@ void CM_TestInLeaf(traceWork_t *tw, cLeaf_t *leaf)
 	// test against all patches
 	if (!cm_noCurves->integer)
 	{
+		cPatch_t *patch;
+
 		for (k = 0 ; k < leaf->numLeafSurfaces ; k++)
 		{
 			patch = cm.surfaces[cm.leafsurfaces[leaf->firstLeafSurface + k]];
@@ -600,8 +601,6 @@ static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 	qboolean     getout, startout;
 	float        f;
 	cbrushside_t *side, *leadside;
-	vec3_t       startp;
-	vec3_t       endp;
 
 	if (!brush->numsides)
 	{
@@ -617,7 +616,9 @@ static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 
 	if (tw->sphere.use)
 	{
-		float t;
+		vec3_t startp;
+		vec3_t endp;
+		float  t;
 
 		// compare the trace against all planes of the brush
 		// find the latest time the trace crosses a plane towards the interior
@@ -1257,10 +1258,9 @@ static void CM_TraceThroughTree(traceWork_t *tw, int num, float p1f, float p2f, 
 		return;
 	}
 
-	//
 	// find the point distances to the seperating plane
 	// and the offset for the size of the box
-	//
+
 	node  = cm.nodes + num;
 	plane = node->plane;
 
@@ -1349,7 +1349,6 @@ static void CM_TraceThroughTree(traceWork_t *tw, int num, float p1f, float p2f, 
 
 	CM_TraceThroughTree(tw, node->children[side], p1f, midf, p1, mid);
 
-
 	// go past the node
 	if (frac2 < 0)
 	{
@@ -1385,7 +1384,6 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 	vec3_t      offset;
 	cmodel_t    *cmod;
 	qboolean    positionTest;
-	vec3_t      dir;
 
 	cmod = CM_ClipHandleToModel(model);
 
@@ -1500,6 +1498,8 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 	}
 	else
 	{
+		vec3_t dir;
+
 		VectorSubtract(tw.end, tw.start, dir);
 		VectorCopy(dir, tw.dir);
 		VectorNormalize(dir);
