@@ -28,7 +28,7 @@ menuDef {
 
 	onESC {
 		close wm_autoupdate_modal ;
-		open wm_autoupdate_modal // open main
+		open main
 	}
 
 // Background //
