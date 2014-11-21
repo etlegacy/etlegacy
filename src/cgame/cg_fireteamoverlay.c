@@ -560,7 +560,26 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		x += 14 + bestNameWidth - puwidth;
 
 		// draw the player's weapon icon
-		curWeap = cg_entities[ci->clientNum].currentState.weapon;
+		if (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
+		{
+			if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+			{
+				curWeap = WP_MOBILE_BROWNING;
+			}
+			else
+			{
+				curWeap = WP_MOBILE_MG42;
+			}
+		}
+		else if (cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE)
+		{
+			curWeap = WP_MOBILE_MG42;
+		}
+		else
+		{
+			curWeap = cg_entities[ci->clientNum].currentState.weapon;
+		}
+
 		if (cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 		{
 			CG_DrawPic(x, y, CG_WeaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
