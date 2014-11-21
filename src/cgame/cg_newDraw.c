@@ -210,8 +210,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	VectorCopy(*refcolor, hcolor);
 	hcolor[3] = 1.f;
 
-	if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE) ||
-	    (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK))
+	if (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
 	{
 		if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
 		{
@@ -221,6 +220,10 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		{
 			realweap = WP_MOBILE_MG42;
 		}
+	}
+	else if (cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE)
+	{
+		realweap = WP_MOBILE_MG42;
 	}
 	else
 	{
