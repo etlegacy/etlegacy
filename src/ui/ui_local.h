@@ -614,16 +614,7 @@ extern void UI_FillRect(float x, float y, float width, float height, const float
 extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawTopBottom(float x, float y, float w, float h);
 extern void UI_DrawSides(float x, float y, float w, float h);
-extern void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
-extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
-extern float UI_ProportionalSizeScale(int style);
-extern void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color);
-extern int UI_ProportionalStringWidth(const char *str);
-extern void UI_DrawString(int x, int y, const char *str, int style, vec4_t color);
-extern void UI_DrawChar(int x, int y, int ch, int style, vec4_t color);
-extern qboolean UI_CursorInRect(int x, int y, int width, int height);
 extern void UI_AdjustFrom640(float *x, float *y, float *w, float *h);
-extern void UI_DrawTextBox(int x, int y, int width, int lines);
 extern qboolean UI_IsFullscreen(void);
 extern void UI_SetActiveMenu(uiMenuCommand_t menu);
 extern void UI_PushMenu(menuframework_s *menu);
@@ -633,6 +624,17 @@ extern char *UI_Argv(int arg);
 extern char *UI_Cvar_VariableString(const char *var_name);
 extern void UI_Refresh(int time);
 extern void UI_KeyEvent(int key);
+
+/* unused
+extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
+extern float UI_ProportionalSizeScale(int style);
+extern void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color);
+extern int UI_ProportionalStringWidth(const char *str);
+extern void UI_DrawString(int x, int y, const char *str, int style, vec4_t color);
+extern void UI_DrawChar(int x, int y, int ch, int style, vec4_t color);
+extern void UI_DrawTextBox(int x, int y, int width, int lines);
+extern qboolean UI_CursorInRect(int x, int y, int width, int height);
+*/
 
 // ui_shared.c
 int Binding_IDFromName(const char *name);
