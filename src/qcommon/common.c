@@ -3526,7 +3526,7 @@ static void PrintCvarMatches(const char *s)
 	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
 		Com_TruncateLongString(value, Cvar_VariableString(s));
-		Com_Printf("    %s = \"%s\"\n", s, value);
+		Com_Printf("    %s = \"%s^7\"\n", s, value);
 	}
 }
 

@@ -3584,7 +3584,7 @@ CL_ServerStatusResponse
 void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 {
 	char           *s;
-	char           info[MAX_INFO_STRING];
+	char           info[MAX_INFO_STRING], name[32];
 	int            i, l, score, ping;
 	int            len;
 	serverStatus_t *serverStatus;
@@ -3679,7 +3679,8 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 			{
 				s = "unknown";
 			}
-			Com_Printf("%-2d   %-3d    %-3d   %s\n", i, score, ping, s);
+			sscanf(s, "\"%[^\"]\"", name); // get player's name between double quotes
+			Com_Printf("%-2d   %-3d    %-3d   \"%s^7\"\n", i, score, ping, name);
 		}
 	}
 	len = strlen(serverStatus->string);
