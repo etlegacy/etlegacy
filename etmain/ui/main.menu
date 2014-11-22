@@ -1,4 +1,5 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 #define WINDOW_X		16
@@ -6,9 +7,6 @@
 #define WINDOW_WIDTH	128
 #define WINDOW_HEIGHT	248
 #define GROUP_NAME		"grpMain"
-
-// Macros //
-#include "ui/menumacros.h"
 
 // Opener //
 menuDef {
@@ -38,7 +36,7 @@ menuDef {
 
 	onOpen {
 		exec "set cl_noprint 1; exec etlegacy.cfg; set cl_noprint 0"
-	
+
 		conditionalscript cl_profile 1
 			( "clearFocus" )
 			( "close main ; open profile_create_initial_opener" )	// do we want an abort here?
@@ -115,9 +113,11 @@ menuDef {
 	BUTTON( 6, 224, WINDOW_WIDTH-12, 18, "EXIT GAME", .3, 14, clearFocus ; open quit )
 
 #ifndef LEGACY
-	SUBWINDOWBLACK( SCREEN_WIDTH-265, 0, 245, 105, "^1Attention: ^3Security Information")
-	LABEL( SCREEN_WIDTH-255, 20, 192, 18, "^7You are running old software.\n\nWe do recommend to upgrade your ET client.\nJoin ET Legacy and keep the game alive.", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	//BUTTON( SCREEN_WIDTH-260, 85, 235, 18, "DOWNLOAD LATEST ET CLIENT", .3, 14, clearFocus ; open etlegacywebsite )
-    BUTTON( SCREEN_WIDTH-260, 85, 235, 18, "DOWNLOAD LATEST ET CLIENT", .3, 14, clearFocus; uiScript validate_openURL )
+#define SECURITY_WIDTH	200
+	LABEL( 80, 368, SECURITY_WIDTH, 18, "^1SECURITY INFORMATION", .3, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	LABELWHITE( 80, 384, SECURITY_WIDTH, 9, "You are running old software", .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	LABEL( 80, 398, SECURITY_WIDTH, 9, "We do recommend to\nupgrade your ET client", .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	BUTTON( 80+6, 428, SECURITY_WIDTH-12, 18, "UPGRADE NOW", .3, 14, clearFocus; uiScript validate_openURL )
+	//LABEL( 80, 440, SECURITY_WIDTH, 18, "Join ET Legacy and keep the game alive", .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 #endif
 }
