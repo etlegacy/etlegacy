@@ -3,19 +3,13 @@ ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=m
 
 *A second breath of life for Wolfenstein: Enemy Territory*
 
-Website: [http://www.etlegacy.com](http://www.etlegacy.com)
-
-Release downloads: [http://dev.etlegacy.com/download](http://dev.etlegacy.com/download)
-
-Wiki/FAQ: [http://dev.etlegacy.com/projects/etlegacy/wiki](http://dev.etlegacy.com/projects/etlegacy/wiki)
-
-Forums: [http://dev.etlegacy.com/projects/etlegacy/boards](http://dev.etlegacy.com/projects/etlegacy/boards)
-
-Development (bug reports and feature requests): [http://dev.etlegacy.com](http://dev.etlegacy.com)
-
-Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-
-IRC: \#etlegacy on irc.freenode.net
+* Website: [http://www.etlegacy.com](http://www.etlegacy.com)
+* Release downloads: [http://dev.etlegacy.com/download](http://dev.etlegacy.com/download)
+* Wiki/FAQ: [http://dev.etlegacy.com/projects/etlegacy/wiki](http://dev.etlegacy.com/projects/etlegacy/wiki)
+* Forums: [http://dev.etlegacy.com/projects/etlegacy/boards](http://dev.etlegacy.com/projects/etlegacy/boards)
+* Development (bug reports and feature requests): [http://dev.etlegacy.com](http://dev.etlegacy.com)
+* Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
+* IRC: \#etlegacy on irc.freenode.net
 
 INTRODUCTION
 ============
@@ -31,14 +25,17 @@ For more information consult our [changelog](http://dev.etlegacy.com/projects/et
 GENERAL NOTES
 =============
 
-Game data and patching:
+Game data
 -----------------------------------------------------------------------------
 
 Wolfenstein: Enemy Territory is a free release, and can be downloaded from
-http://www.splashdamage.com/content/download-wolfenstein-enemy-territory
+[Splash Damage](http://www.splashdamage.com/content/download-wolfenstein-enemy-territory)
 
 This source release contains only the engine and mod code but not any game data,
 which is still covered by the original EULA and must be obeyed as usual.
+
+In order to run ET:Legacy you wil need to copy the original assets files
+(*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
 
 Compatibility with Enemy Territory 2.60b
 ----------------------------------------------------------------------------
@@ -51,7 +48,7 @@ In case you are a running a 64 bits system, you probably might want to use the
 can be automatically downloaded using the `git submodule` command. See the next section
 for more details.
 
-NOTE: Even if you have a 64 bits linux distribution which provides 32 bits versions of all
+**NOTE**: Even if you have a 64 bits linux distribution which provides 32 bits versions of all
 the required libraries, you will also need the development libraries (-devel packages)
 installed on your system.
 
@@ -90,7 +87,7 @@ Compile and install
 
 ### Linux
 
-* option A:
+* option A: **command line**
 
 In terminal run:
 
@@ -110,27 +107,27 @@ First adjust the following variables in CMake:
   * (optional) **INSTALL_DEFAULT_BINDIR**: Location for executables. Appended to CMAKE_INSTALL_PREFIX.
     Defaults to "bin".
   * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
-    CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "etmain" is appended to it.
+    CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "legacy" is appended to it.
 
 Then compile ET:Legacy:
 
 	$ make
 	# make install
 
-* option B:
+* option B: ***Easybuild*
 
 In terminal run:
 
- $ ./easybuild.sh
+    $ ./easybuild.sh
 
 Install:
 
- $ cd build
- $ make install
+    $ cd build
+    $ make install
 
 Set the CMake variables (see option A) in file easybuild.sh before.
 
-### Crosscompiling on linux with mingw32
+### Crosscompiling on Linux with mingw32
 
 In terminal run:
 
@@ -145,12 +142,12 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
 
 * option A: **Visual Studio**
 
-    1. download the free Visual Studio C++ Express 2010
-    2. when installing CMake, make sure it is added into your system PATH
+    1. download the free Visual Studio C++ Express 2010 or newer
+    2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
     3. create a `build` directory inside the directory which contains ET:Legacy sources
-    4. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu) and `cd` to the newly created build directory
+    4. open *Visual Studio Command Prompt (2010)* in the Start menu and `cd` to the newly created build directory
     5. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake`
-       ... or `cmake -G "Visual Studio 10" ..` and open the resulting project in VS 2010
+       ... or `cmake -G "Visual Studio 10" -DBUNDLED_LIBS=YES ..` and open the resulting project in Visual Studio
 
 * option B: **QtCreator**
 
@@ -158,7 +155,7 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
     1. open the CMakeLists.txt file in QtCreator.
 
 
-NOTES:
+**NOTES:**
 
 In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
 Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows
