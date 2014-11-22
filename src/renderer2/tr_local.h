@@ -710,6 +710,7 @@ typedef enum
 	CGEN_CUSTOM_RGBs,           // multiple expressions
 } colorGen_t;
 
+// not used in r2
 typedef enum
 {
 	TCGEN_BAD,
@@ -720,6 +721,7 @@ typedef enum
 	TCGEN_FOG,
 	TCGEN_VECTOR            // S and T from world coordinates
 } texCoordGen_t;
+
 
 typedef enum
 {

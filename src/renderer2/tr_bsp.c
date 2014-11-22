@@ -4630,16 +4630,16 @@ void R_LoadLights(char *lightDefs)
 	char         *p, *token, *s;
 	char         keyname[MAX_TOKEN_CHARS];
 	char         value[MAX_TOKEN_CHARS];
-	qboolean     isLight = qfalse;
-	int          numEntities = 0;
-	int          numLights = 0;
-	int          numOmniLights = 0;
-	int          numProjLights = 0;
+	qboolean     isLight           = qfalse;
+	int          numEntities       = 0;
+	int          numLights         = 0;
+	int          numOmniLights     = 0;
+	int          numProjLights     = 0;
 	int          numParallelLights = 0;
 	trRefLight_t *light;
-	int i = 0;
+	int          i = 0;
 
-	p = lightDefs;
+	p           = lightDefs;
 	numEntities = 1;            // parsed worldspawn so far
 
 	// count lights
@@ -4752,17 +4752,17 @@ void R_LoadLights(char *lightDefs)
 
 		light->l.inverseShadows = qfalse;
 
-		light->isStatic = qtrue;
+		light->isStatic    = qtrue;
 		light->noRadiosity = qfalse;
-		light->additive = qtrue;
+		light->additive    = qtrue;
 
 		light->shadowLOD = 0;
 	}
 
 	// parse lights
-	p = lightDefs;
+	p           = lightDefs;
 	numEntities = 1;
-	light = &s_worldData.lights[0];
+	light       = &s_worldData.lights[0];
 
 	while (1)
 	{
@@ -4892,7 +4892,7 @@ void R_LoadLights(char *lightDefs)
 			{
 				vec_t value2;
 
-				value2 = atof(value);
+				value2             = atof(value);
 				light->l.radius[0] = value2;
 				light->l.radius[1] = value2;
 				light->l.radius[2] = value2;
@@ -4921,7 +4921,7 @@ void R_LoadLights(char *lightDefs)
 				matrix_t rotation;
 
 				sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
-					&rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
+				       &rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
 
 				QuatFromMatrix(light->l.rotation, rotation);
 			}
@@ -4998,11 +4998,11 @@ R_LoadEntities
 */
 void R_LoadEntities(lump_t *l)
 {
-	char         *p, *token, *s;
-	char         keyname[MAX_TOKEN_CHARS];
-	char         value[MAX_TOKEN_CHARS];
-	world_t      *w                = &s_worldData;
-	
+	char    *p, *token, *s;
+	char    keyname[MAX_TOKEN_CHARS];
+	char    value[MAX_TOKEN_CHARS];
+	world_t *w = &s_worldData;
+
 	Ren_Print("...loading entities\n");
 
 	w->lightGridSize[0] = 64;
