@@ -2473,22 +2473,24 @@ void CG_DrawUpperRight(void)
 {
 	int y = 152; // 20 + 100 + 32;
 
-	if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
+	if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 	{
-		if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
+		if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
 		{
-			CG_DrawFireTeamOverlay(&activehud->fireteam.location);
+			if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
+			{
+				CG_DrawFireTeamOverlay(&activehud->fireteam.location);
+			}
+			else
+			{
+				CG_DrawFireTeamOverlay(&hud0.fireteam.location);
+			}
 		}
-		else
-		{
-			CG_DrawFireTeamOverlay(&hud0.fireteam.location);
-		}
-	}
 
-	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR) &&
-	    (cgs.autoMapExpanded || (!cgs.autoMapExpanded && (cg.time - cgs.autoMapExpandTime < 250.f))))
-	{
-		return;
+		if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cgs.autoMapExpanded || (!cgs.autoMapExpanded && (cg.time - cgs.autoMapExpandTime < 250.f))))
+		{
+			return;
+		}
 	}
 
 	if (cg_drawRoundTimer.integer)
