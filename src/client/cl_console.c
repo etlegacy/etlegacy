@@ -83,7 +83,7 @@ void Con_ToggleConsole_f(void)
 		// short console
 		if (keys[K_CTRL].down)
 		{
-			con.desiredFrac = (5.0 * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight;
+			con.desiredFrac = (4.0 * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight;
 		}
 		// full console
 		else if (keys[K_ALT].down)
