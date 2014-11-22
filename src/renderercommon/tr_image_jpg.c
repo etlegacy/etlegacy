@@ -45,10 +45,6 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-#if JPEG_LIB_VERSION < 80 && !defined(MEM_SRCDST_SUPPORTED)
-#   error Need system libjpeg >= 80 or jpeg_mem_ support
-#endif
-
 /*
  * Override default libjpeg error manager in order to be able to jump back
  * out to our routines during JPEG decoding.
