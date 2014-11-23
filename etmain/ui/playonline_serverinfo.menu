@@ -68,7 +68,7 @@ menuDef {
 		columns			4	0	40	20
 							40	40	10
 							90	40	10
-							135	40	30
+							135	40	44
 		visible			1
 		notselectable
 	}
