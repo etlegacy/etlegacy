@@ -6587,7 +6587,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
-				if (strcmp(Info_ValueForKey(info, "version"), PRODUCT_LABEL) == 0)
+				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 				{
 					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%s^9(+%s)/%s",
 					            Info_ValueForKey(info, "humans"),
