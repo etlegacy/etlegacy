@@ -5468,7 +5468,7 @@ static void UI_BuildServerDisplayList(int force)
 	len = strlen(uiInfo.serverStatus.motd);
 	if (len == 0)
 	{
-		strcpy(uiInfo.serverStatus.motd, va("Enemy Territory: Legacy - Version: %s", Q3_VERSION));
+		strcpy(uiInfo.serverStatus.motd, va("Enemy Territory: Legacy - Version: %s", ETLEGACY_VERSION));
 		len = strlen(uiInfo.serverStatus.motd);
 	}
 	if (len != uiInfo.serverStatus.motdLen)
