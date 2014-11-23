@@ -615,7 +615,7 @@ menuDef {
 		elementtype		LISTBOX_TEXT
 		elementwidth	$evalfloat((SUBWINDOW_WIDTH)-12)
 		elementheight	12
-		columns			7	0 SERVERNAME_WIDTH 39
+		columns			7	0 SERVERNAME_WIDTH 34
 							$evalfloat(SERVERNAME_WIDTH) MAPNAME_WIDTH 13
 							$evalfloat(SERVERNAME_WIDTH+MAPNAME_WIDTH) PLAYERS_WIDTH 10
 							$evalfloat(SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH) GAMETYPE_WIDTH 10
