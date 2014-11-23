@@ -325,10 +325,9 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  */
 void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
-	trace_t steptrace;
-	vec3_t  ofs, org, point;
-	vec3_t  flatforward;
-	float   angle;
+	vec3_t ofs, org, point;
+	vec3_t flatforward;
+	float  angle;
 
 	// zinx - don't let players block legs
 	tracemask &= ~(CONTENTS_BODY | CONTENTS_CORPSE);
@@ -358,6 +357,8 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 	if (!bodytrace || trace->fraction < bodytrace->fraction ||
 	    trace->allsolid)
 	{
+		trace_t steptrace;
+
 		// legs are clipping sooner than body
 		// see if our legs can step up
 
@@ -1007,6 +1008,8 @@ static qboolean PM_CheckProne(void)
 				case WP_MOBILE_BROWNING_SET:
 					PM_BeginWeaponChange(WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING, qfalse);
 					break;
+				default:
+					break;
 				}
 
 				// don't jump for a bit
@@ -1037,6 +1040,8 @@ static qboolean PM_CheckProne(void)
 				break;
 			case WP_K43_SCOPE:
 				PM_BeginWeaponChange(WP_K43_SCOPE, WP_K43, qfalse);
+				break;
+			default:
 				break;
 			}
 		}
@@ -2573,21 +2578,6 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	switch (oldweapon)
 	{
 	case WP_CARBINE:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime = 0;
-			if (!pm->ps->ammoclip[newweapon] && pm->ps->ammo[newweapon])
-			{
-				PM_ReloadClip(newweapon);
-			}
-		}
-		break;
-	case WP_M7:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime = 0;
-		}
-		break;
 	case WP_KAR98:
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
@@ -2598,31 +2588,20 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 			}
 		}
 		break;
+	case WP_M7:
 	case WP_GPG40:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime = 0;
-		}
-		break;
 	case WP_LUGER:
+	case WP_COLT:
+	case WP_MOBILE_MG42_SET:
+	case WP_MOBILE_BROWNING_SET:
+	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime = 0;
 		}
 		break;
 	case WP_SILENCER:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime    = 1000;
-			altSwitchAnim = qtrue;
-		}
-		break;
-	case WP_COLT:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime = 0;
-		}
-		break;
 	case WP_SILENCED_COLT:
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
@@ -2639,25 +2618,6 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			vec3_t axis[3];
-
-			switchtime = 0;
-
-			VectorCopy(pml.forward, axis[0]);
-			VectorCopy(pml.right, axis[2]);
-			CrossProduct(axis[0], axis[2], axis[1]);
-			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
-		}
-		break;
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime = 0;
-		}
-		break;
 	case WP_MORTAR:
 	case WP_MORTAR2:
 		if (newweapon == weaponTable[oldweapon].weapAlts)
@@ -2672,12 +2632,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
 		}
 		break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime = 0;
-		}
+	default:
 		break;
 	}
 
@@ -2814,27 +2769,6 @@ static void PM_FinishWeaponChange(void)
 		}
 		break;
 	case WP_CARBINE:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			if (pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
-			{
-				switchtime = 1347;
-			}
-			else
-			{
-				switchtime   = 0;
-				doSwitchAnim = qfalse;
-			}
-			altSwitchAnim = qtrue ;
-		}
-		break;
-	case WP_M7:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
-		{
-			switchtime    = 2350;
-			altSwitchAnim = qtrue ;
-		}
-		break;
 	case WP_KAR98:
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
@@ -2850,6 +2784,7 @@ static void PM_FinishWeaponChange(void)
 			altSwitchAnim = qtrue ;
 		}
 		break;
+	case WP_M7:
 	case WP_GPG40:
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
@@ -3902,7 +3837,6 @@ static void PM_Weapon(void)
 	switch (pm->ps->weaponstate)
 	{
 	case WEAPON_RELOADING:
-
 		PM_FinishWeaponReload();
 		break;
 	case WEAPON_DROPPING:
@@ -4118,18 +4052,21 @@ static void PM_Weapon(void)
 	// player is underwater - no fire
 	if (pm->waterlevel == 3)
 	{
-		// FIXME: do a switch
-		if (pm->ps->weapon != WP_KNIFE &&
-		    pm->ps->weapon != WP_KNIFE_KABAR &&
-		    pm->ps->weapon != WP_GRENADE_LAUNCHER &&
-		    pm->ps->weapon != WP_GRENADE_PINEAPPLE &&
-		    pm->ps->weapon != WP_MEDIC_SYRINGE &&
-		    pm->ps->weapon != WP_DYNAMITE &&
-		    pm->ps->weapon != WP_PLIERS &&
-		    pm->ps->weapon != WP_LANDMINE &&
-		    pm->ps->weapon != WP_MEDIC_ADRENALINE &&
-		    pm->ps->weapon != WP_SMOKE_BOMB)
+		switch (pm->ps->weapon)
 		{
+		case WP_KNIFE:
+		case WP_KNIFE_KABAR:
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+		case WP_MEDIC_SYRINGE:
+		case WP_DYNAMITE:
+		case WP_PLIERS:
+		case WP_LANDMINE:
+		case WP_MEDIC_ADRENALINE:
+		case WP_SMOKE_BOMB:
+		case WP_BINOCULARS:
+			break;
+		default:
 			PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
 			pm->ps->weaponTime  = 500;
 			pm->ps->weaponDelay = 0;                // avoid insta-fire after water exit on delayed weapon attacks
@@ -4396,6 +4333,8 @@ static void PM_Weapon(void)
 			case WP_K43_SCOPE:
 				reloading = qfalse;
 				break;
+			default:
+				break;
 			}
 
 			if (playswitchsound)
@@ -4444,6 +4383,8 @@ static void PM_Weapon(void)
 			break;
 		case WP_FLAMETHROWER:
 			fwdmove_knockback = 2000.f;
+			break;
+		default:
 			break;
 		}
 
