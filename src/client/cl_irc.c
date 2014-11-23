@@ -1852,7 +1852,7 @@ static int CTCP_Version(qboolean is_channel, const char *argument)
 		return IRC_CMD_SUCCESS;
 	}
 
-	return IRC_Send("NOTICE %s :\001VERSION ET: Legacy IRC client - v" Q3_VERSION "\001", IRC_String(pfx_nickOrServer));
+	return IRC_Send("NOTICE %s :\001VERSION " Q3_VERSION "\001", IRC_String(pfx_nickOrServer));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2329,7 +2329,7 @@ static void IRC_MainLoop()
 			{
 				IRC_ThreadStatus = IRC_THREAD_QUITTING;
 				IRC_Display(IRC_MakeEvent(QUIT, 1), "", "quit from menu\n");
-				err_code = IRC_Send("QUIT :ET: Legacy IRC %s", Q3_VERSION);
+				err_code = IRC_Send("QUIT : %s", Q3_VERSION);
 			}
 			else
 			{
