@@ -2418,6 +2418,7 @@ typedef enum
 
 	GAMESOUND_WORLD_BUILD,          // "sound/world/build.wav"
 	GAMESOUND_WORLD_CHAIRCREAK,     // "sound/world/chaircreak.wav"                     Common code
+	GAMESOUND_WORLD_MG_CONSTRUCTED, // "sound/world/mg_constructed.wav"
 
 	GAMESOUND_MAX
 } gameSounds;

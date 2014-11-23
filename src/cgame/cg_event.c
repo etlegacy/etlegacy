@@ -2477,13 +2477,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		else if (cg_weapons[es->weapon].reloadSound)
 		{
-			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadSound);     // JPW NERVE following sherman's SP fix, should allow killing reload sound when player dies
+			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadSound);     // following sherman's SP fix, should allow killing reload sound when player dies
 		}
 		break;
 	case EV_MG42_FIXED:
 		DEBUGNAME("EV_MG42_FIXED");
-		// FIXME? play a sound when engineer fixes MG42
-		//trap_S_StartSound(NULL,es->number,CHAN_WEAPON,cg_weapons[WP_MAUSER].reloadSound); // Arnout: needs updating
+		trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cgs.cachedSounds[GAMESOUND_WORLD_MG_CONSTRUCTED]);
 		break;
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
