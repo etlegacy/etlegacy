@@ -68,6 +68,7 @@ vidmode_t r_vidModes[] =
 	{ "Mode 17: 1920x1200 (16:10)", 1920, 1200, 1 },
 	{ "Mode 18: 2560x1440 (16:9)",  2560, 1440, 1 },
 	{ "Mode 19: 2560x1600 (16:10)", 2560, 1600, 1 },
+	{ "Mode 20: 3840x2160 (16:9)",  3840, 2160, 1 },
 };
 static int s_numVidModes = ARRAY_LEN(r_vidModes);
 
