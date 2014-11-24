@@ -137,8 +137,22 @@ CLEANLIBS=0
 if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
 	einfo "Cleaning SDL..."
 	cd ${_SRC}/libs/sdl2;  make clean
-	einfo "Cleaning libjpeg..."
+	einfo "Cleaning lib jpegturbo..."
 	cd ${_SRC}/libs/jpegturbo; make clean
+	if [ "${BUNDLED_CURL}" == 1 ]; then
+		einfo "Cleaning lib curl..."
+		cd ${_SRC}/libs/curl/src; make clean
+	fi	
+	if [ "${BUNDLED_LUA}" == 1 ]; then
+		einfo "Cleaning lib lua..."
+		cd ${_SRC}/libs/lua/src; make clean
+	fi
+	if [ "${BUNDLED_OGG}" == 1 ]; then
+		einfo "Cleaning lib ogg..."
+		cd ${_SRC}/libs/ogg; make clean
+		einfo "Cleaning lib vorbis..."
+		cd ${_SRC}/libs/vorbis; make clean
+	fi
 else
 	einfo "Getting bundled libs..."
 	git submodule init
