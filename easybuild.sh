@@ -94,6 +94,7 @@ checkapp clang 0
 checkapp clang++ 0
 checkapp git
 checkapp zip
+checkapp nasm
 echo
 
 einfo "Using compilers:"
@@ -135,9 +136,9 @@ mkdir -p ${BUILDDIR}
 CLEANLIBS=0
 if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
 	einfo "Cleaning SDL..."
-	cd ${_SRC}/libs/sdl;  make clean
+	cd ${_SRC}/libs/sdl2;  make clean
 	einfo "Cleaning libjpeg..."
-	cd ${_SRC}/libs/jpeg; make clean
+	cd ${_SRC}/libs/jpegturbo; make clean
 else
 	einfo "Getting bundled libs..."
 	git submodule init
