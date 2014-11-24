@@ -9,7 +9,7 @@ ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=m
 * Forums: [http://dev.etlegacy.com/projects/etlegacy/boards](http://dev.etlegacy.com/projects/etlegacy/boards)
 * Development (bug reports and feature requests): [http://dev.etlegacy.com](http://dev.etlegacy.com)
 * Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-* IRC: \#etlegacy on irc.freenode.net
+* IRC: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net
 
 INTRODUCTION
 ============
@@ -28,8 +28,7 @@ GENERAL NOTES
 Game data
 -----------------------------------------------------------------------------
 
-Wolfenstein: Enemy Territory is a free release, and can be downloaded from
-[Splash Damage](http://www.splashdamage.com/content/download-wolfenstein-enemy-territory)
+Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Splash Damage](http://www.splashdamage.com/content/download-wolfenstein-enemy-territory).
 
 This source release contains only the engine and mod code but not any game data,
 which is still covered by the original EULA and must be obeyed as usual.
@@ -48,22 +47,18 @@ In case you are a running a 64 bits system, you probably might want to use the
 can be automatically downloaded using the `git submodule` command. See the next section
 for more details.
 
-**NOTE**: Even if you have a 64 bits linux distribution which provides 32 bits versions of all
-the required libraries, you will also need the development libraries (-devel packages)
-installed on your system.
-
 Dependencies
 -----------------------------------------------------------------------------
 
 * **CMake** (compile-time only)
 * **OpenGL**
-* **GLEW**, version 1.10
-* **SDL**, version 2.0.3
-* **libjpeg**, version 8, or **libjpeg-turbo**, version 1.3
+* **GLEW** version 1.10
+* **SDL** version 2.0.3
+* **libjpeg-turbo** version 1.3, or **libjpeg** version 8
 * **libcurl** (optional, enabled by default)
-* **Lua**, version 5.2 (optional, enabled by default)
+* **Lua** version 5.2 (optional, enabled by default)
 * **Ogg Vorbis** (optional, enabled by default)
-* **Freetype**, version 2 (optional)
+* **Freetype** version 2 (optional)
 * **OpenAL** (optional)
 * **Jansson** (optional)
 
@@ -85,21 +80,9 @@ by toggling the respective `BUNDLED_XXX` variable.
 Compile and install
 -----------------------------------------------------------------------------
 
-### Linux
-
-* option A: **command line**
-
-In terminal run:
-
-    $ mkdir build && cd build && cmake-gui ..
-
-If you do not wish to install ET:Legacy system-wide simply run:
-
-    $ make
-
 To install the binaries system-wide, you need to compile ET:Legacy with hardcoded fs_basepath.
 
-First adjust the following variables in CMake:
+The following variables can be adjusted in CMake:
   * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
     executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
     Defaults to empty value, because we want *fs_basepath* to be the current working directory
@@ -109,81 +92,129 @@ First adjust the following variables in CMake:
   * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
     CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "legacy" is appended to it.
 
-Then compile ET:Legacy:
 
-	$ make
-	# make install
+### Linux
 
-* option B: ***Easybuild*
+* option A: **command line**
 
-In terminal run:
+In terminal, run:
+
+    $ mkdir build && cd build && cmake-gui ..
+
+To compile, run:
+
+    $ make
+
+If you wish to install ET:Legacy system-wide, run:
+
+    # make install
+
+Be sure to set the CMake variables (see above) beforehand.
+
+* option B: **easybuild**
+
+In terminal, run:
 
     $ ./easybuild.sh
 
-Install:
+To install, run:
 
     $ cd build
     $ make install
 
-Set the CMake variables (see option A) in file easybuild.sh before.
+ET:Legacy will be installed in `~/etlegacy`. To change it, set the CMake variables (see above) in the
+easybuild.sh file beforehand.
+
+**NOTE:**
+
+Even if you have a 64 bits linux distribution which provides 32 bits versions of all
+the required libraries, you might also need the development libraries (-devel packages)
+installed on your system.
+
 
 ### Crosscompiling on Linux with mingw32
 
-In terminal run:
+In terminal, run:
 
     $ mkdir build && cd build
     $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw32-linux.cmake ..
     $ make
 
-Mingw32 name is set to *i686-pc-mingw32* by default. You may have to change that
-in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on your system.
+By default, Mingw32 name is set to *i686-pc-mingw32*. You may have to change it in
+`cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on your system.
+
 
 ### Windows
 
 * option A: **Visual Studio**
 
-    1. download the free Visual Studio C++ Express 2010 or newer
+    1. install the free [Visual Studio](http://www.visualstudio.com/) (C++ Express 2010 or newer)
     2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
     3. create a `build` directory inside the directory which contains ET:Legacy sources
-    4. open *Visual Studio Command Prompt (2010)* in the Start menu and `cd` to the newly created build directory
-    5. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake`
-       ... or `cmake -G "Visual Studio 10" -DBUNDLED_LIBS=YES ..` and open the resulting project in Visual Studio
+    4. open *Visual Studio Command Prompt* in the Start menu
+    5. change directory with `cd` to the newly created build directory
+
+In the command prompt, run:
+
+    cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake
+
+or
+
+    cmake -G "Visual Studio 10" -DBUNDLED_LIBS=YES ..
+
+and open the resulting project in Visual Studio.
 
 * option B: **QtCreator**
 
-    1. download the free [QtCreator](http://qt-project.org/)
-    1. open the CMakeLists.txt file in QtCreator.
+    1. install the free [QtCreator](http://www.qt.io/download-open-source/)
+    2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
+    3. open the CMakeLists.txt file in QtCreator.
 
+* option C: **easybuild**
+
+    1. install the free [Visual Studio](http://www.visualstudio.com/) (C++ Express 2010 or newer)
+    2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
+    3. run easybuild.bat
+
+ET:Legacy will be installed in `My Documents\ETLegacy-Build`. To change it, set the CMake variables
+(see above) in the easybuild.bat file beforehand.
 
 **NOTES:**
 
+If compilation of bundled libraries is aborted for any reason, you will probably need to clean the
+libs directory and start over. This can be done by executing `git clean -df && git reset --hard HEAD`
+inside `libs/` directory.
+
+If the build fails during libcurl compilation because of missing *sed* utility, download it from
+[GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm) and place it into your system path or
+copy it into `MSVC/VC/bin`. It also comes with Git and can be placed into your system path
+automatically if you select that option during Git installation.
+
 In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
-Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows
-SDK 7 and copy 'win32.mak' to libs/jpeg/.
-
-If the build fails during libcurl compilation because of missing *sed* utility,
-download it from http://gnuwin32.sourceforge.net/packages/sed.htm and place it into
-your system path or copy it into MSVC/VC/bin. It also comes with Git and can be placed
-into your system path automatically if you select that option during Git installation.
-
-If compilation of bundled libraries is aborted for any reason, you will probably need to clean libs/ directory
-and start over. This can be done by executing `git clean -df && git reset --hard HEAD` inside libs/ directory.
+Unfortunately this file isn't shipped with Windows 8.0 and 8.1 SDK versions.
+Solution: Get the Windows SDK 7 and copy 'win32.mak' to `libs/jpeturbo/`.
 
 
 ### Mac OS X
 
-* Building and Installation
+* option A: **command line**
+
+TBD
+
+* option B: **easybuild**
 
 In Terminal, run:
 
     $ ./easybuild.sh
-    $ cd build && make install && cd ../
+    $ cd build && make install
 
 This will put an 'etlegacy' folder into your user folder.
 
-In the legacy mod folder, the cgame_mac and ui_mac files are redundant since they're in the etl_bin.pk3 and
-will be extracted at runtime, so you can delete those. The client is named etl.app (and can safely be
-renamed), while the dedicated server is just a command-line binary named "etded".
+**NOTE**:
+
+In the legacy mod folder, the cgame_mac and ui_mac files are redundant since they are in the
+etl_bin.pk3 and will be extracted at runtime, so you can delete those. The client is named etl.app
+(and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 
 
