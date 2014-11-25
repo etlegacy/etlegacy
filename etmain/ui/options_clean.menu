@@ -2,60 +2,45 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X		0
-#define WINDOW_Y		0
-#define WINDOW_WIDTH	640
-#define WINDOW_HEIGHT	480
-#define GROUP_NAME		"grpClean"
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	224 // 448
+#define GROUP_NAME		"grpOptionsClean"
 
-// Quit Menu //
+// Subwindows //
+#define SUBWINDOW_WIDTH 		WINDOW_WIDTH-12
+#define SUBWINDOW_WIDTH_L		.50*(WINDOW_WIDTH-18)
+#define SUBWINDOW_WIDTH_R		.50*(WINDOW_WIDTH-18)
+
+// Customise Game Menu //
 menuDef {
 	name		"options_clean"
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
-	popup
-
-	fadeClamp	0.5
-	fadeAmount  0.075
-
-	onOpen {
-		setitemcolor background backcolor 0 0 0 0 ;
-		fadein background
-	}
 
 	onESC {
 		close options_clean ;
 		open options
 	}
 
-// Background //
-	itemDef {
-		name		"background"
-		rect		0 0 640 480
-		style		WINDOW_STYLE_FILLED
-		background	"ui/assets/fadebox.tga"
-		backcolor	0 0 0 0
-		visible		1
-		decoration
-	}
+// Window //
+	WINDOW( "CLEAN", 94 )
 
-// Subwindows //
-#define SUBWINDOW_WIDTH		400
-#define SUBWINDOW_HEIGHT	160
-#define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
-#define SUBWINDOW_Y			.5*(WINDOW_HEIGHT-SUBWINDOW_HEIGHT)
+// Player //
+#define HOMEPATH_Y 32
+	SUBWINDOW( 6, HOMEPATH_Y, WINDOW_WIDTH-12, 164, "HOMEPATH CLEAN UP" )
+	LABEL( 8, HOMEPATH_Y+28, SUBWINDOW_WIDTH-4, 10, "This will delete all unnecessary files from you fs_homepath.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( 8, HOMEPATH_Y+52, SUBWINDOW_WIDTH-4, 10, "A simple clean will remove tmp- and custom pk3 files.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( 8, HOMEPATH_Y+68, SUBWINDOW_WIDTH-4, 10, "A full clean will remove all downloaded files like map-,\n campaign- and custom pk3 files.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( 8, HOMEPATH_Y+104, SUBWINDOW_WIDTH-4, 10, "^1WARNING: Use at your own risk!", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( 8, HOMEPATH_Y+128, SUBWINDOW_WIDTH-4, 10, "Consult our wiki for documentation.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( 8, HOMEPATH_Y+142, SUBWINDOW_WIDTH-4, 10, "Press '^7ABORT^9' if you don't know what you are doing here.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "HOMEPATH CLEAN UP" )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-4, 10, "This will delete all unnecessary files from you fs_homepath.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-4, 10, "A simple clean will remove tmp- and custom pk3 files.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+56, (SUBWINDOW_WIDTH)-4, 10, "A full clean will remove all downloaded files like map-,\n campaign- and custom pk3 files.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+90, (SUBWINDOW_WIDTH)-4, 10, "^3WARNING: Use at your own risk!", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+106, (SUBWINDOW_WIDTH)-4, 10, "Consult our wiki for documentation.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+122, (SUBWINDOW_WIDTH)-4, 10, "Press 'ABORT' if you don't know what you are doing here.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "ABORT", .3, 14, close options_clean ; open options )
-	BUTTON( SUBWINDOW_X+6+.33*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "SIMPLE CLEAN", .3, 14, exec "exec clean_simple.cfg" ; close options_clean ; open options )
-	BUTTON( SUBWINDOW_X+6+.33*(SUBWINDOW_WIDTH-18)+6+.33*(SUBWINDOW_WIDTH-24)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "FULL CLEAN", .3, 14, exec "exec clean_full.cfg" ; close options_clean ; open options )
+// Buttons //
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-18), 18, "ABORT", .3, 14, close options_clean ; open options )
+	BUTTON( 6+.33*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-18), 18, "SIMPLE CLEAN", .3, 14, exec "exec clean_simple.cfg" ; close options_clean ; open options )
+	BUTTON( 6+.33*(WINDOW_WIDTH-18)+6+.33*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-18), 18, "FULL CLEAN", .3, 14, exec "exec clean_full.cfg" ; close options_clean ; open options )
 }
