@@ -34,11 +34,12 @@
 #ifndef INCLUDE_MENUMACROS_H
 #define INCLUDE_MENUMACROS_H
 
-#define LEGACY_RESOLUTIONS cvarFloatList { "desktop resolution" -2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1366x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1440 (16:9)" 18 "2560x1600 (16:10)" 19 "3840x2160 (16:9)" 20 }
+#define LEGACY_RESOLUTIONS cvarFloatList { "desktop resolution" - 2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1366x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1440 (16:9)" 18 "2560x1600 (16:10)" 19 "3840x2160 (16:9)" 20 }
 #define LEGACY_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 "Windowed Fullscreen" 2 }
+#define LEGACY_LANGUAGES   cvarStrList { "English (default)"; "en"; "French"; "fr"; "German"; "de"; "Italian"; "it"; "Spanish"; "es"; "Polish"; "pl"; "Dutch"; "nl"; "Czech"; "cz"; "Swedish"; "se"; "Finnish"; "fi"; "Danish"; "da"; "Portuguese"; "pt"; "Norwegian"; "no" }
 
 #define WINDOW_FUI(WINDOW_TEXT, GRADIENT_START_OFFSET)                                                        \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "window"                                                                                    \
 		group GROUP_NAME                                                                                  \
 		rect        0 0 WINDOW_WIDTH WINDOW_HEIGHT                                                              \
@@ -50,7 +51,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "titlebar"                                                                                  \
 		group GROUP_NAME                                                                                  \
 		rect        2 2 GRADIENT_START_OFFSET 24                                                                \
@@ -60,7 +61,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "titlebargradient"                                                                          \
 		group GROUP_NAME                                                                                  \
 		rect $evalint(GRADIENT_START_OFFSET + 2) 2 $evalint(WINDOW_WIDTH - (GRADIENT_START_OFFSET + 4)) 24     \
@@ -70,7 +71,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "windowtitle"                                                                               \
 		group GROUP_NAME                                                                                  \
 		rect        2 2 $evalint(WINDOW_WIDTH - 4) 24                                                             \
@@ -87,7 +88,7 @@
 	}
 
 #define WINDOW_INGAME(WINDOW_TEXT, GRADIENT_START_OFFSET)                                                     \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "window"                                                                                    \
 		group GROUP_NAME                                                                                  \
 		rect        0 0 WINDOW_WIDTH WINDOW_HEIGHT                                                              \
@@ -99,7 +100,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "titlebar"                                                                                  \
 		group GROUP_NAME                                                                                  \
 		rect        2 2 GRADIENT_START_OFFSET 24                                                                \
@@ -109,7 +110,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "titlebargradient"                                                                          \
 		group GROUP_NAME                                                                                  \
 		rect $evalint(GRADIENT_START_OFFSET + 2) 2 $evalint(WINDOW_WIDTH - (GRADIENT_START_OFFSET + 4)) 24     \
@@ -119,7 +120,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "windowtitle"                                                                               \
 		group GROUP_NAME                                                                                  \
 		rect        2 2 $evalint(WINDOW_WIDTH - 4) 24                                                             \
@@ -142,7 +143,7 @@
 #endif
 
 #define SUBWINDOW(SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_W, SUBWINDOW_H, SUBWINDOW_TEXT) \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "subwindow" ## SUBWINDOW_TEXT                                                                 \
 		group GROUP_NAME                                                                                  \
 		rect $evalfloat(SUBWINDOW_X) $evalfloat(SUBWINDOW_Y) $evalfloat(SUBWINDOW_W) $evalfloat(SUBWINDOW_H) \
@@ -154,7 +155,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "subwindowtitle" ## SUBWINDOW_TEXT                                                            \
 		group GROUP_NAME                                                                                  \
 		rect $evalfloat((SUBWINDOW_X)+2) $evalfloat((SUBWINDOW_Y)+2) $evalfloat((SUBWINDOW_W)-4) 12      \
@@ -171,7 +172,7 @@
 	}
 
 #define SUBWINDOWBLACK(SUBWINDOWBLACK_X, SUBWINDOWBLACK_Y, SUBWINDOWBLACK_W, SUBWINDOWBLACK_H, SUBWINDOWBLACK_TEXT)   \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "subwindowblack" ## SUBWINDOWBLACK_TEXT                                                       \
 		group GROUP_NAME                                                                                  \
 		rect $evalfloat(SUBWINDOWBLACK_X) $evalfloat(SUBWINDOWBLACK_Y) $evalfloat(SUBWINDOWBLACK_W) $evalfloat(SUBWINDOWBLACK_H) \
@@ -183,7 +184,7 @@
 		decoration                                                                                              \
 	}                                                                                                           \
                                                                                                                 \
-    itemDef {                                                                                                   \
+	itemDef {                                                                                                   \
 		name        "subwindowblacktitle" ## SUBWINDOWBLACK_TEXT                                                          \
 		group GROUP_NAME                                                                                  \
 		rect $evalfloat((SUBWINDOWBLACK_X)+2) $evalfloat((SUBWINDOWBLACK_Y)+2) $evalfloat((SUBWINDOWBLACK_W)-4) 12       \
@@ -200,7 +201,7 @@
 	}
 
 #define BUTTON(BUTTON_X, BUTTON_Y, BUTTON_W, BUTTON_H, BUTTON_TEXT, BUTTON_TEXT_SCALE, BUTTON_TEXT_ALIGN_Y, BUTTON_ACTION)                    \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name        "bttn" ## BUTTON_TEXT                                 \
 		group GROUP_NAME                                          \
 		rect $evalfloat(BUTTON_X) $evalfloat(BUTTON_Y) $evalfloat(BUTTON_W) $evalfloat(BUTTON_H)                 \
@@ -237,7 +238,7 @@
 	}
 
 #define BUTTONEXT(BUTTONEXT_X, BUTTONEXT_Y, BUTTONEXT_W, BUTTONEXT_H, BUTTONEXT_TEXT, BUTTONEXT_TEXT_SCALE, BUTTONEXT_TEXT_ALIGN_Y, BUTTONEXT_ACTION, BUTTONEXT_EXT)                  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name        "bttnext" ## BUTTONEXT_TEXT                           \
 		group GROUP_NAME                                          \
 		rect $evalfloat(BUTTONEXT_X) $evalfloat(BUTTONEXT_Y) $evalfloat(BUTTONEXT_W) $evalfloat(BUTTONEXT_H)                 \
@@ -276,7 +277,7 @@
 	}
 
 #define NAMEDBUTTON(NAMEDBUTTON_NAME, NAMEDBUTTON_X, NAMEDBUTTON_Y, NAMEDBUTTON_W, NAMEDBUTTON_H, NAMEDBUTTON_TEXT, NAMEDBUTTON_TEXT_SCALE, NAMEDBUTTON_TEXT_ALIGN_Y, NAMEDBUTTON_ACTION)                 \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name NAMEDBUTTON_NAME                                    \
 		group GROUP_NAME                                          \
 		rect $evalfloat(NAMEDBUTTON_X) $evalfloat(NAMEDBUTTON_Y) $evalfloat(NAMEDBUTTON_W) $evalfloat(NAMEDBUTTON_H)                 \
@@ -313,7 +314,7 @@
 	}
 
 #define NAMEDBUTTONEXT(NAMEDBUTTONEXT_NAME, NAMEDBUTTONEXT_X, NAMEDBUTTONEXT_Y, NAMEDBUTTONEXT_W, NAMEDBUTTONEXT_H, NAMEDBUTTONEXT_TEXT, NAMEDBUTTONEXT_TEXT_SCALE, NAMEDBUTTONEXT_TEXT_ALIGN_Y, NAMEDBUTTONEXT_ACTION, NAMEDBUTTONEXT_EXT)                   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name NAMEDBUTTONEXT_NAME                                 \
 		group GROUP_NAME                                          \
 		rect $evalfloat(NAMEDBUTTONEXT_X) $evalfloat(NAMEDBUTTONEXT_Y) $evalfloat(NAMEDBUTTONEXT_W) $evalfloat(NAMEDBUTTONEXT_H)                 \
@@ -352,7 +353,7 @@
 	}
 
 #define EDITFIELD(EDITFIELD_X, EDITFIELD_Y, EDITFIELD_W, EDITFIELD_H, EDITFIELD_TEXT, EDITFIELD_TEXT_SCALE, EDITFIELD_TEXT_ALIGN_Y, EDITFIELD_CVAR, EDITFIELD_MAXCHARS, EDITFIELD_MAXPAINTCHARS, EDITFIELD_TOOLTIP)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name        "efback" ## EDITFIELD_TEXT                            \
 		group GROUP_NAME                                          \
 		rect $evalfloat((EDITFIELD_X)+.5 * (EDITFIELD_W)+6) $evalfloat(EDITFIELD_Y) $evalfloat(.5 * (EDITFIELD_W)-6) $evalfloat(EDITFIELD_H) \
@@ -362,7 +363,7 @@
 		decoration                                                      \
 	}                                                                   \
                                                                         \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "ef" ## EDITFIELD_TEXT                            \
 		group GROUP_NAME                                      \
 		rect $evalfloat(EDITFIELD_X) $evalfloat(EDITFIELD_Y) $evalfloat(EDITFIELD_W) $evalfloat(EDITFIELD_H) \
@@ -383,7 +384,7 @@
 	}
 
 #define EDITFIELDLEFT(EDITFIELDLEFT_X, EDITFIELDLEFT_Y, EDITFIELDLEFT_W, EDITFIELDLEFT_H, EDITFIELDLEFT_TEXT, EDITFIELDLEFT_TEXT_SCALE, EDITFIELDLEFT_TEXT_ALIGN_Y, EDITFIELDLEFT_CVAR, EDITFIELDLEFT_MAXCHARS, EDITFIELDLEFT_MAXPAINTCHARS, EDITFIELDLEFT_TOOLTIP)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "efleft" ## EDITFIELDLEFT_TEXT                    \
 		group GROUP_NAME                                      \
 		rect $evalfloat(EDITFIELDLEFT_X) $evalfloat(EDITFIELDLEFT_Y) $evalfloat(EDITFIELDLEFT_W) $evalfloat(EDITFIELDLEFT_H) \
@@ -402,7 +403,7 @@
 	}
 
 #define EDITFIELDLEFTACTION(EDITFIELDLEFTACTION_X, EDITFIELDLEFTACTION_Y, EDITFIELDLEFTACTION_W, EDITFIELDLEFTACTION_H, EDITFIELDLEFTACTION_TEXT, EDITFIELDLEFTACTION_TEXT_SCALE, EDITFIELDLEFTACTION_TEXT_ALIGN_Y, EDITFIELDLEFTACTION_CVAR, EDITFIELDLEFTACTION_MAXCHARS, EDITFIELDLEFTACTION_MAXPAINTCHARS, EDITFIELDLEFTACTION_ACTION, EDITFIELDLEFTACTION_TOOLTIP)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "efleft" ## EDITFIELDLEFTACTION_TEXT                    \
 		group GROUP_NAME                                      \
 		rect $evalfloat(EDITFIELDLEFTACTION_X) $evalfloat(EDITFIELDLEFTACTION_Y) $evalfloat(EDITFIELDLEFTACTION_W) $evalfloat(EDITFIELDLEFTACTION_H) \
@@ -424,7 +425,7 @@
 	}
 
 #define EDITFIELDSIMPLE(EDITFIELDSIMPLE_X, EDITFIELDSIMPLE_Y, EDITFIELDSIMPLE_W, EDITFIELDSIMPLE_H, EDITFIELDSIMPLE_TEXT, EDITFIELDSIMPLE_TEXT_SCALE, EDITFIELDSIMPLE_TEXT_ALIGN_Y, EDITFIELDSIMPLE_CVAR, EDITFIELDSIMPLE_MAXCHARS, EDITFIELDSIMPLE_MAXPAINTCHARS, EDITFIELDSIMPLE_ACCEPT, EDITFIELDSIMPLE_TOOLTIP)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name        "efsimpleback" ## EDITFIELDSIMPLE_TEXT                            \
 		group GROUP_NAME                                          \
 		rect $evalfloat(EDITFIELDSIMPLE_X) $evalfloat(EDITFIELDSIMPLE_Y) $evalfloat(EDITFIELDSIMPLE_W) $evalfloat(EDITFIELDSIMPLE_H) \
@@ -434,7 +435,7 @@
 		decoration                                                      \
 	}                                                                   \
                                                                         \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "efsimple" ## EDITFIELDSIMPLE_TEXT              \
 		group GROUP_NAME                                      \
 		rect $evalfloat(EDITFIELDSIMPLE_X) $evalfloat(EDITFIELDSIMPLE_Y) $evalfloat(EDITFIELDSIMPLE_W) $evalfloat(EDITFIELDSIMPLE_H) \
@@ -443,7 +444,7 @@
 		textfont UI_FONT_COURBD_21                               \
 		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
 		textscale EDITFIELDSIMPLE_TEXT_SCALE                            \
-		textalign ITEM_ALIGN_LEFT								\
+		textalign ITEM_ALIGN_LEFT                               \
 		textaligny EDITFIELDSIMPLE_TEXT_ALIGN_Y                          \
 		forecolor       .6 .6 .6 1                                      \
 		cvar EDITFIELDSIMPLE_CVAR                                  \
@@ -457,7 +458,7 @@
 	}
 
 #define NUMERICFIELD(NUMERICFIELD_X, NUMERICFIELD_Y, NUMERICFIELD_W, NUMERICFIELD_H, NUMERICFIELD_TEXT, NUMERICFIELD_TEXT_SCALE, NUMERICFIELD_TEXT_ALIGN_Y, NUMERICFIELD_CVAR, NUMERICFIELD_MAXCHARS, NUMERICFIELD_TOOLTIP)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name        "nfback" ## NUMERICFIELD_TEXT                         \
 		group GROUP_NAME                                          \
 		rect $evalfloat((NUMERICFIELD_X)+.5 * (NUMERICFIELD_W)+6) $evalfloat(NUMERICFIELD_Y) $evalfloat(.5 * (NUMERICFIELD_W)-6) $evalfloat(NUMERICFIELD_H)  \
@@ -467,7 +468,7 @@
 		decoration                                                      \
 	}                                                                   \
                                                                         \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "nf" ## NUMERICFIELD_TEXT                         \
 		group GROUP_NAME                                      \
 		rect $evalfloat(NUMERICFIELD_X) $evalfloat(NUMERICFIELD_Y) $evalfloat(NUMERICFIELD_W) $evalfloat(NUMERICFIELD_H) \
@@ -487,7 +488,7 @@
 	}
 
 #define NUMERICFIELDLEFTEXT(NUMERICFIELDLEFTEXT_X, NUMERICFIELDLEFTEXT_Y, NUMERICFIELDLEFTEXT_W, NUMERICFIELDLEFTEXT_H, NUMERICFIELDLEFTEXT_TEXT, NUMERICFIELDLEFTEXT_TEXT_SCALE, NUMERICFIELDLEFTEXT_TEXT_ALIGN_Y, NUMERICFIELDLEFTEXT_CVAR, NUMERICFIELDLEFTEXT_MAXCHARS, NUMERICFIELDLEFTEXT_EXT, NUMERICFIELDLEFTEXT_TOOLTIP) \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "nfleftext" ## NUMERICFIELDLEFTEXT_TEXT           \
 		group GROUP_NAME                                      \
 		rect $evalfloat(NUMERICFIELDLEFTEXT_X) $evalfloat(NUMERICFIELDLEFTEXT_Y) $evalfloat(NUMERICFIELDLEFTEXT_W) $evalfloat(NUMERICFIELDLEFTEXT_H) \
@@ -507,7 +508,7 @@
 	}
 
 #define YESNO(YESNO_X, YESNO_Y, YESNO_W, YESNO_H, YESNO_TEXT, YESNO_TEXT_SCALE, YESNO_TEXT_ALIGN_Y, YESNO_CVAR, YESNO_TOOLTIP)    \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "yn" ## YESNO_TEXT                                \
 		group GROUP_NAME                                      \
 		rect $evalfloat(YESNO_X) $evalfloat(YESNO_Y) $evalfloat(YESNO_W) $evalfloat(YESNO_H) \
@@ -538,7 +539,7 @@
 	}
 
 #define YESNOALIGNX(YESNOALIGNX_X, YESNOALIGNX_Y, YESNOALIGNX_W, YESNOALIGNX_H, YESNOALIGNX_TEXT, YESNOALIGNX_TEXT_SCALE, YESNOALIGNX_TEXT_ALIGN_X, YESNOALIGNX_TEXT_ALIGN_Y, YESNOALIGNX_CVAR, YESNOALIGNX_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "ynalx" ## YESNOALIGNX_TEXT                               \
 		group GROUP_NAME                                      \
 		rect $evalfloat(YESNOALIGNX_X) $evalfloat(YESNOALIGNX_Y) $evalfloat(YESNOALIGNX_W) $evalfloat(YESNOALIGNX_H) \
@@ -569,7 +570,7 @@
 	}
 
 #define YESNOACTION(YESNOACTION_X, YESNOACTION_Y, YESNOACTION_W, YESNOACTION_H, YESNOACTION_TEXT, YESNOACTION_TEXT_SCALE, YESNOACTION_TEXT_ALIGN_Y, YESNOACTION_CVAR, YESNOACTION_ACTION, YESNOACTION_TOOLTIP)    \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "ynaction" ## YESNOACTION_TEXT                    \
 		group GROUP_NAME                                      \
 		rect $evalfloat(YESNOACTION_X) $evalfloat(YESNOACTION_Y) $evalfloat(YESNOACTION_W) $evalfloat(YESNOACTION_H) \
@@ -601,7 +602,7 @@
 	}
 
 #define CHECKBOX(CHECKBOX_X, CHECKBOX_Y, CHECKBOX_W, CHECKBOX_H, CHECKBOX_TEXT, CHECKBOX_TEXT_SCALE, CHECKBOX_TEXT_ALIGN_Y, CHECKBOX_CVAR, CHECKBOX_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "check" ## CHECKBOX_TEXT                          \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CHECKBOX_X) $evalfloat(CHECKBOX_Y) $evalfloat(CHECKBOX_W) $evalfloat(CHECKBOX_H) \
@@ -632,7 +633,7 @@
 	}
 
 #define CHECKBOXALIGNX(CHECKBOXALIGNX_X, CHECKBOXALIGNX_Y, CHECKBOXALIGNX_W, CHECKBOXALIGNX_H, CHECKBOXALIGNX_TEXT, CHECKBOXALIGNX_TEXT_SCALE, CHECKBOXALIGNX_TEXT_ALIGN_X, CHECKBOXALIGNX_TEXT_ALIGN_Y, CHECKBOXALIGNX_CVAR, CHECKBOXALIGNX_TOOLTIP) \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "checkalx" ## CHECKBOXALIGNX_TEXT                         \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CHECKBOXALIGNX_X) $evalfloat(CHECKBOXALIGNX_Y) $evalfloat(CHECKBOXALIGNX_W) $evalfloat(CHECKBOXALIGNX_H) \
@@ -663,7 +664,7 @@
 	}
 
 #define CHECKBOXNOTEXT(CHECKBOXNOTEXT_NAME, CHECKBOXNOTEXT_X, CHECKBOXNOTEXT_Y, CHECKBOXNOTEXT_W, CHECKBOXNOTEXT_H, CHECKBOXNOTEXT_CVAR, CHECKBOXNOTEXT_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name CHECKBOXNOTEXT_NAME                             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CHECKBOXNOTEXT_X) $evalfloat(CHECKBOXNOTEXT_Y) $evalfloat(CHECKBOXNOTEXT_W) $evalfloat(CHECKBOXNOTEXT_H) \
@@ -687,7 +688,7 @@
 	}
 
 #define CHECKBOXNOTEXTACTION(CHECKBOXNOTEXTACTION_NAME, CHECKBOXNOTEXTACTION_X, CHECKBOXNOTEXTACTION_Y, CHECKBOXNOTEXTACTION_W, CHECKBOXNOTEXTACTION_H, CHECKBOXNOTEXTACTION_CVAR, CHECKBOXNOTEXTACTION_ACTION, CHECKBOXNOTEXTACTION_TOOLTIP) \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name CHECKBOXNOTEXTACTION_NAME                       \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CHECKBOXNOTEXTACTION_X) $evalfloat(CHECKBOXNOTEXTACTION_Y) $evalfloat(CHECKBOXNOTEXTACTION_W) $evalfloat(CHECKBOXNOTEXTACTION_H) \
@@ -712,7 +713,7 @@
 	}
 
 #define CHECKBOXACTION(CHECKBOXACTION_X, CHECKBOXACTION_Y, CHECKBOXACTION_W, CHECKBOXACTION_H, CHECKBOXACTION_TEXT, CHECKBOXACTION_TEXT_SCALE, CHECKBOXACTION_TEXT_ALIGN_Y, CHECKBOXACTION_CVAR, CHECKBOXACTION_ACTION, CHECKBOXACTION_TOOLTIP)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "checkaction" ## CHECKBOXACTION_TEXT              \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CHECKBOXACTION_X) $evalfloat(CHECKBOXACTION_Y) $evalfloat(CHECKBOXACTION_W) $evalfloat(CHECKBOXACTION_H) \
@@ -744,7 +745,7 @@
 	}
 
 #define CHECKBOXALIGNXACTION(CHECKBOXALIGNXACTION_X, CHECKBOXALIGNXACTION_Y, CHECKBOXALIGNXACTION_W, CHECKBOXALIGNXACTION_H, CHECKBOXALIGNXACTION_TEXT, CHECKBOXALIGNXACTION_TEXT_SCALE, CHECKBOXALIGNXACTION_TEXT_ALIGN_X, CHECKBOXALIGNXACTION_TEXT_ALIGN_Y, CHECKBOXALIGNXACTION_CVAR, CHECKBOXALIGNXACTION_ACTION, CHECKBOXALIGNXACTION_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "checkactionalx" ## CHECKBOXALIGNXACTION_TEXT             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CHECKBOXALIGNXACTION_X) $evalfloat(CHECKBOXALIGNXACTION_Y) $evalfloat(CHECKBOXALIGNXACTION_W) $evalfloat(CHECKBOXALIGNXACTION_H) \
@@ -776,7 +777,7 @@
 	}
 
 #define TRICHECKBOXACTION(TRICHECKBOXACTION_X, TRICHECKBOXACTION_Y, TRICHECKBOXACTION_W, TRICHECKBOXACTION_H, TRICHECKBOXACTION_TEXT, TRICHECKBOXACTION_TEXT_SCALE, TRICHECKBOXACTION_TEXT_ALIGN_Y, TRICHECKBOXACTION_CVAR, TRICHECKBOXACTION_ACTION, TRICHECKBOXACTION_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "tricheckaction" ## TRICHECKBOXACTION_TEXT            \
 		group GROUP_NAME                                      \
 		rect $evalfloat(TRICHECKBOXACTION_X) $evalfloat(TRICHECKBOXACTION_Y) $evalfloat(TRICHECKBOXACTION_W) $evalfloat(TRICHECKBOXACTION_H) \
@@ -808,7 +809,7 @@
 	}
 
 #define TRICHECKBOXACTIONMULTI(TRICHECKBOXACTIONMULTI_X, TRICHECKBOXACTIONMULTI_Y, TRICHECKBOXACTIONMULTI_W, TRICHECKBOXACTIONMULTI_H, TRICHECKBOXACTIONMULTI_TEXT_SCALE, TRICHECKBOXACTIONMULTI_TEXT_ALIGN_Y, TRICHECKBOXACTIONMULTI_CVAR, TRICHECKBOXACTIONMULTI_CVARLIST, TRICHECKBOXACTIONMULTI_ACTION, TTRICHECKBOXACTIONMULTI_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "tricheckactionmulti" ## TRICHECKBOXACTIONMULTI_CVAR      \
 		group GROUP_NAME                                      \
 		rect $evalfloat(TRICHECKBOXACTIONMULTI_X) $evalfloat(TRICHECKBOXACTIONMULTI_Y) $evalfloat(TRICHECKBOXACTIONMULTI_W) $evalfloat(TRICHECKBOXACTIONMULTI_H) \
@@ -840,7 +841,7 @@
 	}
 
 #define MULTI(MULTI_X, MULTI_Y, MULTI_W, MULTI_H, MULTI_TEXT, MULTI_TEXT_SCALE, MULTI_TEXT_ALIGN_Y, MULTI_CVAR, MULTI_CVARLIST, MULTI_TOOLTIP)    \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "multi" ## MULTI_TEXT                             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(MULTI_X) $evalfloat(MULTI_Y) $evalfloat(MULTI_W) $evalfloat(MULTI_H) \
@@ -872,7 +873,7 @@
 	}
 
 #define MULTILEFT(MULTILEFT_X, MULTILEFT_Y, MULTILEFT_W, MULTILEFT_H, MULTILEFT_TEXT, MULTILEFT_TEXT_SCALE, MULTILEFT_TEXT_ALIGN_Y, MULTILEFT_CVAR, MULTILEFT_CVARLIST, MULTILEFT_TOOLTIP)    \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "multileft" ## MULTILEFT_TEXT                             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(MULTILEFT_X) $evalfloat(MULTILEFT_Y) $evalfloat(MULTILEFT_W) $evalfloat(MULTILEFT_H) \
@@ -902,7 +903,7 @@
 	}
 
 #define MULTIACTION(MULTIACTION_X, MULTIACTION_Y, MULTIACTION_W, MULTIACTION_H, MULTIACTION_TEXT, MULTIACTION_TEXT_SCALE, MULTIACTION_TEXT_ALIGN_Y, MULTIACTION_CVAR, MULTIACTION_CVARLIST, MULTIACTION_ACTION, MULTIACTION_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "multiaction" ## MULTIACTION_TEXT                             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(MULTIACTION_X) $evalfloat(MULTIACTION_Y) $evalfloat(MULTIACTION_W) $evalfloat(MULTIACTION_H) \
@@ -935,7 +936,7 @@
 	}
 
 #define MULTIACTIONLEFT(MULTIACTIONLEFT_X, MULTIACTIONLEFT_Y, MULTIACTIONLEFT_W, MULTIACTIONLEFT_H, MULTIACTIONLEFT_TEXT, MULTIACTIONLEFT_TEXT_SCALE, MULTIACTIONLEFT_TEXT_ALIGN_Y, MULTIACTIONLEFT_CVAR, MULTIACTIONLEFT_CVARLIST, MULTIACTIONLEFT_ACTION, MULTIACTIONLEFT_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "multiactionleft" ## MULTIACTIONLEFT_TEXT         \
 		group GROUP_NAME                                      \
 		rect $evalfloat(MULTIACTIONLEFT_X) $evalfloat(MULTIACTIONLEFT_Y) $evalfloat(MULTIACTIONLEFT_W) $evalfloat(MULTIACTIONLEFT_H) \
@@ -966,7 +967,7 @@
 	}
 
 #define SLIDER(SLIDER_X, SLIDER_Y, SLIDER_W, SLIDER_H, SLIDER_TEXT, SLIDER_TEXT_SCALE, SLIDER_TEXT_ALIGN_Y, SLIDER_CVARFLOAT, SLIDER_TOOLTIP) \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "slider" ## SLIDER_TEXT                               \
 		group GROUP_NAME                                      \
 		rect $evalfloat(SLIDER_X) $evalfloat(SLIDER_Y) $evalfloat(SLIDER_W) $evalfloat(SLIDER_H) \
@@ -993,7 +994,7 @@
 	}
 
 #define BIND(BIND_X, BIND_Y, BIND_W, BIND_H, BIND_TEXT, BIND_TEXT_SCALE, BIND_TEXT_ALIGN_Y, BIND_CVAR, BIND_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "bind" ## BIND_TEXT                               \
 		group GROUP_NAME                                      \
 		rect $evalfloat(BIND_X) $evalfloat(BIND_Y) $evalfloat(BIND_W) $evalfloat(BIND_H) \
@@ -1024,7 +1025,7 @@
 	}
 
 #define LABEL(LABEL_X, LABEL_Y, LABEL_W, LABEL_H, LABEL_TEXT, LABEL_TEXT_SCALE, LABEL_TEXT_ALIGN, LABEL_TEXT_ALIGN_X, LABEL_TEXT_ALIGN_Y) \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "label" ## LABEL_TEXT                             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(LABEL_X) $evalfloat(LABEL_Y) $evalfloat(LABEL_W) $evalfloat(LABEL_H) \
@@ -1043,7 +1044,7 @@
 	}
 
 #define LABELWHITE(LABELWHITE_X, LABELWHITE_Y, LABELWHITE_W, LABELWHITE_H, LABELWHITE_TEXT, LABELWHITE_TEXT_SCALE, LABELWHITE_TEXT_ALIGN, LABELWHITE_TEXT_ALIGN_X, LABELWHITE_TEXT_ALIGN_Y)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "labelwhite" ## LABELWHITE_TEXT                   \
 		group GROUP_NAME                                      \
 		rect $evalfloat(LABELWHITE_X) $evalfloat(LABELWHITE_Y) $evalfloat(LABELWHITE_W) $evalfloat(LABELWHITE_H) \
@@ -1062,7 +1063,7 @@
 	}
 
 #define CVARLABEL(CVARLABEL_X, CVARLABEL_Y, CVARLABEL_W, CVARLABEL_H, CVARLABEL_CVAR, CVARLABEL_TEXT_SCALE, CVARLABEL_TEXT_ALIGN, CVARLABEL_TEXT_ALIGN_X, CVARLABEL_TEXT_ALIGN_Y) \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "cvarlabel" ## CVARLABEL_CVAR                     \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CVARLABEL_X) $evalfloat(CVARLABEL_Y) $evalfloat(CVARLABEL_W) $evalfloat(CVARLABEL_H) \
@@ -1081,7 +1082,7 @@
 	}
 
 #define CVARFLOATLABEL(CVARFLOATLABEL_X, CVARFLOATLABEL_Y, CVARFLOATLABEL_W, CVARFLOATLABEL_H, CVARFLOATLABEL_CVAR, CVARFLOATLABEL_TEXT_SCALE, CVARFLOATLABEL_TEXT_ALIGN, CVARFLOATLABEL_TEXT_ALIGN_X, CVARFLOATLABEL_TEXT_ALIGN_Y)   \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "cvarfloatlabel" ## CVARFLOATLABEL_CVAR                       \
 		group GROUP_NAME                                      \
 		rect $evalfloat(CVARFLOATLABEL_X) $evalfloat(CVARFLOATLABEL_Y) $evalfloat(CVARFLOATLABEL_W) $evalfloat(CVARFLOATLABEL_H) \
@@ -1100,7 +1101,7 @@
 	}
 
 #define COMBO(COMBO_X, COMBO_Y, COMBO_W, COMBO_H, COMBO_TEXT, COMBO_TEXT_SCALE, COMBO_TEXT_ALIGN_Y, COMBO_CVAR, COMBO_CVARLIST, COMBO_ACTION, COMBO_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "combo" ## COMBO_TEXT                             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(COMBO_X) $evalfloat(COMBO_Y) $evalfloat(COMBO_W) $evalfloat(COMBO_H) \
@@ -1139,7 +1140,7 @@
 	}
 
 #define COMBOLEFT(COMBOLEFT_X, COMBOLEFT_Y, COMBOLEFT_W, COMBOLEFT_H, COMBOLEFT_TEXT, COMBOLEFT_TEXT_SCALE, COMBOLEFT_TEXT_ALIGN_Y, COMBOLEFT_CVAR, COMBOLEFT_CVARLIST, COMBOLEFT_ACTION, COMBOLEFT_TOOLTIP)  \
-    itemDef {                                                           \
+	itemDef {                                                           \
 		name            "combo" ## COMBOLEFT_TEXT                             \
 		group GROUP_NAME                                      \
 		rect $evalfloat(COMBOLEFT_X) $evalfloat(COMBOLEFT_Y) $evalfloat(COMBOLEFT_W) $evalfloat(COMBOLEFT_H) \
