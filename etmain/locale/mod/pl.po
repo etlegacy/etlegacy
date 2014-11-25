@@ -2564,14 +2564,14 @@ msgstr ""
 "Pelne czyszczenie usunie wszystkie sciagniete pliki jak mapy,\n"
 " kampanie i niestandardowe pk3."
 
-msgid "^3WARNING: Use at your own risk!"
-msgstr "^3UWAGA: Uzywasz na wlasne ryzyko!"
+msgid "^1WARNING: Use at your own risk!"
+msgstr "^1UWAGA: Uzywasz na wlasne ryzyko!"
 
 msgid "Consult our wiki for documentation."
 msgstr "Skonsultuj sie z nami na wiki."
 
-msgid "Press 'ABORT' if you don't know what you are doing here."
-msgstr "Nadus 'PRZERWIJ' jest nie wiesz co tutaj robisz."
+msgid "Press '^7ABORT^9' if you don't know what you are doing here."
+msgstr "Nadus '^7PRZERWIJ^9' jest nie wiesz co tutaj robisz."
 
 msgid "ABORT"
 msgstr "PRZERWIJ"
@@ -4592,20 +4592,20 @@ msgstr "WLACZ BOTY"
 msgid "BOTS OFF"
 msgstr "WYLACZ BOTY"
 
-msgid "^1Attention: ^3Security Information"
-msgstr "^1Uwaga: ^3Informacja Bezpieczenstwa"
+msgid "^1SECURITY INFORMATION"
+msgstr "^1INFORMACJA BEZPIECZENSTWA"
 
-msgid "^7You are running old software.\n"
-"\n"
-"We do recommend to upgrade your ET client.\n"
-"Join ET Legacy and keep the game alive."
-msgstr "^7Dzialasz na starej wersji.\n"
-"\n"
-"Zalecamy aktualizaje klienta ET.\n"
-"Dolacz do ET Legacy i podtrzymuj gre."
+msgid "You are running old software"
+msgstr "Dzialasz na starej wersji"
 
-msgid "DOWNLOAD LATEST ET CLIENT"
-msgstr "SCIAGNIJ KLIENTA ET"
+msgid "We do recommend to\nupgrade your ET client"
+msgstr "Zalecamy aby\nzaktualizowac klienta ET"
+
+msgid "UPGRADE NOW"
+msgstr "AKTUALIZUJ TERAZ"
+
+msgid "Join ET Legacy and keep the game alive"
+msgstr "Dolacz do ET Legacy i podtrzymuj gre"
 
 msgid "CONNECT TO SERVER"
 msgstr "POLACZ Z SERWEREM"

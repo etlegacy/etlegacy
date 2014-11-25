@@ -2578,13 +2578,13 @@ msgid ""
 " campaign- and custom pk3 files."
 msgstr ""
 
-msgid "^3WARNING: Use at your own risk!"
+msgid "^1WARNING: Use at your own risk!"
 msgstr ""
 
 msgid "Consult our wiki for documentation."
 msgstr ""
 
-msgid "Press 'ABORT' if you don't know what you are doing here."
+msgid "Press '^7ABORT^9' if you don't know what you are doing here."
 msgstr ""
 
 msgid "ABORT"
@@ -4565,16 +4565,19 @@ msgstr ""
 msgid "BOTS ON"
 msgstr ""
 
-msgid "^1Attention: ^3Security Information"
+msgid "^1SECURITY INFORMATION"
 msgstr ""
 
-msgid "^7You are running old software.\n"
-"\n"
-"We do recommend to upgrade your ET client.\n"
-"Join ET Legacy and keep the game alive."
+msgid "You are running old software"
 msgstr ""
 
-msgid "DOWNLOAD LATEST ET CLIENT"
+msgid "We do recommend to\nupgrade your ET client"
+msgstr ""
+
+msgid "UPGRADE NOW"
+msgstr ""
+
+msgid "Join ET Legacy and keep the game alive"
 msgstr ""
 
 msgid "CONNECT TO SERVER"
