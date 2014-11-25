@@ -6,6 +6,7 @@
 /obj
 /doc
 !easybuild.sh
+!easybuild.bat
 /Makefile
 /*.make
 CMakeLists.txt.user
