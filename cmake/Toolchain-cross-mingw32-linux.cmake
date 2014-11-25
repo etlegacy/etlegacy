@@ -5,13 +5,15 @@ set(CMAKE_SYSTEM_PROCESSOR "x86")
 
 # Choose an appropriate compiler prefix
 # see http://www.mingw.org/
-set(COMPILER_PREFIX "i686-pc-mingw32")
+set(COMPILER_PREFIX "i686-w64-mingw32")
 
 # which compilers to use for C and C++
 find_program(CMAKE_C_COMPILER NAMES ${COMPILER_PREFIX}-gcc)
 set(CMAKE_C_COMPILER ${COMPILER_PREFIX}-gcc)
 find_program(CMAKE_CXX_COMPILER NAMES ${COMPILER_PREFIX}-g++)
 set(CMAKE_CXX_COMPILER ${COMPILER_PREFIX}-g++)
+find_program(CMAKE_RC_COMPILER NAMES ${COMPILER_PREFIX}-windres)
+set(CMAKE_RC_COMPILER ${COMPILER_PREFIX}-windres)
 
 # here is the target environment located
 set(CMAKE_FIND_ROOT_PATH  /usr/${COMPILER_PREFIX})
