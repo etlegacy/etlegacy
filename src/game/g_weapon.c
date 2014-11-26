@@ -3184,10 +3184,7 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
 	VectorCopy(tr->endpos, origin);
 	SnapVectorTowards(tr->endpos, attacker->s.origin);
 
-	if (Q_stricmp(ent->classname, "func_explosive") == 0)
-	{
-	}
-	else if (Q_stricmp(ent->classname, "func_leaky") == 0)
+	if (Q_stricmp(ent->classname, "func_leaky") == 0)
 	{
 		gentity_t *tent;
 
@@ -4023,7 +4020,7 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 
 	return qfalse;
 }
-
+	
 /*
 ===============
 FireWeapon
