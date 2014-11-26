@@ -4494,11 +4494,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	case WP_M7:
 		curweap = num = WP_CARBINE;
 		break;
-	case WP_MORTAR_SET: // FIXME: never reached see early return above - num/curweap are same
-		curweap = num = WP_MORTAR;
-		break;
-	case WP_MORTAR2_SET: // FIXME: never reached see early return above - num/curweap are same
-		curweap = num = WP_MORTAR2;
+	default:
 		break;
 	}
 
