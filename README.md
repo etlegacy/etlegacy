@@ -132,16 +132,16 @@ the required libraries, you might also need the development libraries (-devel pa
 installed on your system.
 
 
-### Crosscompiling on Linux with mingw32
+### Crosscompiling on Linux with MinGW-w64
 
 In terminal, run:
 
     $ mkdir build && cd build
-    $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw32-linux.cmake ..
+    $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw-linux.cmake ..
     $ make
 
-By default, Mingw32 name is set to *i686-pc-mingw32*. You may have to change it in
-`cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on your system.
+By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it in
+`cmake/Toolchain-cross-mingw-linux.cmake` depending on how it is called on your system.
 
 
 ### Windows
