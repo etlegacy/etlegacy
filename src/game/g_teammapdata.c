@@ -376,6 +376,48 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 	return qtrue;
 }
 
+qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t origin, vec3_t mins, vec3_t maxs)
+{
+	vec3_t  vieworg;
+	trace_t trace;
+
+	VectorCopy(viewer->client->ps.origin, vieworg);
+	vieworg[2] += viewer->client->ps.viewheight;
+
+	if (!G_CullPointAndRadius(origin, 0))
+	{
+		return qfalse;
+	}
+
+	if (!trap_InPVS(vieworg, origin))
+	{
+		return qfalse;
+	}
+
+	trap_Trace(&trace, vieworg, mins, maxs, origin, viewer->s.number, MASK_SHOT);
+
+	if (trace.fraction != 1.f)
+	{
+		if (ent)
+		{
+			if (trace.entityNum != ent->s.number)
+			{
+				return qfalse;
+			}
+			else
+			{
+				return qtrue;
+			}
+		}
+		else
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+
 void G_ResetTeamMapData()
 {
 	G_InitMapEntityData(&mapEntityData[0]);
@@ -1087,14 +1129,10 @@ void G_UpdateTeamMapData(void)
 					}
 
 					VectorCopy(ent2->client->ps.origin, pos[0]);
-					pos[0][2] += ent2->client->ps.mins[2];
-					VectorCopy(ent2->client->ps.origin, pos[1]);
-					VectorCopy(ent2->client->ps.origin, pos[2]);
-					pos[2][2] += ent2->client->ps.maxs[2];
+					VectorCopy(ent2->client->ps.mins, pos[1]);
+					VectorCopy(ent2->client->ps.maxs, pos[2]);
 
-					if (G_VisibleFromBinoculars(ent, ent2, pos[0]) ||
-					    G_VisibleFromBinoculars(ent, ent2, pos[1]) ||
-					    G_VisibleFromBinoculars(ent, ent2, pos[2]))
+					if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
 					{
 						G_UpdateTeamMapData_DisguisedPlayer(ent, ent2, f1, f2);
 					}
@@ -1124,13 +1162,10 @@ void G_UpdateTeamMapData(void)
 						vec3_t pos[3];
 
 						VectorCopy(ent2->client->ps.origin, pos[0]);
-						pos[0][2] += ent2->client->ps.mins[2];
-						VectorCopy(ent2->client->ps.origin, pos[1]);
-						VectorCopy(ent2->client->ps.origin, pos[2]);
-						pos[2][2] += ent2->client->ps.maxs[2];
-						if (ent2->health > 0 && (G_VisibleFromBinoculars(ent, ent2, pos[0]) ||
-						                         G_VisibleFromBinoculars(ent, ent2, pos[1]) ||
-						                         G_VisibleFromBinoculars(ent, ent2, pos[2])))
+						VectorCopy(ent2->client->ps.mins, pos[1]);
+						VectorCopy(ent2->client->ps.maxs, pos[2]);
+
+						if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
 						{
 							if (ent2->client->sess.sessionTeam != ent->client->sess.sessionTeam)
 							{
@@ -1242,7 +1277,7 @@ void G_UpdateTeamMapData(void)
 										default:
 											break;
 										}
-									} // end (G_VisibleFromBinoculars( ent, ent2, ent2->r.currentOrigin ))
+									}
 									else
 									{
 										// if we can't see the mine from our binoculars, make sure we clear out the landmineSpotted ptr,

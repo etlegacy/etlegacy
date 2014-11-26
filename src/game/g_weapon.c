@@ -3978,10 +3978,8 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 	vec3_t    pos[3];
 
 	VectorCopy(ent->client->ps.origin, pos[0]);
-	pos[0][2] += ent->client->ps.mins[2];
-	VectorCopy(ent->client->ps.origin, pos[1]);
-	VectorCopy(ent->client->ps.origin, pos[2]);
-	pos[2][2] += ent->client->ps.maxs[2];
+	VectorCopy(ent->client->ps.mins, pos[1]);
+	VectorCopy(ent->client->ps.maxs, pos[2]);
 
 	for (i = 0, ent2 = g_entities; i < level.maxclients; i++, ent2++)
 	{
@@ -4010,9 +4008,7 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 			G_SetupFrustum(ent2);
 		}
 
-		if (G_VisibleFromBinoculars(ent2, ent, pos[0]) ||
-		    G_VisibleFromBinoculars(ent2, ent, pos[1]) ||
-		    G_VisibleFromBinoculars(ent2, ent, pos[2]))
+		if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
 		{
 			return qtrue;
 		}
@@ -4020,7 +4016,7 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 
 	return qfalse;
 }
-	
+
 /*
 ===============
 FireWeapon
