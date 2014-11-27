@@ -4,7 +4,7 @@ set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR "x86")
 
 # Choose an appropriate compiler prefix
-# see http://www.mingw.org/
+# see http://mingw-w64.sourceforge.net/
 set(COMPILER_PREFIX "i686-w64-mingw32")
 
 # which compilers to use for C and C++

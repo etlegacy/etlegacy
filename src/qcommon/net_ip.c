@@ -37,6 +37,7 @@
 
 #ifdef _WIN32
 #   ifdef __MINGW32__
+#       undef _WIN32_WINNT
 #       define _WIN32_WINNT 0x0501
 #       include <ws2spi.h>
 #   endif

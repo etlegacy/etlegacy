@@ -113,8 +113,10 @@
 #endif
 
 // FIXME: required for MinGW. Find a better way to handle this (<float.h>?)
-#ifndef FLT_EPSILON
-#define FLT_EPSILON __FLT_EPSILON__
+#ifdef __MINGW32__
+#   ifndef FLT_EPSILON
+#       define FLT_EPSILON __FLT_EPSILON__
+#   endif
 #endif
 
 /**********************************************************************
