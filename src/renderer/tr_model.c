@@ -36,7 +36,7 @@
 #include "tr_local.h"
 
 #ifdef _WIN32
-#   include <Windows.h>
+#   include <windows.h>
 #endif
 
 #define LL(x) x = LittleLong(x)
