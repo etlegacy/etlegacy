@@ -2777,12 +2777,12 @@ void Com_Init(char *commandLine)
 	Com_ParseCommandLine(commandLine);
 
 	Cbuf_Init();
+	
+	// override anything from the config files with command line args
+	Com_StartupVariable(NULL);
 
 	Com_InitZoneMemory();
 	Cmd_Init();
-
-	// override anything from the config files with command line args
-	Com_StartupVariable(NULL);
 
 	// get the developer cvar set as early as possible
 	Com_StartupVariable("developer");
