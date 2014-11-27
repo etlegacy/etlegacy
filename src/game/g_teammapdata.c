@@ -350,10 +350,6 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 
 	trap_Trace(&trace, vieworg, NULL, NULL, origin, viewer->s.number, MASK_SHOT);
 
-	/*if( ent && trace.entityNum != ent-g_entities ) {
-	    return qfalse;
-	}*/
-
 	if (trace.fraction != 1.f)
 	{
 		if (ent)
@@ -709,11 +705,9 @@ static void G_UpdateTeamMapData_DisguisedPlayer(gentity_t *spotter, gentity_t *e
 	case TEAM_AXIS:
 		forceAxis = qtrue;
 		break;
-
 	case TEAM_ALLIES:
 		forceAllied = qtrue;
 		break;
-
 	default:
 		break;
 	}
@@ -888,7 +882,6 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-
 		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
 		{
 			continue;
@@ -907,7 +900,6 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-
 		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
 		{
 			continue;
@@ -1013,7 +1005,7 @@ void G_PopupMessageForMines(gentity_t *player) // int sound
 
 void G_UpdateTeamMapData(void)
 {
-	int             i, j /*, k*/;
+	int             i, j;
 	gentity_t       *ent, *ent2;
 	mapEntityData_t *mEnt;
 	qboolean        f1, f2;
@@ -1094,9 +1086,14 @@ void G_UpdateTeamMapData(void)
 			continue;
 		}
 
+		if (ent->health <= 0)
+		{
+			continue;
+		}
+
 		if (ent->client->sess.playerType == PC_FIELDOPS)
 		{
-			if (ent->client->sess.skill[SK_SIGNALS] >= 4 && ent->health > 0)
+			if (ent->client->sess.skill[SK_SIGNALS] >= 4)
 			{
 				vec3_t pos[3];
 
@@ -1112,9 +1109,11 @@ void G_UpdateTeamMapData(void)
 						continue;
 					}
 
-					//if( ent2->s.eType != ET_PLAYER ) {
-					//	continue;
-					//}
+					// players are sometimes of type ET_GENERAL
+					if (ent2->s.eType != ET_PLAYER)
+					{
+						continue;
+					}
 
 					if (ent2->client->sess.sessionTeam == TEAM_SPECTATOR)
 					{
@@ -1141,12 +1140,77 @@ void G_UpdateTeamMapData(void)
 		}
 		else if (ent->client->sess.playerType == PC_COVERTOPS)
 		{
-			if (ent->health > 0)
-			{
-				f1 = ent->client->sess.sessionTeam == TEAM_ALLIES ? qtrue : qfalse;
-				f2 = ent->client->sess.sessionTeam == TEAM_AXIS ?   qtrue : qfalse;
+			vec3_t pos[3];
 
-				G_SetupFrustum(ent);
+			f1 = ent->client->sess.sessionTeam == TEAM_ALLIES ? qtrue : qfalse;
+			f2 = ent->client->sess.sessionTeam == TEAM_AXIS ?   qtrue : qfalse;
+
+			G_SetupFrustum(ent);
+
+			for (j = 0, ent2 = g_entities; j < level.num_entities; j++, ent2++)
+			{
+				if (!ent2->inuse || ent2 == ent)
+				{
+					continue;
+				}
+
+				// players are sometimes of type ET_GENERAL
+				if (ent2->s.eType != ET_PLAYER)
+				{
+					continue;
+				}
+
+				VectorCopy(ent2->client->ps.origin, pos[0]);
+				VectorCopy(ent2->client->ps.mins, pos[1]);
+				VectorCopy(ent2->client->ps.maxs, pos[2]);
+
+				if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
+				{
+					if (ent2->client->sess.sessionTeam != ent->client->sess.sessionTeam)
+					{
+						int k;
+
+						switch (ent2->client->sess.sessionTeam)
+						{
+						case TEAM_AXIS:
+							mEnt = G_FindMapEntityData(&mapEntityData[0], ent2 - g_entities);
+							if (mEnt && level.time - mEnt->startTime > 5000)
+							{
+								for (k = 0; k < MAX_CLIENTS; k++)
+								{
+									if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
+									{
+										trap_SendServerCommand(k, va("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
+										G_Printf("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
+									}
+								}
+							}
+							break;
+						case TEAM_ALLIES:
+							mEnt = G_FindMapEntityData(&mapEntityData[1], ent2 - g_entities);
+							if (mEnt && level.time - mEnt->startTime > 5000)
+							{
+								for (k = 0; k < MAX_CLIENTS; k++)
+								{
+									if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
+									{
+										trap_SendServerCommand(k, va("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
+										G_Printf("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
+									}
+								}
+							}
+							break;
+						default:
+							break;
+						}
+					}
+					G_UpdateTeamMapData_Player(ent2, f1, f2);
+				}
+			}
+
+			if (ent->client->ps.eFlags & EF_ZOOMING)
+			{
+				G_SetupFrustum_ForBinoculars(ent);
 
 				for (j = 0, ent2 = g_entities; j < level.num_entities; j++, ent2++)
 				{
@@ -1155,47 +1219,56 @@ void G_UpdateTeamMapData(void)
 						continue;
 					}
 
-					switch (ent2->s.eType)
+					if (ent2->s.eType != ET_MISSILE)
 					{
-					case ET_PLAYER:
+						continue;
+					}
+
+					if (ent2->methodOfDeath == MOD_LANDMINE)
 					{
-						vec3_t pos[3];
-
-						VectorCopy(ent2->client->ps.origin, pos[0]);
-						VectorCopy(ent2->client->ps.mins, pos[1]);
-						VectorCopy(ent2->client->ps.maxs, pos[2]);
-
-						if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
+						if ((ent2->s.teamNum < 4 || ent2->s.teamNum >= 8) && (ent2->s.teamNum % 4 != ent->client->sess.sessionTeam))
 						{
-							if (ent2->client->sess.sessionTeam != ent->client->sess.sessionTeam)
+							// as before, we can only detect a mine if we can see it from our binoculars
+							if (G_VisibleFromBinoculars(ent, ent2, ent2->r.currentOrigin))
 							{
-								int k;
+								G_UpdateTeamMapData_LandMine(ent2, f1, f2);
 
-								switch (ent2->client->sess.sessionTeam)
+								switch (ent2->s.teamNum % 4)
 								{
 								case TEAM_AXIS:
-									mEnt = G_FindMapEntityData(&mapEntityData[0], ent2 - g_entities);
-									if (mEnt && level.time - mEnt->startTime > 5000)
-									{
-										for (k = 0; k < MAX_CLIENTS; k++)
-										{
-											if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
-											{
-												trap_SendServerCommand(k, va("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
-											}
-										}
-									}
-									break;
 								case TEAM_ALLIES:
-									mEnt = G_FindMapEntityData(&mapEntityData[1], ent2 - g_entities);
-									if (mEnt && level.time - mEnt->startTime > 5000)
+									if (!ent2->s.modelindex2)
 									{
-										for (k = 0; k < MAX_CLIENTS; k++)
+										ent->client->landmineSpottedTime = level.time;
+										ent->client->landmineSpotted     = ent2;
+										ent2->s.density                  = ent - g_entities + 1;
+										ent2->missionLevel               = level.time;
+
+										ent->client->landmineSpotted->count2 += 50;
+										if (ent->client->landmineSpotted->count2 >= 250)
 										{
-											if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
+											ent->client->landmineSpotted->count2 = 250;
+
+											ent->client->landmineSpotted->s.modelindex2 = 1;
+
+											// for marker
+											// Landmine flags shouldn't block our view
+											// don't do this if the mine has been triggered.
+											if (!G_LandmineTriggered(ent->client->landmineSpotted))
 											{
-												trap_SendServerCommand(k, va("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
+												ent->client->landmineSpotted->s.frame    = rand() % 20;
+												ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
+												trap_LinkEntity(ent->client->landmineSpotted);
 											}
+
+											G_PopupMessageForMines(ent);
+
+											trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
+
+											AddScore(ent, 1);
+
+											G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
+											G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
 										}
 									}
 									break;
@@ -1203,92 +1276,12 @@ void G_UpdateTeamMapData(void)
 									break;
 								}
 							}
-							G_UpdateTeamMapData_Player(ent2, f1, f2);
-						}
-						break;
-					}
-					default:
-						break;
-					}
-				}
-
-				if (ent->client->ps.eFlags & EF_ZOOMING)
-				{
-					G_SetupFrustum_ForBinoculars(ent);
-
-					for (j = 0, ent2 = g_entities; j < level.num_entities; j++, ent2++)
-					{
-						if (!ent2->inuse || ent2 == ent)
-						{
-							continue;
-						}
-
-						switch (ent2->s.eType)
-						{
-						case ET_MISSILE:
-							if (ent2->methodOfDeath == MOD_LANDMINE)
+							else
 							{
-								if ((ent2->s.teamNum < 4 || ent2->s.teamNum >= 8) && (ent2->s.teamNum % 4 != ent->client->sess.sessionTeam))
-								{
-									// as before, we can only detect a mine if we can see it from our binoculars
-									if (G_VisibleFromBinoculars(ent, ent2, ent2->r.currentOrigin))
-									{
-										G_UpdateTeamMapData_LandMine(ent2, f1, f2);
-
-										switch (ent2->s.teamNum % 4)
-										{
-										case TEAM_AXIS:
-										case TEAM_ALLIES:
-											if (!ent2->s.modelindex2)
-											{
-												ent->client->landmineSpottedTime = level.time;
-												ent->client->landmineSpotted     = ent2;
-												ent2->s.density                  = ent - g_entities + 1;
-												ent2->missionLevel               = level.time;
-
-												ent->client->landmineSpotted->count2 += 50;
-												if (ent->client->landmineSpotted->count2 >= 250)
-												{
-													ent->client->landmineSpotted->count2 = 250;
-
-													ent->client->landmineSpotted->s.modelindex2 = 1;
-
-													// for marker
-													// Landmine flags shouldn't block our view
-													// don't do this if the mine has been triggered.
-													if (!G_LandmineTriggered(ent->client->landmineSpotted))
-													{
-														ent->client->landmineSpotted->s.frame    = rand() % 20;
-														ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
-														trap_LinkEntity(ent->client->landmineSpotted);
-													}
-
-													G_PopupMessageForMines(ent);
-
-													trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
-
-													AddScore(ent, 1);
-
-													G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
-													G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
-												}
-											}
-											break;
-										default:
-											break;
-										}
-									}
-									else
-									{
-										// if we can't see the mine from our binoculars, make sure we clear out the landmineSpotted ptr,
-										// because bots looking for mines are getting confused
-										ent->client->landmineSpotted = NULL;
-									}
-								}
+								// if we can't see the mine from our binoculars, make sure we clear out the landmineSpotted ptr,
+								// because bots looking for mines are getting confused
+								ent->client->landmineSpotted = NULL;
 							}
-							break;
-						default:
-							break;
 						}
 					}
 				}
