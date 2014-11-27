@@ -19,7 +19,7 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 		message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	endif()
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
-	
+
 	if(PANDORA)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char")
@@ -27,7 +27,7 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
 	endif()
-	
+
 	if(PANDORA)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
@@ -73,14 +73,14 @@ if(UNIX)
 		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem") # These flags will cause error with older Xcode
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_C "-isystem")
-		
+
 		# 10.7 is really an arbitrary choice (it should in theory work back to 10.5). The main point is if
 		# we don't specify a target, it will be require the OS version used at compile time.
 		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
 		execute_process(COMMAND xcode-select -p OUTPUT_VARIABLE XCODE_DEVELOPER_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
 		set(CMAKE_OSX_SYSROOT "${XCODE_DEVELOPER_PATH}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk")
 		set(CMAKE_CXX_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
-		
+
 		if(BUILD_CLIENT)
 			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon")
 		endif()
@@ -90,7 +90,7 @@ if(UNIX)
 		set(OS_LIBRARIES dl m rt pthread)
 		set(LIB_SUFFIX ".mp.")
 	endif()
-	
+
 	if(NOT MSYS)
 		include(CheckCCompilerFlag)
 		check_c_compiler_flag("-fvisibility=hidden" SUPPORT_VISIBILITY)
@@ -98,10 +98,10 @@ if(UNIX)
 			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
-	
+
 elseif(WIN32)
 	add_definitions(-DWINVER=0x501)
-	
+
 	if(WIN64)
 		add_definitions(-DC_ONLY)
 	endif(WIN64)
@@ -135,8 +135,8 @@ elseif(WIN32)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
 	    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
 	    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libgcc -static-libstdc++ -s")
-	    set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -s")
-	    set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -s")
+	    set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -liconv -s")
+	    set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -liconv -s")
 		add_definitions(-D_WIN32_IE=0x0501)
 	endif(MINGW)
 endif()

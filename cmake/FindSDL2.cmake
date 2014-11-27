@@ -72,6 +72,7 @@
 #  License text for the above reference.)
 
 FIND_PATH(SDL2_INCLUDE_DIR SDL.h
+  NAMES SDL2
   HINTS
   $ENV{SDL2DIR}
   PATH_SUFFIXES include/SDL2 include
