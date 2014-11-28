@@ -170,6 +170,7 @@ cvar_t *r_parallelShadowSplitWeight;
 cvar_t *r_lightSpacePerspectiveWarping;
 
 cvar_t *r_mode;
+cvar_t *r_oldMode;
 cvar_t *r_collapseStages;
 cvar_t *r_nobind;
 cvar_t *r_singleShader;
@@ -204,6 +205,7 @@ cvar_t *r_subdivisions;
 cvar_t *r_stitchCurves;
 
 cvar_t *r_fullscreen;
+cvar_t *r_oldFullscreen;
 
 cvar_t *r_customwidth;
 cvar_t *r_customheight;
@@ -1225,7 +1227,9 @@ void R_Register(void)
 	r_depthbits               = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ignorehwgamma           = ri.Cvar_Get("r_ignorehwgamma", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_mode                    = ri.Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH);
+	r_oldMode                 = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);
 	r_fullscreen              = ri.Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_oldFullscreen           = ri.Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
 	r_customwidth             = ri.Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customheight            = ri.Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customaspect            = ri.Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
