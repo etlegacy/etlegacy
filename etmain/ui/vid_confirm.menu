@@ -30,14 +30,14 @@ menuDef
 
 	onESC
 	{
-		uiScript VidReset ;
+		uiScript vidReset ;
 		exec "vid_restart"
 	}
 
 	// after 15 seconds, reset to previous video mode
 	onTimeout 15000
 	{
-		uiScript VidReset ;
+		uiScript vidReset ;
 		exec "vid_restart"
 	}
 

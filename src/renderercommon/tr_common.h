@@ -172,6 +172,7 @@ extern cvar_t *r_showcluster;
 extern cvar_t *r_mode;                  // video mode
 extern cvar_t *r_oldMode;               // previous "good" video mode
 extern cvar_t *r_fullscreen;
+extern cvar_t *r_oldFullscreen;         // previous fullscreen state
 extern cvar_t *r_noborder;
 extern cvar_t *r_gamma;
 extern cvar_t *r_ignorehwgamma;         // overrides hardware gamma capabilities

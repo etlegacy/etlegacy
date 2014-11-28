@@ -4965,20 +4965,25 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "vidSave") == 0)
 		{
-			int r_mode = trap_Cvar_VariableValue("r_mode");
+			int r_mode       = trap_Cvar_VariableValue("r_mode");
+			int r_fullscreen = trap_Cvar_VariableValue("r_fullscreen");
 
-			// Save the last usable mode
+			// save the last usable video settings
 			trap_Cvar_SetValue("r_oldMode", r_mode);
+			trap_Cvar_SetValue("r_oldFullscreen", r_fullscreen);
 		}
 		else if (Q_stricmp(name, "vidReset") == 0)
 		{
-			int   r_oldmode  = trap_Cvar_VariableValue("r_oldMode");
-			float ui_r_gamma = trap_Cvar_VariableValue("ui_r_gamma");
-			float r_gamma    = trap_Cvar_VariableValue("r_gamma");
+			int   r_oldMode       = trap_Cvar_VariableValue("r_oldMode");
+			int   r_oldFullscreen = trap_Cvar_VariableValue("r_oldFullscreen");
+			float ui_r_gamma      = trap_Cvar_VariableValue("ui_r_gamma");
+			float r_gamma         = trap_Cvar_VariableValue("r_gamma");
 
-			// reset mode to old mode
-			trap_Cvar_SetValue("r_mode", r_oldmode);
+			// reset mode to old settings
+			trap_Cvar_SetValue("r_mode", r_oldMode);
+			trap_Cvar_SetValue("r_fullscreen", r_oldFullscreen);
 			trap_Cvar_Set("r_oldMode", "");
+			trap_Cvar_Set("r_oldFullscreen", "");
 
 			// if gamma has been changed in UI, but not saved
 			// reset it back to the last value
@@ -4990,6 +4995,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "vidConfirm") == 0)
 		{
 			trap_Cvar_Set("r_oldMode", "");
+			trap_Cvar_Set("r_oldFullscreen", "");
 		}
 		else if (Q_stricmp(name, "systemCvarsGet") == 0)
 		{
@@ -5039,7 +5045,6 @@ void UI_RunMenuScript(char **args)
 
 			trap_Cvar_Set("ui_r_fullscreen", va("%i", ui_r_fullscreen));
 			trap_Cvar_Set("ui_r_noborder", va("%i", ui_r_noborder));
-
 			trap_Cvar_Set("ui_r_lodbias", va("%i", ui_r_lodbias));
 			trap_Cvar_Set("ui_r_subdivisions", va("%i", ui_r_subdivisions));
 			trap_Cvar_Set("ui_r_picmip", va("%i", ui_r_picmip));
@@ -5084,6 +5089,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
+			int   ui_r_windowmode                     = trap_Cvar_VariableValue("ui_r_windowmode");
 			int   ui_r_mode                           = trap_Cvar_VariableValue("ui_r_mode");
 			int   ui_rate                             = trap_Cvar_VariableValue("ui_rate");
 			int   ui_cl_maxpackets                    = trap_Cvar_VariableValue("ui_cl_maxpackets");
@@ -5125,7 +5131,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("sensitivity", va("%f", ui_sensitivity));
 			trap_Cvar_Set("r_colorbits", va("%i", ui_r_colorbits));
 
-			if (ui_r_fullscreen == 2)
+			if (ui_r_windowmode == 2)
 			{
 				trap_Cvar_Set("r_fullscreen", "0");
 			}
