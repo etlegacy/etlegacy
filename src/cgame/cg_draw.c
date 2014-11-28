@@ -1740,7 +1740,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
 		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
-		str = va(CG_TranslateString("File complaint against %s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
+		str = va(CG_TranslateString("File complaint against ^7%s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 

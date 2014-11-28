@@ -260,7 +260,7 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 		ent->client->sess.skillpoints[skill] = skillLevels[skill][oldskill];
 	}
 
-	G_Printf("%s just lost %.0f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);
+	G_Printf("%s ^7just lost %.0f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]]        -= oldskillpoints - ent->client->sess.skillpoints[skill];
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
