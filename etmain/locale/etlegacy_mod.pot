@@ -3271,7 +3271,7 @@ msgstr ""
 msgid "Allied team has destroyed the Tunnel MG!"
 msgstr ""
 
-msgid "Allied team has destroyed the Side MG Nest!"
+msgid "Axis team has destroyed the Side MG Nest!"
 msgstr ""
 
 msgid "Allied team has breached the Depot Gates!"

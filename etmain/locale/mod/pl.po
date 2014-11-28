@@ -3261,8 +3261,8 @@ msgstr "Allianci przebili Drzwi Tunelu!"
 msgid "Allied team has destroyed the Tunnel MG!"
 msgstr "Allianci rozwalili wieze z MG!"
 
-msgid "Allied team has destroyed the Side MG Nest!"
-msgstr "Allianci rozwalili Boczne Gniazdo MG!"
+msgid "Axis team has destroyed the Side MG Nest!"
+msgstr "Os rozwalila Boczne Gniazdo MG!"
 
 msgid "Allied team has breached the Depot Gates!"
 msgstr "Allianci przebili Boczna Sciane do Magazynu!"
