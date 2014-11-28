@@ -618,7 +618,7 @@ qboolean CG_ViewingDraw()
 
 #define GS_X    166
 #define GS_Y    10
-#define GS_W    308
+#define GS_W    320
 
 void CG_GameStatsDraw(void)
 {
