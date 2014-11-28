@@ -47,8 +47,8 @@ msgstr "OBSERWATOR"
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s^3 for team-killing?"
-msgstr "Czy zaskarzyc gracza %s^3 za zabicie czlonka z teamu?"
+msgid "File complaint against ^7%s^3 for team-killing?"
+msgstr "Czy zaskarzyc gracza ^7%s^3 za zabicie czlonka z teamu?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151

@@ -46,7 +46,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2092
 #, c-format
-msgid "File complaint against %s^3 for team-killing?"
+msgid "File complaint against ^7%s^3 for team-killing?"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
