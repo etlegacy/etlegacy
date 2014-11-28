@@ -471,7 +471,7 @@ void G_ExplodeMissile(gentity_t *ent)
 			}
 		}
 
-		// give big weapons the shakey shakey // FIXME: WP_MORTAR/SET?
+		// give big weapons the shakey shakey
 		// FIXME: weapon table
 		switch (ent->s.weapon)
 		{

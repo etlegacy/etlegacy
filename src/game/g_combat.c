@@ -2256,7 +2256,9 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 			continue;
 		}
 
-		if (clientsonly && !ent->client)
+		// need to include corpses in clientsonly since they
+		// will be neglected from G_TempTraceIgnorePlayersAndBodies()
+		if(clientsonly && !ent->client && ent->s.eType != ET_CORPSE)
 		{
 			continue;
 		}
