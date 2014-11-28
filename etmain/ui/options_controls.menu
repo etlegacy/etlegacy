@@ -47,8 +47,8 @@ menuDef {
 	SUBWINDOW( 6, INPUT_Y, (SUBWINDOW_WIDTH), 52, "INPUT" )
 	CHECKBOXALIGNXACTION( 8, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, "Invert Mouse:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Inverts mouse pitch" )
 	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, "Smooth Mouse:", .2, 24, 8, "m_filter", "Smooths out the mouse using interpolation" )
+	CVARFLOATLABEL( 8, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
 	SLIDER( 8, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, "Mouse Sensitivity:", .2, 8, "sensitivity" 5 1 30, "Use the slider to increase or decrease mouse sensitivity" )
-	CVARFLOATLABEL( 8, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 	MULTI( 8, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, "Mouse Pitch:", .2, 8, "m_pitch", cvarFloatList { "0.015 (lowest allowed)" 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 "0.022 (default)" 0.022 }, "Up-Down Motion Of The Crosshair While Moving." )
 
 // Chat //

@@ -37,7 +37,9 @@ menuDef {
 // Audio //
 #define AUDIO_Y 32
 	SUBWINDOW( 6, AUDIO_Y, (SUBWINDOW_WIDTH), 90, "AUDIO" )
+	CVARFLOATLABEL( 8, AUDIO_Y+16, (SUBWINDOW_WIDTH)-4, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
 	SLIDER( 8, AUDIO_Y+16, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "Set the effects volume" )
+	CVARFLOATLABEL( 8, AUDIO_Y+28, (SUBWINDOW_WIDTH)-4, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
 	SLIDER( 8, AUDIO_Y+28, (SUBWINDOW_WIDTH)-4, 10, "Music Volume:", .2, 8, "s_musicvolume" .25 0 1, "Set the music volume" )
 	MULTI( 8, AUDIO_Y+40, (SUBWINDOW_WIDTH)-4, 10, "Sound Quality:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "Set the sound quality" )
 	YESNO( 8, AUDIO_Y+52, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "Enables or disables the doppler effect" )
