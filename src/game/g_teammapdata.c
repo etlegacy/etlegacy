@@ -1180,8 +1180,8 @@ void G_UpdateTeamMapData(void)
 								{
 									if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
 									{
-										trap_SendServerCommand(k, va("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
-										G_Printf("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
+										trap_SendServerCommand(k, va("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
+										G_Printf("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
 									}
 								}
 							}
@@ -1194,8 +1194,8 @@ void G_UpdateTeamMapData(void)
 								{
 									if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
 									{
-										trap_SendServerCommand(k, va("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
-										G_Printf("tt \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
+										trap_SendServerCommand(k, va("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
+										G_Printf("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
 									}
 								}
 							}
