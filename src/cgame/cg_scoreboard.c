@@ -228,7 +228,14 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				tens     = seconds / 10;
 				seconds -= tens * 10;
 
-				s = va("%s ^F%2.0f:%i%i", CG_TranslateString("REINFORCE TIME:"), (float)mins, tens, seconds);
+				if (tens > 0)
+				{
+					s = va("%s ^F%i%i", CG_TranslateString("REINFORCE TIME:"), tens, seconds);
+				}
+				else
+				{
+					s = va("%s   ^F%i", CG_TranslateString("REINFORCE TIME:"), seconds);
+				}
 				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			}
 		}
