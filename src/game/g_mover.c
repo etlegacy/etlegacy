@@ -131,20 +131,7 @@ gentity_t *G_TestEntityPosition(gentity_t *ent)
 
 	if (ent->clipmask)
 	{
-//if ( ent->r.contents == CONTENTS_CORPSE && ent->health <= 0 ) { // players waiting to be revived are important
-//      if ( ent->r.contents == CONTENTS_CORPSE ) {
-		// corpse aren't important
-		//G_Damage( ent, NULL, NULL, NULL, NULL, 99999, 0, MOD_CRUSH );
-//          return NULL;
-//      } else {
 		mask = ent->clipmask;
-//      }
-
-		/*if ( ent->r.contents == CONTENTS_CORPSE ) {
-		    return NULL;
-		} else {
-		    mask = ent->clipmask;
-		}*/
 	}
 	else
 	{
@@ -191,6 +178,7 @@ gentity_t *G_TestEntityPosition(gentity_t *ent)
 	else if (ent->s.eType == ET_CORPSE)
 	{
 		vec3_t pos;
+
 		VectorCopy(ent->s.pos.trBase, pos);
 		pos[2] += 4; // move up a bit - corpses normally got their origin slightly in the ground
 		trap_Trace(&tr, pos, ent->r.mins, ent->r.maxs, pos, ent->s.number, mask);
@@ -519,7 +507,9 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 	if (pusher->r.currentAngles[0] || pusher->r.currentAngles[1] || pusher->r.currentAngles[2]
 	    || amove[0] || amove[1] || amove[2])
 	{
-		float radius = RadiusFromBounds(pusher->r.mins, pusher->r.maxs);
+		float radius;
+
+		radius = RadiusFromBounds(pusher->r.mins, pusher->r.maxs);
 
 		for (i = 0; i < 3; i++)
 		{
@@ -1661,9 +1651,9 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		return;
 	}
 
-	// FIXME: do a switch
-	if (ent->moverState == MOVER_POS1)
+	switch (ent->moverState)
 	{
+	case MOVER_POS1:
 		// start moving 50 msec later, becase if this was player
 		// triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_1TO2, level.time + 50);
@@ -1688,10 +1678,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			trap_AdjustAreaPortalState(ent, qtrue);
 		}
 		return;
-	}
-
-	if (ent->moverState == MOVER_POS1ROTATE)
-	{
+	case MOVER_POS1ROTATE:
 		// start moving 50 msec later, becase if this was player
 		// triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_1TO2ROTATE, level.time + 50);
@@ -1722,11 +1709,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			trap_AdjustAreaPortalState(ent, qtrue);
 		}
 		return;
-	}
-
-	// if all the way up, just delay before coming down
-	if (ent->moverState == MOVER_POS2)
-	{
+	case MOVER_POS2: // if all the way up, just delay before coming down
 		if (ent->flags & FL_TOGGLE)
 		{
 			ent->nextthink = level.time + 50;
@@ -1738,11 +1721,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			ent->nextthink = level.time + ent->wait;
 		}
 		return;
-	}
-
-	// if all the way up, just delay before coming down
-	if (ent->moverState == MOVER_POS2ROTATE)
-	{
+	case MOVER_POS2ROTATE: // if all the way up, just delay before coming down
 		if (ent->flags & FL_TOGGLE)
 		{
 			ent->nextthink = level.time + 50;   // do it *now* for toggles
@@ -1752,11 +1731,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			ent->nextthink = level.time + ent->wait;
 		}
 		return;
-	}
-
-	// only partway down before reversing
-	if (ent->moverState == MOVER_2TO1)
-	{
+	case MOVER_2TO1: // only partway down before reversing
 		Blocked_Door(ent, NULL);
 
 		if (!nosound)
@@ -1764,11 +1739,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
 		}
 		return;
-	}
-
-	// only partway up before reversing
-	if (ent->moverState == MOVER_1TO2)
-	{
+	case MOVER_1TO2: // only partway up before reversing
 		Blocked_Door(ent, NULL);
 
 		if (!nosound)
@@ -1776,11 +1747,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound2to1);
 		}
 		return;
-	}
-
-	// only partway closed before reversing
-	if (ent->moverState == MOVER_2TO1ROTATE)
-	{
+	case MOVER_2TO1ROTATE: // only partway closed before reversing
 		Blocked_DoorRotate(ent, NULL);
 
 		if (!nosound)
@@ -1788,11 +1755,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
 		}
 		return;
-	}
-
-	// only partway open before reversing
-	if (ent->moverState == MOVER_1TO2ROTATE)
-	{
+	case MOVER_1TO2ROTATE: // only partway open before reversing
 		Blocked_DoorRotate(ent, NULL);
 
 		if (!nosound)
@@ -1806,6 +1769,8 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 				G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound2to1);
 			}
 		}
+		return;
+	default:
 		return;
 	}
 }
