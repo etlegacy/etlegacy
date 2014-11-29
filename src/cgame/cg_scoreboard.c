@@ -179,34 +179,34 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (cgs.gamestate != GS_PLAYING)
 		{
-			s = va("%s %s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("WARMUP"));
+			s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("WARMUP"));
 		}
 		else if (msec < 0 && cgs.timelimit > 0.0f)
 		{
 			if (cgs.gamestate == GS_WAITING_FOR_PLAYERS)
 			{
-				s = va("%s %s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("GAME STOPPED"));
+				s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("GAME STOPPED"));
 			}
 			else
 			{
-				s = va("%s %s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("SUDDEN DEATH"));
+				s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("SUDDEN DEATH"));
 			}
 		}
 		else
 		{
-			s = va("%s   %2.0f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);     // float cast to line up with reinforce time
+			s = va("%s   ^7%2.0f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);     // float cast to line up with reinforce time
 		}
 
 		CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 		if (cg.warmup)
 		{
-			s = va("%s %i", CG_TranslateString("MATCH BEGINS IN:"), (cg.warmup - cg.time) / 1000 + 1);
+			s = va("%s %s%i", CG_TranslateString("MATCH BEGINS IN:"), ((cg.warmup - cg.time) / 1000) < 3 ? "^1" : "^2", (cg.warmup - cg.time) / 1000 + 1);
 			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 		}
 		else if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
 		{
-			s = va(CG_TranslateString("WAITING ON %i %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+			s = va(CG_TranslateString("WAITING ON ^2%i ^9%s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 		}
 		else if (cgs.gametype != GT_WOLF_LMS && !cg.warmup)
@@ -228,7 +228,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				tens     = seconds / 10;
 				seconds -= tens * 10;
 
-				s = va("%s %2.0f:%i%i", CG_TranslateString("REINFORCE TIME:"), (float)mins, tens, seconds);
+				s = va("%s ^F%2.0f:%i%i", CG_TranslateString("REINFORCE TIME:"), (float)mins, tens, seconds);
 				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			}
 		}
