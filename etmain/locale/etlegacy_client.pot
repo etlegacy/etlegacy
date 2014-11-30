@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.70rc2\n"
+"Project-Id-Version: ET: Legacy 2.71rc4\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-01 23:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -29,6 +29,11 @@ msgstr ""
 msgid "say:"
 msgstr ""
 
-#: src/client/cl_console.c:751
-msgid "(UPDATE AVAILABLE)"
+msgid "MOUSE1"
+msgstr ""
+
+msgid "MOUSE2"
+msgstr ""
+
+msgid "%s (UPDATE AVAILABLE)"
 msgstr ""

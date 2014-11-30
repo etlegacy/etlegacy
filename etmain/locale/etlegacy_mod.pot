@@ -4188,7 +4188,6 @@ msgstr ""
 msgid "\n"
 "Usage: ^3\\callvote <command> <params>\n"
 "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-"\n"
 msgstr ""
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
@@ -4616,4 +4615,7 @@ msgstr ""
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
 msgid "You will spawn as an %s %s with a %s."
+msgstr ""
+
+msgid "^3>>> Unknown vote command: ^7 \n"
 msgstr ""
