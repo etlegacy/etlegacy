@@ -1589,7 +1589,7 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 // strips whitespaces and bad characters
 qboolean Q_isBadDirChar(char c)
 {
-	char badchars[] = { ';', '&', '(', ')', '|', '<', '>', '*', '?', '[', ']', '~', '+', '@', '!', '\\', '/', ' ', '\'', '\"', '\0' };
+	char badchars[] = { ';', ':', '&', '(', ')', '|', '<', '>', '*', '?', '[', ']', '~', '+', '@', '!', '\\', '/', ' ', '\'', '\"', '\0' };
 	int  i;
 
 	for (i = 0; badchars[i] != '\0'; i++)
