@@ -166,7 +166,7 @@ mapEntityData_t *G_FindMapEntityData(mapEntityData_Team_t *teamList, int entNum)
 		}
 		if (entNum == mEnt->entNum)
 		{
-			return(mEnt);
+			return mEnt;
 		}
 	}
 
@@ -1166,44 +1166,6 @@ void G_UpdateTeamMapData(void)
 
 				if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
 				{
-					if (ent2->client->sess.sessionTeam != ent->client->sess.sessionTeam)
-					{
-						int k;
-
-						switch (ent2->client->sess.sessionTeam)
-						{
-						case TEAM_AXIS:
-							mEnt = G_FindMapEntityData(&mapEntityData[0], ent2 - g_entities);
-							if (mEnt && level.time - mEnt->startTime > 5000)
-							{
-								for (k = 0; k < MAX_CLIENTS; k++)
-								{
-									if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
-									{
-										trap_SendServerCommand(k, va("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
-										G_Printf("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
-									}
-								}
-							}
-							break;
-						case TEAM_ALLIES:
-							mEnt = G_FindMapEntityData(&mapEntityData[1], ent2 - g_entities);
-							if (mEnt && level.time - mEnt->startTime > 5000)
-							{
-								for (k = 0; k < MAX_CLIENTS; k++)
-								{
-									if (g_entities[k].inuse && g_entities[k].client && g_entities[k].client->sess.sessionTeam == ent->client->sess.sessionTeam)
-									{
-										trap_SendServerCommand(k, va("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n"));
-										G_Printf("cpm \"ENEMY SPOTTED <STOP> CHECK COMMAND MAP FOR DETAILS <STOP>\"\n");
-									}
-								}
-							}
-							break;
-						default:
-							break;
-						}
-					}
 					G_UpdateTeamMapData_Player(ent2, f1, f2);
 				}
 			}
