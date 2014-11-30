@@ -5126,22 +5126,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 	if (allowforceswitch)
 	{
 		// FIXME: do a switch
-		if (cg.weaponSelect == WP_SMOKE_BOMB)
-		{
-			if (CG_WeaponSelectable(WP_LUGER))
-			{
-				cg.weaponSelect = WP_LUGER;
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_LUGER);
-				return;
-			}
-			else if (CG_WeaponSelectable(WP_COLT))
-			{
-				cg.weaponSelect = WP_COLT;
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_COLT);
-				return;
-			}
-		}
-		else if (cg.weaponSelect == WP_LANDMINE)
+		if (cg.weaponSelect == WP_LANDMINE)
 		{
 			if (CG_WeaponSelectable(WP_PLIERS))
 			{
@@ -5190,8 +5175,8 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			}
 		}
 
-		// Early out if we just fired Panzerfaust or Bazooka, go to SMG, pistol, then grenades
-		if (IS_PANZER_WEAPON(cg.weaponSelect))
+		// Early out if we just fired Panzerfaust,Bazooka or Smoke bomb, go to SMG, pistol, then grenades
+		if (IS_PANZER_WEAPON(cg.weaponSelect) || cg.weaponSelect == WP_SMOKE_BOMB)
 		{
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
