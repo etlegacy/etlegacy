@@ -1481,7 +1481,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 				GL_Bind(tr.whiteImage);
 				qglLineWidth(1);
 #if 0
-                // TODO: OpenGL ES renderer
+				// TODO: OpenGL ES renderer
 				qglBegin(GL_LINES);
 				for (j = 0; j < 3; j++)
 				{
@@ -1499,7 +1499,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 				{
 					qglLineWidth(2);
 #if 0
-                        // TODO: OpenGL ES renderer
+					// TODO: OpenGL ES renderer
 					qglBegin(GL_LINES);
 					qglColor3f(.6, .6, .6);
 					qglVertex3fv(bonePtr->translation);
@@ -1523,7 +1523,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 			GL_Bind(tr.whiteImage);
 			qglLineWidth(1);
 #if 0
-            // TODO: OpenGL ES renderer
+			// TODO: OpenGL ES renderer
 			qglBegin(GL_LINES);
 			qglColor3f(.0, .0, .8);
 

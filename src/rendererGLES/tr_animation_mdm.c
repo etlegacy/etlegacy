@@ -1698,7 +1698,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 				{
 					qglLineWidth(1);
 #if 0
-                    // TODO: OpenGL ES renderer
+					// TODO: OpenGL ES renderer
 					qglBegin(GL_LINES);
 					for (j = 0; j < 3; j++)
 					{
@@ -1718,7 +1718,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 				{
 					qglLineWidth(r_bonesDebug->integer == 8 ? 4 : 2);
 #if 0
-                    // TODO: OpenGL ES renderer
+					// TODO: OpenGL ES renderer
 					qglBegin(GL_LINES);
 					qglColor3f(.6, .6, .6);
 					qglVertex3fv(bonePtr->translation);
@@ -1756,8 +1756,8 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 					qglEnable(GL_BLEND);
 
 #if 0
-                    // TODO: OpenGL ES renderer
-                    qglBegin(GL_LINES);
+					// TODO: OpenGL ES renderer
+					qglBegin(GL_LINES);
 					qglColor4f(1.f, .4f, .05f, .35f);
 					qglVertex3fv(bonePtr->translation);
 					qglVertex3fv(vec);
@@ -1795,10 +1795,10 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 							LocalMatrixTransformVector(pTag->axis[j], bone->matrix, outTag.axis[j]);
 						}
 
-                        GL_Bind(tr.whiteImage);
+						GL_Bind(tr.whiteImage);
 						qglLineWidth(2);
 #if 0
-                        // TODO: OpenGL ES renderer
+						// TODO: OpenGL ES renderer
 						qglBegin(GL_LINES);
 						for (j = 0; j < 3; j++)
 						{
@@ -1819,7 +1819,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 
 						qglLineWidth(1);
 #if 0
-                        // TODO: OpenGL ES renderer
+						// TODO: OpenGL ES renderer
 						qglEnable(GL_BLEND);
 						qglBegin(GL_LINES);
 						qglColor4f(1.f, .4f, .05f, .35f);
@@ -1849,7 +1849,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 			GL_Bind(tr.whiteImage);
 			qglLineWidth(1);
 #if 0
-            // TODO: OpenGL ES renderer
+			// TODO: OpenGL ES renderer
 			qglBegin(GL_LINES);
 			qglColor3f(.0, .0, .8);
 
@@ -1891,7 +1891,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 			GL_Bind(tr.whiteImage);
 			qglPointSize(5);
 #if 0
-            // TODO: OpenGL ES renderer
+			// TODO: OpenGL ES renderer
 			qglBegin(GL_POINTS);
 			for (j = 0; j < render_count; j++, tempVert += 4)
 			{
