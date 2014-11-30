@@ -416,7 +416,8 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		}
 	}
 
-	if (ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 4 && (weapon == WP_THOMPSON || weapon == WP_MP40))
+	// FIXME: allow soldier with HW level 4 to pick up enemy SMS too.
+	if (ent->client->sess.playerType == PC_SOLDIER && ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 4 && (weapon == WP_THOMPSON || weapon == WP_MP40))
 	{
 		return qfalse;
 	}
