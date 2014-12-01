@@ -424,7 +424,6 @@ static void AutospriteDeform(void)
 	float  *xyz;
 	vec3_t mid, delta;
 	float  radius;
-	float  axisLength;
 	vec3_t left, up;
 	vec3_t leftDir, upDir;
 
@@ -475,6 +474,8 @@ static void AutospriteDeform(void)
 		// compensate for scale in the axes if necessary
 		if (backEnd.currentEntity->e.nonNormalizedAxes)
 		{
+			float axisLength;
+
 			axisLength = VectorLength(backEnd.currentEntity->e.axis[0]);
 			if (!axisLength)
 			{
