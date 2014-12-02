@@ -579,6 +579,16 @@ static void Upload32(unsigned *data,
 		scaled_height >>= 1;
 	}
 
+	// clamp to minimum size
+	if (scaled_width < 1)
+	{
+		scaled_width = 1;
+	}
+	if (scaled_height < 1)
+	{
+		scaled_height = 1;
+	}
+
 	if (scaled_width != width || scaled_height != height)
 	{
 		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED, "resample");
