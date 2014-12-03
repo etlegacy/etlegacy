@@ -302,6 +302,11 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 		Ren_Drop("ResampleTexture: max width");
 	}
 
+	if (outwidth < 1)
+	{
+		outwidth = 1;
+	}
+
 	fracstep = inwidth * 0x10000 / outwidth;
 
 	frac = fracstep >> 2;
@@ -577,16 +582,6 @@ static void Upload32(unsigned *data,
 	if (r_roundImagesDown->integer && scaled_height > height)
 	{
 		scaled_height >>= 1;
-	}
-
-	// clamp to minimum size
-	if (scaled_width < 1)
-	{
-		scaled_width = 1;
-	}
-	if (scaled_height < 1)
-	{
-		scaled_height = 1;
 	}
 
 	if (scaled_width != width || scaled_height != height)
