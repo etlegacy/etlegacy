@@ -4100,7 +4100,7 @@ static qboolean R_RegisterShaderImages(shader_t *sh)
 		{
 			for (b = 0 ; b < NUM_TEXTURE_BUNDLES ; b++)
 			{
-				for (j = 0; sh->stages[i]->bundle[b].image[j] && j < MAX_IMAGE_ANIMATIONS; j++)
+				for (j = 0; j < MAX_IMAGE_ANIMATIONS && sh->stages[i]->bundle[b].image[j]; j++)
 				{
 					if (!R_TouchImage(sh->stages[i]->bundle[b].image[j]))
 					{
