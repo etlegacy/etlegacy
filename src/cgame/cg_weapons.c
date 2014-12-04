@@ -5117,7 +5117,6 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 	int equiv = WP_NONE;
 
 	// trivial switching
-
 	if (cg.weaponSelect == WP_PLIERS || (cg.weaponSelect == WP_SATCHEL_DET && cg.predictedPlayerState.ammo[WP_SATCHEL_DET]))
 	{
 		return;
@@ -5125,63 +5124,44 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 
 	if (allowforceswitch)
 	{
-		// FIXME: do a switch
-		if (cg.weaponSelect == WP_LANDMINE)
+		switch (cg.weaponSelect)
 		{
+		case WP_LANDMINE:
+		case WP_DYNAMITE:
 			if (CG_WeaponSelectable(WP_PLIERS))
 			{
 				cg.weaponSelect = WP_PLIERS;
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
 				return;
 			}
-		}
-		else if (cg.weaponSelect == WP_SATCHEL)
-		{
+			break;
+		case WP_SATCHEL:
 			if (CG_WeaponSelectable(WP_SATCHEL_DET))
 			{
 				cg.weaponSelect = WP_SATCHEL_DET;
 				return;
 			}
-		}
-		else if (cg.weaponSelect == WP_MORTAR_SET)
-		{
+			break;
+		case WP_MORTAR_SET:
 			cg.weaponSelect = WP_MORTAR;
 			return;
-		}
-		else if (cg.weaponSelect == WP_MORTAR2_SET)
-		{
+		case WP_MORTAR2_SET:
 			cg.weaponSelect = WP_MORTAR2;
 			return;
-		}
-		else if (cg.weaponSelect == WP_MOBILE_MG42_SET)
-		{
+		case WP_MOBILE_MG42_SET:
 			cg.weaponSelect = WP_MOBILE_MG42;
 			return;
-		}
-		else if (cg.weaponSelect == WP_MOBILE_BROWNING_SET)
-		{
+		case WP_MOBILE_BROWNING_SET:
 			cg.weaponSelect = WP_MOBILE_BROWNING;
 			return;
-		}
-
-		// early out if we just dropped dynamite, go to pliers
-		if (cg.weaponSelect == WP_DYNAMITE)
-		{
-			if (CG_WeaponSelectable(WP_PLIERS))
-			{
-				cg.weaponSelect = WP_PLIERS;
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
-				return;
-			}
-		}
-
-		// Early out if we just fired Panzerfaust,Bazooka or Smoke bomb, go to SMG, pistol, then grenades
-		if (IS_PANZER_WEAPON(cg.weaponSelect) || cg.weaponSelect == WP_SMOKE_BOMB)
-		{
+		case WP_PANZERFAUST:
+		case WP_BAZOOKA:
+		case WP_SMOKE_BOMB:
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
-				// Make sure we don't reselect the panzer or bazooka
-				if (weapBanksMultiPlayer[3][i] != WP_PANZERFAUST && weapBanksMultiPlayer[3][i] != WP_BAZOOKA && CG_WeaponSelectable(weapBanksMultiPlayer[3][i])) // find an SMG
+				// make sure we don't reselect the panzer or bazooka
+				if (weapBanksMultiPlayer[3][i] != WP_PANZERFAUST && weapBanksMultiPlayer[3][i] != WP_BAZOOKA
+				    && CG_WeaponSelectable(weapBanksMultiPlayer[3][i]))     // find an SMG
 				{
 					cg.weaponSelect = weapBanksMultiPlayer[3][i];
 					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
@@ -5206,18 +5186,18 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 					return;
 				}
 			}
-		}
-
-		// if you're using an alt mode weapon, try switching back to the parent
-		// otherwise, switch to the equivalent if you've got it
-		if (IS_RIFLENADE_WEAPON(cg.weaponSelect))
-		{
+		case WP_GPG40:
+		case WP_M7:
+			// if you're using an alt mode weapon, try switching back to the parent
+			// otherwise, switch to the equivalent if you've got it
 			cg.weaponSelect = equiv = getAltWeapon(cg.weaponSelect);      // base any further changes on the parent
 			if (CG_WeaponSelectable(equiv))          // the parent was selectable, drop back to that
 			{
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 				return;
 			}
+		default:
+			break;
 		}
 
 		// now try the opposite team's equivalent weap
