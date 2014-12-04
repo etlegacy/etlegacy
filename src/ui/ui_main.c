@@ -7515,7 +7515,6 @@ void _UI_Init(int legacyClient)
 	uiInfo.uiDC.drawCinematic        = &UI_DrawCinematic;
 	uiInfo.uiDC.runCinematicFrame    = &UI_RunCinematicFrame;
 	uiInfo.uiDC.translateString      = &trap_TranslateString;
-	uiInfo.uiDC.checkMotd            = &trap_CheckMotd;
 	uiInfo.uiDC.checkAutoUpdate      = &trap_CheckAutoUpdate;
 	uiInfo.uiDC.getAutoUpdate        = &trap_GetAutoUpdate;
 
