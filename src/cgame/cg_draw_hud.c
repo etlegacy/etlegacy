@@ -826,7 +826,7 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 			}
 			else
 			{
-				Vector4Average(colour, colorWhite, .5f + sin(.2f * sqrt(msec) * 2 * M_PI) * .5f, colour);
+				Vector4Average(colour, colorMdRed, .5f + sin(.2f * sqrt(msec) * 2 * M_PI) * .5f, colour);
 			}
 		}
 	}
