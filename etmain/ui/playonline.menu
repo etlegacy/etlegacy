@@ -18,6 +18,11 @@ menuDef {
 
 	onOpen {
 
+		// motd
+		conditionalscript cl_autoupdate 1
+			( "checkmotd" )
+			( "clearFocus" )
+
 		// sort by servername ?
 		conditionalScript serversort_0 2
 			( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor serverColumn backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab forecolor .9 .9 .9 1" )

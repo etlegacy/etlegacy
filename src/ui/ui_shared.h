@@ -446,6 +446,7 @@ typedef struct
 	qboolean (*feederSelectionClick)(itemDef_t *item);
 	void (*feederAddItem)(float feederID, const char *name, int index);
 	char * (*translateString)(const char *string);
+	void (*checkMotd)(void);
 	void (*checkAutoUpdate)(void);
 	void (*getAutoUpdate)(void);
 

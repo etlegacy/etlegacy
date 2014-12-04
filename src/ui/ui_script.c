@@ -840,6 +840,11 @@ void Script_AddListItem(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+void Script_CheckMotd(itemDef_t *item, qboolean *bAbort, char **args)
+{
+	DC->checkMotd();
+}
+
 void Script_CheckAutoUpdate(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	DC->checkAutoUpdate();
@@ -1094,6 +1099,7 @@ commandDef_t commandList[] =
 	{ "playlooped",         &Script_playLooped         }, // group/name
 	{ "orbit",              &Script_Orbit              }, // group/name
 	{ "addlistitem",        &Script_AddListItem        }, // special command to add text items to list box
+	{ "checkmotd",          &Script_CheckMotd          }, //
 	{ "checkautoupdate",    &Script_CheckAutoUpdate    }, //
 	{ "getautoupdate",      &Script_GetAutoUpdate      }, //
 	{ "setmenufocus",       &Script_SetMenuFocus       }, // focus menu

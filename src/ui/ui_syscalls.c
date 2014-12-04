@@ -584,6 +584,11 @@ char *trap_TranslateString(const char *string)
 	return buf;
 }
 
+void trap_CheckMotd(void)
+{
+	syscall(UI_CHECKMOTD);
+}
+
 void trap_CheckAutoUpdate(void)
 {
 	syscall(UI_CHECKAUTOUPDATE);
