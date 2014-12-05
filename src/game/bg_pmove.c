@@ -3026,7 +3026,7 @@ PM_SwitchIfEmpty
 */
 static void PM_SwitchIfEmpty(void)
 {
-	// weapon from here down will be a thrown explosive
+	// weapon here are thrown explosives or syringe/adrenaline
 	switch (pm->ps->weapon)
 	{
 	case WP_GRENADE_LAUNCHER:
@@ -3034,6 +3034,8 @@ static void PM_SwitchIfEmpty(void)
 	case WP_DYNAMITE:
 	case WP_SMOKE_BOMB:
 	case WP_LANDMINE:
+	case WP_MEDIC_SYRINGE:
+	case WP_MEDIC_ADRENALINE:
 		//case WP_KNIFE:
 		//case WP_SATCHEL_DET:
 		break;

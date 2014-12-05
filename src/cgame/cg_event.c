@@ -2496,7 +2496,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		    (es->weapon != WP_SATCHEL_DET) &&
 		    (es->weapon != WP_SMOKE_BOMB) &&
 		    (es->weapon != WP_AMMO) &&
-		    (es->weapon != WP_MEDKIT))
+		    (es->weapon != WP_MEDKIT) &&
+		    (es->weapon != WP_MEDIC_SYRINGE) &&
+		    (es->weapon != WP_MEDIC_ADRENALINE))
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
 		}
@@ -2520,7 +2522,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		        es->weapon == WP_SATCHEL_DET ||
 		        es->weapon == WP_SMOKE_BOMB ||
 		        es->weapon == WP_AMMO ||
-		        es->weapon == WP_MEDKIT))
+		        es->weapon == WP_MEDKIT ||
+		        es->weapon == WP_MEDIC_SYRINGE ||
+		        es->weapon == WP_MEDIC_ADRENALINE))
 		{
 			CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
 		}
