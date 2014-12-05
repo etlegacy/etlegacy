@@ -5162,7 +5162,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			{
 				// make sure we don't reselect the panzer or bazooka
 				if (weapBanksMultiPlayer[3][i] != WP_PANZERFAUST && weapBanksMultiPlayer[3][i] != WP_BAZOOKA
-				    && CG_WeaponSelectable(weapBanksMultiPlayer[3][i]))     // find an SMG
+				    && CG_WeaponSelectable(weapBanksMultiPlayer[3][i]))     // find a rifle
 				{
 					cg.weaponSelect = weapBanksMultiPlayer[3][i];
 					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
@@ -5183,6 +5183,15 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 				if (CG_WeaponSelectable(weapBanksMultiPlayer[4][i]))       // find a grenade
 				{
 					cg.weaponSelect = weapBanksMultiPlayer[4][i];
+					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+					return;
+				}
+			}
+			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
+			{
+				if (CG_WeaponSelectable(weapBanksMultiPlayer[1][i]))       // find a knife
+				{
+					cg.weaponSelect = weapBanksMultiPlayer[1][i];
 					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 					return;
 				}
@@ -5212,8 +5221,6 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		}
 	}
 
-	// more complicated selection
-
 	// didn't have available alternative or equivalent, try another weap in the bank
 	CG_WeaponIndex(cg.weaponSelect, &bank, &cycle);       // get bank/cycle of current weapon
 
@@ -5236,22 +5243,42 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			return;
 		}
 	}
-
-	// otherwise just do something
-	for (i = cycle; i < MAX_WEAPS_IN_BANK_MP; i++)
+	for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 	{
-		equiv = getNextWeapInBank(bank, i);
-		if (CG_WeaponSelectable(equiv))        // found a reasonable replacement
+		if (CG_WeaponSelectable(weapBanksMultiPlayer[4][i]))       // find a grenade
 		{
-			cg.weaponSelect = equiv;
+			cg.weaponSelect = weapBanksMultiPlayer[4][i];
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+			return;
+		}
+	}
+	for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
+	{
+		if (CG_WeaponSelectable(weapBanksMultiPlayer[1][i]))       // find a knife
+		{
+			cg.weaponSelect = weapBanksMultiPlayer[1][i];
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 			return;
 		}
 	}
 
+	/* never reached, as knife is always found
+	// otherwise just do something
+	for (i = cycle; i < MAX_WEAPS_IN_BANK_MP; i++)
+	{
+	    equiv = getNextWeapInBank(bank, i);
+	    if (CG_WeaponSelectable(equiv))        // found a reasonable replacement
+	    {
+	        cg.weaponSelect = equiv;
+	        CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+	        return;
+	    }
+	}
+
 	// still nothing available, just go to the next
 	// available weap using the regular selection scheme
 	CG_NextWeap(qtrue);
+	*/
 }
 
 /*
