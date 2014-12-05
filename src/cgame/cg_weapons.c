@@ -5157,6 +5157,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		case WP_PANZERFAUST:
 		case WP_BAZOOKA:
 		case WP_SMOKE_BOMB:
+		case WP_MEDIC_ADRENALINE:
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				// make sure we don't reselect the panzer or bazooka

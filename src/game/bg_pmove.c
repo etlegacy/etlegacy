@@ -4498,6 +4498,7 @@ static void PM_Weapon(void)
 	case WP_SMOKE_BOMB:
 	case WP_LANDMINE:
 	case WP_SATCHEL:
+	case WP_MEDIC_ADRENALINE:
 		PM_AddEvent(EV_NOAMMO);
 		if (pm->ps->weapon == WP_SATCHEL)
 		{
