@@ -299,11 +299,13 @@ static void UI_LoadCampaignsFromFile(const char *filename)
 
 	if (!trap_PC_ReadToken(handle, &token))
 	{
+		trap_Print(va(S_COLOR_RED "invalid token: %s\n", filename));
 		trap_PC_FreeSource(handle);
 		return;
 	}
 	if (*token.string != '{')
 	{
+		trap_Print(va(S_COLOR_RED "unexpected start token '%s' inside: %s\n", token.string, filename));
 		trap_PC_FreeSource(handle);
 		return;
 	}
