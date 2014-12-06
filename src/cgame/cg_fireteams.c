@@ -164,7 +164,7 @@ const char *ftMenuRootStringsAlphachars[] =
 	NULL
 };
 
-const char *ftMenuSoliderStrings[] =
+const char *ftMenuSoldierStrings[] =
 {
 	"Cover Me",
 	"Covering Fire",
@@ -172,7 +172,7 @@ const char *ftMenuSoliderStrings[] =
 	NULL
 };
 
-const char *ftMenuSoliderStringsAlphachars[] =
+const char *ftMenuSoldierStringsAlphachars[] =
 {
 	"C",
 	"F",
@@ -180,7 +180,7 @@ const char *ftMenuSoliderStringsAlphachars[] =
 	NULL
 };
 
-const char *ftMenuSoliderStringsMsg[] =
+const char *ftMenuSoldierStringsMsg[] =
 {
 	"FTCoverMe",
 	"FTCoveringFire",
@@ -308,7 +308,7 @@ const char *ftMenuCovertOpsStringsMsg[] =
 
 const char **ftMenuStrings[] =
 {
-	ftMenuSoliderStrings,
+	ftMenuSoldierStrings,
 	ftMenuMedicStrings,
 	ftMenuEngineerStrings,
 	ftMenuFieldOpsStrings,
@@ -317,7 +317,7 @@ const char **ftMenuStrings[] =
 
 const char **ftMenuStringsAlphachars[] =
 {
-	ftMenuSoliderStringsAlphachars,
+	ftMenuSoldierStringsAlphachars,
 	ftMenuMedicStringsAlphachars,
 	ftMenuEngineerStringsAlphachars,
 	ftMenuFieldOpsStringsAlphachars,
@@ -326,7 +326,7 @@ const char **ftMenuStringsAlphachars[] =
 
 const char **ftMenuStringsMsg[] =
 {
-	ftMenuSoliderStringsMsg,
+	ftMenuSoldierStringsMsg,
 	ftMenuMedicStringsMsg,
 	ftMenuEngineerStringsMsg,
 	ftMenuFieldOpsStringsMsg,
@@ -552,6 +552,7 @@ int CG_CountPlayersNF(void)
 
 	return cnt;
 }
+
 
 int CG_PlayerSFFromPos(int pos, int *pageofs)
 {
