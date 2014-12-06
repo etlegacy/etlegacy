@@ -337,6 +337,11 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 	//if(outwidth > 2048)
 	//  Ren_Drop( "ResampleTexture: max width");
 
+	if (outwidth < 1)
+	{
+		outwidth = 1;
+	}
+
 	for (x = 0; x < outwidth; x++)
 	{
 		p1[x] = 4 * (frac >> 16);
