@@ -173,7 +173,6 @@ typedef struct
 	qboolean corruptedTranslationFile;
 	char translationVersion[MAX_STRING_TOKENS];
 
-	qboolean cameraMode;
 } clientActive_t;
 
 extern clientActive_t cl;
