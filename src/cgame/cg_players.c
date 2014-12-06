@@ -2576,12 +2576,6 @@ void CG_Player(centity_t *cent)
 		renderfx = RF_THIRD_PERSON;         // only draw in mirrors
 	}
 
-	// draw the player in cameras
-	if (cg.cameraMode)
-	{
-		renderfx &= ~RF_THIRD_PERSON;
-	}
-
 	if (cg_shadows.integer == 3 && shadow)
 	{
 		renderfx |= RF_SHADOW_PLANE;

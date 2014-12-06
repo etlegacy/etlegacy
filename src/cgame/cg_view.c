@@ -1225,51 +1225,10 @@ int CG_CalcViewValues(void)
 
 	memset(cg.refdef_current, 0, sizeof(cg.refdef));
 
-	// strings for in game rendering
-	// Q_strncpyz( cg.refdef.text[0], "Park Ranger", sizeof(cg.refdef_current->text[0]) );
-	// Q_strncpyz( cg.refdef.text[1], "19", sizeof(cg.refdef_current->text[1]) );
-
 	// calculate size of 3D view
 	CG_CalcVrect();
 
 	ps = &cg.predictedPlayerState;
-
-	if (cg.cameraMode)
-	{
-		vec3_t origin, angles;
-		float  fov = 90;
-
-		if (trap_getCameraInfo(CAM_PRIMARY, cg.time, &origin, &angles, &fov))
-		{
-			float x;
-
-			VectorCopy(origin, cg.refdef_current->vieworg);
-			angles[ROLL]  = 0;
-			angles[PITCH] = -angles[PITCH];     // compensate for reversed pitch (this makes the game match the editor, however I'm guessing the real fix is to be done there)
-			VectorCopy(angles, cg.refdefViewAngles);
-			AnglesToAxis(cg.refdefViewAngles, cg.refdef_current->viewaxis);
-
-			x                        = cg.refdef.width / tan(fov / 360 * M_PI);
-			cg.refdef_current->fov_y = atan2(cg.refdef_current->height, x);
-			cg.refdef_current->fov_y = cg.refdef_current->fov_y * 360 / M_PI;
-			cg.refdef_current->fov_x = fov;
-
-			// FIXME: this is really really bad
-			trap_SendClientCommand(va("setCameraOrigin %f %f %f", origin[0], origin[1], origin[2]));
-
-			return 0;
-		}
-		else
-		{
-			cg.cameraMode = qfalse;
-			trap_Cvar_Set("cg_letterbox", "0");
-			trap_SendClientCommand("stopCamera");
-			trap_stopCamera(CAM_PRIMARY);                 // camera off in client
-
-			CG_Fade(0, 0, 0, 255, 0, 0);                  // go black
-			CG_Fade(0, 0, 0, 0, cg.time + 200, 1500);     // then fadeup
-		}
-	}
 
 	// intermission view
 	if (ps->pm_type == PM_INTERMISSION)
@@ -1290,7 +1249,6 @@ int CG_CalcViewValues(void)
 	cg.bobcycle   = (ps->bobCycle & 128) >> 7;
 	cg.bobfracsin = fabs(sin((ps->bobCycle & 127) / 127.0 * M_PI));
 	cg.xyspeed    = sqrt(ps->velocity[0] * ps->velocity[0] + ps->velocity[1] * ps->velocity[1]);
-
 
 	if (cg.showGameView)
 	{

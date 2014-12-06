@@ -1689,7 +1689,7 @@ typedef enum
 	ET_EXPLOSIVE_INDICATOR,
 
 	ET_EXPLOSIVE,           // brush that will break into smaller bits when damaged
-	ET_EF_SPOTLIGHT,
+	ET_EF_SPOTLIGHT,        // unused
 	ET_ALARMBOX,
 	ET_CORONA,
 	ET_TRAP,

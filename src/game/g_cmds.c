@@ -3266,99 +3266,6 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 	TeleportPlayer(ent, origin, angles);
 }
 
-/*
-=================
-Cmd_StartCamera_f
-=================
-*/
-void Cmd_StartCamera_f(gentity_t *ent)
-{
-	if (ent->client->cameraPortal)
-	{
-		G_FreeEntity(ent->client->cameraPortal);
-	}
-	ent->client->cameraPortal = G_Spawn();
-
-	ent->client->cameraPortal->s.eType           = ET_CAMERA;
-	ent->client->cameraPortal->s.apos.trType     = TR_STATIONARY;
-	ent->client->cameraPortal->s.apos.trTime     = 0;
-	ent->client->cameraPortal->s.apos.trDuration = 0;
-	VectorClear(ent->client->cameraPortal->s.angles);
-	VectorClear(ent->client->cameraPortal->s.apos.trDelta);
-	G_SetOrigin(ent->client->cameraPortal, ent->r.currentOrigin);
-	VectorCopy(ent->r.currentOrigin, ent->client->cameraPortal->s.origin2);
-
-	ent->client->cameraPortal->s.frame = 0;
-
-	ent->client->cameraPortal->r.svFlags     |= (SVF_PORTAL | SVF_SINGLECLIENT);
-	ent->client->cameraPortal->r.singleClient = ent->client->ps.clientNum;
-
-	ent->client->ps.eFlags |= EF_VIEWING_CAMERA;
-	ent->s.eFlags          |= EF_VIEWING_CAMERA;
-
-	VectorCopy(ent->r.currentOrigin, ent->client->cameraOrigin);    // backup our origin
-
-	// trying this in client to avoid 1 frame of player drawing
-	//ent->client->ps.eFlags |= EF_NODRAW;
-	//ent->s.eFlags |= EF_NODRAW;
-}
-
-/*
-=================
-Cmd_StopCamera_f
-=================
-*/
-void Cmd_StopCamera_f(gentity_t *ent)
-{
-	if (ent->client->cameraPortal && (ent->client->ps.eFlags & EF_VIEWING_CAMERA))
-	{
-		// send a script event
-		//G_Script_ScriptEvent( ent->client->cameraPortal, "stopcam", "" );
-
-		// go back into noclient mode
-		G_FreeEntity(ent->client->cameraPortal);
-		ent->client->cameraPortal = NULL;
-
-		ent->s.eFlags          &= ~EF_VIEWING_CAMERA;
-		ent->client->ps.eFlags &= ~EF_VIEWING_CAMERA;
-
-		//G_SetOrigin( ent, ent->client->cameraOrigin );    // restore our origin
-		//VectorCopy( ent->client->cameraOrigin, ent->client->ps.origin );
-	}
-}
-
-/*
-=================
-Cmd_SetCameraOrigin_f
-=================
-*/
-void Cmd_SetCameraOrigin_f(gentity_t *ent)
-{
-	char   buffer[MAX_TOKEN_CHARS];
-	int    i;
-	vec3_t origin;
-
-	if (trap_Argc() != 4)
-	{
-		return;
-	}
-
-	for (i = 0 ; i < 3 ; i++)
-	{
-		trap_Argv(i + 1, buffer, sizeof(buffer));
-		origin[i] = atof(buffer);
-	}
-
-	if (ent->client->cameraPortal)
-	{
-		//G_SetOrigin( ent->client->cameraPortal, origin ); // set our origin
-		VectorCopy(origin, ent->client->cameraPortal->s.origin2);
-		trap_LinkEntity(ent->client->cameraPortal);
-		//  G_SetOrigin( ent, origin ); // set our origin
-		//  VectorCopy( origin, ent->client->ps.origin );
-	}
-}
-
 extern vec3_t playerMins;
 extern vec3_t playerMaxs;
 
@@ -4688,14 +4595,6 @@ void ClientCommand(int clientNum)
 	else if (Q_stricmp(cmd, "where") == 0)
 	{
 		Cmd_Where_f(ent);
-	}
-	else if (Q_stricmp(cmd, "stopCamera") == 0)
-	{
-		Cmd_StopCamera_f(ent);
-	}
-	else if (Q_stricmp(cmd, "setCameraOrigin") == 0)
-	{
-		Cmd_SetCameraOrigin_f(ent);
 	}
 	else if (Q_stricmp(cmd, "setviewpos") == 0)
 	{

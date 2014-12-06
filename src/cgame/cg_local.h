@@ -995,8 +995,6 @@ typedef struct
 	// is rare enough that we can transmit that as an event
 	float recoilPitch, recoilPitchAngle;
 
-	qboolean cameraMode; // if rendering from a camera
-
 	// Objective info display
 	qboolean limboMenu;
 
@@ -2561,17 +2559,6 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 void CG_SparklerSparks(vec3_t origin, int count);
 void CG_ClearFlameChunks(void);
 
-void CG_Spotlight(centity_t *cent, float *color, vec3_t start, vec3_t dir, int segs, float range, int startWidth, float coneAngle, int flags);
-#define SL_NOTRACE          0x001   // don't do a trace check for shortening the beam, always draw at full 'range' length
-#define SL_NODLIGHT         0x002   // don't put a dlight at the end
-#define SL_NOSTARTCAP       0x004   // dont' cap the start circle
-#define SL_LOCKTRACETORANGE 0x010   // only trace out as far as the specified range (rather than to max spot range)
-#define SL_NOFLARE          0x020   // don't draw a flare when the light is pointing at the camera
-#define SL_NOIMPACT         0x040   // don't draw the impact mark
-#define SL_LOCKUV           0x080   // lock the texture coordinates at the 'true' length of the requested beam.
-#define SL_NOCORE           0x100   // don't draw the center 'core' beam
-#define SL_TRACEWORLDONLY   0x200
-
 void CG_RumbleEfx(float pitch, float yaw);
 
 void InitSmokeSprites(void);
@@ -2974,20 +2961,6 @@ void trap_R_RenderToTexture(int textureid, int x, int y, int w, int h);
 int trap_R_GetTextureId(const char *name);
 // flush rendering buffer
 void trap_R_Finish(void);
-
-// camera stuff
-#define CAM_PRIMARY 0   // the main camera for cutscenes, etc.
-qboolean trap_loadCamera(int camNum, const char *name);
-void trap_startCamera(int camNum, int time);
-void trap_stopCamera(int camNum);
-qboolean trap_getCameraInfo(int camNum, int time, vec3_t *origin, vec3_t *angles, float *fov);
-void CG_SetInitialCamera(const char *name, qboolean startBlack);
-void CG_StartCamera(const char *name, qboolean startBlack);
-void CG_StartInitialCamera(void);
-void CG_StopCamera(void);
-
-int CG_LoadCamera(const char *name);
-void CG_FreeCamera(int camNum);
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 

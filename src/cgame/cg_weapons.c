@@ -2465,11 +2465,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	qboolean     drawpart;
 	qboolean     isPlayer = (qboolean)(cent->currentState.clientNum == cg.snap->ps.clientNum); // might as well have this check consistant throughout the routine
 
-	if (ps && cg.cameraMode)
-	{
-		return;
-	}
-
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
 	{

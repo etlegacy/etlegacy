@@ -2719,21 +2719,6 @@ static void CG_ServerCommand(void)
 		CG_ParsePortalPos();
 		return;
 	}
-	else if (!Q_stricmp(cmd, "startCam"))
-	{
-		CG_StartCamera(CG_Argv(1), atoi(CG_Argv(2)));
-		return;
-	}
-	else if (!Q_stricmp(cmd, "SetInitialCamera"))
-	{
-		CG_SetInitialCamera(CG_Argv(1), atoi(CG_Argv(2)));
-		return;
-	}
-	else if (!Q_stricmp(cmd, "stopCam"))
-	{
-		CG_StopCamera();
-		return;
-	}
 	else if (!Q_stricmp(cmd, "setspawnpt"))
 	{
 		cg.selectedSpawnPoint = atoi(CG_Argv(1)) + 1;

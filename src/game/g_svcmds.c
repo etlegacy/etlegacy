@@ -436,7 +436,7 @@ char *enttypenames[] =
 	"ET_EXPLOSIVE_INDICATOR",
 
 	"ET_EXPLOSIVE",
-	"ET_EF_SPOTLIGHT",
+	"ET_EF_SPOTLIGHT",             // unused
 	"ET_ALARMBOX",
 	"ET_CORONA",
 	"ET_TRAP",

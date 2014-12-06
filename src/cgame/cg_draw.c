@@ -3293,39 +3293,36 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-	if (!cg.cameraMode)
-	{
-		CG_DrawFlashBlendBehindHUD();
+	CG_DrawFlashBlendBehindHUD();
 
-		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		if (!CG_DrawScoreboard())
 		{
-			if (!CG_DrawScoreboard())
-			{
-				CG_DrawSpectator();
-			}
+			CG_DrawSpectator();
+		}
+		CG_DrawCrosshair();
+		CG_DrawCrosshairNames();
+
+		// we need to do this for spectators as well
+		CG_DrawTeamInfo();
+	}
+	else
+	{
+		// don't draw any status if dead
+		if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+		{
 			CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
-
-			// we need to do this for spectators as well
-			CG_DrawTeamInfo();
+			CG_DrawNoShootIcon();
 		}
-		else
+
+		CG_DrawTeamInfo();
+
+		if (cg_drawStatus.integer)
 		{
-			// don't draw any status if dead
-			if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
-			{
-				CG_DrawCrosshair();
-				CG_DrawCrosshairNames();
-				CG_DrawNoShootIcon();
-			}
-
-			CG_DrawTeamInfo();
-
-			if (cg_drawStatus.integer)
-			{
-				Menu_PaintAll();
-				CG_DrawTimedMenus();
-			}
+			Menu_PaintAll();
+			CG_DrawTimedMenus();
 		}
 	}
 
@@ -3351,11 +3348,7 @@ static void CG_Draw2D(void)
 		CG_DrawObjectiveInfo();
 		CG_DrawSpectatorMessage();
 		CG_DrawLimboMessage();
-
-		if (!cg.cameraMode)
-		{
-			CG_DrawVote();
-		}
+		CG_DrawVote();
 	}
 	else
 	{

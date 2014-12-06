@@ -1029,12 +1029,6 @@ qboolean CG_DrawScoreboard(void)
 		return qfalse;
 	}
 
-	// don't draw if in cameramode
-	if (cg.cameraMode)
-	{
-		return qtrue;
-	}
-
 	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_INTERMISSION)
 	{
 		fade = 1.0f;

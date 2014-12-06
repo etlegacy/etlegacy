@@ -196,8 +196,6 @@ void CG_Respawn(qboolean revived)
 	cg.cursorHintIcon = 0;
 	cg.cursorHintTime = 0;
 
-	cg.cameraMode = qfalse; // get out of camera for sure
-
 	// select the weapon the server says we are using
 	cg.weaponSelect = cg.snap->ps.weapon;
 	// Clear even more things on respawn

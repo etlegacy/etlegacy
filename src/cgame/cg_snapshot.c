@@ -207,11 +207,6 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 				{
 					CG_LimboMenu_f();
 				}
-				/*          } else {
-				                ccInitial = qtrue;
-
-				                // Start the Initial Camera if specified
-				                CG_StartInitialCamera(); */
 			}
 		}
 	}

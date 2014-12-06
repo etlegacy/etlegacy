@@ -1362,57 +1362,6 @@ static void CG_Corona(centity_t *cent)
 	}
 }
 
-static void CG_SpotlightEfx(centity_t *cent)
-{
-	vec3_t targetpos, normalized_direction, direction;
-	float  dist, fov = 90;
-	vec4_t color        = { 1, 1, 1, .1 };
-	int    splinetarget = cent->overheatTime;
-	char   *cs;
-
-	VectorCopy(cent->currentState.origin2, targetpos);
-
-	if (!splinetarget)
-	{
-		cs                 = (char *)CG_ConfigString(CS_SPLINES + cent->currentState.density);
-		cent->overheatTime = splinetarget = CG_LoadCamera(va("cameras/%s.camera", cs));
-		if (splinetarget != -1)
-		{
-			trap_startCamera(splinetarget, cg.time);
-		}
-	}
-	else
-	{
-		if (splinetarget != -1)
-		{
-			vec3_t angles;
-
-			if (trap_getCameraInfo(splinetarget, cg.time, &targetpos, &angles, &fov))
-			{
-
-			}
-			else        // loop
-			{
-				trap_startCamera(splinetarget, cg.time);
-				trap_getCameraInfo(splinetarget, cg.time, &targetpos, &angles, &fov);
-			}
-		}
-	}
-
-	normalized_direction[0] = direction[0] = targetpos[0] - cent->currentState.origin[0];
-	normalized_direction[1] = direction[1] = targetpos[1] - cent->currentState.origin[1];
-	normalized_direction[2] = direction[2] = targetpos[2] - cent->currentState.origin[2];
-
-	dist = VectorNormalize(normalized_direction);
-
-	if (dist == 0)
-	{
-		return;
-	}
-
-	CG_Spotlight(cent, color, cent->currentState.origin, normalized_direction, 999, 2048, 10, fov, 0);
-}
-
 // func_explosive
 
 /*
@@ -2255,9 +2204,6 @@ static void CG_ProcessEntity(centity_t *cent)
 	case ET_EXPLO_PART:
 	case ET_RAMJET:
 		CG_Missile(cent);
-		break;
-	case ET_EF_SPOTLIGHT:
-		CG_SpotlightEfx(cent);
 		break;
 	case ET_EXPLOSIVE:
 		CG_Explosive(cent);

@@ -144,67 +144,6 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	}
 }
 
-void use_spotlight(gentity_t *ent, gentity_t *other, gentity_t *activator)
-{
-	if (ent->r.linked)
-	{
-		trap_UnlinkEntity(ent);
-	}
-	else
-	{
-		gentity_t *tent;
-
-		tent = G_PickTarget(ent->target);
-		VectorCopy(tent->s.origin, ent->s.origin2);
-
-		ent->active = 0;
-		trap_LinkEntity(ent);
-	}
-}
-
-void spotlight_finish_spawning(gentity_t *ent)
-{
-	if (ent->spawnflags & 1)       // START_ON
-	{
-		ent->active = 0;
-		trap_LinkEntity(ent);
-	}
-
-	ent->use       = use_spotlight;
-	ent->think     = 0;
-	ent->nextthink = 0;
-}
-
-/*
-QUAKED misc_spotlight (1 0 0) (-16 -16 -16) (16 16 16) START_ON BACK_AND_FORTH
-"model" - 'base' model that moves with the light.  Default: "models/mapobjects/light/searchlight_pivot.md3"
-"target" - .camera (spline) file for light to track.  do not specify file extension.
-
-BACK_AND_FORTH - when end of target spline is hit, reverse direction rather than looping (looping is default)
-( /\ not active yet /\ )
-*/
-void SP_misc_spotlight(gentity_t *ent)
-{
-	ent->s.eType = ET_EF_SPOTLIGHT;
-
-	ent->think     = spotlight_finish_spawning;
-	ent->nextthink = level.time + 100;
-
-	if (ent->model)
-	{
-		ent->s.modelindex = G_ModelIndex(ent->model);
-	}
-	else
-	{
-		ent->s.modelindex = G_ModelIndex("models/mapobjects/light/searchlight_pivot.md3");
-	}
-
-	if (ent->target)
-	{
-		ent->s.density = G_FindConfigstringIndex(ent->target, CS_SPLINES, MAX_SPLINE_CONFIGSTRINGS, qtrue);
-	}
-}
-
 //===========================================================
 
 /*

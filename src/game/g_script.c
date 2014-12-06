@@ -68,7 +68,6 @@ qboolean G_ScriptAction_ResetScript(gentity_t *ent, char *params);
 qboolean G_ScriptAction_TagConnect(gentity_t *ent, char *params);
 qboolean G_ScriptAction_Halt(gentity_t *ent, char *params);
 qboolean G_ScriptAction_StopSound(gentity_t *ent, char *params);
-//qboolean G_ScriptAction_StartCam( gentity_t *ent, char *params );
 qboolean G_ScriptAction_EntityScriptName(gentity_t *ent, char *params);
 qboolean G_ScriptAction_AIScriptName(gentity_t *ent, char *params);
 qboolean G_ScriptAction_AxisRespawntime(gentity_t *ent, char *params);
@@ -101,9 +100,6 @@ qboolean G_ScriptAction_ShaderRemapFlush(gentity_t *ent, char *params);
 qboolean G_ScriptAction_ChangeModel(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetDamagable(gentity_t *ent, char *params);
-qboolean G_ScriptAction_StartCam(gentity_t *ent, char *params);
-qboolean G_ScriptAction_SetInitialCamera(gentity_t *ent, char *params);
-qboolean G_ScriptAction_StopCam(gentity_t *ent, char *params);
 qboolean G_ScriptAction_RepairMG42(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params);
 qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params);
@@ -201,9 +197,7 @@ g_script_stack_action_t gScriptActions[] =
 	{ "changemodel",                    G_ScriptAction_ChangeModel                   },
 	{ "setchargetimefactor",            G_ScriptAction_SetChargeTimeFactor           },
 	{ "setdamagable",                   G_ScriptAction_SetDamagable                  },
-	{ "startcam",                       G_ScriptAction_StartCam                      },
-	{ "SetInitialCamera",               G_ScriptAction_SetInitialCamera              },
-	{ "stopcam",                        G_ScriptAction_StopCam                       },
+
 	{ "repairmg42",                     G_ScriptAction_RepairMG42                    },
 	{ "sethqstatus",                    G_ScriptAction_SetHQStatus                   },
 

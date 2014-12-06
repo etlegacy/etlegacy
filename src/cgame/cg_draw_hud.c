@@ -2525,7 +2525,7 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawPing(y);
 	}
 
-	if (cg_lagometer.integer && !cg.cameraMode && !cg.serverRespawning)
+	if (cg_lagometer.integer && !cg.serverRespawning)
 	{
 		y = CG_DrawLagometer(y);
 	}
