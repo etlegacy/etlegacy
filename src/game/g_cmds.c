@@ -3344,6 +3344,7 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 
 						BODY_TEAM(traceEnt) += 4;
 						traceEnt->activator  = ent;
+						traceEnt->s.eFlags  |= EF_HEADSHOT; // remove hat
 
 						traceEnt->s.time2 = 1;
 
