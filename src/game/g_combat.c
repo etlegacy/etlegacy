@@ -711,8 +711,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	if (self->client != NULL)
 	{
 		if (self->health > GIB_HEALTH &&
-		    meansOfDeath != MOD_SUICIDE && meansOfDeath != MOD_SWITCHTEAM && meansOfDeath != MOD_FLAMETHROWER &&
-		    !killedintank && self->waterlevel < 3)
+		    meansOfDeath != MOD_SUICIDE && meansOfDeath != MOD_SWITCHTEAM && !killedintank && self->waterlevel < 3)
 		{
 			G_AddEvent(self, EV_MEDIC_CALL, 0);
 #ifdef FEATURE_OMNIBOT
