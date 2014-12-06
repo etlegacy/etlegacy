@@ -5196,6 +5196,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 					return;
 				}
 			}
+			break;
 		case WP_GPG40:
 		case WP_M7:
 			// if you're using an alt mode weapon, try switching back to the parent
@@ -5206,6 +5207,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 				return;
 			}
+			break;
 		default:
 			break;
 		}
