@@ -1969,7 +1969,7 @@ void WolfRevivePushEnt(gentity_t *self, gentity_t *other)
 	}
 
 	VectorScale(dir, -WR_PUSHAMOUNT, push);
-	push[2] = (float)(WR_PUSHAMOUNT / 2);
+	push[2] = WR_PUSHAMOUNT / 2.0f;
 
 	VectorAdd(other->s.pos.trDelta, push, other->s.pos.trDelta);
 	VectorAdd(other->client->ps.velocity, push, other->client->ps.velocity);

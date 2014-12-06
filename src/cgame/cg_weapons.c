@@ -2513,7 +2513,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			trap_R_AddRefEntityToScene(&flash);
 
 			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128, 1.0f, 0.6f, 0.23f, 0, 0);
+			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
 		}
 		return;
 	}
@@ -3198,7 +3198,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			// make a dlight for the flash
 			if (weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2])
 			{
-				trap_R_AddLightToScene(flash.origin, 320, 1.25 + (float)(rand() & 31) / 128, weapon->flashDlightColor[0],
+				trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
 				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
 			}
 		}
@@ -3480,7 +3480,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 			}
 			else
 			{
-				lengthscale = 1.0f / tan(DEG2RAD((float)cg_fov.integer / 2));
+				lengthscale = 1.0f / tan(DEG2RAD(cg_fov.integer / 2.0f));
 			}
 		}
 		else
@@ -5314,7 +5314,7 @@ void CG_MG42EFX(centity_t *cent)
 			trap_R_AddRefEntityToScene(&flash);
 
 			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (float)(rand() & 31) / 128,
+			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f,
 			                       1.0f, 0.6f, 0.23f, 0, 0);
 			return;
 		}
