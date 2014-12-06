@@ -4692,7 +4692,8 @@ static void PM_Weapon(void)
 		}
 		break;
 	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING:
+		pm->ps->weapHeat[WP_MOBILE_MG42_SET] = pm->ps->weapHeat[WP_MOBILE_MG42]; // sync heat for overheat check
+
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = 200;
 		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
@@ -4706,11 +4707,34 @@ static void PM_Weapon(void)
 			pm->pmext->weapRecoilPitch = .75f * random() * .2f;
 		}
 		break;
-	/*case WP_MOBILE_MG42_SET:
-	    case WP_MOBILE_BROWNING_SET:
-	    pm->pmext->weapRecoilTime = 0;
-	    pm->pmext->weapRecoilYaw = 0.f;
-	    break;*/
+	case WP_MOBILE_BROWNING:
+		pm->ps->weapHeat[WP_MOBILE_BROWNING_SET] = pm->ps->weapHeat[WP_MOBILE_BROWNING]; // sync heat for overheat check
+
+		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
+		pm->pmext->weapRecoilDuration = 200;
+		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
+		{
+			pm->pmext->weapRecoilYaw   = crandom() * .5f;
+			pm->pmext->weapRecoilPitch = .45f * random() * .15f;
+		}
+		else
+		{
+			pm->pmext->weapRecoilYaw   = crandom() * .25f;
+			pm->pmext->weapRecoilPitch = .75f * random() * .2f;
+		}
+		break;
+	case WP_MOBILE_MG42_SET:
+		pm->ps->weapHeat[WP_MOBILE_MG42] = pm->ps->weapHeat[WP_MOBILE_MG42_SET]; // sync heat for overheat check
+
+		pm->pmext->weapRecoilTime = 0;
+		pm->pmext->weapRecoilYaw  = 0.f;
+		break;
+	case WP_MOBILE_BROWNING_SET:
+		pm->ps->weapHeat[WP_MOBILE_BROWNING] = pm->ps->weapHeat[WP_MOBILE_BROWNING_SET]; // sync heat for overheat check
+
+		pm->pmext->weapRecoilTime = 0;
+		pm->pmext->weapRecoilYaw  = 0.f;
+		break;
 	case WP_FG42SCOPE:
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = 100;
