@@ -1289,23 +1289,23 @@ void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 	int map  = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
 	int game = net ? ui_netGameType.integer : uiInfo.gameTypes[ui_gameType.integer].gtEnum;
 
+	if (map < 0 || map > uiInfo.mapCount)
+	{
+		if (net)
+		{
+			ui_currentNetMap.integer = 0;
+			trap_Cvar_Set("ui_currentNetMap", "0");
+		}
+		else
+		{
+			ui_currentMap.integer = 0;
+			trap_Cvar_Set("ui_currentMap", "0");
+		}
+		map = 0;
+	}
+
 	if (game == GT_WOLF_CAMPAIGN)
 	{
-		if (map < 0 || map > uiInfo.campaignCount)
-		{
-			if (net)
-			{
-				ui_currentNetMap.integer = 0;
-				trap_Cvar_Set("ui_currentNetMap", "0");
-			}
-			else
-			{
-				ui_currentMap.integer = 0;
-				trap_Cvar_Set("ui_currentMap", "0");
-			}
-			map = 0;
-		}
-
 		if (uiInfo.campaignList[map].mapTC[0][0] && uiInfo.campaignList[map].mapTC[1][0])
 		{
 			float x, y, w, h;
@@ -1368,103 +1368,108 @@ void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 		}
 		return;
 	}
-
-	if (map < 0 || map > uiInfo.mapCount)
+	else
 	{
-		if (net)
+		// draw levelshot instead of campaign location for non campaign
+		if (uiInfo.mapList[map].mapLoadName)
 		{
-			ui_currentNetMap.integer = 0;
-			trap_Cvar_Set("ui_currentNetMap", "0");
+			qhandle_t preview = trap_R_RegisterShaderNoMip(va("levelshots/%s", uiInfo.mapList[map].mapLoadName)); // FIXME: check if in path
+
+			if (preview)
+			{
+				UI_DrawHandlePic(rect->x, rect->y, rect->w, rect->h, preview);
+			}
+			else
+			{
+				UI_DrawHandlePic(rect->x, rect->y, rect->w, rect->h, trap_R_RegisterShaderNoMip("levelshots/unknownmap"));
+			}
 		}
-		else
-		{
-			ui_currentMap.integer = 0;
-			trap_Cvar_Set("ui_currentMap", "0");
-		}
-		map = 0;
+		return;
 	}
 
+	/* draw campaign locations for non campaings ...
 	if (uiInfo.mapList[map].mappos[0] && uiInfo.mapList[map].mappos[1])
 	{
-		float  x, y, w, h;
-		vec2_t tl, br;
-		vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
+	    float  x, y, w, h;
+	    vec2_t tl, br;
+	    vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
 
-		tl[0] = uiInfo.mapList[map].mappos[0] - .5 * 650.f;
-		if (tl[0] < 0)
-		{
-			tl[0] = 0;
-		}
-		br[0] = tl[0] + 650.f;
-		if (br[0] > 1024.f)
-		{
-			br[0] = 1024.f;
-			tl[0] = br[0] - 650.f;
-		}
+	    tl[0] = uiInfo.mapList[map].mappos[0] - .5 * 650.f;
+	    if (tl[0] < 0)
+	    {
+	        tl[0] = 0;
+	    }
+	    br[0] = tl[0] + 650.f;
+	    if (br[0] > 1024.f)
+	    {
+	        br[0] = 1024.f;
+	        tl[0] = br[0] - 650.f;
+	    }
 
-		tl[1] = uiInfo.mapList[map].mappos[1] - .5 * 650.f;
-		if (tl[1] < 0)
-		{
-			tl[1] = 0;
-		}
-		br[1] = tl[1] + 650.f;
-		if (br[1] > 1024.f)
-		{
-			br[1] = 1024.f;
-			tl[1] = br[1] - 650.f;
-		}
+	    tl[1] = uiInfo.mapList[map].mappos[1] - .5 * 650.f;
+	    if (tl[1] < 0)
+	    {
+	        tl[1] = 0;
+	    }
+	    br[1] = tl[1] + 650.f;
+	    if (br[1] > 1024.f)
+	    {
+	        br[1] = 1024.f;
+	        tl[1] = br[1] - 650.f;
+	    }
 
-		x = rect->x;
-		y = rect->y;
-		w = rect->w;
-		h = rect->h;
-		UI_AdjustFrom640(&x, &y, &w, &h);
-		trap_R_DrawStretchPic(x, y, w, h,
-		                      tl[0] / 1024.f,
-		                      tl[1] / 1024.f,
-		                      br[0] / 1024.f,
-		                      br[1] / 1024.f,
-		                      uiInfo.campaignMap);
+	    x = rect->x;
+	    y = rect->y;
+	    w = rect->w;
+	    h = rect->h;
+	    UI_AdjustFrom640(&x, &y, &w, &h);
+	    trap_R_DrawStretchPic(x, y, w, h,
+	                          tl[0] / 1024.f,
+	                          tl[1] / 1024.f,
+	                          br[0] / 1024.f,
+	                          br[1] / 1024.f,
+	                          uiInfo.campaignMap);
 
-		x = rect->x + ((uiInfo.mapList[map].mappos[0] - tl[0]) / 650.f * rect->w);
-		y = rect->y + ((uiInfo.mapList[map].mappos[1] - tl[1]) / 650.f * rect->h);
+	    x = rect->x + ((uiInfo.mapList[map].mappos[0] - tl[0]) / 650.f * rect->w);
+	    y = rect->y + ((uiInfo.mapList[map].mappos[1] - tl[1]) / 650.f * rect->h);
 
-		w = Text_Width(uiInfo.mapList[map].mapName, scale, 0);
+	    w = Text_Width(uiInfo.mapList[map].mapName, scale, 0);
 
-		// Pin half width is 8
-		// Pin left margin is 2
-		// Pin right margin is 0
-		// Text margin is 2
-		if (x + 10 + w > rect->x + rect->w)
-		{
-			// x - pinhwidth (8) - pin left margin (2) - w - text margin (2) => x - w - 12
-			UI_FillRect(x - w - 12 + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
-			UI_FillRect(x - w - 12, y - 6, 12 + w, 12, colorBlack);
-		}
-		else
-		{
-			// Width = pinhwidth (8) + pin right margin (0) + w + text margin (2) = 10 + w
-			UI_FillRect(x + 1, y - 6 + 1, 10 + w, 12, colourFadedBlack);
-			UI_FillRect(x, y - 6, 10 + w, 12, colorBlack);
-		}
+	    // Pin half width is 8
+	    // Pin left margin is 2
+	    // Pin right margin is 0
+	    // Text margin is 2
+	    if (x + 10 + w > rect->x + rect->w)
+	    {
+	        // x - pinhwidth (8) - pin left margin (2) - w - text margin (2) => x - w - 12
+	        UI_FillRect(x - w - 12 + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
+	        UI_FillRect(x - w - 12, y - 6, 12 + w, 12, colorBlack);
+	    }
+	    else
+	    {
+	        // Width = pinhwidth (8) + pin right margin (0) + w + text margin (2) = 10 + w
+	        UI_FillRect(x + 1, y - 6 + 1, 10 + w, 12, colourFadedBlack);
+	        UI_FillRect(x, y - 6, 10 + w, 12, colorBlack);
+	    }
 
-		UI_DrawHandlePic(x - 8, y - 8, 16, 16, trap_R_RegisterShaderNoMip("gfx/loading/pin_neutral"));
+	    UI_DrawHandlePic(x - 8, y - 8, 16, 16, trap_R_RegisterShaderNoMip("gfx/loading/pin_neutral"));
 
-		if (x + 10 + w > rect->x + rect->w)
-		{
-			// x - pinhwidth (8) - pin left margin (2) - w => x - w - 10
-			Text_Paint(x - w - 10, y + 3, scale, colorWhite, uiInfo.mapList[map].mapName, 0, 0, 0);
-		}
-		else
-		{
-			// x + pinhwidth (8) + pin right margin (0) => x + 8
-			Text_Paint(x + 8, y + 3, scale, colorWhite, uiInfo.mapList[map].mapName, 0, 0, 0);
-		}
+	    if (x + 10 + w > rect->x + rect->w)
+	    {
+	        // x - pinhwidth (8) - pin left margin (2) - w => x - w - 10
+	        Text_Paint(x - w - 10, y + 3, scale, colorWhite, uiInfo.mapList[map].mapName, 0, 0, 0);
+	    }
+	    else
+	    {
+	        // x + pinhwidth (8) + pin right margin (0) => x + 8
+	        Text_Paint(x + 8, y + 3, scale, colorWhite, uiInfo.mapList[map].mapName, 0, 0, 0);
+	    }
 	}
 	else
 	{
-		UI_DrawHandlePic(rect->x, rect->y, rect->w, rect->h, trap_R_RegisterShaderNoMip("levelshots/unknownmap"));
+	    UI_DrawHandlePic(rect->x, rect->y, rect->w, rect->h, trap_R_RegisterShaderNoMip("levelshots/unknownmap"));
 	}
+	*/
 }
 
 void UI_DrawNetMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
@@ -3845,7 +3850,16 @@ void UI_RunMenuScript(char **args)
 
 			if (ui_netGameType.integer == GT_WOLF_CAMPAIGN)
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("wait ; wait ; map %s\n", uiInfo.campaignList[ui_currentNetMap.integer].mapInfos[0]->mapLoadName));
+				if (uiInfo.campaignList[ui_currentNetMap.integer].mapInfos[0])
+				{
+					trap_Cmd_ExecuteText(EXEC_APPEND, va("wait ; wait ; map %s\n", uiInfo.campaignList[ui_currentNetMap.integer].mapInfos[0]->mapLoadName));
+				}
+				else
+				{
+					// this may happen when too many pk3s are in path and buffer size of UI_LoadArenas is reached
+					// in that case some map files on server aren't put into that buffer - arena file isn't and loaded mapInfos[0] is NULL
+					trap_Error(S_COLOR_RED "Can't buffer campaign map files\n");
+				}
 			}
 			else
 			{

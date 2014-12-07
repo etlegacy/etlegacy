@@ -49,12 +49,14 @@ static void UI_LoadArenasFromFile(char *filename)
 
 	if (!trap_PC_ReadToken(handle, &token))
 	{
+		trap_Print(va(S_COLOR_RED "invalid token: %s\n", filename));
 		trap_PC_FreeSource(handle);
 		return;
 	}
 
 	if (*token.string != '{')
 	{
+		trap_Print(va(S_COLOR_RED "unexpected start token '%s' inside: %s\n", token.string, filename));
 		trap_PC_FreeSource(handle);
 		return;
 	}
@@ -242,7 +244,7 @@ void UI_LoadArenas(void)
 {
 	int  numdirs;
 	char filename[128];
-	char dirlist[1024];
+	char dirlist[8192];
 	char *dirptr;
 	int  i;
 	int  dirlen;
@@ -250,7 +252,7 @@ void UI_LoadArenas(void)
 	uiInfo.mapCount = 0;
 
 	// get all arenas from .arena files
-	numdirs = trap_FS_GetFileList("scripts", ".arena", dirlist, 1024);
+	numdirs = trap_FS_GetFileList("scripts", ".arena", dirlist, 8192);
 	dirptr  = dirlist;
 	for (i = 0; i < numdirs; i++, dirptr += dirlen + 1)
 	{
@@ -579,7 +581,7 @@ void UI_LoadCampaigns(void)
 {
 	int  numdirs;
 	char filename[128];
-	char dirlist[1024];
+	char dirlist[2048];
 	char *dirptr;
 	int  i, j;
 	int  dirlen;
@@ -590,7 +592,7 @@ void UI_LoadCampaigns(void)
 	memset(&uiInfo.campaignList, 0, sizeof(uiInfo.campaignList));
 
 	// get all campaigns from .campaign files
-	numdirs = trap_FS_GetFileList("scripts", ".campaign", dirlist, 1024);
+	numdirs = trap_FS_GetFileList("scripts", ".campaign", dirlist, 2048);
 	dirptr  = dirlist;
 	for (i = 0; i < numdirs && uiInfo.campaignCount < MAX_CAMPAIGNS; i++, dirptr += dirlen + 1)
 	{
