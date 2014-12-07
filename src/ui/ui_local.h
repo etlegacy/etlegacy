@@ -587,7 +587,7 @@ typedef struct
 	qhandle_t modFilter_nq;
 	qhandle_t modFilter_nitmod;
 	qhandle_t modFilter_silent;
-	qhandle_t modFilter_tce;
+	qhandle_t modFilter_tc;
 	qhandle_t modFilter_etnam;
 	qhandle_t modFilter_etrun;
 	qhandle_t modFilter_etjump;

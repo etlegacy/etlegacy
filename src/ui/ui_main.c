@@ -5711,7 +5711,7 @@ static void UI_BuildServerDisplayList(int force)
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if (Q_stristr(gamename, "tce") == 0 && ui_browserModFilter.integer == 7)
+				if (Q_stristr(gamename, "tce") == 0 && Q_stristr(gamename, "cqbtest") == 0 && ui_browserModFilter.integer == 7)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -5751,6 +5751,7 @@ static void UI_BuildServerDisplayList(int force)
 				     Q_stristr(gamename, "nitmod") != 0 ||
 				     Q_stristr(gamename, "silent") != 0 ||
 				     Q_stristr(gamename, "tce") != 0 ||
+				     Q_stristr(gamename, "cqbtest") != 0 ||
 				     Q_stristr(gamename, "etnam") != 0 ||
 				     Q_stristr(gamename, "etrun") != 0 ||
 				     Q_stristr(gamename, "etjump") != 0 ||
@@ -6740,9 +6741,9 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 						{
 							handles[3] = uiInfo.modFilter_silent;
 						}
-						else if (Q_stristr(gamename, "tce") != 0)
+						else if (Q_stristr(gamename, "tce") != 0 || Q_stristr(gamename, "cqbtest") != 0)
 						{
-							handles[3] = uiInfo.modFilter_tce;
+							handles[3] = uiInfo.modFilter_tc;
 						}
 						else if (Q_stristr(gamename, "etnam") != 0)
 						{
@@ -7563,7 +7564,7 @@ void _UI_Init(int legacyClient)
 	uiInfo.modFilter_nitmod  = trap_R_RegisterShaderNoMip("ui/assets/mod_nitmod.tga");
 	uiInfo.modFilter_nq      = trap_R_RegisterShaderNoMip("ui/assets/mod_nq.tga");
 	uiInfo.modFilter_silent  = trap_R_RegisterShaderNoMip("ui/assets/mod_silent.tga");
-	uiInfo.modFilter_tce     = trap_R_RegisterShaderNoMip("ui/assets/mod_tce.tga");
+	uiInfo.modFilter_tc      = trap_R_RegisterShaderNoMip("ui/assets/mod_tc.tga");
 	uiInfo.modFilter_tjmod   = trap_R_RegisterShaderNoMip("ui/assets/mod_tjmod.tga");
 	uiInfo.modFilter_etmain  = trap_R_RegisterShaderNoMip("ui/assets/mod_etmain.tga");
 	uiInfo.modFilter_unknown = trap_R_RegisterShaderNoMip("ui/assets/mod_unknown.tga");
