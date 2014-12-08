@@ -204,7 +204,7 @@ void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *ve
 	syscall(UI_R_ADDPOLYTOSCENE, hShader, numVerts, verts);
 }
 
-// ydnar: new dlight system
+// new dlight system
 //% void    trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
 //%     syscall( UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
 //% }
@@ -261,7 +261,7 @@ int trap_CM_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *t
 
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
 {
-	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /* default volume always for the moment*/);
+	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /*default volume always for the moment*/);
 }
 
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)

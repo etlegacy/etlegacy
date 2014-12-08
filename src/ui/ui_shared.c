@@ -117,6 +117,7 @@ void *UI_Alloc(int size)
 		{
 			DC->Print(S_COLOR_RED "UI_Alloc: Failure. UI out of memory!\n");
 		}
+
 		return NULL;
 	}
 
@@ -155,6 +156,7 @@ static long hashForString(const char *str)
 		hash  += (long)(letter) * (i + 119);
 		i++;
 	}
+
 	hash &= (HASH_TABLE_SIZE - 1);
 	return hash;
 }
@@ -197,6 +199,7 @@ const char *String_Alloc(const char *p)
 		{
 			return str->str;
 		}
+
 		str = str->next;
 	}
 
@@ -227,8 +230,10 @@ const char *String_Alloc(const char *p)
 		{
 			strHandle[hash] = str;
 		}
+
 		return &strPool[ph];
 	}
+
 	return NULL;
 }
 
@@ -403,6 +408,7 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 		{
 			DC->setColor(w->foreColor);
 		}
+
 		DC->drawHandlePic(fillRect.x, fillRect.y, fillRect.w, fillRect.h, w->background);
 		DC->setColor(NULL);
 	}
@@ -442,13 +448,13 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 				// red
 				color[0] = 1;
 				color[1] = color[2] = .5;
-
 			}
 			else
 			{
 				color[2] = 1;
 				color[0] = color[1] = .5;
 			}
+
 			color[3] = 1;
 			DC->drawRect(w->rect.x, w->rect.y, w->rect.w, w->rect.h, w->borderSize, color);
 		}
@@ -531,6 +537,7 @@ qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y)
 			return qtrue;
 		}
 	}
+
 	return qfalse;
 }
 
@@ -543,6 +550,7 @@ qboolean Rect_ContainsPointN(rectDef_t *rect, float x, float y)
 			return qtrue;
 		}
 	}
+
 	return qfalse;
 }
 
@@ -576,6 +584,7 @@ int Display_VisibleMenuCount(void)
 			count++;
 		}
 	}
+
 	return count;
 }
 
@@ -837,6 +846,7 @@ char *Binding_FromName(const char *cvar)
 	{
 		Q_strncpyz(g_nameBind1, "(?" "?" "?)", 32);
 	}
+
 	return g_nameBind1;
 }
 
@@ -863,6 +873,7 @@ void *Display_CaptureItem(int x, int y)
 			return &Menus[i];
 		}
 	}
+
 	return NULL;
 }
 
@@ -885,6 +896,7 @@ qboolean Display_MouseMove(void *p, int x, int y)
 				return qtrue;
 			}
 		}
+
 		for (i = 0; i < menuCount; i++)
 		{
 			Menu_HandleMouseMove(&Menus[i], x, y);
@@ -896,6 +908,7 @@ qboolean Display_MouseMove(void *p, int x, int y)
 		menu->window.rect.y += y;
 		Menu_UpdatePosition(menu);
 	}
+
 	return qtrue;
 }
 
@@ -906,7 +919,6 @@ int Display_CursorType(int x, int y)
 
 	for (i = 0; i < menuCount; i++)
 	{
-
 		r2.x = Menus[i].window.rect.x - 3;
 		r2.y = Menus[i].window.rect.y - 3;
 		r2.w = r2.h = 7;
@@ -915,6 +927,7 @@ int Display_CursorType(int x, int y)
 			return CURSOR_SIZER;
 		}
 	}
+
 	return CURSOR_ARROW;
 }
 
@@ -926,6 +939,7 @@ void Display_HandleKey(int key, qboolean down, int x, int y)
 	{
 		menu = Menu_GetFocused();
 	}
+
 	if (menu)
 	{
 		Menu_HandleKey(menu, key, down);
@@ -1022,6 +1036,7 @@ qboolean PC_Rect_Parse(int handle, rectDef_t *r)
 			}
 		}
 	}
+
 	return qfalse;
 }
 
@@ -1035,6 +1050,7 @@ qboolean BG_RectContainsPoint(float x, float y, float w, float h, float px, floa
 	{
 		return qtrue;
 	}
+
 	return qfalse;
 }
 
@@ -1127,6 +1143,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			{
 				button->onFinish(button);
 			}
+
 			return qfalse;
 		}
 		else
@@ -1177,6 +1194,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 						s[len - 1] = '\0';
 					}
 				}
+
 				return qtrue;
 			}
 
@@ -1216,6 +1234,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 				s[len]     = key;
 				s[len + 1] = '\0';
 			}
+
 			return qtrue;
 		}
 		else
@@ -1226,6 +1245,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 				{
 					button->onFinish(button);
 				}
+
 				BG_PanelButtons_SetFocusButton(NULL);
 				return qfalse;
 			}
@@ -1261,6 +1281,7 @@ qboolean BG_PanelButtonsKeyEvent(int key, qboolean down, panel_button_t **button
 						return qtrue;
 					}
 				}
+
 				if (button->onKeyUp && !down)
 				{
 					if (!button->onKeyUp(button, key))
@@ -1392,6 +1413,7 @@ void BG_PanelButtonsRender_TextExt(panel_button_t *button, const char *text)
 		DC->fillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, clrBck);
 		DC->drawRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, clrBdr);
 	}
+
 	DC->drawTextExt(x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, text, 0, 0, button->font->style, button->font->font);
 }
 
