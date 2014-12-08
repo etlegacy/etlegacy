@@ -1227,7 +1227,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	qboolean    wasAlive, onSameTeam;
 	hitRegion_t hr = HR_NUM_HITREGIONS;
 
-	if (!targ->takedamage)
+	if (!targ->takedamage || targ->entstate == STATE_INVISIBLE || targ->entstate == STATE_UNDERCONSTRUCTION) // invisible entities can't be damaged
 	{
 		return;
 	}
@@ -1237,8 +1237,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 	// The intermission has allready been qualified for, so don't allow any extra scoring.
 	// Don't do damage if at warmup and warmupdamage is set to 'None' and the target is a client.
-	if (level.intermissionQueued || (g_gamestate.integer != GS_PLAYING
-	                                 && match_warmupDamage.integer == 0 && targ->client))
+	if (level.intermissionQueued || (g_gamestate.integer != GS_PLAYING && match_warmupDamage.integer == 0 && targ->client))
 	{
 		return;
 	}
@@ -1252,12 +1251,12 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		attacker = &g_entities[ENTITYNUM_WORLD];
 	}
 
-	// invisible entities can't be damaged
-	if (targ->entstate == STATE_INVISIBLE ||
-	    targ->entstate == STATE_UNDERCONSTRUCTION)
+#ifdef FEATURE_LUA
+	if (G_LuaHook_Damage(targ->s.number, attacker->s.number, damage, dflags, mod))
 	{
 		return;
 	}
+#endif
 
 	// was the bot alive before applying any damage?
 	wasAlive   = (targ->health > 0);
