@@ -160,10 +160,11 @@ qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag)
 					return qfalse;
 				}
 			}
-
 		}
+
 		return (item->cvarFlags & flag) ? qfalse : qtrue;
 	}
+
 	return qtrue;
 }
 
@@ -187,6 +188,7 @@ qboolean Item_SettingShow(itemDef_t *item, qboolean fVoteTest)
 	{
 		return(atoi(info) & item->settingTest);
 	}
+
 	if (item->settingFlags & SVS_DISABLED_SHOW)
 	{
 		return(!(atoi(info) & item->settingTest));
@@ -228,6 +230,7 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 	{
 		return qfalse;
 	}
+
 	if (item->voteFlag != 0 && !Item_SettingShow(item, qtrue))
 	{
 		return qfalse;
@@ -247,6 +250,7 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 			{
 				sfx = &item->focusSound;
 			}
+
 			playSound = qtrue;
 		}
 		else
@@ -268,10 +272,12 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 		{
 			Item_RunScript(item, NULL, item->onFocus);
 		}
+
 		if (item->focusSound)
 		{
 			sfx = &item->focusSound;
 		}
+
 		playSound = qtrue;
 	}
 
@@ -306,10 +312,12 @@ int Item_ListBox_MaxScroll(itemDef_t *item)
 	{
 		max = count - (int)(item->window.rect.h / listPtr->elementHeight);
 	}
+
 	if (max < 0)
 	{
 		return 0;
 	}
+
 	return max;
 }
 
@@ -330,6 +338,7 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
 		{
 			pos = 0;
 		}
+
 		pos *= listPtr->startPos;
 		return item->window.rect.x + 1 + SCROLLBAR_SIZE + pos;
 	}
@@ -344,6 +353,7 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
 		{
 			pos = 0;
 		}
+
 		pos *= listPtr->startPos;
 
 		return item->window.rect.y + 1 + SCROLLBAR_SIZE + pos;
@@ -443,6 +453,7 @@ int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 	{
 		return WINDOW_LB_THUMB;
 	}
+
 	return 0;
 }
 
@@ -461,12 +472,14 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 		{
 			return WINDOW_LB_LEFTARROW;
 		}
+
 		// check if on right arrow
 		r.x = item->window.rect.x + item->window.rect.w - SCROLLBAR_SIZE;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_RIGHTARROW;
 		}
+
 		// check if on thumb
 		//thumbstart = Item_ListBox_ThumbPosition(item);
 		thumbstart = Item_ListBox_ThumbDrawPosition(item);
@@ -475,12 +488,14 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 		{
 			return WINDOW_LB_THUMB;
 		}
+
 		r.x = item->window.rect.x + SCROLLBAR_SIZE;
 		r.w = thumbstart - r.x;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_PGUP;
 		}
+
 		r.x = thumbstart + SCROLLBAR_SIZE;
 		r.w = item->window.rect.x + item->window.rect.w - SCROLLBAR_SIZE;
 		if (Rect_ContainsPoint(&r, x, y))
@@ -505,11 +520,13 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 		{
 			return WINDOW_LB_LEFTARROW;
 		}
+
 		r.y = item->window.rect.y + item->window.rect.h - SCROLLBAR_SIZE;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_RIGHTARROW;
 		}
+
 		//thumbstart = Item_ListBox_ThumbPosition(item);
 		thumbstart = Item_ListBox_ThumbDrawPosition(item);
 		r.y        = thumbstart;
@@ -517,12 +534,14 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 		{
 			return WINDOW_LB_THUMB;
 		}
+
 		r.y = item->window.rect.y + SCROLLBAR_SIZE;
 		r.h = thumbstart - r.y;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_PGUP;
 		}
+
 		r.y = thumbstart + SCROLLBAR_SIZE;
 		r.h = item->window.rect.y + item->window.rect.h - SCROLLBAR_SIZE;
 		if (Rect_ContainsPoint(&r, x, y))
@@ -538,6 +557,7 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 			return WINDOW_LB_SOMEWHERE;
 		}
 	}
+
 	return 0;
 }
 
@@ -622,6 +642,7 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 		{
 			return;
 		}
+
 		if (item->voteFlag != 0 && !Item_SettingShow(item, qtrue))
 		{
 			return;
@@ -634,6 +655,7 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 				Item_RunScript(item, NULL, item->mouseEnterText);
 				item->window.flags |= WINDOW_MOUSEOVERTEXT;
 			}
+
 			if (!(item->window.flags & WINDOW_MOUSEOVER))
 			{
 				Item_RunScript(item, NULL, item->mouseEnter);
@@ -649,6 +671,7 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 				Item_RunScript(item, NULL, item->mouseExitText);
 				item->window.flags &= ~WINDOW_MOUSEOVERTEXT;
 			}
+
 			if (!(item->window.flags & WINDOW_MOUSEOVER))
 			{
 				Item_RunScript(item, NULL, item->mouseEnter);
@@ -672,6 +695,7 @@ void Item_MouseLeave(itemDef_t *item)
 			Item_RunScript(item, NULL, item->mouseExitText);
 			item->window.flags &= ~WINDOW_MOUSEOVERTEXT;
 		}
+
 		Item_RunScript(item, NULL, item->mouseExit);
 		item->window.flags &= ~(WINDOW_LB_RIGHTARROW | WINDOW_LB_LEFTARROW);
 	}
@@ -698,6 +722,7 @@ qboolean Item_OwnerDraw_HandleKey(itemDef_t *item, int key)
 	{
 		return DC->ownerDrawHandleKey(item->window.ownerDraw, item->window.ownerDrawFlags, &item->special, key);
 	}
+
 	return qfalse;
 }
 
@@ -724,14 +749,17 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					{
 						listPtr->cursorPos = 0;
 					}
+
 					if (listPtr->cursorPos < listPtr->startPos)
 					{
 						listPtr->startPos = listPtr->cursorPos;
 					}
+
 					if (listPtr->cursorPos >= listPtr->startPos + viewmax)
 					{
 						listPtr->startPos = listPtr->cursorPos - viewmax + 1;
 					}
+
 					item->cursorPos = listPtr->cursorPos;
 					DC->feederSelection(item->special, item->cursorPos);
 				}
@@ -743,6 +771,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 						listPtr->startPos = 0;
 					}
 				}
+
 				return qtrue;
 			}
 			if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW)
@@ -754,14 +783,17 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					{
 						listPtr->startPos = listPtr->cursorPos;
 					}
+
 					if (listPtr->cursorPos >= count)
 					{
 						listPtr->cursorPos = count - 1;
 					}
+
 					if (listPtr->cursorPos >= listPtr->startPos + viewmax)
 					{
 						listPtr->startPos = listPtr->cursorPos - viewmax + 1;
 					}
+
 					item->cursorPos = listPtr->cursorPos;
 					DC->feederSelection(item->special, item->cursorPos);
 				}
@@ -773,6 +805,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 						listPtr->startPos = count - 1;
 					}
 				}
+
 				return qtrue;
 			}
 		}
@@ -788,14 +821,17 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					{
 						listPtr->cursorPos = 0;
 					}
+
 					if (listPtr->cursorPos < listPtr->startPos)
 					{
 						listPtr->startPos = listPtr->cursorPos;
 					}
+
 					if (listPtr->cursorPos >= listPtr->startPos + viewmax)
 					{
 						listPtr->startPos = listPtr->cursorPos - viewmax + 1;
 					}
+
 					item->cursorPos = listPtr->cursorPos;
 					DC->feederSelection(item->special, item->cursorPos);
 				}
@@ -807,6 +843,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 						listPtr->startPos = 0;
 					}
 				}
+
 				return qtrue;
 			}
 			if (key == K_DOWNARROW || key == K_KP_DOWNARROW || key == K_MWHEELDOWN)
@@ -818,14 +855,17 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					{
 						listPtr->startPos = listPtr->cursorPos;
 					}
+
 					if (listPtr->cursorPos >= count)
 					{
 						listPtr->cursorPos = count - 1;
 					}
+
 					if (listPtr->cursorPos >= listPtr->startPos + viewmax)
 					{
 						listPtr->startPos = listPtr->cursorPos - viewmax + 1;
 					}
+
 					item->cursorPos = listPtr->cursorPos;
 					DC->feederSelection(item->special, item->cursorPos);
 				}
@@ -837,6 +877,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 						listPtr->startPos = max;
 					}
 				}
+
 				return qtrue;
 			}
 		}
@@ -902,6 +943,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 				{
 					Item_RunScript(item, NULL, listPtr->doubleClick);
 				}
+
 				lastListBoxClickTime = DC->realTime + DOUBLE_CLICK_DELAY;
 
 				if (item->cursorPos != listPtr->cursorPos)
@@ -929,6 +971,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					}
 				}
 			}
+
 			return qtrue;
 		}
 		if (key == K_HOME || key == K_KP_HOME)
@@ -937,12 +980,14 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 			listPtr->startPos = 0;
 			return qtrue;
 		}
+
 		if (key == K_END || key == K_KP_END)
 		{
 			// end
 			listPtr->startPos = max;
 			return qtrue;
 		}
+
 		if (key == K_PGUP || key == K_KP_PGUP)
 		{
 			// page up
@@ -953,14 +998,17 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 				{
 					listPtr->cursorPos = 0;
 				}
+
 				if (listPtr->cursorPos < listPtr->startPos)
 				{
 					listPtr->startPos = listPtr->cursorPos;
 				}
+
 				if (listPtr->cursorPos >= listPtr->startPos + viewmax)
 				{
 					listPtr->startPos = listPtr->cursorPos - viewmax + 1;
 				}
+
 				item->cursorPos = listPtr->cursorPos;
 				DC->feederSelection(item->special, item->cursorPos);
 			}
@@ -972,8 +1020,10 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					listPtr->startPos = 0;
 				}
 			}
+
 			return qtrue;
 		}
+
 		if (key == K_PGDN || key == K_KP_PGDN)
 		{
 			// page down
@@ -984,14 +1034,17 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 				{
 					listPtr->startPos = listPtr->cursorPos;
 				}
+
 				if (listPtr->cursorPos >= count)
 				{
 					listPtr->cursorPos = count - 1;
 				}
+
 				if (listPtr->cursorPos >= listPtr->startPos + viewmax)
 				{
 					listPtr->startPos = listPtr->cursorPos - viewmax + 1;
 				}
+
 				item->cursorPos = listPtr->cursorPos;
 				DC->feederSelection(item->special, item->cursorPos);
 			}
@@ -1003,9 +1056,11 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					listPtr->startPos = max;
 				}
 			}
+
 			return qtrue;
 		}
 	}
+
 	return qfalse;
 }
 
@@ -1039,6 +1094,7 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 					{
 						curvalue = 2;
 					}
+
 					DC->setCVar(item->cvar, va("%i", curvalue));
 				}
 				else
@@ -1046,9 +1102,11 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 					DC->setCVar(item->cvar, va("%i", !DC->getCVarValue(item->cvar)));
 				}
 			}
+
 			return qtrue;
 		}
 	}
+
 	return qfalse;
 }
 
@@ -1063,9 +1121,11 @@ qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
 			{
 				DC->setCVar(item->cvar, va("%i", !DC->getCVarValue(item->cvar)));
 			}
+
 			return qtrue;
 		}
 	}
+
 	return qfalse;
 }
 
@@ -1077,6 +1137,7 @@ int Item_Multi_CountSettings(itemDef_t *item)
 	{
 		return 0;
 	}
+
 	return multiPtr->count;
 }
 
@@ -1098,6 +1159,7 @@ int Item_Multi_FindCvarByValue(itemDef_t *item)
 		{
 			value = DC->getCVarValue(item->cvar);
 		}
+
 		for (i = 0; i < multiPtr->count; i++)
 		{
 			if (multiPtr->strDef)
@@ -1116,6 +1178,7 @@ int Item_Multi_FindCvarByValue(itemDef_t *item)
 			}
 		}
 	}
+
 	return 0;
 }
 
@@ -1137,6 +1200,7 @@ const char *Item_Multi_Setting(itemDef_t *item)
 		{
 			value = DC->getCVarValue(item->cvar);
 		}
+
 		for (i = 0; i < multiPtr->count; i++)
 		{
 			if (multiPtr->strDef)
@@ -1155,6 +1219,7 @@ const char *Item_Multi_Setting(itemDef_t *item)
 			}
 		}
 	}
+
 	if (multiPtr->undefinedStr)
 	{
 		return multiPtr->undefinedStr;
@@ -1195,6 +1260,7 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 				{
 					current = 0;
 				}
+
 				if (multiPtr->strDef)
 				{
 					DC->setCVar(item->cvar, multiPtr->cvarStr[current]);
@@ -1212,10 +1278,12 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 						DC->setCVar(item->cvar, va("%f", value));
 					}
 				}
+
 				return qtrue;
 			}
 		}
 	}
+
 	return qfalse;
 }
 
@@ -1246,6 +1314,7 @@ void Item_CalcTextFieldCursor(itemDef_t *item)
 		{
 			len = editPtr->maxChars;
 		}
+
 		item->cursorPos = len;
 		DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 	}
@@ -1269,6 +1338,7 @@ void Item_HandleTextFieldDeSelect(itemDef_t *item)
 		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 		DC->setCVar(item->cvar, buff);
 	}
+
 	CLEAR_EDITITEM();
 }
 
@@ -1290,6 +1360,7 @@ qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *
 		{
 			return qtrue;
 		}
+
 		memmove(&buff[item->cursorPos + 1], &buff[item->cursorPos], *len + 1 - item->cursorPos);
 	}
 	else
@@ -1310,6 +1381,7 @@ qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *
 			editPtr->paintOffset++;
 		}
 	}
+
 	*len += 1;
 	return qfalse;
 }
@@ -1372,8 +1444,10 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 					{
 						editPtr->paintOffset--;
 					}
+
 					buff[len] = '\0';
 				}
+
 				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 				return qtrue;
 			}
@@ -1396,11 +1470,12 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			{
 				return qtrue;
 			}
+
 			DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 		}
 		else
 		{
-			if (K_CLIPBOARD(key))  //clipboard paste only on normal textfield
+			if (K_CLIPBOARD(key))  // clipboard paste only on normal textfield
 			{
 				if (item->type != ITEM_TYPE_NUMERICFIELD)
 				{
@@ -1420,13 +1495,15 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 								break;
 							}
 						}
+
 						DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 					}
+
 					return qtrue;
 				}
 				else if (item->onPaste)
 				{
-					//We handle the clipboard action on the script level
+					// We handle the clipboard action on the script level
 					return qfalse;
 				}
 			}
@@ -1439,6 +1516,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 					buff[len] = '\0';
 					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 				}
+
 				return qtrue;
 			}
 
@@ -1450,10 +1528,12 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 					editPtr->paintOffset++;
 					return qtrue;
 				}
+
 				if (item->cursorPos < len)
 				{
 					item->cursorPos++;
 				}
+
 				return qtrue;
 			}
 
@@ -1463,10 +1543,12 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				{
 					item->cursorPos--;
 				}
+
 				if (item->cursorPos < editPtr->paintOffset)
 				{
 					editPtr->paintOffset--;
 				}
+
 				return qtrue;
 			}
 
@@ -1484,6 +1566,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				{
 					editPtr->paintOffset = len - editPtr->maxPaintChars;
 				}
+
 				return qtrue;
 			}
 
@@ -1580,6 +1663,7 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 		{
 			return;
 		}
+
 		r.x = si->item->window.rect.x + SCROLLBAR_SIZE + 1;
 		r.y = si->item->window.rect.y + si->item->window.rect.h - SCROLLBAR_SIZE - 1;
 		r.h = SCROLLBAR_SIZE;
@@ -1595,6 +1679,7 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 		{
 			pos = max;
 		}
+
 		listPtr->startPos = pos;
 		si->xStart        = DC->cursorx;
 	}
@@ -1615,6 +1700,7 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 		{
 			pos = max;
 		}
+
 		listPtr->startPos = pos;
 		si->yStart        = DC->cursory;
 	}
@@ -1665,6 +1751,7 @@ static void Item_Scroll_Slider_ThumbFunc(void *p)
 	{
 		cursorx = x + SLIDER_WIDTH;
 	}
+
 	value  = cursorx - x;
 	value /= SLIDER_WIDTH;
 	value *= (editDef->maxVal - editDef->minVal);
@@ -1770,6 +1857,7 @@ qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down)
 			}
 		}
 	}
+
 	//DC->Print("slider handle key exit\n");
 	return qfalse;
 }
@@ -1795,6 +1883,7 @@ rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
 			rect.y -= rect.h;
 		}
 	}
+
 	return &rect;
 }
 
@@ -1922,10 +2011,12 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 	{
 		textPtr = item->text;
 	}
+
 	if (*textPtr == '\0')
 	{
 		return;
 	}
+
 	Item_TextColor(item, &color);
 	Item_SetTextExtents(item, &width, &height, textPtr);
 
@@ -1952,6 +2043,7 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 			newLinePtr   = p;
 			newLineWidth = textWidth;
 		}
+
 		if ((newLine && textWidth > item->window.rect.w) || *p == '\n' || *p == '\0')
 		{
 			if (len)
@@ -1968,9 +2060,10 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 				{
 					item->textRect.x = item->textalignx - newLineWidth / 2;
 				}
+
 				item->textRect.y = y;
 				ToWindowCoords(&item->textRect.x, &item->textRect.y, &item->window);
-				//
+
 				buff[newLine] = '\0';
 				DC->drawText(item->textRect.x, item->textRect.y, item->textscale, color, buff, 0, 0, item->textStyle);
 			}
@@ -1987,6 +2080,7 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 			hasWhitespace = qfalse;
 			continue;
 		}
+
 		buff[len++] = *p++;
 
 		if (buff[len - 1] == 13)
@@ -2026,6 +2120,7 @@ void Item_Text_Wrapped_Paint(itemDef_t *item)
 	{
 		textPtr = item->text;
 	}
+
 	if (*textPtr == '\0')
 	{
 		return;
@@ -2047,6 +2142,7 @@ void Item_Text_Wrapped_Paint(itemDef_t *item)
 		start += p - start + 1;
 		p      = strchr(p + 1, '\r');
 	}
+
 	DC->drawText(x, y, item->textscale, color, start, 0, 0, item->textStyle);
 }
 
@@ -2159,6 +2255,7 @@ void Item_Text_Paint(itemDef_t *item)
 		Item_Text_Wrapped_Paint(item);
 		return;
 	}
+
 	if (item->window.flags & WINDOW_AUTOWRAPPED)
 	{
 		Item_Text_AutoWrapped_Paint(item);
@@ -2185,6 +2282,7 @@ void Item_Text_Paint(itemDef_t *item)
 				Q_strncpyz(text, s, sizeof(text));
 				item->textRect.w = 0;   // force recalculation
 			}
+
 			textPtr = text;
 		}
 	}
@@ -2193,7 +2291,7 @@ void Item_Text_Paint(itemDef_t *item)
 		textPtr = item->text;
 	}
 
-	//  handle counters
+	// handle counters
 	if (item->type == ITEM_TYPE_TIMEOUT_COUNTER && menu != NULL && menu->openTime > 0)
 	{
 		// calc seconds remaining
@@ -2222,7 +2320,6 @@ void Item_Text_Paint(itemDef_t *item)
 	{
 		return;
 	}
-
 
 	Item_TextColor(item, &color);
 
@@ -2314,6 +2411,7 @@ void Item_TextField_Paint(itemDef_t *item)
 		{
 			break; // keep it safe
 		}
+
 		text_len = DC->textWidth(buff + editPtr->paintOffset + field_offset, item->textscale, 0);
 	}
 	while (text_len + item->textRect.x + item->textRect.w + offset > item->window.rect.x + item->window.rect.w);
@@ -2513,7 +2611,6 @@ void Item_Combo_Paint(itemDef_t *item)
 		selectedTextOffset = item->textRect.x;
 	}
 
-
 	multiPtr = (multiDef_t *)item->typeData;
 	if (!multiPtr || multiPtr->strDef)
 	{
@@ -2637,6 +2734,7 @@ void Item_Slider_Paint(itemDef_t *item)
 	{
 		x = item->window.rect.x;
 	}
+
 	DC->setColor(newColor);
 	DC->drawHandlePic(x, y + 1, SLIDER_WIDTH, SLIDER_HEIGHT, DC->Assets.sliderBar);
 
@@ -2675,6 +2773,7 @@ void Item_Bind_Paint(itemDef_t *item)
 			lowLight[2] = 0.8f * parent->focusColor[2];
 			lowLight[3] = 0.8f * parent->focusColor[3];
 		}
+
 		LerpColor(parent->focusColor, lowLight, newColor, 0.5 + 0.5 * sin((float)(DC->realTime / PULSE_DIVISOR)));
 	}
 	else
@@ -2784,6 +2883,7 @@ qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down)
 				DC->setBinding(binding1, "");
 				Binding_Set(id, -1, -2);
 			}
+
 			if (binding2 != -1)
 			{
 				DC->setBinding(binding2, "");
@@ -2900,6 +3000,7 @@ void Item_Model_Paint(itemDef_t *item)
 			modelPtr->angle       = (int)(modelPtr->angle + 1) % 360;
 		}
 	}
+
 	VectorSet(angles, 0, modelPtr->angle, 0);
 	AnglesToAxis(angles, ent.axis);
 
@@ -2918,14 +3019,14 @@ void Item_Model_Paint(itemDef_t *item)
 		if ((modelPtr->frame - modelPtr->startframe) > modelPtr->numframes)
 		{
 			modelPtr->frame = modelPtr->startframe + modelPtr->frame % modelPtr->numframes; // todo: ignoring loopframes
-
 		}
+
 		modelPtr->oldframe += (backLerpWhole);
 		if ((modelPtr->oldframe - modelPtr->startframe) > modelPtr->numframes)
 		{
 			modelPtr->oldframe = modelPtr->startframe + modelPtr->oldframe % modelPtr->numframes;   // todo: ignoring loopframes
-
 		}
+
 		modelPtr->backlerp = modelPtr->backlerp - backLerpWhole;
 	}
 
@@ -2984,6 +3085,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 		{
 			thumb = x - SCROLLBAR_SIZE - 1;
 		}
+
 		DC->drawHandlePic(thumb, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
 
 		listPtr->endPos = listPtr->startPos;
@@ -3016,6 +3118,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 					listPtr->drawPadding = size; //listPtr->elementWidth - size;
 					break;
 				}
+
 				x += listPtr->elementWidth;
 				listPtr->endPos++;
 			}
@@ -3040,6 +3143,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 		{
 			thumb = y - SCROLLBAR_SIZE - 1;
 		}
+
 		DC->drawHandlePic(x, thumb, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
 
 		// adjust size for item painting
@@ -3076,6 +3180,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 					listPtr->drawPadding = size; //listPtr->elementHeight - size;
 					break;
 				}
+
 				y += listPtr->elementHeight;
 			}
 		}
@@ -3106,6 +3211,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 									                  y + 1, listPtr->elementHeight - 2, listPtr->elementHeight - 2, optionalImages[k]);
 								}
 							}
+
 							//DC->drawHandlePic( x + 4 + listPtr->columnInfo[j].pos, y - 1 + listPtr->elementHeight / 2, listPtr->columnInfo[j].width, listPtr->columnInfo[j].width, optionalImage);
 						}
 						else if (text)
@@ -3139,6 +3245,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 					listPtr->drawPadding = size; //listPtr->elementHeight - size;
 					break;
 				}
+
 				listPtr->endPos++;
 				y += listPtr->elementHeight;
 			}
@@ -3252,6 +3359,7 @@ void Item_DoTransition(itemDef_t *item)
 				}
 			}
 		}
+
 		if (item->window.rectClient.y == item->window.rectEffects.y)
 		{
 			done++;
@@ -3277,6 +3385,7 @@ void Item_DoTransition(itemDef_t *item)
 				}
 			}
 		}
+
 		if (item->window.rectClient.w == item->window.rectEffects.w)
 		{
 			done++;
@@ -3302,6 +3411,7 @@ void Item_DoTransition(itemDef_t *item)
 				}
 			}
 		}
+
 		if (item->window.rectClient.h == item->window.rectEffects.h)
 		{
 			done++;
@@ -3336,7 +3446,6 @@ void Item_DoTransition(itemDef_t *item)
 		}
 	}
 }
-
 
 void Item_Paint(itemDef_t *item)
 {
@@ -3404,6 +3513,7 @@ void Item_Paint(itemDef_t *item)
 	{
 		return;
 	}
+
 	if (item->voteFlag != 0 && !Item_SettingShow(item, qtrue))
 	{
 		return;
@@ -3520,7 +3630,7 @@ void Item_MouseActivate(itemDef_t *item)
 		{
 			editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
 
-			// FIXME make it set the insertion point correctly
+			// FIXME: make it set the insertion point correctly
 
 			// reset scroll offset so we can see what we're editing
 			if (editPtr)
