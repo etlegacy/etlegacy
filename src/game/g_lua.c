@@ -770,11 +770,12 @@ static const gentity_field_t gclient_fields[] =
 
 	_et_gclient_addfield(ps.stats,                       FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.persistant,                  FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.ping,                        FIELD_INT,         0),
+	_et_gclient_addfield(ps.ping,                        FIELD_INT,         FIELD_FLAG_READONLY), // no ping change for lua scripts
 	_et_gclient_addfield(ps.powerups,                    FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.origin,                      FIELD_VEC3,        0),
 	_et_gclient_addfield(ps.ammo,                        FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.ammoclip,                    FIELD_INT_ARRAY,   0),
+	_et_gclient_addfield(ps.classWeaponTime,             FIELD_INT_ARRAY,   0),
 
 	// same order as in g_local.h
 	_et_gclient_addfield(sess.sessionTeam,               FIELD_INT,         0),
