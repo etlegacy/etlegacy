@@ -268,8 +268,17 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
 	CG_RectParse(handle, &comp->location); //PC_Rect_Parse
-	PC_Int_Parse(handle, &comp->style);
-	PC_Int_Parse(handle, &comp->visible);
+
+	if (!PC_Int_Parse(handle, &comp->style))
+	{
+		return qfalse;
+	}
+
+	if (!PC_Int_Parse(handle, &comp->visible))
+	{
+		return qfalse;
+	}
+
 	return qtrue;
 }
 

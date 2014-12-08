@@ -2462,6 +2462,7 @@ int CG_LimboPanel_RenderCounter_NumRollers(panel_button_t *button)
 		case 2:
 			return 3;
 		}
+		break;
 	case 2:     // xp
 		if (cg_gameType.integer == GT_WOLF_LMS)
 		{

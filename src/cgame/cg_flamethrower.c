@@ -996,7 +996,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 				alpha = 1.0;    // new nozzle sprite
 				VectorScale(whiteColor, alpha, c);
 
-				if (f->blueLife > lived * (f->ignitionOnly ? 3.0 : 3.0))
+				if (f->blueLife > lived * 3.0)
 				{
 
 					shader = nozzleShaders[(cg.time / 50 + (cg.time / 50 >> 1)) % NUM_NOZZLE_SPRITES];

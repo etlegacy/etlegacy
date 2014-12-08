@@ -2091,9 +2091,10 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 				{
 					vec3_t muzzle;
 
-					CG_CalcMuzzlePoint(cg.snap->ps.clientNum, muzzle);
-
-					muzzle[2] -= 32;
+					if (CG_CalcMuzzlePoint(cg.snap->ps.clientNum, muzzle))
+					{
+						muzzle[2] -= 32;
+					}
 
 					if (!(rand() % 3))
 					{

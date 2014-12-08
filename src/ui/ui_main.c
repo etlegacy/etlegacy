@@ -1659,7 +1659,7 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	int        height, len, textWidth, newLine, newLineWidth;
 	float      y;
 	rectDef_t  textRect;
-	int        game = (net) ? ui_netGameType.integer : ui_netGameType.integer;
+	int        game = ui_netGameType.integer;
 
 	if (game == GT_WOLF_CAMPAIGN)
 	{
@@ -1764,7 +1764,7 @@ void UI_DrawGametypeDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	int        height, len, textWidth, newLine, newLineWidth, i;
 	float      y;
 	rectDef_t  textRect;
-	int        game = (net) ? ui_netGameType.integer : ui_netGameType.integer;
+	int        game = ui_netGameType.integer;
 
 	for (i = 0; i < uiInfo.numGameTypes; i++)
 	{
@@ -7715,15 +7715,7 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_ActivateByName("backgroundmusic", qtrue); // not nice, but best way to do it - putting the music in it's own menudef
-			// makes sure it doesn't get restarted every time you reach the main menu
-			if (!cl_profile.string[0])
-			{
-				Menus_ActivateByName("main_opener", qtrue);
-			}
-			else
-			{
-				Menus_ActivateByName("main_opener", qtrue);
-			}
+			Menus_ActivateByName("main_opener", qtrue);
 
 			trap_Cvar_VariableStringBuffer("com_errorMessage", buf, sizeof(buf));
 

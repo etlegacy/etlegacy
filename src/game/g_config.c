@@ -228,7 +228,10 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 	trap_GetServerinfo(serverinfo, sizeof(serverinfo));
 	mapname = Info_ValueForKey(serverinfo, "mapname");
 
-	trap_PC_ReadToken(handle, &token);
+	if (!trap_PC_ReadToken(handle, &token))
+	{
+		G_Printf("Malformed map config\n");
+	}
 
 	G_Printf("Map settings for: %s\n", token.string);
 	G_Printf("Current map: %s\n", mapname);
