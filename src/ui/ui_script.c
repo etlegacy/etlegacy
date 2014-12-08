@@ -81,6 +81,7 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 				{
 					return;
 				}
+
 				(*out)[i] = f;
 			}
 		}
@@ -629,9 +630,11 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 					{
 						trap_Cvar_Set("r_oldMode", "");   // clear it
 					}
+
 					Item_RunScript(item, bAbort, script2);
 				}
 			}
+
 			break;
 		}
 	}
@@ -662,6 +665,7 @@ void Script_CloseAllOtherMenus(itemDef_t *item, qboolean *bAbort, char **args)
 		{
 			continue;
 		}
+
 		Menu_RunCloseScript(&Menus[i]);
 		Menus[i].window.flags &= ~(WINDOW_HASFOCUS | WINDOW_VISIBLE | WINDOW_MOUSEOVER);
 	}
@@ -716,6 +720,7 @@ void Script_SetFocus(itemDef_t *item, qboolean *bAbort, char **args)
 			{
 				Item_RunScript(focusItem, NULL, focusItem->onFocus);
 			}
+
 			if (DC->Assets.itemFocusSound)
 			{
 				DC->startLocalSound(DC->Assets.itemFocusSound, CHAN_LOCAL_SOUND);
@@ -913,6 +918,7 @@ qboolean Script_WriteProfile(char *profile_path)
 		Com_Printf("Script_WriteProfile: Can't write %s.\n", profile_path);
 		return qfalse;
 	}
+
 	if (f < 0)
 	{
 		Com_Printf("Script_WriteProfile: Can't write %s.\n", profile_path);
@@ -979,6 +985,7 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 			{
 				Item_RunScript(editItem, NULL, editItem->onFocus);
 			}
+
 			if (DC->Assets.itemFocusSound)
 			{
 				DC->startLocalSound(DC->Assets.itemFocusSound, CHAN_LOCAL_SOUND);
@@ -1150,8 +1157,10 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 						{
 							*bAbort = b_localAbort;
 						}
+
 						return;
 					}
+
 					break;
 				}
 			}
