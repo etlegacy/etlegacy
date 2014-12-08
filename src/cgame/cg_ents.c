@@ -129,11 +129,6 @@ void CG_AddLightstyle(centity_t *cent)
 	int   otime;
 	int   lastch, nextch;
 
-	if (!cent->dl_stylestring)
-	{
-		return;
-	}
-
 	otime        = cg.time - cent->dl_time;
 	stringlength = strlen(cent->dl_stylestring);
 

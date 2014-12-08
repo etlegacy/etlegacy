@@ -1648,7 +1648,7 @@ int BG_GetConditionValue(int client, int condition, qboolean checkConversion)
 		else
 		{
 			// must use COM_BitCheck on the result.
-			return globalScriptData->clientConditions[client][condition] != 0;
+			return (int)globalScriptData->clientConditions[client][condition];
 		}
 		//BG_AnimParseError( "BG_GetConditionValue: internal error" );
 	}

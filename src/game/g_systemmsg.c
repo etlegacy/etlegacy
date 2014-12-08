@@ -135,117 +135,120 @@ void G_SendSystemMessage(sysMsg_t message, int team)
 	}
 }
 
+// FIXME: actually unused
+/*
 void G_CheckForNeededClasses(void)
 {
-	qboolean   playerClasses[NUM_PLAYER_CLASSES - 1][2];
-	int        i, team, cnt;
-	int        teamCounts[2];
-	gentity_t  *ent;
-	static int lastcheck;
+    qboolean   playerClasses[NUM_PLAYER_CLASSES - 1][2];
+    int        i, team, cnt;
+    int        teamCounts[2];
+    gentity_t  *ent;
+    static int lastcheck;
 
-	memset(playerClasses, 0, sizeof(playerClasses));
-	memset(teamCounts, 0, sizeof(teamCounts));
+    memset(playerClasses, 0, sizeof(playerClasses));
+    memset(teamCounts, 0, sizeof(teamCounts));
 
-	if (lastcheck && (level.time - lastcheck) < 60000)
-	{
-		return;
-	}
+    if (lastcheck && (level.time - lastcheck) < 60000)
+    {
+        return;
+    }
 
-	lastcheck = level.time;
+    lastcheck = level.time;
 
 
-	for (i = 0, ent = g_entities; i < level.maxclients; i++, ent++)
-	{
-		if (!ent->client || !ent->inuse)
-		{
-			break;
-		}
+    for (i = 0, ent = g_entities; i < level.maxclients; i++, ent++)
+    {
+        if (!ent->client || !ent->inuse)
+        {
+            break;
+        }
 
-		// don't want spectators
-		if (ent->client->sess.sessionTeam < TEAM_AXIS ||
-		    ent->client->sess.sessionTeam > TEAM_ALLIES)
-		{
-			continue;
-		}
+        // don't want spectators
+        if (ent->client->sess.sessionTeam < TEAM_AXIS ||
+            ent->client->sess.sessionTeam > TEAM_ALLIES)
+        {
+            continue;
+        }
 
-		team = ent->client->sess.sessionTeam == TEAM_AXIS ? 0 : 1;
+        team = ent->client->sess.sessionTeam == TEAM_AXIS ? 0 : 1;
 
-		if (ent->client->sess.playerType != PC_SOLDIER)
-		{
-			playerClasses[ent->client->sess.playerType - 1][team] = qtrue;
-		}
+        if (ent->client->sess.playerType != PC_SOLDIER)
+        {
+            playerClasses[ent->client->sess.playerType - 1][team] = qtrue;
+        }
 
-		teamCounts[team]++;
-	}
+        teamCounts[team]++;
+    }
 
-	// ALLIES
-	if (teamCounts[1] > 3)
-	{
-		if (!playerClasses[PC_ENGINEER - 1])
-		{
-			playerClasses[PC_ENGINEER - 1][0] = G_NeedEngineers(TEAM_ALLIES) ? 0 : 1;
-		}
+    // ALLIES
+    if (teamCounts[1] > 3)
+    {
+        if (!playerClasses[PC_ENGINEER - 1])
+        {
+            playerClasses[PC_ENGINEER - 1][0] = G_NeedEngineers(TEAM_ALLIES) ? 0 : 1;
+        }
 
-		cnt = 0;
-		for (i = 0; i < NUM_PLAYER_CLASSES; i++)
-		{
-			if (!playerClasses[i][0])
-			{
-				cnt++;
-			}
-		}
+        cnt = 0;
+        for (i = 0; i < NUM_PLAYER_CLASSES; i++)
+        {
+            if (!playerClasses[i][0])
+            {
+                cnt++;
+            }
+        }
 
-		if (cnt != 0)
-		{
-			cnt = rand() % cnt;
+        if (cnt != 0)
+        {
+            cnt = rand() % cnt;
 
-			for (i = 0; i < NUM_PLAYER_CLASSES; i++)
-			{
-				if (!playerClasses[i][0])
-				{
-					if (cnt-- == 0)
-					{
-						G_SendSystemMessage(SM_NEED_MEDIC + i, TEAM_AXIS);
-					}
-				}
-			}
-		}
-	}
+            for (i = 0; i < NUM_PLAYER_CLASSES; i++)
+            {
+                if (!playerClasses[i][0])
+                {
+                    if (cnt-- == 0)
+                    {
+                        G_SendSystemMessage(SM_NEED_MEDIC + i, TEAM_AXIS);
+                    }
+                }
+            }
+        }
+    }
 
-	// AXIS
-	if (teamCounts[0] > 3)
-	{
-		if (!playerClasses[PC_ENGINEER - 1])
-		{
-			playerClasses[PC_ENGINEER - 1][1] = G_NeedEngineers(TEAM_AXIS) ? 0 : 1;
-		}
+    // AXIS
+    if (teamCounts[0] > 3)
+    {
+        if (!playerClasses[PC_ENGINEER - 1])
+        {
+            playerClasses[PC_ENGINEER - 1][1] = G_NeedEngineers(TEAM_AXIS) ? 0 : 1;
+        }
 
-		cnt = 0;
-		for (i = 0; i < NUM_PLAYER_CLASSES; i++)
-		{
-			if (!playerClasses[i][1])
-			{
-				cnt++;
-			}
-		}
+        cnt = 0;
+        for (i = 0; i < NUM_PLAYER_CLASSES; i++)
+        {
+            if (!playerClasses[i][1])
+            {
+                cnt++;
+            }
+        }
 
-		if (cnt != 0)
-		{
-			cnt = rand() % cnt;
+        if (cnt != 0)
+        {
+            cnt = rand() % cnt;
 
-			for (i = 0; i < NUM_PLAYER_CLASSES; i++)
-			{
-				if (!playerClasses[i][1])
-				{
-					if (cnt-- == 0)
-					{
-						G_SendSystemMessage(SM_NEED_MEDIC + i, TEAM_ALLIES);
-					}
-				}
-			}
-		}
-	}
+            for (i = 0; i < NUM_PLAYER_CLASSES; i++)
+            {
+                if (!playerClasses[i][1])
+                {
+                    if (cnt-- == 0)
+                    {
+                        G_SendSystemMessage(SM_NEED_MEDIC + i, TEAM_ALLIES);
+                    }
+                }
+            }
+        }
+    }
 }
+*/
 
 void G_CheckMenDown(void)
 {

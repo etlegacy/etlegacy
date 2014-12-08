@@ -1073,15 +1073,11 @@ G_ProcessTagConnect
 */
 void G_ProcessTagConnect(gentity_t *ent, qboolean clearAngles)
 {
-	if (!ent->tagName)
+	if (!G_FindConfigstringIndex(va("%i %i %s", ent->s.number, ent->tagParent->s.number, ent->tagName), CS_TAGCONNECTS, MAX_TAGCONNECTS, qtrue))
 	{
-		G_Error("G_ProcessTagConnect: NULL ent->tagName\n");
+		G_Error("G_ProcessTagConnect: invalid G_FindConfigstringIndex\n");
 	}
-	if (!ent->tagParent)
-	{
-		G_Error("G_ProcessTagConnect: NULL ent->tagParent\n");
-	}
-	G_FindConfigstringIndex(va("%i %i %s", ent->s.number, ent->tagParent->s.number, ent->tagName), CS_TAGCONNECTS, MAX_TAGCONNECTS, qtrue);
+
 	ent->s.eFlags |= EF_TAGCONNECT;
 
 	if (ent->client)

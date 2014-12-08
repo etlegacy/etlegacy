@@ -448,7 +448,7 @@ qboolean G_configSet(const char *configname)
 
 void G_ConfigCheckLocked()
 {
-	int      i       = 0;
+	int      i;
 	config_t *config = &level.config;
 
 	if (!config)
@@ -456,14 +456,9 @@ void G_ConfigCheckLocked()
 		return;
 	}
 
-	for (; i < config->numSetl; i++)
+	for (i = 0; i < config->numSetl; i++)
 	{
 		char temp[256];
-
-		if (!config->setl[i].name)
-		{
-			continue;
-		}
 
 		trap_Cvar_VariableStringBuffer(config->setl[i].name, temp, 256);
 

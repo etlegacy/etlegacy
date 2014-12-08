@@ -1076,22 +1076,15 @@ void script_mover_spawn(gentity_t *ent)
 {
 	if (ent->spawnflags & 128)
 	{
-		if (!ent->tagBuffer)
+		gentity_t *tent = G_FindByTargetname(NULL, ent->tagBuffer);
+
+		if (!tent)
 		{
 			ent->nextTrain = ent;
 		}
 		else
 		{
-			gentity_t *tent = G_FindByTargetname(NULL, ent->tagBuffer);
-
-			if (!tent)
-			{
-				ent->nextTrain = ent;
-			}
-			else
-			{
-				ent->nextTrain = tent;
-			}
+			ent->nextTrain = tent;
 		}
 
 		ent->s.effect3Time = ent->nextTrain - g_entities;

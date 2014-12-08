@@ -1937,7 +1937,7 @@ typedef enum
 	SM_NUM_SYS_MSGS,
 } sysMsg_t;
 
-void G_CheckForNeededClasses(void);
+//void G_CheckForNeededClasses(void); // unused
 void G_CheckMenDown(void);
 void G_SendMapEntityInfo(gentity_t *e);
 void G_SendSystemMessage(sysMsg_t message, int team);
