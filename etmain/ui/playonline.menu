@@ -81,7 +81,7 @@ menuDef {
 
 	MULTIACTIONLEFT( 8, 80, .33*((FILTERS_WIDTH)-6), 10, "Source:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Choose the type of game servers to display from Internet, local and the favorites list" )
 	MULTIACTIONLEFT( 8, 92, .33*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "LMS" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
-	MULTIACTIONLEFT( 8, 104, .33*((FILTERS_WIDTH)-6), 10, "Mod:", .2, 8, "ui_browserModFilter", cvarFloatList { "Disabled" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "Nitmod" 5 "SiLEnT" 6 "True Combat" 7 "ETNam" 8 "ETRun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, "Displays only game servers offering this Mod" )
+	MULTIACTIONLEFT( 8, 104, .33*((FILTERS_WIDTH)-6), 10, "Mod:", .2, 8, "ui_browserModFilter", cvarFloatList { "All" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "Nitmod" 5 "SiLEnT" 6 "True Combat" 7 "ETNam" 8 "ETRun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, "Displays only game servers offering this Mod" )
 	EDITFIELDSIMPLE( 8+24, 116, .33*((FILTERS_WIDTH)-6)-24, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, "Includes or excludes servers with desired map name from the server list" )
 
 		itemDef {
