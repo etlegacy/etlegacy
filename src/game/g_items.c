@@ -202,7 +202,7 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 		return WP_NONE;
 	}
 
-	if (client->sess.skill[SK_HEAVY_WEAPONS] < 4)
+	if (client->sess.playerType != PC_SOLDIER || client->sess.skill[SK_HEAVY_WEAPONS] < 4)
 	{
 		if (COM_BitCheck(client->ps.weapons, WP_THOMPSON))
 		{
