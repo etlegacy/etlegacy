@@ -1038,7 +1038,7 @@ void CG_TimerReset_f(void)
 	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
 }
 
-static int CG_GetSecondayWeapon(int weapon, team_t team, int playerclass)
+static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 {
 	int outputWeapon = -1;
 	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
@@ -1208,11 +1208,11 @@ void CG_Class_f(void)
 	{
 		trap_Argv(3, cls, 64);
 		weapon2 = atoi(cls);
-		weapon2 = CG_GetSecondayWeapon(weapon2, team, playerclass);
+		weapon2 = CG_GetSecondaryWeapon(weapon2, team, playerclass);
 	}
 	else
 	{
-		weapon2 = CG_GetSecondayWeapon(-1, team, playerclass);
+		weapon2 = CG_GetSecondaryWeapon(-1, team, playerclass);
 	}
 
 	// Print out the selected class and weapon info
