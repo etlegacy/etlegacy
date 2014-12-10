@@ -312,6 +312,17 @@ vmCvar_t g_voting;        // see VOTEF_ defines
 
 vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
 
+// os support - this SERVERINFO cvar specifies supported client operating systems on server
+vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
+                //   1 - Windows
+                //   2 - Linux
+                //   4 - Linux64
+                //   8 - Apple
+                //  16 - AROS
+                //  32 - Pandora
+                //  64 - MorphOS
+                // 128 - Android
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -335,6 +346,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_soldierChargeTime,                 "g_soldierChargeTime",                 "20000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_covertopsChargeTime,               "g_covertopsChargeTime",               "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_landminetimeout,                   "g_landminetimeout",                   "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue},
+
+	{ &g_oss,                               "g_oss",                               "11",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},
 
 	{ &g_maxclients,                        "sv_maxclients",                       "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse},
 	{ &g_maxGameClients,                    "g_maxGameClients",                    "0",                          CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse},
