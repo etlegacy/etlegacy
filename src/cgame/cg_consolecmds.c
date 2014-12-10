@@ -1038,6 +1038,75 @@ void CG_TimerReset_f(void)
 	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
 }
 
+static int CG_GetSecondayWeapon(int weapon, team_t team, int playerclass)
+{
+	int outputWeapon = -1;
+	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
+	{
+		switch (weapon)
+		{
+		case 1:
+			outputWeapon = (team == TEAM_AXIS) ? WP_LUGER : WP_COLT;
+			break;
+		case 2:
+			if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
+			{
+				outputWeapon = (team == TEAM_AXIS) ? WP_AKIMBO_LUGER : WP_AKIMBO_COLT;
+			}
+			else
+			{
+				outputWeapon = (team == TEAM_AXIS) ? WP_MP40 : WP_THOMPSON;
+			}
+			break;
+		case 3:
+		default:
+			outputWeapon = (team == TEAM_AXIS) ? WP_MP40 : WP_THOMPSON;
+			break;
+		}
+	}
+	else if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
+	{
+		switch (weapon)
+		{
+		case 1:
+			goto single_pistol;
+			break;
+		case 2:
+		default:
+			goto akimbo_pistols;
+			break;
+		}
+	}
+	else
+	{
+		goto single_pistol;
+	}
+
+	return outputWeapon;
+
+single_pistol:
+	if (playerclass == PC_COVERTOPS)
+	{
+		outputWeapon = (team == TEAM_AXIS) ? WP_SILENCER : WP_SILENCED_COLT;
+	}
+	else
+	{
+		outputWeapon = (team == TEAM_AXIS) ? WP_LUGER : WP_COLT;
+	}
+	return outputWeapon;
+
+akimbo_pistols:
+	if (playerclass == PC_COVERTOPS)
+	{
+		outputWeapon = (team == TEAM_AXIS) ? WP_AKIMBO_SILENCEDLUGER : WP_AKIMBO_SILENCEDCOLT;
+	}
+	else
+	{
+		outputWeapon = (team == TEAM_AXIS) ? WP_AKIMBO_LUGER : WP_AKIMBO_COLT;
+	}
+	return outputWeapon;
+}
+
 /**
  * @brief Sends an class setup message. Enables etpro like classscripts
  */
@@ -1084,23 +1153,23 @@ void CG_Class_f(void)
 
 	trap_Argv(1, cls, 64);
 
-	if (!Q_stricmp(cls, "s"))
+	if (!Q_stricmp(cls, "s") || !Q_stricmp(cls, "0"))
 	{
 		playerclass = PC_SOLDIER;
 	}
-	else if (!Q_stricmp(cls, "m"))
+	else if (!Q_stricmp(cls, "m") || !Q_stricmp(cls, "1"))
 	{
 		playerclass = PC_MEDIC;
 	}
-	else if (!Q_stricmp(cls, "e"))
+	else if (!Q_stricmp(cls, "e") || !Q_stricmp(cls, "2"))
 	{
 		playerclass = PC_ENGINEER;
 	}
-	else if (!Q_stricmp(cls, "f"))
+	else if (!Q_stricmp(cls, "f") || !Q_stricmp(cls, "3"))
 	{
 		playerclass = PC_FIELDOPS;
 	}
-	else if (!Q_stricmp(cls, "c"))
+	else if (!Q_stricmp(cls, "c") || !Q_stricmp(cls, "4"))
 	{
 		playerclass = PC_COVERTOPS;
 	}
@@ -1116,55 +1185,47 @@ void CG_Class_f(void)
 	{
 		trap_Argv(2, cls, 64);
 		weapon1 = atoi(cls);
-		if (!classinfo->classWeapons[weapon1 - 1])
+		if (weapon1 <= 0 || weapon1 > MAX_WEAPS_PER_CLASS)
+		{
+			weapon1 = classinfo->classWeapons[0];
+		}
+		else if (!classinfo->classWeapons[weapon1 - 1])
 		{
 			CG_Printf("Invalid command format for weapon.\n");
 			return;
 		}
+		else
+		{
+			weapon1 = classinfo->classWeapons[weapon1 - 1];
+		}
 	}
 	else
 	{
-		weapon1 = 1; // FIXME: this will show 'You will spawn with WP_NONE
+		weapon1 = classinfo->classWeapons[0];
 	}
 
-	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
+	if (trap_Argc() > 3)
 	{
-		weapon2 = (team == TEAM_AXIS) ? WP_MP40 : WP_THOMPSON;
-	}
-	else if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
-	{
-		if (playerclass == PC_COVERTOPS)
-		{
-			weapon2 = (team == TEAM_AXIS) ? WP_AKIMBO_SILENCEDLUGER : WP_AKIMBO_SILENCEDCOLT;
-		}
-		else
-		{
-			weapon2 = (team == TEAM_AXIS) ? WP_AKIMBO_LUGER : WP_AKIMBO_COLT;
-		}
+		trap_Argv(3, cls, 64);
+		weapon2 = atoi(cls);
+		weapon2 = CG_GetSecondayWeapon(weapon2, team, playerclass);
 	}
 	else
 	{
-		if (playerclass == PC_COVERTOPS)
-		{
-			weapon2 = (team == TEAM_AXIS) ? WP_SILENCER : WP_SILENCED_COLT;
-		}
-		else
-		{
-			weapon2 = (team == TEAM_AXIS) ? WP_LUGER : WP_COLT;
-		}
+		weapon2 = CG_GetSecondayWeapon(-1, team, playerclass);
 	}
 
 	// Print out the selected class and weapon info
-	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER && !Q_stricmp(weaponTable[weapon1 - 1].desc, weaponTable[weapon2 - 1].desc))
+	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER && !Q_stricmp(weaponTable[weapon1].desc, weaponTable[weapon2 - 1].desc))
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1 - 1].desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1].desc), 400, cg_fontScaleCP.value, -1);
 	}
 	else
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1 - 1].desc, weaponTable[weapon2].desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as a %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1].desc, weaponTable[weapon2].desc), 400, cg_fontScaleCP.value, -1);
 	}
 	// Send the switch command to the server
-	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
+	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, weapon1, weapon2));
 }
 
 void CG_ReadHuds_f(void)
