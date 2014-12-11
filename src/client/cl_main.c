@@ -3174,6 +3174,7 @@ void CL_Init(void)
 	// Avi recording
 	Cmd_AddCommand("video", CL_Video_f);
 	Cmd_AddCommand("stopvideo", CL_StopVideo_f);
+	Cmd_AddCommand("update", CL_RunUpdate);
 
 	CL_DemoInit();
 

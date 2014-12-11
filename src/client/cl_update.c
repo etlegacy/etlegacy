@@ -192,9 +192,7 @@ static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const 
 {
 	char *fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, pack);
 	char *fn2 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL);
-	//fileHandle_t handle;
-	//int fileSize = FS_SYS_FOpenFileRead(updatePackage, &handle);
-	//FS_FCloseFile(handle);
+
 	if (FS_UnzipTo(fn1, fn2, qtrue))
 	{
 		fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, bin);
@@ -357,13 +355,27 @@ void CL_UpdateInfoPacket(netadr_t from)
 	}
 
 	Cvar_Set("com_updateavailable", Cmd_Argv(1));
+	Cvar_Set("com_updatefiles", "");
 
-	if (!Q_stricmp(com_updateavailable->string, "1"))
+	if (com_updateavailable->integer)
 	{
 		Cvar_Set("com_updatemessage", Cmd_Argv(2));
-		Cvar_Set("com_updatefiles", Cmd_Argv(3));
+		
+		if (com_updateavailable->integer == 2)
+		{
+			Cvar_Set("com_updatefiles", Cmd_Argv(3));
+		}
+
 #ifdef FEATURE_AUTOUPDATE
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
 #endif /* FEATURE_AUTOUPDATE */
+	}
+}
+
+void CL_RunUpdate(void)
+{
+	if (CL_UnpackUpdatePackage(UPDATE_PACKAGE, UPDATE_BINARY, UPDATE_CONFIG))
+	{
+		CL_RunUpdateBinary(UPDATE_BINARY, UPDATE_CONFIG);
 	}
 }
