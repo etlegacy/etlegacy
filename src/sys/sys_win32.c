@@ -789,19 +789,19 @@ Sys_StartProcess
 */
 void Sys_StartProcess(char *cmdline, qboolean doexit)
 {
-	TCHAR               szPathOrig[_MAX_PATH];
+	//TCHAR               szPathOrig[_MAX_PATH];
 	STARTUPINFO         si;
 	PROCESS_INFORMATION pi;
 
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 
-	GetCurrentDirectory(_MAX_PATH, szPathOrig);
+	//GetCurrentDirectory(_MAX_PATH, szPathOrig);
 
-	if (!CreateProcess(NULL, va("%s\\%s", szPathOrig, cmdline), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+	if (!CreateProcess(NULL, cmdline, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 	{
 		// couldn't start it, popup error box
-		Com_Error(ERR_DROP, "Could not start process: '%s\\%s'", szPathOrig, cmdline);
+		Com_Error(ERR_DROP, "Could not start process: '%s'", cmdline);
 		return;
 	}
 

@@ -482,7 +482,15 @@ char *FS_BuildOSPath(const char *base, const char *game, const char *qpath)
 		game = fs_gamedir;
 	}
 
-	Com_sprintf(temp, sizeof(temp), "/%s/%s", game, qpath);
+	if (qpath)
+	{
+		Com_sprintf(temp, sizeof(temp), "/%s/%s", game, qpath);
+	}
+	else
+	{
+		Com_sprintf(temp, sizeof(temp), "/%s", game);
+	}
+	
 	FS_ReplaceSeparators(temp);
 	Com_sprintf(ospath[toggle], sizeof(ospath[0]), "%s%s", base, temp);
 
@@ -4641,13 +4649,14 @@ qboolean FS_VerifyPak(const char *pak)
 }
 
 /**
- * @brief Extracts zipped file into the current gamedir
- * @param[in] filename to extract
- * @param[in] quiet whether to inform if unzipping fails
- * @retval qtrue    if successfully extracted
- * @retval qfalse   if extraction failed
- */
-qboolean FS_Unzip(char *filename, qboolean quiet)
+* @brief Extracts zipped file into the selected path
+* @param[in] filename to extract
+* @param[in] outpath the path where to write the extracted files
+* @param[in] quiet whether to inform if unzipping fails
+* @retval qtrue    if successfully extracted
+* @retval qfalse   if extraction failed
+*/
+qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 {
 	char            zipPath[MAX_OSPATH];
 	unzFile         zipFile;
@@ -4689,7 +4698,7 @@ qboolean FS_Unzip(char *filename, qboolean quiet)
 
 		err = unzGetCurrentFileInfo(zipFile, &file_info, newFileName, sizeof(newFileName), NULL, 0, NULL, 0);
 
-		Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s%c%s", fs_homepath->string, PATH_SEP, fs_gamedir, PATH_SEP, newFileName);
+		Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", outpath, PATH_SEP, newFileName);
 
 		if (newFilePath[strlen(newFilePath) - 1] == PATH_SEP)
 		{
@@ -4765,4 +4774,18 @@ qboolean FS_Unzip(char *filename, qboolean quiet)
 	}
 
 	return qtrue;
+}
+
+/**
+ * @brief Extracts zipped file into the current gamedir
+ * @param[in] filename to extract
+ * @param[in] quiet whether to inform if unzipping fails
+ * @retval qtrue    if successfully extracted
+ * @retval qfalse   if extraction failed
+ */
+qboolean FS_Unzip(char *filename, qboolean quiet)
+{
+	char newFilePath[MAX_OSPATH];
+	Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", fs_homepath->string, PATH_SEP, fs_gamedir);
+	return FS_UnzipTo(filename, newFilePath, quiet);
 }

@@ -34,6 +34,16 @@
 
 #include "client.h"
 
+#ifdef _WIN32
+#define UPDATE_BINARY "updater.exe"
+#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\""
+#else
+#define UPDATE_BINARY "updater"
+#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s'"
+#endif
+#define UPDATE_PACKAGE "updater.zip"
+#define UPDATE_CONFIG "updater.xml"
+
 autoupdate_t autoupdate;
 
 void CL_CheckAutoUpdate(void)
@@ -153,6 +163,60 @@ void CL_GetAutoUpdate(void)
 #endif /* FEATURE_AUTOUPDATE */
 }
 
+static void CL_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
+{
+	static char fn[MAX_OSPATH];
+
+	Q_strncpyz(fn, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateBinary), MAX_OSPATH);
+	
+#ifndef _WIN32
+	Sys_Chmod(fn, S_IXUSR);
+#endif
+
+	// will either exit with a successful process spawn, or will Com_Error ERR_DROP
+	// so we need to clear the disconnected download data if needed
+	if (cls.bWWWDlDisconnected)
+	{
+		cls.bWWWDlDisconnected = qfalse;
+		CL_ClearStaticDownload();
+	}
+
+	Sys_StartProcess(va(UPDATE_CMD, fn, Cvar_VariableString("fs_basepath"), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig), Cvar_VariableString("com_pid")), qtrue);
+
+	// reinitialize the filesystem if the game directory or checksum has changed
+	// - after Legacy mod update
+	FS_ConditionalRestart(clc.checksumFeed);
+}
+
+static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const char *config)
+{
+	char *fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, pack);
+	char *fn2 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL);
+	//fileHandle_t handle;
+	//int fileSize = FS_SYS_FOpenFileRead(updatePackage, &handle);
+	//FS_FCloseFile(handle);
+	if (FS_UnzipTo(fn1, fn2, qtrue))
+	{
+		fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, bin);
+		fn2 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, config);
+
+		if (FS_FileInPathExists(fn1) && FS_FileInPathExists(fn2))
+		{
+			return qtrue;
+		}
+		else
+		{
+			Com_Printf("The updater binary or config does not exist\n");
+		}
+	}
+	else
+	{
+		Com_Printf("Failed to unpack the update package\n");
+	}
+	
+	return qfalse;
+}
+
 qboolean CL_CheckUpdateDownloads(void)
 {
 #ifdef FEATURE_AUTOUPDATE
@@ -165,26 +229,10 @@ qboolean CL_CheckUpdateDownloads(void)
 			return qtrue;
 		}
 
-		/*
-		char *fn;
-		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, com_updatefiles->string);
-		#ifndef _WIN32
-		Sys_Chmod(fn, S_IXUSR);
-		#endif
-		// will either exit with a successful process spawn, or will Com_Error ERR_DROP
-		// so we need to clear the disconnected download data if needed
-		if (cls.bWWWDlDisconnected)
+		if (CL_UnpackUpdatePackage(UPDATE_PACKAGE, UPDATE_BINARY, UPDATE_CONFIG))
 		{
-		cls.bWWWDlDisconnected = qfalse;
-		CL_ClearStaticDownload();
+			CL_RunUpdateBinary(UPDATE_BINARY, UPDATE_CONFIG);
 		}
-
-		Sys_StartProcess(fn, qtrue);
-
-		// reinitialize the filesystem if the game directory or checksum has changed
-		// - after Legacy mod update
-		FS_ConditionalRestart(clc.checksumFeed);
-		*/
 
 		autoupdate.updateStarted = qfalse;
 
