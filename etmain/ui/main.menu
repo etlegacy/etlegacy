@@ -65,6 +65,21 @@ menuDef {
 		decoration
 	}
 
+   itemDef {
+		name       "modversion"
+		rect        80 324 128 64
+		text        "^1"LEGACY_MODVERSION
+		textfont    UI_FONT_COURBD_30
+		textstyle   ITEM_TEXTSTYLE_SHADOWED
+		textscale   .5
+		textalign   ITEM_ALIGN_LEFT
+		textalignx  280 // 320
+		textaligny  10
+		forecolor   1 1 1 1
+		visible     1
+		decoration
+   }
+
 // Company Logos //
 	itemDef {
 		name		"sd_logo"
