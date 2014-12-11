@@ -305,7 +305,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			// grab a free scriptSound
 			scriptSound = &soundScriptSounds[numSoundScriptSounds++];
 
-			if (numSoundScripts >= MAX_SOUND_SCRIPT_SOUNDS)
+			if (numSoundScriptSounds >= MAX_SOUND_SCRIPT_SOUNDS)
 			{
 				CG_Error(S_COLOR_RED "CG_SoundParseSounds: MAX_SOUND_SCRIPT_SOUNDS exceeded.\nReduce number of sound scripts.\n");
 			}
