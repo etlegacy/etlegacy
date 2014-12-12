@@ -36,13 +36,14 @@
 
 #ifdef _WIN32
 #define UPDATE_BINARY "updater.exe"
-#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\""
+#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute etl.exe"
 #else
 #define UPDATE_BINARY "updater"
-#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s'"
+#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute etl"
 #endif
 #define UPDATE_PACKAGE "updater.zip"
 #define UPDATE_CONFIG "updater.xml"
+#define UPDATE_SERVER_DLFILE "?sys=" CPUSTRING "&ver=" ETLEGACY_VERSION_SHORT "&file="
 
 autoupdate_t autoupdate;
 
@@ -369,6 +370,19 @@ void CL_UpdateInfoPacket(netadr_t from)
 #ifdef FEATURE_AUTOUPDATE
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
 #endif /* FEATURE_AUTOUPDATE */
+	}
+}
+
+void CL_CheckUpdateStarted(void)
+{
+	// If we have completed a connection to the Auto-Update server...
+	if (autoupdate.updateChecked && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
+	{
+		// Mark the client as being in the process of getting an update
+		if (com_updateavailable->integer)
+		{
+			autoupdate.updateStarted = qtrue;
+		}
 	}
 }
 

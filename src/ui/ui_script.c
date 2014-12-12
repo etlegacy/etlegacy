@@ -384,8 +384,10 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 		case 3:
 			if (Int_Parse(args, &testval))
 			{
+				int testVal;
 				val = DC->getCVarValue(cvar);
-				if (val != testval)
+				testVal = (int)val;
+				if (testVal != testval)
 				{
 					Item_RunScript(item, bAbort, script2);
 				}

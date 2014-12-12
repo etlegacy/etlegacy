@@ -1067,6 +1067,7 @@ qboolean CL_CheckUpdateDownloads(void);
 qboolean CL_InitUpdateDownloads(void);
 qboolean CL_UpdatePacketEvent(netadr_t from);
 void CL_UpdateInfoPacket(netadr_t from);
+void CL_CheckUpdateStarted(void);
 void CL_RunUpdate(void);
 
 void Key_KeynameCompletion(void (*callback)(const char *s));

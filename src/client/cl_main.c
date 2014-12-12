@@ -1963,15 +1963,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 			return;
 		}
 
-		// If we have completed a connection to the Auto-Update server...
-		if (autoupdate.updateChecked && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
-		{
-			// Mark the client as being in the process of getting an update
-			if (com_updateavailable->integer)
-			{
-				autoupdate.updateStarted = qtrue;
-			}
-		}
+		CL_CheckUpdateStarted();
 
 		Netchan_Setup(NS_CLIENT, &clc.netchan, from, Cvar_VariableValue("net_qport"));
 		cls.state              = CA_CONNECTED;
