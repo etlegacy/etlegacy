@@ -479,6 +479,33 @@ void Com_ParseCommandLine(char *commandLine)
 	}
 }
 
+char *Com_GetCommandLine(void)
+{
+	static char commandLine[1024];
+	char *offset;
+	int i = 0, len = 0, charoffset = 0;
+	commandLine[0] = '\0';
+	offset = commandLine;
+	for (; i < com_numConsoleLines; i++)
+	{
+		if (!com_consoleLines[i])
+		{
+			continue;
+		}
+
+		len = strlen(com_consoleLines[i]);
+		if (len)
+		{
+			Q_strncpyz(offset, va("+%s", com_consoleLines[i]), 1024 - charoffset);
+			len = len + 1;
+			charoffset += len;
+			offset += len;
+		}
+	}
+
+	return commandLine;
+}
+
 /**
  * @brief Check for "safe" on the command line, which will skip loading of wolfconfig.cfg
  */

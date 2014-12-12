@@ -36,14 +36,15 @@
 
 #ifdef _WIN32
 #define UPDATE_BINARY "updater.exe"
-#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute etl.exe"
+#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute \"etl.exe %s\""
 #else
 #define UPDATE_BINARY "updater"
-#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute etl"
+#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute 'etl %s'"
 #endif
 #define UPDATE_PACKAGE "updater.zip"
 #define UPDATE_CONFIG "updater.xml"
-#define UPDATE_SERVER_DLFILE "?sys=" CPUSTRING "&ver=" ETLEGACY_VERSION_SHORT "&file="
+#define UPDATE_SERVER_DLFILE UPDATE_SERVER_NAME "?sys=" CPUSTRING "&ver=" ETLEGACY_VERSION_SHORT "&file=%s"
+#define MIN_PACK_LEN 4
 
 autoupdate_t autoupdate;
 
@@ -182,7 +183,7 @@ static void CL_RunUpdateBinary(const char *updateBinary, const char *updateConfi
 		CL_ClearStaticDownload();
 	}
 
-	Sys_StartProcess(va(UPDATE_CMD, fn, Cvar_VariableString("fs_basepath"), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig), Cvar_VariableString("com_pid")), qtrue);
+	Sys_StartProcess(va(UPDATE_CMD, fn, Cvar_VariableString("fs_basepath"), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig), Cvar_VariableString("com_pid"), Com_GetCommandLine()), qtrue);
 
 	// reinitialize the filesystem if the game directory or checksum has changed
 	// - after Legacy mod update
@@ -222,7 +223,7 @@ qboolean CL_CheckUpdateDownloads(void)
 	// Auto-update
 	if (autoupdate.updateStarted)
 	{
-		if (strlen(com_updatefiles->string) > 4)
+		if (strlen(com_updatefiles->string) > MIN_PACK_LEN)
 		{
 			CL_InitDownloads();
 			return qtrue;
@@ -252,7 +253,7 @@ qboolean CL_InitUpdateDownloads(void)
 #ifdef FEATURE_AUTOUPDATE
 	if (autoupdate.updateStarted && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
 	{
-		if (strlen(com_updatefiles->string) > 4)
+		if (strlen(com_updatefiles->string) > MIN_PACK_LEN)
 		{
 			char *updateFile;
 			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
@@ -296,7 +297,7 @@ qboolean CL_InitUpdateDownloads(void)
 					Q_strcat(updateFilesRemaining, sizeof(updateFilesRemaining), va("%s;", updateFile));
 				}
 
-				if (strlen(updateFilesRemaining) > 4)
+				if (strlen(updateFilesRemaining) > MIN_PACK_LEN)
 				{
 					Cvar_Set("com_updatefiles", updateFilesRemaining);
 				}
