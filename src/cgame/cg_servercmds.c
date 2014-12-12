@@ -2032,19 +2032,19 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 	if (fFull)
 	{
-		txt_dump("^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n");
+		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"));
 		txt_dump("^7-------------------------------------------------\n");
 	}
 	else
 	{
-		txt_dump("^7Weapon     Acrcy Hits/Atts Kll Dth HS\n");
+		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"));
 		//txt_dump(     "^7-------------------------------------\n");
 		txt_dump("\n");
 	}
 
 	if (!dwWeaponMask)
 	{
-		txt_dump("^3No weapon info available.\n");
+		txt_dump(CG_TranslateString("^3No weapon info available.\n"));
 	}
 	else
 	{
@@ -2150,7 +2150,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	}
 
 	// Medals only in campaign mode
-	txt_dump(va("^7Skills         Level/Points%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "  Medals" : "")));
+	txt_dump(va("^7Skills         Level/Points%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? CG_TranslateString("  Medals") : "")));
 	if (fFull)
 	{
 		txt_dump(va("^7---------------------------%s\n", ((cgs.gametype == GT_WOLF_CAMPAIGN) ? "--------" : "")));
@@ -2162,7 +2162,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 	if (dwSkillPointMask == 0)
 	{
-		txt_dump("^3No skills acquired!\n");
+		txt_dump(CG_TranslateString("^3No skills acquired!\n"));
 	}
 	else
 	{
