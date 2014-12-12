@@ -87,19 +87,23 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+12, .8*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek - Project founder, coding & management", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R. - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S. - Main windows coder & renderer", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson - Website, coding & scripts", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+60, .8*(WINDOW_WIDTH-24), 10, "Remy 'Spyhawk' M. - Coding, mod development", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-
+	LABELWHITE( 6, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Project founder, coding & management", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+24, .5*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+24, .5*(WINDOW_WIDTH-24), 10, "Coding, mod development & bad boy", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+36, .5*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+36, .5*(WINDOW_WIDTH-24), 10, "Main windows coder & renderer", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, "Website, coding & scripts", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, "Remy 'Spyhawk' M.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, "Coding, mod development", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Contributors //
 	itemDef {
@@ -111,15 +115,17 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+96, .7*(WINDOW_WIDTH-24), 10, "'BSzili' - AROS and MorphOS", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6, CREDITS_Y+108, .7*(WINDOW_WIDTH-24), 10, "'PtitSeb' - Pandora", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+96, .5*(WINDOW_WIDTH-24), 10, "'BSzili'", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+96, .5*(WINDOW_WIDTH-24), 10, "AROS and MorphOS", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+108, .5*(WINDOW_WIDTH-24), 10, "'PtitSeb'", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+108, .5*(WINDOW_WIDTH-24), 10, "Pandora", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Greetings //
 	itemDef {
@@ -131,7 +137,7 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
@@ -155,7 +161,7 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
@@ -174,7 +180,7 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
