@@ -43,8 +43,9 @@
 #endif
 #define UPDATE_PACKAGE "updater.zip"
 #define UPDATE_CONFIG "updater.xml"
-#define UPDATE_SERVER_DLFILE UPDATE_SERVER_NAME "?sys=" CPUSTRING "&ver=" ETLEGACY_VERSION_SHORT "&file=%s"
 #define MIN_PACK_LEN 4
+
+//#define UPDATE_SERVER_DLFILE UPDATE_SERVER_NAME "?sys=" CPUSTRING "&ver=" ETLEGACY_VERSION_SHORT "&file=%s"
 
 autoupdate_t autoupdate;
 
@@ -272,7 +273,16 @@ qboolean CL_InitUpdateDownloads(void)
 				// download format: @remotename@localname
 				Q_strncpyz(clc.downloadList, va("@%s@%s", updateFile, updateFile), MAX_INFO_STRING);
 				Q_strncpyz(cls.originalDownloadName, updateFile, sizeof(cls.originalDownloadName));
-				Q_strncpyz(cls.downloadName, va("%s/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
+
+				if (!Q_stricmp(updateFile, UPDATE_PACKAGE))
+				{
+					Q_strncpyz(cls.downloadName, va("%s/updater/%s-%s-%s", UPDATE_SERVER_NAME, ETLEGACY_VERSION_SHORT, CPUSTRING, updateFile), sizeof(cls.downloadName));
+				}
+				else
+				{
+					Q_strncpyz(cls.downloadName, va("%s/packages/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
+				}
+
 				Q_strncpyz(cls.downloadTempName,
 				           FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)),
 				           sizeof(cls.downloadTempName));
