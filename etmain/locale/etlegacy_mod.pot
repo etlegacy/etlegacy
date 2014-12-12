@@ -4619,3 +4619,48 @@ msgstr ""
 
 msgid "^3>>> Unknown vote command: ^7 \n"
 msgstr ""
+
+msgid "Use the ^3players^7 command to find a valid player ID.\n"
+msgstr ""
+
+msgid "^3Match is already in progress!\n"
+msgstr ""
+
+msgid "^1Teams have been shuffled!\n"
+msgstr ""
+
+msgid "^3*** Loading nextmap! ***\n"
+msgstr ""
+
+msgid "^1*** Level Restarted! ***\n"
+msgstr ""
+
+msgid "You have been switched to the Axis team"
+msgstr ""
+
+msgid "Keep the Allies from beating the clock!"
+msgstr ""
+
+msgid "Keep the Axis from beating the clock!"
+msgstr ""
+
+msgid "You have been switched to the Allied team"
+msgstr ""
+
+msgid "Try to beat the clock!"
+msgstr ""
+
+msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
+msgstr ""
+
+msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
+msgstr ""
+
+msgid "^3No weapon info available.\n"
+msgstr ""
+
+msgid "  Medals"
+msgstr ""
+
+msgid "^3No skills acquired!\n"
+msgstr ""

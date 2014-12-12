@@ -4643,3 +4643,48 @@ msgstr "Zrespawnujesz sie jako %s %s z %s."
 
 msgid "^3>>> Unknown vote command: ^7 \n"
 msgstr "^3>>> Nieznana komenda glosowania: ^7 \n"
+
+msgid "Use the ^3players^7 command to find a valid player ID.\n"
+msgstr "Uzyj komende ^3players^7 aby znalesc poprawne ID gracza.\n"
+
+msgid "^3Match is already in progress!\n"
+msgstr "^3Mecz juz trwa!\n"
+
+msgid "^1Teams have been shuffled!\n"
+msgstr "^1Druzyny zostaly pomieszane!\n"
+
+msgid "^3*** Loading nextmap! ***\n"
+msgstr "^3*** Wczytywanie nastepnej mapy! ***\n"
+
+msgid "^1*** Level Restarted! ***\n"
+msgstr "^1*** Poziom Zrestartowany! ***\n"
+
+msgid "You have been switched to the Axis team"
+msgstr "Zostales przeniesiony do zespolu Osi"
+
+msgid "Keep the Allies from beating the clock!"
+msgstr "Utrzymuj Aliantow od pobicia czasu!"
+
+msgid "Keep the Axis from beating the clock!"
+msgstr "Utrzymuj Os od pobicia czasu!"
+
+msgid "You have been switched to the Allied team"
+msgstr "Zostales przeniesiony do zespolu Aliantow"
+
+msgid "Try to beat the clock!"
+msgstr "Sprobuj pokonac czas!"
+
+msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
+msgstr "^7Bron        Celn Traf/Strza Zabic Zgonow  W Glowe\n"
+
+msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
+msgstr "^7Bron      Celn Traf/Strza Zab Zgo HS\n"
+
+msgid "^3No weapon info available.\n"
+msgstr "^3Brak informacji o bronii.\n"
+
+msgid "  Medals"
+msgstr "  Medale"
+
+msgid "^3No skills acquired!\n"
+msgstr "^3Brak nabytych umiejetnosci!\n"
