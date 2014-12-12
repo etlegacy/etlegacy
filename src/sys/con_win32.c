@@ -63,8 +63,8 @@ static int  qconsole_history_oldest = 0;
 static char qconsole_line[MAX_EDIT_LINE];
 static int  qconsole_linelen = 0;
 
-static HANDLE   qconsole_hout;
-static HANDLE   qconsole_hin;
+static HANDLE   qconsole_hout = NULL;
+static HANDLE   qconsole_hin = NULL;
 static qboolean qconsole_drawinput = qtrue;
 
 /*
@@ -520,6 +520,11 @@ CON_Print
 */
 void CON_Print(const char *msg)
 {
+	if (!qconsole_hout)
+	{
+		return;
+	}
+
 	if (com_ansiColor && com_ansiColor->integer)
 	{
 		CON_WindowsColorPrint(msg);
