@@ -95,14 +95,9 @@ menuDef {
 	}
 	
 	TRICHECKBOXACTIONMULTI( 8+12, 116, 10, 10, .2, 8, "ui_browserMapFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting servers with map name", "Includes or excludes servers with desired map name from the server list" )
-	
-	//CHECKBOXACTIONBITFLAG( 8, 128, 100, 10, "^KOSS Filter Disabled", .2, 8, 8, "ui_browserOssFilter", 0, togglecvarbit ui_browserOssFilter 32, "Disabled - all operating systems" )
-	//CHECKBOXACTIONBITFLAG( 8+30, 128, 100, 10, "^KET 2.60", .2, 75, 8, "ui_browserOssFilter", 11, togglecvarbit ui_browserOssFilter 11, "Vanilla operating systems" )
-	//CHECKBOXACTIONBITFLAG( 8+30, 128, 100, 10, "^KLinux64", .2, 75, 8, "ui_browserOssFilter", 15, togglecvarbit ui_browserOssFilter 15, "Servers supporting Linux 64 bit client" )
-	
-	// disable for now
-	//CHECKBOXACTIONBITFLAG( 8+130, 128, 100, 10, "^KMorphOS", .2, 75, 8, "ui_browserOssFilter", 256, togglecvarbit ui_browserOssFilter 256, "No Reports On Kills Where You Are Involved" )
-	//CHECKBOXACTIONBITFLAG( 8+130, 128, 100, 10, "^KPandora", .2, 75, 8, "ui_browserOssFilter", 512, togglecvarbit ui_browserOssFilter 512, "No Kill Messages In Console" )
+
+	//CHECKBOXACTIONBITFLAG( CHECKBOXACTION_X, CHECKBOXACTION_Y, CHECKBOXACTION_W, CHECKBOXACTION_H, CHECKBOXACTION_TEXT, CHECKBOXACTION_TEXT_SCALE, CHECKBOXACTION_TEXT_ALIGN_X, CHECKBOXACTION_TEXT_ALIGN_Y, CHECKBOXACTION_CVAR, BITFLAG, CHECKBOXACTION_ACTION, CHECKBOXACTION_TOOLTIP )
+	CHECKBOXACTIONBITFLAG( 8, 128, 140, 10, "^8Linux 64 bit only", .2, 0, 8, "ui_browserOssFilter", 4, togglecvarbit ui_browserOssFilter 4 ; uiScript RefreshFilter, "Only show Linux 64 bit" )
 
 	itemDef {
 		name		"filtericonEmptyFull"

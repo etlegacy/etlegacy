@@ -5782,10 +5782,9 @@ static void UI_BuildServerDisplayList(int force)
 			trap_Cvar_Update(&ui_browserOssFilter);
 			if (ui_browserOssFilter.integer)
 			{
-
 				int g_oss = atoi(Info_ValueForKey(info, "g_oss"));
 
-				if ((ui_browserOssFilter.integer & 15) && (g_oss & 15))
+				if ((ui_browserOssFilter.integer & 4) && !(g_oss & 4))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
