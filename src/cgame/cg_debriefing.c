@@ -1913,7 +1913,7 @@ qboolean CG_DebriefingPlayerList_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		int pos = ((cgs.cursorY - DH_HEADING_Y) / 12) + cgs.dbPlayerListOffset;
+		int pos = ((cgs.cursorY - DH_HEADING_Y) / 12) + cgs.dbPlayerListOffset - 1;
 
 		if (pos < 0 || pos >= cgs.maxclients)
 		{
