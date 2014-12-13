@@ -93,9 +93,11 @@ menuDef {
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
 	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, "Language:", .2, 8, "cl_lang", LEGACY_LANGUAGES, "Set your desired language" )
 
+#ifdef LEGACY
 	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, "Video Quality:", .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", "Select your initial video settings, these can be changed later via the options menu" )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+150, (SUBWINDOW_WIDTH)-8, 10, "Resolution:", .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, "Choose your preferred video resolution, if unsure leave it as the default" )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+164, (SUBWINDOW_WIDTH)-8, 10, "Window mode:", .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, "Toggle fullscreen" )
+#endif
 	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+178, (SUBWINDOW_WIDTH)-8, 10, "ui_r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
 	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+178, (SUBWINDOW_WIDTH)-8, 10, "Brightness:", .2, 8, "ui_r_gamma" 1 0.5 2, "Set the brightness of the game" )
 

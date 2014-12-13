@@ -35,10 +35,12 @@ menuDef {
 
 // Simple settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 104, "SIMPLE" )
+#ifdef LEGACY
 	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Overall Quality:", .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glcustom", "Set overall video quality" )
 	COMBO( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Resolution:", .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, "Set video resolution of the game" )
 	//YESNOACTION( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Fullscreen:", .2, 8, "ui_r_fullscreen", uiScript glCustom, "Toggle fullscreen" )
 	COMBO( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Window mode:", .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, "Toggle fullscreen" )
+#endif
 	CVARFLOATLABEL( 8, 86, (SUBWINDOW_WIDTH)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
 	SLIDER( 8, 86, (SUBWINDOW_WIDTH)-4, 10, "Brightness:", .2, 8, "r_gamma" 1.3 1 3, "Set the brightness of the game" )
 	MULTIACTION( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Intensity:", .2, 8, "r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, uiScript update "ui_glcustom", "The Intensity Of Textures (requires vid_restart)" )

@@ -31,10 +31,12 @@ menuDef {
 		open main
 	}
 
+#ifdef LEGACY
 	onPaste {
 		//placeholder
 		getclipboard cvar ui_connectToIPAddress ;
 	}
+#endif
 
 // Background //
 	itemDef {
