@@ -1553,6 +1553,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	int            legsSet; // torsoSet;
 	clientInfo_t   *ci        = &cgs.clientinfo[cent->currentState.clientNum];
 	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
+	centity_t      *cgsnap;
 
 	if (!character)
 	{
@@ -1709,6 +1710,12 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	AnglesToAxis(legsAngles, legs);
 	AnglesToAxis(torsoAngles, torso);
 	AnglesToAxis(headAngles, head);
+
+	cgsnap = &cg_entities[cg.snap->ps.clientNum];
+	if (cgsnap == cent && (cg.snap->ps.pm_flags & PMF_LADDER))
+	{
+		memcpy(torso, legs, sizeof(torso));
+	}
 }
 
 /*
@@ -2465,7 +2472,6 @@ void CG_Player(centity_t *cent)
 	qboolean       shadow      = qfalse; // gjd added to make sure it was initialized;
 	float          shadowPlane = 0;
 	qboolean       usingBinocs = qfalse;
-	centity_t      *cgsnap     = &cg_entities[cg.snap->ps.clientNum];
 	bg_character_t *character;
 	float          hilightIntensity = 0.f;
 
@@ -2537,12 +2543,6 @@ void CG_Player(centity_t *cent)
 
 	// get the rotation information
 	CG_PlayerAngles(cent, body.axis, body.torsoAxis, head.axis);
-
-	// FIXME: move this into CG_PlayerAngles
-	if (cgsnap == cent && (cg.snap->ps.pm_flags & PMF_LADDER))
-	{
-		memcpy(body.torsoAxis, body.axis, sizeof(body.torsoAxis));
-	}
 
 	// copy the torso rotation to the accessories
 	AxisCopy(body.torsoAxis, acc.axis);
