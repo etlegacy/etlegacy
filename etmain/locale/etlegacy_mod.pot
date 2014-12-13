@@ -1272,16 +1272,34 @@ msgstr ""
 msgid "^1PROGRAMMING"
 msgstr ""
 
-msgid "Jan 'Radegast' Simek - Project founder, coding & management"
+msgid "Jan 'Radegast' Simek"
 msgstr ""
 
-msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
+msgid "Project founder, coding & management"
 msgstr ""
 
-msgid "Konrad 'morsik' Moson - Website, coding & scripts"
+msgid "Olaf 'IR4T4' R."
 msgstr ""
 
-msgid "Jere 'Jacker' S. - Main windows coder & renderer"
+msgid "Coding, mod development & bad boy"
+msgstr ""
+
+msgid "Konrad 'morsik' Moson"
+msgstr ""
+
+msgid "Website, coding & scripts"
+msgstr ""
+
+msgid "Jere 'Jacker' S."
+msgstr ""
+
+msgid "Main windows coder & renderer"
+msgstr ""
+
+msgid "Remy 'Spyhawk' M."
+msgstr ""
+
+msgid "Coding, mod development"
 msgstr ""
 
 msgid "^1CONTRIBUTORS"
@@ -3683,10 +3701,16 @@ msgstr ""
 msgid "^1PORTS"
 msgstr ""
 
-msgid "'BSzili' - AROS and MorphOS"
+msgid "'BSzili'"
 msgstr ""
 
-msgid "'PtitSeb' - Pandora"
+msgid "AROS and MorphOS"
+msgstr ""
+
+msgid "'PtitSeb'"
+msgstr ""
+
+msgid "Pandora"
 msgstr ""
 
 msgid "^1PACKAGE MAINTAINERS"

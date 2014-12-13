@@ -1265,17 +1265,35 @@ msgstr "WYDANE PRZEZ ZESPOL ET:LEGACY"
 msgid "^1PROGRAMMING"
 msgstr "^1PROGRAMISCI"
 
-msgid "Jan 'Radegast' Simek - Project founder, coding & management"
-msgstr "Jan 'Radegast' Simek - zalozyciel projektu, kodowanie & kierowanie"
+msgid "Jan 'Radegast' Simek"
+msgstr "Jan 'Radegast' Simek"
 
-msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
-msgstr "Olaf 'IR4T4' R. - Programista, wydawca moda & zly chlopak"
+msgid "Project founder, coding & management"
+msgstr "Zalozyciel Projektu, koder & zarzadzanie"
 
-msgid "Konrad 'morsik' Moson - Website, coding & scripts"
-msgstr "Konrad 'morsik' Moson - Strona, kodowanie & skrypty"
+msgid "Olaf 'IR4T4' R."
+msgstr "Olaf 'IR4T4' R."
 
-msgid "Jere 'Jacker' S. - Main windows coder & renderer"
-msgstr "Jere 'Jacker' S. - Glowny programista windowsa & silnik graficzny"
+msgid "Coding, mod development & bad boy"
+msgstr "Koder, wydawaca modu & zly chlopiec"
+
+msgid "Konrad 'morsik' Moson"
+msgstr "Konrad 'morsik' Moson"
+
+msgid "Website, coding & scripts"
+msgstr "Strona, koder & skrypty"
+
+msgid "Jere 'Jacker' S."
+msgstr "Jere 'Jacker' S."
+
+msgid "Main windows coder & renderer"
+msgstr "Glowny koder windowsa & silnik graficzny"
+
+msgid "Remy 'Spyhawk' M."
+msgstr "Remy 'Spyhawk' M."
+
+msgid "Coding, mod development"
+msgstr "Koder, wydawca moda"
 
 msgid "^1CONTRIBUTORS"
 msgstr "^1UCZESTNICY"
@@ -3677,11 +3695,17 @@ msgstr "^1TLUMACZENIE"
 msgid "^1PORTS"
 msgstr "^1PORTY"
 
-msgid "'BSzili' - AROS and MorphOS"
-msgstr "'BSzili' - AROS and MorphOS"
+msgid "'BSzili'"
+msgstr "'BSzili'"
 
-msgid "'PtitSeb' - Pandora"
-msgstr "'PtitSeb' - Pandora"
+msgid "AROS and MorphOS"
+msgstr "AROS and MorphOS"
+
+msgid "'PtitSeb'"
+msgstr "'PtitSeb'"
+
+msgid "Pandora"
+msgstr "Pandora"
 
 msgid "^1PACKAGE MAINTAINERS"
 msgstr "^1OPIEKUNOWIE PACZEK"

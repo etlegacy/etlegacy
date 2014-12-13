@@ -115,7 +115,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+156, .8*(WINDOW_WIDTH-24), 10, "Polish: morsik, RaFal, Lul3k", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+156, .8*(WINDOW_WIDTH-24), 10, "Polish: morsik, RaFal, Lul3k, zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Fun //
         itemDef {
