@@ -362,6 +362,7 @@ void G_addStatsHeadShot(gentity_t *attacker, int mod)
 //  --> MOD_* to WS_* conversion
 //
 // WS_MAX = no equivalent/not used
+// FIXME: move to mod table
 static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 {
 	{ MOD_UNKNOWN,                            WS_MAX             },
@@ -415,7 +416,7 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_LANDMINE,                           WS_LANDMINE        },
 	{ MOD_SATCHEL,                            WS_SATCHEL         },
 
-	{ MOD_SMOKEBOMB,                          WS_SMOKE           },
+	{ MOD_SMOKEBOMB,                          WS_MAX             },
 	{ MOD_MOBILE_MG42,                        WS_MG42            },
 	{ MOD_SILENCED_COLT,                      WS_COLT            },
 	{ MOD_GARAND_SCOPE,                       WS_GARAND          },

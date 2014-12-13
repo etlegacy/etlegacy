@@ -38,6 +38,7 @@
 //	--> WP_* to WS_* conversion
 //
 // WS_MAX = no equivalent/not used
+// FIXME: move to weapon table
 static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 {
 	{ WP_NONE,                 WS_MAX             }, // 0
@@ -73,7 +74,7 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 	{ WP_LANDMINE,             WS_LANDMINE        },
 	{ WP_SATCHEL,              WS_MAX             },
 	{ WP_SATCHEL_DET,          WS_SATCHEL         },
-	{ WP_SMOKE_BOMB,           WS_SMOKE           },
+	{ WP_SMOKE_BOMB,           WS_MAX             },
 
 	{ WP_MOBILE_MG42,          WS_MG42            }, // 30
 	{ WP_K43,                  WS_K43             },

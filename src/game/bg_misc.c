@@ -4169,14 +4169,13 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, "DYNA", "Dynamite"   },  // 14 WS_DYNAMITE
 	{ qfalse, "ARST", "Airstrike"  },  // 15 WS_AIRSTRIKE
 	{ qfalse, "ARTY", "Artillery"  },  // 16 WS_ARTILLERY
-	{ qfalse, "SMOK", "SmokeScrn"  },  // 17 WS_SMOKE
-	{ qfalse, "STCH", "Satchel"    },  // 18 WS_SATCHEL
-	{ qfalse, "GRLN", "G.Launchr"  },  // 19 WS_GRENADELAUNCHER
-	{ qfalse, "LNMN", "Landmine"   },  // 20 WS_LANDMINE
-	{ qtrue,  "MG42", "MG-42 Gun"  },  // 21 WS_MG42
-	{ qtrue,  "BRNG", "Browning"   },  // 22 WS_BROWNING
-	{ qtrue,  "GARN", "Garand"     },  // 23 WS_GARAND
-	{ qtrue,  "K-43", "K43 Rifle"  }   // 24 WS_K43
+	{ qfalse, "STCH", "Satchel"    },  // 17 WS_SATCHEL
+	{ qfalse, "GRLN", "G.Launchr"  },  // 18 WS_GRENADELAUNCHER
+	{ qfalse, "LNMN", "Landmine"   },  // 19 WS_LANDMINE
+	{ qtrue,  "MG42", "MG-42 Gun"  },  // 20 WS_MG42
+	{ qtrue,  "BRNG", "Browning"   },  // 21 WS_BROWNING
+	{ qtrue,  "GARN", "Garand"     },  // 22 WS_GARAND
+	{ qtrue,  "K-43", "K43 Rifle"  }   // 23 WS_K43
 };
 
 // Multiview: Convert weaponstate to simpler format

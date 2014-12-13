@@ -191,9 +191,10 @@ void P_WorldEffects(gentity_t *ent)
 			// That way minimum resolution (1 point) damage changes become less critical.
 
 			ent->client->lastBurnTime = level.time;
-			if ((ent->s.onFireEnd > level.time) && (ent->health > 0))
+			if (ent->s.onFireEnd > level.time && ent->health > 0)
 			{
 				gentity_t *attacker;
+
 				attacker = g_entities + ent->flameBurnEnt;
 				G_Damage(ent, attacker, attacker, NULL, NULL, 5, DAMAGE_NO_KNOCKBACK, MOD_FLAMETHROWER);   //  was 7
 			}

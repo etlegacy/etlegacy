@@ -1385,14 +1385,13 @@ typedef enum extWeaponStats_s
 	WS_DYNAMITE,        // 14
 	WS_AIRSTRIKE,       // 15   -- Fieldops smoke grenade attack
 	WS_ARTILLERY,       // 16   -- Fieldops binocular attack
-	WS_SMOKE,           // 17
-	WS_SATCHEL,         // 18
-	WS_GRENADELAUNCHER, // 19
-	WS_LANDMINE,        // 20
-	WS_MG42,            // 21
-	WS_BROWNING,        // 22
-	WS_GARAND,          // 23   -- carbine and garand
-	WS_K43,             // 24   -- kar98 and k43
+	WS_SATCHEL,         // 17
+	WS_GRENADELAUNCHER, // 18
+	WS_LANDMINE,        // 19
+	WS_MG42,            // 20
+	WS_BROWNING,        // 21
+	WS_GARAND,          // 22   -- carbine and garand
+	WS_K43,             // 23   -- kar98 and k43
 
 	WS_MAX
 } extWeaponStats_t;
