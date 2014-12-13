@@ -210,10 +210,9 @@ const char *UI_DownloadInfo(const char *downloadName)
 		                                    60,  60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
 		                                    60,  60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 };
 	static int  tleIndex = 0;
-
-	char       dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
-	int        downloadSize, downloadCount, downloadTime;
-	const char *s, *ds;
+	char        dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
+	int         downloadSize, downloadCount, downloadTime;
+	const char  *s, *ds;
 
 	downloadSize  = trap_Cvar_VariableValue("cl_downloadSize");
 	downloadCount = trap_Cvar_VariableValue("cl_downloadCount");

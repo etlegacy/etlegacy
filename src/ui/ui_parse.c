@@ -659,6 +659,16 @@ qboolean ItemParse_autowrapped(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+// bitflag <integer>
+qboolean ItemParse_bitflag(itemDef_t *item, int handle)
+{
+	if (!PC_Int_Parse(handle, &item->bitflag))
+	{
+		return qfalse;
+	}
+	return qtrue;
+}
+
 // horizontalscroll
 qboolean ItemParse_horizontalscroll(itemDef_t *item, int handle)
 {
@@ -1664,7 +1674,7 @@ keywordHash_t itemParseKeywords[] =
 	{ "visible",           ItemParse_visible,           NULL },
 	{ "voteFlag",          ItemParse_voteFlag,          NULL }, // vote check
 	{ "wrapped",           ItemParse_wrapped,           NULL },
-
+	{ "bitflag",           ItemParse_bitflag,           NULL },
 	{ NULL,                NULL,                        NULL }
 };
 

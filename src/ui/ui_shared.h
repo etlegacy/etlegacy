@@ -316,6 +316,8 @@ typedef struct itemDef_s
 
 	struct itemDef_s *toolTipData;  // Tag an item to this item for auto-help popups
 
+	// ETL: checkbox for bitflags in an integer cvar. The value it has is the bitvalue (1,2,4,8 etc)
+	int bitflag;
 } itemDef_t;
 
 typedef struct

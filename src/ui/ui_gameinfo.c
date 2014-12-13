@@ -552,11 +552,11 @@ int UI_FindCampaignInCampaignList(const char *shortName)
 	{
 		if (!Q_stricmp(uiInfo.campaignList[i].campaignShortName, shortName))
 		{
-			return(i);
+			return i;
 		}
 	}
 
-	return(-1);
+	return -1;
 }
 
 /**

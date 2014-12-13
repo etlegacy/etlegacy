@@ -385,7 +385,8 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			if (Int_Parse(args, &testval))
 			{
 				int testVal;
-				val = DC->getCVarValue(cvar);
+
+				val     = DC->getCVarValue(cvar);
 				testVal = (int)val;
 				if (testVal != testval)
 				{
@@ -895,7 +896,7 @@ qboolean Script_CheckProfile(char *profile_path)
 	f_pid = atoi(f_data);
 	if (f_pid != pid)
 	{
-		//pid doesn't match
+		// pid doesn't match
 		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
@@ -1066,6 +1067,24 @@ void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+// This is for toggling integer cvars using bitflags.
+void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
+{
+	const char *cvar = NULL, *val = NULL;
+
+	if (String_Parse(args, &cvar) && String_Parse(args, &val))
+	{
+		int  bitvalue, value;
+		char buff[256];
+
+		DC->getCVarString(cvar, buff, 256);
+		value    = atoi(buff);
+		bitvalue = atoi(val);
+		value   ^= bitvalue;
+		DC->setCVar(cvar, va("%i", value));
+	}
+}
+
 commandDef_t commandList[] =
 {
 	{ "fadein",             &Script_FadeIn             }, // group/name
@@ -1110,6 +1129,7 @@ commandDef_t commandList[] =
 	{ "setEditFocus",       &Script_SetEditFocus       },
 	{ "abort",              &Script_Abort              },
 	{ "getclipboard",       &Script_GetClipboard       },
+	{ "togglecvarbit",      &Script_ToggleCvarBit      },
 };
 
 int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);
