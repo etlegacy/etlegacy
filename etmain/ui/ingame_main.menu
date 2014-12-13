@@ -47,7 +47,7 @@ menuDef {
 
 	itemDef {
       name        "legacy_logo"
-      rect        10 195 128 64
+      rect        15 195 128 64
       style       WINDOW_STYLE_SHADER
       background  "ui/assets/etl_logo"
       forecolor   1 1 1 1
@@ -58,11 +58,11 @@ menuDef {
    itemDef {
       name       "modversion"
       group       GROUP_NAME
-      rect        -50 235 128 64
+      rect        -45 235 128 64
       text        "^1"LEGACY_MODVERSION
       textfont    UI_FONT_COURBD_21
       textstyle   ITEM_TEXTSTYLE_SHADOWED
-      textscale   .3
+      textscale   .2
       textalign   ITEM_ALIGN_LEFT
       textalignx  $evalfloat(.7*(WINDOW_WIDTH-8))
       textaligny  10
