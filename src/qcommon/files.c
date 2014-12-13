@@ -490,7 +490,7 @@ char *FS_BuildOSPath(const char *base, const char *game, const char *qpath)
 	{
 		Com_sprintf(temp, sizeof(temp), "/%s", game);
 	}
-	
+
 	FS_ReplaceSeparators(temp);
 	Com_sprintf(ospath[toggle], sizeof(ospath[0]), "%s%s", base, temp);
 

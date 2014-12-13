@@ -482,10 +482,10 @@ void Com_ParseCommandLine(char *commandLine)
 char *Com_GetCommandLine(void)
 {
 	static char commandLine[1024];
-	char *offset;
-	int i = 0, len = 0, charoffset = 0;
+	char        *offset;
+	int         i = 0, len = 0, charoffset = 0;
 	commandLine[0] = '\0';
-	offset = commandLine;
+	offset         = commandLine;
 	for (; i < com_numConsoleLines; i++)
 	{
 		if (!com_consoleLines[i])
@@ -497,9 +497,9 @@ char *Com_GetCommandLine(void)
 		if (len)
 		{
 			Q_strncpyz(offset, va("+%s", com_consoleLines[i]), 1024 - charoffset);
-			len = len + 1;
+			len         = len + 1;
 			charoffset += len;
-			offset += len;
+			offset     += len;
 		}
 	}
 
