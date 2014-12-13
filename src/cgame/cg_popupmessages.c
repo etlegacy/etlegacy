@@ -558,7 +558,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	}
 	else
 	{
-		size  = 2;
+		size = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
 		sizew = 0;
 	}
 
@@ -628,12 +628,13 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		}
 		else
 		{
-			size  = 2;
+			size = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
 			sizew = 0;
 		}
 
 		if (listItem->message2[0])
 		{
+			//size + w + sizew * listItem->scaleShader + 16
 			CG_Text_Paint_Ext(size + w + sizew * listItem->scaleShader + 16, y + 12, fontScale, fontScale, colourText, listItem->message2, 0, 0, style, &cgs.media.limboFont2);
 		}
 	}
