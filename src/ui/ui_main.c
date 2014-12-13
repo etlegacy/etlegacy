@@ -5270,6 +5270,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowBots", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
+			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "SetFontScale") == 0)
 		{
@@ -5772,6 +5773,19 @@ static void UI_BuildServerDisplayList(int force)
 
 				if ((Q_stristr(mapname, ui_browserMapFilter.string) != 0 && ui_browserMapFilterCheckBox.integer == 2) || // ui_browserShowTeamBalanced.integer == 2) ||
 				    (Q_stristr(mapname, ui_browserMapFilter.string) == 0 && ui_browserMapFilterCheckBox.integer == 1)) //ui_browserShowTeamBalanced.integer == 1))
+				{
+					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+					continue;
+				}
+			}
+
+			trap_Cvar_Update(&ui_browserOssFilter);
+			if (ui_browserOssFilter.integer)
+			{
+
+				int g_oss = atoi(Info_ValueForKey(info, "g_oss"));
+
+				if ((ui_browserOssFilter.integer & 15) && (g_oss & 15))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -7996,6 +8010,8 @@ vmCvar_t ui_browserModFilter;
 vmCvar_t ui_browserMapFilter;
 vmCvar_t ui_browserMapFilterCheckBox;
 
+vmCvar_t ui_browserOssFilter;
+
 vmCvar_t ui_serverStatusTimeOut;
 
 vmCvar_t ui_cmd;
@@ -8079,6 +8095,8 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserModFilter,             "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserMapFilter,             "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE                   },
 	{ &ui_browserMapFilterCheckBox,     "ui_browserMapFilterCheckBox",         "0",                          CVAR_ARCHIVE                   },
+
+	{ &ui_browserOssFilter,             "ui_browserOssFilter",                 "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE                   },
 

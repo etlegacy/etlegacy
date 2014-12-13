@@ -81,6 +81,8 @@ extern vmCvar_t ui_browserModFilter;
 extern vmCvar_t ui_browserMapFilter;
 extern vmCvar_t ui_browserMapFilterCheckBox;
 
+extern vmCvar_t ui_browserOssFilter;
+
 extern vmCvar_t ui_serverStatusTimeOut;
 
 extern vmCvar_t g_gameType;
