@@ -181,6 +181,10 @@ if(BUILD_CLIENT)
 		add_definitions(-DFEATURE_IRC_CLIENT)
 		list(APPEND CLIENT_SRC ${IRC_CLIENT_FILES})
 	endif(FEATURE_IRC_CLIENT)
+
+	if(FEATURE_LIVEAUTH)
+		add_definitions(-DFEATURE_LIVEAUTH)
+	endif(FEATURE_LIVEAUTH)
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
