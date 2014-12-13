@@ -1556,6 +1556,10 @@ void CL_InitDownloads(void)
 			}
 		}
 	}
+	else
+	{
+		return;
+	}
 
 	CL_DownloadsComplete();
 }

@@ -36,10 +36,10 @@
 
 #ifdef _WIN32
 #define UPDATE_BINARY "updater.exe"
-#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute \"etl.exe %s\""
+#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute \"etl.exe\" --execute-args \"%s\""
 #else
 #define UPDATE_BINARY "updater"
-#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute 'etl %s'"
+#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute 'etl' --execute-args '%s'"
 #endif
 #define UPDATE_PACKAGE "updater.zip"
 #define UPDATE_CONFIG "updater.xml"
@@ -259,7 +259,7 @@ qboolean CL_InitUpdateDownloads(void)
 			char *updateFile;
 			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
 
-			clc.bWWWDl             = qtrue;
+			clc.bWWWDl = qtrue;
 			cls.bWWWDlDisconnected = qtrue;
 
 			updateFile = strtok(com_updatefiles->string, ";");
@@ -272,7 +272,7 @@ qboolean CL_InitUpdateDownloads(void)
 			{
 				// download format: @remotename@localname
 				Q_strncpyz(clc.downloadList, va("@%s@%s", updateFile, updateFile), MAX_INFO_STRING);
-				Q_strncpyz(cls.originalDownloadName, updateFile, sizeof(cls.originalDownloadName));
+				Q_strncpyz(cls.originalDownloadName, va("%s/%s", AUTOUPDATE_DIR, updateFile), sizeof(cls.originalDownloadName));
 
 				if (!Q_stricmp(updateFile, UPDATE_PACKAGE))
 				{
@@ -283,9 +283,7 @@ qboolean CL_InitUpdateDownloads(void)
 					Q_strncpyz(cls.downloadName, va("%s/packages/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
 				}
 
-				Q_strncpyz(cls.downloadTempName,
-				           FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)),
-				           sizeof(cls.downloadTempName));
+				Q_strncpyz(cls.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", updateFile)), sizeof(cls.downloadTempName));
 				// TODO: add file size, so UI can show progress bar
 				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
 
@@ -328,14 +326,15 @@ qboolean CL_UpdatePacketEvent(netadr_t from)
 {
 #ifdef FEATURE_AUTOUPDATE
 	static qboolean autoupdateRedirected = qfalse;
-
 	// Update server doesn't understand netchan packets
-	if (NET_CompareAdr(autoupdate.autoupdateServer, from)
-	    && autoupdate.updateStarted && !autoupdateRedirected)
+	if (NET_CompareAdr(autoupdate.autoupdateServer, from))
 	{
-		autoupdateRedirected = qtrue;
-		CL_InitDownloads();
-		return qtrue;
+		if (autoupdate.updateStarted && !autoupdateRedirected)
+		{
+			autoupdateRedirected = qtrue;
+			//CL_InitDownloads();
+			return qtrue;
+		}
 	}
 #endif /* FEATURE_AUTOUPDATE */
 
@@ -393,14 +392,12 @@ void CL_CheckUpdateStarted(void)
 		if (com_updateavailable->integer)
 		{
 			autoupdate.updateStarted = qtrue;
+			CL_InitDownloads();
 		}
 	}
 }
 
 void CL_RunUpdate(void)
 {
-	if (CL_UnpackUpdatePackage(UPDATE_PACKAGE, UPDATE_BINARY, UPDATE_CONFIG))
-	{
-		CL_RunUpdateBinary(UPDATE_BINARY, UPDATE_CONFIG);
-	}
+	CL_GetAutoUpdate();
 }
