@@ -356,6 +356,8 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	vec3_t dir;
 	int    res, clientNum, i;
 
+	memset(&maxsBackup, 0, sizeof(maxsBackup));
+
 	G_AttachBodyParts(ent);
 
 	// ignore bodies for bullet tracing
