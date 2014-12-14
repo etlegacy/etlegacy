@@ -2745,7 +2745,6 @@ void Item_Slider_Paint(itemDef_t *item)
 void Item_Bind_Paint(itemDef_t *item)
 {
 	vec4_t         newColor, lowLight;
-	float          value;
 	int            maxChars = 0;
 	menuDef_t      *parent  = (menuDef_t *)item->parent;
 	editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
@@ -2754,8 +2753,6 @@ void Item_Bind_Paint(itemDef_t *item)
 	{
 		maxChars = editPtr->maxPaintChars;
 	}
-
-	value = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
@@ -2799,7 +2796,7 @@ void Item_Bind_Paint(itemDef_t *item)
 	}
 	else
 	{
-		DC->drawText(item->textRect.x, item->textRect.y, item->textscale, newColor, (value != 0) ? "FIXME" : "FIXME", 0, maxChars, item->textStyle);
+		DC->drawText(item->textRect.x, item->textRect.y, item->textscale, newColor, "FIXME", 0, maxChars, item->textStyle);
 	}
 }
 
