@@ -890,7 +890,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 
 // copied from cg_flamethrower.c - FIXME: move same definitions of cg_flamethrower.c to bg_public.h and remove FLAME_* defs here
 #define FLAME_START_SIZE        1.0
-#define FLAME_START_MAX_SIZE    100.0   // when the flame is spawned, it should endevour to reach this size
+#define FLAME_START_MAX_SIZE    140.0   // when the flame is spawned, it should endevour to reach this size
 #define FLAME_START_SPEED       1200.0  // speed of flame as it leaves the nozzle
 #define FLAME_MIN_SPEED         60.0
 

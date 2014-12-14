@@ -129,7 +129,7 @@ static vec3_t flameChunkMaxs = { 0, 0, 0 };
 // these define how the flame looks
 // FIXME: sort out bg/cg and put these into header files
 #define FLAME_START_SIZE        1.0     // bg
-#define FLAME_START_MAX_SIZE    140.0   // bg FIXME: g_missile defines this again with a value of 100
+#define FLAME_START_MAX_SIZE    140.0   // bg
 #define FLAME_MAX_SIZE          200.0   // cg flame sprites cannot be larger than this
 #define FLAME_START_SPEED       1200.0  // cg speed of flame as it leaves the nozzle
 #define FLAME_MIN_SPEED         60.0    // bg 200.0
