@@ -2443,8 +2443,6 @@ typedef enum
 #define FLAMETHROWER_RANGE  2500    // multiplayer range, was 850 in SP
 
 // these define how the flame looks and flamer acts
-#define FLAME_MAX_SIZE          200.0   // cg flame sprites cannot be larger than this
-
 #define FLAME_START_SIZE        1.0     // bg
 #define FLAME_START_MAX_SIZE    140.0   // bg
 #define FLAME_MAX_SIZE          200.0   // cg flame sprites cannot be larger than this
