@@ -126,35 +126,6 @@ void CG_FlameCalcOrg(flameChunk_t *f, int time, vec3_t outOrg);
 static vec3_t flameChunkMins = { 0, 0, 0 };
 static vec3_t flameChunkMaxs = { 0, 0, 0 };
 
-// these define how the flame looks
-// FIXME: sort out bg/cg and put these into header files
-#define FLAME_START_SIZE        1.0     // bg
-#define FLAME_START_MAX_SIZE    140.0   // bg
-#define FLAME_MAX_SIZE          200.0   // cg flame sprites cannot be larger than this
-#define FLAME_START_SPEED       1200.0  // cg speed of flame as it leaves the nozzle
-#define FLAME_MIN_SPEED         60.0    // bg 200.0
-#define FLAME_CHUNK_DIST        8.0     // cg space in between chunks when fired
-
-#define FLAME_BLUE_LENGTH       130.0   // cg
-#define FLAME_BLUE_MAX_ALPHA    1.0     // cg
-
-#define FLAME_FUEL_LENGTH       48.0
-#define FLAME_FUEL_MIN_WIDTH    1.0
-
-// these are calculated (don't change)
-#define FLAME_LENGTH            (FLAMETHROWER_RANGE + 50.0)   // NOTE: only modify the range, since this should always reflect that range
-
-#define FLAME_LIFETIME          (int)((FLAME_LENGTH / FLAME_START_SPEED) * 1000)        // life duration in milliseconds
-#define FLAME_FRICTION_PER_SEC  (2.0 * FLAME_START_SPEED)
-#define FLAME_BLUE_LIFE         (int)((FLAME_BLUE_LENGTH / FLAME_START_SPEED) * 1000)
-#define FLAME_FUEL_LIFE         (int)((FLAME_FUEL_LENGTH / FLAME_START_SPEED) * 1000)
-#define FLAME_FUEL_FADEIN_TIME  (0.2 * FLAME_FUEL_LIFE)
-
-#define FLAME_BLUE_FADEIN_TIME(x)       (0.2 * x)
-#define FLAME_BLUE_FADEOUT_TIME(x)      (0.05 * x)
-#define GET_FLAME_BLUE_SIZE_SPEED(x)    (((float)x / FLAME_LIFETIME) / 1.0)       // x is the current sizeMax
-#define GET_FLAME_SIZE_SPEED(x)         (((float)x / FLAME_LIFETIME) / 0.3)       // x is the current sizeMax
-
 // disable this to stop rotating flames (this is variable so we can change it at run-time)
 int rotatingFlames = qtrue;
 
