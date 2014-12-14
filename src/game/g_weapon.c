@@ -3713,7 +3713,6 @@ FLAMETHROWER
 void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 {
 	vec3_t origin;
-	int    ownerNum = (chunk != NULL) ? chunk->r.ownerNum : self->s.number;
 
 	// add the new damage
 	body->flameQuota    += 5;
@@ -3745,7 +3744,7 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 		}
 		body->s.onFireEnd = level.time + FIRE_FLASH_TIME;
 		// use ourself as the attacker if we have no flamechunk
-		body->flameBurnEnt = ownerNum;
+		body->flameBurnEnt = (chunk != NULL) ? chunk->r.ownerNum : self->s.number;
 		// add to playerState for client-side effect
 		body->client->ps.onFireStart = level.time;
 	}

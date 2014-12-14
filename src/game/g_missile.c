@@ -1010,7 +1010,13 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		}
 	}
 
-	G_BurnMeGood(self, body, self);
+	G_BurnMeGood(self->parent, body, self);
+
+	if (self->count && self->parent->client)
+	{
+		G_addStats(body, self->parent, GetWeaponTableData(WP_FLAMETHROWER)->damage, MOD_FLAMETHROWER);
+		self->count = 0;
+	}
 }
 
 void G_FlameDamage(gentity_t *self, gentity_t *ignoreent)
@@ -1188,6 +1194,7 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->methodOfDeath  = MOD_FLAMETHROWER;
 	bolt->clipmask       = MASK_MISSILESHOT;
 	bolt->count2         = 0; // how often it bounced off of something
+	bolt->count          = 1; // this chunk can add hit
 
 	bolt->s.pos.trType     = TR_DECCELERATE;
 	bolt->s.pos.trTime     = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
