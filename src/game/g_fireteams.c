@@ -1223,7 +1223,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 		}
 		else
 		{
-			G_ClientPrint(ent - g_entities, "You are not an fireteam admin");
+			G_ClientPrint(ent - g_entities, "You are not a fireteam admin");
 			return;
 		}
 	}
