@@ -1553,7 +1553,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	int            legsSet; // torsoSet;
 	clientInfo_t   *ci        = &cgs.clientinfo[cent->currentState.clientNum];
 	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
-	centity_t      *cgsnap;
+	centity_t      *cgsnap    = &cg_entities[cg.snap->ps.clientNum];
 
 	if (!character)
 	{
@@ -1711,10 +1711,9 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	AnglesToAxis(torsoAngles, torso);
 	AnglesToAxis(headAngles, head);
 
-	cgsnap = &cg_entities[cg.snap->ps.clientNum];
 	if (cgsnap == cent && (cg.snap->ps.pm_flags & PMF_LADDER))
 	{
-		memcpy(torso, legs, sizeof(torso));
+		memcpy(torso, legs, sizeof(*torso));
 	}
 }
 
