@@ -79,25 +79,28 @@ menuDef {
 
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, "FILTERS" )
 
-	MULTIACTIONLEFT( 8, 80, .33*((FILTERS_WIDTH)-6), 10, "Source:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Choose the type of game servers to display from Internet, local and the favorites list" )
-	MULTIACTIONLEFT( 8, 92, .33*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "LMS" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
-	MULTIACTIONLEFT( 8, 104, .33*((FILTERS_WIDTH)-6), 10, "Mod:", .2, 8, "ui_browserModFilter", cvarFloatList { "All" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "Nitmod" 5 "SiLEnT" 6 "True Combat" 7 "ETNam" 8 "ETRun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, "Displays only game servers offering this Mod" )
-	EDITFIELDSIMPLE( 8+24, 116, .33*((FILTERS_WIDTH)-6)-24, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, "Includes or excludes servers with desired map name from the server list" )
-		
+	MULTIACTIONLEFT( 12, 80, .33*((FILTERS_WIDTH)-6), 10, "Source:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Choose the type of game servers to display from Internet, local and the favorites list" )
+	MULTIACTIONLEFT( 12, 92, .33*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "LMS" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
+	MULTIACTIONLEFT( 12, 104, .33*((FILTERS_WIDTH)-6), 10, "Mod:", .2, 8, "ui_browserModFilter", cvarFloatList { "All" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "Nitmod" 5 "SiLEnT" 6 "True Combat" 7 "ETNam" 8 "ETRun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, "Displays only game servers offering this Mod" )
+	EDITFIELDSIMPLE( 12+24, 116, .33*((FILTERS_WIDTH)-6)-28, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, "Includes or excludes servers with desired map name from the server list" )
+
 	itemDef {
 		name		"filtericonMapName"
-		rect		8 116 10 10
+		rect		12 116 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_map"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	
-	TRICHECKBOXACTIONMULTI( 8+12, 116, 10, 10, .2, 8, "ui_browserMapFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting servers with map name", "Includes or excludes servers with desired map name from the server list" )
 
+	TRICHECKBOXACTIONMULTI( 12+12, 116, 10, 10, .2, 8, "ui_browserMapFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting servers with map name", "Includes or excludes servers with desired map name from the server list" )
+
+	// FIXME: selected bitflag checkbox enable all checkboxes
 	//CHECKBOXACTIONBITFLAG( CHECKBOXACTION_X, CHECKBOXACTION_Y, CHECKBOXACTION_W, CHECKBOXACTION_H, CHECKBOXACTION_TEXT, CHECKBOXACTION_TEXT_SCALE, CHECKBOXACTION_TEXT_ALIGN_X, CHECKBOXACTION_TEXT_ALIGN_Y, CHECKBOXACTION_CVAR, BITFLAG, CHECKBOXACTION_ACTION, CHECKBOXACTION_TOOLTIP )
-	CHECKBOXACTIONBITFLAG( 8, 128, 140, 10, "^8Linux 64 bit only", .2, 0, 8, "ui_browserOssFilter", 4, togglecvarbit ui_browserOssFilter 4 ; uiScript RefreshFilter, "Only show Linux 64 bit" )
+	//CHECKBOXACTIONBITFLAG( 32, 128, 32, 10, "^8All", .2, 0, 8, "ui_browserOssFilter", 0, togglecvarbit ui_browserOssFilter 0 ; uiScript RefreshFilter, "Show all servers" )
+	//CHECKBOXACTIONBITFLAG( 104, 128, 66, 10, "^8Linux 64", .2, 20, 8, "ui_browserOssFilter", 4, togglecvarbit ui_browserOssFilter 4 ; uiScript RefreshFilter, "Show only Linux 64 bit compatible servers" )
+	MULTIACTIONLEFT( 12, 128, .33*((FILTERS_WIDTH)-6), 10, "Supported systems:", .2, 8, "ui_browserOssFilter", cvarFloatList { "^8All" 0 "^8Linux 64 bits only" 4 }, uiScript UpdateFilter, "Choose the servers supported operating systems to display" )
 
 	itemDef {
 		name		"filtericonEmptyFull"
@@ -188,8 +191,8 @@ menuDef {
 	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowBots", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Bots", "Includes or excludes servers with bots from the server list" )
 
 	// Buttons
-	BUTTONEXT( 8+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, "REFRESH LIST", .24, 11, uiScript RefreshServers, tooltip "Refresh servers list")
-	BUTTONEXT( 8+.5*((FILTERS_WIDTH)-6)+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, "RESET FILTERS", .24, 11, uiScript ResetFilters; uiScript RefreshFilter, tooltip "Reset all filters to their defaults")
+	BUTTONEXT( 10+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, "REFRESH LIST", .24, 11, uiScript RefreshServers, tooltip "Refresh servers list")
+	BUTTONEXT( 10+.5*((FILTERS_WIDTH)-6)+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, "RESET FILTERS", .24, 11, uiScript ResetFilters; uiScript RefreshFilter, tooltip "Reset all filters to their defaults")
 
 	/*
 	itemDef {

@@ -87,7 +87,7 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
@@ -115,7 +115,7 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
@@ -137,7 +137,7 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
@@ -145,9 +145,9 @@ menuDef {
 	}
 
 
-	LABELWHITE( 6, CREDITS_Y+144, .7*(WINDOW_WIDTH-24), 10, "ETPro Team - ETPub Team - NoQuarter Team - Omni-Bot Team \n Q3MME Team - RTCW COOP Team - Lazlo Menczel - Ryan C. Gordon \n Timothee 'TTimo' Besset - Splash Damage ET community \n Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+144, .7*(WINDOW_WIDTH-12), 10, "ETPro Team - ETPub Team - NoQuarter Team - Omni-Bot Team \n Q3MME Team - RTCW COOP Team - Lazlo Menczel - Ryan C. Gordon \n Timothee 'TTimo' Besset - Splash Damage ET community \n Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
-	LABELWHITE( 6, CREDITS_Y+202, (WINDOW_WIDTH-24), 10, "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations.", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+202, (WINDOW_WIDTH-12), 10, "Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations.", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 
 
@@ -161,14 +161,14 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+252, .7*(WINDOW_WIDTH-24), 10, "See HALL OF FAME below", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+252, .7*(WINDOW_WIDTH-12), 10, "See HALL OF FAME below", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Website //
 	itemDef {
@@ -180,17 +180,17 @@ menuDef {
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
-		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12)-4)
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
 		textaligny	10
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+288, .7*(WINDOW_WIDTH-24), 10, "www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+288, .7*(WINDOW_WIDTH-12), 10, "www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Copyright Notices //
-        LABEL( 6, CREDITS_Y+306, .7*(WINDOW_WIDTH-24), 10, "© 2012-2014 ET Legacy Team - under the terms of GPL version 3.", .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+        LABEL( 6, CREDITS_Y+306, .7*(WINDOW_WIDTH-12), 10, "© 2012-2014 ET Legacy Team - under the terms of GPL version 3.", .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Buttons //
 #ifdef FUI
