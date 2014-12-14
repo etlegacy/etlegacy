@@ -53,7 +53,6 @@ _detectlinuxdistro() {
 		echo "${DISTRIB_DESCRIPTION}"
 		exit
 	fi
-	
 	echo "Unknown Linux"
 }
 
@@ -105,7 +104,7 @@ echo "  CXX = ${CXX}"
 
 # everything looks ok, try to compile!
 
-# cmake varialbes
+# cmake variables
 [ ! "${RELEASE_TYPE}" ]    && RELEASE_TYPE="Release"
 [ ! "${CROSS_COMPILE32}" ] && CROSS_COMPILE32=1
 [ ! "${RENDERER_DYNAMIC}" ] && RENDERER_DYNAMIC=0
@@ -130,6 +129,7 @@ FEATURE_TRACKER=1
 [ ! "${FEATURE_LUA}" ] && FEATURE_LUA=1
 [ ! "${FEATURE_FREETYPE}" ] && FEATURE_FREETYPE=1
 [ ! "${FEATURE_RENDERER2}" ] && FEATURE_RENDERER2=0
+[ ! "${FEATURE_LIVEAUTH}" ] && FEATURE_LIVEAUTH=1
 
 
 mkdir -p ${BUILDDIR}
@@ -142,7 +142,7 @@ if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
 	if [ "${BUNDLED_CURL}" == 1 ]; then
 		einfo "Cleaning lib curl..."
 		cd ${_SRC}/libs/curl/src; make clean
-	fi	
+	fi
 	if [ "${BUNDLED_LUA}" == 1 ]; then
 		einfo "Cleaning lib lua..."
 		cd ${_SRC}/libs/lua/src; make clean
