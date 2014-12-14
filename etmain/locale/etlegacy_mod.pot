@@ -4155,13 +4155,10 @@ msgstr ""
 msgid "^5You've been unmuted\n"
 msgstr ""
 
-msgid "\n"
-"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+msgid "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr ""
 
-msgid "\n"
-"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
-"Snaps\n"
+msgid "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr ""
 
 msgid "^5\n"
@@ -4335,7 +4332,7 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:3200
 #, c-format
-msgid "%i SECS TO NEXT MAP"
+msgid "SECS TO NEXT MAP"
 msgstr ""
 
 #: src/cgame/cg_debriefing.c:3130

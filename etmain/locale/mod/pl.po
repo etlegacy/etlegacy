@@ -4154,19 +4154,11 @@ msgstr "Nie mozesz pisac - jestes uciszony\n"
 msgid "^5You've been unmuted\n"
 msgstr "^5Dostales mozliwosc pisania\n"
 
-msgid ""
-"\n"
-"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
-msgstr ""
-"\n"
-"^3 ID^1 : ^3Gracz                     Nudge  Rate  MaxPkts  Snaps\n"
+msgid "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
+msgstr "^7 ID : Gracz                     Nudge  Rate  Pakiety  Snaps  Specjalne\n"
 
-msgid ""
-"\n"
-"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
-msgstr ""
-"\n"
-"^3Status^1   : ^3ID^1 : ^3Gracz                     Nudge  Rate  MaxPkts  Snaps\n"
+msgid "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
+msgstr "^7Status   : ID : Gracz                    Nudge  Rate  Pakiety  Snaps  Specjalne\n"
 
 msgid ""
 "^5\n"
@@ -4356,8 +4348,8 @@ msgstr "STATUS KAMPANI: %s"
 
 #: src/cgame/cg_debriefing.c:3200
 #, c-format
-msgid "%i SECS TO NEXT MAP"
-msgstr "%i SEK DO NAST MAPY"
+msgid "SECS TO NEXT MAP"
+msgstr "SEK DO NAST MAPY"
 
 #: src/cgame/cg_debriefing.c:3130
 msgid "ALLIES WIN!"
