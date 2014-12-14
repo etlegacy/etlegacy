@@ -728,11 +728,6 @@ static void SV_Demo_Record_f(void)
 				break;  // file doesn't exist
 			}
 		}
-		if (number < 0)
-		{
-			Com_Printf("DEMO: ERROR: Couldn't generate a filename for the demo, try deleting some old ones.\n");
-			return;
-		}
 	}
 
 	sv.demoFile = FS_FOpenFileWrite(sv.demoName);
