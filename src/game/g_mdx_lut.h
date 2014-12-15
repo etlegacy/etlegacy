@@ -1,28 +1,28 @@
-/* 
+/*
 
-	Copyright (C) 2003-2005 Christopher Lais (aka "Zinx Verituse")
-	and is covered by the following license:
+    Copyright (C) 2003-2005 Christopher Lais (aka "Zinx Verituse")
+    and is covered by the following license:
 
-	***
-	This software is provided 'as-is', without any express or implied
-	warranty.  In no event will the authors be held liable for any damages
-	arising from the use of this software.
+    ***
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
 
-	1. The origin of this software must not be misrepresented; you must not
-	claim that you wrote the original software.
+    1. The origin of this software must not be misrepresented; you must not
+    claim that you wrote the original software.
 
-	2. Altered source versions must be plainly marked as such, and must not be
-	misrepresented as being the original software.
+    2. Altered source versions must be plainly marked as such, and must not be
+    misrepresented as being the original software.
 
-	3. Modified source for this software, as used in any binaries you have
-	distributed, must be provided on request, free of charge and/or penalty.
+    3. Modified source for this software, as used in any binaries you have
+    distributed, must be provided on request, free of charge and/or penalty.
 
-	4. This notice may not be removed or altered from any source distribution.
-	***
+    4. This notice may not be removed or altered from any source distribution.
+    ***
 
 */
 
@@ -34,23 +34,26 @@
 #if 0
 {
 	memset(&refent, 0, sizeof(refent));
-	refent.hModel = trap_R_RegisterModel("evil.mdm");
-	refent.frame = 0;
+	refent.hModel   = trap_R_RegisterModel("evil.mdm");
+	refent.frame    = 0;
 	refent.oldframe = refent.frame;
-	for (j = 0; j < 64; j++) {
+	for (j = 0; j < 64; j++)
+	{
 		qhandle_t mdxFile = trap_R_RegisterModel(va("evil%d.mdx", j));
 		refent.torsoFrameModel = refent.oldTorsoFrameModel = refent.frameModel = refent.oldframeModel = mdxFile;
-		for (i = 0; i < 64; i++) {
+		for (i = 0; i < 64; i++)
+		{
 			char name[64];
 			sprintf(name, "%d", i);
-			trap_R_LerpTag( &o[0], &refent, name, 0 );
-			CG_Printf("/*%4d*/ %a,\n", j*64 + i, -o[0].origin[2]);
+			trap_R_LerpTag(&o[0], &refent, name, 0);
+			CG_Printf("/*%4d*/ %a,\n", j * 64 + i, -o[0].origin[2]);
 		}
 	}
 }
 #endif
 
-static const float sintable[4096] = {
+static const float sintable[4096] =
+{
 	/*
 	_MSC_VER section added by Gabriel Magana (Calzonzin) to enable compilation
 	under MS Visual C++ 6 (Win32), which does not support the C99-style floating-

@@ -219,31 +219,32 @@ typedef struct
 
 // forty - realistic hitboxes
 //         based on lerpFrame_t
-typedef struct {
-	qhandle_t	oldFrameModel;
-	qhandle_t	frameModel;
+typedef struct
+{
+	qhandle_t oldFrameModel;
+	qhandle_t frameModel;
 
-	int			oldFrame;
-	int			oldFrameTime;		// time when ->oldFrame was exactly on
-	int			oldFrameSnapshotTime;
+	int oldFrame;
+	int oldFrameTime;               // time when ->oldFrame was exactly on
+	int oldFrameSnapshotTime;
 
-	vec3_t		oldFramePos;
+	vec3_t oldFramePos;
 
-	int			frame;
-	int			frameTime;		// time when ->frame will be exactly on
+	int frame;
+	int frameTime;              // time when ->frame will be exactly on
 
-	float		yawAngle;
-	int			yawing;
-	float		pitchAngle;
-	int			pitching;
+	float yawAngle;
+	int yawing;
+	float pitchAngle;
+	int pitching;
 
-	int			moveSpeed;
+	int moveSpeed;
 
-	int			animationNumber;	// may include ANIM_TOGGLEBIT
-	int			oldAnimationNumber;	// may include ANIM_TOGGLEBIT
-	animation_t	*animation;
-	int			animationTime;		// time when the first frame of the animation will be exact
-	float		animSpeedScale;
+	int animationNumber;            // may include ANIM_TOGGLEBIT
+	int oldAnimationNumber;         // may include ANIM_TOGGLEBIT
+	animation_t *animation;
+	int animationTime;              // time when the first frame of the animation will be exact
+	float animSpeedScale;
 
 } glerpFrame_t;
 
@@ -491,9 +492,9 @@ struct gentity_s
 	int numPlayers;
 
 	// forty - realistic hitboxes
-	glerpFrame_t	legsFrame;
-	glerpFrame_t	torsoFrame;
-	int				timeShiftTime;
+	glerpFrame_t legsFrame;
+	glerpFrame_t torsoFrame;
+	int timeShiftTime;
 
 #ifdef FEATURE_OMNIBOT
 	int numPlanted; // Omni-bot increment dyno count
@@ -1296,28 +1297,28 @@ team_t G_GetTeamFromEntity(gentity_t *ent);
 /* core: This struct was moved here from etpro_mdx.h */
 typedef struct
 {
-	qhandle_t	hModel;				// opaque type outside refresh
+	qhandle_t hModel;               // opaque type outside refresh
 
-	vec3_t		headAxis[3];
+	vec3_t headAxis[3];
 
 	// most recent data
-	vec3_t		axis[3];		// rotation vectors
-	vec3_t		torsoAxis[3];		// rotation vectors for torso section of skeletal animation
+	vec3_t axis[3];             // rotation vectors
+	vec3_t torsoAxis[3];            // rotation vectors for torso section of skeletal animation
 	//	qboolean	nonNormalizedAxes;	// axis are not normalized, i.e. they have scale
-	float		origin[3];
-	int			frame;
-	qhandle_t	frameModel;
-	int			torsoFrame;			// skeletal torso can have frame independant of legs frame
-	qhandle_t	torsoFrameModel;
+	float origin[3];
+	int frame;
+	qhandle_t frameModel;
+	int torsoFrame;                 // skeletal torso can have frame independant of legs frame
+	qhandle_t torsoFrameModel;
 
 	// previous data for frame interpolation
-	float		oldorigin[3];
-	int			oldframe;
-	qhandle_t	oldframeModel;
-	int			oldTorsoFrame;
-	qhandle_t	oldTorsoFrameModel;
-	float		backlerp;			// 0.0 = current, 1.0 = old
-	float		torsoBacklerp;
+	float oldorigin[3];
+	int oldframe;
+	qhandle_t oldframeModel;
+	int oldTorsoFrame;
+	qhandle_t oldTorsoFrameModel;
+	float backlerp;                 // 0.0 = current, 1.0 = old
+	float torsoBacklerp;
 } grefEntity_t;
 
 // g_combat.c
