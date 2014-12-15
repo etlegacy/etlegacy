@@ -155,7 +155,8 @@ void CL_GetAutoUpdate(void)
 	Com_DPrintf("%s resolved to %s\n", cls.servername,
 	            NET_AdrToString(clc.serverAddress));
 
-	cls.state = CA_CONNECTING;
+	cls.state = CA_DISCONNECTED;
+	Cvar_Set("ui_connecting", "1");
 
 	cls.keyCatchers        = 0;
 	clc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
@@ -163,6 +164,8 @@ void CL_GetAutoUpdate(void)
 
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", "ET:L Update Server");
+
+	CL_CheckUpdateStarted();
 #endif /* FEATURE_AUTOUPDATE */
 }
 
@@ -233,6 +236,10 @@ qboolean CL_CheckUpdateDownloads(void)
 		if (CL_UnpackUpdatePackage(UPDATE_PACKAGE, UPDATE_BINARY, UPDATE_CONFIG))
 		{
 			CL_RunUpdateBinary(UPDATE_BINARY, UPDATE_CONFIG);
+		}
+		else
+		{
+			Cvar_Set("ui_connecting", "0");
 		}
 
 		autoupdate.updateStarted = qfalse;
@@ -375,6 +382,13 @@ void CL_UpdateInfoPacket(netadr_t from)
 		if (com_updateavailable->integer == 2)
 		{
 			Cvar_Set("com_updatefiles", Cmd_Argv(3));
+
+			if (autoupdate.forceUpdate)
+			{
+				CL_GetAutoUpdate();
+				autoupdate.forceUpdate = qfalse;
+				return;
+			}
 		}
 
 #ifdef FEATURE_AUTOUPDATE
@@ -397,7 +411,23 @@ void CL_CheckUpdateStarted(void)
 	}
 }
 
+void CL_UpdateVarsClean(void)
+{
+	// TODO: clean autoupdate cvars
+	autoupdate.updateChecked = qfalse;
+	autoupdate.updateStarted = qfalse;
+	autoupdate.forceUpdate = qfalse;
+}
+
 void CL_RunUpdate(void)
 {
-	CL_GetAutoUpdate();
+	if (!autoupdate.updateChecked)
+	{
+		autoupdate.forceUpdate = qtrue;
+		CL_CheckAutoUpdate();
+	}
+	else
+	{
+		CL_GetAutoUpdate();
+	}
 }
