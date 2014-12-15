@@ -59,7 +59,7 @@ menuDef {
       name       "modversion"
       group       GROUP_NAME
       rect        -45 235 128 64
-      text        "^1"LEGACY_MODVERSION
+      text        "^1"ETLEGACY_VERSION
       textfont    UI_FONT_COURBD_21
       textstyle   ITEM_TEXTSTYLE_SHADOWED
       textscale   .2

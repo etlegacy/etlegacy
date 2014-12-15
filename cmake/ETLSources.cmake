@@ -151,7 +151,7 @@ FILE(GLOB RENDERER_COMMON_DYNAMIC
 	"src/qcommon/puff.c"
 	"src/qcommon/md4.c"
 )
-	
+
 FILE(GLOB RENDERER1_FILES
 	"src/renderer/*.c"
 	"src/renderer/*.h"
