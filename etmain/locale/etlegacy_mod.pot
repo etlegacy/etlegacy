@@ -3562,9 +3562,19 @@ msgstr ""
 msgid "No qualifying weapon info available."
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1289
+#: src/cgame/cg_consolecmds.c:1221
+#, c-format
+msgid "You will spawn as a %s %s with a %s."
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1225
 #, c-format
 msgid "You will spawn as a %s %s with a %s and a %s."
+msgstr ""
+
+#: src/cgame/cg_limbopanel.c:1224
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
 msgstr ""
 
 #: src/cgame/cg_limbopanel.c:1228
@@ -4158,7 +4168,13 @@ msgstr ""
 msgid "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr ""
 
+msgid "^7----------------------------------------------------------------------\n"
+msgstr ""
+
 msgid "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
+msgstr ""
+
+msgid "^7-------------------------------------------------------------------------------\n"
 msgstr ""
 
 msgid "^5\n"

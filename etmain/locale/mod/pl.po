@@ -3556,10 +3556,20 @@ msgstr "Gracz"
 msgid "No qualifying weapon info available."
 msgstr "Brak dostepnych informacji o broni."
 
+#: src/cgame/cg_consolecmds.c:1221
+#, c-format
+msgid "You will spawn as a %s %s with a %s."
+msgstr "Zrespawnujesz sie jako %s %s z %s."
+
 #: src/cgame/cg_consolecmds.c:1289
 #, c-format
 msgid "You will spawn as a %s %s with a %s and a %s."
 msgstr "Zrespawnujesz sie jako %s %s z %s i %s."
+
+#: src/cgame/cg_limbopanel.c:1224
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
+msgstr "Zrespawnujesz sie jako %s %s z %s."
 
 #: src/cgame/cg_limbopanel.c:1228
 #, c-format
@@ -4157,8 +4167,14 @@ msgstr "^5Dostales mozliwosc pisania\n"
 msgid "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr "^7 ID : Gracz                     Nudge  Rate  Pakiety  Snaps  Specjalne\n"
 
+msgid "^7----------------------------------------------------------------------\n"
+msgstr "^7----------------------------------------------------------------------\n"
+
 msgid "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr "^7Status   : ID : Gracz                    Nudge  Rate  Pakiety  Snaps  Specjalne\n"
+
+msgid "^7-------------------------------------------------------------------------------\n"
+msgstr "^7-------------------------------------------------------------------------------\n"
 
 msgid ""
 "^5\n"
