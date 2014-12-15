@@ -157,6 +157,7 @@ void CL_GetAutoUpdate(void)
 
 	cls.state = CA_DISCONNECTED;
 	Cvar_Set("ui_connecting", "1");
+	Cvar_Set("ui_dl_running", "1");
 
 	cls.keyCatchers        = 0;
 	clc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
@@ -411,17 +412,20 @@ void CL_CheckUpdateStarted(void)
 	}
 }
 
-void CL_UpdateVarsClean(qboolean full)
+void CL_UpdateVarsClean(int flags)
 {
-	autoupdate.updateChecked = qfalse;
-	autoupdate.updateStarted = qfalse;
-	autoupdate.forceUpdate = qfalse;
-
-	if (full)
+	switch (flags)
 	{
+	case CLEAR_ALL:
 		Cvar_Set("com_updatefiles", "");
 		Cvar_Set("com_updatemessage", "");
 		Cvar_Set("com_updatefiles", "");
+	case CLEAR_FLAGS:
+		autoupdate.updateChecked = qfalse;
+		autoupdate.forceUpdate = qfalse;
+	default:
+		autoupdate.updateStarted = qfalse;
+		break;
 	}
 }
 

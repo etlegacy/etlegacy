@@ -627,7 +627,7 @@ void CL_Disconnect(qboolean showMainMenu)
 		*cls.downloadTempName = *cls.downloadName = 0;
 		Cvar_Set("cl_downloadName", "");
 
-		CL_UpdateVarsClean(qtrue);
+		CL_UpdateVarsClean(CLEAR_STATUS);
 	}
 
 	CL_DemoCleanUp();
@@ -1165,7 +1165,7 @@ void CL_Vid_Restart_f(void)
 	cls.cgameStarted         = qfalse;
 	cls.soundRegistered      = qfalse;
 	
-	CL_UpdateVarsClean(qfalse);
+	CL_UpdateVarsClean(CLEAR_FLAGS);
 
 	// unpause so the cgame definately gets a snapshot and renders a frame
 	Cvar_Set("cl_paused", "0");
@@ -1212,7 +1212,7 @@ void CL_UI_Restart_f(void) // shutdown the UI
 {
 	CL_ShutdownUI();
 
-	CL_UpdateVarsClean(qfalse);
+	CL_UpdateVarsClean(CLEAR_FLAGS);
 
 	// init the UI
 	CL_InitUI();
@@ -3230,7 +3230,7 @@ void CL_Init(void)
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
 	CL_UpdateGUID();
 
-	CL_UpdateVarsClean(qtrue);
+	CL_UpdateVarsClean(CLEAR_ALL);
 
 #ifdef FEATURE_GETTEXT
 	I18N_Init();

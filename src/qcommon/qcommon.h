@@ -1064,6 +1064,13 @@ qboolean CL_ConnectedToServer(void);
 void CL_StartHunkUsers(void);
 // start all the client stuff using the hunk
 
+enum UPDATE_FLAGS
+{
+	CLEAR_STATUS = 0,
+	CLEAR_FLAGS,
+	CLEAR_ALL,
+};
+
 void CL_CheckAutoUpdate(void);
 void CL_GetAutoUpdate(void);
 qboolean CL_CheckUpdateDownloads(void);
@@ -1071,7 +1078,7 @@ qboolean CL_InitUpdateDownloads(void);
 qboolean CL_UpdatePacketEvent(netadr_t from);
 void CL_UpdateInfoPacket(netadr_t from);
 void CL_CheckUpdateStarted(void);
-void CL_UpdateVarsClean(qboolean full);
+void CL_UpdateVarsClean(int flags);
 void CL_RunUpdate(void);
 
 void Key_KeynameCompletion(void (*callback)(const char *s));

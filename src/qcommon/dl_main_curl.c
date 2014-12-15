@@ -271,7 +271,7 @@ dlStatus_t DL_DownloadLoop(void)
 
 	if (!dl_request)
 	{
-		Com_Printf("DL_DownloadLoop: unexpected call with dl_request == NULL\n");
+		Com_DPrintf("DL_DownloadLoop: unexpected call with dl_request == NULL\n");
 		return DL_DONE;
 	}
 
