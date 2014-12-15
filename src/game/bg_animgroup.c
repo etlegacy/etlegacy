@@ -184,18 +184,18 @@ static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 	return qtrue;
 }
 
-#ifdef CGAMEDLL
+#ifdef USE_MDXFILE
 extern qhandle_t trap_R_RegisterModel(const char *name);
-#endif // CGAMEDLL;
+#endif // USE_MDXFILE;
 
 static qboolean BG_RAG_ParseAnimFile(int handle, animModelInfo_t *animModelInfo)
 {
 	pc_token_t token;
-#ifdef CGAMEDLL
+#ifdef USE_MDXFILE
 	qhandle_t mdxFile;
 #else
 	char mdxFileName[MAX_QPATH];
-#endif // CGAMEDLL
+#endif // USE_MDXFILE
 
 	animation_t *animation;
 
@@ -204,14 +204,14 @@ static qboolean BG_RAG_ParseAnimFile(int handle, animModelInfo_t *animModelInfo)
 		return BG_RAG_ParseError(handle, "expected mdx filename");
 	}
 
-#ifdef CGAMEDLL
+#ifdef USE_MDXFILE
 	if (!(mdxFile = trap_R_RegisterModel(token.string)))
 	{
 		return BG_RAG_ParseError(handle, "failed to load %s", token.string);
 	}
 #else
 	Q_strncpyz(mdxFileName, token.string, sizeof(mdxFileName));
-#endif // CGAMEDLL
+#endif // USE_MDXFILE
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
@@ -230,13 +230,13 @@ static qboolean BG_RAG_ParseAnimFile(int handle, animModelInfo_t *animModelInfo)
 			break;
 		}
 
-#ifdef CGAMEDLL
+#ifdef USE_MDXFILE
 		if (!(animation = BG_RAG_FindFreeAnimation(mdxFile, token.string)))
 		{
 #else
 		if (!(animation = BG_RAG_FindFreeAnimation(mdxFileName, token.string)))
 		{
-#endif // CGAMEDLL
+#endif // USE_MDXFILE
 			return BG_RAG_ParseError(handle, "out of animation storage space");
 		}
 
