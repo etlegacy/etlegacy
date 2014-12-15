@@ -939,6 +939,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 
 		VectorAdd(v, head->r.currentOrigin, head->r.currentOrigin);
 		head->r.currentOrigin[2] += height / 2;
+		head->r.currentOrigin[0] -= 5;
 	}
 
 	VectorCopy(head->r.currentOrigin, head->s.origin);

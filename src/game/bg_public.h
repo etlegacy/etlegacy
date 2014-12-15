@@ -54,6 +54,10 @@
 #define LEGACY_MOD_VERSION ETLEGACY_VERSION_SHORT
 #define LEGACY // for omnibot
 
+#if defined(CGAMEDLL) || defined(FEATURE_SERVERMDX)
+#define USE_MDXFILE
+#endif
+
 #define SPRINTTIME 20000.0f
 
 #define DEFAULT_GRAVITY     800
@@ -1296,7 +1300,7 @@ typedef enum hudHeadAnimNumber_s
 
 typedef struct animation_s
 {
-#ifdef CGAMEDLL
+#ifdef USE_MDXFILE
 	qhandle_t mdxFile;
 #else
 	char mdxFileName[MAX_QPATH];
@@ -2008,7 +2012,7 @@ typedef struct bg_character_s
 {
 	char characterFile[MAX_QPATH];
 
-#ifdef CGAMEDLL
+#ifdef USE_MDXFILE
 	qhandle_t mesh;
 	qhandle_t skin;
 

@@ -1520,6 +1520,7 @@ TransposeMatrix
 */
 void TransposeMatrix(vec3_t matrix[3], vec3_t transpose[3])
 {
+#if 0
 	int i, j;
 
 	for (i = 0; i < 3; i++)
@@ -1529,6 +1530,17 @@ void TransposeMatrix(vec3_t matrix[3], vec3_t transpose[3])
 			transpose[i][j] = matrix[j][i];
 		}
 	}
+#else
+	transpose[0][0] = matrix[0][0];
+	transpose[0][1] = matrix[1][0];
+	transpose[0][2] = matrix[2][0];
+	transpose[1][0] = matrix[0][1];
+	transpose[1][1] = matrix[1][1];
+	transpose[1][2] = matrix[2][1];
+	transpose[2][0] = matrix[0][2];
+	transpose[2][1] = matrix[1][2];
+	transpose[2][2] = matrix[2][2];
+#endif
 }
 
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)

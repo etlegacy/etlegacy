@@ -217,6 +217,36 @@ typedef struct
 	int zOrder;
 } mapVoteInfo_t;
 
+// forty - realistic hitboxes
+//         based on lerpFrame_t
+typedef struct {
+	qhandle_t	oldFrameModel;
+	qhandle_t	frameModel;
+
+	int			oldFrame;
+	int			oldFrameTime;		// time when ->oldFrame was exactly on
+	int			oldFrameSnapshotTime;
+
+	vec3_t		oldFramePos;
+
+	int			frame;
+	int			frameTime;		// time when ->frame will be exactly on
+
+	float		yawAngle;
+	int			yawing;
+	float		pitchAngle;
+	int			pitching;
+
+	int			moveSpeed;
+
+	int			animationNumber;	// may include ANIM_TOGGLEBIT
+	int			oldAnimationNumber;	// may include ANIM_TOGGLEBIT
+	animation_t	*animation;
+	int			animationTime;		// time when the first frame of the animation will be exact
+	float		animSpeedScale;
+
+} glerpFrame_t;
+
 struct gentity_s
 {
 	entityState_t s;                // communicated by server to clients
@@ -459,6 +489,11 @@ struct gentity_s
 	int etpro_misc_1;
 
 	int numPlayers;
+
+	// forty - realistic hitboxes
+	glerpFrame_t	legsFrame;
+	glerpFrame_t	torsoFrame;
+	int				timeShiftTime;
 
 #ifdef FEATURE_OMNIBOT
 	int numPlanted; // Omni-bot increment dyno count
@@ -1255,6 +1290,35 @@ void G_ParseCampaigns(void);
 qboolean G_MapIsValidCampaignStartMap(void);
 
 team_t G_GetTeamFromEntity(gentity_t *ent);
+
+/* cut down refEntity_t w/ only stuff needed for player bone calculation */
+/* Used only by game code - not engine */
+/* core: This struct was moved here from etpro_mdx.h */
+typedef struct
+{
+	qhandle_t	hModel;				// opaque type outside refresh
+
+	vec3_t		headAxis[3];
+
+	// most recent data
+	vec3_t		axis[3];		// rotation vectors
+	vec3_t		torsoAxis[3];		// rotation vectors for torso section of skeletal animation
+	//	qboolean	nonNormalizedAxes;	// axis are not normalized, i.e. they have scale
+	float		origin[3];
+	int			frame;
+	qhandle_t	frameModel;
+	int			torsoFrame;			// skeletal torso can have frame independant of legs frame
+	qhandle_t	torsoFrameModel;
+
+	// previous data for frame interpolation
+	float		oldorigin[3];
+	int			oldframe;
+	qhandle_t	oldframeModel;
+	int			oldTorsoFrame;
+	qhandle_t	oldTorsoFrameModel;
+	float		backlerp;			// 0.0 = current, 1.0 = old
+	float		torsoBacklerp;
+} grefEntity_t;
 
 // g_combat.c
 void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t vec);
