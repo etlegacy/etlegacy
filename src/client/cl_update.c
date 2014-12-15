@@ -175,7 +175,7 @@ static void CL_RunUpdateBinary(const char *updateBinary, const char *updateConfi
 	static char fn[MAX_OSPATH];
 
 	Q_strncpyz(fn, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateBinary), MAX_OSPATH);
-	
+
 #ifndef _WIN32
 	Sys_Chmod(fn, S_IXUSR);
 #endif
@@ -218,7 +218,7 @@ static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const 
 	{
 		Com_Printf("Failed to unpack the update package\n");
 	}
-	
+
 	return qfalse;
 }
 
@@ -241,6 +241,7 @@ qboolean CL_CheckUpdateDownloads(void)
 		else
 		{
 			Cvar_Set("ui_connecting", "0");
+			Cvar_Set("ui_dl_running", "0");
 		}
 
 		autoupdate.updateStarted = qfalse;
@@ -267,7 +268,7 @@ qboolean CL_InitUpdateDownloads(void)
 			char *updateFile;
 			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
 
-			clc.bWWWDl = qtrue;
+			clc.bWWWDl             = qtrue;
 			cls.bWWWDlDisconnected = qtrue;
 
 			updateFile = strtok(com_updatefiles->string, ";");
@@ -379,7 +380,7 @@ void CL_UpdateInfoPacket(netadr_t from)
 	if (com_updateavailable->integer)
 	{
 		Cvar_Set("com_updatemessage", Cmd_Argv(2));
-		
+
 		if (com_updateavailable->integer == 2)
 		{
 			Cvar_Set("com_updatefiles", Cmd_Argv(3));
@@ -422,7 +423,7 @@ void CL_UpdateVarsClean(int flags)
 		Cvar_Set("com_updatefiles", "");
 	case CLEAR_FLAGS:
 		autoupdate.updateChecked = qfalse;
-		autoupdate.forceUpdate = qfalse;
+		autoupdate.forceUpdate   = qfalse;
 	default:
 		autoupdate.updateStarted = qfalse;
 		break;

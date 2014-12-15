@@ -63,8 +63,8 @@ static int  qconsole_history_oldest = 0;
 static char qconsole_line[MAX_EDIT_LINE];
 static int  qconsole_linelen = 0;
 
-static HANDLE   qconsole_hout = NULL;
-static HANDLE   qconsole_hin = NULL;
+static HANDLE   qconsole_hout      = NULL;
+static HANDLE   qconsole_hin       = NULL;
 static qboolean qconsole_drawinput = qtrue;
 
 /*

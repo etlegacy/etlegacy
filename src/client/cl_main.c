@@ -1160,11 +1160,11 @@ void CL_Vid_Restart_f(void)
 
 	S_BeginRegistration();  // all sound handles are now invalid
 
-	cls.rendererStarted      = qfalse;
-	cls.uiStarted            = qfalse;
-	cls.cgameStarted         = qfalse;
-	cls.soundRegistered      = qfalse;
-	
+	cls.rendererStarted = qfalse;
+	cls.uiStarted       = qfalse;
+	cls.cgameStarted    = qfalse;
+	cls.soundRegistered = qfalse;
+
 	CL_UpdateVarsClean(CLEAR_FLAGS);
 
 	// unpause so the cgame definately gets a snapshot and renders a frame
