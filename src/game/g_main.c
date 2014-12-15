@@ -323,6 +323,8 @@ vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
                 //  64 - MorphOS
                 // 128 - Android
 
+vmCvar_t g_realHead; // b_realHead functionality from ETPro
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -590,6 +592,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugHitboxes,                     "g_debugHitboxes",                     "0",                          CVAR_CHEAT },
 
 	{ &g_corpses,                           "g_dynBQ",                             "0",                          CVAR_LATCH | CVAR_ARCHIVE },
+	{ &g_realHead,                          "g_realHead",                          "1",                          0 },
 };
 
 // made static to avoid aliasing

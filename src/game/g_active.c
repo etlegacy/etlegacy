@@ -1580,9 +1580,10 @@ void ClientThink_real(gentity_t *ent)
 	// debug hitboxes
 	if (g_debugHitboxes.integer == 2)
 	{
-		gentity_t *bboxEnt, *head;
-		vec3_t    b1, b2;
-		vec3_t    maxs;
+		gentity_t    *bboxEnt, *head;
+		vec3_t       b1, b2;
+		vec3_t       maxs;
+		grefEntity_t refent;
 
 		VectorCopy(ent->r.currentOrigin, b1);
 		VectorCopy(ent->r.currentOrigin, b2);
@@ -1597,7 +1598,7 @@ void ClientThink_real(gentity_t *ent)
 		bboxEnt->s.angles[1] = 255;
 		bboxEnt->s.angles[2] = 0;
 
-		head = G_BuildHead(ent);
+		head = G_BuildHead(ent, &refent, qtrue);
 		VectorCopy(head->r.currentOrigin, b1);
 		VectorCopy(head->r.currentOrigin, b2);
 		VectorAdd(b1, head->r.mins, b1);
@@ -2215,9 +2216,10 @@ void ClientEndFrame(gentity_t *ent)
 	// debug hitboxes
 	if (g_debugHitboxes.integer == 1)
 	{
-		gentity_t *bboxEnt, *head;
-		vec3_t    b1, b2;
-		vec3_t    maxs;
+		gentity_t    *bboxEnt, *head;
+		vec3_t       b1, b2;
+		vec3_t       maxs;
+		grefEntity_t refent;
 
 		VectorCopy(ent->r.currentOrigin, b1);
 		VectorCopy(ent->r.currentOrigin, b2);
@@ -2232,7 +2234,7 @@ void ClientEndFrame(gentity_t *ent)
 		bboxEnt->s.angles[1] = 0;
 		bboxEnt->s.angles[2] = 255;
 
-		head = G_BuildHead(ent);
+		head = G_BuildHead(ent, &refent, qtrue);
 		VectorCopy(head->r.currentOrigin, b1);
 		VectorCopy(head->r.currentOrigin, b2);
 		VectorAdd(b1, head->r.mins, b1);

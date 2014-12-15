@@ -1329,8 +1329,8 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod, qboolean clientsonly);
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath);
 void TossClientItems(gentity_t *self);
-gentity_t *G_BuildHead(gentity_t *ent);
-gentity_t *G_BuildLeg(gentity_t *ent);
+gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
+gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
 
 // damage flags
 #define DAMAGE_RADIUS               0x00000001  // damage was indirect
@@ -1803,6 +1803,8 @@ extern vmCvar_t g_debugHitboxes;
 extern vmCvar_t g_voting; // see VOTEF_* defines
 
 extern vmCvar_t g_corpses;
+
+extern vmCvar_t g_realHead;
 
 typedef struct GeoIPTag
 {

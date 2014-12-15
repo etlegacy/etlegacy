@@ -34,9 +34,77 @@
 
 #include "g_local.h"
 
+
+qboolean G_AntilagSafe(gentity_t *ent)
+{
+	if (!ent)
+	{
+		return qfalse;
+	}
+
+	if (!ent->inuse)
+	{
+		return qfalse;
+	}
+
+	if (!ent->r.linked)
+	{
+		return qfalse;
+	}
+
+	if (!ent->client)
+	{
+		return qfalse;
+	}
+
+	if (ent->client->sess.sessionTeam != TEAM_AXIS
+	    && ent->client->sess.sessionTeam != TEAM_ALLIES)
+	{
+		return qfalse;
+	}
+
+	if ((ent->client->ps.pm_flags & PMF_LIMBO))
+	{
+		return qfalse;
+	}
+
+	// realhead support
+	// restore players who have just died to keep the corpse head box in sync.
+	if (ent->client->backupMarker.time == level.time &&
+	    ent->client->ps.pm_type == PM_DEAD && g_realHead.integer)
+	{
+
+		return qtrue;
+	}
+
+	if (ent->health <= 0)
+	{
+		return qfalse;
+	}
+
+	// don't store clientMarkers for corpses, etc
+	if (!(ent->client->ps.pm_type == PM_NORMAL))
+	{
+		return qfalse;
+	}
+
+	// don't store clientMarkers for the player on the tank
+	if ((ent->client->ps.eFlags & EF_MOUNTEDTANK))
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 void G_StoreClientPosition(gentity_t *ent)
 {
 	int top;
+
+	if (!G_AntilagSafe(ent))
+	{
+		return;
+	}
 
 	if (!(ent->inuse &&
 	      (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES) &&
@@ -71,6 +139,11 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 	{
 		time = level.time;
 	} // no lerping forward....
+
+	if (!G_AntilagSafe(ent))
+	{
+		return;
+	}
 
 	// find a pair of markers which bound the requested time
 	i = j = ent->client->topMarker;
@@ -125,7 +198,7 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 
 static void G_ReAdjustSingleClientPosition(gentity_t *ent)
 {
-	if (!ent || !ent->client)
+	if (!G_AntilagSafe(ent))
 	{
 		return;
 	}
@@ -201,6 +274,9 @@ void G_ResetMarkers(gentity_t *ent)
 	}
 }
 
+// This variable needs to be here in order for G_BuildLeg() to access it..
+static grefEntity_t refent;
+
 void G_AttachBodyParts(gentity_t *ent)
 {
 	int       i;
@@ -219,8 +295,8 @@ void G_AttachBodyParts(gentity_t *ent)
 		    (list->client->ps.pm_type == PM_NORMAL)
 		    )
 		{
-			list->client->tempHead = G_BuildHead(list);
-			list->client->tempLeg  = G_BuildLeg(list);
+			list->client->tempHead = G_BuildHead(list, &refent, qtrue);
+			list->client->tempLeg  = G_BuildLeg(list, &refent, qfalse);
 		}
 		else
 		{

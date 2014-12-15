@@ -29,9 +29,6 @@
 #ifndef etpro_MDX_h
 #define etpro_MDX_h 1
 
-/* This should be somewhere else... it's an etpro cvar, not related to etpro_mdx.* */
-#define REALHEAD_HEAD       1
-
 #define REALHEAD_BONEHITS   128
 
 #define REALHEAD_DEBUG_HEAD 256

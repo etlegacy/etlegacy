@@ -34,6 +34,7 @@
 
 #include "g_local.h"
 #include "../qcommon/q_shared.h"
+#include "g_mdx.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
@@ -861,7 +862,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 }
 
-gentity_t *G_BuildHead(gentity_t *ent)
+#define REALHEAD_HEAD 1
+
+gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t     *head;
 	orientation_t orientation;
@@ -872,7 +875,25 @@ gentity_t *G_BuildHead(gentity_t *ent)
 	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
 	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
 
-	if (trap_GetTag(ent->s.number, 0, "tag_head", &orientation))
+	// For some reason the trap_Trace() (called in IsHeadShot()) does quite often
+	// not detect a hit on the head-hitbox when a player is prone (when it -should- hit)..
+	// However, the non-realhead code seems to work much better for prone players.
+	// What is happening?..
+	if ((g_realHead.integer & REALHEAD_HEAD) && !(ent->client->ps.eFlags & EF_PRONE))
+	{
+		// zinx - realistic hitboxes
+		if (newRefent)
+		{
+			mdx_gentity_to_grefEntity(ent, refent, ent->timeShiftTime ? ent->timeShiftTime : level.time);
+		}
+		mdx_head_position(ent, refent, orientation.origin);
+
+		G_SetOrigin(head, orientation.origin);
+
+		VectorSet(head->r.mins, -6, -6, -6);
+		VectorSet(head->r.maxs, 6, 6, 6);
+	}
+	else if (trap_GetTag(ent->s.number, 0, "tag_head", &orientation))
 	{
 		G_SetOrigin(head, orientation.origin);
 	}
@@ -934,6 +955,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 		else
 		{
 			VectorScale(forward, 5, v);
+			VectorMA(v, 5.0f, right, v);
 		}
 		VectorMA(v, 18, up, v);
 
@@ -957,7 +979,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 	return head;
 }
 
-gentity_t *G_BuildLeg(gentity_t *ent)
+gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *leg;
 	vec3_t    flatforward, org;
@@ -970,28 +992,42 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 	leg = G_Spawn();
 	//leg->classname = "leg"; // no need to set -> ET_TEMPLEG
 
-	AngleVectors(ent->client->ps.viewangles, flatforward, NULL, NULL);
-	flatforward[2] = 0;
-	VectorNormalizeFast(flatforward);
-
-	if (ent->client->ps.eFlags & EF_PRONE)
+	if (g_realHead.integer & REALHEAD_HEAD)
 	{
-		org[0] = ent->r.currentOrigin[0] + flatforward[0] * -32;
-		org[1] = ent->r.currentOrigin[1] + flatforward[1] * -32;
+		// zinx - realistic hitboxes
+		if (newRefent)
+		{
+			mdx_gentity_to_grefEntity(ent, refent, ent->timeShiftTime ? ent->timeShiftTime : level.time);
+		}
+		mdx_legs_position(ent, refent, org);
+
+		org[2] += ent->client->pmext.proneLegsOffset;
+		org[2] -= (playerlegsProneMins[2] + playerlegsProneMaxs[2]) * 0.5;
+
 	}
 	else
 	{
-		org[0] = ent->r.currentOrigin[0] + flatforward[0] * 32;
-		org[1] = ent->r.currentOrigin[1] + flatforward[1] * 32;
+		vec3_t flatforward;
+		AngleVectors(ent->client->ps.viewangles, flatforward, NULL, NULL);
+		flatforward[2] = 0;
+		VectorNormalizeFast(flatforward);
+		if (ent->client->ps.eFlags & EF_PRONE)
+		{
+			org[0] = ent->r.currentOrigin[0] + flatforward[0] * -32;
+			org[1] = ent->r.currentOrigin[1] + flatforward[1] * -32;
+		}
+		else
+		{
+			org[0] = ent->r.currentOrigin[0] + flatforward[0] * 32;
+			org[1] = ent->r.currentOrigin[1] + flatforward[1] * 32;
+		}
+		org[2] = ent->r.currentOrigin[2] + ent->client->pmext.proneLegsOffset;
 	}
-	org[2] = ent->r.currentOrigin[2] + ent->client->pmext.proneLegsOffset;
 
 	G_SetOrigin(leg, org);
 
-	//VectorCopy(leg->r.currentOrigin, leg->s.origin);
-	//VectorCopy(ent->r.currentAngles, leg->s.angles);
-	//VectorCopy(leg->s.angles, leg->s.apos.trBase);
-	//VectorCopy(leg->s.angles, leg->s.apos.trDelta);
+	VectorCopy(leg->r.currentOrigin, leg->s.origin);
+
 	VectorCopy(playerlegsProneMins, leg->r.mins);
 	VectorCopy(playerlegsProneMaxs, leg->r.maxs);
 	leg->clipmask   = CONTENTS_SOLID;
@@ -1004,7 +1040,7 @@ gentity_t *G_BuildLeg(gentity_t *ent)
 	return leg;
 }
 
-qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
+qboolean IsHeadShot(gentity_t *attacker, gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *head;
 	trace_t   tr;
@@ -1027,7 +1063,7 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	head = G_BuildHead(targ);
+	head = G_BuildHead(targ, refent, newRefent);
 
 	// trace another shot see if we hit the head
 	VectorCopy(point, start);
@@ -1070,7 +1106,7 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 	return qfalse;
 }
 
-qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
+qboolean IsLegShot(gentity_t *attacker, gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *leg;
 
@@ -1094,7 +1130,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 		return qfalse;
 	}
 
-	leg = G_BuildLeg(targ); // legs are built only if ent->client->ps.eFlags & EF_PRONE is set?!
+	leg = G_BuildLeg(targ, refent, newRefent);   // legs are built only if ent->client->ps.eFlags & EF_PRONE is set?!
 
 	if (leg)
 	{
@@ -1197,6 +1233,7 @@ qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, int mod)
 	return qtrue;
 }
 
+
 /*
 ============
 G_Damage
@@ -1220,6 +1257,10 @@ dflags      these flags are used to control how T_Damage works
     DAMAGE_NO_PROTECTION    kills godmode, armor, everything
 ============
 */
+
+// This variable needs to be here in order for isHeadShot() to access it..
+static grefEntity_t refent;
+
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod)
 {
 	gclient_t   *client;
@@ -1597,7 +1638,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 	}
 
-	if (IsHeadShot(targ, dir, point, mod))
+	if (IsHeadShot(attacker, targ, dir, point, mod, &refent, qtrue))
 	{
 		// FIXME: also when damage is 0 ?
 		if (take * 2 < 50)     // head shots, all weapons, do minimum 50 points damage
@@ -1671,7 +1712,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		G_LogRegionHit(attacker, HR_HEAD);
 		hr = HR_HEAD;
 	}
-	else if (IsLegShot(targ, dir, point, mod))
+	else if (IsLegShot(attacker, targ, dir, point, mod, &refent, qfalse))
 	{
 		G_LogRegionHit(attacker, HR_LEGS);
 		hr = HR_LEGS;
