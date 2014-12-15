@@ -1040,7 +1040,7 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 	return leg;
 }
 
-qboolean IsHeadShot(gentity_t *attacker, gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
+qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *head;
 	trace_t   tr;
@@ -1106,7 +1106,7 @@ qboolean IsHeadShot(gentity_t *attacker, gentity_t *targ, vec3_t dir, vec3_t poi
 	return qfalse;
 }
 
-qboolean IsLegShot(gentity_t *attacker, gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
+qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *leg;
 
@@ -1638,7 +1638,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 	}
 
-	if (IsHeadShot(attacker, targ, dir, point, mod, &refent, qtrue))
+	if (IsHeadShot(targ, dir, point, mod, &refent, qtrue))
 	{
 		// FIXME: also when damage is 0 ?
 		if (take * 2 < 50)     // head shots, all weapons, do minimum 50 points damage
@@ -1712,7 +1712,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		G_LogRegionHit(attacker, HR_HEAD);
 		hr = HR_HEAD;
 	}
-	else if (IsLegShot(attacker, targ, dir, point, mod, &refent, qfalse))
+	else if (IsLegShot(targ, dir, point, mod, &refent, qfalse))
 	{
 		G_LogRegionHit(attacker, HR_LEGS);
 		hr = HR_LEGS;

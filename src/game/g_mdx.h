@@ -26,8 +26,8 @@
 
 */
 
-#ifndef etpro_MDX_h
-#define etpro_MDX_h 1
+#ifndef INCLUDE_G_MDX_H
+#define INCLUDE_G_MDX_H
 
 #define REALHEAD_BONEHITS   128
 
@@ -106,4 +106,4 @@ extern qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *fi
 extern qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent, int *hit_type, vec_t *fraction, animScriptImpactPoint_t *impactpoint);
 #endif
 
-#endif
+#endif // INCLUDE_G_MDX_H

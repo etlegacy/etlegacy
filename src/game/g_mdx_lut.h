@@ -26,8 +26,8 @@
 
 */
 
-#ifndef ETPRO_MDX_LUT_h
-#define ETPRO_MDX_LUT_h 1
+#ifndef INCLUDE_G_MDX_LUT_H
+#define INCLUDE_G_MDX_LUT_H
 
 /* These were dumped */
 
