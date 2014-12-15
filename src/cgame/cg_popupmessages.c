@@ -558,7 +558,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	}
 	else
 	{
-		size = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
+		size  = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
 		sizew = 0;
 	}
 
@@ -628,7 +628,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		}
 		else
 		{
-			size = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
+			size  = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
 			sizew = 0;
 		}
 
