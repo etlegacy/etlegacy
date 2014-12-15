@@ -411,12 +411,18 @@ void CL_CheckUpdateStarted(void)
 	}
 }
 
-void CL_UpdateVarsClean(void)
+void CL_UpdateVarsClean(qboolean full)
 {
-	// TODO: clean autoupdate cvars
 	autoupdate.updateChecked = qfalse;
 	autoupdate.updateStarted = qfalse;
 	autoupdate.forceUpdate = qfalse;
+
+	if (full)
+	{
+		Cvar_Set("com_updatefiles", "");
+		Cvar_Set("com_updatemessage", "");
+		Cvar_Set("com_updatefiles", "");
+	}
 }
 
 void CL_RunUpdate(void)
