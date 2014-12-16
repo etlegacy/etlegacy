@@ -1218,16 +1218,17 @@ const char *Item_Multi_Setting(itemDef_t *item)
 				}
 			}
 		}
-	}
 
-	if (multiPtr->undefinedStr)
-	{
-		return multiPtr->undefinedStr;
+		if (multiPtr->undefinedStr)
+		{
+			return multiPtr->undefinedStr;
+		}
+		else
+		{
+			return((multiPtr->count == 0) ? "None Defined" : "Custom");
+		}
 	}
-	else
-	{
-		return((multiPtr->count == 0) ? "None Defined" : "Custom");
-	}
+	return "";
 }
 
 qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
