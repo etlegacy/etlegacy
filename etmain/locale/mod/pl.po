@@ -4668,11 +4668,6 @@ msgstr "OS POMYSLNIE POKONALI CZAS!"
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
 msgstr "OS NIE MOGLI POKONAC CZASU!"
 
-#: src/cgame/cg_limbopanel.c:1224
-#, c-format
-msgid "You will spawn as an %s %s with a %s."
-msgstr "Zrespawnujesz sie jako %s %s z %s."
-
 msgid "^3>>> Unknown vote command: ^7 \n"
 msgstr "^3>>> Nieznana komenda glosowania: ^7 \n"
 
