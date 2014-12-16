@@ -853,7 +853,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 #if 0
 //#ifdef FEATURE_SERVERMDX
-		self->client->deathAnim = qtrue;	// add animation time
+		self->client->deathAnim = qtrue;    // add animation time
 #endif
 		limbo(self, qtrue);
 	}

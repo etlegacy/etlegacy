@@ -48,65 +48,81 @@ G_CalcMoveSpeeds; adapted from BG_CalcMoveSpeeds
 */
 static void G_CalcMoveSpeeds(bg_character_t *character)
 {
-	char			*tags[2] = { "tag_footleft", "tag_footright" };
-	vec3_t			oldPos[2] = { { 0, 0, 0 }, { 0, 0, 0 } };
-	grefEntity_t		refent;
-	animation_t		*anim;
-	int				i, j, k;
-	float			totalSpeed;
-	int				numSpeed;
-	int				lastLow, low;
-	orientation_t	o[2];
+	char          *tags[2]  = { "tag_footleft", "tag_footright" };
+	vec3_t        oldPos[2] = { { 0, 0, 0 }, { 0, 0, 0 } };
+	grefEntity_t  refent;
+	animation_t   *anim;
+	int           i, j, k;
+	float         totalSpeed;
+	int           numSpeed;
+	int           lastLow, low;
+	orientation_t o[2];
 
 	memset(&refent, 0, sizeof(refent));
 
 	refent.hModel = character->mesh;
 
-	for (i = 0; i < character->animModelInfo->numAnimations; i++) {
+	for (i = 0; i < character->animModelInfo->numAnimations; i++)
+	{
 		anim = character->animModelInfo->animations[i];
 
-		if (anim->moveSpeed >= 0) {
+		if (anim->moveSpeed >= 0)
+		{
 			continue;
 		}
 
 		totalSpeed = 0;
-		lastLow = -1;
-		numSpeed = 0;
+		lastLow    = -1;
+		numSpeed   = 0;
 
 		// for each frame
-		for (j = 0; j < anim->numFrames; j++) {
+		for (j = 0; j < anim->numFrames; j++)
+		{
 
-			refent.frame = anim->firstFrame + j;
-			refent.oldframe = refent.frame;
+			refent.frame           = anim->firstFrame + j;
+			refent.oldframe        = refent.frame;
 			refent.torsoFrameModel = refent.oldTorsoFrameModel = refent.frameModel = refent.oldframeModel = anim->mdxFile;
 
 			// for each foot
-			for (k = 0; k < 2; k++) {
-				if (trap_R_LerpTag(&o[k], &refent, tags[k], 0) < 0) {
+			for (k = 0; k < 2; k++)
+			{
+				if (trap_R_LerpTag(&o[k], &refent, tags[k], 0) < 0)
+				{
 					G_Error("G_CalcMoveSpeeds: unable to find tag %s, cannot calculate movespeed", tags[k]);
 				}
 			}
 
 			// find the contact foot
-			if (anim->flags & ANIMFL_LADDERANIM) {
+			if (anim->flags & ANIMFL_LADDERANIM)
+			{
 				if (o[0].origin[0] > o[1].origin[0])
+				{
 					low = 0;
+				}
 				else
+				{
 					low = 1;
+				}
 				totalSpeed += fabs(oldPos[low][2] - o[low].origin[2]);
 			}
-			else {
+			else
+			{
 				if (o[0].origin[2] < o[1].origin[2])
+				{
 					low = 0;
+				}
 				else
+				{
 					low = 1;
+				}
 				totalSpeed += fabs(oldPos[low][0] - o[low].origin[0]);
 			}
 
 			numSpeed++;
 
 			// save the positions
-			for (k = 0; k < 2; k++) {
+			for (k = 0; k < 2; k++)
+			{
 				VectorCopy(o[k].origin, oldPos[k]);
 			}
 			lastLow = low;
@@ -242,6 +258,23 @@ qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *characte
 			G_Printf(S_COLOR_YELLOW "WARNING: failed to load animation files referenced from '%s'\n", characterFile);
 			return qfalse;
 		}
+
+#ifdef BONE_HITTESTS
+		{
+			char hitsfile[MAX_QPATH], *sep;
+			// zinx - mdx hits
+			Q_strncpyz(hitsfile, characterDef.animationGroup, sizeof(hitsfile) - 4);
+			if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
+			{
+				strcpy(sep, ".hit");
+			}
+			else
+			{
+				strcat(sep, ".hit");
+			}
+			mdx_RegisterHits(character->animModelInfo, hitsfile);
+		}
+#endif
 	}
 
 	return qtrue;

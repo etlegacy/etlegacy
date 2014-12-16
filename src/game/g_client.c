@@ -477,40 +477,40 @@ void CopyToBodyQue(gentity_t *ent)
 
 //#ifdef FEATURE_SERVERMDX
 #if 0
-	if ( ent->client->deathAnim )
+	if (ent->client->deathAnim)
 	{
-	    vec3_t			origin, offset;
-	    grefEntity_t	refent;
+		vec3_t       origin, offset;
+		grefEntity_t refent;
 
-	    mdx_PlayerAnimation( body );
-	    mdx_gentity_to_grefEntity( body, &refent, level.time );
-	    mdx_tag_position( body, &refent, origin, "tag_ubelt", 0, 0 );
+		mdx_PlayerAnimation(body);
+		mdx_gentity_to_grefEntity(body, &refent, level.time);
+		mdx_tag_position(body, &refent, origin, "tag_ubelt", 0, 0);
 
-	    // convert it to vector around null pos
-	    offset[0] = origin[0] - body->r.currentOrigin[0];
-	    offset[1] = origin[1] - body->r.currentOrigin[1];
-	    offset[2] = origin[2] = body->r.currentOrigin[2];
+		// convert it to vector around null pos
+		offset[0] = origin[0] - body->r.currentOrigin[0];
+		offset[1] = origin[1] - body->r.currentOrigin[1];
+		offset[2] = origin[2] = body->r.currentOrigin[2];
 
-	    G_StepSlideCorpse( body, origin );
-	    // this is the max vector we can reach
-	    VectorCopy ( body->s.pos.trBase, origin );
+		G_StepSlideCorpse(body, origin);
+		// this is the max vector we can reach
+		VectorCopy(body->s.pos.trBase, origin);
 
-	    // change bounding box to be off the origin of the corpse
-	    // that will make correct box agains model
-	    body->r.maxs[0] = offset[0] + 18;
-	    body->r.maxs[1] = offset[1] + 18;
-	    body->r.mins[0] = offset[0] - 18;
-	    body->r.mins[1] = offset[1] - 18;
+		// change bounding box to be off the origin of the corpse
+		// that will make correct box agains model
+		body->r.maxs[0] = offset[0] + 18;
+		body->r.maxs[1] = offset[1] + 18;
+		body->r.mins[0] = offset[0] - 18;
+		body->r.mins[1] = offset[1] - 18;
 
-	    body->r.currentOrigin[0] = origin[0] - offset[0];
-	    body->r.currentOrigin[1] = origin[1] - offset[1];
-	    body->r.currentOrigin[2] = origin[2];
+		body->r.currentOrigin[0] = origin[0] - offset[0];
+		body->r.currentOrigin[1] = origin[1] - offset[1];
+		body->r.currentOrigin[2] = origin[2];
 
-	    // ok set it und Fertig!
-	    VectorCopy ( body->r.currentOrigin, body->s.pos.trBase );
+		// ok set it und Fertig!
+		VectorCopy(body->r.currentOrigin, body->s.pos.trBase);
 	}
 #endif
-	
+
 
 	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
 	// allow bullets to pass through bbox
