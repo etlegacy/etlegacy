@@ -10,6 +10,7 @@
 /Makefile
 /*.make
 CMakeLists.txt.user
+etmain/ui/git_version.h
 
 #
 # OS specific

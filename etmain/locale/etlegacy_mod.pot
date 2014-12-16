@@ -1,4 +1,4 @@
-# SOME DESCRIPTIVE TITLE.
+ï»¿# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -1692,11 +1692,11 @@ msgstr ""
 msgid "ET Legacy Website"
 msgstr ""
 
-msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+msgid "Â© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 msgid ""
-"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"Â© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries. "
@@ -4647,11 +4647,6 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr ""
-
-#: src/cgame/cg_limbopanel.c:1224
-#, c-format
-msgid "You will spawn as an %s %s with a %s."
 msgstr ""
 
 msgid "^3>>> Unknown vote command: ^7 \n"
