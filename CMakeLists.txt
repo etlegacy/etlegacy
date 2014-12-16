@@ -63,7 +63,7 @@ option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"			
 option(FEATURE_CROUCH		"Set to ON if you want Toggle Crouch"					OFF)
 option(FEATURE_GETTEXT		"Enable localization using tinygettext"					ON)
 option(FEATURE_JANSSON		"Enable JSON support (client)"						OFF)
-option(FEATURE_SERVERMDX		"Enable MDX support on server side"						OFF)
+option(FEATURE_SERVERMDX		"Enable MDX support on server side"						ON)
 option(FEATURE_LIVEAUTH		"Enable ET:Live authentification support"				ON)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
