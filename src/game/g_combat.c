@@ -875,6 +875,7 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
 	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
 
+#ifdef FEATURE_SERVERMDX
 	// For some reason the trap_Trace() (called in IsHeadShot()) does quite often
 	// not detect a hit on the head-hitbox when a player is prone (when it -should- hit)..
 	// However, the non-realhead code seems to work much better for prone players.
@@ -894,6 +895,9 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 		VectorSet(head->r.maxs, 6, 6, 6);
 	}
 	else if (trap_GetTag(ent->s.number, 0, "tag_head", &orientation))
+#else
+	if (trap_GetTag(ent->s.number, 0, "tag_head", &orientation))
+#endif
 	{
 		G_SetOrigin(head, orientation.origin);
 	}
@@ -982,7 +986,7 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *leg;
-	vec3_t    flatforward, org;
+	vec3_t    org;
 
 	if (!(ent->client->ps.eFlags & (EF_PRONE | EF_DEAD)))
 	{
@@ -992,6 +996,7 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 	leg = G_Spawn();
 	//leg->classname = "leg"; // no need to set -> ET_TEMPLEG
 
+#ifdef FEATURE_SERVERMDX
 	if (g_realHead.integer & REALHEAD_HEAD)
 	{
 		// zinx - realistic hitboxes
@@ -1006,6 +1011,7 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 
 	}
 	else
+#endif
 	{
 		vec3_t flatforward;
 		AngleVectors(ent->client->ps.viewangles, flatforward, NULL, NULL);

@@ -140,11 +140,13 @@ qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *characte
 		return qfalse;  // the parser will provide the error message
 	}
 
+#ifdef FEATURE_SERVERMDX
 	// Register mesh
 	if (!(character->mesh = trap_R_RegisterModel(characterDef.mesh)))
 	{
 		G_Printf(S_COLOR_YELLOW "WARNING: failed to register mesh '%s' referenced from '%s'\n", characterDef.mesh, characterFile);
 	}
+#endif
 
 	// Parse Animation Files
 	if (!G_CheckForExistingAnimModelInfo(characterDef.animationGroup, characterDef.animationScript, &character->animModelInfo))
