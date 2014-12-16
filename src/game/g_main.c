@@ -2520,6 +2520,11 @@ void G_ShutdownGame(int restart)
 
 	GeoIP_close();
 
+#ifdef FEATURE_SERVERMDX
+	// zinx - realistic hitboxes
+	mdx_cleanup();
+#endif
+
 	// write all the client session data so we can get it back
 	G_WriteSessionData(restart);
 }

@@ -38,6 +38,10 @@
 #include "g_etbot_interface.h"
 #endif
 
+#ifdef FEATURE_SERVERMDX
+#include "g_mdx.h"
+#endif
+
 /**
  * @param[in,out] player Player Entity
  *
@@ -2212,6 +2216,10 @@ void ClientEndFrame(gentity_t *ent)
 		ent->client->warping = qtrue;
 	}
 	ent->client->warped = qfalse;
+
+#ifdef FEATURE_SERVERMDX
+	mdx_PlayerAnimation(ent);
+#endif
 
 	// debug hitboxes
 	if (g_debugHitboxes.integer == 1)

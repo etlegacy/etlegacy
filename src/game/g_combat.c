@@ -851,6 +851,10 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 	else if ((meansOfDeath == MOD_SUICIDE && g_gamestate.integer == GS_PLAYING))
 	{
+#if 0
+//#ifdef FEATURE_SERVERMDX
+		self->client->deathAnim = qtrue;	// add animation time
+#endif
 		limbo(self, qtrue);
 	}
 	else if (g_gametype.integer == GT_WOLF_LMS)
@@ -965,7 +969,6 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 
 		VectorAdd(v, head->r.currentOrigin, head->r.currentOrigin);
 		head->r.currentOrigin[2] += height / 2;
-		head->r.currentOrigin[0] -= 5;
 	}
 
 	VectorCopy(head->r.currentOrigin, head->s.origin);

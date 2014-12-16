@@ -474,7 +474,9 @@ void CopyToBodyQue(gentity_t *ent)
 	}
 
 	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
-	/* WIP
+
+//#ifdef FEATURE_SERVERMDX
+#if 0
 	if ( ent->client->deathAnim )
 	{
 	    vec3_t			origin, offset;
@@ -507,7 +509,8 @@ void CopyToBodyQue(gentity_t *ent)
 	    // ok set it und Fertig!
 	    VectorCopy ( body->r.currentOrigin, body->s.pos.trBase );
 	}
-	*/
+#endif
+	
 
 	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
 	// allow bullets to pass through bbox
