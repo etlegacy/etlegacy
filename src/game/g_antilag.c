@@ -34,8 +34,37 @@
 
 #include "g_local.h"
 
+/*
+=============
+TimeShiftLerp (from g_unlagged.c)
 
-qboolean G_AntilagSafe(gentity_t *ent)
+Used below to interpolate between two previous vectors
+Returns a vector "frac" times the distance between "start" and "end"
+=============
+*/
+static void TimeShiftLerp(vec3_t start, vec3_t end, float frac, vec3_t result)
+{
+// From CG_InterpolateEntityPosition in cg_ents.c:
+/*
+    cent->lerpOrigin[0] = current[0] + f * ( next[0] - current[0] );
+    cent->lerpOrigin[1] = current[1] + f * ( next[1] - current[1] );
+    cent->lerpOrigin[2] = current[2] + f * ( next[2] - current[2] );
+
+  Angles would be done in a different function, but here they are only the s.angles
+  lerpAngles is copied over from ent->s.angles
+    cent->lerpAngles[0] = LerpAngle( current[0], next[0], f );
+    cent->lerpAngles[1] = LerpAngle( current[1], next[1], f );
+    cent->lerpAngles[2] = LerpAngle( current[2], next[2], f );
+
+*/
+// Making these exactly the same should avoid floating-point error
+
+	result[0] = start[0] + frac * (end[0] - start[0]);
+	result[1] = start[1] + frac * (end[1] - start[1]);
+	result[2] = start[2] + frac * (end[2] - start[2]);
+}
+
+static qboolean G_AntilagSafe(gentity_t *ent)
 {
 	if (!ent)
 	{
@@ -57,8 +86,7 @@ qboolean G_AntilagSafe(gentity_t *ent)
 		return qfalse;
 	}
 
-	if (ent->client->sess.sessionTeam != TEAM_AXIS
-	    && ent->client->sess.sessionTeam != TEAM_ALLIES)
+	if (ent->client->sess.sessionTeam != TEAM_AXIS && ent->client->sess.sessionTeam != TEAM_ALLIES)
 	{
 		return qfalse;
 	}
@@ -70,8 +98,7 @@ qboolean G_AntilagSafe(gentity_t *ent)
 
 	// realhead support
 	// restore players who have just died to keep the corpse head box in sync.
-	if (ent->client->backupMarker.time == level.time &&
-	    ent->client->ps.pm_type == PM_DEAD && g_realHead.integer)
+	if (ent->client->backupMarker.time == level.time && ent->client->ps.pm_type == PM_DEAD && g_realHead.integer)
 	{
 
 		return qtrue;
@@ -118,6 +145,38 @@ void G_StoreClientPosition(gentity_t *ent)
 	VectorCopy(ent->r.maxs, ent->client->clientMarkers[top].maxs);
 	VectorCopy(ent->s.pos.trBase, ent->client->clientMarkers[top].origin);
 	ent->client->clientMarkers[top].time = level.time;
+
+	// store all angles & frame info
+
+	VectorCopy(ent->s.apos.trBase, ent->client->clientMarkers[top].viewangles);
+
+	ent->client->clientMarkers[top].eFlags     = ent->s.eFlags;
+	ent->client->clientMarkers[top].pm_flags   = ent->client->ps.pm_flags;
+	ent->client->clientMarkers[top].viewheight = ent->client->ps.viewheight;
+
+	// Torso Markers
+	ent->client->clientMarkers[top].torsoOldFrameModel = ent->torsoFrame.oldFrameModel;
+	ent->client->clientMarkers[top].torsoFrameModel    = ent->torsoFrame.frameModel;
+	ent->client->clientMarkers[top].torsoOldFrame      = ent->torsoFrame.oldFrame;
+	ent->client->clientMarkers[top].torsoFrame         = ent->torsoFrame.frame;
+	ent->client->clientMarkers[top].torsoOldFrameTime  = ent->torsoFrame.oldFrameTime;
+	ent->client->clientMarkers[top].torsoFrameTime     = ent->torsoFrame.frameTime;
+	ent->client->clientMarkers[top].torsoYawAngle      = ent->torsoFrame.yawAngle;
+	ent->client->clientMarkers[top].torsoPitchAngle    = ent->torsoFrame.pitchAngle;
+	ent->client->clientMarkers[top].torsoYawing        = ent->torsoFrame.yawing;
+	ent->client->clientMarkers[top].torsoPitching      = ent->torsoFrame.pitching;
+
+	// Legs Markers
+	ent->client->clientMarkers[top].legsOldFrameModel = ent->legsFrame.oldFrameModel;
+	ent->client->clientMarkers[top].legsFrameModel    = ent->legsFrame.frameModel;
+	ent->client->clientMarkers[top].legsOldFrame      = ent->legsFrame.oldFrame;
+	ent->client->clientMarkers[top].legsFrame         = ent->legsFrame.frame;
+	ent->client->clientMarkers[top].legsOldFrameTime  = ent->legsFrame.oldFrameTime;
+	ent->client->clientMarkers[top].legsFrameTime     = ent->legsFrame.frameTime;
+	ent->client->clientMarkers[top].legsYawAngle      = ent->legsFrame.yawAngle;
+	ent->client->clientMarkers[top].legsPitchAngle    = ent->legsFrame.pitchAngle;
+	ent->client->clientMarkers[top].legsYawing        = ent->legsFrame.yawing;
+	ent->client->clientMarkers[top].legsPitching      = ent->legsFrame.pitching;
 }
 
 static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
@@ -163,7 +222,37 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		VectorCopy(ent->r.currentOrigin, ent->client->backupMarker.origin);
 		VectorCopy(ent->r.mins, ent->client->backupMarker.mins);
 		VectorCopy(ent->r.maxs, ent->client->backupMarker.maxs);
+		// Head, Legs
+		VectorCopy(ent->client->ps.viewangles, ent->client->backupMarker.viewangles);
+		ent->client->backupMarker.eFlags     = ent->client->ps.eFlags;
+		ent->client->backupMarker.pm_flags   = ent->client->ps.pm_flags;
+		ent->client->backupMarker.viewheight = ent->client->ps.viewheight;
+
 		ent->client->backupMarker.time = level.time;
+
+		// Torso Markers
+		ent->client->backupMarker.torsoOldFrameModel = ent->torsoFrame.oldFrameModel;
+		ent->client->backupMarker.torsoFrameModel    = ent->torsoFrame.frameModel;
+		ent->client->backupMarker.torsoOldFrame      = ent->torsoFrame.oldFrame;
+		ent->client->backupMarker.torsoFrame         = ent->torsoFrame.frame;
+		ent->client->backupMarker.torsoOldFrameTime  = ent->torsoFrame.oldFrameTime;
+		ent->client->backupMarker.torsoFrameTime     = ent->torsoFrame.frameTime;
+		ent->client->backupMarker.torsoYawAngle      = ent->torsoFrame.yawAngle;
+		ent->client->backupMarker.torsoPitchAngle    = ent->torsoFrame.pitchAngle;
+		ent->client->backupMarker.torsoYawing        = ent->torsoFrame.yawing;
+		ent->client->backupMarker.torsoPitching      = ent->torsoFrame.pitching;
+
+		// Legs Markers
+		ent->client->backupMarker.legsOldFrameModel = ent->legsFrame.oldFrameModel;
+		ent->client->backupMarker.legsFrameModel    = ent->legsFrame.frameModel;
+		ent->client->backupMarker.legsOldFrame      = ent->legsFrame.oldFrame;
+		ent->client->backupMarker.legsFrame         = ent->legsFrame.frame;
+		ent->client->backupMarker.legsOldFrameTime  = ent->legsFrame.oldFrameTime;
+		ent->client->backupMarker.legsFrameTime     = ent->legsFrame.frameTime;
+		ent->client->backupMarker.legsYawAngle      = ent->legsFrame.yawAngle;
+		ent->client->backupMarker.legsPitchAngle    = ent->legsFrame.pitchAngle;
+		ent->client->backupMarker.legsYawing        = ent->legsFrame.yawing;
+		ent->client->backupMarker.legsPitching      = ent->legsFrame.pitching;
 	}
 
 	if (i != ent->client->topMarker)
@@ -171,15 +260,172 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		float frac = (float)(time - ent->client->clientMarkers[i].time) /
 		             (float)(ent->client->clientMarkers[j].time - ent->client->clientMarkers[i].time);
 
-		LerpPosition(ent->client->clientMarkers[i].origin, ent->client->clientMarkers[j].origin, frac, ent->r.currentOrigin);
-		LerpPosition(ent->client->clientMarkers[i].mins, ent->client->clientMarkers[j].mins, frac, ent->r.mins);
-		LerpPosition(ent->client->clientMarkers[i].maxs, ent->client->clientMarkers[j].maxs, frac, ent->r.maxs);
+		//LerpPosition(ent->client->clientMarkers[i].origin, ent->client->clientMarkers[j].origin, frac, ent->r.currentOrigin);
+		//LerpPosition(ent->client->clientMarkers[i].mins, ent->client->clientMarkers[j].mins, frac, ent->r.mins);
+		//LerpPosition(ent->client->clientMarkers[i].maxs, ent->client->clientMarkers[j].maxs, frac, ent->r.maxs);
+
+		// Using TimeShiftLerp since it follows the client exactly meaning less roundoff error
+		TimeShiftLerp(
+		    ent->client->clientMarkers[i].origin,
+		    ent->client->clientMarkers[j].origin,
+		    frac,
+		    ent->r.currentOrigin);
+		TimeShiftLerp(
+		    ent->client->clientMarkers[i].mins,
+		    ent->client->clientMarkers[j].mins,
+		    frac,
+		    ent->r.mins);
+		TimeShiftLerp(
+		    ent->client->clientMarkers[i].maxs,
+		    ent->client->clientMarkers[j].maxs,
+		    frac,
+		    ent->r.maxs);
+
+		// These are for Head / Legs
+		ent->client->ps.viewangles[0] = LerpAngle(
+		    ent->client->clientMarkers[i].viewangles[0],
+		    ent->client->clientMarkers[j].viewangles[0],
+		    frac);
+		ent->client->ps.viewangles[1] = LerpAngle(
+		    ent->client->clientMarkers[i].viewangles[1],
+		    ent->client->clientMarkers[j].viewangles[1],
+		    frac);
+		ent->client->ps.viewangles[2] = LerpAngle(
+		    ent->client->clientMarkers[i].viewangles[2],
+		    ent->client->clientMarkers[j].viewangles[2],
+		    frac);
+		// Set the ints to the closest ones in time since you can't lerp them.
+		if ((ent->client->clientMarkers[j].time - time) < (time - ent->client->clientMarkers[i].time))
+		{
+			ent->client->ps.eFlags     = ent->client->clientMarkers[j].eFlags;
+			ent->client->ps.pm_flags   = ent->client->clientMarkers[j].pm_flags;
+			ent->client->ps.viewheight = ent->client->clientMarkers[j].viewheight;
+
+			// Torso Markers
+			ent->torsoFrame.oldFrameModel = ent->client->clientMarkers[j].torsoOldFrameModel;
+			ent->torsoFrame.frameModel    = ent->client->clientMarkers[j].torsoFrameModel;
+			ent->torsoFrame.oldFrame      = ent->client->clientMarkers[j].torsoOldFrame;
+			ent->torsoFrame.frame         = ent->client->clientMarkers[j].torsoFrame;
+			ent->torsoFrame.oldFrameTime  = ent->client->clientMarkers[j].torsoOldFrameTime;
+			ent->torsoFrame.frameTime     = ent->client->clientMarkers[j].torsoFrameTime;
+			ent->torsoFrame.yawAngle      = ent->client->clientMarkers[j].torsoYawAngle;
+			ent->torsoFrame.pitchAngle    = ent->client->clientMarkers[j].torsoPitchAngle;
+			ent->torsoFrame.yawing        = ent->client->clientMarkers[j].torsoYawing;
+			ent->torsoFrame.pitching      = ent->client->clientMarkers[j].torsoPitching;
+
+			// Legs Markers
+			ent->legsFrame.oldFrameModel = ent->client->clientMarkers[j].legsOldFrameModel;
+			ent->legsFrame.frameModel    = ent->client->clientMarkers[j].legsFrameModel;
+			ent->legsFrame.oldFrame      = ent->client->clientMarkers[j].legsOldFrame;
+			ent->legsFrame.frame         = ent->client->clientMarkers[j].legsFrame;
+			ent->legsFrame.oldFrameTime  = ent->client->clientMarkers[j].legsOldFrameTime;
+			ent->legsFrame.frameTime     = ent->client->clientMarkers[j].legsFrameTime;
+			ent->legsFrame.yawAngle      = ent->client->clientMarkers[j].legsYawAngle;
+			ent->legsFrame.pitchAngle    = ent->client->clientMarkers[j].legsPitchAngle;
+			ent->legsFrame.yawing        = ent->client->clientMarkers[j].legsYawing;
+			ent->legsFrame.pitching      = ent->client->clientMarkers[j].legsPitching;
+
+			// time stamp for BuildHead/Leg
+			ent->timeShiftTime = ent->client->clientMarkers[j].time;
+
+		}
+		else
+		{
+			ent->client->ps.eFlags     = ent->client->clientMarkers[i].eFlags;
+			ent->client->ps.pm_flags   = ent->client->clientMarkers[i].pm_flags;
+			ent->client->ps.viewheight = ent->client->clientMarkers[i].viewheight;
+
+			// Torso Markers
+			ent->torsoFrame.oldFrameModel = ent->client->clientMarkers[i].torsoOldFrameModel;
+			ent->torsoFrame.frameModel    = ent->client->clientMarkers[i].torsoFrameModel;
+			ent->torsoFrame.oldFrame      = ent->client->clientMarkers[i].torsoOldFrame;
+			ent->torsoFrame.frame         = ent->client->clientMarkers[i].torsoFrame;
+			ent->torsoFrame.oldFrameTime  = ent->client->clientMarkers[i].torsoOldFrameTime;
+			ent->torsoFrame.frameTime     = ent->client->clientMarkers[i].torsoFrameTime;
+			ent->torsoFrame.yawAngle      = ent->client->clientMarkers[i].torsoYawAngle;
+			ent->torsoFrame.pitchAngle    = ent->client->clientMarkers[i].torsoPitchAngle;
+			ent->torsoFrame.yawing        = ent->client->clientMarkers[i].torsoYawing;
+			ent->torsoFrame.pitching      = ent->client->clientMarkers[i].torsoPitching;
+
+			// Legs Markers
+			ent->legsFrame.oldFrameModel = ent->client->clientMarkers[i].legsOldFrameModel;
+			ent->legsFrame.frameModel    = ent->client->clientMarkers[i].legsFrameModel;
+			ent->legsFrame.oldFrame      = ent->client->clientMarkers[i].legsOldFrame;
+			ent->legsFrame.frame         = ent->client->clientMarkers[i].legsFrame;
+			ent->legsFrame.oldFrameTime  = ent->client->clientMarkers[i].legsOldFrameTime;
+			ent->legsFrame.frameTime     = ent->client->clientMarkers[i].legsFrameTime;
+			ent->legsFrame.yawAngle      = ent->client->clientMarkers[i].legsYawAngle;
+			ent->legsFrame.pitchAngle    = ent->client->clientMarkers[i].legsPitchAngle;
+			ent->legsFrame.yawing        = ent->client->clientMarkers[i].legsYawing;
+			ent->legsFrame.pitching      = ent->client->clientMarkers[i].legsPitching;
+
+			// time stamp for BuildHead/Leg
+			ent->timeShiftTime = ent->client->clientMarkers[i].time;
+		}
+
+		/* FIXME
+		if ( debugger && debugger->client) {
+		    // print some debugging stuff exactly like what the client does
+		    // it starts with "Rec:" to let you know it backward-reconciled
+		    char msg[2048];
+		    Com_sprintf( msg, sizeof(msg),
+		        "print \"^1Rec: time: %d, j: %d, k: %d, origin: %0.2f %0.2f %0.2f\n"
+		        "^2frac: %0.4f, origin1: %0.2f %0.2f %0.2f, origin2: %0.2f %0.2f %0.2f\n"
+		        "^7level.time: %d, est time: %d, level.time delta: %d, est real ping: %d\n\"",
+		        time, ent->client->clientMarkers[i].time, ent->client->clientMarkers[j].time,
+		        ent->r.currentOrigin[0], ent->r.currentOrigin[1], ent->r.currentOrigin[2],
+		        frac,
+		        ent->client->clientMarkers[i].origin[0],
+		        ent->client->clientMarkers[i].origin[1],
+		        ent->client->clientMarkers[i].origin[2],
+		        ent->client->clientMarkers[j].origin[0],
+		        ent->client->clientMarkers[j].origin[1],
+		        ent->client->clientMarkers[j].origin[2],
+		        level.time, level.time + debugger->client->frameOffset,
+		        level.time - time, level.time + debugger->client->frameOffset - time);
+
+		    trap_SendServerCommand( debugger - g_entities, msg );
+		}
+		*/
 	}
 	else
 	{
 		VectorCopy(ent->client->clientMarkers[j].origin, ent->r.currentOrigin);
 		VectorCopy(ent->client->clientMarkers[j].mins, ent->r.mins);
 		VectorCopy(ent->client->clientMarkers[j].maxs, ent->r.maxs);
+
+		// BuildHead/Legs uses these
+		VectorCopy(ent->client->clientMarkers[j].viewangles, ent->client->ps.viewangles);
+		ent->client->ps.eFlags     = ent->client->clientMarkers[j].eFlags;
+		ent->client->ps.pm_flags   = ent->client->clientMarkers[j].pm_flags;
+		ent->client->ps.viewheight = ent->client->clientMarkers[j].viewheight;
+
+		// Torso Markers
+		ent->torsoFrame.oldFrameModel = ent->client->clientMarkers[j].torsoOldFrameModel;
+		ent->torsoFrame.frameModel    = ent->client->clientMarkers[j].torsoFrameModel;
+		ent->torsoFrame.oldFrame      = ent->client->clientMarkers[j].torsoOldFrame;
+		ent->torsoFrame.frame         = ent->client->clientMarkers[j].torsoFrame;
+		ent->torsoFrame.oldFrameTime  = ent->client->clientMarkers[j].torsoOldFrameTime;
+		ent->torsoFrame.frameTime     = ent->client->clientMarkers[j].torsoFrameTime;
+		ent->torsoFrame.yawAngle      = ent->client->clientMarkers[j].torsoYawAngle;
+		ent->torsoFrame.pitchAngle    = ent->client->clientMarkers[j].torsoPitchAngle;
+		ent->torsoFrame.yawing        = ent->client->clientMarkers[j].torsoYawing;
+		ent->torsoFrame.pitching      = ent->client->clientMarkers[j].torsoPitching;
+
+		// Legs Markers
+		ent->legsFrame.oldFrameModel = ent->client->clientMarkers[j].legsOldFrameModel;
+		ent->legsFrame.frameModel    = ent->client->clientMarkers[j].legsFrameModel;
+		ent->legsFrame.oldFrame      = ent->client->clientMarkers[j].legsOldFrame;
+		ent->legsFrame.frame         = ent->client->clientMarkers[j].legsFrame;
+		ent->legsFrame.oldFrameTime  = ent->client->clientMarkers[j].legsOldFrameTime;
+		ent->legsFrame.frameTime     = ent->client->clientMarkers[j].legsFrameTime;
+		ent->legsFrame.yawAngle      = ent->client->clientMarkers[j].legsYawAngle;
+		ent->legsFrame.pitchAngle    = ent->client->clientMarkers[j].legsPitchAngle;
+		ent->legsFrame.yawing        = ent->client->clientMarkers[j].legsYawing;
+		ent->legsFrame.pitching      = ent->client->clientMarkers[j].legsPitching;
+
+		// time stamp for BuildHead/Leg
+		ent->timeShiftTime = ent->client->clientMarkers[j].time;
 	}
 
 	trap_LinkEntity(ent);
@@ -198,13 +444,47 @@ static void G_ReAdjustSingleClientPosition(gentity_t *ent)
 		VectorCopy(ent->client->backupMarker.origin, ent->r.currentOrigin);
 		VectorCopy(ent->client->backupMarker.mins, ent->r.mins);
 		VectorCopy(ent->client->backupMarker.maxs, ent->r.maxs);
+
+		// Head, Legs stuff
+		VectorCopy(ent->client->backupMarker.viewangles, ent->client->ps.viewangles);
+
+		ent->client->ps.eFlags     = ent->client->backupMarker.eFlags;
+		ent->client->ps.pm_flags   = ent->client->backupMarker.pm_flags;
+		ent->client->ps.viewheight = ent->client->backupMarker.viewheight;
+
+
 		ent->client->backupMarker.time = 0;
+
+		// Torso Markers
+		ent->torsoFrame.oldFrameModel = ent->client->backupMarker.torsoOldFrameModel;
+		ent->torsoFrame.frameModel    = ent->client->backupMarker.torsoFrameModel;
+		ent->torsoFrame.oldFrame      = ent->client->backupMarker.torsoOldFrame;
+		ent->torsoFrame.frame         = ent->client->backupMarker.torsoFrame;
+		ent->torsoFrame.oldFrameTime  = ent->client->backupMarker.torsoOldFrameTime;
+		ent->torsoFrame.frameTime     = ent->client->backupMarker.torsoFrameTime;
+		ent->torsoFrame.yawAngle      = ent->client->backupMarker.torsoYawAngle;
+		ent->torsoFrame.pitchAngle    = ent->client->backupMarker.torsoPitchAngle;
+		ent->torsoFrame.yawing        = ent->client->backupMarker.torsoYawing;
+		ent->torsoFrame.pitching      = ent->client->backupMarker.torsoPitching;
+
+		// Legs Markers
+		ent->legsFrame.oldFrameModel = ent->client->backupMarker.legsOldFrameModel;
+		ent->legsFrame.frameModel    = ent->client->backupMarker.legsFrameModel;
+		ent->legsFrame.oldFrame      = ent->client->backupMarker.legsOldFrame;
+		ent->legsFrame.frame         = ent->client->backupMarker.legsFrame;
+		ent->legsFrame.oldFrameTime  = ent->client->backupMarker.legsOldFrameTime;
+		ent->legsFrame.frameTime     = ent->client->backupMarker.legsFrameTime;
+		ent->legsFrame.yawAngle      = ent->client->backupMarker.legsYawAngle;
+		ent->legsFrame.pitchAngle    = ent->client->backupMarker.legsPitchAngle;
+
+		// time stamp for BuildHead/Leg
+		ent->timeShiftTime = 0;
 
 		trap_LinkEntity(ent);
 	}
 }
 
-void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
+static void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
 {
 	int       i;
 	gentity_t *list;
@@ -240,6 +520,7 @@ void G_ResetMarkers(gentity_t *ent)
 	int   i, time;
 	char  buffer[MAX_CVAR_VALUE_STRING];
 	float period;
+	int   eFlags;
 
 	trap_Cvar_VariableStringBuffer("sv_fps", buffer, sizeof(buffer) - 1);
 
@@ -253,6 +534,13 @@ void G_ResetMarkers(gentity_t *ent)
 		period = 1000.f / period;
 	}
 
+	eFlags = ent->client->ps.eFlags;
+	// don't save entity flags that are not allowed for clientMarkers
+	if (eFlags & EF_MOUNTEDTANK)
+	{
+		eFlags &= ~EF_MOUNTEDTANK;
+	}
+
 	ent->client->topMarker = MAX_CLIENT_MARKERS - 1;
 	for (i = MAX_CLIENT_MARKERS - 1, time = level.time; i >= 0; i--, time -= period)
 	{
@@ -260,13 +548,43 @@ void G_ResetMarkers(gentity_t *ent)
 		VectorCopy(ent->r.maxs, ent->client->clientMarkers[i].maxs);
 		VectorCopy(ent->r.currentOrigin, ent->client->clientMarkers[i].origin);
 		ent->client->clientMarkers[i].time = time;
+		VectorCopy(ent->client->ps.viewangles, ent->client->clientMarkers[i].viewangles);
+		ent->client->clientMarkers[i].eFlags     = eFlags;
+		ent->client->clientMarkers[i].pm_flags   = ent->client->ps.pm_flags;
+		ent->client->clientMarkers[i].viewheight = ent->client->ps.viewheight;
+
+		// Torso Markers
+		ent->client->clientMarkers[i].torsoOldFrameModel = ent->torsoFrame.oldFrameModel;
+		ent->client->clientMarkers[i].torsoFrameModel    = ent->torsoFrame.frameModel;
+		ent->client->clientMarkers[i].torsoOldFrame      = ent->torsoFrame.oldFrame;
+		ent->client->clientMarkers[i].torsoFrame         = ent->torsoFrame.frame;
+		ent->client->clientMarkers[i].torsoOldFrameTime  = ent->torsoFrame.oldFrameTime;
+		ent->client->clientMarkers[i].torsoFrameTime     = ent->torsoFrame.frameTime;
+		ent->client->clientMarkers[i].torsoYawAngle      = ent->torsoFrame.yawAngle;
+		ent->client->clientMarkers[i].torsoPitchAngle    = ent->torsoFrame.pitchAngle;
+		ent->client->clientMarkers[i].torsoYawing        = ent->torsoFrame.yawing;
+		ent->client->clientMarkers[i].torsoPitching      = ent->torsoFrame.pitching;
+
+		// Legs Markers
+		ent->client->clientMarkers[i].legsOldFrameModel = ent->legsFrame.oldFrameModel;
+		ent->client->clientMarkers[i].legsFrameModel    = ent->legsFrame.frameModel;
+		ent->client->clientMarkers[i].legsOldFrame      = ent->legsFrame.oldFrame;
+		ent->client->clientMarkers[i].legsFrame         = ent->legsFrame.frame;
+		ent->client->clientMarkers[i].legsOldFrameTime  = ent->legsFrame.oldFrameTime;
+		ent->client->clientMarkers[i].legsFrameTime     = ent->legsFrame.frameTime;
+		ent->client->clientMarkers[i].legsYawAngle      = ent->legsFrame.yawAngle;
+		ent->client->clientMarkers[i].legsPitchAngle    = ent->legsFrame.pitchAngle;
+		ent->client->clientMarkers[i].legsYawing        = ent->legsFrame.yawing;
+		ent->client->clientMarkers[i].legsPitching      = ent->legsFrame.pitching;
 	}
+	// time stamp for BuildHead/Leg
+	ent->timeShiftTime = 0;
 }
 
 // This variable needs to be here in order for G_BuildLeg() to access it..
 static grefEntity_t refent;
 
-void G_AttachBodyParts(gentity_t *ent)
+static void G_AttachBodyParts(gentity_t *ent)
 {
 	int       i;
 	gentity_t *list;
@@ -280,7 +598,7 @@ void G_AttachBodyParts(gentity_t *ent)
 		    (list != ent) &&
 		    list->r.linked &&
 		    !(list->client->ps.pm_flags & PMF_LIMBO) &&
-		    (list->client->ps.pm_type == PM_NORMAL)
+		    (list->client->ps.pm_type == PM_NORMAL || list->client->ps.pm_type == PM_DEAD)
 		    )
 		{
 			list->client->tempHead = G_BuildHead(list, &refent, qtrue);
@@ -294,7 +612,7 @@ void G_AttachBodyParts(gentity_t *ent)
 	}
 }
 
-void G_DettachBodyParts(void)
+static void G_DettachBodyParts(void)
 {
 	int       i;
 	gentity_t *list;
@@ -313,7 +631,7 @@ void G_DettachBodyParts(void)
 	}
 }
 
-int G_SwitchBodyPartEntity(gentity_t *ent)
+static int G_SwitchBodyPartEntity(gentity_t *ent)
 {
 	if (ent->s.eType == ET_TEMPHEAD)
 	{

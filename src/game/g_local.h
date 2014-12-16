@@ -734,7 +734,37 @@ typedef struct
 
 	vec3_t origin;
 
+	// for BuildHead/Legs
+	int eFlags;             // s.eFlags to ps.eFlags
+	int viewheight;         // ps for both
+	int pm_flags;           // ps for both
+	vec3_t viewangles;      // s.apos.trBase to ps.viewangles
+
 	int time;
+
+	// torso markers
+	qhandle_t torsoOldFrameModel;
+	qhandle_t torsoFrameModel;
+	int torsoOldFrame;
+	int torsoFrame;
+	int torsoOldFrameTime;
+	int torsoFrameTime;
+	float torsoYawAngle;
+	float torsoPitchAngle;
+	int torsoYawing;
+	int torsoPitching;
+
+	// leg markers
+	qhandle_t legsOldFrameModel;
+	qhandle_t legsFrameModel;
+	int legsOldFrame;
+	int legsFrame;
+	int legsOldFrameTime;
+	int legsFrameTime;
+	float legsYawAngle;
+	float legsPitchAngle;
+	int legsYawing;
+	qboolean legsPitching;
 } clientMarker_t;
 
 #define MAX_CLIENT_MARKERS 17
@@ -1899,7 +1929,6 @@ void Svcmd_SwapTeams_f(void);
 
 // g_antilag.c
 void G_StoreClientPosition(gentity_t *ent);
-void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward);
 void G_ResetMarkers(gentity_t *ent);
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 void G_HistoricalTraceBegin(gentity_t *ent);
