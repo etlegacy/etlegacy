@@ -106,17 +106,6 @@ void G_StoreClientPosition(gentity_t *ent)
 		return;
 	}
 
-	if (!(ent->inuse &&
-	      (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES) &&
-	      ent->r.linked &&
-	      (ent->health > 0) &&
-	      !(ent->client->ps.pm_flags & PMF_LIMBO) &&
-	      (ent->client->ps.pm_type == PM_NORMAL)
-	      ))
-	{
-		return;
-	}
-
 	ent->client->topMarker++;
 	if (ent->client->topMarker >= MAX_CLIENT_MARKERS)
 	{
@@ -290,7 +279,6 @@ void G_AttachBodyParts(gentity_t *ent)
 		    (list->client->sess.sessionTeam == TEAM_AXIS || list->client->sess.sessionTeam == TEAM_ALLIES) &&
 		    (list != ent) &&
 		    list->r.linked &&
-		    (list->health > 0) &&
 		    !(list->client->ps.pm_flags & PMF_LIMBO) &&
 		    (list->client->ps.pm_type == PM_NORMAL)
 		    )
