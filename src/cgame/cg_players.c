@@ -2575,6 +2575,7 @@ void CG_Player(centity_t *cent)
 		renderfx = RF_THIRD_PERSON;         // only draw in mirrors
 	}
 
+	// FIXME: buggy
 	if (cg_shadows.integer == 3 && shadow)
 	{
 		renderfx |= RF_SHADOW_PLANE;

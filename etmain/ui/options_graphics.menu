@@ -51,7 +51,8 @@ menuDef {
 // Advanced settings //
 	SUBWINDOW( 6, 152, (SUBWINDOW_WIDTH), 220, "ADVANCED" )
 	YESNO( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Low Quality Sky:", .2, 8, "r_fastsky", "Toggles wether the detailed skybox is drawn or just a basic sky" )
-	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Shadow Detail:", .2, 8, "ui_cg_shadows", cvarFloatList { "None (fastest)" 0 "Blob (old style)" 1 "Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 }, uiScript glCustom, "Set shadow details" )
+	// FIXME: fix cg_shadows >= 2
+	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Shadow Detail:", .2, 8, "ui_cg_shadows", cvarFloatList { "None" 0 "Blob" 1 /*"Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 */}, uiScript glCustom, "Set shadow details" )
 	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Texture Detail:", .2, 8, "ui_r_picmip", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom, "Set texture details" )
 	// add options 0 - disabled, 1 - single path, 2 - path
 	YESNOACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Dynamic Lights:", .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", "Toggles use of dynamic lighting effects" )
