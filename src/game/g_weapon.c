@@ -2481,6 +2481,11 @@ void G_AirStrikeExplode(gentity_t *self)
 
 qboolean G_AvailableAirstrikes(gentity_t *ent)
 {
+	if (g_misc.integer & G_MISC_ARTY_STRIKE_COMBINE)
+	{
+		return G_AvailableArtillery(ent);
+	}
+
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
 		if (level.axisBombCounter > 0)
@@ -2521,6 +2526,12 @@ qboolean G_AvailableArtillery(gentity_t *ent)
 
 void G_AddAirstrikeToCounters(gentity_t *ent)
 {
+	if (g_misc.integer & G_MISC_ARTY_STRIKE_COMBINE)
+	{
+		G_AddArtilleryToCounters(ent);
+		return;
+	}
+
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
 		level.axisBombCounter += team_airstrikeTime.integer * 1000;
