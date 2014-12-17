@@ -406,7 +406,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			tempx    += 12;
 			maxchars -= 2;
 		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0)
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 10, 10, 10, cgs.media.medicIcon);
 			offset   += 12;
@@ -598,7 +598,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			tempx    += 14;
 			maxchars -= 2;
 		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0)
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.medicIcon);
 			offset   += 14;
