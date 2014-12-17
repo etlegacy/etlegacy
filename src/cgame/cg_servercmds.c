@@ -2483,7 +2483,7 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "reqforcespawn"))
 	{
-		if (cg_instanttapout.integer)
+		if (cg_instanttapout.integer || cgs.gamestate != GS_PLAYING)
 		{
 			CG_ForceTapOut_f();
 		}
