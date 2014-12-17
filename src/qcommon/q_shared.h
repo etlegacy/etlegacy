@@ -653,15 +653,6 @@ extern vec4_t clrBrownLineFull;
 #define GAME_INIT_FRAMES    6
 #define FRAMETIME           100                 // msec
 
-// FIXME: Calculate these on the fly so that we don't hard code the sv_fps into macros
-#define SERVER_FRAMETIME    50   // (1000/20)
-#define SERVER_FRAMETIME_F  50.f // (1000/20)
-
-
-// TODO: use the real vale (50 atm) and/or make this dynamic timeDelta - 1000/sv_fps
-#define SERVER_FRAMETIME_DELTA      100     //2*SERVER_FRAMETIME			// msec
-#define SERVER_FRAMETIME_DELTA_F    100.f   //2.f*SERVER_FRAMETIME_F		// msec
-
 #define Q_COLOR_ESCAPE  '^'
 #define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)) && *((p) + 1) != Q_COLOR_ESCAPE)
 

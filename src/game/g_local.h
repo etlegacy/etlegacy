@@ -2397,4 +2397,12 @@ void G_mapvoteinfo_read(void);
 #define VOTEF_NO_POPULIST_PENALTY   2   // successful votes do not count against vote_limit
 #define VOTEF_DISP_CALLER           4   // append "(called by name)" in vote string
 
+// Server frametime is calculated with the sv_fps
+#define SERVER_FRAMETIME    (1000/trap_Cvar_VariableIntegerValue("sv_fps"))   // (1000/20) default
+#define SERVER_FRAMETIME_F  ((float)SERVER_FRAMETIME) // (1000/20) default
+
+// Calculated deltas
+#define SERVER_FRAMETIME_DELTA      (2 * SERVER_FRAMETIME)     // msec
+#define SERVER_FRAMETIME_DELTA_F    (2.f * SERVER_FRAMETIME_F)   // msec
+
 #endif // #ifndef INCLUDE_G_LOCAL_H
