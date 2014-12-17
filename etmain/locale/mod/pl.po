@@ -3977,7 +3977,7 @@ msgstr "Zostales wywalony z oddzialu"
 msgid "You are now the leader of your fireteam"
 msgstr "Jestes teraz liderem twojego oddzialu"
 
-msgid "The Fireteam you are on has been disbanded"
+msgid "The fireteam you are on has been disbanded"
 msgstr "Oddzial w ktorym jestes rozpadl sie"
 
 msgid "You have been given fireteam admin rights"
@@ -4715,3 +4715,12 @@ msgstr "  Medale"
 
 msgid "^3No skills acquired!\n"
 msgstr "^3Brak nabytych umiejetnosci!\n"
+
+msgid "You have been been stripped of fireteam admin rights"
+msgstr "Zostales pozbawiony praw lidera oddzialu"
+
+msgid "%s ^7has left the fireteam\n"
+msgstr "%s ^7odszedl z oddzialu"
+
+msgid "You have been warned by your fireteam leader\n"
+msgstr "Zostales ostrzezony przez swojego lidera oddzialu\n"

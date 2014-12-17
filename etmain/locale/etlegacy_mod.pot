@@ -3979,7 +3979,7 @@ msgstr ""
 msgid "You are now the leader of your fireteam"
 msgstr ""
 
-msgid "The Fireteam you are on has been disbanded"
+msgid "The fireteam you are on has been disbanded"
 msgstr ""
 
 msgid "You have been given fireteam admin rights"
@@ -4695,4 +4695,13 @@ msgid "  Medals"
 msgstr ""
 
 msgid "^3No skills acquired!\n"
+msgstr ""
+
+msgid "You have been been stripped of fireteam admin rights"
+msgstr ""
+
+msgid "%s ^7has left the fireteam\n"
+msgstr ""
+
+msgid "You have been warned by your fireteam leader\n"
 msgstr ""
