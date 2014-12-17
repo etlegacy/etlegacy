@@ -518,12 +518,9 @@ void G_ResetMarkers(gentity_t *ent)
 {
 	int   i, time;
 	char  buffer[MAX_CVAR_VALUE_STRING];
-	float period;
+	float period = sv_fps.value;
 	int   eFlags;
 
-	trap_Cvar_VariableStringBuffer("sv_fps", buffer, sizeof(buffer) - 1);
-
-	period = atoi(buffer);
 	if (!period)
 	{
 		period = 50;
@@ -793,4 +790,150 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	{
 		G_ResetTempTraceIgnoreEnts();
 	}
+}
+
+qboolean G_SkipCorrectionSafe(gentity_t *ent)
+{
+	if (!ent)
+	{
+		return qfalse;
+	}
+
+	if (!ent->inuse)
+	{
+		return qfalse;
+	}
+
+	if (!ent->r.linked)
+	{
+		return qfalse;
+	}
+
+	if (!ent->client)
+	{
+		return qfalse;
+	}
+
+	if (ent->client->sess.sessionTeam != TEAM_AXIS
+	    && ent->client->sess.sessionTeam != TEAM_ALLIES)
+	{
+		return qfalse;
+	}
+
+	if ((ent->client->ps.pm_flags & PMF_LIMBO) ||
+	    (ent->client->ps.pm_flags & PMF_TIME_LOCKPLAYER))
+	{
+		return qfalse;
+	}
+
+	if (ent->health <= 0)
+	{
+		return qfalse;
+	}
+
+	if (ent->client->ps.pm_type != PM_NORMAL)
+	{
+		return qfalse;
+	}
+
+	// this causes segfault with new PM_TraceLegs() from 2.60 because it wants to update pm.pmext which
+	// we don't bother passing.
+	if ((ent->client->ps.eFlags & EF_PRONE))
+	{
+		return qfalse;
+	}
+
+	if ((ent->client->ps.eFlags & EF_MOUNTEDTANK))
+	{
+		return qfalse;
+	}
+
+	// perhaps 2 would be OK too?
+	if (ent->waterlevel > 1)
+	{
+		return qfalse;
+	}
+
+	// don't bother with skip correction if the player isn't moving horizontally
+	if (!ent->client->ps.velocity[0] && !ent->client->ps.velocity[1])
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/*
+ * @brief Make use of the 'Pmove' functions to figure out where a player
+ * would have moved in the short amount of time indicated by frametime.
+ *
+ * After the Pmove is complete, copy the values to the player's entity
+ * state, but then copy the original player state values back to the
+ * player state so that the player's movements aren't effected in any way.
+ *
+ * The only Pmove functions used are PM_StepSlideMove() and
+ * PM_GroundTrace() since these are all that is needed for this
+ * short period of time.  This means that a lot of movement types
+ * cannot be predicted and no prediction should be done for them
+ * See G_SkipCorrectionSafe()
+ *
+ */
+void G_PredictPmove(gentity_t *ent, float frametime)
+{
+	pmove_t   pm;
+	vec3_t    origin;
+	vec3_t    velocity;
+	int       groundEntityNum;
+	int       pm_flags;
+	int       pm_time;
+	int       eFlags;
+	gclient_t *client;
+
+	if (!G_SkipCorrectionSafe(ent))
+	{
+		return;
+	}
+
+	client = ent->client;
+
+	// backup all the playerState values that may be altered by PmovePredict()
+	VectorCopy(client->ps.origin, origin);
+	VectorCopy(client->ps.velocity, velocity);
+	groundEntityNum = client->ps.groundEntityNum;
+	pm_flags        = client->ps.pm_flags;
+	pm_time         = client->ps.pm_time;
+	eFlags          = client->ps.eFlags;
+
+	memset(&pm, 0, sizeof(pm));
+	pm.ps            = &client->ps;
+	pm.pmext         = &client->pmext;
+	pm.character     = client->pers.character;
+	pm.trace         = trap_TraceCapsuleNoEnts;
+	pm.pointcontents = trap_PointContents;
+	pm.tracemask     = MASK_PLAYERSOLID;
+	VectorCopy(ent->r.mins, pm.mins);
+	VectorCopy(ent->r.maxs, pm.maxs);
+	pm.predict = qtrue;
+	//pm.debugLevel = 1;
+
+	PmovePredict(&pm, frametime);
+
+	// update entity state with the resulting player state
+	VectorCopy(client->ps.origin, ent->s.pos.trBase);
+	VectorCopy(client->ps.velocity, ent->s.pos.trDelta);
+	ent->s.groundEntityNum = client->ps.groundEntityNum;
+	ent->s.eFlags          = client->ps.eFlags;
+
+	// this needs to be updated in case g_antilag is not enabled
+	VectorCopy(client->ps.origin, ent->r.currentOrigin);
+	// link them to stop them from skipping over mines and being unhittable when antilag is 0
+	trap_LinkEntity(ent);
+
+	// restore player state so that their next command will process as if nothing has happened.
+	VectorCopy(origin, client->ps.origin);
+	VectorCopy(velocity, client->ps.velocity);
+	client->ps.groundEntityNum = groundEntityNum;
+	client->ps.pm_flags        = pm_flags;
+	client->ps.pm_time         = pm_time;
+	client->ps.eFlags          = eFlags;
 }

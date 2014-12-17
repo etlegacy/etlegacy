@@ -1458,7 +1458,7 @@ void ClientThink_real(gentity_t *ent)
 		ent->r.eventTime = level.time;
 	}
 
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
 
 	// use the precise origin for linking
 	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
@@ -2068,7 +2068,7 @@ void WolfReviveBbox(gentity_t *self)
  */
 void ClientEndFrame(gentity_t *ent)
 {
-	int i;
+	int i, frames;
 
 	// don't count skulled player time
 	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
@@ -2219,11 +2219,32 @@ void ClientEndFrame(gentity_t *ent)
 	// run entity scripting
 	G_Script_ScriptRun(ent);
 
+	// mark as not missing updates initially
+	ent->client->ps.eFlags &= ~EF_CONNECTION;
+
+	// see how many frames the client has missed
+	frames = level.framenum - ent->client->lastUpdateFrame - 1;
+
 	// etpro antiwarp
 	// frames = level.framenum - ent->client->lastUpdateFrame - 1)
-	if (g_maxWarp.integer && (level.framenum - ent->client->lastUpdateFrame - 1) > g_maxWarp.integer && G_DoAntiwarp(ent))
+	if (g_maxWarp.integer && frames > g_maxWarp.integer && G_DoAntiwarp(ent))
 	{
 		ent->client->warping = qtrue;
+	}
+	ent->client->warped = qfalse;
+
+	if (g_skipCorrection.integer && !ent->client->warped && frames > 0 && !G_DoAntiwarp(ent))
+	{
+		if (frames > 3)
+		{
+			// josh: I need frames to be = 2 here
+			frames = 3;
+			// these are disabled because the phone jack can give
+			// away other players position through walls.
+			ent->client->ps.eFlags |= EF_CONNECTION;
+			ent->s.eFlags          |= EF_CONNECTION;
+		}
+		G_PredictPmove(ent, (float)frames / (float)sv_fps.integer);
 	}
 	ent->client->warped = qfalse;
 

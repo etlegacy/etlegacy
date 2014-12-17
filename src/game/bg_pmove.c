@@ -1637,7 +1637,7 @@ static void PM_CrashLand(void)
 
 	// SURF_NODAMAGE is used for bounce pads where you don't ever
 	// want to take damage or play a crunch sound
-	if (!(pml.groundTrace.surfaceFlags & SURF_NODAMAGE))
+	if (!(pml.groundTrace.surfaceFlags & SURF_NODAMAGE) && !pm->predict)
 	{
 		if (pm->debugLevel)
 		{

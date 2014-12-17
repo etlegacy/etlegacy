@@ -1836,6 +1836,9 @@ extern vmCvar_t g_corpses;
 
 extern vmCvar_t g_realHead;
 
+extern vmCvar_t sv_fps;
+extern vmCvar_t g_skipCorrection;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;
@@ -1935,6 +1938,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 void G_HistoricalTraceBegin(gentity_t *ent);
 void G_HistoricalTraceEnd(gentity_t *ent);
 void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses);
+void G_PredictPmove(gentity_t *ent, float frametime);
 
 #define BODY_VALUE(ENT) ENT->watertype
 #define BODY_TEAM(ENT) ENT->s.modelindex
@@ -2403,7 +2407,7 @@ void G_mapvoteinfo_read(void);
 #define VOTEF_DISP_CALLER           4   // append "(called by name)" in vote string
 
 // Server frametime is calculated with the sv_fps
-#define SERVER_FRAMETIME    (1000/trap_Cvar_VariableIntegerValue("sv_fps"))   // (1000/20) default
+#define SERVER_FRAMETIME    (1000 / trap_Cvar_VariableIntegerValue("sv_fps"))   // (1000/20) default
 #define SERVER_FRAMETIME_F  ((float)SERVER_FRAMETIME) // (1000/20) default
 
 // Calculated deltas

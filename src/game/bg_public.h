@@ -522,6 +522,10 @@ typedef struct
 	// these will be different functions during game and cgame
 	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 	int (*pointcontents)(const vec3_t point, int passEntityNum);
+
+	// used to determine if the player move is for prediction if it is, the movement should trigger no events
+	qboolean predict;
+
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
@@ -688,8 +692,8 @@ typedef enum
 	KEY_NUM_KEYS
 } wkey_t;           // conflicts with types.h
 
-#define	NO_AIRSTRIKE	1
-#define	NO_ARTILLERY	2
+#define NO_AIRSTRIKE    1
+#define NO_ARTILLERY    2
 
 // NOTE: we can only use up to 15 in the client-server stream
 // NOTE: should be 31 now (I added 1 bit in msg.c)

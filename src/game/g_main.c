@@ -329,6 +329,9 @@ vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
 
+vmCvar_t sv_fps;
+vmCvar_t g_skipCorrection;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -597,6 +600,8 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_corpses,                           "g_dynBQ",                             "0",                          CVAR_LATCH | CVAR_ARCHIVE },
 	{ &g_realHead,                          "g_realHead",                          "1",                          0 },
+	{ &sv_fps,                              "sv_fps",                              "20",                         CVAR_SYSTEMINFO,                                 0, qfalse},
+	{ &g_skipCorrection,                    "g_skipCorrection",                    "1",                          0 },
 };
 
 // made static to avoid aliasing
