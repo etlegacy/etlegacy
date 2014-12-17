@@ -5315,8 +5315,7 @@ public:
 			OB_GETMSG(WeaponCharged);
 			if (pMsg && pEnt && pEnt->inuse && pEnt->client)
 			{
-#ifdef NOQUARTER
-				if (pMsg->m_Weapon == ET_WP_BINOCULARS && (pEnt->client->ps.ammo[WP_ARTY] & NO_ARTY))
+				if (pMsg->m_Weapon == ET_WP_BINOCULARS && (pEnt->client->ps.ammo[WP_ARTY] & NO_ARTILLERY))
 				{
 					pMsg->m_IsCharged = False;
 				}
@@ -5324,6 +5323,7 @@ public:
 				{
 					pMsg->m_IsCharged = False;
 				}
+#ifdef NOQUARTER
 				else if (pMsg->m_Weapon == ET_WP_ADRENALINE)
 				{
 					pMsg->m_IsCharged = pEnt->client->ps.powerups[PW_ADRENALINE] > 0 ? False : True;

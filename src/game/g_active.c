@@ -1165,6 +1165,16 @@ void ClientThink_real(gentity_t *ent)
 	    VectorCopy( client->cameraOrigin, client->cameraPortal->s.origin2);
 	}*/
 
+	client->ps.ammo[WP_ARTY] = 0;
+	if (!G_AvailableAirstrikes(ent))
+	{
+		client->ps.ammo[WP_ARTY] |= NO_AIRSTRIKE;
+	}
+	if (!G_AvailableArtillery(ent))
+	{
+		client->ps.ammo[WP_ARTY] |= NO_ARTILLERY;
+	}
+
 	// mark the time, so the connection sprite can be removed
 	ucmd = &ent->client->pers.cmd;
 

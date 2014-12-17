@@ -923,7 +923,24 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cgs.media.hudSprintBar);
-	CG_DrawPic(rect->x + (rect->w * 0.25f) - 1, rect->y + rect->h + 4, (rect->w * 0.5f) + 2, rect->w + 2, cgs.media.hudPowerIcon);
+
+	if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
+	{
+		if ((cg.predictedPlayerState.weapon == WP_SMOKE_MARKER && (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE)))
+		{
+			trap_R_SetColor(colorRed);
+		}
+		else if ((cg.predictedPlayerState.weapon != WP_SMOKE_MARKER && (cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)))
+		{
+			trap_R_SetColor(colorRed);
+		}
+		CG_DrawPic(rect->x + (rect->w * 0.25f) - 1, rect->y + rect->h + 4, (rect->w * 0.5f) + 2, rect->w + 2, cgs.media.hudPowerIcon);
+		trap_R_SetColor(NULL);
+	}
+	else
+	{
+		CG_DrawPic(rect->x + (rect->w * 0.25f) - 1, rect->y + rect->h + 4, (rect->w * 0.5f) + 2, rect->w + 2, cgs.media.hudPowerIcon);
+	}
 }
 
 static void CG_DrawGunIcon(rectDef_t location)

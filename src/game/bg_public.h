@@ -688,6 +688,9 @@ typedef enum
 	KEY_NUM_KEYS
 } wkey_t;           // conflicts with types.h
 
+#define	NO_AIRSTRIKE	1
+#define	NO_ARTILLERY	2
+
 // NOTE: we can only use up to 15 in the client-server stream
 // NOTE: should be 31 now (I added 1 bit in msg.c)
 typedef enum
