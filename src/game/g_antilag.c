@@ -100,7 +100,6 @@ static qboolean G_AntilagSafe(gentity_t *ent)
 	// restore players who have just died to keep the corpse head box in sync.
 	if (ent->client->backupMarker.time == level.time && ent->client->ps.pm_type == PM_DEAD && g_realHead.integer)
 	{
-
 		return qtrue;
 	}
 
@@ -431,7 +430,7 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 	trap_LinkEntity(ent);
 }
 
-static void G_ReAdjustSingleClientPosition(gentity_t *ent)
+void G_ReAdjustSingleClientPosition(gentity_t *ent)
 {
 	if (!G_AntilagSafe(ent))
 	{

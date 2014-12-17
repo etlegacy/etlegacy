@@ -419,6 +419,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		self->client->deathTime = level.time;
 	}
 
+	//unlagged - backward reconciliation #2
+	// make sure the body shows up in the client's current position
+	G_ReAdjustSingleClientPosition(self);
+	//unlagged - backward reconciliation #2
+
 	if (attacker == self)
 	{
 		if (self->client)
@@ -1107,6 +1112,11 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEnti
 			tent->s.dmgFlags = 0;
 		}
 
+		if (g_antilag.integer)
+		{
+			G_ReAdjustSingleClientPosition(targ);
+		}
+
 		G_FreeEntity(head);
 		return qtrue;
 	}
@@ -1181,6 +1191,11 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntit
 				tent = G_TempEntity(start, EV_RAILTRAIL);
 				VectorCopy(end, tent->s.origin2);
 				tent->s.dmgFlags = 0;
+			}
+
+			if (g_antilag.integer)
+			{
+				G_ReAdjustSingleClientPosition(targ);
 			}
 
 			G_FreeEntity(leg);

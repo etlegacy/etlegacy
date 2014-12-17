@@ -2895,6 +2895,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// toggle the teleport bit so the client knows to not lerp
 	flags  = ent->client->ps.eFlags & EF_TELEPORT_BIT;
 	flags ^= EF_TELEPORT_BIT;
+
+	//unlagged reset history markers
+	G_ResetMarkers(ent);
+	//unlagged
+
 	flags |= (client->ps.eFlags & EF_VOTED);
 	// clear everything but the persistant data
 

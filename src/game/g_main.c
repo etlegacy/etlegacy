@@ -42,6 +42,10 @@
 #include "g_lua.h"
 #endif
 
+#ifdef FEATURE_SERVERMDX
+#include "g_mdx.h"
+#endif
+
 level_locals_t level;
 
 typedef struct
