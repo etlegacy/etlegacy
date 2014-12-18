@@ -1536,7 +1536,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		knockback *= 0.5;
 	}
 
-	if (targ->client && (g_friendlyFire.integer || g_misc.integer & G_MISC_NO_TEAM_KNOCKBACK) && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
+	if (targ->client && g_friendlyFire.integer && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
 	{
 		knockback = 0;
 	}
