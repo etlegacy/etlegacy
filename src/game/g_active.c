@@ -2243,13 +2243,12 @@ void ClientEndFrame(gentity_t *ent)
 	{
 		ent->client->warping = qtrue;
 	}
-	ent->client->warped = qfalse;
 
 	if (g_skipCorrection.integer && !ent->client->warped && frames > 0 && !G_DoAntiwarp(ent))
 	{
 		if (frames > 3)
 		{
-			// josh: I need frames to be = 2 here
+			// we need frames to be = 2 here
 			frames = 3;
 			// these are disabled because the phone jack can give
 			// away other players position through walls.
