@@ -1073,6 +1073,7 @@ typedef struct level_locals_s
 	int covertopsChargeTime[2];
 
 	int lastMapEntityUpdate;
+	int lastMapSpottedMinesUpdate;
 	int objectiveStatsAllies[MAX_OBJECTIVES];
 	int objectiveStatsAxis[MAX_OBJECTIVES];
 

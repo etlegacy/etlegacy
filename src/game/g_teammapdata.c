@@ -233,14 +233,13 @@ G_SetupFrustum
 */
 void G_SetupFrustum(gentity_t *ent)
 {
-	int    i;
-	float  xs, xc;
-	float  ang = (90 / 180.f) * M_PI * 0.5f;
-	vec3_t axis[3];
-	vec3_t vieworg;
+	float	xs, xc;
+	float	ang;
+	vec3_t	axis[3];
+	vec3_t	vieworg;
 
-	xs = sin(ang);
-	xc = cos(ang);
+	ang = DEG2RAD(90) * 0.5f;
+	SinCos(ang, xs, xc);
 
 	AnglesToAxis(ent->client->ps.viewangles, axis);
 
@@ -259,10 +258,10 @@ void G_SetupFrustum(gentity_t *ent)
 	VectorCopy(ent->client->ps.origin, vieworg);
 	vieworg[2] += ent->client->ps.viewheight;
 
-	for (i = 0 ; i < 4 ; i++)
-	{
-		frustum[i].dist = DotProduct(vieworg, frustum[i].normal);
-	}
+	frustum[0].dist = DotProduct(vieworg, frustum[0].normal);
+	frustum[1].dist = DotProduct(vieworg, frustum[1].normal);
+	frustum[2].dist = DotProduct(vieworg, frustum[2].normal);
+	frustum[3].dist = DotProduct(vieworg, frustum[3].normal);
 }
 
 // Give bots a larger view angle through binoculars than players get - this should help the
@@ -270,16 +269,20 @@ void G_SetupFrustum(gentity_t *ent)
 #define BINOCULAR_ANGLE 10.0f
 #define BOT_BINOCULAR_ANGLE 60.0f
 
-void G_SetupFrustum_ForBinoculars(gentity_t *ent)
+void G_SetupFrustum_ForBinoculars(gentity_t* ent)
 {
-	int    i;
-	float  xs, xc;
-	float  ang = (((ent->r.svFlags & SVF_BOT) ? BOT_BINOCULAR_ANGLE : BINOCULAR_ANGLE) / 180.f) * M_PI * 0.5f;
-	vec3_t axis[3];
-	vec3_t vieworg;
+	// TAT 12/26/2002 - Give bots a larger view angle through binoculars than players get - this should help the
+	//		landmine detection...
+#define BINOCULAR_ANGLE 10.0f
+#define BOT_BINOCULAR_ANGLE 60.0f
+	float	xs, xc;
+	float	ang;
+	vec3_t	axis[3];
+	vec3_t	vieworg;
+	float	baseAngle = (ent->r.svFlags & SVF_BOT) ? BOT_BINOCULAR_ANGLE : BINOCULAR_ANGLE;
 
-	xs = sin(ang);
-	xc = cos(ang);
+	ang = DEG2RAD(baseAngle) * 0.5;
+	SinCos(ang, xs, xc);
 
 	AnglesToAxis(ent->client->ps.viewangles, axis);
 
@@ -298,10 +301,10 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 	VectorCopy(ent->client->ps.origin, vieworg);
 	vieworg[2] += ent->client->ps.viewheight;
 
-	for (i = 0 ; i < 4 ; i++)
-	{
-		frustum[i].dist = DotProduct(vieworg, frustum[i].normal);
-	}
+	frustum[0].dist = DotProduct(vieworg, frustum[0].normal);
+	frustum[1].dist = DotProduct(vieworg, frustum[1].normal);
+	frustum[2].dist = DotProduct(vieworg, frustum[2].normal);
+	frustum[3].dist = DotProduct(vieworg, frustum[3].normal);
 }
 
 /*
@@ -311,20 +314,29 @@ G_CullPointAndRadius - returns true if not culled
 */
 static qboolean G_CullPointAndRadius(vec3_t pt, float radius)
 {
-	int     i;
-	float   dist;
-	plane_t *frust;
+	float dist = DotProduct(pt, frustum[0].normal) - frustum[0].dist;
 
-	// check against frustum planes
-	for (i = 0 ; i < 4 ; i++)
+	if (dist < -radius || dist <= radius)
 	{
-		frust = &frustum[i];
+		return qfalse;
+	}
 
-		dist = DotProduct(pt, frust->normal) - frust->dist;
-		if (dist < -radius || dist <= radius)
-		{
-			return qfalse;
-		}
+	dist = DotProduct(pt, frustum[1].normal) - frustum[1].dist;
+	if (dist < -radius || dist <= radius)
+	{
+		return qfalse;
+	}
+
+	dist = DotProduct(pt, frustum[2].normal) - frustum[2].dist;
+	if (dist < -radius || dist <= radius)
+	{
+		return qfalse;
+	}
+
+	dist = DotProduct(pt, frustum[3].normal) - frustum[3].dist;
+	if (dist < -radius || dist <= radius)
+	{
+		return qfalse;
 	}
 
 	return qtrue;
@@ -749,7 +761,7 @@ static void G_UpdateTeamMapData_DisguisedPlayer(gentity_t *spotter, gentity_t *e
 	}
 }
 
-void G_UpdateTeamMapData_LandMine(gentity_t *ent, qboolean forceAllied, qboolean forceAxis)
+void G_UpdateTeamMapData_LandMine(gentity_t *ent)
 {
 	int                  num = ent - g_entities;
 	mapEntityData_Team_t *teamList;
@@ -1003,6 +1015,123 @@ void G_PopupMessageForMines(gentity_t *player) // int sound
 	//pm->s.loopSound   = sound;
 }
 
+void G_CheckSpottedLandMines(void)
+{
+	int i, j;
+	gentity_t *ent, *ent2;
+
+	if (level.time - level.lastMapSpottedMinesUpdate < 500)
+	{
+		return;
+	}
+	level.lastMapSpottedMinesUpdate = level.time;
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		ent = &g_entities[level.sortedClients[i]];
+
+		if (!ent->inuse || !ent->client)
+		{
+			continue;
+		}
+
+		if (ent->health <= 0)
+		{
+			continue;
+		}
+
+		// must be in a valid team
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+
+		if (ent->client->ps.pm_flags & PMF_LIMBO)
+		{
+			continue;
+		}
+
+		if (ent->client->sess.playerType == PC_COVERTOPS && ent->client->ps.eFlags & EF_ZOOMING)
+		{
+			G_SetupFrustum_ForBinoculars(ent);
+
+			for (j = 0, ent2 = g_entities; j < level.num_entities; j++, ent2++)
+			{
+				if (!ent2->inuse || ent2 == ent)
+				{
+					continue;
+				}
+
+				if (ent2->s.eType != ET_MISSILE)
+				{
+					continue;
+				}
+
+				if (ent2->methodOfDeath == MOD_LANDMINE)
+				{
+					if ((ent2->s.teamNum < 4 || ent2->s.teamNum >= 8) && (ent2->s.teamNum % 4 != ent->client->sess.sessionTeam))
+					{
+						// as before, we can only detect a mine if we can see it from our binoculars
+						if (G_VisibleFromBinoculars(ent, ent2, ent2->r.currentOrigin))
+						{
+							G_UpdateTeamMapData_LandMine(ent2);
+
+							switch (ent2->s.teamNum % 4)
+							{
+							case TEAM_AXIS:
+							case TEAM_ALLIES:
+								if (!ent2->s.modelindex2)
+								{
+									ent->client->landmineSpottedTime = level.time;
+									ent->client->landmineSpotted = ent2;
+									ent2->s.density = ent - g_entities + 1;
+									ent2->missionLevel = level.time;
+
+									ent->client->landmineSpotted->count2 += 50;
+									if (ent->client->landmineSpotted->count2 >= 250)
+									{
+										ent->client->landmineSpotted->count2 = 250;
+
+										ent->client->landmineSpotted->s.modelindex2 = 1;
+
+										// for marker
+										// Landmine flags shouldn't block our view
+										// don't do this if the mine has been triggered.
+										if (!G_LandmineTriggered(ent->client->landmineSpotted))
+										{
+											ent->client->landmineSpotted->s.frame = rand() % 20;
+											ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
+											trap_LinkEntity(ent->client->landmineSpotted);
+										}
+
+										G_PopupMessageForMines(ent);
+
+										trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
+
+										AddScore(ent, 1);
+
+										G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
+										G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
+									}
+								}
+								break;
+							default:
+								break;
+							}
+						}
+						else
+						{
+							// if we can't see the mine from our binoculars, make sure we clear out the landmineSpotted ptr,
+							// because bots looking for mines are getting confused
+							ent->client->landmineSpotted = NULL;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 void G_UpdateTeamMapData(void)
 {
 	int             i, j;
@@ -1010,7 +1139,9 @@ void G_UpdateTeamMapData(void)
 	mapEntityData_t *mEnt;
 	qboolean        f1, f2;
 
-	if (level.time - level.lastMapEntityUpdate < 500)
+	G_CheckSpottedLandMines();
+
+	if (level.time - level.lastMapEntityUpdate < 1000)
 	{
 		return;
 	}
@@ -1065,7 +1196,7 @@ void G_UpdateTeamMapData(void)
 		case ET_MISSILE:
 			if (ent->methodOfDeath == MOD_LANDMINE)
 			{
-				G_UpdateTeamMapData_LandMine(ent, qfalse, qfalse);
+				G_UpdateTeamMapData_LandMine(ent);
 			}
 			break;
 		case ET_COMMANDMAP_MARKER:
@@ -1077,11 +1208,14 @@ void G_UpdateTeamMapData(void)
 	}
 
 	// clients again - do special stuff for field- and covert ops
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < level.numConnectedClients; i++)
 	{
-		ent = &g_entities[i];
+		ent = &g_entities[level.sortedClients[i]];
 
-		if (!ent->inuse)
+		f1 = ent->client->sess.sessionTeam == TEAM_ALLIES ? qtrue : qfalse;
+		f2 = ent->client->sess.sessionTeam == TEAM_AXIS ? qtrue : qfalse;
+
+		if (!ent->inuse || !ent->client)
 		{
 			continue;
 		}
@@ -1091,64 +1225,27 @@ void G_UpdateTeamMapData(void)
 			continue;
 		}
 
-		if (ent->client->sess.playerType == PC_FIELDOPS)
+		// must be in a valid team
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
 		{
-			if (ent->client->sess.skill[SK_SIGNALS] >= 4)
-			{
-				vec3_t pos[3];
-
-				f1 = ent->client->sess.sessionTeam == TEAM_ALLIES ? qtrue : qfalse;
-				f2 = ent->client->sess.sessionTeam == TEAM_AXIS ?   qtrue : qfalse;
-
-				G_SetupFrustum(ent);
-
-				for (j = 0, ent2 = g_entities; j < level.maxclients; j++, ent2++)
-				{
-					if (!ent2->inuse || ent2 == ent)
-					{
-						continue;
-					}
-
-					// players are sometimes of type ET_GENERAL
-					if (ent2->s.eType != ET_PLAYER)
-					{
-						continue;
-					}
-
-					if (ent2->client->sess.sessionTeam == TEAM_SPECTATOR)
-					{
-						continue;
-					}
-
-					if (ent2->health <= 0 ||
-					    ent2->client->sess.sessionTeam == ent->client->sess.sessionTeam ||
-					    !ent2->client->ps.powerups[PW_OPS_DISGUISED])
-					{
-						continue;
-					}
-
-					VectorCopy(ent2->client->ps.origin, pos[0]);
-					VectorCopy(ent2->client->ps.mins, pos[1]);
-					VectorCopy(ent2->client->ps.maxs, pos[2]);
-
-					if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
-					{
-						G_UpdateTeamMapData_DisguisedPlayer(ent, ent2, f1, f2);
-					}
-				}
-			}
+			continue;
 		}
-		else if (ent->client->sess.playerType == PC_COVERTOPS)
+
+		if (ent->client->ps.pm_flags & PMF_LIMBO)
+		{
+			continue;
+		}
+
+		if (ent->client->sess.playerType == PC_FIELDOPS && (ent->client->ps.eFlags & EF_ZOOMING) && ent->client->sess.skill[SK_SIGNALS] >= 4)
 		{
 			vec3_t pos[3];
 
-			f1 = ent->client->sess.sessionTeam == TEAM_ALLIES ? qtrue : qfalse;
-			f2 = ent->client->sess.sessionTeam == TEAM_AXIS ?   qtrue : qfalse;
+			G_SetupFrustum_ForBinoculars(ent);
 
-			G_SetupFrustum(ent);
-
-			for (j = 0, ent2 = g_entities; j < level.num_entities; j++, ent2++)
+			for (j = 0; j < level.numConnectedClients; j++)
 			{
+				ent2 = &g_entities[level.sortedClients[j]];
+
 				if (!ent2->inuse || ent2 == ent)
 				{
 					continue;
@@ -1160,92 +1257,74 @@ void G_UpdateTeamMapData(void)
 					continue;
 				}
 
+				if (ent2->client->sess.sessionTeam == TEAM_SPECTATOR)
+				{
+					continue;
+				}
+
+				if (ent2->health <= 0 ||
+					ent2->client->sess.sessionTeam == ent->client->sess.sessionTeam ||
+					!ent2->client->ps.powerups[PW_OPS_DISGUISED])
+				{
+					continue;
+				}
+
 				VectorCopy(ent2->client->ps.origin, pos[0]);
 				VectorCopy(ent2->client->ps.mins, pos[1]);
 				VectorCopy(ent2->client->ps.maxs, pos[2]);
 
-				if (G_VisibleFromBinoculars_Box(ent2, ent, pos[0], pos[1], pos[2]))
+				if (G_VisibleFromBinoculars_Box(ent, ent2, pos[0], pos[1], pos[2]))
 				{
-					G_UpdateTeamMapData_Player(ent2, f1, f2);
+					G_UpdateTeamMapData_DisguisedPlayer(ent, ent2, f1, f2);
 				}
 			}
+		}
+		else if (ent->client->sess.playerType == PC_COVERTOPS)
+		{
+			vec3_t pos[3];
 
-			if (ent->client->ps.eFlags & EF_ZOOMING)
+			G_SetupFrustum(ent);
+
+			for (j = 0; j < level.numConnectedClients; j++)
 			{
-				G_SetupFrustum_ForBinoculars(ent);
+				ent2 = &g_entities[level.sortedClients[j]];
 
-				for (j = 0, ent2 = g_entities; j < level.num_entities; j++, ent2++)
+				if (!ent2->inuse || ent2 == ent)
 				{
-					if (!ent2->inuse || ent2 == ent)
-					{
-						continue;
-					}
+					continue;
+				}
 
-					if (ent2->s.eType != ET_MISSILE)
-					{
-						continue;
-					}
+				// players are sometimes of type ET_GENERAL
+				if (ent2->s.eType != ET_PLAYER)
+				{
+					continue;
+				}
 
-					if (ent2->methodOfDeath == MOD_LANDMINE)
-					{
-						if ((ent2->s.teamNum < 4 || ent2->s.teamNum >= 8) && (ent2->s.teamNum % 4 != ent->client->sess.sessionTeam))
-						{
-							// as before, we can only detect a mine if we can see it from our binoculars
-							if (G_VisibleFromBinoculars(ent, ent2, ent2->r.currentOrigin))
-							{
-								G_UpdateTeamMapData_LandMine(ent2, f1, f2);
+				// no spectators thanks
+				if (ent2->client->sess.sessionTeam == TEAM_SPECTATOR || ent2->client->sess.sessionTeam == TEAM_FREE)
+				{
+					continue;
+				}
 
-								switch (ent2->s.teamNum % 4)
-								{
-								case TEAM_AXIS:
-								case TEAM_ALLIES:
-									if (!ent2->s.modelindex2)
-									{
-										ent->client->landmineSpottedTime = level.time;
-										ent->client->landmineSpotted     = ent2;
-										ent2->s.density                  = ent - g_entities + 1;
-										ent2->missionLevel               = level.time;
+				// do not add 'dead' players
+				if (ent2->health <= 0)
+				{
+					continue;
+				}
 
-										ent->client->landmineSpotted->count2 += 50;
-										if (ent->client->landmineSpotted->count2 >= 250)
-										{
-											ent->client->landmineSpotted->count2 = 250;
+				// we will only add other team members here
+				if (ent2->client->sess.sessionTeam == ent->client->sess.sessionTeam)
+				{
+					continue;
+				}
 
-											ent->client->landmineSpotted->s.modelindex2 = 1;
+				VectorCopy(ent2->client->ps.origin, pos[0]);
+				VectorCopy(ent2->client->ps.mins, pos[1]);
+				VectorCopy(ent2->client->ps.maxs, pos[2]);
 
-											// for marker
-											// Landmine flags shouldn't block our view
-											// don't do this if the mine has been triggered.
-											if (!G_LandmineTriggered(ent->client->landmineSpotted))
-											{
-												ent->client->landmineSpotted->s.frame    = rand() % 20;
-												ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
-												trap_LinkEntity(ent->client->landmineSpotted);
-											}
-
-											G_PopupMessageForMines(ent);
-
-											trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
-
-											AddScore(ent, 1);
-
-											G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
-											G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
-										}
-									}
-									break;
-								default:
-									break;
-								}
-							}
-							else
-							{
-								// if we can't see the mine from our binoculars, make sure we clear out the landmineSpotted ptr,
-								// because bots looking for mines are getting confused
-								ent->client->landmineSpotted = NULL;
-							}
-						}
-					}
+				if (G_VisibleFromBinoculars_Box(ent, ent2, pos[0], pos[1], pos[2]))
+				{
+					G_UpdateTeamMapData_Player(ent2, f1, f2);
 				}
 			}
 		}

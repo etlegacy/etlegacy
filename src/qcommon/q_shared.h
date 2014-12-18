@@ -863,6 +863,10 @@ void ByteToDir(int b, vec3_t dir);
 
 #endif // 1
 
+#define SinCos(rad,s,c)		\
+	(s) = sin( (rad) );		\
+	(c) = cos( (rad) );
+
 #ifdef __LCC__
 #ifdef VectorCopy
 #undef VectorCopy
