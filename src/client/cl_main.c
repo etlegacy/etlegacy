@@ -762,13 +762,15 @@ void CL_RequestMotd(void)
 
 void CL_RequestMasterData(qboolean force)
 {
-	if (!force && autoupdate.masterDataChecked > 0 && cls.realtime - autoupdate.masterDataChecked < 300000)
+	int tempTime = cls.realtime - autoupdate.masterDataChecked;
+
+	//Only check when we are not running a game
+	if (cls.state >= CA_LOADING)
 	{
 		return;
 	}
 
-	//Only check when we are not running a game
-	if (cls.state >= CA_LOADING)
+	if (!force && autoupdate.masterDataChecked && tempTime < 300000 && tempTime > 0)
 	{
 		return;
 	}
