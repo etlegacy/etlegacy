@@ -517,7 +517,6 @@ static void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
 void G_ResetMarkers(gentity_t *ent)
 {
 	int   i, time;
-	char  buffer[MAX_CVAR_VALUE_STRING];
 	float period = sv_fps.value;
 	int   eFlags;
 
