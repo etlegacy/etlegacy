@@ -923,6 +923,59 @@ void ClientIntermissionThink(gclient_t *client)
 	client->wbuttons    = client->pers.cmd.wbuttons;
 }
 
+void G_FallDamage(gentity_t *ent, int event)
+{
+	int damage;
+
+	if (ent->s.eType != ET_PLAYER)
+	{
+		return;      // not in the player model
+	}
+
+	if (event == EV_FALL_NDIE)
+	{
+		// this damage is used for stats (pushing players to death) - ensure we gib
+		if (ent->health > 0)
+		{
+			damage = ent->health - GIB_HEALTH + 1;
+		}
+		else
+		{
+			damage = -GIB_HEALTH + 1;
+		}
+	}
+	else if (event == EV_FALL_DMG_50)
+	{
+		damage                    = 50;
+		ent->client->ps.pm_time   = 1000;
+		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	}
+	else if (event == EV_FALL_DMG_25)
+	{
+		damage                    = 25;
+		ent->client->ps.pm_time   = 250;
+		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	}
+	else if (event == EV_FALL_DMG_15)
+	{
+		damage                    = 15;
+		ent->client->ps.pm_time   = 1000;
+		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	}
+	else if (event == EV_FALL_DMG_10)
+	{
+		damage                    = 10;
+		ent->client->ps.pm_time   = 1000;
+		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	}
+	else
+	{
+		damage = 5; // never used
+	}
+	ent->pain_debounce_time = level.time + 200; // no normal pain sound
+	G_Damage(ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
+}
+
 /**
  * @param[in] ent              Pointer to Entity
  * @param     oldEventSequence Old event sequence number
@@ -935,7 +988,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 	int       i;
 	int       event;
 	gclient_t *client = ent->client;
-	int       damage;
 	gentity_t *self;
 
 	if (oldEventSequence < client->ps.eventSequence - MAX_EVENTS)
@@ -954,53 +1006,13 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 		case EV_FALL_DMG_15:
 		case EV_FALL_DMG_25:
 		case EV_FALL_DMG_50:
-			// VectorClear() used to be done here whenever falling
-			// damage occured, but I moved it to bg_pmove where it belongs.
+			G_FallDamage(ent, event);
 
-			if (ent->s.eType != ET_PLAYER)
-			{
-				break;      // not in the player model
-			}
-			if (event == EV_FALL_NDIE)
-			{
-				damage = 9999;
-			}
-			else if (event == EV_FALL_DMG_50)
-			{
-				damage                    = 50;
-				ent->client->ps.pm_time   = 1000;
-				ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
-			}
-			else if (event == EV_FALL_DMG_25)
-			{
-				damage                    = 25;
-				ent->client->ps.pm_time   = 250;
-				ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
-			}
-			else if (event == EV_FALL_DMG_15)
-			{
-				damage                    = 15;
-				ent->client->ps.pm_time   = 1000;
-				ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
-			}
-			else if (event == EV_FALL_DMG_10)
-			{
-				damage                    = 10;
-				ent->client->ps.pm_time   = 1000;
-				ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
-			}
-			else
-			{
-				damage = 5; // never used
-			}
-			ent->pain_debounce_time = level.time + 200; // no normal pain sound
-			G_Damage(ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
 			ent->client->pmext.shoved = qfalse;
 			break;
 		case EV_FIRE_WEAPON_MG42:
 			// reset player disguise on firing mounted mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-
 			mg42_fire(ent);
 
 			// Only 1 stats bin for mg42
