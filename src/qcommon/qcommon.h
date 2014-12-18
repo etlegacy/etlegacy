@@ -286,6 +286,7 @@ typedef struct
 
 	char motdChallenge[MAX_TOKEN_CHARS];
 
+	int masterDataChecked;
 } autoupdate_t;
 
 extern autoupdate_t autoupdate;

@@ -63,12 +63,6 @@ void CL_CheckAutoUpdate(void)
 		return;
 	}
 
-	// Only check once per session
-	if (autoupdate.updateChecked)
-	{
-		return;
-	}
-
 	// Resolve update server
 	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
 
@@ -434,6 +428,7 @@ void CL_UpdateVarsClean(int flags)
 		Cvar_Set("com_updatefiles", "");
 		Cvar_Set("com_updatemessage", "");
 		Cvar_Set("com_updatefiles", "");
+		autoupdate.masterDataChecked = 0;
 	case CLEAR_FLAGS:
 		autoupdate.updateChecked = qfalse;
 		autoupdate.forceUpdate   = qfalse;

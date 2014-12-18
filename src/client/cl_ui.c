@@ -1231,8 +1231,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		CL_TranslateStringMod(VMA(1), VMA(2));
 		return 0;
 	case UI_CHECKAUTOUPDATE:
-		CL_RequestMotd();
-		CL_CheckAutoUpdate();
+		CL_RequestMasterData(qfalse);
 		return 0;
 	case UI_GET_AUTOUPDATE:
 		CL_GetAutoUpdate();
