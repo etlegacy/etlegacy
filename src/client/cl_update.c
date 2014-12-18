@@ -222,6 +222,17 @@ static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const 
 	return qfalse;
 }
 
+static void CL_CLeanUpdateFolder(const char *bin)
+{
+	//We just remove the old updater here, if it exists.
+	//The update installer itself does other cleanups
+	char *fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, bin);
+	if (FS_FileInPathExists(fn1))
+	{
+		FS_Remove(fn1);
+	}
+}
+
 qboolean CL_CheckUpdateDownloads(void)
 {
 #ifdef FEATURE_AUTOUPDATE
@@ -233,6 +244,8 @@ qboolean CL_CheckUpdateDownloads(void)
 			CL_InitDownloads();
 			return qtrue;
 		}
+
+		CL_CLeanUpdateFolder(UPDATE_BINARY);
 
 		if (CL_UnpackUpdatePackage(UPDATE_PACKAGE, UPDATE_BINARY, UPDATE_CONFIG))
 		{
