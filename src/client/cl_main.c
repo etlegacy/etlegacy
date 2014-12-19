@@ -775,7 +775,8 @@ void CL_RequestMasterData(qboolean force)
 		return;
 	}
 
-	autoupdate.masterDataChecked = cls.realtime;
+	// We need to add cls.realtime + 1 since on the very first time cls.realtime can be 0
+	autoupdate.masterDataChecked = cls.realtime + 1;
 
 	// fire a message off to the motd server and check for update
 	CL_RequestMotd();
