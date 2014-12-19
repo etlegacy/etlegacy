@@ -512,9 +512,11 @@ void S_MasterGain(float gain)
  */
 void S_Play_f(void)
 {
+	static char tempBuffer[MAX_QPATH];
 	int         i;
 	int         c;
 	sfxHandle_t h;
+
 
 	if (!si.RegisterSound || !si.StartLocalSound)
 	{
@@ -531,12 +533,18 @@ void S_Play_f(void)
 
 	for (i = 1; i < c; i++)
 	{
-		if (!strrchr(Cmd_Argv(i), '.'))
+		Q_strncpyz(tempBuffer, Cmd_Argv(i), MAX_QPATH);
+		if (!strrchr(tempBuffer, '.'))
 		{
-			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension\n", Cmd_Argv(i));
+#if 1
+			// Just add the .wav ending to be compatible with vanilla clients
+			Q_strcat(tempBuffer, MAX_QPATH, ".wav");
+#else
+			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension\n", tempBuffer);
+#endif
 		}
 
-		h = si.RegisterSound(Cmd_Argv(i), qfalse); // TODO: detect compression via extension? ioq uses qfalse by default
+		h = si.RegisterSound(tempBuffer, qfalse); // TODO: detect compression via extension? ioq uses qfalse by default
 
 		if (h)
 		{
@@ -544,7 +552,7 @@ void S_Play_f(void)
 		}
 		else
 		{
-			Com_Printf("Warning: S_Play_f sound '%s' not played.\n", Cmd_Argv(i));
+			Com_Printf("Warning: S_Play_f sound '%s' not played.\n", tempBuffer);
 		}
 	}
 }
