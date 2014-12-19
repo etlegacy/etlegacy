@@ -164,6 +164,7 @@ void CL_GetAutoUpdate(void)
 #endif /* FEATURE_AUTOUPDATE */
 }
 
+#ifdef FEATURE_AUTOUPDATE
 static void CL_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
 {
 	static char fn[MAX_OSPATH];
@@ -188,7 +189,9 @@ static void CL_RunUpdateBinary(const char *updateBinary, const char *updateConfi
 	// - after Legacy mod update
 	FS_ConditionalRestart(clc.checksumFeed);
 }
+#endif /* FEATURE_AUTOUPDATE */
 
+#ifdef FEATURE_AUTOUPDATE
 static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const char *config)
 {
 	char *fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, pack);
@@ -215,7 +218,9 @@ static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const 
 
 	return qfalse;
 }
+#endif /* FEATURE_AUTOUPDATE */
 
+#ifdef FEATURE_AUTOUPDATE
 static void CL_CLeanUpdateFolder(const char *bin)
 {
 	//We just remove the old updater here, if it exists.
@@ -226,6 +231,7 @@ static void CL_CLeanUpdateFolder(const char *bin)
 		FS_Remove(fn1);
 	}
 }
+#endif /* FEATURE_AUTOUPDATE */
 
 qboolean CL_CheckUpdateDownloads(void)
 {
