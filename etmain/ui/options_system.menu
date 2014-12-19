@@ -55,7 +55,9 @@ menuDef {
 // Downloads //
 #define DOWNLOADS_Y 176
 	SUBWINDOW( 6, DOWNLOADS_Y, (SUBWINDOW_WIDTH), 52, "DOWNLOADS" )
+#ifndef LEGACY
 	YESNO( 8, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH)-4, 10, "Check for Updates on Start-Up:", .2, 8, "cl_autoupdate", "Automatically check for updates?" )
+#endif
 	YESNO( 8, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH)-4, 10, "Get Missing Files from Server:", .2, 8, "cl_allowDownload", "Download missing files when available?" )
 	YESNO( 8, DOWNLOADS_Y+40, (SUBWINDOW_WIDTH)-4, 10, "Use HTTP/FTP Downloads:", .2, 8, "cl_wwwDownload", "Enables or disables http/ftp downloads" )
 
