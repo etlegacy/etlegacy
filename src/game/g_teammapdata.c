@@ -233,10 +233,10 @@ G_SetupFrustum
 */
 void G_SetupFrustum(gentity_t *ent)
 {
-	float	xs, xc;
-	float	ang;
-	vec3_t	axis[3];
-	vec3_t	vieworg;
+	float  xs, xc;
+	float  ang;
+	vec3_t axis[3];
+	vec3_t vieworg;
 
 	ang = DEG2RAD(90) * 0.5f;
 	SinCos(ang, xs, xc);
@@ -269,13 +269,13 @@ void G_SetupFrustum(gentity_t *ent)
 #define BINOCULAR_ANGLE 10.0f
 #define BOT_BINOCULAR_ANGLE 60.0f
 
-void G_SetupFrustum_ForBinoculars(gentity_t* ent)
+void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 {
-	float	xs, xc;
-	float	ang;
-	vec3_t	axis[3];
-	vec3_t	vieworg;
-	float	baseAngle = (ent->r.svFlags & SVF_BOT) ? BOT_BINOCULAR_ANGLE : BINOCULAR_ANGLE;
+	float  xs, xc;
+	float  ang;
+	vec3_t axis[3];
+	vec3_t vieworg;
+	float  baseAngle = (ent->r.svFlags & SVF_BOT) ? BOT_BINOCULAR_ANGLE : BINOCULAR_ANGLE;
 
 	ang = DEG2RAD(baseAngle) * 0.5;
 	SinCos(ang, xs, xc);
@@ -1013,7 +1013,7 @@ void G_PopupMessageForMines(gentity_t *player) // int sound
 
 void G_CheckSpottedLandMines(void)
 {
-	int i, j;
+	int       i, j;
 	gentity_t *ent, *ent2;
 
 	if (level.time - level.lastMapSpottedMinesUpdate < 500)
@@ -1079,9 +1079,9 @@ void G_CheckSpottedLandMines(void)
 								if (!ent2->s.modelindex2)
 								{
 									ent->client->landmineSpottedTime = level.time;
-									ent->client->landmineSpotted = ent2;
-									ent2->s.density = ent - g_entities + 1;
-									ent2->missionLevel = level.time;
+									ent->client->landmineSpotted     = ent2;
+									ent2->s.density                  = ent - g_entities + 1;
+									ent2->missionLevel               = level.time;
 
 									ent->client->landmineSpotted->count2 += 50;
 									if (ent->client->landmineSpotted->count2 >= 250)
@@ -1095,7 +1095,7 @@ void G_CheckSpottedLandMines(void)
 										// don't do this if the mine has been triggered.
 										if (!G_LandmineTriggered(ent->client->landmineSpotted))
 										{
-											ent->client->landmineSpotted->s.frame = rand() % 20;
+											ent->client->landmineSpotted->s.frame    = rand() % 20;
 											ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
 											trap_LinkEntity(ent->client->landmineSpotted);
 										}
@@ -1259,8 +1259,8 @@ void G_UpdateTeamMapData(void)
 				}
 
 				if (ent2->health <= 0 ||
-					ent2->client->sess.sessionTeam == ent->client->sess.sessionTeam ||
-					!ent2->client->ps.powerups[PW_OPS_DISGUISED])
+				    ent2->client->sess.sessionTeam == ent->client->sess.sessionTeam ||
+				    !ent2->client->ps.powerups[PW_OPS_DISGUISED])
 				{
 					continue;
 				}
