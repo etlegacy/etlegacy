@@ -6235,11 +6235,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	case WP_LANDMINE:
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
-		sfx2range = 1200;
-		if (weapon == WP_GPG40 || weapon == WP_M7)
-		{
-			sfx2range = 800;
-		}
 		if (weapon == WP_SATCHEL)
 		{
 			sfx  = cgs.media.sfx_satchelexp;
