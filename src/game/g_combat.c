@@ -114,12 +114,12 @@ void AddKillScore(gentity_t *ent, int score)
 
 /*
 =================
-TossClientItems
+TossWeapons
 
 Toss the weapon and powerups for the killed player
 =================
 */
-void TossClientItems(gentity_t *self)
+void TossWeapons(gentity_t *self)
 {
 	/*gitem_t       *item;
 	int         weapon;
@@ -1331,32 +1331,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// combatstate
 	if (targ->client && attacker && attacker->client && attacker != targ)
 	{
-		/*vec_t dist = -1.f;
-
-		if( targ->client->combatState < COMBATSTATE_HOT ) {
-		    vec3_t shotvec;
-
-		    VectorSubtract( targ->r.currentOrigin, attacker->r.currentOrigin, shotvec );
-		    dist = VectorLengthSquared( shotvec );
-
-		    if( dist < Square(1500.f) && targ->client->combatState == COMBATSTATE_WARM )
-		        targ->client->combatState = COMBATSTATE_HOT;
-		}
-
-		if( attacker->client->combatState < COMBATSTATE_HOT ) {
-		    if( dist < 0.f ) {
-		        vec3_t shotvec;
-
-		        VectorSubtract( targ->r.currentOrigin, attacker->r.currentOrigin, shotvec );
-		        dist = VectorLengthSquared( shotvec );
-		    }
-
-		    if( dist > Square(1500.f) )
-		        attacker->client->combatState = COMBATSTATE_WARM;
-		    else if( attacker->client->combatState == COMBATSTATE_WARM )
-		        attacker->client->combatState = COMBATSTATE_HOT;
-		}*/
-
 		if (g_gamestate.integer == GS_PLAYING)
 		{
 			if (!onSameTeam)

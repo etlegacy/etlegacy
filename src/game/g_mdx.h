@@ -91,7 +91,7 @@ extern void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int 
 #ifdef BONE_HITTESTS
 enum
 {
-	MDX_NONE,
+	MDX_NONE = 0,
 	MDX_GUN,
 	MDX_HEAD,
 	MDX_TORSO,

@@ -709,7 +709,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		ent->s.weapon            = ent->client->limboDropWeapon; // stored in player_die()
 		if (makeCorpse && !(contents & CONTENTS_NODROP))
 		{
-			TossClientItems(ent);
+			TossWeapons(ent);
 		}
 
 		if (G_FollowSame(ent))
@@ -3294,7 +3294,7 @@ void ClientDisconnect(int clientNum)
 
 		// They don't get to take powerups with them!
 		// Especially important for stuff like CTF flags
-		TossClientItems(ent);
+		TossWeapons(ent);
 
 		// New code for tossing flags
 		if (ent->client->ps.powerups[PW_REDFLAG])

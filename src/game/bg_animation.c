@@ -252,7 +252,7 @@ static animStringItem_t animAIStateStr[] =
 
 typedef enum
 {
-	ANIM_CONDTYPE_BITFLAGS,
+	ANIM_CONDTYPE_BITFLAGS = 0,
 	ANIM_CONDTYPE_VALUE,
 
 	NUM_ANIM_CONDTYPES
@@ -868,7 +868,7 @@ static void BG_ParseCommands(char **input, animScriptItem_t *scriptItem, animMod
 
 typedef enum
 {
-	PARSEMODE_DEFINES,
+	PARSEMODE_DEFINES = 0,
 	PARSEMODE_ANIMATION,
 	PARSEMODE_CANNED_ANIMATIONS,
 	PARSEMODE_STATECHANGES,

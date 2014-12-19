@@ -40,7 +40,7 @@
 
 typedef enum
 {
-	TOK_g_currentRound,                 // 0
+	TOK_g_currentRound = 0,             // 0
 	TOK_g_nextTimeLimit,                // 1
 	TOK_gamestate,                      // 2
 	TOK_g_currentCampaign,              // 3

@@ -81,7 +81,7 @@
 // movers are things like doors, plats, buttons, etc
 typedef enum
 {
-	MOVER_POS1,
+	MOVER_POS1 = 0,
 	MOVER_POS2,
 	MOVER_POS3,
 	MOVER_1TO2,
@@ -503,21 +503,21 @@ struct gentity_s
 
 typedef enum
 {
-	CON_DISCONNECTED,
+	CON_DISCONNECTED = 0,
 	CON_CONNECTING,
 	CON_CONNECTED
 } clientConnected_t;
 
 typedef enum
 {
-	SPECTATOR_NOT,
+	SPECTATOR_NOT = 0,
 	SPECTATOR_FREE,
 	SPECTATOR_FOLLOW
 } spectatorState_t;
 
 typedef enum
 {
-	COMBATSTATE_COLD,
+	COMBATSTATE_COLD = 0,
 	COMBATSTATE_DAMAGEDEALT,
 	COMBATSTATE_DAMAGERECEIVED,
 	COMBATSTATE_KILLEDPLAYER
@@ -525,7 +525,7 @@ typedef enum
 
 typedef enum
 {
-	TEAM_BEGIN,     // Beginning a team game, spawn at base
+	TEAM_BEGIN = 0,     // Beginning a team game, spawn at base
 	TEAM_ACTIVE     // Now actively playing
 } playerTeamStateState_t;
 
@@ -1359,7 +1359,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod);
 qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod, qboolean clientsonly);
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath);
-void TossClientItems(gentity_t *self);
+void TossWeapons(gentity_t *self);
 gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
 gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
 
@@ -2026,7 +2026,7 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 
 typedef enum
 {
-	SM_NEED_MEDIC,
+	SM_NEED_MEDIC = 0,
 	SM_NEED_ENGINEER,
 	SM_NEED_LT,
 	SM_NEED_COVERTOPS,
@@ -2084,7 +2084,7 @@ void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 // "Delayed Print" ent enumerations
 typedef enum
 {
-	DP_PAUSEINFO,       // Print current pause info
+	DP_PAUSEINFO = 0,       // Print current pause info
 	DP_UNPAUSING,       // Print unpause countdown + unpause
 	DP_CONNECTINFO,     // Display info on connect
 	DP_MVSPAWN          // Set up MV views for clients who need them
@@ -2365,7 +2365,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
 typedef enum
 {
-	F_INT,
+	F_INT = 0,
 	F_FLOAT,
 	F_LSTRING,          // string on disk, pointer in memory, TAG_LEVEL
 	F_GSTRING,          // string on disk, pointer in memory, TAG_GAME
