@@ -419,6 +419,8 @@ const char *ftLeaderMenuListAlphachars[] =
 	"I",
 	"K",
 	"W",
+	"P",
+	"A",
 	NULL,
 };
 
