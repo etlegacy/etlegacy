@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.70rc2\n"
+"Project-Id-Version: ET: Legacy 2.71\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
 "PO-Revision-Date: 2014-01-31 23:55+0100\n"
@@ -2885,7 +2885,7 @@ msgstr "Awansowany do rangi %s!"
 #: src/cgame/cg_players.c:365
 #, c-format
 msgid "Increased %s skill to level %i!"
-msgstr "Zwiekszona %s umiejetnosc do poziomu %i!"
+msgstr "Zwiekszono umiejetnosc %s do poziomu %i!"
 
 #: src/cgame/cg_players.c:367
 #, c-format
@@ -4724,3 +4724,6 @@ msgstr "%s ^7odszedl z oddzialu"
 
 msgid "You have been warned by your fireteam leader\n"
 msgstr "Zostales ostrzezony przez swojego lidera oddzialu\n"
+
+msgid "^3moved to spectator for inactivity!\n"
+msgstr "^3przeniesiony do widzow za nieaktywnosc!\n"
