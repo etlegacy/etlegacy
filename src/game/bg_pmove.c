@@ -2036,7 +2036,6 @@ static void PM_Footsteps(void)
 	float    bobmove;
 	int      old;
 	qboolean footstep;
-	qboolean iswalking;
 	int      animResult = -1;
 
 	if (pm->ps->eFlags & EF_DEAD)
@@ -2067,8 +2066,6 @@ static void PM_Footsteps(void)
 
 		return;
 	}
-
-	iswalking = qfalse;
 
 	// calculate speed and cycle to be used for
 	// all cyclic walking effects
@@ -2270,37 +2267,7 @@ static void PM_Footsteps(void)
 	old              = pm->ps->bobCycle;
 	pm->ps->bobCycle = (int)(old + bobmove * pml.msec) & 255;
 
-	// if we just crossed a cycle boundary, play an apropriate footstep event
-	if (iswalking)
-	{
-		// sounds much more natural this way
-		if (old > pm->ps->bobCycle)
-		{
-			switch (pm->waterlevel)
-			{
-			case 0:
-				if (footstep && !pm->noFootsteps)
-				{
-					PM_AddEventExt(EV_FOOTSTEP, PM_FootstepForSurface());
-				}
-				break;
-			case 1:
-				// splashing
-				PM_AddEvent(EV_FOOTSPLASH);
-				break;
-			case 2:
-				// wading / swimming at surface
-				PM_AddEvent(EV_SWIM);
-				break;
-			case 3:
-				// no sound when completely underwater
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	else if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
+	if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
 	{
 		switch (pm->waterlevel)
 		{
