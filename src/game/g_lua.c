@@ -1720,8 +1720,7 @@ qboolean G_LuaInit(void)
 
 				if (code == NULL)
 				{
-					G_Printf("Lua API: memory allocation error for %s data\n", crt);
-					// FIXME: we should actually abort here
+					G_Error("Lua API: memory allocation error for %s data\n", crt);
 				}
 
 				trap_FS_Read(code, flen, f);
@@ -1742,8 +1741,7 @@ qboolean G_LuaInit(void)
 
 					if (vm == NULL)
 					{
-						G_Printf("Lua API: memory allocation error for %s data\n", crt);
-						// FIXME: we should actually abort here
+						G_Error("Lua API: vm memory allocation error for %s data\n", crt);
 					}
 
 					vm->id = -1;
