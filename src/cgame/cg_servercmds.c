@@ -1649,7 +1649,7 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 			}
 			else if (mode == SAY_BUDDY)
 			{
-				Com_sprintf(vchat.message, sizeof(vchat.message), "<%s^7>^3<%s^3>: ^%c%s",
+				Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s",
 				            ci->name, loc, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
 			}
 			else
