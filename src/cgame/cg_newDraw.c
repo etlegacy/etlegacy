@@ -345,7 +345,7 @@ CG_DrawCursorHints
 void CG_DrawCursorhint(rectDef_t *rect)
 {
 	float     *color;
-	qhandle_t icon, icon2 = 0;
+	qhandle_t icon;
 	float     scale, halfscale;
 	float     middle = rect->x + cgs.wideXoffset;
 
@@ -526,11 +526,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	// set color and draw the hint
 	trap_R_SetColor(color);
 	CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
-
-	if (icon2)
-	{
-		CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon2);
-	}
 
 	trap_R_SetColor(NULL);
 
