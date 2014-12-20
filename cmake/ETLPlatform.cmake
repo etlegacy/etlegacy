@@ -74,15 +74,14 @@ if(UNIX)
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem") # These flags will cause error with older Xcode
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_C "-isystem")
 
-		# 10.7 is really an arbitrary choice (it should in theory work back to 10.5). The main point is if
-		# we don't specify a target, it will be require the OS version used at compile time.
+		# Must specify a target, otherwise it will require the OS version used at compile time.
 		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
-		execute_process(COMMAND xcode-select -p OUTPUT_VARIABLE XCODE_DEVELOPER_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-		set(CMAKE_OSX_SYSROOT "${XCODE_DEVELOPER_PATH}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk")
+		execute_process(COMMAND xcrun -show-sdk-path OUTPUT_VARIABLE XCODE_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+		set(CMAKE_OSX_SYSROOT "${XCODE_SDK_PATH}")
 		set(CMAKE_CXX_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
 
 		if(BUILD_CLIENT)
-			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon")
+			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon -framework CoreAudio -framework ForceFeedback -liconv")
 		endif()
 		set(LIB_SUFFIX "_mac")
 		set(CMAKE_SHARED_MODULE_SUFFIX "")
