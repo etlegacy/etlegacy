@@ -2565,6 +2565,8 @@ void CG_Player(centity_t *cent)
 		CG_PlayerSprites(cent);
 	}
 
+	shadow = CG_PlayerShadow(cent, &shadowPlane);
+
 	// add a water splash if partially in and out of water
 	CG_PlayerSplash(cent);
 
@@ -2821,10 +2823,6 @@ void CG_Player(centity_t *cent)
 	CG_AddRefEntityWithPowerups(&head, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
 
 	cent->pe.headRefEnt = head;
-
-	// add the
-
-	shadow = CG_PlayerShadow(cent, &shadowPlane);
 
 	// set the shadowplane for accessories
 	acc.shadowPlane = shadowPlane;
