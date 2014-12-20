@@ -1440,10 +1440,6 @@ void ClientThink_real(gentity_t *ent)
 
 	Pmove(&pm); // monsterslick
 
-	// fix leaning players bug
-	VectorCopy(client->ps.velocity, ent->s.pos.trDelta);
-	SnapVector(ent->s.pos.trDelta);
-
 	// server cursor hints
 	// bots don't need to check for cursor hints
 	if (!(ent->r.svFlags & SVF_BOT) && ent->lastHintCheckTime < level.time)
