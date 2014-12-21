@@ -380,25 +380,18 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 {
 	weapon_t  weap = BG_WeaponForMOD(meansOfDeath);
 	gclient_t *client;
-	gitem_t   *item           = NULL;
-	int       contents        = 0, i, killer = ENTITYNUM_WORLD;
-	char      *killerName     = "<world>";
-	qboolean  nogib           = qtrue;
-	qboolean  killedintank    = qfalse;
-	qboolean  dieFromSameTeam = OnSameTeam(self, attacker) || (attacker->client && self->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor));
-	qboolean  attackerClient  = (attacker && attacker->client) ? qtrue : qfalse;
+	gitem_t   *item        = NULL;
+	int       contents     = 0, i, killer = ENTITYNUM_WORLD;
+	char      *killerName  = "<world>";
+	qboolean  nogib        = qtrue;
+	qboolean  killedintank = qfalse;
+	qboolean  attackerClient, dieFromSameTeam;
 
 	//G_Printf( "player_die\n" );
 
 	if (!self->client)
 	{
 		return;
-	}
-
-	if (attackerClient)
-	{
-		self->client->pers.lastkiller_client     = attacker->s.clientNum;
-		attacker->client->pers.lastkilled_client = self->s.clientNum;
 	}
 
 	switch (meansOfDeath)
@@ -411,6 +404,15 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			meansOfDeath = MOD_SHOVE;
 		}
 		break;
+	}
+
+	attackerClient  = (attacker && attacker->client) ? qtrue : qfalse;
+	dieFromSameTeam = OnSameTeam(self, attacker) || (attacker->client && self->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor));
+
+	if (attackerClient)
+	{
+		self->client->pers.lastkiller_client     = attacker->s.clientNum;
+		attacker->client->pers.lastkilled_client = self->s.clientNum;
 	}
 
 	// this is used for G_DropLimboHealth()/G_DropLimboAmmo()
