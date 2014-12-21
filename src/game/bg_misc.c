@@ -3369,11 +3369,14 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 	s->pos.trType = TR_INTERPOLATE;
 	s->pos.trTime = time;               // help out new synced animations.
 
+// FIXME: cause shaking models in listen servers
+#ifdef DEDICATED
 	VectorCopy(ps->origin, s->pos.trBase);
 	if (snap)
 	{
 		SnapVector(s->pos.trBase);
 	}
+#endif
 
 	VectorCopy(ps->velocity, s->pos.trDelta);
 
