@@ -5863,7 +5863,7 @@ static void IssueLightOcclusionQuery(link_t *queue, trRefLight_t *light, qboolea
 
 		if (!glIsQuery(light->occlusionQueryObject))
 		{
-			Ren_Fatal("IssueLightOcclusionQuery: light %i has no occlusion query object in slot %i: %i", light - tr.world->lights, backEnd.viewParms.viewCount, light->occlusionQueryObject);
+			Ren_Fatal("IssueLightOcclusionQuery: light %i has no occlusion query object in slot %i: %lu", light - tr.world->lights, backEnd.viewParms.viewCount, (unsigned long)light->occlusionQueryObject);
 		}
 
 		//light->occlusionQueryNumbers[backEnd.viewParms.viewCount] = backEnd.pc.c_occlusionQueries;
