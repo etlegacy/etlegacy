@@ -6249,15 +6249,10 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		{
 			sfx = sfx2 = 0;
 		}
-		else if (weapon == WP_GRENADE_LAUNCHER || weapon == WP_GRENADE_PINEAPPLE || weapon == WP_GPG40 || weapon == WP_M7)
+		else // (weapon == WP_GRENADE_LAUNCHER || weapon == WP_GRENADE_PINEAPPLE || weapon == WP_GPG40 || weapon == WP_M7
 		{
 			sfx  = cgs.media.sfx_grenexp;
 			sfx2 = cgs.media.sfx_grenexpDist;
-		}
-		else
-		{
-			sfx  = cgs.media.sfx_rockexp;
-			sfx2 = cgs.media.sfx_rockexpDist;
 		}
 		shader        = cgs.media.rocketExplosionShader;    // copied from RL
 		sfx2range     = 400;
