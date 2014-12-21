@@ -136,7 +136,6 @@ cvar_t *sv_packetdelay;
 
 cvar_t *com_motd;
 cvar_t *com_motdString;
-cvar_t *com_autoupdate;
 cvar_t *com_updateavailable;
 cvar_t *com_updatemessage;
 cvar_t *com_updatefiles;
@@ -3000,12 +2999,6 @@ void Com_Init(char *commandLine)
 
 	com_motd       = Cvar_Get("com_motd", "1", 0);
 	com_motdString = Cvar_Get("com_motdString", "", CVAR_ROM);
-
-#if DEDICATED
-	com_autoupdate = Cvar_Get("sv_autoupdate", "1", CVAR_ARCHIVE);
-#else
-	com_autoupdate = Cvar_Get("cl_autoupdate", "1", CVAR_ARCHIVE);
-#endif
 
 	com_updatemessage = Cvar_Get("com_updatemessage", "New version available. Do you want to update now?", 0);
 

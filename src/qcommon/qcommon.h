@@ -910,7 +910,6 @@ extern cvar_t *com_minimized;
 extern cvar_t *com_altivec;
 
 // updater and motd
-extern cvar_t *com_autoupdate;
 extern cvar_t *com_updateavailable;
 extern cvar_t *com_updatemessage;
 extern cvar_t *com_updatefiles;

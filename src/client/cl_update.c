@@ -57,12 +57,6 @@ void CL_CheckAutoUpdate(void)
 	return;
 #endif
 
-	if (!com_autoupdate->integer)
-	{
-		Com_DPrintf("Updater is disabled by com_autoupdate 0.\n");
-		return;
-	}
-
 	// Resolve update server
 	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
 
