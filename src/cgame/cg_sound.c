@@ -120,6 +120,8 @@ int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 		scriptSound = scriptSound->next;
 	}
 
+	oldestTime = 0;
+
 	if (oldestSound)
 	{
 		int pos = rand() % oldestSound->numsounds;
@@ -132,11 +134,11 @@ int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 				oldestSound->sounds[pos].sfxHandle = trap_S_RegisterSound(oldestSound->sounds[pos].filename, qfalse);   // FIXME: make compressed settable through the soundscript
 			}
 			trap_S_StartSound(org, entnum, sound->channel, oldestSound->sounds[pos].sfxHandle);
-			return trap_S_GetSoundLength(oldestSound->sounds[pos].sfxHandle);
+			oldestTime = trap_S_GetSoundLength(oldestSound->sounds[pos].sfxHandle);
 		}
 		else
 		{
-			return trap_S_StartStreamingSound(oldestSound->sounds[pos].filename, sound->looping ? oldestSound->sounds[pos].filename : NULL, entnum, sound->channel, sound->attenuation);
+			oldestTime = trap_S_StartStreamingSound(oldestSound->sounds[pos].filename, sound->looping ? oldestSound->sounds[pos].filename : NULL, entnum, sound->channel, sound->attenuation);
 		}
 		oldestSound->lastPlayed = cg.time;
 	}
@@ -145,7 +147,7 @@ int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 		CG_Error(S_COLOR_RED "CG_SoundPickOldestRandomSound: Unable to locate a valid sound for soundScript: %s\n", sound->name);
 	}
 
-	return 0;
+	return oldestTime;
 }
 
 void CG_AddBufferedSoundScript(soundScript_t *sound)

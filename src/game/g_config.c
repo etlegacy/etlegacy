@@ -259,7 +259,10 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 			flen = trap_FS_FOpenFile(va("%s/%s.script", sdir, mapname), &f, FS_READ);
 			if (flen < 0)
 			{
-				return G_ConfigError(handle, "Cannot open mapscript file for hash verification: %s/%s.script", sdir, mapname);
+				// FIXME: handle this properly..
+				//return G_ConfigError(handle, "Cannot open mapscript file for hash verification: %s/%s.script", sdir, mapname);
+				G_Printf("Cannot open mapscript file for hash verification: %s/%s.script", sdir, mapname);
+				return res;
 			}
 
 			code = malloc(flen + 1);

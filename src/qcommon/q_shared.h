@@ -405,6 +405,7 @@ typedef int clipHandle_t;
 #define ENABLEBIT(x, y) x |= BIT(y)
 #define CLEARBIT(x, y) x &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
+#define CHECKBIT(x, y) (x & BIT(y))
 
 //#define   SND_NORMAL          0x000   // (default) Allow sound to be cut off only by the same sound on this channel
 #define     SND_OKTOCUT         0x001   // Allow sound to be cut off by any following sounds on this channel
