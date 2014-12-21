@@ -614,7 +614,7 @@ typedef struct clientInfo_s
 
 typedef enum
 {
-	W_PART_1,
+	W_PART_1 = 0,
 	W_PART_2,
 	W_PART_3,
 	W_PART_4,
@@ -626,7 +626,7 @@ typedef enum
 
 typedef enum
 {
-	W_TP_MODEL,         //  third person model
+	W_TP_MODEL = 0,         //  third person model
 	W_FP_MODEL,         //  first person model
 	W_PU_MODEL,         //  pickup model
 	W_NUM_TYPES
@@ -762,7 +762,7 @@ typedef struct
 
 typedef enum
 {
-	SHOW_OFF,
+	SHOW_OFF = 0,
 	SHOW_SHUTDOWN,
 	SHOW_ON
 } showView_t;
@@ -2646,7 +2646,7 @@ typedef struct
 
 typedef enum
 {
-	ANIM_IDLE,
+	ANIM_IDLE = 0,
 	ANIM_RAISE,
 } animType_t;
 

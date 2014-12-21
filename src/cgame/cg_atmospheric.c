@@ -58,7 +58,7 @@
 
 typedef enum
 {
-	ATM_NONE,
+	ATM_NONE = 0,
 	ATM_RAIN,
 	ATM_SNOW
 } atmFXType_t;
@@ -118,7 +118,7 @@ qboolean CG_AtmosphericKludge(void)
 
 typedef enum
 {
-	ACT_NOT,
+	ACT_NOT = 0,
 	ACT_FALLING
 } active_t;
 
