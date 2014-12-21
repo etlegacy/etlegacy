@@ -1233,13 +1233,13 @@ qboolean BG_EvaluateConditions(int client, animScriptItem_t *scriptItem)
 			if (!(globalScriptData->clientConditions[client][cond->index][0] & cond->value[0]) &&
 			    !(globalScriptData->clientConditions[client][cond->index][1] & cond->value[1]))
 			{
-				return qfalse;
+				passed = qfalse;
 			}
 			break;
 		case ANIM_CONDTYPE_VALUE:
 			if (!(globalScriptData->clientConditions[client][cond->index][0] == cond->value[0]))
 			{
-				return qfalse;
+				passed = qfalse;
 			}
 			break;
 		default:     // NUM_ANIM_CONDTYPES not handled
