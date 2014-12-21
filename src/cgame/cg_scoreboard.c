@@ -98,7 +98,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
-		const char *s, *buf, *shader = NULL, *flagshader = NULL, *nameshader = NULL;
+		const char *s, *buf, *flagshader = NULL, *nameshader = NULL;
 
 		rows = 8;
 		y   += 16 * (rows - 1);
@@ -131,10 +131,6 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			CG_DrawPic(325 + cgs.wideXoffset, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
 		}
 
-		if (shader)
-		{
-			CG_DrawPic(229 + cgs.wideXoffset, 10, 182, 136, trap_R_RegisterShaderNoMip(shader));
-		}
 		if (nameshader)
 		{
 			CG_DrawPic(140 + cgs.wideXoffset, 50, 127, 64, trap_R_RegisterShaderNoMip(nameshader));
