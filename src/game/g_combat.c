@@ -887,11 +887,7 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
 
 #ifdef FEATURE_SERVERMDX
-	// For some reason the trap_Trace() (called in IsHeadShot()) does quite often
-	// not detect a hit on the head-hitbox when a player is prone (when it -should- hit)..
-	// However, the non-realhead code seems to work much better for prone players.
-	// What is happening?..
-	if ((g_realHead.integer & REALHEAD_HEAD) && !(ent->client->ps.eFlags & EF_PRONE))
+	if (g_realHead.integer & REALHEAD_HEAD)
 	{
 		// zinx - realistic hitboxes
 		if (newRefent)
