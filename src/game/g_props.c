@@ -293,19 +293,19 @@ void PGUNsparks_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 
 void Psparks_think(gentity_t *ent)
 {
-	gentity_t *tent;
+	//gentity_t *tent;
 
-// FIXME MOVE TO CLIENT!
+	// FIXME MOVE TO CLIENT!
 	return;
 
-
+	/*
 	if (ent->spawnflags & 1)
 	{
-		tent = G_TempEntity(ent->r.currentOrigin, EV_SPARKS_ELECTRIC);
+	    tent = G_TempEntity(ent->r.currentOrigin, EV_SPARKS_ELECTRIC);
 	}
 	else
 	{
-		tent = G_TempEntity(ent->r.currentOrigin, EV_SPARKS);
+	    tent = G_TempEntity(ent->r.currentOrigin, EV_SPARKS);
 	}
 	VectorCopy(ent->r.currentOrigin, tent->s.origin);
 	VectorCopy(ent->r.currentAngles, tent->s.angles);
@@ -316,6 +316,7 @@ void Psparks_think(gentity_t *ent)
 	tent->s.angles2[2] = ent->speed;
 
 	ent->nextthink = level.time + FRAMETIME + ent->delay + (rand() % 600);
+	*/
 }
 
 void sparks_angles_think(gentity_t *ent)
@@ -359,6 +360,7 @@ void SP_props_sparks(gentity_t *ent)
 	ent->think = G_FreeEntity;
 	return;
 
+	/* FIXME
 	G_SetOrigin(ent, ent->s.origin);
 	ent->r.svFlags = 0;
 	ent->s.eType   = ET_GENERAL;
@@ -368,34 +370,35 @@ void SP_props_sparks(gentity_t *ent)
 
 	if (!ent->health)
 	{
-		ent->health = 8;
+	    ent->health = 8;
 	}
 
 	if (!ent->wait)
 	{
-		ent->wait = 1200;
+	    ent->wait = 1200;
 	}
 	else
 	{
-		ent->wait *= 1000;
+	    ent->wait *= 1000;
 	}
 
 	if (!ent->start_size)
 	{
-		ent->start_size = 8;
+	    ent->start_size = 8;
 	}
 
 	if (!ent->end_size)
 	{
-		ent->end_size = 8;
+	    ent->end_size = 8;
 	}
 
 	if (!ent->speed)
 	{
-		ent->speed = 2;
+	    ent->speed = 2;
 	}
 
 	trap_LinkEntity(ent);
+	*/
 }
 
 /*
@@ -1942,11 +1945,6 @@ the default is in the middle of the barrel on the floor
 void Props_Barrel_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	return; // barrels cant move
-
-	if (!(self->spawnflags & 4))
-	{
-		Props_Chair_Touch(self, other, trace);
-	}
 }
 
 void Props_Barrel_Animate(gentity_t *ent)
@@ -2105,10 +2103,11 @@ void SP_OilParticles(gentity_t *ent)
 	vec3_t    vec;
 	vec3_t    forward;
 
-// Note to self quick fix
-// need to move this to client
+	// Note to self quick fix
+	// need to move this to client
 	return;
 
+	/* FIXME
 	OilLeak = G_Spawn();
 
 	VectorCopy(ent->r.currentOrigin, point);
@@ -2133,6 +2132,7 @@ void SP_OilParticles(gentity_t *ent)
 	OilLeak->count2    = level.time;
 
 	trap_LinkEntity(OilLeak);
+	*/
 }
 
 void Props_Barrel_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t point)
@@ -2612,17 +2612,19 @@ void flippy_table_animate(gentity_t *ent)
 {
 	return;
 
+	/* FIXME/remove?
 	if (ent->s.frame == 9)
 	{
-		G_UseTargets(ent, NULL);
-		ent->think     = G_FreeEntity;
-		ent->nextthink = level.time + 2000;
+	    G_UseTargets(ent, NULL);
+	    ent->think     = G_FreeEntity;
+	    ent->nextthink = level.time + 2000;
 	}
 	else
 	{
-		ent->s.frame++;
-		ent->nextthink = level.time + (FRAMETIME / 2);
+	    ent->s.frame++;
+	    ent->nextthink = level.time + (FRAMETIME / 2);
 	}
+	*/
 }
 
 void props_flippy_table_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
