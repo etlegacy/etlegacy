@@ -1854,6 +1854,7 @@ void G_LuaStackDump()
 	Q_strncpyz(vm->file_name, "current API available to scripts", sizeof(vm->file_name));
 	vm->code      = "";
 	vm->code_size = 0;
+	vm->err       = 0;
 
 	// Start lua virtual machine
 	if (G_LuaStartVM(vm))
