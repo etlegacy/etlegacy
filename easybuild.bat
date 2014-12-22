@@ -155,11 +155,11 @@ GOTO:EOF
 	CALL:SETUPFOLDERS
 
 	:: done
-	CALL:CRETELINK "ETLegacy" "%game_basepath%\etl.exe" "%game_basepath%"
+	CALL:CREATELINK "ETLegacy" "%game_basepath%\etl.exe" "%game_basepath%"
 	ECHO The %build_type% build has been installed in %game_basepath%, and shortcut has been added to your desktop
 GOTO:EOF
 
-:CRETELINK
+:CREATELINK
 	set SCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
 
 	echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SCRIPT%
