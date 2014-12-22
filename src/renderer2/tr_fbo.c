@@ -45,17 +45,12 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 
 	code = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
-	if (code == GL_FRAMEBUFFER_COMPLETE)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER_EXT, id);
-		return qtrue;
-	}
-
-	// an error occured
 	switch (code)
 	{
 	case GL_FRAMEBUFFER_COMPLETE:
-		break;
+		glBindFramebuffer(GL_FRAMEBUFFER_EXT, id); // ok
+		return qtrue;
+	// an error occured
 	case GL_FRAMEBUFFER_UNSUPPORTED:
 		Ren_Warning("R_CheckFBO: (%s) Unsupported framebuffer format\n", fbo->name);
 		break;
@@ -69,12 +64,10 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 	//  Ren_Warning( "R_CheckFBO: (%s) Framebuffer incomplete, duplicate attachment\n", fbo->name);
 	//  break;
 	case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same dimensions\n",
-		            fbo->name);
+		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same dimensions\n", fbo->name);
 		break;
 	case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same format\n",
-		            fbo->name);
+		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same format\n", fbo->name);
 		break;
 	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
 		Ren_Warning("R_CheckFBO: (%s) Framebuffer incomplete, missing draw buffer\n", fbo->name);
