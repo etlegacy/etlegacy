@@ -1674,7 +1674,6 @@ void R_AddEntitySurfaces(void)
 					{
 						break;
 					}
-					shader = R_GetShaderByHandle(ent->e.customShader);
 					R_AddDrawSurf(&entitySurface, tr.defaultShader, 0, 0, 0);
 					break;
 				default:

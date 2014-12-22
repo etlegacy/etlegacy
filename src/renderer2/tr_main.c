@@ -2555,7 +2555,7 @@ void R_AddEntitySurfaces(void)
 					VectorClear(ent->localBounds[1]);
 					VectorClear(ent->worldBounds[0]);
 					VectorClear(ent->worldBounds[1]);
-					shader = R_GetShaderByHandle(ent->e.customShader);
+
 					R_AddDrawSurf(&entitySurface, tr.defaultShader, -1, 0);
 					break;
 				default:

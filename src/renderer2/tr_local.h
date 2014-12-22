@@ -2610,18 +2610,17 @@ typedef struct model_s
 	int numLods;
 } model_t;
 
-void            R_ModelInit(void);
+void R_ModelInit(void);
 model_t *R_GetModelByHandle(qhandle_t hModel);
 
-int             RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endFrame, float frac, const char *tagNameIn);
-int             RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex);
+int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endFrame, float frac, const char *tagNameIn);
+int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex);
 
-int             RE_BoneIndex(qhandle_t hModel, const char *boneName);
+int RE_BoneIndex(qhandle_t hModel, const char *boneName);
 
+void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
 
-void            R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
-
-void            R_Modellist_f(void);
+void R_Modellist_f(void);
 
 //====================================================
 extern refimport_t ri;
@@ -3454,8 +3453,6 @@ void GL_CheckErrors_(const char *filename, int line);
 
 #define GL_CheckErrors() GL_CheckErrors_(__FILE__, __LINE__)
 
-
-
 //ModelViewProjectionMatrix
 #define GLSTACK_MVPM glState.modelViewProjectionMatrix[glState.stackIndex]
 //ProjectionMatrix
@@ -3938,7 +3935,6 @@ void R_AddMDMInteractions(trRefEntity_t *e, trRefLight_t *light);
 
 int R_MDM_GetBoneTag(orientation_t *outTag, mdmModel_t *mdm, int startTagIndex, const refEntity_t *refent,
                      const char *tagName);
-
 
 void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surfType);
 void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surfType);
