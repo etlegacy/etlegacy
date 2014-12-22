@@ -7,6 +7,8 @@
 @echo off
 @setLocal EnableDelayedExpansion
 
+TITLE Building ET:Legacy
+
 ECHO ETLegacy easybuild for Windows
 
 :: The default VS version
@@ -19,21 +21,18 @@ CALL:SETUPNMAKE
 SET game_homepath=%USERPROFILE%\Documents\ETLegacy
 SET game_basepath=%USERPROFILE%\Documents\ETLegacy-Build
 SET build=Release
-
-PAUSE
+SET batloc=%~dp0
+SET build_dir=%batloc%build
 
 :: clean
 ECHO Cleaning...
 IF EXIST %game_basepath% RMDIR /s /q %game_basepath%
-IF EXIST build RMDIR /s /q build
-DEL /q %game_homepath%\legacy\*.pk3
-DEL /q %game_homepath%\legacy\*.dll
-DEL /q %game_homepath%\legacy\*.dat
+IF EXIST %build_dir% RMDIR /s /q %build_dir%
 
 :: build
 ECHO Building...
-MKDIR build
-CD build
+MKDIR %build_dir%
+CD %build_dir%
 
 cmake -G "Visual Studio %vsversion%" -T v%vsversion%0_xp -DBUNDLED_LIBS=YES ^
 -DCMAKE_BUILD_TYPE=%build% ^
@@ -47,16 +46,21 @@ cmake -G "Visual Studio %vsversion%" -T v%vsversion%0_xp -DBUNDLED_LIBS=YES ^
 
 msbuild ETLEGACY.sln /target:ALL_BUILD /p:Configuration=Release
 
-:: install
-ECHO Installing...
-msbuild ETLEGACY.sln /target:INSTALL /p:Configuration=Release
+if errorlevel 1 (
+	ECHO There was an issue with the build so no files are copied
+	PAUSE
+	GOTO:EOF
+)
 
-:: FIXME: SDL2.dll isn't copied by CMake (why?)
-COPY SDL2.dll %game_basepath%\SDL2.dll
+:: install
+ECHO Setting up the game
+CALL:SETUPFOLDERS
 
 :: done
-ECHO The %build% build has been installed in %game_basepath%.
-PAUSE
+CALL:CRETELINK "ETLegacy" "%game_basepath%\etl.exe" "%game_basepath%"
+ECHO The %build% build has been installed in %game_basepath%, and shortcut has been added to your desktop
+SLEEP 5
+::explorer %game_basepath%
 GOTO:EOF
 
 :SETUPNMAKE
@@ -80,6 +84,55 @@ GOTO:EOF
 			GOTO:EOF
 		)
 	)
+GOTO:EOF
+
+:SETUPFOLDERS
+	IF NOT EXIST "%game_basepath%" (
+		ECHO Will create base directory: "%game_basepath%"
+		mkdir "%game_basepath%"
+	)
+	CALL:CLEANPATH "%game_basepath%\legacy\" "*.pk3 *.dll *.dat"
+	CALL:CLEANPATH "%game_homepath%\legacy\" "*.pk3 *.dll *.dat"
+	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_openg*.dll SDL2.dll" "%game_basepath%\"
+	CALL:COPYFROMPATH "%cd%\legacy\" "*.pk3 qagame*.dll" "%game_basepath%\legacy\"
+GOTO:EOF
+
+:CLEANPATH
+	IF NOT EXIST %~1 GOTO:EOF
+	set bacpath=%cd%
+	cd %~1
+	FOR %%F IN (%~2) DO (
+		DEL %%F
+	)
+	cd %bacpath%
+GOTO:EOF
+
+:COPYFROMPATH
+	set bacpath=%cd%
+	cd %~1
+	FOR %%F IN (%~2) DO (
+		CALL:COPYFILE "%%F" %~3
+	)
+	cd %bacpath%
+GOTO:EOF
+
+:COPYFILE
+	REM /D
+	IF EXIST %~1 XCOPY %~1 %~2 /Y >nul
+GOTO:EOF
+
+:CRETELINK
+	set SCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
+
+	echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SCRIPT%
+	echo sLinkFile = "%USERPROFILE%\Desktop\%~1.lnk" >> %SCRIPT%
+	echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SCRIPT%
+	echo oLink.TargetPath = "%~2" >> %SCRIPT%
+	echo oLink.WorkingDirectory = "%~3" >> %SCRIPT%
+	echo oLink.Save >> %SCRIPT%
+
+	cscript /nologo %SCRIPT%
+	del %SCRIPT%
 GOTO:EOF
 
 :Substring
