@@ -8,8 +8,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 project(ETLEGACY C CXX)
-set(ETLEGACY_VERSION "2.71-dirty")
-set(ETLEGACY_VERSIONPLAIN "2,71,5,0")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)

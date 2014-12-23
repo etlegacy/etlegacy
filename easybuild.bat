@@ -44,6 +44,7 @@ GOTO:EOF
 	IF /I "%curvar%"=="clean" CALL:DOCLEAN
 	IF /I "%curvar%"=="build" CALL:DOBUILD
 	IF /I "%curvar%"=="install" CALL:DOINSTALL
+	IF /I "%curvar%"=="pack" CALL:DOPACKAGE
 	:: download pak0 - 2 to the homepath if they do not exist
 	IF /I "%curvar%"=="download" CALL:DOWNLOADPAKS "http://mirror.etlegacy.com/etmain/"
 	IF /I "%curvar%"=="open" explorer %game_basepath%
@@ -135,13 +136,12 @@ GOTO:EOF
 	IF NOT EXIST %build_dir% MKDIR %build_dir%
 	CD %build_dir%
 
+	:: Removed the following since they were not needed anymore and they broke the nsis package stage
+	:: -DCMAKE_INSTALL_PREFIX=%game_basepath% -DINSTALL_DEFAULT_BASEDIR=./ -DINSTALL_DEFAULT_BINDIR=./ -DINSTALL_DEFAULT_MODDIR=./ 
+
 	cmake -G "Visual Studio %vsversion%" -T v%vsversion%0_xp ^
 	-DBUNDLED_LIBS=YES ^
 	-DCMAKE_BUILD_TYPE=%build_type% ^
-	-DCMAKE_INSTALL_PREFIX=%game_basepath% ^
-	-DINSTALL_DEFAULT_BASEDIR=./ ^
-	-DINSTALL_DEFAULT_BINDIR=./ ^
-	-DINSTALL_DEFAULT_MODDIR=./ ^
 	-DINSTALL_OMNIBOT=YES ^
 	-DCROSS_COMPILE32=YES ^
 	..
@@ -157,6 +157,13 @@ GOTO:EOF
 	:: done
 	CALL:CREATELINK "ETLegacy" "%game_basepath%\etl.exe" "%game_basepath%"
 	ECHO The %build_type% build has been installed in %game_basepath%, and shortcut has been added to your desktop
+GOTO:EOF
+
+:DOPACKAGE
+	:: package
+	ECHO Packaging...
+	CD %build_dir%
+	cpack
 GOTO:EOF
 
 :CREATELINK
