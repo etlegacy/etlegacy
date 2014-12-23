@@ -840,6 +840,7 @@ static void CL_ParseDemo(void)
 	demofile        = clc.demofile;
 	CL_ClearState();
 	Com_Memset(&clc, 0, sizeof(clc));
+	CL_ClearDownload();
 	clc.demofile             = demofile;
 	cls.state                = CA_DISCONNECTED;
 	cl_connectedToPureServer = qfalse;

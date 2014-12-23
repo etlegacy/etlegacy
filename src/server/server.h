@@ -334,6 +334,8 @@ typedef struct
 	int currentFrameIndex;
 	int serverLoad;
 	svstats_t stats;
+
+	download_t download;
 } serverStatic_t;
 
 //=============================================================================

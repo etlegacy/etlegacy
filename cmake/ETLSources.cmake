@@ -49,7 +49,7 @@ FILE(GLOB SERVER_SRC
 	"src/botlib/l_*.h"
 	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
-	"src/qcommon/dl_main_stubs.c"
+	"src/qcommon/update.c"
 )
 
 FILE(GLOB CLIENT_SRC
@@ -65,6 +65,7 @@ FILE(GLOB CLIENT_SRC
 	"src/sys/con_log.c"
 	"src/sdl/*.c"
 	"src/sdl/*.h"
+	"src/qcommon/update.c"
 )
 
 FILE(GLOB CLIENT_SRC_REMOVE

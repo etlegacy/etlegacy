@@ -29,17 +29,25 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 /**
- * @file cl_update.c
+ * @file update.c
  */
 
-#include "client.h"
+#ifdef DEDICATED
+#include "../server/server.h"
+#define upd svs.download
+#define gamebin "etlded"
+#else
+#include "../client/client.h"
+#define upd cls.download
+#define gamebin "etl"
+#endif
 
 #ifdef _WIN32
 #define UPDATE_BINARY "updater.exe"
-#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute \"etl.exe\" --execute-args \"%s\""
+#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute \"" gamebin ".exe\" --execute-args \"%s\""
 #else
 #define UPDATE_BINARY "updater"
-#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute 'etl' --execute-args '%s'"
+#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute '" gamebin "' --execute-args '%s'"
 #endif
 #define UPDATE_PACKAGE "updater.zip"
 #define UPDATE_CONFIG "updater.xml"
@@ -49,7 +57,7 @@
 
 autoupdate_t autoupdate;
 
-void CL_CheckAutoUpdate(void)
+void Com_CheckAutoUpdate(void)
 {
 	char info[MAX_INFO_STRING];
 
@@ -85,7 +93,7 @@ void CL_CheckAutoUpdate(void)
 	autoupdate.updateChecked = qtrue;
 }
 
-void CL_GetAutoUpdate(void)
+void Com_GetAutoUpdate(void)
 {
 #ifdef FEATURE_AUTOUPDATE
 	// Don't try and get an update if we haven't checked for one
@@ -102,6 +110,7 @@ void CL_GetAutoUpdate(void)
 
 	Com_DPrintf("Connecting to auto-update server...\n");
 
+#ifndef DEDICATED
 	S_StopAllSounds();
 
 	// starting to load a map so we get out of full screen ui mode
@@ -113,6 +122,7 @@ void CL_GetAutoUpdate(void)
 
 	// clear any previous "server full" type messages
 	clc.serverMessage[0] = 0;
+#endif
 
 	if (com_sv_running->integer)
 	{
@@ -124,19 +134,24 @@ void CL_GetAutoUpdate(void)
 	Cvar_Set("sv_killserver", "1");
 	SV_Frame(0);
 
+#ifndef DEDICATED
 	CL_Disconnect(qtrue);
 	Con_Close();
 
 	Q_strncpyz(cls.servername, "ET:L Update Server", sizeof(cls.servername));
+#endif
 
 	if (autoupdate.autoupdateServer.type == NA_BAD)
 	{
 		Com_Printf("Bad server address\n");
+#ifndef DEDICATED
 		cls.state = CA_DISCONNECTED;
 		Cvar_Set("ui_connecting", "0");
+#endif
 		return;
 	}
 
+#ifndef DEDICATED
 	// Copy auto-update server address to Server connect address
 	memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
 
@@ -153,13 +168,14 @@ void CL_GetAutoUpdate(void)
 
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", "ET:L Update Server");
+#endif
 
-	CL_CheckUpdateStarted();
+	Com_CheckUpdateStarted();
 #endif /* FEATURE_AUTOUPDATE */
 }
 
 #ifdef FEATURE_AUTOUPDATE
-static void CL_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
+static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
 {
 	static char fn[MAX_OSPATH];
 
@@ -169,24 +185,30 @@ static void CL_RunUpdateBinary(const char *updateBinary, const char *updateConfi
 	Sys_Chmod(fn, S_IXUSR);
 #endif
 
+#ifndef DEDICATED
 	// will either exit with a successful process spawn, or will Com_Error ERR_DROP
 	// so we need to clear the disconnected download data if needed
-	if (cls.bWWWDlDisconnected)
+	if (upd.bWWWDlDisconnected)
 	{
-		cls.bWWWDlDisconnected = qfalse;
+		upd.bWWWDlDisconnected = qfalse;
 		CL_ClearStaticDownload();
 	}
+#endif
 
 	Sys_StartProcess(va(UPDATE_CMD, fn, Cvar_VariableString("fs_basepath"), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig), Cvar_VariableString("com_pid"), Com_GetCommandLine()), qtrue);
 
 	// reinitialize the filesystem if the game directory or checksum has changed
 	// - after Legacy mod update
+#ifdef DEDICATED
+	FS_ConditionalRestart(sv.checksumFeed);
+#else
 	FS_ConditionalRestart(clc.checksumFeed);
+#endif
 }
 #endif /* FEATURE_AUTOUPDATE */
 
 #ifdef FEATURE_AUTOUPDATE
-static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const char *config)
+static qboolean Com_UnpackUpdatePackage(const char *pack, const char *bin, const char *config)
 {
 	char *fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, pack);
 	char *fn2 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL);
@@ -215,7 +237,7 @@ static qboolean CL_UnpackUpdatePackage(const char *pack, const char *bin, const 
 #endif /* FEATURE_AUTOUPDATE */
 
 #ifdef FEATURE_AUTOUPDATE
-static void CL_CLeanUpdateFolder(const char *bin)
+static void Com_CLeanUpdateFolder(const char *bin)
 {
 	//We just remove the old updater here, if it exists.
 	//The update installer itself does other cleanups
@@ -227,7 +249,7 @@ static void CL_CLeanUpdateFolder(const char *bin)
 }
 #endif /* FEATURE_AUTOUPDATE */
 
-qboolean CL_CheckUpdateDownloads(void)
+qboolean Com_CheckUpdateDownloads(void)
 {
 #ifdef FEATURE_AUTOUPDATE
 	// Auto-update
@@ -235,15 +257,17 @@ qboolean CL_CheckUpdateDownloads(void)
 	{
 		if (strlen(com_updatefiles->string) > MIN_PACK_LEN)
 		{
+#ifndef DEDICATED
 			CL_InitDownloads();
+#endif
 			return qtrue;
 		}
 
-		CL_CLeanUpdateFolder(UPDATE_BINARY);
+		Com_CLeanUpdateFolder(UPDATE_BINARY);
 
-		if (CL_UnpackUpdatePackage(UPDATE_PACKAGE, UPDATE_BINARY, UPDATE_CONFIG))
+		if (Com_UnpackUpdatePackage(UPDATE_PACKAGE, UPDATE_BINARY, UPDATE_CONFIG))
 		{
-			CL_RunUpdateBinary(UPDATE_BINARY, UPDATE_CONFIG);
+			Com_RunUpdateBinary(UPDATE_BINARY, UPDATE_CONFIG);
 		}
 		else
 		{
@@ -255,9 +279,11 @@ qboolean CL_CheckUpdateDownloads(void)
 
 		CL_Disconnect(qtrue);
 
+#ifndef DEDICATED
 		// we can reset that now
-		cls.bWWWDlDisconnected = qfalse;
+		upd.bWWWDlDisconnected = qfalse;
 		CL_ClearStaticDownload();
+#endif
 
 		return qtrue;
 	}
@@ -265,18 +291,22 @@ qboolean CL_CheckUpdateDownloads(void)
 	return qfalse;
 }
 
-qboolean CL_InitUpdateDownloads(void)
+qboolean Com_InitUpdateDownloads(void)
 {
 #ifdef FEATURE_AUTOUPDATE
-	if (autoupdate.updateStarted && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
+	if (autoupdate.updateStarted
+#ifndef DEDICATED
+		&& NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
+#endif
+		)
 	{
 		if (strlen(com_updatefiles->string) > MIN_PACK_LEN)
 		{
 			char *updateFile;
 			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
 
-			clc.bWWWDl             = qtrue;
-			cls.bWWWDlDisconnected = qtrue;
+			upd.bWWWDl             = qtrue;
+			upd.bWWWDlDisconnected = qtrue;
 
 			updateFile = strtok(com_updatefiles->string, ";");
 
@@ -287,26 +317,26 @@ qboolean CL_InitUpdateDownloads(void)
 			else
 			{
 				// download format: @remotename@localname
-				Q_strncpyz(clc.downloadList, va("@%s@%s", updateFile, updateFile), MAX_INFO_STRING);
-				Q_strncpyz(cls.originalDownloadName, va("%s/%s", AUTOUPDATE_DIR, updateFile), sizeof(cls.originalDownloadName));
+				Q_strncpyz(upd.downloadList, va("@%s@%s", updateFile, updateFile), MAX_INFO_STRING);
+				Q_strncpyz(upd.originalDownloadName, va("%s/%s", AUTOUPDATE_DIR, updateFile), sizeof(upd.originalDownloadName));
 
 				if (!Q_stricmp(updateFile, UPDATE_PACKAGE))
 				{
-					Q_strncpyz(cls.downloadName, va("%s/updater/%s-%s-%s", UPDATE_SERVER_NAME, ETLEGACY_VERSION_SHORT, CPUSTRING, updateFile), sizeof(cls.downloadName));
+					Q_strncpyz(upd.downloadName, va("%s/updater/%s-%s-%s", UPDATE_SERVER_NAME, ETLEGACY_VERSION_SHORT, CPUSTRING, updateFile), sizeof(upd.downloadName));
 				}
 				else
 				{
-					Q_strncpyz(cls.downloadName, va("%s/packages/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
+					Q_strncpyz(upd.downloadName, va("%s/packages/%s", UPDATE_SERVER_NAME, updateFile), sizeof(upd.downloadName));
 				}
 
-				Q_strncpyz(cls.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", updateFile)), sizeof(cls.downloadTempName));
+				Q_strncpyz(upd.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", updateFile)), sizeof(upd.downloadTempName));
 				// TODO: add file size, so UI can show progress bar
 				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
 
-				if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName))
+				if (!DL_BeginDownload(upd.downloadTempName, upd.downloadName))
 				{
-					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"", cls.downloadName);
-					clc.bWWWDlAborting = qtrue;
+					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"", upd.downloadName);
+					upd.bWWWDlAborting = qtrue;
 				}
 
 				while (1)
@@ -338,7 +368,7 @@ qboolean CL_InitUpdateDownloads(void)
 	return qfalse;
 }
 
-qboolean CL_UpdatePacketEvent(netadr_t from)
+qboolean Com_UpdatePacketEvent(netadr_t from)
 {
 #ifdef FEATURE_AUTOUPDATE
 	static qboolean autoupdateRedirected = qfalse;
@@ -362,7 +392,7 @@ qboolean CL_UpdatePacketEvent(netadr_t from)
 CL_UpdateInfoPacket
 ===================
 */
-void CL_UpdateInfoPacket(netadr_t from)
+void Com_UpdateInfoPacket(netadr_t from)
 {
 	if (autoupdate.autoupdateServer.type == NA_BAD)
 	{
@@ -394,13 +424,14 @@ void CL_UpdateInfoPacket(netadr_t from)
 
 			if (autoupdate.forceUpdate)
 			{
-				CL_GetAutoUpdate();
+				Com_GetAutoUpdate();
 				autoupdate.forceUpdate = qfalse;
 				return;
 			}
 		}
 
 #ifdef FEATURE_AUTOUPDATE
+#ifndef DEDICATED
 		if (uivm)
 		{
 			uiMenuCommand_t currentMenu = VM_Call(uivm, UI_GET_ACTIVE_MENU);
@@ -410,6 +441,7 @@ void CL_UpdateInfoPacket(netadr_t from)
 			}
 		}
 		else
+#endif
 		{
 			Com_Printf("%s ^1RUN UPDATE COMMAND TO UPDATE\n", com_updatemessage->string);
 		}
@@ -417,21 +449,27 @@ void CL_UpdateInfoPacket(netadr_t from)
 	}
 }
 
-void CL_CheckUpdateStarted(void)
+void Com_CheckUpdateStarted(void)
 {
 	// If we have completed a connection to the Auto-Update server...
-	if (autoupdate.updateChecked && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
+	if (autoupdate.updateChecked 
+#ifndef DEDICATED
+		&& NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
+#endif
+		)
 	{
 		// Mark the client as being in the process of getting an update
 		if (com_updateavailable->integer)
 		{
 			autoupdate.updateStarted = qtrue;
+#ifndef DEDICATED
 			CL_InitDownloads();
+#endif
 		}
 	}
 }
 
-void CL_UpdateVarsClean(int flags)
+void Com_UpdateVarsClean(int flags)
 {
 	switch (flags)
 	{
@@ -449,15 +487,15 @@ void CL_UpdateVarsClean(int flags)
 	}
 }
 
-void CL_RunUpdate(void)
+void Com_RunUpdate(void)
 {
 	if (!autoupdate.updateChecked)
 	{
 		autoupdate.forceUpdate = qtrue;
-		CL_CheckAutoUpdate();
+		Com_CheckAutoUpdate();
 	}
 	else
 	{
-		CL_GetAutoUpdate();
+		Com_GetAutoUpdate();
 	}
 }

@@ -229,21 +229,6 @@ typedef struct
 	int lastExecutedServerCommand;              // last server command grabbed or executed with CL_GetServerCommand
 	char serverCommands[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
 
-	// file transfer from server
-	fileHandle_t download;
-	int downloadNumber;
-	int downloadBlock;          // block we are waiting for
-	int downloadCount;          // how many bytes we got
-	int downloadSize;           // how many bytes we got
-	int downloadFlags;         // misc download behaviour flags sent by the server
-	char downloadList[MAX_INFO_STRING];        // list of paks we need to download
-
-	// www downloading
-	qboolean bWWWDl;    // we have a www download going
-	qboolean bWWWDlAborting;    // disable the CL_WWWDownload until server gets us a gamestate (used for aborts)
-	char redirectedList[MAX_INFO_STRING];        // list of files that we downloaded through a redirect since last FS_ComparePaks
-	char badChecksumList[MAX_INFO_STRING];        // list of files for which wwwdl redirect is broken (wrong checksum)
-
 	// demo information
 	char demoName[MAX_QPATH];
 	qboolean demorecording;
@@ -358,14 +343,7 @@ typedef struct
 	qhandle_t consoleShader;
 	//qhandle_t consoleShader2;
 
-	// www downloading
-	// in the static stuff since this may have to survive server disconnects
-	// if new stuff gets added, CL_ClearStaticDownload code needs to be updated for clear up
-	qboolean bWWWDlDisconnected; // keep going with the download after server disconnect
-	char downloadName[MAX_OSPATH];
-	char downloadTempName[MAX_OSPATH];    // in wwwdl mode, this is OS path (it's a qpath otherwise)
-	char originalDownloadName[MAX_QPATH];    // if we get a redirect, keep a copy of the original file path
-	qboolean downloadRestart; // if true, we need to do another FS_Restart because we downloaded a pak
+	download_t download;
 } clientStatic_t;
 
 extern clientStatic_t cls;

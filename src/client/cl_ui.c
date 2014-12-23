@@ -1234,7 +1234,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		CL_RequestMasterData(qfalse);
 		return 0;
 	case UI_GET_AUTOUPDATE:
-		CL_GetAutoUpdate();
+		Com_GetAutoUpdate();
 		return 0;
 	case UI_OPENURL:
 		CL_OpenURL((const char *)VMA(1));

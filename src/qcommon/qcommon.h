@@ -269,6 +269,33 @@ void Netchan_TransmitNextFragment(netchan_t *chan);
 
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg);
 
+typedef struct  
+{
+	// file transfer from server
+	fileHandle_t download;
+	int downloadNumber;
+	int downloadBlock;          // block we are waiting for
+	int downloadCount;          // how many bytes we got
+	int downloadSize;           // how many bytes we got
+	int downloadFlags;         // misc download behaviour flags sent by the server
+	char downloadList[MAX_INFO_STRING];        // list of paks we need to download
+
+	// www downloading
+	qboolean bWWWDl;    // we have a www download going
+	qboolean bWWWDlAborting;    // disable the CL_WWWDownload until server gets us a gamestate (used for aborts)
+	char redirectedList[MAX_INFO_STRING];        // list of files that we downloaded through a redirect since last FS_ComparePaks
+	char badChecksumList[MAX_INFO_STRING];        // list of files for which wwwdl redirect is broken (wrong checksum)
+
+	// www downloading from static
+	// in the static stuff since this may have to survive server disconnects
+	// if new stuff gets added, CL_ClearStaticDownload code needs to be updated for clear up
+	qboolean bWWWDlDisconnected; // keep going with the download after server disconnect
+	char downloadName[MAX_OSPATH];
+	char downloadTempName[MAX_OSPATH];    // in wwwdl mode, this is OS path (it's a qpath otherwise)
+	char originalDownloadName[MAX_QPATH];    // if we get a redirect, keep a copy of the original file path
+	qboolean downloadRestart; // if true, we need to do another FS_Restart because we downloaded a pak
+} download_t;
+
 // update and motd server info
 
 #define AUTOUPDATE_DIR "update"
@@ -1023,6 +1050,7 @@ void CL_InitKeyCommands(void);
 // config files, but the rest of client startup will happen later
 
 void CL_Init(void);
+void CL_ClearDownload(void);
 void CL_ClearStaticDownload(void);
 void CL_Disconnect(qboolean showMainMenu);
 void CL_Shutdown(void);
@@ -1071,15 +1099,15 @@ enum UPDATE_FLAGS
 	CLEAR_ALL,
 };
 
-void CL_CheckAutoUpdate(void);
-void CL_GetAutoUpdate(void);
-qboolean CL_CheckUpdateDownloads(void);
-qboolean CL_InitUpdateDownloads(void);
-qboolean CL_UpdatePacketEvent(netadr_t from);
-void CL_UpdateInfoPacket(netadr_t from);
-void CL_CheckUpdateStarted(void);
-void CL_UpdateVarsClean(int flags);
-void CL_RunUpdate(void);
+void Com_CheckAutoUpdate(void);
+void Com_GetAutoUpdate(void);
+qboolean Com_CheckUpdateDownloads(void);
+qboolean Com_InitUpdateDownloads(void);
+qboolean Com_UpdatePacketEvent(netadr_t from);
+void Com_UpdateInfoPacket(netadr_t from);
+void Com_CheckUpdateStarted(void);
+void Com_UpdateVarsClean(int flags);
+void Com_RunUpdate(void);
 
 void Key_KeynameCompletion(void (*callback)(const char *s));
 // for keyname autocompletion
