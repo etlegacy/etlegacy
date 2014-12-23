@@ -31,7 +31,7 @@ endmacro(HEXCHAR2DEC)
 macro(GENERATENUMBER VAR VAL)
 	IF (${VAL} EQUAL 0)
 		SET(${VAR} 0)
-	ELSEIF(${VAL} MATCHES "[0-9]+") # if its just numbers we escape out and just use that
+	ELSEIF(${VAL} MATCHES "^[0-9]+$") # if its just numbers we escape out and just use that
 		SET(${VAR} ${VAL})
   ELSE()
 		SET(CURINDEX 0)
@@ -91,8 +91,6 @@ else() # Not using source from git repo
 	set(ETL_CMAKE_PROD_VERSION ${ETLEGACY_VERSIONPLAIN})
 	set(ETL_CMAKE_PROD_VERSIONSTR ${ETLEGACY_VERSION})
 endif()
-
-#message(FATAL_ERROR "Tulee: ${ETL_CMAKE_VERSION}, ${ETL_CMAKE_VERSION_SHORT}, ${ETL_CMAKE_PROD_VERSION}, ${ETL_CMAKE_PROD_VERSIONSTR}")
 
 # Mod version
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)
