@@ -338,7 +338,7 @@ void Sys_AnsiColorPrint(const char *msg)
 			{
 				// Print the color code
 				_found = 0;
-				for (i = 0; i < 33; i++)
+				for (i = 0; i < 32; i++)
 				{
 					if (_found)
 					{
