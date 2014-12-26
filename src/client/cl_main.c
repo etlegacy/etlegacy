@@ -577,16 +577,16 @@ void CL_ClearState(void)
 
 void CL_ClearDownload(void)
 {
-	cls.download.download = 0;
-	cls.download.downloadNumber = 0;
-	cls.download.downloadBlock = 0;
-	cls.download.downloadCount = 0;
-	cls.download.downloadSize = 0;
-	cls.download.downloadFlags = 0;
-	cls.download.downloadList[0] = '\0';
-	cls.download.bWWWDl = qfalse;
-	cls.download.bWWWDlAborting = qfalse;
-	cls.download.redirectedList[0] = '\0';
+	cls.download.download           = 0;
+	cls.download.downloadNumber     = 0;
+	cls.download.downloadBlock      = 0;
+	cls.download.downloadCount      = 0;
+	cls.download.downloadSize       = 0;
+	cls.download.downloadFlags      = 0;
+	cls.download.downloadList[0]    = '\0';
+	cls.download.bWWWDl             = qfalse;
+	cls.download.bWWWDlAborting     = qfalse;
+	cls.download.redirectedList[0]  = '\0';
 	cls.download.badChecksumList[0] = '\0';
 }
 
@@ -599,9 +599,9 @@ Clear download information that we keep in cls (disconnected download support)
 void CL_ClearStaticDownload(void)
 {
 	assert(!cls.download.bWWWDlDisconnected);    // reset before calling
-	cls.download.downloadRestart = qfalse;
-	cls.download.downloadTempName[0] = '\0';
-	cls.download.downloadName[0] = '\0';
+	cls.download.downloadRestart         = qfalse;
+	cls.download.downloadTempName[0]     = '\0';
+	cls.download.downloadName[0]         = '\0';
 	cls.download.originalDownloadName[0] = '\0';
 }
 
@@ -1559,8 +1559,8 @@ void CL_InitDownloads(void)
 	char missingfiles[1024];
 
 	// init some of the www dl data
-	cls.download.bWWWDl = qfalse;
-	cls.download.bWWWDlAborting = qfalse;
+	cls.download.bWWWDl             = qfalse;
+	cls.download.bWWWDlAborting     = qfalse;
 	cls.download.bWWWDlDisconnected = qfalse;
 	CL_ClearStaticDownload();
 
@@ -2285,8 +2285,8 @@ void CL_WWWDownload(void)
 	{
 		// taken from CL_ParseDownload
 		// we work with OS paths
-		cls.download.download = 0;
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), cls.download.originalDownloadName, "");
+		cls.download.download            = 0;
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), cls.download.originalDownloadName, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 		if (rename(cls.download.downloadTempName, to_ospath))
 		{

@@ -808,7 +808,7 @@ void CL_ParseDownload(msg_t *msg)
 			// server is sending us a www download
 			Q_strncpyz(cls.download.originalDownloadName, cls.download.downloadName, sizeof(cls.download.originalDownloadName));
 			Q_strncpyz(cls.download.downloadName, MSG_ReadString(msg), sizeof(cls.download.downloadName));
-			cls.download.downloadSize = MSG_ReadLong(msg);
+			cls.download.downloadSize  = MSG_ReadLong(msg);
 			cls.download.downloadFlags = MSG_ReadLong(msg);
 			if (cls.download.downloadFlags & (1 << DL_FLAG_URL))
 			{
