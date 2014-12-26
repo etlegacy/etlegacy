@@ -393,7 +393,6 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 {
 	dld.bWWWDl = qtrue;
 	dld.bWWWDlDisconnected = qtrue;
-	dld.noReconnect = qtrue;
 
 	// download format: @remotename@localname
 	Q_strncpyz(dld.downloadList, va("@%s@%s", filename, filename), MAX_INFO_STRING);
@@ -416,6 +415,8 @@ void Com_Download_f(void)
 		return;
 	}
 #endif
+
+	dld.noReconnect = qtrue;
 
 	if (Cmd_Argc() > 1)
 	{

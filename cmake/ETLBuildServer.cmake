@@ -6,4 +6,9 @@ set_target_properties(etlded
 	RUNTIME_OUTPUT_DIRECTORY_DEBUG ""
 	RUNTIME_OUTPUT_DIRECTORY_RELEASE ""
 )
+
+if(BUNDLED_CURL)
+	add_dependencies(etlded bundled_curl)
+endif(BUNDLED_CURL)
+
 install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
