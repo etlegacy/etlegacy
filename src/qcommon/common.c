@@ -2994,7 +2994,8 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("quit", Com_Quit_f);
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f);
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f);
-	Cmd_AddCommand("update", Com_RunUpdate);
+	Cmd_AddCommand("update", Com_Update_f);
+	Cmd_AddCommand("wget", Com_Download_f);
 
 	com_version = Cvar_Get("version", FAKE_VERSION, CVAR_ROM | CVAR_SERVERINFO);
 

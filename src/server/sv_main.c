@@ -1377,6 +1377,16 @@ void SV_Frame(int msec)
 		return;
 	}
 
+#ifdef DEDICATED
+	if (svs.download.bWWWDlDisconnected)
+	{
+		Com_WWWDownload();
+		if (!com_sv_running->integer)
+		{
+			return;
+		}
+	}
+#endif
 	// Running as a server, but no map loaded
 	if (!com_sv_running->integer)
 	{

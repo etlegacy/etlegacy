@@ -479,7 +479,7 @@ void Com_UpdateVarsClean(int flags)
 	}
 }
 
-void Com_RunUpdate(void)
+void Com_Update_f(void)
 {
 	if (!autoupdate.updateChecked)
 	{

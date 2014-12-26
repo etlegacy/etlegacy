@@ -66,6 +66,7 @@ Clear download information that we keep in cls (disconnected download support)
 void Com_ClearStaticDownload(void)
 {
 	assert(!dld.bWWWDlDisconnected);    // reset before calling
+	dld.noReconnect = qfalse;
 	dld.downloadRestart = qfalse;
 	dld.downloadTempName[0] = '\0';
 	dld.downloadName[0] = '\0';
@@ -310,7 +311,7 @@ void Com_WWWDownload(void)
 		if (dld.bWWWDlDisconnected)
 		{
 			// for an auto-update in disconnected mode, we'll be spawning the setup in CL_DownloadsComplete
-			if (!autoupdate.updateStarted)
+			if (!autoupdate.updateStarted && !dld.noReconnect)
 			{
 				// reconnect to the server, which might send us to a new disconnected download
 				Cbuf_ExecuteText(EXEC_APPEND, "reconnect\n");
@@ -392,12 +393,13 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 {
 	dld.bWWWDl = qtrue;
 	dld.bWWWDlDisconnected = qtrue;
+	dld.noReconnect = qtrue;
 
 	// download format: @remotename@localname
 	Q_strncpyz(dld.downloadList, va("@%s@%s", filename, filename), MAX_INFO_STRING);
-	Q_strncpyz(dld.originalDownloadName, va("%s/%s", Cvar_VariableString("fs_homepath"), filename), sizeof(dld.originalDownloadName));
+	Q_strncpyz(dld.originalDownloadName, va("%s/%s", Cvar_VariableString("fs_game"), filename), sizeof(dld.originalDownloadName));
 	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
-	Q_strncpyz(dld.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", filename)), sizeof(dld.downloadTempName));
+	Q_strncpyz(dld.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), va("%s.tmp", filename)), sizeof(dld.downloadTempName));
 
 	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
 	{
@@ -408,7 +410,12 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 
 void Com_Download_f(void)
 {
-	char *dlName;
+#ifndef DEDICATED
+	if (cls.state >= CA_LOADING)
+	{
+		return;
+	}
+#endif
 
 	if (Cmd_Argc() > 1)
 	{

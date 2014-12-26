@@ -290,6 +290,7 @@ typedef struct
 	// in the static stuff since this may have to survive server disconnects
 	// if new stuff gets added, CL_ClearStaticDownload code needs to be updated for clear up
 	qboolean bWWWDlDisconnected; // keep going with the download after server disconnect
+	qboolean noReconnect;	//do not try to reconnect when the dowload is ready
 	char downloadName[MAX_OSPATH];
 	char downloadTempName[MAX_OSPATH];    // in wwwdl mode, this is OS path (it's a qpath otherwise)
 	char originalDownloadName[MAX_QPATH];    // if we get a redirect, keep a copy of the original file path
@@ -1106,7 +1107,7 @@ qboolean Com_UpdatePacketEvent(netadr_t from);
 void Com_UpdateInfoPacket(netadr_t from);
 void Com_CheckUpdateStarted(void);
 void Com_UpdateVarsClean(int flags);
-void Com_RunUpdate(void);
+void Com_Update_f(void);
 
 // download.c
 void Com_ClearDownload(void);
@@ -1116,6 +1117,7 @@ void Com_NextDownload(void);
 void Com_InitDownloads(void);
 void Com_WWWDownload(void);
 qboolean Com_WWWBadChecksum(const char *pakname);
+void Com_Download_f(void);
 
 void Key_KeynameCompletion(void (*callback)(const char *s));
 // for keyname autocompletion
