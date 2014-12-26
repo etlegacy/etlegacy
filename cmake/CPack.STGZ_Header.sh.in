@@ -10,6 +10,8 @@ Options: [defaults in brackets after descriptions]
   --prefix=dir      directory in which to install
   --include-subdir  include the @CPACK_PACKAGE_FILE_NAME@ subdirectory
   --exclude-subdir  exclude the @CPACK_PACKAGE_FILE_NAME@ subdirectory
+  --skip-license    skip license confirmation
+  --skip-assets     skipp assets installation
 EOF
   exit 1
 }
@@ -34,7 +36,8 @@ cpack_fix_slashes ()
 
 interactive=TRUE
 cpack_skip_license=FALSE
-cpack_include_subdir=FALSE
+cpack_skip_assets=FALSE
+cpack_include_subdir=""
 for a in "$@CPACK_AT_SIGN@"; do
   if echo $a | grep "^--prefix=" > /dev/null 2> /dev/null; then
     cpack_prefix_dir=`echo $a | sed "s/^--prefix=//"`
@@ -55,6 +58,9 @@ for a in "$@CPACK_AT_SIGN@"; do
   fi
   if echo $a | grep "^--skip-license" > /dev/null 2> /dev/null; then
     cpack_skip_license=TRUE
+  fi
+  if echo $a | grep "^--skip-assets" > /dev/null 2> /dev/null; then
+    cpack_skip_assets=TRUE
   fi
 done
 
@@ -115,6 +121,56 @@ then
   toplevel="${toplevel}/@CPACK_PACKAGE_FILE_NAME@"
   mkdir -p "${toplevel}"
 fi
+
+
+cpack_downloader() {
+  if [ -f /usr/bin/curl ]; then
+    curl -O $1
+  else
+    wget $1
+  fi
+}
+
+checksum=`mktemp`
+cat >$checksum <<'EOF'
+41cbbc1afb8438bc8fc74a64a171685550888856005111cbf9af5255f659ae36  et-linux-2.60.x86.run
+EOF
+
+if [ "x${interactive}x" = "xTRUEx" ]
+then
+  if [ "x${cpack_skip_assets}x" != "xTRUEx" ]
+  then
+    echo
+    echo "Do you want to fetch the assets data files? [yN]: "
+    read line leftover
+    case ${line} in
+      y* | Y*)
+        echo
+        echo "Fetching Wolf:ET assets data files..."
+        if [ ! -f et-linux-2.60.x86.run ]
+        then
+          cpack_downloader http://ftp.gwdg.de/pub/misc/ftp.idsoftware.com/idstuff/et/linux/et-linux-2.60.x86.run
+        fi
+        echo "Verifying assets data files integrity"
+        sha256sum -c $checksum || exit 1
+        echo "Installing assets..."
+        chmod +x et-linux-2.60.x86.run
+        ./et-linux-2.60.x86.run --noexec --target ${toplevel}
+        rm -rf ${toplevel}/{bin,Docs,README,pb,openurl.sh,CHANGES,ET.xpm} ${toplevel}/setup.{data,sh} ${toplevel}/etmain/{*.cfg,*.so,*.txt,*.dat,mp_bin.pk3}
+        echo
+        echo "Do you want to delete downloaded Wolf:ET assets data files? [yN]: "
+        read line leftover
+        case ${line} in
+          y* | Y*)
+            rm -f et-linux-2.60.x86.run;;
+        esac
+        ;;
+      *)
+        echo "Assets not installed.";;
+    esac
+  fi
+fi
+
 echo
 echo "Using target directory: ${toplevel}"
 echo "Extracting, please wait..."
