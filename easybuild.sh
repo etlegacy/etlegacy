@@ -215,3 +215,6 @@ cmake ${_CFGSTRING} ..
 
 einfo "Compiling ET Legacy..."
 make ${MAKEOPTS}
+
+einfo "Packing ET Legacy..."
+make package
