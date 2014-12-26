@@ -560,6 +560,15 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 
 	//====================================
 
+	case BOTLIB_SETUP:
+		return 0;
+	case BOTLIB_SHUTDOWN:
+		return -1;
+	case BOTLIB_LIBVAR_SET:
+		return 0;
+	case BOTLIB_LIBVAR_GET:
+		return 0;
+
 	case BOTLIB_PC_LOAD_SOURCE:
 		return botlib_export->PC_LoadSourceHandle(VMA(1));
 	case BOTLIB_PC_FREE_SOURCE:

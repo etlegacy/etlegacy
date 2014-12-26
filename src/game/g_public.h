@@ -255,14 +255,17 @@ typedef enum
 	G_REGISTERSOUND,    // register the sound
 	G_GET_SOUND_LENGTH, // get the length of the sound
 
-//#ifdef FEATURE_OMNIBOT - fixme: precompiler marcos for engine ?
 	// 200
+	BOTLIB_SETUP = 200, // returns  0 - dummy trap keep this for 'etmain' compatibility
+	BOTLIB_SHUTDOWN,    // returns -1 - dummy trap keep this for 'etmain' compatibility
+	BOTLIB_LIBVAR_SET,  // returns  0 - dummy trap keep this for 'etmain' compatibility
+	BOTLIB_LIBVAR_GET,  // returns  0 - dummy trap keep this for 'etmain' compatibility
+
 	BOTLIB_GET_CONSOLE_MESSAGE = 210,    // ( int client, char *message, int size );
 	BOTLIB_USER_COMMAND        = 211,    // ( int client, usercmd_t *ucmd );
 
 	// 400
 	BOTLIB_EA_COMMAND = 407,
-//#endif
 
 	// 500
 	// files
