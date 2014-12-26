@@ -53,8 +53,6 @@
 #define UPDATE_CONFIG "updater.xml"
 #define MIN_PACK_LEN 4
 
-//#define UPDATE_SERVER_DLFILE UPDATE_SERVER_NAME "?sys=" CPUSTRING "&ver=" ETLEGACY_VERSION_SHORT "&file=%s"
-
 autoupdate_t autoupdate;
 
 void Com_CheckAutoUpdate(void)
@@ -191,7 +189,7 @@ static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConf
 	if (upd.bWWWDlDisconnected)
 	{
 		upd.bWWWDlDisconnected = qfalse;
-		CL_ClearStaticDownload();
+		Com_ClearStaticDownload();
 	}
 #endif
 
@@ -257,9 +255,7 @@ qboolean Com_CheckUpdateDownloads(void)
 	{
 		if (strlen(com_updatefiles->string) > MIN_PACK_LEN)
 		{
-#ifndef DEDICATED
-			CL_InitDownloads();
-#endif
+			Com_InitDownloads();
 			return qtrue;
 		}
 
@@ -279,11 +275,9 @@ qboolean Com_CheckUpdateDownloads(void)
 
 		CL_Disconnect(qtrue);
 
-#ifndef DEDICATED
 		// we can reset that now
 		upd.bWWWDlDisconnected = qfalse;
-		CL_ClearStaticDownload();
-#endif
+		Com_ClearStaticDownload();
 
 		return qtrue;
 	}
@@ -462,9 +456,7 @@ void Com_CheckUpdateStarted(void)
 		if (com_updateavailable->integer)
 		{
 			autoupdate.updateStarted = qtrue;
-#ifndef DEDICATED
-			CL_InitDownloads();
-#endif
+			Com_InitDownloads();
 		}
 	}
 }

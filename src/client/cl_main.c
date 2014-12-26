@@ -575,36 +575,6 @@ void CL_ClearState(void)
 	Com_Memset(&cl, 0, sizeof(cl));
 }
 
-void CL_ClearDownload(void)
-{
-	cls.download.download = 0;
-	cls.download.downloadNumber = 0;
-	cls.download.downloadBlock = 0;
-	cls.download.downloadCount = 0;
-	cls.download.downloadSize = 0;
-	cls.download.downloadFlags = 0;
-	cls.download.downloadList[0] = '\0';
-	cls.download.bWWWDl = qfalse;
-	cls.download.bWWWDlAborting = qfalse;
-	cls.download.redirectedList[0] = '\0';
-	cls.download.badChecksumList[0] = '\0';
-}
-
-/*
-=====================
-CL_ClearStaticDownload
-Clear download information that we keep in cls (disconnected download support)
-=====================
-*/
-void CL_ClearStaticDownload(void)
-{
-	assert(!cls.download.bWWWDlDisconnected);    // reset before calling
-	cls.download.downloadRestart = qfalse;
-	cls.download.downloadTempName[0] = '\0';
-	cls.download.downloadName[0] = '\0';
-	cls.download.originalDownloadName[0] = '\0';
-}
-
 /*
 =====================
 CL_Disconnect
@@ -669,11 +639,11 @@ void CL_Disconnect(qboolean showMainMenu)
 
 	// wipe the client connection
 	Com_Memset(&clc, 0, sizeof(clc));
-	CL_ClearDownload();
+	Com_ClearDownload();
 
 	if (!cls.download.bWWWDlDisconnected)
 	{
-		CL_ClearStaticDownload();
+		Com_ClearStaticDownload();
 	}
 
 	// allow cheats locally
@@ -1394,41 +1364,8 @@ void CL_WavStopRecord_f(void)
 
 //====================================================================
 
-/**
- * @brief Called when all downloading has been completed
- * Initiates update process after an update has been downloaded.
- */
 void CL_DownloadsComplete(void)
 {
-	if (Com_CheckUpdateDownloads())
-	{
-		return;
-	}
-
-	// if we downloaded files we need to restart the file system
-	if (cls.download.downloadRestart)
-	{
-		cls.download.downloadRestart = qfalse;
-
-		FS_Restart(clc.checksumFeed);    // We possibly downloaded a pak, restart the file system to load it
-
-		if (!cls.download.bWWWDlDisconnected)
-		{
-			// inform the server so we get new gamestate info
-			CL_AddReliableCommand("donedl");
-		}
-		// we can reset that now
-		cls.download.bWWWDlDisconnected = qfalse;
-		CL_ClearStaticDownload();
-
-		// by sending the donedl command we request a new gamestate
-		// so we don't want to load stuff yet
-		return;
-	}
-
-	// I wonder if that happens - it should not but I suspect it could happen if a download fails in the middle or is aborted
-	assert(!cls.download.bWWWDlDisconnected);
-
 	// let the client game init and load data
 	cls.state = CA_LOADING;
 
@@ -1461,144 +1398,6 @@ void CL_DownloadsComplete(void)
 	CL_WritePacket();
 	CL_WritePacket();
 	CL_WritePacket();
-}
-
-/*
-=================
-CL_BeginDownload
-
-Requests a file to download from the server.  Stores it in the current
-game directory.
-=================
-*/
-void CL_BeginDownload(const char *localName, const char *remoteName)
-{
-
-	Com_DPrintf("***** CL_BeginDownload *****\n"
-	            "Localname: %s\n"
-	            "Remotename: %s\n"
-	            "****************************\n", localName, remoteName);
-
-	Q_strncpyz(cls.download.downloadName, localName, sizeof(cls.download.downloadName));
-	Com_sprintf(cls.download.downloadTempName, sizeof(cls.download.downloadTempName), "%s.tmp", localName);
-
-	// Set so UI gets access to it
-	Cvar_Set("cl_downloadName", remoteName);
-	Cvar_Set("cl_downloadSize", "0");
-	Cvar_Set("cl_downloadCount", "0");
-	Cvar_SetValue("cl_downloadTime", cls.realtime);
-
-	cls.download.downloadBlock = 0; // Starting new file
-	cls.download.downloadCount = 0;
-
-	CL_AddReliableCommand(va("download %s", remoteName));
-}
-
-/*
-=================
-CL_NextDownload
-
-A download completed or failed
-=================
-*/
-void CL_NextDownload(void)
-{
-	char *s;
-	char *remoteName, *localName;
-
-	// We are looking to start a download here
-	if (*cls.download.downloadList)
-	{
-		s = cls.download.downloadList;
-
-		// format is:
-		//  @remotename@localname@remotename@localname, etc.
-
-		if (*s == '@')
-		{
-			s++;
-		}
-		remoteName = s;
-
-		if ((s = strchr(s, '@')) == NULL)
-		{
-			CL_DownloadsComplete();
-			return;
-		}
-
-		*s++      = 0;
-		localName = s;
-		if ((s = strchr(s, '@')) != NULL)
-		{
-			*s++ = 0;
-		}
-		else
-		{
-			s = localName + strlen(localName);    // point at the nul byte
-
-		}
-		CL_BeginDownload(localName, remoteName);
-
-		cls.download.downloadRestart = qtrue;
-
-		// move over the rest
-		memmove(cls.download.downloadList, s, strlen(s) + 1);
-
-		return;
-	}
-
-	CL_DownloadsComplete();
-}
-
-/**
- * @brief After receiving a valid game state, we validate the cgame and
- * local zip files here and determine if we need to download them
- */
-void CL_InitDownloads(void)
-{
-	char missingfiles[1024];
-
-	// init some of the www dl data
-	cls.download.bWWWDl = qfalse;
-	cls.download.bWWWDlAborting = qfalse;
-	cls.download.bWWWDlDisconnected = qfalse;
-	CL_ClearStaticDownload();
-
-	if (!Com_InitUpdateDownloads())
-	{
-		// whatever auto download configuration, store missing files in a cvar, use later in the ui maybe
-		if (FS_ComparePaks(missingfiles, sizeof(missingfiles), qfalse))
-		{
-			Cvar_Set("com_missingFiles", missingfiles);
-		}
-		else
-		{
-			Cvar_Set("com_missingFiles", "");
-		}
-
-		// reset the redirect checksum tracking
-		cls.download.redirectedList[0] = '\0';
-
-		if (cl_allowDownload->integer && FS_ComparePaks(cls.download.downloadList, sizeof(cls.download.downloadList), qtrue))
-		{
-			// this gets printed to UI, i18n
-			Com_Printf(CL_TranslateStringBuf("Need paks: %s\n"), cls.download.downloadList);
-
-			if (*cls.download.downloadList)
-			{
-				// if autodownloading is not enabled on the server
-				cls.state = CA_CONNECTED;
-				CL_NextDownload();
-				return;
-			}
-		}
-	}
-	else
-	{
-		return;
-	}
-
-	CL_DownloadsComplete();
 }
 
 /**
@@ -2250,134 +2049,6 @@ void CL_CheckUserinfo(void)
 
 /*
 ==================
-CL_WWWDownload
-==================
-*/
-void CL_WWWDownload(void)
-{
-	char            *to_ospath;
-	dlStatus_t      ret;
-	static qboolean bAbort = qfalse;
-
-	if (cls.download.bWWWDlAborting)
-	{
-		if (!bAbort)
-		{
-			Com_DPrintf("CL_WWWDownload: WWWDlAborting\n");
-			bAbort = qtrue;
-		}
-		return;
-	}
-	if (bAbort)
-	{
-		Com_DPrintf("CL_WWWDownload: WWWDlAborting done\n");
-		bAbort = qfalse;
-	}
-
-	ret = DL_DownloadLoop();
-
-	if (ret == DL_CONTINUE)
-	{
-		return;
-	}
-
-	if (ret == DL_DONE)
-	{
-		// taken from CL_ParseDownload
-		// we work with OS paths
-		cls.download.download = 0;
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), cls.download.originalDownloadName, "");
-		to_ospath[strlen(to_ospath) - 1] = '\0';
-		if (rename(cls.download.downloadTempName, to_ospath))
-		{
-			FS_CopyFile(cls.download.downloadTempName, to_ospath);
-			remove(cls.download.downloadTempName);
-		}
-		*cls.download.downloadTempName = *cls.download.downloadName = 0;
-		Cvar_Set("cl_downloadName", "");
-		if (cls.download.bWWWDlDisconnected)
-		{
-			// for an auto-update in disconnected mode, we'll be spawning the setup in CL_DownloadsComplete
-			if (!autoupdate.updateStarted)
-			{
-				// reconnect to the server, which might send us to a new disconnected download
-				Cbuf_ExecuteText(EXEC_APPEND, "reconnect\n");
-			}
-		}
-		else
-		{
-			CL_AddReliableCommand("wwwdl done");
-			// tracking potential web redirects leading us to wrong checksum - only works in connected mode
-			if (strlen(cls.download.redirectedList) + strlen(cls.download.originalDownloadName) + 1 >= sizeof(cls.download.redirectedList))
-			{
-				// just to be safe
-				Com_Printf("ERROR: redirectedList overflow (%s)\n", cls.download.redirectedList);
-			}
-			else
-			{
-				strcat(cls.download.redirectedList, "@");
-				strcat(cls.download.redirectedList, cls.download.originalDownloadName);
-			}
-		}
-	}
-	else
-	{
-		if (cls.download.bWWWDlDisconnected)
-		{
-			// in a connected download, we'd tell the server about failure and wait for a reply
-			// but in this case we can't get anything from server
-			// if we just reconnect it's likely we'll get the same disconnected download message, and error out again
-			// this may happen for a regular dl or an auto update
-			const char *error = va("Download failure while getting '%s'\n", cls.download.downloadName);    // get the msg before clearing structs
-
-			cls.download.bWWWDlDisconnected = qfalse; // need clearing structs before ERR_DROP, or it goes into endless reload
-			CL_ClearStaticDownload();
-			Com_Error(ERR_DROP, "%s", error);
-		}
-		else
-		{
-			// see CL_ParseDownload, same abort strategy
-			Com_Printf("Download failure while getting '%s'\n", cls.download.downloadName);
-			CL_AddReliableCommand("wwwdl fail");
-			cls.download.bWWWDlAborting = qtrue;
-		}
-		return;
-	}
-
-	cls.download.bWWWDl = qfalse;
-	CL_NextDownload();
-}
-
-/*
-==================
-CL_WWWBadChecksum
-
-FS code calls this when doing FS_ComparePaks
-we can detect files that we got from a www dl redirect with a wrong checksum
-this indicates that the redirect setup is broken, and next dl attempt should NOT redirect
-==================
-*/
-qboolean CL_WWWBadChecksum(const char *pakname)
-{
-	if (strstr(cls.download.redirectedList, va("@%s", pakname)))
-	{
-		Com_Printf("WARNING: file %s obtained through download redirect has wrong checksum\n", pakname);
-		Com_Printf("         this likely means the server configuration is broken\n");
-		if (strlen(cls.download.badChecksumList) + strlen(pakname) + 1 >= sizeof(cls.download.badChecksumList))
-		{
-			Com_Printf("ERROR: badChecksumList overflowed (%s)\n", cls.download.badChecksumList);
-			return qfalse;
-		}
-		strcat(cls.download.badChecksumList, "@");
-		strcat(cls.download.badChecksumList, pakname);
-		Com_DPrintf("bad checksums: %s\n", cls.download.badChecksumList);
-		return qtrue;
-	}
-	return qfalse;
-}
-
-/*
-==================
 CL_StartVideoRecording
 
 This function will be called when the AVI recording will start either by video or cl_avidemo commands
@@ -2569,7 +2240,7 @@ void CL_Frame(int msec)
 	// wwwdl download may survive a server disconnect
 	if ((cls.state == CA_CONNECTED && cls.download.bWWWDl) || cls.download.bWWWDlDisconnected)
 	{
-		CL_WWWDownload();
+		Com_WWWDownload();
 	}
 
 	// send intentions now

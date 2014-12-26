@@ -1050,8 +1050,6 @@ void CL_InitKeyCommands(void);
 // config files, but the rest of client startup will happen later
 
 void CL_Init(void);
-void CL_ClearDownload(void);
-void CL_ClearStaticDownload(void);
 void CL_Disconnect(qboolean showMainMenu);
 void CL_Shutdown(void);
 void CL_Frame(int msec);
@@ -1092,6 +1090,7 @@ qboolean CL_ConnectedToServer(void);
 void CL_StartHunkUsers(void);
 // start all the client stuff using the hunk
 
+// udpate.c
 enum UPDATE_FLAGS
 {
 	CLEAR_STATUS = 0,
@@ -1108,6 +1107,15 @@ void Com_UpdateInfoPacket(netadr_t from);
 void Com_CheckUpdateStarted(void);
 void Com_UpdateVarsClean(int flags);
 void Com_RunUpdate(void);
+
+// download.c
+void Com_ClearDownload(void);
+void Com_ClearStaticDownload(void);
+
+void Com_NextDownload(void);
+void Com_InitDownloads(void);
+void Com_WWWDownload(void);
+qboolean Com_WWWBadChecksum(const char *pakname);
 
 void Key_KeynameCompletion(void (*callback)(const char *s));
 // for keyname autocompletion

@@ -439,9 +439,7 @@ void CL_Snd_Restart_f(void);
 void CL_NextDemo(void);
 void CL_ReadDemoMessage(void);
 
-void CL_InitDownloads(void);
-void CL_NextDownload(void);
-void CL_WWWDownload(void);
+void CL_DownloadsComplete(void);
 
 void CL_GetPing(int n, char *buf, int buflen, int *pingtime);
 void CL_GetPingInfo(int n, char *buf, int buflen);

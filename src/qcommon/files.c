@@ -3633,7 +3633,6 @@ we are not interested in a download string format, we want something human-reada
 (this is used for diagnostics while connecting to a pure server)
 ================
 */
-qboolean CL_WWWBadChecksum(const char *pakname);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
 {
 	searchpath_t *sp;
@@ -3728,7 +3727,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
 #ifndef DEDICATED
 					// let the client subsystem track bad download redirects (dl file with wrong checksums)
 					// this is a bit ugly but the only other solution would have been callback passing..
-					if (CL_WWWBadChecksum(va("%s.pk3", fs_serverReferencedPakNames[i])))
+					if (Com_WWWBadChecksum(va("%s.pk3", fs_serverReferencedPakNames[i])))
 					{
 						// remove a potentially malicious download file
 						// (this is also intended to avoid expansion of the pk3 into a file with different checksum .. messes up wwwdl chkfail)

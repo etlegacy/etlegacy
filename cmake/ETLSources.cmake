@@ -50,6 +50,7 @@ FILE(GLOB SERVER_SRC
 	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
 	"src/qcommon/update.c"
+	"src/qcommon/download.c"
 )
 
 FILE(GLOB CLIENT_SRC
@@ -66,6 +67,7 @@ FILE(GLOB CLIENT_SRC
 	"src/sdl/*.c"
 	"src/sdl/*.h"
 	"src/qcommon/update.c"
+	"src/qcommon/download.c"
 )
 
 FILE(GLOB CLIENT_SRC_REMOVE
