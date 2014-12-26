@@ -1118,7 +1118,7 @@ qboolean CL_ReadyToSendPacket(void)
 	// one packet a second
 	if (cls.state != CA_ACTIVE &&
 	    cls.state != CA_PRIMED &&
-		!*cls.download.downloadTempName &&
+	    !*cls.download.downloadTempName &&
 	    cls.realtime - clc.lastPacketSentTime < 1000)
 	{
 		return qfalse;

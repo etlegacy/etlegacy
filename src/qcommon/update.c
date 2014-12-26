@@ -290,9 +290,9 @@ qboolean Com_InitUpdateDownloads(void)
 #ifdef FEATURE_AUTOUPDATE
 	if (autoupdate.updateStarted
 #ifndef DEDICATED
-		&& NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
+	    && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
 #endif
-		)
+	    )
 	{
 		if (strlen(com_updatefiles->string) > MIN_PACK_LEN)
 		{
@@ -446,11 +446,11 @@ void Com_UpdateInfoPacket(netadr_t from)
 void Com_CheckUpdateStarted(void)
 {
 	// If we have completed a connection to the Auto-Update server...
-	if (autoupdate.updateChecked 
+	if (autoupdate.updateChecked
 #ifndef DEDICATED
-		&& NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
+	    && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
 #endif
-		)
+	    )
 	{
 		// Mark the client as being in the process of getting an update
 		if (com_updateavailable->integer)

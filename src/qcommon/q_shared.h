@@ -403,7 +403,7 @@ typedef int clipHandle_t;
 #endif
 
 #define ENABLEBIT(x, y) x |= BIT(y)
-#define CLEARBIT(x, y) x &= ~BIT(y)
+#define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
 #define CHECKBIT(x, y) (x & BIT(y))
 
@@ -868,9 +868,9 @@ void ByteToDir(int b, vec3_t dir);
 
 #endif // 1
 
-#define SinCos(rad,s,c)		\
-	(s) = sin( (rad) );		\
-	(c) = cos( (rad) );
+#define SinCos(rad, s, c)     \
+	(s) = sin((rad));     \
+	(c) = cos((rad));
 
 #ifdef __LCC__
 #ifdef VectorCopy

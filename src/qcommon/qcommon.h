@@ -269,7 +269,7 @@ void Netchan_TransmitNextFragment(netchan_t *chan);
 
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg);
 
-typedef struct  
+typedef struct
 {
 	// file transfer from server
 	fileHandle_t download;
