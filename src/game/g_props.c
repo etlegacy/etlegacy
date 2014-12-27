@@ -2098,16 +2098,17 @@ qboolean validOilSlickSpawnPoint(vec3_t point, gentity_t *ent)
 
 void SP_OilParticles(gentity_t *ent)
 {
-	gentity_t *OilLeak;
-	vec3_t    point;
-	vec3_t    vec;
-	vec3_t    forward;
 
 	// Note to self quick fix
 	// need to move this to client
 	return;
 
 	/* FIXME
+	gentity_t *OilLeak;
+	vec3_t    point;
+	vec3_t    vec;
+	vec3_t    forward;
+
 	OilLeak = G_Spawn();
 
 	VectorCopy(ent->r.currentOrigin, point);
