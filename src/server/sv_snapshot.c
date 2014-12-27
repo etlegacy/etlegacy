@@ -113,10 +113,13 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 			continue;
 		}
 
-		if (newnum < oldnum && newnum < MAX_GENTITIES)
+		if (newnum < oldnum)
 		{
 			// this is a new entity, send it from the baseline
-			MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
+			if (newnum < MAX_GENTITIES)
+			{
+				MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
+			}
 			newindex++;
 			continue;
 		}
