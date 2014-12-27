@@ -195,15 +195,15 @@ if [ "${DEV}" != 1 ]; then
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
 		-DINSTALL_DEFAULT_MODDIR=./
 		-DINSTALL_DEFAULT_BINDIR=./
-		-DINSTALL_DEFAULT_BASEDIR=${PREFIX}
+		-DINSTALL_DEFAULT_BASEDIR=./
 		"
 	else
 		PREFIX=${HOME}/etlegacy
 		_CFGSTRING="${_CFGSTRING}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
-		-DINSTALL_DEFAULT_MODDIR=mod
-		-DINSTALL_DEFAULT_BINDIR=bin
-		-DINSTALL_DEFAULT_BASEDIR=${PREFIX}/mod
+		-DINSTALL_DEFAULT_MODDIR=.
+		-DINSTALL_DEFAULT_BINDIR=.
+		-DINSTALL_DEFAULT_BASEDIR=.
 		"
 	fi
 fi
@@ -215,6 +215,9 @@ cmake ${_CFGSTRING} ..
 
 einfo "Compiling ET Legacy..."
 make ${MAKEOPTS}
+
+einfo "Installing ET Legacy in ${PREFIX}"
+make install
 
 einfo "Packing ET Legacy..."
 make package
