@@ -43,6 +43,7 @@ GOTO:EOF
 	set curvar=%~1
 	IF /I "%curvar%"=="clean" CALL:DOCLEAN
 	IF /I "%curvar%"=="build" CALL:DOBUILD
+	IF /I "%curvar%"=="build64" CALL:DOBUILD " Win64"
 	IF /I "%curvar%"=="install" CALL:DOINSTALL
 	IF /I "%curvar%"=="pack" CALL:DOPACKAGE
 	:: download pak0 - 2 to the homepath if they do not exist
@@ -78,6 +79,7 @@ GOTO:EOF
 		ECHO Will create base directory: "%game_basepath%"
 		mkdir "%game_basepath%"
 	)
+	CD %build_dir%
 	CALL:CLEANPATH "%game_basepath%\legacy\" "*.pk3 *.dll *.dat"
 	CALL:CLEANPATH "%game_homepath%\legacy\" "*.pk3 *.dll *.dat"
 	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_openg*.dll SDL2.dll" "%game_basepath%\"
@@ -136,14 +138,20 @@ GOTO:EOF
 	IF NOT EXIST %build_dir% MKDIR %build_dir%
 	CD %build_dir%
 
+	IF "%~1" == "" (
+		SET CROSSCOMP=YES
+	) ELSE (
+		SET CROSSCOMP=NO
+	)
+
 	:: Removed the following since they were not needed anymore and they broke the nsis package stage
 	:: -DCMAKE_INSTALL_PREFIX=%game_basepath% -DINSTALL_DEFAULT_BASEDIR=./ -DINSTALL_DEFAULT_BINDIR=./ -DINSTALL_DEFAULT_MODDIR=./ 
 
-	cmake -G "Visual Studio %vsversion%" -T v%vsversion%0_xp ^
+	cmake -G "Visual Studio %vsversion%%~1" -T v%vsversion%0_xp ^
 	-DBUNDLED_LIBS=YES ^
 	-DCMAKE_BUILD_TYPE=%build_type% ^
 	-DINSTALL_OMNIBOT=YES ^
-	-DCROSS_COMPILE32=YES ^
+	-DCROSS_COMPILE32=%CROSSCOMP% ^
 	..
 
 	msbuild ETLEGACY.sln /target:ALL_BUILD /p:Configuration=%build_type%
