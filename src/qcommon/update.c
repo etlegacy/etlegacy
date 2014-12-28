@@ -88,7 +88,13 @@ void Com_CheckAutoUpdate(void)
 	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
 	                    Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
 
-	NET_OutOfBandPrint(NS_CLIENT, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
+	NET_OutOfBandPrint(
+#ifdef DEDICATED
+		NS_SERVER
+#else
+		NS_CLIENT
+#endif
+		, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
 	autoupdate.updateChecked = qtrue;
 }
@@ -509,6 +515,7 @@ void Com_UpdateVarsClean(int flags)
 
 void Com_Update_f(void)
 {
+#ifndef DEDICATED
 	if (!autoupdate.updateChecked)
 	{
 		autoupdate.forceUpdate = qtrue;
@@ -518,4 +525,8 @@ void Com_Update_f(void)
 	{
 		Com_GetAutoUpdate();
 	}
+#else
+	autoupdate.forceUpdate = qtrue;
+	Com_CheckAutoUpdate();
+#endif
 }

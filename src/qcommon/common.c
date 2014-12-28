@@ -3028,10 +3028,10 @@ void Com_Init(char *commandLine)
 		// if the user didn't give any commands, run default action
 	}
 
+	CL_StartHunkUsers();
+
 	// start in full screen ui mode
 	Cvar_Set("r_uiFullScreen", "1");
-
-	CL_StartHunkUsers();
 
 #if idppc
 	Com_DetectAltivec();
