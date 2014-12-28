@@ -17,10 +17,17 @@ INTRODUCTION
 ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/)
 which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory.
 
-Its main goals are fixing bugs, cleaning up the codebase and adding useful features while remaining
-compatible with the ET 2.60b version.
+The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
+while remaining compatible with the ET 2.60b version.
+
+The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many useful features and
+improvements, while staying close to the original gameplay, as well as being lightweight and fully
+extensible through Lua scripts.
 
 For more information consult our [changelog](http://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
+
+ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
+Anyone is welcome to join our efforts!
 
 GENERAL NOTES
 =============
@@ -33,16 +40,20 @@ Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Spla
 This source release contains only the engine and mod code but not any game data,
 which is still covered by the original EULA and must be obeyed as usual.
 
-In order to run ET:Legacy you wil need to copy the original assets files
+In order to run ET: Legacy you wil need to copy the original assets files
 (*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
 
 Compatibility with Enemy Territory 2.60b
 ----------------------------------------------------------------------------
 
-Please remember that only if you compile ET:Legacy on a 32 bits system or crosscompile it
-for 32 bits architecture on a 64 bits system will you be able to play on 2.60b servers.
+Please remember that 64 bit ET: Legacy clients can only connect to servers running mods
+providing a 64 bit version. You will be able to play 32 bit-only mods only if you compile
+ET: Legacy on a 32 bit system or crosscompile it for 32 bit architecture on a 64 bit system.
 
-In case you are a running a 64 bits system, you probably might want to use the
+At the moment, note that only the Legacy mod is available in 64 bit version, while all
+other existing mods are available in 32 bit only version.
+
+In case you are a running a 64 bit system, you probably might want to use the
 **bundled libraries** which are located in a separate *etlegacy-libs* repository and
 can be automatically downloaded using the `git submodule` command. See the next section
 for more details.
@@ -80,7 +91,7 @@ by toggling the respective `BUNDLED_XXX` variable.
 Compile and install
 -----------------------------------------------------------------------------
 
-To install the binaries system-wide, you need to compile ET:Legacy with hardcoded fs_basepath.
+To install the binaries system-wide, you need to compile ET: Legacy with hardcoded fs_basepath.
 
 The following variables can be adjusted in CMake:
   * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
@@ -105,7 +116,7 @@ To compile, run:
 
     $ make
 
-If you wish to install ET:Legacy system-wide, run:
+If you wish to install ET: Legacy system-wide, run:
 
     # make install
 
@@ -122,12 +133,12 @@ To install, run:
     $ cd build
     $ make install
 
-ET:Legacy will be installed in `~/etlegacy`. To change it, set the CMake variables (see above) in the
+ET: Legacy will be installed in `~/etlegacy`. To change it, set the CMake variables (see above) in the
 easybuild.sh file beforehand.
 
 **NOTE:**
 
-Even if you have a 64 bits linux distribution which provides 32 bits versions of all
+Even if you have a 64 bit linux distribution which provides 32 bit versions of all
 the required libraries, you might also need the development libraries (-devel packages)
 installed on your system.
 
@@ -150,7 +161,7 @@ By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it i
 
     1. install the free [Visual Studio](http://www.visualstudio.com/) (C++ Express 2010 or newer)
     2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
-    3. create a `build` directory inside the directory which contains ET:Legacy sources
+    3. create a `build` directory inside the directory which contains ET: Legacy sources
     4. open *Visual Studio Command Prompt* in the Start menu
     5. change directory with `cd` to the newly created build directory
 
@@ -176,7 +187,7 @@ and open the resulting project in Visual Studio.
     2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
     3. run easybuild.bat
 
-ET:Legacy will be installed in `My Documents\ETLegacy-Build`. To change it, set the CMake variables
+ET: Legacy will be installed in `My Documents\ETLegacy-Build`. To change it, set the CMake variables
 (see above) in the easybuild.bat file beforehand.
 
 **NOTES:**
