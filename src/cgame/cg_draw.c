@@ -3068,6 +3068,7 @@ void CG_Fade(int r, int g, int b, int a, int time, int duration)
 	}
 	return; // FIXME: early return?
 
+	/*
 	if (time <= 0)      // do instantly
 	{
 		cg.fadeRate = 1;
@@ -3083,6 +3084,7 @@ void CG_Fade(int r, int g, int b, int a, int time, int duration)
 	cg.fadeColor2[1] = ( float )g / 255.0f;
 	cg.fadeColor2[2] = ( float )b / 255.0f;
 	cg.fadeColor2[3] = ( float )a / 255.0f;
+	*/
 }
 
 /*
