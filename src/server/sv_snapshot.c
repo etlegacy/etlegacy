@@ -115,11 +115,13 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 
 		if (newnum < oldnum)
 		{
-			// this is a new entity, send it from the baseline
-			if (newnum < MAX_GENTITIES)
+			if (newnum >= MAX_GENTITIES)
 			{
-				MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
+				Com_Error(ERR_FATAL, "SV_EmitPacketEntities: MAX_GENTITIES exceeded");
 			}
+
+			// this is a new entity, send it from the baseline
+			MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
 			newindex++;
 			continue;
 		}
