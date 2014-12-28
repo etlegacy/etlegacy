@@ -706,7 +706,7 @@ static void SV_Demo_Record_f(void)
 		return;
 	}
 
-	if (sv_maxclients->integer == MAX_CLIENTS)
+	if (sv_maxclients->integer > MAX_CLIENTS)
 	{
 		Com_Printf("DEMO: ERROR: Too many client slots, reduce sv_maxclients and retry.\n");
 		return;
