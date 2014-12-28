@@ -1082,6 +1082,11 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		// server disconnect messages when their new server sees our final
 		// sequenced messages to the old client
 	}
+	// Update server response message
+	else if (!Q_stricmp(c, "updateResponse"))
+	{
+		Com_UpdateInfoPacket(from);
+	}
 	else
 	{
 		SV_WriteAttackLog(va("bad connectionless packet from %s:\n%s\n" // changed from Com_DPrintf to print in attack log

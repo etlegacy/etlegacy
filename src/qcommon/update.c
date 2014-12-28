@@ -433,9 +433,12 @@ void Com_UpdateInfoPacket(netadr_t from)
 
 	if (!NET_CompareAdr(from, autoupdate.autoupdateServer))
 	{
-		// TODO: when the updater is server-side as well, write this message to the Attack log
-		Com_DPrintf("CL_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
+#ifdef DEDICATED
+		SV_WriteAttackLog(va("bad update info packet from %s\n", NET_AdrToString(from)));
+#else
+		Com_DPrintf("Com_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
 		            NET_AdrToString(from), NET_AdrToString(autoupdate.autoupdateServer));
+#endif
 		return;
 	}
 
