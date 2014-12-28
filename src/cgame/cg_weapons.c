@@ -819,12 +819,15 @@ CG_RailTrail
 */
 void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end)
 {
-	localEntity_t *le = CG_AllocLocalEntity();
-	refEntity_t   *re = &le->refEntity;
+	localEntity_t *le;
+	refEntity_t   *re;
+
+	le = CG_AllocLocalEntity();
+	re = &le->refEntity;
 
 	le->leType    = LE_CONST_RGB;
 	le->startTime = cg.time;
-	le->endTime   = cg.time + cg_railTrailTime.value;
+	le->endTime   = cg.time + 50;
 	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 	re->shaderTime   = cg.time / 1000.0f;

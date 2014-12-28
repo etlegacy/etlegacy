@@ -107,7 +107,6 @@ cgs_t        cgs;
 centity_t    cg_entities[MAX_GENTITIES];
 weaponInfo_t cg_weapons[MAX_WEAPONS];
 
-vmCvar_t cg_railTrailTime;
 vmCvar_t cg_centertime;
 vmCvar_t cg_runpitch;
 vmCvar_t cg_runroll;
@@ -358,7 +357,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_crosshairY,            "cg_crosshairY",            "0",     CVAR_ARCHIVE                 },
 	{ &cg_brassTime,             "cg_brassTime",             "2500",  CVAR_ARCHIVE                 },
 	{ &cg_markTime,              "cg_markTime",              "20000", CVAR_ARCHIVE                 },
-	{ &cg_railTrailTime,         "cg_railTrailTime",         "400",   CVAR_ARCHIVE                 },
 	{ &cg_gun_x,                 "cg_gunX",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_y,                 "cg_gunY",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_z,                 "cg_gunZ",                  "0",     CVAR_CHEAT                   },
