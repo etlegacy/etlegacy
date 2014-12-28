@@ -1000,10 +1000,10 @@ WinMain
 ==================
 */
 WinVars_t   g_wv;
-static char sys_cmdline[MAX_STRING_CHARS];
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	char commandLine[MAX_STRING_CHARS] = { 0 };
 	char cwd[MAX_OSPATH];
 	// should never get a previous instance in Win32
 	if (hPrevInstance)
@@ -1016,7 +1016,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 
 	g_wv.hInstance = hInstance;
-	Q_strncpyz(sys_cmdline, lpCmdLine, sizeof(sys_cmdline));
+
+#if 1
+	commandLine[0] = '\0';
+	Sys_ParseArgs(__argc, __argv);
+	Sys_BuildCommandLine(__argc, __argv, commandLine, sizeof(commandLine));
+#else
+	Q_strncpyz(commandLine, lpCmdLine, sizeof(commandLine));
+#endif
 
 #ifndef DEDICATED
 	Sys_SetProcessProperties();
@@ -1039,8 +1046,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// get the initial time base
 	Sys_Milliseconds();
-
-	Com_Init(sys_cmdline);
+	Com_Init(commandLine);
 	NET_Init();
 
 	Sys_Splash(qfalse);

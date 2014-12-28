@@ -64,6 +64,8 @@ void Sys_AnsiColorPrint(const char *msg);
 void *Sys_LoadDll(const char *name, qboolean useSystemLib);
 void *Sys_LoadGameDll(const char *name, intptr_t(**entryPoint) (int, ...), intptr_t (*systemcalls)(intptr_t, ...));
 void Sys_UnloadDll(void *dllHandle);
+void Sys_ParseArgs(int argc, char **argv);
+void Sys_BuildCommandLine(int argc, char **argv, char *commandLine, int bufferSize);
 
 #ifdef USE_WINDOWS_CONSOLE
 void Conbuf_AppendText(const char *msg);

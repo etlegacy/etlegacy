@@ -3015,6 +3015,8 @@ void Com_Init(char *commandLine)
 		CL_Init();
 	}
 
+	Com_UpdateVarsClean(CLEAR_ALL);
+
 	// set com_frameTime so that if a map is started on the
 	// command line it will still be able to count on com_frameTime
 	// being random enough for a serverid

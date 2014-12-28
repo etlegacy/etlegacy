@@ -44,10 +44,12 @@
 
 #ifdef _WIN32
 #define UPDATE_BINARY "updater.exe"
-#define UPDATE_CMD "\"%s\" --install-dir \"%s\" --package-dir \"%s\" --script \"%s\" --wait \"%s\" --auto-close --execute \"" gamebin ".exe\" --execute-args \"%s\""
+#define GAME_BINARY gamebin ".exe"
+#define CMDP "\""
 #else
 #define UPDATE_BINARY "updater"
-#define UPDATE_CMD "'%s' --install-dir '%s' --package-dir '%s' --script '%s' --wait '%s' --auto-close --execute '" gamebin "' --execute-args '%s'"
+#define GAME_BINARY gamebin
+#define CMDP "'"
 #endif
 #define UPDATE_PACKAGE "updater.zip"
 #define UPDATE_CONFIG "updater.xml"
@@ -100,8 +102,18 @@ void Com_GetAutoUpdate(void)
 		return;
 	}
 
+	if (com_updateavailable->integer != 2)
+	{
+#ifndef DEDICATED
+		Sys_OpenURL("http://www.etlegacy.com", qtrue);
+		
+#endif
+
+		return;
+	}
+
 	// Make sure there's a valid update file to request
-	if (strlen(com_updatefiles->string) < 5)
+	if (strlen(com_updatefiles->string) < MIN_PACK_LEN)
 	{
 		return;
 	}
@@ -176,6 +188,7 @@ void Com_GetAutoUpdate(void)
 static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
 {
 	static char fn[MAX_OSPATH];
+	char cmdBuffer[MAX_OSPATH];
 
 	Q_strncpyz(fn, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateBinary), MAX_OSPATH);
 
@@ -193,7 +206,22 @@ static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConf
 	}
 #endif
 
-	Sys_StartProcess(va(UPDATE_CMD, fn, Cvar_VariableString("fs_basepath"), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL), FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig), Cvar_VariableString("com_pid"), Com_GetCommandLine()), qtrue);
+	Com_sprintf(cmdBuffer, MAX_OSPATH, CMDP "%s" CMDP, fn);
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --install-dir " CMDP "%s" CMDP, Cvar_VariableString("fs_basepath"));
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --package-dir " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL));
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --script " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig));
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --wait " CMDP "%s" CMDP, Cvar_VariableString("com_pid"));
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --auto-close");
+
+	//The etl client is in the app bundle so we need to browse a bit further
+#if defined(__APPLE__) && !defined(DEDICATED)
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP "etl.app/Contents/MacOS/" GAME_BINARY CMDP);
+#else
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP GAME_BINARY CMDP);
+#endif
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute-args " CMDP "%s" CMDP, Com_GetCommandLine());
+
+	Sys_StartProcess(cmdBuffer, qtrue);
 
 	// reinitialize the filesystem if the game directory or checksum has changed
 	// - after Legacy mod update

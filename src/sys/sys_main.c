@@ -835,6 +835,36 @@ void Sys_ParseArgs(int argc, char **argv)
 #endif
 }
 
+void Sys_BuildCommandLine(int argc, char **argv, char *buffer, int bufferSize)
+{
+	int i = 0;
+	// Concatenate the command line for passing to Com_Init
+	for (i = 1; i < argc; i++)
+	{
+		const qboolean containsSpaces = (qboolean)(strchr(argv[i], ' ') != NULL);
+
+		// Allow URIs to be passed without +connect
+		if (!Q_strncmp(argv[i], "et://", 5) && Q_strncmp(argv[i - 1], "+connect", 8))
+		{
+			Q_strcat(buffer, bufferSize, "+connect ");
+		}
+
+		if (containsSpaces)
+		{
+			Q_strcat(buffer, bufferSize, "\"");
+		}
+
+		Q_strcat(buffer, bufferSize, argv[i]);
+
+		if (containsSpaces)
+		{
+			Q_strcat(buffer, bufferSize, "\"");
+		}
+
+		Q_strcat(buffer, bufferSize, " ");
+	}
+}
+
 #ifndef DEFAULT_BASEDIR
 #       define DEFAULT_BASEDIR Sys_BinaryPath()
 #endif
@@ -946,7 +976,6 @@ main
 */
 int main(int argc, char **argv)
 {
-	int  i;
 	char commandLine[MAX_STRING_CHARS] = { 0 };
 
 #ifdef __MORPHOS__
@@ -1015,23 +1044,7 @@ int main(int argc, char **argv)
 	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
 
 	// Concatenate the command line for passing to Com_Init
-	for (i = 1; i < argc; i++)
-	{
-		const qboolean containsSpaces = (qboolean)(strchr(argv[i], ' ') != NULL);
-		if (containsSpaces)
-		{
-			Q_strcat(commandLine, sizeof(commandLine), "\"");
-		}
-
-		Q_strcat(commandLine, sizeof(commandLine), argv[i]);
-
-		if (containsSpaces)
-		{
-			Q_strcat(commandLine, sizeof(commandLine), "\"");
-		}
-
-		Q_strcat(commandLine, sizeof(commandLine), " ");
-	}
+	Sys_BuildCommandLine(argc, argv, commandLine, sizeof(commandLine));
 
 	Com_Init(commandLine);
 	NET_Init();

@@ -2940,8 +2940,6 @@ void CL_Init(void)
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
 	CL_UpdateGUID();
 
-	Com_UpdateVarsClean(CLEAR_ALL);
-
 #ifdef FEATURE_GETTEXT
 	I18N_Init();
 #endif
