@@ -1010,7 +1010,13 @@ void SV_DemoReadAllPlayerState(msg_t *msg)
 	playerState_t *player;
 	int           num;
 
-	num    = MSG_ReadByte(msg);
+	num = MSG_ReadByte(msg);
+
+	if (num < 0 || num >= MAX_CLIENTS)
+	{
+		Com_Error(ERR_FATAL, "SV_DemoReadAllPlayerState: invalid demo message");
+	}
+
 	player = SV_GameClientNum(num);
 	MSG_ReadDeltaPlayerstate(msg, &sv.demoPlayerStates[num], player);
 	sv.demoPlayerStates[num] = *player;
