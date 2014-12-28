@@ -6886,7 +6886,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 		r = Q_crandom(&seed) * MG42_SPREAD_MP;
 		u = Q_crandom(&seed) * MG42_SPREAD_MP;
 
-		VectorMA(muzzle, 8192, forward, end);
+		VectorMA(muzzle, MAX_TRACE, forward, end);
 		VectorMA(end, r, right, end);
 		VectorMA(end, u, up, end);
 

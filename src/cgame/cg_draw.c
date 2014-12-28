@@ -1239,7 +1239,7 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	*hitClient = qfalse;
 
 	VectorCopy(cg.refdef.vieworg, start);
-	VectorMA(start, 8192, cg.refdef.viewaxis[0], end);
+	VectorMA(start, MAX_TRACE, cg.refdef.viewaxis[0], end);
 
 	cg.crosshairClientNoShoot = qfalse;
 
@@ -3071,13 +3071,13 @@ void CG_Fade(int r, int g, int b, int a, int time, int duration)
 	/*
 	if (time <= 0)      // do instantly
 	{
-		cg.fadeRate = 1;
-		cg.fadeTime = cg.time - 1;  // set cg.fadeTime behind cg.time so it will start out 'done'
+	    cg.fadeRate = 1;
+	    cg.fadeTime = cg.time - 1;  // set cg.fadeTime behind cg.time so it will start out 'done'
 	}
 	else
 	{
-		cg.fadeRate = 1.0f / time;
-		cg.fadeTime = cg.time + time;
+	    cg.fadeRate = 1.0f / time;
+	    cg.fadeTime = cg.time + time;
 	}
 
 	cg.fadeColor2[0] = ( float )r / 255.0f;
