@@ -145,7 +145,7 @@ static cvar_t *net_mcast6addr;
 static cvar_t *net_mcast6iface;
 #endif
 
-static cvar_t	*net_dropsim;
+static cvar_t *net_dropsim;
 
 static struct sockaddr socksRelayAddr;
 
@@ -2062,9 +2062,9 @@ Called from NET_Sleep which uses select() to determine which sockets have seen a
 */
 void NET_Event(fd_set *fdr)
 {
-	byte bufData[MAX_MSGLEN + 1];
+	byte     bufData[MAX_MSGLEN + 1];
 	netadr_t from = { 0 };
-	msg_t netmsg;
+	msg_t    netmsg;
 
 	while (1)
 	{
@@ -2108,8 +2108,8 @@ void NET_Sleep(int msec)
 {
 	struct timeval timeout;
 	fd_set         fdset;
-	int retval;
-	SOCKET highestfd = INVALID_SOCKET;
+	int            retval;
+	SOCKET         highestfd = INVALID_SOCKET;
 
 	if (msec < 0)
 	{
@@ -2145,7 +2145,7 @@ void NET_Sleep(int msec)
 
 	timeout.tv_sec  = msec / 1000;
 	timeout.tv_usec = (msec % 1000) * 1000;
-	retval = select(highestfd + 1, &fdset, NULL, NULL, &timeout);
+	retval          = select(highestfd + 1, &fdset, NULL, NULL, &timeout);
 
 	if (retval == SOCKET_ERROR)
 	{

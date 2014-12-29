@@ -44,16 +44,16 @@
 
 void Com_ClearDownload(void)
 {
-	dld.download = 0;
-	dld.downloadNumber = 0;
-	dld.downloadBlock = 0;
-	dld.downloadCount = 0;
-	dld.downloadSize = 0;
-	dld.downloadFlags = 0;
-	dld.downloadList[0] = '\0';
-	dld.bWWWDl = qfalse;
-	dld.bWWWDlAborting = qfalse;
-	dld.redirectedList[0] = '\0';
+	dld.download           = 0;
+	dld.downloadNumber     = 0;
+	dld.downloadBlock      = 0;
+	dld.downloadCount      = 0;
+	dld.downloadSize       = 0;
+	dld.downloadFlags      = 0;
+	dld.downloadList[0]    = '\0';
+	dld.bWWWDl             = qfalse;
+	dld.bWWWDlAborting     = qfalse;
+	dld.redirectedList[0]  = '\0';
 	dld.badChecksumList[0] = '\0';
 }
 
@@ -66,10 +66,10 @@ Clear download information that we keep in cls (disconnected download support)
 void Com_ClearStaticDownload(void)
 {
 	assert(!dld.bWWWDlDisconnected);    // reset before calling
-	dld.noReconnect = qfalse;
-	dld.downloadRestart = qfalse;
-	dld.downloadTempName[0] = '\0';
-	dld.downloadName[0] = '\0';
+	dld.noReconnect             = qfalse;
+	dld.downloadRestart         = qfalse;
+	dld.downloadTempName[0]     = '\0';
+	dld.downloadName[0]         = '\0';
 	dld.originalDownloadName[0] = '\0';
 }
 
@@ -129,9 +129,9 @@ void Com_BeginDownload(const char *localName, const char *remoteName)
 {
 
 	Com_DPrintf("***** Com_BeginDownload *****\n"
-		"Localname: %s\n"
-		"Remotename: %s\n"
-		"****************************\n", localName, remoteName);
+	            "Localname: %s\n"
+	            "Remotename: %s\n"
+	            "****************************\n", localName, remoteName);
 
 	Q_strncpyz(dld.downloadName, localName, sizeof(dld.downloadName));
 	Com_sprintf(dld.downloadTempName, sizeof(dld.downloadTempName), "%s.tmp", localName);
@@ -182,7 +182,7 @@ void Com_NextDownload(void)
 			return;
 		}
 
-		*s++ = 0;
+		*s++      = 0;
 		localName = s;
 		if ((s = strchr(s, '@')) != NULL)
 		{
@@ -215,8 +215,8 @@ void Com_InitDownloads(void)
 	char missingfiles[1024];
 
 	// init some of the www dl data
-	dld.bWWWDl = qfalse;
-	dld.bWWWDlAborting = qfalse;
+	dld.bWWWDl             = qfalse;
+	dld.bWWWDlAborting     = qfalse;
 	dld.bWWWDlDisconnected = qfalse;
 	Com_ClearStaticDownload();
 
@@ -298,8 +298,8 @@ void Com_WWWDownload(void)
 	{
 		// taken from CL_ParseDownload
 		// we work with OS paths
-		dld.download = 0;
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, "");
+		dld.download                     = 0;
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 		if (rename(dld.downloadTempName, to_ospath))
 		{
@@ -391,7 +391,7 @@ qboolean Com_WWWBadChecksum(const char *pakname)
 
 static void Com_SetupDownload(const char *remote, const char *filename)
 {
-	dld.bWWWDl = qtrue;
+	dld.bWWWDl             = qtrue;
 	dld.bWWWDlDisconnected = qtrue;
 
 	// download format: @remotename@localname

@@ -292,7 +292,7 @@ typedef struct
 	// in the static stuff since this may have to survive server disconnects
 	// if new stuff gets added, CL_ClearStaticDownload code needs to be updated for clear up
 	qboolean bWWWDlDisconnected; // keep going with the download after server disconnect
-	qboolean noReconnect;	//do not try to reconnect when the dowload is ready
+	qboolean noReconnect;   //do not try to reconnect when the dowload is ready
 	char downloadName[MAX_OSPATH];
 	char downloadTempName[MAX_OSPATH];    // in wwwdl mode, this is OS path (it's a qpath otherwise)
 	char originalDownloadName[MAX_QPATH];    // if we get a redirect, keep a copy of the original file path

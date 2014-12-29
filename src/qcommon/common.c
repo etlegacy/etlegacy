@@ -131,8 +131,8 @@ cvar_t *com_updatefiles;
 int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
 #elif id386
 //long (QDECL *Q_ftol)(float f);
-int(QDECL * Q_VMftol)(void);  // Unused.
-void(QDECL * Q_SnapVector)(vec3_t vec);
+int (QDECL *Q_VMftol)(void);  // Unused.
+void (QDECL *Q_SnapVector)(vec3_t vec);
 #endif
 
 cvar_t *com_recommendedSet;
@@ -3379,7 +3379,7 @@ void Com_Frame(void)
 	}
 	else if (com_speeds->integer)
 	{
-		timeAfter = Sys_Milliseconds();
+		timeAfter        = Sys_Milliseconds();
 		timeBeforeEvents = timeAfter;
 		timeBeforeClient = timeAfter;
 	}

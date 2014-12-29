@@ -90,11 +90,11 @@ void Com_CheckAutoUpdate(void)
 
 	NET_OutOfBandPrint(
 #ifdef DEDICATED
-		NS_SERVER
+	    NS_SERVER
 #else
-		NS_CLIENT
+	    NS_CLIENT
 #endif
-		, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
+	    , autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
 	autoupdate.updateChecked = qtrue;
 }
@@ -112,7 +112,7 @@ void Com_GetAutoUpdate(void)
 	{
 #ifndef DEDICATED
 		Sys_OpenURL("http://www.etlegacy.com", qtrue);
-		
+
 #endif
 
 		return;
@@ -194,7 +194,7 @@ void Com_GetAutoUpdate(void)
 static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
 {
 	static char fn[MAX_OSPATH];
-	char cmdBuffer[MAX_OSPATH];
+	char        cmdBuffer[MAX_OSPATH];
 
 	Q_strncpyz(fn, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateBinary), MAX_OSPATH);
 
