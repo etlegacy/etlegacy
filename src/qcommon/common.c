@@ -3352,37 +3352,37 @@ void Com_Frame(void)
 	}
 
 	// client system
-#ifndef DEDICATED
-	// run event loop a second time to get server to client packets
-	// without a frame of latency
-	if (com_speeds->integer)
+	if (!com_dedicated->integer)
 	{
-		timeBeforeEvents = Sys_Milliseconds();
+		// run event loop a second time to get server to client packets
+		// without a frame of latency
+		if (com_speeds->integer)
+		{
+			timeBeforeEvents = Sys_Milliseconds();
+		}
+
+		Com_EventLoop();
+		Cbuf_Execute();
+
+		// client side
+		if (com_speeds->integer)
+		{
+			timeBeforeClient = Sys_Milliseconds();
+		}
+
+		CL_Frame(msec);
+
+		if (com_speeds->integer)
+		{
+			timeAfter = Sys_Milliseconds();
+		}
 	}
-
-	Com_EventLoop();
-	Cbuf_Execute();
-
-	// client side
-	if (com_speeds->integer)
-	{
-		timeBeforeClient = Sys_Milliseconds();
-	}
-
-	CL_Frame(msec);
-
-	if (com_speeds->integer)
+	else if (com_speeds->integer)
 	{
 		timeAfter = Sys_Milliseconds();
-	}
-#else
-	if (com_speeds->integer)
-	{
-		timeAfter        = Sys_Milliseconds();
 		timeBeforeEvents = timeAfter;
 		timeBeforeClient = timeAfter;
 	}
-#endif
 
 	NET_FlushPacketQueue();
 
