@@ -4006,18 +4006,6 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 			cg.weaponSelect = newweap;
 		}
 		break;
-//  case WP_MEDIC_SYRINGE:
-//      if((cg.pmext.silencedSideArm & 4) && lastweap != WP_MEDIC_ADRENALINE) {
-//          newweap = WP_MEDIC_ADRENALINE;
-//          cg.weaponSelect = newweap;
-//      }
-//      break;
-//  case WP_MEDIC_ADRENALINE:
-//      if(!(cg.pmext.silencedSideArm & 4) && lastweap != WP_MEDIC_SYRINGE) {
-//          newweap = WP_MEDIC_SYRINGE;
-//          cg.weaponSelect = newweap;
-//      }
-//      break;
 	default:
 		break;
 	}
@@ -5507,12 +5495,6 @@ void CG_FireWeapon(centity_t *cent)
 
 	// mark the entity as muzzle flashing, so when it is added it will
 	// append the flash to the weapon model
-	/*
-	if(cg_muzzleFlash.integer)
-	{
-	    cent->muzzleFlashTime = cg.time;
-	}
-	*/
 	if (cg_muzzleFlash.integer)
 	{
 		cent->muzzleFlashTime = cg.time;
@@ -5734,7 +5716,6 @@ void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duratio
 		CG_ParticleDirtBulletDebris_Core(pos, velocity, duration + (rand() % (duration >> 1)), width, height, alpha, shader);
 	}
 }
-
 
 void CG_RandomDebris(localEntity_t *le)
 {
@@ -7119,8 +7100,6 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 				VectorNormalizeFast(dir);
 				VectorMA(end, 4, dir, end);
 
-				//CG_RailTrail2( NULL, start, end );
-
 				cg.bulletTrace = qtrue;
 				CG_Trace(&trace, start, NULL, NULL, end, 0, MASK_SHOT);
 				cg.bulletTrace = qfalse;
@@ -7147,8 +7126,6 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 				// better bullet marks
 				VectorSubtract(vec3_origin, dir, dir);
 				CG_MissileHitWall(fromweap, 1, trace.endpos, dir, trace.surfaceFlags);
-
-				//CG_RailTrail2( NULL, start, trace.endpos );
 			}
 		}
 	}
