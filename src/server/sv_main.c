@@ -855,6 +855,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	int        i;
 	int        globalCount;
 	int        specificCount;
+	int        timeNow;
 	receipt_t  *receipt;
 	netadr_t   exactFrom;
 	int        oldest;
@@ -871,7 +872,24 @@ qboolean SV_CheckDRDoS(netadr_t from)
 		return qfalse;
 	}
 
+	timeNow = svs.time;
 	exactFrom = from;
+
+	// Time has wrapped
+	if (lastGlobalLogTime > timeNow || lastSpecificLogTime > timeNow)
+	{
+		lastGlobalLogTime = 0;
+		lastSpecificLogTime = 0;
+
+		//just setting time to 1 (cannot be 0 as then globalCount would not be counted)
+		for (i = 0; i < MAX_INFO_RECEIPTS; i++)
+		{
+			if (svs.infoReceipts[i].time)
+			{
+				svs.infoReceipts[i].time = 1; //hack it so we count globalCount correctly
+			}
+		}
+	}
 
 	if (from.type == NA_IP)
 	{
@@ -890,7 +908,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	oldestTime    = 0x7fffffff;
 	for (i = 0; i < MAX_INFO_RECEIPTS; i++, receipt++)
 	{
-		if (receipt->time + 2000 > svs.time)
+		if (receipt->time + 2000 > timeNow)
 		{
 			if (receipt->time)
 			{
@@ -916,21 +934,21 @@ qboolean SV_CheckDRDoS(netadr_t from)
 
 	if (globalCount == MAX_INFO_RECEIPTS)   // All receipts happened in last 2 seconds.
 	{
-		if (lastGlobalLogTime + 1000 <= svs.time)  // Limit one log every second.
+		if (lastGlobalLogTime + 1000 <= timeNow)  // Limit one log every second.
 		{
 			SV_WriteAttackLog("Detected flood of getinfo/getstatus connectionless packets\n");
-			lastGlobalLogTime = svs.time;
+			lastGlobalLogTime = timeNow;
 		}
 
 		return qtrue;
 	}
 	if (specificCount >= 3)   // Already sent 3 to this IP in last 2 seconds.
 	{
-		if (lastSpecificLogTime + 1000 <= svs.time)   // Limit one log every second.
+		if (lastSpecificLogTime + 1000 <= timeNow)   // Limit one log every second.
 		{
 			SV_WriteAttackLog(va("Possible DRDoS attack to address %s, ignoring getinfo/getstatus connectionless packet\n",
 			                     NET_AdrToString(exactFrom)));
-			lastSpecificLogTime = svs.time;
+			lastSpecificLogTime = timeNow;
 		}
 
 		return qtrue;
@@ -938,7 +956,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 
 	receipt       = &svs.infoReceipts[oldest];
 	receipt->adr  = from;
-	receipt->time = svs.time;
+	receipt->time = timeNow;
 	return qfalse;
 }
 
