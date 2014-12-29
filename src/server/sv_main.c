@@ -687,6 +687,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 	// A maximum challenge length of 128 should be more than plenty.
 	if (strlen(Cmd_Argv(1)) > 128)
 	{
+		SV_WriteAttackLog(va("SVC_Status: challenge lenght exceeded from %s, dropping request\n", NET_AdrToString(from)));
 		return;
 	}
 
@@ -759,7 +760,7 @@ void SVC_Info(netadr_t from)
 	// A maximum challenge length of 128 should be more than plenty.
 	if (strlen(Cmd_Argv(1)) > 128)
 	{
-		SV_WriteAttackLog("SVC_Info: challenge lenght exceeded, dropping request\n");
+		SV_WriteAttackLog(va("SVC_Info: challenge lenght from %s exceeded, dropping request\n", NET_AdrToString(from)));
 		return;
 	}
 
@@ -1055,7 +1056,7 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	Com_DPrintf("SV packet %s : %s\n", NET_AdrToString(from), c);
 
 	if (!Q_stricmp(c, "getstatus"))
-	{	
+	{
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
 			return;
