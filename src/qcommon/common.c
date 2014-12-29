@@ -131,8 +131,8 @@ cvar_t *com_updatefiles;
 int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
 #elif id386
 //long (QDECL *Q_ftol)(float f);
-int (QDECL *Q_VMftol)(void);  // Unused.
-void (QDECL *Q_SnapVector)(vec3_t vec);
+int(QDECL * Q_VMftol)(void);  // Unused.
+void(QDECL * Q_SnapVector)(vec3_t vec);
 #endif
 
 cvar_t *com_recommendedSet;
@@ -2188,9 +2188,8 @@ EVENT LOOP
 
 static sysEvent_t eventQueue[MAX_QUEUED_EVENTS];
 // keep in mind: both event vars are never reset
-static int  eventHead = 0;
-static int  eventTail = 0;
-static byte sys_packetReceived[MAX_MSGLEN];
+static int eventHead = 0;
+static int eventTail = 0;
 
 /**
  * @brief A time of 0 will get the current time
@@ -2722,7 +2721,7 @@ void Com_Init(char *commandLine)
 {
 	// gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
 	volatile qboolean safeMode = qtrue;
-	int	qport;
+	int               qport;
 
 	Com_Printf(ET_VERSION "\n");
 
@@ -2941,9 +2940,9 @@ void Com_Init(char *commandLine)
 	Sys_Init();
 
 	// Pick a random port value
-	Com_RandomBytes((byte*)&qport, sizeof(int));
+	Com_RandomBytes((byte *)&qport, sizeof(int));
 	Netchan_Init(qport & 0xffff);
-	
+
 	VM_Init();
 	SV_Init();
 
@@ -3133,7 +3132,7 @@ int Com_ModifyMsec(int msec)
 static void Com_WatchDog(void)
 {
 	static int      watchdogTime = 0;
-	static qboolean watchWarn = qfalse;
+	static qboolean watchWarn    = qfalse;
 
 	if (com_dedicated->integer && !com_sv_running->integer && com_watchdog->integer)
 	{
@@ -3152,7 +3151,7 @@ static void Com_WatchDog(void)
 			{
 				Com_Printf("Idle Server with no map - triggering watchdog\n");
 				watchdogTime = 0;
-				watchWarn = qfalse;
+				watchWarn    = qfalse;
 				if (com_watchdog_cmd->string[0] == '\0')
 				{
 					Cbuf_AddText("quit\n");
@@ -3196,14 +3195,14 @@ Com_Frame
 */
 void Com_Frame(void)
 {
-	int             msec, minMsec;
-	int		timeVal, timeValSV;
-	static int      lastTime = 0, bias = 0;
-	int             timeBeforeFirstEvents;
-	int             timeBeforeServer;
-	int             timeBeforeEvents;
-	int             timeBeforeClient;
-	int             timeAfter;
+	int        msec, minMsec;
+	int        timeVal, timeValSV;
+	static int lastTime = 0, bias = 0;
+	int        timeBeforeFirstEvents;
+	int        timeBeforeServer;
+	int        timeBeforeEvents;
+	int        timeBeforeClient;
+	int        timeAfter;
 
 	if (setjmp(abortframe))
 	{
@@ -3260,7 +3259,7 @@ void Com_Frame(void)
 			}
 
 			timeVal = com_frameTime - lastTime;
-			bias += timeVal - minMsec;
+			bias   += timeVal - minMsec;
 
 			if (bias > minMsec)
 			{
@@ -3282,7 +3281,7 @@ void Com_Frame(void)
 		if (com_sv_running->integer)
 		{
 			timeValSV = SV_SendQueuedPackets();
-			timeVal = Com_TimeVal(minMsec);
+			timeVal   = Com_TimeVal(minMsec);
 
 			if (timeValSV < timeVal)
 			{
@@ -3302,9 +3301,10 @@ void Com_Frame(void)
 		{
 			NET_Sleep(timeVal - 1);
 		}
-	} while (Com_TimeVal(minMsec));
+	}
+	while (Com_TimeVal(minMsec));
 
-	lastTime = com_frameTime;
+	lastTime      = com_frameTime;
 	com_frameTime = Com_EventLoop();
 
 	msec = com_frameTime - lastTime;
@@ -3320,7 +3320,7 @@ void Com_Frame(void)
 #endif
 
 	// mess with msec if needed
-	msec          = Com_ModifyMsec(msec);
+	msec = Com_ModifyMsec(msec);
 
 	// server side
 	if (com_speeds->integer)
@@ -3378,7 +3378,7 @@ void Com_Frame(void)
 #else
 	if (com_speeds->integer)
 	{
-		timeAfter = Sys_Milliseconds();
+		timeAfter        = Sys_Milliseconds();
 		timeBeforeEvents = timeAfter;
 		timeBeforeClient = timeAfter;
 	}
