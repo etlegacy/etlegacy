@@ -50,6 +50,7 @@
 // server attack protection
 #define SVP_IOQ3        0x0001  // 1  - ioQuake3 way
 #define SVP_OWOLF       0x0002  // 2  - OpenWolf way
+#define SVP_CONSOLE     0x0004  // 4  - console print
 
 #define MAX_ENT_CLUSTERS    16
 

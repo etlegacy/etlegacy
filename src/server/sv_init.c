@@ -936,7 +936,8 @@ void SV_WriteAttackLog(const char *log)
 		Com_sprintf(string, sizeof(string), "%i/%i/%i %i:%i:%i %s", 1900 + time.tm_year, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
 		FS_Write(string, strlen(string), attHandle);
 	}
-	else
+
+	if (sv_protect->integer & SVP_CONSOLE)
 	{
 		Com_Printf("%s", log);
 	}

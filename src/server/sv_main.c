@@ -99,7 +99,8 @@ cvar_t *sv_advert;      // 0 - no big brothers
 // server attack protection
 cvar_t *sv_protect;     // 0 - unprotected
                         // 1 - ioquake3 method (default)
-                        // 2 - OPenWolf method
+                        // 2 - OpenWolf method
+                        // 4 - prints attack info to console (when ioquake3 or OPenWolf method is set)
 cvar_t *sv_protectLog;  // name of log file
 
 #ifdef FEATURE_ANTICHEAT
@@ -872,21 +873,21 @@ qboolean SV_CheckDRDoS(netadr_t from)
 		return qfalse;
 	}
 
-	timeNow = svs.time;
+	timeNow   = svs.time;
 	exactFrom = from;
 
 	// Time has wrapped
 	if (lastGlobalLogTime > timeNow || lastSpecificLogTime > timeNow)
 	{
-		lastGlobalLogTime = 0;
+		lastGlobalLogTime   = 0;
 		lastSpecificLogTime = 0;
 
-		//just setting time to 1 (cannot be 0 as then globalCount would not be counted)
+		// just setting time to 1 (cannot be 0 as then globalCount would not be counted)
 		for (i = 0; i < MAX_INFO_RECEIPTS; i++)
 		{
 			if (svs.infoReceipts[i].time)
 			{
-				svs.infoReceipts[i].time = 1; //hack it so we count globalCount correctly
+				svs.infoReceipts[i].time = 1; // hack it so we count globalCount correctly
 			}
 		}
 	}
