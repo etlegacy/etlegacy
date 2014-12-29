@@ -218,6 +218,8 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 		}
 	}
 
+	NET_Shutdown();
+
 	exit(exitCode);
 }
 
@@ -228,8 +230,6 @@ Sys_Quit
 */
 void Sys_Quit(void)
 {
-	NET_Shutdown();
-
 	Sys_Exit(0);
 #ifdef USE_WINDOWS_CONSOLE
 	Sys_DestroyConsole();

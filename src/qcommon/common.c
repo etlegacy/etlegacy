@@ -47,19 +47,6 @@
 #   define Win_ShowConsole(x, y)
 #endif
 
-#ifndef DEDICATED
-	#include "../sdl/sdl_defs.h"
-	#define Com_Sleep(x) SDL_Delay(x)
-#else
-#if defined(WIN32)
-	#define Com_Sleep(x) Sleep(x)
-#elif defined(__linux__) || defined(__APPLE__)
-	#define Com_Sleep(x) usleep(1000 * x)
-#else
-	#define Com_Sleep(x)
-#endif
-#endif
-
 // NOTE: if protocol gets bumped please add 84 to the list before 0
 // 2.55 82, 2.56 83, 2.6 84
 int demo_protocols[] =
@@ -161,7 +148,6 @@ int time_frontend;          // renderer frontend time
 int time_backend;           // renderer backend time
 
 int com_frameTime;
-int com_frameMsec;
 int com_frameNumber;
 int com_expectedhunkusage;
 int com_hunkusedvalue;
@@ -2250,8 +2236,6 @@ sysEvent_t Com_GetSystemEvent(void)
 {
 	sysEvent_t ev;
 	char       *s;
-	msg_t      netmsg;
-	netadr_t   adr;
 
 	// return if we have data
 	if (eventHead > eventTail)
@@ -2276,21 +2260,6 @@ sysEvent_t Com_GetSystemEvent(void)
 		b   = Z_Malloc(len);
 		strcpy(b, s);
 		Com_QueueEvent(0, SE_CONSOLE, 0, 0, len, b);
-	}
-
-	// check for network packets
-	MSG_Init(&netmsg, sys_packetReceived, sizeof(sys_packetReceived));
-	if (NET_GetPacket(&adr, &netmsg))
-	{
-		netadr_t *buf;
-		int      len;
-
-		// copy out to a seperate buffer for qeueing
-		len  = sizeof(netadr_t) + netmsg.cursize;
-		buf  = Z_Malloc(len);
-		*buf = adr;
-		memcpy(buf + 1, netmsg.data, netmsg.cursize);
-		Com_QueueEvent(0, SE_PACKET, 0, 0, len, buf);
 	}
 
 	// return if we have data
@@ -2492,9 +2461,6 @@ int Com_EventLoop(void)
 
 		switch (ev.evType)
 		{
-		default:
-			Com_Error(ERR_FATAL, "Com_EventLoop: bad event type %i", ev.evType);
-			break;
 		case SE_NONE:
 			break;
 		case SE_KEY:
@@ -2524,41 +2490,8 @@ int Com_EventLoop(void)
 			Cbuf_AddText((char *)ev.evPtr);
 			Cbuf_AddText("\n");
 			break;
-		case SE_PACKET:
-			// this cvar allows simulation of connections that
-			// drop a lot of packets.  Note that loopback connections
-			// don't go through here at all.
-			if (com_dropsim->value > 0)
-			{
-				static int seed;
-
-				if (Q_random(&seed) < com_dropsim->value)
-				{
-					break;      // drop this packet
-				}
-			}
-
-			evFrom      = *(netadr_t *)ev.evPtr;
-			buf.cursize = ev.evPtrLength - sizeof(evFrom);
-
-			// we must copy the contents of the message out, because
-			// the event buffers are only large enough to hold the
-			// exact payload, but channel messages need to be large
-			// enough to hold fragment reassembly
-			if ((unsigned)buf.cursize > buf.maxsize)
-			{
-				Com_Printf("Com_EventLoop: oversize packet\n");
-				continue;
-			}
-			memcpy(buf.data, ( byte * )((netadr_t *)ev.evPtr + 1), buf.cursize);
-			if (com_sv_running->integer)
-			{
-				Com_RunAndTimeServerPacket(&evFrom, &buf);
-			}
-			else
-			{
-				CL_PacketEvent(evFrom, &buf);
-			}
+		default:
+			Com_Error(ERR_FATAL, "Com_EventLoop: bad event type %i", ev.evType);
 			break;
 		}
 
@@ -2789,6 +2722,7 @@ void Com_Init(char *commandLine)
 {
 	// gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
 	volatile qboolean safeMode = qtrue;
+	int	qport;
 
 	Com_Printf(ET_VERSION "\n");
 
@@ -3005,7 +2939,11 @@ void Com_Init(char *commandLine)
 	com_updatemessage = Cvar_Get("com_updatemessage", "New version available. Do you want to update now?", 0);
 
 	Sys_Init();
-	Netchan_Init(Com_Milliseconds() & 0xffff);      // pick a port value that should be nice and random
+
+	// Pick a random port value
+	Com_RandomBytes((byte*)&qport, sizeof(int));
+	Netchan_Init(qport & 0xffff);
+	
 	VM_Init();
 	SV_Init();
 
@@ -3192,6 +3130,65 @@ int Com_ModifyMsec(int msec)
 	return msec;
 }
 
+static void Com_WatchDog(void)
+{
+	static int      watchdogTime = 0;
+	static qboolean watchWarn = qfalse;
+
+	if (com_dedicated->integer && !com_sv_running->integer && com_watchdog->integer)
+	{
+		if (watchdogTime == 0)
+		{
+			watchdogTime = Sys_Milliseconds();
+		}
+		else
+		{
+			if (!watchWarn && Sys_Milliseconds() - watchdogTime > (com_watchdog->integer - 4) * 1000)
+			{
+				Com_Printf("WARNING: watchdog will trigger in 4 seconds\n");
+				watchWarn = qtrue;
+			}
+			else if (Sys_Milliseconds() - watchdogTime > com_watchdog->integer * 1000)
+			{
+				Com_Printf("Idle Server with no map - triggering watchdog\n");
+				watchdogTime = 0;
+				watchWarn = qfalse;
+				if (com_watchdog_cmd->string[0] == '\0')
+				{
+					Cbuf_AddText("quit\n");
+				}
+				else
+				{
+					Cbuf_AddText(va("%s\n", com_watchdog_cmd->string));
+				}
+			}
+		}
+	}
+}
+
+/*
+=================
+Com_TimeVal
+=================
+*/
+int Com_TimeVal(int minMsec)
+{
+	int timeVal;
+
+	timeVal = Sys_Milliseconds() - com_frameTime;
+
+	if (timeVal >= minMsec)
+	{
+		timeVal = 0;
+	}
+	else
+	{
+		timeVal = minMsec - timeVal;
+	}
+
+	return timeVal;
+}
+
 /*
 =================
 Com_Frame
@@ -3200,14 +3197,13 @@ Com_Frame
 void Com_Frame(void)
 {
 	int             msec, minMsec;
-	static int      lastTime;
+	int		timeVal, timeValSV;
+	static int      lastTime = 0, bias = 0;
 	int             timeBeforeFirstEvents;
 	int             timeBeforeServer;
 	int             timeBeforeEvents;
 	int             timeBeforeClient;
 	int             timeAfter;
-	static int      watchdogTime = 0;
-	static qboolean watchWarn    = qfalse;
 
 	if (setjmp(abortframe))
 	{
@@ -3237,41 +3233,82 @@ void Com_Frame(void)
 	}
 
 	// we may want to spin here if things are going too fast
-	if (!com_dedicated->integer && com_maxfps->integer > 0 && !com_timedemo->integer)
+	// Figure out how much time we have
+	if (!com_timedemo->integer)
 	{
-		minMsec = 1000 / com_maxfps->integer;
+		if (com_dedicated->integer)
+		{
+			minMsec = SV_FrameMsec();
+		}
+		else
+		{
+			if (com_minimized->integer)
+			{
+				minMsec = 1000 / 10;
+			}
+			else if (com_unfocused->integer && com_maxfps->integer > 1)
+			{
+				minMsec = 1000 / (com_maxfps->integer / 2);
+			}
+			else if (com_maxfps->integer > 0)
+			{
+				minMsec = 1000 / com_maxfps->integer;
+			}
+			else
+			{
+				minMsec = 1;
+			}
+
+			timeVal = com_frameTime - lastTime;
+			bias += timeVal - minMsec;
+
+			if (bias > minMsec)
+			{
+				bias = minMsec;
+			}
+
+			// Adjust minMsec if previous frame took too long to render so
+			// that framerate is stable at the requested value.
+			minMsec -= bias;
+		}
 	}
 	else
 	{
 		minMsec = 1;
 	}
 
-	// If we are running as dedicated or on minimized mode then sleep a bit
-	if (com_dedicated->integer || com_minimized->integer)
-	{
-		Com_Sleep(5);
-	}
-	else if (!com_timedemo->integer)
-	{
-		// Fixes 100% cpu usage on windows (should we set to 1 on other os's?)
-		// A delay of 0 or 1 should be safe
-#ifdef _WIN32
-		Com_Sleep(0);
-#else
-		Com_Sleep(1);
-#endif
-	}
-
 	do
 	{
-		com_frameTime = Com_EventLoop();
-		if (lastTime > com_frameTime)
+		if (com_sv_running->integer)
 		{
-			lastTime = com_frameTime;       // possible on first frame
+			timeValSV = SV_SendQueuedPackets();
+			timeVal = Com_TimeVal(minMsec);
+
+			if (timeValSV < timeVal)
+			{
+				timeVal = timeValSV;
+			}
 		}
-		msec = com_frameTime - lastTime;
-	}
-	while (msec < minMsec);
+		else
+		{
+			timeVal = Com_TimeVal(minMsec);
+		}
+
+		if (timeVal < 1)
+		{
+			NET_Sleep(0);
+		}
+		else
+		{
+			NET_Sleep(timeVal - 1);
+		}
+	} while (Com_TimeVal(minMsec));
+
+	lastTime = com_frameTime;
+	com_frameTime = Com_EventLoop();
+
+	msec = com_frameTime - lastTime;
+
 	Cbuf_Execute();
 
 #if idppc
@@ -3282,10 +3319,7 @@ void Com_Frame(void)
 	}
 #endif
 
-	lastTime = com_frameTime;
-
 	// mess with msec if needed
-	com_frameMsec = msec;
 	msec          = Com_ModifyMsec(msec);
 
 	// server side
@@ -3318,65 +3352,42 @@ void Com_Frame(void)
 	}
 
 	// client system
-	if (!com_dedicated->integer)
+#ifndef DEDICATED
+	// run event loop a second time to get server to client packets
+	// without a frame of latency
+	if (com_speeds->integer)
 	{
-		// run event loop a second time to get server to client packets
-		// without a frame of latency
-		if (com_speeds->integer)
-		{
-			timeBeforeEvents = Sys_Milliseconds();
-		}
-		Com_EventLoop();
-		Cbuf_Execute();
-
-		// client side
-		if (com_speeds->integer)
-		{
-			timeBeforeClient = Sys_Milliseconds();
-		}
-
-		CL_Frame(msec);
-
-		if (com_speeds->integer)
-		{
-			timeAfter = Sys_Milliseconds();
-		}
+		timeBeforeEvents = Sys_Milliseconds();
 	}
-	else
+
+	Com_EventLoop();
+	Cbuf_Execute();
+
+	// client side
+	if (com_speeds->integer)
+	{
+		timeBeforeClient = Sys_Milliseconds();
+	}
+
+	CL_Frame(msec);
+
+	if (com_speeds->integer)
 	{
 		timeAfter = Sys_Milliseconds();
 	}
+#else
+	if (com_speeds->integer)
+	{
+		timeAfter = Sys_Milliseconds();
+		timeBeforeEvents = timeAfter;
+		timeBeforeClient = timeAfter;
+	}
+#endif
+
+	NET_FlushPacketQueue();
 
 	// watchdog
-	if (com_dedicated->integer && !com_sv_running->integer && com_watchdog->integer)
-	{
-		if (watchdogTime == 0)
-		{
-			watchdogTime = Sys_Milliseconds();
-		}
-		else
-		{
-			if (!watchWarn && Sys_Milliseconds() - watchdogTime > (com_watchdog->integer - 4) * 1000)
-			{
-				Com_Printf("WARNING: watchdog will trigger in 4 seconds\n");
-				watchWarn = qtrue;
-			}
-			else if (Sys_Milliseconds() - watchdogTime > com_watchdog->integer * 1000)
-			{
-				Com_Printf("Idle Server with no map - triggering watchdog\n");
-				watchdogTime = 0;
-				watchWarn    = qfalse;
-				if (com_watchdog_cmd->string[0] == '\0')
-				{
-					Cbuf_AddText("quit\n");
-				}
-				else
-				{
-					Cbuf_AddText(va("%s\n", com_watchdog_cmd->string));
-				}
-			}
-		}
-	}
+	Com_WatchDog();
 
 	// report timing information
 	if (com_speeds->integer)

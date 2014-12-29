@@ -212,6 +212,8 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to);
 void QDECL NET_OutOfBandPrint(netsrc_t net_socket, netadr_t adr, const char *format, ...);
 void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len);
 
+void NET_FlushPacketQueue(void);
+
 qboolean NET_CompareAdr(netadr_t a, netadr_t b);
 qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b);
 qboolean NET_IsLocalAddress(netadr_t adr);
@@ -961,7 +963,6 @@ extern int time_frontend;
 extern int time_backend;            // renderer backend time
 
 extern int com_frameTime;
-extern int com_frameMsec;
 extern int com_expectedhunkusage;
 extern int com_hunkusedvalue;
 
@@ -1143,6 +1144,8 @@ void SV_Shutdown(char *finalmsg);
 void SV_Frame(int msec);
 void SV_PacketEvent(netadr_t from, msg_t *msg);
 qboolean SV_GameCommand(void);
+int SV_FrameMsec();
+int SV_SendQueuedPackets();
 
 // UI interface
 
@@ -1174,7 +1177,6 @@ typedef enum
 	SE_MOUSE,           // evValue and evValue2 are reletive signed x / y moves
 	SE_JOYSTICK_AXIS,   // evValue is an axis number and evValue2 is the current state (-127 to 127)
 	SE_CONSOLE,         // evPtr is a char*
-	SE_PACKET           // evPtr is a netadr_t followed by data bytes to evPtrLength
 } sysEventType_t;
 
 typedef struct
@@ -1189,6 +1191,7 @@ typedef struct
 void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr);
 int Com_EventLoop(void);
 sysEvent_t Com_GetSystemEvent(void);
+void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf);
 
 void Sys_Init(void);
 qboolean IN_IsNumLockDown(void);
@@ -1231,7 +1234,6 @@ void Sys_SnapVector(float *v);
 void Sys_DisplaySystemConsole(qboolean show);
 
 void Sys_SendPacket(int length, const void *data, netadr_t to);
-qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message);
 
 qboolean Sys_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 //Does NOT parse port numbers, only base addresses.

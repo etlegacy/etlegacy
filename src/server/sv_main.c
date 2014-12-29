@@ -1329,7 +1329,6 @@ static qboolean SV_CheckPaused(void)
 
 /**
  * @brief Return time in millseconds until processing of the next server frame.
- * @note Unused
  */
 int SV_FrameMsec()
 {
@@ -1421,14 +1420,6 @@ void SV_Frame(int msec)
 	frameMsec = 1000 / sv_fps->integer ;
 
 	sv.timeResidual += msec;
-
-	if (com_dedicated->integer && sv.timeResidual < frameMsec)
-	{
-		// NET_Sleep will give the OS time slices until either get a packet
-		// or time enough for a server frame has gone by
-		NET_Sleep(frameMsec - sv.timeResidual);
-		return;
-	}
 
 	// if time is about to hit the 32nd bit, kick all clients
 	// and clear sv.time, rather
@@ -1706,4 +1697,19 @@ int SV_LoadTag(const char *mod_name)
 
 	FS_FreeFile(buffer);
 	return ++sv.num_tagheaders;
+}
+
+/*
+====================
+SV_SendQueuedPackets
+
+Send download messages and queued packets in the time that we're idle, i.e.
+not computing a server frame or sending client snapshots.
+Return the time in msec until we expect to be called next
+====================
+*/
+int SV_SendQueuedPackets()
+{
+	//FIXME: add the updated DL code from IOQ3
+	return INT_MAX;
 }
