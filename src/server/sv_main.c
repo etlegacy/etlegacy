@@ -594,6 +594,9 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 	}
 
 	// Couldn't allocate a bucket for this address
+	// Write the info to the attack log since this is relevant information as the system is malfunctioning
+	SV_WriteAttackLogD(va("SVC_BucketForAddress: Could not allocate a bucket for client from %s\n", NET_AdrToString(address)));
+
 	return NULL;
 }
 
@@ -609,7 +612,7 @@ qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
 		int expired          = interval / period;
 		int expiredRemainder = interval % period;
 
-		if (expired > bucket->burst)
+		if (expired > bucket->burst || interval < 0)
 		{
 			bucket->burst    = 0;
 			bucket->lastTime = now;
@@ -623,8 +626,11 @@ qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
 		if (bucket->burst < burst)
 		{
 			bucket->burst++;
-
 			return qfalse;
+		}
+		else
+		{
+			SV_WriteAttackLogD(va("SVC_RateLimit: burst limit exceeded for bucket: %i limit: %i\n", bucket->burst, burst));
 		}
 	}
 
@@ -676,6 +682,12 @@ static void SVC_Status(netadr_t from, qboolean force)
 			SV_WriteAttackLog("SVC_Status: rate limit exceeded, dropping request\n");
 			return;
 		}
+	}
+
+	// A maximum challenge length of 128 should be more than plenty.
+	if (strlen(Cmd_Argv(1)) > 128)
+	{
+		return;
 	}
 
 	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
@@ -1043,7 +1055,7 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	Com_DPrintf("SV packet %s : %s\n", NET_AdrToString(from), c);
 
 	if (!Q_stricmp(c, "getstatus"))
-	{
+	{	
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
 			return;

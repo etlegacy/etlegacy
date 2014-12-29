@@ -507,6 +507,12 @@ void SV_ChangeMaxClients(void);
 void SV_SpawnServer(char *server);
 void SV_WriteAttackLog(const char *log);
 
+#ifdef LEGACY_DEBUG
+#define SV_WriteAttackLogD(x) SV_WriteAttackLog(x)
+#else
+#define SV_WriteAttackLogD(x)
+#endif
+
 // sv_client.c
 void SV_GetChallenge(netadr_t from);
 void SV_DirectConnect(netadr_t from);
