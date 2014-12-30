@@ -4196,7 +4196,7 @@ static qboolean ParseShader(char *_text)
 		// light <value> determines flaring in xmap, not needed here
 		else if (!Q_stricmp(token, "light"))
 		{
-			token = COM_ParseExt2(text, qfalse);
+			COM_ParseExt2(text, qfalse);
 			continue;
 		}
 		// cull <face>
@@ -5436,7 +5436,7 @@ static char *FindShaderInShaderText(const char *shaderName)
 		else if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
-			token = COM_ParseExt2(&p, qtrue);
+			COM_ParseExt2(&p, qtrue);
 
 			SkipBracedSection(&p);
 		}
