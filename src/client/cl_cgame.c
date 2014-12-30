@@ -542,7 +542,17 @@ CL_CGameBinaryMessageReceived
 */
 void CL_CGameBinaryMessageReceived(const byte *buf, int buflen, int serverTime)
 {
-	VM_Call(cgvm, CG_MESSAGERECEIVED, buf, buflen, serverTime);
+	// This should not happen, but someone may spice up the server to cause peoples clients to shutdown.
+	// It happens because binary messages are just a bolted in functionality which is read after the main msg data is parser
+	// aka packages longer than normal come here and if we don't have cgame loaded all hell brakes loose.
+	if (!cgvm)
+	{
+		Com_Error(ERR_DROP, "Invalid server message received. Server is possibly doing something malicious.");
+	}
+	else
+	{
+		VM_Call(cgvm, CG_MESSAGERECEIVED, buf, buflen, serverTime);
+	}
 }
 
 /*
