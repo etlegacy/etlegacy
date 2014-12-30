@@ -6052,12 +6052,12 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			// needed to do the CG_WaterRipple using a localent since I needed the timer reset on the shader for each shot
 			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, origin, tv(0, 0, 1), 32, 1000);
 			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5, 80, 16, 0.125, cgs.media.dirtParticle2Shader);
-			break;
 
 			// play a water splash
 			mod      = cgs.media.waterSplashModel;
 			shader   = cgs.media.waterSplashShader;
 			duration = 250;
+			break;
 		}
 
 		// optimization, only spawn the bullet hole if we are close
@@ -6888,8 +6888,11 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 	{
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 		{
-			int sourceContentType = CG_PointContents(start, 0);
-			int destContentType   = CG_PointContents(end, 0);
+			int sourceContentType;
+			int destContentType;
+
+			sourceContentType = CG_PointContents(start, 0);
+			destContentType   = CG_PointContents(end, 0);
 
 			// do a complete bubble trail if necessary
 			if ((sourceContentType == destContentType) && (sourceContentType & CONTENTS_WATER))
