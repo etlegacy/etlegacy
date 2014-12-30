@@ -999,7 +999,7 @@ void Sys_SetProcessProperties(void)
 WinMain
 ==================
 */
-WinVars_t   g_wv;
+WinVars_t g_wv;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {

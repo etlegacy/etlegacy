@@ -168,7 +168,7 @@ void SV_Netchan_FreeQueue(client_t *client)
 	}
 
 	client->netchan_start_queue = NULL;
-	client->netchan_end_queue = &client->netchan_start_queue;
+	client->netchan_end_queue   = &client->netchan_start_queue;
 }
 
 /*
@@ -234,7 +234,7 @@ static void SV_WriteBinaryMessage(msg_t *msg, client_t *cl)
 	{
 		return;
 	}
-	
+
 	MSG_Uncompressed(msg);
 
 	if ((msg->cursize + cl->binaryMessageLength) >= msg->maxsize)
@@ -274,7 +274,7 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)
 		netbuf->next = NULL;
 		// insert it in the queue, the message will be encoded and sent later
 		*client->netchan_end_queue = netbuf;
-		client->netchan_end_queue = &(*client->netchan_end_queue)->next;
+		client->netchan_end_queue  = &(*client->netchan_end_queue)->next;
 	}
 	else
 	{

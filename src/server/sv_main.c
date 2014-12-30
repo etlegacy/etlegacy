@@ -91,7 +91,7 @@ cvar_t *sv_packetdelay;
 
 cvar_t *sv_fullmsg;
 
-cvar_t	*sv_dlRate;
+cvar_t *sv_dlRate;
 
 // do we communicate with others ?
 cvar_t *sv_advert;      // 0 - no big brothers
@@ -1744,10 +1744,10 @@ Return the time in msec until we expect to be called next
 */
 int SV_SendQueuedPackets()
 {
-	int numBlocks;
-	int dlStart, deltaT, delayT;
+	int        numBlocks;
+	int        dlStart, deltaT, delayT;
 	static int dlNextRound = 0;
-	int timeVal = INT_MAX;
+	int        timeVal     = INT_MAX;
 
 	// Send out fragmented packets now that we're idle
 	delayT = SV_SendQueuedMessages();
@@ -1761,7 +1761,7 @@ int SV_SendQueuedPackets()
 		// Rate limiting. This is very imprecise for high
 		// download rates due to millisecond timedelta resolution
 		dlStart = Sys_Milliseconds();
-		deltaT = dlNextRound - dlStart;
+		deltaT  = dlNextRound - dlStart;
 
 		if (deltaT > 0)
 		{
@@ -1779,7 +1779,7 @@ int SV_SendQueuedPackets()
 				// There are active downloads
 				deltaT = Sys_Milliseconds() - dlStart;
 
-				delayT = 1000 * numBlocks * MAX_DOWNLOAD_BLKSIZE;
+				delayT  = 1000 * numBlocks * MAX_DOWNLOAD_BLKSIZE;
 				delayT /= sv_dlRate->integer * 1024;
 
 				if (delayT <= deltaT + 1)
@@ -1801,7 +1801,7 @@ int SV_SendQueuedPackets()
 				else
 				{
 					dlNextRound = dlStart + delayT;
-					delayT -= deltaT;
+					delayT     -= deltaT;
 
 					if (delayT < timeVal)
 					{

@@ -356,7 +356,7 @@ gotnewcl:
 
 	// save the address
 	Netchan_Setup(NS_SERVER, &newcl->netchan, from, qport);
-	
+
 	// init the netchan queue
 	newcl->netchan_end_queue = &newcl->netchan_start_queue;
 
@@ -1009,7 +1009,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 
 	// Perform any reads that we need to
 	while (cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW &&
-		cl->downloadSize != cl->downloadCount)
+	       cl->downloadSize != cl->downloadCount)
 	{
 
 		curindex = (cl->downloadCurrentBlock % MAX_DOWNLOAD_WINDOW);
@@ -1036,7 +1036,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 
 	// Check to see if we have eof condition and add the EOF block
 	if (cl->downloadCount == cl->downloadSize && !cl->downloadEOF &&
-		cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW)
+	    cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW)
 	{
 
 		cl->downloadBlockSize[cl->downloadCurrentBlock % MAX_DOWNLOAD_WINDOW] = 0;
@@ -1106,7 +1106,7 @@ Return the shortest time interval for sending next packet to client
 
 int SV_SendQueuedMessages(void)
 {
-	int i, retval = -1, nextFragT;
+	int      i, retval = -1, nextFragT;
 	client_t *cl;
 
 	for (i = 0; i < sv_maxclients->integer; i++)
@@ -1123,7 +1123,9 @@ int SV_SendQueuedMessages(void)
 			}
 
 			if (nextFragT >= 0 && (retval == -1 || retval > nextFragT))
+			{
 				retval = nextFragT;
+			}
 		}
 	}
 
@@ -1140,10 +1142,10 @@ Send one round of download messages to all clients
 
 int SV_SendDownloadMessages(void)
 {
-	int i, numDLs = 0, retval;
+	int      i, numDLs = 0, retval;
 	client_t *cl;
-	msg_t msg;
-	byte msgBuffer[MAX_MSGLEN];
+	msg_t    msg;
+	byte     msgBuffer[MAX_MSGLEN];
 
 	for (i = 0; i < sv_maxclients->integer; i++)
 	{

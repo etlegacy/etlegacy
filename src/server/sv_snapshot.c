@@ -773,7 +773,7 @@ int SV_RateMsec(client_t *client)
 	int messageSize;
 
 	messageSize = client->netchan.lastSentSize;
-	rate = client->rate;
+	rate        = client->rate;
 
 	if (sv_maxRate->integer)
 	{
@@ -809,7 +809,7 @@ int SV_RateMsec(client_t *client)
 	}
 
 	rateMsec = messageSize * 1000 / ((int)(rate * com_timescale->value));
-	rate = Sys_Milliseconds() - client->netchan.lastSentTime;
+	rate     = Sys_Milliseconds() - client->netchan.lastSentTime;
 
 	if (rate > rateMsec)
 	{
@@ -1035,9 +1035,9 @@ void SV_SendClientMessages(void)
 
 		if (*c->downloadName)
 		{
-			continue;		// Client is downloading, don't send snapshots
+			continue;       // Client is downloading, don't send snapshots
 		}
-		
+
 		numclients++;       // net debugging
 
 		// send additional message fragments if the last message

@@ -393,7 +393,7 @@ extern cvar_t *sv_wwwFallbackURL;
 extern cvar_t *sv_cheats;
 extern cvar_t *sv_packetdelay;
 
-extern	cvar_t	*sv_dlRate;
+extern cvar_t *sv_dlRate;
 
 extern cvar_t *sv_fullmsg;
 

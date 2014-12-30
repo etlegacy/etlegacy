@@ -230,9 +230,9 @@ void NET_Sleep(int msec);
  */
 #define MAX_MSGLEN                  32768
 // ACK window of 48 download chunks.Cannot set this higher, or clients will overflow the reliable commands buffer
-#define MAX_DOWNLOAD_WINDOW		48
+#define MAX_DOWNLOAD_WINDOW     48
 // 896 byte block chunks
-#define MAX_DOWNLOAD_BLKSIZE		1024
+#define MAX_DOWNLOAD_BLKSIZE        1024
 /*
 Netchan handles packet fragmentation and out of order / duplicate suppression
 */
@@ -262,8 +262,8 @@ typedef struct
 	int unsentLength;
 	byte unsentBuffer[MAX_MSGLEN];
 
-	int		lastSentTime;
-	int		lastSentSize;
+	int lastSentTime;
+	int lastSentSize;
 } netchan_t;
 
 void Netchan_Init(int qport);
