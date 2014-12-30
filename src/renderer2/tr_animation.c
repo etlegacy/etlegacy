@@ -96,7 +96,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 	skelAnim->md5  = anim = (md5Animation_t *)ri.Hunk_Alloc(sizeof(*anim), h_low);
 
 	// skip MD5Version indent string
-	COM_ParseExt2(&buf_p, qfalse);
+	(void) COM_ParseExt2(&buf_p, qfalse);
 
 	// check version
 	token   = COM_ParseExt2(&buf_p, qfalse);

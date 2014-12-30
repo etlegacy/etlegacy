@@ -61,7 +61,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	int           boneReferences[MAX_BONES];
 
 	// skip MD5Version indent string
-	COM_ParseExt2(&buf_p, qfalse);
+	(void) COM_ParseExt2(&buf_p, qfalse);
 
 	// check version
 	token   = COM_ParseExt2(&buf_p, qfalse);
@@ -324,7 +324,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				return qfalse;
 			}
 
-			COM_ParseExt2(&buf_p, qfalse);
+			(void) COM_ParseExt2(&buf_p, qfalse);
 
 			// skip (
 			token = COM_ParseExt2(&buf_p, qfalse);
@@ -394,7 +394,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				return qfalse;
 			}
 
-			COM_ParseExt2(&buf_p, qfalse);
+			(void) COM_ParseExt2(&buf_p, qfalse);
 
 			for (k = 0; k < 3; k++)
 			{
@@ -428,7 +428,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				return qfalse;
 			}
 
-			COM_ParseExt2(&buf_p, qfalse);
+			(void) COM_ParseExt2(&buf_p, qfalse);
 
 			token             = COM_ParseExt2(&buf_p, qfalse);
 			weight->boneIndex = atoi(token);

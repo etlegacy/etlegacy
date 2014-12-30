@@ -617,7 +617,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else
 			{
-				COM_ParseExt(text, qfalse);     // ignore the map
+				(void) COM_ParseExt(text, qfalse);     // ignore the map
 				continue;
 			}
 		}
@@ -629,7 +629,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else
 			{
-				COM_ParseExt(text, qfalse);     // ignore the map
+				(void) COM_ParseExt(text, qfalse);     // ignore the map
 				continue;
 			}
 		}
@@ -641,7 +641,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else
 			{
-				COM_ParseExt(text, qfalse);     // ignore the map
+				(void) COM_ParseExt(text, qfalse);     // ignore the map
 				continue;
 			}
 		}
@@ -653,7 +653,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else
 			{
-				COM_ParseExt(text, qfalse);     // ignore the map
+				(void) COM_ParseExt(text, qfalse);     // ignore the map
 				continue;
 			}
 		}
@@ -666,7 +666,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			else
 			{
 				while (token[0])
-					COM_ParseExt(text, qfalse);     // ignore the map
+					(void) COM_ParseExt(text, qfalse);     // ignore the map
 				continue;
 			}
 		}
@@ -680,7 +680,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				while (token[0])
 				{
-					COM_ParseExt(text, qfalse);     // ignore the map
+					(void) COM_ParseExt(text, qfalse);     // ignore the map
 				}
 				continue;
 			}
@@ -1981,7 +1981,7 @@ static qboolean ParseShader(char **text)
 		// light <value> determines flaring in q3map, not needed here
 		else if (!Q_stricmp(token, "light"))
 		{
-			COM_ParseExt(text, qfalse);
+			(void) COM_ParseExt(text, qfalse);
 			continue;
 		}
 		// cull <face>
