@@ -1004,8 +1004,10 @@ void SV_Init(void)
 	sv_mapname        = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO | CVAR_ROM);
 	sv_privateClients = Cvar_Get("sv_privateClients", "0", CVAR_SERVERINFO);
 	sv_hostname       = Cvar_Get("sv_hostname", "ETLHost", CVAR_SERVERINFO | CVAR_ARCHIVE);
+	sv_minRate = Cvar_Get("sv_minRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_maxclients     = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH);
 	sv_maxRate        = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
+	sv_dlRate = Cvar_Get("sv_dlRate", "100", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_minPing        = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_maxPing        = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_floodProtect   = Cvar_Get("sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
@@ -1117,9 +1119,6 @@ void SV_Init(void)
 	Cvar_Get("g_antilag", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
 
 	Cvar_Get("g_needpass", "0", CVAR_SERVERINFO);
-
-	// the download netcode tops at 18/20 kb/s, no need to make you think you can go above
-	sv_dl_maxRate = Cvar_Get("sv_dl_maxRate", "42000", CVAR_ARCHIVE);
 
 	sv_wwwDownload       = Cvar_Get("sv_wwwDownload", "0", CVAR_ARCHIVE);
 	sv_wwwBaseURL        = Cvar_Get("sv_wwwBaseURL", "", CVAR_ARCHIVE);

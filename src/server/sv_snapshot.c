@@ -759,49 +759,66 @@ static void SV_BuildClientSnapshot(client_t *client)
 ====================
 SV_RateMsec
 
-Return the number of msec a given size message is supposed
-to take to clear, based on the current rate
-- use sv_maxRate or sv_dl_maxRate depending on regular or downloading client
+Return the number of msec until another message can be sent to
+a client based on its rate settings
 ====================
 */
-#define HEADER_RATE_BYTES   48      // include our header, IP header, and some overhead
-static int SV_RateMsec(client_t *client, int messageSize)
-{
-	int rate;
-	int rateMsec;
-	int maxRate;
 
-	// individual messages will never be larger than fragment size
-	if (messageSize > 1500)
-	{
-		messageSize = 1500;
-	}
-	// low watermark for sv_maxRate, never 0 < sv_maxRate < 1000 (0 is no limitation)
-	if (sv_maxRate->integer && sv_maxRate->integer < 1000)
-	{
-		Cvar_Set("sv_MaxRate", "1000");
-	}
+#define UDPIP_HEADER_SIZE 28
+#define UDPIP6_HEADER_SIZE 48
+
+int SV_RateMsec(client_t *client)
+{
+	int rate, rateMsec;
+	int messageSize;
+
+	messageSize = client->netchan.lastSentSize;
 	rate = client->rate;
-	// work on the appropriate max rate (client or download)
-	if (!*client->downloadName)
+
+	if (sv_maxRate->integer)
 	{
-		maxRate = sv_maxRate->integer;
-	}
-	else
-	{
-		maxRate = sv_dl_maxRate->integer;
-	}
-	if (maxRate)
-	{
-		if (maxRate < rate)
+		if (sv_maxRate->integer < 1000)
 		{
-			rate = maxRate;
+			Cvar_Set("sv_MaxRate", "1000");
+		}
+		if (sv_maxRate->integer < rate)
+		{
+			rate = sv_maxRate->integer;
 		}
 	}
 
-	rateMsec = (messageSize + HEADER_RATE_BYTES) * 1000 / rate;
+	if (sv_minRate->integer)
+	{
+		if (sv_minRate->integer < 1000)
+		{
+			Cvar_Set("sv_minRate", "1000");
+		}
+		if (sv_minRate->integer > rate)
+		{
+			rate = sv_minRate->integer;
+		}
+	}
 
-	return rateMsec;
+	if (client->netchan.remoteAddress.type == NA_IP6)
+	{
+		messageSize += UDPIP6_HEADER_SIZE;
+	}
+	else
+	{
+		messageSize += UDPIP_HEADER_SIZE;
+	}
+
+	rateMsec = messageSize * 1000 / ((int)(rate * com_timescale->value));
+	rate = Sys_Milliseconds() - client->netchan.lastSentTime;
+
+	if (rate > rateMsec)
+	{
+		return 0;
+	}
+	else
+	{
+		return rateMsec - rate;
+	}
 }
 
 /*
@@ -834,7 +851,7 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client)
 	}
 
 	// normal rate / snapshotMsec calculation
-	rateMsec = SV_RateMsec(client, msg->cursize);
+	rateMsec = SV_RateMsec(client);
 
 	// during a download, ignore the snapshotMsec
 	// the update server on steroids, with this disabled and sv_fps 60, the download can reach 30 kb/s
@@ -958,9 +975,6 @@ void SV_SendClientSnapshot(client_t *client)
 	// and the playerState_t
 	SV_WriteSnapshotToClient(client, &msg);
 
-	// Add any download data if the client is downloading
-	SV_WriteDownloadToClient(client, &msg);
-
 	// check for overflow
 	if (msg.overflowed)
 	{
@@ -1019,14 +1033,18 @@ void SV_SendClientMessages(void)
 			continue;       // not time yet
 		}
 
+		if (*c->downloadName)
+		{
+			continue;		// Client is downloading, don't send snapshots
+		}
+		
 		numclients++;       // net debugging
 
 		// send additional message fragments if the last message
 		// was too large to send at once
 		if (c->netchan.unsentFragments)
 		{
-			c->nextSnapshotTime = svs.time +
-			                      SV_RateMsec(c, c->netchan.unsentLength - c->netchan.unsentFragmentStart);
+			c->nextSnapshotTime = svs.time + SV_RateMsec(c);
 			SV_Netchan_TransmitNextFragment(c);
 			continue;
 		}

@@ -644,7 +644,7 @@ void CL_SystemInfoChanged(void)
 				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") &&
 				    Q_stricmp(key, "pmove_msec"))
 				{
-					Com_Printf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
+					Com_DPrintf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
 					continue;
 				}
 			}
@@ -799,8 +799,7 @@ void CL_ParseDownload(msg_t *msg)
 	// read the data
 	block = MSG_ReadShort(msg);
 
-	// www dl
-	// if we haven't acked the download redirect yet
+	// www dl, if we haven't acknowledged the download redirect yet
 	if (block == -1)
 	{
 		if (!cls.download.bWWWDl)
@@ -854,7 +853,7 @@ void CL_ParseDownload(msg_t *msg)
 		}
 		else
 		{
-			// server keeps sending that message till we ack it, eat and ignore
+			// server keeps sending that message till we acknowledge it, eat and ignore
 			//MSG_ReadLong( msg );
 			MSG_ReadString(msg);
 			MSG_ReadLong(msg);

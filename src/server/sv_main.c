@@ -62,6 +62,7 @@ cvar_t *sv_killserver;          // menu system can set to 1 to shut server down
 cvar_t *sv_mapname;
 cvar_t *sv_mapChecksum;
 cvar_t *sv_serverid;
+cvar_t *sv_minRate;
 cvar_t *sv_maxRate;
 cvar_t *sv_minPing;
 cvar_t *sv_maxPing;
@@ -74,7 +75,6 @@ cvar_t *sv_friendlyFire;
 cvar_t *sv_maxlives;
 cvar_t *sv_needpass;
 
-cvar_t *sv_dl_maxRate;
 cvar_t *sv_dl_timeout;          // seconds without any message when cl->state != CS_ACTIVE
 
 cvar_t *sv_showAverageBPS;      // net debugging
@@ -90,6 +90,8 @@ cvar_t *sv_cheats;
 cvar_t *sv_packetdelay;
 
 cvar_t *sv_fullmsg;
+
+cvar_t	*sv_dlRate;
 
 // do we communicate with others ?
 cvar_t *sv_advert;      // 0 - no big brothers
@@ -1742,6 +1744,80 @@ Return the time in msec until we expect to be called next
 */
 int SV_SendQueuedPackets()
 {
-	//FIXME: add the updated DL code from IOQ3
-	return INT_MAX;
+	int numBlocks;
+	int dlStart, deltaT, delayT;
+	static int dlNextRound = 0;
+	int timeVal = INT_MAX;
+
+	// Send out fragmented packets now that we're idle
+	delayT = SV_SendQueuedMessages();
+	if (delayT >= 0)
+	{
+		timeVal = delayT;
+	}
+
+	if (sv_dlRate->integer)
+	{
+		// Rate limiting. This is very imprecise for high
+		// download rates due to millisecond timedelta resolution
+		dlStart = Sys_Milliseconds();
+		deltaT = dlNextRound - dlStart;
+
+		if (deltaT > 0)
+		{
+			if (deltaT < timeVal)
+			{
+				timeVal = deltaT + 1;
+			}
+		}
+		else
+		{
+			numBlocks = SV_SendDownloadMessages();
+
+			if (numBlocks)
+			{
+				// There are active downloads
+				deltaT = Sys_Milliseconds() - dlStart;
+
+				delayT = 1000 * numBlocks * MAX_DOWNLOAD_BLKSIZE;
+				delayT /= sv_dlRate->integer * 1024;
+
+				if (delayT <= deltaT + 1)
+				{
+					// Sending the last round of download messages
+					// took too long for given rate, don't wait for
+					// next round, but always enforce a 1ms delay
+					// between DL message rounds so we don't hog
+					// all of the bandwidth. This will result in an
+					// effective maximum rate of 1MB/s per user, but the
+					// low download window size limits this anyways.
+					if (timeVal > 2)
+					{
+						timeVal = 2;
+					}
+
+					dlNextRound = dlStart + deltaT + 1;
+				}
+				else
+				{
+					dlNextRound = dlStart + delayT;
+					delayT -= deltaT;
+
+					if (delayT < timeVal)
+					{
+						timeVal = delayT;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		if (SV_SendDownloadMessages())
+		{
+			timeVal = 0;
+		}
+	}
+
+	return timeVal;
 }

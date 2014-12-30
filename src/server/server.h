@@ -151,7 +151,7 @@ typedef struct
 
 typedef enum
 {
-	CS_FREE,        // can be reused for a new connection
+	CS_FREE = 0,        // can be reused for a new connection
 	CS_ZOMBIE,      // client has been disconnected, but don't reuse connection for a couple seconds
 	CS_CONNECTED,   // has been assigned to a client_t, but no gamestate yet
 	CS_PRIMED,      // gamestate has been sent, but client hasn't sent a usercmd
@@ -232,7 +232,7 @@ typedef struct client_s
 	// in case large fragmented messages are stacking up
 	// buffer them into this queue, and hand them out to netchan as needed
 	netchan_buffer_t *netchan_start_queue;
-	netchan_buffer_t *netchan_end_queue;
+	netchan_buffer_t **netchan_end_queue;
 
 	int downloadnotify;
 
@@ -368,6 +368,7 @@ extern cvar_t *sv_killserver;
 extern cvar_t *sv_mapname;
 extern cvar_t *sv_mapChecksum;
 extern cvar_t *sv_serverid;
+extern cvar_t *sv_minRate;
 extern cvar_t *sv_maxRate;
 extern cvar_t *sv_minPing;
 extern cvar_t *sv_maxPing;
@@ -380,7 +381,6 @@ extern cvar_t *sv_onlyVisibleClients;
 extern cvar_t *sv_showAverageBPS;           // net debugging
 
 // autodl
-extern cvar_t *sv_dl_maxRate;
 extern cvar_t *sv_dl_timeout;
 
 extern cvar_t *sv_wwwDownload; // general flag to enable/disable www download redirects
@@ -392,6 +392,8 @@ extern cvar_t *sv_wwwFallbackURL;
 
 extern cvar_t *sv_cheats;
 extern cvar_t *sv_packetdelay;
+
+extern	cvar_t	*sv_dlRate;
 
 extern cvar_t *sv_fullmsg;
 
@@ -469,6 +471,7 @@ void SV_RemoveOperatorCommands(void);
 void SV_MasterHeartbeat(const char *hbname);
 void SV_MasterShutdown(void);
 void SV_MasterGameCompleteStatus(void);
+int SV_RateMsec(client_t *client);
 
 typedef struct leakyBucket_s leakyBucket_t;
 struct leakyBucket_s
@@ -525,7 +528,9 @@ void SV_FreeClientNetChan(client_t *client);
 void SV_DropClient(client_t *drop, const char *reason);
 void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart);
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
-void SV_WriteDownloadToClient(client_t *cl, msg_t *msg);
+int SV_WriteDownloadToClient(client_t *cl, msg_t *msg);
+int SV_SendDownloadMessages(void);
+int SV_SendQueuedMessages(void);
 void SV_UpdateUserinfo_f(client_t *cl);
 
 // sv_ccmds.c
@@ -624,7 +629,7 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 
 // sv_net_chan.c
 void SV_Netchan_Transmit(client_t *client, msg_t *msg);
-void SV_Netchan_TransmitNextFragment(client_t *client);
+int SV_Netchan_TransmitNextFragment(client_t *client);
 qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 
 // cl->downloadnotify
