@@ -403,7 +403,7 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 
 		Com_Memcpy(font->datName, datName, sizeof(font->datName));
 
-		for (i = GLYPH_START; i < GLYPH_END; i++)
+		for (i = GLYPH_START; i <= GLYPH_END; i++)
 		{
 			font->glyphs[i].glyph = RE_RegisterShaderNoMip(font->glyphs[i].shaderName);
 		}
@@ -510,7 +510,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	maxHeight = 0;
 
-	for (i = GLYPH_START; i < GLYPH_END; i++)
+	for (i = GLYPH_START; i <= GLYPH_END; i++)
 	{
 		// FIXME: RE_ConstructGlyphInfo might return NULL and we won't notice that
 		RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
@@ -522,9 +522,17 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	lastStart   = i;
 	imageNumber = 0;
 
-	while (i <= GLYPH_END)
+	while (i <= GLYPH_END + 1)
 	{
-		glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qfalse);
+		if (i == GLYPH_END + 1)
+		{
+			// upload/save current image buffer
+			xOut = yOut = -1;
+		}
+		else
+		{
+			glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qfalse);
+		}
 
 		// FIXME: glyph might be NULL for various reasons
 		if (!glyph)
@@ -533,7 +541,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 			Ren_Warning("R_LoadScalableFont: glyph is NULL!\n");
 		}
 
-		if (xOut == -1 || yOut == -1 || i == GLYPH_END)
+		if (xOut == -1 || yOut == -1)
 		{
 			// ran out of room
 			// we need to create an image from the bitmap, set all the handles in the glyphs to this point
@@ -589,7 +597,10 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 			xOut = 0;
 			yOut = 0;
 			ri.Free(imageBuff);
-			i++;
+			if (i == GLYPH_END + 1)
+			{
+				i++;
+			}
 		}
 		else
 		{
