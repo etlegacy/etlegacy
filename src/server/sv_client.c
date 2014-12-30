@@ -1416,9 +1416,9 @@ void SV_UserinfoChanged(client_t *cl)
 		{
 			i = 1;
 		}
-		else if (i > 30)
+		else if (i > sv_fps->integer)
 		{
-			i = 30;
+			i = sv_fps->integer;
 		}
 
 		cl->snapshotMsec = 1000 / i;
