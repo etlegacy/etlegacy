@@ -257,7 +257,7 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+264, .5*(WINDOW_WIDTH-12), 10, "www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Copyright Notices //
-	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, "© 2012-2014 ET Legacy Team - under the terms of GPL version 3.", .15, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, "© 2012-2015 ET Legacy Team - under the terms of GPL version 3.", .15, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( 6, CREDITS_Y+300, WINDOW_WIDTH-12, 10, "© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners.", .15, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Buttons //
