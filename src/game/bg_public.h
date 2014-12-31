@@ -543,9 +543,6 @@ void PmovePredict(pmove_t *pmove, float frametime);
 
 #define NUM_PLAYER_CLASSES      5
 
-#define MAX_WEAPS_IN_BANK_MP    17
-#define MAX_WEAP_BANKS_MP       10
-
 // leaning flags..
 #define STAT_LEAN_LEFT          0x00000001
 #define STAT_LEAN_RIGHT         0x00000002
