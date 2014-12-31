@@ -446,7 +446,7 @@ float FloatSwap(const float *f);
 
 
 //platform string
-#ifdef NDEBUG
+#ifndef LEGACY_DEBUG
 #define PLATFORM_STRING OS_STRING "-" ARCH_STRING
 #else
 #define PLATFORM_STRING OS_STRING "-" ARCH_STRING "-debug"

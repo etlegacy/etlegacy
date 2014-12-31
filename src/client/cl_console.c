@@ -436,7 +436,7 @@ All console printing must go through this in order to be logged to disk
 If no console is visible, the text will appear at the top of the game window
 ================
 */
-#if defined(_WIN32) && defined(NDEBUG)
+#if defined(_WIN32) && !defined(LEGACY_DEBUG)
 #pragma optimize( "g", off ) // SMF - msvc totally screws this function up with optimize on
 #endif
 
@@ -549,7 +549,7 @@ void CL_ConsolePrint(char *txt)
 	}
 }
 
-#if defined(_WIN32) && defined(NDEBUG)
+#if defined(_WIN32) && !defined(LEGACY_DEBUG)
 #pragma optimize( "g", on ) // SMF - re-enabled optimization
 #endif
 

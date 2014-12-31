@@ -2412,9 +2412,9 @@ void CG_SetHud(void)
 			return;
 		}
 
-#if !defined(NDEBUG)
+#ifdef LEGACY_DEBUG
 		CG_PrintHud(activehud);
-#endif // DEBUG
+#endif
 
 		Com_Printf("Setting hud to: %i\n", cg_altHud.integer);
 	}
