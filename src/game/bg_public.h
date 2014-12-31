@@ -766,9 +766,6 @@ typedef enum
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
-// moved from cg_weapons (now used in g_active) for drop command, actual array in bg_misc.c
-extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP];
-
 typedef struct
 {
 	int kills, teamkills, killedby;
