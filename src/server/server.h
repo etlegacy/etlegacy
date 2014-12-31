@@ -529,7 +529,6 @@ void SV_FreeClientNetChan(client_t *client);
 void SV_DropClient(client_t *drop, const char *reason);
 void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart);
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
-int SV_WriteDownloadToClient(client_t *cl, msg_t *msg);
 int SV_SendDownloadMessages(void);
 int SV_SendQueuedMessages(void);
 void SV_UpdateUserinfo_f(client_t *cl);

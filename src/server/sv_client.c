@@ -847,7 +847,7 @@ static qboolean SV_CheckFallbackURL(client_t *cl, msg_t *msg)
 /**
  * @brief Check to see if the client wants a file, open it if needed and start pumping the client
  */
-int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
+static qboolean SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 {
 	int      curindex;
 	int      idPack;
@@ -857,11 +857,11 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 
 	if (!*cl->downloadName)
 	{
-		return 0; // Nothing being downloaded
+		return qfalse; // Nothing being downloaded
 	}
 	if (cl->bWWWing)
 	{
-		return 0; // The client acked and is downloading with ftp/http
+		return qfalse; // The client acked and is downloading with ftp/http
 	}
 	// CVE-2006-2082
 	// validate the download against the list of pak files
@@ -869,7 +869,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	{
 		// will drop the client and leave it hanging on the other side. good for him
 		SV_DropClient(cl, "illegal download request");
-		return 0;
+		return qfalse;
 	}
 
 	if (!cl->download)
@@ -914,7 +914,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 			SV_BadDownload(cl, msg);
 			MSG_WriteString(msg, errorMessage);   // (could SV_DropClient isntead?)
 
-			return 0;
+			return qtrue;
 		}
 
 		// www download redirect protocol
@@ -957,7 +957,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 						}
 
 						MSG_WriteLong(msg, download_flag);   // flags
-						return 1;
+						return qtrue;
 					}
 					else
 					{
@@ -970,7 +970,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 					cl->bFallback = qfalse;
 					if (SV_CheckFallbackURL(cl, msg))
 					{
-						return 0;
+						return qfalse;
 					}
 
 					Com_Printf("Client '%s': falling back to regular downloading for failed file %s\n", rc(cl->name), cl->downloadName);
@@ -980,7 +980,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 			{
 				if (SV_CheckFallbackURL(cl, msg))
 				{
-					return 0;
+					return qfalse;
 				}
 
 				Com_Printf("Client '%s' is not configured for www download\n", rc(cl->name));
@@ -996,7 +996,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 			Com_sprintf(errorMessage, sizeof(errorMessage), "File \"%s\" not found on server for autodownloading.\n", cl->downloadName);
 			SV_BadDownload(cl, msg);
 			MSG_WriteString(msg, errorMessage);   // (could SV_DropClient isntead?)
-			return 0;
+			return qtrue;
 		}
 
 		// is valid source, init
@@ -1050,7 +1050,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 
 	if (cl->downloadClientBlock == cl->downloadCurrentBlock)
 	{
-		return 0; // Nothing to transmit
+		return qfalse; // Nothing to transmit
 	}
 
 	// Write out the next section of the file, if we have already reached our window,
@@ -1064,7 +1064,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 		}
 		else
 		{
-			return 0;
+			return qfalse;
 		}
 	}
 
@@ -1095,7 +1095,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	cl->downloadXmitBlock++;
 	cl->downloadSendTime = svs.time;
 
-	return 1;
+	return qtrue;
 }
 
 /*
@@ -1145,7 +1145,7 @@ Send one round of download messages to all clients
 
 int SV_SendDownloadMessages(void)
 {
-	int      i, numDLs = 0, retval;
+	int      i, numDLs = 0;
 	client_t *cl;
 	msg_t    msg;
 	byte     msgBuffer[MAX_MSGLEN];
@@ -1161,12 +1161,10 @@ int SV_SendDownloadMessages(void)
 			MSG_Init(&msg, msgBuffer, sizeof(msgBuffer));
 			MSG_WriteLong(&msg, cl->lastClientCommand);
 
-			retval = SV_WriteDownloadToClient(cl, &msg);
-
-			if (retval)
+			if (SV_WriteDownloadToClient(cl, &msg))
 			{
 				SV_Netchan_Transmit(cl, &msg);
-				numDLs += retval;
+				numDLs++;
 			}
 		}
 	}
