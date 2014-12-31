@@ -2685,7 +2685,15 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 	}
 
 	x = button->rect.x;
-	w = button->rect.w / (float)num;
+
+	if (num > 1)
+	{
+		w = button->rect.w / (float)num;
+	}
+	else
+	{
+		w = button->rect.w;
+	}
 
 	if (CG_LimboPanel_RenderCounter_IsReversed(button))
 	{

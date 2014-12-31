@@ -4688,6 +4688,15 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 
 	err = unzGoToFirstFile(zipFile);
 
+	if (err != UNZ_OK)
+	{
+		if (!quiet || fs_debug->integer)
+		{
+			Com_Printf(S_COLOR_RED "FS_Unzip: unable to read first element of file (%s).\n", zipPath);
+		}
+		return qfalse;
+	}
+
 	for (i = 0; i < zipInfo.number_entry; i++)
 	{
 		unz_file_info file_info;
