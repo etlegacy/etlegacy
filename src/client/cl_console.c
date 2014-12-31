@@ -994,6 +994,10 @@ void Con_Close(void)
 	{
 		return;
 	}
+	if (com_developer->integer > 1)
+	{
+		return;
+	}
 	Field_Clear(&g_consoleField);
 	Con_ClearNotify();
 	cls.keyCatchers &= ~KEYCATCH_CONSOLE;
