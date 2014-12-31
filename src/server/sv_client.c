@@ -714,7 +714,7 @@ void SV_NextDownload_f(client_t *cl)
 			return;
 		}
 
-		cl->downloadSendTime = svs.time;
+		cl->downloadAckTime = svs.time;
 		cl->downloadClientBlock++;
 		return;
 	}
@@ -1003,6 +1003,9 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 		cl->downloadCurrentBlock = cl->downloadClientBlock = cl->downloadXmitBlock = 0;
 		cl->downloadCount        = 0;
 		cl->downloadEOF          = qfalse;
+
+		// We reset the ack time to current when we start
+		cl->downloadAckTime = svs.time;
 
 		bTellRate = qtrue;
 	}
