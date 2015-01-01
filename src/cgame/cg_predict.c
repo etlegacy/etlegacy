@@ -243,88 +243,90 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 	}
 }
 
+/* unused
 static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask, int capsule, trace_t *tr)
 {
-	int           i, x, zd, zu;
-	trace_t       trace;
-	entityState_t *ent;
-	clipHandle_t  cmodel;
-	vec3_t        bmins, bmaxs;
-	vec3_t        origin, angles;
-	centity_t     *cent;
+    int           i, x, zd, zu;
+    trace_t       trace;
+    entityState_t *ent;
+    clipHandle_t  cmodel;
+    vec3_t        bmins, bmaxs;
+    vec3_t        origin, angles;
+    centity_t     *cent;
 
-	for (i = 0 ; i < cg_numSolidFTEntities ; i++)
-	{
-		cent = cg_solidFTEntities[i];
-		ent  = &cent->currentState;
+    for (i = 0 ; i < cg_numSolidFTEntities ; i++)
+    {
+        cent = cg_solidFTEntities[i];
+        ent  = &cent->currentState;
 
-		if (ent->number == skipNumber)
-		{
-			continue;
-		}
+        if (ent->number == skipNumber)
+        {
+            continue;
+        }
 
-		if (ent->solid == SOLID_BMODEL)
-		{
-			// special value for bmodel
-			cmodel = trap_CM_InlineModel(ent->modelindex);
-			//VectorCopy( cent->lerpAngles, angles );
-			//VectorCopy( cent->lerpOrigin, origin );
-			BG_EvaluateTrajectory(&cent->currentState.apos, cg.physicsTime, angles, qtrue, cent->currentState.effect2Time);
-			BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin, qfalse, cent->currentState.effect2Time);
-		}
-		else
-		{
-			// encoded bbox
-			x  = (ent->solid & 255);
-			zd = ((ent->solid >> 8) & 255);
-			zu = ((ent->solid >> 16) & 255) - 32;
+        if (ent->solid == SOLID_BMODEL)
+        {
+            // special value for bmodel
+            cmodel = trap_CM_InlineModel(ent->modelindex);
+            //VectorCopy( cent->lerpAngles, angles );
+            //VectorCopy( cent->lerpOrigin, origin );
+            BG_EvaluateTrajectory(&cent->currentState.apos, cg.physicsTime, angles, qtrue, cent->currentState.effect2Time);
+            BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin, qfalse, cent->currentState.effect2Time);
+        }
+        else
+        {
+            // encoded bbox
+            x  = (ent->solid & 255);
+            zd = ((ent->solid >> 8) & 255);
+            zu = ((ent->solid >> 16) & 255) - 32;
 
-			bmins[0] = bmins[1] = -x;
-			bmaxs[0] = bmaxs[1] = x;
-			bmins[2] = -zd;
+            bmins[0] = bmins[1] = -x;
+            bmaxs[0] = bmaxs[1] = x;
+            bmins[2] = -zd;
 
-			// client-side hitbox prediction code
-			if (ent->eType == ET_PLAYER && cg.bulletTrace)
-			{
-				bmaxs[2] = CG_ClientHitboxMaxZ(ent, zu);
-			}
-			else
-			{
-				bmaxs[2] = zu;
-			}
+            // client-side hitbox prediction code
+            if (ent->eType == ET_PLAYER && cg.bulletTrace)
+            {
+                bmaxs[2] = CG_ClientHitboxMaxZ(ent, zu);
+            }
+            else
+            {
+                bmaxs[2] = zu;
+            }
 
-			cmodel = trap_CM_TempCapsuleModel(bmins, bmaxs);
+            cmodel = trap_CM_TempCapsuleModel(bmins, bmaxs);
 
-			VectorCopy(vec3_origin, angles);
-			VectorCopy(cent->lerpOrigin, origin);
-		}
-		// use bbox of capsule
-		if (capsule)
-		{
-			trap_CM_TransformedCapsuleTrace(&trace, start, end,
-			                                mins, maxs, cmodel, mask, origin, angles);
-		}
-		else
-		{
-			trap_CM_TransformedBoxTrace(&trace, start, end,
-			                            mins, maxs, cmodel, mask, origin, angles);
-		}
+            VectorCopy(vec3_origin, angles);
+            VectorCopy(cent->lerpOrigin, origin);
+        }
+        // use bbox of capsule
+        if (capsule)
+        {
+            trap_CM_TransformedCapsuleTrace(&trace, start, end,
+                                            mins, maxs, cmodel, mask, origin, angles);
+        }
+        else
+        {
+            trap_CM_TransformedBoxTrace(&trace, start, end,
+                                        mins, maxs, cmodel, mask, origin, angles);
+        }
 
-		if (trace.allsolid || trace.fraction < tr->fraction)
-		{
-			trace.entityNum = ent->number;
-			*tr             = trace;
-		}
-		else if (trace.startsolid)
-		{
-			tr->startsolid = qtrue;
-		}
-		if (tr->allsolid)
-		{
-			return;
-		}
-	}
+        if (trace.allsolid || trace.fraction < tr->fraction)
+        {
+            trace.entityNum = ent->number;
+            *tr             = trace;
+        }
+        else if (trace.startsolid)
+        {
+            tr->startsolid = qtrue;
+        }
+        if (tr->allsolid)
+        {
+            return;
+        }
+    }
 }
+*/
 
 /*
 ================
@@ -357,18 +359,20 @@ void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, cons
 }
 */
 
+/* unused
 void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
 {
-	trace_t t;
+    trace_t t;
 
-	trap_CM_BoxTrace(&t, start, end, mins, maxs, 0, mask);
-	t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
-	// check all other solid models
+    trap_CM_BoxTrace(&t, start, end, mins, maxs, 0, mask);
+    t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
+    // check all other solid models
 
-	CG_ClipMoveToEntities_FT(start, mins, maxs, end, skipNumber, mask, qfalse, &t);
+    CG_ClipMoveToEntities_FT(start, mins, maxs, end, skipNumber, mask, qfalse, &t);
 
-	*result = t;
+    *result = t;
 }
+*/
 
 /*
 ================
