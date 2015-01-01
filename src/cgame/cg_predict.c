@@ -524,7 +524,7 @@ static void CG_TouchTriggerPrediction(void)
 {
 	int           i;
 	entityState_t *ent;
-	clipHandle_t  cmodel;
+	clipHandle_t  cmodel = 0;
 	centity_t     *cent;
 	qboolean      spectator;
 	const char    *cs;
