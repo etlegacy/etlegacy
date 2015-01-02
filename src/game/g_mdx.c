@@ -2762,7 +2762,7 @@ void mdx_head_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 {
 	bg_character_t *character;
 	mdm_t          *model;
-	orientation_t  o;
+	orientation_t  orientation;
 	vec3_t         axis[3];
 
 	if (ent->s.eType == ET_PLAYER)
@@ -2776,21 +2776,21 @@ void mdx_head_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 
 	model = &mdm_models[QHANDLETOINDEX(refent->hModel)];
 
-	trap_R_LerpTagNumber(&o, refent, model->tag_head);
+	trap_R_LerpTagNumber(&orientation, refent, model->tag_head);
 
 	/* Tag offset */
 	VectorCopy(refent->origin, org);
-	VectorMA(org, o.origin[0], refent->axis[0], org);
-	VectorMA(org, o.origin[1], refent->axis[1], org);
-	VectorMA(org, o.origin[2], refent->axis[2], org);
+	VectorMA(org, orientation.origin[0], refent->axis[0], org);
+	VectorMA(org, orientation.origin[1], refent->axis[1], org);
+	VectorMA(org, orientation.origin[2], refent->axis[2], org);
 
 	/* Apply head/body rotation */
-	MatrixMultiply(refent->headAxis, o.axis, axis);
-	MatrixMultiply(axis, refent->axis, o.axis);
+	MatrixMultiply(refent->headAxis, orientation.axis, axis);
+	MatrixMultiply(axis, refent->axis, orientation.axis);
 
 	/* calculate center position for standard head (this offset is just a guess) */
-	VectorMA(org, 6.5, o.axis[2], org); // up
-	VectorMA(org, 0.5, o.axis[0], org); // forward
+	VectorMA(org, 6.5, orientation.axis[2], org); // up
+	VectorMA(org, 0.5, orientation.axis[0], org); // forward
 }
 
 // returns tags needed for game, not by Zinx
@@ -2798,7 +2798,7 @@ void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, char *ta
 {
 	bg_character_t *character;
 	mdm_t          *model;
-	orientation_t  o;
+	orientation_t  orientation;
 
 	if (ent->s.eType == ET_PLAYER)
 	{
@@ -2812,17 +2812,17 @@ void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, char *ta
 	model = &mdm_models[QHANDLETOINDEX(refent->hModel)];
 
 
-	trap_R_LerpTag(&o, refent, tagName, 0);
+	trap_R_LerpTag(&orientation, refent, tagName, 0);
 
 
 	/* Tag offset */
 	VectorCopy(refent->origin, org);
-	VectorMA(org, o.origin[0], refent->axis[0], org);
-	VectorMA(org, o.origin[1], refent->axis[1], org);
-	VectorMA(org, o.origin[2], refent->axis[2], org);
+	VectorMA(org, orientation.origin[0], refent->axis[0], org);
+	VectorMA(org, orientation.origin[1], refent->axis[1], org);
+	VectorMA(org, orientation.origin[2], refent->axis[2], org);
 
-	VectorMA(org, up_offset, o.axis[2], org); // up
-	VectorMA(org, forward_offset, o.axis[0], org); // forward
+	VectorMA(org, up_offset, orientation.axis[2], org); // up
+	VectorMA(org, forward_offset, orientation.axis[0], org); // forward
 }
 
 
@@ -2830,7 +2830,7 @@ void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 {
 	bg_character_t *character;
 	mdm_t          *model;
-	orientation_t  o;
+	orientation_t  orientation;
 	vec3_t         org1, org2;
 
 	if (ent->s.eType == ET_PLAYER)
@@ -2844,19 +2844,19 @@ void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 
 	model = &mdm_models[QHANDLETOINDEX(refent->hModel)];
 
-	trap_R_LerpTagNumber(&o, refent, model->tag_footleft);
+	trap_R_LerpTagNumber(&orientation, refent, model->tag_footleft);
 	/* Tag offset */
 	VectorCopy(refent->origin, org1);
-	VectorMA(org1, o.origin[0], refent->axis[0], org1);
-	VectorMA(org1, o.origin[1], refent->axis[1], org1);
-	VectorMA(org1, o.origin[2], refent->axis[2], org1);
+	VectorMA(org1, orientation.origin[0], refent->axis[0], org1);
+	VectorMA(org1, orientation.origin[1], refent->axis[1], org1);
+	VectorMA(org1, orientation.origin[2], refent->axis[2], org1);
 
-	trap_R_LerpTagNumber(&o, refent, model->tag_footright);
+	trap_R_LerpTagNumber(&orientation, refent, model->tag_footright);
 	/* Tag offset */
 	VectorCopy(refent->origin, org2);
-	VectorMA(org2, o.origin[0], refent->axis[0], org2);
-	VectorMA(org2, o.origin[1], refent->axis[1], org2);
-	VectorMA(org2, o.origin[2], refent->axis[2], org2);
+	VectorMA(org2, orientation.origin[0], refent->axis[0], org2);
+	VectorMA(org2, orientation.origin[1], refent->axis[1], org2);
+	VectorMA(org2, orientation.origin[2], refent->axis[2], org2);
 
 	VectorAdd(org1, org2, org);
 	VectorScale(org, 0.5, org);
