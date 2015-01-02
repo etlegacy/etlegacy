@@ -2765,6 +2765,8 @@ void mdx_head_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 	orientation_t  orientation;
 	vec3_t         axis[3];
 
+	memset(&orientation, 0, sizeof(orientation));
+
 	if (ent->s.eType == ET_PLAYER)
 	{
 		character = BG_GetCharacter(ent->client->sess.sessionTeam, ent->client->sess.playerType);
@@ -2800,6 +2802,8 @@ void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, char *ta
 	mdm_t          *model;
 	orientation_t  orientation;
 
+	memset(&orientation, 0, sizeof(orientation));
+
 	if (ent->s.eType == ET_PLAYER)
 	{
 		character = BG_GetCharacter(ent->client->sess.sessionTeam, ent->client->sess.playerType);
@@ -2832,6 +2836,8 @@ void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 	mdm_t          *model;
 	orientation_t  orientation;
 	vec3_t         org1, org2;
+
+	memset(&orientation, 0, sizeof(orientation));
 
 	if (ent->s.eType == ET_PLAYER)
 	{
