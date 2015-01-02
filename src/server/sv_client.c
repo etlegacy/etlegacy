@@ -820,7 +820,7 @@ void SV_BadDownload(client_t *cl, msg_t *msg)
 	MSG_WriteShort(msg, 0);   // client is expecting block zero
 	MSG_WriteLong(msg, -1);   // illegal file size
 
-	*cl->downloadName = 0;
+	SV_CloseDownload(cl);
 }
 
 /**
@@ -838,12 +838,157 @@ static qboolean SV_CheckFallbackURL(client_t *cl, msg_t *msg)
 	Com_Printf("clientDownload: sending client '%s' to fallback URL '%s'\n", rc(cl->name), sv_wwwFallbackURL->string);
 
 	MSG_WriteByte(msg, svc_download);
-	MSG_WriteShort(msg, -1);   // block -1 means ftp/http download
+	MSG_WriteShort(msg, DLTYPE_WWW);
 	MSG_WriteString(msg, sv_wwwFallbackURL->string);
 	MSG_WriteLong(msg, 0);
 	MSG_WriteLong(msg, 2);   // DL_FLAG_URL
 
 	return qtrue;
+}
+
+// Check if we are able to share the file
+static qboolean SV_CheckDownloadAllowed(client_t *cl, msg_t *msg)
+{
+	char     errorMessage[1024];
+	int idPack = FS_idPak(cl->downloadName, BASEGAME);
+
+	// sv_allowDownload and idPack checks
+	if (!sv_allowDownload->integer || idPack)
+	{
+		// cannot auto-download file
+		if (idPack)
+		{
+			Com_Printf("clientDownload: %d : \"%s\" cannot download id pk3 files\n", (int)(cl - svs.clients), cl->downloadName);
+			Com_sprintf(errorMessage, sizeof(errorMessage), "Cannot autodownload official pk3 file \"%s\"", cl->downloadName);
+		}
+		else
+		{
+			Com_Printf("clientDownload: %d : \"%s\" download disabled", (int)(cl - svs.clients), cl->downloadName);
+			if (sv_pure->integer)
+			{
+				Com_sprintf(errorMessage, sizeof(errorMessage), "Could not download \"%s\" because autodownloading is disabled on the server.\n\n"
+					"You will need to get this file elsewhere before you "
+					"can connect to this pure server.\n", cl->downloadName);
+			}
+			else
+			{
+				Com_sprintf(errorMessage, sizeof(errorMessage), "Could not download \"%s\" because autodownloading is disabled on the server.\n\n"
+					"Set autodownload to No in your settings and you might be "
+					"able to connect even if you don't have the file.\n", cl->downloadName);
+			}
+		}
+
+		SV_BadDownload(cl, msg);
+		MSG_WriteString(msg, errorMessage);   // (could SV_DropClient isntead?)
+
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+// We open the file here
+static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
+{
+	int      download_flag;
+	fileHandle_t downloadFileHandle = 0;
+	int downloadSize = 0;
+
+	// prevent duplicate download notifications
+	if (cl->downloadnotify & DLNOTIFY_BEGIN)
+	{
+		cl->downloadnotify &= ~DLNOTIFY_BEGIN;
+		Com_Printf("clientDownload: %d : beginning \"%s\"\n", (int)(cl - svs.clients), cl->downloadName);
+	}
+
+	// Check if we allow downloading of the package
+	if (!SV_CheckDownloadAllowed(cl, msg))
+	{
+		// return true so the error message gets sent
+		return qtrue;
+	}
+
+	downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &downloadFileHandle);
+	if (downloadSize <= 0)
+	{
+		Com_Printf("clientDownload: %d : \"%s\" file not found on server\n", (int)(cl - svs.clients), cl->downloadName);
+		SV_BadDownload(cl, msg);
+		SV_DropClient(cl, va("File \"%s\" not found on server for autodownloading.\n", cl->downloadName));
+		return qtrue;
+	}
+
+	// www download redirect protocol
+	// NOTE: this is called repeatedly while a client connects. Maybe we should sort of cache the message or something
+	// FIXME: we need to abstract this to an independant module for maximum configuration/usability by server admins
+	// FIXME: I could rework that, it's crappy
+	if (sv_wwwDownload->integer)
+	{
+		if (cl->bDlOK)
+		{
+			if (!cl->bFallback)
+			{
+				FS_FCloseFile(downloadFileHandle);   // don't keep open, we only care about the size
+
+				Q_strncpyz(cl->downloadURL, va("%s/%s", sv_wwwBaseURL->string, cl->downloadName), sizeof(cl->downloadURL));
+
+				// prevent multiple download notifications
+				if (cl->downloadnotify & DLNOTIFY_REDIRECT)
+				{
+					cl->downloadnotify &= ~DLNOTIFY_REDIRECT;
+					Com_Printf("Redirecting client '%s' to %s\n", rc(cl->name), cl->downloadURL);
+				}
+				// once cl->downloadName is set (and possibly we have our listening socket), let the client know
+				cl->bWWWDl = qtrue;
+				MSG_WriteByte(msg, svc_download);
+				MSG_WriteShort(msg, DLTYPE_WWW);
+				// compatible with legacy svc_download protocol: [size] [size bytes]
+				// download URL, size of the download file, download flags
+				MSG_WriteString(msg, cl->downloadURL);
+				MSG_WriteLong(msg, downloadSize);
+				download_flag = 0;
+				if (sv_wwwDlDisconnected->integer)
+				{
+					download_flag |= (1 << DL_FLAG_DISCON);
+				}
+
+				MSG_WriteLong(msg, download_flag);   // flags
+				return qtrue;
+			}
+			else
+			{
+				cl->bFallback = qfalse;
+				if (SV_CheckFallbackURL(cl, msg))
+				{
+					return qtrue;
+				}
+
+				Com_Printf("Client '%s': falling back to regular downloading for failed file %s\n", rc(cl->name), cl->downloadName);
+			}
+		}
+		else
+		{
+			if (SV_CheckFallbackURL(cl, msg))
+			{
+				return qtrue;
+			}
+
+			Com_Printf("Client '%s' is not configured for www download\n", rc(cl->name));
+		}
+	}
+
+	cl->bWWWDl = qfalse;
+	cl->download = downloadFileHandle;
+	cl->downloadSize = downloadSize;
+
+	// is valid source, init
+	cl->downloadCurrentBlock = cl->downloadClientBlock = cl->downloadXmitBlock = 0;
+	cl->downloadCount = 0;
+	cl->downloadEOF = qfalse;
+
+	// We reset the ack time to current when we start
+	cl->downloadAckTime = svs.time;
+
+	return qfalse;
 }
 
 /**
@@ -852,10 +997,6 @@ static qboolean SV_CheckFallbackURL(client_t *cl, msg_t *msg)
 static qboolean SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 {
 	int      curindex;
-	int      idPack;
-	char     errorMessage[1024];
-	int      download_flag;
-	qboolean bTellRate = qfalse; // verbosity
 
 	if (!*cl->downloadName)
 	{
@@ -865,8 +1006,8 @@ static qboolean SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	{
 		return qfalse; // The client acked and is downloading with ftp/http
 	}
-	// CVE-2006-2082
-	// validate the download against the list of pak files
+
+	// CVE-2006-2082: validate the download against the list of pak files
 	if (!FS_VerifyPak(cl->downloadName))
 	{
 		// will drop the client and leave it hanging on the other side. good for him
@@ -874,149 +1015,15 @@ static qboolean SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 		return qfalse;
 	}
 
-	if (!cl->download)
+	// set up the file to be downloaded
+	if (!cl->download && SV_SetupDownloadFile(cl, msg))
 	{
-		// We open the file here
-
-		// prevent duplicate download notifications
-		if (cl->downloadnotify & DLNOTIFY_BEGIN)
-		{
-			cl->downloadnotify &= ~DLNOTIFY_BEGIN;
-			Com_Printf("clientDownload: %d : beginning \"%s\"\n", (int) (cl - svs.clients), cl->downloadName);
-		}
-
-		idPack = FS_idPak(cl->downloadName, BASEGAME);
-
-		// sv_allowDownload and idPack checks
-		if (!sv_allowDownload->integer || idPack)
-		{
-			// cannot auto-download file
-			if (idPack)
-			{
-				Com_Printf("clientDownload: %d : \"%s\" cannot download id pk3 files\n", (int) (cl - svs.clients), cl->downloadName);
-				Com_sprintf(errorMessage, sizeof(errorMessage), "Cannot autodownload official pk3 file \"%s\"", cl->downloadName);
-			}
-			else
-			{
-				Com_Printf("clientDownload: %d : \"%s\" download disabled", (int) (cl - svs.clients), cl->downloadName);
-				if (sv_pure->integer)
-				{
-					Com_sprintf(errorMessage, sizeof(errorMessage), "Could not download \"%s\" because autodownloading is disabled on the server.\n\n"
-					                                                "You will need to get this file elsewhere before you "
-					                                                "can connect to this pure server.\n", cl->downloadName);
-				}
-				else
-				{
-					Com_sprintf(errorMessage, sizeof(errorMessage), "Could not download \"%s\" because autodownloading is disabled on the server.\n\n"
-					                                                "Set autodownload to No in your settings and you might be "
-					                                                "able to connect even if you don't have the file.\n", cl->downloadName);
-				}
-			}
-
-			SV_BadDownload(cl, msg);
-			MSG_WriteString(msg, errorMessage);   // (could SV_DropClient isntead?)
-
-			return qtrue;
-		}
-
-		// www download redirect protocol
-		// NOTE: this is called repeatedly while a client connects. Maybe we should sort of cache the message or something
-		// FIXME: we need to abstract this to an independant module for maximum configuration/usability by server admins
-		// FIXME: I could rework that, it's crappy
-		if (sv_wwwDownload->integer)
-		{
-			if (cl->bDlOK)
-			{
-				if (!cl->bFallback)
-				{
-					fileHandle_t handle;
-					int          downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &handle);
-
-					if (downloadSize > 0)
-					{
-						FS_FCloseFile(handle);   // don't keep open, we only care about the size
-
-						Q_strncpyz(cl->downloadURL, va("%s/%s", sv_wwwBaseURL->string, cl->downloadName), sizeof(cl->downloadURL));
-
-						// prevent multiple download notifications
-						if (cl->downloadnotify & DLNOTIFY_REDIRECT)
-						{
-							cl->downloadnotify &= ~DLNOTIFY_REDIRECT;
-							Com_Printf("Redirecting client '%s' to %s\n", rc(cl->name), cl->downloadURL);
-						}
-						// once cl->downloadName is set (and possibly we have our listening socket), let the client know
-						cl->bWWWDl = qtrue;
-						MSG_WriteByte(msg, svc_download);
-						MSG_WriteShort(msg, -1);   // block -1 means ftp/http download
-						// compatible with legacy svc_download protocol: [size] [size bytes]
-						// download URL, size of the download file, download flags
-						MSG_WriteString(msg, cl->downloadURL);
-						MSG_WriteLong(msg, downloadSize);
-						download_flag = 0;
-						if (sv_wwwDlDisconnected->integer)
-						{
-							download_flag |= (1 << DL_FLAG_DISCON);
-						}
-
-						MSG_WriteLong(msg, download_flag);   // flags
-						return qtrue;
-					}
-					else
-					{
-						// that should NOT happen - even regular download would fail then anyway
-						Com_Printf("ERROR: Client '%s': couldn't extract file size for %s\n", rc(cl->name), cl->downloadName);
-					}
-				}
-				else
-				{
-					cl->bFallback = qfalse;
-					if (SV_CheckFallbackURL(cl, msg))
-					{
-						return qfalse;
-					}
-
-					Com_Printf("Client '%s': falling back to regular downloading for failed file %s\n", rc(cl->name), cl->downloadName);
-				}
-			}
-			else
-			{
-				if (SV_CheckFallbackURL(cl, msg))
-				{
-					return qfalse;
-				}
-
-				Com_Printf("Client '%s' is not configured for www download\n", rc(cl->name));
-			}
-		}
-
-		// find file
-		cl->bWWWDl       = qfalse;
-		cl->downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &cl->download);
-		if (cl->downloadSize <= 0)
-		{
-			Com_Printf("clientDownload: %d : \"%s\" file not found on server\n", (int) (cl - svs.clients), cl->downloadName);
-			Com_sprintf(errorMessage, sizeof(errorMessage), "File \"%s\" not found on server for autodownloading.\n", cl->downloadName);
-			SV_BadDownload(cl, msg);
-			MSG_WriteString(msg, errorMessage);   // (could SV_DropClient isntead?)
-			return qtrue;
-		}
-
-		// is valid source, init
-		cl->downloadCurrentBlock = cl->downloadClientBlock = cl->downloadXmitBlock = 0;
-		cl->downloadCount        = 0;
-		cl->downloadEOF          = qfalse;
-
-		// We reset the ack time to current when we start
-		cl->downloadAckTime = svs.time;
-
-		bTellRate = qtrue;
+		return qtrue;
 	}
 
 	// Perform any reads that we need to
-	while (cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW &&
-	       cl->downloadSize != cl->downloadCount)
+	while (cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW && cl->downloadSize != cl->downloadCount)
 	{
-
 		curindex = (cl->downloadCurrentBlock % MAX_DOWNLOAD_WINDOW);
 
 		if (!cl->downloadBlocks[curindex])
@@ -1108,7 +1115,6 @@ Send one round of fragments, or queued messages to all clients that have data pe
 Return the shortest time interval for sending next packet to client
 ==================
 */
-
 int SV_SendQueuedMessages(void)
 {
 	int      i, retval = -1, nextFragT;
@@ -1144,7 +1150,6 @@ SV_SendDownloadMessages
 Send one round of download messages to all clients
 ==================
 */
-
 int SV_SendDownloadMessages(void)
 {
 	int      i, numDLs = 0;

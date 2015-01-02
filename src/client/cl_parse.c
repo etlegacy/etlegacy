@@ -800,7 +800,7 @@ void CL_ParseDownload(msg_t *msg)
 	block = MSG_ReadShort(msg);
 
 	// www dl, if we haven't acknowledged the download redirect yet
-	if (block == -1)
+	if (block == DLTYPE_WWW)
 	{
 		if (!cls.download.bWWWDl)
 		{

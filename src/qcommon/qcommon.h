@@ -233,6 +233,10 @@ void NET_Sleep(int msec);
 #define MAX_DOWNLOAD_WINDOW     48
 // 896 byte block chunks
 #define MAX_DOWNLOAD_BLKSIZE        1024
+
+// block -1 means www/ftp download
+#define DLTYPE_WWW -1
+
 /*
 Netchan handles packet fragmentation and out of order / duplicate suppression
 */
