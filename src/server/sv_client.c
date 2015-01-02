@@ -1589,6 +1589,13 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 				return;
 			}
 
+			if (cl->state < CS_ACTIVE && !Q_strncmp(Cmd_Argv(0), "say", 3))
+			{
+				// Do not allow spamming of messages if the client is not active
+				Com_DPrintf("client spam ignored for %s\n", rc(cl->name));
+				return;
+			}
+
 			Cmd_Args_Sanitize();
 			VM_Call(gvm, GAME_CLIENT_COMMAND, cl - svs.clients);
 		}
