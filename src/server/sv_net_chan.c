@@ -157,7 +157,7 @@ static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 SV_Netchan_FreeQueue
 =================
 */
-void SV_Netchan_FreeQueue(client_t *client)
+void SV_Netchan_ClearQueue(client_t *client)
 {
 	netchan_buffer_t *netbuf, *next;
 

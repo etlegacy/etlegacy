@@ -843,7 +843,7 @@ void SV_SpawnServer(char *server)
 					client->gentity = ent;
 
 					client->deltaMessage     = -1;
-					client->nextSnapshotTime = svs.time;    // generate a snapshot immediately
+					client->lastSnapshotTime = 0;	// generate a snapshot immediately
 
 					VM_Call(gvm, GAME_CLIENT_BEGIN, i);
 				}
@@ -1192,7 +1192,7 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 				}
 
 				// force a snapshot to be sent
-				cl->nextSnapshotTime = -1;
+				cl->lastSnapshotTime = 0;
 				SV_SendClientSnapshot(cl);
 			}
 		}
@@ -1239,6 +1239,13 @@ void SV_Shutdown(char *finalmsg)
 	// free server static data
 	if (svs.clients)
 	{
+		int index;
+
+		for (index = 0; index < sv_maxclients->integer; index++)
+		{
+			SV_Netchan_ClearQueue(&svs.clients[index]);
+		}
+
 		//Z_Free( svs.clients );
 		free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 	}

@@ -219,8 +219,8 @@ typedef struct client_s
 	int nextReliableUserTime;           // svs.time when another userinfo change will be allowed
 	int lastPacketTime;                 // svs.time when packet was last received
 	int lastConnectTime;                // svs.time when connection started
-	int nextSnapshotTime;               // send another snapshot when svs.time >= nextSnapshotTime
-	qboolean rateDelayed;               // true if nextSnapshotTime was set based on rate instead of snapshotMsec
+	int lastSnapshotTime;               // svs.time of last sent snapshot
+	qboolean rateDelayed;               // true if lastSnapshotTime was set based on rate instead of snapshotMsec
 	int timeoutCount;                   // must timeout a few frames in a row so debugging doesn't break
 	clientSnapshot_t frames[PACKET_BACKUP];     // updates can be delta'd from here
 	int ping;
@@ -629,6 +629,7 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 
 // sv_net_chan.c
 void SV_Netchan_Transmit(client_t *client, msg_t *msg);
+void SV_Netchan_ClearQueue(client_t *client);
 int SV_Netchan_TransmitNextFragment(client_t *client);
 qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 

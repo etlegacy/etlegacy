@@ -358,7 +358,7 @@ gotnewcl:
 	Netchan_Setup(NS_SERVER, &newcl->netchan, from, qport);
 
 	// init the netchan queue
-	newcl->netchan_end_queue = &newcl->netchan_start_queue;
+	SV_Netchan_ClearQueue(newcl);
 
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
@@ -386,7 +386,7 @@ gotnewcl:
 	Com_DPrintf("Going from CS_FREE to CS_CONNECTED for %s\n", newcl->name);
 
 	newcl->state            = CS_CONNECTED;
-	newcl->nextSnapshotTime = svs.time;
+	newcl->lastSnapshotTime = 0;
 	newcl->lastPacketTime   = svs.time;
 	newcl->lastConnectTime  = svs.time;
 
@@ -460,6 +460,7 @@ void SV_DropClient(client_t *drop, const char *reason)
 
 		// Kill any download
 		SV_CloseDownload(drop);
+		SV_Netchan_ClearQueue(drop);
 	}
 
 	if (!isBot)
@@ -619,7 +620,7 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	client->gentity = ent;
 
 	client->deltaMessage     = -1;
-	client->nextSnapshotTime = svs.time;    // generate a snapshot immediately
+	client->lastSnapshotTime = 0;	// generate a snapshot immediately
 
 	if (cmd)
 	{
@@ -690,6 +691,7 @@ static void SV_DoneDownload_f(client_t *cl)
 	}
 
 	Com_DPrintf("clientDownload: %s Done\n", rc(cl->name));
+
 	// resend the game state to update any clients that entered during the download
 	SV_SendClientGameState(cl);
 }
@@ -1367,7 +1369,7 @@ static void SV_VerifyPaks_f(client_t *cl)
 		else
 		{
 			cl->pureAuthentic    = 0;
-			cl->nextSnapshotTime = -1;
+			cl->lastSnapshotTime = 0;
 			cl->state            = CS_ACTIVE;
 			SV_SendClientSnapshot(cl);
 			SV_DropClient(cl, "Unpure client detected. Invalid .PK3 files referenced!");
@@ -1455,11 +1457,18 @@ void SV_UserinfoChanged(client_t *cl)
 			i = sv_fps->integer;
 		}
 
-		cl->snapshotMsec = 1000 / i;
+		i = 1000 / i;
 	}
 	else
 	{
-		cl->snapshotMsec = 50;
+		i = 50;
+	}
+
+	if (i != cl->snapshotMsec)
+	{
+		// Reset last sent snapshot so we avoid desync between server frame time and snapshot send time
+		cl->lastSnapshotTime = 0;
+		cl->snapshotMsec = i;
 	}
 
 	// maintain the IP information
@@ -1887,7 +1896,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	{
 		if (serverId >= sv.restartedServerId && serverId < sv.serverId)     // TTimo - use a comparison here to catch multiple map_restart
 		{   // they just haven't caught the map_restart yet
-			Com_DPrintf("%s: ignoring pre map_restart / outdated client message\n", rc(cl->name));
+			Com_DPrintf("%s: ignoring pre map_restart / outdated client message status: %d\n", rc(cl->name), cl->state);
 			return;
 		}
 		// if we can tell that the client has dropped the last

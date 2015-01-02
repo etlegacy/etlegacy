@@ -830,8 +830,6 @@ Called by SV_SendClientSnapshot and SV_SendClientGameState
 */
 void SV_SendMessageToClient(msg_t *msg, client_t *client)
 {
-	int rateMsec;
-
 	// record information about the message
 	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageSize  = msg->cursize;
 	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageSent  = svs.time;
@@ -839,47 +837,6 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client)
 
 	// send the datagram
 	SV_Netchan_Transmit(client, msg);
-
-	// set nextSnapshotTime based on rate and requested number of updates
-
-	// local clients get snapshots every frame
-	// added sv_lanForceRate check
-	if (client->netchan.remoteAddress.type == NA_LOOPBACK || (sv_lanForceRate->integer && Sys_IsLANAddress(client->netchan.remoteAddress)))
-	{
-		client->nextSnapshotTime = svs.time - 1;
-		return;
-	}
-
-	// normal rate / snapshotMsec calculation
-	rateMsec = SV_RateMsec(client);
-
-	// during a download, ignore the snapshotMsec
-	// the update server on steroids, with this disabled and sv_fps 60, the download can reach 30 kb/s
-	// on a regular server, we will still top at 20 kb/s because of sv_fps 20
-	if (!*client->downloadName && rateMsec < client->snapshotMsec)
-	{
-		// never send more packets than this, no matter what the rate is at
-		rateMsec            = client->snapshotMsec;
-		client->rateDelayed = qfalse;
-	}
-	else
-	{
-		client->rateDelayed = qtrue;
-	}
-
-	client->nextSnapshotTime = svs.time + rateMsec;
-
-	// don't pile up empty snapshots while connecting
-	if (client->state != CS_ACTIVE)
-	{
-		// a gigantic connection message may have already put the nextSnapshotTime
-		// more than a second away, so don't shorten it
-		// do shorten if client is downloading
-		if (!*client->downloadName && client->nextSnapshotTime < svs.time + 1000)
-		{
-			client->nextSnapshotTime = svs.time + 1000;
-		}
-	}
 }
 
 /*
@@ -1028,11 +985,6 @@ void SV_SendClientMessages(void)
 			continue;
 		}
 
-		if (svs.time < c->nextSnapshotTime)
-		{
-			continue;       // not time yet
-		}
-
 		if (*c->downloadName)
 		{
 			// If the client is downloading via netchan and has not acknowledged a package in 4secs drop it
@@ -1044,19 +996,35 @@ void SV_SendClientMessages(void)
 			continue;       // Client is downloading, don't send snapshots
 		}
 
-		numclients++;       // net debugging
-
-		// send additional message fragments if the last message
-		// was too large to send at once
-		if (c->netchan.unsentFragments)
+		if (c->netchan.unsentFragments || c->netchan_start_queue)
 		{
-			c->nextSnapshotTime = svs.time + SV_RateMsec(c);
-			SV_Netchan_TransmitNextFragment(c);
-			continue;
+			c->rateDelayed = qtrue;
+			continue;		// Drop this snapshot if the packet queue is still full or delta compression will break
 		}
+
+		if (!(c->netchan.remoteAddress.type == NA_LOOPBACK ||
+			(sv_lanForceRate->integer && Sys_IsLANAddress(c->netchan.remoteAddress))))
+		{
+			// rate control for clients not on LAN 
+			if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value)
+			{
+				continue;		// It's not time yet
+			}
+
+			if (SV_RateMsec(c) > 0)
+			{
+				// Not enough time since last packet passed through the line
+				c->rateDelayed = qtrue;
+				continue;
+			}
+		}
+
+		numclients++; // net debugging
 
 		// generate and send a new message
 		SV_SendClientSnapshot(c);
+		c->lastSnapshotTime = svs.time;
+		c->rateDelayed = qfalse;
 	}
 
 	// net debugging
