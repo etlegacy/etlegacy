@@ -126,10 +126,9 @@ void CG_AddLightstyle(centity_t *cent)
 	float r;
 	int   stringlength;
 	float offset;
-	int   otime;
+	int   otime = cg.time - cent->dl_time;
 	int   lastch, nextch;
 
-	otime        = cg.time - cent->dl_time;
 	stringlength = strlen(cent->dl_stylestring);
 
 	// it's been a long time since you were updated, lets assume a reset
@@ -769,7 +768,6 @@ static void CG_Item(centity_t *cent)
 		}
 		else
 		{
-			//ent.hModel = cg_items[es->modelindex].models[0];
 			ent.hModel = bg_itemlist[es->modelindex].itemInfo.models[0];
 		}
 	}
@@ -1160,8 +1158,8 @@ static void CG_Missile(centity_t *cent)
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
 	case WP_PANZERFAUST:
-	case  WP_BAZOOKA:
-	case  WP_MAPMORTAR:
+	case WP_BAZOOKA:
+	case WP_MAPMORTAR:
 	case WP_GPG40:
 	case WP_M7:
 	{
@@ -1199,7 +1197,7 @@ static void CG_Missile(centity_t *cent)
 	// spin as it moves
 	if (s1->pos.trType != TR_STATIONARY)
 	{
-		RotateAroundDirection(ent.axis, cg.time / 4);
+		RotateAroundDirection(ent.axis, cg.time / 4.f);
 	}
 	else
 	{
