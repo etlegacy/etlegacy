@@ -6586,7 +6586,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 	{
 		if (index >= 0 && index < uiInfo.serverStatus.numDisplayServers)
 		{
-			int ping, game, antilag, needpass, friendlyfire, maxlives, weaponrestrictions, balancedteams, serverload;
+			int ping, game, antilag, needpass, friendlyfire, maxlives, weaponrestrictions, balancedteams, serverload, clients, maxclients;
 
 			if (lastColumn != column || lastTime > uiInfo.uiDC.realTime + 5000)
 			{
@@ -6621,16 +6621,19 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
+				clients    = atoi(Info_ValueForKey(info, "clients"));
+				maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
+
 				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 				{
-					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%s^9(+%s)/%s",
-					            Info_ValueForKey(info, "humans"),
-					            va("%i", atoi(Info_ValueForKey(info, "clients")) - atoi(Info_ValueForKey(info, "humans"))),
-					            Info_ValueForKey(info, "sv_maxclients"));
+					int humans = atoi(Info_ValueForKey(info, "humans"));
+
+					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i",
+					            humans, clients - humans, maxclients);
 				}
 				else
 				{
-					Com_sprintf(clientBuff, sizeof(clientBuff), "%s/%s", Info_ValueForKey(info, "clients"), Info_ValueForKey(info, "sv_maxclients"));
+					Com_sprintf(clientBuff, sizeof(clientBuff), "%i/%i", clients, maxclients);
 				}
 				return clientBuff;
 			case SORT_GAME:
