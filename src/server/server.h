@@ -440,6 +440,7 @@ void SV_DemoReadAllEntityShared(msg_t *msg);
 void SV_DemoReadRefreshEntities(void);
 void SV_DemoWriteFrame(void);
 void SV_DemoWriteClientCommand(client_t *client, const char *cmd);
+qboolean SV_DemoClientCommandCapture(client_t *cl, const char *s);
 void SV_DemoWriteServerCommand(const char *cmd);
 void SV_DemoWriteGameCommand(int clientNum, const char *cmd);
 void SV_DemoWriteConfigString(int cs_index, const char *cs_string);

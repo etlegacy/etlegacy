@@ -402,6 +402,26 @@ void SV_DemoWriteClientCommand(client_t *client, const char *cmd)
 	SV_DemoWriteMessage(&msg);
 }
 
+qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg)
+{
+	if (sv.demoState == DS_RECORDING)     // if demo is recording, we store this command and clientid
+	{
+		SV_DemoWriteClientCommand(client, msg);
+	}
+	else if (sv.demoState == DS_PLAYBACK &&
+		((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer) && // preventing only real clients commands (not democlients commands replayed)
+		(!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator"))) // if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
+	{
+		// issue a chat message only to the player trying to join a team
+		SV_SendServerCommand(client, "chat \"^3Can't join a team when a demo is replaying!\"");
+		// issue a chat message only to the player trying to join a team
+		SV_SendServerCommand(client, "cp \"^3Can't join a team when a demo is replaying!\"");
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 /*
 ====================
 SV_DemoWriteServerCommand

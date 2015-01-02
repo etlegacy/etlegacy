@@ -1581,18 +1581,11 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 	if (clientOK)
 	{
 		// pass unknown strings to the game
-		if (!u->name && sv.state == SS_GAME && (cl->state == CS_ACTIVE || cl->state == CS_PRIMED || cl->demoClient))   // accept democlients, else you won't be able to make democlients join teams nor say messages!
+		// accept democlients, else you won't be able to make democlients join teams nor say messages!
+		if (!u->name && sv.state == SS_GAME && (cl->state == CS_ACTIVE || cl->state == CS_PRIMED || cl->demoClient))
 		{
-			if (sv.demoState == DS_RECORDING)     // if demo is recording, we store this command and clientid
+			if (!SV_DemoClientCommandCapture(cl, s))
 			{
-				SV_DemoWriteClientCommand(cl, s);
-			}
-			else if (sv.demoState == DS_PLAYBACK &&
-			         ((cl - svs.clients) >= sv_democlients->integer) && ((cl - svs.clients) < sv_maxclients->integer) && // preventing only real clients commands (not democlients commands replayed)
-			         (!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator"))) // if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
-			{
-				SV_SendServerCommand(cl, "chat \"^3Can't join a team when a demo is replaying!\"");     // issue a chat message only to the player trying to join a team
-				SV_SendServerCommand(cl, "cp \"^3Can't join a team when a demo is replaying!\"");     // issue a chat message only to the player trying to join a team
 				return;
 			}
 
