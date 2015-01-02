@@ -1674,7 +1674,7 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 
 	if (ss->stream->info.channels != 2 || ss->stream->info.rate != 22050)
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING S_StartStreamingSoundEx: stream file %s is not 22k stereo\n", intro);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING S_StartStreamingSoundEx: stream file %s is not 22050k [%i] stereo [%i]\n", intro, ss->stream->info.rate, ss->stream->info.channels);
 	}
 
 	// return the length of sound
