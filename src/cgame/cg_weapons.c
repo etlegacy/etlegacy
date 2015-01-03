@@ -2739,6 +2739,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		refEntity_t brass;
 
+		memset(&brass, 0, sizeof(brass));
+
 		if (IS_AKIMBO_WEAPON(weaponNum) && akimboFire)
 		{
 			CG_PositionRotatedEntityOnTag(&brass, parent, "tag_brass2");
@@ -6855,7 +6857,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 {
 	trace_t    trace, trace2;
 	vec3_t     dir;
-	vec3_t     start;
+	vec3_t     start = { 0, 0, 0 };
 	static int lastBloodSpat;
 
 	// don't ever shoot if we're binoced in
