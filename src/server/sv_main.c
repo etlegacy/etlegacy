@@ -53,7 +53,6 @@ cvar_t *sv_democlients;         // number of slots reserved for playing a demo
 
 cvar_t *sv_privateClients;      // number of clients reserved for password
 cvar_t *sv_hostname;
-cvar_t *sv_master[MAX_MASTER_SERVERS];      // master server ip address
 cvar_t *sv_reconnectlimit;      // minimum seconds between connect messages
 cvar_t *sv_tempbanmessage;
 
@@ -280,6 +279,7 @@ void SV_MasterHeartbeat(const char *message)
 	int             i;
 	int             res;
 	int             netenabled;
+	char            *master;
 
 	if (!(sv_advert->integer & SVA_MASTER))
 	{
@@ -309,22 +309,19 @@ void SV_MasterHeartbeat(const char *message)
 	// send to group masters
 	for (i = 0; i < MAX_MASTER_SERVERS; i++)
 	{
-		if (!sv_master[i]->string[0])
+		master = Cvar_VariableString(va("sv_master%i", i + 1));
+		if (master[0] == '\0')
 		{
 			continue;
 		}
 
 		// see if we haven't already resolved the name
-		// resolving usually causes hitches on win95, so only
-		// do it when needed
-		if (sv_master[i]->modified || (adr[i][0].type == NA_BAD && adr[i][1].type == NA_BAD))
+		if (adr[i][0].type == NA_BAD && adr[i][1].type == NA_BAD)
 		{
-			sv_master[i]->modified = qfalse;
-
 			if (netenabled & NET_ENABLEV4)
 			{
-				Com_Printf("Resolving %s (IPv4)\n", sv_master[i]->string);
-				res = NET_StringToAdr(sv_master[i]->string, &adr[i][0], NA_IP);
+				Com_Printf("Resolving %s (IPv4)\n", master);
+				res = NET_StringToAdr(master, &adr[i][0], NA_IP);
 
 				if (res == 2)
 				{
@@ -334,19 +331,19 @@ void SV_MasterHeartbeat(const char *message)
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToString(adr[i][0]));
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][0]));
 				}
 				else
 				{
-					Com_Printf("%s has no IPv4 address.\n", sv_master[i]->string);
+					Com_Printf("%s has no IPv4 address.\n", master);
 				}
 			}
 
 #ifdef FEATURE_IPV6
 			if (netenabled & NET_ENABLEV6)
 			{
-				Com_Printf("Resolving %s (IPv6)\n", sv_master[i]->string);
-				res = NET_StringToAdr(sv_master[i]->string, &adr[i][1], NA_IP6);
+				Com_Printf("Resolving %s (IPv6)\n", master);
+				res = NET_StringToAdr(master, &adr[i][1], NA_IP6);
 
 				if (res == 2)
 				{
@@ -356,11 +353,11 @@ void SV_MasterHeartbeat(const char *message)
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToString(adr[i][1]));
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][1]));
 				}
 				else
 				{
-					Com_Printf("%s has no IPv6 address.\n", sv_master[i]->string);
+					Com_Printf("%s has no IPv6 address.\n", master);
 				}
 			}
 #endif
@@ -369,14 +366,13 @@ void SV_MasterHeartbeat(const char *message)
 			{
 				// if the address failed to resolve, clear it
 				// so we don't take repeated dns hits
-				Com_Printf("Couldn't resolve address: %s\n", sv_master[i]->string);
-				Cvar_Set(sv_master[i]->name, "");
-				sv_master[i]->modified = qfalse;
+				Com_Printf("Couldn't resolve address: %s\n", master);
+				Cvar_Set(va("sv_master%i", i + 1), "");
 				continue;
 			}
 		}
 
-		Com_Printf("Sending heartbeat to %s\n", sv_master[i]->string);
+		Com_Printf("Sending heartbeat to %s\n", master);
 
 		// this command should be changed if the server info / status format
 		// ever incompatably changes
@@ -394,11 +390,13 @@ void SV_MasterHeartbeat(const char *message)
 
 /**
  * @brief Sends gameCompleteStatus messages to all master servers
+ * @todo IPv6 support
  */
 void SV_MasterGameCompleteStatus()
 {
 	static netadr_t adr[MAX_MASTER_SERVERS];
 	int             i;
+	char            *master;
 
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
 	if (!com_dedicated || com_dedicated->integer != 2)
@@ -415,38 +413,34 @@ void SV_MasterGameCompleteStatus()
 	// send to group masters
 	for (i = 0 ; i < MAX_MASTER_SERVERS ; i++)
 	{
-		if (!sv_master[i]->string[0])
+		master = Cvar_VariableString(va("sv_master%i", i + 1));
+		if (master[0] == '\0')
 		{
 			continue;
 		}
 
 		// see if we haven't already resolved the name
-		// resolving usually causes hitches on win95, so only
-		// do it when needed
-		if (sv_master[i]->modified)
+		if (adr[i].type == NA_BAD)
 		{
-			sv_master[i]->modified = qfalse;
-
-			Com_Printf("Resolving %s\n", sv_master[i]->string);
-			if (!NET_StringToAdr(sv_master[i]->string, &adr[i], NA_IP))
+			Com_Printf("Resolving %s\n", master);
+			if (!NET_StringToAdr(master, &adr[i], NA_IP))
 			{
 				// if the address failed to resolve, clear it
 				// so we don't take repeated dns hits
-				Com_Printf("Couldn't resolve address: %s\n", sv_master[i]->string);
-				Cvar_Set(sv_master[i]->name, "");
-				sv_master[i]->modified = qfalse;
+				Com_Printf("Couldn't resolve address: %s\n", master);
+				Cvar_Set(va("sv_master%i", i + 1), "");
 				continue;
 			}
-			if (!strstr(":", sv_master[i]->string))
+			if (!strstr(":", master))
 			{
 				adr[i].port = BigShort(PORT_MASTER);
 			}
 
-			Com_Printf("%s resolved to %s\n", sv_master[i]->string,
+			Com_Printf("%s resolved to %s\n", master,
 			           NET_AdrToString(adr[i]));
 		}
 
-		Com_Printf("Sending gameCompleteStatus to %s\n", sv_master[i]->string);
+		Com_Printf("Sending gameCompleteStatus to %s\n", master);
 		// this command should be changed if the server info / status format
 		// ever incompatably changes
 		SVC_Status(adr[i], qtrue);

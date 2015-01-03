@@ -352,20 +352,15 @@ You or the server may be running older versions of the game. Press the auto-upda
 // NOTE: that stuff only works with two digits protocols
 extern int demo_protocols[];
 
-/*
- * @def MASTER_SERVER_NAME
- * @brief location of the master server
- */
-#define MASTER_SERVER_NAME  "etmaster.idsoftware.com"
-#define MOTD_SERVER_NAME    "motd.etlegacy.com"
-#define UPDATE_SERVER_NAME  "update.etlegacy.com"
+#define MOTD_SERVER_NAME    "motd.etlegacy.com"    /*!< location of the message of the day server */
+#define UPDATE_SERVER_NAME  "update.etlegacy.com"  /*!< location of the update server */
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
 #define PORT_UPDATE         27951
 #define PORT_SERVER         27960
 
-/*
+/**
  * @def NUM_SERVER_PORTS
  *
  * Broadcast scan this many ports after PORT_SERVER

@@ -3521,8 +3521,6 @@ void CL_GlobalServers_f(void)
 		return;
 	}
 
-	// reset the list, waiting for response
-	// -1 is used to distinguish a "no response"
 
 	i = NET_StringToAdr(masteraddress, &to, NA_UNSPEC);
 
@@ -3539,6 +3537,8 @@ void CL_GlobalServers_f(void)
 	// FIXME: NET_AdrToString doesn't deal with port for IPv6
 	Com_Printf("Requesting servers from the master %s (%s)...\n", masteraddress, NET_AdrToString(to));
 
+	// reset the list, waiting for response
+	// -1 is used to distinguish a "no response"
 	cls.numglobalservers = -1;
 	cls.pingUpdateSource = AS_GLOBAL;
 
