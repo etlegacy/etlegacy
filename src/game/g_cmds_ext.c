@@ -783,8 +783,10 @@ const unsigned int cQualifyingShots[WS_MAX] =
 	10,     // 19 WS_LANDMINE
 	100,    // 20 WS_MG42
 	100,    // 21 WS_BROWNING
-	30,     // 22 WS_GARAND
-	30,     // 23 WS_K43
+	30,     // 22 WS_CARBINE
+	30,     // 23 WS_KAR98
+	30,     // 24 WS_GARAND
+	30,     // 25 WS_K43
 };
 
 // Gives back overall or specific weapon rankings

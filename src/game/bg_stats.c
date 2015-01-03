@@ -68,8 +68,8 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 	{ WP_BINOCULARS,           WS_MAX             }, // 20
 	{ WP_PLIERS,               WS_MAX             },
 	{ WP_SMOKE_MARKER,         WS_AIRSTRIKE       },
-	{ WP_KAR98,                WS_K43             },
-	{ WP_CARBINE,              WS_GARAND          },
+	{ WP_KAR98,                WS_KAR98           },
+	{ WP_CARBINE,              WS_CARBINE         },
 	{ WP_GARAND,               WS_GARAND          },
 	{ WP_LANDMINE,             WS_LANDMINE        },
 	{ WP_SATCHEL,              WS_MAX             },

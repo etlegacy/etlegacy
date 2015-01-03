@@ -409,8 +409,8 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_TRIGGER_HURT,                       WS_MAX             },
 	{ MOD_EXPLOSIVE,                          WS_MAX             },
 
-	{ MOD_CARBINE,                            WS_GARAND          },
-	{ MOD_KAR98,                              WS_K43             },
+	{ MOD_CARBINE,                            WS_CARBINE         },
+	{ MOD_KAR98,                              WS_KAR98           },
 	{ MOD_GPG40,                              WS_GRENADELAUNCHER },
 	{ MOD_M7,                                 WS_GRENADELAUNCHER },
 	{ MOD_LANDMINE,                           WS_LANDMINE        },

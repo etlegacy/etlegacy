@@ -1394,8 +1394,10 @@ typedef enum extWeaponStats_s
 	WS_LANDMINE,        // 19
 	WS_MG42,            // 20
 	WS_BROWNING,        // 21
-	WS_GARAND,          // 22   -- carbine and garand
-	WS_K43,             // 23   -- kar98 and k43
+	WS_CARBINE,         // 22
+	WS_KAR98,           // 23
+	WS_GARAND,          // 24
+	WS_K43,             // 25
 
 	WS_MAX
 } extWeaponStats_t;

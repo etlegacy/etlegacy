@@ -249,14 +249,14 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_SMOKE_MARKER,         WP_NONE,                WP_NONE,  WP_SMOKE_MARKER,      WP_SMOKE_MARKER,      qfalse, 140, qtrue,  qfalse, 0,    "",                }, // 22	// changed name to cause less confusion
 	{ WP_KAR98,                WP_GPG40,               WP_NONE,  WP_KAR98,             WP_KAR98,             qfalse, 34,  qfalse, qtrue,  250,  "K43",             }, // 23	// WolfXP weapons
 	{ WP_CARBINE,              WP_M7,                  WP_NONE,  WP_CARBINE,           WP_CARBINE,           qfalse, 34,  qfalse, qtrue,  250,  "M1 GARAND",       }, // 24
-	{ WP_GARAND,               WP_GARAND_SCOPE,        WP_NONE,  WP_GARAND,            WP_GARAND,            qfalse, 34,  qfalse, qtrue,  250,  "M1 GARAND",       }, // 25
+	{ WP_GARAND,               WP_GARAND_SCOPE,        WP_NONE,  WP_GARAND,            WP_GARAND,            qfalse, 34,  qfalse, qtrue,  250,  "SCOPED M1 GARAND",}, // 25
 	{ WP_LANDMINE,             WP_NONE,                WP_NONE,  WP_LANDMINE,          WP_LANDMINE,          qfalse, 250, qtrue,  qfalse, 0,    "",                }, // 26
 	{ WP_SATCHEL,              WP_NONE,                WP_NONE,  WP_SATCHEL,           WP_SATCHEL,           qfalse, 250, qtrue,  qfalse, 0,    "SATCHEL",         }, // 27
 	{ WP_SATCHEL_DET,          WP_NONE,                WP_NONE,  WP_SATCHEL_DET,       WP_SATCHEL_DET,       qfalse, 1,   qtrue,  qfalse, 0,    "SATCHEL",         }, // 28
 	{ WP_SMOKE_BOMB,           WP_NONE,                WP_NONE,  WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        qfalse, 1,   qfalse, qfalse, 0,    "",                }, // 29
 
 	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, 18,  qfalse, qtrue,  2500, "MOBILE MG42",     }, // 30
-	{ WP_K43,                  WP_K43_SCOPE,           WP_NONE,  WP_K43,               WP_K43,               qfalse, 34,  qfalse, qtrue,  250,  "K43",             }, // 31
+	{ WP_K43,                  WP_K43_SCOPE,           WP_NONE,  WP_K43,               WP_K43,               qfalse, 34,  qfalse, qtrue,  250,  "SCOPED K43",      }, // 31
 	{ WP_FG42,                 WP_FG42SCOPE,           WP_NONE,  WP_FG42,              WP_FG42,              qfalse, 16,  qfalse, qtrue,  500,  "FG42",            }, // 32
 	{ WP_DUMMY_MG42,           WP_NONE,                WP_NONE,  WP_DUMMY_MG42,        WP_DUMMY_MG42,        qfalse, 1,   qfalse, qfalse, 0,    "",                }, // 33   // for storing heat on mounted mg42s...
 	{ WP_MORTAR,               WP_MORTAR_SET,          WP_NONE,  WP_MORTAR,            WP_MORTAR,            qfalse, 1,   qtrue,  qtrue,  0,    "MORTAR",          }, // 34
@@ -4159,8 +4159,10 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, "LNMN", "Landmine"   },  // 19 WS_LANDMINE
 	{ qtrue,  "MG42", "MG-42 Gun"  },  // 20 WS_MG42
 	{ qtrue,  "BRNG", "Browning"   },  // 21 WS_BROWNING
-	{ qtrue,  "GARN", "Garand"     },  // 22 WS_GARAND
-	{ qtrue,  "K-43", "K43 Rifle"  }   // 23 WS_K43
+	{ qtrue,  "GARN", "Garand"     },  // 22 WS_CARBINE
+	{ qtrue,  "K-43", "K43 Rifle"  },  // 23 WS_KAR98
+	{ qtrue,  "SGRN", "Scp.Garand" },  // 24 WS_GARAND
+	{ qtrue,  "SK43", "Scp.K43"    }   // 25 WS_K43
 };
 
 // Multiview: Convert weaponstate to simpler format
