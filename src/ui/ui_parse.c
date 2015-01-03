@@ -1431,6 +1431,8 @@ qboolean ParseColorRange(itemDef_t *item, int handle, int type)
 		return qfalse;
 	}
 
+	memset(&color, 0, sizeof(color));
+
 	item->colorRangeType = type;
 
 	if (PC_Float_Parse(handle, &color.low) &&
