@@ -77,7 +77,7 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 			}
 			else
 			{
-				glyph = &font->glyphs[(unsigned char)*s];
+				glyph = &font->glyphs[*s & 255];
 				out  += glyph->xSkip;
 				s++;
 				count++;
@@ -120,7 +120,7 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 			}
 			else
 			{
-				glyph = &font->glyphs[(unsigned char)*s];
+				glyph = &font->glyphs[*s & 255];
 				if (max < glyph->height)
 				{
 					max = glyph->height;
@@ -187,7 +187,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[(unsigned char)*s];
+			glyph = &font->glyphs[*s & 255];
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -1448,7 +1448,7 @@ static void CG_DrawCrosshairNames(void)
 		return;
 	}
 
-	if (cg.crosshairClientNum > MAX_CLIENTS)
+	if (cg.crosshairClientNum >= MAX_CLIENTS)
 	{
 		if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
 		{
