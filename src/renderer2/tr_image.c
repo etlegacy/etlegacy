@@ -2398,7 +2398,7 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	static qboolean quakeFlipX[6]     = { qtrue, qtrue, qfalse, qtrue, qtrue, qfalse };
 	static qboolean quakeFlipY[6]     = { qfalse, qfalse, qtrue, qfalse, qfalse, qtrue };
 	static int      quakeRot[6]       = { 90, -90, 0, 0, 90, -90 };
-	int             bitsIgnore;
+	int             bitsIgnore        = IF_NONE;
 	char            buffer[1024], filename[1024];
 	//char ddsName[1024];
 	char *filename_p;
