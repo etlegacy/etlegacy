@@ -31,11 +31,11 @@ msgstr "TIMER IS OP %s GEZET"
 
 #: src/cgame/cg_draw.c:650
 msgid "Connection Interrupted"
-msgstr "Connectie afgebroken"
+msgstr "Connectie Afgebroken"
 
 #: src/cgame/cg_draw.c:1902
 msgid "Disguised Enemy!"
-msgstr "Vermomde vijand"
+msgstr "Vermomde vijand!"
 
 #: src/cgame/cg_draw.c:2074
 msgid "SPECTATOR"
@@ -85,7 +85,7 @@ msgstr "JA(%s):%i, NEE(%s):%i"
 #: src/cgame/cg_draw.c:2234
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr "Je kunt stemmen op: %s"
+msgstr "JE HEBT GESTEMD OP: %s"
 
 #: src/cgame/cg_draw.c:2237
 #, c-format
@@ -95,7 +95,7 @@ msgstr "J:%i, N:%i"
 #: src/cgame/cg_draw.c:2460
 #, c-format
 msgid "Press %s to open Limbo Menu"
-msgstr "Druk %s om het Keuze menu te openen"
+msgstr "Druk %s om het Keuze Menu te openen"
 
 #: src/cgame/cg_draw.c:2464
 #, c-format
@@ -105,24 +105,24 @@ msgstr "Druk %s om de volgende speler te volgen"
 #: src/cgame/cg_draw.c:2469
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr "Toets %s om %s multiview mode"
+msgstr "Toets %s voor %s multiview mode"
 
 #: src/cgame/cg_draw.c:2530
 msgid "You are wounded and waiting for a medic."
-msgstr "Je bent gewond en aan het wachten op een medicus"
+msgstr "Je bent gewond en aan het wachten op een hospik."
 
 #: src/cgame/cg_draw.c:2540
 msgid "Press %s to go into reinforcement queue."
-msgstr "Druk %s om over te gaan in de versterkingswachtrij"
+msgstr "Druk %s om over te gaan in de versterkingswachtrij."
 
 #: src/cgame/cg_draw.c:2550
 msgid "No more reinforcements this round."
-msgstr "Geen versterkingen meer deze ronde"
+msgstr "Geen versterkingen meer deze ronde."
 
 #: src/cgame/cg_draw.c:2550
 #, c-format
 msgid "Reinforcements deploy in %d seconds."
-msgstr "Versterkingen arriveren in %d seconden"
+msgstr "Versterkingen arriveren in %d seconden."
 
 #: src/cgame/cg_draw.c:2593
 #, c-format
@@ -150,14 +150,14 @@ msgstr "Volgen"
 #: src/cgame/cg_draw.c:2732
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
-msgstr "^3WARMUP:^7 ^2%i^7 wachten "
+msgstr "^3OPWARMEN: ^2%i^7 wachten "
 
 #: src/cgame/cg_draw.c:2663
 msgid "Type ^3\\ready^* in the console to start"
 msgstr "Type ^3\\ready^* in de console om te starten"
 
 #: src/cgame/cg_draw.c:2684
-msgid "(OPWARMEN) Match begins in:"
+msgid "(WARMUP) Match begins in:"
 msgstr "(OPWARMEN) Ronde begint in:"
 
 #: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
@@ -219,7 +219,7 @@ msgstr "^3AANLOGGEN"
 
 #: src/cgame/cg_scoreboard.c:377 src/cgame/cg_scoreboard.c:540
 msgid "^3SPECTATOR"
-msgstr "^3VOLGER"
+msgstr "^3TOESCHOUWER"
 
 #: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
 msgid "AXIS"
@@ -268,7 +268,7 @@ msgstr "Map"
 
 #: src/cgame/cg_servercmds.c:2326
 msgid "Could not create logfile"
-msgstr "Kon geen logfile maken"
+msgstr "Kon geen logbestand maken"
 
 #: src/cgame/cg_servercmds.c:2866
 msgid "^3Server Restarting"
@@ -332,7 +332,7 @@ msgid ""
 "additional profiles by visiting the Profiles Menu."
 msgstr ""
 "Kies hieronder uw eerste instellingen. U kunt deze op elk gewenst moment te wijzigen"
-"en krijg toegang tot meer geavanceerde opties door een bezoek aan het menu Opties."
+"en toegang krijgen tot meer geavanceerde opties in het Optie menu."
 "Indien er meer dan 1 persoon Enemy Territory: Legacy wil spelen, kunt u een"
 "extra profiel aanmaken in het Profielen Menu."
 
@@ -349,31 +349,31 @@ msgid "Brightness:"
 msgstr "Helderheid:"
 
 msgid "Connection:"
-msgstr "Verbinding"
+msgstr "Verbinding:"
 
 msgid "Mouse Sensitivity:"
-msgstr "Muis Gevoeligheid"
+msgstr "Muis Gevoeligheid:"
 
 msgid "Invert Mouse:"
-msgstr "Omgekeerde Muis"
+msgstr "Omgekeerde Muis:"
 
 msgid "Handedness:"
-msgstr "Linkshandigheid"
+msgstr "Linkshandig:"
 
 msgid "DEFAULT SETTINGS"
-msgstr "Standaard waarde"
+msgstr "STANDAARD WAARDES"
 
 msgid "Language:"
-msgstr "Taal"
+msgstr "Taal:"
 
 msgid "QUIT"
-msgstr "Stop"
+msgstr "STOP"
 
 msgid "RENAME PROFILE"
 msgstr "HERNOEM PROFIEL"
 
 msgid "New Profile Name:"
-msgstr "Nieuwe Profielnaam"
+msgstr "Nieuw Profielnaam:"
 
 msgid "DELETE PROFILE"
 msgstr "VERWIJDER PROFIEL"
@@ -460,16 +460,16 @@ msgid "SETTINGS"
 msgstr "INSTELLINGEN"
 
 msgid "Server Name:"
-msgstr "Server naam:"
+msgstr "Server Naam:"
 
 msgid "Maximum Players:"
 msgstr "Maximale Spelers:"
 
 msgid "Auto-Configure Server:"
-msgstr "Auto-Configureer Server"
+msgstr "Auto-Configureer Server:"
 
 msgid "Dedicated Server:"
-msgstr "Dedicated Server"
+msgstr "Toegewijde Server:"
 
 msgid "Password:"
 msgstr "Wachtwoord:"
@@ -487,10 +487,10 @@ msgid "Max Lives"
 msgstr "Max Levens"
 
 msgid "Weapon Restrictions"
-msgstr "Wapen beperkingen"
+msgstr "Wapen Beperkingen"
 
 msgid "Balanced Teams"
-msgstr "Gebalanceerde teams"
+msgstr "Gebalanceerde Teams"
 
 msgid "NAME"
 msgstr "NAAM"
@@ -520,10 +520,10 @@ msgid "Maximum Game Rate:"
 msgstr "Maximum Game Rate:"
 
 msgid "Player Inactivity:"
-msgstr "Speler Inactiviteit"
+msgstr "Speler Inactiviteit:"
 
 msgid "Spectator Inactivity:"
-msgstr "Toeschouwer Inactiviteit"
+msgstr "Toeschouwer Inactiviteit:"
 
 msgid "Intermission Time:"
 msgstr "Pauze Tijd:"
@@ -550,7 +550,7 @@ msgid "Mute Spectators:"
 msgstr "Mute Toeschouwers:"
 
 msgid "Warmup Damage:"
-msgstr "Warmup schade:"
+msgstr "Opwarm schade:"
 
 msgid "Max Players Per Team:"
 msgstr "Max Spelers Per Team:"
@@ -559,7 +559,7 @@ msgid "Disable Team Controls:"
 msgstr "Team Controle Uit:"
 
 msgid "Warmup Duration:"
-msgstr "Duur Warmup:"
+msgstr "Duur Opwarmen:"
 
 msgid "Maximum Complaints:"
 msgstr "Maximale Klachten:"
@@ -577,7 +577,7 @@ msgid "Axis Spawn Time:"
 msgstr "Axis Spawn Tijd:"
 
 msgid "Allied Max Lives:"
-msgstr "Allied Max Levens::"
+msgstr "Allied Max Levens:"
 
 msgid "Axis Max Lives:"
 msgstr "Axis Max Levens:"
@@ -598,19 +598,19 @@ msgid "LMS Spectate Team Only:"
 msgstr "LMS Kijk Alleen Team Toe:"
 
 msgid "LMS Locked Teams:"
-msgstr "LMS Gesloten Teams:"
+msgstr "LMS Vergrendelde Teams:"
 
 msgid "ADMIN"
 msgstr "ADMIN"
 
 msgid "Pure Server:"
-msgstr "Pure Server"
+msgstr "Pure Server:"
 
 msgid "Referee Password:"
 msgstr "Scheidsrechter Wachtwoord:"
 
 msgid "RCON Password:"
-msgstr "RCON Wachtwoord"
+msgstr "RCON Wachtwoord:"
 
 msgid "VOTING"
 msgstr "STEMMEN"
@@ -637,7 +637,7 @@ msgid "Match Reset:"
 msgstr "Wedstrijd Reset:"
 
 msgid "Mute Spects:"
-msgstr "MUTE Toesch.:"
+msgstr "Mute Toesch.:"
 
 msgid "Next Map:"
 msgstr "Volgende Map:"
@@ -652,7 +652,7 @@ msgid "Referee:"
 msgstr "Scheidsrechter:"
 
 msgid "XP Shuffle:"
-msgstr "XP Shuffle:"
+msgstr "XP Mix:"
 
 msgid "Swap Teams:"
 msgstr "Teams Wisselen:"
@@ -685,13 +685,13 @@ msgid "DOWNLOAD"
 msgstr "DOWNLOAD"
 
 msgid "Client Downloads:"
-msgstr "Client Downloads"
+msgstr "Client Downloads:"
 
 msgid "Maximum Download Rate:"
-msgstr "Max Download Snelheid"
+msgstr "Max Download Snelheid:"
 
 msgid "FTP/HTTP Redirects:"
-msgstr "FTP/HTTP Omleidingen"
+msgstr "FTP/HTTP Omleidingen:"
 
 msgid "Base URL:"
 msgstr "Basis URL:"
@@ -706,7 +706,7 @@ msgid "MISC"
 msgstr "OVERIG"
 
 msgid "Country Flags:"
-msgstr "Landenvlag"
+msgstr "Landvlaggen:"
 
 msgid "DEFAULT SERVER SETTINGS"
 msgstr "STANDAARD SERVER INSTELLINGEN"
@@ -715,10 +715,10 @@ msgid "Reset server settings to default?"
 msgstr "Server instelling terugzetten naar standaard?"
 
 msgid "START DEDICATED SERVER"
-msgstr "START DEDICATED SERVER"
+msgstr "START TOEGEWIJDE SERVER"
 
 msgid "Starting a Dedicated Server will"
-msgstr "Wanneer je een Dedicated Server start"
+msgstr "Wanneer je een Toegewijde Server start"
 
 msgid "close the game window and open the"
 msgstr "zal het game scherm gesloten worden en"
@@ -733,10 +733,10 @@ msgid "Are you sure you want to start"
 msgstr "Ben je er zeker van dat je een"
 
 msgid "a Dedicated Server?"
-msgstr "Dedicated Server wil starten?"
+msgstr "Toegewijde Server wil starten?"
 
 msgid "LOAD MOD"
-msgstr "LAAD MOD"
+msgstr "LAAD MODE"
 
 msgid "VIEW"
 msgstr "ZICHT"
@@ -778,7 +778,7 @@ msgid "Autoswitch:"
 msgstr "Automatisch Wisselen:"
 
 msgid "Weapon Icon Knipperen:"
-msgstr "Wapen Icoon Flit:s"
+msgstr "Wapen Icoon Flits:"
 
 msgid "Muzzle Flash:"
 msgstr "Vuur Flits:"
@@ -790,31 +790,31 @@ msgid "SCOPE"
 msgstr "VIZIER"
 
 msgid "Weapon Cycle for Zoom:"
-msgstr "Wapen Verander Zoom"
+msgstr "Wapen Verander Zoom:"
 
 msgid "Default Zoom Level:"
-msgstr "Standaard Zoom level"
+msgstr "Standaard Zoom level:"
 
 msgid "Zoom Levels:"
-msgstr "Zoom Levels"
+msgstr "Zoom Levels:"
 
 msgid "CHAT"
 msgstr "CHAT"
 
 msgid "Quick Chat Mode:"
-msgstr "Snelle Chat Mode"
+msgstr "Snelle Chat Mode:"
 
 msgid "Chat Icon Time:"
-msgstr "Chat Icoon Tijd"
+msgstr "Chat Icoon Tijd:"
 
 msgid "Team chat only:"
-msgstr "Alleen Team Chat"
+msgstr "Alleen Team Chat:"
 
 msgid "No voice chat:"
 msgstr "Geen spraakberichten:"
 
 msgid "No voice text:"
-msgstr "Geen spraaktekst"
+msgstr "Geen spraaktekst:"
 
 msgid "MISCELLANEOUS"
 msgstr "DIVERSEN"
@@ -874,7 +874,7 @@ msgid "Switch HUD:"
 msgstr "Wissel HUD:"
 
 msgid "Modify Alternate HUD:"
-msgstr "Wijzig alternatieve HUD:"
+msgstr "Wijzig Alternatieve HUD:"
 
 msgid "IN-GAME DISPLAY"
 msgstr "IN-GAME SCHERM"
@@ -898,7 +898,7 @@ msgid "Blood Flash:"
 msgstr "Bloed Vlekken:"
 
 msgid "Blood Splatter:"
-msgstr "Bloedspetters:"
+msgstr "Bloed Spetters:"
 
 msgid "Show Blood:"
 msgstr "Laat Bloed Zien:"
@@ -1021,7 +1021,7 @@ msgid "Show Limbo Menu:"
 msgstr "Laat Limbo Menu Zien:"
 
 msgid "Show Command Map:"
-msgstr "Laat Command Map Zien:"
+msgstr "Laat Commando Map Zien:"
 
 msgid "Compass Map Zoom In:"
 msgstr "Kompas Map Zoom In:"
@@ -1199,7 +1199,7 @@ msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
 msgstr "Fine-Tuning Helderheid (32 bit Textures en Kleur Diepte)"
 
 msgid "1. Move the slider below until you can see 3 separate bars below."
-msgstr "1. Verstel de inderstaande balk tot je hieronder 3 verschillende blokken kan zien."
+msgstr "1. Verstel de onderstaande balk tot je hieronder 3 verschillende blokken kan zien."
 
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
@@ -1227,7 +1227,7 @@ msgid "Intensity:"
 msgstr "Intensiteit:"
 
 msgid "Map overbright bits:"
-msgstr "Map Overhelderheid bits:"
+msgstr "Map overhelderheid bits:"
 
 msgid "Overbright Bits:"
 msgstr "Overhelderheid Bits:"
@@ -1251,7 +1251,7 @@ msgid "Texture Quality:"
 msgstr "Kwaliteit Textures:"
 
 msgid "Texture Filter:"
-msgstr "Textures filter:"
+msgstr "Textures Filter:"
 
 msgid "Anisotropic Filter:"
 msgstr "Anisotropic Filter:"
@@ -1266,7 +1266,7 @@ msgid "Depth Buffer:"
 msgstr "Diepte Buffer:"
 
 msgid "Compress Textures:"
-msgstr "Gecompimeerde Textures:"
+msgstr "Gecomprimeerde Textures:"
 
 msgid "Sync Every Frame:"
 msgstr "Sync Elke Frame:"
@@ -1281,10 +1281,10 @@ msgid "^3DEVELOPED BY ET LEGACY TEAM"
 msgstr "^3ONTWIKKELD DOOR ET LEGACY TEAM"
 
 msgid "^1PROGRAMMING"
-msgstr "PROGRAMMERING"
+msgstr "^1PROGRAMMERING"
 
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
-msgstr "Jan 'Radegast' Simek - PRoject Oprichter, coding & management"
+msgstr "Jan 'Radegast' Simek - Project founder, coding & management"
 
 msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
 msgstr "Olaf 'IR4T4' R. - Coding, mod ontwikkeling & bad boy"
@@ -1296,7 +1296,7 @@ msgid "Jere 'Jacker' S. - Main windows coder & renderer"
 msgstr "Jere 'Jacker' S. - Main windows coder & renderer"
 
 msgid "^1CONTRIBUTORS"
-msgstr "BIJDRAGE"
+msgstr "^1BIJDRAGE"
 
 msgid "^1GREETINGS"
 msgstr "^1GROETEN"
@@ -1446,13 +1446,13 @@ msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
 msgstr ""
-"Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
+"Wolfenstein: Enemy Territory is gemaakt door id Software's Quake III Arena "
 "(TM) technology."
 
 msgid ""
 "Production, development and technical assistance provided by id Software."
 msgstr ""
-"Production, development and technical assistance provided by id Software."
+"Produktie, ontwikkeling en technische ondersteuning gedaan door id Software."
 
 msgid "PRODUCED BY ACTIVISION"
 msgstr "PRODUCED BY ACTIVISION"
@@ -1527,169 +1527,181 @@ msgid ""
 "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
 "Kannard, Cory Rice"
 msgstr ""
+"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+"Kannard, Cory Rice"
 
 msgid ""
 "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
 "Martin, Jim Call"
 msgstr ""
+"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+"Martin, Jim Call"
 
 msgid ""
 "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
 "Lawrence Wong"
 msgstr ""
+"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+"Lawrence Wong"
 
 msgid ""
 "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
 "Todd, Mike Restifo"
 msgstr ""
+"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+"Todd, Mike Restifo"
 
 msgid "Chris Keim"
-msgstr ""
+msgstr "Chris Keim"
 
 msgid "Network"
-msgstr ""
+msgstr "Network"
 
 msgid "Neil Barizo"
-msgstr ""
+msgstr "Neil Barizo"
 
 msgid "Compatibility"
-msgstr ""
+msgstr "Compatibility"
 
 msgid "Marilena Rixford"
-msgstr ""
+msgstr "Marilena Rixford"
 
 msgid "QA Manager"
-msgstr ""
+msgstr "QA Manager"
 
 msgid "Tim Vanlaw"
-msgstr ""
+msgstr "Tim Vanlaw"
 
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Manager, Code Release Group"
 
 msgid "Jason Levine"
-msgstr ""
+msgstr "Jason Levine"
 
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Sr. Lead, Code Release Group"
 
 msgid "Jef Sedivy"
-msgstr ""
+msgstr "Jef Sedivy"
 
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "Lead, Code Release Group"
 
 msgid "Bob McPherson"
-msgstr ""
+msgstr "Bob McPherson"
 
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "Manager, Customer Support"
 
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "ADDITIONAL DEVELOPMENT"
 
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr ""
+msgstr "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
 
 msgid "Jason 'Rhea' Keimig"
-msgstr ""
+msgstr "Jason 'Rhea' Keimig"
 
 msgid "Programming"
-msgstr ""
+msgstr "Programming"
 
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr ""
+msgstr "PUNKBUSTER BY EVEN BALANCE, INC."
 
 msgid "Tony Ray"
-msgstr ""
+msgstr "Tony Ray"
 
 msgid "President"
-msgstr ""
+msgstr "President"
 
 msgid "Bjrn Christoph"
-msgstr ""
+msgstr "Bjrn Christoph"
 
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "Senior Project Leader"
 
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "VOICE ARTISTS"
 
 msgid "Drew Markham"
-msgstr ""
+msgstr "Drew Markham"
 
 msgid "Voice of Allied / Axis soldiers"
-msgstr ""
+msgstr "Voice of Allied / Axis soldiers"
 
 msgid "Neil Ross"
-msgstr ""
+msgstr "Neil Ross"
 
 msgid "Voice of Axis Commander"
-msgstr ""
+msgstr "Voice of Axis Commander"
 
 msgid "Granville van Dusen"
-msgstr ""
+msgstr "Granville van Dusen"
 
 msgid "Voice of Allied Commander"
-msgstr ""
+msgstr "Voice of Allied Commander"
 
 msgid "SPECIAL THANKS TO"
-msgstr ""
+msgstr "SPECIAL THANKS TO"
 
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
 msgstr ""
+"Return to Castle Wolfenstein is ontwikkeld door Gray Matter Studios & Nerve "
+"Software."
 
 msgid "We would like to thank both developers for their help and support"
-msgstr ""
+msgstr "We bedanken beide ontwikkelaars voor hun hulp en ondersteuning"
 
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr ""
+msgstr "gedurende de ontwikkeling van Wolfenstein: Enemy Territory."
 
 msgid "Original Soundtrack by Bill Brown."
-msgstr ""
+msgstr "Originele Soundtrack by Bill Brown."
 
 msgid "ET 2.60 UPDATE"
-msgstr ""
+msgstr "ET 2.60 UPDATE"
 
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr ""
+msgstr "ET PRO DEVELOPMENT TEAM"
 
 msgid "Dan 'bani' Hollis"
-msgstr ""
+msgstr "Dan 'bani' Hollis"
 
 msgid "Ben 'Rain' Winslow"
-msgstr ""
+msgstr "Ben 'Rain' Winslow"
 
 msgid "Frederik 'fretn' Delaere"
-msgstr ""
+msgstr "Frederik 'fretn' Delaere"
 
 msgid "Chris 'Zinx' Lais"
-msgstr ""
+msgstr "Chris 'Zinx' Lais"
 
 msgid "Joe 'Majikthise' D."
-msgstr ""
+msgstr "Joe 'Majikthise' D."
 
 msgid "ET Pro Logo"
-msgstr ""
+msgstr "ET Pro Logo"
 
 msgid "MAC OS X PORT"
-msgstr ""
+msgstr "MAC OS X PORT"
 
 msgid "Brad Oliver"
-msgstr ""
+msgstr "Brad Oliver"
 
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
 msgstr ""
+"Mac OS X is een handelsmerk van Apple Computer, Inc., geregistreerd in de V.S. en "
+"andere landen."
 
 msgid "ET Legacy Website"
-msgstr ""
+msgstr "ET Legacy Website"
 
 msgid "?2012-2013 ET Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr "?2012-2013 ET Legacy Team - under the terms of GPL version 3."
 
 msgid ""
 "?2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
@@ -1699,6 +1711,12 @@ msgid ""
 "All other trademarks and trade names are the properties of their respective "
 "owners."
 msgstr ""
+"?2003 Id Software, Inc. Alle rechten voorbehouden. Wolfenstein: Enemy Territory, "
+"Return to Castle Wolfenstein, de Return to Castle Wolfenstein logo, de id "
+"Software naam, en het id logo zijn of geregistreede handelsnamen of "
+"handelsnamen van Id Software, Inc. in de Verenigde Staten en/of andere landen. "
+"Alle andere handelsmerken en handelsnamen zijn eigendom van hun creative "
+"eigenaren."
 
 msgid "Yeah, right, like YOU have"
 msgstr "Tuurlijk, alsof je"
@@ -1734,7 +1752,7 @@ msgid "Apply new settings?"
 msgstr "Nieuwe instellingen gebruiken?"
 
 msgid "CONFIRM VIDEO CHANGE"
-msgstr "BEVESTIG VIEO INSTELLINGEN"
+msgstr "BEVESTIG VIDEO INSTELLINGEN"
 
 msgid "Use this video mode?"
 msgstr "Gebruik deze video instelling?"
@@ -1772,43 +1790,43 @@ msgid "O. Objectives"
 msgstr "O. Doel"
 
 msgid "P. Path Cleared."
-msgstr "P. Weg vrij"
+msgstr "P. Weg Vrij."
 
 msgid "C. All Clear"
-msgstr "C. Alles vrij"
+msgstr "C. Alles Vrij"
 
 msgid "I. Incoming"
 msgstr "I. Inkomend"
 
 msgid "F. Fire In The Hole!"
-msgstr "F. Pas op, ik schiet!"
+msgstr "F. Pas Op, Ik Schiet!"
 
 msgid "D. I'm Defending."
-msgstr "D. Ik verdedig."
+msgstr "D. Ik Verdedig."
 
 msgid "A. I'm Attacking."
-msgstr "A. Ik val aan."
+msgstr "A. Ik Val Aan."
 
 msgid "T. Taking Fire!"
-msgstr "T. Ik lig onder vuur"
+msgstr "T. Ik Lig Onder Vuur!"
 
 msgid "M. Mines Cleared"
-msgstr "M. Mijnen verwijderd"
+msgstr "M. Mijnen Verwijderd"
 
 msgid "E. Enemy Disguised"
-msgstr "E. Vermomde vijand"
+msgstr "E. Vermomde Vijand"
 
 msgid "M. Need Medic!"
-msgstr "M. Heb Medic Nodig!"
+msgstr "M. Heb Hospik Nodig!"
 
 msgid "A. Need Ammo!"
 msgstr "A. Heb Munitie Nodig!"
 
 msgid "B. Need Backup!"
-msgstr "B. Heb Ondersteuning nodig!"
+msgstr "B. Heb Ondersteuning Nodig!"
 
 msgid "E. Need Engineer!"
-msgstr "E. Heb een ingenieur nodig!"
+msgstr "E. Heb Een Genist Nodig!"
 
 msgid "C. Cover Me!"
 msgstr "C. Zorg Voor Dekking!"
@@ -1817,13 +1835,13 @@ msgid "H. Hold Fire!"
 msgstr "H. Staakt het Vuren!"
 
 msgid "W. Where To?"
-msgstr "W. Waar naar Toe?"
+msgstr "W. Waar Naar Toe?"
 
 msgid "O. Need Covert Ops!"
-msgstr "O. Heb Een Covert nodig!"
+msgstr "O. Heb Een Covert Nodig!"
 
 msgid "F. Follow Me!"
-msgstr "F. Volg mij!"
+msgstr "F. Volg Mij!"
 
 msgid "G. Let's Go!"
 msgstr "G. Laten We Gaan!"
@@ -1886,7 +1904,7 @@ msgid "G. More Globals"
 msgstr "G. Meer Algemeen"
 
 msgid "G. Good Game"
-msgstr "G. Goed Spel"
+msgstr "G. Goed Gespeeld"
 
 msgid "A. Command Acknowledged"
 msgstr "A. Commando Begrepen"
@@ -1916,7 +1934,7 @@ msgid "V. Disable Vehicle"
 msgstr "V. Vernietig Voertuig"
 
 msgid "E. Escort Vehicle"
-msgstr "E. Escorteer Voertuig"
+msgstr "E. Begeleid Voertuig"
 
 msgid "1. Statements"
 msgstr "1. Uitspraken"
@@ -1952,7 +1970,7 @@ msgid "4. Incoming"
 msgstr "4. Inkomend"
 
 msgid "5. Fire In The Hole!"
-msgstr "5. Pas op, ik schiet!"
+msgstr "5. Pas Op, Ik Schiet!"
 
 msgid "6. I'm Defending."
 msgstr "6. Ik Verdedig."
@@ -1970,7 +1988,7 @@ msgid "0. Enemy Disguised"
 msgstr "0. Vermomde Vijand"
 
 msgid "1. Need Medic!"
-msgstr "1. Heb Medic Nodig!"
+msgstr "1. Heb Hospik Nodig!"
 
 msgid "2. Need Ammo!"
 msgstr "2. Heb Munitie Nodig!"
@@ -1979,7 +1997,7 @@ msgid "3. Need Backup!"
 msgstr "3. Heb Ondersteuning nodig!"
 
 msgid "4. Need Engineer!"
-msgstr "4. Heb Ingenieur nodig!"
+msgstr "4. Heb Genist nodig!"
 
 msgid "5. Cover Me!"
 msgstr "5. Zorg Voor Dekking!"
@@ -1991,7 +2009,7 @@ msgid "7. Where To?"
 msgstr "7. Waar Naar Toe?"
 
 msgid "8. Need Covert Ops!"
-msgstr "8. Heb Covert Nodig!"
+msgstr "8. Heb Spion Nodig!"
 
 msgid "1. Follow Me!"
 msgstr "1. Volg Mij!"
@@ -2072,7 +2090,7 @@ msgid "5. Hold Fire!"
 msgstr "5. Staakt Het Vuren!"
 
 msgid "6. Good Game"
-msgstr "6. Goed Spel"
+msgstr "6. Goed Gespeeld"
 
 msgid "1. Command Acknowledged"
 msgstr "1. Commando Begrepen"
@@ -2102,88 +2120,88 @@ msgid "9. Disable Vehicle"
 msgstr "9. Vernietig Voertuig"
 
 msgid "0. Escort Vehicle"
-msgstr "0. Begeleidt Voertuig"
+msgstr "0. Begeleid Voertuig"
 
 msgid "Path cleared."
 msgstr "Weg Vrij."
 
 msgid "The enemy is weakened."
-msgstr "De Vijand Is Verzwakt."
+msgstr "De vijand is verzwakt."
 
 msgid "All clear."
-msgstr "Alles Vrij."
+msgstr "Alles vrij."
 
 msgid "Incoming!"
 msgstr "Inkomend!"
 
 msgid "Fire in the hole!"
-msgstr "Pas Op, Ik Schiet!"
+msgstr "Pas op, ik schiet!"
 
 msgid "I'm on defense."
-msgstr "Ik Verdedig."
+msgstr "Ik verdedig."
 
 msgid "I'm on offense."
-msgstr "Ik Val Aan."
+msgstr "Ik val aan."
 
 msgid "Taking fire!"
-msgstr "Onder Vuur!"
+msgstr "Onder vuur!"
 
 msgid "Mines cleared."
-msgstr "Mijnen Verwijderd."
+msgstr "Mijnen verwijderd."
 
 msgid "Enemy in disguise."
-msgstr "Vermomde Vijand."
+msgstr "Vermomde vijand."
 
 msgid "Need a Medic!"
-msgstr "Heb Een Medic Nodig!"
+msgstr "Heb een hospik nodig!"
 
 msgid "I need ammo!"
-msgstr "Heb Munitie Nodig!"
+msgstr "Heb munitie nodig!"
 
 msgid "I need backup!"
-msgstr "Heb Ondersteuning Nodig!"
+msgstr "Heb ondersteuning nodig!"
 
 msgid "We need an engineer!"
-msgstr "Heb Een Ingenieur Nodig!"
+msgstr "Heb een genist nodig!"
 
 msgid "Cover me!"
-msgstr "Zorg Voor Dekking!"
+msgstr "Zorg voor dekking!"
 
 msgid "Hold your fire!"
-msgstr "Staakt Het Vuren!"
+msgstr "Staakt het vuren!"
 
 msgid "Where to?"
-msgstr "Warr Naar Toe?"
+msgstr "Waar naar toe?"
 
 msgid "We need Covert Ops!"
-msgstr "We Hebben Een Covert Nodig!"
+msgstr "We hebben een spion nodig!"
 
 msgid "Follow me!"
-msgstr "Volg Mij!"
+msgstr "Volg mij!"
 
 msgid "Let's go!"
-msgstr "Laten We Gaan!"
+msgstr "Laten we gaan!"
 
 msgid "Move!"
 msgstr "Ga!"
 
 msgid "Clear the path!"
-msgstr "Maak De Weg Vrij!"
+msgstr "Maak de weg vrij!"
 
 msgid "Defend our objective!"
-msgstr "Verdedig Ons Object!"
+msgstr "Verdedig ons object!"
 
 msgid "Disarm the dynamite!"
-msgstr "Ontmantel Het Dynamiet!"
+msgstr "Ontmantel het dynamiet!"
 
 msgid "Clear the mines!"
-msgstr "Verwijder De Mijnen!"
+msgstr "Verwijder de mijnen!"
 
 msgid "Reinforce the offense!"
-msgstr "Versterk Het Offensief!"
+msgstr "Versterk het offensief!"
 
 msgid "Reinforce the defense!"
-msgstr "VerSterk Het Defensief!"
+msgstr "Versterk het defensief!"
 
 msgid "Affirmative!"
 msgstr "Zeker!"
@@ -2192,13 +2210,13 @@ msgid "No!"
 msgstr "Nee!"
 
 msgid "Thank you!"
-msgstr "Dank Je!"
+msgstr "Dank je!"
 
 msgid "You're welcome."
-msgstr "Graag Gedaan."
+msgstr "Graag gedaan."
 
 msgid "Bitte sehr."
-msgstr "Graag Gedaan."
+msgstr "Graag gedaan."
 
 msgid "Ja!"
 msgstr "Ja!"
@@ -2207,7 +2225,7 @@ msgid "Nein!"
 msgstr "Nee!"
 
 msgid "Kein problem."
-msgstr "Geen Probleem."
+msgstr "Geen probleem."
 
 msgid "Sorry!"
 msgstr "Sorry!"
@@ -2234,16 +2252,16 @@ msgid "Hallo!"
 msgstr "Hallo!"
 
 msgid "Good bye."
-msgstr "Tot Ziens."
+msgstr "Tot ziens."
 
 msgid "Auf wiedersehen."
-msgstr "Tot Ziens."
+msgstr "Tot ziens."
 
 msgid "Bye."
 msgstr "Daag."
 
 msgid "Great shot!"
-msgstr "Mooi Schot!"
+msgstr "Mooi schot!"
 
 msgid "You got it, man!"
 msgstr "Jazeker, man!"
@@ -2267,13 +2285,13 @@ msgid "Yeehaa!"
 msgstr "Yeehaa!"
 
 msgid "'Atta way, baby!"
-msgstr "Uit De Weg, Kerel!"
+msgstr "Uit de weg, kerel!"
 
 msgid "Jahaa!"
 msgstr "Jahaa!"
 
 msgid "Wunderbar!"
-msgstr "Mooi Zo!"
+msgstr "Mooi zo!"
 
 msgid "Excellent!"
 msgstr "Super!"
@@ -2282,52 +2300,52 @@ msgid "Oh yes!"
 msgstr "Oh jaa!"
 
 msgid "Sehr gut!"
-msgstr "Zeer Goed!"
+msgstr "Zeer goed!"
 
 msgid "Thanks!"
-msgstr "Dank Je!"
+msgstr "Dank je!"
 
 msgid "Danke!"
-msgstr "Dank Je!"
+msgstr "Bedankt!"
 
 msgid "Danke sehr!"
-msgstr "Dank Je Wel!"
+msgstr "Dank je wel!"
 
 msgid "No problem."
-msgstr "Geen Probleem."
+msgstr "Geen probleem."
 
 msgid "Good game!"
-msgstr "Goed Spel!"
+msgstr "Goed gespeeld!"
 
 msgid "Command acknowledged!"
-msgstr "Commando Begrepen!"
+msgstr "Commando begrepen!"
 
 msgid "Command declined!"
-msgstr "Commando Afgewezen!"
+msgstr "Commando afgewezen!"
 
 msgid "Command completed!"
-msgstr "Commando Uitgevoerd!"
+msgstr "Commando uitgevoerd!"
 
 msgid "Destroy primary objective!"
-msgstr "Vernietig Primair Object!"
+msgstr "Vernietig primair object!"
 
 msgid "Destroy secondary objective!"
-msgstr "Vernietig Secundair Object!"
+msgstr "Vernietig secundair object!"
 
 msgid "Destroy construction!"
-msgstr "Vernietig Constructie!"
+msgstr "Vernietig constructie!"
 
 msgid "I'm constructing!"
-msgstr "Ik Ben Aan Het Bouwen!"
+msgstr "Ik ben aan het bouwen!"
 
 msgid "Repair the vehicle!"
-msgstr "Repareer Het Voertuig!"
+msgstr "Repareer het voertuig!"
 
 msgid "Disable the vehicle!"
-msgstr "Vernietig Het Voertuig!"
+msgstr "Vernietig het voertuig!"
 
 msgid "Escort the vehicle!"
-msgstr "Begeleid Het Voertuig!"
+msgstr "Begeleid het voertuig!"
 
 msgid "Covering fire!"
 msgstr "Dekkingsvuur!"
@@ -2336,10 +2354,10 @@ msgid "I'm a soldier."
 msgstr "Ik ben een soldaat."
 
 msgid "I'm an engineer."
-msgstr "Ik ben een ingenieur."
+msgstr "Ik ben een genist."
 
 msgid "I'm a medic."
-msgstr "Ik ben een medic."
+msgstr "Ik ben een hospik."
 
 msgid "I'm a field ops."
 msgstr "Ik ben een artillerist."
@@ -2378,7 +2396,7 @@ msgid "MAP"
 msgstr "MAP"
 
 msgid "Voting is disabled"
-msgstr "Stemmen niet toegestaan"
+msgstr "Stemmen is niet toegestaan"
 
 msgid "on this server."
 msgstr "op deze server."
@@ -2405,7 +2423,7 @@ msgid "ANTI-LAG OFF"
 msgstr "ANTI-LAG UIT"
 
 msgid "XP SHUFFLE"
-msgstr "XP MIXEN"
+msgstr "XP SHUFFLE"
 
 msgid "SWAP TEAMS"
 msgstr "WISSEL TEAMS"
@@ -2578,13 +2596,13 @@ msgstr ""
 "Wil je www.etlegacy openen?"
 
 msgid "^1LET'S KEEP ET ALIVE!"
-msgstr "^LATEN WE ET LEVENDIG HOUDEN!"
+msgstr "^1LATEN WE ET LEVEND HOUDEN!"
 
 msgid "^3Thank you for installing ET:Legacy"
 msgstr "^3Bedankt voor het installeren van ET:Legacy"
 
 msgid "HOST GAME: EXTENDED"
-msgstr "ORGANISEER SPEL: UITGEBREID"
+msgstr "ORGANISEER: UITGEBREID"
 
 msgid "CLEAN"
 msgstr "OPSCHONEN"
@@ -2606,10 +2624,10 @@ msgstr ""
 " campagne- en eigen pk3 bestanden."
 
 msgid "^3WARNING: Use at your own risk!"
-msgstr "^3WAARSCHUWING: gebruik is op eigen risico!"
+msgstr "^3WAARSCHUWING: Gebruik is op eigen risico!"
 
 msgid "Consult our wiki for documentation."
-msgstr "Raadpleeg onze wiki voor naslag"
+msgstr "Raadpleeg onze wiki voor naslag."
 
 msgid "Press 'ABORT' if you don't know what you are doing here."
 msgstr "Klik 'ANNULEER' als je niet weet wat je doet."
@@ -2633,7 +2651,7 @@ msgid "Server:"
 msgstr "Server:"
 
 msgid "changed to"
-msgstr "vernader in"
+msgstr "verander in"
 
 msgid "Auto Map Zoom:"
 msgstr "Auto Map Zoom:"
@@ -2651,7 +2669,7 @@ msgid "Landmine armed..."
 msgstr "Landmijn geactiveerd..."
 
 msgid "Dynamite is set, but NOT armed!"
-msgstr "Dynamiet is gelegd, maar niet geactiveerd!"
+msgstr "Dynamiet is gelegd, maar NIET geactiveerd!"
 
 msgid "Arming dynamite..."
 msgstr "Dynamiet activeren..."
@@ -2663,7 +2681,7 @@ msgid "Defusing landmine"
 msgstr "Landmijn ontmantelen"
 
 msgid "Landmine defused..."
-msgstr "Landmijn ontmantelt"
+msgstr "Landmijn ontmantelt..."
 
 msgid "Defusing dynamite..."
 msgstr "Dynamiet ontmantelen..."
@@ -2699,13 +2717,13 @@ msgid "vaporized himself"
 msgstr "verdampte zichzelf"
 
 msgid "never saw his own mortar round coming"
-msgstr "zag niet zijn eigen mortier aankomen"
+msgstr "zag zijn eigen mortier niet aankomen"
 
 msgid "killed himself"
-msgstr "doodde zichzelf"
+msgstr "heeft zichzelf gedood"
 
 msgid "ate his own rifle grenade"
-msgstr "at zijn eigen granaat van zijn geweer"
+msgstr "at zijn eigen granaat van zijn granaatgeweer"
 
 msgid "obliterated himself"
 msgstr "vernietigde zichzelf"
@@ -2736,7 +2754,7 @@ msgid "was stabbed by"
 msgstr "is neergestoken door"
 
 msgid "was exploded by"
-msgstr "explodeerde door"
+msgstr "is geexplodeerde door"
 
 msgid "was blasted by"
 msgstr "is geexplodeerd door"
@@ -2748,7 +2766,7 @@ msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr "^1Anti Spam^7: VoiceChat genegeerd"
 
 msgid "I need a Medic!"
-msgstr "Ik heb een Medic nodig!"
+msgstr "Ik heb een Hospik nodig!"
 
 msgid "entered the game\n"
 msgstr "is het spel binnengekomen\n"
@@ -2790,7 +2808,7 @@ msgid "'s crew-served MG"
 msgstr "'s bemanningsbediende MG"
 
 msgid "was thrown to his doom by"
-msgstr "is naar zijn nodlot gegooid door"
+msgstr "is naar zijn noodlot gegooid door"
 
 msgid "You have been revived by "
 msgstr "Er is nieuw leven in je geblazen door "
@@ -2835,10 +2853,10 @@ msgid "The Old City MG Nest has been damaged!"
 msgstr "De Old City MG opstelling is beschadigd!"
 
 msgid "Axis team has destroyed the Allied Command Post!"
-msgstr "Het Axis team hebben de Commando Post vernietigd!"
+msgstr "Het Axis team heeft de Commando Post vernietigd!"
 
 msgid "Allies have breached the Old City wall"
-msgstr "De Allies hebben de Old City muur doorbroken"
+msgstr "De Allies heeft de Old City muur doorbroken"
 
 msgid "drowned"
 msgstr "verdronken"
@@ -2859,10 +2877,10 @@ msgid "Spectators"
 msgstr "Toeschouwers"
 
 msgid "You must be a player or following a player to use +stats\n"
-msgstr "Je moet een speler zijn of een speler volgen om +stats\n te gebruiken"
+msgstr "Je moet een speler zijn of een speler volgen om +stats te gebruiken\n"
 
 msgid "^9You must be alive to use ^3/kill."
-msgstr "^9Je moet levend zijn om ^3/kill te gebruiken."
+msgstr "^9Je moet levend zijn om ^3/kill ^9te gebruiken."
 
 msgid "No vote in progress.\n"
 msgstr "Geen stemming op dit moment.\n"
@@ -2871,13 +2889,13 @@ msgid "Show Clock:"
 msgstr "Toon klok:"
 
 msgid "No or bad challenge for address.\n"
-msgstr "Geen of verkeerde uitdaging voor adres.\n"
+msgstr "Geen of verkeerde aanroep voor adres.\n"
 
 msgid "Match is already in progress!\n"
 msgstr "Wedstrijd is al begonnen!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
-msgstr "^1** Verandering van Scheidsrechter Server Instelling **\n"
+msgstr "^1** Verandering van Server Instelling door Scheidsrechter **\n"
 
 msgid "committed suicide"
 msgstr "pleegde zelfmoord"
@@ -2889,21 +2907,21 @@ msgid "Your fireteam is now private"
 msgstr "Je Fireteam is nu prive"
 
 msgid "The Allies have too many players.\n"
-msgstr "De Allies hebben teveel spelers.\n"
+msgstr "De Allies hebben al teveel spelers.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr "De Axis hebben teveel spelers.\n"
+msgstr "De Axis hebben al teveel spelers.\n"
 
 msgid "Attack!"
-msgstr "Val Aan!"
+msgstr "Val aan!"
 
 msgid "Fall back!"
-msgstr "Val Terug!"
+msgstr "Val terug!"
 
 #: src/cgame/cg_players.c:315
 #, c-format
 msgid "Promoted to rank %s!"
-msgstr "Gepromoveerd tot rank %s!"
+msgstr "Gepromoveerd tot rang %s!"
 
 #: src/cgame/cg_players.c:365
 #, c-format
@@ -2923,7 +2941,7 @@ msgstr "Geplant bij %s."
 #: src/cgame/cg_popupmessages.c:587
 #, c-format
 msgid "Defused at %s."
-msgstr "Ontmantelt bij %s."
+msgstr "Ontmanteld bij %s."
 
 #: src/cgame/cg_popupmessages.c:596
 #, c-format
@@ -2943,17 +2961,17 @@ msgstr "%s is vernietigd."
 #: src/cgame/cg_popupmessages.c:627
 #, c-format
 msgid "%sSpotted by ^7%s%s at %s"
-msgstr "%sGespot bij ^7%s%s bij %s"
+msgstr "%sGespot door ^7%s%s bij %s"
 
 #: src/cgame/cg_popupmessages.c:631
 #, c-format
 msgid "%sSpotted by ^7%s"
-msgstr "%sGespot bij ^7%s"
+msgstr "%sGespot door ^7%s"
 
 #: src/cgame/cg_popupmessages.c:638
 #, c-format
 msgid "%s have stolen %s!"
-msgstr "%s heeft %s gestolen!"
+msgstr "%s stal %s!"
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
 #: src/cgame/cg_consolecmds.c:1207
@@ -2967,7 +2985,7 @@ msgstr "Allies"
 #: src/cgame/cg_popupmessages.c:640
 #, c-format
 msgid "%s have returned %s!"
-msgstr "%s heeft %s teruggebracht!"
+msgstr "%s retourneerde %s!"
 
 #: src/cgame/cg_popupmessages.c:666
 #, c-format
@@ -2978,7 +2996,7 @@ msgid "Improved use of Explosive Ammunition"
 msgstr "Verbeterd gebruik van Explosieven"
 
 msgid "Improved Dexterity"
-msgstr "Verbeterde Uithoudingsvermogen"
+msgstr "Verbeterd Uithoudingsvermogen"
 
 msgid "Improved Construction and Destruction"
 msgstr "Verbeterde Constructie en Destructie"
@@ -3005,13 +3023,13 @@ msgid "Improved Signals"
 msgstr "Verbeterde Signalen"
 
 msgid "Improved Air and Ground Support"
-msgstr "Verbeterde Lucht en Grond Ondersteuning"
+msgstr "Verbeterde Lucht- en Grondondersteuning"
 
 msgid "Enemy Recognition"
 msgstr "Vijand Herkenninng"
 
 msgid "Medic Ammo"
-msgstr "Medic Munitie"
+msgstr "Hospik Munitie"
 
 msgid "Binoculars for any Class"
 msgstr "Verrekijker voor elke Class"
@@ -3050,7 +3068,7 @@ msgid "Improved Light Weapon Handling"
 msgstr "Verbeterde Lichte Wapens Hantering"
 
 msgid "Dual-Wield Pistols"
-msgstr "Hanteer Twee Pistolen"
+msgstr "Twee Hanteerbare Pistolen"
 
 msgid "Allies have destroyed the North Anti-Tank Gun!"
 msgstr "De Allies hebben het Noordelijke Anti-Tank Kanon vernietigd!"
@@ -3065,7 +3083,7 @@ msgid "Allied team has destroyed the South Anti-Tank Gun!"
 msgstr "De Allies hebben het Zuidelijke Anti-Tank Kanon vernietigd!"
 
 msgid "Allies have destroyed both Anti-Tank Guns!"
-msgstr "De Allies hebben beide Anti_tank Kanonnen vernietigd!"
+msgstr "De Allies hebben beide Anti-tank Kanonnen vernietigd!"
 
 msgid "The Allied West beach MG Nest has been constructed."
 msgstr "De Allied Westelijke strand MG Opstelling is gebouwd."
@@ -3146,7 +3164,7 @@ msgid "Allied team has secured the second Gold Crate!"
 msgstr "Het Allied team heeft de tweede Goudkrat veiliggesteld!"
 
 msgid "Allied team is escaping with the Gold Crates!"
-msgstr "Het Allied team is gaat er het Goud aan het er vandoor!"
+msgstr "Het Allied team gaat er het Goud aan het er vandoor!"
 
 msgid "Allied team escaped with the Gold Crates!"
 msgstr "Het Allied team is ontsnapt met het Goud!"
@@ -3197,7 +3215,7 @@ msgid "Allies have breached the Main Entrance and secured the Forward Bunker!"
 msgstr "De Allies hebben de Hoofdingang doorbroken en de Voorwaartse Bunker veiliggesteld!"
 
 msgid "Allies have breached the Side Entrance!"
-msgstr "De Allies hebben de Ingang aan de Zijde doorbroken!"
+msgstr "De Allies hebben de Zijingang doorbroken!"
 
 msgid "The Bunker MG Nest has been destroyed."
 msgstr "De Bunker MG Opstelling is vernietigd."
@@ -3293,7 +3311,7 @@ msgid "Axis team has damaged the Bridge!"
 msgstr "Het Axis team heeft de Brug beschadigd!"
 
 msgid "Allied team has breached the Tunnel Doors!"
-msgstr "Het Allied team heeft de Tunnel doorbroken!"
+msgstr "Het Allied team is doorgebroken bij de Tunnel Deuren!"
 
 msgid "Allied team has destroyed the Tunnel MG!"
 msgstr "Het Allied team heeft de Tunnel MG vernietigd!"
@@ -3305,10 +3323,10 @@ msgid "Allied team has breached the Depot Gates!"
 msgstr "Het Allied team heeft de Depot Poorten doorbroken!"
 
 msgid "Allied team has constructed the Side MG Nest!"
-msgstr "Het Allied team heeft de MG pstelling aan de Zijde gebouwd!"
+msgstr "Het Allied team heeft de MG opstelling aan de Zijde gebouwd!"
 
 msgid "Allied team has breached the Depot Side Wall!"
-msgstr "Het Allied Team heeft de Depot Zijde Muur doorbroken!"
+msgstr "Het Allied Team heeft de Depot Zijmuur doorbroken!"
 
 msgid "Allied team has damaged the East Axis Base Fortification!"
 msgstr "Het Allied team heeft de Oostelijke Axis Basis Versteviging beschadigd!"
@@ -3323,7 +3341,7 @@ msgid "Allied team has destroyed the West Axis Base Fortification!"
 msgstr "Het Allied team heeft de Westelijke Axis Basis Versteviging beschadigd!"
 
 msgid "Allied team has destroyed the Axis Fuel Dump!"
-msgstr "Het Allied team heeft de AXIS Brandstof Depot vernietigd!"
+msgstr "Het Allied team heeft het Axis Brandstof Depot vernietigd!"
 
 msgid "was killed"
 msgstr "is gedood"
@@ -3383,7 +3401,7 @@ msgid "You are near the Generator\n"
 msgstr "Je bent in de buurt van de Generator\n"
 
 msgid "You are near the Gun Controls\n"
-msgstr "Je bent in de buurt van de Kanon Controls\n"
+msgstr "Je bent in de buurt van het Vuursysteem\n"
 
 msgid "You are near the Tank\n"
 msgstr "Je bent in de buurt van de Tank\n"
@@ -3419,13 +3437,13 @@ msgid "You are near the East Radar Parts\n"
 msgstr "Je bent in de buurt van de Oostelijke Radar Onderdelen\n"
 
 msgid "You are near the Side Entrance\n"
-msgstr "Je bent in de buurt van de Zijde Ingang\n"
+msgstr "Je bent in de buurt van de Zijingang\n"
 
 msgid "You are near the Bunker MG Nest\n"
 msgstr "Je bent in de buurt van de Bunker MG Opstelling\n"
 
 msgid "You are near the Escape Truck\n"
-msgstr "Je bent in de buurt van de Truck om te Ontsnappen\n"
+msgstr "Je bent in de buurt van de Truck om mee te Ontsnappen\n"
 
 msgid "You are near the Main Entrance\n"
 msgstr "Je bent in de buurt van de Hoofdingang\n"
@@ -3437,16 +3455,16 @@ msgid "You are near the East Axis Base Fortification\n"
 msgstr "Je bent in de buurt van de Oostelijke Axis Basis Versteviging\n"
 
 msgid "You are near the West Axis Base Fortification\n"
-msgstr "Je bent in de buurt van Westelijke Axis Basis Versteviging\n"
+msgstr "Je bent in de buurt van de Westelijke Axis Basis Versteviging\n"
 
 msgid "You are near the Fuel Dump\n"
-msgstr "Je bent in de buurt van de Brandstof Depot\n"
+msgstr "Je bent in de buurt van het Brandstof Depot\n"
 
 msgid "You are near the Fuel Depot Side Wall\n"
 msgstr "Je bent in de buurt van de Brandstof Depot Zijmuur\n"
 
 msgid "You are near the Fuel Depot Front Gates\n"
-msgstr "Je bent in de buurt van de Brandstof Depot Vooringang\n"
+msgstr "Je bent in de buurt van de Brandstof Depot Hoofdingang\n"
 
 msgid "You are near the Side MG\n"
 msgstr "Je bent in de buurt van de Zijde MG\n"
@@ -3467,10 +3485,10 @@ msgid "You are near the Road MG\n"
 msgstr "Je bent in de buurt van de Weg MG\n"
 
 msgid "You are near the Track Switch MG Nest\n"
-msgstr "Je bent in de buurt van Wissel Slagboom\n"
+msgstr "Je bent in de buurt van de Slagboom MG Opstelling\n"
 
 msgid "You are near the Depot Yard MG Nest\n"
-msgstr "Je bent in de buurt van Remise MG Opstelling\n"
+msgstr "Je bent in de buurt van de Remise MG Opstelling\n"
 
 msgid "You are near the First Tug\n"
 msgstr "Je bent in de buurt van het Eerste Treinstel\n"
@@ -3479,13 +3497,13 @@ msgid "You are near the Second Tug\n"
 msgstr "Je bent in de buurt van het Tweede Treinstel\n"
 
 msgid "You are near the Rail Gun Firing Controls\n"
-msgstr "Je bent in de buurt van de Railgun Vuursysteem\n"
+msgstr "Je bent in de buurt van het Railgun Vuursysteem\n"
 
 msgid "^3All players ready!^7\nMatch starting...\n"
 msgstr "^3 Alle spelers zijn klaar!^7\nWedstrijd begint...\n"
 
 msgid "You are on the Allied team"
-msgstr "JE zit in het Allied team"
+msgstr "Je zit in het Allied team"
 
 msgid "^1*** Match Reset! ***\n"
 msgstr "^1*** Wedstrijd herstart! ***\n"
@@ -3529,7 +3547,7 @@ msgstr "Dood"
 
 #: src/cgame/cg_info.c:606
 msgid "Headshots"
-msgstr "Hoofdschoten"
+msgstr "Hoofdschot."
 
 #: src/cgame/cg_info.c:615
 msgid "No weapon info available."
@@ -3549,7 +3567,7 @@ msgstr "Level"
 
 #: src/cgame/cg_info.c:671
 msgid "XP / Next Level"
-msgstr "XP / Volgend Level"
+msgstr "XP / Volg. Level"
 
 #: src/cgame/cg_info.c:675
 msgid "Medals"
@@ -3586,19 +3604,19 @@ msgid "an Objective"
 msgstr "een Object"
 
 msgid "Warning, leave the construction area..."
-msgstr "Waarschuwing, verlaat het bouwgebied"
+msgstr "Waarschuwing, verlaat het bouwgebied..."
 
 msgid "got caught in"
 msgstr "is gevangen in"
 
 msgid "'s construction madness"
-msgstr "'s bouw razernij"
+msgstr "'s bouwrazernij"
 
 msgid "Need paks: %s\n"
 msgstr "Heeft paks nodig: %s\n"
 
 msgid "Mod filter:"
-msgstr "Mod filter:"
+msgstr "Mode filter:"
 
 msgid "DELETE FAVS"
 msgstr "VERWIJDER FAVS"
@@ -3610,7 +3628,7 @@ msgid "DELETE SERVER FAVOURITES"
 msgstr "VERWIJDER SERVER FAVORIETEN"
 
 msgid "Do you really want to"
-msgstr "Wil je echt JE favorieten"
+msgstr "Wil je echt JOUW favorieten"
 
 msgid "delete YOUR favourites?"
 msgstr "verwijderen?"
@@ -3640,7 +3658,7 @@ msgstr "^3WARMUP:^7 Wedstrijd begint over:"
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
-msgstr "Wcht op connectie...%i"
+msgstr "Wacht op connectie...%i"
 
 #: src/ui/ui_loadpanel.c:341
 #, c-format
@@ -3649,7 +3667,7 @@ msgstr "Wacht op aanroepen...%i"
 
 #: src/ui/ui_loadpanel.c:351
 msgid "Awaiting gamestate..."
-msgstr "Wachten op spelstatus"
+msgstr "Wachten op spelstatus..."
 
 #: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637
 msgid "Waiting for new key... Press ESCAPE to cancel"
@@ -3744,7 +3762,7 @@ msgid "Your invitation reply has been sent"
 msgstr "Je antwoord op de uitnodiging is verzonden"
 
 msgid "You were team-killed by a bot."
-msgstr "Je bent door een teamgenoot bot gedood"
+msgstr "Je bent door een teamgenoot bot gedood."
 
 msgid "You were team-killed by the Server Host"
 msgstr "Je bent door de Server Host gedood"
@@ -3864,7 +3882,7 @@ msgid "activate"
 msgstr "activeer"
 
 msgid "^3Insufficient fire support."
-msgstr "^3Onvoldoende lucht ondersteuning"
+msgstr "^3Onvoldoende luchtondersteuning"
 
 msgid "'s tank-mounted browning 30cal"
 msgstr "'s tank gemonteerde Browning 30cal"
@@ -3897,7 +3915,7 @@ msgstr "VERBINDEN..."
 
 #: src/ui/ui_loadpanel.c:191
 msgid "DOWNLOADING..."
-msgstr "DOWNLOADING..."
+msgstr "DOWNLOADEN..."
 
 #: src/cgame/cg_loadpanel.c:250
 msgid "Single Player"
@@ -3967,13 +3985,13 @@ msgid "You are not the leader of a fireteam\n"
 msgstr "Je bent niet de leider van een Fireteam\n"
 
 msgid "You have been warned by your Fireteam Commander\n"
-msgstr "JE bent gewaarschuwd door je Fireteam Leider\n"
+msgstr "Je bent gewaarschuwd door de Leider van je Fireteam\n"
 
 msgid "You have been kicked from the fireteam"
 msgstr "Je bent verwijderd uit het Fireteam"
 
 msgid "You are now the leader of your fireteam"
-msgstr "JE bent nude leider van je Fireteam"
+msgstr "Je bent nu de leider van je Fireteam"
 
 msgid "The Fireteam you are on has been disbanded"
 msgstr "Het Fireteam waar je in zat is opgeheven"
@@ -4012,7 +4030,7 @@ msgid "Next"
 msgstr "Volgende"
 
 msgid "Too many players already on this Fireteam"
-msgstr "Er zijn al teveel spelers in het Fireteam"
+msgstr "Er zijn al teveel spelers in dit Fireteam"
 
 msgid "The leader has now left the Fireteam you applied to"
 msgstr "De leider is nu weg uit het Fireteam waar je een verzoek naar stuurde"
@@ -4051,13 +4069,13 @@ msgid "usage: fireteam <create|leave|apply|invite>"
 msgstr "gebruik: fireteam <maak|verlaat|verzoek|nodig uit>"
 
 msgid "You are already on a fireteam, leave it first"
-msgstr "Je zit al in een fireteam, verlaat deze eerst"
+msgstr "Je zit al in een Fireteam, verlaat deze eerst"
 
 msgid "The other player must be on the same fireteam for you to give admin rights to"
-msgstr "De andere speler moet in hetzelfde fireteam zitten om admin rechten van je te krijgen"
+msgstr "De andere speler moet in hetzelfde Fireteam zitten om admin rechten van je te krijgen"
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
-msgstr "Je moet admin zijn van een fireteam om admin rechten aan iemand te geven"
+msgstr "Je moet admin zijn van een Fireteam om admin rechten aan iemand te geven"
 
 msgid "Invalid referee password!\n"
 msgstr "Onjuist scheidsrechter wachtwoord!\n"
@@ -4078,16 +4096,16 @@ msgid "Sorry, referee status disabled on this server.\n"
 msgstr "Sorry, scheidsrechter status niet toegestaan op deze server.\n"
 
 msgid "Referee has ^3LOCKED^7 teams\n"
-msgstr "Scheidsrechter heeft teams ^3VERGRENDELD^7\n"
+msgstr "Scheidsrechter heeft de teams ^3VERGRENDELD^7\n"
 
 msgid "You have LOCKED teams\n"
-msgstr "Je hebt teams VERGRENDELD\n"
+msgstr "Je hebt de teams VERGRENDELD\n"
 
 msgid "Referee has ^3UNLOCKED^7 teams\n"
-msgstr "Scheidsrechter heeft teams ^3ONTGRENDELD^7\n"
+msgstr "Scheidsrechter heeft de teams ^3ONTGRENDELD^7\n"
 
 msgid "You have UNLOCKED teams\n"
-msgstr "Je hebt teams ONTGRENDELD\n"
+msgstr "Je hebt de teams ONTGRENDELD\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
 msgstr "Het ^4Allies^7 team is VERGRENDELD!\n"
@@ -4120,7 +4138,7 @@ msgid "is not active\n"
 msgstr "is niet actief\n"
 
 msgid "You can only remove people in the game!\n"
-msgstr "Je kunt alleen mensen tijdens het spel verwijderen!\n"
+msgstr "Je kunt alleen mensen die deelnemen aan het spel verwijderen!\n"
 
 msgid "User "
 msgstr "Gebruiker "
@@ -4129,16 +4147,16 @@ msgid "is not on the server\n"
 msgstr "is niet op de server\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
-msgstr "^5Je bent verwijderd van het ^4Allies^7 team\n"
+msgstr "^5Je bent verwijderd uit het ^4Allies^7 team\n"
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
-msgstr "^5Je bent verwijderd van het ^1Axis^7 team\n"
+msgstr "^5Je bent verwijderd uit het ^1Axis^7 team\n"
 
 msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
-msgstr "Scheidsrecht ^3VERGRENDELD TOESCHOUWERS^7 team"
+msgstr "Scheidsrechter ^3VERGRENDELD TOESCHOUWERS^7 team"
 
 msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
-msgstr "Scheidsrecht ^3ONTGRENDELD TOESCHOUWERS^7 team"
+msgstr "Scheidsrechter ^3ONTGRENDELD TOESCHOUWERS^7 team"
 
 msgid "usage: ref warn <clientname> [reason].\n"
 msgstr "Gebruik: ref warn <clientname> [reden].\n"
@@ -4209,7 +4227,7 @@ msgid "The ^1Axis^7 team is now unlocked!\n"
 msgstr "Het ^1Axis^7 team is nu ontgrendeld!\n"
 
 msgid "Team commands not enabled on this server.\n"
-msgstr "Team commandos zijn niet beschikbaar op deze server.\n"
+msgstr "Team commando's zijn niet beschikbaar op deze server.\n"
 
 msgid "\n"
 "^3>>> Unknown vote command: ^7 \n"
@@ -4220,7 +4238,7 @@ msgid "\n"
 "Valid ^3callvote^7 commands are:\n"
 "^3----------------------------\n"
 msgstr "\n"
-"Geldige ^3Stem^7 commandos zijn:\n"
+"Geldige ^3stem^7 commando's zijn:\n"
 "^3----------------------------\n"
 
 msgid "\n"
@@ -4236,7 +4254,7 @@ msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
 msgstr "Type ^3\\stats <player_id>^7 om de stats van een actieve speler te zien.\n"
 
 msgid "Spectators can't ready a team!\n"
-msgstr "Toescouwers kunnen niet gereed zijn in een team!\n"
+msgstr "Toescouwers kunnen een team niet gereed melden!\n"
 
 msgid "The ^4Allies^7 team is ready!\n"
 msgstr "Het ^4Allies^7 team is gereed!\n"
@@ -4248,7 +4266,7 @@ msgid "A vote is already in progress.\n"
 msgstr "Er is al een stemming aan de gang.\n"
 
 msgid "called a vote.\n"
-msgstr "heeft een stemming geroepen.\n"
+msgstr "heeft om een stemming geroepen.\n"
 
 msgid "^5Vote passed!\n"
 msgstr "^5Stemming geaccepteerd!\n"
@@ -4272,10 +4290,10 @@ msgid "Not allowed to call a vote as a spectator.\n"
 msgstr "Niet gemachtigd om een stemming te roepen als Toeschouwer.\n"
 
 msgid "called a vote."
-msgstr "heeft een stemming geroepen."
+msgstr "heeft om een stemming geroepen."
 
 msgid "Vote cast.\n"
-msgstr "Stemming geroepen.\n"
+msgstr "Stem uitgebracht.\n"
 
 msgid "'s KA-BAR"
 msgstr "'s KA-BAR"
@@ -4337,7 +4355,7 @@ msgid "Press %s to follow previous player"
 msgstr "Druk %s om de vorige speler te volgen"
 
 msgid "^9You are frozen - ^3/kill^9 is disabled."
-msgstr "^9Je bent bevroren - ^3doden^9 is uitgeschakeld."
+msgstr "^9Je bent bevroren - ^3/kill^9 is uitgeschakeld."
 
 msgid "Objectives:"
 msgstr "Militaire Doelen:"
@@ -4387,7 +4405,7 @@ msgstr "Rang:"
 
 #: src/cgame/cg_debriefing.c:2578
 msgid "ACC:"
-msgstr "ACC:"
+msgstr "NAUWK.:"
 
 #: src/cgame/cg_debriefing.c:2765
 msgid "^5TO TEAM"
@@ -4399,7 +4417,7 @@ msgstr "^3TEGEN FIRETEAM"
 
 #: src/cgame/cg_debriefing.c:2771
 msgid "^2TO GLOBAL"
-msgstr "^2TEGEN IEDEREEN"
+msgstr "^2TEGEN ALLEN"
 
 #: src/cgame/cg_debriefing.c:1311
 #, c-format
@@ -4409,7 +4427,7 @@ msgstr "Laatst Gespeeld         : %s"
 #: src/cgame/cg_debriefing.c:1318
 #, c-format
 msgid "Total Accumulated Votes : %d"
-msgstr "Totaal opgetelde stemmen: %d"
+msgstr "Totaal Opgetelde stemmen: %d"
 
 #: src/cgame/cg_debriefing.c:1312
 msgid "Never"
@@ -4428,17 +4446,17 @@ msgstr "WACHTEN OP %i %s"
 #: src/cgame/cg_servercmds.c:2005
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
-msgstr "Schade Toegebracht: %-6d Team Schade Toegebracht: %d"
+msgstr "Schade Toegebracht: %-6d  Team Schade Toegebracht: %d"
 
 #: src/cgame/cg_servercmds.c:2006
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
-msgstr "Schade Ontv: %-6d  Team Schade Ontv: %d"
+msgstr "Schade Ontv: %-6d   Team Schade Ontv: %d"
 
 #: src/cgame/cg_servercmds.c:2008
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
-msgstr "Zelfmoord: %-2d Team doden: %-2d Nauwkeurig: %-4.1f HS%%: %-4.1f"
+msgstr "Zelfmoord: %-2d Team doden: %-2d Nauwk.: %-4.1f  HS%%: %-4.1f"
 
 msgid "'s Bazooka"
 msgstr "'s Bazooka"
@@ -4467,7 +4485,7 @@ msgstr "^3Bekijk je filters - geen server gevonden!     Gefilterd/Totaal: %i/%i"
 
 #: src/ui/ui_main.c:5812
 msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
-msgstr "^3Bekijk je verbinding - geen server gevonden!    Gefilterd/Totaal: 0/000"
+msgstr "^1Bekijk je verbinding - geen server gevonden!    Gefilterd/Totaal: 0/000"
 
 msgid "Server connection timed out."
 msgstr "Server verbinding timed out"
@@ -4500,7 +4518,7 @@ msgid "No campaigns found.\n"
 msgstr "Geen campagnes gevonden.\n"
 
 msgid "Show Descriptive Text:"
-msgstr "Toon Omschrijving:"
+msgstr "Toon Omschrijvende Tekst:"
 
 msgid "'s Akimbo Luger 9mms"
 msgstr "'s Akimbo Luger 9mms"
@@ -4509,22 +4527,22 @@ msgid "Cheats are not enabled on this server.\n"
 msgstr "Cheats zijn niet toegestaan op de server.\n"
 
 msgid "team: class is not available\n"
-msgstr "team: Class is niet beschikbaar\n"
+msgstr "team: class is niet beschikbaar\n"
 
 msgid "^1Soldier^7 is not available! Choose another class!\n"
 msgstr "^1Soldaat^7 is niet beschikbaar! Kies een andere class!\n"
 
 msgid "^1Medic^7 is not available! Choose another class!\n"
-msgstr "^1Medic^7 is niet beschikbaar! Kies een andere class!\n"
+msgstr "^1Hospik^7 is niet beschikbaar! Kies een andere class!\n"
 
 msgid "^1Engineer^7 is not available! Choose another class!\n"
-msgstr "^1Ingenieur^7 is niet beschikbaar! Kies een andere class!\n"
+msgstr "^1Genist^7 is niet beschikbaar! Kies een andere class!\n"
 
 msgid "^1Field Ops^7 is not available! Choose another class!\n"
 msgstr "^1Artillerist^7 is niet beschikbaar! Kies een andere class!\n"
 
 msgid "^1Covert Ops^7 is not available! Choose another class!\n"
-msgstr "^1Covert Ops^7 is niet beschikbaar! Kies een andere class!\n"
+msgstr "^1Spion^7 is niet beschikbaar! Kies een andere class!\n"
 
 msgid "You must be alive to use this command.\n"
 msgstr "Je moet levend zijn om dit commando te gebruiken.\n"
@@ -4536,7 +4554,7 @@ msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
 msgstr "Het ^4Allies^7 team is niet bemand! Volg commando is genegeerd.\n"
 
 msgid "Can't follow a player on an enemy team!\n"
-msgstr "Kan niet een speler volgen van eht vijandelijk team!\n"
+msgstr "Kan niet een speler volgen van het vijandelijk team!\n"
 
 msgid "Can't follow while not in limbo if on a team!\n"
 msgstr "Kan niet volgen indien in Limbo of in een team!\n"
@@ -4568,7 +4586,7 @@ msgstr "Server stoppen\n"
 #: src/cgame/cg_draw.c:2766
 #, c-format
 msgid "The %s team is speclocked!"
-msgstr "De %s team is toeschouwer vergrendeld!"
+msgstr "Het %s team is toeschouwer vergrendeld!"
 
 msgid "You cannot switch during a match, please wait until the round ends."
 msgstr "Je kunt niet wisselen gedurende een wedstrijd, wacht tot de ronde eindigd"
