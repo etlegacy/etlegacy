@@ -326,7 +326,7 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 			{
 				const float *v0, *v1, *v2;
 				const float *t0, *t1, *t2;
-				vec3_t      tangent;
+				vec3_t      tangent = { 0, 0, 0 };
 				vec3_t      binormal;
 				vec3_t      normal;
 
