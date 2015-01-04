@@ -1845,9 +1845,7 @@ typedef enum
 // font support
 
 #define GLYPH_START 0
-#define GLYPH_END 255
-#define GLYPH_CHARSTART 32
-#define GLYPH_CHAREND 127
+#define GLYPH_END 255 // 1327 (Cyrillic U+052F)
 #define GLYPHS_PER_FONT GLYPH_END - GLYPH_START + 1
 typedef struct
 {

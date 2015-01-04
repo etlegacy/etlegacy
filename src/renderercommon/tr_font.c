@@ -522,9 +522,9 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	lastStart   = i;
 	imageNumber = 0;
 
-	while (i <= GLYPH_END + 1)
+	while (i <= GLYPHS_PER_FONT)
 	{
-		if (i == GLYPH_END + 1)
+		if (i == GLYPHS_PER_FONT)
 		{
 			// upload/save current image buffer
 			xOut = yOut = -1;
@@ -597,7 +597,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 			xOut = 0;
 			yOut = 0;
 			ri.Free(imageBuff);
-			if (i == GLYPH_END + 1)
+			if (i == GLYPHS_PER_FONT)
 			{
 				i++;
 			}
