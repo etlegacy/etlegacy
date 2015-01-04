@@ -3819,7 +3819,7 @@ msgid "Side Print:"
 msgstr "Zijkant Print:"
 
 msgid "Post Print:"
-msgstr "Post PRint:"
+msgstr "Post Print:"
 
 msgid "Crosshair Name:"
 msgstr "Vizier Naam:"
