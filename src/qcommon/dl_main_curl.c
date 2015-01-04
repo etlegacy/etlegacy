@@ -91,7 +91,7 @@ size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *stream)
 
 	if (result->pos + size * nmemb >= GET_BUFFER_SIZE - 1)
 	{
-		Com_Printf("DL_write_function too small buffer");
+		Com_Printf(S_COLOR_RED  "DL_write_function: Error - buffer is too small");
 		return 0;
 	}
 
@@ -149,21 +149,26 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 
 	if (dl_request)
 	{
-		Com_Printf("DL_BeginDownload: ERROR - called with a download request already active\n");
+		Com_Printf(S_COLOR_RED "DL_BeginDownload: Error - called with a download request already active\n");
 		return 0;
 	}
 
 	if (!localName || !remoteName)
 	{
-		Com_Printf("Empty download URL or empty local file name\n");
+		Com_Printf(S_COLOR_RED "DL_BeginDownload: Error - empty download URL or empty local file name\n");
 		return 0;
 	}
 
-	FS_CreatePath(localName);
+	if (FS_CreatePath(localName))
+	{
+		Com_Printf(S_COLOR_RED "DL_BeginDownload: Error - unable to create directory (%s).\n", localName);
+		return 0;
+	}
+
 	dl_file = fopen(localName, "wb+");
 	if (!dl_file)
 	{
-		Com_Printf("DL_BeginDownload: ERROR - unable to open '%s' for writing\n", localName);
+		Com_Printf(S_COLOR_RED  "DL_BeginDownload: Error - unable to open '%s' for writing\n", localName);
 		return 0;
 	}
 
@@ -201,7 +206,7 @@ char *DL_GetString(const char *url)
 
 	if (!url)
 	{
-		Com_Printf("Empty download URL\n");
+		Com_Printf(S_COLOR_RED "DL_GetString: Error - empty download URL\n");
 		return NULL;
 	}
 
@@ -229,15 +234,15 @@ char *DL_GetString(const char *url)
 	status = curl_easy_perform(curl);
 	if (status != 0)
 	{
-		Com_Printf("DL_GetString unable to request data from %s\n", url);
-		Com_Printf("DL_GetString %s\n", curl_easy_strerror(status));
+		Com_Printf(S_COLOR_RED "DL_GetString: Error - unable to request data from %s\n", url);
+		Com_Printf(S_COLOR_RED "DL_GetString: Error - %s\n", curl_easy_strerror(status));
 		goto error_get;
 	}
 
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
 	if (code != 200)
 	{
-		Com_Printf("DL_GetString server responded with code %ld\n", code);
+		Com_Printf(S_COLOR_RED "DL_GetString: Error - server responded with code %ld\n", code);
 		goto error_get;
 	}
 
@@ -271,7 +276,7 @@ dlStatus_t DL_DownloadLoop(void)
 
 	if (!dl_request)
 	{
-		Com_DPrintf("DL_DownloadLoop: unexpected call with dl_request == NULL\n");
+		Com_DPrintf("DL_DownloadLoop: Error - unexpected call with dl_request == NULL\n");
 		return DL_DONE;
 	}
 
@@ -309,7 +314,7 @@ dlStatus_t DL_DownloadLoop(void)
 
 	if (err)
 	{
-		Com_Printf("DL_DownloadLoop: request terminated with failure status '%s'\n", err);
+		Com_Printf(S_COLOR_RED "DL_DownloadLoop: Error - request terminated with failure status '%s'\n", err);
 		return DL_FAILED;
 	}
 
