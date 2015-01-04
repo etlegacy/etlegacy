@@ -313,49 +313,58 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 #endif
 		}
 
-	}
-	// read triangles
-	GetChunkHeader(stream, &chunkHeader);
 
-	if (Q_stricmpn(chunkHeader.ident, "FACE0000", 8))
-	{
-		Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "FACE0000");
-		DeallocAll();
-		return qfalse;
-	}
+		// read triangles
+		GetChunkHeader(stream, &chunkHeader);
 
-	if (chunkHeader.dataSize != sizeof(axTriangle_t))
-	{
-		Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axTriangle_t));
-		DeallocAll();
-		return qfalse;
-	}
-
-	PrintChunkHeader(&chunkHeader);
-
-	numTriangles = chunkHeader.numData;
-	triangles    = Com_Allocate(numTriangles * sizeof(axTriangle_t));
-
-	for (i = 0, triangle = triangles; i < numTriangles; i++, triangle++)
-	{
-		for (j = 0; j < 3; j++)
-		//for(j = 2; j >= 0; j--)
+		if (Q_stricmpn(chunkHeader.ident, "FACE0000", 8))
 		{
-			triangle->indexes[j] = MemStreamGetShort(stream);
-
-			if (triangle->indexes[j] >= numVertexes)
-			{
-				Ren_Warning("R_LoadPSK: '%s' has triangle with vertex index out of range (%i while max %i)\n", modName, triangle->indexes[j], numVertexes);
-				DeallocAll();
-				return qfalse;
-			}
+			Ren_Warning("R_LoadPSK: '%s' has wrong chunk indent ('%s' should be '%s')\n", modName, chunkHeader.ident, "FACE0000");
+			DeallocAll();
+			return qfalse;
 		}
 
-		triangle->materialIndex   = MemStreamGetC(stream);
-		triangle->materialIndex2  = MemStreamGetC(stream);
-		triangle->smoothingGroups = MemStreamGetLong(stream);
-	}
+		if (chunkHeader.dataSize != sizeof(axTriangle_t))
+		{
+			Ren_Warning("R_LoadPSK: '%s' has wrong chunk dataSize ('%i' should be '%i')\n", modName, chunkHeader.dataSize, ( int ) sizeof(axTriangle_t));
+			DeallocAll();
+			return qfalse;
+		}
 
+		PrintChunkHeader(&chunkHeader);
+
+		numTriangles = chunkHeader.numData;
+		triangles    = Com_Allocate(numTriangles * sizeof(axTriangle_t));
+
+		for (i = 0, triangle = triangles; i < numTriangles; i++, triangle++)
+		{
+			for (j = 0; j < 3; j++)
+			//for(j = 2; j >= 0; j--)
+			{
+				tmpVertexInt = MemStreamGetShort(stream);
+
+				if (tmpVertexInt < 0)
+				{
+					Ren_Warning("R_LoadPSK: '%s' MemStream NULL or empty (triangle->indexes[%i])\n", modName, j);
+					DeallocAll();
+					return qfalse;
+				}
+
+				if (tmpVertexInt >= numVertexes)
+				{
+					Ren_Warning("R_LoadPSK: '%s' has triangle with vertex index out of range (%i while max %i)\n", modName, tmpVertexInt, numVertexes);
+					DeallocAll();
+					return qfalse;
+				}
+
+				triangle->indexes[j] = tmpVertexInt;
+			}
+
+			triangle->materialIndex   = MemStreamGetC(stream);
+			triangle->materialIndex2  = MemStreamGetC(stream);
+			triangle->smoothingGroups = MemStreamGetLong(stream);
+		}
+	}
 	// read materials
 	GetChunkHeader(stream, &chunkHeader);
 
