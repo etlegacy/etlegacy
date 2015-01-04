@@ -2423,7 +2423,7 @@ int PC_Directive_error(source_t *source)
 	token_t token;
 
 	strcpy(token.string, "");
-	PC_ReadSourceToken(source, &token);
+	(void) PC_ReadSourceToken(source, &token);
 	SourceError(source, "#error directive: %s", token.string);
 	return qfalse;
 }
