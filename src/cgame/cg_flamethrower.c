@@ -839,6 +839,8 @@ static int lastFlameOwner = -1;
 #define FLAME_SOUND_RANGE               1024.0
 #define FLAME_SPRITE_START_BLUE_SCALE   0.2
 
+#define FLAME_BSCALE                    1.0 // fire stream
+
 /*
 ===============
 CG_AddFlameToScene
@@ -989,18 +991,15 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 				// fire stream
 				if (!f->ignitionOnly)
 				{
-					float    bscale;
 					qboolean fskip = qfalse;
-
-					bscale = 1.0;
 
 					if (!f->nextFlameChunk)
 					{
 						alpha = 0;
 					}
-					else if (lived / 1.3 < bscale * FLAME_BLUE_FADEIN_TIME(f->blueLife))
+					else if (lived / 1.3 < FLAME_BSCALE * FLAME_BLUE_FADEIN_TIME(f->blueLife))
 					{
-						alpha = FLAME_BLUE_MAX_ALPHA * ((lived / 1.3) / (bscale * FLAME_BLUE_FADEIN_TIME(f->blueLife)));
+						alpha = FLAME_BLUE_MAX_ALPHA * ((lived / 1.3) / (FLAME_BSCALE * FLAME_BLUE_FADEIN_TIME(f->blueLife)));
 					}
 					else if (lived / 1.3 < (f->blueLife - FLAME_BLUE_FADEOUT_TIME(f->blueLife)))
 					{
@@ -1028,7 +1027,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 						droppedTrail = qtrue;
 
 						fuelTrailHead = CG_AddTrailJunc(fuelTrailHead,
-						                                NULL,     // rain - zinx's trail fix
+						                                NULL,     // trail fix
 						                                cgs.media.flamethrowerFireStream,
 						                                cg.time,
 						                                (f->ignitionOnly ? STYPE_STRETCH : STYPE_REPEAT),
@@ -1060,16 +1059,8 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 				    &&  (DotProduct(f->velDir, fNext->velDir) > 0.99)
 				    )
 				{
-					if (!droppedTrail)
-					{
-						CG_MergeFlameChunks(f, fNext);
-						fNext = f->nextFlameChunk;      // it may have changed
-					}
-					else
-					{
-						skip = qtrue;
-						break;
-					}
+					CG_MergeFlameChunks(f, fNext);
+					fNext = f->nextFlameChunk;          // it may have changed
 				}
 				else
 				{
