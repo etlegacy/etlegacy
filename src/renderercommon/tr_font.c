@@ -193,7 +193,7 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	ri.Free(buffer);
 }
 
-static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut, int *xOut, int *yOut, int *maxHeight, FT_Face face, const unsigned char c, qboolean calcHeight)
+static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut, int *xOut, int *yOut, int *maxHeight, FT_Face face, unsigned long codepoint, qboolean calcHeight)
 {
 	static glyphInfo_t glyph;
 	unsigned char      *src, *dst;
@@ -204,7 +204,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 	// make sure everything is here
 	if (face != NULL)
 	{
-		FT_UInt index = FT_Get_Char_Index(face, c);
+		FT_UInt index = FT_Get_Char_Index(face, codepoint);
 		float   scaled_width, scaled_height;
 		int     i;
 
@@ -418,7 +418,7 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	FT_Face       face;
-	int           j, k, xOut, yOut, lastStart, imageNumber;
+	int           j, k, xOut, yOut, lastStart, imageNumber, len = 0;
 	int           scaledSize, newSize, maxHeight, left;
 	unsigned char *out, *imageBuff;
 	glyphInfo_t   *glyph;
@@ -427,7 +427,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	float         max;
 	float         glyphScale;
 	unsigned char *faceData;
-	int           i = 0, len = 0;
+	unsigned long i = 0;
 	char          name[1024];
 	qboolean      formatFound = qfalse;
 	int           imageSize;
@@ -513,7 +513,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 	for (i = GLYPH_START; i <= GLYPH_END; i++)
 	{
 		// FIXME: RE_ConstructGlyphInfo might return NULL and we won't notice that
-		RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
+		RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, i, qtrue);
 	}
 
 	xOut        = 0;
@@ -531,7 +531,7 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 		}
 		else
 		{
-			glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qfalse);
+			glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &maxHeight, face, i, qfalse);
 		}
 
 		// FIXME: glyph might be NULL for various reasons
