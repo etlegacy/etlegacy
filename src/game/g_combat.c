@@ -552,8 +552,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 #ifdef FEATURE_LUA
-	// pheno: Lua API callbacks
-	// IRATA NQ like rework (Etpro style)
 	if (G_LuaHook_Obituary(self->s.number, killer, meansOfDeath))
 	{
 		if (self->s.number < 0 || self->s.number >= MAX_CLIENTS)
@@ -1315,13 +1313,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		attacker = &g_entities[ENTITYNUM_WORLD];
 	}
 
-#ifdef FEATURE_LUA
-	if (G_LuaHook_Damage(targ->s.number, attacker->s.number, damage, dflags, mod))
-	{
-		return;
-	}
-#endif
-
 	// was the bot alive before applying any damage?
 	wasAlive   = (targ->health > 0);
 	onSameTeam = OnSameTeam(attacker, targ);
@@ -1742,6 +1733,13 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	{
 		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, modNames[mod]);
 	}
+
+#ifdef FEATURE_LUA
+	if (G_LuaHook_Damage(targ->s.number, attacker->s.number, take, dflags, mod))
+	{
+		return;
+	}
+#endif
 
 	// add to the damage inflicted on a player this frame
 	// the total will be turned into screen blends and view angle kicks
