@@ -343,7 +343,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		{
 			triangle->indexes[j] = MemStreamGetShort(stream);
 
-			if (triangle->indexes[j] < 0 || triangle->indexes[j] >= numVertexes)
+			if (triangle->indexes[j] >= numVertexes)
 			{
 				Ren_Warning("R_LoadPSK: '%s' has triangle with vertex index out of range (%i while max %i)\n", modName, triangle->indexes[j], numVertexes);
 				DeallocAll();
