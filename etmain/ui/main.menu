@@ -98,7 +98,7 @@ menuDef {
 
 
 // Window //
-	WINDOW( "^1ET:Legacy", 50 )
+	WINDOW( "MENU", 50 )
 	execKey "c" { close main ; open main_quickconnect }
 
 // Buttons //
