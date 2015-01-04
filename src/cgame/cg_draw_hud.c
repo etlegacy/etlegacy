@@ -185,18 +185,22 @@ static hudStucture_t *CG_getHudByNumber(int number)
 	int           i;
 	hudStucture_t *hud;
 
+	if (number < 0 || number >= MAXHUDS)
+	{
+		Com_Printf("getHudByNumber invalid HUD!\n");
+		return NULL;
+	}
+
 	for (i = 0; i < hudCount; i++)
 	{
 		hud = &hudlist[i];
-		if (!hud)
-		{
-			Com_Printf("getHudByNumber there is an invalid hud in memory REPORT THIS!\n");
-		}
-		else if (hud->hudnumber == number)
+
+		if (hud->hudnumber == number)
 		{
 			return hud;
 		}
 	}
+
 	return NULL;
 }
 
