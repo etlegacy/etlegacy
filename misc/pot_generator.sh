@@ -20,3 +20,7 @@ find src/game/ src/ui/ src/cgame/ -name '*.c' -o -name '*.cpp' -o -name 'missing
 \--join-existing --from-code=UTF-8 --package-name="ET: Legacy" --copyright-holder="Jan Simek" --package-version="${VERSION}" --msgid-bugs-address="mail@etlegacy.com" -o ${MOD_POT} -k_ -k__ -kCG_TranslateString -ktrap_TranslateString -kTRANSLATE -f -
 
 # TODO: Menu files
+
+# Update po files
+for PO in $(find etmain/locale/mod -type f -name "*.po"); do msgmerge -vU ${PO} ${MOD_POT}; done
+for PO in $(find etmain/locale/client -type f -name "*.po"); do msgmerge -vU ${PO} ${CLIENT_POT}; done

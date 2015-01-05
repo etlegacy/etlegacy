@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
-"Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
-"POT-Creation-Date: 2013-04-07 23:32+0200\n"
+"Report-Msgid-Bugs-To: mail@etlegacy.com\n"
+"POT-Creation-Date: 2015-01-05 10:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,107 +15,112 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
-#: src/cgame/cg_consolecmds.c:568
+#: src/cgame/cg_consolecmds.c:568 src/cgame/cg_consolecmds.c:362
+#: src/cgame/cg_consolecmds.c:400 src/cgame/cg_consolecmds.c:436
 msgid "Can't team voice chat as a spectator.\n"
 msgstr "Kan geen team voice chat uitvoeren als toeschouwer"
 
-#: src/cgame/cg_consolecmds.c:593
+#: src/cgame/cg_consolecmds.c:593 src/cgame/cg_consolecmds.c:461
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr "Kan geen buddy voice chat uitvoeren als toeschouwer"
 
 #: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3106
-#: src/cgame/cg_scoreboard.c:646
+#: src/cgame/cg_scoreboard.c:646 src/cgame/cg_debriefing.c:2013
+#: src/cgame/cg_debriefing.c:3202 src/cgame/cg_scoreboard.c:723
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
 msgstr "TIMER IS OP %s GEZET"
 
-#: src/cgame/cg_draw.c:650
+#: src/cgame/cg_draw.c:650 src/cgame/cg_draw_hud.c:2052
 msgid "Connection Interrupted"
 msgstr "Connectie Afgebroken"
 
-#: src/cgame/cg_draw.c:1902
+#: src/cgame/cg_draw.c:1902 src/cgame/cg_draw.c:1506
 msgid "Disguised Enemy!"
 msgstr "Vermomde vijand!"
 
-#: src/cgame/cg_draw.c:2074
+#: src/cgame/cg_draw.c:2074 src/cgame/cg_draw.c:1716
 msgid "SPECTATOR"
 msgstr "TOESCHOUWER"
 
-#: src/cgame/cg_draw.c:2092
-#, c-format
-msgid "File complaint against %s^3 for team-killing?"
+#: src/cgame/cg_draw.c:2092 src/cgame/cg_draw.c:1743
+#, fuzzy, c-format
+msgid "File complaint against ^7%s^3 for team-killing?"
 msgstr "Klacht indienen tegen %s^3 voor team-killing?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
-#: src/cgame/cg_draw.c:2164
+#: src/cgame/cg_draw.c:2164 src/cgame/cg_draw.c:1747 src/cgame/cg_draw.c:1761
+#: src/cgame/cg_draw.c:1775 src/cgame/cg_draw.c:1789 src/cgame/cg_draw.c:1803
+#: src/cgame/cg_draw.c:1817 src/cgame/cg_draw.c:1831
 #, c-format
 msgid "Press '%s' for YES, or '%s' for NO"
 msgstr "Toets '%s' voor JA, of '%s' voor NEE"
 
-#: src/cgame/cg_draw.c:2096
+#: src/cgame/cg_draw.c:2096 src/cgame/cg_draw.c:1757
 #, c-format
 msgid "Accept %s^3's application to join your fireteam?"
 msgstr "Accepteer je %s^3's aanmelding voor je fireteam?"
 
-#: src/cgame/cg_draw.c:2109
+#: src/cgame/cg_draw.c:2109 src/cgame/cg_draw.c:1771
 #, c-format
 msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
 msgstr "Accepteer je %s^3's voorstel om %s^3 uit te nodigen voor je fireteam?"
 
-#: src/cgame/cg_draw.c:2122
+#: src/cgame/cg_draw.c:2122 src/cgame/cg_draw.c:1785
 #, c-format
 msgid "Accept %s^3's invitation to join their fireteam?"
 msgstr "Accepteer je %s^3 uitnodiging voor hun fireteam?"
 
-#: src/cgame/cg_draw.c:2218
+#: src/cgame/cg_draw.c:2218 src/cgame/cg_draw.c:1895
 #, c-format
 msgid "VOTE(%i): %s"
 msgstr "STEM(%i): %s"
 
-#: src/cgame/cg_draw.c:2223
+#: src/cgame/cg_draw.c:2223 src/cgame/cg_draw.c:1901
 msgid "Cannot vote as Spectator"
 msgstr "Als Toeschouwer kun je niet stemmen"
 
-#: src/cgame/cg_draw.c:2227
+#: src/cgame/cg_draw.c:2227 src/cgame/cg_draw.c:1905
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
 msgstr "JA(%s):%i, NEE(%s):%i"
 
-#: src/cgame/cg_draw.c:2234
+#: src/cgame/cg_draw.c:2234 src/cgame/cg_draw.c:1912
 #, c-format
 msgid "YOU VOTED ON: %s"
 msgstr "JE HEBT GESTEMD OP: %s"
 
-#: src/cgame/cg_draw.c:2237
+#: src/cgame/cg_draw.c:2237 src/cgame/cg_draw.c:1917
 #, c-format
 msgid "Y:%i, N:%i"
 msgstr "J:%i, N:%i"
 
-#: src/cgame/cg_draw.c:2460
+#: src/cgame/cg_draw.c:2460 src/cgame/cg_draw.c:2151
 #, c-format
 msgid "Press %s to open Limbo Menu"
 msgstr "Druk %s om het Keuze Menu te openen"
 
-#: src/cgame/cg_draw.c:2464
+#: src/cgame/cg_draw.c:2464 src/cgame/cg_draw.c:2156
 #, c-format
 msgid "Press %s to follow next player"
 msgstr "Druk %s om de volgende speler te volgen"
 
-#: src/cgame/cg_draw.c:2469
+#: src/cgame/cg_draw.c:2469 src/cgame/cg_draw.c:2167
 #, c-format
 msgid "Press %s to %s multiview mode"
 msgstr "Toets %s voor %s multiview mode"
 
-#: src/cgame/cg_draw.c:2530
+#: src/cgame/cg_draw.c:2530 src/cgame/cg_draw.c:2230
 msgid "You are wounded and waiting for a medic."
 msgstr "Je bent gewond en aan het wachten op een hospik."
 
-#: src/cgame/cg_draw.c:2540
+#: src/cgame/cg_draw.c:2540 src/cgame/cg_draw.c:2239
+#, c-format
 msgid "Press %s to go into reinforcement queue."
 msgstr "Druk %s om over te gaan in de versterkingswachtrij."
 
-#: src/cgame/cg_draw.c:2550
+#: src/cgame/cg_draw.c:2550 src/cgame/cg_draw.c:2250
 msgid "No more reinforcements this round."
 msgstr "Geen versterkingen meer deze ronde."
 
@@ -124,30 +129,31 @@ msgstr "Geen versterkingen meer deze ronde."
 msgid "Reinforcements deploy in %d seconds."
 msgstr "Versterkingen arriveren in %d seconden."
 
-#: src/cgame/cg_draw.c:2593
+#: src/cgame/cg_draw.c:2593 src/cgame/cg_draw.c:2328
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7seconds"
 msgstr "Bonus leven! Inzetten in ^3%d ^7seconden"
 
-#: src/cgame/cg_draw.c:2597
+#: src/cgame/cg_draw.c:2597 src/cgame/cg_draw.c:2337
 msgid "No more deployments this round"
 msgstr "Geen versterkingen meer deze ronde"
 
-#: src/cgame/cg_draw.c:2602
+#: src/cgame/cg_draw.c:2602 src/cgame/cg_draw.c:2258 src/cgame/cg_draw.c:2346
 #, c-format
 msgid "Deploying in ^3%d ^7seconds"
 msgstr "Inzetten in ^3%d ^7seconden"
 
-#: src/cgame/cg_draw.c:2613
+#: src/cgame/cg_draw.c:2613 src/cgame/cg_draw.c:2262 src/cgame/cg_draw.c:2350
 #, c-format
 msgid "Deploying in ^3%d ^7second"
 msgstr "Inzetten in ^3%d ^7seconden"
 
-#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
+#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621 src/cgame/cg_draw.c:2361
+#: src/cgame/cg_draw.c:2387
 msgid "Following"
 msgstr "Volgen"
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr "^3OPWARMEN: ^2%i^7 wachten "
@@ -161,116 +167,130 @@ msgid "(WARMUP) Match begins in:"
 msgstr "(OPWARMEN) Ronde begint in:"
 
 #: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
+#: src/cgame/cg_draw.c:2503 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
 msgstr "STOPWATCH RONDE"
 
 #: src/cgame/cg_draw_hud.c:1535 src/cgame/cg_scoreboard.c:165
+#: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
+#: src/cgame/cg_scoreboard.c:178
 msgid "WARMUP"
 msgstr "OPWARMEN"
 
-#: src/cgame/cg_event.c:189
+#: src/cgame/cg_event.c:189 src/cgame/cg_event.c:271
 msgid "You swapped places with"
 msgstr "Je bent van plaats geruild met"
 
-#: src/cgame/cg_event.c:193
+#: src/cgame/cg_event.c:193 src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
 msgstr "Je doodde ^1TEAMMATE^7"
 
-#: src/cgame/cg_event.c:198
+#: src/cgame/cg_event.c:198 src/cgame/cg_event.c:280
 msgid "You killed"
 msgstr "Je doodde"
 
-#: src/cgame/cg_main.c:893
+#: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "User"
 msgstr "Gebruiker"
 
-#: src/cgame/cg_main.c:893
+#: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "is not on the server"
 msgstr "is niet op de server"
 
 #: src/cgame/cg_scoreboard.c:165 src/cgame/cg_scoreboard.c:171
 #: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:180
+#: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
+#: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
 msgid "MISSION TIME:"
 msgstr "MISSIE TIJD:"
 
-#: src/cgame/cg_scoreboard.c:171
+#: src/cgame/cg_scoreboard.c:171 src/cgame/cg_scoreboard.c:184
 msgid "GAME STOPPED"
 msgstr "HET SPEL IS GESTOPT"
 
-#: src/cgame/cg_scoreboard.c:175
+#: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:188
 msgid "SUDDEN DEATH"
 msgstr "SUDDEN DEATH"
 
-#: src/cgame/cg_scoreboard.c:205
+#: src/cgame/cg_scoreboard.c:205 src/cgame/cg_scoreboard.c:229
+#: src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
 msgstr "VERSTERKINGSTIJD:"
 
-#: src/cgame/cg_scoreboard.c:222
+#: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
 msgstr "RONDE"
 
-#: src/cgame/cg_scoreboard.c:222
+#: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "SCORE"
 msgstr "SCORE"
 
 #: src/cgame/cg_scoreboard.c:373 src/cgame/cg_scoreboard.c:536
+#: src/cgame/cg_scoreboard.c:451 src/cgame/cg_scoreboard.c:642
 msgid "^3CONNECTING"
 msgstr "^3AANLOGGEN"
 
 #: src/cgame/cg_scoreboard.c:377 src/cgame/cg_scoreboard.c:540
+#: src/cgame/cg_scoreboard.c:455 src/cgame/cg_scoreboard.c:646
 msgid "^3SPECTATOR"
 msgstr "^3TOESCHOUWER"
 
 #: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
+#: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
 msgstr "AXIS"
 
 #: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
 #: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:205 src/cgame/cg_scoreboard.c:811
+#: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:828
+#: src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
 msgstr "SPELERS"
 
 #: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
+#: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
 msgstr "EERSTE TREFFER"
 
 #: src/cgame/cg_scoreboard.c:814 src/cgame/cg_scoreboard.c:828
+#: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:832
 msgid "ALLIES"
 msgstr "ALLIES"
 
-#: src/cgame/cg_scoreboard.c:701
+#: src/cgame/cg_scoreboard.c:701 src/cgame/cg_scoreboard.c:846
 msgid "Name"
 msgstr "Naam"
 
-#: src/cgame/cg_scoreboard.c:704
+#: src/cgame/cg_scoreboard.c:704 src/cgame/cg_scoreboard.c:855
 msgid "C R"
 msgstr "C R"
 
-#: src/cgame/cg_scoreboard.c:709
+#: src/cgame/cg_scoreboard.c:709 src/cgame/cg_scoreboard.c:860
 msgid "Score"
 msgstr "Score"
 
-#: src/cgame/cg_scoreboard.c:714
+#: src/cgame/cg_scoreboard.c:714 src/cgame/cg_scoreboard.c:865
 msgid "XP"
 msgstr "XP"
 
-#: src/cgame/cg_scoreboard.c:718
+#: src/cgame/cg_scoreboard.c:718 src/cgame/cg_scoreboard.c:869
 msgid "Ping"
 msgstr "Ping"
 
-#: src/cgame/cg_servercmds.c:405
+#: src/cgame/cg_servercmds.c:405 src/cgame/cg_servercmds.c:421
 msgid "Auto Pick"
 msgstr "Automatisch kiezen"
 
-#: src/cgame/cg_servercmds.c:2304
+#: src/cgame/cg_servercmds.c:2304 src/cgame/cg_servercmds.c:2344
 msgid "Map"
 msgstr "Map"
 
-#: src/cgame/cg_servercmds.c:2326
+#: src/cgame/cg_servercmds.c:2326 src/cgame/cg_servercmds.c:2366
 msgid "Could not create logfile"
 msgstr "Kon geen logbestand maken"
 
-#: src/cgame/cg_servercmds.c:2866
+#: src/cgame/cg_servercmds.c:2866 src/cgame/cg_servercmds.c:2903
 msgid "^3Server Restarting"
 msgstr "^3Server start opnieuw op"
 
@@ -331,10 +351,10 @@ msgid ""
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
 msgstr ""
-"Kies hieronder uw eerste instellingen. U kunt deze op elk gewenst moment te wijzigen"
-"en toegang krijgen tot meer geavanceerde opties in het Optie menu."
-"Indien er meer dan 1 persoon Enemy Territory: Legacy wil spelen, kunt u een"
-"extra profiel aanmaken in het Profielen Menu."
+"Kies hieronder uw eerste instellingen. U kunt deze op elk gewenst moment te "
+"wijzigenen toegang krijgen tot meer geavanceerde opties in het Optie menu."
+"Indien er meer dan 1 persoon Enemy Territory: Legacy wil spelen, kunt u "
+"eenextra profiel aanmaken in het Profielen Menu."
 
 msgid "Player Alias:"
 msgstr "Speler Alias"
@@ -347,9 +367,6 @@ msgstr "Resolutie:"
 
 msgid "Brightness:"
 msgstr "Helderheid:"
-
-msgid "Connection:"
-msgstr "Verbinding:"
 
 msgid "Mouse Sensitivity:"
 msgstr "Muis Gevoeligheid:"
@@ -423,8 +440,9 @@ msgstr "SERVER NAAM"
 msgid "MAP NAME"
 msgstr "MAP NAAM"
 
-msgid "#PLRS"
-msgstr "#PLRS"
+#, fuzzy
+msgid "#PLAYERS"
+msgstr "SPELERS"
 
 msgid "TYPE"
 msgstr "TYPE"
@@ -756,6 +774,7 @@ msgstr "SYSTEEM"
 msgid "GRAPHICS"
 msgstr "GRAFISCH"
 
+#: src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
 msgstr "SPELER"
 
@@ -777,7 +796,8 @@ msgstr "Automatisch Herladen:"
 msgid "Autoswitch:"
 msgstr "Automatisch Wisselen:"
 
-msgid "Weapon Icon Knipperen:"
+#, fuzzy
+msgid "Weapon Icon Flash:"
 msgstr "Wapen Icoon Flits:"
 
 msgid "Muzzle Flash:"
@@ -1186,8 +1206,8 @@ msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can "
 "see 16"
 msgstr ""
-"1. Verstel de onderstaande balk en/of the helderheid van je monitor totdat je "
-"16 verschillende"
+"1. Verstel de onderstaande balk en/of the helderheid van je monitor totdat "
+"je 16 verschillende"
 
 msgid "     separate bars below of equal differing brightness."
 msgstr "     blokken met gelijke verschillen van helderheid kan zien."
@@ -1199,7 +1219,9 @@ msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
 msgstr "Fine-Tuning Helderheid (32 bit Textures en Kleur Diepte)"
 
 msgid "1. Move the slider below until you can see 3 separate bars below."
-msgstr "1. Verstel de onderstaande balk tot je hieronder 3 verschillende blokken kan zien."
+msgstr ""
+"1. Verstel de onderstaande balk tot je hieronder 3 verschillende blokken kan "
+"zien."
 
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
@@ -1217,11 +1239,8 @@ msgstr "SIMPEL"
 msgid "Overall Quality:"
 msgstr "Algehele Kwaliteit:"
 
-msgid "Fullscreen:"
-msgstr "Volledig Scherm:"
-
-msgid "Borderless:"
-msgstr "Geen Randen:"
+msgid "Window mode:"
+msgstr ""
 
 msgid "Intensity:"
 msgstr "Intensiteit:"
@@ -1277,23 +1296,49 @@ msgstr "GL Extensies:"
 msgid "SET RECOMMENDED"
 msgstr "GEBRUIK AANBEVOLEN"
 
-msgid "^3DEVELOPED BY ET LEGACY TEAM"
+#, fuzzy
+msgid "DEVELOPED BY ET:LEGACY TEAM"
 msgstr "^3ONTWIKKELD DOOR ET LEGACY TEAM"
 
 msgid "^1PROGRAMMING"
 msgstr "^1PROGRAMMERING"
 
-msgid "Jan 'Radegast' Simek - Project founder, coding & management"
+#, fuzzy
+msgid "Jan 'Radegast' Simek"
+msgstr "Jason 'Rhea' Keimig"
+
+#, fuzzy
+msgid "Project founder, coding & management"
 msgstr "Jan 'Radegast' Simek - Project founder, coding & management"
 
-msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
+msgid "Olaf 'IR4T4' R."
+msgstr ""
+
+#, fuzzy
+msgid "Coding, mod development & bad boy"
 msgstr "Olaf 'IR4T4' R. - Coding, mod ontwikkeling & bad boy"
 
-msgid "Konrad 'morsik' Moson - Website, coding & scripts"
+#, fuzzy
+msgid "Konrad 'morsik' Moson"
 msgstr "Konrad 'morsik' Moson - Website, coding & scripts"
 
-msgid "Jere 'Jacker' S. - Main windows coder & renderer"
+#, fuzzy
+msgid "Website, coding & scripts"
+msgstr "Konrad 'morsik' Moson - Website, coding & scripts"
+
+msgid "Jere 'Jacker' S."
+msgstr ""
+
+#, fuzzy
+msgid "Main windows coder & renderer"
 msgstr "Jere 'Jacker' S. - Main windows coder & renderer"
+
+msgid "Remy 'Spyhawk' M."
+msgstr ""
+
+#, fuzzy
+msgid "Coding, mod development"
+msgstr "Remy 'Spyhawk' M. - Coding, mod development"
 
 msgid "^1CONTRIBUTORS"
 msgstr "^1BIJDRAGE"
@@ -1694,29 +1739,31 @@ msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
 msgstr ""
-"Mac OS X is een handelsmerk van Apple Computer, Inc., geregistreerd in de V.S. en "
-"andere landen."
+"Mac OS X is een handelsmerk van Apple Computer, Inc., geregistreerd in de V."
+"S. en andere landen."
 
 msgid "ET Legacy Website"
 msgstr "ET Legacy Website"
 
-msgid "?2012-2013 ET Legacy Team - under the terms of GPL version 3."
+#, fuzzy
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
 msgstr "?2012-2013 ET Legacy Team - under the terms of GPL version 3."
 
+#, fuzzy
 msgid ""
-"?2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries. "
 "All other trademarks and trade names are the properties of their respective "
 "owners."
 msgstr ""
-"?2003 Id Software, Inc. Alle rechten voorbehouden. Wolfenstein: Enemy Territory, "
-"Return to Castle Wolfenstein, de Return to Castle Wolfenstein logo, de id "
-"Software naam, en het id logo zijn of geregistreede handelsnamen of "
-"handelsnamen van Id Software, Inc. in de Verenigde Staten en/of andere landen. "
-"Alle andere handelsmerken en handelsnamen zijn eigendom van hun creative "
-"eigenaren."
+"?2003 Id Software, Inc. Alle rechten voorbehouden. Wolfenstein: Enemy "
+"Territory, Return to Castle Wolfenstein, de Return to Castle Wolfenstein "
+"logo, de id Software naam, en het id logo zijn of geregistreede handelsnamen "
+"of handelsnamen van Id Software, Inc. in de Verenigde Staten en/of andere "
+"landen. Alle andere handelsmerken en handelsnamen zijn eigendom van hun "
+"creative eigenaren."
 
 msgid "Yeah, right, like YOU have"
 msgstr "Tuurlijk, alsof je"
@@ -1730,11 +1777,8 @@ msgstr "ERROR"
 msgid "RECONNECT"
 msgstr "RECONNECT"
 
-msgid "AUTO UPDATE"
-msgstr "AUTO UPDATE"
-
-msgid "New version available. Do you want to update now?"
-msgstr "Nieuwe versie beschikbaar. Wil je nu een update uitvoeren?"
+msgid "UPDATE AVAILABLE"
+msgstr ""
 
 msgid "PASSWORD REQUIRED"
 msgstr "WACHTWOORD NODIG"
@@ -1764,7 +1808,7 @@ msgstr "Terug naar vorige"
 msgid "setting in %s seconds..."
 msgstr "instellingen in %s seconden..."
 
-#: src/cgame/cg_fireteams.c:340
+#: src/cgame/cg_fireteams.c:340 src/cgame/cg_fireteams.c:341
 msgid "MESSAGE"
 msgstr "BERICHT"
 
@@ -2365,15 +2409,15 @@ msgstr "Ik ben een artillerist."
 msgid "I'm a covert ops."
 msgstr "Ik ben een spion"
 
-#: src/cgame/cg_draw.c:2126
+#: src/cgame/cg_draw.c:2126 src/cgame/cg_draw.c:1813
 msgid "Create a Fireteam?"
 msgstr "Maak een Fireteam?"
 
-#: src/cgame/cg_draw.c:2112
+#: src/cgame/cg_draw.c:2112 src/cgame/cg_draw.c:1799
 msgid "Make Fireteam private?"
 msgstr "Maak Fireteam persoonlijk?"
 
-#: src/cgame/cg_draw.c:2360
+#: src/cgame/cg_draw.c:2360 src/cgame/cg_draw.c:2057
 msgid "Response Sent"
 msgstr "Antwoord Verzonden"
 
@@ -2485,7 +2529,7 @@ msgstr "MAPS"
 msgid "CAMPAIGNS"
 msgstr "CAMPAGNES"
 
-#: src/cgame/cg_fireteams.c:358
+#: src/cgame/cg_fireteams.c:358 src/cgame/cg_fireteams.c:359
 msgid "KICK"
 msgstr "VERWIJDER"
 
@@ -2510,7 +2554,7 @@ msgstr "MAAK ALLIED"
 msgid "MAKE SPEC"
 msgstr "MAAK TOESCHOUWER"
 
-#: src/cgame/cg_fireteams.c:361
+#: src/cgame/cg_fireteams.c:361 src/cgame/cg_fireteams.c:362
 msgid "WARN"
 msgstr "WAARSCHUW"
 
@@ -2554,7 +2598,8 @@ msgid ""
 "This server has Max Lives enabled. Tapping out now will lose a life. Are you "
 "sure?"
 msgstr ""
-"Deze server heeft Max Leven aan. Wegdrukken kost een leven. Weet je het zeker?"
+"Deze server heeft Max Leven aan. Wegdrukken kost een leven. Weet je het "
+"zeker?"
 
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
@@ -2563,13 +2608,15 @@ msgstr ""
 "In Last Man Standing Mode zul je niet respawnen als je wegdrukt. Weet je het "
 "zeker?"
 
-msgid "MAX OMNI-BOT"
-msgstr "MAX OMNI-BOT"
+msgid "Bot count:"
+msgstr ""
 
-msgid "MIN OMNI-BOT"
-msgstr "MIN OMNI-BOT"
+#, fuzzy
+msgid "Move skill:"
+msgstr "Naar Rechts:"
 
-msgid "KICK OMNI-BOT"
+#, fuzzy
+msgid "KICK ALL BOTS"
 msgstr "VERWIJDER OMNI-BOT"
 
 msgid "Yes"
@@ -2578,27 +2625,23 @@ msgstr "Ja"
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
-msgstr ""
-"Stel de voorgestelde video instellingen in"
-"en terug naar het hoofdmenu?"
+msgstr "Stel de voorgestelde video instellingen inen terug naar het hoofdmenu?"
 
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
-msgstr ""
-"Stel de voorgestelde video instellingen in"
-"en terug naar het spelmenu?"
+msgstr "Stel de voorgestelde video instellingen inen terug naar het spelmenu?"
 
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
-"Wil je www.etlegacy openen?"
+msgstr "Wil je www.etlegacy openen?"
 
 msgid "^1LET'S KEEP ET ALIVE!"
 msgstr "^1LATEN WE ET LEVEND HOUDEN!"
 
-msgid "^3Thank you for installing ET:Legacy"
+#, fuzzy
+msgid "Thank you for installing ET:Legacy"
 msgstr "^3Bedankt voor het installeren van ET:Legacy"
 
 msgid "HOST GAME: EXTENDED"
@@ -2620,16 +2663,18 @@ msgid ""
 "A full clean will remove all downloaded files like map-,\n"
 " campaign- and custom pk3 files."
 msgstr ""
-"Een volledige opschoning zal alle gedownloade bestanden verwijderen zoals map-,"
-" campagne- en eigen pk3 bestanden."
+"Een volledige opschoning zal alle gedownloade bestanden verwijderen zoals "
+"map-, campagne- en eigen pk3 bestanden."
 
-msgid "^3WARNING: Use at your own risk!"
+#, fuzzy
+msgid "^1WARNING: Use at your own risk!"
 msgstr "^3WAARSCHUWING: Gebruik is op eigen risico!"
 
 msgid "Consult our wiki for documentation."
 msgstr "Raadpleeg onze wiki voor naslag."
 
-msgid "Press 'ABORT' if you don't know what you are doing here."
+#, fuzzy
+msgid "Press '^7ABORT^9' if you don't know what you are doing here."
 msgstr "Klik 'ANNULEER' als je niet weet wat je doet."
 
 msgid "ABORT"
@@ -2743,10 +2788,11 @@ msgstr "zag zijn eigen landmijn niet"
 msgid "dynamited himself to pieces"
 msgstr "blies zichzelf op met zijn dynamiet"
 
-#: src/cgame/cg_draw.c:2797
+#: src/cgame/cg_draw.c:2797 src/cgame/cg_draw.c:2480
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr "^3MAAK JE KLAAR VOOR HET GEVECHT!\n"
 
+#: src/cgame/cg_servercmds.c:387
 msgid "^1FIGHT!\n"
 msgstr "^1VECHT!\n"
 
@@ -2861,9 +2907,13 @@ msgstr "De Allies heeft de Old City muur doorbroken"
 msgid "drowned"
 msgstr "verdronken"
 
+#: src/cgame/cg_event.c:614
+#, c-format
 msgid "Picked up %s"
 msgstr "%s opgepakt"
 
+#: src/cgame/cg_popupmessages.c:758
+#, c-format
 msgid "%s^7 has joined the %s^7!"
 msgstr "%s^7 is aangesloten bij %s^7"
 
@@ -2918,76 +2968,79 @@ msgstr "Val aan!"
 msgid "Fall back!"
 msgstr "Val terug!"
 
-#: src/cgame/cg_players.c:315
+#: src/cgame/cg_players.c:315 src/cgame/cg_players.c:309
 #, c-format
 msgid "Promoted to rank %s!"
 msgstr "Gepromoveerd tot rang %s!"
 
-#: src/cgame/cg_players.c:365
+#: src/cgame/cg_players.c:365 src/cgame/cg_players.c:359
 #, c-format
 msgid "Increased %s skill to level %i!"
 msgstr "Verhoogde %s skill naar level %i!"
 
-#: src/cgame/cg_players.c:367
+#: src/cgame/cg_players.c:367 src/cgame/cg_players.c:361
 #, c-format
 msgid "You have been rewarded with %s"
 msgstr "Je bent nu uitgerust met %s"
 
-#: src/cgame/cg_popupmessages.c:585
+#: src/cgame/cg_popupmessages.c:585 src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
 msgstr "Geplant bij %s."
 
-#: src/cgame/cg_popupmessages.c:587
+#: src/cgame/cg_popupmessages.c:587 src/cgame/cg_popupmessages.c:682
 #, c-format
 msgid "Defused at %s."
 msgstr "Ontmanteld bij %s."
 
-#: src/cgame/cg_popupmessages.c:596
+#: src/cgame/cg_popupmessages.c:596 src/cgame/cg_popupmessages.c:691
 #, c-format
 msgid "%s has been constructed."
 msgstr "%s is gebouwd."
 
-#: src/cgame/cg_popupmessages.c:603
+#: src/cgame/cg_popupmessages.c:603 src/cgame/cg_popupmessages.c:698
 #, c-format
 msgid "%s has been damaged."
 msgstr "%s is beschadigd."
 
-#: src/cgame/cg_popupmessages.c:605
+#: src/cgame/cg_popupmessages.c:605 src/cgame/cg_popupmessages.c:700
 #, c-format
 msgid "%s has been destroyed."
 msgstr "%s is vernietigd."
 
-#: src/cgame/cg_popupmessages.c:627
+#: src/cgame/cg_popupmessages.c:627 src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "%sSpotted by ^7%s%s at %s"
 msgstr "%sGespot door ^7%s%s bij %s"
 
-#: src/cgame/cg_popupmessages.c:631
+#: src/cgame/cg_popupmessages.c:631 src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "%sSpotted by ^7%s"
 msgstr "%sGespot door ^7%s"
 
-#: src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:733
 #, c-format
 msgid "%s have stolen %s!"
 msgstr "%s stal %s!"
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
-#: src/cgame/cg_consolecmds.c:1207
+#: src/cgame/cg_consolecmds.c:1207 src/cgame/cg_consolecmds.c:1143
+#: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Axis"
 msgstr "Axis"
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1211 src/cgame/cg_consolecmds.c:1147
+#: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Allies"
 msgstr "Allies"
 
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:640 src/cgame/cg_popupmessages.c:735
 #, c-format
 msgid "%s have returned %s!"
 msgstr "%s retourneerde %s!"
 
-#: src/cgame/cg_popupmessages.c:666
+#: src/cgame/cg_popupmessages.c:666 src/cgame/cg_popupmessages.c:761
 #, c-format
 msgid "%s^7 disconnected"
 msgstr "%s^7 heeft de verbinding verbroken"
@@ -3133,8 +3186,12 @@ msgstr "De Axis hebben de Voorwaartse Bunker veroverd!"
 msgid "Allies have destroyed the gun tracking"
 msgstr "De Allies hebben de wapen traceerder vernietigd"
 
-msgid "^3All players ready!^7\nMatch starting..."
-msgstr "^3Alle spelers zijn klaar!^7\nWedstrijd begint..."
+msgid ""
+"^3All players ready!^7\n"
+"Match starting..."
+msgstr ""
+"^3Alle spelers zijn klaar!^7\n"
+"Wedstrijd begint..."
 
 msgid "The Axis North-West MG Nest has been destroyed."
 msgstr "De Noord-Westelijke Axis MG Opstelling is vernietigd."
@@ -3212,7 +3269,9 @@ msgid "Axis reclaim the Forward Bunker!"
 msgstr "De Axis hebben de Voorwaartse Bunker heroverd!"
 
 msgid "Allies have breached the Main Entrance and secured the Forward Bunker!"
-msgstr "De Allies hebben de Hoofdingang doorbroken en de Voorwaartse Bunker veiliggesteld!"
+msgstr ""
+"De Allies hebben de Hoofdingang doorbroken en de Voorwaartse Bunker "
+"veiliggesteld!"
 
 msgid "Allies have breached the Side Entrance!"
 msgstr "De Allies hebben de Zijingang doorbroken!"
@@ -3284,10 +3343,12 @@ msgid "Axis team has constructed the Side MG Nest!"
 msgstr "Het Axis team heeft de MG Opstelling aan de Zijde gebouwd!"
 
 msgid "Axis team has constructed the East Axis Base Fortification!"
-msgstr "Het Axis team heeft de Oostelijke Versterking van de Axis Basis gebouwd!"
+msgstr ""
+"Het Axis team heeft de Oostelijke Versterking van de Axis Basis gebouwd!"
 
 msgid "Axis team has constructed the West Axis Base Fortification!"
-msgstr "Het Axis team heeft de Westelijke Versterking van de Axis Basis gebouwd!"
+msgstr ""
+"Het Axis team heeft de Westelijke Versterking van de Axis Basis gebouwd!"
 
 msgid "Allied team has constructed the Foot Bridge!"
 msgstr "Het Allied team heeft de Voetgangersbrug gebouwd!"
@@ -3316,7 +3377,8 @@ msgstr "Het Allied team is doorgebroken bij de Tunnel Deuren!"
 msgid "Allied team has destroyed the Tunnel MG!"
 msgstr "Het Allied team heeft de Tunnel MG vernietigd!"
 
-msgid "Allied team has destroyed the Side MG Nest!"
+#, fuzzy
+msgid "Axis team has destroyed the Side MG Nest!"
 msgstr "Het Allied team heeft de MG Opstelling aan de Zijde vernietigd!"
 
 msgid "Allied team has breached the Depot Gates!"
@@ -3329,16 +3391,20 @@ msgid "Allied team has breached the Depot Side Wall!"
 msgstr "Het Allied Team heeft de Depot Zijmuur doorbroken!"
 
 msgid "Allied team has damaged the East Axis Base Fortification!"
-msgstr "Het Allied team heeft de Oostelijke Axis Basis Versteviging beschadigd!"
+msgstr ""
+"Het Allied team heeft de Oostelijke Axis Basis Versteviging beschadigd!"
 
 msgid "Allied team has destroyed the East Axis Base Fortification!"
-msgstr "Het Allied team heeft de Oostelijke Axis Basis Versteviging vernietigd!"
+msgstr ""
+"Het Allied team heeft de Oostelijke Axis Basis Versteviging vernietigd!"
 
 msgid "Allied team has damaged the West Axis Base Fortification!"
-msgstr "Het Allied team heeft de Westelijke Axis Basis Versteviging beschadigd!"
+msgstr ""
+"Het Allied team heeft de Westelijke Axis Basis Versteviging beschadigd!"
 
 msgid "Allied team has destroyed the West Axis Base Fortification!"
-msgstr "Het Allied team heeft de Westelijke Axis Basis Versteviging beschadigd!"
+msgstr ""
+"Het Allied team heeft de Westelijke Axis Basis Versteviging beschadigd!"
 
 msgid "Allied team has destroyed the Axis Fuel Dump!"
 msgstr "Het Allied team heeft het Axis Brandstof Depot vernietigd!"
@@ -3499,8 +3565,12 @@ msgstr "Je bent in de buurt van het Tweede Treinstel\n"
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr "Je bent in de buurt van het Railgun Vuursysteem\n"
 
-msgid "^3All players ready!^7\nMatch starting...\n"
-msgstr "^3 Alle spelers zijn klaar!^7\nWedstrijd begint...\n"
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
+msgstr ""
+"^3 Alle spelers zijn klaar!^7\n"
+"Wedstrijd begint...\n"
 
 msgid "You are on the Allied team"
 msgstr "Je zit in het Allied team"
@@ -3511,95 +3581,109 @@ msgstr "^1*** Wedstrijd herstart! ***\n"
 msgid "You are on the Axis team"
 msgstr "Je zit in het Axis team"
 
-#: src/cgame/cg_fireteamoverlay.c:446
+#: src/cgame/cg_fireteamoverlay.c:446 src/cgame/cg_fireteamoverlay.c:475
 #, c-format
 msgid "Private Fireteam: %s"
 msgstr "Prive Fireteam: %s"
 
-#: src/cgame/cg_fireteamoverlay.c:450
+#: src/cgame/cg_fireteamoverlay.c:450 src/cgame/cg_fireteamoverlay.c:479
 #, c-format
 msgid "Fireteam: %s"
 msgstr "Fireteam: %s"
 
-#: src/cgame/cg_info.c:585
+#: src/cgame/cg_info.c:585 src/cgame/cg_info.c:718
 msgid "PLAYER STATS"
 msgstr "SPELER STATS"
 
-#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
+#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802 src/cgame/cg_info.c:729
+#: src/cgame/cg_info.c:931
 msgid "Weapon"
 msgstr "Wapen"
 
-#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804
+#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804 src/cgame/cg_info.c:731
+#: src/cgame/cg_info.c:933
 msgid "Accuracy"
 msgstr "Nauwk."
 
-#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806
+#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806 src/cgame/cg_info.c:733
+#: src/cgame/cg_info.c:935
 msgid "Hits / Shots"
 msgstr "Raak / Schot."
 
-#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808
+#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808 src/cgame/cg_info.c:735
+#: src/cgame/cg_info.c:937
 msgid "Kills"
 msgstr "Kills"
 
-#: src/cgame/cg_info.c:604
+#: src/cgame/cg_info.c:604 src/cgame/cg_info.c:737
 msgid "Deaths"
 msgstr "Dood"
 
-#: src/cgame/cg_info.c:606
+#: src/cgame/cg_info.c:606 src/cgame/cg_info.c:739
 msgid "Headshots"
 msgstr "Hoofdschot."
 
-#: src/cgame/cg_info.c:615
+#: src/cgame/cg_info.c:615 src/cgame/cg_info.c:748
 msgid "No weapon info available."
 msgstr "Geen wapen info beschikbaar"
 
-#: src/cgame/cg_info.c:650
+#: src/cgame/cg_info.c:650 src/cgame/cg_info.c:783
 msgid "Rank"
 msgstr "Rang"
 
-#: src/cgame/cg_info.c:667
+#: src/cgame/cg_info.c:667 src/cgame/cg_info.c:799
 msgid "Skills"
 msgstr "Skills"
 
-#: src/cgame/cg_info.c:669
+#: src/cgame/cg_info.c:669 src/cgame/cg_info.c:801
 msgid "Level"
 msgstr "Level"
 
-#: src/cgame/cg_info.c:671
+#: src/cgame/cg_info.c:671 src/cgame/cg_info.c:803
 msgid "XP / Next Level"
 msgstr "XP / Volg. Level"
 
-#: src/cgame/cg_info.c:675
+#: src/cgame/cg_info.c:675 src/cgame/cg_info.c:807
 msgid "Medals"
 msgstr "Medailles"
 
-#: src/cgame/cg_info.c:684
+#: src/cgame/cg_info.c:684 src/cgame/cg_info.c:816
 msgid "No skills acquired!"
 msgstr "Geen skills verworven"
 
-#: src/cgame/cg_info.c:792
+#: src/cgame/cg_info.c:792 src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
 msgstr "\"BESTE SCHOT\" NAUWKEURIGHEID"
 
-#: src/cgame/cg_info.c:810
+#: src/cgame/cg_info.c:810 src/cgame/cg_info.c:939
 msgid "Player"
 msgstr "Speler"
 
-#: src/cgame/cg_info.c:818
+#: src/cgame/cg_info.c:818 src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
 msgstr "Geen kwalicerende wapen info beschikbaar"
 
-#: src/cgame/cg_consolecmds.c:1289
+#: src/cgame/cg_consolecmds.c:1221
 #, c-format
 msgid "You will spawn as a %s %s with a %s."
 msgstr "Je spawnt als een %s %s met een %s."
 
-#: src/cgame/cg_limbopanel.c:1223
+#: src/cgame/cg_consolecmds.c:1225
+#, fuzzy, c-format
+msgid "You will spawn as a %s %s with a %s and a %s."
+msgstr "Je spawnt als een %s %s met een %s."
+
+#: src/cgame/cg_limbopanel.c:1224
 #, c-format
 msgid "You will spawn as an %s %s with a %s."
 msgstr "Je spawnt als een %s %s met een %s."
 
-#: src/cgame/cg_draw.c:441
+#: src/cgame/cg_limbopanel.c:1228
+#, fuzzy, c-format
+msgid "You will spawn as an %s %s with a %s and a %s."
+msgstr "Je spawnt als een %s %s met een %s."
+
+#: src/cgame/cg_draw.c:441 src/cgame/cg_draw.c:395
 msgid "an Objective"
 msgstr "een Object"
 
@@ -3642,16 +3726,15 @@ msgstr "PopUpVerschijningsTijd:"
 msgid "PopUpTimeFade:"
 msgstr "PopUpVervloeiTijd:"
 
-#: src/cgame/cg_consolecmds.c:1211
-msgid "Allies"
-msgstr "Allies"
-
+#: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
 msgstr "DEMO TOETSEN"
 
+#: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
 msgstr "^nBACKSPACE ^mhelp aan/uit"
 
+#: src/cgame/cg_draw.c:2469
 msgid "^3WARMUP:^7 Match begins in:"
 msgstr "^3WARMUP:^7 Wedstrijd begint over:"
 
@@ -3669,42 +3752,48 @@ msgstr "Wacht op aanroepen...%i"
 msgid "Awaiting gamestate..."
 msgstr "Wachten op spelstatus..."
 
-#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637
+#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637 src/ui/ui_main.c:2400
+#: src/ui/ui_main.c:2641
 msgid "Waiting for new key... Press ESCAPE to cancel"
 msgstr "Wachten op een nieuwe key... Druk ESCAPE om te annuleren"
 
-#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641
+#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641 src/ui/ui_main.c:2404
+#: src/ui/ui_main.c:2645
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
 msgstr "Druk ENTER of KLIK om te wijzigen, Druk BACKSPACE om te verwijderen"
 
-#: src/ui/ui_main.c:2539
+#: src/ui/ui_main.c:2539 src/ui/ui_main.c:2542
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
 msgstr "Informatie ophalen van %d servers (ESC om te annuleren)"
 
-#: src/ui/ui_main.c:2543
+#: src/ui/ui_main.c:2543 src/ui/ui_main.c:2546
 msgid "Waiting for response from Master Server"
 msgstr "Wachten op antwoord van Master Server"
 
-#: src/ui/ui_main.c:2551
+#: src/ui/ui_main.c:2551 src/ui/ui_main.c:2554
 #, c-format
 msgid "Refresh Time: %s"
 msgstr "Ververs Tijd: %s"
 
 #: src/ui/ui_main.c:4330 src/ui/ui_main.c:4378 src/ui/ui_main.c:4413
+#: src/ui/ui_main.c:4342 src/ui/ui_main.c:4396 src/ui/ui_main.c:4431
 msgid "Favorite already in list\n"
 msgstr "Favoriet bestaat al\n"
 
 #: src/ui/ui_main.c:4335 src/ui/ui_main.c:4383 src/ui/ui_main.c:4418
+#: src/ui/ui_main.c:4347 src/ui/ui_main.c:4401 src/ui/ui_main.c:4436
 msgid "Favorite list full\n"
 msgstr "Favorietenlijst vol\n"
 
 #: src/ui/ui_main.c:4340 src/ui/ui_main.c:4388 src/ui/ui_main.c:4423
+#: src/ui/ui_main.c:4352 src/ui/ui_main.c:4406 src/ui/ui_main.c:4441
 #, c-format
 msgid "Added favorite server %s\n"
 msgstr "Favoriet toegevoegd %s\n"
 
-msgid "^3See HALL OF FAME below"
+#, fuzzy
+msgid "See HALL OF FAME below"
 msgstr "^3Bekijk hieronder HALL OF FAME"
 
 msgid "^1WEBSITE"
@@ -3716,7 +3805,8 @@ msgstr "http://www.etlegacy.com"
 msgid "HALL OF FAME"
 msgstr "HALL OF FAME"
 
-msgid "^3ET LEGACY HALL OF FAME"
+#, fuzzy
+msgid "ET:LEGACY HALL OF FAME"
 msgstr "^3ET LEGACY HALL OF FAME"
 
 msgid "Advices, Bug reports, Patches"
@@ -3728,78 +3818,104 @@ msgstr "^1VERTALINGEN"
 msgid "^1PORTS"
 msgstr "^1PORTS"
 
-msgid "'BSzili' - AROS and MorphOS"
+msgid "'BSzili'"
+msgstr ""
+
+#, fuzzy
+msgid "AROS and MorphOS"
 msgstr "'BSzili' - AROS and MorphOS"
 
-msgid "'PtitSeb' - Pandora"
+#, fuzzy
+msgid "'PtitSeb'"
 msgstr "'PtitSeb' - Pandora"
+
+msgid "Pandora"
+msgstr ""
 
 msgid "^1PACKAGE MAINTAINERS"
 msgstr "^1PACKAGE MAINTAINERS"
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 msgid "player"
 msgstr "speler"
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 msgid "players"
 msgstr "spelers"
 
-#: src/cgame/cg_draw.c:2749
+#: src/cgame/cg_draw.c:2749 src/cgame/cg_draw.c:2451
+#, c-format
 msgid "Press ^3%s^7 to start"
 msgstr "Druk ^3%s^7 om te starten"
 
 msgid "Not enough players to start match!\n"
 msgstr "Niet genoeg spelers om te beginnen!\n"
 
+#: src/cgame/cg_draw.c:2023
 msgid "Your invitation has been submitted"
 msgstr "Je uitnodiging is verzonden"
 
+#: src/cgame/cg_draw.c:2037
 msgid "Your invitation was accepted"
 msgstr "Je uitnodiging is geaccepteerd"
 
+#: src/cgame/cg_draw.c:2044
 msgid "Your invitation reply has been sent"
 msgstr "Je antwoord op de uitnodiging is verzonden"
 
+#: src/cgame/cg_draw.c:1951
 msgid "You were team-killed by a bot."
 msgstr "Je bent door een teamgenoot bot gedood."
 
+#: src/cgame/cg_draw.c:1945
 msgid "You were team-killed by the Server Host"
 msgstr "Je bent door de Server Host gedood"
 
+#: src/cgame/cg_draw.c:1939
 msgid "Server Host cannot be complained against"
 msgstr "Je kunt geen klacht indienen tegen de Server Host"
 
+#: src/cgame/cg_draw.c:1933
 msgid "Complaint dismissed"
 msgstr "Klacht afgewezen"
 
+#: src/cgame/cg_draw.c:1927
 msgid "Your complaint has been filed"
 msgstr "Je klacht is geregistreerd"
 
+#: src/cgame/cg_draw.c:1961
 msgid "Your application has been submitted"
 msgstr "Je verzoek is ingediend"
 
+#: src/cgame/cg_draw.c:1968
 msgid "Your application failed"
 msgstr "Je verzoek is afgewezen"
 
+#: src/cgame/cg_draw.c:1975
 msgid "Your application has been approved"
 msgstr "Je verzoek is toegekend"
 
+#: src/cgame/cg_draw.c:1982
 msgid "Your application reply has been sent"
 msgstr "Je antwoord is verzonden"
 
+#: src/cgame/cg_draw.c:1992
 msgid "Your proposition has been submitted"
 msgstr "Je voorstel is ingediend"
 
+#: src/cgame/cg_draw.c:1999
 msgid "Your proposition was rejected"
 msgstr "Je voorstel is afgewezen"
 
+#: src/cgame/cg_draw.c:2006
 msgid "Your proposition was accepted"
 msgstr "Je voorstel is geaccepteerd"
 
+#: src/cgame/cg_draw.c:2013
 msgid "Your proposition reply has been sent"
 msgstr "Het antwoord op je voorstel is verzonden"
 
+#: src/cgame/cg_draw.c:2030
 msgid "Your invitation was rejected"
 msgstr "Je uitnodiging is afgewezen"
 
@@ -3818,8 +3934,9 @@ msgstr "Boven Print:"
 msgid "Side Print:"
 msgstr "Zijkant Print:"
 
-msgid "Post Print:"
-msgstr "Post Print:"
+#, fuzzy
+msgid "Center Print:"
+msgstr "Zijkant Print:"
 
 msgid "Crosshair Name:"
 msgstr "Vizier Naam:"
@@ -3830,12 +3947,14 @@ msgstr "Fonts Grootte:"
 msgid "Obituaries Icons:"
 msgstr "Sterf Iconen:"
 
+#: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
 msgstr "WEDSTRIJD BEGINT OVER:"
 
 msgid "You must be in the game to be ^3ready^7!\n"
 msgstr "Je moet deelnemen aan het spel om ^3ready^7 te zijn!"
 
+#: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
 msgstr "ALLIES KONDEN DE TIJD NIET VERSLAAN!"
 
@@ -3860,12 +3979,12 @@ msgstr "'s dynamiet"
 msgid "Timelimit hit.\n"
 msgstr "Tijdslimiet schot.\n"
 
-#: src/cgame/cg_scoreboard.c:146
+#: src/cgame/cg_scoreboard.c:146 src/cgame/cg_scoreboard.c:273
 #, c-format
 msgid "Config: ^7%s^7"
 msgstr "Config: ^7%s^7"
 
-#: src/cgame/cg_draw.c:2745
+#: src/cgame/cg_draw.c:2745 src/cgame/cg_draw.c:2428
 #, c-format
 msgid "^3Config: ^7%s^7"
 msgstr "^3Config: ^7%s^7"
@@ -3873,11 +3992,11 @@ msgstr "^3Config: ^7%s^7"
 msgid "Landmine revealed"
 msgstr "Landmijn gevonden"
 
-#: src/cgame/cg_draw.c:2486
+#: src/cgame/cg_draw.c:2486 src/cgame/cg_draw.c:2167
 msgid "disable"
 msgstr "schakel uit"
 
-#: src/cgame/cg_draw.c:2486
+#: src/cgame/cg_draw.c:2486 src/cgame/cg_draw.c:2167
 msgid "activate"
 msgstr "activeer"
 
@@ -3909,39 +4028,39 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/ui/ui_loadpanel.c:195
+#: src/ui/ui_loadpanel.c:195 src/ui/ui_loadpanel.c:196
 msgid "CONNECTING..."
 msgstr "VERBINDEN..."
 
-#: src/ui/ui_loadpanel.c:191
+#: src/ui/ui_loadpanel.c:191 src/ui/ui_loadpanel.c:192
 msgid "DOWNLOADING..."
 msgstr "DOWNLOADEN..."
 
-#: src/cgame/cg_loadpanel.c:250
+#: src/cgame/cg_loadpanel.c:250 src/cgame/cg_loadpanel.c:251
 msgid "Single Player"
 msgstr "Enkele Speler"
 
-#: src/cgame/cg_loadpanel.c:252
+#: src/cgame/cg_loadpanel.c:252 src/cgame/cg_loadpanel.c:253
 msgid "Co-op"
 msgstr "Co-op"
 
-#: src/cgame/cg_loadpanel.c:254
+#: src/cgame/cg_loadpanel.c:254 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
 msgstr "Militair Doel"
 
-#: src/cgame/cg_loadpanel.c:256
+#: src/cgame/cg_loadpanel.c:256 src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
 msgstr "Stopwatch"
 
-#: src/cgame/cg_loadpanel.c:258
+#: src/cgame/cg_loadpanel.c:258 src/cgame/cg_loadpanel.c:259
 msgid "Campaign"
 msgstr "Campagne"
 
-#: src/cgame/cg_loadpanel.c:260
+#: src/cgame/cg_loadpanel.c:260 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
 msgstr "Last Man Standing"
 
-#: src/cgame/cg_loadpanel.c:262
+#: src/cgame/cg_loadpanel.c:262 src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
 msgstr "Map Stemming"
 
@@ -3952,6 +4071,7 @@ msgid "Public Settings Loaded!\n"
 msgstr "Publieke Instelling Geladen!\n"
 
 #: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
+#: src/cgame/cg_scoreboard.c:254 src/cgame/cg_scoreboard.c:260
 #, c-format
 msgid "MAP %i of %i"
 msgstr "MAP %i of %i"
@@ -3963,7 +4083,9 @@ msgid "Your team has too many landmines placed..."
 msgstr "Je team heeft te veel landmijnen geplaatst..."
 
 msgid "You cannot arm dynamite near a friendly construction!"
-msgstr "Je kunt dynamiet niet activeren in de buurt van een vriendschappelijk bouwwerk!"
+msgstr ""
+"Je kunt dynamiet niet activeren in de buurt van een vriendschappelijk "
+"bouwwerk!"
 
 #: src/cgame/cg_draw.c:402
 #, c-format
@@ -3993,39 +4115,44 @@ msgstr "Je bent verwijderd uit het Fireteam"
 msgid "You are now the leader of your fireteam"
 msgstr "Je bent nu de leider van je Fireteam"
 
-msgid "The Fireteam you are on has been disbanded"
+#, fuzzy
+msgid "The fireteam you are on has been disbanded"
 msgstr "Het Fireteam waar je in zat is opgeheven"
 
 msgid "You have been given fireteam admin rights"
 msgstr "Je hebt Fireteam Admin Rechten gekregen"
 
-#: src/cgame/cg_fireteams.c:343
+#: src/cgame/cg_fireteams.c:343 src/cgame/cg_fireteams.c:344
 msgid "FIRETEAMS"
 msgstr "FIRETEAMS"
 
-#: src/cgame/cg_fireteams.c:346
+#: src/cgame/cg_fireteams.c:346 src/cgame/cg_fireteams.c:347
 msgid "JOIN"
 msgstr "SLUIT AAN"
 
-#: src/cgame/cg_fireteams.c:349
+#: src/cgame/cg_fireteams.c:349 src/cgame/cg_fireteams.c:350
 msgid "PROPOSE"
 msgstr "STEL VOOR"
 
-#: src/cgame/cg_fireteams.c:355
+#: src/cgame/cg_fireteams.c:355 src/cgame/cg_fireteams.c:356
 msgid "INVITE"
 msgstr "NODIG UIT"
-	
-#: src/cgame/cg_fireteams.c:364
+
+#: src/cgame/cg_fireteams.c:364 src/cgame/cg_fireteams.c:365
 msgid "SET ADMIN"
 msgstr "WIJS ADMIN AAN"
 
 #: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
 #: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
+#: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
+#: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
 msgid "Previous"
 msgstr "Vorige"
 
 #: src/cgame/cg_fireteams.c:709 src/cgame/cg_fireteams.c:713
 #: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
+#: src/cgame/cg_fireteams.c:717 src/cgame/cg_fireteams.c:721
+#: src/cgame/cg_fireteams.c:778 src/cgame/cg_fireteams.c:782
 msgid "Next"
 msgstr "Volgende"
 
@@ -4071,11 +4198,15 @@ msgstr "gebruik: fireteam <maak|verlaat|verzoek|nodig uit>"
 msgid "You are already on a fireteam, leave it first"
 msgstr "Je zit al in een Fireteam, verlaat deze eerst"
 
-msgid "The other player must be on the same fireteam for you to give admin rights to"
-msgstr "De andere speler moet in hetzelfde Fireteam zitten om admin rechten van je te krijgen"
+msgid ""
+"The other player must be on the same fireteam for you to give admin rights to"
+msgstr ""
+"De andere speler moet in hetzelfde Fireteam zitten om admin rechten van je "
+"te krijgen"
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
-msgstr "Je moet admin zijn van een Fireteam om admin rechten aan iemand te geven"
+msgstr ""
+"Je moet admin zijn van een Fireteam om admin rechten aan iemand te geven"
 
 msgid "Invalid referee password!\n"
 msgstr "Onjuist scheidsrechter wachtwoord!\n"
@@ -4083,11 +4214,21 @@ msgstr "Onjuist scheidsrechter wachtwoord!\n"
 msgid "Usage: ref [password]\n"
 msgstr "Gebruik: ref [wachtwoord]\n"
 
-msgid "\n^3Referee commands:^7\n"
-msgstr "\n^3Scheidsrechter commandos:^7\n"
+#, fuzzy
+msgid ""
+"^3Referee commands:^7\n"
+"------------------------------------------\n"
+msgstr ""
+"\n"
+"Geldige ^3stem^7 commando's zijn:\n"
+"^3----------------------------\n"
 
-msgid "Usage: ^3\\ref <cmd> [params]\n\n"
-msgstr "Gebruik: ^3\\ref <cmd> [params]\n\n"
+msgid ""
+"Usage: ^3\\ref <cmd> [params]\n"
+"\n"
+msgstr ""
+"Gebruik: ^3\\ref <cmd> [params]\n"
+"\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
 msgstr "^5pauzeer toeschouwersgrendel warmup ^7[waarde]\n"
@@ -4123,7 +4264,8 @@ msgid "The match is already ^1PAUSED!\n"
 msgstr "De wedstrijd is reeds ^1GEPAUZEERD!\n"
 
 msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
-msgstr "^3Scheidsrechter ^5HERVAT^3 de wedstrijd ... doorgaan in 10 seconden!\n"
+msgstr ""
+"^3Scheidsrechter ^5HERVAT^3 de wedstrijd ... doorgaan in 10 seconden!\n"
 
 msgid "The match is already ^5UNPAUSED!\n"
 msgstr "De wedstrijd wordt al ^5HERVAT!\n"
@@ -4179,27 +4321,40 @@ msgstr "Kan niet chatten - je bent gemute\n"
 msgid "^5You've been unmuted\n"
 msgstr "^5Je bent ge-unmute\n"
 
-msgid "\n"
-"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+#, fuzzy
+msgid ""
+"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr "^3 ID^1 : ^3Speler                    Nudge  Rate  MaxPkts  Snaps\n"
 
-msgid "\n"
-"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
-"Snaps\n"
-msgstr "\n"
+msgid "^7----------------------------------------------------------------------\n"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
+"Specials\n"
+msgstr ""
+"\n"
 "^3Status^1   : ^3ID^1 : ^3Speler                    Nudge  Rate  MaxPkts  "
 "Snaps\n"
 
-msgid "^5\n"
+msgid "^7-------------------------------------------------------------------------------\n"
+msgstr ""
+
+msgid ""
+"^5\n"
 "Available Game Commands:\n"
 "------------------------\n"
-msgstr "^5\n"
+msgstr ""
+"^5\n"
 "Beschikbare Spel Commandos:\n"
 "------------------------\n"
 
-msgid "\n"
+msgid ""
+"\n"
 "Type: ^3\\command_name ?^7 for more information\n"
-msgstr "\n"
+msgstr ""
+"\n"
 "Type: ^3\\command_name ?^7 voor meer informatie\n"
 
 msgid "Spectators can't lock a team!\n"
@@ -4229,29 +4384,36 @@ msgstr "Het ^1Axis^7 team is nu ontgrendeld!\n"
 msgid "Team commands not enabled on this server.\n"
 msgstr "Team commando's zijn niet beschikbaar op deze server.\n"
 
-msgid "\n"
+msgid ""
+"\n"
 "^3>>> Unknown vote command: ^7 \n"
-msgstr "\n"
+msgstr ""
+"\n"
 "^3>>> Onbekend stem commando: ^7 \n"
 
-msgid "\n"
+msgid ""
+"\n"
 "Valid ^3callvote^7 commands are:\n"
 "^3----------------------------\n"
-msgstr "\n"
+msgstr ""
+"\n"
 "Geldige ^3stem^7 commando's zijn:\n"
 "^3----------------------------\n"
 
-msgid "\n"
+#, fuzzy
+msgid ""
+"\n"
 "Usage: ^3\\callvote <command> <params>\n"
 "^7For current settings/help, use: ^3\\callvote <command> ?\n"
+msgstr ""
 "\n"
-msgstr "\n"
 "Gebruik: ^3\\callvote <commando> <params>\n"
 "^7Voor huidige instellingen/help, gebruik: ^3\\callvote <commando> ?\n"
 "\n"
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
-msgstr "Type ^3\\stats <player_id>^7 om de stats van een actieve speler te zien.\n"
+msgstr ""
+"Type ^3\\stats <player_id>^7 om de stats van een actieve speler te zien.\n"
 
 msgid "Spectators can't ready a team!\n"
 msgstr "Toescouwers kunnen een team niet gereed melden!\n"
@@ -4346,10 +4508,11 @@ msgstr "Slot 8 - Verrekijker:"
 msgid "Remy 'Spyhawk' M. - Coding, mod development"
 msgstr "Remy 'Spyhawk' M. - Coding, mod development"
 
+#: src/cgame/cg_event.c:566
 msgid "died"
 msgstr "stierf"
 
-#: src/cgame/cg_draw.c:2250
+#: src/cgame/cg_draw.c:2250 src/cgame/cg_draw.c:2161
 #, c-format
 msgid "Press %s to follow previous player"
 msgstr "Druk %s om de vorige speler te volgen"
@@ -4360,80 +4523,80 @@ msgstr "^9Je bent bevroren - ^3/kill^9 is uitgeschakeld."
 msgid "Objectives:"
 msgstr "Militaire Doelen:"
 
-#: src/cgame/cg_info.c:1068
+#: src/cgame/cg_info.c:1068 src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
 msgstr "MILITAIRE DOELEN"
 
-#: src/cgame/cg_debriefing.c:3191
+#: src/cgame/cg_debriefing.c:3191 src/cgame/cg_debriefing.c:3236
 #, c-format
 msgid "CAMPAIGN STATUS: %s"
 msgstr "CAMPAGNE STATUS: %s"
 
-#: src/cgame/cg_debriefing.c:3200
-#, c-format
-msgid "%i SECS TO NEXT MAP"
+#: src/cgame/cg_debriefing.c:3200 src/cgame/cg_debriefing.c:3245
+#, fuzzy, c-format
+msgid "SECS TO NEXT MAP"
 msgstr "%i SECS TOT VOLGENDE MAP"
 
-#: src/cgame/cg_debriefing.c:3130
+#: src/cgame/cg_debriefing.c:3130 src/cgame/cg_debriefing.c:3175
 msgid "ALLIES WIN!"
 msgstr "ALLIES WIN!"
 
-#: src/cgame/cg_debriefing.c:3132
+#: src/cgame/cg_debriefing.c:3132 src/cgame/cg_debriefing.c:3177
 msgid "AXIS WIN!"
 msgstr "AXIS WIN!"
 
-#: src/cgame/cg_debriefing.c:3134
+#: src/cgame/cg_debriefing.c:3134 src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
 msgstr "GELIJKSPEL!"
 
-#: src/cgame/cg_debriefing.c:3311
+#: src/cgame/cg_debriefing.c:3311 src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
 msgstr "Campagne: %s"
 
-#: src/cgame/cg_debriefing.c:2614
+#: src/cgame/cg_debriefing.c:2614 src/cgame/cg_debriefing.c:2659
 msgid "Time:"
 msgstr "Tijd:"
 
-#: src/cgame/cg_debriefing.c:2626
+#: src/cgame/cg_debriefing.c:2626 src/cgame/cg_debriefing.c:2671
 msgid "Medals:"
 msgstr "Medailles:"
 
-#: src/cgame/cg_debriefing.c:2645
+#: src/cgame/cg_debriefing.c:2645 src/cgame/cg_debriefing.c:2690
 msgid "Rank:"
 msgstr "Rang:"
 
-#: src/cgame/cg_debriefing.c:2578
+#: src/cgame/cg_debriefing.c:2578 src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
 msgstr "NAUWK.:"
 
-#: src/cgame/cg_debriefing.c:2765
+#: src/cgame/cg_debriefing.c:2765 src/cgame/cg_debriefing.c:2810
 msgid "^5TO TEAM"
 msgstr "^5TEGEN TEAM"
 
-#: src/cgame/cg_debriefing.c:2768
+#: src/cgame/cg_debriefing.c:2768 src/cgame/cg_debriefing.c:2813
 msgid "^3TO FIRETEAM"
 msgstr "^3TEGEN FIRETEAM"
 
-#: src/cgame/cg_debriefing.c:2771
+#: src/cgame/cg_debriefing.c:2771 src/cgame/cg_debriefing.c:2816
 msgid "^2TO GLOBAL"
 msgstr "^2TEGEN ALLEN"
 
-#: src/cgame/cg_debriefing.c:1311
+#: src/cgame/cg_debriefing.c:1311 src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
 msgstr "Laatst Gespeeld         : %s"
 
-#: src/cgame/cg_debriefing.c:1318
+#: src/cgame/cg_debriefing.c:1318 src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
 msgstr "Totaal Opgetelde stemmen: %d"
 
-#: src/cgame/cg_debriefing.c:1312
+#: src/cgame/cg_debriefing.c:1312 src/cgame/cg_debriefing.c:1341
 msgid "Never"
 msgstr "Nooit"
 
-#: src/cgame/cg_debriefing.c:1312
+#: src/cgame/cg_debriefing.c:1312 src/cgame/cg_debriefing.c:1341
 #, c-format
 msgid "%d maps ago"
 msgstr "%d maps geleden"
@@ -4443,17 +4606,17 @@ msgstr "%d maps geleden"
 msgid "WAITING ON %i %s"
 msgstr "WACHTEN OP %i %s"
 
-#: src/cgame/cg_servercmds.c:2005
+#: src/cgame/cg_servercmds.c:2005 src/cgame/cg_servercmds.c:1954
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
 msgstr "Schade Toegebracht: %-6d  Team Schade Toegebracht: %d"
 
-#: src/cgame/cg_servercmds.c:2006
+#: src/cgame/cg_servercmds.c:2006 src/cgame/cg_servercmds.c:1955
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
 msgstr "Schade Ontv: %-6d   Team Schade Ontv: %d"
 
-#: src/cgame/cg_servercmds.c:2008
+#: src/cgame/cg_servercmds.c:2008 src/cgame/cg_servercmds.c:1957
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
 msgstr "Zelfmoord: %-2d Team doden: %-2d Nauwk.: %-4.1f  HS%%: %-4.1f"
@@ -4464,28 +4627,37 @@ msgstr "'s Bazooka"
 msgid "'s Akimbo .45ACP 1911s"
 msgstr "'s Akimbo .45ACP 1911s"
 
+#: src/cgame/cg_event.c:302
 msgid "^7killed"
 msgstr "^7doodde"
 
+#: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
 msgstr "^7doodde ^1TEAMGENOOT^7"
 
 msgid "Server disconnected"
 msgstr "Server verbroken"
 
-#: src/ui/ui_main.c:5803
-#, c-format
-msgid "^3Filtered/Total: %i/%i"
+#: src/ui/ui_main.c:5803 src/ui/ui_main.c:5873
+#, fuzzy, c-format
+msgid "^3Filtered/Total: %04i/%04i"
 msgstr "^3Gefilterd/Totaal: %i/%i"
 
-#: src/ui/ui_main.c:5807
-#, c-format
-msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
-msgstr "^3Bekijk je filters - geen server gevonden!     Gefilterd/Totaal: %i/%i"
+#: src/ui/ui_main.c:5807 src/ui/ui_main.c:5877
+#, fuzzy, c-format
+msgid ""
+"^3Check your filters - no servers found!              Filtered/Total: %04i/"
+"%04i"
+msgstr ""
+"^3Bekijk je filters - geen server gevonden!     Gefilterd/Totaal: %i/%i"
 
-#: src/ui/ui_main.c:5812
-msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
-msgstr "^1Bekijk je verbinding - geen server gevonden!    Gefilterd/Totaal: 0/000"
+#: src/ui/ui_main.c:5812 src/ui/ui_main.c:5882
+#, fuzzy
+msgid ""
+"^1No Connection or master down - no servers found!    Filtered/Total: "
+"0000/0000"
+msgstr ""
+"^1Bekijk je verbinding - geen server gevonden!    Gefilterd/Totaal: 0/000"
 
 msgid "Server connection timed out."
 msgstr "Server verbinding timed out"
@@ -4493,27 +4665,42 @@ msgstr "Server verbinding timed out"
 msgid "Server disconnected for unknown reason"
 msgstr "Server verbrak zonder reden de verbinding"
 
+#: src/ui/ui_main.c:7751
+#, c-format
 msgid "Server is full, redirect to: %s\n"
 msgstr "Server is vol, herroutering naar: %s\n"
 
+#: src/ui/ui_main.c:4083
 msgid "Can't show Server Info (not found, or local server)\n"
 msgstr "Kan Server Info niet laden (niet gevonden, of lokale server)\n"
 
+#: src/ui/ui_main.c:8294
+#, c-format
 msgid "%d servers listed in browser with %d players.\n"
 msgstr "%d servers vermeld in browser met %d spelers.\n"
 
+#: src/ui/ui_main.c:8300
+#, c-format
 msgid "%d servers not listed (filtered out by game browser settings)\n"
-msgstr "%d servers niet vermeld (gefilterd door de spel browser instellingen)\n"
+msgstr ""
+"%d servers niet vermeld (gefilterd door de spel browser instellingen)\n"
 
+#: src/ui/ui_main.c:8428
+#, c-format
 msgid "Can't find campaign '%s'\n"
 msgstr "Kan campagne niet vinden '%s'\n"
 
+#: src/ui/ui_main.c:8434
+#, c-format
 msgid "Corrupted campaign '%s'\n"
 msgstr "Beschadigde Campagne '%s'\n"
 
+#: src/ui/ui_main.c:8465
+#, c-format
 msgid "%i campaigns found:\n"
 msgstr "%i campagnes gevonden:\n"
 
+#: src/ui/ui_main.c:8469
 msgid "No campaigns found.\n"
 msgstr "Geen campagnes gevonden.\n"
 
@@ -4583,22 +4770,264 @@ msgstr "Sorry, toeschouwen is nu vergrendeld voor het ^1Axis^7 team.\n"
 msgid "Server quit\n"
 msgstr "Server stoppen\n"
 
-#: src/cgame/cg_draw.c:2766
+#: src/cgame/cg_draw.c:2766 src/cgame/cg_draw.c:2677
 #, c-format
 msgid "The %s team is speclocked!"
 msgstr "Het %s team is toeschouwer vergrendeld!"
 
 msgid "You cannot switch during a match, please wait until the round ends."
-msgstr "Je kunt niet wisselen gedurende een wedstrijd, wacht tot de ronde eindigd"
+msgstr ""
+"Je kunt niet wisselen gedurende een wedstrijd, wacht tot de ronde eindigd"
 
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
 "their inspirations."
 msgstr ""
-"Hartelijk dank Splash Damage voor het vrijgeven van de broncode, ioWolfET "
-"& raedwulf-et (speciaal Ralph Eastwood) voor de basis van de code en ioQuake3 voor "
-"hun inspiratie."
+"Hartelijk dank Splash Damage voor het vrijgeven van de broncode, ioWolfET & "
+"raedwulf-et (speciaal Ralph Eastwood) voor de basis van de code en ioQuake3 "
+"voor hun inspiratie."
 
 msgid "Show Ping:"
 msgstr "Laat Ping zien:"
+
+#, fuzzy
+msgid "Allied team has constructed the bridge!"
+msgstr "Het Allied team heeft de Voetgangersbrug gebouwd!"
+
+#, fuzzy
+msgid "Anti-Aliasing:"
+msgstr "Anti-Lag:"
+
+#, fuzzy
+msgid "The Tank has been repaired"
+msgstr "De Tank is gerepareerd!"
+
+#, fuzzy
+msgid "^1ORIGINAL DEVELOPERS"
+msgstr "ADDITIONAL DEVELOPMENT"
+
+#, fuzzy
+msgid "The Tank has been damaged"
+msgstr "De Tank is beschadigd!"
+
+msgid "BOTS"
+msgstr ""
+
+msgid "Difficulty:"
+msgstr ""
+
+msgid "BOTS ON"
+msgstr ""
+
+msgid "^1SECURITY INFORMATION"
+msgstr ""
+
+msgid "You are running old software"
+msgstr ""
+
+msgid ""
+"We do recommend to\n"
+"upgrade your ET client"
+msgstr ""
+
+msgid "UPGRADE NOW"
+msgstr ""
+
+msgid "Join ET Legacy and keep the game alive"
+msgstr ""
+
+#, fuzzy
+msgid "CONNECT TO SERVER"
+msgstr "VERBIND MET IP"
+
+#, fuzzy
+msgid "Server PW:"
+msgstr "Server IP:"
+
+#, fuzzy
+msgid "joined the Axis team\n"
+msgstr "Je zit in het Axis team"
+
+#, fuzzy
+msgid "joined the Allies team\n"
+msgstr "Je zit in het Allied team"
+
+#, fuzzy
+msgid "AXIS BOTS"
+msgstr "AXIS"
+
+#, fuzzy
+msgid "ALLIED BOTS"
+msgstr "ALLIES"
+
+#, fuzzy
+msgid "BALANCED"
+msgstr "GEAVANCEERD"
+
+#: src/cgame/cg_debriefing.c:3211
+#, fuzzy
+msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
+msgstr "ALLIES KONDEN DE TIJD NIET VERSLAAN!"
+
+#: src/cgame/cg_debriefing.c:3222
+#, fuzzy
+msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
+msgstr "ALLIES KONDEN DE TIJD NIET VERSLAAN!"
+
+#: src/cgame/cg_debriefing.c:3226
+#, fuzzy
+msgid "AXIS COULDN'T BEAT THE CLOCK!"
+msgstr "ALLIES KONDEN DE TIJD NIET VERSLAAN!"
+
+#, fuzzy
+msgid "^3>>> Unknown vote command: ^7 \n"
+msgstr ""
+"\n"
+"^3>>> Onbekend stem commando: ^7 \n"
+
+msgid "Use the ^3players^7 command to find a valid player ID.\n"
+msgstr ""
+
+#, fuzzy
+msgid "^3Match is already in progress!\n"
+msgstr "Wedstrijd is al begonnen!\n"
+
+msgid "^1Teams have been shuffled!\n"
+msgstr ""
+
+#, fuzzy
+msgid "^3*** Loading nextmap! ***\n"
+msgstr "^1*** Wedstrijd herstart! ***\n"
+
+#, fuzzy
+msgid "^1*** Level Restarted! ***\n"
+msgstr "^1*** Wedstrijd herstart! ***\n"
+
+#, fuzzy
+msgid "You have been switched to the Axis team"
+msgstr "Je bent verwijderd uit het Fireteam"
+
+msgid "Keep the Allies from beating the clock!"
+msgstr ""
+
+msgid "Keep the Axis from beating the clock!"
+msgstr ""
+
+#, fuzzy
+msgid "You have been switched to the Allied team"
+msgstr "Je bent verwijderd uit het Fireteam"
+
+msgid "Try to beat the clock!"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2035
+msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2040
+msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2047
+#, fuzzy
+msgid "^3No weapon info available.\n"
+msgstr "Geen wapen info beschikbaar"
+
+#: src/cgame/cg_servercmds.c:2153
+#, fuzzy
+msgid "  Medals"
+msgstr "Medailles"
+
+#: src/cgame/cg_servercmds.c:2165
+#, fuzzy
+msgid "^3No skills acquired!\n"
+msgstr "Geen skills verworven"
+
+#, fuzzy
+msgid "You have been been stripped of fireteam admin rights"
+msgstr "Je hebt Fireteam Admin Rechten gekregen"
+
+msgid "%s ^7has left the fireteam\n"
+msgstr ""
+
+#, fuzzy
+msgid "You have been warned by your fireteam leader\n"
+msgstr "Je bent gewaarschuwd door de Leider van je Fireteam\n"
+
+#, fuzzy
+msgid "^3moved to spectator for inactivity!\n"
+msgstr "Toeschouwer Inactiviteit:"
+
+#: src/cgame/cg_debriefing.c:2624
+msgid "HS:"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2332
+#, fuzzy, c-format
+msgid "Bonus Life! Deploying in ^3%d ^7second"
+msgstr "Bonus leven! Inzetten in ^3%d ^7seconden"
+
+#: src/cgame/cg_draw.c:2447
+#, fuzzy
+msgid "Type ^3\\ready^7 in the console to start"
+msgstr "Type ^3\\ready^* in de console om te starten"
+
+#: src/cgame/cg_event.c:293
+#, fuzzy
+msgid "^7swapped places with"
+msgstr "Je bent van plaats geruild met"
+
+#: src/cgame/cg_info.c:1421
+#, fuzzy
+msgid "DEMO STATUS"
+msgstr "SPELER STATS"
+
+#: src/cgame/cg_scoreboard.c:205
+#, fuzzy, c-format
+msgid "WAITING ON ^2%i ^9%s"
+msgstr "WACHTEN OP %i %s"
+
+#: src/ui/ui_main.c:8517
+#, fuzzy
+msgid "No favourite servers found."
+msgstr "Favoriet toegevoegd %s\n"
+
+#: src/ui/ui_main.c:8528
+#, fuzzy
+msgid "All favourite servers removed."
+msgstr "Favoriet toegevoegd %s\n"
+
+#~ msgid "Connection:"
+#~ msgstr "Verbinding:"
+
+#~ msgid "#PLRS"
+#~ msgstr "#PLRS"
+
+#~ msgid "Fullscreen:"
+#~ msgstr "Volledig Scherm:"
+
+#~ msgid "Borderless:"
+#~ msgstr "Geen Randen:"
+
+#~ msgid "AUTO UPDATE"
+#~ msgstr "AUTO UPDATE"
+
+#~ msgid "New version available. Do you want to update now?"
+#~ msgstr "Nieuwe versie beschikbaar. Wil je nu een update uitvoeren?"
+
+#~ msgid "MAX OMNI-BOT"
+#~ msgstr "MAX OMNI-BOT"
+
+#~ msgid "MIN OMNI-BOT"
+#~ msgstr "MIN OMNI-BOT"
+
+#~ msgid "Post Print:"
+#~ msgstr "Post Print:"
+
+#~ msgid ""
+#~ "\n"
+#~ "^3Referee commands:^7\n"
+#~ msgstr ""
+#~ "\n"
+#~ "^3Scheidsrechter commandos:^7\n"

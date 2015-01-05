@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
-"Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
-"POT-Creation-Date: 2013-04-07 23:32+0200\n"
+"Report-Msgid-Bugs-To: mail@etlegacy.com\n"
+"POT-Creation-Date: 2015-01-05 10:10+0100\n"
 "PO-Revision-Date: 2014-02-16 12:11+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
@@ -19,107 +19,112 @@ msgstr ""
 "X-Generator: Poedit 1.5.5\n"
 
 #: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
-#: src/cgame/cg_consolecmds.c:568
+#: src/cgame/cg_consolecmds.c:568 src/cgame/cg_consolecmds.c:362
+#: src/cgame/cg_consolecmds.c:400 src/cgame/cg_consolecmds.c:436
 msgid "Can't team voice chat as a spectator.\n"
 msgstr "Neni mozne vydavat hlasove prikazy tymu jako pozorovatel.\n"
 
-#: src/cgame/cg_consolecmds.c:593
+#: src/cgame/cg_consolecmds.c:593 src/cgame/cg_consolecmds.c:461
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr "Neni mozne vydavat hlasove prikazy spoluhraci jako pozorovatel.\n"
 
 #: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3106
-#: src/cgame/cg_scoreboard.c:646
+#: src/cgame/cg_scoreboard.c:646 src/cgame/cg_debriefing.c:2013
+#: src/cgame/cg_debriefing.c:3202 src/cgame/cg_scoreboard.c:723
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
 msgstr "HODINY JSOU NYNI NASTAVENY NA %s!"
 
-#: src/cgame/cg_draw.c:650
+#: src/cgame/cg_draw.c:650 src/cgame/cg_draw_hud.c:2052
 msgid "Connection Interrupted"
 msgstr "Spojeni preruseno"
 
-#: src/cgame/cg_draw.c:1902
+#: src/cgame/cg_draw.c:1902 src/cgame/cg_draw.c:1506
 msgid "Disguised Enemy!"
 msgstr "Prevleceny nepritel!"
 
-#: src/cgame/cg_draw.c:2074
+#: src/cgame/cg_draw.c:2074 src/cgame/cg_draw.c:1716
 msgid "SPECTATOR"
 msgstr "POZOROVATEL"
 
-#: src/cgame/cg_draw.c:2092
-#, c-format
-msgid "File complaint against %s^3 for team-killing?"
+#: src/cgame/cg_draw.c:2092 src/cgame/cg_draw.c:1743
+#, fuzzy, c-format
+msgid "File complaint against ^7%s^3 for team-killing?"
 msgstr "Podat stiznost proti %s^3 za zabiti spoluhrace?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
-#: src/cgame/cg_draw.c:2164
+#: src/cgame/cg_draw.c:2164 src/cgame/cg_draw.c:1747 src/cgame/cg_draw.c:1761
+#: src/cgame/cg_draw.c:1775 src/cgame/cg_draw.c:1789 src/cgame/cg_draw.c:1803
+#: src/cgame/cg_draw.c:1817 src/cgame/cg_draw.c:1831
 #, c-format
 msgid "Press '%s' for YES, or '%s' for NO"
 msgstr "Stiskni '%s' pro ANO nebo '%s' pro NE"
 
-#: src/cgame/cg_draw.c:2096
+#: src/cgame/cg_draw.c:2096 src/cgame/cg_draw.c:1757
 #, c-format
 msgid "Accept %s^3's application to join your fireteam?"
 msgstr "Prijmout zadost od %s^3 k pripojeni do vasi cety?"
 
-#: src/cgame/cg_draw.c:2109
+#: src/cgame/cg_draw.c:2109 src/cgame/cg_draw.c:1771
 #, c-format
 msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
 msgstr "Prijmout navrh od %s^3 pro pozvani %s^3 do vasi cety?"
 
-#: src/cgame/cg_draw.c:2122
+#: src/cgame/cg_draw.c:2122 src/cgame/cg_draw.c:1785
 #, c-format
 msgid "Accept %s^3's invitation to join their fireteam?"
 msgstr "Prijmout zadost od %s^3 pro pripojeni do vasi cety?"
 
-#: src/cgame/cg_draw.c:2218
+#: src/cgame/cg_draw.c:2218 src/cgame/cg_draw.c:1895
 #, c-format
 msgid "VOTE(%i): %s"
 msgstr "VOLBA(%i): %s"
 
-#: src/cgame/cg_draw.c:2223
+#: src/cgame/cg_draw.c:2223 src/cgame/cg_draw.c:1901
 msgid "Cannot vote as Spectator"
 msgstr "Neni mozne volit jako pozorovatel"
 
-#: src/cgame/cg_draw.c:2227
+#: src/cgame/cg_draw.c:2227 src/cgame/cg_draw.c:1905
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
 msgstr "ANO(%s):%i, NE(%s):%i"
 
-#: src/cgame/cg_draw.c:2234
+#: src/cgame/cg_draw.c:2234 src/cgame/cg_draw.c:1912
 #, c-format
 msgid "YOU VOTED ON: %s"
 msgstr "VOLIL JSI: %s"
 
-#: src/cgame/cg_draw.c:2237
+#: src/cgame/cg_draw.c:2237 src/cgame/cg_draw.c:1917
 #, c-format
 msgid "Y:%i, N:%i"
 msgstr "A:%i, N:%i"
 
-#: src/cgame/cg_draw.c:2460
+#: src/cgame/cg_draw.c:2460 src/cgame/cg_draw.c:2151
 #, c-format
 msgid "Press %s to open Limbo Menu"
 msgstr "Stiskni %s pro otevreni Limbo nabidky"
 
-#: src/cgame/cg_draw.c:2464
+#: src/cgame/cg_draw.c:2464 src/cgame/cg_draw.c:2156
 #, c-format
 msgid "Press %s to follow next player"
 msgstr "Stiskni %s pro nasledovani dalsiho hrace"
 
-#: src/cgame/cg_draw.c:2469
+#: src/cgame/cg_draw.c:2469 src/cgame/cg_draw.c:2167
 #, c-format
 msgid "Press %s to %s multiview mode"
 msgstr "Stiskni %s pro %s multiview zobrazeni"
 
-#: src/cgame/cg_draw.c:2530
+#: src/cgame/cg_draw.c:2530 src/cgame/cg_draw.c:2230
 msgid "You are wounded and waiting for a medic."
 msgstr "Jsi ranen a cekas na zdravotnika."
 
-#: src/cgame/cg_draw.c:2540
+#: src/cgame/cg_draw.c:2540 src/cgame/cg_draw.c:2239
+#, fuzzy, c-format
 msgid "Press %s to go into reinforcement queue."
 msgstr "Stiskni SKOK pro navraceni do fronty posil."
 
-#: src/cgame/cg_draw.c:2550
+#: src/cgame/cg_draw.c:2550 src/cgame/cg_draw.c:2250
 msgid "No more reinforcements this round."
 msgstr "Toto kolo uz nebudou zadne posily."
 
@@ -128,30 +133,31 @@ msgstr "Toto kolo uz nebudou zadne posily."
 msgid "Reinforcements deploy in %d seconds."
 msgstr "Posily prijdou za %d vterin"
 
-#: src/cgame/cg_draw.c:2593
+#: src/cgame/cg_draw.c:2593 src/cgame/cg_draw.c:2328
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7seconds"
 msgstr "Zivot navic! Rozmisteni za ^3%d ^7vterin"
 
-#: src/cgame/cg_draw.c:2597
+#: src/cgame/cg_draw.c:2597 src/cgame/cg_draw.c:2337
 msgid "No more deployments this round"
 msgstr "Zadne dalsi rozmisteni toto kolo"
 
-#: src/cgame/cg_draw.c:2602
+#: src/cgame/cg_draw.c:2602 src/cgame/cg_draw.c:2258 src/cgame/cg_draw.c:2346
 #, c-format
 msgid "Deploying in ^3%d ^7seconds"
 msgstr "Rozmisteni za ^3%d ^7vterin"
 
-#: src/cgame/cg_draw.c:2613
+#: src/cgame/cg_draw.c:2613 src/cgame/cg_draw.c:2262 src/cgame/cg_draw.c:2350
 #, c-format
 msgid "Deploying in ^3%d ^7second"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
+#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621 src/cgame/cg_draw.c:2361
+#: src/cgame/cg_draw.c:2387
 msgid "Following"
 msgstr "Sledujes"
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr "^3ZAHRIVANI:^7 Ceka se na ^2%i^7 %s"
@@ -165,116 +171,130 @@ msgid "(WARMUP) Match begins in:"
 msgstr "(ZAHRIVACI KOLO) Zápas zacne za:"
 
 #: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
+#: src/cgame/cg_draw.c:2503 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
 msgstr ""
 
 #: src/cgame/cg_draw_hud.c:1535 src/cgame/cg_scoreboard.c:165
+#: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
+#: src/cgame/cg_scoreboard.c:178
 msgid "WARMUP"
 msgstr "ZAHRIVANI"
 
-#: src/cgame/cg_event.c:189
+#: src/cgame/cg_event.c:189 src/cgame/cg_event.c:271
 msgid "You swapped places with"
 msgstr "Vymenil jsis misto s"
 
-#: src/cgame/cg_event.c:193
+#: src/cgame/cg_event.c:193 src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
 msgstr "Zabil jsi ^1SPOLUHRACE^7"
 
-#: src/cgame/cg_event.c:198
+#: src/cgame/cg_event.c:198 src/cgame/cg_event.c:280
 msgid "You killed"
 msgstr "Zabil jsi"
 
-#: src/cgame/cg_main.c:893
+#: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "User"
 msgstr "Uzivatel"
 
-#: src/cgame/cg_main.c:893
+#: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "is not on the server"
 msgstr "neni na tomto serveru"
 
 #: src/cgame/cg_scoreboard.c:165 src/cgame/cg_scoreboard.c:171
 #: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:180
+#: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
+#: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
 msgid "MISSION TIME:"
 msgstr "CAS MISE:"
 
-#: src/cgame/cg_scoreboard.c:171
+#: src/cgame/cg_scoreboard.c:171 src/cgame/cg_scoreboard.c:184
 msgid "GAME STOPPED"
 msgstr "HRA ZASTAVENA"
 
-#: src/cgame/cg_scoreboard.c:175
+#: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:188
 msgid "SUDDEN DEATH"
 msgstr "NAHLA SMRT"
 
-#: src/cgame/cg_scoreboard.c:205
+#: src/cgame/cg_scoreboard.c:205 src/cgame/cg_scoreboard.c:229
+#: src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
 msgstr "CAS POSIL:"
 
-#: src/cgame/cg_scoreboard.c:222
+#: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
 msgstr "KOLO"
 
-#: src/cgame/cg_scoreboard.c:222
+#: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "SCORE"
 msgstr "SKORE"
 
 #: src/cgame/cg_scoreboard.c:373 src/cgame/cg_scoreboard.c:536
+#: src/cgame/cg_scoreboard.c:451 src/cgame/cg_scoreboard.c:642
 msgid "^3CONNECTING"
 msgstr "^3PRIPOJUJE"
 
 #: src/cgame/cg_scoreboard.c:377 src/cgame/cg_scoreboard.c:540
+#: src/cgame/cg_scoreboard.c:455 src/cgame/cg_scoreboard.c:646
 msgid "^3SPECTATOR"
 msgstr "^3POZORUJE"
 
 #: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
+#: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
 msgstr "OSA"
 
 #: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
 #: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:205 src/cgame/cg_scoreboard.c:811
+#: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:828
+#: src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
 msgstr "HRACU"
 
 #: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
+#: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
 msgstr "PRVNI KREV"
 
 #: src/cgame/cg_scoreboard.c:814 src/cgame/cg_scoreboard.c:828
+#: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:832
 msgid "ALLIES"
 msgstr "SPOJENCI"
 
-#: src/cgame/cg_scoreboard.c:701
+#: src/cgame/cg_scoreboard.c:701 src/cgame/cg_scoreboard.c:846
 msgid "Name"
 msgstr "Jmeno"
 
-#: src/cgame/cg_scoreboard.c:704
+#: src/cgame/cg_scoreboard.c:704 src/cgame/cg_scoreboard.c:855
 msgid "C R"
 msgstr "T H"
 
-#: src/cgame/cg_scoreboard.c:709
+#: src/cgame/cg_scoreboard.c:709 src/cgame/cg_scoreboard.c:860
 msgid "Score"
 msgstr "Skore"
 
-#: src/cgame/cg_scoreboard.c:714
+#: src/cgame/cg_scoreboard.c:714 src/cgame/cg_scoreboard.c:865
 msgid "XP"
 msgstr "XP"
 
-#: src/cgame/cg_scoreboard.c:718
+#: src/cgame/cg_scoreboard.c:718 src/cgame/cg_scoreboard.c:869
 msgid "Ping"
 msgstr "Odezva"
 
-#: src/cgame/cg_servercmds.c:405
+#: src/cgame/cg_servercmds.c:405 src/cgame/cg_servercmds.c:421
 msgid "Auto Pick"
 msgstr "Vzdy sbirat"
 
-#: src/cgame/cg_servercmds.c:2304
+#: src/cgame/cg_servercmds.c:2304 src/cgame/cg_servercmds.c:2344
 msgid "Map"
 msgstr "Mapa"
 
-#: src/cgame/cg_servercmds.c:2326
+#: src/cgame/cg_servercmds.c:2326 src/cgame/cg_servercmds.c:2366
 msgid "Could not create logfile"
 msgstr "Nebylo mozne vytvorit soubor s logem"
 
-#: src/cgame/cg_servercmds.c:2866
+#: src/cgame/cg_servercmds.c:2866 src/cgame/cg_servercmds.c:2903
 msgid "^3Server Restarting"
 msgstr "^3Server se restartuje"
 
@@ -348,9 +368,6 @@ msgstr "Rozliseni:"
 msgid "Brightness:"
 msgstr "Jas:"
 
-msgid "Connection:"
-msgstr "Spojeni:"
-
 msgid "Mouse Sensitivity:"
 msgstr "Citlivost mysi:"
 
@@ -423,8 +440,9 @@ msgstr "NAZEV SERVERU"
 msgid "MAP NAME"
 msgstr "MAPA"
 
-msgid "#PLRS"
-msgstr "#HRCI"
+#, fuzzy
+msgid "#PLAYERS"
+msgstr "HRACU"
 
 msgid "TYPE"
 msgstr "TYP"
@@ -624,7 +642,7 @@ msgstr ""
 msgid "ALLOW VOTES"
 msgstr "POVOLIT HLASOVANI"
 
-msgid "Comp Settings:"
+msgid "Game config:"
 msgstr ""
 
 msgid "Player Kick:"
@@ -756,6 +774,7 @@ msgstr "SYSTEM"
 msgid "GRAPHICS"
 msgstr "GRAFIKA"
 
+#: src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
 msgstr "HRAC"
 
@@ -789,7 +808,7 @@ msgstr "Stopy strel:"
 msgid "SCOPE"
 msgstr ""
 
-msgid "Use Weapon Cycle for Zoom:"
+msgid "Weapon Cycle for Zoom:"
 msgstr ""
 
 msgid "Default Zoom Level:"
@@ -1186,8 +1205,8 @@ msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can "
 "see 16"
 msgstr ""
-"1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud "
-"neuvidis 16"
+"1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud neuvidis "
+"16"
 
 msgid "     separate bars below of equal differing brightness."
 msgstr "     oddelenych mrizi pod stejnymi rozdily v jasu"
@@ -1215,11 +1234,8 @@ msgstr "JEDNODUCHE"
 msgid "Overall Quality:"
 msgstr "Celkova kvalita:"
 
-msgid "Fullscreen:"
-msgstr "Cela obrazovka:"
-
-msgid "Borderless:"
-msgstr "Bez okraju:"
+msgid "Window mode:"
+msgstr ""
 
 msgid "Intensity:"
 msgstr "Intensita:"
@@ -1275,22 +1291,42 @@ msgstr "Rozsireni OpenGL:"
 msgid "SET RECOMMENDED"
 msgstr "POUZIT DOPORUCENE"
 
-msgid "^3DEVELOPED BY ET LEGACY TEAM"
+#, fuzzy
+msgid "DEVELOPED BY ET:LEGACY TEAM"
 msgstr "^3VYTVORENO TYMEM ET: LEGACY"
 
 msgid "^1PROGRAMMING"
 msgstr "^1PROGRAMOVANI"
 
-msgid "Jan 'Radegast' Simek - Project founder, coding & management"
+#, fuzzy
+msgid "Jan 'Radegast' Simek"
+msgstr "Jason 'Rhea' Keimig"
+
+msgid "Project founder, coding & management"
 msgstr ""
 
-msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
+msgid "Olaf 'IR4T4' R."
 msgstr ""
 
-msgid "Konrad 'morsik' Moson - Website, coding & scripts"
+msgid "Coding, mod development & bad boy"
 msgstr ""
 
-msgid "Jere 'Jacker' S. - Main windows coder & renderer"
+msgid "Konrad 'morsik' Moson"
+msgstr ""
+
+msgid "Website, coding & scripts"
+msgstr ""
+
+msgid "Jere 'Jacker' S."
+msgstr ""
+
+msgid "Main windows coder & renderer"
+msgstr ""
+
+msgid "Remy 'Spyhawk' M."
+msgstr ""
+
+msgid "Coding, mod development"
 msgstr ""
 
 msgid "^1CONTRIBUTORS"
@@ -1444,13 +1480,12 @@ msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
 msgstr ""
-"Wolfenstein: Enemy Territory pohani Quake III Arena "
-"(TM) technologie od id Software"
+"Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id "
+"Software"
 
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr ""
-"Produkci, vyvojovou a technickou asistenci poskytlo id Software."
+msgstr "Produkci, vyvojovou a technickou asistenci poskytlo id Software."
 
 msgid "PRODUCED BY ACTIVISION"
 msgstr "PRODUKOVAL ACTIVISION"
@@ -1521,24 +1556,32 @@ msgstr ""
 msgid "Testers:"
 msgstr "Testeri:"
 
-msgid "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+msgid ""
+"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
 "Kannard, Cory Rice"
-msgstr "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+msgstr ""
+"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
 "Kannard, Cory Rice"
 
-msgid "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+msgid ""
+"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
 "Martin, Jim Call"
-msgstr "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+msgstr ""
+"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
 "Martin, Jim Call"
 
-msgid "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+msgid ""
+"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
 "Lawrence Wong"
-msgstr "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+msgstr ""
+"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
 "Lawrence Wong"
 
-msgid "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+msgid ""
+"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
 "Todd, Mike Restifo"
-msgstr "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+msgstr ""
+"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
 "Todd, Mike Restifo"
 
 msgid "Chris Keim"
@@ -1690,7 +1733,8 @@ msgstr ""
 msgid "ET Legacy Website"
 msgstr "Webova stranka ET: Legacy"
 
-msgid "@ 2012-2013 ET Legacy Team - under the terms of GPL version 3."
+#, fuzzy
+msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
 msgstr " 2012-2013 ET: Legacy vyvojari - pod licenci GPL verze 3."
 
 msgid ""
@@ -1701,11 +1745,11 @@ msgid ""
 "All other trademarks and trade names are the properties of their respective "
 "owners."
 msgstr ""
-"@ 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy Territory, "
-"Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, "
-"nazev id Software a id logo jsou bud registrovane ochranne znamky nebo "
-"znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny dalsi "
-"ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
+"@ 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy "
+"Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein "
+"logo, nazev id Software a id logo jsou bud registrovane ochranne znamky nebo "
+"znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny "
+"dalsi ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
 
 msgid "Yeah, right, like YOU have"
 msgstr "Jasne, jako bys mel"
@@ -1719,11 +1763,8 @@ msgstr "CHYBA"
 msgid "RECONNECT"
 msgstr "ZNOVU SPOJIT"
 
-msgid "AUTO UPDATE"
-msgstr "AKTUALIZACE"
-
-msgid "New version available. Do you want to update now?"
-msgstr "Je k dispozici nova verze. Chcete aktualizovat nyni?"
+msgid "UPDATE AVAILABLE"
+msgstr ""
 
 msgid "PASSWORD REQUIRED"
 msgstr "POZADOVANO HESLO"
@@ -1753,7 +1794,7 @@ msgstr "Navrat k puvodnim nastavenim"
 msgid "setting in %s seconds..."
 msgstr "nastaveni za %s vterin..."
 
-#: src/cgame/cg_fireteams.c:340
+#: src/cgame/cg_fireteams.c:340 src/cgame/cg_fireteams.c:341
 msgid "MESSAGE"
 msgstr "VZKAZ"
 
@@ -2354,15 +2395,15 @@ msgstr ""
 msgid "I'm a covert ops."
 msgstr ""
 
-#: src/cgame/cg_draw.c:2126
+#: src/cgame/cg_draw.c:2126 src/cgame/cg_draw.c:1813
 msgid "Create a Fireteam?"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2112
+#: src/cgame/cg_draw.c:2112 src/cgame/cg_draw.c:1799
 msgid "Make Fireteam private?"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2360
+#: src/cgame/cg_draw.c:2360 src/cgame/cg_draw.c:2057
 msgid "Response Sent"
 msgstr ""
 
@@ -2474,7 +2515,7 @@ msgstr "MAPY"
 msgid "CAMPAIGNS"
 msgstr "KAMPANE"
 
-#: src/cgame/cg_fireteams.c:358
+#: src/cgame/cg_fireteams.c:358 src/cgame/cg_fireteams.c:359
 msgid "KICK"
 msgstr "VYKOPNOUT"
 
@@ -2499,7 +2540,7 @@ msgstr ""
 msgid "MAKE SPEC"
 msgstr ""
 
-#: src/cgame/cg_fireteams.c:361
+#: src/cgame/cg_fireteams.c:361 src/cgame/cg_fireteams.c:362
 msgid "WARN"
 msgstr "VAROVAT"
 
@@ -2549,13 +2590,15 @@ msgid ""
 "sure?"
 msgstr ""
 
-msgid "MAX OMNI-BOT"
-msgstr "MAX OMNI-BOTu"
+msgid "Bot count:"
+msgstr ""
 
-msgid "MIN OMNI-BOT"
-msgstr "MIN OMNI-BOTu"
+#, fuzzy
+msgid "Move skill:"
+msgstr "Pohyb doprava:"
 
-msgid "KICK OMNI-BOT"
+#, fuzzy
+msgid "KICK ALL BOTS"
 msgstr "VYKOPNOUT OMNI-BOTa"
 
 msgid "Yes"
@@ -2579,7 +2622,7 @@ msgstr "Chces otevrit"
 msgid "^1LET'S KEEP ET ALIVE!"
 msgstr ""
 
-msgid "^3Thank you for installing ET:Legacy"
+msgid "Thank you for installing ET:Legacy"
 msgstr ""
 
 msgid "HOST GAME: EXTENDED"
@@ -2602,13 +2645,13 @@ msgid ""
 " campaign- and custom pk3 files."
 msgstr ""
 
-msgid "^3WARNING: Use at your own risk!"
+msgid "^1WARNING: Use at your own risk!"
 msgstr ""
 
 msgid "Consult our wiki for documentation."
 msgstr ""
 
-msgid "Press 'ABORT' if you don't know what you are doing here."
+msgid "Press '^7ABORT^9' if you don't know what you are doing here."
 msgstr ""
 
 msgid "ABORT"
@@ -2722,10 +2765,11 @@ msgstr ""
 msgid "dynamited himself to pieces"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2797
+#: src/cgame/cg_draw.c:2797 src/cgame/cg_draw.c:2480
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr ""
 
+#: src/cgame/cg_servercmds.c:387
 msgid "^1FIGHT!\n"
 msgstr ""
 
@@ -2840,9 +2884,13 @@ msgstr ""
 msgid "drowned"
 msgstr ""
 
+#: src/cgame/cg_event.c:614
+#, c-format
 msgid "Picked up %s"
 msgstr "Podniosl %s"
 
+#: src/cgame/cg_popupmessages.c:758
+#, c-format
 msgid "%s^7 has joined the %s^7!"
 msgstr ""
 
@@ -2897,76 +2945,79 @@ msgstr "Utok:"
 msgid "Fall back!"
 msgstr ""
 
-#: src/cgame/cg_players.c:315
+#: src/cgame/cg_players.c:315 src/cgame/cg_players.c:309
 #, c-format
 msgid "Promoted to rank %s!"
 msgstr ""
 
-#: src/cgame/cg_players.c:365
+#: src/cgame/cg_players.c:365 src/cgame/cg_players.c:359
 #, c-format
 msgid "Increased %s skill to level %i!"
 msgstr ""
 
-#: src/cgame/cg_players.c:367
+#: src/cgame/cg_players.c:367 src/cgame/cg_players.c:361
 #, c-format
 msgid "You have been rewarded with %s"
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:585
+#: src/cgame/cg_popupmessages.c:585 src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:587
+#: src/cgame/cg_popupmessages.c:587 src/cgame/cg_popupmessages.c:682
 #, c-format
 msgid "Defused at %s."
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:596
+#: src/cgame/cg_popupmessages.c:596 src/cgame/cg_popupmessages.c:691
 #, c-format
 msgid "%s has been constructed."
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:603
+#: src/cgame/cg_popupmessages.c:603 src/cgame/cg_popupmessages.c:698
 #, c-format
 msgid "%s has been damaged."
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:605
+#: src/cgame/cg_popupmessages.c:605 src/cgame/cg_popupmessages.c:700
 #, c-format
 msgid "%s has been destroyed."
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:627
+#: src/cgame/cg_popupmessages.c:627 src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "%sSpotted by ^7%s%s at %s"
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:631
+#: src/cgame/cg_popupmessages.c:631 src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "%sSpotted by ^7%s"
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:733
 #, c-format
 msgid "%s have stolen %s!"
 msgstr ""
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
-#: src/cgame/cg_consolecmds.c:1207
+#: src/cgame/cg_consolecmds.c:1207 src/cgame/cg_consolecmds.c:1143
+#: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Axis"
 msgstr ""
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1211 src/cgame/cg_consolecmds.c:1147
+#: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Allies"
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:640 src/cgame/cg_popupmessages.c:735
 #, c-format
 msgid "%s have returned %s!"
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:666
+#: src/cgame/cg_popupmessages.c:666 src/cgame/cg_popupmessages.c:761
 #, c-format
 msgid "%s^7 disconnected"
 msgstr ""
@@ -3010,8 +3061,8 @@ msgstr ""
 msgid "Medic Ammo"
 msgstr ""
 
-msgid "Binoculars"
-msgstr "Priblizeni dalekohledu:"
+msgid "Binoculars for any Class"
+msgstr ""
 
 msgid "Full Revive"
 msgstr ""
@@ -3112,7 +3163,9 @@ msgstr ""
 msgid "Allies have destroyed the gun tracking"
 msgstr ""
 
-msgid "^3All players ready!^7\nMatch starting..."
+msgid ""
+"^3All players ready!^7\n"
+"Match starting..."
 msgstr ""
 
 msgid "The Axis North-West MG Nest has been destroyed."
@@ -3295,7 +3348,7 @@ msgstr ""
 msgid "Allied team has destroyed the Tunnel MG!"
 msgstr ""
 
-msgid "Allied team has destroyed the Side MG Nest!"
+msgid "Axis team has destroyed the Side MG Nest!"
 msgstr ""
 
 msgid "Allied team has breached the Depot Gates!"
@@ -3478,7 +3531,9 @@ msgstr ""
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr ""
 
-msgid "^3All players ready!^7\nMatch starting...\n"
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
 msgstr ""
 
 msgid "You are on the Allied team"
@@ -3490,95 +3545,109 @@ msgstr ""
 msgid "You are on the Axis team"
 msgstr ""
 
-#: src/cgame/cg_fireteamoverlay.c:446
+#: src/cgame/cg_fireteamoverlay.c:446 src/cgame/cg_fireteamoverlay.c:475
 #, c-format
 msgid "Private Fireteam: %s"
 msgstr ""
 
-#: src/cgame/cg_fireteamoverlay.c:450
+#: src/cgame/cg_fireteamoverlay.c:450 src/cgame/cg_fireteamoverlay.c:479
 #, c-format
 msgid "Fireteam: %s"
 msgstr ""
 
-#: src/cgame/cg_info.c:585
+#: src/cgame/cg_info.c:585 src/cgame/cg_info.c:718
 msgid "PLAYER STATS"
 msgstr "HRACU"
 
-#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
+#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802 src/cgame/cg_info.c:729
+#: src/cgame/cg_info.c:931
 msgid "Weapon"
 msgstr "Dalsi zbran:"
 
-#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804
+#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804 src/cgame/cg_info.c:731
+#: src/cgame/cg_info.c:933
 msgid "Accuracy"
 msgstr ""
 
-#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806
+#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806 src/cgame/cg_info.c:733
+#: src/cgame/cg_info.c:935
 msgid "Hits / Shots"
 msgstr ""
 
-#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808
+#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808 src/cgame/cg_info.c:735
+#: src/cgame/cg_info.c:937
 msgid "Kills"
 msgstr ""
 
-#: src/cgame/cg_info.c:604
+#: src/cgame/cg_info.c:604 src/cgame/cg_info.c:737
 msgid "Deaths"
 msgstr ""
 
-#: src/cgame/cg_info.c:606
+#: src/cgame/cg_info.c:606 src/cgame/cg_info.c:739
 msgid "Headshots"
 msgstr "6. Skvela trefa"
 
-#: src/cgame/cg_info.c:615
+#: src/cgame/cg_info.c:615 src/cgame/cg_info.c:748
 msgid "No weapon info available."
 msgstr ""
 
-#: src/cgame/cg_info.c:650
+#: src/cgame/cg_info.c:650 src/cgame/cg_info.c:783
 msgid "Rank"
 msgstr ""
 
-#: src/cgame/cg_info.c:667
+#: src/cgame/cg_info.c:667 src/cgame/cg_info.c:799
 msgid "Skills"
 msgstr ""
 
-#: src/cgame/cg_info.c:669
+#: src/cgame/cg_info.c:669 src/cgame/cg_info.c:801
 msgid "Level"
 msgstr ""
 
-#: src/cgame/cg_info.c:671
+#: src/cgame/cg_info.c:671 src/cgame/cg_info.c:803
 msgid "XP / Next Level"
 msgstr ""
 
-#: src/cgame/cg_info.c:675
+#: src/cgame/cg_info.c:675 src/cgame/cg_info.c:807
 msgid "Medals"
 msgstr ""
 
-#: src/cgame/cg_info.c:684
+#: src/cgame/cg_info.c:684 src/cgame/cg_info.c:816
 msgid "No skills acquired!"
 msgstr ""
 
-#: src/cgame/cg_info.c:792
+#: src/cgame/cg_info.c:792 src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
 msgstr ""
 
-#: src/cgame/cg_info.c:810
+#: src/cgame/cg_info.c:810 src/cgame/cg_info.c:939
 msgid "Player"
 msgstr "Vykopnuti hrace:"
 
-#: src/cgame/cg_info.c:818
+#: src/cgame/cg_info.c:818 src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1289
+#: src/cgame/cg_consolecmds.c:1221
 #, c-format
 msgid "You will spawn as a %s %s with a %s."
 msgstr ""
 
-#: src/cgame/cg_limbopanel.c:1223
+#: src/cgame/cg_consolecmds.c:1225
+#, c-format
+msgid "You will spawn as a %s %s with a %s and a %s."
+msgstr ""
+
+#: src/cgame/cg_limbopanel.c:1224
 #, c-format
 msgid "You will spawn as an %s %s with a %s."
 msgstr ""
 
-#: src/cgame/cg_draw.c:441
+#: src/cgame/cg_limbopanel.c:1228
+#, c-format
+msgid "You will spawn as an %s %s with a %s and a %s."
+msgstr ""
+
+#: src/cgame/cg_draw.c:441 src/cgame/cg_draw.c:395
 msgid "an Objective"
 msgstr ""
 
@@ -3615,25 +3684,21 @@ msgstr ""
 msgid "Modify Selected HUD:"
 msgstr "Upravit alternativni HUD:"
 
-msgid "PopUpTime:"
-msgstr ""
-
 msgid "PopUpTimeStay:"
 msgstr ""
 
 msgid "PopUpTimeFade:"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1211
-msgid "Allies"
-msgstr ""
-
+#: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
 msgstr ""
 
+#: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2469
 msgid "^3WARMUP:^7 Match begins in:"
 msgstr ""
 
@@ -3651,42 +3716,47 @@ msgstr "Ceka se na odezvu...%i"
 msgid "Awaiting gamestate..."
 msgstr "Ceka se na nacteni hry..."
 
-#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637
+#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637 src/ui/ui_main.c:2400
+#: src/ui/ui_main.c:2641
 msgid "Waiting for new key... Press ESCAPE to cancel"
 msgstr "Ceka se na novou klavesu... Stiskni ESCAPE pro zruseni"
 
-#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641
+#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641 src/ui/ui_main.c:2404
+#: src/ui/ui_main.c:2645
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
 msgstr ""
 
-#: src/ui/ui_main.c:2539
+#: src/ui/ui_main.c:2539 src/ui/ui_main.c:2542
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
 msgstr ""
 
-#: src/ui/ui_main.c:2543
+#: src/ui/ui_main.c:2543 src/ui/ui_main.c:2546
 msgid "Waiting for response from Master Server"
 msgstr ""
 
-#: src/ui/ui_main.c:2551
+#: src/ui/ui_main.c:2551 src/ui/ui_main.c:2554
 #, c-format
 msgid "Refresh Time: %s"
 msgstr ""
 
 #: src/ui/ui_main.c:4330 src/ui/ui_main.c:4378 src/ui/ui_main.c:4413
+#: src/ui/ui_main.c:4342 src/ui/ui_main.c:4396 src/ui/ui_main.c:4431
 msgid "Favorite already in list\n"
 msgstr ""
 
 #: src/ui/ui_main.c:4335 src/ui/ui_main.c:4383 src/ui/ui_main.c:4418
+#: src/ui/ui_main.c:4347 src/ui/ui_main.c:4401 src/ui/ui_main.c:4436
 msgid "Favorite list full\n"
 msgstr ""
 
 #: src/ui/ui_main.c:4340 src/ui/ui_main.c:4388 src/ui/ui_main.c:4423
+#: src/ui/ui_main.c:4352 src/ui/ui_main.c:4406 src/ui/ui_main.c:4441
 #, c-format
 msgid "Added favorite server %s\n"
 msgstr ""
 
-msgid "^3See HALL OF FAME below"
+msgid "See HALL OF FAME below"
 msgstr ""
 
 msgid "^1WEBSITE"
@@ -3698,7 +3768,7 @@ msgstr ""
 msgid "HALL OF FAME"
 msgstr ""
 
-msgid "^3ET LEGACY HALL OF FAME"
+msgid "ET:LEGACY HALL OF FAME"
 msgstr ""
 
 msgid "Advices, Bug reports, Patches"
@@ -3710,78 +3780,102 @@ msgstr ""
 msgid "^1PORTS"
 msgstr ""
 
-msgid "'BSzili' - AROS and MorphOS"
+msgid "'BSzili'"
 msgstr ""
 
-msgid "'PtitSeb' - Pandora"
+msgid "AROS and MorphOS"
+msgstr ""
+
+msgid "'PtitSeb'"
+msgstr ""
+
+msgid "Pandora"
 msgstr ""
 
 msgid "^1PACKAGE MAINTAINERS"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 msgid "player"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 msgid "players"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2749
+#: src/cgame/cg_draw.c:2749 src/cgame/cg_draw.c:2451
+#, c-format
 msgid "Press ^3%s^7 to start"
 msgstr ""
 
 msgid "Not enough players to start match!\n"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2023
 msgid "Your invitation has been submitted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2037
 msgid "Your invitation was accepted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2044
 msgid "Your invitation reply has been sent"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1951
 msgid "You were team-killed by a bot."
 msgstr ""
 
+#: src/cgame/cg_draw.c:1945
 msgid "You were team-killed by the Server Host"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1939
 msgid "Server Host cannot be complained against"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1933
 msgid "Complaint dismissed"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1927
 msgid "Your complaint has been filed"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1961
 msgid "Your application has been submitted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1968
 msgid "Your application failed"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1975
 msgid "Your application has been approved"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1982
 msgid "Your application reply has been sent"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1992
 msgid "Your proposition has been submitted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1999
 msgid "Your proposition was rejected"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2006
 msgid "Your proposition was accepted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2013
 msgid "Your proposition reply has been sent"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2030
 msgid "Your invitation was rejected"
 msgstr ""
 
@@ -3812,12 +3906,14 @@ msgstr ""
 msgid "Obituaries Icons:"
 msgstr ""
 
+#: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
 msgstr ""
 
 msgid "You must be in the game to be ^3ready^7!\n"
 msgstr ""
 
+#: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
 msgstr ""
 
@@ -3842,12 +3938,12 @@ msgstr ""
 msgid "Timelimit hit.\n"
 msgstr ""
 
-#: src/cgame/cg_scoreboard.c:146
+#: src/cgame/cg_scoreboard.c:146 src/cgame/cg_scoreboard.c:273
 #, c-format
 msgid "Config: ^7%s^7"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2745
+#: src/cgame/cg_draw.c:2745 src/cgame/cg_draw.c:2428
 #, c-format
 msgid "^3Config: ^7%s^7"
 msgstr ""
@@ -3855,11 +3951,11 @@ msgstr ""
 msgid "Landmine revealed"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2486
+#: src/cgame/cg_draw.c:2486 src/cgame/cg_draw.c:2167
 msgid "disable"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2486
+#: src/cgame/cg_draw.c:2486 src/cgame/cg_draw.c:2167
 msgid "activate"
 msgstr ""
 
@@ -3887,39 +3983,39 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/ui/ui_loadpanel.c:195
+#: src/ui/ui_loadpanel.c:195 src/ui/ui_loadpanel.c:196
 msgid "CONNECTING..."
 msgstr ""
 
-#: src/ui/ui_loadpanel.c:191
+#: src/ui/ui_loadpanel.c:191 src/ui/ui_loadpanel.c:192
 msgid "DOWNLOADING..."
 msgstr ""
 
-#: src/cgame/cg_loadpanel.c:250
+#: src/cgame/cg_loadpanel.c:250 src/cgame/cg_loadpanel.c:251
 msgid "Single Player"
 msgstr ""
 
-#: src/cgame/cg_loadpanel.c:252
+#: src/cgame/cg_loadpanel.c:252 src/cgame/cg_loadpanel.c:253
 msgid "Co-op"
 msgstr ""
 
-#: src/cgame/cg_loadpanel.c:254
+#: src/cgame/cg_loadpanel.c:254 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
 msgstr ""
 
-#: src/cgame/cg_loadpanel.c:256
+#: src/cgame/cg_loadpanel.c:256 src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
 msgstr ""
 
-#: src/cgame/cg_loadpanel.c:258
+#: src/cgame/cg_loadpanel.c:258 src/cgame/cg_loadpanel.c:259
 msgid "Campaign"
 msgstr ""
 
-#: src/cgame/cg_loadpanel.c:260
+#: src/cgame/cg_loadpanel.c:260 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
 msgstr ""
 
-#: src/cgame/cg_loadpanel.c:262
+#: src/cgame/cg_loadpanel.c:262 src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
 msgstr ""
 
@@ -3930,6 +4026,7 @@ msgid "Public Settings Loaded!\n"
 msgstr ""
 
 #: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
+#: src/cgame/cg_scoreboard.c:254 src/cgame/cg_scoreboard.c:260
 #, c-format
 msgid "MAP %i of %i"
 msgstr ""
@@ -3971,39 +4068,43 @@ msgstr ""
 msgid "You are now the leader of your fireteam"
 msgstr ""
 
-msgid "The Fireteam you are on has been disbanded"
+msgid "The fireteam you are on has been disbanded"
 msgstr ""
 
 msgid "You have been given fireteam admin rights"
 msgstr ""
 
-#: src/cgame/cg_fireteams.c:343
+#: src/cgame/cg_fireteams.c:343 src/cgame/cg_fireteams.c:344
 msgid "FIRETEAMS"
 msgstr ""
 
-#: src/cgame/cg_fireteams.c:346
+#: src/cgame/cg_fireteams.c:346 src/cgame/cg_fireteams.c:347
 msgid "JOIN"
 msgstr ""
 
-#: src/cgame/cg_fireteams.c:349
+#: src/cgame/cg_fireteams.c:349 src/cgame/cg_fireteams.c:350
 msgid "PROPOSE"
 msgstr ""
 
-#: src/cgame/cg_fireteams.c:355
+#: src/cgame/cg_fireteams.c:355 src/cgame/cg_fireteams.c:356
 msgid "INVITE"
 msgstr ""
-	
-#: src/cgame/cg_fireteams.c:364
+
+#: src/cgame/cg_fireteams.c:364 src/cgame/cg_fireteams.c:365
 msgid "SET ADMIN"
 msgstr ""
 
 #: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
 #: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
+#: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
+#: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
 msgid "Previous"
 msgstr ""
 
 #: src/cgame/cg_fireteams.c:709 src/cgame/cg_fireteams.c:713
 #: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
+#: src/cgame/cg_fireteams.c:717 src/cgame/cg_fireteams.c:721
+#: src/cgame/cg_fireteams.c:778 src/cgame/cg_fireteams.c:782
 msgid "Next"
 msgstr ""
 
@@ -4049,7 +4150,8 @@ msgstr ""
 msgid "You are already on a fireteam, leave it first"
 msgstr ""
 
-msgid "The other player must be on the same fireteam for you to give admin rights to"
+msgid ""
+"The other player must be on the same fireteam for you to give admin rights to"
 msgstr ""
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
@@ -4061,10 +4163,14 @@ msgstr ""
 msgid "Usage: ref [password]\n"
 msgstr ""
 
-msgid "\n^3Referee commands:^7\n"
+msgid ""
+"^3Referee commands:^7\n"
+"------------------------------------------\n"
 msgstr ""
 
-msgid "Usage: ^3\\ref <cmd> [params]\n\n"
+msgid ""
+"Usage: ^3\\ref <cmd> [params]\n"
+"\n"
 msgstr ""
 
 msgid "^5pause speclock warmup ^7[value]\n"
@@ -4157,21 +4263,29 @@ msgstr ""
 msgid "^5You've been unmuted\n"
 msgstr ""
 
-msgid "\n"
-"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+msgid ""
+"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr ""
 
-msgid "\n"
-"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
-"Snaps\n"
+msgid "^7----------------------------------------------------------------------\n"
 msgstr ""
 
-msgid "^5\n"
+msgid ""
+"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
+"Specials\n"
+msgstr ""
+
+msgid "^7-------------------------------------------------------------------------------\n"
+msgstr ""
+
+msgid ""
+"^5\n"
 "Available Game Commands:\n"
 "------------------------\n"
 msgstr ""
 
-msgid "\n"
+msgid ""
+"\n"
 "Type: ^3\\command_name ?^7 for more information\n"
 msgstr ""
 
@@ -4202,19 +4316,21 @@ msgstr ""
 msgid "Team commands not enabled on this server.\n"
 msgstr ""
 
-msgid "\n"
+msgid ""
+"\n"
 "^3>>> Unknown vote command: ^7 \n"
 msgstr ""
 
-msgid "\n"
+msgid ""
+"\n"
 "Valid ^3callvote^7 commands are:\n"
 "^3----------------------------\n"
 msgstr ""
 
-msgid "\n"
+msgid ""
+"\n"
 "Usage: ^3\\callvote <command> <params>\n"
 "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-"\n"
 msgstr ""
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
@@ -4313,10 +4429,11 @@ msgstr ""
 msgid "Remy 'Spyhawk' M. - Coding, mod development"
 msgstr ""
 
+#: src/cgame/cg_event.c:566
 msgid "died"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2250
+#: src/cgame/cg_draw.c:2250 src/cgame/cg_draw.c:2161
 #, c-format
 msgid "Press %s to follow previous player"
 msgstr ""
@@ -4327,80 +4444,80 @@ msgstr ""
 msgid "Objectives:"
 msgstr ""
 
-#: src/cgame/cg_info.c:1068
+#: src/cgame/cg_info.c:1068 src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:3191
+#: src/cgame/cg_debriefing.c:3191 src/cgame/cg_debriefing.c:3236
 #, c-format
 msgid "CAMPAIGN STATUS: %s"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:3200
-#, c-format
-msgid "%i SECS TO NEXT MAP"
-msgstr ""
+#: src/cgame/cg_debriefing.c:3200 src/cgame/cg_debriefing.c:3245
+#, fuzzy, c-format
+msgid "SECS TO NEXT MAP"
+msgstr "DALSI MAPA"
 
-#: src/cgame/cg_debriefing.c:3130
+#: src/cgame/cg_debriefing.c:3130 src/cgame/cg_debriefing.c:3175
 msgid "ALLIES WIN!"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:3132
+#: src/cgame/cg_debriefing.c:3132 src/cgame/cg_debriefing.c:3177
 msgid "AXIS WIN!"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:3134
+#: src/cgame/cg_debriefing.c:3134 src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:3311
+#: src/cgame/cg_debriefing.c:3311 src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2614
+#: src/cgame/cg_debriefing.c:2614 src/cgame/cg_debriefing.c:2659
 msgid "Time:"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2626
+#: src/cgame/cg_debriefing.c:2626 src/cgame/cg_debriefing.c:2671
 msgid "Medals:"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2645
+#: src/cgame/cg_debriefing.c:2645 src/cgame/cg_debriefing.c:2690
 msgid "Rank:"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2578
+#: src/cgame/cg_debriefing.c:2578 src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2765
+#: src/cgame/cg_debriefing.c:2765 src/cgame/cg_debriefing.c:2810
 msgid "^5TO TEAM"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2768
+#: src/cgame/cg_debriefing.c:2768 src/cgame/cg_debriefing.c:2813
 msgid "^3TO FIRETEAM"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2771
+#: src/cgame/cg_debriefing.c:2771 src/cgame/cg_debriefing.c:2816
 msgid "^2TO GLOBAL"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:1311
+#: src/cgame/cg_debriefing.c:1311 src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:1318
+#: src/cgame/cg_debriefing.c:1318 src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:1312
+#: src/cgame/cg_debriefing.c:1312 src/cgame/cg_debriefing.c:1341
 msgid "Never"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:1312
+#: src/cgame/cg_debriefing.c:1312 src/cgame/cg_debriefing.c:1341
 #, c-format
 msgid "%d maps ago"
 msgstr ""
@@ -4410,17 +4527,17 @@ msgstr ""
 msgid "WAITING ON %i %s"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:2005
+#: src/cgame/cg_servercmds.c:2005 src/cgame/cg_servercmds.c:1954
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:2006
+#: src/cgame/cg_servercmds.c:2006 src/cgame/cg_servercmds.c:1955
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:2008
+#: src/cgame/cg_servercmds.c:2008 src/cgame/cg_servercmds.c:1957
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
 msgstr ""
@@ -4431,27 +4548,33 @@ msgstr ""
 msgid "'s Akimbo .45ACP 1911s"
 msgstr ""
 
+#: src/cgame/cg_event.c:302
 msgid "^7killed"
 msgstr ""
 
+#: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
 msgstr ""
 
 msgid "Server disconnected"
 msgstr ""
 
-#: src/ui/ui_main.c:5803
+#: src/ui/ui_main.c:5803 src/ui/ui_main.c:5873
 #, c-format
-msgid "^3Filtered/Total: %i/%i"
+msgid "^3Filtered/Total: %04i/%04i"
 msgstr ""
 
-#: src/ui/ui_main.c:5807
+#: src/ui/ui_main.c:5807 src/ui/ui_main.c:5877
 #, c-format
-msgid "^3Check your filters - no servers found!        Filtered/Total: %i/%i"
+msgid ""
+"^3Check your filters - no servers found!              Filtered/Total: %04i/"
+"%04i"
 msgstr ""
 
-#: src/ui/ui_main.c:5812
-msgid "^1Check your connection - no servers found!      Filtered/Total: 0/000"
+#: src/ui/ui_main.c:5812 src/ui/ui_main.c:5882
+msgid ""
+"^1No Connection or master down - no servers found!    Filtered/Total: "
+"0000/0000"
 msgstr ""
 
 msgid "Server connection timed out."
@@ -4460,27 +4583,41 @@ msgstr ""
 msgid "Server disconnected for unknown reason"
 msgstr ""
 
+#: src/ui/ui_main.c:7751
+#, c-format
 msgid "Server is full, redirect to: %s\n"
 msgstr ""
 
+#: src/ui/ui_main.c:4083
 msgid "Can't show Server Info (not found, or local server)\n"
 msgstr ""
 
+#: src/ui/ui_main.c:8294
+#, c-format
 msgid "%d servers listed in browser with %d players.\n"
 msgstr ""
 
+#: src/ui/ui_main.c:8300
+#, c-format
 msgid "%d servers not listed (filtered out by game browser settings)\n"
 msgstr ""
 
+#: src/ui/ui_main.c:8428
+#, c-format
 msgid "Can't find campaign '%s'\n"
 msgstr ""
 
+#: src/ui/ui_main.c:8434
+#, c-format
 msgid "Corrupted campaign '%s'\n"
 msgstr ""
 
+#: src/ui/ui_main.c:8465
+#, c-format
 msgid "%i campaigns found:\n"
 msgstr ""
 
+#: src/ui/ui_main.c:8469
 msgid "No campaigns found.\n"
 msgstr ""
 
@@ -4550,7 +4687,7 @@ msgstr ""
 msgid "Server quit\n"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2766
+#: src/cgame/cg_draw.c:2766 src/cgame/cg_draw.c:2677
 #, c-format
 msgid "The %s team is speclocked!"
 msgstr ""
@@ -4566,3 +4703,214 @@ msgstr ""
 
 msgid "Show Ping:"
 msgstr ""
+
+msgid "Allied team has constructed the bridge!"
+msgstr ""
+
+#, fuzzy
+msgid "Anti-Aliasing:"
+msgstr "Proti-lag:"
+
+msgid "The Tank has been repaired"
+msgstr ""
+
+#, fuzzy
+msgid "^1ORIGINAL DEVELOPERS"
+msgstr "DALSI VYVOJ"
+
+msgid "The Tank has been damaged"
+msgstr ""
+
+msgid "BOTS"
+msgstr ""
+
+msgid "Difficulty:"
+msgstr ""
+
+msgid "BOTS ON"
+msgstr ""
+
+msgid "^1SECURITY INFORMATION"
+msgstr ""
+
+msgid "You are running old software"
+msgstr ""
+
+msgid ""
+"We do recommend to\n"
+"upgrade your ET client"
+msgstr ""
+
+msgid "UPGRADE NOW"
+msgstr ""
+
+msgid "Join ET Legacy and keep the game alive"
+msgstr ""
+
+#, fuzzy
+msgid "CONNECT TO SERVER"
+msgstr "PRIPOJIT SE K IP"
+
+#, fuzzy
+msgid "Server PW:"
+msgstr "IP serveru:"
+
+msgid "joined the Axis team\n"
+msgstr ""
+
+msgid "joined the Allies team\n"
+msgstr ""
+
+#, fuzzy
+msgid "AXIS BOTS"
+msgstr "OSA"
+
+#, fuzzy
+msgid "ALLIED BOTS"
+msgstr "SPOJENCI"
+
+#, fuzzy
+msgid "BALANCED"
+msgstr "POKROCILE"
+
+#: src/cgame/cg_debriefing.c:3211
+msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3222
+msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3226
+msgid "AXIS COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+msgid "^3>>> Unknown vote command: ^7 \n"
+msgstr ""
+
+msgid "Use the ^3players^7 command to find a valid player ID.\n"
+msgstr ""
+
+msgid "^3Match is already in progress!\n"
+msgstr ""
+
+msgid "^1Teams have been shuffled!\n"
+msgstr ""
+
+msgid "^3*** Loading nextmap! ***\n"
+msgstr ""
+
+msgid "^1*** Level Restarted! ***\n"
+msgstr ""
+
+msgid "You have been switched to the Axis team"
+msgstr ""
+
+msgid "Keep the Allies from beating the clock!"
+msgstr ""
+
+msgid "Keep the Axis from beating the clock!"
+msgstr ""
+
+msgid "You have been switched to the Allied team"
+msgstr ""
+
+msgid "Try to beat the clock!"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2035
+msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2040
+msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2047
+msgid "^3No weapon info available.\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2153
+msgid "  Medals"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2165
+msgid "^3No skills acquired!\n"
+msgstr ""
+
+msgid "You have been been stripped of fireteam admin rights"
+msgstr ""
+
+msgid "%s ^7has left the fireteam\n"
+msgstr ""
+
+msgid "You have been warned by your fireteam leader\n"
+msgstr ""
+
+#, fuzzy
+msgid "^3moved to spectator for inactivity!\n"
+msgstr "Neaktivita pozorovatelu:"
+
+#: src/cgame/cg_debriefing.c:2624
+msgid "HS:"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2332
+#, fuzzy, c-format
+msgid "Bonus Life! Deploying in ^3%d ^7second"
+msgstr "Zivot navic! Rozmisteni za ^3%d ^7vterin"
+
+#: src/cgame/cg_draw.c:2447
+#, fuzzy
+msgid "Type ^3\\ready^7 in the console to start"
+msgstr "Napiste ^3\\ready^* do konzole pro zacatek"
+
+#: src/cgame/cg_event.c:293
+#, fuzzy
+msgid "^7swapped places with"
+msgstr "Vymenil jsis misto s"
+
+#: src/cgame/cg_info.c:1421
+#, fuzzy
+msgid "DEMO STATUS"
+msgstr "HRACU"
+
+#: src/cgame/cg_scoreboard.c:205
+#, c-format
+msgid "WAITING ON ^2%i ^9%s"
+msgstr ""
+
+#: src/ui/ui_main.c:8517
+msgid "No favourite servers found."
+msgstr ""
+
+#: src/ui/ui_main.c:8528
+msgid "All favourite servers removed."
+msgstr ""
+
+#~ msgid "Connection:"
+#~ msgstr "Spojeni:"
+
+#~ msgid "#PLRS"
+#~ msgstr "#HRCI"
+
+#~ msgid "Fullscreen:"
+#~ msgstr "Cela obrazovka:"
+
+#~ msgid "Borderless:"
+#~ msgstr "Bez okraju:"
+
+#~ msgid "AUTO UPDATE"
+#~ msgstr "AKTUALIZACE"
+
+#~ msgid "New version available. Do you want to update now?"
+#~ msgstr "Je k dispozici nova verze. Chcete aktualizovat nyni?"
+
+#~ msgid "MAX OMNI-BOT"
+#~ msgstr "MAX OMNI-BOTu"
+
+#~ msgid "MIN OMNI-BOT"
+#~ msgstr "MIN OMNI-BOTu"
+
+#~ msgid "Binoculars"
+#~ msgstr "Priblizeni dalekohledu:"

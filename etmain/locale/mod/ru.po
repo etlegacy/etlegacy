@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ET: Legacy\n"
-"Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
-"POT-Creation-Date: 2013-04-07 23:32+0200\n"
+"Report-Msgid-Bugs-To: mail@etlegacy.com\n"
+"POT-Creation-Date: 2015-01-05 09:58+0100\n"
 "PO-Revision-Date: 2014-10-19 20:16+0400\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: \n"
@@ -21,107 +21,112 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
-#: src/cgame/cg_consolecmds.c:568
+#: src/cgame/cg_consolecmds.c:568 src/cgame/cg_consolecmds.c:362
+#: src/cgame/cg_consolecmds.c:400 src/cgame/cg_consolecmds.c:436
 msgid "Can't team voice chat as a spectator.\n"
 msgstr "Не могу использовать командный голосовой чат как зритель.\n"
 
-#: src/cgame/cg_consolecmds.c:593
+#: src/cgame/cg_consolecmds.c:593 src/cgame/cg_consolecmds.c:461
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr "Не могу использовать личный голосовой чат как зритель.\n"
 
 #: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3106
-#: src/cgame/cg_scoreboard.c:646
+#: src/cgame/cg_scoreboard.c:646 src/cgame/cg_debriefing.c:2013
+#: src/cgame/cg_debriefing.c:3202 src/cgame/cg_scoreboard.c:723
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
 msgstr "ЧАСЫ УСТАНОВЛЕНЫ НА %s!"
 
-#: src/cgame/cg_draw.c:650
+#: src/cgame/cg_draw.c:650 src/cgame/cg_draw_hud.c:2052
 msgid "Connection Interrupted"
 msgstr "Соединение прервано"
 
-#: src/cgame/cg_draw.c:1902
+#: src/cgame/cg_draw.c:1902 src/cgame/cg_draw.c:1506
 msgid "Disguised Enemy!"
 msgstr "Замаскированный враг!"
 
-#: src/cgame/cg_draw.c:2074
+#: src/cgame/cg_draw.c:2074 src/cgame/cg_draw.c:1716
 msgid "SPECTATOR"
 msgstr "ЗРИТЕЛЬ"
 
-#: src/cgame/cg_draw.c:2092
+#: src/cgame/cg_draw.c:2092 src/cgame/cg_draw.c:1743
 #, c-format
 msgid "File complaint against ^7%s^3 for team-killing?"
 msgstr "Пожаловаться на ^7%s^3 за убийство своих?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
-#: src/cgame/cg_draw.c:2164
+#: src/cgame/cg_draw.c:2164 src/cgame/cg_draw.c:1747 src/cgame/cg_draw.c:1761
+#: src/cgame/cg_draw.c:1775 src/cgame/cg_draw.c:1789 src/cgame/cg_draw.c:1803
+#: src/cgame/cg_draw.c:1817 src/cgame/cg_draw.c:1831
 #, c-format
 msgid "Press '%s' for YES, or '%s' for NO"
 msgstr "Нажмите '%s' если ДА, '%s' если НЕТ"
 
-#: src/cgame/cg_draw.c:2096
+#: src/cgame/cg_draw.c:2096 src/cgame/cg_draw.c:1757
 #, c-format
 msgid "Accept %s^3's application to join your fireteam?"
 msgstr "Разрешить %s^3 вступить в Ваше звено?"
 
-#: src/cgame/cg_draw.c:2109
+#: src/cgame/cg_draw.c:2109 src/cgame/cg_draw.c:1771
 #, c-format
 msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
 msgstr "Принять предложение %s^3 пригласить %s^3 в Ваше звено?"
 
-#: src/cgame/cg_draw.c:2122
+#: src/cgame/cg_draw.c:2122 src/cgame/cg_draw.c:1785
 #, c-format
 msgid "Accept %s^3's invitation to join their fireteam?"
 msgstr "Принять приглашение %s^3 и вступить в их звено?"
 
-#: src/cgame/cg_draw.c:2218
+#: src/cgame/cg_draw.c:2218 src/cgame/cg_draw.c:1895
 #, c-format
 msgid "VOTE(%i): %s"
 msgstr "ГОЛОСОВАТЬ(%i): %s"
 
-#: src/cgame/cg_draw.c:2223
+#: src/cgame/cg_draw.c:2223 src/cgame/cg_draw.c:1901
 msgid "Cannot vote as Spectator"
 msgstr "Зритель не может голосовать"
 
-#: src/cgame/cg_draw.c:2227
+#: src/cgame/cg_draw.c:2227 src/cgame/cg_draw.c:1905
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
 msgstr "ДА(%s):%i, НЕТ(%s):%i"
 
-#: src/cgame/cg_draw.c:2234
+#: src/cgame/cg_draw.c:2234 src/cgame/cg_draw.c:1912
 #, c-format
 msgid "YOU VOTED ON: %s"
 msgstr "ВЫ ПРОГОЛОСОВАЛИ ЗА: %s"
 
-#: src/cgame/cg_draw.c:2237
+#: src/cgame/cg_draw.c:2237 src/cgame/cg_draw.c:1917
 #, c-format
 msgid "Y:%i, N:%i"
 msgstr "Д:%i, Н:%i"
 
-#: src/cgame/cg_draw.c:2460
+#: src/cgame/cg_draw.c:2460 src/cgame/cg_draw.c:2151
 #, c-format
 msgid "Press %s to open Limbo Menu"
 msgstr "Нажмите %s чтобы открыть Меню забвения"
 
-#: src/cgame/cg_draw.c:2464
+#: src/cgame/cg_draw.c:2464 src/cgame/cg_draw.c:2156
 #, c-format
 msgid "Press %s to follow next player"
 msgstr "Нажмите %s чтобы наблюдать за следующим игроком"
 
-#: src/cgame/cg_draw.c:2469
+#: src/cgame/cg_draw.c:2469 src/cgame/cg_draw.c:2167
 #, c-format
 msgid "Press %s to %s multiview mode"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2530
+#: src/cgame/cg_draw.c:2530 src/cgame/cg_draw.c:2230
 msgid "You are wounded and waiting for a medic."
 msgstr "Вы ранены и ждёте медика"
 
-#: src/cgame/cg_draw.c:2540
+#: src/cgame/cg_draw.c:2540 src/cgame/cg_draw.c:2239
+#, c-format
 msgid "Press %s to go into reinforcement queue."
 msgstr "Нажмите %s чтобы вернуться в очередь подкреплений."
 
-#: src/cgame/cg_draw.c:2550
+#: src/cgame/cg_draw.c:2550 src/cgame/cg_draw.c:2250
 msgid "No more reinforcements this round."
 msgstr "Больше не будет подкреплений в этом раунде."
 
@@ -130,30 +135,31 @@ msgstr "Больше не будет подкреплений в этом рау
 msgid "Reinforcements deploy in %d seconds."
 msgstr "Прибытие подкрепления через %d секунд."
 
-#: src/cgame/cg_draw.c:2593
+#: src/cgame/cg_draw.c:2593 src/cgame/cg_draw.c:2328
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7seconds"
 msgstr "Бонусная жизнь! Прибытие через ^3%d ^7секунд"
 
-#: src/cgame/cg_draw.c:2597
+#: src/cgame/cg_draw.c:2597 src/cgame/cg_draw.c:2337
 msgid "No more deployments this round"
 msgstr "Больше никаких подкреплений в этом раунде"
 
-#: src/cgame/cg_draw.c:2602
+#: src/cgame/cg_draw.c:2602 src/cgame/cg_draw.c:2258 src/cgame/cg_draw.c:2346
 #, c-format
 msgid "Deploying in ^3%d ^7seconds"
 msgstr "Развёртывание через ^3%d ^7секунд"
 
-#: src/cgame/cg_draw.c:2613
+#: src/cgame/cg_draw.c:2613 src/cgame/cg_draw.c:2262 src/cgame/cg_draw.c:2350
 #, c-format
 msgid "Deploying in ^3%d ^7second"
 msgstr "Развёртывание через ^3%d ^7секунду"
 
-#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
+#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621 src/cgame/cg_draw.c:2361
+#: src/cgame/cg_draw.c:2387
 msgid "Following"
 msgstr "Следую"
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
 msgstr "^3РАЗМИНКА:^7 Ждём ^2%i^7 %s"
@@ -167,116 +173,130 @@ msgid "(WARMUP) Match begins in:"
 msgstr "(РАЗМИНКА) Матч начнётся через:"
 
 #: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
+#: src/cgame/cg_draw.c:2503 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
 msgstr ""
 
 #: src/cgame/cg_draw_hud.c:1535 src/cgame/cg_scoreboard.c:165
+#: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
+#: src/cgame/cg_scoreboard.c:178
 msgid "WARMUP"
 msgstr "РАЗМИНКА"
 
-#: src/cgame/cg_event.c:189
+#: src/cgame/cg_event.c:189 src/cgame/cg_event.c:271
 msgid "You swapped places with"
 msgstr "Вы поменялись местами с"
 
-#: src/cgame/cg_event.c:193
+#: src/cgame/cg_event.c:193 src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
 msgstr "Вы убили ^1СОЮЗНИКА^7"
 
-#: src/cgame/cg_event.c:198
+#: src/cgame/cg_event.c:198 src/cgame/cg_event.c:280
 msgid "You killed"
 msgstr "Вы убили"
 
-#: src/cgame/cg_main.c:893
+#: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "User"
 msgstr "Пользователь"
 
-#: src/cgame/cg_main.c:893
+#: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "is not on the server"
 msgstr "не на сервере"
 
 #: src/cgame/cg_scoreboard.c:165 src/cgame/cg_scoreboard.c:171
 #: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:180
+#: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
+#: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
 msgid "MISSION TIME:"
 msgstr "ВРЕМЯ ЗАДАНИЯ:"
 
-#: src/cgame/cg_scoreboard.c:171
+#: src/cgame/cg_scoreboard.c:171 src/cgame/cg_scoreboard.c:184
 msgid "GAME STOPPED"
 msgstr "ИГРА ОСТАНОВЛЕНА"
 
-#: src/cgame/cg_scoreboard.c:175
+#: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:188
 msgid "SUDDEN DEATH"
 msgstr "ВНЕЗАПНАЯ СМЕРТЬ"
 
-#: src/cgame/cg_scoreboard.c:205
+#: src/cgame/cg_scoreboard.c:205 src/cgame/cg_scoreboard.c:229
+#: src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
 msgstr "ВРЕМЯ ПОДКРЕПЛЕНИЙ:"
 
-#: src/cgame/cg_scoreboard.c:222
+#: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
 msgstr "РАУНД"
 
-#: src/cgame/cg_scoreboard.c:222
+#: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "SCORE"
 msgstr "СЧЁТ"
 
 #: src/cgame/cg_scoreboard.c:373 src/cgame/cg_scoreboard.c:536
+#: src/cgame/cg_scoreboard.c:451 src/cgame/cg_scoreboard.c:642
 msgid "^3CONNECTING"
 msgstr "^3ПОДКЛЮЧЕНИЕ"
 
 #: src/cgame/cg_scoreboard.c:377 src/cgame/cg_scoreboard.c:540
+#: src/cgame/cg_scoreboard.c:455 src/cgame/cg_scoreboard.c:646
 msgid "^3SPECTATOR"
 msgstr "^3ЗРИТЕЛЬ"
 
 #: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
+#: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
 msgstr "НАЦИСТЫ"
 
 #: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
 #: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:205 src/cgame/cg_scoreboard.c:811
+#: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:828
+#: src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
 msgstr "ИГРОКИ"
 
 #: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
+#: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
 msgstr "ПЕРВАЯ КРОВЬ"
 
 #: src/cgame/cg_scoreboard.c:814 src/cgame/cg_scoreboard.c:828
+#: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:832
 msgid "ALLIES"
 msgstr "СОЮЗНИКИ"
 
-#: src/cgame/cg_scoreboard.c:701
+#: src/cgame/cg_scoreboard.c:701 src/cgame/cg_scoreboard.c:846
 msgid "Name"
 msgstr "Имя"
 
-#: src/cgame/cg_scoreboard.c:704
+#: src/cgame/cg_scoreboard.c:704 src/cgame/cg_scoreboard.c:855
 msgid "C R"
 msgstr ""
 
-#: src/cgame/cg_scoreboard.c:709
+#: src/cgame/cg_scoreboard.c:709 src/cgame/cg_scoreboard.c:860
 msgid "Score"
 msgstr "Счёт"
 
-#: src/cgame/cg_scoreboard.c:714
+#: src/cgame/cg_scoreboard.c:714 src/cgame/cg_scoreboard.c:865
 msgid "XP"
 msgstr "Опыт"
 
-#: src/cgame/cg_scoreboard.c:718
+#: src/cgame/cg_scoreboard.c:718 src/cgame/cg_scoreboard.c:869
 msgid "Ping"
 msgstr "Задержка"
 
-#: src/cgame/cg_servercmds.c:405
+#: src/cgame/cg_servercmds.c:405 src/cgame/cg_servercmds.c:421
 msgid "Auto Pick"
 msgstr "Авто выбор"
 
-#: src/cgame/cg_servercmds.c:2304
+#: src/cgame/cg_servercmds.c:2304 src/cgame/cg_servercmds.c:2344
 msgid "Map"
 msgstr "Карта"
 
-#: src/cgame/cg_servercmds.c:2326
+#: src/cgame/cg_servercmds.c:2326 src/cgame/cg_servercmds.c:2366
 msgid "Could not create logfile"
 msgstr "Невозможно создать лог"
 
-#: src/cgame/cg_servercmds.c:2866
+#: src/cgame/cg_servercmds.c:2866 src/cgame/cg_servercmds.c:2903
 msgid "^3Server Restarting"
 msgstr "^3Перезапуск сервера"
 
@@ -758,6 +778,7 @@ msgstr "СИСТЕМА"
 msgid "GRAPHICS"
 msgstr "ВИДЕО"
 
+#: src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
 msgstr "ИГРОК"
 
@@ -1297,18 +1318,43 @@ msgstr "РАЗРАБОТАНО КОМАНДОЙ ET:LEGACY"
 msgid "^1PROGRAMMING"
 msgstr "^1ПРОГРАММИРОВАНИЕ"
 
-msgid "Jan 'Radegast' Simek - Project founder, coding & management"
+#, fuzzy
+msgid "Jan 'Radegast' Simek"
+msgstr "Джейсон 'Rhea' Каймиг"
+
+#, fuzzy
+msgid "Project founder, coding & management"
 msgstr ""
 "Jan 'Radegast' Simek - основатель проекта, программирование и управление"
 
-msgid "Olaf 'IR4T4' R. - Coding, mod development & bad boy"
+msgid "Olaf 'IR4T4' R."
+msgstr ""
+
+#, fuzzy
+msgid "Coding, mod development & bad boy"
 msgstr "Olaf 'IR4T4' R. - программирование, разработка мода и плохой парень"
 
-msgid "Konrad 'morsik' Moson - Website, coding & scripts"
+#, fuzzy
+msgid "Konrad 'morsik' Moson"
 msgstr "Konrad 'morsik' Moson - сайт, программирование и скрипты"
 
-msgid "Jere 'Jacker' S. - Main windows coder & renderer"
+#, fuzzy
+msgid "Website, coding & scripts"
+msgstr "Konrad 'morsik' Moson - сайт, программирование и скрипты"
+
+msgid "Jere 'Jacker' S."
+msgstr ""
+
+#, fuzzy
+msgid "Main windows coder & renderer"
 msgstr "Jere 'Jacker' S. - разработка главных окон и рендерера"
+
+msgid "Remy 'Spyhawk' M."
+msgstr ""
+
+#, fuzzy
+msgid "Coding, mod development"
+msgstr "Remy 'Spyhawk' M. - Программирование, разработка мода"
 
 #, fuzzy
 msgid "^1CONTRIBUTORS"
@@ -1768,7 +1814,7 @@ msgstr "Откат к предыдущим"
 msgid "setting in %s seconds..."
 msgstr "установкам через %s секунд..."
 
-#: src/cgame/cg_fireteams.c:340
+#: src/cgame/cg_fireteams.c:340 src/cgame/cg_fireteams.c:341
 msgid "MESSAGE"
 msgstr "СООБЩЕНИЕ"
 
@@ -2369,15 +2415,15 @@ msgstr ""
 msgid "I'm a covert ops."
 msgstr "Я разведчик."
 
-#: src/cgame/cg_draw.c:2126
+#: src/cgame/cg_draw.c:2126 src/cgame/cg_draw.c:1813
 msgid "Create a Fireteam?"
 msgstr "Создать звено?"
 
-#: src/cgame/cg_draw.c:2112
+#: src/cgame/cg_draw.c:2112 src/cgame/cg_draw.c:1799
 msgid "Make Fireteam private?"
 msgstr "Сделать звено закрытым?"
 
-#: src/cgame/cg_draw.c:2360
+#: src/cgame/cg_draw.c:2360 src/cgame/cg_draw.c:2057
 msgid "Response Sent"
 msgstr "Принято"
 
@@ -2489,7 +2535,7 @@ msgstr "КАРТЫ"
 msgid "CAMPAIGNS"
 msgstr "КАМПАНИИ"
 
-#: src/cgame/cg_fireteams.c:358
+#: src/cgame/cg_fireteams.c:358 src/cgame/cg_fireteams.c:359
 msgid "KICK"
 msgstr "КИК"
 
@@ -2514,7 +2560,7 @@ msgstr "СДЕЛАТЬ СОЮЗНИКОМ"
 msgid "MAKE SPEC"
 msgstr "СДЕЛАТЬ ЗРИТЕЛЕМ"
 
-#: src/cgame/cg_fireteams.c:361
+#: src/cgame/cg_fireteams.c:361 src/cgame/cg_fireteams.c:362
 msgid "WARN"
 msgstr "ПРЕДУПРЕЖДЕНИЕ"
 
@@ -2745,10 +2791,11 @@ msgstr "не заметил своей мины"
 msgid "dynamited himself to pieces"
 msgstr "взорвал себя динамитом"
 
-#: src/cgame/cg_draw.c:2797
+#: src/cgame/cg_draw.c:2797 src/cgame/cg_draw.c:2480
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr "^3ПРИГОТОВЬТЕСЬ К БОЮ!\n"
 
+#: src/cgame/cg_servercmds.c:387
 msgid "^1FIGHT!\n"
 msgstr "^1БОЙ!\n"
 
@@ -2863,9 +2910,13 @@ msgstr "Союзники пробили брешь в стене Старого 
 msgid "drowned"
 msgstr "утонул"
 
+#: src/cgame/cg_event.c:614
+#, c-format
 msgid "Picked up %s"
 msgstr "Поднял %s"
 
+#: src/cgame/cg_popupmessages.c:758
+#, c-format
 msgid "%s^7 has joined the %s^7!"
 msgstr "%s^7 присоединился к %s^7!"
 
@@ -2921,76 +2972,79 @@ msgstr "Атакуем!"
 msgid "Fall back!"
 msgstr "Назад!"
 
-#: src/cgame/cg_players.c:315
+#: src/cgame/cg_players.c:315 src/cgame/cg_players.c:309
 #, c-format
 msgid "Promoted to rank %s!"
 msgstr "Повышен в ранг %s!"
 
-#: src/cgame/cg_players.c:365
+#: src/cgame/cg_players.c:365 src/cgame/cg_players.c:359
 #, c-format
 msgid "Increased %s skill to level %i!"
 msgstr "Навык %s повышен до уровня %i!"
 
-#: src/cgame/cg_players.c:367
+#: src/cgame/cg_players.c:367 src/cgame/cg_players.c:361
 #, c-format
 msgid "You have been rewarded with %s"
 msgstr "Вам награда: %s"
 
-#: src/cgame/cg_popupmessages.c:585
+#: src/cgame/cg_popupmessages.c:585 src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
 msgstr "Заряжен у %s."
 
-#: src/cgame/cg_popupmessages.c:587
+#: src/cgame/cg_popupmessages.c:587 src/cgame/cg_popupmessages.c:682
 #, c-format
 msgid "Defused at %s."
 msgstr "Обезврежен у %s."
 
-#: src/cgame/cg_popupmessages.c:596
+#: src/cgame/cg_popupmessages.c:596 src/cgame/cg_popupmessages.c:691
 #, c-format
 msgid "%s has been constructed."
 msgstr "%s сооружён."
 
-#: src/cgame/cg_popupmessages.c:603
+#: src/cgame/cg_popupmessages.c:603 src/cgame/cg_popupmessages.c:698
 #, c-format
 msgid "%s has been damaged."
 msgstr "%s повреждён."
 
-#: src/cgame/cg_popupmessages.c:605
+#: src/cgame/cg_popupmessages.c:605 src/cgame/cg_popupmessages.c:700
 #, c-format
 msgid "%s has been destroyed."
 msgstr "%s уничтожен."
 
-#: src/cgame/cg_popupmessages.c:627
+#: src/cgame/cg_popupmessages.c:627 src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "%sSpotted by ^7%s%s at %s"
 msgstr "%sЗамечен ^7%s%s у %s"
 
-#: src/cgame/cg_popupmessages.c:631
+#: src/cgame/cg_popupmessages.c:631 src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "%sSpotted by ^7%s"
 msgstr "%sЗамечен ^7%s"
 
-#: src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:733
 #, c-format
 msgid "%s have stolen %s!"
 msgstr "%s украли %s!"
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
-#: src/cgame/cg_consolecmds.c:1207
+#: src/cgame/cg_consolecmds.c:1207 src/cgame/cg_consolecmds.c:1143
+#: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Axis"
 msgstr "Нацисты"
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_consolecmds.c:1211 src/cgame/cg_consolecmds.c:1147
+#: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Allies"
 msgstr "Союзники"
 
-#: src/cgame/cg_popupmessages.c:640
+#: src/cgame/cg_popupmessages.c:640 src/cgame/cg_popupmessages.c:735
 #, c-format
 msgid "%s have returned %s!"
 msgstr "%s вернули %s!"
 
-#: src/cgame/cg_popupmessages.c:666
+#: src/cgame/cg_popupmessages.c:666 src/cgame/cg_popupmessages.c:761
 #, c-format
 msgid "%s^7 disconnected"
 msgstr "%s^7 отключился"
@@ -3527,95 +3581,109 @@ msgstr "^1*** Перезапуск матча! ***\n"
 msgid "You are on the Axis team"
 msgstr "Вы в команде нацистов"
 
-#: src/cgame/cg_fireteamoverlay.c:446
+#: src/cgame/cg_fireteamoverlay.c:446 src/cgame/cg_fireteamoverlay.c:475
 #, c-format
 msgid "Private Fireteam: %s"
 msgstr "Закрытое звено: %s"
 
-#: src/cgame/cg_fireteamoverlay.c:450
+#: src/cgame/cg_fireteamoverlay.c:450 src/cgame/cg_fireteamoverlay.c:479
 #, c-format
 msgid "Fireteam: %s"
 msgstr "Звено: %s"
 
-#: src/cgame/cg_info.c:585
+#: src/cgame/cg_info.c:585 src/cgame/cg_info.c:718
 msgid "PLAYER STATS"
 msgstr "СТАТИСТИКА ИГРОКА"
 
-#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
+#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802 src/cgame/cg_info.c:729
+#: src/cgame/cg_info.c:931
 msgid "Weapon"
 msgstr "Оружие"
 
-#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804
+#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804 src/cgame/cg_info.c:731
+#: src/cgame/cg_info.c:933
 msgid "Accuracy"
 msgstr "Точность"
 
-#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806
+#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806 src/cgame/cg_info.c:733
+#: src/cgame/cg_info.c:935
 msgid "Hits / Shots"
 msgstr "Попаданий / Выстрелов"
 
-#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808
+#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808 src/cgame/cg_info.c:735
+#: src/cgame/cg_info.c:937
 msgid "Kills"
 msgstr "Убийств"
 
-#: src/cgame/cg_info.c:604
+#: src/cgame/cg_info.c:604 src/cgame/cg_info.c:737
 msgid "Deaths"
 msgstr "Смертей"
 
-#: src/cgame/cg_info.c:606
+#: src/cgame/cg_info.c:606 src/cgame/cg_info.c:739
 msgid "Headshots"
 msgstr "Попаданий в голову"
 
-#: src/cgame/cg_info.c:615
+#: src/cgame/cg_info.c:615 src/cgame/cg_info.c:748
 msgid "No weapon info available."
 msgstr "Нет информации об оружии"
 
-#: src/cgame/cg_info.c:650
+#: src/cgame/cg_info.c:650 src/cgame/cg_info.c:783
 msgid "Rank"
 msgstr "Ранг"
 
-#: src/cgame/cg_info.c:667
+#: src/cgame/cg_info.c:667 src/cgame/cg_info.c:799
 msgid "Skills"
 msgstr "Навыки"
 
-#: src/cgame/cg_info.c:669
+#: src/cgame/cg_info.c:669 src/cgame/cg_info.c:801
 msgid "Level"
 msgstr "Уровень"
 
-#: src/cgame/cg_info.c:671
+#: src/cgame/cg_info.c:671 src/cgame/cg_info.c:803
 msgid "XP / Next Level"
 msgstr "XP / След. уровень"
 
-#: src/cgame/cg_info.c:675
+#: src/cgame/cg_info.c:675 src/cgame/cg_info.c:807
 msgid "Medals"
 msgstr "Медали"
 
-#: src/cgame/cg_info.c:684
+#: src/cgame/cg_info.c:684 src/cgame/cg_info.c:816
 msgid "No skills acquired!"
 msgstr ""
 
-#: src/cgame/cg_info.c:792
+#: src/cgame/cg_info.c:792 src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
 msgstr ""
 
-#: src/cgame/cg_info.c:810
+#: src/cgame/cg_info.c:810 src/cgame/cg_info.c:939
 msgid "Player"
 msgstr ""
 
-#: src/cgame/cg_info.c:818
+#: src/cgame/cg_info.c:818 src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1289
+#: src/cgame/cg_consolecmds.c:1221
+#, fuzzy, c-format
+msgid "You will spawn as a %s %s with a %s."
+msgstr "Вы появитесь в качестве %s %s с %s."
+
+#: src/cgame/cg_consolecmds.c:1225
 #, c-format
 msgid "You will spawn as a %s %s with a %s and a %s."
 msgstr "Вы появитесь в роли %s %s с %s и %s."
+
+#: src/cgame/cg_limbopanel.c:1224
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
+msgstr "Вы появитесь в качестве %s %s с %s."
 
 #: src/cgame/cg_limbopanel.c:1228
 #, c-format
 msgid "You will spawn as an %s %s with a %s and a %s."
 msgstr "Вы появитесь в роли %s %s с %s и %s."
 
-#: src/cgame/cg_draw.c:441
+#: src/cgame/cg_draw.c:441 src/cgame/cg_draw.c:395
 msgid "an Objective"
 msgstr "Цель"
 
@@ -3658,13 +3726,15 @@ msgstr ""
 msgid "PopUpTimeFade:"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:1211
+#: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
 msgstr ""
 
+#: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2469
 msgid "^3WARMUP:^7 Match begins in:"
 msgstr ""
 
@@ -3682,37 +3752,42 @@ msgstr "Ждём вызов...%i"
 msgid "Awaiting gamestate..."
 msgstr "Ждём состояние игры..."
 
-#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637
+#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637 src/ui/ui_main.c:2400
+#: src/ui/ui_main.c:2641
 msgid "Waiting for new key... Press ESCAPE to cancel"
 msgstr "Жду новую клавишу... Нажмите ESCAPE для отмены"
 
-#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641
+#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641 src/ui/ui_main.c:2404
+#: src/ui/ui_main.c:2645
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
 msgstr ""
 
-#: src/ui/ui_main.c:2539
+#: src/ui/ui_main.c:2539 src/ui/ui_main.c:2542
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
 msgstr ""
 
-#: src/ui/ui_main.c:2543
+#: src/ui/ui_main.c:2543 src/ui/ui_main.c:2546
 msgid "Waiting for response from Master Server"
 msgstr "Ждём ответ Мастер-сервера"
 
-#: src/ui/ui_main.c:2551
+#: src/ui/ui_main.c:2551 src/ui/ui_main.c:2554
 #, c-format
 msgid "Refresh Time: %s"
 msgstr "Время обновления: %s"
 
 #: src/ui/ui_main.c:4330 src/ui/ui_main.c:4378 src/ui/ui_main.c:4413
+#: src/ui/ui_main.c:4342 src/ui/ui_main.c:4396 src/ui/ui_main.c:4431
 msgid "Favorite already in list\n"
 msgstr ""
 
 #: src/ui/ui_main.c:4335 src/ui/ui_main.c:4383 src/ui/ui_main.c:4418
+#: src/ui/ui_main.c:4347 src/ui/ui_main.c:4401 src/ui/ui_main.c:4436
 msgid "Favorite list full\n"
 msgstr "Избранные полны\n"
 
 #: src/ui/ui_main.c:4340 src/ui/ui_main.c:4388 src/ui/ui_main.c:4423
+#: src/ui/ui_main.c:4352 src/ui/ui_main.c:4406 src/ui/ui_main.c:4441
 #, c-format
 msgid "Added favorite server %s\n"
 msgstr ""
@@ -3741,78 +3816,104 @@ msgstr "^1ПЕРЕВОДЫ"
 msgid "^1PORTS"
 msgstr "^1ПОРТЫ"
 
-msgid "'BSzili' - AROS and MorphOS"
+msgid "'BSzili'"
+msgstr ""
+
+#, fuzzy
+msgid "AROS and MorphOS"
 msgstr "'BSzili' - AROS и MorphOS"
 
-msgid "'PtitSeb' - Pandora"
+#, fuzzy
+msgid "'PtitSeb'"
 msgstr "'PtitSeb' - Pandora"
+
+msgid "Pandora"
+msgstr ""
 
 msgid "^1PACKAGE MAINTAINERS"
 msgstr "^1СОПРОВОЖДАЮЩИЕ ПАКЕТОВ"
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 msgid "player"
 msgstr "игрок"
 
-#: src/cgame/cg_draw.c:2732
+#: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 msgid "players"
 msgstr "игроков"
 
-#: src/cgame/cg_draw.c:2749
+#: src/cgame/cg_draw.c:2749 src/cgame/cg_draw.c:2451
+#, c-format
 msgid "Press ^3%s^7 to start"
 msgstr "Нажмите ^3%s^7 чтобы начать"
 
 msgid "Not enough players to start match!\n"
 msgstr "Недостаточно игроков чтобы начать матч!\n"
 
+#: src/cgame/cg_draw.c:2023
 msgid "Your invitation has been submitted"
 msgstr "Ваше приглашение отправлено"
 
+#: src/cgame/cg_draw.c:2037
 msgid "Your invitation was accepted"
 msgstr "Ваше приглашение принято"
 
+#: src/cgame/cg_draw.c:2044
 msgid "Your invitation reply has been sent"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1951
 msgid "You were team-killed by a bot."
 msgstr ""
 
+#: src/cgame/cg_draw.c:1945
 msgid "You were team-killed by the Server Host"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1939
 msgid "Server Host cannot be complained against"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1933
 msgid "Complaint dismissed"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1927
 msgid "Your complaint has been filed"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1961
 msgid "Your application has been submitted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1968
 msgid "Your application failed"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1975
 msgid "Your application has been approved"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1982
 msgid "Your application reply has been sent"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1992
 msgid "Your proposition has been submitted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:1999
 msgid "Your proposition was rejected"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2006
 msgid "Your proposition was accepted"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2013
 msgid "Your proposition reply has been sent"
 msgstr ""
 
+#: src/cgame/cg_draw.c:2030
 msgid "Your invitation was rejected"
 msgstr ""
 
@@ -3843,13 +3944,14 @@ msgstr ""
 msgid "Obituaries Icons:"
 msgstr ""
 
+#: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
 msgstr "МАТЧ НАЧНЁТСЯ ЧЕРЕЗ:"
 
 msgid "You must be in the game to be ^3ready^7!\n"
 msgstr "Вы должны быть в игры чтобы быть ^3готовым^7!\n"
 
-+#: src/cgame/cg_debriefing.c:3215
+#: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
 msgstr "СОЮЗНИКИ НЕ УСПЕЛИ ВОВРЕМЯ!"
 
@@ -3874,12 +3976,12 @@ msgstr ""
 msgid "Timelimit hit.\n"
 msgstr ""
 
-#: src/cgame/cg_scoreboard.c:146
+#: src/cgame/cg_scoreboard.c:146 src/cgame/cg_scoreboard.c:273
 #, c-format
 msgid "Config: ^7%s^7"
 msgstr "Конфигурация: ^7%s^7"
 
-#: src/cgame/cg_draw.c:2745
+#: src/cgame/cg_draw.c:2745 src/cgame/cg_draw.c:2428
 #, c-format
 msgid "^3Config: ^7%s^7"
 msgstr "^3Конфигурация: ^7%s^7"
@@ -3887,11 +3989,11 @@ msgstr "^3Конфигурация: ^7%s^7"
 msgid "Landmine revealed"
 msgstr "Обнаружена мина"
 
-#: src/cgame/cg_draw.c:2486
+#: src/cgame/cg_draw.c:2486 src/cgame/cg_draw.c:2167
 msgid "disable"
 msgstr "отключить"
 
-#: src/cgame/cg_draw.c:2486
+#: src/cgame/cg_draw.c:2486 src/cgame/cg_draw.c:2167
 msgid "activate"
 msgstr "включить"
 
@@ -3923,39 +4025,39 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/ui/ui_loadpanel.c:195
+#: src/ui/ui_loadpanel.c:195 src/ui/ui_loadpanel.c:196
 msgid "CONNECTING..."
 msgstr "СОЕДИНЕНИЕ..."
 
-#: src/ui/ui_loadpanel.c:191
+#: src/ui/ui_loadpanel.c:191 src/ui/ui_loadpanel.c:192
 msgid "DOWNLOADING..."
 msgstr "ЗАГРУЗКА..."
 
-#: src/cgame/cg_loadpanel.c:250
+#: src/cgame/cg_loadpanel.c:250 src/cgame/cg_loadpanel.c:251
 msgid "Single Player"
 msgstr "Одиночная игра"
 
-#: src/cgame/cg_loadpanel.c:252
+#: src/cgame/cg_loadpanel.c:252 src/cgame/cg_loadpanel.c:253
 msgid "Co-op"
 msgstr "Кооператив"
 
-#: src/cgame/cg_loadpanel.c:254
+#: src/cgame/cg_loadpanel.c:254 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
 msgstr "Цель"
 
-#: src/cgame/cg_loadpanel.c:256
+#: src/cgame/cg_loadpanel.c:256 src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
 msgstr "Секундомер"
 
-#: src/cgame/cg_loadpanel.c:258
+#: src/cgame/cg_loadpanel.c:258 src/cgame/cg_loadpanel.c:259
 msgid "Campaign"
 msgstr "Кампания"
 
-#: src/cgame/cg_loadpanel.c:260
+#: src/cgame/cg_loadpanel.c:260 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
 msgstr "Последний выживший"
 
-#: src/cgame/cg_loadpanel.c:262
+#: src/cgame/cg_loadpanel.c:262 src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
 msgstr "Голосование"
 
@@ -3966,6 +4068,7 @@ msgid "Public Settings Loaded!\n"
 msgstr "Общие настройки загружены!\n"
 
 #: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
+#: src/cgame/cg_scoreboard.c:254 src/cgame/cg_scoreboard.c:260
 #, c-format
 msgid "MAP %i of %i"
 msgstr "КАРТА %i из %i"
@@ -4007,39 +4110,44 @@ msgstr "Вас выкинули из звена"
 msgid "You are now the leader of your fireteam"
 msgstr "Вы стали руководителем звена"
 
-msgid "The Fireteam you are on has been disbanded"
+#, fuzzy
+msgid "The fireteam you are on has been disbanded"
 msgstr "Ваше звено распущено"
 
 msgid "You have been given fireteam admin rights"
 msgstr "Вы теперь администратор звена"
 
-#: src/cgame/cg_fireteams.c:343
+#: src/cgame/cg_fireteams.c:343 src/cgame/cg_fireteams.c:344
 msgid "FIRETEAMS"
 msgstr "ЗВЕНЬЯ"
 
-#: src/cgame/cg_fireteams.c:346
+#: src/cgame/cg_fireteams.c:346 src/cgame/cg_fireteams.c:347
 msgid "JOIN"
 msgstr "ПРИСОЕДИНИТЬСЯ"
 
-#: src/cgame/cg_fireteams.c:349
+#: src/cgame/cg_fireteams.c:349 src/cgame/cg_fireteams.c:350
 msgid "PROPOSE"
 msgstr "ПРЕДЛОЖИТЬ"
 
-#: src/cgame/cg_fireteams.c:355
+#: src/cgame/cg_fireteams.c:355 src/cgame/cg_fireteams.c:356
 msgid "INVITE"
 msgstr "ПРИГЛАСИТЬ"
 
-#: src/cgame/cg_fireteams.c:364
+#: src/cgame/cg_fireteams.c:364 src/cgame/cg_fireteams.c:365
 msgid "SET ADMIN"
 msgstr "СДЕЛАТЬ АДМИНОМ"
 
 #: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
 #: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
+#: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
+#: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
 msgid "Previous"
 msgstr "Предыдущий"
 
 #: src/cgame/cg_fireteams.c:709 src/cgame/cg_fireteams.c:713
 #: src/cgame/cg_fireteams.c:770 src/cgame/cg_fireteams.c:774
+#: src/cgame/cg_fireteams.c:717 src/cgame/cg_fireteams.c:721
+#: src/cgame/cg_fireteams.c:778 src/cgame/cg_fireteams.c:782
 msgid "Next"
 msgstr "Следующий"
 
@@ -4201,15 +4309,25 @@ msgid "^5You've been unmuted\n"
 msgstr ""
 
 msgid ""
-"\n"
-"^3 ID^1 : ^3Player                    Nudge  Rate  MaxPkts  Snaps\n"
+"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr ""
 
-msgid ""
-"\n"
-"^3Status^1   : ^3ID^1 : ^3Player                    Nudge  Rate  MaxPkts  "
-"Snaps\n"
+#, fuzzy
+msgid "^7----------------------------------------------------------------------\n"
 msgstr ""
+"^3Команды судьи:^7\n"
+"------------------------------------------\n"
+
+msgid ""
+"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
+"Specials\n"
+msgstr ""
+
+#, fuzzy
+msgid "^7-------------------------------------------------------------------------------\n"
+msgstr ""
+"^3Команды судьи:^7\n"
+"------------------------------------------\n"
 
 msgid ""
 "^5\n"
@@ -4362,10 +4480,11 @@ msgstr "Слот 8 - бинокли:"
 msgid "Remy 'Spyhawk' M. - Coding, mod development"
 msgstr "Remy 'Spyhawk' M. - Программирование, разработка мода"
 
+#: src/cgame/cg_event.c:566
 msgid "died"
 msgstr "умер"
 
-#: src/cgame/cg_draw.c:2250
+#: src/cgame/cg_draw.c:2250 src/cgame/cg_draw.c:2161
 #, c-format
 msgid "Press %s to follow previous player"
 msgstr "Нажмите %s чтобы следовать за предыдущим игроком"
@@ -4376,80 +4495,80 @@ msgstr "^9Вы заморожены - ^3/kill^9 отключён."
 msgid "Objectives:"
 msgstr "Цели:"
 
-#: src/cgame/cg_info.c:1068
+#: src/cgame/cg_info.c:1068 src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
 msgstr "ЦЕЛИ"
 
-#: src/cgame/cg_debriefing.c:3191
+#: src/cgame/cg_debriefing.c:3191 src/cgame/cg_debriefing.c:3236
 #, c-format
 msgid "CAMPAIGN STATUS: %s"
 msgstr "СОСТОЯНИЕ КАМПАНИИ: %s"
 
-#: src/cgame/cg_debriefing.c:3200
-#, c-format
-msgid "%i SECS TO NEXT MAP"
+#: src/cgame/cg_debriefing.c:3200 src/cgame/cg_debriefing.c:3245
+#, fuzzy, c-format
+msgid "SECS TO NEXT MAP"
 msgstr "%i СЕК ДО СЛЕД КАРТЫ"
 
-#: src/cgame/cg_debriefing.c:3130
+#: src/cgame/cg_debriefing.c:3130 src/cgame/cg_debriefing.c:3175
 msgid "ALLIES WIN!"
 msgstr "СОЮЗНИКИ ПОБЕДИЛИ!"
 
-#: src/cgame/cg_debriefing.c:3132
+#: src/cgame/cg_debriefing.c:3132 src/cgame/cg_debriefing.c:3177
 msgid "AXIS WIN!"
 msgstr "НАЦИСТЫ ПОБЕДИЛИ!"
 
-#: src/cgame/cg_debriefing.c:3134
+#: src/cgame/cg_debriefing.c:3134 src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
 msgstr "ЭТО НИЧЬЯ!"
 
-#: src/cgame/cg_debriefing.c:3311
+#: src/cgame/cg_debriefing.c:3311 src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
 msgstr "Кампания: %s"
 
-#: src/cgame/cg_debriefing.c:2614
+#: src/cgame/cg_debriefing.c:2614 src/cgame/cg_debriefing.c:2659
 msgid "Time:"
 msgstr "Время:"
 
-#: src/cgame/cg_debriefing.c:2626
+#: src/cgame/cg_debriefing.c:2626 src/cgame/cg_debriefing.c:2671
 msgid "Medals:"
 msgstr "Медали:"
 
-#: src/cgame/cg_debriefing.c:2645
+#: src/cgame/cg_debriefing.c:2645 src/cgame/cg_debriefing.c:2690
 msgid "Rank:"
 msgstr "Ранг:"
 
-#: src/cgame/cg_debriefing.c:2578
+#: src/cgame/cg_debriefing.c:2578 src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:2765
+#: src/cgame/cg_debriefing.c:2765 src/cgame/cg_debriefing.c:2810
 msgid "^5TO TEAM"
 msgstr "^5В КОМАНДУ"
 
-#: src/cgame/cg_debriefing.c:2768
+#: src/cgame/cg_debriefing.c:2768 src/cgame/cg_debriefing.c:2813
 msgid "^3TO FIRETEAM"
 msgstr "^3В ЗВЕНО"
 
-#: src/cgame/cg_debriefing.c:2771
+#: src/cgame/cg_debriefing.c:2771 src/cgame/cg_debriefing.c:2816
 msgid "^2TO GLOBAL"
 msgstr "^2В ОБЩИЙ"
 
-#: src/cgame/cg_debriefing.c:1311
+#: src/cgame/cg_debriefing.c:1311 src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:1318
+#: src/cgame/cg_debriefing.c:1318 src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:1312
+#: src/cgame/cg_debriefing.c:1312 src/cgame/cg_debriefing.c:1341
 msgid "Never"
 msgstr "Никогда"
 
-#: src/cgame/cg_debriefing.c:1312
+#: src/cgame/cg_debriefing.c:1312 src/cgame/cg_debriefing.c:1341
 #, c-format
 msgid "%d maps ago"
 msgstr "%d карт назад"
@@ -4459,17 +4578,17 @@ msgstr "%d карт назад"
 msgid "WAITING ON %i %s"
 msgstr "ЖДЁМ %i %s"
 
-#: src/cgame/cg_servercmds.c:2005
+#: src/cgame/cg_servercmds.c:2005 src/cgame/cg_servercmds.c:1954
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:2006
+#: src/cgame/cg_servercmds.c:2006 src/cgame/cg_servercmds.c:1955
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:2008
+#: src/cgame/cg_servercmds.c:2008 src/cgame/cg_servercmds.c:1957
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
 msgstr ""
@@ -4480,28 +4599,39 @@ msgstr " (базука)"
 msgid "'s Akimbo .45ACP 1911s"
 msgstr " (Akimbo .45ACP 1911s)"
 
+#: src/cgame/cg_event.c:302
 msgid "^7killed"
 msgstr "^7убил"
 
+#: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
 msgstr "^7убил ^1НАПАРНИКА^7"
 
 msgid "Server disconnected"
 msgstr ""
 
-#: src/ui/ui_main.c:5803
+#: src/ui/ui_main.c:5803 src/ui/ui_main.c:5873
 #, c-format
 msgid "^3Filtered/Total: %04i/%04i"
 msgstr "^3Отфильтровано/Всего: %04i/%04i"
 
-#: src/ui/ui_main.c:5807
+#: src/ui/ui_main.c:5807 src/ui/ui_main.c:5877
 #, c-format
-msgid "^3Check your filters - no servers found!              Filtered/Total: %04i/%04i"
-msgstr "^3Проверьте фильтры - сервера не найдены!              Отфильтровано/Всего: %04i/%04i"
+msgid ""
+"^3Check your filters - no servers found!              Filtered/Total: %04i/"
+"%04i"
+msgstr ""
+"^3Проверьте фильтры - сервера не найдены!              Отфильтровано/Всего: "
+"%04i/%04i"
 
-#: src/ui/ui_main.c:5812
-msgid "^1No Connection or master down - no servers found!      Filtered/Total: 0000/0000"
-msgstr "^1Нет соединения с мастер-сервером - сервера не найдены!      Отфильтровано/Всего: 0000/0000"
+#: src/ui/ui_main.c:5812 src/ui/ui_main.c:5882
+#, fuzzy
+msgid ""
+"^1No Connection or master down - no servers found!    Filtered/Total: "
+"0000/0000"
+msgstr ""
+"^1Нет соединения с мастер-сервером - сервера не найдены!      Отфильтровано/"
+"Всего: 0000/0000"
 
 msgid "Server connection timed out."
 msgstr "Тайм-аут соединения с сервером."
@@ -4509,27 +4639,41 @@ msgstr "Тайм-аут соединения с сервером."
 msgid "Server disconnected for unknown reason"
 msgstr "Отключён от сервера по неизвестной причине"
 
+#: src/ui/ui_main.c:7751
+#, c-format
 msgid "Server is full, redirect to: %s\n"
 msgstr "Сервер полон, перенаправление на :%s\n"
 
+#: src/ui/ui_main.c:4083
 msgid "Can't show Server Info (not found, or local server)\n"
 msgstr ""
 
+#: src/ui/ui_main.c:8294
+#, c-format
 msgid "%d servers listed in browser with %d players.\n"
 msgstr "Показано %d серверов с %d игроками.\n"
 
+#: src/ui/ui_main.c:8300
+#, c-format
 msgid "%d servers not listed (filtered out by game browser settings)\n"
 msgstr "%d серверов скрыто (отфильтровано по настройкам брауера)\n"
 
+#: src/ui/ui_main.c:8428
+#, c-format
 msgid "Can't find campaign '%s'\n"
 msgstr "Кампания '%s' не найдена\n"
 
+#: src/ui/ui_main.c:8434
+#, c-format
 msgid "Corrupted campaign '%s'\n"
 msgstr "Кампания '%s' повреждена\n"
 
+#: src/ui/ui_main.c:8465
+#, c-format
 msgid "%i campaigns found:\n"
 msgstr "Найдено %i кампаний:\n"
 
+#: src/ui/ui_main.c:8469
 msgid "No campaigns found.\n"
 msgstr ""
 
@@ -4599,7 +4743,7 @@ msgstr ""
 msgid "Server quit\n"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2766
+#: src/cgame/cg_draw.c:2766 src/cgame/cg_draw.c:2677
 #, c-format
 msgid "The %s team is speclocked!"
 msgstr ""
@@ -4649,7 +4793,9 @@ msgstr "^1ИНФОРМАЦИЯ О БЕЗОПАСНОСТИ"
 msgid "You are running old software"
 msgstr "Версия игры устарела"
 
-msgid "We do recommend to\nupgrade your ET client"
+msgid ""
+"We do recommend to\n"
+"upgrade your ET client"
 msgstr "Советуем обновить клиент ET"
 
 msgid "UPGRADE NOW"
@@ -4691,10 +4837,114 @@ msgstr "НАЦИСТЫ УСПЕЛИ ВОВРЕМЯ!"
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
 msgstr "НАЦИСТЫ НЕ УСПЕЛИ ВОВРЕМЯ!"
 
-#: src/cgame/cg_limbopanel.c:1224
-#, c-format
-msgid "You will spawn as an %s %s with a %s."
-msgstr "Вы появитесь в качестве %s %s с %s."
-
 msgid "^3>>> Unknown vote command: ^7 \n"
 msgstr "^3>>> Неисзвестная команда голосования: ^7 \n"
+
+msgid "Use the ^3players^7 command to find a valid player ID.\n"
+msgstr ""
+
+#, fuzzy
+msgid "^3Match is already in progress!\n"
+msgstr "Матч уже идёт!\n"
+
+msgid "^1Teams have been shuffled!\n"
+msgstr ""
+
+#, fuzzy
+msgid "^3*** Loading nextmap! ***\n"
+msgstr "^1*** Перезапуск матча! ***\n"
+
+#, fuzzy
+msgid "^1*** Level Restarted! ***\n"
+msgstr "^1*** Перезапуск матча! ***\n"
+
+#, fuzzy
+msgid "You have been switched to the Axis team"
+msgstr "Вас выкинули из звена"
+
+msgid "Keep the Allies from beating the clock!"
+msgstr ""
+
+msgid "Keep the Axis from beating the clock!"
+msgstr ""
+
+#, fuzzy
+msgid "You have been switched to the Allied team"
+msgstr "Вас выкинули из звена"
+
+msgid "Try to beat the clock!"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2035
+msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2040
+msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2047
+#, fuzzy
+msgid "^3No weapon info available.\n"
+msgstr "Нет информации об оружии"
+
+#: src/cgame/cg_servercmds.c:2153
+#, fuzzy
+msgid "  Medals"
+msgstr "Медали"
+
+#: src/cgame/cg_servercmds.c:2165
+msgid "^3No skills acquired!\n"
+msgstr ""
+
+#, fuzzy
+msgid "You have been been stripped of fireteam admin rights"
+msgstr "Вы теперь администратор звена"
+
+msgid "%s ^7has left the fireteam\n"
+msgstr ""
+
+#, fuzzy
+msgid "You have been warned by your fireteam leader\n"
+msgstr "Предупреждение от командира звена\n"
+
+#, fuzzy
+msgid "^3moved to spectator for inactivity!\n"
+msgstr "Неактивность зрителя:"
+
+#: src/cgame/cg_debriefing.c:2624
+msgid "HS:"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2332
+#, fuzzy, c-format
+msgid "Bonus Life! Deploying in ^3%d ^7second"
+msgstr "Бонусная жизнь! Прибытие через ^3%d ^7секунд"
+
+#: src/cgame/cg_draw.c:2447
+#, fuzzy
+msgid "Type ^3\\ready^7 in the console to start"
+msgstr "Чтобы начать напишите ^3\\ready^* в консоли"
+
+#: src/cgame/cg_event.c:293
+#, fuzzy
+msgid "^7swapped places with"
+msgstr "Вы поменялись местами с"
+
+#: src/cgame/cg_info.c:1421
+#, fuzzy
+msgid "DEMO STATUS"
+msgstr "СТАТИСТИКА ИГРОКА"
+
+#: src/cgame/cg_scoreboard.c:205
+#, fuzzy, c-format
+msgid "WAITING ON ^2%i ^9%s"
+msgstr "ЖДЁМ %i %s"
+
+#: src/ui/ui_main.c:8517
+msgid "No favourite servers found."
+msgstr ""
+
+#: src/ui/ui_main.c:8528
+msgid "All favourite servers removed."
+msgstr ""
