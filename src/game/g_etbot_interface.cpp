@@ -2144,18 +2144,6 @@ class ETInterface : public IEngineInterface
 public:
 	int AddBot(const MessageHelper &_data)
 	{
-		// wait until everything settles before adding bots on dedicated servers
-		if (g_dedicated.integer && (level.time - level.startTime < 10000))
-		{
-			return -1;
-		}
-
-		//if (level.maxclients == level.numConnectedClients && (level.time % 3000 == 0))
-		//{
-		//	PrintError("Could not add bot! Server is full!");
-		//	return -1;
-		//}
-
 		OB_GETMSG(Msg_Addbot);
 
 		// cs: find a usable slot. this should avoid any game / engine sync problems related to CS_FREE
