@@ -992,8 +992,12 @@ void SV_SendClientMessages(void)
 			{
 				SV_DropClient(c, "Download failed");
 			}
-
+			c->lastValidGamestate = svs.time;
 			continue;       // Client is downloading, don't send snapshots
+		}
+		else if (c->state == CS_ACTIVE)
+		{
+			c->lastValidGamestate = svs.time;
 		}
 
 		if (c->netchan.unsentFragments || c->netchan_start_queue)

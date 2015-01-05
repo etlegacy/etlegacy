@@ -1282,6 +1282,12 @@ static void SV_CheckTimeouts(void)
 			cl->lastPacketTime = svs.time;
 		}
 
+		// time is wonked
+		if (cl->lastValidGamestate > svs.time || cl->lastValidGamestate == 0)
+		{
+			cl->lastValidGamestate = svs.time;
+		}
+
 		if (cl->state == CS_ZOMBIE && cl->lastPacketTime < zombiepoint)
 		{
 			// using the client id cause the cl->name is empty at this point
@@ -1291,7 +1297,16 @@ static void SV_CheckTimeouts(void)
 			continue;
 		}
 
-		if (cl->state == CS_ACTIVE && cl->lastPacketTime < droppoint)
+		if (cl->state < CS_ACTIVE && cl->lastValidGamestate < droppoint)
+		{
+			// wait several frames so a debugger session doesn't cause a timeout
+			if (++cl->timeoutCount > 5)
+			{
+				SV_DropClient(cl, va("game timed out %i\n", cl->state));
+				cl->state = CS_FREE;    // don't bother with zombie state
+			}
+		}
+		else if (cl->state == CS_ACTIVE && cl->lastPacketTime < droppoint)
 		{
 			// wait several frames so a debugger session doesn't cause a timeout
 			if (++cl->timeoutCount > 5)

@@ -387,6 +387,7 @@ gotnewcl:
 
 	newcl->state            = CS_CONNECTED;
 	newcl->lastSnapshotTime = 0;
+	newcl->lastValidGamestate = 0;
 	newcl->lastPacketTime   = svs.time;
 	newcl->lastConnectTime  = svs.time;
 
@@ -444,7 +445,8 @@ void SV_DropClient(client_t *drop, const char *reason)
 		}
 	}
 
-	if (!isBot && !drop->demoClient) // Don't drop bots nor democlients (will make the server crash since there's no network connection to manage with these clients!)
+	// Don't drop bots nor democlients (will make the server crash since there's no network connection to manage with these clients!)
+	if (!isBot && !drop->demoClient)
 	{
 		// see if we already have a challenge for this ip
 		challenge = &svs.challenges[0];

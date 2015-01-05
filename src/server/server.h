@@ -219,6 +219,7 @@ typedef struct client_s
 	int nextReliableUserTime;           // svs.time when another userinfo change will be allowed
 	int lastPacketTime;                 // svs.time when packet was last received
 	int lastConnectTime;                // svs.time when connection started
+	int lastValidGamestate;             // svs.time when active in game
 	int lastSnapshotTime;               // svs.time of last sent snapshot
 	qboolean rateDelayed;               // true if lastSnapshotTime was set based on rate instead of snapshotMsec
 	int timeoutCount;                   // must timeout a few frames in a row so debugging doesn't break
