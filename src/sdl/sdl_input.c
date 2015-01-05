@@ -687,7 +687,7 @@ static void IN_InitJoystick(void)
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
 		Com_Printf("Initializing joystick devices\n");
-		if (SDL_Init(SDL_INIT_JOYSTICK) == -1)
+		if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
 		{
 			Com_Printf("SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
 			return;

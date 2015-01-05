@@ -51,11 +51,4 @@
 #include <SDL2/SDL_cpuinfo.h>
 #endif
 
-//If we are running a debug build with MSVC we need to enable NOPARACHUTE on inits
-#if defined(_WIN32) && defined(_DEBUG) && defined(_MSC_VER)
-#define LegacySDL_Init(x) SDL_Init(x | SDL_INIT_NOPARACHUTE)
-#else
-#define LegacySDL_Init(x) SDL_Init(x)
-#endif
-
 #endif // #ifndef INCLUDE_SDLDEF_H
