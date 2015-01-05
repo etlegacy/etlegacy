@@ -36,7 +36,7 @@
 #include "server.h"
 
 // static function decl
-void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string);
+static void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string);
 
 #define SV_DEMO_DIR va("demos/server%s%s", sv_demopath->string[0] ? "/" : "", sv_demopath->string[0] ? sv_demopath->string : "")
 #define Q_IsColorStringGameCommand(p)      ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1)) // ^[anychar]
