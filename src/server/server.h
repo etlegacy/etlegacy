@@ -420,45 +420,18 @@ extern cvar_t *sv_demoTolerant;
 //===========================================================
 
 // sv_demo.c
-void SV_DemoStartRecord(void);
-void SV_DemoStopRecord(void);
-void SV_DemoStartPlayback(void);
-void SV_DemoStopPlayback(void);
 void SV_DemoAutoDemoRecord(void);
 void SV_DemoRestartPlayback(void);
 void SV_DemoReadFrame(void);
-void SV_DemoReadClientCommand(msg_t *msg);
-void SV_DemoReadServerCommand(msg_t *msg);
-void SV_DemoReadGameCommand(msg_t *msg);
-void SV_DemoReadConfigString(msg_t *msg);
-void SV_DemoReadClientConfigString(msg_t *msg);
-void SV_DemoReadClientUserinfo(msg_t *msg);
-//void SV_DemoReadClientUsercmd( msg_t *msg );
-void SV_DemoReadAllPlayerState(msg_t *msg);
-void SV_DemoReadAllEntityState(msg_t *msg);
-void SV_DemoReadAllEntityShared(msg_t *msg);
-void SV_DemoReadRefreshEntities(void);
 void SV_DemoWriteFrame(void);
-void SV_DemoWriteClientCommand(client_t *client, const char *cmd);
 qboolean SV_DemoClientCommandCapture(client_t *cl, const char *s);
 void SV_DemoWriteServerCommand(const char *cmd);
 void SV_DemoWriteGameCommand(int clientNum, const char *cmd);
 void SV_DemoWriteConfigString(int cs_index, const char *cs_string);
-void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string);
 void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo);
-//void SV_DemoWriteClientUsercmd( client_t *cl, qboolean delta, int cmdCount, usercmd_t *cmds, int key );
-void SV_DemoWriteAllPlayerState(void);
-void SV_DemoWriteAllEntityState(void);
-void SV_DemoWriteAllEntityShared(void);
-qboolean SV_CheckClientCommand(client_t *client, const char *cmd);
-qboolean SV_CheckServerCommand(const char *cmd);
-qboolean SV_CheckGameCommand(const char *cmd);
-qboolean SV_CheckConfigString(int cs_index, const char *cs_string);
 qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore);
-void SV_DemoFilterClientUserinfo(const char *userinfo);
-char *SV_CleanFilename(char *string);
-char *SV_CleanStrCmd(char *string);
-char *SV_GenerateDateTime(void);
+void SV_DemoStopAll(void);
+void SV_DemoInit(void);
 
 // sv_demo_ext.c
 int SV_GentityGetHealthField(sharedEntity_t *gent);

@@ -137,15 +137,7 @@ static void SV_Map_f(void)
 		cheat = qfalse;
 	}
 
-	// stop any demos
-	if (sv.demoState == DS_RECORDING)
-	{
-		SV_DemoStopRecord();
-	}
-	else if (sv.demoState == DS_PLAYBACK)
-	{
-		SV_DemoStopPlayback();
-	}
+	SV_DemoStopAll();
 
 	// save the map name here cause on a map restart we reload the etconfig.cfg
 	// and thus nuke the arguments of the map command
@@ -310,16 +302,7 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-	// stop any demos
-	if (sv.demoState == DS_RECORDING)
-	{
-		SV_DemoStopRecord();
-	}
-	else if (sv.demoState == DS_PLAYBACK)
-	{
-		Com_Printf("SV_MapRestart_f\n");
-		SV_DemoStopPlayback();
-	}
+	SV_DemoStopAll();
 
 	// toggle the server bit so clients can detect that a
 	// map_restart has happened
@@ -681,149 +664,6 @@ static void SV_KillServer_f(void)
 }
 
 /*
-=================
-SV_Demo_Record_f
-=================
-*/
-static void SV_Demo_Record_f(void)
-{
-	// make sure server is running
-	if (!com_sv_running->integer)
-	{
-		Com_Printf("Server is not running.\n");
-		return;
-	}
-
-	if (Cmd_Argc() > 2)
-	{
-		Com_Printf("Usage: demo_record <demoname>\n");
-		return;
-	}
-
-	if (sv.demoState != DS_NONE)
-	{
-		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
-		return;
-	}
-
-	if (sv_maxclients->integer > MAX_CLIENTS)
-	{
-		Com_Printf("DEMO: ERROR: Too many client slots, reduce sv_maxclients and retry.\n");
-		return;
-	}
-
-	if (Cmd_Argc() == 2)
-	{
-		sprintf(sv.demoName, "svdemos/%s.%s%d", Cmd_Argv(1), SVDEMOEXT, PROTOCOL_VERSION);
-	}
-	else
-	{
-		int number;
-		// scan for a free demo name
-		for (number = 0 ; number >= 0 ; number++)
-		{
-			Com_sprintf(sv.demoName, sizeof(sv.demoName), "svdemos/%d.%s%d", number, SVDEMOEXT, PROTOCOL_VERSION);
-			if (!FS_FileExists(sv.demoName))
-			{
-				break;  // file doesn't exist
-			}
-		}
-	}
-
-	sv.demoFile = FS_FOpenFileWrite(sv.demoName);
-	if (!sv.demoFile)
-	{
-		Com_Printf("DEMO: ERROR: Couldn't open %s for writing.\n", sv.demoName);
-		return;
-	}
-
-	SV_DemoStartRecord();
-}
-
-/*
-=================
-SV_Demo_Play_f
-=================
-*/
-static void SV_Demo_Play_f(void)
-{
-	char *arg;
-
-	if (Cmd_Argc() != 2)
-	{
-		Com_Printf("Usage: demo_play <demoname>\n");
-		return;
-	}
-
-	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK)
-	{
-		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
-		return;
-	}
-
-	// check for an extension .svdm_?? (?? is protocol)
-	arg = Cmd_Argv(1);
-	if (!strcmp(arg + strlen(arg) - 6, va(".%s%d", SVDEMOEXT, PROTOCOL_VERSION)))
-	{
-		Com_sprintf(sv.demoName, sizeof(sv.demoName), "svdemos/%s", arg);
-	}
-	else
-	{
-		Com_sprintf(sv.demoName, sizeof(sv.demoName), "svdemos/%s.%s%d", arg, SVDEMOEXT, PROTOCOL_VERSION);
-	}
-
-	//FS_FileExists(sv.demoName);
-	FS_FOpenFileRead(sv.demoName, &sv.demoFile, qtrue);
-	if (!sv.demoFile)
-	{
-		Com_Printf("ERROR: Couldn't open %s for reading.\n", sv.demoName);
-		return;
-	}
-
-	SV_DemoStartPlayback();
-}
-
-/*
-=================
-SV_Demo_Stop_f
-=================
-*/
-static void SV_Demo_Stop_f(void)
-{
-	if (sv.demoState == DS_NONE)
-	{
-		Com_Printf("No demo is currently being recorded or played.\n");
-		return;
-	}
-
-	// Close the demo file
-	if (sv.demoState == DS_PLAYBACK || sv.demoState == DS_WAITINGPLAYBACK)
-	{
-		SV_DemoStopPlayback();
-	}
-	else
-	{
-		SV_DemoStopRecord();
-	}
-}
-
-/*
-====================
-SV_CompleteDemoName
-====================
-*/
-static void SV_CompleteDemoName(char *args, int argNum)
-{
-	if (argNum == 2)
-	{
-		char demoExt[16];
-
-		Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", SVDEMOEXT, PROTOCOL_VERSION);
-		Field_CompleteFilename("svdemos", demoExt, qtrue, qtrue);
-	}
-}
-
-/*
 ==================
 SV_CompleteMapName
 ==================
@@ -913,12 +753,9 @@ void SV_AddOperatorCommands(void)
 		Cmd_AddCommand("say", SV_ConSay_f);
 	}
 
-	Cmd_AddCommand("sv_record", SV_Demo_Record_f);
-	Cmd_AddCommand("sv_demo", SV_Demo_Play_f);
-	Cmd_SetCommandCompletionFunc("sv_demo", SV_CompleteDemoName);
-	Cmd_AddCommand("sv_demostop", SV_Demo_Stop_f);
-
 	Cmd_AddCommand("uptime", SV_Uptime_f);
+
+	SV_DemoInit();
 }
 
 /*

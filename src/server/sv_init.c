@@ -1218,15 +1218,7 @@ void SV_Shutdown(char *finalmsg)
 	SV_MasterShutdown();
 	SV_ShutdownGameProgs();
 
-	// stop any demos
-	if (sv.demoState == DS_RECORDING)
-	{
-		SV_DemoStopRecord();
-	}
-	else if (sv.demoState == DS_PLAYBACK)
-	{
-		SV_DemoStopPlayback();
-	}
+	SV_DemoStopAll();
 
 	// free current level
 	SV_ClearServer();
