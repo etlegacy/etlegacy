@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.71rc4\n"
-"Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
-"POT-Creation-Date: 2013-04-01 23:37+0200\n"
+"Project-Id-Version: ET: Legacy v2.71a\n"
+"Report-Msgid-Bugs-To: mail@etlegacy.com\n"
+"POT-Creation-Date: 2015-01-05 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/client/cl_console.c:654
+#: src/client/cl_console.c:654 src/client/cl_console.c:674
 msgid "say_team:"
 msgstr ""
 
-#: src/client/cl_console.c:661
+#: src/client/cl_console.c:661 src/client/cl_console.c:682
 msgid "say_fireteam:"
 msgstr ""
 
-#: src/client/cl_console.c:668
+#: src/client/cl_console.c:668 src/client/cl_console.c:690
 msgid "say:"
 msgstr ""
 
@@ -35,5 +35,7 @@ msgstr ""
 msgid "MOUSE2"
 msgstr ""
 
+#: src/client/cl_console.c:803
+#, c-format
 msgid "%s (UPDATE AVAILABLE)"
 msgstr ""
