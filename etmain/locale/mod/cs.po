@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
-"POT-Creation-Date: 2015-01-05 10:10+0100\n"
-"PO-Revision-Date: 2014-02-16 12:11+0100\n"
+"POT-Creation-Date: 2015-01-05 10:15+0100\n"
+"PO-Revision-Date: 2015-01-05 10:41+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
 "Language: cs_CZ\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.7.1\n"
 
 #: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
 #: src/cgame/cg_consolecmds.c:568 src/cgame/cg_consolecmds.c:362
@@ -37,7 +37,7 @@ msgstr "HODINY JSOU NYNI NASTAVENY NA %s!"
 
 #: src/cgame/cg_draw.c:650 src/cgame/cg_draw_hud.c:2052
 msgid "Connection Interrupted"
-msgstr "Spojeni preruseno"
+msgstr "Spojení přerušeno"
 
 #: src/cgame/cg_draw.c:1902 src/cgame/cg_draw.c:1506
 msgid "Disguised Enemy!"
@@ -48,9 +48,9 @@ msgid "SPECTATOR"
 msgstr "POZOROVATEL"
 
 #: src/cgame/cg_draw.c:2092 src/cgame/cg_draw.c:1743
-#, fuzzy, c-format
+#, c-format
 msgid "File complaint against ^7%s^3 for team-killing?"
-msgstr "Podat stiznost proti %s^3 za zabiti spoluhrace?"
+msgstr "Podat stížnost proti %s^3 za zabití spoluhráče?"
 
 #: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
 #: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
@@ -120,9 +120,9 @@ msgid "You are wounded and waiting for a medic."
 msgstr "Jsi ranen a cekas na zdravotnika."
 
 #: src/cgame/cg_draw.c:2540 src/cgame/cg_draw.c:2239
-#, fuzzy, c-format
+#, c-format
 msgid "Press %s to go into reinforcement queue."
-msgstr "Stiskni SKOK pro navraceni do fronty posil."
+msgstr "Stiskni %s pro návrat do fronty posil."
 
 #: src/cgame/cg_draw.c:2550 src/cgame/cg_draw.c:2250
 msgid "No more reinforcements this round."
@@ -155,7 +155,7 @@ msgstr ""
 #: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621 src/cgame/cg_draw.c:2361
 #: src/cgame/cg_draw.c:2387
 msgid "Following"
-msgstr "Sledujes"
+msgstr "Sleduješ"
 
 #: src/cgame/cg_draw.c:2732 src/cgame/cg_draw.c:2434
 #, c-format
@@ -168,7 +168,7 @@ msgstr "Napiste ^3\\ready^* do konzole pro zacatek"
 
 #: src/cgame/cg_draw.c:2684
 msgid "(WARMUP) Match begins in:"
-msgstr "(ZAHRIVACI KOLO) Zápas zacne za:"
+msgstr "(ZAHŘÍVACÍ KOLO) Zápas začne za:"
 
 #: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
 #: src/cgame/cg_draw.c:2503 src/cgame/cg_scoreboard.c:242
@@ -179,7 +179,7 @@ msgstr ""
 #: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
 #: src/cgame/cg_scoreboard.c:178
 msgid "WARMUP"
-msgstr "ZAHRIVANI"
+msgstr "ZAHŘÍVÁNÍ"
 
 #: src/cgame/cg_event.c:189 src/cgame/cg_event.c:271
 msgid "You swapped places with"
@@ -187,7 +187,7 @@ msgstr "Vymenil jsis misto s"
 
 #: src/cgame/cg_event.c:193 src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
-msgstr "Zabil jsi ^1SPOLUHRACE^7"
+msgstr "Zabil jsi ^1SPOLUHRÁČE^7"
 
 #: src/cgame/cg_event.c:198 src/cgame/cg_event.c:280
 msgid "You killed"
@@ -250,7 +250,7 @@ msgstr "OSA"
 #: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:828
 #: src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
-msgstr "HRACU"
+msgstr "HRÁČŮ"
 
 #: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
 #: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
@@ -302,22 +302,22 @@ msgid "^1ET:Legacy"
 msgstr "^1ET:Legacy"
 
 msgid "PLAY ONLINE"
-msgstr "HRAT ONLINE"
+msgstr "HRÁT ONLINE"
 
 msgid "HOST GAME"
 msgstr "HOSTOVAT HRU"
 
 msgid "REPLAYS"
-msgstr "ZAZNAMY"
+msgstr "ZÁZNAMY"
 
 msgid "OPTIONS"
-msgstr "NASTAVENI"
+msgstr "NASTAVENÍ"
 
 msgid "PROFILE"
 msgstr "PROFIL"
 
 msgid "MODS"
-msgstr "MODY"
+msgstr "MÓDY"
 
 msgid "CREDITS"
 msgstr "TITULKY"
@@ -329,25 +329,25 @@ msgid "EXIT GAME"
 msgstr "OPUSTIT HRU"
 
 msgid "CREATE"
-msgstr "VYTVORIT"
+msgstr "VYTVOŘIT"
 
 msgid "DELETE"
 msgstr "SMAZAT"
 
 msgid "RENAME"
-msgstr "PREJMENOVAT"
+msgstr "PŘEJMENOVAT"
 
 msgid "SET AS DEFAULT"
 msgstr "NASTAVIT JAKO HLAVNI"
 
 msgid "BACK"
-msgstr "ZPET"
+msgstr "ZPĚT"
 
 msgid "SELECT PROFILE"
 msgstr "VYBRAT PROFIL"
 
 msgid "CREATE PROFILE"
-msgstr "VYTVORIT PROFIL"
+msgstr "VYTVOŘIT PROFIL"
 
 msgid ""
 "Please choose your initial settings below. You can change these at any time "
@@ -357,19 +357,19 @@ msgid ""
 msgstr ""
 
 msgid "Player Alias:"
-msgstr "Prezdivka:"
+msgstr "Přezdívka:"
 
 msgid "Video Quality:"
 msgstr "Kvalita obrazu:"
 
 msgid "Resolution:"
-msgstr "Rozliseni:"
+msgstr "Rozlišení:"
 
 msgid "Brightness:"
 msgstr "Jas:"
 
 msgid "Mouse Sensitivity:"
-msgstr "Citlivost mysi:"
+msgstr "Citlivost myši:"
 
 msgid "Invert Mouse:"
 msgstr "Obratit mys:"
@@ -384,10 +384,10 @@ msgid "Language:"
 msgstr "Jazyk:"
 
 msgid "QUIT"
-msgstr "UKONCIT"
+msgstr "UKONČIT"
 
 msgid "RENAME PROFILE"
-msgstr "PREJMENOVAT PROFIL"
+msgstr "PŘEJMENOVAT PROFIL"
 
 msgid "New Profile Name:"
 msgstr "Novy nazev profilu:"
@@ -429,7 +429,7 @@ msgid "Game Type:"
 msgstr "Typ hry:"
 
 msgid "PREVIEW"
-msgstr "NAHLED"
+msgstr "NÁHLED"
 
 msgid "SERVER BROWSER"
 msgstr "PROHLIZEC SERVERU"
@@ -440,9 +440,8 @@ msgstr "NAZEV SERVERU"
 msgid "MAP NAME"
 msgstr "MAPA"
 
-#, fuzzy
 msgid "#PLAYERS"
-msgstr "HRACU"
+msgstr "#HRÁČŮ"
 
 msgid "TYPE"
 msgstr "TYP"
@@ -457,7 +456,7 @@ msgid "REFRESH LIST"
 msgstr "OBNOVIT SEZNAM"
 
 msgid "CONNECT TO IP"
-msgstr "PRIPOJIT SE K IP"
+msgstr "PŘIPOJIT SE K IP"
 
 msgid "SERVER INFO"
 msgstr "INFO O SERVERU"
@@ -469,13 +468,13 @@ msgid "Server IP:"
 msgstr "IP serveru:"
 
 msgid "CONNECT"
-msgstr "PRIPOJIT"
+msgstr "PŘIPOJIT"
 
 msgid "REFRESH"
 msgstr "OBNOVIT"
 
 msgid "SETTINGS"
-msgstr "NASTAVENI"
+msgstr "NASTAVENÍ"
 
 msgid "Server Name:"
 msgstr "Jmeno serveru:"
@@ -523,7 +522,7 @@ msgid "START SERVER"
 msgstr "SPUSTIT SERVER"
 
 msgid "HOST GAME: ADVANCED"
-msgstr "HOSTOVAT HRU: POKROCILE"
+msgstr "HOSTOVAT HRU: POKROČILÉ"
 
 msgid "GENERAL"
 msgstr "OBECNE"
@@ -550,7 +549,7 @@ msgid "Intermission Ready %:"
 msgstr ""
 
 msgid "MATCH"
-msgstr "ZAPAS"
+msgstr "ZÁPAS"
 
 msgid "Wait for Ready:"
 msgstr "Cekat na pripravene:"
@@ -700,7 +699,7 @@ msgid "Line 5:"
 msgstr "Radek 5:"
 
 msgid "DOWNLOAD"
-msgstr "STAHOVANI"
+msgstr "STAHOVÁNÍ"
 
 msgid "Client Downloads:"
 msgstr ""
@@ -718,13 +717,13 @@ msgid "EXTENDED"
 msgstr "ROZSIRENE"
 
 msgid "DEFAULT"
-msgstr "PUVODNI"
+msgstr "PŮVODNÍ"
 
 msgid "MISC"
-msgstr "RUZNE"
+msgstr "RŮZNÉ"
 
 msgid "Country Flags:"
-msgstr "Vlajky zemi:"
+msgstr "Vlajky zemÍ:"
 
 msgid "DEFAULT SERVER SETTINGS"
 msgstr "STANDARDNI NASTAVENI SERVERU"
@@ -754,7 +753,7 @@ msgid "a Dedicated Server?"
 msgstr "dedikovany server?"
 
 msgid "LOAD MOD"
-msgstr "NAHRAT MOD"
+msgstr "NAHRÁT MOD"
 
 msgid "VIEW"
 msgstr "ZOBRAZENI"
@@ -776,13 +775,13 @@ msgstr "GRAFIKA"
 
 #: src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
-msgstr "HRAC"
+msgstr "HRÁČ"
 
 msgid "PHYSICS"
 msgstr "FYZIKA"
 
 msgid "Always Run:"
-msgstr "Vzdy bezet:"
+msgstr "Vždy běžet:"
 
 msgid "Double-Tap Prone:"
 msgstr ""
@@ -1298,9 +1297,8 @@ msgstr "^3VYTVORENO TYMEM ET: LEGACY"
 msgid "^1PROGRAMMING"
 msgstr "^1PROGRAMOVANI"
 
-#, fuzzy
 msgid "Jan 'Radegast' Simek"
-msgstr "Jason 'Rhea' Keimig"
+msgstr "Jan 'Radegast' Šimek"
 
 msgid "Project founder, coding & management"
 msgstr ""
@@ -1731,11 +1729,10 @@ msgstr ""
 "other countries."
 
 msgid "ET Legacy Website"
-msgstr "Webova stranka ET: Legacy"
+msgstr "Webová stránka ET: Legacy"
 
-#, fuzzy
 msgid "© 2012-2013 ET Legacy Team - under the terms of GPL version 3."
-msgstr " 2012-2013 ET: Legacy vyvojari - pod licenci GPL verze 3."
+msgstr "© 2012-2013 ET: Legacy vývojáři - pod licencí GPL verze 3."
 
 msgid ""
 "© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
@@ -1752,10 +1749,10 @@ msgstr ""
 "dalsi ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
 
 msgid "Yeah, right, like YOU have"
-msgstr "Jasne, jako bys mel"
+msgstr "Jasně, jako bys měl"
 
 msgid "anything better to do!"
-msgstr "neco lepsiho na praci!"
+msgstr "něco lepšího na práci!"
 
 msgid "ERROR"
 msgstr "CHYBA"
@@ -2273,22 +2270,22 @@ msgid "Negative!"
 msgstr ""
 
 msgid "Hi!"
-msgstr ""
+msgstr "Čau!"
 
 msgid "Hello!"
-msgstr ""
+msgstr "Ahoj!"
 
 msgid "Hallo!"
-msgstr ""
+msgstr "Hallo!"
 
 msgid "Good bye."
-msgstr ""
+msgstr "Nashle."
 
 msgid "Auf wiedersehen."
 msgstr ""
 
 msgid "Bye."
-msgstr ""
+msgstr "Zatím se mějte."
 
 msgid "Great shot!"
 msgstr "6. Skvela trefa"
@@ -2566,13 +2563,13 @@ msgid "SEND MESSAGE"
 msgstr "POSLAT VZKAZ"
 
 msgid "Say:"
-msgstr "Rict:"
+msgstr "ŘÍct:"
 
 msgid "To:"
 msgstr "Komu:"
 
 msgid "CANCEL"
-msgstr "ZRUSIT"
+msgstr "ZRUŠIT"
 
 msgid "SEND"
 msgstr "ODESLAT"
@@ -2629,7 +2626,7 @@ msgid "HOST GAME: EXTENDED"
 msgstr "HOSTOVAT HRU: POKROCILE"
 
 msgid "CLEAN"
-msgstr ""
+msgstr "VYČISTIT"
 
 msgid "HOMEPATH CLEAN UP"
 msgstr ""
@@ -3092,7 +3089,7 @@ msgid "Improved use of Light Weapon Ammunition"
 msgstr ""
 
 msgid "Faster Reload"
-msgstr "Atomaticke prebiti:"
+msgstr "Rychlejší nabíjení"
 
 msgid "Improved Light Weapon Handling"
 msgstr ""
@@ -3376,7 +3373,7 @@ msgid "Allied team has destroyed the Axis Fuel Dump!"
 msgstr ""
 
 msgid "was killed"
-msgstr "Zabil jsi"
+msgstr "byl zabit"
 
 msgid "You are near the Old City Wall\n"
 msgstr ""
@@ -4707,16 +4704,14 @@ msgstr ""
 msgid "Allied team has constructed the bridge!"
 msgstr ""
 
-#, fuzzy
 msgid "Anti-Aliasing:"
-msgstr "Proti-lag:"
+msgstr "Vyhlazování:"
 
 msgid "The Tank has been repaired"
 msgstr ""
 
-#, fuzzy
 msgid "^1ORIGINAL DEVELOPERS"
-msgstr "DALSI VYVOJ"
+msgstr "PŮVODNÍ VÝVOJÁŘI"
 
 msgid "The Tank has been damaged"
 msgstr ""
@@ -4747,9 +4742,8 @@ msgstr ""
 msgid "Join ET Legacy and keep the game alive"
 msgstr ""
 
-#, fuzzy
 msgid "CONNECT TO SERVER"
-msgstr "PRIPOJIT SE K IP"
+msgstr "PŘIPOJIT SE K SERVERU"
 
 #, fuzzy
 msgid "Server PW:"
@@ -4761,13 +4755,11 @@ msgstr ""
 msgid "joined the Allies team\n"
 msgstr ""
 
-#, fuzzy
 msgid "AXIS BOTS"
-msgstr "OSA"
+msgstr "BOTI OSY"
 
-#, fuzzy
 msgid "ALLIED BOTS"
-msgstr "SPOJENCI"
+msgstr "SPOJENEČTÍ BOTI"
 
 #, fuzzy
 msgid "BALANCED"
@@ -4832,7 +4824,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:2153
 msgid "  Medals"
-msgstr ""
+msgstr " Vyznamenání"
 
 #: src/cgame/cg_servercmds.c:2165
 msgid "^3No skills acquired!\n"
@@ -4856,9 +4848,9 @@ msgid "HS:"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2332
-#, fuzzy, c-format
+#, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7second"
-msgstr "Zivot navic! Rozmisteni za ^3%d ^7vterin"
+msgstr "Život navÍc! Rozmistění za ^3%d ^7vteřin"
 
 #: src/cgame/cg_draw.c:2447
 #, fuzzy
@@ -4882,11 +4874,11 @@ msgstr ""
 
 #: src/ui/ui_main.c:8517
 msgid "No favourite servers found."
-msgstr ""
+msgstr "Žádné oblíbené servery nenalezeny."
 
 #: src/ui/ui_main.c:8528
 msgid "All favourite servers removed."
-msgstr ""
+msgstr "Všechny oblíbené servery byly odebrány."
 
 #~ msgid "Connection:"
 #~ msgstr "Spojeni:"
