@@ -2178,6 +2178,7 @@ void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
 		va_start(ap, numMacros);
 		value = va_arg(ap, int);
 		GLSL_SetMacroStatesByOffset(programlist, value);
+		va_end(ap);
 		return;
 	}
 
