@@ -1337,7 +1337,8 @@ void IN_Init(void)
 
 	IN_InitKeyLockStates();
 
-	IN_InitJoystick(); // FIXME: Joystick initialization crashes some Mac OS X clients
+	// FIXME: Joystick initialization crashes some Windows and Mac OS X clients (see SDL #2833)
+	//IN_InitJoystick();
 
 #ifdef DISABLE_DINGY
 	IN_EnableDingFilter();
