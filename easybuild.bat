@@ -13,6 +13,9 @@ set vsvarsbat=!VS%vsversion%0COMNTOOLS!\vsvars32.bat
 :: Setup the NMake env or find the correct .bat this also finds msbuild
 CALL:SETUPNMAKE
 
+:: Init the submdule
+CALL:INITSUBMODULE
+
 :: variables
 SET game_homepath=%USERPROFILE%\Documents\ETLegacy
 SET game_basepath=%USERPROFILE%\Documents\ETLegacy-Build
@@ -21,7 +24,7 @@ SET batloc=%~dp0
 SET build_dir=%batloc%build
 
 IF "%~1"=="" (
-	CALL:DEFAULTPROCESS
+	GOTO:DEFAULTPROCESS
 ) ELSE (
 	GOTO:PROCESSARGS
 )
@@ -71,6 +74,15 @@ GOTO:EOF
 			CALL "!%%G!\vsvars32.bat" >nul
 			GOTO:EOF
 		)
+	)
+GOTO:EOF
+
+:INITSUBMODULE
+	IF NOT EXIST "%batloc%libs\CMakeLists.txt" (
+		ECHO Getting bundled libs...
+		CD %batloc%
+		git submodule init
+		git submodule update
 	)
 GOTO:EOF
 
@@ -143,9 +155,6 @@ GOTO:EOF
 	) ELSE (
 		SET CROSSCOMP=NO
 	)
-
-	:: Removed the following since they were not needed anymore and they broke the nsis package stage
-	:: -DCMAKE_INSTALL_PREFIX=%game_basepath% -DINSTALL_DEFAULT_BASEDIR=./ -DINSTALL_DEFAULT_BINDIR=./ -DINSTALL_DEFAULT_MODDIR=./ 
 
 	cmake -G "Visual Studio %vsversion%%~1" -T v%vsversion%0_xp ^
 	-DBUNDLED_LIBS=YES ^
