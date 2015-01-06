@@ -366,8 +366,8 @@ void SV_MasterHeartbeat(const char *message)
 		}
 #endif
 
-		if ((netenabled & NET_ENABLEV4 && adr[i][0].type == NA_BAD || !(netenabled & NET_ENABLEV4))
-		    && (netenabled & NET_ENABLEV6 && adr[i][1].type == NA_BAD || !(netenabled & NET_ENABLEV6)))
+		if (((netenabled & NET_ENABLEV4 && adr[i][0].type == NA_BAD) || !(netenabled & NET_ENABLEV4))
+		    && ((netenabled & NET_ENABLEV6 && adr[i][1].type == NA_BAD) || !(netenabled & NET_ENABLEV6)))
 		{
 			// if the address failed to resolve, clear it
 			// so we don't take repeated dns hits
