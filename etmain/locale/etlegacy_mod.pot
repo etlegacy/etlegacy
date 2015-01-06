@@ -848,7 +848,7 @@ msgstr ""
 msgid "Use JPEG for AutoScreenshots:"
 msgstr ""
 
-msgid "Show Tool Tips :"
+msgid "Show Tool Tips:"
 msgstr ""
 
 msgid "Announcer:"

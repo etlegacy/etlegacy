@@ -853,7 +853,7 @@ msgstr "Auto-Akcja:"
 msgid "Use JPEG for AutoScreenshots:"
 msgstr "Uzyj JPEG dla AutoScreenow:"
 
-msgid "Show Tool Tips :"
+msgid "Show Tool Tips:"
 msgstr "Pokaz Opis:"
 
 msgid "Announcer:"

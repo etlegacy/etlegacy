@@ -851,7 +851,7 @@ msgstr "Automatische Actie:"
 msgid "Use JPEG for AutoScreenshots:"
 msgstr "Gebruik JPEG voor Automatische Screenshots:"
 
-msgid "Show Tool Tips :"
+msgid "Show Tool Tips:"
 msgstr "Laat Tool Tips zien :"
 
 msgid "Announcer:"

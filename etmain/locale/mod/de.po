@@ -30,7 +30,7 @@ msgstr ""
 #: src/cgame/cg_debriefing.c:3202 src/cgame/cg_scoreboard.c:723
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
-msgstr ""
+msgstr "DIE UHR IST GESETZT AUF: %s!"
 
 #: src/cgame/cg_draw.c:650 src/cgame/cg_draw_hud.c:2052
 msgid "Connection Interrupted"
@@ -76,11 +76,11 @@ msgstr ""
 #: src/cgame/cg_draw.c:2218 src/cgame/cg_draw.c:1895
 #, c-format
 msgid "VOTE(%i): %s"
-msgstr ""
+msgstr "ABSTIMMUNG(%i): %s"
 
 #: src/cgame/cg_draw.c:2223 src/cgame/cg_draw.c:1901
 msgid "Cannot vote as Spectator"
-msgstr "Keine Wahlbeteiligung als Zuschauer"
+msgstr "Keine Abstimmung als Zuschauer"
 
 #: src/cgame/cg_draw.c:2227 src/cgame/cg_draw.c:1905
 #, c-format
@@ -90,7 +90,7 @@ msgstr "Ja(%s):%i, NEIN(%s):%i"
 #: src/cgame/cg_draw.c:2234 src/cgame/cg_draw.c:1912
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr ""
+msgstr "DU STIMMST:"
 
 #: src/cgame/cg_draw.c:2237 src/cgame/cg_draw.c:1917
 #, c-format
@@ -123,12 +123,12 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2550 src/cgame/cg_draw.c:2250
 msgid "No more reinforcements this round."
-msgstr ""
+msgstr "Keine weiteren Verstärkungen in dieser Runde."
 
 #: src/cgame/cg_draw.c:2550
 #, c-format
 msgid "Reinforcements deploy in %d seconds."
-msgstr ""
+msgstr "Verstärkung kommt in %d Sekunden."
 
 #: src/cgame/cg_draw.c:2593 src/cgame/cg_draw.c:2328
 #, c-format
@@ -180,7 +180,7 @@ msgstr "AUFWÄRMEN"
 
 #: src/cgame/cg_event.c:189 src/cgame/cg_event.c:271
 msgid "You swapped places with"
-msgstr ""
+msgstr "Du hast den Platz getauscht mit"
 
 #: src/cgame/cg_event.c:193 src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
@@ -192,22 +192,22 @@ msgstr ""
 
 #: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "User"
-msgstr ""
+msgstr "Benutzer"
 
 #: src/cgame/cg_main.c:893 src/cgame/cg_main.c:935
 msgid "is not on the server"
-msgstr ""
+msgstr "ist nicht auf dem Server"
 
 #: src/cgame/cg_scoreboard.c:165 src/cgame/cg_scoreboard.c:171
 #: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:180
 #: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
 #: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
 msgid "MISSION TIME:"
-msgstr ""
+msgstr "EINSATZ ZEIT:"
 
 #: src/cgame/cg_scoreboard.c:171 src/cgame/cg_scoreboard.c:184
 msgid "GAME STOPPED"
-msgstr ""
+msgstr "SPIEL GESTOPPT"
 
 #: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:188
 msgid "SUDDEN DEATH"
@@ -220,7 +220,7 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
-msgstr ""
+msgstr "RUNDE"
 
 #: src/cgame/cg_scoreboard.c:222 src/cgame/cg_scoreboard.c:248
 msgid "SCORE"
@@ -239,7 +239,7 @@ msgstr "^3ZUSCHAUER"
 #: src/cgame/cg_scoreboard.c:807 src/cgame/cg_scoreboard.c:824
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
-msgstr ""
+msgstr "AXEN"
 
 #: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
 #: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
@@ -252,12 +252,12 @@ msgstr "SPIELER"
 #: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
 #: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
-msgstr ""
+msgstr "ERSTER KONTAKT"
 
 #: src/cgame/cg_scoreboard.c:814 src/cgame/cg_scoreboard.c:828
 #: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:832
 msgid "ALLIES"
-msgstr ""
+msgstr "ALLIIERTE"
 
 #: src/cgame/cg_scoreboard.c:701 src/cgame/cg_scoreboard.c:846
 msgid "Name"
@@ -273,7 +273,7 @@ msgstr "Punkte"
 
 #: src/cgame/cg_scoreboard.c:714 src/cgame/cg_scoreboard.c:865
 msgid "XP"
-msgstr "XP"
+msgstr ""
 
 #: src/cgame/cg_scoreboard.c:718 src/cgame/cg_scoreboard.c:869
 msgid "Ping"
@@ -289,11 +289,11 @@ msgstr "Karte"
 
 #: src/cgame/cg_servercmds.c:2326 src/cgame/cg_servercmds.c:2366
 msgid "Could not create logfile"
-msgstr ""
+msgstr "Kann das Logfile nicht erzeugen"
 
 #: src/cgame/cg_servercmds.c:2866 src/cgame/cg_servercmds.c:2903
 msgid "^3Server Restarting"
-msgstr ""
+msgstr "^3Server startet neu"
 
 msgid "^1ET:Legacy"
 msgstr ""
@@ -302,13 +302,13 @@ msgid "PLAY ONLINE"
 msgstr "SPIELE ONLINE"
 
 msgid "HOST GAME"
-msgstr ""
+msgstr "SERVER STARTEN"
 
 msgid "REPLAYS"
-msgstr ""
+msgstr "WIEDERHOLUNGEN"
 
 msgid "OPTIONS"
-msgstr ""
+msgstr "EINSTELLUNGEN"
 
 msgid "PROFILE"
 msgstr ""
@@ -317,7 +317,7 @@ msgid "MODS"
 msgstr ""
 
 msgid "CREDITS"
-msgstr ""
+msgstr "DANKSAGUNGEN"
 
 msgid "ETLEGACY.COM"
 msgstr ""
@@ -335,7 +335,7 @@ msgid "RENAME"
 msgstr "UMBENENNEN"
 
 msgid "SET AS DEFAULT"
-msgstr ""
+msgstr "SETZE ALS VOREINSTELLUNG"
 
 msgid "BACK"
 msgstr "ZURÜCK"
@@ -360,7 +360,7 @@ msgid "Video Quality:"
 msgstr ""
 
 msgid "Resolution:"
-msgstr ""
+msgstr "Auflösung:"
 
 msgid "Brightness:"
 msgstr ""
@@ -411,7 +411,7 @@ msgid "active profile."
 msgstr ""
 
 msgid "CREATION ERROR"
-msgstr ""
+msgstr "ERZEUGUNGSFEHLER"
 
 msgid "MESSAGE OF THE DAY"
 msgstr "NACHRICHT DES TAGES"
@@ -459,7 +459,7 @@ msgid "SERVER INFO"
 msgstr ""
 
 msgid "JOIN SERVER"
-msgstr ""
+msgstr "SERVER BEITRETEN"
 
 msgid "Server IP:"
 msgstr ""
@@ -477,10 +477,10 @@ msgid "Server Name:"
 msgstr ""
 
 msgid "Maximum Players:"
-msgstr ""
+msgstr "Max. Spieleranzahl:"
 
 msgid "Auto-Configure Server:"
-msgstr ""
+msgstr "Server Autokonfiguration:"
 
 msgid "Dedicated Server:"
 msgstr ""
@@ -492,19 +492,19 @@ msgid "FEATURES"
 msgstr ""
 
 msgid "Friendly Fire"
-msgstr ""
+msgstr "Eigenbeschuß"
 
 msgid "Anti-Lag"
 msgstr ""
 
 msgid "Max Lives"
-msgstr ""
+msgstr "Max. Leben"
 
 msgid "Weapon Restrictions"
-msgstr ""
+msgstr "Waffenbeschränkungen"
 
 msgid "Balanced Teams"
-msgstr ""
+msgstr "Ausgewogene Teams"
 
 msgid "NAME"
 msgstr ""
@@ -513,16 +513,16 @@ msgid "DETAILS"
 msgstr ""
 
 msgid "ADVANCED"
-msgstr ""
+msgstr "ERWEITERT"
 
 msgid "START SERVER"
-msgstr ""
+msgstr "STARTE SERVER"
 
 msgid "HOST GAME: ADVANCED"
 msgstr ""
 
 msgid "GENERAL"
-msgstr ""
+msgstr "ALLGEMEIN"
 
 msgid "Minimum Ping:"
 msgstr ""
@@ -549,7 +549,7 @@ msgid "MATCH"
 msgstr ""
 
 msgid "Wait for Ready:"
-msgstr ""
+msgstr "Warte auf bereit"
 
 msgid "Minimum Players:"
 msgstr ""
@@ -618,7 +618,7 @@ msgid "ADMIN"
 msgstr ""
 
 msgid "Pure Server:"
-msgstr ""
+msgstr "Purer Server:"
 
 msgid "Referee Password:"
 msgstr ""
@@ -627,7 +627,7 @@ msgid "RCON Password:"
 msgstr "RCON Passwort:"
 
 msgid "VOTING"
-msgstr ""
+msgstr "ABSTIMMUNG"
 
 msgid "Max Votes per Player:"
 msgstr ""
@@ -636,10 +636,10 @@ msgid "Successful voting:"
 msgstr ""
 
 msgid "ALLOW VOTES"
-msgstr ""
+msgstr "ERLAUBE ABSTIMMUNGEN"
 
 msgid "Game config:"
-msgstr ""
+msgstr "Spielkonfiguration"
 
 msgid "Player Kick:"
 msgstr ""
@@ -657,7 +657,7 @@ msgid "Next Map:"
 msgstr "Nächste Karte:"
 
 msgid "Balanced Teams:"
-msgstr ""
+msgstr "Ausgewogene Teams:"
 
 msgid "Pub Settings:"
 msgstr ""
@@ -666,10 +666,10 @@ msgid "Referee:"
 msgstr "Schiedsrichter"
 
 msgid "XP Shuffle:"
-msgstr ""
+msgstr "XP Mischen:"
 
 msgid "Swap Teams:"
-msgstr ""
+msgstr "Tausche Teams:"
 
 msgid "Friendly Fire:"
 msgstr "Eigenbeschuß:"
@@ -681,19 +681,19 @@ msgid "Anti-Lag:"
 msgstr ""
 
 msgid "Line 1:"
-msgstr ""
+msgstr "Zeile 1"
 
 msgid "Line 2:"
-msgstr ""
+msgstr "Zeile 2"
 
 msgid "Line 3:"
-msgstr ""
+msgstr "Zeile 3"
 
 msgid "Line 4:"
-msgstr ""
+msgstr "Zeile 4"
 
 msgid "Line 5:"
-msgstr ""
+msgstr "Zeile 5"
 
 msgid "DOWNLOAD"
 msgstr ""
@@ -708,16 +708,16 @@ msgid "FTP/HTTP Redirects:"
 msgstr ""
 
 msgid "Base URL:"
-msgstr ""
+msgstr "Basis URL:"
 
 msgid "EXTENDED"
-msgstr ""
+msgstr "ERWEITERT"
 
 msgid "DEFAULT"
 msgstr ""
 
 msgid "MISC"
-msgstr ""
+msgstr "DIVERSE"
 
 msgid "Country Flags:"
 msgstr "Länder Flaggen:"
@@ -750,10 +750,10 @@ msgid "a Dedicated Server?"
 msgstr ""
 
 msgid "LOAD MOD"
-msgstr ""
+msgstr "LADE MOD"
 
 msgid "VIEW"
-msgstr ""
+msgstr "ANSICHT"
 
 msgid "DELETE REPLAY"
 msgstr ""
@@ -762,23 +762,23 @@ msgid "GAME"
 msgstr "SPIEL"
 
 msgid "CONTROLS"
-msgstr ""
+msgstr "STEUERUNG"
 
 msgid "SYSTEM"
 msgstr ""
 
 msgid "GRAPHICS"
-msgstr ""
+msgstr "GRAFIK"
 
 #: src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
-msgstr ""
+msgstr "SPIELER"
 
 msgid "PHYSICS"
-msgstr ""
+msgstr "PHYSIK"
 
 msgid "Always Run:"
-msgstr ""
+msgstr "Immer rennen:"
 
 msgid "Double-Tap Prone:"
 msgstr ""
@@ -846,7 +846,7 @@ msgstr ""
 msgid "Use JPEG for AutoScreenshots:"
 msgstr ""
 
-msgid "Show Tool Tips :"
+msgid "Show Tool Tips:"
 msgstr ""
 
 msgid "Announcer:"
@@ -859,7 +859,7 @@ msgid "Draw Gun:"
 msgstr ""
 
 msgid "Show Compass:"
-msgstr ""
+msgstr "Zeige Kompass"
 
 msgid "Mission Timer:"
 msgstr ""
@@ -1003,7 +1003,7 @@ msgid "Use (Activate):"
 msgstr ""
 
 msgid "INPUT"
-msgstr ""
+msgstr "EINGABE"
 
 msgid "Smooth Mouse:"
 msgstr ""
@@ -1066,13 +1066,13 @@ msgid "Binocular Zoom:"
 msgstr ""
 
 msgid "SELECT WEAPONS"
-msgstr ""
+msgstr "WÄHLE WAFFEN"
 
 msgid "Next Weapon:"
-msgstr ""
+msgstr "Nächste Waffe:"
 
 msgid "Previous Weapon:"
-msgstr ""
+msgstr "Vorherige Waffe:"
 
 msgid "Slot 1 - Melee:"
 msgstr ""
@@ -1147,13 +1147,13 @@ msgid "AUDIO"
 msgstr ""
 
 msgid "Effects Volume:"
-msgstr ""
+msgstr "Effekt Lautstärke"
 
 msgid "Music Volume:"
-msgstr ""
+msgstr "Musik Lautstärke"
 
 msgid "Sound Quality:"
-msgstr ""
+msgstr "Klang Qualität"
 
 msgid "Doppler FX:"
 msgstr ""
@@ -1223,13 +1223,13 @@ msgid "3. Click the BACK button."
 msgstr ""
 
 msgid "SIMPLE"
-msgstr ""
+msgstr "EINFACH"
 
 msgid "Overall Quality:"
 msgstr ""
 
 msgid "Window mode:"
-msgstr ""
+msgstr "Fenster Modus:"
 
 msgid "Intensity:"
 msgstr ""
@@ -1724,22 +1724,22 @@ msgid ""
 msgstr ""
 
 msgid "Yeah, right, like YOU have"
-msgstr ""
+msgstr "Ja richtig. ICH habe"
 
 msgid "anything better to do!"
-msgstr ""
+msgstr "etwas Besseres zu tun!"
 
 msgid "ERROR"
-msgstr ""
+msgstr "FEHLER"
 
 msgid "RECONNECT"
 msgstr ""
 
 msgid "UPDATE AVAILABLE"
-msgstr ""
+msgstr "AKTUALISIERUNG VERFÜGBAR"
 
 msgid "PASSWORD REQUIRED"
-msgstr ""
+msgstr "PASSWORT BENÖTIGT"
 
 msgid "REDIRECTION ADVISED"
 msgstr ""
@@ -1751,7 +1751,7 @@ msgid "CHANGE VIDEO SETTINGS"
 msgstr ""
 
 msgid "Apply new settings?"
-msgstr ""
+msgstr "Neue Einstellungen übernehmen?"
 
 msgid "CONFIRM VIDEO CHANGE"
 msgstr ""
@@ -2386,7 +2386,7 @@ msgid "VOTE"
 msgstr ""
 
 msgid "REFEREE"
-msgstr ""
+msgstr "SCHIEDSRICHTER"
 
 msgid "RCON"
 msgstr ""
@@ -2395,7 +2395,7 @@ msgid "DISCONNECT"
 msgstr ""
 
 msgid "MAP"
-msgstr ""
+msgstr "KARTE"
 
 msgid "Voting is disabled"
 msgstr ""
@@ -2437,10 +2437,10 @@ msgid "UNMUTE SPECS"
 msgstr ""
 
 msgid "FRIENDLY FIRE ON"
-msgstr ""
+msgstr "EIGENBESCHUß AN"
 
 msgid "FRIENDLY FIRE OFF"
-msgstr ""
+msgstr "EIGENBESCHUß AUS"
 
 msgid "BALANCED TEAMS ON"
 msgstr ""
@@ -2449,7 +2449,7 @@ msgid "BALANCED TEAMS OFF"
 msgstr ""
 
 msgid "COMPETITION SETTINGS"
-msgstr ""
+msgstr "Wettkampf Einstellungen"
 
 msgid "PUBLIC SETTINGS"
 msgstr ""
@@ -2458,7 +2458,7 @@ msgid "OK"
 msgstr ""
 
 msgid "Time Limit:"
-msgstr ""
+msgstr "Zeit Limit:"
 
 msgid "OMNI-BOT"
 msgstr ""
@@ -2482,10 +2482,10 @@ msgid "UNLOCK SPECS"
 msgstr ""
 
 msgid "MAPS"
-msgstr ""
+msgstr "KARTEN"
 
 msgid "CAMPAIGNS"
-msgstr ""
+msgstr "KAMPAGNEN"
 
 #: src/cgame/cg_fireteams.c:358 src/cgame/cg_fireteams.c:359
 msgid "KICK"
@@ -2514,7 +2514,7 @@ msgstr ""
 
 #: src/cgame/cg_fireteams.c:361 src/cgame/cg_fireteams.c:362
 msgid "WARN"
-msgstr ""
+msgstr "WARNEN"
 
 msgid "BAN"
 msgstr ""
@@ -2523,7 +2523,7 @@ msgid "WARN PLAYER"
 msgstr ""
 
 msgid "Warning:"
-msgstr ""
+msgstr "Warnung:"
 
 msgid "ADD TO FAVORITES"
 msgstr ""
@@ -2547,7 +2547,7 @@ msgid "CANCEL"
 msgstr ""
 
 msgid "SEND"
-msgstr ""
+msgstr "SENDE"
 
 msgid "RESPAWNING"
 msgstr ""
@@ -2563,7 +2563,7 @@ msgid ""
 msgstr ""
 
 msgid "Bot count:"
-msgstr ""
+msgstr "Botanzahl:"
 
 msgid "Move skill:"
 msgstr ""
@@ -2572,7 +2572,7 @@ msgid "KICK ALL BOTS"
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "JA"
 
 msgid ""
 "Set recommended video settings\n"
@@ -2590,16 +2590,16 @@ msgid ""
 msgstr ""
 
 msgid "^1LET'S KEEP ET ALIVE!"
-msgstr ""
+msgstr "^1LANG LEBE ET!"
 
 msgid "Thank you for installing ET:Legacy"
-msgstr ""
+msgstr "Danke für die Installation von ET:Legacy"
 
 msgid "HOST GAME: EXTENDED"
 msgstr ""
 
 msgid "CLEAN"
-msgstr ""
+msgstr "SÄUBERN"
 
 msgid "HOMEPATH CLEAN UP"
 msgstr ""
@@ -2616,16 +2616,16 @@ msgid ""
 msgstr ""
 
 msgid "^1WARNING: Use at your own risk!"
-msgstr ""
+msgstr "^1WARNUNG: Benutzung auf eigene Gefahr!"
 
 msgid "Consult our wiki for documentation."
-msgstr ""
+msgstr "Besuche unser Wiki für die Dokumentation"
 
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
 msgstr ""
 
 msgid "ABORT"
-msgstr ""
+msgstr "ABBRECHEN"
 
 msgid "SIMPLE CLEAN"
 msgstr ""
@@ -2634,7 +2634,7 @@ msgid "FULL CLEAN"
 msgstr ""
 
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 msgid "unknown cmd"
 msgstr ""
@@ -2740,8 +2740,8 @@ msgid "^3PREPARE TO FIGHT!\n"
 msgstr "^3KLAR ZUM GEFECHT!\n"
 
 #: src/cgame/cg_servercmds.c:387
-msgid "^1FEUER FREI!\n"
-msgstr ""
+msgid "^1FIGHT!\n"
+msgstr "^1FEUER FREI!\n"
 
 msgid "was stabbed by"
 msgstr ""
@@ -2865,13 +2865,13 @@ msgid "%s^7 has joined the %s^7!"
 msgstr ""
 
 msgid "Axis team"
-msgstr ""
+msgstr "Axen Team"
 
 msgid "Allied team"
-msgstr ""
+msgstr "Alliierte Team"
 
 msgid "Spectators"
-msgstr ""
+msgstr "Zuschauer"
 
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
@@ -2883,13 +2883,13 @@ msgid "No vote in progress.\n"
 msgstr ""
 
 msgid "Show Clock:"
-msgstr ""
+msgstr "Zeige Uhr:"
 
 msgid "No or bad challenge for address.\n"
 msgstr ""
 
 msgid "Match is already in progress!\n"
-msgstr ""
+msgstr "Das Spiel läuft bereits!"
 
 msgid "^1** Referee Server Setting Change **\n"
 msgstr ""
@@ -2910,10 +2910,10 @@ msgid "The Axis has too many players.\n"
 msgstr ""
 
 msgid "Attack!"
-msgstr ""
+msgstr "Angriff"
 
 msgid "Fall back!"
-msgstr ""
+msgstr "Rückzug!"
 
 #: src/cgame/cg_players.c:315 src/cgame/cg_players.c:309
 #, c-format
@@ -2974,13 +2974,13 @@ msgstr ""
 #: src/cgame/cg_consolecmds.c:1207 src/cgame/cg_consolecmds.c:1143
 #: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Axis"
-msgstr ""
+msgstr "Axen"
 
 #: src/cgame/cg_popupmessages.c:638 src/cgame/cg_popupmessages.c:640
 #: src/cgame/cg_consolecmds.c:1211 src/cgame/cg_consolecmds.c:1147
 #: src/cgame/cg_popupmessages.c:733 src/cgame/cg_popupmessages.c:735
 msgid "Allies"
-msgstr ""
+msgstr "Alliierte"
 
 #: src/cgame/cg_popupmessages.c:640 src/cgame/cg_popupmessages.c:735
 #, c-format
@@ -3930,7 +3930,7 @@ msgid "activate"
 msgstr ""
 
 msgid "^3Insufficient fire support."
-msgstr ""
+msgstr "^3Unzureichende Feuerunterstützung."
 
 msgid "'s tank-mounted browning 30cal"
 msgstr ""
@@ -3952,6 +3952,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Verbinde mit:\n"
+" %s^*\n"
+"\n"
+"%s"
 
 #: src/ui/ui_loadpanel.c:195 src/ui/ui_loadpanel.c:196
 msgid "CONNECTING..."
@@ -3993,7 +3997,7 @@ msgid "Competition Settings Loaded!\n"
 msgstr "Wettkamp Einstellungen geladen!"
 
 msgid "Public Settings Loaded!\n"
-msgstr ""
+msgstr "Allgemeine Einstellungen geladen!"
 
 #: src/cgame/cg_scoreboard.c:247 src/cgame/cg_scoreboard.c:253
 #: src/cgame/cg_scoreboard.c:254 src/cgame/cg_scoreboard.c:260
@@ -4008,7 +4012,7 @@ msgid "Your team has too many landmines placed..."
 msgstr "Dein Team hat zu viele Landmienen gelegt..."
 
 msgid "You cannot arm dynamite near a friendly construction!"
-msgstr ""
+msgstr "Du kannst kein Dynamit neben Eigenzielen zünden."
 
 #: src/cgame/cg_draw.c:402
 #, c-format
@@ -4062,7 +4066,7 @@ msgstr "EINLADEN"
 
 #: src/cgame/cg_fireteams.c:364 src/cgame/cg_fireteams.c:365
 msgid "SET ADMIN"
-msgstr ""
+msgstr "SETZE ADMIN"
 
 #: src/cgame/cg_fireteams.c:693 src/cgame/cg_fireteams.c:697
 #: src/cgame/cg_fireteams.c:754 src/cgame/cg_fireteams.c:758
@@ -4409,7 +4413,7 @@ msgid "Press %s to follow previous player"
 msgstr "Drücke %s um den vorherigen Spieler zu folgen"
 
 msgid "^9You are frozen - ^3/kill^9 is disabled."
-msgstr ""
+msgstr "⁹Du bist eingefroren - ^3/kill^9 ist ausgeschaltet."
 
 msgid "Objectives:"
 msgstr "Kampfziele:"
@@ -4426,7 +4430,7 @@ msgstr "KAMPAGNEN STATUS: %s"
 #: src/cgame/cg_debriefing.c:3200 src/cgame/cg_debriefing.c:3245
 #, c-format
 msgid "SECS TO NEXT MAP"
-msgstr "SEKS BIS ZUR NÄCHSTEN KARTE"
+msgstr "SEK BIS ZUR NÄCHSTEN KARTE"
 
 #: src/cgame/cg_debriefing.c:3130 src/cgame/cg_debriefing.c:3175
 msgid "ALLIES WIN!"
@@ -4699,10 +4703,10 @@ msgid "BOTS ON"
 msgstr "BOTS AN"
 
 msgid "^1SECURITY INFORMATION"
-msgstr "^1UNSICHERE INFORMATION"
+msgstr "^1SICHERHEITSWARNUNG"
 
 msgid "You are running old software"
-msgstr ""
+msgstr "Du hast alte Software"
 
 msgid ""
 "We do recommend to\n"
@@ -4722,19 +4726,19 @@ msgid "Server PW:"
 msgstr ""
 
 msgid "joined the Axis team\n"
-msgstr ""
+msgstr "schließt sich den Axen an\n"
 
 msgid "joined the Allies team\n"
-msgstr ""
+msgstr "schließt sich den Alliierten an\n"
 
 msgid "AXIS BOTS"
-msgstr ""
+msgstr "AXEN BOTS"
 
 msgid "ALLIED BOTS"
-msgstr ""
+msgstr "ALLIIERTE BOTS"
 
 msgid "BALANCED"
-msgstr ""
+msgstr "AUSGEWOGEN"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
@@ -4779,7 +4783,7 @@ msgid "You have been switched to the Allied team"
 msgstr ""
 
 msgid "Try to beat the clock!"
-msgstr ""
+msgstr "Versuche die Uhr zu schlagen!"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"

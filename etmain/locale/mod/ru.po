@@ -855,7 +855,7 @@ msgstr "Автодействие:"
 msgid "Use JPEG for AutoScreenshots:"
 msgstr "Сохранять Автоснимки как JPEG:"
 
-msgid "Show Tool Tips :"
+msgid "Show Tool Tips:"
 msgstr "Показывать подсказки:"
 
 #, fuzzy
