@@ -1199,7 +1199,7 @@ void IN_Frame(void)
 {
 	qboolean loading;
 
-	IN_JoyMove();
+	//IN_JoyMove();
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
@@ -1358,13 +1358,13 @@ void IN_Shutdown(void)
 	IN_DeactivateMouse();
 	mouseAvailable = qfalse;
 
-	IN_ShutdownJoystick();
+	//IN_ShutdownJoystick();
 
 	mainScreen = NULL;
 }
 
 void IN_Restart(void)
 {
-	IN_ShutdownJoystick();
+	//IN_ShutdownJoystick();
 	IN_Init();
 }
