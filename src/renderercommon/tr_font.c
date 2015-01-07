@@ -369,13 +369,18 @@ float readFloat(void)
 	return me.ffred;
 }
 
+#define GLYPH_OLD_FORMAT 20548 //!< sizeof(fontInfo_t) with 256 chars that 2.60b used
+
+/**
+ * @brief Loads ASCII texture font compatible with ET version 2.60b
+ */
 qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 {
 	unsigned char *faceData;
 	int           len;
 
 	len = ri.FS_ReadFile(datName, NULL);
-	if (len == sizeof(fontInfo_t))
+	if (len == GLYPH_OLD_FORMAT)
 	{
 		int i;
 
@@ -403,18 +408,26 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 
 		Com_Memcpy(font->datName, datName, sizeof(font->datName));
 
-		for (i = GLYPH_START; i <= GLYPH_END; i++)
+		for (i = GLYPH_START; i <= 255; i++) // limit to 256 glyphs
 		{
 			font->glyphs[i].glyph = RE_RegisterShaderNoMip(font->glyphs[i].shaderName);
 		}
-		Com_Memcpy(&registeredFont[registeredFontCount++], font, sizeof(fontInfo_t));
+		Com_Memcpy(&registeredFont[registeredFontCount++], font, GLYPH_OLD_FORMAT);
 		ri.FS_FreeFile(faceData);
 		return qtrue;
 	}
+	else
+	{
+		Ren_Warning("R_LoadPreRenderedFont: font file %s is in an incompatible format.\n", datName);
+	}
+
 	return qfalse;
 }
 
 #ifdef FEATURE_FREETYPE
+/**
+ * @brief Loads a unicode TrueType or OpenType font
+ */
 qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	FT_Face       face;
@@ -574,10 +587,10 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 			}
 
 			Com_sprintf(name, sizeof(name), "fonts/%s_%i_%i.tga", fontName, imageNumber++, pointSize);
-			if (r_saveFontData->integer)
-			{
-				WriteTGA(name, imageBuff, imageSize, imageSize);
-			}
+			//if (r_saveFontData->integer)
+			//{
+			//	WriteTGA(name, imageBuff, imageSize, imageSize);
+			//}
 
 			//Com_sprintf (name, sizeof(name), "fonts/fontImage_%i_%i", imageNumber++, pointSize);
 #ifdef FEATURE_RENDERER2
@@ -622,10 +635,10 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 
 	Com_Memcpy(&registeredFont[registeredFontCount++], font, sizeof(fontInfo_t));
 
-	if (r_saveFontData->integer)
-	{
-		ri.FS_WriteFile(va("fonts/%s_%i.dat", fontName, pointSize), font, sizeof(fontInfo_t));
-	}
+	//if (r_saveFontData->integer)
+	//{
+	//	ri.FS_WriteFile(va("fonts/%s_%i.dat", fontName, pointSize), font, sizeof(fontInfo_t));
+	//}
 
 	ri.Free(out);
 
@@ -644,7 +657,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 	{
 		if (Q_stricmp(datName, registeredFont[i].datName) == 0)
 		{
-			Com_Memcpy(font, &registeredFont[i], sizeof(fontInfo_t));
+			Com_Memcpy(font, &registeredFont[i], GLYPH_OLD_FORMAT);
 			return qtrue;
 		}
 	}

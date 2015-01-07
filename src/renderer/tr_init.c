@@ -168,7 +168,7 @@ cvar_t *r_directedScale;
 cvar_t *r_debugLight;
 cvar_t *r_debugSort;
 cvar_t *r_printShaders;
-cvar_t *r_saveFontData;
+//cvar_t *r_saveFontData;
 
 cvar_t *r_cache;
 cvar_t *r_cacheShaders;
@@ -1180,7 +1180,7 @@ void R_Register(void)
 	r_debugLight   = ri.Cvar_Get("r_debuglight", "0", CVAR_TEMP);
 	r_debugSort    = ri.Cvar_Get("r_debugSort", "0", CVAR_CHEAT);
 	r_printShaders = ri.Cvar_Get("r_printShaders", "0", 0);
-	r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0);
+	//r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0); // used to generate texture font file
 
 	// with r_cache enabled, non-win32 OSes were leaking 24Mb per R_Init..
 	r_cache        = ri.Cvar_Get("r_cache", "1", CVAR_LATCH); // leaving it as this for backwards compability. but it caches models and shaders also

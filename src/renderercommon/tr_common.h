@@ -241,7 +241,7 @@ extern cvar_t *r_showImages;
 extern cvar_t *r_debugSort;
 
 extern cvar_t *r_printShaders;
-extern cvar_t *r_saveFontData;
+//extern cvar_t *r_saveFontData;
 
 extern cvar_t *r_cache;           // FIXME: move out -> renderer1 only
 extern cvar_t *r_cacheShaders;    // FIXME: move out -> renderer1 only
