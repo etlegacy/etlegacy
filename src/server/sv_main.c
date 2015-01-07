@@ -397,28 +397,35 @@ void SV_MasterHeartbeat(const char *message)
 
 /**
  * @brief Sends gameCompleteStatus messages to all master servers
- * @todo IPv6 support
  */
 void SV_MasterGameCompleteStatus()
 {
-	static netadr_t adr[MAX_MASTER_SERVERS];
+	static netadr_t adr[MAX_MASTER_SERVERS][2]; // [2] for v4 and v6 address for the same address string.
 	int             i;
+	int             res;
+	int             netenabled;
 	char            *master;
-
-	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
-	if (!com_dedicated || com_dedicated->integer != 2)
-	{
-		return;     // only dedicated servers send master game status
-	}
 
 	if (!(sv_advert->integer & SVA_MASTER))
 	{
-		Com_Printf("Not sending ending gameCompleteStatus to master servers - disabled by sv_advert.\n");
 		return;
 	}
 
+	netenabled = Cvar_VariableIntegerValue("net_enabled");
+
+	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
+	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (
+#ifdef FEATURE_IPV6
+	                                                           NET_ENABLEV6 |
+#endif
+	                                                           NET_ENABLEV4)))
+	{
+		return;     // only dedicated servers send heartbeats
+
+	}
+
 	// send to group masters
-	for (i = 0 ; i < MAX_MASTER_SERVERS ; i++)
+	for (i = 0; i < MAX_MASTER_SERVERS; i++)
 	{
 		master = Cvar_VariableString(va("sv_master%i", i + 1));
 		if (master[0] == '\0')
@@ -427,30 +434,82 @@ void SV_MasterGameCompleteStatus()
 		}
 
 		// see if we haven't already resolved the name
-		if (adr[i].type == NA_BAD)
+		if (netenabled & NET_ENABLEV4)
 		{
-			Com_Printf("Resolving %s\n", master);
-			if (!NET_StringToAdr(master, &adr[i], NA_IP))
+			if (adr[i][0].type == NA_BAD)
 			{
-				// if the address failed to resolve, clear it
-				// so we don't take repeated dns hits
-				Com_Printf("Couldn't resolve address: %s\n", master);
-				Cvar_Set(va("sv_master%i", i + 1), "");
-				continue;
-			}
-			if (!strstr(":", master))
-			{
-				adr[i].port = BigShort(PORT_MASTER);
-			}
+				Com_Printf("Resolving %s (IPv4)\n", master);
+				res = NET_StringToAdr(master, &adr[i][0], NA_IP);
 
-			Com_Printf("%s resolved to %s\n", master,
-			           NET_AdrToString(adr[i]));
+				if (res == 2)
+				{
+					// if no port was specified, use the default master port
+					adr[i][0].port = BigShort(PORT_MASTER);
+				}
+
+				if (res)
+				{
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][0]));
+				}
+				else
+				{
+					Com_Printf("%s has no IPv4 address.\n", master);
+				}
+			}
+		}
+
+#ifdef FEATURE_IPV6
+		if (netenabled & NET_ENABLEV6)
+		{
+			if (adr[i][1].type == NA_BAD)
+			{
+				Com_Printf("Resolving %s (IPv6)\n", master);
+				res = NET_StringToAdr(master, &adr[i][1], NA_IP6);
+
+				if (res == 2)
+				{
+					// if no port was specified, use the default master port
+					adr[i][1].port = BigShort(PORT_MASTER);
+				}
+
+				if (res)
+				{
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][1]));
+				}
+				else
+				{
+					Com_Printf("%s has no IPv6 address.\n", master);
+				}
+			}
+		}
+#endif
+
+		if (((netenabled & NET_ENABLEV4 && adr[i][0].type == NA_BAD) || !(netenabled & NET_ENABLEV4))
+		    && ((netenabled & NET_ENABLEV6 && adr[i][1].type == NA_BAD) || !(netenabled & NET_ENABLEV6)))
+		{
+			// if the address failed to resolve, clear it
+			// so we don't take repeated dns hits
+			Com_Printf("Couldn't resolve address: %s\n", master);
+			Cvar_Set(va("sv_master%i", i + 1), "");
+			continue;
 		}
 
 		Com_Printf("Sending gameCompleteStatus to %s\n", master);
+
 		// this command should be changed if the server info / status format
 		// ever incompatably changes
-		SVC_Status(adr[i], qtrue);
+
+		if (netenabled & NET_ENABLEV4 && adr[i][0].type != NA_BAD)
+		{
+			SVC_Status(adr[i][0], qtrue);
+		}
+
+#ifdef FEATURE_IPV6
+		if (netenabled & NET_ENABLEV6 && adr[i][1].type != NA_BAD)
+		{
+			SVC_Status(adr[i][1], qtrue);
+		}
+#endif
 	}
 
 #ifdef FEATURE_TRACKER
