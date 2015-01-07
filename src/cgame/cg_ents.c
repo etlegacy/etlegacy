@@ -129,6 +129,11 @@ void CG_AddLightstyle(centity_t *cent)
 	int   otime = cg.time - cent->dl_time;
 	int   lastch, nextch;
 
+	if (cent->dl_stylestring[0] == '\0')
+	{
+		return;
+	}
+
 	stringlength = strlen(cent->dl_stylestring);
 
 	// it's been a long time since you were updated, lets assume a reset

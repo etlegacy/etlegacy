@@ -463,6 +463,11 @@ void G_ConfigCheckLocked()
 	{
 		char temp[256];
 
+		if (config->setl[i].name[0] == '\0')
+		{
+			continue;
+		}
+
 		trap_Cvar_VariableStringBuffer(config->setl[i].name, temp, 256);
 
 		if (Q_stricmp(config->setl[i].value, temp))
