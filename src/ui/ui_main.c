@@ -221,7 +221,7 @@ int Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 	if (text)
 	{
 		int count = 0;
-		int len   = strlen(text);
+		int len   = Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -237,9 +237,9 @@ int Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 			}
 			else
 			{
-				glyph = &font->glyphs[(unsigned char)*s];
+				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 				out  += glyph->xSkip;
-				s++;
+				s    += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -264,7 +264,7 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 
 	if (text)
 	{
-		int len   = strlen(text);
+		int len   = Q_UTF8_Strlen(text);
 		int count = 0;
 
 		if (limit > 0 && len > limit)
@@ -292,10 +292,10 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 				}
 				else
 				{
-					glyph = &font->glyphs[(unsigned char)*s];
+					glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 					out  += glyph->xSkip;
 				}
-				s++;
+				s += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -326,7 +326,7 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 	if (text)
 	{
 		int count = 0;
-		int len   = strlen(text);
+		int len   = Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -342,12 +342,12 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 			}
 			else
 			{
-				glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
+				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 				if (max < glyph->height)
 				{
 					max = glyph->height;
 				}
-				s++;
+				s += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -374,7 +374,7 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 	if (text)
 	{
 		int count = 0;
-		int len   = strlen(text);
+		int len   = Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -401,13 +401,13 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 				}
 				else
 				{
-					glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
+					glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 					if (max < glyph->height)
 					{
 						max = glyph->height;
 					}
 				}
-				s++;
+				s += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -455,7 +455,7 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 	if (text)
 	{
 		const char *s  = text;
-		int        len = strlen(text);
+		int        len = Q_UTF8_Strlen(text);
 		int        index;
 		int        count = 0;
 
@@ -469,7 +469,7 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 		while (s && *s && count < len)
 		{
-			index = (unsigned char)*s;
+			index = Q_UTF8_CodePoint(s);
 
 			// don't draw tabs and newlines
 			if (index < 20)
@@ -514,7 +514,7 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 				Text_PaintCharExt(x + (glyph->pitch * scalex), y - yadj, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 
 				x += (glyph->xSkip * scalex) + adjust;
-				s++;
+				s += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -539,7 +539,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 	if (text)
 	{
 		float      yadj;
-		int        len   = strlen(text);
+		int        len   = Q_UTF8_Strlen(text);
 		int        count = 0;
 		const char *s    = text;
 
@@ -551,10 +551,10 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 			len = limit;
 		}
 
-		glyph2 = &font->glyphs[(unsigned char)cursor];
+		glyph2 = &font->glyphs[Q_UTF8_CodePoint(&cursor)];
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
+			glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 			yadj  = useScale * glyph->top;
 
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
@@ -601,7 +601,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 			}
 
 			x += (glyph->xSkip * useScale);
-			s++;
+			s += Q_UTF8_Width(s);
 			count++;
 
 		}
@@ -634,7 +634,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 		float      max      = *maxX;
 		fontInfo_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 		float      useScale = scale * font->glyphScale;
-		int        len      = strlen(text);
+		int        len      = Q_UTF8_Strlen(text);
 		int        count    = 0;
 
 		trap_R_SetColor(color);
@@ -646,7 +646,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
+			glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -683,7 +683,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 				x    += (glyph->xSkip * useScale) + adjust;
 				*maxX = x;
 				count++;
-				s++;
+				s += Q_UTF8_Width(s);
 			}
 		}
 		trap_R_SetColor(NULL);
