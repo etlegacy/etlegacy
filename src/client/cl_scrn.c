@@ -309,38 +309,6 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 	re.SetColor(NULL);
 }
 
-/**
- * @brief Like strlen, but skips color escape codes
- */
-static int SCR_Strlen(const char *str)
-{
-	const char *s    = str;
-	int        count = 0;
-
-	while (*s)
-	{
-		if (Q_IsColorString(s))
-		{
-			s += 2;
-		}
-		else
-		{
-			count++;
-			s++;
-		}
-	}
-
-	return count;
-}
-
-/**
- * @note Unused.
- */
-int SCR_GetBigStringWidth(const char *str)
-{
-	return SCR_Strlen(str) * BIGCHAR_WIDTH;
-}
-
 //===============================================================================
 
 /*
