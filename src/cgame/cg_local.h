@@ -41,6 +41,7 @@
 #define INCLUDE_CG_LOCAL_H
 
 #include "../qcommon/q_shared.h"
+#include "../qcommon/q_unicode.h"
 #include "../renderercommon/tr_types.h"
 #include "../game/bg_public.h"
 #include "cg_public.h"

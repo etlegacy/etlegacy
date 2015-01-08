@@ -61,7 +61,7 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 		const char  *s = text;
 		glyphInfo_t *glyph;
 		int         count = 0;
-		int         len   = strlen(text);
+		int         len   = Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -77,9 +77,9 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 			}
 			else
 			{
-				glyph = &font->glyphs[*s & 255];
+				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 				out  += glyph->xSkip;
-				s++;
+				s    += Q_UTF8_Strlen(s);
 				count++;
 			}
 		}
@@ -104,7 +104,7 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 		const char  *s = text;
 		glyphInfo_t *glyph;
 		int         count = 0;
-		int         len   = strlen(text);
+		int         len   = Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -120,12 +120,12 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 			}
 			else
 			{
-				glyph = &font->glyphs[*s & 255];
+				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 				if (max < glyph->height)
 				{
 					max = glyph->height;
 				}
-				s++;
+				s += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -179,7 +179,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 		trap_R_SetColor(color);
 		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-		len = strlen(text);
+		len = Q_UTF8_Strlen(text);
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
@@ -187,7 +187,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[*s & 255];
+			glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -218,7 +218,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 				}
 				CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex), y - yadj, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 				x += (glyph->xSkip * scalex) + adjust;
-				s++;
+				s += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -441,7 +441,7 @@ void CG_CenterPrint(const char *str, int y, float fontScale)
 	cg.centerPrintPriority = priority;
 
 	// turn spaces into newlines, if we've run over the linewidth
-	len = strlen(cg.centerPrint);
+	len = Q_UTF8_Strlen(cg.centerPrint);
 	for (i = 0; i < len; i++)
 	{
 		// NOTE: subtract a few chars here so long words still get displayed properly
@@ -471,7 +471,7 @@ void CG_CenterPrint(const char *str, int y, float fontScale)
 		{
 			cg.centerPrintLines++;
 		}
-		s++;
+		s += Q_UTF8_Width(s);
 	}
 }
 
