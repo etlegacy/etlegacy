@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.71\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-05 10:15+0100\n"
-"PO-Revision-Date: 2014-01-31 23:55+0100\n"
+"PO-Revision-Date: 2015-01-08 21:31+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.6.10\n"
 
 #: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
 #: src/cgame/cg_consolecmds.c:568 src/cgame/cg_consolecmds.c:362
@@ -4139,11 +4139,10 @@ msgid "The other player is already on a fireteam"
 msgstr "Ten gracz jest juz w oddziale"
 
 msgid "You are not on the same team as the other player"
-msgstr "Nie jestes w tym samym zespole co dany gracz gracz"
+msgstr "Nie jestes w tym samym zespole jak inny gracz"
 
-#, fuzzy
 msgid "You are not on the same Fireteam as the other player"
-msgstr "Nie jestes w tym samym zespole co dany gracz gracz"
+msgstr "Nie jestes w tym samym oddziale jak inny gracz"
 
 msgid "Invalid client selected"
 msgstr "Niewlasciwie wybrany klient"
@@ -4640,6 +4639,7 @@ msgstr "Serwer jest pelny, przekierowac do: %s\n"
 #: src/ui/ui_main.c:4083
 msgid "Can't show Server Info (not found, or local server)\n"
 msgstr ""
+"Nie mozna pokazac Informacji o Serwerze (nie znaleziono lub lokalny serwer)\n"
 
 #: src/ui/ui_main.c:8294
 #, c-format
@@ -4893,7 +4893,7 @@ msgid "You have been been stripped of fireteam admin rights"
 msgstr "Zostales pozbawiony praw lidera oddzialu"
 
 msgid "%s ^7has left the fireteam\n"
-msgstr "%s ^7odszedl z oddzialu"
+msgstr "%s ^7odszedl z oddzialu\n"
 
 msgid "You have been warned by your fireteam leader\n"
 msgstr "Zostales ostrzezony przez swojego lidera oddzialu\n"
@@ -4903,42 +4903,37 @@ msgstr "^3przeniesiony do widzow za nieaktywnosc!\n"
 
 #: src/cgame/cg_debriefing.c:2624
 msgid "HS:"
-msgstr ""
+msgstr "HS:"
 
 #: src/cgame/cg_draw.c:2332
-#, fuzzy, c-format
+#, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7second"
 msgstr "Dodatkowe Zycie! Rozstawienie za ^3%d ^7sekund"
 
 #: src/cgame/cg_draw.c:2447
-#, fuzzy
 msgid "Type ^3\\ready^7 in the console to start"
 msgstr "Napisz ^3\\ready^* w konsoli aby zaczac"
 
 #: src/cgame/cg_event.c:293
-#, fuzzy
 msgid "^7swapped places with"
-msgstr "Zamieniles sie miejscami z"
+msgstr "^7zamieniles miejscami z"
 
 #: src/cgame/cg_info.c:1421
-#, fuzzy
 msgid "DEMO STATUS"
-msgstr "STATYSTYKI GRACZA"
+msgstr "STATUS DEMA"
 
 #: src/cgame/cg_scoreboard.c:205
-#, fuzzy, c-format
+#, c-format
 msgid "WAITING ON ^2%i ^9%s"
-msgstr "CZEKAM NA %i %s"
+msgstr "CZEKAM NA ^2%i ^9%s"
 
 #: src/ui/ui_main.c:8517
-#, fuzzy
 msgid "No favourite servers found."
-msgstr "Dodany ulubiony serwer %s\n"
+msgstr "Brak ulubionych serwerow."
 
 #: src/ui/ui_main.c:8528
-#, fuzzy
 msgid "All favourite servers removed."
-msgstr "Dodany ulubiony serwer %s\n"
+msgstr "Wsztstkie ulubione serwery usuniete."
 
-#~ msgid "BOTS OFF"
-#~ msgstr "WYLACZ BOTY"
+msgid "BOTS OFF"
+msgstr "WYLACZ BOTY"
