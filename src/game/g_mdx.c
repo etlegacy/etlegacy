@@ -1297,6 +1297,12 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 	{
 		ret        = mdx_model_count++;
 		mdx_models = realloc(mdx_models, mdx_model_count * sizeof(*mdx_models));
+		if (!mdx_models)
+		{
+			free(mdx_models);
+			G_Error(GAME_VERSION " MDX: mdx_models memory realocation error\n");
+		}
+
 		memset(&mdx_models[ret], 0, sizeof(mdx_models[ret]));
 		Q_strncpyz(mdx_models[ret].path, filename, sizeof(mdx_models[ret].path));
 		mdx_load(&mdx_models[ret], mem);
@@ -1305,6 +1311,11 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 	{
 		ret        = mdm_model_count++;
 		mdm_models = realloc(mdm_models, mdm_model_count * sizeof(*mdm_models));
+		if (!mdm_models)
+		{
+			free(mdm_models);
+			G_Error(GAME_VERSION " MDX: mdm_models memory realocation error\n");
+		}
 		memset(&mdm_models[ret], 0, sizeof(mdm_models[ret]));
 		Q_strncpyz(mdm_models[ret].path, filename, sizeof(mdm_models[ret].path));
 		mdm_load(&mdm_models[ret], mem);
@@ -1312,6 +1323,7 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 	else
 	{
 		ret = -1;
+		free(mem);
 		G_Error(GAME_VERSION " MDX: Not a model: %s\n", filename);
 	}
 
