@@ -92,6 +92,7 @@ FILE(GLOB CGAME_SRC
 	"src/cgame/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
+	"src/qcommon/q_unicode.c"
 	"src/game/bg_*.c"
 )
 
