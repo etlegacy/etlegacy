@@ -447,13 +447,9 @@ extern char bigTextBuffer[100000];  // we got it anyway, might as well use it
 #define MAX_SOUND_FILES     16 // decreased from 128 - ET uses 3! (2 x team voice & map)
 static void CG_SoundLoadSoundFiles(void)
 {
-	char         soundFiles[MAX_SOUND_FILES][MAX_QPATH];
-	char         *text;
 	char         filename[MAX_QPATH];
 	fileHandle_t f;
-	int          numSounds;
-	int          i, len;
-	char         *token;
+	int          len;
 
 	// scan for sound files
 	Com_sprintf(filename, MAX_QPATH, "sound/scripts/filelist.txt");
@@ -463,62 +459,71 @@ static void CG_SoundLoadSoundFiles(void)
 		CG_Printf(S_COLOR_RED "ERROR CG_SoundLoadSoundFiles: No sound files found (filelist.txt not found in sound/scripts)\n");
 		return;
 	}
+
 	if (len > sizeof(bigTextBuffer))
 	{
 		trap_FS_FCloseFile(f);
 		CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
 	}
-	// load the file into memory
-	trap_FS_Read(bigTextBuffer, len, f);
-	bigTextBuffer[len] = 0;
-	trap_FS_FCloseFile(f);
-	// parse the list
-	text      = bigTextBuffer;
-	numSounds = 0;
-	while (1)
+	else
 	{
-		token = COM_ParseExt(&text, qtrue);
-		if (!token[0])
-		{
-			break;
-		}
-		Com_sprintf(soundFiles[numSounds++], MAX_QPATH, "%s", token);
-	}
+		int  i, numSounds = 0;
+		char soundFiles[MAX_SOUND_FILES][MAX_QPATH];
+		char *text;
+		char *token;
 
-	// add the map specific soundfile
-	Com_sprintf(soundFiles[numSounds++], MAX_QPATH, "%s.sounds", cgs.rawmapname);
-
-	if (!numSounds)
-	{
-		CG_Printf(S_COLOR_RED "ERROR CG_SoundLoadSoundFiles: No sound files found\n");
-		return;
-	}
-
-	// load and parse sound files
-	for (i = 0; i < numSounds; i++)
-	{
-		Com_sprintf(filename, sizeof(filename), "sound/scripts/%s", soundFiles[i]);
-		CG_Printf("...loading '%s'\n", filename);
-		len = trap_FS_FOpenFile(filename, &f, FS_READ);
-		if (len <= 0)
-		{
-			if (i != (numSounds - 1))
-			{
-				CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: Couldn't load %s\n", filename);
-			}
-			continue;
-		}
-		if (len > sizeof(bigTextBuffer))
-		{
-			trap_FS_FCloseFile(f);
-			CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
-		}
-		memset(bigTextBuffer, 0, sizeof(bigTextBuffer));
+		// load the file into memory
 		trap_FS_Read(bigTextBuffer, len, f);
+		bigTextBuffer[len] = 0;
 		trap_FS_FCloseFile(f);
-		CG_SoundParseSounds(filename, bigTextBuffer);
+		// parse the list
+		text = bigTextBuffer;
+
+		while (1)
+		{
+			token = COM_ParseExt(&text, qtrue);
+			if (!token[0])
+			{
+				break;
+			}
+			Com_sprintf(soundFiles[numSounds++], MAX_QPATH, "%s", token);
+		}
+
+		// add the map specific soundfile
+		Com_sprintf(soundFiles[numSounds++], MAX_QPATH, "%s.sounds", cgs.rawmapname);
+
+		if (!numSounds)
+		{
+			CG_Printf(S_COLOR_RED "ERROR CG_SoundLoadSoundFiles: No sound files found\n");
+			return;
+		}
+
+		// load and parse sound files
+		for (i = 0; i < numSounds; i++)
+		{
+			Com_sprintf(filename, sizeof(filename), "sound/scripts/%s", soundFiles[i]);
+			CG_Printf("...loading '%s'\n", filename);
+			len = trap_FS_FOpenFile(filename, &f, FS_READ);
+			if (len <= 0)
+			{
+				if (i != (numSounds - 1))
+				{
+					CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: Couldn't load %s\n", filename);
+				}
+				continue;
+			}
+			if (len > sizeof(bigTextBuffer))
+			{
+				trap_FS_FCloseFile(f);
+				CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
+			}
+			memset(bigTextBuffer, 0, sizeof(bigTextBuffer));
+			trap_FS_Read(bigTextBuffer, len, f);
+			trap_FS_FCloseFile(f);
+			CG_SoundParseSounds(filename, bigTextBuffer);
+		}
+		CG_Printf("...%i sound scripts files loaded. Total sounds: %i\n", numSounds, numSoundScripts);
 	}
-	CG_Printf("...%i sound scripts files loaded. Total sounds: %i\n", numSounds, numSoundScripts);
 }
 
 /*
