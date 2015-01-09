@@ -356,7 +356,7 @@ static void CG_Obituary(entityState_t *ent)
 			break;
 		case MOD_MP40:
 			message  = "was killed by";
-			message2 = "'s MP40";
+			message2 = "'s MP 40";
 			break;
 		case MOD_THOMPSON:
 			message  = "was killed by";
@@ -402,7 +402,7 @@ static void CG_Obituary(entityState_t *ent)
 			break;
 		case MOD_MG42:
 			message  = "was perforated by";
-			message2 = "'s tank-mounted MG42";
+			message2 = "'s tank-mounted MG 42";
 			break;
 		case MOD_AIRSTRIKE:
 			message  = "was blasted by";
@@ -445,7 +445,7 @@ static void CG_Obituary(entityState_t *ent)
 			break;
 		case MOD_MOBILE_MG42:
 			message  = "was mown down by";
-			message2 = "'s Mobile MG42";
+			message2 = "'s Mobile MG 42";
 			break;
 		case MOD_MOBILE_BROWNING:
 			message  = "was mown down by";
@@ -461,11 +461,11 @@ static void CG_Obituary(entityState_t *ent)
 			break;
 		case MOD_FG42:
 			message  = "was killed by";
-			message2 = "'s FG42";
+			message2 = "'s FG 42";
 			break;
 		case MOD_FG42SCOPE:
 			message  = "was sniped by";
-			message2 = "'s FG42";
+			message2 = "'s FG 42";
 			break;
 		case MOD_SATCHEL:
 			message  = "was blasted by";

@@ -4141,10 +4141,10 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, "KNKB", "Ka-Bar"     },  // 1  WS_KNIFE_KBAR
 	{ qtrue,  "LUGR", "Luger"      },  // 2  WS_LUGER
 	{ qtrue,  "COLT", "Colt"       },  // 3  WS_COLT
-	{ qtrue,  "MP40", "MP-40"      },  // 4  WS_MP40
+	{ qtrue,  "MP40", "MP 40"      },  // 4  WS_MP40
 	{ qtrue,  "TMPS", "Thompson"   },  // 5  WS_THOMPSON
 	{ qtrue,  "STEN", "Sten"       },  // 6  WS_STEN
-	{ qtrue,  "FG42", "FG-42"      },  // 7  WS_FG42
+	{ qtrue,  "FG42", "FG 42"      },  // 7  WS_FG42
 	{ qtrue,  "PNZR", "Panzer"     },  // 8  WS_PANZERFAUST
 	{ qtrue,  "BZKA", "Bazooka"    },  // 9  WS_BAZOOKA
 	{ qtrue,  "FLAM", "F.Thrower"  },  // 10 WS_FLAMETHROWER
@@ -4157,7 +4157,7 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, "STCH", "Satchel"    },  // 17 WS_SATCHEL
 	{ qfalse, "GRLN", "G.Launchr"  },  // 18 WS_GRENADELAUNCHER
 	{ qfalse, "LNMN", "Landmine"   },  // 19 WS_LANDMINE
-	{ qtrue,  "MG42", "MG-42 Gun"  },  // 20 WS_MG42
+	{ qtrue,  "MG42", "MG 42 Gun"  },  // 20 WS_MG42
 	{ qtrue,  "BRNG", "Browning"   },  // 21 WS_BROWNING
 	{ qtrue,  "GARN", "Garand"     },  // 22 WS_CARBINE
 	{ qtrue,  "K-43", "K43 Rifle"  },  // 23 WS_KAR98
