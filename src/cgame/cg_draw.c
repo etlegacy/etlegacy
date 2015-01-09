@@ -79,7 +79,7 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 			{
 				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
 				out  += glyph->xSkip;
-				s    += Q_UTF8_Strlen(s);
+				s    += Q_UTF8_Width(s);
 				count++;
 			}
 		}
