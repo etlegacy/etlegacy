@@ -255,9 +255,9 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_SATCHEL_DET,          WP_NONE,                WP_NONE,  WP_SATCHEL_DET,       WP_SATCHEL_DET,       qfalse, 1,   qtrue,  qfalse, 0,    "SATCHEL",          }, // 28
 	{ WP_SMOKE_BOMB,           WP_NONE,                WP_NONE,  WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        qfalse, 1,   qfalse, qfalse, 0,    "",                 }, // 29
 
-	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, 18,  qfalse, qtrue,  2500, "MOBILE MG42",      }, // 30
+	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, 18,  qfalse, qtrue,  2500, "MOBILE MG 42",     }, // 30
 	{ WP_K43,                  WP_K43_SCOPE,           WP_NONE,  WP_K43,               WP_K43,               qfalse, 34,  qfalse, qtrue,  250,  "SCOPED K43",       }, // 31
-	{ WP_FG42,                 WP_FG42SCOPE,           WP_NONE,  WP_FG42,              WP_FG42,              qfalse, 16,  qfalse, qtrue,  500,  "FG42",             }, // 32
+	{ WP_FG42,                 WP_FG42SCOPE,           WP_NONE,  WP_FG42,              WP_FG42,              qfalse, 16,  qfalse, qtrue,  500,  "FG 42",            }, // 32
 	{ WP_DUMMY_MG42,           WP_NONE,                WP_NONE,  WP_DUMMY_MG42,        WP_DUMMY_MG42,        qfalse, 1,   qfalse, qfalse, 0,    "",                 }, // 33   // for storing heat on mounted mg42s...
 	{ WP_MORTAR,               WP_MORTAR_SET,          WP_NONE,  WP_MORTAR,            WP_MORTAR,            qfalse, 1,   qtrue,  qtrue,  0,    "MORTAR",           }, // 34
 	{ WP_AKIMBO_COLT,          WP_NONE,                WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       qfalse, 18,  qfalse, qtrue,  600,  "AKIMBO COLTS",     }, // 35
@@ -269,12 +269,12 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 
 	{ WP_GARAND_SCOPE,         WP_GARAND,              WP_NONE,  WP_GARAND,            WP_GARAND,            qtrue,  50,  qfalse, qtrue,  700,  "",                 }, // 40
 	{ WP_K43_SCOPE,            WP_K43,                 WP_NONE,  WP_K43,               WP_K43,               qtrue,  50,  qfalse, qtrue,  700,  "",                 }, // 41
-	{ WP_FG42SCOPE,            WP_FG42,                WP_NONE,  WP_FG42,              WP_FG42,              qtrue,  30,  qfalse, qtrue,  200,  "FG42",             }, // 42
+	{ WP_FG42SCOPE,            WP_FG42,                WP_NONE,  WP_FG42,              WP_FG42,              qtrue,  30,  qfalse, qtrue,  200,  "FG 42",            }, // 42
 	{ WP_MORTAR_SET,           WP_MORTAR,              WP_NONE,  WP_MORTAR,            WP_MORTAR,            qfalse, 400, qtrue,  qtrue,  0,    "MORTAR",           }, // 43
 	{ WP_MEDIC_ADRENALINE,     WP_NONE,                WP_NONE,  WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     qfalse, 1,   qfalse, qfalse, 0,    "ADRENALINE",       }, // 44
 	{ WP_AKIMBO_SILENCEDCOLT,  WP_NONE,                WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       qfalse, 18,  qfalse, qtrue,  600,  "AKIMBO COLTS",     }, // 45
 	{ WP_AKIMBO_SILENCEDLUGER, WP_NONE,                WP_LUGER, WP_LUGER,             WP_AKIMBO_LUGER,      qfalse, 18,  qfalse, qtrue,  600,  "AKIMBO LUGERS",    }, // 46
-	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, 18,  qfalse, qtrue,  2500, "MOBILE MG42",      }, // 47
+	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, 18,  qfalse, qtrue,  2500, "MOBILE MG 42",     }, // 47
 
 	// legacy weapons
 	{ WP_KNIFE_KABAR,          WP_NONE,                WP_NONE,  WP_KNIFE_KABAR,       WP_KNIFE_KABAR,       qfalse, 10,  qtrue,  qfalse, 0,    "KABAR",            }, // 48
