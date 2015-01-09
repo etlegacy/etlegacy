@@ -237,9 +237,10 @@ int Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 			}
 			else
 			{
-				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
-				out  += glyph->xSkip;
-				s    += Q_UTF8_Width(s);
+				glyph = Q_UTF8_GetGlyph(font, s);
+
+				out += glyph->xSkip;
+				s   += Q_UTF8_Width(s);
 				count++;
 			}
 		}
@@ -292,8 +293,9 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 				}
 				else
 				{
-					glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
-					out  += glyph->xSkip;
+					glyph = Q_UTF8_GetGlyph(font, s);
+
+					out += glyph->xSkip;
 				}
 				s += Q_UTF8_Width(s);
 				count++;
@@ -342,7 +344,8 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 			}
 			else
 			{
-				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
+				glyph = Q_UTF8_GetGlyph(font, s);
+
 				if (max < glyph->height)
 				{
 					max = glyph->height;
@@ -401,7 +404,7 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 				}
 				else
 				{
-					glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
+					glyph = Q_UTF8_GetGlyph(font, s);
 					if (max < glyph->height)
 					{
 						max = glyph->height;
@@ -454,9 +457,8 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 	if (text)
 	{
-		const char *s  = text;
-		int        len = Q_UTF8_Strlen(text);
-		int        index;
+		const char *s    = text;
+		int        len   = Q_UTF8_Strlen(text);
 		int        count = 0;
 
 		trap_R_SetColor(color);
@@ -469,17 +471,16 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 		while (s && *s && count < len)
 		{
-			index = Q_UTF8_CodePoint(s);
-
 			// don't draw tabs and newlines
-			if (index < 20)
+			if (Q_UTF8_CodePoint(s) < 20)
 			{
 				s++;
 				count++;
 				continue;
 			}
 
-			glyph = &font->glyphs[index];
+			glyph = Q_UTF8_GetGlyph(font, s);
+
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -551,10 +552,10 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 			len = limit;
 		}
 
-		glyph2 = &font->glyphs[Q_UTF8_CodePoint(&cursor)];
+		glyph2 = Q_UTF8_GetGlyph(font, &cursor);
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
+			glyph = Q_UTF8_GetGlyph(font, s);
 			yadj  = useScale * glyph->top;
 
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
@@ -646,7 +647,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
+			glyph = Q_UTF8_GetGlyph(font, s);
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -5486,11 +5487,11 @@ static void UI_BuildServerDisplayList(int force)
 
 	// do motd updates here too
 	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd, sizeof(uiInfo.serverStatus.motd));
-	len = strlen(uiInfo.serverStatus.motd);
+	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
 	if (len == 0)
 	{
 		strcpy(uiInfo.serverStatus.motd, va("Enemy Territory: Legacy - Version: %s", ETLEGACY_VERSION));
-		len = strlen(uiInfo.serverStatus.motd);
+		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
 	}
 	if (len != uiInfo.serverStatus.motdLen)
 	{

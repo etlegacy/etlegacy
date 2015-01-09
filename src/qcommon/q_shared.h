@@ -1845,8 +1845,10 @@ typedef enum
 // font support
 
 #define GLYPH_START 0
-#define GLYPH_END 255 // 1327 (Cyrillic U+052F)
-#define GLYPHS_PER_FONT GLYPH_END - GLYPH_START + 1
+#define GLYPH_ASCII_END 255
+#define GLYPH_END 1327 // (Cyrillic U+052F)
+#define GLYPHS_ASCII_PER_FONT GLYPH_ASCII_END - GLYPH_START + 1
+#define GLYPHS_PER_FONT GLYPH_END + 1
 typedef struct
 {
 	int height;       // number of scan lines
@@ -1866,9 +1868,11 @@ typedef struct
 
 typedef struct
 {
-	glyphInfo_t glyphs[GLYPHS_PER_FONT];
+	glyphInfo_t glyphs[GLYPHS_ASCII_PER_FONT];
 	float glyphScale;
 	char datName[MAX_QPATH];
+	glyphInfo_t glyphsUTF8[GLYPHS_PER_FONT];
+
 } fontInfo_t;
 
 // SQR

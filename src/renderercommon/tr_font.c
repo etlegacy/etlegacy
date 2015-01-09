@@ -387,7 +387,7 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 		ri.FS_ReadFile(datName, (void **)&faceData);
 		fdOffset = 0;
 		fdFile   = faceData;
-		for (i = 0; i < GLYPHS_PER_FONT; i++)
+		for (i = 0; i < GLYPHS_ASCII_PER_FONT; i++)
 		{
 			font->glyphs[i].height      = readInt();
 			font->glyphs[i].top         = readInt();
@@ -408,7 +408,7 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 
 		Com_Memcpy(font->datName, datName, sizeof(font->datName));
 
-		for (i = GLYPH_START; i <= 255; i++) // limit to 256 glyphs
+		for (i = GLYPH_START; i <= GLYPH_ASCII_END; i++) // limit to 256 glyphs
 		{
 			font->glyphs[i].glyph = RE_RegisterShaderNoMip(font->glyphs[i].shaderName);
 		}
@@ -602,8 +602,17 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 #endif
 			for (j = lastStart; j < i; j++)
 			{
-				font->glyphs[j].glyph = h;
-				Q_strncpyz(font->glyphs[j].shaderName, name, sizeof(font->glyphs[j].shaderName));
+				// split ascii and unicode chars into different containers for old mod compatibility
+				if (j <= GLYPHS_ASCII_PER_FONT)
+				{
+					font->glyphs[j].glyph = h;
+					Q_strncpyz(font->glyphs[j].shaderName, name, sizeof(font->glyphs[j].shaderName));
+				}
+				else
+				{
+					font->glyphsUTF8[j].glyph = h;
+					Q_strncpyz(font->glyphsUTF8[j].shaderName, name, sizeof(font->glyphsUTF8[j].shaderName));
+				}
 			}
 			lastStart = i;
 			Com_Memset(out, 0, imageSize * imageSize);
@@ -617,7 +626,15 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 		}
 		else
 		{
-			Com_Memcpy(&font->glyphs[i], glyph, sizeof(glyphInfo_t));
+			// split ascii and unicode chars into different containers for old mod compatibility
+			if (i <= GLYPHS_ASCII_PER_FONT)
+			{
+				Com_Memcpy(&font->glyphs[i], glyph, sizeof(glyphInfo_t));
+			}
+			else
+			{
+				Com_Memcpy(&font->glyphsUTF8[i], glyph, sizeof(glyphInfo_t));
+			}
 			i++;
 		}
 	}

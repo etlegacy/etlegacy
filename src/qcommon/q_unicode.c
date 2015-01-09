@@ -343,3 +343,23 @@ char *Q_UTF8_Unstore(int e)
 
 	return ( char * ) buf;
 }
+
+glyphInfo_t *Q_UTF8_GetGlyph(fontInfo_t *font, const char *s)
+{
+	unsigned long codepoint = Q_UTF8_CodePoint(s);
+
+	if (codepoint > GLYPHS_PER_FONT)
+	{
+		//Com_DPrintf(S_COLOR_RED "ERROR: unicode char %i is over the current limit %i\n", codepoint, GLYPHS_PER_FONT);
+		codepoint = 219;        // empty square
+	}
+
+	if (codepoint <= GLYPH_ASCII_END)
+	{
+		return &font->glyphs[codepoint];
+	}
+	else
+	{
+		return &font->glyphsUTF8[codepoint];
+	}
+}

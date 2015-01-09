@@ -77,7 +77,7 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 			}
 			else
 			{
-				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
+				glyph = Q_UTF8_GetGlyph(font, s);
 				out  += glyph->xSkip;
 				s    += Q_UTF8_Width(s);
 				count++;
@@ -120,7 +120,7 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 			}
 			else
 			{
-				glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
+				glyph = Q_UTF8_GetGlyph(font, s);
 				if (max < glyph->height)
 				{
 					max = glyph->height;
@@ -187,7 +187,8 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[Q_UTF8_CodePoint(s)];
+			glyph = Q_UTF8_GetGlyph(font, s);
+
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
