@@ -183,7 +183,7 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 4,   1, 1,   4,  1,   3000, DELAY_LOW,    400,  0,    0,   MOD_M7                   },  // WP_M7                    // 38
 	{ 24,  1, 8,   24, 8,   1500, DELAY_PISTOL, 400,  0,    0,   MOD_SILENCED_COLT        },  // WP_SILENCED_COLT         // 39
 
-	{ 30,  1, 10,  20, 8,   1500, 0,            400,  0,    0,   MOD_GARAND_SCOPE         },  // WP_GARAND_SCOPE          // 40       GARAND  old max ammo 24 max clip size 8 start ammo 16 start clip 8
+	{ 30,  1, 10,  20, 10,  1500, 0,            400,  0,    0,   MOD_GARAND_SCOPE         },  // WP_GARAND_SCOPE          // 40       GARAND  old max ammo 24 max clip size 8 start ammo 16 start clip 8
 	{ 30,  1, 10,  20, 10,  1500, 0,            400,  0,    0,   MOD_K43_SCOPE            },  // WP_K43_SCOPE             // 41       K43
 	{ 60,  1, 20,  40, 20,  2000, DELAY_LOW,    400,  0,    0,   MOD_FG42SCOPE            },  // WP_FG42SCOPE             // 42
 	{ 16,  1, 1,   12, 0,   0,    DELAY_HW,     1400, 0,    0,   MOD_MORTAR               },  // WP_MORTAR_SET            // 43
