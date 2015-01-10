@@ -503,7 +503,7 @@ void Weapon_Syringe(gentity_t *ent)
 		//{
 		//ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
 		//}
-		if (ent && ent->client)
+		if (ent->client)
 		{
 			G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
