@@ -377,7 +377,17 @@ float readFloat(void)
 qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 {
 	unsigned char *faceData;
-	int           len;
+	int           len, i;
+
+	// Check if this font isn't loaded already
+	for (i = 0; i < registeredFontCount; i++)
+	{
+		if (Q_stricmp(datName, registeredFont[i].datName) == 0)
+		{
+			Com_Memcpy(font, &registeredFont[i], GLYPH_OLD_FORMAT);
+			return qtrue;
+		}
+	}
 
 	len = ri.FS_ReadFile(datName, NULL);
 	if (len == GLYPH_OLD_FORMAT)
@@ -469,7 +479,15 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 		return qfalse;
 	}
 
-	i = 0;
+	// Check if this font isn't loaded already
+	for (i = 0; i < registeredFontCount; i++)
+	{
+		if (Q_stricmp(va("fonts/%s_%i.dat", fontName, pointSize), registeredFont[i].datName) == 0)
+		{
+			Com_Memcpy(font, &registeredFont[i], sizeof(fontInfo_t));
+			return qtrue;
+		}
+	}
 
 	len = ri.FS_ReadFile(name, (void **)&faceData);
 	if (len <= 0)
@@ -667,18 +685,8 @@ qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *fon
 static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	char datName[MAX_QPATH];
-	int  i;
 
 	Com_sprintf(datName, sizeof(datName), "fonts/%s_%i.dat", fontName, pointSize);
-
-	//for (i = 0; i < registeredFontCount; i++)
-	//{
-	//	if (Q_stricmp(datName, registeredFont[i].datName) == 0)
-	//	{
-	//        Com_Memcpy(font, &registeredFont[i], GLYPH_OLD_FORMAT);
-	//        //return qtrue;
-	//	}
-	//}
 
 	if (registeredFontCount >= MAX_FONTS)
 	{
