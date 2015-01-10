@@ -63,7 +63,7 @@ menuDef {
 		name		"headerLogo"
 		group		GROUP_NAME
 		rect		6 80 $evalfloat(WINDOW_WIDTH-12) 16
-		text		"EXECUTIVE PRODUCED BY ID SOFTWARE"
+		text		_("EXECUTIVE PRODUCED BY ID SOFTWARE")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3
@@ -79,19 +79,19 @@ menuDef {
 #define CREDITS_Y	108
 
 	LABELWHITE( 6, CREDITS_Y, .5*(WINDOW_WIDTH-24), 10, "Kevin Cloud", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y, .5*(WINDOW_WIDTH-24), 10, "Executive Producer", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y, .5*(WINDOW_WIDTH-24), 10, _("Executive Producer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Timothee Besset", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Additional Programming", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, _("Additional Programming"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Copyright Notice //
-	LABELWHITE( 6, CREDITS_Y+36, WINDOW_WIDTH-12, 10, "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena (TM) technology.", .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
-	LABELWHITE( 6, CREDITS_Y+48, WINDOW_WIDTH-12, 10, "Production, development and technical assistance provided by id Software.", .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
+	LABELWHITE( 6, CREDITS_Y+36, WINDOW_WIDTH-12, 10, _("Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena (TM) technology."), .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
+	LABELWHITE( 6, CREDITS_Y+48, WINDOW_WIDTH-12, 10, _("Production, development and technical assistance provided by id Software."), .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
 
 // Buttons //
 #ifdef FUI
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_idsoftware ; open main )
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_idsoftware ; open main )
 #else
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_idsoftware ; open ingame_main )
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_idsoftware ; open ingame_main )
 #endif
         BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_idsoftware ; open credits_splashdamage )
         BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "ACTIVISION", .3, 14, close credits_idsoftware ; open credits_activision )

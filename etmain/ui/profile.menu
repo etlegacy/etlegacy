@@ -26,7 +26,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( "PROFILE", 90 )
+	WINDOW( _("PROFILE"), 90 )
 
 // Profile List //
 	itemDef {
@@ -59,17 +59,17 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTON( 252, 32, WINDOW_WIDTH-252-6, 14, "CREATE", .24, 11, clearFocus ; open profile_create )
-	BUTTON( 252, 50, WINDOW_WIDTH-252-6, 14, "DELETE", .24, 11, clearFocus ; conditionalscript UIProfileIsActiveProfile 2
+	BUTTON( 252, 32, WINDOW_WIDTH-252-6, 14, _("CREATE"), .24, 11, clearFocus ; open profile_create )
+	BUTTON( 252, 50, WINDOW_WIDTH-252-6, 14, _("DELETE"), .24, 11, clearFocus ; conditionalscript UIProfileIsActiveProfile 2
 																			( "open profile_delete_error" )
 																			( "open profile_delete" ) )
-	BUTTON( 252, 68, WINDOW_WIDTH-252-6, 14, "RENAME", .24, 11, clearFocus ; open profile_rename )
-	BUTTON( 252, 86, WINDOW_WIDTH-252-6, 14, "SET AS DEFAULT", .24, 11, conditionalscript ui_profile 1
+	BUTTON( 252, 68, WINDOW_WIDTH-252-6, 14, _("RENAME"), .24, 11, clearFocus ; open profile_rename )
+	BUTTON( 252, 86, WINDOW_WIDTH-252-6, 14, _("SET AS DEFAULT"), .24, 11, conditionalscript ui_profile 1
 																			( "uiscript setDefaultProfile" )
 																			( "open profile" ) )
 
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, close profile ; open main )
-	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "SELECT PROFILE", .3, 14, conditionalscript ui_profile 1
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close profile ; open main )
+	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("SELECT PROFILE"), .3, 14, conditionalscript ui_profile 1
 																			// Load the cached servers before the vid_restart (which saves the cached servers),
 																			// ui_profile is set so servers will be loaded from profile directory
 																			( "close profile ; uiscript clearPID ; uiscript applyProfile ; execwolfconfig 1 ; uiscript loadCachedServers ; exec vid_restart" )

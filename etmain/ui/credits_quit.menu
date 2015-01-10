@@ -59,7 +59,7 @@ menuDef {
 		name		"headerLogo"
 		group		GROUP_NAME
 		rect		6 80 $evalfloat(WINDOW_WIDTH-12) 16
-		text		"DEVELOPED BY ET:LEGACY TEAM"
+		text		_("DEVELOPED BY ET:LEGACY TEAM")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3
@@ -81,7 +81,7 @@ menuDef {
 		name		"headerDevelopers"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+100) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"^1ORIGINAL DEVELOPERS"
+		text		_("^1ORIGINAL DEVELOPERS")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -242,7 +242,7 @@ menuDef {
 		name		"headerWebsite"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+252) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"^1WEBSITE"
+		text		_("^1WEBSITE")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -257,8 +257,8 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+264, .5*(WINDOW_WIDTH-12), 10, "www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Copyright Notices //
-	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, "© 2012-2015 ET Legacy Team - under the terms of GPL version 3.", .15, ITEM_ALIGN_LEFT, 0, 8 )
-	LABEL( 6, CREDITS_Y+300, WINDOW_WIDTH-12, 10, "© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners.", .15, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, _("© 2012-2015 ET Legacy Team - under the terms of GPL version 3."), .15, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 6, CREDITS_Y+300, WINDOW_WIDTH-12, 10, _("© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners."), .15, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Buttons //
 	itemDef {

@@ -40,6 +40,9 @@
 #define LEGACY_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 "Windowed Fullscreen" 2 }
 #define LEGACY_LANGUAGES   cvarStrList { "English (default)"; "en"; "French"; "fr"; "German"; "de"; "Polish"; "pl"; "Russian"; "ru"; "Dutch"; "nl"; "Czech"; "cs"; "Finnish"; "fi"; "Norwegian"; "no" }
 
+// Marks text as translatable
+#define _(x) x
+
 #define WINDOW_FUI(WINDOW_TEXT, GRADIENT_START_OFFSET)                                                        \
 	itemDef {                                                                                                   \
 		name        "window"                                                                                    \

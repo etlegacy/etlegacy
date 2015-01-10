@@ -1,9 +1,25 @@
+#: src/client/cl_console.c:674
+msgid "say_team:"
+msgstr ""
+
+#: src/client/cl_console.c:682
+msgid "say_fireteam:"
+msgstr ""
+
+#: src/client/cl_console.c:690
+msgid "say:"
+msgstr ""
+
+#: src/client/cl_console.c:803
+#, c-format
+msgid "%s (UPDATE AVAILABLE)"
+msgstr ""
+
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
 #
+#~ msgid "MOUSE1"
+#~ msgstr "MAUS1"
 
-msgid "MOUSE1"
-msgstr "MAUS1"
-
-msgid "MOUSE2"
-msgstr "MAUS2"
+#~ msgid "MOUSE2"
+#~ msgstr "MAUS2"

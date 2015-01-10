@@ -32,38 +32,38 @@ menuDef {
 		open options
 	}
 
-	WINDOW( "SYSTEM", 78 )
+	WINDOW( _("SYSTEM"), 78 )
 
 // Audio //
 #define AUDIO_Y 32
-	SUBWINDOW( 6, AUDIO_Y, (SUBWINDOW_WIDTH), 90, "AUDIO" )
+	SUBWINDOW( 6, AUDIO_Y, (SUBWINDOW_WIDTH), 90, _("AUDIO") )
 	CVARFLOATLABEL( 8, AUDIO_Y+16, (SUBWINDOW_WIDTH)-4, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
-	SLIDER( 8, AUDIO_Y+16, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "Set the effects volume" )
+	SLIDER( 8, AUDIO_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume") )
 	CVARFLOATLABEL( 8, AUDIO_Y+28, (SUBWINDOW_WIDTH)-4, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
-	SLIDER( 8, AUDIO_Y+28, (SUBWINDOW_WIDTH)-4, 10, "Music Volume:", .2, 8, "s_musicvolume" .25 0 1, "Set the music volume" )
-	MULTI( 8, AUDIO_Y+40, (SUBWINDOW_WIDTH)-4, 10, "Sound Quality:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "Set the sound quality" )
-	YESNO( 8, AUDIO_Y+52, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "Enables or disables the doppler effect" )
-	YESNO( 8, AUDIO_Y+64, (SUBWINDOW_WIDTH)-4, 10, "Mute When Minimized:", .2, 8, "s_muteWhenMinimized", "Enables or disables sound when window is minimized" )
-	YESNO( 8, AUDIO_Y+76, (SUBWINDOW_WIDTH)-4, 10, "Mute When Unfocused:", .2, 8, "s_muteWhenUnfocused", "Enables or disables sound when window is unfocused" )
+	SLIDER( 8, AUDIO_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Music Volume:"), .2, 8, "s_musicvolume" .25 0 1, _("Set the music volume") )
+	MULTI( 8, AUDIO_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Sound Quality:"), .2, 8, "ui_s_khz", cvarFloatList { _("11 khz (low)") 11 _("22 khz (high)") 22 _("44 khz (ultra high)") 44 }, _("Set the sound quality") )
+	YESNO( 8, AUDIO_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Enables or disables the doppler effect") )
+	YESNO( 8, AUDIO_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Enables or disables sound when window is minimized") )
+	YESNO( 8, AUDIO_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Enables or disables sound when window is unfocused") )
 
 // Networking //
 #define NETWORKING_Y 128
-	SUBWINDOW( 6, NETWORKING_Y, (SUBWINDOW_WIDTH), 42, "NETWORKING" )
-	MULTIACTION( 8, NETWORKING_Y+16, (SUBWINDOW_WIDTH)-4, 10, "Max Packets:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low" 15 "Low" 30 "Medium" 60 "High" 100 }, uiScript update "ui_cl_maxpackets", "Cap for upstream data packet transmissions" )
-	MULTIACTION( 8, NETWORKING_Y+28, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "Number of duplicates for every data packet sent upstream, minimized packetloss" )
+	SUBWINDOW( 6, NETWORKING_Y, (SUBWINDOW_WIDTH), 42, _("NETWORKING") )
+	MULTIACTION( 8, NETWORKING_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { _("Very Low") 15 _("Low") 30 _("Medium") 60 _("High") 100 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions") )
+	MULTIACTION( 8, NETWORKING_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { _("No") 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Number of duplicates for every data packet sent upstream, minimized packetloss") )
 
 // Downloads //
 #define DOWNLOADS_Y 176
-	SUBWINDOW( 6, DOWNLOADS_Y, (SUBWINDOW_WIDTH), 52, "DOWNLOADS" )
+	SUBWINDOW( 6, DOWNLOADS_Y, (SUBWINDOW_WIDTH), 52, _("DOWNLOADS") )
 #ifndef LEGACY
-	YESNO( 8, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH)-4, 10, "Check for Updates on Start-Up:", .2, 8, "cl_autoupdate", "Automatically check for updates?" )
+	YESNO( 8, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Check for Updates on Start-Up:"), .2, 8, "cl_autoupdate", _("Automatically check for updates?") )
 #endif
-	YESNO( 8, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH)-4, 10, "Get Missing Files from Server:", .2, 8, "cl_allowDownload", "Download missing files when available?" )
-	YESNO( 8, DOWNLOADS_Y+40, (SUBWINDOW_WIDTH)-4, 10, "Use HTTP/FTP Downloads:", .2, 8, "cl_wwwDownload", "Enables or disables http/ftp downloads" )
+	YESNO( 8, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Get Missing Files from Server:"), .2, 8, "cl_allowDownload", _("Download missing files when available?") )
+	YESNO( 8, DOWNLOADS_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Enables or disables http/ftp downloads") )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, uiScript vidReset ; close options_system ; open options )
-	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLY", .3, 14,
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, uiScript vidReset ; close options_system ; open options )
+	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("APPLY"), .3, 14,
 		conditionalScript vidrestartIsRequired 2
 		( "open vid_restart" )
 		( "uiScript systemCvarsApply ; close options_system ; open options" ) )

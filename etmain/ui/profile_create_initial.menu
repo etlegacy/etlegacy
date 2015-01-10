@@ -82,9 +82,9 @@ menuDef {
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5*(WINDOW_HEIGHT-SUBWINDOW_HEIGHT)
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "CREATE PROFILE" )
+	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("CREATE PROFILE") )
 
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Please choose your initial settings below. You can change these at any time and access more advanced options by visiting the Options Menu. Should more than one person wish to play Enemy Territory: Legacy, you can create additional profiles by visiting the Profiles Menu.", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Please choose your initial settings below. You can change these at any time and access more advanced options by visiting the Options Menu. Should more than one person wish to play Enemy Territory: Legacy, you can create additional profiles by visiting the Profiles Menu."), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 	itemDef {
 		name		"efleftbackPlayer Alias:"
@@ -95,25 +95,25 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( SUBWINDOW_X+4+32, SUBWINDOW_Y+88, (SUBWINDOW_WIDTH)-8-64, 10, "Player Alias:", .2, 8, "ui_profile", 36, 23, "Enter the alias here that you would like displayed to others on servers" )
+	EDITFIELDLEFT( SUBWINDOW_X+4+32, SUBWINDOW_Y+88, (SUBWINDOW_WIDTH)-8-64, 10, _("Player Alias:"), .2, 8, "ui_profile", 36, 23, _("Enter the alias here that you would like displayed to others on servers") )
 
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
-	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, "Language:", .2, 8, "cl_lang", LEGACY_LANGUAGES, "Set your desired language" )
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, "Video Quality:", .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", "Select your initial video settings, these can be changed later via the options menu" )
+	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, _("Video Quality:"), .2, 8, "ui_glCustom", cvarFloatList { _("Fastest") 3 _("Fast") 2 _("Normal") 1 _("High") 0 }, uiScript update "ui_glCustom", _("Select your initial video settings, these can be changed later via the options menu") )
 #ifdef LEGACY
-	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+150, (SUBWINDOW_WIDTH)-8, 10, "Resolution:", .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, "Choose your preferred video resolution, if unsure leave it as the default" )
-	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+164, (SUBWINDOW_WIDTH)-8, 10, "Window mode:", .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, "Toggle fullscreen" )
+	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default") )
+	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+164, (SUBWINDOW_WIDTH)-8, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
 #endif
 	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+178, (SUBWINDOW_WIDTH)-8, 10, "ui_r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+178, (SUBWINDOW_WIDTH)-8, 10, "Brightness:", .2, 8, "ui_r_gamma" 1 0.5 2, "Set the brightness of the game" )
+	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+178, (SUBWINDOW_WIDTH)-8, 10, _("Brightness:"), .2, 8, "ui_r_gamma" 1 0.5 2, _("Set the brightness of the game") )
 
 	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+202, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+202, (SUBWINDOW_WIDTH)-8, 10, "Mouse Sensitivity:", .2, 8, "ui_sensitivity" 5 1 30, "Use this slider to set your mouse sensitivity" )
-	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+214, (SUBWINDOW_WIDTH)-8, 10, "Invert Mouse:", .2, 8, "ui_profile_mousePitch", "Choose invert mouse if you prefer flight-simulator style mouse pitch controls" )
+	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+202, (SUBWINDOW_WIDTH)-8, 10, _("Mouse Sensitivity:"), .2, 8, "ui_sensitivity" 5 1 30, _("Use this slider to set your mouse sensitivity") )
+	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+214, (SUBWINDOW_WIDTH)-8, 10, _("Invert Mouse:"), .2, 8, "ui_profile_mousePitch", _("Choose invert mouse if you prefer flight-simulator style mouse pitch controls") )
 
-	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+226, (SUBWINDOW_WIDTH)-8, 10, "Handedness:", .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, "Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu" )
+	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+226, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { _("Right") 0 _("Left") 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
 
-	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+250, 164, 14, "DEFAULT SETTINGS", .24, 11, DEFAULT_SETTINGS ;
+	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+250, 164, 14, _("DEFAULT SETTINGS"), .24, 11, DEFAULT_SETTINGS ;
 		conditionalscript com_recommendedSet 0
 		( "clearfocus" )
 		( "abort" )
@@ -122,13 +122,13 @@ menuDef {
 		( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
 		( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 
-        LABEL( 6, SUBWINDOW_Y+282, .7*(WINDOW_WIDTH-24), 10, "^1LET'S KEEP ET ALIVE!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-        LABEL( 6, SUBWINDOW_Y+294, .7*(WINDOW_WIDTH-24), 10, "Thank you for installing ET:Legacy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-        LABEL( 6, SUBWINDOW_Y+316, .7*(WINDOW_WIDTH-24), 10, "^1WEBSITE", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+        LABEL( 6, SUBWINDOW_Y+282, .7*(WINDOW_WIDTH-24), 10, _("^1LET'S KEEP ET ALIVE!"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+        LABEL( 6, SUBWINDOW_Y+294, .7*(WINDOW_WIDTH-24), 10, _("Thank you for installing ET:Legacy"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+        LABEL( 6, SUBWINDOW_Y+316, .7*(WINDOW_WIDTH-24), 10, _("^1WEBSITE"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
         LABEL( 6, SUBWINDOW_Y+328, .7*(WINDOW_WIDTH-24), 10, "^7www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "QUIT", .3, 14, close profile_create_initial ; close main ; open credits_quit )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "CREATE", .3, 14, conditionalscript UIProfileValidName 2
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("QUIT"), .3, 14, close profile_create_initial ; close main ; open credits_quit )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CREATE"), .3, 14, conditionalscript UIProfileValidName 2
 		( "clearFocus" )
 		( "setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort" )
 		conditionalscript ui_rate 0

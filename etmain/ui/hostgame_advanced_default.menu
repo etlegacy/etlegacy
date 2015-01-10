@@ -9,7 +9,7 @@
 #define GROUP_NAME		"grpHostgameAdvancedDefault"
 
 // Host Game Advanced Default Menu //
-#define DEFAULT_SETTINGS	setcvar sv_hostname "ETHost" ;			\
+#define DEFAULT_SETTINGS	setcvar sv_hostname "ETLHost" ;			\
 							setcvar ui_netGameType 4 ;				\
 							setcvar sv_maxclients 20 ;				\
 							clearcvar g_customConfig ;				\
@@ -120,9 +120,9 @@ menuDef
 #define SUBWINDOW_X			.5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5 * (WINDOW_HEIGHT - SUBWINDOW_HEIGHT)
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "DEFAULT SERVER SETTINGS" )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Reset server settings to default?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("DEFAULT SERVER SETTINGS") )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Reset server settings to default?"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, close hostgame_advanced_default ; close hostgame_extended ; open hostgame_advanced ; DEFAULT_SETTINGS )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, close hostgame_advanced_default ; open hostgame_advanced )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, close hostgame_advanced_default ; close hostgame_extended ; open hostgame_advanced ; DEFAULT_SETTINGS )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close hostgame_advanced_default ; open hostgame_advanced )
 }

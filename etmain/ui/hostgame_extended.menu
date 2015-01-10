@@ -22,17 +22,17 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( "HOST GAME: EXTENDED", 90)
+	WINDOW( _("HOST GAME: EXTENDED"), 90)
 
 // Subwindows //
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
 
 // Extended //
-	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 34, "MISC" )
-	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Country Flags:", .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, "Enable Country Flags on the server" )
+	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 34, _("MISC") )
+	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, _("Country Flags:"), .2, 8, "g_countryflags", cvarFloatList { _("No") 0 _("Yes") 1 }, _("Enable Country Flags on the server") )
 
 // Buttons //
-        BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close hostgame_extended ; open hostgame )
-        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ADVANCED", .3, 14, close hostgame_extended ; open hostgame_advanced )
-        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "DEFAULT", .3, 14, open hostgame_advanced_default )
+        BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close hostgame_extended ; open hostgame )
+        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("ADVANCED"), .3, 14, close hostgame_extended ; open hostgame_advanced )
+        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("DEFAULT"), .3, 14, open hostgame_advanced_default )
 }

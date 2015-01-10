@@ -26,7 +26,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( "MODS", 150 )
+	WINDOW( _("MODS"), 150 )
 
 // Demo List //
 	itemDef {
@@ -47,7 +47,7 @@ menuDef {
 		elementheight	12
 		columns			1 0 200 33
 		visible			1
-		tooltip			"Select the modification to play"
+		tooltip			_("Select the modification to play")
 
 		doubleClick {
 			uiScript RunMod
@@ -55,6 +55,6 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, close mods ; open main )
-	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "LOAD MOD", .3, 14, uiScript RunMod )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close mods ; open main )
+	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("LOAD MOD"), .3, 14, uiScript RunMod )
 }

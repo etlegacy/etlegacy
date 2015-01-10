@@ -125,7 +125,7 @@ menuDef {
 		name		"headerLogo"
 		group		GROUP_NAME
 		rect		6 80 $evalfloat(WINDOW_WIDTH-12) 16
-		text		"ADDITIONAL DEVELOPMENT"
+		text		_("ADDITIONAL DEVELOPMENT")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3
@@ -145,7 +145,7 @@ menuDef {
 		name		"headerOSP"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"OSP BY ORANGE SMOOTHIE PRODUCTIONS"
+		text		_("OSP BY ORANGE SMOOTHIE PRODUCTIONS")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -158,14 +158,14 @@ menuDef {
 	}
 
 	LABELWHITE( 6, CREDITS_Y+16, .5*(WINDOW_WIDTH-24), 10, "Jason 'Rhea' Keimig", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+16, .5*(WINDOW_WIDTH-24), 10, "Programming", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+16, .5*(WINDOW_WIDTH-24), 10, _("Programming"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // PunkBuster //
 	itemDef {
 		name		"headerPunkBuster"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+36) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"PUNKBUSTER BY EVEN BALANCE, INC."
+		text		_("PUNKBUSTER BY EVEN BALANCE, INC.")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -178,16 +178,16 @@ menuDef {
 	}
 
 	LABELWHITE( 6, CREDITS_Y+52, .5*(WINDOW_WIDTH-24), 10, "Tony Ray", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+52, .5*(WINDOW_WIDTH-24), 10, "President", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+52, .5*(WINDOW_WIDTH-24), 10, _("President"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+64, .5*(WINDOW_WIDTH-24), 10, "Björn Christoph", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+64, .5*(WINDOW_WIDTH-24), 10, "Senior Project Leader", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+64, .5*(WINDOW_WIDTH-24), 10, _("Senior Project Leader"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Voice Artists //
 	itemDef {
 		name		"headerVoiceArtists"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+84) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"VOICE ARTISTS"
+		text		_("VOICE ARTISTS")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -200,18 +200,18 @@ menuDef {
 	}
 
 	LABELWHITE( 6, CREDITS_Y+100, .5*(WINDOW_WIDTH-24), 10, "Drew Markham", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+100, .5*(WINDOW_WIDTH-24), 10, "Voice of Allied / Axis soldiers", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+100, .5*(WINDOW_WIDTH-24), 10, _("Voice of Allied / Axis soldiers"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+112, .5*(WINDOW_WIDTH-24), 10, "Neil Ross", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+112, .5*(WINDOW_WIDTH-24), 10, "Voice of Axis Commander", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+112, .5*(WINDOW_WIDTH-24), 10, _("Voice of Axis Commander"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+124, .5*(WINDOW_WIDTH-24), 10, "Granville van Dusen", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+124, .5*(WINDOW_WIDTH-24), 10, "Voice of Allied Commander", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+124, .5*(WINDOW_WIDTH-24), 10, _("Voice of Allied Commander"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Special Thanks //
 	itemDef {
 		name		"headerSpecialThanks"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+156) $evalfloat(WINDOW_WIDTH-12) 16
-		text		"SPECIAL THANKS TO"
+		text		_("SPECIAL THANKS TO")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3
@@ -223,16 +223,16 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+184, WINDOW_WIDTH-12, 10, "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve Software.", .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
-	LABELWHITE( 6, CREDITS_Y+208, WINDOW_WIDTH-12, 10, "We would like to thank both developers for their help and support", .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
-	LABELWHITE( 6, CREDITS_Y+220, WINDOW_WIDTH-12, 10, "during the development of Wolfenstein: Enemy Territory.", .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
-	LABELWHITE( 6, CREDITS_Y+244, WINDOW_WIDTH-12, 10, "Original Soundtrack by Bill Brown.", .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
+	LABELWHITE( 6, CREDITS_Y+184, WINDOW_WIDTH-12, 10, _("Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve Software."), .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
+	LABELWHITE( 6, CREDITS_Y+208, WINDOW_WIDTH-12, 10, _("We would like to thank both developers for their help and support"), .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
+	LABELWHITE( 6, CREDITS_Y+220, WINDOW_WIDTH-12, 10, _("during the development of Wolfenstein: Enemy Territory."), .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
+	LABELWHITE( 6, CREDITS_Y+244, WINDOW_WIDTH-12, 10, _("Original Soundtrack by Bill Brown."), .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
 
 // Buttons //
 #ifdef FUI
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_additional ; open main )
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_additional ; open main )
 #else
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_additional ; open ingame_main )
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_additional ; open ingame_main )
 #endif
         BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ACTIVISION", .3, 14, close credits_additional ; open credits_activision )
         BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "ET 2.60", .3, 14, close credits_additional ; open credits_et260 )

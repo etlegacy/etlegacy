@@ -52,7 +52,7 @@ menuDef {
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5*(WINDOW_HEIGHT-SUBWINDOW_HEIGHT)
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "RENAME PROFILE" )
+	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("RENAME PROFILE") )
 	itemDef {
 		name		"efleftbackNew Profile Name:"
 		group		GROUP_NAME
@@ -62,11 +62,11 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "New Profile Name:", .2, 8, "ui_profile_renameto", 32, 23, "New name of profile" )
+	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("New Profile Name:"), .2, 8, "ui_profile_renameto", 32, 23, _("New name of profile") )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "BACK", .3, 14, close profile_rename ; open profile )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close profile_rename ; open profile )
 
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "RENAME", .3, 14, conditionalscript ui_profile_renameto 1
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("RENAME"), .3, 14, conditionalscript ui_profile_renameto 1
 																																		( "clearFocus" )
 																																		( "setcvar ui_profile_create_error \\\"Can't rename profile. Please enter a profile name.\\\" ; open profile_create_error ; abort" )
 																																	 conditionalscript UIProfileAlreadyExists_Rename 2
