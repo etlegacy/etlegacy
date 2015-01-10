@@ -615,17 +615,30 @@ static void FS_CheckFilenameIsNotExecutable(const char *filename, const char *fu
 
 void FS_Remove(const char *osPath)
 {
+	int ret;
+
 	FS_CheckFilenameIsNotExecutable(osPath, __func__);
 
-	remove(osPath);
+	ret = remove(osPath);
+
+	if (ret != 0)
+	{
+		Com_Printf(S_COLOR_YELLOW "FS_Remove WARNING: cannot remove file '%s'\n", osPath);
+	}
 }
 
 void FS_HomeRemove(const char *homePath)
 {
+	int ret;
+
 	FS_CheckFilenameIsNotExecutable(homePath, __func__);
 
-	remove(FS_BuildOSPath(fs_homepath->string,
-	                      fs_gamedir, homePath));
+	ret = remove(FS_BuildOSPath(fs_homepath->string, fs_gamedir, homePath));
+
+	if (ret != 0)
+	{
+		Com_Printf(S_COLOR_YELLOW "FS_HomeRemove WARNING: cannot remove file '%s'\n", FS_BuildOSPath(fs_homepath->string, fs_gamedir, homePath));
+	}
 }
 
 /**
