@@ -670,14 +670,15 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 	int  i;
 
 	Com_sprintf(datName, sizeof(datName), "fonts/%s_%i.dat", fontName, pointSize);
-	for (i = 0; i < registeredFontCount; i++)
-	{
-		if (Q_stricmp(datName, registeredFont[i].datName) == 0)
-		{
-			Com_Memcpy(font, &registeredFont[i], GLYPH_OLD_FORMAT);
-			return qtrue;
-		}
-	}
+
+	//for (i = 0; i < registeredFontCount; i++)
+	//{
+	//	if (Q_stricmp(datName, registeredFont[i].datName) == 0)
+	//	{
+	//        Com_Memcpy(font, &registeredFont[i], GLYPH_OLD_FORMAT);
+	//        //return qtrue;
+	//	}
+	//}
 
 	if (registeredFontCount >= MAX_FONTS)
 	{
