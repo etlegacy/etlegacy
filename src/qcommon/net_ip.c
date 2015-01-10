@@ -542,7 +542,7 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 	break;
 #endif
 	default:
-		Com_Printf("NET_CompareBaseAdrMask: bad address type\n");
+		Com_Printf("NET_CompareBaseAdrMask: bad address type a: %i (b: %i, netmask: %i)\n", a.type, b.type, netmask);
 		return qfalse;
 	}
 
