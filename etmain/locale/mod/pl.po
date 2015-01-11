@@ -1,22 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.71\n"
+"Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-11 20:46+0100\n"
+"PO-Revision-Date: 2015-01-11 20:47+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
-"Language-Team: Polish translators <mail@etlegacy.com>\n"
-"Language: pl_PL\n"
+"Language-Team: Polish (http://www.transifex.com/projects/p/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.6.10\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
@@ -183,9 +182,7 @@ msgstr "SPECJALNE PODZIĘKOWANIA"
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
-"Return to Castle Wolfenstein był wykonany przez Gray Matter Studios & Nerve "
-"Software."
+msgstr "Return to Castle Wolfenstein był wykonany przez Gray Matter Studios & Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
@@ -242,12 +239,9 @@ msgstr "^1PODZIĘKOWANIA"
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
-msgstr ""
-"Wielkie podziękowania dla Splash Damage za wydanie kodu żródłowego,  "
-"ioWolfET & raedwulf-et (w szczegolności Ralph Eastwood) za kod bazowy i "
-"ioQuake3 za ich inspirację."
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
+msgstr "Wielkie podziękowania dla Splash Damage za wydanie kodu żródłowego,  ioWolfET & raedwulf-et (w szczegolności Ralph Eastwood) za kod bazowy i ioQuake3 za ich inspirację."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
@@ -263,9 +257,8 @@ msgid "^1WEBSITE"
 msgstr "^1STRONA"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-#, fuzzy
 msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr " 2012-2013 ET: Legacy wykonanie - pod licencja GPL wersja 3."
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -291,9 +284,7 @@ msgstr "Główny Programista"
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
-"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
-"other countries."
+msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET:LEGACY HALL OF FAME"
@@ -323,9 +314,7 @@ msgstr "Dodatkowe Programowanie"
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr ""
-"Wolfenstein: Enemy Territory jest zasilany przez technologię Quake III Arena "
-"(TM) od id Software"
+msgstr "Wolfenstein: Enemy Territory jest zasilany przez technologię Quake III Arena (TM) od id Software"
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
@@ -337,21 +326,14 @@ msgid "^1ORIGINAL DEVELOPERS"
 msgstr "^1ORYGINALNI WYDAWCY"
 
 #: etmain/ui/credits_quit.menu:261
-#, fuzzy
 msgid ""
 " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
-"trademarks of Id Software, Inc. in the United States and/or other countries. "
-"All other trademarks and trade names are the properties of their respective "
-"owners."
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
 msgstr ""
-"© 2003 Id Software, Inc. Wszystkie prawa zastrzezone. Wolfenstein: Enemy "
-"Territory, Return to Castle Wolfenstein, powrot do zamku Wolfenstein logo, "
-"nazwe oprogramowania id i logo identyfikator sa zarejestrowanymi znakami "
-"handlowymi lub znakami firmy Id Software, Inc. w Stanach Zjednoczonych i/lub "
-"innych krajach. Wszystkie inne znaki towarowe i nazwy handlowe sa wlasnoscia "
-"ich wlascicieli."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -439,9 +421,7 @@ msgstr "Strona Web ET: Legacy"
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
-"Czy chcesz otworzyć\n"
-" www.etlegacy.com ?"
+msgstr "Czy chcesz otworzyć\n www.etlegacy.com ?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -1004,8 +984,8 @@ msgstr "Maks Predkość Ściąg.:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
-"Specifies the maximum download rate from the server for players with missing "
-"files"
+"Specifies the maximum download rate from the server for players with missing"
+" files"
 msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
@@ -1088,9 +1068,8 @@ msgid "Yes"
 msgstr "Tak"
 
 #: etmain/ui/hostgame_extended.menu:32
-#, fuzzy
 msgid "Enable Country Flags on the server"
-msgstr "nie jest na serwerze"
+msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1131,9 +1110,8 @@ msgstr "Głosowanie na Mapy"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
-#, fuzzy
 msgid "Single-Map Objective"
-msgstr "Cel"
+msgstr ""
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1158,14 +1136,12 @@ msgid "Auto-Configure Server:"
 msgstr "Samo-Konfig. Serwer:"
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Competition Settings"
-msgstr "Ustawienia Rozgrywki Wczytane!\n"
+msgstr ""
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Public Settings"
-msgstr "Ustaw. Publ.:"
+msgstr ""
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
@@ -1185,8 +1161,8 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
-"Specifies if the server should be \"dedicated\" for LAN or Internet play (no "
-"client)"
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
 msgstr ""
 
 #: etmain/ui/hostgame.menu:44
@@ -1318,9 +1294,8 @@ msgid "Say:"
 msgstr "Mów:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
-#, fuzzy
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr "Oczekanie na nowy klucz... Naciśnij ESCAPE aby anulować"
+msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
@@ -1329,18 +1304,16 @@ msgstr "Do:"
 #: etmain/ui/ingame_messagemode.menu:59
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
-#, fuzzy
 msgid "All"
-msgstr "Alianci"
+msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
 msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
-#, fuzzy
 msgid "Fireteam"
-msgstr "Oddział: %s"
+msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
@@ -1370,17 +1343,13 @@ msgstr "ODRODZENIE"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
-"W Ostatni Człowiek Przetrwały nie odrodzisz się jeśli padniesz teraz. Jesteś "
-"pewien?"
+msgstr "W Ostatni Człowiek Przetrwały nie odrodzisz się jeśli padniesz teraz. Jesteś pewien?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
-"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
-"sure?"
-msgstr ""
-"Ten serwer ma włączone max życie. Padając będziesz tracił życie. Jesteś "
-"pewien?"
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
+msgstr "Ten serwer ma włączone max życie. Padając będziesz tracił życie. Jesteś pewien?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1576,14 +1545,12 @@ msgid "Enable or disable warmup damage"
 msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
-#, fuzzy
 msgid "Set the time limit for the server"
-msgstr "nie jest na serwerze"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
-#, fuzzy
 msgid "Set the game type"
-msgstr "wszedł do gry\n"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
@@ -1699,9 +1666,7 @@ msgstr "Korzystasz ze starej wersji"
 msgid ""
 "We do recommend to\n"
 "upgrade your ET client"
-msgstr ""
-"Zalecamy aby\n"
-"zaktualizowac klienta ET"
+msgstr "Zalecamy aby\nzaktualizowac klienta ET"
 
 #: etmain/ui/main.menu:121
 msgid "UPGRADE NOW"
@@ -1762,9 +1727,7 @@ msgstr "Proste czyszczenie usunie pliki -tmp i niestandardowe pk3."
 msgid ""
 "A full clean will remove all downloaded files like map-,\n"
 " campaign- and custom pk3 files."
-msgstr ""
-"Pełne czyszczenie usunie wszystkie ściągniete pliki takie jak mapy,\n"
-" kampanie i niestandardowe pk3."
+msgstr "Pełne czyszczenie usunie wszystkie ściągniete pliki takie jak mapy,\n kampanie i niestandardowe pk3."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1805,9 +1768,8 @@ msgstr "Wybór dłoni:"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
-#, fuzzy
 msgid "Right"
-msgstr "Na Prawo:"
+msgstr ""
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
@@ -1858,9 +1820,8 @@ msgid "Jump:"
 msgstr "Skok:"
 
 #: etmain/ui/options_controls.menu:40
-#, fuzzy
 msgid "Crouc)h:"
-msgstr "Kucnięcie:"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -1884,9 +1845,8 @@ msgid "Invert Mouse:"
 msgstr "Obróć Mysz:"
 
 #: etmain/ui/options_controls.menu:48
-#, fuzzy
 msgid "Inverts mouse pitch"
-msgstr "Obróć Mysz:"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
@@ -2389,9 +2349,8 @@ msgid "No Body Hit Sound"
 msgstr ""
 
 #: etmain/ui/options_customise_game.menu:73
-#, fuzzy
 msgid "Set hit sounds"
-msgstr "Dżwięki Trafień:"
+msgstr ""
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
@@ -2418,9 +2377,8 @@ msgid "Demo"
 msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
-#, fuzzy
 msgid "Screenshot"
-msgstr "Zrób Screenshota:"
+msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
@@ -2435,9 +2393,8 @@ msgid "Demo + Stats"
 msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
-#, fuzzy
 msgid "SS + Stats"
-msgstr "S. Zeznania"
+msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
@@ -2552,19 +2509,16 @@ msgid "Cordinates Only"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Names Fireteam Only"
-msgstr "Prywatny Oddział: %s"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Names Team Chat Only"
-msgstr "Tylko Chat Zesołu:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Team & Fireteam Chat"
-msgstr "Chat Oddziału:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
@@ -2583,9 +2537,8 @@ msgid "Fireteam Latched Class:"
 msgstr "Klasa w Oddziale:"
 
 #: etmain/ui/options_customise_hud.menu:42
-#, fuzzy
 msgid "Displays Fireteam latched class"
-msgstr "Klasa w Oddziale:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -2668,14 +2621,12 @@ msgid "Standard Hud"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 1"
-msgstr "Alternatywny HUD:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 2"
-msgstr "Alternatywny HUD:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
@@ -2686,9 +2637,8 @@ msgid "Modify Selected HUD:"
 msgstr "Modyfikuj Wybrany HUD:"
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Move Round Timer"
-msgstr "Czas Misji:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Remove Ranks"
@@ -2715,9 +2665,8 @@ msgid "Timer + Ranks + Popups"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Customises Selected HUD"
-msgstr "Modyfikuj Wybrany HUD:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:55
 msgid "IN-GAME DISPLAY"
@@ -2735,9 +2684,8 @@ msgid "High"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:56
-#, fuzzy
 msgid "Med"
-msgstr "Medale"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
@@ -2790,18 +2738,16 @@ msgstr "Błysk Krwi:"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
-#, fuzzy
 msgid "Light"
-msgstr "Wychyl na Prawo:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 #: etmain/ui/options_customise_hud.menu:70 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52
-#, fuzzy
 msgid "Medium"
-msgstr "Amunicją Medyka"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
@@ -2927,9 +2873,8 @@ msgid "Displays player info when the crosshair is over a teammate"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:86
-#, fuzzy
 msgid "Set crosshair type"
-msgstr "Wielkość Celownika:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
@@ -2942,9 +2887,8 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
-#, fuzzy
 msgid "Yellow"
-msgstr "Witam!"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -3127,7 +3071,8 @@ msgid "Side Print:"
 msgstr "Boczna:"
 
 #: etmain/ui/options_customise_hud.menu:118
-msgid "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:120
@@ -3171,10 +3116,9 @@ msgstr "Ogólne Dopasowanie Jasności (Wszystkie Kolory Głębi)"
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
-"1. Move the slider below and/or the brightness on your monitor until you can "
-"see 16"
-msgstr ""
-"1. Przesuń suwak poniżej i/lub jasność na ekranie monitora, aż zobaczysz 16"
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
+msgstr "1. Przesuń suwak poniżej i/lub jasność na ekranie monitora, aż zobaczysz 16"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
@@ -3201,9 +3145,7 @@ msgstr "1. Porusz pasek na dole aż zobaczysz 3 oddzielne paski niżej"
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
-msgstr ""
-"2. Dostosuj suwak aż nie będzie żadnej różnicy pomiędzy lewym i środkowym "
-"polem."
+msgstr "2. Dostosuj suwak aż nie będzie żadnej różnicy pomiędzy lewym i środkowym polem."
 
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
@@ -3251,9 +3193,8 @@ msgid "high"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:39
-#, fuzzy
 msgid "Set overall video quality"
-msgstr "Ogólna Jakość:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
@@ -3315,9 +3256,8 @@ msgid "Blob"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:55
-#, fuzzy
 msgid "Set shadow details"
-msgstr "Detale Cieńi:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Texture Detail:"
@@ -3329,9 +3269,8 @@ msgid "Low"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:56
-#, fuzzy
 msgid "Set texture details"
-msgstr "Detale Textur:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
@@ -3391,23 +3330,20 @@ msgid "Anisotropic Filter:"
 msgstr "Filtr Anizotropowy:"
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
-#, fuzzy
 msgid "Disabled"
-msgstr "wyłączyć"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:64
-#, fuzzy
 msgid "Set anisotropic filtering"
-msgstr "Filtr Anizotropowy:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Anti-Aliasing:"
 msgstr "Anty-Aliasing:"
 
 #: etmain/ui/options_graphics.menu:65
-#, fuzzy
 msgid "Set Anti-Aliasing"
-msgstr "Anty-Aliasing:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Color Depth:"
@@ -3418,9 +3354,8 @@ msgid "Desktop Default"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:66
-#, fuzzy
 msgid "Set color depth"
-msgstr "Głębia Koloru:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Detail Textures:"
@@ -3463,9 +3398,8 @@ msgid "GL Extensions:"
 msgstr "Rozszerzenie OpenGL:"
 
 #: etmain/ui/options_graphics.menu:71
-#, fuzzy
 msgid "Enabled"
-msgstr "Włącz Flagi:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enables or disables usage of OpenGL extensions"
@@ -3492,18 +3426,16 @@ msgid "Effects Volume:"
 msgstr "Glosność Efektów:"
 
 #: etmain/ui/options_system.menu:41
-#, fuzzy
 msgid "Set the effects volume"
-msgstr "Glosność Efektów:"
+msgstr ""
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
 msgstr "Glosność Muzyki:"
 
 #: etmain/ui/options_system.menu:43
-#, fuzzy
 msgid "Set the music volume"
-msgstr "Glosność Muzyki:"
+msgstr ""
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
@@ -3522,9 +3454,8 @@ msgid "44 khz (ultra high)"
 msgstr ""
 
 #: etmain/ui/options_system.menu:44
-#, fuzzy
 msgid "Set the sound quality"
-msgstr "Jakość Dżwięku:"
+msgstr ""
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3633,14 +3564,12 @@ msgid "Local"
 msgstr ""
 
 #: etmain/ui/playonline.menu:82
-#, fuzzy
 msgid "Internet"
-msgstr "Intensywność:"
+msgstr ""
 
 #: etmain/ui/playonline.menu:82
-#, fuzzy
 msgid "Favorites"
-msgstr "Lista Ulubionych pełna\n"
+msgstr ""
 
 #: etmain/ui/playonline.menu:82
 msgid ""
@@ -3669,7 +3598,8 @@ msgid "Displays only game servers offering this Mod"
 msgstr ""
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
-msgid "Includes or excludes servers with desired map name from the server list"
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
 msgstr ""
 
 #: etmain/ui/playonline.menu:97
@@ -3702,18 +3632,16 @@ msgid "REFRESH LIST"
 msgstr "ODŚWIEŻ LISTĘ"
 
 #: etmain/ui/playonline.menu:194
-#, fuzzy
 msgid "Refresh servers list"
-msgstr "Czas Odświeżania %s"
+msgstr ""
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
 msgstr "RESETUJ FILTRY"
 
 #: etmain/ui/playonline.menu:195
-#, fuzzy
 msgid "Reset all filters to their defaults"
-msgstr "Zresetować ustawienia do domyślnych?"
+msgstr ""
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
@@ -3809,14 +3737,11 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr ""
-"Wybierz Ustawienia początkowe poniżej. Możesz zmienić je w dowolnym "
-"momencie, a dostęp do bardziej zaawansowanych opcji odwiedzajćc Menu opcje. "
-"Jeżeli wiecęj niż jedna osoba zamierza grać Enemy Territory: Legacy na tym "
-"komputerze, można utworzyć dodatkowe profile odwiedzając Menu profile."
+msgstr "Wybierz Ustawienia początkowe poniżej. Możesz zmienić je w dowolnym momencie, a dostęp do bardziej zaawansowanych opcji odwiedzajćc Menu opcje. Jeżeli wiecęj niż jedna osoba zamierza grać Enemy Territory: Legacy na tym komputerze, można utworzyć dodatkowe profile odwiedzając Menu profile."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
-msgid "Enter the alias here that you would like displayed to others on servers"
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
@@ -3848,7 +3773,8 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
-"Choose invert mouse if you prefer flight-simulator style mouse pitch controls"
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
@@ -3940,17 +3866,13 @@ msgstr "ZMIEŃ USTAWIENIA VIDEO"
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
-msgstr ""
-"Ustawić rekomendowane ustawienia\n"
-"i wrócić do menu głównego?"
+msgstr "Ustawić rekomendowane ustawienia\ni wrócić do menu głównego?"
 
 #: etmain/ui/rec_restart.menu:57
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
-msgstr ""
-"Ustawić rekomendowane ustawienia\n"
-"i wrćcić do menu w grze?"
+msgstr "Ustawić rekomendowane ustawienia\ni wrćcić do menu w grze?"
 
 #: etmain/ui/vid_confirm.menu:61
 msgid "CONFIRM VIDEO CHANGE"
@@ -4177,9 +4099,8 @@ msgid "6. Oops"
 msgstr "6. Oops"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:149
-#, fuzzy
 msgid "2. No)"
-msgstr "2. Nie"
+msgstr ""
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
@@ -5327,11 +5248,7 @@ msgid ""
 " %s^*\n"
 "\n"
 "%s"
-msgstr ""
-"Łączenie z:\n"
-" %s^*\n"
-"\n"
-"%s"
+msgstr "Łączenie z:\n %s^*\n\n%s"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
@@ -5353,8 +5270,7 @@ msgstr "Oczekanie na nowy klucz... Naciśnij ESCAPE aby anulować"
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr ""
-"Naciśnij ENTER lub KLIKNIJ aby zmienić, Naciśnij BACKSPACE aby wyczyscić"
+msgstr "Naciśnij ENTER lub KLIKNIJ aby zmienić, Naciśnij BACKSPACE aby wyczyscić"
 
 #: src/ui/ui_main.c:2543
 #, c-format
@@ -5372,8 +5288,7 @@ msgstr "Czas Odświeżania %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
-msgstr ""
-"Nie można pokazać Informacji o Serwerze (nie znaleziono lub lokalny serwer)\n"
+msgstr "Nie można pokazać Informacji o Serwerze (nie znaleziono lub lokalny serwer)\n"
 
 #: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
 msgid "Favorite already in list\n"
@@ -5396,19 +5311,15 @@ msgstr "^3Zfiltrowanych/Łącznie: %04i/%04i"
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
-"^3Check your filters - no servers found!              Filtered/Total: %04i/"
-"%04i"
-msgstr ""
-"^3Sprawdż swoje filtry - brak serwerów!              Zfiltrowanych/Łącznie: "
-"%i/%i"
+"^3Check your filters - no servers found!              Filtered/Total: "
+"%04i/%04i"
+msgstr "^3Sprawdż swoje filtry - brak serwerów!              Zfiltrowanych/Łącznie: %i/%i"
 
 #: src/ui/ui_main.c:5883
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr ""
-"^1Brak Połączenia lub serwer padl - brak serwerów!    Filtered/Total: "
-"0000/0000"
+msgstr "^1Brak Połączenia lub serwer padl - brak serwerów!    Filtered/Total: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format
@@ -5423,8 +5334,7 @@ msgstr "%d serwerów wyświetlonych w przeglądarce z %d graczami.\n"
 #: src/ui/ui_main.c:8301
 #, c-format
 msgid "%d servers not listed (filtered out by game browser settings)\n"
-msgstr ""
-"%d serwerow nie wyświetlonych (zfiltrowanych przez ustawienia przeglądarki)\n"
+msgstr "%d serwerow nie wyświetlonych (zfiltrowanych przez ustawienia przeglądarki)\n"
 
 #: src/ui/ui_main.c:8429
 #, c-format
@@ -5452,1857 +5362,3 @@ msgstr "Brak ulubionych serwerów."
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
 msgstr "Wszystkie ulubione serwery usunięte."
-
-#~ msgid "Reinforcements deploy in %d seconds."
-#~ msgstr "Rozstawienie posiłków za %d sekund."
-
-#~ msgid "Type ^3\\ready^* in the console to start"
-#~ msgstr "Napisz ^3\\ready^* w konsoli aby zacząć"
-
-#~ msgid "(WARMUP) Match begins in:"
-#~ msgstr "(ROZGRZEWKA) Mecz zacznie się za:"
-
-#~ msgid "^1ET:Legacy"
-#~ msgstr "^1ET:Legacy"
-
-#~ msgid "FAV"
-#~ msgstr "ULB"
-
-#~ msgid "Use JPEG for AutoScreenshots:"
-#~ msgstr "Użyj JPEG dla AutoScreenów:"
-
-#~ msgid "Bob yaw:"
-#~ msgstr "Huśtanie poziom:"
-
-#~ msgid "Binocular Zoom:"
-#~ msgstr "Użycie Lornetki:"
-
-#~ msgid "Jan 'Radegast' Simek"
-#~ msgstr "Jan 'Radegast' Simek"
-
-#~ msgid "Olaf 'IR4T4' R."
-#~ msgstr "Olaf 'IR4T4' R."
-
-#~ msgid "Konrad 'morsik' Moson"
-#~ msgstr "Konrad 'morsik' Moson"
-
-#~ msgid "Jere 'Jacker' S."
-#~ msgstr "Jere 'Jacker' S."
-
-#~ msgid "Remy 'Spyhawk' M."
-#~ msgstr "Remy 'Spyhawk' M."
-
-#~ msgid "SPLASH DAMAGE"
-#~ msgstr "SPLASH DAMAGE"
-
-#~ msgid "ID SOFTWARE"
-#~ msgstr "ID SOFTWARE"
-
-#~ msgid "ACTIVISION"
-#~ msgstr "ACTIVISION"
-
-#~ msgid "ET 2.60"
-#~ msgstr "ET 2.60"
-
-#~ msgid "Paul 'Locki' Wedgwood"
-#~ msgstr "Paul 'Locki' Wedgwood"
-
-#~ msgid "Francisca 'Freya' Wedgwood"
-#~ msgstr "Francisca 'Freya' Wedgwood"
-
-#~ msgid "Richard 'Fluffy_gIMp' Jolly"
-#~ msgstr "Richard 'Fluffy_gIMp' Jolly"
-
-#~ msgid "Francis 'Frankie' Hobbins"
-#~ msgstr "Francis 'Frankie' Hobbins"
-
-#~ msgid "Per 'Per128' Abrahamsen"
-#~ msgstr "Per 'Per128' Abrahamsen"
-
-#~ msgid "Arnout 'RR2DO2' van Meer"
-#~ msgstr "Arnout 'RR2DO2' van Meer"
-
-#~ msgid "Gordon 'digibob' Biggans"
-#~ msgstr "Gordon 'digibob' Biggans"
-
-#~ msgid "Randy 'ydnar' Reddig"
-#~ msgstr "Randy 'ydnar' Reddig"
-
-#~ msgid "Tim 'Marauder' Kautz"
-#~ msgstr "Tim 'Marauder' Kautz"
-
-#~ msgid "Ed 'Bongoboy' Stern"
-#~ msgstr "Ed 'Bongoboy' Stern"
-
-#~ msgid "Matt 'Wils' Wilson"
-#~ msgstr "Matt 'Wils' Wilson"
-
-#~ msgid "Simon 'sock' O'Callaghan"
-#~ msgstr "Simon 'sock' O'Callaghan"
-
-#~ msgid "Mark 'nakedape' Fry"
-#~ msgstr "Mark 'nakedape' Fry"
-
-#~ msgid "Thomas 'Q-Fraggel' Creutzenberg"
-#~ msgstr "Thomas 'Q-Fraggel' Creutzenberg"
-
-#~ msgid "Chris 'SHoD' Farcy"
-#~ msgstr "Chris 'SHoD' Farcy"
-
-#~ msgid "Lloyd 'LloydM' Morris"
-#~ msgstr "Lloyd 'LloydM' Morris"
-
-#~ msgid "Lee 'Llama' Mercer"
-#~ msgstr "Lee 'Llama' Mercer"
-
-#~ msgid "Kevin Cloud"
-#~ msgstr "Kevin Cloud"
-
-#~ msgid "Timothee Besset"
-#~ msgstr "Timothee Besset"
-
-#~ msgid "Jonathan Moses"
-#~ msgstr "Jonathan Moses"
-
-#~ msgid "Doug Avery"
-#~ msgstr "Doug Avery"
-
-#~ msgid "John Fritts"
-#~ msgstr "John Fritts"
-
-#~ msgid "Steve Holmes"
-#~ msgstr "Steve Holmes"
-
-#~ msgid "Matthew Beal"
-#~ msgstr "Matthew Beal"
-
-#~ msgid "Laird M. Malamed"
-#~ msgstr "Laird M. Malamed"
-
-#~ msgid "Mark Lamia"
-#~ msgstr "Mark Lamia"
-
-#~ msgid "Brad Saavedra"
-#~ msgstr "Brad Saavedra"
-
-#~ msgid "Evan Button"
-#~ msgstr "Evan Button"
-
-#~ msgid "Matt McClure"
-#~ msgstr "Matt McClure"
-
-#~ msgid "Nathaniel McClure"
-#~ msgstr "Nathaniel McClure"
-
-#~ msgid ""
-#~ "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, "
-#~ "Daniel Kannard, Cory Rice"
-#~ msgstr ""
-#~ "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, "
-#~ "Daniel Kannard, Cory Rice"
-
-#~ msgid ""
-#~ "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert "
-#~ "Max Martin, Jim Call"
-#~ msgstr ""
-#~ "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert "
-#~ "Max Martin, Jim Call"
-
-#~ msgid ""
-#~ "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
-#~ "Lawrence Wong"
-#~ msgstr ""
-#~ "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
-#~ "Lawrence Wong"
-
-#~ msgid ""
-#~ "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
-#~ "Todd, Mike Restifo"
-#~ msgstr ""
-#~ "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
-#~ "Todd, Mike Restifo"
-
-#~ msgid "Chris Keim"
-#~ msgstr "Chris Keim"
-
-#~ msgid "Neil Barizo"
-#~ msgstr "Neil Barizo"
-
-#~ msgid "Marilena Rixford"
-#~ msgstr "Marilena Rixford"
-
-#~ msgid "Tim Vanlaw"
-#~ msgstr "Tim Vanlaw"
-
-#~ msgid "Jason Levine"
-#~ msgstr "Jason Levine"
-
-#~ msgid "Jef Sedivy"
-#~ msgstr "Jef Sedivy"
-
-#~ msgid "Bob McPherson"
-#~ msgstr "Bob McPherson"
-
-#~ msgid "Jason 'Rhea' Keimig"
-#~ msgstr "Jason 'Rhea' Keimig"
-
-#~ msgid "Tony Ray"
-#~ msgstr "Tony Ray"
-
-#~ msgid "Bjrn Christoph"
-#~ msgstr "Bjrn Christoph"
-
-#~ msgid "Drew Markham"
-#~ msgstr "Drew Markham"
-
-#~ msgid "Neil Ross"
-#~ msgstr "Neil Ross"
-
-#~ msgid "Granville van Dusen"
-#~ msgstr "Granville van Dusen"
-
-#~ msgid "Dan 'bani' Hollis"
-#~ msgstr "Dan 'bani' Hollis"
-
-#~ msgid "Ben 'Rain' Winslow"
-#~ msgstr "Ben 'Rain' Winslow"
-
-#~ msgid "Frederik 'fretn' Delaere"
-#~ msgstr "Frederik 'fretn' Delaere"
-
-#~ msgid "Chris 'Zinx' Lais"
-#~ msgstr "Chris 'Zinx' Lais"
-
-#~ msgid "Joe 'Majikthise' D."
-#~ msgstr "Joe 'Majikthise' D."
-
-#~ msgid "ET Pro Logo"
-#~ msgstr "ET Pro Logo"
-
-#~ msgid "Brad Oliver"
-#~ msgstr "Brad Oliver"
-
-#~ msgid "Path cleared."
-#~ msgstr "Droga Wolna."
-
-#~ msgid "The enemy is weakened."
-#~ msgstr "Wróg jest osłabiony"
-
-#~ msgid "All clear."
-#~ msgstr "Czysto"
-
-#~ msgid "Incoming!"
-#~ msgstr "Nadchodzą"
-
-#~ msgid "Fire in the hole!"
-#~ msgstr "Uwaga Strzelam!"
-
-#~ msgid "I'm on defense."
-#~ msgstr "Obraniam."
-
-#~ msgid "I'm on offense."
-#~ msgstr "Atakuje."
-
-#~ msgid "Taking fire!"
-#~ msgstr "Ściągam Ogien!"
-
-#~ msgid "Mines cleared."
-#~ msgstr "Pole Oczyszczone z Min."
-
-#~ msgid "Enemy in disguise."
-#~ msgstr "Wróg w Przebraniu."
-
-#~ msgid "Need a Medic!"
-#~ msgstr "Potrzebuje Medyka!"
-
-#~ msgid "I need ammo!"
-#~ msgstr "Potrzebuje Amunicji!"
-
-#~ msgid "I need backup!"
-#~ msgstr "Potrzebuje pomocy!"
-
-#~ msgid "We need an engineer!"
-#~ msgstr "Potrzebujemy Inżyniera!"
-
-#~ msgid "Cover me!"
-#~ msgstr "Osłaniaj Mnie!"
-
-#~ msgid "Hold your fire!"
-#~ msgstr "Wstrzymaj Ogień!"
-
-#~ msgid "Where to?"
-#~ msgstr "Dokąd?"
-
-#~ msgid "We need Covert Ops!"
-#~ msgstr "Potrzebuje Coverta!"
-
-#~ msgid "Follow me!"
-#~ msgstr "Za Mną!"
-
-#~ msgid "Let's go!"
-#~ msgstr "No Dalej!"
-
-#~ msgid "Move!"
-#~ msgstr "Ruchy!"
-
-#~ msgid "Clear the path!"
-#~ msgstr "Oczyść Droge!"
-
-#~ msgid "Defend our objective!"
-#~ msgstr "Ochraniaj nasz cel!"
-
-#~ msgid "Disarm the dynamite!"
-#~ msgstr "Rozbrój dynamit!"
-
-#~ msgid "Clear the mines!"
-#~ msgstr "Rozbrój miny!"
-
-#~ msgid "Reinforce the offense!"
-#~ msgstr "Wzmocnij Atak!"
-
-#~ msgid "Reinforce the defense!"
-#~ msgstr "Wzmocnij Obrone!"
-
-#~ msgid "Affirmative!"
-#~ msgstr "Pozytywnie!"
-
-#~ msgid "No!"
-#~ msgstr "Nie!"
-
-#~ msgid "Thank you!"
-#~ msgstr "Dzięki Ci!"
-
-#~ msgid "You're welcome."
-#~ msgstr "Nie ma za co."
-
-#~ msgid "Bitte sehr."
-#~ msgstr "Proszę bardzo."
-
-#~ msgid "Ja!"
-#~ msgstr "Tak!"
-
-#~ msgid "Nein!"
-#~ msgstr "Nie!"
-
-#~ msgid "Kein problem."
-#~ msgstr "Bez problemu."
-
-#~ msgid "Sorry!"
-#~ msgstr "Przepraszam!"
-
-#~ msgid "Oops!"
-#~ msgstr "Oops!"
-
-#~ msgid "Yes!"
-#~ msgstr "Tak!"
-
-#~ msgid "Jawohl!"
-#~ msgstr "Tak jest!"
-
-#~ msgid "Negative!"
-#~ msgstr "Negatywnie!"
-
-#~ msgid "Hi!"
-#~ msgstr "Cześć!"
-
-#~ msgid "Hallo!"
-#~ msgstr "Cześć!"
-
-#~ msgid "Good bye."
-#~ msgstr "Dowidzenia."
-
-#~ msgid "Auf wiedersehen."
-#~ msgstr "Dowidzenia."
-
-#~ msgid "Bye."
-#~ msgstr "Nara."
-
-#~ msgid "Great shot!"
-#~ msgstr "Niezły Strzał!"
-
-#~ msgid "You got it, man!"
-#~ msgstr "Masz to, człowieku!"
-
-#~ msgid "Yeah!"
-#~ msgstr "Nareszcie!"
-
-#~ msgid "Yoohoo!"
-#~ msgstr "Tak Jest!"
-
-#~ msgid "Hahaa!"
-#~ msgstr "Hahaha!"
-
-#~ msgid "Alright!"
-#~ msgstr "W Porządku!"
-
-#~ msgid "Woo!"
-#~ msgstr "Wooo!"
-
-#~ msgid "Yeehaa!"
-#~ msgstr "Wspaniale!"
-
-#~ msgid "'Atta way, baby!"
-#~ msgstr "'Tak trzymać, maleńka!"
-
-#~ msgid "Jahaa!"
-#~ msgstr "Nareszcie!"
-
-#~ msgid "Wunderbar!"
-#~ msgstr "Wspaniale!"
-
-#~ msgid "Excellent!"
-#~ msgstr "Doskonale!"
-
-#~ msgid "Oh yes!"
-#~ msgstr "Taaak jest!"
-
-#~ msgid "Sehr gut!"
-#~ msgstr "Bardzo dobrze!"
-
-#~ msgid "Thanks!"
-#~ msgstr "Dzięki!"
-
-#~ msgid "Danke!"
-#~ msgstr "Dzięki!"
-
-#~ msgid "Danke sehr!"
-#~ msgstr "Dziękuje bardzo!"
-
-#~ msgid "No problem."
-#~ msgstr "Bez problemu."
-
-#~ msgid "Good game!"
-#~ msgstr "Dobra gra!"
-
-#~ msgid "Command acknowledged!"
-#~ msgstr "Polecenie przyjęte!"
-
-#~ msgid "Command declined!"
-#~ msgstr "Polecenie odrzucone!"
-
-#~ msgid "Command completed!"
-#~ msgstr "Polecenie wykonane!"
-
-#~ msgid "Destroy primary objective!"
-#~ msgstr "Zniszcz Pierwszy cel!"
-
-#~ msgid "Destroy secondary objective!"
-#~ msgstr "Zniszcz Drugi cel!"
-
-#~ msgid "Destroy construction!"
-#~ msgstr "Zniscz Konstrukcję!"
-
-#~ msgid "I'm constructing!"
-#~ msgstr "Konstruuje!"
-
-#~ msgid "Repair the vehicle!"
-#~ msgstr "Napraw pojazd!"
-
-#~ msgid "Disable the vehicle!"
-#~ msgstr "Zniszcz pojazd!"
-
-#~ msgid "Escort the vehicle!"
-#~ msgstr "Eskortuj pojazd!"
-
-#~ msgid "Covering fire!"
-#~ msgstr "Ogień osłaniający!"
-
-#~ msgid "I'm a soldier."
-#~ msgstr "Jestem Żołnierzem."
-
-#~ msgid "I'm an engineer."
-#~ msgstr "Jestem Inżynierem."
-
-#~ msgid "I'm a medic."
-#~ msgstr "Jestem Medykiem."
-
-#~ msgid "I'm a field ops."
-#~ msgstr "Jestem Wsparciem."
-
-#~ msgid "I'm a covert ops."
-#~ msgstr "Jestem Zabójcą."
-
-#~ msgid "^1Legacy"
-#~ msgstr "^1Legacy"
-
-#~ msgid "MAP"
-#~ msgstr "MAPA"
-
-#~ msgid "OMNI-BOT"
-#~ msgstr "OMNI-BOT"
-
-#~ msgid "unknown cmd"
-#~ msgstr "nieznane polecenie"
-
-#~ msgid "Server:"
-#~ msgstr "Serwer:"
-
-#~ msgid "changed to"
-#~ msgstr "zmienił na"
-
-#~ msgid "was killed by"
-#~ msgstr "został zabity przez"
-
-#~ msgid "^1WAS KILLED BY TEAMMATE^7"
-#~ msgstr "^1ZOSTAŁ ZABITY PRZEZ KOMPANA^7"
-
-#~ msgid "Arming landmine..."
-#~ msgstr "Podkładanie miny..."
-
-#~ msgid "Landmine armed..."
-#~ msgstr "Mina uzbrojona..."
-
-#~ msgid "Dynamite is set, but NOT armed!"
-#~ msgstr "Dynamit jest ustawiony, ale NIE uzbrojony!"
-
-#~ msgid "Arming dynamite..."
-#~ msgstr "Podkładanie dynamitu..."
-
-#~ msgid "Dynamite is now armed with a 30 second timer!"
-#~ msgstr "Dynamit jest uzbrojony z czasem 30 sekund!"
-
-#~ msgid "Defusing landmine"
-#~ msgstr "Rozbrajanie miny"
-
-#~ msgid "Landmine defused..."
-#~ msgstr "Mina rozbrojona..."
-
-#~ msgid "Defusing dynamite..."
-#~ msgstr "Rozbrajanie dynamitu..."
-
-#~ msgid "Constructing..."
-#~ msgstr "Budowanie..."
-
-#~ msgid "was sniped by"
-#~ msgstr "został zestrzelony przez"
-
-#~ msgid "was mown down by"
-#~ msgstr "został podziurawiony przez"
-
-#~ msgid "never saw"
-#~ msgstr "nie widział"
-
-#~ msgid "was cooked by"
-#~ msgstr "został usmażony przez"
-
-#~ msgid "played with fire"
-#~ msgstr "bawił się ogniem"
-
-#~ msgid "failed to spot"
-#~ msgstr "niezauwazył"
-
-#~ msgid "was silenced by"
-#~ msgstr "został uciszony przez"
-
-#~ msgid "dove on his own grenade"
-#~ msgstr "nadepnął na własny granat"
-
-#~ msgid "vaporized himself"
-#~ msgstr "zniszczył samego siebie"
-
-#~ msgid "never saw his own mortar round coming"
-#~ msgstr "nigdy nie widział lecącego własnego pocisku mortara"
-
-#~ msgid "killed himself"
-#~ msgstr "zabił sie"
-
-#~ msgid "ate his own rifle grenade"
-#~ msgstr "zjadł własnego granata od rifli"
-
-#~ msgid "obliterated himself"
-#~ msgstr "Ostrzelał się"
-
-#~ msgid "Fire Mission: ^3Firing for effect!"
-#~ msgstr "Misja Ostrzału: ^3Strzelanie!"
-
-#~ msgid "fired-for-effect on himself"
-#~ msgstr "zestrzelony na własną prośbę"
-
-#~ msgid "embraced his own satchel explosion"
-#~ msgstr "został wysadzony przez ładunek"
-
-#~ msgid "failed to spot his own landmine"
-#~ msgstr "niezauwazył własnej miny"
-
-#~ msgid "dynamited himself to pieces"
-#~ msgstr "rozwalił się na kawałki"
-
-#~ msgid "was stabbed by"
-#~ msgstr "został pchnięty przez"
-
-#~ msgid "was exploded by"
-#~ msgstr "został zdetonowany przez"
-
-#~ msgid "was blasted by"
-#~ msgstr "został wysadzony przez"
-
-#~ msgid "Affirmative!!"
-#~ msgstr "Pozytywnie!!"
-
-#~ msgid "^1Spam Protection^7: VoiceChat ignored"
-#~ msgstr "^1Ochrona przed Spamem^7: ChatGłosowy zignorowany"
-
-#~ msgid "I need a Medic!"
-#~ msgstr "Potrzebuje Medyka!"
-
-#~ msgid "was shelled by"
-#~ msgstr "został ostrzelany przez"
-
-#~ msgid "Mines have been reported in this area."
-#~ msgstr "Miny zostały zgłoszone w tym terenie."
-
-#~ msgid "was perforated by"
-#~ msgstr "został podziurawiony przez"
-
-#~ msgid "'s mortar round coming"
-#~ msgstr " pocisku mortara"
-
-#~ msgid "'s artillery support"
-#~ msgstr " artylerię"
-
-#~ msgid "rediscovered gravity"
-#~ msgstr "ponownie odkrył grawitacje"
-
-#~ msgid "'s Landmine"
-#~ msgstr " Miny"
-
-#~ msgid "'s Mobile MG42"
-#~ msgstr " Mobilne MG42"
-
-#~ msgid "'s Mobile Browning"
-#~ msgstr " Mobilny Browning"
-
-#~ msgid "'s rifle grenade"
-#~ msgstr " granatem od rifli"
-
-#~ msgid "'s support fire"
-#~ msgstr " ogniem wsparcia"
-
-#~ msgid "'s crew-served MG"
-#~ msgstr " serii z MG"
-
-#~ msgid "was thrown to his doom by"
-#~ msgstr "został zepchnięty przez"
-
-#~ msgid "You have been revived by "
-#~ msgstr "Zostałeś ożywiony przez "
-
-#~ msgid "Allies have built the Oasis Water Pump!"
-#~ msgstr "Alianci wybudowali Pompę Wodną Oasis!"
-
-#~ msgid "Allied Command Post constructed. Charge speed increased!"
-#~ msgstr ""
-#~ "Centrum Dowodzenia Aliantów wybudowane. Szybkość ładowania zwiększona!"
-
-#~ msgid "Axis Command Post constructed. Charge speed increased!"
-#~ msgstr "Centrum Dowodzenia OSi wybudowane. Szybkość ładowania zwiekszona!"
-
-#~ msgid "Allies capture the Old City!"
-#~ msgstr "Alianci zdobyli Stare Miasto!"
-
-#~ msgid "Axis reclaim the Old City!"
-#~ msgstr "Oś odzyskała Stare Miasto!"
-
-#~ msgid "Allies have built the Old City Water Pump!"
-#~ msgstr "Alianci wybudowali Pompę Wodną Starego Miasta!"
-
-#~ msgid "Allies have repaired both Water Pumps!"
-#~ msgstr "Alianci naprawili obie Pompy Wodne!"
-
-#~ msgid "The Old City MG Nest has been constructed!"
-#~ msgstr "Gniazdo MG Stargo Miasta zostało wybudowane!"
-
-#~ msgid "The Garrison MG Nest has been constructed!"
-#~ msgstr "Gniazdo MG Garnizonu zostało wybudowane!"
-
-#~ msgid "Axis have damaged the Old City Water Pump!"
-#~ msgstr "Oś zepsuła Pompę Wodną Starego Miasta!"
-
-#~ msgid "Axis have damaged the Oasis Water Pump!"
-#~ msgstr "Oś zepsuła Pompę Wodną Oasis!"
-
-#~ msgid "Axis have damaged both Water Pumps!"
-#~ msgstr "Oś zepsuła obie Pompy Wodne!"
-
-#~ msgid "The Old City MG Nest has been damaged!"
-#~ msgstr "Gniazdo MG Starego Miasta zostało zepsute!"
-
-#~ msgid "Axis team has destroyed the Allied Command Post!"
-#~ msgstr "Oś rozwaliła Centrum Dowodzenia Aliantów!"
-
-#~ msgid "Allies have breached the Old City wall"
-#~ msgstr "Alianci przełamali Ścianę Starego Miasta"
-
-#~ msgid "drowned"
-#~ msgstr "utopił się"
-
-#~ msgid "Axis team"
-#~ msgstr "Zespołu Osi"
-
-#~ msgid "Allied team"
-#~ msgstr "Zespołu Aliantów"
-
-#~ msgid "Spectators"
-#~ msgstr "Obserwatorów"
-
-#~ msgid "You must be a player or following a player to use +stats\n"
-#~ msgstr "Musisz być graczem lub obserwować gracza aby użyć +stats\n"
-
-#~ msgid "^9You must be alive to use ^3/kill."
-#~ msgstr "^9Musisz być żywy aby użyć ^3/kill."
-
-#~ msgid "No vote in progress.\n"
-#~ msgstr "Brak głosowań.\n"
-
-#~ msgid "No or bad challenge for address.\n"
-#~ msgstr "Brak lub złe wezwanie dla adresu.\n"
-
-#~ msgid "Match is already in progress!\n"
-#~ msgstr "Mecz już trwa!\n"
-
-#~ msgid "^1** Referee Server Setting Change **\n"
-#~ msgstr "^1** Sędzia Zmienił Ustawienia Serwera **\n"
-
-#~ msgid "committed suicide"
-#~ msgstr "wykonał samobójstwo"
-
-#~ msgid "Your fireteam is now public"
-#~ msgstr "Twój oddział jest teraz publiczny"
-
-#~ msgid "Your fireteam is now private"
-#~ msgstr "Twój oddział jest teraz prywatny"
-
-#~ msgid "The Allies have too many players.\n"
-#~ msgstr "Alianci mają zbyt dużo graczy.\n"
-
-#~ msgid "The Axis has too many players.\n"
-#~ msgstr "Oś ma zbyt dużo graczy.\n"
-
-#~ msgid "Attack!"
-#~ msgstr "Atak!"
-
-#~ msgid "Fall back!"
-#~ msgstr "Odwrót!"
-
-#~ msgid "Improved use of Explosive Ammunition"
-#~ msgstr "Lepszym użyciem Amunicji Wybuchowej"
-
-#~ msgid "Improved Dexterity"
-#~ msgstr "Lepszą Zręcznością"
-
-#~ msgid "Improved Construction and Destruction"
-#~ msgstr "Ulepszonym Budowaniem i Niszczeniem"
-
-#~ msgid "a Flak Jacket"
-#~ msgstr "Kamizelką Kuloodporną"
-
-#~ msgid "Improved use of Scoped Weapon Ammunition"
-#~ msgstr "Lepszym użyciem Amunicji do Snajperki"
-
-#~ msgid "Improved use of Sabotage and Misdirection"
-#~ msgstr "Lepszym użyciem Sabotażu i Odwrócenia Uwagi"
-
-#~ msgid "Breath Control"
-#~ msgstr "Kontrolą Oddechu"
-
-#~ msgid "Assassin"
-#~ msgstr "Zabójstwem"
-
-#~ msgid "Improved Resources"
-#~ msgstr "Ulepszonymi Zasobami"
-
-#~ msgid "Improved Signals"
-#~ msgstr "Ulepszonymi Sygnałami"
-
-#~ msgid "Improved Air and Ground Support"
-#~ msgstr "Lepszymi Nalotami i Wsparciem Naziemnym"
-
-#~ msgid "Enemy Recognition"
-#~ msgstr "Rozpoznaniem Wroga"
-
-#~ msgid "Binoculars for any Class"
-#~ msgstr "Lornetkami dla każdej Klasy"
-
-#~ msgid "Full Revive"
-#~ msgstr "Pełnym Ożywieniem"
-
-#~ msgid "Adrenalin Self"
-#~ msgstr "Własną Adrelaniną"
-
-#~ msgid "Improved Projectile Resources"
-#~ msgstr "Lepszym Zasobem Pocisków"
-
-#~ msgid "Heavy Weapon Proficiency"
-#~ msgstr "Biegłością Obsługi Ciężkiej Bronii"
-
-#~ msgid "Improved Physical Fitness"
-#~ msgstr "Poprawną Sprawnością Fizyczną"
-
-#~ msgid "Improved Health"
-#~ msgstr "Ulepszonym Życiem"
-
-#~ msgid "Improved Weapon Handling"
-#~ msgstr "Ulepszoną Obsługą Bronii"
-
-#~ msgid "Trap Awareness"
-#~ msgstr "Wykrywaniem Pułapek"
-
-#~ msgid "Improved use of Light Weapon Ammunition"
-#~ msgstr "Lepszym użyciem Amunicji do Bronii Lekkiej"
-
-#~ msgid "Faster Reload"
-#~ msgstr "Szybszym Przeładowaniem"
-
-#~ msgid "Improved Light Weapon Handling"
-#~ msgstr "Lepszą Obsługą Bronii Lekkiej"
-
-#~ msgid "Dual-Wield Pistols"
-#~ msgstr "Podwójnymi Pistoletami"
-
-#~ msgid "Allies have destroyed the North Anti-Tank Gun!"
-#~ msgstr "Allianci zniszczyli Północne Działo Przeciwczołgowe!"
-
-#~ msgid "Allied team has destroyed the Axis Command Post!"
-#~ msgstr "Allianci zniszczyli Stanowisko Dowodzenia Osi!"
-
-#~ msgid "The Garrison MG Nest has been damaged!"
-#~ msgstr "Gniazdo MG Garnizonu zostało uszkodzone!"
-
-#~ msgid "Allied team has destroyed the South Anti-Tank Gun!"
-#~ msgstr "Allianci zniszczyli Południowe Działo Przeciwczołgowe!"
-
-#~ msgid "Allies have destroyed both Anti-Tank Guns!"
-#~ msgstr "Allianci zniszczyli obydwa Działa Przeciwczołgowe!"
-
-#~ msgid "The Allied West beach MG Nest has been constructed."
-#~ msgstr "Allianci zbudowali Gniazdo MG na Zachodniej plaży."
-
-#~ msgid "The Allied Beach Assault Ramp has been constructed."
-#~ msgstr "Allianci zbudowali Rusztowanie na Plaży."
-
-#~ msgid "The Allied East beach MG Nest has been constructed."
-#~ msgstr "Allianci zbudowali Gniazdo MG na Wchodniej plazy."
-
-#~ msgid "Allied team has destroyed the Door Controls Generator!"
-#~ msgstr "Allianci rozwalili Generator Kontrolujący Drzwi!"
-
-#~ msgid "Magnetic seal deactivated - opening emergency bunker doors"
-#~ msgstr "Deaktywowano Magnetyczną Zaporę - awaryjne otwieranie drzwi bunkra"
-
-#~ msgid "The Axis North-West MG Nest has been constructed."
-#~ msgstr "Oś zbudowała Gniazdo MG na Północnym Zachodzie."
-
-#~ msgid "got buried under a pile of rubble"
-#~ msgstr "pochowany pod stertą gruzów"
-
-#~ msgid "The Axis Main Bunker MG Nest has been constructed."
-#~ msgstr "Oś zbudowała Gniazdo MG w Głównym Bunkrze."
-
-#~ msgid "The Axis South-East MG Nest has been constructed."
-#~ msgstr "Oś zbudowała Gniazdo MG na Południowym Wschodzie."
-
-#~ msgid "Axis have constructed the Door Controls Generator!"
-#~ msgstr "Oś zbudowała Generator Kontrolujący Drzwi!"
-
-#~ msgid "Axis have destroyed the Allied Beach Assault Ramp."
-#~ msgstr "Oś rozwaliła Allianckie Rusztowanie na Plaży."
-
-#~ msgid "The Allied West beach MG Nest has been destroyed."
-#~ msgstr "Zachodnie Allianckie Gniazdo MG zostało zniszczone."
-
-#~ msgid "The Allied East beach MG Nest has been destroyed."
-#~ msgstr "Wchodnie Allianckie Gniazdo MG zostało zniszczone."
-
-#~ msgid "Allies capture the Forward Bunker!"
-#~ msgstr "Allianci zdobyli Przedni Bunkier!"
-
-#~ msgid "Axis capture the West Bunker!"
-#~ msgstr "Oś zbobyła Wschodni Bunkier!"
-
-#~ msgid "Allies have destroyed the gun tracking"
-#~ msgstr "Allianci zniszczyli układ skręcający Działa"
-
-#~ msgid ""
-#~ "^3All players ready!^7\n"
-#~ "Match starting..."
-#~ msgstr ""
-#~ "^3Wszyscy gracze gotowi!^7\n"
-#~ "Mecz zaczyna..."
-
-#~ msgid "The Axis North-West MG Nest has been destroyed."
-#~ msgstr "Północno Zachodnie Gniazdo MG Osi zostało zniszczone."
-
-#~ msgid "The Axis Main Bunker MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Osi w Głównym Bunkrze zostało zniszczone."
-
-#~ msgid "The Axis South-East MG Nest has been destroyed."
-#~ msgstr "Południowo Wschodnie Gniazdo MG Osi zostało zniszczone."
-
-#~ msgid "The Tank has been repaired!"
-#~ msgstr "Czołg został naprawiony!"
-
-#~ msgid "Allied team has stolen the Tank!"
-#~ msgstr "Allianci ukradli Czołg!"
-
-#~ msgid "The Tank has been damaged!"
-#~ msgstr "Czołg został uszkodzony!"
-
-#~ msgid "Allied team has destroyed the Bank Doors!"
-#~ msgstr "Allianci rozwalili Drzwi Banku!"
-
-#~ msgid "Allied team has secured the first Gold Crate!"
-#~ msgstr "Allianci zabezpieczyli pierwszą Skrzynie Złota!"
-
-#~ msgid "Allied team has secured the second Gold Crate!"
-#~ msgstr "Allianci zabezpieczyli drugą Skrzynie Złota!"
-
-#~ msgid "Allied team is escaping with the Gold Crates!"
-#~ msgstr "Allianci uciekają ze Skrzyniami Złota!"
-
-#~ msgid "Allied team escaped with the Gold Crates!"
-#~ msgstr "Allianci uciekli ze Skrzyniami Złota!"
-
-#~ msgid "Tank Barrier #1 has been constructed."
-#~ msgstr "Barriera Czołgu #1 została wybudowana."
-
-#~ msgid "Tank Barrier #2 has been constructed."
-#~ msgstr "Barriera Czołgu #2 została wybudowana."
-
-#~ msgid "Truck Barrier #1 has been constructed."
-#~ msgstr "Barriera Ciężarówki #1 została wybudowana."
-
-#~ msgid "Truck Barrier #2 has been constructed."
-#~ msgstr "Barriera Ciężarówki #2 została wybudowana."
-
-#~ msgid "The Truck has been damaged!"
-#~ msgstr "Ciężarówka została uszkodzona!"
-
-#~ msgid "Tank Barrier #1 has been destroyed."
-#~ msgstr "Barriera Czołgu #1 została zniszczona."
-
-#~ msgid "Tank Barrier #2 has been destroyed."
-#~ msgstr "Barriera Czołgu #2 została zniszczona."
-
-#~ msgid "Truck Barrier #1 has been destroyed."
-#~ msgstr "Barriera Ciężarówki #1 została zniszczona."
-
-#~ msgid "Truck Barrier #2 has been destroyed."
-#~ msgstr "Barriera Ciężarówki #2 została zniszczona."
-
-#~ msgid "The Truck has been repaired!"
-#~ msgstr "Ciężarówka została naprawiona!"
-
-#~ msgid "The Bunker MG Nest has been constructed."
-#~ msgstr "Gniazdo MG Bunkra zostało wybudowane."
-
-#~ msgid "The Axis Road MG Nest has been constructed."
-#~ msgstr "Gniazdo MG Osi przy Drodze zostało wybudowane."
-
-#~ msgid "The Axis Watchtower MG Nest has been constructed."
-#~ msgstr "Gniazdo MG Wieży Obserwacyjnej Osi zostało wybudowane."
-
-#~ msgid "Axis reclaim the Forward Bunker!"
-#~ msgstr "Oś odzyskała Przedni Bunkier!"
-
-#~ msgid ""
-#~ "Allies have breached the Main Entrance and secured the Forward Bunker!"
-#~ msgstr "Allianci przebili Główne Wejście i zabezpieczyli Przedni Bunkier!"
-
-#~ msgid "Allies have breached the Side Entrance!"
-#~ msgstr "Allianci przebili Boczne Wejście!"
-
-#~ msgid "The Bunker MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Bunkra zostało zniszczone."
-
-#~ msgid "The Axis Road MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Osi przy Drodze zostało zniszczone."
-
-#~ msgid "The Axis Watchtower MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Wieży Obserwacyjnej Osi zostało zniszczone."
-
-#~ msgid "Allies have secured the West Radar Parts!"
-#~ msgstr "Alianci zabezpieczyli Zachodnią Część Radaru!"
-
-#~ msgid "Allies have secured the East Radar Parts!"
-#~ msgstr "Alianci zabezpieczyli Wchodnią Część Radaru!"
-
-#~ msgid "The Track Switch MG Nest has been constructed."
-#~ msgstr "Gniazdo MG przy Zmianie Torów zostało wybudowane."
-
-#~ msgid "The Depot Yard MG has been constructed."
-#~ msgstr "MG przy Magazynie zostało wybudowane!"
-
-#~ msgid "Allies capture the Depot Yard!"
-#~ msgstr "Allianci zdobyli Magazyn!"
-
-#~ msgid "Rail Gun Firing Controls destroyed!"
-#~ msgstr "Panel sterujący Działa Kolejowego został zniszczony!"
-
-#~ msgid "Rail Gun Firing Controls rebuilt!"
-#~ msgstr "Panel sterujący Działa Kolejowego zostal naprawiony!"
-
-#~ msgid "The Track Switch MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG przy Zmianie Torów zostało zniaszczone."
-
-#~ msgid "The Depot Yard MG has been destroyed."
-#~ msgstr "MG przy Magazynie zostało zniszczone."
-
-#~ msgid "Axis captures the Depot Yard!"
-#~ msgstr "Oś zdobyła Magazyn!"
-
-#~ msgid "Track Switch raised!"
-#~ msgstr "Szlaban Podniesiony!"
-
-#~ msgid "Track Switch lowered!"
-#~ msgstr "Szlaban Opuszczony!"
-
-#~ msgid "Axis loaded the Rail Gun Ammo onto the First Tug!"
-#~ msgstr "Oś załadowała Amunicję do Działa Kolejowego na Pierwszy Holownik!"
-
-#~ msgid "Axis transported the Ammo to the North Crane!"
-#~ msgstr "Oś przetransportowała Amunicję do Północnego Dzwigu!"
-
-#~ msgid "Axis transferred the Ammo to the Second Tug!"
-#~ msgstr "Oś przeniosła Amunicję na Drugi Holownik!"
-
-#~ msgid "Axis team have loaded the Rail Gun!"
-#~ msgstr "Oś załadowała Działo Kolejowe!"
-
-#~ msgid "Axis fired the Rail Gun!"
-#~ msgstr "Oś wystrzeliła z Działa Kolejowego!"
-
-#~ msgid "Axis team has constructed the Tunnel MG!"
-#~ msgstr "Oś zbudowała wieże z MG"
-
-#~ msgid "Axis team has constructed the Side MG Nest!"
-#~ msgstr "Oś zbudowała Boczne Gniazdo MG!"
-
-#~ msgid "Axis team has constructed the East Axis Base Fortification!"
-#~ msgstr "Oś zbudowała Wschodnie Umocnienia Bazy!"
-
-#~ msgid "Axis team has constructed the West Axis Base Fortification!"
-#~ msgstr "Oś zbudowała Zachodnie Umocnienia Bazy!"
-
-#~ msgid "Allied team has constructed the Foot Bridge!"
-#~ msgstr "Allianci wybudowali Most Linowy!"
-
-#~ msgid "Allied team has constructed the Road MG Nest!"
-#~ msgstr "Allianci wybudowali Gniazdo MG przy Drodze!"
-
-#~ msgid "Allied team has breached the Tunnel Grate!"
-#~ msgstr "Allianci przebili Bramę Tunelu!"
-
-#~ msgid "Axis team has destroyed the Foot Bridge!"
-#~ msgstr "Oś rozwaliła Most Linowy!"
-
-#~ msgid "Axis team has destroyed the Road MG Nest!"
-#~ msgstr "Oś rozwaliła Gniazdo MG przy Drodze!"
-
-#~ msgid "Allied team has reinforced the Bridge!"
-#~ msgstr "Allianci wzmocnili Most!"
-
-#~ msgid "Axis team has damaged the Bridge!"
-#~ msgstr "Oś zniszczyła Most!"
-
-#~ msgid "Allied team has breached the Tunnel Doors!"
-#~ msgstr "Allianci przebili Drzwi Tunelu!"
-
-#~ msgid "Allied team has destroyed the Tunnel MG!"
-#~ msgstr "Allianci rozwalili wieże z MG!"
-
-#~ msgid "Axis team has destroyed the Side MG Nest!"
-#~ msgstr "Oś rozwaliła Boczne Gniazdo MG!"
-
-#~ msgid "Allied team has breached the Depot Gates!"
-#~ msgstr "Allianci przebili Bramę do Magazynu!"
-
-#~ msgid "Allied team has constructed the Side MG Nest!"
-#~ msgstr "Allianci wybudowali Boczne Gniazdo MG!"
-
-#~ msgid "Allied team has breached the Depot Side Wall!"
-#~ msgstr "Alianci przebili Boczną Ścianę Magazynu!"
-
-#~ msgid "Allied team has damaged the East Axis Base Fortification!"
-#~ msgstr "Allianci uszkodzili Wschodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has destroyed the East Axis Base Fortification!"
-#~ msgstr "Allianci zniszczyli Wschodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has damaged the West Axis Base Fortification!"
-#~ msgstr "Allianci uszkodzili Zachodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has destroyed the West Axis Base Fortification!"
-#~ msgstr "Allianci zniszczyli Zachodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has destroyed the Axis Fuel Dump!"
-#~ msgstr "Allianci rozwalili Zbiorniki z Paliwem!"
-
-#~ msgid "was killed"
-#~ msgstr "został zabity"
-
-#~ msgid "You are near the Old City Wall\n"
-#~ msgstr "Jesteś blisko Ściany Starego Miasta\n"
-
-#~ msgid "You are near the Old City Water Pump\n"
-#~ msgstr "Jesteś blisko Pompy Wodnej Starego Miasta\n"
-
-#~ msgid "You are near the Oasis Water Pump\n"
-#~ msgstr "Jesteś blisko Pompy Wodnej Oazy\n"
-
-#~ msgid "You are near the Allied Command Post\n"
-#~ msgstr "Jesteś blisko Centrum Dowodzenia Alliantów\n"
-
-#~ msgid "You are near the Old City MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Starego Miasta\n"
-
-#~ msgid "You are near the Axis Command Post\n"
-#~ msgstr "Jesteś blisko Centrum Dowodzenia Osi\n"
-
-#~ msgid "You are near the Garrison MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Garnizonu\n"
-
-#~ msgid "You are near the North Anti-Tank Gun\n"
-#~ msgstr "Jesteś blisko Północnego Działa Przeciwczołgowego\n"
-
-#~ msgid "You are near the South Anti-Tank Gun\n"
-#~ msgstr "Jesteś blisko Południowego Działa Przeciwczołgowego\n"
-
-#~ msgid "You are near the Health and Ammo Cabinets\n"
-#~ msgstr "Jesteś blisko Szafek Zdrowia i Amunicji\n"
-
-#~ msgid "You are near the Allied East beach MG nest\n"
-#~ msgstr "Jesteś blisko Wschodniego Gniazda MG Aliantów na plaży\n"
-
-#~ msgid "You are near the Allied West beach MG nest\n"
-#~ msgstr "Jesteś blisko Zachodniego Gniazda MG Aliantów na plaży\n"
-
-#~ msgid "You are near the Allied Beach Assault Ramp\n"
-#~ msgstr "Jesteś blisko Rusztowania Aliantów na Plaży\n"
-
-#~ msgid "You are near the Command Post\n"
-#~ msgstr "Jesteś blisko Centrum Dowodzenia\n"
-
-#~ msgid "You are near the Axis North-West MG nest\n"
-#~ msgstr "Jesteś blisko Północno Zachodniego Gniazda MG Osi\n"
-
-#~ msgid "You are near the Axis Main Bunker MG nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Osi w Głównym Bunkrze\n"
-
-#~ msgid "You are near the Axis South-East MG nest\n"
-#~ msgstr "Jesteś blisko Południowo Wschodniego Gniazda MG Osi\n"
-
-#~ msgid "You are near the Generator\n"
-#~ msgstr "Jesteś blisko Generatora\n"
-
-#~ msgid "You are near the Gun Controls\n"
-#~ msgstr "Jesteś blisko układu skrecającego Działa\n"
-
-#~ msgid "You are near the Tank\n"
-#~ msgstr "Jesteś blisko Czołgu\n"
-
-#~ msgid "You are near Tank Barrier #1\n"
-#~ msgstr "Jesteś blisko Bariery Czołgu #1\n"
-
-#~ msgid "You are near Tank Barrier #2\n"
-#~ msgstr "Jesteś blisko Bariery Czołgu #2\n"
-
-#~ msgid "You are near the Bank Doors\n"
-#~ msgstr "Jesteś blisko Drzwi Banku\n"
-
-#~ msgid "You are near the Gold Crates\n"
-#~ msgstr "Jesteś blisko Skrzynii Złota\n"
-
-#~ msgid "You are near the Truck\n"
-#~ msgstr "Jesteś blisko Ciężarówki\n"
-
-#~ msgid "You are near Truck Barrier #1\n"
-#~ msgstr "Jesteś blisko Bariery Ciężarówki #1\n"
-
-#~ msgid "You are near Truck Barrier #2\n"
-#~ msgstr "Jesteś blisko Bariery Ciężarówki #2\n"
-
-#~ msgid "You are near the Axis Watchtower MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Wieży Obserwacyjnej Osi\n"
-
-#~ msgid "You are near the West Radar Parts\n"
-#~ msgstr "Jesteś blisko Zachodniej Części do Radaru\n"
-
-#~ msgid "You are near the East Radar Parts\n"
-#~ msgstr "Jesteś blisko Wschodniej Części do Radaru\n"
-
-#~ msgid "You are near the Side Entrance\n"
-#~ msgstr "Jesteś blisko Bocznego Wejścia\n"
-
-#~ msgid "You are near the Bunker MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Bunkra\n"
-
-#~ msgid "You are near the Escape Truck\n"
-#~ msgstr "Jesteś blisko Ciężarówki do Ucieczki\n"
-
-#~ msgid "You are near the Main Entrance\n"
-#~ msgstr "Jesteś blisko Głównego Wejścia\n"
-
-#~ msgid "You are near the Axis Road MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG przy Drodze\n"
-
-#~ msgid "You are near the East Axis Base Fortification\n"
-#~ msgstr "Jesteś blisko Wschodnich Umocnień Bazy Osi\n"
-
-#~ msgid "You are near the West Axis Base Fortification\n"
-#~ msgstr "Jesteś blisko Zachodnich Umocnień Bazy Osi\n"
-
-#~ msgid "You are near the Fuel Dump\n"
-#~ msgstr "Jesteś blisko Zbiorników z Paliwem\n"
-
-#~ msgid "You are near the Fuel Depot Side Wall\n"
-#~ msgstr "Jesteś blisko Bocznej Ściany Magazynu\n"
-
-#~ msgid "You are near the Fuel Depot Front Gates\n"
-#~ msgstr "Jesteś blisko Przedniej Bramy Magazynu\n"
-
-#~ msgid "You are near the Side MG\n"
-#~ msgstr "Jesteś blisko Bocznego MG\n"
-
-#~ msgid "You are near the Tunnel Doors\n"
-#~ msgstr "Jesteś blisko Drzwi Tunelu\n"
-
-#~ msgid "You are near the Tunnel MG\n"
-#~ msgstr "Jesteś blisko wieży MG\n"
-
-#~ msgid "You are near the Foot Bridge\n"
-#~ msgstr "Jesteś blisko Mostu Linowego\n"
-
-#~ msgid "You are near the Bridge\n"
-#~ msgstr "Jesteś blisko Mostu\n"
-
-#~ msgid "You are near the Road MG\n"
-#~ msgstr "Jesteś blisko MG przy Drodze\n"
-
-#~ msgid "You are near the Track Switch MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG przy Zmianie Torów\n"
-
-#~ msgid "You are near the Depot Yard MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Magazynu\n"
-
-#~ msgid "You are near the First Tug\n"
-#~ msgstr "Jesteś blisko Pierwszego Holownika\n"
-
-#~ msgid "You are near the Second Tug\n"
-#~ msgstr "Jesteś blisko Drugiego Holownika\n"
-
-#~ msgid "You are near the Rail Gun Firing Controls\n"
-#~ msgstr "Jesteś blisko Panelu Sterującego Działa Kolejowego\n"
-
-#~ msgid ""
-#~ "^3All players ready!^7\n"
-#~ "Match starting...\n"
-#~ msgstr ""
-#~ "^3Wszyscy gracze gotowi!^7\n"
-#~ "Mecz zaczyna...\n"
-
-#~ msgid "You are on the Allied team"
-#~ msgstr "Jesteś w Zespole Alliantów"
-
-#~ msgid "^1*** Match Reset! ***\n"
-#~ msgstr "^1*** Restart Meczu! ***\n"
-
-#~ msgid "You are on the Axis team"
-#~ msgstr "Jesteś w Zespole Osi"
-
-#~ msgid "Warning, leave the construction area..."
-#~ msgstr "Uwaga, opuść plac budowy..."
-
-#~ msgid "got caught in"
-#~ msgstr "został złapany w"
-
-#~ msgid "'s construction madness"
-#~ msgstr " szaleństwie budowlanym"
-
-#~ msgid "Need paks: %s\n"
-#~ msgstr "Potrzebuje paczek %s\n"
-
-#~ msgid "Mod filter:"
-#~ msgstr "Filtr Modów:"
-
-#~ msgid "http://www.etlegacy.com"
-#~ msgstr "http://www.etlegacy.com"
-
-#~ msgid "'BSzili'"
-#~ msgstr "'BSzili'"
-
-#~ msgid "'PtitSeb'"
-#~ msgstr "'PtitSeb'"
-
-#~ msgid "Pandora"
-#~ msgstr "Pandora"
-
-#~ msgid "^1PACKAGE MAINTAINERS"
-#~ msgstr "^1OPIEKUNOWIE PACZEK"
-
-#~ msgid "Not enough players to start match!\n"
-#~ msgstr "Zbyt mało graczy aby zacząć mecz!\n"
-
-#~ msgid "'s flamethrower"
-#~ msgstr " miotaczem ognia"
-
-#~ msgid "'s Satchel Charge"
-#~ msgstr " Ładunkiem Kulminacyjnym"
-
-#~ msgid "You must be in the game to be ^3ready^7!\n"
-#~ msgstr "Musisz być w grze aby być ^3gotowy^7!\n"
-
-#~ msgid "You cannot arm dynamite near a friendly objective!"
-#~ msgstr "Nie możesz uzbroić dynamitu blisko przyjaznego celu!"
-
-#~ msgid "Axis team has destroyed the Bridge!"
-#~ msgstr "Oś rozwalila Most!"
-
-#~ msgid "^3Aborting, can't see target."
-#~ msgstr "^3Przerwanie, nie można namierzyć celu."
-
-#~ msgid "^3Firing for effect!"
-#~ msgstr "^3Rozpoczęcie Ostrzału!"
-
-#~ msgid "'s tank-mounted MG42"
-#~ msgstr " MG42 na czołgu"
-
-#~ msgid "'s dynamite"
-#~ msgstr " dynamit"
-
-#~ msgid "Timelimit hit.\n"
-#~ msgstr "Limit Czasowy skończony.\n"
-
-#~ msgid "Landmine revealed"
-#~ msgstr "Mina wykryta"
-
-#~ msgid "^3Insufficient fire support."
-#~ msgstr "^3Niewystarczający ogień wsparcia."
-
-#~ msgid "'s tank-mounted browning 30cal"
-#~ msgstr " browning 30cal na czołgu"
-
-#~ msgid "'s grenade"
-#~ msgstr " granat"
-
-#~ msgid "was crushed"
-#~ msgstr "został zmiażdżony"
-
-#~ msgid "Public Settings Loaded!\n"
-#~ msgstr "Ustawienia Publiczne Wczytane!\n"
-
-#~ msgid "Landmine cannot be armed here..."
-#~ msgstr "Miny nie mogą być tutaj uzbrojone.."
-
-#~ msgid "Your team has too many landmines placed..."
-#~ msgstr "Twój zespół ma zbyc dużo podłożonych min..."
-
-#~ msgid "You cannot arm dynamite near a friendly construction!"
-#~ msgstr "Nie możesz podłożyć dynamitu w pobliżu przyjaznej konstrukcji!"
-
-#~ msgid "Countdown started.... ^3notready^7 ignored!\n"
-#~ msgstr "Odliczanie rozpoczęte.... ^3niegotowy^7 zignorowane!\n"
-
-#~ msgid "No complaint filed against you.\n"
-#~ msgstr "Brak skarg przeciwko tobie.\n"
-
-#~ msgid "You are not the leader of a fireteam\n"
-#~ msgstr "Nie jesteś liderem oddziału\n"
-
-#~ msgid "You have been warned by your Fireteam Commander\n"
-#~ msgstr "Zostaleś ostrzeżony przez twojego Dowódcę Oddziału\n"
-
-#~ msgid "You have been kicked from the fireteam"
-#~ msgstr "Zostaleś wywalony z oddziału"
-
-#~ msgid "You are now the leader of your fireteam"
-#~ msgstr "Jesteś teraz liderem oddziału"
-
-#~ msgid "The fireteam you are on has been disbanded"
-#~ msgstr "Oddział rozpadł się"
-
-#~ msgid "You have been given fireteam admin rights"
-#~ msgstr "Dostaleś prawa Dowódcy oddziału"
-
-#~ msgid "Too many players already on this Fireteam"
-#~ msgstr "Zbyt dużo graczy już w tym Oddziale"
-
-#~ msgid "The leader has now left the Fireteam you applied to"
-#~ msgstr "Lider odszedł z Oddziału do ktorego chcialeś dojść"
-
-#~ msgid "The other player is already on a fireteam"
-#~ msgstr "Ten gracz jest już w oddziale"
-
-#~ msgid "You are not on the same team as the other player"
-#~ msgstr "Nie jesteś w tym samym zespole jak inny gracz"
-
-#~ msgid "You are not on the same Fireteam as the other player"
-#~ msgstr "Nie jesteś w tym samym oddziale jak inny gracz"
-
-#~ msgid "Invalid client selected"
-#~ msgstr "Niewlaściwie wybrany klient"
-
-#~ msgid "usage: fireteam admin <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam admin <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam propose <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam propose <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam kick <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam kick <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam warn <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam warn <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam invite <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam invite <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
-#~ msgstr "użycie: fireteam apply <nazwaoddzialu|numeroddzialu>"
-
-#~ msgid "usage: fireteam <create|leave|apply|invite>"
-#~ msgstr "użycie: fireteam <create|leave|apply|invite>"
-
-#~ msgid "You are already on a fireteam, leave it first"
-#~ msgstr "Jesteś już w oddziale, wpierw odejdz z oddziału"
-
-#~ msgid ""
-#~ "The other player must be on the same fireteam for you to give admin "
-#~ "rights to"
-#~ msgstr ""
-#~ "Dany gracz musi być w tym samym oddziale abyś mogł dać mu prawa Dowódcy"
-
-#~ msgid "You must be a fireteam admin to give admin rights to someone else"
-#~ msgstr "Musisz być Dowódcą oddziału aby dać prawa Dowódcy komuś innemu"
-
-#~ msgid "Invalid referee password!\n"
-#~ msgstr "Nieprawidłowe hasło sędziego!\n"
-
-#~ msgid "Usage: ref [password]\n"
-#~ msgstr "Użycie: ref [hasło]\n"
-
-#~ msgid ""
-#~ "^3Referee commands:^7\n"
-#~ "------------------------------------------\n"
-#~ msgstr ""
-#~ "^3Komendy sędziego:^7\n"
-#~ "------------------------------------------\n"
-
-#~ msgid ""
-#~ "Usage: ^3\\ref <cmd> [params]\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Użycie: ^3\\ref <komenda> [parametry]\n"
-#~ "\n"
-
-#~ msgid "^5pause speclock warmup ^7[value]\n"
-#~ msgstr "^5pause speclock warmup ^7[wartość]\n"
-
-#~ msgid "Sorry, referee status disabled on this server.\n"
-#~ msgstr "Status sędziego jest wyłączony na tym serwerze.\n"
-
-#~ msgid "Referee has ^3LOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ZABLOKOWAŁ^7 zespoły\n"
-
-#~ msgid "You have LOCKED teams\n"
-#~ msgstr "ZABLOKOWAŁEŚ zespoły\n"
-
-#~ msgid "Referee has ^3UNLOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ODBLOKOWAŁ^7 zespoły\n"
-
-#~ msgid "You have UNLOCKED teams\n"
-#~ msgstr "ODBLOKOWALEŚ zespoły\n"
-
-#~ msgid "The ^4Allies^7 team is LOCKED!\n"
-#~ msgstr "Zespół ^4Alliantów^7 jest ZABLOKOWANY!\n"
-
-#~ msgid "The ^1Axis^7 team is LOCKED!\n"
-#~ msgstr "Zespół ^1Osi^7 jest ZABLOKOWANY!\n"
-
-#~ msgid "^3Referee ^1PAUSED^3 the match^3!\n"
-#~ msgstr "^3Sędzia ^1ZATRZYMAŁ^3 mecz^3!\n"
-
-#~ msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
-#~ msgstr "^3Mecz ^1ZATRZYMANY^3! (^7Sędzia^3)\n"
-
-#~ msgid "The match is already ^1PAUSED!\n"
-#~ msgstr "Mecz jest już ^1ZATRZYMANY!\n"
-
-#~ msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
-#~ msgstr "^3Sędzia ^5WZNOWIŁ^3 mecz ... wznowienie za 10 sekund!\n"
-
-#~ msgid "The match is already ^5UNPAUSED!\n"
-#~ msgstr "Mecz jest już ^5WZNOWIONY!\n"
-
-#~ msgid "Bad client slot: "
-#~ msgstr "Zły slot klienta: "
-
-#~ msgid "Client"
-#~ msgstr "Klient"
-
-#~ msgid "is not active\n"
-#~ msgstr "nie jest aktywny\n"
-
-#~ msgid "You can only remove people in the game!\n"
-#~ msgstr "Możesz tylko usuwać ludzi z gry!\n"
-
-#~ msgid "User "
-#~ msgstr "Użytkownik "
-
-#~ msgid "is not on the server\n"
-#~ msgstr "nie jest na serwerze\n"
-
-#~ msgid "^5You've been removed from the ^4Allies^7 team\n"
-#~ msgstr "^5Zostałeś usunięty z zespołu ^4Alliantów\n"
-
-#~ msgid "^5You've been removed from the ^1Axis^7 team\n"
-#~ msgstr "^5Zostałeś usunięty z ^7zespołu ^1Osi\n"
-
-#~ msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ZABLOKOWAŁ OBSERWATORÓW\n"
-
-#~ msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ODBLOKOWAŁ OBSERWATORÓW\n"
-
-#~ msgid "usage: ref warn <clientname> [reason].\n"
-#~ msgstr "użycie: ref warn <nazwaklienta> [powód].\n"
-
-#~ msgid "Client not on server.\n"
-#~ msgstr "Nie ma Klienta na serwerze.\n"
-
-#~ msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
-#~ msgstr "%s^7 otrzymał ^1Ostrzeżenie^7 (Brak Dostatecznego Powodu)\n"
-
-#~ msgid "Cannot mute a referee.\n"
-#~ msgstr "Nie mozża uciszyć sędziego.\n"
-
-#~ msgid "^5You've been muted\n"
-#~ msgstr "^5Zostałes uciszony\n"
-
-#~ msgid "Can't chat - you are muted\n"
-#~ msgstr "Nie możesz pisać - jesteś uciszony\n"
-
-#~ msgid "^5You've been unmuted\n"
-#~ msgstr "^5Dostałeś możliwość pisania\n"
-
-#~ msgid ""
-#~ "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
-#~ msgstr ""
-#~ "^7 ID : Gracz                     Nudge  Rate  Pakiety  Snaps  Specjalne\n"
-
-#~ msgid "^7----------------------------------------------------------------------\n"
-#~ msgstr "^7----------------------------------------------------------------------\n"
-
-#~ msgid ""
-#~ "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
-#~ "Specials\n"
-#~ msgstr ""
-#~ "^7Status   : ID : Gracz                    Nudge  Rate  Pakiety  Snaps  "
-#~ "Specjalne\n"
-
-#~ msgid "^7-------------------------------------------------------------------------------\n"
-#~ msgstr "^7-------------------------------------------------------------------------------\n"
-
-#~ msgid ""
-#~ "^5\n"
-#~ "Available Game Commands:\n"
-#~ "------------------------\n"
-#~ msgstr ""
-#~ "^5\n"
-#~ "Dostępne Komendy-W Grze:\n"
-#~ "------------------------\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Type: ^3\\command_name ?^7 for more information\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Napisz: ^3\\nazwa_komendy ?^7 aby uzyskać więcej informacji\n"
-
-#~ msgid "Spectators can't lock a team!\n"
-#~ msgstr "Widzowie nie mogą zablokować zepsołu!\n"
-
-#~ msgid "The ^4Allies^7 team is now locked!\n"
-#~ msgstr "Zespół ^4Alliancki^7 jest teraz zablokowany!\n"
-
-#~ msgid "^3Your team is already locked!\n"
-#~ msgstr "^3Twój zespół jest już zablokowany!\n"
-
-#~ msgid "The ^4Allies^7 team is now unlocked!\n"
-#~ msgstr "Zespół ^4Alliancki^7 jest już odblokowany!\n"
-
-#~ msgid "^3Your team is already unlocked!\n"
-#~ msgstr "^3Twój zespół jest już odblokowany!\n"
-
-#~ msgid "Spectators can't unlock a team!\n"
-#~ msgstr "Widzowie nie mogą odblokowywać zespołu!\n"
-
-#~ msgid "The ^1Axis^7 team is now locked!\n"
-#~ msgstr "Zespół ^1Osi^7 jest teraz zablokowany!\n"
-
-#~ msgid "The ^1Axis^7 team is now unlocked!\n"
-#~ msgstr "Zespół ^1Osi^7 jest już odblokowany!\n"
-
-#~ msgid "Team commands not enabled on this server.\n"
-#~ msgstr "Komendy Zespołu nie są włączone na tym serwerze.\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "^3>>> Unknown vote command: ^7 \n"
-#~ msgstr ""
-#~ "\n"
-#~ "^3>>> Nieznana komenda głosowania: ^7 \n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Valid ^3callvote^7 commands are:\n"
-#~ "^3----------------------------\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Prawidłowymi komendami ^3callvote^7 są:\n"
-#~ "^3----------------------------\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Usage: ^3\\callvote <command> <params>\n"
-#~ "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Użycie: ^3\\callvote <komenda> <parametry>\n"
-#~ "^7Dla bieżących ustawień/pomocy, użyj: ^3\\callvote <komenda> ?\n"
-
-#~ msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
-#~ msgstr ""
-#~ "Napisz ^3\\stats <id_gracza>^7 aby zobaczyć statystyki aktywnego gracza.\n"
-
-#~ msgid "Spectators can't ready a team!\n"
-#~ msgstr "Widzowie nie mogą być gotowi!\n"
-
-#~ msgid "The ^4Allies^7 team is ready!\n"
-#~ msgstr "Zespół ^4Alliantów^7 jest gotowy!\n"
-
-#~ msgid "The ^1Axis^7 team is ready!\n"
-#~ msgstr "Zespół ^1Osi^7 jest gotowy!\n"
-
-#~ msgid "A vote is already in progress.\n"
-#~ msgstr "Głosowanie jest już w toku.\n"
-
-#~ msgid "called a vote.\n"
-#~ msgstr "wybrał głosowanie.\n"
-
-#~ msgid "^5Vote passed!\n"
-#~ msgstr "^5Głosownie Ważne!\n"
-
-#~ msgid "Spectator team\n"
-#~ msgstr "Zespół Widzów\n"
-
-#~ msgid "Allies team\n"
-#~ msgstr "Zespół Alliantów\n"
-
-#~ msgid "Axis team\n"
-#~ msgstr "Zespół Osi\n"
-
-#~ msgid "Sorry, "
-#~ msgstr "Wybacz, "
-
-#~ msgid "voting has been disabled"
-#~ msgstr "głosowania zostały wyłączone"
-
-#~ msgid "Not allowed to call a vote as a spectator.\n"
-#~ msgstr "Nie wolno głosować jako obserwator.\n"
-
-#~ msgid "called a vote."
-#~ msgstr "wybrał głosowanie."
-
-#~ msgid "Vote cast.\n"
-#~ msgstr "Oddawanie głosów.\n"
-
-#~ msgid "'s KA-BAR"
-#~ msgstr " Nożem Bojowym"
-
-#~ msgid "'s .45ACP 1911"
-#~ msgstr " Coltem .45"
-
-#~ msgid "'s Thompson"
-#~ msgstr " Thompsonem"
-
-#~ msgid "'s MP40"
-#~ msgstr " MP40"
-
-#~ msgid "'s knife"
-#~ msgstr " nożem"
-
-#~ msgid "'s Luger 9mm"
-#~ msgstr " Lugerem 9mm"
-
-#~ msgid "'s Panzerfaust"
-#~ msgstr " Pociskiem Przeciwczołgowym"
-
-#~ msgid "'s Garand"
-#~ msgstr " Garantem"
-
-#~ msgid "'s Sten"
-#~ msgstr " Stenem"
-
-#~ msgid "'s FG42"
-#~ msgstr " FG42"
-
-#~ msgid "'s K43"
-#~ msgstr " K43"
-
-#~ msgid "Reset Filters"
-#~ msgstr "Resetuj Filtry"
-
-#~ msgid "Remy 'Spyhawk' M. - Coding, mod development"
-#~ msgstr "Remy 'Spyhawk' M. - Programowanie, wydawca moda"
-
-#~ msgid "^9You are frozen - ^3/kill^9 is disabled."
-#~ msgstr "^9Jesteś zamrożony - ^3/kill^9 jest wyłączone."
-
-#~ msgid "WAITING ON %i %s"
-#~ msgstr "CZEKAM NA %i %s"
-
-#~ msgid "'s Bazooka"
-#~ msgstr " Pociskiem Przeciwczołgowym"
-
-#~ msgid "'s Akimbo .45ACP 1911s"
-#~ msgstr " Podwójnym .45ACP 1911s"
-
-#~ msgid "Server disconnected"
-#~ msgstr "Serwer rozłączony"
-
-#~ msgid "Server connection timed out."
-#~ msgstr "Połączenie z serwerem przerwane."
-
-#~ msgid "Server disconnected for unknown reason"
-#~ msgstr "Serwer rozłączony z nieznanych przyczyn"
-
-#~ msgid "'s Akimbo Luger 9mms"
-#~ msgstr " Podwójnym Lugerem 9mm"
-
-#~ msgid "Cheats are not enabled on this server.\n"
-#~ msgstr "Kody nie są włączony na tym serwerze.\n"
-
-#~ msgid "team: class is not available\n"
-#~ msgstr "zespół: klasa nie jest dostępna\n"
-
-#~ msgid "^1Soldier^7 is not available! Choose another class!\n"
-#~ msgstr "^1Żołnierz^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Medic^7 is not available! Choose another class!\n"
-#~ msgstr "^1Medyk^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Engineer^7 is not available! Choose another class!\n"
-#~ msgstr "^1Inżynier^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Field Ops^7 is not available! Choose another class!\n"
-#~ msgstr "^1Wsparcie^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Covert Ops^7 is not available! Choose another class!\n"
-#~ msgstr "^1Zabójca^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "You must be alive to use this command.\n"
-#~ msgstr "Musisz być żywy aby użyć tą komende.\n"
-
-#~ msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
-#~ msgstr "Zespół ^1Osi^7 jest pusty!  Komenda Follow zignorowana.\n"
-
-#~ msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
-#~ msgstr "Zespół ^4Aliantów^7 jest pusty!  Komenda Follow zignorowana.\n"
-
-#~ msgid "Can't follow a player on an enemy team!\n"
-#~ msgstr "Nie możesz podązać za graczem z przeciwnego zespołu!\n"
-
-#~ msgid "Can't follow while not in limbo if on a team!\n"
-#~ msgstr "Nie możesz podązać podczas kiedy jesteś w zespole!\n"
-
-#~ msgid "Partial Name Matches more than 1 Player.\n"
-#~ msgstr "Częściowe Imie Pasuje dla więcej niż 1 Gracza.\n"
-
-#~ msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
-#~ msgstr "Obserwowanie Zespołu ^1Osi^7 jest teraz zablokowane.\n"
-
-#~ msgid "^1Axis^7 team spectating is now disabled.\n"
-#~ msgstr "Obserwowanie Zespołu ^1Osi^7 jest teraz wyłączone.\n"
-
-#~ msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
-#~ msgstr "Obserwowanie Zespołu ^4Aliantów^7 jest teraz zablokowane.\n"
-
-#~ msgid "^4Allies^7 team spectating is now disabled.\n"
-#~ msgstr "Obserwowanie Zespołu ^4Aliantów^7 jest teraz wyłączone.\n"
-
-#~ msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
-#~ msgstr "Zespół ^4Aliantów^7 jest zablokowany od obserwowania.\n"
-
-#~ msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
-#~ msgstr "Zespół ^1Osi^7 jest zablokowany od obserwowania.\n"
-
-#~ msgid "Server quit\n"
-#~ msgstr "Serwer wyłączony\n"
-
-#~ msgid "You cannot switch during a match, please wait until the round ends."
-#~ msgstr ""
-#~ "Nie możesz przechodzić podczas meczu, proszę poczekaj aż runda dobiegnie "
-#~ "końca."
-
-#~ msgid "Allied team has constructed the bridge!"
-#~ msgstr "Allianci zbudowali most!"
-
-#~ msgid "The Tank has been repaired"
-#~ msgstr "Czołg został naprawiony"
-
-#~ msgid "The Tank has been damaged"
-#~ msgstr "Czołg został uszkodzony"
-
-#~ msgid "Join ET Legacy and keep the game alive"
-#~ msgstr "Dolacz do ET Legacy i podtrzymuj gre"
-
-#~ msgid "joined the Axis team\n"
-#~ msgstr "dołączył do Zespołu Osi\n"
-
-#~ msgid "joined the Allies team\n"
-#~ msgstr "dołączył do Zespołu Aliantów\n"
-
-#~ msgid "^3>>> Unknown vote command: ^7 \n"
-#~ msgstr "^3>>> Nieznana komenda głosowania: ^7 \n"
-
-#~ msgid "Use the ^3players^7 command to find a valid player ID.\n"
-#~ msgstr "Użyj komende ^3players^7 aby znaleść poprawne ID gracza.\n"
-
-#~ msgid "^3Match is already in progress!\n"
-#~ msgstr "^3Mecz już trwa!\n"
-
-#~ msgid "^1Teams have been shuffled!\n"
-#~ msgstr "^1Zespoły zostały pomieszane!\n"
-
-#~ msgid "^3*** Loading nextmap! ***\n"
-#~ msgstr "^3*** Wczytywanie następnej mapy! ***\n"
-
-#~ msgid "^1*** Level Restarted! ***\n"
-#~ msgstr "^1*** Poziom Zrestartowany! ***\n"
-
-#~ msgid "You have been switched to the Axis team"
-#~ msgstr "Zostałeś przeniesiony do zespołu Osi"
-
-#~ msgid "Keep the Allies from beating the clock!"
-#~ msgstr "Utrzymuj Aliantów od pobicia czasu!"
-
-#~ msgid "Keep the Axis from beating the clock!"
-#~ msgstr "Utrzymuj Oś od pobicia czasu!"
-
-#~ msgid "You have been switched to the Allied team"
-#~ msgstr "Zostałeś przeniesiony do zespołu Aliantów"
-
-#~ msgid "Try to beat the clock!"
-#~ msgstr "Spróbuj pokonać czas!"
-
-#~ msgid "You have been been stripped of fireteam admin rights"
-#~ msgstr "Zostałeś pozbawiony praw lidera oddziału"
-
-#~ msgid "%s ^7has left the fireteam\n"
-#~ msgstr "%s ^7odszedł z oddziału\n"
-
-#~ msgid "You have been warned by your fireteam leader\n"
-#~ msgstr "Zostałeś ostrzeżony przez swojego lidera oddziału\n"
-
-#~ msgid "^3moved to spectator for inactivity!\n"
-#~ msgstr "^3przeniesiony do widzów za nieaktywność!\n"

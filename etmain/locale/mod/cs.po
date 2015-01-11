@@ -1,22 +1,22 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Jan Šimek <jsimek.cz@gmail.com>, 2015
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.70rc2\n"
+"Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-05 10:41+0100\n"
+"PO-Revision-Date: 2015-01-11 21:37+0000\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
-"Language-Team: Czech translators <mail@etlegacy.com>\n"
-"Language: cs_CZ\n"
+"Language-Team: Czech (http://www.transifex.com/projects/p/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.7.1\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
@@ -183,9 +183,7 @@ msgstr "ZVLASTNI PODEKOVANI"
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
-"Return to Castle Wolfenstein byl vytvoren studii Gray Matter Studios & Nerve "
-"Software."
+msgstr "Return to Castle Wolfenstein byl vytvoren studii Gray Matter Studios & Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
@@ -200,9 +198,8 @@ msgid "Original Soundtrack by Bill Brown."
 msgstr "Puvodni hudba od Billa Browna."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
-#, fuzzy
 msgid "DEVELOPED BY ET:LEGACY TEAM"
-msgstr "^3VYTVORENO TYMEM ET: LEGACY"
+msgstr "VYTVOŘENO TÝMEM ET:LEGACY"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
@@ -243,8 +240,8 @@ msgstr "^1PODEKOVANI"
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
@@ -261,9 +258,8 @@ msgid "^1WEBSITE"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-#, fuzzy
 msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2013 ET: Legacy vývojáři - pod licencí GPL verze 3."
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -289,9 +285,7 @@ msgstr "Hlavni programator"
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
-"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
-"other countries."
+msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET:LEGACY HALL OF FAME"
@@ -303,7 +297,7 @@ msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
-msgstr ""
+msgstr "^1PŘEKLADY"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
@@ -321,9 +315,7 @@ msgstr "Dalsi programovani"
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr ""
-"Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id "
-"Software"
+msgstr "Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id Software"
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
@@ -335,20 +327,14 @@ msgid "^1ORIGINAL DEVELOPERS"
 msgstr "PŮVODNÍ VÝVOJÁŘI"
 
 #: etmain/ui/credits_quit.menu:261
-#, fuzzy
 msgid ""
 " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
-"trademarks of Id Software, Inc. in the United States and/or other countries. "
-"All other trademarks and trade names are the properties of their respective "
-"owners."
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
 msgstr ""
-"@ 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy "
-"Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein "
-"logo, nazev id Software a id logo jsou bud registrovane ochranne znamky nebo "
-"znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny "
-"dalsi ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -364,7 +350,7 @@ msgstr "Obchodni reditel"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
-msgstr "ART"
+msgstr "GRAFIKA"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
@@ -436,7 +422,7 @@ msgstr "Webová stránka ET: Legacy"
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr "Chces otevrit"
+msgstr "Chceš otevřít\n www.etlegacy.com ?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -615,7 +601,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
-msgstr "Max hracu na tym:"
+msgstr "Max hráčů na tým:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
@@ -999,8 +985,8 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
-"Specifies the maximum download rate from the server for players with missing "
-"files"
+"Specifies the maximum download rate from the server for players with missing"
+" files"
 msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
@@ -1083,9 +1069,8 @@ msgid "Yes"
 msgstr "Ano"
 
 #: etmain/ui/hostgame_extended.menu:32
-#, fuzzy
 msgid "Enable Country Flags on the server"
-msgstr "neni na tomto serveru"
+msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1177,8 +1162,8 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
-"Specifies if the server should be \"dedicated\" for LAN or Internet play (no "
-"client)"
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
 msgstr ""
 
 #: etmain/ui/hostgame.menu:44
@@ -1310,9 +1295,8 @@ msgid "Say:"
 msgstr "ŘÍct:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
-#, fuzzy
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr "Ceka se na novou klavesu... Stiskni ESCAPE pro zruseni"
+msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
@@ -1364,8 +1348,8 @@ msgstr ""
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
-"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
-"sure?"
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
 msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:31
@@ -1373,18 +1357,16 @@ msgid "Bot count:"
 msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:39
-#, fuzzy
 msgid "Move skill:"
-msgstr "Pohyb doprava:"
+msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:45
 msgid "Difficulty:"
 msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:53
-#, fuzzy
 msgid "KICK ALL BOTS"
-msgstr "VYKOPNOUT OMNI-BOTa"
+msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:55
 msgid "AXIS BOTS"
@@ -1395,9 +1377,8 @@ msgid "ALLIED BOTS"
 msgstr "SPOJENEČTÍ BOTI"
 
 #: etmain/ui/ingame_vote_bot.menu:57
-#, fuzzy
 msgid "BALANCED"
-msgstr "POKROCILE"
+msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:59
 msgid "BOTS ON"
@@ -1565,9 +1546,8 @@ msgid "Enable or disable warmup damage"
 msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
-#, fuzzy
 msgid "Set the time limit for the server"
-msgstr "neni na tomto serveru"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
@@ -1708,9 +1688,8 @@ msgid "Enter the IP address seperated by dots: xxx.xxx.xxx.xxx"
 msgstr ""
 
 #: etmain/ui/main_quickconnect.menu:82
-#, fuzzy
 msgid "Server PW:"
-msgstr "IP serveru:"
+msgstr ""
 
 #: etmain/ui/main_quickconnect.menu:84
 msgid "Enter the server password if any"
@@ -1790,9 +1769,8 @@ msgstr "Ruka:"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
-#, fuzzy
 msgid "Right"
-msgstr "Pohyb doprava:"
+msgstr ""
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
@@ -1843,9 +1821,8 @@ msgid "Jump:"
 msgstr "Skok:"
 
 #: etmain/ui/options_controls.menu:40
-#, fuzzy
 msgid "Crouc)h:"
-msgstr "Prikrceni:"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -1869,9 +1846,8 @@ msgid "Invert Mouse:"
 msgstr "Obratit mys:"
 
 #: etmain/ui/options_controls.menu:48
-#, fuzzy
 msgid "Inverts mouse pitch"
-msgstr "Obratit mys:"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
@@ -2374,9 +2350,8 @@ msgid "No Body Hit Sound"
 msgstr ""
 
 #: etmain/ui/options_customise_game.menu:73
-#, fuzzy
 msgid "Set hit sounds"
-msgstr "Zvuky zasahu:"
+msgstr ""
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
@@ -2403,9 +2378,8 @@ msgid "Demo"
 msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
-#, fuzzy
 msgid "Screenshot"
-msgstr "Snímek obrazovky:"
+msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
@@ -2648,14 +2622,12 @@ msgid "Standard Hud"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 1"
-msgstr "Upravit alternativni HUD:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 2"
-msgstr "Upravit alternativni HUD:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
@@ -2666,9 +2638,8 @@ msgid "Modify Selected HUD:"
 msgstr "Upravit alternativni HUD:"
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Move Round Timer"
-msgstr "Stopky mise:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Remove Ranks"
@@ -2695,9 +2666,8 @@ msgid "Timer + Ranks + Popups"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Customises Selected HUD"
-msgstr "Upravit alternativni HUD:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:55
 msgid "IN-GAME DISPLAY"
@@ -2769,9 +2739,8 @@ msgstr "Zablesk krve:"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
-#, fuzzy
 msgid "Light"
-msgstr "Naklon vpravo:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
@@ -2905,9 +2874,8 @@ msgid "Displays player info when the crosshair is over a teammate"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:86
-#, fuzzy
 msgid "Set crosshair type"
-msgstr "Velikost zamerovace:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
@@ -2920,9 +2888,8 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
-#, fuzzy
 msgid "Yellow"
-msgstr "Ahoj!"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -3105,7 +3072,8 @@ msgid "Side Print:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:118
-msgid "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:120
@@ -3149,11 +3117,9 @@ msgstr "Obecna kalibrace jasu (vsechny hloubky barev)"
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
-"1. Move the slider below and/or the brightness on your monitor until you can "
-"see 16"
-msgstr ""
-"1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud neuvidis "
-"16"
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
+msgstr "1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud neuvidis 16"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
@@ -3228,9 +3194,8 @@ msgid "high"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:39
-#, fuzzy
 msgid "Set overall video quality"
-msgstr "Celkova kvalita:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
@@ -3248,9 +3213,8 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
-#, fuzzy
 msgid "Toggle fullscreen"
-msgstr "Cela obrazovka:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:46
 msgid "Intensity:"
@@ -3293,9 +3257,8 @@ msgid "Blob"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:55
-#, fuzzy
 msgid "Set shadow details"
-msgstr "Detaily stinu:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Texture Detail:"
@@ -3307,9 +3270,8 @@ msgid "Low"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:56
-#, fuzzy
 msgid "Set texture details"
-msgstr "Detaily textur:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
@@ -3373,18 +3335,16 @@ msgid "Disabled"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:64
-#, fuzzy
 msgid "Set anisotropic filtering"
-msgstr "Anisotropicky filtr:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Anti-Aliasing:"
 msgstr "Vyhlazování:"
 
 #: etmain/ui/options_graphics.menu:65
-#, fuzzy
 msgid "Set Anti-Aliasing"
-msgstr "Vyhlazování:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Color Depth:"
@@ -3395,9 +3355,8 @@ msgid "Desktop Default"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:66
-#, fuzzy
 msgid "Set color depth"
-msgstr "Hloubka barev:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Detail Textures:"
@@ -3440,9 +3399,8 @@ msgid "GL Extensions:"
 msgstr "Rozsireni OpenGL:"
 
 #: etmain/ui/options_graphics.menu:71
-#, fuzzy
 msgid "Enabled"
-msgstr "Povolit vlajky:"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enables or disables usage of OpenGL extensions"
@@ -3469,18 +3427,16 @@ msgid "Effects Volume:"
 msgstr "Hlasitost efektu:"
 
 #: etmain/ui/options_system.menu:41
-#, fuzzy
 msgid "Set the effects volume"
-msgstr "Hlasitost efektu:"
+msgstr ""
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
 msgstr "Hlasitost hudby:"
 
 #: etmain/ui/options_system.menu:43
-#, fuzzy
 msgid "Set the music volume"
-msgstr "Hlasitost hudby:"
+msgstr ""
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
@@ -3499,9 +3455,8 @@ msgid "44 khz (ultra high)"
 msgstr ""
 
 #: etmain/ui/options_system.menu:44
-#, fuzzy
 msgid "Set the sound quality"
-msgstr "Kvalita zvuku:"
+msgstr ""
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3610,9 +3565,8 @@ msgid "Local"
 msgstr ""
 
 #: etmain/ui/playonline.menu:82
-#, fuzzy
 msgid "Internet"
-msgstr "Intensita:"
+msgstr ""
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
@@ -3645,7 +3599,8 @@ msgid "Displays only game servers offering this Mod"
 msgstr ""
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
-msgid "Includes or excludes servers with desired map name from the server list"
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
 msgstr ""
 
 #: etmain/ui/playonline.menu:97
@@ -3686,9 +3641,8 @@ msgid "RESET FILTERS"
 msgstr "FILTRY"
 
 #: etmain/ui/playonline.menu:195
-#, fuzzy
 msgid "Reset all filters to their defaults"
-msgstr "Vratit se k puvodnimu nastaveni?"
+msgstr ""
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
@@ -3787,7 +3741,8 @@ msgid ""
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
-msgid "Enter the alias here that you would like displayed to others on servers"
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
@@ -3819,7 +3774,8 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
-"Choose invert mouse if you prefer flight-simulator style mouse pitch controls"
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
@@ -4144,9 +4100,8 @@ msgid "6. Oops"
 msgstr "6. Sakra"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:149
-#, fuzzy
 msgid "2. No)"
-msgstr "2. Ne"
+msgstr ""
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
@@ -4612,9 +4567,8 @@ msgid "CAMPAIGN STATUS: %s"
 msgstr ""
 
 #: src/cgame/cg_debriefing.c:3245
-#, fuzzy
 msgid "SECS TO NEXT MAP"
-msgstr "DALSI MAPA"
+msgstr ""
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
@@ -4862,9 +4816,8 @@ msgid "players"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2448
-#, fuzzy
 msgid "Type ^3\\ready^7 in the console to start"
-msgstr "Napiste ^3\\ready^* do konzole pro zacatek"
+msgstr ""
 
 #: src/cgame/cg_draw.c:2452
 #, c-format
@@ -4910,9 +4863,8 @@ msgid "You killed"
 msgstr "Zabil jsi"
 
 #: src/cgame/cg_event.c:293
-#, fuzzy
 msgid "^7swapped places with"
-msgstr "Vymenil jsis misto s"
+msgstr ""
 
 #: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
@@ -5040,9 +4992,8 @@ msgid "OBJECTIVES"
 msgstr ""
 
 #: src/cgame/cg_info.c:1421
-#, fuzzy
 msgid "DEMO STATUS"
-msgstr "HRACU"
+msgstr ""
 
 #: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
@@ -5361,8 +5312,8 @@ msgstr ""
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
-"^3Check your filters - no servers found!              Filtered/Total: %04i/"
-"%04i"
+"^3Check your filters - no servers found!              Filtered/Total: "
+"%04i/%04i"
 msgstr ""
 
 #: src/ui/ui_main.c:5883
@@ -5412,308 +5363,3 @@ msgstr "Žádné oblíbené servery nenalezeny."
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
 msgstr "Všechny oblíbené servery byly odebrány."
-
-#~ msgid "Reinforcements deploy in %d seconds."
-#~ msgstr "Posily prijdou za %d vterin"
-
-#~ msgid "Type ^3\\ready^* in the console to start"
-#~ msgstr "Napiste ^3\\ready^* do konzole pro zacatek"
-
-#~ msgid "(WARMUP) Match begins in:"
-#~ msgstr "(ZAHŘÍVACÍ KOLO) Zápas začne za:"
-
-#~ msgid "^1ET:Legacy"
-#~ msgstr "^1ET:Legacy"
-
-#~ msgid "FAV"
-#~ msgstr "OBL"
-
-#~ msgid "Use JPEG for AutoScreenshots:"
-#~ msgstr "Pouzit JPEG pro automaticke snimky obrazovky:"
-
-#~ msgid "Binocular Zoom:"
-#~ msgstr "Priblizeni dalekohledu:"
-
-#~ msgid "Jan 'Radegast' Simek"
-#~ msgstr "Jan 'Radegast' Šimek"
-
-#~ msgid "SPLASH DAMAGE"
-#~ msgstr "SPLASH DAMAGE"
-
-#~ msgid "ID SOFTWARE"
-#~ msgstr "ID SOFTWARE"
-
-#~ msgid "ACTIVISION"
-#~ msgstr "ACTIVISION"
-
-#~ msgid "ET 2.60"
-#~ msgstr "ET 2.60"
-
-#~ msgid "Paul 'Locki' Wedgwood"
-#~ msgstr "Paul 'Locki' Wedgwood"
-
-#~ msgid "Francisca 'Freya' Wedgwood"
-#~ msgstr "Francisca 'Freya' Wedgwood"
-
-#~ msgid "Richard 'Fluffy_gIMp' Jolly"
-#~ msgstr "Richard 'Fluffy_gIMp' Jolly"
-
-#~ msgid "Francis 'Frankie' Hobbins"
-#~ msgstr "Francis 'Frankie' Hobbins"
-
-#~ msgid "Per 'Per128' Abrahamsen"
-#~ msgstr "Per 'Per128' Abrahamsen"
-
-#~ msgid "Arnout 'RR2DO2' van Meer"
-#~ msgstr "Arnout 'RR2DO2' van Meer"
-
-#~ msgid "Gordon 'digibob' Biggans"
-#~ msgstr "Gordon 'digibob' Biggans"
-
-#~ msgid "Randy 'ydnar' Reddig"
-#~ msgstr "Randy 'ydnar' Reddig"
-
-#~ msgid "Tim 'Marauder' Kautz"
-#~ msgstr "Tim 'Marauder' Kautz"
-
-#~ msgid "Ed 'Bongoboy' Stern"
-#~ msgstr "Ed 'Bongoboy' Stern"
-
-#~ msgid "Matt 'Wils' Wilson"
-#~ msgstr "Matt 'Wils' Wilson"
-
-#~ msgid "Simon 'sock' O'Callaghan"
-#~ msgstr "Simon 'sock' O'Callaghan"
-
-#~ msgid "Mark 'nakedape' Fry"
-#~ msgstr "Mark 'nakedape' Fry"
-
-#~ msgid "Thomas 'Q-Fraggel' Creutzenberg"
-#~ msgstr "Thomas 'Q-Fraggel' Creutzenberg"
-
-#~ msgid "Chris 'SHoD' Farcy"
-#~ msgstr "Chris 'SHoD' Farcy"
-
-#~ msgid "Lloyd 'LloydM' Morris"
-#~ msgstr "Lloyd 'LloydM' Morris"
-
-#~ msgid "Lee 'Llama' Mercer"
-#~ msgstr "Lee 'Llama' Mercer"
-
-#~ msgid "Kevin Cloud"
-#~ msgstr "Kevin Cloud"
-
-#~ msgid "Timothee Besset"
-#~ msgstr "Timothee Besset"
-
-#~ msgid "Jonathan Moses"
-#~ msgstr "Jonathan Moses"
-
-#~ msgid "Doug Avery"
-#~ msgstr "Doug Avery"
-
-#~ msgid "John Fritts"
-#~ msgstr "John Fritts"
-
-#~ msgid "Steve Holmes"
-#~ msgstr "Steve Holmes"
-
-#~ msgid "Matthew Beal"
-#~ msgstr "Matthew Beal"
-
-#~ msgid "Laird M. Malamed"
-#~ msgstr "Laird M. Malamed"
-
-#~ msgid "Mark Lamia"
-#~ msgstr "Mark Lamia"
-
-#~ msgid "Brad Saavedra"
-#~ msgstr "Brad Saavedra"
-
-#~ msgid "Evan Button"
-#~ msgstr "Evan Button"
-
-#~ msgid "Matt McClure"
-#~ msgstr "Matt McClure"
-
-#~ msgid "Nathaniel McClure"
-#~ msgstr "Nathaniel McClure"
-
-#~ msgid ""
-#~ "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, "
-#~ "Daniel Kannard, Cory Rice"
-#~ msgstr ""
-#~ "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, "
-#~ "Daniel Kannard, Cory Rice"
-
-#~ msgid ""
-#~ "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert "
-#~ "Max Martin, Jim Call"
-#~ msgstr ""
-#~ "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert "
-#~ "Max Martin, Jim Call"
-
-#~ msgid ""
-#~ "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
-#~ "Lawrence Wong"
-#~ msgstr ""
-#~ "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
-#~ "Lawrence Wong"
-
-#~ msgid ""
-#~ "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
-#~ "Todd, Mike Restifo"
-#~ msgstr ""
-#~ "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
-#~ "Todd, Mike Restifo"
-
-#~ msgid "Chris Keim"
-#~ msgstr "Chris Keim"
-
-#~ msgid "Neil Barizo"
-#~ msgstr "Neil Barizo"
-
-#~ msgid "Marilena Rixford"
-#~ msgstr "Marilena Rixford"
-
-#~ msgid "Tim Vanlaw"
-#~ msgstr "Tim Vanlaw"
-
-#~ msgid "Jason Levine"
-#~ msgstr "Jason Levine"
-
-#~ msgid "Jef Sedivy"
-#~ msgstr "Jef Sedivy"
-
-#~ msgid "Bob McPherson"
-#~ msgstr "Bob McPherson"
-
-#~ msgid "Jason 'Rhea' Keimig"
-#~ msgstr "Jason 'Rhea' Keimig"
-
-#~ msgid "Tony Ray"
-#~ msgstr "Tony Ray"
-
-#~ msgid "Bjrn Christoph"
-#~ msgstr "Bjrn Christoph"
-
-#~ msgid "Drew Markham"
-#~ msgstr "Drew Markham"
-
-#~ msgid "Neil Ross"
-#~ msgstr "Neil Ross"
-
-#~ msgid "Granville van Dusen"
-#~ msgstr "Granville van Dusen"
-
-#~ msgid "Dan 'bani' Hollis"
-#~ msgstr "Dan 'bani' Hollis"
-
-#~ msgid "Ben 'Rain' Winslow"
-#~ msgstr "Ben 'Rain' Winslow"
-
-#~ msgid "Frederik 'fretn' Delaere"
-#~ msgstr "Frederik 'fretn' Delaere"
-
-#~ msgid "Chris 'Zinx' Lais"
-#~ msgstr "Chris 'Zinx' Lais"
-
-#~ msgid "Joe 'Majikthise' D."
-#~ msgstr "Joe 'Majikthise' D."
-
-#~ msgid "ET Pro Logo"
-#~ msgstr "ET Pro Logo"
-
-#~ msgid "Brad Oliver"
-#~ msgstr "Brad Oliver"
-
-#~ msgid "Follow me!"
-#~ msgstr "Sledujes"
-
-#~ msgid "Sorry!"
-#~ msgstr "S. Promin"
-
-#~ msgid "Oops!"
-#~ msgstr "O. Oops"
-
-#~ msgid "Hi!"
-#~ msgstr "Čau!"
-
-#~ msgid "Hallo!"
-#~ msgstr "Hallo!"
-
-#~ msgid "Good bye."
-#~ msgstr "Nashle."
-
-#~ msgid "Bye."
-#~ msgstr "Zatím se mějte."
-
-#~ msgid "Great shot!"
-#~ msgstr "6. Skvela trefa"
-
-#~ msgid "Thanks!"
-#~ msgstr "T. Dekuji"
-
-#~ msgid "^1Legacy"
-#~ msgstr "^1Legacy"
-
-#~ msgid "MAP"
-#~ msgstr "MAPA"
-
-#~ msgid "OMNI-BOT"
-#~ msgstr "OMNI-BOT"
-
-#~ msgid "Server:"
-#~ msgstr "IP serveru:"
-
-#~ msgid "was killed by"
-#~ msgstr "Zabil jsi"
-
-#~ msgid "Arming dynamite..."
-#~ msgstr "Ceka se na nacteni hry..."
-
-#~ msgid "embraced his own satchel explosion"
-#~ msgstr "zostal uciszony przez"
-
-#~ msgid "Spectators"
-#~ msgstr "Nemi pozorovatele:"
-
-#~ msgid "Attack!"
-#~ msgstr "Utok:"
-
-#~ msgid "Faster Reload"
-#~ msgstr "Rychlejší nabíjení"
-
-#~ msgid "was killed"
-#~ msgstr "byl zabit"
-
-#~ msgid "Mod filter:"
-#~ msgstr "Splouchance krve:"
-
-#, fuzzy
-#~ msgid "^3moved to spectator for inactivity!\n"
-#~ msgstr "Neaktivita pozorovatelu:"
-
-#~ msgid "Connection:"
-#~ msgstr "Spojeni:"
-
-#~ msgid "#PLRS"
-#~ msgstr "#HRCI"
-
-#~ msgid "Borderless:"
-#~ msgstr "Bez okraju:"
-
-#~ msgid "AUTO UPDATE"
-#~ msgstr "AKTUALIZACE"
-
-#~ msgid "New version available. Do you want to update now?"
-#~ msgstr "Je k dispozici nova verze. Chcete aktualizovat nyni?"
-
-#~ msgid "MAX OMNI-BOT"
-#~ msgstr "MAX OMNI-BOTu"
-
-#~ msgid "MIN OMNI-BOT"
-#~ msgstr "MIN OMNI-BOTu"
-
-#~ msgid "Binoculars"
-#~ msgstr "Priblizeni dalekohledu:"

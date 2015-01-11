@@ -1,19 +1,21 @@
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.70rc2\n"
+"Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2013-09-20 01:16+0100\n"
-"Last-Translator: IR4\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2015-01-11 10:27+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
@@ -237,8 +239,8 @@ msgstr ""
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
@@ -328,9 +330,9 @@ msgid ""
 " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
-"trademarks of Id Software, Inc. in the United States and/or other countries. "
-"All other trademarks and trade names are the properties of their respective "
-"owners."
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
 msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:66
@@ -982,8 +984,8 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
-"Specifies the maximum download rate from the server for players with missing "
-"files"
+"Specifies the maximum download rate from the server for players with missing"
+" files"
 msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
@@ -1066,9 +1068,8 @@ msgid "Yes"
 msgstr "JA"
 
 #: etmain/ui/hostgame_extended.menu:32
-#, fuzzy
 msgid "Enable Country Flags on the server"
-msgstr "ist nicht auf dem Server"
+msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1135,14 +1136,12 @@ msgid "Auto-Configure Server:"
 msgstr "Server Autokonfiguration:"
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Competition Settings"
-msgstr "Wettkamp Einstellungen geladen!"
+msgstr ""
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Public Settings"
-msgstr "Allgemeine Einstellungen geladen!"
+msgstr ""
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
@@ -1162,8 +1161,8 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
-"Specifies if the server should be \"dedicated\" for LAN or Internet play (no "
-"client)"
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
 msgstr ""
 
 #: etmain/ui/hostgame.menu:44
@@ -1305,18 +1304,16 @@ msgstr ""
 #: etmain/ui/ingame_messagemode.menu:59
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
-#, fuzzy
 msgid "All"
-msgstr "Alliierte"
+msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
 msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
-#, fuzzy
 msgid "Fireteam"
-msgstr "Alliierte Team"
+msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
@@ -1350,8 +1347,8 @@ msgstr ""
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
-"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
-"sure?"
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
 msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:31
@@ -1387,9 +1384,8 @@ msgid "BOTS ON"
 msgstr "BOTS AN"
 
 #: etmain/ui/ingame_vote_bot.menu:60
-#, fuzzy
 msgid "BOTS OFF"
-msgstr "BOTS AN"
+msgstr ""
 
 #: etmain/ui/ingame_vote_disabled.menu:51
 msgid "Voting is disabled"
@@ -1549,9 +1545,8 @@ msgid "Enable or disable warmup damage"
 msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
-#, fuzzy
 msgid "Set the time limit for the server"
-msgstr "ist nicht auf dem Server"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
@@ -1850,9 +1845,8 @@ msgid "Invert Mouse:"
 msgstr "Invertiere Maus:"
 
 #: etmain/ui/options_controls.menu:48
-#, fuzzy
 msgid "Inverts mouse pitch"
-msgstr "Invertiere Maus:"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
@@ -2690,9 +2684,8 @@ msgid "High"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:56
-#, fuzzy
 msgid "Med"
-msgstr "Medaillen:"
+msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
@@ -3078,7 +3071,8 @@ msgid "Side Print:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:118
-msgid "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:120
@@ -3122,8 +3116,8 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
-"1. Move the slider below and/or the brightness on your monitor until you can "
-"see 16"
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
 msgstr ""
 
 #: etmain/ui/options_graphics_gamma.menu:35
@@ -3432,18 +3426,16 @@ msgid "Effects Volume:"
 msgstr "Effekt Lautstärke"
 
 #: etmain/ui/options_system.menu:41
-#, fuzzy
 msgid "Set the effects volume"
-msgstr "Effekt Lautstärke"
+msgstr ""
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
 msgstr "Musik Lautstärke"
 
 #: etmain/ui/options_system.menu:43
-#, fuzzy
 msgid "Set the music volume"
-msgstr "Musik Lautstärke"
+msgstr ""
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
@@ -3462,9 +3454,8 @@ msgid "44 khz (ultra high)"
 msgstr ""
 
 #: etmain/ui/options_system.menu:44
-#, fuzzy
 msgid "Set the sound quality"
-msgstr "Klang Qualität"
+msgstr ""
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3607,7 +3598,8 @@ msgid "Displays only game servers offering this Mod"
 msgstr ""
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
-msgid "Includes or excludes servers with desired map name from the server list"
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
 msgstr ""
 
 #: etmain/ui/playonline.menu:97
@@ -3748,7 +3740,8 @@ msgid ""
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
-msgid "Enter the alias here that you would like displayed to others on servers"
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
@@ -3780,7 +3773,8 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
-"Choose invert mouse if you prefer flight-simulator style mouse pitch controls"
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
@@ -4654,7 +4648,7 @@ msgstr "Ja(%s):%i, NEIN(%s):%i"
 #: src/cgame/cg_draw.c:1913
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr "DU STIMMST:"
+msgstr "DU STIMMST: %s"
 
 #: src/cgame/cg_draw.c:1918
 #, c-format
@@ -5254,11 +5248,7 @@ msgid ""
 " %s^*\n"
 "\n"
 "%s"
-msgstr ""
-"Verbinde mit:\n"
-" %s^*\n"
-"\n"
-"%s"
+msgstr "Verbinde mit:\n %s^*\n\n%s"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
@@ -5321,8 +5311,8 @@ msgstr ""
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
-"^3Check your filters - no servers found!              Filtered/Total: %04i/"
-"%04i"
+"^3Check your filters - no servers found!              Filtered/Total: "
+"%04i/%04i"
 msgstr ""
 
 #: src/ui/ui_main.c:5883
@@ -5372,90 +5362,3 @@ msgstr ""
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
 msgstr ""
-
-#~ msgid "Reinforcements deploy in %d seconds."
-#~ msgstr "Verstärkung kommt in %d Sekunden."
-
-#~ msgid "(WARMUP) Match begins in:"
-#~ msgstr "(AUFWÄRMEN) Spiel beginnt in:"
-
-#~ msgid "MAP"
-#~ msgstr "KARTE"
-
-#~ msgid "Axis team"
-#~ msgstr "Axen Team"
-
-#~ msgid "Spectators"
-#~ msgstr "Zuschauer"
-
-#~ msgid "Match is already in progress!\n"
-#~ msgstr "Das Spiel läuft bereits!"
-
-#~ msgid "Attack!"
-#~ msgstr "Angriff"
-
-#~ msgid "Fall back!"
-#~ msgstr "Rückzug!"
-
-#~ msgid "Mod filter:"
-#~ msgstr "Mod Filter:"
-
-#~ msgid "Not enough players to start match!\n"
-#~ msgstr "Nicht genug Spieler um den Kampf zu starten!\n"
-
-#~ msgid "Timelimit hit.\n"
-#~ msgstr "Zeitlimit erreicht.\n"
-
-#~ msgid "^3Insufficient fire support."
-#~ msgstr "^3Unzureichende Feuerunterstützung."
-
-#~ msgid "Landmine cannot be armed here..."
-#~ msgstr "Landmienen können hier nicht gelegt werden..."
-
-#~ msgid "Your team has too many landmines placed..."
-#~ msgstr "Dein Team hat zu viele Landmienen gelegt..."
-
-#~ msgid "You cannot arm dynamite near a friendly construction!"
-#~ msgstr "Du kannst kein Dynamit neben Eigenzielen zünden."
-
-#~ msgid "No complaint filed against you.\n"
-#~ msgstr "Keine Beschwerde gegen dich eingereicht.\n"
-
-#~ msgid "Bad client slot: "
-#~ msgstr "Schlechter Client Slot: "
-
-#~ msgid "is not active\n"
-#~ msgstr "ist nicht aktiv\n"
-
-#~ msgid "User "
-#~ msgstr "Benutzer "
-
-#~ msgid "is not on the server\n"
-#~ msgstr "ist nicht auf dem Server\n"
-
-#~ msgid "Client not on server.\n"
-#~ msgstr "Client ist nicht auf dem Server.\n"
-
-#~ msgid "^9You are frozen - ^3/kill^9 is disabled."
-#~ msgstr "⁹Du bist eingefroren - ^3/kill^9 ist ausgeschaltet."
-
-#~ msgid "Allied team has constructed the bridge!"
-#~ msgstr "Die Alliierten haben die Brücke gebaut!"
-
-#~ msgid "The Tank has been repaired"
-#~ msgstr "Der Tank wurde repariert"
-
-#~ msgid "The Tank has been damaged"
-#~ msgstr "Der Panzer wurde beschädigt"
-
-#~ msgid "joined the Axis team\n"
-#~ msgstr "schließt sich den Axen an\n"
-
-#~ msgid "joined the Allies team\n"
-#~ msgstr "schließt sich den Alliierten an\n"
-
-#~ msgid "Try to beat the clock!"
-#~ msgstr "Versuche die Uhr zu schlagen!"
-
-#~ msgid "Connection:"
-#~ msgstr "Verbindung"
