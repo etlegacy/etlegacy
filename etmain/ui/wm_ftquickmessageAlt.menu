@@ -146,7 +146,7 @@ QM_MENU_END
 QM_MENU_START( "wm_ftquickglobal_alt" )
 
 	QM_MENU_ITEM( _("1. Yes"),				exec "VoiceChat Affirmative"; 	close wm_ftquickglobal_alt, 	"1", 0 )
-	QM_MENU_ITEM( _("2. No)"),				exec "VoiceChat Negative"; 		close wm_ftquickglobal_alt, 	"2", 1 )
+	QM_MENU_ITEM( _("2. No"),				exec "VoiceChat Negative"; 		close wm_ftquickglobal_alt, 	"2", 1 )
 	QM_MENU_ITEM( _("3. Enemy Weak"),		exec "VoiceChat EnemyWeak";		close wm_ftquickglobal_alt, 	"3", 2 )
 	QM_MENU_ITEM( _("4. Hi"),				exec "VoiceChat Hi"; 			close wm_ftquickglobal_alt, 	"4", 3 )
 	QM_MENU_ITEM( _("5. Bye"),				exec "VoiceChat Bye"; 			close wm_ftquickglobal_alt, 	"5", 4 )
