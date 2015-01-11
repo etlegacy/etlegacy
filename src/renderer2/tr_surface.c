@@ -784,7 +784,7 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 		float       *v;
 		const float *v0, *v1, *v2;
 		const float *t0, *t1, *t2;
-		vec3_t      tangent;
+		vec3_t      tangent = { 0, 0, 0 };
 		vec3_t      binormal;
 		vec3_t      normal;
 		glIndex_t   *indices;
@@ -1735,7 +1735,7 @@ static void Tess_SurfaceMDV(mdvSurface_t *srf)
 		float       *v;
 		const float *v0, *v1, *v2;
 		const float *t0, *t1, *t2;
-		vec3_t      tangent;
+		vec3_t      tangent = { 0, 0, 0 };
 		vec3_t      binormal;
 		vec3_t      normal;
 		glIndex_t   *indices;
