@@ -17,6 +17,12 @@
 #define ETLEGACY_VERSION_SHORT "@ETL_CMAKE_VERSION_SHORT@"
 
 /**
+ * @def ETLEGACY_VERSION_INT
+ * @brief Version in integral format. Contains only the most recent tag.
+ */
+#define ETLEGACY_VERSION_INT @ETL_CMAKE_VERSION_INT@
+
+/**
 * @def PRODUCT_VERSION
 * @brief Version data used for windows RC compiler
 */

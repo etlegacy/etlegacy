@@ -1296,7 +1296,7 @@ void CL_InitUI(void)
 	}
 
 	// init for this gamestate
-	VM_Call(uivm, UI_INIT, (cls.state >= CA_AUTHORIZING && cls.state < CA_ACTIVE), qtrue);
+	VM_Call(uivm, UI_INIT, (cls.state >= CA_AUTHORIZING && cls.state < CA_ACTIVE), qtrue, ETLEGACY_VERSION_INT);
 }
 
 qboolean UI_checkKeyExec(int key)

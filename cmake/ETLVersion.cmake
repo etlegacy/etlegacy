@@ -92,6 +92,12 @@ else() # Not using source from git repo
 	set(ETL_CMAKE_PROD_VERSIONSTR ${ETLEGACY_VERSION})
 endif()
 
+if(${ETLEGACY_VERSION_MINOR} LESS 10)
+	set(ETL_CMAKE_VERSION_INT "${ETLEGACY_VERSION_MAJOR}0${ETLEGACY_VERSION_MINOR}")
+else()
+	set(ETL_CMAKE_VERSION_INT "${ETLEGACY_VERSION_MAJOR}${ETLEGACY_VERSION_MINOR}")
+endif()
+
 # Mod version
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)
 # This is for NSIS

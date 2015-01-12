@@ -785,7 +785,7 @@ typedef struct
 
 	qboolean demoPlayback;
 	demoPlayInfo_t *demoinfo;
-	int legacyClient;
+	int legacyClient;               // is either 0 (vanilla client) 1 (old legacy client) or a version integer from git_version.h
 	qboolean loading;               // don't defer players at initial startup
 	qboolean intermissionStarted;   // don't play voice rewards, because game will end shortly
 

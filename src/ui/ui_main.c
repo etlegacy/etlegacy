@@ -85,7 +85,7 @@ void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 static char translated_yes[4], translated_no[4];
 
-void _UI_Init(int legacyClient);
+void _UI_Init(int legacyClient, int clientVersion);
 void _UI_Shutdown(void);
 void _UI_KeyEvent(int key, qboolean down);
 void _UI_MouseEvent(int dx, int dy);
@@ -129,7 +129,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case UI_GETAPIVERSION:
 		return UI_API_VERSION;
 	case UI_INIT:
-		_UI_Init(arg1);
+		_UI_Init(arg1, arg2);
 		return 0;
 	case UI_SHUTDOWN:
 		_UI_Shutdown();
@@ -7452,7 +7452,7 @@ static void UI_RunCinematicFrame(int handle)
 	trap_CIN_RunCinematic(handle);
 }
 
-void _UI_Init(int legacyClient)
+void _UI_Init(int legacyClient, int clientVersion)
 {
 	int x;
 
@@ -7481,7 +7481,7 @@ void _UI_Init(int legacyClient)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	uiInfo.legacyClient = (legacyClient == qtrue ? qtrue : qfalse);
+	MOD_CHECK_LEGACY(legacyClient, clientVersion, uiInfo.legacyClient);
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;

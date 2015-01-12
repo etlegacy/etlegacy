@@ -607,7 +607,7 @@ cvarTable_t gameCvarTable[] =
 // made static to avoid aliasing
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
-void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer);
+void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion);
 void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
 void CheckExitRules(void);
@@ -646,7 +646,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 
 		Bot_Interface_InitHandles();
 #endif
-		G_InitGame(arg0, arg1, arg2, arg3);
+		G_InitGame(arg0, arg1, arg2, arg3, arg4);
 		G_Printf("Game Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
 #ifdef FEATURE_OMNIBOT
 
@@ -2106,7 +2106,7 @@ void bani_getmapxp(void)
 G_InitGame
 ============
 */
-void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
+void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion)
 {
 	int  i;
 	char cs[MAX_INFO_STRING];
@@ -2149,7 +2149,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer)
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
 	}
 
-	level.legacyServer = legacyServer;
+	MOD_CHECK_LEGACY(legacyServer, serverVersion, level.legacyServer);
 
 	// set some level globals
 	i = level.server_settings;
