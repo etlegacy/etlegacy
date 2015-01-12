@@ -642,7 +642,7 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
  * An interpreted function will immediately execute an OP_ENTER instruction,
  * which will subtract space for locals from sp
  */
-intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
+intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 {
 	vm_t     *oldVM;
 	intptr_t r;
@@ -665,19 +665,25 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 	if (vm->entryPoint)
 	{
 		// rcg010207 -  see dissertation at top of VM_DllSyscall() in this file.
-		int     args[16];
+		int     args[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		va_list ap;
 		int     i;
 
 		va_start(ap, callnum);
-		for (i = 0; i < sizeof(args) / sizeof(args[i]); i++)
+		for (i = 0; i < ARRAY_LEN(args); i++)
 		{
+			// We add the end of args point since windows at least just returns random values if there are no args
+			// this way we know that only valid values are sent to the vm
 			args[i] = va_arg(ap, int);
+			if (args[i] == VM_CALL_END)
+			{
+				args[i] = 0;
+				break;
+			}
 		}
 		va_end(ap);
 
-		r = vm->entryPoint(callnum, args[0], args[1], args[2], args[3],
-		                   args[4], args[5], args[6], args[7],
+		r = vm->entryPoint(callnum, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7],
 		                   args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15]);
 	}
 #if 0

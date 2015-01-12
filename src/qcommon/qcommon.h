@@ -38,11 +38,7 @@
 #define INCLUDE_QCOMMON_H
 
 #include "../qcommon/cm_public.h"
-/*
-#ifdef USE_WINDOWS_CONSOLE
-#include "../sys/sys_win32.h"
-#endif
-*/
+
 // Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #   ifndef __attribute__
@@ -449,7 +445,11 @@ void VM_Free(vm_t *vm);
 void VM_Clear(void);
 vm_t *VM_Restart(vm_t *vm);
 
-intptr_t QDECL VM_Call(vm_t *vm, int callNum, ...);
+// this should be something like INT_MAX but that would need limits.h everywhere so meh and negative values should be somewhat safe
+#define VM_CALL_END -1337
+
+intptr_t QDECL VM_CallFunc(vm_t *vm, int callNum, ...);
+#define VM_Call(vm, callNum, ...) VM_CallFunc(vm, callNum, __VA_ARGS__, VM_CALL_END)
 
 void VM_Debug(int level);
 
