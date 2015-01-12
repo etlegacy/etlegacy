@@ -943,12 +943,13 @@ void Sys_CreateConsoleWindow(void)
 #endif
 }
 
+#define SET_PROCESS_AFFINITY 1
+
 void Sys_SetProcessProperties(void)
 {
-#if 0
+#ifdef SET_PROCESS_AFFINITY
 	DWORD_PTR processAffinityMask;
 	DWORD_PTR systemAffinityMask;
-	DWORD_PTR mask;
 	int       core, bit, currentCore;
 	BOOL      success;
 #endif
@@ -957,39 +958,38 @@ void Sys_SetProcessProperties(void)
 	//Set Process priority
 	SetPriorityClass(process, HIGH_PRIORITY_CLASS);
 
-#if 0 //This could be fixed & enabled in the future, but now it just causes input issues
+#ifdef SET_PROCESS_AFFINITY
 	if (!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask))
 	{
 		return;
 	}
 
 	//set this to the core you want your process to run on
-	core = 2;
-	mask = 0x1;
-
+	// probably could catch this from a cvar, but do we want people fucking arround with it
+	core = SET_PROCESS_AFFINITY;
 	for (bit = 0, currentCore = 1; bit < 64; bit++)
 	{
-		if (mask & processAffinityMask)
+		if (BIT(bit) & processAffinityMask)
 		{
 			if (currentCore != core)
 			{
-				processAffinityMask &= ~mask;
+				CLEARBIT(processAffinityMask, bit);
 			}
 
 			currentCore++;
 		}
-
-		mask = mask << 1;
 	}
 
 	success = SetProcessAffinityMask(process, processAffinityMask);
 	if (success)
 	{
 		//Yup great
+		Com_DPrintf(S_COLOR_GREEN "Sys_SetProcessProperties succesfully set process affinity");
 	}
 	else
 	{
 		//Fuck!
+		Com_DPrintf(S_COLOR_RED "Sys_SetProcessProperties failed to set process affinity");
 	}
 #endif
 }
