@@ -451,7 +451,7 @@ static void CG_SoundLoadSoundFiles(void)
 	fileHandle_t f;
 	int          len;
 
-	// scan for sound files
+	// scan for sound files ... file is must have!
 	Com_sprintf(filename, MAX_QPATH, "sound/scripts/filelist.txt");
 	len = trap_FS_FOpenFile(filename, &f, FS_READ);
 	if (len <= 0)
@@ -492,12 +492,6 @@ static void CG_SoundLoadSoundFiles(void)
 		// add the map specific soundfile
 		Com_sprintf(soundFiles[numSounds++], MAX_QPATH, "%s.sounds", cgs.rawmapname);
 
-		if (!numSounds)
-		{
-			CG_Printf(S_COLOR_RED "ERROR CG_SoundLoadSoundFiles: No sound files found\n");
-			return;
-		}
-
 		// load and parse sound files
 		for (i = 0; i < numSounds; i++)
 		{
@@ -506,11 +500,7 @@ static void CG_SoundLoadSoundFiles(void)
 			len = trap_FS_FOpenFile(filename, &f, FS_READ);
 			if (len <= 0)
 			{
-				if (i != (numSounds - 1))
-				{
-					CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: Couldn't load %s\n", filename);
-				}
-				continue;
+				CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: Couldn't load %s\n", filename);
 			}
 			if (len > sizeof(bigTextBuffer))
 			{
