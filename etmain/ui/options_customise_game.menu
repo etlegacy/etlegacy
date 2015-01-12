@@ -1,4 +1,4 @@
-_(#include "ui/menudef.h"
+#include "ui/menudef.h"
 #include "ui/menumacros.h"
 
 // Defines //
