@@ -136,7 +136,6 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 	int        i, j, k, dist;
 	vec3_t     normal;
 	vec3_t     sum;
-	int        count;
 	vec3_t     base;
 	vec3_t     delta;
 	int        x, y;
@@ -185,7 +184,6 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 	{
 		for (j = 0; j < height; j++)
 		{
-			count = 0;
 			dv    = &ctrl[j][i];
 			VectorCopy(dv->xyz, base);
 			for (k = 0; k < 8; k++)
@@ -251,12 +249,6 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 					continue;
 				}
 				VectorAdd(normal, sum, sum);
-				count++;
-			}
-			if (count == 0)
-			{
-				//printf("bad normal\n");
-				count = 1;
 			}
 			VectorNormalize2(sum, dv->normal);
 		}
