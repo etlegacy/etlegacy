@@ -1609,16 +1609,17 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			}
 		}
 
-		if (key == K_ENTER || key == K_KP_ENTER)
+		if (key == K_ENTER || key == K_KP_ENTER || key == K_ESCAPE)
 		{
-			if (item->onAccept)
+			if ((key == K_ENTER || key == K_KP_ENTER) && item->onAccept)
 			{
 				Item_RunScript(item, NULL, item->onAccept);
 			}
-		}
+			else if (key == K_ESCAPE && item->onEsc)
+			{
+				Item_RunScript(item, NULL, item->onEsc);
+			}
 
-		if (key == K_ENTER || key == K_KP_ENTER || key == K_ESCAPE)
-		{
 			return qfalse;
 		}
 
