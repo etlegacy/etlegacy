@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-11 21:37+0000\n"
+"PO-Revision-Date: 2015-01-12 10:06+0000\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -28,15 +28,15 @@ msgstr "Producent"
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
-msgstr ""
+msgstr "Vedoucí výroby"
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
-msgstr "Instalator"
+msgstr "Instalátor"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
-msgstr ""
+msgstr "Koordinátor výroby"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
@@ -44,7 +44,7 @@ msgstr "Produkcni testr"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
-msgstr ""
+msgstr "St. výkonný producent"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
@@ -68,7 +68,7 @@ msgstr "Testeri:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr "Sit"
+msgstr "Síť"
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
@@ -263,7 +263,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
-msgstr ""
+msgstr "SÍŇ SLÁVY"
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
@@ -289,7 +289,7 @@ msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. 
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET:LEGACY HALL OF FAME"
-msgstr ""
+msgstr "ET:LEGACY SÍŇ SLÁVY"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
