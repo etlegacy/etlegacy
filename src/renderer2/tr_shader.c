@@ -6514,7 +6514,7 @@ static void ScanAndLoadShaderFiles(void)
 		if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
-			token = COM_ParseExt2(&p, qtrue);
+			(void) COM_ParseExt2(&p, qtrue);
 
 			SkipBracedSection(&p);
 		}
