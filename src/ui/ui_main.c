@@ -530,7 +530,7 @@ void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, f
 	Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
 }
 
-void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, char cursor, int limit, int style)
+void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
 {
 	vec4_t      newColor;
 	glyphInfo_t *glyph, *glyph2;
@@ -552,7 +552,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 			len = limit;
 		}
 
-		glyph2 = Q_UTF8_GetGlyph(font, &cursor);
+		glyph2 = Q_UTF8_GetGlyph(font, cursor);
 		while (s && *s && count < len)
 		{
 			glyph = Q_UTF8_GetGlyph(font, s);

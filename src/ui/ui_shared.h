@@ -1,4 +1,4 @@
-/**
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -27,8 +27,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
+ */
+/**
  * @file ui_shared.h
+ * @brief Shared between cgame and ui
  */
 
 #ifndef INCLUDE_UI_SHARED_H
@@ -435,7 +437,7 @@ typedef struct
 	void (*getCVarString)(const char *cvar, char *buffer, int bufsize);
 	float (*getCVarValue)(const char *cvar);
 	void (*setCVar)(const char *cvar, const char *value);
-	void (*drawTextWithCursor)(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, char cursor, int limit, int style);
+	void (*drawTextWithCursor)(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style);
 	void (*setOverstrikeMode)(qboolean b);
 	qboolean (*getOverstrikeMode)(void);
 	void (*startLocalSound)(sfxHandle_t sfx, int channelNum);

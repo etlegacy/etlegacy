@@ -2430,8 +2430,7 @@ void Item_TextField_Paint(itemDef_t *item)
 
 	if (IS_EDITMODE(item))
 	{
-		char cursor = DC->getOverstrikeMode() ? '_' : '|';
-		DC->drawTextWithCursor(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, buff + editPtr->paintOffset + field_offset, item->cursorPos - editPtr->paintOffset - field_offset, cursor, editPtr->maxPaintChars, item->textStyle);
+		DC->drawTextWithCursor(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, buff + editPtr->paintOffset + field_offset, item->cursorPos - editPtr->paintOffset - field_offset, (DC->getOverstrikeMode() ? "_" : "|"), editPtr->maxPaintChars, item->textStyle);
 	}
 	else
 	{

@@ -2266,7 +2266,10 @@ float CG_Cvar_Get(const char *cvar)
 	return atof(buff);
 }
 
-void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, char cursor, int limit, int style)
+/**
+ * @todo Unused. Cursor is ignored
+ */
+void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
 {
 	CG_Text_Paint(x, y, scale, color, text, 0, limit, style);
 }
