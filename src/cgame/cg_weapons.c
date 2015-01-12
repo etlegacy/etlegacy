@@ -6860,6 +6860,11 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 	vec3_t     start = { 0, 0, 0 };
 	static int lastBloodSpat;
 
+	if (sourceEntityNum < 0 || sourceEntityNum >= MAX_GENTITIES)
+	{
+		return;
+	}
+
 	// don't ever shoot if we're binoced in
 	if (cg_entities[sourceEntityNum].currentState.eFlags & EF_ZOOMING)
 	{
@@ -6897,7 +6902,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 
 	// if the shooter is currently valid, calc a source point and possibly
 	// do trail effects
-	if (sourceEntityNum >= 0 && cg_tracerChance.value > 0)
+	if (cg_tracerChance.value > 0)
 	{
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 		{
