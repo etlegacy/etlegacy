@@ -961,6 +961,11 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 	int  lastcolor;
 	int  chatHeight;
 
+	if (clientnum < 0 || clientnum >= MAX_CLIENTS)
+	{
+		return;
+	}
+
 	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
 	{
 		chatHeight = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_HEIGHT : cg_teamChatHeight.integer;
