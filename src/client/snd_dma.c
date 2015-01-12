@@ -1892,7 +1892,7 @@ void S_UpdateStreamingSounds(void)
 			r = S_CodecReadStream(ss->stream, fileBytes, raw);
 			if (r < fileBytes)
 			{
-				fileBytes   = r;
+				// fileBytes   = r; // unused/overwritten
 				fileSamples = r / (ss->stream->info.width * ss->stream->info.channels);
 			}
 
