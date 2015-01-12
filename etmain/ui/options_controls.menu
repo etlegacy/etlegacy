@@ -37,7 +37,7 @@ menuDef {
 	BIND( 8, MOVE_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Lean Left:"), .2, 8, "+leanleft", "" )
 	BIND( 8, MOVE_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Lean Right:"), .2, 8, "+leanright", "" )
 	BIND( 8, MOVE_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Jump:"), .2, 8, "+moveup", "" )
-	BIND( 8, MOVE_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Crouc)h:"), .2, 8, "+movedown", "" )
+	BIND( 8, MOVE_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Crouch:"), .2, 8, "+movedown", "" )
 	BIND( 8, MOVE_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Prone:"), .2, 8, "+prone", "" )
 	BIND( 8, MOVE_Y+124, (SUBWINDOW_WIDTH)-4, 10, _("Walk:"), .2, 8, "+speed", "" )
 	BIND( 8, MOVE_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Sprint:"), .2, 8, "+sprint", "" )
