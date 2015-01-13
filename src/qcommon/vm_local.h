@@ -139,6 +139,8 @@ typedef struct vmSymbol_s
 #define VM_OFFSET_PROGRAM_STACK     0
 #define VM_OFFSET_SYSTEM_CALL       4
 
+#define VM_SYSCALL_ARGS 16
+
 struct vm_s
 {
 	// DO NOT MOVE OR CHANGE THESE WITHOUT CHANGING THE VM_OFFSET_* DEFINES

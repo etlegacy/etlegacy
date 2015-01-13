@@ -303,7 +303,7 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
 #if defined(__x86_64__) || defined (__llvm__) || ((defined __linux__) && (defined __powerpc__)) || defined(__MORPHOS__)
 	// rcg010206 - see commentary above
-	intptr_t args[16];
+	intptr_t args[VM_SYSCALL_ARGS];
 	int      i;
 	va_list  ap;
 
@@ -311,7 +311,9 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 
 	va_start(ap, arg);
 	for (i = 1; i < ARRAY_LEN(args); i++)
+	{
 		args[i] = va_arg(ap, intptr_t);
+	}
 	va_end(ap);
 
 	return currentVM->systemCall(args);
@@ -665,16 +667,16 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 	if (vm->entryPoint)
 	{
 		// rcg010207 -  see dissertation at top of VM_DllSyscall() in this file.
-		int     args[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		va_list ap;
-		int     i;
+		intptr_t args[VM_SYSCALL_ARGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		va_list  ap;
+		int      i;
 
 		va_start(ap, callnum);
 		for (i = 0; i < ARRAY_LEN(args); i++)
 		{
 			// We add the end of args point since windows at least just returns random values if there are no args
 			// this way we know that only valid values are sent to the vm
-			args[i] = va_arg(ap, int);
+			args[i] = va_arg(ap, intptr_t);
 			if (args[i] == VM_CALL_END)
 			{
 				args[i] = 0;
