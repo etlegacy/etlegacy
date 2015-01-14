@@ -12,13 +12,16 @@ find_path(JPEG_INCLUDE_DIR turbojpeg.h)
 set(JPEG_NAMES ${JPEG_NAMES} jpeg)
 find_library(JPEG_LIBRARY NAMES ${JPEG_NAMES} )
 
-# handle the QUIETLY and REQUIRED arguments and set JPEGTURBO_FOUND to TRUE if
-# all listed variables are TRUE
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(JPEGTURBO DEFAULT_MSG JPEG_LIBRARY JPEG_INCLUDE_DIR)
-
-if(JPEGTURBO_FOUND)
-  set(JPEG_LIBRARIES ${JPEG_LIBRARY})
+# Determine libjpeg-turbo version
+if(JPEG_INCLUDE_DIR AND EXISTS "${JPEG_INCLUDE_DIR}/jconfig.h")
+  file(STRINGS "${JPEG_INCLUDE_DIR}/jconfig.h" jpegturbo_version_str REGEX "^#define LIBJPEG_TURBO_VERSION[ ]+[0-9].[0-9].[0-9]")
+  string(REGEX REPLACE "^#define LIBJPEG_TURBO_VERSION[ ]+([^\"]*).*" "\\1" JPEGTURBO_VERSION_STRING "${jpegturbo_version_str}")
+  unset(jpegturbo_version_str)
 endif()
 
-mark_as_advanced(JPEG_LIBRARY JPEG_INCLUDE_DIR )
+# handle the QUIETLY and REQUIRED arguments and set JPEGTURBO_FOUND to TRUE if
+# all listed variables are TRUE
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(JPEGTURBO
+								  REQUIRED_VARS JPEG_LIBRARY JPEG_INCLUDE_DIR
+								  VERSION_VAR JPEGTURBO_VERSION_STRING)
