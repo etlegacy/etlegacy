@@ -25,3 +25,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(JPEGTURBO
 								  REQUIRED_VARS JPEG_LIBRARY JPEG_INCLUDE_DIR
 								  VERSION_VAR JPEGTURBO_VERSION_STRING)
+
+if(JPEGTURBO_FOUND)
+	set(JPEG_LIBRARIES ${JPEG_LIBRARY})
+endif()
