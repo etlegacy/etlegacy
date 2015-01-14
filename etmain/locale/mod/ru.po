@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-12 09:45+0000\n"
+"PO-Revision-Date: 2015-01-12 18:07+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -60,7 +60,7 @@ msgstr "Старший руководитель команды тестиров�
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "Менеджер QA"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
@@ -84,7 +84,7 @@ msgstr "Менеджер, Группа выпуска кода"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Ст. руководитель, группа выпуска кода"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
@@ -227,7 +227,7 @@ msgstr "Программирование, разработка мода"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr "^1ПОРТЫ"
+msgstr "^1ПОРТИРОВАНИЕ"
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
@@ -259,7 +259,7 @@ msgstr "^1САЙТ"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr " 2012-2015 ET Legacy Team - на условиях GPL версии 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -334,7 +334,7 @@ msgid ""
 "trademarks of Id Software, Inc. in the United States and/or other countries."
 " All other trademarks and trade names are the properties of their respective"
 " owners."
-msgstr ""
+msgstr " 2003 Id Software, Inc. Все права защищены. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, логотип Return to Castle Wolfenstein, имя id Software, и логотип id зарегистрированные товарные знаки или товарные знаки Id Software, Inc. в США и/или других странах. Все другие товарные знаки или товарные имена являются собственностью соответствующих владельцев."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -350,7 +350,7 @@ msgstr "Бизнес-директор"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
-msgstr ""
+msgstr "АРТ"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
@@ -362,7 +362,7 @@ msgstr "Художник / Аниматор"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
-msgstr ""
+msgstr "Дополнительный арт"
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
@@ -456,7 +456,7 @@ msgstr "НАСТРОЙКИ СЕРВЕРА ПО УМОЛЧАНИЮ"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr "Вернуть настройки сервера по умолчанию?"
+msgstr "Сбросить настройки сервера?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
@@ -472,7 +472,7 @@ msgstr "Минимальная задержка:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Установка минимальной задержки может быть использована для исключения LPB (0 = нет минимума)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
@@ -480,16 +480,16 @@ msgstr "Максимальная задержка:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Установка максимальной задержки может быть использована для исключения HPB (0 = нет максимума)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
-msgstr ""
+msgstr "Максимальный рейт:"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Максимальный рейт при отправке данных клиентам (0 = использовать настройки клиента)"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
@@ -499,7 +499,7 @@ msgstr "Неактивность игрока:"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Максимальное время (сек) неактивности игрока до кика с сервера (0 = выключено)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -509,7 +509,7 @@ msgstr "Неактивность зрителя:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Максимальное время (сек) неактивности зрителя до кика с сервера (0 = выключено)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -533,22 +533,22 @@ msgstr "МАТЧ"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
-msgstr "Ждём готовность:"
+msgstr "Ожидать готовность:"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr ""
+msgstr "Определяет ожидать ли готовность всех игроков до начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr "Мин. игроков"
+msgstr "Минимум игроков"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Минимальное число игроков для начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
@@ -558,7 +558,7 @@ msgstr "Процент готовности:"
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr ""
+msgstr "Минимальный процент готовности игроков для начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
@@ -566,7 +566,7 @@ msgstr "Разрешить позднее присоединение:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr ""
+msgstr "Можно ли присоединиться к команде после начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
@@ -574,26 +574,26 @@ msgstr "Глушить зрителей:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr ""
+msgstr "Нужно ли глушить зрителей"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Warmup Damage:"
-msgstr "Ущерб при разминке:"
+msgstr "Нанесение ущерба при разминке:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr "Никто"
+msgstr "никому"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr "Только враги"
+msgstr "только врагам"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr "Все"
+msgstr "всем"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
@@ -609,13 +609,13 @@ msgstr "Максимальное количество игроков в кома
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr "Отключить управление командами:"
+msgstr "Отключить командные приказы:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr ""
+msgstr "Можно ли выполнять командные приказы (lock team/spectators, readyteam и т.п.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
@@ -623,21 +623,21 @@ msgstr "Длительность разминки:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
-msgstr ""
+msgstr "Длительность разминки перед началом матча"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid "Maximum Complaints:"
-msgstr "Макс. жалоб:"
+msgstr "Максимум жалоб:"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Число жалоб на игрока до его кика с сервера."
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr "Макс. пожаловавшихся:"
+msgstr "Максимум пожаловавшихся:"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -658,13 +658,13 @@ msgstr "Макс. пожаловавшихся:"
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
 msgid "Off"
-msgstr "Выкл"
+msgstr "выключено"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Число уникальных жалоб на игрока до его кика с сервера"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
@@ -672,7 +672,7 @@ msgstr "Времени на карту:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
-msgstr ""
+msgstr "Заменить время на карту по умолчанию"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
@@ -680,7 +680,7 @@ msgstr "Время респа союзников:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr ""
+msgstr "Заменить время респа союзников по умолчанию"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
@@ -688,69 +688,69 @@ msgstr "Время респа нацистов:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr ""
+msgstr "Заменить время респа нацистов по умолчанию"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
-msgstr "Макс. жизней у союзников:"
+msgstr "Максимум жизней у союзников:"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
-msgstr ""
+msgstr "Указать число жизней у союзников в игре с ограниченным числом жизней"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr "Макс. жизней у нацистов:"
+msgstr "Максимум жизней у нацистов:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr ""
+msgstr "Указать число жизней у нацистов в игре с ограниченным числом жизней"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr ""
+msgstr "Тип секундомерного раунда"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr ""
+msgstr "Определяет тип секундомерного раунда (АББА = смена сторон, АБАБ = сохранение сторон)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr "ПОСЛЕДНИЙ ВЫЖИВШИЙ"
+msgstr "ПОСЛЕДНИЙ ГЕРОЙ"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr "ПВ-раундов за матч:"
+msgstr "ПГ - раундов на матч:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Указать количество ПГ-раундов на матч"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr "ПВ-раундов за карту:"
+msgstr "ПГ - раундов за карту:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Указать количество ПГ-матчей (состоящих из раундов) на карту"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr ""
+msgstr "ПГ Наблюдать только за командой"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr ""
+msgstr "Не даёт игрокам наблюдать за врагом"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr ""
+msgstr "ПГ - заморозить команды"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Отключает перемещение между командами"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
@@ -764,7 +764,7 @@ msgstr "Чистый сервер:"
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr ""
+msgstr "Ограничивает контент содержимым файлов PK3, которые есть у клиента и у сервера, с совпадающими CRC"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -773,7 +773,7 @@ msgstr "Пароль:"
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"
-msgstr ""
+msgstr "Установить пароль, необходимый клиентам для подключения к серверу"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
@@ -783,7 +783,7 @@ msgstr "Пароль судьи:"
 msgid ""
 "Password to utilize the \"ref\" command for match control and remote game "
 "administration"
-msgstr ""
+msgstr "Пароль от команды \"ref\" для контроля матчей и удалённого администрирования"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
@@ -793,7 +793,7 @@ msgstr "Пароль RCON:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Пароль от удалённой консоли сервера (очень мощной, держите пароль в тайне)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
@@ -805,7 +805,7 @@ msgstr "Макс. голосов на игрока:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
-msgstr ""
+msgstr "Указать максимальное число голосов на игрока на матч"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
@@ -813,7 +813,7 @@ msgstr "Успешное голосование:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Указать минимальный процент, необходимый для прохождения вопроса"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -825,7 +825,7 @@ msgstr "Настройки игры:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Разрешить голосовать за набор опций"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
@@ -835,7 +835,7 @@ msgstr "Тип игры:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Разрешить голосовать за смену типа игры"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
@@ -843,7 +843,7 @@ msgstr "Кик игрока:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Разрешить голосовать за кик другого игрока"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -851,7 +851,7 @@ msgstr "Карта:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Разрешить голосовать за смену карты или кампании"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
@@ -859,7 +859,7 @@ msgstr "Перезагрузка матча"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Разрешить голосовать за перезапуск матча"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
@@ -867,7 +867,7 @@ msgstr "Глушить зрителей:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Разрешить голосовать за глушение зрителей"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
@@ -875,7 +875,7 @@ msgstr "След. карта:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Разрешить голосовать за следующую кампанию или карту"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
@@ -883,7 +883,7 @@ msgstr "Балансировка команд:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Разрешить голосовать за принудительную балансировку команд"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
@@ -891,7 +891,7 @@ msgstr "Судья:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Разрешить игрокам выбирать судью"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
@@ -899,7 +899,7 @@ msgstr "Сортировка по XP:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Разрешить голосовать за перетасовку команд"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
@@ -907,7 +907,7 @@ msgstr "Своп команд:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Разрешить голосовать за смену сторон"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
@@ -915,7 +915,7 @@ msgstr "Огонь по своим:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Разрешить голосовать за переключение огня по своим"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
@@ -923,11 +923,11 @@ msgstr "Лимит времени:"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Разрешить игрокам голосовать за лимит времени"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Разрешить голосовать за переключение нанесения ущерба при разминке"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
@@ -935,7 +935,7 @@ msgstr "Анти-лаг"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
-msgstr ""
+msgstr "Разрешить голосовать за переключение антилага"
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
@@ -949,7 +949,7 @@ msgstr "Строка 1:"
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Specifies the message clients will see when connecting to the server"
-msgstr ""
+msgstr "Указать сообщение, отображаемое у клиента при подключении к серверу"
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
@@ -977,7 +977,7 @@ msgstr "Скачивание клиентами:"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
-msgstr ""
+msgstr "Разрешить загрузку файлов с сервера"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
@@ -987,7 +987,7 @@ msgstr "Макс. скорость скачивания:"
 msgid ""
 "Specifies the maximum download rate from the server for players with missing"
 " files"
-msgstr ""
+msgstr "Указать максимальную скорость загрузки файлов с сервера"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
@@ -995,7 +995,7 @@ msgstr "Перенаправления FTP/HTTP:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Перенаправляет игроков без необходимых файлов на другой сервер"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
@@ -1003,7 +1003,7 @@ msgstr "Базовый адрес:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "На его основе составляется URL для клиентских загрузок"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
@@ -1061,16 +1061,16 @@ msgstr "Флаги стран:"
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
 #: etmain/ui/options_system.menu:53
 msgid "No"
-msgstr "Нет"
+msgstr "нет"
 
 #: etmain/ui/hostgame_extended.menu:32
 #: etmain/ui/options_customise_game.menu:42
 msgid "Yes"
-msgstr "Да"
+msgstr "да"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable Country Flags on the server"
-msgstr ""
+msgstr "Включить флаги стран на сервере"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1091,7 +1091,7 @@ msgstr "Имя сервера:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
-msgstr ""
+msgstr "Здесь можно указать имя данного сервера"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
@@ -1101,7 +1101,7 @@ msgstr "Кампания"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr "Последний выживший"
+msgstr "Последний герой"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1112,7 +1112,7 @@ msgstr "Выбор карты"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Single-Map Objective"
-msgstr ""
+msgstr "Одна карта - цель"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1126,7 +1126,7 @@ msgstr "Выберите тип игры"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
-msgstr "Макс. игроков:"
+msgstr "Максимум игроков:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
@@ -1146,7 +1146,7 @@ msgstr "Публичные настройки"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
-msgstr ""
+msgstr "Автонастройка сервера под указанный набор опций"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Dedicated Server:"
@@ -1164,11 +1164,11 @@ msgstr "Да - Интернет"
 msgid ""
 "Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
 " client)"
-msgstr ""
+msgstr "Должен ли сервер быть \"выделенным\" для игры по ЛВС или Интернету (без клиента)"
 
 #: etmain/ui/hostgame.menu:44
 msgid "Password clients must set to join the server"
-msgstr ""
+msgstr "Пароль, который клиенты должны указать для подключения к серверу."
 
 #: etmain/ui/hostgame.menu:47
 msgid "FEATURES"
@@ -1180,7 +1180,7 @@ msgstr "Дружественный огонь"
 
 #: etmain/ui/hostgame.menu:59
 msgid "Specifies if teammates can hurt each other"
-msgstr ""
+msgstr "Указать можно ли вести огонь по своим"
 
 #: etmain/ui/hostgame.menu:70
 msgid "Anti-Lag"
@@ -1188,7 +1188,7 @@ msgstr "Анти-лаг"
 
 #: etmain/ui/hostgame.menu:71
 msgid "Enables modem-friendly server support"
-msgstr ""
+msgstr "Включить серверную поддержку для модемов"
 
 #: etmain/ui/hostgame.menu:85
 msgid "Max Lives"
@@ -1196,7 +1196,7 @@ msgstr "Макс. жизней"
 
 #: etmain/ui/hostgame.menu:86
 msgid "Limits the number of player lives per round"
-msgstr ""
+msgstr "Ограничивает число жизней на раунд"
 
 #: etmain/ui/hostgame.menu:97
 msgid "Weapon Restrictions"
@@ -1206,7 +1206,7 @@ msgstr "Ограничения на оружие"
 msgid ""
 "Restricts the number of weapons available to players to a percentage of the "
 "team size to reduce spam"
-msgstr ""
+msgstr "Ограничивает количество вооружения до процента от размера команды для предотвращения спама"
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
@@ -1216,7 +1216,7 @@ msgstr "Балансировка команд"
 msgid ""
 "Enforces balanced teams by forcing players to join the team with the lowest "
 "player count"
-msgstr ""
+msgstr "Следит за балансом команд вынуждая игроков заходить за команду с меньшим числом игроков"
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
@@ -1224,7 +1224,7 @@ msgstr "ИМЯ"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
-msgstr ""
+msgstr "Выбрать кампанию или карту для загрузки"
 
 #: etmain/ui/hostgame.menu:142 etmain/ui/playonline.menu:219
 msgid "PREVIEW"
@@ -1318,7 +1318,7 @@ msgstr "Звено"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
-msgstr ""
+msgstr "Выберите пункт назначения для сообщения"
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
@@ -1338,19 +1338,19 @@ msgstr "ДОБАВИТЬ В ИЗБРАННОЕ"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
-msgstr ""
+msgstr "ВОЗРОДИТЬСЯ"
 
 #: etmain/ui/ingame_tapoutlms.menu:50
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
+msgstr "В режиме последнего героя вы не можете возродиться если выйдете из ожидания помощи. Вы уверены?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
 "This server has Max Lives enabled. Tapping out now will lose a life. Are you"
 " sure?"
-msgstr ""
+msgstr "На сервере включено ограничение числа жизней. Ждите помощи или Вы потеряете жизнь. Перейти в очередь подкрепления?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1386,7 +1386,7 @@ msgstr "БОТЫ ВКЛ"
 
 #: etmain/ui/ingame_vote_bot.menu:60
 msgid "BOTS OFF"
-msgstr ""
+msgstr "БОТЫ ВЫКЛ"
 
 #: etmain/ui/ingame_vote_disabled.menu:51
 msgid "Voting is disabled"
@@ -1463,12 +1463,12 @@ msgstr "АНТИ-ЛАГ ВЫКЛ"
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
 msgid "XP SHUFFLE"
-msgstr ""
+msgstr "ТАСОВАТЬ ПО ОПЫТУ"
 
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
 msgid "SWAP TEAMS"
-msgstr ""
+msgstr "СМЕНА КОМАНД"
 
 #: etmain/ui/ingame_vote_misc.menu:51
 #: etmain/ui/ingame_vote_misc_refrcon.menu:50
@@ -1517,16 +1517,16 @@ msgstr "ОБЩИЕ НАСТРОЙКИ"
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "нет"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "враги"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
-msgstr ""
+msgstr "Выберите тип урона при разминке для голосования"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
@@ -1535,23 +1535,23 @@ msgstr "Лимит времени:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
-msgstr ""
+msgstr "Укажите лимит времени для голосования"
 
 #: etmain/ui/ingame_vote_misc.menu:78
 msgid "Select the game type to vote on"
-msgstr ""
+msgstr "Укажите тип игры для голосования"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enable or disable warmup damage"
-msgstr ""
+msgstr "Включить или выключить ущерб при разминке"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Set the time limit for the server"
-msgstr ""
+msgstr "Установить лимит времени для сервера"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
-msgstr ""
+msgstr "Установить тип игры"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
@@ -1567,7 +1567,7 @@ msgstr "ЗАФИКСИРОВАТЬ КОМАНДЫ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:84
 msgid "UNLOCK TEAMS"
-msgstr ""
+msgstr "ОТКРЫТЬ КОМАНДЫ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:86
 msgid "LOCK SPECS"
@@ -1575,7 +1575,7 @@ msgstr "ЗАФИКСИРОВАТЬ ЗРИТЕЛЕЙ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:87
 msgid "UNLOCK SPECS"
-msgstr ""
+msgstr "ОТКРЫТЬ ЗРИТЕЛЕЙ"
 
 #: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
 #: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
@@ -1760,7 +1760,7 @@ msgstr "УПРАВЛЕНИЕ ПО УМОЛЧАНИЮ"
 
 #: etmain/ui/options_controls_default.menu:53
 msgid "Reset controls to default?"
-msgstr ""
+msgstr "Сбросить настройки управления?"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
@@ -1822,11 +1822,11 @@ msgstr "Прыжок:"
 
 #: etmain/ui/options_controls.menu:40
 msgid "Crouc)h:"
-msgstr ""
+msgstr "Присесть:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
-msgstr ""
+msgstr "Ничком"
 
 #: etmain/ui/options_controls.menu:42
 msgid "Walk:"
@@ -1847,15 +1847,15 @@ msgstr "Инвертировать мышь:"
 
 #: etmain/ui/options_controls.menu:48
 msgid "Inverts mouse pitch"
-msgstr ""
+msgstr "Инвертирует шаг мыши"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
-msgstr ""
+msgstr "Плавная мышь:"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooths out the mouse using interpolation"
-msgstr ""
+msgstr "Делает мышь плавной при интерполяции"
 
 #: etmain/ui/options_controls.menu:51
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
@@ -1864,23 +1864,23 @@ msgstr "Чувствительность мыши:"
 
 #: etmain/ui/options_controls.menu:51
 msgid "Use the slider to increase or decrease mouse sensitivity"
-msgstr ""
+msgstr "Изменяйте чувствительность мыши с помощью слайдера"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Mouse Pitch:"
-msgstr ""
+msgstr "Шаг мыши:"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
-msgstr ""
+msgstr "0.015 (наинизший возможный)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr ""
+msgstr "0.022 (по умолчанию)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Движение прицела вверх вниз при перемещении."
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
@@ -1936,7 +1936,7 @@ msgstr "Статистика игроков:"
 
 #: etmain/ui/options_controls.menu:72
 msgid "Top Shots:"
-msgstr ""
+msgstr "Лучшие игроки:"
 
 #: etmain/ui/options_controls.menu:73
 msgid "Objectives:"
@@ -1944,7 +1944,7 @@ msgstr "Цели:"
 
 #: etmain/ui/options_controls.menu:78
 msgid "USE WEAPONS"
-msgstr ""
+msgstr "ПРИМЕНЕНИЕ ОРУЖИЯ"
 
 #: etmain/ui/options_controls.menu:79
 msgid "Attack:"
@@ -2086,7 +2086,7 @@ msgstr "Имя пользователя:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
-msgstr ""
+msgstr "Введите имя, под которым Вас будут знать в игре"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
@@ -2096,7 +2096,7 @@ msgstr "Язык:"
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr ""
+msgstr "Выберите язык"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
@@ -2112,11 +2112,11 @@ msgstr "Переключение бега/ходьбы"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr ""
+msgstr "Ничком по двойному нажатию:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
-msgstr ""
+msgstr "Установить задержку между нажатиями для признания двойного"
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
@@ -2160,11 +2160,11 @@ msgstr "Вспышка от выстрела:"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Enables or disables weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Переключение огня от оружия (вспышки от выстрела)"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Трассеры пуль:"
 
 #: etmain/ui/options_customise_game.menu:51
 #: etmain/ui/options_customise_game.menu:78
@@ -2174,19 +2174,19 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "включены"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "только свои"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "только чужие"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Включить/Выключить трассеры пуль"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
@@ -2194,20 +2194,20 @@ msgstr "ПРИЦЕЛ"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Зум кнопкой переключения оружия:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr "Вкл (норм)"
+msgstr "включено (норма)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr "Вкл (обрат)"
+msgstr "включено (наоборот)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Во время прицеливания кнопка зума будет изменять увеличение"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
@@ -2215,25 +2215,25 @@ msgstr "Уровень зума по умолчанию:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "полностью во вне"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr "Близ"
+msgstr "близкий"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr "Дал"
+msgstr "дальний"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "полностью во внутрь"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Установить стандартный уровень зума для прицелов"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
@@ -2249,7 +2249,7 @@ msgstr "8 уровней"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Определяет шаг зума"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
@@ -2257,11 +2257,11 @@ msgstr "Режим быстрого чата:"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr "Буквенный"
+msgstr "буквенный"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr "Численный"
+msgstr "численный"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
@@ -2274,7 +2274,7 @@ msgstr "Время значка чата:"
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Short"
-msgstr ""
+msgstr "короткое"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:50
@@ -2282,20 +2282,20 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Normal"
-msgstr ""
+msgstr "среднее"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "длинное"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "очень длинное"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
-msgstr ""
+msgstr "Указать как долго значок чата висит над головами игроков"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
@@ -2303,7 +2303,7 @@ msgstr "Только командный чат:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr ""
+msgstr "Играть только командный чат"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
@@ -2319,19 +2319,19 @@ msgstr "ЗВУК"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
-msgstr ""
+msgstr "Диктор:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Включает или отключает командира в игре"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
-msgstr "Нет голосового чата:"
+msgstr "Отключить голосовой чат:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "Не воспроизводить голосовые сообщения в игре"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
@@ -2339,27 +2339,27 @@ msgstr "Звуки попаданий:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Отключить звук удара команды"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Отключить звук удара головы"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Отключить звук удара тела"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Установить звуки ударов"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
-msgstr ""
+msgstr "Всплывающее окно жалобы:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Показывать опцию подачи жалобы на игроков в команде, убивших Вас"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
@@ -2367,7 +2367,7 @@ msgstr "Запись важных сообщений:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Вывод важных сообщений игры в консоль"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
@@ -2383,27 +2383,27 @@ msgstr "Снимок экрана"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Дамп статистики"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Демо + СС"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Демо + Статистика"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "SS + Stats"
-msgstr ""
+msgstr "СС + Статистика"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Демо + СС + Статистика"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Автоматически выполняет действия в начале или конце раунда"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
@@ -2413,7 +2413,7 @@ msgstr "Формат автоснимков:"
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Переключение между форматами .tga и .jpg для команды \"autoscreenshot\""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
@@ -2475,31 +2475,31 @@ msgstr "Таймер подкреплений:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Отображает время до подкрепления Вашей команды"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Подсказки курсора:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr ""
+msgstr "Пульс размера"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
-msgstr ""
+msgstr "Пульс строба"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr ""
+msgstr "Пульс альфа"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
-msgstr ""
+msgstr "Твёрдый"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Icon display format when near an action item"
-msgstr ""
+msgstr "Формат отображения значков когда рядом с предметом действия"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
@@ -2507,23 +2507,23 @@ msgstr "Показывать локации:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "только координаты"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
-msgstr ""
+msgstr "только имена звено"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Team Chat Only"
-msgstr ""
+msgstr "только имена командный чат"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Team & Fireteam Chat"
-msgstr ""
+msgstr "чат звена и команды"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Отображает местоположения в звене"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
@@ -2535,11 +2535,11 @@ msgstr "Показывать флаги стран игроков в табли�
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Тактный класс звена:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr ""
+msgstr "Отображает тактный класс звена:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -2547,15 +2547,15 @@ msgstr "Значки некрологов:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "жертва оружие убийца"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "убийца оружие жертва"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
-msgstr ""
+msgstr "Отображать графические некрологи"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
@@ -2563,7 +2563,7 @@ msgstr "Показать описание:"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Displays limbo help text"
-msgstr ""
+msgstr "Показывать текст помощи в меню забвения"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Show Clock:"
@@ -2643,11 +2643,11 @@ msgstr "Переместить таймер раунда"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Remove Ranks"
-msgstr ""
+msgstr "Удалить ранги"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Popups"
-msgstr ""
+msgstr "Передвинуть всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Timer"
@@ -2655,15 +2655,15 @@ msgstr "Ранги + Таймер"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Popups"
-msgstr ""
+msgstr "таймер + всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Popups"
-msgstr ""
+msgstr "ранги + всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Ranks + Popups"
-msgstr ""
+msgstr "таймер + ранги + всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Customises Selected HUD"
@@ -2675,7 +2675,7 @@ msgstr "ВНУТРИИГРОВОЙ ДИСПЛЕЙ"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Ejecting Brass:"
-msgstr ""
+msgstr "Выбрасывание гильз:"
 
 #: etmain/ui/options_customise_hud.menu:56 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
@@ -2786,7 +2786,7 @@ msgstr "Атмосферные эффекты:"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Draws atmospheric effects (snow/rain) on-screen"
-msgstr ""
+msgstr "Отображает атмосферные эффекты (снег/дождь) на экране"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "CROSSHAIR"
@@ -2824,7 +2824,7 @@ msgstr "Пульсирование прицела:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
-msgstr ""
+msgstr "Переключает расширение прицела при перемещении/стрельбе"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
@@ -2834,12 +2834,12 @@ msgstr "Состояние здоровья на прицеле:"
 msgid ""
 "Colors the crosshair based on current health (overrides crosshair color "
 "settings)"
-msgstr ""
+msgstr "Окрашивает прицел на основании текущего здоровья (замещает настройки цвета прицела)"
 
 #: etmain/ui/options_customise_hud.menu:73
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Crosshair Name:"
-msgstr ""
+msgstr "Имя прицела:"
 
 #: etmain/ui/options_customise_hud.menu:73 src/cgame/cg_scoreboard.c:846
 msgid "Name"
@@ -2851,7 +2851,7 @@ msgstr "Цветное имя"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Displays player name when the crosshair is over a teammate"
-msgstr ""
+msgstr "Отображает имя товарища при наводе прицела на него"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Crosshair Info:"
@@ -2871,11 +2871,11 @@ msgstr "Класс + ранг"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
-msgstr ""
+msgstr "Отображает инфо о товарище при наводе прицела на него"
 
 #: etmain/ui/options_customise_hud.menu:86
 msgid "Set crosshair type"
-msgstr ""
+msgstr "Установить тип прицела"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
@@ -3021,31 +3021,31 @@ msgstr "Установить уровень прозрачности втори�
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
-msgstr "ПЕРЕДВИЖЕНИЕ"
+msgstr "ПЕРЕМЕЩЕНИЕ"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
-msgstr ""
+msgstr "Подпрыгнуть:"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Enable/Disable the vertical bob effect when moving"
-msgstr ""
+msgstr "Включить/выключить подпрыгивание при перемещении"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Bob pitch:"
-msgstr ""
+msgstr "Шаг подпрыгивания:"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
-msgstr ""
+msgstr "Включить/выключить шаг подпрыгивания (вперёд/назад) при перемещении"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Bob roll:"
-msgstr ""
+msgstr "Качание:"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Enable/Disable the bob roll (left/right) effect when moving"
-msgstr ""
+msgstr "Включить/выключить качание (лево/вправо) при перемещении"
 
 #: etmain/ui/options_customise_hud.menu:113
 msgid "FONTS"
@@ -3061,48 +3061,48 @@ msgstr "Установить размер шрифтов в игре"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Top Print:"
-msgstr ""
+msgstr "Принт сверху:"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Set font size for Warmup message and Spectator label"
-msgstr ""
+msgstr "Установить размер шрифта для сообщения о разминке и метки зрителя"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid "Side Print:"
-msgstr ""
+msgstr "Принт сбоку:"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid ""
 "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
-msgstr ""
+msgstr "Установить размер шрифта для сообщений забвения/звена/голосования/некролога/улучшения навыка"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Center Print:"
-msgstr ""
+msgstr "Принт посередине:"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
-msgstr ""
+msgstr "Установить размер шрифта для сообщений CenterPrint/Инфо о цели/Награда за навык"
 
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Set font size for Crosshair Name label"
-msgstr ""
+msgstr "Установить размер шрифта для метки имени прицела"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "PopUpTimeStay:"
-msgstr ""
+msgstr "ВсплОкноВремяОстан:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
-msgstr ""
+msgstr "Сколько времени всплывающее окно будет видимым"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "PopUpTimeFade:"
-msgstr ""
+msgstr "ВсплОкноВремяУход:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
-msgstr ""
+msgstr "Сколько времени всплывающее окно уходит"
 
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
@@ -3222,23 +3222,23 @@ msgstr "Интенсивность:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr ""
+msgstr "Интенсивность текстур (требует vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
-msgstr ""
+msgstr "Бит переяркости карты:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr ""
+msgstr "Мир становится ярче, но бледнее (требует vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
-msgstr ""
+msgstr "Бит переяркости:"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Map shines brighter (requires vid_restart)"
-msgstr ""
+msgstr "Карта становится ярче (требует vid_restart)"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
@@ -3246,7 +3246,7 @@ msgstr "Небо низкого качества:"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
-msgstr ""
+msgstr "Переключение между отрисовкой детального скайбокса или базового неба"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Shadow Detail:"
@@ -3254,11 +3254,11 @@ msgstr "Детализация теней:"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Blob"
-msgstr ""
+msgstr "Блоб"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Set shadow details"
-msgstr ""
+msgstr "Установить детализацию теней"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Texture Detail:"
@@ -3279,7 +3279,7 @@ msgstr "Динамическое освещение:"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Toggles use of dynamic lighting effects"
-msgstr ""
+msgstr "Переключает наличие эффектов динамического освещения"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Geometric Detail:"
@@ -3287,7 +3287,7 @@ msgstr "Детализация геометрии:"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Set level of details bias"
-msgstr ""
+msgstr "Установить смещение уровня детализации"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Texture Quality:"
@@ -3376,7 +3376,7 @@ msgstr "24 бита"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
-msgstr ""
+msgstr "Установить желаемое число битов глубины"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Compress Textures:"
@@ -3384,7 +3384,7 @@ msgstr "Сжатие текстур:"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Toggles the compression of textures"
-msgstr ""
+msgstr "Переключает сжатие текстур"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Sync Every Frame:"
@@ -3392,7 +3392,7 @@ msgstr "Синхронизация кадров:"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Prevent screen tearing"
-msgstr ""
+msgstr "Предотвращать разрывы на экране"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "GL Extensions:"
@@ -3456,7 +3456,7 @@ msgstr "44 кГц (оч. выс.)"
 
 #: etmain/ui/options_system.menu:44
 msgid "Set the sound quality"
-msgstr ""
+msgstr "Установить качество звука"
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3464,7 +3464,7 @@ msgstr "Допплер-эффекты:"
 
 #: etmain/ui/options_system.menu:45
 msgid "Enables or disables the doppler effect"
-msgstr ""
+msgstr "Переключает эффект допплера"
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
@@ -3472,7 +3472,7 @@ msgstr "Глушить если свёрнуто:"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
-msgstr ""
+msgstr "Включить или выключить звук когда окно свёрнуто"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
@@ -3480,7 +3480,7 @@ msgstr "Глушить если не в фокусе:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr ""
+msgstr "Включить или выключить звук когда окно без фокуса"
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
@@ -3492,11 +3492,11 @@ msgstr "Макс. пакетов:"
 
 #: etmain/ui/options_system.menu:52
 msgid "Very Low"
-msgstr ""
+msgstr "очень низко"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
-msgstr ""
+msgstr "Ограничение числа загружаемых на сервер пакетов"
 
 #: etmain/ui/options_system.menu:53
 msgid "Packet Duplication:"
@@ -3506,7 +3506,7 @@ msgstr "Повтор пакетов:"
 msgid ""
 "Number of duplicates for every data packet sent upstream, minimized "
 "packetloss"
-msgstr ""
+msgstr "Число дубликатов пакетов для отправки на сервер, минимизирует потери"
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
@@ -3518,7 +3518,7 @@ msgstr "Проверять обновления при запуске:"
 
 #: etmain/ui/options_system.menu:59
 msgid "Automatically check for updates?"
-msgstr ""
+msgstr "Автоматически проверять обновления?"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
@@ -3526,7 +3526,7 @@ msgstr "Загрузка файлов с сервера:"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
-msgstr ""
+msgstr "Загружать файлы по необходимости?"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3534,7 +3534,7 @@ msgstr "Загружать через HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
-msgstr ""
+msgstr "Включает или отключает загрузки через http/ftp"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
@@ -3570,13 +3570,13 @@ msgstr "Интернет"
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
-msgstr ""
+msgstr "Избранное"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
 "Choose the type of game servers to display from Internet, local and the "
 "favorites list"
-msgstr ""
+msgstr "Выберите тип игровых серверов к показу из интернета, ЛВС и списка избранных"
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
@@ -3584,11 +3584,11 @@ msgstr "Цель"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
-msgstr ""
+msgstr "ПГ"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
-msgstr ""
+msgstr "Показывает только сервера с этим типом игры"
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
@@ -3596,23 +3596,23 @@ msgstr "Мод:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
-msgstr ""
+msgstr "Показывает только сервера с этим модом"
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
 msgid ""
 "Includes or excludes servers with desired map name from the server list"
-msgstr ""
+msgstr "Включает в или исключает сервера с желаемым именем карты из списка"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr ""
+msgstr "Фильтр, влияющий на сервера именем карты"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr ""
+msgstr "Фильтр выключен"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
@@ -3634,7 +3634,7 @@ msgstr "ОБНОВИТЬ СПИСОК"
 
 #: etmain/ui/playonline.menu:194
 msgid "Refresh servers list"
-msgstr ""
+msgstr "Перезагрузить список серверов"
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
@@ -3642,7 +3642,7 @@ msgstr "СБРОС ФИЛЬТРОВ"
 
 #: etmain/ui/playonline.menu:195
 msgid "Reset all filters to their defaults"
-msgstr ""
+msgstr "Сбросить все фильтры"
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
@@ -3654,7 +3654,7 @@ msgstr "ИМЯ СЕРВЕРА"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по имени сервера"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
@@ -3662,7 +3662,7 @@ msgstr "КАРТА"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по имени кампании или карты"
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
@@ -3670,7 +3670,7 @@ msgstr "ИГРОКИ"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по числу игроков"
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
@@ -3678,7 +3678,7 @@ msgstr "ТИП"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по типу игры"
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
@@ -3743,7 +3743,7 @@ msgstr "Выберите начальные настройки ниже. Их в
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
 "Enter the alias here that you would like displayed to others on servers"
-msgstr ""
+msgstr "Введите псевдоним, который будет отображаться у других игроков на сервере"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Video Quality:"
@@ -3751,32 +3751,32 @@ msgstr "Качество видео:"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
-msgstr ""
+msgstr "быстрее всего"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fast"
-msgstr ""
+msgstr "быстрые"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid ""
 "Select your initial video settings, these can be changed later via the "
 "options menu"
-msgstr ""
+msgstr "Выберите Ваши начальные настройки видео, их можно позже изменить через меню настроек"
 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr ""
+msgstr "Выберите разрешение экрана, если не уверены, то оставьте по умолчанию"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Используйте слайдер для установки чувствительности мыши"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
 "Choose invert mouse if you prefer flight-simulator style mouse pitch "
 "controls"
-msgstr ""
+msgstr "Выберите инвертировать мышь если Вам нравится управление как в симуляторе полётов"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
@@ -3801,7 +3801,7 @@ msgstr "СОЗДАТЬ"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr ""
+msgstr "Выберите инвертировать мышь если Вам нравится управление как в симуляторе полётов"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
@@ -3849,7 +3849,7 @@ msgstr "Имя нового профиля:"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New name of profile"
-msgstr ""
+msgstr "Новое имя профиля"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
@@ -3902,7 +3902,7 @@ msgstr "УДАЛИТЬ ПОВТОР"
 
 #: etmain/ui/viewreplay.menu:50
 msgid "Select the replay to view or delete"
-msgstr ""
+msgstr "Выберите повтор для просмотра или удаления"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:33 etmain/ui/wm_ftquickmessage.menu:33
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
@@ -4101,7 +4101,7 @@ msgstr "6. Ой"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:149
 msgid "2. No)"
-msgstr ""
+msgstr "2. Нет)"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
@@ -4493,7 +4493,7 @@ msgstr "%d карт назад"
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
-msgstr ""
+msgstr "Итого собрано голосов: %d"
 
 #: src/cgame/cg_debriefing.c:2013 src/cgame/cg_debriefing.c:3202
 #: src/cgame/cg_scoreboard.c:723
@@ -4507,7 +4507,7 @@ msgstr "ТОЧ:"
 
 #: src/cgame/cg_debriefing.c:2624
 msgid "HS:"
-msgstr ""
+msgstr "Гол:"
 
 #: src/cgame/cg_debriefing.c:2659
 msgid "Time:"
@@ -4658,55 +4658,55 @@ msgstr "Д:%i, Н:%i"
 
 #: src/cgame/cg_draw.c:1928
 msgid "Your complaint has been filed"
-msgstr ""
+msgstr "Жалоба отправлена"
 
 #: src/cgame/cg_draw.c:1934
 msgid "Complaint dismissed"
-msgstr ""
+msgstr "Жалоба отклонена"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
-msgstr ""
+msgstr "Нельзя жаловаться на хозяина сервера"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
-msgstr ""
+msgstr "Вас убил товарищ - хозяин сервера"
 
 #: src/cgame/cg_draw.c:1952
 msgid "You were team-killed by a bot."
-msgstr ""
+msgstr "Вас убил товарищ-бот"
 
 #: src/cgame/cg_draw.c:1962
 msgid "Your application has been submitted"
-msgstr ""
+msgstr "Заявка подана"
 
 #: src/cgame/cg_draw.c:1969
 msgid "Your application failed"
-msgstr ""
+msgstr "Заявка отклонена"
 
 #: src/cgame/cg_draw.c:1976
 msgid "Your application has been approved"
-msgstr ""
+msgstr "Заявка принята"
 
 #: src/cgame/cg_draw.c:1983
 msgid "Your application reply has been sent"
-msgstr ""
+msgstr "Ответ на заявку отправлен"
 
 #: src/cgame/cg_draw.c:1993
 msgid "Your proposition has been submitted"
-msgstr ""
+msgstr "Предложение подано"
 
 #: src/cgame/cg_draw.c:2000
 msgid "Your proposition was rejected"
-msgstr ""
+msgstr "Предложение отклонено"
 
 #: src/cgame/cg_draw.c:2007
 msgid "Your proposition was accepted"
-msgstr ""
+msgstr "Предложение принято"
 
 #: src/cgame/cg_draw.c:2014
 msgid "Your proposition reply has been sent"
-msgstr ""
+msgstr "Ответ на предложение отправлен"
 
 #: src/cgame/cg_draw.c:2024
 msgid "Your invitation has been submitted"
@@ -4714,7 +4714,7 @@ msgstr "Ваше приглашение отправлено"
 
 #: src/cgame/cg_draw.c:2031
 msgid "Your invitation was rejected"
-msgstr ""
+msgstr "Приглашение отклонено"
 
 #: src/cgame/cg_draw.c:2038
 msgid "Your invitation was accepted"
@@ -4722,7 +4722,7 @@ msgstr "Ваше приглашение принято"
 
 #: src/cgame/cg_draw.c:2045
 msgid "Your invitation reply has been sent"
-msgstr ""
+msgstr "Ответ на приглашение отправлен"
 
 #: src/cgame/cg_draw.c:2058
 msgid "Response Sent"
@@ -4746,7 +4746,7 @@ msgstr "Нажмите %s чтобы следовать за предыдущи�
 #: src/cgame/cg_draw.c:2168
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr ""
+msgstr "Нажмите %s для %s режима мультипросмотра"
 
 #: src/cgame/cg_draw.c:2168
 msgid "disable"
@@ -4787,7 +4787,7 @@ msgstr "Бонусная жизнь! Прибытие через ^3%d ^7секу
 #: src/cgame/cg_draw.c:2333
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7second"
-msgstr ""
+msgstr "Бонусная жизнь! Появление через ^3%d ^7секунд"
 
 #: src/cgame/cg_draw.c:2338
 msgid "No more deployments this round"
@@ -4834,12 +4834,12 @@ msgstr "^3ПРИГОТОВЬТЕСЬ К БОЮ!\n"
 
 #: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
-msgstr ""
+msgstr "СЕКУНДОМЕРНЫЙ РАУНД"
 
 #: src/cgame/cg_draw.c:2678
 #, c-format
 msgid "The %s team is speclocked!"
-msgstr ""
+msgstr "Наблюдение команды %s ограничено!"
 
 #: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
 #: src/cgame/cg_scoreboard.c:178
@@ -4977,7 +4977,7 @@ msgstr "Навыков не получено!"
 
 #: src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
-msgstr ""
+msgstr "ТОЧНОСТЬ ЛУЧШИХ"
 
 #: src/cgame/cg_info.c:939
 msgid "Player"
@@ -4985,7 +4985,7 @@ msgstr "Игрок"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
-msgstr ""
+msgstr "Нет квалифицирующей информации об оружии"
 
 #: src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
@@ -4997,11 +4997,11 @@ msgstr "СТАТУС ДЕМО"
 
 #: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
-msgstr ""
+msgstr "ДЕМО-УПРАВЛЕНИЕ"
 
 #: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
-msgstr ""
+msgstr "^nBACKSPACE ^mhelp on/off"
 
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
@@ -5165,7 +5165,7 @@ msgstr "СОЮЗНИКИ"
 
 #: src/cgame/cg_scoreboard.c:855
 msgid "C R"
-msgstr ""
+msgstr "C R"
 
 #: src/cgame/cg_scoreboard.c:860
 msgid "Score"
@@ -5190,33 +5190,33 @@ msgstr "Авто выбор"
 #: src/cgame/cg_servercmds.c:1954
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
-msgstr ""
+msgstr "Нанесено урона: %-6d  Нанесено урона своим: %d"
 
 #: src/cgame/cg_servercmds.c:1955
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
-msgstr ""
+msgstr "Получено урона: %-6d  Получ урона от своих: %d"
 
 #: src/cgame/cg_servercmds.c:1957
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
-msgstr ""
+msgstr "Самоубийств: %-2d Убиств своих: %-2d Точность: %-4.1f HS%%: %-4.1f"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
-msgstr ""
+msgstr "^7Оружие Точно Удар/Аттк Убийств Смертей В голову\n"
 
 #: src/cgame/cg_servercmds.c:2040
 msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
-msgstr ""
+msgstr "^7Оружие Точно Удар/Аттк Уб  Смт Гол\n"
 
 #: src/cgame/cg_servercmds.c:2047
 msgid "^3No weapon info available.\n"
-msgstr ""
+msgstr "^3Нет информации об оружии\n"
 
 #: src/cgame/cg_servercmds.c:2153
 msgid "  Medals"
-msgstr ""
+msgstr "Медали"
 
 #: src/cgame/cg_servercmds.c:2165
 msgid "^3No skills acquired!\n"
@@ -5271,7 +5271,7 @@ msgstr "Жду новую клавишу... Нажмите ESCAPE для отм�
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr ""
+msgstr "ENTER или КЛИК для смены, BACKSPACE для очистки"
 
 #: src/ui/ui_main.c:2543
 #, c-format
@@ -5293,7 +5293,7 @@ msgstr "Нет инфо о сервере (не найдена или серве
 
 #: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
 msgid "Favorite already in list\n"
-msgstr ""
+msgstr "Сервер уже в списке избранных\n"
 
 #: src/ui/ui_main.c:4348 src/ui/ui_main.c:4402 src/ui/ui_main.c:4437
 msgid "Favorite list full\n"
@@ -5302,7 +5302,7 @@ msgstr "Избранные полны\n"
 #: src/ui/ui_main.c:4353 src/ui/ui_main.c:4407 src/ui/ui_main.c:4442
 #, c-format
 msgid "Added favorite server %s\n"
-msgstr ""
+msgstr "Добавлено в избранное %s\n"
 
 #: src/ui/ui_main.c:5874
 #, c-format
@@ -5358,8 +5358,8 @@ msgstr "Кампании не найдены.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
-msgstr ""
+msgstr "Избранных нет."
 
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
-msgstr ""
+msgstr "Избранное стёрто"
