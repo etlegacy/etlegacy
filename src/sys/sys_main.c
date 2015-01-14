@@ -723,23 +723,44 @@ void *Sys_LoadGameDll(const char *name,
 	homepath = Cvar_VariableString("fs_homepath");
 	gamedir  = Cvar_VariableString("fs_game");
 
-#ifndef DEDICATED
+	// STORY TIME
+	//
+	//When doing an debug build just load the mod lib from the basepath as that will have the debug pointers
+	//
+	// Now the code always just unpacks new libraries from the packs on release builds.
+	// So the libraryfiles in the homepath are always refreshed with latest from the packs.
+	// This fixes many issues with clients loading old libraries from the mod paths.
+	//
+	// The way it used to work is described under (or in debug mode)..
+	//
 	// if the server is pure, extract the dlls from the mod_bin.pk3 so
 	// that they can be referenced
-	if (Cvar_VariableValue("sv_pure") && Q_stricmp(name, "qagame"))
+	//
+	// If the server is not pure, then the
+	// lib must either already be in the homepath, or in the basepath,
+	// without being in a pak. For a pure server, it always grabs the lib
+	// from within a pak. This means there must be two copies of the lib!
+	//
+	// So now, if connecting to an impure server, and the lib was not
+	// loaded from homepath or the basepath, let's pull it out of the pak.
+	// This means we only *need* the copy that's in the pak, and will use
+	// it if another copy isn't found first.
+#ifdef LEGACY_DEBUG
+#define SEARCHPATH1 basepath
+#define SEARCHPATH2 homepath
+#define LIB_DO_UNPACK Cvar_VariableIntegerValue("sv_pure")
+#else
+#define LIB_DO_UNPACK qtrue
+#define SEARCHPATH1 homepath
+#define SEARCHPATH2 basepath
+#endif
+
+#ifndef DEDICATED
+	if (LIB_DO_UNPACK && Q_stricmp(name, "qagame"))
 	{
 		Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
 		FS_CL_ExtractFromPakFile(homepath, gamedir, fname);
 	}
-#endif
-
-	//When doing an debug build just load the mod lib from the basepath as that will have the debug pointers
-#ifdef LEGACY_DEBUG
-#define SEARCHPATH1 basepath
-#define SEARCHPATH2 homepath
-#else
-#define SEARCHPATH1 homepath
-#define SEARCHPATH2 basepath
 #endif
 
 	libHandle = Sys_TryLibraryLoad(SEARCHPATH1, gamedir, fname);
@@ -750,16 +771,7 @@ void *Sys_LoadGameDll(const char *name,
 	}
 
 #ifndef DEDICATED
-	// According to the code above, if the server is not pure, then the
-	// lib must either already be in the homepath, or in the basepath,
-	// without being in a pak. For a pure server, it always grabs the lib
-	// from within a pak. This means there must be two copies of the lib!
-	//
-	// So now, if connecting to an impure server, and the lib was not
-	// loaded from homepath or the basepath, let's pull it out of the pak.
-	// This means we only *need* the copy that's in the pak, and will use
-	// it if another copy isn't found first.
-	if (!libHandle && !Cvar_VariableValue("sv_pure") && Q_stricmp(name, "qagame"))
+	if (!libHandle && !LIB_DO_UNPACK && Q_stricmp(name, "qagame"))
 	{
 		Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
 		FS_CL_ExtractFromPakFile(homepath, gamedir, fname);
