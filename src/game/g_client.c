@@ -2072,7 +2072,7 @@ char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 	int       theirIPLength;
 	int       checkLength;
 	int       count      = 1; // we count as the first one
-	int       max        = trap_Cvar_VariableIntegerValue("g_ip_max_clients");
+	int       max = g_ip_max_clients.integer;
 	int       myIPLength = GetIPLength(ip);
 	int       i;
 	char      *theirIP;
