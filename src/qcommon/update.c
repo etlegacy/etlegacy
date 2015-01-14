@@ -83,6 +83,11 @@ void Com_CheckAutoUpdate(void)
 	info[0] = 0;
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
+
+#ifndef DEDICATED
+	Info_SetValueForKey(info, "lang", Cvar_VariableString("cl_lang"));
+#endif
+
 	Info_SetValueForKey(info, va("etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT),
 	                    Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
 	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
