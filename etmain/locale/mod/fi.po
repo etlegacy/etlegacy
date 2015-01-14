@@ -1,21 +1,22 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Jere Sjöroos <shogaiam@gmail.com>, 2015
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.70rc2\n"
+"Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2013-09-20 01:15+0100\n"
-"Last-Translator: Jere S <shogaiam@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2015-01-12 14:09+0000\n"
+"Last-Translator: Jere Sjöroos <shogaiam@gmail.com>\n"
+"Language-Team: Finnish (http://www.transifex.com/projects/p/etlegacy/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
@@ -239,8 +240,8 @@ msgstr ""
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
@@ -330,9 +331,9 @@ msgid ""
 " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
-"trademarks of Id Software, Inc. in the United States and/or other countries. "
-"All other trademarks and trade names are the properties of their respective "
-"owners."
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
 msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:66
@@ -421,7 +422,7 @@ msgstr ""
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
+msgstr "Haluatko avata sivun\nwww.etlegacy.com ?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -434,7 +435,7 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:84 etmain/ui/vid_confirm.menu:86
 #: etmain/ui/vid_restart.menu:50 etmain/ui/viewreplay_delete.menu:53
 msgid "YES"
-msgstr ""
+msgstr "KYLLÄ"
 
 #: etmain/ui/etlegacywebsite.menu:53 etmain/ui/etlegacywebsite.menu:55
 #: etmain/ui/hostgame_advanced_default.menu:127
@@ -447,160 +448,160 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:89 etmain/ui/vid_restart.menu:51
 #: etmain/ui/viewreplay_delete.menu:54
 msgid "NO"
-msgstr ""
+msgstr "EI"
 
 #: etmain/ui/hostgame_advanced_default.menu:123
 msgid "DEFAULT SERVER SETTINGS"
-msgstr ""
+msgstr "PALVELIMEN OLETUSASETUKSET"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr ""
+msgstr "Palauta palvelimen oletusasetukset?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
-msgstr ""
+msgstr "ISÄNNÖI PELI: KEHITTYNEET"
 
 #: etmain/ui/hostgame_advanced.menu:31
 msgid "GENERAL"
-msgstr ""
+msgstr "YLEISET"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Minimum Ping:"
-msgstr ""
+msgstr "Pienin vaste:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Asettamalla pienin vaste asetus, voidaan estää LPB:t (0 = ei rajoutusta)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
-msgstr ""
+msgstr "Suurin vaste:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Asettamalla suurin vaste asetus, voidaan estää HPB:t (0 = ei rajoitusta)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
-msgstr ""
+msgstr "Suurin verkon nopeus:"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Suurin verkon nopeus mitä käytetään (0 = käytä pelaajan asetusta)"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
-msgstr ""
+msgstr "Pelaajan joutilaisuus:"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Maksimiaika (sekunneissa) pelaaja voi olla joutilaanana ennen palvelimelta poistoa (0 = ei rajoitusta)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
-msgstr ""
+msgstr "Katsojan joutilaisuus:"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Maksimiaika (sekunnaissa) katsoja voi olla joutilaana ennen palvelimelta poistoa (0 = ei rajoitusta)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
-msgstr ""
+msgstr "Väliajan kesto:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr ""
+msgstr "Väliaika"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr ""
+msgstr "Väliaika PÄÄTTYY %:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
-msgstr ""
+msgstr "Prosenttiosuus pelaajista 'valmiina' kentän aloitukseen"
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
-msgstr ""
+msgstr "PELI"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
-msgstr ""
+msgstr "Pelaajien täytyy olla valmiina:"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr ""
+msgstr "Pitääkö palvelimen odottaa pelaajia olemaan valmiis ennen pelin aloitusta"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr ""
+msgstr "Minimimäärä pelaajia:"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Vaatii minimimäärän pelaajia pelin aloitukseen"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
-msgstr ""
+msgstr "Valmiusprosentti:"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr ""
+msgstr "Asettaa pienimmän sallitun määrän valmiita pelaajia prosentteina, jotta peli voidaan aloittaa"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
-msgstr ""
+msgstr "Salli myöhäiset peliinliittymiset"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr ""
+msgstr "Sallitaanko pelaajan liittyminen peliin, pelin jo alettua"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr ""
+msgstr "Vaimenna katsojat:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr ""
+msgstr "Vaimennetaanko katsojat pelissä"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Warmup Damage:"
-msgstr ""
+msgstr "Lämmittelyvahinko:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "Ei ketään"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr ""
+msgstr "Vain viholliset"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr ""
+msgstr "Kaikki"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
-msgstr ""
+msgstr "Voitko vahingoittaa muita pelaajia lämmittelyn aikana"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
-msgstr ""
+msgstr "Maksimipelaajamäärä joukkueessa:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
@@ -984,8 +985,8 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
-"Specifies the maximum download rate from the server for players with missing "
-"files"
+"Specifies the maximum download rate from the server for players with missing"
+" files"
 msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
@@ -1082,7 +1083,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:37
 msgid "SETTINGS"
-msgstr ""
+msgstr "ASETUKSET"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Server Name:"
@@ -1137,15 +1138,15 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:42
 msgid "Competition Settings"
-msgstr ""
+msgstr "Kilpailuasetukset"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Public Settings"
-msgstr ""
+msgstr "Julkiset asetukset"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
-msgstr ""
+msgstr "Palvelin automaattisesti asettaa valitut asetukset"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Dedicated Server:"
@@ -1161,8 +1162,8 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
-"Specifies if the server should be \"dedicated\" for LAN or Internet play (no "
-"client)"
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
 msgstr ""
 
 #: etmain/ui/hostgame.menu:44
@@ -1347,8 +1348,8 @@ msgstr ""
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
-"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
-"sure?"
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
 msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:31
@@ -1502,12 +1503,12 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:58
 #: etmain/ui/ingame_vote_misc_refrcon.menu:57
 msgid "COMPETITION SETTINGS"
-msgstr ""
+msgstr "KILPAILUASETUKSET"
 
 #: etmain/ui/ingame_vote_misc.menu:59
 #: etmain/ui/ingame_vote_misc_refrcon.menu:58
 msgid "PUBLIC SETTINGS"
-msgstr ""
+msgstr "JULKISET ASETUKSET"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
@@ -3071,7 +3072,8 @@ msgid "Side Print:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:118
-msgid "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:120
@@ -3115,8 +3117,8 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
-"1. Move the slider below and/or the brightness on your monitor until you can "
-"see 16"
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
 msgstr ""
 
 #: etmain/ui/options_graphics_gamma.menu:35
@@ -3597,7 +3599,8 @@ msgid "Displays only game servers offering this Mod"
 msgstr ""
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
-msgid "Includes or excludes servers with desired map name from the server list"
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
 msgstr ""
 
 #: etmain/ui/playonline.menu:97
@@ -3738,7 +3741,8 @@ msgid ""
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
-msgid "Enter the alias here that you would like displayed to others on servers"
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
@@ -3770,7 +3774,8 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
-"Choose invert mouse if you prefer flight-simulator style mouse pitch controls"
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
@@ -5307,8 +5312,8 @@ msgstr ""
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
-"^3Check your filters - no servers found!              Filtered/Total: %04i/"
-"%04i"
+"^3Check your filters - no servers found!              Filtered/Total: "
+"%04i/%04i"
 msgstr ""
 
 #: src/ui/ui_main.c:5883

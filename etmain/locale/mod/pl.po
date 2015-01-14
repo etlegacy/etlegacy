@@ -1,22 +1,22 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Jan Simek
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Rafał Pawlak <rafal1137@yahoo.pl>, 2015
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy 2.71\n"
+"Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-11 20:46+0100\n"
+"PO-Revision-Date: 2015-01-12 18:25+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
-"Language-Team: Polish translators <mail@etlegacy.com>\n"
-"Language: pl_PL\n"
+"Language-Team: Polish (http://www.transifex.com/projects/p/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.6.10\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
@@ -183,9 +183,7 @@ msgstr "SPECJALNE PODZIĘKOWANIA"
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
-"Return to Castle Wolfenstein był wykonany przez Gray Matter Studios & Nerve "
-"Software."
+msgstr "Return to Castle Wolfenstein był wykonany przez Gray Matter Studios & Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
@@ -242,12 +240,9 @@ msgstr "^1PODZIĘKOWANIA"
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
-msgstr ""
-"Wielkie podziękowania dla Splash Damage za wydanie kodu żródłowego,  "
-"ioWolfET & raedwulf-et (w szczegolności Ralph Eastwood) za kod bazowy i "
-"ioQuake3 za ich inspirację."
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
+msgstr "Wielkie podziękowania dla Splash Damage za wydanie kodu żródłowego,  ioWolfET & raedwulf-et (w szczegolności Ralph Eastwood) za kod bazowy i ioQuake3 za ich inspirację."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
@@ -263,9 +258,8 @@ msgid "^1WEBSITE"
 msgstr "^1STRONA"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-#, fuzzy
 msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr " 2012-2013 ET: Legacy wykonanie - pod licencja GPL wersja 3."
+msgstr "2012-2015 Zespół ET Legacy - zgodnie z warunkami GPL wersja 3"
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -291,9 +285,7 @@ msgstr "Główny Programista"
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
-"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
-"other countries."
+msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET:LEGACY HALL OF FAME"
@@ -323,9 +315,7 @@ msgstr "Dodatkowe Programowanie"
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr ""
-"Wolfenstein: Enemy Territory jest zasilany przez technologię Quake III Arena "
-"(TM) od id Software"
+msgstr "Wolfenstein: Enemy Territory jest zasilany przez technologię Quake III Arena (TM) od id Software"
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
@@ -337,21 +327,14 @@ msgid "^1ORIGINAL DEVELOPERS"
 msgstr "^1ORYGINALNI WYDAWCY"
 
 #: etmain/ui/credits_quit.menu:261
-#, fuzzy
 msgid ""
 " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
-"trademarks of Id Software, Inc. in the United States and/or other countries. "
-"All other trademarks and trade names are the properties of their respective "
-"owners."
-msgstr ""
-"© 2003 Id Software, Inc. Wszystkie prawa zastrzezone. Wolfenstein: Enemy "
-"Territory, Return to Castle Wolfenstein, powrot do zamku Wolfenstein logo, "
-"nazwe oprogramowania id i logo identyfikator sa zarejestrowanymi znakami "
-"handlowymi lub znakami firmy Id Software, Inc. w Stanach Zjednoczonych i/lub "
-"innych krajach. Wszystkie inne znaki towarowe i nazwy handlowe sa wlasnoscia "
-"ich wlascicieli."
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
+msgstr "© 2003 Id Software, Inc. Wszystkie prawa zastrzeżone. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, Return to Castle Wolfenstein logo, nazwę oprogramowania id i logo identyfikator są zarejestrowanymi znakami handlowymi lub znakami firmy Id Software, Inc. w Stanach Zjednoczonych i/lub innych krajach. Wszystkie inne znaki towarowe i nazwy handlowe są własnością ich właścicieli."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -439,9 +422,7 @@ msgstr "Strona Web ET: Legacy"
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
-"Czy chcesz otworzyć\n"
-" www.etlegacy.com ?"
+msgstr "Czy chcesz otworzyć\n www.etlegacy.com ?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -491,7 +472,7 @@ msgstr "Minimalny Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Ustawia minimalny ping który może być użyty do wykluczenia (0 = Brak Minimum)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
@@ -499,7 +480,7 @@ msgstr "Maximalny Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Ustawia maxymalny ping który może być użyty do wykluczenia (0 = Brak Maximum)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
@@ -508,7 +489,7 @@ msgstr "Maksymalny Rate Gry:"
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Maxymalna ilość danych gry wysłanych do klientów (0 = ustawienia jak u klienta )"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
@@ -518,7 +499,7 @@ msgstr "Nieaktywność Gracza:"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Czas (w sek) w którym gracz może być w stanie spoczynku zanim zostanie wywalony z serwera (0 = wyłączone)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -528,7 +509,7 @@ msgstr "Nieaktywność Widza:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Czas (w sek) w którym obserwator może być w stanie spoczynku zanim zostanie wywalony z serwera (0 = wyłączone)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -536,7 +517,7 @@ msgstr "Czas Przerwy:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr ""
+msgstr "Czas przerwy"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
@@ -544,7 +525,7 @@ msgstr "Procent Gotowości %:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
-msgstr ""
+msgstr "Procent 'gotowych' graczy aby zacząć następną mapę"
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
@@ -558,7 +539,7 @@ msgstr "Czekaj na Gotowość:"
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr ""
+msgstr "Czy serwer powinien wymagać od graczy gotowości przed rozpoczęciem meczu"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
@@ -567,7 +548,7 @@ msgstr "Minimum Graczy:"
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Sprecyzuj minimalną liczbę graczy potrzebnych do rozpoczęciem meczu"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
@@ -577,7 +558,7 @@ msgstr "Gotowość Procentowa:"
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr ""
+msgstr "Sprecyzuj minimalny procent graczy którzy muszą wdusić gotowy do rozpoczęcia meczu"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
@@ -585,7 +566,7 @@ msgstr "Pozwól na pozn. dol.:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr ""
+msgstr "Czy gracz może dołączyć do zespołu kiedy mecz się rozpoczął"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
@@ -593,7 +574,7 @@ msgstr "Ucisz Obserwatorów:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr ""
+msgstr "Czy obserwatorzy są uciszeni"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
@@ -603,20 +584,20 @@ msgstr "Obr. w Rozgrz.:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "Nikt"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr ""
+msgstr "Tylko Wrogowie"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr ""
+msgstr "Każdy"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
-msgstr ""
+msgstr "Czy możesz zranić graczy podczas czasu rozgrzewki"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
@@ -624,7 +605,7 @@ msgstr "Max Graczy na Zespół:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
-msgstr ""
+msgstr "Sprecyzuj maxymalną liczbę graczy na zespół"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
@@ -634,7 +615,7 @@ msgstr "Wyłącz Kontrole Zespołu:"
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr ""
+msgstr "Czy gracze mogą korzystać z komend zespołów (lock team/spectators, readyteam, etc.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
@@ -642,7 +623,7 @@ msgstr "Czas Rozgrzewki:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
-msgstr ""
+msgstr "Długość trwającej rozgrzewki"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid "Maximum Complaints:"
@@ -652,7 +633,7 @@ msgstr "Maksimum Skarg:"
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Maxymalna liczba skarg których gracz może dostać zanim zostanie wywalony z serwera"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
@@ -677,13 +658,13 @@ msgstr "Maksymalna Ilość Skarg:"
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
 msgid "Off"
-msgstr ""
+msgstr "Wyłącz"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Liczba unikatowych skarg których gracz może dostać zanim zostanie wywalony z serwera"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
@@ -691,7 +672,7 @@ msgstr "Limit Czasowy na Mape:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
-msgstr ""
+msgstr "Nadpisz domyślny limit czasowy"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
@@ -699,7 +680,7 @@ msgstr "Czas Odro. Aliatow:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr ""
+msgstr "Nadpisz domyślny czas rozstawiania Alliantów"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
@@ -707,7 +688,7 @@ msgstr "Czas Odro. Osi:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr ""
+msgstr "Nadpisz domyślny czas rozstawiania Osi"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
@@ -715,7 +696,7 @@ msgstr "Ilość Żyć Aliantów:"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
-msgstr ""
+msgstr "Sprecyzuj liczbę żyć Alliantów w grze z maxymalną ilością żyć"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
@@ -723,7 +704,7 @@ msgstr "Ilość Żyć OSi:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr ""
+msgstr "Sprecyzuj liczbę żyć Osi w grze z maxymalną ilością żyć"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
@@ -733,7 +714,7 @@ msgstr "Na Czas Typ-Rundy:"
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr ""
+msgstr "Zdeterminuj tryb Rund Na Czas (ABBA = zamiana stron, ABAB = zachowanie stron)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
@@ -745,7 +726,7 @@ msgstr "OOC Rund na Mecz:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Nadpisz domyślną ilość rund OOC na mecz"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
@@ -753,7 +734,7 @@ msgstr "OOC Meczów na Mape:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Nadpisz domyślną ilość meczów OOC (składających się z rund) na mapę"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
@@ -761,7 +742,7 @@ msgstr "Blokuje Ogla. Zespołu:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr ""
+msgstr "Zatrzymaj graczy od obserwowania zespołu wroga"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
@@ -769,7 +750,7 @@ msgstr "OOC Zablokowane Zespoły:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Zatrzymaj graczy od możliwości zmiany zespołów"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
@@ -783,7 +764,7 @@ msgstr "Czysty Serwer:"
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr ""
+msgstr "Limituj zawartość gry zawartych w plikach PK3 w kliencie i serwerze z takimi samymi CRCs"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -792,7 +773,7 @@ msgstr "Hasło:"
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"
-msgstr ""
+msgstr "Ustawia hasło potrzebne aby wejść na serwer"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
@@ -802,7 +783,7 @@ msgstr "Hasło Sędziego:"
 msgid ""
 "Password to utilize the \"ref\" command for match control and remote game "
 "administration"
-msgstr ""
+msgstr "Hasło do korzystania z komend \"ref\" dla kontroli meczu i zdalnej administracji gry"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
@@ -812,7 +793,7 @@ msgstr "Hasło RCON:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Hasło do korzystania do zdalnej konsoli serwera gry (bardzo potężne, więc trzymaj te hasło bezpiecznie)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
@@ -824,7 +805,7 @@ msgstr "Max głosów na Gracza:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
-msgstr ""
+msgstr "Sprecyzuj maxymalną liczbę głosów na gracza na mecz"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
@@ -832,7 +813,7 @@ msgstr "Sukces głosowania:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Sprecyzuj minimalny procent potrzebny aby głosowanie powiodło się"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -844,7 +825,7 @@ msgstr "Konfigu. gry:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali na konfiguracje gry"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
@@ -854,7 +835,7 @@ msgstr "Typ Gry:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali na zmianę trybu gry"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
@@ -862,7 +843,7 @@ msgstr "Wyrzuć Gracza:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali na wywalanie innych graczy"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -870,7 +851,7 @@ msgstr "Mapa:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za inną kampanią lub mapą"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
@@ -878,7 +859,7 @@ msgstr "Reset Meczu:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za resetem meczu"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
@@ -886,7 +867,7 @@ msgstr "Wycisz Widzów:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za uciszeniem obserwatorów"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
@@ -894,7 +875,7 @@ msgstr "Następna Mapa:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za następną kampanie lub mapę"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
@@ -902,7 +883,7 @@ msgstr "Balans Zespołów:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za wymuszeniem balansu zespołu"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
@@ -910,7 +891,7 @@ msgstr "Sędzia:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za sędziego"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
@@ -918,7 +899,7 @@ msgstr "Pomieszanie XP:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za wymieszaniem zespołów"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
@@ -926,7 +907,7 @@ msgstr "Zamiana Zespołów:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za zamianą stron"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
@@ -934,7 +915,7 @@ msgstr "Ogieć Przyjaciół:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za przyjacielskim ogniem aby był włączony lub wyłączony"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
@@ -942,11 +923,11 @@ msgstr "Limit Czasowy:"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za zmianą limitu czasowego"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za uszkodzenia rozgrzewki aby były włączone lub wyłączone"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
@@ -954,7 +935,7 @@ msgstr "Anty-Lag:"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
-msgstr ""
+msgstr "Pozwól graczom aby głosowali za antylagiem aby był włączony lub wyłączony"
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
@@ -968,7 +949,7 @@ msgstr "Linia 1:"
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Specifies the message clients will see when connecting to the server"
-msgstr ""
+msgstr "Sprecyzuj wiadomość którą będą widzieć klienci łączący się do serwera"
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
@@ -996,7 +977,7 @@ msgstr "Ściąg. przez Klienta:"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
-msgstr ""
+msgstr "Pozwól graczom ściągnięcie brakujących plików z serwera"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
@@ -1004,9 +985,9 @@ msgstr "Maks Predkość Ściąg.:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
-"Specifies the maximum download rate from the server for players with missing "
-"files"
-msgstr ""
+"Specifies the maximum download rate from the server for players with missing"
+" files"
+msgstr "Sprecyzuj maxymalne ściąganie z serwera brakujących plików"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
@@ -1014,7 +995,7 @@ msgstr "Przekierowy. FTP/HTTP:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Przekieruj graczy z brakującymi plikami do innego serwera"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
@@ -1022,7 +1003,7 @@ msgstr "Bazwowy URL:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "Użyj URL dla klientów do ściagania"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
@@ -1088,9 +1069,8 @@ msgid "Yes"
 msgstr "Tak"
 
 #: etmain/ui/hostgame_extended.menu:32
-#, fuzzy
 msgid "Enable Country Flags on the server"
-msgstr "nie jest na serwerze"
+msgstr "Włącz Flagi Państw na serwerze"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1111,7 +1091,7 @@ msgstr "Nazwa Serwera:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
-msgstr ""
+msgstr "Sprecyzuj nazwę twojego serwera gry"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
@@ -1131,9 +1111,8 @@ msgstr "Głosowanie na Mapy"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
-#, fuzzy
 msgid "Single-Map Objective"
-msgstr "Cel"
+msgstr "Pojedyncza-Mapa Cel"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1143,7 +1122,7 @@ msgstr "Na Czas"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
-msgstr ""
+msgstr "Naduś aby sprecyzować tryb gry do wczytania"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
@@ -1151,25 +1130,23 @@ msgstr "Maximum Graczy:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
-msgstr ""
+msgstr "Maxymalna # graczy którzy mogą połączyć się z serwerem"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Auto-Configure Server:"
 msgstr "Samo-Konfig. Serwer:"
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Competition Settings"
-msgstr "Ustawienia Rozgrywki Wczytane!\n"
+msgstr "Ustawienia Rozgrywki"
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Public Settings"
-msgstr "Ustaw. Publ.:"
+msgstr "Ustawienia Publiczne"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
-msgstr ""
+msgstr "Serwer automatycznie konfiguruje samego siebie do sprecyzowanych ustawień domyślnych"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Dedicated Server:"
@@ -1177,21 +1154,21 @@ msgstr "Dedykowany Serwer:"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - LAN"
-msgstr ""
+msgstr "Tak -LAN"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - Internet"
-msgstr ""
+msgstr "Tak - Internet"
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
-"Specifies if the server should be \"dedicated\" for LAN or Internet play (no "
-"client)"
-msgstr ""
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
+msgstr "Sprecyzuj czy serwer powinien być \"dedykowany dla LAN lub Internetu (brak klienta)"
 
 #: etmain/ui/hostgame.menu:44
 msgid "Password clients must set to join the server"
-msgstr ""
+msgstr "Hasło aby dołączyć do serwera"
 
 #: etmain/ui/hostgame.menu:47
 msgid "FEATURES"
@@ -1203,7 +1180,7 @@ msgstr "Ogień Przyjaciela"
 
 #: etmain/ui/hostgame.menu:59
 msgid "Specifies if teammates can hurt each other"
-msgstr ""
+msgstr "Sprecyzuj czy kompanii mogą ranić każdego"
 
 #: etmain/ui/hostgame.menu:70
 msgid "Anti-Lag"
@@ -1211,7 +1188,7 @@ msgstr "Anty-Lag"
 
 #: etmain/ui/hostgame.menu:71
 msgid "Enables modem-friendly server support"
-msgstr ""
+msgstr "Włącza wsparcie serwera"
 
 #: etmain/ui/hostgame.menu:85
 msgid "Max Lives"
@@ -1219,7 +1196,7 @@ msgstr "Max Żyć"
 
 #: etmain/ui/hostgame.menu:86
 msgid "Limits the number of player lives per round"
-msgstr ""
+msgstr "Limit liczby żyć graczy na rundę"
 
 #: etmain/ui/hostgame.menu:97
 msgid "Weapon Restrictions"
@@ -1229,7 +1206,7 @@ msgstr "Restrykcja Broni"
 msgid ""
 "Restricts the number of weapons available to players to a percentage of the "
 "team size to reduce spam"
-msgstr ""
+msgstr "Ogranicza liczbę broni dostępnych dla graczy na procent wielkości zespołu aby ograniczyć spam"
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
@@ -1239,7 +1216,7 @@ msgstr "Balans Zespołów"
 msgid ""
 "Enforces balanced teams by forcing players to join the team with the lowest "
 "player count"
-msgstr ""
+msgstr "Wymusza Balans zespołów przez wymuszenie graczy aby dołączyli do zespołu z mniejszą ilością graczy"
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
@@ -1247,7 +1224,7 @@ msgstr "NAZWA"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
-msgstr ""
+msgstr "Wybierz kampanie lub mapę którą serwer powinien wczytać"
 
 #: etmain/ui/hostgame.menu:142 etmain/ui/playonline.menu:219
 msgid "PREVIEW"
@@ -1275,7 +1252,7 @@ msgstr "z tego serwera?"
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
-msgstr ""
+msgstr "MENU"
 
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
@@ -1318,9 +1295,8 @@ msgid "Say:"
 msgstr "Mów:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
-#, fuzzy
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr "Oczekanie na nowy klucz... Naciśnij ESCAPE aby anulować"
+msgstr "Wpisz tekst tutaj - naduś ESCAPE dwa razy aby anulować"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
@@ -1329,22 +1305,20 @@ msgstr "Do:"
 #: etmain/ui/ingame_messagemode.menu:59
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
-#, fuzzy
 msgid "All"
-msgstr "Alianci"
+msgstr "Wszystko"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
-msgstr ""
+msgstr "Zespół"
 
 #: etmain/ui/ingame_messagemode.menu:59
-#, fuzzy
 msgid "Fireteam"
-msgstr "Oddział: %s"
+msgstr "Oddział"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
-msgstr ""
+msgstr "Wybierz kierunek twoich wiadomości"
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
@@ -1370,17 +1344,13 @@ msgstr "ODRODZENIE"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
-"W Ostatni Człowiek Przetrwały nie odrodzisz się jeśli padniesz teraz. Jesteś "
-"pewien?"
+msgstr "W Ostatni Człowiek Przetrwały nie odrodzisz się jeśli padniesz teraz. Jesteś pewien?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
-"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
-"sure?"
-msgstr ""
-"Ten serwer ma włączone max życie. Padając będziesz tracił życie. Jesteś "
-"pewien?"
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
+msgstr "Ten serwer ma włączone max życie. Padając będziesz tracił życie. Jesteś pewien?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1547,16 +1517,16 @@ msgstr "USTAWIENIA PUBLICZNE"
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "Brak"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "Wrogowie"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
-msgstr ""
+msgstr "Wybierz tryb uszkodzeń rozgrzewki do zagłosowania"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
@@ -1565,25 +1535,23 @@ msgstr "Limit Czasu:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
-msgstr ""
+msgstr "Sprecyzuj limit czasowy do zagłosowania"
 
 #: etmain/ui/ingame_vote_misc.menu:78
 msgid "Select the game type to vote on"
-msgstr ""
+msgstr "Sprecyzuj tryb gry do zagłosowania"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enable or disable warmup damage"
-msgstr ""
+msgstr "Włącza lub wyłącza uszkodzenia rozgrzewki"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
-#, fuzzy
 msgid "Set the time limit for the server"
-msgstr "nie jest na serwerze"
+msgstr "Ustaw limit czasowy dla sewera"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
-#, fuzzy
 msgid "Set the game type"
-msgstr "wszedł do gry\n"
+msgstr "Ustaw tryb gry"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
@@ -1665,7 +1633,7 @@ msgstr "Uwaga:"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning message to send to a player"
-msgstr ""
+msgstr "Komunikat ostrzegawczy do wysłania dla gracza"
 
 #: etmain/ui/main.menu:105 etmain/ui/playonline.menu:56
 msgid "PLAY ONLINE"
@@ -1699,9 +1667,7 @@ msgstr "Korzystasz ze starej wersji"
 msgid ""
 "We do recommend to\n"
 "upgrade your ET client"
-msgstr ""
-"Zalecamy aby\n"
-"zaktualizowac klienta ET"
+msgstr "Zalecamy aby\nzaktualizowac klienta ET"
 
 #: etmain/ui/main.menu:121
 msgid "UPGRADE NOW"
@@ -1719,7 +1685,7 @@ msgstr "IP Serwera:"
 #: etmain/ui/main_quickconnect.menu:71
 #: etmain/ui/playonline_connecttoip.menu:64
 msgid "Enter the IP address seperated by dots: xxx.xxx.xxx.xxx"
-msgstr ""
+msgstr "Wpisz adres IP oddzielony przez kropki: xxx.xxx.xxx.xxx"
 
 #: etmain/ui/main_quickconnect.menu:82
 msgid "Server PW:"
@@ -1727,7 +1693,7 @@ msgstr "Hasło:"
 
 #: etmain/ui/main_quickconnect.menu:84
 msgid "Enter the server password if any"
-msgstr ""
+msgstr "Wpisz hasło serwera jeśli potrzebne"
 
 #: etmain/ui/main_quickconnect.menu:87
 #: etmain/ui/playonline_connecttoip.menu:67 etmain/ui/popup_password.menu:87
@@ -1736,7 +1702,7 @@ msgstr "POŁĄCZ"
 
 #: etmain/ui/mods.menu:50
 msgid "Select the modification to play"
-msgstr ""
+msgstr "Wybierz modyfikacje do zagrania"
 
 #: etmain/ui/mods.menu:59
 msgid "LOAD MOD"
@@ -1762,9 +1728,7 @@ msgstr "Proste czyszczenie usunie pliki -tmp i niestandardowe pk3."
 msgid ""
 "A full clean will remove all downloaded files like map-,\n"
 " campaign- and custom pk3 files."
-msgstr ""
-"Pełne czyszczenie usunie wszystkie ściągniete pliki takie jak mapy,\n"
-" kampanie i niestandardowe pk3."
+msgstr "Pełne czyszczenie usunie wszystkie ściągniete pliki takie jak mapy,\n kampanie i niestandardowe pk3."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1805,21 +1769,20 @@ msgstr "Wybór dłoni:"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
-#, fuzzy
 msgid "Right"
-msgstr "Na Prawo:"
+msgstr "Prawo"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Left"
-msgstr ""
+msgstr "Lewo"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid ""
 "Left or Right Handed? This sets your default controls\n"
 "which you can modify later via the options menu"
-msgstr ""
+msgstr "Lewo lub Prawo Ręczny? To ustawia twoje sterowanie domyślne\nktóre możesz zmodyfikować później przez menu opcje"
 
 #: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
 msgid "CONTROLS"
@@ -1858,9 +1821,8 @@ msgid "Jump:"
 msgstr "Skok:"
 
 #: etmain/ui/options_controls.menu:40
-#, fuzzy
 msgid "Crouc)h:"
-msgstr "Kucnięcie:"
+msgstr "Kucanie:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -1884,9 +1846,8 @@ msgid "Invert Mouse:"
 msgstr "Obróć Mysz:"
 
 #: etmain/ui/options_controls.menu:48
-#, fuzzy
 msgid "Inverts mouse pitch"
-msgstr "Obróć Mysz:"
+msgstr "Odwrócenia pitch myszy"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
@@ -1894,7 +1855,7 @@ msgstr "Gładka Mysz:"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooths out the mouse using interpolation"
-msgstr ""
+msgstr "Wygładzanie myszy używając interpolacji"
 
 #: etmain/ui/options_controls.menu:51
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
@@ -1903,7 +1864,7 @@ msgstr "Czułość myszy:"
 
 #: etmain/ui/options_controls.menu:51
 msgid "Use the slider to increase or decrease mouse sensitivity"
-msgstr ""
+msgstr "Użyj paska do zwiększenia lub zmniejszenia czułości myszy"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Mouse Pitch:"
@@ -1911,15 +1872,15 @@ msgstr "Pion Myszy:"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
-msgstr ""
+msgstr "0.015 (najniższa dozwolona)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr ""
+msgstr "0.022 (domyślna)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Ruch Góra-Dół Celownika Podczas Poruszania."
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
@@ -2125,7 +2086,7 @@ msgstr "Pseudonim:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
-msgstr ""
+msgstr "Wpisz nazwę przez którą chciałbyś być rozpoznawalny przez innych na serwerze"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
@@ -2135,7 +2096,7 @@ msgstr "Język:"
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr ""
+msgstr "Ustaw swój pożądany język"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
@@ -2147,7 +2108,7 @@ msgstr "Zawsze Biegnij:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toogle walk/run"
-msgstr ""
+msgstr "Ustawia chodznie/bieg"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -2155,7 +2116,7 @@ msgstr "Podwójne Kli. do Padania:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
-msgstr ""
+msgstr "Ustaw opóźnienie pomiędzy naduszeniem potrzebnym do double-tap"
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
@@ -2167,7 +2128,7 @@ msgstr "Auto Przeładowanie:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Automatycznie przeładuj kiedy amunicja skończy się w magazynku"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
@@ -2175,7 +2136,7 @@ msgstr "Auto-zmiana:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Automatycznie zmieniaj do nowej broni kiedy brak amunicji"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
@@ -2183,15 +2144,15 @@ msgstr "Świecąca Ikona Broni:"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 kolory"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 kolory"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
-msgstr ""
+msgstr "Migaj ikonami broni kiedy strzelając, przeładowując lub zmieniając"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
@@ -2199,7 +2160,7 @@ msgstr "Błysk Lufy:"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Enables or disables weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Włącza lub wyłącza ogień broni (błysk)"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
@@ -2213,19 +2174,19 @@ msgstr "Ślady Pocisków:"
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "Włączony"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "Tylko wskaźniki własne"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "Tylko wskaźniki innych"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Włącza/Wyłącza wskaźniki kul"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
@@ -2237,16 +2198,16 @@ msgstr "Kółko myszki dla przyb.:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "Włączony (normalny)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "Włączony (odwrotny)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Zmiana Broni zbliży i oddali kiedy celujesz, raczej niż zmieni bronie"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
@@ -2254,25 +2215,25 @@ msgstr "Dom. Poziom Przybliżenia:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "Na całego Poza"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "Blisko"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "Daleko"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "Na całego Do"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Ustaw domyślny poziom przybliżenia dla snajperek"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
@@ -2280,15 +2241,15 @@ msgstr "Poziom Przybliżenia:"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 Poziomy Przybliżenia"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 Poziomy Przybliżenia"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Sprecyzuj przyrost przybliżenia przez"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
@@ -2296,15 +2257,15 @@ msgstr "Mod Szybkiego Czatu:"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr ""
+msgstr "Alpha"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr ""
+msgstr "Numeryczna"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr ""
+msgstr "Użyj alpha lub klawiszy numerycznych do wysyłania wiadomości radiowych"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
@@ -2313,7 +2274,7 @@ msgstr "Ikona Czasu Czatu:"
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Short"
-msgstr ""
+msgstr "Krótkie"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:50
@@ -2321,20 +2282,20 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Normal"
-msgstr ""
+msgstr "Normalne"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "Długie"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "Bardzo Długie"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
-msgstr ""
+msgstr "Sprecyzuj jak długo ikony czatu pojawiają się ponad głowami innych graczy"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
@@ -2342,7 +2303,7 @@ msgstr "Tylko Chat Zesołu:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr ""
+msgstr "Graj tylko zespołowy chat w grze"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
@@ -2350,7 +2311,7 @@ msgstr "Bez Dżwięku Textu:"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "Don't show voice text in-game"
-msgstr ""
+msgstr "Nie pokazuj tekstu głosowego w grze"
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
@@ -2362,7 +2323,7 @@ msgstr "Informacje:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Włącza lub wyłącza Dowódcę w grze"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
@@ -2370,7 +2331,7 @@ msgstr "Bez Dżwięku Czatu:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "Nie graj chatu głosowego w grze"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
@@ -2378,20 +2339,19 @@ msgstr "Dżwięki Trafień:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Brak Dźwięku Trafień Zespołu"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Brak Dźwięku Trafień w Głowę"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Brak Dźwięku Trafień w Ciało"
 
 #: etmain/ui/options_customise_game.menu:73
-#, fuzzy
 msgid "Set hit sounds"
-msgstr "Dżwięki Trafień:"
+msgstr "Ustaw Dźwięki Trafień"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
@@ -2399,7 +2359,7 @@ msgstr "Okienko Skarg:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Pokazuj opcje do wypełnienia skarg o kompanu który cie zabił"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
@@ -2407,7 +2367,7 @@ msgstr "Zapisuj Ważne Wiadomości:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Drukuj ważne wiadomości gry do konsoli"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
@@ -2415,37 +2375,35 @@ msgstr "Auto-Akcja:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: etmain/ui/options_customise_game.menu:80
-#, fuzzy
 msgid "Screenshot"
-msgstr "Zrób Screenshota:"
+msgstr "Screenshot"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Zrzut Statystyk"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Demo + SS"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Demo + Statystyki"
 
 #: etmain/ui/options_customise_game.menu:80
-#, fuzzy
 msgid "SS + Stats"
-msgstr "S. Zeznania"
+msgstr "SS + Statystyki"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Demo + SS + Statystyki"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Automatycznie wykonaj akcje przy starcie lub końcu rundy"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
@@ -2455,7 +2413,7 @@ msgstr "Format autoscreena:"
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Zmiana pomiędzy typami obrazów .tga i .jpg dla komendy \"autoscreenshot\""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
@@ -2463,12 +2421,12 @@ msgstr "Pokaż Opis:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Wyświetl Podpowiedzi w UI"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
 msgid "ui/menudef.h"
-msgstr ""
+msgstr "ui/menudef.h"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
@@ -2485,7 +2443,7 @@ msgstr "Pokazuj Broń:"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Shows gun model on-screen"
-msgstr ""
+msgstr "Pokazuje model broni na ekranie"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
@@ -2493,7 +2451,7 @@ msgstr "Pokaż Kompas:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
-msgstr ""
+msgstr "Wyświetla kompas (z ikonami kiedy wybrane wydarzenia są blisko)"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
@@ -2501,7 +2459,7 @@ msgstr "Auto Przybliżenie Mapy:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
-msgstr ""
+msgstr "Ustawia Poziom Przybliżenia Automatycznie Kiedy Mapa Wczytana"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
@@ -2509,7 +2467,7 @@ msgstr "Czas Misji:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
-msgstr ""
+msgstr "Wyświetla pozostały czas misji"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
@@ -2517,7 +2475,7 @@ msgstr "Czas Odrodzenia:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Wyświetla czas \"odrodzenia\" twojego zespołu"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
@@ -2525,23 +2483,23 @@ msgstr "Wskazówki Kursora:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr ""
+msgstr "Wielkość Pulsu"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
-msgstr ""
+msgstr "Puls Stroboskopowy"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr ""
+msgstr "Puls Alpha"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
-msgstr ""
+msgstr "Stały"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Icon display format when near an action item"
-msgstr ""
+msgstr "Wyświetl format ikony kiedy blisko elementu akcji"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
@@ -2549,26 +2507,23 @@ msgstr "Pokaż Lokalizacje:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "Tylko Kordynaty"
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Names Fireteam Only"
-msgstr "Prywatny Oddział: %s"
+msgstr "Tylko Nazwy Oddziału"
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Names Team Chat Only"
-msgstr "Tylko Chat Zesołu:"
+msgstr "Tylko Nazwy Chatu Zespołu"
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Team & Fireteam Chat"
-msgstr "Chat Oddziału:"
+msgstr "Chat Zespołu & Oddziału"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Wyświetl lokalizacje w oddziale"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
@@ -2576,16 +2531,15 @@ msgstr "Włącz Flagi:"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
-msgstr ""
+msgstr "Wyświetl flagi państw graczy w tablicy wyników"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
 msgstr "Klasa w Oddziale:"
 
 #: etmain/ui/options_customise_hud.menu:42
-#, fuzzy
 msgid "Displays Fireteam latched class"
-msgstr "Klasa w Oddziale:"
+msgstr "Wyświetl zmianę klasy w Oddziale"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -2593,15 +2547,15 @@ msgstr "Ikony Zabić:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "Ofiara Broń Zabójca"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "Zabójca Broń Ofiara"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
-msgstr ""
+msgstr "Wyświetla ikony zabić"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
@@ -2609,7 +2563,7 @@ msgstr "Pokaż Tekst Opisu:"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Displays limbo help text"
-msgstr ""
+msgstr "Wyświetla tekst pomocy w limbo"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Show Clock:"
@@ -2617,23 +2571,23 @@ msgstr "Pokaż Zegar:"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours"
-msgstr ""
+msgstr "24 godziny"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours + seconds"
-msgstr ""
+msgstr "24 godziny + sekundy"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours"
-msgstr ""
+msgstr "12 godzin"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours + seconds"
-msgstr ""
+msgstr "12 godzin + sekundy"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Displays local time"
-msgstr ""
+msgstr "Wyświetla czas lokalny"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Show FPS:"
@@ -2641,7 +2595,7 @@ msgstr "Pokaż FPS:"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Displays Frames Per Second"
-msgstr ""
+msgstr "Wyświetla Klatki Na Sekundy"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Show Ping:"
@@ -2649,7 +2603,7 @@ msgstr "Pokaż Ping:"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Displays ping"
-msgstr ""
+msgstr "Wyświetla ping"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Show Lagometer:"
@@ -2657,7 +2611,7 @@ msgstr "Pokaż Lagometr:"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Displays lagometer"
-msgstr ""
+msgstr "Wyświetla lagometer"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switch HUD:"
@@ -2665,59 +2619,55 @@ msgstr "Zmień HUDA:"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Standard Hud"
-msgstr ""
+msgstr "Hud Standardowy"
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 1"
-msgstr "Alternatywny HUD:"
+msgstr "Hud Alternatywny 1"
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 2"
-msgstr "Alternatywny HUD:"
+msgstr "Hud Alternatywny 2"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
-msgstr ""
+msgstr "Zmiana pomiędzy różnymi HUD-ami"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
 msgstr "Modyfikuj Wybrany HUD:"
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Move Round Timer"
-msgstr "Czas Misji:"
+msgstr "Przenieś Czas Rundy"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Remove Ranks"
-msgstr ""
+msgstr "Usuń Rangi"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Popups"
-msgstr ""
+msgstr "Przenieś powiadomienia"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Timer"
-msgstr ""
+msgstr "Rangi + Czas"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Popups"
-msgstr ""
+msgstr "Czas + Powiadomienia"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Popups"
-msgstr ""
+msgstr "Rangi + Powiadomienia"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Ranks + Popups"
-msgstr ""
+msgstr "Czas + Rangi + Powiadomienia"
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Customises Selected HUD"
-msgstr "Modyfikuj Wybrany HUD:"
+msgstr "Dostosowuje Wybrany HUD"
 
 #: etmain/ui/options_customise_hud.menu:55
 msgid "IN-GAME DISPLAY"
@@ -2732,16 +2682,15 @@ msgstr "Czas Pokazywania Łusek:"
 #: etmain/ui/options_system.menu:52 etmain/ui/profile_create_initial.menu:102
 #: etmain/ui/profile_create.menu:97
 msgid "High"
-msgstr ""
+msgstr "Wysoko"
 
 #: etmain/ui/options_customise_hud.menu:56
-#, fuzzy
 msgid "Med"
-msgstr "Medale"
+msgstr "Średnio"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
-msgstr ""
+msgstr "Ustawia czas trwania trwania wystrzelonych kul łusek itd."
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
@@ -2749,7 +2698,7 @@ msgstr "Pole Widzenia:"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
-msgstr ""
+msgstr "Najlepszy FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
@@ -2757,15 +2706,15 @@ msgstr "Odleglość Rozbłysku:"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Normal)"
-msgstr ""
+msgstr "Normalny"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
-msgstr ""
+msgstr "Extremalne"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Sets the maximum distance light corona is displayed"
-msgstr ""
+msgstr "Ustawia maxymalną odległość na jaką light corona jest pokazywana"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles:"
@@ -2774,7 +2723,7 @@ msgstr "Cząstki:"
 #: etmain/ui/options_customise_hud.menu:60
 msgid ""
 "Toggles display of particle effects - e.g. explosions, some smoke effects"
-msgstr ""
+msgstr "Włącza wyświetlanie efektów cząsteczkowych - ekspozje, kilka efektów dymu"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
@@ -2782,7 +2731,7 @@ msgstr "Czas Trwania Śladów:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls etc"
-msgstr ""
+msgstr "Czas trwania znaków kul na ścianach itd"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
@@ -2790,32 +2739,30 @@ msgstr "Błysk Krwi:"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
-#, fuzzy
 msgid "Light"
-msgstr "Wychyl na Prawo:"
+msgstr "Jasno"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 #: etmain/ui/options_customise_hud.menu:70 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52
-#, fuzzy
 msgid "Medium"
-msgstr "Amunicją Medyka"
+msgstr "Średnio"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Heavy"
-msgstr ""
+msgstr "Ciężko"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Full"
-msgstr ""
+msgstr "Pełne"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Red blood \"flash\" scale when receiving damage"
-msgstr ""
+msgstr "Skala czerwonej krwi \"błysk\" kiedy otrzymując uszkodzenia"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood Splatter:"
@@ -2823,7 +2770,7 @@ msgstr "Rozprysk Krwi:"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood \"splatter\" transparency when taking damage from other players"
-msgstr ""
+msgstr "Przejrzystość Krwi \"rozbrysk\" kiedy otrzymując uszkodzenia od innych graczy"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Show Blood:"
@@ -2831,7 +2778,7 @@ msgstr "Pokaż Krew:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when player's are shot"
-msgstr ""
+msgstr "Włącza pokazywanie efektu strug krwi kiedy gracz/gracze są ostrzeliwani"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
@@ -2839,7 +2786,7 @@ msgstr "Efekty Atmosferyczne:"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Draws atmospheric effects (snow/rain) on-screen"
-msgstr ""
+msgstr "Rysuje efekty atmosferyczne (śnieg/deszcz) na ekranie"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "CROSSHAIR"
@@ -2852,24 +2799,24 @@ msgstr "Wielkość Celownika:"
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Tiny"
-msgstr ""
+msgstr "Malutki"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Small"
-msgstr ""
+msgstr "Mały"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Large"
-msgstr ""
+msgstr "Duży"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Huge"
-msgstr ""
+msgstr "Ogromny"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Sets the size of the displayed crosshair"
-msgstr ""
+msgstr "Ustawia wielkość wyświetlanego celownika"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Crosshair Pulsing:"
@@ -2877,7 +2824,7 @@ msgstr "Pulsowanie Celownika:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
-msgstr ""
+msgstr "Włącza rozszerzania celownika podczas poruszania/strzelania"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
@@ -2887,7 +2834,7 @@ msgstr "Poziom Życia:"
 msgid ""
 "Colors the crosshair based on current health (overrides crosshair color "
 "settings)"
-msgstr ""
+msgstr "Kolory celownika bazowane na bieżącym życiu (nadpisuje ustawienia koloru celownika)"
 
 #: etmain/ui/options_customise_hud.menu:73
 #: etmain/ui/options_customise_hud.menu:122
@@ -2900,11 +2847,11 @@ msgstr "Nazwa"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Coloured Name"
-msgstr ""
+msgstr "Kolorowe Nazwy"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Displays player name when the crosshair is over a teammate"
-msgstr ""
+msgstr "Wyświetla nazwę gracza kiedy celownik jest na kompanu"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Crosshair Info:"
@@ -2912,7 +2859,7 @@ msgstr "Informacja o Graczu:"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class"
-msgstr ""
+msgstr "Klasa"
 
 #: etmain/ui/options_customise_hud.menu:74 src/cgame/cg_info.c:783
 msgid "Rank"
@@ -2920,16 +2867,15 @@ msgstr "Ranga"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank"
-msgstr ""
+msgstr "Klasa + Ranga"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
-msgstr ""
+msgstr "Wyświetla info o graczu kiedy celownik jest na kompanu"
 
 #: etmain/ui/options_customise_hud.menu:86
-#, fuzzy
 msgid "Set crosshair type"
-msgstr "Wielkość Celownika:"
+msgstr "Ustaw typ celownika"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
@@ -2938,117 +2884,116 @@ msgstr "Pierwszy Kolor:"
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "White"
-msgstr ""
+msgstr "Biały"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
-#, fuzzy
 msgid "Yellow"
-msgstr "Witam!"
+msgstr "Żółty"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Red"
-msgstr ""
+msgstr "Czerwony"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Green"
-msgstr ""
+msgstr "Zielony"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Blue"
-msgstr ""
+msgstr "Niebieski"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Magenta"
-msgstr ""
+msgstr "Magneta"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Cyan"
-msgstr ""
+msgstr "Cyan"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Orange"
-msgstr ""
+msgstr "Pomarańczowy"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Blue"
-msgstr ""
+msgstr "Lekko Niebieski"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Blue"
-msgstr ""
+msgstr "Średnio Niemieski"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Red"
-msgstr ""
+msgstr "Lekko Czerwony"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Red"
-msgstr ""
+msgstr "Średnio Czerwony"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Green"
-msgstr ""
+msgstr "Lekko Zielony"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Green"
-msgstr ""
+msgstr "Średnio Zielony"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Green"
-msgstr ""
+msgstr "Ciemno Zielony"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Cyan"
-msgstr ""
+msgstr "Średnio Cyan"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Yellow"
-msgstr ""
+msgstr "Średnio Żółty"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Orange"
-msgstr ""
+msgstr "Średnio Pomarańczowy"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Grey"
-msgstr ""
+msgstr "Lekko Szary"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Grey"
-msgstr ""
+msgstr "Średnio Szary"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Grey"
-msgstr ""
+msgstr "Ciemno Szary"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Black"
-msgstr ""
+msgstr "Czarny"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Set the color for the primary crosshair"
-msgstr ""
+msgstr "Ustaw kolor pierwszego celownika"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
@@ -3056,7 +3001,7 @@ msgstr "Pierwszy Alfa:"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Set the transparency level for the primary crosshair"
-msgstr ""
+msgstr "Ustaw poziom przejrzystości pierwszego celownika"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Secondary Color:"
@@ -3064,7 +3009,7 @@ msgstr "Drugi Kolor:"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Set the color for the secondary crosshair"
-msgstr ""
+msgstr "Ustaw kolor drugiego celownika"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Secondary Alpha:"
@@ -3072,7 +3017,7 @@ msgstr "Drugi Alfa:"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Set the transparency level for the secondary crosshair"
-msgstr ""
+msgstr "Ustaw poziome przejrzystości drugiego celownika"
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
@@ -3084,7 +3029,7 @@ msgstr "Huśtanie góra:"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Enable/Disable the vertical bob effect when moving"
-msgstr ""
+msgstr "Włącza/Wyłącza pionowy efekt bob podczas chodzenia"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Bob pitch:"
@@ -3092,7 +3037,7 @@ msgstr "Huśtanie pion:"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
-msgstr ""
+msgstr "Włącza/Wyłącza pitch efekt bob (do przodu/do tyłu)  podczas chodzenia"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Bob roll:"
@@ -3100,7 +3045,7 @@ msgstr "Huśtanie w koło:"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Enable/Disable the bob roll (left/right) effect when moving"
-msgstr ""
+msgstr "Włącza/Wyłącza roll efekt bob (lewo/prawo) podczas chodzenia"
 
 #: etmain/ui/options_customise_hud.menu:113
 msgid "FONTS"
@@ -3112,7 +3057,7 @@ msgstr "Wielkość Czcionki:"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Sets the size of the in-game fonts"
-msgstr ""
+msgstr "Ustawia wielkość czcionki w grze"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Top Print:"
@@ -3120,15 +3065,16 @@ msgstr "Górna:"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Set font size for Warmup message and Spectator label"
-msgstr ""
+msgstr "Ustaw wielkość czcionki dla wiadomości Rozgrzewki i tabeli Obserwatorów"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid "Side Print:"
 msgstr "Boczna:"
 
 #: etmain/ui/options_customise_hud.menu:118
-msgid "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
-msgstr ""
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgstr "Ustaw wielkość czcionki dla wiadomości o Limbo/Oddziału/Głosowań/Ikon/Umiejętnościach"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Center Print:"
@@ -3136,11 +3082,11 @@ msgstr "Środkowa:"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
-msgstr ""
+msgstr "Ustaw wielkość czcionki dla wiadomości o Centrum Druku/Info o Celu/Nagrodzeniu Umiejętnoścami"
 
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Set font size for Crosshair Name label"
-msgstr ""
+msgstr "Ustaw wielkość czcionki dla tabeli Nazw Celownika"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "PopUpTimeStay:"
@@ -3148,7 +3094,7 @@ msgstr "Wiadomości Pozostanie:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
-msgstr ""
+msgstr "Ustaw czas pokazywania powiadomień"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "PopUpTimeFade:"
@@ -3156,7 +3102,7 @@ msgstr "Wiadomości Znikanie:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
-msgstr ""
+msgstr "Ustaw czas znikania powiadowień"
 
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
@@ -3171,10 +3117,9 @@ msgstr "Ogólne Dopasowanie Jasności (Wszystkie Kolory Głębi)"
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
-"1. Move the slider below and/or the brightness on your monitor until you can "
-"see 16"
-msgstr ""
-"1. Przesuń suwak poniżej i/lub jasność na ekranie monitora, aż zobaczysz 16"
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
+msgstr "1. Przesuń suwak poniżej i/lub jasność na ekranie monitora, aż zobaczysz 16"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
@@ -3201,9 +3146,7 @@ msgstr "1. Porusz pasek na dole aż zobaczysz 3 oddzielne paski niżej"
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
-msgstr ""
-"2. Dostosuj suwak aż nie będzie żadnej różnicy pomiędzy lewym i środkowym "
-"polem."
+msgstr "2. Dostosuj suwak aż nie będzie żadnej różnicy pomiędzy lewym i środkowym polem."
 
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
@@ -3220,7 +3163,7 @@ msgstr "Jasność:"
 #: etmain/ui/options_system_gamma.menu:70
 #: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
 msgid "Set the brightness of the game"
-msgstr ""
+msgstr "Ustaw jasność gry"
 
 #: etmain/ui/options_graphics.menu:34 etmain/ui/options.menu:36
 msgid "GRAPHICS"
@@ -3236,24 +3179,23 @@ msgstr "Ogólna Jakość:"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fastest"
-msgstr ""
+msgstr "najszybsza"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fast"
-msgstr ""
+msgstr "szybka"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "normal"
-msgstr ""
+msgstr "normalna"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "high"
-msgstr ""
+msgstr "wysoka"
 
 #: etmain/ui/options_graphics.menu:39
-#, fuzzy
 msgid "Set overall video quality"
-msgstr "Ogólna Jakość:"
+msgstr "Ustaw ogólną jakość video"
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
@@ -3262,7 +3204,7 @@ msgstr "Rozdzielczość:"
 
 #: etmain/ui/options_graphics.menu:40
 msgid "Set video resolution of the game"
-msgstr ""
+msgstr "Ustaw rozdzielczość video gry"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
@@ -3272,7 +3214,7 @@ msgstr "Tryb okna:"
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Włącza pełny ekran"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "Intensity:"
@@ -3280,7 +3222,7 @@ msgstr "Intensywność:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr ""
+msgstr "Intensywność Tektur (potrzebne vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
@@ -3288,7 +3230,7 @@ msgstr "Nadjasność bitowa Mapy:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr ""
+msgstr "Świat Staje się Jasny, Ale Jaśniejszy (potrzeba vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
@@ -3296,7 +3238,7 @@ msgstr "Nadjasność Bitowa:"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Map shines brighter (requires vid_restart)"
-msgstr ""
+msgstr "Mapa świeci jaśniej (potrzeba vid_restart)"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
@@ -3304,7 +3246,7 @@ msgstr "Niska Jakość Nieba:"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
-msgstr ""
+msgstr "Włącza czy szczegółowe niebo jest rysowane lub tylko proste"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Shadow Detail:"
@@ -3312,12 +3254,11 @@ msgstr "Detale Cieńi:"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Blob"
-msgstr ""
+msgstr "Blob"
 
 #: etmain/ui/options_graphics.menu:55
-#, fuzzy
 msgid "Set shadow details"
-msgstr "Detale Cieńi:"
+msgstr "Ustaw detale cieni"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Texture Detail:"
@@ -3326,12 +3267,11 @@ msgstr "Detale Textur:"
 #: etmain/ui/options_graphics.menu:56 etmain/ui/options_graphics.menu:60
 #: etmain/ui/options_system.menu:52
 msgid "Low"
-msgstr ""
+msgstr "Niskie"
 
 #: etmain/ui/options_graphics.menu:56
-#, fuzzy
 msgid "Set texture details"
-msgstr "Detale Textur:"
+msgstr "Ustaw detale tekstur"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
@@ -3339,7 +3279,7 @@ msgstr "Dynamiczne Światła:"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Toggles use of dynamic lighting effects"
-msgstr ""
+msgstr "Włącz użycie efektu dynamicznych świateł"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Geometric Detail:"
@@ -3347,7 +3287,7 @@ msgstr "Detale Geometryczne:"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Set level of details bias"
-msgstr ""
+msgstr "Ustaw poziom detalów bias"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Texture Quality:"
@@ -3355,20 +3295,20 @@ msgstr "Jakość Textur:"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
 msgid "Default"
-msgstr ""
+msgstr "Domyślnie"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 #: etmain/ui/options_graphics.menu:68
 msgid "16-bit"
-msgstr ""
+msgstr "16-bit"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 msgid "32-bit"
-msgstr ""
+msgstr "32-bit"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
-msgstr ""
+msgstr "Ustaw liczbę bitów dla tekstur"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Texture Filter:"
@@ -3376,38 +3316,35 @@ msgstr "Filtr Textur:"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Bilinear"
-msgstr ""
+msgstr "Bilinear"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Trilinear"
-msgstr ""
+msgstr "Trilinear"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Set the GL texture mode"
-msgstr ""
+msgstr "Ustaw tryb tekstury GL"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Anisotropic Filter:"
 msgstr "Filtr Anizotropowy:"
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
-#, fuzzy
 msgid "Disabled"
-msgstr "wyłączyć"
+msgstr "Wyłączone"
 
 #: etmain/ui/options_graphics.menu:64
-#, fuzzy
 msgid "Set anisotropic filtering"
-msgstr "Filtr Anizotropowy:"
+msgstr "Ustaw filtrowanie anistropicowe"
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Anti-Aliasing:"
 msgstr "Anty-Aliasing:"
 
 #: etmain/ui/options_graphics.menu:65
-#, fuzzy
 msgid "Set Anti-Aliasing"
-msgstr "Anty-Aliasing:"
+msgstr "Ustaw Anty-Aliasing"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Color Depth:"
@@ -3415,12 +3352,11 @@ msgstr "Głębia Koloru:"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Desktop Default"
-msgstr ""
+msgstr "Domyślne Ekranu"
 
 #: etmain/ui/options_graphics.menu:66
-#, fuzzy
 msgid "Set color depth"
-msgstr "Głębia Koloru:"
+msgstr "Ustaw głębie koloru"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Detail Textures:"
@@ -3428,7 +3364,7 @@ msgstr "Detale Textur:"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Toogles usage of high detail textures"
-msgstr ""
+msgstr "Włącza użycie szczegółowych tekstur"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Depth Buffer:"
@@ -3436,11 +3372,11 @@ msgstr "Głębia Bufforowania:"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "24-bit"
-msgstr ""
+msgstr "24-bit"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
-msgstr ""
+msgstr "Ustaw liczbę pożądanych głębi bitów"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Compress Textures:"
@@ -3448,7 +3384,7 @@ msgstr "Kompresja Textur:"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Toggles the compression of textures"
-msgstr ""
+msgstr "Włącza kompresję tekstur"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Sync Every Frame:"
@@ -3456,20 +3392,19 @@ msgstr "Synchronizacja Klatek:"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Prevent screen tearing"
-msgstr ""
+msgstr "Zapobiega miganiu ekranu"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "GL Extensions:"
 msgstr "Rozszerzenie OpenGL:"
 
 #: etmain/ui/options_graphics.menu:71
-#, fuzzy
 msgid "Enabled"
-msgstr "Włącz Flagi:"
+msgstr "Włączone"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enables or disables usage of OpenGL extensions"
-msgstr ""
+msgstr "Włącza lub wyłącza użycie rozszerzenia OpenGL"
 
 #: etmain/ui/options_graphics.menu:73
 msgid "SET RECOMMENDED"
@@ -3492,18 +3427,16 @@ msgid "Effects Volume:"
 msgstr "Glosność Efektów:"
 
 #: etmain/ui/options_system.menu:41
-#, fuzzy
 msgid "Set the effects volume"
-msgstr "Glosność Efektów:"
+msgstr "Ustaw głośność efektów"
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
 msgstr "Glosność Muzyki:"
 
 #: etmain/ui/options_system.menu:43
-#, fuzzy
 msgid "Set the music volume"
-msgstr "Glosność Muzyki:"
+msgstr "Ustaw głośność muzyki"
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
@@ -3511,20 +3444,19 @@ msgstr "Jakość Dżwięku:"
 
 #: etmain/ui/options_system.menu:44
 msgid "11 khz (low)"
-msgstr ""
+msgstr "11 khz (niskie)"
 
 #: etmain/ui/options_system.menu:44
 msgid "22 khz (high)"
-msgstr ""
+msgstr "22 khz (wysokie)"
 
 #: etmain/ui/options_system.menu:44
 msgid "44 khz (ultra high)"
-msgstr ""
+msgstr "44 khz (bardzo wysokie)"
 
 #: etmain/ui/options_system.menu:44
-#, fuzzy
 msgid "Set the sound quality"
-msgstr "Jakość Dżwięku:"
+msgstr "Ustaw jakość dżwięku"
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3532,7 +3464,7 @@ msgstr "Doppler FX:"
 
 #: etmain/ui/options_system.menu:45
 msgid "Enables or disables the doppler effect"
-msgstr ""
+msgstr "Włącza lub wyłącza efekt dopplera"
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
@@ -3540,7 +3472,7 @@ msgstr "Wycisz Kiedy Zminimalizowana:"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
-msgstr ""
+msgstr "Włącza lub wyłącza dźwięk kiedy okno jest zminimalizowne"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
@@ -3548,7 +3480,7 @@ msgstr "Wycisz Kiedy Nie Korzystasz:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr ""
+msgstr "Włącza lub wyłącza dźwięk kiedy okno jest nieaktywne"
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
@@ -3560,11 +3492,11 @@ msgstr "Max Pakietów:"
 
 #: etmain/ui/options_system.menu:52
 msgid "Very Low"
-msgstr ""
+msgstr "Bardzo Niskie"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
-msgstr ""
+msgstr "Górna granica dla upstreamu transmisji pakietów danych"
 
 #: etmain/ui/options_system.menu:53
 msgid "Packet Duplication:"
@@ -3574,7 +3506,7 @@ msgstr "Duplikacja Pakietu:"
 msgid ""
 "Number of duplicates for every data packet sent upstream, minimized "
 "packetloss"
-msgstr ""
+msgstr "Liczba zduplikowanych pakietów danych wysłanych upstream, zminimalizowane tracenie pakietów"
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
@@ -3586,7 +3518,7 @@ msgstr "Aktualizacja przy Starcie:"
 
 #: etmain/ui/options_system.menu:59
 msgid "Automatically check for updates?"
-msgstr ""
+msgstr "Automatycznie sprawdzaj aktualizacje?"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
@@ -3594,7 +3526,7 @@ msgstr "Zdobądż Pliki z Serwera:"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
-msgstr ""
+msgstr "Ściągnij brakujące pliki kiedy dostępne?"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3602,7 +3534,7 @@ msgstr "Użyj HTTP/FTP Ściągania:"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
-msgstr ""
+msgstr "Włącza lub wyłącza ściąganie http/ftp"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
@@ -3630,23 +3562,21 @@ msgstr "Zródło:"
 
 #: etmain/ui/playonline.menu:82
 msgid "Local"
-msgstr ""
+msgstr "Lokalny"
 
 #: etmain/ui/playonline.menu:82
-#, fuzzy
 msgid "Internet"
-msgstr "Intensywność:"
+msgstr "Internet"
 
 #: etmain/ui/playonline.menu:82
-#, fuzzy
 msgid "Favorites"
-msgstr "Lista Ulubionych pełna\n"
+msgstr "Ulubione"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
 "Choose the type of game servers to display from Internet, local and the "
 "favorites list"
-msgstr ""
+msgstr "Wybierz tryb gry serwera do wyświetlenia dla Internetu, lokalnego i listy ulubionych"
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
@@ -3654,66 +3584,65 @@ msgstr "Cel"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
-msgstr ""
+msgstr "OOC"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
-msgstr ""
+msgstr "Wyświetl tylko serwery oferujące ten Tryb Gry"
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
-msgstr ""
+msgstr "Mod:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
-msgstr ""
+msgstr "Wyświetl tylko serwery oferujące ten Mod"
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
-msgid "Includes or excludes servers with desired map name from the server list"
-msgstr ""
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
+msgstr "Zawiera lub wyklucza serwery z pożądaną nazwą mapy z listy serwerów"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr ""
+msgstr "Filtr wpływa na serwery z nazwą mapy"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr ""
+msgstr "Filtr Wyłączont"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Only show..."
-msgstr ""
+msgstr "Tylko pokazuj..."
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Don't show..."
-msgstr ""
+msgstr "Nie pokazuj..."
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
 msgstr "ODŚWIEŻ LISTĘ"
 
 #: etmain/ui/playonline.menu:194
-#, fuzzy
 msgid "Refresh servers list"
-msgstr "Czas Odświeżania %s"
+msgstr "Odśwież listę serwerów"
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
 msgstr "RESETUJ FILTRY"
 
 #: etmain/ui/playonline.menu:195
-#, fuzzy
 msgid "Reset all filters to their defaults"
-msgstr "Zresetować ustawienia do domyślnych?"
+msgstr "Zresetuj wszystkie filtry do domyślnych"
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
@@ -3725,7 +3654,7 @@ msgstr "NAZWA SERWERA"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr ""
+msgstr "Naduś tutaj aby posortować przez Nazwę Serwera"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
@@ -3733,7 +3662,7 @@ msgstr "MAPA"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
-msgstr ""
+msgstr "Naduś tutaj aby posortować przez Kampanie lub Nazwę Mapy"
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
@@ -3741,7 +3670,7 @@ msgstr "#GRACZY"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
-msgstr ""
+msgstr "Naduś tutaj aby posortować przez Liczbę Graczy"
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
@@ -3749,7 +3678,7 @@ msgstr "TYP"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
-msgstr ""
+msgstr "Naduś tutaj aby posortować przez Tryb Gry"
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
@@ -3785,7 +3714,7 @@ msgstr "POTRZEBNE HASŁO"
 
 #: etmain/ui/popup_password.menu:84
 msgid "Enter the server password"
-msgstr ""
+msgstr "Wpisz hasło serwera"
 
 #: etmain/ui/popup_serverredirect.menu:71
 msgid "REDIRECTION ADVISED"
@@ -3809,15 +3738,12 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr ""
-"Wybierz Ustawienia początkowe poniżej. Możesz zmienić je w dowolnym "
-"momencie, a dostęp do bardziej zaawansowanych opcji odwiedzajćc Menu opcje. "
-"Jeżeli wiecęj niż jedna osoba zamierza grać Enemy Territory: Legacy na tym "
-"komputerze, można utworzyć dodatkowe profile odwiedzając Menu profile."
+msgstr "Wybierz Ustawienia początkowe poniżej. Możesz zmienić je w dowolnym momencie, a dostęp do bardziej zaawansowanych opcji odwiedzajćc Menu opcje. Jeżeli wiecęj niż jedna osoba zamierza grać Enemy Territory: Legacy na tym komputerze, można utworzyć dodatkowe profile odwiedzając Menu profile."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
-msgid "Enter the alias here that you would like displayed to others on servers"
-msgstr ""
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
+msgstr "Wpisz pseudonim tutaj który chciałbyś wyświetlać innym na serwerach"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Video Quality:"
@@ -3825,31 +3751,32 @@ msgstr "Jakość Obrazu:"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
-msgstr ""
+msgstr "Najszybszy"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fast"
-msgstr ""
+msgstr "Szybki"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid ""
 "Select your initial video settings, these can be changed later via the "
 "options menu"
-msgstr ""
+msgstr "Wybierz swoje początkowe ustawienia video, one mogą być zmienione później przez menu opcje"
 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr ""
+msgstr "Wybierz swoją preferowaną rozdzielczość video, jeśli nie jesteś pewny zostaw domyślną"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Użyj paska aby ustawić czułość myszy"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
-"Choose invert mouse if you prefer flight-simulator style mouse pitch controls"
-msgstr ""
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
+msgstr "Wybierz odwróconą mysz jeśli preferujesz kontrole stylu symulatora  latania"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
@@ -3874,7 +3801,7 @@ msgstr "STWÓRZ"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr ""
+msgstr "Wybierz odwróć mysz jeśli preferujesz symulator latania"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
@@ -3922,7 +3849,7 @@ msgstr "Nowa Nazwa Profilu:"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New name of profile"
-msgstr ""
+msgstr "Nowa nazwa profilu"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
@@ -3940,17 +3867,13 @@ msgstr "ZMIEŃ USTAWIENIA VIDEO"
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
-msgstr ""
-"Ustawić rekomendowane ustawienia\n"
-"i wrócić do menu głównego?"
+msgstr "Ustawić rekomendowane ustawienia\ni wrócić do menu głównego?"
 
 #: etmain/ui/rec_restart.menu:57
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
-msgstr ""
-"Ustawić rekomendowane ustawienia\n"
-"i wrćcić do menu w grze?"
+msgstr "Ustawić rekomendowane ustawienia\ni wrćcić do menu w grze?"
 
 #: etmain/ui/vid_confirm.menu:61
 msgid "CONFIRM VIDEO CHANGE"
@@ -3979,7 +3902,7 @@ msgstr "USUŃ POWTÓRKĘ"
 
 #: etmain/ui/viewreplay.menu:50
 msgid "Select the replay to view or delete"
-msgstr ""
+msgstr "Wybierz powtórkę aby obejrzeć lub usunąć"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:33 etmain/ui/wm_ftquickmessage.menu:33
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
@@ -4177,9 +4100,8 @@ msgid "6. Oops"
 msgstr "6. Oops"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:149
-#, fuzzy
 msgid "2. No)"
-msgstr "2. Nie"
+msgstr "2. No"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
@@ -5327,11 +5249,7 @@ msgid ""
 " %s^*\n"
 "\n"
 "%s"
-msgstr ""
-"Łączenie z:\n"
-" %s^*\n"
-"\n"
-"%s"
+msgstr "Łączenie z:\n %s^*\n\n%s"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
@@ -5353,8 +5271,7 @@ msgstr "Oczekanie na nowy klucz... Naciśnij ESCAPE aby anulować"
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr ""
-"Naciśnij ENTER lub KLIKNIJ aby zmienić, Naciśnij BACKSPACE aby wyczyscić"
+msgstr "Naciśnij ENTER lub KLIKNIJ aby zmienić, Naciśnij BACKSPACE aby wyczyscić"
 
 #: src/ui/ui_main.c:2543
 #, c-format
@@ -5372,8 +5289,7 @@ msgstr "Czas Odświeżania %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
-msgstr ""
-"Nie można pokazać Informacji o Serwerze (nie znaleziono lub lokalny serwer)\n"
+msgstr "Nie można pokazać Informacji o Serwerze (nie znaleziono lub lokalny serwer)\n"
 
 #: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
 msgid "Favorite already in list\n"
@@ -5396,19 +5312,15 @@ msgstr "^3Zfiltrowanych/Łącznie: %04i/%04i"
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
-"^3Check your filters - no servers found!              Filtered/Total: %04i/"
-"%04i"
-msgstr ""
-"^3Sprawdż swoje filtry - brak serwerów!              Zfiltrowanych/Łącznie: "
-"%i/%i"
+"^3Check your filters - no servers found!              Filtered/Total: "
+"%04i/%04i"
+msgstr "^3Sprawdż swoje filtry - brak serwerów!              Zfiltrowanych/Łącznie: %i/%i"
 
 #: src/ui/ui_main.c:5883
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr ""
-"^1Brak Połączenia lub serwer padl - brak serwerów!    Filtered/Total: "
-"0000/0000"
+msgstr "^1Brak Połączenia lub serwer padl - brak serwerów!    Filtered/Total: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format
@@ -5423,8 +5335,7 @@ msgstr "%d serwerów wyświetlonych w przeglądarce z %d graczami.\n"
 #: src/ui/ui_main.c:8301
 #, c-format
 msgid "%d servers not listed (filtered out by game browser settings)\n"
-msgstr ""
-"%d serwerow nie wyświetlonych (zfiltrowanych przez ustawienia przeglądarki)\n"
+msgstr "%d serwerow nie wyświetlonych (zfiltrowanych przez ustawienia przeglądarki)\n"
 
 #: src/ui/ui_main.c:8429
 #, c-format
@@ -5452,1857 +5363,3 @@ msgstr "Brak ulubionych serwerów."
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
 msgstr "Wszystkie ulubione serwery usunięte."
-
-#~ msgid "Reinforcements deploy in %d seconds."
-#~ msgstr "Rozstawienie posiłków za %d sekund."
-
-#~ msgid "Type ^3\\ready^* in the console to start"
-#~ msgstr "Napisz ^3\\ready^* w konsoli aby zacząć"
-
-#~ msgid "(WARMUP) Match begins in:"
-#~ msgstr "(ROZGRZEWKA) Mecz zacznie się za:"
-
-#~ msgid "^1ET:Legacy"
-#~ msgstr "^1ET:Legacy"
-
-#~ msgid "FAV"
-#~ msgstr "ULB"
-
-#~ msgid "Use JPEG for AutoScreenshots:"
-#~ msgstr "Użyj JPEG dla AutoScreenów:"
-
-#~ msgid "Bob yaw:"
-#~ msgstr "Huśtanie poziom:"
-
-#~ msgid "Binocular Zoom:"
-#~ msgstr "Użycie Lornetki:"
-
-#~ msgid "Jan 'Radegast' Simek"
-#~ msgstr "Jan 'Radegast' Simek"
-
-#~ msgid "Olaf 'IR4T4' R."
-#~ msgstr "Olaf 'IR4T4' R."
-
-#~ msgid "Konrad 'morsik' Moson"
-#~ msgstr "Konrad 'morsik' Moson"
-
-#~ msgid "Jere 'Jacker' S."
-#~ msgstr "Jere 'Jacker' S."
-
-#~ msgid "Remy 'Spyhawk' M."
-#~ msgstr "Remy 'Spyhawk' M."
-
-#~ msgid "SPLASH DAMAGE"
-#~ msgstr "SPLASH DAMAGE"
-
-#~ msgid "ID SOFTWARE"
-#~ msgstr "ID SOFTWARE"
-
-#~ msgid "ACTIVISION"
-#~ msgstr "ACTIVISION"
-
-#~ msgid "ET 2.60"
-#~ msgstr "ET 2.60"
-
-#~ msgid "Paul 'Locki' Wedgwood"
-#~ msgstr "Paul 'Locki' Wedgwood"
-
-#~ msgid "Francisca 'Freya' Wedgwood"
-#~ msgstr "Francisca 'Freya' Wedgwood"
-
-#~ msgid "Richard 'Fluffy_gIMp' Jolly"
-#~ msgstr "Richard 'Fluffy_gIMp' Jolly"
-
-#~ msgid "Francis 'Frankie' Hobbins"
-#~ msgstr "Francis 'Frankie' Hobbins"
-
-#~ msgid "Per 'Per128' Abrahamsen"
-#~ msgstr "Per 'Per128' Abrahamsen"
-
-#~ msgid "Arnout 'RR2DO2' van Meer"
-#~ msgstr "Arnout 'RR2DO2' van Meer"
-
-#~ msgid "Gordon 'digibob' Biggans"
-#~ msgstr "Gordon 'digibob' Biggans"
-
-#~ msgid "Randy 'ydnar' Reddig"
-#~ msgstr "Randy 'ydnar' Reddig"
-
-#~ msgid "Tim 'Marauder' Kautz"
-#~ msgstr "Tim 'Marauder' Kautz"
-
-#~ msgid "Ed 'Bongoboy' Stern"
-#~ msgstr "Ed 'Bongoboy' Stern"
-
-#~ msgid "Matt 'Wils' Wilson"
-#~ msgstr "Matt 'Wils' Wilson"
-
-#~ msgid "Simon 'sock' O'Callaghan"
-#~ msgstr "Simon 'sock' O'Callaghan"
-
-#~ msgid "Mark 'nakedape' Fry"
-#~ msgstr "Mark 'nakedape' Fry"
-
-#~ msgid "Thomas 'Q-Fraggel' Creutzenberg"
-#~ msgstr "Thomas 'Q-Fraggel' Creutzenberg"
-
-#~ msgid "Chris 'SHoD' Farcy"
-#~ msgstr "Chris 'SHoD' Farcy"
-
-#~ msgid "Lloyd 'LloydM' Morris"
-#~ msgstr "Lloyd 'LloydM' Morris"
-
-#~ msgid "Lee 'Llama' Mercer"
-#~ msgstr "Lee 'Llama' Mercer"
-
-#~ msgid "Kevin Cloud"
-#~ msgstr "Kevin Cloud"
-
-#~ msgid "Timothee Besset"
-#~ msgstr "Timothee Besset"
-
-#~ msgid "Jonathan Moses"
-#~ msgstr "Jonathan Moses"
-
-#~ msgid "Doug Avery"
-#~ msgstr "Doug Avery"
-
-#~ msgid "John Fritts"
-#~ msgstr "John Fritts"
-
-#~ msgid "Steve Holmes"
-#~ msgstr "Steve Holmes"
-
-#~ msgid "Matthew Beal"
-#~ msgstr "Matthew Beal"
-
-#~ msgid "Laird M. Malamed"
-#~ msgstr "Laird M. Malamed"
-
-#~ msgid "Mark Lamia"
-#~ msgstr "Mark Lamia"
-
-#~ msgid "Brad Saavedra"
-#~ msgstr "Brad Saavedra"
-
-#~ msgid "Evan Button"
-#~ msgstr "Evan Button"
-
-#~ msgid "Matt McClure"
-#~ msgstr "Matt McClure"
-
-#~ msgid "Nathaniel McClure"
-#~ msgstr "Nathaniel McClure"
-
-#~ msgid ""
-#~ "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, "
-#~ "Daniel Kannard, Cory Rice"
-#~ msgstr ""
-#~ "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, "
-#~ "Daniel Kannard, Cory Rice"
-
-#~ msgid ""
-#~ "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert "
-#~ "Max Martin, Jim Call"
-#~ msgstr ""
-#~ "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert "
-#~ "Max Martin, Jim Call"
-
-#~ msgid ""
-#~ "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
-#~ "Lawrence Wong"
-#~ msgstr ""
-#~ "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
-#~ "Lawrence Wong"
-
-#~ msgid ""
-#~ "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
-#~ "Todd, Mike Restifo"
-#~ msgstr ""
-#~ "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
-#~ "Todd, Mike Restifo"
-
-#~ msgid "Chris Keim"
-#~ msgstr "Chris Keim"
-
-#~ msgid "Neil Barizo"
-#~ msgstr "Neil Barizo"
-
-#~ msgid "Marilena Rixford"
-#~ msgstr "Marilena Rixford"
-
-#~ msgid "Tim Vanlaw"
-#~ msgstr "Tim Vanlaw"
-
-#~ msgid "Jason Levine"
-#~ msgstr "Jason Levine"
-
-#~ msgid "Jef Sedivy"
-#~ msgstr "Jef Sedivy"
-
-#~ msgid "Bob McPherson"
-#~ msgstr "Bob McPherson"
-
-#~ msgid "Jason 'Rhea' Keimig"
-#~ msgstr "Jason 'Rhea' Keimig"
-
-#~ msgid "Tony Ray"
-#~ msgstr "Tony Ray"
-
-#~ msgid "Bjrn Christoph"
-#~ msgstr "Bjrn Christoph"
-
-#~ msgid "Drew Markham"
-#~ msgstr "Drew Markham"
-
-#~ msgid "Neil Ross"
-#~ msgstr "Neil Ross"
-
-#~ msgid "Granville van Dusen"
-#~ msgstr "Granville van Dusen"
-
-#~ msgid "Dan 'bani' Hollis"
-#~ msgstr "Dan 'bani' Hollis"
-
-#~ msgid "Ben 'Rain' Winslow"
-#~ msgstr "Ben 'Rain' Winslow"
-
-#~ msgid "Frederik 'fretn' Delaere"
-#~ msgstr "Frederik 'fretn' Delaere"
-
-#~ msgid "Chris 'Zinx' Lais"
-#~ msgstr "Chris 'Zinx' Lais"
-
-#~ msgid "Joe 'Majikthise' D."
-#~ msgstr "Joe 'Majikthise' D."
-
-#~ msgid "ET Pro Logo"
-#~ msgstr "ET Pro Logo"
-
-#~ msgid "Brad Oliver"
-#~ msgstr "Brad Oliver"
-
-#~ msgid "Path cleared."
-#~ msgstr "Droga Wolna."
-
-#~ msgid "The enemy is weakened."
-#~ msgstr "Wróg jest osłabiony"
-
-#~ msgid "All clear."
-#~ msgstr "Czysto"
-
-#~ msgid "Incoming!"
-#~ msgstr "Nadchodzą"
-
-#~ msgid "Fire in the hole!"
-#~ msgstr "Uwaga Strzelam!"
-
-#~ msgid "I'm on defense."
-#~ msgstr "Obraniam."
-
-#~ msgid "I'm on offense."
-#~ msgstr "Atakuje."
-
-#~ msgid "Taking fire!"
-#~ msgstr "Ściągam Ogien!"
-
-#~ msgid "Mines cleared."
-#~ msgstr "Pole Oczyszczone z Min."
-
-#~ msgid "Enemy in disguise."
-#~ msgstr "Wróg w Przebraniu."
-
-#~ msgid "Need a Medic!"
-#~ msgstr "Potrzebuje Medyka!"
-
-#~ msgid "I need ammo!"
-#~ msgstr "Potrzebuje Amunicji!"
-
-#~ msgid "I need backup!"
-#~ msgstr "Potrzebuje pomocy!"
-
-#~ msgid "We need an engineer!"
-#~ msgstr "Potrzebujemy Inżyniera!"
-
-#~ msgid "Cover me!"
-#~ msgstr "Osłaniaj Mnie!"
-
-#~ msgid "Hold your fire!"
-#~ msgstr "Wstrzymaj Ogień!"
-
-#~ msgid "Where to?"
-#~ msgstr "Dokąd?"
-
-#~ msgid "We need Covert Ops!"
-#~ msgstr "Potrzebuje Coverta!"
-
-#~ msgid "Follow me!"
-#~ msgstr "Za Mną!"
-
-#~ msgid "Let's go!"
-#~ msgstr "No Dalej!"
-
-#~ msgid "Move!"
-#~ msgstr "Ruchy!"
-
-#~ msgid "Clear the path!"
-#~ msgstr "Oczyść Droge!"
-
-#~ msgid "Defend our objective!"
-#~ msgstr "Ochraniaj nasz cel!"
-
-#~ msgid "Disarm the dynamite!"
-#~ msgstr "Rozbrój dynamit!"
-
-#~ msgid "Clear the mines!"
-#~ msgstr "Rozbrój miny!"
-
-#~ msgid "Reinforce the offense!"
-#~ msgstr "Wzmocnij Atak!"
-
-#~ msgid "Reinforce the defense!"
-#~ msgstr "Wzmocnij Obrone!"
-
-#~ msgid "Affirmative!"
-#~ msgstr "Pozytywnie!"
-
-#~ msgid "No!"
-#~ msgstr "Nie!"
-
-#~ msgid "Thank you!"
-#~ msgstr "Dzięki Ci!"
-
-#~ msgid "You're welcome."
-#~ msgstr "Nie ma za co."
-
-#~ msgid "Bitte sehr."
-#~ msgstr "Proszę bardzo."
-
-#~ msgid "Ja!"
-#~ msgstr "Tak!"
-
-#~ msgid "Nein!"
-#~ msgstr "Nie!"
-
-#~ msgid "Kein problem."
-#~ msgstr "Bez problemu."
-
-#~ msgid "Sorry!"
-#~ msgstr "Przepraszam!"
-
-#~ msgid "Oops!"
-#~ msgstr "Oops!"
-
-#~ msgid "Yes!"
-#~ msgstr "Tak!"
-
-#~ msgid "Jawohl!"
-#~ msgstr "Tak jest!"
-
-#~ msgid "Negative!"
-#~ msgstr "Negatywnie!"
-
-#~ msgid "Hi!"
-#~ msgstr "Cześć!"
-
-#~ msgid "Hallo!"
-#~ msgstr "Cześć!"
-
-#~ msgid "Good bye."
-#~ msgstr "Dowidzenia."
-
-#~ msgid "Auf wiedersehen."
-#~ msgstr "Dowidzenia."
-
-#~ msgid "Bye."
-#~ msgstr "Nara."
-
-#~ msgid "Great shot!"
-#~ msgstr "Niezły Strzał!"
-
-#~ msgid "You got it, man!"
-#~ msgstr "Masz to, człowieku!"
-
-#~ msgid "Yeah!"
-#~ msgstr "Nareszcie!"
-
-#~ msgid "Yoohoo!"
-#~ msgstr "Tak Jest!"
-
-#~ msgid "Hahaa!"
-#~ msgstr "Hahaha!"
-
-#~ msgid "Alright!"
-#~ msgstr "W Porządku!"
-
-#~ msgid "Woo!"
-#~ msgstr "Wooo!"
-
-#~ msgid "Yeehaa!"
-#~ msgstr "Wspaniale!"
-
-#~ msgid "'Atta way, baby!"
-#~ msgstr "'Tak trzymać, maleńka!"
-
-#~ msgid "Jahaa!"
-#~ msgstr "Nareszcie!"
-
-#~ msgid "Wunderbar!"
-#~ msgstr "Wspaniale!"
-
-#~ msgid "Excellent!"
-#~ msgstr "Doskonale!"
-
-#~ msgid "Oh yes!"
-#~ msgstr "Taaak jest!"
-
-#~ msgid "Sehr gut!"
-#~ msgstr "Bardzo dobrze!"
-
-#~ msgid "Thanks!"
-#~ msgstr "Dzięki!"
-
-#~ msgid "Danke!"
-#~ msgstr "Dzięki!"
-
-#~ msgid "Danke sehr!"
-#~ msgstr "Dziękuje bardzo!"
-
-#~ msgid "No problem."
-#~ msgstr "Bez problemu."
-
-#~ msgid "Good game!"
-#~ msgstr "Dobra gra!"
-
-#~ msgid "Command acknowledged!"
-#~ msgstr "Polecenie przyjęte!"
-
-#~ msgid "Command declined!"
-#~ msgstr "Polecenie odrzucone!"
-
-#~ msgid "Command completed!"
-#~ msgstr "Polecenie wykonane!"
-
-#~ msgid "Destroy primary objective!"
-#~ msgstr "Zniszcz Pierwszy cel!"
-
-#~ msgid "Destroy secondary objective!"
-#~ msgstr "Zniszcz Drugi cel!"
-
-#~ msgid "Destroy construction!"
-#~ msgstr "Zniscz Konstrukcję!"
-
-#~ msgid "I'm constructing!"
-#~ msgstr "Konstruuje!"
-
-#~ msgid "Repair the vehicle!"
-#~ msgstr "Napraw pojazd!"
-
-#~ msgid "Disable the vehicle!"
-#~ msgstr "Zniszcz pojazd!"
-
-#~ msgid "Escort the vehicle!"
-#~ msgstr "Eskortuj pojazd!"
-
-#~ msgid "Covering fire!"
-#~ msgstr "Ogień osłaniający!"
-
-#~ msgid "I'm a soldier."
-#~ msgstr "Jestem Żołnierzem."
-
-#~ msgid "I'm an engineer."
-#~ msgstr "Jestem Inżynierem."
-
-#~ msgid "I'm a medic."
-#~ msgstr "Jestem Medykiem."
-
-#~ msgid "I'm a field ops."
-#~ msgstr "Jestem Wsparciem."
-
-#~ msgid "I'm a covert ops."
-#~ msgstr "Jestem Zabójcą."
-
-#~ msgid "^1Legacy"
-#~ msgstr "^1Legacy"
-
-#~ msgid "MAP"
-#~ msgstr "MAPA"
-
-#~ msgid "OMNI-BOT"
-#~ msgstr "OMNI-BOT"
-
-#~ msgid "unknown cmd"
-#~ msgstr "nieznane polecenie"
-
-#~ msgid "Server:"
-#~ msgstr "Serwer:"
-
-#~ msgid "changed to"
-#~ msgstr "zmienił na"
-
-#~ msgid "was killed by"
-#~ msgstr "został zabity przez"
-
-#~ msgid "^1WAS KILLED BY TEAMMATE^7"
-#~ msgstr "^1ZOSTAŁ ZABITY PRZEZ KOMPANA^7"
-
-#~ msgid "Arming landmine..."
-#~ msgstr "Podkładanie miny..."
-
-#~ msgid "Landmine armed..."
-#~ msgstr "Mina uzbrojona..."
-
-#~ msgid "Dynamite is set, but NOT armed!"
-#~ msgstr "Dynamit jest ustawiony, ale NIE uzbrojony!"
-
-#~ msgid "Arming dynamite..."
-#~ msgstr "Podkładanie dynamitu..."
-
-#~ msgid "Dynamite is now armed with a 30 second timer!"
-#~ msgstr "Dynamit jest uzbrojony z czasem 30 sekund!"
-
-#~ msgid "Defusing landmine"
-#~ msgstr "Rozbrajanie miny"
-
-#~ msgid "Landmine defused..."
-#~ msgstr "Mina rozbrojona..."
-
-#~ msgid "Defusing dynamite..."
-#~ msgstr "Rozbrajanie dynamitu..."
-
-#~ msgid "Constructing..."
-#~ msgstr "Budowanie..."
-
-#~ msgid "was sniped by"
-#~ msgstr "został zestrzelony przez"
-
-#~ msgid "was mown down by"
-#~ msgstr "został podziurawiony przez"
-
-#~ msgid "never saw"
-#~ msgstr "nie widział"
-
-#~ msgid "was cooked by"
-#~ msgstr "został usmażony przez"
-
-#~ msgid "played with fire"
-#~ msgstr "bawił się ogniem"
-
-#~ msgid "failed to spot"
-#~ msgstr "niezauwazył"
-
-#~ msgid "was silenced by"
-#~ msgstr "został uciszony przez"
-
-#~ msgid "dove on his own grenade"
-#~ msgstr "nadepnął na własny granat"
-
-#~ msgid "vaporized himself"
-#~ msgstr "zniszczył samego siebie"
-
-#~ msgid "never saw his own mortar round coming"
-#~ msgstr "nigdy nie widział lecącego własnego pocisku mortara"
-
-#~ msgid "killed himself"
-#~ msgstr "zabił sie"
-
-#~ msgid "ate his own rifle grenade"
-#~ msgstr "zjadł własnego granata od rifli"
-
-#~ msgid "obliterated himself"
-#~ msgstr "Ostrzelał się"
-
-#~ msgid "Fire Mission: ^3Firing for effect!"
-#~ msgstr "Misja Ostrzału: ^3Strzelanie!"
-
-#~ msgid "fired-for-effect on himself"
-#~ msgstr "zestrzelony na własną prośbę"
-
-#~ msgid "embraced his own satchel explosion"
-#~ msgstr "został wysadzony przez ładunek"
-
-#~ msgid "failed to spot his own landmine"
-#~ msgstr "niezauwazył własnej miny"
-
-#~ msgid "dynamited himself to pieces"
-#~ msgstr "rozwalił się na kawałki"
-
-#~ msgid "was stabbed by"
-#~ msgstr "został pchnięty przez"
-
-#~ msgid "was exploded by"
-#~ msgstr "został zdetonowany przez"
-
-#~ msgid "was blasted by"
-#~ msgstr "został wysadzony przez"
-
-#~ msgid "Affirmative!!"
-#~ msgstr "Pozytywnie!!"
-
-#~ msgid "^1Spam Protection^7: VoiceChat ignored"
-#~ msgstr "^1Ochrona przed Spamem^7: ChatGłosowy zignorowany"
-
-#~ msgid "I need a Medic!"
-#~ msgstr "Potrzebuje Medyka!"
-
-#~ msgid "was shelled by"
-#~ msgstr "został ostrzelany przez"
-
-#~ msgid "Mines have been reported in this area."
-#~ msgstr "Miny zostały zgłoszone w tym terenie."
-
-#~ msgid "was perforated by"
-#~ msgstr "został podziurawiony przez"
-
-#~ msgid "'s mortar round coming"
-#~ msgstr " pocisku mortara"
-
-#~ msgid "'s artillery support"
-#~ msgstr " artylerię"
-
-#~ msgid "rediscovered gravity"
-#~ msgstr "ponownie odkrył grawitacje"
-
-#~ msgid "'s Landmine"
-#~ msgstr " Miny"
-
-#~ msgid "'s Mobile MG42"
-#~ msgstr " Mobilne MG42"
-
-#~ msgid "'s Mobile Browning"
-#~ msgstr " Mobilny Browning"
-
-#~ msgid "'s rifle grenade"
-#~ msgstr " granatem od rifli"
-
-#~ msgid "'s support fire"
-#~ msgstr " ogniem wsparcia"
-
-#~ msgid "'s crew-served MG"
-#~ msgstr " serii z MG"
-
-#~ msgid "was thrown to his doom by"
-#~ msgstr "został zepchnięty przez"
-
-#~ msgid "You have been revived by "
-#~ msgstr "Zostałeś ożywiony przez "
-
-#~ msgid "Allies have built the Oasis Water Pump!"
-#~ msgstr "Alianci wybudowali Pompę Wodną Oasis!"
-
-#~ msgid "Allied Command Post constructed. Charge speed increased!"
-#~ msgstr ""
-#~ "Centrum Dowodzenia Aliantów wybudowane. Szybkość ładowania zwiększona!"
-
-#~ msgid "Axis Command Post constructed. Charge speed increased!"
-#~ msgstr "Centrum Dowodzenia OSi wybudowane. Szybkość ładowania zwiekszona!"
-
-#~ msgid "Allies capture the Old City!"
-#~ msgstr "Alianci zdobyli Stare Miasto!"
-
-#~ msgid "Axis reclaim the Old City!"
-#~ msgstr "Oś odzyskała Stare Miasto!"
-
-#~ msgid "Allies have built the Old City Water Pump!"
-#~ msgstr "Alianci wybudowali Pompę Wodną Starego Miasta!"
-
-#~ msgid "Allies have repaired both Water Pumps!"
-#~ msgstr "Alianci naprawili obie Pompy Wodne!"
-
-#~ msgid "The Old City MG Nest has been constructed!"
-#~ msgstr "Gniazdo MG Stargo Miasta zostało wybudowane!"
-
-#~ msgid "The Garrison MG Nest has been constructed!"
-#~ msgstr "Gniazdo MG Garnizonu zostało wybudowane!"
-
-#~ msgid "Axis have damaged the Old City Water Pump!"
-#~ msgstr "Oś zepsuła Pompę Wodną Starego Miasta!"
-
-#~ msgid "Axis have damaged the Oasis Water Pump!"
-#~ msgstr "Oś zepsuła Pompę Wodną Oasis!"
-
-#~ msgid "Axis have damaged both Water Pumps!"
-#~ msgstr "Oś zepsuła obie Pompy Wodne!"
-
-#~ msgid "The Old City MG Nest has been damaged!"
-#~ msgstr "Gniazdo MG Starego Miasta zostało zepsute!"
-
-#~ msgid "Axis team has destroyed the Allied Command Post!"
-#~ msgstr "Oś rozwaliła Centrum Dowodzenia Aliantów!"
-
-#~ msgid "Allies have breached the Old City wall"
-#~ msgstr "Alianci przełamali Ścianę Starego Miasta"
-
-#~ msgid "drowned"
-#~ msgstr "utopił się"
-
-#~ msgid "Axis team"
-#~ msgstr "Zespołu Osi"
-
-#~ msgid "Allied team"
-#~ msgstr "Zespołu Aliantów"
-
-#~ msgid "Spectators"
-#~ msgstr "Obserwatorów"
-
-#~ msgid "You must be a player or following a player to use +stats\n"
-#~ msgstr "Musisz być graczem lub obserwować gracza aby użyć +stats\n"
-
-#~ msgid "^9You must be alive to use ^3/kill."
-#~ msgstr "^9Musisz być żywy aby użyć ^3/kill."
-
-#~ msgid "No vote in progress.\n"
-#~ msgstr "Brak głosowań.\n"
-
-#~ msgid "No or bad challenge for address.\n"
-#~ msgstr "Brak lub złe wezwanie dla adresu.\n"
-
-#~ msgid "Match is already in progress!\n"
-#~ msgstr "Mecz już trwa!\n"
-
-#~ msgid "^1** Referee Server Setting Change **\n"
-#~ msgstr "^1** Sędzia Zmienił Ustawienia Serwera **\n"
-
-#~ msgid "committed suicide"
-#~ msgstr "wykonał samobójstwo"
-
-#~ msgid "Your fireteam is now public"
-#~ msgstr "Twój oddział jest teraz publiczny"
-
-#~ msgid "Your fireteam is now private"
-#~ msgstr "Twój oddział jest teraz prywatny"
-
-#~ msgid "The Allies have too many players.\n"
-#~ msgstr "Alianci mają zbyt dużo graczy.\n"
-
-#~ msgid "The Axis has too many players.\n"
-#~ msgstr "Oś ma zbyt dużo graczy.\n"
-
-#~ msgid "Attack!"
-#~ msgstr "Atak!"
-
-#~ msgid "Fall back!"
-#~ msgstr "Odwrót!"
-
-#~ msgid "Improved use of Explosive Ammunition"
-#~ msgstr "Lepszym użyciem Amunicji Wybuchowej"
-
-#~ msgid "Improved Dexterity"
-#~ msgstr "Lepszą Zręcznością"
-
-#~ msgid "Improved Construction and Destruction"
-#~ msgstr "Ulepszonym Budowaniem i Niszczeniem"
-
-#~ msgid "a Flak Jacket"
-#~ msgstr "Kamizelką Kuloodporną"
-
-#~ msgid "Improved use of Scoped Weapon Ammunition"
-#~ msgstr "Lepszym użyciem Amunicji do Snajperki"
-
-#~ msgid "Improved use of Sabotage and Misdirection"
-#~ msgstr "Lepszym użyciem Sabotażu i Odwrócenia Uwagi"
-
-#~ msgid "Breath Control"
-#~ msgstr "Kontrolą Oddechu"
-
-#~ msgid "Assassin"
-#~ msgstr "Zabójstwem"
-
-#~ msgid "Improved Resources"
-#~ msgstr "Ulepszonymi Zasobami"
-
-#~ msgid "Improved Signals"
-#~ msgstr "Ulepszonymi Sygnałami"
-
-#~ msgid "Improved Air and Ground Support"
-#~ msgstr "Lepszymi Nalotami i Wsparciem Naziemnym"
-
-#~ msgid "Enemy Recognition"
-#~ msgstr "Rozpoznaniem Wroga"
-
-#~ msgid "Binoculars for any Class"
-#~ msgstr "Lornetkami dla każdej Klasy"
-
-#~ msgid "Full Revive"
-#~ msgstr "Pełnym Ożywieniem"
-
-#~ msgid "Adrenalin Self"
-#~ msgstr "Własną Adrelaniną"
-
-#~ msgid "Improved Projectile Resources"
-#~ msgstr "Lepszym Zasobem Pocisków"
-
-#~ msgid "Heavy Weapon Proficiency"
-#~ msgstr "Biegłością Obsługi Ciężkiej Bronii"
-
-#~ msgid "Improved Physical Fitness"
-#~ msgstr "Poprawną Sprawnością Fizyczną"
-
-#~ msgid "Improved Health"
-#~ msgstr "Ulepszonym Życiem"
-
-#~ msgid "Improved Weapon Handling"
-#~ msgstr "Ulepszoną Obsługą Bronii"
-
-#~ msgid "Trap Awareness"
-#~ msgstr "Wykrywaniem Pułapek"
-
-#~ msgid "Improved use of Light Weapon Ammunition"
-#~ msgstr "Lepszym użyciem Amunicji do Bronii Lekkiej"
-
-#~ msgid "Faster Reload"
-#~ msgstr "Szybszym Przeładowaniem"
-
-#~ msgid "Improved Light Weapon Handling"
-#~ msgstr "Lepszą Obsługą Bronii Lekkiej"
-
-#~ msgid "Dual-Wield Pistols"
-#~ msgstr "Podwójnymi Pistoletami"
-
-#~ msgid "Allies have destroyed the North Anti-Tank Gun!"
-#~ msgstr "Allianci zniszczyli Północne Działo Przeciwczołgowe!"
-
-#~ msgid "Allied team has destroyed the Axis Command Post!"
-#~ msgstr "Allianci zniszczyli Stanowisko Dowodzenia Osi!"
-
-#~ msgid "The Garrison MG Nest has been damaged!"
-#~ msgstr "Gniazdo MG Garnizonu zostało uszkodzone!"
-
-#~ msgid "Allied team has destroyed the South Anti-Tank Gun!"
-#~ msgstr "Allianci zniszczyli Południowe Działo Przeciwczołgowe!"
-
-#~ msgid "Allies have destroyed both Anti-Tank Guns!"
-#~ msgstr "Allianci zniszczyli obydwa Działa Przeciwczołgowe!"
-
-#~ msgid "The Allied West beach MG Nest has been constructed."
-#~ msgstr "Allianci zbudowali Gniazdo MG na Zachodniej plaży."
-
-#~ msgid "The Allied Beach Assault Ramp has been constructed."
-#~ msgstr "Allianci zbudowali Rusztowanie na Plaży."
-
-#~ msgid "The Allied East beach MG Nest has been constructed."
-#~ msgstr "Allianci zbudowali Gniazdo MG na Wchodniej plazy."
-
-#~ msgid "Allied team has destroyed the Door Controls Generator!"
-#~ msgstr "Allianci rozwalili Generator Kontrolujący Drzwi!"
-
-#~ msgid "Magnetic seal deactivated - opening emergency bunker doors"
-#~ msgstr "Deaktywowano Magnetyczną Zaporę - awaryjne otwieranie drzwi bunkra"
-
-#~ msgid "The Axis North-West MG Nest has been constructed."
-#~ msgstr "Oś zbudowała Gniazdo MG na Północnym Zachodzie."
-
-#~ msgid "got buried under a pile of rubble"
-#~ msgstr "pochowany pod stertą gruzów"
-
-#~ msgid "The Axis Main Bunker MG Nest has been constructed."
-#~ msgstr "Oś zbudowała Gniazdo MG w Głównym Bunkrze."
-
-#~ msgid "The Axis South-East MG Nest has been constructed."
-#~ msgstr "Oś zbudowała Gniazdo MG na Południowym Wschodzie."
-
-#~ msgid "Axis have constructed the Door Controls Generator!"
-#~ msgstr "Oś zbudowała Generator Kontrolujący Drzwi!"
-
-#~ msgid "Axis have destroyed the Allied Beach Assault Ramp."
-#~ msgstr "Oś rozwaliła Allianckie Rusztowanie na Plaży."
-
-#~ msgid "The Allied West beach MG Nest has been destroyed."
-#~ msgstr "Zachodnie Allianckie Gniazdo MG zostało zniszczone."
-
-#~ msgid "The Allied East beach MG Nest has been destroyed."
-#~ msgstr "Wchodnie Allianckie Gniazdo MG zostało zniszczone."
-
-#~ msgid "Allies capture the Forward Bunker!"
-#~ msgstr "Allianci zdobyli Przedni Bunkier!"
-
-#~ msgid "Axis capture the West Bunker!"
-#~ msgstr "Oś zbobyła Wschodni Bunkier!"
-
-#~ msgid "Allies have destroyed the gun tracking"
-#~ msgstr "Allianci zniszczyli układ skręcający Działa"
-
-#~ msgid ""
-#~ "^3All players ready!^7\n"
-#~ "Match starting..."
-#~ msgstr ""
-#~ "^3Wszyscy gracze gotowi!^7\n"
-#~ "Mecz zaczyna..."
-
-#~ msgid "The Axis North-West MG Nest has been destroyed."
-#~ msgstr "Północno Zachodnie Gniazdo MG Osi zostało zniszczone."
-
-#~ msgid "The Axis Main Bunker MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Osi w Głównym Bunkrze zostało zniszczone."
-
-#~ msgid "The Axis South-East MG Nest has been destroyed."
-#~ msgstr "Południowo Wschodnie Gniazdo MG Osi zostało zniszczone."
-
-#~ msgid "The Tank has been repaired!"
-#~ msgstr "Czołg został naprawiony!"
-
-#~ msgid "Allied team has stolen the Tank!"
-#~ msgstr "Allianci ukradli Czołg!"
-
-#~ msgid "The Tank has been damaged!"
-#~ msgstr "Czołg został uszkodzony!"
-
-#~ msgid "Allied team has destroyed the Bank Doors!"
-#~ msgstr "Allianci rozwalili Drzwi Banku!"
-
-#~ msgid "Allied team has secured the first Gold Crate!"
-#~ msgstr "Allianci zabezpieczyli pierwszą Skrzynie Złota!"
-
-#~ msgid "Allied team has secured the second Gold Crate!"
-#~ msgstr "Allianci zabezpieczyli drugą Skrzynie Złota!"
-
-#~ msgid "Allied team is escaping with the Gold Crates!"
-#~ msgstr "Allianci uciekają ze Skrzyniami Złota!"
-
-#~ msgid "Allied team escaped with the Gold Crates!"
-#~ msgstr "Allianci uciekli ze Skrzyniami Złota!"
-
-#~ msgid "Tank Barrier #1 has been constructed."
-#~ msgstr "Barriera Czołgu #1 została wybudowana."
-
-#~ msgid "Tank Barrier #2 has been constructed."
-#~ msgstr "Barriera Czołgu #2 została wybudowana."
-
-#~ msgid "Truck Barrier #1 has been constructed."
-#~ msgstr "Barriera Ciężarówki #1 została wybudowana."
-
-#~ msgid "Truck Barrier #2 has been constructed."
-#~ msgstr "Barriera Ciężarówki #2 została wybudowana."
-
-#~ msgid "The Truck has been damaged!"
-#~ msgstr "Ciężarówka została uszkodzona!"
-
-#~ msgid "Tank Barrier #1 has been destroyed."
-#~ msgstr "Barriera Czołgu #1 została zniszczona."
-
-#~ msgid "Tank Barrier #2 has been destroyed."
-#~ msgstr "Barriera Czołgu #2 została zniszczona."
-
-#~ msgid "Truck Barrier #1 has been destroyed."
-#~ msgstr "Barriera Ciężarówki #1 została zniszczona."
-
-#~ msgid "Truck Barrier #2 has been destroyed."
-#~ msgstr "Barriera Ciężarówki #2 została zniszczona."
-
-#~ msgid "The Truck has been repaired!"
-#~ msgstr "Ciężarówka została naprawiona!"
-
-#~ msgid "The Bunker MG Nest has been constructed."
-#~ msgstr "Gniazdo MG Bunkra zostało wybudowane."
-
-#~ msgid "The Axis Road MG Nest has been constructed."
-#~ msgstr "Gniazdo MG Osi przy Drodze zostało wybudowane."
-
-#~ msgid "The Axis Watchtower MG Nest has been constructed."
-#~ msgstr "Gniazdo MG Wieży Obserwacyjnej Osi zostało wybudowane."
-
-#~ msgid "Axis reclaim the Forward Bunker!"
-#~ msgstr "Oś odzyskała Przedni Bunkier!"
-
-#~ msgid ""
-#~ "Allies have breached the Main Entrance and secured the Forward Bunker!"
-#~ msgstr "Allianci przebili Główne Wejście i zabezpieczyli Przedni Bunkier!"
-
-#~ msgid "Allies have breached the Side Entrance!"
-#~ msgstr "Allianci przebili Boczne Wejście!"
-
-#~ msgid "The Bunker MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Bunkra zostało zniszczone."
-
-#~ msgid "The Axis Road MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Osi przy Drodze zostało zniszczone."
-
-#~ msgid "The Axis Watchtower MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG Wieży Obserwacyjnej Osi zostało zniszczone."
-
-#~ msgid "Allies have secured the West Radar Parts!"
-#~ msgstr "Alianci zabezpieczyli Zachodnią Część Radaru!"
-
-#~ msgid "Allies have secured the East Radar Parts!"
-#~ msgstr "Alianci zabezpieczyli Wchodnią Część Radaru!"
-
-#~ msgid "The Track Switch MG Nest has been constructed."
-#~ msgstr "Gniazdo MG przy Zmianie Torów zostało wybudowane."
-
-#~ msgid "The Depot Yard MG has been constructed."
-#~ msgstr "MG przy Magazynie zostało wybudowane!"
-
-#~ msgid "Allies capture the Depot Yard!"
-#~ msgstr "Allianci zdobyli Magazyn!"
-
-#~ msgid "Rail Gun Firing Controls destroyed!"
-#~ msgstr "Panel sterujący Działa Kolejowego został zniszczony!"
-
-#~ msgid "Rail Gun Firing Controls rebuilt!"
-#~ msgstr "Panel sterujący Działa Kolejowego zostal naprawiony!"
-
-#~ msgid "The Track Switch MG Nest has been destroyed."
-#~ msgstr "Gniazdo MG przy Zmianie Torów zostało zniaszczone."
-
-#~ msgid "The Depot Yard MG has been destroyed."
-#~ msgstr "MG przy Magazynie zostało zniszczone."
-
-#~ msgid "Axis captures the Depot Yard!"
-#~ msgstr "Oś zdobyła Magazyn!"
-
-#~ msgid "Track Switch raised!"
-#~ msgstr "Szlaban Podniesiony!"
-
-#~ msgid "Track Switch lowered!"
-#~ msgstr "Szlaban Opuszczony!"
-
-#~ msgid "Axis loaded the Rail Gun Ammo onto the First Tug!"
-#~ msgstr "Oś załadowała Amunicję do Działa Kolejowego na Pierwszy Holownik!"
-
-#~ msgid "Axis transported the Ammo to the North Crane!"
-#~ msgstr "Oś przetransportowała Amunicję do Północnego Dzwigu!"
-
-#~ msgid "Axis transferred the Ammo to the Second Tug!"
-#~ msgstr "Oś przeniosła Amunicję na Drugi Holownik!"
-
-#~ msgid "Axis team have loaded the Rail Gun!"
-#~ msgstr "Oś załadowała Działo Kolejowe!"
-
-#~ msgid "Axis fired the Rail Gun!"
-#~ msgstr "Oś wystrzeliła z Działa Kolejowego!"
-
-#~ msgid "Axis team has constructed the Tunnel MG!"
-#~ msgstr "Oś zbudowała wieże z MG"
-
-#~ msgid "Axis team has constructed the Side MG Nest!"
-#~ msgstr "Oś zbudowała Boczne Gniazdo MG!"
-
-#~ msgid "Axis team has constructed the East Axis Base Fortification!"
-#~ msgstr "Oś zbudowała Wschodnie Umocnienia Bazy!"
-
-#~ msgid "Axis team has constructed the West Axis Base Fortification!"
-#~ msgstr "Oś zbudowała Zachodnie Umocnienia Bazy!"
-
-#~ msgid "Allied team has constructed the Foot Bridge!"
-#~ msgstr "Allianci wybudowali Most Linowy!"
-
-#~ msgid "Allied team has constructed the Road MG Nest!"
-#~ msgstr "Allianci wybudowali Gniazdo MG przy Drodze!"
-
-#~ msgid "Allied team has breached the Tunnel Grate!"
-#~ msgstr "Allianci przebili Bramę Tunelu!"
-
-#~ msgid "Axis team has destroyed the Foot Bridge!"
-#~ msgstr "Oś rozwaliła Most Linowy!"
-
-#~ msgid "Axis team has destroyed the Road MG Nest!"
-#~ msgstr "Oś rozwaliła Gniazdo MG przy Drodze!"
-
-#~ msgid "Allied team has reinforced the Bridge!"
-#~ msgstr "Allianci wzmocnili Most!"
-
-#~ msgid "Axis team has damaged the Bridge!"
-#~ msgstr "Oś zniszczyła Most!"
-
-#~ msgid "Allied team has breached the Tunnel Doors!"
-#~ msgstr "Allianci przebili Drzwi Tunelu!"
-
-#~ msgid "Allied team has destroyed the Tunnel MG!"
-#~ msgstr "Allianci rozwalili wieże z MG!"
-
-#~ msgid "Axis team has destroyed the Side MG Nest!"
-#~ msgstr "Oś rozwaliła Boczne Gniazdo MG!"
-
-#~ msgid "Allied team has breached the Depot Gates!"
-#~ msgstr "Allianci przebili Bramę do Magazynu!"
-
-#~ msgid "Allied team has constructed the Side MG Nest!"
-#~ msgstr "Allianci wybudowali Boczne Gniazdo MG!"
-
-#~ msgid "Allied team has breached the Depot Side Wall!"
-#~ msgstr "Alianci przebili Boczną Ścianę Magazynu!"
-
-#~ msgid "Allied team has damaged the East Axis Base Fortification!"
-#~ msgstr "Allianci uszkodzili Wschodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has destroyed the East Axis Base Fortification!"
-#~ msgstr "Allianci zniszczyli Wschodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has damaged the West Axis Base Fortification!"
-#~ msgstr "Allianci uszkodzili Zachodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has destroyed the West Axis Base Fortification!"
-#~ msgstr "Allianci zniszczyli Zachodnie Umocnienia Bazy Osi!"
-
-#~ msgid "Allied team has destroyed the Axis Fuel Dump!"
-#~ msgstr "Allianci rozwalili Zbiorniki z Paliwem!"
-
-#~ msgid "was killed"
-#~ msgstr "został zabity"
-
-#~ msgid "You are near the Old City Wall\n"
-#~ msgstr "Jesteś blisko Ściany Starego Miasta\n"
-
-#~ msgid "You are near the Old City Water Pump\n"
-#~ msgstr "Jesteś blisko Pompy Wodnej Starego Miasta\n"
-
-#~ msgid "You are near the Oasis Water Pump\n"
-#~ msgstr "Jesteś blisko Pompy Wodnej Oazy\n"
-
-#~ msgid "You are near the Allied Command Post\n"
-#~ msgstr "Jesteś blisko Centrum Dowodzenia Alliantów\n"
-
-#~ msgid "You are near the Old City MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Starego Miasta\n"
-
-#~ msgid "You are near the Axis Command Post\n"
-#~ msgstr "Jesteś blisko Centrum Dowodzenia Osi\n"
-
-#~ msgid "You are near the Garrison MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Garnizonu\n"
-
-#~ msgid "You are near the North Anti-Tank Gun\n"
-#~ msgstr "Jesteś blisko Północnego Działa Przeciwczołgowego\n"
-
-#~ msgid "You are near the South Anti-Tank Gun\n"
-#~ msgstr "Jesteś blisko Południowego Działa Przeciwczołgowego\n"
-
-#~ msgid "You are near the Health and Ammo Cabinets\n"
-#~ msgstr "Jesteś blisko Szafek Zdrowia i Amunicji\n"
-
-#~ msgid "You are near the Allied East beach MG nest\n"
-#~ msgstr "Jesteś blisko Wschodniego Gniazda MG Aliantów na plaży\n"
-
-#~ msgid "You are near the Allied West beach MG nest\n"
-#~ msgstr "Jesteś blisko Zachodniego Gniazda MG Aliantów na plaży\n"
-
-#~ msgid "You are near the Allied Beach Assault Ramp\n"
-#~ msgstr "Jesteś blisko Rusztowania Aliantów na Plaży\n"
-
-#~ msgid "You are near the Command Post\n"
-#~ msgstr "Jesteś blisko Centrum Dowodzenia\n"
-
-#~ msgid "You are near the Axis North-West MG nest\n"
-#~ msgstr "Jesteś blisko Północno Zachodniego Gniazda MG Osi\n"
-
-#~ msgid "You are near the Axis Main Bunker MG nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Osi w Głównym Bunkrze\n"
-
-#~ msgid "You are near the Axis South-East MG nest\n"
-#~ msgstr "Jesteś blisko Południowo Wschodniego Gniazda MG Osi\n"
-
-#~ msgid "You are near the Generator\n"
-#~ msgstr "Jesteś blisko Generatora\n"
-
-#~ msgid "You are near the Gun Controls\n"
-#~ msgstr "Jesteś blisko układu skrecającego Działa\n"
-
-#~ msgid "You are near the Tank\n"
-#~ msgstr "Jesteś blisko Czołgu\n"
-
-#~ msgid "You are near Tank Barrier #1\n"
-#~ msgstr "Jesteś blisko Bariery Czołgu #1\n"
-
-#~ msgid "You are near Tank Barrier #2\n"
-#~ msgstr "Jesteś blisko Bariery Czołgu #2\n"
-
-#~ msgid "You are near the Bank Doors\n"
-#~ msgstr "Jesteś blisko Drzwi Banku\n"
-
-#~ msgid "You are near the Gold Crates\n"
-#~ msgstr "Jesteś blisko Skrzynii Złota\n"
-
-#~ msgid "You are near the Truck\n"
-#~ msgstr "Jesteś blisko Ciężarówki\n"
-
-#~ msgid "You are near Truck Barrier #1\n"
-#~ msgstr "Jesteś blisko Bariery Ciężarówki #1\n"
-
-#~ msgid "You are near Truck Barrier #2\n"
-#~ msgstr "Jesteś blisko Bariery Ciężarówki #2\n"
-
-#~ msgid "You are near the Axis Watchtower MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Wieży Obserwacyjnej Osi\n"
-
-#~ msgid "You are near the West Radar Parts\n"
-#~ msgstr "Jesteś blisko Zachodniej Części do Radaru\n"
-
-#~ msgid "You are near the East Radar Parts\n"
-#~ msgstr "Jesteś blisko Wschodniej Części do Radaru\n"
-
-#~ msgid "You are near the Side Entrance\n"
-#~ msgstr "Jesteś blisko Bocznego Wejścia\n"
-
-#~ msgid "You are near the Bunker MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Bunkra\n"
-
-#~ msgid "You are near the Escape Truck\n"
-#~ msgstr "Jesteś blisko Ciężarówki do Ucieczki\n"
-
-#~ msgid "You are near the Main Entrance\n"
-#~ msgstr "Jesteś blisko Głównego Wejścia\n"
-
-#~ msgid "You are near the Axis Road MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG przy Drodze\n"
-
-#~ msgid "You are near the East Axis Base Fortification\n"
-#~ msgstr "Jesteś blisko Wschodnich Umocnień Bazy Osi\n"
-
-#~ msgid "You are near the West Axis Base Fortification\n"
-#~ msgstr "Jesteś blisko Zachodnich Umocnień Bazy Osi\n"
-
-#~ msgid "You are near the Fuel Dump\n"
-#~ msgstr "Jesteś blisko Zbiorników z Paliwem\n"
-
-#~ msgid "You are near the Fuel Depot Side Wall\n"
-#~ msgstr "Jesteś blisko Bocznej Ściany Magazynu\n"
-
-#~ msgid "You are near the Fuel Depot Front Gates\n"
-#~ msgstr "Jesteś blisko Przedniej Bramy Magazynu\n"
-
-#~ msgid "You are near the Side MG\n"
-#~ msgstr "Jesteś blisko Bocznego MG\n"
-
-#~ msgid "You are near the Tunnel Doors\n"
-#~ msgstr "Jesteś blisko Drzwi Tunelu\n"
-
-#~ msgid "You are near the Tunnel MG\n"
-#~ msgstr "Jesteś blisko wieży MG\n"
-
-#~ msgid "You are near the Foot Bridge\n"
-#~ msgstr "Jesteś blisko Mostu Linowego\n"
-
-#~ msgid "You are near the Bridge\n"
-#~ msgstr "Jesteś blisko Mostu\n"
-
-#~ msgid "You are near the Road MG\n"
-#~ msgstr "Jesteś blisko MG przy Drodze\n"
-
-#~ msgid "You are near the Track Switch MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG przy Zmianie Torów\n"
-
-#~ msgid "You are near the Depot Yard MG Nest\n"
-#~ msgstr "Jesteś blisko Gniazda MG Magazynu\n"
-
-#~ msgid "You are near the First Tug\n"
-#~ msgstr "Jesteś blisko Pierwszego Holownika\n"
-
-#~ msgid "You are near the Second Tug\n"
-#~ msgstr "Jesteś blisko Drugiego Holownika\n"
-
-#~ msgid "You are near the Rail Gun Firing Controls\n"
-#~ msgstr "Jesteś blisko Panelu Sterującego Działa Kolejowego\n"
-
-#~ msgid ""
-#~ "^3All players ready!^7\n"
-#~ "Match starting...\n"
-#~ msgstr ""
-#~ "^3Wszyscy gracze gotowi!^7\n"
-#~ "Mecz zaczyna...\n"
-
-#~ msgid "You are on the Allied team"
-#~ msgstr "Jesteś w Zespole Alliantów"
-
-#~ msgid "^1*** Match Reset! ***\n"
-#~ msgstr "^1*** Restart Meczu! ***\n"
-
-#~ msgid "You are on the Axis team"
-#~ msgstr "Jesteś w Zespole Osi"
-
-#~ msgid "Warning, leave the construction area..."
-#~ msgstr "Uwaga, opuść plac budowy..."
-
-#~ msgid "got caught in"
-#~ msgstr "został złapany w"
-
-#~ msgid "'s construction madness"
-#~ msgstr " szaleństwie budowlanym"
-
-#~ msgid "Need paks: %s\n"
-#~ msgstr "Potrzebuje paczek %s\n"
-
-#~ msgid "Mod filter:"
-#~ msgstr "Filtr Modów:"
-
-#~ msgid "http://www.etlegacy.com"
-#~ msgstr "http://www.etlegacy.com"
-
-#~ msgid "'BSzili'"
-#~ msgstr "'BSzili'"
-
-#~ msgid "'PtitSeb'"
-#~ msgstr "'PtitSeb'"
-
-#~ msgid "Pandora"
-#~ msgstr "Pandora"
-
-#~ msgid "^1PACKAGE MAINTAINERS"
-#~ msgstr "^1OPIEKUNOWIE PACZEK"
-
-#~ msgid "Not enough players to start match!\n"
-#~ msgstr "Zbyt mało graczy aby zacząć mecz!\n"
-
-#~ msgid "'s flamethrower"
-#~ msgstr " miotaczem ognia"
-
-#~ msgid "'s Satchel Charge"
-#~ msgstr " Ładunkiem Kulminacyjnym"
-
-#~ msgid "You must be in the game to be ^3ready^7!\n"
-#~ msgstr "Musisz być w grze aby być ^3gotowy^7!\n"
-
-#~ msgid "You cannot arm dynamite near a friendly objective!"
-#~ msgstr "Nie możesz uzbroić dynamitu blisko przyjaznego celu!"
-
-#~ msgid "Axis team has destroyed the Bridge!"
-#~ msgstr "Oś rozwalila Most!"
-
-#~ msgid "^3Aborting, can't see target."
-#~ msgstr "^3Przerwanie, nie można namierzyć celu."
-
-#~ msgid "^3Firing for effect!"
-#~ msgstr "^3Rozpoczęcie Ostrzału!"
-
-#~ msgid "'s tank-mounted MG42"
-#~ msgstr " MG42 na czołgu"
-
-#~ msgid "'s dynamite"
-#~ msgstr " dynamit"
-
-#~ msgid "Timelimit hit.\n"
-#~ msgstr "Limit Czasowy skończony.\n"
-
-#~ msgid "Landmine revealed"
-#~ msgstr "Mina wykryta"
-
-#~ msgid "^3Insufficient fire support."
-#~ msgstr "^3Niewystarczający ogień wsparcia."
-
-#~ msgid "'s tank-mounted browning 30cal"
-#~ msgstr " browning 30cal na czołgu"
-
-#~ msgid "'s grenade"
-#~ msgstr " granat"
-
-#~ msgid "was crushed"
-#~ msgstr "został zmiażdżony"
-
-#~ msgid "Public Settings Loaded!\n"
-#~ msgstr "Ustawienia Publiczne Wczytane!\n"
-
-#~ msgid "Landmine cannot be armed here..."
-#~ msgstr "Miny nie mogą być tutaj uzbrojone.."
-
-#~ msgid "Your team has too many landmines placed..."
-#~ msgstr "Twój zespół ma zbyc dużo podłożonych min..."
-
-#~ msgid "You cannot arm dynamite near a friendly construction!"
-#~ msgstr "Nie możesz podłożyć dynamitu w pobliżu przyjaznej konstrukcji!"
-
-#~ msgid "Countdown started.... ^3notready^7 ignored!\n"
-#~ msgstr "Odliczanie rozpoczęte.... ^3niegotowy^7 zignorowane!\n"
-
-#~ msgid "No complaint filed against you.\n"
-#~ msgstr "Brak skarg przeciwko tobie.\n"
-
-#~ msgid "You are not the leader of a fireteam\n"
-#~ msgstr "Nie jesteś liderem oddziału\n"
-
-#~ msgid "You have been warned by your Fireteam Commander\n"
-#~ msgstr "Zostaleś ostrzeżony przez twojego Dowódcę Oddziału\n"
-
-#~ msgid "You have been kicked from the fireteam"
-#~ msgstr "Zostaleś wywalony z oddziału"
-
-#~ msgid "You are now the leader of your fireteam"
-#~ msgstr "Jesteś teraz liderem oddziału"
-
-#~ msgid "The fireteam you are on has been disbanded"
-#~ msgstr "Oddział rozpadł się"
-
-#~ msgid "You have been given fireteam admin rights"
-#~ msgstr "Dostaleś prawa Dowódcy oddziału"
-
-#~ msgid "Too many players already on this Fireteam"
-#~ msgstr "Zbyt dużo graczy już w tym Oddziale"
-
-#~ msgid "The leader has now left the Fireteam you applied to"
-#~ msgstr "Lider odszedł z Oddziału do ktorego chcialeś dojść"
-
-#~ msgid "The other player is already on a fireteam"
-#~ msgstr "Ten gracz jest już w oddziale"
-
-#~ msgid "You are not on the same team as the other player"
-#~ msgstr "Nie jesteś w tym samym zespole jak inny gracz"
-
-#~ msgid "You are not on the same Fireteam as the other player"
-#~ msgstr "Nie jesteś w tym samym oddziale jak inny gracz"
-
-#~ msgid "Invalid client selected"
-#~ msgstr "Niewlaściwie wybrany klient"
-
-#~ msgid "usage: fireteam admin <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam admin <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam propose <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam propose <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam kick <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam kick <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam warn <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam warn <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam invite <clientname|clientnumber>"
-#~ msgstr "użycie: fireteam invite <nazwaklienta|numerklienta>"
-
-#~ msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
-#~ msgstr "użycie: fireteam apply <nazwaoddzialu|numeroddzialu>"
-
-#~ msgid "usage: fireteam <create|leave|apply|invite>"
-#~ msgstr "użycie: fireteam <create|leave|apply|invite>"
-
-#~ msgid "You are already on a fireteam, leave it first"
-#~ msgstr "Jesteś już w oddziale, wpierw odejdz z oddziału"
-
-#~ msgid ""
-#~ "The other player must be on the same fireteam for you to give admin "
-#~ "rights to"
-#~ msgstr ""
-#~ "Dany gracz musi być w tym samym oddziale abyś mogł dać mu prawa Dowódcy"
-
-#~ msgid "You must be a fireteam admin to give admin rights to someone else"
-#~ msgstr "Musisz być Dowódcą oddziału aby dać prawa Dowódcy komuś innemu"
-
-#~ msgid "Invalid referee password!\n"
-#~ msgstr "Nieprawidłowe hasło sędziego!\n"
-
-#~ msgid "Usage: ref [password]\n"
-#~ msgstr "Użycie: ref [hasło]\n"
-
-#~ msgid ""
-#~ "^3Referee commands:^7\n"
-#~ "------------------------------------------\n"
-#~ msgstr ""
-#~ "^3Komendy sędziego:^7\n"
-#~ "------------------------------------------\n"
-
-#~ msgid ""
-#~ "Usage: ^3\\ref <cmd> [params]\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Użycie: ^3\\ref <komenda> [parametry]\n"
-#~ "\n"
-
-#~ msgid "^5pause speclock warmup ^7[value]\n"
-#~ msgstr "^5pause speclock warmup ^7[wartość]\n"
-
-#~ msgid "Sorry, referee status disabled on this server.\n"
-#~ msgstr "Status sędziego jest wyłączony na tym serwerze.\n"
-
-#~ msgid "Referee has ^3LOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ZABLOKOWAŁ^7 zespoły\n"
-
-#~ msgid "You have LOCKED teams\n"
-#~ msgstr "ZABLOKOWAŁEŚ zespoły\n"
-
-#~ msgid "Referee has ^3UNLOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ODBLOKOWAŁ^7 zespoły\n"
-
-#~ msgid "You have UNLOCKED teams\n"
-#~ msgstr "ODBLOKOWALEŚ zespoły\n"
-
-#~ msgid "The ^4Allies^7 team is LOCKED!\n"
-#~ msgstr "Zespół ^4Alliantów^7 jest ZABLOKOWANY!\n"
-
-#~ msgid "The ^1Axis^7 team is LOCKED!\n"
-#~ msgstr "Zespół ^1Osi^7 jest ZABLOKOWANY!\n"
-
-#~ msgid "^3Referee ^1PAUSED^3 the match^3!\n"
-#~ msgstr "^3Sędzia ^1ZATRZYMAŁ^3 mecz^3!\n"
-
-#~ msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
-#~ msgstr "^3Mecz ^1ZATRZYMANY^3! (^7Sędzia^3)\n"
-
-#~ msgid "The match is already ^1PAUSED!\n"
-#~ msgstr "Mecz jest już ^1ZATRZYMANY!\n"
-
-#~ msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
-#~ msgstr "^3Sędzia ^5WZNOWIŁ^3 mecz ... wznowienie za 10 sekund!\n"
-
-#~ msgid "The match is already ^5UNPAUSED!\n"
-#~ msgstr "Mecz jest już ^5WZNOWIONY!\n"
-
-#~ msgid "Bad client slot: "
-#~ msgstr "Zły slot klienta: "
-
-#~ msgid "Client"
-#~ msgstr "Klient"
-
-#~ msgid "is not active\n"
-#~ msgstr "nie jest aktywny\n"
-
-#~ msgid "You can only remove people in the game!\n"
-#~ msgstr "Możesz tylko usuwać ludzi z gry!\n"
-
-#~ msgid "User "
-#~ msgstr "Użytkownik "
-
-#~ msgid "is not on the server\n"
-#~ msgstr "nie jest na serwerze\n"
-
-#~ msgid "^5You've been removed from the ^4Allies^7 team\n"
-#~ msgstr "^5Zostałeś usunięty z zespołu ^4Alliantów\n"
-
-#~ msgid "^5You've been removed from the ^1Axis^7 team\n"
-#~ msgstr "^5Zostałeś usunięty z ^7zespołu ^1Osi\n"
-
-#~ msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ZABLOKOWAŁ OBSERWATORÓW\n"
-
-#~ msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
-#~ msgstr "Sędzia ^3ODBLOKOWAŁ OBSERWATORÓW\n"
-
-#~ msgid "usage: ref warn <clientname> [reason].\n"
-#~ msgstr "użycie: ref warn <nazwaklienta> [powód].\n"
-
-#~ msgid "Client not on server.\n"
-#~ msgstr "Nie ma Klienta na serwerze.\n"
-
-#~ msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
-#~ msgstr "%s^7 otrzymał ^1Ostrzeżenie^7 (Brak Dostatecznego Powodu)\n"
-
-#~ msgid "Cannot mute a referee.\n"
-#~ msgstr "Nie mozża uciszyć sędziego.\n"
-
-#~ msgid "^5You've been muted\n"
-#~ msgstr "^5Zostałes uciszony\n"
-
-#~ msgid "Can't chat - you are muted\n"
-#~ msgstr "Nie możesz pisać - jesteś uciszony\n"
-
-#~ msgid "^5You've been unmuted\n"
-#~ msgstr "^5Dostałeś możliwość pisania\n"
-
-#~ msgid ""
-#~ "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
-#~ msgstr ""
-#~ "^7 ID : Gracz                     Nudge  Rate  Pakiety  Snaps  Specjalne\n"
-
-#~ msgid "^7----------------------------------------------------------------------\n"
-#~ msgstr "^7----------------------------------------------------------------------\n"
-
-#~ msgid ""
-#~ "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
-#~ "Specials\n"
-#~ msgstr ""
-#~ "^7Status   : ID : Gracz                    Nudge  Rate  Pakiety  Snaps  "
-#~ "Specjalne\n"
-
-#~ msgid "^7-------------------------------------------------------------------------------\n"
-#~ msgstr "^7-------------------------------------------------------------------------------\n"
-
-#~ msgid ""
-#~ "^5\n"
-#~ "Available Game Commands:\n"
-#~ "------------------------\n"
-#~ msgstr ""
-#~ "^5\n"
-#~ "Dostępne Komendy-W Grze:\n"
-#~ "------------------------\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Type: ^3\\command_name ?^7 for more information\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Napisz: ^3\\nazwa_komendy ?^7 aby uzyskać więcej informacji\n"
-
-#~ msgid "Spectators can't lock a team!\n"
-#~ msgstr "Widzowie nie mogą zablokować zepsołu!\n"
-
-#~ msgid "The ^4Allies^7 team is now locked!\n"
-#~ msgstr "Zespół ^4Alliancki^7 jest teraz zablokowany!\n"
-
-#~ msgid "^3Your team is already locked!\n"
-#~ msgstr "^3Twój zespół jest już zablokowany!\n"
-
-#~ msgid "The ^4Allies^7 team is now unlocked!\n"
-#~ msgstr "Zespół ^4Alliancki^7 jest już odblokowany!\n"
-
-#~ msgid "^3Your team is already unlocked!\n"
-#~ msgstr "^3Twój zespół jest już odblokowany!\n"
-
-#~ msgid "Spectators can't unlock a team!\n"
-#~ msgstr "Widzowie nie mogą odblokowywać zespołu!\n"
-
-#~ msgid "The ^1Axis^7 team is now locked!\n"
-#~ msgstr "Zespół ^1Osi^7 jest teraz zablokowany!\n"
-
-#~ msgid "The ^1Axis^7 team is now unlocked!\n"
-#~ msgstr "Zespół ^1Osi^7 jest już odblokowany!\n"
-
-#~ msgid "Team commands not enabled on this server.\n"
-#~ msgstr "Komendy Zespołu nie są włączone na tym serwerze.\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "^3>>> Unknown vote command: ^7 \n"
-#~ msgstr ""
-#~ "\n"
-#~ "^3>>> Nieznana komenda głosowania: ^7 \n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Valid ^3callvote^7 commands are:\n"
-#~ "^3----------------------------\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Prawidłowymi komendami ^3callvote^7 są:\n"
-#~ "^3----------------------------\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Usage: ^3\\callvote <command> <params>\n"
-#~ "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Użycie: ^3\\callvote <komenda> <parametry>\n"
-#~ "^7Dla bieżących ustawień/pomocy, użyj: ^3\\callvote <komenda> ?\n"
-
-#~ msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
-#~ msgstr ""
-#~ "Napisz ^3\\stats <id_gracza>^7 aby zobaczyć statystyki aktywnego gracza.\n"
-
-#~ msgid "Spectators can't ready a team!\n"
-#~ msgstr "Widzowie nie mogą być gotowi!\n"
-
-#~ msgid "The ^4Allies^7 team is ready!\n"
-#~ msgstr "Zespół ^4Alliantów^7 jest gotowy!\n"
-
-#~ msgid "The ^1Axis^7 team is ready!\n"
-#~ msgstr "Zespół ^1Osi^7 jest gotowy!\n"
-
-#~ msgid "A vote is already in progress.\n"
-#~ msgstr "Głosowanie jest już w toku.\n"
-
-#~ msgid "called a vote.\n"
-#~ msgstr "wybrał głosowanie.\n"
-
-#~ msgid "^5Vote passed!\n"
-#~ msgstr "^5Głosownie Ważne!\n"
-
-#~ msgid "Spectator team\n"
-#~ msgstr "Zespół Widzów\n"
-
-#~ msgid "Allies team\n"
-#~ msgstr "Zespół Alliantów\n"
-
-#~ msgid "Axis team\n"
-#~ msgstr "Zespół Osi\n"
-
-#~ msgid "Sorry, "
-#~ msgstr "Wybacz, "
-
-#~ msgid "voting has been disabled"
-#~ msgstr "głosowania zostały wyłączone"
-
-#~ msgid "Not allowed to call a vote as a spectator.\n"
-#~ msgstr "Nie wolno głosować jako obserwator.\n"
-
-#~ msgid "called a vote."
-#~ msgstr "wybrał głosowanie."
-
-#~ msgid "Vote cast.\n"
-#~ msgstr "Oddawanie głosów.\n"
-
-#~ msgid "'s KA-BAR"
-#~ msgstr " Nożem Bojowym"
-
-#~ msgid "'s .45ACP 1911"
-#~ msgstr " Coltem .45"
-
-#~ msgid "'s Thompson"
-#~ msgstr " Thompsonem"
-
-#~ msgid "'s MP40"
-#~ msgstr " MP40"
-
-#~ msgid "'s knife"
-#~ msgstr " nożem"
-
-#~ msgid "'s Luger 9mm"
-#~ msgstr " Lugerem 9mm"
-
-#~ msgid "'s Panzerfaust"
-#~ msgstr " Pociskiem Przeciwczołgowym"
-
-#~ msgid "'s Garand"
-#~ msgstr " Garantem"
-
-#~ msgid "'s Sten"
-#~ msgstr " Stenem"
-
-#~ msgid "'s FG42"
-#~ msgstr " FG42"
-
-#~ msgid "'s K43"
-#~ msgstr " K43"
-
-#~ msgid "Reset Filters"
-#~ msgstr "Resetuj Filtry"
-
-#~ msgid "Remy 'Spyhawk' M. - Coding, mod development"
-#~ msgstr "Remy 'Spyhawk' M. - Programowanie, wydawca moda"
-
-#~ msgid "^9You are frozen - ^3/kill^9 is disabled."
-#~ msgstr "^9Jesteś zamrożony - ^3/kill^9 jest wyłączone."
-
-#~ msgid "WAITING ON %i %s"
-#~ msgstr "CZEKAM NA %i %s"
-
-#~ msgid "'s Bazooka"
-#~ msgstr " Pociskiem Przeciwczołgowym"
-
-#~ msgid "'s Akimbo .45ACP 1911s"
-#~ msgstr " Podwójnym .45ACP 1911s"
-
-#~ msgid "Server disconnected"
-#~ msgstr "Serwer rozłączony"
-
-#~ msgid "Server connection timed out."
-#~ msgstr "Połączenie z serwerem przerwane."
-
-#~ msgid "Server disconnected for unknown reason"
-#~ msgstr "Serwer rozłączony z nieznanych przyczyn"
-
-#~ msgid "'s Akimbo Luger 9mms"
-#~ msgstr " Podwójnym Lugerem 9mm"
-
-#~ msgid "Cheats are not enabled on this server.\n"
-#~ msgstr "Kody nie są włączony na tym serwerze.\n"
-
-#~ msgid "team: class is not available\n"
-#~ msgstr "zespół: klasa nie jest dostępna\n"
-
-#~ msgid "^1Soldier^7 is not available! Choose another class!\n"
-#~ msgstr "^1Żołnierz^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Medic^7 is not available! Choose another class!\n"
-#~ msgstr "^1Medyk^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Engineer^7 is not available! Choose another class!\n"
-#~ msgstr "^1Inżynier^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Field Ops^7 is not available! Choose another class!\n"
-#~ msgstr "^1Wsparcie^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "^1Covert Ops^7 is not available! Choose another class!\n"
-#~ msgstr "^1Zabójca^7 nie jest dostępny! Wybierz inną klase!\n"
-
-#~ msgid "You must be alive to use this command.\n"
-#~ msgstr "Musisz być żywy aby użyć tą komende.\n"
-
-#~ msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
-#~ msgstr "Zespół ^1Osi^7 jest pusty!  Komenda Follow zignorowana.\n"
-
-#~ msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
-#~ msgstr "Zespół ^4Aliantów^7 jest pusty!  Komenda Follow zignorowana.\n"
-
-#~ msgid "Can't follow a player on an enemy team!\n"
-#~ msgstr "Nie możesz podązać za graczem z przeciwnego zespołu!\n"
-
-#~ msgid "Can't follow while not in limbo if on a team!\n"
-#~ msgstr "Nie możesz podązać podczas kiedy jesteś w zespole!\n"
-
-#~ msgid "Partial Name Matches more than 1 Player.\n"
-#~ msgstr "Częściowe Imie Pasuje dla więcej niż 1 Gracza.\n"
-
-#~ msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
-#~ msgstr "Obserwowanie Zespołu ^1Osi^7 jest teraz zablokowane.\n"
-
-#~ msgid "^1Axis^7 team spectating is now disabled.\n"
-#~ msgstr "Obserwowanie Zespołu ^1Osi^7 jest teraz wyłączone.\n"
-
-#~ msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
-#~ msgstr "Obserwowanie Zespołu ^4Aliantów^7 jest teraz zablokowane.\n"
-
-#~ msgid "^4Allies^7 team spectating is now disabled.\n"
-#~ msgstr "Obserwowanie Zespołu ^4Aliantów^7 jest teraz wyłączone.\n"
-
-#~ msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
-#~ msgstr "Zespół ^4Aliantów^7 jest zablokowany od obserwowania.\n"
-
-#~ msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
-#~ msgstr "Zespół ^1Osi^7 jest zablokowany od obserwowania.\n"
-
-#~ msgid "Server quit\n"
-#~ msgstr "Serwer wyłączony\n"
-
-#~ msgid "You cannot switch during a match, please wait until the round ends."
-#~ msgstr ""
-#~ "Nie możesz przechodzić podczas meczu, proszę poczekaj aż runda dobiegnie "
-#~ "końca."
-
-#~ msgid "Allied team has constructed the bridge!"
-#~ msgstr "Allianci zbudowali most!"
-
-#~ msgid "The Tank has been repaired"
-#~ msgstr "Czołg został naprawiony"
-
-#~ msgid "The Tank has been damaged"
-#~ msgstr "Czołg został uszkodzony"
-
-#~ msgid "Join ET Legacy and keep the game alive"
-#~ msgstr "Dolacz do ET Legacy i podtrzymuj gre"
-
-#~ msgid "joined the Axis team\n"
-#~ msgstr "dołączył do Zespołu Osi\n"
-
-#~ msgid "joined the Allies team\n"
-#~ msgstr "dołączył do Zespołu Aliantów\n"
-
-#~ msgid "^3>>> Unknown vote command: ^7 \n"
-#~ msgstr "^3>>> Nieznana komenda głosowania: ^7 \n"
-
-#~ msgid "Use the ^3players^7 command to find a valid player ID.\n"
-#~ msgstr "Użyj komende ^3players^7 aby znaleść poprawne ID gracza.\n"
-
-#~ msgid "^3Match is already in progress!\n"
-#~ msgstr "^3Mecz już trwa!\n"
-
-#~ msgid "^1Teams have been shuffled!\n"
-#~ msgstr "^1Zespoły zostały pomieszane!\n"
-
-#~ msgid "^3*** Loading nextmap! ***\n"
-#~ msgstr "^3*** Wczytywanie następnej mapy! ***\n"
-
-#~ msgid "^1*** Level Restarted! ***\n"
-#~ msgstr "^1*** Poziom Zrestartowany! ***\n"
-
-#~ msgid "You have been switched to the Axis team"
-#~ msgstr "Zostałeś przeniesiony do zespołu Osi"
-
-#~ msgid "Keep the Allies from beating the clock!"
-#~ msgstr "Utrzymuj Aliantów od pobicia czasu!"
-
-#~ msgid "Keep the Axis from beating the clock!"
-#~ msgstr "Utrzymuj Oś od pobicia czasu!"
-
-#~ msgid "You have been switched to the Allied team"
-#~ msgstr "Zostałeś przeniesiony do zespołu Aliantów"
-
-#~ msgid "Try to beat the clock!"
-#~ msgstr "Spróbuj pokonać czas!"
-
-#~ msgid "You have been been stripped of fireteam admin rights"
-#~ msgstr "Zostałeś pozbawiony praw lidera oddziału"
-
-#~ msgid "%s ^7has left the fireteam\n"
-#~ msgstr "%s ^7odszedł z oddziału\n"
-
-#~ msgid "You have been warned by your fireteam leader\n"
-#~ msgstr "Zostałeś ostrzeżony przez swojego lidera oddziału\n"
-
-#~ msgid "^3moved to spectator for inactivity!\n"
-#~ msgstr "^3przeniesiony do widzów za nieaktywność!\n"

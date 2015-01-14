@@ -1,24 +1,22 @@
-# Russian translation for ET:Legacy mod
-# Copyright (C) 2014 Artem Vorotnikov
-# This file is distributed under the same license as the ET:Legacy package.
-# Artem Vorotnikov <artem@vorotnikov.me>, 2014.
-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Jan Simek
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Artem Vorotnikov <artem@vorotnikov.me>, 2014-2015
 msgid ""
 msgstr ""
-"Project-Id-Version: ET: Legacy\n"
+"Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2014-10-19 20:16+0400\n"
+"PO-Revision-Date: 2015-01-12 18:07+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
-"Language-Team: \n"
-"Language: ru\n"
+"Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.6.9\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
@@ -41,7 +39,6 @@ msgid "Production Coordinator"
 msgstr "Координатор производства"
 
 #: etmain/ui/credits_activision.menu:90
-#, fuzzy
 msgid "Production Tester"
 msgstr "Тестер производства"
 
@@ -50,7 +47,6 @@ msgid "Sr. Executive Producer"
 msgstr "Старший исполнительный продюсер"
 
 #: etmain/ui/credits_activision.menu:94
-#, fuzzy
 msgid "VP North American Studios"
 msgstr "Вице-президент североамериканской студии"
 
@@ -64,7 +60,7 @@ msgstr "Старший руководитель команды тестиров�
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "Менеджер QA"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
@@ -83,14 +79,12 @@ msgid "QA Manager"
 msgstr "Менеджер команды тестирования"
 
 #: etmain/ui/credits_activision.menu:116
-#, fuzzy
 msgid "Manager, Code Release Group"
-msgstr "Менеджер, группа выпуска кода"
+msgstr "Менеджер, Группа выпуска кода"
 
 #: etmain/ui/credits_activision.menu:118
-#, fuzzy
 msgid "Sr. Lead, Code Release Group"
-msgstr "Старший руководитель, группа выпуска кода"
+msgstr "Ст. руководитель, группа выпуска кода"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
@@ -189,9 +183,7 @@ msgstr "ОТДЕЛЬНОЕ СПАСИБО"
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
-"Return to Castle Wolfenstein была разработана Gray Matter Studios и Nerve "
-"Software."
+msgstr "Return to Castle Wolfenstein была разработана Gray Matter Studios и Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
@@ -214,59 +206,47 @@ msgid "^1PROGRAMMING"
 msgstr "^1ПРОГРАММИРОВАНИЕ"
 
 #: etmain/ui/credits_etlegacy.menu:98
-#, fuzzy
 msgid "Project founder, coding & management"
-msgstr ""
-"Jan 'Radegast' Simek - основатель проекта, программирование и управление"
+msgstr "Основатель проекта, программирование и управление"
 
 #: etmain/ui/credits_etlegacy.menu:100
-#, fuzzy
 msgid "Coding, mod development & bad boy"
 msgstr "Olaf 'IR4T4' R. - программирование, разработка мода и плохой парень"
 
 #: etmain/ui/credits_etlegacy.menu:102
-#, fuzzy
 msgid "Main windows coder & renderer"
 msgstr "Jere 'Jacker' S. - разработка главных окон и рендерера"
 
 #: etmain/ui/credits_etlegacy.menu:104
-#, fuzzy
 msgid "Website, coding & scripts"
-msgstr "Konrad 'morsik' Moson - сайт, программирование и скрипты"
+msgstr "Сайт, программирование и скрипты"
 
 #: etmain/ui/credits_etlegacy.menu:106
-#, fuzzy
 msgid "Coding, mod development"
-msgstr "Remy 'Spyhawk' M. - Программирование, разработка мода"
+msgstr "Программирование, разработка мода"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr "^1ПОРТЫ"
+msgstr "^1ПОРТИРОВАНИЕ"
 
 #: etmain/ui/credits_etlegacy.menu:126
-#, fuzzy
 msgid "AROS and MorphOS"
-msgstr "'BSzili' - AROS и MorphOS"
+msgstr "AROS и MorphOS"
 
 #: etmain/ui/credits_etlegacy.menu:135
-#, fuzzy
 msgid "^1GREETINGS"
-msgstr "^1ПРИВЕТСТВИЯ"
+msgstr "^1БЛАГОДАРНОСТИ"
 
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
-msgstr ""
-"Огромное спасибо Splash Damage за релиз исходного кода, ioWolfET и raedwulf-"
-"et (особенно Ralph Eastwood) за нашу кодовую базу и ioQuake3 за их "
-"вдохновение."
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
+msgstr "Огромное спасибо Splash Damage за релиз исходного кода, ioWolfET и raedwulf-et (особенно Ralph Eastwood) за нашу кодовую базу и ioQuake3 за их вдохновение."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
-#, fuzzy
 msgid "^1CONTRIBUTORS"
-msgstr "^1РАЗРАБОТЧИКИ"
+msgstr "^1УЧАСТНИКИ"
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
@@ -278,9 +258,8 @@ msgid "^1WEBSITE"
 msgstr "^1САЙТ"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-#, fuzzy
 msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2013 Команда ET Legacy - на условиях GPL версии 3."
+msgstr " 2012-2015 ET Legacy Team - на условиях GPL версии 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -306,9 +285,7 @@ msgstr "Главный программист"
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
-"Mac OS X - товарный знак Apple Computer, Inc., зарегистрированный в США и "
-"других странах."
+msgstr "Mac OS X - товарный знак Apple Computer, Inc., зарегистрированный в США и других странах."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET:LEGACY HALL OF FAME"
@@ -316,7 +293,7 @@ msgstr "ЗАЛ СЛАВЫ ETLEGACY.COM"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Советы, сообщения об ошибках, патчи"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
@@ -338,9 +315,7 @@ msgstr "Дополнительное программирование"
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr ""
-"Wolfenstein: Enemy Territory разработан на основе Quake III Arena от id "
-"Software."
+msgstr "Wolfenstein: Enemy Territory разработан на основе Quake III Arena от id Software."
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
@@ -356,10 +331,10 @@ msgid ""
 " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
-"trademarks of Id Software, Inc. in the United States and/or other countries. "
-"All other trademarks and trade names are the properties of their respective "
-"owners."
-msgstr ""
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
+msgstr " 2003 Id Software, Inc. Все права защищены. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, логотип Return to Castle Wolfenstein, имя id Software, и логотип id зарегистрированные товарные знаки или товарные знаки Id Software, Inc. в США и/или других странах. Все другие товарные знаки или товарные имена являются собственностью соответствующих владельцев."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -375,7 +350,7 @@ msgstr "Бизнес-директор"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
-msgstr ""
+msgstr "АРТ"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
@@ -387,7 +362,7 @@ msgstr "Художник / Аниматор"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
-msgstr ""
+msgstr "Дополнительный арт"
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
@@ -447,9 +422,7 @@ msgstr "Сайт ET Legacy"
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
-"Открыть\n"
-" www.etlegacy.com ?"
+msgstr "Открыть\n www.etlegacy.com ?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -483,7 +456,7 @@ msgstr "НАСТРОЙКИ СЕРВЕРА ПО УМОЛЧАНИЮ"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr "Вернуть настройки сервера по умолчанию?"
+msgstr "Сбросить настройки сервера?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
@@ -499,7 +472,7 @@ msgstr "Минимальная задержка:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Установка минимальной задержки может быть использована для исключения LPB (0 = нет минимума)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
@@ -507,16 +480,16 @@ msgstr "Максимальная задержка:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Установка максимальной задержки может быть использована для исключения HPB (0 = нет максимума)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
-msgstr ""
+msgstr "Максимальный рейт:"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Максимальный рейт при отправке данных клиентам (0 = использовать настройки клиента)"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
@@ -526,7 +499,7 @@ msgstr "Неактивность игрока:"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Максимальное время (сек) неактивности игрока до кика с сервера (0 = выключено)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -536,7 +509,7 @@ msgstr "Неактивность зрителя:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Максимальное время (сек) неактивности зрителя до кика с сервера (0 = выключено)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -544,15 +517,15 @@ msgstr "Длительность перерыва:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr ""
+msgstr "Время интермиссии"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr ""
+msgstr "Интермиссия - готовность %:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
-msgstr ""
+msgstr "Доля готовых игроков для начала следующей карты"
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
@@ -560,22 +533,22 @@ msgstr "МАТЧ"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
-msgstr "Ждём готовность:"
+msgstr "Ожидать готовность:"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr ""
+msgstr "Определяет ожидать ли готовность всех игроков до начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr "Мин. игроков"
+msgstr "Минимум игроков"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Минимальное число игроков для начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
@@ -585,7 +558,7 @@ msgstr "Процент готовности:"
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr ""
+msgstr "Минимальный процент готовности игроков для начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
@@ -593,7 +566,7 @@ msgstr "Разрешить позднее присоединение:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr ""
+msgstr "Можно ли присоединиться к команде после начала матча"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
@@ -601,30 +574,30 @@ msgstr "Глушить зрителей:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr ""
+msgstr "Нужно ли глушить зрителей"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Warmup Damage:"
-msgstr "Ущерб при разминке:"
+msgstr "Нанесение ущерба при разминке:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "никому"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr ""
+msgstr "только врагам"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr ""
+msgstr "всем"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
-msgstr ""
+msgstr "Можно ли наносить ущерб другим игрокам во время разминки"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
@@ -632,17 +605,17 @@ msgstr "Макс. игроков на команду:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
-msgstr ""
+msgstr "Максимальное количество игроков в команде"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr "Отключить управление командами:"
+msgstr "Отключить командные приказы:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr ""
+msgstr "Можно ли выполнять командные приказы (lock team/spectators, readyteam и т.п.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
@@ -650,21 +623,21 @@ msgstr "Длительность разминки:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
-msgstr ""
+msgstr "Длительность разминки перед началом матча"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid "Maximum Complaints:"
-msgstr "Макс. жалоб:"
+msgstr "Максимум жалоб:"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Число жалоб на игрока до его кика с сервера."
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr "Макс. пожаловавшихся:"
+msgstr "Максимум пожаловавшихся:"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -685,13 +658,13 @@ msgstr "Макс. пожаловавшихся:"
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
 msgid "Off"
-msgstr ""
+msgstr "выключено"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Число уникальных жалоб на игрока до его кика с сервера"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
@@ -699,7 +672,7 @@ msgstr "Времени на карту:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
-msgstr ""
+msgstr "Заменить время на карту по умолчанию"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
@@ -707,7 +680,7 @@ msgstr "Время респа союзников:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr ""
+msgstr "Заменить время респа союзников по умолчанию"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
@@ -715,69 +688,69 @@ msgstr "Время респа нацистов:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr ""
+msgstr "Заменить время респа нацистов по умолчанию"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
-msgstr "Макс. жизней у союзников:"
+msgstr "Максимум жизней у союзников:"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
-msgstr ""
+msgstr "Указать число жизней у союзников в игре с ограниченным числом жизней"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr "Макс. жизней у нацистов:"
+msgstr "Максимум жизней у нацистов:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr ""
+msgstr "Указать число жизней у нацистов в игре с ограниченным числом жизней"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr ""
+msgstr "Тип секундомерного раунда"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr ""
+msgstr "Определяет тип секундомерного раунда (АББА = смена сторон, АБАБ = сохранение сторон)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr "ПОСЛЕДНИЙ ВЫЖИВШИЙ"
+msgstr "ПОСЛЕДНИЙ ГЕРОЙ"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr "ПВ-раундов за матч:"
+msgstr "ПГ - раундов на матч:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Указать количество ПГ-раундов на матч"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr "ПВ-раундов за карту:"
+msgstr "ПГ - раундов за карту:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Указать количество ПГ-матчей (состоящих из раундов) на карту"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr ""
+msgstr "ПГ Наблюдать только за командой"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr ""
+msgstr "Не даёт игрокам наблюдать за врагом"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr ""
+msgstr "ПГ - заморозить команды"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Отключает перемещение между командами"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
@@ -791,7 +764,7 @@ msgstr "Чистый сервер:"
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr ""
+msgstr "Ограничивает контент содержимым файлов PK3, которые есть у клиента и у сервера, с совпадающими CRC"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -800,7 +773,7 @@ msgstr "Пароль:"
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"
-msgstr ""
+msgstr "Установить пароль, необходимый клиентам для подключения к серверу"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
@@ -810,7 +783,7 @@ msgstr "Пароль судьи:"
 msgid ""
 "Password to utilize the \"ref\" command for match control and remote game "
 "administration"
-msgstr ""
+msgstr "Пароль от команды \"ref\" для контроля матчей и удалённого администрирования"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
@@ -820,7 +793,7 @@ msgstr "Пароль RCON:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Пароль от удалённой консоли сервера (очень мощной, держите пароль в тайне)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
@@ -832,7 +805,7 @@ msgstr "Макс. голосов на игрока:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
-msgstr ""
+msgstr "Указать максимальное число голосов на игрока на матч"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
@@ -840,7 +813,7 @@ msgstr "Успешное голосование:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Указать минимальный процент, необходимый для прохождения вопроса"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -852,7 +825,7 @@ msgstr "Настройки игры:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Разрешить голосовать за набор опций"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
@@ -862,7 +835,7 @@ msgstr "Тип игры:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Разрешить голосовать за смену типа игры"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
@@ -870,7 +843,7 @@ msgstr "Кик игрока:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Разрешить голосовать за кик другого игрока"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -878,7 +851,7 @@ msgstr "Карта:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Разрешить голосовать за смену карты или кампании"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
@@ -886,7 +859,7 @@ msgstr "Перезагрузка матча"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Разрешить голосовать за перезапуск матча"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
@@ -894,7 +867,7 @@ msgstr "Глушить зрителей:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Разрешить голосовать за глушение зрителей"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
@@ -902,7 +875,7 @@ msgstr "След. карта:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Разрешить голосовать за следующую кампанию или карту"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
@@ -910,7 +883,7 @@ msgstr "Балансировка команд:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Разрешить голосовать за принудительную балансировку команд"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
@@ -918,7 +891,7 @@ msgstr "Судья:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Разрешить игрокам выбирать судью"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
@@ -926,7 +899,7 @@ msgstr "Сортировка по XP:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Разрешить голосовать за перетасовку команд"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
@@ -934,15 +907,15 @@ msgstr "Своп команд:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Разрешить голосовать за смену сторон"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
-msgstr "Дружественный огонь:"
+msgstr "Огонь по своим:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Разрешить голосовать за переключение огня по своим"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
@@ -950,11 +923,11 @@ msgstr "Лимит времени:"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Разрешить игрокам голосовать за лимит времени"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Разрешить голосовать за переключение нанесения ущерба при разминке"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
@@ -962,7 +935,7 @@ msgstr "Анти-лаг"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
-msgstr ""
+msgstr "Разрешить голосовать за переключение антилага"
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
@@ -976,7 +949,7 @@ msgstr "Строка 1:"
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Specifies the message clients will see when connecting to the server"
-msgstr ""
+msgstr "Указать сообщение, отображаемое у клиента при подключении к серверу"
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
@@ -996,7 +969,7 @@ msgstr "Строка 5:"
 
 #: etmain/ui/hostgame_advanced.menu:157
 msgid "DOWNLOAD"
-msgstr "СКАЧИВАНИЕ"
+msgstr "ЗАГРУЗКИ"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Client Downloads:"
@@ -1004,7 +977,7 @@ msgstr "Скачивание клиентами:"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
-msgstr ""
+msgstr "Разрешить загрузку файлов с сервера"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
@@ -1012,9 +985,9 @@ msgstr "Макс. скорость скачивания:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
-"Specifies the maximum download rate from the server for players with missing "
-"files"
-msgstr ""
+"Specifies the maximum download rate from the server for players with missing"
+" files"
+msgstr "Указать максимальную скорость загрузки файлов с сервера"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
@@ -1022,7 +995,7 @@ msgstr "Перенаправления FTP/HTTP:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Перенаправляет игроков без необходимых файлов на другой сервер"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
@@ -1030,7 +1003,7 @@ msgstr "Базовый адрес:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "На его основе составляется URL для клиентских загрузок"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
@@ -1063,7 +1036,7 @@ msgstr "данном ПК будет невозможна"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
-msgstr "Хотите продолжить?"
+msgstr "Запустить"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:58
 msgid "a Dedicated Server?"
@@ -1088,17 +1061,16 @@ msgstr "Флаги стран:"
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
 #: etmain/ui/options_system.menu:53
 msgid "No"
-msgstr "Нет"
+msgstr "нет"
 
 #: etmain/ui/hostgame_extended.menu:32
 #: etmain/ui/options_customise_game.menu:42
 msgid "Yes"
-msgstr "Да"
+msgstr "да"
 
 #: etmain/ui/hostgame_extended.menu:32
-#, fuzzy
 msgid "Enable Country Flags on the server"
-msgstr "не на сервере"
+msgstr "Включить флаги стран на сервере"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1119,7 +1091,7 @@ msgstr "Имя сервера:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
-msgstr ""
+msgstr "Здесь можно указать имя данного сервера"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
@@ -1129,19 +1101,18 @@ msgstr "Кампания"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr "Последний выживший"
+msgstr "Последний герой"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
-msgstr "Голосование"
+msgstr "Выбор карты"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
-#, fuzzy
 msgid "Single-Map Objective"
-msgstr "Цель"
+msgstr "Одна карта - цель"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1151,33 +1122,31 @@ msgstr "Секундомер"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
-msgstr ""
+msgstr "Выберите тип игры"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
-msgstr "Макс. игроков:"
+msgstr "Максимум игроков:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
-msgstr ""
+msgstr "Максимальное количество людей на сервере"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Auto-Configure Server:"
 msgstr "Автонастройка сервера:"
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Competition Settings"
-msgstr "Настройки соревнования загружены!\n"
+msgstr "Настройки соревнования"
 
 #: etmain/ui/hostgame.menu:42
-#, fuzzy
 msgid "Public Settings"
-msgstr "Публ. настройки:"
+msgstr "Публичные настройки"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
-msgstr ""
+msgstr "Автонастройка сервера под указанный набор опций"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Dedicated Server:"
@@ -1185,21 +1154,21 @@ msgstr "Выделенный сервер"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - LAN"
-msgstr ""
+msgstr "Да - ЛВС"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - Internet"
-msgstr ""
+msgstr "Да - Интернет"
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
-"Specifies if the server should be \"dedicated\" for LAN or Internet play (no "
-"client)"
-msgstr ""
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
+msgstr "Должен ли сервер быть \"выделенным\" для игры по ЛВС или Интернету (без клиента)"
 
 #: etmain/ui/hostgame.menu:44
 msgid "Password clients must set to join the server"
-msgstr ""
+msgstr "Пароль, который клиенты должны указать для подключения к серверу."
 
 #: etmain/ui/hostgame.menu:47
 msgid "FEATURES"
@@ -1211,7 +1180,7 @@ msgstr "Дружественный огонь"
 
 #: etmain/ui/hostgame.menu:59
 msgid "Specifies if teammates can hurt each other"
-msgstr ""
+msgstr "Указать можно ли вести огонь по своим"
 
 #: etmain/ui/hostgame.menu:70
 msgid "Anti-Lag"
@@ -1219,7 +1188,7 @@ msgstr "Анти-лаг"
 
 #: etmain/ui/hostgame.menu:71
 msgid "Enables modem-friendly server support"
-msgstr ""
+msgstr "Включить серверную поддержку для модемов"
 
 #: etmain/ui/hostgame.menu:85
 msgid "Max Lives"
@@ -1227,7 +1196,7 @@ msgstr "Макс. жизней"
 
 #: etmain/ui/hostgame.menu:86
 msgid "Limits the number of player lives per round"
-msgstr ""
+msgstr "Ограничивает число жизней на раунд"
 
 #: etmain/ui/hostgame.menu:97
 msgid "Weapon Restrictions"
@@ -1237,7 +1206,7 @@ msgstr "Ограничения на оружие"
 msgid ""
 "Restricts the number of weapons available to players to a percentage of the "
 "team size to reduce spam"
-msgstr ""
+msgstr "Ограничивает количество вооружения до процента от размера команды для предотвращения спама"
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
@@ -1247,7 +1216,7 @@ msgstr "Балансировка команд"
 msgid ""
 "Enforces balanced teams by forcing players to join the team with the lowest "
 "player count"
-msgstr ""
+msgstr "Следит за балансом команд вынуждая игроков заходить за команду с меньшим числом игроков"
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
@@ -1255,7 +1224,7 @@ msgstr "ИМЯ"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
-msgstr ""
+msgstr "Выбрать кампанию или карту для загрузки"
 
 #: etmain/ui/hostgame.menu:142 etmain/ui/playonline.menu:219
 msgid "PREVIEW"
@@ -1283,7 +1252,7 @@ msgstr "от сервера?"
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
-msgstr ""
+msgstr "МЕНЮ"
 
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
@@ -1323,12 +1292,11 @@ msgstr "ОТПРАВИТЬ СООБЩЕНИЕ"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Say:"
-msgstr "Сказать:"
+msgstr "Речь:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
-#, fuzzy
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr "Жду новую клавишу... Нажмите ESCAPE для отмены"
+msgstr "Введите текст - нажмите ESC дважды для отмены"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
@@ -1337,22 +1305,20 @@ msgstr "Кому:"
 #: etmain/ui/ingame_messagemode.menu:59
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
-#, fuzzy
 msgid "All"
-msgstr "Союзники"
+msgstr "Все"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
-msgstr ""
+msgstr "Команда"
 
 #: etmain/ui/ingame_messagemode.menu:59
-#, fuzzy
 msgid "Fireteam"
-msgstr "Звено: %s"
+msgstr "Звено"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
-msgstr ""
+msgstr "Выберите пункт назначения для сообщения"
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
@@ -1372,19 +1338,19 @@ msgstr "ДОБАВИТЬ В ИЗБРАННОЕ"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
-msgstr ""
+msgstr "ВОЗРОДИТЬСЯ"
 
 #: etmain/ui/ingame_tapoutlms.menu:50
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
+msgstr "В режиме последнего героя вы не можете возродиться если выйдете из ожидания помощи. Вы уверены?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
-"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
-"sure?"
-msgstr ""
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
+msgstr "На сервере включено ограничение числа жизней. Ждите помощи или Вы потеряете жизнь. Перейти в очередь подкрепления?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1419,9 +1385,8 @@ msgid "BOTS ON"
 msgstr "БОТЫ ВКЛ"
 
 #: etmain/ui/ingame_vote_bot.menu:60
-#, fuzzy
 msgid "BOTS OFF"
-msgstr "БОТЫ ВКЛ"
+msgstr "БОТЫ ВЫКЛ"
 
 #: etmain/ui/ingame_vote_disabled.menu:51
 msgid "Voting is disabled"
@@ -1463,12 +1428,12 @@ msgstr "БОТЫ"
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
 msgid "START MATCH"
-msgstr "НАЧАТЬ БОЙ"
+msgstr "НАЧАТЬ МАТЧ"
 
 #: etmain/ui/ingame_vote_misc.menu:42
 #: etmain/ui/ingame_vote_misc_refrcon.menu:41
 msgid "RESET MATCH"
-msgstr "ПЕРЕЗАГРУЗИТЬ БОЙ"
+msgstr "ПЕРЕЗАГРУЗИТЬ МАТЧ"
 
 #: etmain/ui/ingame_vote_misc.menu:43
 #: etmain/ui/ingame_vote_misc_refrcon.menu:42
@@ -1498,12 +1463,12 @@ msgstr "АНТИ-ЛАГ ВЫКЛ"
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
 msgid "XP SHUFFLE"
-msgstr ""
+msgstr "ТАСОВАТЬ ПО ОПЫТУ"
 
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
 msgid "SWAP TEAMS"
-msgstr ""
+msgstr "СМЕНА КОМАНД"
 
 #: etmain/ui/ingame_vote_misc.menu:51
 #: etmain/ui/ingame_vote_misc_refrcon.menu:50
@@ -1552,16 +1517,16 @@ msgstr "ОБЩИЕ НАСТРОЙКИ"
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "нет"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "враги"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
-msgstr ""
+msgstr "Выберите тип урона при разминке для голосования"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
@@ -1570,25 +1535,23 @@ msgstr "Лимит времени:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
-msgstr ""
+msgstr "Укажите лимит времени для голосования"
 
 #: etmain/ui/ingame_vote_misc.menu:78
 msgid "Select the game type to vote on"
-msgstr ""
+msgstr "Укажите тип игры для голосования"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enable or disable warmup damage"
-msgstr ""
+msgstr "Включить или выключить ущерб при разминке"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
-#, fuzzy
 msgid "Set the time limit for the server"
-msgstr "не на сервере"
+msgstr "Установить лимит времени для сервера"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
-#, fuzzy
 msgid "Set the game type"
-msgstr "зашёл в игру\n"
+msgstr "Установить тип игры"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
@@ -1604,7 +1567,7 @@ msgstr "ЗАФИКСИРОВАТЬ КОМАНДЫ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:84
 msgid "UNLOCK TEAMS"
-msgstr ""
+msgstr "ОТКРЫТЬ КОМАНДЫ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:86
 msgid "LOCK SPECS"
@@ -1612,7 +1575,7 @@ msgstr "ЗАФИКСИРОВАТЬ ЗРИТЕЛЕЙ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:87
 msgid "UNLOCK SPECS"
-msgstr ""
+msgstr "ОТКРЫТЬ ЗРИТЕЛЕЙ"
 
 #: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
 #: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
@@ -1670,11 +1633,11 @@ msgstr "Внимание:"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning message to send to a player"
-msgstr ""
+msgstr "Предупреждение, которое будет отправлено игроку"
 
 #: etmain/ui/main.menu:105 etmain/ui/playonline.menu:56
 msgid "PLAY ONLINE"
-msgstr "ИГРАТЬ ПО СЕТИ"
+msgstr "СЕТЕВАЯ ИГРА"
 
 #: etmain/ui/main.menu:107 etmain/ui/viewreplay.menu:29
 msgid "REPLAYS"
@@ -1722,7 +1685,7 @@ msgstr "IP сервера:"
 #: etmain/ui/main_quickconnect.menu:71
 #: etmain/ui/playonline_connecttoip.menu:64
 msgid "Enter the IP address seperated by dots: xxx.xxx.xxx.xxx"
-msgstr ""
+msgstr "Введите IP-адрес, разделённый точками: xxx.xxx.xxx.xxx"
 
 #: etmain/ui/main_quickconnect.menu:82
 msgid "Server PW:"
@@ -1730,7 +1693,7 @@ msgstr "Пароль:"
 
 #: etmain/ui/main_quickconnect.menu:84
 msgid "Enter the server password if any"
-msgstr ""
+msgstr "Введите пароль при наличии"
 
 #: etmain/ui/main_quickconnect.menu:87
 #: etmain/ui/playonline_connecttoip.menu:67 etmain/ui/popup_password.menu:87
@@ -1739,7 +1702,7 @@ msgstr "ПОДКЛЮЧИТЬСЯ"
 
 #: etmain/ui/mods.menu:50
 msgid "Select the modification to play"
-msgstr ""
+msgstr "Выберите мод для загрузки"
 
 #: etmain/ui/mods.menu:59
 msgid "LOAD MOD"
@@ -1765,9 +1728,7 @@ msgstr "Простая чистка удалит tmp- и пользовател�
 msgid ""
 "A full clean will remove all downloaded files like map-,\n"
 " campaign- and custom pk3 files."
-msgstr ""
-"Полная чистка удалит все загруженные файлы напр.\n"
-" карты, кампании и пользовательские pk3."
+msgstr "Полная чистка удалит все загруженные файлы напр.\n карты, кампании и пользовательские pk3."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1798,32 +1759,30 @@ msgid "DEFAULT CONTROLS"
 msgstr "УПРАВЛЕНИЕ ПО УМОЛЧАНИЮ"
 
 #: etmain/ui/options_controls_default.menu:53
-#, fuzzy
 msgid "Reset controls to default?"
-msgstr "Установить кнопки по умолчанию?"
+msgstr "Сбросить настройки управления?"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Handedness:"
-msgstr "Рукость:"
+msgstr "Ведущая рука:"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
-#, fuzzy
 msgid "Right"
-msgstr "Двигаться вправо:"
+msgstr "Правша"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Left"
-msgstr ""
+msgstr "Левша"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid ""
 "Left or Right Handed? This sets your default controls\n"
 "which you can modify later via the options menu"
-msgstr ""
+msgstr "Правша или левша? От этого зависит стандартное\nуправление; его можно изменить в меню настроек"
 
 #: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
 msgid "CONTROLS"
@@ -1862,14 +1821,12 @@ msgid "Jump:"
 msgstr "Прыжок:"
 
 #: etmain/ui/options_controls.menu:40
-#, fuzzy
 msgid "Crouc)h:"
-msgstr "Согнуться:"
+msgstr "Присесть:"
 
 #: etmain/ui/options_controls.menu:41
-#, fuzzy
 msgid "Prone:"
-msgstr "Ничком:"
+msgstr "Ничком"
 
 #: etmain/ui/options_controls.menu:42
 msgid "Walk:"
@@ -1889,17 +1846,16 @@ msgid "Invert Mouse:"
 msgstr "Инвертировать мышь:"
 
 #: etmain/ui/options_controls.menu:48
-#, fuzzy
 msgid "Inverts mouse pitch"
-msgstr "Инвертировать мышь:"
+msgstr "Инвертирует шаг мыши"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
-msgstr ""
+msgstr "Плавная мышь:"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooths out the mouse using interpolation"
-msgstr ""
+msgstr "Делает мышь плавной при интерполяции"
 
 #: etmain/ui/options_controls.menu:51
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
@@ -1908,23 +1864,23 @@ msgstr "Чувствительность мыши:"
 
 #: etmain/ui/options_controls.menu:51
 msgid "Use the slider to increase or decrease mouse sensitivity"
-msgstr ""
+msgstr "Изменяйте чувствительность мыши с помощью слайдера"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Mouse Pitch:"
-msgstr ""
+msgstr "Шаг мыши:"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
-msgstr ""
+msgstr "0.015 (наинизший возможный)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr ""
+msgstr "0.022 (по умолчанию)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Движение прицела вверх вниз при перемещении."
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
@@ -1980,7 +1936,7 @@ msgstr "Статистика игроков:"
 
 #: etmain/ui/options_controls.menu:72
 msgid "Top Shots:"
-msgstr ""
+msgstr "Лучшие игроки:"
 
 #: etmain/ui/options_controls.menu:73
 msgid "Objectives:"
@@ -1988,16 +1944,15 @@ msgstr "Цели:"
 
 #: etmain/ui/options_controls.menu:78
 msgid "USE WEAPONS"
-msgstr ""
+msgstr "ПРИМЕНЕНИЕ ОРУЖИЯ"
 
 #: etmain/ui/options_controls.menu:79
 msgid "Attack:"
 msgstr "Атаковать:"
 
 #: etmain/ui/options_controls.menu:80
-#, fuzzy
 msgid "Switch to Alternate:"
-msgstr "Переключиться на запасной:"
+msgstr "Переключить на запасное:"
 
 #: etmain/ui/options_controls.menu:81
 msgid "Reload Weapon:"
@@ -2024,19 +1979,16 @@ msgid "Previous Weapon:"
 msgstr "Пред. оружие:"
 
 #: etmain/ui/options_controls.menu:90
-#, fuzzy
 msgid "Slot 1 - Melee:"
-msgstr "Слот 1 - рукопашная"
+msgstr "Слот 1 - рукопашная:"
 
 #: etmain/ui/options_controls.menu:91
-#, fuzzy
 msgid "Slot 2 - One Handed:"
-msgstr "Слот 2 - одноручное:"
+msgstr "Слот 2 - одноручные:"
 
 #: etmain/ui/options_controls.menu:92
-#, fuzzy
 msgid "Slot 3 - Two Handed:"
-msgstr "Слот 3 - двуручное:"
+msgstr "Слот 3 - двуручные:"
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
@@ -2134,7 +2086,7 @@ msgstr "Имя пользователя:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
-msgstr ""
+msgstr "Введите имя, под которым Вас будут знать в игре"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
@@ -2144,7 +2096,7 @@ msgstr "Язык:"
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr ""
+msgstr "Выберите язык"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
@@ -2156,15 +2108,15 @@ msgstr "Всегда бежать:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toogle walk/run"
-msgstr ""
+msgstr "Переключение бега/ходьбы"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr ""
+msgstr "Ничком по двойному нажатию:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
-msgstr ""
+msgstr "Установить задержку между нажатиями для признания двойного"
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
@@ -2176,7 +2128,7 @@ msgstr "Автоперезарядка:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Автоперезарядка по окончании обоймы"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
@@ -2184,35 +2136,35 @@ msgstr "Автопереключение:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Автопереключение по окончании аммуниции"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
-msgstr ""
+msgstr "Мерцание значка оружия"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 цвета"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 цвета"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
-msgstr ""
+msgstr "Мерцание значка оружия на ИЛС при стрельбе, перезарядке и переключении"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
-msgstr ""
+msgstr "Вспышка от выстрела:"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Enables or disables weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Переключение огня от оружия (вспышки от выстрела)"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Трассеры пуль:"
 
 #: etmain/ui/options_customise_game.menu:51
 #: etmain/ui/options_customise_game.menu:78
@@ -2222,19 +2174,19 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "включены"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "только свои"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "только чужие"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Включить/Выключить трассеры пуль"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
@@ -2242,20 +2194,20 @@ msgstr "ПРИЦЕЛ"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Зум кнопкой переключения оружия:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "включено (норма)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "включено (наоборот)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Во время прицеливания кнопка зума будет изменять увеличение"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
@@ -2263,25 +2215,25 @@ msgstr "Уровень зума по умолчанию:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "полностью во вне"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "близкий"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "дальний"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "полностью во внутрь"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Установить стандартный уровень зума для прицелов"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
@@ -2289,15 +2241,15 @@ msgstr "Уровни зума:"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 уровня"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 уровней"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Определяет шаг зума"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
@@ -2305,15 +2257,15 @@ msgstr "Режим быстрого чата:"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr ""
+msgstr "буквенный"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr ""
+msgstr "численный"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr ""
+msgstr "Использовать кнопки букв или цифр для отправки радиосообщений"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
@@ -2322,7 +2274,7 @@ msgstr "Время значка чата:"
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Short"
-msgstr ""
+msgstr "короткое"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:50
@@ -2330,20 +2282,20 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Normal"
-msgstr ""
+msgstr "среднее"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "длинное"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "очень длинное"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
-msgstr ""
+msgstr "Указать как долго значок чата висит над головами игроков"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
@@ -2351,7 +2303,7 @@ msgstr "Только командный чат:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr ""
+msgstr "Играть только командный чат"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
@@ -2359,28 +2311,27 @@ msgstr "Нет голосового текста:"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "Don't show voice text in-game"
-msgstr ""
+msgstr "Не показывать голосовой текст в игре"
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
 msgstr "ЗВУК"
 
 #: etmain/ui/options_customise_game.menu:71
-#, fuzzy
 msgid "Announcer:"
 msgstr "Диктор:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Включает или отключает командира в игре"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
-msgstr "Нет голосового чата:"
+msgstr "Отключить голосовой чат:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "Не воспроизводить голосовые сообщения в игре"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
@@ -2388,29 +2339,27 @@ msgstr "Звуки попаданий:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Отключить звук удара команды"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Отключить звук удара головы"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Отключить звук удара тела"
 
 #: etmain/ui/options_customise_game.menu:73
-#, fuzzy
 msgid "Set hit sounds"
-msgstr "Звуки попаданий:"
+msgstr "Установить звуки ударов"
 
 #: etmain/ui/options_customise_game.menu:78
-#, fuzzy
 msgid "Complaint PopUp:"
-msgstr "Вспл. окно жалобы:"
+msgstr "Всплывающее окно жалобы:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Показывать опцию подачи жалобы на игроков в команде, убивших Вас"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
@@ -2418,7 +2367,7 @@ msgstr "Запись важных сообщений:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Вывод важных сообщений игры в консоль"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
@@ -2426,37 +2375,35 @@ msgstr "Автодействие:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
-msgstr ""
+msgstr "Демо"
 
 #: etmain/ui/options_customise_game.menu:80
-#, fuzzy
 msgid "Screenshot"
-msgstr "Сделать снимок экрана:"
+msgstr "Снимок экрана"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Дамп статистики"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Демо + СС"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Демо + Статистика"
 
 #: etmain/ui/options_customise_game.menu:80
-#, fuzzy
 msgid "SS + Stats"
-msgstr "S. Утверждения"
+msgstr "СС + Статистика"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Демо + СС + Статистика"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Автоматически выполняет действия в начале или конце раунда"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
@@ -2466,7 +2413,7 @@ msgstr "Формат автоснимков:"
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Переключение между форматами .tga и .jpg для команды \"autoscreenshot\""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
@@ -2474,12 +2421,12 @@ msgstr "Показывать подсказки:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Показывать подсказки в UI"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
 msgid "ui/menudef.h"
-msgstr ""
+msgstr "ui/menudef.h"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
@@ -2496,7 +2443,7 @@ msgstr "Достать оружие:"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Shows gun model on-screen"
-msgstr ""
+msgstr "Показать модель оружия на экране"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
@@ -2504,7 +2451,7 @@ msgstr "Показывать компас:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
-msgstr ""
+msgstr "Показывать компас (со значками когда рядом с особыми событиями)"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
@@ -2512,7 +2459,7 @@ msgstr "Автоувеличение карты:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
-msgstr ""
+msgstr "Автоустановка уровня зума при загрузке карты"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
@@ -2520,7 +2467,7 @@ msgstr "Таймер задания:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
-msgstr ""
+msgstr "Показывать оставшееся время задания"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
@@ -2528,32 +2475,31 @@ msgstr "Таймер подкреплений:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Отображает время до подкрепления Вашей команды"
 
 #: etmain/ui/options_customise_hud.menu:39
-#, fuzzy
 msgid "Cursor Hints:"
 msgstr "Подсказки курсора:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr ""
+msgstr "Пульс размера"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
-msgstr ""
+msgstr "Пульс строба"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr ""
+msgstr "Пульс альфа"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
-msgstr ""
+msgstr "Твёрдый"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Icon display format when near an action item"
-msgstr ""
+msgstr "Формат отображения значков когда рядом с предметом действия"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
@@ -2561,26 +2507,23 @@ msgstr "Показывать локации:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "только координаты"
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Names Fireteam Only"
-msgstr "Закрытое звено: %s"
+msgstr "только имена звено"
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Names Team Chat Only"
-msgstr "Только командный чат:"
+msgstr "только имена командный чат"
 
 #: etmain/ui/options_customise_hud.menu:40
-#, fuzzy
 msgid "Team & Fireteam Chat"
-msgstr "Чат звена:"
+msgstr "чат звена и команды"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Отображает местоположения в звене"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
@@ -2588,41 +2531,39 @@ msgstr "Включить флаги:"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
-msgstr ""
+msgstr "Показывать флаги стран игроков в таблице счёта"
 
 #: etmain/ui/options_customise_hud.menu:42
-#, fuzzy
 msgid "Fireteam Latched Class:"
-msgstr "Запертые классы звена:"
+msgstr "Тактный класс звена:"
 
 #: etmain/ui/options_customise_hud.menu:42
-#, fuzzy
 msgid "Displays Fireteam latched class"
-msgstr "Запертые классы звена:"
+msgstr "Отображает тактный класс звена:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
-msgstr ""
+msgstr "Значки некрологов:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "жертва оружие убийца"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "убийца оружие жертва"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
-msgstr ""
+msgstr "Отображать графические некрологи"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
-msgstr ""
+msgstr "Показать описание:"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Displays limbo help text"
-msgstr ""
+msgstr "Показывать текст помощи в меню забвения"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Show Clock:"
@@ -2630,23 +2571,23 @@ msgstr "Показать часы:"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours"
-msgstr ""
+msgstr "24 часа"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours + seconds"
-msgstr ""
+msgstr "24 часа + секунды"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours"
-msgstr ""
+msgstr "12 часов"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours + seconds"
-msgstr ""
+msgstr "12 часов + секунды"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Displays local time"
-msgstr ""
+msgstr "Показать местное время"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Show FPS:"
@@ -2654,15 +2595,15 @@ msgstr "Показывать FPS:"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Displays Frames Per Second"
-msgstr ""
+msgstr "Показать число кадров в секунду"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Show Ping:"
-msgstr "Показывать пинг:"
+msgstr "Показывать задержку:"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Displays ping"
-msgstr ""
+msgstr "Показывать задержку"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Show Lagometer:"
@@ -2670,7 +2611,7 @@ msgstr "Показывать лагометр:"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Displays lagometer"
-msgstr ""
+msgstr "Показывать лагометр"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switch HUD:"
@@ -2678,59 +2619,55 @@ msgstr "Сменить ИЛС:"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Standard Hud"
-msgstr ""
+msgstr "Стандартный ИЛС"
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 1"
-msgstr "Изменить альтернативный ИЛС:"
+msgstr "Альтернативный ИЛС 1"
 
 #: etmain/ui/options_customise_hud.menu:49
-#, fuzzy
 msgid "Alternate Hud 2"
-msgstr "Изменить альтернативный ИЛС:"
+msgstr "Альтернативный ИЛС 2"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
-msgstr ""
+msgstr "Переключение между вариантами ИЛС"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
 msgstr "Изменить выделенный ИЛС:"
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Move Round Timer"
-msgstr "Таймер задания:"
+msgstr "Переместить таймер раунда"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Remove Ranks"
-msgstr ""
+msgstr "Удалить ранги"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Popups"
-msgstr ""
+msgstr "Передвинуть всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Timer"
-msgstr ""
+msgstr "Ранги + Таймер"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Popups"
-msgstr ""
+msgstr "таймер + всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Popups"
-msgstr ""
+msgstr "ранги + всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Ranks + Popups"
-msgstr ""
+msgstr "таймер + ранги + всплывающие окна"
 
 #: etmain/ui/options_customise_hud.menu:50
-#, fuzzy
 msgid "Customises Selected HUD"
-msgstr "Изменить выделенный ИЛС:"
+msgstr "Изменяет выбранный ИЛС"
 
 #: etmain/ui/options_customise_hud.menu:55
 msgid "IN-GAME DISPLAY"
@@ -2738,23 +2675,22 @@ msgstr "ВНУТРИИГРОВОЙ ДИСПЛЕЙ"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Ejecting Brass:"
-msgstr ""
+msgstr "Выбрасывание гильз:"
 
 #: etmain/ui/options_customise_hud.menu:56 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52 etmain/ui/profile_create_initial.menu:102
 #: etmain/ui/profile_create.menu:97
 msgid "High"
-msgstr ""
+msgstr "Выс"
 
 #: etmain/ui/options_customise_hud.menu:56
-#, fuzzy
 msgid "Med"
-msgstr "Медали"
+msgstr "Сред"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
-msgstr ""
+msgstr "Сколько времени гильзы и т.п. остаются на поле боя"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
@@ -2762,7 +2698,7 @@ msgstr "Поле зрения:"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
-msgstr ""
+msgstr "Лучшее ПЗ (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
@@ -2770,15 +2706,15 @@ msgstr "Расстояние короны:"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Normal)"
-msgstr ""
+msgstr "Сред."
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
-msgstr ""
+msgstr "Экстрем."
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Sets the maximum distance light corona is displayed"
-msgstr ""
+msgstr "Макс. расстояние отображения короны света"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles:"
@@ -2787,7 +2723,7 @@ msgstr "Частицы:"
 #: etmain/ui/options_customise_hud.menu:60
 msgid ""
 "Toggles display of particle effects - e.g. explosions, some smoke effects"
-msgstr ""
+msgstr "Отображение частиц - эффектов взрывов, дыма и т.п."
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
@@ -2795,40 +2731,38 @@ msgstr "Время жизни декалей:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls etc"
-msgstr ""
+msgstr "Время жизни дырок от пуль и т.п."
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
-msgstr ""
+msgstr "Удар крови:"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
-#, fuzzy
 msgid "Light"
-msgstr "Наклон вправо:"
+msgstr "Лёг."
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 #: etmain/ui/options_customise_hud.menu:70 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52
-#, fuzzy
 msgid "Medium"
-msgstr "патроны для медика"
+msgstr "Сред."
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Heavy"
-msgstr ""
+msgstr "Тяж."
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Full"
-msgstr ""
+msgstr "Полн."
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Red blood \"flash\" scale when receiving damage"
-msgstr ""
+msgstr "Как сильно кровь бьёт в голову при получении урона"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood Splatter:"
@@ -2836,7 +2770,7 @@ msgstr "Брызги крови:"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood \"splatter\" transparency when taking damage from other players"
-msgstr ""
+msgstr "Прозрачность брызгов крови при получении урона"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Show Blood:"
@@ -2844,7 +2778,7 @@ msgstr "Показывать кровь:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when player's are shot"
-msgstr ""
+msgstr "Переключает отображение эффекта кровяной вспышки при получении урона"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
@@ -2852,7 +2786,7 @@ msgstr "Атмосферные эффекты:"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Draws atmospheric effects (snow/rain) on-screen"
-msgstr ""
+msgstr "Отображает атмосферные эффекты (снег/дождь) на экране"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "CROSSHAIR"
@@ -2865,24 +2799,24 @@ msgstr "Размер прицела:"
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Tiny"
-msgstr ""
+msgstr "Крош."
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Small"
-msgstr ""
+msgstr "Мал."
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Large"
-msgstr ""
+msgstr "Бол."
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Huge"
-msgstr ""
+msgstr "Огромн."
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Sets the size of the displayed crosshair"
-msgstr ""
+msgstr "Установка размера прицела"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Crosshair Pulsing:"
@@ -2890,7 +2824,7 @@ msgstr "Пульсирование прицела:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
-msgstr ""
+msgstr "Переключает расширение прицела при перемещении/стрельбе"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
@@ -2900,12 +2834,12 @@ msgstr "Состояние здоровья на прицеле:"
 msgid ""
 "Colors the crosshair based on current health (overrides crosshair color "
 "settings)"
-msgstr ""
+msgstr "Окрашивает прицел на основании текущего здоровья (замещает настройки цвета прицела)"
 
 #: etmain/ui/options_customise_hud.menu:73
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Crosshair Name:"
-msgstr ""
+msgstr "Имя прицела:"
 
 #: etmain/ui/options_customise_hud.menu:73 src/cgame/cg_scoreboard.c:846
 msgid "Name"
@@ -2913,11 +2847,11 @@ msgstr "Имя"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Coloured Name"
-msgstr ""
+msgstr "Цветное имя"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Displays player name when the crosshair is over a teammate"
-msgstr ""
+msgstr "Отображает имя товарища при наводе прицела на него"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Crosshair Info:"
@@ -2925,7 +2859,7 @@ msgstr "Инфо на прицеле:"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class"
-msgstr ""
+msgstr "Класс"
 
 #: etmain/ui/options_customise_hud.menu:74 src/cgame/cg_info.c:783
 msgid "Rank"
@@ -2933,16 +2867,15 @@ msgstr "Ранг"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank"
-msgstr ""
+msgstr "Класс + ранг"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
-msgstr ""
+msgstr "Отображает инфо о товарище при наводе прицела на него"
 
 #: etmain/ui/options_customise_hud.menu:86
-#, fuzzy
 msgid "Set crosshair type"
-msgstr "Размер прицела:"
+msgstr "Установить тип прицела"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
@@ -2951,117 +2884,116 @@ msgstr "Цвет 1:"
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "White"
-msgstr ""
+msgstr "Белый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
-#, fuzzy
 msgid "Yellow"
-msgstr "Привет!"
+msgstr "Жёлтый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Red"
-msgstr ""
+msgstr "Красный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Green"
-msgstr ""
+msgstr "Зелёный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Blue"
-msgstr ""
+msgstr "Синий"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Magenta"
-msgstr ""
+msgstr "Розовый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Cyan"
-msgstr ""
+msgstr "Сине-зелёный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Orange"
-msgstr ""
+msgstr "Оранжевый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Blue"
-msgstr ""
+msgstr "Светло-синий"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Blue"
-msgstr ""
+msgstr "Средне-синий"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Red"
-msgstr ""
+msgstr "Светло-красный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Red"
-msgstr ""
+msgstr "Средне-красный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Green"
-msgstr ""
+msgstr "Светло-зелёный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Green"
-msgstr ""
+msgstr "Средне-зелёный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Green"
-msgstr ""
+msgstr "Тёмно-зелёный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Cyan"
-msgstr ""
+msgstr "Средне-сине-зелёный"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Yellow"
-msgstr ""
+msgstr "Средне-жёлтый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Orange"
-msgstr ""
+msgstr "Средне-оранжевый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Grey"
-msgstr ""
+msgstr "Светло-серый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Grey"
-msgstr ""
+msgstr "Средне-серый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Grey"
-msgstr ""
+msgstr "Тёмно-серый"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Black"
-msgstr ""
+msgstr "Чёрный"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Set the color for the primary crosshair"
-msgstr ""
+msgstr "Установить цвет основного прицела"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
@@ -3069,7 +3001,7 @@ msgstr "Альфа 1:"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Set the transparency level for the primary crosshair"
-msgstr ""
+msgstr "Установить уровень прозрачности основного прицела"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Secondary Color:"
@@ -3077,7 +3009,7 @@ msgstr "Цвет 2:"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Set the color for the secondary crosshair"
-msgstr ""
+msgstr "Установить цвет вторичного прицела"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Secondary Alpha:"
@@ -3085,35 +3017,35 @@ msgstr "Альфа 2:"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Set the transparency level for the secondary crosshair"
-msgstr ""
+msgstr "Установить уровень прозрачности вторичного прицела"
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
-msgstr "ПЕРЕДВИЖЕНИЕ"
+msgstr "ПЕРЕМЕЩЕНИЕ"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
-msgstr ""
+msgstr "Подпрыгнуть:"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Enable/Disable the vertical bob effect when moving"
-msgstr ""
+msgstr "Включить/выключить подпрыгивание при перемещении"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Bob pitch:"
-msgstr ""
+msgstr "Шаг подпрыгивания:"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
-msgstr ""
+msgstr "Включить/выключить шаг подпрыгивания (вперёд/назад) при перемещении"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Bob roll:"
-msgstr ""
+msgstr "Качание:"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Enable/Disable the bob roll (left/right) effect when moving"
-msgstr ""
+msgstr "Включить/выключить качание (лево/вправо) при перемещении"
 
 #: etmain/ui/options_customise_hud.menu:113
 msgid "FONTS"
@@ -3121,55 +3053,56 @@ msgstr "ШРИФТЫ"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Fonts Size:"
-msgstr ""
+msgstr "Размер шрифтов:"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Sets the size of the in-game fonts"
-msgstr ""
+msgstr "Установить размер шрифтов в игре"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Top Print:"
-msgstr ""
+msgstr "Принт сверху:"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Set font size for Warmup message and Spectator label"
-msgstr ""
+msgstr "Установить размер шрифта для сообщения о разминке и метки зрителя"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid "Side Print:"
-msgstr ""
+msgstr "Принт сбоку:"
 
 #: etmain/ui/options_customise_hud.menu:118
-msgid "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
-msgstr ""
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgstr "Установить размер шрифта для сообщений забвения/звена/голосования/некролога/улучшения навыка"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Center Print:"
-msgstr ""
+msgstr "Принт посередине:"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
-msgstr ""
+msgstr "Установить размер шрифта для сообщений CenterPrint/Инфо о цели/Награда за навык"
 
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Set font size for Crosshair Name label"
-msgstr ""
+msgstr "Установить размер шрифта для метки имени прицела"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "PopUpTimeStay:"
-msgstr ""
+msgstr "ВсплОкноВремяОстан:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
-msgstr ""
+msgstr "Сколько времени всплывающее окно будет видимым"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "PopUpTimeFade:"
-msgstr ""
+msgstr "ВсплОкноВремяУход:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
-msgstr ""
+msgstr "Сколько времени всплывающее окно уходит"
 
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
@@ -3183,17 +3116,15 @@ msgstr "Калибровка общей яркости (Все глубины ц
 
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
-#, fuzzy
 msgid ""
-"1. Move the slider below and/or the brightness on your monitor until you can "
-"see 16"
-msgstr "1. Двигайте ползунок ниже и/или яркость монитора пока не увидите 16"
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
+msgstr "1. Двигайте слайдер снизу и/или яркость монитора пока не увидите 16"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
-#, fuzzy
 msgid "     separate bars below of equal differing brightness."
-msgstr "     разных полос равноудалённой яркости."
+msgstr "отдельных полос равноудалённых уровней яркости."
 
 #: etmain/ui/options_graphics_gamma.menu:36
 #: etmain/ui/options_system_gamma.menu:39
@@ -3215,8 +3146,7 @@ msgstr "1. Двигайте ползунок ниже пока не увидит
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
-msgstr ""
-"2. Двигайте ползунок пока не будет разницы между левым и правым квадратами."
+msgstr "2. Двигайте ползунок пока не будет разницы между левым и правым квадратами."
 
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
@@ -3233,7 +3163,7 @@ msgstr "Яркость:"
 #: etmain/ui/options_system_gamma.menu:70
 #: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
 msgid "Set the brightness of the game"
-msgstr ""
+msgstr "Установить яркость игры"
 
 #: etmain/ui/options_graphics.menu:34 etmain/ui/options.menu:36
 msgid "GRAPHICS"
@@ -3249,24 +3179,23 @@ msgstr "Общее качество:"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fastest"
-msgstr ""
+msgstr "очень быстро"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fast"
-msgstr ""
+msgstr "быстро"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "normal"
-msgstr ""
+msgstr "средне"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "high"
-msgstr ""
+msgstr "высоко"
 
 #: etmain/ui/options_graphics.menu:39
-#, fuzzy
 msgid "Set overall video quality"
-msgstr "Общее качество:"
+msgstr "Установить общее качество графики"
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
@@ -3275,7 +3204,7 @@ msgstr "Разрешение:"
 
 #: etmain/ui/options_graphics.menu:40
 msgid "Set video resolution of the game"
-msgstr ""
+msgstr "Установить разрешение игры"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
@@ -3285,7 +3214,7 @@ msgstr "Оконный режим:"
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Переключение полноэкранного режима"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "Intensity:"
@@ -3293,23 +3222,23 @@ msgstr "Интенсивность:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr ""
+msgstr "Интенсивность текстур (требует vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
-msgstr ""
+msgstr "Бит переяркости карты:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr ""
+msgstr "Мир становится ярче, но бледнее (требует vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
-msgstr ""
+msgstr "Бит переяркости:"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Map shines brighter (requires vid_restart)"
-msgstr ""
+msgstr "Карта становится ярче (требует vid_restart)"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
@@ -3317,36 +3246,32 @@ msgstr "Небо низкого качества:"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
-msgstr ""
+msgstr "Переключение между отрисовкой детального скайбокса или базового неба"
 
 #: etmain/ui/options_graphics.menu:55
-#, fuzzy
 msgid "Shadow Detail:"
-msgstr "Детали теней:"
+msgstr "Детализация теней:"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Blob"
-msgstr ""
+msgstr "Блоб"
 
 #: etmain/ui/options_graphics.menu:55
-#, fuzzy
 msgid "Set shadow details"
-msgstr "Детали теней:"
+msgstr "Установить детализацию теней"
 
 #: etmain/ui/options_graphics.menu:56
-#, fuzzy
 msgid "Texture Detail:"
-msgstr "Детали текстур:"
+msgstr "Детализация текстур:"
 
 #: etmain/ui/options_graphics.menu:56 etmain/ui/options_graphics.menu:60
 #: etmain/ui/options_system.menu:52
 msgid "Low"
-msgstr ""
+msgstr "Низ."
 
 #: etmain/ui/options_graphics.menu:56
-#, fuzzy
 msgid "Set texture details"
-msgstr "Детали текстур:"
+msgstr "Установить детализацию текстур"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
@@ -3354,16 +3279,15 @@ msgstr "Динамическое освещение:"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Toggles use of dynamic lighting effects"
-msgstr ""
+msgstr "Переключает наличие эффектов динамического освещения"
 
 #: etmain/ui/options_graphics.menu:60
-#, fuzzy
 msgid "Geometric Detail:"
-msgstr "Качество геометрии:"
+msgstr "Детализация геометрии:"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Set level of details bias"
-msgstr ""
+msgstr "Установить смещение уровня детализации"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Texture Quality:"
@@ -3371,20 +3295,20 @@ msgstr "Качество текстур:"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
 msgid "Default"
-msgstr ""
+msgstr "По умолчанию"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 #: etmain/ui/options_graphics.menu:68
 msgid "16-bit"
-msgstr ""
+msgstr "16 бит"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 msgid "32-bit"
-msgstr ""
+msgstr "32 бита"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
-msgstr ""
+msgstr "Установить число бит для текстур"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Texture Filter:"
@@ -3392,38 +3316,35 @@ msgstr "Фильтр текстур:"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Bilinear"
-msgstr ""
+msgstr "Билинейный"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Trilinear"
-msgstr ""
+msgstr "Трилинейный"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Set the GL texture mode"
-msgstr ""
+msgstr "Установить режим текстурирования GL"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Anisotropic Filter:"
 msgstr "Анизотропия:"
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
-#, fuzzy
 msgid "Disabled"
-msgstr "отключить"
+msgstr "Выключено"
 
 #: etmain/ui/options_graphics.menu:64
-#, fuzzy
 msgid "Set anisotropic filtering"
-msgstr "Анизотропия:"
+msgstr "Установить уровень анизотропии"
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Anti-Aliasing:"
 msgstr "Сглаживание:"
 
 #: etmain/ui/options_graphics.menu:65
-#, fuzzy
 msgid "Set Anti-Aliasing"
-msgstr "Сглаживание:"
+msgstr "Установить уровень сглаживания"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Color Depth:"
@@ -3431,34 +3352,31 @@ msgstr "Глубина цвета:"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Desktop Default"
-msgstr ""
+msgstr "Уровень системы"
 
 #: etmain/ui/options_graphics.menu:66
-#, fuzzy
 msgid "Set color depth"
-msgstr "Глубина цвета:"
+msgstr "Установить глубину цвета"
 
 #: etmain/ui/options_graphics.menu:67
-#, fuzzy
 msgid "Detail Textures:"
-msgstr "Детализировать текстуры:"
+msgstr "Детальные текстуры:"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Toogles usage of high detail textures"
-msgstr ""
+msgstr "Включает детализированные текстуры"
 
 #: etmain/ui/options_graphics.menu:68
-#, fuzzy
 msgid "Depth Buffer:"
 msgstr "Буфер глубины:"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "24-bit"
-msgstr ""
+msgstr "24 бита"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
-msgstr ""
+msgstr "Установить желаемое число битов глубины"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Compress Textures:"
@@ -3466,7 +3384,7 @@ msgstr "Сжатие текстур:"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Toggles the compression of textures"
-msgstr ""
+msgstr "Переключает сжатие текстур"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Sync Every Frame:"
@@ -3474,20 +3392,19 @@ msgstr "Синхронизация кадров:"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Prevent screen tearing"
-msgstr ""
+msgstr "Предотвращать разрывы на экране"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "GL Extensions:"
 msgstr "Расширения GL:"
 
 #: etmain/ui/options_graphics.menu:71
-#, fuzzy
 msgid "Enabled"
-msgstr "Включить флаги:"
+msgstr "Вкл"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enables or disables usage of OpenGL extensions"
-msgstr ""
+msgstr "Включить или выключить использование расширений OpenGL"
 
 #: etmain/ui/options_graphics.menu:73
 msgid "SET RECOMMENDED"
@@ -3510,18 +3427,16 @@ msgid "Effects Volume:"
 msgstr "Громкость эффектов:"
 
 #: etmain/ui/options_system.menu:41
-#, fuzzy
 msgid "Set the effects volume"
-msgstr "Громкость эффектов:"
+msgstr "Установить громкость эффектов"
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
 msgstr "Громкость музыки:"
 
 #: etmain/ui/options_system.menu:43
-#, fuzzy
 msgid "Set the music volume"
-msgstr "Громкость музыки:"
+msgstr "Установить громкость музыки"
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
@@ -3529,20 +3444,19 @@ msgstr "Качество звука:"
 
 #: etmain/ui/options_system.menu:44
 msgid "11 khz (low)"
-msgstr ""
+msgstr "11 кГц (низ.)"
 
 #: etmain/ui/options_system.menu:44
 msgid "22 khz (high)"
-msgstr ""
+msgstr "22 кГц (выс.)"
 
 #: etmain/ui/options_system.menu:44
 msgid "44 khz (ultra high)"
-msgstr ""
+msgstr "44 кГц (оч. выс.)"
 
 #: etmain/ui/options_system.menu:44
-#, fuzzy
 msgid "Set the sound quality"
-msgstr "Качество звука:"
+msgstr "Установить качество звука"
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3550,7 +3464,7 @@ msgstr "Допплер-эффекты:"
 
 #: etmain/ui/options_system.menu:45
 msgid "Enables or disables the doppler effect"
-msgstr ""
+msgstr "Переключает эффект допплера"
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
@@ -3558,7 +3472,7 @@ msgstr "Глушить если свёрнуто:"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
-msgstr ""
+msgstr "Включить или выключить звук когда окно свёрнуто"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
@@ -3566,7 +3480,7 @@ msgstr "Глушить если не в фокусе:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr ""
+msgstr "Включить или выключить звук когда окно без фокуса"
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
@@ -3578,11 +3492,11 @@ msgstr "Макс. пакетов:"
 
 #: etmain/ui/options_system.menu:52
 msgid "Very Low"
-msgstr ""
+msgstr "очень низко"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
-msgstr ""
+msgstr "Ограничение числа загружаемых на сервер пакетов"
 
 #: etmain/ui/options_system.menu:53
 msgid "Packet Duplication:"
@@ -3592,7 +3506,7 @@ msgstr "Повтор пакетов:"
 msgid ""
 "Number of duplicates for every data packet sent upstream, minimized "
 "packetloss"
-msgstr ""
+msgstr "Число дубликатов пакетов для отправки на сервер, минимизирует потери"
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
@@ -3604,15 +3518,15 @@ msgstr "Проверять обновления при запуске:"
 
 #: etmain/ui/options_system.menu:59
 msgid "Automatically check for updates?"
-msgstr ""
+msgstr "Автоматически проверять обновления?"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
-msgstr "Скачивать недостающие файлы с сервера:"
+msgstr "Загрузка файлов с сервера:"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
-msgstr ""
+msgstr "Загружать файлы по необходимости?"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3620,23 +3534,23 @@ msgstr "Загружать через HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
-msgstr ""
+msgstr "Включает или отключает загрузки через http/ftp"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
-msgstr "ПОДКЛЮЧИТЬСЯ К АДРЕСУ"
+msgstr "УКАЗАТЬ АДРЕС"
 
 #: etmain/ui/playonline_deletefavs.menu:50
 msgid "DELETE SERVER FAVOURITES"
-msgstr ""
+msgstr "УДАЛИТЬ ИЗБРАННОЕ"
 
 #: etmain/ui/playonline_deletefavs.menu:51
 msgid "Do you really want to"
-msgstr ""
+msgstr "Удалить"
 
 #: etmain/ui/playonline_deletefavs.menu:52
 msgid "delete YOUR favourites?"
-msgstr ""
+msgstr "ВАШЕ избранное?"
 
 #: etmain/ui/playonline.menu:80
 msgid "FILTERS"
@@ -3648,23 +3562,21 @@ msgstr "Источник:"
 
 #: etmain/ui/playonline.menu:82
 msgid "Local"
-msgstr ""
+msgstr "ЛВС"
 
 #: etmain/ui/playonline.menu:82
-#, fuzzy
 msgid "Internet"
-msgstr "Интенсивность:"
+msgstr "Интернет"
 
 #: etmain/ui/playonline.menu:82
-#, fuzzy
 msgid "Favorites"
-msgstr "Избранные полны\n"
+msgstr "Избранное"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
 "Choose the type of game servers to display from Internet, local and the "
 "favorites list"
-msgstr ""
+msgstr "Выберите тип игровых серверов к показу из интернета, ЛВС и списка избранных"
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
@@ -3672,70 +3584,69 @@ msgstr "Цель"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
-msgstr ""
+msgstr "ПГ"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
-msgstr ""
+msgstr "Показывает только сервера с этим типом игры"
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
-msgstr ""
+msgstr "Мод:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
-msgstr ""
+msgstr "Показывает только сервера с этим модом"
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
-msgid "Includes or excludes servers with desired map name from the server list"
-msgstr ""
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
+msgstr "Включает в или исключает сервера с желаемым именем карты из списка"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr ""
+msgstr "Фильтр, влияющий на сервера именем карты"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr ""
+msgstr "Фильтр выключен"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Only show..."
-msgstr ""
+msgstr "Только показывать"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Don't show..."
-msgstr ""
+msgstr "Не показывать"
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
 msgstr "ОБНОВИТЬ СПИСОК"
 
 #: etmain/ui/playonline.menu:194
-#, fuzzy
 msgid "Refresh servers list"
-msgstr "Время обновления: %s"
+msgstr "Перезагрузить список серверов"
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
 msgstr "СБРОС ФИЛЬТРОВ"
 
 #: etmain/ui/playonline.menu:195
-#, fuzzy
 msgid "Reset all filters to their defaults"
-msgstr "Установить кнопки по умолчанию?"
+msgstr "Сбросить все фильтры"
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
-msgstr "ОБЗОР СЕРВЕРОВ"
+msgstr "СПИСОК СЕРВЕРОВ"
 
 #: etmain/ui/playonline.menu:332
 msgid "SERVER NAME"
@@ -3743,23 +3654,23 @@ msgstr "ИМЯ СЕРВЕРА"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по имени сервера"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
-msgstr "ИМЯ КАРТЫ"
+msgstr "КАРТА"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по имени кампании или карты"
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
-msgstr "#ИГРОКОВ"
+msgstr "ИГРОКИ"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по числу игроков"
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
@@ -3767,7 +3678,7 @@ msgstr "ТИП"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
-msgstr ""
+msgstr "Нажмите чтобы сортировать по типу игры"
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
@@ -3775,7 +3686,7 @@ msgstr "ПИНГ"
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
-msgstr "УДАЛИТЬ ИЗБРАННОЕ"
+msgstr "СБРОС ИЗБРАННОГО"
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
@@ -3803,7 +3714,7 @@ msgstr "ТРЕБУЕТСЯ ПАРОЛЬ"
 
 #: etmain/ui/popup_password.menu:84
 msgid "Enter the server password"
-msgstr ""
+msgstr "Введите пароль сервера"
 
 #: etmain/ui/popup_serverredirect.menu:71
 msgid "REDIRECTION ADVISED"
@@ -3827,14 +3738,12 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr ""
-"Выберите начальные настройки ниже. Их всегда можно изменить в меню настроек. "
-"Если в Enemy Territory: Legacy будет играть более одного человека за этим "
-"компьютером, то можно создать дополнительные профили в меню профилей."
+msgstr "Выберите начальные настройки ниже. Их всегда можно изменить в меню настроек. Если за этим компьютером будут играть несколько человек, то для них можно создать дополнительные профили в меню профилей."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
-msgid "Enter the alias here that you would like displayed to others on servers"
-msgstr ""
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
+msgstr "Введите псевдоним, который будет отображаться у других игроков на сервере"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Video Quality:"
@@ -3842,31 +3751,32 @@ msgstr "Качество видео:"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
-msgstr ""
+msgstr "быстрее всего"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fast"
-msgstr ""
+msgstr "быстрые"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid ""
 "Select your initial video settings, these can be changed later via the "
 "options menu"
-msgstr ""
+msgstr "Выберите Ваши начальные настройки видео, их можно позже изменить через меню настроек"
 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr ""
+msgstr "Выберите разрешение экрана, если не уверены, то оставьте по умолчанию"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Используйте слайдер для установки чувствительности мыши"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
-"Choose invert mouse if you prefer flight-simulator style mouse pitch controls"
-msgstr ""
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
+msgstr "Выберите инвертировать мышь если Вам нравится управление как в симуляторе полётов"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
@@ -3891,7 +3801,7 @@ msgstr "СОЗДАТЬ"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr ""
+msgstr "Выберите инвертировать мышь если Вам нравится управление как в симуляторе полётов"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
@@ -3935,11 +3845,11 @@ msgstr "ПЕРЕИМЕНОВАТЬ ПРОФИЛЬ"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New Profile Name:"
-msgstr "Имя нового профиля"
+msgstr "Имя нового профиля:"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New name of profile"
-msgstr ""
+msgstr "Новое имя профиля"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
@@ -3957,17 +3867,13 @@ msgstr "ИЗМЕНИТЬ НАСТРОЙКИ ВИДЕО"
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
-msgstr ""
-"Установить рекомендуемые настройки видео\n"
-"и вернуться в главное меню?"
+msgstr "Установить рекомендуемые настройки видео\nи вернуться в главное меню?"
 
 #: etmain/ui/rec_restart.menu:57
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
-msgstr ""
-"Установить рекомендуемые настройки видео\n"
-"и вернуться в игровое меню?"
+msgstr "Установить рекомендуемые настройки видео\nи вернуться в игровое меню?"
 
 #: etmain/ui/vid_confirm.menu:61
 msgid "CONFIRM VIDEO CHANGE"
@@ -3996,7 +3902,7 @@ msgstr "УДАЛИТЬ ПОВТОР"
 
 #: etmain/ui/viewreplay.menu:50
 msgid "Select the replay to view or delete"
-msgstr ""
+msgstr "Выберите повтор для просмотра или удаления"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:33 etmain/ui/wm_ftquickmessage.menu:33
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
@@ -4194,9 +4100,8 @@ msgid "6. Oops"
 msgstr "6. Ой"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:149
-#, fuzzy
 msgid "2. No)"
-msgstr "2. Нет"
+msgstr "2. Нет)"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
@@ -4545,11 +4450,11 @@ msgstr "2. Приказ отклонён"
 #: src/cgame/cg_consolecmds.c:362 src/cgame/cg_consolecmds.c:400
 #: src/cgame/cg_consolecmds.c:436
 msgid "Can't team voice chat as a spectator.\n"
-msgstr "Не могу использовать командный голосовой чат как зритель.\n"
+msgstr "Нельзя использовать командный голосовой чат как зритель.\n"
 
 #: src/cgame/cg_consolecmds.c:461
 msgid "Can't buddy voice chat as a spectator.\n"
-msgstr "Не могу использовать личный голосовой чат как зритель.\n"
+msgstr "Нельзя использовать личный голосовой чат как зритель.\n"
 
 #: src/cgame/cg_consolecmds.c:1143 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
@@ -4562,9 +4467,9 @@ msgid "Allies"
 msgstr "Союзники"
 
 #: src/cgame/cg_consolecmds.c:1221
-#, fuzzy, c-format
+#, c-format
 msgid "You will spawn as a %s %s with a %s."
-msgstr "Вы появитесь в качестве %s %s с %s."
+msgstr "Вы появитесь в роли %s %s с %s."
 
 #: src/cgame/cg_consolecmds.c:1225
 #, c-format
@@ -4574,7 +4479,7 @@ msgstr "Вы появитесь в роли %s %s с %s и %s."
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
-msgstr ""
+msgstr "Послед. игра: %s"
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
@@ -4588,7 +4493,7 @@ msgstr "%d карт назад"
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
-msgstr ""
+msgstr "Итого собрано голосов: %d"
 
 #: src/cgame/cg_debriefing.c:2013 src/cgame/cg_debriefing.c:3202
 #: src/cgame/cg_scoreboard.c:723
@@ -4598,11 +4503,11 @@ msgstr "ЧАСЫ УСТАНОВЛЕНЫ НА %s!"
 
 #: src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
-msgstr ""
+msgstr "ТОЧ:"
 
 #: src/cgame/cg_debriefing.c:2624
 msgid "HS:"
-msgstr ""
+msgstr "Гол:"
 
 #: src/cgame/cg_debriefing.c:2659
 msgid "Time:"
@@ -4618,15 +4523,15 @@ msgstr "Ранг:"
 
 #: src/cgame/cg_debriefing.c:2810
 msgid "^5TO TEAM"
-msgstr "^5В КОМАНДУ"
+msgstr "^5КОМАНДЕ"
 
 #: src/cgame/cg_debriefing.c:2813
 msgid "^3TO FIRETEAM"
-msgstr "^3В ЗВЕНО"
+msgstr "^3ЗВЕНУ"
 
 #: src/cgame/cg_debriefing.c:2816
 msgid "^2TO GLOBAL"
-msgstr "^2В ОБЩИЙ"
+msgstr "^2ВСЕМ"
 
 #: src/cgame/cg_debriefing.c:3175
 msgid "ALLIES WIN!"
@@ -4638,7 +4543,7 @@ msgstr "НАЦИСТЫ ПОБЕДИЛИ!"
 
 #: src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
-msgstr "ЭТО НИЧЬЯ!"
+msgstr "НИЧЬЯ!"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
@@ -4662,9 +4567,8 @@ msgid "CAMPAIGN STATUS: %s"
 msgstr "СОСТОЯНИЕ КАМПАНИИ: %s"
 
 #: src/cgame/cg_debriefing.c:3245
-#, fuzzy
 msgid "SECS TO NEXT MAP"
-msgstr "%i СЕК ДО СЛЕД КАРТЫ"
+msgstr "СЕК. ДО СЛЕД. КАРТЫ"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
@@ -4687,7 +4591,7 @@ msgstr "%s"
 
 #: src/cgame/cg_draw.c:1507
 msgid "Disguised Enemy!"
-msgstr "Замаскированный враг!"
+msgstr "Враг в маскировке!"
 
 #: src/cgame/cg_draw.c:1717
 msgid "SPECTATOR"
@@ -4754,55 +4658,55 @@ msgstr "Д:%i, Н:%i"
 
 #: src/cgame/cg_draw.c:1928
 msgid "Your complaint has been filed"
-msgstr ""
+msgstr "Жалоба отправлена"
 
 #: src/cgame/cg_draw.c:1934
 msgid "Complaint dismissed"
-msgstr ""
+msgstr "Жалоба отклонена"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
-msgstr ""
+msgstr "Нельзя жаловаться на хозяина сервера"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
-msgstr ""
+msgstr "Вас убил товарищ - хозяин сервера"
 
 #: src/cgame/cg_draw.c:1952
 msgid "You were team-killed by a bot."
-msgstr ""
+msgstr "Вас убил товарищ-бот"
 
 #: src/cgame/cg_draw.c:1962
 msgid "Your application has been submitted"
-msgstr ""
+msgstr "Заявка подана"
 
 #: src/cgame/cg_draw.c:1969
 msgid "Your application failed"
-msgstr ""
+msgstr "Заявка отклонена"
 
 #: src/cgame/cg_draw.c:1976
 msgid "Your application has been approved"
-msgstr ""
+msgstr "Заявка принята"
 
 #: src/cgame/cg_draw.c:1983
 msgid "Your application reply has been sent"
-msgstr ""
+msgstr "Ответ на заявку отправлен"
 
 #: src/cgame/cg_draw.c:1993
 msgid "Your proposition has been submitted"
-msgstr ""
+msgstr "Предложение подано"
 
 #: src/cgame/cg_draw.c:2000
 msgid "Your proposition was rejected"
-msgstr ""
+msgstr "Предложение отклонено"
 
 #: src/cgame/cg_draw.c:2007
 msgid "Your proposition was accepted"
-msgstr ""
+msgstr "Предложение принято"
 
 #: src/cgame/cg_draw.c:2014
 msgid "Your proposition reply has been sent"
-msgstr ""
+msgstr "Ответ на предложение отправлен"
 
 #: src/cgame/cg_draw.c:2024
 msgid "Your invitation has been submitted"
@@ -4810,7 +4714,7 @@ msgstr "Ваше приглашение отправлено"
 
 #: src/cgame/cg_draw.c:2031
 msgid "Your invitation was rejected"
-msgstr ""
+msgstr "Приглашение отклонено"
 
 #: src/cgame/cg_draw.c:2038
 msgid "Your invitation was accepted"
@@ -4818,7 +4722,7 @@ msgstr "Ваше приглашение принято"
 
 #: src/cgame/cg_draw.c:2045
 msgid "Your invitation reply has been sent"
-msgstr ""
+msgstr "Ответ на приглашение отправлен"
 
 #: src/cgame/cg_draw.c:2058
 msgid "Response Sent"
@@ -4842,7 +4746,7 @@ msgstr "Нажмите %s чтобы следовать за предыдущи�
 #: src/cgame/cg_draw.c:2168
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr ""
+msgstr "Нажмите %s для %s режима мультипросмотра"
 
 #: src/cgame/cg_draw.c:2168
 msgid "disable"
@@ -4881,9 +4785,9 @@ msgid "Bonus Life! Deploying in ^3%d ^7seconds"
 msgstr "Бонусная жизнь! Прибытие через ^3%d ^7секунд"
 
 #: src/cgame/cg_draw.c:2333
-#, fuzzy, c-format
+#, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7second"
-msgstr "Бонусная жизнь! Прибытие через ^3%d ^7секунд"
+msgstr "Бонусная жизнь! Появление через ^3%d ^7секунд"
 
 #: src/cgame/cg_draw.c:2338
 msgid "No more deployments this round"
@@ -4912,9 +4816,8 @@ msgid "players"
 msgstr "игроков"
 
 #: src/cgame/cg_draw.c:2448
-#, fuzzy
 msgid "Type ^3\\ready^7 in the console to start"
-msgstr "Чтобы начать напишите ^3\\ready^* в консоли"
+msgstr "Чтобы начать напишите ^3\\ready^7 в консоли"
 
 #: src/cgame/cg_draw.c:2452
 #, c-format
@@ -4923,7 +4826,7 @@ msgstr "Нажмите ^3%s^7 чтобы начать"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in:"
-msgstr ""
+msgstr "^3РАЗМИНКА:^7 Начало матча через:"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
@@ -4931,12 +4834,12 @@ msgstr "^3ПРИГОТОВЬТЕСЬ К БОЮ!\n"
 
 #: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
-msgstr ""
+msgstr "СЕКУНДОМЕРНЫЙ РАУНД"
 
 #: src/cgame/cg_draw.c:2678
 #, c-format
 msgid "The %s team is speclocked!"
-msgstr ""
+msgstr "Наблюдение команды %s ограничено!"
 
 #: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
 #: src/cgame/cg_scoreboard.c:178
@@ -4960,9 +4863,8 @@ msgid "You killed"
 msgstr "Вы убили"
 
 #: src/cgame/cg_event.c:293
-#, fuzzy
 msgid "^7swapped places with"
-msgstr "Вы поменялись местами с"
+msgstr "^7поменялся местами с"
 
 #: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
@@ -5071,36 +4973,35 @@ msgstr "Медали"
 
 #: src/cgame/cg_info.c:816
 msgid "No skills acquired!"
-msgstr ""
+msgstr "Навыков не получено!"
 
 #: src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
-msgstr ""
+msgstr "ТОЧНОСТЬ ЛУЧШИХ"
 
 #: src/cgame/cg_info.c:939
 msgid "Player"
-msgstr ""
+msgstr "Игрок"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
-msgstr ""
+msgstr "Нет квалифицирующей информации об оружии"
 
 #: src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
 msgstr "ЦЕЛИ"
 
 #: src/cgame/cg_info.c:1421
-#, fuzzy
 msgid "DEMO STATUS"
-msgstr "СТАТИСТИКА ИГРОКА"
+msgstr "СТАТУС ДЕМО"
 
 #: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
-msgstr ""
+msgstr "ДЕМО-УПРАВЛЕНИЕ"
 
 #: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
-msgstr ""
+msgstr "^nBACKSPACE ^mhelp on/off"
 
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
@@ -5216,9 +5117,9 @@ msgid "MATCH BEGINS IN:"
 msgstr "МАТЧ НАЧНЁТСЯ ЧЕРЕЗ:"
 
 #: src/cgame/cg_scoreboard.c:205
-#, fuzzy, c-format
+#, c-format
 msgid "WAITING ON ^2%i ^9%s"
-msgstr "ЖДЁМ %i %s"
+msgstr "ЖДЁМ ^2%i ^9%s"
 
 #: src/cgame/cg_scoreboard.c:229 src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
@@ -5264,7 +5165,7 @@ msgstr "СОЮЗНИКИ"
 
 #: src/cgame/cg_scoreboard.c:855
 msgid "C R"
-msgstr ""
+msgstr "C R"
 
 #: src/cgame/cg_scoreboard.c:860
 msgid "Score"
@@ -5289,39 +5190,37 @@ msgstr "Авто выбор"
 #: src/cgame/cg_servercmds.c:1954
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
-msgstr ""
+msgstr "Нанесено урона: %-6d  Нанесено урона своим: %d"
 
 #: src/cgame/cg_servercmds.c:1955
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
-msgstr ""
+msgstr "Получено урона: %-6d  Получ урона от своих: %d"
 
 #: src/cgame/cg_servercmds.c:1957
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
-msgstr ""
+msgstr "Самоубийств: %-2d Убиств своих: %-2d Точность: %-4.1f HS%%: %-4.1f"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
-msgstr ""
+msgstr "^7Оружие Точно Удар/Аттк Убийств Смертей В голову\n"
 
 #: src/cgame/cg_servercmds.c:2040
 msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
-msgstr ""
+msgstr "^7Оружие Точно Удар/Аттк Уб  Смт Гол\n"
 
 #: src/cgame/cg_servercmds.c:2047
-#, fuzzy
 msgid "^3No weapon info available.\n"
-msgstr "Нет информации об оружии"
+msgstr "^3Нет информации об оружии\n"
 
 #: src/cgame/cg_servercmds.c:2153
-#, fuzzy
 msgid "  Medals"
 msgstr "Медали"
 
 #: src/cgame/cg_servercmds.c:2165
 msgid "^3No skills acquired!\n"
-msgstr ""
+msgstr "^3Навыков не получено!\n"
 
 #: src/cgame/cg_servercmds.c:2344
 msgid "Map"
@@ -5350,11 +5249,7 @@ msgid ""
 " %s^*\n"
 "\n"
 "%s"
-msgstr ""
-"Подключение к:\n"
-" %s^*\n"
-"\n"
-"%s"
+msgstr "Подключение к:\n %s^*\n\n%s"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
@@ -5376,12 +5271,12 @@ msgstr "Жду новую клавишу... Нажмите ESCAPE для отм�
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr ""
+msgstr "ENTER или КЛИК для смены, BACKSPACE для очистки"
 
 #: src/ui/ui_main.c:2543
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
-msgstr ""
+msgstr "Получение информации о %d серверах (ESC для отмены)"
 
 #: src/ui/ui_main.c:2547
 msgid "Waiting for response from Master Server"
@@ -5394,11 +5289,11 @@ msgstr "Время обновления: %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
-msgstr ""
+msgstr "Нет инфо о сервере (не найдена или сервер локальный)\n"
 
 #: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
 msgid "Favorite already in list\n"
-msgstr ""
+msgstr "Сервер уже в списке избранных\n"
 
 #: src/ui/ui_main.c:4348 src/ui/ui_main.c:4402 src/ui/ui_main.c:4437
 msgid "Favorite list full\n"
@@ -5407,7 +5302,7 @@ msgstr "Избранные полны\n"
 #: src/ui/ui_main.c:4353 src/ui/ui_main.c:4407 src/ui/ui_main.c:4442
 #, c-format
 msgid "Added favorite server %s\n"
-msgstr ""
+msgstr "Добавлено в избранное %s\n"
 
 #: src/ui/ui_main.c:5874
 #, c-format
@@ -5417,20 +5312,15 @@ msgstr "^3Отфильтровано/Всего: %04i/%04i"
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
-"^3Check your filters - no servers found!              Filtered/Total: %04i/"
-"%04i"
-msgstr ""
-"^3Проверьте фильтры - сервера не найдены!              Отфильтровано/Всего: "
+"^3Check your filters - no servers found!              Filtered/Total: "
 "%04i/%04i"
+msgstr "^3Проверьте фильтры - сервера не найдены! Отфильтровано/Всего: %04i/%04i"
 
 #: src/ui/ui_main.c:5883
-#, fuzzy
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr ""
-"^1Нет соединения с мастер-сервером - сервера не найдены!      Отфильтровано/"
-"Всего: 0000/0000"
+msgstr "^1Нет соединения с мастер-сервером - сервера не найдены! Отфильтровано/Всего: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format
@@ -5464,1311 +5354,12 @@ msgstr "Найдено %i кампаний:\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
-msgstr ""
+msgstr "Кампании не найдены.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
-msgstr ""
+msgstr "Избранных нет."
 
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
-msgstr ""
-
-#~ msgid "Reinforcements deploy in %d seconds."
-#~ msgstr "Прибытие подкрепления через %d секунд."
-
-#~ msgid "Type ^3\\ready^* in the console to start"
-#~ msgstr "Чтобы начать напишите ^3\\ready^* в консоли"
-
-#~ msgid "(WARMUP) Match begins in:"
-#~ msgstr "(РАЗМИНКА) Матч начнётся через:"
-
-#~ msgid "^1ET:Legacy"
-#~ msgstr "^1ET:Legacy"
-
-#~ msgid "FAV"
-#~ msgstr "ЛЮБ"
-
-#~ msgid "Use JPEG for AutoScreenshots:"
-#~ msgstr "Сохранять Автоснимки как JPEG:"
-
-#~ msgid "Binocular Zoom:"
-#~ msgstr "Бинокль:"
-
-#, fuzzy
-#~ msgid "Jan 'Radegast' Simek"
-#~ msgstr "Джейсон 'Rhea' Каймиг"
-
-#, fuzzy
-#~ msgid "Konrad 'morsik' Moson"
-#~ msgstr "Konrad 'morsik' Moson - сайт, программирование и скрипты"
-
-#~ msgid "SPLASH DAMAGE"
-#~ msgstr "SPLASH DAMAGE"
-
-#~ msgid "ID SOFTWARE"
-#~ msgstr "ID SOFTWARE"
-
-#~ msgid "ACTIVISION"
-#~ msgstr "ACTIVISION"
-
-#~ msgid "ET 2.60"
-#~ msgstr "ET 2.60"
-
-#~ msgid "Paul 'Locki' Wedgwood"
-#~ msgstr "Пол 'Locki' Веджвуд"
-
-#~ msgid "Francisca 'Freya' Wedgwood"
-#~ msgstr "Франциска 'Freya' Веджвуд"
-
-#~ msgid "Richard 'Fluffy_gIMp' Jolly"
-#~ msgstr "Ричард 'Fluffy_gIMp' Джолли"
-
-#~ msgid "Francis 'Frankie' Hobbins"
-#~ msgstr "Фрэнсис 'Frankie' Хоббинс"
-
-#~ msgid "Per 'Per128' Abrahamsen"
-#~ msgstr "Пер 'Per128' Абрамсен"
-
-#~ msgid "Arnout 'RR2DO2' van Meer"
-#~ msgstr "Арну 'RR2DO2' ван Меер"
-
-#~ msgid "Gordon 'digibob' Biggans"
-#~ msgstr "Гордон 'digibob' Бигганс"
-
-#~ msgid "Randy 'ydnar' Reddig"
-#~ msgstr "Ренди 'ydnar' Реддиг"
-
-#~ msgid "Tim 'Marauder' Kautz"
-#~ msgstr "Тим 'Marauder' Кауц"
-
-#~ msgid "Ed 'Bongoboy' Stern"
-#~ msgstr "Эд 'Bongoboy' Штерн"
-
-#~ msgid "Matt 'Wils' Wilson"
-#~ msgstr "Мэтт 'Wils' Уилсон"
-
-#~ msgid "Simon 'sock' O'Callaghan"
-#~ msgstr "Симон 'sock' О'Кэллэген"
-
-#~ msgid "Mark 'nakedape' Fry"
-#~ msgstr "Марк 'nakedape' Фрай"
-
-#~ msgid "Thomas 'Q-Fraggel' Creutzenberg"
-#~ msgstr "Томас 'Q-Fraggel' Кройценберг"
-
-#~ msgid "Chris 'SHoD' Farcy"
-#~ msgstr "Крис 'SHoD' Фэрси"
-
-#~ msgid "Lloyd 'LloydM' Morris"
-#~ msgstr "Ллойд 'LloydM' Моррис"
-
-#~ msgid "Lee 'Llama' Mercer"
-#~ msgstr "Ли 'Llama' Мерсер"
-
-#~ msgid "Kevin Cloud"
-#~ msgstr "Кевин Клауд"
-
-#~ msgid "Timothee Besset"
-#~ msgstr "Тимоти Бессет"
-
-#~ msgid "Jonathan Moses"
-#~ msgstr "Джонатан Мозес"
-
-#~ msgid "Doug Avery"
-#~ msgstr "Дуг Авери"
-
-#~ msgid "John Fritts"
-#~ msgstr "Джон Фриттс"
-
-#~ msgid "Steve Holmes"
-#~ msgstr "Стим Холмс"
-
-#~ msgid "Matthew Beal"
-#~ msgstr "Мэттью Бил"
-
-#~ msgid "Laird M. Malamed"
-#~ msgstr "Лэрд М. Маламед"
-
-#~ msgid "Mark Lamia"
-#~ msgstr "Марк Ламия"
-
-#~ msgid "Brad Saavedra"
-#~ msgstr "Брэд Сааведра"
-
-#~ msgid "Evan Button"
-#~ msgstr "Эван Баттон"
-
-#~ msgid "Matt McClure"
-#~ msgstr "Мэтт МакКлюр"
-
-#~ msgid "Nathaniel McClure"
-#~ msgstr "Натаниел МакКлюр"
-
-#~ msgid "Chris Keim"
-#~ msgstr "Крис Кайм"
-
-#~ msgid "Neil Barizo"
-#~ msgstr "Нил Баризо"
-
-#~ msgid "Marilena Rixford"
-#~ msgstr "Марилена Риксфорд"
-
-#~ msgid "Tim Vanlaw"
-#~ msgstr "Тим Ванлоу"
-
-#~ msgid "Jason Levine"
-#~ msgstr "Джэйсон Левин"
-
-#~ msgid "Jef Sedivy"
-#~ msgstr "Джеф Седиви"
-
-#~ msgid "Bob McPherson"
-#~ msgstr "Боб МакФерсон"
-
-#~ msgid "Jason 'Rhea' Keimig"
-#~ msgstr "Джейсон 'Rhea' Каймиг"
-
-#~ msgid "Tony Ray"
-#~ msgstr "Тони Рэй"
-
-#, fuzzy
-#~ msgid "Bjrn Christoph"
-#~ msgstr "Бйрн Кристоф"
-
-#~ msgid "Drew Markham"
-#~ msgstr "Дрю Маркхем"
-
-#~ msgid "Neil Ross"
-#~ msgstr "Нил Росс"
-
-#~ msgid "Granville van Dusen"
-#~ msgstr "Гренвилль ван Дусен"
-
-#~ msgid "Dan 'bani' Hollis"
-#~ msgstr "Дэн 'bani' Холлис"
-
-#~ msgid "Ben 'Rain' Winslow"
-#~ msgstr "Бен 'Rain' Уинслоу"
-
-#~ msgid "Frederik 'fretn' Delaere"
-#~ msgstr "Фредерик 'fretn' Делере"
-
-#~ msgid "Chris 'Zinx' Lais"
-#~ msgstr "Крис 'Zinx' Ле"
-
-#~ msgid "Joe 'Majikthise' D."
-#~ msgstr "Джо 'Majikthise' Д."
-
-#~ msgid "ET Pro Logo"
-#~ msgstr " Логотип ET Pro"
-
-#~ msgid "Brad Oliver"
-#~ msgstr "Брэд Оливер"
-
-#~ msgid "Path cleared."
-#~ msgstr "Путь чист."
-
-#~ msgid "The enemy is weakened."
-#~ msgstr "Враг ослаблен."
-
-#~ msgid "All clear."
-#~ msgstr "Всё чисто."
-
-#~ msgid "Incoming!"
-#~ msgstr "Летит!"
-
-#~ msgid "Fire in the hole!"
-#~ msgstr "Сейчас рванёт!"
-
-#~ msgid "I'm on defense."
-#~ msgstr "Я защищаю."
-
-#~ msgid "I'm on offense."
-#~ msgstr "Я атакую."
-
-#~ msgid "Taking fire!"
-#~ msgstr "Беру огонь на себя!"
-
-#~ msgid "Mines cleared."
-#~ msgstr "Мины обезврежены."
-
-#~ msgid "Enemy in disguise."
-#~ msgstr "Враг замаскирован."
-
-#~ msgid "Need a Medic!"
-#~ msgstr "Нужна аптечка!"
-
-#~ msgid "I need ammo!"
-#~ msgstr "Нужны патроны!"
-
-#~ msgid "I need backup!"
-#~ msgstr "Нужна помощь!"
-
-#~ msgid "We need an engineer!"
-#~ msgstr "Нужен инженер"
-
-#~ msgid "Cover me!"
-#~ msgstr "Прикройте меня!"
-
-#~ msgid "Hold your fire!"
-#~ msgstr "Не стреляй!"
-
-#~ msgid "Where to?"
-#~ msgstr "Куда?"
-
-#~ msgid "We need Covert Ops!"
-#~ msgstr "Нужен разведчик!"
-
-#~ msgid "Follow me!"
-#~ msgstr "Следуйте за мной!"
-
-#~ msgid "Let's go!"
-#~ msgstr "Пошли!"
-
-#~ msgid "Move!"
-#~ msgstr "Двигайтесь!"
-
-#~ msgid "Clear the path!"
-#~ msgstr "Зачистите путь!"
-
-#~ msgid "Defend our objective!"
-#~ msgstr "Защищайте нашу цель!"
-
-#~ msgid "Disarm the dynamite!"
-#~ msgstr "Обезвредьте динамит!"
-
-#~ msgid "Clear the mines!"
-#~ msgstr "Обезвредьте мины!"
-
-#~ msgid "Reinforce the offense!"
-#~ msgstr "Поддержите наступление!"
-
-#~ msgid "Reinforce the defense!"
-#~ msgstr "Поддержите оборону!"
-
-#~ msgid "Affirmative!"
-#~ msgstr "Так точно!"
-
-#~ msgid "No!"
-#~ msgstr "Нет!"
-
-#~ msgid "Thank you!"
-#~ msgstr "Спасибо!"
-
-#~ msgid "You're welcome."
-#~ msgstr "Пожалуйста."
-
-#~ msgid "Bitte sehr."
-#~ msgstr "Пожалуйста."
-
-#~ msgid "Ja!"
-#~ msgstr "Да!"
-
-#~ msgid "Nein!"
-#~ msgstr "Нет!"
-
-#~ msgid "Kein problem."
-#~ msgstr "Пожалуйста."
-
-#~ msgid "Sorry!"
-#~ msgstr "Извини!"
-
-#~ msgid "Oops!"
-#~ msgstr "Ой!"
-
-#~ msgid "Yes!"
-#~ msgstr "Да!"
-
-#~ msgid "Jawohl!"
-#~ msgstr "Так точно!"
-
-#~ msgid "Negative!"
-#~ msgstr "Никак нет!"
-
-#~ msgid "Hi!"
-#~ msgstr "Привет!"
-
-#~ msgid "Hallo!"
-#~ msgstr "Привет!"
-
-#~ msgid "Good bye."
-#~ msgstr "Пока."
-
-#~ msgid "Auf wiedersehen."
-#~ msgstr "До свидания."
-
-#~ msgid "Bye."
-#~ msgstr "Пока."
-
-#~ msgid "Great shot!"
-#~ msgstr "Отличный выстрел!"
-
-#~ msgid "Yeah!"
-#~ msgstr "Ура!"
-
-#~ msgid "Yoohoo!"
-#~ msgstr "Ура!"
-
-#~ msgid "Hahaa!"
-#~ msgstr "Хаха!"
-
-#~ msgid "No problem."
-#~ msgstr "Пожалуйста."
-
-#~ msgid "Good game!"
-#~ msgstr "Отличная игра!"
-
-#~ msgid "Command acknowledged!"
-#~ msgstr "Приказ принят!"
-
-#~ msgid "Command declined!"
-#~ msgstr "Приказ отклонён!"
-
-#~ msgid "Command completed!"
-#~ msgstr "Приказ выполнен!"
-
-#~ msgid "Destroy primary objective!"
-#~ msgstr "Уничтожьте первичную цель!"
-
-#~ msgid "Destroy secondary objective!"
-#~ msgstr "Уничтожьте вторичную цель!"
-
-#~ msgid "Destroy construction!"
-#~ msgstr "Уничтожьте постройку!"
-
-#~ msgid "I'm constructing!"
-#~ msgstr "Сооружаю!"
-
-#~ msgid "Repair the vehicle!"
-#~ msgstr "Почините транспорт!"
-
-#~ msgid "I'm a soldier."
-#~ msgstr "Я солдат."
-
-#~ msgid "I'm an engineer."
-#~ msgstr "Я инженер."
-
-#~ msgid "I'm a medic."
-#~ msgstr "Я врач."
-
-#~ msgid "I'm a covert ops."
-#~ msgstr "Я разведчик."
-
-#~ msgid "^1Legacy"
-#~ msgstr "^1Legacy"
-
-#~ msgid "MAP"
-#~ msgstr "КАРТА"
-
-#~ msgid "OMNI-BOT"
-#~ msgstr "ОМНИ-БОТ"
-
-#~ msgid "unknown cmd"
-#~ msgstr "неизвестная кмд"
-
-#~ msgid "Server:"
-#~ msgstr "Сервер:"
-
-#~ msgid "changed to"
-#~ msgstr "изменён на"
-
-#~ msgid "was killed by"
-#~ msgstr "был убит"
-
-#~ msgid "^1WAS KILLED BY TEAMMATE^7"
-#~ msgstr "^1БЫЛ УБИТ НАПАРНИКОМ^7"
-
-#~ msgid "Arming landmine..."
-#~ msgstr "Закладка мины..."
-
-#~ msgid "Landmine armed..."
-#~ msgstr "Мина заложена..."
-
-#~ msgid "Dynamite is set, but NOT armed!"
-#~ msgstr "Динамит выброшен, но НЕ заряжен!"
-
-#~ msgid "Arming dynamite..."
-#~ msgstr "Динамит заряжается..."
-
-#~ msgid "Dynamite is now armed with a 30 second timer!"
-#~ msgstr "Динамит заряжен с 30-секундным таймером!"
-
-#~ msgid "Defusing landmine"
-#~ msgstr "Обезвреживание мины..."
-
-#~ msgid "Landmine defused..."
-#~ msgstr "Мина обезврежена..."
-
-#~ msgid "Defusing dynamite..."
-#~ msgstr "Обезврежевание динамита..."
-
-#~ msgid "Constructing..."
-#~ msgstr "Сооружение..."
-
-#~ msgid "was sniped by"
-#~ msgstr "был убит снайперским выстрелом"
-
-#~ msgid "was mown down by"
-#~ msgstr "был скошен"
-
-#~ msgid "never saw"
-#~ msgstr "не видел"
-
-#~ msgid "was cooked by"
-#~ msgstr "был поджарен"
-
-#~ msgid "played with fire"
-#~ msgstr "поигрался с огнём"
-
-#~ msgid "failed to spot"
-#~ msgstr "не заметил"
-
-#~ msgid "dove on his own grenade"
-#~ msgstr "подорвался на своей гранате"
-
-#~ msgid "vaporized himself"
-#~ msgstr "испарил себя"
-
-#~ msgid "never saw his own mortar round coming"
-#~ msgstr "не ожидал свой снаряд мортиры"
-
-#~ msgid "killed himself"
-#~ msgstr "убился"
-
-#~ msgid "ate his own rifle grenade"
-#~ msgstr "скушал свою винтовочную гранату"
-
-#~ msgid "obliterated himself"
-#~ msgstr "уничтожил себя"
-
-#~ msgid "Fire Mission: ^3Firing for effect!"
-#~ msgstr "Огневая миссия: ^3Огонь на поражение!"
-
-#~ msgid "fired-for-effect on himself"
-#~ msgstr "вызвал огонь на себя"
-
-#~ msgid "embraced his own satchel explosion"
-#~ msgstr "встретил взрыв своего ранца"
-
-#~ msgid "failed to spot his own landmine"
-#~ msgstr "не заметил своей мины"
-
-#~ msgid "dynamited himself to pieces"
-#~ msgstr "взорвал себя динамитом"
-
-#~ msgid "was stabbed by"
-#~ msgstr "был зарезан"
-
-#~ msgid "was exploded by"
-#~ msgstr "был взорван"
-
-#~ msgid "was blasted by"
-#~ msgstr "был взорван"
-
-#~ msgid "Affirmative!!"
-#~ msgstr "Так точно!!"
-
-#~ msgid "I need a Medic!"
-#~ msgstr "Нужна аптечка!"
-
-#~ msgid "Mines have been reported in this area."
-#~ msgstr "Рядом замечены мины."
-
-#~ msgid "rediscovered gravity"
-#~ msgstr "открыл гравитацию"
-
-#~ msgid "You have been revived by "
-#~ msgstr "Вас оживил"
-
-#~ msgid "Allies have built the Oasis Water Pump!"
-#~ msgstr "Союзники построили Водокачку в Оазисе!"
-
-#~ msgid "Allied Command Post constructed. Charge speed increased!"
-#~ msgstr "Союзники построили командный пост. Зарядка ускорена!"
-
-#~ msgid "Axis Command Post constructed. Charge speed increased!"
-#~ msgstr "Нацисты построили командный пост. Зарядка ускорена!"
-
-#~ msgid "Allies capture the Old City!"
-#~ msgstr "Союники захватили Старый Город!"
-
-#~ msgid "Axis reclaim the Old City!"
-#~ msgstr "Нацисты захватили Старый Город!"
-
-#~ msgid "Allies have built the Old City Water Pump!"
-#~ msgstr "Союники построили Водокачку в Старом Городе!"
-
-#~ msgid "Allies have repaired both Water Pumps!"
-#~ msgstr "Союзники починили обе Водокачки!"
-
-#~ msgid "The Old City MG Nest has been constructed!"
-#~ msgstr "Пулемётное Гнездо в Старом Городе сооружено!"
-
-#~ msgid "The Garrison MG Nest has been constructed!"
-#~ msgstr "Пулемётное Гнездо в Гарнизоне сооружено!"
-
-#~ msgid "Axis have damaged the Old City Water Pump!"
-#~ msgstr "Нацисты повредили Водокачку в Старом Городе!"
-
-#~ msgid "Axis have damaged the Oasis Water Pump!"
-#~ msgstr "Нацисты повредили Водокачку в Оазисе!"
-
-#~ msgid "Axis have damaged both Water Pumps!"
-#~ msgstr "Нацисты повредили обе Водокачки"
-
-#~ msgid "The Old City MG Nest has been damaged!"
-#~ msgstr "Пулемётное Гнездо в Старом Городе повреждено!"
-
-#~ msgid "Axis team has destroyed the Allied Command Post!"
-#~ msgstr "Нацисты уничтожили командный пост союзников!"
-
-#~ msgid "Allies have breached the Old City wall"
-#~ msgstr "Союзники пробили брешь в стене Старого Города"
-
-#~ msgid "drowned"
-#~ msgstr "утонул"
-
-#~ msgid "Axis team"
-#~ msgstr "Команда нацистов"
-
-#~ msgid "Allied team"
-#~ msgstr "Команда союзников"
-
-#~ msgid "Spectators"
-#~ msgstr "Зрители"
-
-#~ msgid "You must be a player or following a player to use +stats\n"
-#~ msgstr ""
-#~ "Вы должны быть игроком или следовать за игроком чтобы использовать "
-#~ "+stats\n"
-
-#~ msgid "^9You must be alive to use ^3/kill."
-#~ msgstr "^9Вы должны быть живы чтобы использовать ^3/kill."
-
-#~ msgid "No vote in progress.\n"
-#~ msgstr "Сейчас нет голосования.\n"
-
-#~ msgid "No or bad challenge for address.\n"
-#~ msgstr "Нет подходящего вызова для адреса.\n"
-
-#~ msgid "Match is already in progress!\n"
-#~ msgstr "Матч уже идёт!\n"
-
-#~ msgid "^1** Referee Server Setting Change **\n"
-#~ msgstr "^1** Изменение настроек сервера судьёй **\n"
-
-#~ msgid "committed suicide"
-#~ msgstr "покончил с собой"
-
-#~ msgid "Your fireteam is now public"
-#~ msgstr "Ваше звено теперь открыто"
-
-#~ msgid "Your fireteam is now private"
-#~ msgstr "Ваше звено теперь закрыто"
-
-#~ msgid "The Allies have too many players.\n"
-#~ msgstr "У союзников слишком много игроков.\n"
-
-#~ msgid "The Axis has too many players.\n"
-#~ msgstr "У нацистов слишком много игроков.\n"
-
-#~ msgid "Attack!"
-#~ msgstr "Атакуем!"
-
-#~ msgid "Fall back!"
-#~ msgstr "Назад!"
-
-#~ msgid "Improved use of Explosive Ammunition"
-#~ msgstr "улучшенное использование взрывных патронов"
-
-#~ msgid "Improved Dexterity"
-#~ msgstr "улучшенная ловкость"
-
-#~ msgid "Improved Construction and Destruction"
-#~ msgstr "улучшенное сооружение и уничтожение"
-
-#~ msgid "a Flak Jacket"
-#~ msgstr "бронежилет"
-
-#~ msgid "Improved use of Scoped Weapon Ammunition"
-#~ msgstr "улучшенное использование патронов к ружьям с прицелом"
-
-#~ msgid "Improved use of Sabotage and Misdirection"
-#~ msgstr "улучшенное использование подрывной деятельности"
-
-#~ msgid "Breath Control"
-#~ msgstr "контроль дыхания"
-
-#~ msgid "Assassin"
-#~ msgstr "бесшумный убийца"
-
-#~ msgid "Improved Resources"
-#~ msgstr "улучшенные ресурсы"
-
-#~ msgid "Improved Signals"
-#~ msgstr "улучшенные сигналы"
-
-#~ msgid "Improved Air and Ground Support"
-#~ msgstr "улучшенная авиа- и наземная поддержка"
-
-#~ msgid "Enemy Recognition"
-#~ msgstr "распознавание врага"
-
-#~ msgid "Binoculars for any Class"
-#~ msgstr "бинокли для всех классов"
-
-#~ msgid "Full Revive"
-#~ msgstr "полное оживление"
-
-#~ msgid "Adrenalin Self"
-#~ msgstr "укол адреналина"
-
-#, fuzzy
-#~ msgid "Improved Projectile Resources"
-#~ msgstr "улучшенные прожектильные ресурсы"
-
-#~ msgid "Heavy Weapon Proficiency"
-#~ msgstr "улучшенное обращение с тяжёлым вооружением"
-
-#~ msgid "Improved Physical Fitness"
-#~ msgstr "улучшенная физическая подготовка"
-
-#~ msgid "Improved Health"
-#~ msgstr "крепкое здоровье"
-
-#~ msgid "Improved Weapon Handling"
-#~ msgstr "улучшенное обращение с оружием"
-
-#, fuzzy
-#~ msgid "Trap Awareness"
-#~ msgstr "ориентация по ловушкам"
-
-#~ msgid "Improved use of Light Weapon Ammunition"
-#~ msgstr "улучшенное использование патронов к лёгкому вооружению"
-
-#~ msgid "Faster Reload"
-#~ msgstr "быстрая перезарядка"
-
-#~ msgid "Improved Light Weapon Handling"
-#~ msgstr "улучшенное обращение с лёгким оружием"
-
-#~ msgid "Dual-Wield Pistols"
-#~ msgstr "двойные пистолеты"
-
-#~ msgid "Allies have destroyed the North Anti-Tank Gun!"
-#~ msgstr "Союзники уничтожили Северную Противотанковую Пушку!"
-
-#~ msgid "Allied team has destroyed the Axis Command Post!"
-#~ msgstr "Союзники уничтожили Командный Пост Нацистов!"
-
-#~ msgid "The Garrison MG Nest has been damaged!"
-#~ msgstr "Пулемётное Гнездо в Гарнизоне повреждено!"
-
-#~ msgid "Allied team has destroyed the South Anti-Tank Gun!"
-#~ msgstr "Союзники уничтожили Южную Противотанковую Пушку!"
-
-#~ msgid "Allies have destroyed both Anti-Tank Guns!"
-#~ msgstr "Союзники уничтожили обе Противотанковые Пушки!"
-
-#~ msgid "The Allied West beach MG Nest has been constructed."
-#~ msgstr "Западное Береговое Пулемётное Гнездо Союзников построено."
-
-#~ msgid "The Allied East beach MG Nest has been constructed."
-#~ msgstr "Восточное Береговое Пулемётное Гнездо Союзников построено."
-
-#, fuzzy
-#~ msgid "Allied team has destroyed the Door Controls Generator!"
-#~ msgstr "Союзники уничтожили Дверной Генератор!"
-
-#, fuzzy
-#~ msgid "Magnetic seal deactivated - opening emergency bunker doors"
-#~ msgstr "Магнитный замок отключён - идёт открытие дверей"
-
-#~ msgid "The Axis North-West MG Nest has been constructed."
-#~ msgstr "Северо-Западное Пулемётное Гнездо Нацистов построено."
-
-#~ msgid "got buried under a pile of rubble"
-#~ msgstr "похоронило под обломками"
-
-#~ msgid "The Axis Main Bunker MG Nest has been constructed."
-#~ msgstr "Пулемётное Гнездо Нацистов в Главном Бункере построено."
-
-#~ msgid "The Axis South-East MG Nest has been constructed."
-#~ msgstr "Юго-Восточное Пулемётное Гнездо Нацистов построено."
-
-#~ msgid "Axis have constructed the Door Controls Generator!"
-#~ msgstr "Нацисты построили Дверной Генератор!"
-
-#~ msgid "The Allied West beach MG Nest has been destroyed."
-#~ msgstr "Западное Береговое Пулемётное Гнездо Союзников уничтожено."
-
-#~ msgid "The Allied East beach MG Nest has been destroyed."
-#~ msgstr "Восточное Береговое Пулемётное Гнездо Союзников уничтожено."
-
-#~ msgid "Allies capture the Forward Bunker!"
-#~ msgstr "Союзники захватили Передний Бункер!"
-
-#~ msgid "Axis capture the West Bunker!"
-#~ msgstr "Нацисты захватили Западный Бункер!"
-
-#~ msgid "Allies have destroyed the gun tracking"
-#~ msgstr "Союзники уничтожили наведение пушек"
-
-#~ msgid ""
-#~ "^3All players ready!^7\n"
-#~ "Match starting..."
-#~ msgstr ""
-#~ "^3Все игроки готовы!^7\n"
-#~ "Матч начинается..."
-
-#~ msgid "The Axis North-West MG Nest has been destroyed."
-#~ msgstr "Северо-Западное Пулемётное Гнездо Нацистов уничтожено."
-
-#~ msgid "The Axis Main Bunker MG Nest has been destroyed."
-#~ msgstr "Пулемётное Гнездо Нацистов у Главного Бункера уничтожено."
-
-#~ msgid "The Axis South-East MG Nest has been destroyed."
-#~ msgstr "Юго-Восточное Пулемётное Гнездо Нацистов уничтожено."
-
-#~ msgid "The Tank has been repaired!"
-#~ msgstr "Танк отремонтирован!"
-
-#~ msgid "Allied team has stolen the Tank!"
-#~ msgstr "Союзники украли Танк!"
-
-#~ msgid "The Tank has been damaged!"
-#~ msgstr "Танк повреждён!"
-
-#~ msgid "Allied team has destroyed the Bank Doors!"
-#~ msgstr "Союзники уничтожили Двери Банка!"
-
-#~ msgid "Allied team has secured the first Gold Crate!"
-#~ msgstr "Союзники захватили первый Ящик с Золотом!"
-
-#~ msgid "Allied team has secured the second Gold Crate!"
-#~ msgstr "Союзники захватили второй Ящик с Золотом!"
-
-#~ msgid "Allied team is escaping with the Gold Crates!"
-#~ msgstr "Союзники убегают с Ящиками с Золотом!"
-
-#~ msgid "Allied team escaped with the Gold Crates!"
-#~ msgstr "Союзники удрали с Ящиками с Золотом!"
-
-#~ msgid "Tank Barrier #1 has been constructed."
-#~ msgstr "Танковая Преграда #1 сооружена."
-
-#~ msgid "Tank Barrier #2 has been constructed."
-#~ msgstr "Танковая Преграда #2 сооружена."
-
-#~ msgid "Truck Barrier #1 has been constructed."
-#~ msgstr "Преграда для Грузовика #1 сооружена."
-
-#~ msgid "Truck Barrier #2 has been constructed."
-#~ msgstr "Преграда для Грузовика #2 сооружена."
-
-#~ msgid "The Truck has been damaged!"
-#~ msgstr "Грузовик повреждён!"
-
-#~ msgid "Tank Barrier #1 has been destroyed."
-#~ msgstr "Танковая Преграда #1 уничтожена."
-
-#~ msgid "Tank Barrier #2 has been destroyed."
-#~ msgstr "Танковая Преграда #2 уничтожена."
-
-#~ msgid "Truck Barrier #1 has been destroyed."
-#~ msgstr "Преграда для Грузовика #1 уничтожена."
-
-#~ msgid "Truck Barrier #2 has been destroyed."
-#~ msgstr "Преграда для Грузовика #2 уничтожена."
-
-#~ msgid "The Truck has been repaired!"
-#~ msgstr "Грузовик отремонтирован!"
-
-#~ msgid "Axis reclaim the Forward Bunker!"
-#~ msgstr "Нацисты вернули контроль на Передним Бункером!"
-
-#~ msgid ""
-#~ "Allies have breached the Main Entrance and secured the Forward Bunker!"
-#~ msgstr "Союзники пробили Главный Вход и закрепились в Переднем Бункере!"
-
-#~ msgid "Allies have breached the Side Entrance!"
-#~ msgstr "Союзники пробили Боковой Вход!"
-
-#~ msgid "Allies have secured the West Radar Parts!"
-#~ msgstr "Союзники захватили Запчасти Западного Радара!"
-
-#~ msgid "Allies have secured the East Radar Parts!"
-#~ msgstr "Союзники захватили Запчасти Восточного Радара!"
-
-#~ msgid "The Track Switch MG Nest has been constructed."
-#~ msgstr "Пулемётное Гнездо у Шлагбаума сооружено."
-
-#~ msgid "The Depot Yard MG has been constructed."
-#~ msgstr "Пулемётное Гнездо в Депо сооружено."
-
-#~ msgid "Allies capture the Depot Yard!"
-#~ msgstr "Союзники захватили Депо!"
-
-#~ msgid "Rail Gun Firing Controls destroyed!"
-#~ msgstr "Управление Огнём Рельсовой Пушки уничтожено!"
-
-#~ msgid "Rail Gun Firing Controls rebuilt!"
-#~ msgstr "Управление Огнём Рельсовой Пушки восстановлено!"
-
-#~ msgid "The Track Switch MG Nest has been destroyed."
-#~ msgstr "Пулемётное Гнездо у Шлагбаума уничтожено."
-
-#~ msgid "The Depot Yard MG has been destroyed."
-#~ msgstr "Пулемётное Гнездо в Депо уничтожено."
-
-#~ msgid "Axis captures the Depot Yard!"
-#~ msgstr "Нацисты захватили депо!"
-
-#~ msgid "Track Switch raised!"
-#~ msgstr "Шлагбаум поднят!"
-
-#~ msgid "Track Switch lowered!"
-#~ msgstr "Шлагбаум опущен!"
-
-#~ msgid "Axis loaded the Rail Gun Ammo onto the First Tug!"
-#~ msgstr "Нацисты погрузили Боеприпасы для Рельсовой Пушки в Первый Тепловоз!"
-
-#~ msgid "Axis transported the Ammo to the North Crane!"
-#~ msgstr "Нацисты привезли Боеприпасы к Северному Крану!"
-
-#~ msgid "Axis transferred the Ammo to the Second Tug!"
-#~ msgstr "Нацисты погрузили Боеприпасы во Второй Тепловоз!"
-
-#~ msgid "Axis team have loaded the Rail Gun!"
-#~ msgstr "Нацисты зарядили Рельсовую Пушку!"
-
-#~ msgid "Axis fired the Rail Gun!"
-#~ msgstr "Нацисты выстрелили из Рельсовой Пушки!"
-
-#~ msgid "Axis team has constructed the Tunnel MG!"
-#~ msgstr "Нацисты построили Пулемётное Гнездо у Туннеля!"
-
-#~ msgid "Axis team has constructed the Side MG Nest!"
-#~ msgstr "Нацисты построили Боковое Пулемётное Гнездо!"
-
-#~ msgid "Axis team has constructed the East Axis Base Fortification!"
-#~ msgstr "Нацисты построили Восточное Укрепление Базы!"
-
-#~ msgid "Axis team has constructed the West Axis Base Fortification!"
-#~ msgstr "Нацисты построили Западное Укрепление Базы!"
-
-#~ msgid "Allied team has constructed the Foot Bridge!"
-#~ msgstr "Союзники построили Пешеходный Мост!"
-
-#~ msgid "Allied team has constructed the Road MG Nest!"
-#~ msgstr "Союзники построили Пулемётное Гнездо у Дороги!"
-
-#~ msgid "Allied team has breached the Tunnel Grate!"
-#~ msgstr "Союзники выбили Решётку Туннеля"
-
-#~ msgid "Axis team has destroyed the Foot Bridge!"
-#~ msgstr "Нацисты уничтожили Пешеходный Мост!"
-
-#~ msgid "Axis team has destroyed the Road MG Nest!"
-#~ msgstr "Нацисты уничтожили Пулемётное Гнездо у Дороги!"
-
-#~ msgid "Allied team has reinforced the Bridge!"
-#~ msgstr "Союзники укрепили Мост!"
-
-#~ msgid "Axis team has damaged the Bridge!"
-#~ msgstr "Нацисты повредили Мост!"
-
-#~ msgid "Allied team has breached the Tunnel Doors!"
-#~ msgstr "Союзники пробили Двери Туннеля!"
-
-#~ msgid "Allied team has destroyed the Tunnel MG!"
-#~ msgstr "Союзники уничтожили Пулемётное Гнездо у Туннеля!"
-
-#~ msgid "Axis team has destroyed the Side MG Nest!"
-#~ msgstr "Нацисты уничтожили Боковое Пулемётное Гнездо!"
-
-#~ msgid "Allied team has breached the Depot Gates!"
-#~ msgstr "Союзники пробили Ворота Депо!"
-
-#~ msgid "Allied team has constructed the Side MG Nest!"
-#~ msgstr "Союзники построили Боковое Пулемётное Гнездо!"
-
-#~ msgid "Allied team has breached the Depot Side Wall!"
-#~ msgstr "Союзники пробили Боковую Стену Депо!"
-
-#~ msgid "Allied team has damaged the East Axis Base Fortification!"
-#~ msgstr "Союзники повредили Восточное Укрепление Базы!"
-
-#~ msgid "Allied team has destroyed the East Axis Base Fortification!"
-#~ msgstr "Союзники уничтожили Восточное Укрепление Базы!"
-
-#~ msgid "Allied team has damaged the West Axis Base Fortification!"
-#~ msgstr "Союзники повредили Западное Укрепление Базы!"
-
-#~ msgid "Allied team has destroyed the West Axis Base Fortification!"
-#~ msgstr "Союзники уничтожили Западное Укрепление Базы!"
-
-#~ msgid "Allied team has destroyed the Axis Fuel Dump!"
-#~ msgstr "Союзники уничтожили Склад Горючего!"
-
-#~ msgid "was killed"
-#~ msgstr "был убит"
-
-#~ msgid "You are near the Old City Wall\n"
-#~ msgstr "Вы рядом со Стеной Старого Города\n"
-
-#~ msgid "You are near the Old City Water Pump\n"
-#~ msgstr "Вы рядом с Водокачкой Старого Города\n"
-
-#~ msgid "You are near the Oasis Water Pump\n"
-#~ msgstr "Вы рядом с Водокачкой в Оазисе\n"
-
-#~ msgid "You are near the Allied Command Post\n"
-#~ msgstr "Вы рядом с Командным Постом Союзников\n"
-
-#~ msgid "You are near the Old City MG Nest\n"
-#~ msgstr "Вы рядом с Пулемётным Гнездом в Старом Городе\n"
-
-#~ msgid "You are near the Axis Command Post\n"
-#~ msgstr "Вы рядом с Командным Постом Нацистов\n"
-
-#~ msgid "You are near the Garrison MG Nest\n"
-#~ msgstr "Вы рядом с Пулемётным Гнездом у Гарнизона\n"
-
-#~ msgid "You are near the North Anti-Tank Gun\n"
-#~ msgstr "Вы рядом с Северной Противотанковой Пушкой\n"
-
-#~ msgid "You are near the South Anti-Tank Gun\n"
-#~ msgstr "Вы рядом с Южной Противотанковой Пушкой\n"
-
-#~ msgid "You are near the Health and Ammo Cabinets\n"
-#~ msgstr "Вы рядом со Складами Аптечек и Патронов\n"
-
-#~ msgid "You are near the Allied East beach MG nest\n"
-#~ msgstr "Вы рядом с Восточным Береговым Пулемётным Гнездом Союзников\n"
-
-#~ msgid "You are near the Allied West beach MG nest\n"
-#~ msgstr "Вы рядом с Западным Береговым Пулемётным Гнездом Союзников\n"
-
-#~ msgid "You are near the Command Post\n"
-#~ msgstr "Вы рядом с Командным Постом\n"
-
-#~ msgid "You are near the Generator\n"
-#~ msgstr "Вы рядом с Генератором\n"
-
-#, fuzzy
-#~ msgid "You are near the Gun Controls\n"
-#~ msgstr "Вы рядом с Оружейным Управлением\n"
-
-#~ msgid "You are near the Tank\n"
-#~ msgstr "Вы рядом с Танком\n"
-
-#~ msgid "You are near Tank Barrier #1\n"
-#~ msgstr "Вы рядом с Танковой Преградой #1\n"
-
-#~ msgid "You are near Tank Barrier #2\n"
-#~ msgstr "Вы рядом с Танковой Преградой #2\n"
-
-#~ msgid "You are near the Bank Doors\n"
-#~ msgstr "Вы рядом с Дверьми Банка\n"
-
-#~ msgid "You are near the Gold Crates\n"
-#~ msgstr "Вы рядом с Ящиками с Золотом\n"
-
-#~ msgid "You are near the Truck\n"
-#~ msgstr "Вы рядом с Грузовиком\n"
-
-#~ msgid "You are near Truck Barrier #1\n"
-#~ msgstr "Вы рядом с Преградой для Грузовика #1\n"
-
-#~ msgid "You are near Truck Barrier #2\n"
-#~ msgstr "Вы рядом с Преградой для Грузовика #2\n"
-
-#~ msgid ""
-#~ "^3All players ready!^7\n"
-#~ "Match starting...\n"
-#~ msgstr ""
-#~ "^3Все игроки готовы!^7\n"
-#~ "Матч начинается...\n"
-
-#~ msgid "You are on the Allied team"
-#~ msgstr "Вы в команде союзников"
-
-#~ msgid "^1*** Match Reset! ***\n"
-#~ msgstr "^1*** Перезапуск матча! ***\n"
-
-#~ msgid "You are on the Axis team"
-#~ msgstr "Вы в команде нацистов"
-
-#~ msgid "Warning, leave the construction area..."
-#~ msgstr "Покиньте зону строительства..."
-
-#~ msgid "got caught in"
-#~ msgstr "оказался на пути строительного сумасшествия"
-
-#~ msgid "Need paks: %s\n"
-#~ msgstr "Требуемые паки: %s\n"
-
-#~ msgid "Mod filter:"
-#~ msgstr "Фильтр модов:"
-
-#~ msgid "http://www.etlegacy.com"
-#~ msgstr "http://www.etlegacy.com"
-
-#, fuzzy
-#~ msgid "'PtitSeb'"
-#~ msgstr "'PtitSeb' - Pandora"
-
-#~ msgid "^1PACKAGE MAINTAINERS"
-#~ msgstr "^1СОПРОВОЖДАЮЩИЕ ПАКЕТОВ"
-
-#~ msgid "Not enough players to start match!\n"
-#~ msgstr "Недостаточно игроков чтобы начать матч!\n"
-
-#~ msgid "You must be in the game to be ^3ready^7!\n"
-#~ msgstr "Вы должны быть в игры чтобы быть ^3готовым^7!\n"
-
-#~ msgid "You cannot arm dynamite near a friendly objective!"
-#~ msgstr "Нельзя заложить динамит рядом с дружественной целью!"
-
-#~ msgid "Axis team has destroyed the Bridge!"
-#~ msgstr "Нацисты уничтожили мост!"
-
-#~ msgid "^3Aborting, can't see target."
-#~ msgstr "^3Отмена, не вижу цели."
-
-#~ msgid "Landmine revealed"
-#~ msgstr "Обнаружена мина"
-
-#~ msgid "^3Insufficient fire support."
-#~ msgstr "^3недостаточно огневой поддержки."
-
-#~ msgid "'s tank-mounted browning 30cal"
-#~ msgstr "с помощью танкового пулемёта 30 калибра"
-
-#~ msgid "'s grenade"
-#~ msgstr "с помощью гранаты"
-
-#~ msgid "was crushed"
-#~ msgstr "был раздавлен"
-
-#~ msgid "Public Settings Loaded!\n"
-#~ msgstr "Общие настройки загружены!\n"
-
-#~ msgid "Landmine cannot be armed here..."
-#~ msgstr "Нельзя заложить мину здесь..."
-
-#~ msgid "Your team has too many landmines placed..."
-#~ msgstr "У Вашей команды уже заложено слишком много мин..."
-
-#~ msgid "You cannot arm dynamite near a friendly construction!"
-#~ msgstr "Нельзя заложить динамит рядом с дружественной постройкой!"
-
-#~ msgid "Countdown started.... ^3notready^7 ignored!\n"
-#~ msgstr "Отсчёт пошёл.... игнорирование ^3не готовых^7!\n"
-
-#~ msgid "No complaint filed against you.\n"
-#~ msgstr "На Вас не подана жалоба.\n"
-
-#~ msgid "You are not the leader of a fireteam\n"
-#~ msgstr "Вы не руководитель звена\n"
-
-#~ msgid "You have been warned by your Fireteam Commander\n"
-#~ msgstr "Предупреждение от командира звена\n"
-
-#~ msgid "You have been kicked from the fireteam"
-#~ msgstr "Вас выкинули из звена"
-
-#~ msgid "You are now the leader of your fireteam"
-#~ msgstr "Вы стали руководителем звена"
-
-#, fuzzy
-#~ msgid "The fireteam you are on has been disbanded"
-#~ msgstr "Ваше звено распущено"
-
-#~ msgid "You have been given fireteam admin rights"
-#~ msgstr "Вы теперь администратор звена"
-
-#~ msgid ""
-#~ "^3Referee commands:^7\n"
-#~ "------------------------------------------\n"
-#~ msgstr ""
-#~ "^3Команды судьи:^7\n"
-#~ "------------------------------------------\n"
-
-#~ msgid "Client"
-#~ msgstr "Клиент"
-
-#~ msgid "is not active\n"
-#~ msgstr "не активен\n"
-
-#~ msgid "User "
-#~ msgstr "Пользователь"
-
-#~ msgid "is not on the server\n"
-#~ msgstr "не на сервере\n"
-
-#~ msgid "^5You've been removed from the ^4Allies^7 team\n"
-#~ msgstr "^5Вас удалили из команды ^4Союзников^7\n"
-
-#~ msgid "^5You've been removed from the ^1Axis^7 team\n"
-#~ msgstr "^5Вас удалили из команды ^4Нацистов^7\n"
-
-#~ msgid "usage: ref warn <clientname> [reason].\n"
-#~ msgstr "использование: ref warn <имяклиента> [причина].\n"
-
-#~ msgid "Client not on server.\n"
-#~ msgstr "Клиент не на сервере.\n"
-
-#~ msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
-#~ msgstr "%s^7 было выдано ^1Предупреждение^7 (Причина не указана)\n"
-
-#~ msgid "Cannot mute a referee.\n"
-#~ msgstr "Нельзя заглушить судью.\n"
-
-#~ msgid "^5You've been muted\n"
-#~ msgstr "^5Вы были заглушены\n"
-
-#, fuzzy
-#~ msgid "^7----------------------------------------------------------------------\n"
-#~ msgstr ""
-#~ "^3Команды судьи:^7\n"
-#~ "------------------------------------------\n"
-
-#, fuzzy
-#~ msgid "^7-------------------------------------------------------------------------------\n"
-#~ msgstr ""
-#~ "^3Команды судьи:^7\n"
-#~ "------------------------------------------\n"
-
-#~ msgid "The ^4Allies^7 team is ready!\n"
-#~ msgstr "^4Союзники^7 готовы!\n"
-
-#~ msgid "The ^1Axis^7 team is ready!\n"
-#~ msgstr "^1Нацисты^7 готовы!\n"
-
-#~ msgid "A vote is already in progress.\n"
-#~ msgstr "Голосование в процессе.\n"
-
-#~ msgid "called a vote.\n"
-#~ msgstr "начал голосование.\n"
-
-#~ msgid "Sorry, "
-#~ msgstr "Извините,"
-
-#~ msgid "voting has been disabled"
-#~ msgstr "голосования отключены"
-
-#~ msgid "called a vote."
-#~ msgstr "начал голосование."
-
-#~ msgid "'s KA-BAR"
-#~ msgstr " (KA-BAR)"
-
-#~ msgid "'s .45ACP 1911"
-#~ msgstr " (.45ACP 1911)"
-
-#~ msgid "'s Thompson"
-#~ msgstr " (Thompson)"
-
-#~ msgid "'s MP40"
-#~ msgstr " (MP40)"
-
-#~ msgid "'s knife"
-#~ msgstr " (нож)"
-
-#~ msgid "'s Luger 9mm"
-#~ msgstr " (Luger 9mm)"
-
-#~ msgid "'s Panzerfaust"
-#~ msgstr " (Panzerfaust)"
-
-#~ msgid "'s Garand"
-#~ msgstr " (Garand)"
-
-#~ msgid "'s Sten"
-#~ msgstr " (Sten)"
-
-#~ msgid "'s FG42"
-#~ msgstr " (FG42)"
-
-#~ msgid "'s K43"
-#~ msgstr " (K43)"
-
-#~ msgid "Reset Filters"
-#~ msgstr "Сбросить фильтры"
-
-#~ msgid "Remy 'Spyhawk' M. - Coding, mod development"
-#~ msgstr "Remy 'Spyhawk' M. - Программирование, разработка мода"
-
-#~ msgid "^9You are frozen - ^3/kill^9 is disabled."
-#~ msgstr "^9Вы заморожены - ^3/kill^9 отключён."
-
-#~ msgid "WAITING ON %i %s"
-#~ msgstr "ЖДЁМ %i %s"
-
-#~ msgid "'s Bazooka"
-#~ msgstr " (базука)"
-
-#~ msgid "'s Akimbo .45ACP 1911s"
-#~ msgstr " (Akimbo .45ACP 1911s)"
-
-#~ msgid "Server connection timed out."
-#~ msgstr "Тайм-аут соединения с сервером."
-
-#~ msgid "Server disconnected for unknown reason"
-#~ msgstr "Отключён от сервера по неизвестной причине"
-
-#~ msgid "Allied team has constructed the bridge!"
-#~ msgstr "Команда союзников соорудила мост!"
-
-#~ msgid "The Tank has been repaired"
-#~ msgstr "Танк отремонтирован"
-
-#~ msgid "The Tank has been damaged"
-#~ msgstr "Танк повреждён"
-
-#~ msgid "Join ET Legacy and keep the game alive"
-#~ msgstr "Играйте в ET Legacy, поддержите любимую игру!"
-
-#~ msgid "joined the Axis team\n"
-#~ msgstr "присоединился к команде Гитлеровцев\n"
-
-#~ msgid "joined the Allies team\n"
-#~ msgstr "присоединился к команде Союзников\n"
-
-#~ msgid "^3>>> Unknown vote command: ^7 \n"
-#~ msgstr "^3>>> Неисзвестная команда голосования: ^7 \n"
-
-#, fuzzy
-#~ msgid "^3Match is already in progress!\n"
-#~ msgstr "Матч уже идёт!\n"
-
-#, fuzzy
-#~ msgid "^3*** Loading nextmap! ***\n"
-#~ msgstr "^1*** Перезапуск матча! ***\n"
-
-#, fuzzy
-#~ msgid "^1*** Level Restarted! ***\n"
-#~ msgstr "^1*** Перезапуск матча! ***\n"
-
-#, fuzzy
-#~ msgid "You have been switched to the Axis team"
-#~ msgstr "Вас выкинули из звена"
-
-#, fuzzy
-#~ msgid "You have been switched to the Allied team"
-#~ msgstr "Вас выкинули из звена"
-
-#, fuzzy
-#~ msgid "You have been been stripped of fireteam admin rights"
-#~ msgstr "Вы теперь администратор звена"
-
-#, fuzzy
-#~ msgid "You have been warned by your fireteam leader\n"
-#~ msgstr "Предупреждение от командира звена\n"
-
-#, fuzzy
-#~ msgid "^3moved to spectator for inactivity!\n"
-#~ msgstr "Неактивность зрителя:"
+msgstr "Избранное стёрто"
