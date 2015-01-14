@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-12 18:07+0000\n"
+"PO-Revision-Date: 2015-01-14 17:31+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -1334,7 +1334,7 @@ msgstr "ОБНОВИТЬ"
 
 #: etmain/ui/ingame_serverinfo.menu:78
 msgid "ADD TO FAVORITES"
-msgstr "ДОБАВИТЬ В ИЗБРАННОЕ"
+msgstr "В ИЗБРАННОЕ"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
@@ -1344,13 +1344,13 @@ msgstr "ВОЗРОДИТЬСЯ"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr "В режиме последнего героя вы не можете возродиться если выйдете из ожидания помощи. Вы уверены?"
+msgstr "В режиме последнего героя вы не сможете возродиться если выйдете из ожидания помощи. Вы уверены?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
 "This server has Max Lives enabled. Tapping out now will lose a life. Are you"
 " sure?"
-msgstr "На сервере включено ограничение числа жизней. Ждите помощи или Вы потеряете жизнь. Перейти в очередь подкрепления?"
+msgstr "На сервере включено ограничение числа жизней. Ждите помощи или Вы потеряете жизнь. Перейти в очередь подкреплений?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1531,7 +1531,7 @@ msgstr "Выберите тип урона при разминке для гол
 #: etmain/ui/ingame_vote_misc.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Time Limit:"
-msgstr "Лимит времени:"
+msgstr "Время:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
@@ -1563,7 +1563,7 @@ msgstr "ПРОДОЛЖИТЬ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:83
 msgid "LOCK TEAMS"
-msgstr "ЗАФИКСИРОВАТЬ КОМАНДЫ"
+msgstr "ЗАКРЫТЬ КОМАНДЫ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:84
 msgid "UNLOCK TEAMS"
@@ -1571,7 +1571,7 @@ msgstr "ОТКРЫТЬ КОМАНДЫ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:86
 msgid "LOCK SPECS"
-msgstr "ЗАФИКСИРОВАТЬ ЗРИТЕЛЕЙ"
+msgstr "ОТКРЫТЬ ЗРИТЕЛЕЙ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:87
 msgid "UNLOCK SPECS"
@@ -1826,7 +1826,7 @@ msgstr "Присесть:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
-msgstr "Ничком"
+msgstr "Ничком:"
 
 #: etmain/ui/options_controls.menu:42
 msgid "Walk:"
@@ -1928,7 +1928,7 @@ msgstr "Увеличить компасс-карту:"
 
 #: etmain/ui/options_controls.menu:70
 msgid "Compass Map Zoom Out:"
-msgstr "Уменьшить компасс-карту"
+msgstr "Уменьшить компасс-карту:"
 
 #: etmain/ui/options_controls.menu:71
 msgid "Player Stats:"
@@ -1960,7 +1960,7 @@ msgstr "Перезарядить:"
 
 #: etmain/ui/options_controls.menu:82
 msgid "Binoculars Zoom:"
-msgstr "Увеличение биноклей:"
+msgstr "Увеличение бинокля:"
 
 #: etmain/ui/options_controls.menu:83
 msgid "Use (Activate):"
@@ -2008,7 +2008,7 @@ msgstr "Слот 7 - спец. 3:"
 
 #: etmain/ui/options_controls.menu:97
 msgid "Slot 8 - Binoculars:"
-msgstr "Слот 8 - бинокли:"
+msgstr "Слот 8 - бинокль:"
 
 #: etmain/ui/options_controls.menu:101
 #: etmain/ui/options_customise_game.menu:77
@@ -2017,15 +2017,15 @@ msgstr "РАЗНОЕ"
 
 #: etmain/ui/options_controls.menu:102
 msgid "Vote Yes:"
-msgstr "Голосовать 'За':"
+msgstr "Голос 'Да':"
 
 #: etmain/ui/options_controls.menu:103
 msgid "Take Screenshot:"
-msgstr "Сделать снимок экрана:"
+msgstr "Снимок экрана:"
 
 #: etmain/ui/options_controls.menu:104
 msgid "Vote No:"
-msgstr "Голосовать 'Против':"
+msgstr "Голос 'Нет':"
 
 #: etmain/ui/options_controls.menu:105
 msgid "Record Replay:"
@@ -2069,7 +2069,7 @@ msgstr "Снять выбор со всех:"
 
 #: etmain/ui/options_controls.menu:118
 msgid "Fire-Team Admin:"
-msgstr "Глава звена:"
+msgstr "Лидер звена:"
 
 #: etmain/ui/options_customise_game.menu:29 etmain/ui/options.menu:32
 msgid "GAME"
@@ -2431,7 +2431,7 @@ msgstr "ui/menudef.h"
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
-msgstr "СМОТРЕТЬ"
+msgstr "ВИД"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
@@ -4479,7 +4479,7 @@ msgstr "Вы появитесь в роли %s %s с %s и %s."
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
-msgstr "Послед. игра: %s"
+msgstr "Последняя игра: %s"
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
@@ -4493,7 +4493,7 @@ msgstr "%d карт назад"
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
-msgstr "Итого собрано голосов: %d"
+msgstr "Голосов: %d"
 
 #: src/cgame/cg_debriefing.c:2013 src/cgame/cg_debriefing.c:3202
 #: src/cgame/cg_scoreboard.c:723
@@ -4741,7 +4741,7 @@ msgstr "Нажмите %s чтобы наблюдать за следующим 
 #: src/cgame/cg_draw.c:2162
 #, c-format
 msgid "Press %s to follow previous player"
-msgstr "Нажмите %s чтобы следовать за предыдущим игроком"
+msgstr "Нажмите %s чтобы наблюдать за предыдущим игроком"
 
 #: src/cgame/cg_draw.c:2168
 #, c-format
@@ -4763,7 +4763,7 @@ msgstr "Вы ранены и ждёте медика"
 #: src/cgame/cg_draw.c:2240
 #, c-format
 msgid "Press %s to go into reinforcement queue."
-msgstr "Нажмите %s чтобы вернуться в очередь подкреплений."
+msgstr "Нажмите %s чтобы перейти в очередь подкреплений."
 
 #: src/cgame/cg_draw.c:2251
 msgid "No more reinforcements this round."
@@ -4795,7 +4795,7 @@ msgstr "Больше никаких подкреплений в этом рау�
 
 #: src/cgame/cg_draw.c:2362 src/cgame/cg_draw.c:2388
 msgid "Following"
-msgstr "Следую"
+msgstr "Наблюдение за"
 
 #: src/cgame/cg_draw.c:2429
 #, c-format
@@ -4881,7 +4881,7 @@ msgstr "умер"
 #: src/cgame/cg_event.c:614
 #, c-format
 msgid "Picked up %s"
-msgstr "Поднял %s"
+msgstr "Поднято %s"
 
 #: src/cgame/cg_fireteamoverlay.c:475
 #, c-format
@@ -4937,7 +4937,7 @@ msgstr "Точность"
 
 #: src/cgame/cg_info.c:733 src/cgame/cg_info.c:935
 msgid "Hits / Shots"
-msgstr "Попаданий / Выстрелов"
+msgstr "Удар / Стрел"
 
 #: src/cgame/cg_info.c:735 src/cgame/cg_info.c:937
 msgid "Kills"
@@ -5047,7 +5047,7 @@ msgstr "Вам награда: %s"
 #: src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
-msgstr "Заряжен у %s."
+msgstr "Заложен у %s."
 
 #: src/cgame/cg_popupmessages.c:682
 #, c-format
@@ -5102,7 +5102,7 @@ msgstr "%s^7 отключился"
 #: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
 #: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
 msgid "MISSION TIME:"
-msgstr "ВРЕМЯ ЗАДАНИЯ:"
+msgstr "ОСТАЛОСЬ ВРЕМЕНИ:"
 
 #: src/cgame/cg_scoreboard.c:184
 msgid "GAME STOPPED"
@@ -5123,7 +5123,7 @@ msgstr "ЖДЁМ ^2%i ^9%s"
 
 #: src/cgame/cg_scoreboard.c:229 src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
-msgstr "ВРЕМЯ ПОДКРЕПЛЕНИЙ:"
+msgstr "ДО ПОДКРЕПЛЕНИЯ:"
 
 #: src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
@@ -5177,7 +5177,7 @@ msgstr "Опыт"
 
 #: src/cgame/cg_scoreboard.c:869
 msgid "Ping"
-msgstr "Задержка"
+msgstr "Пинг"
 
 #: src/cgame/cg_servercmds.c:387
 msgid "^1FIGHT!\n"
