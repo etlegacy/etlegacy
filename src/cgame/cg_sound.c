@@ -287,7 +287,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			}
 			if (scriptSound)
 			{
-				CG_Printf("...'%s' loaded - total script sounds: %i\n", filename, numSoundScripts);
+				CG_Printf("...'%s' parsed - total script sounds: %i\n", filename, numSoundScripts);
 			}
 			return;
 		}
@@ -467,7 +467,7 @@ static void CG_SoundLoadSoundFiles(void)
 	}
 	else
 	{
-		int  i, numSounds = 0;
+		int  i, numSounds = 0, sfalse = 0;
 		char soundFiles[MAX_SOUND_FILES][MAX_QPATH];
 		char *text;
 		char *token;
@@ -500,19 +500,23 @@ static void CG_SoundLoadSoundFiles(void)
 			len = trap_FS_FOpenFile(filename, &f, FS_READ);
 			if (len <= 0)
 			{
-				CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: Couldn't load %s\n", filename);
+				CG_Printf(S_COLOR_YELLOW "INFO: script sound file '%s' not found\n", filename);
+				sfalse++;
+				continue;
 			}
 			if (len > sizeof(bigTextBuffer))
 			{
 				trap_FS_FCloseFile(f);
-				CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
+				CG_Printf(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
+				sfalse++;
+				continue;
 			}
 			memset(bigTextBuffer, 0, sizeof(bigTextBuffer));
 			trap_FS_Read(bigTextBuffer, len, f);
 			trap_FS_FCloseFile(f);
 			CG_SoundParseSounds(filename, bigTextBuffer);
 		}
-		CG_Printf("...%i sound scripts files loaded. Total sounds: %i\n", numSounds, numSoundScripts);
+		CG_Printf("...%i of %i sound scripts files loaded. Total sounds: %i\n", numSounds - sfalse, numSounds, numSoundScripts);
 	}
 }
 
