@@ -16,22 +16,22 @@ DEFINES
 
 // weapons
 set weapons knives               = knife AND Ka-Bar
-set weapons Bipods               = Mobile MG42 Bipod AND Mobile Browning Bipod
-set weapons pistols              = Luger AND Colt AND sp5 pistol AND Silenced Colt
+set weapons Bipods               = Mobile MG 42 Bipod AND Mobile Browning Bipod
+set weapons pistols              = Luger AND Colt AND Silenced Luger AND Silenced Colt
 set weapons akimbo_pistols       = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
-set weapons machineguns          = MP40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND bazooka AND Mobile MG42 AND Mobile Browning
-set weapons rifles               = K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
+set weapons machineguns          = MP 40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND bazooka AND Mobile MG 42 AND Mobile Browning
+set weapons rifles               = K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope
 
 // broke off dynamite, since we never want to throw it overhand
 set weapons throwables           = pineapple AND grenade AND Smoke Bomb
 set weapons throwables_underhand = dynamite weapon
 
-set weapons one_handed_weapons   = Luger AND Colt AND sp5 pistol AND Silenced Colt
-set weapons two_handed_weapons   = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mobile Browning
+set weapons one_handed_weapons   = Luger AND Colt AND Silenced Luger AND Silenced Colt
+set weapons two_handed_weapons   = MP 40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped M1 Garand AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope AND Mobile Browning
 
-set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
-set weapons all_one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
-set weapons all_two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP 40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all_one_handed_weapons = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
+set weapons all_two_handed_weapons = MP 40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
 
 // movetypes
 set movetype moving = walk AND walkcr AND walkcrbk AND walkbk AND run AND runbk AND straferight AND strafeleft
@@ -73,7 +73,7 @@ set movetype backstep = walkbk AND runbk AND walkcrbk
 //		position: behind, infront, right, left
 //		enemy_weapon: <see weapon pickup names>
 //		underwater: <no values>
-//		mounted: mg42
+//		mounted: MG42
 //		movetype: <see movement types>
 //		underhand: <no values>
 //		leaning: right, left
@@ -109,11 +109,11 @@ STATE COMBAT
 		{
 			legs stand_medpack torso satchel_remote_stand
 		}
-		mounted mg42, firing
+		mounted MG42, firing
 		{
 			both firing_mg42
 		}
-		mounted mg42
+		mounted MG42
 		{
 			both stand_mg42
 		}
@@ -179,15 +179,15 @@ STATE COMBAT
 		{
 			legs stand_pistolB torso stand_akimbo
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both stand_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both stand_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both stand_srifle
 		}
@@ -195,7 +195,7 @@ STATE COMBAT
 		{
 			legs stand_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs stand_srifle torso stand_grenlauncher
 		}
@@ -203,7 +203,7 @@ STATE COMBAT
 		{
 			both stand_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both stand_srifle
 		}
@@ -215,7 +215,7 @@ STATE COMBAT
 		{
 			both stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			both stand_rifle
 		}
@@ -231,13 +231,13 @@ STATE COMBAT
 		{
 			both stand_panzer
 		}
-		weapons Mobile MG42 AND Mobile Browning, firing
+		weapons Mobile MG 42 AND Mobile Browning, firing
 		{
-			legs firing_machinegun torso firing_mobilemg42
+			legs firing_machinegun torso firing_mobileMG42
 		}
-		weapons Mobile MG42 AND Mobile Browning
+		weapons Mobile MG 42 AND Mobile Browning
 		{
-			legs stand_machinegun torso stand_mobilemg42
+			legs stand_machinegun torso stand_mobileMG42
 		}
 		weapons machineguns, firing
 		{
@@ -310,15 +310,15 @@ STATE COMBAT
 		{
 			legs alert_crchidle_1h torso stand_pistolB
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_crchidle_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_crchidle_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_crchidle_srifle
 		}
@@ -326,7 +326,7 @@ STATE COMBAT
 		{
 			legs alert_crchidle_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_crchidle_srifle torso stand_grenlauncher
 		}
@@ -334,7 +334,7 @@ STATE COMBAT
 		{
 			both alert_crchidle_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_crchidle_srifle
 		}
@@ -346,7 +346,7 @@ STATE COMBAT
 		{
 			legs alert_crchidle_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_crchidle_2h torso stand_rifle
 		}
@@ -437,15 +437,15 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_pistolB
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			legs relaxed_walk_1h_1 torso stand_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			legs relaxed_walk_1h_1 torso stand_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			legs relaxed_walk_1h_1 torso stand_srifle
 		}
@@ -453,7 +453,7 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs relaxed_walk_1h_1 torso stand_grenlauncher
 		}
@@ -461,7 +461,7 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			legs relaxed_walk_1h_1 torso stand_srifle
 		}
@@ -473,7 +473,7 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs relaxed_walk_1h_1 torso stand_rifle
 		}
@@ -560,15 +560,15 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_bk_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_bk_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_bk_srifle
 		}
@@ -576,7 +576,7 @@ STATE COMBAT
 		{
 			legs alert_bk_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_bk_srifle torso stand_grenlauncher
 		}
@@ -584,7 +584,7 @@ STATE COMBAT
 		{
 			both alert_bk_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_bk_srifle
 		}
@@ -596,7 +596,7 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
@@ -683,15 +683,15 @@ STATE COMBAT
 		{
 			both alert_crch_1h
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_crch_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_crch_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_crch_srifle
 		}
@@ -699,7 +699,7 @@ STATE COMBAT
 		{
 			legs alert_crch_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_crch_srifle torso stand_grenlauncher
 		}
@@ -707,7 +707,7 @@ STATE COMBAT
 		{
 			both alert_crch_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_crch_srifle
 		}
@@ -719,7 +719,7 @@ STATE COMBAT
 		{
 			legs alert_crch_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_crch_2h torso stand_rifle
 		}
@@ -807,15 +807,15 @@ STATE COMBAT
 		{
 			both alert_crbk_1h
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_crbk_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_crbk_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_crbk_srifle
 		}
@@ -823,7 +823,7 @@ STATE COMBAT
 		{
 			legs alert_crbk_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_crbk_srifle torso stand_grenlauncher
 		}
@@ -831,7 +831,7 @@ STATE COMBAT
 		{
 			both alert_crbk_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_crbk_srifle
 		}
@@ -843,7 +843,7 @@ STATE COMBAT
 		{
 			legs alert_crbk_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_crbk_2h torso stand_rifle
 		}
@@ -930,15 +930,15 @@ STATE COMBAT
 		{
 			legs alert_run_1h torso stand_pistolb
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_run_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_run_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_run_srifle
 		}
@@ -946,7 +946,7 @@ STATE COMBAT
 		{
 			legs alert_run_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_run_srifle torso stand_grenlauncher
 		}
@@ -954,7 +954,7 @@ STATE COMBAT
 		{
 			both alert_run_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_run_srifle
 		}
@@ -966,7 +966,7 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1057,15 +1057,15 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_bk_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_bk_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_bk_srifle
 		}
@@ -1073,7 +1073,7 @@ STATE COMBAT
 		{
 			legs alert_bk_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_bk_srifle torso stand_grenlauncher
 		}
@@ -1081,7 +1081,7 @@ STATE COMBAT
 		{
 			both alert_bk_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_bk_srifle
 		}
@@ -1093,7 +1093,7 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
@@ -1180,15 +1180,15 @@ STATE COMBAT
 		{
 			both alert_run_no
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_run_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_run_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_run_srifle
 		}
@@ -1196,7 +1196,7 @@ STATE COMBAT
 		{
 			legs alert_run_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_run_srifle torso stand_grenlauncher
 		}
@@ -1204,7 +1204,7 @@ STATE COMBAT
 		{
 			both alert_run_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_run_srifle
 		}
@@ -1216,7 +1216,7 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1303,15 +1303,15 @@ STATE COMBAT
 		{
 			both alert_run_no
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			both alert_run_srifle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			both alert_run_srifle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			both alert_run_srifle
 		}
@@ -1319,7 +1319,7 @@ STATE COMBAT
 		{
 			legs alert_run_srifle torso stand_grenlauncher
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs alert_run_srifle torso stand_grenlauncher
 		}
@@ -1327,7 +1327,7 @@ STATE COMBAT
 		{
 			both alert_run_srifle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			both alert_run_srifle
 		}
@@ -1339,7 +1339,7 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_rifle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1438,11 +1438,11 @@ STATE COMBAT
 		{
 			legs prone_legs torso prone_poke_idle
 		}
-		weapons Mobile MG42 Bipod AND Mobile Browning Bipod
+		weapons Mobile MG 42 Bipod AND Mobile Browning Bipod
 		{
 			legs prone_legs torso prone_mg42_idle
 		}
-		weapons Mobile MG42 AND Mobile Browning
+		weapons Mobile MG 42 AND Mobile Browning
 		{
 			legs prone_legs torso prone_mg42_idle
 		}
@@ -1506,15 +1506,15 @@ STATE COMBAT
 		{
 			legs prone_legs torso e_prone_pistols_idle	// FIXME
 		}
-		weapons Garand
+		weapons Scoped M1 Garand
 		{
 			legs prone_legs torso prone_rifle_idle
 		}
-		weapons FG42 Paratroop Rifle
+		weapons FG 42 Rifle
 		{
 			legs prone_legs torso prone_rifle_idle
 		}
-		weapons K43
+		weapons K43 Rifle
 		{
 			legs prone_legs torso prone_rifle_idle
 		}
@@ -1522,7 +1522,7 @@ STATE COMBAT
 		{
 			legs prone_legs torso e_prone_rifle_altidle
 		}
-		weapons gpg40a
+		weapons M7
 		{
 			legs prone_legs torso e_prone_rifle_altidle
 		}
@@ -1530,7 +1530,7 @@ STATE COMBAT
 		{
 			legs prone_legs torso prone_rifle_idle
 		}
-		weapons K43 Rifle
+		weapons Scoped K43 Rifle
 		{
 			legs prone_legs torso prone_rifle_idle
 		}
@@ -1542,7 +1542,7 @@ STATE COMBAT
 		{
 			legs prone_legs torso e_prone_rifle_snipeidle
 		}
-		weapons FG42 Scope
+		weapons FG 42 Rifle Scope
 		{
 			legs prone_legs torso e_prone_rifle_snipeidle
 		}
@@ -1574,13 +1574,13 @@ STATE COMBAT
 	{
 		// - fixed movetype condition, so reenabled crouch
 		// - nixing 'weapons machineguns' because we don't
-		// want to just slide with any weapon; adding mounted mg42
+		// want to just slide with any weapon; adding mounted MG42
 		// so that we don't dance around in the tank
-		movetype idlecr, NOT mounted mg42
+		movetype idlecr, NOT mounted MG42
 		{
 			legs turn_crch_R
 		}
-		movetype idle, NOT mounted mg42
+		movetype idle, NOT mounted MG42
 		{
 			legs turn_machinegun_R
 		}
@@ -1591,11 +1591,11 @@ STATE COMBAT
 		// - fixed movetype condition, so reenabled crouch
 		// - nixing 'weapons machineguns' because we don't
 		// want to just slide with any weapon
-		movetype idlecr, NOT mounted mg42
+		movetype idlecr, NOT mounted MG42
 		{
 			legs turn_crch_L
 		}
-		movetype idle, NOT mounted mg42
+		movetype idle, NOT mounted MG42
 		{
 			legs turn_machinegun_R
 		}
@@ -1659,8 +1659,8 @@ fireweapon
 	{
 		torso satchel_remote_fire
 	}
-// MG42
-	mounted mg42
+// MG 42
+	mounted MG42
 	{
 		both firing_mg42
 	}
@@ -1838,42 +1838,42 @@ fireweapon
 	{
 		torso firing_akimbo
 	}
-// MOBILE MG42
-	weapons Mobile MG42 AND Mobile Browning
+// MOBILE MG 42
+	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso firing_mobilemg42
+		torso firing_mobileMG42
 	}
-	weapons Mobile MG42 AND Mobile Browning, movetype straferight
-	{
-		torso alert_run_2h duration 50
-	}
-	weapons Mobile MG42 AND Mobile Browning, movetype strafeleft
+	weapons Mobile MG 42 AND Mobile Browning, movetype straferight
 	{
 		torso alert_run_2h duration 50
 	}
-	weapons Mobile MG42 AND Mobile Browning, movetype walk AND turnleft AND turnright AND idlecr
+	weapons Mobile MG 42 AND Mobile Browning, movetype strafeleft
 	{
-		torso firing_mobilemg42 duration 50
+		torso alert_run_2h duration 50
 	}
-	weapons Mobile MG42 AND Mobile Browning, movetype walkcrbk
+	weapons Mobile MG 42 AND Mobile Browning, movetype walk AND turnleft AND turnright AND idlecr
+	{
+		torso firing_mobileMG42 duration 50
+	}
+	weapons Mobile MG 42 AND Mobile Browning, movetype walkcrbk
 	{
 		torso firing_crbk_2h duration 50
 	}
-	weapons Mobile MG42 AND Mobile Browning, movetype crouching
+	weapons Mobile MG 42 AND Mobile Browning, movetype crouching
 	{
 		torso firing_crch_2h duration 50
 	}
-	weapons Mobile MG42 AND Mobile Browning, movetype run AND swim
+	weapons Mobile MG 42 AND Mobile Browning, movetype run AND swim
 	{
 		torso alert_run_2h duration 50
 	}
-	weapons Mobile MG42 AND Mobile Browning, movetype backstep AND swimbk
+	weapons Mobile MG 42 AND Mobile Browning, movetype backstep AND swimbk
 	{
 		torso alert_bk_2h duration 50
 	}
-	weapons Mobile MG42 AND Mobile Browning
+	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso firing_mobilemg42 duration 50
+		torso firing_mobileMG42 duration 50
 	}
 // MACHINEGUNS
 	weapons machineguns, movetype straferight
@@ -1909,63 +1909,63 @@ fireweapon
 		torso firing_machinegun duration 50
 	}
 // RIFLES
-	weapons Garand, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons Scoped M1 Garand, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_srifle
 	}
-	weapons Garand, movetype crouching
+	weapons Scoped M1 Garand, movetype crouching
 	{
 		torso firing_crch_srifle
 	}
-	weapons Garand, movetype run AND swim
+	weapons Scoped M1 Garand, movetype run AND swim
 	{
 		torso firing_run_srifle
 	}
-	weapons Garand, movetype backstep AND swimbk
+	weapons Scoped M1 Garand, movetype backstep AND swimbk
 	{
 		torso firing_bk_srifle
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		torso firing_srifle
 	}
-	weapons FG42 Paratroop Rifle, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons FG 42 Rifle, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_srifle
 	}
-	weapons FG42 Paratroop Rifle, movetype crouching
+	weapons FG 42 Rifle, movetype crouching
 	{
 		torso firing_crch_srifle
 	}
-	weapons FG42 Paratroop Rifle, movetype run AND swim
+	weapons FG 42 Rifle, movetype run AND swim
 	{
 		torso firing_run_srifle
 	}
-	weapons FG42 Paratroop Rifle, movetype backstep AND swimbk
+	weapons FG 42 Rifle, movetype backstep AND swimbk
 	{
 		torso firing_bk_srifle
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		torso firing_srifle
 	}
-	weapons K43, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons K43 Rifle, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_srifle
 	}
-	weapons K43, movetype crouching
+	weapons K43 Rifle, movetype crouching
 	{
 		torso firing_crch_srifle
 	}
-	weapons K43, movetype run AND swim
+	weapons K43 Rifle, movetype run AND swim
 	{
 		torso firing_run_srifle
 	}
-	weapons K43, movetype backstep AND swimbk
+	weapons K43 Rifle, movetype backstep AND swimbk
 	{
 		torso firing_bk_srifle
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso firing_srifle
 	}
@@ -1989,23 +1989,23 @@ fireweapon
 	{
 		torso firing_grenlauncher
 	}
-	weapons gpg40a, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons M7, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_grenlauncher
 	}
-	weapons gpg40a, movetype crouching
+	weapons M7, movetype crouching
 	{
 		torso firing_grenlauncher
 	}
-	weapons gpg40a, movetype run AND swim
+	weapons M7, movetype run AND swim
 	{
 		torso firing_grenlauncher
 	}
-	weapons gpg40a, movetype backstep AND swimbk
+	weapons M7, movetype backstep AND swimbk
 	{
 		torso firing_grenlauncher
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso firing_grenlauncher
 	}
@@ -2029,43 +2029,43 @@ fireweapon
 	{
 		torso firing_srifle
 	}
-	weapons FG42 Scope, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons FG 42 Rifle Scope, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_rifle
 	}
-	weapons FG42 Scope, movetype crouching
+	weapons FG 42 Rifle Scope, movetype crouching
 	{
 		torso firing_crch_2h
 	}
-	weapons FG42 Scope, movetype run AND swim
+	weapons FG 42 Rifle Scope, movetype run AND swim
 	{
 		torso alert_run_2h
 	}
-	weapons FG42 Scope, movetype backstep AND swimbk
+	weapons FG 42 Rifle Scope, movetype backstep AND swimbk
 	{
 		torso firing_bk_2h
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		torso firing_rifle
 	}
-	weapons K43 Rifle, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons Scoped K43 Rifle, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_srifle
 	}
-	weapons K43 Rifle, movetype crouching
+	weapons Scoped K43 Rifle, movetype crouching
 	{
 		torso firing_crch_srifle
 	}
-	weapons K43 Rifle, movetype run AND swim
+	weapons Scoped K43 Rifle, movetype run AND swim
 	{
 		torso firing_run_srifle
 	}
-	weapons K43 Rifle, movetype backstep AND swimbk
+	weapons Scoped K43 Rifle, movetype backstep AND swimbk
 	{
 		torso firing_bk_srifle
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		torso firing_srifle
 	}
@@ -2218,11 +2218,11 @@ fireweaponprone
 	{
 		torso e_prone_pistols_fire
 	}
-	weapons Mobile MG42 AND Mobile Browning
+	weapons Mobile MG 42 AND Mobile Browning
 	{
 		torso prone_mg42_fire
 	}
-	weapons Mobile MG42 Bipod  AND Mobile Browning Bipod
+	weapons Mobile MG 42 Bipod  AND Mobile Browning Bipod
 	{
 		torso prone_mg42_fire
 	}
@@ -2230,15 +2230,15 @@ fireweaponprone
 	{
 		torso prone_mg_fire
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		torso prone_rifle_fire
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		torso prone_rifle_fire
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso prone_rifle_fire
 	}
@@ -2246,7 +2246,7 @@ fireweaponprone
 	{
 		torso e_prone_rifle_fire
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso e_prone_rifle_fire
 	}
@@ -2254,7 +2254,7 @@ fireweaponprone
 	{
 		torso prone_rifle_fire
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		torso prone_rifle_fire
 	}
@@ -2266,7 +2266,7 @@ fireweaponprone
 	{
 		torso e_prone_rifle_snipefire
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		torso e_prone_rifle_snipefire
 	}
@@ -2350,7 +2350,7 @@ raiseweaponprone
 	{
 		torso e_prone_pistols_switch
 	}
-	weapons Mobile MG42 AND Mobile Browning
+	weapons Mobile MG 42 AND Mobile Browning
 	{
 		torso prone_mg42_switch
 	}
@@ -2358,15 +2358,15 @@ raiseweaponprone
 	{
 		torso prone_mg_switch
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		torso prone_rifle_switch
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		torso prone_rifle_switch
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso prone_rifle_switch
 	}
@@ -2374,7 +2374,7 @@ raiseweaponprone
 	{
 		torso e_prone_rifle_altfire
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso e_prone_rifle_altfire
 	}
@@ -2382,7 +2382,7 @@ raiseweaponprone
 	{
 		torso prone_rifle_switch
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		torso prone_rifle_switch
 	}
@@ -2394,7 +2394,7 @@ raiseweaponprone
 	{
 		torso e_prone_rifle_snipe
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		torso e_prone_rifle_snipe
 	}
@@ -2442,11 +2442,11 @@ reloadprone
 	{
 		torso e_prone_pistols_reload
 	}
-	weapons Mobile MG42 AND Mobile Browning
+	weapons Mobile MG 42 AND Mobile Browning
 	{
 		torso prone_mg42_reload
 	}
-	weapons Mobile MG42 Bipod  AND Mobile Browning Bipod
+	weapons Mobile MG 42 Bipod  AND Mobile Browning Bipod
 	{
 		torso prone_mg42_reload
 	}
@@ -2454,15 +2454,15 @@ reloadprone
 	{
 		torso prone_mg_reload
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		torso prone_rifle_reload
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		torso prone_rifle_reload
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso prone_rifle_reload
 	}
@@ -2470,7 +2470,7 @@ reloadprone
 	{
 		torso e_prone_rifle_attach
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso e_prone_rifle_attach
 	}
@@ -2478,7 +2478,7 @@ reloadprone
 	{
 		torso prone_rifle_reload
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		torso prone_rifle_reload
 	}
@@ -2490,7 +2490,7 @@ reloadprone
 	{
 		torso prone_rifle_reload
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		torso prone_rifle_reload
 	}
@@ -2558,23 +2558,23 @@ raiseweapon
 	{
 		torso raise_akimbo
 	}
-	weapons Mobile MG42 AND Mobile Browning
+	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso raise_mobilemg42
+		torso raise_mobileMG42
 	}
 	weapons machineguns
 	{
 		torso raise_machinegun
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		torso raise_machinegun
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		torso raise_machinegun
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso raise_machinegun
 	}
@@ -2582,7 +2582,7 @@ raiseweapon
 	{
 		torso raise_grenlauncher
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso raise_grenlauncher
 	}
@@ -2590,7 +2590,7 @@ raiseweapon
 	{
 		torso raise_machinegun
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		torso raise_machinegun
 	}
@@ -2606,7 +2606,7 @@ raiseweapon
 	{
 		torso raise_grenade
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		torso raise_sniper
 	}
@@ -2674,9 +2674,9 @@ reload
 	{
 		torso reload_akimbo
 	}
-	weapons Mobile MG42 AND Mobile Browning
+	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso reload_mobilemg42
+		torso reload_mobileMG42
 	}
 	weapons machineguns, movetype idlecr
 	{
@@ -2686,15 +2686,15 @@ reload
 	{
 		torso reload_machinegun
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		torso reload_machinegun
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		torso reload_machinegun
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso reload_machinegun
 	}
@@ -2702,7 +2702,7 @@ reload
 	{
 		torso reload_grenlauncher
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso reload_grenlauncher
 	}
@@ -2710,7 +2710,7 @@ reload
 	{
 		torso reload_machinegun
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		torso reload_machinegun
 	}
@@ -2722,7 +2722,7 @@ reload
 	{
 		torso reload_rifle
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		torso reload_rifle
 	}
@@ -2754,27 +2754,27 @@ jump
 //	{
 //		legs jump_nostep_1h torso stand_rifle
 //	}
-	weapons Garand, movetype run
+	weapons Scoped M1 Garand, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		legs jump_nostep_1h
 	}
-	weapons FG42 Paratroop Rifle, movetype run
+	weapons FG 42 Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		legs jump_nostep_1h
 	}
-	weapons K43, movetype run
+	weapons K43 Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		legs jump_nostep_1h
 	}
@@ -2786,11 +2786,11 @@ jump
 	{
 		legs jump_nostep_1h
 	}
-	weapons gpg40a, movetype run
+	weapons M7, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		legs jump_nostep_1h
 	}
@@ -2802,11 +2802,11 @@ jump
 	{
 		legs jump_nostep_1h
 	}
-	weapons K43 Rifle, movetype run
+	weapons Scoped K43 Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		legs jump_nostep_1h
 	}
@@ -2826,11 +2826,11 @@ jump
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
-	weapons FG42 Scope, movetype run
+	weapons FG 42 Rifle Scope, movetype run
 	{
 		legs jump_1step_2h torso stand_rifle
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
@@ -2882,27 +2882,27 @@ jumpbk
 //	{
 //		legs jump_nostep_1h torso stand_rifle
 //	}
-	weapons Garand, movetype run
+	weapons Scoped M1 Garand, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons Garand
+	weapons Scoped M1 Garand
 	{
 		legs jump_nostep_1h
 	}
-	weapons FG42 Paratroop Rifle, movetype run
+	weapons FG 42 Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons FG42 Paratroop Rifle
+	weapons FG 42 Rifle
 	{
 		legs jump_nostep_1h
 	}
-	weapons K43, movetype run
+	weapons K43 Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons K43
+	weapons K43 Rifle
 	{
 		legs jump_nostep_1h
 	}
@@ -2914,11 +2914,11 @@ jumpbk
 	{
 		legs jump_nostep_1h
 	}
-	weapons gpg40a, movetype run
+	weapons M7, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		legs jump_nostep_1h
 	}
@@ -2930,11 +2930,11 @@ jumpbk
 	{
 		legs jump_nostep_1h
 	}
-	weapons K43 Rifle, movetype run
+	weapons Scoped K43 Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons K43 Rifle
+	weapons Scoped K43 Rifle
 	{
 		legs jump_nostep_1h
 	}
@@ -2954,11 +2954,11 @@ jumpbk
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
-	weapons FG42 Scope, movetype run
+	weapons FG 42 Rifle Scope, movetype run
 	{
 		legs jump_1step_2h torso stand_rifle
 	}
-	weapons FG42 Scope
+	weapons FG 42 Rifle Scope
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
@@ -3127,7 +3127,7 @@ pain
 
 do_alt_weapon_mode
 {
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso detach_grenlauncher
 	}
@@ -3139,11 +3139,11 @@ do_alt_weapon_mode
 	{
 		torso reload_grenlauncher
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso reload_grenlauncher
 	}
-	weapons sp5 pistol
+	weapons Silenced Luger
 	{
 		torso attach_silencer
 	}
@@ -3155,7 +3155,7 @@ do_alt_weapon_mode
 
 undo_alt_weapon_mode
 {
-	weapons sp5 pistol
+	weapons Silenced Luger
 	{
 		torso detach_silencer
 	}
@@ -3167,7 +3167,7 @@ undo_alt_weapon_mode
 
 do_alt_weapon_mode_prone
 {
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso e_prone_rifle_attach
 	}
@@ -3179,11 +3179,11 @@ do_alt_weapon_mode_prone
 	{
 		torso e_prone_rifle_attach
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso e_prone_rifle_attach
 	}
-	weapons sp5 pistol
+	weapons Silenced Luger
 	{
 		torso e_prone_pistol_attach
 	}
@@ -3195,7 +3195,7 @@ do_alt_weapon_mode_prone
 
 undo_alt_weapon_mode_prone
 {
-	weapons K43
+	weapons K43 Rifle
 	{
 		torso e_prone_rifle_detach
 	}
@@ -3207,11 +3207,11 @@ undo_alt_weapon_mode_prone
 	{
 		torso e_prone_rifle_detach
 	}
-	weapons gpg40a
+	weapons M7
 	{
 		torso e_prone_rifle_detach
 	}
-	weapons sp5 pistol
+	weapons Silenced Luger
 	{
 		torso e_prone_pistol_detach
 	}
