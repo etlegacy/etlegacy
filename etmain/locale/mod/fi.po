@@ -4,13 +4,14 @@
 # 
 # Translators:
 # Jere Sjöroos <shogaiam@gmail.com>, 2015
+# Sauli Vepsä <zAulivee@outlook.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-12 14:09+0000\n"
-"Last-Translator: Jere Sjöroos <shogaiam@gmail.com>\n"
+"PO-Revision-Date: 2015-01-14 21:26+0000\n"
+"Last-Translator: Sauli Vepsä <zAulivee@outlook.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/etlegacy/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,31 +21,31 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr ""
+msgstr "ACTIVISIONIN TUOTTAMA"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
-msgstr ""
+msgstr "Tuottaja"
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
-msgstr ""
+msgstr "Apulaistuottaja"
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
-msgstr ""
+msgstr "Asentaja"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
-msgstr ""
+msgstr "Tuotantokoordinaattori"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr ""
+msgstr "Tuotantotestaaja"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
-msgstr ""
+msgstr "Ylemmän tason Vastaava Tuottaja"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
@@ -64,35 +65,35 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr ""
+msgstr "Testaajat:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr ""
+msgstr "Verkko"
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
-msgstr ""
+msgstr "Yhteensopivuus"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
-msgstr ""
+msgstr "Laadunvarmistuspäällikkö"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Johtaja, Koodin Julkaisu Ryhmä"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Ylemmän tason Johto, Koodin Julkaisu Ryhmä"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "Johto, Koodin Julkaisu Ryhmä"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "Johtaja, Asiakastuki"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -129,7 +130,7 @@ msgstr ""
 #: etmain/ui/profile.menu:71 etmain/ui/profile_rename.menu:67
 #: etmain/ui/viewreplay.menu:58
 msgid "BACK"
-msgstr ""
+msgstr "TAKAISIN"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
@@ -137,65 +138,65 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "LISÄKEHITYS"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr ""
+msgstr "ORANGE SMOOTHIE PRODUCTIONIN OSP"
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
-msgstr ""
+msgstr "Ohjelmointi"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr ""
+msgstr "EVEN BALANCE, INC. PUNKBUSTER"
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
-msgstr ""
+msgstr "Presidentti"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "Johtava Projektipäällikkö"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "ÄÄNITAITEILIJAT"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr ""
+msgstr "Liittoutuneiden / Akselivaltojen Sotilaiden Ääni"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr ""
+msgstr "Akselivaltojen Komentajan Ääni"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
-msgstr ""
+msgstr "Liittoutuneiden Komentajan Ääni"
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
-msgstr ""
+msgstr "ERITYISKIITOKSET"
 
 #: etmain/ui/credits_additional.menu:226
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
+msgstr "Return to Castle Wolfensteinin kehitti Gray Matter Studios & Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr ""
+msgstr "Haluaisimme kiittää kumpaakin kehittäjää heidän avusta ja tuesta"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr ""
+msgstr "Wolfenstein: Enemy Territory:n kehityksen aikana."
 
 #: etmain/ui/credits_additional.menu:229
 msgid "Original Soundtrack by Bill Brown."
-msgstr ""
+msgstr "Alkuperäinen Ääniraita Bill Brown:lta."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET:LEGACY TEAM"
@@ -203,39 +204,39 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
-msgstr ""
+msgstr "^1OHJELMOINTI"
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
-msgstr ""
+msgstr "Projektin perustaja. koodaus & johto"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr ""
+msgstr "Koodaus, modin kehitys & paha poika"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr ""
+msgstr "Windowsin pääkoodaaja & renderöijä"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr ""
+msgstr "Verkkosivusto, koodaus & ohjelmakoodit"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr ""
+msgstr "Koodaus, modin kehitys"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr ""
+msgstr "^1PORTIT"
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
-msgstr ""
+msgstr "AROS ja MorphOS"
 
 #: etmain/ui/credits_etlegacy.menu:135
 msgid "^1GREETINGS"
-msgstr ""
+msgstr "^1TERVEISET"
 
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
@@ -246,16 +247,16 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
-msgstr ""
+msgstr "^1AVUSTAJAT"
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
-msgstr ""
+msgstr "Katso HALL OF FAME alta"
 
 #: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
 #: etmain/ui/profile_create_initial.menu:127
 msgid "^1WEBSITE"
-msgstr ""
+msgstr "^1VERKKOSIVUSTO"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
@@ -263,23 +264,23 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
-msgstr ""
+msgstr "HALL OF FAME"
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
-msgstr ""
+msgstr "ET 2.60 PÄIVITYS"
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr ""
+msgstr "ET PRO KEHITYSTIIMI"
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
-msgstr ""
+msgstr "MAC OS X PORTTI"
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
-msgstr ""
+msgstr "Johtava Ohjelmoija"
 
 #: etmain/ui/credits_et260.menu:128
 msgid ""
@@ -297,7 +298,7 @@ msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
-msgstr ""
+msgstr "^1KÄÄNNÖKSET"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
@@ -305,11 +306,11 @@ msgstr ""
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
-msgstr ""
+msgstr "Vastaava Tuottaja"
 
 #: etmain/ui/credits_idsoftware.menu:84
 msgid "Additional Programming"
-msgstr ""
+msgstr "Lisäohjelmointi"
 
 #: etmain/ui/credits_idsoftware.menu:87
 msgid ""
@@ -324,7 +325,7 @@ msgstr ""
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
-msgstr ""
+msgstr "^1ALKUPERÄISET KEHITTÄJÄT"
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
@@ -338,19 +339,19 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
-msgstr ""
+msgstr "SPLASH DAMAGEN KEHITTÄMÄ"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
-msgstr ""
+msgstr "Pelisuunnittelija / Toimitusjohtaja"
 
 #: etmain/ui/credits_splashdamage.menu:84
 msgid "Business Director"
-msgstr ""
+msgstr "Liiketoimintajohtaja"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
-msgstr ""
+msgstr "TAIDE"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
@@ -358,7 +359,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
-msgstr ""
+msgstr "Taiteilija / Animoija"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
@@ -366,49 +367,49 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
-msgstr ""
+msgstr "OHJELMOINTI"
 
 #: etmain/ui/credits_splashdamage.menu:130
 msgid "Programmer"
-msgstr ""
+msgstr "Ohjelmoija"
 
 #: etmain/ui/credits_splashdamage.menu:132
 msgid "Programmer / Artist"
-msgstr ""
+msgstr "Ohjelmoija / Taiteilija"
 
 #: etmain/ui/credits_splashdamage.menu:139
 msgid "DESIGN"
-msgstr ""
+msgstr "SUUNNITTELU"
 
 #: etmain/ui/credits_splashdamage.menu:152
 msgid "Designer / Audio Engineer"
-msgstr ""
+msgstr "Suunnittelija / Audioinsinööri"
 
 #: etmain/ui/credits_splashdamage.menu:154
 msgid "Designer / Writer"
-msgstr ""
+msgstr "Suunnittelija / Kirjoittaja"
 
 #: etmain/ui/credits_splashdamage.menu:161
 msgid "LEVEL DESIGN"
-msgstr ""
+msgstr "TASOSUUNNITTELU"
 
 #: etmain/ui/credits_splashdamage.menu:174
 msgid "Lead Level Designer"
-msgstr ""
+msgstr "Johtava Tasosuunnittelija"
 
 #: etmain/ui/credits_splashdamage.menu:176
 msgid "Senior Level Designer"
-msgstr ""
+msgstr "Ylemmän tason Tasosuunnittelija"
 
 #: etmain/ui/credits_splashdamage.menu:178
 #: etmain/ui/credits_splashdamage.menu:180
 #: etmain/ui/credits_splashdamage.menu:184
 msgid "Level Designer"
-msgstr ""
+msgstr "Tasosuunnittelija"
 
 #: etmain/ui/credits_splashdamage.menu:182
 msgid "Level Designer / Artist"
-msgstr ""
+msgstr "Tasosuunnittelija / Taiteilija"
 
 #: etmain/ui/credits_splashdamage.menu:186
 msgid "Additional Level Design"
@@ -817,7 +818,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
-msgstr ""
+msgstr "SALLI ÄÄNESTYKSET"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
@@ -1968,191 +1969,191 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT WEAPONS"
-msgstr ""
+msgstr "VALITSE ASEET"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
-msgstr ""
+msgstr "Seuraava ase:"
 
 #: etmain/ui/options_controls.menu:89
 msgid "Previous Weapon:"
-msgstr ""
+msgstr "Edellinen ase:"
 
 #: etmain/ui/options_controls.menu:90
 msgid "Slot 1 - Melee:"
-msgstr ""
+msgstr "Paikka 1 - Lähitaistelu:"
 
 #: etmain/ui/options_controls.menu:91
 msgid "Slot 2 - One Handed:"
-msgstr ""
+msgstr "Paikka 2 - Yhden käden:"
 
 #: etmain/ui/options_controls.menu:92
 msgid "Slot 3 - Two Handed:"
-msgstr ""
+msgstr "Paikka 3 - Kahden käden:"
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
-msgstr ""
+msgstr "Paikka 4 - Kranaatti:"
 
 #: etmain/ui/options_controls.menu:94
 msgid "Slot 5 - Special 1:"
-msgstr ""
+msgstr "Paikka 5 - Erikoinen 1:"
 
 #: etmain/ui/options_controls.menu:95
 msgid "Slot 6 - Special 2:"
-msgstr ""
+msgstr "Paikka 6 - Erikoinen 2:"
 
 #: etmain/ui/options_controls.menu:96
 msgid "Slot 7 - Special 3:"
-msgstr ""
+msgstr "Paikka 7 - Erikoinen 3:"
 
 #: etmain/ui/options_controls.menu:97
 msgid "Slot 8 - Binoculars:"
-msgstr ""
+msgstr "Paikka 8 - Kiikarit:"
 
 #: etmain/ui/options_controls.menu:101
 #: etmain/ui/options_customise_game.menu:77
 msgid "MISCELLANEOUS"
-msgstr ""
+msgstr "SEKALAISET"
 
 #: etmain/ui/options_controls.menu:102
 msgid "Vote Yes:"
-msgstr ""
+msgstr "Äänestä Kyllä:"
 
 #: etmain/ui/options_controls.menu:103
 msgid "Take Screenshot:"
-msgstr ""
+msgstr "Ota kuvankaappaus:"
 
 #: etmain/ui/options_controls.menu:104
 msgid "Vote No:"
-msgstr ""
+msgstr "Äänestä Ei:"
 
 #: etmain/ui/options_controls.menu:105
 msgid "Record Replay:"
-msgstr ""
+msgstr "Tallenna Uusinta:"
 
 #: etmain/ui/options_controls.menu:109
 msgid "FIRE-TEAMS"
-msgstr ""
+msgstr "PARTIOT"
 
 #: etmain/ui/options_controls.menu:110
 msgid "Select All Members:"
-msgstr ""
+msgstr "Valitse Kaikki Jäsenet:"
 
 #: etmain/ui/options_controls.menu:111
 msgid "Select Member #1:"
-msgstr ""
+msgstr "Valitse Jäsen #1:"
 
 #: etmain/ui/options_controls.menu:112
 msgid "Select Member #2:"
-msgstr ""
+msgstr "Valitse Jäsen #2:"
 
 #: etmain/ui/options_controls.menu:113
 msgid "Select Member #3:"
-msgstr ""
+msgstr "Valitse Jäsen #3:"
 
 #: etmain/ui/options_controls.menu:114
 msgid "Select Member #4:"
-msgstr ""
+msgstr "Valitse Jäsen #4:"
 
 #: etmain/ui/options_controls.menu:115
 msgid "Select Member #5:"
-msgstr ""
+msgstr "Valitse Jäsen #5:"
 
 #: etmain/ui/options_controls.menu:116
 msgid "Select Member #6:"
-msgstr ""
+msgstr "Valitse Jäsen #6:"
 
 #: etmain/ui/options_controls.menu:117
 msgid "Deselect All:"
-msgstr ""
+msgstr "Poista Kaikki Valinnat:"
 
 #: etmain/ui/options_controls.menu:118
 msgid "Fire-Team Admin:"
-msgstr ""
+msgstr "Partion Ylläpitäjä:"
 
 #: etmain/ui/options_customise_game.menu:29 etmain/ui/options.menu:32
 msgid "GAME"
-msgstr ""
+msgstr "PELI"
 
 #: etmain/ui/options_customise_game.menu:33 src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
-msgstr ""
+msgstr "PELAAJA"
 
 #: etmain/ui/options_customise_game.menu:34
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid "Player Alias:"
-msgstr ""
+msgstr "Pelaaja Alias:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
-msgstr ""
+msgstr "Syötä nimi, jolla haluat muiden sinut tuntevan palvelimilla"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Language:"
-msgstr ""
+msgstr "Kieli:"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr ""
+msgstr "Aseta haluttu kielesi"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
-msgstr ""
+msgstr "FYSIIKKA"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Always Run:"
-msgstr ""
+msgstr "Juokse Aina:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toogle walk/run"
-msgstr ""
+msgstr "Kytke kävely/juoksu"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr ""
+msgstr "Kaksoisnäpäytys Makuu:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
-msgstr ""
+msgstr "Aseta viive näppäinten painallusten välillä, jonka kaksoisnäpäytyks vaatii"
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
-msgstr ""
+msgstr "ASEET"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatic Reload:"
-msgstr ""
+msgstr "Automaattinen Lataus:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Lataa automaattisesti, kun lipas on tyhjä"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
-msgstr ""
+msgstr "Automaattivaihto:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Vaihtaa automaattisesti uuteen aseseen, kun ammukset loppuvat"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
-msgstr ""
+msgstr "Aseen Ikonin Välähtely:"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 väriä"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 väriä"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
-msgstr ""
+msgstr "Väläyttää aseen ikonia, kun ammutaan, ladataan tai vaihdetaan asetta"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
@@ -2164,7 +2165,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Luotien valojuovat:"
 
 #: etmain/ui/options_customise_game.menu:51
 #: etmain/ui/options_customise_game.menu:78
@@ -2174,82 +2175,82 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "Päällä"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "Vain omat valojuovaluodit"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "Vain toisten valojuovaluodit"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Ota käyttöön/Poista käytöstä luotien valojuova"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
-msgstr ""
+msgstr "KIIKARITÄHTÄIN"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Ase Sykli Zoomille:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "Päällä (normaali)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "Päällä (käänteinen)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Aseen vaihtaminen zoomaa sisään ja ulos käyttäessä kiikaritähtäintä mielummin kuin vaihtaa aseita"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
-msgstr ""
+msgstr "Oletus Zoomaus Taso:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "Kokonaan Ulos"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "Lähelle"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "Kauas"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "Kokonaan Sisään"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Aseta oletus zoomaus taso kiikaritähtäimille"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
-msgstr ""
+msgstr "Zoomaus Tasot:"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 Zoomaus Tasoa"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 Zoomaus Tasoa"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Määrittelee tarkkuudet, jolla zoomaat"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
@@ -2269,12 +2270,12 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
-msgstr ""
+msgstr "Keskustelu Ikonin Aika:"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Short"
-msgstr ""
+msgstr "Lyhyt"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:50
@@ -2282,92 +2283,92 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Normal"
-msgstr ""
+msgstr "Normaali"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "Pitkä"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "Erittäin Pitkä"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
-msgstr ""
+msgstr "Määritä kuinka kauan keskustelu ikoni näkyy toisten pelaajien päiden yläpuolella"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
-msgstr ""
+msgstr "Vain tiimi keskustelu:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr ""
+msgstr "Näyttää vain tiimi keskustelun pelissä"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
-msgstr ""
+msgstr "Ei äänitekstiä:"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "Don't show voice text in-game"
-msgstr ""
+msgstr "Älä näytä äänitekstejä pelissä"
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
-msgstr ""
+msgstr "ÄÄNI"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
-msgstr ""
+msgstr "Kuuluttaja:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Ottaa käyttöön tai poistää käytöstä pelin Komentajan"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
-msgstr ""
+msgstr "Ei radioviestejä:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "Älä soita radioviestejä pelissä"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
-msgstr ""
+msgstr "Osumaäänet:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Ei Tiimin Osumaääniä"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Ei Pään Osumaääniä"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Ei Kehon Osumaääniä"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Aseta osumaäänet"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
-msgstr ""
+msgstr "Valitus Ponnahdusikkuna:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Näytä vaihtoehto jättääksesi valitus tiimiläisistä, jotka tappavat sinut"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
-msgstr ""
+msgstr "Kirjaa Tärkeät Viestit:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Kirjoittaa tärkeät peli viestit konsoliin"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
