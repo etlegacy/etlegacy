@@ -528,14 +528,22 @@ static void IN_GobbleMotionEvents(void)
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
 	static qboolean mouse_grabbed = qfalse, mouse_relative = qfalse;
+	int relative_result = 0;
 
 	if (relative == !mouse_relative)
 	{
 		SDL_ShowCursor(!relative);
-		if (SDL_SetRelativeMouseMode((SDL_bool)relative) == -1)
+		if ((relative_result = SDL_SetRelativeMouseMode((SDL_bool)relative)) != 0)
 		{
 			// FIXME: this happens on some systems (IR4)
-			Com_Error(ERR_FATAL, "Setting relative mouse location fails\n");
+			if (relative_result == -1)
+			{
+				Com_Error(ERR_FATAL, "Setting relative mouse location fails (system not supported)\n");
+			}
+			else
+			{
+				Com_Error(ERR_FATAL, "Setting relative mouse location fails: %s\n", SDL_GetError());
+			}
 		}
 		mouse_relative = relative;
 	}
@@ -1313,6 +1321,19 @@ void IN_Init(void)
 
 	// mouse variables
 	in_mouse = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE);
+
+	if (in_mouse->integer == 2)
+	{
+		Com_Printf("Trying to emulate non raw input\n");
+		if (!SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE))
+		{
+			Com_Printf(S_COLOR_RED "Failed to set the hint");
+		}
+	}
+	else
+	{
+		SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "0", SDL_HINT_OVERRIDE);
+	}
 
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
 
