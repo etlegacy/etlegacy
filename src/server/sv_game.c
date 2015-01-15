@@ -766,17 +766,9 @@ qboolean SV_GameCommand(void)
 	return VM_Call(gvm, GAME_CONSOLE_COMMAND);
 }
 
-/*
-====================
-SV_GetTag
-
-  return qfalse if unable to retrieve tag information for this client
-====================
-*/
-#ifndef DEDICATED
-extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation);
-#endif
-
+/**
+ * @return qfalse if unable to retrieve tag information for this client
+ */
 qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation)
 {
 	if (tagFileNumber > 0 && tagFileNumber <= sv.num_tagheaders)
@@ -796,17 +788,5 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 		}
 	}
 
-	// lets try and remove the inconsitancy between ded/non-ded servers...
-	// - bleh, some code in clientthink_real really relies on this working on player models...
-	// only only this code for the release builds so we can test out the hitbox code with the clients
-#if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
-	if (com_dedicated->integer)
-	{
-		return qfalse;
-	}
-
-	return CL_GetTag(clientNum, tagname, orientation);
-#else
 	return qfalse;
-#endif
 }
