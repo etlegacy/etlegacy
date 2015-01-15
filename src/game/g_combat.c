@@ -878,8 +878,8 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 	gentity_t     *head;
 	orientation_t orientation;
 
-	head = G_Spawn();
-	//head->classname = "head"; // no need to set -> ET_TEMPHEAD
+	head            = G_Spawn();
+	head->classname = "head"; // see also ET_TEMPHEAD
 
 	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
 	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
@@ -997,8 +997,8 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 		return NULL;
 	}
 
-	leg = G_Spawn();
-	//leg->classname = "leg"; // no need to set -> ET_TEMPLEG
+	leg            = G_Spawn();
+	leg->classname = "leg"; // see also ET_TEMPLEG
 
 #ifdef FEATURE_SERVERMDX
 	if (g_realHead.integer & REALHEAD_HEAD)
