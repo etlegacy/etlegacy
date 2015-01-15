@@ -214,7 +214,7 @@ void CG_LoadLocations(void)
 		}
 	}
 
-	if (fLen > MAX_BUFFER)
+	if (fLen >= MAX_BUFFER)
 	{
 		trap_FS_FCloseFile(f);
 		CG_Error("Location file is too big, make it smaller (max = %i bytes)\n", MAX_BUFFER);
