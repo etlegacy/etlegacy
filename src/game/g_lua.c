@@ -1086,6 +1086,8 @@ static int _et_G_Spawn(lua_State *L)
 {
 	gentity_t *entnum = G_Spawn();
 
+	entnum->classname = "lua_spawn";
+
 	lua_pushinteger(L, entnum - g_entities);
 	return 1;
 }
