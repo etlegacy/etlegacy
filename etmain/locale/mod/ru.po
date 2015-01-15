@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-14 17:31+0000\n"
+"PO-Revision-Date: 2015-01-15 21:17+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -187,7 +187,7 @@ msgstr "Return to Castle Wolfenstein была разработана Gray Matter
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr "Хотим поблагодарить обоих разработчиков за помощь и поддержку"
+msgstr "Спасибо им за помощь и поддержку"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
@@ -615,7 +615,7 @@ msgstr "Отключить командные приказы:"
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr "Можно ли выполнять командные приказы (lock team/spectators, readyteam и т.п.)"
+msgstr "Можно ли отдавать командные приказы (lock team/spectators, readyteam и т.п.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
@@ -1279,7 +1279,7 @@ msgstr "НАСТРОЙКИ"
 
 #: etmain/ui/ingame_main.menu:43 etmain/ui/main.menu:111
 msgid "CREDITS"
-msgstr "ТИТРЫ"
+msgstr "РАЗРАБОТЧИКИ"
 
 #: etmain/ui/ingame_main.menu:46 etmain/ui/main.menu:113
 #: etmain/ui/quit.menu:54
@@ -1419,7 +1419,7 @@ msgstr "OK"
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:818
 #: src/cgame/cg_scoreboard.c:828 src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
-msgstr "ИГРОКИ"
+msgstr "ИГРОКОВ"
 
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
@@ -1571,7 +1571,7 @@ msgstr "ОТКРЫТЬ КОМАНДЫ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:86
 msgid "LOCK SPECS"
-msgstr "ОТКРЫТЬ ЗРИТЕЛЕЙ"
+msgstr "ЗАКРЫТЬ ЗРИТЕЛЕЙ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:87
 msgid "UNLOCK SPECS"
@@ -4758,7 +4758,7 @@ msgstr "включить"
 
 #: src/cgame/cg_draw.c:2231
 msgid "You are wounded and waiting for a medic."
-msgstr "Вы ранены и ждёте медика"
+msgstr "Вы ранены и ждёте помощи"
 
 #: src/cgame/cg_draw.c:2240
 #, c-format
@@ -5165,7 +5165,7 @@ msgstr "СОЮЗНИКИ"
 
 #: src/cgame/cg_scoreboard.c:855
 msgid "C R"
-msgstr "C R"
+msgstr "К Р"
 
 #: src/cgame/cg_scoreboard.c:860
 msgid "Score"

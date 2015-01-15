@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-13 19:02+0000\n"
+"PO-Revision-Date: 2015-01-15 17:22+0000\n"
 "Last-Translator: Calinou\n"
 "Language-Team: French (http://www.transifex.com/projects/p/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -212,19 +212,19 @@ msgstr "Fondateur du projet, programmation et gestion"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr ""
+msgstr "Programmation et développement de mods"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr ""
+msgstr "Programmeur pour Windows principal et moteur de rendu"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr ""
+msgstr "Site Web, programmation et scripts"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr ""
+msgstr "Programmation et développement de mods"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
@@ -294,7 +294,7 @@ msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Conseils, rapports de bogues, patches"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
@@ -343,7 +343,7 @@ msgstr "DÉVELOPPÉ PAR SPLASH DAMAGE"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
-msgstr ""
+msgstr "Game Designer / Directeur de gestion"
 
 #: etmain/ui/credits_splashdamage.menu:84
 msgid "Business Director"
@@ -659,7 +659,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
 msgid "Off"
-msgstr ""
+msgstr "Désactivé"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid ""
@@ -719,7 +719,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr ""
+msgstr "DERNIER HOMME EN VIE"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
@@ -755,17 +755,17 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
-msgstr ""
+msgstr "ADMINISTRATION"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
-msgstr ""
+msgstr "Serveur « pur » :"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr ""
+msgstr "Limite le contenu du jeu à celui contenu dans les fichiers PK3 sur le client et le serveur tout en vérifiant les sommes de contrôle CRC"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -774,47 +774,47 @@ msgstr "Mot de passe :"
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"
-msgstr ""
+msgstr "Définit le mot de passe requis pour se connecter au serveur"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
-msgstr ""
+msgstr "Mot de passe arbitre :"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid ""
 "Password to utilize the \"ref\" command for match control and remote game "
 "administration"
-msgstr ""
+msgstr "Mot de passe à utiliser afin de pouvoir se servir de la commande « ref » pour contrôler la partie et administrer à distance"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
-msgstr ""
+msgstr "Mot de passe RCON :"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Mot de passe à utiliser pour contrôler le serveur à distance (très puissant, conservez celui-ci à l'abri)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
-msgstr ""
+msgstr "VOTES"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr ""
+msgstr "Votes maximum par joueur :"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
-msgstr ""
+msgstr "Définit le nombre maximum de votes qu'un joueur peut effectuer lors d'une manche"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
-msgstr ""
+msgstr "Majorité qualifiée :"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Définit le pourcentage minimum requis afin qu'un vote soit accepté"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -822,11 +822,11 @@ msgstr "PERMETTRE LES VOTES"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
-msgstr ""
+msgstr "Configuration du jeu :"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour la configuration du jeu"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
@@ -836,63 +836,63 @@ msgstr "Type de jeu :"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Autoriser les joueurs à voter afin de changer le mode de jeu"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr ""
+msgstr "Expluser un joueur :"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour expluser d'autres joueurs"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
-msgstr ""
+msgstr "Carte :"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour une campagne ou une carte différente"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
-msgstr ""
+msgstr "Réinit. de la manche :"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour une réinitialisation de la manche"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr ""
+msgstr "Rendre les spectateurs muets :"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Autoriser les joueurs à voter afin de rendre les spectateurs muets"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
-msgstr ""
+msgstr "Carte suivante :"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour la prochaine campagne ou cart"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr ""
+msgstr "Équipes équilibrées :"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour forcer l'équilibrage des équipes"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
-msgstr ""
+msgstr "Arbitre :"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour élire un arbitre"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
@@ -904,31 +904,31 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
-msgstr ""
+msgstr "Échanger les équipes :"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Autoriser les joueurs à voter afin d'échanger les équipes"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
-msgstr ""
+msgstr "Tirs fratricides :"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour activer ou désactiver les tirs fratricides"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
-msgstr ""
+msgstr "Limite de temps :"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour une limite de temps différent"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour activer ou désactiver les dégâts lors de l'échauffement"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
@@ -974,41 +974,41 @@ msgstr "TÉLÉCHARGEMENT"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Client Downloads:"
-msgstr ""
+msgstr "Téléchargements des clients :"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
-msgstr ""
+msgstr "Autoriser les joueurs à télécharger les fichiers manquants depuis le serveur"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr ""
+msgstr "Vitesse de téléchargement maximale :"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
 "Specifies the maximum download rate from the server for players with missing"
 " files"
-msgstr ""
+msgstr "Définit la vitesse maximale des téléchargements pour les joueurs ayant des fichiers manquants"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
-msgstr ""
+msgstr "Redirections FTP/HTTP :"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Rediriger les joueurs avec des fichiers manquants vers un autre serveur"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
-msgstr ""
+msgstr "URL de base :"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "Utilisée afin de construire l'URL donnée aux clients pour le téléchargement"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
-msgstr ""
+msgstr "ÉTENDU"
 
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
@@ -1021,38 +1021,38 @@ msgstr "DÉMARRER LE SERVEUR DÉDIÉ"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:53
 msgid "Starting a Dedicated Server will"
-msgstr ""
+msgstr "Démarrer un serveur dédié va"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:54
 msgid "close the game window and open the"
-msgstr ""
+msgstr "fermer la fenêtre du jeu et ouvrir la"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. It will not be possible"
-msgstr ""
+msgstr "console du serveur. Il ne sera pas possible"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
 msgid "to play the game on the host machine."
-msgstr ""
+msgstr "de jouer sur la machine hôte."
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
-msgstr ""
+msgstr "Voulez-vous vraiment démarrer"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:58
 msgid "a Dedicated Server?"
-msgstr ""
+msgstr "un serveur dédié ?"
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
-msgstr ""
+msgstr "HÉBERGER UNE PARTIE : ÉTENDU"
 
 #: etmain/ui/hostgame_extended.menu:31 etmain/ui/ingame_vote.menu:86
 #: etmain/ui/ingame_vote.menu:87 etmain/ui/ingame_vote_misc.menu:38
 #: etmain/ui/ingame_vote_misc_refrcon.menu:37
 #: etmain/ui/options_customise_hud.menu:126
 msgid "MISC"
-msgstr ""
+msgstr "DIVERS"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Country Flags:"
@@ -1092,38 +1092,38 @@ msgstr "Nom du serveur :"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
-msgstr ""
+msgstr "Définit le nom de votre serveur de jeu"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
 msgid "Campaign"
-msgstr ""
+msgstr "Campagne"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr ""
+msgstr "Dernier homme en vie"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
-msgstr ""
+msgstr "Vote de cart"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Single-Map Objective"
-msgstr ""
+msgstr "Objectif à carte unique"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
-msgstr ""
+msgstr "Chronomètre"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
-msgstr ""
+msgstr "Cliquez pour définir le mode de jeu à utiliser"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
@@ -1147,7 +1147,7 @@ msgstr "Réglages publics"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
-msgstr ""
+msgstr "Le serveur se configure automatiquement aux réglages spécifiés par défaut"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Dedicated Server:"
@@ -1165,7 +1165,7 @@ msgstr "Oui - Internet"
 msgid ""
 "Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
 " client)"
-msgstr ""
+msgstr "Définit si le serveur doit être « dédié » au parties en réseau local ou sur l'Internet (pas de client)"
 
 #: etmain/ui/hostgame.menu:44
 msgid "Password clients must set to join the server"
@@ -1345,13 +1345,13 @@ msgstr "RÉAPPARITION"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
+msgstr "En mode Dernier homme en vie, vous ne réapparaîtrez pas si vous abandonnez maintenant. Êtes-vous sûr ?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
 "This server has Max Lives enabled. Tapping out now will lose a life. Are you"
 " sure?"
-msgstr ""
+msgstr "Ce serveur a les Vies maximales activés. Abandonner vous fera perdre une vie. Êtes-vous sûr ?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1548,7 +1548,7 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Set the time limit for the server"
-msgstr ""
+msgstr "Définir la limite de temps pour le serveur"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
@@ -1723,13 +1723,13 @@ msgstr "Ceci supprimera tous les fichiers non nécessaires dans votre fs_homepat
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp- and custom pk3 files."
-msgstr ""
+msgstr "Un nettoyage simple supprimera les fichiers temporaires et les fichiers PK3 personnalisés."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
 "A full clean will remove all downloaded files like map-,\n"
 " campaign- and custom pk3 files."
-msgstr ""
+msgstr "Un nettoyage complet supprimera tous les fichiers téléchargés comme les cartes,\nles campagnes et les fichiers PK3 personnalisés."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -2212,25 +2212,25 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
-msgstr ""
+msgstr "Niveau de zoom par défaut :"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "Complètement dézoomé"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "Proche"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "Éloigné"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "Complètement zoomé"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
@@ -2238,19 +2238,19 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
-msgstr ""
+msgstr "Niveaux de zoom :"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 niveaux de zoom"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 niveaux de zoom"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Définit le nombre d'incréments disponibles pour zoomer"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
@@ -2270,7 +2270,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
-msgstr ""
+msgstr "Temps d'icône de tchat :"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
@@ -4177,41 +4177,41 @@ msgstr "2. Ordre complété"
 #: etmain/ui/wm_ftquickmessageAlt.menu:174
 #: etmain/ui/wm_quickmessageAlt.menu:175
 msgid "4. Destroy Primary Objective"
-msgstr ""
+msgstr "4. Détruisez l'objectif primaire"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:175
 #: etmain/ui/wm_quickmessageAlt.menu:176
 msgid "5. Destroy Secondary Objective"
-msgstr ""
+msgstr "5. Détruisez l'objectif secondaire"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:176
 #: etmain/ui/wm_quickmessageAlt.menu:177
 msgid "6. Destroy Construction"
-msgstr ""
+msgstr "6. Détruisez la construction"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:177
 #: etmain/ui/wm_quickmessageAlt.menu:178
 msgid "7. Commencing Construction"
-msgstr ""
+msgstr "7. Commencement de la construction"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:178
 #: etmain/ui/wm_quickmessageAlt.menu:179
 msgid "8. Repair Vehicle"
-msgstr ""
+msgstr "8. Réparez le véhicule"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:179
 #: etmain/ui/wm_quickmessageAlt.menu:180
 msgid "9. Disable Vehicle"
-msgstr ""
+msgstr "9. Neutralisez le véhicule"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:180
 #: etmain/ui/wm_quickmessageAlt.menu:181
 msgid "0. Escort Vehicle"
-msgstr ""
+msgstr "0. Escortez le véhicule"
 
 #: etmain/ui/wm_ftquickmessage.menu:83 etmain/ui/wm_quickmessage.menu:84
 msgid "S. Statements"
-msgstr ""
+msgstr "S. Déclaration"
 
 #: etmain/ui/wm_ftquickmessage.menu:84 etmain/ui/wm_quickmessage.menu:85
 msgid "R. Requests"
@@ -4219,108 +4219,108 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:85 etmain/ui/wm_quickmessage.menu:86
 msgid "C. Commands"
-msgstr ""
+msgstr "C. Ordres"
 
 #: etmain/ui/wm_ftquickmessage.menu:86 etmain/ui/wm_quickmessage.menu:87
 msgid "T. Talk"
-msgstr ""
+msgstr "T. Parler"
 
 #: etmain/ui/wm_ftquickmessage.menu:87 etmain/ui/wm_quickmessage.menu:88
 msgid "G. Global"
-msgstr ""
+msgstr "G. Global"
 
 #: etmain/ui/wm_ftquickmessage.menu:88 etmain/ui/wm_quickmessage.menu:89
 msgid "F. Function"
-msgstr ""
+msgstr "F. Fonction"
 
 #: etmain/ui/wm_ftquickmessage.menu:89 etmain/ui/wm_quickmessage.menu:90
 msgid "O. Objectives"
-msgstr ""
+msgstr "O. Objectifs"
 
 #: etmain/ui/wm_ftquickmessage.menu:95 etmain/ui/wm_quickmessage.menu:96
 msgid "P. Path Cleared."
-msgstr ""
+msgstr "P. La voie est libre."
 
 #: etmain/ui/wm_ftquickmessage.menu:96 etmain/ui/wm_quickmessage.menu:97
 msgid "W. Enemy Weak!"
-msgstr ""
+msgstr "W. L'ennemi est affaibli !"
 
 #: etmain/ui/wm_ftquickmessage.menu:97 etmain/ui/wm_quickmessage.menu:98
 msgid "C. All Clear"
-msgstr ""
+msgstr "C. Rien à signaler"
 
 #: etmain/ui/wm_ftquickmessage.menu:98 etmain/ui/wm_quickmessage.menu:99
 msgid "I. Incoming"
-msgstr ""
+msgstr "I. Ils arrivent"
 
 #: etmain/ui/wm_ftquickmessage.menu:99 etmain/ui/wm_quickmessage.menu:100
 msgid "F. Fire In The Hole!"
-msgstr ""
+msgstr "F. Tirez dans le tas !"
 
 #: etmain/ui/wm_ftquickmessage.menu:100 etmain/ui/wm_quickmessage.menu:101
 msgid "D. I'm Defending."
-msgstr ""
+msgstr "D. Je défends."
 
 #: etmain/ui/wm_ftquickmessage.menu:101 etmain/ui/wm_quickmessage.menu:102
 msgid "A. I'm Attacking."
-msgstr ""
+msgstr "A. J'attaque."
 
 #: etmain/ui/wm_ftquickmessage.menu:102
 msgid "T. Taking Fire!"
-msgstr ""
+msgstr "T. Je suis touché !"
 
 #: etmain/ui/wm_ftquickmessage.menu:103 etmain/ui/wm_quickmessage.menu:103
 msgid "M. Mines Cleared"
-msgstr ""
+msgstr "M. Mines supprimées"
 
 #: etmain/ui/wm_ftquickmessage.menu:104 etmain/ui/wm_quickmessage.menu:104
 msgid "E. Enemy Disguised"
-msgstr ""
+msgstr "E. Ennemi déguisé"
 
 #: etmain/ui/wm_ftquickmessage.menu:110 etmain/ui/wm_quickmessage.menu:110
 msgid "M. Need Medic!"
-msgstr ""
+msgstr "M. J'ai besoin d'un médecin !"
 
 #: etmain/ui/wm_ftquickmessage.menu:111 etmain/ui/wm_quickmessage.menu:111
 msgid "A. Need Ammo!"
-msgstr ""
+msgstr "A. J'ai besoin de munitions !"
 
 #: etmain/ui/wm_ftquickmessage.menu:112 etmain/ui/wm_quickmessage.menu:112
 msgid "B. Need Backup!"
-msgstr ""
+msgstr "B. J'ai besoin d'aide !"
 
 #: etmain/ui/wm_ftquickmessage.menu:113 etmain/ui/wm_quickmessage.menu:113
 msgid "E. Need Engineer!"
-msgstr ""
+msgstr "E. J'ai besoin d'un ingénieur !"
 
 #: etmain/ui/wm_ftquickmessage.menu:114 etmain/ui/wm_quickmessage.menu:114
 msgid "C. Cover Me!"
-msgstr ""
+msgstr "C. Couvrez-moi !"
 
 #: etmain/ui/wm_ftquickmessage.menu:115 etmain/ui/wm_ftquickmessage.menu:165
 #: etmain/ui/wm_quickmessage.menu:115 etmain/ui/wm_quickmessage.menu:165
 msgid "H. Hold Fire!"
-msgstr ""
+msgstr "H. Attention où vous tirez !"
 
 #: etmain/ui/wm_ftquickmessage.menu:116 etmain/ui/wm_quickmessage.menu:116
 msgid "W. Where To?"
-msgstr ""
+msgstr "W. Où aller ?"
 
 #: etmain/ui/wm_ftquickmessage.menu:117 etmain/ui/wm_quickmessage.menu:117
 msgid "O. Need Covert Ops!"
-msgstr ""
+msgstr "O. J'ai besoin d'un Covert Ops !"
 
 #: etmain/ui/wm_ftquickmessage.menu:123 etmain/ui/wm_quickmessage.menu:123
 msgid "F. Follow Me!"
-msgstr ""
+msgstr "F. Suivez-moi !"
 
 #: etmain/ui/wm_ftquickmessage.menu:124 etmain/ui/wm_quickmessage.menu:124
 msgid "G. Let's Go!"
-msgstr ""
+msgstr "G. Allons-y !"
 
 #: etmain/ui/wm_ftquickmessage.menu:125 etmain/ui/wm_quickmessage.menu:125
 msgid "M. Move!"
-msgstr ""
+msgstr "M. Bougez !"
 
 #: etmain/ui/wm_ftquickmessage.menu:126 etmain/ui/wm_quickmessage.menu:126
 msgid "C. Clear The Path!"
@@ -4328,23 +4328,23 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:127 etmain/ui/wm_quickmessage.menu:127
 msgid "O. Defend Objective!"
-msgstr ""
+msgstr "O. Défendez l'objectif !"
 
 #: etmain/ui/wm_ftquickmessage.menu:128 etmain/ui/wm_quickmessage.menu:128
 msgid "D. Disarm Dynamite!"
-msgstr ""
+msgstr "D. Désamorcez la dynamite !"
 
 #: etmain/ui/wm_ftquickmessage.menu:129 etmain/ui/wm_quickmessage.menu:129
 msgid "N. Clear Mines!"
-msgstr ""
+msgstr "N. Supprimez les mines !"
 
 #: etmain/ui/wm_ftquickmessage.menu:130 etmain/ui/wm_quickmessage.menu:130
 msgid "R. Reinforce Offense"
-msgstr ""
+msgstr "R. Renforcez l'attaque"
 
 #: etmain/ui/wm_ftquickmessage.menu:131 etmain/ui/wm_quickmessage.menu:131
 msgid "E. Reinforce Defense"
-msgstr ""
+msgstr "E. Renforcez la défens"
 
 #: etmain/ui/wm_ftquickmessage.menu:137 etmain/ui/wm_ftquickmessage.menu:148
 #: etmain/ui/wm_quickmessage.menu:137 etmain/ui/wm_quickmessage.menu:148
@@ -4480,7 +4480,7 @@ msgstr "Vous serez %s %s avec un %s et un %s."
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
-msgstr ""
+msgstr "Dernière partie : %s"
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
@@ -4489,7 +4489,7 @@ msgstr "Jamai"
 #: src/cgame/cg_debriefing.c:1341
 #, c-format
 msgid "%d maps ago"
-msgstr ""
+msgstr "il y a %d cartes"
 
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
@@ -4504,23 +4504,23 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
-msgstr ""
+msgstr "PRÉCI. :"
 
 #: src/cgame/cg_debriefing.c:2624
 msgid "HS:"
-msgstr ""
+msgstr "TÊTES :"
 
 #: src/cgame/cg_debriefing.c:2659
 msgid "Time:"
-msgstr ""
+msgstr "Temps "
 
 #: src/cgame/cg_debriefing.c:2671
 msgid "Medals:"
-msgstr ""
+msgstr "Médailles :"
 
 #: src/cgame/cg_debriefing.c:2690
 msgid "Rank:"
-msgstr ""
+msgstr "Rang :"
 
 #: src/cgame/cg_debriefing.c:2810
 msgid "^5TO TEAM"
@@ -4548,28 +4548,28 @@ msgstr "ÉGALITÉ !"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "LES ALLIÉS ONT BATTU LE CHRONOMÈTRE !"
 
 #: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "LES ALLIÉS N'ONT PAS RÉUSSI À BATTRE LE CHRONOMÈTRE !"
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "L'AXE A BATTU LE CHRONOMÈTRE !"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "L'AXE N'A PAS RÉUSSI À BATTRE LE CHRONOMÈTRE !"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
 msgid "CAMPAIGN STATUS: %s"
-msgstr ""
+msgstr "STATUT DE LA CAMPAGNE : %s"
 
 #: src/cgame/cg_debriefing.c:3245
 msgid "SECS TO NEXT MAP"
-msgstr ""
+msgstr "SECONDES RESTANTES AVANT LA PROCHAINE CARTE"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
@@ -4667,7 +4667,7 @@ msgstr "Plainte annulée"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
-msgstr ""
+msgstr "L'hôte du serveur ne peut pas être attaqué par une plainte"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
@@ -4835,7 +4835,7 @@ msgstr "^3PRÉPARE-TOI À COMBATTRE !\n"
 
 #: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
-msgstr ""
+msgstr "MANCHE DE CHRONOMÈTRE"
 
 #: src/cgame/cg_draw.c:2678
 #, c-format
@@ -5073,12 +5073,12 @@ msgstr "%s a été détruit."
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "%sSpotted by ^7%s%s at %s"
-msgstr ""
+msgstr "%sAperçue par ^7%s%s à %s"
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "%sSpotted by ^7%s"
-msgstr ""
+msgstr "%sAperçue par ^7%s"
 
 #: src/cgame/cg_popupmessages.c:733
 #, c-format
@@ -5213,7 +5213,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:2047
 msgid "^3No weapon info available.\n"
-msgstr ""
+msgstr "^3Pas d'information sur les armes disponible.\n"
 
 #: src/cgame/cg_servercmds.c:2153
 msgid "  Medals"
@@ -5286,7 +5286,7 @@ msgstr "En attente d'une réponse du serveur maître"
 #: src/ui/ui_main.c:2555
 #, c-format
 msgid "Refresh Time: %s"
-msgstr ""
+msgstr "Temps de rafraîchissement : %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
@@ -5341,21 +5341,21 @@ msgstr ""
 #: src/ui/ui_main.c:8429
 #, c-format
 msgid "Can't find campaign '%s'\n"
-msgstr ""
+msgstr "Impossible de trouver la campagne « %s »\n"
 
 #: src/ui/ui_main.c:8435
 #, c-format
 msgid "Corrupted campaign '%s'\n"
-msgstr ""
+msgstr "Campagne corrompue « %s »\n"
 
 #: src/ui/ui_main.c:8466
 #, c-format
 msgid "%i campaigns found:\n"
-msgstr ""
+msgstr "%i campagnes trouvées.\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
-msgstr ""
+msgstr "Pas de campagnes trouvées.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
