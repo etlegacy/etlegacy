@@ -829,7 +829,7 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 			continue;
 		}
 
-		// FIXME : dynamite seems to test out of position?
+		// FIXME: dynamite seems to test out of position?
 		// see if the entity is in a solid now
 		if ((block = G_TestEntityPosition(check)) == NULL)
 		{
@@ -2813,8 +2813,8 @@ void artilleryThink_real(gentity_t *ent)
 		ent->s.onFireStart = 255;
 		break;
 	}
-
 }
+
 void artilleryThink(gentity_t *ent)
 {
 	ent->think     = artilleryThink_real;
@@ -3891,7 +3891,7 @@ void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, v
 	//VectorMA( muzzlePoint, 14, forward, muzzlePoint );
 
 	// offset for more realistic firing from actual gun position
-	switch (weapon)    // Ridah, changed this so I can predict weapons
+	switch (weapon)    // changed this so I can predict weapons
 	{
 	case WP_PANZERFAUST:
 	case WP_BAZOOKA:
