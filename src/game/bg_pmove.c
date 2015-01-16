@@ -323,7 +323,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 /**
  * @brief finds worst trace of body/legs, for collision.
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -394,13 +394,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 }
 
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t * results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -1191,6 +1191,12 @@ static void PM_FlyMove(void)
 	PM_Friction();
 
 	scale = PM_CmdScale(&pm->cmd);
+
+	// spectator boost
+	if (pm->cmd.buttons & BUTTON_SPRINT)
+	{
+		scale *= 3;
+	}
 
 	// user intentions
 	if (!scale)
@@ -3563,13 +3569,13 @@ static void PM_HandleRecoil(void)
 		{
 			if (pm->pmext->weapRecoilPitch > 0.f)
 			{
-				muzzlebounce[PITCH] -= 2 *pm->pmext->weapRecoilPitch *cos(2.5 *(i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
 				muzzlebounce[PITCH] -= 0.25 * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 
 			if (pm->pmext->weapRecoilYaw > 0.f)
 			{
-				muzzlebounce[YAW] += 0.5 *pm->pmext->weapRecoilYaw *cos(1.0 - (i) *3 / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += 0.5 * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
 				muzzlebounce[YAW] += 0.5 * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 		}
@@ -4996,7 +5002,7 @@ are being updated isntead of a full move
 ================
 */
 // take a tracemask as well - we can't use anything out of pm
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
 {
 	short  temp;
 	int    i;
