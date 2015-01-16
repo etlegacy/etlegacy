@@ -887,7 +887,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_sten_1",    // icon
 		"icons/ammo2",           // ammo icon
-		"Sten",                  // pickup
+		"Sten gun",              // pickup
 		30,
 		IT_WEAPON,
 		WP_STEN,
@@ -1426,7 +1426,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_fg42_1",    // icon
 		"icons/ammo5",           // ammo icon
-		"FG 42 Rifle",           // pickup
+		"FG 42 Paratroop Rifle", // pickup
 		10,
 		IT_WEAPON,
 		WP_FG42,
@@ -1445,7 +1445,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_fg42_1",    // icon
 		"icons/ammo5",           // ammo icon
-		"FG 42 Rifle Scope",     // pickup
+		"FG 42 Paratroop Rifle Scope", // pickup
 		0,
 		IT_WEAPON,
 		WP_FG42SCOPE,   // this weap

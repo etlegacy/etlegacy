@@ -19,19 +19,19 @@ set weapons knives               = knife AND Ka-Bar
 set weapons Bipods               = Mobile MG 42 Bipod AND Mobile Browning Bipod
 set weapons pistols              = Luger AND Colt AND Silenced Luger AND Silenced Colt
 set weapons akimbo_pistols       = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
-set weapons machineguns          = MP 40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND bazooka AND Mobile MG 42 AND Mobile Browning
-set weapons rifles               = K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope
+set weapons machineguns          = MP 40 AND Thompson AND Sten gun AND Flamethrower AND panzerfaust AND bazooka AND Mobile MG 42 AND Mobile Browning
+set weapons rifles               = K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope
 
 // broke off dynamite, since we never want to throw it overhand
 set weapons throwables           = pineapple AND grenade AND Smoke Bomb
 set weapons throwables_underhand = dynamite weapon
 
 set weapons one_handed_weapons   = Luger AND Colt AND Silenced Luger AND Silenced Colt
-set weapons two_handed_weapons   = MP 40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped M1 Garand AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope AND Mobile Browning
+set weapons two_handed_weapons   = MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mobile Browning
 
-set weapons all = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP 40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
 set weapons all_one_handed_weapons = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
-set weapons all_two_handed_weapons = MP 40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all_two_handed_weapons = MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
 
 // movetypes
 set movetype moving = walk AND walkcr AND walkcrbk AND walkbk AND run AND runbk AND straferight AND strafeleft
@@ -183,7 +183,7 @@ STATE COMBAT
 		{
 			both stand_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both stand_srifle
 		}
@@ -215,7 +215,7 @@ STATE COMBAT
 		{
 			both stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			both stand_rifle
 		}
@@ -233,11 +233,11 @@ STATE COMBAT
 		}
 		weapons Mobile MG 42 AND Mobile Browning, firing
 		{
-			legs firing_machinegun torso firing_mobileMG42
+			legs firing_machinegun torso firing_mobilemg42
 		}
 		weapons Mobile MG 42 AND Mobile Browning
 		{
-			legs stand_machinegun torso stand_mobileMG42
+			legs stand_machinegun torso stand_mobilemg42
 		}
 		weapons machineguns, firing
 		{
@@ -314,7 +314,7 @@ STATE COMBAT
 		{
 			both alert_crchidle_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_crchidle_srifle
 		}
@@ -346,7 +346,7 @@ STATE COMBAT
 		{
 			legs alert_crchidle_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_crchidle_2h torso stand_rifle
 		}
@@ -441,7 +441,7 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			legs relaxed_walk_1h_1 torso stand_srifle
 		}
@@ -473,7 +473,7 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs relaxed_walk_1h_1 torso stand_rifle
 		}
@@ -564,7 +564,7 @@ STATE COMBAT
 		{
 			both alert_bk_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_bk_srifle
 		}
@@ -596,7 +596,7 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
@@ -687,7 +687,7 @@ STATE COMBAT
 		{
 			both alert_crch_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_crch_srifle
 		}
@@ -719,7 +719,7 @@ STATE COMBAT
 		{
 			legs alert_crch_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_crch_2h torso stand_rifle
 		}
@@ -811,7 +811,7 @@ STATE COMBAT
 		{
 			both alert_crbk_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_crbk_srifle
 		}
@@ -843,7 +843,7 @@ STATE COMBAT
 		{
 			legs alert_crbk_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_crbk_2h torso stand_rifle
 		}
@@ -934,7 +934,7 @@ STATE COMBAT
 		{
 			both alert_run_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_run_srifle
 		}
@@ -966,7 +966,7 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1061,7 +1061,7 @@ STATE COMBAT
 		{
 			both alert_bk_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_bk_srifle
 		}
@@ -1093,7 +1093,7 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_bk_2h torso stand_rifle
 		}
@@ -1184,7 +1184,7 @@ STATE COMBAT
 		{
 			both alert_run_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_run_srifle
 		}
@@ -1216,7 +1216,7 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1307,7 +1307,7 @@ STATE COMBAT
 		{
 			both alert_run_srifle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			both alert_run_srifle
 		}
@@ -1339,7 +1339,7 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_rifle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs alert_run_2h torso stand_rifle
 		}
@@ -1510,7 +1510,7 @@ STATE COMBAT
 		{
 			legs prone_legs torso prone_rifle_idle
 		}
-		weapons FG 42 Rifle
+		weapons FG 42 Paratroop Rifle
 		{
 			legs prone_legs torso prone_rifle_idle
 		}
@@ -1542,7 +1542,7 @@ STATE COMBAT
 		{
 			legs prone_legs torso e_prone_rifle_snipeidle
 		}
-		weapons FG 42 Rifle Scope
+		weapons FG 42 Paratroop Rifle Scope
 		{
 			legs prone_legs torso e_prone_rifle_snipeidle
 		}
@@ -1841,7 +1841,7 @@ fireweapon
 // MOBILE MG 42
 	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso firing_mobileMG42
+		torso firing_mobilemg42
 	}
 	weapons Mobile MG 42 AND Mobile Browning, movetype straferight
 	{
@@ -1853,7 +1853,7 @@ fireweapon
 	}
 	weapons Mobile MG 42 AND Mobile Browning, movetype walk AND turnleft AND turnright AND idlecr
 	{
-		torso firing_mobileMG42 duration 50
+		torso firing_mobilemg42 duration 50
 	}
 	weapons Mobile MG 42 AND Mobile Browning, movetype walkcrbk
 	{
@@ -1873,7 +1873,7 @@ fireweapon
 	}
 	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso firing_mobileMG42 duration 50
+		torso firing_mobilemg42 duration 50
 	}
 // MACHINEGUNS
 	weapons machineguns, movetype straferight
@@ -1929,23 +1929,23 @@ fireweapon
 	{
 		torso firing_srifle
 	}
-	weapons FG 42 Rifle, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons FG 42 Paratroop Rifle, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_srifle
 	}
-	weapons FG 42 Rifle, movetype crouching
+	weapons FG 42 Paratroop Rifle, movetype crouching
 	{
 		torso firing_crch_srifle
 	}
-	weapons FG 42 Rifle, movetype run AND swim
+	weapons FG 42 Paratroop Rifle, movetype run AND swim
 	{
 		torso firing_run_srifle
 	}
-	weapons FG 42 Rifle, movetype backstep AND swimbk
+	weapons FG 42 Paratroop Rifle, movetype backstep AND swimbk
 	{
 		torso firing_bk_srifle
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		torso firing_srifle
 	}
@@ -2029,23 +2029,23 @@ fireweapon
 	{
 		torso firing_srifle
 	}
-	weapons FG 42 Rifle Scope, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons FG 42 Paratroop Rifle Scope, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_rifle
 	}
-	weapons FG 42 Rifle Scope, movetype crouching
+	weapons FG 42 Paratroop Rifle Scope, movetype crouching
 	{
 		torso firing_crch_2h
 	}
-	weapons FG 42 Rifle Scope, movetype run AND swim
+	weapons FG 42 Paratroop Rifle Scope, movetype run AND swim
 	{
 		torso alert_run_2h
 	}
-	weapons FG 42 Rifle Scope, movetype backstep AND swimbk
+	weapons FG 42 Paratroop Rifle Scope, movetype backstep AND swimbk
 	{
 		torso firing_bk_2h
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		torso firing_rifle
 	}
@@ -2234,7 +2234,7 @@ fireweaponprone
 	{
 		torso prone_rifle_fire
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		torso prone_rifle_fire
 	}
@@ -2266,7 +2266,7 @@ fireweaponprone
 	{
 		torso e_prone_rifle_snipefire
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		torso e_prone_rifle_snipefire
 	}
@@ -2362,7 +2362,7 @@ raiseweaponprone
 	{
 		torso prone_rifle_switch
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		torso prone_rifle_switch
 	}
@@ -2394,7 +2394,7 @@ raiseweaponprone
 	{
 		torso e_prone_rifle_snipe
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		torso e_prone_rifle_snipe
 	}
@@ -2458,7 +2458,7 @@ reloadprone
 	{
 		torso prone_rifle_reload
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		torso prone_rifle_reload
 	}
@@ -2490,7 +2490,7 @@ reloadprone
 	{
 		torso prone_rifle_reload
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		torso prone_rifle_reload
 	}
@@ -2560,7 +2560,7 @@ raiseweapon
 	}
 	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso raise_mobileMG42
+		torso raise_mobilemg42
 	}
 	weapons machineguns
 	{
@@ -2570,7 +2570,7 @@ raiseweapon
 	{
 		torso raise_machinegun
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		torso raise_machinegun
 	}
@@ -2606,7 +2606,7 @@ raiseweapon
 	{
 		torso raise_grenade
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		torso raise_sniper
 	}
@@ -2676,7 +2676,7 @@ reload
 	}
 	weapons Mobile MG 42 AND Mobile Browning
 	{
-		torso reload_mobileMG42
+		torso reload_mobilemg42
 	}
 	weapons machineguns, movetype idlecr
 	{
@@ -2690,7 +2690,7 @@ reload
 	{
 		torso reload_machinegun
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		torso reload_machinegun
 	}
@@ -2722,7 +2722,7 @@ reload
 	{
 		torso reload_rifle
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		torso reload_rifle
 	}
@@ -2762,11 +2762,11 @@ jump
 	{
 		legs jump_nostep_1h
 	}
-	weapons FG 42 Rifle, movetype run
+	weapons FG 42 Paratroop Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		legs jump_nostep_1h
 	}
@@ -2826,11 +2826,11 @@ jump
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
-	weapons FG 42 Rifle Scope, movetype run
+	weapons FG 42 Paratroop Rifle Scope, movetype run
 	{
 		legs jump_1step_2h torso stand_rifle
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
@@ -2890,11 +2890,11 @@ jumpbk
 	{
 		legs jump_nostep_1h
 	}
-	weapons FG 42 Rifle, movetype run
+	weapons FG 42 Paratroop Rifle, movetype run
 	{
 		legs jump_1step_2h
 	}
-	weapons FG 42 Rifle
+	weapons FG 42 Paratroop Rifle
 	{
 		legs jump_nostep_1h
 	}
@@ -2954,11 +2954,11 @@ jumpbk
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
-	weapons FG 42 Rifle Scope, movetype run
+	weapons FG 42 Paratroop Rifle Scope, movetype run
 	{
 		legs jump_1step_2h torso stand_rifle
 	}
-	weapons FG 42 Rifle Scope
+	weapons FG 42 Paratroop Rifle Scope
 	{
 		legs jump_nostep_1h torso stand_rifle
 	}
