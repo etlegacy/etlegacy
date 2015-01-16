@@ -2730,7 +2730,7 @@ static void PM_FinishWeaponChange(void)
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 0;
-			altSwitchAnim = qtrue ;
+			altSwitchAnim = qtrue;
 		}
 		break;
 	case WP_SILENCER:
@@ -2738,7 +2738,7 @@ static void PM_FinishWeaponChange(void)
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 1190;
-			altSwitchAnim = qtrue ;
+			altSwitchAnim = qtrue;
 		}
 		break;
 	case WP_CARBINE:
@@ -2754,7 +2754,7 @@ static void PM_FinishWeaponChange(void)
 				switchtime   = 0;
 				doSwitchAnim = qfalse;
 			}
-			altSwitchAnim = qtrue ;
+			altSwitchAnim = qtrue;
 		}
 		break;
 	case WP_M7:
@@ -2762,7 +2762,7 @@ static void PM_FinishWeaponChange(void)
 		if (newweapon == weaponTable[oldweapon].weapAlts)
 		{
 			switchtime    = 2350;
-			altSwitchAnim = qtrue ;
+			altSwitchAnim = qtrue;
 		}
 		break;
 	case WP_FG42:
