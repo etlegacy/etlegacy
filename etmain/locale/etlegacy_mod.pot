@@ -4068,7 +4068,6 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:138
 #: etmain/ui/wm_quickmessageAlt.menu:138 etmain/ui/wm_quickmessageAlt.menu:149
-#: etmain/ui/wm_ftquickmessageAlt.menu:149
 msgid "2. No"
 msgstr ""
 
