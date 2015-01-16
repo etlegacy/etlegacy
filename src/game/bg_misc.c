@@ -759,7 +759,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_knife_1",   // icon
 		"icons/ammo2",           // ammo icon
-		"Knife",                 // pickup
+		"Knife",             // pickup
 		50,
 		IT_WEAPON,
 		WP_KNIFE,
@@ -775,7 +775,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_knife_1",   // icon
 		"icons/ammo2",           // ammo icon
-		"Ka-Bar",                // pickup
+		"Ka-Bar",             // pickup
 		50,
 		IT_WEAPON,
 		WP_KNIFE_KABAR,
@@ -966,7 +966,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_mp40_1",    // icon
 		"icons/ammo2",       // ammo icon
-		"MP 40",             // pickup
+		"MP40",              // pickup
 		30,
 		IT_WEAPON,
 		WP_MP40,
@@ -1272,7 +1272,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_mauser_1",  // icon
 		"icons/ammo3",           // ammo icon
-		"Scoped K43 Rifle",      // pickup
+		"K43 Rifle",             // pickup
 		50,
 		IT_WEAPON,
 		WP_K43,
@@ -1310,7 +1310,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_kar98_1",   // icon
 		"icons/ammo3",           // ammo icon
-		"K43 Rifle",             // pickup
+		"K43",                   // pickup
 		50,
 		IT_WEAPON,
 		WP_KAR98,
@@ -1348,7 +1348,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_m1_garand_1",   // icon
 		"icons/ammo10",              // ammo icon
-		"M7",                        // pickup
+		"GPG40A",                    // pickup
 		200,
 		IT_WEAPON,
 		WP_M7,
@@ -1367,7 +1367,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_m1_garand_1",   // icon
 		"icons/ammo3",           // ammo icon
-		"M1 Garand",             // pickup
+		"M1 Garand",     // pickup
 		50,
 		IT_WEAPON,
 		WP_CARBINE,
@@ -1387,7 +1387,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_mauser_1",  // icon
 		"icons/ammo3",           // ammo icon
-		"Scoped M1 Garand",      // pickup
+		"Garand",                // pickup
 		50,
 		IT_WEAPON,
 		WP_GARAND,
@@ -1426,7 +1426,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_fg42_1",    // icon
 		"icons/ammo5",           // ammo icon
-		"FG 42",                 // pickup
+		"FG42 Paratroop Rifle",  // pickup
 		10,
 		IT_WEAPON,
 		WP_FG42,
@@ -1445,7 +1445,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_fg42_1",    // icon
 		"icons/ammo5",           // ammo icon
-		"FG 42 Scope",           // pickup
+		"FG42 Scope",            // pickup
 		0,
 		IT_WEAPON,
 		WP_FG42SCOPE,   // this weap
@@ -1594,7 +1594,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_mg42_1",    // icon
 		"icons/ammo2",           // ammo icon
-		"Mobile MG 42",          // pickup
+		"Mobile MG42",           // pickup
 		30,
 		IT_WEAPON,
 		WP_MOBILE_MG42,
@@ -1610,7 +1610,7 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_mg42_1",    // icon
 		"icons/ammo2",           // ammo icon
-		"Mobile MG 42 Bipod",    // pickup
+		"Mobile MG42 Bipod",     // pickup
 		30,
 		IT_WEAPON,
 		WP_MOBILE_MG42_SET,
@@ -1658,7 +1658,8 @@ gitem_t bg_itemlist[] =
 		},
 		"icons/iconw_silencer_1",    // icon
 		"icons/ammo5",       // ammo icon
-		"Luger",             // pickup
+//      "Silencer",     // pickup
+		"sp5 pistol",
 		10,
 		IT_WEAPON,
 		WP_SILENCER,
