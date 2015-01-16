@@ -272,6 +272,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		case WP_KAR98:
 		case WP_CARBINE:
 		case WP_K43:
+		case WP_GARAND:
 			offset[0]  = 16;
 			offset[1]  = -4;
 			offset[2]  = 24;
