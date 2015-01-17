@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-15 17:22+0000\n"
+"PO-Revision-Date: 2015-01-16 20:03+0000\n"
 "Last-Translator: Calinou\n"
 "Language-Team: French (http://www.transifex.com/projects/p/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -723,19 +723,19 @@ msgstr "DERNIER HOMME EN VIE"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr ""
+msgstr "Manches par partie en LMS :"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Forcer le nombre de manches de LMS par parti"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr ""
+msgstr "Parties par carte en LMS :"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Forcer le nombre de parties en LMS (elles-mêmes comprises de plusieurs manches) par carte"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
@@ -900,7 +900,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Autoriser les joueurs à voter pour mélanger les équipes"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
@@ -2165,7 +2165,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Traceurs des balles :"
 
 #: etmain/ui/options_customise_game.menu:51
 #: etmain/ui/options_customise_game.menu:78
@@ -2179,15 +2179,15 @@ msgstr "Activé"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "Mes propres traceurs"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "Les traceurs des autres"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Activer ou désactiver les traceurs de balles"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
@@ -2195,20 +2195,20 @@ msgstr "VISEUR"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Changement d'arme pour zoomer :"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "Activé (normal)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "Activé (inversé)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Changer d'arme en étant zoomé permet de zoomer ou dézoomer, plutôt que de changer d'arme"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
@@ -2234,7 +2234,7 @@ msgstr "Complètement zoomé"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Définit le niveau de zoom par défaut pour les lunettes de visée"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
@@ -2266,7 +2266,7 @@ msgstr "Numérique"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr ""
+msgstr "Utiliser les chiffres ou les letters pour envoyer des messages radio"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
@@ -2324,7 +2324,7 @@ msgstr "Annonceur :"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Active ou désactive le Commandant"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
@@ -2352,7 +2352,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Définit les sons de tir réussi"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
@@ -2364,15 +2364,15 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
-msgstr ""
+msgstr "Journaliser les messages importants :"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Affiche les messages de jeu importants dans la console"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Action auto. :"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
@@ -2404,30 +2404,30 @@ msgstr "Démo + capture d'écran + stat."
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Exécute une action automatiquement à la fin d'une manche"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
-msgstr ""
+msgstr "Format des captures d'écran auto. :"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Bascule entre les formats .tga et .jpg pour la commande « autoscreenshot »"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
-msgstr ""
+msgstr "Afficher les infobulles :"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Afficher les infobulles dans les menu"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
 msgid "ui/menudef.h"
-msgstr ""
+msgstr "ui/menudef.h"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
@@ -2464,35 +2464,35 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
-msgstr ""
+msgstr "Temps de la mission :"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
-msgstr ""
+msgstr "Affiche le temps restant de la mission"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
-msgstr ""
+msgstr "Temps de renforcement :"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Affiche le temps restant avant le prochain renforcement de votre équip"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Astuces du curseur :"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr ""
+msgstr "Taille variabl"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
-msgstr ""
+msgstr "Stroboscope"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr ""
+msgstr "Transparence variabl"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
@@ -2504,11 +2504,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
-msgstr ""
+msgstr "Afficher les positions :"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "Coordonnées seulement"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
@@ -2524,35 +2524,35 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Affiche les positions dans la Fireteam"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
-msgstr ""
+msgstr "Activer les drapeaux :"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
-msgstr ""
+msgstr "Affiche les drapeaux des pays des joueurs dans le tableau des score"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Classe attachée dans la Fireteam :"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr ""
+msgstr "Affiche la classe attachée dans la Fireteam"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
-msgstr ""
+msgstr "Icônes des frags :"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "Victime Arme Tueur"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "Tueur Arme Victime"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
@@ -3917,7 +3917,7 @@ msgstr "1. Déclarations"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:84 etmain/ui/wm_quickmessageAlt.menu:84
 msgid "2. Requests"
-msgstr "2. Requêts"
+msgstr "2. Requêtes"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:85 etmain/ui/wm_quickmessageAlt.menu:85
 msgid "3. Commands"
@@ -4042,7 +4042,7 @@ msgstr "3. Bougez !"
 #: etmain/ui/wm_ftquickmessageAlt.menu:126
 #: etmain/ui/wm_quickmessageAlt.menu:126
 msgid "4. Clear The Path!"
-msgstr ""
+msgstr "4. Faites le ménage !"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:127
 #: etmain/ui/wm_quickmessageAlt.menu:127
@@ -4215,7 +4215,7 @@ msgstr "S. Déclaration"
 
 #: etmain/ui/wm_ftquickmessage.menu:84 etmain/ui/wm_quickmessage.menu:85
 msgid "R. Requests"
-msgstr ""
+msgstr "R. Requêtes"
 
 #: etmain/ui/wm_ftquickmessage.menu:85 etmain/ui/wm_quickmessage.menu:86
 msgid "C. Commands"
@@ -4324,7 +4324,7 @@ msgstr "M. Bougez !"
 
 #: etmain/ui/wm_ftquickmessage.menu:126 etmain/ui/wm_quickmessage.menu:126
 msgid "C. Clear The Path!"
-msgstr ""
+msgstr "C. Faites le ménage !"
 
 #: etmain/ui/wm_ftquickmessage.menu:127 etmain/ui/wm_quickmessage.menu:127
 msgid "O. Defend Objective!"
@@ -4574,7 +4574,7 @@ msgstr "SECONDES RESTANTES AVANT LA PROCHAINE CARTE"
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
-msgstr ""
+msgstr "Campagne : %s"
 
 #: src/cgame/cg_draw.c:382 src/cgame/cg_draw.c:391 src/cgame/cg_draw.c:407
 #, c-format
@@ -4671,7 +4671,7 @@ msgstr "L'hôte du serveur ne peut pas être attaqué par une plainte"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
-msgstr ""
+msgstr "Vous avez été tué par l'hôte du serveur"
 
 #: src/cgame/cg_draw.c:1952
 msgid "You were team-killed by a bot."
