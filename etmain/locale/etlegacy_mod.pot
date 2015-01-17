@@ -257,7 +257,7 @@ msgid "^1WEBSITE"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
