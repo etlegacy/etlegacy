@@ -327,7 +327,7 @@ msgstr ""
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries. "
