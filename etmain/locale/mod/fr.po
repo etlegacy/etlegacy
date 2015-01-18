@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-16 20:03+0000\n"
-"Last-Translator: Calinou\n"
+"PO-Revision-Date: 2015-01-18 10:29+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -259,8 +259,8 @@ msgid "^1WEBSITE"
 msgstr "^1SITE WEB"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr "2012-2015 L'équipe d'ET Legacy - sous les termes de la GPL version 3."
+msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -329,13 +329,13 @@ msgstr "^1DÉVELOPPEURS ORIGINAU"
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries."
 " All other trademarks and trade names are the properties of their respective"
 " owners."
-msgstr "2003 id Software, Inc. Tous droits réservés. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, le logo Return to Castle Wolfenstein, le nom id Software, le logo id sont des marques ou des marques déposées aux États-Unis et/ou dans d'autres pays. Toutes les autres marques appartiennent à leurs proprétaires respectifs."
+msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -1822,8 +1822,8 @@ msgid "Jump:"
 msgstr "Sauter :"
 
 #: etmain/ui/options_controls.menu:40
-msgid "Crouc)h:"
-msgstr "S'accroupir :"
+msgid "Crouch:"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -2282,6 +2282,7 @@ msgstr "Court"
 #: etmain/ui/options_customise_hud.menu:61
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+#: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
 msgstr "Normal"
 
@@ -2704,10 +2705,6 @@ msgstr "Champs de vision recommandés (4:3) = 90 | (16:10) = 100.39 | (16:9) = 1
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
 msgstr ""
-
-#: etmain/ui/options_customise_hud.menu:59
-msgid "Normal)"
-msgstr "Normal"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
@@ -4099,10 +4096,6 @@ msgstr "5. Désolé"
 #: etmain/ui/wm_quickmessageAlt.menu:142
 msgid "6. Oops"
 msgstr "6. Oups"
-
-#: etmain/ui/wm_ftquickmessageAlt.menu:149
-msgid "2. No)"
-msgstr "2. Non)"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150

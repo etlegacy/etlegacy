@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-15 21:17+0000\n"
+"PO-Revision-Date: 2015-01-18 17:48+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -258,8 +258,8 @@ msgid "^1WEBSITE"
 msgstr "^1САЙТ"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr " 2012-2015 ET Legacy Team - на условиях GPL версии 3."
+msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2015 ET Legacy Team - на условиях GPL версии 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -328,13 +328,13 @@ msgstr "^1ОРИГИНАЛЬНЫЕ РАЗРАБОТЧИКИ"
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries."
 " All other trademarks and trade names are the properties of their respective"
 " owners."
-msgstr " 2003 Id Software, Inc. Все права защищены. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, логотип Return to Castle Wolfenstein, имя id Software, и логотип id зарегистрированные товарные знаки или товарные знаки Id Software, Inc. в США и/или других странах. Все другие товарные знаки или товарные имена являются собственностью соответствующих владельцев."
+msgstr "© 2003 Id Software, Inc. Все права защищены. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, логотип Return to Castle Wolfenstein, имя id Software, и логотип id зарегистрированные товарные знаки или товарные знаки Id Software, Inc. в США и/или других странах. Все другие товарные знаки или товарные имена являются собственностью соответствующих владельцев."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -1419,7 +1419,7 @@ msgstr "OK"
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:818
 #: src/cgame/cg_scoreboard.c:828 src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
-msgstr "ИГРОКОВ"
+msgstr "ИГРОКИ"
 
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
@@ -1740,7 +1740,7 @@ msgstr "Документация на нашей вики."
 
 #: etmain/ui/options_clean.menu:40
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
-msgstr "Нажмите '^7ОТМЕНА^9' если не знаете зачем это."
+msgstr "Если не уверены, то нажмите '^7ОТМЕНА^9'."
 
 #: etmain/ui/options_clean.menu:43
 msgid "ABORT"
@@ -1821,8 +1821,8 @@ msgid "Jump:"
 msgstr "Прыжок:"
 
 #: etmain/ui/options_controls.menu:40
-msgid "Crouc)h:"
-msgstr "Присесть:"
+msgid "Crouch:"
+msgstr "Согнуться:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -1834,7 +1834,7 @@ msgstr "Ходьба:"
 
 #: etmain/ui/options_controls.menu:43
 msgid "Sprint:"
-msgstr "Спринт:"
+msgstr "Бег:"
 
 #: etmain/ui/options_controls.menu:47
 msgid "INPUT"
@@ -2281,6 +2281,7 @@ msgstr "короткое"
 #: etmain/ui/options_customise_hud.menu:61
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+#: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
 msgstr "среднее"
 
@@ -2703,10 +2704,6 @@ msgstr "Лучшее ПЗ (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
 msgstr "Расстояние короны:"
-
-#: etmain/ui/options_customise_hud.menu:59
-msgid "Normal)"
-msgstr "Сред."
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
@@ -4099,10 +4096,6 @@ msgstr "5. Извини"
 msgid "6. Oops"
 msgstr "6. Ой"
 
-#: etmain/ui/wm_ftquickmessageAlt.menu:149
-msgid "2. No)"
-msgstr "2. Нет)"
-
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
 msgid "3. Enemy Weak"
@@ -4568,7 +4561,7 @@ msgstr "СОСТОЯНИЕ КАМПАНИИ: %s"
 
 #: src/cgame/cg_debriefing.c:3245
 msgid "SECS TO NEXT MAP"
-msgstr "СЕК. ДО СЛЕД. КАРТЫ"
+msgstr "СЕКУНД ДО СЛЕДУЮЩЕЙ КАРТЫ"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
