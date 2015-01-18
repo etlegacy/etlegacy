@@ -51,7 +51,6 @@
 #endif
 
 #define LEGACY_MOD         "Legacy"
-#define LEGACY_MOD_VERSION ETLEGACY_VERSION_SHORT
 #define LEGACY // for omnibot
 
 #if defined(CGAMEDLL) || defined(FEATURE_SERVERMDX)
