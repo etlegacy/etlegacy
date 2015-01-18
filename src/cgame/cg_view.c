@@ -589,22 +589,21 @@ static void CG_OffsetFirstPersonView(void)
 		break;
 	}
 
-
 	// if dead, fix the angle and don't add any kick
 	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && cg.snap->ps.stats[STAT_HEALTH] <= 0)
 	{
 		angles[ROLL]  = 40;
 		angles[PITCH] = -15;
 
-		// rain - #254 - force yaw to 0 if we're tracking a medic
-		// rain - medic tracking doesn't seem to happen in this case?
+		// force yaw to 0 if we're tracking a medic
+		// medic tracking doesn't seem to happen in this case?
 		if (cg.snap->ps.viewlocked == VIEWLOCK_MEDIC)
 		{
 			angles[YAW] = 0;
 		}
 		else
 		{
-			// rain - do short2angle AFTER the network part
+			// do short2angle AFTER the network part
 			angles[YAW] = SHORT2ANGLE(cg.snap->ps.stats[STAT_DEAD_YAW]);
 		}
 
@@ -680,6 +679,7 @@ static void CG_OffsetFirstPersonView(void)
 	{
 		delta *= 3;     // crouching
 	}
+	
 	angles[PITCH] += delta;
 	delta          = useLastValidBob ? cg.lastvalidBobfracsin * cg_bobroll.value * speed : cg.bobfracsin * cg_bobroll.value * speed;
 	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
@@ -743,7 +743,6 @@ static void CG_OffsetFirstPersonView(void)
 	}
 
 	origin[2] += bob;
-
 
 	// add fall height
 	delta = cg.time - cg.landTime;
@@ -1621,7 +1620,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 typedef struct plane_s
 {
 	vec3_t normal;
-	float dist;
+	float  dist;
 } plane_t;
 
 static plane_t frustum[4];
@@ -2125,6 +2124,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		{
 			CG_AddTestModel();
 		}
+		
 		cg.refdef.time = cg.time;
 		memcpy(cg.refdef.areamask, cg.snap->areamask, sizeof(cg.refdef.areamask));
 
