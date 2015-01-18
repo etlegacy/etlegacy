@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-16 20:45+0000\n"
+"PO-Revision-Date: 2015-01-18 16:47+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -242,7 +242,7 @@ msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr "Wielkie podziękowania dla Splash Damage za wydanie kodu żródłowego,  ioWolfET & raedwulf-et (w szczegolności Ralph Eastwood) za kod bazowy i ioQuake3 za ich inspirację."
+msgstr "Podziękowania dla Splash Damage za wydanie kodu żródłowego, ioWolfET & raedwulf-et (w szczegolności Ralph Eastwood) za kod bazowy i ioQuake3 za ich inspirację."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
@@ -258,8 +258,8 @@ msgid "^1WEBSITE"
 msgstr "^1STRONA"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr "2012-2015 Zespół ET Legacy - zgodnie z warunkami GPL wersja 3"
+msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2015 Zespół ET Legacy - pod warunkami GPL wersja 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -328,7 +328,7 @@ msgstr "^1ORYGINALNI WYDAWCY"
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries."
@@ -1821,7 +1821,7 @@ msgid "Jump:"
 msgstr "Skok:"
 
 #: etmain/ui/options_controls.menu:40
-msgid "Crouc)h:"
+msgid "Crouch:"
 msgstr "Kucanie:"
 
 #: etmain/ui/options_controls.menu:41
@@ -2281,6 +2281,7 @@ msgstr "Krótkie"
 #: etmain/ui/options_customise_hud.menu:61
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+#: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
 msgstr "Normalne"
 
@@ -2703,10 +2704,6 @@ msgstr "Najlepszy FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
 msgstr "Odleglość Rozbłysku:"
-
-#: etmain/ui/options_customise_hud.menu:59
-msgid "Normal)"
-msgstr "Normalny"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
@@ -4098,10 +4095,6 @@ msgstr "5. Przepraszam"
 #: etmain/ui/wm_quickmessageAlt.menu:142
 msgid "6. Oops"
 msgstr "6. Oops"
-
-#: etmain/ui/wm_ftquickmessageAlt.menu:149
-msgid "2. No)"
-msgstr "2. No"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150

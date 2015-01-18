@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-11 10:27+0000\n"
+"PO-Revision-Date: 2015-01-18 10:29+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -257,7 +257,7 @@ msgid "^1WEBSITE"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid " 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
@@ -327,7 +327,7 @@ msgstr ""
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
-" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
 "trademarks of Id Software, Inc. in the United States and/or other countries."
@@ -1820,7 +1820,7 @@ msgid "Jump:"
 msgstr ""
 
 #: etmain/ui/options_controls.menu:40
-msgid "Crouc)h:"
+msgid "Crouch:"
 msgstr ""
 
 #: etmain/ui/options_controls.menu:41
@@ -2280,6 +2280,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:61
 #: etmain/ui/options_customise_hud.menu:114
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+#: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
 msgstr ""
 
@@ -2701,10 +2702,6 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
-msgstr ""
-
-#: etmain/ui/options_customise_hud.menu:59
-msgid "Normal)"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:59
@@ -4096,10 +4093,6 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:142
 #: etmain/ui/wm_quickmessageAlt.menu:142
 msgid "6. Oops"
-msgstr ""
-
-#: etmain/ui/wm_ftquickmessageAlt.menu:149
-msgid "2. No)"
 msgstr ""
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
