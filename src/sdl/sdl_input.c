@@ -1117,6 +1117,8 @@ static void IN_ProcessEvents(void)
 		case SDL_MOUSEMOTION:
 			if (mouseActive)
 			{
+				if (!e.motion.xrel && !e.motion.yrel)
+					break;
 				Com_QueueEvent(0, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
 			}
 			break;
@@ -1201,7 +1203,6 @@ void IN_Frame(void)
 	qboolean loading;
 
 	//IN_JoyMove();
-	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
 	loading = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
@@ -1238,6 +1239,8 @@ void IN_Frame(void)
 		vidRestartTime = 0;
 		Cbuf_AddText("vid_restart\n");
 	}
+	
+	IN_ProcessEvents();
 }
 
 #ifdef _WIN32
