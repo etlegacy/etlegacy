@@ -527,8 +527,8 @@ static void IN_GobbleMotionEvents(void)
 
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
-	static qboolean mouse_grabbed = qfalse, mouse_relative = qfalse;
-	int relative_result = 0;
+	static qboolean mouse_grabbed   = qfalse, mouse_relative = qfalse;
+	int             relative_result = 0;
 
 	if (relative == !mouse_relative)
 	{
@@ -1118,7 +1118,9 @@ static void IN_ProcessEvents(void)
 			if (mouseActive)
 			{
 				if (!e.motion.xrel && !e.motion.yrel)
+				{
 					break;
+				}
 				Com_QueueEvent(0, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
 			}
 			break;
@@ -1239,7 +1241,7 @@ void IN_Frame(void)
 		vidRestartTime = 0;
 		Cbuf_AddText("vid_restart\n");
 	}
-	
+
 	IN_ProcessEvents();
 }
 
