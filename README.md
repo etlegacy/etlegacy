@@ -9,6 +9,7 @@ ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=m
 * Forums: [http://dev.etlegacy.com/projects/etlegacy/boards](http://dev.etlegacy.com/projects/etlegacy/boards)
 * Development (bug reports and feature requests): [http://dev.etlegacy.com](http://dev.etlegacy.com)
 * Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
+* Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
 * IRC: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net
 
 INTRODUCTION
@@ -69,7 +70,7 @@ Dependencies
 * **libcurl** (optional, enabled by default)
 * **Lua** version 5.2 (optional, enabled by default)
 * **Ogg Vorbis** (optional, enabled by default)
-* **Freetype** version 2 (optional)
+* **Freetype** version 2 (optional, enabled by default)
 * **OpenAL** (optional)
 * **Jansson** (optional)
 
