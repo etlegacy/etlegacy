@@ -679,7 +679,7 @@ static void CG_OffsetFirstPersonView(void)
 	{
 		delta *= 3;     // crouching
 	}
-	
+
 	angles[PITCH] += delta;
 	delta          = useLastValidBob ? cg.lastvalidBobfracsin * cg_bobroll.value * speed : cg.bobfracsin * cg_bobroll.value * speed;
 	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
@@ -936,7 +936,6 @@ void CG_Zoom(void)
 				case WP_FG42SCOPE:
 				case WP_GARAND_SCOPE:
 				case WP_K43_SCOPE:
-					cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;
 					break;
 				default:
 					cg.zoomval = 0;
@@ -1620,7 +1619,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 typedef struct plane_s
 {
 	vec3_t normal;
-	float  dist;
+	float dist;
 } plane_t;
 
 static plane_t frustum[4];
@@ -2124,7 +2123,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		{
 			CG_AddTestModel();
 		}
-		
+
 		cg.refdef.time = cg.time;
 		memcpy(cg.refdef.areamask, cg.snap->areamask, sizeof(cg.refdef.areamask));
 

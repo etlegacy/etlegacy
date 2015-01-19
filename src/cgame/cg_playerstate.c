@@ -198,7 +198,7 @@ void CG_Respawn(qboolean revived)
 
 	// select the weapon the server says we are using
 	cg.weaponSelect = cg.snap->ps.weapon;
-	// Clear even more things on respawn
+	// clear even more things on respawn
 	cg.zoomedBinoc = qfalse;
 	cg.zoomedScope = qfalse;
 	cg.zoomTime    = 0;
@@ -206,6 +206,23 @@ void CG_Respawn(qboolean revived)
 
 	trap_SendConsoleCommand("-zoom\n");
 	cg.binocZoomTime = 0;
+
+	// ensure scoped weapons are reset after revive
+	if (revived)
+	{
+		if (cg.snap->ps.weapon == WP_FG42SCOPE)
+		{
+			CG_FinishWeaponChange(WP_FG42SCOPE, WP_FG42);
+		}
+		if (cg.snap->ps.weapon == WP_GARAND_SCOPE)
+		{
+			CG_FinishWeaponChange(WP_GARAND_SCOPE, WP_GARAND);
+		}
+		if (cg.snap->ps.weapon == WP_K43_SCOPE)
+		{
+			CG_FinishWeaponChange(WP_K43_SCOPE, WP_K43);
+		}
+	}
 
 	// clear pmext
 	memset(&cg.pmext, 0, sizeof(cg.pmext));
