@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-18 12:12+0000\n"
-"Last-Translator: Sauli Vepsä <zAulivee@outlook.com>\n"
+"PO-Revision-Date: 2015-01-19 14:29+0000\n"
+"Last-Translator: Jere Sjöroos <shogaiam@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/etlegacy/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,7 +49,7 @@ msgstr "Ylemmän tason Vastaava Tuottaja"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
-msgstr ""
+msgstr "VP North American Studios"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
@@ -864,79 +864,79 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr ""
+msgstr "Mykistä katsojat:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Salli pelaajien äänestää katsojien mykistämisestä"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
-msgstr ""
+msgstr "Seuraava kartta:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Salli pelaajien äänestää seuraavaa kampanjaa tai karttaa"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr ""
+msgstr "Tasapainotetut tiimit:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Salli pelaajien äänestää tiimien pakkotasapainosta"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
-msgstr ""
+msgstr "Tuomari:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Salli pelaajien äänestää tuomariksi"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
-msgstr ""
+msgstr "XP sekoitus:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Salli pelaajien äänestää tiimien sekoitusta"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
-msgstr ""
+msgstr "Vaihda tiimit:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Salli pelaajien äänestää tiimien puolien vaihtoa"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
-msgstr ""
+msgstr "Omien tulitus:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Salli pelaajien äänestää omien tulituksen käyttöön- tai poisottoa"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
-msgstr ""
+msgstr "Aikaraja:"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Salli pelaajien äänestää eri aikarajaa"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Salli pelaajien äänestää lämmittelyvahingon käyttöön- tai poisottoa"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
-msgstr ""
+msgstr "Anti-lagi:"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
-msgstr ""
+msgstr "Salli pelaajien äänestää antilagin käyttöön- tai poisottoa"
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
@@ -1008,16 +1008,16 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
-msgstr ""
+msgstr "LAAJENNETTU"
 
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
 msgid "DEFAULT"
-msgstr ""
+msgstr "OLETUS"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:52
 msgid "START DEDICATED SERVER"
-msgstr ""
+msgstr "ALOITA OMISTETTU PALVELIN"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:53
 msgid "Starting a Dedicated Server will"
@@ -1045,42 +1045,42 @@ msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
-msgstr ""
+msgstr "ISÄNNÖI PELI: LAAJENNETTU"
 
 #: etmain/ui/hostgame_extended.menu:31 etmain/ui/ingame_vote.menu:86
 #: etmain/ui/ingame_vote.menu:87 etmain/ui/ingame_vote_misc.menu:38
 #: etmain/ui/ingame_vote_misc_refrcon.menu:37
 #: etmain/ui/options_customise_hud.menu:126
 msgid "MISC"
-msgstr ""
+msgstr "MUUT"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Country Flags:"
-msgstr ""
+msgstr "Maiden liput:"
 
 #: etmain/ui/hostgame_extended.menu:32 etmain/ui/hostgame.menu:42
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
 #: etmain/ui/options_system.menu:53
 msgid "No"
-msgstr ""
+msgstr "Ei"
 
 #: etmain/ui/hostgame_extended.menu:32
 #: etmain/ui/options_customise_game.menu:42
 msgid "Yes"
-msgstr ""
+msgstr "Kyllä"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable Country Flags on the server"
-msgstr ""
+msgstr "Ota maiden liput käyttöön palvelimella"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
 msgid "ADVANCED"
-msgstr ""
+msgstr "KEHITTYNYT"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
-msgstr ""
+msgstr "ISÄNNÖI PELI"
 
 #: etmain/ui/hostgame.menu:37
 msgid "SETTINGS"
@@ -1088,16 +1088,16 @@ msgstr "ASETUKSET"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Server Name:"
-msgstr ""
+msgstr "Palvelimen nimi:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
-msgstr ""
+msgstr "Määrittää pelipalvelimen nimi"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
 msgid "Campaign"
-msgstr ""
+msgstr "Kampanja"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
@@ -1108,18 +1108,18 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
-msgstr ""
+msgstr "Kartan äänestäminen"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Single-Map Objective"
-msgstr ""
+msgstr "Yhden kartan päämäärä"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
-msgstr ""
+msgstr "Sekuntikello"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
@@ -1127,7 +1127,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
-msgstr ""
+msgstr "Maksimi pelaajat:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
@@ -1464,7 +1464,7 @@ msgstr "ANTI-LAGI POIS PÄÄLTÄ"
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
 msgid "XP SHUFFLE"
-msgstr ""
+msgstr "XP SEKOITUS"
 
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
@@ -1518,41 +1518,41 @@ msgstr "JULKISET ASETUKSET"
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "Ei lainkaan"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "Viholliset"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
-msgstr ""
+msgstr "Valitse lämmitelyvahingon tila, jota äänestää"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Time Limit:"
-msgstr ""
+msgstr "Aikaraja:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
-msgstr ""
+msgstr "Määritä aikaraja, jota äänestää"
 
 #: etmain/ui/ingame_vote_misc.menu:78
 msgid "Select the game type to vote on"
-msgstr ""
+msgstr "Valitse pelityyppi, jota äänestää"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enable or disable warmup damage"
-msgstr ""
+msgstr "Ota käyttöön tai poista käytöstä lämmittelyvahinko"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Set the time limit for the server"
-msgstr ""
+msgstr "Aseta aikaraja palvelimelle"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
-msgstr ""
+msgstr "Aseta pelityyppi"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
@@ -1823,7 +1823,7 @@ msgstr "Hyppää:"
 
 #: etmain/ui/options_controls.menu:40
 msgid "Crouch:"
-msgstr ""
+msgstr "Kumarru:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -2262,7 +2262,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr ""
+msgstr "Numeerinen"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
@@ -3155,88 +3155,88 @@ msgstr ""
 #: etmain/ui/options_system_gamma.menu:70
 #: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
 msgid "Brightness:"
-msgstr ""
+msgstr "Kirkkaus:"
 
 #: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
 #: etmain/ui/options_system_gamma.menu:70
 #: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
 msgid "Set the brightness of the game"
-msgstr ""
+msgstr "Aseta pelin kirkkaus"
 
 #: etmain/ui/options_graphics.menu:34 etmain/ui/options.menu:36
 msgid "GRAPHICS"
-msgstr ""
+msgstr "GRAFIIKAT"
 
 #: etmain/ui/options_graphics.menu:37
 msgid "SIMPLE"
-msgstr ""
+msgstr "YKSINKERTAISET"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "Overall Quality:"
-msgstr ""
+msgstr "Yleislaatu:"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fastest"
-msgstr ""
+msgstr "nopein"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fast"
-msgstr ""
+msgstr "nopea"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "normal"
-msgstr ""
+msgstr "normaali"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "high"
-msgstr ""
+msgstr "korkea"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "Set overall video quality"
-msgstr ""
+msgstr "Yleinen kuvan laatu"
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid "Resolution:"
-msgstr ""
+msgstr "Resoluutio:"
 
 #: etmain/ui/options_graphics.menu:40
 msgid "Set video resolution of the game"
-msgstr ""
+msgstr "Aseta pelin resoluutio"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Window mode:"
-msgstr ""
+msgstr "Ikkunan tila:"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Vaihda kokoruutu"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "Intensity:"
-msgstr ""
+msgstr "Intensiteetti:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr ""
+msgstr "Tekstuurien intensiteetti (vaati vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
-msgstr ""
+msgstr "Kartan ylikirkkaus:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr ""
+msgstr "Maailma kirkastuu mutta menettää väriä (vaatii vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
-msgstr ""
+msgstr "Ylikirkkaus:"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Map shines brighter (requires vid_restart)"
-msgstr ""
+msgstr "Kartta kirkastuu (vaatii vid_restart)"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
@@ -4473,7 +4473,7 @@ msgstr ""
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
-msgstr ""
+msgstr "Viimeksipelattu: %s"
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
@@ -4482,18 +4482,18 @@ msgstr "Ei koskaan"
 #: src/cgame/cg_debriefing.c:1341
 #, c-format
 msgid "%d maps ago"
-msgstr ""
+msgstr "%d kenttää sitten"
 
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
-msgstr ""
+msgstr "Lasketut äänet: %d"
 
 #: src/cgame/cg_debriefing.c:2013 src/cgame/cg_debriefing.c:3202
 #: src/cgame/cg_scoreboard.c:723
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
-msgstr ""
+msgstr "KELLO ON NYT ASETETTU %s!"
 
 #: src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
@@ -4541,33 +4541,33 @@ msgstr "TASAPELI!"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "LIITTOUTUNEET PÄIHITTIVÄT KELLON!"
 
 #: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "LIITTOUTUNEET EIVÄT PÄIHITTÄNEET KELLOA!"
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "AKSELIVALLAT PÄIHITTIVÄT KELLON!"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "AKSELIVALLAT EIVÄT PÄIHITTÄNEET KELLOA!"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
 msgid "CAMPAIGN STATUS: %s"
-msgstr ""
+msgstr "KAMPANJAN STATUS: %s"
 
 #: src/cgame/cg_debriefing.c:3245
 msgid "SECS TO NEXT MAP"
-msgstr ""
+msgstr "SEK SEURAAVAAN KARTTAAN"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
-msgstr ""
+msgstr "Kampanja: %s"
 
 #: src/cgame/cg_draw.c:382 src/cgame/cg_draw.c:391 src/cgame/cg_draw.c:407
 #, c-format
@@ -4585,7 +4585,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1507
 msgid "Disguised Enemy!"
-msgstr ""
+msgstr "Naamioitunut vihollinen!"
 
 #: src/cgame/cg_draw.c:1717
 msgid "SPECTATOR"
@@ -4594,7 +4594,7 @@ msgstr "KATSOJA"
 #: src/cgame/cg_draw.c:1744
 #, c-format
 msgid "File complaint against ^7%s^3 for team-killing?"
-msgstr ""
+msgstr "Valitus pelaajaa ^7%s^3 vastaan joukkuetaposta?"
 
 #: src/cgame/cg_draw.c:1748 src/cgame/cg_draw.c:1762 src/cgame/cg_draw.c:1776
 #: src/cgame/cg_draw.c:1790 src/cgame/cg_draw.c:1804 src/cgame/cg_draw.c:1818
