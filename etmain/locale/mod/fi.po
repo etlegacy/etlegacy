@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-19 14:29+0000\n"
-"Last-Translator: Jere Sjöroos <shogaiam@gmail.com>\n"
+"PO-Revision-Date: 2015-01-20 20:09+0000\n"
+"Last-Translator: Sauli Vepsä <zAulivee@outlook.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/etlegacy/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2788,210 +2788,210 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "CROSSHAIR"
-msgstr ""
+msgstr "TÄHTÄIN"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Crosshair Size:"
-msgstr ""
+msgstr "Tähtäimen koko:"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Tiny"
-msgstr ""
+msgstr "Pikkuruinen"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Small"
-msgstr ""
+msgstr "Pieni"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Large"
-msgstr ""
+msgstr "Iso"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Huge"
-msgstr ""
+msgstr "Valtava"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Sets the size of the displayed crosshair"
-msgstr ""
+msgstr "Asettaa tähtäimen koko"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Crosshair Pulsing:"
-msgstr ""
+msgstr "Tähtäimen sykkiminen:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
-msgstr ""
+msgstr "Valitsee tähtäimen laajuuden mitoitus liikkuessa/ampuessa"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
-msgstr ""
+msgstr "Tähtäimen terveystiedot:"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid ""
 "Colors the crosshair based on current health (overrides crosshair color "
 "settings)"
-msgstr ""
+msgstr "Värittää tähtäimen nykyisen terveydentilan mukaan (ohittaa tähtäimen väriasetukset)"
 
 #: etmain/ui/options_customise_hud.menu:73
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Crosshair Name:"
-msgstr ""
+msgstr "Tähtäimen nimi:"
 
 #: etmain/ui/options_customise_hud.menu:73 src/cgame/cg_scoreboard.c:846
 msgid "Name"
-msgstr ""
+msgstr "Nimi"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Coloured Name"
-msgstr ""
+msgstr "Värillinen nimi"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Displays player name when the crosshair is over a teammate"
-msgstr ""
+msgstr "Näyttää pelaajan nimen, kun tähtäin on tiimitoverin päällä"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Crosshair Info:"
-msgstr ""
+msgstr "Tähtäimen tiedot:"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class"
-msgstr ""
+msgstr "Luokka"
 
 #: etmain/ui/options_customise_hud.menu:74 src/cgame/cg_info.c:783
 msgid "Rank"
-msgstr ""
+msgstr "Arvo"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank"
-msgstr ""
+msgstr "Luokka + Arvo"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
-msgstr ""
+msgstr "Näyttää pelaajan tiedot, kun tähtäin on tiimitoverin päällä"
 
 #: etmain/ui/options_customise_hud.menu:86
 msgid "Set crosshair type"
-msgstr ""
+msgstr "Aseta tähtäimen tyyppi"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
-msgstr ""
+msgstr "Pääväri:"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "White"
-msgstr ""
+msgstr "Valkoinen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Yellow"
-msgstr ""
+msgstr "Keltainen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Red"
-msgstr ""
+msgstr "Punainen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Green"
-msgstr ""
+msgstr "Vihreä"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Blue"
-msgstr ""
+msgstr "Sininen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Magenta"
-msgstr ""
+msgstr "Purppura"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Cyan"
-msgstr ""
+msgstr "Syaani"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Orange"
-msgstr ""
+msgstr "Oranssi"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Blue"
-msgstr ""
+msgstr "Vaaleansininen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Blue"
-msgstr ""
+msgstr "Keskisininen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Red"
-msgstr ""
+msgstr "Vaaleanpunainen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Red"
-msgstr ""
+msgstr "Keskipunainen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Green"
-msgstr ""
+msgstr "Vaaleanvihreä"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Green"
-msgstr ""
+msgstr "Keskivihreä"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Green"
-msgstr ""
+msgstr "Tummanvihreä"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Cyan"
-msgstr ""
+msgstr "Keskisyaani"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Yellow"
-msgstr ""
+msgstr "Keskikeltainen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Orange"
-msgstr ""
+msgstr "Keskioranssi"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Grey"
-msgstr ""
+msgstr "Vaaleanharmaa"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Grey"
-msgstr ""
+msgstr "Keskiharmaa"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Grey"
-msgstr ""
+msgstr "Tummanharmaa"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Black"
-msgstr ""
+msgstr "Musta"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Set the color for the primary crosshair"
-msgstr ""
+msgstr "Asettaa tähtäimen päävärin"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
@@ -3003,11 +3003,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Secondary Color:"
-msgstr ""
+msgstr "Toissijainen väri:"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Set the color for the secondary crosshair"
-msgstr ""
+msgstr "Asettaa tähtäimen toissijaisen värin"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Secondary Alpha:"
@@ -3019,7 +3019,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
-msgstr ""
+msgstr "LIIKKUMINEN"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
@@ -3293,16 +3293,16 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
 msgid "Default"
-msgstr ""
+msgstr "Oletus"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 #: etmain/ui/options_graphics.menu:68
 msgid "16-bit"
-msgstr ""
+msgstr "16-bittinen"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 msgid "32-bit"
-msgstr ""
+msgstr "32-bittinen"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
@@ -3314,11 +3314,11 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Bilinear"
-msgstr ""
+msgstr "Bilineaarinen"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Trilinear"
-msgstr ""
+msgstr "Trilineaarinen"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Set the GL texture mode"
@@ -3326,35 +3326,35 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Anisotropic Filter:"
-msgstr ""
+msgstr "Anisotrooppinen suodatus:"
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
 msgid "Disabled"
-msgstr ""
+msgstr "Pois käytöstä"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Set anisotropic filtering"
-msgstr ""
+msgstr "Aseta anisotrooppinen suodatus"
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Anti-Aliasing:"
-msgstr ""
+msgstr "Reunanpehmennys:"
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Set Anti-Aliasing"
-msgstr ""
+msgstr "Aseta reunanpehmennys"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Color Depth:"
-msgstr ""
+msgstr "Värisyys:"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Desktop Default"
-msgstr ""
+msgstr "Työpöydän oletus"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Set color depth"
-msgstr ""
+msgstr "Aseta värisyys"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Detail Textures:"
@@ -3366,11 +3366,11 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Depth Buffer:"
-msgstr ""
+msgstr "Syvyydenpuskurointi:"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "24-bit"
-msgstr ""
+msgstr "24-bittinen"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
@@ -3418,7 +3418,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
-msgstr ""
+msgstr "AUDIO"
 
 #: etmain/ui/options_system.menu:41
 msgid "Effects Volume:"
@@ -3430,35 +3430,35 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
-msgstr ""
+msgstr "Musiikin äänenvoimakkuus:"
 
 #: etmain/ui/options_system.menu:43
 msgid "Set the music volume"
-msgstr ""
+msgstr "Aseta musiikin äänenvoimakkuus"
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
-msgstr ""
+msgstr "Äänenlaatu:"
 
 #: etmain/ui/options_system.menu:44
 msgid "11 khz (low)"
-msgstr ""
+msgstr "11 kHz (matala)"
 
 #: etmain/ui/options_system.menu:44
 msgid "22 khz (high)"
-msgstr ""
+msgstr "22 kHz (korkea)"
 
 #: etmain/ui/options_system.menu:44
 msgid "44 khz (ultra high)"
-msgstr ""
+msgstr "44 kHz (erittäin korkea)"
 
 #: etmain/ui/options_system.menu:44
 msgid "Set the sound quality"
-msgstr ""
+msgstr "Aseta äänenlaatu"
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
-msgstr ""
+msgstr "Doppler-efekti:"
 
 #: etmain/ui/options_system.menu:45
 msgid "Enables or disables the doppler effect"
@@ -3552,23 +3552,23 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:80
 msgid "FILTERS"
-msgstr ""
+msgstr "SUODATTIMET"
 
 #: etmain/ui/playonline.menu:82
 msgid "Source:"
-msgstr ""
+msgstr "Lähde:"
 
 #: etmain/ui/playonline.menu:82
 msgid "Local"
-msgstr ""
+msgstr "Paikallinen"
 
 #: etmain/ui/playonline.menu:82
 msgid "Internet"
-msgstr ""
+msgstr "Internet"
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
-msgstr ""
+msgstr "Suosikit"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
@@ -3578,7 +3578,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
-msgstr ""
+msgstr "Päämäärä"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
@@ -3590,11 +3590,11 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
-msgstr ""
+msgstr "Modi:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
-msgstr ""
+msgstr "Näyttää vain tällä modilla olevat pelipalvelimet"
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
 msgid ""
@@ -3636,19 +3636,19 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
-msgstr ""
+msgstr "NOLLAA SUODATTIMET"
 
 #: etmain/ui/playonline.menu:195
 msgid "Reset all filters to their defaults"
-msgstr ""
+msgstr "Nollaa kaikki suodattimet niiden oletuksiksi"
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
-msgstr ""
+msgstr "PALVELINSELAIN"
 
 #: etmain/ui/playonline.menu:332
 msgid "SERVER NAME"
-msgstr ""
+msgstr "PAVELIMEN NIMI"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
@@ -3656,7 +3656,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
-msgstr ""
+msgstr "KARTAN NIMI"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
@@ -3664,7 +3664,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
-msgstr ""
+msgstr "#PELAAJAT"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
@@ -3672,7 +3672,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
-msgstr ""
+msgstr "TYYPPI"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
@@ -3684,21 +3684,21 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
-msgstr ""
+msgstr "POISTA SUOSIKIT"
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
-msgstr ""
+msgstr "LIITY PALVELIMELLE"
 
 #: etmain/ui/popup_autoupdate.menu:51
 msgid "UPDATE AVAILABLE"
-msgstr ""
+msgstr "PÄIVITYS SAATAVILLA"
 
 #: etmain/ui/popup_errormessage.menu:52
 #: etmain/ui/popup_errormessage_pb.menu:52
 #: etmain/ui/popup_hostgameerrormessage.menu:52
 msgid "ERROR"
-msgstr ""
+msgstr "VIRHE"
 
 #: etmain/ui/popup_errormessage.menu:59
 #: etmain/ui/popup_errormessage_pb.menu:57
