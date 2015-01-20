@@ -199,7 +199,7 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 		{
 			if (!trap_PC_ReadToken(handle, &token))
 			{
-				return G_ConfigError(handle, "excepted a command value");
+				return G_ConfigError(handle, "expected a command value");
 			}
 			trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", token.string));
 		}
