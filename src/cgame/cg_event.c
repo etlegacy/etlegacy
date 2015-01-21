@@ -58,8 +58,8 @@ static void CG_Obituary(entityState_t *ent)
 	int          target       = ent->otherEntityNum;
 	int          attacker     = ent->otherEntityNum2;
 	weapon_t     weapon       = ent->weapon;
-	char         *message;
-	char         *message2;
+	char         *message     = NULL;
+	char         *message2    = NULL;
 	char         targetName[MAX_NAME_LENGTH];
 	char         attackerName[MAX_NAME_LENGTH];
 	clientInfo_t *ci, *ca;    // ca = attacker
@@ -84,50 +84,52 @@ static void CG_Obituary(entityState_t *ent)
 	strcat(targetName, S_COLOR_WHITE);
 
 	// check for single client messages
-	switch (mod)
+	if (!ca)
 	{
-	case MOD_SUICIDE:
-		message = "committed suicide";
-		break;
-	case MOD_FALLING:
-		message = "rediscovered gravity";
-		break;
-	case MOD_CRUSH:
-		message = "was crushed";
-		break;
-	case MOD_WATER:
-		message = "drowned";
-		break;
-	case MOD_SLIME:
-		message = "died by toxic materials";
-		break;
-	case MOD_TRIGGER_HURT:
-	case MOD_TELEFRAG:     // added TELEFRAG and TARGET_LASER, just in case
-	case MOD_TARGET_LASER:
-		message = "was killed";
-		break;
-	case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
-		message = "got buried under a pile of rubble";
-		break;
-	case MOD_LAVA:
-		message = "was incinerated";
-		break;
-	case MOD_MAPMORTAR: // direct hit
-		message = "had an appointment with the map mortar";
-		break;
-	case MOD_MAPMORTAR_SPLASH:
-		message = "took a map mortar shell shower";
-		break;
-	case MOD_EXPLOSIVE:
-		message = "was pulverized by an explosion";
-		break;
-	default:
-		message = NULL;
-		break;
+		switch (mod)
+		{
+		case MOD_SUICIDE:
+			message = "committed suicide";
+			break;
+		case MOD_FALLING:
+			message = "rediscovered gravity";
+			break;
+		case MOD_CRUSH:
+			message = "was crushed";
+			break;
+		case MOD_WATER:
+			message = "drowned";
+			break;
+		case MOD_SLIME:
+			message = "died by toxic materials";
+			break;
+		case MOD_TRIGGER_HURT:
+		case MOD_TELEFRAG: // added TELEFRAG and TARGET_LASER, just in case
+		case MOD_TARGET_LASER:
+			message = "was killed";
+			break;
+		case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
+			message = "got buried under a pile of rubble";
+			break;
+		case MOD_LAVA:
+			message = "was incinerated";
+			break;
+		case MOD_MAPMORTAR: // direct hit
+			message = "had an appointment with the map mortar";
+			break;
+		case MOD_MAPMORTAR_SPLASH:
+			message = "took a map mortar shell shower";
+			break;
+		case MOD_EXPLOSIVE:
+			message = "was pulverized by an explosion";
+			break;
+		default:
+			message = NULL;
+			break;
+		}
 	}
-
 	// check for self kill messages
-	if (attacker == target)
+	else if (attacker == target)
 	{
 		switch (mod)
 		{
@@ -237,11 +239,11 @@ static void CG_Obituary(entityState_t *ent)
 				}
 				break;
 			}
-			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, (attacker == target ? OB_YELLOW : NULL));
+			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, OB_YELLOW);
 		}
 		else
 		{
-			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), " ", shader, 0, 0, (attacker == target ? OB_YELLOW : NULL));
+			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), " ", shader, 0, 0, OB_YELLOW);
 		}
 		trap_Print(va("%s %s\n", targetName, message));
 
