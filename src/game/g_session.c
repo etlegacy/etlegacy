@@ -86,7 +86,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.referee,
 	       client->sess.spec_invite,
 	       client->sess.spec_team,
-	       client->sess.suicides,
+	       client->sess.selfkills,
 	       client->sess.team_kills,
 	       client->sess.time_axis,
 	       client->sess.time_allies,
@@ -232,6 +232,7 @@ void G_ReadSessionData(gclient_t *client)
 #ifdef FEATURE_MULTIVIEW
 	int mvc_l, mvc_h;
 #endif
+	int      j;
 	char     s[MAX_STRING_CHARS];
 	qboolean test;
 
@@ -260,7 +261,7 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.referee,
 	       &client->sess.spec_invite,
 	       &client->sess.spec_team,
-	       &client->sess.suicides,
+	       &client->sess.selfkills,
 	       &client->sess.team_kills,
 	       &client->sess.time_axis,
 	       &client->sess.time_allies,
@@ -329,26 +330,22 @@ void G_ReadSessionData(gclient_t *client)
 	test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
 	        if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
-	        {
-	            G_ClientSwap(client);
-			}
+	{
+		G_ClientSwap(client);
+	}
 
 	        if (g_swapteams.integer)
-	        {
-	            trap_Cvar_Set("g_swapteams", "0");
-	            G_ClientSwap(client);
-			}
+	{
+		trap_Cvar_Set("g_swapteams", "0");
+		G_ClientSwap(client);
+	}
 
-	        {
-	            int j;
-
-	            client->sess.startxptotal = 0;
-	            for (j = 0; j < SK_NUM_SKILLS; j++)
-	            {
-	                client->sess.startskillpoints[j] = client->sess.skillpoints[j];
-	                client->sess.startxptotal += client->sess.skillpoints[j];
-				}
-			}
+	        client->sess.startxptotal = 0;
+	        for (j = 0; j < SK_NUM_SKILLS; j++)
+	{
+		client->sess.startskillpoints[j] = client->sess.skillpoints[j];
+		client->sess.startxptotal += client->sess.skillpoints[j];
+	}
 }
 
 /*

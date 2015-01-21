@@ -582,7 +582,7 @@ typedef struct
 	int rounds;
 	int spec_invite;
 	int spec_team;
-	int suicides;
+	int selfkills;
 	int team_damage_given;
 	int team_damage_received;
 	int team_kills;

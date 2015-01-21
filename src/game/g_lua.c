@@ -710,7 +710,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(acc,                            FIELD_FLOAT,       FIELD_FLAG_READONLY),
 
 	_et_gclient_addfield(lasthurt_mod,                   FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.playerStats.suicides,      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.playerStats.selfkills,     FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(lastKillTime,                   FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(lasthurt_time,                  FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(lasthurt_client,                FIELD_INT,         FIELD_FLAG_READONLY),
@@ -770,7 +770,7 @@ static const gentity_field_t gclient_fields[] =
 
 	_et_gclient_addfield(ps.stats,                       FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.persistant,                  FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.ping,                        FIELD_INT,         FIELD_FLAG_READONLY), // no ping change for lua scripts
+	_et_gclient_addfield(ps.ping,                        FIELD_INT,         FIELD_FLAG_READONLY),// no ping change for lua scripts
 	_et_gclient_addfield(ps.powerups,                    FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.origin,                      FIELD_VEC3,        0),
 	_et_gclient_addfield(ps.ammo,                        FIELD_INT_ARRAY,   0),
@@ -809,7 +809,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.rounds,                    FIELD_INT,         0),
 	_et_gclient_addfield(sess.spec_invite,               FIELD_INT,         0),
 	_et_gclient_addfield(sess.spec_team,                 FIELD_INT,         0),
-	_et_gclient_addfield(sess.suicides,                  FIELD_INT,         0),
+	_et_gclient_addfield(sess.selfkills,                 FIELD_INT,         0),
 	_et_gclient_addfield(sess.team_damage_given,         FIELD_INT,         0),
 	_et_gclient_addfield(sess.team_damage_received,      FIELD_INT,         0),
 	_et_gclient_addfield(sess.team_kills,                FIELD_INT,         0),

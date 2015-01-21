@@ -590,7 +590,7 @@ typedef struct clientInfo_s
 	int totalWeapHSpct;
 	int kills;
 	int deaths;
-	int suicides;
+	int selfkills;
 	int teamkills;
 	int timeAxis;
 	int timeAllies;
@@ -2690,9 +2690,9 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void (txt_dump) (char *));
-void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
-void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (char *));
+void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
+void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
 void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);

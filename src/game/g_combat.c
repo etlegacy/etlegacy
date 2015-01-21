@@ -430,7 +430,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		if (self->client)
 		{
-			self->client->pers.playerStats.suicides++;
+			self->client->pers.playerStats.selfkills++;
 		}
 	}
 	else if (dieFromSameTeam)

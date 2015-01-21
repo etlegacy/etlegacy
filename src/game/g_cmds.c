@@ -4057,7 +4057,7 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent)
 	{
 		if (g_entities[i].inuse)
 		{
-			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths, level.clients[i].sess.suicides, level.clients[i].sess.team_kills));
+			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths, level.clients[i].sess.selfkills, level.clients[i].sess.team_kills));
 		}
 		else
 		{

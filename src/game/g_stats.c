@@ -97,7 +97,7 @@ void G_PrintAccuracyLog(gentity_t *ent)
 		                          ent->client->pers.playerStats.weaponStats[i].teamkills));
 	}
 
-	Q_strcat(buffer, 2048, va(" %i", ent->client->pers.playerStats.suicides));
+	Q_strcat(buffer, 2048, va(" %i", ent->client->pers.playerStats.selfkills));
 
 	for (i = 0; i < HR_NUM_HITREGIONS; i++)
 	{

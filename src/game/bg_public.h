@@ -809,7 +809,7 @@ extern int skillLevels[SK_NUM_SKILLS][NUM_SKILL_LEVELS];
 typedef struct
 {
 	weaponStats_t weaponStats[WP_NUM_WEAPONS];
-	int suicides;
+	int selfkills;
 	int hitRegions[HR_NUM_HITREGIONS];
 	int objectiveStats[MAX_OBJECTIVES];
 } playerStats_t;

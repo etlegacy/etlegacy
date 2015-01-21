@@ -1950,7 +1950,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			int dmg_rcvd       = atoi(CG_Argv(iArg++));
 			int team_dmg_given = atoi(CG_Argv(iArg++));
 			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
-			int suicides       = atoi(CG_Argv(iArg++));
+			int selfkills      = atoi(CG_Argv(iArg++));
 			int team_kills     = atoi(CG_Argv(iArg++));
 
 			float htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
@@ -1959,7 +1959,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			Q_strncpyz(gs->strExtra[0], va(CG_TranslateString("Damage Given: %-6d  Team Damage Given: %d"), dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[1], va(CG_TranslateString("Damage Recvd: %-6d  Team Damage Recvd: %d"), dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[2], "", sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"), suicides, team_kills, htRatio, hsRatio), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Self Kills: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"), selfkills, team_kills, htRatio, hsRatio), sizeof(gs->strExtra[0]));
 		}
 	}
 
@@ -2009,7 +2009,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 }
 
 // Client-side stat presentation
-void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
+void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 {
 	clientInfo_t *ci;
 	qboolean     fFull     = (txt_dump != CG_printWindow);
@@ -2101,7 +2101,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 			int dmg_rcvd       = atoi(CG_Argv(iArg++));
 			int team_dmg_given = atoi(CG_Argv(iArg++));
 			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
-			int suicides       = atoi(CG_Argv(iArg++));
+			int selfkills      = atoi(CG_Argv(iArg++));
 			int team_kills     = atoi(CG_Argv(iArg++));
 
 			float htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
@@ -2119,7 +2119,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 			txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage Given: ^7%d\n", dmg_given, team_dmg_given));
 			txt_dump(va("^3Damage Recvd: ^7%-6d  ^3Team Damage Recvd: ^7%d\n", dmg_rcvd, team_dmg_rcvd));
 			txt_dump("\n");
-			txt_dump(va("^3Suicides: ^7%-2d ^3Team Kills: ^7%-2d ^3Accuracy: ^7%-3.1f ^3HS%%: ^7%-3.1f\n", suicides, team_kills, htRatio, hsRatio));
+			txt_dump(va("^3Self Kills: ^7%-2d ^3Team Kills: ^7%-2d ^3Accuracy: ^7%-3.1f ^3HS%%: ^7%-3.1f\n", selfkills, team_kills, htRatio, hsRatio));
 		}
 	}
 
@@ -2202,7 +2202,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	}
 }
 
-void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
+void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
 {
 	int      iArg  = 1;
 	qboolean fFull = (txt_dump != CG_printWindow);
@@ -2257,7 +2257,7 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 	}
 }
 
-void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
+void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
 {
 	int i, iArg = 1;
 	int cClients = atoi(CG_Argv(iArg++));
@@ -2437,7 +2437,7 @@ static void CG_ServerCommand(void)
 			cgs.playerStats.weaponStats[i].teamkills = atoi(CG_Argv(start++));
 		}
 
-		cgs.playerStats.suicides = atoi(CG_Argv(start++));
+		cgs.playerStats.selfkills = atoi(CG_Argv(start++));
 
 		for (i = 0; i < HR_NUM_HITREGIONS; i++)
 		{
