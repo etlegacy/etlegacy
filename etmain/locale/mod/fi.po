@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-20 20:09+0000\n"
-"Last-Translator: Sauli Vepsä <zAulivee@outlook.com>\n"
+"PO-Revision-Date: 2015-01-21 11:16+0000\n"
+"Last-Translator: Jere Sjöroos <shogaiam@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/etlegacy/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,15 +53,15 @@ msgstr "VP North American Studios"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr ""
+msgstr "LV. Projektipäällikkö"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr ""
+msgstr "LV Vanhempi Projektipäällikkö"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "LV Tiimipäällikkö"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
@@ -134,7 +134,7 @@ msgstr "TAKAISIN"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
-msgstr ""
+msgstr "LISÄÄ"
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
@@ -200,7 +200,7 @@ msgstr "Alkuperäinen Ääniraita Bill Brown:lta."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET:LEGACY TEAM"
-msgstr ""
+msgstr "KEHITETTY ET:LEGACY TIIMIN TOIMESTA"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
@@ -243,7 +243,7 @@ msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr ""
+msgstr "Kiitokset Splash Damage:lle heidän julkaisemastaan lähdekoodista. ioWolfET ja raedwulf-et (varsinkin Ralp Eastwood) projekteille heidän koodipohjastaan sekä ioQuake3 projektille inspiraatiosta."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
@@ -260,7 +260,7 @@ msgstr "^1VERKKOSIVUSTO"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr "© 2012-2015 ET Legacy Team - GPL 3 Lisenssillä"
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -286,15 +286,15 @@ msgstr "Johtava Ohjelmoija"
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
+msgstr "Mac OS X on Apple Computer, Inc rekisteröity tavaramerkki yhdysvalloissa ja muissa maissa."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET:LEGACY HALL OF FAME"
-msgstr ""
+msgstr "ET:LEGACY KUNNIAGALLERIA"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Vinkit, Virheraportit ja Korjaukset"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
@@ -302,7 +302,7 @@ msgstr "^1KÄÄNNÖKSET"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
-msgstr ""
+msgstr "JOHTAVA TUOTTAJA ID SOFTWARE:lta"
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
@@ -316,12 +316,12 @@ msgstr "Lisäohjelmointi"
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr ""
+msgstr "Wolfenstein: Enemy Territory on rakennettu id Software:n Quake III Arena (TM) pelimoottorin päälle."
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr ""
+msgstr "Tuotanto, kehitys ja teknistä apua toimitti id Software."
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
@@ -335,7 +335,7 @@ msgid ""
 "trademarks of Id Software, Inc. in the United States and/or other countries."
 " All other trademarks and trade names are the properties of their respective"
 " owners."
-msgstr ""
+msgstr "© 2003 Id Software, Inc. Kaikki oikeidet varattu. Wolfenstein Enemy Territory, Return to Castle Wolfenstein, Return to Castle Wolfenstein logo, id Software nimi ja id:n logo ovat rekisteröityjä tavaramerkkejä tai Id Software:n tavarakerkkejä yhdysvalloissa ja/tai muissa maissa. Kaikki muut tavaramerkit ovat omistajiensa omaisuutta."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -355,7 +355,7 @@ msgstr "TAIDE"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
-msgstr ""
+msgstr "Pääartisti / Luova johtaja"
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
@@ -363,7 +363,7 @@ msgstr "Taiteilija / Animoija"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
-msgstr ""
+msgstr "Muut artistit"
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
@@ -413,11 +413,11 @@ msgstr "Tasosuunnittelija / Taiteilija"
 
 #: etmain/ui/credits_splashdamage.menu:186
 msgid "Additional Level Design"
-msgstr ""
+msgstr "Muut tasosuunnittelijat"
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET Legacy Website"
-msgstr ""
+msgstr "ET Legacy Web sivusto"
 
 #: etmain/ui/etlegacywebsite.menu:50
 msgid ""
@@ -616,7 +616,7 @@ msgstr "Poista tiimi kontrollit käytöstä:"
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr ""
+msgstr "Voivatko pelaajat ajaa joukkuekomentoja (lockteam/spectators, readyteam, jne.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
@@ -624,7 +624,7 @@ msgstr "Lämmittelyn kesto:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
-msgstr ""
+msgstr "Lämmitelyn kesto ennen pelin alkamista"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid "Maximum Complaints:"
@@ -715,57 +715,57 @@ msgstr "Sekuntikellon kierrostyyppi:"
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr ""
+msgstr "Määrittää kellokierrokset tyypin (ABBA = vaiha puolet, ABAB = pidä puolet)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr ""
+msgstr "VIIMEINEN MIES PYSTYSSÄ"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr ""
+msgstr "VMP kierroksia per peli:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Ohittaa oletus VMP kierrokset per peli"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr ""
+msgstr "VMP pelejä per kartta:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Ohittaa oletus VMP pelit (muodostuen kierroksista) per kartta"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr ""
+msgstr "VMP katsele vain tiimiä:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr ""
+msgstr "Estää pelaajia katselemasta vihollistiimiä"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr ""
+msgstr "VMP lukitut tiimit:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Estää pelaajia vaihtamaan tiimejä"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
-msgstr ""
+msgstr "ADMIN"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
-msgstr ""
+msgstr "Puhdas palvelin:"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr ""
+msgstr "Rajoittaa pelin sisällön täsmäämään palvelimen PK3 tiedostojen sisältöä"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -784,7 +784,7 @@ msgstr "Tuomari salasana:"
 msgid ""
 "Password to utilize the \"ref\" command for match control and remote game "
 "administration"
-msgstr ""
+msgstr "Salasana joka mahdollistaa \"ref\" komennot pelin hallintaan palvelimella tai etänä"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
@@ -794,7 +794,7 @@ msgstr "RCON salasana:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Salasana joka mahdolistaa palvelimen etähallinnan (vaarallinen, eli pidä salassa)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
@@ -810,11 +810,11 @@ msgstr "Määrittää maksimi määrän äänestyksiä per pelaaja per peli"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
-msgstr ""
+msgstr "Onnistunut äänestys:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Asettaa minimi prosentin joka vaaditaan äänestyksen onnistumiseen"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -822,11 +822,11 @@ msgstr "SALLI ÄÄNESTYKSET"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
-msgstr ""
+msgstr "Pelin asetustiedosto:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Salli pelaajien äänestää pelin asetustiedostosta"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
@@ -836,15 +836,15 @@ msgstr "Peli tyyppi:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Salli pelaajien äänestää pelityypin muutosta"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr ""
+msgstr "Pelaajan poisto:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Salli pelaajien äänestää toisten pelaajien potkimista"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -856,11 +856,11 @@ msgstr "Salli pelaajien äänestää eri kampanjaa tai karttaa"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
-msgstr ""
+msgstr "Pelin resetointi:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Salli pelaajien äänestää pelin resetoinnista"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
@@ -982,29 +982,29 @@ msgstr "Salli pelaajien ladata puuttuvat tiedostot palvelimelta"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr ""
+msgstr "Maksimi latausnopeus"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
 "Specifies the maximum download rate from the server for players with missing"
 " files"
-msgstr ""
+msgstr "Asettaa maksimaallisen latausnopeuden palvelimelta pelaajalle jolta puuttuu tiedosto"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
-msgstr ""
+msgstr "FTP/HTTP uudelleenohjaukset:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Uudelleenohjaa pelaajat toiselle palvelimelle, joilta puuttuvat tiedostot"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
-msgstr ""
+msgstr "Juuriosoite URL:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "Käytetään osoitteen rakentamiseen mikä lähetetään pelaajalle latausta varten"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
@@ -1021,27 +1021,27 @@ msgstr "ALOITA OMISTETTU PALVELIN"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:53
 msgid "Starting a Dedicated Server will"
-msgstr ""
+msgstr "Omistetun palvelimen aloittaminen"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:54
 msgid "close the game window and open the"
-msgstr ""
+msgstr "sulkee peli-ikkunan ja aukaisee"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. It will not be possible"
-msgstr ""
+msgstr "palvelimen konsolin. Ei tule olemaan mahdollista"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
 msgid "to play the game on the host machine."
-msgstr ""
+msgstr "pelata peliä isäntäkoneelta."
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
-msgstr ""
+msgstr "Oletko varma, että haluat aloittaa"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:58
 msgid "a Dedicated Server?"
-msgstr ""
+msgstr "omistetun palvelimen?"
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
@@ -1102,7 +1102,7 @@ msgstr "Kampanja"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr ""
+msgstr "Viimeinen mies pystyssä"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1123,7 +1123,7 @@ msgstr "Sekuntikello"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
-msgstr ""
+msgstr "Klikkaa märittääksesi pelin tyyppi, joka ladataan"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
@@ -1131,11 +1131,11 @@ msgstr "Maksimi pelaajat:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
-msgstr ""
+msgstr "Maksimi määrä pelaajia, jotka voivat liittyä palvelimelle"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Auto-Configure Server:"
-msgstr ""
+msgstr "Autokonfiguroi palvelin:"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Competition Settings"
@@ -1217,7 +1217,7 @@ msgstr "Tasapainotetut tiimit"
 msgid ""
 "Enforces balanced teams by forcing players to join the team with the lowest "
 "player count"
-msgstr ""
+msgstr "Pakottaa pelaajat tasaisiin joukkueisiin"
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
@@ -1280,7 +1280,7 @@ msgstr "ASETUKSET"
 
 #: etmain/ui/ingame_main.menu:43 etmain/ui/main.menu:111
 msgid "CREDITS"
-msgstr ""
+msgstr "TUNNUSTUKSET"
 
 #: etmain/ui/ingame_main.menu:46 etmain/ui/main.menu:113
 #: etmain/ui/quit.menu:54
@@ -1301,7 +1301,7 @@ msgstr "Syötä teksti tähän - paina ESCAPE painiketta kahdesti peruuttaaksesi
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
-msgstr ""
+msgstr "Henkilölle:"
 
 #: etmain/ui/ingame_messagemode.menu:59
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
@@ -1345,13 +1345,13 @@ msgstr "UUDELLEENSPAWNATAAN"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
+msgstr "Viimeinen mies pystyssä moodissa et spawnaa uudelleen jos luovutat. Oletko varma?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
 "This server has Max Lives enabled. Tapping out now will lose a life. Are you"
 " sure?"
-msgstr ""
+msgstr "Tällä palvelimella on maksimielämät käytössä. Luovuttamalla menetät elämän. Oletko varma?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1560,7 +1560,7 @@ msgstr "TAUKO"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:81
 msgid "UNPAUSE"
-msgstr ""
+msgstr "LOPETA TAUKO"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:83
 msgid "LOCK TEAMS"
@@ -1881,7 +1881,7 @@ msgstr "0.022 (oletus)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Tähtäimen ylös-alas liike liikkumisen aikana."
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
@@ -2254,11 +2254,11 @@ msgstr "Määrittelee tarkkuudet, jolla zoomaat"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
-msgstr ""
+msgstr "Pikaviestintätila:"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr ""
+msgstr "Aakkosellinen"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
@@ -2266,7 +2266,7 @@ msgstr "Numeerinen"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr ""
+msgstr "Käytä aakkosellisia tai numeerisia näppäimiä lähettääksesi radioviestejä"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
@@ -2373,7 +2373,7 @@ msgstr "Kirjoittaa tärkeät peli viestit konsoliin"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Automaattitoiminta:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
@@ -2385,7 +2385,7 @@ msgstr "Kuvankaappaus"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Statsidumppi"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
@@ -2405,30 +2405,30 @@ msgstr "Demo + Kuvankaappaus + Tilastot"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Automaattisesti tee toiminto erän alussa tai lopussa"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
-msgstr ""
+msgstr "Autom. ruudunkaappaukset:"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Vaihtaa .tga tai .jpg tilaan automaattisissa ruudunkaappauksissa"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
-msgstr ""
+msgstr "Näytä vinkkejä:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Näytä vinkit menuissa"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
 msgid "ui/menudef.h"
-msgstr ""
+msgstr "ui/menudef.h"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
@@ -2501,7 +2501,7 @@ msgstr "Vankka"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Icon display format when near an action item"
-msgstr ""
+msgstr "Näytä ikoni kun tehtävän lähellä"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
@@ -2513,11 +2513,11 @@ msgstr "Vain koordinaatit"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
-msgstr ""
+msgstr "Nimet vain partiossa"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Team Chat Only"
-msgstr ""
+msgstr "Nimet vain tiimiviesteissä"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Team & Fireteam Chat"
@@ -2537,35 +2537,35 @@ msgstr "Näyttää pelaajien maiden liput tulostaulukossa"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Tulijoukkueen luokkavaihdot:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr ""
+msgstr "Näytä tulijoukkueen luokkavaihdot"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
-msgstr ""
+msgstr "Kuolinilmoitus ikonit:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "Uhri, ase, tappaja"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "Tappaja, ase, uhri"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
-msgstr ""
+msgstr "Näyttää graafiset kuolinilmoitukset"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
-msgstr ""
+msgstr "Näytä kuvaileva teksti:"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Displays limbo help text"
-msgstr ""
+msgstr "Näyttää limbon ohjetekstin"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Show Clock:"
@@ -2677,68 +2677,68 @@ msgstr "PELIN NÄYTTÖ"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Ejecting Brass:"
-msgstr ""
+msgstr "Uloslentävät hylsyt:"
 
 #: etmain/ui/options_customise_hud.menu:56 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52 etmain/ui/profile_create_initial.menu:102
 #: etmain/ui/profile_create.menu:97
 msgid "High"
-msgstr ""
+msgstr "Korkea"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Med"
-msgstr ""
+msgstr "Kohtalainen"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
-msgstr ""
+msgstr "Asettaa uloslentävien hylsyjen jne. keston"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
-msgstr ""
+msgstr "Näkökenttä:"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
-msgstr ""
+msgstr "Paras näkökenttä (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
-msgstr ""
+msgstr "Koronan etäisyys:"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
-msgstr ""
+msgstr "Äärimmäinen"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Sets the maximum distance light corona is displayed"
-msgstr ""
+msgstr "Asettaa maksimietäisyyden valokoronoiden näyttämiseen"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles:"
-msgstr ""
+msgstr "Hiukkaset:"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid ""
 "Toggles display of particle effects - e.g. explosions, some smoke effects"
-msgstr ""
+msgstr "Kytkee hiukkasten piirtämiset päälle tai pois, esim räjähdykset ja savuefektit"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
-msgstr ""
+msgstr "Luodinreikien elinaika:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls etc"
-msgstr ""
+msgstr "Aika kuinka pitkään luodinreijät näkyvät seinissä jne"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
-msgstr ""
+msgstr "Veren välkyntä:"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Light"
-msgstr ""
+msgstr "Kevyt"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
@@ -2746,45 +2746,45 @@ msgstr ""
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52
 msgid "Medium"
-msgstr ""
+msgstr "Keskikokoinen"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Heavy"
-msgstr ""
+msgstr "Voimakas"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Full"
-msgstr ""
+msgstr "Täysi"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Red blood \"flash\" scale when receiving damage"
-msgstr ""
+msgstr "Punainen veren \"välkynnän\" suuruus, kun vastaanotetaan vahinkoa"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood Splatter:"
-msgstr ""
+msgstr "Veren roisukunta:"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood \"splatter\" transparency when taking damage from other players"
-msgstr ""
+msgstr "Veren \"roiskunnan\" läpinäkyvyys, kun otetaan vastaan vahinkoa toisilta pelaajilta"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Show Blood:"
-msgstr ""
+msgstr "Näytä veri:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when player's are shot"
-msgstr ""
+msgstr "Kytkee pelaajien veriroiskeet päälle tai pois kun pelaajaa ammutaan"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
-msgstr ""
+msgstr "Ilmakehän efektit:"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Draws atmospheric effects (snow/rain) on-screen"
-msgstr ""
+msgstr "Näyttää ilmakehän efektit (lumen/sateen) näytöllä"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "CROSSHAIR"
@@ -2995,11 +2995,11 @@ msgstr "Asettaa tähtäimen päävärin"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
-msgstr ""
+msgstr "Primääri läpinäkyvyys:"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Set the transparency level for the primary crosshair"
-msgstr ""
+msgstr "Primäärin tähtäimen läpinäkyvyys"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Secondary Color:"
@@ -3011,11 +3011,11 @@ msgstr "Asettaa tähtäimen toissijaisen värin"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Secondary Alpha:"
-msgstr ""
+msgstr "Sekundääri läpinäkyvyys:"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Set the transparency level for the secondary crosshair"
-msgstr ""
+msgstr "Sekundaarisen tähtäimen läpinäkyvyys"
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
@@ -3023,27 +3023,27 @@ msgstr "LIIKKUMINEN"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
-msgstr ""
+msgstr "Ylösheilunta:"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Enable/Disable the vertical bob effect when moving"
-msgstr ""
+msgstr "Käytä tai poista käystöstä vertikaalinen heilunta liikkeen aikana"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Bob pitch:"
-msgstr ""
+msgstr "Tärinä:"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
-msgstr ""
+msgstr "Käytä tai poista käytöstä pelaajan tärinäefekti (eteen/taakse)liikkeen aikana"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Bob roll:"
-msgstr ""
+msgstr "Pyörintä:"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Enable/Disable the bob roll (left/right) effect when moving"
-msgstr ""
+msgstr "Käytä tai poista käytöstä pelaajan pyörintä (vasen/oikea) liikeen aikana"
 
 #: etmain/ui/options_customise_hud.menu:113
 msgid "FONTS"
@@ -3072,7 +3072,7 @@ msgstr "Sivuteksti:"
 #: etmain/ui/options_customise_hud.menu:118
 msgid ""
 "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
-msgstr ""
+msgstr "Aseta fontin koko jota käytetään limbossa/tulijoukkueessa/äänestyksessä tai muissa viesteissä"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Center Print:"
@@ -3080,76 +3080,76 @@ msgstr "Keskiteksti:"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
-msgstr ""
+msgstr "Aseta keskiprintin/kohdetiedon/taito palkintojen fontin koko"
 
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Set font size for Crosshair Name label"
-msgstr ""
+msgstr "Aseta tähtäimen nimien fontin koko"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "PopUpTimeStay:"
-msgstr ""
+msgstr "Viestin säilytys:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
-msgstr ""
+msgstr "Aseta aika kuinka kauan viestit säilyvät ruudulla"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "PopUpTimeFade:"
-msgstr ""
+msgstr "Viestien katoaminen:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
-msgstr ""
+msgstr "Aseta aika kuinka kauan viestitien katoaminen kestää"
 
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
 msgid "CALIBRATE BRIGHTNESS"
-msgstr ""
+msgstr "KALIBROI KIRKKAUS"
 
 #: etmain/ui/options_graphics_gamma.menu:33
 #: etmain/ui/options_system_gamma.menu:36
 msgid "General Brightness Calibration (All Color Depths)"
-msgstr ""
+msgstr "Geneerinen kirkkauden säätö (kaikki värisyvyydet)"
 
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can"
 " see 16"
-msgstr ""
+msgstr "1. Siirrä alla olevaa liukusäädintä tai säädä näyttösi kirkkautta kunnes näet numeron 16"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
 msgid "     separate bars below of equal differing brightness."
-msgstr ""
+msgstr "palkit alla eriävää kirkkaustasoa"
 
 #: etmain/ui/options_graphics_gamma.menu:36
 #: etmain/ui/options_system_gamma.menu:39
 msgid "2. Click the BACK button."
-msgstr ""
+msgstr "2. Paina TAKAISIN nappulaa."
 
 #: etmain/ui/options_graphics_gamma.menu:50
 #: etmain/ui/options_system_gamma.menu:53
 msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
-msgstr ""
+msgstr "Kirkkauden hienosäätö (32 bittiset tekstuurit ja värisyvyys)"
 
 #: etmain/ui/options_graphics_gamma.menu:51
 #: etmain/ui/options_system_gamma.menu:54
 msgid "1. Move the slider below until you can see 3 separate bars below."
-msgstr ""
+msgstr "1. Käytä liukusäädintä kunnes näet 3 eri palkkia alla."
 
 #: etmain/ui/options_graphics_gamma.menu:52
 #: etmain/ui/options_system_gamma.menu:55
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
-msgstr ""
+msgstr "2. Käytä liukusäädintä kunnes vasemmalla ja oikealla laatikolla ei ole enää eroa."
 
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
 msgid "3. Click the BACK button."
-msgstr ""
+msgstr "3. Paina TAKAISIN nappulaa."
 
 #: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
 #: etmain/ui/options_system_gamma.menu:70
@@ -3240,56 +3240,56 @@ msgstr "Kartta kirkastuu (vaatii vid_restart)"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
-msgstr ""
+msgstr "Heikkolaatuinen taivas:"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
-msgstr ""
+msgstr "Piirretäänkö yksinkertainen taivas vai teksturoitu taivas"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Shadow Detail:"
-msgstr ""
+msgstr "Varjojen yksityiskohdat:"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Blob"
-msgstr ""
+msgstr "Möykky"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Set shadow details"
-msgstr ""
+msgstr "Aseta varjojen yksityiskohdat"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Texture Detail:"
-msgstr ""
+msgstr "Tekstuurien yksityiskohdat:"
 
 #: etmain/ui/options_graphics.menu:56 etmain/ui/options_graphics.menu:60
 #: etmain/ui/options_system.menu:52
 msgid "Low"
-msgstr ""
+msgstr "Matala"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Set texture details"
-msgstr ""
+msgstr "Aseta tekstuurien yksityiskohdat"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
-msgstr ""
+msgstr "Dynaamiset valot:"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Toggles use of dynamic lighting effects"
-msgstr ""
+msgstr "Asettaa dynaamisten valoefektien käytön"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Geometric Detail:"
-msgstr ""
+msgstr "Geometriset yksityiskohdat:"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Set level of details bias"
-msgstr ""
+msgstr "Aseta yksityiskohtien vääristymien taso"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Texture Quality:"
-msgstr ""
+msgstr "Tekstuurien laatu:"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
 msgid "Default"
@@ -3306,11 +3306,11 @@ msgstr "32-bittinen"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
-msgstr ""
+msgstr "Aseta tekstuurien bittimäärä"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Texture Filter:"
-msgstr ""
+msgstr "Tekstuuri suodatin:"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Bilinear"
@@ -3322,7 +3322,7 @@ msgstr "Trilineaarinen"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Set the GL texture mode"
-msgstr ""
+msgstr "Aseta grafiikkalaajennuksien tila"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Anisotropic Filter:"
@@ -3358,11 +3358,11 @@ msgstr "Aseta värisyys"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Detail Textures:"
-msgstr ""
+msgstr "Tarkenna tekstuurit:"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Toogles usage of high detail textures"
-msgstr ""
+msgstr "Korkean tason tekstuurien kytkin"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Depth Buffer:"
@@ -3374,47 +3374,47 @@ msgstr "24-bittinen"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
-msgstr ""
+msgstr "Asettaa syvyysbittien määrän"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Compress Textures:"
-msgstr ""
+msgstr "Tekstuurien pakkaus:"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Toggles the compression of textures"
-msgstr ""
+msgstr "Tekstuurien pakkauskytkin"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Sync Every Frame:"
-msgstr ""
+msgstr "Synkronoi jokainen ruutu:"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Prevent screen tearing"
-msgstr ""
+msgstr "Estä ruudunhajonta"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "GL Extensions:"
-msgstr ""
+msgstr "Grafiikkalaajennukset:"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enabled"
-msgstr ""
+msgstr "Käytössä"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enables or disables usage of OpenGL extensions"
-msgstr ""
+msgstr "Käyttää tai poistaa käytöstä grafiikkalaajennukset"
 
 #: etmain/ui/options_graphics.menu:73
 msgid "SET RECOMMENDED"
-msgstr ""
+msgstr "ASETA SUOSITELLUT"
 
 #: etmain/ui/options_graphics.menu:78 etmain/ui/options_system.menu:66
 msgid "APPLY"
-msgstr ""
+msgstr "KÄYTÄ"
 
 #: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
 msgid "SYSTEM"
-msgstr ""
+msgstr "JÄRJESTELMÄ"
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
@@ -3422,11 +3422,11 @@ msgstr "AUDIO"
 
 #: etmain/ui/options_system.menu:41
 msgid "Effects Volume:"
-msgstr ""
+msgstr "Efektien äänenevoimakkuus:"
 
 #: etmain/ui/options_system.menu:41
 msgid "Set the effects volume"
-msgstr ""
+msgstr "Aseta efektien äänenvoimakkuus"
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
@@ -3462,93 +3462,93 @@ msgstr "Doppler-efekti:"
 
 #: etmain/ui/options_system.menu:45
 msgid "Enables or disables the doppler effect"
-msgstr ""
+msgstr "Ota käytöön tai poista käytöstä doppler-efekti"
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
-msgstr ""
+msgstr "Mykistä minimoituna:"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
-msgstr ""
+msgstr "Ota käytöön tai ota pois käytöstä äänet, kun ikkuna on minimoituna"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
-msgstr ""
+msgstr "Mykistä keskitettömänä:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr ""
+msgstr "Ota käyttöön tai poista käytöstä äänet, kun ikkuna on keskitettömänä"
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
-msgstr ""
+msgstr "VERKKO"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
-msgstr ""
+msgstr "Maksimi paketit:"
 
 #: etmain/ui/options_system.menu:52
 msgid "Very Low"
-msgstr ""
+msgstr "Erittäin alhainen"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
-msgstr ""
+msgstr "Ylävirran datapakettien siirron yläraja"
 
 #: etmain/ui/options_system.menu:53
 msgid "Packet Duplication:"
-msgstr ""
+msgstr "Pakettien kopiointi:"
 
 #: etmain/ui/options_system.menu:53
 msgid ""
 "Number of duplicates for every data packet sent upstream, minimized "
 "packetloss"
-msgstr ""
+msgstr "Duplikaattien määrä jokaisesta lähetettävästä datapaketista, minimoi pakettihävikin"
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
-msgstr ""
+msgstr "LATAUKSET"
 
 #: etmain/ui/options_system.menu:59
 msgid "Check for Updates on Start-Up:"
-msgstr ""
+msgstr "Tarkista päivitykset käynnistyksessä:"
 
 #: etmain/ui/options_system.menu:59
 msgid "Automatically check for updates?"
-msgstr ""
+msgstr "Tarkista päivitykset automaattisesti?"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
-msgstr ""
+msgstr "Hanki puuttuvat tiedostot palvelimelta:"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
-msgstr ""
+msgstr "Lataa puuttuvat tiedostot, kun saatavilla?"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
-msgstr ""
+msgstr "Käytä HTTP/FTP latauksia:"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
-msgstr ""
+msgstr "Käyttää tai poistaa käytöstä http/ftp latauksen"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
-msgstr ""
+msgstr "YHDISTÄ IP:N"
 
 #: etmain/ui/playonline_deletefavs.menu:50
 msgid "DELETE SERVER FAVOURITES"
-msgstr ""
+msgstr "POISTA PALVELIN SUOSIKEISTA"
 
 #: etmain/ui/playonline_deletefavs.menu:51
 msgid "Do you really want to"
-msgstr ""
+msgstr "Haluatko varmasti"
 
 #: etmain/ui/playonline_deletefavs.menu:52
 msgid "delete YOUR favourites?"
-msgstr ""
+msgstr "poistaa SINUN suosikkisi?"
 
 #: etmain/ui/playonline.menu:80
 msgid "FILTERS"
@@ -3574,7 +3574,7 @@ msgstr "Suosikit"
 msgid ""
 "Choose the type of game servers to display from Internet, local and the "
 "favorites list"
-msgstr ""
+msgstr "Valitse pelipalvelinten tyypit jotka näytetään verkosta, lokaalista tai suosikeista"
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
@@ -3582,11 +3582,11 @@ msgstr "Päämäärä"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
-msgstr ""
+msgstr "VMP"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
-msgstr ""
+msgstr "Näytä vain pelipalvelimet jotka tarjoavat tätä pelityyppiä"
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
@@ -3599,40 +3599,40 @@ msgstr "Näyttää vain tällä modilla olevat pelipalvelimet"
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
 msgid ""
 "Includes or excludes servers with desired map name from the server list"
-msgstr ""
+msgstr "Näytä tai poista palvelimet joissa on tietty kartta pelissä"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr ""
+msgstr "Filtteröi palvelimet kartan nimellä"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr ""
+msgstr "Suodatin poistettu käytöstä"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Only show..."
-msgstr ""
+msgstr "Näytä vain..."
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Don't show..."
-msgstr ""
+msgstr "Älä näytä..."
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
-msgstr ""
+msgstr "PÄIVITÄ LISTA"
 
 #: etmain/ui/playonline.menu:194
 msgid "Refresh servers list"
-msgstr ""
+msgstr "Päivitä palvelinlista"
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
@@ -3652,7 +3652,7 @@ msgstr "PAVELIMEN NIMI"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr ""
+msgstr "Klikkaa tästä lajitellaksesi palvelimen nimen mukaan"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
@@ -3660,7 +3660,7 @@ msgstr "KARTAN NIMI"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
-msgstr ""
+msgstr "Klikkaa tästä lajitellaksesi kampanjan tai kartan nimen mukaan"
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
@@ -3668,7 +3668,7 @@ msgstr "#PELAAJAT"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
-msgstr ""
+msgstr "Klikkaa tästä lajitellaksesi pelaajamäärän mukaan"
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
@@ -3676,11 +3676,11 @@ msgstr "TYYPPI"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
-msgstr ""
+msgstr "Klikkaa tästä lajitellaksesi pelityypin mukaan"
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
-msgstr ""
+msgstr "VIIVE"
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
@@ -3704,31 +3704,31 @@ msgstr "VIRHE"
 #: etmain/ui/popup_errormessage_pb.menu:57
 #: etmain/ui/popup_serverredirect.menu:79
 msgid "RECONNECT"
-msgstr ""
+msgstr "UUDELLEENYHDISTÄ"
 
 #: etmain/ui/popup_password.menu:73
 msgid "PASSWORD REQUIRED"
-msgstr ""
+msgstr "SALASANA VAADITTU"
 
 #: etmain/ui/popup_password.menu:84
 msgid "Enter the server password"
-msgstr ""
+msgstr "Syötä palvelimen salasana"
 
 #: etmain/ui/popup_serverredirect.menu:71
 msgid "REDIRECTION ADVISED"
-msgstr ""
+msgstr "OHJAUS SUOSITELTU"
 
 #: etmain/ui/popup_serverredirect.menu:74
 msgid "Do you want to redirect to:"
-msgstr ""
+msgstr "Haluatko sinut ohjattavan:"
 
 #: etmain/ui/profile_create_error.menu:51
 msgid "CREATION ERROR"
-msgstr ""
+msgstr "LUOMISVIRHE"
 
 #: etmain/ui/profile_create_initial.menu:85 etmain/ui/profile_create.menu:78
 msgid "CREATE PROFILE"
-msgstr ""
+msgstr "LUO PROFIILI"
 
 #: etmain/ui/profile_create_initial.menu:87 etmain/ui/profile_create.menu:80
 msgid ""
@@ -3736,171 +3736,171 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr ""
+msgstr "Ole hyvä ja valitse alustavat asetuksesi alapuolelta. Voit vaihtaa näitä milloin tahansa ja päästä käsiksi vielä kehittyneempiin asetuksiin käymällä asetusvalikossa. Jos useampi kuin yksi henkilö haluaa pelata Enemy Territory: Legacya, niin voit luoda lisäprofiileja käymällä profiili valikossa."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
 "Enter the alias here that you would like displayed to others on servers"
-msgstr ""
+msgstr "Syötä alias tänne, jonka haluat näkyävän muille palvelimella"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Video Quality:"
-msgstr ""
+msgstr "Videonlaatu:"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
-msgstr ""
+msgstr "Nopein"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fast"
-msgstr ""
+msgstr "Nopea"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid ""
 "Select your initial video settings, these can be changed later via the "
 "options menu"
-msgstr ""
+msgstr "Valitse alustavat videoasetuksesi, nämä voidaan vaihtaa myöhemmin asetusvalikosta."
 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr ""
+msgstr "Valitse toivomasi video resoluutio, jos olet epävarma jätä se oletukseksi"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Kyätä liukusäädintä asettaaksesi hiiren herkkyytesi"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
 "Choose invert mouse if you prefer flight-simulator style mouse pitch "
 "controls"
-msgstr ""
+msgstr "Valitse hiiren invertointi jos pidät enemmän lento-simulaattori tyylisestä hallinnasta"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
-msgstr ""
+msgstr "OLETUSASETUKSET"
 
 #: etmain/ui/profile_create_initial.menu:125
 msgid "^1LET'S KEEP ET ALIVE!"
-msgstr ""
+msgstr "^1PIDETÄÄN ET ELOSSA!"
 
 #: etmain/ui/profile_create_initial.menu:126
 msgid "Thank you for installing ET:Legacy"
-msgstr ""
+msgstr "Kiitos että asensit ET:Legacy:n"
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"
-msgstr ""
+msgstr "LOPETA"
 
 #: etmain/ui/profile_create_initial.menu:131 etmain/ui/profile_create.menu:120
 #: etmain/ui/profile.menu:62
 msgid "CREATE"
-msgstr ""
+msgstr "LUO"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr ""
+msgstr "Valitse hiiren invertointi jos pidät enemmän lento-simulaattori tyylisestä hallinnasta"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
-msgstr ""
+msgstr "POISTOVAROITUS"
 
 #: etmain/ui/profile_delete_error.menu:51
 msgid "Can't delete"
-msgstr ""
+msgstr "Ei voida poistaa"
 
 #: etmain/ui/profile_delete_error.menu:52
 msgid "active profile."
-msgstr ""
+msgstr "aktiivista profiilia."
 
 #: etmain/ui/profile_delete.menu:50
 msgid "DELETE PROFILE"
-msgstr ""
+msgstr "POISTA PROFIILI"
 
 #: etmain/ui/profile_delete.menu:51 etmain/ui/viewreplay_delete.menu:51
 msgid "Are you sure?"
-msgstr ""
+msgstr "Oletko varma?"
 
 #: etmain/ui/profile.menu:63 etmain/ui/viewreplay.menu:59
 msgid "DELETE"
-msgstr ""
+msgstr "POISTA"
 
 #: etmain/ui/profile.menu:66 etmain/ui/profile_rename.menu:69
 msgid "RENAME"
-msgstr ""
+msgstr "UUDELLEENNIMEÄ"
 
 #: etmain/ui/profile.menu:67
 msgid "SET AS DEFAULT"
-msgstr ""
+msgstr "ASETA OLETUKSEKSI"
 
 #: etmain/ui/profile.menu:72
 msgid "SELECT PROFILE"
-msgstr ""
+msgstr "VALITSE PROFIILI"
 
 #: etmain/ui/profile_rename.menu:55
 msgid "RENAME PROFILE"
-msgstr ""
+msgstr "UUDELLEENNIMEÄ PROFIILI"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New Profile Name:"
-msgstr ""
+msgstr "Uusi profiilin nimi:"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New name of profile"
-msgstr ""
+msgstr "Profiilin uusi nimi"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
-msgstr ""
+msgstr "Joo, just, niin kuin SINULLA olisi"
 
 #: etmain/ui/quit.menu:56
 msgid "anything better to do!"
-msgstr ""
+msgstr "jotain parempaa tekemistä!"
 
 #: etmain/ui/rec_restart.menu:53 etmain/ui/vid_restart.menu:47
 msgid "CHANGE VIDEO SETTINGS"
-msgstr ""
+msgstr "VAIHDA VIDEOASETUKSIA"
 
 #: etmain/ui/rec_restart.menu:55
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
-msgstr ""
+msgstr "Aseta suositellut videoasetukset\nja palaa päävalikkoon?"
 
 #: etmain/ui/rec_restart.menu:57
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
-msgstr ""
+msgstr "Aseta suositellut videoasetukset\nja palaa pelivalikkoon?"
 
 #: etmain/ui/vid_confirm.menu:61
 msgid "CONFIRM VIDEO CHANGE"
-msgstr ""
+msgstr "VAHVISTA VIDEON MUUTOS"
 
 #: etmain/ui/vid_confirm.menu:63
 msgid "Use this video mode?"
-msgstr ""
+msgstr "Käytä tätä videotilaa?"
 
 #: etmain/ui/vid_confirm.menu:64
 msgid "Reverting to previous"
-msgstr ""
+msgstr "Palataan edelliseen"
 
 #: etmain/ui/vid_confirm.menu:71
 #, c-format
 msgid "setting in %s seconds..."
-msgstr ""
+msgstr "asetetaan %s sekunnin kuluttua..."
 
 #: etmain/ui/vid_restart.menu:48
 msgid "Apply new settings?"
-msgstr ""
+msgstr "Käytä uusia asetuksia?"
 
 #: etmain/ui/viewreplay_delete.menu:50
 msgid "DELETE REPLAY"
-msgstr ""
+msgstr "POISTA UUSINTA"
 
 #: etmain/ui/viewreplay.menu:50
 msgid "Select the replay to view or delete"
-msgstr ""
+msgstr "Valitse katsottava tai poistettava uusinta"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:33 etmain/ui/wm_ftquickmessage.menu:33
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
@@ -4150,7 +4150,7 @@ msgstr "4. Anteeksi"
 #: etmain/ui/wm_ftquickmessageAlt.menu:165
 #: etmain/ui/wm_quickmessageAlt.menu:165
 msgid "5. Hold Fire!"
-msgstr ""
+msgstr "5. Pidättäkää tulta!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:166
 #: etmain/ui/wm_quickmessageAlt.menu:166
@@ -4160,295 +4160,295 @@ msgstr "6. Hyvä peli"
 #: etmain/ui/wm_ftquickmessageAlt.menu:172
 #: etmain/ui/wm_quickmessageAlt.menu:172
 msgid "1. Command Acknowledged"
-msgstr ""
+msgstr "1. Komento kuitattu"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:173
 #: etmain/ui/wm_quickmessageAlt.menu:174
 msgid "3. Command Completed"
-msgstr ""
+msgstr "3. Komento suoritettu"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:174
 #: etmain/ui/wm_quickmessageAlt.menu:175
 msgid "4. Destroy Primary Objective"
-msgstr ""
+msgstr "4. Tuhotkaa ensisijainen päämäärä"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:175
 #: etmain/ui/wm_quickmessageAlt.menu:176
 msgid "5. Destroy Secondary Objective"
-msgstr ""
+msgstr "5. Tuhotkaa toissijainen päämäärä"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:176
 #: etmain/ui/wm_quickmessageAlt.menu:177
 msgid "6. Destroy Construction"
-msgstr ""
+msgstr "6. Tuhotkaa rakennelma"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:177
 #: etmain/ui/wm_quickmessageAlt.menu:178
 msgid "7. Commencing Construction"
-msgstr ""
+msgstr "7. Aloitetaan rakennelmaa"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:178
 #: etmain/ui/wm_quickmessageAlt.menu:179
 msgid "8. Repair Vehicle"
-msgstr ""
+msgstr "8. Korjatkaa ajoneuvo"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:179
 #: etmain/ui/wm_quickmessageAlt.menu:180
 msgid "9. Disable Vehicle"
-msgstr ""
+msgstr "9. Lamauttakaa ajoneuvo"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:180
 #: etmain/ui/wm_quickmessageAlt.menu:181
 msgid "0. Escort Vehicle"
-msgstr ""
+msgstr "0. Saattakaa ajoneuvo"
 
 #: etmain/ui/wm_ftquickmessage.menu:83 etmain/ui/wm_quickmessage.menu:84
 msgid "S. Statements"
-msgstr ""
+msgstr "S. Lausunnot"
 
 #: etmain/ui/wm_ftquickmessage.menu:84 etmain/ui/wm_quickmessage.menu:85
 msgid "R. Requests"
-msgstr ""
+msgstr "R. Pyynnöt"
 
 #: etmain/ui/wm_ftquickmessage.menu:85 etmain/ui/wm_quickmessage.menu:86
 msgid "C. Commands"
-msgstr ""
+msgstr "C. Komennot"
 
 #: etmain/ui/wm_ftquickmessage.menu:86 etmain/ui/wm_quickmessage.menu:87
 msgid "T. Talk"
-msgstr ""
+msgstr "T. Keskustelu"
 
 #: etmain/ui/wm_ftquickmessage.menu:87 etmain/ui/wm_quickmessage.menu:88
 msgid "G. Global"
-msgstr ""
+msgstr "G. Globaali"
 
 #: etmain/ui/wm_ftquickmessage.menu:88 etmain/ui/wm_quickmessage.menu:89
 msgid "F. Function"
-msgstr ""
+msgstr "F. Virkatehtävä"
 
 #: etmain/ui/wm_ftquickmessage.menu:89 etmain/ui/wm_quickmessage.menu:90
 msgid "O. Objectives"
-msgstr ""
+msgstr "O. Päämäärät"
 
 #: etmain/ui/wm_ftquickmessage.menu:95 etmain/ui/wm_quickmessage.menu:96
 msgid "P. Path Cleared."
-msgstr ""
+msgstr "P. Reitti selvä."
 
 #: etmain/ui/wm_ftquickmessage.menu:96 etmain/ui/wm_quickmessage.menu:97
 msgid "W. Enemy Weak!"
-msgstr ""
+msgstr "W. Vihollinen on heikko!"
 
 #: etmain/ui/wm_ftquickmessage.menu:97 etmain/ui/wm_quickmessage.menu:98
 msgid "C. All Clear"
-msgstr ""
+msgstr "C. Kaikki selvä"
 
 #: etmain/ui/wm_ftquickmessage.menu:98 etmain/ui/wm_quickmessage.menu:99
 msgid "I. Incoming"
-msgstr ""
+msgstr "I. Lähestyvä"
 
 #: etmain/ui/wm_ftquickmessage.menu:99 etmain/ui/wm_quickmessage.menu:100
 msgid "F. Fire In The Hole!"
-msgstr ""
+msgstr "F. Tulta reikään!"
 
 #: etmain/ui/wm_ftquickmessage.menu:100 etmain/ui/wm_quickmessage.menu:101
 msgid "D. I'm Defending."
-msgstr ""
+msgstr "D. Puolustan."
 
 #: etmain/ui/wm_ftquickmessage.menu:101 etmain/ui/wm_quickmessage.menu:102
 msgid "A. I'm Attacking."
-msgstr ""
+msgstr "A. Hyökkään"
 
 #: etmain/ui/wm_ftquickmessage.menu:102
 msgid "T. Taking Fire!"
-msgstr ""
+msgstr "T. Otetaan tulta vastaan!"
 
 #: etmain/ui/wm_ftquickmessage.menu:103 etmain/ui/wm_quickmessage.menu:103
 msgid "M. Mines Cleared"
-msgstr ""
+msgstr "M. Miinat poistettu"
 
 #: etmain/ui/wm_ftquickmessage.menu:104 etmain/ui/wm_quickmessage.menu:104
 msgid "E. Enemy Disguised"
-msgstr ""
+msgstr "E. Vihollinen naamioituneena"
 
 #: etmain/ui/wm_ftquickmessage.menu:110 etmain/ui/wm_quickmessage.menu:110
 msgid "M. Need Medic!"
-msgstr ""
+msgstr "M. Tarvitaan lääkintämiestä!"
 
 #: etmain/ui/wm_ftquickmessage.menu:111 etmain/ui/wm_quickmessage.menu:111
 msgid "A. Need Ammo!"
-msgstr ""
+msgstr "A. Tarvitaan ammuksia!"
 
 #: etmain/ui/wm_ftquickmessage.menu:112 etmain/ui/wm_quickmessage.menu:112
 msgid "B. Need Backup!"
-msgstr ""
+msgstr "B. Tarvitaan taustatukea!"
 
 #: etmain/ui/wm_ftquickmessage.menu:113 etmain/ui/wm_quickmessage.menu:113
 msgid "E. Need Engineer!"
-msgstr ""
+msgstr "E. Tarvitaan insinööriä!"
 
 #: etmain/ui/wm_ftquickmessage.menu:114 etmain/ui/wm_quickmessage.menu:114
 msgid "C. Cover Me!"
-msgstr ""
+msgstr "C. Suojatkaa minua!"
 
 #: etmain/ui/wm_ftquickmessage.menu:115 etmain/ui/wm_ftquickmessage.menu:165
 #: etmain/ui/wm_quickmessage.menu:115 etmain/ui/wm_quickmessage.menu:165
 msgid "H. Hold Fire!"
-msgstr ""
+msgstr "H. Pidättäkää tulta!"
 
 #: etmain/ui/wm_ftquickmessage.menu:116 etmain/ui/wm_quickmessage.menu:116
 msgid "W. Where To?"
-msgstr ""
+msgstr "W. Minne?"
 
 #: etmain/ui/wm_ftquickmessage.menu:117 etmain/ui/wm_quickmessage.menu:117
 msgid "O. Need Covert Ops!"
-msgstr ""
+msgstr "O. Tarvitaan salaista operaattoria!"
 
 #: etmain/ui/wm_ftquickmessage.menu:123 etmain/ui/wm_quickmessage.menu:123
 msgid "F. Follow Me!"
-msgstr ""
+msgstr "F. Seuratkaa minua!"
 
 #: etmain/ui/wm_ftquickmessage.menu:124 etmain/ui/wm_quickmessage.menu:124
 msgid "G. Let's Go!"
-msgstr ""
+msgstr "G. Mennään!"
 
 #: etmain/ui/wm_ftquickmessage.menu:125 etmain/ui/wm_quickmessage.menu:125
 msgid "M. Move!"
-msgstr ""
+msgstr "M. Liikkukaa!"
 
 #: etmain/ui/wm_ftquickmessage.menu:126 etmain/ui/wm_quickmessage.menu:126
 msgid "C. Clear The Path!"
-msgstr ""
+msgstr "C. Selvittäkää reitti!"
 
 #: etmain/ui/wm_ftquickmessage.menu:127 etmain/ui/wm_quickmessage.menu:127
 msgid "O. Defend Objective!"
-msgstr ""
+msgstr "O. Puolustakaa päämäärää!"
 
 #: etmain/ui/wm_ftquickmessage.menu:128 etmain/ui/wm_quickmessage.menu:128
 msgid "D. Disarm Dynamite!"
-msgstr ""
+msgstr "D. Purkakaa dynamiitti!"
 
 #: etmain/ui/wm_ftquickmessage.menu:129 etmain/ui/wm_quickmessage.menu:129
 msgid "N. Clear Mines!"
-msgstr ""
+msgstr "N. Poistakaa miinat!"
 
 #: etmain/ui/wm_ftquickmessage.menu:130 etmain/ui/wm_quickmessage.menu:130
 msgid "R. Reinforce Offense"
-msgstr ""
+msgstr "R. Vahvistakaa hyökkäystä"
 
 #: etmain/ui/wm_ftquickmessage.menu:131 etmain/ui/wm_quickmessage.menu:131
 msgid "E. Reinforce Defense"
-msgstr ""
+msgstr "E. Vahvistakaa puolustusta"
 
 #: etmain/ui/wm_ftquickmessage.menu:137 etmain/ui/wm_ftquickmessage.menu:148
 #: etmain/ui/wm_quickmessage.menu:137 etmain/ui/wm_quickmessage.menu:148
 msgid "Y. Yes"
-msgstr ""
+msgstr "Y. Kyllä"
 
 #: etmain/ui/wm_ftquickmessage.menu:138 etmain/ui/wm_ftquickmessage.menu:149
 #: etmain/ui/wm_quickmessage.menu:138 etmain/ui/wm_quickmessage.menu:149
 msgid "N. No"
-msgstr ""
+msgstr "N. Ei"
 
 #: etmain/ui/wm_ftquickmessage.menu:139 etmain/ui/wm_ftquickmessage.menu:161
 #: etmain/ui/wm_quickmessage.menu:139 etmain/ui/wm_quickmessage.menu:161
 msgid "T. Thanks"
-msgstr ""
+msgstr "T. Kiitos"
 
 #: etmain/ui/wm_ftquickmessage.menu:140 etmain/ui/wm_ftquickmessage.menu:162
 #: etmain/ui/wm_quickmessage.menu:140 etmain/ui/wm_quickmessage.menu:162
 msgid "W. Welcome"
-msgstr ""
+msgstr "W. Tervetullut"
 
 #: etmain/ui/wm_ftquickmessage.menu:141 etmain/ui/wm_ftquickmessage.menu:164
 #: etmain/ui/wm_quickmessage.menu:141 etmain/ui/wm_quickmessage.menu:164
 msgid "S. Sorry"
-msgstr ""
+msgstr "S. Anteeksi"
 
 #: etmain/ui/wm_ftquickmessage.menu:142 etmain/ui/wm_ftquickmessage.menu:163
 #: etmain/ui/wm_quickmessage.menu:142 etmain/ui/wm_quickmessage.menu:163
 msgid "O. Oops"
-msgstr ""
+msgstr "O. Oho"
 
 #: etmain/ui/wm_ftquickmessage.menu:150 etmain/ui/wm_quickmessage.menu:150
 msgid "W. Enemy Weak"
-msgstr ""
+msgstr "W. Vihollinen on heikko"
 
 #: etmain/ui/wm_ftquickmessage.menu:151 etmain/ui/wm_quickmessage.menu:151
 msgid "H. Hi"
-msgstr ""
+msgstr "H. Hei"
 
 #: etmain/ui/wm_ftquickmessage.menu:152 etmain/ui/wm_quickmessage.menu:152
 msgid "B. Bye"
-msgstr ""
+msgstr "B. Heippa"
 
 #: etmain/ui/wm_ftquickmessage.menu:153 etmain/ui/wm_quickmessage.menu:153
 msgid "S. Great Shot"
-msgstr ""
+msgstr "S. Hyvä laukaus"
 
 #: etmain/ui/wm_ftquickmessage.menu:154 etmain/ui/wm_quickmessage.menu:154
 msgid "C. Cheer"
-msgstr ""
+msgstr "7. Hurraa"
 
 #: etmain/ui/wm_ftquickmessage.menu:155 etmain/ui/wm_quickmessage.menu:155
 msgid "G. More Globals"
-msgstr ""
+msgstr "G. Enemmän globaaleja"
 
 #: etmain/ui/wm_ftquickmessage.menu:166 etmain/ui/wm_quickmessage.menu:166
 msgid "G. Good Game"
-msgstr ""
+msgstr "G. Hyvä peli"
 
 #: etmain/ui/wm_ftquickmessage.menu:172 etmain/ui/wm_quickmessage.menu:172
 msgid "A. Command Acknowledged"
-msgstr ""
+msgstr "A. Komento kuitattu"
 
 #: etmain/ui/wm_ftquickmessage.menu:173 etmain/ui/wm_quickmessage.menu:173
 msgid "D. Command Declined"
-msgstr ""
+msgstr "D. Komento hylätty"
 
 #: etmain/ui/wm_ftquickmessage.menu:174 etmain/ui/wm_quickmessage.menu:174
 msgid "C. Command Completed"
-msgstr ""
+msgstr "C. Komento suoritettu"
 
 #: etmain/ui/wm_ftquickmessage.menu:175 etmain/ui/wm_quickmessage.menu:175
 msgid "P. Destroy Primary Objective"
-msgstr ""
+msgstr "P. Tuhotkaa ensisijainen päämäärä"
 
 #: etmain/ui/wm_ftquickmessage.menu:176 etmain/ui/wm_quickmessage.menu:176
 msgid "S. Destroy Secondary Objective"
-msgstr ""
+msgstr "S. Tuhotkaa toissijainen päämäärä"
 
 #: etmain/ui/wm_ftquickmessage.menu:177 etmain/ui/wm_quickmessage.menu:177
 msgid "X. Destroy Construction"
-msgstr ""
+msgstr "X. Tuhotkaa rakennelma"
 
 #: etmain/ui/wm_ftquickmessage.menu:178 etmain/ui/wm_quickmessage.menu:178
 msgid "M. Commencing Construction"
-msgstr ""
+msgstr "M. Aloitetaan rakennelmaa"
 
 #: etmain/ui/wm_ftquickmessage.menu:179 etmain/ui/wm_quickmessage.menu:179
 msgid "R. Repair Vehicle"
-msgstr ""
+msgstr "R. Korjatkaa ajoneuvo"
 
 #: etmain/ui/wm_ftquickmessage.menu:180 etmain/ui/wm_quickmessage.menu:180
 msgid "V. Disable Vehicle"
-msgstr ""
+msgstr "V. Lamauttakaa ajoneuvo"
 
 #: etmain/ui/wm_ftquickmessage.menu:181 etmain/ui/wm_quickmessage.menu:181
 msgid "E. Escort Vehicle"
-msgstr ""
+msgstr "E. Saattakaa ajoneuvo"
 
 #: etmain/ui/wm_quickmessageAlt.menu:173
 msgid "2. Command Declined"
-msgstr ""
+msgstr "2. Komento hylätty"
 
 #: src/cgame/cg_consolecmds.c:362 src/cgame/cg_consolecmds.c:400
 #: src/cgame/cg_consolecmds.c:436
 msgid "Can't team voice chat as a spectator.\n"
-msgstr ""
+msgstr "Katsojana ei voi käyttää tiimiääniviestejä.\n"
 
 #: src/cgame/cg_consolecmds.c:461
 msgid "Can't buddy voice chat as a spectator.\n"
-msgstr ""
+msgstr "Katsojana ei voi käyttää kaveriääniviestejä.\n"
 
 #: src/cgame/cg_consolecmds.c:1143 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
@@ -4463,12 +4463,12 @@ msgstr "Liittoutuneet"
 #: src/cgame/cg_consolecmds.c:1221
 #, c-format
 msgid "You will spawn as a %s %s with a %s."
-msgstr ""
+msgstr "Spawnaat %s %s aseella %s."
 
 #: src/cgame/cg_consolecmds.c:1225
 #, c-format
 msgid "You will spawn as a %s %s with a %s and a %s."
-msgstr ""
+msgstr "Spawnaat %s %s aseilla %s ja %s"
 
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
@@ -4572,7 +4572,7 @@ msgstr "Kampanja: %s"
 #: src/cgame/cg_draw.c:382 src/cgame/cg_draw.c:391 src/cgame/cg_draw.c:407
 #, c-format
 msgid "a %s"
-msgstr ""
+msgstr "%s"
 
 #: src/cgame/cg_draw.c:396
 msgid "an Objective"
@@ -4581,7 +4581,7 @@ msgstr "Päämäärä"
 #: src/cgame/cg_draw.c:403
 #, c-format
 msgid "an %s"
-msgstr ""
+msgstr "%s"
 
 #: src/cgame/cg_draw.c:1507
 msgid "Disguised Enemy!"
@@ -4601,22 +4601,22 @@ msgstr "Valitus pelaajaa ^7%s^3 vastaan joukkuetaposta?"
 #: src/cgame/cg_draw.c:1832
 #, c-format
 msgid "Press '%s' for YES, or '%s' for NO"
-msgstr ""
+msgstr "Paina '%s' (KYLLÄ), tai '%s' (EI)"
 
 #: src/cgame/cg_draw.c:1758
 #, c-format
 msgid "Accept %s^3's application to join your fireteam?"
-msgstr ""
+msgstr "Hyväksy pelaajan %s^3 anomus liittyä partioosi?"
 
 #: src/cgame/cg_draw.c:1772
 #, c-format
 msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
-msgstr ""
+msgstr "Hyväkst pelaajan %s^3 ehdotus kutsua %s^3 liittymään partioosi?"
 
 #: src/cgame/cg_draw.c:1786
 #, c-format
 msgid "Accept %s^3's invitation to join their fireteam?"
-msgstr ""
+msgstr "Hyväksy pelaajan %s^3 kutsu liittyä heidän partioonsa?"
 
 #: src/cgame/cg_draw.c:1800
 msgid "Make Fireteam private?"
@@ -4725,7 +4725,7 @@ msgstr "Vastaus lähetettin"
 #: src/cgame/cg_draw.c:2152
 #, c-format
 msgid "Press %s to open Limbo Menu"
-msgstr ""
+msgstr "Paina %s avataksesi limbo-valikko"
 
 #: src/cgame/cg_draw.c:2157
 #, c-format
@@ -4740,7 +4740,7 @@ msgstr "Paina %s seurataksesi edellistä pelaajaa"
 #: src/cgame/cg_draw.c:2168
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr ""
+msgstr "Paina %s %s monikuvatilan"
 
 #: src/cgame/cg_draw.c:2168
 msgid "disable"
@@ -4794,7 +4794,7 @@ msgstr "Seurataan"
 #: src/cgame/cg_draw.c:2429
 #, c-format
 msgid "^3Config: ^7%s^7"
-msgstr ""
+msgstr "^3Asetustiedosto: ^7%s^7"
 
 #: src/cgame/cg_draw.c:2435
 #, c-format
@@ -4971,7 +4971,7 @@ msgstr "Ei taitoja hankittuna!"
 
 #: src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
-msgstr ""
+msgstr "\"HUIPPUOSUMAT\" TARKKUUDET"
 
 #: src/cgame/cg_info.c:939
 msgid "Player"
@@ -4995,7 +4995,7 @@ msgstr "DEMON HALLINTA"
 
 #: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
-msgstr ""
+msgstr "^nASKELPALAUTIN ^mapu päälle/pois"
 
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
@@ -5184,12 +5184,12 @@ msgstr "Autovalinta"
 #: src/cgame/cg_servercmds.c:1954
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
-msgstr ""
+msgstr "Vahinkoa annettu: %-6d Joukkuevahinkoa annettu: %d"
 
 #: src/cgame/cg_servercmds.c:1955
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
-msgstr ""
+msgstr "Vahinkoa otettu: %-6d Joukkuevahinkoa otettu: %d"
 
 #: src/cgame/cg_servercmds.c:1957
 #, c-format
