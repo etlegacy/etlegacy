@@ -839,7 +839,7 @@ void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end)
 
 	le->leType    = LE_CONST_RGB;
 	le->startTime = cg.time;
-	le->endTime   = cg.time + 50;
+	le->endTime   = cg.time + 50; // FIXME: make it sv_fps dependent?
 	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 	re->shaderTime   = cg.time / 1000.0f;
