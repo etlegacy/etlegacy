@@ -1353,16 +1353,16 @@ void Item_HandleSaveValue(void)
 	}
 }
 
-qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *item, editFieldDef_t *editPtr)
+static qboolean Item_TextField_InsertToCursor(int *len, char *buff, int key, itemDef_t *item, editFieldDef_t *editPtr)
 {
+	qboolean overStrike = qfalse;
+
 	if (DC->getOverstrikeMode && !DC->getOverstrikeMode())
 	{
 		if ((*len == MAX_EDITFIELD - 1) || (editPtr->maxChars && *len >= editPtr->maxChars))
 		{
 			return qtrue;
 		}
-
-		memmove(&buff[item->cursorPos + 1], &buff[item->cursorPos], *len + 1 - item->cursorPos);
 	}
 	else
 	{
@@ -1370,10 +1370,10 @@ qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *
 		{
 			return qtrue;
 		}
+		overStrike = qtrue;
 	}
 
-	buff[item->cursorPos] = key;
-	//Q_UTF8_Insert(buff, Q_UTF8_ByteOffset(buff, item->cursorPos), key);
+	Q_UTF8_Insert(buff, *len, item->cursorPos, key, overStrike);
 
 	if (item->cursorPos < *len + 1)
 	{
@@ -1422,7 +1422,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	memset(buff, 0, sizeof(buff));
 	DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 
-	valueLen = strlen(buff);
+	valueLen = Q_UTF8_Strlen(buff);
 
 	if (editPtr->maxChars && valueLen > editPtr->maxChars)
 	{
@@ -1443,14 +1443,12 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		{
 			if (item->cursorPos > 0)
 			{
-				memmove(&buff[item->cursorPos - 1], &buff[item->cursorPos], valueLen + 1 - item->cursorPos);
+				Q_UTF8_Move(buff, item->cursorPos - 1, item->cursorPos, valueLen + 1 - item->cursorPos);
 				item->cursorPos--;
 				if (item->cursorPos < editPtr->paintOffset)
 				{
 					editPtr->paintOffset--;
 				}
-
-				buff[valueLen] = '\0';
 			}
 
 			DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
@@ -1471,13 +1469,9 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			}
 		}
 
-		tmp = Q_UTF8_Encode(key);
-		for (i = 0; i < Q_UTF8_WidthCP(key); i++)
+		if (Item_TextField_InsertToCursor(&valueLen, buff, key, item, editPtr))
 		{
-			if (Item_TextFieldInsertToCursor(&valueLen, buff, tmp[i], item, editPtr))
-			{
-				return qtrue;
-			}
+			return qtrue;
 		}
 
 		DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
@@ -1489,17 +1483,20 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			if (item->type != ITEM_TYPE_NUMERICFIELD)
 			{
 				char clipbuff[1024];
+				int clipbuff32[256];
 
 				memset(clipbuff, 0, sizeof(clipbuff));
+				memset(clipbuff32, 0, sizeof(int) * 256);
+
 				DC->getClipboardData(clipbuff, sizeof(clipbuff));
 				if (strlen(clipbuff))
 				{
-					int i = 0;
-					int cliplen = strlen(clipbuff);
+					int i = 0, cliplen = 0;
 
+					Q_UTF8_ToUTF32(clipbuff, clipbuff32, &cliplen);
 					for (; i < cliplen; i++)
 					{
-						if (Item_TextFieldInsertToCursor(&valueLen, buff, clipbuff[i], item, editPtr))
+						if (Item_TextField_InsertToCursor(&valueLen, buff, clipbuff32[i], item, editPtr))
 						{
 							break;
 						}
@@ -1521,8 +1518,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		{
 			if (item->cursorPos < valueLen)
 			{
-				memmove(buff + item->cursorPos, buff + item->cursorPos + 1, valueLen - item->cursorPos);
-				buff[valueLen] = '\0';
+				Q_UTF8_Move(buff, item->cursorPos, item->cursorPos + 1, valueLen - item->cursorPos);
 				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 			}
 

@@ -50,7 +50,7 @@ int Q_UTF8_WidthCP(int ch);
 int Q_UTF8_Strlen(const char *str);
 int Q_UTF8_PrintStrlen(const char *str);
 int Q_UTF8_ByteOffset(const char *str, int offset);
-void Q_UTF8_Insert(char *dest, int offset, unsigned long key);
+void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrike);
 void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size);
 qboolean Q_UTF8_ContByte(char c);
 unsigned long Q_UTF8_CodePoint(const char *str);
@@ -58,5 +58,6 @@ char *Q_UTF8_Encode(unsigned long codepoint);
 int Q_UTF8_Store(const char *s);
 char *Q_UTF8_Unstore(int e);
 glyphInfo_t *Q_UTF8_GetGlyph(fontInfo_t *font, const char *s);
+void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen);
 
 #endif // INCLUDE_Q_UNICODE_H

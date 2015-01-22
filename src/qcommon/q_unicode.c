@@ -142,7 +142,7 @@ int Q_UTF8_ByteOffset(const char *str, int offset)
 {
 	int i = 0,l = 0, m = 0;
 
-	if (0 <= offset)
+	if (offset <= 0)
 	{
 		return 0;
 	}
@@ -153,7 +153,7 @@ int Q_UTF8_ByteOffset(const char *str, int offset)
 
 		m = Q_UTF8_Width(str);
 		i += m;
-		str += i;
+		str += m;
 
 		if (l == offset)
 		{
@@ -164,15 +164,38 @@ int Q_UTF8_ByteOffset(const char *str, int offset)
 	return i;
 }
 
-void Q_UTF8_Insert(char *dest, int offset, unsigned long key)
+void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrike)
 {
-	int len = 0;
-	int i = 0;
-	char *str = Q_UTF8_Encode(key);
+	int len = 0, i = 0, byteOffset = 0;
+	char *str = NULL;
+
+	str = Q_UTF8_Encode(key);
+	byteOffset = Q_UTF8_ByteOffset(dest, offset);
 	len = Q_UTF8_WidthCP(key);
+
+	if (offset < size)
+	{
+		if (overstrike)
+		{
+			int moveReq = len - Q_UTF8_Width(&dest[byteOffset]);
+			if (moveReq > 0)
+			{
+				memmove(&dest[byteOffset + moveReq], &dest[byteOffset], strlen(dest) + 1 - byteOffset);
+			}
+			else if (moveReq < 0)
+			{
+				memmove(&dest[byteOffset], &dest[byteOffset - moveReq], strlen(dest) + 1 - byteOffset);
+			}
+		}
+		else
+		{
+			memmove(&dest[byteOffset + len], &dest[byteOffset], strlen(dest) + 1 - byteOffset);
+		}
+	}
+
 	for (i = 0; i < len; i++)
 	{
-		dest[offset + i] = str[i];
+		dest[byteOffset + i] = str[i];
 	}
 }
 
@@ -180,9 +203,24 @@ void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size)
 {
 	size_t byteOffset1 = 0, byteOffset2 = 0, byteSize = 0;
 
+	if (!size)
+	{
+		return;
+	}
+
 	byteOffset1 = Q_UTF8_ByteOffset(data, offset1);
 	byteOffset2 = Q_UTF8_ByteOffset(data, offset2);
 	byteSize = Q_UTF8_ByteOffset(&data[byteOffset2], size);
+
+	if (!byteSize)
+	{
+		byteSize = 1;
+	}
+
+	if (offset1 < offset2 && (offset2 + size) > Q_UTF8_Strlen(data))
+	{
+		byteSize++;
+	}
 
 	memmove(&data[byteOffset1], &data[byteOffset2], byteSize); // +1
 	data[strlen(data) + 1] = '\0';
@@ -412,4 +450,47 @@ glyphInfo_t *Q_UTF8_GetGlyph(fontInfo_t *font, const char *s)
 	{
 		return &font->glyphsUTF8[codepoint];
 	}
+}
+
+void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
+{
+	int i = 0;
+	char *c = string;
+
+	// Quick and dirty UTF-8 to UTF-32 conversion
+	while (*c)
+	{
+		int utf32 = 0;
+
+		if ((*c & 0x80) == 0)
+		{
+			utf32 = *c++;
+		}
+		else if ((*c & 0xE0) == 0xC0)    // 110x xxxx
+		{
+			utf32 |= (*c++ & 0x1F) << 6;
+			utf32 |= (*c++ & 0x3F);
+		}
+		else if ((*c & 0xF0) == 0xE0)    // 1110 xxxx
+		{
+			utf32 |= (*c++ & 0x0F) << 12;
+			utf32 |= (*c++ & 0x3F) << 6;
+			utf32 |= (*c++ & 0x3F);
+		}
+		else if ((*c & 0xF8) == 0xF0)    // 1111 0xxx
+		{
+			utf32 |= (*c++ & 0x07) << 18;
+			utf32 |= (*c++ & 0x3F) << 12;
+			utf32 |= (*c++ & 0x3F) << 6;
+			utf32 |= (*c++ & 0x3F);
+		}
+		else
+		{
+			//Com_DPrintf("Unrecognised UTF-8 lead byte: 0x%x\n", (unsigned int)*c);
+			c++;
+		}
+		charArray[i++] = utf32;
+	}
+
+	*outlen = i;
 }
