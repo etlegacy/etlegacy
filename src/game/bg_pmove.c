@@ -3748,22 +3748,22 @@ static void PM_Weapon(void)
 
 		// aha, THIS is the kewl quick fire mode :)
 		// added back for multiplayer pistol balancing
-		switch(pm->ps->weapon)
+		switch (pm->ps->weapon)
 		{
-			case WP_LUGER:
-			case WP_COLT:
-			case WP_SILENCER:
-			case WP_SILENCED_COLT:
-			case WP_KAR98:
-			case WP_K43:
-			case WP_CARBINE:
-			case WP_GARAND:
-			case WP_GARAND_SCOPE:
-			case WP_K43_SCOPE:
-			case WP_AKIMBO_COLT:
-			case WP_AKIMBO_LUGER:
-			case WP_AKIMBO_SILENCEDCOLT:
-			case WP_AKIMBO_SILENCEDLUGER:
+		case WP_LUGER:
+		case WP_COLT:
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+		case WP_KAR98:
+		case WP_K43:
+		case WP_CARBINE:
+		case WP_GARAND:
+		case WP_GARAND_SCOPE:
+		case WP_K43_SCOPE:
+		case WP_AKIMBO_COLT:
+		case WP_AKIMBO_LUGER:
+		case WP_AKIMBO_SILENCEDCOLT:
+		case WP_AKIMBO_SILENCEDLUGER:
 			// moved releasedFire into pmext instead of ps
 			if (pm->pmext->releasedFire)
 			{
@@ -3846,6 +3846,7 @@ static void PM_Weapon(void)
 	}
 
 	// don't allow some weapons to fire if charge bar isn't full
+	// FIXME: put chargeTime factor in weapon table? See CG_DrawWeapRecharge()
 	switch (pm->ps->weapon)
 	{
 	case WP_NONE: // this is possible since the player starts with nothing

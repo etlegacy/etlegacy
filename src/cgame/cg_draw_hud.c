@@ -881,10 +881,11 @@ static void CG_DrawBreathBar(rectDef_t *rect)
 
 static void CG_DrawWeapRecharge(rectDef_t *rect)
 {
-	float  barFrac, chargeTime;
-	int    flags   = 1 | 4 | 16;
-	vec4_t bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
-	vec4_t color;
+	float    barFrac, chargeTime;
+	int      flags   = 1 | 4 | 16;
+	qboolean charge  = qtrue;
+	vec4_t   bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
+	vec4_t   color;
 
 	// Draw power bar
 	switch (cg.snap->ps.stats[STAT_PLAYER_CLASS])
@@ -906,15 +907,157 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 		break;
 	}
 
+	// display colored charbar if charge bar isn't full enough
+	// FIXME: put chargeTime factor in weapon table?
+	switch (cg.predictedPlayerState.weapon)
+	{
+	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
+		if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 1)
+		{
+			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.66f)
+			{
+				charge = qfalse;
+			}
+		}
+		else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_GPG40:
+	case WP_M7:
+		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.5f)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
+		if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 1)
+		{
+			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.33f)
+			{
+				charge = qfalse;
+			}
+		}
+		else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.5f)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_SMOKE_BOMB:
+	case WP_SATCHEL:
+		if (cgs.clientinfo[cg.clientNum].skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2)
+		{
+			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.66f)
+			{
+				charge = qfalse;
+			}
+		}
+		else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_LANDMINE:
+		if (cgs.clientinfo[cg.clientNum].skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
+		{
+			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.33f)
+			{
+				charge = qfalse;
+			}
+		}
+		else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.5f)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_DYNAMITE:
+		if (cgs.clientinfo[cg.clientNum].skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+		{
+			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.66f)
+			{
+				charge = qfalse;
+			}
+		}
+		else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_AMMO:
+		if (cgs.clientinfo[cg.clientNum].skill[SK_SIGNALS] >= 1)
+		{
+			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.15f)
+			{
+				charge = qfalse;
+			}
+		}
+		else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.25f)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_MEDKIT:
+		if (cgs.clientinfo[cg.clientNum].skill[SK_SIGNALS] >= 2)
+		{
+			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.15f)
+			{
+				charge = qfalse;
+			}
+		}
+		else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.25f)
+		{
+			charge = qfalse;
+		}
+		break;
+	case WP_SMOKE_MARKER:
+	case WP_BINOCULARS:
+		if (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS) // only fieldops binocs
+		{
+			if (cgs.clientinfo[cg.clientNum].skill[SK_FIRST_AID] >= 2)
+			{
+				if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.66f)
+				{
+					charge = qfalse;
+				}
+			}
+			else if (cg.time - cg.snap->ps.classWeaponTime < chargeTime)
+			{
+				charge = qfalse;
+			}
+		}
+		break;
+	case WP_MEDIC_ADRENALINE:
+		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime)
+		{
+			charge = qfalse;
+		}
+		break;
+	default:
+		break;
+	}
+
 	barFrac = (cg.time - cg.snap->ps.classWeaponTime) / chargeTime; // FIXME: potential DIV 0 when charge times are set to 0!
+
 	if (barFrac > 1.0)
 	{
 		barFrac = 1.0;
 	}
 
-	color[0] = 1.0f;
-	color[1] = color[2] = barFrac;
-	color[3] = 0.25 + barFrac * 0.5;
+	if (!charge)
+	{
+		color[0] = 1.0f;
+		color[1] = color[2] = 0.0f;
+		color[3] = 1.0f;
+	}
+	else
+	{
+		color[0] = 1.0f;
+		color[1] = color[2] = barFrac;
+		color[3] = 0.25 + barFrac * 0.5;
+	}
 
 	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolor, barFrac, flags);
 
