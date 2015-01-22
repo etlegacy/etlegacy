@@ -1373,6 +1373,7 @@ qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *
 	}
 
 	buff[item->cursorPos] = key;
+	//Q_UTF8_Insert(buff, Q_UTF8_ByteOffset(buff, item->cursorPos), key);
 
 	if (item->cursorPos < *len + 1)
 	{
@@ -1408,225 +1409,229 @@ qboolean Item_Combo_HandleKey(itemDef_t *item, int key)
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 {
 	char           buff[1024];
+	char *tmp;
+	int valueLen, i;
 	itemDef_t      *newItem = NULL;
 	editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
 
-	if (item->cvar)
+	if (!item->cvar)
 	{
-		int len;
+		return qfalse;
+	}
 
-		memset(buff, 0, sizeof(buff));
-		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
+	memset(buff, 0, sizeof(buff));
+	DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 
-		len = Q_UTF8_Strlen(buff);
+	valueLen = strlen(buff);
 
-		if (editPtr->maxChars && len > editPtr->maxChars)
+	if (editPtr->maxChars && valueLen > editPtr->maxChars)
+	{
+		valueLen = editPtr->maxChars;
+	}
+
+	// make sure our cursorpos doesn't go oob, windows doesn't like negative memory copy operations :)
+	if (item->cursorPos < 0 || item->cursorPos > valueLen)
+	{
+		item->cursorPos = 0;
+	}
+
+	if (key & K_CHAR_FLAG)
+	{
+		key &= ~K_CHAR_FLAG;
+
+		if (key == 'h' - 'a' + 1)          // ctrl-h is backspace
 		{
-			len = editPtr->maxChars;
-		}
-
-		// make sure our cursorpos doesn't go oob, windows doesn't like negative memory copy operations :)
-		if (item->cursorPos < 0 || item->cursorPos > len)
-		{
-			item->cursorPos = 0;
-		}
-
-		if (key & K_CHAR_FLAG)
-		{
-			key &= ~K_CHAR_FLAG;
-
-			if (key == 'h' - 'a' + 1)          // ctrl-h is backspace
+			if (item->cursorPos > 0)
 			{
-				if (item->cursorPos > 0)
-				{
-					memmove(&buff[item->cursorPos - 1], &buff[item->cursorPos], len + 1 - item->cursorPos);
-					item->cursorPos--;
-					if (item->cursorPos < editPtr->paintOffset)
-					{
-						editPtr->paintOffset--;
-					}
-
-					buff[len] = '\0';
-				}
-
-				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
-				return qtrue;
-			}
-
-			// ignore any non printable chars
-			if (key < 32 || !item->cvar)
-			{
-				return qtrue;
-			}
-
-			if (item->type == ITEM_TYPE_NUMERICFIELD)
-			{
-				if ((key < '0' || key > '9') && key != '.')
-				{
-					return qfalse;
-				}
-			}
-
-			if (Item_TextFieldInsertToCursor(&len, buff, key, item, editPtr))
-			{
-				return qtrue;
-			}
-
-			DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
-		}
-		else
-		{
-			if (K_CLIPBOARD(key))  // clipboard paste only on normal textfield
-			{
-				if (item->type != ITEM_TYPE_NUMERICFIELD)
-				{
-					char clipbuff[1024];
-
-					memset(clipbuff, 0, sizeof(clipbuff));
-					DC->getClipboardData(clipbuff, sizeof(clipbuff));
-					if (strlen(clipbuff))
-					{
-						int i       = 0;
-						int cliplen = strlen(clipbuff);
-
-						for (; i < cliplen; i++)
-						{
-							if (Item_TextFieldInsertToCursor(&len, buff, clipbuff[i], item, editPtr))
-							{
-								break;
-							}
-						}
-
-						DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
-					}
-
-					return qtrue;
-				}
-				else if (item->onPaste)
-				{
-					// We handle the clipboard action on the script level
-					return qfalse;
-				}
-			}
-
-			if (key == K_DEL || key == K_KP_DEL)
-			{
-				if (item->cursorPos < len)
-				{
-					memmove(buff + item->cursorPos, buff + item->cursorPos + 1, len - item->cursorPos);
-					buff[len] = '\0';
-					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
-				}
-
-				return qtrue;
-			}
-
-			if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW)
-			{
-				if (editPtr->maxPaintChars && item->cursorPos >= editPtr->paintOffset + editPtr->maxPaintChars && item->cursorPos < len)
-				{
-					item->cursorPos++;
-					editPtr->paintOffset++;
-					return qtrue;
-				}
-
-				if (item->cursorPos < len)
-				{
-					item->cursorPos++;
-				}
-
-				return qtrue;
-			}
-
-			if (key == K_LEFTARROW || key == K_KP_LEFTARROW)
-			{
-				if (item->cursorPos > 0)
-				{
-					item->cursorPos--;
-				}
-
+				memmove(&buff[item->cursorPos - 1], &buff[item->cursorPos], valueLen + 1 - item->cursorPos);
+				item->cursorPos--;
 				if (item->cursorPos < editPtr->paintOffset)
 				{
 					editPtr->paintOffset--;
 				}
 
-				return qtrue;
+				buff[valueLen] = '\0';
 			}
 
-			if (key == K_HOME || key == K_KP_HOME)
+			DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+			return qtrue;
+		}
+
+		// ignore any non printable chars
+		if (key < 32 || !item->cvar)
+		{
+			return qtrue;
+		}
+
+		if (item->type == ITEM_TYPE_NUMERICFIELD)
+		{
+			if ((key < '0' || key > '9') && key != '.')
 			{
-				item->cursorPos      = 0;
-				editPtr->paintOffset = 0;
+				return qfalse;
+			}
+		}
+
+		tmp = Q_UTF8_Encode(key);
+		for (i = 0; i < Q_UTF8_WidthCP(key); i++)
+		{
+			if (Item_TextFieldInsertToCursor(&valueLen, buff, tmp[i], item, editPtr))
+			{
 				return qtrue;
 			}
+		}
 
-			if (key == K_END || key == K_KP_END)
+		DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+	}
+	else
+	{
+		if (K_CLIPBOARD(key))  // clipboard paste only on normal textfield
+		{
+			if (item->type != ITEM_TYPE_NUMERICFIELD)
 			{
-				item->cursorPos = len;
-				if (item->cursorPos > editPtr->maxPaintChars)
+				char clipbuff[1024];
+
+				memset(clipbuff, 0, sizeof(clipbuff));
+				DC->getClipboardData(clipbuff, sizeof(clipbuff));
+				if (strlen(clipbuff))
 				{
-					editPtr->paintOffset = len - editPtr->maxPaintChars;
+					int i = 0;
+					int cliplen = strlen(clipbuff);
+
+					for (; i < cliplen; i++)
+					{
+						if (Item_TextFieldInsertToCursor(&valueLen, buff, clipbuff[i], item, editPtr))
+						{
+							break;
+						}
+					}
+
+					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 				}
 
 				return qtrue;
 			}
-
-			if (key == K_INS || key == K_KP_INS)
+			else if (item->onPaste)
 			{
-				DC->setOverstrikeMode(!DC->getOverstrikeMode());
-				return qtrue;
+				// We handle the clipboard action on the script level
+				return qfalse;
 			}
 		}
 
-		if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW)
+		if (key == K_DEL || key == K_KP_DEL)
 		{
-			newItem = Menu_SetNextCursorItem(item->parent);
-			if (newItem && TEXTFIELD(newItem->type))
+			if (item->cursorPos < valueLen)
 			{
-				Item_HandleTextFieldDeSelect(item);
-				Item_HandleTextFieldSelect(newItem);
-				//g_editItem = newItem;
+				memmove(buff + item->cursorPos, buff + item->cursorPos + 1, valueLen - item->cursorPos);
+				buff[valueLen] = '\0';
+				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 			}
-			else
-			{
-				Item_HandleSaveValue();
-			}
-		}
-		else if (key == K_TAB && item->onTab)
-		{
-			Item_RunScript(item, NULL, item->onTab);
+
 			return qtrue;
 		}
 
-		if (key == K_UPARROW || key == K_KP_UPARROW)
+		if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW)
 		{
-			newItem = Menu_SetPrevCursorItem(item->parent);
-			if (newItem && TEXTFIELD(newItem->type))
+			if (editPtr->maxPaintChars && item->cursorPos >= editPtr->paintOffset + editPtr->maxPaintChars && item->cursorPos < valueLen)
 			{
-				Item_HandleTextFieldDeSelect(item);
-				Item_HandleTextFieldSelect(newItem);
-				//g_editItem = newItem;
+				item->cursorPos++;
+				editPtr->paintOffset++;
+				return qtrue;
 			}
+
+			if (item->cursorPos < valueLen)
+			{
+				item->cursorPos++;
+			}
+
+			return qtrue;
 		}
 
-		if (key == K_ENTER || key == K_KP_ENTER || key == K_ESCAPE)
+		if (key == K_LEFTARROW || key == K_KP_LEFTARROW)
 		{
-			if ((key == K_ENTER || key == K_KP_ENTER) && item->onAccept)
+			if (item->cursorPos > 0)
 			{
-				Item_RunScript(item, NULL, item->onAccept);
-			}
-			else if (key == K_ESCAPE && item->onEsc)
-			{
-				Item_RunScript(item, NULL, item->onEsc);
+				item->cursorPos--;
 			}
 
-			return qfalse;
+			if (item->cursorPos < editPtr->paintOffset)
+			{
+				editPtr->paintOffset--;
+			}
+
+			return qtrue;
 		}
 
+		if (key == K_HOME || key == K_KP_HOME)
+		{
+			item->cursorPos = 0;
+			editPtr->paintOffset = 0;
+			return qtrue;
+		}
+
+		if (key == K_END || key == K_KP_END)
+		{
+			item->cursorPos = valueLen;
+			if (item->cursorPos > editPtr->maxPaintChars)
+			{
+				editPtr->paintOffset = valueLen - editPtr->maxPaintChars;
+			}
+
+			return qtrue;
+		}
+
+		if (key == K_INS || key == K_KP_INS)
+		{
+			DC->setOverstrikeMode(!DC->getOverstrikeMode());
+			return qtrue;
+		}
+	}
+
+	if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW)
+	{
+		newItem = Menu_SetNextCursorItem(item->parent);
+		if (newItem && TEXTFIELD(newItem->type))
+		{
+			Item_HandleTextFieldDeSelect(item);
+			Item_HandleTextFieldSelect(newItem);
+			//g_editItem = newItem;
+		}
+		else
+		{
+			Item_HandleSaveValue();
+		}
+	}
+	else if (key == K_TAB && item->onTab)
+	{
+		Item_RunScript(item, NULL, item->onTab);
 		return qtrue;
 	}
 
-	return qfalse;
+	if (key == K_UPARROW || key == K_KP_UPARROW)
+	{
+		newItem = Menu_SetPrevCursorItem(item->parent);
+		if (newItem && TEXTFIELD(newItem->type))
+		{
+			Item_HandleTextFieldDeSelect(item);
+			Item_HandleTextFieldSelect(newItem);
+			//g_editItem = newItem;
+		}
+	}
+
+	if (key == K_ENTER || key == K_KP_ENTER || key == K_ESCAPE)
+	{
+		if ((key == K_ENTER || key == K_KP_ENTER) && item->onAccept)
+		{
+			Item_RunScript(item, NULL, item->onAccept);
+		}
+		else if (key == K_ESCAPE && item->onEsc)
+		{
+			Item_RunScript(item, NULL, item->onEsc);
+		}
+
+		return qfalse;
+	}
+
+	return qtrue;
 }
 
 static void Item_Scroll_ListBox_AutoFunc(void *p)

@@ -138,6 +138,56 @@ int Q_UTF8_PrintStrlen(const char *str)
 	return l;
 }
 
+int Q_UTF8_ByteOffset(const char *str, int offset)
+{
+	int i = 0,l = 0, m = 0;
+
+	if (0 <= offset)
+	{
+		return 0;
+	}
+
+	while (*str)
+	{
+		l++;
+
+		m = Q_UTF8_Width(str);
+		i += m;
+		str += i;
+
+		if (l == offset)
+		{
+			break;
+		}
+	}
+
+	return i;
+}
+
+void Q_UTF8_Insert(char *dest, int offset, unsigned long key)
+{
+	int len = 0;
+	int i = 0;
+	char *str = Q_UTF8_Encode(key);
+	len = Q_UTF8_WidthCP(key);
+	for (i = 0; i < len; i++)
+	{
+		dest[offset + i] = str[i];
+	}
+}
+
+void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size)
+{
+	size_t byteOffset1 = 0, byteOffset2 = 0, byteSize = 0;
+
+	byteOffset1 = Q_UTF8_ByteOffset(data, offset1);
+	byteOffset2 = Q_UTF8_ByteOffset(data, offset2);
+	byteSize = Q_UTF8_ByteOffset(&data[byteOffset2], size);
+
+	memmove(&data[byteOffset1], &data[byteOffset2], byteSize); // +1
+	data[strlen(data) + 1] = '\0';
+}
+
 qboolean Q_UTF8_ContByte(char c)
 {
 	return (unsigned char )0x80 <= (unsigned char)c && (unsigned char)c <= (unsigned char )0xBF;
