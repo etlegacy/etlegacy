@@ -88,9 +88,6 @@ static void CG_Obituary(entityState_t *ent)
 	{
 		switch (mod)
 		{
-		case MOD_SUICIDE:
-			message = "committed suicide";
-			break;
 		case MOD_FALLING:
 			message = "rediscovered gravity";
 			break;
@@ -182,7 +179,8 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_SMOKEGRENADE:
 			message = "danced on his airstrike marker";
 			break;
-		case MOD_SUICIDE: // message is already set above
+		case MOD_SUICIDE:
+			message = "committed suicide";
 			break;
 		// no obituary message if changing teams
 		case MOD_SWITCHTEAM:
