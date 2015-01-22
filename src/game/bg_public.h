@@ -2472,4 +2472,43 @@ typedef enum
 #define GET_FLAME_BLUE_SIZE_SPEED(x)    (((float)x / FLAME_LIFETIME) / 1.0)       // cg x is the current sizeMax
 #define GET_FLAME_SIZE_SPEED(x)         (((float)x / FLAME_LIFETIME) / 0.3)       // cg x is the current sizeMax
 
+enum VOTE_CLIENT_RESPONSE
+{
+	VOTE_CLIENT_NONE = 0,
+	VOTE_CLIENT_YES,
+	VOTE_CLIENT_NO
+};
+
+enum VOTE_TYPE_ENUM
+{
+	VOTE_COMPLAINT = 0,
+	VOTE_APPLICATION,
+	VOTE_PROPOSITION,
+	VOTE_INVITATION,
+	VOTE_AUTOFIRETEAM,
+	VOTE_GENERIC
+};
+
+enum VOTE_FLAGS_ENUM
+{
+	VOTE_FLAG_GLOBAL = BIT(0),
+	VOTE_FLAG_PERSONAL = BIT(1),
+	VOTE_FLAG_AXIS = BIT(2),
+	VOTE_FLAG_ALLIES = BIT(3),
+	VOTE_FLAG_CREATE_FIRETEAM = BIT(4),
+	VOTE_FLAG_JOIN_FIRETEAM = BIT(5)
+};
+
+typedef struct client_vote_s
+{
+	int id;
+	int type;
+	int flags;
+	int client_started;
+	int start_time;
+	int end_time;
+	char message[MAX_STRING_TOKENS];
+	int clients[MAX_CLIENTS];
+} client_vote_t;
+
 #endif // #ifndef INCLUDE_BG_PUBLIC_H
