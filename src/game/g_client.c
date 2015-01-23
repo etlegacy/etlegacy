@@ -1832,6 +1832,21 @@ void ClientUserinfoChanged(int clientNum)
 				trap_DropClient(clientNum, "Name too long. Plase change your name.", 0);
 				return;
 			}
+			if (!g_extendedNames.integer)
+			{
+				unsigned int i;
+
+				// Avoid ext. ASCII chars in the CS
+				for (i = 0; i < strlen(cs_value); ++i)
+				{
+					if (cs_value[i] < 0)  // extended ASCII chars have values between -128 and 0 (signed char)
+					{
+						G_Printf("ClientUserinfoChanged: client %d kicked for extended ASCII characters name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+						trap_DropClient(clientNum, "Server does not allow extended ASCII characters. Please change your name.", 0);
+						return;
+					}
+				}
+			}
 			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
 			break;
 		case TOK_cl_guid:
@@ -2246,6 +2261,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		return "Bad name: Name too long. Please change your name.";
 	}
 
+	if (!g_extendedNames.integer)
 	{
 		unsigned int i;
 

@@ -1840,6 +1840,8 @@ extern vmCvar_t g_realHead;
 extern vmCvar_t sv_fps;
 extern vmCvar_t g_skipCorrection;
 
+extern vmCvar_t g_extendedNames;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;

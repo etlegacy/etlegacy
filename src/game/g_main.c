@@ -332,6 +332,8 @@ vmCvar_t g_realHead; // b_realHead functionality from ETPro
 vmCvar_t sv_fps;
 vmCvar_t g_skipCorrection;
 
+vmCvar_t g_extendedNames;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -602,6 +604,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_realHead,                          "g_realHead",                          "1",                          0 },
 	{ &sv_fps,                              "sv_fps",                              "20",                         CVAR_SYSTEMINFO,                                 0, qfalse},
 	{ &g_skipCorrection,                    "g_skipCorrection",                    "1",                          0 },
+	{ &g_extendedNames, "g_extendedNames", "1", 0 },
 };
 
 // made static to avoid aliasing
