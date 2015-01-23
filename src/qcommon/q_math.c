@@ -224,25 +224,6 @@ signed char ClampChar(int i)
 	return i;
 }
 
-signed char SafeChar(int i)
-{
-	if (i > 127 || i == '%')
-	{
-		return '.';
-	}
-
-	return i;
-}
-
-void SafeString(char *string, size_t size)
-{
-	size_t i = 0;
-	for (; i < size; i++)
-	{
-		string[i] = SafeChar(string[i]);
-	}
-}
-
 /**
  * @note Unused.
  */
