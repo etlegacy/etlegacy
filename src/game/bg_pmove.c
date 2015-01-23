@@ -3748,11 +3748,22 @@ static void PM_Weapon(void)
 
 		// aha, THIS is the kewl quick fire mode :)
 		// added back for multiplayer pistol balancing
-		// FIXME: do a switch
-		if (pm->ps->weapon == WP_LUGER || pm->ps->weapon == WP_COLT || pm->ps->weapon == WP_SILENCER || pm->ps->weapon == WP_SILENCED_COLT ||
-		    pm->ps->weapon == WP_KAR98 || pm->ps->weapon == WP_K43 || pm->ps->weapon == WP_CARBINE || pm->ps->weapon == WP_GARAND ||
-		    pm->ps->weapon == WP_GARAND_SCOPE || pm->ps->weapon == WP_K43_SCOPE || IS_AKIMBO_WEAPON(pm->ps->weapon))
+		switch (pm->ps->weapon)
 		{
+		case WP_LUGER:
+		case WP_COLT:
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+		case WP_KAR98:
+		case WP_K43:
+		case WP_CARBINE:
+		case WP_GARAND:
+		case WP_GARAND_SCOPE:
+		case WP_K43_SCOPE:
+		case WP_AKIMBO_COLT:
+		case WP_AKIMBO_LUGER:
+		case WP_AKIMBO_SILENCEDCOLT:
+		case WP_AKIMBO_SILENCEDLUGER:
 			// moved releasedFire into pmext instead of ps
 			if (pm->pmext->releasedFire)
 			{
@@ -3781,13 +3792,15 @@ static void PM_Weapon(void)
 				// moved releasedFire into pmext instead of ps
 				pm->pmext->releasedFire = qtrue;
 			}
+			break;
+		default:
+			break;
 		}
 	}
 
 	// check for weapon change
 	// can't change if weapon is firing, but can change
 	// again if lowering or raising
-
 	if ((pm->ps->weaponTime <= 0 || (!weaponstateFiring && pm->ps->weaponDelay <= 0)) && !delayedFire)
 	{
 		if (pm->ps->weapon != pm->cmd.weapon)
@@ -3796,6 +3809,7 @@ static void PM_Weapon(void)
 		}
 	}
 
+	// waiting for attack animation to complete (eg. Mortar)
 	if (pm->ps->weaponDelay > 0)
 	{
 		return;
@@ -3804,6 +3818,7 @@ static void PM_Weapon(void)
 	// check for clip change
 	PM_CheckForReload(pm->ps->weapon);
 
+	// check if weapon is busy
 	if (pm->ps->weaponTime > 0 || pm->ps->weaponDelay > 0)
 	{
 		return;
@@ -3830,7 +3845,8 @@ static void PM_Weapon(void)
 		break;
 	}
 
-	// in multiplayer, don't allow some weapons to fire if charge bar isn't full
+	// don't allow some weapons to fire if charge bar isn't full
+	// FIXME: put chargeTime factor in weapon table? See CG_DrawWeapRecharge()
 	switch (pm->ps->weapon)
 	{
 	case WP_NONE: // this is possible since the player starts with nothing
