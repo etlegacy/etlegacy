@@ -85,14 +85,9 @@ static void CL_Netchan_Encode(msg_t *msg)
 		{
 			index = 0;
 		}
-		if (string[index] > 127 || string[index] == '%')
-		{
-			key ^= '.' << (i & 1);
-		}
-		else
-		{
-			key ^= string[index] << (i & 1);
-		}
+
+		key ^= GET_SKIPPED_CHAR(string[index]) << (i & 1);
+
 		index++;
 		// encode the data with this key
 		*(msg->data + i) = (*(msg->data + i)) ^ key;
@@ -137,14 +132,9 @@ static void CL_Netchan_Decode(msg_t *msg)
 		{
 			index = 0;
 		}
-		if (string[index] > 127 || string[index] == '%')
-		{
-			key ^= '.' << (i & 1);
-		}
-		else
-		{
-			key ^= string[index] << (i & 1);
-		}
+
+		key ^= GET_SKIPPED_CHAR(string[index]) << (i & 1);
+
 		index++;
 		// decode the data with this key
 		*(msg->data + i) = *(msg->data + i) ^ key;

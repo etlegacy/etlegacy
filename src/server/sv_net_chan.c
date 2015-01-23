@@ -82,14 +82,8 @@ static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 		{
 			index = 0;
 		}
-		if (string[index] > 127 || string[index] == '%')
-		{
-			key ^= '.' << (i & 1);
-		}
-		else
-		{
-			key ^= string[index] << (i & 1);
-		}
+
+		key ^= GET_SKIPPED_CHAR(string[index]) << (i & 1);
 
 		index++;
 		// encode the data with this key
@@ -137,14 +131,8 @@ static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 		{
 			index = 0;
 		}
-		if (string[index] > 127 || string[index] == '%')
-		{
-			key ^= '.' << (i & 1);
-		}
-		else
-		{
-			key ^= string[index] << (i & 1);
-		}
+
+		key ^= GET_SKIPPED_CHAR(string[index]) << (i & 1);
 
 		index++;
 		// decode the data with this key

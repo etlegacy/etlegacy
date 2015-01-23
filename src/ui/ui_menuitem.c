@@ -1409,8 +1409,7 @@ qboolean Item_Combo_HandleKey(itemDef_t *item, int key)
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 {
 	char           buff[1024];
-	char *tmp;
-	int valueLen, i;
+	int valueLen;
 	itemDef_t      *newItem = NULL;
 	editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
 
