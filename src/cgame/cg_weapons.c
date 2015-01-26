@@ -6052,10 +6052,10 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0);      // rand scale
 
 				// just do a little one
-				if (sfx && (rand() % 3 == 0))
-				{
-					CG_AddSparks(origin, dir, 450, 300, 3 + rand() % 3, 0.5);     // rand scale
-				}
+				//if (rand() % 3 == 0)
+				//{
+				//	CG_AddSparks(origin, dir, 450, 300, 3 + rand() % 3, 0.5);     // rand scale
+				//}
 			}
 		}
 		else if (clientNum == 2)

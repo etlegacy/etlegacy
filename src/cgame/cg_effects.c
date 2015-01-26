@@ -500,7 +500,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 		le->bounceFactor = 0.2f;
 
 		// if the player is on fire, then make the hat on fire
-		if (cent && CG_EntOnFire(cent))
+		if (CG_EntOnFire(cent))
 		{
 			le->onFireStart = cent->currentState.onFireStart;
 			le->onFireEnd   = cent->currentState.onFireEnd + 4000;

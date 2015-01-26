@@ -47,6 +47,12 @@ CG_EntOnFire
 */
 qboolean CG_EntOnFire(centity_t *cent)
 {
+	// don't display on respawn
+	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
+	{
+		return qfalse;
+	}
+
 	if (cent->currentState.number == cg.snap->ps.clientNum && cent->currentState.eType != ET_CORPSE)
 	{
 		// the player is always starting out on fire, which is easily seen in cinematics

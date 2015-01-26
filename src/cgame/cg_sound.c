@@ -460,7 +460,7 @@ static void CG_SoundLoadSoundFiles(void)
 		return;
 	}
 
-	if (len > sizeof(bigTextBuffer))
+	if (len >= sizeof(bigTextBuffer))
 	{
 		trap_FS_FCloseFile(f);
 		CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);

@@ -1155,6 +1155,7 @@ static void GLimp_InitExtensions(void)
 }
 #endif
 
+// FIXME: rework & add latest gfx cards
 void GLimp_SetHardware(void)
 {
 	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
@@ -1221,9 +1222,15 @@ void GLimp_SetHardware(void)
 		    Q_stristr(glConfig.renderer_string, "gtx 645") ||
 		    Q_stristr(glConfig.renderer_string, "gtx 670") ||
 		    Q_stristr(glConfig.renderer_string, "gtx 680") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 690"))
+		    Q_stristr(glConfig.renderer_string, "gtx 690") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 770"))
 		{
 			glConfig.hardwareType = GLHW_NV_DX10;
+		}
+		else
+		{
+			Ren_Print("Warning: unknown geforce series\n");
+			//glConfig.hardwareType = GLHW_GENERIC;
 		}
 
 	}
@@ -1232,6 +1239,11 @@ void GLimp_SetHardware(void)
 		if (Q_stristr(glConfig.renderer_string, "3600"))
 		{
 			glConfig.hardwareType = GLHW_NV_DX10;
+		}
+		else
+		{
+			Ren_Print("Warning: unknown quadro fx series\n");
+			//glConfig.hardwareType = GLHW_GENERIC;
 		}
 	}
 	else if (Q_stristr(glConfig.renderer_string, "gallium") &&
@@ -1251,6 +1263,11 @@ void GLimp_SetHardware(void)
 	else if (Q_stristr(glConfig.renderer_string, "radeon"))
 	{
 		glConfig.hardwareType = GLHW_ATI;
+	}
+	else
+	{
+		Ren_Print("Warning: unknown gfx card - hardware type not set\n");
+		//glConfig.hardwareType = GLHW_GENERIC;
 	}
 }
 

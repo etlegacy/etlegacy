@@ -1960,11 +1960,14 @@ void CG_parseWeaponStatsGS_cmd(void)
 			float htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
 			float hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
 
+			// cap stats at 100% (for flamethrower)
+			htRatio = (htRatio > 100.0f) ? 100.0f : htRatio;
+
 			Q_strncpyz(gs->strExtra[0], va(CG_TranslateString("Damage Given: %-6d  Team Damage Given: %d"), dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[1], va(CG_TranslateString("Damage Recvd: %-6d  Team Damage Recvd: %d"), dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[2], "", sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Kills: %-2d Deaths: %-2d Self Kills: %-2d Team Kills: %-2d"), totKills, totDeaths, selfkills, teamkills), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[4], va(CG_TranslateString("Accuracy: %-4.1f       Headshots%%: %-4.1f"), htRatio, hsRatio), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[4], va(CG_TranslateString("Accuracy: %-5.1f      Headshot%%: %-5.1f"), htRatio, hsRatio), sizeof(gs->strExtra[0]));
 
 		}
 	}
@@ -2117,6 +2120,9 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 			float htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
 			float hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
 
+			// cap stats at 100% (for flamethrower)
+			htRatio = (htRatio > 100.0f) ? 100.0f : htRatio;
+
 			if (!fFull)
 			{
 				txt_dump("\n\n\n");
@@ -2130,7 +2136,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 			txt_dump(va("^3Damage Recvd: ^7%-6d  ^3Team Damage Recvd: ^7%d\n", dmg_rcvd, team_dmg_rcvd));
 			txt_dump("\n");
 			txt_dump(va("^3Kills: ^7%-2d ^3Deaths: ^7%-2d ^3Self Kills: ^7%-2d ^3Team Kills: ^7%-2d\n", totKills, totDeaths, selfkills, teamkills));
-			txt_dump(va("^3Accuracy: ^7%-4.1f  ^3Headshots%%: ^7%-4.1f\n", htRatio, hsRatio));
+			txt_dump(va("^3Accuracy: ^7%-5.1f      ^3Headshot%%: ^7%-5.1f\n", htRatio, hsRatio));
 		}
 	}
 
