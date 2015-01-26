@@ -49,6 +49,7 @@ GOTO:EOF
 	IF /I "%curvar%"=="build64" CALL:DOBUILD " Win64"
 	IF /I "%curvar%"=="install" CALL:DOINSTALL
 	IF /I "%curvar%"=="pack" CALL:DOPACKAGE
+	IF /I "%curvar%"=="crust" GOTO:UNCRUSTCODE
 	:: download pak0 - 2 to the homepath if they do not exist
 	IF /I "%curvar%"=="download" CALL:DOWNLOADPAKS "http://mirror.etlegacy.com/etmain/"
 	IF /I "%curvar%"=="open" explorer %game_basepath%
@@ -181,6 +182,19 @@ GOTO:EOF
 	ECHO Packaging...
 	CD %build_dir%
 	cpack
+GOTO:EOF
+
+:UNCRUSTCODE
+	echo Uncrustifying code...
+	FOR /R "%batloc%src" %%G IN (*.h *.c *.cpp *.glsl) DO call:UNCRUSTFILE %%G
+GOTO:EOF
+
+:UNCRUSTFILE
+	set pathstr=%~1
+	if not x%pathstr:unzip.c=%==x%pathstr% GOTO:EOF
+	if not x%pathstr:sha-1=%==x%pathstr% GOTO:EOF
+	if not x%pathstr:Omnibot=%==x%pathstr% GOTO:EOF
+	uncrustify --no-backup -c %batloc%uncrustify.cfg %~1
 GOTO:EOF
 
 :CREATELINK
