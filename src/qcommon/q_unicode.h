@@ -57,6 +57,7 @@ unsigned long Q_UTF8_CodePoint(const char *str);
 char *Q_UTF8_Encode(unsigned long codepoint);
 int Q_UTF8_Store(const char *s);
 char *Q_UTF8_Unstore(int e);
+glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, unsigned long codepoint);
 glyphInfo_t *Q_UTF8_GetGlyph(fontInfo_t *font, const char *s);
 void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen);
 
