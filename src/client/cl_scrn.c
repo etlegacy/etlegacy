@@ -102,16 +102,33 @@ void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 	re.DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
 }
 
+static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
+{
+	int   row, col;
+	float frow, fcol;
+	float size;
+
+	ch &= 255;
+
+	row = ch >> 4;
+	col = ch & 15;
+
+	frow = row * 0.0625;
+	fcol = col * 0.0625;
+	size = 0.0625;
+
+	re.DrawStretchPic(x, y, w, h,
+		fcol, frow,
+		fcol + size, frow + size,
+		cls.charSetShader);
+}
+
 /**
  * @brief Chars are drawn at 640*480 virtual screen size
  */
 static void SCR_DrawChar(int x, int y, float size, int ch)
 {
-	int   row, col;
-	float frow, fcol;
 	float ax, ay, aw, ah;
-
-	ch &= 255;
 
 	if (ch == ' ')
 	{
@@ -128,18 +145,7 @@ static void SCR_DrawChar(int x, int y, float size, int ch)
 	aw = size;
 	ah = size;
 	SCR_AdjustFrom640(&ax, &ay, &aw, &ah);
-
-	row = ch >> 4;
-	col = ch & 15;
-
-	frow = row * 0.0625;
-	fcol = col * 0.0625;
-	size = 0.0625;
-
-	re.DrawStretchPic(ax, ay, aw, ah,
-	                  fcol, frow,
-	                  fcol + size, frow + size,
-	                  cls.charSetShader);
+	SRC_DrawSingleChar(ax, ay, aw, ah, ch);
 }
 
 /**
@@ -147,12 +153,6 @@ static void SCR_DrawChar(int x, int y, float size, int ch)
  */
 void SCR_DrawSmallChar(int x, int y, int ch)
 {
-	int   row, col;
-	float frow, fcol;
-	float size;
-
-	ch &= 255;
-
 	if (ch == ' ')
 	{
 		return;
@@ -162,18 +162,7 @@ void SCR_DrawSmallChar(int x, int y, int ch)
 	{
 		return;
 	}
-
-	row = ch >> 4;
-	col = ch & 15;
-
-	frow = row * 0.0625;
-	fcol = col * 0.0625;
-	size = 0.0625;
-
-	re.DrawStretchPic(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT,
-	                  fcol, frow,
-	                  fcol + size, frow + size,
-	                  cls.charSetShader);
+	SRC_DrawSingleChar(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, ch);
 }
 
 /*
