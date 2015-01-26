@@ -2026,7 +2026,7 @@ void CG_RegisterItemVisuals(int itemNum)
 		return;
 	}
 
-	memset(itemInfo, 0, sizeof(&itemInfo));
+	memset(itemInfo, 0, sizeof(*itemInfo));
 
 	for (i = 0; i < MAX_ITEM_MODELS; i++)
 	{
