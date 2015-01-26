@@ -1992,7 +1992,7 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 	char       text[1024];
 	const char *p, *textPtr, *newLinePtr = NULL;
 	char       buff[1024];
-	int        width, height, len, textWidth = 0, newLine, newLineWidth;
+	int        width, height, len, textWidth = 0, newLine, newLineWidth, charWidth = 0;
 	qboolean   hasWhitespace;
 	float      y;
 	vec4_t     color;
@@ -2031,6 +2031,7 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 	p             = textPtr;
 	while (p)
 	{
+		charWidth = Q_UTF8_Width(p);
 		textWidth = DC->textWidth(buff, item->textscale, 0);
 		if (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\0')
 		{
@@ -2083,11 +2084,22 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 			continue;
 		}
 
-		buff[len++] = *p++;
-
-		if (buff[len - 1] == 13)
+		if (charWidth > 1)
 		{
-			buff[len - 1] = ' ';
+			while (charWidth)
+			{
+				buff[len++] = *p++;
+				charWidth--;
+			}
+		}
+		else
+		{
+			buff[len++] = *p++;
+
+			if (buff[len - 1] == 13)
+			{
+				buff[len - 1] = ' ';
+			}
 		}
 
 		buff[len] = '\0';

@@ -1572,7 +1572,7 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 
 qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 {
-	return(Item_ValidateTooltipData(item) && PC_String_Parse(handle, &item->toolTipData->text));
+	return(Item_ValidateTooltipData(item) && PC_String_ParseTranslate(handle, &item->toolTipData->text));
 }
 
 qboolean ItemParse_tooltipalignx(itemDef_t *item, int handle)
