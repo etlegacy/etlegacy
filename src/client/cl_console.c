@@ -171,7 +171,7 @@ Save the console contents out to a file
 void Con_Dump_f(void)
 {
 	int          l, x, i;
-	int          *line;
+	unsigned int          *line;
 	fileHandle_t f;
 	int          bufferlen;
 	char         *buffer;
@@ -200,7 +200,7 @@ void Con_Dump_f(void)
 	{
 		line = con.text + (l % con.totallines) * con.linewidth;
 		for (x = 0 ; x < con.linewidth ; x++)
-			if ((line[x] & 0xff) != ' ')
+			if (line[x] != ' ')
 			{
 				break;
 			}
@@ -622,7 +622,7 @@ Draws the last few lines of output transparently over the game top
 void Con_DrawNotify(void)
 {
 	int  x, v = 0;
-	int  *text;
+	unsigned int  *text;
 	byte *textColor;
 	int  i;
 	int  time;
@@ -688,7 +688,7 @@ void Con_DrawNotify(void)
 			char buf[128];
 
 			CL_TranslateString("say_team:", buf); // FIXME: do we want translations for Con_DrawNotify?
-			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
+			SCR_DrawBigString(8, v, buf, colorWhite, qfalse);
 			skip = strlen(buf) + 2;
 		}
 		else if (chat_buddy)
@@ -696,7 +696,7 @@ void Con_DrawNotify(void)
 			char buf[128];
 
 			CL_TranslateString("say_fireteam:", buf); // FIXME: do we want translations for Con_DrawNotify?
-			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
+			SCR_DrawBigString(8, v, buf, colorWhite, qfalse);
 			skip = strlen(buf) + 2;
 		}
 		else
@@ -704,7 +704,7 @@ void Con_DrawNotify(void)
 			char buf[128];
 
 			CL_TranslateString("say:", buf); // FIXME: do we want translations for Con_DrawNotify?
-			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
+			SCR_DrawBigString(8, v, buf, colorWhite, qfalse);
 			skip = strlen(buf) + 1;
 		}
 
@@ -756,7 +756,7 @@ void Con_DrawSolidConsole(float frac)
 {
 	int    i, x, y;
 	int    rows;
-	int    *text;
+	unsigned int    *text;
 	byte   *textColor;
 	int    row;
 	int    yoffset = cls.glconfig.vidHeight * frac;

@@ -33,6 +33,7 @@
  */
 
 #include "client.h"
+#include "../qcommon/q_unicode.h"
 #include "../sdl/sdl_defs.h"
 
 /*
@@ -286,15 +287,12 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 	// draw it
 	if (size == SMALLCHAR_WIDTH)
 	{
-		float color[4];
-
-		color[0] = color[1] = color[2] = color[3] = 1.0;
-		SCR_DrawSmallStringExt(x, y, str, color, qfalse, noColorEscape);
+		SCR_DrawSmallString(x, y, str, colorWhite, qfalse, noColorEscape);
 	}
 	else
 	{
 		// draw big string with drop shadow
-		SCR_DrawBigString(x, y, str, 1.0, noColorEscape);
+		SCR_DrawBigString(x, y, str, colorWhite, noColorEscape);
 	}
 
 	// draw the cursor
@@ -330,7 +328,7 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 		{
 			str[0] = cursorChar;
 			str[1] = 0;
-			SCR_DrawBigString(x + (edit->cursor - prestep - i) * size, y, str, 1.0, qfalse);
+			SCR_DrawBigString(x + (edit->cursor - prestep - i) * size, y, str, colorWhite, qfalse);
 		}
 	}
 }
@@ -466,7 +464,11 @@ Field_CharEvent
 */
 void Field_CharEvent(field_t *edit, int ch)
 {
-	int len;
+	int len, charWidth, stringLen;
+	char *value = NULL;
+
+	charWidth = Q_UTF8_WidthCP(ch);
+	value = Q_UTF8_Encode(ch);
 
 	if (ch == 'v' - 'a' + 1)      // ctrl-v is paste
 	{
@@ -481,13 +483,13 @@ void Field_CharEvent(field_t *edit, int ch)
 	}
 
 	len = strlen(edit->buffer);
+	stringLen = Q_UTF8_Strlen(edit->buffer);
 
 	if (ch == 'h' - 'a' + 1)          // ctrl-h is backspace
 	{
 		if (edit->cursor > 0)
 		{
-			memmove(edit->buffer + edit->cursor - 1,
-			        edit->buffer + edit->cursor, len + 1 - edit->cursor);
+			memmove(edit->buffer + edit->cursor - 1, edit->buffer + edit->cursor, len + 1 - edit->cursor);
 			edit->cursor--;
 			if (edit->cursor < edit->scroll)
 			{
@@ -518,28 +520,14 @@ void Field_CharEvent(field_t *edit, int ch)
 		return;
 	}
 
-	if (key_overstrikeMode)
+	// - 2 to leave room for the leading slash and trailing \0
+	if (len == MAX_EDIT_LINE - 2)
 	{
-		// - 2 to leave room for the leading slash and trailing \0
-		if (edit->cursor == MAX_EDIT_LINE - 2)
-		{
-			return;
-		}
-		edit->buffer[edit->cursor] = ch;
-		edit->cursor++;
+		return; // all full
 	}
-	else        // insert mode
-	{
-		// - 2 to leave room for the leading slash and trailing \0
-		if (len == MAX_EDIT_LINE - 2)
-		{
-			return; // all full
-		}
-		memmove(edit->buffer + edit->cursor + 1,
-		        edit->buffer + edit->cursor, len + 1 - edit->cursor);
-		edit->buffer[edit->cursor] = ch;
-		edit->cursor++;
-	}
+
+	Q_UTF8_Insert(edit->buffer, stringLen, edit->cursor, ch, key_overstrikeMode);
+	edit->cursor++;
 
 
 	if (edit->cursor >= edit->widthInChars)
@@ -547,9 +535,9 @@ void Field_CharEvent(field_t *edit, int ch)
 		edit->scroll++;
 	}
 
-	if (edit->cursor == len + 1)
+	if (edit->cursor == stringLen + 1)
 	{
-		edit->buffer[edit->cursor] = 0;
+		edit->buffer[Q_UTF8_ByteOffset(edit->buffer,edit->cursor)] = 0;
 	}
 }
 

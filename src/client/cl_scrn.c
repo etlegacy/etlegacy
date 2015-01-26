@@ -34,6 +34,7 @@
  */
 
 #include "client.h"
+#include "../qcommon/q_unicode.h"
 
 qboolean scr_initialized;           // ready to draw
 
@@ -117,52 +118,41 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 	fcol = col * 0.0625;
 	size = 0.0625;
 
-	re.DrawStretchPic(x, y, w, h,
-	                  fcol, frow,
+	re.DrawStretchPic(x, y, w, h, fcol, frow,
 	                  fcol + size, frow + size,
 	                  cls.charSetShader);
 }
 
 /**
- * @brief Chars are drawn at 640*480 virtual screen size
+ * @brief Chars are drawn at 640*480 virtual or native screen size
  */
-static void SCR_DrawChar(int x, int y, float size, int ch)
-{
-	float ax, ay, aw, ah;
-
-	if (ch == ' ')
-	{
-		return;
-	}
-
-	if (y < -size)
-	{
-		return;
-	}
-
-	ax = x;
-	ay = y;
-	aw = size;
-	ah = size;
-	SCR_AdjustFrom640(&ax, &ay, &aw, &ah);
-	SRC_DrawSingleChar(ax, ay, aw, ah, ch);
-}
-
-/**
- * @brief Small chars are drawn at native screen resolution
- */
-void SCR_DrawSmallChar(int x, int y, int ch)
+void SCR_DrawChar(int x, int y, float w, float h, int ch, qboolean nativeResolution)
 {
 	if (ch == ' ')
 	{
 		return;
 	}
 
-	if (y < -SMALLCHAR_HEIGHT)
+	if (y < -h)
 	{
 		return;
 	}
-	SRC_DrawSingleChar(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, ch);
+
+	if (nativeResolution)
+	{
+		SRC_DrawSingleChar(x, y, w, h, ch);
+	}
+	else
+	{
+		float ax, ay, aw, ah;
+
+		ax = x;
+		ay = y;
+		aw = w;
+		ah = h;
+		SCR_AdjustFrom640(&ax, &ay, &aw, &ah);
+		SRC_DrawSingleChar(ax, ay, aw, ah, ch);
+	}
 }
 
 /*
@@ -171,34 +161,35 @@ SCR_DrawBigString[Color]
 
 Draws a multi-colored string with a drop shadow, optionally forcing
 to a fixed color.
-
-Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape)
+void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape, qboolean dropShadow, qboolean nativeResolution)
 {
 	vec4_t     color;
 	const char *s;
 	int        xx;
 
-	// draw the drop shadow
-	color[0] = color[1] = color[2] = 0;
-	color[3] = setColor[3];
-	re.SetColor(color);
-	s  = string;
-	xx = x;
-	while (*s)
+	if (dropShadow)
 	{
-		if (!noColorEscape && Q_IsColorString(s))
+		// draw the drop shadow
+		Vector4Copy(colorBlack, color);
+		color[3] = setColor[3];
+		re.SetColor(color);
+		s = string;
+		xx = x;
+		while (*s)
 		{
-			s += 2;
-			continue;
+			if (!noColorEscape && Q_IsColorString(s))
+			{
+				s += 2;
+				continue;
+			}
+			SCR_DrawChar(xx + 2, y + 2, w, h, Q_UTF8_CodePoint(s), nativeResolution);
+			xx += w;
+			s += Q_UTF8_Width(s);
 		}
-		SCR_DrawChar(xx + 2, y + 2, size, *s);
-		xx += size;
-		s++;
 	}
-
+	
 	// draw the colored text
 	s  = string;
 	xx = x;
@@ -227,73 +218,9 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 				continue;
 			}
 		}
-		SCR_DrawChar(xx, y, size, *s);
-		xx += size;
-		s++;
-	}
-	re.SetColor(NULL);
-}
-
-void SCR_DrawBigString(int x, int y, const char *s, float alpha, qboolean noColorEscape)
-{
-	float color[4];
-
-	color[0] = color[1] = color[2] = 1.0;
-	color[3] = alpha;
-	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qfalse, noColorEscape);
-}
-
-void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color, qboolean noColorEscape)
-{
-	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qtrue, noColorEscape);
-}
-
-/*
-==================
-SCR_DrawSmallString[Color]
-
-Draws a multi-colored string with a drop shadow, optionally forcing
-to a fixed color.
-
-Coordinates are at 640 by 480 virtual resolution
-==================
-*/
-void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape)
-{
-	vec4_t     color;
-	const char *s;
-	int        xx;
-
-	// draw the colored text
-	s  = string;
-	xx = x;
-	re.SetColor(setColor);
-	while (*s)
-	{
-		if (Q_IsColorString(s))
-		{
-			if (!forceColor)
-			{
-				if (*(s + 1) == COLOR_NULL)
-				{
-					memcpy(color, setColor, sizeof(color));
-				}
-				else
-				{
-					memcpy(color, g_color_table[ColorIndex(*(s + 1))], sizeof(color));
-					color[3] = setColor[3];
-				}
-				re.SetColor(color);
-			}
-			if (!noColorEscape)
-			{
-				s += 2;
-				continue;
-			}
-		}
-		SCR_DrawSmallChar(xx, y, *s);
-		xx += SMALLCHAR_WIDTH;
-		s++;
+		SCR_DrawChar(xx, y, w, h, Q_UTF8_CodePoint(s), nativeResolution);
+		xx += w;
+		s += Q_UTF8_Width(s);
 	}
 	re.SetColor(NULL);
 }

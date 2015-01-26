@@ -634,11 +634,13 @@ void SCR_AdjustFrom640(float *x, float *y, float *w, float *h);
 void SCR_FillRect(float x, float y, float width, float height,
                   const float *color);
 void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
+void SCR_DrawChar(int x, int y, float w, float h, int ch, qboolean nativeResolution);
+void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape, qboolean dropShadow, qboolean nativeResolution);
 
-void SCR_DrawBigString(int x, int y, const char *s, float alpha, qboolean noColorEscape);               // draws a string with embedded color control characters with fade
-void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color, qboolean noColorEscape);         // ignores embedded color control characters
-void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape);
-void SCR_DrawSmallChar(int x, int y, int ch);
+#define SCR_DrawSmallChar(x, y, ch) SCR_DrawChar(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, ch, qtrue)
+// ignores embedded color control characters
+#define SCR_DrawBigString(x, y, s, color, noColorEscape) SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, s, color, qtrue, noColorEscape, qtrue, qfalse)
+#define SCR_DrawSmallString(x, y, string, setColor, forceColor, noColorEscape) SCR_DrawStringExt(x, y, SMALLCHAR_WIDTH, BIGCHAR_HEIGHT, string, setColor, forceColor, noColorEscape, qfalse, qtrue)
 
 // cl_cin.c
 

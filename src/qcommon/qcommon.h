@@ -862,7 +862,7 @@ Edit fields and command line history/completion
 ==============================================================
 */
 
-#define MAX_EDIT_LINE   256
+#define MAX_EDIT_LINE   512
 typedef struct
 {
 	int cursor;

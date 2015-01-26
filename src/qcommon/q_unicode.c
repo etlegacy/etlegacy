@@ -261,8 +261,10 @@ static void shiftbitsright(unsigned char *p, unsigned long num, unsigned long by
 
 	if (by >= num)
 	{
-		for ( ; num > 8; p++, num -= 8)
+		for (; num > 8; p++, num -= 8)
+		{
 			*p = 0;
+		}
 
 		*p &= (~0x00) >> num;
 
@@ -273,12 +275,16 @@ static void shiftbitsright(unsigned char *p, unsigned long num, unsigned long by
 	off  = by % 8;
 
 	for (e = p + (num + 7) / 8 - 1; e > p + step; e--)
+	{
 		*e = (*(e - step) >> off) | (*(e - step - 1) << (8 - off));
+	}
 
 	*e = *(e - step) >> off;
 
 	for (e = p; e < p + step; e++)
+	{
 		*e = 0;
+	}
 }
 
 /**
@@ -304,10 +310,17 @@ unsigned long Q_UTF8_CodePoint(const char *str)
 	}
 
 	for (i = (size > 1 ? size + 1 : 1); i < 8; i++)
+	{
 		setbit(p, n++, getbit((const unsigned char *)str, i));
+	}
+
 	for (i = 1; i < size; i++)
+	{
 		for (j = 2; j < 8; j++)
+		{
 			setbit(p, n++, getbit(((const unsigned char *)str) + i, j));
+		}
+	}
 
 	/*
 	if( n > 8 * sizeof(codepoint) )
