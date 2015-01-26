@@ -35,6 +35,7 @@
  */
 
 #include "client.h"
+#include "../qcommon/q_unicode.h"
 
 int g_console_field_width = 78;
 #define DEFAULT_CONSOLE_WIDTH   78
@@ -153,7 +154,8 @@ void Con_Clear_f(void)
 
 	for (i = 0 ; i < CON_TEXTSIZE ; i++)
 	{
-		con.text[i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
+		con.text[i] = ' ';
+		con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 	}
 
 	Con_Bottom();       // go to end
@@ -169,7 +171,7 @@ Save the console contents out to a file
 void Con_Dump_f(void)
 {
 	int          l, x, i;
-	short        *line;
+	int        *line;
 	fileHandle_t f;
 	int          bufferlen;
 	char         *buffer;
@@ -271,7 +273,8 @@ If the line width has changed, reformat the buffer.
 void Con_CheckResize(void)
 {
 	int              i, width;
-	MAC_STATIC short tbuf[CON_TEXTSIZE];
+	MAC_STATIC int tbuf[CON_TEXTSIZE];
+	MAC_STATIC byte tbuff[CON_TEXTSIZE];
 
 	// wasn't allowing for larger consoles
 	// width = (SCREEN_WIDTH / SMALLCHAR_WIDTH) - 2;
@@ -289,7 +292,8 @@ void Con_CheckResize(void)
 		con.totallines = CON_TEXTSIZE / con.linewidth;
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
-			con.text[i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
+			con.text[i] = ' ';
+			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
 	}
 	else
@@ -315,10 +319,12 @@ void Con_CheckResize(void)
 			numchars = con.linewidth;
 		}
 
-		memcpy(tbuf, con.text, CON_TEXTSIZE * sizeof(short));
+		memcpy(tbuf, con.text, CON_TEXTSIZE * sizeof(int));
+		memcpy(tbuff, con.textColor, CON_TEXTSIZE * sizeof(byte));
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
-			con.text[i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
+			con.text[i] = ' ';
+			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
 
 		for (i = 0 ; i < numlines ; i++)
@@ -328,6 +334,9 @@ void Con_CheckResize(void)
 				con.text[(con.totallines - 1 - i) * con.linewidth + j] =
 				    tbuf[((con.current - i + oldtotallines) %
 				          oldtotallines) * oldwidth + j];
+				con.textColor[(con.totallines - 1 - i) * con.linewidth + j] =
+					tbuff[((con.current - i + oldtotallines) %
+					oldtotallines) * oldwidth + j];
 			}
 		}
 
@@ -424,7 +433,10 @@ void Con_Linefeed(qboolean skipnotify)
 	}
 	con.current++;
 	for (i = 0; i < con.linewidth; i++)
-		con.text[(con.current % con.totallines) * con.linewidth + i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
+	{
+		con.text[(con.current % con.totallines) * con.linewidth + i] = ' ';
+		con.textColor[(con.current % con.totallines) * con.linewidth + i] = ColorIndex(CONSOLE_COLOR);
+	}
 }
 
 /*
@@ -471,7 +483,7 @@ void CL_ConsolePrint(char *txt)
 
 	color = ColorIndex(CONSOLE_COLOR);
 
-	while ((c = *txt) != 0)
+	while (*txt != 0)
 	{
 		if (Q_IsColorString(txt))
 		{
@@ -494,17 +506,15 @@ void CL_ConsolePrint(char *txt)
 			{
 				break;
 			}
-
 		}
 
 		// word wrap
 		if (l != con.linewidth && (con.x + l >= con.linewidth))
 		{
 			Con_Linefeed(skipnotify);
-
 		}
 
-		txt++;
+		c = Q_UTF8_CodePoint(txt);
 
 		switch (c)
 		{
@@ -514,20 +524,24 @@ void CL_ConsolePrint(char *txt)
 		case '\r':
 			con.x = 0;
 			break;
-		default:    // display character and advance
+		default:
+			// display character and advance
 			y = con.current % con.totallines;
-			// rain - sign extension caused the character to carry over
+			
+			// sign extension caused the character to carry over
 			// into the color info for high ascii chars; casting c to unsigned
-			con.text[y * con.linewidth + con.x] = (color << 8) | (unsigned char)c;
+			con.text[y * con.linewidth + con.x] = c;
+			con.textColor[y * con.linewidth + con.x] = color;
 			con.x++;
 			if (con.x >= con.linewidth)
 			{
-
 				Con_Linefeed(skipnotify);
 				con.x = 0;
 			}
 			break;
 		}
+
+		txt += Q_UTF8_Width(txt);
 	}
 
 	// mark time for transparent overlay
@@ -608,7 +622,8 @@ Draws the last few lines of output transparently over the game top
 void Con_DrawNotify(void)
 {
 	int   x, v = 0;
-	short *text;
+	int *text;
+	byte *textColor;
 	int   i;
 	int   time;
 	int   currentColor = 7;
@@ -632,6 +647,7 @@ void Con_DrawNotify(void)
 			continue;
 		}
 		text = con.text + (i % con.totallines) * con.linewidth;
+		textColor = con.textColor + (i % con.totallines) * con.linewidth;
 
 		if (cl.snap.ps.pm_type != PM_INTERMISSION && (cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME)))
 		{
@@ -640,16 +656,16 @@ void Con_DrawNotify(void)
 
 		for (x = 0 ; x < con.linewidth ; x++)
 		{
-			if ((text[x] & 0xff) == ' ')
+			if ((text[x]) == ' ')
 			{
 				continue;
 			}
-			if (((text[x] >> 8) & COLOR_BITS) != currentColor)
+			if (textColor[x] != currentColor)
 			{
-				currentColor = (text[x] >> 8) & COLOR_BITS;
+				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
-			SCR_DrawSmallChar(cl_conXOffset->integer + con.xadjust + (x + 1) * SMALLCHAR_WIDTH, v, text[x] & 0xff);
+			SCR_DrawSmallChar(cl_conXOffset->integer + con.xadjust + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
 		}
 
 		v += SMALLCHAR_HEIGHT;
@@ -740,7 +756,8 @@ void Con_DrawSolidConsole(float frac)
 {
 	int    i, x, y;
 	int    rows;
-	short  *text;
+	int  *text;
+	byte *textColor;
 	int    row;
 	int    yoffset = cls.glconfig.vidHeight * frac;
 	int    currentColor;
@@ -826,8 +843,11 @@ void Con_DrawSolidConsole(float frac)
 	{
 		// draw arrows to show the buffer is backscrolled
 		re.SetColor(g_color_table[ColorIndex(COLOR_WHITE)]);
-		for (x = 0 ; x < con.linewidth ; x += 4)
+		for (x = 0; x < con.linewidth; x += 4)
+		{
 			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, '^');
+		}
+
 		y -= SMALLCHAR_HEIGHT;
 		rows--;
 	}
@@ -855,20 +875,21 @@ void Con_DrawSolidConsole(float frac)
 		}
 
 		text = con.text + (row % con.totallines) * con.linewidth;
-
+		textColor = con.textColor + (row % con.totallines) * con.linewidth;
+		
 		for (x = 0 ; x < con.linewidth ; x++)
 		{
-			if ((text[x] & 0xff) == ' ')
+			if (text[x] == ' ')
 			{
 				continue;
 			}
 
-			if (((text[x] >> 8) & COLOR_BITS) != currentColor)
+			if (textColor[x] != currentColor)
 			{
-				currentColor = (text[x] >> 8) & COLOR_BITS;
+				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
-			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, text[x] & 0xff);
+			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, text[x]);
 		}
 	}
 
