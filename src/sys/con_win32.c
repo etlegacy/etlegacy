@@ -331,7 +331,7 @@ void CON_Init(void)
 
 	// set text color to white
 	SetConsoleTextAttribute(qconsole_hout, CON_ColorCharToAttrib(COLOR_WHITE));
-	
+
 	// set process output translation
 	SetConsoleOutputCP(CP_UTF8);
 }

@@ -184,7 +184,7 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 	{
 		for (j = 0; j < height; j++)
 		{
-			dv    = &ctrl[j][i];
+			dv = &ctrl[j][i];
 			VectorCopy(dv->xyz, base);
 			for (k = 0; k < 8; k++)
 			{

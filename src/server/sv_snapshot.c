@@ -1003,16 +1003,16 @@ void SV_SendClientMessages(void)
 		if (c->netchan.unsentFragments || c->netchan_start_queue)
 		{
 			c->rateDelayed = qtrue;
-			continue;		// Drop this snapshot if the packet queue is still full or delta compression will break
+			continue;       // Drop this snapshot if the packet queue is still full or delta compression will break
 		}
 
 		if (!(c->netchan.remoteAddress.type == NA_LOOPBACK ||
-			(sv_lanForceRate->integer && Sys_IsLANAddress(c->netchan.remoteAddress))))
+		      (sv_lanForceRate->integer && Sys_IsLANAddress(c->netchan.remoteAddress))))
 		{
-			// rate control for clients not on LAN 
+			// rate control for clients not on LAN
 			if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value)
 			{
-				continue;		// It's not time yet
+				continue;       // It's not time yet
 			}
 
 			if (SV_RateMsec(c) > 0)
@@ -1028,7 +1028,7 @@ void SV_SendClientMessages(void)
 		// generate and send a new message
 		SV_SendClientSnapshot(c);
 		c->lastSnapshotTime = svs.time;
-		c->rateDelayed = qfalse;
+		c->rateDelayed      = qfalse;
 	}
 
 	// net debugging

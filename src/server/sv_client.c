@@ -385,11 +385,11 @@ gotnewcl:
 
 	Com_DPrintf("Going from CS_FREE to CS_CONNECTED for %s\n", newcl->name);
 
-	newcl->state            = CS_CONNECTED;
-	newcl->lastSnapshotTime = 0;
+	newcl->state              = CS_CONNECTED;
+	newcl->lastSnapshotTime   = 0;
 	newcl->lastValidGamestate = 0;
-	newcl->lastPacketTime   = svs.time;
-	newcl->lastConnectTime  = svs.time;
+	newcl->lastPacketTime     = svs.time;
+	newcl->lastConnectTime    = svs.time;
 
 	// when we receive the first packet from the client, we will
 	// notice that it is from a different serverid and that the
@@ -622,7 +622,7 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	client->gentity = ent;
 
 	client->deltaMessage     = -1;
-	client->lastSnapshotTime = 0;	// generate a snapshot immediately
+	client->lastSnapshotTime = 0;   // generate a snapshot immediately
 
 	if (cmd)
 	{
@@ -851,8 +851,8 @@ static qboolean SV_CheckFallbackURL(client_t *cl, msg_t *msg)
 // Check if we are able to share the file
 static qboolean SV_CheckDownloadAllowed(client_t *cl, msg_t *msg)
 {
-	char     errorMessage[1024];
-	int idPack = FS_idPak(cl->downloadName, BASEGAME);
+	char errorMessage[1024];
+	int  idPack = FS_idPak(cl->downloadName, BASEGAME);
 
 	// sv_allowDownload and idPack checks
 	if (!sv_allowDownload->integer || idPack)
@@ -869,14 +869,14 @@ static qboolean SV_CheckDownloadAllowed(client_t *cl, msg_t *msg)
 			if (sv_pure->integer)
 			{
 				Com_sprintf(errorMessage, sizeof(errorMessage), "Could not download \"%s\" because autodownloading is disabled on the server.\n\n"
-					"You will need to get this file elsewhere before you "
-					"can connect to this pure server.\n", cl->downloadName);
+				                                                "You will need to get this file elsewhere before you "
+				                                                "can connect to this pure server.\n", cl->downloadName);
 			}
 			else
 			{
 				Com_sprintf(errorMessage, sizeof(errorMessage), "Could not download \"%s\" because autodownloading is disabled on the server.\n\n"
-					"Set autodownload to No in your settings and you might be "
-					"able to connect even if you don't have the file.\n", cl->downloadName);
+				                                                "Set autodownload to No in your settings and you might be "
+				                                                "able to connect even if you don't have the file.\n", cl->downloadName);
 			}
 		}
 
@@ -892,9 +892,9 @@ static qboolean SV_CheckDownloadAllowed(client_t *cl, msg_t *msg)
 // We open the file here
 static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 {
-	int      download_flag;
+	int          download_flag;
 	fileHandle_t downloadFileHandle = 0;
-	int downloadSize = 0;
+	int          downloadSize       = 0;
 
 	// prevent duplicate download notifications
 	if (cl->downloadnotify & DLNOTIFY_BEGIN)
@@ -978,14 +978,14 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 		}
 	}
 
-	cl->bWWWDl = qfalse;
-	cl->download = downloadFileHandle;
+	cl->bWWWDl       = qfalse;
+	cl->download     = downloadFileHandle;
 	cl->downloadSize = downloadSize;
 
 	// is valid source, init
 	cl->downloadCurrentBlock = cl->downloadClientBlock = cl->downloadXmitBlock = 0;
-	cl->downloadCount = 0;
-	cl->downloadEOF = qfalse;
+	cl->downloadCount        = 0;
+	cl->downloadEOF          = qfalse;
 
 	// We reset the ack time to current when we start
 	cl->downloadAckTime = svs.time;
@@ -998,7 +998,7 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
  */
 static qboolean SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 {
-	int      curindex;
+	int curindex;
 
 	if (!*cl->downloadName)
 	{
@@ -1475,7 +1475,7 @@ void SV_UserinfoChanged(client_t *cl)
 	{
 		// Reset last sent snapshot so we avoid desync between server frame time and snapshot send time
 		cl->lastSnapshotTime = 0;
-		cl->snapshotMsec = i;
+		cl->snapshotMsec     = i;
 	}
 
 	// maintain the IP information

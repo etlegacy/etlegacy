@@ -140,7 +140,7 @@ int Q_UTF8_PrintStrlen(const char *str)
 
 int Q_UTF8_ByteOffset(const char *str, int offset)
 {
-	int i = 0,l = 0, m = 0;
+	int i = 0, l = 0, m = 0;
 
 	if (offset <= 0)
 	{
@@ -151,8 +151,8 @@ int Q_UTF8_ByteOffset(const char *str, int offset)
 	{
 		l++;
 
-		m = Q_UTF8_Width(str);
-		i += m;
+		m    = Q_UTF8_Width(str);
+		i   += m;
 		str += m;
 
 		if (l == offset)
@@ -166,12 +166,12 @@ int Q_UTF8_ByteOffset(const char *str, int offset)
 
 void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrike)
 {
-	int len = 0, i = 0, byteOffset = 0;
+	int  len  = 0, i = 0, byteOffset = 0;
 	char *str = NULL;
 
-	str = Q_UTF8_Encode(key);
+	str        = Q_UTF8_Encode(key);
 	byteOffset = Q_UTF8_ByteOffset(dest, offset);
-	len = Q_UTF8_WidthCP(key);
+	len        = Q_UTF8_WidthCP(key);
 
 	if (offset < size)
 	{
@@ -210,7 +210,7 @@ void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size)
 
 	byteOffset1 = Q_UTF8_ByteOffset(data, offset1);
 	byteOffset2 = Q_UTF8_ByteOffset(data, offset2);
-	byteSize = Q_UTF8_ByteOffset(&data[byteOffset2], size);
+	byteSize    = Q_UTF8_ByteOffset(&data[byteOffset2], size);
 
 	if (!byteSize)
 	{
@@ -457,7 +457,7 @@ glyphInfo_t *Q_UTF8_GetGlyph(fontInfo_t *font, const char *s)
 
 void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
 {
-	int i = 0;
+	int  i  = 0;
 	char *c = string;
 
 	// Quick and dirty UTF-8 to UTF-32 conversion

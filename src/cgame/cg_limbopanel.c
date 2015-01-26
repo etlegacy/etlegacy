@@ -260,7 +260,7 @@ TEAM_COUNTER(2);
 		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + (number * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)) + (CLASS_COUNTER_BUTTON_DIFF / 2.f),266,                                                                                                                             CLASS_COUNTER_WIDTH - CLASS_COUNTER_BUTTON_DIFF, 34 },   \
 		{ 0,                             number,                                                                                                                          0,                                               0, 0, 0, 0, 0},        \
 		NULL,                            /* font       */              \
-		CG_LimboPanel_ClassButton_KeyDown,/* keyDown   */  \
+		CG_LimboPanel_ClassButton_KeyDown, /* keyDown   */  \
 		NULL,                            /* keyUp  */                  \
 		CG_LimboPanel_RenderClassButton,        \
 		NULL,                                   \
@@ -305,7 +305,7 @@ CLASS_COUNTER(4);
 		{ 15,                      54 + (number * 31), 26, 26 },     \
 		{ number,                  0,                  0,  0, 0, 0, 0, 0},    \
 		NULL,                      /* font       */          \
-		CG_LimboPanel_Filter_KeyDown,/* keyDown    */              \
+		CG_LimboPanel_Filter_KeyDown, /* keyDown    */              \
 		NULL,                      /* keyUp  */              \
 		CG_LimboPanel_Filter_Draw,          \
 		NULL,                               \
@@ -610,8 +610,8 @@ panel_button_t weaponPanel =
 	{ 455,                    353,   140, 56 },
 	{ 0,                      0,     0,   0, 0, 0, 0, 0},
 	NULL,                     /* font     */
-	CG_LimboPanel_WeaponPanel_KeyDown,/* keyDown  */
-	CG_LimboPanel_WeaponPanel_KeyUp,/* keyUp    */
+	CG_LimboPanel_WeaponPanel_KeyDown, /* keyDown  */
+	CG_LimboPanel_WeaponPanel_KeyUp, /* keyUp    */
 	CG_LimboPanel_WeaponPanel,
 	NULL,
 };
@@ -623,7 +623,7 @@ panel_button_t weaponLight1 =
 	{ 605,                     362,   20, 20 },
 	{ 0,                       0,     0,  0, 0, 0, 0, 0},
 	NULL,                      /* font     */
-	CG_LimboPanel_WeaponLights_KeyDown,/* keyDown  */
+	CG_LimboPanel_WeaponLights_KeyDown, /* keyDown  */
 	NULL,                      /* keyUp    */
 	CG_LimboPanel_WeaponLights,
 	NULL,
@@ -649,7 +649,7 @@ panel_button_t weaponLight2 =
 	{ 605,                     386,   20, 20 },
 	{ 1,                       0,     0,  0, 0, 0, 0, 0},
 	NULL,                      /* font     */
-	CG_LimboPanel_WeaponLights_KeyDown,/* keyDown  */
+	CG_LimboPanel_WeaponLights_KeyDown, /* keyDown  */
 	NULL,                      /* keyUp    */
 	CG_LimboPanel_WeaponLights,
 	NULL,
@@ -823,7 +823,7 @@ panel_button_t objectivePanelButtonUp =
 	{ 252,                       416,24, 24 },
 	{ 0,                         0,  0,  0, 0, 0, 0, 1},
 	NULL,                        /* font     */
-	CG_LimboPanel_ObjectiveText_KeyDown,/* keyDown  */
+	CG_LimboPanel_ObjectiveText_KeyDown, /* keyDown  */
 	NULL,                        /* keyUp    */
 	BG_PanelButtonsRender_Img,
 	NULL,
@@ -836,7 +836,7 @@ panel_button_t briefingButton =
 	{ 252,                            388,   24, 24 },
 	{ 0,                              0,     0,  0, 0, 0, 0, 0},
 	NULL,                             /* font     */
-	CG_LimboPanel_BriefingButton_KeyDown,/* keyDown  */
+	CG_LimboPanel_BriefingButton_KeyDown, /* keyDown  */
 	NULL,                             /* keyUp    */
 	CG_LimboPanel_BriefingButton_Draw,
 	NULL,
@@ -849,7 +849,7 @@ panel_button_t objectivePanelButtonDown =
 	{ 252,                       444,24, 24 },
 	{ 0,                         0,  0,  0, 0, 0, 0, 0},
 	NULL,                        /* font     */
-	CG_LimboPanel_ObjectiveText_KeyDown,/* keyDown  */
+	CG_LimboPanel_ObjectiveText_KeyDown, /* keyDown  */
 	NULL,                        /* keyUp    */
 	BG_PanelButtonsRender_Img,
 	NULL,
@@ -877,7 +877,7 @@ panel_button_t okButton =
 	{ 454 + 2,                454 + 2,       82 - 4, 18 - 4 },
 	{ 0,                      0,             0,      0, 0, 0, 0, 0},
 	NULL,                     /* font     */
-	CG_LimboPanel_OkButton_KeyDown,/* keyDown  */
+	CG_LimboPanel_OkButton_KeyDown, /* keyDown  */
 	NULL,                     /* keyUp    */
 	CG_LimboPanel_Border_Draw,
 	NULL,
@@ -903,7 +903,7 @@ panel_button_t cancelButton =
 	{ 543 + 2,                454 + 2,       82 - 4, 18 - 4 },
 	{ 0,                      0,             0,      0, 0, 0, 0, 0},
 	NULL,                     /* font     */
-	CG_LimboPanel_CancelButton_KeyDown,/* keyDown  */
+	CG_LimboPanel_CancelButton_KeyDown, /* keyDown  */
 	NULL,                     /* keyUp    */
 	CG_LimboPanel_Border_Draw,
 	NULL,
@@ -931,7 +931,7 @@ panel_button_t plusButton =
 	{ 19,                     320,  18, 14 },
 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
 	NULL,                     /* font     */
-	CG_LimboPanel_PlusButton_KeyDown,/* keyDown  */
+	CG_LimboPanel_PlusButton_KeyDown, /* keyDown  */
 	NULL,                     /* keyUp    */
 	CG_LimboPanel_Border_Draw,
 	NULL,
@@ -957,7 +957,7 @@ panel_button_t minusButton =
 	{ 19,                     346,  18, 14 },
 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
 	NULL,                     /* font     */
-	CG_LimboPanel_MinusButton_KeyDown,/* keyDown  */
+	CG_LimboPanel_MinusButton_KeyDown, /* keyDown  */
 	NULL,                     /* keyUp    */
 	CG_LimboPanel_Border_Draw,
 	NULL,

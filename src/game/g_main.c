@@ -604,7 +604,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_realHead,                          "g_realHead",                          "1",                          0 },
 	{ &sv_fps,                              "sv_fps",                              "20",                         CVAR_SYSTEMINFO,                                 0, qfalse},
 	{ &g_skipCorrection,                    "g_skipCorrection",                    "1",                          0 },
-	{ &g_extendedNames, "g_extendedNames", "1", 0 },
+	{ &g_extendedNames,                     "g_extendedNames",                     "1",                          0 },
 };
 
 // made static to avoid aliasing

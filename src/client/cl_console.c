@@ -154,7 +154,7 @@ void Con_Clear_f(void)
 
 	for (i = 0 ; i < CON_TEXTSIZE ; i++)
 	{
-		con.text[i] = ' ';
+		con.text[i]      = ' ';
 		con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 	}
 
@@ -171,7 +171,7 @@ Save the console contents out to a file
 void Con_Dump_f(void)
 {
 	int          l, x, i;
-	int        *line;
+	int          *line;
 	fileHandle_t f;
 	int          bufferlen;
 	char         *buffer;
@@ -272,8 +272,8 @@ If the line width has changed, reformat the buffer.
 */
 void Con_CheckResize(void)
 {
-	int              i, width;
-	MAC_STATIC int tbuf[CON_TEXTSIZE];
+	int             i, width;
+	MAC_STATIC int  tbuf[CON_TEXTSIZE];
 	MAC_STATIC byte tbuff[CON_TEXTSIZE];
 
 	// wasn't allowing for larger consoles
@@ -292,7 +292,7 @@ void Con_CheckResize(void)
 		con.totallines = CON_TEXTSIZE / con.linewidth;
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
-			con.text[i] = ' ';
+			con.text[i]      = ' ';
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
 	}
@@ -323,7 +323,7 @@ void Con_CheckResize(void)
 		memcpy(tbuff, con.textColor, CON_TEXTSIZE * sizeof(byte));
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
-			con.text[i] = ' ';
+			con.text[i]      = ' ';
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
 
@@ -335,8 +335,8 @@ void Con_CheckResize(void)
 				    tbuf[((con.current - i + oldtotallines) %
 				          oldtotallines) * oldwidth + j];
 				con.textColor[(con.totallines - 1 - i) * con.linewidth + j] =
-					tbuff[((con.current - i + oldtotallines) %
-					oldtotallines) * oldwidth + j];
+				    tbuff[((con.current - i + oldtotallines) %
+				           oldtotallines) * oldwidth + j];
 			}
 		}
 
@@ -434,7 +434,7 @@ void Con_Linefeed(qboolean skipnotify)
 	con.current++;
 	for (i = 0; i < con.linewidth; i++)
 	{
-		con.text[(con.current % con.totallines) * con.linewidth + i] = ' ';
+		con.text[(con.current % con.totallines) * con.linewidth + i]      = ' ';
 		con.textColor[(con.current % con.totallines) * con.linewidth + i] = ColorIndex(CONSOLE_COLOR);
 	}
 }
@@ -527,10 +527,10 @@ void CL_ConsolePrint(char *txt)
 		default:
 			// display character and advance
 			y = con.current % con.totallines;
-			
+
 			// sign extension caused the character to carry over
 			// into the color info for high ascii chars; casting c to unsigned
-			con.text[y * con.linewidth + con.x] = c;
+			con.text[y * con.linewidth + con.x]      = c;
 			con.textColor[y * con.linewidth + con.x] = color;
 			con.x++;
 			if (con.x >= con.linewidth)
@@ -621,12 +621,12 @@ Draws the last few lines of output transparently over the game top
 */
 void Con_DrawNotify(void)
 {
-	int   x, v = 0;
-	int *text;
+	int  x, v = 0;
+	int  *text;
 	byte *textColor;
-	int   i;
-	int   time;
-	int   currentColor = 7;
+	int  i;
+	int  time;
+	int  currentColor = 7;
 
 	re.SetColor(g_color_table[currentColor]);
 
@@ -646,7 +646,7 @@ void Con_DrawNotify(void)
 		{
 			continue;
 		}
-		text = con.text + (i % con.totallines) * con.linewidth;
+		text      = con.text + (i % con.totallines) * con.linewidth;
 		textColor = con.textColor + (i % con.totallines) * con.linewidth;
 
 		if (cl.snap.ps.pm_type != PM_INTERMISSION && (cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME)))
@@ -756,8 +756,8 @@ void Con_DrawSolidConsole(float frac)
 {
 	int    i, x, y;
 	int    rows;
-	int  *text;
-	byte *textColor;
+	int    *text;
+	byte   *textColor;
 	int    row;
 	int    yoffset = cls.glconfig.vidHeight * frac;
 	int    currentColor;
@@ -874,9 +874,9 @@ void Con_DrawSolidConsole(float frac)
 			continue;
 		}
 
-		text = con.text + (row % con.totallines) * con.linewidth;
+		text      = con.text + (row % con.totallines) * con.linewidth;
 		textColor = con.textColor + (row % con.totallines) * con.linewidth;
-		
+
 		for (x = 0 ; x < con.linewidth ; x++)
 		{
 			if (text[x] == ' ')

@@ -189,9 +189,9 @@ If onlyStore is true, it will only store the new cmd, without checking.
 qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 {
 	static char prevcmddata[MAX_STRING_CHARS];
-	static char *prevcmd = prevcmddata;
+	static char *prevcmd        = prevcmddata;
 	char        *cleanedprevcmd = (char *)malloc(MAX_STRING_CHARS * sizeof(char));
-	char        *cleanedcmd = (char *)malloc(MAX_STRING_CHARS * sizeof(char));
+	char        *cleanedcmd     = (char *)malloc(MAX_STRING_CHARS * sizeof(char));
 
 	Q_strncpyz(cleanedprevcmd, SV_CleanStrCmd(va("%s", (char *)prevcmd)), MAX_STRING_CHARS);
 	Q_strncpyz(cleanedcmd, SV_CleanStrCmd(va("%s", (char *)cmd)), MAX_STRING_CHARS);
@@ -314,10 +314,10 @@ char *SV_CleanFilename(char *string)
 			s++; // skip if it's a color
 		}
 		else if (c == 0x2D || c == 0x2E || c == 0x5F ||  // - . _
-			(c >= 0x30 && c <= 0x39) || // numbers
-			(c >= 0x41 && c <= 0x5A) || // uppercase letters
-			(c >= 0x61 && c <= 0x7A) // lowercase letters
-			)
+		         (c >= 0x30 && c <= 0x39) || // numbers
+		         (c >= 0x41 && c <= 0x5A) || // uppercase letters
+		         (c >= 0x61 && c <= 0x7A) // lowercase letters
+		         )
 		{
 			*d++ = c; // keep if this character is not forbidden (contained inside the above whitelist)
 		}
@@ -342,7 +342,7 @@ char *SV_GenerateDateTime(void)
 	// Current local time
 	qtime_t   now;
 	time_t    utcnow = time(NULL);
-	struct tm tnow = *gmtime(&utcnow);
+	struct tm tnow   = *gmtime(&utcnow);
 	char      buff[1024];
 
 	Com_RealTime(&now);
@@ -351,13 +351,13 @@ char *SV_GenerateDateTime(void)
 
 	// Return local time and utc time
 	return va("%04d-%02d-%02d %02d:%02d:%02d %s",
-		1900 + now.tm_year,
-		1 + now.tm_mon,
-		now.tm_mday,
-		now.tm_hour,
-		now.tm_min,
-		now.tm_sec,
-		buff);
+	          1900 + now.tm_year,
+	          1 + now.tm_mon,
+	          now.tm_mday,
+	          now.tm_hour,
+	          now.tm_min,
+	          now.tm_sec,
+	          buff);
 }
 
 /***********************************************
@@ -415,8 +415,8 @@ qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg)
 		SV_DemoWriteClientCommand(client, msg);
 	}
 	else if (sv.demoState == DS_PLAYBACK &&
-		((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer) && // preventing only real clients commands (not democlients commands replayed)
-		(!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator"))) // if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
+	         ((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer) && // preventing only real clients commands (not democlients commands replayed)
+	         (!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator"))) // if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
 	{
 		// issue a chat message only to the player trying to join a team
 		SV_SendServerCommand(client, "chat \"^3Can't join a team when a demo is replaying!\"");
@@ -657,7 +657,7 @@ static void SV_DemoWriteAllEntityState(void)
 			continue;
 		}
 
-		entity = SV_GentityNum(i);
+		entity           = SV_GentityNum(i);
 		entity->s.number = i;
 		MSG_WriteDeltaEntity(&msg, &sv.demoEntities[i].s, &entity->s, qfalse);
 		sv.demoEntities[i].s = entity->s;
@@ -771,15 +771,15 @@ void SV_DemoAutoDemoRecord(void)
 	Com_RealTime(&now);
 
 	Q_strncpyz(demoname, va("%s_%04d-%02d-%02d-%02d-%02d-%02d_%s",
-		SV_CleanFilename(va("%s", sv_hostname->string)),
-		1900 + now.tm_year,
-		1 + now.tm_mon,
-		now.tm_mday,
-		now.tm_hour,
-		now.tm_min,
-		now.tm_sec,
-		SV_CleanFilename(Cvar_VariableString("mapname"))),
-		MAX_QPATH);
+	                        SV_CleanFilename(va("%s", sv_hostname->string)),
+	                        1900 + now.tm_year,
+	                        1 + now.tm_mon,
+	                        now.tm_mday,
+	                        now.tm_hour,
+	                        now.tm_min,
+	                        now.tm_sec,
+	                        SV_CleanFilename(Cvar_VariableString("mapname"))),
+	           MAX_QPATH);
 
 	Com_Printf("DEMO: recording a server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
 
@@ -952,14 +952,14 @@ static void SV_DemoStartPlayback(void)
 	msg_t msg;
 	int   r, time, i, clients, fps, gametype, timelimit, fraglimit, capturelimit;
 
-	char *map = (char *)malloc(MAX_QPATH * sizeof(char));
-	char *fs = (char *)malloc(MAX_QPATH * sizeof(char));
+	char *map      = (char *)malloc(MAX_QPATH * sizeof(char));
+	char *fs       = (char *)malloc(MAX_QPATH * sizeof(char));
 	char *hostname = (char *)malloc(MAX_NAME_LENGTH * sizeof(char));
 	char *datetime = (char *)malloc(1024 * sizeof(char));   // there's no limit in the whole engine specifically designed for dates and time...
 	char *metadata; // = malloc( 1024 * sizeof * metadata ); // used to store the current metadata index
 
 	// Init vars with empty values (to avoid compilation warnings)
-	r = i = clients = fps = gametype = timelimit = fraglimit = capturelimit = 0;
+	r    = i = clients = fps = gametype = timelimit = fraglimit = capturelimit = 0;
 	time = 400;
 
 	// Initialize the demo message buffer
@@ -1010,8 +1010,8 @@ static void SV_DemoStartPlayback(void)
 			// Check slots, time and map
 			clients = MSG_ReadByte(&msg); // number of democlients (sv_maxclients at the time of the recording)
 			if (sv_maxclients->integer < clients || // if we have less real slots than democlients slots or
-				savedMaxClients < 0 || // if there's no savedMaxClients (so this means we didin't change sv_maxclients yet, and we always need to do so since we need to add sv_democlients)
-				sv_maxclients->integer <= savedMaxClients)
+			    savedMaxClients < 0 || // if there's no savedMaxClients (so this means we didin't change sv_maxclients yet, and we always need to do so since we need to add sv_democlients)
+			    sv_maxclients->integer <= savedMaxClients)
 			{ // or if maxclients is below or equal to the previous value of maxclients (normally it can only be equal, but if we switch the mod with game_restart, it can get the default value of 8, which can be below, so we need to check that as well)
 				Com_Printf("DEMO: Not enough demo slots, automatically increasing sv_democlients to %d and sv_maxclients to %d.\n", clients, sv_maxclients->integer + clients);
 
@@ -1171,13 +1171,13 @@ static void SV_DemoStartPlayback(void)
 	// Checking if all initial conditions from the demo are met (map, sv_fps, gametype, servertime, etc...)
 	// FIXME? why sv_cheats is needed? Just to be able to use cheats commands to pass through walls?
 	if (!com_sv_running->integer || Q_stricmp(sv_mapname->string, map) ||
-		Q_stricmp(Cvar_VariableString("fs_game"), fs) ||
-		!Cvar_VariableIntegerValue("sv_cheats") ||
-		(time < svs.time && !keepSaved) || // if the demo initial time is below server time AND we didn't already restart for demo playback, then we must restart to reinit the server time (because else, it might happen that the server time is still above demo time if the demo was recorded during a warmup time, in this case we won't restart the demo playback but just iterate a few demo frames in the void to catch up the server time, see below the else statement)
-		sv_maxclients->modified
-		||
-		(sv_gametype->integer != gametype && !(gametype == GT_SINGLE_PLAYER && sv_gametype->integer == GT_COOP))  // check for gametype change (need a restart to take effect since it's a latched var) AND check that the gametype difference is not between SinglePlayer and DM/FFA, which are in fact the same gametype (and the server will automatically change SinglePlayer to FFA, so we need to detect that and ignore this automatic change)
-		)
+	    Q_stricmp(Cvar_VariableString("fs_game"), fs) ||
+	    !Cvar_VariableIntegerValue("sv_cheats") ||
+	    (time < svs.time && !keepSaved) || // if the demo initial time is below server time AND we didn't already restart for demo playback, then we must restart to reinit the server time (because else, it might happen that the server time is still above demo time if the demo was recorded during a warmup time, in this case we won't restart the demo playback but just iterate a few demo frames in the void to catch up the server time, see below the else statement)
+	    sv_maxclients->modified
+	    ||
+	    (sv_gametype->integer != gametype && !(gametype == GT_SINGLE_PLAYER && sv_gametype->integer == GT_COOP))  // check for gametype change (need a restart to take effect since it's a latched var) AND check that the gametype difference is not between SinglePlayer and DM/FFA, which are in fact the same gametype (and the server will automatically change SinglePlayer to FFA, so we need to detect that and ignore this automatic change)
+	    )
 	{
 		/// Change to the right map/maxclients/mod and restart the demo playback at the next SV_Frame() iteration
 
@@ -1191,7 +1191,7 @@ static void SV_DemoStartPlayback(void)
 		Cvar_SetValue("sv_autoDemo", 0); // disable sv_autoDemo else it will start a recording before we can replay a demo (since we restart the map)
 		// **** Automatic mod (fs_game) switching management ****
 		if ((Q_stricmp(Cvar_VariableString("fs_game"), fs) && strlen(fs)) ||
-			(!strlen(fs) && Q_stricmp(Cvar_VariableString("fs_game"), fs) && Q_stricmp(fs, BASEGAME)))
+		    (!strlen(fs) && Q_stricmp(Cvar_VariableString("fs_game"), fs) && Q_stricmp(fs, BASEGAME)))
 		{ // change the game mod only if necessary - if it's different from the current gamemod and the new is not empty, OR the new is empty but it's not BASEGAME and it's different (we're careful because it will restart the game engine and so probably every client will get disconnected)
 
 			// Memorize the current mod (only if we are indeed switching mod, otherwise we will save basegame instead of empty strings and force a mod switching when stopping the demo when we haven't changed mod in the first place!)

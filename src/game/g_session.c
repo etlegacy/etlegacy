@@ -330,22 +330,22 @@ void G_ReadSessionData(gclient_t *client)
 	test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
 	        if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
-	{
-		G_ClientSwap(client);
-	}
+	        {
+	            G_ClientSwap(client);
+			}
 
 	        if (g_swapteams.integer)
-	{
-		trap_Cvar_Set("g_swapteams", "0");
-		G_ClientSwap(client);
-	}
+	        {
+	            trap_Cvar_Set("g_swapteams", "0");
+	            G_ClientSwap(client);
+			}
 
 	        client->sess.startxptotal = 0;
 	        for (j = 0; j < SK_NUM_SKILLS; j++)
-	{
-		client->sess.startskillpoints[j] = client->sess.skillpoints[j];
-		client->sess.startxptotal += client->sess.skillpoints[j];
-	}
+	        {
+	            client->sess.startskillpoints[j] = client->sess.skillpoints[j];
+	            client->sess.startxptotal += client->sess.skillpoints[j];
+			}
 }
 
 /*

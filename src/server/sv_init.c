@@ -843,7 +843,7 @@ void SV_SpawnServer(char *server)
 					client->gentity = ent;
 
 					client->deltaMessage     = -1;
-					client->lastSnapshotTime = 0;	// generate a snapshot immediately
+					client->lastSnapshotTime = 0;   // generate a snapshot immediately
 
 					VM_Call(gvm, GAME_CLIENT_BEGIN, i);
 				}

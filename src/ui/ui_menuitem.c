@@ -1409,7 +1409,7 @@ qboolean Item_Combo_HandleKey(itemDef_t *item, int key)
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 {
 	char           buff[1024];
-	int valueLen;
+	int            valueLen;
 	itemDef_t      *newItem = NULL;
 	editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
 
@@ -1482,7 +1482,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			if (item->type != ITEM_TYPE_NUMERICFIELD)
 			{
 				char clipbuff[1024];
-				int clipbuff32[256];
+				int  clipbuff32[256];
 
 				memset(clipbuff, 0, sizeof(clipbuff));
 				memset(clipbuff32, 0, sizeof(int) * 256);
@@ -1558,7 +1558,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 
 		if (key == K_HOME || key == K_KP_HOME)
 		{
-			item->cursorPos = 0;
+			item->cursorPos      = 0;
 			editPtr->paintOffset = 0;
 			return qtrue;
 		}

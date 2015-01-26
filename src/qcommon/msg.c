@@ -406,7 +406,7 @@ void MSG_WriteString(msg_t *sb, const char *s)
 	}
 	else
 	{
-		int  l;
+		int l;
 #if SKIP_UTF8
 		int i;
 #endif
@@ -441,7 +441,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s)
 	}
 	else
 	{
-		int  l;
+		int l;
 #if SKIP_UTF8
 		int i;
 #endif
@@ -589,7 +589,7 @@ char *MSG_ReadBigString(msg_t *msg)
 		{
 			break;
 		}
-		
+
 		SET_SKIPPED_CHAR(c);
 
 		string[l] = c;
@@ -614,7 +614,7 @@ char *MSG_ReadStringLine(msg_t *msg)
 		{
 			break;
 		}
-		
+
 		SET_SKIPPED_CHAR(c);
 
 		string[l] = c;

@@ -86,18 +86,18 @@
 #if SKIP_UTF8
 // translate all '%' fmt spec to avoid crash bugs
 // > 127 don't allow higher ascii values
-#define GET_SKIPPED_CHAR(x) ((byte)x > 127 || x == '%'?'.':x)
+#define GET_SKIPPED_CHAR(x) ((byte)x > 127 || x == '%' ? '.' : x)
 #define SET_SKIPPED_CHAR(x) x = GET_SKIPPED_CHAR(x)
 #else
 // translate all '%' fmt spec to avoid crash bugs
-#define GET_SKIPPED_CHAR(x) (x == '%'?'.':x)
-#define SET_SKIPPED_CHAR(x) if(x == '%') x = '.'
+#define GET_SKIPPED_CHAR(x) (x == '%' ? '.' : x)
+#define SET_SKIPPED_CHAR(x) if (x == '%') x = '.'
 #endif
 
 // Added after 272 release these are used by mod code
 #define MOD_VERSION_DATA_CHECK(x) (x && x >= 272 && x < 3000)
-#define MOD_CHECK_LEGACY(islegacy, versionNum, outputValue) outputValue = (islegacy == qtrue?qtrue:qfalse); \
-	if(outputValue && MOD_VERSION_DATA_CHECK(versionNum)) outputValue = versionNum;
+#define MOD_CHECK_LEGACY(islegacy, versionNum, outputValue) outputValue = (islegacy == qtrue ? qtrue : qfalse); \
+	if (outputValue && MOD_VERSION_DATA_CHECK(versionNum)) { outputValue = versionNum; }
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4018) // signed/unsigned mismatch

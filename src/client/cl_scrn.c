@@ -118,9 +118,9 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 	size = 0.0625;
 
 	re.DrawStretchPic(x, y, w, h,
-		fcol, frow,
-		fcol + size, frow + size,
-		cls.charSetShader);
+	                  fcol, frow,
+	                  fcol + size, frow + size,
+	                  cls.charSetShader);
 }
 
 /**
