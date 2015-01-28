@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-24 16:53+0000\n"
+"PO-Revision-Date: 2015-01-27 18:05+0000\n"
 "Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -2116,55 +2116,55 @@ msgstr "Doble Pulsación al Tumbarse:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
-msgstr ""
+msgstr "Ajusta el tiempo entre pulsaciones dobles."
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
-msgstr ""
+msgstr "ARMAS"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatic Reload:"
-msgstr ""
+msgstr "Recarga Automática:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Recargar automáticamente cuando el cargador se agote"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
-msgstr ""
+msgstr "Cambiar Automáticamente:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Cambiar automáticamente al siguiente arma cuando se acabe la munición"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
-msgstr ""
+msgstr "Parpadeo del Icono:"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 colores"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 colores"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
-msgstr ""
+msgstr "Parpadear el icono del arma al disparar, recargar o cambiar."
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
-msgstr ""
+msgstr "Fogonazo:"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Enables or disables weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Activa o desactiva los fogonazos (destello en la boca del arma)"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Trazo de las Balas:"
 
 #: etmain/ui/options_customise_game.menu:51
 #: etmain/ui/options_customise_game.menu:78
@@ -2174,107 +2174,107 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "Activado"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "Solo trazos propios"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "Solo trazos de otros"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Activa/Desactiva los trazos de las balas"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
-msgstr ""
+msgstr "Mira"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Cambio de Arma para Enfocar:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "Activado (normal)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "Activado (invertido)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Los controles de cambio de arma servirán para enfocar mientras se usa la mira."
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
-msgstr ""
+msgstr "Nivel de Enfoque por Defecto:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "Lo más alejado"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "Cerca"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "Lejos"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "Lo más cerca"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Ajusta el nivel de zoom por defecto en las miras"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
-msgstr ""
+msgstr "Niveles de Enfoque:"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 Niveles de Enfoque"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 Niveles de Enfoque"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Especifica lo que se puede incrementar el enfoque"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
-msgstr ""
+msgstr "Modo de Chat Rápido:"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr ""
+msgstr "Alfabético"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr ""
+msgstr "Numérico"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr ""
+msgstr "Usar teclas alfabéticas o numéricas para enviar mensajes de radio"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
-msgstr ""
+msgstr "Duración del icono del Chat:"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Short"
-msgstr ""
+msgstr "Corta"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:50
@@ -2283,204 +2283,204 @@ msgstr ""
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "Larga"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "Muy Larga"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
-msgstr ""
+msgstr "Especifica durante cuanto tiempo aparece el icono del chat sobre las cabezas de otros jugadores"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
-msgstr ""
+msgstr "Chat solo del equipo:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr ""
+msgstr "Muestra sólo el chat del equipo durante el juego."
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
-msgstr ""
+msgstr "No texto de voz:"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "Don't show voice text in-game"
-msgstr ""
+msgstr "No muestra el texto de las voces durante el juego"
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
-msgstr ""
+msgstr "SONIDO"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
-msgstr ""
+msgstr "Locutor:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Activa o desactiva el Comandante durante el juego"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
-msgstr ""
+msgstr "No chat de voz:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "No reproduce los mensajes de voz durante el juego"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
-msgstr ""
+msgstr "Sonido al acertar:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Sin sonido al disparar a jugadores del equipo"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Sin sonido al acertar en la cabeza"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Sin sonido al acertar al cuerpo"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Ajustar los sonidos al acertar"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
-msgstr ""
+msgstr "Mensaje Emergente de Quejas:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Mostrar la opción para guardar quejas a jugadores del equipo que te maten."
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
-msgstr ""
+msgstr "Registrar Mensajes Importantes:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Muestra mensajes importantes por la consola"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Acción Automática:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Screenshot"
-msgstr ""
+msgstr "Captura de Pantalla"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Mostrar Estadísticas"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Demo + Captura"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Demo + Estadísticas"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "SS + Stats"
-msgstr ""
+msgstr "Captura + Estadísticas"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Demo + Captura + Estadísticas"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Realiza acciones automaticamente al comienzo o final de una ronda"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
-msgstr ""
+msgstr "Formato de las Capturas Autom.:"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Cambia entre los formatos .tga y .jpg para el comando \"autoscreenshot\""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
-msgstr ""
+msgstr "Mostrar Información de Herramientas:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Mostrar información de Herramientas en la Interfaz"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
 msgid "ui/menudef.h"
-msgstr ""
+msgstr "ui/menudef.h"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
-msgstr ""
+msgstr "VISTA"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
-msgstr ""
+msgstr "INTERFAZ"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Draw Gun:"
-msgstr ""
+msgstr "Dibujar Arma:"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Shows gun model on-screen"
-msgstr ""
+msgstr "Muestra el modelo del arma en la pantalla"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
-msgstr ""
+msgstr "Mostrar Brújula:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
-msgstr ""
+msgstr "Muestra el compás (con iconos al acercarse a objetivos)"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
-msgstr ""
+msgstr "Zoom Automático del Mapa:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
-msgstr ""
+msgstr "Ajusta el Zoom Automáticamente al Cargar el Mapa."
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
-msgstr ""
+msgstr "Temporizador de la Misión:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
-msgstr ""
+msgstr "Muestra el tiempo restante de la misión"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
-msgstr ""
+msgstr "Tiempo de Refuerzos:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Muestra el tiempo de los \"refuerzos\" del equipo"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Consejos del Cursor:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
@@ -2504,35 +2504,35 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
-msgstr ""
+msgstr "Mostrar Ubicación:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "Sólo Coordenadas"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
-msgstr ""
+msgstr "Solo Nombres de la Escuadra"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Team Chat Only"
-msgstr ""
+msgstr "Sólo Nombres del Chat del Equipo"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Team & Fireteam Chat"
-msgstr ""
+msgstr "Chat del Equipo y de la Escuadra"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Muestra las posiciones en la Escuadra"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
-msgstr ""
+msgstr "Activar Banderas:"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
-msgstr ""
+msgstr "Muestra las banderas de los países de los jugadores en las puntuaciones"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
@@ -2568,138 +2568,138 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Show Clock:"
-msgstr ""
+msgstr "Mostrar Reloj:"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours"
-msgstr ""
+msgstr "24 horas"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours + seconds"
-msgstr ""
+msgstr "24 horas + segundos"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours"
-msgstr ""
+msgstr "12 horas"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours + seconds"
-msgstr ""
+msgstr "12 horas + segundos"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Displays local time"
-msgstr ""
+msgstr "Muestra la hora local"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Show FPS:"
-msgstr ""
+msgstr "Mostrar FPS:"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Displays Frames Per Second"
-msgstr ""
+msgstr "Muestra las Imágenes Por Segundo"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Show Ping:"
-msgstr ""
+msgstr "Mostrar Ping:"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Displays ping"
-msgstr ""
+msgstr "Muestra el Ping"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Show Lagometer:"
-msgstr ""
+msgstr "Mostrar Medidor de Lag:"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Displays lagometer"
-msgstr ""
+msgstr "Muestra el medidor de Lag"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switch HUD:"
-msgstr ""
+msgstr "Cambiar Interfaz:"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Standard Hud"
-msgstr ""
+msgstr "Interfaz Éstandar"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Alternate Hud 1"
-msgstr ""
+msgstr "Interfaz Alternativa 1"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Alternate Hud 2"
-msgstr ""
+msgstr "Interfaz Alternativa 2"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
-msgstr ""
+msgstr "Cambia entre Interfaces diferentes"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
-msgstr ""
+msgstr "Modificar Interfaz Seleccionada"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Round Timer"
-msgstr ""
+msgstr "Mover el Temporizador de la Ronda"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Remove Ranks"
-msgstr ""
+msgstr "Eliminar RAngos"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Popups"
-msgstr ""
+msgstr "Mover Avisos Emergentes"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Timer"
-msgstr ""
+msgstr "Rango + Temporizador"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Popups"
-msgstr ""
+msgstr "Temporizador + Mensajes Emergentes"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Ranks + Popups"
-msgstr ""
+msgstr "Rangos + Mensajes Emergentes"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Timer + Ranks + Popups"
-msgstr ""
+msgstr "Temporizador + Rangos + Mensajes Emergentes"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Customises Selected HUD"
-msgstr ""
+msgstr "Personaliza la Interfaz Seleccionada"
 
 #: etmain/ui/options_customise_hud.menu:55
 msgid "IN-GAME DISPLAY"
-msgstr ""
+msgstr "VISUALIZACIÓN EN EL JUEGO"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Ejecting Brass:"
-msgstr ""
+msgstr "Duración Balas:"
 
 #: etmain/ui/options_customise_hud.menu:56 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52 etmain/ui/profile_create_initial.menu:102
 #: etmain/ui/profile_create.menu:97
 msgid "High"
-msgstr ""
+msgstr "Alta"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Med"
-msgstr ""
+msgstr "Media"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
-msgstr ""
+msgstr "Ajusta la duración de las balas disparadas"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
-msgstr ""
+msgstr "Campo De Visión:"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
-msgstr ""
+msgstr "Mejor CDV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
@@ -3104,122 +3104,122 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
 msgid "CALIBRATE BRIGHTNESS"
-msgstr ""
+msgstr "CALIBRAR BRILLO"
 
 #: etmain/ui/options_graphics_gamma.menu:33
 #: etmain/ui/options_system_gamma.menu:36
 msgid "General Brightness Calibration (All Color Depths)"
-msgstr ""
+msgstr "Calibración de Brillo General (Para Todas las Profundidades de Color)"
 
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can"
 " see 16"
-msgstr ""
+msgstr "1. Mueve el control deslizante y/o el brillo de tu monitor hasta que puedas ver abajo"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
 msgid "     separate bars below of equal differing brightness."
-msgstr ""
+msgstr "16 barras separadas con la misma diferencia de brillo."
 
 #: etmain/ui/options_graphics_gamma.menu:36
 #: etmain/ui/options_system_gamma.menu:39
 msgid "2. Click the BACK button."
-msgstr ""
+msgstr "2. Haz click en el botón ATRÁS."
 
 #: etmain/ui/options_graphics_gamma.menu:50
 #: etmain/ui/options_system_gamma.menu:53
 msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
-msgstr ""
+msgstr "Ajuste Fino del Brillo (Texturas y Profundidad de Color de 32 bit)"
 
 #: etmain/ui/options_graphics_gamma.menu:51
 #: etmain/ui/options_system_gamma.menu:54
 msgid "1. Move the slider below until you can see 3 separate bars below."
-msgstr ""
+msgstr "1. Mueve el control deslizante hasta que puedas ver abajo 3 barras separadas."
 
 #: etmain/ui/options_graphics_gamma.menu:52
 #: etmain/ui/options_system_gamma.menu:55
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
-msgstr ""
+msgstr "2. Ajusta el control hasta que no haya diferencia entre el recuadro izquierdo y el central."
 
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
 msgid "3. Click the BACK button."
-msgstr ""
+msgstr "3. Haz click en el botón ATRÁS."
 
 #: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
 #: etmain/ui/options_system_gamma.menu:70
 #: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
 msgid "Brightness:"
-msgstr ""
+msgstr "Brillo:"
 
 #: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
 #: etmain/ui/options_system_gamma.menu:70
 #: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
 msgid "Set the brightness of the game"
-msgstr ""
+msgstr "Ajusta el brillo del juego"
 
 #: etmain/ui/options_graphics.menu:34 etmain/ui/options.menu:36
 msgid "GRAPHICS"
-msgstr ""
+msgstr "GRÁFICOS"
 
 #: etmain/ui/options_graphics.menu:37
 msgid "SIMPLE"
-msgstr ""
+msgstr "SIMPLE"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "Overall Quality:"
-msgstr ""
+msgstr "Calidad:"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fastest"
-msgstr ""
+msgstr "La más rápida"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fast"
-msgstr ""
+msgstr "Rápida"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "normal"
-msgstr ""
+msgstr "Normal"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "high"
-msgstr ""
+msgstr "Alta"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "Set overall video quality"
-msgstr ""
+msgstr "Ajusta la calidad de vídeo"
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid "Resolution:"
-msgstr ""
+msgstr "Resolución:"
 
 #: etmain/ui/options_graphics.menu:40
 msgid "Set video resolution of the game"
-msgstr ""
+msgstr "Ajusta la resolución del vídeo en el juego"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Window mode:"
-msgstr ""
+msgstr "Tipo de Ventana:"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Activar Pantalla Completa"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "Intensity:"
-msgstr ""
+msgstr "Intensidad:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr ""
+msgstr "La Intensidad de las Texturas (necesita vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
@@ -3239,221 +3239,221 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
-msgstr ""
+msgstr "Cielo de Baja Calidad:"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
-msgstr ""
+msgstr "Activa si el cielo ha de dibujarse de manera detallada o simple"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Shadow Detail:"
-msgstr ""
+msgstr "Detalle de Sombras:"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Blob"
-msgstr ""
+msgstr "Blob"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Set shadow details"
-msgstr ""
+msgstr "Ajusta los detalles de las sombras"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Texture Detail:"
-msgstr ""
+msgstr "Detalle de Texturas:"
 
 #: etmain/ui/options_graphics.menu:56 etmain/ui/options_graphics.menu:60
 #: etmain/ui/options_system.menu:52
 msgid "Low"
-msgstr ""
+msgstr "Bajo"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Set texture details"
-msgstr ""
+msgstr "Ajusta los detalles de las texturas"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
-msgstr ""
+msgstr "Luces Dinámicas:"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Toggles use of dynamic lighting effects"
-msgstr ""
+msgstr "Activa el uso de efectos de luces dinámicas"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Geometric Detail:"
-msgstr ""
+msgstr "Detalle Geométrico:"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Set level of details bias"
-msgstr ""
+msgstr "Ajusta el nivel de detalles"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Texture Quality:"
-msgstr ""
+msgstr "Calidad de Texturas:"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
 msgid "Default"
-msgstr ""
+msgstr "Por Defecto"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 #: etmain/ui/options_graphics.menu:68
 msgid "16-bit"
-msgstr ""
+msgstr "16-bit"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 msgid "32-bit"
-msgstr ""
+msgstr "32-bit"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
-msgstr ""
+msgstr "Ajusta el número de bits para las texturas."
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Texture Filter:"
-msgstr ""
+msgstr "Filtro de Texturas:"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Bilinear"
-msgstr ""
+msgstr "Bilineal"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Trilinear"
-msgstr ""
+msgstr "Trilineal"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Set the GL texture mode"
-msgstr ""
+msgstr "Ajusta el modo para las texturas GL"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Anisotropic Filter:"
-msgstr ""
+msgstr "Filtro Anisotrópico:"
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
 msgid "Disabled"
-msgstr ""
+msgstr "Desactivado"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Set anisotropic filtering"
-msgstr ""
+msgstr "Ajusta el filtrado anisotrópico"
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Anti-Aliasing:"
-msgstr ""
+msgstr "Anti-Aliasing:"
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Set Anti-Aliasing"
-msgstr ""
+msgstr "Ajusta el Anti-Aliasing"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Color Depth:"
-msgstr ""
+msgstr "Profundidad de Color:"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Desktop Default"
-msgstr ""
+msgstr "La del Escritorio"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Set color depth"
-msgstr ""
+msgstr "Ajusta la profundidad del color"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Detail Textures:"
-msgstr ""
+msgstr "Detalles de Texturas:"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Toogles usage of high detail textures"
-msgstr ""
+msgstr "Activa el uso de texturas de alto detalle"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Depth Buffer:"
-msgstr ""
+msgstr "Buffer de Profundidad:"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "24-bit"
-msgstr ""
+msgstr "24-bit"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
-msgstr ""
+msgstr "Ajusta el número de los bits de profundidad deseados"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Compress Textures:"
-msgstr ""
+msgstr "Comprimir Texturas:"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Toggles the compression of textures"
-msgstr ""
+msgstr "Ajusta la compresión de las texturas"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Sync Every Frame:"
-msgstr ""
+msgstr "Sincr. Todas las Imágenes:"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Prevent screen tearing"
-msgstr ""
+msgstr "Previene el \"tearing\""
 
 #: etmain/ui/options_graphics.menu:71
 msgid "GL Extensions:"
-msgstr ""
+msgstr "Extensiones GL:"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enabled"
-msgstr ""
+msgstr "Activado"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enables or disables usage of OpenGL extensions"
-msgstr ""
+msgstr "Activa o desactiva el uso de las extensiones OpenGL"
 
 #: etmain/ui/options_graphics.menu:73
 msgid "SET RECOMMENDED"
-msgstr ""
+msgstr "RECOMENDADO"
 
 #: etmain/ui/options_graphics.menu:78 etmain/ui/options_system.menu:66
 msgid "APPLY"
-msgstr ""
+msgstr "APLICAR"
 
 #: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
 msgid "SYSTEM"
-msgstr ""
+msgstr "SISTEMA"
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
-msgstr ""
+msgstr "UDIO"
 
 #: etmain/ui/options_system.menu:41
 msgid "Effects Volume:"
-msgstr ""
+msgstr "Volumen de Efectos:"
 
 #: etmain/ui/options_system.menu:41
 msgid "Set the effects volume"
-msgstr ""
+msgstr "Ajusta el volumen de los efectos"
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
-msgstr ""
+msgstr "Volumen de Música:"
 
 #: etmain/ui/options_system.menu:43
 msgid "Set the music volume"
-msgstr ""
+msgstr "Ajusta el volumen de la música"
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
-msgstr ""
+msgstr "Calidad del Sonido:"
 
 #: etmain/ui/options_system.menu:44
 msgid "11 khz (low)"
-msgstr ""
+msgstr "11 khz (baja)"
 
 #: etmain/ui/options_system.menu:44
 msgid "22 khz (high)"
-msgstr ""
+msgstr "22 khz (alta)"
 
 #: etmain/ui/options_system.menu:44
 msgid "44 khz (ultra high)"
-msgstr ""
+msgstr "44 khz (ultra alta)"
 
 #: etmain/ui/options_system.menu:44
 msgid "Set the sound quality"
-msgstr ""
+msgstr "Ajusta la calidad del sonido"
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3465,31 +3465,31 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
-msgstr ""
+msgstr "Silenciar al Minimizar"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
-msgstr ""
+msgstr "Activa o desactiva el sonido cuando la ventana está minimizada"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
-msgstr ""
+msgstr "Silenciar al quitar foco:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr ""
+msgstr "Activa o desactiva el sonido cuando la ventana no está en primer plano"
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
-msgstr ""
+msgstr "RED"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
-msgstr ""
+msgstr "Paquetes Máximos:"
 
 #: etmain/ui/options_system.menu:52
 msgid "Very Low"
-msgstr ""
+msgstr "Muy Bajo"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
@@ -3497,87 +3497,87 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:53
 msgid "Packet Duplication:"
-msgstr ""
+msgstr "Duplicación de Paquetes"
 
 #: etmain/ui/options_system.menu:53
 msgid ""
 "Number of duplicates for every data packet sent upstream, minimized "
 "packetloss"
-msgstr ""
+msgstr "Número de duplicados de cada paquete de datos enviado, minimiza pérdidas"
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
-msgstr ""
+msgstr "DESCARGAS"
 
 #: etmain/ui/options_system.menu:59
 msgid "Check for Updates on Start-Up:"
-msgstr ""
+msgstr "Comprobar Actualizaciones al Iniciar:"
 
 #: etmain/ui/options_system.menu:59
 msgid "Automatically check for updates?"
-msgstr ""
+msgstr "¿Comprobar automáticamente las actualizaciones?"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
-msgstr ""
+msgstr "Obtener los Archivos que Faltan del Servidor:"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
-msgstr ""
+msgstr "¿Descargar los archivos que faltan si están disponibles?"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
-msgstr ""
+msgstr "Usar Descargas HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
-msgstr ""
+msgstr "Activa o desactiva las descargas http/ftp"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
-msgstr ""
+msgstr "CONECTAR A IP"
 
 #: etmain/ui/playonline_deletefavs.menu:50
 msgid "DELETE SERVER FAVOURITES"
-msgstr ""
+msgstr "ELIMINAR SERVIDORES FAVORITOS"
 
 #: etmain/ui/playonline_deletefavs.menu:51
 msgid "Do you really want to"
-msgstr ""
+msgstr "¿Seguro que quieres"
 
 #: etmain/ui/playonline_deletefavs.menu:52
 msgid "delete YOUR favourites?"
-msgstr ""
+msgstr "eliminar TUS favoritos?"
 
 #: etmain/ui/playonline.menu:80
 msgid "FILTERS"
-msgstr ""
+msgstr "FILTROS"
 
 #: etmain/ui/playonline.menu:82
 msgid "Source:"
-msgstr ""
+msgstr "Fuente:"
 
 #: etmain/ui/playonline.menu:82
 msgid "Local"
-msgstr ""
+msgstr "Local"
 
 #: etmain/ui/playonline.menu:82
 msgid "Internet"
-msgstr ""
+msgstr "Internet"
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
-msgstr ""
+msgstr "Favoritos"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
 "Choose the type of game servers to display from Internet, local and the "
 "favorites list"
-msgstr ""
+msgstr "Elige el tipo de servidores a mostrar de Internet, Local y la lista de favoritos"
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
-msgstr ""
+msgstr "Objetivo"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
@@ -3585,20 +3585,20 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
-msgstr ""
+msgstr "Muestra sólo servidores que ofrezcan éste Modo de Juego"
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
-msgstr ""
+msgstr "Mod:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
-msgstr ""
+msgstr "Muestra sólo servidores que ofrezcan éste Mod"
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
 msgid ""
 "Includes or excludes servers with desired map name from the server list"
-msgstr ""
+msgstr "Incluye o excluye servidores con el mapa deseado de la lista de servidores"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
@@ -3609,125 +3609,125 @@ msgstr ""
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr ""
+msgstr "Filtro Desactivado"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Only show..."
-msgstr ""
+msgstr "Mostrar sólo..."
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Don't show..."
-msgstr ""
+msgstr "No mostrar..."
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
-msgstr ""
+msgstr "ACTUALIZAR LISTA"
 
 #: etmain/ui/playonline.menu:194
 msgid "Refresh servers list"
-msgstr ""
+msgstr "Actualizar la lista de servidores"
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
-msgstr ""
+msgstr "REINICIAR FILTROS"
 
 #: etmain/ui/playonline.menu:195
 msgid "Reset all filters to their defaults"
-msgstr ""
+msgstr "Reiniciar todos los filtros a sus valores por defecto"
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
-msgstr ""
+msgstr "NAVEGADOR DE SERVIDORES"
 
 #: etmain/ui/playonline.menu:332
 msgid "SERVER NAME"
-msgstr ""
+msgstr "NOMBRE DEL SERVIDOR"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr ""
+msgstr "Click aquí para ordenar por Nombre del Servidor"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
-msgstr ""
+msgstr "NOMBRE DEL MAPA"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
-msgstr ""
+msgstr "Click aquí para ordenar por el nombre de la Campaña o Mapa"
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
-msgstr ""
+msgstr "#JUGADORES"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
-msgstr ""
+msgstr "Click aquí para ordenar por el Número de Jugadores"
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
-msgstr ""
+msgstr "TIPO"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
-msgstr ""
+msgstr "Click aquí para ordenar por Tipo de Juego"
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
-msgstr ""
+msgstr "PING"
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
-msgstr ""
+msgstr "BORRAR FAVS"
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
-msgstr ""
+msgstr "UNIRSE AL SERVIDOR"
 
 #: etmain/ui/popup_autoupdate.menu:51
 msgid "UPDATE AVAILABLE"
-msgstr ""
+msgstr "ACTUALIZACIÓN DISPONIBLE"
 
 #: etmain/ui/popup_errormessage.menu:52
 #: etmain/ui/popup_errormessage_pb.menu:52
 #: etmain/ui/popup_hostgameerrormessage.menu:52
 msgid "ERROR"
-msgstr ""
+msgstr "ERROR"
 
 #: etmain/ui/popup_errormessage.menu:59
 #: etmain/ui/popup_errormessage_pb.menu:57
 #: etmain/ui/popup_serverredirect.menu:79
 msgid "RECONNECT"
-msgstr ""
+msgstr "RECONECTAR"
 
 #: etmain/ui/popup_password.menu:73
 msgid "PASSWORD REQUIRED"
-msgstr ""
+msgstr "CONTRASEÑA REQUERIDA"
 
 #: etmain/ui/popup_password.menu:84
 msgid "Enter the server password"
-msgstr ""
+msgstr "Introduce la contraseña del servidor"
 
 #: etmain/ui/popup_serverredirect.menu:71
 msgid "REDIRECTION ADVISED"
-msgstr ""
+msgstr "REDIRECCIÓN RECOMENDADA"
 
 #: etmain/ui/popup_serverredirect.menu:74
 msgid "Do you want to redirect to:"
-msgstr ""
+msgstr "¿Quieres ser redirigido a:"
 
 #: etmain/ui/profile_create_error.menu:51
 msgid "CREATION ERROR"
-msgstr ""
+msgstr "ERROR DE CREACIÓN"
 
 #: etmain/ui/profile_create_initial.menu:85 etmain/ui/profile_create.menu:78
 msgid "CREATE PROFILE"
-msgstr ""
+msgstr "CREAR PERFIL"
 
 #: etmain/ui/profile_create_initial.menu:87 etmain/ui/profile_create.menu:80
 msgid ""
@@ -3735,177 +3735,177 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr ""
+msgstr "Por favor elige tus ajustes iniciales abajo. Puede cambiarlos en cualquier momento y acceder a opciones más avanzadas visitando el Menú de Opciones. Si desea jugar más de una persona a Enemy Territory: Legacy, puede crear perfiles adicionales visitando el Menú de Perfiles"
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
 "Enter the alias here that you would like displayed to others on servers"
-msgstr ""
+msgstr "Introduce aquí el alias que quiere que se le muestre los jugadores en los servidores"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Video Quality:"
-msgstr ""
+msgstr "Calidad de Vídeo:"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
-msgstr ""
+msgstr "La Más Rápida"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fast"
-msgstr ""
+msgstr "Rápida"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid ""
 "Select your initial video settings, these can be changed later via the "
 "options menu"
-msgstr ""
+msgstr "Elige tus ajustes iniciales de vídeo, se pueden cambiar más adelante en el menú de opciones"
 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr ""
+msgstr "Elige tu resolución de vídeo preferida, si no estás seguro deja la de por defecto"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Usa este control deslizante para ajustar la sensibilidad de tu ratón"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
 "Choose invert mouse if you prefer flight-simulator style mouse pitch "
 "controls"
-msgstr ""
+msgstr "Elige invertir ratón si prefieres los movimientos del estilo de un simulador de vuelo"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
-msgstr ""
+msgstr "AJUSTES POR DEFECTO"
 
 #: etmain/ui/profile_create_initial.menu:125
 msgid "^1LET'S KEEP ET ALIVE!"
-msgstr ""
+msgstr "^1¡MANTENGAMOS VIVO ET!"
 
 #: etmain/ui/profile_create_initial.menu:126
 msgid "Thank you for installing ET:Legacy"
-msgstr ""
+msgstr "Gracias por instalar ET:Legacy"
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"
-msgstr ""
+msgstr "CERRAR"
 
 #: etmain/ui/profile_create_initial.menu:131 etmain/ui/profile_create.menu:120
 #: etmain/ui/profile.menu:62
 msgid "CREATE"
-msgstr ""
+msgstr "CREAR"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr ""
+msgstr "Elige invertir ratón si prefieres los movimientos del estilo de un simulador de vuelo"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
-msgstr ""
+msgstr "AVISO DE BORRADO"
 
 #: etmain/ui/profile_delete_error.menu:51
 msgid "Can't delete"
-msgstr ""
+msgstr "No puede borrarse"
 
 #: etmain/ui/profile_delete_error.menu:52
 msgid "active profile."
-msgstr ""
+msgstr "el perfil activo."
 
 #: etmain/ui/profile_delete.menu:50
 msgid "DELETE PROFILE"
-msgstr ""
+msgstr "BORRAR PERFIL"
 
 #: etmain/ui/profile_delete.menu:51 etmain/ui/viewreplay_delete.menu:51
 msgid "Are you sure?"
-msgstr ""
+msgstr "¿Estás seguro?"
 
 #: etmain/ui/profile.menu:63 etmain/ui/viewreplay.menu:59
 msgid "DELETE"
-msgstr ""
+msgstr "BORRAR"
 
 #: etmain/ui/profile.menu:66 etmain/ui/profile_rename.menu:69
 msgid "RENAME"
-msgstr ""
+msgstr "RENOMBRAR"
 
 #: etmain/ui/profile.menu:67
 msgid "SET AS DEFAULT"
-msgstr ""
+msgstr "CONFIGURAR COMO PRINCIPAL"
 
 #: etmain/ui/profile.menu:72
 msgid "SELECT PROFILE"
-msgstr ""
+msgstr "SELECCIONAR PERFIL"
 
 #: etmain/ui/profile_rename.menu:55
 msgid "RENAME PROFILE"
-msgstr ""
+msgstr "RENOMBRAR PERFIL"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New Profile Name:"
-msgstr ""
+msgstr "Nombre del Nuevo Perfil:"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New name of profile"
-msgstr ""
+msgstr "Nombre del nuevo perfil"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
-msgstr ""
+msgstr "Oh si, ¡como si tuvieras"
 
 #: etmain/ui/quit.menu:56
 msgid "anything better to do!"
-msgstr ""
+msgstr "algo mejor que hacer!"
 
 #: etmain/ui/rec_restart.menu:53 etmain/ui/vid_restart.menu:47
 msgid "CHANGE VIDEO SETTINGS"
-msgstr ""
+msgstr "CAMBIAR AJUSTES DE VIDEO"
 
 #: etmain/ui/rec_restart.menu:55
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
-msgstr ""
+msgstr "Poner los ajustes de vídeo recomendados\ny volver al menú principal?"
 
 #: etmain/ui/rec_restart.menu:57
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
-msgstr ""
+msgstr "Poner los ajustes de vídeo recomendados\ny volver al menú del juego?"
 
 #: etmain/ui/vid_confirm.menu:61
 msgid "CONFIRM VIDEO CHANGE"
-msgstr ""
+msgstr "CONFIRMAR CAMBIO DE VIDEO"
 
 #: etmain/ui/vid_confirm.menu:63
 msgid "Use this video mode?"
-msgstr ""
+msgstr "¿Usar este modo de vídeo?"
 
 #: etmain/ui/vid_confirm.menu:64
 msgid "Reverting to previous"
-msgstr ""
+msgstr "Revirtiendo a los anteriores"
 
 #: etmain/ui/vid_confirm.menu:71
 #, c-format
 msgid "setting in %s seconds..."
-msgstr ""
+msgstr "ajustes en %s segundos..."
 
 #: etmain/ui/vid_restart.menu:48
 msgid "Apply new settings?"
-msgstr ""
+msgstr "¿Aplicar nuevos ajustes?"
 
 #: etmain/ui/viewreplay_delete.menu:50
 msgid "DELETE REPLAY"
-msgstr ""
+msgstr "BORRAR REPETICIÓN"
 
 #: etmain/ui/viewreplay.menu:50
 msgid "Select the replay to view or delete"
-msgstr ""
+msgstr "Seleccionar repetición para ver o borrar"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:33 etmain/ui/wm_ftquickmessage.menu:33
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
 #: src/cgame/cg_fireteams.c:341
 msgid "MESSAGE"
-msgstr ""
+msgstr "MENSAJE"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:83 etmain/ui/wm_quickmessageAlt.menu:83
 msgid "1. Statements"
@@ -4584,11 +4584,11 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1507
 msgid "Disguised Enemy!"
-msgstr ""
+msgstr "¡Enemigo Disfrazado!"
 
 #: src/cgame/cg_draw.c:1717
 msgid "SPECTATOR"
-msgstr ""
+msgstr "ESPECTADOR"
 
 #: src/cgame/cg_draw.c:1744
 #, c-format
