@@ -1839,7 +1839,8 @@ void ClientUserinfoChanged(int clientNum)
 				// Avoid ext. ASCII chars in the CS
 				for (i = 0; i < strlen(cs_value); ++i)
 				{
-					if (cs_value[i] < 0)  // extended ASCII chars have values between -128 and 0 (signed char)
+					// extended ASCII chars have values between -128 and 0 (signed char) and the ASCII code flags are 0-31
+					if (cs_value[i] < 32)
 					{
 						G_Printf("ClientUserinfoChanged: client %d kicked for extended ASCII characters name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 						trap_DropClient(clientNum, "Server does not allow extended ASCII characters. Please change your name.", 0);
@@ -2268,7 +2269,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		// Avoid ext. ASCII chars in the CS
 		for (i = 0; i < strlen(cs_name); ++i)
 		{
-			if (cs_name[i] < 0)  // extended ASCII chars have values between -128 and 0 (signed char)
+			// extended ASCII chars have values between -128 and 0 (signed char) and the ASCII code flags are 0-31
+			if (cs_name[i] < 32)
 			{
 				return "Bad name: Extended ASCII characters. Please change your name.";
 			}
