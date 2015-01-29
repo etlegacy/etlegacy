@@ -4413,11 +4413,21 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	}
 	else if (!Q_stricmp(lastToken, "random"))
 	{
+		int randomValue;
+
 		if (!token[0])
 		{
 			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
-		cvarValue = rand() % atoi(token);
+
+		randomValue = atoi(token);
+
+		if (randomValue == 0)
+		{
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a random parameter <> 0\n", lastToken);
+		}
+
+		cvarValue = rand() % randomValue;
 	}
 	else if (!Q_stricmp(lastToken, "trigger_if_equal"))
 	{
