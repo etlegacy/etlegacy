@@ -1211,7 +1211,7 @@ void G_UpdateTeamMapData(void)
 		f1 = ent->client->sess.sessionTeam == TEAM_ALLIES ? qtrue : qfalse;
 		f2 = ent->client->sess.sessionTeam == TEAM_AXIS ? qtrue : qfalse;
 
-		if (!ent->inuse || !ent->client)
+		if (!ent->inuse)
 		{
 			continue;
 		}
