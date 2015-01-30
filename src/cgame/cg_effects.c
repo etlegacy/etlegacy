@@ -176,16 +176,12 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
                                 int msec, qboolean isSprite)
 {
 	localEntity_t *ex;
-	int           offset;
 	vec3_t        newOrigin;
 
 	if (msec <= 0)
 	{
 		CG_Error("CG_MakeExplosion: msec = %i\n", msec);
 	}
-
-	// skew the time a bit so they aren't all in sync
-	offset = rand() & 63;
 
 	ex = CG_AllocLocalEntity();
 	if (isSprite)
@@ -216,7 +212,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 		}
 	}
 
-	ex->startTime = cg.time - offset;
+	ex->startTime = cg.time - rand() & 63; // skew the time a bit so they aren't all in sync
 	ex->endTime   = ex->startTime + msec;
 
 	// bias the time so all shader effects start correctly
@@ -235,7 +231,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 	VectorCopy(newOrigin, ex->pos.trBase);
 	VectorScale(dir, 48, ex->pos.trDelta);
 
-	ex->color[0] = ex->color[1] = ex->color[2] = 1.0;
+	ex->color[0] = ex->color[1] = ex->color[2] = 1.0f;
 
 	return ex;
 }
@@ -349,7 +345,7 @@ void CG_Bleed(vec3_t origin, int entityNum)
 			                  100,  // speed
 			                  450 + (int)(crandom() * 50),       // duration
 			                  2 + rand() % 2,     // count
-			                  0.1);     // rand scale
+			                  0.1f);     // rand scale
 		}
 	}
 }
@@ -381,7 +377,7 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	VectorCopy(angles, le->angles.trBase);
 	VectorCopy(origin, re->origin);
 	AnglesToAxis(angles, re->axis);
-	if (sizeScale != 1.0)
+	if (sizeScale != 1)
 	{
 		int i;
 
@@ -986,11 +982,11 @@ static qboolean CG_SmokeSpritePhysics(smokesprite_t *smokesprite, const float di
 	//CG_Trace( &tr, oldpos, mins, maxs, smokesprite->pos, -1, CONTENTS_SOLID );
 	CG_Trace(&tr, oldpos, NULL, NULL, smokesprite->pos, -1, CONTENTS_SOLID);
 
-	if (tr.fraction != 1.f)
+	if (tr.fraction != 1)
 	{
 		//float dot;
 
-		if (smokesprite->dist < 24.f)
+		if (smokesprite->dist < 24)
 		{
 			return qfalse;
 		}
@@ -1202,12 +1198,12 @@ void CG_AddSmokeSprites(void)
 		}
 		else
 		{
-			radius = -1.f;
+			radius = -1;
 		}
 
 		if (radius < 0)
 		{
-			radius = 640.f; // max radius
+			radius = 640; // max radius
 
 		}
 		// Expire sprites
