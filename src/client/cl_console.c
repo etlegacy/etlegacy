@@ -171,7 +171,7 @@ Save the console contents out to a file
 void Con_Dump_f(void)
 {
 	int          l, x, i;
-	unsigned int          *line;
+	unsigned int *line;
 	fileHandle_t f;
 	int          bufferlen;
 	char         *buffer;
@@ -621,12 +621,12 @@ Draws the last few lines of output transparently over the game top
 */
 void Con_DrawNotify(void)
 {
-	int  x, v = 0;
-	unsigned int  *text;
-	byte *textColor;
-	int  i;
-	int  time;
-	int  currentColor = 7;
+	int          x, v = 0;
+	unsigned int *text;
+	byte         *textColor;
+	int          i;
+	int          time;
+	int          currentColor = 7;
 
 	re.SetColor(g_color_table[currentColor]);
 
@@ -754,15 +754,15 @@ void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrol
  */
 void Con_DrawSolidConsole(float frac)
 {
-	int    i, x, y;
-	int    rows;
-	unsigned int    *text;
-	byte   *textColor;
-	int    row;
-	int    yoffset = cls.glconfig.vidHeight * frac;
-	int    currentColor;
-	vec4_t color;
-	char   version[256] = ET_VERSION;
+	int          i, x, y;
+	int          rows;
+	unsigned int *text;
+	byte         *textColor;
+	int          row;
+	int          yoffset = cls.glconfig.vidHeight * frac;
+	int          currentColor;
+	vec4_t       color;
+	char         version[256] = ET_VERSION;
 
 	if (yoffset <= 0)
 	{

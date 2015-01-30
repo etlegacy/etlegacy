@@ -175,7 +175,7 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 		Vector4Copy(colorBlack, color);
 		color[3] = setColor[3];
 		re.SetColor(color);
-		s = string;
+		s  = string;
 		xx = x;
 		while (*s)
 		{
@@ -186,10 +186,10 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 			}
 			SCR_DrawChar(xx + 2, y + 2, w, h, Q_UTF8_CodePoint(s), nativeResolution);
 			xx += w;
-			s += Q_UTF8_Width(s);
+			s  += Q_UTF8_Width(s);
 		}
 	}
-	
+
 	// draw the colored text
 	s  = string;
 	xx = x;
@@ -220,7 +220,7 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 		}
 		SCR_DrawChar(xx, y, w, h, Q_UTF8_CodePoint(s), nativeResolution);
 		xx += w;
-		s += Q_UTF8_Width(s);
+		s  += Q_UTF8_Width(s);
 	}
 	re.SetColor(NULL);
 }

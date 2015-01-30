@@ -464,11 +464,11 @@ Field_CharEvent
 */
 void Field_CharEvent(field_t *edit, int ch)
 {
-	int len, charWidth, stringLen;
+	int  len, charWidth, stringLen;
 	char *value = NULL;
 
 	charWidth = Q_UTF8_WidthCP(ch);
-	value = Q_UTF8_Encode(ch);
+	value     = Q_UTF8_Encode(ch);
 
 	if (ch == 'v' - 'a' + 1)      // ctrl-v is paste
 	{
@@ -482,7 +482,7 @@ void Field_CharEvent(field_t *edit, int ch)
 		return;
 	}
 
-	len = strlen(edit->buffer);
+	len       = strlen(edit->buffer);
 	stringLen = Q_UTF8_Strlen(edit->buffer);
 
 	if (ch == 'h' - 'a' + 1)          // ctrl-h is backspace
@@ -537,7 +537,7 @@ void Field_CharEvent(field_t *edit, int ch)
 
 	if (edit->cursor == stringLen + 1)
 	{
-		edit->buffer[Q_UTF8_ByteOffset(edit->buffer,edit->cursor)] = 0;
+		edit->buffer[Q_UTF8_ByteOffset(edit->buffer, edit->cursor)] = 0;
 	}
 }
 
