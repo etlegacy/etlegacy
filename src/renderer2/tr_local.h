@@ -3421,7 +3421,7 @@ void GL_Bind(image_t *image);
 void GL_BindNearestCubeMap(const vec3_t xyz);
 void GL_Unbind();
 void BindAnimatedImage(textureBundle_t *bundle);
-void GL_TextureFilter(image_t *image, filterType_t filterType);
+//void GL_TextureFilter(image_t *image, filterType_t filterType);
 void GL_SetDefaultState(void);
 void GL_SelectTexture(int unit);
 void GL_TextureMode(const char *string);

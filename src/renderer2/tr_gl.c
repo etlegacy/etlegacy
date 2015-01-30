@@ -103,47 +103,47 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	GL_Bind(bundle->image[index]);
 }
 
+/*
 void GL_TextureFilter(image_t *image, filterType_t filterType)
 {
-	if (!image)
-	{
-		Ren_Warning("GL_TextureFilter: NULL image\n");
-	}
-	else
-	{
-		Ren_LogComment("--- GL_TextureFilter( %s ) ---\n", image->name);
-	}
+    if (!image)
+    {
+        Ren_Warning("GL_TextureFilter: NULL image\n");
+    }
+    else
+    {
+        Ren_LogComment("--- GL_TextureFilter( %s ) ---\n", image->name);
+    }
 
-	if (image->filterType == filterType)
-	{
-		return;
-	}
+    if (image->filterType == filterType)
+    {
+        return;
+    }
 
-	// set filter type
-	switch (image->filterType)
-	{
-	/*
-	case FT_DEFAULT:
-	glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-	glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+    // set filter type
+    switch (image->filterType)
+    {
+    //case FT_DEFAULT:
+    //glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+    //glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 
-	// set texture anisotropy
-	if(glConfig2.textureAnisotropyAvailable)
-	glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
-	break;
-	*/
-	case FT_LINEAR:
-		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		break;
-	case FT_NEAREST:
-		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		break;
-	default:
-		break;
-	}
+    // set texture anisotropy
+    //if(glConfig2.textureAnisotropyAvailable)
+    //glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
+    //break;
+    case FT_LINEAR:
+        glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        break;
+    case FT_NEAREST:
+        glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        break;
+    default:
+        break;
+    }
 }
+*/
 
 void GL_SelectTexture(int unit)
 {
