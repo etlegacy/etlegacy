@@ -1797,7 +1797,7 @@ static void mdx_SwingAngles(float destination, float swingTolerance, float clamp
 	// swing towards the destination angle
 	if (swing >= 0)
 	{
-		move = SERVER_FRAMETIME * scale * speed;
+		move = SERVER_FRAMETIME_F * scale * speed;
 		if (move >= swing)
 		{
 			move      = swing;
@@ -1811,7 +1811,7 @@ static void mdx_SwingAngles(float destination, float swingTolerance, float clamp
 	}
 	else if (swing < 0)
 	{
-		move = SERVER_FRAMETIME * scale * -speed;
+		move = SERVER_FRAMETIME_F * scale * -speed;
 		if (move <= swing)
 		{
 			move      = swing;
