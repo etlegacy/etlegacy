@@ -6221,7 +6221,7 @@ void RB_RenderLightOcclusionQueries()
 						multiQueryLight = light;
 						while (!QueueEmpty(&multiQueryLight->multiQuery))
 						{
-							light = (trRefLight_t *) DeQueue(&multiQueryLight->multiQuery);
+							DeQueue(&multiQueryLight->multiQuery);
 
 							backEnd.pc.c_occlusionQueriesLightsCulled++;
 							backEnd.pc.c_occlusionQueriesSaved++;
