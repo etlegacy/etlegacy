@@ -6790,7 +6790,7 @@ void RB_RenderEntityOcclusionQueries()
 						multiQueryEntity = entity;
 						while (!QueueEmpty(&multiQueryEntity->multiQuery))
 						{
-							entity = (trRefEntity_t *) DeQueue(&multiQueryEntity->multiQuery);
+							DeQueue(&multiQueryEntity->multiQuery);
 
 							backEnd.pc.c_occlusionQueriesEntitiesCulled++;
 							backEnd.pc.c_occlusionQueriesSaved++;
