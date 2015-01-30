@@ -567,6 +567,7 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 			if ((extraAnim = R_AllocAnimation()) == NULL)
 			{
 				Ren_Warning("R_LoadPSA: R_AllocAnimation() failed for '%s'\n", name);
+				FreeMemStream(stream);
 				return qfalse;
 			}
 
