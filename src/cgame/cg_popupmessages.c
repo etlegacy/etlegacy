@@ -106,6 +106,11 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImageAlliesMine      = trap_R_RegisterShaderNoMip("gfx/hud/pm_mineallied");
 	cgs.media.pmImageAxisMine        = trap_R_RegisterShaderNoMip("gfx/hud/pm_mineaxis");
 	cgs.media.hintKey                = trap_R_RegisterShaderNoMip("gfx/hud/keyboardkey_old");
+
+	// extra obituaries
+	cgs.media.pmImagePoison = trap_R_RegisterShader("gfx/hud/pm_poison");
+	cgs.media.pmImageCrush  = trap_R_RegisterShader("gfx/hud/pm_crush");
+	cgs.media.pmImageShove  = trap_R_RegisterShader("gfx/hud/pm_shove");
 }
 
 void CG_InitPM(void)

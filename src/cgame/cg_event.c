@@ -204,8 +204,6 @@ static void CG_Obituary(entityState_t *ent)
 			// FIXME:
 			//case MOD_UNKNOWN:
 			//case MOD_FALLING:
-			//case MOD_CRUSH:
-			//case MOD_SLIME:
 			//case MOD_LAVA:
 			//case MOD_TRIGGER_HURT:
 			//case MOD_TELEFRAG:
@@ -241,11 +239,17 @@ static void CG_Obituary(entityState_t *ent)
 				}
 				break;
 			case MOD_WATER:
-				if (cg_drawSmallPopupIcons.integer)
-				{
-					weaponShader = cgs.media.waterHintShader;
-					scaleShader  = 1;
-				}
+				weaponShader = cgs.media.waterHintShader;
+				scaleShader  = 1;
+				break;
+			case MOD_SLIME:
+				weaponShader = cgs.media.pmImagePoison;
+				scaleShader  = 1;
+				break;
+			case MOD_CRUSH:
+				weaponShader = cgs.media.pmImageCrush;
+				scaleShader  = 1;
+				break;
 			default:
 				if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
 				{
@@ -527,7 +531,6 @@ static void CG_Obituary(entityState_t *ent)
 				{
 				// FIXME:
 				//case MOD_AIRSTRIKE:
-				//case MOD_SHOVE:
 				case MOD_ARTY:
 					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
 					{
@@ -577,6 +580,10 @@ static void CG_Obituary(entityState_t *ent)
 						weaponShader = cg_weapons[WP_PLIERS].weaponIcon[1];
 						scaleShader  = CG_WeaponIconScale(WP_PLIERS);
 					}
+					break;
+				case MOD_SHOVE:
+					weaponShader = cgs.media.pmImageShove;
+					scaleShader  = 1;
 					break;
 				default:
 					if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
