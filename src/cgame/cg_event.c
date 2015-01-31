@@ -205,9 +205,15 @@ static void CG_Obituary(entityState_t *ent)
 			//case MOD_UNKNOWN:
 			//case MOD_FALLING:
 			//case MOD_CRUSH:
-			//case MOD_WATER:
 			//case MOD_SLIME:
+			//case MOD_LAVA:
+			//case MOD_TRIGGER_HURT:
+			//case MOD_TELEFRAG:
+			//case MOD_TARGET_LASER:
 			//case MOD_AIRSTRIKE:
+			//case MOD_MAPMORTAR:
+			//case MOD_MAPMORTAR_SPLASH:
+			//case MOD_EXPLOSIVE:
 			case MOD_ARTY:
 				if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
 				{
@@ -234,6 +240,12 @@ static void CG_Obituary(entityState_t *ent)
 					scaleShader  = CG_WeaponIconScale(WP_PLIERS);
 				}
 				break;
+			case MOD_WATER:
+				if (cg_drawSmallPopupIcons.integer)
+				{
+					weaponShader = cgs.media.waterHintShader;
+					scaleShader  = 1;
+				}
 			default:
 				if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
 				{
