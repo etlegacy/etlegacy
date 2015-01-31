@@ -526,9 +526,6 @@ static void CG_Obituary(entityState_t *ent)
 				switch (mod) // deal with icon specials
 				{
 				// FIXME:
-				//case MOD_MACHINEGUN:
-				//case MOD_BROWNING:
-				//case MOD_MG42:
 				//case MOD_AIRSTRIKE:
 				//case MOD_SHOVE:
 				case MOD_ARTY:
@@ -541,6 +538,31 @@ static void CG_Obituary(entityState_t *ent)
 					{
 						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
 						scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+					}
+					break;
+				case MOD_MACHINEGUN:
+				case MOD_MG42:
+					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_MOBILE_MG42].weaponIcon[0])
+					{
+						weaponShader = cg_weapons[WP_MOBILE_MG42].weaponIcon[0];
+						scaleShader  = CG_WeaponIconScale(WP_MOBILE_MG42);
+					}
+					else if (cg_weapons[WP_MOBILE_MG42].weaponIcon[1])
+					{
+						weaponShader = cg_weapons[WP_MOBILE_MG42].weaponIcon[1];
+						scaleShader  = CG_WeaponIconScale(WP_MOBILE_MG42);
+					}
+					break;
+				case MOD_BROWNING:
+					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_MOBILE_BROWNING].weaponIcon[0])
+					{
+						weaponShader = cg_weapons[WP_MOBILE_BROWNING].weaponIcon[0];
+						scaleShader  = CG_WeaponIconScale(WP_MOBILE_MG42);
+					}
+					else if (cg_weapons[WP_MOBILE_BROWNING].weaponIcon[1])
+					{
+						weaponShader = cg_weapons[WP_MOBILE_BROWNING].weaponIcon[1];
+						scaleShader  = CG_WeaponIconScale(WP_MOBILE_BROWNING);
 					}
 					break;
 				case MOD_CRUSH_CONSTRUCTION:
