@@ -243,7 +243,11 @@ static void CG_Obituary(entityState_t *ent)
 				scaleShader  = 1;
 				break;
 			case MOD_SLIME:
-				weaponShader = cgs.media.pmImagePoison;
+				weaponShader = cgs.media.pmImageSlime;
+				scaleShader  = 1;
+				break;
+			case MOD_LAVA:
+				weaponShader = cgs.media.pmImageLava;
 				scaleShader  = 1;
 				break;
 			case MOD_CRUSH:

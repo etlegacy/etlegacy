@@ -1614,8 +1614,9 @@ typedef struct
 	qhandle_t pmImageAxisMine;
 	qhandle_t hintKey;
 
+	qhandle_t pmImageSlime;
+	qhandle_t pmImageLava;
 	qhandle_t pmImageCrush;
-	qhandle_t pmImagePoison;
 	qhandle_t pmImageShove;
 
 	qhandle_t hudDamagedStates[4];

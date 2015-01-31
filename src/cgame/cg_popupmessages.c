@@ -108,7 +108,8 @@ void CG_InitPMGraphics(void)
 	cgs.media.hintKey                = trap_R_RegisterShaderNoMip("gfx/hud/keyboardkey_old");
 
 	// extra obituaries
-	cgs.media.pmImagePoison = trap_R_RegisterShader("gfx/hud/pm_poison");
+	cgs.media.pmImageSlime  = trap_R_RegisterShader("gfx/hud/pm_slime");
+	cgs.media.pmImageLava   = trap_R_RegisterShader("gfx/hud/pm_lava");
 	cgs.media.pmImageCrush  = trap_R_RegisterShader("gfx/hud/pm_crush");
 	cgs.media.pmImageShove  = trap_R_RegisterShader("gfx/hud/pm_shove");
 }
