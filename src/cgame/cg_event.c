@@ -518,8 +518,6 @@ static void CG_Obituary(entityState_t *ent)
 				//case MOD_BROWNING:
 				//case MOD_MG42:
 				//case MOD_AIRSTRIKE:
-				//case MOD_CRUSH_CONSTRUCTION:
-				//case MOD_CRUSH_CONSTRUCTIONDEATH:
 				//case MOD_SHOVE:
 				case MOD_ARTY:
 					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
@@ -531,6 +529,19 @@ static void CG_Obituary(entityState_t *ent)
 					{
 						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
 						scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+					}
+					break;
+				case MOD_CRUSH_CONSTRUCTION:
+				case MOD_CRUSH_CONSTRUCTIONDEATH:
+					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_PLIERS].weaponIcon[0])
+					{
+						weaponShader = cg_weapons[WP_PLIERS].weaponIcon[0];
+						scaleShader  = CG_WeaponIconScale(WP_PLIERS);
+					}
+					else if (cg_weapons[WP_PLIERS].weaponIcon[1])
+					{
+						weaponShader = cg_weapons[WP_PLIERS].weaponIcon[1];
+						scaleShader  = CG_WeaponIconScale(WP_PLIERS);
 					}
 					break;
 				default:
