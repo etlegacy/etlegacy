@@ -266,6 +266,25 @@ const char *BG_ClassnameForNumber(int classNum)
 	}
 }
 
+const char *BG_ClassnameForNumberFilename(int classNum)
+{
+	switch (classNum)
+	{
+	case PC_SOLDIER:
+		return "Soldier";
+	case PC_MEDIC:
+		return "Medic";
+	case PC_ENGINEER:
+		return "Engineer";
+	case PC_FIELDOPS:
+		return "Fieldops";
+	case PC_COVERTOPS:
+		return "Covertops";
+	default:
+		return "^1ERROR";
+	}
+}
+
 const char *BG_ClassLetterForNumber(int classNum)
 {
 	switch (classNum)
@@ -309,6 +328,23 @@ int BG_ClassTextToClass(char *token)
 	}
 
 	return -1;
+}
+
+const char *BG_TeamnameForNumber(team_t teamNum)
+{
+	switch (teamNum)
+	{
+	case TEAM_FREE:
+		return "free";
+	case TEAM_AXIS:
+		return "axis";
+	case TEAM_ALLIES:
+		return "allies";
+	case TEAM_SPECTATOR:
+		return "spectator";
+	default:
+		return "^1ERROR";
+	}
 }
 
 skillType_t classskill[NUM_PLAYER_CLASSES] = { SK_HEAVY_WEAPONS, SK_FIRST_AID, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_SIGNALS, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS };

@@ -181,6 +181,8 @@ A respawn happened this snapshot
 */
 void CG_Respawn(qboolean revived)
 {
+	static int oldTeam = -1;
+	static int oldCls  = -1;
 	cg.serverRespawning = qfalse;   // just in case
 
 	// no error decay on player movement
@@ -245,6 +247,21 @@ void CG_Respawn(qboolean revived)
 
 	// reset fog to world fog (if present)
 	trap_R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
+
+	// try to exec a cfg file if it is found
+	if (!revived)
+	{
+		if ((cgs.clientinfo[cg.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES) && (cgs.clientinfo[cg.clientNum].cls != oldCls))
+		{
+			CG_execFile(va("autoexec_%s", BG_ClassnameForNumberFilename(cgs.clientinfo[cg.clientNum].cls)));
+			oldCls = cgs.clientinfo[cg.clientNum].cls;
+		}
+		if (cgs.clientinfo[cg.clientNum].team != oldTeam)
+		{
+			CG_execFile(va("autoexec_%s", BG_TeamnameForNumber(cgs.clientinfo[cg.clientNum].team)));
+			oldTeam = cgs.clientinfo[cg.clientNum].team;
+		}
+	}
 }
 
 void CG_CheckPlayerstateEvents(playerState_t *ps, playerState_t *ops)

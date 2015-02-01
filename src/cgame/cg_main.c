@@ -676,6 +676,24 @@ void CG_RestoreProfile(void)
 	}
 }
 
+// try to exec a cfg file if it is found
+qboolean CG_execFile(char *filename)
+{
+	int handle = trap_PC_LoadSource(va("%s.cfg", filename));
+
+	trap_PC_FreeSource(handle);
+
+	if (!handle)
+	{
+		// file not found
+		return qfalse;
+	}
+
+	trap_SendConsoleCommand(va("exec %s.cfg\n", filename));
+
+	return qtrue;
+}
+
 void CG_setClientFlags(void)
 {
 	if (cg.demoPlayback)
@@ -2488,14 +2506,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	trap_R_SetColor(NULL);
 
 	// load a few needed things before we do any screen updates
-	cgs.media.charsetShader = trap_R_RegisterShader("gfx/2d/hudchars");       //trap_R_RegisterShader( "gfx/2d/bigchars" );
-
+	cgs.media.charsetShader     = trap_R_RegisterShader("gfx/2d/hudchars");   //trap_R_RegisterShader( "gfx/2d/bigchars" );
 	cgs.media.menucharsetShader = trap_R_RegisterShader("gfx/2d/hudchars");
-
-	cgs.media.whiteShader     = trap_R_RegisterShader("white");
-	cgs.media.charsetProp     = trap_R_RegisterShaderNoMip("menu/art/font1_prop.tga");
-	cgs.media.charsetPropGlow = trap_R_RegisterShaderNoMip("menu/art/font1_prop_glo.tga");
-	cgs.media.charsetPropB    = trap_R_RegisterShaderNoMip("menu/art/font2_prop.tga");
+	cgs.media.whiteShader       = trap_R_RegisterShader("white");
+	cgs.media.charsetProp       = trap_R_RegisterShaderNoMip("menu/art/font1_prop.tga");
+	cgs.media.charsetPropGlow   = trap_R_RegisterShaderNoMip("menu/art/font1_prop_glo.tga");
+	cgs.media.charsetPropB      = trap_R_RegisterShaderNoMip("menu/art/font2_prop.tga");
 
 	CG_RegisterCvars();
 
@@ -2526,6 +2542,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_ParseServerinfo();
 	CG_ParseWolfinfo();
+
+	// try execing map autoexec scripts
+	if (!CG_execFile(va("autoexec_%s", cgs.rawmapname)))
+	{
+		CG_execFile("autoexec_default");
+	}
 
 	cgs.campaignInfoLoaded = qfalse;
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
@@ -2739,7 +2761,7 @@ void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2))
 #ifdef __AROS__
 #include <dll.h>
 
-void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...));
+void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...));
 
 dll_tExportSymbol DLL_ExportSymbols[] =
 {

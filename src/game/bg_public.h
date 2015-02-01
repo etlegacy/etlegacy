@@ -2075,7 +2075,9 @@ qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t w
 int BG_ClassWeaponCount(bg_playerclass_t *classInfo, team_t team);
 const char *BG_ShortClassnameForNumber(int classNum);
 const char *BG_ClassnameForNumber(int classNum);
+const char *BG_ClassnameForNumberFilename(int classNum);
 const char *BG_ClassLetterForNumber(int classNum);
+const char *BG_TeamnameForNumber(team_t teamNum);
 
 extern bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES];
 extern bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES];

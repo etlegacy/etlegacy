@@ -2270,6 +2270,7 @@ void CG_QueueMusic(void);
 
 void CG_UpdateCvars(void);
 
+qboolean CG_execFile(char *filename);
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
 void CG_KeyEvent(int key, qboolean down);
