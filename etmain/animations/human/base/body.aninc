@@ -12,25 +12,25 @@
 
 		wounded_idle_1		173	144	144	20	0	0	0
 
-		revive			320	47	0	15	0	0	0
+		revive				320	47	0	15	0	0	0
 		stand_binoculars	370	57	57	15	0	0	0
-		stand_radio		430	110	110	15	0	0	0
+		stand_radio			430	110	110	15	0	0	0
 
-		pain_head		572	26	0	20	0	0	0
-		pain_chest		599	21	0	20	0	0	0
-		pain_gut		621	20	0	20	0	0	0
-		pain_groin		642	24	0	20	0	0	0
+		pain_head			572	26	0	20	0	0	0
+		pain_chest			599	21	0	20	0	0	0
+		pain_gut			621	20	0	20	0	0	0
+		pain_groin			642	24	0	20	0	0	0
 		pain_shoulderR		667	15	0	20	0	0	0
 		pain_shoulderL		683	15	0	20	0	0	0
-		pain_kneeR		699	21	0	20	0	0	0
-		pain_kneeL		721	19	0	20	0	0	0
-		pain_daze		741	46	0	20	0	0	0
-		pain_fire		788	45	0	20	0	0	0
+		pain_kneeR			699	21	0	20	0	0	0
+		pain_kneeL			721	19	0	20	0	0	0
+		pain_daze			741	46	0	20	0	0	0
+		pain_fire			788	45	0	20	0	0	0
 		pain_cr_head		834	19	0	20	0	0	0
 		pain_cr_shoulderR	854	21	0	20	0	0	0
 		pain_cr_shoulderL	876	21	0	20	0	0	0
 
-		relaxed_idle_2h_1	898	195	195	15	0	0	0
+		relaxed_idle_2h_1	898		195	195	15	0	0	0
 		relaxed_idle_1h_1	1093	1	1	15	0	0	0
 		relaxed_idle_no		1094	219	219	15	0	0	0
 		relaxed_walk_2h_1	1314	21	21	22	-1	0	0
@@ -52,8 +52,8 @@
 		alert_crch_1h		1932	14	14	22	-1	0	0
 		alert_crchidle_2h	1947	50	50	7	0	0	0
 		alert_crchidle_1h	1998	15	15	5	0	0	0
-		alert_bk_2h		2014	10	10	22	-1	0	0
-		alert_bk_1h		2025	12	12	22	-1	0	0
+		alert_bk_2h			2014	10	10	22	-1	0	0
+		alert_bk_1h			2025	12	12	22	-1	0	0
 		alert_crbk_1h		2038	13	13	22	-1	0	0
 		alert_crbk_2h		2052	15	15	22	-1	0	0
 		alert_strafe_1h_R	2068	9	9	22	-1	0	0
@@ -89,8 +89,8 @@
 		firing_pistolB_1	2551	12	0	30	0	50	0
 		firing_pistolB_2	2563	13	0	30	0	50	0
 
-		raise_rifle		2600	22	0	20	0	0	0
-		stand_rifle		2623	12	12	5	0	0	0
+		raise_rifle			2600	22	0	20	0	0	0
+		stand_rifle			2623	12	12	5	0	0	0
 		firing_rifle		2636	22	0	20	0	0	0
 		reload_rifle		2659	42	0	30	0	0	0
 
@@ -101,33 +101,33 @@
 		firing_grenadeB		2788	15	0	20	0	0	0
 		firing_grenadeA		2838	24	0	20	0	0	0
 
-		stand_mg42		2863	1	1	15	0	0	0
-		firing_mg42		2865	6	0	15	0	0	0
-		turn_L_mg42		2872	16	16	30	0	0	0
-		turn_R_mg42		2889	16	16	15	0	0	0
+		stand_mg42			2863	1	1	15	0	0	0
+		firing_mg42			2865	6	0	15	0	0	0
+		turn_L_mg42			2872	16	16	30	0	0	0
+		turn_R_mg42			2889	16	16	15	0	0	0
 
-		raise_knife		2906	25	0	20	0	0	0
-		stand_knife		2932	16	16	10	0	0	0
+		raise_knife			2906	25	0	20	0	0	0
+		stand_knife			2932	16	16	10	0	0	0
 		firing_knifeA		2959	10	10	30	0	0	0
 
-		drop			2975	5	0	20	0	0	0
+		drop				2975	5	0	20	0	0	0
 
-		climb_up		2981	21	21	20	-1	0	0
-		climb_dis		3003	31	0	20	0	0	0
-		climb_start		3035	46	0	20	0	0	0
-		climb_down		3082	28	28	20	-1	0	0
+		climb_up			2981	21	21	20	-1	0	0
+		climb_dis			3003	31	0	20	0	0	0
+		climb_start			3035	46	0	20	0	0	0
+		climb_down			3082	28	28	20	-1	0	0
 
 		jump_1step_2h		3111	11	0	20	0	0	0
 		jump_1step_1h		3131	11	0	20	0	0	0
 		jump_nostep_1h		3152	16	0	16	0	0	0
 
-		swim_2h			3169	30	30	20	0	0	0
-		swim_1h			3200	33	33	20	0	0	0
+		swim_2h				3169	30	30	20	0	0	0
+		swim_1h				3200	33	33	20	0	0	0
 
-		turn_1h_R		3234	24	24	30	0	0	0
+		turn_1h_R			3234	24	24	30	0	0	0
 		turn_machinegun_R	3259	19	19	40	0	0	0
-		turn_crch_R		3279	13	13	15	0	0	0
-		turn_crch_L		3293	13	13	15	0	0	0
+		turn_crch_R			3279	13	13	15	0	0	0
+		turn_crch_L			3293	13	13	15	0	0	0
 
 		medic_revive		3315	60	60	15	0	0	0
 		eng_hammer_firing	3380	13	13	15	0	0	0
@@ -144,7 +144,7 @@
 		raise_medpack		3590	10	0	20	0	0	0
 		stand_medpack		3605	30	30	20	0	0	0
 
-		run_medpack		3640	12	12	20	0	0	0
+		run_medpack			3640	12	12	20	0	0	0
 		raise_sniper		3660	5	0	20	0	0	0
 
 		alert_run_srifle	3670	13	13	22	-1	0	0
@@ -161,13 +161,13 @@
 		reload_srifle		3925	43	0	20	0	0	0
 
 		// AMBIENT
-		tools			4040	75	75	15	0	0	0
+		tools				4040	75	75	15	0	0	0
 		tunning_radio_in	4116	16	16	15	0	0	0
 		tunning_radio		4132	108	108	15	0	0	0
-		nazi_salute		4243	29	29	15	0	0	0
+		nazi_salute			4243	29	29	15	0	0	0
 
 		// BASE FRAME
-		base_frame		4274	1	0	15	0	0	0
+		base_frame			4274	1	0	15	0	0	0
 
 		//HEADFRAMES
 		//head_neutral_mclosed
@@ -209,25 +209,25 @@
 		// MORTAR
 		mortar_reload		4784	12	0	15	0	0	0
 		mortar_deployed		4795	5	5	2	0	0	0
-		mortar_fire		4800	13	0	15	0	0	0
+		mortar_fire			4800	13	0	15	0	0	0
 		mortar_drop_dep		4813	5	0	15	0	0	0
 		mortar_raise_dep	4818	5	0	15	0	0	0
-		mortar_drop		4822	6	0	15	0	0	0
+		mortar_drop			4822	6	0	15	0	0	0
 
 		// SATCHEL CHARGE REMOTE
 		satchel_remote_raise	4828	4	0	15	0	0	0
 		satchel_remote_stand	4831	1	1	20	0	0	0
-		satchel_remote_fire	4231	6	0	15	0	0	0
+		satchel_remote_fire		4231	6	0	15	0	0	0
 		//satchel_remote_fire	4831	6	0	15	0	0	0
-		satchel_remote_drop	4836	4	0	15	0	0	0
+		satchel_remote_drop		4836	4	0	15	0	0	0
 
 		// SELF INJECT 4870
-		self_inject		4848	16	0	15	0	0	0
+		self_inject				4848	16	0	15	0	0	0
 
 		//PRONE
 		//
 		//Prone Movement
-		prone_crawl		4431	19	19	15	0	0	0
+		prone_crawl			4431	19	19	15	0	0	0
 		prone_crawl_bk		4431	19	19	15	0	0	1
 
 		//Prone Pistol
@@ -277,7 +277,7 @@
 		prone_knife_idle	4672	1	0	20	0	0	0
 
 		//Prone Death
-		prone_die1		4573    10	0	20	0	0	0
+		prone_die1			4573    10	0	20	0	0	0
 
 		//Prone Legs
-		prone_legs		4594	1	0	20	0	0	0
+		prone_legs			4594	1	0	20	0	0	0
