@@ -132,7 +132,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@FILE_VERSION@"
 
 ; Polish
 LangString DESC_Section1 ${LANG_POLISH} "ET: Legacy ${VERSION} zostało zainstalowane na twoim komputerze.$\n$\n\
-ETKEY, folder profilu i wszystkie sciagnięte pliki znajdziesz w katalogu $DOCUMENTS\ETLegacy."
+ETKEY, folder profilu i wszystkie ściągnięte pliki znajdziesz w katalogu $DOCUMENTS\ETLegacy."
 LangString DESC_Section2 ${LANG_POLISH} "Błąd Pobierania: Nie udało się ściągnąć Instalatora."
 LangString DESC_Section3 ${LANG_POLISH} "Błąd Integrarności: Zła suma kontrolna MD5 Instalatora."
 LangString DESC_Section4 ${LANG_POLISH} "Podczas wypakowywania plików W:ET ekran stanie się czarny na kilka sekund."

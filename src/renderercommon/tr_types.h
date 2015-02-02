@@ -393,7 +393,7 @@ typedef struct
 	char version_string[MAX_STRING_CHARS];
 	char extensions_string[MAX_STRING_CHARS * 4];   // bumping, some cards have a big extension string
 	                                                // - no need to increase MAX_STRING_CHARS *4 - console doesn't print more
-	                                                // ET: L also stores this data in char* to fix extensions_string overflow issues
+	                                                // ET:L also stores this data in char* to fix extensions_string overflow issues
 	                                                // see end of struct - modern gfx cards have huge extensions string
 
 	int maxTextureSize;                             // queried from GL

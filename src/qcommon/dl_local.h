@@ -44,7 +44,6 @@
 // system API
 // only the restricted subset we need
 
-int Com_VPrintf(const char *fmt, va_list pArgs) _attribute((format(printf, 1, 0)));
 int Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 int Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));       // watch out, we don't define ERR_FATAL and stuff

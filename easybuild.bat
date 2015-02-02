@@ -124,7 +124,7 @@ GOTO:EOF
 GOTO:EOF
 
 :DEFAULTPROCESS
-	TITLE Building ET:Legacy
+	TITLE Building ET: Legacy
 	ECHO ETLegacy easybuild for Windows
 
 	CALL:DOCLEAN
