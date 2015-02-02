@@ -63,7 +63,7 @@ set movetype backstep = walkbk AND runbk AND walkcrbk
 //
 //	<state description>: relaxed, alert, combat
 //
-//	<movement type>: idle, idlecr, walk, walkbk, walkcr, walkcrbk, run, runbk, straferight, strafeleft, turnright, turnleft
+//	<movement type>: dead, idle, idlecr, walk, walkbk, walkcr, walkcrbk, run, runbk, straferight, strafeleft, turnright, turnleft
 //
 //	<condition type>: weapons, position, enemy_weapon, underwater, mounted, movetype, underhand, leaning
 //
@@ -91,6 +91,14 @@ STATE ALERT
 
 STATE COMBAT
 {
+	dead	
+	{
+		default
+		{
+			both dead_machinegun_1
+		}
+	}
+
 	idle
 	{
 		weapons Mortar AND Granatwerfer

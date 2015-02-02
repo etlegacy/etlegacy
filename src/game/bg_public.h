@@ -1737,21 +1737,23 @@ typedef enum
 	ANIM_MT_RUN,
 	ANIM_MT_RUNBK,
 	ANIM_MT_SWIM,
-	ANIM_MT_SWIMBK,
+	ANIM_MT_SWIMBK,         // 10
 	ANIM_MT_STRAFERIGHT,
 	ANIM_MT_STRAFELEFT,
 	ANIM_MT_TURNRIGHT,
 	ANIM_MT_TURNLEFT,
 	ANIM_MT_CLIMBUP,
 	ANIM_MT_CLIMBDOWN,
-	ANIM_MT_FALLEN,                 // dead, before limbo
+	ANIM_MT_FALLEN,         // dead, before limbo
 	ANIM_MT_PRONE,
 	ANIM_MT_PRONEBK,
-	ANIM_MT_IDLEPRONE,
+	ANIM_MT_IDLEPRONE,      // 20
 	ANIM_MT_FLAILING,
 	//ANIM_MT_TALK,
-	ANIM_MT_SNEAK,
-	ANIM_MT_AFTERBATTLE,            // just finished battle
+	//ANIM_MT_SNEAK,
+	//ANIM_MT_AFTERBATTLE,            // just finished battle
+
+	ANIM_MT_DEAD,
 
 	NUM_ANIM_MOVETYPES
 } scriptAnimMoveTypes_t;

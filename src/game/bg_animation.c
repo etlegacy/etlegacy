@@ -83,7 +83,7 @@ animStringItem_t animStateStr[] =
 
 static animStringItem_t animMoveTypesStr[] =
 {
-	{ "** UNUSED **", -1 },
+	{ "** UNUSED **", -1 }, // 0
 	{ "IDLE",         -1 },
 	{ "IDLECR",       -1 },
 	{ "WALK",         -1 },
@@ -93,7 +93,7 @@ static animStringItem_t animMoveTypesStr[] =
 	{ "RUN",          -1 },
 	{ "RUNBK",        -1 },
 	{ "SWIM",         -1 },
-	{ "SWIMBK",       -1 },
+	{ "SWIMBK",       -1 }, // 10
 	{ "STRAFERIGHT",  -1 },
 	{ "STRAFELEFT",   -1 },
 	{ "TURNRIGHT",    -1 },
@@ -103,8 +103,10 @@ static animStringItem_t animMoveTypesStr[] =
 	{ "FALLEN",       -1 }, // dead, before limbo
 	{ "PRONE",        -1 },
 	{ "PRONEBK",      -1 },
-	{ "IDLEPRONE",    -1 },
+	{ "IDLEPRONE",    -1 }, // 20
 	{ "FLAILING",     -1 },
+
+	{ "DEAD",         -1 },
 
 	{ NULL,           -1 },
 };
@@ -1442,7 +1444,7 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 	int                 state          = ps->aiState;
 
 	// Allow fallen movetype while dead
-	if ((ps->eFlags & EF_DEAD) && movetype != ANIM_MT_FALLEN && movetype != ANIM_MT_FLAILING)
+	if ((ps->eFlags & EF_DEAD) && movetype != ANIM_MT_FALLEN && movetype != ANIM_MT_FLAILING && movetype != ANIM_MT_DEAD)
 	{
 		return -1;
 	}
