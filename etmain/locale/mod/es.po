@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-27 18:05+0000\n"
+"PO-Revision-Date: 2015-02-03 18:52+0000\n"
 "Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1314,7 +1314,7 @@ msgstr "Equipo"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Fireteam"
-msgstr "Fireteam"
+msgstr "Escuadra"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
@@ -1868,19 +1868,19 @@ msgstr "Usa el control deslizante para incrementar o decrementar la sensibilidad
 
 #: etmain/ui/options_controls.menu:52
 msgid "Mouse Pitch:"
-msgstr ""
+msgstr "Mov. del Pto. de Mira:"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
-msgstr ""
+msgstr "0.015 (mínimo permitido)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr ""
+msgstr "0.022 (por defecto)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Movimiento arriba-abajo del punto de mira al moverse."
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
@@ -2703,41 +2703,41 @@ msgstr "Mejor CDV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
-msgstr ""
+msgstr "Distancia de la Corona:"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
-msgstr ""
+msgstr "Extrema"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Sets the maximum distance light corona is displayed"
-msgstr ""
+msgstr "Ajusta la distancia máxima a la que se muestra la corona."
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles:"
-msgstr ""
+msgstr "Partículas"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid ""
 "Toggles display of particle effects - e.g. explosions, some smoke effects"
-msgstr ""
+msgstr "Activa si se muestran o no los efectos de partículas - ej. explosiones, algunos efectos de humo"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
-msgstr ""
+msgstr "Tiempo de Marcas en la Pared:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls etc"
-msgstr ""
+msgstr "Duración de las marcas de las balas en la pared etc."
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
-msgstr ""
+msgstr "Parpadeo de la Sangre:"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Light"
-msgstr ""
+msgstr "Ligero"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
@@ -2745,361 +2745,361 @@ msgstr ""
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52
 msgid "Medium"
-msgstr ""
+msgstr "Medio"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Heavy"
-msgstr ""
+msgstr "Heavy"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Full"
-msgstr ""
+msgstr "Completo"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Red blood \"flash\" scale when receiving damage"
-msgstr ""
+msgstr "\"Parpadeo\" rojo de sangre al recibir daño"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood Splatter:"
-msgstr ""
+msgstr "Salpicadura de Sangre:"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood \"splatter\" transparency when taking damage from other players"
-msgstr ""
+msgstr "Transparencia de la \"salpicadura\" de sangre al recibir daño de otros jugadores"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Show Blood:"
-msgstr ""
+msgstr "Mostrar Sangre:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when player's are shot"
-msgstr ""
+msgstr "Activa mostrar el efecto de brote de sangre cuando le disparan al jugador"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
-msgstr ""
+msgstr "Efectos Atmosféricos:"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Draws atmospheric effects (snow/rain) on-screen"
-msgstr ""
+msgstr "Dibuja efectos atmosféricos (nieve/lluvia) en pantalla"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "CROSSHAIR"
-msgstr ""
+msgstr "PUNTO DE MIRA"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Crosshair Size:"
-msgstr ""
+msgstr "Tamaño:"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Tiny"
-msgstr ""
+msgstr "Diminuto"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Small"
-msgstr ""
+msgstr "Pequeño"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Large"
-msgstr ""
+msgstr "Grande"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Huge"
-msgstr ""
+msgstr "Gigante"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Sets the size of the displayed crosshair"
-msgstr ""
+msgstr "Ajusta el tamaño del punto de mira"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Crosshair Pulsing:"
-msgstr ""
+msgstr "Punto Pulsante:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
-msgstr ""
+msgstr "Activa  el cambio de tamaño del punto de mira al moverse/disparar"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
-msgstr ""
+msgstr "Info de Salud:"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid ""
 "Colors the crosshair based on current health (overrides crosshair color "
 "settings)"
-msgstr ""
+msgstr "Colorea el punto de mira dependiendo en la salud actual (anula los ajustes de color)"
 
 #: etmain/ui/options_customise_hud.menu:73
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Crosshair Name:"
-msgstr ""
+msgstr "Nombre en el Punto:"
 
 #: etmain/ui/options_customise_hud.menu:73 src/cgame/cg_scoreboard.c:846
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Coloured Name"
-msgstr ""
+msgstr "Nombre Coloreado"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Displays player name when the crosshair is over a teammate"
-msgstr ""
+msgstr "Muestra el nombre del jugador cuando el punto de mira está sobre un compañero de equipo"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Crosshair Info:"
-msgstr ""
+msgstr "Info del Punto"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class"
-msgstr ""
+msgstr "Clase"
 
 #: etmain/ui/options_customise_hud.menu:74 src/cgame/cg_info.c:783
 msgid "Rank"
-msgstr ""
+msgstr "Rango"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank"
-msgstr ""
+msgstr "Clase + Rango"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
-msgstr ""
+msgstr "Muestra la información del jugador cuando el punto de mira está sobre un compañero del equipo"
 
 #: etmain/ui/options_customise_hud.menu:86
 msgid "Set crosshair type"
-msgstr ""
+msgstr "Ajusta el tipo del punto de mira"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
-msgstr ""
+msgstr "Color Primario:"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "White"
-msgstr ""
+msgstr "Blanco"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Yellow"
-msgstr ""
+msgstr "Amarillo"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Red"
-msgstr ""
+msgstr "Rojo"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Green"
-msgstr ""
+msgstr "Verde"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Blue"
-msgstr ""
+msgstr "Azul"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Magenta"
-msgstr ""
+msgstr "Magenta"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Cyan"
-msgstr ""
+msgstr "Cian"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Orange"
-msgstr ""
+msgstr "Naranja"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Blue"
-msgstr ""
+msgstr "Celeste"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Blue"
-msgstr ""
+msgstr "Azul Medio"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Red"
-msgstr ""
+msgstr "Rojo Claro"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Red"
-msgstr ""
+msgstr "Rojo Medio"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Green"
-msgstr ""
+msgstr "Verde Claro"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Green"
-msgstr ""
+msgstr "Verde Medio"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Green"
-msgstr ""
+msgstr "Verde Oscuro"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Cyan"
-msgstr ""
+msgstr "Cian Medio"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Yellow"
-msgstr ""
+msgstr "Amarillo Medio"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Orange"
-msgstr ""
+msgstr "Naranja Medio"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Grey"
-msgstr ""
+msgstr "Gris Claro"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Grey"
-msgstr ""
+msgstr "Gris Medio"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Grey"
-msgstr ""
+msgstr "Gris Oscuro"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Black"
-msgstr ""
+msgstr "Negro"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Set the color for the primary crosshair"
-msgstr ""
+msgstr "Ajusta el color primario del punto de mira"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
-msgstr ""
+msgstr "Alfa Primario:"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Set the transparency level for the primary crosshair"
-msgstr ""
+msgstr "Ajusta el nivel de transparencia primario"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Secondary Color:"
-msgstr ""
+msgstr "Color Secundario"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Set the color for the secondary crosshair"
-msgstr ""
+msgstr "Ajusta el color para el punto de mira secundario"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Secondary Alpha:"
-msgstr ""
+msgstr "Alfa Secundario"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Set the transparency level for the secondary crosshair"
-msgstr ""
+msgstr "Ajusta la transparencia para el punto de mira secundario"
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
-msgstr ""
+msgstr "MOVIMIENTO"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
-msgstr ""
+msgstr "Balanceo Vertical:"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Enable/Disable the vertical bob effect when moving"
-msgstr ""
+msgstr "Activa o desactiva el balanceo vertical al moverse"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Bob pitch:"
-msgstr ""
+msgstr "Balanceo:"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
-msgstr ""
+msgstr "Activa o desactiva el efecto de balanceo (hacia delante/detrás) al moverse"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Bob roll:"
-msgstr ""
+msgstr "Balanceo horizontal:"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Enable/Disable the bob roll (left/right) effect when moving"
-msgstr ""
+msgstr "Activa o desactiva el balanceo (derecha/izquierda) al moverse"
 
 #: etmain/ui/options_customise_hud.menu:113
 msgid "FONTS"
-msgstr ""
+msgstr "FUENTES"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Fonts Size:"
-msgstr ""
+msgstr "Tamaño de Fuente:"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Sets the size of the in-game fonts"
-msgstr ""
+msgstr "Ajusta el tamaño de las fuentes en el juego"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Top Print:"
-msgstr ""
+msgstr "Mensaje superior:"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Set font size for Warmup message and Spectator label"
-msgstr ""
+msgstr "Ajusta el tamaño de la fuente para el mensaje de Calentamiento y la etiqueta de Espectador"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid "Side Print:"
-msgstr ""
+msgstr "Mensaje lateral:"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid ""
 "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
-msgstr ""
+msgstr "Ajusta el tamaño de la fuente para los mensajes del Limbo/Escuadra/Votos/Habilidades/Muertes"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Center Print:"
-msgstr ""
+msgstr "Mensaje Central:"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
-msgstr ""
+msgstr "Ajusta el tamaño de la fuente los mensajes Centrales/Objetivo/Premios por habilidad"
 
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Set font size for Crosshair Name label"
-msgstr ""
+msgstr "Ajusta el tamaño de fuente para la etiqueta del Nombre en el Punto de Mira"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "PopUpTimeStay:"
-msgstr ""
+msgstr "Tiempo de PopUp:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
-msgstr ""
+msgstr "Ajusta el tiempo que un mensaje emergente permanece visible"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "PopUpTimeFade:"
-msgstr ""
+msgstr "Desvanecer PopUp"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
-msgstr ""
+msgstr "Ajusta el tiempo en el que un mensaje emergente desaparece"
 
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
@@ -4462,31 +4462,31 @@ msgstr ""
 #: src/cgame/cg_consolecmds.c:1221
 #, c-format
 msgid "You will spawn as a %s %s with a %s."
-msgstr ""
+msgstr "Aparecerás como %s %s con %s."
 
 #: src/cgame/cg_consolecmds.c:1225
 #, c-format
 msgid "You will spawn as a %s %s with a %s and a %s."
-msgstr ""
+msgstr "Aparecerás como %s %s con %s y %s."
 
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
-msgstr ""
+msgstr "Última vez: %s"
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
-msgstr ""
+msgstr "Nunca"
 
 #: src/cgame/cg_debriefing.c:1341
 #, c-format
 msgid "%d maps ago"
-msgstr ""
+msgstr "%d mapas antes"
 
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
-msgstr ""
+msgstr "Votos Totales Acumulados: %d"
 
 #: src/cgame/cg_debriefing.c:2013 src/cgame/cg_debriefing.c:3202
 #: src/cgame/cg_scoreboard.c:723
@@ -4496,91 +4496,91 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
-msgstr ""
+msgstr "ACC:"
 
 #: src/cgame/cg_debriefing.c:2624
 msgid "HS:"
-msgstr ""
+msgstr "HS:"
 
 #: src/cgame/cg_debriefing.c:2659
 msgid "Time:"
-msgstr ""
+msgstr "Tiempo:"
 
 #: src/cgame/cg_debriefing.c:2671
 msgid "Medals:"
-msgstr ""
+msgstr "Medallas: "
 
 #: src/cgame/cg_debriefing.c:2690
 msgid "Rank:"
-msgstr ""
+msgstr "Rango: "
 
 #: src/cgame/cg_debriefing.c:2810
 msgid "^5TO TEAM"
-msgstr ""
+msgstr "^5AL EQUIPO"
 
 #: src/cgame/cg_debriefing.c:2813
 msgid "^3TO FIRETEAM"
-msgstr ""
+msgstr "^3A LA ESCUADRA"
 
 #: src/cgame/cg_debriefing.c:2816
 msgid "^2TO GLOBAL"
-msgstr ""
+msgstr "^2AL GLOBAL"
 
 #: src/cgame/cg_debriefing.c:3175
 msgid "ALLIES WIN!"
-msgstr ""
+msgstr "¡GANARON LOS ALIADOS!"
 
 #: src/cgame/cg_debriefing.c:3177
 msgid "AXIS WIN!"
-msgstr ""
+msgstr "¡GANÓ EL EJE!"
 
 #: src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
-msgstr ""
+msgstr "¡EMPATE!"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "¡LOS ALIADOS CONSIGUIERON MEJORAR EL TIEMPO!"
 
 #: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "¡LOS ALIADOS NO CONSIGUIERON MEJORAR EL TIEMPO!"
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "¡EL EJE CONSIGUIÓ MEJORAR EL TIEMPO!"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "¡EL EJE NO CONSIGUIÓ MEJORAR EL TIEMPO!"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
 msgid "CAMPAIGN STATUS: %s"
-msgstr ""
+msgstr "ESTADO DE LA CAMPAÑA: %s"
 
 #: src/cgame/cg_debriefing.c:3245
 msgid "SECS TO NEXT MAP"
-msgstr ""
+msgstr "SEG. PARA EL SIGUIENTE MAPA"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
-msgstr ""
+msgstr "Campaña: %s"
 
 #: src/cgame/cg_draw.c:382 src/cgame/cg_draw.c:391 src/cgame/cg_draw.c:407
 #, c-format
 msgid "a %s"
-msgstr ""
+msgstr "un %s"
 
 #: src/cgame/cg_draw.c:396
 msgid "an Objective"
-msgstr ""
+msgstr "un Objetivo"
 
 #: src/cgame/cg_draw.c:403
 #, c-format
 msgid "an %s"
-msgstr ""
+msgstr "un %s"
 
 #: src/cgame/cg_draw.c:1507
 msgid "Disguised Enemy!"
@@ -4593,174 +4593,174 @@ msgstr "ESPECTADOR"
 #: src/cgame/cg_draw.c:1744
 #, c-format
 msgid "File complaint against ^7%s^3 for team-killing?"
-msgstr ""
+msgstr "¿Guardar queja contra ^7%s^3 por matar a miembros del equipo?"
 
 #: src/cgame/cg_draw.c:1748 src/cgame/cg_draw.c:1762 src/cgame/cg_draw.c:1776
 #: src/cgame/cg_draw.c:1790 src/cgame/cg_draw.c:1804 src/cgame/cg_draw.c:1818
 #: src/cgame/cg_draw.c:1832
 #, c-format
 msgid "Press '%s' for YES, or '%s' for NO"
-msgstr ""
+msgstr "Pulsa '%s' para SI, o '%s' para NO"
 
 #: src/cgame/cg_draw.c:1758
 #, c-format
 msgid "Accept %s^3's application to join your fireteam?"
-msgstr ""
+msgstr "¿Aceptar la petición de %s^3 para unirse a tu escuadra?"
 
 #: src/cgame/cg_draw.c:1772
 #, c-format
 msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
-msgstr ""
+msgstr "¿Aceptar la petición de %s^3 para invitar a %s^3 a unirse a tu escuadra?"
 
 #: src/cgame/cg_draw.c:1786
 #, c-format
 msgid "Accept %s^3's invitation to join their fireteam?"
-msgstr ""
+msgstr "¿Aceptar la invitación de %s^3 para unirte a su escuadra?"
 
 #: src/cgame/cg_draw.c:1800
 msgid "Make Fireteam private?"
-msgstr ""
+msgstr "¿Hacer la escuadra privada?"
 
 #: src/cgame/cg_draw.c:1814
 msgid "Create a Fireteam?"
-msgstr ""
+msgstr "¿Crear una Escuadra?"
 
 #: src/cgame/cg_draw.c:1896
 #, c-format
 msgid "VOTE(%i): %s"
-msgstr ""
+msgstr "VOTAR(%i): %s"
 
 #: src/cgame/cg_draw.c:1902
 msgid "Cannot vote as Spectator"
-msgstr ""
+msgstr "No puedes votar como Espectador"
 
 #: src/cgame/cg_draw.c:1906
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
-msgstr ""
+msgstr "SI(%s):%i, NO(%s):%i"
 
 #: src/cgame/cg_draw.c:1913
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr ""
+msgstr "HAS VOTADO EN: %s"
 
 #: src/cgame/cg_draw.c:1918
 #, c-format
 msgid "Y:%i, N:%i"
-msgstr ""
+msgstr "S:%i, N:%i"
 
 #: src/cgame/cg_draw.c:1928
 msgid "Your complaint has been filed"
-msgstr ""
+msgstr "Tu queja se ha archivado"
 
 #: src/cgame/cg_draw.c:1934
 msgid "Complaint dismissed"
-msgstr ""
+msgstr "Queja rechazada"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
-msgstr ""
+msgstr "No te puedes quejar contra el Server Host"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
-msgstr ""
+msgstr "Te ha matado Server Host"
 
 #: src/cgame/cg_draw.c:1952
 msgid "You were team-killed by a bot."
-msgstr ""
+msgstr "Te ha matado un bot de tu equipo."
 
 #: src/cgame/cg_draw.c:1962
 msgid "Your application has been submitted"
-msgstr ""
+msgstr "Tu petición se ha enviado"
 
 #: src/cgame/cg_draw.c:1969
 msgid "Your application failed"
-msgstr ""
+msgstr "Han denegado tu petición"
 
 #: src/cgame/cg_draw.c:1976
 msgid "Your application has been approved"
-msgstr ""
+msgstr "Han aprobado tu petición"
 
 #: src/cgame/cg_draw.c:1983
 msgid "Your application reply has been sent"
-msgstr ""
+msgstr "Tu respuesta a la petición se ha enviado"
 
 #: src/cgame/cg_draw.c:1993
 msgid "Your proposition has been submitted"
-msgstr ""
+msgstr "Tu propocisión se ha enviado"
 
 #: src/cgame/cg_draw.c:2000
 msgid "Your proposition was rejected"
-msgstr ""
+msgstr "Han denegado tu proposición"
 
 #: src/cgame/cg_draw.c:2007
 msgid "Your proposition was accepted"
-msgstr ""
+msgstr "Han aceptado tu proposición"
 
 #: src/cgame/cg_draw.c:2014
 msgid "Your proposition reply has been sent"
-msgstr ""
+msgstr "Tu respuesta a la proposición se ha enviado"
 
 #: src/cgame/cg_draw.c:2024
 msgid "Your invitation has been submitted"
-msgstr ""
+msgstr "Tu invitación se ha enviado"
 
 #: src/cgame/cg_draw.c:2031
 msgid "Your invitation was rejected"
-msgstr ""
+msgstr "Han rechazado tu invitación"
 
 #: src/cgame/cg_draw.c:2038
 msgid "Your invitation was accepted"
-msgstr ""
+msgstr "Han aceptado tu invitación"
 
 #: src/cgame/cg_draw.c:2045
 msgid "Your invitation reply has been sent"
-msgstr ""
+msgstr "Tu respuesta a la invitación se ha enviado"
 
 #: src/cgame/cg_draw.c:2058
 msgid "Response Sent"
-msgstr ""
+msgstr "Respuesta enviada"
 
 #: src/cgame/cg_draw.c:2152
 #, c-format
 msgid "Press %s to open Limbo Menu"
-msgstr ""
+msgstr "Pulsa %s para abrir el Menú del Limbo"
 
 #: src/cgame/cg_draw.c:2157
 #, c-format
 msgid "Press %s to follow next player"
-msgstr ""
+msgstr "Pulsa %s para seguir al siguiente jugador"
 
 #: src/cgame/cg_draw.c:2162
 #, c-format
 msgid "Press %s to follow previous player"
-msgstr ""
+msgstr "Pulsa %s para seguir al jugador anterior"
 
 #: src/cgame/cg_draw.c:2168
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr ""
+msgstr "Pulsa %s para %s el modo multivista"
 
 #: src/cgame/cg_draw.c:2168
 msgid "disable"
-msgstr ""
+msgstr "desactivar"
 
 #: src/cgame/cg_draw.c:2168
 msgid "activate"
-msgstr ""
+msgstr "activar"
 
 #: src/cgame/cg_draw.c:2231
 msgid "You are wounded and waiting for a medic."
-msgstr ""
+msgstr "Estás herido y esperando a un médico."
 
 #: src/cgame/cg_draw.c:2240
 #, c-format
 msgid "Press %s to go into reinforcement queue."
-msgstr ""
+msgstr "Pulsa %s para ir a la cola de los refuerzos."
 
 #: src/cgame/cg_draw.c:2251
 msgid "No more reinforcements this round."
-msgstr ""
+msgstr "No hay más refuerzos para esta ronda."
 
 #: src/cgame/cg_draw.c:2259 src/cgame/cg_draw.c:2347
 #, c-format
@@ -4788,42 +4788,42 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2362 src/cgame/cg_draw.c:2388
 msgid "Following"
-msgstr ""
+msgstr "Siguiendo"
 
 #: src/cgame/cg_draw.c:2429
 #, c-format
 msgid "^3Config: ^7%s^7"
-msgstr ""
+msgstr "^3Config: ^7%s^7"
 
 #: src/cgame/cg_draw.c:2435
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
-msgstr ""
+msgstr "^3CALENTAMIENTO:^7 Esperando a ^2%i^7 %s"
 
 #: src/cgame/cg_draw.c:2435
 msgid "player"
-msgstr ""
+msgstr "jugador"
 
 #: src/cgame/cg_draw.c:2435
 msgid "players"
-msgstr ""
+msgstr "jugadores"
 
 #: src/cgame/cg_draw.c:2448
 msgid "Type ^3\\ready^7 in the console to start"
-msgstr ""
+msgstr "Escribe ^3\\ready^7 en la consola para empezar"
 
 #: src/cgame/cg_draw.c:2452
 #, c-format
 msgid "Press ^3%s^7 to start"
-msgstr ""
+msgstr "Pulsa ^3%s^7 para empezar"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in:"
-msgstr ""
+msgstr "^3CALENTAMIENTO:^7 La partida empieza en:"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
-msgstr ""
+msgstr "^3¡PREPÁRATE PARA EL COMBATE!\n"
 
 #: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
@@ -4837,11 +4837,11 @@ msgstr ""
 #: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
 #: src/cgame/cg_scoreboard.c:178
 msgid "WARMUP"
-msgstr ""
+msgstr "CALENTAMIENTO"
 
 #: src/cgame/cg_draw_hud.c:2052
 msgid "Connection Interrupted"
-msgstr ""
+msgstr "Conexión Interrumpida"
 
 #: src/cgame/cg_event.c:271
 msgid "You swapped places with"
@@ -4849,11 +4849,11 @@ msgstr ""
 
 #: src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
-msgstr ""
+msgstr "Has matado a ^1MIEMBRO DEL EQUIPO^7"
 
 #: src/cgame/cg_event.c:280
 msgid "You killed"
-msgstr ""
+msgstr "Has matado a"
 
 #: src/cgame/cg_event.c:293
 msgid "^7swapped places with"
@@ -4861,339 +4861,339 @@ msgstr ""
 
 #: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
-msgstr ""
+msgstr "^7mató a ^1MIEMBRO DEL EQUIPO^7"
 
 #: src/cgame/cg_event.c:302
 msgid "^7killed"
-msgstr ""
+msgstr "^7mató a"
 
 #: src/cgame/cg_event.c:566
 msgid "died"
-msgstr ""
+msgstr "murió"
 
 #: src/cgame/cg_event.c:614
 #, c-format
 msgid "Picked up %s"
-msgstr ""
+msgstr "Has cogido %s"
 
 #: src/cgame/cg_fireteamoverlay.c:475
 #, c-format
 msgid "Private Fireteam: %s"
-msgstr ""
+msgstr "Escuadra Privada: %s"
 
 #: src/cgame/cg_fireteamoverlay.c:479
 #, c-format
 msgid "Fireteam: %s"
-msgstr ""
+msgstr "Escuadra: %s"
 
 #: src/cgame/cg_fireteams.c:344
 msgid "FIRETEAMS"
-msgstr ""
+msgstr "ESCUADRAS"
 
 #: src/cgame/cg_fireteams.c:347
 msgid "JOIN"
-msgstr ""
+msgstr "UNIRSE"
 
 #: src/cgame/cg_fireteams.c:350
 msgid "PROPOSE"
-msgstr ""
+msgstr "PROPONER"
 
 #: src/cgame/cg_fireteams.c:356
 msgid "INVITE"
-msgstr ""
+msgstr "INVITAR"
 
 #: src/cgame/cg_fireteams.c:365
 msgid "SET ADMIN"
-msgstr ""
+msgstr "PONER ADMIN"
 
 #: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
 #: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 #: src/cgame/cg_fireteams.c:717 src/cgame/cg_fireteams.c:721
 #: src/cgame/cg_fireteams.c:778 src/cgame/cg_fireteams.c:782
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 #: src/cgame/cg_info.c:718
 msgid "PLAYER STATS"
-msgstr ""
+msgstr "ESTADISTICAS DE JUGADOR"
 
 #: src/cgame/cg_info.c:729 src/cgame/cg_info.c:931
 msgid "Weapon"
-msgstr ""
+msgstr "Arma"
 
 #: src/cgame/cg_info.c:731 src/cgame/cg_info.c:933
 msgid "Accuracy"
-msgstr ""
+msgstr "Precisión"
 
 #: src/cgame/cg_info.c:733 src/cgame/cg_info.c:935
 msgid "Hits / Shots"
-msgstr ""
+msgstr "Aciertos / Disparos"
 
 #: src/cgame/cg_info.c:735 src/cgame/cg_info.c:937
 msgid "Kills"
-msgstr ""
+msgstr "Matados"
 
 #: src/cgame/cg_info.c:737
 msgid "Deaths"
-msgstr ""
+msgstr "Muertes"
 
 #: src/cgame/cg_info.c:739
 msgid "Headshots"
-msgstr ""
+msgstr "Disparos en la Cabeza"
 
 #: src/cgame/cg_info.c:748
 msgid "No weapon info available."
-msgstr ""
+msgstr "No hay información de las armas"
 
 #: src/cgame/cg_info.c:799
 msgid "Skills"
-msgstr ""
+msgstr "Habilidades"
 
 #: src/cgame/cg_info.c:801
 msgid "Level"
-msgstr ""
+msgstr "Nivel"
 
 #: src/cgame/cg_info.c:803
 msgid "XP / Next Level"
-msgstr ""
+msgstr "XP / Siguiente Nivel"
 
 #: src/cgame/cg_info.c:807
 msgid "Medals"
-msgstr ""
+msgstr "Medallas"
 
 #: src/cgame/cg_info.c:816
 msgid "No skills acquired!"
-msgstr ""
+msgstr "¡No has obtenido más nivel!"
 
 #: src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
-msgstr ""
+msgstr "PRECISIONES \"TOP SHOT\""
 
 #: src/cgame/cg_info.c:939
 msgid "Player"
-msgstr ""
+msgstr "Jugador"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
-msgstr ""
+msgstr "No hay información disponible de este arma."
 
 #: src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
-msgstr ""
+msgstr "OBJETIVOS"
 
 #: src/cgame/cg_info.c:1421
 msgid "DEMO STATUS"
-msgstr ""
+msgstr "ESTADO DEL DEMO"
 
 #: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
-msgstr ""
+msgstr "CONTROLES DEL DEMO"
 
 #: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
-msgstr ""
+msgstr "^nRETROCESO ^mayuda on/off"
 
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
 msgid "You will spawn as an %s %s with a %s."
-msgstr ""
+msgstr "Aparecerás como un %s %s con %s."
 
 #: src/cgame/cg_limbopanel.c:1228
 #, c-format
 msgid "You will spawn as an %s %s with a %s and a %s."
-msgstr ""
+msgstr "Aparecerás como un %s %s con %s y %s."
 
 #: src/cgame/cg_loadpanel.c:251
 msgid "Single Player"
-msgstr ""
+msgstr "Un Jugador"
 
 #: src/cgame/cg_loadpanel.c:253
 msgid "Co-op"
-msgstr ""
+msgstr "Co-op"
 
 #: src/cgame/cg_main.c:935
 msgid "User"
-msgstr ""
+msgstr "El usuario"
 
 #: src/cgame/cg_main.c:935
 msgid "is not on the server"
-msgstr ""
+msgstr "no está en el servidor"
 
 #: src/cgame/cg_players.c:309
 #, c-format
 msgid "Promoted to rank %s!"
-msgstr ""
+msgstr "¡Promocionado al rango %s!"
 
 #: src/cgame/cg_players.c:359
 #, c-format
 msgid "Increased %s skill to level %i!"
-msgstr ""
+msgstr "¡Incrementado la habilidad %s al nivel %i!"
 
 #: src/cgame/cg_players.c:361
 #, c-format
 msgid "You have been rewarded with %s"
-msgstr ""
+msgstr "Has sido premiado con %s"
 
 #: src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
-msgstr ""
+msgstr "Colocada en %s."
 
 #: src/cgame/cg_popupmessages.c:682
 #, c-format
 msgid "Defused at %s."
-msgstr ""
+msgstr "Desactivada en %s."
 
 #: src/cgame/cg_popupmessages.c:691
 #, c-format
 msgid "%s has been constructed."
-msgstr ""
+msgstr "Se ha construido %s."
 
 #: src/cgame/cg_popupmessages.c:698
 #, c-format
 msgid "%s has been damaged."
-msgstr ""
+msgstr "Se ha dañado %s."
 
 #: src/cgame/cg_popupmessages.c:700
 #, c-format
 msgid "%s has been destroyed."
-msgstr ""
+msgstr "Se ha destruido %s."
 
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "%sSpotted by ^7%s%s at %s"
-msgstr ""
+msgstr "%sEncontrada por ^7%s%s en %s"
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "%sSpotted by ^7%s"
-msgstr ""
+msgstr "%sEncontrada por ^7%s"
 
 #: src/cgame/cg_popupmessages.c:733
 #, c-format
 msgid "%s have stolen %s!"
-msgstr ""
+msgstr "%s han robado %s!"
 
 #: src/cgame/cg_popupmessages.c:735
 #, c-format
 msgid "%s have returned %s!"
-msgstr ""
+msgstr "%s han devuelto %s!"
 
 #: src/cgame/cg_popupmessages.c:758
 #, c-format
 msgid "%s^7 has joined the %s^7!"
-msgstr ""
+msgstr "%s^7 se ha unido a %s^7!"
 
 #: src/cgame/cg_popupmessages.c:761
 #, c-format
 msgid "%s^7 disconnected"
-msgstr ""
+msgstr "%s^7 se ha desconectado"
 
 #: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
 #: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
 msgid "MISSION TIME:"
-msgstr ""
+msgstr "TIEMPO DE MISIÓN:"
 
 #: src/cgame/cg_scoreboard.c:184
 msgid "GAME STOPPED"
-msgstr ""
+msgstr "JUEGO PARADO"
 
 #: src/cgame/cg_scoreboard.c:188
 msgid "SUDDEN DEATH"
-msgstr ""
+msgstr "MUERTE SÚBITA"
 
 #: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
-msgstr ""
+msgstr "LA PARTIDA EMPIEZA EN:"
 
 #: src/cgame/cg_scoreboard.c:205
 #, c-format
 msgid "WAITING ON ^2%i ^9%s"
-msgstr ""
+msgstr "ESPERANDO A ^2%i ^9%s"
 
 #: src/cgame/cg_scoreboard.c:229 src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
-msgstr ""
+msgstr "TIEMPO DE REFUERZOS:"
 
 #: src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
-msgstr ""
+msgstr "RONDA"
 
 #: src/cgame/cg_scoreboard.c:248
 msgid "SCORE"
-msgstr ""
+msgstr "PUNTUACIÓN"
 
 #: src/cgame/cg_scoreboard.c:254 src/cgame/cg_scoreboard.c:260
 #, c-format
 msgid "MAP %i of %i"
-msgstr ""
+msgstr "MAPA %i of %i"
 
 #: src/cgame/cg_scoreboard.c:273
 #, c-format
 msgid "Config: ^7%s^7"
-msgstr ""
+msgstr "Config: ^7%s^7"
 
 #: src/cgame/cg_scoreboard.c:451 src/cgame/cg_scoreboard.c:642
 msgid "^3CONNECTING"
-msgstr ""
+msgstr "^3CONECTANDO"
 
 #: src/cgame/cg_scoreboard.c:455 src/cgame/cg_scoreboard.c:646
 msgid "^3SPECTATOR"
-msgstr ""
+msgstr "^3ESPECTADOR"
 
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
-msgstr ""
+msgstr "EJE"
 
 #: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
-msgstr ""
+msgstr "PRIMERA MUERTE"
 
 #: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:832
 msgid "ALLIES"
-msgstr ""
+msgstr "ALIADOS"
 
 #: src/cgame/cg_scoreboard.c:855
 msgid "C R"
-msgstr ""
+msgstr "C R"
 
 #: src/cgame/cg_scoreboard.c:860
 msgid "Score"
-msgstr ""
+msgstr "Puntos"
 
 #: src/cgame/cg_scoreboard.c:865
 msgid "XP"
-msgstr ""
+msgstr "XP"
 
 #: src/cgame/cg_scoreboard.c:869
 msgid "Ping"
-msgstr ""
+msgstr "Ping"
 
 #: src/cgame/cg_servercmds.c:387
 msgid "^1FIGHT!\n"
-msgstr ""
+msgstr "^1¡A LUCHAR!\n"
 
 #: src/cgame/cg_servercmds.c:421
 msgid "Auto Pick"
-msgstr ""
+msgstr "Elegir Automáticamente"
 
 #: src/cgame/cg_servercmds.c:1954
 #, c-format
 msgid "Damage Given: %-6d  Team Damage Given: %d"
-msgstr ""
+msgstr "Daño Hecho: %-6d Daño Hecho al Equipo: %d"
 
 #: src/cgame/cg_servercmds.c:1955
 #, c-format
 msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
-msgstr ""
+msgstr "Daño Recibido: %-6d Daño Recibido del Equipo: %d"
 
 #: src/cgame/cg_servercmds.c:1957
 #, c-format
 msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
-msgstr ""
+msgstr "Suicidios: %-2d Muertes de Compañeros: %-2d Precisión: %-4.1f HS%%: %-4.1f"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
@@ -5205,35 +5205,35 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:2047
 msgid "^3No weapon info available.\n"
-msgstr ""
+msgstr "^3No hay información disponible del arma.\n"
 
 #: src/cgame/cg_servercmds.c:2153
 msgid "  Medals"
-msgstr ""
+msgstr "Medallas"
 
 #: src/cgame/cg_servercmds.c:2165
 msgid "^3No skills acquired!\n"
-msgstr ""
+msgstr "^3¡No se han obtenido habilidades!\n"
 
 #: src/cgame/cg_servercmds.c:2344
 msgid "Map"
-msgstr ""
+msgstr "Mapa"
 
 #: src/cgame/cg_servercmds.c:2366
 msgid "Could not create logfile"
-msgstr ""
+msgstr "No se pudo crear el log"
 
 #: src/cgame/cg_servercmds.c:2903
 msgid "^3Server Restarting"
-msgstr ""
+msgstr "^3Servidor Reiniciándose"
 
 #: src/ui/ui_loadpanel.c:192
 msgid "DOWNLOADING..."
-msgstr ""
+msgstr "DESCARGANDO..."
 
 #: src/ui/ui_loadpanel.c:196
 msgid "CONNECTING..."
-msgstr ""
+msgstr "CONECTANDO..."
 
 #: src/ui/ui_loadpanel.c:322
 #, c-format
@@ -5242,117 +5242,117 @@ msgid ""
 " %s^*\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Conectando a:\n %s^*\n\n%s"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
-msgstr ""
+msgstr "Esperando conexión... %i"
 
 #: src/ui/ui_loadpanel.c:341
 #, c-format
 msgid "Awaiting challenge...%i"
-msgstr ""
+msgstr "Esperando partida... %i"
 
 #: src/ui/ui_loadpanel.c:351
 msgid "Awaiting gamestate..."
-msgstr ""
+msgstr "Esperando estado de la partida..."
 
 #: src/ui/ui_main.c:2401 src/ui/ui_main.c:2642
 msgid "Waiting for new key... Press ESCAPE to cancel"
-msgstr ""
+msgstr "Esperando un código nuevo... Pulsa ESC para cancelar"
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr ""
+msgstr "Pulsa INTRO o CLICK para cambiar, pulsa RETROCESO para borrar"
 
 #: src/ui/ui_main.c:2543
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
-msgstr ""
+msgstr "Obteniendo info de %d servidores (ESC para cancelar)"
 
 #: src/ui/ui_main.c:2547
 msgid "Waiting for response from Master Server"
-msgstr ""
+msgstr "Esperando la respuesta del Master Server"
 
 #: src/ui/ui_main.c:2555
 #, c-format
 msgid "Refresh Time: %s"
-msgstr ""
+msgstr "Tiempo de Actualización: %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
-msgstr ""
+msgstr "No se puede mostrar la Información del Servidor (no encontrado, o es un servidor local)\n"
 
 #: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
 msgid "Favorite already in list\n"
-msgstr ""
+msgstr "El Favorito ya está en la lista\n"
 
 #: src/ui/ui_main.c:4348 src/ui/ui_main.c:4402 src/ui/ui_main.c:4437
 msgid "Favorite list full\n"
-msgstr ""
+msgstr "La lista de Favoritos está llena\n"
 
 #: src/ui/ui_main.c:4353 src/ui/ui_main.c:4407 src/ui/ui_main.c:4442
 #, c-format
 msgid "Added favorite server %s\n"
-msgstr ""
+msgstr "Añadido el servidor %s a los favoritos\n"
 
 #: src/ui/ui_main.c:5874
 #, c-format
 msgid "^3Filtered/Total: %04i/%04i"
-msgstr ""
+msgstr "^3Filtrados/Totales: %04i/%04i"
 
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
 "^3Check your filters - no servers found!              Filtered/Total: "
 "%04i/%04i"
-msgstr ""
+msgstr "^3Comprueba tus filtros - ¡no se han encontrado servidores! Filtrados/Totales: %04i/%04i"
 
 #: src/ui/ui_main.c:5883
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr ""
+msgstr "^1Sin Conexión o Master caído - ¡no se han encontrado servidores! Filtrados/Totales: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format
 msgid "Server is full, redirect to: %s\n"
-msgstr ""
+msgstr "Servidor lleno, redireccionar a: %s\n"
 
 #: src/ui/ui_main.c:8295
 #, c-format
 msgid "%d servers listed in browser with %d players.\n"
-msgstr ""
+msgstr "%d servidores mostrados con %d jugadores.\n"
 
 #: src/ui/ui_main.c:8301
 #, c-format
 msgid "%d servers not listed (filtered out by game browser settings)\n"
-msgstr ""
+msgstr "%d servidores no mostrados (filtrados por las preferencias)\n"
 
 #: src/ui/ui_main.c:8429
 #, c-format
 msgid "Can't find campaign '%s'\n"
-msgstr ""
+msgstr "Campaña '%s' no encontrada\n"
 
 #: src/ui/ui_main.c:8435
 #, c-format
 msgid "Corrupted campaign '%s'\n"
-msgstr ""
+msgstr "Campaña '%s' corrompida\n"
 
 #: src/ui/ui_main.c:8466
 #, c-format
 msgid "%i campaigns found:\n"
-msgstr ""
+msgstr "%i campañas encontradas:\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
-msgstr ""
+msgstr "No se han encontrado campañas.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
-msgstr ""
+msgstr "No se han encontrado servidores favoritos."
 
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
-msgstr ""
+msgstr "Todos los favoritos eliminados."
