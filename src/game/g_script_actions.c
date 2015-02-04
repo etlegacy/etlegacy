@@ -2033,6 +2033,13 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 				G_Error("G_ScriptAction_PlayAnim: playanim has RATE parameter without an actual rate specified\n");
 			}
 			rate = atoi(token);
+
+			// avoid div/0
+			if (rate == 0)
+			{
+				rate = 20;
+				G_Printf("G_ScriptAction_PlayAnim: RATE parameter can't be <= 0 - default value 20 set!\n");
+			}
 		}
 
 		if (!looping)
