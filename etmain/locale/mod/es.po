@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-03 18:52+0000\n"
+"PO-Revision-Date: 2015-02-05 18:13+0000\n"
 "Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -2775,7 +2775,7 @@ msgstr "Mostrar Sangre:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when player's are shot"
-msgstr "Activa mostrar el efecto de brote de sangre cuando le disparan al jugador"
+msgstr "Activa el efecto \"brote de sangre\" cuando le disparan al jugador"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
@@ -3909,61 +3909,61 @@ msgstr "MENSAJE"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:83 etmain/ui/wm_quickmessageAlt.menu:83
 msgid "1. Statements"
-msgstr ""
+msgstr "1. Declaraciones"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:84 etmain/ui/wm_quickmessageAlt.menu:84
 msgid "2. Requests"
-msgstr ""
+msgstr "2. Solicitudes"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:85 etmain/ui/wm_quickmessageAlt.menu:85
 msgid "3. Commands"
-msgstr ""
+msgstr "3. Órdenes"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:86 etmain/ui/wm_quickmessageAlt.menu:86
 msgid "4. Talk"
-msgstr ""
+msgstr "4. Hablar"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:87 etmain/ui/wm_quickmessageAlt.menu:87
 msgid "5. Global"
-msgstr ""
+msgstr "5. Global"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:88 etmain/ui/wm_quickmessageAlt.menu:88
 msgid "6. Function"
-msgstr ""
+msgstr "6. Función"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:89 etmain/ui/wm_quickmessageAlt.menu:89
 msgid "7. Objectives"
-msgstr ""
+msgstr "7. Objetivos"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:95 etmain/ui/wm_quickmessageAlt.menu:95
 msgid "1. Path Cleared."
-msgstr ""
+msgstr "1. Via Despejada."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:96 etmain/ui/wm_quickmessageAlt.menu:96
 msgid "2. Enemy Weak!"
-msgstr ""
+msgstr "2. ¡Enemigo Débil!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:97 etmain/ui/wm_quickmessageAlt.menu:97
 msgid "3. All Clear"
-msgstr ""
+msgstr "3. Todo Despejado"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:98 etmain/ui/wm_quickmessageAlt.menu:98
 msgid "4. Incoming"
-msgstr ""
+msgstr "4. ¡Que vienen!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:99 etmain/ui/wm_quickmessageAlt.menu:99
 msgid "5. Fire In The Hole!"
-msgstr ""
+msgstr "5. Fire In The Hole!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:100
 #: etmain/ui/wm_quickmessageAlt.menu:100
 msgid "6. I'm Defending."
-msgstr ""
+msgstr "6. Estoy Defendiendo."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:101
 #: etmain/ui/wm_quickmessageAlt.menu:101
 msgid "7. I'm Attacking."
-msgstr ""
+msgstr "7. Estoy Atacando."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:102
 #: etmain/ui/wm_quickmessageAlt.menu:102
@@ -3973,77 +3973,77 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:103
 #: etmain/ui/wm_quickmessageAlt.menu:103
 msgid "9. Mines Cleared"
-msgstr ""
+msgstr "9. Minas Desactivadas"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:104
 #: etmain/ui/wm_quickmessageAlt.menu:104
 msgid "0. Enemy Disguised"
-msgstr ""
+msgstr "0. Enemigo Disfrazado"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:110
 #: etmain/ui/wm_quickmessageAlt.menu:110
 msgid "1. Need Medic!"
-msgstr ""
+msgstr "1. ¡Necesito un Médico!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:111
 #: etmain/ui/wm_quickmessageAlt.menu:111
 msgid "2. Need Ammo!"
-msgstr ""
+msgstr "2. ¡Necesito Munición!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:112
 #: etmain/ui/wm_quickmessageAlt.menu:112
 msgid "3. Need Backup!"
-msgstr ""
+msgstr "3. ¡Necesito Cobertura!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:113
 #: etmain/ui/wm_quickmessageAlt.menu:113
 msgid "4. Need Engineer!"
-msgstr ""
+msgstr "4. ¡Necesito un Ingeniero!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:114
 #: etmain/ui/wm_quickmessageAlt.menu:114
 msgid "5. Cover Me!"
-msgstr ""
+msgstr "5. ¡Cubridme!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:115
 #: etmain/ui/wm_quickmessageAlt.menu:115
 msgid "6. Hold Fire!"
-msgstr ""
+msgstr "6. ¡Alto al fuego!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:116
 #: etmain/ui/wm_quickmessageAlt.menu:116
 msgid "7. Where To?"
-msgstr ""
+msgstr "7. ¿A Dónde?"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:117
 #: etmain/ui/wm_quickmessageAlt.menu:117
 msgid "8. Need Covert Ops!"
-msgstr ""
+msgstr "8. ¡Necesitamos un Covert Ops!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:123
 #: etmain/ui/wm_quickmessageAlt.menu:123
 msgid "1. Follow Me!"
-msgstr ""
+msgstr "1. ¡Seguidme!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:124
 #: etmain/ui/wm_quickmessageAlt.menu:124
 msgid "2. Let's Go!"
-msgstr ""
+msgstr "2. ¡Vamos!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:125
 #: etmain/ui/wm_quickmessageAlt.menu:125
 msgid "3. Move!"
-msgstr ""
+msgstr "3. ¡Muévete!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:126
 #: etmain/ui/wm_quickmessageAlt.menu:126
 msgid "4. Clear The Path!"
-msgstr ""
+msgstr "4. ¡Despejad el Camino!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:127
 #: etmain/ui/wm_quickmessageAlt.menu:127
 msgid "5. Defend Objective!"
-msgstr ""
+msgstr "5. ¡Defended el Objetivo!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:128
 #: etmain/ui/wm_quickmessageAlt.menu:128
