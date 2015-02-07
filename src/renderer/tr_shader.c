@@ -1678,7 +1678,7 @@ static qboolean ParseShader(char **text)
 		// stage definition
 		else if (token[0] == '{')
 		{
-			if (s >= MAX_SHADER_STAGES - 1)
+			if (s >= MAX_SHADER_STAGES)
 			{
 				Ren_Warning("WARNING: too many stages in shader %s (max is %i)\n", shader.name, MAX_SHADER_STAGES);
 				return qfalse;
