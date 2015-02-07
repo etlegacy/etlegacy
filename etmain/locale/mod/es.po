@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-05 18:13+0000\n"
+"PO-Revision-Date: 2015-02-07 22:29+0000\n"
 "Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1200,7 +1200,7 @@ msgstr "Limita el número de vidas del jugador por cada ronda"
 
 #: etmain/ui/hostgame.menu:97
 msgid "Weapon Restrictions"
-msgstr "Restricciones de Armas"
+msgstr "Armas Restringidas"
 
 #: etmain/ui/hostgame.menu:98
 msgid ""
@@ -2194,7 +2194,7 @@ msgstr "Mira"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr "Cambio de Arma para Enfocar:"
+msgstr "Cambio de Arma Enfoca:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
@@ -2211,7 +2211,7 @@ msgstr "Los controles de cambio de arma servirán para enfocar mientras se usa l
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
-msgstr "Nivel de Enfoque por Defecto:"
+msgstr "Enfoque por Defecto:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
@@ -2269,7 +2269,7 @@ msgstr "Usar teclas alfabéticas o numéricas para enviar mensajes de radio"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
-msgstr "Duración del icono del Chat:"
+msgstr "Duración del Icono Chat:"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
@@ -3519,7 +3519,7 @@ msgstr "¿Comprobar automáticamente las actualizaciones?"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
-msgstr "Obtener los Archivos que Faltan del Servidor:"
+msgstr "Descargar los Archivos que Faltan:"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
