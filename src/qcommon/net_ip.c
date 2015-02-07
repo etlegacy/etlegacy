@@ -915,30 +915,33 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 
 //=============================================================================
 
-/*
-==================
-Sys_IsLANAddress
-
-LAN clients will have their rate var ignored
-==================
-*/
+/**
+ * @brief	LAN clients will have their rate var ignored
+ *
+ *          IPv4: A LAN client is loopback adapter (localhost/127.0.0.1),
+ *                a computer of the network this computer is member of
+ *                or private network from RFC1918:
+ *          10.0.0.0        -   10.255.255.255  (10/8 prefix)
+ *	        172.16.0.0      -   172.31.255.255  (172.16/12 prefix)
+ *			192.168.0.0     -   192.168.255.255 (192.168/16 prefix)
+ *
+ *          IPv6:               FIXME: docu
+ *
+ *          This function expects adresses of type NA_IP_4 & 6 ONLY!
+ *          other types (also NA_BOT) will return qfalse
+ */
 qboolean Sys_IsLANAddress(netadr_t adr)
 {
 	int      index, run, addrsize;
 	qboolean differed;
 	byte     *compareadr, *comparemask, *compareip;
 
-	if (adr.type == NA_LOOPBACK)
+	switch (adr.type)
 	{
+	case NA_LOOPBACK:
 		return qtrue;
-	}
-
-	if (adr.type == NA_IP)
-	{
+	case NA_IP:
 		// RFC1918:
-		// 10.0.0.0        -   10.255.255.255  (10/8 prefix)
-		// 172.16.0.0      -   172.31.255.255  (172.16/12 prefix)
-		// 192.168.0.0     -   192.168.255.255 (192.168/16 prefix)
 		if (adr.ip[0] == 10)
 		{
 			return qtrue;
@@ -956,10 +959,9 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 		{
 			return qtrue;
 		}
-	}
+		break;
+	case NA_IP6:
 #ifdef FEATURE_IPV6
-	else if (adr.type == NA_IP6)
-	{
 		if (adr.ip6[0] == 0xfe && (adr.ip6[1] & 0xc0) == 0x80)
 		{
 			return qtrue;
@@ -968,8 +970,11 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 		{
 			return qtrue;
 		}
-	}
 #endif
+		break;
+	default: // drop broadcast & other unwanted types
+		return qfalse;
+	}
 
 	// Now compare against the networks this computer is member of.
 	for (index = 0; index < numIP; index++)
@@ -984,9 +989,9 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 
 				addrsize = sizeof(adr.ip);
 			}
-#ifdef FEATURE_IPV6
 			else
 			{
+#ifdef FEATURE_IPV6
 				// TODO? should we check the scope_id here?
 
 				compareip   = (byte *) &((struct sockaddr_in6 *) &localIP[index].addr)->sin6_addr;
@@ -994,8 +999,10 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 				compareadr  = adr.ip6;
 
 				addrsize = sizeof(adr.ip6);
-			}
+#else
+				return qfalse; // NA_IP6 disabled
 #endif
+			}
 
 			differed = qfalse;
 			for (run = 0; run < addrsize; run++)
