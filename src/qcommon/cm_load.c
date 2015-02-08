@@ -659,7 +659,7 @@ void CM_LoadMap(const char *name, qboolean clientload, int *checksum)
 	// load the file
 	length = FS_ReadFile(name, &buf.v);
 
-	if (!buf.i)
+	if (!buf.i || length <= 0)
 	{
 		Com_Error(ERR_DROP, "CM_LoadMap: Couldn't load %s", name);
 	}
