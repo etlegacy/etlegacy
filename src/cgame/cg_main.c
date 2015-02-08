@@ -2761,7 +2761,7 @@ void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2))
 #ifdef __AROS__
 #include <dll.h>
 
-void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...));
+void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...));
 
 dll_tExportSymbol DLL_ExportSymbols[] =
 {

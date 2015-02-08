@@ -3350,7 +3350,7 @@ qboolean CG_LimboPanel_WeaponIsDisabled(int index)
 	return CG_LimboPanel_RealWeaponIsDisabled(weapon);
 }
 
-// Dens: originates from q_shared.c
+// originates from q_shared.c
 // Convert a string to an integer, with the same behavior that the engine converts
 // cvars to their integer representation:
 // - Integer is obtained from concatenating all the integers in the string,
@@ -3430,7 +3430,8 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	count  = CG_LimboPanel_TeamCount(-1);
 	wcount = CG_LimboPanel_TeamCount(weapon);
 
-	if (IS_HEAVY_WEAPON(weapon)) // why this check again?
+	// heavy weapon restriction
+	if (IS_HEAVY_WEAPON(weapon))
 	{
 		if (wcount >= ceil(count * cgs.weaponRestrictions))
 		{
@@ -3438,6 +3439,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 	}
 
+	// single weapon restrictions
 	switch (weapon)
 	{
 	case WP_PANZERFAUST:
