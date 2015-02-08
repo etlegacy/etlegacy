@@ -970,8 +970,10 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 		{
 			return qtrue;
 		}
-#endif
 		break;
+#else
+		return qfalse; // NA_IP6 disabled
+#endif
 	default: // drop broadcast & other unwanted types
 		return qfalse;
 	}
@@ -999,8 +1001,6 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 				compareadr  = adr.ip6;
 
 				addrsize = sizeof(adr.ip6);
-#else
-				return qfalse; // NA_IP6 disabled
 #endif
 			}
 
