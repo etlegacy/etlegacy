@@ -4,14 +4,14 @@
 # 
 # Translators:
 # Calinou, 2015
-# Thomas DEBESSE <illwieckz@users.noreply.github.com>, 2015
+# Thomas DEBESSE <dev@illwieckz.net>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-18 10:29+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2015-02-07 10:39+0000\n"
+"Last-Translator: Thomas DEBESSE <dev@illwieckz.net>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -166,11 +166,11 @@ msgstr "VOIX"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr "Voix des soldats Alliés / de l'Axe"
+msgstr "Voix des soldats Alliés / de l’Axe"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr "Voix du commandant de l'Axe"
+msgstr "Voix du commandant de l’Axe"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
@@ -359,7 +359,7 @@ msgstr "Directeur artistique"
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
-msgstr "Artiste animateu"
+msgstr "Artiste animateur"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
@@ -469,7 +469,7 @@ msgstr "GÉNÉRAL"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Minimum Ping:"
-msgstr "Latence minimale :"
+msgstr "Latence minimale :"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
@@ -477,7 +477,7 @@ msgstr "Définir la latence minimale permet d'exclure les personnes ayant une la
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
-msgstr "Latence maximal :"
+msgstr "Latence maximal :"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
@@ -544,7 +544,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr ""
+msgstr "Joueurs minimum :"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
@@ -723,7 +723,7 @@ msgstr "DERNIER HOMME EN VIE"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr "Manches par partie en LMS :"
+msgstr "Manches par partie en LMS :"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
@@ -731,7 +731,7 @@ msgstr "Forcer le nombre de manches de LMS par parti"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr "Parties par carte en LMS :"
+msgstr "Parties par carte en LMS :"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
@@ -759,7 +759,7 @@ msgstr "ADMINISTRATION"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
-msgstr "Serveur « pur » :"
+msgstr "Serveur « pur » :"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid ""
@@ -778,7 +778,7 @@ msgstr "Définit le mot de passe requis pour se connecter au serveur"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
-msgstr "Mot de passe arbitre :"
+msgstr "Mot de passe arbitre :"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid ""
@@ -788,7 +788,7 @@ msgstr "Mot de passe à utiliser afin de pouvoir se servir de la commande « ref
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
-msgstr "Mot de passe RCON :"
+msgstr "Mot de passe RCON :"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid ""
@@ -802,7 +802,7 @@ msgstr "VOTES"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr "Votes maximum par joueur :"
+msgstr "Votes maximum par joueur :"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
@@ -810,11 +810,11 @@ msgstr "Définit le nombre maximum de votes qu'un joueur peut effectuer lors d'u
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
-msgstr "Majorité qualifiée :"
+msgstr "Majorité qualifiée :"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr "Définit le pourcentage minimum requis afin qu'un vote soit accepté"
+msgstr "Définit le pourcentage minimum requis afin qu’un vote soit accepté"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -822,7 +822,7 @@ msgstr "PERMETTRE LES VOTES"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
-msgstr "Configuration du jeu :"
+msgstr "Configuration du jeu :"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
@@ -840,7 +840,7 @@ msgstr "Autoriser les joueurs à voter afin de changer le mode de jeu"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr "Expluser un joueur :"
+msgstr "Expulser un joueur :"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
@@ -848,7 +848,7 @@ msgstr "Autoriser les joueurs à voter pour expluser d'autres joueurs"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
-msgstr "Carte :"
+msgstr "Carte :"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
@@ -864,7 +864,7 @@ msgstr "Autoriser les joueurs à voter pour une réinitialisation de la manche"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr "Rendre les spectateurs muets :"
+msgstr "Rendre les spectateurs muets :"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
@@ -872,7 +872,7 @@ msgstr "Autoriser les joueurs à voter afin de rendre les spectateurs muets"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
-msgstr "Carte suivante :"
+msgstr "Carte suivante :"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
@@ -880,7 +880,7 @@ msgstr "Autoriser les joueurs à voter pour la prochaine campagne ou cart"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr "Équipes équilibrées :"
+msgstr "Équipes équilibrées :"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
@@ -888,7 +888,7 @@ msgstr "Autoriser les joueurs à voter pour forcer l'équilibrage des équipes"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
-msgstr "Arbitre :"
+msgstr "Arbitre :"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
@@ -904,7 +904,7 @@ msgstr "Autoriser les joueurs à voter pour mélanger les équipes"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
-msgstr "Échanger les équipes :"
+msgstr "Échanger les équipes :"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
@@ -920,7 +920,7 @@ msgstr "Autoriser les joueurs à voter pour activer ou désactiver les tirs frat
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
-msgstr "Limite de temps :"
+msgstr "Limite de temps :"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
@@ -932,7 +932,7 @@ msgstr "Autoriser les joueurs à voter pour activer ou désactiver les dégâts 
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
-msgstr "Anti-lag :"
+msgstr "Anti-lag :"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
@@ -944,7 +944,7 @@ msgstr "MESSAGE DU JOUR"
 
 #: etmain/ui/hostgame_advanced.menu:110
 msgid "Line 1:"
-msgstr "Ligne 1 :"
+msgstr "Ligne 1 :"
 
 #: etmain/ui/hostgame_advanced.menu:110 etmain/ui/hostgame_advanced.menu:121
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
@@ -954,19 +954,19 @@ msgstr "Définit le message que les joueurs verront en se connectant au serveur"
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
-msgstr "Ligne 2 :"
+msgstr "Ligne 2 :"
 
 #: etmain/ui/hostgame_advanced.menu:132
 msgid "Line 3:"
-msgstr "Ligne 3 :"
+msgstr "Ligne 3 :"
 
 #: etmain/ui/hostgame_advanced.menu:143
 msgid "Line 4:"
-msgstr "Ligne 4 :"
+msgstr "Ligne 4 :"
 
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Line 5:"
-msgstr "Ligne 5 :"
+msgstr "Ligne 5 :"
 
 #: etmain/ui/hostgame_advanced.menu:157
 msgid "DOWNLOAD"
@@ -974,7 +974,7 @@ msgstr "TÉLÉCHARGEMENT"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Client Downloads:"
-msgstr "Téléchargements des clients :"
+msgstr "Téléchargements des clients :"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
@@ -982,7 +982,7 @@ msgstr "Autoriser les joueurs à télécharger les fichiers manquants depuis le 
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr "Vitesse de téléchargement maximale :"
+msgstr "Vitesse de téléchargement maximale :"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
@@ -1000,7 +1000,7 @@ msgstr "Rediriger les joueurs avec des fichiers manquants vers un autre serveur"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
-msgstr "URL de base :"
+msgstr "URL de base :"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
@@ -1041,11 +1041,11 @@ msgstr "Voulez-vous vraiment démarrer"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:58
 msgid "a Dedicated Server?"
-msgstr "un serveur dédié ?"
+msgstr "un serveur dédié ?"
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
-msgstr "HÉBERGER UNE PARTIE : ÉTENDU"
+msgstr "HÉBERGER UNE PARTIE : ÉTENDU"
 
 #: etmain/ui/hostgame_extended.menu:31 etmain/ui/ingame_vote.menu:86
 #: etmain/ui/ingame_vote.menu:87 etmain/ui/ingame_vote_misc.menu:38
@@ -1056,7 +1056,7 @@ msgstr "DIVERS"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Country Flags:"
-msgstr "Drapeaux des pays :"
+msgstr "Drapeaux des pays :"
 
 #: etmain/ui/hostgame_extended.menu:32 etmain/ui/hostgame.menu:42
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
@@ -1536,11 +1536,11 @@ msgstr "Limite de temps :"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
-msgstr ""
+msgstr "Spécifier une limite de durée à voter"
 
 #: etmain/ui/ingame_vote_misc.menu:78
 msgid "Select the game type to vote on"
-msgstr ""
+msgstr "Choisir un type de jeu à voter"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enable or disable warmup damage"
@@ -3474,11 +3474,11 @@ msgstr "Rend le jeu muet ou non lorsque la fenêtre est minimisée"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
-msgstr ""
+msgstr "Couper le son à la perte de focus :"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr ""
+msgstr "Activer ou désactiver le son quand la fenêtre n’a pas le focus"
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
@@ -3520,11 +3520,11 @@ msgstr "Vérifie automatiquement les mises à jou"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
-msgstr ""
+msgstr "Récupérer les fichiers manquants depuis le serveur :"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
-msgstr ""
+msgstr "Télécharger les fichiers manquants quand ils sont disponibles ?"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3532,7 +3532,7 @@ msgstr "Utiliser les téléchargements HTTP/FTP :"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
-msgstr ""
+msgstr "Activer ou désactiver les téléchargements http/ftp"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
@@ -3599,18 +3599,18 @@ msgstr "Affiche uniquement les serveurs de jeu offrant cd mod"
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
 msgid ""
 "Includes or excludes servers with desired map name from the server list"
-msgstr ""
+msgstr "Inclure ou exclure les serveurs de la liste de serveur avec le nom de la carte désirée"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr ""
+msgstr "Filtre affectant les serveurs avec le nom de carte"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr ""
+msgstr "Filtre désactivé"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
@@ -3764,17 +3764,17 @@ msgstr "Sélectionnez les réglages vidéo initiaux, ils peuvent être changés 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr ""
+msgstr "Choisissez votre résolution vidéo préférée, en cas d’incertitude laissez par défaut"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Utilisez ce curseur pour configurer la sensibilité de votre souris"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
 "Choose invert mouse if you prefer flight-simulator style mouse pitch "
 "controls"
-msgstr ""
+msgstr "Choisissez d’inverser la souris si vous préférez contrôler le tangage à la souris à la manière d’un simulateur de vol"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
@@ -3799,7 +3799,7 @@ msgstr "CRÉER"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr ""
+msgstr "Choisissez d’inverser la souris si vous préférez le contrôle de tangage à la manière d’un simulateur de vol"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
