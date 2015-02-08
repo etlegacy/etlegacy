@@ -144,7 +144,6 @@ void SV_DirectConnect(netadr_t from)
 	char                *password;
 	int                 startIndex;
 	char                *denied;
-	qboolean            secondRun = qfalse;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
@@ -309,18 +308,11 @@ void SV_DirectConnect(netadr_t from)
 		}
 
 		// if the server is full, we prefer human players over bots
-		if ((startIndex < sv_privateClients->integer || secondRun) &&
-		    cl->netchan.remoteAddress.type == NA_BOT)
+		if (startIndex < sv_privateClients->integer && cl->netchan.remoteAddress.type == NA_BOT)
 		{
 			SV_DropClient(&svs.clients[i], "humans over robots!");
 			newcl = &svs.clients[i];
 			break;
-		}
-
-		if (i + 1 == sv_maxclients->integer)
-		{
-			secondRun = qtrue;
-			i         = startIndex;
 		}
 	}
 
