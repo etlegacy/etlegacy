@@ -1612,10 +1612,11 @@ FS_AllowDeletion
 */
 qboolean FS_AllowDeletion(char *filename)
 {
-	// for safety, only allow deletion from the save, profiles and demo directory
+	// for safety, only allow deletion from the save, profiles, demo directory and pid file
 	if (Q_strncmp(filename, "save/", 5) != 0 &&
 	    Q_strncmp(filename, "profiles/", 9) != 0 &&
-	    Q_strncmp(filename, "demos/", 6) != 0)
+	    Q_strncmp(filename, "demos/", 6) != 0 &&
+	    !strstr(filename, ".pid")) // PID file
 	{
 		return qfalse;
 	}
@@ -1774,7 +1775,7 @@ int FS_Delete(char *filename)
 
 	if (stat == 1)
 	{
-		return(FS_DeleteDir(filename, qtrue, qtrue));
+		return FS_DeleteDir(filename, qtrue, qtrue);
 	}
 	else
 	{
@@ -1970,6 +1971,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 	if (fsh[f].streamed)
 	{
 		int r;
+
 		fsh[f].streamed = qfalse;
 		r               = FS_Seek(f, offset, origin);
 		fsh[f].streamed = qtrue;
