@@ -3442,9 +3442,18 @@ void Com_Shutdown(qboolean badProfile)
 	// FIXME: common defines more cmds - remove all see Cmd_AddCommand()
 
 	// delete pid file
-	if (!badProfile && FS_FileExists(Cvar_VariableString("com_pidfile")))
+	if (!badProfile && FS_FileExists(com_pidfile->string))
 	{
-		FS_Delete(Cvar_VariableString("com_pidfile"));
+		if (FS_Delete(com_pidfile->string) == 0)
+		{
+			Com_Printf("Com_Shutdown warning - can't delete PID file %s%c%s%c%s\n", Cvar_VariableString("fs_homepath"),
+			           PATH_SEP, Cvar_VariableString("fs_game"),
+			           PATH_SEP, com_pidfile->string);
+		}
+		else
+		{
+			Com_Printf("PID file removed.\n");
+		}
 	}
 
 	if (logfile)
