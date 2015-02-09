@@ -161,10 +161,6 @@ void G_voteHelp(gentity_t *ent, qboolean fShowVote)
 	{
 		rows++;
 	}
-	if (rows < 0)
-	{
-		return;
-	}
 
 	for (i = 0; i < rows; i++)
 	{
