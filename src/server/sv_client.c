@@ -298,6 +298,7 @@ void SV_DirectConnect(netadr_t from)
 	}
 
 	newcl = NULL;
+	// check ALL slots for CS_FREE first
 	for (i = startIndex; i < sv_maxclients->integer ; i++)
 	{
 		cl = &svs.clients[i];
@@ -306,21 +307,31 @@ void SV_DirectConnect(netadr_t from)
 			newcl = cl;
 			break;
 		}
+	}
 
-		// if the server is full, we prefer human players over bots
-		if (startIndex < sv_privateClients->integer && cl->netchan.remoteAddress.type == NA_BOT)
+	// if there is no free slot avalable we prefer human players over bots
+	// do a 2nd run and kick bots above startIndex slot
+	if (!newcl)
+	{
+		for (i = startIndex; i < sv_maxclients->integer ; i++)
 		{
-			SV_DropClient(&svs.clients[i], "humans over robots!");
-			newcl = &svs.clients[i];
-			break;
+			cl = &svs.clients[i];
+			if (cl->netchan.remoteAddress.type == NA_BOT)
+			{
+				SV_DropClient(&svs.clients[i], "humans over robots!");
+				newcl = &svs.clients[i];
+				break;
+			}
 		}
 	}
+	// note: keep consistency - at this point bots might be still connected to private slots when a human player w/o password connects
+	// but if we use a private slot for players w/o password the slot is no longer available for reserved players (see startIndex)
 
 	if (!newcl)
 	{
 		if (NET_IsLocalAddress(from))
 		{
-			Com_Error(ERR_FATAL, "server is full on local connect");
+			Com_Error(ERR_FATAL, "server is full on local connect"); // clarify: why do we have to abort here?
 		}
 		else
 		{
