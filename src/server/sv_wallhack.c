@@ -101,9 +101,11 @@ static void predict_clip_velocity(vec3_t in, vec3_t normal, vec3_t out)
 #define MAX_CLIP_PLANES   5
 #define Z_ADJUST          1
 
+#define NUMBUMPS          4
+
 static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t *tr, vec3_t result)
 {
-	int    count, numbumps = 4, numplanes = 0, i, j, k;
+	int    count, numplanes = 0, i, j, k;
 	float  d, time_left = frametime, into;
 	vec3_t planes[MAX_CLIP_PLANES],
 	       velocity, origin, clipVelocity, endVelocity, endClipVelocity, dir, end;
@@ -115,7 +117,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 	VectorCopy(tr->trDelta, velocity);
 	VectorCopy(tr->trDelta, endVelocity);
 
-	for (count = 0; count < numbumps; count++)
+	for (count = 0; count < NUMBUMPS; count++)
 	{
 		// calculate position we are trying to move to
 		VectorMA(origin, time_left, velocity, end);
@@ -154,11 +156,13 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 		// out along it, which fixes some epsilon issues with
 		// non-axial planes
 		for (i = 0; i < numplanes; i++)
+		{
 			if (DotProduct(trace.plane.normal, planes[i]) > 0.99)
 			{
 				VectorAdd(trace.plane.normal, velocity, velocity);
 				break;
 			}
+		}
 
 		if (i < numplanes)
 		{
