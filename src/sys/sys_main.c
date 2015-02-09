@@ -166,13 +166,21 @@ qboolean Sys_WritePIDFile(void)
 		    return qfalse;
 		}
 		*/
-		FS_Delete(com_pidfile->string); // stale pid from previous run
+		if (FS_Delete(com_pidfile->string) == 0) // stale pid from previous run
+		{
+			Com_Printf("WARNING: unable to delete old PID file!\n");
+		}
 	}
 
 	f = FS_FOpenFileWrite(com_pidfile->string);
 	if (f < 0)
 	{
+		Com_Printf("WARNING: can't write PID file!\n");
 		return qfalse;
+	}
+	else
+	{
+		Com_Printf("Creating PID file '%s'\n", com_pidfile->string);
 	}
 
 	FS_Printf(f, "%d", com_pid->integer);
@@ -200,21 +208,42 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 	CloseLibrary(DynLoadBase);
 #endif
 
-	if (exitCode < 2)
+	// fail safe: delete PID file on abnormal exit
+	// FIXME: normal exit pid deletion is done in Com_Shutdown
+	//        why do we have 2 locations for this job?
+	//        ... is this Com or Sys code?
+	if (exitCode > 0)
 	{
 		// Normal exit
-		const char *pidfile = Cvar_VariableString("com_pidfile");
-
 		// com_pidfile does not yet exist on early exit
-		if (pidfile[0] != '\0')
+		if (com_pidfile->string[0] != '\0')
 		{
-			if (FS_FileExists(pidfile))
+			if (FS_FileExists(com_pidfile->string))
 			{
 				// FIXME: delete even when outside of homepath
-				remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
-				          PATH_SEP, Cvar_VariableString("fs_game"),
-				          PATH_SEP, com_pidfile->string));
+				if (remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
+				              PATH_SEP, Cvar_VariableString("fs_game"),
+				              PATH_SEP, com_pidfile->string)) != 0)
+				{
+					Com_Printf("Sys_Exit warning - can't delete PID file %s%c%s%c%s\n", Cvar_VariableString("fs_homepath"),
+					           PATH_SEP, Cvar_VariableString("fs_game"),
+					           PATH_SEP, com_pidfile->string);
+				}
+				else
+				{
+					Com_Printf("PID file removed.\n");
+				}
 			}
+			else
+			{
+				Com_Printf("Sys_Exit warning - PID file doesn't exist %s%c%s%c%s\n", Cvar_VariableString("fs_homepath"),
+				           PATH_SEP, Cvar_VariableString("fs_game"),
+				           PATH_SEP, com_pidfile->string);
+			}
+		}
+		else
+		{
+			Com_Printf("Sys_Exit warning no PID file found to remove\n");
 		}
 	}
 
@@ -222,6 +251,7 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 
 	exit(exitCode);
 }
+
 
 /*
 =================
