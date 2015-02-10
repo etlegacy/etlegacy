@@ -35,7 +35,7 @@
 
 #include "q_shared.h"
 #include "qcommon.h"
-#include "unzip.h"
+#include "../minizip/unzip.h"
 #ifdef _WIN32
 #define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
 #elif defined (__MORPHOS__)

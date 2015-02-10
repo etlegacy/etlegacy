@@ -7,6 +7,11 @@ FILE(GLOB COMMON_SRC
 	"src/qcommon/*.h"
 )
 
+FILE(GLOB MINIZIP_SRC
+	"src/minizip/*.c"
+	"src/minizip/*.h"
+)
+
 FILE(GLOB ZLIB_SRC
 	"src/zlib/*.c"
 	"src/zlib/*.h"

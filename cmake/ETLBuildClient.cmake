@@ -1,5 +1,5 @@
 if(WIN32)
-	add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	add_executable(etl WIN32 ${COMMON_SRC} ${MINIZIP_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 elseif(APPLE)
 	# These are vars used in the misc/Info.plist template file
 	# See set_target_properties( ... MACOSX_BUNDLE_INFO_PLIST ...)
@@ -10,16 +10,16 @@ elseif(APPLE)
 	set(MACOSX_BUNDLE_BUNDLE_NAME            "ETLegacy")
 	set(MACOSX_BUNDLE_SHORT_VERSION_STRING   "${ETL_CMAKE_VERSION_SHORT}")
 	set(MACOSX_BUNDLE_COPYRIGHT              "etlegacy.com")
-	
+
 	# Specify files to be copied into the .app's Resources folder
 	set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/misc")
 	set(MACOSX_RESOURCES "${RESOURCES_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
 	set_source_files_properties(${CMAKE_SOURCE_DIR}/misc/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-	
+
 	# Create the .app bundle
-	add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
+	add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${MINIZIP_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
 else()
-	add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	add_executable(etl ${COMMON_SRC} ${MINIZIP_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 endif(WIN32)
 
 if(BUNDLED_SDL)
