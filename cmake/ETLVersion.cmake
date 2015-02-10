@@ -100,8 +100,6 @@ endif()
 
 # Mod version
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)
-# PK3 version
-string(REPLACE "-" "_" ETL_CMAKE_VERSION_PK3 ${ETL_CMAKE_VERSION})
 # This is for NSIS
 string(REPLACE "," "." ETL_CMAKE_PROD_VERSIONDOT ${ETL_CMAKE_PROD_VERSION})
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h" @ONLY)

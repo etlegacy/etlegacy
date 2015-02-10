@@ -66,7 +66,7 @@ endif()
 # etl_bin.pk3
 #
 if(BUILD_MOD_PK3)
-	add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin_${ETL_CMAKE_VERSION_PK3}.pk3)
+	add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3)
 
 	if(APPLE)
 		set(ZIP_FILE_LIST cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*)
@@ -75,13 +75,13 @@ if(BUILD_MOD_PK3)
 	endif()
 
 	add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_PK3}.pk3
-		COMMAND ${ZIP_EXECUTABLE} etl_bin_${ETL_CMAKE_VERSION_PK3}.pk3 ${ZIP_FILE_LIST}
+		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3
+		COMMAND ${ZIP_EXECUTABLE} etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3 ${ZIP_FILE_LIST}
 		DEPENDS cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy/
 	)
 
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_PK3}.pk3
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 	)
 endif()
