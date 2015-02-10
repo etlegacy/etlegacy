@@ -500,7 +500,7 @@ cvarTable_t cvarTable[] =
 	{ &cl_waveoffset,            "cl_waveoffset",            "0",     CVAR_ROM                     },
 	{ &cg_recording_statusline,  "cg_recording_statusline",  "9",     CVAR_ARCHIVE                 },
 
-	{ &cg_hitSounds,             "cg_hitSounds",             "0",     CVAR_ARCHIVE                 },
+	{ &cg_hitSounds,             "cg_hitSounds",             "1",     CVAR_ARCHIVE                 },
 	{ &cg_locations,             "cg_locations",             "7",     CVAR_ARCHIVE                 },
 
 	{ &cg_spawnTimer_set,        "cg_spawnTimer_set",        "-1",    CVAR_TEMP                    },
