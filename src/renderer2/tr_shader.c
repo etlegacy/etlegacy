@@ -3165,7 +3165,7 @@ surfaceparm <name>
 */
 static qboolean SurfaceParm(const char *token)
 {
-	int numInfoParms = sizeof(infoParms) / sizeof(infoParms[0]);
+	int numInfoParms = ARRAY_LEN(infoParms);
 	int i;
 
 	for (i = 0; i < numInfoParms; i++)
