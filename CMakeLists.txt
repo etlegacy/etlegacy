@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------
-# ET:Legacy, http://www.etlegacy.com
+# ET: Legacy, http://www.etlegacy.com
 # - Wolfenstein: Enemy Territory 2.60b compatible client/server
 # - based on raedwulf-et: https://bitbucket.org/tcmreastwood/raedwulf-et
 #

@@ -197,7 +197,7 @@ msgid "Original Soundtrack by Bill Brown."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
-msgid "DEVELOPED BY ET:LEGACY TEAM"
+msgid "DEVELOPED BY ET: LEGACY TEAM"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:85
@@ -287,7 +287,7 @@ msgid ""
 msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:66
-msgid "ET:LEGACY HALL OF FAME"
+msgid "ET: LEGACY HALL OF FAME"
 msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:98
@@ -3779,7 +3779,7 @@ msgid "^1LET'S KEEP ET ALIVE!"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:126
-msgid "Thank you for installing ET:Legacy"
+msgid "Thank you for installing ET: Legacy"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:130
