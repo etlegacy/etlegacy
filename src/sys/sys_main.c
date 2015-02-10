@@ -216,18 +216,21 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 	{
 		// Normal exit
 		// com_pidfile does not yet exist on early exit
-		if (com_pidfile->string[0] != '\0')
+		if (Cvar_VariableString("com_pidfile")[0] != '\0')
 		{
-			if (FS_FileExists(com_pidfile->string))
+			if (FS_FileExists(Cvar_VariableString("com_pidfile")))
 			{
 				// FIXME: delete even when outside of homepath
 				if (remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
 				              PATH_SEP, Cvar_VariableString("fs_game"),
-				              PATH_SEP, com_pidfile->string)) != 0)
+				              PATH_SEP, Cvar_VariableString("com_pidfile"))) != 0)
 				{
+					// This is thrown when game game crashes before PID file is created
+					// f.e. when pak files are missing
+					// FIXME: try to create PID file earlier
 					Com_Printf("Sys_Exit warning - can't delete PID file %s%c%s%c%s\n", Cvar_VariableString("fs_homepath"),
 					           PATH_SEP, Cvar_VariableString("fs_game"),
-					           PATH_SEP, com_pidfile->string);
+					           PATH_SEP, Cvar_VariableString("com_pidfile"));
 				}
 				else
 				{
@@ -238,7 +241,7 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 			{
 				Com_Printf("Sys_Exit warning - PID file doesn't exist %s%c%s%c%s\n", Cvar_VariableString("fs_homepath"),
 				           PATH_SEP, Cvar_VariableString("fs_game"),
-				           PATH_SEP, com_pidfile->string);
+				           PATH_SEP, Cvar_VariableString("com_pidfile"));
 			}
 		}
 		else
