@@ -818,6 +818,10 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.time_axis,                 FIELD_INT,         0),
 	_et_gclient_addfield(sess.time_allies,               FIELD_INT,         0),
 	_et_gclient_addfield(sess.time_played,               FIELD_INT,         0),
+#ifdef FEATURE_RATING
+	_et_gclient_addfield(sess.mu,                        FIELD_FLOAT,       0),
+	_et_gclient_addfield(sess.sigma,                     FIELD_FLOAT,       0),
+#endif
 	_et_gclient_addfield(sess.uci,                       FIELD_INT,         0),
 
 	_et_gclient_addfield(sess.aWeaponStats,              FIELD_WEAPONSTAT,  0),

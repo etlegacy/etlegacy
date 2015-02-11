@@ -186,6 +186,23 @@ void CG_objectivesUp_f(void)
 
 void CG_ScoresDown_f(void)
 {
+#ifdef FEATURE_RATING
+	if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
+	{
+		int sb = cg_scoreboard.integer + 1;
+
+		// cycle scoreboard type with a quick tap of +scores
+		if (sb < SCOREBOARD_XP || sb > SCOREBOARD_SR)
+		{
+			sb = SCOREBOARD_XP;
+		}
+
+		trap_Cvar_Set("cg_scoreboard", va("%i", sb));
+		cg.scoreToggleTime = cg.time;
+	}
+	cg.scoresDownTime = cg.time;
+#endif
+
 	if (cg.scoresRequestTime + 2000 < cg.time)
 	{
 		// the scores are more than two seconds out of data,

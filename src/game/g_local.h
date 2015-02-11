@@ -589,6 +589,11 @@ typedef struct
 	int time_axis;
 	int time_allies;
 	int time_played;
+#ifdef FEATURE_RATING
+	// skill rating
+	float mu;
+	float sigma;
+#endif
 
 	// MAPVOTE
 	int mapVotedFor[3];
@@ -1803,6 +1808,10 @@ extern vmCvar_t sv_fps;
 extern vmCvar_t g_skipCorrection;
 
 extern vmCvar_t g_extendedNames;
+
+#ifdef FEATURE_RATING
+extern vmCvar_t g_skillRating;
+#endif
 
 typedef struct GeoIPTag
 {

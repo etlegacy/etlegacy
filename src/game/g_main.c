@@ -334,6 +334,10 @@ vmCvar_t g_skipCorrection;
 
 vmCvar_t g_extendedNames;
 
+#ifdef FEATURE_RATING
+vmCvar_t g_skillRating;
+#endif
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -605,6 +609,9 @@ cvarTable_t gameCvarTable[] =
 	{ &sv_fps,                              "sv_fps",                              "20",                         CVAR_SYSTEMINFO,                                 0, qfalse},
 	{ &g_skipCorrection,                    "g_skipCorrection",                    "1",                          0 },
 	{ &g_extendedNames,                     "g_extendedNames",                     "1",                          0 },
+#ifdef FEATURE_RATING
+	{ &g_skillRating,                       "g_skillRating",                       "1",                          0 },
+#endif
 };
 
 // made static to avoid aliasing

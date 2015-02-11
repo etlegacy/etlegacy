@@ -221,6 +221,31 @@ void G_PlaySound_Cmd(void)
 	}
 }
 
+#ifdef FEATURE_RATING
+static void G_SendSkillRating(gentity_t *ent)
+{
+	int       i;
+	gclient_t *cl;
+	char      buff[1021] = { "sr " };
+
+	// FIXME: win probability
+	//Q_strcat(buff, sizeof(buff), va("%.1f ", (level.axisProb * 100.0f)));
+	//Q_strcat(buff, sizeof(buff), va("%.1f ", (level.alliesProb * 100.0f)));
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		cl = &level.clients[level.sortedClients[i]];
+		Q_strcat(buff, sizeof(buff), va("%.3f ", cl->sess.mu));
+		Q_strcat(buff, sizeof(buff), va("%.3f ", cl->sess.sigma));
+	}
+
+	if (strlen(buff) > 3)
+	{
+		buff[strlen(buff) - 1] = '\0';
+	}
+	trap_SendServerCommand(ent - g_entities, va("%s\n", buff));
+}
+#endif
+
 /*
 ==================
 G_SendScore_Add
@@ -329,6 +354,13 @@ void G_SendScore(gentity_t *ent)
 
 	*buffer      = '\0';
 	*startbuffer = '\0';
+
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer)
+	{
+		G_SendSkillRating(ent);
+	}
+#endif
 
 	Q_strncpyz(startbuffer, va(
 	               "sc0 %i %i",

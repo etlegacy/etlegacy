@@ -340,6 +340,9 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	vec4_t       hcolor;
 	clientInfo_t *ci;
 	char         buf[64];
+#ifdef FEATURE_RATING
+	float        rating;
+#endif
 
 	if (y + 16 >= 470)
 	{
@@ -492,7 +495,21 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	tempx += INFO_CLASS_WIDTH;
 
+#ifdef FEATURE_RATING
+	if (cg_scoreboard.integer == SCOREBOARD_XP)
+	{
+		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	}
+	else if (cg_scoreboard.integer == SCOREBOARD_SR)
+	{
+		rating = score->mu - 3 * score->sigma;
+
+		CG_Text_Paint_Ext(tempx + 8, y, 0.24, 0.28, colorWhite, va("^7%5.2f", rating < 0 ? 0.f : rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	}
+#else
 	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+#endif
+
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -550,6 +567,9 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	clientInfo_t *ci;
 	int          i, j;    // To draw medals
 	char         buf[64]; // To draw medals
+#ifdef FEATURE_RATING
+	float        rating;
+#endif
 
 	if (y + 12 >= 470)
 	{
@@ -681,7 +701,20 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	tempx += INFO_CLASS_WIDTH + 6;
 
+#ifdef FEATURE_RATING
+	if (cg_scoreboard.integer == SCOREBOARD_XP)
+	{
+		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	}
+	else if (cg_scoreboard.integer == SCOREBOARD_SR)
+	{
+		rating = score->mu - 3 * score->sigma;
+
+		CG_Text_Paint_Ext(tempx + 8, y, 0.20, 0.25, colorWhite, va("^7%5.2f", rating < 0 ? 0.f : rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	}
+#else
 	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+#endif
 
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
@@ -844,13 +877,45 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	}
 	else
 	{
+#ifdef FEATURE_RATING
+		char *s;
+#endif
+
 		if (team == TEAM_AXIS)
 		{
+#ifdef FEATURE_RATING
+			if (cg_scoreboard.integer == SCOREBOARD_XP)
+			{
+				s = va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+			}
+			else if (cg_scoreboard.integer == SCOREBOARD_SR)
+			{
+				// FIXME: add cg.axisProb
+				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), 0.f, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+			}
+
+			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+#else
 			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, FONT_HEADER);
+#endif
 		}
 		else if (team == TEAM_ALLIES)
 		{
+#ifdef FEATURE_RATING
+			if (cg_scoreboard.integer == SCOREBOARD_XP)
+			{
+				s = va("%s [%d] (%d %s)", CG_TranslateString("ALLIES"), cg.teamScores[1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+			}
+			else if (cg_scoreboard.integer == SCOREBOARD_SR)
+			{
+				// FIXME: add cg.axisProb
+				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), 0.f, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+			}
+
+			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+#else
 			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, va("%s [%d] (%d %s)", CG_TranslateString("ALLIES"), cg.teamScores[1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, FONT_HEADER);
+#endif
 		}
 	}
 
@@ -883,7 +948,18 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	}
 	else
 	{
+#ifdef FEATURE_RATING
+		if (cg_scoreboard.integer == SCOREBOARD_XP)
+		{
+			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		}
+		else if (cg_scoreboard.integer == SCOREBOARD_SR)
+		{
+			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, "SR", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		}
+#else
 		CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+#endif
 		tempx += INFO_XP_WIDTH;
 	}
 

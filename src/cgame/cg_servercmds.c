@@ -38,6 +38,26 @@
 
 #include "cg_local.h"
 
+#ifdef FEATURE_RATING
+static void CG_ParseSkillRating(void)
+{
+	int        i = 0; // 2
+	const char *s;
+
+	// cg.axisProb = atof(CG_Argv(1));
+	// cg.alliesProb = atof(CG_Argv(2));
+
+	s = CG_Argv(i);
+	while (*s)
+	{
+		cgs.clientinfo[i].mu    = atof(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].sigma = atof(CG_Argv(i * 2 + 2));
+		i++;
+		s = CG_Argv(i);
+	}
+}
+#endif
+
 /*
 =================
 CG_ParseScore
@@ -87,6 +107,12 @@ static void CG_ParseScore(team_t team)
 		cgs.clientinfo[cg.scores[i].client].powerups = powerups;
 
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
+
+#ifdef FEATURE_RATING
+		// skill rating
+		cg.scores[i].mu    = cg.mu[i];
+		cg.scores[i].sigma = cg.sigma[i];
+#endif
 
 		cg.numScores++;
 	}
@@ -2375,6 +2401,13 @@ static void CG_ServerCommand(void)
 		CG_ParseScore(TEAM_ALLIES);
 		return;
 	}
+#ifdef FEATURE_RATING
+	else if (!strcmp(cmd, "sr"))
+	{
+		CG_ParseSkillRating();
+		return;
+	}
+#endif
 	else if (!strcmp(cmd, "WeaponStats"))
 	{
 		int i, start = 1;

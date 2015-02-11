@@ -553,6 +553,11 @@ void G_deleteStats(int nClient)
 	cl->sess.time_allies          = 0;
 	cl->sess.time_played          = 0;
 
+#ifdef FEATURE_RATING
+	// skill rating
+	cl->sess.mu    = MU;
+	cl->sess.sigma = SIGMA;
+#endif
 	cl->sess.startskillpoints[SK_BATTLE_SENSE]                             = 0;
 	cl->sess.startskillpoints[SK_EXPLOSIVES_AND_CONSTRUCTION]              = 0;
 	cl->sess.startskillpoints[SK_FIRST_AID]                                = 0;
