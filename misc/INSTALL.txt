@@ -1,0 +1,73 @@
+INTRODUCTION
+============
+
+ET: Legacy is based on the on the GPL'd source code of Wolfenstein: Enemy Territory.
+
+The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
+while remaining compatible with the ET 2.60b version.
+
+The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many useful features and
+improvements, while staying close to the original gameplay, as well as being lightweight and fully
+extensible through Lua scripts.
+
+ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
+Anyone is welcome to join our efforts!
+
+
+GENERAL NOTES
+=============
+
+Game data
+-----------------------------------------------------------------------------
+
+This package release contains only the engine and mod code but not any game data, which is still
+covered by the original EULA and must be obeyed as usual. The ET: Legacy installer have downloaded
+them for you automatically.
+
+In case you have not used the installer, you can download the free Wolfenstein: Enemy Territory
+release from Splash Damage at http://www.splashdamage.com/content/download-wolfenstein-enemy-territory.
+
+In order to run ET: Legacy you will need to copy the original assets files
+(*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
+
+
+Compatibility with Enemy Territory 2.60b
+----------------------------------------------------------------------------
+
+ET: Legacy remains compatible with the ET 2.60b version as much as possible.
+
+Please note that ET: Legacy is *not* compatible with PunkBuster enabled servers. ET: Legacy clients
+also cannot connect to servers running the ETPro mod.
+
+See http://dev.etlegacy.com/projects/etlegacy/wiki/Compatible_Mods for more information.
+
+
+Linux 64 bit client
+-------------------
+
+Please remember that Linux 64 bit ET: Legacy clients can only connect to servers running mods
+providing a 64 bit version. You will be able to play 32 bit-only mods only if you install the
+Linux 32 bit version.
+
+At the moment, only the Legacy mod is available in 64 bit version, while all other existing mods
+are available in 32 bit only version.
+
+
+INSTALLATION
+============
+
+Installation Guides are provided at http://dev.etlegacy.com/projects/etlegacy/wiki/Installation_Guides
+
+To run a server, please refer to http://dev.etlegacy.com/projects/etlegacy/wiki/Set_up_Features
+
+
+FREQUENTLY ASKED QUESTIONS
+==========================
+
+See our FAQ at http://dev.etlegacy.com/projects/etlegacy/wiki/FAQ
+
+
+WEBSITE
+=======
+
+For more information consult our website at http://www.etlegacy.com/.

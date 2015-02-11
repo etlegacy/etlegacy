@@ -41,7 +41,7 @@ Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Spla
 This source release contains only the engine and mod code but not any game data,
 which is still covered by the original EULA and must be obeyed as usual.
 
-In order to run ET: Legacy you wil need to copy the original assets files
+In order to run ET: Legacy you will need to copy the original assets files
 (*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
 
 Compatibility with Enemy Territory 2.60b
