@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# IR4 <gutzu@gmx.ch>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-18 10:29+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2015-02-10 15:41+0000\n"
+"Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,7 +24,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
-msgstr ""
+msgstr "Produzent"
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
@@ -67,7 +68,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr ""
+msgstr "Netzwerk"
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
@@ -144,7 +145,7 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
-msgstr ""
+msgstr "Programmierung"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
@@ -176,7 +177,7 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
-msgstr ""
+msgstr "SPEZIELLEN DANK AN"
 
 #: etmain/ui/credits_additional.menu:226
 msgid ""
@@ -234,7 +235,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:135
 msgid "^1GREETINGS"
-msgstr ""
+msgstr "^1GRÜßE"
 
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
@@ -886,7 +887,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
-msgstr "Schiedsrichter"
+msgstr "Schiedsrichter:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
@@ -1239,7 +1240,7 @@ msgstr "STARTE SERVER"
 
 #: etmain/ui/ingame_disconnect.menu:50 etmain/ui/ingame_main.menu:45
 msgid "DISCONNECT"
-msgstr ""
+msgstr "TRENNEN"
 
 #: etmain/ui/ingame_disconnect.menu:51
 msgid "Do you want to disconnect"
@@ -1251,7 +1252,7 @@ msgstr ""
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
-msgstr ""
+msgstr "Menü"
 
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
@@ -1287,7 +1288,7 @@ msgstr "SPIEL BEENDEN"
 
 #: etmain/ui/ingame_messagemode.menu:42
 msgid "SEND MESSAGE"
-msgstr ""
+msgstr "SENDE NACHRICHT"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Say:"
@@ -1357,11 +1358,11 @@ msgstr "Botanzahl:"
 
 #: etmain/ui/ingame_vote_bot.menu:39
 msgid "Move skill:"
-msgstr ""
+msgstr "Beweglichkeit:"
 
 #: etmain/ui/ingame_vote_bot.menu:45
 msgid "Difficulty:"
-msgstr "Schwierigkeit"
+msgstr "Schwierigkeit:"
 
 #: etmain/ui/ingame_vote_bot.menu:53
 msgid "KICK ALL BOTS"
@@ -1385,7 +1386,7 @@ msgstr "BOTS AN"
 
 #: etmain/ui/ingame_vote_bot.menu:60
 msgid "BOTS OFF"
-msgstr ""
+msgstr "BOTS AUS"
 
 #: etmain/ui/ingame_vote_disabled.menu:51
 msgid "Voting is disabled"
@@ -1411,7 +1412,7 @@ msgstr "KAMPAGNEN"
 #: etmain/ui/ingame_vote_misc_refrcon.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:78
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: etmain/ui/ingame_vote.menu:90 etmain/ui/ingame_vote.menu:91
 #: etmain/ui/ingame_vote_players.menu:25 src/cgame/cg_scoreboard.c:205
@@ -1422,7 +1423,7 @@ msgstr "SPIELER"
 
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
-msgstr ""
+msgstr "BOTS"
 
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
@@ -1620,11 +1621,11 @@ msgstr "WARNEN"
 
 #: etmain/ui/ingame_vote_players.menu:71
 msgid "BAN"
-msgstr ""
+msgstr "VERBANNEN"
 
 #: etmain/ui/ingame_vote_players_warn.menu:51
 msgid "WARN PLAYER"
-msgstr ""
+msgstr "WARNE SPIELER"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning:"
@@ -1644,11 +1645,11 @@ msgstr "WIEDERHOLUNGEN"
 
 #: etmain/ui/main.menu:109 etmain/ui/profile.menu:29
 msgid "PROFILE"
-msgstr ""
+msgstr "PROFILE"
 
 #: etmain/ui/main.menu:110 etmain/ui/mods.menu:29
 msgid "MODS"
-msgstr ""
+msgstr "MODS"
 
 #: etmain/ui/main.menu:112
 msgid "ETLEGACY.COM"
@@ -1688,7 +1689,7 @@ msgstr ""
 
 #: etmain/ui/main_quickconnect.menu:82
 msgid "Server PW:"
-msgstr ""
+msgstr "Server PW:"
 
 #: etmain/ui/main_quickconnect.menu:84
 msgid "Enter the server password if any"
@@ -1789,7 +1790,7 @@ msgstr "STEUERUNG"
 
 #: etmain/ui/options_controls.menu:32
 msgid "MOVE"
-msgstr ""
+msgstr "BEWEGUNG"
 
 #: etmain/ui/options_controls.menu:33
 msgid "Forward:"
@@ -1947,7 +1948,7 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:79
 msgid "Attack:"
-msgstr ""
+msgstr "Angriff:"
 
 #: etmain/ui/options_controls.menu:80
 msgid "Switch to Alternate:"
@@ -3678,7 +3679,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
-msgstr ""
+msgstr "PING"
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
@@ -3776,7 +3777,7 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
-msgstr ""
+msgstr "STANDARD EINSTELLUNGEN"
 
 #: etmain/ui/profile_create_initial.menu:125
 msgid "^1LET'S KEEP ET ALIVE!"
@@ -5208,7 +5209,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:2153
 msgid "  Medals"
-msgstr ""
+msgstr "Medalien"
 
 #: src/cgame/cg_servercmds.c:2165
 msgid "^3No skills acquired!\n"
@@ -5332,7 +5333,7 @@ msgstr ""
 #: src/ui/ui_main.c:8429
 #, c-format
 msgid "Can't find campaign '%s'\n"
-msgstr ""
+msgstr "Kann Kampagne '%s' nicht finden\n"
 
 #: src/ui/ui_main.c:8435
 #, c-format
