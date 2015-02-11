@@ -109,6 +109,7 @@ void P_DamageFeedback(gentity_t *player)
 }
 
 #define MIN_BURN_INTERVAL 399 // set burn timeinterval so we can do more precise damage (was 199 old model)
+#define UNDERWATER_DAMAGE 2
 
 /**
  * @brief Check for lava/slime contents and drowning
@@ -169,7 +170,7 @@ void P_WorldEffects(gentity_t *ent)
 		// air left while underwater..
 		ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
 		ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
-		ent->damage                         = 2;
+		ent->damage                         = UNDERWATER_DAMAGE;
 	}
 
 	// check for sizzle damage (move to pmove?)
@@ -194,10 +195,9 @@ void P_WorldEffects(gentity_t *ent)
 			ent->client->lastBurnTime = level.time;
 			if (ent->s.onFireEnd > level.time && ent->health > 0)
 			{
-				gentity_t *attacker;
+				gentity_t *attacker = g_entities + ent->flameBurnEnt;
 
-				attacker = g_entities + ent->flameBurnEnt;
-				G_Damage(ent, attacker, attacker, NULL, NULL, 5, DAMAGE_NO_KNOCKBACK, MOD_FLAMETHROWER);   //  was 7
+				G_Damage(ent, attacker, attacker, NULL, NULL, weaponTable[WP_FLAMETHROWER].damage, DAMAGE_NO_KNOCKBACK, MOD_FLAMETHROWER);
 			}
 		}
 	}
