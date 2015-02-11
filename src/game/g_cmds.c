@@ -4742,11 +4742,6 @@ void ClientCommand(int clientNum)
 	}
 	else if (!Q_stricmp(cmd, "forcetapout"))
 	{
-		if (!ent || !ent->client)
-		{
-			return;
-		}
-
 		if (ent->client->ps.stats[STAT_HEALTH] <= 0 && (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES))
 		{
 			limbo(ent, qtrue);
