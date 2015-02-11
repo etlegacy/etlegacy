@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-18 10:29+0000\n"
+"PO-Revision-Date: 2015-02-11 10:31+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/etlegacy/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -197,7 +197,7 @@ msgid "Original Soundtrack by Bill Brown."
 msgstr "Originele Soundtrack by Bill Brown."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
-msgid "DEVELOPED BY ET:LEGACY TEAM"
+msgid "DEVELOPED BY ET: LEGACY TEAM"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:85
@@ -287,7 +287,7 @@ msgid ""
 msgstr "Mac OS X is een handelsmerk van Apple Computer, Inc., geregistreerd in de V.S. en andere landen."
 
 #: etmain/ui/credits_halloffame.menu:66
-msgid "ET:LEGACY HALL OF FAME"
+msgid "ET: LEGACY HALL OF FAME"
 msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:98
@@ -3783,7 +3783,7 @@ msgid "^1LET'S KEEP ET ALIVE!"
 msgstr "^1LATEN WE ET LEVEND HOUDEN!"
 
 #: etmain/ui/profile_create_initial.menu:126
-msgid "Thank you for installing ET:Legacy"
+msgid "Thank you for installing ET: Legacy"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:130
