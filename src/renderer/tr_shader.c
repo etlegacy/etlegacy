@@ -1615,15 +1615,18 @@ surfaceparm <name>
 */
 static void ParseSurfaceParm(char **text)
 {
-	char *token;
-	int  numInfoParms = ARRAY_LEN(infoParms);  // sizeof(infoParms) / sizeof(infoParms[0]);
-	int  i;
+	char     *token;
+	int      numInfoParms = ARRAY_LEN(infoParms); // sizeof(infoParms) / sizeof(infoParms[0]);
+	int      i;
+	qboolean unknownParm = qtrue;
 
 	token = COM_ParseExt(text, qfalse);
 	for (i = 0 ; i < numInfoParms ; i++)
 	{
 		if (!Q_stricmp(token, infoParms[i].name))
 		{
+			// FIXME: add output for devmap?!
+			//Ren_Warning("ParseSurfaceParm - adding '%s' surface parm properties to shader '%s'\n", token, shader.name);
 			shader.surfaceFlags |= infoParms[i].surfaceFlags;
 			shader.contentFlags |= infoParms[i].contents;
 #if 0
@@ -1632,8 +1635,14 @@ static void ParseSurfaceParm(char **text)
 				si->contents &= ~CONTENTS_SOLID;
 			}
 #endif
+			unknownParm = qfalse;
 			break;
 		}
+	}
+
+	if (unknownParm == qtrue)
+	{
+		Ren_Warning("WARNING: ParseSurfaceParm - unknown surface parm '%s' in shader '%s' - inspect your shader definitions\n", token, shader.name);
 	}
 }
 
