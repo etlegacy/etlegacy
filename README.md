@@ -1,4 +1,4 @@
-ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160)
+Enemy Territory: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160)
 ==========
 
 *A second breath of life for Wolfenstein: Enemy Territory*
@@ -15,8 +15,8 @@ ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=m
 INTRODUCTION
 ============
 
-ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/)
-which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory.
+Enemy Territory: Legacy is based on the [raedwulf-et](https://bitbucket.org/tcmreastwood/raedwulf-et/)
+project which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory.
 
 The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
 while remaining compatible with the ET 2.60b version.
@@ -47,17 +47,26 @@ In order to run ET: Legacy you will need to copy the original assets files
 Compatibility with Enemy Territory 2.60b
 ----------------------------------------------------------------------------
 
-Please remember that 64 bit ET: Legacy clients can only connect to servers running mods
-providing a 64 bit version. You will be able to play 32 bit-only mods only if you compile
-ET: Legacy on a 32 bit system or crosscompile it for 32 bit architecture on a 64 bit system.
+ET: Legacy remains compatible with the ET 2.60b version as much as possible.
 
-At the moment, note that only the Legacy mod is available in 64 bit version, while all
-other existing mods are available in 32 bit only version.
+Please note that ET: Legacy is *not* compatible with PunkBuster enabled servers.
+ET: Legacy clients also cannot connect to servers running the ETPro mod.
+
+Linux 64 bit
+------------
+
+Please remember that 64 bit ET: Legacy clients can only connect to servers running
+mods providing a 64 bit version. You will be able to play 32 bit-only mods only if
+you compile ET: Legacy on a 32 bit system or crosscompile it for 32 bit architecture
+on a 64 bit system.
+
+At the moment, only the Legacy mod is available in 64 bit version, while all other
+existing mods are available in 32 bit only version.
 
 In case you are a running a 64 bit system, you probably might want to use the
 **bundled libraries** which are located in a separate *etlegacy-libs* repository and
-can be automatically downloaded using the `git submodule` command. See the next section
-for more details.
+can be automatically downloaded using the `git submodule` command. See the next
+section for more details.
 
 Dependencies
 -----------------------------------------------------------------------------
@@ -84,15 +93,16 @@ If the required dependencies are not installed on your system run:
     $ git submodule init
     $ git submodule update
 
-This downloads the essential dependencies into the `libs/`directory. You can choose whether
-to use bundled libraries instead of the system ones by changing the `BUNDLED_LIBS` variable
-in the CMakeList.txt configuration file. You can then select which bundled libraries to use
-by toggling the respective `BUNDLED_XXX` variable.
+This downloads the essential dependencies into the `libs/`directory. You can choose
+whether to use bundled libraries instead of the system ones by changing the
+`BUNDLED_LIBS` variable in the CMakeList.txt configuration file. You can then select
+which bundled libraries to use by toggling the respective `BUNDLED_XXX` variable.
 
 Compile and install
 -----------------------------------------------------------------------------
 
-To install the binaries system-wide, you need to compile ET: Legacy with hardcoded fs_basepath.
+To install the binaries system-wide, you need to compile ET: Legacy with hardcoded
+fs_basepath.
 
 The following variables can be adjusted in CMake:
   * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
@@ -111,7 +121,7 @@ The following variables can be adjusted in CMake:
 
 In terminal, run:
 
-    $ mkdir build && cd build && cmake-gui ..
+    $ mkdir build && cd build && cmake ..
 
 To compile, run:
 
@@ -134,8 +144,8 @@ To install, run:
     $ cd build
     $ make install
 
-ET: Legacy will be installed in `~/etlegacy`. To change it, set the CMake variables (see above) in the
-easybuild.sh file beforehand.
+ET: Legacy will be installed in `~/etlegacy`. To change it, set the CMake variables
+(see above) in the easybuild.sh file beforehand.
 
 **NOTE:**
 
@@ -233,27 +243,46 @@ etl_bin.pk3 and will be extracted at runtime, so you can delete those. The clien
 LICENSE
 =======
 
-See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
-
-ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also
-subject to certain additional terms. You should have received a copy of these
-additional terms immediately following the terms and conditions of the GNU GPL
-which accompanied the Wolf ET Source Code.  If not, please request a copy in
-writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120,
-Rockville, Maryland 20850 USA.
-
-EXCLUDED CODE:  The code described below and contained in the Wolfenstein:
-Enemy Territory GPL Source Code release is not part of the Program covered by
-the GPL and is expressly excluded from its terms.  You are solely responsible
-for obtaining from the copyright holder a license for such code and complying
-with the applicable license terms.
-
-IO on .zip files using portions of zlib
+Enemy Territory: Legacy
 -----------------------------------------------------------------------------
-lines	file(s)
-4301	src/qcommon/unzip.c
-Copyright (C) 1998 Gilles Vollant
-zlib is Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler
+
+Wolfenstein: Enemy Territory GPL Source Code
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+
+OpenWolf GPL Source Code
+Copyright (C) 2011 Dusan Jocic
+
+ET: Legacy
+Copyright (C) 2012-2015 Jan Simek <mail@etlegacy.com>
+
+  ET: Legacy is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option) any later
+  version.
+
+  ET: Legacy is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  ET: Legacy (see COPYING.txt). If not, see <http://www.gnu.org/licenses/>.
+
+  ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also
+  subject to certain additional terms. You should have received a copy of these
+  additional terms immediately following the terms and conditions of the GNU GPL
+  which accompanied the Wolf ET Source Code.  If not, please request a copy in
+  writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120,
+  Rockville, Maryland 20850 USA.
+
+  EXCLUDED CODE:  The code described below and contained in the Wolfenstein:
+  Enemy Territory GPL Source Code release is not part of the Program covered by
+  the GPL and is expressly excluded from its terms.  You are solely responsible
+  for obtaining from the copyright holder a license for such code and complying
+  with the applicable license terms.
+
+zLib - general purpose compression library
+-----------------------------------------------------------------------------
+Copyright (C) 1995-2013 Jean-loup Gailly and Mark Adler
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -271,19 +300,85 @@ zlib is Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+
+
+  The data format used by the zlib library is described by RFCs (Request for
+  Comments) 1950 to 1952 in the files http://tools.ietf.org/html/rfc1950
+  (zlib format), rfc1951 (deflate format) and rfc1952 (gzip format).
+
+Minizip - IO on .zip files using portions of zlib
+-----------------------------------------------------------------------------
+
+Copyright (c) 1990-2000 Info-ZIP.  All rights reserved.
+Copyright (C) 1998-2009 Gilles Vollant
+
+This unzip package allow extract file from .ZIP file, compatible with PKZip 2.04g
+WinZip, InfoZip tools and compatible.
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+Decryption code comes from crypt.c by Info-ZIP but has been greatly reduced in
+terms of compatibility with older software. The following is from the original
+crypt.c. Code woven in by Terry Thorsen 1/2003.
+
+  See the accompanying file LICENSE, version 2000-Apr-09 or later
+  (the contents of which are also included in zip.h) for terms of use.
+  If, for some reason, all these files are missing, the Info-ZIP license
+  also may be found at:  ftp://ftp.info-zip.org/pub/infozip/license.html
+
+  crypt.c (full version) by Info-ZIP.
+
+  The encryption/decryption parts of this source code (as opposed to the
+  non-echoing password parts) were originally written in Europe.  The
+  whole source package can be freely distributed, including from the USA.
+  (Prior to January 2000, re-export from the US was a violation of US law.)
+
+  This encryption code is a direct transcription of the algorithm from
+  Roger Schlafly, described by Phil Katz in the file appnote.txt.  This
+  file (appnote.txt) is distributed with the PKZIP program (even in the
+  version without encryption capabilities).
+
 MD4 Message-Digest Algorithm
 -----------------------------------------------------------------------------
-lines   file(s)
-289     src/qcommon/md4.c
-Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All rights reserved.
+Copyright (C) 1991-1992, RSA Data Security, Inc. Created 1991. All rights reserved.
 
-License to copy and use this software is granted provided that it is identified
-as the <93>RSA Data Security, Inc. MD4 Message-Digest Algorithm<94> in all mater
-ial mentioning or referencing this software or this function.
-License is also granted to make and use derivative works provided that such work
-s are identified as <93>derived from the RSA Data Security, Inc. MD4 Message-Dig
-est Algorithm<94> in all material mentioning or referencing the derived work.
-RSA Data Security, Inc. makes no representations concerning either the merchanta
-bility of this software or the suitability of this software for any particular p
-urpose. It is provided <93>as is<94> without express or implied warranty of any
-kind.
+  License to copy and use this software is granted provided that it is identified
+  as the "RSA Data Security, Inc. MD4 Message-Digest Algorithm" in all mater
+  ial mentioning or referencing this software or this function.
+
+  License is also granted to make and use derivative works provided that such work
+  s are identified as "derived from the RSA Data Security, Inc. MD4 Message-Digest
+  Algorithm" in all material mentioning or referencing the derived work.
+
+  RSA Data Security, Inc. makes no representations concerning either the merchanta
+  bility of this software or the suitability of this software for any particular p
+  urpose. It is provided "as is" without express or implied warranty of any
+  kind.
+
+MD5 Message-Digest Algorithm
+-----------------------------------------------------------------------------
+
+The MD5 algorithm was developed by Ron Rivest. The public domain C language
+implementation used in this program was written by Colin Plumb in 1993, no copyright
+is claimed.
+
+  This software is in the public domain. Permission to use, copy, modify, and
+  distribute this software and its documentation for any purpose and without fee is
+  hereby granted, without any conditions or restrictions. This software is provided
+  "as is" without express or implied warranty.
