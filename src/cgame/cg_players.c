@@ -278,6 +278,14 @@ void CG_NewClientInfo(int clientNum)
 	v                       = Info_ValueForKey(configstring, "sw");
 	newInfo.secondaryweapon = atoi(v);
 
+#ifdef FEATURE_RATING
+	// skill rating
+	v             = Info_ValueForKey(configstring, "srm");
+	newInfo.mu    = atof(v);
+	v             = Info_ValueForKey(configstring, "srs");
+	newInfo.sigma = atof(v);
+#endif
+
 	v                 = Info_ValueForKey(configstring, "ref");
 	newInfo.refStatus = atoi(v);
 

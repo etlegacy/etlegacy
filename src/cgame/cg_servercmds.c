@@ -50,8 +50,8 @@ static void CG_ParseSkillRating(void)
 	s = CG_Argv(i);
 	while (*s)
 	{
-		cgs.clientinfo[i].mu    = atof(CG_Argv(i * 2 + 1));
-		cgs.clientinfo[i].sigma = atof(CG_Argv(i * 2 + 2));
+		cg.mu[i]    = atof(CG_Argv(i * 2 + 1));
+		cg.sigma[i] = atof(CG_Argv(i * 2 + 2));
 		i++;
 		s = CG_Argv(i);
 	}
@@ -1940,7 +1940,11 @@ void CG_parseWeaponStatsGS_cmd(void)
 		}
 	}
 
+#ifdef FEATURE_RATING
+	Q_strncpyz(gs->strRank, va("%-20s %-12d %4.2f (%4.2f,%4.2f)", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp, ci->mu - 3 * ci->sigma, ci->mu, ci->sigma), sizeof(gs->strRank));
+#else
 	Q_strncpyz(gs->strRank, va("%-20s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
+#endif
 
 	if (skillMask != 0)
 	{

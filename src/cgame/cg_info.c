@@ -666,7 +666,7 @@ void CG_GameStatsDraw(void)
 		    tSpacing * ((gs->fHasStats) ? 7 : 0) +
 		    ((cgs.gametype == GT_WOLF_LMS) ? 0 :
 		     (
-		         4 + 2 * tSpacing +                                 // Rank/XP
+		         4 + 2 * tSpacing +                                 // Rank/XP/Skill Rating
 		         1 + tSpacing +
 		         4 + 2 * tSpacing +                                 // Skill columns
 		         1 +                                                // Skillz
@@ -779,6 +779,10 @@ void CG_GameStatsDraw(void)
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Rank"), 0.0f, 0, hStyle2, hFont2);
 		x += 122;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
+#ifdef FEATURE_RATING
+		x += 76;
+		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
+#endif
 
 		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 		y += 1;
