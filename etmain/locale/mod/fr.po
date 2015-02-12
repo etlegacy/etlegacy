@@ -4,7 +4,7 @@
 # 
 # Translators:
 # Calinou, 2015
-# Thomas DEBESSE <dev@illwieckz.net>, 2015
+# Thomas Debesse <dev@illwieckz.net>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
