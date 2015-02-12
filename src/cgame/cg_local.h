@@ -2248,6 +2248,16 @@ extern vmCvar_t cg_fontScaleCN;
 #define CROSSHAIR_CLASS             0x01
 #define CROSSHAIR_RANK              0x02
 
+// cg_atmospheric.c
+void CG_EffectParse(const char *effectstr);
+void CG_AddAtmosphericEffects(void);
+
+// cg_character.c
+qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *character);
+bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent);
+bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps);
+void CG_RegisterPlayerClasses(void);
+
 // cg_main.c
 const char *CG_ConfigString(int index);
 int CG_ConfigStringCopy(int index, char *buff, int buffsize);
@@ -2713,10 +2723,7 @@ typedef struct
 void CG_Respawn(qboolean revived);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
 
-// cg_atmospheric.c
 void CG_GenerateTracemap(void);
-void CG_EffectParse(const char *effectstr);
-void CG_AddAtmosphericEffects(void);
 
 //===============================================
 
@@ -3100,12 +3107,6 @@ void CG_ParseTagConnects(void);
 
 // cg_ents.c
 void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg42upper, refEntity_t *mg42gun, refEntity_t *player, refEntity_t *flash, vec_t *playerangles, const char *tagName, qboolean browning);
-
-// cg_character.c
-qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *character);
-bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent);
-bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps);
-void CG_RegisterPlayerClasses(void);
 
 // cg_polybus.c
 polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies);

@@ -37,13 +37,10 @@
 
 char bigTextBuffer[100000];
 
-/*
-======================
-CG_ParseGibModels
-
-Read a configuration file containing gib models for use with this character
-======================
-*/
+/**
+ * @brief Parse gib models
+ * @details Read a configuration file containing gib models for use with this character.
+ */
 static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 {
 	char         *text_p;
@@ -82,6 +79,7 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 	for (i = 0; i < MAX_GIB_MODELS; i++)
 	{
 		token = COM_Parse(&text_p);
+
 		if (!token || !token[0])
 		{
 			break;
@@ -99,11 +97,10 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 	return qtrue;
 }
 
-/*
-======================
-CG_ParseHudHeadConfig
-======================
-*/
+/**
+ * @brief Parse HUD head config
+ * @details Parse HUD head config
+ */
 static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 {
 	char         *text_p;
@@ -137,25 +134,32 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 	for (i = 0 ; i < MAX_HD_ANIMATIONS ; i++)
 	{
 		token = COM_Parse(&text_p);     // first frame
+
 		if (!token)
 		{
 			break;
 		}
+
 		hha[i].firstFrame = atoi(token);
 
 		token = COM_Parse(&text_p);     // length
+
 		if (!token)
 		{
 			break;
 		}
+
 		hha[i].numFrames = atoi(token);
 
 		token = COM_Parse(&text_p);     // fps
+
 		if (!token)
 		{
 			break;
 		}
+
 		fps = atof(token);
+
 		if (fps == 0)
 		{
 			fps = 1;
@@ -165,10 +169,12 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 		hha[i].initialLerp = 1000 / fps;
 
 		token = COM_Parse(&text_p);     // looping frames
+
 		if (!token)
 		{
 			break;
 		}
+
 		hha[i].loopFrames = atoi(token);
 
 		if (hha[i].loopFrames > hha[i].numFrames)
@@ -190,11 +196,10 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 	return qtrue;
 }
 
-/*
-==================
-CG_CalcMoveSpeeds
-==================
-*/
+/**
+ * @brief Calculate move speeds
+ * @details Calculate movement speeds.
+ */
 static void CG_CalcMoveSpeeds(bg_character_t *character)
 {
 	char          *tags[2] = { "tag_footleft", "tag_footright" };
@@ -280,13 +285,10 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 	}
 }
 
-/*
-======================
-CG_ParseAnimationFiles
-
-  Read in all the configuration and script files for this model.
-======================
-*/
+/**
+ * @brief Parse animation files
+ * @details Read in all the configuration and script files for this model.
+ */
 static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *animationGroup, const char *animationScript)
 {
 	fileHandle_t f;
@@ -303,16 +305,20 @@ static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *an
 
 	// load the script file
 	len = trap_FS_FOpenFile(animationScript, &f, FS_READ);
+
 	if (len <= 0)
 	{
 		return qfalse;
 	}
+
 	if (len >= sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s is too long\n", animationScript);
 		trap_FS_FCloseFile(f);
+
 		return qfalse;
 	}
+
 	trap_FS_Read(bigTextBuffer, len, f);
 	bigTextBuffer[len] = 0;
 	trap_FS_FCloseFile(f);
@@ -323,16 +329,11 @@ static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *an
 	return qtrue;
 }
 
-/*
-==================
-CG_CheckForExistingAnimModelInfo
-
-  If this player model has already been parsed, then use the existing information.
-  Otherwise, set the modelInfo pointer to the first free slot.
-
-  returns qtrue if existing model found, qfalse otherwise
-==================
-*/
+/**
+ * @brief Check for existing animation model information
+ * @details If this player model has already been parsed, then use the existing information.
+ *          Otherwise, set the modelInfo pointer to the first free slot.
+ */
 static qboolean CG_CheckForExistingAnimModelInfo(const char *animationGroup, const char *animationScript, animModelInfo_t **animModelInfo)
 {
 	int             i;
@@ -366,15 +367,14 @@ static qboolean CG_CheckForExistingAnimModelInfo(const char *animationGroup, con
 		memset(*animModelInfo, 0, sizeof(**animModelInfo));
 	}
 
-	// qfalse signifies that we need to parse the information from the script files
+	// we need to parse the information from the script files
 	return qfalse;
 }
 
-/*
-==============
-CG_RegisterAcc
-==============
-*/
+/**
+ * @brief Register accessories
+ * @details  Register model accessories.
+ */
 static qboolean CG_RegisterAcc(const char *modelName, int *model, const char *skinname, qhandle_t *skin)
 {
 	char filename[MAX_QPATH];
@@ -421,11 +421,10 @@ static acc_t cg_headAccessories[] =
 
 static int cg_numHeadAccessories = sizeof(cg_headAccessories) / sizeof(cg_headAccessories[0]);
 
-/*
-====================
-CG_RegisterCharacter
-====================
-*/
+/**
+ * @brief Register character
+ * @details Register character.
+ */
 qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *character)
 {
 	bg_characterDef_t characterDef;
@@ -439,15 +438,16 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 		return qfalse;  // the parser will provide the error message
 	}
 
-	// Register Mesh
+	// register mesh
 	if (!(character->mesh = trap_R_RegisterModel(characterDef.mesh)))
 	{
 		CG_Printf(S_COLOR_YELLOW "WARNING: failed to register mesh '%s' referenced from '%s'\n", characterDef.mesh, characterFile);
 	}
 
-	// Register Skin
+	// register skin
 	COM_StripExtension(characterDef.mesh, buf, sizeof(buf));
 	filename = va("%s_%s.skin", buf, characterDef.skin);
+
 	if (!(character->skin = trap_R_RegisterSkin(filename)))
 	{
 		CG_Printf(S_COLOR_YELLOW "WARNING: failed to register skin '%s' referenced from '%s'\n", filename, characterFile);
@@ -484,18 +484,19 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 	COM_StripExtension(characterDef.mesh, buf, sizeof(buf));
 	CG_ParseGibModels(buf, character); // it is here so we can use modelpath from above
 
-	// Register Undressed Corpse Media
+	// register undressed corpse media
 	if (*characterDef.undressedCorpseModel)
 	{
-		// Register Undressed Corpse Model
+		// register undressed corpse model
 		if (!(character->undressedCorpseModel = trap_R_RegisterModel(characterDef.undressedCorpseModel)))
 		{
 			CG_Printf(S_COLOR_YELLOW "WARNING: failed to register undressed corpse model '%s' referenced from '%s'\n", characterDef.undressedCorpseModel, characterFile);
 		}
 
-		// Register Undressed Corpse Skin
+		// register undressed corpse skin
 		COM_StripExtension(characterDef.undressedCorpseModel, buf, sizeof(buf));
 		filename = va("%s_%s.skin", buf, characterDef.undressedCorpseSkin);
+
 		if (!(character->undressedCorpseSkin = trap_R_RegisterSkin(filename)))
 		{
 			CG_Printf(S_COLOR_YELLOW "WARNING: failed to register undressed corpse skin '%s' referenced from '%s'\n", filename, characterFile);
@@ -506,10 +507,10 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 		CG_Printf(S_COLOR_YELLOW "WARNING: no undressed coprse model definition in '%s'\n", characterFile);
 	}
 
-	// Register the head for the hud
+	// register the head for the hud
 	if (*characterDef.hudhead)
 	{
-		// Register Hud Head Model
+		// register hud head model
 		if (!(character->hudhead = trap_R_RegisterModel(characterDef.hudhead)))
 		{
 			CG_Printf(S_COLOR_YELLOW "WARNING: failed to register hud head model '%s' referenced from '%s'\n", characterDef.hudhead, characterFile);
@@ -530,7 +531,7 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 		CG_Printf(S_COLOR_YELLOW "WARNING: no hud head character definition in '%s'\n", characterFile);
 	}
 
-	// Parse Animation Files
+	// parse animation files
 	if (!CG_CheckForExistingAnimModelInfo(characterDef.animationGroup, characterDef.animationScript, &character->animModelInfo))
 	{
 		if (!CG_ParseAnimationFiles(character, characterDef.animationGroup, characterDef.animationScript))
@@ -540,11 +541,13 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 		}
 	}
 
-	// STILL MISSING: GIB MODELS (OPTIONAL?)
-
 	return qtrue;
 }
 
+/**
+ * @brief Character for clientinfo
+ * @details Define character for clientinfo.
+ */
 bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 {
 	if (cent && cent->currentState.eType == ET_CORPSE)
@@ -582,6 +585,10 @@ bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 	return BG_GetCharacter(ci->team, ci->cls);
 }
 
+/**
+ * @brief Character for playerstate
+ * @details Define character for playerstate.
+ */
 bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps)
 {
 	if (ps->powerups[PW_OPS_DISGUISED])
@@ -608,11 +615,10 @@ bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps)
 	return BG_GetCharacter(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].cls);
 }
 
-/*
-========================
-CG_RegisterPlayerClasses
-========================
-*/
+/**
+ * @brief Register player classes
+ * @details Register player classes.
+ */
 void CG_RegisterPlayerClasses(void)
 {
 	bg_playerclass_t *classInfo;
