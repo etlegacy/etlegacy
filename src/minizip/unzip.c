@@ -399,7 +399,7 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
     const char *path;
     zlib_filefunc_def* pzlib_filefunc_def;
 {
-    unz_s us = {0};
+    unz_s us = { {0} };
     unz_s *s;
     uLong central_pos,uL;
 

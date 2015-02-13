@@ -212,7 +212,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 		}
 	}
 
-	ex->startTime = cg.time - rand() & 63; // skew the time a bit so they aren't all in sync
+	ex->startTime = cg.time - (rand() & 63); // skew the time a bit so they aren't all in sync
 	ex->endTime   = ex->startTime + msec;
 
 	// bias the time so all shader effects start correctly
