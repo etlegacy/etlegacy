@@ -536,7 +536,7 @@ static void PM_Friction(void)
 	// apply water friction even if just wading
 	if (pm->waterlevel)
 	{
-		if (pm->watertype == CONTENTS_SLIME)     // slag
+		if (pm->watertype & CONTENTS_SLIME)     // slag
 		{
 			drop += speed * pm_slagfriction * pm->waterlevel * pml.frametime;
 		}
@@ -1138,8 +1138,15 @@ static void PM_WaterMove(void)
 	VectorCopy(wishvel, wishdir);
 	wishspeed = VectorNormalize(wishdir);
 
-	if (pm->watertype == CONTENTS_SLIME)        // slag
+	if (pm->watertype & CONTENTS_SLIME)        // slag
 	{
+
+#ifdef CGAMEDLL
+		Com_Printf(" SLIME\n");
+#else
+		Com_Printf(" !SLIME\n");
+#endif
+
 		if (wishspeed > pm->ps->speed * pm_slagSwimScale)
 		{
 			wishspeed = pm->ps->speed * pm_slagSwimScale;
@@ -1392,7 +1399,7 @@ static void PM_WalkMove(void)
 		float waterScale;
 
 		waterScale = pm->waterlevel / 3.0;
-		if (pm->watertype == CONTENTS_SLIME)     // slag
+		if (pm->watertype & CONTENTS_SLIME)     // slag cont
 		{
 			waterScale = 1.0 - (1.0 - pm_slagSwimScale) * waterScale;
 		}
