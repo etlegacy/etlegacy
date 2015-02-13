@@ -454,10 +454,11 @@ void G_ConfigCheckLocked()
 	int      i;
 	config_t *config = &level.config;
 
-	if (!config)
-	{
-		return;
-	}
+	// this is dead code - config is never NULL FIXME: check for anything else?
+	//if (!config)
+	//{
+	//	return;
+	//}
 
 	for (i = 0; i < config->numSetl; i++)
 	{
