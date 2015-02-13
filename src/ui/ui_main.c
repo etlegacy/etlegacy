@@ -7750,19 +7750,9 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 				{
 					Q_strncpyz(buf, buf + 5, sizeof(buf));
 					Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
-					switch (ui_autoredirect.integer)
-					{
-					//auto-redirect
-					case 1:
-						trap_Cvar_Set("com_errorMessage", "");
-						trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", buf));
-						break;
-					//prompt (default)
-					default:
-						trap_Cvar_Set("com_errorMessage", buf);
-						Menus_ActivateByName("popupServerRedirect", qtrue);
-						break;
-					}
+					// always prompt
+					trap_Cvar_Set("com_errorMessage", buf);
+					Menus_ActivateByName("popupServerRedirect", qtrue);
 				}
 				else
 				{
@@ -8049,8 +8039,6 @@ vmCvar_t cg_crosshairSize;
 
 vmCvar_t cl_bypassMouseInput;
 
-vmCvar_t ui_autoredirect;
-
 cvarTable_t cvarTable[] =
 {
 	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP                      },
@@ -8225,7 +8213,6 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,      },
 
 	{ NULL,                             "ui_showtooltips",                     "1",                          CVAR_ARCHIVE                   },
-	{ &ui_autoredirect,                 "ui_autoredirect",                     "0",                          CVAR_ARCHIVE                   },
 
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE                   },
 };
