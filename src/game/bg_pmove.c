@@ -1140,13 +1140,6 @@ static void PM_WaterMove(void)
 
 	if (pm->watertype & CONTENTS_SLIME)        // slag
 	{
-
-#ifdef CGAMEDLL
-		Com_Printf(" SLIME\n");
-#else
-		Com_Printf(" !SLIME\n");
-#endif
-
 		if (wishspeed > pm->ps->speed * pm_slagSwimScale)
 		{
 			wishspeed = pm->ps->speed * pm_slagSwimScale;
