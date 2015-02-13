@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-01-18 17:48+0000\n"
+"PO-Revision-Date: 2015-02-11 23:03+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -198,8 +198,8 @@ msgid "Original Soundtrack by Bill Brown."
 msgstr "Музыкальное сопровождение от Bill Brown."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
-msgid "DEVELOPED BY ET:LEGACY TEAM"
-msgstr "РАЗРАБОТАНО КОМАНДОЙ ET:LEGACY"
+msgid "DEVELOPED BY ET: LEGACY TEAM"
+msgstr "РАЗРАБОТАНО КОМАНДОЙ ET: LEGACY"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
@@ -288,8 +288,8 @@ msgid ""
 msgstr "Mac OS X - товарный знак Apple Computer, Inc., зарегистрированный в США и других странах."
 
 #: etmain/ui/credits_halloffame.menu:66
-msgid "ET:LEGACY HALL OF FAME"
-msgstr "ЗАЛ СЛАВЫ ETLEGACY.COM"
+msgid "ET: LEGACY HALL OF FAME"
+msgstr "ЗАЛ СЛАВЫ ET: LEGACY"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
@@ -3784,8 +3784,8 @@ msgid "^1LET'S KEEP ET ALIVE!"
 msgstr "^1СОХРАНИМ ET!"
 
 #: etmain/ui/profile_create_initial.menu:126
-msgid "Thank you for installing ET:Legacy"
-msgstr "Спасибо за установку ET:Legacy"
+msgid "Thank you for installing ET: Legacy"
+msgstr "Спасибо за установку ET: Legacy!"
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"

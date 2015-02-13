@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-10 15:41+0000\n"
+"PO-Revision-Date: 2015-02-11 17:22+0000\n"
 "Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -198,7 +198,7 @@ msgid "Original Soundtrack by Bill Brown."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
-msgid "DEVELOPED BY ET:LEGACY TEAM"
+msgid "DEVELOPED BY ET: LEGACY TEAM"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:85
@@ -288,7 +288,7 @@ msgid ""
 msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:66
-msgid "ET:LEGACY HALL OF FAME"
+msgid "ET: LEGACY HALL OF FAME"
 msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:98
@@ -543,7 +543,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr ""
+msgstr "Minimum Spieler:"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
@@ -552,7 +552,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
-msgstr ""
+msgstr "Bereit Anteil:"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid ""
@@ -584,16 +584,16 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "Niemand"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr ""
+msgstr "Nur Gegner"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr ""
+msgstr "Jeder"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
@@ -619,7 +619,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
-msgstr ""
+msgstr "Aufwärmzeit:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
@@ -658,7 +658,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
 msgid "Off"
-msgstr ""
+msgstr "Aus"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid ""
@@ -754,7 +754,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
-msgstr ""
+msgstr "ADMIN"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
@@ -777,7 +777,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
-msgstr ""
+msgstr "Schiedsrichter Password:"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid ""
@@ -931,7 +931,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
-msgstr ""
+msgstr "Anti-Lag:"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
@@ -1079,7 +1079,7 @@ msgstr "ERWEITERT"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
-msgstr "SERVER STARTEN"
+msgstr "SPIEL STARTEN"
 
 #: etmain/ui/hostgame.menu:37
 msgid "SETTINGS"
@@ -1087,7 +1087,7 @@ msgstr "EINSTELLUNGEN"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Server Name:"
-msgstr ""
+msgstr "Server Name:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
@@ -1184,7 +1184,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:70
 msgid "Anti-Lag"
-msgstr ""
+msgstr "Anti-Lag"
 
 #: etmain/ui/hostgame.menu:71
 msgid "Enables modem-friendly server support"
@@ -1220,7 +1220,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
-msgstr ""
+msgstr "NAME"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
@@ -1232,7 +1232,7 @@ msgstr "VORSCHAU"
 
 #: etmain/ui/hostgame.menu:159
 msgid "DETAILS"
-msgstr ""
+msgstr "DETAILS"
 
 #: etmain/ui/hostgame.menu:196
 msgid "START SERVER"
@@ -1322,7 +1322,7 @@ msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
-msgstr ""
+msgstr "ABBRECHEN"
 
 #: etmain/ui/ingame_messagemode.menu:61
 msgid "SEND"
@@ -1443,7 +1443,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:44
 #: etmain/ui/ingame_vote_misc_refrcon.menu:43
 msgid "NEXT MAP"
-msgstr ""
+msgstr "NÄCHSTE KARTE"
 
 #: etmain/ui/ingame_vote_misc.menu:45
 #: etmain/ui/ingame_vote_misc_refrcon.menu:44
@@ -1453,12 +1453,12 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:46
 #: etmain/ui/ingame_vote_misc_refrcon.menu:45
 msgid "ANTI-LAG ON"
-msgstr ""
+msgstr "ANTI-LAG AN"
 
 #: etmain/ui/ingame_vote_misc.menu:47
 #: etmain/ui/ingame_vote_misc_refrcon.menu:46
 msgid "ANTI-LAG OFF"
-msgstr ""
+msgstr "ANTI-LAG AUS"
 
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
@@ -1522,7 +1522,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "Gegner"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
@@ -1555,7 +1555,7 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
-msgstr ""
+msgstr "PAUSE"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:81
 msgid "UNPAUSE"
@@ -1637,7 +1637,7 @@ msgstr ""
 
 #: etmain/ui/main.menu:105 etmain/ui/playonline.menu:56
 msgid "PLAY ONLINE"
-msgstr "SPIELE ONLINE"
+msgstr "ONLINE SPIEL"
 
 #: etmain/ui/main.menu:107 etmain/ui/viewreplay.menu:29
 msgid "REPLAYS"
@@ -1653,7 +1653,7 @@ msgstr "MODS"
 
 #: etmain/ui/main.menu:112
 msgid "ETLEGACY.COM"
-msgstr ""
+msgstr "ETLEGACY.COM"
 
 #: etmain/ui/main.menu:118
 msgid "^1SECURITY INFORMATION"
@@ -1680,7 +1680,7 @@ msgstr "VERBINDE MIT SERVER"
 #: etmain/ui/main_quickconnect.menu:69
 #: etmain/ui/playonline_connecttoip.menu:62
 msgid "Server IP:"
-msgstr ""
+msgstr "Server IP:"
 
 #: etmain/ui/main_quickconnect.menu:71
 #: etmain/ui/playonline_connecttoip.menu:64
@@ -1770,12 +1770,12 @@ msgstr ""
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Right"
-msgstr ""
+msgstr "Rechts"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Left"
-msgstr ""
+msgstr "Links"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
@@ -1794,11 +1794,11 @@ msgstr "BEWEGUNG"
 
 #: etmain/ui/options_controls.menu:33
 msgid "Forward:"
-msgstr ""
+msgstr "Vorwärts:"
 
 #: etmain/ui/options_controls.menu:34
 msgid "Back:"
-msgstr ""
+msgstr "Zurück:"
 
 #: etmain/ui/options_controls.menu:35
 msgid "Move Left:"
@@ -1818,11 +1818,11 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:39
 msgid "Jump:"
-msgstr ""
+msgstr "Springen:"
 
 #: etmain/ui/options_controls.menu:40
 msgid "Crouch:"
-msgstr ""
+msgstr "Ducken:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -1830,11 +1830,11 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:42
 msgid "Walk:"
-msgstr ""
+msgstr "Gehen:"
 
 #: etmain/ui/options_controls.menu:43
 msgid "Sprint:"
-msgstr ""
+msgstr "Laufen:"
 
 #: etmain/ui/options_controls.menu:47
 msgid "INPUT"
@@ -1964,7 +1964,7 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:83
 msgid "Use (Activate):"
-msgstr ""
+msgstr "Benutze (Aktiviere):"
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT WEAPONS"
@@ -1992,19 +1992,19 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
-msgstr ""
+msgstr "Slot 4 - Granate:"
 
 #: etmain/ui/options_controls.menu:94
 msgid "Slot 5 - Special 1:"
-msgstr ""
+msgstr "Slot 5 - Spezial 1:"
 
 #: etmain/ui/options_controls.menu:95
 msgid "Slot 6 - Special 2:"
-msgstr ""
+msgstr "Slot 6 - Spezial 2:"
 
 #: etmain/ui/options_controls.menu:96
 msgid "Slot 7 - Special 3:"
-msgstr ""
+msgstr "Slot 7 - Spezial 3:"
 
 #: etmain/ui/options_controls.menu:97
 msgid "Slot 8 - Binoculars:"
@@ -2124,7 +2124,7 @@ msgstr "WAFFEN"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatic Reload:"
-msgstr ""
+msgstr "Automatisches Nachladen:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
@@ -2144,11 +2144,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 Farben"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 Farben"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
@@ -2174,7 +2174,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "An"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
@@ -2220,12 +2220,12 @@ msgstr ""
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "Nah"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "Entfernt"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
@@ -2257,11 +2257,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr ""
+msgstr "Alpha"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr ""
+msgstr "Numerisch"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
@@ -2283,16 +2283,16 @@ msgstr ""
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "Lang"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "Wirklich lang"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
@@ -2572,7 +2572,7 @@ msgstr "Zeige Uhr:"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours"
-msgstr ""
+msgstr "24 Stunden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours + seconds"
@@ -2580,7 +2580,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours"
-msgstr ""
+msgstr "12 Stunden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours + seconds"
@@ -2737,7 +2737,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Light"
-msgstr ""
+msgstr "Leicht"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
@@ -2750,12 +2750,12 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Heavy"
-msgstr ""
+msgstr "Schwer"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Full"
-msgstr ""
+msgstr "Voll"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Red blood \"flash\" scale when receiving damage"
@@ -2763,7 +2763,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood Splatter:"
-msgstr ""
+msgstr "Blut Spritzer:"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood \"splatter\" transparency when taking damage from other players"
@@ -2796,7 +2796,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Tiny"
-msgstr ""
+msgstr "Winzig"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
@@ -2856,15 +2856,15 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class"
-msgstr ""
+msgstr "Klasse"
 
 #: etmain/ui/options_customise_hud.menu:74 src/cgame/cg_info.c:783
 msgid "Rank"
-msgstr ""
+msgstr "Rang"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank"
-msgstr ""
+msgstr "Klasse + Rang"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
@@ -2881,27 +2881,27 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "White"
-msgstr ""
+msgstr "Weiss"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Yellow"
-msgstr ""
+msgstr "Gelb"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Red"
-msgstr ""
+msgstr "Rot"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Green"
-msgstr ""
+msgstr "Grün"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Blue"
-msgstr ""
+msgstr "Blau"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -2986,7 +2986,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Black"
-msgstr ""
+msgstr "Schwarz"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Set the color for the primary crosshair"
@@ -3050,7 +3050,7 @@ msgstr "SCHRIFTEN"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Fonts Size:"
-msgstr ""
+msgstr "Schriftgröße:"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Sets the size of the in-game fonts"
@@ -3413,7 +3413,7 @@ msgstr ""
 
 #: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
 msgid "SYSTEM"
-msgstr ""
+msgstr "SYSTEM"
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
@@ -3457,7 +3457,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
-msgstr ""
+msgstr "Doppler Effekt:"
 
 #: etmain/ui/options_system.menu:45
 msgid "Enables or disables the doppler effect"
@@ -3563,7 +3563,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:82
 msgid "Internet"
-msgstr ""
+msgstr "Internet"
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
@@ -3577,7 +3577,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
-msgstr ""
+msgstr "Ziele"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
@@ -3643,11 +3643,11 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
-msgstr ""
+msgstr "SERVER BROWSER"
 
 #: etmain/ui/playonline.menu:332
 msgid "SERVER NAME"
-msgstr ""
+msgstr "SERVER NAME"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
@@ -3784,8 +3784,8 @@ msgid "^1LET'S KEEP ET ALIVE!"
 msgstr "^1LANG LEBE ET!"
 
 #: etmain/ui/profile_create_initial.menu:126
-msgid "Thank you for installing ET:Legacy"
-msgstr "Danke für die Installation von ET:Legacy"
+msgid "Thank you for installing ET: Legacy"
+msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"
@@ -3905,7 +3905,7 @@ msgstr ""
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
 #: src/cgame/cg_fireteams.c:341
 msgid "MESSAGE"
-msgstr ""
+msgstr "NACHRICHT"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:83 etmain/ui/wm_quickmessageAlt.menu:83
 msgid "1. Statements"
@@ -4033,7 +4033,7 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:125
 #: etmain/ui/wm_quickmessageAlt.menu:125
 msgid "3. Move!"
-msgstr ""
+msgstr "3. Bewegung!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:126
 #: etmain/ui/wm_quickmessageAlt.menu:126
@@ -4069,12 +4069,12 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:148
 #: etmain/ui/wm_quickmessageAlt.menu:137 etmain/ui/wm_quickmessageAlt.menu:148
 msgid "1. Yes"
-msgstr ""
+msgstr "1. JA"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:138
 #: etmain/ui/wm_quickmessageAlt.menu:138 etmain/ui/wm_quickmessageAlt.menu:149
 msgid "2. No"
-msgstr ""
+msgstr "2. Nein"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:139
 #: etmain/ui/wm_quickmessageAlt.menu:139
@@ -4341,12 +4341,12 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessage.menu:137 etmain/ui/wm_ftquickmessage.menu:148
 #: etmain/ui/wm_quickmessage.menu:137 etmain/ui/wm_quickmessage.menu:148
 msgid "Y. Yes"
-msgstr ""
+msgstr "Y. Ja"
 
 #: etmain/ui/wm_ftquickmessage.menu:138 etmain/ui/wm_ftquickmessage.menu:149
 #: etmain/ui/wm_quickmessage.menu:138 etmain/ui/wm_quickmessage.menu:149
 msgid "N. No"
-msgstr ""
+msgstr "N. Nein"
 
 #: etmain/ui/wm_ftquickmessage.menu:139 etmain/ui/wm_ftquickmessage.menu:161
 #: etmain/ui/wm_quickmessage.menu:139 etmain/ui/wm_quickmessage.menu:161
@@ -4374,7 +4374,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:151 etmain/ui/wm_quickmessage.menu:151
 msgid "H. Hi"
-msgstr ""
+msgstr "H. Hi"
 
 #: etmain/ui/wm_ftquickmessage.menu:152 etmain/ui/wm_quickmessage.menu:152
 msgid "B. Bye"
@@ -4394,7 +4394,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:166 etmain/ui/wm_quickmessage.menu:166
 msgid "G. Good Game"
-msgstr ""
+msgstr "G. Gutes Spiel"
 
 #: etmain/ui/wm_ftquickmessage.menu:172 etmain/ui/wm_quickmessage.menu:172
 msgid "A. Command Acknowledged"
@@ -4476,7 +4476,7 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
-msgstr ""
+msgstr "Niemals"
 
 #: src/cgame/cg_debriefing.c:1341
 #, c-format
@@ -4512,7 +4512,7 @@ msgstr "Medaillen:"
 
 #: src/cgame/cg_debriefing.c:2690
 msgid "Rank:"
-msgstr ""
+msgstr "Rang:"
 
 #: src/cgame/cg_debriefing.c:2810
 msgid "^5TO TEAM"
@@ -4909,12 +4909,12 @@ msgstr "SETZE ADMIN"
 #: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
 #: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
 msgid "Previous"
-msgstr ""
+msgstr "Vorheriger"
 
 #: src/cgame/cg_fireteams.c:717 src/cgame/cg_fireteams.c:721
 #: src/cgame/cg_fireteams.c:778 src/cgame/cg_fireteams.c:782
 msgid "Next"
-msgstr ""
+msgstr "Nächster"
 
 #: src/cgame/cg_info.c:718
 msgid "PLAYER STATS"
@@ -4986,7 +4986,7 @@ msgstr "KAMPFZIELE"
 
 #: src/cgame/cg_info.c:1421
 msgid "DEMO STATUS"
-msgstr ""
+msgstr "DEMO STATUS"
 
 #: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
@@ -5107,7 +5107,7 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
-msgstr ""
+msgstr "SPIEL BEGINNT IN:"
 
 #: src/cgame/cg_scoreboard.c:205
 #, c-format
@@ -5166,11 +5166,11 @@ msgstr "Punkte"
 
 #: src/cgame/cg_scoreboard.c:865
 msgid "XP"
-msgstr ""
+msgstr "XP"
 
 #: src/cgame/cg_scoreboard.c:869
 msgid "Ping"
-msgstr ""
+msgstr "Ping"
 
 #: src/cgame/cg_servercmds.c:387
 msgid "^1FIGHT!\n"
@@ -5229,7 +5229,7 @@ msgstr "^3Server startet neu"
 
 #: src/ui/ui_loadpanel.c:192
 msgid "DOWNLOADING..."
-msgstr ""
+msgstr "LADE DATEI..."
 
 #: src/ui/ui_loadpanel.c:196
 msgid "CONNECTING..."
