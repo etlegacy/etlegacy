@@ -178,7 +178,7 @@ static qboolean CG_SetParticleActive(cg_atmosphericParticle_t *particle, active_
 */
 
 /**
- * @brief Generate rain particule
+ * @brief Generate rain particle
  * @details Attempt to 'spot' a raindrop somewhere below a sky texture.
  */
 static qboolean CG_RainParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight)
@@ -217,9 +217,7 @@ static qboolean CG_RainParticleGenerate(cg_atmosphericParticle_t *particle, vec3
 	}
 
 	// rain goes in bursts - allow max raindrops every 10 seconds
-	float maxActiveDrops = 0.50 * cg_atmFx.numDrops + 0.001 * cg_atmFx.numDrops * (10000 - (cg.time % 10000));
-
-	if (cg_atmFx.oldDropsActive > maxActiveDrops)
+	if (cg_atmFx.oldDropsActive > (0.50 * cg_atmFx.numDrops + 0.001 * cg_atmFx.numDrops * (10000 - (cg.time % 10000))))
 	{
 		return qfalse;
 	}
