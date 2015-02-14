@@ -645,11 +645,10 @@ menuDef {
 
 
 	// Misc Buttons
-	BUTTON( 12, 102+316-20, .195*((SUBWINDOW_WIDTH)-30), 14, _("REFRESH LIST"), .24, 11, uiScript RefreshServers )
-	BUTTON( 6+6+(.195*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .195*((SUBWINDOW_WIDTH)-30), 14, _("CONNECT TO IP"), .24, 11, clearFocus ; open playonline_connecttoip )
-	BUTTON( 6+6+(.195*((SUBWINDOW_WIDTH)-30))+6+(.195*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .195*((SUBWINDOW_WIDTH)-30), 14, _("SERVER INFO"), .24, 11, clearFocus ; open playonline_serverinfo )
-	BUTTON( 6+6+(.195*((SUBWINDOW_WIDTH)-30))+6+(.195*((SUBWINDOW_WIDTH)-30))+6+(.195*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .195*((SUBWINDOW_WIDTH)-30), 14, _("DELETE FAVS"), .24, 11, clearFocus ; open playonline_deletefavs )
-	BUTTON( 6+6+(.195*((SUBWINDOW_WIDTH)-30))+6+(.195*((SUBWINDOW_WIDTH)-30))+6+(.195*((SUBWINDOW_WIDTH)-30))+6+(.195*((SUBWINDOW_WIDTH)-30))+6 , 102+316-20, .195*((SUBWINDOW_WIDTH)-30), 14, _("RESET FILTERS"), .24, 11, /*clearFocus*/ ; uiScript ResetFilters; uiScript RefreshFilter )
+	BUTTON( 12, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("REFRESH LIST"), .24, 11, uiScript RefreshServers )
+	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("CONNECT TO IP"), .24, 11, clearFocus ; open playonline_connecttoip )
+	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("SERVER INFO"), .24, 11, clearFocus ; open playonline_serverinfo )
+	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("DELETE FAVS"), .24, 11, clearFocus ; open playonline_deletefavs )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close playonline ; open main )
