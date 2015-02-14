@@ -3647,7 +3647,10 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	pm->watertype = 0;
+	// commented - why do we do this in weapon code? This messes up water content type
+	// only PM_SetWaterLevel and init functions should deal with this
+	// if we have issues with water we know why ....
+	//pm->watertype = 0;
 
 	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
 	{

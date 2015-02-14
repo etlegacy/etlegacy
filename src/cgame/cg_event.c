@@ -98,7 +98,7 @@ static void CG_Obituary(entityState_t *ent)
 			message = "drowned";
 			break;
 		case MOD_SLIME:
-			message = "died by toxic materials";
+			message = "slagged";
 			break;
 		case MOD_TRIGGER_HURT:
 		case MOD_TELEFRAG: // added TELEFRAG and TARGET_LASER, just in case

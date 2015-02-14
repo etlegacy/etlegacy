@@ -2056,6 +2056,7 @@ IsFakepConnection
 #define DEF_IP_MAX_CLIENTS  3
 
 // Return the length of the IP address if it has a port, or INT_MAX otherwise
+// FIXME: IPv6
 int GetIPLength(char const *ip)
 {
 	char *start = strchr(ip, ':');

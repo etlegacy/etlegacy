@@ -160,7 +160,14 @@ void P_WorldEffects(gentity_t *ent)
 				// don't play a normal pain sound
 				ent->pain_debounce_time = level.time + 200;
 
-				G_Damage(ent, NULL, NULL, NULL, NULL, ent->damage, 0, MOD_WATER);
+				if (ent->watertype & CONTENTS_SLIME)     // slag
+				{
+					G_Damage(ent, NULL, NULL, NULL, NULL, ent->damage, 0, MOD_SLIME);
+				}
+				else
+				{
+					G_Damage(ent, NULL, NULL, NULL, NULL, ent->damage, 0, MOD_WATER);
+				}
 			}
 		}
 	}
