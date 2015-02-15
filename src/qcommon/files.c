@@ -412,9 +412,14 @@ long FS_fplength(FILE *h)
 	pos = ftell(h);
 	fseek(h, 0, SEEK_END);
 	end = ftell(h);
-	fseek(h, pos, SEEK_SET);
 
-	return end;
+	if (pos < 0)
+	{
+		Com_Error(ERR_DROP, "FS_fplength: pos < 0");
+	}
+	
+	fseek(h, pos, SEEK_SET);
+	return end;	
 }
 
 /**
