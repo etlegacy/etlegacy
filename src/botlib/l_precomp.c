@@ -2923,29 +2923,29 @@ void PC_UnreadToken(source_t *source, token_t *token)
 
 /**
  * @note Unused. Keep it here for the time being.
- */
 void PC_SetIncludePath(source_t *source, char *path)
 {
-	size_t len;
+    size_t len;
 
-	Q_strncpyz(source->includepath, path, _MAX_PATH - 1);
+    Q_strncpyz(source->includepath, path, _MAX_PATH - 1);
 
-	len = strlen(source->includepath);
-	// add trailing path seperator
-	if (len > 0 && source->includepath[len - 1] != '\\' &&
-	    source->includepath[len - 1] != '/')
-	{
-		strcat(source->includepath, va("%c", PATH_SEP));
-	}
+    len = strlen(source->includepath);
+    // add trailing path seperator
+    if (len > 0 && source->includepath[len - 1] != '\\' &&
+        source->includepath[len - 1] != '/')
+    {
+        strcat(source->includepath, va("%c", PATH_SEP));
+    }
 }
+ */
 
 /**
  * @note Unused. Keep it here for the time being.
- */
 void PC_SetPunctuations(source_t *source, punctuation_t *p)
 {
-	source->punctuations = p;
+    source->punctuations = p;
 }
+ */
 
 source_t *LoadSourceFile(const char *filename)
 {
