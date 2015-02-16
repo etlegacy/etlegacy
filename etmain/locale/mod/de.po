@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-11 17:22+0000\n"
+"PO-Revision-Date: 2015-02-15 14:54+0000\n"
 "Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -334,11 +334,11 @@ msgid ""
 "trademarks of Id Software, Inc. in the United States and/or other countries."
 " All other trademarks and trade names are the properties of their respective"
 " owners."
-msgstr ""
+msgstr "© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
-msgstr ""
+msgstr "ENTWICKELT VON SPLASH DAMAGE"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
@@ -370,7 +370,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:130
 msgid "Programmer"
-msgstr ""
+msgstr "Programmierer"
 
 #: etmain/ui/credits_splashdamage.menu:132
 msgid "Programmer / Artist"
@@ -378,7 +378,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:139
 msgid "DESIGN"
-msgstr ""
+msgstr "DESIGN"
 
 #: etmain/ui/credits_splashdamage.menu:152
 msgid "Designer / Audio Engineer"
@@ -422,7 +422,7 @@ msgstr ""
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
+msgstr "Möchtest Du www.etlegacy.com\nbesuchen?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -468,7 +468,7 @@ msgstr "ALLGEMEIN"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Minimum Ping:"
-msgstr ""
+msgstr "Minimum Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
@@ -580,7 +580,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Warmup Damage:"
-msgstr ""
+msgstr "Aufwärmschaden:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
@@ -609,7 +609,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr ""
+msgstr "Team Kontrolle abschalten:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
@@ -1633,7 +1633,7 @@ msgstr "Warnung:"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning message to send to a player"
-msgstr ""
+msgstr "Eine Verwarnung wurde an den Spieler gesendet"
 
 #: etmain/ui/main.menu:105 etmain/ui/playonline.menu:56
 msgid "PLAY ONLINE"
@@ -1714,7 +1714,7 @@ msgstr "SÄUBERN"
 
 #: etmain/ui/options_clean.menu:34
 msgid "HOMEPATH CLEAN UP"
-msgstr ""
+msgstr "HOMEPATH SÄUBERN"
 
 #: etmain/ui/options_clean.menu:35
 msgid "This will delete all unnecessary files from you fs_homepath."
@@ -1748,7 +1748,7 @@ msgstr "ABBRECHEN"
 
 #: etmain/ui/options_clean.menu:44
 msgid "SIMPLE CLEAN"
-msgstr ""
+msgstr "EINFACHES SÄUBERN"
 
 #: etmain/ui/options_clean.menu:45
 msgid "FULL CLEAN"
@@ -2082,7 +2082,7 @@ msgstr "SPIELER"
 #: etmain/ui/options_customise_game.menu:34
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid "Player Alias:"
-msgstr ""
+msgstr "Spieler Alias:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
@@ -3409,7 +3409,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:78 etmain/ui/options_system.menu:66
 msgid "APPLY"
-msgstr ""
+msgstr "ÜBERNEHMEN"
 
 #: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
 msgid "SYSTEM"
@@ -3421,7 +3421,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:41
 msgid "Effects Volume:"
-msgstr "Effekt Lautstärke"
+msgstr "Effekt Lautstärke:"
 
 #: etmain/ui/options_system.menu:41
 msgid "Set the effects volume"
@@ -3437,7 +3437,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
-msgstr "Klang Qualität"
+msgstr "Klang Qualität:"
 
 #: etmain/ui/options_system.menu:44
 msgid "11 khz (low)"
@@ -4575,7 +4575,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:396
 msgid "an Objective"
-msgstr ""
+msgstr "ein Ziel"
 
 #: src/cgame/cg_draw.c:403
 #, c-format
@@ -4743,11 +4743,11 @@ msgstr "Drücke %s bis %s für die Mehrspieleransicht"
 
 #: src/cgame/cg_draw.c:2168
 msgid "disable"
-msgstr ""
+msgstr "abschalten"
 
 #: src/cgame/cg_draw.c:2168
 msgid "activate"
-msgstr ""
+msgstr "aktivieren"
 
 #: src/cgame/cg_draw.c:2231
 msgid "You are wounded and waiting for a medic."
@@ -4874,7 +4874,7 @@ msgstr ""
 #: src/cgame/cg_event.c:614
 #, c-format
 msgid "Picked up %s"
-msgstr ""
+msgstr "%s aufgehoben"
 
 #: src/cgame/cg_fireteamoverlay.c:475
 #, c-format
@@ -4896,7 +4896,7 @@ msgstr "ANSCHLIEßEN"
 
 #: src/cgame/cg_fireteams.c:350
 msgid "PROPOSE"
-msgstr ""
+msgstr "VORSCHLAGEN"
 
 #: src/cgame/cg_fireteams.c:356
 msgid "INVITE"
@@ -4978,7 +4978,7 @@ msgstr "Spieler"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
-msgstr ""
+msgstr "Keine Waffen Informationen verfügbar."
 
 #: src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
@@ -5103,7 +5103,7 @@ msgstr "SPIEL GESTOPPT"
 
 #: src/cgame/cg_scoreboard.c:188
 msgid "SUDDEN DEATH"
-msgstr ""
+msgstr "PLÖTZLICHER TOD"
 
 #: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
@@ -5134,7 +5134,7 @@ msgstr "KARTE %i von %i"
 #: src/cgame/cg_scoreboard.c:273
 #, c-format
 msgid "Config: ^7%s^7"
-msgstr ""
+msgstr "Konfiguartion: ^7%s^7"
 
 #: src/cgame/cg_scoreboard.c:451 src/cgame/cg_scoreboard.c:642
 msgid "^3CONNECTING"
@@ -5343,7 +5343,7 @@ msgstr ""
 #: src/ui/ui_main.c:8466
 #, c-format
 msgid "%i campaigns found:\n"
-msgstr ""
+msgstr "%i Kampagnen gefunden:\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
