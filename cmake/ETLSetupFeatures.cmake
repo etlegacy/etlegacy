@@ -232,10 +232,6 @@ if(FEATURE_ANTICHEAT)
 	add_definitions(-DFEATURE_ANTICHEAT)
 endif(FEATURE_ANTICHEAT)
 
-if(PANDORA)
-	add_definitions(-DPANDORA -DARM -DNEON -DAUTOAIM)
-endif()
-
 if (FEATURE_RENDERER_GLES)
 	add_definitions(-DFEATURE_RENDERER_GLES)
 endif()

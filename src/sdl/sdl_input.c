@@ -456,28 +456,12 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 		case SDLK_PAUSE:        key = K_PAUSE;
 			break; // FIXME: SDL 2.0 maps PAUSE to PAUSE as well as BREAK
 			       // (key = K_BREAK;         break;)
-
-#ifdef PANDORA
-		case SDLK_LSHIFT:       key = K_SHIFT;
-			break;
-		case SDLK_RSHIFT:       key = K_MOUSE2;
-			break;
-#else
 		case SDLK_LSHIFT:
 		case SDLK_RSHIFT:       key = K_SHIFT;
 			break;
-#endif
-
-#ifdef PANDORA
-		case SDLK_LCTRL:        key = K_CTRL;
-			break;
-		case SDLK_RCTRL:        key = K_MOUSE1;
-			break;
-#else
 		case SDLK_LCTRL:
 		case SDLK_RCTRL:        key = K_CTRL;
 			break;
-#endif
 
 #ifdef __APPLE__
 		case SDLK_RGUI:

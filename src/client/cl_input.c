@@ -802,11 +802,7 @@ void CL_JoystickMove(usercmd_t *cmd)
 		anglespeed = 0.001 * cls.frametime;
 	}
 
-#ifdef PANDORA
-	if (kb[KB_STRAFE].active)
-#else
 	if (!kb[KB_STRAFE].active)
-#endif
 	{
 		cl.viewangles[YAW] += anglespeed * cl_yawspeed->value * cl.joystickAxis[AXIS_SIDE];
 	}
@@ -868,20 +864,12 @@ void CL_MouseMove(usercmd_t *cmd)
 	if (cl.snap.ps.persistant[PERS_HWEAPON_USE])
 	{
 		mx *= 2.5; //(accelSensitivity * 0.1);
-#ifdef PANDORA
-		my *= 1.25f; //(accelSensitivity * 0.075);
-#else
 		my *= 2; //(accelSensitivity * 0.075);
-#endif
 	}
 	else
 	{
 		mx *= accelSensitivity;
-#ifdef PANDORA
-		my *= accelSensitivity * 0.5f;
-#else
 		my *= accelSensitivity;
-#endif
 	}
 
 	if (!mx && !my)

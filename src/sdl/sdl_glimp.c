@@ -639,11 +639,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	Ren_Print("...setting mode %d: ", mode);
 
-#ifdef PANDORA
-	glConfig.vidWidth     = 800;
-	glConfig.vidHeight    = 480;
-	glConfig.windowAspect = 800.0 / 480.0;
-#else
 	if (mode == -2)
 	{
 		// use desktop video resolution
@@ -666,13 +661,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		Ren_Print("invalid mode\n");
 		return RSERR_INVALID_MODE;
 	}
-#endif
 	Ren_Print("%dx%d\n", glConfig.vidWidth, glConfig.vidHeight);
-
-#ifdef PANDORA
-	flags                |= SDL_FULLSCREEN;
-	glConfig.isFullscreen = qtrue;
-#else
 
 	// Center window
 	if (r_centerWindow->integer && !fullscreen)
@@ -718,7 +707,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		glConfig.isFullscreen = qfalse;
 	}
-#endif
 
 	colorBits = r_colorbits->value;
 	if ((!colorBits) || (colorBits >= 32))
@@ -1278,11 +1266,7 @@ void Glimp_ClearScreen(void)
 	GLimp_EndFrame();
 }
 
-#ifdef PANDORA
-#define R_MODE_FALLBACK 11 // 800 * 480
-#else
 #define R_MODE_FALLBACK 3 // 640 * 480
-#endif
 
 /**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
