@@ -303,12 +303,9 @@ void Com_WWWDownload(void)
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 		if (rename(dld.downloadTempName, to_ospath))
 		{
-			int res;
-
 			FS_CopyFile(dld.downloadTempName, to_ospath);
-			res = remove(dld.downloadTempName);
 
-			if (res != 0)
+			if (remove(dld.downloadTempName) != 0)
 			{
 				Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
 			}
