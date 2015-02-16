@@ -322,6 +322,10 @@ vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
                 //   2 - Linux
                 //   4 - Linux64
                 //   8 - Apple
+                //  16 - AROS
+                //  32 - Pandora
+                //  64 - MorphOS
+                // 128 - Android
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
 
