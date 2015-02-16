@@ -929,7 +929,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	GLimp_DetectAvailableModes();
 
-#if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
+#if !defined(FEATURE_RENDERER_GLES)
 	glewResult = glewInit();
 
 	if (GLEW_OK != glewResult)
@@ -1024,7 +1024,7 @@ static void GLimp_InitExtensions(void)
 
 	glConfig.textureCompression = TC_NONE;
 
-#if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
+#if !defined(FEATURE_RENDERER_GLES)
 	// GL_EXT_texture_compression_s3tc
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
@@ -1045,7 +1045,7 @@ static void GLimp_InitExtensions(void)
 		Ren_Print("...GL_EXT_texture_compression_s3tc not found\n");
 	}
 
-#if !defined(FEATURE_RENDERER_GLES) && !defined(__MORPHOS__)
+#if !defined(FEATURE_RENDERER_GLES)
 	// GL_S3_s3tc ... legacy extension before GL_EXT_texture_compression_s3tc.
 	if (glConfig.textureCompression == TC_NONE)
 	{
@@ -1072,8 +1072,6 @@ static void GLimp_InitExtensions(void)
 #ifdef FEATURE_RENDERER_GLES
 	glConfig.textureEnvAddAvailable = qtrue;
 	Ren_Print("...using GL_EXT_texture_env_add\n");
-#elif defined(__MORPHOS__)
-	Ren_Print("...GL_EXT_texture_env_add not found\n");
 #else
 	glConfig.textureEnvAddAvailable = qfalse;
 	if (GLEW_EXT_texture_env_add)
@@ -1097,7 +1095,7 @@ static void GLimp_InitExtensions(void)
 
 	// GL_ARB_multitexture
 	glConfig.maxActiveTextures = 1;
-#if defined(FEATURE_RENDERER_GLES) || defined(__MORPHOS__)
+#if defined(FEATURE_RENDERER_GLES)
 	GLint glint = 0;
 	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;

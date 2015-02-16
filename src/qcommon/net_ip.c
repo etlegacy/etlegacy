@@ -60,35 +60,6 @@ typedef unsigned short sa_family_t;
 static WSADATA  winsockdata;
 static qboolean winsockInitialized = qfalse;
 
-#elif defined (__AROS__) || defined (__MORPHOS__)
-
-#include <errno.h>
-#include <netdb.h>
-#include <netinet/tcp.h>
-#include <netinet/in.h>
-#include <sys/ioctl.h>
-#include <sys/time.h>
-#include <sys/socket.h>
-#include <proto/exec.h>
-#include <proto/socket.h>
-
-typedef unsigned short sa_family_t;
-typedef int SOCKET;
-#ifdef __MORPHOS__
-#include <net/socketbasetags.h>
-typedef int socklen_t;
-//#define inet_ntoa Inet_NtoA
-#endif
-
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
-#define ioctlsocket IoctlSocket
-#define closesocket CloseSocket
-#define socketError errno
-#define sockaddr_storage sockaddr_in
-
-struct Library *SocketBase;
-
 #else // *NIX & APPLE
 
 #   if MAC_OS_X_VERSION_MIN_REQUIRED == 1020
@@ -452,14 +423,10 @@ static void Sys_SockaddrToString(char *dest, int destlen, struct sockaddr *input
 		*dest = '\0';
 	}
 #else // IPV4
-#ifdef __MORPHOS__
-	char *addr = Inet_NtoA(((struct sockaddr_in *)input)->sin_addr.s_addr);
-#else
 	char *addr = inet_ntoa(((struct sockaddr_in *)input)->sin_addr);
 #endif
 
 	Q_strncpyz(dest, addr, destlen);
-#endif
 }
 
 /*
@@ -880,9 +847,7 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 	}
 	else
 	{
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 		if (addr.ss_family == AF_INET)
-#endif
 		{
 			ret = sendto(ip_socket, data, length, 0, (struct sockaddr *) &addr, sizeof(struct sockaddr_in));
 		}
@@ -1062,11 +1027,7 @@ int NET_IPSocket(char *net_interface, int port, int *err)
 {
 	SOCKET             newsocket;
 	struct sockaddr_in address;
-#if defined(__AROS__) || defined(__MORPHOS__)
-	char _true = 1;
-#else
 	u_long _true = 1;
-#endif
 	int i = 1;
 
 	*err = 0;
@@ -1624,44 +1585,6 @@ static void NET_GetLocalAddress(void)
 		Sys_ShowIP();
 	}
 }
-#elif defined (__AROS__) || defined (__MORPHOS__)
-static void NET_GetLocalAddress(void)
-{
-	char               hostname[256];
-	struct hostent     *hostInfo;
-	char               *p;
-	struct sockaddr_in sockaddr;
-	struct sockaddr_in mask4;
-	int                numIP;
-
-	if (gethostname(hostname, 256) == -1)
-	{
-		return;
-	}
-
-	hostInfo = gethostbyname(hostname);
-	if (!hostInfo)
-	{
-		return;
-	}
-
-	if (hostInfo->h_addrtype != AF_INET)
-	{
-		return;
-	}
-
-	memset(&mask4, 0, sizeof(mask4));
-
-	mask4.sin_family = AF_INET;
-	memset(&mask4.sin_addr.s_addr, 0xFF, sizeof(mask4.sin_addr.s_addr));
-
-	numIP = 0;
-	while ((p = hostInfo->h_addr_list[numIP++]) != NULL)
-	{
-		memcpy((char *)&(sockaddr.sin_addr.s_addr), (char *)p, (size_t)hostInfo->h_length);
-		NET_AddLocalAddress("", (struct sockaddr *)&sockaddr, (struct sockaddr *) &mask4);
-	}
-}
 #else
 static void NET_GetLocalAddress(void)
 {
@@ -2008,22 +1931,6 @@ void NET_Init(void)
 	winsockInitialized = qtrue;
 	Com_Printf("Winsock initialized.\n");
 #endif
-#if defined(__AROS__) || defined(__MORPHOS__)
-	SocketBase = OpenLibrary("bsdsocket.library", 0);
-	if (!SocketBase)
-	{
-		Com_Printf("WARNING: NET_Init - Unable to open bsdsocket.library\n");
-		return;
-	}
-
-	if (SocketBaseTags(SBTM_SETVAL(SBTC_ERRNOPTR(sizeof(errno))), (IPTR)&errno, TAG_DONE))
-	{
-		CloseLibrary(SocketBase);
-		SocketBase = NULL;
-		Com_Printf("WARNING: NET_Init - SocketBaseTags failed\n");
-		return;
-	}
-#endif
 
 	NET_Config(qtrue);
 
@@ -2049,13 +1956,6 @@ void NET_Shutdown(void)
 #ifdef _WIN32
 	WSACleanup();
 	winsockInitialized = qfalse;
-#endif
-#if defined(__AROS__) || defined(__MORPHOS__)
-	if (SocketBase)
-	{
-		CloseLibrary(SocketBase);
-		SocketBase = NULL;
-	}
 #endif
 	Com_Printf("Network shutdown.\n");
 }

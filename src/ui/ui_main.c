@@ -5801,37 +5801,6 @@ static void UI_BuildServerDisplayList(int force)
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-
-#if defined(__AROS__) || defined(__MORPHOS__)
-				{
-					char *whitelist[] =
-					{
-						"etmain",
-						"etpub",
-						"silent",
-						"nq",
-						"legacy",
-						NULL
-					};
-					char **p = whitelist;
-
-					while (*p)
-					{
-						if (!Q_stricmp(gamename, *p))
-						{
-							break;
-						}
-
-						p++;
-					}
-
-					if (!*p)
-					{
-						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-						continue;
-					}
-				}
-#endif
 			}
 
 			// make sure we never add a favorite server twice
@@ -8515,30 +8484,3 @@ void UI_RemoveAllFavourites_f(void)
 
 	Com_Printf("%s\n", trap_TranslateString("All favourite servers removed."));
 }
-
-#ifdef __AROS__
-#include <dll.h>
-
-void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...));
-
-dll_tExportSymbol DLL_ExportSymbols[] =
-{
-	{ (void *)dllEntry, "dllEntry" },
-	{ (void *)vmMain,   "vmMain"   },
-	{ 0,                0          }
-};
-
-dll_tImportSymbol DLL_ImportSymbols[] =
-{
-	{ 0, 0, 0, 0 }
-};
-
-int DLL_Init(void)
-{
-	return 1;
-}
-
-void DLL_DeInit(void)
-{
-}
-#endif

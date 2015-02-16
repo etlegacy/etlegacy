@@ -38,11 +38,6 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
-#ifdef __MORPHOS__
-#undef send
-#define send Huff_send
-#endif
-
 static int bloc = 0;
 
 // clears data along the way so we dont have to memset() it ahead of time

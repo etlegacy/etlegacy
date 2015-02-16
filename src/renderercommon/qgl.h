@@ -37,16 +37,6 @@
 
 #ifdef FEATURE_RENDERER_GLES
 #   include <GLES/gl.h>
-#elif defined(__MORPHOS__)
-#   include <proto/tinygl.h>
-#   include <tgl/gl.h>
-#   define GL_GENERATE_MIPMAP_SGIS 0x8191
-#   define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
-#   define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
-#   define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
-#   define GL_RGB4_S3TC 0x83A1
-#   define GLAPIENTRY
-#   define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_UNITS_ARB
 #else
 #   ifdef BUNDLED_GLEW
 #       include "GL/glew.h"
@@ -64,24 +54,6 @@
 #endif
 #endif
 */
-
-#ifdef __MORPHOS__
-#undef glActiveTextureARB
-static void glActiveTextureARB(GLenum unit)
-{
-	GLActiveTextureARB(__tglContext, unit);
-}
-#undef glLockArraysEXT
-static void glLockArraysEXT(int f, int c)
-{
-	GLLockArraysEXT(__tglContext, f, c);
-}
-#undef glUnlockArraysEXT
-static void glUnlockArraysEXT()
-{
-	GLUnlockArraysEXT(__tglContext);
-}
-#endif
 
 #ifdef FEATURE_RENDERER_GLES
 #   define qglMultiTexCoord2fARB(t, s)                             glMultiTexCoord4f(t, s, 0, 1.0f)

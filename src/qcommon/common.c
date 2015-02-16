@@ -2886,11 +2886,7 @@ void Com_Init(char *commandLine)
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 
-#if defined (__AROS__) || defined (__MORPHOS__)
-	com_ansiColor = Cvar_Get("com_ansiColor", "0", CVAR_ARCHIVE);
-#else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
-#endif
 
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);

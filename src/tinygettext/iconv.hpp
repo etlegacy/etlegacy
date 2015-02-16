@@ -5,12 +5,12 @@
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-//  
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -26,16 +26,11 @@
 #  define tinygettext_iconv_t     SDL_iconv_t
 #  define tinygettext_iconv       SDL_iconv
 #  define tinygettext_iconv_open  SDL_iconv_open
-#  define tinygettext_iconv_close SDL_iconv_close 
+#  define tinygettext_iconv_close SDL_iconv_close
 
 #else // Using pure iconv
 
 #  include <iconv.h>
-
-#  ifdef __MORPHOS__
-#    define HAVE_ICONV_CONST
-#    define ICONV_CONST const
-#  endif
 
 // In FreeBSD, iconv is included in libc starting from version 10.0.
 #  ifdef __FreeBSD__
@@ -49,13 +44,13 @@
 #  ifdef HAVE_ICONV_CONST
 #    define tinygettext_ICONV_CONST ICONV_CONST
 #  else
-#    define tinygettext_ICONV_CONST 
+#    define tinygettext_ICONV_CONST
 #  endif
 
 #  define tinygettext_iconv_t     iconv_t
 #  define tinygettext_iconv       iconv
 #  define tinygettext_iconv_open  iconv_open
-#  define tinygettext_iconv_close iconv_close 
+#  define tinygettext_iconv_close iconv_close
 
 #endif
 

@@ -38,8 +38,6 @@
 #include "../minizip/unzip.h"
 #ifdef _WIN32
 #define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
-#elif defined (__MORPHOS__)
-#define realpath(N, R) strdup(N)
 #endif // _WIN32
 
 /*
@@ -417,9 +415,9 @@ long FS_fplength(FILE *h)
 	{
 		Com_Error(ERR_DROP, "FS_fplength: pos < 0");
 	}
-	
+
 	fseek(h, pos, SEEK_SET);
-	return end;	
+	return end;
 }
 
 /**

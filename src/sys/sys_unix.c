@@ -51,39 +51,14 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <unistd.h>
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 #include <sys/mman.h>
-#endif
 #include <sys/time.h>
 #include <pwd.h>
 #include <libgen.h>
 #include <fcntl.h>
 #include <sys/wait.h>
 
-#if defined(__AROS__) || defined(__MORPHOS__)
-#ifndef SIGIOT
-#define SIGIOT SIGABRT
-#endif
-#include <datatypes/textclass.h>
-#include <intuition/intuition.h>
-#include <proto/exec.h>
-#include <proto/intuition.h>
-#include <proto/iffparse.h>
-#include <proto/openurl.h>
-#ifdef __MORPHOS__
-#define kill(x, y) - 1
-#define setenv(x, y, z)
-#define unsetenv(x)
-#define dirname(x) x
-#define basename(x) x
-#endif
-
-struct Library *OpenURLBase;
-#endif
-
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 qboolean stdinIsATTY;
-#endif
 
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = { 0 };
@@ -98,11 +73,7 @@ char *Sys_DefaultHomePath(void)
 
 	if (!*homePath)
 	{
-#if defined(__AROS__) || defined(__MORPHOS__)
-		if (*(p = Sys_DefaultInstallPath()) != 0)
-#else
 		if ((p = getenv("HOME")) != NULL)
-#endif
 		{
 			Q_strncpyz(homePath, p, sizeof(homePath));
 #ifdef __APPLE__
@@ -194,7 +165,6 @@ void Sys_SnapVector(float *v)
  */
 qboolean Sys_RandomBytes(byte *string, int len)
 {
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	FILE *fp;
 
 	fp = fopen("/dev/urandom", "r");
@@ -211,9 +181,6 @@ qboolean Sys_RandomBytes(byte *string, int len)
 
 	fclose(fp);
 	return qtrue;
-#else
-	return qfalse;
-#endif
 }
 
 /**
@@ -222,16 +189,14 @@ qboolean Sys_RandomBytes(byte *string, int len)
  */
 char *Sys_GetCurrentUser(void)
 {
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	struct passwd *p;
 
-	if ((p = getpwuid(getuid())) != NULL)
+	if ((p = getpwuid(getuid())) == NULL)
 	{
-		return p->pw_name;
+		return "player";
 	}
-#endif
 
-	return "player";
+	return p->pw_name;
 }
 
 /**
@@ -528,7 +493,6 @@ void Sys_Sleep(int msec)
 		return;
 	}
 
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	if (stdinIsATTY)
 	{
 		fd_set fdset;
@@ -549,7 +513,6 @@ void Sys_Sleep(int msec)
 		}
 	}
 	else
-#endif
 	{
 		// With nothing to select() on, we can't wait indefinitely
 		if (msec < 0)
@@ -619,50 +582,7 @@ void Sys_ErrorDialog(const char *error)
 	close(f);
 }
 
-#if defined(__AROS__) || defined(__MORPHOS__)
-/**
- * @brief Display an Intuition dialog box
- * @param     type    Dialog Type
- * @param[in] message Message to show
- * @param[in] title   Message box title
- */
-dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title)
-{
-	struct EasyStruct es;
-	int               result;
-
-	es.es_StructSize = sizeof(es);
-	es.es_Flags      = 0;
-	es.es_Title      = title;
-	es.es_TextFormat = message;
-
-	switch (type)
-	{
-	case DT_YES_NO:
-		es.es_GadgetFormat = "Yes|No";
-		break;
-	case DT_OK_CANCEL:
-		es.es_GadgetFormat = "OK|Cancel";
-		break;
-	default:
-		es.es_GadgetFormat = "OK";
-		break;
-	}
-
-	result = EasyRequest(0, &es, 0, 0);
-
-	// the rightmost button is always 0, others are numbered left to right
-	switch (type)
-	{
-	case DT_YES_NO:
-		return result ? DR_YES : DR_NO;
-	case DT_OK_CANCEL:
-		return result ? DR_OK : DR_CANCEL;
-	}
-
-	return DR_OK;
-}
-#elif !defined (__APPLE__)
+#if !defined (__APPLE__)
 static char execBuffer[1024];
 static char *execBufferPointer;
 static char *execArgv[16];
@@ -916,7 +836,6 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
  */
 void Sys_DoStartProcess(char *cmdline)
 {
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	switch (fork())
 	{
 	case -1:
@@ -946,7 +865,6 @@ void Sys_DoStartProcess(char *cmdline)
 		_exit(0);
 		break;
 	}
-#endif
 }
 
 /**
@@ -980,10 +898,8 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	char fn[MAX_OSPATH];
 	char cmdline[MAX_CMD];
-#endif
 
 	static qboolean doexit_spamguard = qfalse;
 
@@ -995,7 +911,6 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	Com_Printf("Open URL: %s\n", url);
 
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	Com_DPrintf("URL script: %s\n", fn);
 
 #ifdef __APPLE__
@@ -1005,13 +920,6 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #endif
 
 	Sys_StartProcess(cmdline, doexit);
-#else
-	if ((OpenURLBase = OpenLibrary("openurl.library", 1)))
-	{
-		URL_Open(url, TAG_DONE);
-		CloseLibrary(OpenURLBase);
-	}
-#endif
 
 	Cbuf_ExecuteText(EXEC_NOW, "minimize");
 #endif // not DEDICATED
@@ -1046,10 +954,8 @@ void Sys_PlatformInit(void)
 	signal(SIGIOT, Sys_SigHandler);
 	signal(SIGBUS, Sys_SigHandler);
 
-#if !defined(__AROS__) && !defined(__MORPHOS__)
 	stdinIsATTY = isatty(STDIN_FILENO) &&
 	              !(term && (!strcmp(term, "raw") || !strcmp(term, "dumb")));
-#endif
 }
 
 /**

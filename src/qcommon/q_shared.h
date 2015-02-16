@@ -348,40 +348,6 @@ static ID_INLINE float idSqrt(float x)
 
 #endif // __FreeBSD__
 
-//======================= AROS DEFINES =================================
-
-#ifdef __AROS__
-
-#define MAC_STATIC
-
-#ifdef __i386__
-#define CPUSTRING   "aros-i386"
-#elif defined __x86_64__
-#define CPUSTRING   "aros-x86_64"
-#elif defined __powerpc__
-#define CPUSTRING   "aros-ppc"
-#elif defined __arm__
-#define CPUSTRING   "aros-arm"
-#else
-#define CPUSTRING   "aros-other"
-#endif
-
-#define PATH_SEP '/'
-
-#endif // __AROS__
-
-//======================= MORPHOS DEFINES =================================
-
-#ifdef __MORPHOS__
-
-#define MAC_STATIC
-
-#define CPUSTRING   "morphos-ppc"
-
-#define PATH_SEP '/'
-
-#endif // __MORPHOS__
-
 //=============================================================
 
 typedef unsigned char byte;
@@ -1121,8 +1087,6 @@ const char *Q_stristr(const char *s, const char *find);
 
 #ifdef _WIN32
 #define Q_putenv _putenv
-#elif defined(__MORPHOS__)
-#define Q_putenv(x)
 #else
 #define Q_putenv putenv
 #endif

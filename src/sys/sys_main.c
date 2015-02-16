@@ -42,15 +42,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#if defined(__AROS__) || defined(__MORPHOS__)
-#include <proto/dos.h>
-#ifdef __MORPHOS__
-#include <proto/exec.h>
-#include <locale.h>
-int            __stack      = 0x100000;
-struct Library *DynLoadBase = NULL;
-#endif
-#endif
 
 #include "sys_local.h"
 #include "sys_loadlib.h"
@@ -82,11 +73,7 @@ Sys_SetBinaryPath
 */
 void Sys_SetBinaryPath(const char *path)
 {
-#if defined(__AROS__) || defined(__MORPHOS__)
-	NameFromLock(GetProgramDir(), binaryPath, sizeof(binaryPath));
-#else
 	Q_strncpyz(binaryPath, path, sizeof(binaryPath));
-#endif
 }
 
 /*
@@ -202,10 +189,6 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 
 #ifndef DEDICATED
 	SDL_Quit();
-#endif
-
-#ifdef __MORPHOS__
-	CloseLibrary(DynLoadBase);
 #endif
 
 	// fail safe: delete PID file on abnormal exit
@@ -525,23 +508,11 @@ Sys_UnloadDll
 */
 void Sys_UnloadDll(void *dllHandle)
 {
-#ifdef __MORPHOS__
-	void (*morphos_so_deinit)(void);
-#endif
-
 	if (!dllHandle)
 	{
 		Com_Printf("Sys_UnloadDll(NULL)\n");
 		return;
 	}
-
-#ifdef __MORPHOS__
-	morphos_so_deinit = Sys_LoadFunction(dllHandle, "morphos_so_deinit");
-	if (morphos_so_deinit)
-	{
-		morphos_so_deinit();
-	}
-#endif
 
 	Sys_UnloadLibrary(dllHandle);
 }
@@ -613,10 +584,6 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 {
 	void *libHandle;
 	char *fn;
-#ifdef __MORPHOS__
-	int  (*morphos_so_init)(void);
-	void (*morphos_so_deinit)(void);
-#endif
 
 #ifdef __APPLE__
 	Com_Printf("Sys_LoadDll -> Sys_TryLibraryLoad(%s, %s, %s)... \n", base, gamedir, fname);
@@ -712,18 +679,6 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	}
 
 #endif // __APPLE__
-
-#ifdef __MORPHOS__
-	morphos_so_init   = dlsym(libHandle, "morphos_so_init");
-	morphos_so_deinit = dlsym(libHandle, "morphos_so_deinit");
-
-	if (!(morphos_so_init && morphos_so_deinit && morphos_so_init()))
-	{
-		Com_Printf("failed: \"can't find the morphos_so_init and morphos_so_deinit symbols\"\n");
-		Sys_UnloadLibrary(libHandle);
-		return NULL;
-	}
-#endif
 
 	Com_Printf("succeeded\n");
 
@@ -1022,25 +977,6 @@ main
 int main(int argc, char **argv)
 {
 	char commandLine[MAX_STRING_CHARS] = { 0 };
-
-#ifdef __MORPHOS__
-	// don't let locales with decimal comma screw up the string to float conversions
-	setlocale(LC_NUMERIC, "C");
-
-	DynLoadBase = OpenLibrary("dynload.library", 51);
-
-	if (DynLoadBase && DynLoadBase->lib_Revision < 3)
-	{
-		CloseLibrary(DynLoadBase);
-		DynLoadBase = NULL;
-	}
-
-	if (!DynLoadBase)
-	{
-		Sys_Dialog(DT_ERROR, "Unable to open dynload.library version 51.3 or newer", "dynload.library error");
-		Sys_Exit(1);
-	}
-#endif
 
 	Sys_PlatformInit();
 
