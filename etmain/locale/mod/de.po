@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-15 14:54+0000\n"
+"PO-Revision-Date: 2015-02-16 11:39+0000\n"
 "Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -297,7 +297,7 @@ msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
-msgstr ""
+msgstr "^1Übersetzungen"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
@@ -416,7 +416,7 @@ msgstr ""
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET Legacy Website"
-msgstr ""
+msgstr "ET Legacy Website"
 
 #: etmain/ui/etlegacywebsite.menu:50
 msgid ""
@@ -452,7 +452,7 @@ msgstr "NEIN"
 
 #: etmain/ui/hostgame_advanced_default.menu:123
 msgid "DEFAULT SERVER SETTINGS"
-msgstr ""
+msgstr "STANDARD SERVER EINSTELLUNGEN"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
@@ -476,7 +476,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
-msgstr ""
+msgstr "Maximum Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
@@ -493,7 +493,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
-msgstr ""
+msgstr "Spieler Inaktivität:"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid ""
@@ -503,7 +503,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
-msgstr ""
+msgstr "Zuschauer Inaktivität:"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid ""
@@ -513,15 +513,15 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
-msgstr ""
+msgstr "Intermission Zeit:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr ""
+msgstr "Intermission Zeit"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr ""
+msgstr "Intermission Bereit %:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
@@ -601,7 +601,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
-msgstr ""
+msgstr "Max Spieler Pro Team:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
@@ -708,7 +708,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr ""
+msgstr "Stoppuhr Rundentyp:"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
@@ -821,7 +821,7 @@ msgstr "ERLAUBE ABSTIMMUNGEN"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
-msgstr "Spielkonfiguration"
+msgstr "Spielkonfig."
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
@@ -879,7 +879,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr "Ausgewogene Teams:"
+msgstr "Ausgewog. Teams:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
@@ -2198,7 +2198,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "An (normal)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
@@ -3184,7 +3184,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:39
 msgid "normal"
-msgstr ""
+msgstr "normal"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "high"
@@ -4946,7 +4946,7 @@ msgstr ""
 
 #: src/cgame/cg_info.c:748
 msgid "No weapon info available."
-msgstr ""
+msgstr "Keine Waffen Info verfügbar."
 
 #: src/cgame/cg_info.c:799
 msgid "Skills"
@@ -4978,7 +4978,7 @@ msgstr "Spieler"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
-msgstr "Keine Waffen Informationen verfügbar."
+msgstr "Keine erläuternde Waffen Informationen verfügbar."
 
 #: src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
@@ -5347,7 +5347,7 @@ msgstr "%i Kampagnen gefunden:\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
-msgstr ""
+msgstr "Keine Kampagnen gefunden.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
