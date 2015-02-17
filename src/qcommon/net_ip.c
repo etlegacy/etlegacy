@@ -424,9 +424,9 @@ static void Sys_SockaddrToString(char *dest, int destlen, struct sockaddr *input
 	}
 #else // IPV4
 	char *addr = inet_ntoa(((struct sockaddr_in *)input)->sin_addr);
-#endif
 
 	Q_strncpyz(dest, addr, destlen);
+#endif
 }
 
 /*
