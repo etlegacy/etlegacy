@@ -399,34 +399,30 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 #endif
 }
 
-/*
-=============
-Sys_SockaddrToString
-=============
-*/
+/**
+ * @brief Copies ANSI host name into dest of address familiy IPv4 or IPv6
+ */
 static void Sys_SockaddrToString(char *dest, int destlen, struct sockaddr *input)
 {
-#ifdef FEATURE_IPV6
 	socklen_t inputlen;
 
-	if (input->sa_family == AF_INET6)
+	if (input->sa_family == AF_INET6) // FEATURE_IPV6
 	{
 		inputlen = sizeof(struct sockaddr_in6);
 	}
-	else
+	else if (input->sa_family == AF_INET)
 	{
 		inputlen = sizeof(struct sockaddr_in);
+	}
+	else
+	{
+		Com_Error(ERR_FATAL, "Sys_SockaddrToString: unsupported address family");
 	}
 
 	if (getnameinfo(input, inputlen, dest, destlen, NULL, 0, NI_NUMERICHOST) && destlen > 0)
 	{
 		*dest = '\0';
 	}
-#else // IPV4
-	char *addr = inet_ntoa(((struct sockaddr_in *)input)->sin_addr);
-
-	Q_strncpyz(dest, addr, destlen);
-#endif
 }
 
 /*
@@ -1027,8 +1023,8 @@ int NET_IPSocket(char *net_interface, int port, int *err)
 {
 	SOCKET             newsocket;
 	struct sockaddr_in address;
-	u_long _true = 1;
-	int i = 1;
+	u_long             _true = 1;
+	int                i     = 1;
 
 	*err = 0;
 
