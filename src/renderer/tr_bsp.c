@@ -1419,7 +1419,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->width >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
 				}
@@ -1494,7 +1494,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->height >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
 				}
@@ -1590,7 +1590,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->width >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
 				}
@@ -1664,7 +1664,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->height >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
 				}
@@ -1881,7 +1881,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	drawVert_t *dv;
 	int        *indexes;
 	int        count;
-	int        numFaces = 0, numMeshes = 0, numTriSurfs = 0, numFlares = 0, numFoliage = 0;
+	int        numFaces = 0, numMeshes = 0, numTriSurfs = 0, numFlares = 0, numFoliages = 0;
 	int        i;
 
 	in = ( void * )(fileBase + surfs->fileofs);
@@ -1936,7 +1936,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			break;
 		case MST_FOLIAGE:
 			ParseFoliage(in, dv, out, indexes);
-			numFoliage++;
+			numFoliages++;
 			break;
 		default:
 			Ren_Drop("Bad surfaceType");
@@ -1955,7 +1955,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 #endif
 
 	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliage\n",
-	          numFaces, numMeshes, numTriSurfs, numFlares, numFoliage);
+	          numFaces, numMeshes, numTriSurfs, numFlares, numFoliages);
 }
 
 /*

@@ -2428,7 +2428,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->width >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
 				}
@@ -2497,7 +2497,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->height >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
 				}
@@ -2588,7 +2588,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->width >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
 				}
@@ -2658,7 +2658,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-				if (grid2->height >= MAX_GRID_SIZE)
+				if (!grid2 || grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
 				}
