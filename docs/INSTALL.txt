@@ -42,8 +42,8 @@ also cannot connect to servers running the ETPro mod.
 See http://dev.etlegacy.com/projects/etlegacy/wiki/Compatible_Mods for more information.
 
 
-Linux 64 bit client
--------------------
+Linux 64 bit
+------------
 
 Please remember that Linux 64 bit ET: Legacy clients can only connect to servers running mods
 providing a 64 bit version. You will be able to play 32 bit-only mods only if you install the
