@@ -437,8 +437,7 @@ typedef enum
 } sharedTraps_t;
 
 void VM_Init(void);
-vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *),
-                vmInterpret_t interpret);
+vm_t *VM_Create(const char *module, qboolean extract, intptr_t (*systemCalls)(intptr_t *), vmInterpret_t interpret);
 // module should be bare: "cgame", not "cgame.dll" or "vm/cgame.qvm"
 
 void VM_Free(vm_t *vm);

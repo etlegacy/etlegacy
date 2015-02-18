@@ -338,13 +338,14 @@ vm_t *VM_Restart(vm_t *vm)
 	{
 		char     name[MAX_QPATH];
 		intptr_t (*systemCall)(intptr_t *parms);
+		qboolean extract = vm->extract;
 
 		systemCall = vm->systemCall;
 		Q_strncpyz(name, vm->name, sizeof(name));
 
 		VM_Free(vm);
 
-		vm = VM_Create(name, systemCall, VMI_NATIVE);
+		vm = VM_Create(name, extract, systemCall, VMI_NATIVE);
 		return vm;
 	}
 
@@ -404,7 +405,7 @@ vm_t *VM_Restart(vm_t *vm)
  */
 #define STACK_SIZE  0x20000
 
-vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInterpret_t interpret)
+vm_t *VM_Create(const char *module, qboolean extract, intptr_t(*systemCalls)(intptr_t *), vmInterpret_t interpret)
 {
 	vm_t *vm;
 	int  i;
@@ -442,11 +443,12 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 
 	Q_strncpyz(vm->name, module, sizeof(vm->name));
 	vm->systemCall = systemCalls;
+	vm->extract = extract;
 
 	if (interpret == VMI_NATIVE)
 	{
 		// try to load as a system dll
-		vm->dllHandle = Sys_LoadGameDll(module, &vm->entryPoint, VM_DllSyscall);
+		vm->dllHandle = Sys_LoadGameDll(module, extract, &vm->entryPoint, VM_DllSyscall);
 
 		// never try qvm
 		if (vm->dllHandle)

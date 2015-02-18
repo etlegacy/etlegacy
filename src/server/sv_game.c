@@ -736,7 +736,7 @@ void SV_InitGameProgs(void)
 	sv.num_tags       = 0;
 
 	// load the dll
-	gvm = VM_Create("qagame", SV_GameSystemCalls, VMI_NATIVE);
+	gvm = VM_Create("qagame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
 	if (!gvm)
 	{
 		Com_Error(ERR_FATAL, "VM_Create on game failed");
