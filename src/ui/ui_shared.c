@@ -358,7 +358,12 @@ void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, qboo
 void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 {
 	vec4_t    color;
-	rectDef_t fillRect = w->rect;
+	rectDef_t fillRect;
+
+	if (w == NULL)
+	{
+		return;
+	}
 
 	if (debugMode)
 	{
@@ -366,10 +371,12 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 		DC->drawRect(w->rect.x, w->rect.y, w->rect.w, w->rect.h, 1, color);
 	}
 
-	if (w == NULL || (w->style == 0 && w->border == 0))
+	if (w->style == 0 && w->border == 0)
 	{
 		return;
 	}
+
+	fillRect = w->rect;
 
 	// FIXME: do right thing for right border type
 	if (w->border != 0)
