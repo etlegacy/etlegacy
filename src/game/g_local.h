@@ -2412,7 +2412,7 @@ void G_mapvoteinfo_read(void);
 
 // Server frametime is calculated with the sv_fps
 #define SERVER_FRAMETIME    (1000 / trap_Cvar_VariableIntegerValue("sv_fps"))   // (1000/20) default
-#define SERVER_FRAMETIME_F  ((float)SERVER_FRAMETIME) // (1000/20) default
+#define SERVER_FRAMETIME_F  (1000.f / trap_Cvar_VariableIntegerValue("sv_fps"))
 
 // Calculated deltas
 #define SERVER_FRAMETIME_DELTA      (2 * SERVER_FRAMETIME)     // msec
