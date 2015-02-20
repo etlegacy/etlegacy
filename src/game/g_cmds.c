@@ -2513,6 +2513,16 @@ void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume)
 	                              (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
 }
 
+void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
+{
+	if (!other || !other->inuse || !other->client)
+	{
+		return;
+	}
+
+	trap_SendServerCommand(other - g_entities, va("gamechat \"%s%c%c%s\" 1", name, Q_COLOR_ESCAPE, color, message));
+}
+
 /*
 ==================
 G_Say

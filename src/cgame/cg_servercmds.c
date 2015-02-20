@@ -2468,7 +2468,6 @@ static void CG_ServerCommand(void)
 			cgs.playerStats.objectiveStats[i] = atoi(CG_Argv(start++));
 			cgs.teamobjectiveStats[i]         = atoi(CG_Argv(start++));
 		}
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "cpm"))
@@ -2549,7 +2548,6 @@ static void CG_ServerCommand(void)
 		allied_number = atoi(buffer);
 
 		CG_ParseMapEntityInfo(axis_number, allied_number);
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "chat"))
@@ -2582,7 +2580,6 @@ static void CG_ServerCommand(void)
 		CG_AddToTeamChat(text, clientNum);
 		CG_Printf("%s\n", text);
 		CG_WriteToLog("%s\n", text);
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "tchat"))
@@ -2622,7 +2619,6 @@ static void CG_ServerCommand(void)
 		CG_AddToTeamChat(text, clientNum); // disguise ?
 		CG_Printf("%s\n", text);
 		CG_WriteToLog("%s\n", text);
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "vchat"))
@@ -2640,6 +2636,17 @@ static void CG_ServerCommand(void)
 		CG_VoiceChat(SAY_BUDDY);
 		return;
 	}
+	else if (!Q_stricmp(cmd, "gamechat"))
+	{
+		const char *s = CG_LocalizeServerCommand(CG_Argv(1));
+		char       text[MAX_SAY_TEXT];
+
+		Q_strncpyz(text, s, MAX_SAY_TEXT);
+		CG_RemoveChatEscapeChar(text);
+		CG_AddToTeamChat(text, cg.snap->ps.clientNum);
+		CG_Printf("%s\n", text);
+		return;
+	}
 	// Allow client to lodge a complaing
 	else if (!Q_stricmp(cmd, "complaint") && cgs.gamestate == GS_PLAYING)
 	{
@@ -2655,7 +2662,6 @@ static void CG_ServerCommand(void)
 		{
 			cgs.complaintEndTime = cg.time + 10000;
 		}
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "map_restart"))
@@ -2681,7 +2687,6 @@ static void CG_ServerCommand(void)
 			CG_parseWeaponStats_cmd(CG_printConsoleString);
 			cgs.dumpStatsTime = 0;
 		}
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "wws"))
@@ -2754,7 +2759,6 @@ static void CG_ServerCommand(void)
 		// func has been called (g_main in G_UpdateCvars() ~ilne 949)
 		// cg_norender has been removed.
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "application"))
@@ -2766,7 +2770,6 @@ static void CG_ServerCommand(void)
 		{
 			cgs.applicationEndTime = cg.time + 10000;
 		}
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "invitation"))
@@ -2778,7 +2781,6 @@ static void CG_ServerCommand(void)
 		{
 			cgs.invitationEndTime = cg.time + 10000;
 		}
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "proposition"))
@@ -2791,7 +2793,6 @@ static void CG_ServerCommand(void)
 		{
 			cgs.propositionEndTime = cg.time + 10000;
 		}
-
 		return;
 	}
 	else if (!Q_stricmp(cmd, "aft"))
@@ -2929,7 +2930,6 @@ static void CG_ServerCommand(void)
 
 		// fade out over the course of 5 seconds, should be enough (nuking: atvi bug 3793)
 		//CG_Fade( 0, 0, 0, 255, cg.time, 5000 );
-
 		return;
 	}
 	else if (CG_Debriefing_ServerCommand(cmd))

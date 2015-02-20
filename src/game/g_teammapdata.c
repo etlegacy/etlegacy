@@ -1047,7 +1047,7 @@ void G_CheckSpottedLandMines(void)
 			continue;
 		}
 
-		if (ent->client->sess.playerType == PC_COVERTOPS && ent->client->ps.eFlags & EF_ZOOMING)
+		if (ent->client->sess.playerType == PC_COVERTOPS && (ent->client->ps.eFlags & EF_ZOOMING))
 		{
 			G_SetupFrustum_ForBinoculars(ent);
 

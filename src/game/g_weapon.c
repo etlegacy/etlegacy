@@ -2633,7 +2633,7 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 	{
 		if (level.numActiveAirstrikes[ent->s.teamNum - 1] > 6 || !G_AvailableAirstrikes(ent->parent))
 		{
-			G_SayTo(ent->parent, ent->parent, 2, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.", qtrue);
+			G_SayTo(ent->parent, ent->parent, SAY_BUDDY, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.", qtrue);
 
 			G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
 
@@ -2675,7 +2675,7 @@ void weapon_callAirStrike(gentity_t *ent)
 	trap_Trace(&tr, ent->s.pos.trBase, NULL, NULL, bomboffset, ent->s.number, MASK_SHOT);
 	if ((tr.fraction < 1.0) && (!(tr.surfaceFlags & SURF_NOIMPACT)))           //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
 	{
-		G_SayTo(ent->parent, ent->parent, 2, COLOR_YELLOW, "Pilot: ", "Aborting, can't see target.", qtrue);
+		G_HQSay(ent->parent, COLOR_YELLOW, "Pilot: ", "Aborting, can't see target.");
 
 		G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 1, ent->parent - g_entities);
 
@@ -2920,7 +2920,7 @@ void Weapon_Artillery(gentity_t *ent)
 	{
 		if (!G_AvailableArtillery(ent))
 		{
-			G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Insufficient fire support.", qtrue);
+			G_HQSay(ent, COLOR_YELLOW, "Fire Mission: ", "Insufficient fire support.");
 			ent->active = qfalse;
 
 			G_GlobalClientEvent(EV_ARTYMESSAGE, 0, ent - g_entities);
@@ -2949,7 +2949,7 @@ void Weapon_Artillery(gentity_t *ent)
 	trap_Trace(&trace, pos, NULL, NULL, bomboffset, ent->s.number, MASK_SHOT);
 	if (trace.fraction < 1.0 && !(trace.surfaceFlags & SURF_NOIMPACT)) // was SURF_SKY
 	{
-		G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Aborting, can't see target.", qtrue);
+		G_HQSay(ent, COLOR_YELLOW, "Fire Mission: ", "Aborting, can't see target.");
 
 		G_GlobalClientEvent(EV_ARTYMESSAGE, 1, ent - g_entities);
 
@@ -2959,7 +2959,7 @@ void Weapon_Artillery(gentity_t *ent)
 	// arty/airstrike rate limiting.
 	G_AddArtilleryToCounters(ent);
 
-	G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Firing for effect!", qtrue);
+	G_HQSay(ent, COLOR_YELLOW, "Fire Mission: ", "Firing for effect!");
 
 	G_GlobalClientEvent(EV_ARTYMESSAGE, 2, ent - g_entities);
 
