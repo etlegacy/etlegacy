@@ -885,7 +885,7 @@ void FS_FCloseFile(fileHandle_t f)
 
 	if (fsh[f].zipFile == qtrue)
 	{
-		unzCloseCurrentFile(fsh[f].handleFiles.file.z);
+		(void) unzCloseCurrentFile(fsh[f].handleFiles.file.z);
 		if (fsh[f].handleFiles.unique)
 		{
 			unzClose(fsh[f].handleFiles.file.z);
@@ -4784,7 +4784,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 
 			fclose(newFile);
 
-			err = unzCloseCurrentFile(zipFile);
+			(void) unzCloseCurrentFile(zipFile);
 		}
 
 		err = unzGoToNextFile(zipFile);
