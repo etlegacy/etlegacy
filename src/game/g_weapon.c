@@ -2633,7 +2633,7 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 	{
 		if (level.numActiveAirstrikes[ent->s.teamNum - 1] > 6 || !G_AvailableAirstrikes(ent->parent))
 		{
-			G_SayTo(ent->parent, ent->parent, SAY_BUDDY, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.", qtrue);
+			G_HQSay(ent->parent, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.");
 
 			G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
 
