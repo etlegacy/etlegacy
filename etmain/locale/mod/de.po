@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-16 11:39+0000\n"
+"PO-Revision-Date: 2015-02-21 16:12+0000\n"
 "Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr ""
+msgstr "PRODUZIERT VON ACTIVISION"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
@@ -64,7 +64,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr ""
+msgstr "Tester:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
@@ -149,7 +149,7 @@ msgstr "Programmierung"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr ""
+msgstr "PUNKBUSTER BY EVEN BALANCE, INC."
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
@@ -199,11 +199,11 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
-msgstr ""
+msgstr "ENTWICKELT VOM ET: LEGACY TEAM"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
-msgstr ""
+msgstr "^1PROGRAMMIERUNG"
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
@@ -227,11 +227,11 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr ""
+msgstr "^1PORTS"
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
-msgstr ""
+msgstr "AROS and MorphOS"
 
 #: etmain/ui/credits_etlegacy.menu:135
 msgid "^1GREETINGS"
@@ -259,7 +259,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -271,7 +271,7 @@ msgstr ""
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr ""
+msgstr "ET PRO ENTWICKLER TEAM"
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
@@ -366,7 +366,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
-msgstr ""
+msgstr "PROGRAMMIERUNG"
 
 #: etmain/ui/credits_splashdamage.menu:130
 msgid "Programmer"
@@ -1101,7 +1101,7 @@ msgstr "Kampagne"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr ""
+msgstr "Last Man Standing"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1154,11 +1154,11 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - LAN"
-msgstr ""
+msgstr "Ja - LAN"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - Internet"
-msgstr ""
+msgstr "Ja - Internet"
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
@@ -1196,7 +1196,7 @@ msgstr "Max. Leben"
 
 #: etmain/ui/hostgame.menu:86
 msgid "Limits the number of player lives per round"
-msgstr ""
+msgstr "Limitiert die Anzahl der Spieler pro Runde"
 
 #: etmain/ui/hostgame.menu:97
 msgid "Weapon Restrictions"
@@ -1265,12 +1265,12 @@ msgstr "SCHIEDSRICHTER"
 
 #: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
-msgstr ""
+msgstr "RCON"
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
 msgid "SERVER INFO"
-msgstr ""
+msgstr "SERVER INFO"
 
 #: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
 #: etmain/ui/options.menu:29
@@ -1306,7 +1306,7 @@ msgstr ""
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
@@ -1448,7 +1448,7 @@ msgstr "NÄCHSTE KARTE"
 #: etmain/ui/ingame_vote_misc.menu:45
 #: etmain/ui/ingame_vote_misc_refrcon.menu:44
 msgid "NEXT CAMPAIGN"
-msgstr ""
+msgstr "NÄCHSTE KAMAGNE"
 
 #: etmain/ui/ingame_vote_misc.menu:46
 #: etmain/ui/ingame_vote_misc_refrcon.menu:45
@@ -1517,7 +1517,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "Niemand"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
@@ -1802,19 +1802,19 @@ msgstr "Zurück:"
 
 #: etmain/ui/options_controls.menu:35
 msgid "Move Left:"
-msgstr ""
+msgstr "Bewegung Links:"
 
 #: etmain/ui/options_controls.menu:36
 msgid "Move Right:"
-msgstr ""
+msgstr "Bewegung Rechts:"
 
 #: etmain/ui/options_controls.menu:37
 msgid "Lean Left:"
-msgstr ""
+msgstr "Neigung Links:"
 
 #: etmain/ui/options_controls.menu:38
 msgid "Lean Right:"
-msgstr ""
+msgstr "Neigung Rechts:"
 
 #: etmain/ui/options_controls.menu:39
 msgid "Jump:"
@@ -1884,7 +1884,7 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
-msgstr ""
+msgstr "CHAT"
 
 #: etmain/ui/options_controls.menu:57
 msgid "Chat:"
@@ -2320,7 +2320,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
-msgstr ""
+msgstr "Ansager:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
@@ -2372,7 +2372,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Auto-Aktion:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
@@ -2464,7 +2464,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
-msgstr ""
+msgstr "Missionszeit:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
@@ -2576,7 +2576,7 @@ msgstr "24 Stunden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours + seconds"
-msgstr ""
+msgstr "24 Stunden + Sekunden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours"
@@ -2584,7 +2584,7 @@ msgstr "12 Stunden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours + seconds"
-msgstr ""
+msgstr "12 Stunden + Sekunden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Displays local time"
@@ -2620,7 +2620,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Standard Hud"
-msgstr ""
+msgstr "Standard Hud"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Alternate Hud 1"
@@ -3297,11 +3297,11 @@ msgstr ""
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 #: etmain/ui/options_graphics.menu:68
 msgid "16-bit"
-msgstr ""
+msgstr "16-bit"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 msgid "32-bit"
-msgstr ""
+msgstr "32-bit"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
@@ -3369,7 +3369,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:68
 msgid "24-bit"
-msgstr ""
+msgstr "24-bit"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
@@ -5351,8 +5351,8 @@ msgstr "Keine Kampagnen gefunden.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
-msgstr ""
+msgstr "Keine Server Favouriten gefunden."
 
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
-msgstr ""
+msgstr "Alle Server Favouriten gelöscht."
