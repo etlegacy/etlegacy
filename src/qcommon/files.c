@@ -4749,7 +4749,8 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 			newFile = Sys_FOpen(newFilePath, "wb");
 			if (!newFile)
 			{
-				break;
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't open file %s\n", newFilePath);
+				break; // FIXME: close buf and return qfalse?
 			}
 
 			if (buf)
@@ -4761,25 +4762,33 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 
 			if (!buf)
 			{
-				break;
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't create buffer\n");
+				fclose(newFile);
+				break; // FIXME: close buf and return qfalse?
 			}
 
 			err = unzOpenCurrentFile(zipFile);
 			if (err)
 			{
-				break;
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't open current file\n");
+				fclose(newFile);
+				break; // FIXME: close buf and return qfalse?
 			}
 
 			err = unzReadCurrentFile(zipFile, buf, file_info.uncompressed_size);
 			if ((err < 0) || (err != file_info.uncompressed_size))
 			{
-				break;
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't read current file\n");
+				fclose(newFile);
+				break; // FIXME: close buf and return qfalse?
 			}
 
 			err = fwrite(buf, file_info.uncompressed_size, 1, newFile);
 			if (err != 1)
 			{
-				break;
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't write file\n");
+				fclose(newFile);
+				break; // FIXME: close buf and return qfalse?
 			}
 
 			fclose(newFile);
@@ -4812,6 +4821,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 qboolean FS_Unzip(char *filename, qboolean quiet)
 {
 	char newFilePath[MAX_OSPATH];
+
 	Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", fs_homepath->string, PATH_SEP, fs_gamedir);
 	return FS_UnzipTo(filename, newFilePath, quiet);
 }
