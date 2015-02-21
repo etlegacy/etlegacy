@@ -405,7 +405,7 @@ vm_t *VM_Restart(vm_t *vm)
  */
 #define STACK_SIZE  0x20000
 
-vm_t *VM_Create(const char *module, qboolean extract, intptr_t(*systemCalls)(intptr_t *), vmInterpret_t interpret)
+vm_t *VM_Create(const char *module, qboolean extract, intptr_t (*systemCalls)(intptr_t *), vmInterpret_t interpret)
 {
 	vm_t *vm;
 	int  i;
@@ -443,7 +443,7 @@ vm_t *VM_Create(const char *module, qboolean extract, intptr_t(*systemCalls)(int
 
 	Q_strncpyz(vm->name, module, sizeof(vm->name));
 	vm->systemCall = systemCalls;
-	vm->extract = extract;
+	vm->extract    = extract;
 
 	if (interpret == VMI_NATIVE)
 	{
