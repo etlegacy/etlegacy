@@ -46,10 +46,10 @@ WM_DrawObjectives
 */
 
 #define INFO_PLAYER_WIDTH       134
-#define INFO_SCORE_WIDTH        56
-#define INFO_XP_WIDTH           36
-#define INFO_CLASS_WIDTH        50
-#define INFO_LATENCY_WIDTH      40
+#define INFO_SCORE_WIDTH        76
+#define INFO_XP_WIDTH           56
+#define INFO_CLASS_WIDTH        34
+#define INFO_LATENCY_WIDTH      36
 #define INFO_LIVES_WIDTH        20
 #define INFO_TEAM_HEIGHT        24
 #define INFO_BORDER             2
@@ -443,7 +443,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 6;
 
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
@@ -475,7 +475,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	tempx += INFO_CLASS_WIDTH;
 
-	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%3i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -634,7 +634,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 6;
 
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
@@ -658,9 +658,11 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			CG_DrawPic(tempx + 13, y - 9, 12, 12, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 	}
-	tempx += INFO_CLASS_WIDTH + 4;
 
-	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%3i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+	tempx += INFO_CLASS_WIDTH + 6;
+
+	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -857,12 +859,12 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 	if (cgs.gametype == GT_WOLF_LMS)
 	{
-		CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Score"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + 22, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Score"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
 		tempx += INFO_SCORE_WIDTH;
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx + 8, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
 		tempx += INFO_XP_WIDTH;
 	}
 
