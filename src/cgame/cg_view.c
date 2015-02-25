@@ -1710,11 +1710,6 @@ static void CG_RenderLocations(void)
 	{
 		location = &cgs.location[i];
 
-		if (!location)
-		{
-			break;
-		}
-
 		if (VectorDistance(cg.refdef.vieworg, location->origin) > 3000)
 		{
 			continue;
