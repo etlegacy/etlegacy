@@ -2701,6 +2701,8 @@ void weapon_callAirStrike(gentity_t *ent)
 		return;
 	}
 
+	G_HQSay(ent->parent, COLOR_YELLOW, "Pilot: ", "Affirmative, on my way!");
+
 	G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 2, ent->parent - g_entities);
 
 	VectorCopy(tr.endpos, bomboffset);
