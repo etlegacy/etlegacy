@@ -72,11 +72,6 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 	{
 		curLoc = &cgs.location[i];
 
-		if (!curLoc)
-		{
-			break;
-		}
-
 		VectorSubtract(origin, curLoc->origin, lenVec);
 		len = VectorLength(lenVec);
 
