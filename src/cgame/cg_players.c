@@ -733,12 +733,8 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	// make sure the animation speed is updated when possible
 	anim = lf->animation;
 
-	// check for forcing last frame
-	if ((cent->currentState.eFlags & EF_FORCE_END_FRAME)
-	    // In SP, corpse also stays at the last frame (of the death animation)
-	    // so that the death animation can end up in different positions
-	    // and the body will stay in that position
-	    || cent->currentState.eType == ET_CORPSE)
+	// force last frame for corpses
+	if (cent->currentState.eType == ET_CORPSE)
 	{
 		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
 		lf->oldFrameModel = lf->frameModel = anim->mdxFile;
@@ -1784,10 +1780,17 @@ CG_PlayerFloatSprite
 Float a sprite over the player's head added height parameter
 ===============
 */
-static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
+static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, int off)
 {
 	int         rf;
+	vec3_t      right;
 	refEntity_t ent;
+	int         hPos[] = { 0, -13, 13,
+		                   0,         -13, 13,
+		                   0,         -13, 13 };
+	int         vPos[] = { 0, 0,  0,
+		                   13,        13, 13,
+		                   26,        26, 26 };
 
 	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson)
 	{
@@ -1802,16 +1805,23 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	ent.origin[2] += height;
 
+	AngleVectors(cg.refdefViewAngles, NULL, right, NULL);
+
+	if (off > 8)   // I haven't coded pattern for more than 9, note current code have 8 sprites...
+	{
+		return;
+	}
+
+	// move it!
+	ent.origin[2] += vPos[off];
+	VectorMA(ent.origin, hPos[off], right, ent.origin) ;
+
 	// Account for ducking
 	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
 	{
-		if (cent->currentState.eFlags & EF_CROUCHING)
+		if (cg.snap->ps.pm_flags & PMF_DUCKED)
 		{
 			ent.origin[2] -= 18;
-		}
-		else if (cent->currentState.eFlags & EF_PRONE)
-		{
-			ent.origin[2] -= 45;
 		}
 	}
 	else
@@ -1830,6 +1840,7 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
 	ent.shaderRGBA[1] = 255;
 	ent.shaderRGBA[2] = 255;
 	ent.shaderRGBA[3] = 255;
+
 	trap_R_AddRefEntityToScene(&ent);
 }
 
@@ -1947,7 +1958,6 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 	CG_AddOnScreenText(text, origin, cent->currentState.clientNum);
 }
 
-
 /*
 ===============
 CG_PlayerSprites
@@ -1957,34 +1967,36 @@ Float sprites over the player's head
 */
 static void CG_PlayerSprites(centity_t *cent)
 {
-	int team;
+	int          team;
+	int          numIcons = 0;
+	clientInfo_t *ci      = &cgs.clientinfo[cent->currentState.clientNum];
+	qboolean     sameTeam;
+	int          height   = 48;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) ||
-	    (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
+	 (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, 56);
-		return;
+		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, 56, numIcons++);
 	}
 
-	if (cent->currentState.eFlags & EF_CONNECTION)
+	if (cent->currentState.eFlags & EF_DEAD)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, 48);
-		return;
+		height = 8;
 	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-		CG_PlayerFloatText(cent, cgs.clientinfo[cent->currentState.clientNum].name, 56);
+		CG_PlayerFloatText(cent, ci->name, height + 16);
 		return;
 	}
 
 	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, 56);
-		return;
+		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, 8 + height, numIcons++);
 	}
 
-	team = cgs.clientinfo[cent->currentState.clientNum].team;
+	team     = ci->team;
+	sameTeam = ((cg.snap->ps.persistant[PERS_TEAM] == team) ? qtrue : qfalse);
 
 	// If this client is a medic, draw a 'revive' icon over
 	// dead players that are not in limbo yet.
@@ -1992,30 +2004,42 @@ static void CG_PlayerSprites(centity_t *cent)
 	    && cent->currentState.number == cent->currentState.clientNum
 	    && cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC
 	    && cg.snap->ps.stats[STAT_HEALTH] > 0
-	    && cg.snap->ps.persistant[PERS_TEAM] == team)
+	    && sameTeam)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, 8);
-		return;
+	
+			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++);
+		
+	}
+
+	if (cent->currentState.eFlags & EF_CONNECTION)    // IRATA: shown for both teams now ...
+	{
+		CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++);
+	}
+
+	if (cent->currentState.eFlags & EF_POISONED)
+	{
+		CG_PlayerFloatSprite(cent, cgs.media.poisonedIcon, height + 8, numIcons++);
 	}
 
 	// show voice chat signal so players know who's talking
-	if (cent->voiceChatSpriteTime > cg.time && cg.snap->ps.persistant[PERS_TEAM] == team)
+	if (cent->voiceChatSpriteTime > cg.time)
 	{
-		CG_PlayerFloatSprite(cent, cent->voiceChatSprite, 56);
-		return;
+		if (sameTeam || disguise)
+		{
+			CG_PlayerFloatSprite(cent, cent->voiceChatSprite, height + 8, numIcons++);
+		}
 	}
 
 	// only show talk icon to team-mates
-	if ((cent->currentState.eFlags & EF_TALK) && cg.snap->ps.persistant[PERS_TEAM] == team)
+	if (cent->currentState.eFlags & EF_TALK) && sameTeam)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, 48);
-		return;
+		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, height, numIcons++);
 	}
 
 	// draw disguised icon over disguised teammates
-	if ((cent->currentState.powerups & (1 << PW_OPS_DISGUISED)) && cg.snap->ps.persistant[PERS_TEAM] == team)
+	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && sameTeam)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.friendShader, 56);
+		CG_PlayerFloatSprite(cent, cgs.media.disguiseShader, height + 8, numIcons++);
 	}
 
 	{
@@ -2025,7 +2049,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		{
 			if (ft == CG_IsOnFireteam(cg.clientNum) && cgs.clientinfo[cent->currentState.number].selected)
 			{
-				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], 56);
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], 56, numIcons++);
 			}
 		}
 	}
