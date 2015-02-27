@@ -135,8 +135,7 @@ void G_SendSystemMessage(sysMsg_t message, int team)
 	}
 }
 
-// FIXME: actually unused
-/*
+/* unused
 void G_CheckForNeededClasses(void)
 {
     qboolean   playerClasses[NUM_PLAYER_CLASSES - 1][2];
@@ -250,48 +249,50 @@ void G_CheckForNeededClasses(void)
 }
 */
 
+/* unused
 void G_CheckMenDown(void)
 {
-	int       alive[2], dead[2];
-	gentity_t *ent;
-	int       i, team;
+    int       alive[2], dead[2];
+    gentity_t *ent;
+    int       i, team;
 
-	memset(dead, 0, sizeof(dead));
-	memset(alive, 0, sizeof(alive));
+    memset(dead, 0, sizeof(dead));
+    memset(alive, 0, sizeof(alive));
 
-	for (i = 0, ent = g_entities; i < level.maxclients; i++, ent++)
-	{
-		if (!ent->client || !ent->inuse)
-		{
-			break;
-		}
+    for (i = 0, ent = g_entities; i < level.maxclients; i++, ent++)
+    {
+        if (!ent->client || !ent->inuse)
+        {
+            break;
+        }
 
-		// don't want spectators
-		if (ent->client->sess.sessionTeam < TEAM_AXIS ||
-		    ent->client->sess.sessionTeam > TEAM_ALLIES)
-		{
-			continue;
-		}
+        // don't want spectators
+        if (ent->client->sess.sessionTeam < TEAM_AXIS ||
+            ent->client->sess.sessionTeam > TEAM_ALLIES)
+        {
+            continue;
+        }
 
-		team = ent->client->sess.sessionTeam == TEAM_AXIS ? 0 : 1;
+        team = ent->client->sess.sessionTeam == TEAM_AXIS ? 0 : 1;
 
-		if (ent->health <= 0)
-		{
-			dead[team]++;
-		}
-		else
-		{
-			alive[team]++;
-		}
-	}
+        if (ent->health <= 0)
+        {
+            dead[team]++;
+        }
+        else
+        {
+            alive[team]++;
+        }
+    }
 
-	if (dead[0] + alive[0] >= 4 && (dead[0] >= ((dead[0] + alive[0]) * 0.75f)))
-	{
-		G_SendSystemMessage(SM_LOST_MEN, TEAM_AXIS);
-	}
+    if (dead[0] + alive[0] >= 4 && (dead[0] >= ((dead[0] + alive[0]) * 0.75f)))
+    {
+        G_SendSystemMessage(SM_LOST_MEN, TEAM_AXIS);
+    }
 
-	if (dead[1] + alive[1] >= 4 && (dead[1] >= ((dead[1] + alive[1]) * 0.75f)))
-	{
-		G_SendSystemMessage(SM_LOST_MEN, TEAM_ALLIES);
-	}
+    if (dead[1] + alive[1] >= 4 && (dead[1] >= ((dead[1] + alive[1]) * 0.75f)))
+    {
+        G_SendSystemMessage(SM_LOST_MEN, TEAM_ALLIES);
+    }
 }
+*/
