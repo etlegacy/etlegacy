@@ -515,7 +515,7 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 
 		// get the next frame based on the animation
 		anim = lf->animation;
-		if (!anim->frameLerp)
+		if (!anim || !anim->frameLerp)
 		{
 			return;     // shouldn't happen
 		}
