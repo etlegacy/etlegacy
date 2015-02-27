@@ -2060,6 +2060,8 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 			info->list->programs[i].program  = 0;
 			info->list->programs[i].compiled = qfalse;
 		}
+
+		Com_Dealloc(tempString); // see GLSL_GenerateMacroString
 	}
 
 	endTime = ri.Milliseconds();
