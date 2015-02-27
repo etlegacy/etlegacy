@@ -589,7 +589,6 @@ typedef enum
 // entityState_t->eFlags
 #define EF_DEAD             0x00000001      // don't draw a foe marker over players with EF_DEAD
 #define EF_NONSOLID_BMODEL  0x00000002      // bmodel is visible, but not solid
-#define EF_FORCE_END_FRAME  EF_NONSOLID_BMODEL  // force client to end of current animation (after loading a savegame)
 #define EF_TELEPORT_BIT     0x00000004      // toggled every time the origin abruptly changes
 #define EF_READY            0x00000008      // player is ready
 
