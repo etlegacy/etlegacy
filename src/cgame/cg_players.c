@@ -1114,7 +1114,7 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 
 		// get the next frame based on the animation
 		anim = lf->animation;
-		if (!anim->frameLerp)
+		if (!anim || !anim->frameLerp)
 		{
 			return;     // shouldn't happen
 		}
@@ -3194,7 +3194,7 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 
 		// get the next frame based on the animation
 		anim = lf->animation;
-		if (!anim->frameLerp)
+		if (!anim || !anim->frameLerp)
 		{
 			return;     // shouldn't happen
 		}
