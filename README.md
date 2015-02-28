@@ -105,12 +105,15 @@ To install the binaries system-wide, you need to compile ET: Legacy with hardcod
 fs_basepath.
 
 The following variables can be adjusted in CMake:
+
   * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
     executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
     Defaults to empty value, because we want *fs_basepath* to be the current working directory
     when not installing the game system-wide.
+
   * (optional) **INSTALL_DEFAULT_BINDIR**: Location for executables. Appended to CMAKE_INSTALL_PREFIX.
     Defaults to "bin".
+
   * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
     CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "legacy" is appended to it.
 
@@ -149,9 +152,11 @@ ET: Legacy will be installed in `~/etlegacy`. To change it, set the CMake variab
 
 **NOTE:**
 
-Even if you have a 64 bit linux distribution which provides 32 bit versions of all
-the required libraries, you might also need the development libraries (-devel packages)
-installed on your system.
+  * Even if you have a 64 bit linux distribution which provides 32 bit versions of all
+  the required libraries, you might also need the development libraries (-devel packages)
+  installed on your system.
+
+  * In order to compile the jpeg-turbo library properly you will need the **nasm** assembler.
 
 
 ### Crosscompiling on Linux with MinGW-w64
@@ -203,18 +208,18 @@ ET: Legacy will be installed in `My Documents\ETLegacy-Build`. To change it, set
 
 **NOTES:**
 
-If compilation of bundled libraries is aborted for any reason, you will probably need to clean the
-libs directory and start over. This can be done by executing `git clean -df && git reset --hard HEAD`
-inside `libs/` directory.
+  * If compilation of bundled libraries is aborted for any reason, you will probably need to clean the
+  libs directory and start over. This can be done by executing `git clean -df && git reset --hard HEAD`
+  inside `libs/` directory.
 
-If the build fails during libcurl compilation because of missing *sed* utility, download it from
-[GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm) and place it into your system path or
-copy it into `MSVC/VC/bin`. It also comes with Git and can be placed into your system path
-automatically if you select that option during Git installation.
+  * If the build fails during libcurl compilation because of missing *sed* utility, download it from
+  [GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm) and place it into your system path or
+  copy it into `MSVC/VC/bin`. It also comes with Git and can be placed into your system path
+  automatically if you select that option during Git installation.
 
-In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
-Unfortunately this file isn't shipped with Windows 8.0 and 8.1 SDK versions.
-Solution: Get the Windows SDK 7 and copy 'win32.mak' to `libs/jpeturbo/`.
+  * In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
+  Unfortunately this file isn't shipped with Windows 8.0 and 8.1 SDK versions.
+  Solution: Get the Windows SDK 7 and copy 'win32.mak' to `libs/jpeturbo/`.
 
 
 ### Mac OS X
