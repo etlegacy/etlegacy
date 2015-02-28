@@ -675,7 +675,7 @@ static bind_t g_bindings[] =
 	{ "autoscreenshot",   K_F11,           -1,  K_F11,           -1,  -1, -1 },
 	{ "autoRecord",       K_F12,           -1,  K_F12,           -1,  -1, -1 },
 	{ "mp_fireteamadmin", K_KP_ENTER,      -1,  K_KP_ENTER,      -1,  -1, -1 },
-	{ "selectbuddy -1",   K_KP_DEL,        -1,  K_KP_PLUS,       -1,  -1, -1 },
+	{ "selectbuddy -1",   K_KP_PLUS,       -1,  K_KP_PLUS,       -1,  -1, -1 },
 	{ "selectbuddy 0",    K_KP_END,        -1,  K_KP_END,        -1,  -1, -1 },
 	{ "selectbuddy 1",    K_KP_DOWNARROW,  -1,  K_KP_DOWNARROW,  -1,  -1, -1 },
 	{ "selectbuddy 2",    K_KP_PGDN,       -1,  K_KP_PGDN,       -1,  -1, -1 },
@@ -684,7 +684,7 @@ static bind_t g_bindings[] =
 	{ "selectbuddy 5",    K_KP_RIGHTARROW, -1,  K_KP_RIGHTARROW, -1,  -1, -1 },
 	{ "selectbuddy 6",    K_KP_HOME,       -1,  K_KP_HOME,       -1,  -1, -1 },
 	{ "selectbuddy 7",    K_KP_UPARROW,    -1,  K_KP_UPARROW,    -1,  -1, -1 },
-	{ "selectbuddy -2",   K_KP_INS,        -1,  K_KP_MINUS,      -1,  -1, -1 },
+	{ "selectbuddy -2",   K_KP_MINUS,      -1,  K_KP_MINUS,      -1,  -1, -1 },
 };
 
 static const int g_bindCount = sizeof(g_bindings) / sizeof(bind_t);
