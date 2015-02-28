@@ -2042,12 +2042,12 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		fireteamData_t *ft;
 
-		// FIXME: clarify if we want to see same or all fireteams
-		ft = CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum);
-
-		if (ft)
+		if ((ft = CG_IsOnFireteam(cent->currentState.number)))
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], 56, numIcons++);
+			if (ft == CG_IsOnFireteam(cg.clientNum) && cgs.clientinfo[cent->currentState.number].selected)
+			{
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], 56, numIcons++);
+			}
 		}
 	}
 }
