@@ -553,7 +553,7 @@ static void CG_SelectBuddy_f(void)
 	int          i;
 	clientInfo_t *ci;
 
-	// 0 - 5 = select that person
+	// 0 - 7 = select that person
 	// -1 = none
 	// -2 = all
 	switch (pos)
@@ -564,6 +564,8 @@ static void CG_SelectBuddy_f(void)
 	case 3:
 	case 4:
 	case 5:
+	case 6:
+	case 7:
 		if (!CG_IsOnFireteam(cg.clientNum))
 		{
 			break;     // we aren't a leader, so dont allow selection
@@ -584,7 +586,7 @@ static void CG_SelectBuddy_f(void)
 			break;     // we aren't a leader, so dont allow selection
 		}
 
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 		{
 			ci = CG_SortedFireTeamPlayerForPosition(i);
 			if (!ci)
@@ -602,7 +604,7 @@ static void CG_SelectBuddy_f(void)
 			break;     // we aren't a leader, so dont allow selection
 		}
 
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 		{
 			ci = CG_SortedFireTeamPlayerForPosition(i);
 			if (!ci)

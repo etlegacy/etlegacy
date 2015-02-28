@@ -682,6 +682,8 @@ static bind_t g_bindings[] =
 	{ "selectbuddy 3",    K_KP_LEFTARROW,  -1,  K_KP_LEFTARROW,  -1,  -1, -1 },
 	{ "selectbuddy 4",    K_KP_5,          -1,  K_KP_5,          -1,  -1, -1 },
 	{ "selectbuddy 5",    K_KP_RIGHTARROW, -1,  K_KP_RIGHTARROW, -1,  -1, -1 },
+	{ "selectbuddy 6",    K_KP_HOME,       -1,  K_KP_HOME,       -1,  -1, -1 },
+	{ "selectbuddy 7",    K_KP_UPARROW,    -1,  K_KP_UPARROW,    -1,  -1, -1 },
 	{ "selectbuddy -2",   K_KP_INS,        -1,  K_KP_MINUS,      -1,  -1, -1 },
 };
 

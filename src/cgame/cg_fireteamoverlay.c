@@ -807,7 +807,7 @@ const char *CG_BuildSelectedFirteamString(void)
 	int          i;
 
 	*buffer = '\0';
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		ci = CG_SortedFireTeamPlayerForPosition(i);
 		if (!ci)
