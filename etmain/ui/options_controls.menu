@@ -42,26 +42,18 @@ menuDef {
 	BIND( 8, MOVE_Y+124, (SUBWINDOW_WIDTH)-4, 10, _("Walk:"), .2, 8, "+speed", "" )
 	BIND( 8, MOVE_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Sprint:"), .2, 8, "+sprint", "" )
 
-// Input //
-#define INPUT_Y 186
-	SUBWINDOW( 6, INPUT_Y, (SUBWINDOW_WIDTH), 52, _("INPUT") )
-	CHECKBOXALIGNXACTION( 8, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10,_("Invert Mouse:"), .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, _("Inverts mouse pitch") )
-	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Smooth Mouse:"), .2, 24, 8, "m_filter", _("Smooths out the mouse using interpolation") )
-	CVARFLOATLABEL( 8, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
-	SLIDER( 8, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Sensitivity:"), .2, 8, "sensitivity" 5 1 30, _("Use the slider to increase or decrease mouse sensitivity") )
-	MULTI( 8, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { _("0.015 (lowest allowed)") 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 _("0.022 (default)") 0.022 }, _("Up-Down Motion Of The Crosshair While Moving.") )
-
-// Chat //
-#define CHAT_Y 244
-	SUBWINDOW( 6, CHAT_Y, (SUBWINDOW_WIDTH), 64, _("CHAT") )
-	BIND( 8, CHAT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Chat:"), .2, 8, "messagemode", "" )
-	BIND( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, CHAT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Team Chat:"), .2, 8, "messagemode2", "" )
-	BIND( 8, CHAT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Fire-Team Chat:"), .2, 8, "messagemode3", "" )
-	BIND( 8, CHAT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Quick Chat:"), .2, 8, "mp_QuickMessage", "" )
-	BIND( 8, CHAT_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Fire-Team Quick Chat:"), .2, 8, "mp_fireteammsg", "" )
+// Use Weapons //
+#define USEWEAPONS_Y 186
+	SUBWINDOW( 6, USEWEAPONS_Y, (SUBWINDOW_WIDTH), 88, _("USE WEAPONS") )
+	BIND( 8, USEWEAPONS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Attack:"), .2, 8, "+attack", "" )
+	BIND( 8, USEWEAPONS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Switch to Alternate:"), .2, 8, "weapalt", "" )
+	BIND( 8, USEWEAPONS_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Reload Weapon:"), .2, 8, "+reload", "" )
+	BIND( 8, USEWEAPONS_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Binoculars Zoom:"), .2, 8, "+zoom", "" )
+	BIND( 8, USEWEAPONS_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Use (Activate):"), .2, 8, "+activate", "" )
+	BIND( 8, USEWEAPONS_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Selfkill:"), .2, 8, "kill", "" )
 
 // Pop-Ups //
-#define POPUPS_Y 314
+#define POPUPS_Y 280
 	SUBWINDOW( 6, POPUPS_Y, (SUBWINDOW_WIDTH), 112, _("POP-UPS") )
 	BIND( 8, POPUPS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Show Scores:"), .2, 8, "+scores", "" )
 	BIND( 8, POPUPS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Show Limbo Menu:"), .2, 8, "OpenLimboMenu", "" )
@@ -73,17 +65,8 @@ menuDef {
 	BIND( 8, POPUPS_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Objectives:"), .2, 8, "+objectives", "" )
 //	BIND( 8, POPUPS_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Multiview:"), .2, 8, "mvactivate", "" )
 
-// Use Weapons //
-#define USEWEAPONS_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, USEWEAPONS_Y, (SUBWINDOW_WIDTH), 76, _("USE WEAPONS") )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, USEWEAPONS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Attack:"), .2, 8, "+attack", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, USEWEAPONS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Switch to Alternate:"), .2, 8, "weapalt", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, USEWEAPONS_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Reload Weapon:"), .2, 8, "+reload", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, USEWEAPONS_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Binoculars Zoom:"), .2, 8, "+zoom", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, USEWEAPONS_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Use (Activate):"), .2, 8, "+activate", "" )
-
 // Select Weapons //
-#define SELECTWEAPONS_Y 114
+#define SELECTWEAPONS_Y 32
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, SELECTWEAPONS_Y, (SUBWINDOW_WIDTH), 136, _("SELECT WEAPONS") )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Next Weapon:"), .2, 8, "weapnext", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Previous Weapon:"), .2, 8, "weapprev", "" )
@@ -96,28 +79,37 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Slot 7 - Special 3:"), .2, 8, "weaponbank 7", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+124, (SUBWINDOW_WIDTH)-4, 10, _("Slot 8 - Binoculars:"), .2, 8, "weaponbank 8", "" )
 
-// Miscellaneous //
-#define MISC_Y 256
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 40, _("MISCELLANEOUS") )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Vote Yes:"), .2, 8, "vote yes", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, MISC_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Take Screenshot:"), .2, 8, "autoScreenshot", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+28, .5*((SUBWINDOW_WIDTH)-6), 10, _("Vote No:"), .2, 8, "vote no", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, MISC_Y+28, .5*((SUBWINDOW_WIDTH)-6), 10, _("Record Replay:"), .2, 8, "autoRecord", "" )
+// Chat //
+#define CHAT_Y 174
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, CHAT_Y, (SUBWINDOW_WIDTH), 76, _("CHAT") )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Chat:"), .2, 8, "messagemode", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Team Chat:"), .2, 8, "messagemode2", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Fireteam Chat:"), .2, 8, "messagemode3", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Quick Chat:"), .2, 8, "mp_QuickMessage", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Fireteam Quick Chat:"), .2, 8, "mp_fireteammsg", "" )
 
-// Fire-Teams //
-#define FIRETEAM_Y 302
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, FIRETEAM_Y, (SUBWINDOW_WIDTH), 124, _("FIRE-TEAMS" ))
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Select All Members:"), .2, 8, "selectbuddy -2", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #1:"), .2, 8, "selectbuddy 0", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #2:"), .2, 8, "selectbuddy 1", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #3:"), .2, 8, "selectbuddy 2", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #4:"), .2, 8, "selectbuddy 3", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #5:"), .2, 8, "selectbuddy 4", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #6:"), .2, 8, "selectbuddy 5", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Deselect All:"), .2, 8, "selectbuddy -1", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, FIRETEAM_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Fire-Team Admin:"), .2, 8, "mp_fireteamadmin", "" )
+// Input //
+#define INPUT_Y 256
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, INPUT_Y, (SUBWINDOW_WIDTH), 52, _("INPUT") )
+	CHECKBOXALIGNXACTION(  6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10,_("Invert Mouse:"), .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, _("Inverts mouse pitch") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Smooth Mouse:"), .2, 24, 8, "m_filter", _("Smooths out the mouse using interpolation") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Sensitivity:"), .2, 8, "sensitivity" 5 1 30, _("Use the slider to increase or decrease mouse sensitivity") )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { _("0.015 (lowest allowed)") 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 _("0.022 (default)") 0.022 }, _("Up-Down Motion Of The Crosshair While Moving.") )
+
+// Miscellaneous //
+#define MISC_Y 314
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 88, _("MISCELLANEOUS") )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Vote Yes:"), .2, 8, "vote yes", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Vote No:"), .2, 8, "vote no", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Ready:"), .2, 8, "ready", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Not Ready:"), .2, 8, "notready", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Take Screenshot:"), .2, 8, "autoScreenshot", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Record Replay:"), .2, 8, "autoRecord", "" )
+
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close options_controls ; open options )
-	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("DEFAULT"), .3, 14, open options_controls_default )
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close options_controls ; open options )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("ADVANCED"), .3, 14, close options_controls ; open options_controls_advanced )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("DEFAULT"), .3, 14, open options_controls_default )
 }
