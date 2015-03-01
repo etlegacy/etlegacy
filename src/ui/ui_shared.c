@@ -649,6 +649,7 @@ static bind_t g_bindings[] =
 	{ "+zoom",            'b',             -1,  'b',             -1,  -1, -1 },
 	{ "+mapexpand",       'g',             -1,  '#',             -1,  -1, -1 },
 	{ "+reload",          'r',             -1,  K_END,           -1,  -1, -1 },
+	{ "kill",             'k',             -1,  'k',             -1,  -1, -1 },
 	{ "+scores",          K_TAB,           -1,  K_TAB,           -1,  -1, -1 },
 	{ "+stats",           K_ALT,           -1,  K_F9,            -1,  -1, -1 },
 	{ "+topshots",        K_CTRL,          -1,  K_F10,           -1,  -1, -1 },
