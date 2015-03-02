@@ -642,6 +642,7 @@ extern qboolean UI_CursorInRect(int x, int y, int width, int height);
 // ui_shared.c
 int Binding_IDFromName(const char *name);
 void Binding_Set(int id, int b1, int b2);
+void Binding_Unset(int id, int index);
 qboolean Binding_Check(int id, qboolean b1, int key);
 int Binding_Get(int id, qboolean b1);
 int Binding_Count(void);

@@ -773,13 +773,44 @@ void Binding_Set(int id, int b1, int b2)
 	{
 		if (b1 != -2)
 		{
+			int key1;
+			int key2;
+
+			// Set the current value of bind1 to bind2
+			DC->getKeysForBinding(g_bindings[id].command, &key1, &key2);
+			Binding_Set(id, -2, key1);
+
+			Binding_Unset(id, 1);
 			g_bindings[id].bind1 = b1;
 		}
 
 		if (b2 != -2)
 		{
+			Binding_Unset(id, 2);
 			g_bindings[id].bind2 = b2;
 		}
+	}
+}
+
+void Binding_Unset(int id, int index)
+{
+	int key1;
+	int key2;
+
+	// Find the keys binded to action
+	DC->getKeysForBinding(g_bindings[id].command, &key1, &key2);
+
+	// Unbind the key1 or key2 according to index
+	switch (index)
+	{
+	case 1:
+		DC->setBinding(key1, "");
+		break;
+	case 2:
+		DC->setBinding(key2, "");
+		break;
+	default:
+		break;
 	}
 }
 
