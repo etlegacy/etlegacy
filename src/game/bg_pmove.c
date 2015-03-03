@@ -3719,12 +3719,6 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	// can't shoot while prone and moving
-	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
-	{
-		return;
-	}
-
 	// make weapon function
 	if (pm->ps->weaponTime > 0)
 	{
@@ -3784,6 +3778,13 @@ static void PM_Weapon(void)
 		default:
 			break;
 		}
+	}
+
+	// can't shoot while prone and moving
+	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
+	{
+		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+		return;
 	}
 
 	// check for weapon change
