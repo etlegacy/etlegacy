@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-11 23:03+0000\n"
+"PO-Revision-Date: 2015-03-02 21:57+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -499,7 +499,7 @@ msgstr "Неактивность игрока:"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr "Максимальное время (сек) неактивности игрока до кика с сервера (0 = выключено)"
+msgstr "Выкинуть игрока с сервера при данном промежутке (сек) неактивности (0 = выключено)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -509,7 +509,7 @@ msgstr "Неактивность зрителя:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr "Максимальное время (сек) неактивности зрителя до кика с сервера (0 = выключено)"
+msgstr "Выкинуть зрителя с сервера при данном промежутке (сек) неактивности (0 = выключено)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -633,7 +633,7 @@ msgstr "Максимум жалоб:"
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr "Число жалоб на игрока до его кика с сервера."
+msgstr "Выкинуть игрока с сервера при данном числе жалоб."
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
@@ -664,7 +664,7 @@ msgstr "выключено"
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr "Число уникальных жалоб на игрока до его кика с сервера"
+msgstr "Выкинуть игрока с сервера при данном числе уникальных жалоб."
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
@@ -764,7 +764,7 @@ msgstr "Чистый сервер:"
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr "Ограничивает контент содержимым файлов PK3, которые есть у клиента и у сервера, с совпадающими CRC"
+msgstr "Ограничивает игру содержимым файлов PK3 в наличии у клиента и у сервера, с совпадающими контрольными суммами"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -987,7 +987,7 @@ msgstr "Макс. скорость скачивания:"
 msgid ""
 "Specifies the maximum download rate from the server for players with missing"
 " files"
-msgstr "Указать максимальную скорость загрузки файлов с сервера"
+msgstr "Максимальная скорость загрузки файлов с сервера"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
@@ -3585,7 +3585,7 @@ msgstr "ПГ"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
-msgstr "Показывает только сервера с этим типом игры"
+msgstr "Показывать только серверы с этим типом игры"
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
@@ -3593,16 +3593,16 @@ msgstr "Мод:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
-msgstr "Показывает только сервера с этим модом"
+msgstr "Показывать только серверы с этим модом"
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
 msgid ""
 "Includes or excludes servers with desired map name from the server list"
-msgstr "Включает в или исключает сервера с желаемым именем карты из списка"
+msgstr "Включает или исключает серверы с данным именем карты"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr "Фильтр, влияющий на сервера именем карты"
+msgstr "Фильтр, влияющий на серверы именем карты"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
@@ -3651,7 +3651,7 @@ msgstr "ИМЯ СЕРВЕРА"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr "Нажмите чтобы сортировать по имени сервера"
+msgstr "Нажмите для сортировки по имени сервера"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
@@ -5307,13 +5307,13 @@ msgstr "^3Отфильтровано/Всего: %04i/%04i"
 msgid ""
 "^3Check your filters - no servers found!              Filtered/Total: "
 "%04i/%04i"
-msgstr "^3Проверьте фильтры - сервера не найдены! Отфильтровано/Всего: %04i/%04i"
+msgstr "^3Проверьте фильтры - серверы не найдены! Отфильтровано/Всего: %04i/%04i"
 
 #: src/ui/ui_main.c:5883
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr "^1Нет соединения с мастер-сервером - сервера не найдены! Отфильтровано/Всего: 0000/0000"
+msgstr "^1Нет связи с мастер-сервером - серверы не найдены! Отфильтровано/Всего: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format
