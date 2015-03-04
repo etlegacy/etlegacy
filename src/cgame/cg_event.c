@@ -3442,7 +3442,7 @@ void CG_CheckEvents(centity_t *cent)
 	CG_SetEntitySoundPosition(cent);
 
 	// check for event-only entities
-	if (cent->currentState.eType > ET_EVENTS)
+	if (cent->currentState.eType >= ET_EVENTS)
 	{
 		if (cent->previousEvent)
 		{
