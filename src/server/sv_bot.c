@@ -199,24 +199,8 @@ BotImport_Trace
 */
 void BotImport_Trace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask)
 {
-	trace_t trace;
-
 	// always use bounding box for bot stuff ?
-	SV_Trace(&trace, start, mins, maxs, end, passent, contentmask, qfalse);
-	// copy the trace information
-	bsptrace->allsolid   = trace.allsolid;
-	bsptrace->startsolid = trace.startsolid;
-	bsptrace->fraction   = trace.fraction;
-	VectorCopy(trace.endpos, bsptrace->endpos);
-	bsptrace->plane.dist = trace.plane.dist;
-	VectorCopy(trace.plane.normal, bsptrace->plane.normal);
-	bsptrace->plane.signbits = trace.plane.signbits;
-	bsptrace->plane.type     = trace.plane.type;
-	bsptrace->surface.value  = trace.surfaceFlags;
-	bsptrace->ent            = trace.entityNum;
-	bsptrace->exp_dist       = 0;
-	bsptrace->sidenum        = 0;
-	bsptrace->contents       = 0;
+	SV_Trace(bsptrace, start, mins, maxs, end, passent, contentmask, qfalse);
 }
 
 /*
@@ -226,24 +210,8 @@ BotImport_EntityTrace
 */
 void BotImport_EntityTrace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int entnum, int contentmask)
 {
-	trace_t trace;
-
 	// always use bounding box for bot stuff ?
-	SV_ClipToEntity(&trace, start, mins, maxs, end, entnum, contentmask, qfalse);
-	// copy the trace information
-	bsptrace->allsolid   = trace.allsolid;
-	bsptrace->startsolid = trace.startsolid;
-	bsptrace->fraction   = trace.fraction;
-	VectorCopy(trace.endpos, bsptrace->endpos);
-	bsptrace->plane.dist = trace.plane.dist;
-	VectorCopy(trace.plane.normal, bsptrace->plane.normal);
-	bsptrace->plane.signbits = trace.plane.signbits;
-	bsptrace->plane.type     = trace.plane.type;
-	bsptrace->surface.value  = trace.surfaceFlags;
-	bsptrace->ent            = trace.entityNum;
-	bsptrace->exp_dist       = 0;
-	bsptrace->sidenum        = 0;
-	bsptrace->contents       = 0;
+	SV_ClipToEntity(bsptrace, start, mins, maxs, end, entnum, contentmask, qfalse);
 }
 
 /*
