@@ -3451,6 +3451,8 @@ void CG_CheckEvents(centity_t *cent)
 
 		cent->previousEvent      = 1;
 		cent->currentState.event = cent->currentState.eType - ET_EVENTS;
+
+		CG_EntityEvent(cent, cent->lerpOrigin);
 	}
 	else
 	{
@@ -3459,36 +3461,32 @@ void CG_CheckEvents(centity_t *cent)
 		//      circular 'events' list contains the valid events.  So we
 		//      skip processing the single 'event' field and go straight
 		//      to the circular list.
-		goto skipEvent;
+
+		// check the sequencial list
+		// if we've added more events than can fit into the list, make sure we only add them once
+		if (cent->currentState.eventSequence < cent->previousEventSequence)
+		{
+			cent->previousEventSequence -= (1 << 8);      // eventSequence is sent as an 8-bit through network stream
+		}
+
+		if (cent->currentState.eventSequence - cent->previousEventSequence > MAX_EVENTS)
+		{
+			cent->previousEventSequence = cent->currentState.eventSequence - MAX_EVENTS;
+		}
+
+		for (i = cent->previousEventSequence ; i != cent->currentState.eventSequence; i++)
+		{
+			event = cent->currentState.events[i & (MAX_EVENTS - 1)];
+
+			cent->currentState.event     = event;
+			cent->currentState.eventParm = cent->currentState.eventParms[i & (MAX_EVENTS - 1)];
+
+			CG_EntityEvent(cent, cent->lerpOrigin);
+		}
+
+		cent->previousEventSequence = cent->currentState.eventSequence;
+
+		// set the event back so we don't think it's changed next frame (unless it really has)
+		cent->currentState.event = cent->previousEvent;
 	}
-
-	CG_EntityEvent(cent, cent->lerpOrigin);
-	// Temp ents return after processing
-	return;
-
-skipEvent:
-
-	// check the sequencial list
-	// if we've added more events than can fit into the list, make sure we only add them once
-	if (cent->currentState.eventSequence < cent->previousEventSequence)
-	{
-		cent->previousEventSequence -= (1 << 8);      // eventSequence is sent as an 8-bit through network stream
-	}
-	if (cent->currentState.eventSequence - cent->previousEventSequence > MAX_EVENTS)
-	{
-		cent->previousEventSequence = cent->currentState.eventSequence - MAX_EVENTS;
-	}
-
-	for (i = cent->previousEventSequence ; i != cent->currentState.eventSequence; i++)
-	{
-		event = cent->currentState.events[i & (MAX_EVENTS - 1)];
-
-		cent->currentState.event     = event;
-		cent->currentState.eventParm = cent->currentState.eventParms[i & (MAX_EVENTS - 1)];
-		CG_EntityEvent(cent, cent->lerpOrigin);
-	}
-	cent->previousEventSequence = cent->currentState.eventSequence;
-
-	// set the event back so we don't think it's changed next frame (unless it really has)
-	cent->currentState.event = cent->previousEvent;
 }

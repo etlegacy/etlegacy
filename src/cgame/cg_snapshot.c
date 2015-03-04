@@ -47,7 +47,6 @@ static void CG_ResetEntity(centity_t *cent)
 {
 	// if an event is set, assume it is new enough to use
 	// if the event had timed out, it would have been cleared
-	// Wolf is now using this.
 	cent->previousEvent         = 0;
 	cent->previousEventSequence = cent->currentState.eventSequence;
 
