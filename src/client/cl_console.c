@@ -846,8 +846,8 @@ void Con_DrawSolidConsole(float frac)
 			re.SetColor(g_color_table[ColorIndex(COLOR_GREEN)]);
 		}
 
-		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x) * SMALLCHAR_WIDTH,
-		                  (yoffset - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), version[x]);
+		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * SMALLCHAR_WIDTH,
+		                  yoffset - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2), version[x]);
 	}
 
 	// draw the text
