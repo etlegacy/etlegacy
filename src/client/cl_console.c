@@ -734,7 +734,7 @@ void Con_DrawNotify(void)
 void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrollBarY)
 {
 	vec4_t      color                   = { 0.2f, 0.2f, 0.2f, 0.75f };
-	const float scrollBarWidth          = 3.0f;
+	const float scrollBarWidth          = 1.0f;
 	const float scrollHandleLength      = con.totallines ? scrollBarLength *MIN(1.0f, (float) con.vislines / con.totallines) : 0;
 	const float scrollBarLengthPerLine  = (scrollBarLength - scrollHandleLength) / (con.totallines - con.vislines);
 	const float relativeScrollLineIndex = con.current - con.totallines + MIN(con.vislines, con.totallines);
