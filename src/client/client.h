@@ -587,7 +587,8 @@ typedef struct
 	int display;            // bottom of console displays this line
 
 	int linewidth;          // characters across screen
-	int totallines;         // total lines in console scrollback
+	int totallines;         // total text filled lines in console scrollback
+	int maxtotallines;      // total lines in console scrollback
 
 	float xadjust;          // for wide aspect screens
 
@@ -595,7 +596,8 @@ typedef struct
 	float finalFrac;        // 0.0 to 1.0 lines of console to display
 	float desiredFrac;      // ydnar: for variable console heights
 
-	int vislines;           // in scanlines
+	int scanlines;          // in scanlines
+	int vislines;           // amount of visible lines
 
 	int times[NUM_CON_TIMES];       // cls.realtime time the line was generated
 	// for transparent notify lines

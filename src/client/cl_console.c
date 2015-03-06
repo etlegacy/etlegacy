@@ -196,9 +196,9 @@ void Con_Dump_f(void)
 	Com_Printf("Dumped console text to %s.\n", filename);
 
 	// skip empty lines
-	for (l = con.current - con.totallines + 1 ; l <= con.current ; l++)
+	for (l = con.current - con.maxtotallines + 1 ; l <= con.current ; l++)
 	{
-		line = con.text + (l % con.totallines) * con.linewidth;
+		line = con.text + (l % con.maxtotallines) * con.linewidth;
 		for (x = 0 ; x < con.linewidth ; x++)
 			if (line[x] != ' ')
 			{
@@ -222,7 +222,7 @@ void Con_Dump_f(void)
 	buffer[bufferlen - 1] = 0;
 	for ( ; l <= con.current ; l++)
 	{
-		line = con.text + (l % con.totallines) * con.linewidth;
+		line = con.text + (l % con.maxtotallines) * con.linewidth;
 		for (i = 0; i < con.linewidth; i++)
 			buffer[i] = line[i] & 0xff;
 		for (x = con.linewidth - 1 ; x >= 0 ; x--)
@@ -287,9 +287,9 @@ void Con_CheckResize(void)
 
 	if (width < 1)            // video hasn't been initialized yet
 	{
-		width          = DEFAULT_CONSOLE_WIDTH;
-		con.linewidth  = width;
-		con.totallines = CON_TEXTSIZE / con.linewidth;
+		width             = DEFAULT_CONSOLE_WIDTH;
+		con.linewidth     = width;
+		con.maxtotallines = CON_TEXTSIZE / con.linewidth;
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
 			con.text[i]      = ' ';
@@ -302,14 +302,14 @@ void Con_CheckResize(void)
 		int oldtotallines, numlines, numchars;
 		int oldwidth = con.linewidth;
 
-		con.linewidth  = width;
-		oldtotallines  = con.totallines;
-		con.totallines = CON_TEXTSIZE / con.linewidth;
-		numlines       = oldtotallines;
+		con.linewidth     = width;
+		oldtotallines     = con.maxtotallines;
+		con.maxtotallines = CON_TEXTSIZE / con.linewidth;
+		numlines          = oldtotallines;
 
-		if (con.totallines < numlines)
+		if (con.maxtotallines < numlines)
 		{
-			numlines = con.totallines;
+			numlines = con.maxtotallines;
 		}
 
 		numchars = oldwidth;
@@ -331,10 +331,10 @@ void Con_CheckResize(void)
 		{
 			for (j = 0 ; j < numchars ; j++)
 			{
-				con.text[(con.totallines - 1 - i) * con.linewidth + j] =
+				con.text[(con.maxtotallines - 1 - i) * con.linewidth + j] =
 				    tbuf[((con.current - i + oldtotallines) %
 				          oldtotallines) * oldwidth + j];
-				con.textColor[(con.totallines - 1 - i) * con.linewidth + j] =
+				con.textColor[(con.maxtotallines - 1 - i) * con.linewidth + j] =
 				    tbuff[((con.current - i + oldtotallines) %
 				           oldtotallines) * oldwidth + j];
 			}
@@ -343,7 +343,7 @@ void Con_CheckResize(void)
 		Con_ClearNotify();
 	}
 
-	con.current = con.totallines - 1;
+	con.current = con.maxtotallines - 1;
 	con.display = con.current;
 }
 
@@ -431,11 +431,18 @@ void Con_Linefeed(qboolean skipnotify)
 	{
 		con.display++;
 	}
+
 	con.current++;
+
+	if (con.totallines < con.maxtotallines)
+	{
+		con.totallines++;
+	}
+
 	for (i = 0; i < con.linewidth; i++)
 	{
-		con.text[(con.current % con.totallines) * con.linewidth + i]      = ' ';
-		con.textColor[(con.current % con.totallines) * con.linewidth + i] = ColorIndex(CONSOLE_COLOR);
+		con.text[(con.current % con.maxtotallines) * con.linewidth + i]      = ' ';
+		con.textColor[(con.current % con.maxtotallines) * con.linewidth + i] = ColorIndex(CONSOLE_COLOR);
 	}
 }
 
@@ -526,7 +533,7 @@ void CL_ConsolePrint(char *txt)
 			break;
 		default:
 			// display character and advance
-			y = con.current % con.totallines;
+			y = con.current % con.maxtotallines;
 
 			// sign extension caused the character to carry over
 			// into the color info for high ascii chars; casting c to unsigned
@@ -589,7 +596,7 @@ void Con_DrawInput(void)
 		return;
 	}
 
-	y = con.vislines - (SMALLCHAR_HEIGHT * 2);
+	y = con.scanlines - (SMALLCHAR_HEIGHT * 2);
 
 	// hightlight the current autocompleted part
 	if (con.highlightOffset)
@@ -646,8 +653,8 @@ void Con_DrawNotify(void)
 		{
 			continue;
 		}
-		text      = con.text + (i % con.totallines) * con.linewidth;
-		textColor = con.textColor + (i % con.totallines) * con.linewidth;
+		text      = con.text + (i % con.maxtotallines) * con.linewidth;
+		textColor = con.textColor + (i % con.maxtotallines) * con.linewidth;
 
 		if (cl.snap.ps.pm_type != PM_INTERMISSION && (cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME)))
 		{
@@ -715,18 +722,18 @@ void Con_DrawNotify(void)
 	}
 }
 
-void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrollBarY, int rows)
+void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrollBarY)
 {
 	vec4_t      color                   = { 0.2f, 0.2f, 0.2f, 0.75f };
-	const float scrollBarWidth          = 3;
-	const float scrollHandleLength      = con.totallines ? scrollBarLength *MIN(1.0f, (float) rows / con.totallines) : 0;
-	const float scrollBarLengthPerLine  = (scrollBarLength - scrollHandleLength) / (con.totallines - rows);
-	const float relativeScrollLineIndex = con.current - con.totallines + MIN(rows, con.totallines);
+	const float scrollBarWidth          = 3.0f;
+	const float scrollHandleLength      = con.totallines ? scrollBarLength *MIN(1.0f, (float) con.vislines / con.totallines) : 0;
+	const float scrollBarLengthPerLine  = (scrollBarLength - scrollHandleLength) / (con.totallines - con.vislines);
+	const float relativeScrollLineIndex = con.current - con.totallines + MIN(con.vislines, con.totallines);
 	const float scrollHandlePostition   = scrollBarLengthPerLine * (con.display - relativeScrollLineIndex);
 
 	SCR_FillRect(scrollBarX, scrollBarY, scrollBarWidth, scrollBarLength, color);
 
-	//draw the handle
+	// draw the handle
 	if (scrollHandlePostition >= 0 && scrollHandleLength > 0)
 	{
 		color[0] = 0.5f;
@@ -736,7 +743,7 @@ void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrol
 
 		SCR_FillRect(scrollBarX, scrollBarY + scrollHandlePostition, scrollBarWidth, scrollHandleLength, color);
 	}
-	//this happens when line appending gets us over the top position in a roll-lock situation (scrolling itself won't do that)
+	// this happens when line appending gets us over the top position in a roll-lock situation (scrolling itself won't do that)
 	else if (con.totallines)
 	{
 		//color[0] = (-scrollHandlePostition * 5.0f) / 10;
@@ -833,8 +840,9 @@ void Con_DrawSolidConsole(float frac)
 	}
 
 	// draw the text
-	con.vislines = yoffset;
-	rows         = (yoffset - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT; // rows of text to draw
+	con.scanlines = yoffset;
+	con.vislines  = (yoffset - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT; // rows of text to draw
+	rows          = con.vislines;
 
 	y = yoffset - (SMALLCHAR_HEIGHT * 3);
 
@@ -868,14 +876,14 @@ void Con_DrawSolidConsole(float frac)
 		{
 			break;
 		}
-		if (con.current - row >= con.totallines)
+		if (con.current - row >= con.maxtotallines)
 		{
 			// past scrollback wrap point
 			continue;
 		}
 
-		text      = con.text + (row % con.totallines) * con.linewidth;
-		textColor = con.textColor + (row % con.totallines) * con.linewidth;
+		text      = con.text + (row % con.maxtotallines) * con.linewidth;
+		textColor = con.textColor + (row % con.maxtotallines) * con.linewidth;
 
 		for (x = 0 ; x < con.linewidth ; x++)
 		{
@@ -895,7 +903,7 @@ void Con_DrawSolidConsole(float frac)
 
 	// draw the input prompt, user text, and cursor if desired
 	Con_DrawInput();
-	Con_DrawConsoleScrollbar((frac * SCREEN_HEIGHT) - 5 - SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3, rows);
+	Con_DrawConsoleScrollbar((frac * SCREEN_HEIGHT) - 5 - SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3);
 	re.SetColor(NULL);
 }
 
