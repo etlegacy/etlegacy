@@ -158,6 +158,8 @@ void Con_Clear_f(void)
 		con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 	}
 
+	con.totallines = 0;
+
 	Con_Bottom();       // go to end
 }
 
@@ -295,6 +297,7 @@ void Con_CheckResize(void)
 			con.text[i]      = ' ';
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
+		con.totallines = 0;
 	}
 	else
 	{
@@ -427,6 +430,7 @@ void Con_Linefeed(qboolean skipnotify)
 	}
 
 	con.x = 0;
+
 	if (con.display == con.current)
 	{
 		con.display++;
@@ -643,16 +647,19 @@ void Con_DrawNotify(void)
 		{
 			continue;
 		}
+
 		time = con.times[i % NUM_CON_TIMES];
 		if (time == 0)
 		{
 			continue;
 		}
+
 		time = cls.realtime - time;
 		if (time > con_notifytime->value * 1000)
 		{
 			continue;
 		}
+
 		text      = con.text + (i % con.maxtotallines) * con.linewidth;
 		textColor = con.textColor + (i % con.maxtotallines) * con.linewidth;
 
@@ -667,11 +674,13 @@ void Con_DrawNotify(void)
 			{
 				continue;
 			}
+
 			if (textColor[x] != currentColor)
 			{
 				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
+
 			SCR_DrawSmallChar(cl_conXOffset->integer + con.xadjust + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
 		}
 
@@ -787,6 +796,7 @@ void Con_DrawSolidConsole(float frac)
 
 	// draw the background
 	y = frac * SCREEN_HEIGHT - 2;
+
 	if (y < 1)
 	{
 		y = 0;
@@ -795,7 +805,6 @@ void Con_DrawSolidConsole(float frac)
 	{
 		SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
 
-		// merged from WolfSP
 		if (frac >= 0.5f)
 		{
 			color[0] = color[1] = color[2] = frac * 2.0f;
@@ -813,6 +822,7 @@ void Con_DrawSolidConsole(float frac)
 	color[1] = 0.75f;
 	color[2] = 0.75f;
 	color[3] = 1.0f;
+
 	if (frac < 1)
 	{
 		SCR_FillRect(0, y, SCREEN_WIDTH, 1.25f, color);
@@ -835,6 +845,7 @@ void Con_DrawSolidConsole(float frac)
 		{
 			re.SetColor(g_color_table[ColorIndex(COLOR_GREEN)]);
 		}
+
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x) * SMALLCHAR_WIDTH,
 		                  (yoffset - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), version[x]);
 	}
@@ -847,10 +858,11 @@ void Con_DrawSolidConsole(float frac)
 	y = yoffset - (SMALLCHAR_HEIGHT * 3);
 
 	// draw from the bottom up
-	if (con.display != con.current)
+	if (con.display < con.current - 1)
 	{
 		// draw arrows to show the buffer is backscrolled
 		re.SetColor(g_color_table[ColorIndex(COLOR_WHITE)]);
+
 		for (x = 0; x < con.linewidth; x += 4)
 		{
 			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, '^');
@@ -876,6 +888,7 @@ void Con_DrawSolidConsole(float frac)
 		{
 			break;
 		}
+
 		if (con.current - row >= con.maxtotallines)
 		{
 			// past scrollback wrap point
@@ -897,6 +910,7 @@ void Con_DrawSolidConsole(float frac)
 				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
+
 			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, text[x]);
 		}
 	}
@@ -969,6 +983,7 @@ void Con_RunConsole(void)
 	if (con.finalFrac < con.displayFrac)
 	{
 		con.displayFrac -= con_conspeed->value * cls.realFrametime * 0.001;
+
 		if (con.finalFrac > con.displayFrac)
 		{
 			con.displayFrac = con.finalFrac;
@@ -978,6 +993,7 @@ void Con_RunConsole(void)
 	else if (con.finalFrac > con.displayFrac)
 	{
 		con.displayFrac += con_conspeed->value * cls.realFrametime * 0.001;
+
 		if (con.finalFrac < con.displayFrac)
 		{
 			con.displayFrac = con.finalFrac;
@@ -987,16 +1003,18 @@ void Con_RunConsole(void)
 
 void Con_PageUp(void)
 {
-	con.display -= 2;
-	if (con.current - con.display >= con.totallines)
+	if (con.current - con.display > con.totallines - con.vislines)
 	{
-		con.display = con.current - con.totallines + 1;
+		con.display = con.current - con.totallines + con.vislines;
 	}
+
+	con.display -= 2;
 }
 
 void Con_PageDown(void)
 {
 	con.display += 2;
+
 	if (con.display > con.current)
 	{
 		con.display = con.current;
@@ -1006,9 +1024,10 @@ void Con_PageDown(void)
 void Con_Top(void)
 {
 	con.display = con.totallines;
-	if (con.current - con.display >= con.totallines)
+
+	if (con.current - con.display > con.totallines - con.vislines)
 	{
-		con.display = con.current - con.totallines + 1;
+		con.display = con.current - con.totallines + con.vislines - 2;
 	}
 }
 
@@ -1023,10 +1042,12 @@ void Con_Close(void)
 	{
 		return;
 	}
+
 	if (com_developer->integer > 1)
 	{
 		return;
 	}
+
 	Field_Clear(&g_consoleField);
 	Con_ClearNotify();
 	cls.keyCatchers &= ~KEYCATCH_CONSOLE;
