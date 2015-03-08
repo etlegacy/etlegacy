@@ -274,7 +274,7 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 
 #define CHATLOC_X 160
 #define CHATLOC_Y 478
-#define CHATLOC_TEXT_X (CHATLOC_X + 0.25f * TINYCHAR_WIDTH)
+#define CHATLOC_TEXT_X (CHATLOC_X + 0.25f * SMALLCHAR_WIDTH)
 
 /*
 =================
