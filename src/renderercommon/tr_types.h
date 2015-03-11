@@ -380,9 +380,10 @@ typedef enum
 	GLHW_RAGEPRO,           // deprecated
 	GLHW_PERMEDIA2,         // deprecated
 	// renderer2 BEGIN
-	GLHW_ATI,                   // where you don't have proper GLSL support
-	GLHW_ATI_DX10,              // ATI Radeon HD series DX10 hardware
-	GLHW_NV_DX10                // Geforce 8/9 class DX10 hardware
+	GLHW_ATI,               // where you don't have proper GLSL support
+	GLHW_ATI_DX10,          // ATI Radeon HD series DX10 hardware
+	GLHW_NV_DX10,           // Geforce 8/9 class DX10 hardware
+	GLHW_GENERIC_GL3        // other OpenGL 3.2 capable hardware (Intel Mesa)
 	// renderer2 END
 } glHardwareType_t;
 

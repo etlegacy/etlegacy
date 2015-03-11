@@ -886,6 +886,10 @@ static void GLSL_BuildShaderExtraDef()
 	{
 		BUFFEXT("#ifndef GLHW_NV_DX10\n#define GLHW_NV_DX10 1\n#endif\n");
 	}
+	else if (glConfig.hardwareType == GLHW_GENERIC_GL3)
+	{
+		BUFFEXT("#ifndef GLHW_GENERIC_GL3\n#define GLHW_GENERIC_GL3 1\n#endif\n");
+	}
 
 	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
 	{

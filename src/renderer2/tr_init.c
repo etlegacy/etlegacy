@@ -1162,6 +1162,11 @@ void GfxInfo_f(void)
 		Ren_Print("Using NVIDIA DirectX 10 hardware features\n");
 	}
 
+	if (glConfig.hardwareType == GLHW_GENERIC_GL3)
+	{
+		Ren_Print("Using generic OpenGL 3 hardware features\n");
+	}
+
 	if (glConfig2.vboVertexSkinningAvailable)
 	{
 		Ren_Print("Using GPU vertex skinning with max %i bones in a single pass\n", glConfig2.maxVertexSkinningBones);

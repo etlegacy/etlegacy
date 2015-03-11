@@ -1162,7 +1162,8 @@ static void GLimp_InitExtensions(void)
 // FIXME: rework & add latest gfx cards
 void GLimp_SetHardware(void)
 {
-	if (Q_stristr(glConfig.renderer_string, "mesa") ||
+	if (glConfig.driverType != GLDRV_OPENGL3 &&
+	    (Q_stristr(glConfig.renderer_string, "mesa") ||
 	     Q_stristr(glConfig.renderer_string, "gallium") ||
 	     Q_stristr(glConfig.vendor_string, "nouveau") ||
 	     Q_stristr(glConfig.vendor_string, "mesa")))
@@ -1170,7 +1171,28 @@ void GLimp_SetHardware(void)
 		glConfig.driverType = GLDRV_MESA;
 	}
 
-	if (Q_stristr(glConfig.renderer_string, "geforce"))
+	if (Q_stristr(glConfig.vendor_string, "Intel"))
+	{
+		// FIXME: filter out HD Graphics from first generation ("Westmere")
+		if (Q_stristr(glConfig.renderer_string, "HD Graphics") ||     // proprietary driver
+		    Q_stristr(glConfig.renderer_string, "Iris Graphics") ||
+		    Q_stristr(glConfig.renderer_string, "Iris Pro Graphics") ||
+		    Q_stristr(glConfig.renderer_string, "Sandybridge") ||     // open source driver (Mesa DRI)
+		    Q_stristr(glConfig.renderer_string, "Ivybridge") ||
+		    Q_stristr(glConfig.renderer_string, "Haswell") ||
+		    Q_stristr(glConfig.renderer_string, "Broadwell") ||
+		    Q_stristr(glConfig.renderer_string, "Skylake") ||
+		    Q_stristr(glConfig.renderer_string, "Cannonlake"))
+		{
+			glConfig.hardwareType = GLHW_GENERIC_GL3;
+		}
+		else
+		{
+			Ren_Print("Warning: unknown HD/Iris Graphics series\n");
+			//glConfig.hardwareType = GLHW_GENERIC;
+		}
+	}
+	else if (Q_stristr(glConfig.renderer_string, "geforce"))
 	{
 		if (Q_stristr(glConfig.renderer_string, "8400") ||
 		    Q_stristr(glConfig.renderer_string, "8500") ||
@@ -1221,7 +1243,7 @@ void GLimp_SetHardware(void)
 		}
 		else
 		{
-			Ren_Print("Warning: unknown geforce series\n");
+			Ren_Print("Warning: unknown GeForce series\n");
 			//glConfig.hardwareType = GLHW_GENERIC;
 		}
 
@@ -1234,7 +1256,7 @@ void GLimp_SetHardware(void)
 		}
 		else
 		{
-			Ren_Print("Warning: unknown quadro fx series\n");
+			Ren_Print("Warning: unknown Quadro series\n");
 			//glConfig.hardwareType = GLHW_GENERIC;
 		}
 	}
