@@ -600,7 +600,7 @@ void Con_DrawInput(void)
 		return;
 	}
 
-	y = con.scanlines - (SMALLCHAR_HEIGHT * 2);
+	y = con.scanlines - 1.5f * SMALLCHAR_HEIGHT;
 
 	// hightlight the current autocompleted part
 	if (con.highlightOffset)
@@ -795,7 +795,7 @@ void Con_DrawSolidConsole(float frac)
 	SCR_AdjustFrom640(&con.xadjust, NULL, NULL, NULL);
 
 	// draw the background
-	y = frac * SCREEN_HEIGHT - 2;
+	y = frac * SCREEN_HEIGHT;
 
 	if (y < 1)
 	{
