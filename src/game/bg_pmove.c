@@ -4049,6 +4049,7 @@ static void PM_Weapon(void)
 			break;
 		default:
 			PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
+			PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 			pm->ps->weaponTime  = 500;
 			pm->ps->weaponDelay = 0;                // avoid insta-fire after water exit on delayed weapon attacks
 			return;
