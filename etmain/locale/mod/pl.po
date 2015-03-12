@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-13 11:45+0000\n"
+"PO-Revision-Date: 2015-03-11 09:48+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -5040,7 +5040,7 @@ msgstr "Zostałeś nagrodzony %s"
 #: src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
-msgstr "Podłożony na %s."
+msgstr "Podłożony pod %s."
 
 #: src/cgame/cg_popupmessages.c:682
 #, c-format
