@@ -3794,7 +3794,12 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
-			pm->ps->weaponTime = 0;
+			// Default switch time = 250
+			if (IS_MG_WEAPON(pm->ps->weapon) && pm->ps->weaponTime > 250)
+			{
+				pm->ps->weaponTime = 250;
+			}
+
 			PM_BeginWeaponChange(pm->ps->weapon, pm->cmd.weapon, qfalse);
 		}
 	}
