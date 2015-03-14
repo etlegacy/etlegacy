@@ -309,7 +309,7 @@ unsigned long Q_UTF8_CodePoint(const char *str)
 		size = 1;
 	}
 
-	for (i = (size > 1 ? size + 1 : 1); i < 8; i++)
+	for (i = (size > 1 ? size : 0); i < 8; i++)
 	{
 		setbit(p, n++, getbit((const unsigned char *)str, i));
 	}
