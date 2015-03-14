@@ -3333,9 +3333,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// drop gun lower at higher fov
-	if (!cg_gun_fovscale.integer && cg_fov.integer > 90)
+	if (!cg_gun_fovscale.integer && cg_fov.value > 90)
 	{
-		fovOffset = -0.2 * (cg_fov.integer - 90);
+		fovOffset = -0.2 * (cg_fov.value - 90);
 	}
 	else
 	{
@@ -3489,15 +3489,15 @@ void CG_AddViewWeapon(playerState_t *ps)
 			hand.nonNormalizedAxes = qtrue;
 		}
 
-		if (cg_gun_fovscale.integer && cg_fov.integer != 0)
+		if (cg_gun_fovscale.integer && cg_fov.value != 0)
 		{
-			if (cg_gun_fovscale.integer > 1 && cg_fov.integer <= 90)
+			if (cg_gun_fovscale.integer > 0 && cg_fov.value <= 90)
 			{
 				lengthscale = 1.0f;
 			}
 			else
 			{
-				lengthscale = 1.0f / tan(DEG2RAD(cg_fov.integer / 2.0f));
+				lengthscale = 1.0f / tan(DEG2RAD(cg_fov.value / 2.0f));
 			}
 		}
 		else

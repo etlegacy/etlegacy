@@ -596,7 +596,7 @@ void CG_mvDraw(cg_window_t *sw)
 	                    (cent->currentState.eFlags & EF_ZOOMING))) ?
 	               cg_zoomDefaultSniper.value :
 	               (cgs.clientinfo[pID].fCrewgun) ?
-	               55 : cg_fov.integer;
+	               55 : cg_fov.value;
 
 	x            = refdef.width / tan(refdef.fov_x / 360 * M_PI);
 	refdef.fov_y = atan2(refdef.height, x) * 360 / M_PI;
