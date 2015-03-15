@@ -2420,11 +2420,21 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	}
 	else if (!Q_stricmp(lastToken, "random"))
 	{
+		int randomValue;
+
 		if (!token[0])
 		{
 			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
-		ent->scriptAccumBuffer[bufferIndex] = rand() % atoi(token);
+
+		randomValue = atoi(token);
+
+		if (randomValue == 0)
+		{
+			G_Error("G_ScriptAction_Accum: accum %s requires a random parameter <> 0\n", lastToken);
+		}
+
+		ent->scriptAccumBuffer[bufferIndex] = rand() % randomValue;
 	}
 	else if (!Q_stricmp(lastToken, "trigger_if_equal"))
 	{
@@ -2689,11 +2699,21 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	}
 	else if (!Q_stricmp(lastToken, "random"))
 	{
+		int randomValue;
+
 		if (!token[0])
 		{
 			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
-		level.globalAccumBuffer[bufferIndex] = rand() % atoi(token);
+
+		randomValue = atoi(token);
+
+		if (randomValue == 0)
+		{
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a random parameter <> 0\n", lastToken);
+		}
+
+		level.globalAccumBuffer[bufferIndex] = rand() % randomValue;
 	}
 	else if (!Q_stricmp(lastToken, "trigger_if_equal"))
 	{
