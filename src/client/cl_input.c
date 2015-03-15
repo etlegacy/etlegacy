@@ -946,6 +946,13 @@ void CL_CreateNewCommands(void)
 
 	frame_msec = com_frameTime - old_com_frameTime;
 
+	// force at least 1 msec frametime to avoid CL_KeyState returning
+	// bogus values resulting in #IND cl.viewangles[]
+	if (frame_msec < 1)
+	{
+		frame_msec = 1;
+	}
+
 	// if running less than 5fps, truncate the extra time to prevent
 	// unexpected moves after a hitch
 	if (frame_msec > 200)
