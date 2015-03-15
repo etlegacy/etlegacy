@@ -7902,14 +7902,6 @@ void UI_DrawConnectScreen(qboolean overlay)
 {
 	if (!overlay)
 	{
-		// to avoid a flickering screen on widescreens, we erase it before drawing onto it..
-		if (((float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight) != RATIO43)
-		{
-			float xoffset = Cui_WideXoffset() * DC->xscale;
-
-			trap_R_DrawStretchPic(0, 0, xoffset, DC->glconfig.vidHeight, 0, 0, 1, 1, DC->registerShaderNoMip("gfx/2d/backtile"));
-			trap_R_DrawStretchPic(DC->glconfig.vidWidth - xoffset, 0, xoffset, DC->glconfig.vidHeight, 0, 0, 1, 1, DC->registerShaderNoMip("gfx/2d/backtile"));
-		}
 		UI_DrawLoadPanel(qfalse, qfalse);
 	}
 }
