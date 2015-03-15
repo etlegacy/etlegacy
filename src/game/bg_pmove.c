@@ -3794,10 +3794,10 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
-			// Default switch time = 250
-			if (IS_MG_WEAPON(pm->ps->weapon) && pm->ps->weaponTime > 250)
+			// don't change weapon while unmounting alt weapon
+			if ((IS_MG_WEAPON(pm->ps->weapon) || IS_MORTAR_WEAPON(pm->ps->weapon) || IS_RIFLE_AND_NADE_WEAPON(pm->ps->weapon || IS_SILENCED_PISTOL(pm->ps->weapon))) && pm->ps->weaponTime > 250)
 			{
-				pm->ps->weaponTime = 250;
+				return;
 			}
 
 			PM_BeginWeaponChange(pm->ps->weapon, pm->cmd.weapon, qfalse);

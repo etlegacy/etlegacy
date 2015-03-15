@@ -905,6 +905,9 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define IS_PANZER_WEAPON(w) \
 	(w == WP_PANZERFAUST         || w == WP_BAZOOKA)
 
+#define IS_SILENCED_PISTOL(w) \
+	(w == WP_SILENCER            || w == WP_SILENCED_COLT)
+
 #define IS_AKIMBO_WEAPON(w) \
 	(w == WP_AKIMBO_COLT         || w == WP_AKIMBO_LUGER         || \
 	 w == WP_AKIMBO_SILENCEDCOLT || w == WP_AKIMBO_SILENCEDLUGER)
