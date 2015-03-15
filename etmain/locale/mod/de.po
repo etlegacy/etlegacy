@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-21 16:12+0000\n"
+"PO-Revision-Date: 2015-03-15 12:21+0000\n"
 "Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -2269,7 +2269,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
-msgstr ""
+msgstr "Chat Icon Zeit:"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
@@ -2436,7 +2436,7 @@ msgstr "ANSICHT"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
-msgstr ""
+msgstr "HUD ANZEIGE"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Draw Gun:"
@@ -2480,7 +2480,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Cursor Hinweise:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
@@ -2916,7 +2916,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Orange"
-msgstr ""
+msgstr "Orange"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -3393,7 +3393,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:71
 msgid "GL Extensions:"
-msgstr ""
+msgstr "GL Erweiterungen:"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enabled"
@@ -3481,7 +3481,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
-msgstr ""
+msgstr "NETZWERK"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
@@ -3507,7 +3507,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
-msgstr ""
+msgstr "DOWNLOADS"
 
 #: etmain/ui/options_system.menu:59
 msgid "Check for Updates on Start-Up:"
@@ -3589,7 +3589,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
-msgstr ""
+msgstr "Mod:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
@@ -3616,14 +3616,14 @@ msgstr ""
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Only show..."
-msgstr ""
+msgstr "Zeige nur"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Don't show..."
-msgstr ""
+msgstr "Nicht zeigen"
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
@@ -3744,7 +3744,7 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Video Quality:"
-msgstr ""
+msgstr "Video Qualität:"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
@@ -3858,7 +3858,7 @@ msgstr "etwas Besseres zu tun!"
 
 #: etmain/ui/rec_restart.menu:53 etmain/ui/vid_restart.menu:47
 msgid "CHANGE VIDEO SETTINGS"
-msgstr ""
+msgstr "ÄNDERE VIDEO EINSTELLUNGEN"
 
 #: etmain/ui/rec_restart.menu:55
 msgid ""
@@ -4472,7 +4472,7 @@ msgstr ""
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
-msgstr ""
+msgstr "Zuletzt gespielt: %s"
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
@@ -4571,7 +4571,7 @@ msgstr "Kampagne: %s"
 #: src/cgame/cg_draw.c:382 src/cgame/cg_draw.c:391 src/cgame/cg_draw.c:407
 #, c-format
 msgid "a %s"
-msgstr ""
+msgstr "Ein %s"
 
 #: src/cgame/cg_draw.c:396
 msgid "an Objective"
@@ -4580,7 +4580,7 @@ msgstr "ein Ziel"
 #: src/cgame/cg_draw.c:403
 #, c-format
 msgid "an %s"
-msgstr ""
+msgstr "Ein %s"
 
 #: src/cgame/cg_draw.c:1507
 msgid "Disguised Enemy!"
