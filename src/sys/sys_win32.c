@@ -943,7 +943,8 @@ void Sys_CreateConsoleWindow(void)
 #endif
 }
 
-#define SET_PROCESS_AFFINITY 0	// This could be enabled in the future
+// This could be enabled in the future
+//#define SET_PROCESS_AFFINITY 1
 
 void Sys_SetProcessProperties(void)
 {
