@@ -960,6 +960,10 @@ void CL_Connect_f(void)
 
 	S_StopAllSounds();
 
+	// Remove pure paks
+	FS_PureServerSetLoadedPaks("", "");
+	FS_PureServerSetReferencedPaks("", "");
+
 	// starting to load a map so we get out of full screen ui mode
 	Cvar_Set("r_uiFullScreen", "0");
 	Cvar_Set("ui_connecting", "1");

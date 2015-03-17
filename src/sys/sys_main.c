@@ -772,11 +772,8 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	{
 		Com_Printf("Sys_LoadDll: failed to load the mod library. Trying to revert to the default one.\n");
 #ifndef DEDICATED
-		// Try to extract the legacy mod from the pk3:s
-		if (extract && FS_CL_ExtractFromPakFile(homepath, DEFAULT_MODGAME, fname))
-		{
-			libHandle = Sys_TryLibraryLoad(homepath, DEFAULT_MODGAME, fname);
-		}
+		// Try to use the legacy mod
+		libHandle = Sys_TryLibraryLoad(homepath, DEFAULT_MODGAME, fname);
 
 		if (!libHandle)
 #endif
