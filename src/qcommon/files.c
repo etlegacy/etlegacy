@@ -1528,9 +1528,9 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 	unsigned char *destData;
 	qboolean      needToCopy = qtrue;
 	FILE          *destHandle;
-	char          *fn;
+	char          outputFile[MAX_OSPATH];
 
-	fn = FS_BuildOSPath(base, gamedir, filename);
+	Q_strncpyz(outputFile, FS_BuildOSPath(base, gamedir, filename), MAX_OSPATH * sizeof(char));
 
 	// read in compressed file
 	srcLength = FS_ReadFile(filename, (void **)&srcData);
@@ -1542,7 +1542,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 	}
 
 	// read in local file
-	destHandle = Sys_FOpen(fn, "rb");
+	destHandle = Sys_FOpen(outputFile, "rb");
 
 	// if we have a local file, we need to compare the two
 	if (destHandle)
