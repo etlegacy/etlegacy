@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-03-16 10:15+0000\n"
+"PO-Revision-Date: 2015-03-17 08:50+0000\n"
 "Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
-msgstr ""
+msgstr "VP North American Studios"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
@@ -137,7 +137,7 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "WEITERE ENTWICKLUNG"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
@@ -157,23 +157,23 @@ msgstr "Präsident"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "Senior Projektleiter"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "SPRACH KÜNSTLER"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr ""
+msgstr "Sprache der Alliierten / Axen Soldaten"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr ""
+msgstr "Stimme des Axen Kommandant"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
-msgstr ""
+msgstr "Stimme des Alliierten Kommandant"
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
@@ -187,11 +187,11 @@ msgstr "Return to Castle Wolfenstein wurde von Gray Matter Studios & Nerve Softw
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr ""
+msgstr "Wir danken beiden Entwicklern für ihre Hilfe und Unterstützung"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr ""
+msgstr "während der Entwicklung von Wolfenstein: Enemy Territory."
 
 #: etmain/ui/credits_additional.menu:229
 msgid "Original Soundtrack by Bill Brown."
@@ -309,7 +309,7 @@ msgstr "Ausführender Produzent"
 
 #: etmain/ui/credits_idsoftware.menu:84
 msgid "Additional Programming"
-msgstr ""
+msgstr "Weitere Programmierung"
 
 #: etmain/ui/credits_idsoftware.menu:87
 msgid ""
@@ -386,7 +386,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:154
 msgid "Designer / Writer"
-msgstr ""
+msgstr "Designer / Autor"
 
 #: etmain/ui/credits_splashdamage.menu:161
 msgid "LEVEL DESIGN"
@@ -525,7 +525,7 @@ msgstr "Intermission Bereit %:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
-msgstr ""
+msgstr "Prozentualer Anteil von 'bereit' Spielern um die nächste Karte zu starten"
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
@@ -562,7 +562,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
-msgstr ""
+msgstr "Erlaube spätes Anschließen:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
@@ -692,7 +692,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
-msgstr ""
+msgstr "Alliierte max Leben:"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
@@ -700,7 +700,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr ""
+msgstr "Axen max. Leben:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
@@ -718,11 +718,11 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr ""
+msgstr "LAST MAN STANDING"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr ""
+msgstr "LMS Runden Pro Spiel:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
@@ -730,7 +730,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr ""
+msgstr "LMS Spiele Pro Karte:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
@@ -891,7 +891,7 @@ msgstr "Schiedsrichter:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Erlaube Spieler einen Schiedsrichter zu wählen"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
@@ -991,7 +991,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
-msgstr ""
+msgstr "FTP/HTTP Weiterleitungen:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
@@ -1036,11 +1036,11 @@ msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
-msgstr ""
+msgstr "Bist du sicher einen"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:58
 msgid "a Dedicated Server?"
-msgstr ""
+msgstr "dedizierten Server zu starten?"
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
@@ -1070,7 +1070,7 @@ msgstr "JA"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable Country Flags on the server"
-msgstr ""
+msgstr "Aktiviere Länder Flaggen auf dem Server"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1244,11 +1244,11 @@ msgstr "TRENNEN"
 
 #: etmain/ui/ingame_disconnect.menu:51
 msgid "Do you want to disconnect"
-msgstr ""
+msgstr "Möchtest du dich"
 
 #: etmain/ui/ingame_disconnect.menu:52
 msgid "from the server?"
-msgstr ""
+msgstr "vom Server trennen?"
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
@@ -1428,12 +1428,12 @@ msgstr "BOTS"
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
 msgid "START MATCH"
-msgstr ""
+msgstr "STARTE SPIEL"
 
 #: etmain/ui/ingame_vote_misc.menu:42
 #: etmain/ui/ingame_vote_misc_refrcon.menu:41
 msgid "RESET MATCH"
-msgstr ""
+msgstr "SPIEL-RESET"
 
 #: etmain/ui/ingame_vote_misc.menu:43
 #: etmain/ui/ingame_vote_misc_refrcon.menu:42
@@ -1463,12 +1463,12 @@ msgstr "ANTI-LAG AUS"
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
 msgid "XP SHUFFLE"
-msgstr ""
+msgstr "XP MISCHEN"
 
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
 msgid "SWAP TEAMS"
-msgstr ""
+msgstr "TAUSCHE TEAMS"
 
 #: etmain/ui/ingame_vote_misc.menu:51
 #: etmain/ui/ingame_vote_misc_refrcon.menu:50
@@ -1612,7 +1612,7 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_players.menu:68
 msgid "MAKE SPEC"
-msgstr ""
+msgstr "MACHE ZUSCH"
 
 #: etmain/ui/ingame_vote_players.menu:70
 #: etmain/ui/ingame_vote_players_warn.menu:64 src/cgame/cg_fireteams.c:362
@@ -1752,11 +1752,11 @@ msgstr "EINFACHES SÄUBERN"
 
 #: etmain/ui/options_clean.menu:45
 msgid "FULL CLEAN"
-msgstr ""
+msgstr "KOPLETTES SÄUBERN"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
-msgstr ""
+msgstr "STANDARDSTEUERUNG"
 
 #: etmain/ui/options_controls_default.menu:53
 msgid "Reset controls to default?"
@@ -4765,22 +4765,22 @@ msgstr "Keine weiteren Verstärkungen in dieser Runde."
 #: src/cgame/cg_draw.c:2259 src/cgame/cg_draw.c:2347
 #, c-format
 msgid "Deploying in ^3%d ^7seconds"
-msgstr ""
+msgstr "Aufmarsch in ^3%d ^7Sekunden"
 
 #: src/cgame/cg_draw.c:2263 src/cgame/cg_draw.c:2351
 #, c-format
 msgid "Deploying in ^3%d ^7second"
-msgstr ""
+msgstr "Aufmarsch in ^3%d ^7Sekunde"
 
 #: src/cgame/cg_draw.c:2329
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7seconds"
-msgstr ""
+msgstr "Bonus Leben! Aufmarsch in ^3%d ^7Sekunden"
 
 #: src/cgame/cg_draw.c:2333
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7second"
-msgstr ""
+msgstr "Bonus Leben! Aufmarsch in ^3%d ^7Sekunde"
 
 #: src/cgame/cg_draw.c:2338
 msgid "No more deployments this round"
@@ -4954,11 +4954,11 @@ msgstr ""
 
 #: src/cgame/cg_info.c:801
 msgid "Level"
-msgstr ""
+msgstr "Stufe"
 
 #: src/cgame/cg_info.c:803
 msgid "XP / Next Level"
-msgstr ""
+msgstr "XP / Nächste Stufe"
 
 #: src/cgame/cg_info.c:807
 msgid "Medals"
@@ -5025,7 +5025,7 @@ msgstr "ist nicht auf dem Server"
 #: src/cgame/cg_players.c:309
 #, c-format
 msgid "Promoted to rank %s!"
-msgstr ""
+msgstr "Befördert zum %s!"
 
 #: src/cgame/cg_players.c:359
 #, c-format
@@ -5090,7 +5090,7 @@ msgstr "%s^7 tritt den %s^7 bei!"
 #: src/cgame/cg_popupmessages.c:761
 #, c-format
 msgid "%s^7 disconnected"
-msgstr ""
+msgstr "%s^7 getrennt"
 
 #: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
 #: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
@@ -5260,7 +5260,7 @@ msgstr "Erwarte Spielstatus..."
 
 #: src/ui/ui_main.c:2401 src/ui/ui_main.c:2642
 msgid "Waiting for new key... Press ESCAPE to cancel"
-msgstr ""
+msgstr "Warten auf neue Taste ... Drücke ESCAPE, um abzubrechen"
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
@@ -5278,7 +5278,7 @@ msgstr ""
 #: src/ui/ui_main.c:2555
 #, c-format
 msgid "Refresh Time: %s"
-msgstr ""
+msgstr "Aktualisierungszeit: %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
