@@ -22,6 +22,7 @@ SET game_basepath=%USERPROFILE%\Documents\ETLegacy-Build
 SET build_type=Release
 SET batloc=%~dp0
 SET build_dir=%batloc%build
+SET project_dir=%batloc%project
 
 IF "%~1"=="" (
 	GOTO:DEFAULTPROCESS
@@ -50,6 +51,7 @@ GOTO:EOF
 	IF /I "%curvar%"=="install" CALL:DOINSTALL
 	IF /I "%curvar%"=="pack" CALL:DOPACKAGE
 	IF /I "%curvar%"=="crust" GOTO:UNCRUSTCODE
+	IF /I "%curvar%"=="project" CALL:GENERATEPROJECT %project_dir% "%batloc%" "" "" "YES"
 	:: download pak0 - 2 to the homepath if they do not exist
 	IF /I "%curvar%"=="download" CALL:DOWNLOADPAKS "http://mirror.etlegacy.com/etmain/"
 	IF /I "%curvar%"=="open" explorer %game_basepath%
@@ -145,25 +147,21 @@ GOTO:EOF
 	IF EXIST %build_dir% RMDIR /s /q %build_dir%
 GOTO:EOF
 
+:: GenerateProject(targetDir, sourceDir, compileType, crossCompile, buildR2)
+:GENERATEPROJECT
+	ECHO Generating...
+	IF NOT EXIST "%~1" MKDIR "%~1"
+	CD "%~1"
+
+	set build_string=
+	CALL:GENERATECMAKE build_string "%~4" "%~5"
+	cmake -G "Visual Studio %vsversion%%~3" -T v%vsversion%0_xp %build_string% "%~2"
+GOTO:EOF
+
 :DOBUILD
 	:: build
+	CALL:GENERATEPROJECT %build_dir% "%batloc%" "%~1" "%~1" ""
 	ECHO Building...
-	IF NOT EXIST %build_dir% MKDIR %build_dir%
-	CD %build_dir%
-
-	IF "%~1" == "" (
-		SET CROSSCOMP=YES
-	) ELSE (
-		SET CROSSCOMP=NO
-	)
-
-	cmake -G "Visual Studio %vsversion%%~1" -T v%vsversion%0_xp ^
-	-DBUNDLED_LIBS=YES ^
-	-DCMAKE_BUILD_TYPE=%build_type% ^
-	-DINSTALL_OMNIBOT=YES ^
-	-DCROSS_COMPILE32=%CROSSCOMP% ^
-	..
-
 	msbuild ETLEGACY.sln /target:ALL_BUILD /p:Configuration=%build_type%
 GOTO:EOF
 
@@ -242,3 +240,28 @@ GOTO:EOF
 	:substringResult
 	set "%~1=%_substring%"
 GOTO :EOF
+
+:: GenerateCmake(outputVar, crosscompile, buildR2)
+:GENERATECMAKE
+	SETLOCAL
+	IF "%~2" == "" (
+		SET CROSSCOMP=YES
+	) ELSE (
+		SET CROSSCOMP=NO
+	)
+
+	IF "%~3" == "" (
+		SET build_r2=NO
+	) ELSE (
+		SET build_r2=YES
+	)
+
+	SET loca_build_string=-DBUNDLED_LIBS=YES ^
+	-DCMAKE_BUILD_TYPE=%build_type% ^
+	-DINSTALL_OMNIBOT=YES ^
+	-DCROSS_COMPILE32=%CROSSCOMP% ^
+	-DRENDERER_DYNAMIC=%build_r2% ^
+	-DFEATURE_RENDERER2=%build_r2%
+
+	ENDLOCAL&SET "%~1=%loca_build_string%"
+GOTO:EOF
