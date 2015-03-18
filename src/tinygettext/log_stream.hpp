@@ -23,9 +23,9 @@
 namespace tinygettext {
 
 // FIXME: very bad to have such things in the API
-#define log_error   if (!Log::log_error_callback);   else (Log(Log::log_error_callback)).get()
-#define log_warning if (!Log::log_warning_callback); else (Log(Log::log_warning_callback)).get()
-#define log_info    if (!Log::log_info_callback);    else (Log(Log::log_warning_callback)).get()
+#define log_error   if (!Log::log_error_callback) {; } else (Log(Log::log_error_callback)).get()
+#define log_warning if (!Log::log_warning_callback) {; } else (Log(Log::log_warning_callback)).get()
+#define log_info    if (!Log::log_info_callback) {; } else (Log(Log::log_warning_callback)).get()
 
 } // namespace tinygettext
 

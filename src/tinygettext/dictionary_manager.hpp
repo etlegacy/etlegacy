@@ -37,59 +37,59 @@ class FileSystem;
 class DictionaryManager
 {
 private:
-  typedef std::map<Language, Dictionary*> Dictionaries;
-  Dictionaries dictionaries;
+	typedef std::map<Language, Dictionary *> Dictionaries;
+	Dictionaries dictionaries;
 
-  typedef std::vector<std::string> SearchPath;
-  SearchPath search_path;
+	typedef std::vector<std::string> SearchPath;
+	SearchPath search_path;
 
-  std::string charset;
-  bool        use_fuzzy;
-  
-  Language    current_language;
-  Dictionary* current_dict;
+	std::string charset;
+	bool        use_fuzzy;
 
-  Dictionary  empty_dict;
+	Language   current_language;
+	Dictionary *current_dict;
 
-  std::auto_ptr<FileSystem> filesystem;
+	Dictionary empty_dict;
 
-  void clear_cache();
+	std::auto_ptr<FileSystem> filesystem;
+
+	void clear_cache();
 
 public:
-  DictionaryManager(const std::string& charset_ = "UTF-8");
-  ~DictionaryManager();
+	DictionaryManager(const std::string& charset_ = "UTF-8");
+	~DictionaryManager();
 
-  /** Return the currently active dictionary, if none is set, an empty
-      dictionary is returned. */
-  Dictionary& get_dictionary();
+	/** Return the currently active dictionary, if none is set, an empty
+	    dictionary is returned. */
+	Dictionary& get_dictionary();
 
-  /** Get dictionary for language */
-  Dictionary& get_dictionary(const Language& language);
+	/** Get dictionary for language */
+	Dictionary& get_dictionary(const Language& language);
 
-  /** Set a language based on a four? letter country code */
-  void set_language(const Language& language);
+	/** Set a language based on a four? letter country code */
+	void set_language(const Language& language);
 
-  /** returns the (normalized) country code of the currently used language */
-  Language get_language() const;
+	/** returns the (normalized) country code of the currently used language */
+	Language get_language() const;
 
-  void set_use_fuzzy(bool t);
-  bool get_use_fuzzy() const;
+	void set_use_fuzzy(bool t);
+	bool get_use_fuzzy() const;
 
-  /** Set a charset that will be set on the returned dictionaries */
-  void set_charset(const std::string& charset);
+	/** Set a charset that will be set on the returned dictionaries */
+	void set_charset(const std::string& charset);
 
-  /** Add a directory to the search path for dictionaries, earlier
-      added directories have higher priority then later added ones */
-  void add_directory(const std::string& pathname);
+	/** Add a directory to the search path for dictionaries, earlier
+	    added directories have higher priority then later added ones */
+	void add_directory(const std::string& pathname);
 
-  /** Return a set of the available languages in their country code */
-  std::set<Language> get_languages();
+	/** Return a set of the available languages in their country code */
+	std::set<Language> get_languages();
 
-  void set_filesystem(std::auto_ptr<FileSystem> filesystem);
+	void set_filesystem(std::auto_ptr<FileSystem> filesystem);
 
 private:
-  DictionaryManager (const DictionaryManager&);
-  DictionaryManager& operator= (const DictionaryManager&);
+	DictionaryManager (const DictionaryManager&);
+	DictionaryManager& operator=(const DictionaryManager&);
 };
 
 } // namespace tinygettext

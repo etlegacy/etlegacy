@@ -59,21 +59,21 @@ namespace tinygettext {
 class IConv
 {
 private:
-  std::string to_charset;
-  std::string from_charset;
-  tinygettext_iconv_t cd;
+	std::string         to_charset;
+	std::string         from_charset;
+	tinygettext_iconv_t cd;
 
 public:
-  IConv();
-  IConv(const std::string& fromcode, const std::string& tocode);
-  ~IConv();
+	IConv();
+	IConv(const std::string& fromcode, const std::string& tocode);
+	~IConv();
 
-  void set_charsets(const std::string& fromcode, const std::string& tocode);
-  std::string convert(const std::string& text);
+	void set_charsets(const std::string& fromcode, const std::string& tocode);
+	std::string convert(const std::string& text);
 
 private:
-  IConv (const IConv&);
-  IConv& operator= (const IConv&);
+	IConv (const IConv&);
+	IConv& operator=(const IConv&);
 };
 
 } // namespace tinygettext

@@ -28,60 +28,61 @@ struct LanguageSpec;
 class Language
 {
 private:
-  LanguageSpec* language_spec;
+	LanguageSpec *language_spec;
 
-  Language(LanguageSpec* language_spec);
+	Language(LanguageSpec *language_spec);
 
 public:
-  /** Create a language from language and country code:
-      Example: Languge("de", "DE"); */
-  static Language from_spec(const std::string& language, 
-                            const std::string& country = std::string(), 
-                            const std::string& modifier = std::string());
+	/** Create a language from language and country code:
+	    Example: Languge("de", "DE"); */
+	static Language from_spec(const std::string& language,
+	                          const std::string& country = std::string(),
+	                          const std::string& modifier = std::string());
 
-  /** Create a language from language and country code:
-      Example: Languge("deutsch"); 
-      Example: Languge("de_DE"); */
-  static Language from_name(const std::string& str);
+	/** Create a language from language and country code:
+	    Example: Languge("deutsch");
+	    Example: Languge("de_DE"); */
+	static Language from_name(const std::string& str);
 
-  /** Create a language from an environment variable style string (e.g de_DE.UTF-8@modifier) */
-  static Language from_env(const std::string& env);
+	/** Create a language from an environment variable style string (e.g de_DE.UTF-8@modifier) */
+	static Language from_env(const std::string& env);
 
-  /** Compares two Languages, returns 0 on missmatch and a score
-      between 1 and 9 on match, the higher the score the better the
-      match */
-  static int match(const Language& lhs, const Language& rhs);
+	/** Compares two Languages, returns 0 on missmatch and a score
+	    between 1 and 9 on match, the higher the score the better the
+	    match */
+	static int match(const Language& lhs, const Language& rhs);
 
-  /** Create an undefined Language object */
-  Language();
-  
-  operator bool() const { return language_spec; }
+	/** Create an undefined Language object */
+	Language();
 
-  /** Returns the language code (i.e. de, en, fr) */
-  std::string get_language() const;
+	operator bool() const { return language_spec; }
 
-  /** Returns the country code (i.e. DE, AT, US) */
-  std::string get_country()  const;
+	/** Returns the language code (i.e. de, en, fr) */
+	std::string get_language() const;
 
-  /** Returns the modifier of the language (i.e. latn or Latn for
-      Serbian with non-cyrilic characters) */
-  std::string get_modifier()  const;
+	/** Returns the country code (i.e. DE, AT, US) */
+	std::string get_country()  const;
 
-  /** Returns the human readable name of the Language */
-  std::string get_name() const;
+	/** Returns the modifier of the language (i.e. latn or Latn for
+	    Serbian with non-cyrilic characters) */
+	std::string get_modifier()  const;
 
-  /** Returns the Language as string in the form of an environment
-      variable: {language}_{country}@{modifier} */
-  std::string str() const;
+	/** Returns the human readable name of the Language */
+	std::string get_name() const;
 
-  bool operator==(const Language& rhs) const;
-  bool operator!=(const Language& rhs) const;
+	/** Returns the Language as string in the form of an environment
+	    variable: {language}_{country}@{modifier} */
+	std::string str() const;
 
-  friend bool operator<(const Language& lhs, const Language& rhs);
+	bool operator==(const Language& rhs) const;
+	bool operator!=(const Language& rhs) const;
+
+	friend bool operator<(const Language& lhs, const Language& rhs);
 };
 
-inline bool operator<(const Language& lhs, const Language& rhs) {
-  return lhs.language_spec < rhs.language_spec;
+inline bool operator<(const Language& lhs, const Language& rhs)
+{
+	return lhs.language_spec < rhs.language_spec;
 }
 
 } // namespace tinygettext

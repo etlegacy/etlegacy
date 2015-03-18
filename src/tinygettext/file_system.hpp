@@ -25,13 +25,15 @@
 
 namespace tinygettext {
 
-class FileSystem 
+class FileSystem
 {
 public:
-  virtual ~FileSystem() {}
+	virtual ~FileSystem()
+	{
+	}
 
-  virtual std::vector<std::string>    open_directory(const std::string& pathname) =0;
-  virtual std::auto_ptr<std::istream> open_file(const std::string& filename)      =0;
+	virtual std::vector<std::string>    open_directory(const std::string& pathname) = 0;
+	virtual std::auto_ptr<std::istream> open_file(const std::string& filename)      = 0;
 };
 
 } // namespace tinygettext
@@ -39,4 +41,3 @@ public:
 #endif
 
 /* EOF */
-
