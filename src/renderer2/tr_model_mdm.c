@@ -37,9 +37,6 @@
 #include "tr_local.h"
 #include "tr_model_skel.h"
 
-#define LL(x) x = LittleLong(x)
-#define LF(x) x = LittleFloat(x)
-
 const float mdmLODResolutions[MD3_MAX_LODS] = { 1.0f, 0.75f, 0.5f, 0.35f };
 
 static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *vboTriangles, mdmModel_t *mdm, mdmSurfaceIntern_t *surf, int skinIndex, int numBoneReferences, int boneReferences[MAX_BONES])
@@ -860,6 +857,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 	// split the surfaces into VBO surfaces by the maximum number of GPU vertex skinning bones
 	{
+		int         i, j, k;
 		int        numRemaining;
 		growList_t sortedTriangles;
 		growList_t vboTriangles;

@@ -36,9 +36,6 @@
 
 #include "tr_local.h"
 
-#define LL(x) x = LittleLong(x)
-#define LF(x) x = LittleFloat(x)
-
 qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
 
 qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);

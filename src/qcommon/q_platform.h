@@ -408,4 +408,7 @@ float FloatSwap(const float *f);
 
 #endif
 
+#define LL(x) x = LittleLong(x)
+#define LF(x) x = LittleFloat(x)
+
 #endif // #ifndef INCLUDE_Q_PLATFORM_H

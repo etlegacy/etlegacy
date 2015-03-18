@@ -346,7 +346,6 @@ static shader_t *ShaderForShaderNum(int shaderNum, int lightmapNum)
 static byte *surfHunkPtr;
 static int  surfHunkSize;
 #define SURF_HUNK_MAXSIZE 0x40000
-#define LL(x) LittleLong(x)
 
 /*
 ==============

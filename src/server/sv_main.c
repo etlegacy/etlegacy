@@ -119,8 +119,6 @@ cvar_t *sv_demoTolerant;
 
 static void SVC_Status(netadr_t from, qboolean force);
 
-#define LL(x) x = LittleLong(x)
-
 /*
 =============================================================================
 EVENT MESSAGES
