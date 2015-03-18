@@ -857,7 +857,6 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 	// split the surfaces into VBO surfaces by the maximum number of GPU vertex skinning bones
 	{
-		int         i, j, k;
 		int        numRemaining;
 		growList_t sortedTriangles;
 		growList_t vboTriangles;
