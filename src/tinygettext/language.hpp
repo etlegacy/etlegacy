@@ -29,9 +29,9 @@ struct LanguageSpec;
 class Language
 {
 private:
-	LanguageSpec *language_spec;
+	const LanguageSpec *language_spec;
 
-	Language(LanguageSpec *language_spec);
+	Language(const LanguageSpec *language_spec);
 
 public:
 	/** Create a language from language and country code:
@@ -56,7 +56,7 @@ public:
 	/** Create an undefined Language object */
 	Language();
 
-	operator bool() const { return language_spec; }
+	operator bool() const { return language_spec!=NULL; }
 
 	/** Returns the language code (i.e. de, en, fr) */
 	std::string get_language() const;

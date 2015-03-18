@@ -71,7 +71,7 @@ public:
 	}
 
 	operator bool() const {
-		return plural;
+		return plural!=NULL;
 	}
 };
 
