@@ -19,7 +19,7 @@
 
 #include <string>
 
-#ifdef HAVE_SDL
+#if defined(BUNDLED_SDL) || __APPLE__ // using SDL iconv
 #  include "SDL.h"
 
 #  define tinygettext_ICONV_CONST const
@@ -29,6 +29,15 @@
 #  define tinygettext_iconv_close SDL_iconv_close
 #else
 #  include <iconv.h>
+
+// In FreeBSD, iconv is included in libc starting from version 10.0.
+#  ifdef __FreeBSD__
+#    include <sys/param.h>
+#    if __FreeBSD_version >= 1000100
+#      define HAVE_ICONV_CONST
+#      define ICONV_CONST const
+#    endif
+#  endif
 
 #  ifdef HAVE_ICONV_CONST
 #    define tinygettext_ICONV_CONST ICONV_CONST

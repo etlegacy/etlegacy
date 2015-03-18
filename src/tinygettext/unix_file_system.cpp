@@ -19,9 +19,13 @@
 
 #include <sys/types.h>
 #include <fstream>
-#include <dirent.h>
+#ifdef _MSC_VER
+// MSVC doesn't include dirent.h, so we use this emulated win32 version
+#  include "win32/dirent.h"
+#else
+#  include <dirent.h>
+#endif
 #include <stdlib.h>
-#include <dirent.h>
 #include <string.h>
 
 namespace tinygettext {
