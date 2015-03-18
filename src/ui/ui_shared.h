@@ -705,4 +705,13 @@ float Cui_WideX(float x);
 float Cui_WideXoffset(void);
 void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset);      // called from UI & CGAME
 
+//A simple macro to check if a certain functionality is available in the engine version
+#ifdef CGAMEDLL
+#define IS_FUNC_SUPPORTED(x) (cg.legacyClient >= x)
+#else
+#define IS_FUNC_SUPPORTED(x) (uiInfo.legacyClient >= x)
+#endif
+
+#define Q_UTF8_GetGlyph(font, string) Q_UTF8_GetGlyphSafe(font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION), string)
+
 #endif // #ifndef INCLUDE_UI_SHARED_H

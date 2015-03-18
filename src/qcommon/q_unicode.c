@@ -445,27 +445,31 @@ char *Q_UTF8_Unstore(int e)
 	return ( char * ) buf;
 }
 
-glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, unsigned long codepoint)
+glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, qboolean extended, unsigned long codepoint)
 {
 	if (codepoint > GLYPHS_PER_FONT)
 	{
 		//Com_DPrintf(S_COLOR_RED "ERROR: unicode char %i is over the current limit %i\n", codepoint, GLYPHS_PER_FONT);
-		codepoint = 215;        // cross sign
+		codepoint = INVALID_CHAR_OFFSET;
 	}
 
 	if (codepoint <= GLYPH_ASCII_END)
 	{
 		return &font->glyphs[codepoint];
 	}
-	else
+	else if (extended)
 	{
 		return &font->glyphsUTF8[codepoint];
 	}
+	else
+	{
+		return &font->glyphs[INVALID_CHAR_OFFSET];
+	}
 }
 
-glyphInfo_t *Q_UTF8_GetGlyph(fontInfo_t *font, const char *s)
+glyphInfo_t *Q_UTF8_GetGlyphSafe(fontInfo_t *font, qboolean extended, const char *s)
 {
-	return Q_UTF8_GetGlyphLong(font, Q_UTF8_CodePoint(s));
+	return Q_UTF8_GetGlyphLong(font, extended, Q_UTF8_CodePoint(s));
 }
 
 void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
