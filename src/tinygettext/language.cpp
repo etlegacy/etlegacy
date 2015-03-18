@@ -17,8 +17,8 @@
 
 #include "language.hpp"
 
+#include <map>
 #include <assert.h>
-#include <unordered_map>
 #include <vector>
 #include <algorithm>
 
@@ -288,7 +288,7 @@ static const LanguageSpec languages[] =
 std::string
 resolve_language_alias(const std::string& name)
 {
-	typedef std::unordered_map<std::string, std::string> Aliases;
+	typedef std::map<std::string, std::string> Aliases;
 	static Aliases language_aliases;
 	if (language_aliases.empty())
 	{
@@ -366,7 +366,7 @@ resolve_language_alias(const std::string& name)
 Language
 Language::from_spec(const std::string& language, const std::string& country, const std::string& modifier)
 {
-	static std::unordered_map<std::string, std::vector<const LanguageSpec *> > language_map;
+	static std::map<std::string, std::vector<const LanguageSpec *> > language_map;
 
 	if (language_map.empty())
 	{ // Init language_map
@@ -374,7 +374,7 @@ Language::from_spec(const std::string& language, const std::string& country, con
 			language_map[languages[i].language].push_back(&languages[i]);
 	}
 
-	std::unordered_map<std::string, std::vector<const LanguageSpec *> >::iterator i = language_map.find(language);
+	std::map<std::string, std::vector<const LanguageSpec *> >::iterator i = language_map.find(language);
 	if (i != language_map.end())
 	{
 		std::vector<const LanguageSpec *>& lst = i->second;

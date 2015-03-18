@@ -19,12 +19,7 @@
 
 #include <sys/types.h>
 #include <fstream>
-#ifdef _MSC_VER
-// MSVC doesn't include dirent.h, so we use this emulated win32 version
-#  include "win32/dirent.h"
-#else
-#  include <dirent.h>
-#endif
+#include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -58,10 +53,10 @@ UnixFileSystem::open_directory(const std::string& pathname)
 	}
 }
 
-std::unique_ptr<std::istream>
+std::auto_ptr<std::istream>
 UnixFileSystem::open_file(const std::string& filename)
 {
-	return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
+	return std::auto_ptr<std::istream>(new std::ifstream(filename.c_str()));
 }
 
 } // namespace tinygettext

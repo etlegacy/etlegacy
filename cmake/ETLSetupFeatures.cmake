@@ -115,10 +115,6 @@ if(BUILD_CLIENT)
 			"src/tinygettext/plural_forms.cpp"
 			"src/tinygettext/po_parser.cpp"
 			"src/tinygettext/po_parser.hpp"
-			"src/tinygettext/unix_file_system.cpp"
-			"src/tinygettext/unix_file_system.hpp"
-			"src/tinygettext/win32/dirent.h"
-			"src/tinygettext/win32/dirent.c"
 		)
 		set(CLIENT_SRC ${CLIENT_SRC} ${GETTEXT_SRC})
 	endif(FEATURE_GETTEXT)

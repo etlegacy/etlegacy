@@ -35,13 +35,13 @@ public:
 
 	PluralForms()
 		: nplural(0),
-		  plural(0)
+		plural(0)
 	{
 	}
 
 	PluralForms(unsigned int nplural_, PluralFunc plural_)
 		: nplural(nplural_),
-		  plural(plural_)
+		plural(plural_)
 	{
 	}
 
@@ -71,7 +71,7 @@ public:
 	}
 
 	operator bool() const {
-		return plural!=NULL;
+		return plural != NULL;
 	}
 };
 

@@ -17,7 +17,7 @@
 
 #include "plural_forms.hpp"
 
-#include <unordered_map>
+#include <map>
 
 namespace tinygettext {
 
@@ -82,7 +82,7 @@ unsigned int plural4_ar(int n)
 PluralForms
 PluralForms::from_string(const std::string& str)
 {
-	static std::unordered_map<std::string, class PluralForms> plural_forms;
+	static std::map<std::string, class PluralForms> plural_forms;
 
 	if (plural_forms.empty())
 	{
@@ -111,7 +111,7 @@ PluralForms::from_string(const std::string& str)
 			space_less_str += str[i];
 		}
 
-	std::unordered_map<std::string, class PluralForms>::const_iterator it = plural_forms.find(space_less_str);
+	std::map<std::string, class PluralForms>::const_iterator it = plural_forms.find(space_less_str);
 	if (it != plural_forms.end())
 	{
 		return it->second;

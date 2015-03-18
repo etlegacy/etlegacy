@@ -388,15 +388,3 @@ is claimed.
   distribute this software and its documentation for any purpose and without fee is
   hereby granted, without any conditions or restrictions. This software is provided
   "as is" without express or implied warranty.
-
-
-Implementation of POSIX directory browsing functions and types for Win32
------------------------------------------------------------------------------
-Copyright (C) 1997, 2003, 2012, Kevlin Henney. All rights reserved.
-
-    Permission to use, copy, modify, and distribute this software and its
-    documentation for any purpose is hereby granted without fee, provided
-    that this copyright and permissions notice appear in all copies and
-    derivatives.
-
-    This software is supplied "as is" without express or implied warranty.
