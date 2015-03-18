@@ -361,6 +361,7 @@ crypt.c. Code woven in by Terry Thorsen 1/2003.
 
 MD4 Message-Digest Algorithm
 -----------------------------------------------------------------------------
+
 Copyright (C) 1991-1992, RSA Data Security, Inc. Created 1991. All rights reserved.
 
   License to copy and use this software is granted provided that it is identified
@@ -387,3 +388,15 @@ is claimed.
   distribute this software and its documentation for any purpose and without fee is
   hereby granted, without any conditions or restrictions. This software is provided
   "as is" without express or implied warranty.
+
+
+Implementation of POSIX directory browsing functions and types for Win32
+-----------------------------------------------------------------------------
+Copyright (C) 1997, 2003, 2012, Kevlin Henney. All rights reserved.
+
+    Permission to use, copy, modify, and distribute this software and its
+    documentation for any purpose is hereby granted without fee, provided
+    that this copyright and permissions notice appear in all copies and
+    derivatives.
+
+    This software is supplied "as is" without express or implied warranty.
