@@ -1085,6 +1085,11 @@ void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+void Script_Skip(itemDef_t *item, qboolean *bAbort, char **args)
+{
+	//We do nothing here..
+}
+
 commandDef_t commandList[] =
 {
 	{ "fadein",             &Script_FadeIn             }, // group/name
@@ -1130,6 +1135,7 @@ commandDef_t commandList[] =
 	{ "abort",              &Script_Abort              },
 	{ "getclipboard",       &Script_GetClipboard       },
 	{ "togglecvarbit",      &Script_ToggleCvarBit      },
+	{ "none", &Script_Skip }, // skip execution (used as a placeholder)
 };
 
 int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);

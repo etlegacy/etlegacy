@@ -33,7 +33,8 @@ menuDef {
 	SUBWINDOW( 6, PLAYER_Y, (SUBWINDOW_WIDTH_L), 40, _("PLAYER") )
 	EDITFIELD( 8, PLAYER_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Player Alias:"), .2, 8, "name", 36, 18, _("Enter the name that you wish to be known by to others on servers") )
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
-	MULTI( 8, PLAYER_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
+	//MULTI( 8, PLAYER_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
+	COMBO( 8, PLAYER_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language") )
 
 // Physics //
 #define PHYSICS_Y 78

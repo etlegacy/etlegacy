@@ -1397,7 +1397,14 @@ qboolean Item_Combo_HandleKey(itemDef_t *item, int key)
 		if (item->cursorPos >= 0)
 		{
 			multi = (multiDef_t *)item->typeData;
-			DC->setCVar(item->cvar, va("%.0f", multi->cvarValue[item->cursorPos]));
+			if (multi->strDef)
+			{
+				DC->setCVar(item->cvar, multi->cvarStr[item->cursorPos]);
+			}
+			else
+			{
+				DC->setCVar(item->cvar, va("%.0f", multi->cvarValue[item->cursorPos]));
+			}
 			Item_RunScript(item, NULL, item->onAccept);
 			return qtrue;
 		}
@@ -2604,7 +2611,8 @@ void Item_Combo_Paint(itemDef_t *item)
 	//menuDef_t    *parent            = (menuDef_t *)item->parent;
 	rectDef_t    rect, selectorRect;
 	multiDef_t   *multiPtr;
-	float        value = 0;
+	char        valueString[MAX_QPATH];
+	float        valueFloat = 0;
 	int          i;
 	static float borderOffset = 4.f;
 
@@ -2625,13 +2633,18 @@ void Item_Combo_Paint(itemDef_t *item)
 	}
 
 	multiPtr = (multiDef_t *)item->typeData;
-	if (!multiPtr || multiPtr->strDef)
+	if (!multiPtr)
 	{
 		return;
 	}
+
+	if (multiPtr->strDef)
+	{
+		DC->getCVarString(item->cvar, valueString, MAX_QPATH);
+	}
 	else
 	{
-		value = DC->getCVarValue(item->cvar);
+		valueFloat = DC->getCVarValue(item->cvar);
 	}
 
 	for (i = 0; i < multiPtr->count; i++)
@@ -2700,7 +2713,7 @@ void Item_Combo_Paint(itemDef_t *item)
 				currentColor    = &itemColor;
 				item->cursorPos = i;
 			}
-			else if (multiPtr->cvarValue[i] == value)
+			else if ((!multiPtr->strDef && multiPtr->cvarValue[i] == valueFloat) || (multiPtr->strDef && !Q_stricmp(multiPtr->cvarStr[i], valueString)))
 			{
 				currentColor = &redishColor;
 			}
