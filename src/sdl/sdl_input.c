@@ -455,7 +455,7 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 			break;
 		case SDLK_PAUSE:        key = K_PAUSE;
 			break; // FIXME: SDL 2.0 maps PAUSE to PAUSE as well as BREAK
-			       // (key = K_BREAK;         break;)
+		// (key = K_BREAK;         break;)
 		case SDLK_LSHIFT:
 		case SDLK_RSHIFT:       key = K_SHIFT;
 			break;

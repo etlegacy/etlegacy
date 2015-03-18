@@ -1135,7 +1135,7 @@ commandDef_t commandList[] =
 	{ "abort",              &Script_Abort              },
 	{ "getclipboard",       &Script_GetClipboard       },
 	{ "togglecvarbit",      &Script_ToggleCvarBit      },
-	{ "none", &Script_Skip }, // skip execution (used as a placeholder)
+	{ "none",               &Script_Skip               }, // skip execution (used as a placeholder)
 };
 
 int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);

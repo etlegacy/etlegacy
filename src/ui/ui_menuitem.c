@@ -2611,7 +2611,7 @@ void Item_Combo_Paint(itemDef_t *item)
 	//menuDef_t    *parent            = (menuDef_t *)item->parent;
 	rectDef_t    rect, selectorRect;
 	multiDef_t   *multiPtr;
-	char        valueString[MAX_QPATH];
+	char         valueString[MAX_QPATH];
 	float        valueFloat = 0;
 	int          i;
 	static float borderOffset = 4.f;
