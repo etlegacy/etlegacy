@@ -50,8 +50,7 @@ DictionaryManager::DictionaryManager(const std::string& charset_) :
 	current_language(),
 	current_dict(0),
 	empty_dict(),
-	filesystem(0)
-	//filesystem(new UnixFileSystem)
+	filesystem(new UnixFileSystem)
 {
 }
 
@@ -151,7 +150,7 @@ DictionaryManager::get_dictionary(const Language& language)
 				std::string pofile = *p + "/" + best_filename;
 				try
 				{
-					std::auto_ptr<std::istream> in = filesystem->open_file(pofile);
+					std::unique_ptr<std::istream> in = filesystem->open_file(pofile);
 					if (!in.get())
 					{
 						log_error << "error: failure opening: " << pofile << std::endl;
@@ -237,9 +236,9 @@ DictionaryManager::add_directory(const std::string& pathname)
 }
 
 void
-DictionaryManager::set_filesystem(std::auto_ptr<FileSystem> filesystem_)
+DictionaryManager::set_filesystem(std::unique_ptr<FileSystem> filesystem_)
 {
-	filesystem = filesystem_;
+	filesystem = std::move(filesystem_);
 }
 
 } // namespace tinygettext

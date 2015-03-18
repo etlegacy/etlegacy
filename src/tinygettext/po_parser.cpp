@@ -22,7 +22,7 @@
 #include <string>
 #include <istream>
 #include <string.h>
-#include <map>
+#include <unordered_map>
 #include <stdlib.h>
 
 #include "language.hpp"
@@ -93,7 +93,7 @@ POParser::next_line()
 }
 
 void
-POParser::get_string_line(std::ostringstream& out, unsigned int skip)
+POParser::get_string_line(std::ostringstream& out, size_t skip)
 {
 	if (skip + 1 >= static_cast<unsigned int>(current_line.size()))
 	{
