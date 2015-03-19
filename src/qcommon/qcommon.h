@@ -806,7 +806,7 @@ const char *FS_ReferencedPakPureChecksums(void);
 
 void FS_ClearPakReferences(int flags);
 // clears referenced booleans on loaded pk3s
-
+void FS_ClearPureServerPacks(void);
 void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames);
 void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 // If the string is empty, all data sources will be allowed.

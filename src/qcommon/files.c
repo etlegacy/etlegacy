@@ -1515,7 +1515,7 @@ NOTE:
     on linux it can be in fs_homepath/<fs_game>/ or fs_basepath/<fs_game>/
   the dll is extracted to fs_homepath (== fs_basepath on win32) if needed
 
-  the return value doesn't tell wether file was extracted or not, it just says wether it's ok to continue
+  the return value doesn't tell whether file was extracted or not, it just says whether it's ok to continue
   (i.e. either the right file was extracted successfully, or it was already present)
 
   cvar_lastVersion is the optional name of a CVAR_ARCHIVE used to store the wolf version for the last extracted .so
@@ -1532,8 +1532,10 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 
 	Q_strncpyz(outputFile, FS_BuildOSPath(base, gamedir, filename), MAX_OSPATH * sizeof(char));
 
-	// read in compressed file
+	// read in compressed file (force it to exclude files from directories)
+	fs_filter_flag = FS_EXCLUDE_DIR;
 	srcLength = FS_ReadFile(filename, (void **)&srcData);
+	fs_filter_flag = 0;
 
 	// if its not in the pak, we bail
 	if (srcLength == -1)
@@ -3867,6 +3869,22 @@ static void FS_ReorderPurePaks(void)
 	}
 }
 
+static void FS_AddBothGameDirectories(const char *subpath)
+{
+	if (fs_basepath->string[0])
+	{
+		// fs_homepath is somewhat particular to *nix systems, only add if relevant
+		// - update: now fs_homepath is used for all system
+		// NOTE: same filtering below for mods and basegame
+		FS_AddGameDirectory(fs_basepath->string, subpath);
+
+		if (fs_homepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
+		{
+			FS_AddGameDirectory(fs_homepath->string, subpath);
+		}
+	}
+}
+
 /*
 ================
 FS_Startup
@@ -3900,43 +3918,18 @@ static void FS_Startup(const char *gameName)
 	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO);
 
 	// add search path elements in reverse priority order
-	if (fs_basepath->string[0])
-	{
-		FS_AddGameDirectory(fs_basepath->string, gameName);
-	}
-
-	// fs_homepath is somewhat particular to *nix systems, only add if relevant
-	// - update: now fs_homepath is used for all system
-	// NOTE: same filtering below for mods and basegame
-	if (fs_basepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
-	{
-		FS_AddGameDirectory(fs_homepath->string, gameName);
-	}
+	FS_AddBothGameDirectories(gameName);
 
 	// check for additional base game so mods can be based upon other mods
 	if (fs_basegame->string[0] && !Q_stricmp(gameName, BASEGAME) && Q_stricmp(fs_basegame->string, gameName))
 	{
-		if (fs_basepath->string[0])
-		{
-			FS_AddGameDirectory(fs_basepath->string, fs_basegame->string);
-		}
-		if (fs_homepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
-		{
-			FS_AddGameDirectory(fs_homepath->string, fs_basegame->string);
-		}
+		FS_AddBothGameDirectories(fs_basegame->string);
 	}
 
 	// check for additional game folder for mods
 	if (fs_gamedirvar->string[0] && !Q_stricmp(gameName, BASEGAME) && Q_stricmp(fs_gamedirvar->string, gameName))
 	{
-		if (fs_basepath->string[0])
-		{
-			FS_AddGameDirectory(fs_basepath->string, fs_gamedirvar->string);
-		}
-		if (fs_homepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
-		{
-			FS_AddGameDirectory(fs_homepath->string, fs_gamedirvar->string);
-		}
+		FS_AddBothGameDirectories(fs_gamedirvar->string);
 	}
 
 	// add our commands
@@ -4252,6 +4245,13 @@ void FS_ClearPakReferences(int flags)
 			search->pack->referenced &= ~flags;
 		}
 	}
+}
+
+void FS_ClearPureServerPacks(void)
+{
+	// Remove pure paks
+	FS_PureServerSetLoadedPaks("", "");
+	FS_PureServerSetReferencedPaks("", "");
 }
 
 /**

@@ -104,6 +104,11 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode);
 void R_ModeList_f(void);
 
+// font stuff
+void R_InitFreeType(void);
+void R_DoneFreeType(void);
+void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
+
 extern cvar_t *r_customwidth;
 extern cvar_t *r_customheight;
 extern cvar_t *r_customaspect;

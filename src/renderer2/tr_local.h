@@ -4188,11 +4188,6 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
 
 void FreeVertexHashTable(vertexHash_t **hashTable);
 
-// font stuff
-void R_InitFreeType();
-void R_DoneFreeType();
-void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
-
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h);
 void RE_Finish(void);
 

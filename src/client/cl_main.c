@@ -635,9 +635,7 @@ void CL_Disconnect(qboolean showMainMenu)
 		CL_WritePacket();
 	}
 
-	// Remove pure paks
-	FS_PureServerSetLoadedPaks("", "");
-	FS_PureServerSetReferencedPaks("", "");
+	FS_ClearPureServerPacks();
 
 	CL_ClearState();
 
@@ -960,9 +958,7 @@ void CL_Connect_f(void)
 
 	S_StopAllSounds();
 
-	// Remove pure paks
-	FS_PureServerSetLoadedPaks("", "");
-	FS_PureServerSetReferencedPaks("", "");
+	FS_ClearPureServerPacks();
 
 	// starting to load a map so we get out of full screen ui mode
 	Cvar_Set("r_uiFullScreen", "0");
