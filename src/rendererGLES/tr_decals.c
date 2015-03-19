@@ -184,10 +184,11 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	temp.color[2]      = color[2] * 255;
 	temp.color[3]      = color[3] * 255;
 	temp.numPlanes     = numPoints + 2;
-	temp.fadeStartTime = tr.refdef.time + lifeTime - fadeTime; /* fixme: stale refdef time */
+	temp.fadeStartTime = tr.refdef.time + lifeTime - fadeTime; /* FIXME: stale refdef time */
 	temp.fadeEndTime   = temp.fadeStartTime + fadeTime;
+	temp.projectorNum  = 0;
 
-	/* set up decal texcoords (fixme: support arbitrary projector st coordinates in trapcall) */
+	/* set up decal texcoords (FIXME: support arbitrary projector st coordinates in trapcall) */
 	dv[0].st[0] = 0.0f;
 	dv[0].st[1] = 0.0f;
 	dv[1].st[0] = 0.0f;
