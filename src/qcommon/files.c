@@ -4250,8 +4250,21 @@ void FS_ClearPakReferences(int flags)
 void FS_ClearPureServerPacks(void)
 {
 	// Remove pure paks
+	/* Old Code
 	FS_PureServerSetLoadedPaks("", "");
 	FS_PureServerSetReferencedPaks("", "");
+	*/
+	// This does the same thing as the above,
+	// but does not cause the tokenizing of strings..
+	fs_numServerPaks = 0;
+	fs_numServerReferencedPaks = 0;
+
+	if (fs_reordered)
+	{
+		// force a restart to make sure the search order will be correct
+		Com_DPrintf("FS search reorder is required\n");
+		FS_Restart(fs_checksumFeed);
+	}
 }
 
 /**
