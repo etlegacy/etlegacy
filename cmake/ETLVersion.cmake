@@ -60,7 +60,7 @@ if(GIT_DESCRIBE)
 
 		if("${GIT_DESCRIBE}" MATCHES "^v[0-9]+\\.[0-9]+rc[0-9]+.*")
 			string(REGEX REPLACE "^v[0-9]+\\.[0-9]+rc([0-9]+).*" "\\1" VERSION_PATCH "${GIT_DESCRIBE}")
-		elseif("${GIT_DESCRIBE}" MATCHES "^v[0-9]+\\.[0-9]+\\.?[0-9a-zA-Z]+.*")
+		elseif("${GIT_DESCRIBE}" MATCHES "^v[0-9]+\\.[0-9]+\\.[0-9a-zA-Z]+.*")
 			string(REGEX REPLACE "^v[0-9]+\\.[0-9]+\\.?([0-9a-zA-Z]+).*" "\\1" VERSION_PATCH "${GIT_DESCRIBE}")
 			GENERATENUMBER(VERSION_PATCH ${VERSION_PATCH})
 		else()
