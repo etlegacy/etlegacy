@@ -645,6 +645,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		float time = trap_Milliseconds();
+		Com_Printf("Initializing Legacy game " ETLEGACY_VERSION "\n");
 #ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();

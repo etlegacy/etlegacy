@@ -2445,6 +2445,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	//int startat = trap_Milliseconds();
 
+	Com_Printf("Initializing Legacy cgame " ETLEGACY_VERSION "\n");
+
 	// clean up the config backup if one exists
 	CG_RestoreProfile();
 

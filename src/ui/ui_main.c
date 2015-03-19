@@ -7421,6 +7421,7 @@ static void UI_RunCinematicFrame(int handle)
 void _UI_Init(int legacyClient, int clientVersion)
 {
 	int x;
+	Com_Printf("Initializing Legacy ui " ETLEGACY_VERSION "\n");
 
 	UI_RegisterCvars();
 	UI_InitMemory();
