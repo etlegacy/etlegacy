@@ -1470,7 +1470,7 @@ void ClientThink_real(gentity_t *ent)
 		ent->r.eventTime = level.time;
 	}
 
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	// use the precise origin for linking
 	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
