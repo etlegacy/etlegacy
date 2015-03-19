@@ -1534,7 +1534,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 
 	// read in compressed file (force it to exclude files from directories)
 	fs_filter_flag = FS_EXCLUDE_DIR;
-	srcLength = FS_ReadFile(filename, (void **)&srcData);
+	srcLength      = FS_ReadFile(filename, (void **)&srcData);
 	fs_filter_flag = 0;
 
 	// if its not in the pak, we bail
@@ -4256,7 +4256,7 @@ void FS_ClearPureServerPacks(void)
 	*/
 	// This does the same thing as the above,
 	// but does not cause the tokenizing of strings..
-	fs_numServerPaks = 0;
+	fs_numServerPaks           = 0;
 	fs_numServerReferencedPaks = 0;
 
 	if (fs_reordered)
