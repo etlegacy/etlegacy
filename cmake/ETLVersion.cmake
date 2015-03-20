@@ -64,7 +64,6 @@ if(GIT_DESCRIBE)
 			string(REGEX REPLACE "^v[0-9]+\\.[0-9]+\\.?([0-9a-zA-Z]+).*" "\\1" VERSION_PATCH "${GIT_DESCRIBE}")
 			GENERATENUMBER(VERSION_PATCH ${VERSION_PATCH})
 		else()
-			message(WARNING "The tag is of invalid format, patch information could not be generated or no patch data exists")
 			set(VERSION_PATCH 0)
 		endif()
 
