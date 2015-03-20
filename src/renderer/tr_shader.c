@@ -1578,12 +1578,12 @@ infoParm_t infoParms[] =
 
 	{ "monsterslick",      0, SURF_MONSTERSLICK, 0                         }, // surf only slick for monsters
 
-	{ "glass",             0, SURF_GLASS,        0                         }, //----(SA) added
-	{ "splash",            0, SURF_SPLASH,       0                         }, //----(SA) added
+	{ "glass",             0, SURF_GLASS,        0                         },
+	{ "splash",            0, SURF_SPLASH,       0                         },
 
 	// steps
 	{ "metal",             0, SURF_METAL,        0                         },
-	{ "metalsteps",        0, SURF_METAL,        0                         }, // retain bw compatibility with Q3A metal shaders... (SA)
+	{ "metalsteps",        0, SURF_METAL,        0                         }, // retain bw compatibility with Q3A metal shaders...
 	{ "nosteps",           0, SURF_NOSTEPS,      0                         },
 	{ "woodsteps",         0, SURF_WOOD,         0                         },
 	{ "grasssteps",        0, SURF_GRASS,        0                         },
@@ -1649,7 +1649,10 @@ static void ParseSurfaceParm(char **text)
 
 	if (unknownParm == qtrue)
 	{
-		Ren_Warning("WARNING: ParseSurfaceParm - unknown surface parm '%s' in shader '%s' - inspect your shader definitions\n", token, shader.name);
+		if (Q_stricmp(token, "landmine"))  // don't print warning for landmine
+		{
+			Ren_Warning("WARNING: ParseSurfaceParm - unknown surface parm '%s' in shader '%s' - inspect your shader definitions\n", token, shader.name);
+		}
 	}
 }
 
