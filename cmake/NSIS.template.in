@@ -140,7 +140,7 @@ LangString DESC_Section5 ${LANG_POLISH} "Błąd Krytyczny: Wypakowywanie Instala
 LangString DESC_Section6 ${LANG_POLISH} "Błąd Krytyczny: Kopiowanie nie powiodło się (pak0.pk3)."
 LangString DESC_Section7 ${LANG_POLISH} "Błąd Pobierania: Nie udało się ściągnąć Łatki."
 LangString DESC_Section8 ${LANG_POLISH} "Błąd Integrarności: Zła suma kontrolna MD5 Łatki."
-LangString DESC_Section9 ${LANG_ENGLISH} "Błąd Krytyczny: Wypakowywanie Łatki nie powiodło się."
+LangString DESC_Section9 ${LANG_POLISH} "Błąd Krytyczny: Wypakowywanie Łatki nie powiodło się."
 LangString DESC_Section10 ${LANG_POLISH} "Błąd Krytyczny: Kopiowanie nie powiodło się (pak1.pk3)."
 LangString DESC_Section11 ${LANG_POLISH} "Błąd Krytyczny: Kopiowanie nie powiodło się (pak2.pk3)."
 LangString DESC_Section12 ${LANG_POLISH} "Pamiętaj, aby skopiować główne pliki W:ET (pak0.pk3, pak1.pk3, pak2.pk3) do $INSTDIR\etmain przed uruchomieniem ET: Legacy."
