@@ -2252,7 +2252,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		break;
 	case EV_BODY_DP:
-		if (&cg_entities[es->otherEntityNum2] && &cg_entities[es->otherEntityNum2].pe)
+		if (&cg_entities[es->otherEntityNum2])
 		{
 			memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
 		}
