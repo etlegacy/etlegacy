@@ -49,7 +49,7 @@
 #define MACRO_DEF(n)
 #endif
 
-//These are not yet in use
+// These are not yet in use
 #if defined(SHADER_PROTO)
 #define SHADER_DEF(name) extern programInfo_t * name;
 #elif defined(SHADER_DECL)
