@@ -1632,8 +1632,7 @@ static void ParseSurfaceParm(char **text)
 	{
 		if (!Q_stricmp(token, infoParms[i].name))
 		{
-			// FIXME: add output for devmap?!
-			//Ren_Warning("ParseSurfaceParm - adding '%s' surface parm properties to shader '%s'\n", token, shader.name);
+			Ren_Developer("ParseSurfaceParm - adding '%s' surface parm properties to shader '%s'\n", token, shader.name);
 			shader.surfaceFlags |= infoParms[i].surfaceFlags;
 			shader.contentFlags |= infoParms[i].contents;
 #if 0
@@ -1649,9 +1648,9 @@ static void ParseSurfaceParm(char **text)
 
 	if (unknownParm == qtrue)
 	{
-		if (Q_stricmp(token, "landmine"))  // don't print warning for landmine
+		if (Q_stricmp(token, "landmine"))  // ET exception - don't print warning for landmine
 		{
-			Ren_Warning("WARNING: ParseSurfaceParm - unknown surface parm '%s' in shader '%s' - inspect your shader definitions\n", token, shader.name);
+			Ren_Developer("WARNING: ParseSurfaceParm - unknown or custom surface parm '%s' in shader '%s' - inspect your shader definitions if this parm is unknown\n", token, shader.name);
 		}
 	}
 }
