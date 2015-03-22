@@ -123,6 +123,7 @@ void P_WorldEffects(gentity_t *ent)
 		// air left while underwater..
 		ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
 		ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
+
 		return;
 	}
 
@@ -134,7 +135,8 @@ void P_WorldEffects(gentity_t *ent)
 		{
 			// drown!
 			ent->client->airOutTime += 1000;
-			if (ent->health > 0)
+
+			if (ent->health >= FORCE_LIMBO_HEALTH)
 			{
 				// take more damage the longer underwater
 				ent->damage += 2;
@@ -143,22 +145,25 @@ void P_WorldEffects(gentity_t *ent)
 					ent->damage = 15;
 				}
 
-				// play a gurp sound instead of a normal pain sound
-				if (ent->health <= ent->damage)
+				if (ent->health > 0)
 				{
-					G_Sound(ent, GAMESOUND_PLAYER_BUBBLE);
-				}
-				else if (rand() & 1)
-				{
-					G_Sound(ent, GAMESOUND_PLAYER_GURP1);
-				}
-				else
-				{
-					G_Sound(ent, GAMESOUND_PLAYER_GURP2);
-				}
+					// play a gurp sound instead of a normal pain sound
+					if (ent->health <= ent->damage)
+					{
+						G_Sound(ent, GAMESOUND_PLAYER_BUBBLE);
+					}
+					else if (rand() & 1)
+					{
+						G_Sound(ent, GAMESOUND_PLAYER_GURP1);
+					}
+					else
+					{
+						G_Sound(ent, GAMESOUND_PLAYER_GURP2);
+					}
 
-				// don't play a normal pain sound
-				ent->pain_debounce_time = level.time + 200;
+					// don't play a normal pain sound
+					ent->pain_debounce_time = level.time + 200;
+				}
 
 				if (ent->watertype & CONTENTS_SLIME)     // slag
 				{
