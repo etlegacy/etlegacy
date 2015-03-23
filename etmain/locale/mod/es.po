@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-02-20 21:23+0000\n"
+"PO-Revision-Date: 2015-03-22 20:08+0000\n"
 "Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -708,13 +708,13 @@ msgstr "Especifica el número de vidas del Eje en una partida."
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr "Tipo de Ronda Stopwatch:"
+msgstr "Tipo de Ronda Contrareloj:"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr "Determina el tipo de ronda Stopwatch (ABBA = cambiar bandos, ABAB = mantener bandos)"
+msgstr "Determina el tipo de ronda Contrareloj (ABBA = cambiar bandos, ABAB = mantener bandos)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
@@ -1118,7 +1118,7 @@ msgstr "Objetivo de un Mapa"
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
-msgstr "Stopwatch"
+msgstr "Contrareloj"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
@@ -2472,7 +2472,7 @@ msgstr "Muestra el tiempo restante de la misión"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
-msgstr "Tiempo de Refuerzos:"
+msgstr "Refuerzos:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
@@ -4827,7 +4827,7 @@ msgstr "^3¡PREPÁRATE PARA EL COMBATE!\n"
 
 #: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
-msgstr ""
+msgstr "RONDA CONTRARELOJ"
 
 #: src/cgame/cg_draw.c:2678
 #, c-format
@@ -5116,7 +5116,7 @@ msgstr "ESPERANDO A ^2%i ^9%s"
 
 #: src/cgame/cg_scoreboard.c:229 src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
-msgstr "TIEMPO DE REFUERZOS:"
+msgstr "REFUERZOS:"
 
 #: src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
