@@ -1489,7 +1489,8 @@ int G_TeamCount(gentity_t *ent, int weap)
 
 /**
  * @brief Checks for heavy- and rifle weapons
- * @note this function needs some rework to drop redundant code: split into G_IsPanzerDisabled, G_IsMGDisabled, G_IsRifleDisabled
+ * @note  this function needs some rework: count picked up opposite team weapons too
+ *        see CG_LimboPanel_RealWeaponIsDisabled
  */
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {

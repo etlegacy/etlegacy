@@ -3412,6 +3412,13 @@ int CG_LimboPanel_MaxCount(int playerCount, char *variableString)
 	return maxCount;
 }
 
+/**
+ * @brief Checks for heavy- and rifle weapons
+ * @note  this function needs some rework: count picked up opposite team weapons too
+ *        see G_IsWeaponDisabled
+ *        check: CG_LimboPanel_RealWeaponIsDisabled probably doesn't have to check for alt weapons
+ *        they can't be selected
+ */
 qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 {
 	int count, wcount;
@@ -3421,8 +3428,8 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		return qtrue;
 	}
 
-	// Never restrict normal weapons
-	if (!IS_HEAVY_WEAPON(weapon) && weapon != WP_KAR98 && weapon != WP_CARBINE)
+	// never restrict normal weapons
+	if (!IS_HEAVY_WEAPON(weapon) && !IS_RIFLE_AND_NADE_WEAPON(weapon))
 	{
 		return qfalse;
 	}
@@ -3450,14 +3457,32 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 		break;
 	case WP_MORTAR:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_MORTAR_SET);
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMortars))
+		{
+			return qtrue;
+		}
+		break;
 	case WP_MORTAR2:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_MORTAR2_SET);
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMortars))
 		{
 			return qtrue;
 		}
 		break;
 	case WP_MOBILE_MG42:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_MG42);
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
+		{
+			return qtrue;
+		}
+		break;
 	case WP_MOBILE_BROWNING:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_BROWNING_SET);
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
 		{
 			return qtrue;
@@ -3470,12 +3495,39 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 		break;
 	case WP_KAR98:
-	case WP_CARBINE:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_GPG40);
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
 		{
 			return qtrue;
 		}
 		break;
+	case WP_CARBINE:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_M7);
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+		{
+			return qtrue;
+		}
+		break;
+/* FIXME: do we have to check these?
+        case WP_GPG40:
+            // add alt weapons
+            wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
+            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+            {
+                return qtrue;
+            }
+            break;
+        case WP_M7:
+            // add alt weapons
+            wcount = wcount + CG_LimboPanel_TeamCount(WP_CARBINE);
+            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+            {
+                return qtrue;
+            }
+            break;
+*/
 	default:
 		break;
 	}
