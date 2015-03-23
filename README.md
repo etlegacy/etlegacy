@@ -226,7 +226,30 @@ ET: Legacy will be installed in `My Documents\ETLegacy-Build`. To change it, set
 
 * option A: **command line**
 
-TBD
+    1. install [Xcode](https://developer.apple.com/xcode/downloads/)
+    2. install [Homebrew](http://brew.sh/)
+    3. install [Homebrew Cask](http://caskroom.io/)
+
+Then brew the following packages in the terminal app:
+
+    $ brew cask install xquartz
+    $ brew install --universal gnu-sed cmake glew sdl2 jpeg curl lua libogg libvorbis freetype
+
+The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
+
+In terminal, run:
+
+    $ mkdir build && cd build && cmake ..
+
+To compile, run:
+
+    $ make
+
+If you wish to install ET: Legacy system-wide, run:
+
+    # make install
+
+Be sure to set the CMake variables (see above) beforehand.
 
 * option B: **easybuild**
 
