@@ -7,10 +7,25 @@
 # also defined, but not for general use are
 #  JPEG_LIBRARY, where to find the libjpeg-turbo library.
 
-find_path(JPEG_INCLUDE_DIR turbojpeg.h)
+find_path(JPEG_INCLUDE_DIR turbojpeg.h
+	/usr/include
+	/usr/local/include
+	/sw/include
+	/opt/local/include
+	DOC "The directory where turbojpeg.h resides"
+)
 
-set(JPEG_NAMES ${JPEG_NAMES} jpeg)
-find_library(JPEG_LIBRARY NAMES ${JPEG_NAMES} )
+find_library(JPEG_LIBRARY
+		NAMES ${JPEG_NAMES} jpeg
+		PATHS
+		/usr/lib64
+		/usr/lib
+		/usr/local/lib64
+		/usr/local/lib
+		/sw/lib
+		/opt/local/lib
+		DOC "The JPEG library"
+)
 
 # Determine libjpeg-turbo version
 if(JPEG_INCLUDE_DIR AND EXISTS "${JPEG_INCLUDE_DIR}/jconfig.h")
