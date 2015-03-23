@@ -1817,9 +1817,11 @@ typedef enum
 
 #define GLYPH_START 0
 #define GLYPH_ASCII_END 255
-#define GLYPH_END 1327 // (Cyrillic U+052F)
+#define GLYPH_UTF_END 1327 // (Cyrillic U+052F)
+#define GLYPH_END(ext) (ext?GLYPH_UTF_END:GLYPH_ASCII_END)
 #define GLYPHS_ASCII_PER_FONT GLYPH_ASCII_END - GLYPH_START + 1
-#define GLYPHS_PER_FONT GLYPH_END + 1
+#define GLYPHS_UTF_PER_FONT GLYPH_UTF_END - GLYPH_START + 1
+#define GLYPHS_PER_FONT(ext) GLYPH_END(ext) + 1
 typedef struct
 {
 	int height;       // number of scan lines
@@ -1842,9 +1844,23 @@ typedef struct
 	glyphInfo_t glyphs[GLYPHS_ASCII_PER_FONT];
 	float glyphScale;
 	char datName[MAX_QPATH];
-	glyphInfo_t glyphsUTF8[GLYPHS_PER_FONT];
 
 } fontInfo_t;
+
+typedef struct
+{
+	glyphInfo_t glyphs[GLYPHS_ASCII_PER_FONT];
+	float glyphScale;
+	char datName[MAX_QPATH];
+	glyphInfo_t glyphsUTF8[GLYPHS_UTF_PER_FONT];
+
+} fontInfo_extra_t;
+
+typedef struct
+{
+	void *fontData;
+	glyphInfo_t *(*GetGlyph)(void *fontdata, unsigned long codepoint);
+} fontHelper_t;
 
 // SQR
 #define Square(x) ((x) * (x))

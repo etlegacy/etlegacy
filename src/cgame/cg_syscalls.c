@@ -926,11 +926,11 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 	return handle;
 }
 
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
+void trap_R_RegisterFont(const char *fontName, int pointSize, void *font)
 {
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
-	syscall(CG_R_REGISTERFONT, fontName, pointSize, font);
+	syscall(CG_R_REGISTERFONT, fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION));
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterFont", fontName)
 }
 
@@ -980,10 +980,10 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 	return syscall(CG_R_REGISTERSHADERNOMIP, name);
 }
 
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
+void trap_R_RegisterFont(const char *fontName, int pointSize, void *font)
 {
 	CG_DrawInformation(qtrue);
-	syscall(CG_R_REGISTERFONT, fontName, pointSize, font);
+	syscall(CG_R_REGISTERFONT, fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION));
 }
 
 void trap_CM_LoadMap(const char *mapname)

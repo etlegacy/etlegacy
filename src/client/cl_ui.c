@@ -1165,7 +1165,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_MEMORY_REMAINING:
 		return Hunk_MemoryRemaining();
 	case UI_R_REGISTERFONT:
-		re.RegisterFont(VMA(1), args[2], VMA(3));
+		re.RegisterFont(VMA(1), args[2], VMA(3), (args[4] == qtrue));
 		return 0;
 	case UI_MEMSET:
 		return (intptr_t)memset(VMA(1), args[2], args[3]);

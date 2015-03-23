@@ -2933,7 +2933,7 @@ void testPrintInt(char *string, int i);
 void testPrintFloat(char *string, float f);
 
 int trap_MemoryRemaining(void);
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
+void trap_R_RegisterFont(const char *fontName, int pointSize, void *font);
 qboolean trap_Key_IsDown(int keynum);
 int trap_Key_GetCatcher(void);
 void trap_Key_SetCatcher(int catcher);

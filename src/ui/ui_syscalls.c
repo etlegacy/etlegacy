@@ -179,9 +179,9 @@ qhandle_t trap_R_RegisterSkin(const char *name)
 	return syscall(UI_R_REGISTERSKIN, name);
 }
 
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
+void trap_R_RegisterFont(const char *fontName, int pointSize, void *font)
 {
-	syscall(UI_R_REGISTERFONT, fontName, pointSize, font);
+	syscall(UI_R_REGISTERFONT, fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION));
 }
 
 qhandle_t trap_R_RegisterShaderNoMip(const char *name)

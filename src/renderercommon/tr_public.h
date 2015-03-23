@@ -64,7 +64,7 @@ typedef struct
 	qhandle_t (*RegisterSkin)(const char *name);
 	qhandle_t (*RegisterShader)(const char *name);
 	qhandle_t (*RegisterShaderNoMip)(const char *name);
-	void (*RegisterFont)(const char *fontName, int pointSize, fontInfo_t *font);
+	void (*RegisterFont)(const char *fontName, int pointSize, void *font, qboolean extended);
 
 	void (*LoadWorld)(const char *name);
 	qboolean (*GetSkinModel)(qhandle_t skinid, const char *type, char *name);

@@ -107,7 +107,7 @@ void R_ModeList_f(void);
 // font stuff
 void R_InitFreeType(void);
 void R_DoneFreeType(void);
-void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
+void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean extended);
 
 extern cvar_t *r_customwidth;
 extern cvar_t *r_customheight;

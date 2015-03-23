@@ -445,9 +445,41 @@ char *Q_UTF8_Unstore(int e)
 	return ( char * ) buf;
 }
 
+glyphInfo_t *Q_UTF8_GetGlyphExtended(void *fontdata, unsigned long codepoint)
+{
+	if (codepoint > GLYPH_UTF_END)
+	{
+		codepoint = INVALID_CHAR_OFFSET;
+	}
+
+	if (codepoint <= GLYPH_ASCII_END)
+	{
+		return &((fontInfo_extra_t *)fontdata)->glyphs[codepoint];
+	}
+	else
+	{
+		return &((fontInfo_extra_t *)fontdata)->glyphsUTF8[codepoint];
+	}
+}
+
+glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
+{
+	if (codepoint > GLYPH_ASCII_END)
+	{
+		codepoint = INVALID_CHAR_OFFSET;
+	}
+
+	return &((fontInfo_t *)fontdata)->glyphs[codepoint];
+}
+
+glyphInfo_t *Q_UTF8_GetGlyph(fontHelper_t *font, const char *s)
+{
+	return font->GetGlyph(font->fontData, Q_UTF8_CodePoint(s));
+}
+
 glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, qboolean extended, unsigned long codepoint)
 {
-	if (codepoint > GLYPHS_PER_FONT)
+	if (codepoint > GLYPHS_PER_FONT(qfalse))
 	{
 		//Com_DPrintf(S_COLOR_RED "ERROR: unicode char %i is over the current limit %i\n", codepoint, GLYPHS_PER_FONT);
 		codepoint = INVALID_CHAR_OFFSET;
@@ -459,7 +491,8 @@ glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, qboolean extended, unsigned l
 	}
 	else if (extended)
 	{
-		return &font->glyphsUTF8[codepoint];
+		//return &font->glyphsUTF8[codepoint];
+		return &font->glyphs[INVALID_CHAR_OFFSET];
 	}
 	else
 	{

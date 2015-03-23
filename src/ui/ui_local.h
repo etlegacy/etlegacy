@@ -730,7 +730,7 @@ int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int max
 void trap_LAN_LoadCachedServers(void);
 qboolean trap_LAN_ServerIsInFavoriteList(int source, int n);
 
-void trap_R_RegisterFont(const char *pFontname, int pointSize, fontInfo_t *font);
+void trap_R_RegisterFont(const char *pFontname, int pointSize, void *font);
 void trap_S_StopBackgroundTrack(void);
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime);
 void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsound);

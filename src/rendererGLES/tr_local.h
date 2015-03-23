@@ -1853,11 +1853,6 @@ size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality,
 void RE_TakeVideoFrame(int width, int height,
                        byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
 
-// font stuff
-void R_InitFreeType(void);
-void R_DoneFreeType(void);
-void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
-
 // caching system
 // NOTE: to disable this for development, set "r_cache 0" in autoexec.cfg
 void R_InitTexnumImages(qboolean force);
