@@ -1073,6 +1073,9 @@ static int CG_CalcFov(void)
 		fov_x = fov_y = 60.f;
 	}
 
+	// automatic fov adjustment for wide screens
+	fov_x = atan(tan(fov_x * M_PI / 360.0f) * 0.75f * (float)cgs.glconfig.vidWidth / (float)cgs.glconfig.vidHeight) * 360.0f / M_PI;
+
 	// this is weird... (but ensures square pixel ratio!)
 	x     = cg.refdef_current->width / tan(fov_x / 360 * M_PI);
 	fov_y = atan2(cg.refdef_current->height, x);
@@ -1593,6 +1596,9 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 		{
 			fov_x = 55;
 		}
+
+		// automatic fov adjustment for wide screens
+		fov_x = atan(tan(fov_x * M_PI / 360.0f) * 0.75f * (float)cgs.glconfig.vidWidth / (float)cgs.glconfig.vidHeight) * 360.0f / M_PI;
 
 		x     = rd.width / tan(fov_x / 360 * M_PI);
 		fov_y = atan2(rd.height, x);
