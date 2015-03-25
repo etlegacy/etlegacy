@@ -1080,7 +1080,8 @@ void S_AddLoopSounds(void)
 		numLoopChannels++;
 		if (numLoopChannels == MAX_CHANNELS)
 		{
-			i = numLoopSounds + 1;
+			Com_Printf("S_AddLoopSounds warning: MAX_CHANNELS %i reached - loop sound dropped\n", MAX_CHANNELS);
+			return;
 		}
 	}
 }
