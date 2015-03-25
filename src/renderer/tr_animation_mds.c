@@ -53,8 +53,9 @@ frame.
 static float                    frontlerp, backlerp;
 static float                    torsoFrontlerp, torsoBacklerp;
 static int                      *triangles, *boneRefs;
-static glIndex_t                indexes, *pIndexes;
-static glIndex_t                baseIndex, baseVertex, oldIndexes;
+static int                      indexes;
+static glIndex_t                *pIndexes;
+static int                      baseIndex, baseVertex, oldIndexes;
 static int                      numVerts;
 static mdsVertex_t              *v;
 static mdsBoneFrame_t           bones[MDS_MAX_BONES], rawBones[MDS_MAX_BONES], oldBones[MDS_MAX_BONES];
@@ -1360,12 +1361,15 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 		render_count = surface->numVerts;
 	}
 
-	RB_CheckOverflow(render_count, surface->numTriangles);
+	RB_CheckOverflow(render_count, surface->numTriangles * 3);
 
 //DBG_SHOWTIME
 
+	//
 	// setup triangle list
-	RB_CheckOverflow(surface->numVerts, surface->numTriangles * 3);
+	//
+	// no need to do this twice
+	//% RB_CheckOverflow(surface->numVerts, surface->numTriangles * 3);
 
 //DBG_SHOWTIME
 
@@ -1384,14 +1388,8 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 	if (render_count == surface->numVerts)
 	{
-		memcpy(pIndexes, triangles, sizeof(triangles[0]) * indexes);
-		if (baseVertex)
-		{
-			glIndex_t *indexesEnd;
-			for (indexesEnd = pIndexes + indexes ; pIndexes < indexesEnd ; pIndexes++)
-			{
-				*pIndexes += baseVertex;
-			}
+		for ( j = 0; j < indexes; j++ ) {
+			pIndexes[j] = triangles[j] + baseVertex;
 		}
 		tess.numIndexes += indexes;
 	}

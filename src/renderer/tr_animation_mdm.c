@@ -55,8 +55,9 @@ frame.
 static float                    frontlerp, backlerp;
 static float                    torsoFrontlerp, torsoBacklerp;
 static int                      *triangles, *boneRefs;
-static glIndex_t                indexes, *pIndexes;
-static glIndex_t                baseIndex, baseVertex, oldIndexes;
+static int                      indexes;
+static glIndex_t                *pIndexes;
+static int                      baseIndex, baseVertex, oldIndexes;
 static int                      numVerts;
 static mdmVertex_t              *v;
 static mdxBoneFrame_t           bones[MDX_MAX_BONES], rawBones[MDX_MAX_BONES], oldBones[MDX_MAX_BONES];
@@ -1598,15 +1599,8 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 
 	if (render_count == surface->numVerts)
 	{
-		memcpy(pIndexes, triangles, sizeof(triangles[0]) * indexes);
-		if (baseVertex)
-		{
-			glIndex_t *indexesEnd;
-
-			for (indexesEnd = pIndexes + indexes ; pIndexes < indexesEnd ; pIndexes++)
-			{
-				*pIndexes += baseVertex;
-			}
+		for ( j = 0; j < indexes; j++ ) {
+			pIndexes[j] = triangles[j] + baseVertex;
 		}
 		tess.numIndexes += indexes;
 	}
