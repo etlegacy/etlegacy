@@ -1388,7 +1388,8 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 	if (render_count == surface->numVerts)
 	{
-		for ( j = 0; j < indexes; j++ ) {
+		for (j = 0; j < indexes; j++)
+		{
 			pIndexes[j] = triangles[j] + baseVertex;
 		}
 		tess.numIndexes += indexes;
