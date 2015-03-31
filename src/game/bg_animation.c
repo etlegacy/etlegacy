@@ -430,7 +430,7 @@ animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
 	}
 	// no match found
 	Com_Error(ERR_DROP, "BG_AnimationForString: unknown animation '%s' for animation group '%s'", string, animModelInfo->animationGroup);
-	return NULL;    // shutup compiler
+	return NULL;
 }
 
 /**
@@ -1771,6 +1771,7 @@ animation_t *BG_GetAnimationForIndex(animModelInfo_t *animModelInfo, int index)
 	if (index < 0 || index >= animModelInfo->numAnimations)
 	{
 		Com_Error(ERR_DROP, "BG_GetAnimationForIndex: index out of bounds");
+		return NULL;
 	}
 
 	return animModelInfo->animations[index];
