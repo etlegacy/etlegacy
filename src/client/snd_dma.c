@@ -1977,7 +1977,6 @@ void S_UpdateStreamingSounds(void)
 					char loopStream[MAX_QPATH];
 
 					Q_strncpyz(loopStream, ss->loopStream, MAX_QPATH);
-					S_StopStreamingSound(i);
 					S_StartStreamingSoundEx(loopStream, loopStream,
 					                        ss->entnum, ss->channel, i == 0, i == 0 ? 0 : ss->attenuation);
 				}
