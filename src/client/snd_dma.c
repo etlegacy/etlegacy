@@ -1842,7 +1842,7 @@ void S_UpdateStreamingSounds(void)
 	int              fileSamples;
 	byte             raw[30000]; // just enough to fit in a mac stack frame
 	int              fileBytes;
-	int              r;
+	int              rs;
 	int              i, j;
 	float            lvol, rvol;
 	float            streamingVol = 1.0f;
@@ -1889,12 +1889,11 @@ void S_UpdateStreamingSounds(void)
 				fileSamples = fileBytes / (ss->stream->info.width * ss->stream->info.channels);
 			}
 
-			// Read
-			r = S_CodecReadStream(ss->stream, fileBytes, raw);
-			if (r < fileBytes)
+			// read stream
+			rs = S_CodecReadStream(ss->stream, fileBytes, raw);
+			if (rs < fileBytes)
 			{
-				// fileBytes   = r; // unused/overwritten
-				fileSamples = r / (ss->stream->info.width * ss->stream->info.channels);
+				fileSamples = rs / (ss->stream->info.width * ss->stream->info.channels);
 			}
 
 			// calculate the streaming volume based on stream fade and global fade
@@ -1907,7 +1906,7 @@ void S_UpdateStreamingSounds(void)
 			}
 			streamingVol *= s_volCurrent;
 
-			if (r > 0)
+			if (rs > 0)
 			{
 				if (i == 0)
 				{
