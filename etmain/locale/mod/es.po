@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-03-22 20:08+0000\n"
+"PO-Revision-Date: 2015-04-03 13:38+0000\n"
 "Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -48,19 +48,19 @@ msgstr "Productor Ejecutivo Senior"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
-msgstr ""
+msgstr "VP North American Studios"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr ""
+msgstr "QA Project Lead"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr ""
+msgstr "QA Senior Project Lead"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "QA Floor Lead"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
@@ -80,15 +80,15 @@ msgstr "Administrador del Control de Calidad"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Manager, Code Release Group"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Sr. Lead, Code Release Group"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "Lead, Code Release Group"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
@@ -499,7 +499,7 @@ msgstr "Inact. Jugadores"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr "Máx. tiempo (en seg.) que un jugador puede estar inactivo antes de ser expulsado del servidor (0 = desactivado)"
+msgstr "Máx. tiempo (en seg.) que un jugador puede estar inactivo antes de ser expulsado del servidor (0 = desact.)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -509,7 +509,7 @@ msgstr "Inact. Espectadores:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr "Máx. tiempo (en seg.) que un espectador puede estar inactivo antes de ser expulsado del servidor (0 = desactivado)"
+msgstr "Máx. tiempo (en seg.) que un espectador puede estar inactivo antes de ser expulsado del servidor (0 = desact.)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -552,7 +552,7 @@ msgstr "Especifica el número mínimo de jugadores requeridos para empezar una p
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
-msgstr "Porcentaje de 'Preparados':"
+msgstr "Porcentaje 'Preparados':"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid ""
@@ -609,7 +609,7 @@ msgstr "Especifica el número máximo de jugadores por equipo"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr "Desact. Controles Equipo:"
+msgstr "Desact. Control Equipo:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
@@ -708,7 +708,7 @@ msgstr "Especifica el número de vidas del Eje en una partida."
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr "Tipo de Ronda Contrareloj:"
+msgstr "Tipo Ronda Contrareloj:"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
@@ -738,7 +738,7 @@ msgstr "Anula el número de partidas LMS (incluyendo rondas) por mapa por defect
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr "LMS Espect. Sólo al Equipo:"
+msgstr "LMS Espect. Sólo Equipo:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
@@ -797,7 +797,7 @@ msgstr "Contraseña para utilizar la consola remota del servidor (muy potente, a
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
-msgstr "VOTANDO"
+msgstr "VOTACIONES"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
@@ -817,7 +817,7 @@ msgstr "Especifica el mínimo porcentaje requerido para aprobar una votación"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
-msgstr "PERMITIR VOTOS"
+msgstr "PERMITIR VOTACIONES"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
@@ -863,7 +863,7 @@ msgstr "Permite que los jugadores voten para reinciar la partida"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr "Silenciar Espect.:"
+msgstr "Silenc. Espect.:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
@@ -879,7 +879,7 @@ msgstr "Permite que los jugadores voten para el siguiente mapa o campaña"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr "Equipos Equilibrados:"
+msgstr "Eq. Equilibrados:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
@@ -1012,7 +1012,7 @@ msgstr "EXTENDIDO"
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
 msgid "DEFAULT"
-msgstr "DEFECTO"
+msgstr "POR DEFECTO"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:52
 msgid "START DEDICATED SERVER"
@@ -1354,11 +1354,11 @@ msgstr "Este servidor tiene un número Máx. de Vidas. Pulsando ahora perderás 
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
-msgstr "Número de Bots:"
+msgstr "Número Bots:"
 
 #: etmain/ui/ingame_vote_bot.menu:39
 msgid "Move skill:"
-msgstr "Habilidad de Movimiento:"
+msgstr "Habilidad Mov.:"
 
 #: etmain/ui/ingame_vote_bot.menu:45
 msgid "Difficulty:"
@@ -1625,7 +1625,7 @@ msgstr "BANEAR"
 
 #: etmain/ui/ingame_vote_players_warn.menu:51
 msgid "WARN PLAYER"
-msgstr "AWISAR JUGADOR"
+msgstr "AVISAR JUGADOR"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning:"
@@ -2112,7 +2112,7 @@ msgstr "Alternar caminar/correr"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr "Doble Pulsación Tumbarse:"
+msgstr "Doble Pulsación Tumbar:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
@@ -2418,7 +2418,7 @@ msgstr "Cambia entre los formatos .tga y .jpg para el comando \"autoscreenshot\"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
-msgstr "Mostrar Info. de Herram.:"
+msgstr "Mostrar Info. Herram.:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
@@ -2456,7 +2456,7 @@ msgstr "Muestra el compás (con iconos al acercarse a objetivos)"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
-msgstr "Zoom Automático del Mapa:"
+msgstr "Zoom Auto. del Mapa:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
@@ -2464,7 +2464,7 @@ msgstr "Ajusta el Zoom Automáticamente al Cargar el Mapa."
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
-msgstr "Temporizador de la Misión:"
+msgstr "Temporizador Misión:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
@@ -2484,15 +2484,15 @@ msgstr "Consejos del Cursor:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr ""
+msgstr "Tamaño del Pulso"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
-msgstr ""
+msgstr "Parpadeo Pulso"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr ""
+msgstr "Alfa Pulso"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
@@ -2536,11 +2536,11 @@ msgstr "Muestra las banderas de los países de los jugadores en las puntuaciones
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Escuadra Próxima Clase:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr ""
+msgstr "Muestra la próxima clase en la escuadra."
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -2560,7 +2560,7 @@ msgstr "Muestra esquelas gráficas"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
-msgstr "Muestra Texto Descriptivo:"
+msgstr "Texto Descriptivo:"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Displays limbo help text"
@@ -2636,7 +2636,7 @@ msgstr "Cambia entre Interfaces diferentes"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
-msgstr "Modificar Interfaz Seleccionada"
+msgstr "Modificar Interfaz:"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Round Timer"
@@ -2668,7 +2668,7 @@ msgstr "Temporizador + Rangos + Mensajes Emergentes"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Customises Selected HUD"
-msgstr "Personaliza la Interfaz Seleccionada"
+msgstr "Personaliza la Interfaz"
 
 #: etmain/ui/options_customise_hud.menu:55
 msgid "IN-GAME DISPLAY"
@@ -2724,7 +2724,7 @@ msgstr "Activa si se muestran o no los efectos de partículas - ej. explosiones,
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
-msgstr "Tiempo de Marcas en la Pared:"
+msgstr "Marcas en Pared:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls etc"
@@ -3223,19 +3223,19 @@ msgstr "La Intensidad de las Texturas (necesita vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
-msgstr ""
+msgstr "Bits Exceso Brillo Mapa:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr ""
+msgstr "El mundo se pone más brillante, pero más pálido (requiere vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
-msgstr ""
+msgstr "Bits Exceso Brillo:"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Map shines brighter (requires vid_restart)"
-msgstr ""
+msgstr "El Mapa brilla más (requiere vid_restart)"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
@@ -3493,7 +3493,7 @@ msgstr "Muy Bajo"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
-msgstr ""
+msgstr "Tope de paquetes de datos transmitidos"
 
 #: etmain/ui/options_system.menu:53
 msgid "Packet Duplication:"
@@ -3602,7 +3602,7 @@ msgstr "Incluye o excluye servidores con el mapa deseado de la lista de servidor
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr ""
+msgstr "Filtrando servidores por el nombre del mapa"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
@@ -4084,7 +4084,7 @@ msgstr "3. Gracias"
 #: etmain/ui/wm_ftquickmessageAlt.menu:140
 #: etmain/ui/wm_quickmessageAlt.menu:140
 msgid "4. Welcome"
-msgstr "4. De nada"
+msgstr "4. No ha sido nada"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:141
 #: etmain/ui/wm_quickmessageAlt.menu:141
@@ -4134,7 +4134,7 @@ msgstr "1. Gracias"
 #: etmain/ui/wm_ftquickmessageAlt.menu:162
 #: etmain/ui/wm_quickmessageAlt.menu:162
 msgid "2. Welcome"
-msgstr "2. De nada"
+msgstr "2. No ha sido nada"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:163
 #: etmain/ui/wm_quickmessageAlt.menu:163
@@ -4356,7 +4356,7 @@ msgstr "T. Gracias"
 #: etmain/ui/wm_ftquickmessage.menu:140 etmain/ui/wm_ftquickmessage.menu:162
 #: etmain/ui/wm_quickmessage.menu:140 etmain/ui/wm_quickmessage.menu:162
 msgid "W. Welcome"
-msgstr "W. De Nada"
+msgstr "W. No ha sido nada"
 
 #: etmain/ui/wm_ftquickmessage.menu:141 etmain/ui/wm_ftquickmessage.menu:164
 #: etmain/ui/wm_quickmessage.menu:141 etmain/ui/wm_quickmessage.menu:164
@@ -4492,7 +4492,7 @@ msgstr "Votos Totales Acumulados: %d"
 #: src/cgame/cg_scoreboard.c:723
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
-msgstr ""
+msgstr "¡EL RELOJ SE HA PUESTO A %s!"
 
 #: src/cgame/cg_debriefing.c:2615
 msgid "ACC:"
@@ -4691,15 +4691,15 @@ msgstr "Tu propocisión se ha enviado"
 
 #: src/cgame/cg_draw.c:2000
 msgid "Your proposition was rejected"
-msgstr "Han denegado tu proposición"
+msgstr "Han denegado tu propuesta"
 
 #: src/cgame/cg_draw.c:2007
 msgid "Your proposition was accepted"
-msgstr "Han aceptado tu proposición"
+msgstr "Han aceptado tu propuesta"
 
 #: src/cgame/cg_draw.c:2014
 msgid "Your proposition reply has been sent"
-msgstr "Tu respuesta a la proposición se ha enviado"
+msgstr "Tu respuesta a la propuesta se ha enviado"
 
 #: src/cgame/cg_draw.c:2024
 msgid "Your invitation has been submitted"
@@ -4765,26 +4765,26 @@ msgstr "No hay más refuerzos para esta ronda."
 #: src/cgame/cg_draw.c:2259 src/cgame/cg_draw.c:2347
 #, c-format
 msgid "Deploying in ^3%d ^7seconds"
-msgstr ""
+msgstr "Desplegando en ^3%d ^7segundos"
 
 #: src/cgame/cg_draw.c:2263 src/cgame/cg_draw.c:2351
 #, c-format
 msgid "Deploying in ^3%d ^7second"
-msgstr ""
+msgstr "Desplegando en ^3%d ^7segundo"
 
 #: src/cgame/cg_draw.c:2329
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7seconds"
-msgstr ""
+msgstr "¡Vida Extra! Desplegando en ^3%d ^7segundos"
 
 #: src/cgame/cg_draw.c:2333
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7second"
-msgstr ""
+msgstr "¡Vida Extra! Desplegando en ^3%d ^7segundo"
 
 #: src/cgame/cg_draw.c:2338
 msgid "No more deployments this round"
-msgstr ""
+msgstr "No hay más despliegues en esta ronda"
 
 #: src/cgame/cg_draw.c:2362 src/cgame/cg_draw.c:2388
 msgid "Following"
@@ -4832,7 +4832,7 @@ msgstr "RONDA CONTRARELOJ"
 #: src/cgame/cg_draw.c:2678
 #, c-format
 msgid "The %s team is speclocked!"
-msgstr ""
+msgstr "¡El equipo %s tiene los espect. bloqueados!"
 
 #: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
 #: src/cgame/cg_scoreboard.c:178
@@ -4845,7 +4845,7 @@ msgstr "Conexión Interrumpida"
 
 #: src/cgame/cg_event.c:271
 msgid "You swapped places with"
-msgstr ""
+msgstr "Has cambiado el puesto con"
 
 #: src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
@@ -4857,7 +4857,7 @@ msgstr "Has matado a"
 
 #: src/cgame/cg_event.c:293
 msgid "^7swapped places with"
-msgstr ""
+msgstr "^7cambiado puesto con"
 
 #: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
@@ -5197,11 +5197,11 @@ msgstr "Suicidios: %-2d Muertes de Compañeros: %-2d Precisión: %-4.1f HS%%: %-
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
-msgstr ""
+msgstr "^7Weapon     Precisi Acier/Atts Matados Muertes En la Cabeza\n"
 
 #: src/cgame/cg_servercmds.c:2040
 msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
-msgstr ""
+msgstr "^7Arma    Precisi Acier/Atts Mat Muert HS\n"
 
 #: src/cgame/cg_servercmds.c:2047
 msgid "^3No weapon info available.\n"
