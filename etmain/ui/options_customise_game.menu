@@ -47,7 +47,7 @@ menuDef {
 	SUBWINDOW( 6, WEAPONS_Y, (SUBWINDOW_WIDTH_L), 78, _("WEAPONS") )
 	YESNO( 8, WEAPONS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Automatic Reload:"), .2, 8, "cg_autoReload", _("Automatically reload when ammunition clip runs out") )
 	YESNO( 8, WEAPONS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Autoswitch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammunition") )
-	MULTI( 8, WEAPONS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Icon Flash:"), .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { _("Off") 0 _("2 colors") 1 _("3 colors") 2}, _("Flash weapon icon when firing, reloading, or switching") )
+	MULTI( 8, WEAPONS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Icon Flash:"), .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { _("Off") 0 _("On") 1 }, _("Flash weapon icon when firing, reloading, or switching") )
 	YESNO( 8, WEAPONS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Enables or disables weapon fire (muzzle flash)") )
 	MULTI( 8, WEAPONS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { _("Off") 0 _("On") 1 _("Only own tracers") 2 _("Only others tracers") 3 }, _("Enable/Disable bullet tracers") )
 

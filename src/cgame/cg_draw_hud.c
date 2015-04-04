@@ -1097,7 +1097,7 @@ static void CG_DrawGunIcon(rectDef_t location)
 	{
 		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
 	}
-	else if (cg_drawWeaponIconFlash.integer == 2)  // ETPro style
+	else
 	{
 		int ws =
 #if FEATURE_MULTIVIEW
@@ -1106,15 +1106,6 @@ static void CG_DrawGunIcon(rectDef_t location)
 		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
 		CG_DrawPlayerWeaponIcon(&rect, (ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
-	}
-	else
-	{
-		int ws =
-#if FEATURE_MULTIVIEW
-		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
-#endif
-		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
-		CG_DrawPlayerWeaponIcon(&rect, (ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH) ? &colorWhite : (ws == WSTATE_FIRE) ? &colorRed : &colorYellow));
 	}
 }
 
