@@ -101,50 +101,6 @@ void Con_ToggleConsole_f(void)
 
 /*
 ================
-Con_MessageMode_f
-================
-*/
-void Con_MessageMode_f(void)
-{
-	chat_team = qfalse;
-
-	Field_Clear(&chatField);
-	chatField.widthInChars = 30;
-
-	cls.keyCatchers ^= KEYCATCH_MESSAGE;
-}
-
-/*
-================
-Con_MessageMode2_f
-================
-*/
-void Con_MessageMode2_f(void)
-{
-	chat_team = qtrue;
-
-	Field_Clear(&chatField);
-	chatField.widthInChars = 25;
-	cls.keyCatchers       ^= KEYCATCH_MESSAGE;
-}
-
-/*
-================
-Con_MessageMode3_f
-================
-*/
-void Con_MessageMode3_f(void)
-{
-	chat_team  = qfalse;
-	chat_buddy = qtrue;
-
-	Field_Clear(&chatField);
-	chatField.widthInChars = 26;
-	cls.keyCatchers       ^= KEYCATCH_MESSAGE;
-}
-
-/*
-================
 Con_Clear_f
 ================
 */
@@ -385,10 +341,6 @@ void Con_Init(void)
 	}
 
 	Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f);
-	// clMessageMode: deprecated in favor of cgame/ui based version
-	Cmd_AddCommand("clMessageMode", Con_MessageMode_f);
-	Cmd_AddCommand("clMessageMode2", Con_MessageMode2_f);
-	Cmd_AddCommand("clMessageMode3", Con_MessageMode3_f);
 	Cmd_AddCommand("clear", Con_Clear_f);
 	Cmd_AddCommand("condump", Con_Dump_f);
 	Cmd_SetCommandCompletionFunc("condump", Cmd_CompleteTxtName);
@@ -400,9 +352,6 @@ void Con_Init(void)
 void Con_Shutdown(void)
 {
 	Cmd_RemoveCommand("toggleconsole");
-	Cmd_RemoveCommand("clMessageMode");
-	Cmd_RemoveCommand("clMessageMode2");
-	Cmd_RemoveCommand("clMessageMode3");
 	Cmd_RemoveCommand("clear");
 	Cmd_RemoveCommand("condump");
 }
@@ -688,47 +637,6 @@ void Con_DrawNotify(void)
 	}
 
 	re.SetColor(NULL);
-
-	if (cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME))
-	{
-		return;
-	}
-
-	// draw the chat line
-	if (cls.keyCatchers & KEYCATCH_MESSAGE)
-	{
-		int skip;
-
-		if (chat_team)
-		{
-			char buf[128];
-
-			CL_TranslateString("say_team:", buf); // FIXME: do we want translations for Con_DrawNotify?
-			SCR_DrawBigString(8, v, buf, colorWhite, qfalse);
-			skip = strlen(buf) + 2;
-		}
-		else if (chat_buddy)
-		{
-			char buf[128];
-
-			CL_TranslateString("say_fireteam:", buf); // FIXME: do we want translations for Con_DrawNotify?
-			SCR_DrawBigString(8, v, buf, colorWhite, qfalse);
-			skip = strlen(buf) + 2;
-		}
-		else
-		{
-			char buf[128];
-
-			CL_TranslateString("say:", buf); // FIXME: do we want translations for Con_DrawNotify?
-			SCR_DrawBigString(8, v, buf, colorWhite, qfalse);
-			skip = strlen(buf) + 1;
-		}
-
-		Field_BigDraw(&chatField, skip * BIGCHAR_WIDTH, v,
-		              SCREEN_WIDTH - (skip + 1) * BIGCHAR_WIDTH, qtrue, qfalse);
-
-		v += BIGCHAR_HEIGHT;
-	}
 }
 
 void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrollBarY)
