@@ -108,7 +108,6 @@ cvar_t *com_cleanwhitelist;
 cvar_t *com_showtrace;
 cvar_t *com_version;
 cvar_t *com_buildScript;    // for automated data building scripts
-cvar_t *con_drawnotify;
 cvar_t *com_introPlayed;
 cvar_t *com_ansiColor;
 cvar_t *com_unfocused;
@@ -2880,8 +2879,6 @@ void Com_Init(char *commandLine)
 	com_sv_running  = Cvar_Get("sv_running", "0", CVAR_ROM);
 	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM);
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
-
-	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 

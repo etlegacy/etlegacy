@@ -69,8 +69,6 @@ void Con_ToggleConsole_f(void)
 
 	g_consoleField.widthInChars = g_console_field_width;
 
-	Con_ClearNotify();
-
 	// multiple console size support
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
 	{
@@ -208,21 +206,6 @@ void Con_Dump_f(void)
 
 /*
 ================
-Con_ClearNotify
-================
-*/
-void Con_ClearNotify(void)
-{
-	int i;
-
-	for (i = 0 ; i < NUM_CON_TIMES ; i++)
-	{
-		con.times[i] = 0;
-	}
-}
-
-/*
-================
 Con_CheckResize
 
 If the line width has changed, reformat the buffer.
@@ -298,8 +281,6 @@ void Con_CheckResize(void)
 				           oldtotallines) * oldwidth + j];
 			}
 		}
-
-		Con_ClearNotify();
 	}
 
 	con.current = con.maxtotallines - 1;
@@ -361,23 +342,9 @@ void Con_Shutdown(void)
 Con_Linefeed
 ===============
 */
-void Con_Linefeed(qboolean skipnotify)
+void Con_Linefeed(void)
 {
 	int i;
-
-	// mark time for transparent overlay
-	if (con.current >= 0)
-	{
-		if (skipnotify)
-		{
-			con.times[con.current % NUM_CON_TIMES] = 0;
-		}
-		else
-		{
-			con.times[con.current % NUM_CON_TIMES] = cls.realtime;
-		}
-	}
-
 	con.x = 0;
 
 	if (con.display == con.current)
@@ -414,18 +381,9 @@ If no console is visible, the text will appear at the top of the game window
 
 void CL_ConsolePrint(char *txt)
 {
-	int      y;
-	int      c, l;
-	int      color;
-	qboolean skipnotify = qfalse;
-	int      prev;
-
-	// work around for text that shows up in console but not in notify
-	if (!Q_strncmp(txt, "[skipnotify]", 12))
-	{
-		skipnotify = qtrue;
-		txt       += 12;
-	}
+	int y;
+	int c, l;
+	int color;
 
 	// for some demos we don't want to ever show anything on the console
 	if (cl_noprint && cl_noprint->integer)
@@ -439,6 +397,12 @@ void CL_ConsolePrint(char *txt)
 		con.linewidth = -1;
 		Con_CheckResize();
 		con.initialized = qtrue;
+	}
+
+	// work around for text that shows up in console but not in notify
+	if (!Q_strncmp(txt, "[skipnotify]", 12))
+	{
+		txt += 12;
 	}
 
 	color = ColorIndex(CONSOLE_COLOR);
@@ -471,7 +435,7 @@ void CL_ConsolePrint(char *txt)
 		// word wrap
 		if (l != con.linewidth && (con.x + l >= con.linewidth))
 		{
-			Con_Linefeed(skipnotify);
+			Con_Linefeed();
 		}
 
 		c = Q_UTF8_CodePoint(txt);
@@ -479,7 +443,7 @@ void CL_ConsolePrint(char *txt)
 		switch (c)
 		{
 		case '\n':
-			Con_Linefeed(skipnotify);
+			Con_Linefeed();
 			break;
 		case '\r':
 			con.x = 0;
@@ -495,31 +459,13 @@ void CL_ConsolePrint(char *txt)
 			con.x++;
 			if (con.x >= con.linewidth)
 			{
-				Con_Linefeed(skipnotify);
+				Con_Linefeed();
 				con.x = 0;
 			}
 			break;
 		}
 
 		txt += Q_UTF8_Width(txt);
-	}
-
-	// mark time for transparent overlay
-	if (con.current >= 0)
-	{
-		if (skipnotify)
-		{
-			prev = con.current % NUM_CON_TIMES - 1;
-			if (prev < 0)
-			{
-				prev = NUM_CON_TIMES - 1;
-			}
-			con.times[prev] = 0;
-		}
-		else
-		{
-			con.times[con.current % NUM_CON_TIMES] = cls.realtime;
-		}
 	}
 }
 
@@ -570,73 +516,6 @@ void Con_DrawInput(void)
 
 	Field_Draw(&g_consoleField, con.xadjust + 2 * SMALLCHAR_WIDTH, y,
 	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qtrue);
-}
-
-/*
-================
-Con_DrawNotify
-
-Draws the last few lines of output transparently over the game top
-================
-*/
-void Con_DrawNotify(void)
-{
-	int          x, v = 0;
-	unsigned int *text;
-	byte         *textColor;
-	int          i;
-	int          time;
-	int          currentColor = 7;
-
-	re.SetColor(g_color_table[currentColor]);
-
-	for (i = con.current - NUM_CON_TIMES + 1 ; i <= con.current ; i++)
-	{
-		if (i < 0)
-		{
-			continue;
-		}
-
-		time = con.times[i % NUM_CON_TIMES];
-		if (time == 0)
-		{
-			continue;
-		}
-
-		time = cls.realtime - time;
-		if (time > con_notifytime->value * 1000)
-		{
-			continue;
-		}
-
-		text      = con.text + (i % con.maxtotallines) * con.linewidth;
-		textColor = con.textColor + (i % con.maxtotallines) * con.linewidth;
-
-		if (cl.snap.ps.pm_type != PM_INTERMISSION && (cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME)))
-		{
-			continue;
-		}
-
-		for (x = 0 ; x < con.linewidth ; x++)
-		{
-			if ((text[x]) == ' ')
-			{
-				continue;
-			}
-
-			if (textColor[x] != currentColor)
-			{
-				currentColor = textColor[x];
-				re.SetColor(g_color_table[currentColor]);
-			}
-
-			SCR_DrawSmallChar(cl_conXOffset->integer + con.xadjust + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
-		}
-
-		v += SMALLCHAR_HEIGHT;
-	}
-
-	re.SetColor(NULL);
 }
 
 void Con_DrawConsoleScrollbar(int scrollBarLength, float scrollBarX, float scrollBarY)
@@ -829,8 +708,6 @@ void Con_DrawSolidConsole(float frac)
 	re.SetColor(NULL);
 }
 
-extern cvar_t *con_drawnotify;
-
 /*
 ==================
 Con_DrawConsole
@@ -854,14 +731,6 @@ void Con_DrawConsole(void)
 	if (con.displayFrac)
 	{
 		Con_DrawSolidConsole(con.displayFrac);
-	}
-	else
-	{
-		// draw notify lines
-		if (cls.state == CA_ACTIVE && con_drawnotify->integer)
-		{
-			Con_DrawNotify();
-		}
 	}
 }
 
@@ -957,7 +826,6 @@ void Con_Close(void)
 	}
 
 	Field_Clear(&g_consoleField);
-	Con_ClearNotify();
 	cls.keyCatchers &= ~KEYCATCH_CONSOLE;
 	con.finalFrac    = 0;           // none visible
 	con.displayFrac  = 0;
