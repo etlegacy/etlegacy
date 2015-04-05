@@ -45,7 +45,6 @@ int g_console_field_width = 78;
 console_t con;
 
 cvar_t *con_conspeed;
-cvar_t *con_notifytime;
 cvar_t *con_autoclear;
 
 
@@ -309,7 +308,6 @@ void Con_Init(void)
 {
 	int i;
 
-	con_notifytime = Cvar_Get("con_notifytime", "7", 0);   // increased per id req for obits
 	con_conspeed   = Cvar_Get("scr_conspeed", "3", 0);
 	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
 
