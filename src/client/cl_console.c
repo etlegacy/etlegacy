@@ -560,20 +560,21 @@ void Con_DrawSolidConsole(float frac)
 	unsigned int *text;
 	byte         *textColor;
 	int          row;
-	int          yoffset = cls.glconfig.vidHeight * frac;
 	int          currentColor;
 	vec4_t       color;
 	char         version[256] = ET_VERSION;
 
-	if (yoffset <= 0)
+	if (frac <= 0)
 	{
 		return;
 	}
 
-	if (yoffset > cls.glconfig.vidHeight)
+	if (frac > 1)
 	{
-		yoffset = cls.glconfig.vidHeight;
+		frac = 1;
 	}
+
+	con.scanlines = frac * cls.glconfig.vidHeight;
 
 	// on wide screens, we will center the text
 	con.xadjust = 0;
@@ -632,15 +633,14 @@ void Con_DrawSolidConsole(float frac)
 		}
 
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * SMALLCHAR_WIDTH,
-		                  yoffset - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2), version[x]);
+		                  con.scanlines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2), version[x]);
 	}
 
 	// draw the text
-	con.scanlines = yoffset;
-	con.vislines  = (yoffset - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT; // rows of text to draw
-	rows          = con.vislines;
+	con.vislines = (con.scanlines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT;  // rows of text to draw
+	rows         = con.vislines;
 
-	y = yoffset - (SMALLCHAR_HEIGHT * 3);
+	y = con.scanlines - (SMALLCHAR_HEIGHT * 3);
 
 	// draw from the bottom up
 	if (con.display < con.current - 1)
@@ -713,23 +713,17 @@ Con_DrawConsole
 */
 void Con_DrawConsole(void)
 {
+	// render console only if opened but also if disconnected
+	if (!con.displayFrac && !(cls.state == CA_DISCONNECTED &&
+	                          !(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME))))
+	{
+		return;
+	}
+
 	// check for console width changes from a vid mode change
 	Con_CheckResize();
 
-	// if disconnected, render console full screen
-	if (cls.state == CA_DISCONNECTED)
-	{
-		if (!(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME)))
-		{
-			Con_DrawSolidConsole(1.0f);
-			return;
-		}
-	}
-
-	if (con.displayFrac)
-	{
-		Con_DrawSolidConsole(con.displayFrac);
-	}
+	Con_DrawSolidConsole(con.displayFrac);
 }
 
 //================================================================
