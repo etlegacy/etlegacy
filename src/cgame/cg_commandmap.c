@@ -608,7 +608,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 		}
 
-		if (mEnt->type == ME_PLAYER_REVIVE)
+		if (mEnt->type == ME_PLAYER_REVIVE && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 		{
 			float  msec;
 			vec4_t reviveClr = { 1.f, 1.f, 1.f, 1.f };
