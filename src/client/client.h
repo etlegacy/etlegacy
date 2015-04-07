@@ -591,7 +591,7 @@ typedef struct
 
 	float displayFrac;      // aproaches finalFrac at scr_conspeed
 	float finalFrac;        // 0.0 to 1.0 lines of console to display
-	float desiredFrac;      // ydnar: for variable console heights
+	float desiredFrac;      // for variable console heights
 
 	int scanlines;          // in scanlines
 	int vislines;           // amount of visible lines
@@ -605,13 +605,23 @@ extern console_t con;
 
 void Con_DrawCharacter(int cx, int line, int num);
 
+void Con_ToggleConsole_f(void);
+void Con_Clear_f(void);
+void Con_Dump_f(void);
 void Con_CheckResize(void);
+void Cmd_CompleteTxtName(char *args, int argNum);
 void Con_Init(void);
 void Con_Shutdown(void);
-void Con_Clear_f(void);
-void Con_ToggleConsole_f(void);
-void Con_RunConsole(void);
+void Con_Linefeed(void);
+void CL_ConsolePrint(char *txt);
+
+void Con_DrawVersion(void);
+void Con_DrawInput(void);
+void Con_DrawScrollbar(int length, float x, float y);
+void Con_DrawSolidConsole(float frac);
 void Con_DrawConsole(void);
+void Con_RunConsole(void);
+
 void Con_PageUp(void);
 void Con_PageDown(void);
 void Con_Top(void);
