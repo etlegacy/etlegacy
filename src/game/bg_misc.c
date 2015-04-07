@@ -4181,10 +4181,10 @@ int BG_simpleWeaponState(int ws)
 	case WEAPON_FIRINGALT:
 		return WSTATE_FIRE;
 	case WEAPON_RELOADING:
-		return(WSTATE_RELOAD);
+		return WSTATE_RELOAD;
 	}
 
-	return(WSTATE_IDLE);
+	return WSTATE_IDLE;
 }
 
 #ifdef FEATURE_MULTIVIEW

@@ -321,7 +321,7 @@ typedef struct centity_s
 
 	int trailTime;                  // so missile trails can handle dropped initial packets
 	int miscTime;
-	int soundTime;                  // ydnar: so looping sounds can start when triggered
+	int soundTime;                  // so looping sounds can start when triggered
 
 	playerEntity_t pe;
 

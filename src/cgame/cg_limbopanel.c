@@ -3510,24 +3510,24 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 			return qtrue;
 		}
 		break;
-/* FIXME: do we have to check these?
-        case WP_GPG40:
-            // add alt weapons
-            wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
-            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
-            {
-                return qtrue;
-            }
-            break;
-        case WP_M7:
-            // add alt weapons
-            wcount = wcount + CG_LimboPanel_TeamCount(WP_CARBINE);
-            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
-            {
-                return qtrue;
-            }
-            break;
-*/
+	/* FIXME: do we have to check these?
+	        case WP_GPG40:
+	            // add alt weapons
+	            wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
+	            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+	            {
+	                return qtrue;
+	            }
+	            break;
+	        case WP_M7:
+	            // add alt weapons
+	            wcount = wcount + CG_LimboPanel_TeamCount(WP_CARBINE);
+	            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+	            {
+	                return qtrue;
+	            }
+	            break;
+	*/
 	default:
 		break;
 	}

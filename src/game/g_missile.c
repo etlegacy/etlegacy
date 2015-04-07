@@ -239,6 +239,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	{
 		// try projecting it in the direction it came from, for better decals
 		vec3_t dir;
+
 		BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, dir, qfalse, ent->s.effect2Time);
 		BG_GetMarkDir(dir, trace->plane.normal, dir);
 

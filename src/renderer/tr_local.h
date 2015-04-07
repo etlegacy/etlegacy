@@ -55,7 +55,7 @@ typedef unsigned int glIndex_t;
 // the client game, as well as some locally derived info
 
 // optimizing diffuse lighting calculation with a table lookup
-#define ENTITY_LIGHT_STEPS      16
+#define ENTITY_LIGHT_STEPS      64
 
 typedef struct
 {

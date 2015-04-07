@@ -139,7 +139,6 @@ typedef struct serverStatus_s
 } serverStatus_t;
 
 serverStatus_t cl_serverStatusList[MAX_SERVERSTATUSREQUESTS];
-int            serverStatusCount;
 
 void CL_CheckForResend(void);
 void CL_ShowIP_f(void);
@@ -284,7 +283,7 @@ static void CL_WriteWaveHeader(void)
 	FS_Write(&hdr.ChunkID, 44, clc.wavefile);
 }
 
-static char wavName[MAX_QPATH];     // compiler bug workaround
+static char wavName[MAX_OSPATH];     // compiler bug workaround
 void CL_WriteWaveOpen(void)
 {
 	// we will just save it as a 16bit stereo 22050kz pcm file
@@ -3247,12 +3246,8 @@ serverStatus_t *CL_GetServerStatus(netadr_t from)
 			oldestTime = cl_serverStatusList[i].startTime;
 		}
 	}
-	if (oldest != -1)
-	{
-		return &cl_serverStatusList[oldest];
-	}
-	serverStatusCount++;
-	return &cl_serverStatusList[serverStatusCount & (MAX_SERVERSTATUSREQUESTS - 1)];
+
+	return &cl_serverStatusList[oldest];
 }
 
 /*

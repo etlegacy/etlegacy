@@ -1080,7 +1080,8 @@ void S_AddLoopSounds(void)
 		numLoopChannels++;
 		if (numLoopChannels == MAX_CHANNELS)
 		{
-			i = numLoopSounds + 1;
+			Com_Printf("S_AddLoopSounds warning: MAX_CHANNELS %i reached - loop sound dropped\n", MAX_CHANNELS);
+			return;
 		}
 	}
 }
@@ -1841,7 +1842,7 @@ void S_UpdateStreamingSounds(void)
 	int              fileSamples;
 	byte             raw[30000]; // just enough to fit in a mac stack frame
 	int              fileBytes;
-	int              r;
+	int              rs;
 	int              i, j;
 	float            lvol, rvol;
 	float            streamingVol = 1.0f;
@@ -1888,12 +1889,11 @@ void S_UpdateStreamingSounds(void)
 				fileSamples = fileBytes / (ss->stream->info.width * ss->stream->info.channels);
 			}
 
-			// Read
-			r = S_CodecReadStream(ss->stream, fileBytes, raw);
-			if (r < fileBytes)
+			// read stream
+			rs = S_CodecReadStream(ss->stream, fileBytes, raw);
+			if (rs < fileBytes)
 			{
-				// fileBytes   = r; // unused/overwritten
-				fileSamples = r / (ss->stream->info.width * ss->stream->info.channels);
+				fileSamples = rs / (ss->stream->info.width * ss->stream->info.channels);
 			}
 
 			// calculate the streaming volume based on stream fade and global fade
@@ -1906,7 +1906,7 @@ void S_UpdateStreamingSounds(void)
 			}
 			streamingVol *= s_volCurrent;
 
-			if (r > 0)
+			if (rs > 0)
 			{
 				if (i == 0)
 				{
@@ -1976,7 +1976,6 @@ void S_UpdateStreamingSounds(void)
 					char loopStream[MAX_QPATH];
 
 					Q_strncpyz(loopStream, ss->loopStream, MAX_QPATH);
-					S_StopStreamingSound(i);
 					S_StartStreamingSoundEx(loopStream, loopStream,
 					                        ss->entnum, ss->channel, i == 0, i == 0 ? 0 : ss->attenuation);
 				}
