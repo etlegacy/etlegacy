@@ -83,7 +83,7 @@ void Con_ToggleConsole_f(void)
 		// full console
 		else if (keys[K_ALT].down)
 		{
-			con.desiredFrac = 1.0;
+			con.desiredFrac = 1.0f;
 		}
 		// normal half-screen console
 		else
@@ -106,7 +106,7 @@ void Con_Clear_f(void)
 		con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 	}
 
-	con.totallines = 0;
+	con.totalLines = 0;
 
 	Con_Bottom();
 }
@@ -142,9 +142,9 @@ void Con_Dump_f(void)
 	Com_Printf("Dumped console text to %s.\n", filename);
 
 	// skip empty lines
-	for (l = con.current - con.maxtotallines + 1 ; l <= con.current ; l++)
+	for (l = con.current - con.maxTotalLines + 1 ; l <= con.current ; l++)
 	{
-		line = con.text + (l % con.maxtotallines) * con.linewidth;
+		line = con.text + (l % con.maxTotalLines) * con.linewidth;
 		for (x = 0 ; x < con.linewidth ; x++)
 			if (line[x] != ' ')
 			{
@@ -168,7 +168,7 @@ void Con_Dump_f(void)
 	buffer[bufferlen - 1] = 0;
 	for ( ; l <= con.current ; l++)
 	{
-		line = con.text + (l % con.maxtotallines) * con.linewidth;
+		line = con.text + (l % con.maxTotalLines) * con.linewidth;
 		for (i = 0; i < con.linewidth; i++)
 			buffer[i] = line[i] & 0xff;
 		for (x = con.linewidth - 1 ; x >= 0 ; x--)
@@ -215,28 +215,28 @@ void Con_CheckResize(void)
 	if (width < 1)            // video hasn't been initialized yet
 	{
 		con.linewidth     = DEFAULT_CONSOLE_WIDTH;
-		con.maxtotallines = CON_TEXTSIZE / con.linewidth;
+		con.maxTotalLines = CON_TEXTSIZE / con.linewidth;
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
 			con.text[i]      = ' ';
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
-		con.totallines = 0;
+		con.totalLines = 0;
 	}
 	else
 	{
 		int j;
-		int oldtotallines, numlines, numchars;
+		int oldtotalLines, numlines, numchars;
 		int oldwidth = con.linewidth;
 
 		con.linewidth     = width;
-		oldtotallines     = con.maxtotallines;
-		con.maxtotallines = CON_TEXTSIZE / con.linewidth;
-		numlines          = oldtotallines;
+		oldtotalLines     = con.maxTotalLines;
+		con.maxTotalLines = CON_TEXTSIZE / con.linewidth;
+		numlines          = oldtotalLines;
 
-		if (con.maxtotallines < numlines)
+		if (con.maxTotalLines < numlines)
 		{
-			numlines = con.maxtotallines;
+			numlines = con.maxTotalLines;
 		}
 
 		numchars = oldwidth;
@@ -258,18 +258,19 @@ void Con_CheckResize(void)
 		{
 			for (j = 0 ; j < numchars ; j++)
 			{
-				con.text[(con.maxtotallines - 1 - i) * con.linewidth + j] =
-				    tbuf[((con.current - i + oldtotallines) %
-				          oldtotallines) * oldwidth + j];
-				con.textColor[(con.maxtotallines - 1 - i) * con.linewidth + j] =
-				    tbuff[((con.current - i + oldtotallines) %
-				           oldtotallines) * oldwidth + j];
+				con.text[(con.maxTotalLines - 1 - i) * con.linewidth + j] =
+				    tbuf[((con.current - i + oldtotalLines) %
+				          oldtotalLines) * oldwidth + j];
+				con.textColor[(con.maxTotalLines - 1 - i) * con.linewidth + j] =
+				    tbuff[((con.current - i + oldtotalLines) %
+				           oldtotalLines) * oldwidth + j];
 			}
 		}
 	}
 
-	con.current = con.maxtotallines - 1;
-	con.display = con.current;
+	con.current             = con.maxTotalLines - 1;
+	con.bottomDisplayedLine = con.current;
+	con.scrollIndex         = con.current;
 }
 
 /**
@@ -325,22 +326,22 @@ void Con_Linefeed(void)
 	int i;
 	con.x = 0;
 
-	if (con.display == con.current)
+	if (con.scrollIndex >= con.current)
 	{
-		con.display++;
+		con.scrollIndex++;
 	}
 
 	con.current++;
 
-	if (con.totallines < con.maxtotallines)
+	if (con.totalLines < con.maxTotalLines)
 	{
-		con.totallines++;
+		con.totalLines++;
 	}
 
 	for (i = 0; i < con.linewidth; i++)
 	{
-		con.text[(con.current % con.maxtotallines) * con.linewidth + i]      = ' ';
-		con.textColor[(con.current % con.maxtotallines) * con.linewidth + i] = ColorIndex(CONSOLE_COLOR);
+		con.text[(con.current % con.maxTotalLines) * con.linewidth + i]      = ' ';
+		con.textColor[(con.current % con.maxTotalLines) * con.linewidth + i] = ColorIndex(CONSOLE_COLOR);
 	}
 }
 
@@ -422,7 +423,7 @@ void CL_ConsolePrint(char *txt)
 			break;
 		default:
 			// display character and advance
-			y = con.current % con.maxtotallines;
+			y = con.current % con.maxTotalLines;
 
 			// sign extension caused the character to carry over
 			// into the color info for high ascii chars; casting c to unsigned
@@ -469,8 +470,9 @@ void Con_DrawVersion(void)
 		}
 
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * SMALLCHAR_WIDTH,
-		                  con.scanlines - 1.25f * SMALLCHAR_HEIGHT, version[x]);
+		                  con.scanLines - 1.25f * SMALLCHAR_HEIGHT, version[x]);
 	}
+
 }
 
 /**
@@ -485,7 +487,7 @@ void Con_DrawInput(void)
 		return;
 	}
 
-	y = con.scanlines - 1.25f * SMALLCHAR_HEIGHT;
+	y = con.scanLines - 1.25f * SMALLCHAR_HEIGHT;
 
 	// hightlight the current autocompleted part
 	if (con.highlightOffset)
@@ -515,10 +517,10 @@ void Con_DrawScrollbar(int length, float x, float y)
 {
 	vec4_t      color          = { 0.2f, 0.2f, 0.2f, 0.75f };
 	const float width          = 1.0f;
-	const float handleLength   = con.totallines ? length *MIN(1.0f, (float) con.vislines / con.totallines) : 0;
-	const float lengthPerLine  = (length - handleLength) / (con.totallines - con.vislines);
-	const float relativeScroll = con.current - con.totallines + MIN(con.vislines, con.totallines);
-	const float handlePosition = lengthPerLine * (con.display - relativeScroll);
+	const float handleLength   = con.totalLines ? length *MIN(1.0f, (float) con.visibleLines / con.totalLines) : 0;
+	const float lengthPerLine  = (length - handleLength) / (con.totalLines - con.visibleLines);
+	const float relativeScroll = con.current - con.totalLines + MIN(con.visibleLines, con.totalLines);
+	const float handlePosition = lengthPerLine * (con.bottomDisplayedLine - relativeScroll);
 
 	SCR_FillRect(x, y, width, length, color);
 
@@ -533,7 +535,7 @@ void Con_DrawScrollbar(int length, float x, float y)
 		SCR_FillRect(x, y + handlePosition, width, handleLength, color);
 	}
 	// this happens when line appending gets us over the top position in a roll-lock situation (scrolling itself won't do that)
-	else if (con.totallines)
+	else if (con.totalLines)
 	{
 		SCR_FillRect(x, y, width, handleLength, color);
 	}
@@ -561,7 +563,7 @@ void Con_DrawSolidConsole(float frac)
 		frac = 1;
 	}
 
-	con.scanlines = frac * cls.glconfig.vidHeight;
+	con.scanLines = frac * cls.glconfig.vidHeight;
 
 	// on wide screens, we will center the text
 	con.xadjust = 0;
@@ -613,12 +615,12 @@ void Con_DrawSolidConsole(float frac)
 	Con_DrawVersion();
 
 	// draw text
-	con.vislines = (con.scanlines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT - 1;  // rows of text to draw
+	con.visibleLines = (con.scanLines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT - 1;  // rows of text to draw
 
-	y = con.scanlines - 3 * SMALLCHAR_HEIGHT;
+	y = con.scanLines - 3 * SMALLCHAR_HEIGHT;
 
 	// draw from the bottom up
-	if (con.display < con.current - 1)
+	if (con.scrollIndex < con.current - 1)
 	{
 		// draw arrows to show the buffer is backscrolled
 		re.SetColor(g_color_table[ColorIndex(COLOR_WHITE)]);
@@ -629,7 +631,7 @@ void Con_DrawSolidConsole(float frac)
 		}
 	}
 
-	row = con.display;
+	row = con.bottomDisplayedLine;
 
 	if (con.x == 0)
 	{
@@ -639,21 +641,21 @@ void Con_DrawSolidConsole(float frac)
 	currentColor = 7;
 	re.SetColor(g_color_table[currentColor]);
 
-	for (i = 0 ; i < con.vislines ; i++, y -= SMALLCHAR_HEIGHT, row--)
+	for (i = 0 ; i < con.visibleLines; i++, y -= SMALLCHAR_HEIGHT, row--)
 	{
 		if (row < 0)
 		{
 			break;
 		}
 
-		if (con.current - row >= con.maxtotallines)
+		if (con.current - row >= con.maxTotalLines)
 		{
 			// past scrollback wrap point
 			continue;
 		}
 
-		text      = con.text + (row % con.maxtotallines) * con.linewidth;
-		textColor = con.textColor + (row % con.maxtotallines) * con.linewidth;
+		text      = con.text + (row % con.maxTotalLines) * con.linewidth;
+		textColor = con.textColor + (row % con.maxTotalLines) * con.linewidth;
 
 		for (x = 0 ; x < con.linewidth ; x++)
 		{
@@ -706,9 +708,9 @@ void Con_RunConsole(void)
 	}
 	else
 	{
-		con.finalFrac = 0;  // none visible
-
+		con.finalFrac = 0.0f;  // none visible
 	}
+
 	// scroll towards the destination height
 	if (con.finalFrac < con.displayFrac)
 	{
@@ -718,7 +720,6 @@ void Con_RunConsole(void)
 		{
 			con.displayFrac = con.finalFrac;
 		}
-
 	}
 	else if (con.finalFrac > con.displayFrac)
 	{
@@ -729,19 +730,70 @@ void Con_RunConsole(void)
 			con.displayFrac = con.finalFrac;
 		}
 	}
+
+	// animated scroll
+	if (con.displayFrac > 0)
+	{
+		const float scrolldiff   = MAX(0.5f, abs(con.bottomDisplayedLine - con.scrollIndex));
+		int         nudgingValue = con_conspeed->value * cls.realFrametime * 0.005 * scrolldiff;
+
+		// nudge might turn out to be 0 so just bump it to 1 so we actually move towards our goal
+		if (nudgingValue <= 0)
+		{
+			nudgingValue = 1;
+		}
+
+		if (con.bottomDisplayedLine < con.scrollIndex)
+		{
+			con.bottomDisplayedLine += nudgingValue;
+
+			if (con.bottomDisplayedLine > con.scrollIndex)
+			{
+				con.bottomDisplayedLine = con.scrollIndex;
+			}
+		}
+		else if (con.bottomDisplayedLine > con.scrollIndex)
+		{
+			con.bottomDisplayedLine -= nudgingValue;
+
+			if (con.bottomDisplayedLine < con.scrollIndex)
+			{
+				con.bottomDisplayedLine = con.scrollIndex;
+			}
+		}
+	}
+	else
+	{
+		con.bottomDisplayedLine = con.scrollIndex;
+	}
 }
+
+/**
+ * @brief Check that the console does not go over the buffer limits
+ */
+static void Con_CheckLimits(void)
+{
+	// going up
+	if (con.scrollIndex < con.current - con.totalLines + con.visibleLines)
+	{
+		con.scrollIndex = con.current - con.totalLines + con.visibleLines;
+	}
+
+	// going down
+	if (con.scrollIndex > con.current)
+	{
+		con.scrollIndex = con.current;
+	}
+}
+
 
 /**
  * @brief Page up
  */
 void Con_PageUp(void)
 {
-	con.display -= 2;
-
-	if (con.current - con.display > con.totallines - con.vislines)
-	{
-		con.display = con.current - con.totallines + con.vislines;
-	}
+	con.scrollIndex -= con.visibleLines / 2;
+	Con_CheckLimits();
 }
 
 /**
@@ -749,12 +801,8 @@ void Con_PageUp(void)
  */
 void Con_PageDown(void)
 {
-	con.display += 2;
-
-	if (con.display > con.current)
-	{
-		con.display = con.current;
-	}
+	con.scrollIndex += con.visibleLines / 2;
+	Con_CheckLimits();
 }
 
 /**
@@ -762,12 +810,8 @@ void Con_PageDown(void)
  */
 void Con_Top(void)
 {
-	con.display = con.totallines;
-
-	if (con.current - con.display > con.totallines - con.vislines)
-	{
-		con.display = con.current - con.totallines + con.vislines;
-	}
+	con.scrollIndex = con.current - con.totalLines + con.visibleLines;
+	Con_CheckLimits();
 }
 
 /**
@@ -775,7 +819,8 @@ void Con_Top(void)
  */
 void Con_Bottom(void)
 {
-	con.display = con.current;
+	con.scrollIndex = con.current;
+	Con_CheckLimits();
 }
 
 /**

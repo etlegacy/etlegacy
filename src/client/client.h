@@ -579,26 +579,27 @@ typedef struct
 
 	unsigned int text[CON_TEXTSIZE];
 	byte textColor[CON_TEXTSIZE];
-	int current;            // line where next message will be printed
-	int x;                  // offset in current line for next print
-	int display;            // bottom of console displays this line
+	int current;             // line where next message will be printed
+	int x;                   // offset in current line for next print
+	int scrollIndex;         // bottom of console displays this line (current)
+	int bottomDisplayedLine; // bottom of console displays this line (final)
 
-	int linewidth;          // characters across screen
-	int totallines;         // total text filled lines in console scrollback
-	int maxtotallines;      // total lines in console scrollback
+	int linewidth;           // characters across screen
+	int totalLines;          // total text filled lines in console scrollback
+	int maxTotalLines;       // total lines in console scrollback
 
-	float xadjust;          // for wide aspect screens
+	float xadjust;           // for wide aspect screens
 
-	float displayFrac;      // aproaches finalFrac at scr_conspeed
-	float finalFrac;        // 0.0 to 1.0 lines of console to display
-	float desiredFrac;      // for variable console heights
+	float displayFrac;       // aproaches finalFrac at scr_conspeed
+	float finalFrac;         // 0.0 to 1.0 lines of console to display
+	float desiredFrac;       // for variable console heights
 
-	int scanlines;          // in scanlines
-	int vislines;           // amount of visible lines
+	int scanLines;           // in scan lines
+	int visibleLines;        // amount of visible lines
 
-	vec4_t color;           // for transparent lines
+	vec4_t color;            // for transparent lines
 
-	int highlightOffset;    // highligting start offset (if == 0) then no hightlight
+	int highlightOffset;     // highligting start offset (if == 0) then no hightlight
 } console_t;
 
 extern console_t con;
