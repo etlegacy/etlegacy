@@ -485,7 +485,7 @@ void Con_DrawInput(void)
 		return;
 	}
 
-	y = con.scanlines - 1.5f * SMALLCHAR_HEIGHT;
+	y = con.scanlines - 1.25f * SMALLCHAR_HEIGHT;
 
 	// hightlight the current autocompleted part
 	if (con.highlightOffset)
@@ -608,12 +608,12 @@ void Con_DrawSolidConsole(float frac)
 	// draw the input prompt, user text, and cursor
 	Con_DrawInput();
 	// draw scrollbar
-	Con_DrawScrollbar(y - 5 - SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3);
+	Con_DrawScrollbar(y - 1.5f * SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3);
 	// draw the version number
 	Con_DrawVersion();
 
 	// draw text
-	con.vislines = (con.scanlines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT;  // rows of text to draw
+	con.vislines = (con.scanlines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT - 1;  // rows of text to draw
 
 	y = con.scanlines - 3 * SMALLCHAR_HEIGHT;
 
@@ -625,11 +625,8 @@ void Con_DrawSolidConsole(float frac)
 
 		for (x = 0; x < con.linewidth; x += 4)
 		{
-			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, '^');
+			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y + 0.75f * SMALLCHAR_HEIGHT, '^');
 		}
-
-		y -= SMALLCHAR_HEIGHT;
-		con.vislines--;
 	}
 
 	row = con.display;
@@ -739,12 +736,12 @@ void Con_RunConsole(void)
  */
 void Con_PageUp(void)
 {
+	con.display -= 2;
+
 	if (con.current - con.display > con.totallines - con.vislines)
 	{
 		con.display = con.current - con.totallines + con.vislines;
 	}
-
-	con.display -= 2;
 }
 
 /**
@@ -769,7 +766,7 @@ void Con_Top(void)
 
 	if (con.current - con.display > con.totallines - con.vislines)
 	{
-		con.display = con.current - con.totallines + con.vislines - 2;
+		con.display = con.current - con.totallines + con.vislines;
 	}
 }
 
