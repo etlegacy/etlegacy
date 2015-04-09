@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-04-04 15:20+0000\n"
+"PO-Revision-Date: 2015-04-08 12:40+0000\n"
 "Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -246,7 +246,7 @@ msgstr "Muchas gracias a Splash Damage por liberar el código fuente, ioWolfET y
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
-msgstr "^1CONTRIBUIDORES"
+msgstr "^1COLABORADORES"
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
@@ -521,7 +521,7 @@ msgstr "Tiempo que transcurre entre las misiones"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr "'Preparados' sig. Mapa %:"
+msgstr "'Preparados' sig. Mapa%:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
@@ -2328,7 +2328,7 @@ msgstr "Activa o desactiva el Comandante durante el juego"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
-msgstr "No chat de voz:"
+msgstr "Desact. chat de voz:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
@@ -2540,7 +2540,7 @@ msgstr "Escuadra Próxima Clase:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr "Muestra la próxima clase en la escuadra."
+msgstr "Muestra la próxima clase de los miembros de la escuadra."
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -3663,7 +3663,7 @@ msgstr "Click aquí para ordenar por el nombre de la Campaña o Mapa"
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
-msgstr "#JUGADORES"
+msgstr "JUGADORES"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
