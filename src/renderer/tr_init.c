@@ -995,17 +995,13 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	Ren_Print("\nGL_VENDOR: %s\n", glConfig.vendor_string);
-	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
-
 	if (r_gfxInfo->integer > 0)
 	{
-		Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string); // GLEW already reports this
 		Ren_Print("GL_EXTENSIONS: ");
 		R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
 	}
 
-	Ren_Print("\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
+	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	Ren_Print("GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
 	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
 	Ren_Print("MODE: %d, SCREEN: %d x %d %s (ratio %.4f) Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1], glConfig.windowAspect);

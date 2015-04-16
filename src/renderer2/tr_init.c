@@ -1038,10 +1038,6 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	Ren_Print("\nGL_VENDOR: %s\n", glConfig.vendor_string);
-	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
-	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
-
 	//Lets not do this on gl3.2 context as the functionality is not supported.
 	/*
 	Ren_Print("GL_EXTENSIONS: ");
@@ -1089,7 +1085,7 @@ void GfxInfo_f(void)
 		Ren_Print("GL_MAX_COLOR_ATTACHMENTS_EXT: %d\n", glConfig2.maxColorAttachments);
 	}
 
-	Ren_Print("\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits,
+	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits,
 	          glConfig.depthBits, glConfig.stencilBits);
 	Ren_Print("MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight,
 	          fsstrings[r_fullscreen->integer == 1]);

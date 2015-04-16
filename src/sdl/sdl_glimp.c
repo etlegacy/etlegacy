@@ -45,7 +45,7 @@
 #   include "../rendererGLES/tr_local.h"
 #else // OpenGL 2 renderer
 #   include "../renderer/tr_local.h"
- #endif
+#endif
 
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
@@ -280,6 +280,58 @@ qboolean GL_CheckForExtension(const char *ext)
 	"machine since it is missing one or more required OpenGL "                             \
 	"extensions. Please update your video card drivers and try again.\n"
 
+static qboolean GLimp_InitOpenGLContext()
+{
+	int GLmajor, GLminor;
+
+	// get vendor
+	Q_strncpyz(glConfig.vendor_string, (char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
+
+	// get renderer
+	Q_strncpyz(glConfig.renderer_string, (char *) qglGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
+	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
+	{
+		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
+	}
+
+	// get GL version
+	Q_strncpyz(glConfig.version_string, (char *) qglGetString(GL_VERSION), sizeof(glConfig.version_string));
+	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
+	glConfig.contextMajorVersion = GLmajor;
+	glConfig.contextMinorVersion = GLminor;
+	glConfig.contextCombined     = (GLmajor * 100) + (GLminor * 10);
+
+	// get shading language version
+	Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig.shadingLanguageVersion));
+	sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
+
+	// display all strings
+	Ren_Print("GL_VENDOR: %s\n", glConfig.vendor_string);
+	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
+	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
+	Ren_Print("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig.shadingLanguageVersion);
+
+#ifdef FEATURE_RENDERER2
+	if (GLmajor < 2)
+	{
+		// missing shader support
+		return qfalse;
+	}
+
+	if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
+	{
+		// shaders are supported, but not all GL3.x features
+		Ren_Print("Using enhanced (GL3) Renderer in GL 2.x mode...\n");
+		return qtrue;
+	}
+
+	Ren_Print("Using enhanced (GL3) Renderer in GL 3.x mode...\n");
+	glConfig.driverType = GLDRV_OPENGL3;
+#endif
+
+	return qtrue;
+}
+
 #ifdef FEATURE_RENDERER2
 
 void GLAPIENTRY Glimp_DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam)
@@ -291,7 +343,7 @@ static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, q
 {
 	qboolean result = qfalse;
 
-	if ((coresince >= 0 && coresince <= glConfig2.contextCombined) || GL_CheckForExtension(ext))
+	if ((coresince >= 0 && coresince <= glConfig.contextCombined) || GL_CheckForExtension(ext))
 	{
 		if (var && var->integer)
 		{
@@ -325,36 +377,6 @@ static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, q
 	}
 
 	return result;
-}
-
-static qboolean GLimp_InitOpenGL3xContext()
-{
-	int GLmajor, GLminor;
-
-	Ren_Print("Renderer: %s Version: %s\n", glGetString(GL_RENDERER), glGetString(GL_VERSION));
-
-	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
-	glConfig2.contextMajorVersion = GLmajor;
-	glConfig2.contextMinorVersion = GLminor;
-	glConfig2.contextCombined     = (GLmajor * 100) + (GLminor * 10);
-
-	if (GLmajor < 2)
-	{
-		// missing shader support, switch to 1.x renderer
-		return qfalse;
-	}
-
-	if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
-	{
-		// shaders are supported, but not all GL3.x features
-		Ren_Print("Using enhanced (GL3) Renderer in GL 2.x mode...\n");
-		return qtrue;
-	}
-
-	Ren_Print("Using enhanced (GL3) Renderer in GL 3.x mode...\n");
-	glConfig.driverType = GLDRV_OPENGL3;
-
-	return qtrue;
 }
 
 static void GLimp_InitExtensionsR2(void)
@@ -549,7 +571,7 @@ static void GLimp_InitExtensionsR2(void)
 #ifdef GL_DEBUG_OUTPUT
 		glEnable(GL_DEBUG_OUTPUT);
 
-		if (410 <= glConfig2.contextCombined)
+		if (410 <= glConfig.contextCombined)
 		{
 			glDebugMessageCallback(Glimp_DebugCallback, NULL);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -943,12 +965,10 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 #endif
 
-#ifdef FEATURE_RENDERER2
-	if (!GLimp_InitOpenGL3xContext())
+	if (!GLimp_InitOpenGLContext())
 	{
 		return RSERR_OLD_GL;
 	}
-#endif
 
 	if (!main_window) //|| !main_renderer)
 	{
@@ -957,8 +977,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 
 	SDL_FreeSurface(icon);
-
-	Ren_Print("GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
 
 	return RSERR_OK;
 }
@@ -1144,22 +1162,10 @@ static void GLimp_InitExtensions(void)
 // FIXME: rework & add latest gfx cards
 void GLimp_SetHardware(void)
 {
-	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
-	{
-		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
-	}
-
-	Q_strncpyz(glConfig.version_string, ( char * ) glGetString(GL_VERSION), sizeof(glConfig.version_string));
-
-	if (glConfig.driverType != GLDRV_OPENGL3)
-	{
-		Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
-	}
-
 	if (Q_stristr(glConfig.renderer_string, "mesa") ||
-	    Q_stristr(glConfig.renderer_string, "gallium") ||
-	    Q_stristr(glConfig.vendor_string, "nouveau") ||
-	    Q_stristr(glConfig.vendor_string, "mesa"))
+	     Q_stristr(glConfig.renderer_string, "gallium") ||
+	     Q_stristr(glConfig.vendor_string, "nouveau") ||
+	     Q_stristr(glConfig.vendor_string, "mesa")))
 	{
 		glConfig.driverType = GLDRV_MESA;
 	}
@@ -1335,19 +1341,12 @@ success:
 	glConfig.deviceSupportsGamma = !r_ignorehwgamma->integer &&
 	                               SDL_SetWindowBrightness(main_window, 1.0f) >= 0;
 
-	// get our config strings
-
-	Q_strncpyz(glConfig.vendor_string, (char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
-	Q_strncpyz(glConfig.renderer_string, (char *) qglGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
-	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
-	{
-		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
-	}
-	Q_strncpyz(glConfig.version_string, (char *) qglGetString(GL_VERSION), sizeof(glConfig.version_string));
+	// Get extension strings
 	if (glConfig.driverType != GLDRV_OPENGL3)
 	{
 		Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
 	}
+
 #ifndef FEATURE_RENDERER_GLES
 	else
 	{

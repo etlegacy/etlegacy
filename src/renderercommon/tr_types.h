@@ -391,10 +391,17 @@ typedef struct
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
+	char shadingLanguageVersion[MAX_STRING_CHARS];
 	char extensions_string[MAX_STRING_CHARS * 4];   // bumping, some cards have a big extension string
 	                                                // - no need to increase MAX_STRING_CHARS *4 - console doesn't print more
 	                                                // ET:L also stores this data in char* to fix extensions_string overflow issues
 	                                                // see end of struct - modern gfx cards have huge extensions string
+	int glslMajorVersion;
+	int glslMinorVersion;
+
+	int contextMajorVersion;
+	int contextMinorVersion;
+	int contextCombined;
 
 	int maxTextureSize;                             // queried from GL
 	int maxActiveTextures;                          // multitexture ability
