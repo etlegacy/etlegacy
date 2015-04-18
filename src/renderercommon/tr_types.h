@@ -433,10 +433,6 @@ typedef struct
 	qboolean isFullscreen;
 	qboolean stereoEnabled;
 	qboolean smpActive;                     // obsolete, kept for compatibility
-
-	// renderer2 BEGIN
-	int numTextureUnits;
-	// renderer2 END
 } glconfig_t;
 
 // =========================================
