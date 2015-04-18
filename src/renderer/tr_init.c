@@ -1072,7 +1072,6 @@ void GfxInfo_f(void)
 	{
 		Ren_Print("Forcing glFinish\n");
 	}
-	Ren_Print("Renderer: vanilla+\n");
 }
 
 /*

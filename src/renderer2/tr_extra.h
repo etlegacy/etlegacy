@@ -87,6 +87,8 @@ typedef struct
 
 	qboolean generateMipmapAvailable;
 
+	int contextCombined;
+
 	int glslMajorVersion;
 	int glslMinorVersion;
 

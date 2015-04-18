@@ -282,7 +282,10 @@ qboolean GL_CheckForExtension(const char *ext)
 
 static qboolean GLimp_InitOpenGLContext()
 {
+
+#ifdef FEATURE_RENDERER2
 	int GLmajor, GLminor;
+#endif
 
 	// get vendor
 	Q_strncpyz(glConfig.vendor_string, (char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
@@ -296,22 +299,23 @@ static qboolean GLimp_InitOpenGLContext()
 
 	// get GL version
 	Q_strncpyz(glConfig.version_string, (char *) qglGetString(GL_VERSION), sizeof(glConfig.version_string));
-	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
-	glConfig.contextMajorVersion = GLmajor;
-	glConfig.contextMinorVersion = GLminor;
-	glConfig.contextCombined     = (GLmajor * 100) + (GLminor * 10);
 
-	// get shading language version
-	Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig.shadingLanguageVersion));
-	sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
-
-	// display all strings
 	Ren_Print("GL_VENDOR: %s\n", glConfig.vendor_string);
 	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
 	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
-	Ren_Print("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig.shadingLanguageVersion);
 
-#ifdef FEATURE_RENDERER2
+#ifndef FEATURE_RENDERER2
+	Ren_Print("Using vanilla renderer\n");
+#else
+	// get shading language version
+	Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig2.shadingLanguageVersion));
+	sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
+	Ren_Print("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig2.shadingLanguageVersion);
+
+	// get GL context version
+	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
+	glConfig2.contextCombined = (GLmajor * 100) + (GLminor * 10);
+
 	if (GLmajor < 2)
 	{
 		// missing shader support
@@ -321,11 +325,11 @@ static qboolean GLimp_InitOpenGLContext()
 	if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
 	{
 		// shaders are supported, but not all GL3.x features
-		Ren_Print("Using enhanced (GL3) Renderer in GL 2.x mode...\n");
+		Ren_Print("Using enhanced renderer in GL 2.x mode\n");
 		return qtrue;
 	}
 
-	Ren_Print("Using enhanced (GL3) Renderer in GL 3.x mode...\n");
+	Ren_Print("Using enhanced renderer in GL 3.x mode\n");
 	glConfig.driverType = GLDRV_OPENGL3;
 #endif
 
@@ -343,7 +347,7 @@ static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, q
 {
 	qboolean result = qfalse;
 
-	if ((coresince >= 0 && coresince <= glConfig.contextCombined) || GL_CheckForExtension(ext))
+	if ((coresince >= 0 && coresince <= glConfig2.contextCombined) || GL_CheckForExtension(ext))
 	{
 		if (var && var->integer)
 		{
@@ -571,7 +575,7 @@ static void GLimp_InitExtensionsR2(void)
 #ifdef GL_DEBUG_OUTPUT
 		glEnable(GL_DEBUG_OUTPUT);
 
-		if (410 <= glConfig.contextCombined)
+		if (410 <= glConfig2.contextCombined)
 		{
 			glDebugMessageCallback(Glimp_DebugCallback, NULL);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
