@@ -4725,6 +4725,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 		{
 			Com_Printf(S_COLOR_RED "FS_Unzip: unable to read first element of file (%s).\n", zipPath);
 		}
+		(void) unzCloseCurrentFile(zipFile);
 		return qfalse;
 	}
 
