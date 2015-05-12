@@ -30,7 +30,10 @@
  */
 /**
  * @file files.c
- * @brief Handle based filesystem for Quake III Arena
+ * @brief Handle based filesystem for ET: Legacy
+ *
+ *        note: this implementation is POSIX only see
+ *        https://www.securecoding.cert.org/confluence/display/c/FIO19-C.+Do+not+use+fseek%28%29+and+ftell%28%29+to+compute+the+size+of+a+regular+file
  */
 
 #include "q_shared.h"
@@ -46,7 +49,7 @@ ET: Legacy (QUAKE3) FILESYSTEM
 
 FIXME: This docu needs an update - the following lines aren't fully valid for ET: Legacy
 
-All of ET: Legacy'S (Quake's) data access is through a hierarchical file system, but the contents of
+All of ET: Legacy's (Quake's) data access is through a hierarchical file system, but the contents of
 the file system can be transparently merged from several sources.
 
 A "qpath" is a reference to game file data.  MAX_ZPATH is 256 characters, which must include
@@ -566,10 +569,16 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 	f = Sys_FOpen(fromOSPath, "rb");
 	if (!f)
 	{
+		Com_Printf(S_COLOR_YELLOW "FS_CopyFile WARNING: cannot open file '%s'\n", fromOSPath);
 		return;
 	}
+
 	fseek(f, 0, SEEK_END);
-	len = ftell(f);
+	len = ftell(f); // on failure, -1L is returned, and errno is set to a system-specific positive value
+	if (len == -1)
+	{
+		Com_Error(ERR_FATAL, "FS_CopyFile: unable to get current position in stream of file '%s'", fromOSPath);
+	}
 	fseek(f, 0, SEEK_SET);
 
 	buf = malloc(len);
@@ -4509,7 +4518,7 @@ void FS_Restart(int checksumFeed)
 				if (!Com_CheckProfile())
 				{
 #ifndef LEGACY_DEBUG
-					Com_Printf("^3WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
+					Com_Printf(S_COLOR_YELLOW "WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
 					// set crashed state
 					Cbuf_AddText("set com_crashed 1\n");
 #endif
@@ -4518,7 +4527,7 @@ void FS_Restart(int checksumFeed)
 				// write a new one
 				if (!Sys_WritePIDFile())
 				{
-					Com_Printf("^3WARNING: couldn't write %s\n", com_pidfile->string);
+					Com_Printf(S_COLOR_YELLOW "WARNING: couldn't write %s\n", com_pidfile->string);
 				}
 
 				// exec the config
@@ -4616,6 +4625,12 @@ int FS_FTell(fileHandle_t f)
 	else
 	{
 		pos = ftell(fsh[f].handleFiles.file.o);
+
+		if (pos == -1)
+		{
+			// FIXME: change to com error?
+			Com_Printf(S_COLOR_YELLOW "FS_FTell WARNING: cannot get current position in stream\n");
+		}
 	}
 
 	return pos;
@@ -4685,6 +4700,8 @@ qboolean FS_VerifyPak(const char *pak)
 * @param[in] quiet whether to inform if unzipping fails
 * @retval qtrue    if successfully extracted
 * @retval qfalse   if extraction failed
+*
+* @todo fix closing zip files and zip file itself when errors occure
 */
 qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 {
@@ -4725,7 +4742,8 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 		{
 			Com_Printf(S_COLOR_RED "FS_Unzip: unable to read first element of file (%s).\n", zipPath);
 		}
-		(void) unzCloseCurrentFile(zipFile);
+		//(void) unzCloseCurrentFile(zipFile); // test this and close our zip file(s) properly
+		//(void) unzClose(zipFile);
 		return qfalse;
 	}
 
@@ -4750,6 +4768,8 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 			if (FS_CreatePath(newFilePath))
 			{
 				Com_Printf(S_COLOR_RED "ERROR: Unable to create directory (%s).\n", newFilePath);
+				//(void) unzCloseCurrentFile(zipFile);
+				//(void) unzClose(zipFile);
 				return qfalse;
 			}
 		}
@@ -4808,11 +4828,13 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 			fclose(newFile);
 
 			(void) unzCloseCurrentFile(zipFile);
+			//(void) unzClose(zipFile);
 		}
 
 		err = unzGoToNextFile(zipFile);
 		if (err)
 		{
+			Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file\n");
 			break;
 		}
 	}
