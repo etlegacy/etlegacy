@@ -426,7 +426,7 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 		ri.FS_FreeFile(faceData);
 		return qtrue;
 	}
-	else
+	else if (len != -1)
 	{
 		Ren_Warning("R_LoadPreRenderedFont: font file %s is in an incompatible format.\n", datName);
 	}
