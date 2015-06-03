@@ -426,9 +426,13 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 		ri.FS_FreeFile(faceData);
 		return qtrue;
 	}
-	else if (len != -1)
+	else if (len == -1)
 	{
-		Ren_Warning("R_LoadPreRenderedFont: font file %s is in an incompatible format.\n", datName);
+		Ren_Warning("R_LoadPreRenderedFont: font file '%s' was not found.\n", datName);
+	}
+	else
+	{
+		Ren_Warning("R_LoadPreRenderedFont: font file '%s' is in an incompatible format.\n", datName);
 	}
 
 	return qfalse;
@@ -705,8 +709,6 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font)
 	{
 		return qtrue;
 	}
-
-	Ren_Warning("R_GetFont: no font available.\n");
 
 	return qfalse;
 }
