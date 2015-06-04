@@ -1089,6 +1089,14 @@ static void CG_DrawGunIcon(rectDef_t location)
 
 	// Draw weapon icon and overheat bar
 	CG_DrawWeapHeat(&rect, HUD_HORIZONTAL);
+
+	// drawn the common white icon, usage of mounted weapons don't change cg.snap->ps.weapon for real
+	if (BG_PlayerMounted(cg.snap->ps.eFlags))
+	{
+		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
+		return;
+	}
+
 	if (
 #if FEATURE_MULTIVIEW
 	    cg.mvTotalClients < 1 &&
