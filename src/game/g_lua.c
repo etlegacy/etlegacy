@@ -93,7 +93,7 @@ static int _et_FindSelf(lua_State *L)
  */
 static int _et_FindMod(lua_State *L)
 {
-	int      vmnumber = luaL_checkint(L, 1);
+	int      vmnumber = (int)luaL_checkinteger(L, 1);
 	lua_vm_t *vm      = lVM[vmnumber];
 
 	if (vm)
@@ -112,7 +112,7 @@ static int _et_FindMod(lua_State *L)
 // success = et.IPCSend( vmnumber, message )
 static int _et_IPCSend(lua_State *L)
 {
-	int        vmnumber = luaL_checkint(L, 1);
+	int        vmnumber = (int)luaL_checkinteger(L, 1);
 	const char *message = luaL_checkstring(L, 2);
 
 	lua_vm_t *sender = G_LuaGetVM(L);
@@ -205,7 +205,7 @@ static int _et_G_LogPrint(lua_State *L)
 // args = et.ConcatArgs( index )
 static int _et_ConcatArgs(lua_State *L)
 {
-	int index = luaL_checkint(L, 1);
+	int index = (int)luaL_checkinteger(L, 1);
 
 	lua_pushstring(L, ConcatArgs(index));
 	return 1;
@@ -222,7 +222,7 @@ static int _et_trap_Argc(lua_State *L)
 static int _et_trap_Argv(lua_State *L)
 {
 	char buff[MAX_STRING_CHARS];
-	int  argnum = luaL_checkint(L, 1);
+	int  argnum = (int)luaL_checkinteger(L, 1);
 
 	trap_Argv(argnum, buff, sizeof(buff));
 	lua_pushstring(L, buff);
@@ -257,9 +257,9 @@ static int _et_trap_Cvar_Set(lua_State *L)
 // duration is in seconds.
 static int _et_MutePlayer(lua_State *L)
 {
-	int        clientnum = luaL_checkint(L, 1);
+	int        clientnum = (int)luaL_checkinteger(L, 1);
 	gentity_t  *ent      = g_entities + clientnum;
-	int        duration  = luaL_checkint(L, 2);
+	int        duration  = (int)luaL_checkinteger(L, 2);
 	const char *reason   = luaL_optstring(L, 3, NULL);
 
 	if (!ent->client)
@@ -304,7 +304,7 @@ static int _et_MutePlayer(lua_State *L)
 // added the output messages.
 static int _et_UnmutePlayer(lua_State *L)
 {
-	int       clientnum = luaL_checkint(L, 1);
+	int       clientnum = (int)luaL_checkinteger(L, 1);
 	gentity_t *ent      = g_entities + clientnum;
 
 	if (!ent->client)
@@ -325,7 +325,7 @@ static int _et_UnmutePlayer(lua_State *L)
 static int _et_trap_GetConfigstring(lua_State *L)
 {
 	char buff[MAX_STRING_CHARS];
-	int  index = luaL_checkint(L, 1);
+	int  index = (int)luaL_checkinteger(L, 1);
 
 	trap_GetConfigstring(index, buff, sizeof(buff));
 	lua_pushstring(L, buff);
@@ -335,7 +335,7 @@ static int _et_trap_GetConfigstring(lua_State *L)
 // et.trap_SetConfigstring( index, configstringvalue )
 static int _et_trap_SetConfigstring(lua_State *L)
 {
-	int        index = luaL_checkint(L, 1);
+	int        index = (int)luaL_checkinteger(L, 1);
 	const char *csv  = luaL_checkstring(L, 2);
 
 	trap_SetConfigstring(index, csv);
@@ -346,7 +346,7 @@ static int _et_trap_SetConfigstring(lua_State *L)
 // et.trap_SendConsoleCommand( when, command )
 static int _et_trap_SendConsoleCommand(lua_State *L)
 {
-	int        when = luaL_checkint(L, 1);
+	int        when = (int)luaL_checkinteger(L, 1);
 	const char *cmd = luaL_checkstring(L, 2);
 
 	trap_SendConsoleCommand(when, cmd);
@@ -357,7 +357,7 @@ static int _et_trap_SendConsoleCommand(lua_State *L)
 // et.trap_DropClient( clientnum, reason, ban_time )
 static int _et_trap_DropClient(lua_State *L)
 {
-	int        clientnum = luaL_checkint(L, 1);
+	int        clientnum = (int)luaL_checkinteger(L, 1);
 	const char *reason   = luaL_checkstring(L, 2);
 	int        ban       = trap_Cvar_VariableIntegerValue("g_defaultBanTime"); // FIXME: 3d add param int for ban time
 
@@ -369,7 +369,7 @@ static int _et_trap_DropClient(lua_State *L)
 // et.trap_SendServerCommand( clientnum, command )
 static int _et_trap_SendServerCommand(lua_State *L)
 {
-	int        clientnum = luaL_checkint(L, 1);
+	int        clientnum = (int)luaL_checkinteger(L, 1);
 	const char *cmd      = luaL_checkstring(L, 2);
 
 	trap_SendServerCommand(clientnum, cmd);
@@ -379,8 +379,8 @@ static int _et_trap_SendServerCommand(lua_State *L)
 // et.G_Say( clientNum, mode, text )
 static int _et_G_Say(lua_State *L)
 {
-	int        clientnum = luaL_checkint(L, 1);
-	int        mode      = luaL_checkint(L, 2);
+	int        clientnum = (int)luaL_checkinteger(L, 1);
+	int        mode      = (int)luaL_checkinteger(L, 2);
 	const char *text     = luaL_checkstring(L, 3);
 
 	G_Say(g_entities + clientnum, NULL, mode, text);
@@ -390,7 +390,7 @@ static int _et_G_Say(lua_State *L)
 // et.ClientUserinfoChanged( clientNum )
 static int _et_ClientUserinfoChanged(lua_State *L)
 {
-	int clientnum = luaL_checkint(L, 1);
+	int clientnum = (int)luaL_checkinteger(L, 1);
 
 	ClientUserinfoChanged(clientnum);
 	return 0;
@@ -424,8 +424,8 @@ static int _et_ClientNumberFromString(lua_State *L)
 // if bit 'bit' is set in 'value', true is returned, else false
 static int _et_isBitSet(lua_State *L)
 {
-	int b = luaL_checkint(L, 1);
-	int v = luaL_checkint(L, 2);
+	int b = (int)luaL_checkinteger(L, 1);
+	int v = (int)luaL_checkinteger(L, 2);
 
 	if (v & b)
 	{
@@ -443,7 +443,7 @@ static int _et_isBitSet(lua_State *L)
 static int _et_trap_GetUserinfo(lua_State *L)
 {
 	char buff[MAX_STRING_CHARS];
-	int  clientnum = luaL_checkint(L, 1);
+	int  clientnum = (int)luaL_checkinteger(L, 1);
 
 	trap_GetUserinfo(clientnum, buff, sizeof(buff));
 	lua_pushstring(L, buff);
@@ -453,7 +453,7 @@ static int _et_trap_GetUserinfo(lua_State *L)
 // et.trap_SetUserinfo( clientnum, userinfo )
 static int _et_trap_SetUserinfo(lua_State *L)
 {
-	int        clientnum = luaL_checkint(L, 1);
+	int        clientnum = (int)luaL_checkinteger(L, 1);
 	const char *userinfo = luaL_checkstring(L, 2);
 
 	trap_SetUserinfo(clientnum, userinfo);
@@ -542,7 +542,7 @@ static int _et_trap_FS_FOpenFile(lua_State *L)
 	fileHandle_t fd;
 	int          len;
 	const char   *filename = luaL_checkstring(L, 1);
-	int          mode      = luaL_checkint(L, 2);
+	int          mode      = (int)luaL_checkinteger(L, 2);
 
 	len = trap_FS_FOpenFile(filename, &fd, mode);
 	lua_pushinteger(L, fd);
@@ -554,8 +554,8 @@ static int _et_trap_FS_FOpenFile(lua_State *L)
 static int _et_trap_FS_Read(lua_State *L)
 {
 	char         *filedata = "";
-	fileHandle_t fd        = luaL_checkint(L, 1);
-	int          count     = luaL_checkint(L, 2);
+	fileHandle_t fd        = (int)luaL_checkinteger(L, 1);
+	int          count     = (int)luaL_checkinteger(L, 2);
 
 	filedata = malloc(count + 1);
 
@@ -576,9 +576,9 @@ static int _et_trap_FS_Read(lua_State *L)
 static int _et_trap_FS_Write(lua_State *L)
 {
 	const char *filedata = luaL_checkstring(L, 1);
-	int        count     = luaL_checkint(L, 2);
+	int        count     = (int)luaL_checkinteger(L, 2);
 
-	fileHandle_t fd = luaL_checkint(L, 3);
+	fileHandle_t fd = (int)luaL_checkinteger(L, 3);
 	lua_pushinteger(L, trap_FS_Write(filedata, count, fd));
 	return 1;
 }
@@ -596,7 +596,7 @@ static int _et_trap_FS_Rename(lua_State *L)
 // et.trap_FS_FCloseFile( fd )
 static int _et_trap_FS_FCloseFile(lua_State *L)
 {
-	fileHandle_t fd = luaL_checkint(L, 1);
+	fileHandle_t fd = (int)luaL_checkinteger(L, 1);
 	trap_FS_FCloseFile(fd);
 	return 0;
 }
@@ -633,8 +633,8 @@ static int _et_G_globalSound(lua_State *L)
 // et.G_Sound( entnum, soundindex )
 static int _et_G_Sound(lua_State *L)
 {
-	int entnum     = luaL_checkint(L, 1);
-	int soundindex = luaL_checkint(L, 2);
+	int entnum     = (int)luaL_checkinteger(L, 1);
+	int soundindex = (int)luaL_checkinteger(L, 2);
 
 	G_Sound(g_entities + entnum, soundindex);
 	return 0;
@@ -643,8 +643,8 @@ static int _et_G_Sound(lua_State *L)
 // et.G_ClientSound( clientnum, soundindex )
 static int _et_G_ClientSound(lua_State *L)
 {
-	int clientnum  = luaL_checkint(L, 1);
-	int soundindex = luaL_checkint(L, 2);
+	int clientnum  = (int)luaL_checkinteger(L, 1);
+	int soundindex = (int)luaL_checkinteger(L, 2);
 
 	G_ClientSound(g_entities + clientnum, soundindex);
 	return 0;
@@ -661,12 +661,12 @@ static int _et_trap_Milliseconds(lua_State *L)
 // et.G_Damage( target, inflictor, attacker, damage, dflags, mod )
 static int _et_G_Damage(lua_State *L)
 {
-	int target    = luaL_checkint(L, 1);
-	int inflictor = luaL_checkint(L, 2);
-	int attacker  = luaL_checkint(L, 3);
-	int damage    = luaL_checkint(L, 4);
-	int dflags    = luaL_checkint(L, 5);
-	int mod       = luaL_checkint(L, 6);
+	int target    = (int)luaL_checkinteger(L, 1);
+	int inflictor = (int)luaL_checkinteger(L, 2);
+	int attacker  = (int)luaL_checkinteger(L, 3);
+	int damage    = (int)luaL_checkinteger(L, 4);
+	int dflags    = (int)luaL_checkinteger(L, 5);
+	int mod       = (int)luaL_checkinteger(L, 6);
 
 	G_Damage(g_entities + target,
 	         g_entities + inflictor,
@@ -683,8 +683,8 @@ static int _et_G_Damage(lua_State *L)
 // et.G_AddSkillPoints( ent, skill, points )
 static int _et_G_AddSkillPoints(lua_State *L)
 {
-	gentity_t *ent   = g_entities + luaL_checkint(L, 1);
-	int       skill  = luaL_checkint(L, 2);
+	gentity_t *ent   = g_entities + (int)luaL_checkinteger(L, 1);
+	int       skill  = (int)luaL_checkinteger(L, 2);
 	float     points = luaL_checknumber(L, 3);
 
 	G_AddSkillPoints(ent, skill, points);
@@ -694,8 +694,8 @@ static int _et_G_AddSkillPoints(lua_State *L)
 // et.G_LoseSkillPoints( ent, skill, points )
 static int _et_G_LoseSkillPoints(lua_State *L)
 {
-	gentity_t *ent   = g_entities + luaL_checkint(L, 1);
-	int       skill  = luaL_checkint(L, 2);
+	gentity_t *ent   = g_entities + (int)luaL_checkinteger(L, 1);
+	int       skill  = (int)luaL_checkinteger(L, 2);
 	float     points = luaL_checknumber(L, 3);
 
 	G_LoseSkillPoints(ent, skill, points);
@@ -1096,7 +1096,7 @@ static int _et_G_Spawn(lua_State *L)
 static int _et_G_TempEntity(lua_State *L)
 {
 	vec3_t origin;
-	int    event = luaL_checkint(L, 2);
+	int    event = (int)luaL_checkinteger(L, 2);
 
 	lua_pop(L, 1);
 	_et_gentity_setvec3(L, &origin);
@@ -1107,7 +1107,7 @@ static int _et_G_TempEntity(lua_State *L)
 // et.G_FreeEntity( entnum )
 static int _et_G_FreeEntity(lua_State *L)
 {
-	int entnum = luaL_checkint(L, 1);
+	int entnum = (int)luaL_checkinteger(L, 1);
 
 	G_FreeEntity(g_entities + entnum);
 	// a succesful LUA function has to return 1
@@ -1137,7 +1137,7 @@ static int _et_G_EntitiesFree(lua_State *L)
 static int _et_G_GetSpawnVar(lua_State *L)
 {
 	gentity_t   *ent;
-	int         entnum = luaL_checkint(L, 1);
+	int         entnum = (int)luaL_checkinteger(L, 1);
 	const char  *key   = luaL_checkstring(L, 2);
 	int         index  = GetFieldIndex((char *)key);
 	fieldtype_t type   = GetFieldType((char *)key);
@@ -1221,7 +1221,7 @@ static int _et_G_GetSpawnVar(lua_State *L)
 static int _et_G_SetSpawnVar(lua_State *L)
 {
 	gentity_t   *ent;
-	int         entnum = luaL_checkint(L, 1);
+	int         entnum = (int)luaL_checkinteger(L, 1);
 	const char  *key   = luaL_checkstring(L, 2);
 	int         index  = GetFieldIndex((char *)key);
 	fieldtype_t type   = GetFieldType((char *)key);
@@ -1255,7 +1255,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 	switch (type)
 	{
 	case F_INT:
-		*(int *) ((byte *)ent + ofs) = luaL_checkint(L, 3);
+		*(int *) ((byte *)ent + ofs) = (int)luaL_checkinteger(L, 3);
 		return 1;
 	case F_FLOAT:
 		*(float *) ((byte *)ent + ofs) = (float)luaL_checknumber(L, 3);
@@ -1280,7 +1280,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 		return 1;
 	case F_ENTITY:
 		// pointer-fields are read-only..
-		//*(gentity_t **)((byte *)ent + ofs) = g_entities + luaL_checkint(L, 3);
+		//*(gentity_t **)((byte *)ent + ofs) = g_entities + (int)luaL_checkinteger(L, 3);
 		return 0;
 	case F_ITEM:
 	case F_CLIENT:
@@ -1299,7 +1299,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 // et.trap_LinkEntity( entnum )
 static int _et_trap_LinkEntity(lua_State *L)
 {
-	int entnum = luaL_checkint(L, 1);
+	int entnum = (int)luaL_checkinteger(L, 1);
 
 	trap_LinkEntity(g_entities + entnum);
 	return 0;
@@ -1308,7 +1308,7 @@ static int _et_trap_LinkEntity(lua_State *L)
 // et.trap_UnlinkEntity( entnum )
 static int _et_trap_UnlinkEntity(lua_State *L)
 {
-	int entnum = luaL_checkint(L, 1);
+	int entnum = (int)luaL_checkinteger(L, 1);
 
 	trap_UnlinkEntity(g_entities + entnum);
 	return 0;
@@ -1317,7 +1317,7 @@ static int _et_trap_UnlinkEntity(lua_State *L)
 // (variable) = et.gentity_get( entnum, fieldname, arrayindex )
 static int _et_gentity_get(lua_State *L)
 {
-	gentity_t       *ent       = g_entities + luaL_checkint(L, 1);
+	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
 	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
 	unsigned long   addr;
@@ -1403,7 +1403,7 @@ static int _et_gentity_get(lua_State *L)
 // et.gentity_set( entnum, fieldname, arrayindex, (value) )
 static int _et_gentity_set(lua_State *L)
 {
-	gentity_t       *ent       = g_entities + luaL_checkint(L, 1);
+	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
 	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
 	unsigned long   addr;
@@ -1444,7 +1444,7 @@ static int _et_gentity_set(lua_State *L)
 	switch (field->type)
 	{
 	case FIELD_INT:
-		*(int *)addr = luaL_checkint(L, 3);
+		*(int *)addr = (int)luaL_checkinteger(L, 3);
 		break;
 	case FIELD_STRING:
 		buffer = luaL_checkstring(L, 3);
@@ -1469,13 +1469,13 @@ static int _et_gentity_set(lua_State *L)
 		_et_gentity_setvec3(L, (vec3_t *)addr);
 		break;
 	case FIELD_INT_ARRAY:
-		*(int *)(addr + (sizeof(int) * luaL_checkint(L, 3))) = luaL_checkint(L, 4);
+		*(int *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, 3))) = (int)luaL_checkinteger(L, 4);
 		break;
 	case FIELD_TRAJECTORY:
 		_et_gentity_settrajectory(L, (trajectory_t *)addr);
 		break;
 	case FIELD_FLOAT_ARRAY:
-		*(float *)(addr + (sizeof(int) * luaL_checkint(L, 3))) = luaL_checknumber(L, 4);
+		*(float *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, 3))) = luaL_checknumber(L, 4);
 		return 1;
 	}
 	return 0;
@@ -1484,9 +1484,9 @@ static int _et_gentity_set(lua_State *L)
 // et.G_AddEvent( ent, event, eventparm )
 static int _et_G_AddEvent(lua_State *L)
 {
-	int ent       = luaL_checkint(L, 1);
-	int event     = luaL_checkint(L, 2);
-	int eventparm = luaL_checkint(L, 3);
+	int ent       = (int)luaL_checkinteger(L, 1);
+	int event     = (int)luaL_checkinteger(L, 2);
+	int eventparm = (int)luaL_checkinteger(L, 3);
 	G_AddEvent(g_entities + ent, event, eventparm);
 	return 0;
 }
@@ -1497,10 +1497,10 @@ static int _et_G_AddEvent(lua_State *L)
 static int _et_G_XP_Set(lua_State *L)
 {
 	gentity_t *ent      = NULL;
-	int       clientNum = luaL_checkint(L, 1);
-	int       xp        = luaL_checkint(L, 2);
-	int       skill     = luaL_checkint(L, 3);
-	int       add       = luaL_checkint(L, 4); // 'add' just checks to be 0 or not to be 0
+	int       clientNum = (int)luaL_checkinteger(L, 1);
+	int       xp        = (int)luaL_checkinteger(L, 2);
+	int       skill     = (int)luaL_checkinteger(L, 3);
+	int       add       = (int)luaL_checkinteger(L, 4); // 'add' just checks to be 0 or not to be 0
 
 	ent = &g_entities[clientNum];
 
