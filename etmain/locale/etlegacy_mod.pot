@@ -5351,3 +5351,179 @@ msgstr ""
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
 msgstr ""
+
+#: src/cgame/cg_predict.c:641
+msgid "You are near"
+msgstr ""
+
+msgid "joined the Axis team\n"
+msgstr ""
+
+msgid "joined the Allies team\n"
+msgstr ""
+
+msgid "entered the game\n"
+msgstr ""
+
+msgid "rediscovered gravity"
+msgstr ""
+
+msgid "was crushed"
+msgstr ""
+
+msgid "drowned"
+msgstr ""
+
+msgid "slagged"
+msgstr ""
+
+msgid "was killed"
+msgstr ""
+
+msgid "got buried under a pile of rubble"
+msgstr ""
+
+msgid "was incinerated"
+msgstr ""
+
+msgid "had an appointment with the map mortar"
+msgstr ""
+
+msgid "took a map mortar shell shower"
+msgstr ""
+
+msgid "was pulverized by an explosion"
+msgstr ""
+
+msgid "dynamited himself to pieces"
+msgstr ""
+
+msgid "dove on his own grenade"
+msgstr ""
+
+msgid "vaporized himself"
+msgstr ""
+
+msgid "played with fire"
+msgstr ""
+
+msgid "obliterated himself"
+msgstr ""
+
+msgid "fired-for-effect on himself"
+msgstr ""
+
+msgid "died in his own explosion"
+msgstr ""
+
+msgid "ate his own rifle grenade"
+msgstr ""
+
+msgid "failed to spot his own landmine"
+msgstr ""
+
+msgid "embraced his own satchel explosion"
+msgstr ""
+
+msgid "engineered himself into oblivion"
+msgstr ""
+
+msgid "buried himself alive"
+msgstr ""
+
+msgid "never saw his own mortar round coming"
+msgstr ""
+
+msgid "danced on his airstrike marker"
+msgstr ""
+
+msgid "committed suicide"
+msgstr ""
+
+msgid "killed himself"
+msgstr ""
+
+msgid "Improved use of Explosive Ammunition"
+msgstr ""
+
+msgid "Improved Dexterity"
+msgstr ""
+
+msgid "Binoculars for any Class"
+msgstr ""
+
+msgid "Medic Ammo"
+msgstr ""
+
+msgid "Improved Resources"
+msgstr ""
+
+msgid "Improved use of Light Weapon Ammunition"
+msgstr ""
+
+msgid "Improved Projectile Resources"
+msgstr ""
+
+msgid "Improved use of Scoped Weapon Ammunition"
+msgstr ""
+
+msgid "Improved Physical Fitness"
+msgstr ""
+
+msgid "Improved Resources"
+msgstr ""
+
+msgid "Improved Signals"
+msgstr ""
+
+msgid "Faster Reload"
+msgstr ""
+
+msgid "Heavy Weapon Proficiency"
+msgstr ""
+
+msgid "Improved use of Sabotage and Misdirection"
+msgstr ""
+
+msgid "Improved Health"
+msgstr ""
+
+msgid "Improved Construction and Destruction"
+msgstr ""
+
+msgid "Full Revive"
+msgstr ""
+
+msgid "Improved Air and Ground Support"
+msgstr ""
+
+msgid "Improved Light Weapon Handling"
+msgstr ""
+
+msgid "Breath Control"
+msgstr ""
+
+msgid "Trap Awareness"
+msgstr ""
+
+msgid "a Flak Jacket"
+msgstr ""
+
+msgid "Adrenalin Self"
+msgstr ""
+
+msgid "Enemy Recognition"
+msgstr ""
+
+msgid "Dual-Wield Pistols"
+msgstr ""
+
+msgid "Improved Weapon Handling"
+msgstr ""
+
+msgid "Assassin"
+msgstr ""
+
+#: src/cgame/cg_consolecmds:1233
+msgid "You will spawn as an %s %s with a %s and %s."
+msgstr ""

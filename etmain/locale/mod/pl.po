@@ -5356,3 +5356,176 @@ msgstr "Brak ulubionych serwerów."
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
 msgstr "Wszystkie ulubione serwery usunięte."
+
+#: src/cgame/cg_predict.c:641
+msgid "You are near"
+msgstr "Jesteś blisko"
+
+msgid "joined the Axis team\n"
+msgstr "dołączył do zespołu Osi\n"
+
+msgid "joined the Allies team\n"
+msgstr "dołączył do zespołu Aliantów\n"
+
+msgid "entered the game\n"
+msgstr "wszedł do gry\n"
+
+msgid "rediscovered gravity"
+msgstr "odkrył grawitacje"
+
+msgid "was crushed"
+msgstr "został zmiażdżony"
+
+msgid "drowned"
+msgstr "utopił się"
+
+msgid "slagged"
+msgstr ""
+
+msgid "was killed"
+msgstr "został zabity"
+
+msgid "got buried under a pile of rubble"
+msgstr "został pochowany pod stertą gruzu"
+
+msgid "was incinerated"
+msgstr "został spalony"
+
+msgid "had an appointment with the map mortar"
+msgstr "miał spotkanie z mortarem"
+
+msgid "took a map mortar shell shower"
+msgstr "wziął prysznić z naboi mortara"
+
+msgid "was pulverized by an explosion"
+msgstr "został starty na proch przez wybuch"
+
+msgid "dynamited himself to pieces"
+msgstr "rozwalił samego siebie na kawałki"
+
+msgid "dove on his own grenade"
+msgstr "zanurkował na własny granat"
+
+msgid "vaporized himself"
+msgstr "zniszczył samego siebie"
+
+msgid "played with fire"
+msgstr "bawił się ogniem"
+
+msgid "obliterated himself"
+msgstr "Ostrzelał samego siebie"
+
+msgid "fired-for-effect on himself"
+msgstr "zestrzelony na własną prośbę"
+
+msgid "died in his own explosion"
+msgstr "zginął we własnej eksplozjii"
+
+msgid "ate his own rifle grenade"
+msgstr "zjadł własnego granata od rifli"
+
+msgid "failed to spot his own landmine"
+msgstr "niezauwazył własnej miny"
+
+msgid "embraced his own satchel explosion"
+msgstr "został wysadzony przez ładunek"
+
+msgid "engineered himself into oblivion"
+msgstr ""
+
+msgid "buried himself alive"
+msgstr "pochował się żywcem"
+
+msgid "never saw his own mortar round coming"
+msgstr "nigdy nie widział lecącego własnego pocisku mortara"
+
+msgid "danced on his airstrike marker"
+msgstr "tańczył na swoim znaczniku od nalotu"
+
+msgid "committed suicide"
+msgstr "wykonał samobójstwo"
+
+msgid "killed himself"
+msgstr "zabił samego siebie"
+
+msgid "Improved use of Explosive Ammunition"
+msgstr "Lepszym użyciem Amunicji Wybuchowej"
+
+msgid "Improved Dexterity"
+msgstr "Lepszą Zręcznością"
+
+msgid "Binoculars for any Class"
+msgstr "Lornetkami dla każdej Klasy"
+
+msgid "Medic Ammo"
+msgstr "Amunicja Medyka"
+
+msgid "Improved Resources"
+msgstr "Ulepszonymi Zasobami"
+
+msgid "Improved use of Light Weapon Ammunition"
+msgstr "Lepszym użyciem Amunicji do Bronii Lekkiej"
+
+msgid "Improved Projectile Resources"
+msgstr "Lepszym Zasobem Pociskow"
+
+msgid "Improved use of Scoped Weapon Ammunition"
+msgstr "Lepszym uzyciem Amunicji do Snajperki"
+
+msgid "Improved Physical Fitness"
+msgstr "Poprawną Sprawnością Fizyczną"
+
+msgid "Improved Signals"
+msgstr "Ulepszonymi Sygnałami"
+
+msgid "Faster Reload"
+msgstr "Szybszym Przeładowaniem"
+
+msgid "Heavy Weapon Proficiency"
+msgstr "Bieglością Obsługi Ciężkiej Bronii"
+
+msgid "Improved use of Sabotage and Misdirection"
+msgstr "Lepszym użyciem Sabotażu i Odwrócenia Uwagi"
+
+msgid "Improved Health"
+msgstr "Ulepszonym Życiem"
+
+msgid "Improved Construction and Destruction"
+msgstr "Ulepszonym Budowaniem i Niszczeniem"
+
+msgid "Full Revive"
+msgstr "Pełnym Ożywieniem"
+
+msgid "Improved Air and Ground Support"
+msgstr "Lepszymi Nalotami i Wsparciem Naziemnym"
+
+msgid "Improved Light Weapon Handling"
+msgstr "Lepszą Obsługą Bronii Lekkiej"
+
+msgid "Breath Control"
+msgstr "Kontrolą Oddechu"
+
+msgid "Trap Awareness"
+msgstr "Wykrywaniem Pułapek"
+
+msgid "a Flak Jacket"
+msgstr "Kamizelką Kuloodporną"
+
+msgid "Adrenalin Self"
+msgstr "Wlasną Adrelaniną"
+
+msgid "Enemy Recognition"
+msgstr "Rozpoznaniem Wroga"
+
+msgid "Dual-Wield Pistols"
+msgstr "Podwojnymi Pistoletami"
+
+msgid "Improved Weapon Handling"
+msgstr "Ulepszoną Obslugą Bronii"
+
+msgid "Assassin"
+msgstr "Zabójstwem"
+
+#: src/cgame/cg_consolecmds:1233
+msgid "You will spawn as an %s %s with a %s and %s."
+msgstr "Zrespawnujesz się jako %s %s z %s i %s."
