@@ -5527,3 +5527,372 @@ msgstr ""
 #: src/cgame/cg_consolecmds:1233
 msgid "You will spawn as an %s %s with a %s and %s."
 msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:85
+msgid "^1THE TEAM"
+msgstr ""
+
+msgid "Axis team"
+msgstr ""
+
+msgid "Allied team"
+msgstr ""
+
+msgid "Spectators"
+msgstr ""
+
+msgid "You must be a player or following a player to use +stats\n"
+msgstr ""
+
+msgid "^9You must be alive to use ^3/kill."
+msgstr ""
+
+msgid "No vote in progress.\n"
+msgstr ""
+
+msgid "No or bad challenge for address.\n"
+msgstr ""
+
+msgid "Match is already in progress!\n"
+msgstr ""
+
+msgid "^1** Referee Server Setting Change **\n"
+msgstr ""
+
+msgid "Your fireteam is now public"
+msgstr ""
+
+msgid "Your fireteam is now private"
+msgstr ""
+
+msgid "The Allies have too many players.\n"
+msgstr ""
+
+msgid "The Axis has too many players.\n"
+msgstr ""
+
+msgid "Attack!"
+msgstr ""
+
+msgid "Fall back!"
+msgstr ""
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting..."
+msgstr ""
+
+msgid "Path cleared."
+msgstr ""
+
+msgid "The enemy is weakened."
+msgstr ""
+
+msgid "All clear."
+msgstr ""
+
+msgid "Incoming!"
+msgstr ""
+
+msgid "Fire in the hole!"
+msgstr ""
+
+msgid "I'm on defense."
+msgstr ""
+
+msgid "I'm on offense."
+msgstr ""
+
+msgid "Taking fire!"
+msgstr ""
+
+msgid "Mines cleared."
+msgstr ""
+
+msgid "Enemy in disguise."
+msgstr ""
+
+msgid "Need a Medic!"
+msgstr ""
+
+msgid "I need ammo!"
+msgstr ""
+
+msgid "I need backup!"
+msgstr ""
+
+msgid "We need an engineer!"
+msgstr ""
+
+msgid "Cover me!"
+msgstr ""
+
+msgid "Hold your fire!"
+msgstr ""
+
+msgid "Where to?"
+msgstr ""
+
+msgid "We need Covert Ops!"
+msgstr ""
+
+msgid "Follow me!"
+msgstr ""
+
+msgid "Let's go!"
+msgstr ""
+
+msgid "Move!"
+msgstr ""
+
+msgid "Clear the path!"
+msgstr ""
+
+msgid "Defend our objective!"
+msgstr ""
+
+msgid "Disarm the dynamite!"
+msgstr ""
+
+msgid "Clear the mines!"
+msgstr ""
+
+msgid "Reinforce the offense!"
+msgstr ""
+
+msgid "Reinforce the defense!"
+msgstr ""
+
+msgid "Affirmative!"
+msgstr ""
+
+msgid "No!"
+msgstr ""
+
+msgid "Thank you!"
+msgstr ""
+
+msgid "You're welcome."
+msgstr ""
+
+msgid "Bitte sehr."
+msgstr ""
+
+msgid "Ja!"
+msgstr ""
+
+msgid "Nein!"
+msgstr ""
+
+msgid "Kein problem."
+msgstr ""
+
+msgid "Sorry!"
+msgstr ""
+
+msgid "Oops!"
+msgstr ""
+
+msgid "Yes!"
+msgstr ""
+
+msgid "Jawohl!"
+msgstr ""
+
+msgid "Negative!"
+msgstr ""
+
+msgid "Hi!"
+msgstr ""
+
+msgid "Hello!"
+msgstr ""
+
+msgid "Hallo!"
+msgstr ""
+
+msgid "Good bye."
+msgstr ""
+
+msgid "Auf wiedersehen."
+msgstr ""
+
+msgid "Bye."
+msgstr ""
+
+msgid "Great shot!"
+msgstr ""
+
+msgid "You got it, man!"
+msgstr ""
+
+msgid "Yeah!"
+msgstr ""
+
+msgid "Yoohoo!"
+msgstr ""
+
+msgid "Hahaa!"
+msgstr ""
+
+msgid "Alright!"
+msgstr ""
+
+msgid "Woo!"
+msgstr ""
+
+msgid "Yeehaa!"
+msgstr ""
+
+msgid "'Atta way, baby!"
+msgstr ""
+
+msgid "Jahaa!"
+msgstr ""
+
+msgid "Wunderbar!"
+msgstr ""
+
+msgid "Excellent!"
+msgstr ""
+
+msgid "Oh yes!"
+msgstr ""
+
+msgid "Sehr gut!"
+msgstr ""
+
+msgid "Thanks!"
+msgstr ""
+
+msgid "Danke!"
+msgstr ""
+
+msgid "Danke sehr!"
+msgstr ""
+
+msgid "No problem."
+msgstr ""
+
+msgid "Good game!"
+msgstr ""
+
+msgid "Command acknowledged!"
+msgstr ""
+
+msgid "Command declined!"
+msgstr ""
+
+msgid "Command completed!"
+msgstr ""
+
+msgid "Destroy primary objective!"
+msgstr ""
+
+msgid "Destroy secondary objective!"
+msgstr ""
+
+msgid "Destroy construction!"
+msgstr ""
+
+msgid "I'm constructing!"
+msgstr ""
+
+msgid "Repair the vehicle!"
+msgstr ""
+
+msgid "Disable the vehicle!"
+msgstr ""
+
+msgid "Escort the vehicle!"
+msgstr ""
+
+msgid "Covering fire!"
+msgstr ""
+
+msgid "I'm a soldier."
+msgstr ""
+
+msgid "I'm an engineer."
+msgstr ""
+
+msgid "I'm a medic."
+msgstr ""
+
+msgid "I'm a field ops."
+msgstr ""
+
+msgid "I'm a covert ops."
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "unknown cmd"
+msgstr ""
+
+msgid "Server:"
+msgstr ""
+
+msgid "changed to"
+msgstr ""
+
+msgid "Arming landmine..."
+msgstr ""
+
+msgid "Landmine armed..."
+msgstr ""
+
+msgid "Dynamite is set, but NOT armed!"
+msgstr ""
+
+msgid "Arming dynamite..."
+msgstr ""
+
+msgid "Dynamite is now armed with a 30 second timer!"
+msgstr ""
+
+msgid "Defusing landmine"
+msgstr ""
+
+msgid "Landmine defused..."
+msgstr ""
+
+msgid "Defusing dynamite..."
+msgstr ""
+
+msgid "Affirmative!!"
+msgstr ""
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr ""
+
+msgid "Mines have been reported in this area."
+msgstr ""
+
+msgid "'s Landmine"
+msgstr ""
+
+msgid "'s Mobile MG42"
+msgstr ""
+
+msgid "'s Mobile Browning"
+msgstr ""
+
+msgid "'s rifle grenade"
+msgstr ""
+
+msgid "'s support fire"
+msgstr ""
+
+msgid "'s crew-served MG"
+msgstr ""
+
+msgid "was thrown to his doom by"
+msgstr ""
+
+msgid "You have been revived by "
+msgstr ""
+
+msgid "Constructing..."
+msgstr ""

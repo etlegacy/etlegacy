@@ -5045,7 +5045,7 @@ msgstr "Podłożony pod %s."
 #: src/cgame/cg_popupmessages.c:682
 #, c-format
 msgid "Defused at %s."
-msgstr "Rozbrojony na %s."
+msgstr "Rozbrojony pod %s."
 
 #: src/cgame/cg_popupmessages.c:691
 #, c-format
@@ -5380,7 +5380,7 @@ msgid "drowned"
 msgstr "utopił się"
 
 msgid "slagged"
-msgstr ""
+msgstr "zmęczył się"
 
 msgid "was killed"
 msgstr "został zabity"
@@ -5431,7 +5431,7 @@ msgid "embraced his own satchel explosion"
 msgstr "został wysadzony przez ładunek"
 
 msgid "engineered himself into oblivion"
-msgstr ""
+msgstr "zaprojektował samego siebie w zapomnienie"
 
 msgid "buried himself alive"
 msgstr "pochował się żywcem"
@@ -5529,3 +5529,374 @@ msgstr "Zabójstwem"
 #: src/cgame/cg_consolecmds:1233
 msgid "You will spawn as an %s %s with a %s and %s."
 msgstr "Zrespawnujesz się jako %s %s z %s i %s."
+
+#: etmain/ui/credits_etlegacy.menu:85
+msgid "^1THE TEAM"
+msgstr "^1ZESPÓŁ"
+
+msgid "Axis team"
+msgstr "Zespołu Osi"
+
+msgid "Allied team"
+msgstr "Zespołu Aliantów"
+
+msgid "Spectators"
+msgstr "Obserwatorów"
+
+msgid "You must be a player or following a player to use +stats\n"
+msgstr "Musisz być graczem lub obserwować gracza aby użyć +stats\n"
+
+msgid "^9You must be alive to use ^3/kill."
+msgstr "^9Musisz być żywy aby użyć ^3/kill."
+
+msgid "No vote in progress.\n"
+msgstr "Brak głosowań.\n"
+
+msgid "No or bad challenge for address.\n"
+msgstr "Brak lub złe wezwanie dla adresu.\n"
+
+msgid "Match is already in progress!\n"
+msgstr "Mecz już trwa!\n"
+
+msgid "^1** Referee Server Setting Change **\n"
+msgstr "^1** Sędzia Zmienił Ustawienia Serwera **\n"
+
+msgid "Your fireteam is now public"
+msgstr "Twój oddział jest teraz publiczny"
+
+msgid "Your fireteam is now private"
+msgstr "Twój oddział jest teraz prywatny"
+
+msgid "The Allies have too many players.\n"
+msgstr "Alianci mają zbyt dużo graczy.\n"
+
+msgid "The Axis has too many players.\n"
+msgstr "Oś ma zbyt dużo graczy.\n"
+
+msgid "Attack!"
+msgstr "Atak!"
+
+msgid "Fall back!"
+msgstr "Odwrót!"
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting..."
+msgstr ""
+"^3Wszyscy gracze gotowi!^7\n"
+"Mecz zaczyna..."
+
+msgid "Path cleared."
+msgstr "Droga Wolna."
+
+msgid "The enemy is weakened."
+msgstr "Wróg jest osłabiony"
+
+msgid "All clear."
+msgstr "Czysto"
+
+msgid "Incoming!"
+msgstr "Nadchodzą"
+
+msgid "Fire in the hole!"
+msgstr "Uwaga Strzelam!"
+
+msgid "I'm on defense."
+msgstr "Obraniam."
+
+msgid "I'm on offense."
+msgstr "Atakuję."
+
+msgid "Taking fire!"
+msgstr "Ściągam Ogien!"
+
+msgid "Mines cleared."
+msgstr "Pole Oczyszczone z Min."
+
+msgid "Enemy in disguise."
+msgstr "Wróg w Przebraniu."
+
+msgid "Need a Medic!"
+msgstr "Potrzebuję Medyka!"
+
+msgid "I need ammo!"
+msgstr "Potrzebuję Amunicji!"
+
+msgid "I need backup!"
+msgstr "Potrzebuję pomocy!"
+
+msgid "We need an engineer!"
+msgstr "Potrzebujemy Inżyniera!"
+
+msgid "Cover me!"
+msgstr "Osłaniaj Mnie!"
+
+msgid "Hold your fire!"
+msgstr "Wstrzymaj Ogień!"
+
+msgid "Where to?"
+msgstr "Dokąd?"
+
+msgid "We need Covert Ops!"
+msgstr "Potrzebuję Coverta!"
+
+msgid "Follow me!"
+msgstr "Za Mną!"
+
+msgid "Let's go!"
+msgstr "No Dalej!"
+
+msgid "Move!"
+msgstr "Ruchy!"
+
+msgid "Clear the path!"
+msgstr "Oczyść Drogę!"
+
+msgid "Defend our objective!"
+msgstr "Ochraniaj nasz cel!"
+
+msgid "Disarm the dynamite!"
+msgstr "Rozbrój dynamit!"
+
+msgid "Clear the mines!"
+msgstr "Rozbrój miny!"
+
+msgid "Reinforce the offense!"
+msgstr "Wzmocnij Atak!"
+
+msgid "Reinforce the defense!"
+msgstr "Wzmocnij Obronę!"
+
+msgid "Affirmative!"
+msgstr "Pozytywnie!"
+
+msgid "No!"
+msgstr "Nie!"
+
+msgid "Thank you!"
+msgstr "Dzięki Ci!"
+
+msgid "You're welcome."
+msgstr "Nie ma za co."
+
+msgid "Bitte sehr."
+msgstr "Proszę bardzo."
+
+msgid "Ja!"
+msgstr "Tak!"
+
+msgid "Nein!"
+msgstr "Nie!"
+
+msgid "Kein problem."
+msgstr "Bez problemu."
+
+msgid "Sorry!"
+msgstr "Przepraszam!"
+
+msgid "Oops!"
+msgstr "Oops!"
+
+msgid "Yes!"
+msgstr "Tak!"
+
+msgid "Jawohl!"
+msgstr "Tak jest!"
+
+msgid "Negative!"
+msgstr "Negatywnie!"
+
+msgid "Hi!"
+msgstr "Cześć!"
+
+msgid "Hello!"
+msgstr "Witam!"
+
+msgid "Hallo!"
+msgstr "Cześć!"
+
+msgid "Good bye."
+msgstr "Dowidzenia."
+
+msgid "Auf wiedersehen."
+msgstr "Dowidzenia."
+
+msgid "Bye."
+msgstr "Nara."
+
+msgid "Great shot!"
+msgstr "Niezły Strzał!"
+
+msgid "You got it, man!"
+msgstr "Masz to, człowieku!"
+
+msgid "Yeah!"
+msgstr "Nareszcie!"
+
+msgid "Yoohoo!"
+msgstr "Tak Jest!"
+
+msgid "Hahaa!"
+msgstr "Hahaha!"
+
+msgid "Alright!"
+msgstr "W Porządku!"
+
+msgid "Woo!"
+msgstr "Wooo!"
+
+msgid "Yeehaa!"
+msgstr "Wspaniale!"
+
+msgid "'Atta way, baby!"
+msgstr "'Tak trzymać, maleńka!"
+
+msgid "Jahaa!"
+msgstr "Nareszcie!"
+
+msgid "Wunderbar!"
+msgstr "Wspaniale!"
+
+msgid "Excellent!"
+msgstr "Doskonale!"
+
+msgid "Oh yes!"
+msgstr "Taaak jest!"
+
+msgid "Sehr gut!"
+msgstr "Bardzo dobrze!"
+
+msgid "Thanks!"
+msgstr "Dzięki!"
+
+msgid "Danke!"
+msgstr "Dzięki!"
+
+msgid "Danke sehr!"
+msgstr "Dziękuje bardzo!"
+
+msgid "No problem."
+msgstr "Bez problemu."
+
+msgid "Good game!"
+msgstr "Dobra gra!"
+
+msgid "Command acknowledged!"
+msgstr "Polecenie przyjęte!"
+
+msgid "Command declined!"
+msgstr "Polecenie odrzucone!"
+
+msgid "Command completed!"
+msgstr "Polecenie wykonane!"
+
+msgid "Destroy primary objective!"
+msgstr "Zniszcz Pierwszy cel!"
+
+msgid "Destroy secondary objective!"
+msgstr "Zniszcz Drugi cel!"
+
+msgid "Destroy construction!"
+msgstr "Zniscz Konstrukcję!"
+
+msgid "I'm constructing!"
+msgstr "Konstruuje!"
+
+msgid "Repair the vehicle!"
+msgstr "Napraw pojazd!"
+
+msgid "Disable the vehicle!"
+msgstr "Zniszcz pojazd!"
+
+msgid "Escort the vehicle!"
+msgstr "Eskortuj pojazd!"
+
+msgid "Covering fire!"
+msgstr "Ogień osłaniający!"
+
+msgid "I'm a soldier."
+msgstr "Jestem Żołnierzem."
+
+msgid "I'm an engineer."
+msgstr "Jestem Inżynierem."
+
+msgid "I'm a medic."
+msgstr "Jestem Medykiem."
+
+msgid "I'm a field ops."
+msgstr "Jestem Wsparciem."
+
+msgid "I'm a covert ops."
+msgstr "Jestem Zabójcą."
+
+msgid "No"
+msgstr "Nie"
+
+msgid "unknown cmd"
+msgstr "nieznane polecenie"
+
+msgid "Server:"
+msgstr "Serwer:"
+
+msgid "changed to"
+msgstr "zmienił na"
+
+msgid "Arming landmine..."
+msgstr "Podkładanie miny..."
+
+msgid "Landmine armed..."
+msgstr "Mina uzbrojona..."
+
+msgid "Dynamite is set, but NOT armed!"
+msgstr "Dynamit jest ustawiony, ale NIE uzbrojony!"
+
+msgid "Arming dynamite..."
+msgstr "Podkładanie dynamitu..."
+
+msgid "Dynamite is now armed with a 30 second timer!"
+msgstr "Dynamit jest uzbrojony z czasem 30 sekund!"
+
+msgid "Defusing landmine"
+msgstr "Rozbrajanie miny"
+
+msgid "Landmine defused..."
+msgstr "Mina rozbrojona..."
+
+msgid "Defusing dynamite..."
+msgstr "Rozbrajanie dynamitu..."
+
+msgid "Affirmative!!"
+msgstr "Pozytywnie!!"
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr "^1Ochrona przed Spamem^7: ChatGłosowy zignorowany"
+
+msgid "Mines have been reported in this area."
+msgstr "Miny zostały zgloszone w tym terenie."
+
+msgid "'s Landmine"
+msgstr " Miny"
+
+msgid "'s Mobile MG42"
+msgstr " Mobilne MG42"
+
+msgid "'s Mobile Browning"
+msgstr " Mobilny Browning"
+
+msgid "'s rifle grenade"
+msgstr " granatem od rifli"
+
+msgid "'s support fire"
+msgstr " ogieniem wsparcia"
+
+msgid "'s crew-served MG"
+msgstr " serie z MG"
+
+msgid "was thrown to his doom by"
+msgstr "został zepchnięty przez"
+
+msgid "You have been revived by "
+msgstr "Zostałeś ożywiony przez "
+
+msgid "Constructing..."
+msgstr "Budowanie..."
