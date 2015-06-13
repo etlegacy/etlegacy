@@ -4667,7 +4667,7 @@ msgstr "Zostaleą zabity przez Gospodarza Serwera"
 
 #: src/cgame/cg_draw.c:1952
 msgid "You were team-killed by a bot."
-msgstr "Zostaleą zabity przez bota."
+msgstr "Zostaleś zabity przez bota."
 
 #: src/cgame/cg_draw.c:1962
 msgid "Your application has been submitted"
@@ -5900,3 +5900,626 @@ msgstr "Zostałeś ożywiony przez "
 
 msgid "Constructing..."
 msgstr "Budowanie..."
+
+msgid "Allied Command Post constructed. Charge speed increased!"
+msgstr "Aliancke Centrum Dowodzenia wybudowane. Szybkość ładowania zwiększona!"
+
+msgid "Axis Command Post constructed. Charge speed increased!"
+msgstr "Centrum Dowodzenia OSi wybudowane. Szybkość ładowania zwiększona!"
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
+msgstr ""
+"^3Wszyscy gracze gotowi!^7\n"
+"Mecz zaczyna...\n"
+
+msgid "You are on the Allied team"
+msgstr "Jesteś w Zespole Alliantów"
+
+msgid "^1*** Match Reset! ***\n"
+msgstr "^1*** Restart Meczu! ***\n"
+
+msgid "You are on the Axis team"
+msgstr "Jesteś w Zespole Osi"
+
+msgid "Warning, leave the construction area..."
+msgstr "Uwaga, opuść plac budowy..."
+
+msgid "got caught in"
+msgstr "został złapany w"
+
+msgid "'s construction madness"
+msgstr " szalenstwie budowlanym"
+
+#: src/qcommon/download.c:244
+msgid "Need paks: %s\n"
+msgstr "Potrzebuje paczek %s\n"
+
+msgid "Not enough players to start match!\n"
+msgstr "Zbyt malo graczy aby zaczac mecz!\n"
+
+msgid "'s flamethrower"
+msgstr " miotaczem ognia"
+
+msgid "'s Satchel Charge"
+msgstr " Ładunkiem Kulminacyjnym"
+
+msgid "You cannot arm dynamite near a friendly objective!"
+msgstr "Nie możesz uzbroić dynamitu blisko przyjaznego celu!"
+
+msgid "^3Aborting, can't see target."
+msgstr "^3Przerwanie, nie można namierzyć celu."
+
+msgid "^3Firing for effect!"
+msgstr "^3Rozpoczęcie Ostrzału!"
+
+msgid "'s tank-mounted MG42"
+msgstr " MG42 na czołgu"
+
+msgid "'s dynamite"
+msgstr " dynamitem"
+
+msgid "Timelimit hit.\n"
+msgstr "Limitczasowy skończony.\n"
+
+msgid "Landmine revealed"
+msgstr "Mina ujawniona"
+
+msgid "^3Insufficient fire support."
+msgstr "^3Niewystarczający ogień wsparcia."
+
+msgid "'s tank-mounted browning 30cal"
+msgstr " browningiem 30cal na czołgu"
+
+msgid "'s grenade"
+msgstr " granatem"
+
+msgid "Competition Settings Loaded!\n"
+msgstr "Ustawienia Rozgrywki Wczytane!\n"
+
+msgid "Public Settings Loaded!\n"
+msgstr "Ustawienia Publiczne Wczytane!\n"
+
+msgid "Landmine cannot be armed here..."
+msgstr "Miny nie mogą być tutaj uzbrojone.."
+
+msgid "Your team has too many landmines placed..."
+msgstr "Twój zespół ma zbyt dużo podłożonych min..."
+
+msgid "You cannot arm dynamite near a friendly construction!"
+msgstr "Nie możesz podłozyć dynamitu w pobliżu przyjaznej konstrukcji!"
+
+msgid "Countdown started.... ^3notready^7 ignored!\n"
+msgstr "Odliczanie rozpoczęte.... ^3niegotowy^7 zignorowane!\n"
+
+msgid "No complaint filed against you.\n"
+msgstr "Nie wysłano skargi przeciwko tobie.\n"
+
+msgid "You are not the leader of a fireteam\n"
+msgstr "Nie jesteś liderem oddziału\n"
+
+msgid "You have been warned by your Fireteam Commander\n"
+msgstr "Zostałeś ostrzeżony przez twojego Dowódcę Oddziału\n"
+
+msgid "You have been kicked from the fireteam"
+msgstr "Zostałeś wywalony z oddziału"
+
+msgid "You are now the leader of your fireteam"
+msgstr "Jesteś teraz liderem twojego oddziału"
+
+msgid "The fireteam you are on has been disbanded"
+msgstr "Oddział w którym jesteś rozpadł się"
+
+msgid "You have been given fireteam admin rights"
+msgstr "Dostałeś prawa Dowódcy oddziału"
+
+msgid "Too many players already on this Fireteam"
+msgstr "Zbyt dużo graczy już w tym Oddziale"
+
+msgid "The leader has now left the Fireteam you applied to"
+msgstr "Lider odszedł z Oddziału do którego chciałeś dojść"
+
+msgid "The other player is already on a fireteam"
+msgstr "Ten gracz jest już w oddziale"
+
+msgid "You are not on the same team as the other player"
+msgstr "Nie jesteś w tym samym zespole co inny gracz"
+
+msgid "You are not on the same Fireteam as the other player"
+msgstr "Nie jesteś w tym samym oddziale co inny gracz"
+
+msgid "Invalid client selected"
+msgstr "Niewłaściwie wybrany klient"
+
+msgid "usage: fireteam admin <clientname|clientnumber>"
+msgstr "użycie: fireteam admin <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam propose <clientname|clientnumber>"
+msgstr "użycie: fireteam propose <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam kick <clientname|clientnumber>"
+msgstr "użycie: fireteam kick <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam warn <clientname|clientnumber>"
+msgstr "użycie: fireteam warn <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam invite <clientname|clientnumber>"
+msgstr "użycie: fireteam invite <nazwaklienta|numerklienta>"
+
+msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
+msgstr "użycie: fireteam apply <nazwaoddzialu|numeroddzialu>"
+
+msgid "usage: fireteam <create|leave|apply|invite>"
+msgstr "użycie: fireteam <create|leave|apply|invite>"
+
+msgid "You are already on a fireteam, leave it first"
+msgstr "Jesteś już w oddziale, najpierw odejdź z oddziału"
+
+msgid ""
+"The other player must be on the same fireteam for you to give admin rights to"
+msgstr ""
+"Dany gracz musi być w tym samym oddziale aby mogłbyś dać mu prawa Dowódcy"
+
+msgid "You must be a fireteam admin to give admin rights to someone else"
+msgstr "Musisz być Dowódcą oddziału aby dać prawa Dowódcy komuś innemu"
+
+msgid "Invalid referee password!\n"
+msgstr "Nieprawidłowe hasło sędziego!\n"
+
+msgid "Usage: ref [password]\n"
+msgstr "Użycie: ref [hasło]\n"
+
+msgid ""
+"^3Referee commands:^7\n"
+"------------------------------------------\n"
+msgstr ""
+"^3Komendy sędziego:^7\n"
+"------------------------------------------\n"
+
+msgid ""
+"Usage: ^3\\ref <cmd> [params]\n"
+"\n"
+msgstr ""
+"Użycie: ^3\\ref <komenda> [parametry]\n"
+"\n"
+
+msgid "^5pause speclock warmup ^7[value]\n"
+msgstr "^5pause speclock warmup ^7[wartość]\n"
+
+msgid "Sorry, referee status disabled on this server.\n"
+msgstr "Status sędziego jest wyłączony na tym serwerze.\n"
+
+msgid "Referee has ^3LOCKED^7 teams\n"
+msgstr "Sędzia ^3ZABLOKOWAŁ^7 zespoły\n"
+
+msgid "You have LOCKED teams\n"
+msgstr "ZABLOKOWAŁEŚ zespoły\n"
+
+msgid "Referee has ^3UNLOCKED^7 teams\n"
+msgstr "Sędzia ^3ODBLOKOWAŁ^7 zespoły\n"
+
+msgid "You have UNLOCKED teams\n"
+msgstr "ODBLOKOWAŁEŚ zespoły\n"
+
+msgid "The ^4Allies^7 team is LOCKED!\n"
+msgstr "Zespół ^4Alliantów^7 jest ZABLOKOWANY!\n"
+
+msgid "The ^1Axis^7 team is LOCKED!\n"
+msgstr "Zespół ^1Osi^7 jest ZABLOKOWANY!\n"
+
+msgid "^3Referee ^1PAUSED^3 the match^3!\n"
+msgstr "^3Sędzia ^1ZATRZYMAŁ^3 mecz^3!\n"
+
+msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
+msgstr "^3Mecz ^1ZATRZYMANY^3! (^7Sędzia^3)\n"
+
+msgid "The match is already ^1PAUSED!\n"
+msgstr "Mecz jest już ^1ZATRZYMANY!\n"
+
+msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
+msgstr "^3Sędzia ^5WZNOWIŁ^3 mecz ... wznowienie za 10 sekund!\n"
+
+msgid "The match is already ^5UNPAUSED!\n"
+msgstr "Mecz jest już ^5WZNOWIONY!\n"
+
+msgid "Bad client slot: "
+msgstr "Zły slot klienta: "
+
+msgid "Client"
+msgstr "Klient"
+
+msgid "is not active\n"
+msgstr "nie jest aktywny\n"
+
+msgid "You can only remove people in the game!\n"
+msgstr "Możesz tylko usuwać ludzi w grze!\n"
+
+msgid "User "
+msgstr "Użytkownik "
+
+msgid "is not on the server\n"
+msgstr "nie jest na serwerze\n"
+
+msgid "^5You've been removed from the ^4Allies^7 team\n"
+msgstr "^5Zostałeś usunięty z zespołu ^4Alliantów\n"
+
+msgid "^5You've been removed from the ^1Axis^7 team\n"
+msgstr "^5Zostałeś usunięty z ^7zespołu ^1Osi\n"
+
+msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
+msgstr "Sędzia ^3ZABLOKOWAŁ OBSERWATORÓW\n"
+
+msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
+msgstr "Sędzia ^3ODBLOKOWAŁ OBSERWATORÓW\n"
+
+msgid "usage: ref warn <clientname> [reason].\n"
+msgstr "użycie: ref warn <nazwaklienta> [powód].\n"
+
+msgid "Client not on server.\n"
+msgstr "Nie ma Klienta na serwerze.\n"
+
+msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
+msgstr "%s^7 otrzymał ^1Ostrzeżenie^7 (Brak Dostatecznego Powodu)\n"
+
+msgid "Cannot mute a referee.\n"
+msgstr "Nie można uciszyć sędziego.\n"
+
+msgid "^5You've been muted\n"
+msgstr "^5Zostałeś uciszony\n"
+
+msgid "Can't chat - you are muted\n"
+msgstr "Nie możesz pisać - jesteś uciszony\n"
+
+msgid "^5You've been unmuted\n"
+msgstr "^5Dostałeś możliwość pisania\n"
+
+msgid ""
+"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
+msgstr ""
+"^7 ID : Gracz                     Nudge  Rate  Pakiety  Snaps  Specjalne\n"
+
+msgid "^7----------------------------------------------------------------------\n"
+msgstr "^7----------------------------------------------------------------------\n"
+
+msgid ""
+"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
+"Specials\n"
+msgstr ""
+"^7Status   : ID : Gracz                    Nudge  Rate  Pakiety  Snaps  "
+"Specjalne\n"
+
+msgid "^7-------------------------------------------------------------------------------\n"
+msgstr "^7-------------------------------------------------------------------------------\n"
+
+msgid ""
+"^5\n"
+"Available Game Commands:\n"
+"------------------------\n"
+msgstr ""
+"^5\n"
+"Dostępne Komendy W Grze:\n"
+"------------------------\n"
+
+msgid ""
+"\n"
+"Type: ^3\\command_name ?^7 for more information\n"
+msgstr ""
+"\n"
+"Napisz: ^3\\nazwa_komendy ?^7 aby uzyskać więcej informacji\n"
+
+msgid "Spectators can't lock a team!\n"
+msgstr "Widzowie nie mogą zablokować zepsołu!\n"
+
+msgid "The ^4Allies^7 team is now locked!\n"
+msgstr "Zespół ^4Alliancki^7 jest teraz zablokowany!\n"
+
+msgid "^3Your team is already locked!\n"
+msgstr "^3Twój zespół jest już zablokowany!\n"
+
+msgid "The ^4Allies^7 team is now unlocked!\n"
+msgstr "Zespół ^4Alliancki^7 jest już odblokowany!\n"
+
+msgid "^3Your team is already unlocked!\n"
+msgstr "^3Twój zespół jest juz odblokowany!\n"
+
+msgid "Spectators can't unlock a team!\n"
+msgstr "Widzowie nie mogą odblokwoac zespolu!\n"
+
+msgid "The ^1Axis^7 team is now locked!\n"
+msgstr "Zespół ^1Osi^7 jest teraz zablokowany!\n"
+
+msgid "The ^1Axis^7 team is now unlocked!\n"
+msgstr "Zespół ^1Osi^7 jest juz odblokowany!\n"
+
+msgid "Team commands not enabled on this server.\n"
+msgstr "Komendy Zespołu nie są włączone na tym serwerze.\n"
+
+msgid ""
+"\n"
+"^3>>> Unknown vote command: ^7 \n"
+msgstr ""
+"\n"
+"^3>>> Nieznana komenda głosowania: ^7 \n"
+
+msgid ""
+"\n"
+"Valid ^3callvote^7 commands are:\n"
+"^3----------------------------\n"
+msgstr ""
+"\n"
+"Prawidłowymi komendami ^3callvote^7 są:\n"
+"^3----------------------------\n"
+
+msgid ""
+"\n"
+"Usage: ^3\\callvote <command> <params>\n"
+"^7For current settings/help, use: ^3\\callvote <command> ?\n"
+msgstr ""
+"\n"
+"Użycie: ^3\\callvote <komenda> <parametry>\n"
+"^7Dla bieżących ustawień/pomocy, użyj: ^3\\callvote <komenda> ?\n"
+
+msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
+msgstr ""
+"Napisz ^3\\stats <id_gracza>^7 aby zobaczyć statystyki aktywnego gracza.\n"
+
+msgid "Spectators can't ready a team!\n"
+msgstr "Widzowie nie mogą być gotowi!\n"
+
+msgid "The ^4Allies^7 team is ready!\n"
+msgstr "Zespół ^4Alliantów^7 jest gotowy!\n"
+
+msgid "The ^1Axis^7 team is ready!\n"
+msgstr "Zespół ^1Osi^7 jest gotowy!\n"
+
+msgid "A vote is already in progress.\n"
+msgstr "Głosowanie jest już w toku.\n"
+
+msgid "called a vote.\n"
+msgstr "wybrał głosowanie.\n"
+
+msgid "^5Vote passed!\n"
+msgstr "^5Głosownie zaliczone!\n"
+
+msgid "Spectator team\n"
+msgstr "Zespół Widzów\n"
+
+msgid "Allies team\n"
+msgstr "Zespół Alliantów\n"
+
+msgid "Axis team\n"
+msgstr "Zespół Osi\n"
+
+msgid "Sorry, "
+msgstr "Wybacz, "
+
+msgid "voting has been disabled"
+msgstr "głosowania zostały wyłączone"
+
+msgid "Not allowed to call a vote as a spectator.\n"
+msgstr "Nie wolno glosowac jako obserwator.\n"
+
+msgid "called a vote."
+msgstr "wybrał głosowanie."
+
+msgid "Vote cast.\n"
+msgstr "Oddanie glosów.\n"
+
+msgid "'s KA-BAR"
+msgstr " Nożem Bojowym"
+
+msgid "'s .45ACP 1911"
+msgstr " Coltem .45"
+
+msgid "'s Thompson"
+msgstr " Thompsonem"
+
+msgid "'s MP 40"
+msgstr " MP 40"
+
+msgid "'s knife"
+msgstr " nożem"
+
+msgid "'s Luger 9mm"
+msgstr " Lugerem 9mm"
+
+msgid "'s Panzerfaust"
+msgstr " Pociskiem Przeciwczołgowym"
+
+msgid "'s Garand"
+msgstr " Garantem"
+
+msgid "'s Sten"
+msgstr " Stenem"
+
+msgid "'s FG 42"
+msgstr " FG 42"
+
+msgid "'s K43"
+msgstr " K43"
+
+msgid "'s Bazooka"
+msgstr " Pociskiem Przeciwczołgowym"
+
+msgid "'s Akimbo .45ACP 1911s"
+msgstr " Podwójnym .45ACP 1911s"
+
+msgid "Server disconnected"
+msgstr "Serwer rozłączony"
+
+msgid "Server connection timed out."
+msgstr "Połączenie z serwerem przerwane."
+
+msgid "Server disconnected for unknown reason"
+msgstr "Serwer rozłączony z nieznananej przyczyny"
+
+msgid "'s Akimbo Luger 9mms"
+msgstr " Podwójnym Lugerem 9mm"
+
+msgid "Cheats are not enabled on this server.\n"
+msgstr "Kody nie są włączone na tym serwerze.\n"
+
+msgid "team: class is not available\n"
+msgstr "zespół: klasa nie jest dostępna\n"
+
+msgid "^1Soldier^7 is not available! Choose another class!\n"
+msgstr "^1Żołnierz^7 nie jest dostępny! Wybierz inną klasę!\n"
+
+msgid "^1Medic^7 is not available! Choose another class!\n"
+msgstr "^1Medyk^7 nie jest dostępny! Wybierz inną klasę!\n"
+
+msgid "^1Engineer^7 is not available! Choose another class!\n"
+msgstr "^1Inżynier^7 nie jest dostępny! Wybierz inną klasę!\n"
+
+msgid "^1Field Ops^7 is not available! Choose another class!\n"
+msgstr "^1Wsparcie^7 nie jest dostępny! Wybierz inną klasę!\n"
+
+msgid "^1Covert Ops^7 is not available! Choose another class!\n"
+msgstr "^1Zabojca^7 nie jest dostępny! Wybierz inną klasę!\n"
+
+msgid "You must be alive to use this command.\n"
+msgstr "Musisz byż żywy aby uzyć tą komende.\n"
+
+msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
+msgstr "Zespół ^1Osi^7 jest pusty!  Komenda Follow zignorowana.\n"
+
+msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
+msgstr "Zespół ^4Aliantow^7 jest pusty!  Komenda Follow zignorowana.\n"
+
+msgid "Can't follow a player on an enemy team!\n"
+msgstr "Nie możesz podążać za graczem z przeciwnego zespołu!\n"
+
+msgid "Can't follow while not in limbo if on a team!\n"
+msgstr "Nie możesz podążać podczas kiedy jesteś w limbo!\n"
+
+msgid "Partial Name Matches more than 1 Player.\n"
+msgstr "Częściowe Imię Pasuje dla więcej niż 1 Gracza.\n"
+
+msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
+msgstr "Podążanie obserwatora jest teraz zablokowane na Zespole ^1Osi^7.\n"
+
+msgid "^1Axis^7 team spectating is now disabled.\n"
+msgstr "Obserwowanie Zespołu ^1Axis^7 jest teraz wyłączone.\n"
+
+msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
+msgstr "Podążanie obserwatora jest teraz zablokowane na Zespole ^4Aliantów^7.\n"
+
+msgid "^4Allies^7 team spectating is now disabled.\n"
+msgstr "Obserwowanie Zespołu ^4Aliantów^7 jest teraz wyłączone.\n"
+
+msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
+msgstr "Zespół ^4Aliantów^7 jest zablokowany od obserwowania.\n"
+
+msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
+msgstr "Zespół ^1Osi^7 jest zablokowany od obserwowania.\n"
+
+msgid "Server quit\n"
+msgstr "Server wyłączony\n"
+
+msgid "You cannot switch during a match, please wait until the round ends."
+msgstr ""
+"Nie możesz przechodzić podczas meczu, proszę poczekaj aż runda dobiegnie "
+"końca."
+
+msgid "Use the ^3players^7 command to find a valid player ID.\n"
+msgstr "Użyj komende ^3players^7 aby znaleść poprawne ID gracza.\n"
+
+msgid "^3Match is already in progress!\n"
+msgstr "^3Mecz już trwa!\n"
+
+msgid "^1Teams have been shuffled!\n"
+msgstr "^1Drużyny zostały pomieszane!\n"
+
+msgid "^3*** Loading nextmap! ***\n"
+msgstr "^3*** Wczytywanie następnej mapy! ***\n"
+
+msgid "^1*** Level Restarted! ***\n"
+msgstr "^1*** Poziom Zrestartowany! ***\n"
+
+msgid "You have been switched to the Axis team"
+msgstr "Zostałeś przeniesiony do zespołu Osi"
+
+msgid "Keep the Allies from beating the clock!"
+msgstr "Utrzymuj Aliantów od pobicia czasu!"
+
+msgid "Keep the Axis from beating the clock!"
+msgstr "Utrzymuj Oś od pobicia czasu!"
+
+msgid "You have been switched to the Allied team"
+msgstr "Zostałeś przeniesiony do zespołu Aliantow"
+
+msgid "Try to beat the clock!"
+msgstr "Sprobuj pokonać czas!"
+
+msgid "You have been been stripped of fireteam admin rights"
+msgstr "Zostałeś pozbawiony praw lidera oddziału"
+
+msgid "%s ^7has left the fireteam\n"
+msgstr "%s ^7odszedł z oddziału\n"
+
+msgid "You have been warned by your fireteam leader\n"
+msgstr "Zostałeś ostrzeżony przez swojego lidera oddziału\n"
+
+msgid "^3moved to spectator for inactivity!\n"
+msgstr "^3przeniesiony do widzów za nieaktywność!\n"
+
+msgid "was killed by"
+msgstr "został zabity przez"
+
+msgid "was stabbed by"
+msgstr "został pchnięty przez"
+
+msgid "was stabbed by"
+msgstr "został pchnięty przez"
+
+msgid "was blasted by"
+msgstr "został wysadzony przez"
+
+msgid "was exploded by"
+msgstr "został zdetonowany przez"
+
+msgid "was cooked by"
+msgstr "został usmażony przez"
+
+msgid "never saw"
+msgstr "nie widział"
+
+msgid "'s mortar round coming"
+msgstr " pocisku mortara"
+
+msgid "was perforated by"
+msgstr "został podziurawiony przez"
+
+msgid "'s tank-mounted MG 42"
+msgstr " MG 42 na czołgu"
+
+msgid "'s support fire"
+msgstr " ogieniem wsparcia"
+
+msgid "was shelled by"
+msgstr "został ostrzelany przez"
+
+msgid "'s artillery support"
+msgstr " artylerię"
+
+msgid "^2swapped places with^7"
+msgstr "^2zamienileś miejscami z^7"
+
+msgid "failed to spot"
+msgstr "niezauwazył"
+
+msgid "was mown down by"
+msgstr "został podziurawiony przez"
+
+msgid "was silenced by"
+msgstr "został uciszony przez"
+
+msgid "was sniped by"
+msgstr "został zestrzelony przez"
+
+msgid "stood on"
+msgstr "stanął na"
+
+msgid "'s airstrike marker"
+msgstr " znaczniku nalotu"
