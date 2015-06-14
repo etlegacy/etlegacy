@@ -5873,7 +5873,7 @@ msgstr ""
 msgid "'s Landmine"
 msgstr ""
 
-msgid "'s Mobile MG42"
+msgid "'s Mobile MG 42"
 msgstr ""
 
 msgid "'s Mobile Browning"

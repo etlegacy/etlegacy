@@ -5877,8 +5877,8 @@ msgstr "Miny zostały zgloszone w tym terenie."
 msgid "'s Landmine"
 msgstr " Miny"
 
-msgid "'s Mobile MG42"
-msgstr " Mobilne MG42"
+msgid "'s Mobile MG 42"
+msgstr " Mobilne MG 42"
 
 msgid "'s Mobile Browning"
 msgstr " Mobilny Browning"
