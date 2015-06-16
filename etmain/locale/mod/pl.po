@@ -6470,9 +6470,6 @@ msgstr "został zabity przez"
 msgid "was stabbed by"
 msgstr "został pchnięty przez"
 
-msgid "was stabbed by"
-msgstr "został pchnięty przez"
-
 msgid "was blasted by"
 msgstr "został wysadzony przez"
 
@@ -6493,9 +6490,6 @@ msgstr "został podziurawiony przez"
 
 msgid "'s tank-mounted MG 42"
 msgstr " MG 42 na czołgu"
-
-msgid "'s support fire"
-msgstr " ogieniem wsparcia"
 
 msgid "was shelled by"
 msgstr "został ostrzelany przez"
@@ -6649,3 +6643,63 @@ msgstr "- Lugera z Tłumikiem"
 
 msgid "- Silenced Colt"
 msgstr "- Colta z Tłumikiem"
+
+msgid "Includes or excludes empty and full servers from the server list"
+msgstr "Zawiera lub wyklucza serwery puste lub pełne z listy serwerów"
+
+msgid "Includes or excludes password protected servers from the server list"
+msgstr "Zawiera lub wyklucza serwery chronione hasłem z listy serwerów"
+
+msgid "Includes or excludes servers where team mates can damage each other from the server list"
+msgstr "Zawiera lub wyklucza serwery gdzie jest włączony Ogień Przyjaciela z listy serwerów"
+
+msgid "Includes or excludes servers that limit the number of player lives per match from the server list"
+msgstr "Zawiera lub wyklucza serwery które ograniczają liczbę żyć na mecz z listy serwerów"
+
+msgid "Includes or excludes servers that limit the number of\n available heavy weapons from the server list"
+msgstr "Zawiera lub wyklucza serwery które ograniczają liczbę\n dostępnej broni ciężkiej z liczby serwerów"
+
+msgid "Includes or excludes servers with support for modem players from the server list"
+msgstr "Zawiera lub wyklucza serwery z wsparciem dla graczy z modemami z liczby serwerów"
+
+msgid "Includes or excludes servers that enforce balanced teams from the server list"
+msgstr "Zawiera lub wyklucza serwery które wymuszają balans zespołów z liczby serwerów"
+
+msgid "Includes or excludes servers with bots from the server list"
+msgstr "Zawiera lub wyklucza serwery z botami z liczby serwerów"
+
+msgid "Click here to sort by Ping"
+msgstr "Naduś tutaj aby posortować przez Ping"
+
+msgid "FAV"
+msgstr "ULU"
+
+msgid "Sets field of view"
+msgstr "Ustawia pole widzenia"
+
+msgid "Selfkill:"
+msgstr "Samobójstwo:"
+
+msgid "Fireteam Chat:"
+msgstr "Chat Oddziału:"
+
+msgid "Fireteam Quick Chat:"
+msgstr "Szybki Chat Oddziału:"
+
+msgid "Ready:"
+msgstr "Gotowy:"
+
+msgid "Not Ready:"
+msgstr "Nie Gotowy:"
+
+msgid "CONTROLS: ADVANCED"
+msgstr "STEROWANIE: ZAAWANSOWANE"
+
+msgid "Deselect All Members:"
+msgstr "Odznacz Wszystkich:"
+
+msgid "Select Member #7:"
+msgstr "Wybierz Członka #7:"
+
+msgid "Select Member #8:"
+msgstr "Wybierz Członka #8:"

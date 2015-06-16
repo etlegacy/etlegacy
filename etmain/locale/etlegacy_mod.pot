@@ -6616,3 +6616,63 @@ msgstr ""
 
 msgid "- Silenced Colt"
 msgstr ""
+
+msgid "Includes or excludes empty and full servers from the server list"
+msgstr ""
+
+msgid "Includes or excludes password protected servers from the server list"
+msgstr ""
+
+msgid "Includes or excludes servers where team mates can damage each other from the server list"
+msgstr ""
+
+msgid "Includes or excludes servers that limit the number of player lives per match from the server list"
+msgstr ""
+
+msgid "Includes or excludes servers that limit the number of\n available heavy weapons from the server list"
+msgstr ""
+
+msgid "Includes or excludes servers with support for modem players from the server list"
+msgstr ""
+
+msgid "Includes or excludes servers that enforce balanced teams from the server list"
+msgstr ""
+
+msgid "Includes or excludes servers with bots from the server list"
+msgstr ""
+
+msgid "Click here to sort by Ping"
+msgstr ""
+
+msgid "FAV"
+msgstr ""
+
+msgid "Sets field of view"
+msgstr ""
+
+msgid "Selfkill:"
+msgstr ""
+
+msgid "Fireteam Chat:"
+msgstr ""
+
+msgid "Fireteam Quick Chat:"
+msgstr ""
+
+msgid "Ready:"
+msgstr ""
+
+msgid "Not Ready:"
+msgstr ""
+
+msgid "CONTROLS: ADVANCED"
+msgstr ""
+
+msgid "Deselect All Members:"
+msgstr ""
+
+msgid "Select Member #7:"
+msgstr ""
+
+msgid "Select Member #8:"
+msgstr ""
