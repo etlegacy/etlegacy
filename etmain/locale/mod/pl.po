@@ -6523,3 +6523,129 @@ msgstr "stanął na"
 
 msgid "'s airstrike marker"
 msgstr " znaczniku nalotu"
+
+msgid "- Small Health"
+msgstr "Małą Apteczkę"
+
+msgid "- Med Health"
+msgstr "- Średnią Apteczką"
+
+msgid "- Health Pack"
+msgstr "- Apteczkę"
+
+msgid "- Hot Meal"
+msgstr "- Ciepły Posiłek"
+
+msgid "- Cold Meal"
+msgstr "- Zimny Posiłek"
+
+msgid "- Health"
+msgstr "- Życie"
+
+msgid "- Knife"
+msgstr "- Nóż"
+
+msgid "- Ka-Bar"
+msgstr "- Nóż Bojowy"
+
+msgid "- Luger"
+msgstr "- Lugera"
+
+msgid "- Akimbo Luger"
+msgstr "- Podwójnego Lugera"
+
+msgid "- Silenced Akimbo Luger"
+msgstr "- Podwójnego Lugera z Tłumikiem"
+
+msgid "- Thompson"
+msgstr "- Thompsona"
+
+msgid "- Sten gun"
+msgstr "- Stena"
+
+msgid "- Colt"
+msgstr "- Colta"
+
+msgid "- Akimbo Colt"
+msgstr "- Podwójnego Colta"
+
+msgid "- Silenced Akimbo Colt"
+msgstr "- Podwójnego Colta z Tłumikiem"
+
+msgid "- MP 40"
+msgstr "- MP 40"
+
+msgid "- Panzerfaust"
+msgstr "- RPG"
+
+msgid "- Bazooka"
+msgstr "- RPG"
+
+msgid "- Grenade"
+msgstr "- Granat"
+
+msgid "- Pineapple"
+msgstr "- Granat Odłamkowy"
+
+msgid "- Flamethrower"
+msgstr "- Miotacz Ognia"
+
+msgid "- Syringe"
+msgstr "- Strzykawkę"
+
+msgid "- Adrenaline Syringe"
+msgstr "- Strzykawkę z Adrenaliną"
+
+msgid "- Ammo Pack"
+msgstr "- Paczkę Amunicji"
+
+msgid "- Mega Ammo Pack"
+msgstr "- Wielką Paczkę Amunicji"
+
+msgid "- Binoculars"
+msgstr "- Lornetkę"
+
+msgid "- Scoped K43 Rifle"
+msgstr "- Karabin K43 z Lunetą"
+
+msgid "- K43 Rifle Scope"
+msgstr "- Karabin K43 z Lunetą"
+
+msgid "- K43 Rifle"
+msgstr "- Karabin K43"
+
+msgid "- M1 Garand"
+msgstr "- Garanta"
+
+msgid "- M7"
+msgstr "- M7"
+
+msgid "- Scoped M1 Garand"
+msgstr "- Garanta z Lunetą"
+
+msgid "- M1 Garand Scope"
+msgstr "- Garanta z Lunetą"
+
+msgid "- FG 42 Paratroop Rifle"
+msgstr "- Karabin Spadochroniarzy FG 42"
+
+msgid "- FG 42 Paratroop Rifle Scope"
+msgstr "- Karabin Spadochroniarzy FG 42"
+
+msgid "- Mortar"
+msgstr "- Moździerz"
+
+msgid "- Granatwerfer"
+msgstr "- Moździerz"
+
+msgid "- Mobile MG 42"
+msgstr "- Mobilne MG 42"
+
+msgid "- Mobile Browning"
+msgstr "- Mobilnego Browninga"
+
+msgid "- Silenced Luger"
+msgstr "- Lugera z Tłumikiem"
+
+msgid "- Silenced Colt"
+msgstr "- Colta z Tłumikiem"

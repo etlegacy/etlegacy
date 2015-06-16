@@ -6490,3 +6490,129 @@ msgstr ""
 
 msgid "'s airstrike marker"
 msgstr ""
+
+msgid "- Small Health"
+msgstr ""
+
+msgid "- Med Health"
+msgstr ""
+
+msgid "- Health Pack"
+msgstr ""
+
+msgid "- Hot Meal"
+msgstr ""
+
+msgid "- Cold Meal"
+msgstr ""
+
+msgid "- Health"
+msgstr ""
+
+msgid "- Knife"
+msgstr ""
+
+msgid "- Ka-Bar"
+msgstr ""
+
+msgid "- Luger"
+msgstr ""
+
+msgid "- Akimbo Luger"
+msgstr ""
+
+msgid "- Silenced Akimbo Luger"
+msgstr ""
+
+msgid "- Thompson"
+msgstr ""
+
+msgid "- Sten gun"
+msgstr ""
+
+msgid "- Colt"
+msgstr ""
+
+msgid "- Akimbo Colt"
+msgstr ""
+
+msgid "- Silenced Akimbo Colt"
+msgstr ""
+
+msgid "- MP 40"
+msgstr ""
+
+msgid "- Panzerfaust"
+msgstr ""
+
+msgid "- Bazooka"
+msgstr ""
+
+msgid "- Grenade"
+msgstr ""
+
+msgid "- Pineapple"
+msgstr ""
+
+msgid "- Flamethrower"
+msgstr ""
+
+msgid "- Syringe"
+msgstr ""
+
+msgid "- Adrenaline Syringe"
+msgstr ""
+
+msgid "- Ammo Pack"
+msgstr ""
+
+msgid "- Mega Ammo Pack"
+msgstr ""
+
+msgid "- Binoculars"
+msgstr ""
+
+msgid "- Scoped K43 Rifle"
+msgstr ""
+
+msgid "- K43 Rifle Scope"
+msgstr ""
+
+msgid "- K43 Rifle"
+msgstr ""
+
+msgid "- M1 Garand"
+msgstr ""
+
+msgid "- M7"
+msgstr ""
+
+msgid "- Scoped M1 Garand"
+msgstr ""
+
+msgid "- M1 Garand Scope"
+msgstr ""
+
+msgid "- FG 42 Paratroop Rifle"
+msgstr ""
+
+msgid "- FG 42 Paratroop Rifle Scope"
+msgstr ""
+
+msgid "- Mortar"
+msgstr ""
+
+msgid "- Granatwerfer"
+msgstr ""
+
+msgid "- Mobile MG 42"
+msgstr ""
+
+msgid "- Mobile Browning"
+msgstr ""
+
+msgid "- Silenced Luger"
+msgstr ""
+
+msgid "- Silenced Colt"
+msgstr ""
