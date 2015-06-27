@@ -5455,7 +5455,7 @@ msgstr ""
 msgid "Medic Ammo"
 msgstr ""
 
-msgid "Improved Resources"
+msgid "Improved First Aid Resources"
 msgstr ""
 
 msgid "Improved use of Light Weapon Ammunition"
@@ -5470,7 +5470,7 @@ msgstr ""
 msgid "Improved Physical Fitness"
 msgstr ""
 
-msgid "Improved Resources"
+msgid "Improved Ammo Resources"
 msgstr ""
 
 msgid "Improved Signals"
@@ -5823,9 +5823,6 @@ msgid "I'm a field ops."
 msgstr ""
 
 msgid "I'm a covert ops."
-msgstr ""
-
-msgid "No"
 msgstr ""
 
 msgid "unknown cmd"
@@ -6459,9 +6456,6 @@ msgid "was perforated by"
 msgstr ""
 
 msgid "'s tank-mounted MG 42"
-msgstr ""
-
-msgid "'s support fire"
 msgstr ""
 
 msgid "was shelled by"
