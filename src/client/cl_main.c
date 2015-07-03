@@ -2327,8 +2327,8 @@ static void CL_Cache_UsedFile_f(void)
 	strcpy(itemStr, Cmd_Argv(2));
 	for (i = 3; i < Cmd_Argc(); i++)
 	{
-		strcat(itemStr, " ");
-		strcat(itemStr, Cmd_Argv(i));
+		Q_strcat(itemStr, MAX_QPATH, " ");
+		Q_strcat(itemStr, MAX_QPATH, Cmd_Argv(i));
 	}
 	Q_strlwr(itemStr);
 
@@ -2340,9 +2340,10 @@ static void CL_Cache_UsedFile_f(void)
 			break;
 		}
 	}
+
 	if (i == CACHE_NUMGROUPS)
 	{
-		Com_Error(ERR_DROP, "usedfile without a valid cache group");
+		Com_Error(ERR_DROP, "usedfile without a valid cache group: '%s' item: '%s'", groupStr, itemStr);
 		return;
 	}
 
