@@ -596,7 +596,7 @@ typedef struct
 	int scanlines;          // in scanlines
 	int vislines;           // amount of visible lines
 
-	vec4_t color;			// for transparent lines
+	vec4_t color;           // for transparent lines
 
 	int highlightOffset;    // highligting start offset (if == 0) then no hightlight
 } console_t;
