@@ -406,8 +406,8 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 
 	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
 	{
-		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);
 		dld.bWWWDlAborting = qtrue;
+		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);
 	}
 }
 
