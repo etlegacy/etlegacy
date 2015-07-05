@@ -10,6 +10,11 @@ env:
     - CROSS_COMPILE32=0
     - FEATURE_RENDERER2=1
     - RENDERER_DYNAMIC=1
+    - BUNDLED_OGG=0
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq nasm libvorbis-dev
 
 script:
   - ./easybuild.sh
