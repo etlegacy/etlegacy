@@ -10,7 +10,10 @@ env:
     - CROSS_COMPILE32=0
     - FEATURE_RENDERER2=1
     - RENDERER_DYNAMIC=1
-    - BUNDLED_OGG=0
+    - BUNDLED_OGG=1
+    - BUNDLED_SDL=1
+    - BUNDLED_JPEG=1
+    - BUNDLED_LUA=1
 
 before_install:
   - sudo apt-get update -qq
