@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-06-28 08:54+0000\n"
+"PO-Revision-Date: 2015-07-05 19:56+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -5359,275 +5359,275 @@ msgstr "Избранное стёрто"
 
 #: src/cgame/cg_predict.c:641
 msgid "You are near"
-msgstr ""
+msgstr "Вы рядом с"
 
 msgid "joined the Axis team\n"
-msgstr ""
+msgstr "присоединился к команде нацистов\n"
 
 msgid "joined the Allies team\n"
-msgstr ""
+msgstr "присоединился к команде союзников\n"
 
 msgid "entered the game\n"
-msgstr ""
+msgstr "зашёл в игру\n"
 
 msgid "rediscovered gravity"
-msgstr ""
+msgstr "познал гравитацию"
 
 msgid "was crushed"
-msgstr ""
+msgstr "был раздавлен"
 
 msgid "drowned"
-msgstr ""
+msgstr "утонул"
 
 msgid "slagged"
 msgstr ""
 
 msgid "was killed"
-msgstr ""
+msgstr "был убит"
 
 msgid "got buried under a pile of rubble"
-msgstr ""
+msgstr "похоронило под обломками"
 
 msgid "was incinerated"
-msgstr ""
+msgstr "был сожжён"
 
 msgid "had an appointment with the map mortar"
-msgstr ""
+msgstr "встретился с картовой мортирой"
 
 msgid "took a map mortar shell shower"
-msgstr ""
+msgstr "ощутил мощь картовой мортиры"
 
 msgid "was pulverized by an explosion"
-msgstr ""
+msgstr "разорвало при взрыве"
 
 msgid "dynamited himself to pieces"
-msgstr ""
+msgstr "подорвался на динамите"
 
 msgid "dove on his own grenade"
-msgstr ""
+msgstr "подорвался на собственной гранате"
 
 msgid "vaporized himself"
-msgstr ""
+msgstr "испарил себя"
 
 msgid "played with fire"
-msgstr ""
+msgstr "поигрался с огнём"
 
 msgid "obliterated himself"
-msgstr ""
+msgstr "уничтожил себя"
 
 msgid "fired-for-effect on himself"
-msgstr ""
+msgstr "вызвал огонь на себя"
 
 msgid "died in his own explosion"
-msgstr ""
+msgstr "взорвал себя"
 
 msgid "ate his own rifle grenade"
-msgstr ""
+msgstr "подорвался на своей винтовочной гранате"
 
 msgid "failed to spot his own landmine"
-msgstr ""
+msgstr "не заметил своей мины"
 
 msgid "embraced his own satchel explosion"
-msgstr ""
+msgstr "встретил взрыв своего ранца"
 
 msgid "engineered himself into oblivion"
-msgstr ""
+msgstr "застроил себя в ноль"
 
 msgid "buried himself alive"
-msgstr ""
+msgstr "похоронил себя заживо"
 
 msgid "never saw his own mortar round coming"
-msgstr ""
+msgstr "не ожидал свой снаряд мортиры"
 
 msgid "danced on his airstrike marker"
-msgstr ""
+msgstr "прозевал свой же маркер бомбёжки"
 
 msgid "committed suicide"
-msgstr ""
+msgstr "покончил с собой"
 
 msgid "killed himself"
-msgstr ""
+msgstr "убился"
 
 msgid "Improved use of Explosive Ammunition"
-msgstr ""
+msgstr "улучшенное использование взрывчатки"
 
 msgid "Improved Dexterity"
-msgstr ""
+msgstr "улучшенная ловкость"
 
 msgid "Binoculars for any Class"
-msgstr ""
+msgstr "бинокли для всех классов"
 
 msgid "Medic Ammo"
-msgstr ""
+msgstr "патроны для медика"
 
 msgid "Improved First Aid Resources"
-msgstr ""
+msgstr "улучшенный медкомплект"
 
 msgid "Improved use of Light Weapon Ammunition"
-msgstr ""
+msgstr "улучшенное использование боеприпасов к лёгкому вооружению"
 
 msgid "Improved Projectile Resources"
-msgstr ""
+msgstr "улучшенные ракеты"
 
 msgid "Improved use of Scoped Weapon Ammunition"
-msgstr ""
+msgstr "улучшенное использование патронов к ружьям с прицелом"
 
 msgid "Improved Physical Fitness"
-msgstr ""
+msgstr "улучшенная физподготовка"
 
 msgid "Improved Ammo Resources"
-msgstr ""
+msgstr "улучшенный боекомплект"
 
 msgid "Improved Signals"
-msgstr ""
+msgstr "улучшенные сигналы"
 
 msgid "Faster Reload"
-msgstr ""
+msgstr "быстрая перезарядка"
 
 msgid "Heavy Weapon Proficiency"
-msgstr ""
+msgstr "улучшенное обращение с тяжёлым вооружением"
 
 msgid "Improved use of Sabotage and Misdirection"
-msgstr ""
+msgstr "улучшенные навыки подрывной деятельности"
 
 msgid "Improved Health"
-msgstr ""
+msgstr "крепкое здоровье"
 
 msgid "Improved Construction and Destruction"
-msgstr ""
+msgstr "улучшенное сооружение и уничтожение"
 
 msgid "Full Revive"
-msgstr ""
+msgstr "полное оживление"
 
 msgid "Improved Air and Ground Support"
-msgstr ""
+msgstr "улучшенная авиа- и наземная поддержка"
 
 msgid "Improved Light Weapon Handling"
-msgstr ""
+msgstr "улучшенное обращение с лёгким оружием"
 
 msgid "Breath Control"
-msgstr ""
+msgstr "контроль дыхания"
 
 msgid "Trap Awareness"
-msgstr ""
+msgstr "чутьё на ловушки"
 
 msgid "a Flak Jacket"
-msgstr ""
+msgstr "бронежилет"
 
 msgid "Adrenalin Self"
-msgstr ""
+msgstr "укол адреналина"
 
 msgid "Enemy Recognition"
-msgstr ""
+msgstr "распознавание врага"
 
 msgid "Dual-Wield Pistols"
-msgstr ""
+msgstr "двойные пистолеты"
 
 msgid "Improved Weapon Handling"
-msgstr ""
+msgstr "улучшенное обращение с оружием"
 
 msgid "Assassin"
-msgstr ""
+msgstr "бесшумный убийца"
 
 #: src/cgame/cg_consolecmds:1233
 msgid "You will spawn as an %s %s with a %s and %s."
-msgstr ""
+msgstr "Вы появитесь как %s %s с %s и %s."
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1THE TEAM"
-msgstr ""
+msgstr "^1КОМАНДА"
 
 msgid "Axis team"
-msgstr ""
+msgstr "Нацисты"
 
 msgid "Allied team"
-msgstr ""
+msgstr "Союзники"
 
 msgid "Spectators"
-msgstr ""
+msgstr "Зрители"
 
 msgid "You must be a player or following a player to use +stats\n"
-msgstr ""
+msgstr "Вы должны быть или следовать за игроком чтобы использовать +stats\n"
 
 msgid "^9You must be alive to use ^3/kill."
-msgstr ""
+msgstr "^9Только живой может использовать ^3/kill."
 
 msgid "No vote in progress.\n"
-msgstr ""
+msgstr "Сейчас нет голосования.\n"
 
 msgid "No or bad challenge for address.\n"
-msgstr ""
+msgstr "Нет подходящего вызова для адреса.\n"
 
 msgid "Match is already in progress!\n"
-msgstr ""
+msgstr "Матч уже идёт!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
-msgstr ""
+msgstr "^1** Изменение настроек сервера судьёй **\n"
 
 msgid "Your fireteam is now public"
-msgstr ""
+msgstr "Ваше звено теперь открыто"
 
 msgid "Your fireteam is now private"
-msgstr ""
+msgstr "Ваше звено теперь закрыто"
 
 msgid "The Allies have too many players.\n"
-msgstr ""
+msgstr "У союзников слишком много игроков.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr ""
+msgstr "У нацистов слишком много игроков.\n"
 
 msgid "Attack!"
-msgstr ""
+msgstr "Атакуем!"
 
 msgid "Fall back!"
-msgstr ""
+msgstr "Назад!"
 
 msgid ""
 "^3All players ready!^7\n"
 "Match starting..."
-msgstr ""
+msgstr "^3Все игроки готовы!^7\nМатч начинается..."
 
 msgid "Path cleared."
-msgstr ""
+msgstr "Путь чист."
 
 msgid "The enemy is weakened."
-msgstr ""
+msgstr "Враг ослаблен."
 
 msgid "All clear."
-msgstr ""
+msgstr "Всё чисто."
 
 msgid "Incoming!"
-msgstr ""
+msgstr "Летит!"
 
 msgid "Fire in the hole!"
-msgstr ""
+msgstr "Сейчас рванёт!"
 
 msgid "I'm on defense."
-msgstr ""
+msgstr "Я защищаю."
 
 msgid "I'm on offense."
-msgstr ""
+msgstr "Я атакую."
 
 msgid "Taking fire!"
-msgstr ""
+msgstr "Я под огнём!"
 
 msgid "Mines cleared."
-msgstr ""
+msgstr "Мины обезврежены."
 
 msgid "Enemy in disguise."
-msgstr ""
+msgstr "Враг в камуфляже."
 
 msgid "Need a Medic!"
-msgstr ""
+msgstr "Врача!"
 
 msgid "I need ammo!"
-msgstr ""
+msgstr "Патронов!"
 
 msgid "I need backup!"
-msgstr ""
+msgstr "Нужна помощь!"
 
 msgid "We need an engineer!"
-msgstr ""
+msgstr "Инженера!"
 
 msgid "Cover me!"
 msgstr ""
