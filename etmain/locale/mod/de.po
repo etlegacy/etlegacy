@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-06-28 08:54+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2015-07-14 15:43+0000\n"
+"Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -563,7 +563,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
-msgstr "Erlaube spätes Anschließen:"
+msgstr "Spätes Anschließen:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
@@ -610,7 +610,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr "Team Kontrolle abschalten:"
+msgstr "Team Kontrolle aus:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
@@ -802,7 +802,7 @@ msgstr "ABSTIMMUNG"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr "Max Abstimmungen pro Spieler:"
+msgstr "Max Abstimm. pro Spieler:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
@@ -992,7 +992,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
-msgstr "FTP/HTTP Weiterleitungen:"
+msgstr "FTP/HTTP Weiterleitung:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
@@ -1135,7 +1135,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:42
 msgid "Auto-Configure Server:"
-msgstr "Server Autokonfiguration:"
+msgstr "Server Autokonfig.:"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Competition Settings"
@@ -1319,7 +1319,7 @@ msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
-msgstr ""
+msgstr "Wähle das Ziel Deiner Nachricht"
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
@@ -1395,7 +1395,7 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_disabled.menu:52
 msgid "on this server."
-msgstr ""
+msgstr "auf dem Server."
 
 #: etmain/ui/ingame_vote_map.menu:34 etmain/ui/ingame_vote_map.menu:37
 #: etmain/ui/ingame_vote.menu:88 etmain/ui/ingame_vote.menu:89
@@ -1741,7 +1741,7 @@ msgstr "Besuche unser Wiki für die Dokumentation"
 
 #: etmain/ui/options_clean.menu:40
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
-msgstr ""
+msgstr "Drücke '^7ABBRECHENORT^9' wenn Du nicht weißt, was Du hier machst."
 
 #: etmain/ui/options_clean.menu:43
 msgid "ABORT"
@@ -1753,7 +1753,7 @@ msgstr "EINFACHES SÄUBERN"
 
 #: etmain/ui/options_clean.menu:45
 msgid "FULL CLEAN"
-msgstr "KOPLETTES SÄUBERN"
+msgstr "KOMPLETTES SÄUBERN"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -2684,7 +2684,7 @@ msgstr ""
 #: etmain/ui/options_system.menu:52 etmain/ui/profile_create_initial.menu:102
 #: etmain/ui/profile_create.menu:97
 msgid "High"
-msgstr ""
+msgstr "Hoch"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Med"
@@ -6027,7 +6027,7 @@ msgid "You are not on the same Fireteam as the other player"
 msgstr ""
 
 msgid "Invalid client selected"
-msgstr ""
+msgstr "Ungültiger Client gewählt"
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
 msgstr ""
@@ -6673,10 +6673,10 @@ msgid "Fireteam Quick Chat:"
 msgstr ""
 
 msgid "Ready:"
-msgstr ""
+msgstr "Bereit:"
 
 msgid "Not Ready:"
-msgstr ""
+msgstr "Nicht Bereit:"
 
 msgid "CONTROLS: ADVANCED"
 msgstr ""
