@@ -22,7 +22,7 @@ env:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq pkg-config nasm libgl1-mesa-dev libasound2-dev
+  - sudo apt-get install -qq pkg-config nasm libgl1-mesa-dev libasound2-dev m4
 
 script:
   - ./easybuild.sh
