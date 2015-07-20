@@ -1408,12 +1408,6 @@ void CL_DownloadsComplete(void)
  */
 void CL_CheckForResend(void)
 {
-	int  port, i;
-	char info[MAX_INFO_STRING];
-	char data[MAX_INFO_STRING];
-	char pkt[1024 + 1];
-	int  pktlen;
-
 	// don't send anything if playing back a demo
 	if (clc.demoplaying)
 	{
@@ -1437,11 +1431,19 @@ void CL_CheckForResend(void)
 	switch (cls.state)
 	{
 	case CA_CONNECTING:
+	{
+		char pkt[1024 + 1];
+
 		strcpy(pkt, "getchallenge");
 		NET_OutOfBandPrint(NS_CLIENT, clc.serverAddress, pkt);
-		break;
-
+	}
+	break;
 	case CA_CHALLENGING:
+	{
+		int  port;
+		char info[MAX_INFO_STRING];
+		char data[MAX_INFO_STRING + 10];
+
 		// received and confirmed the challenge, now responding with a connect packet
 		port = Cvar_VariableValue("net_qport");
 
@@ -1450,27 +1452,15 @@ void CL_CheckForResend(void)
 		Info_SetValueForKey(info, "qport", va("%i", port));
 		Info_SetValueForKey(info, "challenge", va("%i", clc.challenge));
 
-		strcpy(data, "connect ");
+		Com_sprintf(data, sizeof(data), "connect \"%s\"", info);
+		NET_OutOfBandData(NS_CLIENT, clc.serverAddress, (const char *) data, strlen(data));
 
-		data[8] = '\"'; // quote the string because it may contain spaces
-
-		for (i = 0; i < strlen(info); i++)
-		{
-			data[9 + i] = info[i];
-		}
-
-		data[9 + i]  = '\"'; // ending quote
-		data[10 + i] = 0;
-
-		pktlen = i + 10 ;
-		memcpy(pkt, &data[0], pktlen);
-
-		NET_OutOfBandData(NS_CLIENT, clc.serverAddress, pkt, pktlen);
 		// the most current userinfo has been sent, so watch for any
 		// newer changes to userinfo variables
 		cvar_modifiedFlags &= ~CVAR_USERINFO;
-		break;
 
+	}
+	break;
 	default:
 		Com_Error(ERR_FATAL, "CL_CheckForResend: bad cls.state");
 		break;
@@ -1572,6 +1562,7 @@ void CL_MotdPacket(netadr_t from)
 void CL_PrintPacket(msg_t *msg)
 {
 	char *s;
+
 	s = MSG_ReadBigString(msg);
 	if (!Q_stricmpn(s, "[err_dialog]", 12))
 	{
@@ -1700,7 +1691,9 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 			}
 
 			for (i = 0; i < sizeof(addresses[numservers].ip6); i++)
+			{
 				addresses[numservers].ip6[i] = *buffptr++;
+			}
 
 			addresses[numservers].type     = NA_IP6;
 			addresses[numservers].scope_id = from->scope_id;
@@ -1967,9 +1960,8 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 	// packet from server
 	if (!NET_CompareAdr(from, clc.netchan.remoteAddress))
 	{
-		Com_DPrintf("%s:sequenced packet without connection\n"
-		            , NET_AdrToString(from));
-		// FIXME: send a client disconnect?
+		Com_DPrintf("%s:sequenced packet without connection\n", NET_AdrToString(from));
+		// client isn't connected - don't send disconnect
 		return;
 	}
 
@@ -3160,7 +3152,6 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 			case NA_IP6:
 				type = 2;
 				break;
-
 			default:
 				type = 0;
 				break;
