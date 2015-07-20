@@ -2378,7 +2378,9 @@ evilbanigoto:
 						VectorCopy(traceEnt->r.currentOrigin, org);
 						org[2] += 4;        // move out of ground
 
+						G_TempTraceIgnorePlayersAndBodies();
 						numListedEntities = EntsThatRadiusCanDamage(org, traceEnt->splashRadius, entityList);
+						G_ResetTempTraceIgnoreEnts();
 
 						for (e = 0; e < numListedEntities; e++)
 						{

@@ -46,10 +46,7 @@ int nextHistoryLine;        // the last line in the history buffer, not masked
 int historyLine;            // the line being displayed from history buffer
                             // will be <= nextHistoryLine
 
-field_t  g_consoleField;
-field_t  chatField;
-qboolean chat_team;
-qboolean chat_buddy;
+field_t g_consoleField;
 
 qboolean key_overstrikeMode;
 
@@ -739,53 +736,6 @@ void Console_Key(int key)
 
 //============================================================================
 
-/*
-================
-Message_Key
-
-In game talk message
-================
-*/
-void Message_Key(int key)
-{
-	if (key == K_ESCAPE)
-	{
-		cls.keyCatchers &= ~KEYCATCH_MESSAGE;
-		Field_Clear(&chatField);
-		return;
-	}
-
-	if (key == K_ENTER || key == K_KP_ENTER)
-	{
-		if (chatField.buffer[0] && cls.state == CA_ACTIVE)
-		{
-			char buffer[MAX_STRING_CHARS];
-
-			if (chat_team)
-			{
-				Com_sprintf(buffer, sizeof(buffer), "say_team \"%s\"\n", chatField.buffer);
-			}
-			else if (chat_buddy)
-			{
-				Com_sprintf(buffer, sizeof(buffer), "say_buddy \"%s\"\n", chatField.buffer);
-			}
-			else
-			{
-				Com_sprintf(buffer, sizeof(buffer), "say \"%s\"\n", chatField.buffer);
-			}
-
-			CL_AddReliableCommand(buffer);
-		}
-		cls.keyCatchers &= ~KEYCATCH_MESSAGE;
-		Field_Clear(&chatField);
-		return;
-	}
-
-	Field_KeyDownEvent(&chatField, key);
-}
-
-//============================================================================
-
 qboolean Key_GetOverstrikeMode(void)
 {
 	return key_overstrikeMode;
@@ -1390,13 +1340,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			return;
 		}
 
-		if (cls.keyCatchers & KEYCATCH_MESSAGE)
-		{
-			// clear message mode
-			Message_Key(key);
-			return;
-		}
-
 		// escape always gets out of CGAME stuff
 		if (cls.keyCatchers & KEYCATCH_CGAME)
 		{
@@ -1499,13 +1442,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			}
 		}
 	}
-	else if (cls.keyCatchers & KEYCATCH_MESSAGE)
-	{
-		if (!onlybinds)
-		{
-			Message_Key(key);
-		}
-	}
 	else if (cls.state == CA_DISCONNECTED)
 	{
 		if (!onlybinds)
@@ -1573,10 +1509,6 @@ void CL_CharEvent(int key)
 	else if (cls.keyCatchers & KEYCATCH_CGAME)
 	{
 		VM_Call(cgvm, CG_KEY_EVENT, key | K_CHAR_FLAG, qtrue);
-	}
-	else if (cls.keyCatchers & KEYCATCH_MESSAGE)
-	{
-		Field_CharEvent(&chatField, key);
 	}
 	else if (cls.state == CA_DISCONNECTED)
 	{

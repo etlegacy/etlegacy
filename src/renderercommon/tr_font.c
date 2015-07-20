@@ -215,7 +215,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 
 		flags |= FT_LOAD_FORCE_AUTOHINT;
 
-		//Test filtering
+		// Test filtering
 		FT_Library_SetLcdFilter(ftLibrary, FT_LCD_FILTER_LIGHT);
 		flags |= FT_LOAD_TARGET_LCD;
 
@@ -376,8 +376,7 @@ float readFloat(void)
  */
 qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 {
-	unsigned char *faceData;
-	int           len, i;
+	int len, i;
 
 	// Check if this font isn't loaded already
 	for (i = 0; i < registeredFontCount; i++)
@@ -392,7 +391,7 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 	len = ri.FS_ReadFile(datName, NULL);
 	if (len == GLYPH_OLD_FORMAT)
 	{
-		int i;
+		unsigned char *faceData;
 
 		ri.FS_ReadFile(datName, (void **)&faceData);
 		fdOffset = 0;
@@ -426,9 +425,13 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 		ri.FS_FreeFile(faceData);
 		return qtrue;
 	}
+	else if (len == -1)
+	{
+		Ren_Warning("R_LoadPreRenderedFont: font file '%s' was not found.\n", datName);
+	}
 	else
 	{
-		Ren_Warning("R_LoadPreRenderedFont: font file %s is in an incompatible format.\n", datName);
+		Ren_Warning("R_LoadPreRenderedFont: font file '%s' is in an incompatible format.\n", datName);
 	}
 
 	return qfalse;
@@ -719,8 +722,6 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font,
 	{
 		return qtrue;
 	}
-
-	Ren_Warning("R_GetFont: no font available.\n");
 
 	return qfalse;
 }

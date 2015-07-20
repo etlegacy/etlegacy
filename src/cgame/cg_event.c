@@ -677,7 +677,7 @@ static void CG_ItemPickup(int itemNum)
 		break;
 	}
 
-	CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_PickupItemText(itemNum)), " ", cgs.media.pmImages[giType], 0, 0, NULL);
+	CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, NULL);
 
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON)

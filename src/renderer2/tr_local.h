@@ -1492,8 +1492,7 @@ typedef struct decalProjector_s
 	vec4_t planes[6];
 	vec4_t texMat[3][2];
 	int projectorNum;               // global identifier
-}
-decalProjector_t;
+} decalProjector_t;
 
 typedef struct corona_s
 {
@@ -2514,12 +2513,12 @@ typedef enum
 
 enum
 {
-	COMPONENT_BIT_TX     = 1 << 0,
-	    COMPONENT_BIT_TY = 1 << 1,
-	    COMPONENT_BIT_TZ = 1 << 2,
-	    COMPONENT_BIT_QX = 1 << 3,
-	    COMPONENT_BIT_QY = 1 << 4,
-	    COMPONENT_BIT_QZ = 1 << 5
+	COMPONENT_BIT_TX = 1 << 0,
+	COMPONENT_BIT_TY = 1 << 1,
+	COMPONENT_BIT_TZ = 1 << 2,
+	COMPONENT_BIT_QX = 1 << 3,
+	COMPONENT_BIT_QY = 1 << 4,
+	COMPONENT_BIT_QZ = 1 << 5
 };
 
 typedef struct

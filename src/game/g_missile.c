@@ -1239,7 +1239,9 @@ void DynaFree(gentity_t *self)
 	VectorCopy(self->r.currentOrigin, org);
 	org[2] += 4;    // move out of ground
 
+	G_TempTraceIgnorePlayersAndBodies();
 	numListedEntities = EntsThatRadiusCanDamage(org, self->splashRadius, entityList);
+	G_ResetTempTraceIgnoreEnts();
 
 	for (e = 0; e < numListedEntities; e++)
 	{

@@ -760,7 +760,6 @@ void QDECL CG_Printf(const char *msg, ...)
 			return;
 		}
 
-		CG_AddToNotify(&text[10]);
 		Q_strncpyz(buf, &text[10], 1013);
 		Q_strncpyz(text, "[skipnotify]", 13);
 		Q_strcat(text, 1011, buf);
@@ -793,7 +792,6 @@ void QDECL CG_DPrintf(const char *msg, ...)
 			return;
 		}
 
-		CG_AddToNotify(&text[10]);
 		Q_strncpyz(buf, &text[10], 1013);
 		Q_strncpyz(text, "[skipnotify]", 13);
 		Q_strcat(text, 1011, buf);

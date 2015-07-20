@@ -108,7 +108,6 @@ cvar_t *com_cleanwhitelist;
 cvar_t *com_showtrace;
 cvar_t *com_version;
 cvar_t *com_buildScript;    // for automated data building scripts
-cvar_t *con_drawnotify;
 cvar_t *com_introPlayed;
 cvar_t *com_ansiColor;
 cvar_t *com_unfocused;
@@ -2881,8 +2880,6 @@ void Com_Init(char *commandLine)
 	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM);
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
 
-	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
-
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
@@ -3941,6 +3938,6 @@ void Com_RandomBytes(byte *string, int len)
 	Com_Printf("Com_RandomBytes: using weak randomization\n");
 	for (i = 0; i < len; i++)
 	{
-		string[i] = (unsigned char)(rand() % 255);
+		string[i] = (unsigned char)(rand() % 256);
 	}
 }
