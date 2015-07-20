@@ -775,6 +775,15 @@ void _UI_Refresh(int realtime)
 
 void _UI_Shutdown(void)
 {
+	int i = 0;
+	for (; i < UI_FONT_COUNT; i++)
+	{
+		Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.fonts[i]);
+	}
+
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.bg_loadscreenfont1);
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.bg_loadscreenfont2);
+
 	//trap_LAN_SaveCachedServers(); // obsolete - ETL saves on add/remove
 }
 
