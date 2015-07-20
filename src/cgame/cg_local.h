@@ -1544,10 +1544,10 @@ typedef struct
 	qhandle_t medal_back;
 
 	// new limbo stuff
-	fontInfo_t limboFont1;
-	fontInfo_t limboFont1_lo;
-	fontInfo_t limboFont2;
-	fontInfo_t limboFont2_lo;
+	fontHelper_t limboFont1;
+	fontHelper_t limboFont1_lo;
+	fontHelper_t limboFont2;
+	fontHelper_t limboFont2_lo;
 	qhandle_t limboNumber_roll;
 	qhandle_t limboNumber_back;
 	qhandle_t limboStar_roll;
@@ -2355,13 +2355,13 @@ void CG_ObjectivePrint(const char *str, float fontScale);
 void CG_DrawActive(stereoFrame_t stereoView);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
-void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font);
-void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font);
+void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
+void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
 void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
 void CG_Text_SetActiveFont(int font);
-int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font);
+int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Width(const char *text, float scale, int limit);
-int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font);
+int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Height(const char *text, float scale, int limit);
 float CG_GetValue(int ownerDraw, int type);   // 'type' is relative or absolute (fractional-'0.5' or absolute- '50' health)
 qboolean CG_OwnerDrawVisible(int flags);
@@ -2971,7 +2971,7 @@ bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent)
 
 void CG_FitTextToWidth(char *instr, int w, int size);
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size);
-void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font);
+void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelper_t *font);
 int CG_TrimLeftPixels(char *instr, float scale, float w, int size);
 void CG_FitTextToWidth_SingleLine(char *instr, float scale, float w, int size);
 

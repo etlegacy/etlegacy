@@ -642,13 +642,13 @@ void CG_GameStatsDraw(void)
 		int        hStyle  = ITEM_TEXTSTYLE_SHADOWED;
 		float      hScale  = 0.16f;
 		float      hScaleY = 0.21f;
-		fontInfo_t *hFont  = FONT_HEADER;
+		fontHelper_t *hFont  = FONT_HEADER;
 
 		// Sub header
 		int        hStyle2  = 0;
 		float      hScale2  = 0.16f;
 		float      hScaleY2 = 0.20f;
-		fontInfo_t *hFont2  = FONT_SUBHEADER;
+		fontHelper_t *hFont2  = FONT_SUBHEADER;
 
 		vec4_t hdrColor = COLOR_HDR;        // text
 		//vec4_t hdrColor2    = COLOR_HDR2;   // text
@@ -657,7 +657,7 @@ void CG_GameStatsDraw(void)
 		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
 		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
 		float      tScale   = 0.19f;
-		fontInfo_t *tFont   = FONT_TEXT;
+		fontHelper_t *tFont   = FONT_TEXT;
 		vec4_t     tColor   = COLOR_TEXT;   // text
 
 		float diff = cgs.gamestats.fadeTime - cg.time;
@@ -850,13 +850,13 @@ void CG_TopShotsDraw(void)
 		int        hStyle  = ITEM_TEXTSTYLE_SHADOWED;
 		float      hScale  = 0.16f;
 		float      hScaleY = 0.21f;
-		fontInfo_t *hFont  = FONT_HEADER;
+		fontHelper_t *hFont  = FONT_HEADER;
 
 		// Sub header
 		int        hStyle2  = 0;
 		float      hScale2  = 0.16f;
 		float      hScaleY2 = 0.20f;
-		fontInfo_t *hFont2  = FONT_SUBHEADER;
+		fontHelper_t *hFont2  = FONT_SUBHEADER;
 
 		vec4_t hdrColor  = COLOR_HDR;       // text
 		vec4_t hdrColor2 = COLOR_HDR2;      // text
@@ -865,7 +865,7 @@ void CG_TopShotsDraw(void)
 		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
 		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
 		float      tScale   = 0.19f;
-		fontInfo_t *tFont   = FONT_TEXT;
+		fontHelper_t *tFont   = FONT_TEXT;
 		vec4_t     tColor   = COLOR_TEXT;   // text
 
 		float diff = cgs.topshots.fadeTime - cg.time;
@@ -986,7 +986,7 @@ void CG_ObjectivesDraw()
 		int        hStyle  = ITEM_TEXTSTYLE_SHADOWED;
 		float      hScale  = 0.16f;
 		float      hScaleY = 0.21f;
-		fontInfo_t *hFont  = FONT_HEADER;
+		fontHelper_t *hFont  = FONT_HEADER;
 
 		vec4_t hdrColor  = COLOR_HDR;       // text
 		vec4_t hdrColor2 = COLOR_HDR2;      // text
@@ -995,7 +995,7 @@ void CG_ObjectivesDraw()
 		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
 		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
 		float      tScale   = 0.19f;
-		fontInfo_t *tFont   = FONT_TEXT;
+		fontHelper_t *tFont   = FONT_TEXT;
 		vec4_t     tColor   = COLOR_TEXT;   // text
 
 		float diff = cgs.objectives.fadeTime - cg.time;
@@ -1400,7 +1400,7 @@ void CG_ObjectivesDraw()
 #define DH_Y    -60     // spacing from bottom
 #define DH_W    148
 
-void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor, int tSpacing, vec4_t bgColorTitle, vec4_t borderColorTitle, float hScale, float hScaleY, vec4_t hdrColor2, int hStyle, fontInfo_t *hFont)
+void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor, int tSpacing, vec4_t bgColorTitle, vec4_t borderColorTitle, float hScale, float hScaleY, vec4_t hdrColor2, int hStyle, fontHelper_t *hFont)
 {
 	static panel_button_text_t demoControlTxt;
 	int                        i;
@@ -1494,14 +1494,14 @@ void CG_DemoHelpDraw(void)
 		int        hStyle    = ITEM_TEXTSTYLE_SHADOWED;
 		float      hScale    = 0.16f;
 		float      hScaleY   = 0.21f;
-		fontInfo_t *hFont    = FONT_HEADER;
+		fontHelper_t *hFont    = FONT_HEADER;
 		vec4_t     hdrColor2 = COLOR_HDR2;  // text
 
 		// Text settings
 		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
 		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
 		float      tScale   = 0.19f;
-		fontInfo_t *tFont   = FONT_TEXT;
+		fontHelper_t *tFont   = FONT_TEXT;
 		vec4_t     tColor   = COLOR_TEXT;   // text
 
 		float diff = cg.fadeTime - trap_Milliseconds();
@@ -1669,14 +1669,14 @@ void CG_SpecHelpDraw(void)
 		int        hStyle    = ITEM_TEXTSTYLE_SHADOWED;
 		float      hScale    = 0.16f;
 		float      hScaleY   = 0.21f;
-		fontInfo_t *hFont    = FONT_HEADER;
+		fontHelper_t *hFont    = FONT_HEADER;
 		vec4_t     hdrColor2 = COLOR_HDR2;  // text
 
 		// Text settings
 		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
 		int        tSpacing = 9;        // Should derive from CG_Text_Height_Ext
 		float      tScale   = 0.19f;
-		fontInfo_t *tFont   = FONT_TEXT;
+		fontHelper_t *tFont   = FONT_TEXT;
 		vec4_t     tColor   = COLOR_TEXT;   // text
 
 		float diff = cg.fadeTime - trap_Milliseconds();

@@ -39,8 +39,8 @@ extern displayContextDef_t *DC;
 
 qboolean   bg_loadscreeninited = qfalse;
 qboolean   bg_loadscreeninteractive;
-fontInfo_t bg_loadscreenfont1;
-fontInfo_t bg_loadscreenfont2;
+fontHelper_t bg_loadscreenfont1;
+fontHelper_t bg_loadscreenfont2;
 qhandle_t  bg_axispin;
 qhandle_t  bg_alliedpin;
 qhandle_t  bg_neutralpin;

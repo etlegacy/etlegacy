@@ -36,8 +36,8 @@
 #include "ui_shared.h"
 
 qboolean   bg_loadscreeninited = qfalse;
-fontInfo_t bg_loadscreenfont1;
-fontInfo_t bg_loadscreenfont2;
+fontHelper_t bg_loadscreenfont1;
+fontHelper_t bg_loadscreenfont2;
 
 void UI_LoadPanel_RenderHeaderText(panel_button_t *button);
 void UI_LoadPanel_RenderLoadingText(panel_button_t *button);
@@ -168,8 +168,8 @@ void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack)
 
 	if (!bg_loadscreeninited)
 	{
-		trap_R_RegisterFont("ariblk", 27, &bg_loadscreenfont1);
-		trap_R_RegisterFont("courbd", 30, &bg_loadscreenfont2);
+		RegisterFont("ariblk", 27, &bg_loadscreenfont1);
+		RegisterFont("courbd", 30, &bg_loadscreenfont2);
 
 		BG_PanelButtonsSetup(loadpanelButtons);
 		C_PanelButtonsSetup(loadpanelButtons, Cui_WideXoffset());   // convert to possible widescreen coordinates..

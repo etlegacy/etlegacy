@@ -7,7 +7,7 @@
  *            Copyright (C) 2009-2010 Mathias Svensson (modifications for Zip64 support) (http://result42.com)
  */
 
-#if (defined(_WIN32))
+#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 		#define _CRT_SECURE_NO_WARNINGS
 #endif
 

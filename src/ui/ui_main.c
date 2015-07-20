@@ -212,7 +212,7 @@ void Text_SetActiveFont(int font)
 	uiInfo.activeFont = font;
 }
 
-int Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
+int Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float       out = 0;
 	glyphInfo_t *glyph;
@@ -245,12 +245,12 @@ int Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 			}
 		}
 	}
-	return out * scale * font->glyphScale;
+	return out * scale * Q_UTF8_GlyphScale(font);
 }
 
 int Text_Width(const char *text, float scale, int limit)
 {
-	fontInfo_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	return Text_Width_Ext(text, scale, limit, font);
 }
@@ -261,7 +261,7 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 	float       width, widest = 0;
 	glyphInfo_t *glyph;
 	const char  *s    = text;
-	fontInfo_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	fontHelper_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	if (text)
 	{
@@ -284,7 +284,7 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 			{
 				if (*s == '\n')
 				{
-					width = out * scale * font->glyphScale;
+					width = out * scale * Q_UTF8_GlyphScale(font);
 					if (width > widest)
 					{
 						widest = width;
@@ -305,7 +305,7 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 
 	if (widest > 0)
 	{
-		width = out * scale * font->glyphScale;
+		width = out * scale * Q_UTF8_GlyphScale(font);
 		if (width > widest)
 		{
 			widest = width;
@@ -315,11 +315,11 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 	}
 	else
 	{
-		return out * scale * font->glyphScale;
+		return out * scale * Q_UTF8_GlyphScale(font);
 	}
 }
 
-int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
+int Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float       max = 0;
 	glyphInfo_t *glyph;
@@ -356,12 +356,12 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 		}
 	}
 
-	return max * scale * font->glyphScale;
+	return max * scale * Q_UTF8_GlyphScale(font);
 }
 
 int Text_Height(const char *text, float scale, int limit)
 {
-	fontInfo_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	return Text_Height_Ext(text, scale, limit, font);
 }
@@ -372,7 +372,7 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 	float       totalheight = 0;
 	glyphInfo_t *glyph;
 	const char  *s    = text;
-	fontInfo_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	fontHelper_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	if (text)
 	{
@@ -423,11 +423,11 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 			totalheight += 5;   // 5 is the vertical spacing that autowrap painting uses
 		}
 		totalheight += max;
-		return totalheight * scale * font->glyphScale;
+		return totalheight * scale * Q_UTF8_GlyphScale(font);
 	}
 	else
 	{
-		return max * scale * font->glyphScale;
+		return max * scale * Q_UTF8_GlyphScale(font);
 	}
 }
 
@@ -447,13 +447,13 @@ void Text_PaintChar(float x, float y, float w, float h, float scale, float s, fl
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
 
-void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font)
+void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
 {
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
 
-	scalex *= font->glyphScale;
-	scaley *= font->glyphScale;
+	scalex *= Q_UTF8_GlyphScale(font);
+	scaley *= Q_UTF8_GlyphScale(font);
 
 	if (text)
 	{
@@ -525,7 +525,7 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style)
 {
-	fontInfo_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
 }
@@ -534,8 +534,8 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 {
 	vec4_t      newColor;
 	glyphInfo_t *glyph, *glyph2;
-	fontInfo_t  *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-	float       useScale = scale * font->glyphScale;
+	fontHelper_t  *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	float       useScale = scale * Q_UTF8_GlyphScale(font);
 
 	if (text)
 	{
@@ -633,8 +633,8 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 	{
 		const char *s       = text;
 		float      max      = *maxX;
-		fontInfo_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-		float      useScale = scale * font->glyphScale;
+		fontHelper_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
 		int        len      = Q_UTF8_Strlen(text);
 		int        count    = 0;
 
@@ -847,7 +847,7 @@ qboolean Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
-			trap_R_RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
+			RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
 			uiInfo.uiDC.Assets.fontRegistered = qtrue;
 			continue;
 		}

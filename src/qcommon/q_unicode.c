@@ -472,10 +472,28 @@ glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
 	return &((fontInfo_t *)fontdata)->glyphs[codepoint];
 }
 
+void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t * font, qboolean extended, void (* font_register)(const char*, int, void *))
+{
+	if (extended)
+	{
+		font->fontData = malloc(sizeof(fontInfo_extra_t));
+		font->GetGlyph = &Q_UTF8_GetGlyphExtended;
+	}
+	else
+	{
+		font->fontData = malloc(sizeof(fontInfo_t));
+		font->GetGlyph = &Q_UTF8_GetGlyphVanilla;
+	}
+
+	font_register(fontName, pointSize, font->fontData);
+}
+
+/*
 glyphInfo_t *Q_UTF8_GetGlyph(fontHelper_t *font, const char *s)
 {
 	return font->GetGlyph(font->fontData, Q_UTF8_CodePoint(s));
 }
+*/
 
 glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, qboolean extended, unsigned long codepoint)
 {
@@ -500,10 +518,12 @@ glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, qboolean extended, unsigned l
 	}
 }
 
+/*
 glyphInfo_t *Q_UTF8_GetGlyphSafe(fontInfo_t *font, qboolean extended, const char *s)
 {
 	return Q_UTF8_GetGlyphLong(font, extended, Q_UTF8_CodePoint(s));
 }
+*/
 
 void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
 {

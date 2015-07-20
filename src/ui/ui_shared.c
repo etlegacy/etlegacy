@@ -1500,7 +1500,7 @@ void BG_PanelButtons_SetFocusButton(panel_button_t *button)
 	bg_focusButton = button;
 }
 
-void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font)
+void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelper_t *font)
 {
 	char buffer[1024];
 	char *s, *p, *c, *ls = NULL;

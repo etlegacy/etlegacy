@@ -360,7 +360,7 @@ typedef struct
 	const char *fontStr;
 	const char *cursorStr;
 	const char *gradientStr;
-	fontInfo_t fonts[6];
+	fontHelper_t fonts[6];
 	qhandle_t cursor;
 	qhandle_t gradientBar;
 	qhandle_t scrollBarArrowUp;
@@ -411,12 +411,12 @@ typedef struct
 	void (*drawHandlePic)(float x, float y, float w, float h, qhandle_t asset);
 	void (*drawStretchPic)(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
 	void (*drawText)(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
-	void (*drawTextExt)(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font);
+	void (*drawTextExt)(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
 	int (*textWidth)(const char *text, float scale, int limit);
-	int (*textWidthExt)(const char *text, float scale, int limit, fontInfo_t *font);
+	int (*textWidthExt)(const char *text, float scale, int limit, fontHelper_t *font);
 	int (*multiLineTextWidth)(const char *text, float scale, int limit);
 	int (*textHeight)(const char *text, float scale, int limit);
-	int (*textHeightExt)(const char *text, float scale, int limit, fontInfo_t *font);
+	int (*textHeightExt)(const char *text, float scale, int limit, fontHelper_t *font);
 	int (*multiLineTextHeight)(const char *text, float scale, int limit);
 	void (*textFont)(int font);
 	qhandle_t (*registerModel)(const char *p);
@@ -428,7 +428,7 @@ typedef struct
 	void (*clearScene)(void);
 	void (*addRefEntityToScene)(const refEntity_t *re);
 	void (*renderScene)(const refdef_t *fd);
-	void (*registerFont)(const char *pFontname, int pointSize, fontInfo_t *font);
+	void (*registerFont)(const char *pFontname, int pointSize, fontHelper_t *font);
 	void (*ownerDrawItem)(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
 	float (*getValue)(int ownerDraw, int type);
 	qboolean (*ownerDrawVisible)(int flags);
@@ -643,7 +643,7 @@ typedef struct panel_button_text_s
 	vec4_t colour;
 	int style;
 	int align;
-	fontInfo_t *font;
+	fontHelper_t *font;
 } panel_button_text_t;
 
 typedef qboolean (*panel_button_key_down)(panel_button_t *, int);
@@ -696,7 +696,7 @@ panel_button_t *BG_PanelButtons_GetFocusButton(void);
 qboolean BG_RectContainsPoint(float x, float y, float w, float h, float px, float py);
 qboolean BG_CursorInRect(rectDef_t *rect);
 
-void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font);
+void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelper_t *font);
 
 void AdjustFrom640(float *x, float *y, float *w, float *h);
 
@@ -712,6 +712,9 @@ void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset);      // calle
 #define IS_FUNC_SUPPORTED(x) (uiInfo.legacyClient >= x)
 #endif
 
-#define Q_UTF8_GetGlyph(font, string) Q_UTF8_GetGlyphSafe(font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION), string)
+#define RegisterFont(fontName, pointSize, font) Q_UTF8_RegisterFont(fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION), &trap_R_RegisterFont)
+#define Q_UTF8_GlyphScale(font) ((fontInfo_t *)font->fontData)->glyphScale
+#define Q_UTF8_GetGlyph(font, string) font->GetGlyph(font->fontData, Q_UTF8_CodePoint(string))
+//#define Q_UTF8_GetGlyph(font, string) Q_UTF8_GetGlyphSafe(font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION), string)
 
 #endif // #ifndef INCLUDE_UI_SHARED_H

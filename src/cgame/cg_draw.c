@@ -52,7 +52,7 @@ void CG_Text_SetActiveFont(int font)
 	activeFont = font;
 }
 
-int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
+int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float out = 0;
 
@@ -85,17 +85,17 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 		}
 	}
 
-	return out * scale * font->glyphScale;
+	return out * scale * Q_UTF8_GlyphScale(font);
 }
 
 int CG_Text_Width(const char *text, float scale, int limit)
 {
-	fontInfo_t *font = &cgDC.Assets.fonts[activeFont];
+	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
 
 	return CG_Text_Width_Ext(text, scale, limit, font);
 }
 
-int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
+int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float max = 0;
 
@@ -130,12 +130,12 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 			}
 		}
 	}
-	return max * scale * font->glyphScale;
+	return max * scale * Q_UTF8_GlyphScale(font);
 }
 
 int CG_Text_Height(const char *text, float scale, int limit)
 {
-	fontInfo_t *font = &cgDC.Assets.fonts[activeFont];
+	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
 
 	return CG_Text_Height_Ext(text, scale, limit, font);
 }
@@ -157,14 +157,14 @@ void CG_Text_PaintChar(float x, float y, float width, float height, float scale,
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
 
-void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font)
+void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
 {
 	x -= CG_Text_Width_Ext(text, scalex, limit, font) * 0.5f;
 
 	CG_Text_Paint_Ext(x, y, scalex, scaley, color, text, adjust, limit, style, font);
 }
 
-void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font)
+void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
 {
 	if (text)
 	{
@@ -174,8 +174,8 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 		float       yadj;
 		int         len, count = 0, ofs;
 
-		scalex *= font->glyphScale;
-		scaley *= font->glyphScale;
+		scalex *= Q_UTF8_GlyphScale(font);
+		scaley *= Q_UTF8_GlyphScale(font);
 
 		trap_R_SetColor(color);
 		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
@@ -229,7 +229,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style)
 {
-	fontInfo_t *font = &cgDC.Assets.fonts[activeFont];
+	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
 
 	CG_Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
 }
