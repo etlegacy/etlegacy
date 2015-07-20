@@ -172,6 +172,14 @@ qboolean UI_ConsoleCommand(int realTime)
 
 void UI_Shutdown(void)
 {
+	int i = 0;
+	for (; i < 6; i++)
+	{
+		Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.fonts[i]);
+	}
+
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.bg_loadscreenfont1);
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.bg_loadscreenfont2);
 }
 
 /**

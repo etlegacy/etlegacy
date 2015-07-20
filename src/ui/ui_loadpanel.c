@@ -36,8 +36,6 @@
 #include "ui_shared.h"
 
 qboolean   bg_loadscreeninited = qfalse;
-fontHelper_t bg_loadscreenfont1;
-fontHelper_t bg_loadscreenfont2;
 
 void UI_LoadPanel_RenderHeaderText(panel_button_t *button);
 void UI_LoadPanel_RenderLoadingText(panel_button_t *button);
@@ -49,7 +47,7 @@ panel_button_text_t missiondescriptionTxt =
 	0.2f,                0.2f,
 	{ 0.0f,              0.0f,0.0f,    1.f },
 	0,                   0,
-	&bg_loadscreenfont2,
+	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
 panel_button_text_t missiondescriptionHeaderTxt =
@@ -57,7 +55,7 @@ panel_button_text_t missiondescriptionHeaderTxt =
 	0.2f,                0.2f,
 	{ 0.0f,              0.0f,             0.0f,    0.8f },
 	0,                   ITEM_ALIGN_CENTER,
-	&bg_loadscreenfont2,
+	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpheaderTxt =
@@ -65,7 +63,7 @@ panel_button_text_t campaignpheaderTxt =
 	0.2f,                0.2f,
 	{ 1.0f,              1.0f,1.0f,    0.6f },
 	0,                   0,
-	&bg_loadscreenfont2,
+	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpTxt =
@@ -73,7 +71,7 @@ panel_button_text_t campaignpTxt =
 	0.35f,               0.35f,
 	{ 1.0f,              1.0f, 1.0f,  0.6f },
 	0,                   0,
-	&bg_loadscreenfont2,
+	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
 panel_button_t loadScreenMap =
@@ -168,8 +166,8 @@ void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack)
 
 	if (!bg_loadscreeninited)
 	{
-		RegisterFont("ariblk", 27, &bg_loadscreenfont1);
-		RegisterFont("courbd", 30, &bg_loadscreenfont2);
+		RegisterFont("ariblk", 27, &uiInfo.uiDC.Assets.bg_loadscreenfont1);
+		RegisterFont("courbd", 30, &uiInfo.uiDC.Assets.bg_loadscreenfont2);
 
 		BG_PanelButtonsSetup(loadpanelButtons);
 		C_PanelButtonsSetup(loadpanelButtons, Cui_WideXoffset());   // convert to possible widescreen coordinates..

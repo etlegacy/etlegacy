@@ -2706,6 +2706,14 @@ void CG_Shutdown(void)
 		trap_FS_FCloseFile(cg.logFile);
 		cg.logFile = 0;
 	}
+
+	Q_UTF8_FreeFont(&cgs.media.limboFont1);
+	Q_UTF8_FreeFont(&cgs.media.limboFont1_lo);
+	Q_UTF8_FreeFont(&cgs.media.limboFont2);
+	Q_UTF8_FreeFont(&cgs.media.limboFont2_lo);
+
+	Q_UTF8_FreeFont(&cgs.media.bg_loadscreenfont1);
+	Q_UTF8_FreeFont(&cgs.media.bg_loadscreenfont2);
 }
 
 qboolean CG_CheckExecKey(int key)

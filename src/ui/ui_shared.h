@@ -361,6 +361,8 @@ typedef struct
 	const char *cursorStr;
 	const char *gradientStr;
 	fontHelper_t fonts[6];
+	fontHelper_t bg_loadscreenfont1;
+	fontHelper_t bg_loadscreenfont2;
 	qhandle_t cursor;
 	qhandle_t gradientBar;
 	qhandle_t scrollBarArrowUp;

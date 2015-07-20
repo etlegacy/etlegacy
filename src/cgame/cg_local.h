@@ -1548,6 +1548,11 @@ typedef struct
 	fontHelper_t limboFont1_lo;
 	fontHelper_t limboFont2;
 	fontHelper_t limboFont2_lo;
+
+	// loadscreen fonts
+	fontHelper_t bg_loadscreenfont1;
+	fontHelper_t bg_loadscreenfont2;
+
 	qhandle_t limboNumber_roll;
 	qhandle_t limboNumber_back;
 	qhandle_t limboStar_roll;

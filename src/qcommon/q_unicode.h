@@ -62,6 +62,7 @@ void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size);
 qboolean Q_UTF8_ContByte(char c);
 unsigned long Q_UTF8_CodePoint(const char *str);
 void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t * font, qboolean extended, void(*font_register)(const char*, int, void *));
+void Q_UTF8_FreeFont(fontHelper_t *font);
 char *Q_UTF8_Encode(unsigned long codepoint);
 int Q_UTF8_Store(const char *s);
 char *Q_UTF8_Unstore(int e);

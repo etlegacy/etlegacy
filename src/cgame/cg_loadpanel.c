@@ -39,8 +39,6 @@ extern displayContextDef_t *DC;
 
 qboolean   bg_loadscreeninited = qfalse;
 qboolean   bg_loadscreeninteractive;
-fontHelper_t bg_loadscreenfont1;
-fontHelper_t bg_loadscreenfont2;
 qhandle_t  bg_axispin;
 qhandle_t  bg_alliedpin;
 qhandle_t  bg_neutralpin;
@@ -62,7 +60,7 @@ panel_button_text_t missiondescriptionTxt =
 	0.2f,                0.2f,
 	{ 0.0f,              0.0f,0.0f,    1.f },
 	0,                   0,
-	&bg_loadscreenfont2,
+	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t missiondescriptionHeaderTxt =
@@ -70,7 +68,7 @@ panel_button_text_t missiondescriptionHeaderTxt =
 	0.2f,                0.2f,
 	{ 0.0f,              0.0f,             0.0f,    0.8f },
 	0,                   ITEM_ALIGN_CENTER,
-	&bg_loadscreenfont2,
+	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpheaderTxt =
@@ -78,7 +76,7 @@ panel_button_text_t campaignpheaderTxt =
 	0.2f,                0.2f,
 	{ 1.0f,              1.0f,1.0f,    0.6f },
 	0,                   0,
-	&bg_loadscreenfont2,
+	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpTxt =
@@ -86,7 +84,7 @@ panel_button_text_t campaignpTxt =
 	0.22f,               0.22f,
 	{ 1.0f,              1.0f, 1.0f,  0.6f },
 	0,                   0,
-	&bg_loadscreenfont2,
+	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t loadScreenMeterBackTxt =
@@ -94,7 +92,7 @@ panel_button_text_t loadScreenMeterBackTxt =
 	0.22f,               0.22f,
 	{ 0.1f,              0.1f,             0.1f,  0.8f },
 	0,                   ITEM_ALIGN_CENTER,
-	&bg_loadscreenfont2,
+	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_t loadScreenMap =
@@ -293,8 +291,8 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 	{
 		trap_Cvar_Set("ui_connecting", "0");
 
-		DC->registerFont("ariblk", 27, &bg_loadscreenfont1);
-		DC->registerFont("courbd", 30, &bg_loadscreenfont2);
+		RegisterFont("ariblk", 27, &cgs.media.bg_loadscreenfont1);
+		RegisterFont("courbd", 30, &cgs.media.bg_loadscreenfont2);
 
 		bg_axispin    = DC->registerShaderNoMip("gfx/loading/pin_axis");
 		bg_alliedpin  = DC->registerShaderNoMip("gfx/loading/pin_allied");
@@ -332,11 +330,11 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		int        i;
 		qboolean   enabled = qfalse;
 
-		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, ("^1" LEGACY_MOD " ^0" ETLEGACY_VERSION), 0, 0, 0, &bg_loadscreenfont1);
+		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, ("^1" LEGACY_MOD " ^0" ETLEGACY_VERSION), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
 
 		y   = 340;
 		str = Info_ValueForKey(buffer, "sv_hostname");
-		CG_Text_Paint_Centred_Ext(x, y, 0.2f, 0.2f, colorWhite, str && *str ? str : "ETHost", 0, 26, 0, &bg_loadscreenfont2);
+		CG_Text_Paint_Centred_Ext(x, y, 0.2f, 0.2f, colorWhite, str && *str ? str : "ETHost", 0, 26, 0, &cgs.media.bg_loadscreenfont2);
 
 
 		y += 14;
@@ -348,7 +346,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 				break;
 			}
 
-			CG_Text_Paint_Centred_Ext(x, y, 0.2f, 0.2f, colorWhite, str, 0, 26, 0, &bg_loadscreenfont2);
+			CG_Text_Paint_Centred_Ext(x, y, 0.2f, 0.2f, colorWhite, str, 0, 26, 0, &cgs.media.bg_loadscreenfont2);
 
 			y += 10;
 		}
@@ -638,7 +636,7 @@ qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key)
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight)
 {
 	static vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
-	float         w                = DC->textWidthExt(text, sx, 0, &bg_loadscreenfont2);
+	float         w = DC->textWidthExt(text, sx, 0, &cgs.media.bg_loadscreenfont2);
 	qboolean      fit              = (px + 20 + w > 440) ? qtrue : qfalse;
 
 	px += cgs.wideXoffset;
@@ -665,12 +663,12 @@ void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float 
 	if (fit)
 	{
 		// x - pinhwidth (16) - pin left margin (4) - w => x - w - 20
-		DC->drawTextExt(px - w - 20, py + 4, sx, sy, colorWhite, text, 0, 0, 0, &bg_loadscreenfont2);
+		DC->drawTextExt(px - w - 20, py + 4, sx, sy, colorWhite, text, 0, 0, 0, &cgs.media.bg_loadscreenfont2);
 	}
 	else
 	{
 		// x + pinhwidth (16) + pin right margin (0) => x + 16
-		DC->drawTextExt(px + 16, py + 4, sx, sy, colorWhite, text, 0, 0, 0, &bg_loadscreenfont2);
+		DC->drawTextExt(px + 16, py + 4, sx, sy, colorWhite, text, 0, 0, 0, &cgs.media.bg_loadscreenfont2);
 	}
 }
 

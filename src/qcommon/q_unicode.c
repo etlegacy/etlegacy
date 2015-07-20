@@ -488,6 +488,18 @@ void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t * fon
 	font_register(fontName, pointSize, font->fontData);
 }
 
+void Q_UTF8_FreeFont(fontHelper_t *font)
+{
+	if (font)
+	{
+		if (font->fontData)
+		{
+			free(font->fontData);
+			font->GetGlyph = NULL;
+		}
+	}
+}
+
 /*
 glyphInfo_t *Q_UTF8_GetGlyph(fontHelper_t *font, const char *s)
 {
