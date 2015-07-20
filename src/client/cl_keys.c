@@ -462,11 +462,12 @@ Field_CharEvent
 */
 void Field_CharEvent(field_t *edit, int ch)
 {
-	int  len, charWidth, stringLen;
-	char *value = NULL;
+	int len, stringLen;
+	//int charWidth;
+	//char *value = NULL;
 
-	charWidth = Q_UTF8_WidthCP(ch);
-	value     = Q_UTF8_Encode(ch);
+	//charWidth = Q_UTF8_WidthCP(ch);
+	//value     = Q_UTF8_Encode(ch);
 
 	if (ch == 'v' - 'a' + 1)      // ctrl-v is paste
 	{
@@ -512,7 +513,6 @@ void Field_CharEvent(field_t *edit, int ch)
 	}
 
 	// ignore any other non printable chars
-
 	if (ch < 32)
 	{
 		return;
