@@ -21,8 +21,10 @@ env:
     - BUNDLED_CURL=1
 
 before_install:
+  - curl http://download.opensuse.org/repositories/home:emby/xUbuntu_12.04/Release.key | sudo apt-key add -
+  - echo 'deb http://download.opensuse.org/repositories/home:/emby/xUbuntu_12.04/ precise automake' | sudo tee -a /etc/apt/sources.list"
   - sudo apt-get update -qq
-  - sudo apt-get install -qq pkg-config nasm libgl1-mesa-dev libasound2-dev m4
+  - sudo apt-get install -qq pkg-config nasm libgl1-mesa-dev libasound2-dev m4 automake1.14
 
 script:
   - ./easybuild.sh
