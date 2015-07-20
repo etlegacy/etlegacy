@@ -843,7 +843,7 @@ qboolean Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
-			if (fontIndex < 0 || fontIndex >= 6)
+			if (fontIndex < 0 || fontIndex >= UI_FONT_COUNT)
 			{
 				return qfalse;
 			}

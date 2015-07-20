@@ -474,6 +474,13 @@ glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
 
 void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t * font, qboolean extended, void (* font_register)(const char*, int, void *))
 {
+	if (!font)
+	{
+		return;
+	}
+
+	Q_UTF8_FreeFont(font);
+
 	if (extended)
 	{
 		font->fontData = malloc(sizeof(fontInfo_extra_t));
@@ -495,6 +502,7 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
 		if (font->fontData)
 		{
 			free(font->fontData);
+			font->fontData = NULL;
 			font->GetGlyph = NULL;
 		}
 	}

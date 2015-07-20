@@ -355,12 +355,14 @@ typedef struct
 	qboolean itemHotkeyMode;
 } menuDef_t;
 
+#define UI_FONT_COUNT 6
+
 typedef struct
 {
 	const char *fontStr;
 	const char *cursorStr;
 	const char *gradientStr;
-	fontHelper_t fonts[6];
+	fontHelper_t fonts[UI_FONT_COUNT];
 	fontHelper_t bg_loadscreenfont1;
 	fontHelper_t bg_loadscreenfont2;
 	qhandle_t cursor;
