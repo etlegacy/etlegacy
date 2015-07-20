@@ -432,7 +432,7 @@ typedef struct
 	void (*clearScene)(void);
 	void (*addRefEntityToScene)(const refEntity_t *re);
 	void (*renderScene)(const refdef_t *fd);
-	void (*registerFont)(const char *pFontname, int pointSize, fontHelper_t *font);
+	void (*registerFont)(const char *pFontname, int pointSize, void *font);
 	void (*ownerDrawItem)(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
 	float (*getValue)(int ownerDraw, int type);
 	qboolean (*ownerDrawVisible)(int flags);
