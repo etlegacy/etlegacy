@@ -1385,7 +1385,6 @@ gentity_t *fire_speargun(gentity_t *self, vec3_t start, vec3_t dir);
 
 #define Fire_Lead(ent, activator, spread, damage, muzzle, forward, right, up) Fire_Lead_Ext(ent, activator, spread, damage, muzzle, forward, right, up, MOD_MACHINEGUN)
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, int mod);
-qboolean visible(gentity_t *self, gentity_t *other);
 
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir);
@@ -1901,9 +1900,8 @@ int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *entityList, in
 qboolean trap_EntityContact(const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
 qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
 
-int trap_BotAllocateClient(int clientNum); // FIXME: precompiler macros for engine ?
+int trap_BotAllocateClient(int clientNum);
 #ifdef FEATURE_OMNIBOT
-//int trap_BotAllocateClient(int clientNum); // FIXME: precompiler macros for engine ?
 int trap_BotGetServerCommand(int clientNum, char *message, int size);
 void trap_BotUserCommand(int client, usercmd_t *ucmd);
 void trap_EA_Command(int client, char *command);

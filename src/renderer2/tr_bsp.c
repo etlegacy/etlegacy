@@ -4627,20 +4627,18 @@ void R_LoadLightGrid(lump_t *l)
 
 void R_LoadLights(char *lightDefs)
 {
-	char         *p, *token, *s;
+	//char *s;
+	char         *p = lightDefs, *token;
 	char         keyname[MAX_TOKEN_CHARS];
 	char         value[MAX_TOKEN_CHARS];
 	qboolean     isLight           = qfalse;
-	int          numEntities       = 0;
+	int          numEntities       = 1; // parsed worldspawn so far
 	int          numLights         = 0;
 	int          numOmniLights     = 0;
 	int          numProjLights     = 0;
 	int          numParallelLights = 0;
 	trRefLight_t *light;
 	int          i = 0;
-
-	p           = lightDefs;
-	numEntities = 1;            // parsed worldspawn so far
 
 	// count lights
 	while (1)
@@ -4823,35 +4821,35 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin"))
 			{
 				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
-				s = &value[0];
+				//s = &value[0];
 				//COM_Parse1DMatrix(&s, 3, light->l.origin, qfalse);
 			}
 			// check for center
 			else if (!Q_stricmp(keyname, "light_center"))
 			{
 				sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.center, qfalse);
 			}
 			// check for color
 			else if (!Q_stricmp(keyname, "_color"))
 			{
 				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.color, qfalse);
 			}
 			// check for radius
 			else if (!Q_stricmp(keyname, "light_radius"))
 			{
 				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.radius, qfalse);
 			}
 			// check for light_target
 			else if (!Q_stricmp(keyname, "light_target"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.projTarget, qfalse);
 				light->l.rlType = RL_PROJ;
 			}
@@ -4859,7 +4857,7 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "light_right"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.projRight, qfalse);
 				light->l.rlType = RL_PROJ;
 			}
@@ -4867,7 +4865,7 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "light_up"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.projUp, qfalse);
 				light->l.rlType = RL_PROJ;
 			}
@@ -4875,7 +4873,7 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "light_start"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.projStart, qfalse);
 				light->l.rlType = RL_PROJ;
 			}
@@ -4883,7 +4881,7 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "light_end"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
-				s = &value[0];
+				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.projEnd, qfalse);
 				light->l.rlType = RL_PROJ;
 			}
