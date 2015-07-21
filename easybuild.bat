@@ -55,6 +55,13 @@ GOTO:EOF
 	:: download pak0 - 2 to the homepath if they do not exist
 	IF /I "%curvar%"=="download" CALL:DOWNLOADPAKS "http://mirror.etlegacy.com/etmain/"
 	IF /I "%curvar%"=="open" explorer %game_basepath%
+	IF /I "%curvar%"=="release" CALL:DORELEASE
+GOTO:EOF
+
+:DORELEASE
+	CALL:DOCLEAN
+	CALL:DOBUILD
+	CALL:DOPACKAGE
 GOTO:EOF
 
 :SETUPNMAKE
