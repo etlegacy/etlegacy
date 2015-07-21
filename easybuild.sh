@@ -1,7 +1,32 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# encoding: utf-8
 
+# Made by the Legacy team!
 # script checks for needed applications
 # and builds et legacy
+
+# mandatory variables
+_SRC=`pwd`
+BUILDDIR="${_SRC}/build"
+SOURCEDIR="${_SRC}/src"
+PROJECTDIR="${_SRC}/project"
+
+# Command that can be run, first array has the cmd names which can be given, the second array holds the functions which match the cmd names
+easy_keys=(clean build package install crust release project help)
+easy_cmd=(run_clean run_build run_package run_install run_uncrustify run_release run_project print_help)
+easy_count=`expr ${#easy_keys[*]} - 1`
+
+check_exit() {
+	EXIT_CODE=$?
+	if [ "$#" -ne 0 ]; then
+		eval "$1"
+		EXIT_CODE=$?
+	fi
+	if [ $EXIT_CODE != 0 ]; then
+		echo Exiting!
+		exit $EXIT_CODE
+	fi
+}
 
 einfo() {
 	echo -e "\n\033[1;32m~~>\033[0m \033[1;37m${1}\033[0m"
@@ -11,6 +36,17 @@ ehead() {
 	echo -e "\033[1;36m * \033[1;37m${1}\033[0m"
 }
 
+app_exists() {
+	local __resultvar=$1
+	local app_result=0
+	BINPATH=`which $2 2>/dev/null`
+	if [ $? == 0 ]; then
+		local app_result=1
+	fi
+
+	eval $__resultvar="'$app_result'"
+}
+
 checkapp() {
 	if [ ${2} ]; then
 		ISPROBLEM=${2}
@@ -18,9 +54,9 @@ checkapp() {
 		ISPROBLEM=1
 	fi
 
-	BINPATH=`which $1 2>/dev/null`
+	app_exists APP_FOUND $1
 
-	if [ $? == 0 ]; then
+	if [ $APP_FOUND == 1 ]; then
 		printf "  %-8s \033[1;32m%s\033[0m: %s\n" "${1}" "found" "${BINPATH}"
 	else
 		if [ ${ISPROBLEM} == 0 ]; then
@@ -70,154 +106,332 @@ detectos() {
 	echo -e "  running on: \033[1;32m${PLATFORMSYS}\033[0m \033[0;32m${PLATFORMARCH}\033[0m - \033[1;36m${DISTRO}\033[0m"
 }
 
-_SRC=`pwd`
-BUILDDIR="${_SRC}/build"
+print_startup() {
+	echo
+	ehead "ET Legacy Easy Builder"
+	ehead "==============================="
+	ehead "This script will check for binaries needed to compile ET Legacy"
+	ehead "Then it'll build ET Legacy into ${BUILDDIR}/ directory"
+	echo
 
-echo
-ehead "ET Legacy Easy Builder"
-ehead "==============================="
-ehead "This script will check for binaries needed to compile ET Legacy"
-ehead "Then it'll build ET Legacy into build/ directory"
-echo
+	einfo "Checking for needed apps to compile..."
 
-einfo "Checking for needed apps to compile..."
+	echo
+	detectos
+	echo
+	checkapp autoconf
+	checkapp cmake
+	checkapp gcc
+	checkapp g++
+	checkapp clang 0
+	checkapp clang++ 0
+	checkapp git
+	checkapp zip
+	checkapp nasm
+	echo
 
-echo
-detectos
-echo
-checkapp autoconf
-checkapp cmake
-checkapp gcc
-checkapp g++
-checkapp clang 0
-checkapp clang++ 0
-checkapp git
-checkapp zip
-checkapp nasm
-echo
-
-einfo "Using compilers:"
-
-echo
-echo "  CC  = ${CC}"
-echo "  CXX = ${CXX}"
-
-# everything looks ok, try to compile!
-
-# cmake variables
-[ ! "${RELEASE_TYPE}" ]    && RELEASE_TYPE="Release"
-[ ! "${CROSS_COMPILE32}" ] && CROSS_COMPILE32=1
-[ ! "${RENDERER_DYNAMIC}" ] && RENDERER_DYNAMIC=0
-[ ! "${BUILD_CLIENT}" ] && BUILD_CLIENT=1
-[ ! "${BUNDLED_LIBS}" ] && BUNDLED_LIBS=1
-[ ! "${BUNDLED_SDL}" ]  && BUNDLED_SDL=1
-[ ! "${BUNDLED_JPEG}" ] && BUNDLED_JPEG=1
-[ ! "${BUNDLED_LUA}" ]  && BUNDLED_LUA=1
-[ ! "${BUNDLED_OGG}" ]  && BUNDLED_OGG=1
-
-if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-	[ ! "${BUNDLED_CURL}" ] && BUNDLED_CURL=0
-else
-	[ ! "${BUNDLED_CURL}" ] && BUNDLED_CURL=1
-fi
-
-
-FEATURE_OGG=1
-FEATURE_TRACKER=1
-[ ! "${FEATURE_OMNIBOT}" ] && FEATURE_OMNIBOT=1
-[ ! "${FEATURE_ANTICHEAT}" ] && FEATURE_ANTICHEAT=1
-[ ! "${FEATURE_LUA}" ] && FEATURE_LUA=1
-[ ! "${FEATURE_FREETYPE}" ] && FEATURE_FREETYPE=1
-[ ! "${FEATURE_RENDERER2}" ] && FEATURE_RENDERER2=0
-[ ! "${FEATURE_LIVEAUTH}" ] && FEATURE_LIVEAUTH=1
-
-
-mkdir -p ${BUILDDIR}
-CLEANLIBS=0
-if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
-	einfo "Cleaning SDL..."
-	cd ${_SRC}/libs/sdl2;  make clean
-	einfo "Cleaning lib jpegturbo..."
-	cd ${_SRC}/libs/jpegturbo; make clean
-	if [ "${BUNDLED_CURL}" == 1 ]; then
-		einfo "Cleaning lib curl..."
-		cd ${_SRC}/libs/curl/src; make clean
+	if [ -z "$CC" ] && [ -z "$CXX" ]; then
+		app_exists GCCFOUND "gcc"
+		app_exists GPLUSFOUND "g++"
+		app_exists CLANGFOUND "clang"
+		app_exists CLANGPLUSFOUND "clang++"
+		if [ $GCCFOUND == 1 ] && [ $GPLUSFOUND == 1 ]; then
+			export CC=gcc
+			export CXX=g++
+		elif [ $CLANGFOUND == 1 ] && [ $CLANGPLUSFOUND == 1 ]; then
+			export CC=clang
+			export CXX=clang++
+		else
+			einfo "Missing compiler. Exiting."
+			exit 1
+		fi
 	fi
-	if [ "${BUNDLED_LUA}" == 1 ]; then
-		einfo "Cleaning lib lua..."
-		cd ${_SRC}/libs/lua/src; make clean
-	fi
-	if [ "${BUNDLED_OGG}" == 1 ]; then
-		einfo "Cleaning lib ogg..."
-		cd ${_SRC}/libs/ogg; make clean
-		einfo "Cleaning lib vorbis..."
-		cd ${_SRC}/libs/vorbis; make clean
-	fi
-else
-	einfo "Getting bundled libs..."
-	git submodule init
-	git submodule update
-fi
 
-cd ${BUILDDIR}
-einfo "Configuring ET Legacy..."
-_CFGSTRING="
-	-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
-	-DBUILD_CLIENT=${BUILD_CLIENT}
-	-DBUILD_SERVER=1
-	-DBUILD_MOD=1
-	-DBUILD_MOD_PK3=1
-	-DBUILD_PAK3_PK3=1
-	-DBUNDLED_LIBS=${BUNDLED_LIBS}
-	-DBUNDLED_SDL=${BUNDLED_SDL}
-	-DBUNDLED_JPEG=${BUNDLED_JPEG}
-	-DBUNDLED_LUA=${BUNDLED_LUA}
-	-DBUNDLED_CURL=${BUNDLED_CURL}
-	-DBUNDLED_OGG_VORBIS=${BUNDLED_OGG}
-	-DCROSS_COMPILE32=${CROSS_COMPILE32}
-	-DFEATURE_CURL=1
-	-DFEATURE_OGG_VORBIS=${FEATURE_OGG}
-	-DFEATURE_FREETYPE=${FEATURE_FREETYPE}
-	-DFEATURE_OPENAL=0
-	-DFEATURE_TRACKER=${FEATURE_TRACKER}
-	-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
-	-DFEATURE_ANTICHEAT=${FEATURE_ANTICHEAT}
-	-DFEATURE_LUA=${FEATURE_LUA}
-	-DFEATURE_RENDERER2=${FEATURE_RENDERER2}
-	-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}
-	-DFEATURE_LIVEAUTH=${FEATURE_LIVEAUTH}
-"
+	einfo "Using compilers:"
 
-if [ "${DEV}" != 1 ]; then
+	echo
+	echo "  CC  = ${CC}"
+	echo "  CXX = ${CXX}"
+}
+
+parse_commandline() {
+	for var in "$@"
+	do
+		if [ "$var" = "-64" ]; then
+			einfo "Disabling Crosscompile"
+			CROSS_COMPILE32=0
+		elif [ "$var" = "-clang" ]; then
+			einfo "Will use clang"
+			export CC=clang
+			export CXX=clang++
+		elif [ "$var" = "-debug" ]; then
+			einfo "Will enable debug build"
+			RELEASE_TYPE="Debug"
+		elif [ "$var" = "-r2" ]; then
+			einfo "Will enable renderer2"
+			FEATURE_RENDERER2=1
+		elif [ "$var" = "-dynamic" ]; then
+			einfo "Will enable dynamic renderer build"
+			RENDERER_DYNAMIC=1
+		elif [ "$var" = "-systemlib" ]; then
+			einfo "Will disable bundled libraries"
+			BUNDLED_LIBS=0
+			BUNDLED_SDL=0
+			BUNDLED_JPEG=0
+			BUNDLED_LUA=0
+			BUNDLED_OGG=0
+			BUNDLED_CURL=0
+		else
+			# drop the script commands from the result
+			for index in ${!easy_keys[*]}
+			do
+				#printf "%4d: %s\n" $index ${easy_keys[$index]}
+				if [ "$easy_count" = "$index" ] && [ ! "$var" = "${easy_keys[$index]}" ]; then
+					if [ -z "$PARSE_CMD" ]; then
+						PARSE_CMD=$var
+					else
+						PARSE_CMD="$PARSE_CMD $var"
+					fi
+				elif [[ "$var" = "${easy_keys[$index]}" ]]; then
+					break
+				fi
+			done
+		fi
+	done
+}
+
+generate_configuration() {
+	# cmake variables
+	[ ! "${RELEASE_TYPE}" ]    && RELEASE_TYPE="Release"
+	[ ! "${CROSS_COMPILE32}" ] && CROSS_COMPILE32=1
+	[ ! "${RENDERER_DYNAMIC}" ] && RENDERER_DYNAMIC=0
+	[ ! "${BUILD_CLIENT}" ] && BUILD_CLIENT=1
+	[ ! "${BUNDLED_LIBS}" ] && BUNDLED_LIBS=1
+	[ ! "${BUNDLED_SDL}" ]  && BUNDLED_SDL=1
+	[ ! "${BUNDLED_JPEG}" ] && BUNDLED_JPEG=1
+	[ ! "${BUNDLED_LUA}" ]  && BUNDLED_LUA=1
+	[ ! "${BUNDLED_OGG}" ]  && BUNDLED_OGG=1
+
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-		PREFIX=${HOME}/etlegacy
-		_CFGSTRING="${_CFGSTRING}
-		-DCMAKE_INSTALL_PREFIX=${PREFIX}
-		-DINSTALL_DEFAULT_MODDIR=./
-		-DINSTALL_DEFAULT_BINDIR=./
-		-DINSTALL_DEFAULT_BASEDIR=./
-		"
+		[ ! "${BUNDLED_CURL}" ] && BUNDLED_CURL=0
 	else
-		PREFIX=${HOME}/etlegacy
-		_CFGSTRING="${_CFGSTRING}
-		-DCMAKE_INSTALL_PREFIX=${PREFIX}
-		-DINSTALL_DEFAULT_MODDIR=.
-		-DINSTALL_DEFAULT_BINDIR=.
-		-DINSTALL_DEFAULT_BASEDIR=.
-		"
+		[ ! "${BUNDLED_CURL}" ] && BUNDLED_CURL=1
 	fi
-fi
 
+	FEATURE_OGG=1
+	FEATURE_TRACKER=1
+	[ ! "${FEATURE_OMNIBOT}" ] && FEATURE_OMNIBOT=1
+	[ ! "${FEATURE_ANTICHEAT}" ] && FEATURE_ANTICHEAT=1
+	[ ! "${FEATURE_LUA}" ] && FEATURE_LUA=1
+	[ ! "${FEATURE_FREETYPE}" ] && FEATURE_FREETYPE=1
+	[ ! "${FEATURE_RENDERER2}" ] && FEATURE_RENDERER2=0
+	[ ! "${FEATURE_LIVEAUTH}" ] && FEATURE_LIVEAUTH=1
 
+	einfo "Configuring ET Legacy..."
+	_CFGSTRING="
+		-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
+		-DBUILD_CLIENT=${BUILD_CLIENT}
+		-DBUILD_SERVER=1
+		-DBUILD_MOD=1
+		-DBUILD_MOD_PK3=1
+		-DBUILD_PAK3_PK3=1
+		-DBUNDLED_LIBS=${BUNDLED_LIBS}
+		-DBUNDLED_SDL=${BUNDLED_SDL}
+		-DBUNDLED_JPEG=${BUNDLED_JPEG}
+		-DBUNDLED_LUA=${BUNDLED_LUA}
+		-DBUNDLED_CURL=${BUNDLED_CURL}
+		-DBUNDLED_OGG_VORBIS=${BUNDLED_OGG}
+		-DCROSS_COMPILE32=${CROSS_COMPILE32}
+		-DFEATURE_CURL=1
+		-DFEATURE_OGG_VORBIS=${FEATURE_OGG}
+		-DFEATURE_FREETYPE=${FEATURE_FREETYPE}
+		-DFEATURE_OPENAL=0
+		-DFEATURE_TRACKER=${FEATURE_TRACKER}
+		-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
+		-DFEATURE_ANTICHEAT=${FEATURE_ANTICHEAT}
+		-DFEATURE_LUA=${FEATURE_LUA}
+		-DFEATURE_RENDERER2=${FEATURE_RENDERER2}
+		-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}
+		-DFEATURE_LIVEAUTH=${FEATURE_LIVEAUTH}
+	"
 
-echo -e "\033[1;33musing: \033[1;37m${_CFGSTRING}\033[0m"
-cmake ${_CFGSTRING} ..
+	if [ "${DEV}" != 1 ]; then
+		if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+			PREFIX=${HOME}/etlegacy
+			_CFGSTRING="${_CFGSTRING}
+			-DCMAKE_INSTALL_PREFIX=${PREFIX}
+			-DINSTALL_DEFAULT_MODDIR=./
+			-DINSTALL_DEFAULT_BINDIR=./
+			-DINSTALL_DEFAULT_BASEDIR=./
+			"
+		else
+			PREFIX=${HOME}/etlegacy
+			_CFGSTRING="${_CFGSTRING}
+			-DCMAKE_INSTALL_PREFIX=${PREFIX}
+			-DINSTALL_DEFAULT_MODDIR=.
+			-DINSTALL_DEFAULT_BINDIR=.
+			-DINSTALL_DEFAULT_BASEDIR=.
+			"
+		fi
+	fi
 
-einfo "Compiling ET Legacy..."
-make ${MAKEOPTS}
+	echo -e "\033[1;33musing: \033[1;37m${_CFGSTRING}\033[0m"
+}
 
-einfo "Installing ET Legacy in ${PREFIX}"
-make install
+# Check if the bundled libs repo has been loaded
+handle_bundled_libs() {
+	if [[ ! -e "${_SRC}/libs/CMakeLists.txt" ]]; then
+		einfo "Getting bundled libs..."
+		git submodule init
+		git submodule update
+	fi
+}
 
-einfo "Packing ET Legacy..."
-make package
+run_clean() {
+	einfo "Clean..."
+	if [ -d ${BUILDDIR} ]; then
+		rm -rf ${BUILDDIR}
+	fi
+	CLEANLIBS=1
+	if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
+		einfo "Cleaning SDL..."
+		cd ${_SRC}/libs/sdl2;  make clean
+		einfo "Cleaning lib jpegturbo..."
+		cd ${_SRC}/libs/jpegturbo; make clean
+		if [ "${BUNDLED_CURL}" == 1 ]; then
+			einfo "Cleaning lib curl..."
+			cd ${_SRC}/libs/curl/src; make clean
+		fi
+		if [ "${BUNDLED_LUA}" == 1 ]; then
+			einfo "Cleaning lib lua..."
+			cd ${_SRC}/libs/lua/src; make clean
+		fi
+		if [ "${BUNDLED_OGG}" == 1 ]; then
+			einfo "Cleaning lib ogg..."
+			cd ${_SRC}/libs/ogg; make clean
+			einfo "Cleaning lib vorbis..."
+			cd ${_SRC}/libs/vorbis; make clean
+		fi
+		cd ${_SRC}/libs
+		git clean -d -f
+	fi
+}
+
+run_build() {
+	einfo "Build..."
+	mkdir -p ${BUILDDIR}
+	cd ${BUILDDIR}
+	cmake ${_CFGSTRING} ..
+	check_exit
+	make ${CMD_ARGS}
+	check_exit
+}
+
+run_package() {
+	einfo "Package..."
+	cd ${BUILDDIR}
+	check_exit "make package"
+	# TODO: detect if osx and generate a package and a dmg installer
+	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+		# Generate DMG
+		echo "Sorry DMG generation is not done yet"
+	fi
+}
+
+run_install() {
+	einfo "Install..."
+	cd ${BUILDDIR}
+	check_exit "make install"
+}
+
+run_uncrustify() {
+	einfo "Uncrustify..."
+	cd ${SOURCEDIR}
+	for FILE in $(find . -type f -not -name "unzip.c" -name "*.c" -or -name "*.cpp" -or -name "*.glsl" -not -name "g_etbot_interface.cpp" -or -name "*.h" -or \( -name "sha*" -prune \) -or \( -name "Omnibot" -prune \));
+	do
+		uncrustify -c ${_SRC}/uncrustify.cfg  --no-backup ${FILE}
+	done
+}
+
+run_project() {
+	einfo "Project..."
+	mkdir -p ${BUILDDIR}
+	cd ${PROJECTDIR}
+	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+		cmake -G 'Xcode' ${_CFGSTRING} ..
+	else
+		cmake ${_CFGSTRING} ..
+	fi
+}
+
+run_release() {
+	run_clean
+	run_build
+	run_package
+}
+
+run_default() {
+	einfo "Default build..."
+	run_clean
+	run_build
+	run_package
+	run_install
+}
+
+print_help() {
+	ehead "ET Legacy Easy Builder Help"
+	ehead "==============================="
+	ehead "clean - cleanup the build"
+	ehead "build - run the build process"
+	ehead "package - run the package process"
+	ehead "install - install the game into the system"
+	ehead "crust - run the uncrustify to the source"
+	ehead "project - generate the project files for your platform"
+	ehead "help - print this help"
+	echo
+	einfo "Properties"
+	ehead "-64, -debug, -clang, -r2, -dynamic"
+	echo
+}
+
+start_script() {
+	parse_commandline $@
+
+	#CMD_ARGS="${@:2}"
+	#CMD_ARGS=$@
+	CMD_ARGS=$PARSE_CMD
+
+	print_startup
+
+	handle_bundled_libs
+
+	generate_configuration
+
+	ARG_FOUND=0
+
+	# everything looks ok, try to run this shit!
+
+	# Find and run the processes the user requested
+	for var in "$@"
+	do
+		for index in ${!easy_keys[*]}
+		do
+			if [ "$var" = "${easy_keys[$index]}" ]; then
+				eval "${easy_cmd[$index]}"
+				ARG_FOUND=1
+			fi
+		done
+	done
+
+	if [ $ARG_FOUND -eq 1 ]; then
+		return
+	fi
+
+	# No process was set run the default
+	run_default
+}
+
+start_script $@
+
+# return to the original path
+cd ${_SRC}
