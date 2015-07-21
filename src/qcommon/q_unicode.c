@@ -508,43 +508,6 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
 	}
 }
 
-/*
-glyphInfo_t *Q_UTF8_GetGlyph(fontHelper_t *font, const char *s)
-{
-	return font->GetGlyph(font->fontData, Q_UTF8_CodePoint(s));
-}
-*/
-
-glyphInfo_t *Q_UTF8_GetGlyphLong(fontInfo_t *font, qboolean extended, unsigned long codepoint)
-{
-	if (codepoint > GLYPHS_PER_FONT(qfalse))
-	{
-		//Com_DPrintf(S_COLOR_RED "ERROR: unicode char %i is over the current limit %i\n", codepoint, GLYPHS_PER_FONT);
-		codepoint = INVALID_CHAR_OFFSET;
-	}
-
-	if (codepoint <= GLYPH_ASCII_END)
-	{
-		return &font->glyphs[codepoint];
-	}
-	else if (extended)
-	{
-		//return &font->glyphsUTF8[codepoint];
-		return &font->glyphs[INVALID_CHAR_OFFSET];
-	}
-	else
-	{
-		return &font->glyphs[INVALID_CHAR_OFFSET];
-	}
-}
-
-/*
-glyphInfo_t *Q_UTF8_GetGlyphSafe(fontInfo_t *font, qboolean extended, const char *s)
-{
-	return Q_UTF8_GetGlyphLong(font, extended, Q_UTF8_CodePoint(s));
-}
-*/
-
 void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
 {
 	int  i  = 0;
@@ -579,7 +542,7 @@ void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
 		}
 		else
 		{
-			//Com_DPrintf("Unrecognised UTF-8 lead byte: 0x%x\n", (unsigned int)*c);
+			//Unrecognized UTF-8 lead byte
 			c++;
 		}
 		charArray[i++] = utf32;
