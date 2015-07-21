@@ -21,10 +21,11 @@ env:
     - BUNDLED_CURL=1
 
 before_install:
-  - curl http://download.opensuse.org/repositories/home:/emby/xUbuntu_12.04/Release.key | sudo apt-key add -
-  - echo 'deb http://download.opensuse.org/repositories/home:/emby/xUbuntu_12.04/ /' | sudo tee -a /etc/apt/sources.list
+  - echo 'deb http://archive.ubuntu.com/ubuntu trusty main' | sudo tee /etc/apt/sources.list.d/ubuntu-trusty.list
+  - sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 40976EAF437D05B5
   - sudo apt-get update -qq
-  - sudo apt-get install -q pkg-config nasm libgl1-mesa-dev libasound2-dev pulseaudio automake1.14
+  - sudo apt-get install -q -t precise pkg-config nasm libgl1-mesa-dev libasound2-dev pulseaudio m4
+  - sudo apt-get install -q -t trusty automake
 
 script:
   - ./easybuild.sh
