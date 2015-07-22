@@ -472,7 +472,7 @@ glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
 	return &((fontInfo_t *)fontdata)->glyphs[codepoint];
 }
 
-void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t * font, qboolean extended, void (* font_register)(const char*, int, void *))
+void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *))
 {
 	if (!font)
 	{
