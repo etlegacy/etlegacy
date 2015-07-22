@@ -822,7 +822,7 @@ static void BG_ClampPointToTracemapExtends(vec3_t point, vec2_t out)
 float BG_GetSkyHeightAtPoint(vec3_t pos)
 {
 	int    i, j;
-	vec2_t point;
+	vec2_t point = { 0 };
 	//int msec = trap_Milliseconds();
 
 	//n_getskytime++;
@@ -849,7 +849,7 @@ float BG_GetSkyHeightAtPoint(vec3_t pos)
 float BG_GetSkyGroundHeightAtPoint(vec3_t pos)
 {
 	int    i, j;
-	vec2_t point;
+	vec2_t point = { 0 };
 	//int msec = trap_Milliseconds();
 
 	//n_getgroundtime++;
@@ -876,7 +876,7 @@ float BG_GetSkyGroundHeightAtPoint(vec3_t pos)
 float BG_GetGroundHeightAtPoint(vec3_t pos)
 {
 	int    i, j;
-	vec2_t point;
+	vec2_t point = { 0 };
 	//int msec = trap_Milliseconds();
 
 	//n_getgroundtime++;
