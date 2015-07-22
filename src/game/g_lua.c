@@ -1384,16 +1384,16 @@ static int _et_gentity_get(lua_State *L)
 		_et_gentity_getvec3(L, *(vec3_t *)addr);
 		return 1;
 	case FIELD_INT_ARRAY:
-		lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * luaL_optinteger(L, 3, 0)))));
+		lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * (int)luaL_optinteger(L, 3, 0)))));
 		return 1;
 	case FIELD_TRAJECTORY:
 		_et_gentity_gettrajectory(L, (trajectory_t *)addr);
 		return 1;
 	case FIELD_FLOAT_ARRAY:
-		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * luaL_optinteger(L, 3, 0)))));
+		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * (int)luaL_optinteger(L, 3, 0)))));
 		return 1;
 	case FIELD_WEAPONSTAT:
-		_et_gentity_getweaponstat(L, (weapon_stat_t *)(addr + (sizeof(weapon_stat_t) * luaL_optinteger(L, 3, 0))));
+		_et_gentity_getweaponstat(L, (weapon_stat_t *)(addr + (sizeof(weapon_stat_t) * (int)luaL_optinteger(L, 3, 0))));
 		return 1;
 
 	}
