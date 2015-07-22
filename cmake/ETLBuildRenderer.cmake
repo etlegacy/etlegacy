@@ -45,6 +45,10 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		)
 
 		if(WIN32)
+            set_target_properties(renderer_opengl1_${ARCH} PROPERTIES PREFIX "")
+		endif(WIN32)
+
+		if(WIN32)
 			install(TARGETS renderer_opengl1_${ARCH}
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
@@ -151,6 +155,11 @@ if(FEATURE_RENDERER2)
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
 		LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
 	)
+
+	if(WIN32)
+    	set_target_properties(renderer_opengl2_${ARCH} PROPERTIES PREFIX "")
+    endif(WIN32)
+
 	if(WIN32)
 		install(TARGETS renderer_opengl2_${ARCH}
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
