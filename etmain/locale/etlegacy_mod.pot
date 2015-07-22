@@ -6725,9 +6725,6 @@ msgstr ""
 msgid "Hauptmann"
 msgstr ""
 
-msgid "Major"
-msgstr ""
-
 msgid "Oberst"
 msgstr ""
 
