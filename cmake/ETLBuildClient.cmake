@@ -38,9 +38,9 @@ if(BUNDLED_OGG_VORBIS)
 endif(BUNDLED_OGG_VORBIS)
 
 target_link_libraries(etl
-	${OS_LIBRARIES} # Has to go after cURL and SDL
 	${CLIENT_LIBRARIES}
 	${SDL_LIBRARIES}
+	${OS_LIBRARIES} # Has to go after cURL and SDL
 )
 
 if(FEATURE_WINDOWS_CONSOLE AND WIN32)

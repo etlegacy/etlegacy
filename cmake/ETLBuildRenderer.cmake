@@ -8,25 +8,31 @@ else(RENDERER_DYNAMIC)
 	set(REND_LIBTYPE STATIC)
 endif(RENDERER_DYNAMIC)
 if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
+
 	if(FEATURE_RENDERER_GLES)
 		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
 	else()
 		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
 	endif()
+
 	if(BUNDLED_SDL)
 		add_dependencies(renderer_opengl1_${ARCH} bundled_sdl)
 	endif(BUNDLED_SDL)
+
 	if(NOT FEATURE_RENDERER_GLES)
 		if(BUNDLED_GLEW)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_glew)
 		endif(BUNDLED_GLEW)
 	endif(NOT FEATURE_RENDERER_GLES)
+
 	if(BUNDLED_JPEG)
 		add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
 	endif(BUNDLED_JPEG)
+
 	if(BUNDLED_FREETYPE)
 		add_dependencies(renderer_opengl1_${ARCH} bundled_freetype)
 	endif(BUNDLED_FREETYPE)
+
 	target_link_libraries(renderer_opengl1_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
 
 	# install the dynamic lib only

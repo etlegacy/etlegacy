@@ -1,5 +1,9 @@
 add_executable(etlded ${COMMON_SRC} ${MINIZIP_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
-target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
+target_link_libraries(etlded
+	${SERVER_LIBRARIES}
+	${OS_LIBRARIES}
+)
+
 set_target_properties(etlded
 	PROPERTIES COMPILE_DEFINITIONS "DEDICATED"
 	RUNTIME_OUTPUT_DIRECTORY ""

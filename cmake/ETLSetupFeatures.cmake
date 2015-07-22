@@ -13,15 +13,6 @@ endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 # Client features
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	if(FEATURE_RENDERER_GLES)
-		list(APPEND RENDERER_LIBRARIES -lGLESv1_CM)
-		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
-	else()
-		find_package(OpenGL REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
-		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
-	endif()
-
 	if(NOT WIN32) # Dependency of GLEW and SDL_syswm.h
 		find_package(X11 REQUIRED)
 		include_directories(${X11_INCLUDE_DIR})
@@ -38,6 +29,15 @@ if(BUILD_CLIENT)
 			add_definitions(-DBUNDLED_GLEW)
 			add_definitions(-DGLEW_STATIC)
 		endif()
+	endif()
+
+	if(FEATURE_RENDERER_GLES)
+    		list(APPEND RENDERER_LIBRARIES -lGLESv1_CM)
+    		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
+	else()
+		find_package(OpenGL REQUIRED)
+		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
+		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 	endif()
 
 	if(NOT BUNDLED_SDL)
