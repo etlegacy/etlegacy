@@ -6688,3 +6688,90 @@ msgstr "Wybierz Członka #7:"
 
 msgid "Select Member #8:"
 msgstr "Wybierz Członka #8:"
+
+msgid "Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version."
+msgstr "Nie można było wczytać oficjalnego pliku; sprawdż swoją instalację i upewnij się że została zaktualizowana do najnowszej wersji."
+
+msgid "Private"
+msgstr "Szeregowiec"
+
+msgid "Private 1st Class"
+msgstr "Starszy Szeregowiec"
+
+msgid "Corporal"
+msgstr "Kapral"
+
+msgid "Sergeant"
+msgstr "Sierżant"
+
+msgid "Lieutenant"
+msgstr "Porucznik"
+
+msgid "Captain"
+msgstr "Kapitan"
+
+msgid "Major"
+msgstr "Major"
+
+msgid "Colonel"
+msgstr "Pułkownik"
+
+msgid "Brigadier General"
+msgstr "Generał Brygady"
+
+msgid "Lieutenant General"
+msgstr "Generał Broni"
+
+msgid "General"
+msgstr "Generał"
+
+msgid "Schutze"
+msgstr "Szeregowiec"
+
+msgid "Oberschutze"
+msgstr "Starszy Strzelec"
+
+msgid "Gefreiter"
+msgstr "Starszy Szeregowiec"
+
+msgid "Feldwebel"
+msgstr "Sierżant"
+
+msgid "Leutnant"
+msgstr "Porucznik"
+
+msgid "Hauptmann"
+msgstr "Kapitan"
+
+msgid "Major"
+msgstr "Major"
+
+msgid "Oberst"
+msgstr "Pułkownik"
+
+msgid "Generalmajor"
+msgstr "Generał Dywizji"
+
+msgid "Generalleutnant"
+msgstr "Generał Broni"
+
+msgid "Battle Sense"
+msgstr "Wyczucia Wojennego"
+
+msgid "Engineering"
+msgstr "Inżyniera"
+
+msgid "First Aid"
+msgstr "Pierwszej Pomocy"
+
+msgid "Signals"
+msgstr "Sygnały"
+
+msgid "Light Weapons"
+msgstr "Lekkiej Broni"
+
+msgid "Heavy Weapons"
+msgstr "Ciężkiej Broni"
+
+msgid "Covert Ops"
+msgstr "Zabójcy"
