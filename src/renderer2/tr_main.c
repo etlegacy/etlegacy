@@ -168,156 +168,152 @@ void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
 	VectorNormalize(binormal);
 }
 
-/* unused
 void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
                         const vec3_t v0, const vec3_t v1, const vec3_t v2, const vec2_t t0, const vec2_t t1, const vec2_t t2)
 {
-    vec3_t cp, u, v;
-    vec3_t faceNormal;
+	vec3_t cp, u, v;
+	vec3_t faceNormal;
 
-    VectorSet(u, v1[0] - v0[0], t1[0] - t0[0], t1[1] - t0[1]);
-    VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
+	VectorSet(u, v1[0] - v0[0], t1[0] - t0[0], t1[1] - t0[1]);
+	VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
 
-    CrossProduct(u, v, cp);
-    if (fabs(cp[0]) > 10e-6)
-    {
-        tangent[0]  = -cp[1] / cp[0];
-        binormal[0] = -cp[2] / cp[0];
-    }
+	CrossProduct(u, v, cp);
+	if (fabs(cp[0]) > 10e-6)
+	{
+		tangent[0]  = -cp[1] / cp[0];
+		binormal[0] = -cp[2] / cp[0];
+	}
 
-    u[0] = v1[1] - v0[1];
-    v[0] = v2[1] - v0[1];
+	u[0] = v1[1] - v0[1];
+	v[0] = v2[1] - v0[1];
 
-    CrossProduct(u, v, cp);
-    if (fabs(cp[0]) > 10e-6)
-    {
-        tangent[1]  = -cp[1] / cp[0];
-        binormal[1] = -cp[2] / cp[0];
-    }
+	CrossProduct(u, v, cp);
+	if (fabs(cp[0]) > 10e-6)
+	{
+		tangent[1]  = -cp[1] / cp[0];
+		binormal[1] = -cp[2] / cp[0];
+	}
 
-    u[0] = v1[2] - v0[2];
-    v[0] = v2[2] - v0[2];
+	u[0] = v1[2] - v0[2];
+	v[0] = v2[2] - v0[2];
 
-    CrossProduct(u, v, cp);
-    if (fabs(cp[0]) > 10e-6)
-    {
-        tangent[2]  = -cp[1] / cp[0];
-        binormal[2] = -cp[2] / cp[0];
-    }
+	CrossProduct(u, v, cp);
+	if (fabs(cp[0]) > 10e-6)
+	{
+		tangent[2]  = -cp[1] / cp[0];
+		binormal[2] = -cp[2] / cp[0];
+	}
 
-    VectorNormalize(tangent);
-    VectorNormalize(binormal);
+	VectorNormalize(tangent);
+	VectorNormalize(binormal);
 
-    // compute the face normal based on vertex points
-    VectorSubtract(v2, v0, u);
-    VectorSubtract(v1, v0, v);
-    CrossProduct(u, v, faceNormal);
+	// compute the face normal based on vertex points
+	VectorSubtract(v2, v0, u);
+	VectorSubtract(v1, v0, v);
+	CrossProduct(u, v, faceNormal);
 
-    VectorNormalize(faceNormal);
+	VectorNormalize(faceNormal);
 
 #if 1
-    // Gram-Schmidt orthogonalize
-    //tangent[a] = (t - n * Dot(n, t)).Normalize();
-    VectorMA(tangent, -DotProduct(faceNormal, tangent), faceNormal, tangent);
-    VectorNormalize(tangent);
+	// Gram-Schmidt orthogonalize
+	//tangent[a] = (t - n * Dot(n, t)).Normalize();
+	VectorMA(tangent, -DotProduct(faceNormal, tangent), faceNormal, tangent);
+	VectorNormalize(tangent);
 
-    // compute the cross product B=NxT
-    //CrossProduct(normal, tangent, binormal);
+	// compute the cross product B=NxT
+	//CrossProduct(normal, tangent, binormal);
 #else
-    // normal, compute the cross product N=TxB
-    CrossProduct(tangent, binormal, normal);
-    VectorNormalize(normal);
+	// normal, compute the cross product N=TxB
+	CrossProduct(tangent, binormal, normal);
+	VectorNormalize(normal);
 
-    if (DotProduct(normal, faceNormal) < 0)
-    {
-        //VectorInverse(normal);
-        //VectorInverse(tangent);
-        //VectorInverse(binormal);
+	if (DotProduct(normal, faceNormal) < 0)
+	{
+		//VectorInverse(normal);
+		//VectorInverse(tangent);
+		//VectorInverse(binormal);
 
-        // compute the cross product T=BxN
-        CrossProduct(binormal, faceNormal, tangent);
+		// compute the cross product T=BxN
+		CrossProduct(binormal, faceNormal, tangent);
 
-        // compute the cross product B=NxT
-        //CrossProduct(normal, tangent, binormal);
-    }
+		// compute the cross product B=NxT
+		//CrossProduct(normal, tangent, binormal);
+	}
 #endif
 
-    VectorCopy(faceNormal, normal);
+	VectorCopy(faceNormal, normal);
 }
-*/
 
-/*
 void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
                             const vec3_t v0, const vec3_t v1, const vec3_t v2, const vec2_t t0, const vec2_t t1, const vec2_t t2)
 {
-    vec3_t cp, u, v;
-    vec3_t faceNormal;
+	vec3_t cp, u, v;
+	vec3_t faceNormal;
 
-    VectorSet(u, v1[0] - v0[0], t1[0] - t0[0], t1[1] - t0[1]);
-    VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
+	VectorSet(u, v1[0] - v0[0], t1[0] - t0[0], t1[1] - t0[1]);
+	VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
 
-    CrossProduct(u, v, cp);
-    if (fabs(cp[0]) > 10e-6)
-    {
-        tangent[0]  = -cp[1] / cp[0];
-        binormal[0] = -cp[2] / cp[0];
-    }
+	CrossProduct(u, v, cp);
+	if (fabs(cp[0]) > 10e-6)
+	{
+		tangent[0]  = -cp[1] / cp[0];
+		binormal[0] = -cp[2] / cp[0];
+	}
 
-    u[0] = v1[1] - v0[1];
-    v[0] = v2[1] - v0[1];
+	u[0] = v1[1] - v0[1];
+	v[0] = v2[1] - v0[1];
 
-    CrossProduct(u, v, cp);
-    if (fabs(cp[0]) > 10e-6)
-    {
-        tangent[1]  = -cp[1] / cp[0];
-        binormal[1] = -cp[2] / cp[0];
-    }
+	CrossProduct(u, v, cp);
+	if (fabs(cp[0]) > 10e-6)
+	{
+		tangent[1]  = -cp[1] / cp[0];
+		binormal[1] = -cp[2] / cp[0];
+	}
 
-    u[0] = v1[2] - v0[2];
-    v[0] = v2[2] - v0[2];
+	u[0] = v1[2] - v0[2];
+	v[0] = v2[2] - v0[2];
 
-    CrossProduct(u, v, cp);
-    if (fabs(cp[0]) > 10e-6)
-    {
-        tangent[2]  = -cp[1] / cp[0];
-        binormal[2] = -cp[2] / cp[0];
-    }
+	CrossProduct(u, v, cp);
+	if (fabs(cp[0]) > 10e-6)
+	{
+		tangent[2]  = -cp[1] / cp[0];
+		binormal[2] = -cp[2] / cp[0];
+	}
 
-    VectorNormalizeFast(tangent);
-    VectorNormalizeFast(binormal);
+	VectorNormalizeFast(tangent);
+	VectorNormalizeFast(binormal);
 
-    // compute the face normal based on vertex points
-    VectorSubtract(v2, v0, u);
-    VectorSubtract(v1, v0, v);
-    CrossProduct(u, v, faceNormal);
+	// compute the face normal based on vertex points
+	VectorSubtract(v2, v0, u);
+	VectorSubtract(v1, v0, v);
+	CrossProduct(u, v, faceNormal);
 
-    VectorNormalizeFast(faceNormal);
+	VectorNormalizeFast(faceNormal);
 
 #if 0
-    // normal, compute the cross product N=TxB
-    CrossProduct(tangent, binormal, normal);
-    VectorNormalizeFast(normal);
+	// normal, compute the cross product N=TxB
+	CrossProduct(tangent, binormal, normal);
+	VectorNormalizeFast(normal);
 
-    if (DotProduct(normal, faceNormal) < 0)
-    {
-        VectorInverse(normal);
-        //VectorInverse(tangent);
-        //VectorInverse(binormal);
+	if (DotProduct(normal, faceNormal) < 0)
+	{
+		VectorInverse(normal);
+		//VectorInverse(tangent);
+		//VectorInverse(binormal);
 
-        CrossProduct(normal, tangent, binormal);
-    }
+		CrossProduct(normal, tangent, binormal);
+	}
 
-    VectorCopy(faceNormal, normal);
+	VectorCopy(faceNormal, normal);
 #else
-    // Gram-Schmidt orthogonalize
-    //tangent[a] = (t - n * Dot(n, t)).Normalize();
-    VectorMA(tangent, -DotProduct(faceNormal, tangent), faceNormal, tangent);
-    VectorNormalizeFast(tangent);
+	// Gram-Schmidt orthogonalize
+	//tangent[a] = (t - n * Dot(n, t)).Normalize();
+	VectorMA(tangent, -DotProduct(faceNormal, tangent), faceNormal, tangent);
+	VectorNormalizeFast(tangent);
 #endif
 
-    VectorCopy(faceNormal, normal);
+	VectorCopy(faceNormal, normal);
 }
-*/
 
 /*
 http://www.terathon.com/code/tangent.html
