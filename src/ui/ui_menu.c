@@ -934,7 +934,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	// we need to check and see if we're supposed to loop through the items to find the key press func
 	if (!menu->itemHotkeyMode)
 	{
-		if (key > 0 && key <= 255 && menu->onKey[key])
+		if (key >= 0 && key < MAX_KEYS && menu->onKey[key])
 		{
 			itemDef_t it;
 			it.parent = menu;
@@ -942,7 +942,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			return;
 		}
 	}
-	else if (key > 0 && key <= 255)
+	else if (key >= 0 && key < MAX_KEYS)
 	{
 		itemDef_t *it;
 
@@ -1012,26 +1012,27 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_MOUSE2:
 		Item_MouseActivate(item);
 		break;
-	case K_JOY1:
-	case K_JOY2:
-	case K_JOY3:
-	case K_JOY4:
-	case K_AUX1:
-	case K_AUX2:
-	case K_AUX3:
-	case K_AUX4:
-	case K_AUX5:
-	case K_AUX6:
-	case K_AUX7:
-	case K_AUX8:
-	case K_AUX9:
-	case K_AUX10:
-	case K_AUX11:
-	case K_AUX12:
-	case K_AUX13:
-	case K_AUX14:
-	case K_AUX15:
-	case K_AUX16:
+	default:
+		//case K_JOY1:
+		//case K_JOY2:
+		//case K_JOY3:
+		//case K_JOY4:
+		//case K_AUX1:
+		//case K_AUX2:
+		//case K_AUX3:
+		//case K_AUX4:
+		//case K_AUX5:
+		//case K_AUX6:
+		//case K_AUX7:
+		//case K_AUX8:
+		//case K_AUX9:
+		//case K_AUX10:
+		//case K_AUX11:
+		//case K_AUX12:
+		//case K_AUX13:
+		//case K_AUX14:
+		//case K_AUX15:
+		//case K_AUX16:
 		break;
 	}
 }

@@ -257,11 +257,11 @@ int Text_Width(const char *text, float scale, int limit)
 
 int Multiline_Text_Width(const char *text, float scale, int limit)
 {
-	float       out = 0;
-	float       width, widest = 0;
-	glyphInfo_t *glyph;
-	const char  *s    = text;
-	fontHelper_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	float        out = 0;
+	float        width, widest = 0;
+	glyphInfo_t  *glyph;
+	const char   *s    = text;
+	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	if (text)
 	{
@@ -368,11 +368,11 @@ int Text_Height(const char *text, float scale, int limit)
 
 int Multiline_Text_Height(const char *text, float scale, int limit)
 {
-	float       max         = 0;
-	float       totalheight = 0;
-	glyphInfo_t *glyph;
-	const char  *s    = text;
-	fontHelper_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	float        max         = 0;
+	float        totalheight = 0;
+	glyphInfo_t  *glyph;
+	const char   *s    = text;
+	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	if (text)
 	{
@@ -532,10 +532,10 @@ void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, f
 
 void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
 {
-	vec4_t      newColor;
-	glyphInfo_t *glyph, *glyph2;
-	fontHelper_t  *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-	float       useScale = scale * Q_UTF8_GlyphScale(font);
+	vec4_t       newColor;
+	glyphInfo_t  *glyph, *glyph2;
+	fontHelper_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	float        useScale = scale * Q_UTF8_GlyphScale(font);
 
 	if (text)
 	{
@@ -631,12 +631,12 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 	glyphInfo_t *glyph;
 	if (text)
 	{
-		const char *s       = text;
-		float      max      = *maxX;
+		const char   *s       = text;
+		float        max      = *maxX;
 		fontHelper_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-		float      useScale = scale * Q_UTF8_GlyphScale(font);
-		int        len      = Q_UTF8_Strlen(text);
-		int        count    = 0;
+		float        useScale = scale * Q_UTF8_GlyphScale(font);
+		int          len      = Q_UTF8_Strlen(text);
+		int          count    = 0;
 
 		trap_R_SetColor(color);
 
@@ -3689,7 +3689,7 @@ qboolean UI_CheckExecKey(int key)
 		return qtrue;
 	}
 
-	if (key > 256)
+	if (key >= MAX_KEYS)
 	{
 		return qfalse;
 	}

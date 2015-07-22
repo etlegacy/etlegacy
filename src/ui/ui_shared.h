@@ -343,7 +343,7 @@ typedef struct
 	int openTime;                   // time menu opened
 	const char *onTimeout;          // run when menu times out
 
-	const char *onKey[255];         // execs commands when a key is pressed
+	const char *onKey[MAX_KEYS];    // execs commands when a key is pressed
 	const char *soundName;          // background loop sound for menu
 
 	vec4_t focusColor;              // focus color for items

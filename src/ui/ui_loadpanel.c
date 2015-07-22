@@ -35,7 +35,7 @@
 #include "ui_local.h"
 #include "ui_shared.h"
 
-qboolean   bg_loadscreeninited = qfalse;
+qboolean bg_loadscreeninited = qfalse;
 
 void UI_LoadPanel_RenderHeaderText(panel_button_t *button);
 void UI_LoadPanel_RenderLoadingText(panel_button_t *button);
@@ -44,33 +44,33 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button);
 
 panel_button_text_t missiondescriptionTxt =
 {
-	0.2f,                0.2f,
-	{ 0.0f,              0.0f,0.0f,    1.f },
-	0,                   0,
+	0.2f,                                   0.2f,
+	{ 0.0f,                                 0.0f,0.0f,    1.f },
+	0,                                      0,
 	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
 panel_button_text_t missiondescriptionHeaderTxt =
 {
-	0.2f,                0.2f,
-	{ 0.0f,              0.0f,             0.0f,    0.8f },
-	0,                   ITEM_ALIGN_CENTER,
+	0.2f,                                   0.2f,
+	{ 0.0f,                                 0.0f,             0.0f,    0.8f },
+	0,                                      ITEM_ALIGN_CENTER,
 	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpheaderTxt =
 {
-	0.2f,                0.2f,
-	{ 1.0f,              1.0f,1.0f,    0.6f },
-	0,                   0,
+	0.2f,                                   0.2f,
+	{ 1.0f,                                 1.0f,1.0f,    0.6f },
+	0,                                      0,
 	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpTxt =
 {
-	0.35f,               0.35f,
-	{ 1.0f,              1.0f, 1.0f,  0.6f },
-	0,                   0,
+	0.35f,                                  0.35f,
+	{ 1.0f,                                 1.0f, 1.0f,  0.6f },
+	0,                                      0,
 	&uiInfo.uiDC.Assets.bg_loadscreenfont2,
 };
 
