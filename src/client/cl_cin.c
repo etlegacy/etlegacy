@@ -928,10 +928,6 @@ static void setupQuad(long xOff, long yOff)
 	cin.oldysize = cinTable[currentHandle].ysize;
 	cin.oldxsize = cinTable[currentHandle].xsize;
 
-	numQuadCels  = (cinTable[currentHandle].CIN_WIDTH * cinTable[currentHandle].CIN_HEIGHT) / (16);
-	numQuadCels += numQuadCels / 4 + numQuadCels / 16;
-	numQuadCels += 64;                            // for overflow
-
 	numQuadCels  = (cinTable[currentHandle].xsize * cinTable[currentHandle].ysize) / (16);
 	numQuadCels += numQuadCels / 4;
 	numQuadCels += 64;                            // for overflow
