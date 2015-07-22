@@ -45,3 +45,6 @@ Thumbs.db
 
 # SublimeText
 *.sublime-workspace
+
+# Clion
+.idea/
