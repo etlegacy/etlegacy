@@ -652,8 +652,7 @@ void G_RunMissile(gentity_t *ent)
 			VectorSubtract(origin, ent->r.currentOrigin, impactpos);
 			VectorMA(origin, 8, impactpos, impactpos);
 
-			trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos,
-			           ent->r.ownerNum, ent->clipmask);
+			trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
 
 			if (mortar_tr.fraction != 1)
 			{
@@ -829,8 +828,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 
 		// trace a line from the previous position to the current position,
 		// ignoring interactions with the missile owner
-		trap_Trace(&tr, org, ent->r.mins, ent->r.maxs, origin,
-		           ent->r.ownerNum, ent->clipmask);
+		trap_Trace(&tr, org, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
 
 		VectorCopy(tr.endpos, org);
 
@@ -1952,19 +1950,6 @@ fire_rocket
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
 {
 	gentity_t *bolt = G_Spawn();
-	int       mod;
-
-	// FIXME: weapon table
-	switch (rocketType)
-	{
-	case WP_BAZOOKA:
-		mod = MOD_BAZOOKA;
-		break;
-	default:
-		rocketType = WP_PANZERFAUST;
-		mod        = MOD_PANZERFAUST;
-		break;
-	}
 
 	VectorNormalize(dir);
 
@@ -1980,11 +1965,11 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
-	bolt->damage              = GetWeaponTableData(WP_PANZERFAUST)->damage;
-	bolt->splashDamage        = GetWeaponTableData(WP_PANZERFAUST)->damage;
+	bolt->damage              = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST))->damage;
+	bolt->splashDamage        = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST))->damage;
 	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // hardcoded bleh hack FIXME: weapon table
-	bolt->methodOfDeath       = mod;
-	bolt->splashMethodOfDeath = mod;
+	bolt->methodOfDeath       = ((rocketType == WP_BAZOOKA) ? MOD_BAZOOKA : MOD_PANZERFAUST);
+	bolt->splashMethodOfDeath = bolt->methodOfDeath; // (rocketType == WP_BAZOOKA) ? MOD_BAZOOKA: MOD_PANZERFAUST;
 	bolt->clipmask            = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_LINEAR;
@@ -2044,30 +2029,6 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	VectorCopy(start, bolt->r.currentOrigin);
 
 	return bolt;
-}
-
-// sniper
-
-/*
-==============
-visible
-==============
-*/
-qboolean visible(gentity_t *self, gentity_t *other)
-{
-	trace_t   tr;
-	gentity_t *traceEnt;
-
-	trap_Trace(&tr, self->r.currentOrigin, NULL, NULL, other->r.currentOrigin, self->s.number, MASK_SHOT);
-
-	traceEnt = &g_entities[tr.entityNum];
-
-	if (traceEnt == other)
-	{
-		return qtrue;
-	}
-
-	return qfalse;
 }
 
 /*
