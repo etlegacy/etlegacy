@@ -2154,7 +2154,7 @@ static qboolean updateModel = qtrue;
 
 static void UI_DrawNetFilter(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
-	if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer > numServerFilters)
+	if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer >= numServerFilters)
 	{
 		ui_serverFilterType.integer = 0;
 	}
@@ -2388,7 +2388,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 		s = va("%i. %s", ownerDraw - UI_REDTEAM1 + 1, text);
 		break;
 	case UI_NETFILTER:
-		if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer > numServerFilters)
+		if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer >= numServerFilters)
 		{
 			ui_serverFilterType.integer = 0;
 		}
