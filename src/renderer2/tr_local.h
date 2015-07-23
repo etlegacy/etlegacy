@@ -498,6 +498,22 @@ typedef struct image_s
 	struct image_s *next;
 } image_t;
 
+//TODO: add this to the framebuffer structure
+typedef struct BufferImage_s
+{
+	uint32_t buffer;
+	int format;
+	image_t *texture;
+} BufferImage_t;
+
+typedef enum
+{
+	DEFAULT = 0,
+	DIFFUSE,
+	NORMAL,
+	SPECULAR
+} BuffetType_t;
+
 typedef struct FBO_s
 {
 	char name[MAX_QPATH];
@@ -506,17 +522,10 @@ typedef struct FBO_s
 
 	uint32_t frameBuffer;
 
-	uint32_t colorBuffers[16];
-	int colorFormat;
-
-	uint32_t depthBuffer;
-	int depthFormat;
-
-	uint32_t stencilBuffer;
-	int stencilFormat;
-
-	uint32_t packedDepthStencilBuffer;
-	int packedDepthStencilFormat;
+	BufferImage_t colorBuffers[16];
+	BufferImage_t depthBuffer;
+	BufferImage_t stencilBuffer;
+	BufferImage_t packedDepthStencilBuffer;
 
 	int width;
 	int height;
