@@ -106,6 +106,25 @@ detectos() {
 	echo -e "  running on: \033[1;32m${PLATFORMSYS}\033[0m \033[0;32m${PLATFORMARCH}\033[0m - \033[1;36m${DISTRO}\033[0m"
 }
 
+check_compiler() {
+	if [ -z "$CC" ] && [ -z "$CXX" ]; then
+		app_exists GCCFOUND "gcc"
+		app_exists GPLUSFOUND "g++"
+		app_exists CLANGFOUND "clang"
+		app_exists CLANGPLUSFOUND "clang++"
+		if [ $GCCFOUND == 1 ] && [ $GPLUSFOUND == 1 ]; then
+			export CC=gcc
+			export CXX=g++
+		elif [ $CLANGFOUND == 1 ] && [ $CLANGPLUSFOUND == 1 ]; then
+			export CC=clang
+			export CXX=clang++
+		else
+			einfo "Missing compiler. Exiting."
+			exit 1
+		fi
+	fi
+}
+
 print_startup() {
 	echo
 	ehead "ET Legacy Easy Builder"
@@ -130,22 +149,7 @@ print_startup() {
 	checkapp nasm
 	echo
 
-	if [ -z "$CC" ] && [ -z "$CXX" ]; then
-		app_exists GCCFOUND "gcc"
-		app_exists GPLUSFOUND "g++"
-		app_exists CLANGFOUND "clang"
-		app_exists CLANGPLUSFOUND "clang++"
-		if [ $GCCFOUND == 1 ] && [ $GPLUSFOUND == 1 ]; then
-			export CC=gcc
-			export CXX=g++
-		elif [ $CLANGFOUND == 1 ] && [ $CLANGPLUSFOUND == 1 ]; then
-			export CC=clang
-			export CXX=clang++
-		else
-			einfo "Missing compiler. Exiting."
-			exit 1
-		fi
-	fi
+	check_compiler
 
 	einfo "Using compilers:"
 
@@ -330,7 +334,9 @@ run_build() {
 run_package() {
 	einfo "Package..."
 	cd ${BUILDDIR}
-	check_exit "make package"
+	# check_exit "make package"
+	# calling cpack directly we are not checking the build output anymore
+	check_exit "cpack"
 	# TODO: detect if osx and generate a package and a dmg installer
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
 		# Generate DMG
@@ -365,6 +371,7 @@ run_project() {
 }
 
 run_release() {
+	einfo "Doing a release build process..."
 	run_clean
 	run_build
 	run_package
@@ -390,7 +397,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -r2, -dynamic"
+	ehead "-64, -debug, -clang, -r2, -dynamic, -systemlib"
 	echo
 }
 
