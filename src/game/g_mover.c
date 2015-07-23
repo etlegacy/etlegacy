@@ -4610,7 +4610,7 @@ void SP_func_explosive(gentity_t *ent)
 	memset(&ent->constructibleStats, 0, sizeof(ent->constructibleStats));
 	G_SpawnInt("constructible_class", "0", &i);
 	i--;    // non-coder friendlyness. Aren't we nice?
-	if (i > 0 && i <= NUM_CONSTRUCTIBLE_CLASSES)
+	if (i > 0 && i < NUM_CONSTRUCTIBLE_CLASSES)
 	{
 		ent->constructibleStats = g_constructible_classes[i];
 
@@ -5606,7 +5606,7 @@ void SP_func_constructible(gentity_t *ent)
 	memset(&ent->constructibleStats, 0, sizeof(ent->constructibleStats));
 	G_SpawnInt("constructible_class", "0", &i);
 	i--;
-	if (i > 0 && i <= NUM_CONSTRUCTIBLE_CLASSES)
+	if (i > 0 && i < NUM_CONSTRUCTIBLE_CLASSES)
 	{
 		ent->constructibleStats = g_constructible_classes[i];
 
