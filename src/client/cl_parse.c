@@ -1039,13 +1039,20 @@ void CL_ParseServerMessage(msg_t *msg)
 
 		if (cl_shownet->integer >= 2)
 		{
-			if (!svc_strings[cmd])
+			if (cmd < 0 || cmd > svc_EOF) // MSG_ReadByte might return -1 and we can't access our svc_strings array ...
 			{
-				Com_Printf("%3i:BAD CMD %i\n", msg->readcount - 1, cmd);
+				Com_Printf("%3i:BAD BYTE %i\n", msg->readcount - 1, cmd); // -> ERR_DROP
 			}
 			else
 			{
-				SHOWNET(msg, svc_strings[cmd]);
+				if (!svc_strings[cmd])
+				{
+					Com_Printf("%3i:BAD CMD %i\n", msg->readcount - 1, cmd);
+				}
+				else
+				{
+					SHOWNET(msg, svc_strings[cmd]);
+				}
 			}
 		}
 
