@@ -35,7 +35,7 @@
 
 #include "client.h"
 
-char *svc_strings[256] =
+char *svc_strings[32] =
 {
 	"svc_bad",
 
@@ -1066,12 +1066,15 @@ void CL_ParseServerMessage(msg_t *msg)
 			break;
 		case svc_serverCommand:
 			CL_ParseCommandString(msg);
+			//Com_Printf("----------------> SERVER CMD \n");
 			break;
 		case svc_gamestate:
 			CL_ParseGamestate(msg);
+			//Com_Printf("----------------> MY GAMESTATE \n");
 			break;
 		case svc_snapshot:
 			CL_ParseSnapshot(msg);
+			//Com_Printf("----------------> SNAPSHOT \n");
 			break;
 		case svc_download:
 			CL_ParseDownload(msg);
