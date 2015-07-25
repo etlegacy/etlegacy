@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-07-23 11:45+0000\n"
+"PO-Revision-Date: 2015-07-25 09:30+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -5181,19 +5181,24 @@ msgstr "^1BATS-TOI !\n"
 msgid "Auto Pick"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:1954
+#: src/cgame/cg_servercmds.c:1875
 #, c-format
-msgid "Damage Given: %-6d  Team Damage Given: %d"
+msgid "Damage Given: %6d      Team Damage Given: %6d"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:1955
+#: src/cgame/cg_servercmds.c:1876
 #, c-format
-msgid "Damage Recvd: %-6d  Team Damage Recvd: %d"
+msgid "Damage Recvd: %6d      Team Damage Recvd: %6d"
 msgstr ""
 
-#: src/cgame/cg_servercmds.c:1957
+#: src/cgame/cg_servercmds.c:1878
 #, c-format
-msgid "Suicides: %-2d Team Kills: %-2d Accuracy: %-4.1f HS%%: %-4.1f"
+msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:1879
+#, c-format
+msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
 msgstr ""
 
 #: src/cgame/cg_servercmds.c:2035
