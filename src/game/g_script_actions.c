@@ -840,9 +840,8 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			// round the duration to the next 50ms
 			if (ent->s.pos.trDuration % 50)
 			{
-				float frac;
+				float frac = (float)(((ent->s.pos.trDuration / 50) * 50 + 50) - ent->s.pos.trDuration) / (float)(ent->s.pos.trDuration);
 
-				frac = (float)(((ent->s.pos.trDuration / 50) * 50 + 50) - ent->s.pos.trDuration) / (float)(ent->s.pos.trDuration);
 				if (frac < 1)
 				{
 					ent->s.apos.trDuration = ent->s.pos.trDuration = (ent->s.pos.trDuration / 50) * 50 + 50;
@@ -872,7 +871,6 @@ G_ScriptAction_AbortMove
 */
 qboolean G_ScriptAction_AbortMove(gentity_t *ent, char *params)
 {
-
 	ent->scriptStatus.scriptFlags &= ~SCFL_GOING_TO_MARKER;
 
 	// set the angles at the destination

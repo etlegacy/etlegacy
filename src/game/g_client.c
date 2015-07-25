@@ -2581,11 +2581,11 @@ void ClientBegin(int clientNum)
 
 	// restore xp & score
 	stat_xp          = ent->client->ps.stats[STAT_XP];
-	stat_xp_overflow = ent->client->ps.stats[STAT_XP_OVERFLOW] ;
-	score			 = ent->client->ps.persistant[PERS_SCORE];
+	stat_xp_overflow = ent->client->ps.stats[STAT_XP_OVERFLOW];
+	score            = ent->client->ps.persistant[PERS_SCORE];
 
 	memset(&client->ps, 0, sizeof(client->ps));
-	
+
 	ent->client->ps.persistant[PERS_SCORE] = score;
 
 	if (ent->client->sess.spectatorState == SPECTATOR_FREE) // restore xp
