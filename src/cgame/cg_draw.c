@@ -1180,6 +1180,7 @@ static void CG_DrawCrosshair(void)
 		}
 
 		trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
+		trap_R_SetColor(NULL);
 	}
 }
 
@@ -1220,6 +1221,7 @@ static void CG_DrawNoShootIcon(void)
 	CG_AdjustFrom640(&x, &y, &w, &h);
 
 	trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cgs.media.friendShader);
+	trap_R_SetColor(NULL);
 }
 
 /*
