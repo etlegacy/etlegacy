@@ -204,7 +204,6 @@ static void CG_Obituary(entityState_t *ent)
 			// FIXME:
 			//case MOD_UNKNOWN:
 			//case MOD_FALLING:
-			//case MOD_LAVA:
 			//case MOD_TRIGGER_HURT:
 			//case MOD_TELEFRAG:
 			//case MOD_TARGET_LASER:
@@ -970,7 +969,7 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 			            dir,
 			            cent->currentState.density,             // mass
 			            cent->currentState.frame,               // type
-			            CG_GetGameSound(cent->currentState.dl_intensity),                                  // sound
+			            CG_GetGameSound(cent->currentState.dl_intensity), // sound
 			            cent->currentState.weapon,              // forceLowGrav
 			            shader,
 			            cent->currentState.angles2[0],
@@ -990,7 +989,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 	int                 i;
 	localEntity_t       *le;
 	refEntity_t         *re;
-	int                 howmany, total, totalsounds;
+	int                 howmany, total, totalsounds = 0;
 	int                 pieces[6];     // how many of each piece
 	qhandle_t           modelshader = 0;
 	float               materialmul = 1;     // multiplier for different types
@@ -1037,8 +1036,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 		}
 	}
 
-	totalsounds = 0;
-	total       = pieces[5] + pieces[4] + pieces[3] + pieces[2] + pieces[1] + pieces[0];
+	total = pieces[5] + pieces[4] + pieces[3] + pieces[2] + pieces[1] + pieces[0];
 
 	if (sound)
 	{

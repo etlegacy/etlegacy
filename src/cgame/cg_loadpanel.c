@@ -37,12 +37,12 @@
 
 extern displayContextDef_t *DC;
 
-qboolean   bg_loadscreeninited = qfalse;
-qboolean   bg_loadscreeninteractive;
-qhandle_t  bg_axispin;
-qhandle_t  bg_alliedpin;
-qhandle_t  bg_neutralpin;
-qhandle_t  bg_pin;
+qboolean  bg_loadscreeninited = qfalse;
+qboolean  bg_loadscreeninteractive;
+qhandle_t bg_axispin;
+qhandle_t bg_alliedpin;
+qhandle_t bg_neutralpin;
+qhandle_t bg_pin;
 
 qhandle_t bg_filter_bo;
 qhandle_t bg_filter_ff;
@@ -57,41 +57,41 @@ qhandle_t bg_mappic;
 
 panel_button_text_t missiondescriptionTxt =
 {
-	0.2f,                0.2f,
-	{ 0.0f,              0.0f,0.0f,    1.f },
-	0,                   0,
+	0.2f,                          0.2f,
+	{ 0.0f,                        0.0f,0.0f,    1.f },
+	0,                             0,
 	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t missiondescriptionHeaderTxt =
 {
-	0.2f,                0.2f,
-	{ 0.0f,              0.0f,             0.0f,    0.8f },
-	0,                   ITEM_ALIGN_CENTER,
+	0.2f,                          0.2f,
+	{ 0.0f,                        0.0f,             0.0f,    0.8f },
+	0,                             ITEM_ALIGN_CENTER,
 	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpheaderTxt =
 {
-	0.2f,                0.2f,
-	{ 1.0f,              1.0f,1.0f,    0.6f },
-	0,                   0,
+	0.2f,                          0.2f,
+	{ 1.0f,                        1.0f,1.0f,    0.6f },
+	0,                             0,
 	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t campaignpTxt =
 {
-	0.22f,               0.22f,
-	{ 1.0f,              1.0f, 1.0f,  0.6f },
-	0,                   0,
+	0.22f,                         0.22f,
+	{ 1.0f,                        1.0f, 1.0f,  0.6f },
+	0,                             0,
 	&cgs.media.bg_loadscreenfont2,
 };
 
 panel_button_text_t loadScreenMeterBackTxt =
 {
-	0.22f,               0.22f,
-	{ 0.1f,              0.1f,             0.1f,  0.8f },
-	0,                   ITEM_ALIGN_CENTER,
+	0.22f,                         0.22f,
+	{ 0.1f,                        0.1f,             0.1f,  0.8f },
+	0,                             ITEM_ALIGN_CENTER,
 	&cgs.media.bg_loadscreenfont2,
 };
 
@@ -636,7 +636,7 @@ qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key)
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight)
 {
 	static vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
-	float         w = DC->textWidthExt(text, sx, 0, &cgs.media.bg_loadscreenfont2);
+	float         w                = DC->textWidthExt(text, sx, 0, &cgs.media.bg_loadscreenfont2);
 	qboolean      fit              = (px + 20 + w > 440) ? qtrue : qfalse;
 
 	px += cgs.wideXoffset;

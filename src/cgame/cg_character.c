@@ -231,7 +231,6 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		// for each frame
 		for (j = 0; j < anim->numFrames; j++)
 		{
-
 			refent.frame           = anim->firstFrame + j;
 			refent.oldframe        = refent.frame;
 			refent.torsoFrameModel = refent.oldTorsoFrameModel = refent.frameModel = refent.oldframeModel = anim->mdxFile;
