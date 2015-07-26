@@ -177,6 +177,9 @@ parse_commandline() {
 		elif [ "$var" = "-dynamic" ]; then
 			einfo "Will enable dynamic renderer build"
 			RENDERER_DYNAMIC=1
+		elif [ "$var" = "-jpeg-turbo" ]; then
+			einfo "Will enable system jpeg turbo"
+			BUNDLED_JPEG=0
 		elif [ "$var" = "-systemlib" ]; then
 			einfo "Will disable bundled libraries"
 			BUNDLED_LIBS=0
