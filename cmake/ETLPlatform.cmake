@@ -24,6 +24,11 @@ elseif(WIN32 AND CROSS_COMPILE32)
 	set(ENV{PLATFORM} win32) #this is redundant but just to  be safe
 endif()
 
+if(APPLE)
+	# The ioapi requires this since OSX already uses 64 fileapi (there is no fseek64 etc)
+	add_definitions(-DUSE_FILE32API)
+endif(APPLE)
+
 if(UNIX)
 	# optimization/debug flags
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
@@ -72,7 +77,6 @@ if(UNIX)
 			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
-
 elseif(WIN32)
 	add_definitions(-DWINVER=0x501)
 
