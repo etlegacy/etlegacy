@@ -10,10 +10,12 @@ _SRC=`pwd`
 BUILDDIR="${_SRC}/build"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
+LEGACYETMAIN="${HOME}/.etlegacy/etmain"
+LEGACY_MIRROR="http://mirror.etlegacy.com/etmain/"
 
 # Command that can be run, first array has the cmd names which can be given, the second array holds the functions which match the cmd names
-easy_keys=(clean build package install crust release project help)
-easy_cmd=(run_clean run_build run_package run_install run_uncrustify run_release run_project print_help)
+easy_keys=(clean build package install download crust release project help)
+easy_cmd=(run_clean run_build run_package run_install run_download run_uncrustify run_release run_project print_help)
 easy_count=`expr ${#easy_keys[*]} - 1`
 
 check_exit() {
@@ -348,6 +350,21 @@ run_install() {
 	einfo "Install..."
 	cd ${BUILDDIR}
 	check_exit "make install"
+}
+
+handle_download() {
+	if [ ! -f $1 ]; then
+		wget "${LEGACY_MIRROR}$1"
+	fi
+}
+
+run_download() {
+	einfo "Downloading packages..."
+	mkdir -p ${LEGACYETMAIN}
+	cd ${LEGACYETMAIN}
+	handle_download "pak0.pk3"
+	handle_download "pak0.pk3"
+	handle_download "pak0.pk3"
 }
 
 run_uncrustify() {
