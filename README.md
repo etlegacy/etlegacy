@@ -16,7 +16,7 @@ INTRODUCTION
 ============
 
 Enemy Territory: Legacy is based on the [raedwulf-et](https://bitbucket.org/tcmreastwood/raedwulf-et/)
-project which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory.
+project which in turn is based on the [GPL'd source code](https://github.com/id-Software/Enemy-Territory) of Wolfenstein: Enemy Territory.
 
 The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
 while remaining compatible with the ET 2.60b version.
@@ -77,7 +77,7 @@ Dependencies
 * **SDL** version 2.0.3
 * **libjpeg-turbo** version 1.3, or **libjpeg** version 8
 * **libcurl** (optional, enabled by default)
-* **Lua** version 5.2 (optional, enabled by default)
+* **Lua** version 5.3 (optional, enabled by default)
 * **Ogg Vorbis** (optional, enabled by default)
 * **Freetype** version 2 (optional, enabled by default)
 * **OpenAL** (optional)
@@ -233,7 +233,7 @@ ET: Legacy will be installed in `My Documents\ETLegacy-Build`. To change it, set
 Then brew the following packages in the terminal app:
 
     $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 jpeg curl lua libogg libvorbis freetype
+    $ brew install --universal gnu-sed cmake glew sdl2 jpeg-turbo curl lua libogg libvorbis freetype
 
 The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
 
