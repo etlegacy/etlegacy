@@ -95,7 +95,7 @@ const int  formatCount = ARRAY_LEN(supportedFormats);
 #endif
 
 #define MAX_FONTS 16
-static int        registeredFontCount = 0;
+static int              registeredFontCount = 0;
 static fontInfo_extra_t registeredFont[MAX_FONTS];
 
 #ifdef FEATURE_FREETYPE
@@ -631,7 +631,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 			for (j = lastStart; j < i; j++)
 			{
 				// split ascii and unicode chars into different containers for old mod compatibility
-				if (j <= GLYPHS_ASCII_PER_FONT)
+				if (j < GLYPHS_ASCII_PER_FONT)
 				{
 					font->glyphs[j].glyph = h;
 					Q_strncpyz(font->glyphs[j].shaderName, name, sizeof(font->glyphs[j].shaderName));
@@ -655,7 +655,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 		else
 		{
 			// split ascii and unicode chars into different containers for old mod compatibility
-			if (i <= GLYPHS_ASCII_PER_FONT)
+			if (i < GLYPHS_ASCII_PER_FONT)
 			{
 				Com_Memcpy(&font->glyphs[i], glyph, sizeof(glyphInfo_t));
 			}
@@ -686,7 +686,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 	{
 		Com_Memcpy(&registeredFont[registeredFontCount++], font, sizeof(fontInfo_t));
 	}
-	
+
 	//if (r_saveFontData->integer)
 	//{
 	//	ri.FS_WriteFile(va("fonts/%s_%i.dat", fontName, pointSize), font, sizeof(fontInfo_t));
