@@ -625,10 +625,15 @@ void Con_DrawSolidConsole(float frac)
 		// draw arrows to show the buffer is backscrolled
 		re.SetColor(g_color_table[ColorIndex(COLOR_WHITE)]);
 
+		color[3] = 0.50f;
+		re.SetColor(color);
+
 		for (x = 0; x < con.linewidth; x += 4)
 		{
 			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y + 0.75f * SMALLCHAR_HEIGHT, '^');
 		}
+
+		re.SetColor(NULL);
 	}
 
 	row = con.bottomDisplayedLine;
