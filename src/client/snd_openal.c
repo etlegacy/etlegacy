@@ -2365,7 +2365,7 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 	{
 		issame = qfalse;
 	}
-	else if ((!loop || !*loop))
+	else if (!loop || !*loop)
 	{
 		loop   = intro;
 		issame = qtrue;
@@ -2382,7 +2382,7 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 	// Copy the loop over if we don't have the special case for music tracks "onetimeonly"
 	if (loop && *loop && (!music || Q_stricmp(loop, "onetimeonly")))
 	{
-		strncpy(ssData[ss].loopStream, loop, sizeof(ssData[ss].loopStream));
+		Q_strncpy(ssData[ss].loopStream, loop, sizeof(ssData[ss].loopStream));
 	}
 
 	// Clear the current music cvar
