@@ -995,6 +995,8 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
+	Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
+
 	if (r_gfxInfo->integer > 0)
 	{
 		Ren_Print("GL_EXTENSIONS: ");

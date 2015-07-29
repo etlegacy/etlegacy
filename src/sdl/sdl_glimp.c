@@ -78,7 +78,6 @@ static SDL_GLContext SDL_glContext  = NULL;
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
 cvar_t *r_centerWindow;
-cvar_t *r_sdlDriver;
 
 void GLimp_Shutdown(void)
 {
@@ -991,17 +990,13 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
-		const char *driverName;
-
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
 			Ren_Print("SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n", SDL_GetError());
 			return qfalse;
 		}
 
-		driverName = SDL_GetCurrentVideoDriver();
-		Ren_Print("SDL using driver \"%s\"\n", driverName);
-		ri.Cvar_Set("r_sdlDriver", driverName);
+		Ren_Print("SDL initialized driver \"%s\"\n", SDL_GetCurrentVideoDriver());
 	}
 
 	if (fullscreen && ri.Cvar_VariableIntegerValue("in_nograb"))
@@ -1304,7 +1299,6 @@ void Glimp_ClearScreen(void)
 void GLimp_Init(void)
 {
 	r_allowSoftwareGL = ri.Cvar_Get("r_allowSoftwareGL", "0", CVAR_LATCH);
-	r_sdlDriver       = ri.Cvar_Get("r_sdlDriver", "", CVAR_ROM);
 	r_allowResize     = ri.Cvar_Get("r_allowResize", "0", CVAR_ARCHIVE);
 	r_centerWindow    = ri.Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE);
 

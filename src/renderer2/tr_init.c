@@ -1038,6 +1038,8 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
+	Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
+	
 	//Lets not do this on gl3.2 context as the functionality is not supported.
 	/*
 	Ren_Print("GL_EXTENSIONS: ");
@@ -1536,7 +1538,7 @@ void R_Register(void)
 
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
-	//FOR sdl_glimp.c
+	// FOR sdl_glimp.c
 	r_noborder        = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_stereoEnabled   = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1563,7 +1565,7 @@ void R_Register(void)
 	ri.Cmd_AddCommand("screenshotJPEG", R_ScreenShotJPEG_f);
 	ri.Cmd_AddCommand("screenshotPNG", R_ScreenShotPNG_f);
 	ri.Cmd_AddCommand("gfxinfo", GfxInfo_f);
-	//	ri.Cmd_AddCommand("generatemtr", R_GenerateMaterialFile_f);
+	//ri.Cmd_AddCommand("generatemtr", R_GenerateMaterialFile_f);
 	ri.Cmd_AddCommand("buildcubemaps", R_BuildCubeMaps);
 	ri.Cmd_AddCommand("minimize", GLimp_Minimize);
 
