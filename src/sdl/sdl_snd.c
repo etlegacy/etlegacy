@@ -45,6 +45,7 @@ qboolean snd_inited = qfalse;
 
 cvar_t *s_bits;     // before rc2 -> *s_sdlBits;
 cvar_t *s_khz;      // before rc2 -> *s_sdlSpeed
+cvar_t *s_device;
 cvar_t *s_sdlChannels; // external s_channels (GPL: cvar_t s_numchannels )
 cvar_t *s_sdlDevSamps;
 cvar_t *s_sdlMixSamps;
@@ -52,7 +53,7 @@ cvar_t *s_sdlMixSamps;
 /* The audio callback. All the magic happens here. */
 static int dmapos  = 0;
 static int dmasize = 0;
-
+static SDL_AudioDeviceID device_id = 0;
 /*
 ===============
 SNDDMA_AudioCallback
@@ -153,6 +154,18 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 	Com_Printf("  Size:     %d\n", (int) spec->size);
 }
 
+static void SND_DeviceList(void)
+{
+	int i, count = SDL_GetNumAudioDevices(0);
+
+	Com_Printf("Printing audio device list. Number of devices: %i\n\n", count);
+
+	for (i = 0; i < count; ++i)
+	{
+		Com_Printf("  Audio device %d: %s\n", i, SDL_GetAudioDeviceName(i, 0));
+	}
+}
+
 /*
 ===============
 SNDDMA_Init
@@ -163,12 +176,15 @@ qboolean SNDDMA_Init(void)
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 	const char    *driver_name;
+	const char	  *device_name;
 	int           tmp;
 
 	if (snd_inited)
 	{
 		return qtrue;
 	}
+
+	Cmd_AddCommand("sndlist", SND_DeviceList);
 
 	// before rc 2 we have had own s_sdl_ cvars to set this
 	// changed back to use genuine cvar names
@@ -180,6 +196,7 @@ qboolean SNDDMA_Init(void)
 
 	s_sdlDevSamps = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
 	s_sdlMixSamps = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
+	s_device = Cvar_Get("s_device", "-1", CVAR_LATCH | CVAR_ARCHIVE);
 
 	Com_Printf("SDL_Init( SDL_INIT_AUDIO )... ");
 
@@ -270,9 +287,16 @@ qboolean SNDDMA_Init(void)
 	desired.channels = (int) s_sdlChannels->value;
 	desired.callback = SNDDMA_AudioCallback;
 
-	if (SDL_OpenAudio(&desired, &obtained) == -1)
+	device_name = (s_device->integer < 0 ? NULL : SDL_GetAudioDeviceName(s_device->integer, 0));
+	if(device_name)
 	{
-		Com_Printf("SDL_OpenAudio() failed: %s\n", SDL_GetError());
+		Com_Printf("Aquiring audio device: %s\n", device_name);
+	}
+
+	device_id = SDL_OpenAudioDevice(device_name, 0, &desired, &obtained, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+	if(device_id == 0)
+	{
+		Com_Printf("SDL_OpenAudioDevice() failed: %s\n", SDL_GetError());
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return qfalse;
 	}
@@ -317,7 +341,7 @@ qboolean SNDDMA_Init(void)
 	}
 
 	Com_Printf("Starting SDL audio callback...\n");
-	SDL_PauseAudio(0);  // start callback.
+	SDL_PauseAudioDevice(device_id, 0); // start callback.
 
 	Com_Printf("SDL audio initialized.\n");
 	snd_inited = qtrue;
@@ -342,13 +366,16 @@ SNDDMA_Shutdown
 void SNDDMA_Shutdown(void)
 {
 	Com_Printf("Closing SDL audio device...\n");
-	SDL_PauseAudio(1);
-	SDL_CloseAudio();
+	SDL_PauseAudioDevice(device_id, 1);
+	SDL_CloseAudioDevice(device_id);
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 	free(dma.buffer);
 	dma.buffer = NULL;
 	dmapos     = dmasize = 0;
 	snd_inited = qfalse;
+
+	Cmd_RemoveCommand("sndlist");
+
 	Com_Printf("SDL audio device shut down.\n");
 }
 
@@ -361,7 +388,7 @@ Send sound to device if buffer isn't really the dma buffer
 */
 void SNDDMA_Submit(void)
 {
-	SDL_UnlockAudio();
+	SDL_UnlockAudioDevice(device_id);
 }
 
 /*
@@ -371,5 +398,5 @@ SNDDMA_BeginPainting
 */
 void SNDDMA_BeginPainting(void)
 {
-	SDL_LockAudio();
+	SDL_LockAudioDevice(device_id);
 }
