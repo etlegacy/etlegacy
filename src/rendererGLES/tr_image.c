@@ -903,7 +903,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Error(ERR_DROP, "R_CreateImage: \"%s\" is too long\n", name);
+		ri.Error(ERR_DROP, "R_CreateImage: \"%s\" is too long", name);
 	}
 	if (!strncmp(name, "*lightmap", 9))
 	{
@@ -935,7 +935,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	if (tr.numImages == MAX_DRAWIMAGES)
 	{
-		ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit\n");
+		ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit");
 	}
 
 	image = tr.images[tr.numImages] = R_CacheImageAlloc(sizeof(image_t));
@@ -1964,7 +1964,7 @@ void *R_CacheImageAlloc(int size)
 		void *buf = malloc(size);    // ri.Z_Malloc causes load times about twice as long?
 		if (!buf)
 		{
-			ri.Error(ERR_DROP, "R_CacheImageAlloc: unable to allocate buffer\n ");
+			ri.Error(ERR_DROP, "R_CacheImageAlloc: unable to allocate buffer");
 		}
 		return buf;
 	}
@@ -2020,7 +2020,7 @@ qboolean R_TouchImage(image_t *inImage)
 			// add it to the current images
 			if (tr.numImages == MAX_DRAWIMAGES)
 			{
-				ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit\n");
+				ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit");
 			}
 
 			tr.images[tr.numImages] = bImage;
@@ -2193,7 +2193,7 @@ image_t *R_FindCachedImage(const char *name, int hash)
 			// add it to the current images
 			if (tr.numImages == MAX_DRAWIMAGES)
 			{
-				ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit\n");
+				ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit");
 			}
 
 			R_TouchImage(bImage);

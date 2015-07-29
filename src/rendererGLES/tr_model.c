@@ -825,7 +825,7 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *mod_name)
 			{
 				if (!R_MDC_CompressSurfaceFrame(md3, surf, f, baseFrames[i - 1], ( mdcXyzCompressed_t * )((byte *)cSurf + cSurf->ofsXyzCompressed + sizeof(mdcXyzCompressed_t) * cSurf->numVerts * c)))
 				{
-					ri.Error(ERR_DROP, "R_MDC_ConvertMD3: tried to compress an unsuitable frame\n");
+					ri.Error(ERR_DROP, "R_MDC_ConvertMD3: tried to compress an unsuitable frame");
 				}
 				frameCompFrames[f] = c;
 				frameBaseFrames[f] = i - 1;
@@ -1556,8 +1556,8 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *mod_name)
 	mdm->lodScale = LittleFloat(mdm->lodScale);
 
 	/*  mdm->skel = RE_RegisterModel(mdm->bonesfile);
-	    if ( !mdm->skel ) {
-	        ri.Error (ERR_DROP, "R_LoadMDM: %s skeleton not found\n", mdm->bonesfile );
+	    if (!mdm->skel) {
+	        ri.Error(ERR_DROP, "R_LoadMDM: %s skeleton not found\n", mdm->bonesfile);
 	    }
 
 	    if ( mdm->numFrames < 1 ) {
@@ -2257,7 +2257,7 @@ void *R_Hunk_Alloc(int size)
 	if (!buf)
 	{
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &buf, 0, NULL);
-		ri.Error(ERR_DROP, "VirtualAlloc commit failed.\n%s", buf);
+		ri.Error(ERR_DROP, "VirtualAlloc commit failed: %s", buf);
 	}
 
 #endif
