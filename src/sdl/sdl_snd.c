@@ -156,7 +156,7 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 
 static void SND_DeviceList(void)
 {
-	int i, count = SDL_GetNumAudioDevices(0);
+	int i, count = SDL_GetNumAudioDevices(qfalse);
 
 	Com_Printf("Printing audio device list. Number of devices: %i\n\n", count);
 
@@ -287,13 +287,20 @@ qboolean SNDDMA_Init(void)
 	desired.channels = (int) s_sdlChannels->value;
 	desired.callback = SNDDMA_AudioCallback;
 
-	device_name = (s_device->integer < 0 ? NULL : SDL_GetAudioDeviceName(s_device->integer, 0));
-	if(device_name)
+	if (s_device->integer >= 0 && s_device->integer < SDL_GetNumAudioDevices(qfalse))
 	{
-		Com_Printf("Aquiring audio device: %s\n", device_name);
+		device_name = SDL_GetAudioDeviceName(s_device->integer, 0);
+		Com_Printf("Acquiring audio device: %s\n", device_name);
+	}
+	else
+	{
+		device_name = NULL;
+
+		//Reset the cvar just in case
+		Cvar_Set("s_device", "-1");
 	}
 
-	device_id = SDL_OpenAudioDevice(device_name, 0, &desired, &obtained, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+	device_id = SDL_OpenAudioDevice(device_name, qfalse, &desired, &obtained, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
 	if(device_id == 0)
 	{
 		Com_Printf("SDL_OpenAudioDevice() failed: %s\n", SDL_GetError());
