@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Frank Houweling <houweling.frank@gmail.com>, 2015
 # Lammert <lammerts@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-07-25 09:30+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2015-07-31 10:42+0000\n"
+"Last-Translator: Frank Houweling <houweling.frank@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/etlegacy/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +21,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr "PRODUCED BY ACTIVISION"
+msgstr "GEPRODUCEERD DOOR ACTIVISION"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
@@ -680,7 +681,7 @@ msgstr "Allied Spawn Tijd:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr ""
+msgstr "De standaard Allied spawn tijd overschrijven"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
@@ -688,7 +689,7 @@ msgstr "Axis Spawn Tijd:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr ""
+msgstr "De standaard Axis spawn tijd overschrijven"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
@@ -793,7 +794,7 @@ msgstr "RCON Wachtwoord:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Wachtwoord om de remote game server console te gebruiken (hou dit wachtwoord veilig)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
@@ -805,7 +806,7 @@ msgstr "Max Stemmen per Speler:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
-msgstr ""
+msgstr "Geeft het maximum aantal stemmen per speler per wedstrijd aan"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
@@ -813,7 +814,7 @@ msgstr "Succesvolle stemming:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Geeft het minimale percentage stemmen benodigd voor een succesvolle stemming aan"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -825,17 +826,17 @@ msgstr "Spel config:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Sta stemmingen door spelers om de game config te veranderen toe"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 msgid "Game Type:"
-msgstr "Spel Type:"
+msgstr "Speltype:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Sta stemmingen door spelers om het speltype te wijzigen toe"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
@@ -843,7 +844,7 @@ msgstr "Speler Kick:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Sta stemmingen door spelers om andere spelers te kicken toe"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -851,7 +852,7 @@ msgstr "Map:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Sta stemmingen door spelers voor een andere campagne of map toe"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
@@ -859,7 +860,7 @@ msgstr "Wedstrijd Reset:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Sta stemmingen door spelers om het spel te resetten toe"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
@@ -867,7 +868,7 @@ msgstr "Mute Toesch.:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Sta stemmingen door spelers om toeschouwers te muten toe"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
@@ -875,7 +876,7 @@ msgstr "Volgende Map:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Sta spelers toe om te stemmen voor de volgende compagne of map"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
@@ -883,7 +884,7 @@ msgstr "Gebalanc. Teams:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Sta spelers toe om te stemmen voor verplichte gebalanceerde teams"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
@@ -891,7 +892,7 @@ msgstr "Scheidsrechter:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Sta spelers toe om te stemmen voor een scheidsrechter"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
@@ -899,7 +900,7 @@ msgstr "XP Mix:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Sta spelers toe om te stemmen of de teams geschud moeten worden"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
@@ -907,7 +908,7 @@ msgstr "Teams Wisselen:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Sta spelers toe om te stemmen of de teams van kant moeten wisselen"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
@@ -1314,7 +1315,7 @@ msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Fireteam"
-msgstr ""
+msgstr "Sectie"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
@@ -1770,19 +1771,19 @@ msgstr "Linkshandig:"
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Right"
-msgstr ""
+msgstr "Rechts"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Left"
-msgstr ""
+msgstr "Links"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid ""
 "Left or Right Handed? This sets your default controls\n"
 "which you can modify later via the options menu"
-msgstr ""
+msgstr "Links of rechtshandig? Dit veranderd je standaard\nbesturingsinstellingen welke je later kunt veranderen\nin het opties menu"
 
 #: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
 msgid "CONTROLS"
@@ -1822,7 +1823,7 @@ msgstr "Spring:"
 
 #: etmain/ui/options_controls.menu:40
 msgid "Crouch:"
-msgstr ""
+msgstr "Kruipen:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
@@ -1864,7 +1865,7 @@ msgstr "Muis Gevoeligheid:"
 
 #: etmain/ui/options_controls.menu:51
 msgid "Use the slider to increase or decrease mouse sensitivity"
-msgstr ""
+msgstr "Gebruiker de schuifknop om de gevoeligheid van de muis aan te passen"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Mouse Pitch:"
@@ -1872,11 +1873,11 @@ msgstr "Muis Pitch:"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
-msgstr ""
+msgstr "0.015 (minimale toegestane waarde)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr ""
+msgstr "0.022 (standaard waarde)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
@@ -2096,7 +2097,7 @@ msgstr "Taal:"
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr ""
+msgstr "Zet uw gewenste taal"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
@@ -2108,7 +2109,7 @@ msgstr "Altijd Rennen:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toogle walk/run"
-msgstr ""
+msgstr "Wissel lopen/rennen"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -2128,7 +2129,7 @@ msgstr "Automatisch Herladen:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Automatisch herladen wanneer munitie leeg is"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
@@ -2136,7 +2137,7 @@ msgstr "Automatisch Wisselen:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Automatisch wisselen naar een nieuw wapen wanneer munitie op is"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
@@ -2144,15 +2145,15 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 kleuren"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 kleuren"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
-msgstr ""
+msgstr "Wapen icoon laten flitsen bij schieten, herladen of wisselen"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
@@ -2174,7 +2175,7 @@ msgstr "Kogel Traceerders:"
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "Aan"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
@@ -2198,11 +2199,11 @@ msgstr "Wapen Verander Zoom:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "Aan (normaal)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "Aan (omgekeerd)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
@@ -2215,17 +2216,17 @@ msgstr "Standaard Zoom level:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "Helemaal uit"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "Dichtbij"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "Verweg"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
@@ -2233,7 +2234,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Zet het standaard zoomniveau voor scopes"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
@@ -2241,11 +2242,11 @@ msgstr "Zoom Levels:"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 zoomniveaus"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 zoomniveus"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
@@ -2257,15 +2258,15 @@ msgstr "Snelle Chat Mode:"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr ""
+msgstr "Alfa"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr ""
+msgstr "Numeriek"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr ""
+msgstr "Gebruik alfa of numerieke toetsen om radio berichten te sturen"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
@@ -2274,7 +2275,7 @@ msgstr "Chat Icoon Tijd:"
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Short"
-msgstr ""
+msgstr "Kort"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:50
@@ -2283,20 +2284,20 @@ msgstr ""
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
-msgstr ""
+msgstr "Normaal"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "Lang"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "Heel lang"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
-msgstr ""
+msgstr "Geef aan hoe lang het chaticoon boven een spelers hoofd blijft"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
@@ -2340,19 +2341,19 @@ msgstr "Geluiden bij Geraakt:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Geen hit geluiden bij eigen team"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Geen hit geluiden bij hoofd"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Geen hit geluiden bij lichaam"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Zet hit geluiden"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
@@ -2360,7 +2361,7 @@ msgstr "Klacht PopUp:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Geef de optie om te klagen over teamleden die je doden"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
@@ -2368,7 +2369,7 @@ msgstr "Log Belangrijke Berichten:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Geef belangrijke spelberichten weer in de console"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
@@ -2376,35 +2377,35 @@ msgstr "Automatische Actie:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Screenshot"
-msgstr ""
+msgstr "Schermafbeelding"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Statistieken Dump"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Demo + SS"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Demo + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "SS + Stats"
-msgstr ""
+msgstr "SS + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Demo + SS + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Automatisch acties uitvoeren bij het begin of einde van een ronde"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
@@ -2422,7 +2423,7 @@ msgstr "Laat Tool Tips zien :"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Geef tooltips weer in de UI"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
@@ -2444,7 +2445,7 @@ msgstr "Laat Wapen Zien:"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Shows gun model on-screen"
-msgstr ""
+msgstr "Geef wapenmodel weer"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
@@ -2452,7 +2453,7 @@ msgstr "Laat Kompas Zien:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
-msgstr ""
+msgstr "Geef compas weer (met iconen wanneer dicht bij gebeurtenissen)"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
@@ -2460,7 +2461,7 @@ msgstr "Auto Map Zoom:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
-msgstr ""
+msgstr "Zet zoom niveau automatisch wanneer de map herlaad"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
@@ -2468,7 +2469,7 @@ msgstr "Missie Timer:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
-msgstr ""
+msgstr "Geef overgebleven tijd voor de missie weer"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
@@ -2476,7 +2477,7 @@ msgstr "Versterkingstimer:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Geef de tijd tot versterkingen aan"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
@@ -2508,7 +2509,7 @@ msgstr "Laat Lokaties Zien:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "Alleen coördinaten"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
@@ -2524,7 +2525,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Geef locaties van sectie aan"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
