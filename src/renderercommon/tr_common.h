@@ -75,7 +75,6 @@ void *GLimp_MainWindow(void);
 void GLimp_EndFrame(void);
 void GLimp_LogComment(const char *comment);
 void GLimp_Minimize(void);
-const char* SDL_GetCurrentVideoDriver(void);
 
 #ifdef LEGACY_DEBUG
 #define RENLOG r_logFile->integer
