@@ -5,13 +5,14 @@
 # Translators:
 # IR4 <gutzu@gmx.ch>, 2015
 # Joshua <git@sky-e.de>, 2015
+# Julius <wm_jkm@yahoo.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-07-28 20:29+0000\n"
-"Last-Translator: IR4 <gutzu@gmx.ch>\n"
+"PO-Revision-Date: 2015-08-01 16:05+0000\n"
+"Last-Translator: Julius <wm_jkm@yahoo.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,7 +34,7 @@ msgstr "Koproduzent"
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
-msgstr "Installer"
+msgstr "Installationssoftware"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
@@ -41,7 +42,7 @@ msgstr "Produktionskoordinator"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr ""
+msgstr "Produktionstester"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
@@ -61,7 +62,7 @@ msgstr "Qualitätssicherung Senior Projektleiter"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "Abteilungsleiter der Qualitätssicherung"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
@@ -81,19 +82,19 @@ msgstr "Qualitätssicherung Manager"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Manager, Codeveröffentlichungsgruppe"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Sr. Leiter, Codeveröffentlichungsgruppe"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "Leiter, Codeveröffentlichungsgruppe"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "Manager, Kundendienst"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -212,19 +213,19 @@ msgstr "Projektgründer, Coding & Management"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr ""
+msgstr "Programmierung, Modentwicklung und Bad Boy"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr ""
+msgstr "Hauptwindowsprogrammierer & Renderer"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr ""
+msgstr "Webseite, programmierung & Skripte"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr ""
+msgstr "Programmierung, Modentwicklung"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
@@ -251,7 +252,7 @@ msgstr "^1MITWIRKENDE"
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
-msgstr ""
+msgstr "Siehe unten: HALL OF FAME "
 
 #: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
 #: etmain/ui/profile_create_initial.menu:127
@@ -268,7 +269,7 @@ msgstr "RUHMESHALLE"
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
-msgstr ""
+msgstr "ET 2.60 UPDATE"
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
@@ -286,7 +287,7 @@ msgstr "Chef-Programmierer"
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
+msgstr "Mac OS X ist eine eingetragene Marke von Apple Computer, Inc, registriert in den USA und anderen Ländern."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET: LEGACY HALL OF FAME"
@@ -294,7 +295,7 @@ msgstr "ET: LEGACY RUHMESHALLE"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Beratung, Fehlerberichte, Patches"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
@@ -302,7 +303,7 @@ msgstr "^1Übersetzungen"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
-msgstr ""
+msgstr "EXEKUTIVE PRODUKTION VON ID SOFTWARE"
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
@@ -321,7 +322,7 @@ msgstr "Wolfenstein: Enemy Territory wird mit id Software's Quake III Arena (TM)
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr ""
+msgstr "Produktion, Entwicklung und technische Unterstützung von id Software"
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
@@ -343,27 +344,27 @@ msgstr "ENTWICKELT VON SPLASH DAMAGE"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
-msgstr ""
+msgstr "Spielentwickler / Leitender Direktor"
 
 #: etmain/ui/credits_splashdamage.menu:84
 msgid "Business Director"
-msgstr ""
+msgstr "Geschäftsführer"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
-msgstr ""
+msgstr "KUNST"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
-msgstr ""
+msgstr "Leitender Illustrator / Kreativdirektor"
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
-msgstr ""
+msgstr "Illustrator / Animator"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
-msgstr ""
+msgstr "Zusätzliche Illustrationen"
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
@@ -375,7 +376,7 @@ msgstr "Programmierer"
 
 #: etmain/ui/credits_splashdamage.menu:132
 msgid "Programmer / Artist"
-msgstr ""
+msgstr "Programmierer / Illustrator"
 
 #: etmain/ui/credits_splashdamage.menu:139
 msgid "DESIGN"
@@ -383,7 +384,7 @@ msgstr "DESIGN"
 
 #: etmain/ui/credits_splashdamage.menu:152
 msgid "Designer / Audio Engineer"
-msgstr ""
+msgstr "Designer / Audioingenieur"
 
 #: etmain/ui/credits_splashdamage.menu:154
 msgid "Designer / Writer"
@@ -395,11 +396,11 @@ msgstr "KARTEN DESIGN"
 
 #: etmain/ui/credits_splashdamage.menu:174
 msgid "Lead Level Designer"
-msgstr ""
+msgstr "Leitender Umgebungsdesigner"
 
 #: etmain/ui/credits_splashdamage.menu:176
 msgid "Senior Level Designer"
-msgstr ""
+msgstr "Senior Umgebungsdesigner"
 
 #: etmain/ui/credits_splashdamage.menu:178
 #: etmain/ui/credits_splashdamage.menu:180
@@ -409,11 +410,11 @@ msgstr "Karten Designer"
 
 #: etmain/ui/credits_splashdamage.menu:182
 msgid "Level Designer / Artist"
-msgstr ""
+msgstr "Umgebungsdesigner / Illustrator"
 
 #: etmain/ui/credits_splashdamage.menu:186
 msgid "Additional Level Design"
-msgstr ""
+msgstr "Zusätzliches Umgebungsdesign"
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET Legacy Website"
@@ -461,7 +462,7 @@ msgstr "Server Einstellungen auf die Voreinstellungen zurücksetzen?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
-msgstr ""
+msgstr "SPIEL ERSTELLUNG: ERWEITERT"
 
 #: etmain/ui/hostgame_advanced.menu:31
 msgid "GENERAL"
@@ -473,7 +474,7 @@ msgstr "Minimum Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Einstellung des minimalen Ping kann dazu verwendet werden LPBs auszuschließen (0 = kein Minimum)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
@@ -481,16 +482,16 @@ msgstr "Maximum Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Einstellung des maximalen Ping kann dazu verwendet werden HPBs auszuschließen (0 = kein Maximum)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
-msgstr ""
+msgstr "Maximale Spielrate:"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Maximale Rate mit der Spieldaten zu den Clients gesendet wird (0 = an Rate die der Client eingestellt hat anpassen)"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
@@ -500,7 +501,7 @@ msgstr "Spieler Inaktivität:"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Maximale Zeit (in Sek.) die ein Spieler abwesend sein kann bevor Ausschluss vom Server (0 = nicht aktiv)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -510,7 +511,7 @@ msgstr "Zuschauer Inaktivität:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Maximale Zeit (in Sek.) die ein Beobachter abwesend sein kann bevor Ausschluss vom Server (0 = nicht aktiv)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -530,7 +531,7 @@ msgstr "Prozentualer Anteil von 'bereit' Spielern, um die nächste Karte zu star
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
-msgstr ""
+msgstr "SPIEL"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
@@ -540,7 +541,7 @@ msgstr "Warte auf bereit"
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr ""
+msgstr "Soll der Server abwarten das alle Spieler bereit sind bevor ein Spiel starten kann?"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
@@ -549,7 +550,7 @@ msgstr "Minimum Spieler:"
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Spezifiziert die minimale Anzahl von Spielern bevor ein Spiel begonnen werden kann"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
@@ -559,7 +560,7 @@ msgstr "Bereit Anteil:"
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr ""
+msgstr "Spezifiziert die Mindestprozentzahl der Spieler die ihre Fertigtaste gedrückt haben bevor ein Spiel starten kann"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
@@ -567,15 +568,15 @@ msgstr "Spätes Anschließen:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr ""
+msgstr "Sollen Spieler in ein Team eintreten können nachdem das Spiel gestartet hat"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr ""
+msgstr "Beobachter stummstellen:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr ""
+msgstr "Sind Beobachter stummgestellt?"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
@@ -598,7 +599,7 @@ msgstr "Jeder"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
-msgstr ""
+msgstr "Ob man Spieler schaden zufügen kann während der Aufwärmphase des Spiels"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
@@ -606,7 +607,7 @@ msgstr "Max Spieler Pro Team:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
-msgstr ""
+msgstr "Spezifiziert die maximale Anzahl an Spielern pro Team"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
@@ -616,7 +617,7 @@ msgstr "Team Kontrolle aus:"
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr ""
+msgstr "Ob Spieler Teambefehle aussprechen können (Schließen von Teams/Beobachter, Team bereit, etc.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
@@ -624,7 +625,7 @@ msgstr "Aufwärmzeit:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
-msgstr ""
+msgstr "Länge der Aufwärmphase bevor das Spiel beginnt"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid "Maximum Complaints:"
@@ -634,11 +635,11 @@ msgstr "Maximale Beschwerden:"
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Maximale Anzahl der Beschwerden die ein Spieler erhalten darf bevor Serverausschluss"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr ""
+msgstr "Maximale Beschwerende"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -665,7 +666,7 @@ msgstr "Aus"
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Anzahl von individuellen Beschwerden die ein Spieler erhalten darf bevor Serverausschluss"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
@@ -673,23 +674,23 @@ msgstr "Karten Zeitlimit:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
-msgstr ""
+msgstr "Standard Zeitlimit nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
-msgstr ""
+msgstr "Spielwiedereintrittszeit für die Alliierten"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr ""
+msgstr "Standard Spielwiedereintrittszeit für die Alliierten nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr ""
+msgstr "Spielwiedereintrittszeit für die Axenmächte"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr ""
+msgstr "Standard Spielwiedereintrittszeit für die Axenmächte nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
@@ -697,7 +698,7 @@ msgstr "Alliierte max Leben:"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
-msgstr ""
+msgstr "Spezifiziere die Anzahl der Leben für die Alliierten in einem Maximale Leben Spiel"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
@@ -705,7 +706,7 @@ msgstr "Axen max. Leben:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr ""
+msgstr "Spezifiziere die Anzahl der Leben für die Axenmächte in einem Maximale Leben Spiel"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
@@ -715,7 +716,7 @@ msgstr "Stoppuhr Rundentyp:"
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr ""
+msgstr "Bestimmt die Art der Stoppuhrrunde (ABBA = Seitenwechsel, ABAB = Kein Seitenwechsel)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
@@ -727,7 +728,7 @@ msgstr "LMS Runden Pro Spiel:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Standard für LMS runden pro Spiel nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
@@ -735,23 +736,23 @@ msgstr "LMS Spiele Pro Karte:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Standard für LMS Spiele (Bestehend aus Runden) pro Karte nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr ""
+msgstr "LMS Nur Team Beobachter:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr ""
+msgstr "Verhindert das Spieler das gegnerische Team beobachten"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr ""
+msgstr "LMS gesperrte Teams:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Verhindert das Spieler das Team wechseln können"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
@@ -794,7 +795,7 @@ msgstr "RCON Passwort:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Passwort um die Konsole des Spielservers über das Netzwerk zu verwenden (sehr mächtig, also Passwort geheim halten)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
@@ -814,7 +815,7 @@ msgstr "Erfolgreiche Abstimmung:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Spezifiziert die minimale Prozentzahl damit eine Abstimmung Erfolg hat"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -836,15 +837,15 @@ msgstr "Spiel Typ:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Erlaubt Spielern für eine Änderung des Spieltyps abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr ""
+msgstr "Spieler hinauswerfen:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Erlaubt Spielern über den Hinauswurf anderer Spieler abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -852,23 +853,23 @@ msgstr "Karte:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Erlaubt Spielern über einen Karten- oder Kampangnenwechsel abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
-msgstr ""
+msgstr "Spiel zurücksetzen:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Erlaubt Spielern abzustimmen ob ein Spiel zurückgesetzt wird"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr ""
+msgstr "Beobachter stummstellen:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Erlaube Spielern darüber abzustimmen Beobachter stummzustellen"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
@@ -876,7 +877,7 @@ msgstr "Nächste Karte:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Erlaube Spielern darüber abzustimmen in die nächste Karte oder Kampagne zu wechseln "
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
@@ -884,7 +885,7 @@ msgstr "Ausgewog. Teams:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Erlaubt Spielern für erzwungene Teambalanzierung abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
@@ -900,7 +901,7 @@ msgstr "XP Mischen:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Erlaubt Spielern für eine Durchmischung der Teams abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
@@ -908,7 +909,7 @@ msgstr "Tausche Teams:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Erlaubt Spielern für einen Seitenwechsel der Teams abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
@@ -916,7 +917,7 @@ msgstr "Eigenbeschuß:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Erlaubt Spielern darüber abzustimmen ob Schaden von Verbündeten aktiviert oder deaktiviert ist"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
@@ -924,11 +925,11 @@ msgstr "Zeitlimit:"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Erlaubt Spielern über ein verändertes Zeitlimit abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Erlaubt Spielern darüber abzustimmen ob Schaden in der Aufwärmphase aktiviert oder deaktiviert ist"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
@@ -936,7 +937,7 @@ msgstr "Anti-Lag:"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
-msgstr ""
+msgstr "Erlaubt Spielern darüber abzustimmen ob Antilag aktiviert oder deaktiviert ist"
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
@@ -950,7 +951,7 @@ msgstr "Zeile 1"
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Specifies the message clients will see when connecting to the server"
-msgstr ""
+msgstr "Spezifiziert die Willkommensnachricht wenn mit dem Server verbunden wird"
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
@@ -978,11 +979,11 @@ msgstr "Client Downloads:"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
-msgstr ""
+msgstr "Erlaubt Spielern fehlende Dateien von dem Server herunterzuladen"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr ""
+msgstr "Maximale Downloadrate"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
@@ -1025,7 +1026,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:54
 msgid "close the game window and open the"
-msgstr ""
+msgstr "Schließe Spielfenster und öffne"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. It will not be possible"
@@ -1143,7 +1144,7 @@ msgstr "Wettkampf Einstellungen"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Public Settings"
-msgstr ""
+msgstr "Öffentliche Einstellungen"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
@@ -1335,11 +1336,11 @@ msgstr "AKTUALISIEREN"
 
 #: etmain/ui/ingame_serverinfo.menu:78
 msgid "ADD TO FAVORITES"
-msgstr ""
+msgstr "ZU FAVORITEN HINZUFÜGEN"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
-msgstr ""
+msgstr "WIEDEREINSTEIGEN"
 
 #: etmain/ui/ingame_tapoutlms.menu:50
 msgid ""
@@ -4676,7 +4677,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1969
 msgid "Your application failed"
-msgstr "Deine Bewerbung ist fehlgeschlagen"
+msgstr "Dein Antrag ist abgelehnt"
 
 #: src/cgame/cg_draw.c:1976
 msgid "Your application has been approved"
@@ -4757,7 +4758,7 @@ msgstr "Du bist verwundet und wartest auf den Sani."
 #: src/cgame/cg_draw.c:2240
 #, c-format
 msgid "Press %s to go into reinforcement queue."
-msgstr ""
+msgstr "Drücke %s um dich der Verstärkung anzuschließen."
 
 #: src/cgame/cg_draw.c:2251
 msgid "No more reinforcements this round."
@@ -4885,11 +4886,11 @@ msgstr ""
 #: src/cgame/cg_fireteamoverlay.c:479
 #, c-format
 msgid "Fireteam: %s"
-msgstr ""
+msgstr "Feuerteam: %s"
 
 #: src/cgame/cg_fireteams.c:344
 msgid "FIRETEAMS"
-msgstr ""
+msgstr "FEUERTEAMS"
 
 #: src/cgame/cg_fireteams.c:347
 msgid "JOIN"
@@ -5026,7 +5027,7 @@ msgstr "ist nicht auf dem Server"
 #: src/cgame/cg_players.c:309
 #, c-format
 msgid "Promoted to rank %s!"
-msgstr "Befördert zum %s!"
+msgstr "Befördert zum Rang %s!"
 
 #: src/cgame/cg_players.c:359
 #, c-format
@@ -5288,7 +5289,7 @@ msgstr "Aktualisierungszeit: %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
-msgstr ""
+msgstr "Server Info kann nicht gezeigt werden (nicht gefunden, oder lokaler Server)\n"
 
 #: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
 msgid "Favorite already in list\n"
@@ -5374,7 +5375,7 @@ msgid "joined the Allies team\n"
 msgstr ""
 
 msgid "entered the game\n"
-msgstr ""
+msgstr "tritt dem Spiel bei\n"
 
 msgid "rediscovered gravity"
 msgstr ""
@@ -5383,13 +5384,13 @@ msgid "was crushed"
 msgstr ""
 
 msgid "drowned"
-msgstr ""
+msgstr "ertrank"
 
 msgid "slagged"
-msgstr ""
+msgstr "verschlackte"
 
 msgid "was killed"
-msgstr ""
+msgstr "wurde getötet"
 
 msgid "got buried under a pile of rubble"
 msgstr ""
@@ -5398,7 +5399,7 @@ msgid "was incinerated"
 msgstr ""
 
 msgid "had an appointment with the map mortar"
-msgstr ""
+msgstr "hatte eine Verabredung mit dem Karten Mörser"
 
 msgid "took a map mortar shell shower"
 msgstr ""
@@ -5413,10 +5414,10 @@ msgid "dove on his own grenade"
 msgstr ""
 
 msgid "vaporized himself"
-msgstr ""
+msgstr "hat sich selbst verdampft"
 
 msgid "played with fire"
-msgstr ""
+msgstr "hat mit Feuer gespielt"
 
 msgid "obliterated himself"
 msgstr ""
@@ -5425,7 +5426,7 @@ msgid "fired-for-effect on himself"
 msgstr ""
 
 msgid "died in his own explosion"
-msgstr ""
+msgstr "starb an seiner eigenen Explosion"
 
 msgid "ate his own rifle grenade"
 msgstr ""
@@ -5449,7 +5450,7 @@ msgid "danced on his airstrike marker"
 msgstr ""
 
 msgid "committed suicide"
-msgstr ""
+msgstr "verübte Selbstmord"
 
 msgid "killed himself"
 msgstr ""
@@ -5488,7 +5489,7 @@ msgid "Improved Signals"
 msgstr ""
 
 msgid "Faster Reload"
-msgstr ""
+msgstr "Schnelleres Nachladen"
 
 msgid "Heavy Weapon Proficiency"
 msgstr ""
@@ -5550,7 +5551,7 @@ msgid "Allied team"
 msgstr ""
 
 msgid "Spectators"
-msgstr ""
+msgstr "Zuschauer"
 
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
@@ -5583,10 +5584,10 @@ msgid "The Axis has too many players.\n"
 msgstr ""
 
 msgid "Attack!"
-msgstr ""
+msgstr "Angriff!"
 
 msgid "Fall back!"
-msgstr ""
+msgstr "Rückzug!"
 
 msgid ""
 "^3All players ready!^7\n"
@@ -5648,25 +5649,25 @@ msgid "We need Covert Ops!"
 msgstr ""
 
 msgid "Follow me!"
-msgstr ""
+msgstr "Mir nach!"
 
 msgid "Let's go!"
 msgstr ""
 
 msgid "Move!"
-msgstr ""
+msgstr "Bewegung!"
 
 msgid "Clear the path!"
 msgstr ""
 
 msgid "Defend our objective!"
-msgstr ""
+msgstr "Verteidige unser Ziel!"
 
 msgid "Disarm the dynamite!"
-msgstr ""
+msgstr "Entschärfe das Dynamit!"
 
 msgid "Clear the mines!"
-msgstr ""
+msgstr "Entschärfe die Minen!"
 
 msgid "Reinforce the offense!"
 msgstr ""
@@ -5678,7 +5679,7 @@ msgid "Affirmative!"
 msgstr ""
 
 msgid "No!"
-msgstr ""
+msgstr "Nein!"
 
 msgid "Thank you!"
 msgstr ""
@@ -5705,7 +5706,7 @@ msgid "Oops!"
 msgstr ""
 
 msgid "Yes!"
-msgstr ""
+msgstr "Ja!"
 
 msgid "Jawohl!"
 msgstr ""
@@ -5732,7 +5733,7 @@ msgid "Bye."
 msgstr ""
 
 msgid "Great shot!"
-msgstr ""
+msgstr "Guter Schuss!"
 
 msgid "You got it, man!"
 msgstr ""
@@ -5951,7 +5952,7 @@ msgid "You cannot arm dynamite near a friendly objective!"
 msgstr ""
 
 msgid "^3Aborting, can't see target."
-msgstr ""
+msgstr "^3Breche ab, kein Ziel in Sicht."
 
 msgid "^3Firing for effect!"
 msgstr ""
@@ -6017,13 +6018,13 @@ msgid "You have been given fireteam admin rights"
 msgstr ""
 
 msgid "Too many players already on this Fireteam"
-msgstr ""
+msgstr "Es sind schon zu viele Spieler im Feuerteam"
 
 msgid "The leader has now left the Fireteam you applied to"
 msgstr ""
 
 msgid "The other player is already on a fireteam"
-msgstr ""
+msgstr "Der andere Spieler ist schon in einem Feuerteam"
 
 msgid "You are not on the same team as the other player"
 msgstr ""
@@ -6035,7 +6036,7 @@ msgid "Invalid client selected"
 msgstr "Ungültiger Client gewählt"
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
-msgstr ""
+msgstr "Anwendung: fireteam admin <Clientname|Clientnummer>"
 
 msgid "usage: fireteam propose <clientname|clientnumber>"
 msgstr ""
@@ -6053,10 +6054,10 @@ msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
 msgstr ""
 
 msgid "usage: fireteam <create|leave|apply|invite>"
-msgstr ""
+msgstr "Anwendung: fireteam <create|leave|apply|invite>"
 
 msgid "You are already on a fireteam, leave it first"
-msgstr ""
+msgstr "Du bist schon in einem Feuerteam, verlasse es zuerst"
 
 msgid ""
 "The other player must be on the same fireteam for you to give admin rights "
@@ -6067,10 +6068,10 @@ msgid "You must be a fireteam admin to give admin rights to someone else"
 msgstr ""
 
 msgid "Invalid referee password!\n"
-msgstr ""
+msgstr "Üngültiges Schiedsrichterpasswort!\n"
 
 msgid "Usage: ref [password]\n"
-msgstr ""
+msgstr "Anwendung: ref [Passwort]\n"
 
 msgid ""
 "^3Referee commands:^7\n"
@@ -6092,7 +6093,7 @@ msgid "Referee has ^3LOCKED^7 teams\n"
 msgstr ""
 
 msgid "You have LOCKED teams\n"
-msgstr ""
+msgstr "Du hast die Teams gesperrt\n"
 
 msgid "Referee has ^3UNLOCKED^7 teams\n"
 msgstr ""
@@ -6137,7 +6138,7 @@ msgid "User "
 msgstr "Benutzer"
 
 msgid "is not on the server\n"
-msgstr ""
+msgstr "ist nicht auf dem Server\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
 msgstr ""
@@ -6155,7 +6156,7 @@ msgid "usage: ref warn <clientname> [reason].\n"
 msgstr ""
 
 msgid "Client not on server.\n"
-msgstr ""
+msgstr "Client ist nicht auf dem Server.\n"
 
 msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
 msgstr ""
@@ -6251,13 +6252,13 @@ msgid "Spectators can't ready a team!\n"
 msgstr ""
 
 msgid "The ^4Allies^7 team is ready!\n"
-msgstr ""
+msgstr "Das ^4Alliierte^7 Team ist bereit!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
-msgstr ""
+msgstr "Das ^1Axen^7 Team ist bereit!\n"
 
 msgid "A vote is already in progress.\n"
-msgstr ""
+msgstr "Eine Abstimmung findet schon statt.\n"
 
 msgid "called a vote.\n"
 msgstr ""
@@ -6431,13 +6432,13 @@ msgid "You have been switched to the Allied team"
 msgstr ""
 
 msgid "Try to beat the clock!"
-msgstr ""
+msgstr "Versuche die Uhr zu schlagen!"
 
 msgid "You have been been stripped of fireteam admin rights"
 msgstr ""
 
 msgid "%s ^7has left the fireteam\n"
-msgstr ""
+msgstr "%s ^7hat das Feuerteam verlassen\n"
 
 msgid "You have been warned by your fireteam leader\n"
 msgstr ""
@@ -6494,10 +6495,10 @@ msgid "was sniped by"
 msgstr ""
 
 msgid "stood on"
-msgstr ""
+msgstr "stand auf"
 
 msgid "'s airstrike marker"
-msgstr ""
+msgstr "s Luftangriff Markierung"
 
 msgid "- Small Health"
 msgstr ""
@@ -6660,7 +6661,7 @@ msgid "Includes or excludes servers with bots from the server list"
 msgstr ""
 
 msgid "Click here to sort by Ping"
-msgstr ""
+msgstr "Drücke hier um nach Pings zu sortieren."
 
 msgid "FAV"
 msgstr ""
@@ -6684,7 +6685,7 @@ msgid "Not Ready:"
 msgstr "Nicht Bereit:"
 
 msgid "CONTROLS: ADVANCED"
-msgstr ""
+msgstr "STEUERUNG: ERWEITERT"
 
 msgid "Deselect All Members:"
 msgstr ""
