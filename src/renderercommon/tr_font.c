@@ -711,17 +711,18 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font,
 		return qfalse;
 	}
 
+	// FIXME: analyse extension and load prerendered OR freetype font to avoid stupid warnings ...
+	// in case of freetype fontName contains the extension - see supportedFormats[]
+	if (R_LoadPreRenderedFont(datName, font))
+	{
+		return qtrue;
+	}
 #ifdef FEATURE_FREETYPE
 	if (R_LoadScalableFont(fontName, pointSize, font, extended))
 	{
 		return qtrue;
 	}
 #endif
-
-	if (R_LoadPreRenderedFont(datName, font))
-	{
-		return qtrue;
-	}
 
 	return qfalse;
 }
