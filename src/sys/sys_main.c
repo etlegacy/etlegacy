@@ -949,7 +949,7 @@ void Sys_GameLoop(void)
 
 	while (qtrue)
 	{
-#if defined(_WIN32) && defined(LEGACY_DEBUG) && !defined(_WIN64)
+#if defined(_MSC_VER) && defined(LEGACY_DEBUG) && !defined(_WIN64)
 		// set low precision every frame, because some system calls
 		// reset it arbitrarily
 		_controlfp(_PC_24, _MCW_PC);

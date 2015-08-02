@@ -47,7 +47,7 @@
 
 // The version in which unicode was added..
 // FIXME: change this to 273 before release...!!!
-#define UNICODE_SUPPORT_VERSION 272
+#define UNICODE_SUPPORT_VERSION 273
 
 // the cross sign which is used in place of invalid chars
 #define INVALID_CHAR_OFFSET 215
