@@ -438,6 +438,24 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 }
 
 #ifdef FEATURE_FREETYPE
+static qboolean isFreetypeFontFormat(const char *fontName)
+{
+	unsigned long i           = 0;
+	qboolean      formatFound = qfalse;
+
+	while (i < formatCount)
+	{
+		if (COM_CompareExtension(fontName, supportedFormats[i]))
+		{
+			formatFound = qtrue;
+			break;
+		}
+		i++;
+	}
+
+	return formatFound;
+}
+
 /**
  * @brief Loads a unicode TrueType or OpenType font
  */
@@ -711,18 +729,19 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font,
 		return qfalse;
 	}
 
-	// FIXME: analyse extension and load prerendered OR freetype font to avoid stupid warnings ...
-	// in case of freetype fontName contains the extension - see supportedFormats[]
-	if (R_LoadPreRenderedFont(datName, font))
-	{
-		return qtrue;
-	}
 #ifdef FEATURE_FREETYPE
-	if (R_LoadScalableFont(fontName, pointSize, font, extended))
+	if (isFreetypeFontFormat(fontName) && R_LoadScalableFont(fontName, pointSize, font, extended))
 	{
 		return qtrue;
 	}
 #endif
+
+	if (R_LoadPreRenderedFont(datName, font))
+	{
+		return qtrue;
+	}
+
+	Ren_Warning("R_GetFont: can't load font '%s'.\n", fontName);
 
 	return qfalse;
 }
