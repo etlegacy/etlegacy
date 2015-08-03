@@ -438,24 +438,6 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 }
 
 #ifdef FEATURE_FREETYPE
-static qboolean isFreetypeFontFormat(const char *fontName)
-{
-	unsigned long i           = 0;
-	qboolean      formatFound = qfalse;
-
-	while (i < formatCount)
-	{
-		if (COM_CompareExtension(fontName, supportedFormats[i]))
-		{
-			formatFound = qtrue;
-			break;
-		}
-		i++;
-	}
-
-	return formatFound;
-}
-
 /**
  * @brief Loads a unicode TrueType or OpenType font
  */
@@ -730,7 +712,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font,
 	}
 
 #ifdef FEATURE_FREETYPE
-	if (isFreetypeFontFormat(fontName) && R_LoadScalableFont(fontName, pointSize, font, extended))
+	if (R_LoadScalableFont(fontName, pointSize, font, extended))
 	{
 		return qtrue;
 	}
