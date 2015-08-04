@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-07-25 09:30+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2015-08-04 21:11+0000\n"
+"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5949,12 +5949,6 @@ msgstr ""
 msgid "You cannot arm dynamite near a friendly objective!"
 msgstr ""
 
-msgid "^3Aborting, can't see target."
-msgstr ""
-
-msgid "^3Firing for effect!"
-msgstr ""
-
 msgid "'s tank-mounted MG42"
 msgstr ""
 
@@ -5965,9 +5959,6 @@ msgid "Timelimit hit.\n"
 msgstr ""
 
 msgid "Landmine revealed"
-msgstr ""
-
-msgid "^3Insufficient fire support."
 msgstr ""
 
 msgid "'s tank-mounted browning 30cal"
@@ -6778,4 +6769,19 @@ msgid "Heavy Weapons"
 msgstr ""
 
 msgid "Covert Ops"
+msgstr ""
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr ""
+
+msgid "Fire Mission: Insufficient fire support."
+msgstr ""
+
+msgid "Fire Mission: Aborting, can't see target."
+msgstr ""
+
+msgid "I need a Medic!"
+msgstr ""
+
+msgid "New version available. Do you want to update now?"
 msgstr ""

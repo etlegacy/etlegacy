@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-03 20:26+0000\n"
+"PO-Revision-Date: 2015-08-04 21:17+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -5950,12 +5950,6 @@ msgstr " Ładunkiem Kulminacyjnym"
 msgid "You cannot arm dynamite near a friendly objective!"
 msgstr "Nie możesz uzbroić dynamitu blisko przyjaznego celu!"
 
-msgid "^3Aborting, can't see target."
-msgstr "^3Przerwanie, nie można namierzyć celu."
-
-msgid "^3Firing for effect!"
-msgstr "^3Rozpoczęcie Ostrzału!"
-
 msgid "'s tank-mounted MG42"
 msgstr " MG42 na czołgu"
 
@@ -5967,9 +5961,6 @@ msgstr "Limit czasowy skończony.\\n"
 
 msgid "Landmine revealed"
 msgstr "Mina ujawniona"
-
-msgid "^3Insufficient fire support."
-msgstr "^3Niewystarczający ogień wsparcia."
 
 msgid "'s tank-mounted browning 30cal"
 msgstr " browningiem 30cal na czołgu"
@@ -6780,3 +6771,18 @@ msgstr "Ciężkiej Broni"
 
 msgid "Covert Ops"
 msgstr "Zabójcy"
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr ""
+
+msgid "Fire Mission: Insufficient fire support."
+msgstr ""
+
+msgid "Fire Mission: Aborting, can't see target."
+msgstr ""
+
+msgid "I need a Medic!"
+msgstr "Potrzebuję Medyka!"
+
+msgid "New version available. Do you want to update now?"
+msgstr "Nowa wersja dostępna. Czy chcesz zaktualizować teraz?"
