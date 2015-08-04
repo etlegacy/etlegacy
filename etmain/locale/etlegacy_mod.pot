@@ -5944,12 +5944,6 @@ msgstr ""
 msgid "You cannot arm dynamite near a friendly objective!"
 msgstr ""
 
-msgid "^3Aborting, can't see target."
-msgstr ""
-
-msgid "^3Firing for effect!"
-msgstr ""
-
 msgid "'s tank-mounted MG42"
 msgstr ""
 
@@ -5960,9 +5954,6 @@ msgid "Timelimit hit.\n"
 msgstr ""
 
 msgid "Landmine revealed"
-msgstr ""
-
-msgid "^3Insufficient fire support."
 msgstr ""
 
 msgid "'s tank-mounted browning 30cal"
@@ -6758,4 +6749,19 @@ msgid "Heavy Weapons"
 msgstr ""
 
 msgid "Covert Ops"
+msgstr ""
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr ""
+
+msgid "Fire Mission: Insufficient fire support."
+msgstr ""
+
+msgid "Fire Mission: Aborting, can't see target."
+msgstr ""
+
+msgid "I need a Medic!"
+msgstr ""
+
+msgid "New version available. Do you want to update now?"
 msgstr ""
