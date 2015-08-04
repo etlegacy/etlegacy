@@ -4315,7 +4315,7 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent)
 		}
 		else
 		{
-			Q_strcat(buffer, sizeof(buffer), "0 0 0 ");
+			Q_strcat(buffer, sizeof(buffer), "0 0 0 0 ");
 		}
 	}
 
