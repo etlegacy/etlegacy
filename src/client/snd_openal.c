@@ -2382,7 +2382,7 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 	// Copy the loop over if we don't have the special case for music tracks "onetimeonly"
 	if (loop && *loop && (!music || Q_stricmp(loop, "onetimeonly")))
 	{
-		Q_strncpy(ssData[ss].loopStream, loop, sizeof(ssData[ss].loopStream));
+		Q_strncpyz(ssData[ss].loopStream, loop, sizeof(ssData[ss].loopStream));
 	}
 
 	// Clear the current music cvar
