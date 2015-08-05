@@ -1181,6 +1181,7 @@ void GLimp_SetHardware(void)
 		    Q_stristr(glConfig.renderer_string, "Haswell") ||
 		    Q_stristr(glConfig.renderer_string, "Broadwell") ||
 		    Q_stristr(glConfig.renderer_string, "Skylake") ||
+		    Q_stristr(glConfig.renderer_string, "Kaby Lake") ||
 		    Q_stristr(glConfig.renderer_string, "Cannonlake"))
 		{
 			glConfig.hardwareType = GLHW_GENERIC_GL3;
