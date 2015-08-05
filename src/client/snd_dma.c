@@ -1941,7 +1941,7 @@ void S_UpdateStreamingSounds(void)
 					}
 					else
 					{
-						lvol = rvol = s_volume->value * streamingVol;
+						lvol = rvol = streamingVol;
 					}
 				}
 				// add to raw buffer
