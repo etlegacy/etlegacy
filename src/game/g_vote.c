@@ -372,9 +372,13 @@ int G_Gametype_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 	}
 	else
 	{
+		char s[MAX_STRING_CHARS];
+
 		// Set gametype
 		G_voteSetValue("Gametype", "g_gametype");
-		Svcmd_ResetMatch_f(qtrue, qtrue);
+
+		trap_Cvar_VariableStringBuffer("mapname", s, sizeof(s));
+		trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", s));
 	}
 
 	return G_OK;
