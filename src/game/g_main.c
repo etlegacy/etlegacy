@@ -2014,7 +2014,7 @@ char *strcut(char *dest, char *src, int num)
 }
 
 // g_{axies,allies}mapxp overflows and crashes the server
-void bani_clearmapxp(void)
+void G_ClearMapXP(void)
 {
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, "");
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, "");
@@ -2023,7 +2023,7 @@ void bani_clearmapxp(void)
 	trap_Cvar_Set(va("%s_alliedmapxp0", GAMEVERSION), "");
 }
 
-void bani_storemapxp(void)
+void G_StoreMapXP(void)
 {
 	char cs[MAX_STRING_CHARS];
 	char u[MAX_STRING_CHARS];
@@ -2075,7 +2075,7 @@ void bani_storemapxp(void)
 	}
 }
 
-void bani_getmapxp(void)
+void G_GetMapXP(void)
 {
 	int  j = 0;
 	char s[MAX_STRING_CHARS];
@@ -2250,7 +2250,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
-		bani_clearmapxp();
+		G_ClearMapXP();
 	}
 
 	trap_GetServerinfo(cs, sizeof(cs));
@@ -2266,14 +2266,14 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 			trap_Cvar_Set("g_axiswins", "0");
 			trap_Cvar_Set("g_alliedwins", "0");
 
-			bani_clearmapxp();
+			G_ClearMapXP();
 
 			trap_Cvar_Update(&g_axiswins);
 			trap_Cvar_Update(&g_alliedwins);
 		}
 		else
 		{
-			bani_getmapxp();
+			G_GetMapXP();
 		}
 	}
 
@@ -3539,7 +3539,7 @@ void G_LogExit(const char *string)
 
 		trap_Cvar_Set("g_currentRound", va("%i", !g_currentRound.integer));
 
-		bani_storemapxp();
+		G_StoreMapXP();
 	}
 	else if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -3567,7 +3567,7 @@ void G_LogExit(const char *string)
 		trap_SetConfigstring(CS_ROUNDSCORES1, va("%i", g_axiswins.integer));
 		trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
 
-		bani_storemapxp();
+		G_StoreMapXP();
 
 		// award medals
 		for (teamNum = TEAM_AXIS; teamNum <= TEAM_ALLIES; teamNum++)
@@ -3712,7 +3712,7 @@ void G_LogExit(const char *string)
 	}
 	else if (g_gametype.integer == GT_WOLF)
 	{
-		bani_storemapxp();
+		G_StoreMapXP();
 	}
 
 #ifdef FEATURE_OMNIBOT
