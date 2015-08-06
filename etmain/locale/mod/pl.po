@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-04 21:17+0000\n"
+"PO-Revision-Date: 2015-08-05 19:21+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -1668,7 +1668,7 @@ msgstr "Korzystasz ze starej wersji"
 msgid ""
 "We do recommend to\n"
 "upgrade your ET client"
-msgstr "Zalecamy aby\nzaktualizowac klienta ET"
+msgstr "Zalecamy aby\nzaktualizować klienta ET"
 
 #: etmain/ui/main.menu:121
 msgid "UPGRADE NOW"
@@ -5368,13 +5368,13 @@ msgid "You are near"
 msgstr "Jesteś blisko"
 
 msgid "joined the Axis team\n"
-msgstr "dołączył do zespołu Osi\\n"
+msgstr "dołączył do zespołu Osi\n"
 
 msgid "joined the Allies team\n"
-msgstr "dołączył do zespołu Aliantów\\n"
+msgstr "dołączył do zespołu Aliantów\n"
 
 msgid "entered the game\n"
-msgstr "wszedł do gry\\n"
+msgstr "wszedł do gry\n"
 
 msgid "rediscovered gravity"
 msgstr "ponownie odkrył grawitacje"
@@ -5553,22 +5553,22 @@ msgid "Spectators"
 msgstr "Obserwatorów"
 
 msgid "You must be a player or following a player to use +stats\n"
-msgstr "Musisz być graczem lub obserwować gracza aby użyć +stats\\n"
+msgstr "Musisz być graczem lub obserwować gracza aby użyć +stats\n"
 
 msgid "^9You must be alive to use ^3/kill."
 msgstr "^9Musisz być żywy aby użyć ^3/kill."
 
 msgid "No vote in progress.\n"
-msgstr "Brak głosowań.\\n"
+msgstr "Brak głosowań.\n"
 
 msgid "No or bad challenge for address.\n"
-msgstr "Brak lub złe wezwanie dla adresu.\\n"
+msgstr "Brak lub złe wezwanie dla adresu.\n"
 
 msgid "Match is already in progress!\n"
-msgstr "Mecz już trwa!\\n"
+msgstr "Mecz już trwa!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
-msgstr "^1** Sędzia Zmienił Ustawienia Serwera **\\n"
+msgstr "^1** Sędzia Zmienił Ustawienia Serwera **\n"
 
 msgid "Your fireteam is now public"
 msgstr "Twój oddział jest teraz publiczny"
@@ -5577,10 +5577,10 @@ msgid "Your fireteam is now private"
 msgstr "Twój oddział jest teraz prywatny"
 
 msgid "The Allies have too many players.\n"
-msgstr "Alianci mają zbyt dużo graczy.\\n"
+msgstr "Alianci mają zbyt dużo graczy.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr "Oś ma zbyt dużo graczy.\\n"
+msgstr "Oś ma zbyt dużo graczy.\n"
 
 msgid "Attack!"
 msgstr "Atak!"
@@ -5591,7 +5591,7 @@ msgstr "Odwrót!"
 msgid ""
 "^3All players ready!^7\n"
 "Match starting..."
-msgstr "^3Wszyscy gracze gotowi!^7\\n\nMecz zaczyna..."
+msgstr "^3Wszyscy gracze gotowi!^7\nMecz zaczyna..."
 
 msgid "Path cleared."
 msgstr "Droga Wolna."
@@ -5914,13 +5914,13 @@ msgstr "Centrum Dowodzenia Ośi wybudowane. Szybkość ładowania zwiększona!"
 msgid ""
 "^3All players ready!^7\n"
 "Match starting...\n"
-msgstr "^3Wszyscy gracze gotowi!^7\\n\nMecz zaczyna...\\n"
+msgstr "^3Wszyscy gracze gotowi!^7\nMecz zaczyna...\n"
 
 msgid "You are on the Allied team"
 msgstr "Jesteś w Zespole Alliantów"
 
 msgid "^1*** Match Reset! ***\n"
-msgstr "^1*** Restart Meczu! ***\\n"
+msgstr "^1*** Restart Meczu! ***\n"
 
 msgid "You are on the Axis team"
 msgstr "Jesteś w Zespole Osi"
@@ -5936,10 +5936,10 @@ msgstr " szaleństwie budowlanym"
 
 #: src/qcommon/download.c:244
 msgid "Need paks: %s\n"
-msgstr "Potrzebuje paczek %s\\n"
+msgstr "Potrzebuje paczek %s\n"
 
 msgid "Not enough players to start match!\n"
-msgstr "Zbyt mało graczy aby zacząć mecz!\\n"
+msgstr "Zbyt mało graczy aby zacząć mecz!\n"
 
 msgid "'s flamethrower"
 msgstr " miotaczem ognia"
@@ -5957,7 +5957,7 @@ msgid "'s dynamite"
 msgstr " dynamitem"
 
 msgid "Timelimit hit.\n"
-msgstr "Limit czasowy skończony.\\n"
+msgstr "Limit czasowy skończony.\n"
 
 msgid "Landmine revealed"
 msgstr "Mina ujawniona"
@@ -5969,10 +5969,10 @@ msgid "'s grenade"
 msgstr " granatem"
 
 msgid "Competition Settings Loaded!\n"
-msgstr "Ustawienia Rozgrywki Wczytane!\\n"
+msgstr "Ustawienia Rozgrywki Wczytane!\n"
 
 msgid "Public Settings Loaded!\n"
-msgstr "Ustawienia Publiczne Wczytane!\\n"
+msgstr "Ustawienia Publiczne Wczytane!\n"
 
 msgid "Landmine cannot be armed here..."
 msgstr "Miny nie mogą być tutaj uzbrojone.."
@@ -5984,16 +5984,16 @@ msgid "You cannot arm dynamite near a friendly construction!"
 msgstr "Nie możesz podłożyć dynamitu w pobliżu przyjaznej konstrukcji!"
 
 msgid "Countdown started.... ^3notready^7 ignored!\n"
-msgstr "Odliczanie rozpoczęte.... ^3niegotowy^7 zignorowane!\\n"
+msgstr "Odliczanie rozpoczęte.... ^3niegotowy^7 zignorowane!\n"
 
 msgid "No complaint filed against you.\n"
-msgstr "Nie wysłano skargi przeciwko tobie.\\n"
+msgstr "Nie wysłano skargi przeciwko tobie.\n"
 
 msgid "You are not the leader of a fireteam\n"
-msgstr "Nie jesteś liderem oddziału\\n"
+msgstr "Nie jesteś liderem oddziału\n"
 
 msgid "You have been warned by your Fireteam Commander\n"
-msgstr "Zostałeś ostrzeżony przez twojego Dowódcę Oddziału\\n"
+msgstr "Zostałeś ostrzeżony przez twojego Dowódcę Oddziału\n"
 
 msgid "You have been kicked from the fireteam"
 msgstr "Zostałeś wywalony z oddziału"
@@ -6058,59 +6058,59 @@ msgid "You must be a fireteam admin to give admin rights to someone else"
 msgstr "Musisz być Dowódcą oddziału aby dać prawa Dowódcy komuś innemu"
 
 msgid "Invalid referee password!\n"
-msgstr "Nieprawidłowe hasło sędziego!\\n"
+msgstr "Nieprawidłowe hasło sędziego!\n"
 
 msgid "Usage: ref [password]\n"
-msgstr "Użycie: ref [hasło]\\n"
+msgstr "Użycie: ref [hasło]\n"
 
 msgid ""
 "^3Referee commands:^7\n"
 "------------------------------------------\n"
-msgstr "^3Komendy sędziego:^7\\n\n------------------------------------------\\n"
+msgstr "^3Komendy sędziego:^7\n------------------------------------------\n"
 
 msgid ""
 "Usage: ^3\\ref <cmd> [params]\n"
 "\n"
-msgstr "Użycie: ^3\\\\ref <komenda> [parametry]\\n"
+msgstr "Użycie: ^3\\ref <komenda> [parametry]\n\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
-msgstr "^5pause speclock warmup ^7[wartość]\\n"
+msgstr "^5pause speclock warmup ^7[wartość]\n"
 
 msgid "Sorry, referee status disabled on this server.\n"
-msgstr "Status sędziego jest wyłączony na tym serwerze.\\n"
+msgstr "Status sędziego jest wyłączony na tym serwerze.\n"
 
 msgid "Referee has ^3LOCKED^7 teams\n"
-msgstr "Sędzia ^3ZABLOKOWAŁ^7 zespoły\\n"
+msgstr "Sędzia ^3ZABLOKOWAŁ^7 zespoły\n"
 
 msgid "You have LOCKED teams\n"
-msgstr "ZABLOKOWAŁEŚ zespoły\\n"
+msgstr "ZABLOKOWAŁEŚ zespoły\n"
 
 msgid "Referee has ^3UNLOCKED^7 teams\n"
-msgstr "Sędzia ^3ODBLOKOWAŁ^7 zespoły\\n"
+msgstr "Sędzia ^3ODBLOKOWAŁ^7 zespoły\n"
 
 msgid "You have UNLOCKED teams\n"
-msgstr "ODBLOKOWAŁEŚ zespoły\\n"
+msgstr "ODBLOKOWAŁEŚ zespoły\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr "Zespół ^4Alliantów^7 jest ZABLOKOWANY!\\n"
+msgstr "Zespół ^4Alliantów^7 jest ZABLOKOWANY!\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
-msgstr "Zespół ^1Osi^7 jest ZABLOKOWANY!\\n"
+msgstr "Zespół ^1Osi^7 jest ZABLOKOWANY!\n"
 
 msgid "^3Referee ^1PAUSED^3 the match^3!\n"
-msgstr "^3Sędzia ^1ZATRZYMAŁ^3 mecz^3!\\n"
+msgstr "^3Sędzia ^1ZATRZYMAŁ^3 mecz^3!\n"
 
 msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
-msgstr "^3Mecz ^1ZATRZYMANY^3! (^7Sędzia^3)\\n"
+msgstr "^3Mecz ^1ZATRZYMANY^3! (^7Sędzia^3)\n"
 
 msgid "The match is already ^1PAUSED!\n"
-msgstr "Mecz jest już ^1ZATRZYMANY!\\n"
+msgstr "Mecz jest już ^1ZATRZYMANY!\n"
 
 msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
-msgstr "^3Sędzia ^5WZNOWIŁ^3 mecz ... wznowienie za 10 sekund!\\n"
+msgstr "^3Sędzia ^5WZNOWIŁ^3 mecz ... wznowienie za 10 sekund!\n"
 
 msgid "The match is already ^5UNPAUSED!\n"
-msgstr "Mecz jest już ^5WZNOWIONY!\\n"
+msgstr "Mecz jest już ^5WZNOWIONY!\n"
 
 msgid "Bad client slot: "
 msgstr "Zły slot klienta: "
@@ -6119,151 +6119,151 @@ msgid "Client"
 msgstr "Klient"
 
 msgid "is not active\n"
-msgstr "nie jest aktywny\\n"
+msgstr "nie jest aktywny\n"
 
 msgid "You can only remove people in the game!\n"
-msgstr "Możesz tylko usuwać ludzi w grze!\\n"
+msgstr "Możesz tylko usuwać ludzi w grze!\n"
 
 msgid "User "
 msgstr "Użytkownik "
 
 msgid "is not on the server\n"
-msgstr "nie jest na serwerze\\n"
+msgstr "nie jest na serwerze\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
-msgstr "^5Zostałeś usunięty z zespołu ^4Alliantów\\n"
+msgstr "^5Zostałeś usunięty z zespołu ^4Alliantów\n"
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
-msgstr "^5Zostałeś usunięty z ^7zespołu ^1Osi\\n"
+msgstr "^5Zostałeś usunięty z ^7zespołu ^1Osi\n"
 
 msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
-msgstr "Sędzia ^3ZABLOKOWAŁ OBSERWATORÓW\\n"
+msgstr "Sędzia ^3ZABLOKOWAŁ OBSERWATORÓW\n"
 
 msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
-msgstr "Sędzia ^3ODBLOKOWAŁ OBSERWATORÓW\\n"
+msgstr "Sędzia ^3ODBLOKOWAŁ OBSERWATORÓW\n"
 
 msgid "usage: ref warn <clientname> [reason].\n"
-msgstr "użycie: ref warn <nazwaklienta> [powód].\\n"
+msgstr "użycie: ref warn <nazwaklienta> [powód].\n"
 
 msgid "Client not on server.\n"
-msgstr "Nie ma Klienta na serwerze.\\n"
+msgstr "Nie ma Klienta na serwerze.\n"
 
 msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
-msgstr "%s^7 otrzymał ^1Ostrzeżenie^7 (Brak Dostatecznego Powodu)\\n"
+msgstr "%s^7 otrzymał ^1Ostrzeżenie^7 (Brak Dostatecznego Powodu)\n"
 
 msgid "Cannot mute a referee.\n"
-msgstr "Nie można uciszyć sędziego.\\n"
+msgstr "Nie można uciszyć sędziego.\n"
 
 msgid "^5You've been muted\n"
-msgstr "^5Zostałeś uciszony\\n"
+msgstr "^5Zostałeś uciszony\n"
 
 msgid "Can't chat - you are muted\n"
-msgstr "Nie możesz pisać - jesteś uciszony\\n"
+msgstr "Nie możesz pisać - jesteś uciszony\n"
 
 msgid "^5You've been unmuted\n"
-msgstr "^5Dostałeś możliwość pisania\\n"
+msgstr "^5Dostałeś możliwość pisania\n"
 
 msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
-msgstr "^7 ID : Gracz                     Nudge  Rate  Pakiety  Snaps  Specjalne\\n"
+msgstr "^7 ID : Gracz                     Nudge  Rate  Pakiety  Snaps  Specjalne\n"
 
 msgid ""
 "^7----------------------------------------------------------------------\n"
-msgstr "^7----------------------------------------------------------------------\\n"
+msgstr "^7----------------------------------------------------------------------\n"
 
 msgid ""
 "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
 "Specials\n"
-msgstr "^7Status   : ID : Gracz                    Nudge  Rate  Pakiety  Snaps Specjalne\\n"
+msgstr "^7Status   : ID : Gracz                    Nudge  Rate  Pakiety  Snaps Specjalne\n"
 
 msgid ""
 "^7-------------------------------------------------------------------------------\n"
-msgstr "^7-------------------------------------------------------------------------------\\n"
+msgstr "^7-------------------------------------------------------------------------------\n"
 
 msgid ""
 "^5\n"
 "Available Game Commands:\n"
 "------------------------\n"
-msgstr "^5\\n\nDostępne Komendy W Grze:\\n"
+msgstr "^5\nDostępne Komendy W Grze:\n------------------------\n"
 
 msgid ""
 "\n"
 "Type: ^3\\command_name ?^7 for more information\n"
-msgstr "\nNapisz: ^3\\\\nazwa_komendy ?^7 aby uzyskać więcej informacji\\n"
+msgstr "\nNapisz: ^3\\nazwa_komendy ?^7 aby uzyskać więcej informacji\n"
 
 msgid "Spectators can't lock a team!\n"
-msgstr "Widzowie nie mogą zablokować zespołu!\\n"
+msgstr "Widzowie nie mogą zablokować zespołu!\n"
 
 msgid "The ^4Allies^7 team is now locked!\n"
-msgstr "Zespół ^4Alliancki^7 jest teraz zablokowany!\\n"
+msgstr "Zespół ^4Alliancki^7 jest teraz zablokowany!\n"
 
 msgid "^3Your team is already locked!\n"
-msgstr "^3Twój zespół jest już zablokowany!\\n"
+msgstr "^3Twój zespół jest już zablokowany!\n"
 
 msgid "The ^4Allies^7 team is now unlocked!\n"
-msgstr "Zespół ^4Alliancki^7 jest już odblokowany!\\n"
+msgstr "Zespół ^4Alliancki^7 jest już odblokowany!\n"
 
 msgid "^3Your team is already unlocked!\n"
-msgstr "^3Twój zespół jest juz odblokowany!\\n"
+msgstr "^3Twój zespół jest juz odblokowany!\n"
 
 msgid "Spectators can't unlock a team!\n"
-msgstr "Widzowie nie mogą odblokować zespołu!\\n"
+msgstr "Widzowie nie mogą odblokować zespołu!\n"
 
 msgid "The ^1Axis^7 team is now locked!\n"
-msgstr "Zespół ^1Osi^7 jest teraz zablokowany!\\n"
+msgstr "Zespół ^1Osi^7 jest teraz zablokowany!\n"
 
 msgid "The ^1Axis^7 team is now unlocked!\n"
-msgstr "Zespół ^1Osi^7 jest już odblokowany!\\n"
+msgstr "Zespół ^1Osi^7 jest już odblokowany!\n"
 
 msgid "Team commands not enabled on this server.\n"
-msgstr "Komendy Zespołu nie są włączone na tym serwerze.\\n"
+msgstr "Komendy Zespołu nie są włączone na tym serwerze.\n"
 
 msgid ""
 "\n"
 "^3>>> Unknown vote command: ^7 \n"
-msgstr "\n^3>>> Nieznana komenda głosowania: ^7 \\n"
+msgstr "\n^3>>> Nieznana komenda głosowania: ^7 \n"
 
 msgid ""
 "\n"
 "Valid ^3callvote^7 commands are:\n"
 "^3----------------------------\n"
-msgstr "\nPrawidłowymi komendami ^3callvote^7 są:\\n\n^3----------------------------\\n"
+msgstr "\nPrawidłowymi komendami ^3callvote^7 są:\n^3----------------------------\n"
 
 msgid ""
 "\n"
 "Usage: ^3\\callvote <command> <params>\n"
 "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-msgstr "\nUżycie: ^3\\\\callvote <komenda> <parametry>\\n\n^7Dla bieżących ustawień/pomocy, użyj: ^3\\\\callvote <komenda> ?\\n"
+msgstr "\nUżycie: ^3\\callvote <komenda> <parametry>\n^7Dla bieżących ustawień/pomocy, użyj: ^3\\callvote <komenda> ?\n"
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
-msgstr "Napisz ^3\\\\stats <id_gracza>^7 aby zobaczyć statystyki aktywnego gracza.\\n"
+msgstr "Napisz ^3\\stats <id_gracza>^7 aby zobaczyć statystyki aktywnego gracza.\n"
 
 msgid "Spectators can't ready a team!\n"
-msgstr "Widzowie nie mogą być gotowi!\\n"
+msgstr "Widzowie nie mogą być gotowi!\n"
 
 msgid "The ^4Allies^7 team is ready!\n"
-msgstr "Zespół ^4Alliantów^7 jest gotowy!\\n"
+msgstr "Zespół ^4Alliantów^7 jest gotowy!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
-msgstr "Zespół ^1Osi^7 jest gotowy!\\n"
+msgstr "Zespół ^1Osi^7 jest gotowy!\n"
 
 msgid "A vote is already in progress.\n"
-msgstr "Głosowanie jest już w toku.\\n"
+msgstr "Głosowanie jest już w toku.\n"
 
 msgid "called a vote.\n"
-msgstr "wybrał głosowanie.\\n"
+msgstr "wybrał głosowanie.\n"
 
 msgid "^5Vote passed!\n"
-msgstr "^5Głosownie zaliczone!\\n"
+msgstr "^5Głosownie zaliczone!\n"
 
 msgid "Spectator team\n"
-msgstr "Zespół Widzów\\n"
+msgstr "Zespół Widzów\n"
 
 msgid "Allies team\n"
-msgstr "Zespół Aliantów\\n"
+msgstr "Zespół Aliantów\n"
 
 msgid "Axis team\n"
-msgstr "Zespół Osi\\n"
+msgstr "Zespół Osi\n"
 
 msgid "Sorry, "
 msgstr "Wybacz, "
@@ -6272,13 +6272,13 @@ msgid "voting has been disabled"
 msgstr "głosowania zostały wyłączone"
 
 msgid "Not allowed to call a vote as a spectator.\n"
-msgstr "Nie wolno głosować jako obserwator.\\n"
+msgstr "Nie wolno głosować jako obserwator.\n"
 
 msgid "called a vote."
 msgstr "wybrał głosowanie."
 
 msgid "Vote cast.\n"
-msgstr "Oddanie głosów.\\n"
+msgstr "Oddanie głosów.\n"
 
 msgid "'s KA-BAR"
 msgstr " Nożem Bojowym"
@@ -6332,82 +6332,82 @@ msgid "'s Akimbo Luger 9mms"
 msgstr " Podwójnym Lugerem 9mm"
 
 msgid "Cheats are not enabled on this server.\n"
-msgstr "Kody nie są włączone na tym serwerze.\\n"
+msgstr "Kody nie są włączone na tym serwerze.\n"
 
 msgid "team: class is not available\n"
-msgstr "zespół: klasa nie jest dostępna\\n"
+msgstr "zespół: klasa nie jest dostępna\n"
 
 msgid "^1Soldier^7 is not available! Choose another class!\n"
-msgstr "^1Żołnierz^7 nie jest dostępny! Wybierz inną klasę!\\n"
+msgstr "^1Żołnierz^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "^1Medic^7 is not available! Choose another class!\n"
-msgstr "^1Medyk^7 nie jest dostępny! Wybierz inną klasę!\\n"
+msgstr "^1Medyk^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "^1Engineer^7 is not available! Choose another class!\n"
-msgstr "^1Inżynier^7 nie jest dostępny! Wybierz inną klasę!\\n"
+msgstr "^1Inżynier^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "^1Field Ops^7 is not available! Choose another class!\n"
-msgstr "^1Wsparcie^7 nie jest dostępny! Wybierz inną klasę!\\n"
+msgstr "^1Wsparcie^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "^1Covert Ops^7 is not available! Choose another class!\n"
-msgstr "^1Zabojca^7 nie jest dostępny! Wybierz inną klasę!\\n"
+msgstr "^1Zabojca^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "You must be alive to use this command.\n"
-msgstr "Musisz być żywy aby użyć tą komendę.\\n"
+msgstr "Musisz być żywy aby użyć tą komendę.\n"
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
-msgstr "Zespół ^1Osi^7 jest pusty!  Komenda Follow zignorowana.\\n"
+msgstr "Zespół ^1Osi^7 jest pusty!  Komenda Follow zignorowana.\n"
 
 msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
-msgstr "Zespół ^4Aliantow^7 jest pusty!  Komenda Follow zignorowana.\\n"
+msgstr "Zespół ^4Aliantow^7 jest pusty!  Komenda Follow zignorowana.\n"
 
 msgid "Can't follow a player on an enemy team!\n"
-msgstr "Nie możesz podążać za graczem z przeciwnego zespołu!\\n"
+msgstr "Nie możesz podążać za graczem z przeciwnego zespołu!\n"
 
 msgid "Can't follow while not in limbo if on a team!\n"
-msgstr "Nie możesz podążać podczas kiedy jesteś w limbo!\\n"
+msgstr "Nie możesz podążać podczas kiedy jesteś w limbo!\n"
 
 msgid "Partial Name Matches more than 1 Player.\n"
-msgstr "Częściowe Imię Pasuje dla więcej niż 1 Gracza.\\n"
+msgstr "Częściowe Imię Pasuje dla więcej niż 1 Gracza.\n"
 
 msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
-msgstr "Podążanie obserwatora jest teraz zablokowane na Zespole ^1Osi^7.\\n"
+msgstr "Podążanie obserwatora jest teraz zablokowane na Zespole ^1Osi^7.\n"
 
 msgid "^1Axis^7 team spectating is now disabled.\n"
-msgstr "Obserwowanie Zespołu ^1Axis^7 jest teraz wyłączone.\\n"
+msgstr "Obserwowanie Zespołu ^1Axis^7 jest teraz wyłączone.\n"
 
 msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
-msgstr "Podążanie obserwatora jest teraz zablokowane na Zespole ^4Aliantów^7.\\n"
+msgstr "Podążanie obserwatora jest teraz zablokowane na Zespole ^4Aliantów^7.\n"
 
 msgid "^4Allies^7 team spectating is now disabled.\n"
-msgstr "Obserwowanie Zespołu ^4Aliantów^7 jest teraz wyłączone.\\n"
+msgstr "Obserwowanie Zespołu ^4Aliantów^7 jest teraz wyłączone.\n"
 
 msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
-msgstr "Zespół ^4Aliantów^7 jest zablokowany od obserwowania.\\n"
+msgstr "Zespół ^4Aliantów^7 jest zablokowany od obserwowania.\n"
 
 msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
-msgstr "Zespół ^1Osi^7 jest zablokowany od obserwowania.\\n"
+msgstr "Zespół ^1Osi^7 jest zablokowany od obserwowania.\n"
 
 msgid "Server quit\n"
-msgstr "Serwer wyłączony\\n"
+msgstr "Serwer wyłączony\n"
 
 msgid "You cannot switch during a match, please wait until the round ends."
 msgstr "Nie możesz przechodzić podczas meczu, proszę poczekaj aż runda dobiegnie końca."
 
 msgid "Use the ^3players^7 command to find a valid player ID.\n"
-msgstr "Użyj komendę ^3players^7 aby znaleźć poprawne ID gracza.\\n"
+msgstr "Użyj komendę ^3players^7 aby znaleźć poprawne ID gracza.\n"
 
 msgid "^3Match is already in progress!\n"
-msgstr "^3Mecz już trwa!\\n"
+msgstr "^3Mecz już trwa!\n"
 
 msgid "^1Teams have been shuffled!\n"
-msgstr "^1Drużyny zostały pomieszane!\\n"
+msgstr "^1Drużyny zostały pomieszane!\n"
 
 msgid "^3*** Loading nextmap! ***\n"
-msgstr "^3*** Wczytywanie następnej mapy! ***\\n"
+msgstr "^3*** Wczytywanie następnej mapy! ***\n"
 
 msgid "^1*** Level Restarted! ***\n"
-msgstr "^1*** Poziom Zrestartowany! ***\\n"
+msgstr "^1*** Poziom Zrestartowany! ***\n"
 
 msgid "You have been switched to the Axis team"
 msgstr "Zostałeś przeniesiony do zespołu Osi"
@@ -6428,13 +6428,13 @@ msgid "You have been been stripped of fireteam admin rights"
 msgstr "Zostałeś pozbawiony praw lidera oddziału"
 
 msgid "%s ^7has left the fireteam\n"
-msgstr "%s ^7odszedł z oddziału\\n"
+msgstr "%s ^7odszedł z oddziału\n"
 
 msgid "You have been warned by your fireteam leader\n"
-msgstr "Zostałeś ostrzeżony przez swojego lidera oddziału\\n"
+msgstr "Zostałeś ostrzeżony przez swojego lidera oddziału\n"
 
 msgid "^3moved to spectator for inactivity!\n"
-msgstr "^3przeniesiony do widzów za nieaktywność!\\n"
+msgstr "^3przeniesiony do widzów za nieaktywność!\n"
 
 msgid "was killed by"
 msgstr "został zabity przez"
@@ -6635,7 +6635,7 @@ msgstr "Zawiera lub wyklucza serwery które ograniczają liczbę żyć na mecz z
 msgid ""
 "Includes or excludes servers that limit the number of\n"
 " available heavy weapons from the server list"
-msgstr "Zawiera lub wyklucza serwery które ograniczają liczbę\\n dostępnej broni ciężkiej z liczby serwerów"
+msgstr "Zawiera lub wyklucza serwery które ograniczają liczbę\n dostępnej broni ciężkiej z liczby serwerów"
 
 msgid ""
 "Includes or excludes servers with support for modem players from the server "
