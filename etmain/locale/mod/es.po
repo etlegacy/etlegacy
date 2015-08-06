@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-04 21:11+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-08-06 16:09+0000\n"
+"Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5385,7 +5385,7 @@ msgid "drowned"
 msgstr "se ahogó"
 
 msgid "slagged"
-msgstr ""
+msgstr "se derritió"
 
 msgid "was killed"
 msgstr "ha muerto"
@@ -5397,16 +5397,16 @@ msgid "was incinerated"
 msgstr "fue incinerado"
 
 msgid "had an appointment with the map mortar"
-msgstr ""
+msgstr "tuvo un encuentro con el mortero"
 
 msgid "took a map mortar shell shower"
-msgstr ""
+msgstr "tuvo una ducha de metralla del mortero"
 
 msgid "was pulverized by an explosion"
 msgstr "fue pulverizado por una explosion"
 
 msgid "dynamited himself to pieces"
-msgstr ""
+msgstr "se dinamitó en pedazos"
 
 msgid "dove on his own grenade"
 msgstr "se comió su propia granada"
@@ -5418,34 +5418,34 @@ msgid "played with fire"
 msgstr "jugó con fuego"
 
 msgid "obliterated himself"
-msgstr ""
+msgstr "se enterró a si mismo"
 
 msgid "fired-for-effect on himself"
-msgstr ""
+msgstr "se hizo un ataque aéreo sobre él mismo"
 
 msgid "died in his own explosion"
 msgstr "murió en su propia explosión"
 
 msgid "ate his own rifle grenade"
-msgstr ""
+msgstr "se comió su propia granada del rifle"
 
 msgid "failed to spot his own landmine"
-msgstr ""
+msgstr "se equivocó al activar su propia mina"
 
 msgid "embraced his own satchel explosion"
-msgstr ""
+msgstr "se vio involucrado en la explosión de su Satchel"
 
 msgid "engineered himself into oblivion"
-msgstr ""
+msgstr "construyó sobre el mismo"
 
 msgid "buried himself alive"
-msgstr ""
+msgstr "se enterró vivo él mismo"
 
 msgid "never saw his own mortar round coming"
-msgstr ""
+msgstr "nunca vió sus propios tiros de morteros volviendo"
 
 msgid "danced on his airstrike marker"
-msgstr ""
+msgstr "bailó sobre su marcador de ataque aéreo"
 
 msgid "committed suicide"
 msgstr "se suicidó"
@@ -5454,10 +5454,10 @@ msgid "killed himself"
 msgstr "se mató a si mismo"
 
 msgid "Improved use of Explosive Ammunition"
-msgstr ""
+msgstr "Mejorado el uso de munición explosiva"
 
 msgid "Improved Dexterity"
-msgstr ""
+msgstr "Destreza Mejorada"
 
 msgid "Binoculars for any Class"
 msgstr "Prismáticos para cualquier clase"
@@ -5472,64 +5472,64 @@ msgid "Improved use of Light Weapon Ammunition"
 msgstr "Mejorado el uso de la munición de las armas ligeras"
 
 msgid "Improved Projectile Resources"
-msgstr ""
+msgstr "Recursos de proyectiles mejorados"
 
 msgid "Improved use of Scoped Weapon Ammunition"
-msgstr ""
+msgstr "Mejorado el uso de munición de armas con mira"
 
 msgid "Improved Physical Fitness"
 msgstr "Mejorada la forma física."
 
 msgid "Improved Ammo Resources"
-msgstr ""
+msgstr "Recursos de munición mejorados"
 
 msgid "Improved Signals"
-msgstr ""
+msgstr "Señalización mejorada"
 
 msgid "Faster Reload"
 msgstr "Recarga más rápida"
 
 msgid "Heavy Weapon Proficiency"
-msgstr ""
+msgstr "Eficacia de armas pesadas"
 
 msgid "Improved use of Sabotage and Misdirection"
-msgstr ""
+msgstr "Mejorado el uso de sabotaje y distracción"
 
 msgid "Improved Health"
 msgstr "Mejorada la salud"
 
 msgid "Improved Construction and Destruction"
-msgstr ""
+msgstr "Mejorada la construcción y destrucción"
 
 msgid "Full Revive"
-msgstr ""
+msgstr "Resucitar completamente"
 
 msgid "Improved Air and Ground Support"
-msgstr ""
+msgstr "Mejorado el soporte aéreo y terrestre"
 
 msgid "Improved Light Weapon Handling"
-msgstr ""
+msgstr "Mejorado el manejo de armas ligeras"
 
 msgid "Breath Control"
 msgstr "Control de la respiración"
 
 msgid "Trap Awareness"
-msgstr ""
+msgstr "Reconocmiento de trampas"
 
 msgid "a Flak Jacket"
-msgstr ""
+msgstr "un chaleco antibalas"
 
 msgid "Adrenalin Self"
-msgstr ""
+msgstr "Auto-adrenalina"
 
 msgid "Enemy Recognition"
 msgstr "Reconocimiento de Enemigos"
 
 msgid "Dual-Wield Pistols"
-msgstr ""
+msgstr "Pistolas duales"
 
 msgid "Improved Weapon Handling"
-msgstr ""
+msgstr "Mejorado el manejo de las armas"
 
 msgid "Assassin"
 msgstr "Asesino"
@@ -5561,13 +5561,13 @@ msgid "No vote in progress.\n"
 msgstr "Ninguna votación en curso.\n"
 
 msgid "No or bad challenge for address.\n"
-msgstr ""
+msgstr "No hay partida o es incorrecta para esta dirección\n"
 
 msgid "Match is already in progress!\n"
 msgstr "La partida ya ha comenzado!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
-msgstr ""
+msgstr "^1** Árbitro ajustando un cambio del servidor **\n"
 
 msgid "Your fireteam is now public"
 msgstr "Tu escuadra ahora es pública"
@@ -5585,7 +5585,7 @@ msgid "Attack!"
 msgstr "Atacad!"
 
 msgid "Fall back!"
-msgstr ""
+msgstr "¡Retroceded!"
 
 msgid ""
 "^3All players ready!^7\n"
@@ -5593,19 +5593,19 @@ msgid ""
 msgstr "^3Todos los jugadores listos!^7\nEmpezando Partida..."
 
 msgid "Path cleared."
-msgstr ""
+msgstr "Camino Despejado."
 
 msgid "The enemy is weakened."
-msgstr ""
+msgstr "El enemigo está debilitado."
 
 msgid "All clear."
-msgstr ""
+msgstr "Todo despejado."
 
 msgid "Incoming!"
-msgstr ""
+msgstr "¡Que vienen!"
 
 msgid "Fire in the hole!"
-msgstr ""
+msgstr "Fire in the hole!"
 
 msgid "I'm on defense."
 msgstr "Estoy defendiendo."
@@ -5617,16 +5617,16 @@ msgid "Taking fire!"
 msgstr "¡Me disparan!"
 
 msgid "Mines cleared."
-msgstr ""
+msgstr "Minas desactivadas."
 
 msgid "Enemy in disguise."
-msgstr ""
+msgstr "Enemigo disfrazado."
 
 msgid "Need a Medic!"
-msgstr ""
+msgstr "¡Necesito un médico!"
 
 msgid "I need ammo!"
-msgstr ""
+msgstr "¡Necesito munición!"
 
 msgid "I need backup!"
 msgstr "¡Necesito Cobertura!"
@@ -5635,16 +5635,16 @@ msgid "We need an engineer!"
 msgstr "¡Necesitamos un ingeniero!"
 
 msgid "Cover me!"
-msgstr ""
+msgstr "¡Cubridme!"
 
 msgid "Hold your fire!"
-msgstr ""
+msgstr "¡Alto al fuego!"
 
 msgid "Where to?"
-msgstr ""
+msgstr "¿A dónde?"
 
 msgid "We need Covert Ops!"
-msgstr ""
+msgstr "¡Necesitamos un Covert Ops!"
 
 msgid "Follow me!"
 msgstr "¡Seguidme!"
@@ -5653,7 +5653,7 @@ msgid "Let's go!"
 msgstr "¡Vamos!"
 
 msgid "Move!"
-msgstr ""
+msgstr "¡Muévete!"
 
 msgid "Clear the path!"
 msgstr "¡Despejad el camino!"
@@ -5668,10 +5668,10 @@ msgid "Clear the mines!"
 msgstr "¡Desactivad las Minas!"
 
 msgid "Reinforce the offense!"
-msgstr ""
+msgstr "¡Reforzad el ataque!"
 
 msgid "Reinforce the defense!"
-msgstr ""
+msgstr "¡Reforzad la defensa!"
 
 msgid "Affirmative!"
 msgstr "¡Afirmativo!"
@@ -5683,7 +5683,7 @@ msgid "Thank you!"
 msgstr "¡Gracias!"
 
 msgid "You're welcome."
-msgstr ""
+msgstr "De nada."
 
 msgid "Bitte sehr."
 msgstr ""
@@ -5707,10 +5707,10 @@ msgid "Yes!"
 msgstr "¡Si!"
 
 msgid "Jawohl!"
-msgstr ""
+msgstr "Jawohl!"
 
 msgid "Negative!"
-msgstr ""
+msgstr "¡Negativo!"
 
 msgid "Hi!"
 msgstr "¡Hola!"
@@ -5719,22 +5719,22 @@ msgid "Hello!"
 msgstr "¡Hola!"
 
 msgid "Hallo!"
-msgstr ""
+msgstr "Hallo!"
 
 msgid "Good bye."
 msgstr "Good bye."
 
 msgid "Auf wiedersehen."
-msgstr ""
+msgstr "Auf wiedersehen."
 
 msgid "Bye."
 msgstr "Adios."
 
 msgid "Great shot!"
-msgstr ""
+msgstr "¡Buen tiro!"
 
 msgid "You got it, man!"
-msgstr ""
+msgstr "You got it, man!"
 
 msgid "Yeah!"
 msgstr "Yeah!"
@@ -5749,61 +5749,61 @@ msgid "Alright!"
 msgstr ""
 
 msgid "Woo!"
-msgstr ""
+msgstr "Woo!"
 
 msgid "Yeehaa!"
-msgstr ""
+msgstr "Yeehaa!"
 
 msgid "'Atta way, baby!"
-msgstr ""
+msgstr "'Atta way, baby!"
 
 msgid "Jahaa!"
-msgstr ""
+msgstr "Jahaa!"
 
 msgid "Wunderbar!"
-msgstr ""
+msgstr "Wunderbar!"
 
 msgid "Excellent!"
-msgstr ""
+msgstr "¡Excelente!"
 
 msgid "Oh yes!"
-msgstr ""
+msgstr "¡Oh si!"
 
 msgid "Sehr gut!"
-msgstr ""
+msgstr "Sehr gut!"
 
 msgid "Thanks!"
-msgstr ""
+msgstr "¡Gracias!"
 
 msgid "Danke!"
-msgstr ""
+msgstr "Danke!"
 
 msgid "Danke sehr!"
-msgstr ""
+msgstr "Danke sehr!"
 
 msgid "No problem."
-msgstr ""
+msgstr "Sin problema."
 
 msgid "Good game!"
-msgstr ""
+msgstr "¡Buena partida!"
 
 msgid "Command acknowledged!"
-msgstr ""
+msgstr "¡Orden recibida!"
 
 msgid "Command declined!"
-msgstr ""
+msgstr "¡Orden rechazada!"
 
 msgid "Command completed!"
-msgstr ""
+msgstr "¡Orden completada!"
 
 msgid "Destroy primary objective!"
-msgstr ""
+msgstr "¡Destruid el objetivo primario!"
 
 msgid "Destroy secondary objective!"
-msgstr ""
+msgstr "¡Destruid el objetivo secundario!"
 
 msgid "Destroy construction!"
-msgstr ""
+msgstr "¡Destruid la construción!"
 
 msgid "I'm constructing!"
 msgstr "¡Estoy construyendo!"
@@ -5878,7 +5878,7 @@ msgid "Mines have been reported in this area."
 msgstr "Se han reportado minas en esta zona."
 
 msgid "'s Landmine"
-msgstr ""
+msgstr " "
 
 msgid "'s Mobile MG 42"
 msgstr ""
@@ -5928,62 +5928,62 @@ msgid "Warning, leave the construction area..."
 msgstr "Cuidado, sal de la zona en construcción..."
 
 msgid "got caught in"
-msgstr ""
+msgstr "fue atrapado por"
 
 msgid "'s construction madness"
-msgstr ""
+msgstr "y su locura por construir"
 
 #: src/qcommon/download.c:244
 msgid "Need paks: %s\n"
-msgstr ""
+msgstr "Necesita los paks: %s\n"
 
 msgid "Not enough players to start match!\n"
 msgstr "¡No hay suficientes jugadores para empezar la partida!\n"
 
 msgid "'s flamethrower"
-msgstr ""
+msgstr "y su lanzallamas"
 
 msgid "'s Satchel Charge"
-msgstr ""
+msgstr "y su carga Satchel"
 
 msgid "You cannot arm dynamite near a friendly objective!"
-msgstr ""
+msgstr "¡No puedes armar una dinamita cerca de un objetivo de tu equipo!"
 
 msgid "'s tank-mounted MG42"
-msgstr ""
+msgstr "y su MG42 montada en el tanque"
 
 msgid "'s dynamite"
-msgstr ""
+msgstr "y su dinamita"
 
 msgid "Timelimit hit.\n"
-msgstr ""
+msgstr "Límite de tiempo alcanzado.\n"
 
 msgid "Landmine revealed"
-msgstr ""
+msgstr "Mina descubierta"
 
 msgid "'s tank-mounted browning 30cal"
-msgstr ""
+msgstr "y su browning 30cal montada en el tanque"
 
 msgid "'s grenade"
-msgstr ""
+msgstr "y su granada"
 
 msgid "Competition Settings Loaded!\n"
-msgstr ""
+msgstr "¡Ajustes de competición cargados!\n"
 
 msgid "Public Settings Loaded!\n"
-msgstr ""
+msgstr "¡Ajustes públicos cargados!\n"
 
 msgid "Landmine cannot be armed here..."
-msgstr ""
+msgstr "No se puede colocar una mina aquí..."
 
 msgid "Your team has too many landmines placed..."
-msgstr ""
+msgstr "Tu equipo ha puesto demasiadas minas..."
 
 msgid "You cannot arm dynamite near a friendly construction!"
-msgstr ""
+msgstr "¡No puedes colocar dinamita cerca de una construcción de tu equipo!"
 
 msgid "Countdown started.... ^3notready^7 ignored!\n"
-msgstr ""
+msgstr "Cuenta atrás comenzada... ¡^3notready^7 ignorados!\n"
 
 msgid "No complaint filed against you.\n"
 msgstr "No se ha archivado ninguna queja contra ti.\n"
@@ -5992,37 +5992,37 @@ msgid "You are not the leader of a fireteam\n"
 msgstr "No eres el líder de la escuadra\n"
 
 msgid "You have been warned by your Fireteam Commander\n"
-msgstr ""
+msgstr "Te ha llamado la atención el comandante de tu escuadra\n"
 
 msgid "You have been kicked from the fireteam"
-msgstr ""
+msgstr "Has sido expulsado de la escuadra"
 
 msgid "You are now the leader of your fireteam"
-msgstr ""
+msgstr "Ahora eres líder de tu escuadra"
 
 msgid "The fireteam you are on has been disbanded"
-msgstr ""
+msgstr "La escuadra en la que estás ha sido disuelta"
 
 msgid "You have been given fireteam admin rights"
-msgstr ""
+msgstr "Te han concedido derechos administrativos de la escuadra"
 
 msgid "Too many players already on this Fireteam"
-msgstr ""
+msgstr "Hay demasiados jugadores en la escuadra"
 
 msgid "The leader has now left the Fireteam you applied to"
-msgstr ""
+msgstr "El líder acaba de abandonar la escuadra que solicitaste"
 
 msgid "The other player is already on a fireteam"
-msgstr ""
+msgstr "El otro jugador está ya en una escuadra"
 
 msgid "You are not on the same team as the other player"
-msgstr ""
+msgstr "No estás en el mismo equipo que el otro jugador"
 
 msgid "You are not on the same Fireteam as the other player"
-msgstr ""
+msgstr "No estás en la misma escuadra que el otro jugador"
 
 msgid "Invalid client selected"
-msgstr ""
+msgstr "Cliente inválido seleccionado"
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
 msgstr ""
@@ -6046,26 +6046,26 @@ msgid "usage: fireteam <create|leave|apply|invite>"
 msgstr ""
 
 msgid "You are already on a fireteam, leave it first"
-msgstr ""
+msgstr "Ya estás en una escuadra, abandónala primero"
 
 msgid ""
 "The other player must be on the same fireteam for you to give admin rights "
 "to"
-msgstr ""
+msgstr "El otro jugador debe de estar en la misma escuadra para poderle dar derechos admin."
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
-msgstr ""
+msgstr "Debes de ser el admin. de la escuadra para dar los derechos de admin. a otro"
 
 msgid "Invalid referee password!\n"
-msgstr ""
+msgstr "¡Contraseña de árbitro inválida!\n"
 
 msgid "Usage: ref [password]\n"
-msgstr ""
+msgstr "Uso: ref [password]\n"
 
 msgid ""
 "^3Referee commands:^7\n"
 "------------------------------------------\n"
-msgstr ""
+msgstr "^3Comandos de árbitro:^7\n------------------------------------------\n"
 
 msgid ""
 "Usage: ^3\\ref <cmd> [params]\n"
@@ -6076,19 +6076,19 @@ msgid "^5pause speclock warmup ^7[value]\n"
 msgstr ""
 
 msgid "Sorry, referee status disabled on this server.\n"
-msgstr ""
+msgstr "Lo siento, el estado de árbitro está desactivado en éste servidor.\n"
 
 msgid "Referee has ^3LOCKED^7 teams\n"
-msgstr ""
+msgstr "El árbitro ha ^3BLOQUEADO^7 los equipos\n"
 
 msgid "You have LOCKED teams\n"
-msgstr ""
+msgstr "Has BLOQUEADO los equipos\n"
 
 msgid "Referee has ^3UNLOCKED^7 teams\n"
-msgstr ""
+msgstr "El árbitro ha ^3DESBLOQUEADO^7 los equipos\n"
 
 msgid "You have UNLOCKED teams\n"
-msgstr ""
+msgstr "Has DESBLOQUEADO los equipos\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
 msgstr ""
@@ -6115,16 +6115,16 @@ msgid "Bad client slot: "
 msgstr ""
 
 msgid "Client"
-msgstr ""
+msgstr "Cliente"
 
 msgid "is not active\n"
-msgstr ""
+msgstr "no está activo\n"
 
 msgid "You can only remove people in the game!\n"
 msgstr ""
 
 msgid "User "
-msgstr ""
+msgstr "Usuario"
 
 msgid "is not on the server\n"
 msgstr ""
@@ -6154,13 +6154,13 @@ msgid "Cannot mute a referee.\n"
 msgstr ""
 
 msgid "^5You've been muted\n"
-msgstr ""
+msgstr "^5Has sido silenciado\n\n"
 
 msgid "Can't chat - you are muted\n"
-msgstr ""
+msgstr "No puedes chatear - estás silenciado\n"
 
 msgid "^5You've been unmuted\n"
-msgstr ""
+msgstr "^5Ya no estás silenciado\n\n \n"
 
 msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
@@ -6265,70 +6265,70 @@ msgid "Axis team\n"
 msgstr ""
 
 msgid "Sorry, "
-msgstr ""
+msgstr "Lo sentimos"
 
 msgid "voting has been disabled"
-msgstr ""
+msgstr "las votaciones han sido desactivadas"
 
 msgid "Not allowed to call a vote as a spectator.\n"
-msgstr ""
+msgstr "No está permitido abrir votaciones como espectador.\n"
 
 msgid "called a vote."
-msgstr ""
+msgstr "lanzó una votación."
 
 msgid "Vote cast.\n"
-msgstr ""
+msgstr "Resultado de la votación.\n"
 
 msgid "'s KA-BAR"
-msgstr ""
+msgstr "y su KA-BAR"
 
 msgid "'s .45ACP 1911"
-msgstr ""
+msgstr "y su .45ACP 1911"
 
 msgid "'s Thompson"
-msgstr ""
+msgstr "y su Thompson"
 
 msgid "'s MP 40"
-msgstr ""
+msgstr "y su MP 40"
 
 msgid "'s knife"
-msgstr ""
+msgstr "y su cuchillo"
 
 msgid "'s Luger 9mm"
-msgstr ""
+msgstr "y su Luger 9mm"
 
 msgid "'s Panzerfaust"
-msgstr ""
+msgstr "y su Panzerfaust"
 
 msgid "'s Garand"
-msgstr ""
+msgstr "y su Garand"
 
 msgid "'s Sten"
-msgstr ""
+msgstr "y su Sten"
 
 msgid "'s FG 42"
-msgstr ""
+msgstr "y su FG 42"
 
 msgid "'s K43"
-msgstr ""
+msgstr "y su K43"
 
 msgid "'s Bazooka"
-msgstr ""
+msgstr "y su Bazooka"
 
 msgid "'s Akimbo .45ACP 1911s"
-msgstr ""
+msgstr "y su Akimbo .45ACP 1911s"
 
 msgid "Server disconnected"
-msgstr ""
+msgstr "Servidor desconectado"
 
 msgid "Server connection timed out."
-msgstr ""
+msgstr "Conexión con el servidor caducada."
 
 msgid "Server disconnected for unknown reason"
-msgstr ""
+msgstr "Servidor desconectado por razones desconocidas."
 
 msgid "'s Akimbo Luger 9mms"
-msgstr ""
+msgstr "y su Akimbo Luger 9mms"
 
 msgid "Cheats are not enabled on this server.\n"
 msgstr "Trucos no activados en este servidor.\n"
@@ -6451,28 +6451,28 @@ msgid "was cooked by"
 msgstr "fue cocinado por"
 
 msgid "never saw"
-msgstr ""
+msgstr "nunca vio a"
 
 msgid "'s mortar round coming"
-msgstr ""
+msgstr "y su ronda de mortero"
 
 msgid "was perforated by"
-msgstr ""
+msgstr "fue perforado por"
 
 msgid "'s tank-mounted MG 42"
-msgstr ""
+msgstr "y su MG42 montada en el tanque"
 
 msgid "was shelled by"
-msgstr ""
+msgstr "fue ametrallado por"
 
 msgid "'s artillery support"
-msgstr ""
+msgstr "y su soporte de artillería"
 
 msgid "^2swapped places with^7"
 msgstr ""
 
 msgid "failed to spot"
-msgstr ""
+msgstr "se equivocó al activar la mina de"
 
 msgid "was mown down by"
 msgstr ""
@@ -6541,79 +6541,79 @@ msgid "- MP 40"
 msgstr ""
 
 msgid "- Panzerfaust"
-msgstr ""
+msgstr "- Panzerfaust"
 
 msgid "- Bazooka"
-msgstr ""
+msgstr "- Bazooka"
 
 msgid "- Grenade"
-msgstr ""
+msgstr "- Granada"
 
 msgid "- Pineapple"
-msgstr ""
+msgstr "- Pineapple"
 
 msgid "- Flamethrower"
-msgstr ""
+msgstr "- Lanzallamas"
 
 msgid "- Syringe"
-msgstr ""
+msgstr "- Jeringuilla"
 
 msgid "- Adrenaline Syringe"
-msgstr ""
+msgstr "- Jeringuilla de adrenalina"
 
 msgid "- Ammo Pack"
-msgstr ""
+msgstr "- Paquete de munición"
 
 msgid "- Mega Ammo Pack"
-msgstr ""
+msgstr "- Mega-paquete  de munición"
 
 msgid "- Binoculars"
-msgstr ""
+msgstr "- Prismáticos"
 
 msgid "- Scoped K43 Rifle"
-msgstr ""
+msgstr "- Rifle K43 con mira"
 
 msgid "- K43 Rifle Scope"
-msgstr ""
+msgstr "- Rifle K43 Mira"
 
 msgid "- K43 Rifle"
-msgstr ""
+msgstr "- Rifle K43"
 
 msgid "- M1 Garand"
-msgstr ""
+msgstr "- M1 Garand"
 
 msgid "- M7"
-msgstr ""
+msgstr "- M7"
 
 msgid "- Scoped M1 Garand"
-msgstr ""
+msgstr "- M1 Garand con mira"
 
 msgid "- M1 Garand Scope"
-msgstr ""
+msgstr "- M1 Garand Mira"
 
 msgid "- FG 42 Paratroop Rifle"
-msgstr ""
+msgstr "- Rifle de paracaidista FG 42"
 
 msgid "- FG 42 Paratroop Rifle Scope"
-msgstr ""
+msgstr "- Rifle de paracaidista FG 42 Mira"
 
 msgid "- Mortar"
-msgstr ""
+msgstr "- Mortero"
 
 msgid "- Granatwerfer"
-msgstr ""
+msgstr "- Granatwerfer"
 
 msgid "- Mobile MG 42"
-msgstr ""
+msgstr "- MG 42 móvil"
 
 msgid "- Mobile Browning"
-msgstr ""
+msgstr "- Mobile Browning"
 
 msgid "- Silenced Luger"
-msgstr ""
+msgstr "- Luger silenciada"
 
 msgid "- Silenced Colt"
-msgstr ""
+msgstr "- Colt silenciada"
 
 msgid "Includes or excludes empty and full servers from the server list"
 msgstr "Incluye o excluye servidores vacíos y llenos de la lista"
@@ -6659,7 +6659,7 @@ msgid "Sets field of view"
 msgstr "Ajusta el Campo de Visión"
 
 msgid "Selfkill:"
-msgstr ""
+msgstr "Suicidio:"
 
 msgid "Fireteam Chat:"
 msgstr "Chat de Escuadra:"
@@ -6688,100 +6688,100 @@ msgstr "Seleccionar MIembro #8:"
 msgid ""
 "Couldn't load an official pak file; verify your installation and make sure "
 "it has been updated to the latest version."
-msgstr ""
+msgstr "No se pudo cargar un archivo pak oficial; comprueba tu instalación y asegúrate de que se ha actualizado a la ultima versión."
 
 msgid "Private"
-msgstr ""
+msgstr "Soldado raso"
 
 msgid "Private 1st Class"
-msgstr ""
+msgstr "Soldado"
 
 msgid "Corporal"
-msgstr ""
+msgstr "Cabo"
 
 msgid "Sergeant"
-msgstr ""
+msgstr "Sargento"
 
 msgid "Lieutenant"
-msgstr ""
+msgstr "Teniente"
 
 msgid "Captain"
-msgstr ""
+msgstr "Capitán"
 
 msgid "Major"
-msgstr ""
+msgstr "Mayor"
 
 msgid "Colonel"
-msgstr ""
+msgstr "Coronel"
 
 msgid "Brigadier General"
-msgstr ""
+msgstr "General Brigadista"
 
 msgid "Lieutenant General"
-msgstr ""
+msgstr "General Teniente"
 
 msgid "General"
-msgstr ""
+msgstr "General"
 
 msgid "Schutze"
-msgstr ""
+msgstr "Soldado raso"
 
 msgid "Oberschutze"
-msgstr ""
+msgstr "Soldado"
 
 msgid "Gefreiter"
-msgstr ""
+msgstr "Cabo"
 
 msgid "Feldwebel"
-msgstr ""
+msgstr "Sargento"
 
 msgid "Leutnant"
-msgstr ""
+msgstr "Teniente"
 
 msgid "Hauptmann"
-msgstr ""
+msgstr "Capitán"
 
 msgid "Oberst"
-msgstr ""
+msgstr "Mayor"
 
 msgid "Generalmajor"
-msgstr ""
+msgstr "Coronel"
 
 msgid "Generalleutnant"
-msgstr ""
+msgstr "Teniente General"
 
 msgid "Battle Sense"
-msgstr ""
+msgstr "Battle Sense"
 
 msgid "Engineering"
-msgstr ""
+msgstr "Ingeniería"
 
 msgid "First Aid"
-msgstr ""
+msgstr "Primeros Auxilios"
 
 msgid "Signals"
-msgstr ""
+msgstr "Señales"
 
 msgid "Light Weapons"
-msgstr ""
+msgstr "Armas Ligeras"
 
 msgid "Heavy Weapons"
-msgstr ""
+msgstr "Armas Pesadas"
 
 msgid "Covert Ops"
-msgstr ""
+msgstr "Covert Ops"
 
 msgid "Fire Mission: ^3Firing for effect!"
-msgstr ""
+msgstr "Artillero: ^3¡Disparando al objetivo!"
 
 msgid "Fire Mission: Insufficient fire support."
-msgstr ""
+msgstr "Artillero: Fuego de apoyo insuficiente."
 
 msgid "Fire Mission: Aborting, can't see target."
-msgstr ""
+msgstr "Artillero: Abortando, no podemos ver el objetivo."
 
 msgid "I need a Medic!"
-msgstr ""
+msgstr "¡Necesito un médico!"
 
 msgid "New version available. Do you want to update now?"
-msgstr ""
+msgstr "Nueva versión disponible. ¿Quieres actualizar ahora?"
