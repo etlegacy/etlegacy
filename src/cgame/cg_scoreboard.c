@@ -443,19 +443,25 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 6;
+		const char *p;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
 
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
 		{
 			s = CG_TranslateString("^3CONNECTING");
+			p = "";
 		}
 		else
 		{
 			s = CG_TranslateString("^3SPECTATOR");
+			p = va("%4i", score->ping);
 		}
+
 		w = CG_Text_Width_Ext(s, 0.24, 0, &cgs.media.limboFont2_lo);
-		CG_Text_Paint_Ext(tempx + totalwidth - w, y, 0.24, 0.28, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+
 		return;
 	}
 	// allow MV clients see the class of its merged client's on the scoreboard
@@ -634,19 +640,23 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 6;
+		const char *p;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH + 6;
 
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
 		{
 			s = CG_TranslateString("^3CONNECTING");
+			p = "";
 		}
 		else
 		{
 			s = CG_TranslateString("^3SPECTATOR");
+			p = va("%4i", score->ping);
 		}
 		w = CG_Text_Width_Ext(s, 0.20, 0, &cgs.media.limboFont2_lo);
-		CG_Text_Paint_Ext(tempx + totalwidth - w, y, 0.20, 0.25, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
 		return;
 	}
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
