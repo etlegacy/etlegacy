@@ -144,6 +144,17 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	}
 }
 
+/*
+QUAKED misc_teleporter_dest (1 0 0) (-32 -32 -24) (32 32 -16)
+Point teleporters at these.
+Now that we don't have teleport destination pads, this is just
+an info_notnull
+*/
+void SP_misc_teleporter_dest(gentity_t *ent)
+{
+	// Do not remove this function - this is just to create a destination spot entity for the teleporter
+}
+
 //===========================================================
 
 /*

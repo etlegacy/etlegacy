@@ -403,7 +403,9 @@ G_FindByTargetname
 gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 {
 	gentity_t *max = &g_entities[level.num_entities];
-	int       hash = BG_StringHashValue(match);
+	int       hash = -1;
+
+	hash = BG_StringHashValue(match);
 
 	if (hash == -1) // if there is no name (not empty string!) BG_StringHashValue returns -1
 	{

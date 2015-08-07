@@ -277,6 +277,7 @@ void SP_path_corner_2(gentity_t *self);
 void SP_info_limbo_camera(gentity_t *self);
 void SP_info_train_spline_main(gentity_t *self);
 
+void SP_misc_teleporter_dest(gentity_t *self); // do not remove!
 void SP_misc_model(gentity_t *ent);
 void SP_misc_gamemodel(gentity_t *ent);
 void SP_misc_portal_camera(gentity_t *ent);
@@ -477,6 +478,7 @@ spawn_t spawns[] =
 	{ "info_train_spline_control", SP_path_corner_2             },
 	{ "info_limbo_camera",         SP_info_limbo_camera         },
 
+	{ "misc_teleporter_dest",      SP_misc_teleporter_dest      },
 	{ "misc_model",                SP_misc_model                },
 	{ "misc_gamemodel",            SP_misc_gamemodel            },
 	{ "misc_portal_surface",       SP_misc_portal_surface       },
@@ -635,8 +637,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 
 	// hack: this avoids spammy prints on start, bsp uses obsolete classnames!
 	// bot_sniper_spot (railgun)
-	// misc_teleporter_dest (baserace)
-	if (Q_stricmp(ent->classname, "bot_sniper_spot") && Q_stricmp(ent->classname, "misc_teleporter_dest"))
+	if (Q_stricmp(ent->classname, "bot_sniper_spot"))
 	{
 		G_Printf("%s doesn't have a spawn function\n", ent->classname);
 	}
