@@ -1376,6 +1376,8 @@ void I18N_SetLanguage(const char *language);
 const char *I18N_Translate(const char *msgid);
 const char *I18N_TranslateMod(const char *msgid);
 
+extern qboolean doTranslateMod;
+
 #else // FEATURE_GETTEXT
 #define _(x) x
 #define __(x) x
