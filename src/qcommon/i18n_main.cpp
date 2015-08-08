@@ -64,6 +64,9 @@ cvar_t      *cl_language;
 cvar_t      *cl_languageDebug;
 static char cl_language_last[3];
 
+qboolean doTranslate = qfalse;   // we don't translate english in general
+qboolean doTranslateMod = qtrue; // translate legacy mod only
+
 std::map <std::string, std::string> strings; // original text / translated text
 
 static void TranslationMissing(const char *msgid);
@@ -256,6 +259,15 @@ void I18N_SetLanguage(const char *language)
 	Com_Printf("Language set to %s\n", dictionary.get_language().get_name().c_str());
 	Com_sprintf(cl_language_last, sizeof(cl_language_last), "%s", language);
 
+	if (!Q_stricmp(cl_language->string, "en"))
+	{
+		doTranslate = qfalse;
+	}
+	else
+	{
+		doTranslate = qtrue;
+	}
+	
 	strings.clear();
 }
 
@@ -277,10 +289,7 @@ static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryMan
 		I18N_SetLanguage(cl_language->string);
 	}
 
-	// HACK: how to tell tinygettext not to translate if cl_language is English?
-	// FIXME: this can be done in CL_TranslateString
-	// we should also move the cl_language cvars out of this file to have a clean architecture & data structure
-	if (!Q_stricmp(cl_language->string, "en"))
+	if (!doTranslate)
 	{
 		return msgid;
 	}
@@ -309,7 +318,16 @@ const char *I18N_Translate(const char *msgid)
 
 const char *I18N_TranslateMod(const char *msgid)
 {
-	return _I18N_Translate(msgid, dictionary_mod);
+	if(doTranslateMod)
+	{
+		return _I18N_Translate(msgid, dictionary_mod);
+	}
+	else
+	{
+		// we don't check for language change in this case - see *_I18N_Translate()
+		// let *I18N_Translate() do the job
+		return msgid;
+	}
 }
 
 /**
