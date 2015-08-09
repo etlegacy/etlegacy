@@ -902,6 +902,7 @@ struct gclient_s
 
 	int medals;
 	float acc;
+	float hspct;
 
 	int flametime; // flamethrower exploit fix
 

@@ -4351,26 +4351,30 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
 void G_CalcClientAccuracies(void)
 {
 	int i, j;
-	int shots, hits;
+	int shots, hits, headshots;
 
 	for (i = 0; i < g_maxclients.integer; i++)
 	{
-		shots = 0;
-		hits  = 0;
+		shots     = 0;
+		hits      = 0;
+		headshots = 0;
 
 		if (g_entities[i].inuse)
 		{
 			for (j = 0; j < WS_MAX; j++)
 			{
-				shots += level.clients[i].sess.aWeaponStats[j].atts;
-				hits  += level.clients[i].sess.aWeaponStats[j].hits;
+				shots     += level.clients[i].sess.aWeaponStats[j].atts;
+				hits      += level.clients[i].sess.aWeaponStats[j].hits;
+				headshots += level.clients[i].sess.aWeaponStats[j].headshots;
 			}
 
-			level.clients[i].acc = shots ? (100 * hits) / (float)shots : 0;
+			level.clients[i].acc   = shots ? (100 * hits) / (float)shots : 0;
+			level.clients[i].hspct = hits ? (100 * headshots) / (float)hits : 0;
 		}
 		else
 		{
-			level.clients[i].acc = 0;
+			level.clients[i].acc   = 0;
+			level.clients[i].hspct = 0;
 		}
 	}
 }
@@ -4390,7 +4394,14 @@ void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
 	Q_strncpyz(buffer, "imwa ", sizeof(buffer));
 	for (i = 0; i < g_maxclients.integer; i++)
 	{
-		Q_strcat(buffer, sizeof(buffer), va("%i ", (int)level.clients[i].acc));
+		if (g_entities[i].inuse)
+		{
+			Q_strcat(buffer, sizeof(buffer), va("%i %i ", (int)level.clients[i].acc, (int)level.clients[i].hspct));
+		}
+		else
+		{
+			Q_strcat(buffer, sizeof(buffer), "0 0 ");
+		}
 	}
 
 	trap_SendServerCommand(ent - g_entities, buffer);
