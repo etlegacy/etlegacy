@@ -795,6 +795,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			customimage = mEnt->team == TEAM_AXIS ? oidInfo->customimageaxis : oidInfo->customimageallies;
 		}
 
+		// FIXME: do a switch
 		if (mEnt->type == ME_CONSTRUCT)
 		{
 			if (mEntFilter & CC_FILTER_CONSTRUCTIONS)
@@ -824,13 +825,17 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		{
 			pic = 0;
 		}
+		else if (mEnt->type == ME_DESTRUCT_2)
+		{
+			pic = 0;
+		}
 		else
 		{
 			if (mEntFilter & CC_FILTER_DESTRUCTIONS)
 			{
 				return;
 			}
-			pic = mEnt->team == TEAM_AXIS ? cgs.media.ccDestructIcon[cent->currentState.effect1Time][0] : cgs.media.ccDestructIcon[cent->currentState.effect1Time][1];
+			pic = lmEnt->team == TEAM_AXIS ? cgs.media.ccDestructIcon[cent->currentState.effect1Time][0] : cgs.media.ccDestructIcon[cent->currentState.effect1Time][1];
 		}
 
 		{
