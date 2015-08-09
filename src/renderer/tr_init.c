@@ -995,7 +995,8 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
+	// FIXME: implicit declaration
+	//Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
 
 	if (r_gfxInfo->integer > 0)
 	{
