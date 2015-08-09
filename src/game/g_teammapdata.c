@@ -1083,7 +1083,7 @@ void G_CheckSpottedLandMines(void)
 									ent2->s.density                  = ent - g_entities + 1;
 									ent2->missionLevel               = level.time;
 
-									ent->client->landmineSpotted->count2 += 50;
+									ent->client->landmineSpotted->count2 += 50; // @sv_fps
 									if (ent->client->landmineSpotted->count2 >= 250)
 									{
 										ent->client->landmineSpotted->count2 = 250;
