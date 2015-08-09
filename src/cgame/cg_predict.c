@@ -687,10 +687,13 @@ qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 		return qfalse;
 	}
 
+	/* FIXME: disabled for now since it always evaluates to true
+	 * don't predict flying ents ?
 	if (ps1->groundEntityNum != ENTITYNUM_WORLD || ps1->groundEntityNum != ENTITYNUM_NONE || ps2->groundEntityNum != ENTITYNUM_WORLD || ps2->groundEntityNum != ENTITYNUM_NONE)
 	{
 		return qfalse;
 	}
+	 */
 
 	if (ps2->speed != ps1->speed || ps2->delta_angles[0] != ps1->delta_angles[0] || ps2->delta_angles[1] != ps1->delta_angles[1] || ps2->delta_angles[2] != ps1->delta_angles[2])
 	{
