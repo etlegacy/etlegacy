@@ -2511,11 +2511,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (BG_PlayerMounted(es->eFlags))
 		{
-			trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.hWeaponHeatSnd, 255);
-		}
-		else if (es->eFlags & EF_MOUNTEDTANK)
-		{
-			if (cg_entities[cg_entities[cg_entities[es->number].tagParent].tankparent].currentState.density & 8)
+			if ((es->eFlags & EF_MOUNTEDTANK) && (cg_entities[cg_entities[cg_entities[es->number].tagParent].tankparent].currentState.density & 8))
 			{
 				trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.hWeaponHeatSnd_2, 255);
 			}
