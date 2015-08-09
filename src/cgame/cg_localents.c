@@ -246,7 +246,7 @@ void CG_LoadLocations(void)
 		}
 
 		// parse the next line
-		while (p < fLen && (fBuffer[p] != '\n' || fBuffer[p] != '\r'))
+		while (p < fLen && (fBuffer[p] != '\n' && fBuffer[p] != '\r'))
 		{
 			// grab the x-coord
 			while (p < fLen && fBuffer[p] != ' ')
