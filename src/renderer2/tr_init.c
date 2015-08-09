@@ -1038,8 +1038,9 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
-	
+	// FIXME: implicit declaration
+	//Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
+
 	//Lets not do this on gl3.2 context as the functionality is not supported.
 	/*
 	Ren_Print("GL_EXTENSIONS: ");

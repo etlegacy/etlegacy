@@ -973,7 +973,8 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
-	Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
+	// FIXME: implicit declaration
+	//Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
 
 	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
 	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
