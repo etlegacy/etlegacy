@@ -49,7 +49,7 @@ GOTO:EOF
 	IF /I "%curvar%"=="build" CALL:DOBUILD
 	IF /I "%curvar%"=="build64" CALL:DOBUILD " Win64"
 	IF /I "%curvar%"=="install" CALL:DOINSTALL
-	IF /I "%curvar%"=="pack" CALL:DOPACKAGE
+	IF /I "%curvar%"=="package" CALL:DOPACKAGE
 	IF /I "%curvar%"=="crust" GOTO:UNCRUSTCODE
 	IF /I "%curvar%"=="project" CALL:GENERATEPROJECT %project_dir% "%batloc%" "" "" "YES"
 	:: download pak0 - 2 to the homepath if they do not exist
@@ -152,6 +152,10 @@ GOTO:EOF
 	ECHO Cleaning...
 	IF EXIST %game_basepath% RMDIR /s /q %game_basepath%
 	IF EXIST %build_dir% RMDIR /s /q %build_dir%
+	IF EXIST %batloc%libs (
+		cd "%batloc%libs"
+		git clean -d -f
+	)
 GOTO:EOF
 
 :: GenerateProject(targetDir, sourceDir, compileType, crossCompile, buildR2)
