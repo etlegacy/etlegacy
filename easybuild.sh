@@ -12,6 +12,7 @@ SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
 LEGACYETMAIN="${HOME}/.etlegacy/etmain"
 LEGACY_MIRROR="http://mirror.etlegacy.com/etmain/"
+LEGACY_VERSION=`git describe 2>/dev/null`
 
 # Command that can be run, first array has the cmd names which can be given, the second array holds the functions which match the cmd names
 easy_keys=(clean build package install download crust release project help)
@@ -345,7 +346,50 @@ run_package() {
 	# TODO: detect if osx and generate a package and a dmg installer
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
 		# Generate DMG
-		echo "Sorry DMG generation is not done yet"
+		app_exists APP_FOUND "dmgcanvas"
+		if [ $APP_FOUND == 0 ]; then
+			echo "Missing dmgcanvas cannot create installer"
+			exit 1
+		fi
+
+		app_exists APP_FOUND "rsvg-convert"
+		if [ $APP_FOUND == 0 ]; then
+			echo "Missing rsvg-convert cannot create installer"
+			exit 1
+		fi
+
+		echo "Generating OSX installer"
+		CANVAS_FILE="ETLegacy.dmgCanvas"
+
+		# Generate the icon for the folder
+		# using rsvg-convert
+		# brew install librsvg
+		rsvg-convert -h 256 ../misc/etl.svg > icon.png
+
+		#Copy the canvas
+		cp -rf ../misc/${CANVAS_FILE} ${CANVAS_FILE}
+
+		# needs to be the osx:s default python install!
+		python << END
+import Cocoa
+import sys
+import os
+import glob
+import shutil
+iconfile = "icon.png"
+foldername = "ET Legacy"
+if os.path.isdir(foldername):
+	shutil.rmtree(foldername)
+files = [f for f in glob.glob('./_CPack_Packages/Darwin/TGZ/etlegacy*') if os.path.isdir(f)]
+if len(files) == 1 :
+	packfolder = files[0]
+	shutil.copytree(packfolder, foldername)
+	print 'Copied the legacy install folder'
+	Cocoa.NSWorkspace.sharedWorkspace().setIcon_forFile_options_(Cocoa.NSImage.alloc().initWithContentsOfFile_(iconfile), foldername, 0) or sys.exit("Unable to set file icon")
+	print 'The icon succesfully set'
+END
+		# We will be generating the dmg with the DMG Canvas app
+		dmgcanvas ${CANVAS_FILE} "ETLegacy-${LEGACY_VERSION}.dmg" -v "ET Legacy ${LEGACY_VERSION}" -volume "ET Legacy ${LEGACY_VERSION}"
 	fi
 }
 
