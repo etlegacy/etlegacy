@@ -58,9 +58,17 @@ else(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT CROSS_COMPILE32)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT CROSS_COMPILE32)
 
 # Installation options
-set(INSTALL_DEFAULT_BASEDIR	""			CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
-set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
-set(INSTALL_DEFAULT_MODDIR	"lib/etlegacy"		CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+# If we are in windows clean these so the packaging is cleaner
+# these need to be set before any other processing happens!
+if(WIN32)
+	set(INSTALL_DEFAULT_BINDIR ".")
+	set(INSTALL_DEFAULT_MODDIR ".")
+	set(INSTALL_DEFAULT_BASEDIR ".")
+else()
+	set(INSTALL_DEFAULT_BASEDIR	""			CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
+    set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+    set(INSTALL_DEFAULT_MODDIR	"lib/etlegacy"		CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+endif()
 
 if(INSTALL_DEFAULT_BASEDIR)
 	# On OS X the base dir is the .app's (or etlded binary's) parent path, and is set in the etl code itself
@@ -69,11 +77,3 @@ if(INSTALL_DEFAULT_BASEDIR)
 		add_definitions(-DDEFAULT_BASEDIR=\"${INSTALL_DEFAULT_BASEDIR}\")
 	endif()
 endif(INSTALL_DEFAULT_BASEDIR)
-
-# If we are in windows clean these so the packaging is cleaner
-# these need to be set before any other processing happens!
-if(WIN32)
-	set(INSTALL_DEFAULT_BINDIR ".")
-	set(INSTALL_DEFAULT_MODDIR ".")
-	set(INSTALL_DEFAULT_BASEDIR ".")
-endif()

@@ -172,7 +172,8 @@ Section "Enemy Territory: Legacy" FILES
     SetOverwrite ifnewer
     SetOutPath $INSTDIR
     File /r "@CPACK_PACKAGE_FILE_NAME@\*"
-    File "@BINARY_DIR@\SDL2.dll"
+    ; We include SDL2.dll with the install phase now
+    ;File "@BINARY_DIR@\SDL2.dll"
 
     SimpleFC::AddApplication "ET: Legacy" "$INSTDIR\etl.exe" 0 2 "" 1
     SimpleFC::AddApplication "ET: Legacy server" "$INSTDIR\etlded.exe" 0 2 "" 1
