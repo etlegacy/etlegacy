@@ -34,9 +34,9 @@ if(UNIX)
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man6"
 	)
 else(UNIX)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
-		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-	)
+	#install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
+	#	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+	#)
 endif(UNIX)
 
 # project adds

@@ -172,15 +172,16 @@ Section "Enemy Territory: Legacy" FILES
     SetOverwrite ifnewer
     SetOutPath $INSTDIR
     ; File /r "${RESOURCE_PATH}\*.*"
-    File /r "@CPACK_PACKAGE_FILE_NAME@\bin\*.*"
+    ; File /r /x *.ico "@CPACK_PACKAGE_FILE_NAME@\*"
+    File /r "@CPACK_PACKAGE_FILE_NAME@\*"
     File "@BINARY_DIR@\SDL2.dll"
-    File "${RESOURCE_PATH}\wininstaller\COPYING.txt"
+    ;File "${RESOURCE_PATH}\wininstaller\COPYING.txt"
 
-    SetOutPath "$INSTDIR\etmain"
-    File /r "@CPACK_PACKAGE_FILE_NAME@\lib\etlegacy\etmain\*.*"
+    ; SetOutPath "$INSTDIR\etmain"
+    ; File /r "@CPACK_PACKAGE_FILE_NAME@\lib\etlegacy\etmain\*.*"
 
-    SetOutPath "$INSTDIR\legacy"
-    File "@CPACK_PACKAGE_FILE_NAME@\lib\etlegacy\legacy\*.*"
+    ; SetOutPath "$INSTDIR\legacy"
+    ; File "@CPACK_PACKAGE_FILE_NAME@\lib\etlegacy\legacy\*.*"
 
     SimpleFC::AddApplication "ET: Legacy" "$INSTDIR\etl.exe" 0 2 "" 1
     SimpleFC::AddApplication "ET: Legacy server" "$INSTDIR\etlded.exe" 0 2 "" 1
