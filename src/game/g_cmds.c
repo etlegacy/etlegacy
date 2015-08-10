@@ -4396,7 +4396,7 @@ void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
 	{
 		if (g_entities[i].inuse)
 		{
-			Q_strcat(buffer, sizeof(buffer), va("%i %i ", (int)level.clients[i].acc, (int)level.clients[i].hspct));
+			Q_strcat(buffer, sizeof(buffer), va("%i %i ", (int)roundf(level.clients[i].acc), (int)roundf(level.clients[i].hspct)));
 		}
 		else
 		{
