@@ -478,6 +478,9 @@ char *G_createStats(gentity_t *refEnt)
 	unsigned int i, dwWeaponMask = 0, dwSkillPointMask = 0;
 	char         strWeapInfo[MAX_STRING_CHARS]  = { 0 };
 	char         strSkillInfo[MAX_STRING_CHARS] = { 0 };
+#ifdef FEATURE_RATING
+	char         strSkillRatingInfo[MAX_STRING_CHARS] = { 0 };
+#endif
 
 	if (!refEnt)
 	{
@@ -524,12 +527,27 @@ char *G_createStats(gentity_t *refEnt)
 		}
 	}
 
+#ifdef FEATURE_RATING
+	// Add skill rating info
+	Q_strcat(strSkillRatingInfo, sizeof(strSkillRatingInfo), va(" %.2f %.2f",
+	                                                            refEnt->client->sess.mu,
+	                                                            refEnt->client->sess.sigma));
+#endif
+
+#ifdef FEATURE_RATING
+	return(va("%d %d %d%s %d%s %s", (int)(refEnt - g_entities),
+#else
 	return(va("%d %d %d%s %d%s", (int)(refEnt - g_entities),
+#endif
 	          refEnt->client->sess.rounds,
 	          dwWeaponMask,
 	          strWeapInfo,
 	          dwSkillPointMask,
 	          strSkillInfo
+#ifdef FEATURE_RATING
+	          ,
+	          strSkillRatingInfo
+#endif
 	          ));
 }
 
@@ -618,6 +636,9 @@ void G_printMatchInfo(gentity_t *ent)
 {
 	int       i, j, cnt = 0, eff, time_eff;
 	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
+#ifdef FEATURE_RATING
+	float     tot_rating, tot_mean, tot_var;
+#endif
 	gclient_t *cl;
 	char      *ref;
 	char      n2[MAX_STRING_CHARS];
@@ -643,10 +664,21 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_tdg    = 0;
 		tot_tdr    = 0;
 		tot_xp     = 0;
+#ifdef FEATURE_RATING
+		tot_rating = 0.f;
+		tot_mean   = 0.f;
+		tot_var    = 0.f;
+#endif
 
 		CP("sc \"\n\"");
+#ifdef FEATURE_RATING
+		CP("sc \"^7TEAM       Player         ^1 TmX^4 TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score^8  Rating^9   Mean^9   Dev^9   PpX^9   PpL\n\"");
+		CP("sc \"^7-----------------------------------------------------------------------------------------------^9-------------^9------------\n\"");
+#else
 		CP("sc \"^7TEAM       Player         ^1 TmX^4 TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score\n\"");
 		CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
+
+#endif
 
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
@@ -675,6 +707,11 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_tdg    += cl->sess.team_damage_given;
 			tot_tdr    += cl->sess.team_damage_received;
 			tot_xp     += cl->ps.persistant[PERS_SCORE];
+#ifdef FEATURE_RATING
+			tot_rating += cl->sess.mu - 3 * cl->sess.sigma,
+			tot_mean   += cl->sess.mu;
+			tot_var    += pow(cl->sess.sigma,2);
+#endif
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
 			if (eff < 0)
@@ -693,7 +730,11 @@ void G_printMatchInfo(gentity_t *ent)
 			}
 
 			cnt++;
+#ifdef FEATURE_RATING
+			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^9%7.2f^9%6.2f^9%6.2f^9%6.2f\n\"",
+#else
 			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+#endif
 			      aTeams[i],
 			      ref,
 			      n2,
@@ -713,7 +754,16 @@ void G_printMatchInfo(gentity_t *ent)
 			      cl->sess.damage_received,
 			      cl->sess.team_damage_given,
 			      cl->sess.team_damage_received,
-			      cl->ps.persistant[PERS_SCORE]));
+			      cl->ps.persistant[PERS_SCORE]
+#ifdef FEATURE_RATING
+			      ,
+			      (cl->sess.mu - 3 * cl->sess.sigma < 0.f) ? 0.f : cl->sess.mu - 3 * cl->sess.sigma,
+			      cl->sess.mu,
+			      cl->sess.sigma,
+			      cl->sess.time_axis / (float)(level.intermissiontime - level.startTime - level.timeDelta),
+			      cl->sess.time_allies / (float)(level.intermissiontime - level.startTime - level.timeDelta)
+#endif
+			      ));
 		}
 
 		eff = (tot_kills + tot_deaths == 0) ? 0 : 100 * tot_kills / (tot_kills + tot_deaths);
@@ -724,8 +774,13 @@ void G_printMatchInfo(gentity_t *ent)
 
 		time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
+#ifdef FEATURE_RATING
+		CP("sc \"^7-----------------------------------------------------------------------------------------------^9-------------^9------------\n\"");
+		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^9%7.2f^9%6.2f^9%6.2f^9%6.2f\n\"",
+#else
 		CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
 		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+#endif
 		      aTeams[i],
 		      "Totals",
 		      tot_timex / 60000,
@@ -742,7 +797,16 @@ void G_printMatchInfo(gentity_t *ent)
 		      tot_dr,
 		      tot_tdg,
 		      tot_tdr,
-		      tot_xp));
+		      tot_xp
+#ifdef FEATURE_RATING
+		      ,
+		      (tot_rating < 0.f) ? 0.f : tot_rating / TeamCount(-1, i),
+		      tot_mean / TeamCount(-1, i),
+		      sqrt(tot_var/ TeamCount(-1, i)),
+		      tot_timex / (float)(level.intermissiontime - level.startTime - level.timeDelta) / TeamCount(-1, i),
+		      tot_timel / (float)(level.intermissiontime - level.startTime - level.timeDelta) / TeamCount(-1, i)
+#endif
+		      ));
 	}
 
 	CP(va("sc \"%s\n\n\" 0", ((!cnt) ? "^3\nNo scores to report." : "")));

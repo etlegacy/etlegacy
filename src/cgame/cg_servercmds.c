@@ -1991,6 +1991,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	unsigned int nRounds      = atoi(CG_Argv(iArg++));
 	unsigned int dwWeaponMask = atoi(CG_Argv(iArg++));
 	unsigned int dwSkillPointMask;
+#ifdef FEATURE_RATING
+	float        mu    = 0.f;
+	float        sigma = 0.f;
+#endif
 	int          xp           = 0; // XP can be negative
 	int          totHits      = 0;
 	int          totShots     = 0;
@@ -2128,6 +2132,17 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	}
 
 	txt_dump(va("^2Rank: ^7%s (%d XP)\n", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp));
+
+#ifdef FEATURE_RATING
+	// skill rating
+	mu    = atof(CG_Argv(iArg++));
+	sigma = atof(CG_Argv(iArg++));
+
+	float rating = mu - 3 * sigma;
+	rating = (rating < 0.f) ? 0.f : rating;
+
+	txt_dump(va("^2Skill Rating: ^7%5.2f       ^3Mean:^7 %.2f   ^3Dev:^7 %.2f\n", rating, mu, sigma));
+#endif
 
 	if (!fFull)
 	{
