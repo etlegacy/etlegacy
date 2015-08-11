@@ -583,8 +583,8 @@ typedef struct clientInfo_s
 	qboolean selected;
 
 	// Intermission stats
-	int totalWeapAcc;
-	int totalWeapHSpct;
+	float totalWeapAcc;
+	float totalWeapHSpct;
 	int kills;
 	int deaths;
 	int selfkills;
