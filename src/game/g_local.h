@@ -576,7 +576,6 @@ typedef struct
 	int damage_given;
 	int damage_received;
 	int deaths;
-	int game_points;
 	int kills;
 	int referee;
 	int rounds;

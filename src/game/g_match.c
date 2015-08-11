@@ -527,7 +527,6 @@ void G_deleteStats(int nClient)
 	cl->sess.damage_given         = 0;
 	cl->sess.damage_received      = 0;
 	cl->sess.deaths               = 0;
-	cl->sess.game_points          = 0;
 	cl->sess.rounds               = 0;
 	cl->sess.kills                = 0;
 	cl->sess.selfkills            = 0;
@@ -596,7 +595,7 @@ void G_parseStats(char *pszStatsInfo)
 void G_printMatchInfo(gentity_t *ent)
 {
 	int       i, j, cnt = 0, eff;
-	int       tot_timex, tot_timel, tot_kills, tot_deaths, tot_gp, tot_sk, tot_tk, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
+	int       tot_timex, tot_timel, tot_kills, tot_deaths, tot_sk, tot_tk, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 	gclient_t *cl;
 	char      *ref;
 	char      n2[MAX_STRING_CHARS];
@@ -618,12 +617,11 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_dr     = 0;
 		tot_tdg    = 0;
 		tot_tdr    = 0;
-		tot_gp     = 0;
 		tot_xp     = 0;
 
 		CP("sc \"\n\"");
-		CP("sc \"^7TEAM   Player          ^1TmX ^4TmL ^7Kll Dth  SK  TK Eff  ^3GP^7    ^2DG    ^1DR  ^6TDG  ^4TDR  ^3Score\n\"");
-		CP("sc \"^7-----------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7TEAM   Player          ^1TmX ^4TmL ^7Kll Dth  SK  TK ^7   ^2DG    ^1DR  ^6TDG  ^4TDR  ^3Score\n\"");
+		CP("sc \"^7---------------------------------------------------------------------------\n\"");
 
 		for (j = 0; j < level.numPlayingClients; j++)
 		{
@@ -648,7 +646,6 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_dr     += cl->sess.damage_received;
 			tot_tdg    += cl->sess.team_damage_given;
 			tot_tdr    += cl->sess.team_damage_received;
-			tot_gp     += cl->sess.game_points;
 			tot_xp     += cl->ps.persistant[PERS_SCORE];
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
@@ -666,7 +663,7 @@ void G_printMatchInfo(gentity_t *ent)
 			}
 
 			cnt++;
-			CP(va("sc \"%-10s %s%-15s^1%4d^4%4d^3%4d%4d%4d%4d%s%4d^3%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+			CP(va("sc \"%-10s %s%-15s^1%4d^4%4d^3%4d%4d%4d%4d%s^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 			      aTeams[i],
 			      ref,
 			      n2,
@@ -677,8 +674,6 @@ void G_printMatchInfo(gentity_t *ent)
 			      cl->sess.selfkills,
 			      cl->sess.team_kills,
 			      ref,
-			      eff,
-			      cl->sess.game_points - (cl->sess.kills * WOLF_FRAG_BONUS),
 			      cl->sess.damage_given,
 			      cl->sess.damage_received,
 			      cl->sess.team_damage_given,
@@ -692,8 +687,8 @@ void G_printMatchInfo(gentity_t *ent)
 			eff = 0;
 		}
 
-		CP("sc \"^7------------------------------------------- ---------------------------------------\n\"");
-		CP(va("sc \"%-10s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d^5%4d^3%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+		CP("sc \"^7---------------------------------------------------------------------------\n\"");
+		CP(va("sc \"%-10s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 		      aTeams[i],
 		      "Totals",
 		      tot_timex / 60000,
@@ -702,8 +697,6 @@ void G_printMatchInfo(gentity_t *ent)
 		      tot_deaths,
 		      tot_sk,
 		      tot_tk,
-		      eff,
-		      tot_gp - (tot_kills * WOLF_FRAG_BONUS),
 		      tot_dg,
 		      tot_dr,
 		      tot_tdg,
