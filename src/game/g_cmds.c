@@ -4380,6 +4380,34 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
 	trap_SendServerCommand(ent - g_entities, buffer);
 }
 
+#ifdef FEATURE_RATING
+void Cmd_IntermissionSkillRating_f(gentity_t *ent)
+{
+	char buffer[1024];
+	int  i;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	Q_strncpyz(buffer, "imsr ", sizeof(buffer));
+	for (i = 0; i < g_maxclients.integer; i++)
+	{
+		if (g_entities[i].inuse)
+		{
+			Q_strcat(buffer, sizeof(buffer), va("%.3f %.3f ", level.clients[i].sess.mu, level.clients[i].sess.sigma));
+		}
+		else
+		{
+			Q_strcat(buffer, sizeof(buffer), "0 0 ");
+		}
+	}
+
+	trap_SendServerCommand(ent - g_entities, buffer);
+}
+#endif
+
 void G_CalcClientAccuracies(void)
 {
 	int i, j;
@@ -4774,6 +4802,13 @@ void ClientCommand(int clientNum)
 		Cmd_IntermissionPlayerTime_f(ent);
 		return;
 	}
+#ifdef FEATURE_RATING
+	else if (!Q_stricmp(cmd, "imsr"))
+	{
+		Cmd_IntermissionSkillRating_f(ent);
+		return;
+	}
+#endif
 	else if (!Q_stricmp(cmd, "imwa"))
 	{
 		Cmd_IntermissionWeaponAccuracies_f(ent);

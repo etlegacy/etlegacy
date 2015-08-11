@@ -557,6 +557,21 @@ panel_button_t debriefPlayerInfoXP =
 	NULL,
 };
 
+#ifdef FEATURE_RATING
+panel_button_t debriefPlayerInfoSR =
+{
+	NULL,
+	NULL,
+	{ 136,                      112,   0, 0 },
+	{ 0,                        0,     0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,     /* font     */
+	NULL,                       /* keyDown  */
+	NULL,                       /* keyUp    */
+	CG_Debriefing_PlayerSR_Draw,
+	NULL,
+};
+#endif
+
 panel_button_t debriefPlayerInfoACC =
 {
 	NULL,
@@ -610,7 +625,11 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
 	&debriefHeadingRank,            &debriefHeadingName,
 	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingGibs,                  &debriefHeadingSelfKills, &debriefHeadingTeamKills, &debriefHeadingTeamGibs,
-	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,     &debriefPlayerInfoACC,    &debriefPlayerInfoHS,
+	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,
+#ifdef FEATURE_RATING
+	&debriefPlayerInfoSR,
+#endif
+	&debriefPlayerInfoACC,          &debriefPlayerInfoHS,
 	&debriefPlayerInfoSkills0,
 	&debriefPlayerInfoSkills1,
 	&debriefPlayerInfoSkills2,
@@ -1385,6 +1404,9 @@ void CG_Debriefing_Startup(void)
 	cgs.dbWeaponStatsRecieved       = qfalse;
 	cgs.dbPlayerKillsDeathsRecieved = qfalse;
 	cgs.dbPlayerTimeRecieved        = qfalse;
+#ifdef FEATURE_RATING
+	cgs.dbSkillRatingRecieved       = qfalse;
+#endif
 
 	cgs.dbLastRequestTime = 0;
 	cgs.dbSelectedClient  = cg.clientNum;
@@ -1451,6 +1473,14 @@ void CG_Debriefing_InfoRequests(void)
 		trap_SendClientCommand("impt");
 		return;
 	}
+
+#ifdef FEATURE_RATING
+	if (!cgs.dbSkillRatingRecieved)
+	{
+		trap_SendClientCommand("imsr");
+		return;
+	}
+#endif
 
 	if (!cgs.dbPlayerKillsDeathsRecieved)
 	{
@@ -1846,6 +1876,20 @@ void CG_Debriefing_ParsePlayerTime(void)
 	cgs.dbPlayerTimeRecieved = qtrue;
 }
 
+#ifdef FEATURE_RATING
+void CG_Debriefing_ParseSkillRating(void)
+{
+	int i;
+
+	for (i = 0; i < cgs.maxclients; i++)
+	{
+		cgs.clientinfo[i].mu    = atof(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].sigma = atof(CG_Argv(i * 2 + 2));
+	}
+	cgs.dbSkillRatingRecieved = qtrue;
+}
+#endif
+
 void CG_Debriefing_ParsePlayerKillsDeaths(void)
 {
 	int i;
@@ -1954,6 +1998,13 @@ qboolean CG_Debriefing_ServerCommand(const char *cmd)
 		CG_Debriefing_ParsePlayerTime();
 		return qtrue;
 	}
+#ifdef FEATURE_RATING
+	else if (!Q_stricmp(cmd, "imsr"))
+	{
+		CG_Debriefing_ParseSkillRating();
+		return qtrue;
+	}
+#endif
 	// MAPVOTE
 	else if (!Q_stricmp(cmd, "immaplist"))
 	{
@@ -2334,6 +2385,19 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
+
+#ifdef FEATURE_RATING
+void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
+{
+	clientInfo_t *ci    = CG_Debriefing_GetSelectedClientInfo();
+	float        w      = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
+	float        rating = ci->mu - 3 * ci->sigma;
+
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f", rating < 0 ? 0.f : rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+}
+#endif
 
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 {

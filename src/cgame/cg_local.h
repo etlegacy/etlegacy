@@ -1978,6 +1978,9 @@ typedef struct cgs_s
 	qboolean dbAccuraciesRecieved;
 	qboolean dbPlayerKillsDeathsRecieved;
 	qboolean dbPlayerTimeRecieved;
+#ifdef FEATURE_RATING
+	qboolean dbSkillRatingRecieved;
+#endif
 	qboolean dbWeaponStatsRecieved;
 	qboolean dbAwardsParsed;
 	char *dbAwardNames[NUM_ENDGAME_AWARDS];
@@ -3211,6 +3214,9 @@ void CG_Debriefing_PlayerRank_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button);
+#ifdef FEATURE_RATING
+void CG_Debriefing_PlayerSR_Draw(panel_button_t *button);
+#endif
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerHS_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
