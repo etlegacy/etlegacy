@@ -4368,13 +4368,13 @@ void G_CalcClientAccuracies(void)
 				headshots += level.clients[i].sess.aWeaponStats[j].headshots;
 			}
 
-			level.clients[i].acc   = shots ? (100 * hits) / (float)shots : 0;
-			level.clients[i].hspct = hits ? (100 * headshots) / (float)hits : 0;
+			level.clients[i].acc   = shots ? 100 * hits / (float)shots : 0.f;
+			level.clients[i].hspct = hits ? 100 * headshots / (float)hits : 0.f;
 		}
 		else
 		{
-			level.clients[i].acc   = 0;
-			level.clients[i].hspct = 0;
+			level.clients[i].acc   = 0.f;
+			level.clients[i].hspct = 0.f;
 		}
 	}
 }
@@ -4396,7 +4396,7 @@ void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
 	{
 		if (g_entities[i].inuse)
 		{
-			Q_strcat(buffer, sizeof(buffer), va("%.1f %.1f ", level.clients[i].acc, roundf(level.clients[i].hspct)));
+			Q_strcat(buffer, sizeof(buffer), va("%i %i ", (int)roundf(level.clients[i].acc), (int)roundf(level.clients[i].hspct)));
 		}
 		else
 		{

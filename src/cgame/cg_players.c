@@ -196,8 +196,6 @@ void CG_NewClientInfo(int clientNum)
 	newInfo.fireteamData   = ci->fireteamData;
 	newInfo.clientNum      = clientNum;
 	newInfo.selected       = ci->selected;
-	newInfo.totalWeapAcc   = ci->totalWeapAcc;
-	newInfo.totalWeapHSpct = ci->totalWeapHSpct;
 
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
