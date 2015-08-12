@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-05 19:21+0000\n"
+"PO-Revision-Date: 2015-08-10 22:01+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -4668,7 +4668,7 @@ msgstr "Zostaleą zabity przez Gospodarza Serwera"
 
 #: src/cgame/cg_draw.c:1952
 msgid "You were team-killed by a bot."
-msgstr "Zostaleą zabity przez bota."
+msgstr "Zostaleś zabity przez bota."
 
 #: src/cgame/cg_draw.c:1962
 msgid "Your application has been submitted"
@@ -5319,7 +5319,7 @@ msgstr "^3Sprawdż swoje filtry - brak serwerów!              Zfiltrowanych/Ł�
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr "^1Brak Połączenia lub serwer padl - brak serwerów!    Filtered/Total: 0000/0000"
+msgstr "^1Brak Połączenia lub serwer padl - brak serwerów!    Zfiltrowanych/Łącznie: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format

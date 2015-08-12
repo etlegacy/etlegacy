@@ -5,13 +5,14 @@
 # Translators:
 # Frank Houweling <houweling.frank@gmail.com>, 2015
 # Lammert <lammerts@gmail.com>, 2015
+# Nick Spijker <arnhemnick@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-04 21:11+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-08-11 10:54+0000\n"
+"Last-Translator: Nick Spijker <arnhemnick@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/etlegacy/etlegacy/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -500,7 +501,7 @@ msgstr "Speler Inactiviteit:"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Maximale tijd (in seconden) waarbij een speler afwezig kan zijn voordat hij uit de server wordt gekicked (0 = uitgeschakeld)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -510,7 +511,7 @@ msgstr "Toeschouwer Inactiviteit:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Maximale tijd (in seconden) waarbij een toeschouwer afwezig kan zijn voordat hij uit de server wordt gekicked (0 = uitgeschakeld)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -549,7 +550,7 @@ msgstr "Minimum Spelers:"
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Het aantal minimum spelers voordat een wedstrijd gestart kan worden"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
@@ -585,16 +586,16 @@ msgstr "Opwarm schade:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "Niemand"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr ""
+msgstr "Alleen vijanden"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr ""
+msgstr "Iedereen"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
@@ -606,7 +607,7 @@ msgstr "Max Spelers Per Team:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
-msgstr ""
+msgstr "Geef het maximum aantal spelers aan per team"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
@@ -659,7 +660,7 @@ msgstr "Maximale Klagers:"
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
 msgid "Off"
-msgstr ""
+msgstr "Uit"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid ""
@@ -751,7 +752,7 @@ msgstr "LMS Vergrendelde Teams:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Blokkeert een speler om van team te wijzigen "
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
@@ -996,7 +997,7 @@ msgstr "FTP/HTTP Omleidingen:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Stuurt mensen met missende bestanden naar een andere server"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
@@ -1071,7 +1072,7 @@ msgstr "Ja"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable Country Flags on the server"
-msgstr ""
+msgstr "Landvlaggen toestaan op deze server?"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
@@ -1092,7 +1093,7 @@ msgstr "Server Naam:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
-msgstr ""
+msgstr "Geef de naam van jouw server"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
@@ -1155,11 +1156,11 @@ msgstr "Toegewijde Server:"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - LAN"
-msgstr ""
+msgstr "Ja - LAN"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - Internet"
-msgstr ""
+msgstr "Ja - Internet"
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
@@ -1297,7 +1298,7 @@ msgstr "Zeg:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr ""
+msgstr "Typ je tekst hier - druk 2x op ESCAPE om te annuleren "
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
@@ -1307,11 +1308,11 @@ msgstr "Aan:"
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
 msgid "All"
-msgstr ""
+msgstr "Iedereen"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
-msgstr ""
+msgstr "Team"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Fireteam"
@@ -1355,7 +1356,7 @@ msgstr "Deze server heeft Max Leven aan. Wegdrukken kost een leven. Weet je het 
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
-msgstr ""
+msgstr "Aantal bots:"
 
 #: etmain/ui/ingame_vote_bot.menu:39
 msgid "Move skill:"
@@ -1363,11 +1364,11 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:45
 msgid "Difficulty:"
-msgstr ""
+msgstr "Moeilijkheidsgraad: "
 
 #: etmain/ui/ingame_vote_bot.menu:53
 msgid "KICK ALL BOTS"
-msgstr ""
+msgstr "KICK ALLE BOTS"
 
 #: etmain/ui/ingame_vote_bot.menu:55
 msgid "AXIS BOTS"
@@ -1379,15 +1380,15 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:57
 msgid "BALANCED"
-msgstr ""
+msgstr "GEBALANCEERD"
 
 #: etmain/ui/ingame_vote_bot.menu:59
 msgid "BOTS ON"
-msgstr ""
+msgstr "BOTS AAN"
 
 #: etmain/ui/ingame_vote_bot.menu:60
 msgid "BOTS OFF"
-msgstr ""
+msgstr "BOTS UIT"
 
 #: etmain/ui/ingame_vote_disabled.menu:51
 msgid "Voting is disabled"
@@ -1424,7 +1425,7 @@ msgstr "SPELERS"
 
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
-msgstr ""
+msgstr "BOTS"
 
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
@@ -1518,12 +1519,12 @@ msgstr "PUBLIEKE INSTELLINGEN"
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "Niemand"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "Vijanden"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
@@ -1662,21 +1663,21 @@ msgstr ""
 
 #: etmain/ui/main.menu:119
 msgid "You are running old software"
-msgstr ""
+msgstr "Je gebruikt oude software"
 
 #: etmain/ui/main.menu:120
 msgid ""
 "We do recommend to\n"
 "upgrade your ET client"
-msgstr ""
+msgstr "We adviseren je om je ET client te updaten"
 
 #: etmain/ui/main.menu:121
 msgid "UPGRADE NOW"
-msgstr ""
+msgstr "UPGRADE NU"
 
 #: etmain/ui/main_quickconnect.menu:58
 msgid "CONNECT TO SERVER"
-msgstr ""
+msgstr "VERBIND MET EEN SERVER"
 
 #: etmain/ui/main_quickconnect.menu:69
 #: etmain/ui/playonline_connecttoip.menu:62
@@ -1694,7 +1695,7 @@ msgstr ""
 
 #: etmain/ui/main_quickconnect.menu:84
 msgid "Enter the server password if any"
-msgstr ""
+msgstr "Type de server wachtwoord indien aanwezig"
 
 #: etmain/ui/main_quickconnect.menu:87
 #: etmain/ui/playonline_connecttoip.menu:67 etmain/ui/popup_password.menu:87
@@ -2513,15 +2514,15 @@ msgstr "Alleen coördinaten"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
-msgstr ""
+msgstr "Alleen Fireteam Namen"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Team Chat Only"
-msgstr ""
+msgstr "Alleen Team Chat Namen"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Team & Fireteam Chat"
-msgstr ""
+msgstr "Team & Fireteam Chat"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
@@ -2533,7 +2534,7 @@ msgstr "Schakel Vlaggen In:"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
-msgstr ""
+msgstr "Laat landvlaggen zien in de scoreboard"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
@@ -2549,11 +2550,11 @@ msgstr "Sterf Iconen:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "Slachtoffer Wapen Moordenaar"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "Moordenaar Wapen Slachtoffer"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
@@ -2573,23 +2574,23 @@ msgstr "Toon klok:"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours"
-msgstr ""
+msgstr "24 uur"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours + seconds"
-msgstr ""
+msgstr "24 uur + seconden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours"
-msgstr ""
+msgstr "12 uur"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours + seconds"
-msgstr ""
+msgstr "12 uur + seconden"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Displays local time"
-msgstr ""
+msgstr "Laat locale tijd zien"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Show FPS:"
@@ -2684,11 +2685,11 @@ msgstr "Uitwerpen hulzen:"
 #: etmain/ui/options_system.menu:52 etmain/ui/profile_create_initial.menu:102
 #: etmain/ui/profile_create.menu:97
 msgid "High"
-msgstr ""
+msgstr "Hoog"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Med"
-msgstr ""
+msgstr "Medium"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
@@ -2708,7 +2709,7 @@ msgstr "Afstand Licht Effecten:"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
-msgstr ""
+msgstr "Extreem"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Sets the maximum distance light corona is displayed"
@@ -2738,7 +2739,7 @@ msgstr "Bloed Vlekken:"
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Light"
-msgstr ""
+msgstr "licht"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
@@ -2746,17 +2747,17 @@ msgstr ""
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
 #: etmain/ui/options_system.menu:52
 msgid "Medium"
-msgstr ""
+msgstr "Medium"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Heavy"
-msgstr ""
+msgstr "Zwaar"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Full"
-msgstr ""
+msgstr "Volledig"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Red blood \"flash\" scale when receiving damage"
@@ -2797,24 +2798,24 @@ msgstr "Vizier Grootte:"
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Tiny"
-msgstr ""
+msgstr "Erg klein"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Small"
-msgstr ""
+msgstr "Klein"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Large"
-msgstr ""
+msgstr "Groot"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Huge"
-msgstr ""
+msgstr "Enorm groot"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Sets the size of the displayed crosshair"
-msgstr ""
+msgstr "Stel de grootte van je vizier in"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Crosshair Pulsing:"
@@ -2845,7 +2846,7 @@ msgstr "Naam"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Coloured Name"
-msgstr ""
+msgstr "Gekleurde naam"
 
 #: etmain/ui/options_customise_hud.menu:73
 msgid "Displays player name when the crosshair is over a teammate"
@@ -2857,7 +2858,7 @@ msgstr "Vizier info:"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class"
-msgstr ""
+msgstr "Klas"
 
 #: etmain/ui/options_customise_hud.menu:74 src/cgame/cg_info.c:783
 msgid "Rank"
@@ -2865,7 +2866,7 @@ msgstr "Rang"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank"
-msgstr ""
+msgstr "Klas + Rang"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
@@ -2882,116 +2883,116 @@ msgstr "Eerste Kleur:"
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "White"
-msgstr ""
+msgstr "Wit"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Yellow"
-msgstr ""
+msgstr "Geel"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Red"
-msgstr ""
+msgstr "Rood"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Green"
-msgstr ""
+msgstr "Groen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Blue"
-msgstr ""
+msgstr "Blauw"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Magenta"
-msgstr ""
+msgstr "Magenta"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Cyan"
-msgstr ""
+msgstr "Cyaan"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Orange"
-msgstr ""
+msgstr "Oranje"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Blue"
-msgstr ""
+msgstr "lichtblauw"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Blue"
-msgstr ""
+msgstr "Medium Blauw"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Red"
-msgstr ""
+msgstr "Licht Rood"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Red"
-msgstr ""
+msgstr "Medium Rood"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Green"
-msgstr ""
+msgstr "Licht Groen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Green"
-msgstr ""
+msgstr "Medium Groen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Green"
-msgstr ""
+msgstr "Donker Groen"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Cyan"
-msgstr ""
+msgstr "Medium Cyaan"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Yellow"
-msgstr ""
+msgstr "Medium Geel"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Orange"
-msgstr ""
+msgstr "Medium Oranje"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Grey"
-msgstr ""
+msgstr "Licht Grijs"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Grey"
-msgstr ""
+msgstr "Medium Grijs"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Dark Grey"
-msgstr ""
+msgstr "Donker Grijs"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Black"
-msgstr ""
+msgstr "Zwart"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Set the color for the primary crosshair"
-msgstr ""
+msgstr "Stel de kleur van je primaire vizier in"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
@@ -2999,7 +3000,7 @@ msgstr "Eerste Alpha:"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Set the transparency level for the primary crosshair"
-msgstr ""
+msgstr "Stel de doorzichtigheid van je primaire vizier in"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Secondary Color:"
@@ -3007,7 +3008,7 @@ msgstr "Tweede Kleur:"
 
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Set the color for the secondary crosshair"
-msgstr ""
+msgstr "Stel de kleur in van je secundaire vizier"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Secondary Alpha:"
@@ -3015,7 +3016,7 @@ msgstr "Tweede Alpha:"
 
 #: etmain/ui/options_customise_hud.menu:102
 msgid "Set the transparency level for the secondary crosshair"
-msgstr ""
+msgstr "Stel de doorzichtigheid van je secundaire vizier in"
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
@@ -3055,7 +3056,7 @@ msgstr "Fonts Grootte:"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Sets the size of the in-game fonts"
-msgstr ""
+msgstr "Stel de grootte van de in-game fonts in"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Top Print:"
@@ -3161,7 +3162,7 @@ msgstr "Helderheid:"
 #: etmain/ui/options_system_gamma.menu:70
 #: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
 msgid "Set the brightness of the game"
-msgstr ""
+msgstr "Stel de helderheid van het spel in"
 
 #: etmain/ui/options_graphics.menu:34 etmain/ui/options.menu:36
 msgid "GRAPHICS"
@@ -3177,23 +3178,23 @@ msgstr "Algehele Kwaliteit:"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fastest"
-msgstr ""
+msgstr "Snelste"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fast"
-msgstr ""
+msgstr "Snel"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "normal"
-msgstr ""
+msgstr "Normaal"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "high"
-msgstr ""
+msgstr "Hoog"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "Set overall video quality"
-msgstr ""
+msgstr "Stel de video kwaliteit in"
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
@@ -3202,17 +3203,17 @@ msgstr "Resolutie:"
 
 #: etmain/ui/options_graphics.menu:40
 msgid "Set video resolution of the game"
-msgstr ""
+msgstr "Stel de resolutie van het spel in"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Window mode:"
-msgstr ""
+msgstr "Window modus"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Toggle Fullscreen"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "Intensity:"
@@ -3265,11 +3266,11 @@ msgstr "Gedetaileerde Textures:"
 #: etmain/ui/options_graphics.menu:56 etmain/ui/options_graphics.menu:60
 #: etmain/ui/options_system.menu:52
 msgid "Low"
-msgstr ""
+msgstr "Laag"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Set texture details"
-msgstr ""
+msgstr "Stel texturen details in "
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
@@ -3293,20 +3294,20 @@ msgstr "Kwaliteit Textures:"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
 msgid "Default"
-msgstr ""
+msgstr "Standaard"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 #: etmain/ui/options_graphics.menu:68
 msgid "16-bit"
-msgstr ""
+msgstr "16-bit"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
 msgid "32-bit"
-msgstr ""
+msgstr "32-bit"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
-msgstr ""
+msgstr "Stel het aantal bits in voor texturen"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Texture Filter:"
@@ -3330,7 +3331,7 @@ msgstr "Anisotropic Filter:"
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
 msgid "Disabled"
-msgstr ""
+msgstr "Uitgeschakeld"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Set anisotropic filtering"
@@ -3350,7 +3351,7 @@ msgstr "Kleur Diepte:"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Desktop Default"
-msgstr ""
+msgstr "Standaard van computer"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Set color depth"
@@ -3370,7 +3371,7 @@ msgstr "Diepte Buffer:"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "24-bit"
-msgstr ""
+msgstr "24-bit"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
@@ -3398,7 +3399,7 @@ msgstr "GL Extensies:"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enabled"
-msgstr ""
+msgstr "Ingeschakeld"
 
 #: etmain/ui/options_graphics.menu:71
 msgid "Enables or disables usage of OpenGL extensions"
@@ -3434,7 +3435,7 @@ msgstr "Volume Muziek:"
 
 #: etmain/ui/options_system.menu:43
 msgid "Set the music volume"
-msgstr ""
+msgstr "Stel het muziek volume i"
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
@@ -3442,19 +3443,19 @@ msgstr "Geluidskwaliteit:"
 
 #: etmain/ui/options_system.menu:44
 msgid "11 khz (low)"
-msgstr ""
+msgstr "11 khz (laag)"
 
 #: etmain/ui/options_system.menu:44
 msgid "22 khz (high)"
-msgstr ""
+msgstr "22 khz (hoog)"
 
 #: etmain/ui/options_system.menu:44
 msgid "44 khz (ultra high)"
-msgstr ""
+msgstr "44 khz (enorm hoog)"
 
 #: etmain/ui/options_system.menu:44
 msgid "Set the sound quality"
-msgstr ""
+msgstr "Stel het geluid kwaliteit in"
 
 #: etmain/ui/options_system.menu:45
 msgid "Doppler FX:"
@@ -3490,7 +3491,7 @@ msgstr "Max Packets:"
 
 #: etmain/ui/options_system.menu:52
 msgid "Very Low"
-msgstr ""
+msgstr "Erg Laag"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
@@ -3516,7 +3517,7 @@ msgstr "Zoek naar Updates bij Opstarten:"
 
 #: etmain/ui/options_system.menu:59
 msgid "Automatically check for updates?"
-msgstr ""
+msgstr "Automatisch controleren voor updates?"
 
 #: etmain/ui/options_system.menu:61
 msgid "Get Missing Files from Server:"
@@ -3524,7 +3525,7 @@ msgstr "Haal Ontbrekende Bestanden:"
 
 #: etmain/ui/options_system.menu:61
 msgid "Download missing files when available?"
-msgstr ""
+msgstr "Download missende bestanden wanneer beschikbaar?"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3560,15 +3561,15 @@ msgstr "Bron:"
 
 #: etmain/ui/playonline.menu:82
 msgid "Local"
-msgstr ""
+msgstr "Lokaal"
 
 #: etmain/ui/playonline.menu:82
 msgid "Internet"
-msgstr ""
+msgstr "Internet"
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
-msgstr ""
+msgstr "Favorieten"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
@@ -3582,7 +3583,7 @@ msgstr "Militair Doel"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
-msgstr ""
+msgstr "LMS"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
@@ -3590,7 +3591,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
-msgstr ""
+msgstr "Mod:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
@@ -3632,7 +3633,7 @@ msgstr "VERVERS LIJST"
 
 #: etmain/ui/playonline.menu:194
 msgid "Refresh servers list"
-msgstr ""
+msgstr "Ververs server lijst"
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
@@ -3640,7 +3641,7 @@ msgstr "RESET FILTERS"
 
 #: etmain/ui/playonline.menu:195
 msgid "Reset all filters to their defaults"
-msgstr ""
+msgstr "Reset alle filters naar standaard waarden"
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
@@ -3652,7 +3653,7 @@ msgstr "SERVER NAAM"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr ""
+msgstr "Klik hier om te sorteren bij Server Naam"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
@@ -3664,11 +3665,11 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
-msgstr ""
+msgstr "#SPELERS"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
-msgstr ""
+msgstr "Klik hier om te sorteren bij Speler Aantal"
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
@@ -3676,7 +3677,7 @@ msgstr "TYPE"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
-msgstr ""
+msgstr "Klik hier om te sorteren bij Spel Type"
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
@@ -3692,7 +3693,7 @@ msgstr "MEEDOEN OP SERVER"
 
 #: etmain/ui/popup_autoupdate.menu:51
 msgid "UPDATE AVAILABLE"
-msgstr ""
+msgstr "UPDATE BESCHIKBAAR"
 
 #: etmain/ui/popup_errormessage.menu:52
 #: etmain/ui/popup_errormessage_pb.menu:52
@@ -3712,7 +3713,7 @@ msgstr "WACHTWOORD NODIG"
 
 #: etmain/ui/popup_password.menu:84
 msgid "Enter the server password"
-msgstr ""
+msgstr "Type de server wachtwoord in"
 
 #: etmain/ui/popup_serverredirect.menu:71
 msgid "REDIRECTION ADVISED"
@@ -3749,11 +3750,11 @@ msgstr "Video Kwaliteit"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
-msgstr ""
+msgstr "Snelste"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fast"
-msgstr ""
+msgstr "Snel"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid ""
@@ -3768,7 +3769,7 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Gebruik deze slider om je muis sensiviteit in te stellen"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
@@ -3786,7 +3787,7 @@ msgstr "^1LATEN WE ET LEVEND HOUDEN!"
 
 #: etmain/ui/profile_create_initial.menu:126
 msgid "Thank you for installing ET: Legacy"
-msgstr ""
+msgstr "Bedankt voor het intstalleren van ET: Legacy."
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"
@@ -3847,7 +3848,7 @@ msgstr "Nieuw Profielnaam:"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New name of profile"
-msgstr ""
+msgstr "Nieuwe naam van het profiel"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
@@ -3984,7 +3985,7 @@ msgstr "0. Vermomde Vijand"
 #: etmain/ui/wm_ftquickmessageAlt.menu:110
 #: etmain/ui/wm_quickmessageAlt.menu:110
 msgid "1. Need Medic!"
-msgstr "1. Heb Hospik Nodig!"
+msgstr "1. Heb een Hospik Nodig!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:111
 #: etmain/ui/wm_quickmessageAlt.menu:111
@@ -4272,7 +4273,7 @@ msgstr "E. Vermomde Vijand"
 
 #: etmain/ui/wm_ftquickmessage.menu:110 etmain/ui/wm_quickmessage.menu:110
 msgid "M. Need Medic!"
-msgstr "M. Heb Hospik Nodig!"
+msgstr "M. Heb een Hospik Nodig!"
 
 #: etmain/ui/wm_ftquickmessage.menu:111 etmain/ui/wm_quickmessage.menu:111
 msgid "A. Need Ammo!"
@@ -4541,7 +4542,7 @@ msgstr "GELIJKSPEL!"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "DE GEALLIEERDEN HEBBEN MET SUCCES DE TIJD VERSLAGEN!"
 
 #: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
@@ -4549,11 +4550,11 @@ msgstr "ALLIES KONDEN DE TIJD NIET VERSLAAN!"
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "AXIS HEEFT MET SUCCES DE TIJD VERSLAGEN!"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "AXIS HEEFT DE TIJD NIET KUNNEN VERSLAAN!"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
@@ -4562,7 +4563,7 @@ msgstr "CAMPAGNE STATUS: %s"
 
 #: src/cgame/cg_debriefing.c:3245
 msgid "SECS TO NEXT MAP"
-msgstr ""
+msgstr "AANTAL SECONDEN TOT VOLGENDE LEVEL"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
@@ -4594,7 +4595,7 @@ msgstr "TOESCHOUWER"
 #: src/cgame/cg_draw.c:1744
 #, c-format
 msgid "File complaint against ^7%s^3 for team-killing?"
-msgstr ""
+msgstr "Stuur een klacht tegen ^7%s^3 voor team-killing?"
 
 #: src/cgame/cg_draw.c:1748 src/cgame/cg_draw.c:1762 src/cgame/cg_draw.c:1776
 #: src/cgame/cg_draw.c:1790 src/cgame/cg_draw.c:1804 src/cgame/cg_draw.c:1818
@@ -4781,7 +4782,7 @@ msgstr "Bonus leven! Inzetten in ^3%d ^7seconden"
 #: src/cgame/cg_draw.c:2333
 #, c-format
 msgid "Bonus Life! Deploying in ^3%d ^7second"
-msgstr ""
+msgstr "Bonus leven! Inzetten in ^3%d ^7seconde"
 
 #: src/cgame/cg_draw.c:2338
 msgid "No more deployments this round"
@@ -4858,7 +4859,7 @@ msgstr "Je doodde"
 
 #: src/cgame/cg_event.c:293
 msgid "^7swapped places with"
-msgstr ""
+msgstr "^7Plaatsen geruild met"
 
 #: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
@@ -4987,7 +4988,7 @@ msgstr "MILITAIRE DOELEN"
 
 #: src/cgame/cg_info.c:1421
 msgid "DEMO STATUS"
-msgstr ""
+msgstr "DEMO STATUS"
 
 #: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
@@ -5005,7 +5006,7 @@ msgstr "Je spawnt als een %s %s met een %s."
 #: src/cgame/cg_limbopanel.c:1228
 #, c-format
 msgid "You will spawn as an %s %s with a %s and a %s."
-msgstr ""
+msgstr "Je spawnt als een %s %s met een %s en een %s."
 
 #: src/cgame/cg_loadpanel.c:251
 msgid "Single Player"
@@ -5215,7 +5216,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:2153
 msgid "  Medals"
-msgstr ""
+msgstr "Medailles "
 
 #: src/cgame/cg_servercmds.c:2165
 msgid "^3No skills acquired!\n"
@@ -5383,22 +5384,22 @@ msgid "was crushed"
 msgstr ""
 
 msgid "drowned"
-msgstr ""
+msgstr "verdronken"
 
 msgid "slagged"
 msgstr ""
 
 msgid "was killed"
-msgstr ""
+msgstr "is gedood"
 
 msgid "got buried under a pile of rubble"
-msgstr ""
+msgstr "Is begraven onder een berg met rotzooi"
 
 msgid "was incinerated"
 msgstr ""
 
 msgid "had an appointment with the map mortar"
-msgstr ""
+msgstr "Had een afspraak met de map mortar"
 
 msgid "took a map mortar shell shower"
 msgstr ""
@@ -5416,7 +5417,7 @@ msgid "vaporized himself"
 msgstr ""
 
 msgid "played with fire"
-msgstr ""
+msgstr "Speelde met vuur"
 
 msgid "obliterated himself"
 msgstr ""
@@ -5431,7 +5432,7 @@ msgid "ate his own rifle grenade"
 msgstr ""
 
 msgid "failed to spot his own landmine"
-msgstr ""
+msgstr "Is gefaald met het spotten van zijn eigen landmijn"
 
 msgid "embraced his own satchel explosion"
 msgstr ""
@@ -5440,7 +5441,7 @@ msgid "engineered himself into oblivion"
 msgstr ""
 
 msgid "buried himself alive"
-msgstr ""
+msgstr "zichzelf levend begraven"
 
 msgid "never saw his own mortar round coming"
 msgstr ""
@@ -5449,10 +5450,10 @@ msgid "danced on his airstrike marker"
 msgstr ""
 
 msgid "committed suicide"
-msgstr ""
+msgstr "Zelfmoord gepleegd"
 
 msgid "killed himself"
-msgstr ""
+msgstr "Doodde zichzelf"
 
 msgid "Improved use of Explosive Ammunition"
 msgstr ""
@@ -5461,7 +5462,7 @@ msgid "Improved Dexterity"
 msgstr ""
 
 msgid "Binoculars for any Class"
-msgstr ""
+msgstr "Verrekijker voor elke klas"
 
 msgid "Medic Ammo"
 msgstr ""
@@ -5488,7 +5489,7 @@ msgid "Improved Signals"
 msgstr ""
 
 msgid "Faster Reload"
-msgstr ""
+msgstr "Sneller Herladen"
 
 msgid "Heavy Weapon Proficiency"
 msgstr ""
@@ -5544,13 +5545,13 @@ msgid "^1THE TEAM"
 msgstr ""
 
 msgid "Axis team"
-msgstr ""
+msgstr "Axis Team"
 
 msgid "Allied team"
-msgstr ""
+msgstr "Geallieerden Team"
 
 msgid "Spectators"
-msgstr ""
+msgstr "Toeschouwers"
 
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
@@ -5577,16 +5578,16 @@ msgid "Your fireteam is now private"
 msgstr ""
 
 msgid "The Allies have too many players.\n"
-msgstr ""
+msgstr "De Geallieerden hebben teveel spelers.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr ""
+msgstr "Axis heeft teveel spelers.\n"
 
 msgid "Attack!"
-msgstr ""
+msgstr "Aanvallen!"
 
 msgid "Fall back!"
-msgstr ""
+msgstr "Val terug"
 
 msgid ""
 "^3All players ready!^7\n"
@@ -5597,13 +5598,13 @@ msgid "Path cleared."
 msgstr ""
 
 msgid "The enemy is weakened."
-msgstr ""
+msgstr "De vijanden zijn zwak"
 
 msgid "All clear."
 msgstr ""
 
 msgid "Incoming!"
-msgstr ""
+msgstr "Inkomend!"
 
 msgid "Fire in the hole!"
 msgstr ""
@@ -5624,7 +5625,7 @@ msgid "Enemy in disguise."
 msgstr ""
 
 msgid "Need a Medic!"
-msgstr ""
+msgstr "Heb een hospik nodig!"
 
 msgid "I need ammo!"
 msgstr ""
