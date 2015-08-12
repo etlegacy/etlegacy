@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-10 22:01+0000\n"
+"PO-Revision-Date: 2015-08-12 21:42+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -6773,16 +6773,28 @@ msgid "Covert Ops"
 msgstr "Zabójcy"
 
 msgid "Fire Mission: ^3Firing for effect!"
-msgstr ""
+msgstr "Artyleria: ^3Rozpoczęcie ostrzału!"
 
-msgid "Fire Mission: Insufficient fire support."
-msgstr ""
+msgid "Fire Mission: ^3Insufficient fire support."
+msgstr "Artyleria: ^3Niewystarczający ogień wsparcia."
 
-msgid "Fire Mission: Aborting, can't see target."
-msgstr ""
+msgid "Fire Mission: ^3Aborting, can't see target."
+msgstr "Artyleria: ^3Przerywam, nie widzę celu."
 
 msgid "I need a Medic!"
 msgstr "Potrzebuję Medyka!"
 
 msgid "New version available. Do you want to update now?"
 msgstr "Nowa wersja dostępna. Czy chcesz zaktualizować teraz?"
+
+msgid "20 Med Health"
+msgstr "Średnią Apteczkę"
+
+msgid "Pilot: ^3Aborting, can't see target."
+msgstr "Pilot: ^3Przerywam, nie widzę celu."
+
+msgid "Pilot: ^3Affirmative, on my way!"
+msgstr "Pilot: ^3Zrozumiałem, w drodze!"
+
+msgid "HQ: ^3All available planes are already en-route."
+msgstr "HQ: ^3Wszystkie dostępne samoloty są już w trasie."
