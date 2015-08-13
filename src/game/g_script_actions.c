@@ -2503,6 +2503,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	else if (!Q_stricmp(lastToken, "set_to_dynamitecount"))
 	{
 		gentity_t *target;
+
 		if (!*token)
 		{
 			G_Error("G_ScriptAction_Accum: globalaccum %s requires a parameter\n", lastToken);
@@ -2524,9 +2525,11 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 				{
 					continue;
 				}
-// FIXME
-//				if ( g_entities[i].etpro_misc_2 != target-g_entities)
-//					continue;
+
+				if (g_entities[i].etpro_misc_2 != target - g_entities)
+				{
+					continue;
+				}
 
 				num++;
 			}

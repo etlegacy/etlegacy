@@ -2093,7 +2093,7 @@ evilbanigoto:
 							}
 						}
 
-						// spawnflags 128 = disabled (#309)
+						// spawnflags 128 = disabled
 						if (!(hit->spawnflags & 128) && (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)) ||
 						                                 ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS))))
 						{
@@ -2126,6 +2126,7 @@ evilbanigoto:
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 							}
 							traceEnt->etpro_misc_1 |= 1;
+							traceEnt->etpro_misc_2  = hit->s.number;
 						}
 						// i = num;
 						return;     // bail out here because primary obj's take precendence over constructibles
