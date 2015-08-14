@@ -142,13 +142,7 @@ In terminal, run:
 
     $ ./easybuild.sh
 
-To install, run:
-
-    $ cd build
-    $ make install
-
-ET: Legacy will be installed in `~/etlegacy`. To change it, set the CMake variables
-(see above) in the easybuild.sh file beforehand.
+ET: Legacy will be installed in `~/etlegacy`.
 
 **NOTE:**
 
@@ -173,13 +167,16 @@ By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it i
 
 ### Windows
 
+Install:
+
+    * [Visual Studio Community](http://www.visualstudio.com/)
+    * [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
+
 * option A: **Visual Studio**
 
-    1. install the free [Visual Studio](http://www.visualstudio.com/) (C++ Express 2010 or newer)
-    2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
-    3. create a `build` directory inside the directory which contains ET: Legacy sources
-    4. open *Visual Studio Command Prompt* in the Start menu
-    5. change directory with `cd` to the newly created build directory
+    1. create a `build` directory inside the directory which contains ET: Legacy sources
+    2. open *Visual Studio Command Prompt* in the Start menu
+    3. change directory with `cd` to the newly created build directory
 
 In the command prompt, run:
 
@@ -191,20 +188,11 @@ or
 
 and open the resulting project in Visual Studio.
 
-* option B: **QtCreator**
+* option B: **easybuild**
 
-    1. install the free [QtCreator](http://www.qt.io/download-open-source/)
-    2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
-    3. open the CMakeLists.txt file in QtCreator.
-
-* option C: **easybuild**
-
-    1. install the free [Visual Studio](http://www.visualstudio.com/) (C++ Express 2010 or newer)
-    2. install [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
     3. run easybuild.bat
 
-ET: Legacy will be installed in `My Documents\ETLegacy-Build`. To change it, set the CMake variables
-(see above) in the easybuild.bat file beforehand.
+ET: Legacy will be installed in `My Documents\ETLegacy-Build`.
 
 **NOTES:**
 
@@ -256,7 +244,6 @@ Be sure to set the CMake variables (see above) beforehand.
 In Terminal, run:
 
     $ ./easybuild.sh
-    $ cd build && make install
 
 This will put an 'etlegacy' folder into your user folder.
 
