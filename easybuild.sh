@@ -191,6 +191,9 @@ parse_commandline() {
 			BUNDLED_LUA=0
 			BUNDLED_OGG=0
 			BUNDLED_CURL=0
+		elif [ "$var" = "-noob" ]; then
+			einfo "Will disable omni-bot installation"
+			INSTALL_OMNIBOT=0
 		else
 			# drop the script commands from the result
 			for index in ${!easy_keys[*]}
@@ -236,6 +239,7 @@ generate_configuration() {
 	[ ! "${FEATURE_FREETYPE}" ] && FEATURE_FREETYPE=1
 	[ ! "${FEATURE_RENDERER2}" ] && FEATURE_RENDERER2=0
 	[ ! "${FEATURE_LIVEAUTH}" ] && FEATURE_LIVEAUTH=1
+	[ ! "${INSTALL_OMNIBOT}" ] && INSTALL_OMNIBOT=1
 
 	einfo "Configuring ET Legacy..."
 	_CFGSTRING="
@@ -263,6 +267,7 @@ generate_configuration() {
 		-DFEATURE_RENDERER2=${FEATURE_RENDERER2}
 		-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}
 		-DFEATURE_LIVEAUTH=${FEATURE_LIVEAUTH}
+		-DINSTALL_OMNIBOT=${INSTALL_OMNIBOT}
 	"
 
 	if [ "${DEV}" != 1 ]; then
@@ -465,7 +470,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -r2, -dynamic, -systemlib"
+	ehead "-64, -debug, -clang, -r2, -dynamic, -systemlib, -noob"
 	echo
 }
 
