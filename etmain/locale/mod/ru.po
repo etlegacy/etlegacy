@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-12 21:41+0000\n"
+"PO-Revision-Date: 2015-08-14 00:04+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Russian (http://www.transifex.com/etlegacy/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -5183,22 +5183,22 @@ msgstr "Авто выбор"
 #: src/cgame/cg_servercmds.c:1875
 #, c-format
 msgid "Damage Given: %6d      Team Damage Given: %6d"
-msgstr ""
+msgstr "Нанесено урона: %6d  Нанесено урона своим: %6d"
 
 #: src/cgame/cg_servercmds.c:1876
 #, c-format
 msgid "Damage Recvd: %6d      Team Damage Recvd: %6d"
-msgstr ""
+msgstr "Получено урона: %6d  Получ урона от своих: %6d"
 
 #: src/cgame/cg_servercmds.c:1878
 #, c-format
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
-msgstr ""
+msgstr "Убийств: %3d Убийств своих: %3d Точность: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
 msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
-msgstr ""
+msgstr "Смертей: %3d Самоубийств: %3d Попаданий в голову: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
@@ -5635,121 +5635,121 @@ msgid "We need an engineer!"
 msgstr "Инженера!"
 
 msgid "Cover me!"
-msgstr ""
+msgstr "Прикройте меня!"
 
 msgid "Hold your fire!"
-msgstr ""
+msgstr "Не стреляй!"
 
 msgid "Where to?"
-msgstr ""
+msgstr "Куда?"
 
 msgid "We need Covert Ops!"
-msgstr ""
+msgstr "Нужен разведчик!"
 
 msgid "Follow me!"
-msgstr ""
+msgstr "Следуйте за мной!"
 
 msgid "Let's go!"
-msgstr ""
+msgstr "Пошли!"
 
 msgid "Move!"
-msgstr ""
+msgstr "Двигайтесь!"
 
 msgid "Clear the path!"
-msgstr ""
+msgstr "Зачистите путь!"
 
 msgid "Defend our objective!"
-msgstr ""
+msgstr "Защищайте нашу цель!"
 
 msgid "Disarm the dynamite!"
-msgstr ""
+msgstr "Обезвредьте динамит!"
 
 msgid "Clear the mines!"
-msgstr ""
+msgstr "Обезвредьте мины!"
 
 msgid "Reinforce the offense!"
-msgstr ""
+msgstr "Поддержите наступление!"
 
 msgid "Reinforce the defense!"
-msgstr ""
+msgstr "Поддержите оборону!"
 
 msgid "Affirmative!"
-msgstr ""
+msgstr "Так точно!"
 
 msgid "No!"
-msgstr ""
+msgstr "Нет!"
 
 msgid "Thank you!"
-msgstr ""
+msgstr "Спасибо!"
 
 msgid "You're welcome."
-msgstr ""
+msgstr "Пожалуйста."
 
 msgid "Bitte sehr."
-msgstr ""
+msgstr "Пожалуйста."
 
 msgid "Ja!"
-msgstr ""
+msgstr "Да!"
 
 msgid "Nein!"
-msgstr ""
+msgstr "Нет!"
 
 msgid "Kein problem."
-msgstr ""
+msgstr "Пожалуйста."
 
 msgid "Sorry!"
-msgstr ""
+msgstr "Извини!"
 
 msgid "Oops!"
-msgstr ""
+msgstr "Ой!"
 
 msgid "Yes!"
-msgstr ""
+msgstr "Да!"
 
 msgid "Jawohl!"
-msgstr ""
+msgstr "Так точно!"
 
 msgid "Negative!"
-msgstr ""
+msgstr "Никак нет!"
 
 msgid "Hi!"
-msgstr ""
+msgstr "Привет!"
 
 msgid "Hello!"
-msgstr ""
+msgstr "Привет!"
 
 msgid "Hallo!"
-msgstr ""
+msgstr "Привет!"
 
 msgid "Good bye."
-msgstr ""
+msgstr "Пока."
 
 msgid "Auf wiedersehen."
-msgstr ""
+msgstr "До свидания."
 
 msgid "Bye."
-msgstr ""
+msgstr "Пока."
 
 msgid "Great shot!"
-msgstr ""
+msgstr "Отличный выстрел!"
 
 msgid "You got it, man!"
-msgstr ""
+msgstr "Классно сделано, мужик!"
 
 msgid "Yeah!"
-msgstr ""
+msgstr "Дааа!"
 
 msgid "Yoohoo!"
-msgstr ""
+msgstr "Ура!"
 
 msgid "Hahaa!"
-msgstr ""
+msgstr "Хаха!"
 
 msgid "Alright!"
-msgstr ""
+msgstr "Отлично!"
 
 msgid "Woo!"
-msgstr ""
+msgstr "Йей!"
 
 msgid "Yeehaa!"
 msgstr ""
