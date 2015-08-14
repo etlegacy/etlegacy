@@ -4,12 +4,13 @@
 # 
 # Translators:
 # Jan Šimek <jsimek.cz@gmail.com>, 2015
+# Michal Mitter <mittermichal@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-12 21:41+0000\n"
+"PO-Revision-Date: 2015-08-14 00:04+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -1314,7 +1315,7 @@ msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Fireteam"
-msgstr ""
+msgstr "Četa"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
@@ -2524,7 +2525,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Zobrazí pozice v okně čety"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
@@ -4304,7 +4305,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:123 etmain/ui/wm_quickmessage.menu:123
 msgid "F. Follow Me!"
-msgstr ""
+msgstr "F. Následuj Mě!"
 
 #: etmain/ui/wm_ftquickmessage.menu:124 etmain/ui/wm_quickmessage.menu:124
 msgid "G. Let's Go!"
@@ -4341,12 +4342,12 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessage.menu:137 etmain/ui/wm_ftquickmessage.menu:148
 #: etmain/ui/wm_quickmessage.menu:137 etmain/ui/wm_quickmessage.menu:148
 msgid "Y. Yes"
-msgstr ""
+msgstr "Y. Ano"
 
 #: etmain/ui/wm_ftquickmessage.menu:138 etmain/ui/wm_ftquickmessage.menu:149
 #: etmain/ui/wm_quickmessage.menu:138 etmain/ui/wm_quickmessage.menu:149
 msgid "N. No"
-msgstr ""
+msgstr "N. Ne"
 
 #: etmain/ui/wm_ftquickmessage.menu:139 etmain/ui/wm_ftquickmessage.menu:161
 #: etmain/ui/wm_quickmessage.menu:139 etmain/ui/wm_quickmessage.menu:161
@@ -4356,7 +4357,7 @@ msgstr "T. Dekuji"
 #: etmain/ui/wm_ftquickmessage.menu:140 etmain/ui/wm_ftquickmessage.menu:162
 #: etmain/ui/wm_quickmessage.menu:140 etmain/ui/wm_quickmessage.menu:162
 msgid "W. Welcome"
-msgstr ""
+msgstr "W. Není zač"
 
 #: etmain/ui/wm_ftquickmessage.menu:141 etmain/ui/wm_ftquickmessage.menu:164
 #: etmain/ui/wm_quickmessage.menu:141 etmain/ui/wm_quickmessage.menu:164
@@ -4394,7 +4395,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:166 etmain/ui/wm_quickmessage.menu:166
 msgid "G. Good Game"
-msgstr ""
+msgstr "G. Dobrá Hra"
 
 #: etmain/ui/wm_ftquickmessage.menu:172 etmain/ui/wm_quickmessage.menu:172
 msgid "A. Command Acknowledged"
@@ -4619,11 +4620,11 @@ msgstr "Prijmout zadost od %s^3 pro pripojeni do vasi cety?"
 
 #: src/cgame/cg_draw.c:1800
 msgid "Make Fireteam private?"
-msgstr ""
+msgstr "Udělat četu privátní?"
 
 #: src/cgame/cg_draw.c:1814
 msgid "Create a Fireteam?"
-msgstr ""
+msgstr "Vytvořit četu?"
 
 #: src/cgame/cg_draw.c:1896
 #, c-format
@@ -4879,16 +4880,16 @@ msgstr "Podniosl %s"
 #: src/cgame/cg_fireteamoverlay.c:475
 #, c-format
 msgid "Private Fireteam: %s"
-msgstr ""
+msgstr "Privátní Četa: %s"
 
 #: src/cgame/cg_fireteamoverlay.c:479
 #, c-format
 msgid "Fireteam: %s"
-msgstr ""
+msgstr "Četa: %s"
 
 #: src/cgame/cg_fireteams.c:344
 msgid "FIRETEAMS"
-msgstr ""
+msgstr "ČETY"
 
 #: src/cgame/cg_fireteams.c:347
 msgid "JOIN"
