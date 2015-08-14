@@ -401,7 +401,11 @@ run_install() {
 
 handle_download() {
 	if [ ! -f $1 ]; then
-		wget "${LEGACY_MIRROR}$1"
+		if [ -f /usr/bin/curl  ]; then
+			curl -O "${LEGACY_MIRROR}$1"
+		else
+			wget "${LEGACY_MIRROR}$1"
+		fi
 	fi
 }
 
