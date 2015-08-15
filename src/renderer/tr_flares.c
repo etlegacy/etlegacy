@@ -239,7 +239,7 @@ void RB_AddDlightFlares(void)
 	}
 
 	l   = backEnd.refdef.dlights;
-	fog = tr.world->fogs;
+
 	for (i = 0 ; i < backEnd.refdef.num_dlights ; i++, l++)
 	{
 		// find which fog volume the light is in
@@ -289,7 +289,7 @@ void RB_AddCoronaFlares(void)
 	}
 
 	cor = backEnd.refdef.coronas;
-	fog = tr.world->fogs;
+
 	for (i = 0 ; i < backEnd.refdef.num_coronas ; i++, cor++)
 	{
 		// find which fog volume the corona is in
