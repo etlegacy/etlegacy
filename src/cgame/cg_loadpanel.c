@@ -38,7 +38,6 @@
 extern displayContextDef_t *DC;
 
 qboolean  bg_loadscreeninited = qfalse;
-qboolean  bg_loadscreeninteractive;
 qhandle_t bg_axispin;
 qhandle_t bg_alliedpin;
 qhandle_t bg_neutralpin;
@@ -272,8 +271,6 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 {
 	static qboolean inside = qfalse;
 	char            buffer[1024];
-
-	bg_loadscreeninteractive = interactive;
 
 	if (!DC)
 	{
