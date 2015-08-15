@@ -332,7 +332,7 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
 		size = item->window.rect.w - (SCROLLBAR_SIZE * 2) - 2;
 		if (max > 0)
 		{
-			pos = (size - SCROLLBAR_SIZE) / (float)max;
+			pos = (size - SCROLLBAR_SIZE) / max;
 		}
 		else
 		{
@@ -347,7 +347,7 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
 		size = item->window.rect.h - (SCROLLBAR_SIZE * 2) - 2;
 		if (max > 0)
 		{
-			pos = (size - SCROLLBAR_SIZE) / (float)max;
+			pos = (size - SCROLLBAR_SIZE) / max;
 		}
 		else
 		{
@@ -3020,7 +3020,7 @@ void Item_Model_Paint(itemDef_t *item)
 		if (DC->realTime > item->window.nextTime)
 		{
 			item->window.nextTime = DC->realTime + modelPtr->rotationSpeed;
-			modelPtr->angle       = (int)(modelPtr->angle + 1) % 360;
+			modelPtr->angle       = (modelPtr->angle + 1) % 360;
 		}
 	}
 

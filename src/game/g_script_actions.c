@@ -754,7 +754,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_FollowSpline: followspline must have a speed\n");
 		}
 
-		speed = atof(token) * (float)g_moverScale.value;
+		speed = atof(token) * g_moverScale.value;
 
 		while (token[0])
 		{
@@ -1386,7 +1386,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			VectorCopy(vec, ent->movedir);
 			VectorCopy(ent->r.currentOrigin, ent->pos1);
 			VectorAdd(ent->r.currentOrigin, vec, ent->pos2);
-			ent->speed = speed * (float)g_moverScale.value;
+			ent->speed = speed * g_moverScale.value;
 			dist       = VectorDistance(ent->pos1, ent->pos2);
 			// setup the movement with the new parameters
 			InitMover(ent);
