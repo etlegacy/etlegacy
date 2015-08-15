@@ -2875,6 +2875,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		{
 			G_Error("G_ScriptAction_FaceAngles: faceangles requires a <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
 		}
+
 		if (!Q_stricmp(token, "gototime"))
 		{
 			duration = ent->s.pos.trDuration;
@@ -2923,7 +2924,12 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		{   // calc the speed from duration and start/end delta
 			for (i = 0; i < 3; i++)
 			{
-				ent->s.apos.trDelta[i] = 2.0 * 1000.0 * diff[i] / (float)duration;
+				if (duration)
+				{
+					ent->s.apos.trDelta[i] = 2.0 * 1000.0 * diff[i] / (float)duration;
+				}
+				// else ... vector is already cleared
+
 			}
 			ent->s.apos.trType = trType;
 		}
