@@ -86,7 +86,11 @@ static void CL_Netchan_Encode(msg_t *msg)
 			index = 0;
 		}
 
-		key ^= GET_SKIPPED_CHAR(string[index]) << (i & 1);
+		if ((IS_LEGACY_MOD && string[index] == '%') || ((byte)string[index] > 127 || string[index] == '%'))
+		{
+			string[index] = '.';
+		}
+		key ^= string[index] << (i & 1);
 
 		index++;
 		// encode the data with this key
@@ -133,7 +137,11 @@ static void CL_Netchan_Decode(msg_t *msg)
 			index = 0;
 		}
 
-		key ^= GET_SKIPPED_CHAR(string[index]) << (i & 1);
+		if ((IS_LEGACY_MOD && string[index] == '%') || ((byte)string[index] > 127 || string[index] == '%'))
+		{
+			string[index] = '.';
+		}
+		key ^= string[index] << (i & 1);
 
 		index++;
 		// decode the data with this key

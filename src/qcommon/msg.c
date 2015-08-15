@@ -406,10 +406,7 @@ void MSG_WriteString(msg_t *sb, const char *s)
 	}
 	else
 	{
-		int l;
-#if SKIP_UTF8
-		int i;
-#endif
+		int  l;
 		char string[MAX_STRING_CHARS];
 
 		l = strlen(s);
@@ -421,13 +418,19 @@ void MSG_WriteString(msg_t *sb, const char *s)
 		}
 		Q_strncpyz(string, s, sizeof(string));
 
-#if SKIP_UTF8
-		// get rid of 0xff chars, because old clients don't like them
-		for (i = 0 ; i < l ; i++)
+		if (!IS_LEGACY_MOD)
 		{
-			SET_SKIPPED_CHAR(string[i]);
+			int i;
+
+			// only allow ascii and translate all '%' fmt spec to avoid crash bugs
+			for (i = 0 ; i < l ; i++)
+			{
+				if ((byte)string[i] > 127 || string[i] == '%')
+				{
+					string[i] = '.';
+				}
+			}
 		}
-#endif
 
 		MSG_WriteData(sb, string, l + 1);
 	}
@@ -441,10 +444,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s)
 	}
 	else
 	{
-		int l;
-#if SKIP_UTF8
-		int i;
-#endif
+		int  l;
 		char string[BIG_INFO_STRING];
 
 		l = strlen(s);
@@ -456,13 +456,19 @@ void MSG_WriteBigString(msg_t *sb, const char *s)
 		}
 		Q_strncpyz(string, s, sizeof(string));
 
-#if SKIP_UTF8
-		// get rid of 0xff chars, because old clients don't like them
-		for (i = 0 ; i < l ; i++)
+		if (IS_LEGACY_MOD)
 		{
-			SET_SKIPPED_CHAR(string[i]);
+			int i;
+
+			// only allow ascii and translate all '%' fmt spec to avoid crash bugs
+			for (i = 0 ; i < l ; i++)
+			{
+				if ((byte)string[i] > 127 || string[i] == '%')
+				{
+					string[i] = '.';
+				}
+			}
 		}
-#endif
 
 		MSG_WriteData(sb, string, l + 1);
 	}
@@ -565,7 +571,11 @@ char *MSG_ReadString(msg_t *msg)
 			break;
 		}
 
-		SET_SKIPPED_CHAR(c);
+		// translate all '%' fmt spec to avoid crash bugs
+		if (c == '%')
+		{
+			c = '.';
+		}
 
 		string[l] = c;
 		l++;
@@ -590,7 +600,11 @@ char *MSG_ReadBigString(msg_t *msg)
 			break;
 		}
 
-		SET_SKIPPED_CHAR(c);
+		// translate all '%' fmt spec to avoid crash bugs
+		if (c == '%')
+		{
+			c = '.';
+		}
 
 		string[l] = c;
 		l++;
@@ -615,7 +629,11 @@ char *MSG_ReadStringLine(msg_t *msg)
 			break;
 		}
 
-		SET_SKIPPED_CHAR(c);
+		// translate all '%' fmt spec to avoid crash bugs
+		if (c == '%')
+		{
+			c = '.';
+		}
 
 		string[l] = c;
 		l++;
@@ -1404,7 +1422,7 @@ netField_t entitySharedFields[] =
 {
 	{ ESF(linked),           1               },
 	{ ESF(linkcount),        8               }, // enough to see whether the linkcount has changed
-	                                           // (assuming it doesn't change 256 times in 1 frame)
+	                                            // (assuming it doesn't change 256 times in 1 frame)
 	{ ESF(bmodel),           1               },
 	{ ESF(svFlags),          12              },
 	{ ESF(singleClient),     CLIENTNUM_BITS  },

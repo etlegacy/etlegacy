@@ -76,19 +76,6 @@
 
 #define SLASH_COMMAND 1         // Will the client require a '/' sign in front of commands
 
-#define SKIP_UTF8 0
-
-#if SKIP_UTF8
-// translate all '%' fmt spec to avoid crash bugs
-// > 127 don't allow higher ascii values
-#define GET_SKIPPED_CHAR(x) ((byte)x > 127 || x == '%' ? '.' : x)
-#define SET_SKIPPED_CHAR(x) x = GET_SKIPPED_CHAR(x)
-#else
-// translate all '%' fmt spec to avoid crash bugs
-#define GET_SKIPPED_CHAR(x) (x == '%' ? '.' : x)
-#define SET_SKIPPED_CHAR(x) if (x == '%') x = '.'
-#endif
-
 // Added after 272 release these are used by mod code
 #define MOD_VERSION_DATA_CHECK(x) (x && x >= 272 && x < 3000)
 #define MOD_CHECK_LEGACY(islegacy, versionNum, outputValue) outputValue = (islegacy == qtrue ? qtrue : qfalse); \
@@ -723,8 +710,8 @@ extern void QDECL qsnapvectorx87(vec3_t vec);
 extern void QDECL qsnapvectorsse(vec3_t vec);
 
 //extern long (QDECL *Q_ftol)(float f);
-extern int (QDECL *Q_VMftol)(void);  // Unused.
-extern void (QDECL *Q_SnapVector)(vec3_t vec);
+extern int(QDECL * Q_VMftol)(void);  // Unused.
+extern void(QDECL * Q_SnapVector)(vec3_t vec);
 #else
 // Q_ftol must expand to a function name so the pluggable renderer can take
 // its address
