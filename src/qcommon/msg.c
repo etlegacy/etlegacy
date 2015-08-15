@@ -456,7 +456,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s)
 		}
 		Q_strncpyz(string, s, sizeof(string));
 
-		if (IS_LEGACY_MOD)
+		if (!IS_LEGACY_MOD)
 		{
 			int i;
 
