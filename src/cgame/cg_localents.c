@@ -1577,7 +1577,7 @@ static void CG_AddExplosion(localEntity_t *ex)
 	}
 
 	// add the dlight
-	if (ex->light || 1)
+	if (ex->light)
 	{
 		float light = (float)(cg.time - ex->startTime) / (ex->endTime - ex->startTime);
 
