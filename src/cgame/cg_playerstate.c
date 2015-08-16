@@ -374,6 +374,10 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 			{
 				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.headShot);
 			}
+			else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+			{
+				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+			}
 		}
 		else
 		{

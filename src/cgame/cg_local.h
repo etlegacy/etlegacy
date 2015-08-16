@@ -3312,10 +3312,13 @@ void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 
 // hitsounds flags
-#define HITSOUNDS_ON                0x01
-#define HITSOUNDS_NOTEAMSHOT        0x02
-#define HITSOUNDS_NOHEADSHOT        0x04
-#define HITSOUNDS_NOBODYSHOT        0x08
+typedef enum
+{
+	HITSOUNDS_ON			=	BIT(0),
+	HITSOUNDS_NOTEAMSHOT	=	BIT(1),
+	HITSOUNDS_NOHEADSHOT	=	BIT(2),
+	HITSOUNDS_NOBODYSHOT	=	BIT(3),
+} hitsooundFlags;
 
 // Safe screenwidth and screenheight defines
 #define SCREEN_WIDTH_SAFE Ccg_WideX(SCREEN_WIDTH)
