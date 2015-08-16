@@ -403,7 +403,7 @@ G_FindByTargetname
 gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 {
 	gentity_t *max = &g_entities[level.num_entities];
-	int       hash = -1;
+	int       hash;
 
 	hash = BG_StringHashValue(match);
 
@@ -748,6 +748,7 @@ gentity_t *G_Spawn(void)
 			break;
 		}
 	}
+
 	if (i == ENTITYNUM_MAX_NORMAL)
 	{
 		for (i = 0; i < MAX_GENTITIES; i++)
@@ -856,8 +857,10 @@ must be taken if the origin is right on a surface (snap towards start vector fir
 */
 gentity_t *G_TempEntity(vec3_t origin, int event)
 {
-	gentity_t *e = G_Spawn();
+	gentity_t *e;
 	vec3_t    snapped;
+
+	e = G_Spawn();
 
 	e->s.eType = ET_EVENTS + event;
 
@@ -888,7 +891,9 @@ Note: Don't forget to call e->r.svFlags = SVF_BROADCAST; after
 */
 gentity_t *G_TempEntityNotLinked(int event)
 {
-	gentity_t *e = G_Spawn();
+	gentity_t *e;
+
+	e = G_Spawn();
 
 	e->s.eType        = ET_EVENTS + event;
 	e->classname      = "tempEntity";
@@ -902,7 +907,9 @@ gentity_t *G_TempEntityNotLinked(int event)
 
 gentity_t *G_PopupMessage(popupMessageType_t type)
 {
-	gentity_t *e = G_Spawn();
+	gentity_t *e;
+
+	e = G_Spawn();
 
 	e->s.eType        = ET_EVENTS + EV_POPUPMESSAGE;
 	e->classname      = "messageent";
@@ -969,7 +976,9 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
  */
 void G_Sound(gentity_t *ent, int soundIndex)
 {
-	gentity_t *te = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
+	gentity_t *te;
+
+	te = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
 
 	te->s.eventParm = soundIndex;
 }
@@ -983,7 +992,9 @@ void G_ClientSound(gentity_t *ent, int soundIndex)
 {
 	if (ent && ent->client)
 	{
-		gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
+		gentity_t *te;
+
+		te = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
 
 		te->s.teamNum   = (ent->client - level.clients);
 		te->s.eventParm = soundIndex;
@@ -1729,7 +1740,6 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		break;
 	case ET_CONSTRUCTIBLE:
 		return ent->s.teamNum;
-		break;
 	case ET_MG42_BARREL:
 		return G_GetTeamFromEntity(&g_entities[ent->r.ownerNum]);
 
