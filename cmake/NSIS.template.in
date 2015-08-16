@@ -171,7 +171,7 @@ Section "Enemy Territory: Legacy" FILES
     SectionIn RO
     SetOverwrite ifnewer
     SetOutPath $INSTDIR
-    File /r "@CPACK_PACKAGE_FILE_NAME@\*"
+    File /r /x omni-bot "@CPACK_PACKAGE_FILE_NAME@\*"
     ; We include SDL2.dll with the install phase now
     ;File "@BINARY_DIR@\SDL2.dll"
 
