@@ -659,7 +659,15 @@ issues.
 #define BASEGAME "etmain"
 #define DEFAULT_MODGAME "legacy" // see files.c
 
-#define IS_LEGACY_MOD (Q_stricmp(Cvar_VariableString("fs_game"), DEFAULT_MODGAME) == 0)
+typedef struct
+{
+	unsigned int defaultMod;
+	unsigned int currentMod;
+} modHash;
+extern modHash modHashes;
+
+//#define IS_LEGACY_MOD (Q_stricmp(Cvar_VariableString("fs_game"), DEFAULT_MODGAME) == 0)
+#define IS_LEGACY_MOD (modHashes.defaultMod == modHashes.currentMod)
 
 // referenced flags
 // these are in loop specific order so don't change the order

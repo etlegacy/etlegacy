@@ -3978,7 +3978,7 @@ static void FS_Startup(const char *gameName)
 	}
 
 #ifdef FEATURE_GETTEXT
-    // only translate legacy mod 
+    // only translate legacy mod
     // - other mods don't support our unicode translation files
     // - mods have own strings to translate - we avoid language mixes
     if (!Q_stricmp(fs_gamedirvar->string, DEFAULT_MODGAME))
@@ -4431,6 +4431,16 @@ void FS_Fileinfo_f(void)
 	Com_Printf("Total number of files in packs %i\n", fs_packFiles);
 }
 
+modHash modHashes;
+
+void FS_CalcModHashes(void)
+{
+	char *tmp = Cvar_VariableString("fs_game");
+
+	modHashes.defaultMod = Com_BlockChecksum(DEFAULT_MODGAME, strlen(DEFAULT_MODGAME));
+	modHashes.currentMod = Com_BlockChecksum(tmp, strlen(tmp));
+}
+
 /**
  * @brief If we can't find pak0.pk3, assume that the paths are busted
  * and error out now, rather than getting an unreadable graphics screen.
@@ -4492,6 +4502,8 @@ void FS_InitFilesystem(void)
 		Com_Printf("Info: fs_game now defaults to '%s' mod instead of 'etmain'\n", tmp_fs_game->string);
 	}
 
+	FS_CalcModHashes();
+
 	// try to start up normally
 	FS_Startup(BASEGAME);
 
@@ -4521,6 +4533,8 @@ void FS_Restart(int checksumFeed)
 	FS_Startup(BASEGAME);
 
 	FS_CheckRequiredFiles(checksumFeed);
+
+	FS_CalcModHashes();
 
 	// new check before safeMode
 	if (Q_stricmp(fs_gamedirvar->string, lastValidGame))
