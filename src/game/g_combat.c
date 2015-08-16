@@ -1569,7 +1569,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// add to the attacker's hit counter (but only if target is a client)
-	if (attacker && attacker->client && targ->client  && targ != attacker && targ->health > 0 &&
+	if (attacker && attacker->client && targ->client  && targ != attacker &&
 	    mod != MOD_SWITCHTEAM && mod != MOD_SWAP_PLACES && mod != MOD_SUICIDE)
 	{
 		if (onSameTeam || (targ->client->ps.powerups[PW_OPS_DISGUISED] && (g_friendlyFire.integer & 1)))
