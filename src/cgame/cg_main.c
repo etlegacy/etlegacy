@@ -1814,9 +1814,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hWeaponHeatSnd_2 = trap_S_RegisterSound("sound/weapons/browning/browning_heat.wav", qfalse);
 
 	// FIXME - find a better sound
-	//cgs.media.hflakWeaponSnd = trap_S_RegisterSound("sound/vehicles/misc/20mm_fire.wav", qfalse);
-	cgs.media.hflakWeaponSnd = trap_S_RegisterSound("sound/vehicles/tank/tank_fire.wav", qfalse);
-
+	cgs.media.hflakWeaponSnd = trap_S_RegisterSound("sound/vehicles/misc/20mm_fire.wav", qfalse);
+	
 	cgs.media.minePrimedSound = trap_S_RegisterSound("sound/weapons/landmine/mine_on.wav", qfalse);
 
 	// wall marks

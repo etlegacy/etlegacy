@@ -1532,9 +1532,10 @@ typedef struct
 	qhandle_t hWeaponEchoSnd_2;
 	qhandle_t hWeaponHeatSnd_2;
 
-	qhandle_t hMountedMG42Base;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nestbase.md3" );
-	qhandle_t hMountedMG42Nest;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nest.md3" );
-	qhandle_t hMountedMG42;         //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42.md3" );
+	qhandle_t hflakWeaponSnd;       //  "models/mapobjects/weapons/flak_a.md3"
+	qhandle_t hMountedMG42Base;     //  "models/mapobjects/tanks_sd/mg42nestbase.md3"
+	qhandle_t hMountedMG42Nest;     //  "models/mapobjects/tanks_sd/mg42nest.md3"
+	qhandle_t hMountedMG42;         //  "models/mapobjects/tanks_sd/mg42.md3"
 	qhandle_t hMountedBrowning;
 	qhandle_t hMountedFPMG42;
 	qhandle_t hMountedFPBrowning;

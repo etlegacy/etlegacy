@@ -5467,7 +5467,7 @@ void CG_FireWeapon(centity_t *cent)
 	{
 		if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 		{
-			//trap_S_StartSound( NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hflakWeaponSnd );
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hflakWeaponSnd );
 		}
 		else
 		{
