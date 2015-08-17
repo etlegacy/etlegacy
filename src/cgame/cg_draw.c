@@ -1827,7 +1827,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
 		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 
-		str = "Join a Fireteam?";
+		str = CG_TranslateString("Join a Fireteam?");
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		y += charHeight * 2.0f;
 
