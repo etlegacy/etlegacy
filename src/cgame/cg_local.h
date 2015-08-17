@@ -3315,9 +3315,9 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 typedef enum
 {
 	HITSOUNDS_ON			=	BIT(0),
-	HITSOUNDS_NOTEAMSHOT	=	BIT(1),
+	HITSOUNDS_NOBODYSHOT	=	BIT(1),
 	HITSOUNDS_NOHEADSHOT	=	BIT(2),
-	HITSOUNDS_NOBODYSHOT	=	BIT(3),
+	HITSOUNDS_NOTEAMSHOT	=	BIT(3),
 } hitsooundFlags;
 
 // Safe screenwidth and screenheight defines
