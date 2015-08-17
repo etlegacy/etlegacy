@@ -70,7 +70,7 @@ menuDef {
 #define SOUND_Y 102
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 40, _("SOUND") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("No voice chat:"), .2, 8, "cg_noVoiceChats", _("Don't play voice chat in-game") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { _("None") 0 _("All") 1 _("No Team Hit Sound") 2 _("No Head Hit Sound") 4 _("No Body Hit Sound") 8 }, _("Set hit sounds") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { _("None") 0 _("All") 1 _("No Body Hit Sound") 2 _("No Head Hit Sound") 4 _("No Team Hit Sound") 8 }, _("Set hit sounds") )
 
 // Miscellaneous //
 #define MISC_Y 148
