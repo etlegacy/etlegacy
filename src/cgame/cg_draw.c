@@ -1901,7 +1901,7 @@ static void CG_DrawVote(void)
 
 			if (cgs.clientinfo[cg.clientNum].team != TEAM_AXIS && cgs.clientinfo[cg.clientNum].team != TEAM_ALLIES)
 			{
-				str = CG_TranslateString("Cannot vote as Spectator");
+				str = va(CG_TranslateString("YES:%i, NO:%i - Can't vote as Spectator"), cgs.voteYes, cgs.voteNo);
 			}
 			else
 			{
