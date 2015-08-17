@@ -1901,7 +1901,12 @@ static void CG_DrawVote(void)
 
 			if (cgs.clientinfo[cg.clientNum].team != TEAM_AXIS && cgs.clientinfo[cg.clientNum].team != TEAM_ALLIES)
 			{
-				str = va(CG_TranslateString("YES:%i, NO:%i - Can't vote as Spectator"), cgs.voteYes, cgs.voteNo);
+
+				str = va(CG_TranslateString("YES:%i, NO:%i"), cgs.voteYes, cgs.voteNo);
+				CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				y += charHeight * 2.0f;
+
+				str = CG_TranslateString("Can't vote as Spectator");
 			}
 			else
 			{
