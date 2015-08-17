@@ -1070,7 +1070,8 @@ static int CG_CalcFov(void)
 
 	if (cg.showGameView)
 	{
-		fov_x = fov_y = 60.f;
+		fov_x = 60.f;
+		// fov_y = 60.f; // this isn't used and overwritten below
 	}
 
 	// automatic fov adjustment for wide screens

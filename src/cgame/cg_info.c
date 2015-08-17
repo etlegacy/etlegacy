@@ -201,8 +201,9 @@ qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 	{
 	case 0:
 	{
-		int   result = -1;
+		int   result;
 		float offset = cgDC.cursorx - button->rect.x;
+
 		offset = offset / button->rect.w;
 		result = (int)(cg.demoinfo->firstTime + ((cg.demoinfo->lastTime - cg.demoinfo->firstTime) * offset));
 		trap_SendConsoleCommand(va("seekservertime %i", result));
@@ -1306,7 +1307,6 @@ void CG_ObjectivesDraw()
 				}
 				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
-				status   = 0;
 				color[0] = '\0';
 				status   = atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
 				if (status == 1)
@@ -1357,7 +1357,6 @@ void CG_ObjectivesDraw()
 				}
 				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
-				status   = 0;
 				color[0] = '\0';
 				status   = atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
 				if (status == 1)

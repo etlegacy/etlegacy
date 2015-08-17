@@ -1852,7 +1852,6 @@ static void CG_DrawVote(void)
 		sec = (VOTE_TIME - (cg.time - cgs.voteTime)) / 1000;
 		if (sec < 0)
 		{
-			sec = 0;
 			// expired votetime
 			cgs.voteTime                  = 0;
 			cgs.complaintEndTime          = 0;
@@ -1862,6 +1861,7 @@ static void CG_DrawVote(void)
 			cgs.autoFireteamEndTime       = 0;
 			cgs.autoFireteamCreateEndTime = 0;
 			cgs.autoFireteamJoinEndTime   = 0;
+			//sec = 0;
 			return;
 		}
 
@@ -2168,9 +2168,9 @@ static void CG_DrawSpectatorMessage(void)
 	str2 = Binding_FromName("weapalt");
 	str  = va(CG_TranslateString("Press %s to follow previous player"), str2);
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+#ifdef FEATURE_MULTIVIEW
 	y += charHeight * 2.0f;
 
-#ifdef FEATURE_MULTIVIEW
 	str2 = Binding_FromName("mvactivate");
 	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -2970,7 +2970,7 @@ static void CG_DrawObjectiveInfo(void)
 			x2 = 320 + w / 2;
 		}
 
-		x  = 320 - w / 2;
+		//x  = 320 - w / 2; // no need to calculate x - it's not used and overwritten in next loop
 		y += cg.oidPrintCharHeight * 1.5;
 
 		while (*start && (*start != '\n'))
@@ -3551,7 +3551,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 		separation = cg_stereoSeparation.value / 2;
 		break;
 	default:
-		separation = 0;
+		//separation = 0;
 		CG_Error("CG_DrawActive: Undefined stereoView\n");
 		break;
 	}

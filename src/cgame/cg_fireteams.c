@@ -723,7 +723,7 @@ void CG_DrawPlayerSF(panel_button_t *button, int *pageofs)
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, str, 0, 0, button->font->style, button->font->font);
 
 
-		y += button->rect.h;
+		//y += button->rect.h;
 	}
 }
 
@@ -784,7 +784,7 @@ void CG_DrawPlayerNF(panel_button_t *button, int *pageofs)
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, str, 0, 0, button->font->style, button->font->font);
 
 
-		y += button->rect.h;
+		//y += button->rect.h;
 	}
 }
 
