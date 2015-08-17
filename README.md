@@ -120,7 +120,15 @@ The following variables can be adjusted in CMake:
 
 ### Linux
 
-* option A: **command line**
+* option A: **easybuild**
+
+In terminal, run:
+
+    $ ./easybuild.sh
+
+ET: Legacy will be installed in `~/etlegacy`.
+
+* option B: **command line**
 
 In terminal, run:
 
@@ -136,13 +144,6 @@ If you wish to install ET: Legacy system-wide, run:
 
 Be sure to set the CMake variables (see above) beforehand.
 
-* option B: **easybuild**
-
-In terminal, run:
-
-    $ ./easybuild.sh
-
-ET: Legacy will be installed in `~/etlegacy`.
 
 **NOTE:**
 
@@ -169,10 +170,16 @@ By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it i
 
 Install:
 
-    * [Visual Studio Community](http://www.visualstudio.com/)
-    * [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
+    1. [Visual Studio Community](http://www.visualstudio.com/)
+    2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
 
-* option A: **Visual Studio**
+* option A: **easybuild**
+
+    1. run easybuild.bat
+
+ET: Legacy will be installed in `My Documents\ETLegacy-Build`.
+
+* option B: **Visual Studio**
 
     1. create a `build` directory inside the directory which contains ET: Legacy sources
     2. open *Visual Studio Command Prompt* in the Start menu
@@ -188,11 +195,6 @@ or
 
 and open the resulting project in Visual Studio.
 
-* option B: **easybuild**
-
-    3. run easybuild.bat
-
-ET: Legacy will be installed in `My Documents\ETLegacy-Build`.
 
 **NOTES:**
 
@@ -212,7 +214,15 @@ ET: Legacy will be installed in `My Documents\ETLegacy-Build`.
 
 ### Mac OS X
 
-* option A: **command line**
+* option A: **easybuild**
+
+In Terminal, run:
+
+    $ ./easybuild.sh
+
+This will put an 'etlegacy' folder into your user folder.
+
+* option B: **command line**
 
     1. install [Xcode](https://developer.apple.com/xcode/downloads/)
     2. install [Homebrew](http://brew.sh/)
@@ -239,13 +249,6 @@ If you wish to install ET: Legacy system-wide, run:
 
 Be sure to set the CMake variables (see above) beforehand.
 
-* option B: **easybuild**
-
-In Terminal, run:
-
-    $ ./easybuild.sh
-
-This will put an 'etlegacy' folder into your user folder.
 
 **NOTE**:
 
