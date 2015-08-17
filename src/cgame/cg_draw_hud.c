@@ -821,7 +821,7 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 	vec4_t colourlow = { 1.0f, 0.1f, 0.1f, 0.5f };
 	vec_t  *color    = colour;
 	int    flags     = 1 | 4 | 16 | 64;
-	float  frac      = cg.pmext.sprintTime / (float)SPRINTTIME;
+	float  frac      = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
 
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{

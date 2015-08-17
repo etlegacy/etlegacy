@@ -6129,6 +6129,9 @@ void PmoveSingle(pmove_t *pmove)
 		// snap some parts of playerstate to save network bandwidth
 		trap_SnapVector(pm->ps->velocity);
 	}
+
+	// save sprinttime for CG_DrawStaminaBar()
+	pm->ps->stats[STAT_SPRINTTIME] = pm->pmext->sprintTime;
 }
 
 /**

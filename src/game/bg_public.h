@@ -558,6 +558,7 @@ typedef enum
 	STAT_XP_OVERFLOW,               // count XP overflow(every 2^15)
 	STAT_PS_FLAGS,
 	STAT_AIRLEFT,                   // airtime for CG_DrawBreathBar()
+	STAT_SPRINTTIME	                // sprinttime for CG_DrawStaminaBar()
 } statIndex_t;
 
 // player_state->persistant[] indexes
