@@ -170,8 +170,8 @@ By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it i
 
 Install:
 
-    1. [Visual Studio Community](http://www.visualstudio.com/)
-    2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
+  1. [Visual Studio Community](http://www.visualstudio.com/)
+  2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
 
 * option A: **easybuild**
 
