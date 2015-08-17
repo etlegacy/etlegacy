@@ -2,7 +2,7 @@
 
 images/blackmask
 {
-	nopicmip 
+	nopicmip
 	nocompress
 	nomipmaps
 	{
@@ -19,15 +19,14 @@ models/weapons2/shells/m_shell
 	{
 		map models/weapons2/shells/M_shell.jpg
 		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingDiffuse 
+		rgbGen lightingDiffuse
 	}
 	{
 		map models/weapons2/shells/M_shell.jpg
 		blendFunc GL_ZERO GL_ONE
-		rgbGen lightingDiffuse 
+		rgbGen lightingDiffuse
 	}
 }
-
 
 icons/iconw_mortar
 {
@@ -68,6 +67,28 @@ icons/iconw_bazooka_1_select
 	nopicmip
 	{
 		map icons/iconw_bazooka_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_browning
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_browning.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_browning_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_browning_1_select.tga
 		blendFunc blend
 		rgbGen vertex
 	}
@@ -935,7 +956,7 @@ models/weapons2/browning/barrel
 	cull none
 	{
 		map models/multiplayer/browning/barrel.tga
-		rgbGen const ( 0 0 0 ) 
+		rgbGen const ( 0 0 0 )
 		alphaFunc GE128
 		depthWrite
 	}
@@ -1012,7 +1033,7 @@ models/multiplayer/syringe/adrenaline
         }
 }
 
-// Helmet Ranks 
+// Helmet Ranks
 models/players/temperate/common/rank1
 {
 	polygonoffset
