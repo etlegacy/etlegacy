@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-14 00:05+0000\n"
+"PO-Revision-Date: 2015-08-17 11:29+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -4626,26 +4626,31 @@ msgstr "Stworzyć Oddział prywatny?"
 msgid "Create a Fireteam?"
 msgstr "Stworzyć Oddział?"
 
-#: src/cgame/cg_draw.c:1896
+#: src/cgame/cg_draw.c:1898
 #, c-format
 msgid "VOTE(%i): %s"
 msgstr "GŁOSOWANIE(%i): %s"
 
-#: src/cgame/cg_draw.c:1902
-msgid "Cannot vote as Spectator"
-msgstr "Nie można oddać głosu jako obserwator"
+#: src/cgame/cg_draw.c:1905
+#, c-format
+msgid "YES:%i, NO:%i"
+msgstr "TAK:%i, NIE:%i"
 
-#: src/cgame/cg_draw.c:1906
+#: src/cgame/cg_draw.c:1909
+msgid "Can't vote as Spectator"
+msgstr "Nie możesz oddać głosu jako obserwator"
+
+#: src/cgame/cg_draw.c:1913
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
 msgstr "TAK(%s):%i, NIE(%s):%i"
 
-#: src/cgame/cg_draw.c:1913
+#: src/cgame/cg_draw.c:1920
 #, c-format
 msgid "YOU VOTED ON: %s"
 msgstr "ZAGŁOSOWAŁEŚ NA: %s"
 
-#: src/cgame/cg_draw.c:1918
+#: src/cgame/cg_draw.c:1925
 #, c-format
 msgid "Y:%i, N:%i"
 msgstr "T:%i, N:%i"
@@ -6798,3 +6803,7 @@ msgstr "Pilot: ^3Zrozumiałem, w drodze!"
 
 msgid "HQ: ^3All available planes are already en-route."
 msgstr "HQ: ^3Wszystkie dostępne samoloty są już w trasie."
+
+#: src/cgame/cg_draw.c:1830
+msgid "Join a Fireteam?"
+msgstr "Dołączyć do Oddziału?"

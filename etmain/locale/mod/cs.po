@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-14 00:04+0000\n"
+"PO-Revision-Date: 2015-08-17 11:09+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -4626,26 +4626,31 @@ msgstr "Udělat četu privátní?"
 msgid "Create a Fireteam?"
 msgstr "Vytvořit četu?"
 
-#: src/cgame/cg_draw.c:1896
+#: src/cgame/cg_draw.c:1898
 #, c-format
 msgid "VOTE(%i): %s"
 msgstr "VOLBA(%i): %s"
 
-#: src/cgame/cg_draw.c:1902
-msgid "Cannot vote as Spectator"
-msgstr "Neni mozne volit jako pozorovatel"
+#: src/cgame/cg_draw.c:1905
+#, c-format
+msgid "YES:%i, NO:%i"
+msgstr ""
 
-#: src/cgame/cg_draw.c:1906
+#: src/cgame/cg_draw.c:1909
+msgid "Can't vote as Spectator"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1913
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
 msgstr "ANO(%s):%i, NE(%s):%i"
 
-#: src/cgame/cg_draw.c:1913
+#: src/cgame/cg_draw.c:1920
 #, c-format
 msgid "YOU VOTED ON: %s"
 msgstr "VOLIL JSI: %s"
 
-#: src/cgame/cg_draw.c:1918
+#: src/cgame/cg_draw.c:1925
 #, c-format
 msgid "Y:%i, N:%i"
 msgstr "A:%i, N:%i"
@@ -6797,4 +6802,8 @@ msgid "Pilot: ^3Affirmative, on my way!"
 msgstr ""
 
 msgid "HQ: ^3All available planes are already en-route."
+msgstr ""
+
+#: src/cgame/cg_draw.c:1830
+msgid "Join a Fireteam?"
 msgstr ""
