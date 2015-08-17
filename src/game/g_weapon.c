@@ -2560,7 +2560,6 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 
 #define NUMBOMBS 10
 #define BOMBSPREAD 150
-extern void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize);
 
 void weapon_checkAirStrikeThink1(gentity_t *ent)
 {
