@@ -29,6 +29,13 @@
 #ifndef INCLUDE_G_MDX_H
 #define INCLUDE_G_MDX_H
 
+//TODO: enable this later on when fixed (&& figured out how the fuck it works)
+/*
+#ifdef LEGACY_DEBUG
+#define BONE_HITTESTS 1
+#endif
+*/
+
 #define REALHEAD_BONEHITS   128
 
 #define REALHEAD_DEBUG_HEAD 256
@@ -87,6 +94,8 @@ extern void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, c
 extern void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec3_t headAngles, qboolean doswing);
 extern void mdx_PlayerAnimation(gentity_t *ent);
 extern void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int lerpTime);
+
+void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo);
 
 #ifdef BONE_HITTESTS
 enum

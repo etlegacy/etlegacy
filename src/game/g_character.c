@@ -257,22 +257,7 @@ qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *characte
 			return qfalse;
 		}
 
-#ifdef BONE_HITTESTS
-		{
-			char hitsfile[MAX_QPATH], *sep;
-			// zinx - mdx hits
-			Q_strncpyz(hitsfile, characterDef.animationGroup, sizeof(hitsfile) - 4);
-			if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
-			{
-				strcpy(sep, ".hit");
-			}
-			else
-			{
-				strcat(sep, ".hit");
-			}
-			mdx_RegisterHits(character->animModelInfo, hitsfile);
-		}
-#endif
+		mdx_LoadHitsFile(characterDef.animationGroup, character->animModelInfo);
 	}
 
 	return qtrue;

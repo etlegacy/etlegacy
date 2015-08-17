@@ -31,6 +31,7 @@
 
 #include "../qcommon/q_shared.h"
 #include "g_local.h"
+#include "../qcommon/qfiles.h"
 
 #include "g_mdx.h"
 #include "g_mdx_lut.h"
@@ -253,6 +254,12 @@ static vec3_t *mdx_bones    = NULL;
 #define QHANDLETOINDEX(qh)      ((qh >= 1) ? ((int)(qh) - 1) : 0)
 #define QHANDLETOINDEX_SAFE(qh, old) ((qh >= 1) ? (int)(qh) - 1 : QHANDLETOINDEX(old))
 
+// draw debug lines
+void legacy_AddDebugLine(const vec3_t origin, const vec3_t target, const int offset)
+{
+
+}
+
 /**************************************************************/
 // free allocated memory
 void mdx_cleanup(void)
@@ -307,6 +314,16 @@ static void PointRotate(const vec3_t in, vec3_t axis[3], vec3_t out)
 	out[0] = in[0] * axis[0][0] + in[1] * axis[1][0] + in[2] * axis[2][0];
 	out[1] = in[0] * axis[0][1] + in[1] * axis[1][1] + in[2] * axis[2][1];
 	out[2] = in[0] * axis[0][2] + in[1] * axis[1][2] + in[2] * axis[2][2];
+}
+
+static void MatrixTranspose(/*const*/ vec3_t in[3], vec3_t out[3])
+{
+	int i, j;
+	for (i = 0; i < 3; i++) {
+		for (j = 0; j < 3; j++) {
+			out[i][j] = in[j][i];
+		}
+	}
 }
 
 static void MatrixWeight(/*const*/ vec3_t m[3], float weight, vec3_t mout[3])
@@ -1200,7 +1217,7 @@ static qboolean hit_load(hit_t *hitModel, const animModelInfo_t *animModelInfo, 
 	len = trap_FS_FOpenFile(filename, &fh, FS_READ);
 	if (len <= 0)
 	{
-#if DEBUG // don't show this normally, for now..
+#if LEGACY_DEBUG // don't show this normally, for now..
 		G_Printf(S_COLOR_YELLOW GAME_VERSION " MDX WARNING: Missing %s (only needed for per-bone hits)\n", filename);
 #endif
 		return qfalse;
@@ -1329,6 +1346,24 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 
 	free(mem);
 	return INDEXTOQHANDLE(ret);
+}
+
+void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
+{
+#ifdef BONE_HITTESTS
+	char hitsfile[MAX_QPATH], *sep;
+	// zinx - mdx hits
+	Q_strncpyz(hitsfile, animationGroup, sizeof(hitsfile) - 4);
+	if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
+	{
+		strcpy(sep, ".hit");
+	}
+	else
+	{
+		strcat(sep, ".hit");
+	}
+	mdx_RegisterHits(animModelInfo, hitsfile);
+#endif
 }
 
 #ifdef BONE_HITTESTS
@@ -1470,7 +1505,7 @@ static void mdx_calculate_bones(/*const*/ grefEntity_t *refent)
 	mdx_t *torsoFrameModel    = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
 	mdx_t *oldTorsoFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldTorsoFrameModel, refent->torsoFrameModel)];
 
-#ifdef DEBUG
+#ifdef LEGACY_DEBUG
 	if (frameModel->bone_count != torsoFrameModel->bone_count
 	    || frameModel->bone_count != oldFrameModel->bone_count
 	    || frameModel->bone_count != oldTorsoFrameModel->bone_count)
@@ -1500,7 +1535,7 @@ void mdx_calculate_bones_single(/*const*/ grefEntity_t *refent, int i)
 	mdx_t *torsoFrameModel    = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
 	mdx_t *oldTorsoFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldTorsoFrameModel, refent->torsoFrameModel)];
 
-#ifdef DEBUG
+#ifdef LEGACY_DEBUG
 	if (frameModel->bone_count != torsoFrameModel->bone_count
 	    || frameModel->bone_count != oldFrameModel->bone_count
 	    || frameModel->bone_count != oldTorsoFrameModel->bone_count)
@@ -2463,7 +2498,7 @@ static qboolean mdx_hit_warp(
 		vec3_t point;
 		VectorSubtract(end, start, point);
 		VectorMA(start, *fraction, point, point);
-		etpro_AddDebugLine(origin, point, 2, LINEMODE_LINE, LINESHADER_RAILCORE, 0, qfalse);
+		legacy_AddDebugLine(origin, point, 2);
 	}
 
 	return qtrue;
@@ -2616,7 +2651,7 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 	{
 		struct hit_area *hit = &hitModel->hits[i];
 		vec_t           hit_frac;
-		vec3_t          o2;
+		vec3_t          o1;
 		vec3_t          a1[3], a2[3];
 		vec3_t          t1;
 
@@ -2642,24 +2677,24 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 
 			if (g_debugBullets.integer >= 3)
 			{
-				etpro_AddDebugLine(o1, o2, 1, LINEMODE_LINE, LINESHADER_RAILCORE, 0, qfalse);
+				legacy_AddDebugLine(o1, o2, 1);
 
 				VectorScale(a2[0], hit->scale[0][0], a1[0]);
 				VectorScale(a2[1], hit->scale[0][1], a1[1]);
 				VectorScale(a2[2], hit->scale[0][2], a1[2]);
-#ifdef DEBUG
-				etpro_AddDebugLine(o1, a1[0], 1, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
-				etpro_AddDebugLine(o1, a1[1], 2, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
-				etpro_AddDebugLine(o1, a1[2], 3, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
+#ifdef LEGACY_DEBUG
+				legacy_AddDebugLine(o1, a1[0], 1);
+				legacy_AddDebugLine(o1, a1[1], 2);
+				legacy_AddDebugLine(o1, a1[2], 3);
 #endif
 
 				VectorScale(a2[0], hit->scale[1][0], a1[0]);
 				VectorScale(a2[1], hit->scale[1][1], a1[1]);
 				VectorScale(a2[2], hit->scale[1][2], a1[2]);
-#ifdef DEBUG
-				etpro_AddDebugLine(o2, a1[0], 1, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
-				etpro_AddDebugLine(o2, a1[1], 2, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
-				etpro_AddDebugLine(o2, a1[2], 3, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
+#ifdef LEGACY_DEBUG
+				legacy_AddDebugLine(o2, a1[0], 1);
+				legacy_AddDebugLine(o2, a1[1], 2);
+				legacy_AddDebugLine(o2, a1[2], 3);
 #endif
 			}
 
@@ -2699,10 +2734,10 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 				VectorScale(a2[0], hit->scale[0][0], a1[0]);
 				VectorScale(a2[1], hit->scale[0][1], a1[1]);
 				VectorScale(a2[2], hit->scale[0][2], a1[2]);
-#ifdef DEBUG
-				etpro_AddDebugLine(o1, a1[0], 1, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
-				etpro_AddDebugLine(o1, a1[1], 2, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
-				etpro_AddDebugLine(o1, a1[2], 3, LINEMODE_ARROW, LINESHADER_RAILCORE, 0, qfalse);
+#ifdef LEGACY_DEBUG
+				legacy_AddDebugLine(o1, a1[0], 1);
+				legacy_AddDebugLine(o1, a1[1], 2);
+				legacy_AddDebugLine(o1, a1[2], 3);
 #endif
 			}
 

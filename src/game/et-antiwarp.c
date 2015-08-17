@@ -309,7 +309,7 @@ drop_packet:
 		}
 		parms[2] = (ent->client->ps.commandTime * 180.f) / 1000.f;
 
-		//etpro_AddDebugLine( org, parms, ((ent - g_entities) % 32), LINEMODE_SPOKES, LINESHADER_RAILCORE, 0, qfalse );
+		//legacy_AddDebugLine( org, parms, ((ent - g_entities) % 32), LINEMODE_SPOKES, LINESHADER_RAILCORE, 0, qfalse );
 	}
 
 	//ent->client->ps.stats[STAT_ANTIWARP_DELAY] = latestTime - ent->client->ps.commandTime;
