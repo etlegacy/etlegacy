@@ -62,7 +62,7 @@ LAN_LoadCachedServers
 */
 void LAN_LoadCachedServers(void)
 {
-	int          size;
+	int32_t      size;
 	fileHandle_t fileIn;
 	char         filename[MAX_QPATH];
 
@@ -81,8 +81,8 @@ void LAN_LoadCachedServers(void)
 	// moved to mod/profiles dir
 	if (FS_FOpenFileRead(filename, &fileIn, qtrue))
 	{
-		FS_Read(&cls.numfavoriteservers, sizeof(int), fileIn);
-		FS_Read(&size, sizeof(int), fileIn);
+		FS_Read(&cls.numfavoriteservers, sizeof(int32_t), fileIn);
+		FS_Read(&size, sizeof(int32_t), fileIn);
 		if (size == sizeof(cls.favoriteServers))
 		{
 			FS_Read(&cls.favoriteServers, sizeof(cls.favoriteServers), fileIn);
@@ -104,7 +104,7 @@ LAN_SaveServersToFile
 */
 void LAN_SaveServersToFile(void)
 {
-	int          size;
+	int32_t      size;
 	fileHandle_t fileOut;
 	char         filename[MAX_QPATH];
 
@@ -119,11 +119,11 @@ void LAN_SaveServersToFile(void)
 
 	// moved to mod/profiles dir
 	fileOut = FS_FOpenFileWrite(filename); // FIXME: catch error
-	FS_Write(&cls.numfavoriteservers, sizeof(int), fileOut);
+	FS_Write(&cls.numfavoriteservers, sizeof(int32_t), fileOut);
 
 	size = sizeof(cls.favoriteServers);
 
-	FS_Write(&size, sizeof(int), fileOut);
+	FS_Write(&size, sizeof(int32_t), fileOut);
 	FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
 	FS_FCloseFile(fileOut);
 

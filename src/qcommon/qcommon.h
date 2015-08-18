@@ -192,11 +192,11 @@ typedef enum
 #define NET_ADDRSTRMAXLEN 48
 typedef struct
 {
-	netadrtype_t type;
+	uint16_t type;
 	byte ip[4];
 	byte ip6[16];
-	unsigned short port;
-	unsigned long scope_id; // Needed for IPv6 link-local addresses
+	uint16_t port;
+	uint64_t scope_id; // Needed for IPv6 link-local addresses
 } netadr_t;
 
 void NET_Init(void);

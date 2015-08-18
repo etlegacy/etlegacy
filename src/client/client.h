@@ -274,25 +274,25 @@ typedef struct
 	netadr_t adr;
 	char version[MAX_NAME_LENGTH];
 	char hostName[MAX_NAME_LENGTH];
-	int load;
+	int32_t load;
 	char mapName[MAX_NAME_LENGTH];
 	char game[MAX_NAME_LENGTH];
-	int netType;
-	int gameType;
-	int clients;
-	int humans;
-	int maxClients;
-	int minPing;
-	int maxPing;
-	int ping;
-	qboolean visible;
-	int friendlyFire;
-	int maxlives;
-	int needpass;
-	int punkbuster;
-	int antilag;
-	int weaprestrict;
-	int balancedteams;
+	int32_t netType;
+	int32_t gameType;
+	int32_t clients;
+	int32_t humans;
+	int32_t maxClients;
+	int32_t minPing;
+	int32_t maxPing;
+	int32_t ping;
+	int32_t visible;
+	int32_t friendlyFire;
+	int32_t maxlives;
+	int32_t needpass;
+	int32_t punkbuster;
+	int32_t antilag;
+	int32_t weaprestrict;
+	int32_t balancedteams;
 	char gameName[MAX_NAME_LENGTH];
 } serverInfo_t;
 
@@ -327,7 +327,7 @@ typedef struct
 	int numGlobalServerAddresses;
 	netadr_t globalServerAddresses[MAX_GLOBAL_SERVERS];
 
-	int numfavoriteservers;
+	int32_t numfavoriteservers;
 	serverInfo_t favoriteServers[MAX_OTHER_SERVERS];
 
 	int pingUpdateSource;       // source currently pinging or updating
