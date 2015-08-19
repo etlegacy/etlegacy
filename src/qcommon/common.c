@@ -2810,8 +2810,10 @@ void Com_Init(char *commandLine)
 			// check existing pid file and make sure it's ok
 			if (!Com_CheckProfile())
 			{
-#ifndef DEDICATED
+#if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
 				if (Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?", "Reset settings") == DR_YES)
+#else
+                if(qfalse)
 #endif
 				{
 					Com_Printf("WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
