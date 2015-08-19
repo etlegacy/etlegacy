@@ -570,7 +570,7 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 	if (IN_IsConsoleKey(key, 0))
 	{
 		// Console keys can't be bound or generate characters
-		key = K_CONSOLE;
+		key = CONSOLE_KEY;
 	}
 
 	return key;
@@ -1125,7 +1125,7 @@ static void IN_ProcessEvents(void)
 			lastKeyDown = 0;
 			break;
 		case SDL_TEXTINPUT:
-			if (lastKeyDown != K_CONSOLE)
+			if (lastKeyDown != CONSOLE_KEY)
 			{
 				char *c = e.text.text;
 
@@ -1166,8 +1166,8 @@ static void IN_ProcessEvents(void)
 					{
 						if (IN_IsConsoleKey(0, utf32))
 						{
-							Com_QueueEvent(0, SE_KEY, K_CONSOLE, qtrue, 0, NULL);
-							Com_QueueEvent(0, SE_KEY, K_CONSOLE, qfalse, 0, NULL);
+							Com_QueueEvent(0, SE_KEY, CONSOLE_KEY, qtrue, 0, NULL);
+							Com_QueueEvent(0, SE_KEY, CONSOLE_KEY, qfalse, 0, NULL);
 						}
 						else
 						{
