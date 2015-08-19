@@ -1433,6 +1433,12 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 	return -1;
 }
 
+#if !defined(DEDICATED)
+#define ALLOW_RAW_FILE_ACCESS (com_sv_running && com_sv_running->integer)
+#else
+#define ALLOW_RAW_FILE_ACCESS qfalse
+#endif
+
 /**
  * @brief Finds the file in the search path.
  * @returns filesize and an open FILE pointer.
@@ -1459,7 +1465,8 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 		{
 			continue;
 		}
-		len = FS_FOpenFileReadDir(filename, search, file, uniqueFILE, qfalse);
+
+		len = FS_FOpenFileReadDir(filename, search, file, uniqueFILE, ALLOW_RAW_FILE_ACCESS);
 
 		if (file == NULL)
 		{
@@ -2747,7 +2754,7 @@ FS_ListFiles
 */
 char **FS_ListFiles(const char *path, const char *extension, int *numfiles)
 {
-	return FS_ListFilteredFiles(path, extension, NULL, numfiles, qfalse);
+	return FS_ListFilteredFiles(path, extension, NULL, numfiles, ALLOW_RAW_FILE_ACCESS);
 }
 
 /*
