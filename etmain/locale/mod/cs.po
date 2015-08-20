@@ -5,13 +5,14 @@
 # Translators:
 # Jan Šimek <jsimek.cz@gmail.com>, 2015
 # Michal Mitter <mittermichal@gmail.com>, 2015
+# yfcz <yfcz@wolfenstein.cz>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-17 11:09+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-08-20 11:51+0000\n"
+"Last-Translator: yfcz <yfcz@wolfenstein.cz>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,7 +42,7 @@ msgstr "Koordinátor výroby"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr "Produkcni testr"
+msgstr "Tester výroby"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
@@ -53,11 +54,11 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr "QA Project Lead"
+msgstr "Projektový lídr kvality"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr ""
+msgstr "Starší projektový lídr kvality"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
@@ -65,7 +66,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr "Testeri:"
+msgstr "Testeři:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
@@ -77,7 +78,7 @@ msgstr "Kompatibilita"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
-msgstr "QA Manager"
+msgstr "Vedoucí kvality"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
@@ -85,15 +86,15 @@ msgstr "Manager, Code Release Group"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Starší lídr, vydání zdrojového kódu"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "Lídr, vydání zdrojového kódu"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "Vedoucí, zákaznická podpora"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -134,85 +135,85 @@ msgstr "ZPĚT"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
-msgstr "DALSI"
+msgstr "DALŠÍ"
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr "DALSI VYVOJ"
+msgstr "DALŠÍ VÝVOJ"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
+msgstr "OSP VYTVOŘILA ORANGE SMOOTHIE PRODUCTIONS"
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
-msgstr "Programovani"
+msgstr "Programování"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr "PUNKBUSTER BY EVEN BALANCE, INC."
+msgstr "PUNKBUSTER VYTVOŘILA EVEN BALANCE, INC."
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
-msgstr "President"
+msgstr "Prezident"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
-msgstr "Senior Project Leader"
+msgstr "Starší projektový lídr"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
-msgstr "DABERI"
+msgstr "DABÉŘI"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr "Hlas spojencu a vojaku osy"
+msgstr "Hlas vojáků Spojenců a Osy"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr "Hlas velitele osy"
+msgstr "Hlas velitele Osy"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
-msgstr "Hlas spojeneckeho velitele"
+msgstr "Hlas velitele Spojenců"
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
-msgstr "ZVLASTNI PODEKOVANI"
+msgstr "ZVLÁŠTNÍ PODĚKOVÁNÍ"
 
 #: etmain/ui/credits_additional.menu:226
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr "Return to Castle Wolfenstein byl vytvoren studii Gray Matter Studios & Nerve Software."
+msgstr "Return to Castle Wolfenstein vyl vyvinut společnostmi Gray Matter Studios a Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr "Chteli bychom podekovat obema vyvojarum za jejich podporu"
+msgstr "Rádi bychom poděkovali oběma společnostem za jejich pomoc a podporu"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr "behem vyvoje Wolfenstein: Enemy Territory."
+msgstr "během vývoje Wolfenstein: Enemy Territory."
 
 #: etmain/ui/credits_additional.menu:229
 msgid "Original Soundtrack by Bill Brown."
-msgstr "Puvodni hudba od Billa Browna."
+msgstr "Doprovodnou hudbu zkomponoval Bill Brown."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
-msgstr ""
+msgstr "VYVINUTO TÝMEM ET:LEGACY"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
-msgstr "^1PROGRAMOVANI"
+msgstr "^1PROGRAMOVANÍ"
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
-msgstr ""
+msgstr "Zakladatel projektu, kódování a vedení"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr ""
+msgstr "Kódování, vývoj módu a „Bad Boy“"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
@@ -220,47 +221,47 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr ""
+msgstr "Web, kódování a skriptování"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr ""
+msgstr "Kódování, vývoj módu"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr ""
+msgstr "^1PORTY"
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
-msgstr ""
+msgstr "AROS a MorphOS"
 
 #: etmain/ui/credits_etlegacy.menu:135
 msgid "^1GREETINGS"
-msgstr "^1PODEKOVANI"
+msgstr "^1ZDRAVÍME"
 
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr ""
+msgstr "Mnoho díků Splash Damage za vydání zdrojového kódu, ioWolfET a raedwulf-et (speciálně Ralphu Eastwoodovi) za kódovou základnu a ioQuake3 za jejich inspiraci."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
-msgstr "^1PRISPEVOVATELE"
+msgstr "^1PŘISPĚVATELÉ"
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
-msgstr ""
+msgstr "Viz tlačítko SÍŇ SLÁVY dole."
 
 #: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
 #: etmain/ui/profile_create_initial.menu:127
 msgid "^1WEBSITE"
-msgstr ""
+msgstr "^1WEB"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr "© 2012-2015 ET: Legacy vývojáři - pod licencí GPL verze 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -272,29 +273,29 @@ msgstr "ET 2.60 AKTUALIZACE"
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr "TYM VYVOJARU ET PRO"
+msgstr "TÝM VÝVOJÁŘŮ ET PRO"
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
-msgstr "MAC OS X PORT"
+msgstr "PORT MAC OS X"
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
-msgstr "Hlavni programator"
+msgstr "Hlavní programátor"
 
 #: etmain/ui/credits_et260.menu:128
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
+msgstr "Mac OS X je obchodní značka Apple Computer, Inc. registrovaná v USA a v jiných zemích."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET: LEGACY HALL OF FAME"
-msgstr ""
+msgstr "SÍŇ SLÁVY ET:LEGACY"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Rady, hlášení chyb, záplaty"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
@@ -302,26 +303,26 @@ msgstr "^1PŘEKLADY"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
-msgstr "VYKONNA PRODUKCE ID SOFTWARE"
+msgstr "VÝROBA PROVEDENA ID SOFTWARE"
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
-msgstr "Vykonny producent"
+msgstr "Vedoucí výroby"
 
 #: etmain/ui/credits_idsoftware.menu:84
 msgid "Additional Programming"
-msgstr "Dalsi programovani"
+msgstr "Další programování"
 
 #: etmain/ui/credits_idsoftware.menu:87
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr "Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id Software"
+msgstr "Wolfenstein: Enemy Territory je založeno na technologii Quake III Arena (TM) od id Software."
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr "Produkci, vyvojovou a technickou asistenci poskytlo id Software."
+msgstr "Výrobní, vývojářskou a technickou asistenci poskytl id Software."
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
@@ -335,85 +336,85 @@ msgid ""
 "trademarks of Id Software, Inc. in the United States and/or other countries."
 " All other trademarks and trade names are the properties of their respective"
 " owners."
-msgstr ""
+msgstr "© 2003 Id Software, Inc. Všechna práva vyhrazena. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, logo Return to Castle Wolfenstein, jméno id Software a jeho logo jsou buď registrované obchodní známky nebo obchodní známky společnosti Id Software, Inc. v USA a nebo v jiných zemích. Všechny ostatní obchodní známky a obchodní jména jsou majetkem jejich vlastníků."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
-msgstr "VYTVORILO SPLASH DAMAGE"
+msgstr "VYVINUTO SPLASH DAMAGE"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
-msgstr ""
+msgstr "Herní designér / Výkonný ředitel"
 
 #: etmain/ui/credits_splashdamage.menu:84
 msgid "Business Director"
-msgstr "Obchodni reditel"
+msgstr "Obchodní ředitel"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
-msgstr "GRAFIKA"
+msgstr "VÝTVARNÉ UMĚNÍ"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
-msgstr "Hlavni vytvarnik / Kreativni reditel"
+msgstr "Hlavní výtvarník / Tvůrčí ředitel"
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
-msgstr "Vytvarnik / Animator"
+msgstr "Výtvarník / Animátor"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
-msgstr "Dalsi art"
+msgstr "Další výtvarní umění"
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
-msgstr "PROGRAMOVANI"
+msgstr "PROGRAMOVÁNÍ"
 
 #: etmain/ui/credits_splashdamage.menu:130
 msgid "Programmer"
-msgstr "Programator"
+msgstr "Programátor"
 
 #: etmain/ui/credits_splashdamage.menu:132
 msgid "Programmer / Artist"
-msgstr "Programator / Vytvarnik"
+msgstr "Programátor / Umělec"
 
 #: etmain/ui/credits_splashdamage.menu:139
 msgid "DESIGN"
-msgstr "NAVRH"
+msgstr "NÁVRH"
 
 #: etmain/ui/credits_splashdamage.menu:152
 msgid "Designer / Audio Engineer"
-msgstr ""
+msgstr "Návrhář / Zvukař"
 
 #: etmain/ui/credits_splashdamage.menu:154
 msgid "Designer / Writer"
-msgstr ""
+msgstr "Návrhář / Spisovatel"
 
 #: etmain/ui/credits_splashdamage.menu:161
 msgid "LEVEL DESIGN"
-msgstr "NAVRH UROVNI"
+msgstr "NÁVRH ÚROVNÍ"
 
 #: etmain/ui/credits_splashdamage.menu:174
 msgid "Lead Level Designer"
-msgstr "Hlavni navrhar urovni"
+msgstr "Hlavní návrhář úrovní"
 
 #: etmain/ui/credits_splashdamage.menu:176
 msgid "Senior Level Designer"
-msgstr ""
+msgstr "Starší návrhář úrovní"
 
 #: etmain/ui/credits_splashdamage.menu:178
 #: etmain/ui/credits_splashdamage.menu:180
 #: etmain/ui/credits_splashdamage.menu:184
 msgid "Level Designer"
-msgstr "Navrhar urovni"
+msgstr "Návrhář úrovní"
 
 #: etmain/ui/credits_splashdamage.menu:182
 msgid "Level Designer / Artist"
-msgstr "Navrhar urovni / Vytvarnik"
+msgstr "Návrhář úrovní / Výtvarník"
 
 #: etmain/ui/credits_splashdamage.menu:186
 msgid "Additional Level Design"
-msgstr ""
+msgstr "Doplňující návrh úrovní"
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET Legacy Website"
@@ -453,80 +454,80 @@ msgstr "NE"
 
 #: etmain/ui/hostgame_advanced_default.menu:123
 msgid "DEFAULT SERVER SETTINGS"
-msgstr "STANDARDNI NASTAVENI SERVERU"
+msgstr "PŮVODNÍ NASTAVENÍ"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr ""
+msgstr "Vrátit nastavení serveru do výchozího stavu?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
-msgstr "HOSTOVAT HRU: POKROČILÉ"
+msgstr "HOSTIT HRU: POKROČILÉ"
 
 #: etmain/ui/hostgame_advanced.menu:31
 msgid "GENERAL"
-msgstr "OBECNE"
+msgstr "OBECNÉ"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Minimum Ping:"
-msgstr "Minimalni ping:"
+msgstr "Min. ping:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Nastavením minimálního pingu lze odfiltrovat hráče s nízkým pingem (0 = minimum vypnuto)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
-msgstr "Maximalni ping:"
+msgstr "Max. ping:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Nastavením maximálního pingu lze odfiltrovat hráče s vysokým pingem (0 = maximum vypnuto)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
-msgstr ""
+msgstr "Max. datový tok:"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Maximum datového toku ze serveru ke klientovi (0 = bez limitu)"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
-msgstr "Neaktivita hrace:"
+msgstr "Nečinnost hráče:"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Čas (sekundy), po který hráč smí zůstat nečinný (0 = bez omezení)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
-msgstr "Neaktivita pozorovatelu:"
+msgstr "Nečinnost diváků:"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Čas (sekundy), po který divák smí zůstat nečinný (0 = bez omezení)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
-msgstr ""
+msgstr "Délka přestávky:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr ""
+msgstr "Délka přestávky před začátkem dalšího kola hry"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr ""
+msgstr "Míra připravenosti:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
-msgstr ""
+msgstr "Procentuální množství připravených hráčů nutné pro předčasné ukončení přestávky"
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
@@ -534,48 +535,48 @@ msgstr "ZÁPAS"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
-msgstr "Cekat na pripravene:"
+msgstr "Žádat připravenost:"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr ""
+msgstr "Ukládá hráčům povinnost potvrdit svou připravenost pro start zápasu"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr "Minimum hracu:"
+msgstr "Min. hráčů ke startu:"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Nutný minimální počet hráčů k tomu, aby zápas mohl započít"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
-msgstr ""
+msgstr "Míra připravenosti:"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr ""
+msgstr "Nutné minimální procento připravených hráčů k tomu, aby zápas mohl započít"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
-msgstr "Povolit pripojeni opozdilcum:"
+msgstr "Pozdější připojení:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr ""
+msgstr "Povoluje připojit se po startu zápasu"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr "Nemi pozorovatele:"
+msgstr "Umlčet diváky:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr ""
+msgstr "Udává, je-li divákům znemožněno přispívat do herního chatu"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
@@ -585,20 +586,20 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "Nikdo"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr ""
+msgstr "Pouze nepřátele"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr ""
+msgstr "Všechny"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
-msgstr ""
+msgstr "Udává, může-li hráč poškozovat jiné hráče během rozcvičky"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
@@ -606,39 +607,39 @@ msgstr "Max hráčů na tým:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
-msgstr ""
+msgstr "Udává maximální počet hráčů v jednom týmu"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr ""
+msgstr "Vypnout řízení týmu:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr ""
+msgstr "Mohou-li hráči využívat příkazy k řízení týmu (uzamčení týmu nebo diváků, připravenost týmu, apod.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
-msgstr "Trvani zahrivaciho kola:"
+msgstr "Délka rozcvičky:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
-msgstr ""
+msgstr "Délka rozcvičky na zahřátí před začátkem zápasu (v sekundách)"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid "Maximum Complaints:"
-msgstr ""
+msgstr "Max. stížností:"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Maximální počet stížností, který může hráč obdržet před vyhozením ze serveru"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr ""
+msgstr "Max. stěžovatelů:"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -659,113 +660,113 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
 msgid "Off"
-msgstr ""
+msgstr "Vypnuto"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Maximální počet různých hráčů, od kterých hráč obdrží stížnost, před vyhozením ze serveru"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
-msgstr "Casovy limit mapy:"
+msgstr "Časový limit úrovně:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
-msgstr ""
+msgstr "Přepíše původní časový limit herní úrovně, který je pro ni specifický"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
-msgstr ""
+msgstr "Čas zrodu Spojenců:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr ""
+msgstr "Přepíše původní délku periody zrodu hráčů Spojenců, která je specifická pro herní úroveň (v sekundách)"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr ""
+msgstr "Čas zrodu Osy:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr ""
+msgstr "Přepíše původní délku periody zrodu hráčů Osy, která je specifická pro herní úroveň (v sekundách)"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
-msgstr ""
+msgstr "Životy Spojenců:"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
-msgstr ""
+msgstr "Udává počet životů týmu Spojenců — pouze při hře s omezením životů"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr ""
+msgstr "Životy Osy:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr ""
+msgstr "Udává počet životů týmu Osy — pouze při hře s omezením životů"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr ""
+msgstr "Typ Stopek (SW):"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr ""
+msgstr "Určuje, jakým způsobem se budou střídat týmy během kol Stopek (ABBA = tým se v začínání zápasu střídá, ABAB =  zápas vždy začíná tým A )"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr ""
+msgstr "POSLEDNÍ VYHRÁVÁ (LMS)"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr ""
+msgstr "Kol na zápas:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Přepisuje původní počet LMS kol na zápas"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr ""
+msgstr "Zápasů na úroveň:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Přepisuje původní počet LMS zápasů (zápas se může skládat z více kol) na herní úroveň"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr ""
+msgstr "Sledovat pouze svůj tým:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr ""
+msgstr "Udává, zda-li hráč smí jako divák sledovat pouze spoluhráče jeho týmu"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr ""
+msgstr "Uzamčené týmy:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Udává, je-li hráčům znemožněno měnit týmy"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
-msgstr "SPRAVCE"
+msgstr "SPRÁVA"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
-msgstr "Cisty server:"
+msgstr "Čistý server:"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr ""
+msgstr "Povoluje využívat pouze herní obsah uložený v souborech PK3, jejichž kontrolní součty jsou schodné s těmi serverovými"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -774,17 +775,17 @@ msgstr "Heslo:"
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"
-msgstr ""
+msgstr "Nastavuje heslo nutné pro připojení hráčů k serveru"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
-msgstr "Heslo rozhodci:"
+msgstr "Heslo rozhodčího:"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid ""
 "Password to utilize the \"ref\" command for match control and remote game "
 "administration"
-msgstr ""
+msgstr "Heslo umožňuje využívat roli rozhodčího pomocí příkazu „ref“"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
@@ -794,39 +795,39 @@ msgstr "Heslo RCON:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Heslo umožňuje vzdáleně spravovat server (velmi mocný nástroj, toto heslo držte v tajnosti)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
-msgstr "HLASOVANI"
+msgstr "HLASOVÁNÍ"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr "Nejvic hlasu na hrace:"
+msgstr "Max. hlas. na hráče:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
-msgstr ""
+msgstr "Udává, kolikrát může hráč během zápasu vyvolat neúspěšné hlasování "
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
-msgstr ""
+msgstr "Úspěch hlasování:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Procento hlasů potřebné pro úspěch hlasování"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
-msgstr "POVOLIT HLASOVANI"
+msgstr "POVOLIT HLASOVÁNÍ"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
-msgstr ""
+msgstr "Konfigurace:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o změně sady nastavení serveru"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
@@ -836,137 +837,137 @@ msgstr "Typ hry:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o změně herního typu"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr "Vykopnuti hrace:"
+msgstr "Vyhození hráče:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o vyhození hráčů"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
-msgstr "Mapa:"
+msgstr "Herní úroveň:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o změně herní úrovně"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
-msgstr ""
+msgstr "Restart zápasu:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o restartu zápasu"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr ""
+msgstr "Umlčet diváky:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o umlčení diváků"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
-msgstr "Dalsi mapa:"
+msgstr "Další úroveň:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o načtení herní úrovně, která je nastavena jako další"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr "Vyrovnane tymy:"
+msgstr "Vyrovnané týmy:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o změně nastavení vyrovnání týmů"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
-msgstr "Rozhodci:"
+msgstr "Rozhodčí:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o rozhodčích"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
-msgstr "Promichani XP:"
+msgstr "Promíchat dle XP:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o promíchání složení týmů"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
-msgstr "Prohozeni tymu:"
+msgstr "Výměna týmů:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o výměně stran týmů"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
-msgstr "Palba do vlastnich:"
+msgstr "Palba do vlastních:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o změně možnosti poškozovat spoluhráč ze stejného týmu"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
-msgstr "Casovy limit:"
+msgstr "Časový limit:"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o změně časového limitu"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o změně nastavení udělování poškozování během rozcvičky"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
-msgstr "Proti-lag:"
+msgstr "Antilag:"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
-msgstr ""
+msgstr "Povoluje hráčům hlasovat o přepnutí nastavení antilagu"
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
-msgstr "ZPRAVA DNE"
+msgstr "ZPRÁVA DNE"
 
 #: etmain/ui/hostgame_advanced.menu:110
 msgid "Line 1:"
-msgstr "Radek 1:"
+msgstr "Řádek 1:"
 
 #: etmain/ui/hostgame_advanced.menu:110 etmain/ui/hostgame_advanced.menu:121
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Specifies the message clients will see when connecting to the server"
-msgstr ""
+msgstr "Udává zprávu, která se hráčům zobrazí během připojování k serveru"
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
-msgstr "Radek 2:"
+msgstr "Řádek 2:"
 
 #: etmain/ui/hostgame_advanced.menu:132
 msgid "Line 3:"
-msgstr "Radek 3:"
+msgstr "Řádek 3:"
 
 #: etmain/ui/hostgame_advanced.menu:143
 msgid "Line 4:"
-msgstr "Radek 4:"
+msgstr "Řádek 4:"
 
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Line 5:"
-msgstr "Radek 5:"
+msgstr "Řádek 5:"
 
 #: etmain/ui/hostgame_advanced.menu:157
 msgid "DOWNLOAD"
@@ -974,78 +975,78 @@ msgstr "STAHOVÁNÍ"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Client Downloads:"
-msgstr ""
+msgstr "Povolit stahování"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
-msgstr ""
+msgstr "Povoluje klientům stažení chybějících souborů ze serveru"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr ""
+msgstr "Max. rychlost stahování:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
 "Specifies the maximum download rate from the server for players with missing"
 " files"
-msgstr ""
+msgstr "Udává maximální rychlost stahování chybějících souborů ze serveru jedním klientem"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
-msgstr "Presmerovani FTP/HTTP:"
+msgstr "Přesměrování:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Zapíná přesměrování hráčů v případě stahování chybějících souborů na FTP/HTTP"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
-msgstr ""
+msgstr "URL přesměrování:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "Základ adresy, kam se má požadavek na stahování chybějících souborů přesměrovat"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
-msgstr "ROZSIRENE"
+msgstr "POKROČILÉ II"
 
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
 msgid "DEFAULT"
-msgstr "PŮVODNÍ"
+msgstr "OBNOVIT"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:52
 msgid "START DEDICATED SERVER"
-msgstr "SPUSTIT DEDIKOVANY SERVER"
+msgstr "SPUSTIT DEDIKOVANÝ SERVER"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:53
 msgid "Starting a Dedicated Server will"
-msgstr "Spusteni dedikovaneho serveru"
+msgstr "Spuštění dedikovaného serveru"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:54
 msgid "close the game window and open the"
-msgstr "zavre okno se hrou a otevre"
+msgstr "zavře okno hry a otevře"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. It will not be possible"
-msgstr "serverovou konzoli. Nebude mozne"
+msgstr "konzoli serveru. Pro připojení"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
 msgid "to play the game on the host machine."
-msgstr "hrat hru na tomto pocitaci."
+msgstr " k serveru musíš hru spustit znovu."
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
-msgstr "Jsi si jisty, ze chces spustit"
+msgstr "Chceš opravdu spustit"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:58
 msgid "a Dedicated Server?"
-msgstr "dedikovany server?"
+msgstr "dedikovaný server?"
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
-msgstr "HOSTOVAT HRU: POKROCILE"
+msgstr "HOSTIT HRU: POKROČILÉ II"
 
 #: etmain/ui/hostgame_extended.menu:31 etmain/ui/ingame_vote.menu:86
 #: etmain/ui/ingame_vote.menu:87 etmain/ui/ingame_vote_misc.menu:38
@@ -1056,13 +1057,13 @@ msgstr "RŮZNÉ"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Country Flags:"
-msgstr "Vlajky zemÍ:"
+msgstr "Vlajky států:"
 
 #: etmain/ui/hostgame_extended.menu:32 etmain/ui/hostgame.menu:42
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
 #: etmain/ui/options_system.menu:53
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: etmain/ui/hostgame_extended.menu:32
 #: etmain/ui/options_customise_game.menu:42
@@ -1071,16 +1072,16 @@ msgstr "Ano"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable Country Flags on the server"
-msgstr ""
+msgstr "Povoluje zobrazení vlajek států"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
 msgid "ADVANCED"
-msgstr "POKROCILE"
+msgstr "POKROČILÉ I"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
-msgstr "HOSTOVAT HRU"
+msgstr "HOSTIT HRU"
 
 #: etmain/ui/hostgame.menu:37
 msgid "SETTINGS"
@@ -1088,88 +1089,88 @@ msgstr "NASTAVENÍ"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Server Name:"
-msgstr "Jmeno serveru:"
+msgstr "Jméno serveru:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
-msgstr ""
+msgstr "Udává jméno tvého herního serveru"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
 msgid "Campaign"
-msgstr ""
+msgstr "Kampaň"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr ""
+msgstr "Poslední vyhrává (LMS)"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
-msgstr ""
+msgstr "Hlasování"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Single-Map Objective"
-msgstr ""
+msgstr "Jednotlivé úrovně (SMO)"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
-msgstr ""
+msgstr "Stopky (SW)"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
-msgstr ""
+msgstr "Klikni pro výběr typu hry"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
-msgstr "Maximum hracu:"
+msgstr "Maximum hráčů:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
-msgstr ""
+msgstr "Maximum hráčů, kolik se může připojit k serveru"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Auto-Configure Server:"
-msgstr "Samo-nastavit server:"
+msgstr "Soubor nastavení:"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Competition Settings"
-msgstr ""
+msgstr "Soutěžní nastavení"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Public Settings"
-msgstr ""
+msgstr "Běžné nastavení"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
-msgstr ""
+msgstr "Server automaticky načte zvolený balík nastavení"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Dedicated Server:"
-msgstr "Dedikovany server:"
+msgstr "Dedikovaný server:"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - LAN"
-msgstr ""
+msgstr "Ano - LAN"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - Internet"
-msgstr ""
+msgstr "Ano - Internet"
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
 "Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
 " client)"
-msgstr ""
+msgstr "Určuje, zda-li je server dedikovaný — pokud ano, tak jestli pro hru přes LAN nebo internet"
 
 #: etmain/ui/hostgame.menu:44
 msgid "Password clients must set to join the server"
-msgstr ""
+msgstr "Nastavuje heslo nutné pro připojení hráčů k serveru"
 
 #: etmain/ui/hostgame.menu:47
 msgid "FEATURES"
@@ -1177,55 +1178,55 @@ msgstr "VLASTNOSTI"
 
 #: etmain/ui/hostgame.menu:58
 msgid "Friendly Fire"
-msgstr "Palba do vlastnich"
+msgstr "Palba do vlastních"
 
 #: etmain/ui/hostgame.menu:59
 msgid "Specifies if teammates can hurt each other"
-msgstr ""
+msgstr "Určuje, zda-li hráči mohou udělit poškození spoluhráčům ze stejného týmu"
 
 #: etmain/ui/hostgame.menu:70
 msgid "Anti-Lag"
-msgstr "Proti-Lag"
+msgstr "Antilag"
 
 #: etmain/ui/hostgame.menu:71
 msgid "Enables modem-friendly server support"
-msgstr ""
+msgstr "Povoluje technologii Antilag, která kompenzuje pomalé síťové připojení hráče"
 
 #: etmain/ui/hostgame.menu:85
 msgid "Max Lives"
-msgstr "Max zivotu"
+msgstr "Max. životů"
 
 #: etmain/ui/hostgame.menu:86
 msgid "Limits the number of player lives per round"
-msgstr ""
+msgstr "Zapne limitování počtu životů hráčů na kolo hry"
 
 #: etmain/ui/hostgame.menu:97
 msgid "Weapon Restrictions"
-msgstr "Omezeni zbrani:"
+msgstr "Omezení zbraní:"
 
 #: etmain/ui/hostgame.menu:98
 msgid ""
 "Restricts the number of weapons available to players to a percentage of the "
 "team size to reduce spam"
-msgstr ""
+msgstr "Omezuje využití těžkých zbraní dle počtu hráčů v týmech"
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
-msgstr "Vyrovnane tymy"
+msgstr "Vyrovnané týmy"
 
 #: etmain/ui/hostgame.menu:110
 msgid ""
 "Enforces balanced teams by forcing players to join the team with the lowest "
 "player count"
-msgstr ""
+msgstr "Určuje hráčům, že se mohou připojit pouze do týmu s nejmenším počtem hráčů"
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
-msgstr "NAZEV"
+msgstr "NÁZEV ÚROVNĚ NEBO KAMPANĚ"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
-msgstr ""
+msgstr "Výběr úrovně nebo kampaně, kterou má server nahrát"
 
 #: etmain/ui/hostgame.menu:142 etmain/ui/playonline.menu:219
 msgid "PREVIEW"
@@ -1245,7 +1246,7 @@ msgstr "ODPOJIT"
 
 #: etmain/ui/ingame_disconnect.menu:51
 msgid "Do you want to disconnect"
-msgstr "Chces se odpojit"
+msgstr "Opravdu odpojit"
 
 #: etmain/ui/ingame_disconnect.menu:52
 msgid "from the server?"
@@ -1253,7 +1254,7 @@ msgstr "ze serveru?"
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
-msgstr ""
+msgstr "MENU"
 
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
@@ -1262,7 +1263,7 @@ msgstr "HLASOVAT"
 
 #: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
-msgstr "ROZHODCI"
+msgstr "ROZHODČÍ"
 
 #: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
@@ -1271,7 +1272,7 @@ msgstr "RCON"
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
 msgid "SERVER INFO"
-msgstr "INFO O SERVERU"
+msgstr "O SERVERU"
 
 #: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
 #: etmain/ui/options.menu:29
@@ -1289,15 +1290,15 @@ msgstr "OPUSTIT HRU"
 
 #: etmain/ui/ingame_messagemode.menu:42
 msgid "SEND MESSAGE"
-msgstr "POSLAT VZKAZ"
+msgstr "ODESLAT ZPRÁVU"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Say:"
-msgstr "ŘÍct:"
+msgstr "Text:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr ""
+msgstr "Sem vložte zprávu — stiskněte dvakrát Escape pro zrušení"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
@@ -1307,19 +1308,19 @@ msgstr "Komu:"
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
 msgid "All"
-msgstr ""
+msgstr "Všem"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
-msgstr ""
+msgstr "Týmu"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Fireteam"
-msgstr "Četa"
+msgstr "Četě"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
-msgstr ""
+msgstr "Vyber adresáty tvé zprávy"
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
@@ -1335,39 +1336,39 @@ msgstr "OBNOVIT"
 
 #: etmain/ui/ingame_serverinfo.menu:78
 msgid "ADD TO FAVORITES"
-msgstr "DAT DO OBLIBENYCH"
+msgstr "DÁT DO OBLÍBENÝCH"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
-msgstr ""
+msgstr "ZNOVUZROZENÍ"
 
 #: etmain/ui/ingame_tapoutlms.menu:50
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
+msgstr "V módu „Poslední vyhrává“ se po odklepnutí nelze opětovně zrodit. Jsi si jistý?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
 "This server has Max Lives enabled. Tapping out now will lose a life. Are you"
 " sure?"
-msgstr ""
+msgstr "Je zapnuto omezení počtu životů. Odklepneš-li se, bude tě to stát jeden život. Jsi si jistý?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
-msgstr ""
+msgstr "Počet botů:"
 
 #: etmain/ui/ingame_vote_bot.menu:39
 msgid "Move skill:"
-msgstr ""
+msgstr "Obratnost:"
 
 #: etmain/ui/ingame_vote_bot.menu:45
 msgid "Difficulty:"
-msgstr ""
+msgstr "Obtížnost:"
 
 #: etmain/ui/ingame_vote_bot.menu:53
 msgid "KICK ALL BOTS"
-msgstr ""
+msgstr "VYHODIT BOTY"
 
 #: etmain/ui/ingame_vote_bot.menu:55
 msgid "AXIS BOTS"
@@ -1375,36 +1376,36 @@ msgstr "BOTI OSY"
 
 #: etmain/ui/ingame_vote_bot.menu:56
 msgid "ALLIED BOTS"
-msgstr "SPOJENEČTÍ BOTI"
+msgstr "BOTI SPOJENCŮ"
 
 #: etmain/ui/ingame_vote_bot.menu:57
 msgid "BALANCED"
-msgstr ""
+msgstr "VYVÁŽIT"
 
 #: etmain/ui/ingame_vote_bot.menu:59
 msgid "BOTS ON"
-msgstr ""
+msgstr "ZAPNOUT BOTY"
 
 #: etmain/ui/ingame_vote_bot.menu:60
 msgid "BOTS OFF"
-msgstr ""
+msgstr "VYPNOUT BOTY"
 
 #: etmain/ui/ingame_vote_disabled.menu:51
 msgid "Voting is disabled"
-msgstr "Hlasovani je zakazano"
+msgstr "Hlasování je zakázáno"
 
 #: etmain/ui/ingame_vote_disabled.menu:52
 msgid "on this server."
-msgstr "na tomto serveru."
+msgstr "na tomto serveru.na tomto serveru."
 
 #: etmain/ui/ingame_vote_map.menu:34 etmain/ui/ingame_vote_map.menu:37
 #: etmain/ui/ingame_vote.menu:88 etmain/ui/ingame_vote.menu:89
 msgid "MAPS"
-msgstr "MAPY"
+msgstr "ÚROVNĚ"
 
 #: etmain/ui/ingame_vote_map.menu:38
 msgid "CAMPAIGNS"
-msgstr "KAMPANE"
+msgstr "KAMPANĚ"
 
 #: etmain/ui/ingame_vote_map.menu:82 etmain/ui/ingame_vote_map.menu:83
 #: etmain/ui/ingame_vote_map.menu:84 etmain/ui/ingame_vote_misc.menu:62
@@ -1413,28 +1414,28 @@ msgstr "KAMPANE"
 #: etmain/ui/ingame_vote_misc_refrcon.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:78
 msgid "OK"
-msgstr "POTVRDIT"
+msgstr "OK"
 
 #: etmain/ui/ingame_vote.menu:90 etmain/ui/ingame_vote.menu:91
 #: etmain/ui/ingame_vote_players.menu:25 src/cgame/cg_scoreboard.c:205
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:818
 #: src/cgame/cg_scoreboard.c:828 src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
-msgstr "HRÁČŮ"
+msgstr "HRÁČI"
 
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
-msgstr ""
+msgstr "BOTI"
 
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
 msgid "START MATCH"
-msgstr "ZAHAJIT ZAPAS"
+msgstr "ZAHÁJIT ZÁPAS"
 
 #: etmain/ui/ingame_vote_misc.menu:42
 #: etmain/ui/ingame_vote_misc_refrcon.menu:41
 msgid "RESET MATCH"
-msgstr "RESETOVAT ZAPAS"
+msgstr "ANULOVAT ZÁPAS"
 
 #: etmain/ui/ingame_vote_misc.menu:43
 #: etmain/ui/ingame_vote_misc_refrcon.menu:42
@@ -1444,22 +1445,22 @@ msgstr "RESTARTOVAT MAPU"
 #: etmain/ui/ingame_vote_misc.menu:44
 #: etmain/ui/ingame_vote_misc_refrcon.menu:43
 msgid "NEXT MAP"
-msgstr "DALSI MAPA"
+msgstr "DALŠÍ MAPA"
 
 #: etmain/ui/ingame_vote_misc.menu:45
 #: etmain/ui/ingame_vote_misc_refrcon.menu:44
 msgid "NEXT CAMPAIGN"
-msgstr "DALSI KAMPAN"
+msgstr "DALŠÍ KAMPAŇ"
 
 #: etmain/ui/ingame_vote_misc.menu:46
 #: etmain/ui/ingame_vote_misc_refrcon.menu:45
 msgid "ANTI-LAG ON"
-msgstr "PROTI-LAG ZAPNUT"
+msgstr "ZAPNOUT ANTILAG"
 
 #: etmain/ui/ingame_vote_misc.menu:47
 #: etmain/ui/ingame_vote_misc_refrcon.menu:46
 msgid "ANTI-LAG OFF"
-msgstr "PROTI-LAG VYPNUT"
+msgstr "VYPNOUT ANTILAG"
 
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
@@ -1474,42 +1475,42 @@ msgstr "PROHODIT TYMY"
 #: etmain/ui/ingame_vote_misc.menu:51
 #: etmain/ui/ingame_vote_misc_refrcon.menu:50
 msgid "MUTE SPECS"
-msgstr ""
+msgstr "UMLČET DIVÁKY"
 
 #: etmain/ui/ingame_vote_misc.menu:52
 #: etmain/ui/ingame_vote_misc_refrcon.menu:51
 msgid "UNMUTE SPECS"
-msgstr ""
+msgstr "ODUMLČET DIVÁKY"
 
 #: etmain/ui/ingame_vote_misc.menu:53
 #: etmain/ui/ingame_vote_misc_refrcon.menu:52
 msgid "FRIENDLY FIRE ON"
-msgstr "STRILENI DO VLASTNICH ZAPNUTO"
+msgstr "ZAPNOUT PALBU DO VLASTNÍCH"
 
 #: etmain/ui/ingame_vote_misc.menu:54
 #: etmain/ui/ingame_vote_misc_refrcon.menu:53
 msgid "FRIENDLY FIRE OFF"
-msgstr "STRILENI DO VLASTNICH VYPNUTO"
+msgstr "VYPNOUT PALBU DO VLASTNÍCH"
 
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
 msgid "BALANCED TEAMS ON"
-msgstr "VYROVNANE TYMY ZAPNUTY"
+msgstr "ZAPNOUT VYROVNANÍ TÝMŮ"
 
 #: etmain/ui/ingame_vote_misc.menu:56
 #: etmain/ui/ingame_vote_misc_refrcon.menu:55
 msgid "BALANCED TEAMS OFF"
-msgstr "VYROVNANE TYMY VYPNUTY"
+msgstr "VYPNOUT VYROVNANÍ TÝMŮ"
 
 #: etmain/ui/ingame_vote_misc.menu:58
 #: etmain/ui/ingame_vote_misc_refrcon.menu:57
 msgid "COMPETITION SETTINGS"
-msgstr ""
+msgstr "SOUTĚŽNÍ NASTAVENÍ"
 
 #: etmain/ui/ingame_vote_misc.menu:59
 #: etmain/ui/ingame_vote_misc_refrcon.menu:58
 msgid "PUBLIC SETTINGS"
-msgstr ""
+msgstr "BĚŽNÉ NASTAVENÍ"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
@@ -1518,41 +1519,41 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "Žádné"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "Nepřátele"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
-msgstr ""
+msgstr "Zvolit typ poškození pro rozcvičku k hlasování"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Time Limit:"
-msgstr ""
+msgstr "Časový limit:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
-msgstr ""
+msgstr "Zvol časový limit ke hlasování"
 
 #: etmain/ui/ingame_vote_misc.menu:78
 msgid "Select the game type to vote on"
-msgstr ""
+msgstr "Zvol typ hry ke hlasování"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enable or disable warmup damage"
-msgstr ""
+msgstr "Povol nebo zakaž poškození při rozcvičce"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Set the time limit for the server"
-msgstr ""
+msgstr "Nastav časový limit"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
-msgstr ""
+msgstr "Nastav časový limit"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
@@ -1560,60 +1561,60 @@ msgstr "PAUZA"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:81
 msgid "UNPAUSE"
-msgstr "ODPAUZOVAT"
+msgstr "POKRAČOVAT"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:83
 msgid "LOCK TEAMS"
-msgstr "ZAMKNOUT TYMY"
+msgstr "ZAMKNOUT TÝMY"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:84
 msgid "UNLOCK TEAMS"
-msgstr "ODEMKNOUT TYMY"
+msgstr "ODEMKNOUT TÝMY"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:86
 msgid "LOCK SPECS"
-msgstr ""
+msgstr "ZAMKNOUT DIVÁKY"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:87
 msgid "UNLOCK SPECS"
-msgstr ""
+msgstr "ODEMKNOUT DIVÁKY"
 
 #: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
 #: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
 msgid "KICK"
-msgstr "VYKOPNOUT"
+msgstr "VYLOUČIT"
 
 #: etmain/ui/ingame_vote_players.menu:52 etmain/ui/ingame_vote_players.menu:53
 #: etmain/ui/ingame_vote_players.menu:54
 msgid "MUTE"
-msgstr ""
+msgstr "UMLČET"
 
 #: etmain/ui/ingame_vote_players.menu:55 etmain/ui/ingame_vote_players.menu:56
 #: etmain/ui/ingame_vote_players.menu:57
 msgid "UN-MUTE"
-msgstr ""
+msgstr "ODUMLČET"
 
 #: etmain/ui/ingame_vote_players.menu:59 etmain/ui/ingame_vote_players.menu:60
 #: etmain/ui/ingame_vote_players.menu:61
 msgid "MAKE REFEREE"
-msgstr ""
+msgstr "URČIT ROZHODČÍHO"
 
 #: etmain/ui/ingame_vote_players.menu:62 etmain/ui/ingame_vote_players.menu:63
 #: etmain/ui/ingame_vote_players.menu:64
 msgid "UN-REFEREE"
-msgstr ""
+msgstr "ODEBRAT ROZHODČÍHO"
 
 #: etmain/ui/ingame_vote_players.menu:66
 msgid "MAKE AXIS"
-msgstr ""
+msgstr "PŘESUN K OSE"
 
 #: etmain/ui/ingame_vote_players.menu:67
 msgid "MAKE ALLIED"
-msgstr ""
+msgstr "PŘESUN KE SPOJENCŮM"
 
 #: etmain/ui/ingame_vote_players.menu:68
 msgid "MAKE SPEC"
-msgstr ""
+msgstr "PŘESUN K DIVÁKŮM"
 
 #: etmain/ui/ingame_vote_players.menu:70
 #: etmain/ui/ingame_vote_players_warn.menu:64 src/cgame/cg_fireteams.c:362
@@ -1626,15 +1627,15 @@ msgstr "ZABANOVAT"
 
 #: etmain/ui/ingame_vote_players_warn.menu:51
 msgid "WARN PLAYER"
-msgstr "VAROVAT HRACE"
+msgstr "VAROVAT HRÁČE"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning:"
-msgstr "Varovani:"
+msgstr "Varování:"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning message to send to a player"
-msgstr ""
+msgstr "Varovná zpráva pro hráče"
 
 #: etmain/ui/main.menu:105 etmain/ui/playonline.menu:56
 msgid "PLAY ONLINE"
@@ -1658,25 +1659,25 @@ msgstr "ETLEGACY.COM"
 
 #: etmain/ui/main.menu:118
 msgid "^1SECURITY INFORMATION"
-msgstr ""
+msgstr "^1BEZPEČNOSTNÍ INFO"
 
 #: etmain/ui/main.menu:119
 msgid "You are running old software"
-msgstr ""
+msgstr "Tvůj software je zastaralý."
 
 #: etmain/ui/main.menu:120
 msgid ""
 "We do recommend to\n"
 "upgrade your ET client"
-msgstr ""
+msgstr "Doporučujeme aktualizovat\ntvého ET:L klienta."
 
 #: etmain/ui/main.menu:121
 msgid "UPGRADE NOW"
-msgstr ""
+msgstr "AKTUALIZOVAT NYNÍ"
 
 #: etmain/ui/main_quickconnect.menu:58
 msgid "CONNECT TO SERVER"
-msgstr "PŘIPOJIT SE K SERVERU"
+msgstr "PŘIPOJIT K SERVERU"
 
 #: etmain/ui/main_quickconnect.menu:69
 #: etmain/ui/playonline_connecttoip.menu:62
@@ -1686,15 +1687,15 @@ msgstr "IP serveru:"
 #: etmain/ui/main_quickconnect.menu:71
 #: etmain/ui/playonline_connecttoip.menu:64
 msgid "Enter the IP address seperated by dots: xxx.xxx.xxx.xxx"
-msgstr ""
+msgstr "Vlož IP adresu ve tvaru xxx.xxx.xxx.xxx"
 
 #: etmain/ui/main_quickconnect.menu:82
 msgid "Server PW:"
-msgstr ""
+msgstr "Heslo serveru:"
 
 #: etmain/ui/main_quickconnect.menu:84
 msgid "Enter the server password if any"
-msgstr ""
+msgstr "Vlož heslo serveru"
 
 #: etmain/ui/main_quickconnect.menu:87
 #: etmain/ui/playonline_connecttoip.menu:67 etmain/ui/popup_password.menu:87
@@ -1703,7 +1704,7 @@ msgstr "PŘIPOJIT"
 
 #: etmain/ui/mods.menu:50
 msgid "Select the modification to play"
-msgstr ""
+msgstr "Vyber modifikaci hry"
 
 #: etmain/ui/mods.menu:59
 msgid "LOAD MOD"
@@ -1745,15 +1746,15 @@ msgstr ""
 
 #: etmain/ui/options_clean.menu:43
 msgid "ABORT"
-msgstr ""
+msgstr "ZRUŠIT"
 
 #: etmain/ui/options_clean.menu:44
 msgid "SIMPLE CLEAN"
-msgstr "JEDNODUCHE"
+msgstr "JEDNODUCHÉ"
 
 #: etmain/ui/options_clean.menu:45
 msgid "FULL CLEAN"
-msgstr ""
+msgstr "ÚPLNÉ"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
