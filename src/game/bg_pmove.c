@@ -4627,11 +4627,7 @@ static void PM_Weapon(void)
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING:
 	case WP_MOBILE_BROWNING_SET:
-		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
-		{
-			addTime = 2000;
-		}
-		else
+		if (weapattackanim != WEAP_ATTACK_LASTSHOT)
 		{
 			addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		}
