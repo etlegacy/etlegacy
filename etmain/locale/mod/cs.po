@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-20 11:51+0000\n"
+"PO-Revision-Date: 2015-08-21 02:12+0000\n"
 "Last-Translator: yfcz <yfcz@wolfenstein.cz>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -1716,33 +1716,33 @@ msgstr "VYČISTIT"
 
 #: etmain/ui/options_clean.menu:34
 msgid "HOMEPATH CLEAN UP"
-msgstr ""
+msgstr "VYČISTIT DOMOVSKOU SLOŽKU"
 
 #: etmain/ui/options_clean.menu:35
 msgid "This will delete all unnecessary files from you fs_homepath."
-msgstr ""
+msgstr "Tímto budou smazány všechny nepotřebné soubory uložené v fs_homepath."
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp- and custom pk3 files."
-msgstr ""
+msgstr "Jednoduché vyčistění odstraní dočasné soubory TMP a pomocné PK3 soubory."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
 "A full clean will remove all downloaded files like map-,\n"
 " campaign- and custom pk3 files."
-msgstr ""
+msgstr "Úplné vyčistění odstraní všechny neoriginální PK3 soubory včetně souborů s herními úrovněmi a kampaněmi."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
-msgstr ""
+msgstr "^1VAROVÁNÍ: použití na vlastní nebezpečí!"
 
 #: etmain/ui/options_clean.menu:39
 msgid "Consult our wiki for documentation."
-msgstr ""
+msgstr "Pro více informací nahlédněte do naší wikipedie."
 
 #: etmain/ui/options_clean.menu:40
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
-msgstr ""
+msgstr "Stiskněte '^7ZRUŠIT^9', jestliže nevíte, co dělat."
 
 #: etmain/ui/options_clean.menu:43
 msgid "ABORT"
@@ -1758,11 +1758,11 @@ msgstr "ÚPLNÉ"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
-msgstr "PUVODNI NASTAVENI"
+msgstr "PŮVODNÍ NASTAVENÍ"
 
 #: etmain/ui/options_controls_default.menu:53
 msgid "Reset controls to default?"
-msgstr "Vratit se k puvodnimu nastaveni?"
+msgstr "Načíst výchozí nastavení?"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
@@ -1772,92 +1772,92 @@ msgstr "Ruka:"
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Right"
-msgstr ""
+msgstr "Pravá"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Left"
-msgstr ""
+msgstr "Levá"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid ""
 "Left or Right Handed? This sets your default controls\n"
 "which you can modify later via the options menu"
-msgstr ""
+msgstr "Jsi pravák nebo levák? Toto přednastaví možnosti,\nkteré můžeš později upravit v menu"
 
 #: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
 msgid "CONTROLS"
-msgstr "OVLADANI"
+msgstr "OVLÁDÁNÍ"
 
 #: etmain/ui/options_controls.menu:32
 msgid "MOVE"
-msgstr ""
+msgstr "POHYB"
 
 #: etmain/ui/options_controls.menu:33
 msgid "Forward:"
-msgstr "Dopredu:"
+msgstr "Vpřed:"
 
 #: etmain/ui/options_controls.menu:34
 msgid "Back:"
-msgstr "Zpet:"
+msgstr "Zpět:"
 
 #: etmain/ui/options_controls.menu:35
 msgid "Move Left:"
-msgstr "Pohyb doleva:"
+msgstr "Vlevo:"
 
 #: etmain/ui/options_controls.menu:36
 msgid "Move Right:"
-msgstr "Pohyb doprava:"
+msgstr "Vpravo:"
 
 #: etmain/ui/options_controls.menu:37
 msgid "Lean Left:"
-msgstr "Naklon vlevo:"
+msgstr "Náklon vlevo:"
 
 #: etmain/ui/options_controls.menu:38
 msgid "Lean Right:"
-msgstr "Naklon vpravo:"
+msgstr "Náklon vpravo:"
 
 #: etmain/ui/options_controls.menu:39
 msgid "Jump:"
-msgstr "Skok:"
+msgstr "Výskok:"
 
 #: etmain/ui/options_controls.menu:40
 msgid "Crouch:"
-msgstr ""
+msgstr "Přikrčení:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
-msgstr "Lehnuti:"
+msgstr "Leh:"
 
 #: etmain/ui/options_controls.menu:42
 msgid "Walk:"
-msgstr "Chuze:"
+msgstr "Chůze:"
 
 #: etmain/ui/options_controls.menu:43
 msgid "Sprint:"
-msgstr "Beh:"
+msgstr "Sprint:"
 
 #: etmain/ui/options_controls.menu:47
 msgid "INPUT"
-msgstr "VSTUP"
+msgstr "MYŠ"
 
 #: etmain/ui/options_controls.menu:48
 #: etmain/ui/profile_create_initial.menu:112 etmain/ui/profile_create.menu:106
 msgid "Invert Mouse:"
-msgstr "Obratit mys:"
+msgstr "Invertovat myš:"
 
 #: etmain/ui/options_controls.menu:48
 msgid "Inverts mouse pitch"
-msgstr ""
+msgstr "Obrátí vertikální směr pohybu myši"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
-msgstr ""
+msgstr "Zjemnit:"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooths out the mouse using interpolation"
-msgstr ""
+msgstr "Zjemní pohyb myši pomocí interpolace"
 
 #: etmain/ui/options_controls.menu:51
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
@@ -1866,55 +1866,55 @@ msgstr "Citlivost myši:"
 
 #: etmain/ui/options_controls.menu:51
 msgid "Use the slider to increase or decrease mouse sensitivity"
-msgstr ""
+msgstr "Použij jezdec ke zvýšení nebo snížení citlivosti myši"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Mouse Pitch:"
-msgstr ""
+msgstr "Vertikální citlivost:"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
-msgstr ""
+msgstr "0.015 (nejmenší povolená)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr ""
+msgstr "0.022 (standardní)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Vertikální citlivost zaměřovače"
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
-msgstr "ROZHOVOR"
+msgstr "CHAT"
 
 #: etmain/ui/options_controls.menu:57
 msgid "Chat:"
-msgstr ""
+msgstr "Chat:"
 
 #: etmain/ui/options_controls.menu:58
 msgid "Team Chat:"
-msgstr ""
+msgstr "Chat týmu:"
 
 #: etmain/ui/options_controls.menu:59
 msgid "Fire-Team Chat:"
-msgstr ""
+msgstr "Chat čety:"
 
 #: etmain/ui/options_controls.menu:60
 msgid "Quick Chat:"
-msgstr ""
+msgstr "Hlasový chat:"
 
 #: etmain/ui/options_controls.menu:61
 msgid "Fire-Team Quick Chat:"
-msgstr ""
+msgstr "Hlasový chat čety:"
 
 #: etmain/ui/options_controls.menu:65
 msgid "POP-UPS"
-msgstr "VYSKAKOVACI UPOZORNENI"
+msgstr "PŘEHLEDY INFORMACÍ"
 
 #: etmain/ui/options_controls.menu:66
 msgid "Show Scores:"
-msgstr ""
+msgstr "Zobrazit skóre:"
 
 #: etmain/ui/options_controls.menu:67
 msgid "Show Limbo Menu:"
@@ -1922,100 +1922,100 @@ msgstr "Otevrit limbo menu:"
 
 #: etmain/ui/options_controls.menu:68
 msgid "Show Command Map:"
-msgstr ""
+msgstr "Zobrazit mapu:"
 
 #: etmain/ui/options_controls.menu:69
 msgid "Compass Map Zoom In:"
-msgstr "Priblizeni kompasu:"
+msgstr "Přiblížení kompasu:"
 
 #: etmain/ui/options_controls.menu:70
 msgid "Compass Map Zoom Out:"
-msgstr "Oddaleni kompasu:"
+msgstr "Oddálení kompasu:"
 
 #: etmain/ui/options_controls.menu:71
 msgid "Player Stats:"
-msgstr "Statistiky hrace:"
+msgstr "Osobní statistka:"
 
 #: etmain/ui/options_controls.menu:72
 msgid "Top Shots:"
-msgstr ""
+msgstr "Top hráči:"
 
 #: etmain/ui/options_controls.menu:73
 msgid "Objectives:"
-msgstr ""
+msgstr "Úkoly mise:"
 
 #: etmain/ui/options_controls.menu:78
 msgid "USE WEAPONS"
-msgstr ""
+msgstr "ZBRANĚ"
 
 #: etmain/ui/options_controls.menu:79
 msgid "Attack:"
-msgstr "Utok:"
+msgstr "Útok:"
 
 #: etmain/ui/options_controls.menu:80
 msgid "Switch to Alternate:"
-msgstr ""
+msgstr "Alternativní útok:"
 
 #: etmain/ui/options_controls.menu:81
 msgid "Reload Weapon:"
-msgstr "Nabit zbran:"
+msgstr "Nabít zbraň:"
 
 #: etmain/ui/options_controls.menu:82
 msgid "Binoculars Zoom:"
-msgstr ""
+msgstr "Dalekohled:"
 
 #: etmain/ui/options_controls.menu:83
 msgid "Use (Activate):"
-msgstr "Pouzit (aktivovat):"
+msgstr "Použít (aktivovat):"
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT WEAPONS"
-msgstr "VYBER ZBRANI"
+msgstr "VÝBĚR ZBRANÍ"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
-msgstr "Dalsi zbran:"
+msgstr "Další zbraň:"
 
 #: etmain/ui/options_controls.menu:89
 msgid "Previous Weapon:"
-msgstr "Predchozi zbran:"
+msgstr "Předchozí zbraň:"
 
 #: etmain/ui/options_controls.menu:90
 msgid "Slot 1 - Melee:"
-msgstr ""
+msgstr "Slot 1 — dýka:"
 
 #: etmain/ui/options_controls.menu:91
 msgid "Slot 2 - One Handed:"
-msgstr ""
+msgstr "Slot 2 — jednoruční:"
 
 #: etmain/ui/options_controls.menu:92
 msgid "Slot 3 - Two Handed:"
-msgstr ""
+msgstr "Slot 3 — obouruční:"
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
-msgstr ""
+msgstr "Slot 4 — granát:"
 
 #: etmain/ui/options_controls.menu:94
 msgid "Slot 5 - Special 1:"
-msgstr ""
+msgstr "Slot 5 — speciální 1:"
 
 #: etmain/ui/options_controls.menu:95
 msgid "Slot 6 - Special 2:"
-msgstr ""
+msgstr "Slot 6 — speciální 2:"
 
 #: etmain/ui/options_controls.menu:96
 msgid "Slot 7 - Special 3:"
-msgstr ""
+msgstr "Slot 7 — speciální 3:"
 
 #: etmain/ui/options_controls.menu:97
 msgid "Slot 8 - Binoculars:"
-msgstr ""
+msgstr "Slot 8 — dalekholed:"
 
 #: etmain/ui/options_controls.menu:101
 #: etmain/ui/options_customise_game.menu:77
 msgid "MISCELLANEOUS"
-msgstr "RUZNE"
+msgstr "RŮZNÉ"
 
 #: etmain/ui/options_controls.menu:102
 msgid "Vote Yes:"
@@ -2031,47 +2031,47 @@ msgstr "Hlasovat ne:"
 
 #: etmain/ui/options_controls.menu:105
 msgid "Record Replay:"
-msgstr ""
+msgstr "Nahrát záznam:"
 
 #: etmain/ui/options_controls.menu:109
 msgid "FIRE-TEAMS"
-msgstr "CETY"
+msgstr "ČETA"
 
 #: etmain/ui/options_controls.menu:110
 msgid "Select All Members:"
-msgstr "Vybrat vsechny cleny:"
+msgstr "Vybrat všechny členy:"
 
 #: etmain/ui/options_controls.menu:111
 msgid "Select Member #1:"
-msgstr "Vybrat clena #1:"
+msgstr "Vybrat člena #1:"
 
 #: etmain/ui/options_controls.menu:112
 msgid "Select Member #2:"
-msgstr "Vybrat clena #2:"
+msgstr "Vybrat člena #2:"
 
 #: etmain/ui/options_controls.menu:113
 msgid "Select Member #3:"
-msgstr "Vybrat clena #3:"
+msgstr "Vybrat člena #3:"
 
 #: etmain/ui/options_controls.menu:114
 msgid "Select Member #4:"
-msgstr "Vybrat clena #4:"
+msgstr "Vybrat člena #4:"
 
 #: etmain/ui/options_controls.menu:115
 msgid "Select Member #5:"
-msgstr "Vybrat clena #5:"
+msgstr "Vybrat člena #5:"
 
 #: etmain/ui/options_controls.menu:116
 msgid "Select Member #6:"
-msgstr "Vybrat clena #6:"
+msgstr "Vybrat člena #6:"
 
 #: etmain/ui/options_controls.menu:117
 msgid "Deselect All:"
-msgstr ""
+msgstr "Zrušit výběr:"
 
 #: etmain/ui/options_controls.menu:118
 msgid "Fire-Team Admin:"
-msgstr ""
+msgstr "Správa čety:"
 
 #: etmain/ui/options_customise_game.menu:29 etmain/ui/options.menu:32
 msgid "GAME"
@@ -2088,7 +2088,7 @@ msgstr "Přezdívka:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
-msgstr ""
+msgstr "Vlož svou přezdívku, pod kterou budeš znám mezi ostatními"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
@@ -2098,7 +2098,7 @@ msgstr "Jazyk:"
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr ""
+msgstr "Nastav si jazyk"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
@@ -2110,7 +2110,7 @@ msgstr "Vždy běžet:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toogle walk/run"
-msgstr ""
+msgstr "Přepne mezi chůzí a během"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -2122,51 +2122,51 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
-msgstr "ZBRANE"
+msgstr "ZBRANĚ"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatic Reload:"
-msgstr "Atomaticke prebiti:"
+msgstr "Automatické nabíjení:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Zbraň bude automaticky nabita, jestliže dojde k vyprázdnění zásobníku"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
-msgstr ""
+msgstr "Automatické přepnutí:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Automaticky se zvolí další zbraň, jestliže té současné dojde munice"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
-msgstr ""
+msgstr "Zář ikony zbraně:"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 barvy"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 barvy"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
-msgstr ""
+msgstr "Ikona zbraně se rozzáří při střelbě, nabíjení nebo přepínání"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
-msgstr ""
+msgstr "Záblesk výstřelů:"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Enables or disables weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Povolí zobrazení záblesků při střelbě"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
-msgstr "Stopy strel:"
+msgstr "Zobrazit letící kulky:"
 
 #: etmain/ui/options_customise_game.menu:51
 #: etmain/ui/options_customise_game.menu:78
@@ -2176,82 +2176,82 @@ msgstr "Stopy strel:"
 #: etmain/ui/options_customise_hud.menu:108
 #: etmain/ui/options_customise_hud.menu:109
 msgid "On"
-msgstr ""
+msgstr "Zapnuto"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "Pouze své"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "Pouze ostatních"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Nastavuje povolení zobrazení kulek během letu"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
-msgstr ""
+msgstr "ZBRAŇOVÁ OPTIKA"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Možnost změny přiblížení: "
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "Zapnuta (normální)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "Zapnuta (obrácený)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Určuje, zda-li cyklování mezi vybavením bude u optiky nahrazeno změnou úrovně přiblížení"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
-msgstr ""
+msgstr "Výchozí přiblížení:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "nejmenší"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Near"
-msgstr ""
+msgstr "malé"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Far"
-msgstr ""
+msgstr "větší"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "největší"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Nastavuje výchozí úroveň přiblížení pro optiku"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
-msgstr "Urovne priblizeni:"
+msgstr "Úrovně přiblížení:"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 úrovně přiblížení"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 úrovní přiblížení"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Udává velikost změny přiblížení"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
