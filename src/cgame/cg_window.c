@@ -371,7 +371,7 @@ void CG_windowDraw(void)
 			{
 				if (tmp > 0)
 				{
-					textColor[3] = (float)((float)t_offset / (float)w->targetTime);
+					textColor[3] = ((float)t_offset / (float)w->targetTime);
 				}
 				else
 				{
@@ -399,7 +399,7 @@ void CG_windowDraw(void)
 			{
 				if (tmp > 0)
 				{
-					textColor[3] -= (float)((float)t_offset / (float)w->targetTime);
+					textColor[3] -= ((float)t_offset / (float)w->targetTime);
 				}
 				else
 				{
@@ -422,15 +422,14 @@ void CG_windowDraw(void)
 		{
 			if (w->effects & WFX_TRUETYPE)
 			{
-				CG_Text_Paint_Ext(x, y + h, w->fontScaleX, w->fontScaleY, textColor,
-				                  (char *)w->lineText[j], 0.0f, 0, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, y + h, w->fontScaleX, w->fontScaleY, textColor, w->lineText[j], 0.0f, 0, 0, &cgs.media.limboFont2);
 			}
 
 			h -= (w->lineHeight[j] + 3);
 
 			if (!(w->effects & WFX_TRUETYPE))
 			{
-				CG_Text_Paint_Ext(x, y + h, cg_fontScaleSP.value, cg_fontScaleSP.value, textColor, (char *)w->lineText[j], 0, 0, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, y + h, cg_fontScaleSP.value, cg_fontScaleSP.value, textColor, w->lineText[j], 0, 0, 0, &cgs.media.limboFont2);
 			}
 		}
 	}
@@ -484,11 +483,11 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 	{
 		if (w->effects & WFX_TRUETYPE)
 		{
-			tmp = CG_Text_Width_Ext((char *)w->lineText[i], w->fontScaleX, 0, &cgs.media.limboFont2);
+			tmp = CG_Text_Width_Ext(w->lineText[i], w->fontScaleX, 0, &cgs.media.limboFont2);
 		}
 		else
 		{
-			tmp = CG_Text_Width_Ext((char *)w->lineText[i], cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+			tmp = CG_Text_Width_Ext(w->lineText[i], cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		}
 
 		if (tmp > w->w)
@@ -501,7 +500,7 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 	{
 		if (w->effects & WFX_TRUETYPE)
 		{
-			w->lineHeight[i] = CG_Text_Height_Ext((char *)w->lineText[i], w->fontScaleY, 0, &cgs.media.limboFont2);
+			w->lineHeight[i] = CG_Text_Height_Ext(w->lineText[i], w->fontScaleY, 0, &cgs.media.limboFont2);
 		}
 		else
 		{

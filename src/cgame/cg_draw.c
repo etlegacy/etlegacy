@@ -2727,7 +2727,7 @@ static void CG_DrawFlashZoomTransition(void)
 	{
 		vec4_t color;
 
-		frac = frac / (float)fadeTime;
+		frac = frac / fadeTime;
 		Vector4Set(color, 0, 0, 0, 1.0f - frac);
 		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, color);
 	}
