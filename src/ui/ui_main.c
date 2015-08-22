@@ -7590,7 +7590,7 @@ void _UI_Init(int legacyClient, int clientVersion)
 	uiInfo.serverStatus.currentServerCinematic = -1;
 	uiInfo.previewMovie                        = -1;
 
-	// init Yes/No once for cl_language -> server browser (punkbuster)
+	// init Yes/No once for cl_lang -> server browser (punkbuster)
 	Q_strncpyz(translated_yes, DC->translateString("Yes"), sizeof(translated_yes));
 	Q_strncpyz(translated_no, DC->translateString("NO"), sizeof(translated_no));
 

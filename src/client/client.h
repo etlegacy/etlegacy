@@ -409,9 +409,6 @@ extern cvar_t *cl_inGameVideo;
 
 extern cvar_t *cl_missionStats;
 
-// localization
-extern cvar_t *cl_language;
-
 extern cvar_t *cl_profile;
 extern cvar_t *cl_defaultProfile;
 
