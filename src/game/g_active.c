@@ -1883,7 +1883,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 				else
 				{
 					int savedScore = ent->client->ps.persistant[PERS_SCORE];
-					
+
 					ent->client->ps                        = cl->ps;
 					ent->client->ps.pm_flags              |= PMF_FOLLOW;
 					ent->client->ps.persistant[PERS_SCORE] = savedScore;

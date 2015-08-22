@@ -601,9 +601,25 @@ qboolean G_IsAllowedHeal(gentity_t *ent)
 		return qfalse;
 	}
 
-	if (ent->health <= 0 || ent->health >= ent->client->ps.stats[STAT_MAX_HEALTH])
+	if (ent->health <= 0)
 	{
 		return qfalse;
+	}
+
+	if (ent->client->sess.playerType == PC_MEDIC)
+	{
+		// medics can go up to 12% extra on max health
+		if (ent->client->ps.stats[STAT_HEALTH] >= (int)(ent->client->ps.stats[STAT_MAX_HEALTH] * 1.12))
+		{
+			return qfalse;
+		}
+	}
+	else
+	{
+		if (ent->client->ps.stats[STAT_HEALTH] >= ent->client->ps.stats[STAT_MAX_HEALTH])
+		{
+			return qfalse;
+		}
 	}
 
 	return qtrue;
@@ -632,7 +648,7 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	{
 		j = level.sortedClients[i];
 
-		if (level.clients[j].ps.stats[STAT_MAX_HEALTH] > g_entities[j].health && trap_EntityContactCapsule(g_entities[j].r.absmin, g_entities[j].r.absmax, self) && G_IsAllowedHeal(&g_entities[j]))
+		if (trap_EntityContactCapsule(g_entities[j].r.absmin, g_entities[j].r.absmax, self) && G_IsAllowedHeal(&g_entities[j]))
 		{
 			touchClients[clientcount] = &g_entities[j];
 			clientcount++;
@@ -646,7 +662,15 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	for (i = 0; i < clientcount; i++)
 	{
-		healvalue = MIN(touchClients[i]->client->ps.stats[STAT_MAX_HEALTH] - touchClients[i]->health, self->damage);
+		if (touchClients[i]->client->sess.playerType == PC_MEDIC)
+		{
+			healvalue = MIN((int)(touchClients[i]->client->ps.stats[STAT_MAX_HEALTH] * 1.12) - touchClients[i]->health, self->damage);
+		}
+		else
+		{
+			healvalue = MIN(touchClients[i]->client->ps.stats[STAT_MAX_HEALTH] - touchClients[i]->health, self->damage);
+		}
+
 		if (self->health != -9999)
 		{
 			healvalue = MIN(healvalue, self->health);
