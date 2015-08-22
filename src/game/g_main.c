@@ -1099,7 +1099,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 			case ET_GENERAL:
 			case ET_MG42_BARREL:
 			case ET_AAGUN:
-				hintType = HINT_FORCENONE;
+				//hintType = HINT_FORCENONE;
 
 				if (G_EmplacedGunIsMountable(traceEnt, ent))
 				{
@@ -1237,9 +1237,9 @@ void G_CheckForCursorHints(gentity_t *ent)
 					}
 					else
 					{
-						hintDist = CH_NONE_DIST;
-						hintType = ps->serverCursorHint = HINT_FORCENONE;
-						hintVal  = ps->serverCursorHintVal = 0;
+						//hintDist = CH_NONE_DIST;
+						//hintType = ps->serverCursorHint = HINT_FORCENONE;
+						//hintVal  = ps->serverCursorHintVal = 0;
 						return;
 					}
 				}

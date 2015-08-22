@@ -236,15 +236,13 @@ G_SendScore_Add
 qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 {
 	gclient_t *cl = &level.clients[level.sortedClients[i]];
-	int       ping, respawnsLeft = -1;
+	int       ping, respawnsLeft = cl->ps.persistant[PERS_RESPAWNS_LEFT]; // number of respawns left
 	char      entry[128];
 	int       totalXP   = 0;
 	int       miscFlags = 0; // 1 - ready 2 - is bot
 
 	entry[0] = '\0';
 
-	// number of respawns left
-	respawnsLeft = cl->ps.persistant[PERS_RESPAWNS_LEFT];
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		if (g_entities[level.sortedClients[i]].health <= 0)
@@ -2830,7 +2828,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 	if (mode == SAY_BUDDY)
 	{
 		char     buffer[32];
-		int      cls = -1, i, cnt, num;
+		int      cls, i, cnt, num;
 		qboolean allowclients[MAX_CLIENTS];
 
 		memset(allowclients, 0, sizeof(allowclients));
@@ -3857,7 +3855,7 @@ void Cmd_Activate_f(gentity_t *ent)
 	vec3_t    end;
 	gentity_t *traceEnt;
 	vec3_t    forward, right, up, offset;
-	qboolean  found = qfalse;
+	qboolean  found;
 	qboolean  pass2 = qfalse;
 
 	if (ent->health <= 0)
@@ -4038,7 +4036,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 	vec3_t    end;
 	gentity_t *traceEnt;
 	vec3_t    forward, right, up, offset;
-	qboolean  found = qfalse;
+	qboolean  found;
 	qboolean  pass2 = qfalse;
 
 	if (ent->health <= 0)  // uch
