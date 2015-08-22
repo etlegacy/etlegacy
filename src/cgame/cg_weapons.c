@@ -2604,13 +2604,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 
 		gun.hModel = weapon->weaponModel[W_TP_MODEL].model;
-		if ((team == TEAM_AXIS) &&
-		    weapon->weaponModel[W_TP_MODEL].skin[TEAM_AXIS])
+		if (team == TEAM_AXIS && weapon->weaponModel[W_TP_MODEL].skin[TEAM_AXIS])
 		{
 			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS];
 		}
-		else if ((team == TEAM_ALLIES) &&
-		         weapon->weaponModel[W_TP_MODEL].skin[TEAM_ALLIES])
+		else if (team == TEAM_ALLIES && weapon->weaponModel[W_TP_MODEL].skin[TEAM_ALLIES])
 		{
 			gun.customSkin = weapon->weaponModel[W_TP_MODEL].skin[TEAM_ALLIES];
 		}
@@ -3517,18 +3515,6 @@ void CG_AddViewWeapon(playerState_t *ps)
 WEAPON SELECTION
 ==============================================================================
 */
-
-#define WP_ICON_X       38  // new sizes per MK
-#define WP_ICON_X_WIDE  72  // new sizes per MK
-#define WP_ICON_Y       38
-#define WP_ICON_SPACE_Y 10
-#define WP_DRAW_X       SCREEN_WIDTH - WP_ICON_X - 4 // 4 is 'selected' border width
-#define WP_DRAW_X_WIDE  SCREEN_WIDTH - WP_ICON_X_WIDE - 4
-#define WP_DRAW_Y       4
-
-// secondary fire icons
-#define WP_ICON_SEC_X   18  // new sizes per MK
-#define WP_ICON_SEC_Y   18
 
 /*
 ==============
@@ -5112,7 +5098,6 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 {
 	int i;
 	int bank  = 0, cycle = 0;
-	int equiv = WP_NONE;
 
 	// trivial switching
 	if (cg.weaponSelect == WP_PLIERS || (cg.weaponSelect == WP_SATCHEL_DET && cg.predictedPlayerState.ammo[WP_SATCHEL_DET]))
@@ -5122,6 +5107,8 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 
 	if (allowforceswitch)
 	{
+		int equiv;
+
 		switch (cg.weaponSelect)
 		{
 		case WP_LANDMINE:
@@ -6090,7 +6077,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			if (clientNum)
 			{
 				// mark and sound can potentially use the surface for override values
-				mark   = cgs.media.bulletMarkShader;    // default
+				//mark   = cgs.media.bulletMarkShader;    // default
 				radius = 1.0f + 0.5f * (rand() % 2);
 
 				if ((surfFlags & SURF_METAL) || (surfFlags & SURF_ROOF))
