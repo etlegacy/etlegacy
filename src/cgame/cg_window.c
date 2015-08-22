@@ -34,7 +34,6 @@
  */
 
 #include "cg_local.h"
-#include "../ui/ui_shared.h"
 
 #if FEATURE_MULTIVIEW
 extern pmove_t cg_pmove;        // cg_predict.c
