@@ -667,6 +667,7 @@ typedef struct weaponInfo_s
 	sfxHandle_t lastShotSound[4];       // sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
 
 	qhandle_t weaponIcon[2];            // [0] is weap icon, [1] is highlight icon
+	int       weaponIconScale;
 
 	qhandle_t missileModel;
 	qhandle_t missileAlliedSkin;
@@ -3033,8 +3034,6 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect);
 clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos);
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
-
-int CG_WeaponIconScale(int weap); // FIXME: weapon table
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
 #define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), 400, cg_fontScaleCP.value)

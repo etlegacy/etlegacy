@@ -215,13 +215,14 @@ static void CG_Obituary(entityState_t *ent)
 				if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
 				{
 					weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[0];
-					scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+					scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
 				}
 				else if (cg_weapons[WP_BINOCULARS].weaponIcon[1])
 				{
 					weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
-					scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+					scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
 				}
+				
 				break;
 			case MOD_CRUSH_CONSTRUCTION:
 			case MOD_CRUSH_CONSTRUCTIONDEATH:
@@ -229,12 +230,12 @@ static void CG_Obituary(entityState_t *ent)
 				if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_PLIERS].weaponIcon[0])
 				{
 					weaponShader = cg_weapons[WP_PLIERS].weaponIcon[0];
-					scaleShader  = CG_WeaponIconScale(WP_PLIERS);
+					scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
 				}
 				else if (cg_weapons[WP_PLIERS].weaponIcon[1])
 				{
 					weaponShader = cg_weapons[WP_PLIERS].weaponIcon[1];
-					scaleShader  = CG_WeaponIconScale(WP_PLIERS);
+					scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
 				}
 				break;
 			case MOD_WATER:
@@ -254,15 +255,15 @@ static void CG_Obituary(entityState_t *ent)
 				scaleShader  = 1;
 				break;
 			default:
-				if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+				if (IS_VALID_WEAPON(weapon) && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
 				{
 					weaponShader = cg_weapons[weapon].weaponIcon[0];
-					scaleShader  = CG_WeaponIconScale(weapon);
+					scaleShader  = cg_weapons[weapon].weaponIconScale;
 				}
-				else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
+				else if (IS_VALID_WEAPON(weapon) && cg_weapons[weapon].weaponIcon[1])
 				{
 					weaponShader = cg_weapons[weapon].weaponIcon[1];
-					scaleShader  = CG_WeaponIconScale(weapon);
+					scaleShader  = cg_weapons[weapon].weaponIconScale;
 				}
 				break;
 			}
@@ -538,37 +539,38 @@ static void CG_Obituary(entityState_t *ent)
 					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
 					{
 						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[0];
-						scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+						scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
 					}
 					else if (cg_weapons[WP_BINOCULARS].weaponIcon[1])
 					{
 						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
-						scaleShader  = CG_WeaponIconScale(WP_BINOCULARS);
+						scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
 					}
+					
 					break;
 				case MOD_MACHINEGUN:
 				case MOD_MG42:
 					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_MOBILE_MG42].weaponIcon[0])
 					{
 						weaponShader = cg_weapons[WP_MOBILE_MG42].weaponIcon[0];
-						scaleShader  = CG_WeaponIconScale(WP_MOBILE_MG42);
+						scaleShader  = cg_weapons[WP_MOBILE_MG42].weaponIconScale;
 					}
 					else if (cg_weapons[WP_MOBILE_MG42].weaponIcon[1])
 					{
 						weaponShader = cg_weapons[WP_MOBILE_MG42].weaponIcon[1];
-						scaleShader  = CG_WeaponIconScale(WP_MOBILE_MG42);
+						scaleShader  = cg_weapons[WP_MOBILE_MG42].weaponIconScale;
 					}
 					break;
 				case MOD_BROWNING:
 					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_MOBILE_BROWNING].weaponIcon[0])
 					{
 						weaponShader = cg_weapons[WP_MOBILE_BROWNING].weaponIcon[0];
-						scaleShader  = CG_WeaponIconScale(WP_MOBILE_MG42);
+						scaleShader  = cg_weapons[WP_MOBILE_BROWNING].weaponIconScale;
 					}
 					else if (cg_weapons[WP_MOBILE_BROWNING].weaponIcon[1])
 					{
 						weaponShader = cg_weapons[WP_MOBILE_BROWNING].weaponIcon[1];
-						scaleShader  = CG_WeaponIconScale(WP_MOBILE_BROWNING);
+						scaleShader  = cg_weapons[WP_MOBILE_BROWNING].weaponIconScale;
 					}
 					break;
 				case MOD_CRUSH_CONSTRUCTION:
@@ -576,12 +578,12 @@ static void CG_Obituary(entityState_t *ent)
 					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_PLIERS].weaponIcon[0])
 					{
 						weaponShader = cg_weapons[WP_PLIERS].weaponIcon[0];
-						scaleShader  = CG_WeaponIconScale(WP_PLIERS);
+						scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
 					}
 					else if (cg_weapons[WP_PLIERS].weaponIcon[1])
 					{
 						weaponShader = cg_weapons[WP_PLIERS].weaponIcon[1];
-						scaleShader  = CG_WeaponIconScale(WP_PLIERS);
+						scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
 					}
 					break;
 				case MOD_SHOVE:
@@ -589,15 +591,15 @@ static void CG_Obituary(entityState_t *ent)
 					scaleShader  = 1;
 					break;
 				default:
-					if (weapon != WP_NONE && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+					if (IS_VALID_WEAPON(weapon) && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
 					{
 						weaponShader = cg_weapons[weapon].weaponIcon[0];
-						scaleShader  = CG_WeaponIconScale(weapon);
+						scaleShader  = cg_weapons[weapon].weaponIconScale;
 					}
-					else if (weapon != WP_NONE && cg_weapons[weapon].weaponIcon[1])
+					else if (IS_VALID_WEAPON(weapon) && cg_weapons[weapon].weaponIcon[1])
 					{
 						weaponShader = cg_weapons[weapon].weaponIcon[1];
-						scaleShader  = CG_WeaponIconScale(weapon);
+						scaleShader  = cg_weapons[weapon].weaponIconScale;
 					}
 					break;
 				}

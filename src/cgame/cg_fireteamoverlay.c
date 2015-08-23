@@ -313,48 +313,6 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 #define FT_BAR_YSPACING 2.f
 #define FT_BAR_HEIGHT   10.f
 
-// FIXME: weapon table
-int CG_WeaponIconScale(int weap)
-{
-	switch (weap)
-	{
-	// weapons with 'wide' icons
-	case WP_THOMPSON:
-	case WP_MP40:
-	case WP_STEN:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_FLAMETHROWER:
-	case WP_GARAND:
-	case WP_FG42:
-	case WP_FG42SCOPE:
-	case WP_KAR98:
-	case WP_GPG40:
-	case WP_CARBINE:
-	case WP_M7:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-	case WP_K43:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-	case WP_MORTAR:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2:
-	case WP_MORTAR2_SET:
-	case WP_SILENCED_COLT:
-	case WP_SILENCER:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_AKIMBO_SILENCEDLUGER:
-		return 2;
-	}
-
-	return 1;
-}
-
 /*
 CG_DrawFireTeamOverlay
     based on NQ CG_DrawFireTeamOverlay
@@ -580,13 +538,14 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			curWeap = cg_entities[ci->clientNum].currentState.weapon;
 		}
 
-		if (cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
+		// note: WP_NONE is excluded
+		if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 		{
-			CG_DrawPic(x, y, CG_WeaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
+			CG_DrawPic(x, y, cg_weapons[curWeap].weaponIconScale * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
 		}
-		else if (cg_weapons[curWeap].weaponIcon[1])
+		else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 		{
-			CG_DrawPic(x, y, CG_WeaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[1]);
+			CG_DrawPic(x, y, cg_weapons[curWeap].weaponIconScale * 10, 10, cg_weapons[curWeap].weaponIcon[1]);
 		}
 
 		x += 24;

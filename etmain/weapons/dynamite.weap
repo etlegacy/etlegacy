@@ -24,6 +24,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_dynamite"
+		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_dynamite_1_select"
 		
 		missileModel		"models/multiplayer/dynamite/dynamite.md3"

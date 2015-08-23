@@ -24,6 +24,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_smokegrenade"
+		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_smokegrenade_1_select"
 		
 		missileModel		"models/multiplayer/smokegrenade/smokegrenade.md3"

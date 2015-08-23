@@ -24,6 +24,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_bazooka"
+		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_bazooka_1_select"
 		
 		missileModel		"models/weapons2/bazooka/bazooka_rocket.md3"

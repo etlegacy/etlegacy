@@ -25,6 +25,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_mg42"
+		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mg42_1_select"
 		
 		//missileModel		""

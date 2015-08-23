@@ -24,6 +24,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_binoculars"
+		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_binoculars_1_select.tga"
 		
 		//missileModel		""

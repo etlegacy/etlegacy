@@ -25,6 +25,7 @@ weaponDef
 		switchSound			"sound/weapons/k43/k43_grenade_off.wav"	// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_kar98"
+		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_kar98_1_select"
 		
 		//missileModel		""

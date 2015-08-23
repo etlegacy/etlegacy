@@ -24,6 +24,7 @@ weaponDef
 		switchSound			"sound/weapons/mortar/mortar_on.wav"		// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_mortar"
+		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mortar_1_select"
 		
 		missileModel		"models/multiplayer/mortar/mortar_shell.md3"

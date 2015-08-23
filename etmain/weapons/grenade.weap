@@ -24,6 +24,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_grenade"
+		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_grenade_1_select"
 		
 		missileModel		"models/ammo/grenade1.md3"

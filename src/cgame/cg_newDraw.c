@@ -201,7 +201,6 @@ CG_DrawPlayerWeaponIcon
 */
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor)
 {
-	int       size;
 	int       realweap;
 	qhandle_t icon;
 	float     scale, halfScale;
@@ -228,13 +227,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	else
 	{
 		realweap = cg.predictedPlayerState.weapon;
-	}
-
-	size = CG_WeaponIconScale(realweap);
-
-	if (!size)
-	{
-		return;
 	}
 
 	// we don't have icon[0];
@@ -294,7 +286,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	{
 		float x, y, w, h;
 
-		if (size == 1)     // draw half width to match the icon asset
+		if (IS_VALID_WEAPON(realweap) && cg_weapons[realweap].weaponIconScale == 1)     // draw half width to match the icon asset
 		{   // start at left
 			x = rect->x - halfScale;
 			y = rect->y - halfScale;

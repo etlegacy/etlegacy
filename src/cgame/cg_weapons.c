@@ -1613,6 +1613,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				weaponInfo->weaponIcon[0] = trap_R_RegisterShader(filename);
 			}
 		}
+		else if (!Q_stricmp(token.string, "weaponIconScale"))
+		{
+			if (!PC_Int_Parse(handle, &weaponInfo->weaponIconScale))
+			{
+				return CG_RW_ParseError(handle, "expected weaponIconScale filename");
+			}
+		}
 		else if (!Q_stricmp(token.string, "weaponSelectedIcon"))
 		{
 			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
@@ -1990,6 +1997,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case VERYBIGEXPLOSION:
 	case WP_DUMMY_MG42:
 		//CG_Printf(S_COLOR_YELLOW "WARNING: skipping weapon %i to register.\n", weaponNum);
+		weaponInfo->weaponIconScale = 1;
 		return;     // to shut the game up
 	default:
 		CG_Printf(S_COLOR_RED "WARNING: trying to register weapon %i but there is no weapon file entry for it.\n", weaponNum);

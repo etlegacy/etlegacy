@@ -24,6 +24,7 @@ weaponDef
 		switchSound			"sound/weapons/misc/silence_off.wav"	// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_colt"
+		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_colt_1_select"
 		
 		//missileModel		""

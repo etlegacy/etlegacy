@@ -24,6 +24,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_landmine"
+		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_landmine_1_select"
 		
 		missileModel		"models/multiplayer/landmine/landmine.md3"

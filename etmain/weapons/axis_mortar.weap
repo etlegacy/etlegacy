@@ -24,8 +24,9 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		switchSound			"sound/weapons/mortar/mortar_off.wav"		// allow overriding of weaponswitch sound
 		
-		weaponIcon				"icons/iconw_mortar_ax"
-		weaponSelectedIcon		"icons/iconw_mortar_ax_1_select"
+		weaponIcon			"icons/iconw_mortar_ax"
+		weaponIconScale		2
+		weaponSelectedIcon	"icons/iconw_mortar_ax_1_select"
 		
 		//missileModel		""
 		//missileSound		""

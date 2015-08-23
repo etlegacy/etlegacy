@@ -25,6 +25,7 @@ weaponDef
 		switchSound			"sound/weapons/garand/m1_grenade_off.wav"	// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_m1_garand"
+		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_m1_garand_1_select"
 		
 		//missileModel		""

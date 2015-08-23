@@ -26,6 +26,7 @@ weaponDef
 		//switchSound		""									// allow overriding of weaponswitch sound
 		
 		weaponIcon			"icons/iconw_knife_kbar"
+		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_knife_kbar_1_select"
 		
 		//missileModel		""
