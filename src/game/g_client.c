@@ -376,6 +376,118 @@ void BodySink(gentity_t *ent)
 	BodySink2(ent);
 }
 
+#ifdef FEATURE_SERVERMDX
+
+static qboolean G_IsPositionOK(gentity_t *ent, vec3_t newOrigin)
+{
+	trace_t	trace;
+
+	trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, MASK_PLAYERSOLID);
+
+	if (trace.fraction == 1)
+	{
+		VectorCopy (trace.endpos, ent->s.pos.trBase);
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
+
+// note that this is only with first stage, corpse can just use slidemove
+static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
+{
+	vec3_t		start, down, up;
+	trace_t		trace;
+
+	VectorCopy(ent->s.pos.trBase, start);
+
+	if (G_IsPositionOK(ent, newOrigin))
+	{
+		// so check if we can fall even more down
+		VectorCopy (ent->s.pos.trBase, down);
+		down[2] -= 16;
+		// item code is using these
+		trap_Trace(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
+		if (trace.fraction == 1)
+		{
+			// begin with falling again
+			ent->s.pos.trType = TR_GRAVITY;
+			ent->s.pos.trTime = level.time;
+		}
+		else
+		{
+			VectorCopy (trace.endpos, ent->s.pos.trBase);
+		}
+
+		return;		// we got exactly where we wanted to go first try
+	}
+
+	VectorCopy(ent->s.pos.trBase, down);
+
+	down[2] -= 18;
+
+	trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
+
+	VectorSet(up, 0, 0, 1);
+	// never step up when you still have up velocity
+	if (ent->s.pos.trDelta[2] > 0 && (trace.fraction == 1.0 || DotProduct(trace.plane.normal, up) < 0.7))
+	{
+		return;
+	}
+
+	VectorCopy(ent->s.pos.trBase, down);
+
+	VectorCopy(start, up);
+	up[2] += 18;
+
+	// test the player position if they were a stepheight higher
+	trap_TraceCapsule(&trace, start, ent->r.mins, ent->r.maxs, up, ent->s.number, MASK_PLAYERSOLID);
+
+	if (trace.allsolid)
+	{
+		return;		// can't step up
+	}
+
+	// try slidemove from this position
+	VectorCopy (trace.endpos, ent->s.pos.trBase);
+
+	G_IsPositionOK(ent, newOrigin);
+
+	// push down the final amount
+	VectorCopy(ent->s.pos.trBase, down);
+	down[2] -= 18;
+
+	memset(&trace, 0, sizeof(trace));
+
+	trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
+
+	if (!trace.allsolid)
+	{
+		VectorCopy(trace.endpos, ent->s.pos.trBase);
+	}
+
+	// so check if we can fall even more down
+	if (trace.fraction == 1.f)
+	{
+		down[2] -= 16;
+		// item code is using these
+		trap_Trace(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
+		if (trace.fraction == 1)
+		{
+			// begin with falling again
+			ent->s.pos.trType = TR_GRAVITY;
+			ent->s.pos.trTime = level.time;
+		}
+		else
+		{
+			VectorCopy(trace.endpos, ent->s.pos.trBase);
+		}
+	}
+}
+#endif
+
 /*
 =============
 CopyToBodyQue
@@ -475,8 +587,7 @@ void CopyToBodyQue(gentity_t *ent)
 
 	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
 
-//#ifdef FEATURE_SERVERMDX
-#if 0
+#ifdef FEATURE_SERVERMDX
 	if (ent->client->deathAnim)
 	{
 		vec3_t       origin, offset;
@@ -510,7 +621,6 @@ void CopyToBodyQue(gentity_t *ent)
 		VectorCopy(body->r.currentOrigin, body->s.pos.trBase);
 	}
 #endif
-
 
 	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
 	// allow bullets to pass through bbox

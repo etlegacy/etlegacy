@@ -893,6 +893,9 @@ struct gclient_s
 
 	int lastSpammyCentrePrintTime;
 	pmoveExt_t pmext;
+#ifdef FEATURE_SERVERMDX
+	qboolean deathAnim;				// if true body has effect1Time set so death animation may start
+#endif
 	int deathAnimTime;              // time when anim ends
 
 	int deathTime;                  // if we are dead, when did we die
