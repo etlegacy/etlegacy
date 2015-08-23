@@ -897,11 +897,13 @@ extern int weapAlts[];  // defined in bg_misc.c
 
 // FIXME: weapon table - put following macros in
 #define IS_RIFLENADE_WEAPON(w) \
-	(w == WP_GPG40               || w == WP_M7)
+	(w == WP_CARBINE             || w ==WP_KAR98)
 
 #define IS_RIFLE_AND_NADE_WEAPON(w) \
-	(w == WP_CARBINE             || w ==  WP_KAR98 || \
-	 IS_RIFLENADE_WEAPON(w))
+	(w == WP_GPG40               || w ==  WP_M7)
+
+#define IS_RIFLE_WEAPON(w) \
+	IS_RIFLENADE_WEAPON(w) || IS_RIFLE_AND_NADE_WEAPON(w)
 
 #define IS_PANZER_WEAPON(w) \
 	(w == WP_PANZERFAUST         || w == WP_BAZOOKA)
