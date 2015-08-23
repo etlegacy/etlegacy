@@ -800,11 +800,11 @@ void CG_GameStatsDraw(void)
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Skills"), 0.0f, 0, hStyle2, hFont2);
 		x += 84;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Level"), 0.0f, 0, hStyle2, hFont2);
-		x += 40;
+		x += 76;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("XP / Next Level"), 0.0f, 0, hStyle2, hFont2);
 		if (cgs.gametype == GT_WOLF_CAMPAIGN)
 		{
-			x += 86;
+			x += 108;
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Medals"), 0.0f, 0, hStyle2, hFont2);
 		}
 

@@ -1906,20 +1906,20 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 			if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
 			{
-				str = va("%4d/%-4d", ci->skillpoints[i], skillLevels[i][ci->skill[i] + 1]);
+				str = va("%10d/%-10d", ci->skillpoints[i], skillLevels[i][ci->skill[i] + 1]);
 			}
 			else
 			{
-				str = va("%-8d", ci->skillpoints[i]);
+				str = va("%10d", ci->skillpoints[i]);
 			}
 
 			if (cgs.gametype == GT_WOLF_CAMPAIGN)
 			{
-				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-15s %6d", skillNames[i], ci->skill[i], str, ci->medals[i]), sizeof(gs->strSkillz[0]));
+				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-24s %6d", skillNames[i], ci->skill[i], str, ci->medals[i]), sizeof(gs->strSkillz[0]));
 			}
 			else
 			{
-				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-15s", skillNames[i], ci->skill[i], str), sizeof(gs->strSkillz[0]));
+				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-24s", skillNames[i], ci->skill[i], str), sizeof(gs->strSkillz[0]));
 			}
 		}
 	}
