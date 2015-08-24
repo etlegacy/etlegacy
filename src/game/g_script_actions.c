@@ -483,7 +483,7 @@ qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_ScriptAction_StartAnimation: startanimation fps rate must have a value > 0\n");
+		G_Error("G_ScriptAction_StartAnimation: startanimation fps rate of entity %s %s must have a value > 0\n", ent->classname, ent->targetname);
 	}
 
 	while (token[0])
