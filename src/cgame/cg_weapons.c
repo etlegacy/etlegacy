@@ -4523,7 +4523,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	// initially, just try to find a lower weapon in the current bank
 	if (cg_cycleAllWeaps.integer || !switchBanks)
 	{
-		for (i = cycle; i >= 0; i--)
+		for (i = MAX_WEAPS_IN_BANK_MP; i >= 0; i--)
 		{
 			num = getPrevWeapInBankBynum(num);
 
