@@ -1048,9 +1048,6 @@ typedef struct level_locals_s
 	int reloadPauseTime;                // don't think AI/client's until this time has elapsed
 	int reloadDelayTime;                // don't start loading the savegame until this has expired
 
-	int capturetimes[4];         // red, blue, none, spectator for WOLF_MP_CPH - this isn't used
-	int redReinforceTime, blueReinforceTime;         // last time reinforcements arrived in ms
-	int redNumWaiting, blueNumWaiting;         // number of reinforcements in queue
 	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];      // coordinates of spawn targets
 	int numspawntargets;         // # spawntargets in this map
 

@@ -1094,19 +1094,6 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace);
 
 void checkpoint_hold_think(gentity_t *self)
 {
-	switch (self->s.frame)
-	{
-	case WCP_ANIM_RAISE_AXIS:
-	case WCP_ANIM_AXIS_RAISED:
-		level.capturetimes[TEAM_AXIS]++;
-		break;
-	case WCP_ANIM_RAISE_AMERICAN:
-	case WCP_ANIM_AMERICAN_RAISED:
-		level.capturetimes[TEAM_ALLIES]++;
-		break;
-	default:
-		break;
-	}
 	self->nextthink = level.time + 5000;
 }
 

@@ -103,9 +103,6 @@ void PM_AddEvent(int newEvent);
 qboolean PM_SlideMove(qboolean gravity);
 void PM_StepSlideMove(qboolean gravity);
 
-qboolean PM_SlideMoveProne(qboolean gravity);
-void PM_StepSlideMoveProne(qboolean gravity);
-
 void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload);
 
 #endif // #ifndef INCLUDE_BG_LOCAL_H

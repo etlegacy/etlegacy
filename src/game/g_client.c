@@ -313,7 +313,9 @@ void BodyUnlink(gentity_t *ent)
 
 void G_BodyDP(gentity_t *ent)
 {
-	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+	gentity_t *tent;
+
+	tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
 
 	tent->s.otherEntityNum2 = ent->s.number;
 	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
@@ -386,7 +388,7 @@ static qboolean G_IsPositionOK(gentity_t *ent, vec3_t newOrigin)
 
 	if (trace.fraction == 1)
 	{
-		VectorCopy (trace.endpos, ent->s.pos.trBase);
+		VectorCopy(trace.endpos, ent->s.pos.trBase);
 		return qtrue;
 	}
 	else
@@ -406,7 +408,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 	if (G_IsPositionOK(ent, newOrigin))
 	{
 		// so check if we can fall even more down
-		VectorCopy (ent->s.pos.trBase, down);
+		VectorCopy(ent->s.pos.trBase, down);
 		down[2] -= 16;
 		// item code is using these
 		trap_Trace(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
@@ -418,7 +420,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 		}
 		else
 		{
-			VectorCopy (trace.endpos, ent->s.pos.trBase);
+			VectorCopy(trace.endpos, ent->s.pos.trBase);
 		}
 
 		return;		// we got exactly where we wanted to go first try
@@ -451,7 +453,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 	}
 
 	// try slidemove from this position
-	VectorCopy (trace.endpos, ent->s.pos.trBase);
+	VectorCopy(trace.endpos, ent->s.pos.trBase);
 
 	G_IsPositionOK(ent, newOrigin);
 
@@ -839,17 +841,6 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			{
 				ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
 			}
-		}
-
-		if (ent->client->sess.sessionTeam == TEAM_AXIS)
-		{
-			ent->client->deployQueueNumber = level.redNumWaiting;
-			level.redNumWaiting++;
-		}
-		else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
-		{
-			ent->client->deployQueueNumber = level.blueNumWaiting;
-			level.blueNumWaiting++;
 		}
 
 		for (i = 0; i < level.numConnectedClients; i++)
@@ -1592,12 +1583,6 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 				break;
 			}
 
-			// don't allow black in a name, period
-/*			if( ColorIndex(*in) == 0 ) {
-                in++;
-                continue;
-            }
-*/
 			// make sure room in dest for both chars
 			if (len > outSize - 2)
 			{
