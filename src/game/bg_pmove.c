@@ -2894,6 +2894,11 @@ void PM_CheckForReload(int weapon)
 		return;
 	}
 
+	if (pm->ps->eFlags & EF_ZOOMING)
+	{
+		return;
+	}
+
 	switch (pm->ps->weaponstate)
 	{
 	case WEAPON_RAISING:
