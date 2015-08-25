@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-17 11:09+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-08-24 17:47+0000\n"
+"Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3417,7 +3417,7 @@ msgstr "SISTEMA"
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
-msgstr "UDIO"
+msgstr "AUDIO"
 
 #: etmain/ui/options_system.menu:41
 msgid "Effects Volume:"
@@ -3735,7 +3735,7 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr "Por favor elige tus ajustes iniciales abajo. Puede cambiarlos en cualquier momento y acceder a opciones más avanzadas visitando el Menú de Opciones. Si desea jugar más de una persona a Enemy Territory: Legacy, puede crear perfiles adicionales visitando el Menú de Perfiles"
+msgstr "Por favor elige tus ajustes iniciales abajo. Puede cambiarlos en cualquier momento y acceder a opciones más avanzadas visitando el Menú de Opciones. Si desea jugar más de una persona a Enemy Territory: Legacy, puede crear perfiles adicionales visitando el Menú de Perfil"
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
@@ -4633,11 +4633,11 @@ msgstr "VOTAR(%i): %s"
 #: src/cgame/cg_draw.c:1905
 #, c-format
 msgid "YES:%i, NO:%i"
-msgstr ""
+msgstr "SI:%i, NO:%i"
 
 #: src/cgame/cg_draw.c:1909
 msgid "Can't vote as Spectator"
-msgstr ""
+msgstr "No puedes votar como espectador"
 
 #: src/cgame/cg_draw.c:1913
 #, c-format
@@ -5188,22 +5188,22 @@ msgstr "Elegir Automáticamente"
 #: src/cgame/cg_servercmds.c:1875
 #, c-format
 msgid "Damage Given: %6d      Team Damage Given: %6d"
-msgstr ""
+msgstr "Daño hecho: %6d Daño al Equipo: %6d"
 
 #: src/cgame/cg_servercmds.c:1876
 #, c-format
 msgid "Damage Recvd: %6d      Team Damage Recvd: %6d"
-msgstr ""
+msgstr "Daño recibido: %6d Daño rec. por Equipo: %6d"
 
 #: src/cgame/cg_servercmds.c:1878
 #, c-format
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
-msgstr ""
+msgstr "Matados: %3d Mat. Equipo: %3d Puntería: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
 msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
-msgstr ""
+msgstr "Muertes %3d Suicidios: %3d En la cabeza: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
@@ -5507,7 +5507,7 @@ msgid "Improved Construction and Destruction"
 msgstr "Mejorada la construcción y destrucción"
 
 msgid "Full Revive"
-msgstr "Resucitar completamente"
+msgstr "curación completa"
 
 msgid "Improved Air and Ground Support"
 msgstr "Mejorado el soporte aéreo y terrestre"
@@ -5569,7 +5569,7 @@ msgid "No or bad challenge for address.\n"
 msgstr "No hay partida o es incorrecta para esta dirección\n"
 
 msgid "Match is already in progress!\n"
-msgstr "La partida ya ha comenzado!\n"
+msgstr "¡La partida ya ha comenzado!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
 msgstr "^1** Árbitro ajustando un cambio del servidor **\n"
@@ -5877,7 +5877,7 @@ msgid "Affirmative!!"
 msgstr "¡Afirmativo!"
 
 msgid "^1Spam Protection^7: VoiceChat ignored"
-msgstr ""
+msgstr "^1Protección anti-spam^7: Chat de voz ignorado"
 
 msgid "Mines have been reported in this area."
 msgstr "Se han reportado minas en esta zona."
@@ -5886,34 +5886,34 @@ msgid "'s Landmine"
 msgstr " "
 
 msgid "'s Mobile MG 42"
-msgstr ""
+msgstr "y su MG 42 móvil"
 
 msgid "'s Mobile Browning"
-msgstr ""
+msgstr "y su Browning móvil"
 
 msgid "'s rifle grenade"
-msgstr ""
+msgstr "y su lanzagranadas "
 
 msgid "'s support fire"
-msgstr ""
+msgstr "y su soporte de artillería"
 
 msgid "'s crew-served MG"
-msgstr ""
+msgstr "y su crew-served MG"
 
 msgid "was thrown to his doom by"
-msgstr ""
+msgstr "fue lanzado a su suerte por"
 
 msgid "You have been revived by "
-msgstr "Has sido revivido por"
+msgstr "Te ha curado "
 
 msgid "Constructing..."
 msgstr "Construyendo..."
 
 msgid "Allied Command Post constructed. Charge speed increased!"
-msgstr ""
+msgstr "Puesto de Comando Aliado construido. ¡Velocidad de carga aumentada!"
 
 msgid "Axis Command Post constructed. Charge speed increased!"
-msgstr ""
+msgstr "Puesto de Comando Eje construido. ¡Velocidad de carga aumentada!"
 
 msgid ""
 "^3All players ready!^7\n"
@@ -6030,25 +6030,25 @@ msgid "Invalid client selected"
 msgstr "Cliente inválido seleccionado"
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam admin <clientname|clientnumber>"
 
 msgid "usage: fireteam propose <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam propose <clientname|clientnumber>"
 
 msgid "usage: fireteam kick <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam kick <clientname|clientnumber>"
 
 msgid "usage: fireteam warn <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam warn <clientname|clientnumber>"
 
 msgid "usage: fireteam invite <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam invite <clientname|clientnumber>"
 
 msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
-msgstr ""
+msgstr "uso: fireteam apply <fireteamname|fireteamnumber>"
 
 msgid "usage: fireteam <create|leave|apply|invite>"
-msgstr ""
+msgstr "uso: fireteam <create|leave|apply|invite>"
 
 msgid "You are already on a fireteam, leave it first"
 msgstr "Ya estás en una escuadra, abandónala primero"
@@ -6075,7 +6075,7 @@ msgstr "^3Comandos de árbitro:^7\n------------------------------------------\n"
 msgid ""
 "Usage: ^3\\ref <cmd> [params]\n"
 "\n"
-msgstr ""
+msgstr "Uso: ^3\\ref <cmd> [params]\n\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
 msgstr ""
@@ -6096,25 +6096,25 @@ msgid "You have UNLOCKED teams\n"
 msgstr "Has DESBLOQUEADO los equipos\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr ""
+msgstr "¡El equipo ^4Aliado^7 está bloqueado!\n\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
-msgstr ""
+msgstr "¡El equipo ^1Eje^7 está bloqueado!\n\n"
 
 msgid "^3Referee ^1PAUSED^3 the match^3!\n"
-msgstr ""
+msgstr "^3¡Un árbitro ha ^1PAUSADO^3 la partida^3!\n"
 
 msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
-msgstr ""
+msgstr "^3La partida se ha ^1PAUSADO^3! (^7Referee^3)\n"
 
 msgid "The match is already ^1PAUSED!\n"
-msgstr ""
+msgstr "¡La partida ya se ha ^1PAUSADO!\n"
 
 msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
 msgstr ""
 
 msgid "The match is already ^5UNPAUSED!\n"
-msgstr ""
+msgstr "¡La partida ya se ha ^5RENAUDADO!\n"
 
 msgid "Bad client slot: "
 msgstr ""
@@ -6126,13 +6126,13 @@ msgid "is not active\n"
 msgstr "no está activo\n"
 
 msgid "You can only remove people in the game!\n"
-msgstr ""
+msgstr "¡Solo puedes eliminar jugadores!\n"
 
 msgid "User "
 msgstr "Usuario"
 
 msgid "is not on the server\n"
-msgstr ""
+msgstr "no está en el servidor\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
 msgstr ""
@@ -6147,16 +6147,16 @@ msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
 msgstr ""
 
 msgid "usage: ref warn <clientname> [reason].\n"
-msgstr ""
+msgstr "uso: ref warn <clientname> [reason].\n"
 
 msgid "Client not on server.\n"
-msgstr ""
+msgstr "El cliente no está en el servidor.\n"
 
 msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
-msgstr ""
+msgstr "%s^7ha recibido un ^1Aviso^7 (Ningún motivo especificado)\n"
 
 msgid "Cannot mute a referee.\n"
-msgstr ""
+msgstr "No puedes silenciar un árbitro.\n"
 
 msgid "^5You've been muted\n"
 msgstr "^5Has sido silenciado\n\n"
@@ -6173,7 +6173,7 @@ msgstr ""
 
 msgid ""
 "^7----------------------------------------------------------------------\n"
-msgstr ""
+msgstr "^7----------------------------------------------------------------------\n"
 
 msgid ""
 "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
@@ -6182,45 +6182,45 @@ msgstr ""
 
 msgid ""
 "^7-------------------------------------------------------------------------------\n"
-msgstr ""
+msgstr "^7-------------------------------------------------------------------------------\n"
 
 msgid ""
 "^5\n"
 "Available Game Commands:\n"
 "------------------------\n"
-msgstr ""
+msgstr "^5\nComandos disponibles:\n------------------------\n"
 
 msgid ""
 "\n"
 "Type: ^3\\command_name ?^7 for more information\n"
-msgstr ""
+msgstr "\nEscribe: ^3\\nombre_del_comando ?^7  para más información\n"
 
 msgid "Spectators can't lock a team!\n"
-msgstr ""
+msgstr "¡Los espectadores no pueden bloquear un equipo!\n"
 
 msgid "The ^4Allies^7 team is now locked!\n"
-msgstr ""
+msgstr "¡El equipo ^4Aliado^7 ahora está bloqueado!\n\n"
 
 msgid "^3Your team is already locked!\n"
-msgstr ""
+msgstr "^3Tu equipo ya está bloqueado!\n"
 
 msgid "The ^4Allies^7 team is now unlocked!\n"
-msgstr ""
+msgstr "¡El equipo ^4Aliado^7 ahora está desbloqueado!\n"
 
 msgid "^3Your team is already unlocked!\n"
-msgstr ""
+msgstr "^3Tu equipo ya está desbloqueado!\n"
 
 msgid "Spectators can't unlock a team!\n"
-msgstr ""
+msgstr "¡Los espectadores no pueden desbloquear un equipo!\n"
 
 msgid "The ^1Axis^7 team is now locked!\n"
-msgstr ""
+msgstr "¡El equipo ^1Eje^7 ahora está bloqueado!\n\n"
 
 msgid "The ^1Axis^7 team is now unlocked!\n"
-msgstr ""
+msgstr "¡El equipo ^1Eje^7 ahora está desbloqueado!\n"
 
 msgid "Team commands not enabled on this server.\n"
-msgstr ""
+msgstr "Las órdenes de equipo están desactivadas en este servidor.\n"
 
 msgid ""
 "\n"
@@ -6252,22 +6252,22 @@ msgid "The ^1Axis^7 team is ready!\n"
 msgstr ""
 
 msgid "A vote is already in progress.\n"
-msgstr ""
+msgstr "Ya hay una votación en curso.\n"
 
 msgid "called a vote.\n"
-msgstr ""
+msgstr "lanzó una votación.\n"
 
 msgid "^5Vote passed!\n"
-msgstr ""
+msgstr "^5¡Votación aprobada!\n"
 
 msgid "Spectator team\n"
-msgstr ""
+msgstr "Equipo Espectador\n"
 
 msgid "Allies team\n"
-msgstr ""
+msgstr "Equipo Aliado\n"
 
 msgid "Axis team\n"
-msgstr ""
+msgstr "Equipo Eje\n"
 
 msgid "Sorry, "
 msgstr "Lo sentimos"
@@ -6393,19 +6393,19 @@ msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
 msgstr ""
 
 msgid "Server quit\n"
-msgstr ""
+msgstr "Servidor cerrado.\n"
 
 msgid "You cannot switch during a match, please wait until the round ends."
-msgstr ""
+msgstr "No te puedes cambiar durante una partida, por favor espera hasta que acabe la ronda."
 
 msgid "Use the ^3players^7 command to find a valid player ID.\n"
-msgstr ""
+msgstr "Usa el comando ^3players^7 para encontrar una ID de jugador válida.\n"
 
 msgid "^3Match is already in progress!\n"
-msgstr ""
+msgstr "^3¡La partida ya ha comenzado!\n"
 
 msgid "^1Teams have been shuffled!\n"
-msgstr ""
+msgstr "^1¡Se han mezclado los equipos!\n"
 
 msgid "^3*** Loading nextmap! ***\n"
 msgstr "^3*** ¡Cargando siguiente mapa! ***\n"
@@ -6417,16 +6417,16 @@ msgid "You have been switched to the Axis team"
 msgstr "Has sido cambiado al equipo del Eje"
 
 msgid "Keep the Allies from beating the clock!"
-msgstr ""
+msgstr "¡Evita que los Aliados superen el tiempo!"
 
 msgid "Keep the Axis from beating the clock!"
-msgstr ""
+msgstr "¡Evita que el Eje supere el tiempo!"
 
 msgid "You have been switched to the Allied team"
 msgstr "Has sido cambiado al equipo Aliado"
 
 msgid "Try to beat the clock!"
-msgstr ""
+msgstr "¡Intenta superar el tiempo!"
 
 msgid "You have been been stripped of fireteam admin rights"
 msgstr ""
@@ -6480,7 +6480,7 @@ msgid "failed to spot"
 msgstr "se equivocó al activar la mina de"
 
 msgid "was mown down by"
-msgstr ""
+msgstr "fue derribado por"
 
 msgid "was silenced by"
 msgstr "fue silenciado por"
@@ -6489,61 +6489,61 @@ msgid "was sniped by"
 msgstr "fue "
 
 msgid "stood on"
-msgstr ""
+msgstr "permaneció en"
 
 msgid "'s airstrike marker"
 msgstr ""
 
 msgid "- Small Health"
-msgstr ""
+msgstr "- Botiquín Pequeño"
 
 msgid "- Med Health"
-msgstr ""
+msgstr "- Botiquín Mediano"
 
 msgid "- Health Pack"
-msgstr ""
+msgstr "- Botiquín"
 
 msgid "- Hot Meal"
-msgstr ""
+msgstr "- Comida Caliente"
 
 msgid "- Cold Meal"
-msgstr ""
+msgstr "- Comida Fría"
 
 msgid "- Health"
-msgstr ""
+msgstr "- Salud"
 
 msgid "- Knife"
-msgstr ""
+msgstr "- Cuchillo"
 
 msgid "- Ka-Bar"
-msgstr ""
+msgstr "- Ka-Bar"
 
 msgid "- Luger"
-msgstr ""
+msgstr "- Luger"
 
 msgid "- Akimbo Luger"
-msgstr ""
+msgstr "- Akimbo Luger"
 
 msgid "- Silenced Akimbo Luger"
-msgstr ""
+msgstr "- Akimbo Luger Silenciada"
 
 msgid "- Thompson"
-msgstr ""
+msgstr "- Thompson"
 
 msgid "- Sten gun"
-msgstr ""
+msgstr "- Sten"
 
 msgid "- Colt"
-msgstr ""
+msgstr "- Colt"
 
 msgid "- Akimbo Colt"
-msgstr ""
+msgstr "- Akimbo Colt"
 
 msgid "- Silenced Akimbo Colt"
-msgstr ""
+msgstr "- Akimbo Colt Silenciada"
 
 msgid "- MP 40"
-msgstr ""
+msgstr "- MP 40"
 
 msgid "- Panzerfaust"
 msgstr "- Panzerfaust"
@@ -6780,10 +6780,10 @@ msgid "Fire Mission: ^3Firing for effect!"
 msgstr "Artillero: ^3¡Disparando al objetivo!"
 
 msgid "Fire Mission: ^3Insufficient fire support."
-msgstr ""
+msgstr "Artillero: ^3Fuego de apoyo insuficiente."
 
 msgid "Fire Mission: ^3Aborting, can't see target."
-msgstr ""
+msgstr "Artillero: ^3Abortando, no podemos ver el objetivo."
 
 msgid "I need a Medic!"
 msgstr "¡Necesito un médico!"
@@ -6792,17 +6792,17 @@ msgid "New version available. Do you want to update now?"
 msgstr "Nueva versión disponible. ¿Quieres actualizar ahora?"
 
 msgid "20 Med Health"
-msgstr ""
+msgstr "Botiquín de 20 puntos"
 
 msgid "Pilot: ^3Aborting, can't see target."
-msgstr ""
+msgstr "Piloto: ^3Abortando, no podemos ver el objetivo."
 
 msgid "Pilot: ^3Affirmative, on my way!"
-msgstr ""
+msgstr "Piloto: ^3Afirmativo, ¡en camino!"
 
 msgid "HQ: ^3All available planes are already en-route."
-msgstr ""
+msgstr "HQ: ^3Todos los aviones disponibles están de camino."
 
 #: src/cgame/cg_draw.c:1830
 msgid "Join a Fireteam?"
-msgstr ""
+msgstr "¿Unirse a una escuadra?"
