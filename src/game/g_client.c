@@ -45,6 +45,10 @@
 #include "g_lua.h"
 #endif
 
+#ifdef FEATURE_SERVERMDX
+#include "g_mdx.h"
+#endif
+
 qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 
 // new bounding box

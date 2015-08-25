@@ -316,16 +316,6 @@ static void PointRotate(const vec3_t in, vec3_t axis[3], vec3_t out)
 	out[2] = in[0] * axis[0][2] + in[1] * axis[1][2] + in[2] * axis[2][2];
 }
 
-static void MatrixTranspose(/*const*/ vec3_t in[3], vec3_t out[3])
-{
-	int i, j;
-	for (i = 0; i < 3; i++) {
-		for (j = 0; j < 3; j++) {
-			out[i][j] = in[j][i];
-		}
-	}
-}
-
 static void MatrixWeight(/*const*/ vec3_t m[3], float weight, vec3_t mout[3])
 {
 	float one = 1.0 - weight;
@@ -2452,7 +2442,7 @@ static qboolean mdx_hit_warp(
 	VectorSubtract(end, origin, unend);
 
 	// Un-rotate
-	MatrixTranspose(axis, unaxis);
+	TransposeMatrix(axis, unaxis);
 
 	PointRotate(unstart, unaxis, tmp);
 	VectorCopy(tmp, unstart);
