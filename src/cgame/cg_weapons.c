@@ -4274,6 +4274,20 @@ void CG_NextWeap(qboolean switchBanks)
 		break;
 	}
 
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		switch (curweap)
+		{
+		case WP_KAR98:
+		case WP_CARBINE:
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+			return;
+		default:
+			break;
+		}
+	}
+
 	if (IS_RIFLENADE_WEAPON(curweap))
 	{
 		num = getAltWeapon(curweap);      // base any further changes on the parent
@@ -4501,6 +4515,20 @@ void CG_PrevWeap(qboolean switchBanks)
 		break;
 	default:
 		break;
+	}
+
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		switch (curweap)
+		{
+		case WP_GPG40:
+		case WP_M7:
+		case WP_LUGER:
+		case WP_COLT:
+			return;
+		default:
+			break;
+		}
 	}
 
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
