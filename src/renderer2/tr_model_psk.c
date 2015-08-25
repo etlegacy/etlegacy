@@ -755,7 +755,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		md5Vertex_t *v0, *v1, *v2;
 		const float *p0, *p1, *p2;
 		const float *t0, *t1, *t2;
-		vec3_t      tangent;
+		vec3_t      tangent = { 0, 0, 0 };
 		vec3_t      binormal;
 		vec3_t      normal;
 
