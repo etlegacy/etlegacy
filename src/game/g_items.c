@@ -492,6 +492,11 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		}
 	}
 
+	if (ent->client->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return qfalse;
+	}
+
 	return BG_WeaponIsPrimaryForClassAndTeam(ent->client->sess.playerType, ent->client->sess.sessionTeam, weapon);
 }
 
