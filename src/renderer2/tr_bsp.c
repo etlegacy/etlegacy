@@ -772,13 +772,13 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 		// load HDR lightmaps
 		lightmapFiles = ri.FS_ListFiles(mapName, ".hdr", &numLightmaps);
 
-		qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
-
 		if (!lightmapFiles || !numLightmaps)
 		{
 			Ren_Warning("WARNING: no lightmap files found for map %s\n", mapName);
 			return;
 		}
+
+		qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
 
 		Ren_Developer("...loading %i HDR lightmaps\n", numLightmaps);
 
