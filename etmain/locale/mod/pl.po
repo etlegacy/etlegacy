@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-17 11:29+0000\n"
+"PO-Revision-Date: 2015-08-26 12:45+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -6807,3 +6807,36 @@ msgstr "HQ: ^3Wszystkie dostępne samoloty są już w trasie."
 #: src/cgame/cg_draw.c:1830
 msgid "Join a Fireteam?"
 msgstr "Dołączyć do Oddziału?"
+
+msgid "Apply"
+msgstr "Ubiegaj się"
+
+msgid "Create"
+msgstr "Stwórz"
+
+msgid "Attack"
+msgstr "Atak"
+
+msgid "Fall Back"
+msgstr "Odwrót"
+
+msgid "Disband"
+msgstr "Rozwiąż"
+
+msgid "Leave"
+msgstr "Odejdż"
+
+msgid "Invite"
+msgstr "Zaproś"
+
+msgid "Change privacy"
+msgstr "Zmień prywatność"
+
+msgid "Kick"
+msgstr "Wywal"
+
+msgid "Warn"
+msgstr "Ostrzeż"
+
+msgid "Change admin"
+msgstr "Zmień admina"
