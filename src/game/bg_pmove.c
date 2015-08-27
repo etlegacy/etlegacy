@@ -192,7 +192,8 @@ int PM_ReloadAnimForWeapon(int weapon)
 	case WP_MOBILE_BROWNING_SET:
 		return WEAP_RELOAD3;
 	default:
-		if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && BG_isLightWeaponSupportingFastReload(weapon))
+		// IS_VALID_WEAPON(weapon) ?
+		if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && weaponTable[weapon].isLightWeaponSupportingFastReload)
 		{
 			return WEAP_RELOAD2;        // faster reload
 		}
@@ -2421,7 +2422,7 @@ static void PM_BeginWeaponReload(int weapon)
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
 	reloadTime = GetAmmoTableData(weapon)->reloadTime;
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && BG_isLightWeaponSupportingFastReload(weapon))
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && weaponTable[weapon].isLightWeaponSupportingFastReload)
 	{
 		reloadTime *= .65f;
 	}

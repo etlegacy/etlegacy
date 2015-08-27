@@ -845,6 +845,8 @@ typedef struct weapontable_s
 
 	qboolean isScoped;        // bg
 
+	qboolean isLightWeaponSupportingFastReload; // bg
+
 	int damage;               // g
 	qboolean canGib;          // g
 	qboolean isReload;        // g
@@ -2245,8 +2247,6 @@ void BG_AdjustAAGunMuzzleForBarrel(vec_t *origin, vec_t *forward, vec_t *right, 
 
 int BG_ClassTextToClass(char *token);
 skillType_t BG_ClassSkillForClass(int classnum);
-
-qboolean BG_isLightWeaponSupportingFastReload(int weapon);
 
 int BG_FootstepForSurface(int surfaceFlags);
 

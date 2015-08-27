@@ -2533,7 +2533,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_FILL_CLIP:
 		DEBUGNAME("EV_FILL_CLIP");
-		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 2 && BG_isLightWeaponSupportingFastReload(es->weapon) && cg_weapons[es->weapon].reloadFastSound)
+		// IS_VALID_WEAPON(es->weapon) ?
+		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 2 && weaponTable[es->weapon].isLightWeaponSupportingFastReload && cg_weapons[es->weapon].reloadFastSound)
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadFastSound);
 		}
