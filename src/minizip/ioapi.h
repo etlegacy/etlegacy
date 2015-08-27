@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include "../zlib/zlib.h"
 
-#if defined(USE_FILE32API)
+#if defined(USE_FILE32API) || defined(__FreeBSD__)
 #define fopen64 fopen
 #define ftello64 ftell
 #define fseeko64 fseek
