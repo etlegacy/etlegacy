@@ -376,7 +376,7 @@ player_die
 */
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath)
 {
-	weapon_t  weap = BG_WeaponForMOD(meansOfDeath);
+	weapon_t  weap;
 	gclient_t *client;
 	gitem_t   *item        = NULL;
 	int       contents     = 0, i, killer = ENTITYNUM_WORLD;
@@ -386,6 +386,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	qboolean  attackerClient, dieFromSameTeam;
 
 	//G_Printf( "player_die\n" );
+
+	weap = BG_WeaponForMOD(meansOfDeath);
 
 	if (!self->client)
 	{
@@ -419,10 +421,10 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		self->client->deathTime = level.time;
 	}
 
-	//unlagged - backward reconciliation #2
+	// unlagged - backward reconciliation #2
 	// make sure the body shows up in the client's current position
 	G_ReAdjustSingleClientPosition(self);
-	//unlagged - backward reconciliation #2
+	// unlagged - backward reconciliation #2
 
 	if (attacker == self)
 	{
@@ -561,7 +563,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	{
 		// broadcast the death event to everyone
-		gentity_t *ent = G_TempEntityNotLinked(EV_OBITUARY);
+		gentity_t *ent;
+
+		ent = G_TempEntityNotLinked(EV_OBITUARY);
 
 		ent->s.eventParm       = meansOfDeath;
 		ent->s.otherEntityNum  = self->s.number;
@@ -771,17 +775,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// g_forcerespawn may force spawning at some later time
 	self->client->respawnTime = level.timeCurrent + 800;
 
-	// remove powerups
-	// FIXME: but not FLAKJACKET and HELMETSHIELD
-	//{
-	//int flakJacket=self->client->ps.powerups[PW_FLAKJACKET];
-	//int helmetArmor=self->client->ps.powerups[PW_HELMETSHIELD];
-
 	memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));
-
-	//self->client->ps.powerups[PW_FLAKJACKET]=flakJacket;
-	//self->client->ps.powerups[PW_HELMETSHIELD]=helmetArmor;
-	//}
 
 	// never gib in a nodrop
 	// FIXME: contents is always 0 here
@@ -791,7 +785,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		nogib = qfalse;
 	}
 
-	if (nogib)
+	if (nogib && meansOfDeath != MOD_SWAP_PLACES)
 	{
 		// normal death
 		// for the no-blood option, we need to prevent the health
@@ -801,23 +795,23 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			self->health = GIB_HEALTH + 1;
 		}
 
-		// FIXME: re-enable this for flailing
-		/*      if( self->client->ps.groundEntityNum == ENTITYNUM_NONE ) {
-		            self->client->ps.pm_flags |= PMF_FLAILING;
-		            self->client->ps.pm_time = 750;
-		            BG_AnimScriptAnimation( &self->client->ps, ANIM_MT_FLAILING, qtrue );
+		// set enemy weapon
+		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_WEAPON, weap, qtrue);
 
-		            // Face explosion directory
-		            {
-		                vec3_t angles;
+		// set enemy location
+		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, 0, qfalse);
 
-		                vectoangles( self->client->ps.velocity, angles );
-		                self->client->ps.viewangles[YAW] = angles[YAW];
-		                SetClientViewAngle( self, self->client->ps.viewangles );
-		            }
-		        } else*/
+		// FIXME: add POSITION_RIGHT, POSITION_LEFT
+		if (infront(self, inflictor))
+		{
+			BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, POSITION_INFRONT, qtrue);
+		}
+		else
+		{
+			BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, POSITION_BEHIND, qtrue);
+		}
 
-		self->client->ps.pm_time = BG_AnimScriptEvent(&self->client->ps, self->client->pers.character->animModelInfo, ANIM_ET_DEATH, qfalse, qtrue);
+		self->client->ps.pm_time = BG_AnimScriptEvent( &self->client->ps, self->client->pers.character->animModelInfo, ANIM_ET_DEATH, qfalse, qtrue );
 
 		// record the death animation to be used later on by the corpse
 		self->client->torsoDeathAnim = self->client->ps.torsoAnim;
@@ -851,6 +845,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	if (killedintank)
 	{
 		limbo(self, qfalse);   // but no corpse
+#ifdef FEATURE_SERVERMDX
+		self->client->deathAnim = qfalse;    // add no animation time
+#endif
 	}
 	else if ((meansOfDeath == MOD_SUICIDE && g_gamestate.integer == GS_PLAYING))
 	{
@@ -861,6 +858,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 	else if (g_gametype.integer == GT_WOLF_LMS)
 	{
+#ifdef FEATURE_SERVERMDX
+		self->client->deathAnim = qfalse;    // add no animation time
+#endif
 		if (!G_CountTeamMedics(self->client->sess.sessionTeam, qtrue))
 		{
 			limbo(self, qtrue);
