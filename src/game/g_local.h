@@ -2097,6 +2097,17 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 
+#ifdef FEATURE_RATING
+// g_skillrating.c
+#define MU      25.f            // mean
+#define SIGMA   (MU / 3)        // standard deviation
+#define BETA    (SIGMA / 2)     // skill chain length
+#define TAU     (SIGMA / 100)   // dynamics factor
+#define EPSILON 0.f             // draw margin (assumed null)
+
+void G_CalculateSkillRatings();
+#endif
+
 // g_stats.c
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill);
 

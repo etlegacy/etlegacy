@@ -3500,6 +3500,14 @@ void G_LogExit(const char *string)
 		G_LogPrintf("score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], ping, level.sortedClients[i], cl->pers.netname);
 	}
 
+#ifdef FEATURE_RATING
+	// calculate skill ratings
+	if (g_skillRating.integer)
+	{
+		G_CalculateSkillRatings();
+	}
+#endif
+
 	G_LogPrintf("red:%i  blue:%i\n", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]);
 
 	// Send gameCompleteStatus message to master servers
