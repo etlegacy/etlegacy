@@ -492,7 +492,7 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		}
 	}
 
-	if (ent->client->ps.weaponstate == WEAPON_RELOADING)
+	if (ent->client->ps.weaponTime > 0)
 	{
 		return qfalse;
 	}
