@@ -223,8 +223,11 @@ Chooses a player start, deathmatch start, etc
 */
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 {
-	gentity_t *nearestSpot = SelectNearestDeathmatchSpawnPoint(avoidPoint);
-	gentity_t *spot        = SelectRandomDeathmatchSpawnPoint();
+	gentity_t *nearestSpot;
+	gentity_t *spot;
+
+	nearestSpot = SelectNearestDeathmatchSpawnPoint(avoidPoint);
+	spot        = SelectRandomDeathmatchSpawnPoint();
 
 	if (spot == nearestSpot)
 	{
@@ -306,7 +309,9 @@ Called by BodySink
 */
 void BodyUnlink(gentity_t *ent)
 {
-	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+	gentity_t *tent;
+
+	tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
 
 	tent->s.otherEntityNum2 = ent->s.number;
 	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
@@ -549,11 +554,6 @@ void CopyToBodyQue(gentity_t *ent)
 	VectorCopy(ent->client->ps.viewangles, body->s.angles);
 	VectorCopy(ent->client->ps.viewangles, body->r.currentAngles);
 
-	//if ( ent->client->ps.powerups[PW_HELMETSHIELD])
-	//{
-	//	body->s.powerups |= (1 << PW_HELMETSHIELD);
-	//}
-
 	if (body->s.groundEntityNum == ENTITYNUM_NONE)
 	{
 		body->s.pos.trType = TR_GRAVITY;
@@ -574,7 +574,8 @@ void CopyToBodyQue(gentity_t *ent)
 	body->s.eventSequence = 0;
 
 	// time needed to complete animation
-	body->s.torsoAnim = body->s.legsAnim = ent->client->legsDeathAnim;
+	body->s.torsoAnim = ent->client->torsoDeathAnim;
+	body->s.legsAnim  = ent->client->legsDeathAnim;
 
 	body->r.svFlags = ent->r.svFlags & ~SVF_BOT;
 	VectorCopy(ent->r.mins, body->r.mins);
@@ -2501,10 +2502,10 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		{
 			unsigned long ip = GeoIP_addr_to_num(cs_ip);
 
-			//10.0.0.0/8			[RFC1918]
-			//172.16.0.0/12			[RFC1918]
-			//192.168.0.0/16		[RFC1918]
-			//169.254.0.0/16		[RFC3330] we need this ?
+			// 10.0.0.0/8			[RFC1918]
+			// 172.16.0.0/12			[RFC1918]
+			// 192.168.0.0/16		[RFC1918]
+			// 169.254.0.0/16		[RFC3330] we need this ?
 			if (((ip & 0xFF000000) == 0x0A000000) ||
 			    ((ip & 0xFFF00000) == 0xAC100000) ||
 			    ((ip & 0xFFFF0000) == 0xC0A80000) ||
@@ -2610,7 +2611,7 @@ int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 	float scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
 	int   val    = (int)scaled;
 
-	// rain - #102 - don't scale of the timelimit is 0
+	// don't scale of the timelimit is 0
 	if (g_timelimit.value == 0.0)
 	{
 		return maxRespawns - 1;
@@ -2791,9 +2792,6 @@ void ClientBegin(int clientNum)
 	// Start players in limbo mode if they change teams during the match
 	if (g_gamestate.integer != GS_INTERMISSION && client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - level.startTime > FRAMETIME * GAME_INIT_FRAMES))
 	{
-/*	  if( (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - client->pers.connectTime) > 60000) ||
-        ( g_gamestate.integer == GS_PLAYING && ( client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES ) &&
-         g_gametype.integer == GT_WOLF_LMS && ( level.numTeamClients[0] > 0 || level.numTeamClients[1] > 0 ) ) ) {*/
 		ent->health     = 0;
 		ent->r.contents = CONTENTS_CORPSE;
 
@@ -2822,7 +2820,7 @@ void ClientBegin(int clientNum)
 			trap_SendServerCommand(-1, va("print \"[lof]%s" S_COLOR_WHITE " [lon]joined the Allies team\n\"", client->pers.netname));
 			break;
 		default:
-			//Just in case
+			// Just in case
 			trap_SendServerCommand(-1, va("print \"[lof]%s" S_COLOR_WHITE " [lon]entered the game\n\"", client->pers.netname));
 			break;
 		}
@@ -2995,19 +2993,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 		else
 		{
-			// if we have requested a specific spawn point, use it (fixme: what if this will place us inside another character?)
-/*			spawnPoint = NULL;
-            trap_GetUserinfo( ent->s.number, userinfo, sizeof(userinfo) );
-            if( (str = Info_ValueForKey( userinfo, "spawnPoint" )) != NULL && str[0] ) {
-                spawnPoint = SelectSpawnPointFromList( str, spawn_origin, spawn_angles );
-                if (!spawnPoint) {
-                    G_Printf( "WARNING: unable to find spawn point \"%s\" for bot \"%s\"\n", str, ent->aiName );
-                }
-            }
-            //
-            if( !spawnPoint ) {*/
 			spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles, client->sess.spawnObjectiveIndex);
-//			}
 		}
 	}
 
@@ -3017,9 +3003,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	flags  = ent->client->ps.eFlags & EF_TELEPORT_BIT;
 	flags ^= EF_TELEPORT_BIT;
 
-	//unlagged reset history markers
+	// unlagged reset history markers
 	G_ResetMarkers(ent);
-	//unlagged
+	// unlagged
 
 	flags |= (client->ps.eFlags & EF_VOTED);
 	// clear everything but the persistant data
@@ -3140,7 +3126,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 		if (G_IsWeaponDisabled(ent, client->sess.latchPlayerWeapon))
 		{
-			bg_playerclass_t *classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
+			bg_playerclass_t *classInfo;
+
+			classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
 
 			client->sess.latchPlayerWeapon = classInfo->classWeapons[0];
 			update                         = qtrue;
