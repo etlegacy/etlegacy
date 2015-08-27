@@ -5018,7 +5018,7 @@ void CG_WeaponBank_f(void)
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
 
 	// Don't try to switch when in the middle of reloading.
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
+	if (cg.snap->ps.weaponTime > 0 || cg.snap->ps.weaponDelay > 0)
 	{
 		return;
 	}
