@@ -59,7 +59,7 @@
 #define STEP_TIME           200
 #define DUCK_TIME           100
 #define PAIN_TWITCH_TIME    200
-#define ZOOM_TIME           150
+#define ZOOM_TIME           150.0f
 #define MUZZLE_FLASH_TIME   30
 #define SINK_TIME           3000        // time for fragments to sink into ground before going away
 
