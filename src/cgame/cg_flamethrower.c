@@ -82,7 +82,7 @@ typedef struct flameChunk_s
 static flameChunk_t flameChunks[MAX_FLAME_CHUNKS];
 static flameChunk_t *freeFlameChunks, *activeFlameChunks, *headFlameChunks;
 
-static qboolean initFlameChunks = qfalse;
+//static qboolean initFlameChunks = qfalse;
 
 static int numFlameChunksInuse;
 
@@ -99,10 +99,6 @@ typedef struct centFlameInfo_s
 	int lastSoundUpdate;
 
 	qboolean lastFiring;
-
-	int lastDmgUpdate;              // time we last told server about this ent's flame damage
-	int lastDmgCheck;               // only check once per 100ms
-	int lastDmgEnemy;               // entity that inflicted the damage
 } centFlameInfo_t;
 
 static centFlameInfo_t centFlameInfo[MAX_GENTITIES];
@@ -417,7 +413,7 @@ void CG_ClearFlameChunks(void)
 	}
 	flameChunks[MAX_FLAME_CHUNKS - 1].nextGlobal = NULL;
 
-	initFlameChunks     = qtrue;
+	//initFlameChunks     = qtrue;
 	numFlameChunksInuse = 0;
 }
 
@@ -715,10 +711,10 @@ static vec3_t rright, rup;
 
 static qhandle_t flameShaders[NUM_FLAME_SPRITES];
 static qhandle_t nozzleShaders[NUM_NOZZLE_SPRITES];
-static qboolean  initFlameShaders = qtrue;
+//static qboolean  initFlameShaders = qtrue;
 
-#define MAX_CLIPPED_FLAMES  8       // dont draw more than this many per frame
-static int numClippedFlames;
+//#define MAX_CLIPPED_FLAMES  8       // dont draw more than this many per frame
+//static int numClippedFlames;
 
 void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 {
@@ -1044,11 +1040,10 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 		}
 
 		if (!f->ignitionOnly &&
-		    ((float)(FLAME_SPRITE_START_BLUE_SCALE * f->blueLife) < (float)lived))
+		    ((float)(FLAME_SPRITE_START_BLUE_SCALE * f->blueLife) < lived))
 		{
 
 			float    alpha, lifeFrac;
-			qboolean skip = qfalse;
 
 			// should we merge it with the next sprite?
 			while (fNext && !droppedTrail)
@@ -1076,11 +1071,9 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 				alpha = 1.0;
 			}
 
-			if (!skip)
-			{
-				// draw the sprite
-				CG_AddFlameSpriteToScene(f, lifeFrac, alpha);
-			}
+			// draw the sprite
+			CG_AddFlameSpriteToScene(f, lifeFrac, alpha);
+
 			// update the sizeRate
 			f->sizeRate = GET_FLAME_SIZE_SPEED(f->sizeMax);
 		}
@@ -1271,7 +1264,7 @@ void CG_InitFlameChunks(void)
 		Com_sprintf(filename, MAX_QPATH, "nozzleFlame%i", i + 1);
 		nozzleShaders[i] = trap_R_RegisterShader(filename);
 	}
-	initFlameShaders = qfalse;
+	//initFlameShaders = qfalse;
 }
 
 /*
@@ -1290,7 +1283,7 @@ void CG_AddFlameChunks(void)
 	// clear out the volumes so we can rebuild them
 	memset(centFlameStatus, 0, sizeof(centFlameStatus));
 
-	numClippedFlames = 0;
+	//numClippedFlames = 0;
 
 	// age them
 	f = activeFlameChunks;

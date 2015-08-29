@@ -48,13 +48,13 @@ panel_button_text_t debriefTitleFont =
 	&cgs.media.limboFont2,
 };
 
-panel_button_text_t debriefHeadingFont =
-{
-	0.24f,                 0.24f,
-	{ 1.f,                 1.f,  1.f,0.8f },
-	0,                     0,
-	&cgs.media.limboFont2,
-};
+//panel_button_text_t debriefHeadingFont =
+//{
+//	0.24f,                 0.24f,
+//	{ 1.f,                 1.f,  1.f,0.8f },
+//	0,                     0,
+//	&cgs.media.limboFont2,
+//};
 
 panel_button_text_t debriefListFont =
 {
@@ -82,70 +82,70 @@ panel_button_text_t debriefPlayerHeadingSmallerFont =
 #define DB_XP_X        DB_TEAMKILLS_X + 56
 #define DH_HEADING_Y   60
 
-panel_button_t debriefTitleBack =
-{
-	"white",
-	NULL,
-	{ 10,                     4,   620, 20 },
-	{ 1,                      41,  51,  43, 204, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefTitleBack =
+//{
+//	"white",
+//	NULL,
+//	{ 10,                     4,   620, 20 },
+//	{ 1,                      41,  51,  43, 204, 0, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t debriefTitleBackBorderLower =
-{
-	NULL,
-	NULL,
-	{ 10,                     24,   620, 200 },
-	{ 1,                      127,  127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefTitleBackBorderLower =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                     24,   620, 200 },
+//	{ 1,                      127,  127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t debriefTitleBackLower =
-{
-	"white",
-	NULL,
-	{ 10,                     24, 620, 200 },
-	{ 1,                      0,  0,   0, 153, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefTitleBackLower =
+//{
+//	"white",
+//	NULL,
+//	{ 10,                     24, 620, 200 },
+//	{ 1,                      0,  0,   0, 153, 0, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t debriefTitleBackBorder =
-{
-	NULL,
-	NULL,
-	{ 10,                     4,    620, 20 },
-	{ 1,                      127,  127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefTitleBackBorder =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                     4,    620, 20 },
+//	{ 1,                      127,  127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t debriefTitle =
-{
-	NULL,
-	NULL,
-	{ 10,                   20,  620, 0 },
-	{ 0,                    0,   0,   0, 0, 0, 0, 0},
-	&debriefTitleFont,      /* font     */
-	NULL,                   /* keyDown  */
-	NULL,                   /* keyUp    */
-	CG_DebriefingTitle_Draw,
-	NULL,
-};
+//panel_button_t debriefTitle =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                   20,  620, 0 },
+//	{ 0,                    0,   0,   0, 0, 0, 0, 0},
+//	&debriefTitleFont,      /* font     */
+//	NULL,                   /* keyDown  */
+//	NULL,                   /* keyUp    */
+//	CG_DebriefingTitle_Draw,
+//	NULL,
+//};
 
 panel_button_t debriefPlayerHeaderBackBorderLower =
 {
@@ -1076,13 +1076,13 @@ panel_button_text_t chatPanelButtonFont =
 	&cgs.media.limboFont2,
 };
 
-panel_button_text_t chatPanelButtonFontRed =
-{
-	0.20f,                 0.20f,
-	{ 1.f,                 0.f,              0.f,0.8f },
-	0,                     ITEM_ALIGN_CENTER,
-	&cgs.media.limboFont2,
-};
+//panel_button_text_t chatPanelButtonFontRed =
+//{
+//	0.20f,                 0.20f,
+//	{ 1.f,                 0.f,              0.f,0.8f },
+//	0,                     ITEM_ALIGN_CENTER,
+//	&cgs.media.limboFont2,
+//};
 
 panel_button_t chatPanelWindow =
 {
@@ -1123,18 +1123,18 @@ panel_button_t chatPanelNextButton =
 	NULL,
 };
 
-panel_button_t chatPanelHTMLButton =
-{
-	NULL,
-	"^1REPORT",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                             60, 16 },
-	{ 0,                          0,                                              0,  0, 0, 0, 0, 0},
-	NULL,                         /* font */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
-	CG_Debriefing_HTMLButton_Draw,
-	NULL,
-};
+//panel_button_t chatPanelHTMLButton =
+//{
+//	NULL,
+//	"^1REPORT",
+//	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                             60, 16 },
+//	{ 0,                          0,                                              0,  0, 0, 0, 0, 0},
+//	NULL,                         /* font */
+//	NULL,                         /* keyDown  */
+//	NULL,                         /* keyUp    */
+//	CG_Debriefing_HTMLButton_Draw,
+//	NULL,
+//};
 
 panel_button_t chatPanelQCButton =
 {
@@ -2374,7 +2374,7 @@ void CG_Debriefing_ScrollSetOffset(panel_button_t *button, int ofs)
 		return;
 		//case 3:	// awards
 		//	cgs.dbAwardsListOffset = ofs;
-		return;
+		//return;
 	case 3:
 		cgs.dbMapVoteListOffset = ofs;
 		return;
@@ -2440,7 +2440,7 @@ void CG_Debriefing_MouseEvent(int x, int y)
 
 			button->data[1] += y;
 
-			count = (cnt * button->data[1] * 0.5f) / (float)(r.h);
+			count = (cnt * button->data[1] * 0.5f) / r.h;
 			if (count)
 			{
 				int ofs = CG_Debriefing_ScrollGetOffset(button);
@@ -2664,7 +2664,7 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w, x = button->rect.x;
+	float        w, x;
 	int          i;
 
 	w = CG_Text_Width_Ext("Medals: ", button->font->scalex, 0, button->font->font);

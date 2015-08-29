@@ -51,8 +51,8 @@ WM_DrawObjectives
 #define INFO_CLASS_WIDTH        34
 #define INFO_LATENCY_WIDTH      36
 #define INFO_LIVES_WIDTH        20
-#define INFO_TEAM_HEIGHT        24
-#define INFO_BORDER             2
+//#define INFO_TEAM_HEIGHT        24
+//#define INFO_BORDER             2
 #define INFO_LINE_HEIGHT        30
 #define INFO_TOTAL_WIDTH        (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
 
@@ -98,7 +98,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
-		const char *s, *buf, *flagshader = NULL, *nameshader = NULL;
+		const char *buf, *flagshader = NULL, *nameshader = NULL;
 
 		rows = 8;
 		y   += 16 * (rows - 1);

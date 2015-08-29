@@ -1042,7 +1042,8 @@ void CG_TimerReset_f(void)
 
 static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 {
-	int outputWeapon = -1;
+	int outputWeapon;
+
 	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
 	{
 		switch (weapon)

@@ -1145,7 +1145,7 @@ void CG_AddFuseSparkElements(localEntity_t *le)
 		// calculate new position
 		BG_EvaluateTrajectory(&le->pos, time, le->refEntity.origin, qfalse, -1);
 
-		lifeFrac = (float)(time - le->startTime) / (float)(le->endTime - le->startTime);
+		lifeFrac = (time - le->startTime) / (float)(le->endTime - le->startTime);
 
 		//if (lifeFrac > 0.2) {
 		// add a trail
@@ -1629,7 +1629,7 @@ static void CG_AddSpriteExplosion(localEntity_t *le)
 	}
 
 	// add the dlight
-	if (le->light || 1)
+	//if (le->light || 1)
 	{
 		float light = (float)(cg.time - le->startTime) / (le->endTime - le->startTime);
 

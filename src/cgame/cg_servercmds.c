@@ -1172,7 +1172,6 @@ static void CG_MapRestart(void)
 #define MAX_VOICESOUNDS     32
 
 #define MAX_CHATSIZE        64
-#define MAX_HEADMODELS      64
 
 typedef struct voiceChat_s
 {

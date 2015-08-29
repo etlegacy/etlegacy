@@ -73,13 +73,14 @@ panel_button_text_t titleLimboFont =
 	&cgs.media.limboFont1,
 };
 
-panel_button_text_t titleLimboFontBig =
-{
-	0.3f,                  0.3f,
-	{ 1.f,                 1.f, 1.f,  0.6f },
-	0,                     0,
-	&cgs.media.limboFont1,
-};
+
+//panel_button_text_t titleLimboFontBig =
+//{
+//	0.3f,                  0.3f,
+//	{ 1.f,                 1.f, 1.f,  0.6f },
+//	0,                     0,
+//	&cgs.media.limboFont1,
+//};
 
 panel_button_text_t titleLimboFontBigCenter =
 {
@@ -240,7 +241,7 @@ TEAM_COUNTER(2);
 #define CLASS_COUNTER_WIDTH 20.f
 #define CLASS_COUNTER_X     435.f
 #define CLASS_COUNTER_SIZE  (645.f - CLASS_COUNTER_X)
-#define CLASS_COUNTER_LIGHT_DIFF 4.f
+//#define CLASS_COUNTER_LIGHT_DIFF 4.f
 #define CLASS_COUNTER_BUTTON_DIFF -18.f
 #define CLASS_COUNTER(number)            \
 	panel_button_t classCounter ## number = {     \
@@ -1349,7 +1350,7 @@ void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 	trap_R_SetColor(NULL);
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, shader);
 
-	if (qfalse) //There is no lock status transfer yet.
+	if (qfalse) // FIXME: There is no lock status transfer yet.
 	{
 		lock.w = lock.h = button->rect.h * 0.6;
 
@@ -2691,7 +2692,7 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 
 		for (i = 0, j = 1; i < num; i++, j *= numimages)
 		{
-			count[i] = (int)(button->data[3] / j);
+			count[i] = (button->data[3] / j);
 		}
 	}
 

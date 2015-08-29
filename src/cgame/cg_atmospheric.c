@@ -38,7 +38,7 @@
 #include "cg_local.h"
 
 #define MAX_ATMOSPHERIC_HEIGHT          MAX_MAP_SIZE    // maximum world height
-#define MIN_ATMOSPHERIC_HEIGHT          -MAX_MAP_SIZE   // minimum world height
+//#define MIN_ATMOSPHERIC_HEIGHT          -MAX_MAP_SIZE   // minimum world height
 
 //int getgroundtime, getskytime, rendertime, checkvisibletime, generatetime;
 //int n_getgroundtime, n_getskytime, n_rendertime, n_checkvisibletime, n_generatetime;

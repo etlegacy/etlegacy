@@ -617,7 +617,7 @@ qboolean CG_ViewingDraw()
 }
 #endif
 
-#define GS_X    166
+//#define GS_X    166
 #define GS_Y    10
 #define GS_W    308
 
@@ -961,7 +961,7 @@ void CG_TopShotsDraw(void)
 }
 
 #define OBJ_X   -80     // spacing from right
-#define OBJ_Y   -60     // spacing from bottom
+//#define OBJ_Y   -60     // spacing from bottom
 #define OBJ_W   308
 
 void CG_ObjectivesDraw()

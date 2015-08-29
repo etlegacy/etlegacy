@@ -51,7 +51,6 @@ typedef struct particle_s
 	vec3_t vel;
 	vec3_t accel;
 	int color;
-	float colorvel;
 	float alpha;
 	float alphavel;
 	int type;
@@ -85,7 +84,7 @@ typedef enum
 	P_WEATHER,
 	P_FLAT,
 	P_SMOKE,
-	P_ROTATE,
+	P_ROTATE, // unused
 	P_WEATHER_TURBULENT,
 	P_ANIM,
 	P_DLIGHT_ANIM,
@@ -136,7 +135,7 @@ static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
 	1,
 	1,
 };
-static int numShaderAnims;
+//static int numShaderAnims;
 
 
 #define     MAX_PARTICLES   1024 * 8
@@ -186,7 +185,7 @@ void CG_ClearParticles(void)
 				shaderAnims[i][j] = trap_R_RegisterShader(va("%s%i", shaderAnimNames[i], j + 1));
 			}
 		}
-		numShaderAnims = i;
+		//numShaderAnims = i;
 
 		initparticles = qtrue;
 	}
@@ -1043,7 +1042,6 @@ CG_AddParticles
 void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 {
 	cparticle_t *p;
-	qboolean    turb = qtrue;
 
 	if (!pshader)
 	{
@@ -1084,14 +1082,9 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 		p->width  = 1;
 	}
 
-	p->vel[2] = -20;
+	p->vel[2] = -10;
 
 	p->type = P_WEATHER_FLURRY;
-
-	if (turb)
-	{
-		p->vel[2] = -10;
-	}
 
 	VectorCopy(cent->currentState.origin, p->org);
 
@@ -1103,11 +1096,8 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 	p->vel[1] += cent->currentState.angles[1] * 32 + (crandom() * 16);
 	p->vel[2] += cent->currentState.angles[2];
 
-	if (turb)
-	{
-		p->accel[0] = crandom() * 16;
-		p->accel[1] = crandom() * 16;
-	}
+	p->accel[0] = crandom() * 16;
+	p->accel[1] = crandom() * 16;
 }
 
 void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum)

@@ -621,6 +621,7 @@ qboolean CG_FireteamGetBoxNeedsButtons(void)
 }
 */
 
+/* unused
 const char *CG_FireteamGetBoxText(void)
 {
 	if (cgs.applicationEndTime > cg.time)
@@ -715,6 +716,7 @@ const char *CG_FireteamGetBoxText(void)
 
 	return NULL;
 }
+*/
 
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly)
 {

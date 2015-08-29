@@ -2863,7 +2863,7 @@ static void CG_DrawFlashBlend(void)
 CG_DrawObjectiveInfo
 =================
 */
-#define OID_LEFT    10
+//#define OID_LEFT    10
 #define OID_TOP     360
 
 void CG_ObjectivePrint(const char *str, float fontScale)
