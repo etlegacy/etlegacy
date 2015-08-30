@@ -1501,7 +1501,7 @@ int Team_ClassForString(char *string)
 	return -1;
 }
 
-char      *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^4Allies^7", "Spectators" };
+char      *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^4Allies^7", "^2Spectators^7" };
 team_info teamInfo[TEAM_NUM_TEAMS];
 
 // Resets a team's settings
