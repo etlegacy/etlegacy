@@ -1497,7 +1497,7 @@ static int _et_G_XP_Set(lua_State *L)
 {
 	gentity_t *ent      = NULL;
 	int       clientNum = (int)luaL_checkinteger(L, 1);
-	int       xp        = (int)luaL_checkinteger(L, 2);
+	float     xp        = (float)luaL_checknumber(L, 2);
 	int       skill     = (int)luaL_checkinteger(L, 3);
 	int       add       = (int)luaL_checkinteger(L, 4); // 'add' just checks to be 0 or not to be 0
 
