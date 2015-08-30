@@ -3415,7 +3415,7 @@ int CG_LimboPanel_MaxCount(int playerCount, char *variableString)
 
 /**
  * @brief Checks for heavy- and rifle weapons
- * @note  this function needs some rework: count picked up opposite team weapons too
+ * @note  FIXME: this function needs some rework: count picked up opposite team weapons too
  *        see G_IsWeaponDisabled
  *        check: CG_LimboPanel_RealWeaponIsDisabled probably doesn't have to check for alt weapons
  *        they can't be selected
@@ -3430,7 +3430,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	}
 
 	// never restrict normal weapons
-	if (!IS_HEAVY_WEAPON(weapon) && !IS_RIFLE_AND_NADE_WEAPON(weapon))
+	if (!(IS_HEAVY_WEAPON(weapon) || IS_RIFLE_AND_NADE_WEAPON(weapon)))
 	{
 		return qfalse;
 	}
@@ -3511,7 +3511,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 			return qtrue;
 		}
 		break;
-	/* FIXME: do we have to check these?
+	/* FIXME: add alt & SET weapons
 	        case WP_GPG40:
 	            // add alt weapons
 	            wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
