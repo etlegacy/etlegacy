@@ -469,6 +469,10 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 			{
 				tc = (ent) ? "^4L^7" : "L";
 			}
+			if (tteam == TEAM_SPECTATOR)
+			{
+				tc = (ent) ? "^2S^7" : "S";
+			}
 		}
 
 		if (ent)
