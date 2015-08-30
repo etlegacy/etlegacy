@@ -620,7 +620,7 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_xp     = 0;
 
 		CP("sc \"\n\"");
-		CP("sc \"^7TEAM   Player          ^1TmX ^4TmL ^7Kll Dth  SK  TK Eff    ^2DG    ^1DR  ^6TDG  ^4TDR  ^3Score\n\"");
+		CP("sc \"^7TEAM   Player         ^1 TmX^4 TmL^7 Kll Dth  SK  TK^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score\n\"");
 		CP("sc \"^7-------------------------------------------------------------------------------\n\"");
 
 		for (j = 0; j < level.numPlayingClients; j++)
