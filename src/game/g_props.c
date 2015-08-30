@@ -256,7 +256,9 @@ void Psmoke_think(gentity_t *ent)
 
 void prop_smoke(gentity_t *ent)
 {
-	gentity_t *Psmoke = G_Spawn();
+	gentity_t *Psmoke;
+
+	Psmoke = G_Spawn();
 
 	VectorCopy(ent->r.currentOrigin, Psmoke->s.origin);
 	Psmoke->think     = Psmoke_think;
@@ -581,7 +583,9 @@ void G_ExplodeMissile(gentity_t *ent);
 
 void propExplosion(gentity_t *ent)
 {
-	gentity_t *bolt = G_Spawn();
+	gentity_t *bolt;
+
+	bolt = G_Spawn();
 
 	bolt->classname = "props_explosion";
 	bolt->nextthink = level.time + FRAMETIME;
@@ -971,10 +975,8 @@ void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, 
 
 void Just_Got_Thrown(gentity_t *self)
 {
-	float  len;
+	float  len = 0;
 	vec3_t vec;
-
-	len = 0;
 
 	if (self->s.groundEntityNum == -1)
 	{
@@ -1048,14 +1050,8 @@ void Props_Activated(gentity_t *self)
 	vec3_t angles;
 	vec3_t dest;
 	vec3_t forward, right;
-	vec3_t velocity;
-	vec3_t prop_ang;
 
-	gentity_t *prop;
-
-	gentity_t *owner;
-
-	owner = &g_entities[self->r.ownerNum];
+	gentity_t *owner = &g_entities[self->r.ownerNum];;
 
 	self->nextthink = level.time + 50;
 
@@ -1068,6 +1064,11 @@ void Props_Activated(gentity_t *self)
 
 	if (owner->active == qfalse)
 	{
+		vec3_t velocity;
+		vec3_t prop_ang;
+
+		gentity_t *prop;
+
 		self->physicsObject = qtrue;
 		self->physicsBounce = 0.2;
 
@@ -1194,7 +1195,7 @@ void Props_Chair_Think(gentity_t *self)
 		return;
 	}
 
-//  trap_UnlinkEntity (self);
+	//trap_UnlinkEntity (self);
 
 	BG_EvaluateTrajectory(&self->s.pos, level.time, self->s.pos.trBase, qfalse, self->s.effect2Time);
 
@@ -1446,11 +1447,11 @@ void Props_Chair_Animate(gentity_t *ent)
 
 	if (ent->enemy)
 	{
-		float  ratio = 2.5f;
+		//float  ratio = 2.5f;
 		vec3_t v;
 
 		VectorSubtract(ent->r.currentOrigin, ent->enemy->r.currentOrigin, v);
-		moveit(ent, vectoyaw(v), (ent->delay * ratio * FRAMETIME) * .001);
+		moveit(ent, vectoyaw(v), (ent->delay * 2.5f * FRAMETIME) * .001);
 	}
 }
 
@@ -1788,7 +1789,6 @@ void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	gentity_t *daent;
 
-	daent = NULL;
 	while ((daent = G_FindByTargetname(daent, daent->target)) != NULL)
 	{
 		if (daent == ent)
@@ -1835,7 +1835,7 @@ void Use_Props_Shard_Generator(gentity_t *ent, gentity_t *other, gentity_t *acti
 {
 	int       quantity;
 	int       type;
-	gentity_t *inflictor = NULL;
+	gentity_t *inflictor;
 
 	type     = ent->count;
 	quantity = ent->wait;
@@ -2032,9 +2032,7 @@ void SP_OilSlick(gentity_t *ent)
 void OilParticles_think(gentity_t *ent)
 {
 	gentity_t *tent;
-	gentity_t *owner;
-
-	owner = &g_entities[ent->s.density];
+	gentity_t *owner = &g_entities[ent->s.density];
 
 	if (owner && owner->takedamage && ent->count2 > level.time - 5000)
 	{
@@ -2159,14 +2157,18 @@ void Props_Barrel_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t p
 
 void OilSlick_remove_think(gentity_t *ent)
 {
-	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_OILSLICKREMOVE);
+	gentity_t *tent;
+
+	tent = G_TempEntity(ent->r.currentOrigin, EV_OILSLICKREMOVE);
 
 	tent->s.density = ent->s.density;
 }
 
 void OilSlick_remove(gentity_t *ent)
 {
-	gentity_t *remove = G_Spawn();
+	gentity_t *remove;
+
+	remove = G_Spawn();
 
 	remove->s.density = ent->s.number;
 	remove->think     = OilSlick_remove_think;
@@ -2353,7 +2355,7 @@ shard =
 
 void touch_crate_64(gentity_t *self, gentity_t *other, trace_t *trace)
 {
-	float  ratio;
+	//float ratio = 1.5;
 	vec3_t v;
 
 	if (other->r.currentOrigin[2] > (self->r.currentOrigin[2] + 10 + 31))
@@ -2361,9 +2363,8 @@ void touch_crate_64(gentity_t *self, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	ratio = 1.5;
 	VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, v);
-	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001);
+	moveit(self, vectoyaw(v), (20 * 1.5 * FRAMETIME) * .001);
 }
 
 void crate_animate(gentity_t *ent)
@@ -2521,7 +2522,6 @@ void props_crate32x64_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attac
 
 void SP_Props_Crate32x64(gentity_t *ent)
 {
-
 	trap_SetBrushModel(ent, ent->model);
 
 	InitProp(ent);
@@ -2551,7 +2551,6 @@ slave so that the table will flip over correctly.
 void flippy_table_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	qboolean  is_infront;
-	gentity_t *slave;
 
 	// it would be odd to flip a table if your standing on it
 	if (other && other->s.groundEntityNum == ent->s.number)
@@ -2566,6 +2565,8 @@ void flippy_table_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	if (is_infront)
 	{
+		gentity_t *slave;
+
 		// need to swap the team leader with the slave
 		for (slave = ent ; slave ; slave = slave->teamchain)
 		{
@@ -2630,9 +2631,8 @@ void flippy_table_animate(gentity_t *ent)
 
 void props_flippy_table_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
 {
-	ent->think     = flippy_table_animate;
-	ent->nextthink = level.time + FRAMETIME;
-
+	ent->think      = flippy_table_animate;
+	ent->nextthink  = level.time + FRAMETIME;
 	ent->takedamage = qfalse;
 
 	G_UseTargets(ent, NULL);
@@ -2643,7 +2643,6 @@ void props_flippy_blocked(gentity_t *ent, gentity_t *other)
 	vec3_t velocity;
 	vec3_t angles;
 	vec3_t kvel;
-
 	// just for now
 	float angle = ent->r.currentAngles[YAW];
 
@@ -2745,7 +2744,6 @@ void SP_Props_Flipping_Table(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 }
-
 
 /*
 QUAKED props_58x112tablew (.8 .6 .2) ?
@@ -2975,7 +2973,6 @@ void props_snowGenerator_use(gentity_t *ent, gentity_t *other, gentity_t *activa
 void SP_props_snowGenerator(gentity_t *ent)
 {
 	vec3_t    center;
-	gentity_t *target = NULL;
 
 	trap_SetBrushModel(ent, ent->model);
 
@@ -2991,6 +2988,8 @@ void SP_props_snowGenerator(gentity_t *ent)
 	}
 	else
 	{
+		gentity_t *target;
+
 		target = G_Find(target, FOFS(targetname), ent->target);
 		if (!target)
 		{
@@ -3161,7 +3160,6 @@ void SP_props_decoration(gentity_t *ent)
 	float    num_frames;
 
 	char *loop;
-
 	char *startonframe;
 
 	if (G_SpawnString("startonframe", "0", &startonframe))
@@ -3331,7 +3329,6 @@ must have an origin brush
 */
 void SP_props_decorBRUSH(gentity_t *self)
 {
-
 	trap_SetBrushModel(self, self->model);
 
 	SP_props_decoration(self);
@@ -3368,7 +3365,6 @@ void SP_props_decor_Scale(gentity_t *ent)
 {
 	float  scale[3] = { 1, 1, 1 };
 	vec3_t scalevec;
-
 
 	SP_props_decoration(ent);
 
@@ -3408,8 +3404,7 @@ void SP_skyportal(gentity_t *ent)
 	int    fogn;
 	int    fogf;
 	int    isfog = 0;
-
-	float fov_x;
+	float  fov_x;
 
 	G_SpawnString("fov", "90", &fov);
 	fov_x = atof(fov);
@@ -3447,7 +3442,7 @@ void props_statue_blocked(gentity_t *ent)
 	vec3_t    forward;
 	float     dist;
 	gentity_t *traceEnt;
-	vec3_t    kvel;
+
 
 	if (!Q_stricmp(ent->classname, "props_statueBRUSH"))
 	{
@@ -3479,7 +3474,8 @@ void props_statue_blocked(gentity_t *ent)
 
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		float grav = 128;
+		float  grav = 128;
+		vec3_t kvel;
 
 		G_Damage(traceEnt, ent, ent, NULL, trace.endpos, ent->damage, 0, MOD_CRUSH);
 
@@ -3727,7 +3723,6 @@ THE damage has been disabled at the moment
 */
 void SP_props_statueBRUSH(gentity_t *self)
 {
-
 	trap_SetBrushModel(self, self->model);
 
 	SP_props_statue(self);
@@ -3854,7 +3849,7 @@ void init_locker(gentity_t *ent)
 void props_locker_spawn_item(gentity_t *ent)
 {
 	gitem_t   *item;
-	gentity_t *drop = NULL;
+	gentity_t *drop;
 
 	item = BG_FindItem(ent->spawnitem);
 
@@ -4056,7 +4051,6 @@ NOSOUND - silent (duh)
 */
 void props_flamethrower_think(gentity_t *ent)
 {
-	vec3_t    vec;
 	gentity_t *target = NULL;
 	// actually create flamechunks that do damage in this direction
 	vec3_t flameDir;
@@ -4077,7 +4071,7 @@ void props_flamethrower_think(gentity_t *ent)
 		}
 		else
 		{
-			vec3_t angles;
+			vec3_t angles, vec;
 
 			VectorSubtract(target->s.origin, ent->s.origin, vec);
 			VectorNormalize(vec);
@@ -4173,8 +4167,6 @@ void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activat
 void props_flamethrower_init(gentity_t *ent)
 {
 	gentity_t *target = NULL;
-	vec3_t    vec;
-	vec3_t    angles;
 
 	if (ent->target)
 	{
@@ -4188,6 +4180,9 @@ void props_flamethrower_init(gentity_t *ent)
 	}
 	else
 	{
+		vec3_t vec;
+		vec3_t angles;
+
 		VectorSubtract(target->s.origin, ent->s.origin, vec);
 		VectorNormalize(vec);
 		vectoangles(vec, angles);
