@@ -46,7 +46,6 @@
 #define MAX_ATMOSPHERIC_PARTICLES       4000    // maximum # of particles
 #define MAX_ATMOSPHERIC_DISTANCE        1000    // maximum distance from refdef origin that particles are visible
 #define MAX_ATMOSPHERIC_EFFECTSHADERS   6       // maximum different effectshaders for an atmospheric effect
-#define ATMOSPHERIC_DROPDELAY           1000
 
 #define ATMOSPHERIC_RAIN_SPEED      (1.1f * DEFAULT_GRAVITY)
 #define ATMOSPHERIC_RAIN_HEIGHT     150
@@ -131,7 +130,6 @@ typedef struct cg_atmosphericParticle_s
 	vec3_t pos, delta, deltaNormalized, colour;
 	float height, weight;
 	active_t active;
-	int nextDropTime;
 	qhandle_t *effectshader;
 } cg_atmosphericParticle_t;
 
@@ -158,7 +156,7 @@ typedef struct cg_atmosphericEffect_s
 	void (*ParticleRender)(cg_atmosphericParticle_t *particle);
 
 	int dropsActive, oldDropsActive;
-	int dropsRendered, dropsCreated, dropsSkipped;
+	int dropsCreated;
 } cg_atmosphericEffect_t;
 
 static cg_atmosphericEffect_t cg_atmFx;
@@ -867,12 +865,6 @@ void CG_EffectParse(const char *effectstr)
 		cg_atmFx.numEffectShaders = 0;
 	}
 
-	// initialise atmospheric effect to prevent all particles falling at the start
-	for (count = 0; count < cg_atmFx.numDrops; count++)
-	{
-		cg_atmFx.particles[count].nextDropTime = ATMOSPHERIC_DROPDELAY + (rand() % ATMOSPHERIC_DROPDELAY);
-	}
-
 	CG_EffectGust();
 }
 
@@ -907,8 +899,7 @@ void CG_AddAtmosphericEffects()
 	// allow parametric management of drop count for swelling/waning precip
 	cg_atmFx.oldDropsActive = cg_atmFx.dropsActive;
 	cg_atmFx.dropsActive    = 0;
-
-	cg_atmFx.dropsRendered = cg_atmFx.dropsCreated = cg_atmFx.dropsSkipped = 0;
+	cg_atmFx.dropsCreated   = 0;
 
 	VectorSet(cg_atmFx.viewDir, cg.refdef_current->viewaxis[0][0], cg.refdef_current->viewaxis[0][1], 0.f);
 
@@ -921,9 +912,6 @@ void CG_AddAtmosphericEffects()
 			// effect has terminated or fallen from screen view
 			if (!cg_atmFx.ParticleGenerate(particle, currvec, currweight))
 			{
-				// ensure it doesn't attempt to generate every frame, to prevent
-				// 'clumping' when there's only a small sky area available
-				particle->nextDropTime = cg.time + ATMOSPHERIC_DROPDELAY;
 				continue;
 			}
 			else
