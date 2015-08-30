@@ -686,7 +686,7 @@ static void CG_EP_ParseInts(char *intstr, int *i1, int *i2)
 void CG_EffectParse(const char *effectstr)
 {
 	float       bmin, bmax, cmin, cmax, gmin, gmax, bdrop, gdrop /*, wsplash, lsplash*/;
-	int         count, bheight;
+	int         bheight;
 	char        *startptr, *eqptr, *endptr;
 	char        workbuff[128];
 	atmFXType_t atmFXType = ATM_NONE;
