@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-26 12:45+0000\n"
+"PO-Revision-Date: 2015-08-31 20:36+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -6840,3 +6840,45 @@ msgstr "Ostrzeż"
 
 msgid "Change admin"
 msgstr "Zmień admina"
+
+msgid "Highest Fragger"
+msgstr "Najlepszy Strzelec"
+
+msgid "Highest Experience Points"
+msgstr "Najwięcej Punktów Doświadczenia"
+
+msgid "Highest Ranking Officer"
+msgstr "Najwyższy Officer"
+
+msgid "Most Highly Decorated"
+msgstr "Najbardziej Udekorowany"
+
+msgid "Highest Battle Sense"
+msgstr "Najwyższe Wyczucie Bojowe"
+
+msgid "Best Engineer"
+msgstr "Najlepszy Inżynier"
+
+msgid "Best Medic"
+msgstr "Najlepszy Medyk"
+
+msgid "Best Field Ops"
+msgstr "Najlepsze Wsparcie"
+
+msgid "Highest Light Weapons"
+msgstr "Najlepsza Lekka Broń"
+
+msgid "Best Soldier"
+msgstr "Najlepszy Żołnierz"
+
+msgid "Best Covert Ops"
+msgstr "Najlepszy Zabójca"
+
+msgid "Highest Accuracy"
+msgstr "Najlepsza Celność"
+
+msgid "I Ain't Got No Friends Award"
+msgstr "Nagroda za brak przyjaciół"
+
+msgid "Welcome Newbie! Award"
+msgstr "Nagroda Witamy Początkującego"
