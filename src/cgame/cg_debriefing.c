@@ -3342,7 +3342,7 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 			break;
 		}
 
-		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, awardNames[i], 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, CG_TranslateString(awardNames[i]), 0, 0, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i]), 0, 0, 0, &cgs.media.limboFont2);
 		y += 16;
 	}
