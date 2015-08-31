@@ -6819,3 +6819,45 @@ msgstr ""
 
 msgid "Change admin"
 msgstr ""
+
+msgid "Highest Fragger"
+msgstr ""
+
+msgid "Highest Experience Points"
+msgstr ""
+
+msgid "Highest Ranking Officer"
+msgstr ""
+
+msgid "Most Highly Decorated"
+msgstr ""
+
+msgid "Highest Battle Sense"
+msgstr ""
+
+msgid "Best Engineer"
+msgstr ""
+
+msgid "Best Medic"
+msgstr ""
+
+msgid "Best Field Ops"
+msgstr ""
+
+msgid "Highest Light Weapons"
+msgstr ""
+
+msgid "Best Soldier"
+msgstr ""
+
+msgid "Best Covert Ops"
+msgstr ""
+
+msgid "Highest Accuracy"
+msgstr ""
+
+msgid "I Ain't Got No Friends Award"
+msgstr ""
+
+msgid "Welcome Newbie! Award"
+msgstr ""
