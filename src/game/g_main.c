@@ -3509,7 +3509,7 @@ void G_LogExit(const char *string)
 
 #ifdef FEATURE_RATING
 	// calculate skill ratings
-	if (g_skillRating.integer)
+	if (g_skillRating.integer && (g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS))
 	{
 		G_CalculateSkillRatings();
 	}
