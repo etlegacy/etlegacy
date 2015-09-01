@@ -1461,7 +1461,7 @@ int G_Surrender_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 		char cs[MAX_STRING_CHARS];
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		Info_SetValueForKey(cs, "winner",
+		Info_SetValueForKey(cs, "w",
 		                    (level.voteInfo.voteTeam == TEAM_AXIS) ? "1" : "0");
 		trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
 		G_LogExit(va("%s Surrender\n",
