@@ -21,7 +21,7 @@ env:
     - BUNDLED_CURL=1
 
 before_script:
-	- ./misc/travis-setup.sh
+  - ./misc/travis-setup.sh
 
 script:
   - ./easybuild.sh
