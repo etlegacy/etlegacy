@@ -40,13 +40,13 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos);
 
 int QDECL CG_SortPlayersByXP(const void *a, const void *b);
 
-panel_button_text_t debriefTitleFont =
-{
-	0.3f,                  0.3f,
-	{ 1.f,                 1.f,              1.f,  0.8f },
-	0,                     ITEM_ALIGN_CENTER,
-	&cgs.media.limboFont2,
-};
+//panel_button_text_t debriefTitleFont =
+//{
+//	0.3f,                  0.3f,
+//	{ 1.f,                 1.f,              1.f,  0.8f },
+//	0,                     ITEM_ALIGN_CENTER,
+//	&cgs.media.limboFont2,
+//};
 
 //panel_button_text_t debriefHeadingFont =
 //{
@@ -147,18 +147,18 @@ panel_button_text_t debriefPlayerHeadingSmallerFont =
 //	NULL,
 //};
 
-panel_button_t debriefPlayerHeaderBackBorderLower =
-{
-	NULL,
-	NULL,
-	{ 10,                     260 - 14,  196, 110 },
-	{ 1,                      127,       127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefPlayerHeaderBackBorderLower =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                     260 - 14,  196, 110 },
+//	{ 1,                      127,       127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
 panel_button_t debriefPlayerHeaderBackLower =
 {
@@ -186,44 +186,44 @@ panel_button_t debriefPlayerHeaderBack =
 	NULL,
 };
 
-panel_button_t debriefPlayerHeaderBackBorder =
-{
-	NULL,
-	NULL,
-	{ 10,                     240 - 14,  196, 20 },
-	{ 1,                      127,       127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefPlayerHeaderBackBorder =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                     240 - 14,  196, 20 },
+//	{ 1,                      127,       127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t debriefPlayerSkillsBackBorderLower =
-{
-	NULL,
-	NULL,
-	{ 210,                    260 - 14,   80,  110 },
-	{ 1,                      127,        127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefPlayerSkillsBackBorderLower =
+//{
+//	NULL,
+//	NULL,
+//	{ 210,                    260 - 14,   80,  110 },
+//	{ 1,                      127,        127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t debriefPlayerSkillsBackLower =
-{
-	"white",
-	NULL,
-	{ 210,                    260 - 14,80, 110 },
-	{ 1,                      0,       0,  0, 153, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t debriefPlayerSkillsBackLower =
+//{
+//	"white",
+//	NULL,
+//	{ 210,                    260 - 14,80, 110 },
+//	{ 1,                      0,       0,  0, 153, 0, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
 panel_button_t debriefPlayerSkillsBack =
 {
@@ -776,109 +776,109 @@ panel_button_t *debriefPanelButtons[] =
 	NULL
 };
 
-panel_button_t teamDebriefOutcome =
-{
-	"white",
-	NULL,
-	{ 14,                         26, 432, 224 },
-	{ 0,                          0,  0,   0, 0, 0, 0, 0},
-	NULL,                         /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
-	CG_TeamDebriefingOutcome_Draw,
-	NULL,
-};
+//panel_button_t teamDebriefOutcome =
+//{
+//	"white",
+//	NULL,
+//	{ 14,                         26, 432, 224 },
+//	{ 0,                          0,  0,   0, 0, 0, 0, 0},
+//	NULL,                         /* font     */
+//	NULL,                         /* keyDown  */
+//	NULL,                         /* keyUp    */
+//	CG_TeamDebriefingOutcome_Draw,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapListBackBorderLower =
-{
-	NULL,
-	NULL,
-	{ 460,                    22,   170, 232 },
-	{ 1,                      127,  127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapListBackBorderLower =
+//{
+//	NULL,
+//	NULL,
+//	{ 460,                    22,   170, 232 },
+//	{ 1,                      127,  127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapListBackLower =
-{
-	"white",
-	NULL,
-	{ 460,                    22, 170, 232 },
-	{ 1,                      0,  0,   0, 153, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapListBackLower =
+//{
+//	"white",
+//	NULL,
+//	{ 460,                    22, 170, 232 },
+//	{ 1,                      0,  0,   0, 153, 0, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapListBackBorder =
-{
-	NULL,
-	NULL,
-	{ 460,                    4,    170, 20 },
-	{ 1,                      127,  127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapListBackBorder =
+//{
+//	NULL,
+//	NULL,
+//	{ 460,                    4,    170, 20 },
+//	{ 1,                      127,  127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapListBack =
-{
-	"white",
-	NULL,
-	{ 460,                    4,   170, 20 },
-	{ 1,                      41,  51,  43, 204, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapListBack =
+//{
+//	"white",
+//	NULL,
+//	{ 460,                    4,   170, 20 },
+//	{ 1,                      41,  51,  43, 204, 0, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapList =
-{
-	NULL,
-	NULL,
-	{ 470,                        196,   130, 50 },
-	{ 0,                          0,     0,   0, 0, 0, 0, 0},
-	&debriefListFont,             /* font     */
-	CG_TeamDebriefingMapList_KeyDown, /* keyDown  */
-	NULL,                         /* keyUp    */
-	CG_TeamDebriefingMapList_Draw,
-	NULL,
-};
+//anel_button_t teamDebriefMapList =
+//{
+//	NULL,
+//	NULL,
+//	{ 470,                        196,   130, 50 },
+//	{ 0,                          0,     0,   0, 0, 0, 0, 0},
+//	&debriefListFont,             /* font     */
+//	CG_TeamDebriefingMapList_KeyDown, /* keyDown  */
+//	NULL,                         /* keyUp    */
+//	CG_TeamDebriefingMapList_Draw,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapListScroll =
-{
-	NULL,
-	NULL,
-	{ 604,                       198,   16, 50 },
-	{ 2,                         0,     0,  0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	CG_Debriefing_Scrollbar_KeyDown, /* keyDown  */
-	CG_Debriefing_Scrollbar_KeyUp, /* keyUp    */
-	CG_Debriefing_Scrollbar_Draw,
-	NULL,
-};
+//panel_button_t teamDebriefMapListScroll =
+//{
+//	NULL,
+//	NULL,
+//	{ 604,                       198,   16, 50 },
+//	{ 2,                         0,     0,  0, 0, 0, 0, 0},
+//	NULL,                        /* font     */
+//	CG_Debriefing_Scrollbar_KeyDown, /* keyDown  */
+//	CG_Debriefing_Scrollbar_KeyUp, /* keyUp    */
+//	CG_Debriefing_Scrollbar_Draw,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapShot =
-{
-	NULL,
-	NULL,
-	{ 464,                        28,   170 - 8, 170 - 8 },
-	{ 0,                          0,    0,       0, 0, 0, 0, 0},
-	NULL,                         /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
-	CG_TeamDebriefingMapShot_Draw,
-	NULL,
-};
+//panel_button_t teamDebriefMapShot =
+//{
+//	NULL,
+//	NULL,
+//	{ 464,                        28,   170 - 8, 170 - 8 },
+//	{ 0,                          0,    0,       0, 0, 0, 0, 0},
+//	NULL,                         /* font     */
+//	NULL,                         /* keyDown  */
+//	NULL,                         /* keyUp    */
+//	CG_TeamDebriefingMapShot_Draw,
+//	NULL,
+//};
 
 panel_button_text_t teamDebriefBigTitle =
 {
@@ -904,96 +904,96 @@ panel_button_text_t teamDebriefTitle =
 	&cgs.media.limboFont2,
 };
 
-panel_button_t teamDebriefMapWinnerText =
-{
-	NULL,
-	NULL,
-	{ 10,                           273,  620, 20 },
-	{ 0,                            0,    0,   0, 0, 0, 0, 0},
-	&teamDebriefBigTitle,           /* font     */
-	NULL,                           /* keyDown  */
-	NULL,                           /* keyUp    */
-	CG_TeamDebriefingMapWinner_Draw,
-	NULL,
-};
+//panel_button_t teamDebriefMapWinnerText =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                           273,  620, 20 },
+//	{ 0,                            0,    0,   0, 0, 0, 0, 0},
+//	&teamDebriefBigTitle,           /* font     */
+//	NULL,                           /* keyDown  */
+//	NULL,                           /* keyUp    */
+//	CG_TeamDebriefingMapWinner_Draw,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapWinnerBackBorderLower =
-{
-	NULL,
-	NULL,
-	{ 10,                     277,  620, 77 },
-	{ 1,                      127,  127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapWinnerBackBorderLower =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                     277,  620, 77 },
+//	{ 1,                      127,  127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapWinnerBackLower =
-{
-	"white",
-	NULL,
-	{ 10,                     277,620, 77 },
-	{ 1,                      0,  0,   0, 153, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapWinnerBackLower =
+//{
+//	"white",
+//	NULL,
+//	{ 10,                     277,620, 77 },
+//	{ 1,                      0,  0,   0, 153, 0, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapWinnerTextBackBorder =
-{
-	NULL,
-	NULL,
-	{ 10,                     258,  620, 20 },
-	{ 1,                      127,  127, 127, 255, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapWinnerTextBackBorder =
+//{
+//	NULL,
+//	NULL,
+//	{ 10,                     258,  620, 20 },
+//	{ 1,                      127,  127, 127, 255, 1, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefMapWinnerTextBack =
-{
-	"white",
-	NULL,
-	{ 10,                     258, 620, 20 },
-	{ 1,                      41,  51,  43, 204, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
-	BG_PanelButtonsRender_Img,
-	NULL,
-};
+//panel_button_t teamDebriefMapWinnerTextBack =
+//{
+//	"white",
+//	NULL,
+//	{ 10,                     258, 620, 20 },
+//	{ 1,                      41,  51,  43, 204, 0, 0, 0},
+//	NULL,                     /* font     */
+//	NULL,                     /* keyDown  */
+//	NULL,                     /* keyUp    */
+//	BG_PanelButtonsRender_Img,
+//	NULL,
+//};
 
-panel_button_t teamDebriefAxisXPText =
-{
-	NULL,
-	"Axis",
-	{ 24,                      320,470, 200 },
-	{ 0,                       0,  0,   0, 0, 0, 0, 0},
-	&teamDebriefBigTitle,      /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
-	BG_PanelButtonsRender_Text,
-	NULL,
-};
+//panel_button_t teamDebriefAxisXPText =
+//{
+//	NULL,
+//	"Axis",
+//	{ 24,                      320,470, 200 },
+//	{ 0,                       0,  0,   0, 0, 0, 0, 0},
+//	&teamDebriefBigTitle,      /* font     */
+//	NULL,                      /* keyDown  */
+//	NULL,                      /* keyUp    */
+//	BG_PanelButtonsRender_Text,
+//	NULL,
+//};
 
-panel_button_t teamDebriefAlliesXPText =
-{
-	NULL,
-	"Allies",
-	{ 24,                      340,470, 200 },
-	{ 0,                       0,  0,   0, 0, 0, 0, 0},
-	&teamDebriefBigTitle,      /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
-	BG_PanelButtonsRender_Text,
-	NULL,
-};
+//panel_button_t teamDebriefAlliesXPText =
+//{
+//	NULL,
+//	"Allies",
+//	{ 24,                      340,470, 200 },
+//	{ 0,                       0,  0,   0, 0, 0, 0, 0},
+//	&teamDebriefBigTitle,      /* font     */
+//	NULL,                      /* keyDown  */
+//	NULL,                      /* keyUp    */
+//	BG_PanelButtonsRender_Text,
+//	NULL,
+//};
 
 #define TDB_SKILL_TITLES_XP(number, title, x)             \
 	panel_button_t teamDebriefSkillXPText_ ## number = {          \
@@ -1602,7 +1602,6 @@ panel_button_t mapVoteBorder3 =
 	NULL,
 };
 // MAPVOTE END
-
 
 void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 {
@@ -3334,11 +3333,9 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 		case TEAM_ALLIES:
 			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.alliedFlag);
 			break;
-		case TEAM_SPECTATOR:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // FIXME
-			break;
+		case TEAM_SPECTATOR: // fall through
 		default:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // FIXME
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // TEAM_SPECTATOR & TEAM_FREE shouldn't occure
 			break;
 		}
 
