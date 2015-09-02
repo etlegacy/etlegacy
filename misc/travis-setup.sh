@@ -15,6 +15,8 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 	export BUNDLED_CURL=0
 	brew update
 	brew install gnu-sed
+	brew install automake
+	brew install autoconfg
 else
 	# unknown system :/
 	echo "Build might fail now"
