@@ -864,11 +864,10 @@ void flakPuff(vec3_t origin)
 	tent->s.angles2[2] = 10;
 }
 
-/*
-==============
-Fire_Lead
-==============
-*/
+/**
+ * @brief Fire_Lead_Ext - machine/flag gun fire
+ * @note  Before calling this ensure 	ent->s.eFlags  and activator->s.eFlags are set (EF_MG42_ACTIVE or EF_AAGUN_ACTIVE)
+ */
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, int mod)
 {
 	trace_t   tr;
@@ -881,9 +880,6 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 
 	r = Q_crandom(&seed) * spread;
 	u = Q_crandom(&seed) * spread;
-
-	ent->s.eFlags       |= EF_MG42_ACTIVE;
-	activator->s.eFlags |= EF_MG42_ACTIVE;
 
 	VectorMA(muzzle, 8192, forward, end);
 	VectorMA(end, r, right, end);
@@ -1185,7 +1181,7 @@ void aagun_fire(gentity_t *other)
 
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
-	Fire_Lead(self, other, AAGUN_SPREAD, AAGUN_DAMAGE, muzzle, forward, right, up);
+	Fire_Lead_Ext(self, other, AAGUN_SPREAD, AAGUN_DAMAGE, muzzle, forward, right, up, MOD_MACHINEGUN);
 }
 
 void aagun_touch(gentity_t *self, gentity_t *other, trace_t *trace)
@@ -1310,7 +1306,7 @@ void mg42_fire(gentity_t *other)
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
 
-	Fire_Lead(self, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up); // FIXME: browning
+	Fire_Lead_Ext(self, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up, MOD_MACHINEGUN); // FIXME: browning?
 }
 
 void mg42_track(gentity_t *self, gentity_t *other)

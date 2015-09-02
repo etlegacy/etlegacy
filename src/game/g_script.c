@@ -1005,6 +1005,10 @@ void mountedmg42_fire(gentity_t *other)
 
 	SnapVector(muzzle);
 
+	// ent & activator are same for Fire_Lead_Ext
+	//self->s.eFlags  |= EF_MG42_ACTIVE;
+	other->s.eFlags |= EF_MG42_ACTIVE;
+
 	if (self->s.density & 8)
 	{
 		Fire_Lead_Ext(other, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up, MOD_BROWNING);
