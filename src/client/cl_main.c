@@ -108,7 +108,6 @@ cvar_t *cl_waverecording;
 cvar_t *cl_wavefilename;
 cvar_t *cl_waveoffset;
 
-cvar_t *cl_packetloss;
 cvar_t *cl_packetdelay;
 
 cvar_t *cl_consoleKeys;
@@ -145,7 +144,6 @@ void CL_ShowIP_f(void);
 void CL_ServerStatus_f(void);
 void CL_ServerStatusResponse(netadr_t from, msg_t *msg);
 
-void CL_WriteWaveClose(void);
 void CL_WavStopRecord_f(void);
 
 void CL_PurgeCache(void)
@@ -2827,7 +2825,6 @@ void CL_Init(void)
 	cl_wavefilename  = Cvar_Get("cl_wavefilename", "", CVAR_ROM);
 	cl_waveoffset    = Cvar_Get("cl_waveoffset", "0", CVAR_ROM);
 
-	cl_packetloss  = Cvar_Get("cl_packetloss", "0", CVAR_CHEAT);
 	cl_packetdelay = Cvar_Get("cl_packetdelay", "0", CVAR_CHEAT);
 
 	Cvar_Get("cl_maxPing", "800", CVAR_ARCHIVE);
