@@ -31,3 +31,9 @@ notifications:
       - "irc.freenode.org#etlegacy"
     use_notice: true
     skip_join: true
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/5bb21505f1a8fdd661c3
+    on_success: change
+    on_failure: always
+    on_start: never
