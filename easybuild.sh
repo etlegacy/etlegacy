@@ -367,40 +367,33 @@ run_build() {
 	check_exit
 }
 
-run_package() {
-	einfo "Package..."
-	cd ${BUILDDIR}
-	# check_exit "make package"
-	# calling cpack directly we are not checking the build output anymore
-	check_exit "cpack"
-	# TODO: detect if osx and generate a package and a dmg installer
-	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-		# Generate DMG
-		app_exists APP_FOUND "dmgcanvas"
-		if [ $APP_FOUND == 0 ]; then
-			echo "Missing dmgcanvas cannot create installer"
-			exit 1
-		fi
+create_osx_dmg() {
+	# Generate DMG
+	app_exists APP_FOUND "dmgcanvas"
+	if [ $APP_FOUND == 0 ]; then
+		echo "Missing dmgcanvas skipping OSX installer creation"
+		return
+	fi
 
-		app_exists APP_FOUND "rsvg-convert"
-		if [ $APP_FOUND == 0 ]; then
-			echo "Missing rsvg-convert cannot create installer"
-			exit 1
-		fi
+	app_exists APP_FOUND "rsvg-convert"
+	if [ $APP_FOUND == 0 ]; then
+		echo "Missing rsvg-convert cannot create installer"
+		exit 1
+	fi
 
-		echo "Generating OSX installer"
-		CANVAS_FILE="ETLegacy.dmgCanvas"
+	echo "Generating OSX installer"
+	CANVAS_FILE="ETLegacy.dmgCanvas"
 
-		# Generate the icon for the folder
-		# using rsvg-convert
-		# brew install librsvg
-		rsvg-convert -h 256 ../misc/etl.svg > icon.png
+	# Generate the icon for the folder
+	# using rsvg-convert
+	# brew install librsvg
+	rsvg-convert -h 256 ../misc/etl.svg > icon.png
 
-		# Copy the canvas
-		cp -rf ../misc/${CANVAS_FILE} ${CANVAS_FILE}
+	# Copy the canvas
+	cp -rf ../misc/${CANVAS_FILE} ${CANVAS_FILE}
 
-		# Needs to be the osx:s default python install!
-		python << END
+	# Needs to be the osx:s default python install!
+	python << END
 import Cocoa
 import sys
 import os
@@ -418,8 +411,19 @@ if len(files) == 1 :
 	Cocoa.NSWorkspace.sharedWorkspace().setIcon_forFile_options_(Cocoa.NSImage.alloc().initWithContentsOfFile_(iconfile), foldername, 0) or sys.exit("Unable to set file icon")
 	print 'The icon succesfully set'
 END
-		# We will be generating the dmg with the DMG Canvas app
-		dmgcanvas ${CANVAS_FILE} "ETLegacy-${LEGACY_VERSION}.dmg" -v "ET Legacy ${LEGACY_VERSION}" -volume "ET Legacy ${LEGACY_VERSION}"
+	# We will be generating the dmg with the DMG Canvas app
+	dmgcanvas ${CANVAS_FILE} "ETLegacy-${LEGACY_VERSION}.dmg" -v "ET Legacy ${LEGACY_VERSION}" -volume "ET Legacy ${LEGACY_VERSION}"
+}
+
+run_package() {
+	einfo "Package..."
+	cd ${BUILDDIR}
+	# check_exit "make package"
+	# calling cpack directly we are not checking the build output anymore
+	check_exit "cpack"
+	# TODO: detect if osx and generate a package and a dmg installer
+	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+		create_osx_dmg
 	fi
 }
 
