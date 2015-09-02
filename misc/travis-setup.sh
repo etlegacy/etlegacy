@@ -10,8 +10,10 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
   sudo apt-get install -q -t precise pkg-config nasm libgl1-mesa-dev libasound2-dev pulseaudio m4
   sudo apt-get install -q -t trusty automake
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-	# do we need something for apple?
+	# we need the gnu-sed from brew for r2
 	echo "Travis running apple build"
+	brew update
+	brew install gnu-sed
 else
 	# unknown system :/
 	echo "Build might fail now"
