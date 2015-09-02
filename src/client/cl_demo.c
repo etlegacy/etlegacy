@@ -194,6 +194,12 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	// CL_ReadDemoMessage()
 	origPosition = FS_FTell(clc.demofile);
 
+	if (origPosition < 0)
+	{
+		// FS_FTell prints the warning ...
+		return qfalse;
+	}
+
 	currentSnapNum = cl.snap.messageNum;
 
 	for (j = 0; j < snapshotNumber - currentSnapNum; j++)
