@@ -1344,7 +1344,7 @@ static int _et_gentity_get(lua_State *L)
 		return 1;
 	}
 
-	addr += (unsigned long)field->mapping;
+	addr += field->mapping;
 
 	switch (field->type)
 	{
@@ -1438,7 +1438,7 @@ static int _et_gentity_set(lua_State *L)
 		return 1;
 	}
 
-	addr += (unsigned long)field->mapping;
+	addr += field->mapping;
 
 	switch (field->type)
 	{
@@ -1476,6 +1476,9 @@ static int _et_gentity_set(lua_State *L)
 	case FIELD_FLOAT_ARRAY:
 		*(float *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, 3))) = luaL_checknumber(L, 4);
 		return 1;
+	default:
+		G_Printf("Lua API: et.gentity_set with no valid field type\n");
+		break;
 	}
 	return 0;
 }
