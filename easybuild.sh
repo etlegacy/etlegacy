@@ -234,7 +234,7 @@ generate_configuration() {
 	[ ! "${BUNDLED_JANSSON}" ]  && BUNDLED_JANSSON=0
 
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-		[ ! "${BUNDLED_CURL}" ] && BUNDLED_CURL=0
+		BUNDLED_CURL=0
 	else
 		[ ! "${BUNDLED_CURL}" ] && BUNDLED_CURL=1
 	fi

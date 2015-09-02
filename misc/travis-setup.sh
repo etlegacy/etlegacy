@@ -12,6 +12,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	# we need the gnu-sed from brew for r2
 	echo "Travis running apple build"
+	export BUNDLED_CURL=0
 	brew update
 	brew install gnu-sed
 else
