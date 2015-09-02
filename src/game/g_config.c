@@ -245,7 +245,7 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 	{
 		fileHandle_t f;
 		char         *code, *signature;
-		qboolean     res = qfalse;
+		qboolean     res;
 
 		G_Printf("Setting rules for map: %s\n", token.string);
 		res = G_ParseSettings(handle, qtrue, config);

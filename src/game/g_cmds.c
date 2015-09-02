@@ -2067,6 +2067,8 @@ qboolean G_IsClassFull(gentity_t *ent, int playerType, team_t team)
 			return qtrue;
 		}
 		break;
+	default:
+		break;
 	}
 	return qfalse;
 }

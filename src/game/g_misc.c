@@ -507,6 +507,8 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		fire_mortar(ent, ent->s.origin, dir);
 		break;
 
+	default:
+		break;
 	}
 
 	G_AddEvent(ent, EV_FIRE_WEAPON, 0);

@@ -786,7 +786,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 				{
 					CP(va("print \">>> ^3Clock set to: %d:%02d\n\n\n\"",
 					      g_nextTimeLimit.integer,
-					      (int)(60.0 * (float)(g_nextTimeLimit.value - g_nextTimeLimit.integer))));
+					      (int)(60.0 * (g_nextTimeLimit.value - g_nextTimeLimit.integer))));
 				}
 				else
 				{
@@ -798,13 +798,13 @@ void G_matchInfoDump(unsigned int dwDumpType)
 						      (int)val,
 						      (int)(60.0 * (val - (int)val)),
 						      g_timelimit.integer,
-						      (int)(60.0 * (float)(g_timelimit.value - g_timelimit.integer))));
+						      (int)(60.0 * (g_timelimit.value - g_timelimit.integer))));
 					}
 					else
 					{
 						CP(va("print \">>> ^3Objective NOT reached in time (%d:%02d)\n\n\n\"",
 						      g_timelimit.integer,
-						      (int)(60.0 * (float)(g_timelimit.value - g_timelimit.integer))));
+						      (int)(60.0 * (g_timelimit.value - g_timelimit.integer))));
 					}
 				}
 			}

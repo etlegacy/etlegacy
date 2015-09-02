@@ -656,7 +656,7 @@ qboolean BG_ParseConditions(char **text_pp, animScriptItem_t *scriptItem)
 {
 	int      conditionIndex, conditionValue[2];
 	char     *token;
-	qboolean minus = qfalse;
+	qboolean minus;
 
 	conditionValue[0] = 0;
 	conditionValue[1] = 0;

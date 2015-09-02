@@ -2695,7 +2695,6 @@ static void PM_FinishWeaponChange(void)
 	case WP_GPG40:
 		pm->pmext->silencedSideArm |= 2;
 		break;
-
 	default:
 		break;
 	}
@@ -2788,6 +2787,8 @@ static void PM_FinishWeaponChange(void)
 			switchtime    = 1667;
 			altSwitchAnim = qtrue;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -3418,6 +3419,8 @@ static qboolean PM_MountedFire(void)
 			//pm->ps->viewlocked = VIEWLOCK_JITTER;     // this enable screen jitter when firing
 		}
 		return qtrue;
+	default:
+		break;
 	}
 
 	if (pm->ps->eFlags & EF_MOUNTEDTANK)

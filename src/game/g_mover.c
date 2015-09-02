@@ -2951,7 +2951,7 @@ void Reached_Train(gentity_t *ent)
 	// if the path_corner has a speed, use that
 	if (next->speed)
 	{
-		speed = next->speed * (float)g_moverScale.value;
+		speed = next->speed * g_moverScale.value;
 	}
 	else
 	{
@@ -3339,7 +3339,7 @@ void Reached_Train_rotating(gentity_t *ent)
 	// if the path_corner has a speed, use that
 	if (next->speed)
 	{
-		speed = next->speed * (float)g_moverScale.value;
+		speed = next->speed * g_moverScale.value;
 	}
 	else
 	{
@@ -5044,6 +5044,8 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 				case 3:
 					G_Script_ScriptEvent(self, "destroyed", "stage3");
 					break;
+				default:
+					break;
 				}
 			}
 
@@ -5265,6 +5267,8 @@ void func_constructible_underconstructionthink(gentity_t *ent)
 						break;
 					case 3:
 						G_Script_ScriptEvent(ent, "decayed", "stage3");
+						break;
+					default:
 						break;
 					}
 				}
