@@ -2990,7 +2990,7 @@ void SP_props_snowGenerator(gentity_t *ent)
 	{
 		gentity_t *target;
 
-		target = G_Find(target, FOFS(targetname), ent->target);
+		target = G_Find(NULL, FOFS(targetname), ent->target);
 		if (!target)
 		{
 			G_Printf("error snowGenerator at loc %s does cant find target %s\n", vtos(center), ent->target);
@@ -3413,7 +3413,7 @@ void SP_skyportal(gentity_t *ent)
 	isfog += G_SpawnInt("fognear", "0", &fogn);
 	isfog += G_SpawnInt("fogfar", "300", &fogf);
 
-	trap_SetConfigstring(CS_SKYBOXORG, va("%.2f %.2f %.2f %.1f %i %.2f %.2f %.2f %i %i", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2], fov_x, (int)isfog, fogv[0], fogv[1], fogv[2], fogn, fogf));
+	trap_SetConfigstring(CS_SKYBOXORG, va("%.2f %.2f %.2f %.1f %i %.2f %.2f %.2f %i %i", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2], fov_x, isfog, fogv[0], fogv[1], fogv[2], fogn, fogf));
 }
 
 /*
