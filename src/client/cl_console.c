@@ -47,7 +47,6 @@ console_t con;
 cvar_t *con_conspeed;
 cvar_t *con_autoclear;
 
-vec4_t console_color = { 1.0, 1.0, 1.0, 1.0 };
 vec4_t console_highlightcolor = { 0.5, 0.5, 0.2, 0.45 };
 
 /**

@@ -1321,11 +1321,12 @@ void CL_Clientinfo_f(void)
 
 /**
  * @brief Eat misc console commands to prevent exploits
- */
+ * @note unused
 void CL_EatMe_f(void)
 {
 	// do nothing kthxbye
 }
+*/
 
 /*
 ==============

@@ -1853,7 +1853,7 @@ void S_UpdateStreamingSounds(void)
 	int              rs;
 	int              i, j;
 	float            lvol, rvol;
-	float            streamingVol = 1.0f;
+	float            streamingVol;
 	streamingSound_t *ss;
 
 	for (i = 0; i < MAX_STREAMING_SOUNDS; i++)

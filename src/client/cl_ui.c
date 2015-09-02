@@ -327,12 +327,11 @@ static int LAN_GetServerCount(int source)
 	{
 	case AS_LOCAL:
 		return cls.numlocalservers;
-		break;
 	case AS_GLOBAL:
 		return cls.numglobalservers;
-		break;
 	case AS_FAVORITES:
 		return cls.numfavoriteservers;
+	default:
 		break;
 	}
 	return 0;

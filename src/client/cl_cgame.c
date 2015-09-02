@@ -99,7 +99,7 @@ CL_GetParseEntityState
 
 @note Unused
 ====================
-*/
+
 qboolean CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
 {
 	// can't return anything that hasn't been parsed yet
@@ -118,6 +118,7 @@ qboolean CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
 	*state = cl.parseEntities[parseEntityNumber & (MAX_PARSE_ENTITIES - 1)];
 	return qtrue;
 }
+*/
 
 /*
 ====================
@@ -1478,8 +1479,10 @@ void CL_SetCGameTime(void)
 /*
 ====================
 CL_GetTag
+
+@note Unused
 ====================
-*/
+
 qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation)
 {
 	if (!cgvm)
@@ -1489,3 +1492,4 @@ qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation)
 
 	return VM_Call(cgvm, CG_GET_TAG, clientNum, tagname, orientation);
 }
+*/
