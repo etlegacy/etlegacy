@@ -1787,7 +1787,7 @@ void SP_Props_ChairChatArm(gentity_t *ent)
 
 void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	gentity_t *daent;
+	gentity_t *daent = NULL;
 
 	while ((daent = G_FindByTargetname(daent, daent->target)) != NULL)
 	{
