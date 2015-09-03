@@ -294,7 +294,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	            level.sortedClients[i],
 	            totalXP,
 	            ping,
-	            (level.time - cl->pers.enterTime - (level.time - level.intermissiontime)) / 60000,
+	            (level.intermissiontime - cl->pers.enterTime) / 60000,
 	            g_entities[level.sortedClients[i]].s.powerups,
 	            miscFlags,
 	            respawnsLeft
