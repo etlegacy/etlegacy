@@ -129,6 +129,9 @@ void G_UpdateSkillRating(int winner)
 	float c, v, w, t, winningMu, losingMu, muFactor, sigmaFactor;
 	int   playerTeam, rankFactor, i;
 
+	// total play time
+	int totalTime = level.intermissiontime - level.startTime - level.timeDelta;
+
 	// player additive factors
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
@@ -143,13 +146,13 @@ void G_UpdateSkillRating(int winner)
 		// player has played in at least one of the team
 		if (cl->sess.time_axis > 0)
 		{
-			teamMuX      += cl->sess.mu;
+			teamMuX      += cl->sess.mu * (cl->sess.time_axis / (float)totalTime);
 			teamSigmaSqX += pow(cl->sess.sigma, 2);
 			numPlayersX++;
 		}
 		if (cl->sess.time_allies > 0)
 		{
-			teamMuL      += cl->sess.mu;
+			teamMuL      += cl->sess.mu * (cl->sess.time_allies / (float)totalTime);
 			teamSigmaSqL += pow(cl->sess.sigma, 2);
 			numPlayersL++;
 		}
