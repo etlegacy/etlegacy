@@ -216,51 +216,45 @@ parse_commandline() {
 }
 
 generate_configuration() {
-	# cmake variables
-	[ ! "${RELEASE_TYPE}" ]     && RELEASE_TYPE="Release"
-	[ ! "${CROSS_COMPILE32}" ]  && CROSS_COMPILE32=1
-	[ ! "${BUILD_SERVER}" ]     && BUILD_SERVER=1
-	[ ! "${BUILD_CLIENT}" ]     && BUILD_CLIENT=1
-	[ ! "${BUILD_MOD}" ]        && BUILD_MOD=1
-	[ ! "${BUILD_MOD_PK3}" ]    && BUILD_MOD_PK3=1
-	[ ! "${BUILD_PAK_PK3}" ]    && BUILD_PAK_PK3=1
-	[ ! "${BUNDLED_LIBS}" ]     && BUNDLED_LIBS=1
-	[ ! "${BUNDLED_SDL}" ]      && BUNDLED_SDL=1
-	[ ! "${BUNDLED_JPEG}" ]     && BUNDLED_JPEG=1
-	[ ! "${BUNDLED_LUA}" ]      && BUNDLED_LUA=1
-	[ ! "${BUNDLED_OGG}" ]      && BUNDLED_OGG=1
-	[ ! "${BUNDLED_GLEW}" ]     && BUNDLED_GLEW=1
-	[ ! "${BUNDLED_FREETYPE}" ] && BUNDLED_FREETYPE=1
-	[ ! "${BUNDLED_JANSSON}" ]  && BUNDLED_JANSSON=0
+	#cmake variables
+	RELEASE_TYPE=${RELEASE_TYPE:-Release}
+	CROSS_COMPILE32=${CROSS_COMPILE32:-1}
+	BUILD_SERVER=${BUILD_SERVER:-1}
+	BUILD_CLIENT=${BUILD_CLIENT:-1}
+	BUILD_MOD=${BUILD_MOD:-1}
+	BUILD_MOD_PK3=${BUILD_MOD_PK3:-1}
+	BUILD_PAK_PK3=${BUILD_PAK_PK3:-1}
+	BUNDLED_LIBS=${BUNDLED_LIBS:-1}
+	BUNDLED_SDL=${BUNDLED_SDL:-1}
+	BUNDLED_JPEG=${BUNDLED_JPEG:-1}
+	BUNDLED_LUA=${BUNDLED_LUA:-1}
+	BUNDLED_OGG=${BUNDLED_OGG:-1}
+	BUNDLED_GLEW=${BUNDLED_GLEW:-1}
+	BUNDLED_FREETYPE=${BUNDLED_FREETYPE:-1}
+	BUNDLED_JANSSON=${BUNDLED_JANSSON:-0}
 
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-		BUNDLED_CURL=0
+		BUNDLED_CURL=${BUNDLED_CURL:-0}
+		FEATURE_RENDERER2=${FEATURE_RENDERER2:-0}
+		RENDERER_DYNAMIC=${RENDERER_DYNAMIC:-0}
 	else
-		[ ! "${BUNDLED_CURL}" ] && BUNDLED_CURL=1
+		BUNDLED_CURL=${BUNDLED_CURL:-1}
+		FEATURE_RENDERER2=${FEATURE_RENDERER2:-1}
+		RENDERER_DYNAMIC=${RENDERER_DYNAMIC:-1}
 	fi
 
-	[ ! "${FEATURE_CURL}" ]      && FEATURE_CURL=1
-	[ ! "${FEATURE_OGG}" ]       && FEATURE_OGG=1
-	[ ! "${FEATURE_OPENAL}" ]    && FEATURE_OPENAL=0
-	[ ! "${FEATURE_FREETYPE}" ]  && FEATURE_FREETYPE=1
-	[ ! "${FEATURE_TRACKER}" ]   && FEATURE_TRACKER=0
-	[ ! "${FEATURE_LUA}" ]       && FEATURE_LUA=1
-	[ ! "${FEATURE_MULTIVIEW}" ] && FEATURE_MULTIVIEW=0
-	[ ! "${FEATURE_ANTICHEAT}" ] && FEATURE_ANTICHEAT=1
-	[ ! "${FEATURE_GETTEXT}" ]   && FEATURE_GETTEXT=1
-	[ ! "${FEATURE_JANSSON}" ]   && FEATURE_JANSSON=0
-	[ ! "${FEATURE_LIVEAUTH}" ]  && FEATURE_LIVEAUTH=1
+	FEATURE_CURL=${FEATURE_CURL:-1}
+	FEATURE_OGG=${FEATURE_OGG:-1}
+	FEATURE_OPENAL=${FEATURE_OPENAL:-0}
+	FEATURE_FREETYPE=${FEATURE_FREETYPE:-1}
+	FEATURE_TRACKER=${FEATURE_TRACKER:-0}
 
-	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-		[ ! "${FEATURE_RENDERER2}" ] && FEATURE_RENDERER2=0
-		[ ! "${RENDERER_DYNAMIC}" ]  && RENDERER_DYNAMIC=0
-	else
-		[ ! "${FEATURE_RENDERER2}" ] && FEATURE_RENDERER2=1
-		[ ! "${RENDERER_DYNAMIC}" ]  && RENDERER_DYNAMIC=1
-	fi
-
-	[ ! "${FEATURE_OMNIBOT}" ]   && FEATURE_OMNIBOT=1
-	[ ! "${INSTALL_OMNIBOT}" ]   && INSTALL_OMNIBOT=1
+	FEATURE_LUA=${FEATURE_LUA:-1}
+	FEATURE_MULTIVIEW=${FEATURE_MULTIVIEW:-0}
+	FEATURE_ANTICHEAT=${FEATURE_ANTICHEAT:-1}
+	FEATURE_LIVEAUTH=${FEATURE_LIVEAUTH:-1}
+	FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
+	INSTALL_OMNIBOT=${INSTALL_OMNIBOT:-1}
 
 	einfo "Configuring ET Legacy..."
 	_CFGSTRING="
@@ -373,40 +367,33 @@ run_build() {
 	check_exit
 }
 
-run_package() {
-	einfo "Package..."
-	cd ${BUILDDIR}
-	# check_exit "make package"
-	# calling cpack directly we are not checking the build output anymore
-	check_exit "cpack"
-	# TODO: detect if osx and generate a package and a dmg installer
-	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-		# Generate DMG
-		app_exists APP_FOUND "dmgcanvas"
-		if [ $APP_FOUND == 0 ]; then
-			echo "Missing dmgcanvas cannot create installer"
-			exit 1
-		fi
+create_osx_dmg() {
+	# Generate DMG
+	app_exists APP_FOUND "dmgcanvas"
+	if [ $APP_FOUND == 0 ]; then
+		echo "Missing dmgcanvas skipping OSX installer creation"
+		return
+	fi
 
-		app_exists APP_FOUND "rsvg-convert"
-		if [ $APP_FOUND == 0 ]; then
-			echo "Missing rsvg-convert cannot create installer"
-			exit 1
-		fi
+	app_exists APP_FOUND "rsvg-convert"
+	if [ $APP_FOUND == 0 ]; then
+		echo "Missing rsvg-convert cannot create installer"
+		exit 1
+	fi
 
-		echo "Generating OSX installer"
-		CANVAS_FILE="ETLegacy.dmgCanvas"
+	echo "Generating OSX installer"
+	CANVAS_FILE="ETLegacy.dmgCanvas"
 
-		# Generate the icon for the folder
-		# using rsvg-convert
-		# brew install librsvg
-		rsvg-convert -h 256 ../misc/etl.svg > icon.png
+	# Generate the icon for the folder
+	# using rsvg-convert
+	# brew install librsvg
+	rsvg-convert -h 256 ../misc/etl.svg > icon.png
 
-		# Copy the canvas
-		cp -rf ../misc/${CANVAS_FILE} ${CANVAS_FILE}
+	# Copy the canvas
+	cp -rf ../misc/${CANVAS_FILE} ${CANVAS_FILE}
 
-		# Needs to be the osx:s default python install!
-		python << END
+	# Needs to be the osx:s default python install!
+	python << END
 import Cocoa
 import sys
 import os
@@ -424,8 +411,19 @@ if len(files) == 1 :
 	Cocoa.NSWorkspace.sharedWorkspace().setIcon_forFile_options_(Cocoa.NSImage.alloc().initWithContentsOfFile_(iconfile), foldername, 0) or sys.exit("Unable to set file icon")
 	print 'The icon succesfully set'
 END
-		# We will be generating the dmg with the DMG Canvas app
-		dmgcanvas ${CANVAS_FILE} "ETLegacy-${LEGACY_VERSION}.dmg" -v "ET Legacy ${LEGACY_VERSION}" -volume "ET Legacy ${LEGACY_VERSION}"
+	# We will be generating the dmg with the DMG Canvas app
+	dmgcanvas ${CANVAS_FILE} "ETLegacy-${LEGACY_VERSION}.dmg" -v "ET Legacy ${LEGACY_VERSION}" -volume "ET Legacy ${LEGACY_VERSION}"
+}
+
+run_package() {
+	einfo "Package..."
+	cd ${BUILDDIR}
+	# check_exit "make package"
+	# calling cpack directly we are not checking the build output anymore
+	check_exit "cpack"
+	# TODO: detect if osx and generate a package and a dmg installer
+	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+		create_osx_dmg
 	fi
 }
 

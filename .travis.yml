@@ -11,14 +11,11 @@ compiler:
 env:
   native:
     - CROSS_COMPILE32=0
-    - FEATURE_RENDERER2=1
-    - RENDERER_DYNAMIC=1
     - BUNDLED_LIBS=1
     - BUNDLED_SDL=1
     - BUNDLED_JPEG=1
     - BUNDLED_LUA=1
     - BUNDLED_OGG=1
-    - BUNDLED_CURL=1
 
 before_script:
   - ./misc/travis-setup.sh
@@ -34,3 +31,9 @@ notifications:
       - "irc.freenode.org#etlegacy"
     use_notice: true
     skip_join: true
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/5bb21505f1a8fdd661c3
+    on_success: change
+    on_failure: always
+    on_start: never

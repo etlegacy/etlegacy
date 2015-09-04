@@ -12,14 +12,15 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	# we need the gnu-sed from brew for r2
 	echo "Travis running apple build"
-	export BUNDLED_CURL=0
-	export CROSS_COMPILE32=1
+	#export BUNDLED_CURL=0
+	#export BUNDLED_SDL=0
 	#export BUNDLED_JPEG=0
 	brew update
 	brew install gnu-sed
 	brew install nasm
 	brew outdated automake || brew upgrade automake
 	brew outdated autoconf || brew upgrade autoconf
+	#brew install sdl2
 	#brew install jpeg-turbo
 else
 	# unknown system :/
