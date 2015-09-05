@@ -310,6 +310,9 @@ vmCvar_t cg_fontScaleSP;
 vmCvar_t cg_fontScaleCP;
 vmCvar_t cg_fontScaleCN;
 
+// unlagged optimized prediction
+vmCvar_t cg_optimizePrediction;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -526,6 +529,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_fontScaleSP,           "cg_fontScaleSP",           "0.22",  CVAR_ARCHIVE                 }, // SidePrint
 	{ &cg_fontScaleCP,           "cg_fontScaleCP",           "0.22",  CVAR_ARCHIVE                 }, // CenterPrint
 	{ &cg_fontScaleCN,           "cg_fontScaleCN",           "0.25",  CVAR_ARCHIVE                 }, // CrossName
+	
+	{ &cg_optimizePrediction,    "cg_optimizePrediction",    "1",     CVAR_ARCHIVE                 }, // unlagged optimized prediction
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

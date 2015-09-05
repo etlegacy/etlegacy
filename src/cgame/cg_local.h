@@ -2231,6 +2231,9 @@ extern vmCvar_t cg_fontScaleSP;
 extern vmCvar_t cg_fontScaleCP;
 extern vmCvar_t cg_fontScaleCN;
 
+// unlagged optimized prediction
+extern vmCvar_t	cg_optimizePrediction;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02

@@ -646,121 +646,127 @@ static void CG_TouchTriggerPrediction(void)
 	}
 }
 
-#define MAX_PREDICT_ORIGIN_DELTA        0.1f
-#define MAX_PREDICT_VELOCITY_DELTA      0.1f
-#define MAX_PREDICT_VIEWANGLES_DELTA    1.0f
+#define MAX_PREDICT_ORIGIN_DELTA		0.1f
+#define MAX_PREDICT_ORIGIN_DELTA_2		0.01f	// Square(MAX_PREDICT_ORIGIN_DELTA)
+#define MAX_PREDICT_VELOCITY_DELTA		0.1f
+#define MAX_PREDICT_VELOCITY_DELTA_2	0.01f	// Square(MAX_PREDICT_VELOCITY_DELTA)
+#define MAX_PREDICT_VIEWANGLES_DELTA	1.0f
 
-qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
+int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 {
 	vec3_t vec;
 	int    i;
 
 	if (ps2->pm_type != ps1->pm_type || ps2->pm_flags != ps1->pm_flags || ps2->pm_time != ps1->pm_time)
 	{
-		return qfalse;
+		return 1;
 	}
 
 	VectorSubtract(ps2->origin, ps1->origin, vec);
-	if (DotProduct(vec, vec) > Square(MAX_PREDICT_ORIGIN_DELTA))
+	if (DotProduct(vec, vec) > MAX_PREDICT_ORIGIN_DELTA_2)
 	{
-		return qfalse;
+		return 2;
 	}
 
 	VectorSubtract(ps2->velocity, ps1->velocity, vec);
-	if (DotProduct(vec, vec) > Square(MAX_PREDICT_VELOCITY_DELTA))
+	if (DotProduct(vec, vec) > MAX_PREDICT_VELOCITY_DELTA_2)
 	{
-		return qfalse;
+		return 3;
 	}
 
 	if (ps2->eFlags != ps1->eFlags)
 	{
-		return qfalse;
+		if (cg_showmiss.integer)
+		{
+			CG_Printf("Backup: %x  Server: %x Diff: %x\n", ps2->eFlags, ps1->eFlags, ps2->eFlags - ps1->eFlags);
+		}
+		return 4;
 	}
 
 	if (ps2->weaponTime != ps1->weaponTime)
 	{
-		return qfalse;
+		if(cg_showmiss.integer)
+		{
+			CG_Printf("Backup: %d Server: %d\n", ps2->weaponTime, ps1->weaponTime);
+		}
+		return 5;
 	}
 
 	if (ps2->groundEntityNum != ps1->groundEntityNum)
 	{
-		return qfalse;
+		return 6;
 	}
 
-	/* FIXME: disabled for now since it always evaluates to true
-	 * don't predict flying ents ?
-	if (ps1->groundEntityNum != ENTITYNUM_WORLD || ps1->groundEntityNum != ENTITYNUM_NONE || ps2->groundEntityNum != ENTITYNUM_WORLD || ps2->groundEntityNum != ENTITYNUM_NONE)
+	if (ps2->speed != ps1->speed ||
+		ps2->delta_angles[0] != ps1->delta_angles[0] ||
+		ps2->delta_angles[1] != ps1->delta_angles[1] ||
+		ps2->delta_angles[2] != ps1->delta_angles[2])
 	{
-		return qfalse;
+		return 8;
 	}
-	 */
 
-	if (ps2->speed != ps1->speed || ps2->delta_angles[0] != ps1->delta_angles[0] || ps2->delta_angles[1] != ps1->delta_angles[1] || ps2->delta_angles[2] != ps1->delta_angles[2])
+	if (ps2->legsTimer != ps1->legsTimer ||
+		ps2->legsAnim != ps1->legsAnim ||
+		ps2->torsoTimer != ps1->torsoTimer ||
+		ps2->torsoAnim != ps1->torsoAnim)
 	{
-		return qfalse;
+		return 9;
 	}
 
-	if (ps2->legsTimer != ps1->legsTimer || ps2->legsAnim != ps1->legsAnim ||
-	    ps2->torsoTimer != ps1->torsoTimer || ps2->torsoAnim != ps1->torsoAnim)
-	{
-		return qfalse;
-	}
-
-	/*  if( ps2->movementDir != ps1->movementDir ) {
-	        return qfalse;
-	    }*/
-
+	// common with item pickups
 	if (ps2->eventSequence != ps1->eventSequence)
 	{
-		return qfalse;
+		return 11;
 	}
 
 	for (i = 0; i < MAX_EVENTS; i++)
 	{
 		if (ps2->events[i] != ps1->events[i] || ps2->eventParms[i] != ps1->eventParms[i])
 		{
-			return qfalse;
+			return 12;
 		}
 	}
 
-	if (ps2->externalEvent != ps1->externalEvent || ps2->externalEventParm != ps1->externalEventParm || ps2->externalEventTime != ps1->externalEventTime)
+	if (ps2->externalEvent != ps1->externalEvent ||
+		ps2->externalEventParm != ps1->externalEventParm ||
+		ps2->externalEventTime != ps1->externalEventTime)
 	{
-		return qfalse;
+		return 13;
 	}
 
 	if (ps2->clientNum != ps1->clientNum)
 	{
-		return qfalse;
+		return 14;
 	}
 
 	if (ps2->weapon != ps1->weapon || ps2->weaponstate != ps1->weaponstate)
 	{
-		return qfalse;
+		return 15;
 	}
 
 	for (i = 0; i < 3; i++)
 	{
-		if (fabsf(ps2->viewangles[i] - ps1->viewangles[i]) > MAX_PREDICT_VIEWANGLES_DELTA)
+		if(abs(ps2->viewangles[i] - ps1->viewangles[i]) > MAX_PREDICT_VIEWANGLES_DELTA)
 		{
-			return qfalse;
+			return 16;
 		}
 	}
 
 	if (ps2->viewheight != ps1->viewheight)
 	{
-		return qfalse;
+		return 17;
 	}
 
 	if (ps2->damageEvent != ps1->damageEvent || ps2->damageYaw != ps1->damageYaw || ps2->damagePitch != ps1->damagePitch || ps2->damageCount != ps1->damageCount)
 	{
-		return qfalse;
+		return 18;
 	}
 
 	for (i = 0; i < MAX_STATS; i++)
 	{
 		if (ps2->stats[i] != ps1->stats[i])
 		{
-			return qfalse;
+			return 19;
 		}
 	}
 
@@ -768,7 +774,7 @@ qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->persistant[i] != ps1->persistant[i])
 		{
-			return qfalse;
+			return 20;
 		}
 	}
 
@@ -776,7 +782,7 @@ qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->powerups[i] != ps1->powerups[i])
 		{
-			return qfalse;
+			return 21;
 		}
 	}
 
@@ -784,28 +790,35 @@ qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->ammo[i] != ps1->ammo[i] || ps2->ammoclip[i] != ps1->ammoclip[i])
 		{
-			return qfalse;
+			if (i != WP_KNIFE || i != WP_KNIFE_KABAR)
+			{
+				return 22;
+			}
 		}
 	}
 
 	if (ps1->viewlocked != ps2->viewlocked || ps1->viewlocked_entNum !=  ps2->viewlocked_entNum)
 	{
-		return qfalse;
+		return 23;
 	}
 
 	if (ps1->onFireStart != ps2->onFireStart)
 	{
-		return qfalse;
+		return 24;
 	}
 
-	return qtrue;
+	// grenadeTimeLeft was not fully predicted
+	if (ps1->grenadeTimeLeft != ps2->grenadeTimeLeft)
+	{
+		if(cg_showmiss.integer)
+		{
+			CG_Printf("Backup: %d Server: %d\n", ps2->grenadeTimeLeft, ps1->grenadeTimeLeft);
+		}
+		return 27;
+	}
+
+	return 0;
 }
-
-#define RESET_PREDICTION                        \
-	cg.lastPredictedCommand = 0;                \
-	cg.backupStateTail      = cg.backupStateTop;     \
-	useCommand              = current - CMD_BACKUP + 1;
-
 
 /*
 =================
@@ -983,7 +996,7 @@ void CG_PredictPlayerState(void)
 	{
 		if (cg_showmiss.integer)
 		{
-			CG_Printf("exceeded PACKET_BACKUP on commands\n");
+			CG_Printf("CG_PredictPlayerState: exceeded PACKET_BACKUP on commands\n");
 		}
 	}
 
@@ -1020,6 +1033,104 @@ void CG_PredictPlayerState(void)
 
 	cg_pmove.pmove_fixed = pmove_fixed.integer;     // | cg_pmove_fixed.integer;
 	cg_pmove.pmove_msec  = pmove_msec.integer;
+
+	// unlagged - optimized prediction
+	// Like the comments described above, a player's state is entirely
+	// re-predicted from the last valid snapshot every client frame, which
+	// can be really, really, really slow.  Every old command has to be
+	// run again.  For every client frame that is *not* directly after a
+	// snapshot, this is unnecessary, since we have no new information.
+	// For those, we'll play back the predictions from the last frame and
+	// predict only the newest commands.  Essentially, we'll be doing
+	// an incremental predict instead of a full predict.
+	//
+	// If we have a new snapshot, we can compare its player state's command
+	// time to the command times in the queue to find a match.  If we find
+	// a matching state, and the predicted version has not deviated, we can
+	// use the predicted state as a base - and also do an incremental predict.
+	//
+	// With this method, we get incremental predicts on every client frame
+	// except a frame following a new snapshot in which there was a prediction
+	// error.  This yeilds anywhere from a 15% to 40% performance increase,
+	// depending on how much of a bottleneck the CPU is.
+
+	{
+		// unlagged - optimized prediction
+		int stateIndex = 0, predictCmd = 0;
+		int numPredicted = 0, numPlayedBack = 0; // debug code
+
+		if (cg_optimizePrediction.integer)
+		{
+			if (cg.nextFrameTeleport || cg.thisFrameTeleport)
+			{
+				// do a full predict
+				cg.lastPredictedCommand = 0;
+				cg.backupStateTail = cg.backupStateTop;
+				predictCmd = current - CMD_BACKUP + 1;
+			}
+			// cg.physicsTime is the current snapshot's serverTime
+			// if it's the same as the last one
+			else if (cg.physicsTime == cg.lastPhysicsTime)
+			{
+				// we have no new information, so do an incremental predict
+				predictCmd = cg.lastPredictedCommand + 1;
+			}
+			else
+			{
+				// we have a new snapshot
+				int i;
+				qboolean error = qtrue;
+
+				// loop through the saved states queue
+				for (i = cg.backupStateTop; i != cg.backupStateTail; i = (i + 1) % MAX_BACKUP_STATES)
+				{
+					// if we find a predicted state whose commandTime matches the snapshot player state's commandTime
+					if (cg.backupStates[i].commandTime == cg.predictedPlayerState.commandTime)
+					{
+						// make sure the state differences are acceptable
+
+						// too much change?
+						if (CG_PredictionOk( &cg.predictedPlayerState, &cg.backupStates[i]))
+						{
+							if (cg_showmiss.integer)
+							{
+								CG_Printf("CG_PredictPlayerState: errorcode %i at cg.time: %i\n", CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]), cg.time);
+							}
+							// yeah, so do a full predict
+							break;
+						}
+
+						// this one is almost exact, so we'll copy it in as the starting point
+						*cg_pmove.ps = cg.backupStates[i];
+						// advance the head
+						cg.backupStateTop = (i + 1) % MAX_BACKUP_STATES;
+
+						// set the next command to predict
+						predictCmd = cg.lastPredictedCommand + 1;
+
+						// a saved state matched, so flag it
+						error = qfalse;
+						break;
+					}
+				}
+
+				// if no saved states matched
+				if (error)
+				{
+					// do a full predict
+					cg.lastPredictedCommand = 0;
+					cg.backupStateTail = cg.backupStateTop;
+					predictCmd = current - CMD_BACKUP + 1;
+				}
+			}
+
+			// keep track of the server time of the last snapshot so we
+			// know when we're starting from a new one in future calls
+			cg.lastPhysicsTime = cg.physicsTime;
+			stateIndex = cg.backupStateTop;
+		}
+		// unlagged - optimized prediction
+	}
 
 	// run cmds
 	moved = qfalse;
@@ -1071,7 +1182,7 @@ void CG_PredictPlayerState(void)
 				VectorClear(cg.predictedError);
 				if (cg_showmiss.integer)
 				{
-					CG_Printf("PredictionTeleport\n");
+					CG_Printf("CG_PredictPlayerState: PredictionTeleport\n");
 				}
 				cg.thisFrameTeleport = qfalse;
 			}
@@ -1152,7 +1263,7 @@ void CG_PredictPlayerState(void)
 		}
 
 		//memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
-		// rain - copy the pmext as it was just before we
+		// copy the pmext as it was just before we
 		// previously ran this cmd (or, this will be the
 		// current predicted data if this is the current cmd)  (#166)
 		memcpy(&pmext, &oldpmext[cmdNum & CMD_MASK], sizeof(pmoveExt_t));
@@ -1176,7 +1287,7 @@ void CG_PredictPlayerState(void)
 	{
 		if (cg_showmiss.integer)
 		{
-			CG_Printf("not moved\n");
+			CG_Printf("CG_PredictPlayerState: not moved\n");
 		}
 		return;
 	}
