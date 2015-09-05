@@ -196,6 +196,9 @@ parse_commandline() {
 		elif [ "$var" = "-noob" ]; then
 			einfo "Will disable omni-bot installation"
 			INSTALL_OMNIBOT=0
+		elif [ "$var" = "-noupdate" ]; then
+			einfo "Will disable autoupdate"
+			FEATURE_AUTOUPDATE=0
 		else
 			# drop the script commands from the result
 			for index in ${!easy_keys[*]}
@@ -253,6 +256,7 @@ generate_configuration() {
 	FEATURE_MULTIVIEW=${FEATURE_MULTIVIEW:-0}
 	FEATURE_ANTICHEAT=${FEATURE_ANTICHEAT:-1}
 	FEATURE_LIVEAUTH=${FEATURE_LIVEAUTH:-1}
+	FEATURE_AUTOUPDATE=${FEATURE_AUTOUPDATE:-0}
 	FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
 	INSTALL_OMNIBOT=${INSTALL_OMNIBOT:-1}
 
@@ -285,6 +289,7 @@ generate_configuration() {
 		-DFEATURE_GETTEXT=${FEATURE_GETTEXT}
 		-DFEATURE_JANSSON=${FEATURE_JANSSON}
 		-DFEATURE_LIVEAUTH=${FEATURE_LIVEAUTH}
+		-DFEATURE_AUTOUPDATE=${FEATURE_AUTOUPDATE}
 		-DFEATURE_RENDERER2=${FEATURE_RENDERER2}
 		-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}
 		-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
@@ -501,7 +506,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -r2, -dynamic, -systemlib, -noob"
+	ehead "-64, -debug, -clang, -r2, -dynamic, -systemlib, -noob, --noupdate"
 	echo
 }
 
