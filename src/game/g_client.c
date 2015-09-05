@@ -3504,6 +3504,14 @@ void ClientDisconnect(int clientNum)
 #ifdef FEATURE_MULTIVIEW
 	G_smvAllRemoveSingleClient(ent - g_entities);
 #endif
+
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer)
+	{
+		level.axisProb   = G_CalculateWinProbability(TEAM_AXIS);
+		level.alliesProb = 1.0 - level.axisProb;
+	}
+#endif
 }
 
 // In just the GAME DLL, we want to store the groundtrace surface stuff,

@@ -204,4 +204,89 @@ void G_UpdateSkillRating(int winner)
 	}
 }
 
+/**
+ * @brief Calculate win probability
+ * @details Calculate win probability // Axis = winprob, Allies = 1.0 - winprob
+ */
+float G_CalculateWinProbability(int team)
+{
+	gclient_t *cl;
+
+	float teamMuX      = 0;
+	float teamMuL      = 0;
+	float teamSigmaSqX = 0;
+	float teamSigmaSqL = 0;
+	int   numPlayersX  = 0;
+	int   numPlayersL  = 0;
+	float c, t, winningMu, losingMu;
+	int   i;
+
+	// current play time
+	int currentTime = level.timeCurrent - level.startTime - level.timeDelta;
+
+	// player additive factors
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		cl = level.clients + level.sortedClients[i];
+
+		if (g_gamestate.integer == GS_PLAYING)
+		{
+			// player has not played at all
+			if (cl->sess.time_axis == 0 && cl->sess.time_allies == 0)
+			{
+				continue;
+			}
+
+			// player has played in at least one of the team
+			if (cl->sess.time_axis > 0)
+			{
+				teamMuX      += cl->sess.mu * (cl->sess.time_axis / (float)currentTime);
+				teamSigmaSqX += pow(cl->sess.sigma, 2);
+				numPlayersX++;
+			}
+			if (cl->sess.time_allies > 0)
+			{
+				teamMuL      += cl->sess.mu * (cl->sess.time_allies / (float)currentTime);
+				teamSigmaSqL += pow(cl->sess.sigma, 2);
+				numPlayersL++;
+			}
+		}
+		// warmup and intermission
+		else
+		{
+			// avoid nan while players join teams
+			if (level.numPlayingClients < 2)
+			{
+				return 0.5f;
+			}
+
+			// check actual team only
+			if (cl->sess.sessionTeam == TEAM_AXIS)
+			{
+				teamMuX      += cl->sess.mu;
+				teamSigmaSqX += pow(cl->sess.sigma, 2);
+				numPlayersX++;
+			}
+			if (cl->sess.sessionTeam == TEAM_ALLIES)
+			{
+				teamMuL      += cl->sess.mu;
+				teamSigmaSqL += pow(cl->sess.sigma, 2);
+				numPlayersL++;
+			}
+		}
+	}
+
+	// normalizing constant
+	c = sqrt(teamSigmaSqX + teamSigmaSqL + (numPlayersX + numPlayersL) * pow(BETA, 2));
+
+	// determine teams rank
+	winningMu = (team == TEAM_AXIS) ? teamMuX : teamMuL;
+	losingMu  = (team == TEAM_AXIS) ? teamMuL : teamMuX;
+
+	// team performance
+	t = (winningMu - losingMu - EPSILON) / c;
+
+	return cdf(t);
+}
+
 #endif

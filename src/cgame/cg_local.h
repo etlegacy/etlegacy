@@ -1181,8 +1181,8 @@ typedef struct
 	// skill rating
 	float mu[MAX_CLIENTS];
 	float sigma[MAX_CLIENTS];
-	//float axisProb;       // FIXME: win probability
-	//float alliesProb;
+	float axisProb;
+	float alliesProb;
 
 	// scoreboard
 	int scoresDownTime;

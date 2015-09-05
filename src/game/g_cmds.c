@@ -228,9 +228,10 @@ static void G_SendSkillRating(gentity_t *ent)
 	gclient_t *cl;
 	char      buff[1021] = { "sr " };
 
-	// FIXME: win probability
-	//Q_strcat(buff, sizeof(buff), va("%.1f ", (level.axisProb * 100.0f)));
-	//Q_strcat(buff, sizeof(buff), va("%.1f ", (level.alliesProb * 100.0f)));
+	// win probability
+	Q_strcat(buff, sizeof(buff), va("%.1f ", (level.axisProb * 100.0f)));
+	Q_strcat(buff, sizeof(buff), va("%.1f ", (level.alliesProb * 100.0f)));
+
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
@@ -1382,6 +1383,13 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		ent->client->inactivitySecondsLeft = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
 	}
 
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer)
+	{
+		level.axisProb   = G_CalculateWinProbability(TEAM_AXIS);
+		level.alliesProb = 1.0 - level.axisProb;
+	}
+#endif
 	return qtrue;
 }
 

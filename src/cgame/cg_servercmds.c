@@ -41,17 +41,17 @@
 #ifdef FEATURE_RATING
 static void CG_ParseSkillRating(void)
 {
-	int        i = 0; // 2
+	int        i = 0;
 	const char *s;
 
-	// cg.axisProb = atof(CG_Argv(1));
-	// cg.alliesProb = atof(CG_Argv(2));
+	cg.axisProb = atof(CG_Argv(1));
+	cg.alliesProb = atof(CG_Argv(2));
 
 	s = CG_Argv(i);
 	while (*s)
 	{
-		cg.mu[i]    = atof(CG_Argv(i * 2 + 1));
-		cg.sigma[i] = atof(CG_Argv(i * 2 + 2));
+		cg.mu[i]    = atof(CG_Argv(2 + i * 2 + 1));
+		cg.sigma[i] = atof(CG_Argv(2 + i * 2 + 2));
 		i++;
 		s = CG_Argv(i);
 	}

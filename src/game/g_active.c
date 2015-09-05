@@ -2106,6 +2106,14 @@ void ClientEndFrame(gentity_t *ent)
 		ent->client->sess.time_played += level.time - level.previousTime;
 	}
 
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer && !(level.time % 2000))
+	{
+		level.axisProb   = G_CalculateWinProbability(TEAM_AXIS);
+		level.alliesProb = 1.0 - level.axisProb;
+	}
+#endif
+
 	// used for informing of speclocked teams.
 	// Zero out here and set only for certain specs
 	ent->client->ps.powerups[PW_BLACKOUT] = 0;
