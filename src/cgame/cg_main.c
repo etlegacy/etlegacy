@@ -2693,6 +2693,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_UpdateSvCvars();
 
+#ifdef FEATURE_RATING
+	CG_ParseLegacyinfo();
+#endif
+
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 }
 

@@ -2040,6 +2040,9 @@ typedef struct cgs_s
 	int fixedphysics;
 	int fixedphysicsfps;
 	int pronedelay;
+#ifdef FEATURE_RATING
+	int skillRating;
+#endif
 } cgs_t;
 
 //==============================================================================
@@ -2664,6 +2667,9 @@ void CG_parseMapVoteTally(void);
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);
 void CG_ParseServerinfo(void);
+#ifdef FEATURE_RATING
+void CG_ParseLegacyinfo(void);
+#endif
 void CG_ParseWolfinfo(void);
 void CG_ParseSpawns(void);
 void CG_ParseServerVersionInfo(const char *pszVersionInfo);

@@ -257,6 +257,9 @@ void CG_ParseLegacyinfo(void)
 
 	cgs.mapVoteMapX = atoi(Info_ValueForKey(info, "X"));
 	cgs.mapVoteMapY = atoi(Info_ValueForKey(info, "Y"));
+#ifdef FEATURE_RATING
+	cgs.skillRating = atoi(Info_ValueForKey(info, "R"));
+#endif
 }
 
 /*
@@ -1941,7 +1944,14 @@ void CG_parseWeaponStatsGS_cmd(void)
 	}
 
 #ifdef FEATURE_RATING
-	Q_strncpyz(gs->strRank, va("%-20s %-12d %4.2f (%4.2f,%4.2f)", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp, ci->mu - 3 * ci->sigma, ci->mu, ci->sigma), sizeof(gs->strRank));
+	if (cgs.skillRating)
+	{
+		Q_strncpyz(gs->strRank, va("%-20s %-12d %4.2f (%4.2f,%4.2f)", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp, ci->mu - 3 * ci->sigma, ci->mu, ci->sigma), sizeof(gs->strRank));
+	}
+	else
+	{
+		Q_strncpyz(gs->strRank, va("%-20s %-12d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
+	}
 #else
 	Q_strncpyz(gs->strRank, va("%-20s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
 #endif

@@ -1879,6 +1879,18 @@ void G_UpdateCvars(void)
 					trap_SetConfigstring(CS_LEGACYINFO, cs);
 				}
 
+#ifdef FEATURE_RATING
+				if (g_skillRating.integer)
+				{
+					char cs[MAX_INFO_STRING];
+
+					cs[0] = '\0';
+
+					Info_SetValueForKey(cs, "R", (va("%i", g_skillRating.integer)));
+					trap_SetConfigstring(CS_LEGACYINFO, cs);
+				}
+#endif
+
 				// Update vote info for clients, if necessary
 				if (cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
 				    cv->vmCvar == &vote_allow_matchreset    || cv->vmCvar == &vote_allow_gametype       ||

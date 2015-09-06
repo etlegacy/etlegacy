@@ -189,7 +189,9 @@ void CG_ScoresDown_f(void)
 #ifdef FEATURE_RATING
 	if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
 	{
-		int sb = cg_scoreboard.integer + 1;
+		int sb        = cg_scoreboard.integer + 1;
+		int sbAllowed = SCOREBOARD_XP;
+		int i;
 
 		// cycle scoreboard type with a quick tap of +scores
 		if (sb < SCOREBOARD_XP || sb > SCOREBOARD_SR)
@@ -197,7 +199,22 @@ void CG_ScoresDown_f(void)
 			sb = SCOREBOARD_XP;
 		}
 
-		trap_Cvar_Set("cg_scoreboard", va("%i", sb));
+		for (i = SCOREBOARD_XP; i <= SCOREBOARD_SR; i++)
+		{
+			if (sb == SCOREBOARD_XP)
+			{
+				sbAllowed = SCOREBOARD_XP;
+				break;
+			}
+			if (sb == SCOREBOARD_SR && cgs.skillRating)
+			{
+				sbAllowed = SCOREBOARD_SR;
+				break;
+			}
+			sb++;
+		}
+		trap_Cvar_Set("cg_scoreboard", va("%i", sbAllowed));
+
 		cg.scoreToggleTime = cg.time;
 	}
 	cg.scoresDownTime = cg.time;

@@ -780,8 +780,11 @@ void CG_GameStatsDraw(void)
 		x += 122;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
 #ifdef FEATURE_RATING
-		x += 76;
-		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
+		if (cgs.skillRating)
+		{
+			x += 76;
+			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
+		}
 #endif
 
 		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
