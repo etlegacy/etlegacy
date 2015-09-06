@@ -766,6 +766,8 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->stats[i] != ps1->stats[i])
 		{
+			CG_Printf("CG_PredictionOk: errorcode 19 - MAX_STATS [%i] ps1: %i ps2: %i\n", i, ps1->stats[i], ps2->stats[i]);
+
 			return 19;
 		}
 	}
@@ -774,6 +776,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->persistant[i] != ps1->persistant[i])
 		{
+			//CG_Printf("CG_PredictionOk: errorcode 20 - MAX_PERSISTANT [%i]\n", i);
 			return 20;
 		}
 	}
@@ -782,6 +785,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->powerups[i] != ps1->powerups[i])
 		{
+			//CG_Printf("CG_PredictionOk: errorcode 21 - MAX_PERSISTANT [%i]\n", i);
 			return 21;
 		}
 	}
@@ -1088,7 +1092,7 @@ void CG_PredictPlayerState(void)
 					// make sure the state differences are acceptable
 
 					// too much change?
-					if (CG_PredictionOk( &cg.predictedPlayerState, &cg.backupStates[i]))
+					if (CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]))
 					{
 						if (cg_showmiss.integer)
 						{
@@ -1137,7 +1141,6 @@ void CG_PredictPlayerState(void)
 		trap_GetUserCmd(cmdNum, &cg_pmove.cmd);
 		// get the previous command
 		trap_GetUserCmd(cmdNum - 1, &cg_pmove.oldcmd);
-
 
 		//if (cg_pmove.pmove_fixed
 		//  && !BG_PlayerMounted(cg.snap->ps.eFlags) // don't update view angles - causes issues in 1st person view with weapons using special view
@@ -1298,8 +1301,7 @@ void CG_PredictPlayerState(void)
 			{
 				numPlayedBack++; // debug code
 
-				if (cg_showmiss.integer &&
-					cg.backupStates[stateIndex].commandTime != cg_pmove.cmd.serverTime)
+				if (cg_showmiss.integer && cg.backupStates[stateIndex].commandTime != cg_pmove.cmd.serverTime)
 				{
 					// this should ONLY happen just after changing the value of pmove_fixed
 					CG_Printf("saved state miss\n");

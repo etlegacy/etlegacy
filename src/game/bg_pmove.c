@@ -2342,7 +2342,15 @@ static void PM_WaterEvents(void)
 		}
 	}
 
-	pm->ps->stats[STAT_AIRLEFT] = pm->pmext->airleft;
+	// fix prediction, ensure full HOLDBREATHTIME when airleft isn't in use
+	if (pm->pmext->airleft < 0 || pm->pmext->airleft > HOLDBREATHTIME)
+	{
+		pm->ps->stats[STAT_AIRLEFT] = HOLDBREATHTIME;
+	}
+	else
+	{
+		pm->ps->stats[STAT_AIRLEFT] = pm->pmext->airleft;
+	}
 }
 
 /*
@@ -6053,6 +6061,8 @@ void PmoveSingle(pmove_t *pmove)
 		// airborne
 		PM_AirMove();
 	}
+
+
 
 	if (pm->ps->eFlags & EF_MOUNTEDTANK)
 	{
