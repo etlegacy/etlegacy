@@ -866,6 +866,9 @@ void CG_PredictPlayerState(void)
 	usercmd_t     latestCmd;
 	vec3_t        deltaAngles;
 	pmoveExt_t    pmext;
+	// unlagged - optimized prediction
+	int stateIndex = 0, predictCmd = 0;
+	int numPredicted = 0, numPlayedBack = 0; // debug code
 
 	cg.hyperspace = qfalse; // will be set if touching a trigger_teleport
 
@@ -1054,83 +1057,77 @@ void CG_PredictPlayerState(void)
 	// error.  This yeilds anywhere from a 15% to 40% performance increase,
 	// depending on how much of a bottleneck the CPU is.
 
+	if (cg_optimizePrediction.integer)
 	{
-		// unlagged - optimized prediction
-		int stateIndex = 0, predictCmd = 0;
-		int numPredicted = 0, numPlayedBack = 0; // debug code
-
-		if (cg_optimizePrediction.integer)
+		if (cg.nextFrameTeleport || cg.thisFrameTeleport)
 		{
-			if (cg.nextFrameTeleport || cg.thisFrameTeleport)
+			// do a full predict
+			cg.lastPredictedCommand = 0;
+			cg.backupStateTail = cg.backupStateTop;
+			predictCmd = current - CMD_BACKUP + 1;
+		}
+		// cg.physicsTime is the current snapshot's serverTime
+		// if it's the same as the last one
+		else if (cg.physicsTime == cg.lastPhysicsTime)
+		{
+			// we have no new information, so do an incremental predict
+			predictCmd = cg.lastPredictedCommand + 1;
+		}
+		else
+		{
+			// we have a new snapshot
+			int i;
+			qboolean error = qtrue;
+
+			// loop through the saved states queue
+			for (i = cg.backupStateTop; i != cg.backupStateTail; i = (i + 1) % MAX_BACKUP_STATES)
+			{
+				// if we find a predicted state whose commandTime matches the snapshot player state's commandTime
+				if (cg.backupStates[i].commandTime == cg.predictedPlayerState.commandTime)
+				{
+					// make sure the state differences are acceptable
+
+					// too much change?
+					if (CG_PredictionOk( &cg.predictedPlayerState, &cg.backupStates[i]))
+					{
+						if (cg_showmiss.integer)
+						{
+							CG_Printf("CG_PredictPlayerState: errorcode %i at cg.time: %i\n", CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]), cg.time);
+						}
+						// yeah, so do a full predict
+						break;
+					}
+
+					// this one is almost exact, so we'll copy it in as the starting point
+					*cg_pmove.ps = cg.backupStates[i];
+					// advance the head
+					cg.backupStateTop = (i + 1) % MAX_BACKUP_STATES;
+
+					// set the next command to predict
+					predictCmd = cg.lastPredictedCommand + 1;
+
+					// a saved state matched, so flag it
+					error = qfalse;
+					break;
+				}
+			}
+
+			// if no saved states matched
+			if (error)
 			{
 				// do a full predict
 				cg.lastPredictedCommand = 0;
 				cg.backupStateTail = cg.backupStateTop;
 				predictCmd = current - CMD_BACKUP + 1;
 			}
-			// cg.physicsTime is the current snapshot's serverTime
-			// if it's the same as the last one
-			else if (cg.physicsTime == cg.lastPhysicsTime)
-			{
-				// we have no new information, so do an incremental predict
-				predictCmd = cg.lastPredictedCommand + 1;
-			}
-			else
-			{
-				// we have a new snapshot
-				int i;
-				qboolean error = qtrue;
-
-				// loop through the saved states queue
-				for (i = cg.backupStateTop; i != cg.backupStateTail; i = (i + 1) % MAX_BACKUP_STATES)
-				{
-					// if we find a predicted state whose commandTime matches the snapshot player state's commandTime
-					if (cg.backupStates[i].commandTime == cg.predictedPlayerState.commandTime)
-					{
-						// make sure the state differences are acceptable
-
-						// too much change?
-						if (CG_PredictionOk( &cg.predictedPlayerState, &cg.backupStates[i]))
-						{
-							if (cg_showmiss.integer)
-							{
-								CG_Printf("CG_PredictPlayerState: errorcode %i at cg.time: %i\n", CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]), cg.time);
-							}
-							// yeah, so do a full predict
-							break;
-						}
-
-						// this one is almost exact, so we'll copy it in as the starting point
-						*cg_pmove.ps = cg.backupStates[i];
-						// advance the head
-						cg.backupStateTop = (i + 1) % MAX_BACKUP_STATES;
-
-						// set the next command to predict
-						predictCmd = cg.lastPredictedCommand + 1;
-
-						// a saved state matched, so flag it
-						error = qfalse;
-						break;
-					}
-				}
-
-				// if no saved states matched
-				if (error)
-				{
-					// do a full predict
-					cg.lastPredictedCommand = 0;
-					cg.backupStateTail = cg.backupStateTop;
-					predictCmd = current - CMD_BACKUP + 1;
-				}
-			}
-
-			// keep track of the server time of the last snapshot so we
-			// know when we're starting from a new one in future calls
-			cg.lastPhysicsTime = cg.physicsTime;
-			stateIndex = cg.backupStateTop;
 		}
-		// unlagged - optimized prediction
+
+		// keep track of the server time of the last snapshot so we
+		// know when we're starting from a new one in future calls
+		cg.lastPhysicsTime = cg.physicsTime;
+		stateIndex = cg.backupStateTop;
 	}
+	// unlagged - optimized prediction
 
 	// run cmds
 	moved = qfalse;
@@ -1272,15 +1269,80 @@ void CG_PredictPlayerState(void)
 
 		Pmove(&cg_pmove);
 
+		// unlagged - optimized prediction
+		// we check for cg_latentCmds because it'll mess up the optimization
+		if (cg_optimizePrediction.integer)
+		{
+			// if we need to predict this command, or we've run out of space in the saved states queue
+			if (cmdNum >= predictCmd || (stateIndex + 1) % MAX_BACKUP_STATES == cg.backupStateTop)
+			{
+				// run the Pmove
+				Pmove(&cg_pmove);
+
+				numPredicted++; // debug code
+
+				// record the last predicted command
+				cg.lastPredictedCommand = cmdNum;
+
+				// if we haven't run out of space in the saved states queue
+				if ((stateIndex + 1) % MAX_BACKUP_STATES != cg.backupStateTop)
+				{
+					// save the state for the false case (of cmdNum >= predictCmd)
+					// in later calls to this function
+					cg.backupStates[stateIndex] = *cg_pmove.ps;
+					stateIndex                  = (stateIndex + 1) % MAX_BACKUP_STATES;
+					cg.backupStateTail          = stateIndex;
+				}
+			}
+			else
+			{
+				numPlayedBack++; // debug code
+
+				if (cg_showmiss.integer &&
+					cg.backupStates[stateIndex].commandTime != cg_pmove.cmd.serverTime)
+				{
+					// this should ONLY happen just after changing the value of pmove_fixed
+					CG_Printf("saved state miss\n");
+				}
+
+				// play back the command from the saved states
+				*cg_pmove.ps = cg.backupStates[stateIndex];
+
+				// go to the next element in the saved states array
+				stateIndex = (stateIndex + 1) % MAX_BACKUP_STATES;
+			}
+		}
+		else
+		{
+			// run the Pmove
+			Pmove(&cg_pmove);
+
+			numPredicted++; // debug code
+		}
+		// unlagged - optimized prediction
+
 		moved = qtrue;
 
 		// add push trigger movement effects
 		CG_TouchTriggerPrediction();
 	}
 
-	if (cg_showmiss.integer > 1)
+	// unlagged - optimized prediction
+	// do a /condump after a few seconds of this
+	if(cg_showmiss.integer & 2)
 	{
-		CG_Printf("[%i : %i] ", cg_pmove.cmd.serverTime, cg.time);
+		CG_Printf("cg.time: %d, numPredicted: %d, numPlayedBack: %d\n", cg.time, numPredicted, numPlayedBack); // debug code
+	}
+	// if everything is working right, numPredicted should be 1 more than 98%
+	// of the time, meaning only ONE predicted move was done in the frame
+	// you should see other values for numPredicted after CG_PredictionOk
+	// returns nonzero, and that's it
+	// unlagged - optimized prediction
+
+
+	if (cg_showmiss.integer & 4)
+	{
+		CG_Printf( "[%i : %i] ", cg_pmove.cmd.serverTime, cg.time );
 	}
 
 	if (!moved)
