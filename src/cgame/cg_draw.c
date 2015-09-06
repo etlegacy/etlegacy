@@ -3246,7 +3246,7 @@ void CG_DrawOnScreenNames(void)
 			continue;                           // no alpha = nothing to draw..
 
 		}
-		CG_Text_Paint_Ext(spcNm->x, spcNm->y, spcNm->scale, spcNm->scale, white, spcNm->text, 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(spcNm->x, spcNm->y, spcNm->scale, spcNm->scale, white, spcNm->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		// expect update next frame again
 		spcNm->visible = qfalse;
 	}
