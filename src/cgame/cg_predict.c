@@ -105,7 +105,6 @@ void CG_BuildSolidList(void)
 			cg_triggerEntities[cg_numTriggerEntities] = cent;
 			cg_numTriggerEntities++;
 			continue;
-			break;
 		case ET_CONSTRUCTIBLE:
 			cg_triggerEntities[cg_numTriggerEntities] = cent;
 			cg_numTriggerEntities++;
@@ -646,9 +645,9 @@ static void CG_TouchTriggerPrediction(void)
 	}
 }
 
-#define MAX_PREDICT_ORIGIN_DELTA		0.1f
+//#define MAX_PREDICT_ORIGIN_DELTA		0.1f
 #define MAX_PREDICT_ORIGIN_DELTA_2		0.01f	// Square(MAX_PREDICT_ORIGIN_DELTA)
-#define MAX_PREDICT_VELOCITY_DELTA		0.1f
+//#define MAX_PREDICT_VELOCITY_DELTA		0.1f
 #define MAX_PREDICT_VELOCITY_DELTA_2	0.01f	// Square(MAX_PREDICT_VELOCITY_DELTA)
 #define MAX_PREDICT_VIEWANGLES_DELTA	1.0f
 
@@ -766,7 +765,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->stats[i] != ps1->stats[i])
 		{
-			CG_Printf("CG_PredictionOk: errorcode 19 - MAX_STATS [%i] ps1: %i ps2: %i\n", i, ps1->stats[i], ps2->stats[i]);
+			CG_Printf("CG_PredictionOk: return 19 - MAX_STATS [%i] ps1: %i ps2: %i\n", i, ps1->stats[i], ps2->stats[i]);
 
 			return 19;
 		}
@@ -776,7 +775,10 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->persistant[i] != ps1->persistant[i])
 		{
-			//CG_Printf("CG_PredictionOk: errorcode 20 - MAX_PERSISTANT [%i]\n", i);
+			if(cg_showmiss.integer)
+			{
+				CG_Printf("CG_PredictionOk: return 20 - MAX_PERSISTANT [%i]\n", i);
+			}
 			return 20;
 		}
 	}
@@ -785,7 +787,10 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->powerups[i] != ps1->powerups[i])
 		{
-			//CG_Printf("CG_PredictionOk: errorcode 21 - MAX_PERSISTANT [%i]\n", i);
+			if(cg_showmiss.integer)
+			{
+				CG_Printf("CG_PredictionOk: return 21 - MAX_PERSISTANT [%i]\n", i);
+			}
 			return 21;
 		}
 	}
@@ -794,7 +799,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->ammo[i] != ps1->ammo[i] || ps2->ammoclip[i] != ps1->ammoclip[i])
 		{
-			if (i != WP_KNIFE || i != WP_KNIFE_KABAR)
+			if (i != WP_KNIFE && i != WP_KNIFE_KABAR) // FIXME: predict knife?
 			{
 				return 22;
 			}
@@ -816,7 +821,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if(cg_showmiss.integer)
 		{
-			CG_Printf("Backup: %d Server: %d\n", ps2->grenadeTimeLeft, ps1->grenadeTimeLeft);
+			CG_Printf("CG_PredictionOk: Backup: %d Server: %d\n", ps2->grenadeTimeLeft, ps1->grenadeTimeLeft);
 		}
 		return 27;
 	}
