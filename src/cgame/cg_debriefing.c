@@ -1883,8 +1883,7 @@ void CG_Debriefing_ParseSkillRating(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].mu    = atof(CG_Argv(i * 2 + 1));
-		cgs.clientinfo[i].sigma = atof(CG_Argv(i * 2 + 2));
+		cgs.clientinfo[i].rating = atof(CG_Argv(i * 1 + 1));
 	}
 	cgs.dbSkillRatingRecieved = qtrue;
 }
@@ -2391,11 +2390,10 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci    = CG_Debriefing_GetSelectedClientInfo();
 	float        w      = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
-	float        rating = ci->mu - 3 * ci->sigma;
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f", rating < 0 ? 0.f : rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f", ci->rating < 0 ? 0.f : ci->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 #endif
 

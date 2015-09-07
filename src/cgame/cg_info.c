@@ -782,7 +782,7 @@ void CG_GameStatsDraw(void)
 #ifdef FEATURE_RATING
 		if (cgs.skillRating)
 		{
-			x += 76;
+			x += 100;
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
 		}
 #endif

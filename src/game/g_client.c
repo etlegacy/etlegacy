@@ -2126,8 +2126,7 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.muted ? 1 : 0,
 	       client->sess.referee,
 #ifdef FEATURE_RATING
-	       client->sess.mu,
-	       client->sess.sigma,
+	       client->sess.mu - 3 * client->sess.sigma,
 #endif
 	       client->sess.uci
 	       );

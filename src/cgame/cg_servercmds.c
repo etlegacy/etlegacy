@@ -50,8 +50,7 @@ static void CG_ParseSkillRating(void)
 	s = CG_Argv(i);
 	while (*s)
 	{
-		cg.mu[i]    = atof(CG_Argv(2 + i * 2 + 1));
-		cg.sigma[i] = atof(CG_Argv(2 + i * 2 + 2));
+		cg.rating[i] = atof(CG_Argv(2 + i * 1 + 1));
 		i++;
 		s = CG_Argv(i);
 	}
@@ -110,8 +109,7 @@ static void CG_ParseScore(team_t team)
 
 #ifdef FEATURE_RATING
 		// skill rating
-		cg.scores[i].mu    = cg.mu[i];
-		cg.scores[i].sigma = cg.sigma[i];
+		cg.scores[i].rating = cg.rating[i];
 #endif
 
 		cg.numScores++;
@@ -1946,7 +1944,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 #ifdef FEATURE_RATING
 	if (cgs.skillRating)
 	{
-		Q_strncpyz(gs->strRank, va("%-20s %-12d %4.2f (%4.2f,%4.2f)", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp, ci->mu - 3 * ci->sigma, ci->mu, ci->sigma), sizeof(gs->strRank));
+		Q_strncpyz(gs->strRank, va("%-20s %-16d %4.2f", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp, ci->rating), sizeof(gs->strRank));
 	}
 	else
 	{
@@ -2002,8 +2000,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	unsigned int dwWeaponMask = atoi(CG_Argv(iArg++));
 	unsigned int dwSkillPointMask;
 #ifdef FEATURE_RATING
-	float        mu    = 0.f;
-	float        sigma = 0.f;
+	float        rating = 0.f;
 #endif
 	int          xp           = 0; // XP can be negative
 	int          totHits      = 0;
@@ -2145,13 +2142,9 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 #ifdef FEATURE_RATING
 	// skill rating
-	mu    = atof(CG_Argv(iArg++));
-	sigma = atof(CG_Argv(iArg++));
+	rating = atof(CG_Argv(iArg++));
 
-	float rating = mu - 3 * sigma;
-	rating = (rating < 0.f) ? 0.f : rating;
-
-	txt_dump(va("^2Skill Rating: ^7%5.2f       ^3Mean:^7 %.2f   ^3Dev:^7 %.2f\n", rating, mu, sigma));
+	txt_dump(va("^2Skill Rating: ^7%5.2f\n", (rating < 0.f) ? 0.f : rating));
 #endif
 
 	if (!fFull)

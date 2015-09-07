@@ -340,9 +340,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	vec4_t       hcolor;
 	clientInfo_t *ci;
 	char         buf[64];
-#ifdef FEATURE_RATING
-	float        rating;
-#endif
 
 	if (y + 16 >= 470)
 	{
@@ -502,9 +499,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 	else if (cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		rating = score->mu - 3 * score->sigma;
-
-		CG_Text_Paint_Ext(tempx + 8, y, 0.24, 0.28, colorWhite, va("^7%5.2f", rating < 0 ? 0.f : rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 8, y, 0.24, 0.28, colorWhite, va("^7%5.2f", score->rating < 0 ? 0.f : score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 #else
 	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
@@ -567,9 +562,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	clientInfo_t *ci;
 	int          i, j;    // To draw medals
 	char         buf[64]; // To draw medals
-#ifdef FEATURE_RATING
-	float        rating;
-#endif
 
 	if (y + 12 >= 470)
 	{
@@ -708,9 +700,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 	else if (cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		rating = score->mu - 3 * score->sigma;
-
-		CG_Text_Paint_Ext(tempx + 8, y, 0.20, 0.25, colorWhite, va("^7%5.2f", rating < 0 ? 0.f : rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 8, y, 0.20, 0.25, colorWhite, va("^7%5.2f", score->rating < 0 ? 0.f : score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 #else
 	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
