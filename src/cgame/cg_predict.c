@@ -1275,8 +1275,6 @@ void CG_PredictPlayerState(void)
 
 		fflush(stdout);
 
-		Pmove(&cg_pmove);
-
 		// unlagged - optimized prediction
 		// we check for cg_latentCmds because it'll mess up the optimization
 		if (cg_optimizePrediction.integer)
@@ -1293,7 +1291,7 @@ void CG_PredictPlayerState(void)
 				cg.lastPredictedCommand = cmdNum;
 
 				// if we haven't run out of space in the saved states queue
-				if ((stateIndex + 1) % MAX_BACKUP_STATES != cg.backupStateTop)
+				if (((stateIndex + 1) % MAX_BACKUP_STATES) != cg.backupStateTop)
 				{
 					// save the state for the false case (of cmdNum >= predictCmd)
 					// in later calls to this function
@@ -1349,7 +1347,7 @@ void CG_PredictPlayerState(void)
 
 	if (cg_showmiss.integer & 4)
 	{
-		CG_Printf( "[%i : %i] ", cg_pmove.cmd.serverTime, cg.time );
+		CG_Printf("[%i : %i] ", cg_pmove.cmd.serverTime, cg.time);
 	}
 
 	if (!moved)
