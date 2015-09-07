@@ -34,7 +34,6 @@
  */
 
 #include "../qcommon/q_shared.h"
-#include "l_memory.h"
 #include "l_script.h"
 #include "l_precomp.h"
 

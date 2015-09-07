@@ -57,8 +57,6 @@ typedef struct directive_s
 
 #define DEFINEHASHSIZE      1024
 
-#define TOKEN_HEAP_SIZE     4096
-
 int numtokens;
 
 // list with global defines added to every source loaded

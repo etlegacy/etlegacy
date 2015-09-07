@@ -57,8 +57,8 @@
 #define SCFL_NOSTRINGWHITESPACES    0x0004
 #define SCFL_NOSTRINGESCAPECHARS    0x0008
 #define SCFL_PRIMITIVE              0x0010
-#define SCFL_NOBINARYNUMBERS        0x0020
-#define SCFL_NONUMBERVALUES         0x0040
+#define SCFL_NOBINARYNUMBERS        0x0020 // unused
+#define SCFL_NONUMBERVALUES         0x0040 // unused
 
 // token types
 #define TT_STRING                   1           // string
