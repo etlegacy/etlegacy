@@ -238,9 +238,16 @@ void CG_Respawn(qboolean revived)
 		cgs.limboLoadoutSelected = qfalse;
 	}
 
+	// Saves the state of sidearm (riflenade weapon is considered as one too)
+	// Puts the silencer on if class is COVERTOPS
+	// Puts riflenade on if current weapon is riflenade weapon
 	if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		cg.pmext.silencedSideArm = 1;
+	} 
+	else if (cg.predictedPlayerState.weapon == WP_GPG40 || cg.predictedPlayerState.weapon == WP_M7)
+	{
+		cg.pmext.silencedSideArm = 2;
 	}
 
 	cg.proneMovingTime = 0;
