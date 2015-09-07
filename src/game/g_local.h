@@ -593,6 +593,8 @@ typedef struct
 	// skill rating
 	float mu;
 	float sigma;
+	float oldmu;
+	float oldsigma;
 #endif
 
 	// MAPVOTE

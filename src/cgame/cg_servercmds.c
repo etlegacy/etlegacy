@@ -50,7 +50,8 @@ static void CG_ParseSkillRating(void)
 	s = CG_Argv(i);
 	while (*s)
 	{
-		cg.rating[i] = atof(CG_Argv(2 + i * 1 + 1));
+		cg.rating[i]      = atof(CG_Argv(2 + i * 2 + 1));
+		cg.deltaRating[i] = atof(CG_Argv(2 + i * 2 + 2));
 		i++;
 		s = CG_Argv(i);
 	}
@@ -2000,7 +2001,8 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	unsigned int dwWeaponMask = atoi(CG_Argv(iArg++));
 	unsigned int dwSkillPointMask;
 #ifdef FEATURE_RATING
-	float        rating = 0.f;
+	float        rating      = 0.f;
+	float        deltaRating = 0.f;
 #endif
 	int          xp           = 0; // XP can be negative
 	int          totHits      = 0;
@@ -2142,9 +2144,10 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 #ifdef FEATURE_RATING
 	// skill rating
-	rating = atof(CG_Argv(iArg++));
+	rating      = atof(CG_Argv(iArg++));
+	deltaRating = atof(CG_Argv(iArg++));
 
-	txt_dump(va("^2Skill Rating: ^7%5.2f\n", (rating < 0.f) ? 0.f : rating));
+	txt_dump(va("^2Skill Rating: ^7%5.2f   (^5%+5.2f^7)\n", (rating < 0.f) ? 0.f : rating, deltaRating));
 #endif
 
 	if (!fFull)

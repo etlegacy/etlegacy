@@ -1883,7 +1883,8 @@ void CG_Debriefing_ParseSkillRating(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].rating = atof(CG_Argv(i * 1 + 1));
+		cgs.clientinfo[i].rating      = atof(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].deltaRating = atof(CG_Argv(i * 2 + 2));
 	}
 	cgs.dbSkillRatingRecieved = qtrue;
 }
@@ -2393,7 +2394,7 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f", ci->rating < 0 ? 0.f : ci->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f (^5%+.1f^7)", ci->rating < 0 ? 0.f : ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 #endif
 
