@@ -1419,7 +1419,6 @@ static void CG_DrawCrosshairNames(void)
 	size_t     colorizedBufferLength = 32;
 	char       colorized[32]         = { 0 };
 	int        playerHealth          = 0;
-	vec4_t     c;
 	qboolean   drawStuff = qfalse;
 	qboolean   isTank    = qfalse;
 	int        maxHealth = 1;
@@ -1671,7 +1670,7 @@ static void CG_DrawCrosshairNames(void)
 	// draw the health bar
 	//  if ( isTank || (cg.crosshairClientNum == cg.snap->ps.identifyClient && drawStuff && cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR ) )
 	{
-		vec4_t bgcolor;
+		vec4_t bgcolor, c;
 		float  barFrac = (float)playerHealth / maxHealth;
 
 		if (barFrac > 1.0)
