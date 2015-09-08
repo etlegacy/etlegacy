@@ -266,14 +266,6 @@ typedef struct
  */
 #define MAX_CHALLENGES  2048
 
-/**
- * @def MAX_CHALLENGES_MULTI
- * @brief Allow a certain amount of challenges to have the same IP address
- * to make it a bit harder to DOS one single IP address from connecting
- * while not allowing a single ip to grab all challenge resources
- */
-#define MAX_CHALLENGES_MULTI (MAX_CHALLENGES / 2)
-
 typedef struct
 {
 	netadr_t adr;
@@ -306,7 +298,6 @@ typedef struct tempBan_s
 	int endtime;
 } tempBan_t;
 
-#define MAX_MASTERS                         8               // max recipients for heartbeat packets
 #define MAX_TEMPBAN_ADDRESSES               MAX_CLIENTS
 
 #define SERVER_PERFORMANCECOUNTER_FRAMES    600
@@ -500,7 +491,6 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg);
 void SV_UserinfoChanged(client_t *cl);
 void SV_UpdateUserinfo_f(client_t *cl);
 void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd);
-void SV_FreeClientNetChan(client_t *client);
 void SV_DropClient(client_t *drop, const char *reason);
 void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart);
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
@@ -517,7 +507,6 @@ void SV_UptimeReset(void);
 // sv_snapshot.c
 void SV_AddServerCommand(client_t *client, const char *cmd);
 void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg);
-void SV_WriteFrameToClient(client_t *client, msg_t *msg);
 void SV_SendMessageToClient(msg_t *msg, client_t *client);
 void SV_SendClientMessages(void);
 void SV_SendClientSnapshot(client_t *client);

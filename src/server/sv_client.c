@@ -1218,7 +1218,7 @@ static void SV_VerifyPaks_f(client_t *cl)
 	if (sv_pure->integer != 0)
 	{
 		int      nClientPaks, nServerPaks, i, j, nCurArg;
-		qboolean bGood = qtrue;
+		qboolean bGood;
 
 		nChkSum1 = nChkSum2 = 0;
 

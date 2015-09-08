@@ -193,7 +193,7 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 	char        *cleanedprevcmd = (char *)malloc(MAX_STRING_CHARS * sizeof(char));
 	char        *cleanedcmd     = (char *)malloc(MAX_STRING_CHARS * sizeof(char));
 
-	Q_strncpyz(cleanedprevcmd, SV_CleanStrCmd(va("%s", (char *)prevcmd)), MAX_STRING_CHARS);
+	Q_strncpyz(cleanedprevcmd, SV_CleanStrCmd(va("%s", prevcmd)), MAX_STRING_CHARS);
 	Q_strncpyz(cleanedcmd, SV_CleanStrCmd(va("%s", (char *)cmd)), MAX_STRING_CHARS);
 
 	// if we only want to store, we skip any checking
@@ -959,7 +959,7 @@ static void SV_DemoStartPlayback(void)
 	char *metadata; // = malloc( 1024 * sizeof * metadata ); // used to store the current metadata index
 
 	// Init vars with empty values (to avoid compilation warnings)
-	r    = i = clients = fps = gametype = timelimit = fraglimit = capturelimit = 0;
+	clients = fps = gametype = timelimit = fraglimit = capturelimit = 0;
 	time = 400;
 
 	// Initialize the demo message buffer
