@@ -529,7 +529,6 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		else if (ent->r.svFlags & SVF_VISDUMMY_MULTIPLE)
 		{
 			int            h;
-			sharedEntity_t *ment   = 0;
 			svEntity_t     *master = 0;
 
 			for (h = 0; h < sv.num_entities; h++)
