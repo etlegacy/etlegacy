@@ -33,7 +33,7 @@ notifications:
     skip_join: true
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/5bb21505f1a8fdd661c3
+      - https://webhooks.gitter.im/e/5a93d4b59447e6129a58
     on_success: change
     on_failure: always
     on_start: never
