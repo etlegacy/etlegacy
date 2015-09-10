@@ -2286,7 +2286,26 @@ void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	switch (ci->team)
+	{
+	case TEAM_AXIS:
+		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.axisFlag);
+		break;
+	case TEAM_ALLIES:
+		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.alliedFlag);
+		break;
+	case TEAM_SPECTATOR: // fall through
+	default:
+		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.limboTeamButtonBack_on);
+		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.limboTeamButtonSpec);
+		break;
+	}
+
+	if (ci->team == TEAM_AXIS || ci->team == TEAM_ALLIES)
+	{
+		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, ci->team == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
+	}
+	CG_Text_Paint_Ext(button->rect.x + 22, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void)
