@@ -2937,7 +2937,8 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 			break;
 		case TEAM_SPECTATOR: // fall through
 		default:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // TEAM_SPECTATOR & TEAM_FREE shouldn't occure
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonBack_on);
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // TEAM_FREE shouldn't occure
 			break;
 		}
 
