@@ -147,7 +147,7 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 		Com_Printf("  Format:   " S_COLOR_RED "UNKNOWN\n");
 	}
 
-	Com_Printf("  Freq:     %d\n", (int) spec->freq);
+	Com_Printf("  Freq:     %d\n", spec->freq);
 	Com_Printf("  Samples:  %d\n", (int) spec->samples);
 	Com_Printf("  Channels: %d\n", (int) spec->channels);
 	Com_Printf("  Silence:  %d\n", (int) spec->silence);
