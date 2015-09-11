@@ -75,14 +75,6 @@ FILE(GLOB CLIENT_SRC
 	"src/qcommon/download.c"
 )
 
-FILE(GLOB CLIENT_SRC_REMOVE
-	"src/sdl/sdl_glimp.c"
-	"src/sdl/sdl_gamma.c"
-	"src/sdl/sdl_icon.h"
-)
-
-LIST(REMOVE_ITEM CLIENT_SRC ${CLIENT_SRC_REMOVE})
-
 # These files are shared with the CGAME from the UI library
 FILE(GLOB UI_SHARED
 	"src/ui/ui_shared.c"
@@ -147,9 +139,6 @@ FILE(GLOB RENDERER_COMMON
 	"src/renderercommon/*.c"
 	"src/renderercommon/*.h"
 	#Library build requires the following
-	"src/sdl/sdl_glimp.c"
-	"src/sdl/sdl_gamma.c"
-	"src/sdl/sdl_icon.h"
 	"src/sys/sys_local.h"
 	"src/qcommon/q_shared.h"
 	"src/qcommon/puff.h"

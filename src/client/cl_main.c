@@ -40,6 +40,7 @@
 
 #include "../sys/sys_local.h"
 #include "../sys/sys_loadlib.h"
+#include "../renderercommon/tr_public.h"
 
 #ifdef USE_RENDERER_DLOPEN
 cvar_t *cl_renderer;
@@ -2699,6 +2700,12 @@ void CL_InitRef(void)
 	ri.IN_Init     = IN_Init;
 	ri.IN_Shutdown = IN_Shutdown;
 	ri.IN_Restart  = IN_Restart;
+
+	// Glimp bindings
+	ri.GLimp_Init = GLimp_Init;
+	ri.GLimp_Shutdown = GLimp_Shutdown;
+	ri.GLimp_SwapFrame = GLimp_EndFrame;
+	ri.GLimp_SetGamma = GLimp_SetGamma;
 
 	//ri.ftol = Q_ftol;
 

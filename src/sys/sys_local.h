@@ -44,6 +44,16 @@ void IN_Frame(void);
 void IN_Shutdown(void);
 void IN_Restart(void);
 
+//SDL Window system
+void *GLimp_MainWindow(void);
+void GLimp_Minimize(void);
+
+//Export to renderer
+void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion);
+void GLimp_Shutdown(void);
+void GLimp_EndFrame(void);
+void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+
 // Console
 void CON_Shutdown(void);
 void CON_Init(void);

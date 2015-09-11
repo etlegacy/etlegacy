@@ -69,16 +69,9 @@ IMPLEMENTATION SPECIFIC GLIMP FUNCTIONS
 */
 extern int gl_NormalFontBase;
 
-void GLimp_Init(void);
-void GLimp_Shutdown(void);
-void *GLimp_MainWindow(void);
-void GLimp_EndFrame(void);
-void GLimp_LogComment(const char *comment);
-void GLimp_Minimize(void);
-
 #ifdef LEGACY_DEBUG
 #define RENLOG r_logFile->integer
-#define Ren_LogComment(...) if (RENLOG) { GLimp_LogComment(va(__VA_ARGS__)); }
+#define Ren_LogComment(...) //if (RENLOG) { GLimp_LogComment(va(__VA_ARGS__)); }
 #define Ren_Developer(...) ri.Printf(PRINT_DEVELOPER, __VA_ARGS__)
 #else
 #define RENLOG 0
@@ -96,29 +89,21 @@ void GLimp_Minimize(void);
 
 #define Ren_Assert(x) if (x) { Ren_Fatal("Ren_Assert: %s failed at %s (%s:%d)\n", #x, __FUNCTION__, __FILE__, __LINE__); }
 
-// NOTE: linux works with float gamma value, not the gamma table
-// the params won't be used, getting the r_gamma cvar directly
-void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+void RE_InitOpenGl(void);
+int RE_InitOpenGlSubsystems(void);
 
-//Resolution selection code
-qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode);
-void R_ModeList_f(void);
+void R_DoGLimpShutdown(void);
 
 // font stuff
 void R_InitFreeType(void);
 void R_DoneFreeType(void);
 void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean extended);
 
-extern cvar_t *r_customwidth;
-extern cvar_t *r_customheight;
-extern cvar_t *r_customaspect;
-
 // These two variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
 // If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
 // the glconfig_t struct.
 extern qboolean textureFilterAnisotropic;
 extern int      maxAnisotropy;
-extern float    displayAspect;
 
 // cvars
 
@@ -136,15 +121,11 @@ extern cvar_t *r_ignoreFastPath;        // FIXME: move out -> renderer1 only - a
 extern cvar_t *r_znear;                 // near Z clip plane
 extern cvar_t *r_zfar;                  // far Z clip plane
 
-extern cvar_t *r_stencilbits;           // number of desired stencil bits
-extern cvar_t *r_depthbits;             // number of desired depth bits
-extern cvar_t *r_colorbits;             // number of desired color bits, only relevant for fullscreen
 extern cvar_t *r_texturebits;           // number of desired texture bits
                                         // 0 = use framebuffer depth
                                         // 16 = use 16-bit textures
                                         // 32 = use 32-bit textures
                                         // all else = error
-extern cvar_t *r_ext_multisample;
 extern cvar_t *r_measureOverdraw;       // enables stencil buffer overdraw measurement
 
 extern cvar_t *r_lodbias;               // push/pull LOD transitions
@@ -174,13 +155,8 @@ extern cvar_t *r_facePlaneCull;         // enables culling of planar surfaces wi
 extern cvar_t *r_nocurves;
 extern cvar_t *r_showcluster;
 
-extern cvar_t *r_mode;                  // video mode
-extern cvar_t *r_oldMode;               // previous "good" video mode
-extern cvar_t *r_fullscreen;
-extern cvar_t *r_oldFullscreen;         // previous fullscreen state
 extern cvar_t *r_noborder;
 extern cvar_t *r_gamma;
-extern cvar_t *r_ignorehwgamma;         // overrides hardware gamma capabilities
 
 extern cvar_t *r_allowExtensions;               // global enable/disable of OpenGL extensions
 extern cvar_t *r_ext_compressed_textures;       // these control use of specific extensions
@@ -197,7 +173,6 @@ extern cvar_t *r_colorMipLevels;                // development aid to see textur
 extern cvar_t *r_picmip;                        // controls picmip values
 extern cvar_t *r_finish;
 extern cvar_t *r_drawBuffer;
-extern cvar_t *r_swapInterval;
 extern cvar_t *r_textureMode;
 extern cvar_t *r_offsetFactor;
 extern cvar_t *r_offsetUnits;
@@ -228,8 +203,6 @@ extern cvar_t *r_subdivisions;
 extern cvar_t *r_lodCurveError;
 
 extern cvar_t *r_skipBackEnd;
-
-extern cvar_t *r_stereoEnabled;
 
 extern cvar_t *r_greyscale; // FIXME: move out -> renderer1 only
 

@@ -3,7 +3,7 @@ if(RENDERER_DYNAMIC)
 	MESSAGE("Will build dynamic renderer libraries")
 	add_definitions( "-DUSE_RENDERER_DLOPEN" )
 	set(REND_LIBTYPE MODULE)
-	list(APPEND RENDERER_COMMON ${RENDERER_COMMON_DYNAMIC}) 
+	list(APPEND RENDERER_COMMON ${RENDERER_COMMON_DYNAMIC})
 else(RENDERER_DYNAMIC)
 	set(REND_LIBTYPE STATIC)
 endif(RENDERER_DYNAMIC)
@@ -14,10 +14,6 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 	else()
 		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
 	endif()
-
-	if(BUNDLED_SDL)
-		add_dependencies(renderer_opengl1_${ARCH} bundled_sdl)
-	endif(BUNDLED_SDL)
 
 	if(NOT FEATURE_RENDERER_GLES)
 		if(BUNDLED_GLEW)
@@ -33,7 +29,7 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		add_dependencies(renderer_opengl1_${ARCH} bundled_freetype)
 	endif(BUNDLED_FREETYPE)
 
-	target_link_libraries(renderer_opengl1_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
+	target_link_libraries(renderer_opengl1_${ARCH} ${RENDERER_LIBRARIES})
 
 	# install the dynamic lib only
 	if(RENDERER_DYNAMIC)
@@ -68,7 +64,7 @@ if(FEATURE_RENDERER2)
 	if(MSVC)
 		list(APPEND RENDERER2_FILES ${RENDERER2_SHADERS})
 	endif(MSVC)
-	
+
 	#This is where we generate the fallback shaders source file.
 	if(SED_EXECUTABLE)
 		SET(SHADER_OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/glsl/tr_glslsources.c")
@@ -131,13 +127,10 @@ if(FEATURE_RENDERER2)
 	else(SED_EXECUTABLE)
 		MESSAGE(FATAL_ERROR "The fallbackshader source file was not created due to \"sed\" missing. The build would fail. :(")
 	endif(SED_EXECUTABLE)
-	
+
 	# increased default hunkmegs value
 	add_definitions(-DFEATURE_INC_HUNKMEGS)
 	add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
-	if(BUNDLED_SDL)
-		add_dependencies(renderer_opengl2_${ARCH} bundled_sdl)
-	endif(BUNDLED_SDL)
 	if(BUNDLED_GLEW)
 			add_dependencies(renderer_opengl2_${ARCH} bundled_glew)
 	endif(BUNDLED_GLEW)
@@ -147,7 +140,7 @@ if(FEATURE_RENDERER2)
 	if(BUNDLED_FREETYPE)
 		add_dependencies(renderer_opengl2_${ARCH} bundled_freetype)
 	endif(BUNDLED_FREETYPE)
-	target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
+	target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES})
 
 	set_target_properties(renderer_opengl2_${ARCH}
 		PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"

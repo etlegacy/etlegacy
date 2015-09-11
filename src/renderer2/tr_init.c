@@ -35,13 +35,12 @@
  */
 
 #include "tr_local.h"
+#include "../renderercommon/tr_public.h"
 
 glconfig_t  glConfig;
 glconfig2_t glConfig2;
 
 glstate_t glState;
-
-float displayAspect = 0.0f;
 
 static void GfxInfo_f(void);
 
@@ -69,7 +68,6 @@ cvar_t *r_zfar;
 cvar_t *r_skipBackEnd;
 cvar_t *r_skipLightBuffer;
 
-cvar_t *r_ignorehwgamma;
 cvar_t *r_measureOverdraw;
 
 cvar_t *r_fastsky;
@@ -125,11 +123,6 @@ cvar_t *r_ext_generate_mipmap;
 cvar_t *r_ignoreGLErrors;
 cvar_t *r_logFile;
 
-cvar_t *r_stencilbits;
-cvar_t *r_depthbits;
-cvar_t *r_colorbits;
-cvar_t *r_stereo;
-
 cvar_t *r_drawBuffer;
 cvar_t *r_uiFullScreen;
 cvar_t *r_shadows;
@@ -169,8 +162,6 @@ cvar_t *r_parallelShadowSplits;
 cvar_t *r_parallelShadowSplitWeight;
 cvar_t *r_lightSpacePerspectiveWarping;
 
-cvar_t *r_mode;
-cvar_t *r_oldMode;
 cvar_t *r_collapseStages;
 cvar_t *r_nobind;
 cvar_t *r_singleShader;
@@ -180,7 +171,6 @@ cvar_t *r_colorMipLevels;
 cvar_t *r_picmip;
 cvar_t *r_finish;
 cvar_t *r_clear;
-cvar_t *r_swapInterval;
 cvar_t *r_textureMode;
 cvar_t *r_offsetFactor;
 cvar_t *r_offsetUnits;
@@ -203,13 +193,6 @@ cvar_t *r_portalSky;
 
 cvar_t *r_subdivisions;
 cvar_t *r_stitchCurves;
-
-cvar_t *r_fullscreen;
-cvar_t *r_oldFullscreen;
-
-cvar_t *r_customwidth;
-cvar_t *r_customheight;
-cvar_t *r_customaspect;
 
 cvar_t *r_overBrightBits;
 cvar_t *r_mapOverBrightBits;
@@ -321,9 +304,6 @@ cvar_t *r_cameraFilmGrainScale;
 cvar_t *r_evsmPostProcess;
 cvar_t *r_detailTextures;
 
-cvar_t *r_noborder;
-cvar_t *r_stereoEnabled;
-cvar_t *r_ext_multisample;
 cvar_t *r_ext_multitexture;
 cvar_t *r_ext_texture_env_add;
 cvar_t *r_allowExtensions;
@@ -355,7 +335,7 @@ static qboolean InitOpenGL(void)
 	{
 		GLint temp;
 
-		GLimp_Init();
+		ri.GLimp_Init(&glConfig, 3, 2);
 
 		GL_CheckErrors();
 
@@ -1090,8 +1070,8 @@ void GfxInfo_f(void)
 
 	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits,
 	          glConfig.depthBits, glConfig.stencilBits);
-	Ren_Print("MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight,
-	          fsstrings[r_fullscreen->integer == 1]);
+	Ren_Print("MODE: %d, %d x %d %s hz:", ri.Cvar_VariableIntegerValue("r_mode"), glConfig.vidWidth, glConfig.vidHeight,
+	          fsstrings[ri.Cvar_VariableIntegerValue("r_fullscreen") == 1]);
 
 	if (glConfig.displayFrequency)
 	{
@@ -1225,18 +1205,6 @@ void R_Register(void)
 	ri.Cvar_AssertCvarRange(r_picmip, 0, 3, qtrue);
 	r_roundImagesDown         = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_colorMipLevels          = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
-	r_colorbits               = ri.Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_stereo                  = ri.Cvar_Get("r_stereo", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_CHEAT);
-	r_stencilbits             = ri.Cvar_Get("r_stencilbits", "8", CVAR_ARCHIVE | CVAR_LATCH);
-	r_depthbits               = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_ignorehwgamma           = ri.Cvar_Get("r_ignorehwgamma", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_mode                    = ri.Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH);
-	r_oldMode                 = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);
-	r_fullscreen              = ri.Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_oldFullscreen           = ri.Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
-	r_customwidth             = ri.Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customheight            = ri.Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customaspect            = ri.Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_simpleMipMaps           = ri.Cvar_Get("r_simpleMipMaps", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen            = ri.Cvar_Get("r_uifullscreen", "0", 0);
 	r_subdivisions            = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1251,8 +1219,6 @@ void R_Register(void)
 	r_heatHazeFix             = ri.Cvar_Get("r_heatHazeFix", "0", CVAR_CHEAT);
 	r_noMarksOnTrisurfs       = ri.Cvar_Get("r_noMarksOnTrisurfs", "1", CVAR_CHEAT);
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
-
-	ri.Cvar_AssertCvarRange(ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH), 0, 200, qtrue);
 
 	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_ARCHIVE);
 	r_noFog   = ri.Cvar_Get("r_noFog", "0", CVAR_CHEAT);
@@ -1306,7 +1272,6 @@ void R_Register(void)
 	r_drawSun       = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE);
 	r_finish        = ri.Cvar_Get("r_finish", "0", CVAR_CHEAT);
 	r_textureMode   = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
-	r_swapInterval  = ri.Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
 	r_gamma         = ri.Cvar_Get("r_gamma", "1.3", CVAR_ARCHIVE);
 	r_facePlaneCull = ri.Cvar_Get("r_facePlaneCull", "1", CVAR_ARCHIVE);
 
@@ -1540,10 +1505,6 @@ void R_Register(void)
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// FOR sdl_glimp.c
-	r_noborder        = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_stereoEnabled   = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
 	r_ext_multitexture    = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_texture_env_add = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_allowExtensions     = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
@@ -1554,7 +1515,6 @@ void R_Register(void)
 	ri.Cmd_AddCommand("shaderexp", R_ShaderExp_f);
 	ri.Cmd_AddCommand("skinlist", R_SkinList_f);
 	ri.Cmd_AddCommand("modellist", R_Modellist_f);
-	ri.Cmd_AddCommand("modelist", R_ModeList_f);
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 	ri.Cmd_AddCommand("animationlist", R_AnimationList_f);
@@ -1568,7 +1528,6 @@ void R_Register(void)
 	ri.Cmd_AddCommand("gfxinfo", GfxInfo_f);
 	//ri.Cmd_AddCommand("generatemtr", R_GenerateMaterialFile_f);
 	ri.Cmd_AddCommand("buildcubemaps", R_BuildCubeMaps);
-	ri.Cmd_AddCommand("minimize", GLimp_Minimize);
 
 	ri.Cmd_AddCommand("glsl_restart", GLSL_restart_f);
 }
@@ -1748,7 +1707,11 @@ void RE_Shutdown(qboolean destroyWindow)
 	if (destroyWindow)
 	{
 		GLSL_ShutdownGPUShaders();
-		GLimp_Shutdown();
+		R_DoGLimpShutdown();
+
+		// release the virtual memory
+		//R_Hunk_End();
+		//R_FreeImageBuffer();
 
 		ri.Tag_Free();
 	}
@@ -1807,7 +1770,6 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	// the RE_ functions are Renderer Entry points
 
 	re.Shutdown               = RE_Shutdown;
-	re.MainWindow             = GLimp_MainWindow;
 	re.BeginRegistration      = RE_BeginRegistration;
 	re.RegisterModel          = RE_RegisterModel;
 	re.RegisterSkin           = RE_RegisterSkin;
@@ -1854,6 +1816,8 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.RenderToTexture        = RE_RenderToTexture;
 	re.Finish                 = RE_Finish;
 	re.TakeVideoFrame         = RE_TakeVideoFrame;
+	re.InitOpenGL = RE_InitOpenGl;
+	re.InitOpenGLSubSystem = RE_InitOpenGlSubsystems;
 	//re.SetClipRegion = RE_SetClipRegion;
 
 #if defined(USE_REFLIGHT)

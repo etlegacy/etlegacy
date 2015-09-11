@@ -34,6 +34,7 @@
  */
 
 #include "tr_local.h"
+#include "../renderercommon/tr_public.h"
 
 backEndData_t  *backEndData;
 backEndState_t backEnd;
@@ -9814,7 +9815,7 @@ static void RB_ColorCorrection()
 	ImageCopyBackBuffer(tr.currentRenderImage);
 
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-	SetUniformFloat(UNIFORM_GAMMA, (!r_ignorehwgamma->integer ? r_gamma->value : 1.0f));
+	SetUniformFloat(UNIFORM_GAMMA, (!ri.Cvar_VariableIntegerValue("r_ignorehwgamma") ? r_gamma->value : 1.0f));
 
 	DRAWSCREENQUAD();
 	GL_CheckErrors();
@@ -9894,7 +9895,7 @@ const void *RB_SwapBuffers(const void *data)
 
 	Ren_LogComment("***************** RB_SwapBuffers *****************\n\n\n");
 
-	GLimp_EndFrame();
+	ri.GLimp_SwapFrame();
 
 	backEnd.projection2D = qfalse;
 

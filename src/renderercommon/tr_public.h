@@ -47,8 +47,6 @@ typedef struct
 	// which will keep the screen from flashing to the desktop.
 	void (*Shutdown)(qboolean destroyWindow);
 
-	void *(*MainWindow)(void);
-
 	// All data that will be used in a level should be
 	// registered before rendering any frames to prevent disk hits,
 	// but they can still be registered at a later time
@@ -140,6 +138,9 @@ typedef struct
 
 	// avi output stuff
 	void (*TakeVideoFrame)(int h, int w, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
+
+	void (*InitOpenGL)(void);
+	int (*InitOpenGLSubSystem)(void);
 
 #if defined(USE_REFLIGHT)
 	void (*AddRefLightToScene)(const refLight_t *light);
@@ -240,6 +241,11 @@ typedef struct
 	void (*IN_Init)(void);
 	void (*IN_Shutdown)(void);
 	void (*IN_Restart)(void);
+
+	void (*GLimp_Init)(glconfig_t *glConfig, int majorVersion, int minorVersion);
+	void (*GLimp_Shutdown)(void);
+	void (*GLimp_SwapFrame)(void);
+	void (*GLimp_SetGamma)(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
 } refimport_t;
 
 // this is the only function actually exported at the linker level

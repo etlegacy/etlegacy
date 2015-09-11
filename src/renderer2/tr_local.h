@@ -3086,16 +3086,10 @@ extern glstate_t glState;       // outside of TR since it shouldn't be cleared d
 // the glconfig_t struct.
 extern qboolean textureFilterAnisotropic;
 extern int      maxAnisotropy;
-extern float    displayAspect;      //FIXME
 
 // cvars
 
 extern cvar_t *r_railCoreWidth;
-
-extern cvar_t *r_stencilbits;   // number of desired stencil bits
-extern cvar_t *r_depthbits;     // number of desired depth bits
-extern cvar_t *r_colorbits;     // number of desired color bits, only relevant for fullscreen
-extern cvar_t *r_stereo;        // desired pixelformat stereo flag
 
 extern cvar_t *r_measureOverdraw;   // enables stencil buffer overdraw measurement
 
@@ -3135,8 +3129,6 @@ extern cvar_t *r_noLightScissors;
 extern cvar_t *r_noLightVisCull;
 extern cvar_t *r_noInteractionSort;
 
-extern cvar_t *r_mode;          // video mode
-extern cvar_t *r_fullscreen;
 extern cvar_t *r_gamma;
 
 extern cvar_t *r_ext_compressed_textures;   // these control use of specific extensions
@@ -3163,7 +3155,6 @@ extern cvar_t *r_colorMipLevels;    // development aid to see texture mip usage
 extern cvar_t *r_picmip;        // controls picmip values
 extern cvar_t *r_finish;
 extern cvar_t *r_drawBuffer;
-extern cvar_t *r_swapInterval;
 extern cvar_t *r_textureMode;
 extern cvar_t *r_offsetFactor;
 extern cvar_t *r_offsetUnits;
@@ -3499,8 +3490,6 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
 model_t *R_AllocModel(void);
 
 void R_Init(void);
-
-qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode);
 
 void R_SetColorMappings(void);
 void R_GammaCorrect(byte *buffer, int bufSize);

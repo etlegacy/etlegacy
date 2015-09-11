@@ -1812,8 +1812,9 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 {
 	ri.Hunk_Clear();    // (SA) MEM NOTE: not in missionpack
 
-	R_Init();
 	*glconfigOut = glConfig;
+
+	R_Init();
 
 	R_IssuePendingRenderCommands();
 
