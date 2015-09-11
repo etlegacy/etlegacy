@@ -391,7 +391,7 @@ void BodySink(gentity_t *ent)
 
 static qboolean G_IsPositionOK(gentity_t *ent, vec3_t newOrigin)
 {
-	trace_t	trace;
+	trace_t trace;
 
 	trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, MASK_PLAYERSOLID);
 
@@ -409,8 +409,8 @@ static qboolean G_IsPositionOK(gentity_t *ent, vec3_t newOrigin)
 // note that this is only with first stage, corpse can just use slidemove
 static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 {
-	vec3_t		start, down, up;
-	trace_t		trace;
+	vec3_t  start, down, up;
+	trace_t trace;
 
 	VectorCopy(ent->s.pos.trBase, start);
 
@@ -432,7 +432,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 			VectorCopy(trace.endpos, ent->s.pos.trBase);
 		}
 
-		return;		// we got exactly where we wanted to go first try
+		return;     // we got exactly where we wanted to go first try
 	}
 
 	VectorCopy(ent->s.pos.trBase, down);
@@ -458,7 +458,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 
 	if (trace.allsolid)
 	{
-		return;		// can't step up
+		return;     // can't step up
 	}
 
 	// try slidemove from this position

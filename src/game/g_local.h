@@ -488,7 +488,7 @@ struct gentity_s
 	g_constructible_stats_t constructibleStats;
 
 	int etpro_misc_1; // bit 0 = it's a planted/ticking dynamite
-	int	etpro_misc_2; // the entityNumber of the (last) planted dyna. bit strange it's only 1 dyna..
+	int etpro_misc_2; // the entityNumber of the (last) planted dyna. bit strange it's only 1 dyna..
 
 	int numPlayers;
 
@@ -894,7 +894,7 @@ struct gclient_s
 	int lastSpammyCentrePrintTime;
 	pmoveExt_t pmext;
 #ifdef FEATURE_SERVERMDX
-	qboolean deathAnim;				// if true body has effect1Time set so death animation may start
+	qboolean deathAnim;             // if true body has effect1Time set so death animation may start
 #endif
 	int deathAnimTime;              // time when anim ends
 

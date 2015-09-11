@@ -222,7 +222,7 @@ static void CG_Obituary(entityState_t *ent)
 					weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
 					scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
 				}
-				
+
 				break;
 			case MOD_CRUSH_CONSTRUCTION:
 			case MOD_CRUSH_CONSTRUCTIONDEATH:
@@ -546,7 +546,7 @@ static void CG_Obituary(entityState_t *ent)
 						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
 						scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
 					}
-					
+
 					break;
 				case MOD_MACHINEGUN:
 				case MOD_MG42:

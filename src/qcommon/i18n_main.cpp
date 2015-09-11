@@ -64,7 +64,7 @@ cvar_t      *cl_lang;
 cvar_t      *cl_langDebug;
 static char cl_lang_last[3];
 
-qboolean doTranslate = qfalse;   // we don't translate english in general
+qboolean doTranslate    = qfalse; // we don't translate english in general
 qboolean doTranslateMod = qtrue; // translate legacy mod only
 
 std::map <std::string, std::string> strings; // original text / translated text
@@ -318,7 +318,7 @@ const char *I18N_Translate(const char *msgid)
 
 const char *I18N_TranslateMod(const char *msgid)
 {
-	if(doTranslateMod)
+	if (doTranslateMod)
 	{
 		return _I18N_Translate(msgid, dictionary_mod);
 	}

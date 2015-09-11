@@ -244,7 +244,7 @@ void CG_Respawn(qboolean revived)
 	if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		cg.pmext.silencedSideArm = 1;
-	} 
+	}
 	else if (cg.predictedPlayerState.weapon == WP_GPG40 || cg.predictedPlayerState.weapon == WP_M7)
 	{
 		cg.pmext.silencedSideArm = 2;

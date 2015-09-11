@@ -200,7 +200,7 @@ static void InitOpenGL(void)
 	{
 		GLint temp;
 
-		ri.GLimp_Init(&glConfig, 0 ,0);
+		ri.GLimp_Init(&glConfig, 0, 0);
 
 		strcpy(renderer_buffer, glConfig.renderer_string);
 		Q_strlwr(renderer_buffer);
@@ -1457,9 +1457,9 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	re.RenderToTexture = RE_RenderToTexture;
 
-	re.Finish         = RE_Finish;
-	re.TakeVideoFrame = RE_TakeVideoFrame;
-	re.InitOpenGL = RE_InitOpenGl;
+	re.Finish              = RE_Finish;
+	re.TakeVideoFrame      = RE_TakeVideoFrame;
+	re.InitOpenGL          = RE_InitOpenGl;
 	re.InitOpenGLSubSystem = RE_InitOpenGlSubsystems;
 
 	return &re;

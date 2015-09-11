@@ -1043,7 +1043,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 		    ((float)(FLAME_SPRITE_START_BLUE_SCALE * f->blueLife) < lived))
 		{
 
-			float    alpha, lifeFrac;
+			float alpha, lifeFrac;
 
 			// should we merge it with the next sprite?
 			while (fNext && !droppedTrail)

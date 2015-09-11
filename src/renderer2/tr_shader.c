@@ -5658,27 +5658,27 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	}
 
 	{
-		image_t *tmpImage = R_FindImageFile(va("%s_norm", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
-		int stageOffset = 1;
+		image_t *tmpImage   = R_FindImageFile(va("%s_norm", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+		int     stageOffset = 1;
 
-		if(tmpImage)
+		if (tmpImage)
 		{
-			stages[stageOffset].active = qtrue;
+			stages[stageOffset].active             = qtrue;
 			stages[stageOffset].bundle[0].image[0] = tmpImage;
-			stages[stageOffset].type = ST_NORMALMAP;
-			stages[stageOffset].rgbGen = CGEN_IDENTITY;
-			stages[stageOffset].stateBits = GLS_DEFAULT;
+			stages[stageOffset].type               = ST_NORMALMAP;
+			stages[stageOffset].rgbGen             = CGEN_IDENTITY;
+			stages[stageOffset].stateBits          = GLS_DEFAULT;
 			stageOffset++;
 		}
 
 		tmpImage = R_FindImageFile(va("%s_spec", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
-		if(tmpImage)
+		if (tmpImage)
 		{
-			stages[stageOffset].active = qtrue;
+			stages[stageOffset].active             = qtrue;
 			stages[stageOffset].bundle[0].image[0] = tmpImage;
-			stages[stageOffset].type = ST_SPECULARMAP;
-			stages[stageOffset].rgbGen = CGEN_IDENTITY;
-			stages[stageOffset].stateBits = GLS_DEFAULT;
+			stages[stageOffset].type               = ST_SPECULARMAP;
+			stages[stageOffset].rgbGen             = CGEN_IDENTITY;
+			stages[stageOffset].stateBits          = GLS_DEFAULT;
 			stageOffset++;
 		}
 
@@ -5686,12 +5686,12 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
 		if(tmpImage)
 		{
-			stages[stageOffset].active = qtrue;
-			stages[stageOffset].bundle[0].image[0] = tmpImage;
-			stages[stageOffset].type = ST_;
-			stages[stageOffset].rgbGen = CGEN_IDENTITY;
-			stages[stageOffset].stateBits = GLS_DEFAULT;
-			stageOffset++;
+		    stages[stageOffset].active = qtrue;
+		    stages[stageOffset].bundle[0].image[0] = tmpImage;
+		    stages[stageOffset].type = ST_;
+		    stages[stageOffset].rgbGen = CGEN_IDENTITY;
+		    stages[stageOffset].stateBits = GLS_DEFAULT;
+		    stageOffset++;
 		}
 		*/
 	}

@@ -1419,9 +1419,9 @@ static void CG_DrawCrosshairNames(void)
 	size_t     colorizedBufferLength = 32;
 	char       colorized[32]         = { 0 };
 	int        playerHealth          = 0;
-	qboolean   drawStuff = qfalse;
-	qboolean   isTank    = qfalse;
-	int        maxHealth = 1;
+	qboolean   drawStuff             = qfalse;
+	qboolean   isTank                = qfalse;
+	int        maxHealth             = 1;
 	float      dist; // Distance to the entity under the crosshair
 	float      zChange;
 	qboolean   hitClient = qfalse;

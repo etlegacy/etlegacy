@@ -960,7 +960,7 @@ static void SV_DemoStartPlayback(void)
 
 	// Init vars with empty values (to avoid compilation warnings)
 	clients = fps = gametype = timelimit = fraglimit = capturelimit = 0;
-	time = 400;
+	time    = 400;
 
 	// Initialize the demo message buffer
 	MSG_Init(&msg, buf, sizeof(buf));

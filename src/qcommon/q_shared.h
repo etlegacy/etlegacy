@@ -710,8 +710,8 @@ extern void QDECL qsnapvectorx87(vec3_t vec);
 extern void QDECL qsnapvectorsse(vec3_t vec);
 
 //extern long (QDECL *Q_ftol)(float f);
-extern int(QDECL * Q_VMftol)(void);  // Unused.
-extern void(QDECL * Q_SnapVector)(vec3_t vec);
+extern int (QDECL *Q_VMftol)(void);  // Unused.
+extern void (QDECL *Q_SnapVector)(vec3_t vec);
 #else
 // Q_ftol must expand to a function name so the pluggable renderer can take
 // its address

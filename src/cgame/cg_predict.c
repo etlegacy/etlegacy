@@ -646,10 +646,10 @@ static void CG_TouchTriggerPrediction(void)
 }
 
 //#define MAX_PREDICT_ORIGIN_DELTA		0.1f
-#define MAX_PREDICT_ORIGIN_DELTA_2		0.01f	// Square(MAX_PREDICT_ORIGIN_DELTA)
+#define MAX_PREDICT_ORIGIN_DELTA_2      0.01f   // Square(MAX_PREDICT_ORIGIN_DELTA)
 //#define MAX_PREDICT_VELOCITY_DELTA		0.1f
-#define MAX_PREDICT_VELOCITY_DELTA_2	0.01f	// Square(MAX_PREDICT_VELOCITY_DELTA)
-#define MAX_PREDICT_VIEWANGLES_DELTA	1.0f
+#define MAX_PREDICT_VELOCITY_DELTA_2    0.01f   // Square(MAX_PREDICT_VELOCITY_DELTA)
+#define MAX_PREDICT_VIEWANGLES_DELTA    1.0f
 
 int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 {
@@ -684,7 +684,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 
 	if (ps2->weaponTime != ps1->weaponTime)
 	{
-		if(cg_showmiss.integer)
+		if (cg_showmiss.integer)
 		{
 			CG_Printf("Backup: %d Server: %d\n", ps2->weaponTime, ps1->weaponTime);
 		}
@@ -697,17 +697,17 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	}
 
 	if (ps2->speed != ps1->speed ||
-		ps2->delta_angles[0] != ps1->delta_angles[0] ||
-		ps2->delta_angles[1] != ps1->delta_angles[1] ||
-		ps2->delta_angles[2] != ps1->delta_angles[2])
+	    ps2->delta_angles[0] != ps1->delta_angles[0] ||
+	    ps2->delta_angles[1] != ps1->delta_angles[1] ||
+	    ps2->delta_angles[2] != ps1->delta_angles[2])
 	{
 		return 8;
 	}
 
 	if (ps2->legsTimer != ps1->legsTimer ||
-		ps2->legsAnim != ps1->legsAnim ||
-		ps2->torsoTimer != ps1->torsoTimer ||
-		ps2->torsoAnim != ps1->torsoAnim)
+	    ps2->legsAnim != ps1->legsAnim ||
+	    ps2->torsoTimer != ps1->torsoTimer ||
+	    ps2->torsoAnim != ps1->torsoAnim)
 	{
 		return 9;
 	}
@@ -727,8 +727,8 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	}
 
 	if (ps2->externalEvent != ps1->externalEvent ||
-		ps2->externalEventParm != ps1->externalEventParm ||
-		ps2->externalEventTime != ps1->externalEventTime)
+	    ps2->externalEventParm != ps1->externalEventParm ||
+	    ps2->externalEventTime != ps1->externalEventTime)
 	{
 		return 13;
 	}
@@ -745,7 +745,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 
 	for (i = 0; i < 3; i++)
 	{
-		if(abs(ps2->viewangles[i] - ps1->viewangles[i]) > MAX_PREDICT_VIEWANGLES_DELTA)
+		if (abs(ps2->viewangles[i] - ps1->viewangles[i]) > MAX_PREDICT_VIEWANGLES_DELTA)
 		{
 			return 16;
 		}
@@ -775,7 +775,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->persistant[i] != ps1->persistant[i])
 		{
-			if(cg_showmiss.integer)
+			if (cg_showmiss.integer)
 			{
 				CG_Printf("CG_PredictionOk: return 20 - MAX_PERSISTANT [%i]\n", i);
 			}
@@ -787,7 +787,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->powerups[i] != ps1->powerups[i])
 		{
-			if(cg_showmiss.integer)
+			if (cg_showmiss.integer)
 			{
 				CG_Printf("CG_PredictionOk: return 21 - MAX_PERSISTANT [%i]\n", i);
 			}
@@ -819,7 +819,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	// grenadeTimeLeft was not fully predicted
 	if (ps1->grenadeTimeLeft != ps2->grenadeTimeLeft)
 	{
-		if(cg_showmiss.integer)
+		if (cg_showmiss.integer)
 		{
 			CG_Printf("CG_PredictionOk: Backup: %d Server: %d\n", ps2->grenadeTimeLeft, ps1->grenadeTimeLeft);
 		}
@@ -876,7 +876,7 @@ void CG_PredictPlayerState(void)
 	vec3_t        deltaAngles;
 	pmoveExt_t    pmext;
 	// unlagged - optimized prediction
-	int stateIndex = 0, predictCmd = 0;
+	int stateIndex   = 0, predictCmd = 0;
 	int numPredicted = 0, numPlayedBack = 0; // debug code
 
 	cg.hyperspace = qfalse; // will be set if touching a trigger_teleport
@@ -1072,8 +1072,8 @@ void CG_PredictPlayerState(void)
 		{
 			// do a full predict
 			cg.lastPredictedCommand = 0;
-			cg.backupStateTail = cg.backupStateTop;
-			predictCmd = current - CMD_BACKUP + 1;
+			cg.backupStateTail      = cg.backupStateTop;
+			predictCmd              = current - CMD_BACKUP + 1;
 		}
 		// cg.physicsTime is the current snapshot's serverTime
 		// if it's the same as the last one
@@ -1085,7 +1085,7 @@ void CG_PredictPlayerState(void)
 		else
 		{
 			// we have a new snapshot
-			int i;
+			int      i;
 			qboolean error = qtrue;
 
 			// loop through the saved states queue
@@ -1126,15 +1126,15 @@ void CG_PredictPlayerState(void)
 			{
 				// do a full predict
 				cg.lastPredictedCommand = 0;
-				cg.backupStateTail = cg.backupStateTop;
-				predictCmd = current - CMD_BACKUP + 1;
+				cg.backupStateTail      = cg.backupStateTop;
+				predictCmd              = current - CMD_BACKUP + 1;
 			}
 		}
 
 		// keep track of the server time of the last snapshot so we
 		// know when we're starting from a new one in future calls
 		cg.lastPhysicsTime = cg.physicsTime;
-		stateIndex = cg.backupStateTop;
+		stateIndex         = cg.backupStateTop;
 	}
 	// unlagged - optimized prediction
 
@@ -1334,7 +1334,7 @@ void CG_PredictPlayerState(void)
 
 	// unlagged - optimized prediction
 	// do a /condump after a few seconds of this
-	if(cg_showmiss.integer & 2)
+	if (cg_showmiss.integer & 2)
 	{
 		CG_Printf("cg.time: %d, numPredicted: %d, numPlayedBack: %d\n", cg.time, numPredicted, numPlayedBack); // debug code
 	}

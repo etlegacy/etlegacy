@@ -1325,7 +1325,7 @@ void CL_Clientinfo_f(void)
  * @note unused
 void CL_EatMe_f(void)
 {
-	// do nothing kthxbye
+    // do nothing kthxbye
 }
 */
 
@@ -2702,10 +2702,10 @@ void CL_InitRef(void)
 	ri.IN_Restart  = IN_Restart;
 
 	// Glimp bindings
-	ri.GLimp_Init = GLimp_Init;
-	ri.GLimp_Shutdown = GLimp_Shutdown;
+	ri.GLimp_Init      = GLimp_Init;
+	ri.GLimp_Shutdown  = GLimp_Shutdown;
 	ri.GLimp_SwapFrame = GLimp_EndFrame;
-	ri.GLimp_SetGamma = GLimp_SetGamma;
+	ri.GLimp_SetGamma  = GLimp_SetGamma;
 
 	//ri.ftol = Q_ftol;
 

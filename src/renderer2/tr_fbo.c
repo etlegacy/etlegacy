@@ -89,7 +89,7 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 
 FBO_t *R_CreateFBO(const char *name, int width, int height)
 {
-	int i = 0;
+	int   i = 0;
 	FBO_t *fbo;
 
 	if (strlen(name) >= MAX_QPATH)
@@ -118,12 +118,12 @@ FBO_t *R_CreateFBO(const char *name, int width, int height)
 	fbo->width  = width;
 	fbo->height = height;
 
-	for(; i < 16; i++)
+	for (; i < 16; i++)
 	{
 		fbo->colorBuffers[i].buffer = 0;
 	}
-	fbo->depthBuffer.buffer = 0;
-	fbo->stencilBuffer.buffer = 0;
+	fbo->depthBuffer.buffer              = 0;
+	fbo->stencilBuffer.buffer            = 0;
 	fbo->packedDepthStencilBuffer.buffer = 0;
 
 	glGenFramebuffers(1, &fbo->frameBuffer);
@@ -140,7 +140,7 @@ Framebuffer must be bound
 */
 void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 {
-	qboolean absent;
+	qboolean      absent;
 	BufferImage_t *bufferImage;
 
 	if (index < 0 || index >= glConfig2.maxColorAttachments)
@@ -181,7 +181,7 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 
 void R_CreateFBODepthBuffer(FBO_t *fbo, int format)
 {
-	qboolean absent;
+	qboolean      absent;
 	BufferImage_t *bufferImage;
 
 	if (format != GL_DEPTH_COMPONENT &&
@@ -214,7 +214,7 @@ void R_CreateFBODepthBuffer(FBO_t *fbo, int format)
 
 void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 {
-	qboolean absent;
+	qboolean      absent;
 	BufferImage_t *bufferImage;
 
 	if (format != GL_STENCIL_INDEX &&
@@ -226,7 +226,7 @@ void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 		return;
 	}
 
-	bufferImage = &fbo->stencilBuffer;
+	bufferImage         = &fbo->stencilBuffer;
 	bufferImage->format = format;
 
 	absent = bufferImage->buffer == 0;
@@ -249,7 +249,7 @@ void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 
 void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 {
-	qboolean absent;
+	qboolean      absent;
 	BufferImage_t *bufferImage;
 
 	if (format != GL_DEPTH_STENCIL && format != GL_DEPTH24_STENCIL8)
@@ -258,7 +258,7 @@ void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 		return;
 	}
 
-	bufferImage = &fbo->packedDepthStencilBuffer;
+	bufferImage         = &fbo->packedDepthStencilBuffer;
 	bufferImage->format = format;
 
 	absent = bufferImage->buffer == 0;
@@ -448,7 +448,7 @@ void R_AttachColorBufferToFBO(FBO_t *fbo, int format, int target, image_t *textu
 
 FBO_t *R_CreateReadyFBO(const char *name, float size)
 {
-	int width, height;
+	int   width, height;
 	FBO_t *tmp;
 
 	if (glConfig2.textureNPOTAvailable)

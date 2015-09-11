@@ -238,7 +238,7 @@ void RB_AddDlightFlares(void)
 		return;
 	}
 
-	l   = backEnd.refdef.dlights;
+	l = backEnd.refdef.dlights;
 
 	for (i = 0 ; i < backEnd.refdef.num_dlights ; i++, l++)
 	{

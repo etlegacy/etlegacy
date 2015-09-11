@@ -1816,8 +1816,8 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.RenderToTexture        = RE_RenderToTexture;
 	re.Finish                 = RE_Finish;
 	re.TakeVideoFrame         = RE_TakeVideoFrame;
-	re.InitOpenGL = RE_InitOpenGl;
-	re.InitOpenGLSubSystem = RE_InitOpenGlSubsystems;
+	re.InitOpenGL             = RE_InitOpenGl;
+	re.InitOpenGLSubSystem    = RE_InitOpenGlSubsystems;
 	//re.SetClipRegion = RE_SetClipRegion;
 
 #if defined(USE_REFLIGHT)

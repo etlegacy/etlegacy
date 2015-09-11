@@ -558,7 +558,7 @@ typedef enum
 	STAT_XP_OVERFLOW,               // count XP overflow(every 2^15)
 	STAT_PS_FLAGS,
 	STAT_AIRLEFT,                   // airtime for CG_DrawBreathBar()
-	STAT_SPRINTTIME	                // sprinttime for CG_DrawStaminaBar()
+	STAT_SPRINTTIME                 // sprinttime for CG_DrawStaminaBar()
 } statIndex_t;
 
 // player_state->persistant[] indexes
@@ -899,7 +899,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 
 // FIXME: weapon table - put following macros in
 #define IS_RIFLENADE_WEAPON(w) \
-	(w == WP_CARBINE             || w ==WP_KAR98)
+	(w == WP_CARBINE             || w == WP_KAR98)
 
 #define IS_RIFLE_AND_NADE_WEAPON(w) \
 	(w == WP_GPG40               || w ==  WP_M7)

@@ -523,7 +523,7 @@ qboolean FS_CreatePath(char *OSPath)
 
 	// Skip creation of the root directory as it will always be there
 	ofs = strchr(path, PATH_SEP);
-	if(ofs != NULL)
+	if (ofs != NULL)
 	{
 		ofs++;
 	}
@@ -3985,17 +3985,17 @@ static void FS_Startup(const char *gameName)
 	}
 
 #ifdef FEATURE_GETTEXT
-    // only translate legacy mod
-    // - other mods don't support our unicode translation files
-    // - mods have own strings to translate - we avoid language mixes
-    if (!Q_stricmp(fs_gamedirvar->string, DEFAULT_MODGAME))
-    {
-    	doTranslateMod = qtrue;
-    }
-    else
-    {
-    	doTranslateMod = qfalse;
-    }
+	// only translate legacy mod
+	// - other mods don't support our unicode translation files
+	// - mods have own strings to translate - we avoid language mixes
+	if (!Q_stricmp(fs_gamedirvar->string, DEFAULT_MODGAME))
+	{
+		doTranslateMod = qtrue;
+	}
+	else
+	{
+		doTranslateMod = qfalse;
+	}
 #endif // FEATURE_GETTEXT
 
 #endif // ifndef DEDICATED

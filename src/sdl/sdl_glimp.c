@@ -55,30 +55,30 @@ static int gammaResetTime = 0;
 SDL_Window           *main_window   = NULL;
 static SDL_Renderer  *main_renderer = NULL;
 static SDL_GLContext SDL_glContext  = NULL;
-static float displayAspect = 0.0f;
+static float         displayAspect  = 0.0f;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
 cvar_t *r_centerWindow;
 
 // Window cvars
-cvar_t	*r_fullscreen = 0;
-cvar_t	*r_noborder;
-cvar_t	*r_centerWindow;
-cvar_t	*r_customwidth;
-cvar_t	*r_customheight;
-cvar_t	*r_swapInterval;
-cvar_t	*r_mode;
-cvar_t  *r_customaspect;
-cvar_t	*r_displayRefresh;
-cvar_t  *r_stereoEnabled;
+cvar_t *r_fullscreen = 0;
+cvar_t *r_noborder;
+cvar_t *r_centerWindow;
+cvar_t *r_customwidth;
+cvar_t *r_customheight;
+cvar_t *r_swapInterval;
+cvar_t *r_mode;
+cvar_t *r_customaspect;
+cvar_t *r_displayRefresh;
+cvar_t *r_stereoEnabled;
 
 // Window surface cvars
-cvar_t	*r_stencilbits; // number of desired stencil bits
-cvar_t	*r_depthbits; // number of desired depth bits
-cvar_t	*r_colorbits; // number of desired color bits, only relevant for fullscreen
-cvar_t	*r_ignorehwgamma;
-cvar_t  *r_ext_multisample;
+cvar_t *r_stencilbits;  // number of desired stencil bits
+cvar_t *r_depthbits;  // number of desired depth bits
+cvar_t *r_colorbits;  // number of desired color bits, only relevant for fullscreen
+cvar_t *r_ignorehwgamma;
+cvar_t *r_ext_multisample;
 
 typedef enum
 {
@@ -105,29 +105,29 @@ typedef struct vidmode_s
 } vidmode_t;
 
 vidmode_t glimp_vidModes[] =
-		{
-				{"Mode  0: 320x240",           320,  240,  1},
-				{"Mode  1: 400x300",           400,  300,  1},
-				{"Mode  2: 512x384",           512,  384,  1},
-				{"Mode  3: 640x480",           640,  480,  1},
-				{"Mode  4: 800x600",           800,  600,  1},
-				{"Mode  5: 960x720",           960,  720,  1},
-				{"Mode  6: 1024x768",          1024, 768,  1},
-				{"Mode  7: 1152x864",          1152, 864,  1},
-				{"Mode  8: 1280x1024",         1280, 1024, 1},
-				{"Mode  9: 1600x1200",         1600, 1200, 1},
-				{"Mode 10: 2048x1536",         2048, 1536, 1},
-				{"Mode 11: 856x480 (wide)",    856,  480,  1},
-				{"Mode 12: 1366x768 (16:9)",   1366, 768,  1},
-				{"Mode 13: 1440x900 (16:10)",  1440, 900,  1},
-				{"Mode 14: 1680x1050 (16:10)", 1680, 1050, 1},
-				{"Mode 15: 1600x1200",         1600, 1200, 1},
-				{"Mode 16: 1920x1080 (16:9)",  1920, 1080, 1},
-				{"Mode 17: 1920x1200 (16:10)", 1920, 1200, 1},
-				{"Mode 18: 2560x1440 (16:9)",  2560, 1440, 1},
-				{"Mode 19: 2560x1600 (16:10)", 2560, 1600, 1},
-				{"Mode 20: 3840x2160 (16:9)",  3840, 2160, 1},
-		};
+{
+	{ "Mode  0: 320x240",           320,  240,  1 },
+	{ "Mode  1: 400x300",           400,  300,  1 },
+	{ "Mode  2: 512x384",           512,  384,  1 },
+	{ "Mode  3: 640x480",           640,  480,  1 },
+	{ "Mode  4: 800x600",           800,  600,  1 },
+	{ "Mode  5: 960x720",           960,  720,  1 },
+	{ "Mode  6: 1024x768",          1024, 768,  1 },
+	{ "Mode  7: 1152x864",          1152, 864,  1 },
+	{ "Mode  8: 1280x1024",         1280, 1024, 1 },
+	{ "Mode  9: 1600x1200",         1600, 1200, 1 },
+	{ "Mode 10: 2048x1536",         2048, 1536, 1 },
+	{ "Mode 11: 856x480 (wide)",    856,  480,  1 },
+	{ "Mode 12: 1366x768 (16:9)",   1366, 768,  1 },
+	{ "Mode 13: 1440x900 (16:10)",  1440, 900,  1 },
+	{ "Mode 14: 1680x1050 (16:10)", 1680, 1050, 1 },
+	{ "Mode 15: 1600x1200",         1600, 1200, 1 },
+	{ "Mode 16: 1920x1080 (16:9)",  1920, 1080, 1 },
+	{ "Mode 17: 1920x1200 (16:10)", 1920, 1200, 1 },
+	{ "Mode 18: 2560x1440 (16:9)",  2560, 1440, 1 },
+	{ "Mode 19: 2560x1600 (16:10)", 2560, 1600, 1 },
+	{ "Mode 20: 3840x2160 (16:9)",  3840, 2160, 1 },
+};
 static int s_numVidModes = ARRAY_LEN(glimp_vidModes);
 
 void *GLimp_MainWindow(void)
@@ -195,13 +195,13 @@ void GLimp_ModeList_f(void)
 
 	Com_Printf("\n");
 	Com_Printf((r_mode->integer == -2) ? "%s ^2(current)\n" : "%s\n",
-			  "Mode -2: desktop resolution");
+	           "Mode -2: desktop resolution");
 	Com_Printf((r_mode->integer == -1) ? "%s ^2(current)\n" : "%s\n",
-			  "Mode -1: custom resolution");
+	           "Mode -1: custom resolution");
 	for (i = 0; i < s_numVidModes; i++)
 	{
 		Com_Printf((i == r_mode->integer) ? "%s ^2(current)\n" : "%s\n",
-				  glimp_vidModes[i].description);
+		           glimp_vidModes[i].description);
 	}
 	Com_Printf("\n");
 }
@@ -214,23 +214,23 @@ static void GLimp_InitCvars(void)
 	r_centerWindow    = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE);
 
 	// Window cvars
-	r_fullscreen = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_noborder = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_centerWindow = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customwidth = Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customheight = Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	r_swapInterval = Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
-	r_stereoEnabled = Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_mode = Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_customaspect = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_fullscreen     = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_noborder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_centerWindow   = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_customwidth    = Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
+	r_customheight   = Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
+	r_swapInterval   = Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
+	r_stereoEnabled  = Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_mode           = Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_customaspect   = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_displayRefresh = Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
 	Cvar_AssertCvarRange(r_displayRefresh, 0, 200, qtrue);
 
 	// Window render surface cvars
-	r_stencilbits = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_depthbits = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_colorbits = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ignorehwgamma = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_stencilbits     = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_depthbits       = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_colorbits       = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_ignorehwgamma   = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_multisample = Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	Cvar_AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
 
@@ -301,7 +301,7 @@ static void GLimp_DetectAvailableModes(void)
 	{
 		if (!SDL_GetNumVideoDisplays())
 		{
-			Com_Error(ERR_VID_FATAL ,"There is no available display to open a game screen - %s", SDL_GetError());
+			Com_Error(ERR_VID_FATAL, "There is no available display to open a game screen - %s", SDL_GetError());
 			return;
 		}
 
@@ -695,7 +695,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_SetWindowIcon(main_window, icon);
 
-		if(majorVersion > 0)
+		if (majorVersion > 0)
 		{
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, majorVersion);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minorVersion);
@@ -717,7 +717,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		glConfig->stencilBits = testStencilBits;
 
 		Com_Printf("Using %d color bits, %d depth, %d stencil display.\n",
-				  glConfig->colorBits, glConfig->depthBits, glConfig->stencilBits);
+		           glConfig->colorBits, glConfig->depthBits, glConfig->stencilBits);
 		break;
 	}
 
@@ -729,7 +729,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		return RSERR_INVALID_MODE;
 	}
 
-	if(!re.InitOpenGLSubSystem())
+	if (!re.InitOpenGLSubSystem())
 	{
 		Com_Printf("Too old openGL driver or hardware");
 		return RSERR_OLD_GL;
@@ -803,7 +803,7 @@ void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion)
 	Sys_GLimpInit();
 
 	// Create the window and set up the context
-	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean)!!r_fullscreen->integer, (qboolean)!!r_noborder->integer, majorVersion, minorVersion))
+	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, (qboolean) !!r_noborder->integer, majorVersion, minorVersion))
 	{
 		goto success;
 	}
@@ -811,7 +811,7 @@ void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion)
 	// Try again, this time in a platform specific "safe mode"
 	Sys_GLimpSafeInit();
 
-	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean)!!r_fullscreen->integer, qfalse, majorVersion, minorVersion))
+	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, qfalse, majorVersion, minorVersion))
 	{
 		goto success;
 	}
@@ -827,7 +827,7 @@ void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion)
 	}
 
 	// Nothing worked, give up
-	Com_Error(ERR_VID_FATAL ,"GLimp_Init() - could not load OpenGL subsystem\n");
+	Com_Error(ERR_VID_FATAL, "GLimp_Init() - could not load OpenGL subsystem\n");
 
 success:
 	// Only using SDL_SetWindowBrightness to determine if hardware gamma is supported

@@ -2476,7 +2476,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	}
 
 	if (pm->ps->weaponstate == WEAPON_DROPPING || pm->ps->weaponstate == WEAPON_DROPPING_TORELOAD ||
-		pm->ps->weaponstate == WEAPON_RELOADING)
+	    pm->ps->weaponstate == WEAPON_RELOADING)
 	{
 		return;
 	}

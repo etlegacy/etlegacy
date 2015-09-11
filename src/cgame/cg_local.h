@@ -667,7 +667,7 @@ typedef struct weaponInfo_s
 	sfxHandle_t lastShotSound[4];       // sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
 
 	qhandle_t weaponIcon[2];            // [0] is weap icon, [1] is highlight icon
-	int       weaponIconScale;
+	int weaponIconScale;
 
 	qhandle_t missileModel;
 	qhandle_t missileAlliedSkin;
@@ -2232,7 +2232,7 @@ extern vmCvar_t cg_fontScaleCP;
 extern vmCvar_t cg_fontScaleCN;
 
 // unlagged optimized prediction
-extern vmCvar_t	cg_optimizePrediction;
+extern vmCvar_t cg_optimizePrediction;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -3316,10 +3316,10 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 // hitsounds flags
 typedef enum
 {
-	HITSOUNDS_ON			=	BIT(0),
-	HITSOUNDS_NOBODYSHOT	=	BIT(1),
-	HITSOUNDS_NOHEADSHOT	=	BIT(2),
-	HITSOUNDS_NOTEAMSHOT	=	BIT(3),
+	HITSOUNDS_ON         = BIT(0),
+	HITSOUNDS_NOBODYSHOT = BIT(1),
+	HITSOUNDS_NOHEADSHOT = BIT(2),
+	HITSOUNDS_NOTEAMSHOT = BIT(3),
 } hitsooundFlags;
 
 // Safe screenwidth and screenheight defines

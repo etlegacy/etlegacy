@@ -1422,7 +1422,7 @@ netField_t entitySharedFields[] =
 {
 	{ ESF(linked),           1               },
 	{ ESF(linkcount),        8               }, // enough to see whether the linkcount has changed
-	                                            // (assuming it doesn't change 256 times in 1 frame)
+	                                           // (assuming it doesn't change 256 times in 1 frame)
 	{ ESF(bmodel),           1               },
 	{ ESF(svFlags),          12              },
 	{ ESF(singleClient),     CLIENTNUM_BITS  },

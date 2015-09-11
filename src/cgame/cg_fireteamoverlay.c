@@ -624,97 +624,97 @@ qboolean CG_FireteamGetBoxNeedsButtons(void)
 /* unused
 const char *CG_FireteamGetBoxText(void)
 {
-	if (cgs.applicationEndTime > cg.time)
-	{
-		if (cgs.applicationClient == -1)
-		{
-			return "Sent";
-		}
+    if (cgs.applicationEndTime > cg.time)
+    {
+        if (cgs.applicationClient == -1)
+        {
+            return "Sent";
+        }
 
-		if (cgs.applicationClient == -2)
-		{
-			return "Failed";
-		}
+        if (cgs.applicationClient == -2)
+        {
+            return "Failed";
+        }
 
-		if (cgs.applicationClient == -3)
-		{
-			return "Accepted";
-		}
+        if (cgs.applicationClient == -3)
+        {
+            return "Accepted";
+        }
 
-		if (cgs.applicationClient == -4)
-		{
-			return "Sent";
-		}
+        if (cgs.applicationClient == -4)
+        {
+            return "Sent";
+        }
 
-		if (cgs.applicationClient < 0)
-		{
-			return NULL;
-		}
+        if (cgs.applicationClient < 0)
+        {
+            return NULL;
+        }
 
-		return va("Accept application from %s?", cgs.clientinfo[cgs.applicationClient].name);
-	}
+        return va("Accept application from %s?", cgs.clientinfo[cgs.applicationClient].name);
+    }
 
-	if (cgs.invitationEndTime > cg.time)
-	{
-		if (cgs.invitationClient == -1)
-		{
-			return "Sent";
-		}
+    if (cgs.invitationEndTime > cg.time)
+    {
+        if (cgs.invitationClient == -1)
+        {
+            return "Sent";
+        }
 
-		if (cgs.invitationClient == -2)
-		{
-			return "Failed";
-		}
+        if (cgs.invitationClient == -2)
+        {
+            return "Failed";
+        }
 
-		if (cgs.invitationClient == -3)
-		{
-			return "Accepted";
-		}
+        if (cgs.invitationClient == -3)
+        {
+            return "Accepted";
+        }
 
-		if (cgs.invitationClient == -4)
-		{
-			return "Sent";
-		}
+        if (cgs.invitationClient == -4)
+        {
+            return "Sent";
+        }
 
-		if (cgs.invitationClient < 0)
-		{
-			return NULL;
-		}
+        if (cgs.invitationClient < 0)
+        {
+            return NULL;
+        }
 
-		return va("Accept invitiation from %s?", cgs.clientinfo[cgs.invitationClient].name);
-	}
+        return va("Accept invitiation from %s?", cgs.clientinfo[cgs.invitationClient].name);
+    }
 
-	if (cgs.propositionEndTime > cg.time)
-	{
-		if (cgs.propositionClient == -1)
-		{
-			return "Sent";
-		}
+    if (cgs.propositionEndTime > cg.time)
+    {
+        if (cgs.propositionClient == -1)
+        {
+            return "Sent";
+        }
 
-		if (cgs.propositionClient == -2)
-		{
-			return "Failed";
-		}
+        if (cgs.propositionClient == -2)
+        {
+            return "Failed";
+        }
 
-		if (cgs.propositionClient == -3)
-		{
-			return "Accepted";
-		}
+        if (cgs.propositionClient == -3)
+        {
+            return "Accepted";
+        }
 
-		if (cgs.propositionClient == -4)
-		{
-			return "Sent";
-		}
+        if (cgs.propositionClient == -4)
+        {
+            return "Sent";
+        }
 
-		if (cgs.propositionClient < 0)
-		{
-			return NULL;
-		}
+        if (cgs.propositionClient < 0)
+        {
+            return NULL;
+        }
 
-		return va("Accept %s's proposition to invite %s to join your fireteam?", cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
-	}
+        return va("Accept %s's proposition to invite %s to join your fireteam?", cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
+    }
 
-	return NULL;
+    return NULL;
 }
 */
 

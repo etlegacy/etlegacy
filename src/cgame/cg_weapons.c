@@ -4296,7 +4296,8 @@ void CG_NextWeap(qboolean switchBanks)
 			CG_FinishWeaponChange(curweap, num);
 			return;
 		}
-	} else if (IS_RIFLE_AND_NADE_WEAPON(curweap))
+	}
+	else if (IS_RIFLE_AND_NADE_WEAPON(curweap))
 	{
 		return;
 	}
@@ -4542,7 +4543,7 @@ void CG_PrevWeap(qboolean switchBanks)
 			CG_FinishWeaponChange(curweap, num);
 			return;
 		}
-	} 
+	}
 	else if (IS_RIFLENADE_WEAPON(curweap))
 	{
 		return;
@@ -5150,7 +5151,7 @@ The current weapon has just run out of ammo
 void CG_OutOfAmmoChange(qboolean allowforceswitch)
 {
 	int i;
-	int bank  = 0, cycle = 0;
+	int bank = 0, cycle = 0;
 
 	// trivial switching
 	if (cg.weaponSelect == WP_PLIERS || (cg.weaponSelect == WP_SATCHEL_DET && cg.predictedPlayerState.ammo[WP_SATCHEL_DET]))
@@ -5507,7 +5508,7 @@ void CG_FireWeapon(centity_t *cent)
 	{
 		if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 		{
-			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hflakWeaponSnd );
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hflakWeaponSnd);
 		}
 		else
 		{

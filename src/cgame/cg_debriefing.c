@@ -1954,9 +1954,9 @@ void CG_Debriefing_ScrollSetOffset(panel_button_t *button, int ofs)
 	case 2:
 		cgs.tdbMapListOffset = ofs;
 		return;
-		//case 3:	// awards
-		//	cgs.dbAwardsListOffset = ofs;
-		//return;
+	//case 3:	// awards
+	//	cgs.dbAwardsListOffset = ofs;
+	//return;
 	case 3:
 		cgs.dbMapVoteListOffset = ofs;
 		return;
