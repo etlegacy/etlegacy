@@ -1481,6 +1481,9 @@ int PC_OperatorPriority(int op)
 		return 5;
 	case P_QUESTIONMARK:
 		return 5;
+
+	default:
+		break;
 	}
 	return qfalse;
 }
@@ -2961,7 +2964,8 @@ source_t *LoadSourceFile(const char *filename)
 	source = (source_t *) GetMemory(sizeof(source_t));
 	memset(source, 0, sizeof(source_t));
 
-	strncpy(source->filename, filename, _MAX_PATH);
+	Q_strncpyz(source->filename, filename, MAX_QPATH);
+
 	source->scriptstack = script;
 	source->tokens      = NULL;
 	source->defines     = NULL;
