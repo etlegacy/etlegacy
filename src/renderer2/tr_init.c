@@ -333,9 +333,10 @@ static qboolean InitOpenGL(void)
 
 	if (glConfig.vidWidth == 0)
 	{
+		windowContext_t windowContext = {3, 2, GL_CONTEXT_CORE};
 		GLint temp;
 
-		ri.GLimp_Init(&glConfig, 3, 2);
+		ri.GLimp_Init(&glConfig, &windowContext);
 
 		GL_CheckErrors();
 

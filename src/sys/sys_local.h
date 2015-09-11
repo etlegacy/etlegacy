@@ -49,7 +49,7 @@ void *GLimp_MainWindow(void);
 void GLimp_Minimize(void);
 
 //Export to renderer
-void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion);
+void GLimp_Init(glconfig_t *glConfig, windowContext_t *context);
 void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);

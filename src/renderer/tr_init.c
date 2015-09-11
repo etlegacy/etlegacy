@@ -199,7 +199,7 @@ static void InitOpenGL(void)
 		char  renderer_buffer[1024];
 		GLint temp;
 
-		ri.GLimp_Init(&glConfig, 0, 0);
+		ri.GLimp_Init(&glConfig, NULL);
 
 		strcpy(renderer_buffer, glConfig.renderer_string);
 		Q_strlwr(renderer_buffer);

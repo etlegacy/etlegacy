@@ -435,6 +435,21 @@ typedef struct
 	qboolean smpActive;                     // obsolete, kept for compatibility
 } glconfig_t;
 
+typedef enum
+{
+	GL_CONTEXT_DEFAULT,
+	GL_CONTEXT_COMP,
+	GL_CONTEXT_CORE,
+	GL_CONTEXT_EGL,
+} windowContextType_t;
+
+typedef struct windowContext_s
+{
+	int versionMajor;
+	int versionMinor;
+	int context;
+} windowContext_t;
+
 // =========================================
 // these MUST NOT exceed the values for SHADER_MAX_VERTEXES/SHADER_MAX_INDEXES
 #define MAX_PB_VERTS    1025

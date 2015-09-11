@@ -388,7 +388,7 @@ static void GLimp_DetectAvailableModes(void)
 	}
 }
 
-static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, int majorVersion, int minorVersion)
+static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, windowContext_t *context)
 {
 	int             perChannelColorBits;
 	int             colorBits, depthBits, stencilBits;
@@ -695,12 +695,26 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_SetWindowIcon(main_window, icon);
 
-		if (majorVersion > 0)
+		if (context && context->versionMajor > 0)
 		{
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, majorVersion);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minorVersion);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, context->versionMajor);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, context->versionMinor);
+
+			switch (context->context)
+			{
+				case GL_CONTEXT_COMP:
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+					break;
+				case GL_CONTEXT_CORE:
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+					break;
+				case GL_CONTEXT_EGL:
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+					break;
+				default:
+					break;
+			}
 		}
 
 		if ((SDL_glContext = SDL_GL_CreateContext(main_window)) == NULL)
@@ -740,7 +754,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	return RSERR_OK;
 }
 
-static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, int majorVersion, int minorVersion)
+static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, windowContext_t *context)
 {
 	rserr_t err;
 
@@ -763,7 +777,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 		fullscreen             = qfalse;
 	}
 
-	err = GLimp_SetMode(glConfig, mode, fullscreen, noborder, majorVersion, minorVersion);
+	err = GLimp_SetMode(glConfig, mode, fullscreen, noborder, context);
 
 	switch (err)
 	{
@@ -788,7 +802,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 /**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
  */
-void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion)
+void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 {
 	GLimp_InitCvars();
 
@@ -803,7 +817,7 @@ void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion)
 	Sys_GLimpInit();
 
 	// Create the window and set up the context
-	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, (qboolean) !!r_noborder->integer, majorVersion, minorVersion))
+	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, (qboolean) !!r_noborder->integer, context))
 	{
 		goto success;
 	}
@@ -811,7 +825,7 @@ void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion)
 	// Try again, this time in a platform specific "safe mode"
 	Sys_GLimpSafeInit();
 
-	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, qfalse, majorVersion, minorVersion))
+	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, qfalse, context))
 	{
 		goto success;
 	}
@@ -820,7 +834,7 @@ void GLimp_Init(glconfig_t *glConfig, int majorVersion, int minorVersion)
 	if (r_mode->integer != R_MODE_FALLBACK)
 	{
 		Com_Printf("Setting r_mode %d failed, falling back on r_mode %d\n", r_mode->integer, R_MODE_FALLBACK);
-		if (GLimp_StartDriverAndSetMode(glConfig, R_MODE_FALLBACK, qfalse, qfalse, majorVersion, minorVersion))
+		if (GLimp_StartDriverAndSetMode(glConfig, R_MODE_FALLBACK, qfalse, qfalse, context))
 		{
 			goto success;
 		}
