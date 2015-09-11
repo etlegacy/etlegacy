@@ -557,6 +557,7 @@ static long SVC_HashForAddress(netadr_t address)
 	if (!ip)
 	{
 		Com_Printf("SVC_HashForAddress: Invalid IP - hash value is 0.\n");
+		return 0;
 	}
 
 	for (i = 0; i < size; i++)
