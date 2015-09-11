@@ -59,7 +59,6 @@ static float         displayAspect  = 0.0f;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
-cvar_t *r_centerWindow;
 
 // Window cvars
 cvar_t *r_fullscreen = 0;
@@ -148,7 +147,7 @@ void GLimp_Minimize(void)
  */
 void GLimp_LogComment(const char *comment)
 {
-	//Ren_Developer("%s", comment);
+	//Ren_Developer("%s", comment); // FIXME
 }
 
 qboolean GLimp_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
@@ -211,7 +210,6 @@ static void GLimp_InitCvars(void)
 	//r_sdlDriver = Cvar_Get("r_sdlDriver", "", CVAR_ROM);
 	r_allowSoftwareGL = Cvar_Get("r_allowSoftwareGL", "0", CVAR_LATCH);
 	r_allowResize     = Cvar_Get("r_allowResize", "0", CVAR_ARCHIVE);
-	r_centerWindow    = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE);
 
 	// Window cvars
 	r_fullscreen     = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -270,9 +268,9 @@ static int GLimp_CompareModes(const void *a, const void *b)
 	float       aspectB         = (float)modeB->w / (float)modeB->h;
 	int         areaA           = modeA->w * modeA->h;
 	int         areaB           = modeB->w * modeB->h;
-	float       aspectDiffA     = fabs(aspectA - displayAspect);
-	float       aspectDiffB     = fabs(aspectB - displayAspect);
-	float       aspectDiffsDiff = aspectDiffA - aspectDiffB;
+	double      aspectDiffA     = fabs(aspectA - displayAspect);
+	double      aspectDiffB     = fabs(aspectB - displayAspect);
+	double      aspectDiffsDiff = aspectDiffA - aspectDiffB;
 
 	if (aspectDiffsDiff > ASPECT_EPSILON)
 	{
@@ -511,7 +509,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		glConfig->isFullscreen = qfalse;
 	}
 
-	colorBits = r_colorbits->value;
+	colorBits = r_colorbits->integer;
 	if ((!colorBits) || (colorBits >= 32))
 	{
 		colorBits = 24;
@@ -523,10 +521,10 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	}
 	else
 	{
-		depthBits = r_depthbits->value;
+		depthBits = r_depthbits->integer;
 	}
-	stencilBits = r_stencilbits->value;
-	samples     = r_ext_multisample->value;
+	stencilBits = r_stencilbits->integer;
+	samples     = r_ext_multisample->integer;
 
 	for (i = 0; i < 16; i++)
 	{
