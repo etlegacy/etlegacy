@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	160
-#define WINDOW_HEIGHT	200
+#define WINDOW_HEIGHT	224
 #define GROUP_NAME		"grpIngameMain"
 
 // Main Menu //
@@ -17,7 +17,6 @@ menuDef {
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
-
 		conditionalscript ROldModeCheck 2
 			( "clearFocus ; open vid_confirm" )
 			( "clearFocus" )
@@ -38,16 +37,17 @@ menuDef {
 		cvarTest "authLevel" showCVar { RL_NONE } )
 	BUTTONEXT( 6, 32, WINDOW_WIDTH-12, 18, _("REFEREE"), .3, 14, close ingame_main ; open ingame_vote, cvarTest "authLevel" showCVar { RL_REFEREE } )
 	BUTTONEXT( 6, 32, WINDOW_WIDTH-12, 18, _("RCON"), .3, 14, close ingame_main ; open ingame_vote, cvarTest "authLevel" showCVar { RL_RCON } )
-	BUTTON( 6, 56, WINDOW_WIDTH-12, 18, _("SERVER INFO"), .3, 14, clearFocus ; open ingame_serverinfo )
-	BUTTON( 6, 80, WINDOW_WIDTH-12, 18, _("OPTIONS"), .3, 14, close ingame_main ; open options )
-	BUTTON( 6, 104, WINDOW_WIDTH-12, 18, _("CREDITS"), .3, 14, close ingame_main ; open credits_etlegacy )
-	BUTTON( 6, 128, WINDOW_WIDTH-12, 18, "ETLEGACY.COM", .3, 14, clearFocus ; open etlegacywebsite )
-	BUTTON( 6, 152, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect )
-	BUTTON( 6, 176, WINDOW_WIDTH-12, 18, _("EXIT GAME"), .3, 14, clearFocus ; open quit )
+	BUTTON( 6, 56, WINDOW_WIDTH-12, 18, _("LIMBO MENU"), .3, 14, exec "openlimbomenu" ; close ingame_main )
+	BUTTON( 6, 80, WINDOW_WIDTH-12, 18, _("SERVER INFO"), .3, 14, clearFocus ; open ingame_serverinfo )
+	BUTTON( 6, 104, WINDOW_WIDTH-12, 18, _("OPTIONS"), .3, 14, close ingame_main ; open options )
+	BUTTON( 6, 128, WINDOW_WIDTH-12, 18, _("CREDITS"), .3, 14, close ingame_main ; open credits_etlegacy )
+	BUTTON( 6, 152, WINDOW_WIDTH-12, 18, "ETLEGACY.COM", .3, 14, clearFocus ; open etlegacywebsite )
+	BUTTON( 6, 176, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect )
+	BUTTON( 6, 200, WINDOW_WIDTH-12, 18, _("EXIT GAME"), .3, 14, clearFocus ; open quit )
 
 	itemDef {
       name        "legacy_logo"
-      rect        15 195 128 64
+      rect        15 220 128 64
       style       WINDOW_STYLE_SHADER
       background  "ui/assets/etl_logo"
       forecolor   1 1 1 1
@@ -58,7 +58,7 @@ menuDef {
    itemDef {
       name       "modversion"
       group       GROUP_NAME
-      rect        -45 235 128 64
+      rect        -45 260 128 64
       text        "^1"ETLEGACY_VERSION
       textfont    UI_FONT_COURBD_21
       textstyle   ITEM_TEXTSTYLE_SHADOWED
