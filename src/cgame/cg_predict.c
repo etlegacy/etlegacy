@@ -765,7 +765,10 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->stats[i] != ps1->stats[i])
 		{
-			CG_Printf("CG_PredictionOk: return 19 - MAX_STATS [%i] ps1: %i ps2: %i\n", i, ps1->stats[i], ps2->stats[i]);
+			if (cg_showmiss.integer)
+			{
+				CG_Printf("CG_PredictionOk: return 19 - MAX_STATS [%i] ps1: %i ps2: %i\n", i, ps1->stats[i], ps2->stats[i]);
+			}
 
 			return 19;
 		}
