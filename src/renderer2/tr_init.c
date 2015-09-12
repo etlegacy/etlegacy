@@ -336,6 +336,7 @@ static qboolean InitOpenGL(void)
 		windowContext_t windowContext = {3, 2, GL_CONTEXT_CORE};
 		GLint temp;
 
+		Com_Memset(&glConfig, 0, sizeof(glConfig));
 		ri.GLimp_Init(&glConfig, &windowContext);
 
 		GL_CheckErrors();

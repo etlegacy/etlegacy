@@ -1287,6 +1287,13 @@ const void *RB_DrawBuffer(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
+void RB_GammaScreen(void)
+{
+	// We force the 2D drawing
+	RB_SetGL2D();
+	R_ScreenGamma();
+}
+
 /*
 ===============
 RB_ShowImages
@@ -1418,6 +1425,8 @@ const void *RB_SwapBuffers(const void *data)
 		RB_ShowImages();
 	}
 
+	RB_GammaScreen();
+
 	cmd = ( const swapBuffersCommand_t * ) data;
 
 	// we measure overdraw by reading back the stencil buffer and
@@ -1439,7 +1448,6 @@ const void *RB_SwapBuffers(const void *data)
 		backEnd.pc.c_overDraw += sum;
 		ri.Hunk_FreeTempMemory(stencilReadback);
 	}
-
 
 	if (!glState.finishCalled)
 	{

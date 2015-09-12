@@ -34,7 +34,6 @@
  */
 
 #include "tr_local.h"
-#include "../renderercommon/tr_public.h"
 
 glconfig_t glConfig;
 qboolean   textureFilterAnisotropic = qfalse;
@@ -199,6 +198,7 @@ static void InitOpenGL(void)
 		char  renderer_buffer[1024];
 		GLint temp;
 
+		Com_Memset(&glConfig, 0, sizeof(glConfig));
 		ri.GLimp_Init(&glConfig, NULL);
 
 		strcpy(renderer_buffer, glConfig.renderer_string);
@@ -1303,6 +1303,8 @@ void R_Init(void)
 
 	R_InitFreeType();
 
+	R_InitGamma();
+
 	err = qglGetError();
 	if (err != GL_NO_ERROR)
 	{
@@ -1368,6 +1370,8 @@ void RE_Shutdown(qboolean destroyWindow)
 	}
 
 	R_DoneFreeType();
+
+	R_ShutdownGamma();
 
 	// shut down platform specific OpenGL stuff
 	if (destroyWindow)

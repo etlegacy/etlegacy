@@ -1870,6 +1870,11 @@ void R_PurgeShaders(int count);
 void R_PurgeLightmapShaders(void);
 void R_LoadCacheShaders(void);
 
+// tr_gamma.c
+void R_ScreenGamma(void);
+void R_InitGamma(void);
+void R_ShutdownGamma(void);
+
 //------------------------------------------------------------------------------
 // mesh compression
 #define NUMMDCVERTEXNORMALS  256
