@@ -40,9 +40,6 @@
 static world_t s_worldData;
 static byte    *fileBase;
 
-int c_subdivisions;
-int c_gridVerts;
-
 surfaceType_t skipData = SF_SKIP;
 
 //===============================================================================
@@ -2645,7 +2642,6 @@ void RE_LoadWorldMap(const char *name)
 	COM_StripExtension(s_worldData.baseName, s_worldData.baseName, sizeof(s_worldData.baseName));
 
 	startMarker = ri.Hunk_Alloc(0, h_low);
-	c_gridVerts = 0;
 
 	header   = (dheader_t *)buffer;
 	fileBase = (byte *)header;
