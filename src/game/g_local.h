@@ -1416,6 +1416,9 @@ void mg42_fire(gentity_t *other);
 void mg42_stopusing(gentity_t *self);
 void aagun_fire(gentity_t *other);
 
+float AngleDifference(float ang1, float ang2);
+qboolean G_FlingClient(gentity_t *vic, int flingType);
+
 // g_weapon.c
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
@@ -1579,8 +1582,6 @@ void G_Script_EventStringInit(void);
 void mountedmg42_fire(gentity_t *other);
 void script_mover_use(gentity_t *ent, gentity_t *other, gentity_t *activator);
 void script_mover_blocked(gentity_t *ent, gentity_t *other);
-
-float AngleDifference(float ang1, float ang2);
 
 // g_props.c
 void Props_Chair_Skyboxtouch(gentity_t *ent);

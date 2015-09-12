@@ -882,7 +882,7 @@ void Svcmd_RevivePlayer(char *name)
 
 	if (!g_cheats.integer)
 	{
-		trap_SendServerCommand(-1, va("print \"Cheats are not enabled on this server.\n\""));
+		G_Printf("Cheats are not enabled on this server.\n");
 		return;
 	}
 
@@ -899,7 +899,7 @@ void Svcmd_RevivePlayer(char *name)
 /**
  * @brief Gib command - based on shrubbot
  */
-void Svcmd_Gib(void)
+static void Svcmd_Gib(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
@@ -909,7 +909,7 @@ void Svcmd_Gib(void)
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		trap_SendServerCommand(-1, va("print \"Gib command not allowed during intermission.\n\""));
+		G_Printf("Gib command not allowed during intermission.\n");
 		return;
 	}
 
@@ -918,7 +918,7 @@ void Svcmd_Gib(void)
 		doAll = qtrue;
 	}
 
-	trap_Argv(2, name, sizeof(name));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!Q_stricmp(name, "-1") || doAll)
 	{
@@ -935,14 +935,22 @@ void Svcmd_Gib(void)
 			G_Damage(vic, NULL, NULL, NULL, NULL, 500, 0, MOD_UNKNOWN);
 			count++;
 		}
-		trap_SendServerCommand(-1, va("print \"%d players gibbed.\n\"", count));
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^9%d players gibbed.\"", count));
+		}
+		else
+		{
+			G_Printf("There is no player to gib.\n");
+		}
 		return;
 	}
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(-1, va("print \"Error - can't gib - %s.\n\"", err));
+		G_Printf("Error - can't gib - %s.", err);
 		return;
 	}
 	vic = &g_entities[pids[0]];
@@ -950,19 +958,21 @@ void Svcmd_Gib(void)
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		trap_SendServerCommand(-1, va("print \"Player must be on a team to be gibbed.\n\""));
+		G_Printf("Player must be on a team to be gibbed.\n");
 		return;
 	}
 
 	G_Damage(vic, NULL, NULL, NULL, NULL, 500, 0, MOD_UNKNOWN);
-	trap_SendServerCommand(-1, va("print \"^7%s ^7was gibbed.\n\"", vic->client->pers.netname));
+
+	CPx(-1, va("cp \"^7%s^7 was gibbed.\"", vic->client->pers.netname));
+
 	return;
 }
 
 /**
  * @brief kill command - kills players
  */
-void Svcmd_Die(void)
+static void Svcmd_Die(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
@@ -970,13 +980,12 @@ void Svcmd_Die(void)
 	qboolean  doAll = qfalse;
 
 	// FIXME: usage
-	//        make all outputs nice
-	//        reason?
+	//        add reason?
 
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		trap_SendServerCommand(-1, va("print \"Die command not allowed during intermission.\n\""));
+		G_Printf("Die command not allowed during intermission.\n");
 		return;
 	}
 
@@ -985,7 +994,7 @@ void Svcmd_Die(void)
 		doAll = qtrue;
 	}
 
-	trap_Argv(2, name, sizeof(name));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!Q_stricmp(name, "-1") || doAll)
 	{
@@ -1002,14 +1011,23 @@ void Svcmd_Die(void)
 			G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
 			count++;
 		}
-		trap_SendServerCommand(-1, va("print \"%d players died.\n\"", count));
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^9%d players died.\"", count));
+		}
+		else
+		{
+			G_Printf("There is no player to die.\n");
+		}
+
 		return;
 	}
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(-1, va("print \"Error - can't execute die command - %s.\n\"", err));
+		G_Printf("Error - can't execute die command - %s.\n", err);
 		return;
 	}
 	vic = &g_entities[pids[0]];
@@ -1017,19 +1035,21 @@ void Svcmd_Die(void)
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		trap_SendServerCommand(-1, va("print \"Player must be on a team to die.\n\""));
+		G_Printf("Player must be on a team to die.\n");
 		return;
 	}
 
 	G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
-	trap_SendServerCommand(-1, va("print \"^7%s ^7died.\n\"", vic->client->pers.netname));
+
+	CPx(-1, va("cp \"^7%s^7 died.\"", vic->client->pers.netname));
+
 	return;
 }
 
 /**
  * @brief freeze command - freezes players
  */
-void Svcmd_Freeze(void)
+static void Svcmd_Freeze(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
@@ -1043,7 +1063,7 @@ void Svcmd_Freeze(void)
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		trap_SendServerCommand(-1, va("print \"Freeze command not allowed during intermission.\n\""));
+		G_Printf("Freeze command not allowed during intermission.\n");
 		return;
 	}
 
@@ -1052,7 +1072,7 @@ void Svcmd_Freeze(void)
 		doAll = qtrue;
 	}
 
-	trap_Argv(2, name, sizeof(name));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!Q_stricmp(name, "-1") || doAll)
 	{
@@ -1066,42 +1086,56 @@ void Svcmd_Freeze(void)
 			{
 				continue;
 			}
+
+			// only freeze & count not frozen players :)
+			if (vic->client->freezed == qtrue)
+			{
+				continue;
+			}
+
 			vic->client->freezed = qtrue;
 			vic->takedamage      = qfalse;
 			count++;
 		}
-		trap_SendServerCommand(-1, va("print \"%d players are frozen.\n\"", count));
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^9%d players are frozen.\"", count));
+		}
+		else
+		{
+			G_Printf("No players in team or they are already frozen.\n");
+		}
+
 		return;
 	}
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(-1, va("print \"Error - can't freeze - %s.\n\"", err));
+		G_Printf("Error - can't freeze - %s.\n", err);
 		return;
 	}
 	vic = &g_entities[pids[0]];
 
-	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
-	      vic->client->sess.sessionTeam == TEAM_ALLIES))
+	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		trap_SendServerCommand(-1, va("print \"Player must be on a team to be frozen.\n\""));
+		G_Printf("Player must be on a team to be frozen.\n");
 		return;
 	}
 
 	vic->client->freezed = qtrue;
 	vic->takedamage      = qfalse;
 
-	trap_SendServerCommand(-1, va("print \"^7%s ^7is frozen.\n\"", vic->client->pers.netname));
+	CPx(-1, va("cp \"^7%s^7 is frozen.\"", vic->client->pers.netname));
 
-	CPx(pids[0], va("cp \"^9 You are frozen\""));
 	return;
 }
 
 /**
  * @brief unfreeze command - unfreezes players
  */
-void Svcmd_Unfreeze(void)
+static void Svcmd_Unfreeze(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
@@ -1117,7 +1151,7 @@ void Svcmd_Unfreeze(void)
 		doAll = qtrue;
 	}
 
-	trap_Argv(2, name, sizeof(name));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!Q_stricmp(name, "-1") || doAll)
 	{
@@ -1131,18 +1165,34 @@ void Svcmd_Unfreeze(void)
 			{
 				continue;
 			}
+
+			// only unfreeze & count not frozen players :)
+			if (vic->client->freezed == qfalse)
+			{
+				continue;
+			}
+
 			vic->client->freezed = qfalse;
 			vic->takedamage      = qtrue;
 			count++;
 		}
-		trap_SendServerCommand(-1, va("print \"%d players are unfrozen.\n\"", count));
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^9%d players are unfrozen.\"", count));
+		}
+		else
+		{
+			G_Printf("No players in team or they are already unfrozen.\n");
+		}
+
 		return;
 	}
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(-1, va("print \"Error - can't unfreeze - %s.\n\"", err));
+		G_Printf("Error - can't unfreeze - %s.\n", err);
 		return;
 	}
 	vic = &g_entities[pids[0]];
@@ -1150,16 +1200,14 @@ void Svcmd_Unfreeze(void)
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		trap_SendServerCommand(-1, va("print \"Player must be on a team to be unfrozen.\n\""));
+		G_Printf("Player must be on a team to be unfrozen.\n");
 		return;
 	}
 
 	vic->client->freezed = qfalse;
 	vic->takedamage      = qtrue;
 
-	trap_SendServerCommand(-1, va("print \"^7%s ^7has been unfrozen.\n\"", vic->client->pers.netname));
-
-	CPx(pids[0], va("cp \"^9 You are unfrozen\""));
+	CPx(-1, va("cp \"^7%s^7 is unfrozen.\"", vic->client->pers.netname));
 
 	return;
 }
@@ -1167,7 +1215,7 @@ void Svcmd_Unfreeze(void)
 /**
  * @brief burn command - burns players
  */
-void Svcmd_Burn(void)
+static void Svcmd_Burn(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
@@ -1181,7 +1229,7 @@ void Svcmd_Burn(void)
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		trap_SendServerCommand(-1, va("print \"Burn command not allowed during intermission.\n\""));
+		G_Printf("Burn command not allowed during intermission.\n");
 		return;
 	}
 
@@ -1190,7 +1238,7 @@ void Svcmd_Burn(void)
 		doAll = qtrue;
 	}
 
-	trap_Argv(2, name, sizeof(name));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!Q_stricmp(name, "-1") || doAll)
 	{
@@ -1210,20 +1258,29 @@ void Svcmd_Burn(void)
 			G_BurnMeGood(vic, vic, NULL);
 			count++;
 		}
-		trap_SendServerCommand(-1, va("print \"%d players burned.\n\"", count));
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^9%d players burned.\"", count));
+		}
+		else
+		{
+			G_Printf("No players in team or they are already burned.\n");
+		}
+
 		return;
 	}
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(-1, va("print \"Error - can't burn - %s.\n\"", err));
+		G_Printf("Error - can't burn - %s.\n", err);
 		return;
 	}
 	vic = &g_entities[pids[0]];
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		trap_SendServerCommand(-1, va("print \"Player must be on a team to be burned.\n\""));
+		G_Printf("Player must be on a team to be burned.\n");
 		return;
 	}
 
@@ -1231,9 +1288,7 @@ void Svcmd_Burn(void)
 	// FIXME: add mod param? mod_unknown instead of flamer
 	G_BurnMeGood(vic, vic, NULL);
 
-	trap_SendServerCommand(-1, va("print \"^7%s ^7was set ablaze.\n\"", vic->client->pers.netname));
-
-	CPx(pids[0], va("cp \"^9 You are burned\""));
+	CPx(-1, va("cp \"^7%s^7 is burned.\"", vic->client->pers.netname));
 	return;
 }
 
@@ -1241,7 +1296,7 @@ void Svcmd_Burn(void)
 // beside the pip command EV_SPARKS and EV_SPARKS_ELECTRIC
 // aren't used for real ... we may delete these events
 // EV_SPARKS_ELECTRIC doesn't seem to work anyway
-void G_Pip(gentity_t *vic)
+static void G_Pip(gentity_t *vic)
 {
 	gentity_t *pip = G_TempEntity(vic->r.currentOrigin, EV_SPARKS);
 
@@ -1258,7 +1313,7 @@ void G_Pip(gentity_t *vic)
 /**
  * @brief pip command - pips players
  */
-void Svcmd_Pip(void)
+static void Svcmd_Pip(void)
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
@@ -1272,7 +1327,7 @@ void Svcmd_Pip(void)
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		trap_SendServerCommand(-1, va("print \"Pip command not allowed during intermission.\n\""));
+		G_Printf("Pip command not allowed during intermission.\n");
 		return;
 	}
 
@@ -1281,7 +1336,7 @@ void Svcmd_Pip(void)
 		doAll = qtrue;
 	}
 
-	trap_Argv(2, name, sizeof(name));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!Q_stricmp(name, "-1") || doAll)
 	{
@@ -1299,28 +1354,126 @@ void Svcmd_Pip(void)
 			G_Pip(vic);
 			count++;
 		}
-		trap_SendServerCommand(-1, va("print \"%d players pipped.\n\"", count));
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^9%d players pipped.\"", count));
+		}
+		else
+		{
+			G_Printf("No players in team or they are already pipped.\n");
+		}
+
 		return;
 	}
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(-1, va("print \"Error - can't pip - %s.\n\"", err));
+		G_Printf("Error - can't pip - %s.\n", err);
 		return;
 	}
 	vic = &g_entities[pids[0]];
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		trap_SendServerCommand(-1, va("print \"Player must be on a team to be pipped.\n\""));
+		G_Printf("Player must be on a team to be pipped.\n");
 		return;
 	}
 
 	G_Pip(vic);
 
-	trap_SendServerCommand(-1, va("print \"^7%s ^7was pipped.\n\"", vic->client->pers.netname));
+	CPx(-1, va("cp \"^7%s^7 is pipped.\"", vic->client->pers.netname));
 
-	CPx(pids[0], va("cp \"^9 You are pipped\""));
+	return;
+}
+
+static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
+{
+	int       pids[MAX_CLIENTS];
+	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	char      fling[9], pastTense[9];
+	gentity_t *vic;
+	qboolean  doAll = qfalse;
+
+	switch (flingType)
+	{
+		case 0:
+			Q_strncpyz(fling, "fling", sizeof(fling));
+			Q_strncpyz(pastTense, "flung", sizeof(pastTense));
+			break;
+		case 1:
+			Q_strncpyz(fling, "throw", sizeof(fling));
+			Q_strncpyz(pastTense, "thrown", sizeof(pastTense));
+			break;
+		case 2:
+			Q_strncpyz(fling, "launch", sizeof(fling));
+			Q_strncpyz(pastTense, "launched", sizeof(pastTense));
+			break;
+		default:
+			return;
+	}
+
+	// ignore in intermission
+	if (level.intermissiontime)
+	{
+		G_Printf("%s command not allowed during intermission.\n", fling);
+		return;
+	}
+
+	if (trap_Argc() < 2)
+	{
+		doAll = qtrue;
+	}
+
+	trap_Argv(1, name, sizeof(name));
+
+	if (!Q_stricmp(name, "-1") || doAll)
+	{
+		int i, count = 0;
+
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			vic = g_entities + level.sortedClients[i];
+
+			if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+				  vic->client->sess.sessionTeam == TEAM_ALLIES))
+			{
+				continue;
+			}
+
+			count += G_FlingClient(vic, flingType);
+		}
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^9%d players %s.\"", count, pastTense));
+		}
+		else
+		{
+			G_Printf("No players in team or they are already %s.\n", pastTense);
+		}
+
+		return;
+	}
+
+	if (ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		G_Printf("Error - can't %s - %s.\n", fling, err);
+		return;
+	}
+	vic = &g_entities[pids[0]];
+	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
+	{
+		G_Printf("Player must be on a team to be %s.\n", pastTense);
+		return;
+	}
+
+	if (G_FlingClient(vic, flingType))
+	{
+		CPx(-1, va("cp \"^7%s^7 was %s.\"", vic->client->pers.netname, pastTense));
+	}
+
 	return;
 }
 
@@ -1334,7 +1487,7 @@ void Svcmd_Pip(void)
 static void Svcmd_Kick_f(void)
 {
 	gclient_t *cl;
-	int       timeout = -1;
+	int       timeout;
 	char      sTimeout[MAX_TOKEN_CHARS];
 	char      name[MAX_TOKEN_CHARS];
 
@@ -1469,7 +1622,7 @@ static void Svcmd_Kick_f(void)
 static void Svcmd_KickNum_f(void)
 {
 	gclient_t *cl;
-	int       timeout = -1;
+	int       timeout;
 	char      *ip;
 	char      userinfo[MAX_INFO_STRING];
 	char      sTimeout[MAX_TOKEN_CHARS];
@@ -2197,7 +2350,13 @@ qboolean ConsoleCommand(void)
 		Svcmd_Pip();
 		return qtrue;
 	}
+	if (!Q_stricmp(cmd, "throw"))
+	{
+		Svcmd_Fling(1);
+		return qtrue;
+	}
 	//}
+
 	if (g_dedicated.integer)
 	{
 		if (!Q_stricmp(cmd, "say"))

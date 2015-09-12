@@ -2460,3 +2460,45 @@ int FindClientByName(char *name)
 
 	return -1;
 }
+
+qboolean G_FlingClient(gentity_t *vic, int flingType)
+{
+	vec3_t dir, flingvec;
+
+	if (!vic || !vic->client)
+	{
+		return qfalse;
+	}
+
+	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
+	{
+		return qfalse;
+	}
+
+	if (vic->health <= 0)
+	{
+		return qfalse;
+	}
+
+	// plenty of room for improvement on setting the dir vector
+	if (flingType == 0) //fling
+	{
+		VectorSet(dir, crandom() * 50, crandom() * 50, 10);
+	}
+	else if (flingType == 1)
+	{	//throw
+		AngleVectors(vic->client->ps.viewangles, dir, NULL, NULL);
+		dir[2] = .25f;
+	}
+	else // launch
+	{
+		VectorSet(dir, 0, 0, 10);
+	}
+
+	VectorNormalize(dir);
+	VectorScale(dir, 1500, flingvec);
+	VectorAdd(vic->s.pos.trDelta, flingvec, vic->s.pos.trDelta);
+	VectorAdd(vic->client->ps.velocity, flingvec,  vic->client->ps.velocity);
+
+	return qtrue;
+}
