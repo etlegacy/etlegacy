@@ -3341,7 +3341,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 {
 	int i;
 
-	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR || ps->stats[STAT_HEALTH] <= GIB_HEALTH)     // || ps->pm_flags & PMF_LIMBO ) { // limbo
+	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR || ps->pm_type == PM_NOCLIP || ps->stats[STAT_HEALTH] <= GIB_HEALTH)     // || ps->pm_flags & PMF_LIMBO ) { // limbo
 	{
 		s->eType = ET_INVISIBLE;
 	}
