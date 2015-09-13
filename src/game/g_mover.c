@@ -1624,16 +1624,15 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			}
 		}
 
-		ent->s.loopSound = 0;
-
 		// looping sound
 		if (!nosound)
 		{
 			ent->s.loopSound = ent->sound2to3;
 		}
-		else if (!nosound)
+		else
 		{
-			ent->s.loopSound = ent->soundLoop;
+			//ent->s.loopSound = ent->soundLoop; // FIXME: check out this line (see blocked mover in Use_TrinaryMover)
+			ent->s.loopSound = 0;
 		}
 
 		// open areaportal
@@ -1665,12 +1664,14 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
 		}
 
-		ent->s.loopSound = 0;
-
 		// set looping sound
 		if (!nosound)
 		{
 			ent->s.loopSound = ent->sound2to3;
+		}
+		else
+		{
+			ent->s.loopSound = 0;
 		}
 
 		// open areaportal
@@ -1697,11 +1698,14 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			}
 		}
 
-		ent->s.loopSound = 0;
 		// set looping sound
 		if (!nosound)
 		{
 			ent->s.loopSound = ent->sound2to3;
+		}
+		else
+		{
+			ent->s.loopSound = 0;
 		}
 
 		// open areaportal
@@ -2894,8 +2898,8 @@ TRAIN
 ===============================================================================
 */
 
-#define TRAIN_START_ON      1
-#define TRAIN_TOGGLE        2
+//#define TRAIN_START_ON      1 // unused
+//#define TRAIN_TOGGLE        2 // unused
 #define TRAIN_BLOCK_STOPS   4
 
 /*
