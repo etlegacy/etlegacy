@@ -158,7 +158,6 @@ SelectNearestDeathmatchSpawnPoint
 Find the spot that we DON'T want to use
 ================
 */
-#define MAX_SPAWN_POINTS    128
 gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 {
 	gentity_t *spot = NULL;
