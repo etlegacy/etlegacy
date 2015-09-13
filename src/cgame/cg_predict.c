@@ -675,18 +675,18 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 
 	if (ps2->eFlags != ps1->eFlags)
 	{
-		if (cg_showmiss.integer)
+		if (cg_showmiss.integer & 8)
 		{
-			CG_Printf("Backup: %x  Server: %x Diff: %x\n", ps2->eFlags, ps1->eFlags, ps2->eFlags - ps1->eFlags);
+			CG_Printf("CG_PredictionOk info: return 4 - backup: '%x'  server: '%x' Diff: '%x'\n", ps2->eFlags, ps1->eFlags, ps2->eFlags - ps1->eFlags);
 		}
 		return 4;
 	}
 
 	if (ps2->weaponTime != ps1->weaponTime)
 	{
-		if (cg_showmiss.integer)
+		if (cg_showmiss.integer & 8)
 		{
-			CG_Printf("Backup: %d Server: %d\n", ps2->weaponTime, ps1->weaponTime);
+			CG_Printf("CG_PredictionOk info: return 5 - backup time: '%d' server time: '%d'\n", ps2->weaponTime, ps1->weaponTime);
 		}
 		return 5;
 	}
@@ -765,9 +765,9 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->stats[i] != ps1->stats[i])
 		{
-			if (cg_showmiss.integer)
+			if (cg_showmiss.integer & 8)
 			{
-				CG_Printf("CG_PredictionOk: return 19 - MAX_STATS [%i] ps1: %i ps2: %i\n", i, ps1->stats[i], ps2->stats[i]);
+				CG_Printf("CG_PredictionOk info: return 19 - MAX_STATS[%i] ps1: %i ps2: %i\n", i, ps1->stats[i], ps2->stats[i]);
 			}
 
 			return 19;
@@ -778,9 +778,9 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->persistant[i] != ps1->persistant[i])
 		{
-			if (cg_showmiss.integer)
+			if (cg_showmiss.integer & 8)
 			{
-				CG_Printf("CG_PredictionOk: return 20 - MAX_PERSISTANT [%i]\n", i);
+				CG_Printf("CG_PredictionOk info: return 20 - MAX_PERSISTANT[%i]\n", i);
 			}
 			return 20;
 		}
@@ -790,9 +790,9 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->powerups[i] != ps1->powerups[i])
 		{
-			if (cg_showmiss.integer)
+			if (cg_showmiss.integer & 8)
 			{
-				CG_Printf("CG_PredictionOk: return 21 - MAX_PERSISTANT [%i]\n", i);
+				CG_Printf("CG_PredictionOk info: return 21 - MAX_POWERUPS[%i]\n", i);
 			}
 			return 21;
 		}
@@ -822,9 +822,9 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	// grenadeTimeLeft was not fully predicted
 	if (ps1->grenadeTimeLeft != ps2->grenadeTimeLeft)
 	{
-		if (cg_showmiss.integer)
+		if (cg_showmiss.integer & 8)
 		{
-			CG_Printf("CG_PredictionOk: Backup: %d Server: %d\n", ps2->grenadeTimeLeft, ps1->grenadeTimeLeft);
+			CG_Printf("CG_PredictionOk info: return 27 - backup time '%d' - server time: '%d'\n", ps2->grenadeTimeLeft, ps1->grenadeTimeLeft);
 		}
 		return 27;
 	}
@@ -868,6 +868,38 @@ to ease the jerk.
 // is a Bad Thing.  This is my bugfix for #166.
 
 pmoveExt_t oldpmext[CMD_BACKUP];
+
+const char *predictionStrings[] =
+{
+		"OK",
+		"PM TYPE FLAGS TIME",
+		"origin",
+		"velocity",
+		"eFlags",
+		"weapon time",
+		"groundEntityNum",
+		"--",                    // 7
+		"speed || delta_angles",
+		"anim || timer",
+		"--",                    // 10
+		"eventSequence",
+		"events || eventParms",
+		"externalEvent",
+		"clientNum",
+		"weapon || weaponState",
+		"viewangles",
+		"viewheight",
+		"damage event ...",
+		"stats",
+		"persistant",            // 20
+		"powerups",
+		"ammo",
+		"viewlocked",
+		"onFireStart",
+		"--",
+		"--",
+		"grenadeTimeLeft",       // 27
+};
 
 void CG_PredictPlayerState(void)
 {
@@ -1088,7 +1120,7 @@ void CG_PredictPlayerState(void)
 		else
 		{
 			// we have a new snapshot
-			int      i;
+			int      i, returncode;
 			qboolean error = qtrue;
 
 			// loop through the saved states queue
@@ -1097,14 +1129,16 @@ void CG_PredictPlayerState(void)
 				// if we find a predicted state whose commandTime matches the snapshot player state's commandTime
 				if (cg.backupStates[i].commandTime == cg.predictedPlayerState.commandTime)
 				{
+					returncode = CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]);
+
 					// make sure the state differences are acceptable
 
 					// too much change?
-					if (CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]))
+					if (returncode)
 					{
 						if (cg_showmiss.integer)
 						{
-							CG_Printf("CG_PredictPlayerState: errorcode %i at cg.time: %i\n", CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]), cg.time);
+							CG_Printf("CG_PredictPlayerState: errorcode %i '%s' at cg.time: %i\n", returncode, predictionStrings[returncode], cg.time);
 						}
 						// yeah, so do a full predict
 						break;
@@ -1211,7 +1245,7 @@ void CG_PredictPlayerState(void)
 				{
 					if (!VectorCompare(oldPlayerState.origin, adjusted))
 					{
-						CG_Printf("prediction error\n");
+						CG_Printf("Prediction error.\n");
 					}
 				}
 				VectorSubtract(oldPlayerState.origin, adjusted, delta);
