@@ -1884,6 +1884,11 @@ static void CG_RegisterGraphics(void)
 			break;
 		}
 		cgs.gameModels[i] = trap_R_RegisterModel(modelName);
+
+		if (!cgs.gameModels[i])
+		{
+			CG_Printf("^3Warning: Register server model '%s' failed - no valid file in paths.\n", modelName);
+		}
 	}
 
 	for (i = 1 ; i < MAX_CS_SKINS ; i++)

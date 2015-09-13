@@ -881,6 +881,11 @@ static void CG_ConfigStringModified(void)
 		else if (num >= CS_MODELS && num < CS_MODELS + MAX_MODELS)
 		{
 			cgs.gameModels[num - CS_MODELS] = trap_R_RegisterModel(CG_ConfigString(num));
+
+			if (!cgs.gameModels[num - CS_MODELS])
+			{
+				CG_Printf("^3Warning: Register server model '%s' failed. No valid file in paths.\n", CG_ConfigString(num));
+			}
 		}
 		else if (num >= CS_SOUNDS && num < CS_SOUNDS + MAX_SOUNDS)
 		{
