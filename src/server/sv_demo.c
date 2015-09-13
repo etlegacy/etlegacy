@@ -1600,7 +1600,7 @@ static void SV_DemoReadClientUserinfo(msg_t *msg)
 	// DEMOCLIENT INITIAL TEAM MANAGEMENT
 	// Note: it is more interoperable to do team management here than in configstrings because here we have the team name as a string, so we can directly issue it in a "team" clientCommand
 	// Note2: this function is only necessary to set the initial team for democlients (the team they were at first when the demo started), for all the latter team changes, the clientCommands are recorded and will be replayed
-	if (userinfo && strlen(userinfo) && strlen(svdnewteam) &&
+	if (strlen(userinfo) && strlen(svdnewteam) &&
 	    (!strlen(svdoldteam) || (Q_stricmp(svdoldteam, svdnewteam) && strlen(svdnewteam)))   // if there was no team for this player before OR if the new team is different
 	    )
 	{
