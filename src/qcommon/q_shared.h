@@ -1938,12 +1938,12 @@ typedef struct demoPlayInfo_s
 	int lastTime;
 } demoPlayInfo_t;
 
-#if defined(_MSC_VER) && (_MSC_VER < 1800) //c99 issue pre 2013 VS do not have support for this
+//c99 issue pre 2013 VS do not have support for this
+#if defined(_MSC_VER) && (_MSC_VER < 1800)
 // source http://smackerelofopinion.blogspot.fi/2011/10/determining-number-of-arguments-in-c.html
 #define NUMARGS PP_NARG
-#define PP_NARG(...)  (PP_NARG_(__VA_ARGS__, PP_RSEQ_N()) - \
-	                   (sizeof(#__VA_ARGS__) == 1))
-#define PP_NARG_(...)  PP_ARG_N(__VA_ARGS__)
+#define PP_NARG(...)  EXPAND((PP_NARG_(__VA_ARGS__, PP_RSEQ_N()) - (sizeof("" #__VA_ARGS__) == 1)))
+#define PP_NARG_(...)  EXPAND(PP_ARG_N(__VA_ARGS__))
 
 #define PP_ARG_N( \
 	    _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
