@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-09-13 22:03+0000\n"
+"PO-Revision-Date: 2015-09-14 20:31+0000\n"
 "Last-Translator: yfcz <yfcz@wolfenstein.cz>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -1277,7 +1277,7 @@ msgstr "O SERVERU"
 #: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
 #: etmain/ui/options.menu:29
 msgid "OPTIONS"
-msgstr "NASTAVENÍ"
+msgstr "VOLBY"
 
 #: etmain/ui/ingame_main.menu:43 etmain/ui/main.menu:111
 msgid "CREDITS"
@@ -2267,11 +2267,11 @@ msgstr "Čísly"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr "Vyber k ovládání rychlého hlasového chatu (RHR) čísla nebo písmena"
+msgstr "Vyber k ovládání rychlách hlasových zpráv (RHZ) čísla nebo písmena"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
-msgstr "Indikátor chatu:"
+msgstr "Indikátor zpráv:"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
@@ -2298,155 +2298,155 @@ msgstr "Skutečně dlouho"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
-msgstr "Určuje, jak dlouho se indikátor chatu zobrazuje postavám nad hlavou"
+msgstr "Určuje, jak dlouho se indikátor zpráv zobrazuje postavám nad hlavou"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
-msgstr "Jen týmový chat:"
+msgstr "Jen týmové zprávy:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr "Zobrazit nebo přehrát pouze týmový chat"
+msgstr "Zobrazit nebo přehrát pouze týmové zprávy"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
-msgstr "RHC bez textu:"
+msgstr "RHZ bez textu:"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "Don't show voice text in-game"
-msgstr ""
+msgstr "Zakáže zobrazování textu rychlých hlasových zpráv"
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
-msgstr ""
+msgstr "ZVUK"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
-msgstr ""
+msgstr "Oznamovatel:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Povolí nebo zakáže hlas oznamovatele"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
-msgstr ""
+msgstr "Bez RHZ:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "Zakáže přehrávání rychlých hlasových zpráv (RHZ)"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
-msgstr "Zvuky zasahu:"
+msgstr "Ozvučení zásahů:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Kromě spoluhráčů"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Kromě hlavy"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Kromě těla"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Nastavuje přehrání zvuku při zásahu do hráčů"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
-msgstr ""
+msgstr "Zobrazit stížnost:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Zobrazovat možnost odeslání stížnosti na hráče, který tě zabil"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
-msgstr "Logovat dulezite vzkazy:"
+msgstr "Logovat důležité zprávy:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Povolí vkládání důležitých zpráv do konzole hry"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Automatické akce:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Screenshot"
-msgstr ""
+msgstr "Snímek obrazovky"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Výpis statistik"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Demo + snímek"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Demo + statistiky"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "SS + Stats"
-msgstr ""
+msgstr "Snímek + statistiky"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Demo + snímek + statistiky"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Automaticky provede zvolenou akci na začátku nebo na konci kola hry"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
-msgstr ""
+msgstr "Auto-snímek obrazovky:"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Zvolí formát JPG nebo TGA pro příkaz: autoscreenshot"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
-msgstr ""
+msgstr "Zobrazovat tipy:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Povolí zobrazování tipů"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
 msgid "ui/menudef.h"
-msgstr ""
+msgstr "ui/menudef.h"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
-msgstr "ZOBRAZENI"
+msgstr "ZOBRAZENÍ"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
-msgstr "HUD ZOBRAZENI"
+msgstr "PRŮHLEDOVÝ DISPLEJ"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Draw Gun:"
-msgstr "Zobrazit zbran:"
+msgstr "Zobrazit zbraň:"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Shows gun model on-screen"
-msgstr ""
+msgstr "Povolí zobrazení vlastní zbraně"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
@@ -2454,75 +2454,75 @@ msgstr "Zobrazit kompas:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
-msgstr ""
+msgstr "Povolí zobrazení kompasu (s indikátory nejbližších událostí)"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
-msgstr "Priblizeni kompasu:"
+msgstr "Přiblížení kompasu:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
-msgstr ""
+msgstr "Nastavuje míru přiblížení mapy v kompasu"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
-msgstr "Stopky mise:"
+msgstr "Čas kola:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
-msgstr ""
+msgstr "Zobrazí zbývající čas kola"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
-msgstr "Stopky posil:"
+msgstr "Čas posil:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Zobrazí čas určující, kdy týmu dorazí další posily"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Kurzor nápovědy:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr ""
+msgstr "Pulzující"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
-msgstr ""
+msgstr "Pulzně-blikající"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr ""
+msgstr "Blikající"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
-msgstr ""
+msgstr "Nemněnný"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Icon display format when near an action item"
-msgstr ""
+msgstr "Určuje chování kurzoru, jestliže jsi poblíž speciálního interaktivního objektu"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
-msgstr "Zobrazit lokace:"
+msgstr "Zobrazit polohu:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "Souřadnicemi"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
-msgstr ""
+msgstr "Názvem — pouze četě"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Team Chat Only"
-msgstr ""
+msgstr "Názvem — pouze týmu"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Team & Fireteam Chat"
-msgstr ""
+msgstr "Názvem — týmu i četě"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
@@ -2530,35 +2530,35 @@ msgstr "Zobrazí pozice v okně čety"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
-msgstr "Povolit vlajky:"
+msgstr "Zobrazit vlajky:"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
-msgstr ""
+msgstr "Povolí zobrazení státních vlajek v tabulce se skóre"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Připravené povolání:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr ""
+msgstr "Povolí zobrazení připraveného povolání pro další zrod"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
-msgstr ""
+msgstr "Grafický nekrolog:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "Oběť + zbraň + vrah"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "Vrah + zbraň + oběť"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
-msgstr ""
+msgstr "Povolí zobrazení grafického nekrologu"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
