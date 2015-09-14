@@ -1512,26 +1512,26 @@ void R_Register(void)
 	r_allowExtensions     = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
 	// make sure all the commands added here are also removed in R_Shutdown
-	ri.Cmd_AddCommand("imagelist", R_ImageList_f);
-	ri.Cmd_AddCommand("shaderlist", R_ShaderList_f);
-	ri.Cmd_AddCommand("shaderexp", R_ShaderExp_f);
-	ri.Cmd_AddCommand("skinlist", R_SkinList_f);
-	ri.Cmd_AddCommand("modellist", R_Modellist_f);
+	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Print out the list of images loaded", NULL);
+	ri.Cmd_AddSystemCommand("shaderlist", R_ShaderList_f, "Print out the list of shaders loaded", NULL);
+	ri.Cmd_AddSystemCommand("shaderexp", R_ShaderExp_f, "Export the shaders", NULL);
+	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Print out the list of skins", NULL);
+	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Print out the list of loaded models", NULL);
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
-	ri.Cmd_AddCommand("animationlist", R_AnimationList_f);
+	ri.Cmd_AddSystemCommand("animationlist", R_AnimationList_f, "List current animations", NULL);
 #endif
 
-	ri.Cmd_AddCommand("fbolist", R_FBOList_f);
-	ri.Cmd_AddCommand("vbolist", R_VBOList_f);
-	ri.Cmd_AddCommand("screenshot", R_ScreenShot_f);
-	ri.Cmd_AddCommand("screenshotJPEG", R_ScreenShotJPEG_f);
-	ri.Cmd_AddCommand("screenshotPNG", R_ScreenShotPNG_f);
-	ri.Cmd_AddCommand("gfxinfo", GfxInfo_f);
-	//ri.Cmd_AddCommand("generatemtr", R_GenerateMaterialFile_f);
-	ri.Cmd_AddCommand("buildcubemaps", R_BuildCubeMaps);
+	ri.Cmd_AddSystemCommand("fbolist", R_FBOList_f, "List current frame buffer objects", NULL);
+	ri.Cmd_AddSystemCommand("vbolist", R_VBOList_f, "List current vertex buffer objects", NULL);
+	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Take a screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShotJPEG_f, "Take a JPG screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("screenshotPNG", R_ScreenShotPNG_f, "Take a PNG screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "GFX infor of current system", NULL);
+	//ri.Cmd_AddSystemCommand("generatemtr", R_GenerateMaterialFile_f, "Generate material file", NULL);
+	ri.Cmd_AddSystemCommand("buildcubemaps", R_BuildCubeMaps, "Build cubemaps for the current loaded map", NULL);
 
-	ri.Cmd_AddCommand("glsl_restart", GLSL_restart_f);
+	ri.Cmd_AddSystemCommand("glsl_restart", GLSL_restart_f, "Restart the GLSL subsystem", NULL);
 }
 
 void R_Init(void)
@@ -1641,23 +1641,23 @@ void RE_Shutdown(qboolean destroyWindow)
 {
 	Ren_Print("RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
 
-	ri.Cmd_RemoveCommand("modellist");
-	ri.Cmd_RemoveCommand("screenshotPNG");
-	ri.Cmd_RemoveCommand("screenshotJPEG");
-	ri.Cmd_RemoveCommand("screenshot");
-	ri.Cmd_RemoveCommand("imagelist");
-	ri.Cmd_RemoveCommand("shaderlist");
-	ri.Cmd_RemoveCommand("shaderexp");
-	ri.Cmd_RemoveCommand("skinlist");
-	ri.Cmd_RemoveCommand("gfxinfo");
-	ri.Cmd_RemoveCommand("modelist");
-	ri.Cmd_RemoveCommand("animationlist");
-	ri.Cmd_RemoveCommand("fbolist");
-	ri.Cmd_RemoveCommand("vbolist");
-	ri.Cmd_RemoveCommand("generatemtr");
-	ri.Cmd_RemoveCommand("buildcubemaps");
+	ri.Cmd_RemoveSystemCommand("modellist");
+	ri.Cmd_RemoveSystemCommand("screenshotPNG");
+	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
+	ri.Cmd_RemoveSystemCommand("screenshot");
+	ri.Cmd_RemoveSystemCommand("imagelist");
+	ri.Cmd_RemoveSystemCommand("shaderlist");
+	ri.Cmd_RemoveSystemCommand("shaderexp");
+	ri.Cmd_RemoveSystemCommand("skinlist");
+	ri.Cmd_RemoveSystemCommand("gfxinfo");
+	ri.Cmd_RemoveSystemCommand("modelist");
+	ri.Cmd_RemoveSystemCommand("animationlist");
+	ri.Cmd_RemoveSystemCommand("fbolist");
+	ri.Cmd_RemoveSystemCommand("vbolist");
+	ri.Cmd_RemoveSystemCommand("generatemtr");
+	ri.Cmd_RemoveSystemCommand("buildcubemaps");
 
-	ri.Cmd_RemoveCommand("glsl_restart");
+	ri.Cmd_RemoveSystemCommand("glsl_restart");
 
 	if (tr.registered)
 	{

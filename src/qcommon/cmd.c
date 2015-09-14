@@ -402,6 +402,7 @@ typedef struct cmd_function_s
 {
 	struct cmd_function_s *next;
 	char *name;
+	char *description;
 	xcommand_t function;
 	completionFunc_t complete;
 } cmd_function_t;
@@ -761,10 +762,10 @@ cmd_function_t *Cmd_FindCommand(const char *cmd_name)
 
 /*
 ============
-Cmd_AddCommand
+Cmd_AddCommandExtended
 ============
 */
-void Cmd_AddCommand(const char *cmd_name, xcommand_t function)
+void Cmd_AddSystemCommand(const char *cmd_name, xcommand_t function, const char *description, completionFunc_t complete)
 {
 	cmd_function_t *cmd;
 
@@ -774,7 +775,7 @@ void Cmd_AddCommand(const char *cmd_name, xcommand_t function)
 		// allow completion-only commands to be silently doubled
 		if (function != NULL)
 		{
-			Com_Printf("Cmd_AddCommand: %s already defined\n", cmd_name);
+			Com_Printf("Cmd_AddCommandExtended: %s already defined\n", cmd_name);
 		}
 		return;
 	}
@@ -783,9 +784,17 @@ void Cmd_AddCommand(const char *cmd_name, xcommand_t function)
 	cmd           = S_Malloc(sizeof(cmd_function_t));
 	cmd->name     = CopyString(cmd_name);
 	cmd->function = function;
-	cmd->complete = NULL;
+	cmd->complete = complete;
 	cmd->next     = cmd_functions;
 	cmd_functions = cmd;
+	if(description && description[0])
+	{
+		cmd->description = CopyString(description);
+	}
+	else
+	{
+		cmd->description = NULL;
+	}
 }
 
 /*
@@ -802,6 +811,24 @@ void Cmd_SetCommandCompletionFunc(const char *command, completionFunc_t complete
 		if (!Q_stricmp(command, cmd->name))
 		{
 			cmd->complete = complete;
+		}
+	}
+}
+
+/*
+============
+Cmd_SetCommandDescription
+============
+*/
+void Cmd_SetCommandDescription(const char *command, const char *description)
+{
+	cmd_function_t *cmd;
+
+	for (cmd = cmd_functions; cmd; cmd = cmd->next)
+	{
+		if (!Q_stricmp(command, cmd->name))
+		{
+			cmd->description = CopyString(description);
 		}
 	}
 }
@@ -829,6 +856,10 @@ void Cmd_RemoveCommand(const char *cmd_name)
 			if (cmd->name)
 			{
 				Z_Free(cmd->name);
+			}
+			if (cmd->description)
+			{
+				Z_Free(cmd->description);
 			}
 			Z_Free(cmd);
 			return;
@@ -1020,7 +1051,14 @@ void Cmd_List_f(void)
 			continue;
 		}
 
-		Com_Printf("%s\n", cmd->name);
+		if(cmd->description)
+		{
+			Com_Printf("%s : %s\n", cmd->name, cmd->description);
+		}
+		else
+		{
+			Com_Printf("%s\n", cmd->name);
+		}
 		i++;
 	}
 	Com_Printf("%i commands\n", i);

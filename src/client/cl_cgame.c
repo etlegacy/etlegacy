@@ -216,16 +216,6 @@ void CL_SetClientLerpOrigin(float x, float y, float z)
 	cl.cgameClientLerpOrigin[2] = z;
 }
 
-/*
-==============
-CL_AddCgameCommand
-==============
-*/
-void CL_AddCgameCommand(const char *cmdName)
-{
-	Cmd_AddCommand(cmdName, NULL);
-}
-
 qboolean CL_CGameCheckKeyExec(int key)
 {
 	if (cgvm)
@@ -664,7 +654,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		Cbuf_AddText(VMA(1));
 		return 0;
 	case CG_ADDCOMMAND:
-		CL_AddCgameCommand(VMA(1));
+		Cmd_AddCommand(VMA(1));
 		return 0;
 	case CG_REMOVECOMMAND:
 		Cmd_RemoveCommandSafe(VMA(1));

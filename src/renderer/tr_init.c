@@ -1207,14 +1207,14 @@ void R_Register(void)
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
-	ri.Cmd_AddCommand("imagelist", R_ImageList_f);
-	ri.Cmd_AddCommand("shaderlist", R_ShaderList_f);
-	ri.Cmd_AddCommand("skinlist", R_SkinList_f);
-	ri.Cmd_AddCommand("modellist", R_Modellist_f);
-	ri.Cmd_AddCommand("screenshot", R_ScreenShot_f);
-	ri.Cmd_AddCommand("screenshotJPEG", R_ScreenShotJPEG_f);
-	ri.Cmd_AddCommand("gfxinfo", GfxInfo_f);
-	ri.Cmd_AddCommand("taginfo", R_TagInfo_f);
+	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Print out the list of images loaded", NULL);
+	ri.Cmd_AddSystemCommand("shaderlist", R_ShaderList_f, "Print out the list of shaders loaded", NULL);
+	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Print out the list of skins", NULL);
+	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Print out the list of loaded models", NULL);
+	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Take a screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShotJPEG_f, "Take a JPEG screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "GFX info of current system", NULL);
+	ri.Cmd_AddSystemCommand("taginfo", R_TagInfo_f, "Print the list of loaded tags", NULL);
 }
 
 /*
@@ -1330,16 +1330,16 @@ void RE_Shutdown(qboolean destroyWindow)
 {
 	Ren_Print("RE_Shutdown( %i )\n", destroyWindow);
 
-	ri.Cmd_RemoveCommand("imagelist");
-	ri.Cmd_RemoveCommand("shaderlist");
-	ri.Cmd_RemoveCommand("skinlist");
-	ri.Cmd_RemoveCommand("modellist");
-	ri.Cmd_RemoveCommand("modelist");
-	ri.Cmd_RemoveCommand("screenshot");
-	ri.Cmd_RemoveCommand("screenshotJPEG");
-	ri.Cmd_RemoveCommand("gfxinfo");
-	ri.Cmd_RemoveCommand("minimize");
-	ri.Cmd_RemoveCommand("taginfo");
+	ri.Cmd_RemoveSystemCommand("imagelist");
+	ri.Cmd_RemoveSystemCommand("shaderlist");
+	ri.Cmd_RemoveSystemCommand("skinlist");
+	ri.Cmd_RemoveSystemCommand("modellist");
+	ri.Cmd_RemoveSystemCommand("modelist");
+	ri.Cmd_RemoveSystemCommand("screenshot");
+	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
+	ri.Cmd_RemoveSystemCommand("gfxinfo");
+	ri.Cmd_RemoveSystemCommand("minimize");
+	ri.Cmd_RemoveSystemCommand("taginfo");
 
 	// keep a backup of the current images if possible
 	// clean out any remaining unused media from the last backup

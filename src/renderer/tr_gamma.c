@@ -34,13 +34,12 @@
  */
 
 #include "tr_local.h"
-#include "../renderercommon/tr_public.h"
 
 typedef struct shaderProgram_s
 {
-	GLuint program;
-	GLuint vertexShader;
-	GLuint fragmentShader;
+	GLhandleARB program;
+	GLhandleARB vertexShader;
+	GLhandleARB fragmentShader;
 
 	GLint gammaUniform;
 	GLint currentMapUniform;

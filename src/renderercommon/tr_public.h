@@ -199,8 +199,8 @@ typedef struct
 	void (*Cvar_AssertCvarRange)(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 	int (*Cvar_VariableIntegerValue)(const char *var_name);
 
-	void (*Cmd_AddCommand)(const char *name, void (*cmd)(void));
-	void (*Cmd_RemoveCommand)(const char *name);
+	void (*Cmd_AddSystemCommand)(const char *name, void (*cmd)(void), const char *description, void (*complete)(char *args, int argNum));
+	void (*Cmd_RemoveSystemCommand)(const char *name);
 
 	int (*Cmd_Argc)(void);
 	char * (*Cmd_Argv)(int i);

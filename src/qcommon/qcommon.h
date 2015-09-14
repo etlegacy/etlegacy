@@ -499,10 +499,22 @@ then searches for a command or variable that matches the first token.
 */
 
 typedef void (*xcommand_t)(void);
+typedef void (*completionFunc_t)(char *args, int argNum);
 
 void Cmd_Init(void);
 
-void Cmd_AddCommand(const char *cmd_name, xcommand_t function);
+// We need to use EXPAND because the Microsoft MSVC preprocessor does not expand the va_args the same way as other preprocessors
+// http://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
+#define EXPAND( x ) x
+#define GET_MACRO(_1, _2, _3, _4, NAME, ...) NAME
+#define Cmd_AddCommand1(x) Cmd_AddSystemCommand(x, NULL, NULL, NULL)
+#define Cmd_AddCommand2(x, y) Cmd_AddSystemCommand(x, y, NULL, NULL)
+#define Cmd_AddCommand3(x, y, z) Cmd_AddSystemCommand(x, y, z, NULL)
+#define Cmd_AddCommand4(x, y, z, i) Cmd_AddSystemCommand(x, y, z, i)
+#define Cmd_AddCommand(...) EXPAND(GET_MACRO(__VA_ARGS__, Cmd_AddCommand4, Cmd_AddCommand3, Cmd_AddCommand2, Cmd_AddCommand1)(__VA_ARGS__))
+
+void Cmd_AddSystemCommand(const char *cmd_name, xcommand_t function, const char *description, completionFunc_t complete);
+
 // called by the init functions of other parts of the program to
 // register commands and functions to call for them.
 // The cmd_name is referenced later, so it should not be in temp memory
@@ -512,12 +524,10 @@ void Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 void Cmd_RemoveCommand(const char *cmd_name);
 void Cmd_RemoveCommandSafe(const char *cmd_name);
 
-typedef void (*completionFunc_t)(char *args, int argNum);
-
 void Cmd_CommandCompletion(void (*callback)(const char *s));
 // callback with each valid string
-void Cmd_SetCommandCompletionFunc(const char *command,
-                                  completionFunc_t complete);
+void Cmd_SetCommandCompletionFunc(const char *command, completionFunc_t complete);
+void Cmd_SetCommandDescription(const char *command, const char *description);
 void Cmd_CompleteArgument(const char *command, char *args, int argNum);
 
 void Cmd_SaveCmdContext(void);

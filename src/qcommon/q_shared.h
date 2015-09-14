@@ -529,11 +529,14 @@ void *Hunk_Alloc(int size, ha_pref preference);
 #define Com_Allocate malloc
 #define Com_Dealloc free
 
-#define CIN_system  1
-#define CIN_loop    2
-#define CIN_hold    4
-#define CIN_silent  8
-#define CIN_shader  16
+typedef enum
+{
+	CIN_system = BIT(0),
+	CIN_loop = BIT(1),
+	CIN_hold = BIT(2),
+	CIN_silent = BIT(3),
+	CIN_shader = BIT(4)
+} CIN_Flags;
 
 /*
 ==============================================================
@@ -1071,6 +1074,8 @@ const char *Q_stristr(const char *s, const char *find);
 #else
 #define Q_putenv putenv
 #endif
+
+#define Q_strcpy(dest, src) strcpy(dest, src)
 
 // buffer size safe library replacements
 void Q_strncpyz(char *dest, const char *src, int destsize);

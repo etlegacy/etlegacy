@@ -998,7 +998,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
 	case UI_ADDCOMMAND:
-		Cmd_AddCommand(VMA(1), NULL);
+		Cmd_AddCommand(VMA(1));
 		return 0;
 	case UI_FS_FOPENFILE:
 		return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
