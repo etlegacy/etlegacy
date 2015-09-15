@@ -113,6 +113,16 @@ float W(float t, float epsilon)
 }
 
 /**
+ * @brief Map winning probability
+ * @details Get wining parameter bias of the played map
+ */
+float G_MapWinProb(int team)
+{
+	// FIXME
+	return 0.5f;
+}
+
+/**
  * @brief Update skill rating
  * @details Update player's skill rating based on team performance
  */
@@ -127,10 +137,20 @@ void G_UpdateSkillRating(int winner)
 	int   numPlayersX  = 0;
 	int   numPlayersL  = 0;
 	float c, v, w, t, winningMu, losingMu, muFactor, sigmaFactor;
+	float mapProb, mapMu, mapSigma, mapBeta;
 	int   playerTeam, rankFactor, i;
 
 	// total play time
 	int totalTime = level.intermissiontime - level.startTime - level.timeDelta;
+
+	// map side parameter
+	if (g_skillRating.integer > 1)
+	{
+		mapProb  = G_MapWinProb(winner);
+		mapMu    = 2 * MU * mapProb;
+		mapSigma = 2 * MU * sqrt(mapProb * (1.0f - mapProb));
+		mapBeta  = mapSigma / 2;
+	}
 
 	// player additive factors
 	for (i = 0; i < level.numConnectedClients; i++)
@@ -159,11 +179,31 @@ void G_UpdateSkillRating(int winner)
 	}
 
 	// normalizing constant
-	c = sqrt(teamSigmaSqX + teamSigmaSqL + (numPlayersX + numPlayersL) * pow(BETA, 2));
+	if (g_skillRating.integer > 1)
+	{
+		c = sqrt(teamSigmaSqX + teamSigmaSqL + (numPlayersX + numPlayersL) * pow(BETA, 2) + pow(mapSigma, 2) + pow(mapBeta, 2));
+	}
+	else
+	{
+		c = sqrt(teamSigmaSqX + teamSigmaSqL + (numPlayersX + numPlayersL) * pow(BETA, 2));
+	}
 
 	// determine teams rank
 	winningMu = (winner == TEAM_AXIS) ? teamMuX : teamMuL;
 	losingMu  = (winner == TEAM_AXIS) ? teamMuL : teamMuX;
+
+	// map bias
+	if (g_skillRating.integer > 1)
+	{
+		if (mapProb > 0.5f)
+		{
+			winningMu += mapMu;
+		}
+		else if (mapProb < 0.5f)
+		{
+			losingMu += 2 * MU - mapMu;
+		}
+	}
 
 	// team performance
 	t = (winningMu - losingMu) / c;
@@ -219,10 +259,20 @@ float G_CalculateWinProbability(int team)
 	int   numPlayersX  = 0;
 	int   numPlayersL  = 0;
 	float c, t, winningMu, losingMu;
+	float mapProb, mapMu, mapSigma, mapBeta;
 	int   i;
 
 	// current play time
 	int currentTime = level.timeCurrent - level.startTime - level.timeDelta;
+
+	// map side parameter
+	if (g_skillRating.integer > 1)
+	{
+		mapProb  = G_MapWinProb(team);
+		mapMu    = 2 * MU * mapProb;
+		mapSigma = 2 * MU * sqrt(mapProb * (1.0f - mapProb));
+		mapBeta  = mapSigma / 2;
+	}
 
 	// player additive factors
 	for (i = 0; i < level.numConnectedClients; i++)
@@ -277,11 +327,31 @@ float G_CalculateWinProbability(int team)
 	}
 
 	// normalizing constant
-	c = sqrt(teamSigmaSqX + teamSigmaSqL + (numPlayersX + numPlayersL) * pow(BETA, 2));
+	if (g_skillRating.integer > 1)
+	{
+		c = sqrt(teamSigmaSqX + teamSigmaSqL + (numPlayersX + numPlayersL) * pow(BETA, 2) + pow(mapSigma, 2) + pow(mapBeta, 2));
+	}
+	else
+	{
+		c = sqrt(teamSigmaSqX + teamSigmaSqL + (numPlayersX + numPlayersL) * pow(BETA, 2));
+	}
 
 	// determine teams rank
 	winningMu = (team == TEAM_AXIS) ? teamMuX : teamMuL;
 	losingMu  = (team == TEAM_AXIS) ? teamMuL : teamMuX;
+
+	// map bias
+	if (g_skillRating.integer > 1)
+	{
+		if (mapProb > 0.5f)
+		{
+			winningMu += mapMu;
+		}
+		else if (mapProb < 0.5f)
+		{
+			losingMu += 2 * MU - mapMu;
+		}
+	}
 
 	// team performance
 	t = (winningMu - losingMu - EPSILON) / c;
