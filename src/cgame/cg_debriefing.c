@@ -468,7 +468,7 @@ panel_button_t debriefPlayerInfoRank =
 {
 	NULL,
 	NULL,
-	{ 74,                         70,  0, 0 },
+	{ 68,                         70,  0, 0 },
 	{ 0,                          0,   0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,       /* font     */
 	NULL,                         /* keyDown  */
@@ -481,7 +481,7 @@ panel_button_t debriefPlayerInfoMedals =
 {
 	NULL,
 	NULL,
-	{ 74,                           84,  0, 0 },
+	{ 68,                           84,  0, 0 },
 	{ 0,                            0,   0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,         /* font     */
 	NULL,                           /* keyDown  */
@@ -494,7 +494,7 @@ panel_button_t debriefPlayerInfoTime =
 {
 	NULL,
 	NULL,
-	{ 74,                         98,  0, 0 },
+	{ 68,                         98,  0, 0 },
 	{ 0,                          0,   0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,       /* font     */
 	NULL,                         /* keyDown  */
@@ -507,7 +507,7 @@ panel_button_t debriefPlayerInfoXP =
 {
 	NULL,
 	NULL,
-	{ 74,                       112,  0, 0 },
+	{ 68,                       112,  0, 0 },
 	{ 0,                        0,    0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,     /* font     */
 	NULL,                       /* keyDown  */
@@ -520,7 +520,7 @@ panel_button_t debriefPlayerInfoACC =
 {
 	NULL,
 	NULL,
-	{ 74,                        126,  0, 0 },
+	{ 68,                        126,  0, 0 },
 	{ 0,                         0,    0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,      /* font     */
 	NULL,                        /* keyDown  */
@@ -533,7 +533,7 @@ panel_button_t debriefPlayerInfoHS =
 {
 	NULL,
 	NULL,
-	{ 142,                      126,   0, 0 },
+	{ 136,                      126,   0, 0 },
 	{ 0,                        0,     0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,     /* font     */
 	NULL,                       /* keyDown  */
@@ -546,7 +546,7 @@ panel_button_t debriefPlayerInfoHS =
 	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
 		NULL,                                       \
-		{ 18 + (100 * (number % 2)),     140 + (number / 2 * 24),                        12, 12 },     \
+		{ 18 + (94 * (number % 2)),      140 + (number / 2 * 24),                        12, 12 },     \
 		{ number,                        0,                                              0,  0, 0, 0, 0, 0},            \
 		&debriefPlayerInfoFont,          /* font     */  \
 		NULL,                            /* keyDown    */                      \
