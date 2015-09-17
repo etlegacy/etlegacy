@@ -4337,11 +4337,11 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
 	{
 		if (g_entities[i].inuse)
 		{
-			Q_strcat(buffer, sizeof(buffer), va("%i %i ", level.clients[i].sess.time_axis / 60000, level.clients[i].sess.time_allies / 60000));
+			Q_strcat(buffer, sizeof(buffer), va("%i %i %i ", level.clients[i].sess.time_axis, level.clients[i].sess.time_allies, level.clients[i].sess.time_played));
 		}
 		else
 		{
-			Q_strcat(buffer, sizeof(buffer), "0 0 ");
+			Q_strcat(buffer, sizeof(buffer), "0 0 0 ");
 		}
 	}
 

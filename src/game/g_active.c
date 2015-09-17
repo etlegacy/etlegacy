@@ -2090,7 +2090,7 @@ void ClientEndFrame(gentity_t *ent)
 {
 	int i, frames;
 
-	// don't count skulled player time
+	// count player time
 	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
 	{
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)
@@ -2101,6 +2101,12 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			ent->client->sess.time_allies += level.time - level.previousTime;
 		}
+	}
+
+	// don't count skulled player time
+	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.pm_flags & PMF_LIMBO || ent->client->ps.stats[STAT_HEALTH] <= 0))
+	{
+		ent->client->sess.time_played += level.time - level.previousTime;
 	}
 
 	// used for informing of speclocked teams.

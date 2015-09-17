@@ -64,9 +64,9 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	//}
 
 #ifdef FEATURE_MULTIVIEW
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       client->sess.sessionTeam,
 	       client->sess.spectatorTime,
@@ -89,6 +89,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.team_kills,
 	       client->sess.time_axis,
 	       client->sess.time_allies,
+	       client->sess.time_played,
 #ifdef FEATURE_MULTIVIEW
 	       (mvc & 0xFFFF),
 	       ((mvc >> 16) & 0xFFFF),
@@ -238,9 +239,9 @@ void G_ReadSessionData(gclient_t *client)
 	trap_Cvar_VariableStringBuffer(va("session%i", (int)(client - level.clients)), s, sizeof(s));
 
 #ifdef FEATURE_MULTIVIEW
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       (int *)&client->sess.sessionTeam,
 	       &client->sess.spectatorTime,
@@ -263,6 +264,7 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.team_kills,
 	       &client->sess.time_axis,
 	       &client->sess.time_allies,
+	       &client->sess.time_played,
 #ifdef FEATURE_MULTIVIEW
 	       &mvc_l,
 	       &mvc_h,

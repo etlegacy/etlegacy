@@ -1794,8 +1794,9 @@ void CG_Debriefing_ParsePlayerTime(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].timeAxis   = atoi(CG_Argv(i * 2 + 1));
-		cgs.clientinfo[i].timeAllies = atoi(CG_Argv(i * 2 + 2));
+		cgs.clientinfo[i].timeAxis   = atoi(CG_Argv(i * 3 + 1));
+		cgs.clientinfo[i].timeAllies = atoi(CG_Argv(i * 3 + 2));
+		cgs.clientinfo[i].timePlayed = atoi(CG_Argv(i * 3 + 3));
 	}
 	cgs.dbPlayerTimeRecieved = qtrue;
 }
@@ -2240,7 +2241,7 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 	w = CG_Text_Width_Ext("Time: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Time:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i ^9(^1%i^9/^4%i^9)", score->time, ci->timeAxis, ci->timeAllies), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i^9/^1%i^9/^4%i^9 (%.0f%% played)", score->time, ci->timeAxis / 60000, ci->timeAllies / 60000, 100.f * ci->timePlayed / (ci->timeAxis + ci->timeAllies)), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)

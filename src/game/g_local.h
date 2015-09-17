@@ -588,6 +588,7 @@ typedef struct
 	int team_kills;
 	int time_axis;
 	int time_allies;
+	int time_played;
 
 	// MAPVOTE
 	int mapVotedFor[3];
