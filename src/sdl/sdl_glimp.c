@@ -854,6 +854,10 @@ success:
 	IN_Init();
 }
 
+#ifdef MACOS_X_GAMMA_RESET_FIX
+extern int CL_ScaledMilliseconds(void);
+#endif
+
 /**
  * @brief Responsible for doing a swapbuffers
  */
