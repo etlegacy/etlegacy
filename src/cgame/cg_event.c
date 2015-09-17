@@ -1115,7 +1115,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case FXTYPE_METAL:     // "metal"
+			case FXTYPE_METAL:     // metal
 				snd = LEBS_METAL;
 				if (i == 5)
 				{
@@ -1140,7 +1140,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case FXTYPE_GIBS:     // "gibs"
+			case FXTYPE_GIBS:     // gibs
 				snd = LEBS_BLOOD;
 				if (i == 5)
 				{
@@ -1160,16 +1160,16 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case FXTYPE_BRICK:     // "brick"
+			case FXTYPE_BRICK:     // brick
 				snd    = LEBS_ROCK;
 				hmodel = cgs.media.debBlock[i];
 				break;
 
-			case FXTYPE_STONE:     // "rock"
+			case FXTYPE_STONE:     // rock
 				snd = LEBS_ROCK;
 				if (i == 5)
 				{
-					hmodel = cgs.media.debRock[2];                  // temporarily use the next smallest rock piece
+					hmodel = cgs.media.debRock[2];            // temporarily use the next smallest rock piece
 				}
 				else if (i == 4)
 				{
@@ -1183,9 +1183,9 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				{
 					hmodel = cgs.media.debRock[0];
 				}
-				else if (i == 1)
+				else if (i == 1) // note: there is debBlock 0-5
 				{
-					hmodel = cgs.media.debBlock[1];                 // temporarily use the small block pieces
+					hmodel = cgs.media.debBlock[1];            // temporarily use the small block pieces
 				}
 				else
 				{
@@ -1197,7 +1197,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 				break;
 
-			case FXTYPE_FABRIC:     // "fabric"
+			case FXTYPE_FABRIC:     // fabric
 				if (i == 5)
 				{
 					hmodel = cgs.media.debFabric[0];
@@ -1219,6 +1219,8 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				{
 					goto pass;     // (only do 5, 4, 2 and 1)
 				}
+				break;
+			default:
 				break;
 			}
 
@@ -1284,9 +1286,11 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			re->radius = 1000;
 
 			// trying to make this a little more interesting
-			if (type == FXTYPE_FABRIC)     // "fabric"
+			if (type == FXTYPE_FABRIC)     // fabric
 			{
 				le->pos.trType = TR_GRAVITY_FLOAT;     // the fabric stuff will change to use something that looks better
+				le->bounceFactor = 0.0;
+				materialmul      = 0.3;     // rotation speed
 			}
 			else
 			{
@@ -1298,17 +1302,8 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				{
 					le->pos.trType = TR_GRAVITY_LOW;
 				}
-			}
 
-			switch (type)
-			{
-			case FXTYPE_FABRIC:     // fabric
-				le->bounceFactor = 0.0;
-				materialmul      = 0.3;     // rotation speed
-				break;
-			default:
 				le->bounceFactor = 0.4;
-				break;
 			}
 
 			// rotation
@@ -1320,9 +1315,6 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			le->angles.trDelta[0] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[1] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[2] = ((100 + (rand() & 500)) - 300) * materialmul;
-
-			//if(type == 6)   // fabric
-			// materialmul = 1;        // translation speed
 
 			VectorCopy(origin, le->pos.trBase);
 			VectorNormalize(dir);
@@ -1442,7 +1434,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 			switch (type)
 			{
-			case FXTYPE_WOOD:     // "wood"
+			case FXTYPE_WOOD:     // wood
 				snd    = LEBS_WOOD;
 				hmodel = cgs.media.debWood[i];
 
@@ -1470,7 +1462,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case FXTYPE_GLASS:     // "glass"
+			case FXTYPE_GLASS:     // glass
 				snd = LEBS_NONE;
 				if (i == 5)
 				{
@@ -1495,7 +1487,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case FXTYPE_METAL:     // "metal"
+			case FXTYPE_METAL:     // metal
 				snd = LEBS_BRASS;
 				if (i == 5)
 				{
@@ -1520,7 +1512,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case FXTYPE_GIBS:     // "gibs"
+			case FXTYPE_GIBS:     // gibs
 				snd = LEBS_BLOOD;
 				if (i == 5)
 				{
@@ -1540,12 +1532,12 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case FXTYPE_BRICK:     // "brick"
+			case FXTYPE_BRICK:     // brick
 				snd    = LEBS_ROCK;
 				hmodel = cgs.media.debBlock[i];
 				break;
 
-			case FXTYPE_STONE:     // "rock"
+			case FXTYPE_STONE:     // rock
 				snd = LEBS_ROCK;
 				if (i == 5)
 				{
@@ -1563,7 +1555,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				{
 					hmodel = cgs.media.debRock[0];
 				}
-				else if (i == 1)
+				else if (i == 1) // note: there is debBlock 0-5
 				{
 					hmodel = cgs.media.debBlock[1];            // temporarily use the small block pieces
 				}
@@ -1577,7 +1569,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				break;
 
-			case FXTYPE_FABRIC:     // "fabric"
+			case FXTYPE_FABRIC:     // fabric
 				if (i == 5)
 				{
 					hmodel = cgs.media.debFabric[0];
@@ -1599,6 +1591,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				{
 					goto pass;     // (only do 5, 4, 2 and 1)
 				}
+				break;
+			default:
 				break;
 			}
 
@@ -1667,6 +1661,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			if (type == FXTYPE_FABRIC)     // "fabric"
 			{
 				le->pos.trType = TR_GRAVITY_FLOAT;     // the fabric stuff will change to use something that looks better
+				le->bounceFactor = 0.0;
+				materialmul      = 0.3;     // rotation speed
 			}
 			else
 			{
@@ -1678,17 +1674,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				{
 					le->pos.trType = TR_GRAVITY_LOW;
 				}
-			}
 
-			switch (type)
-			{
-			case FXTYPE_FABRIC:     // fabric
-				le->bounceFactor = 0.0;
-				materialmul      = 0.3;     // rotation speed
-				break;
-			default:
 				le->bounceFactor = 0.4;
-				break;
 			}
 
 			// rotation
@@ -1701,8 +1688,6 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			le->angles.trDelta[1] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[2] = ((100 + (rand() & 500)) - 300) * materialmul;
 
-			//if(type == FXTYPE_FABRIC)   // fabric
-			//  materialmul = 1;        // translation speed
 
 			VectorCopy(origin, le->pos.trBase);
 			VectorNormalize(dir);
@@ -1919,77 +1904,74 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 		VectorCopy(origin, re->origin);
 		AxisCopy(axisDefault, re->axis);
 
-		if (type == FXTYPE_GLASS)     // glass
-		{
-			rval = rand() % 2;
 
-			if (rval)
-			{
-				re->hModel = cgs.media.shardGlass1;
-			}
-			else
-			{
-				re->hModel = cgs.media.shardGlass2;
-			}
-		}
-		else if (type == FXTYPE_WOOD)           // wood
+		switch (type)
 		{
-			rval = rand() % 2;
+			case FXTYPE_WOOD:
+				rval = rand() % 2;
 
-			if (rval)
-			{
-				re->hModel = cgs.media.shardWood1;
-			}
-			else
-			{
-				re->hModel = cgs.media.shardWood2;
-			}
-		}
-		else if (type == FXTYPE_METAL)           // metal
-		{
-			rval = rand() % 2;
+				if (rval)
+				{
+					re->hModel = cgs.media.shardWood1;
+				}
+				else
+				{
+					re->hModel = cgs.media.shardWood2;
+				}
+			break;
+			case FXTYPE_GLASS:
+				rval = rand() % 2;
 
-			if (rval)
-			{
-				re->hModel = cgs.media.shardMetal1;
-			}
-			else
-			{
-				re->hModel = cgs.media.shardMetal2;
-			}
-		}
-		/*else if (type == 3) // ceramic
-		{
-		    rval = rand()%2;
+				if (rval)
+				{
+					re->hModel = cgs.media.shardGlass1;
+				}
+				else
+				{
+					re->hModel = cgs.media.shardGlass2;
+				}
+			break;
+			case FXTYPE_METAL:
+				rval = rand() % 2;
 
-		    if (rval)
-		        re->hModel = cgs.media.shardCeramic1;
-		    else
-		        re->hModel = cgs.media.shardCeramic2;
-		}*/
-		else if (type == FXTYPE_BRICK || type == FXTYPE_STONE)     // rubble
-		{
-			rval = rand() % 3;
+				if (rval)
+				{
+					re->hModel = cgs.media.shardMetal1;
+				}
+				else
+				{
+					re->hModel = cgs.media.shardMetal2;
+				}
+			break;
+			case FXTYPE_BRICK:  // rubble
+			case FXTYPE_STONE:
+				rval = rand() % 3; // note: there is debBlock 0-5
 
-			if (rval == 1)
-			{
-				//re->hModel = cgs.media.shardRubble1;
-				re->hModel = cgs.media.debBlock[0];
-			}
-			else if (rval == 2)
-			{
-				//re->hModel = cgs.media.shardRubble2;
-				re->hModel = cgs.media.debBlock[1];
-			}
-			else
-			{
-				//re->hModel = cgs.media.shardRubble3;
-				re->hModel = cgs.media.debBlock[2];
-			}
-		}
-		else
-		{
-			CG_Printf("CG_Debris has an unknown type\n");
+				if (rval == 1)
+				{
+					//re->hModel = cgs.media.shardRubble1;
+					re->hModel = cgs.media.debBlock[0];
+				}
+				else if (rval == 2)
+				{
+					//re->hModel = cgs.media.shardRubble2;
+					re->hModel = cgs.media.debBlock[1];
+				}
+				else
+				{
+					//re->hModel = cgs.media.shardRubble3;
+					re->hModel = cgs.media.debBlock[2];
+				}
+			break;
+			//case ceramic:
+			//rval = rand()%2;
+			//if (rval)
+			//  re->hModel = cgs.media.shardCeramic1;
+			//else
+			//  re->hModel = cgs.media.shardCeramic2;
+			default: // FXTYPE_GIBS, FXTYPE_FABRIC
+				CG_Printf("CG_Debris has an unknown type\n");
+			break;
 		}
 
 		// location
@@ -2029,7 +2011,7 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 	}
 }
 
-void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir)
+void CG_ShardJunk(vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le = CG_AllocLocalEntity();
 	refEntity_t   *re = &le->refEntity;
@@ -3202,7 +3184,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			for (i = 0; i < rval; i++)
 			{
-				CG_ShardJunk(cent, position, dir);
+				CG_ShardJunk(position, dir);
 			}
 		}
 		break;
@@ -3309,6 +3291,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 				wav = "allies_hq_airstrike";
 			}
 			break;
+		default:
+			break;
 		}
 
 		if (wav)
@@ -3353,6 +3337,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			{
 				wav = "allies_hq_ffe";
 			}
+			break;
+		default:
 			break;
 		}
 
