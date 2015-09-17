@@ -1300,7 +1300,7 @@ void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 {
 	rectDef_t lock;
 	qhandle_t shader;
-	qboolean  teamDisabled = qfalse;
+	qboolean  teamDisabled;
 
 	teamDisabled = CG_LimboPanel_TeamIsDisabled(teamOrder[button->data[0]]);
 
@@ -1749,6 +1749,8 @@ qboolean CG_LimboPanel_RenderLight_GetValue(panel_button_t *button)
 		return (CG_LimboPanel_GetClass() == button->data[1]) ? qtrue : qfalse;
 	case 1:
 		return (CG_LimboPanel_GetTeam() == teamOrder[button->data[1]]) ? qtrue : qfalse;
+	default:
+		break;
 	}
 
 	return qfalse;
@@ -2374,6 +2376,8 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 		case 2:
 			count = cgs.clientinfo[cg.clientNum].skill[BG_ClassSkillForClass(CG_LimboPanel_GetClass())];
 			break;
+		default:
+			break;
 		}
 		return (1 << count) - 1;
 	case 5:     // clock
@@ -2388,6 +2392,8 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 			return count % 60;
 		case 1:         // mins
 			return count / 60;
+		default:
+			break;
 		}
 		return 0;
 	case 6:     // stats
@@ -2399,6 +2405,8 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 			return cgs.ccWeaponHits;
 		case 2:
 			return cgs.ccWeaponShots != 0 ? 100 * cgs.ccWeaponHits / cgs.ccWeaponShots : 0;
+		default:
+			break;
 		}
 		return 0;
 	default:
@@ -2437,6 +2445,8 @@ int CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button)
 	case 3:     // respawn time
 	case 2:     // xp
 		return 50.f;
+	default:
+		break;
 	}
 
 	return 1000.f;
@@ -2449,6 +2459,8 @@ int CG_LimboPanel_RenderCounter_MaxChangeForButton(panel_button_t *button)
 	case 2:     // xp
 	case 6:     // stats
 		return 5;
+	default:
+		break;
 	}
 
 	return 1;
@@ -2477,6 +2489,8 @@ int CG_LimboPanel_RenderCounter_NumRollers(panel_button_t *button)
 			return 4;
 		case 2:
 			return 3;
+		default:
+			break;
 		}
 		break;
 	case 2:     // xp
@@ -2485,6 +2499,8 @@ int CG_LimboPanel_RenderCounter_NumRollers(panel_button_t *button)
 			return 0;
 		}
 		return 6;
+	default:
+		break;
 	}
 
 	return 0;
@@ -3205,7 +3221,7 @@ weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreD
 			}
 		}
 
-		return 0;
+		return WP_NONE;
 	}
 }
 
@@ -3430,7 +3446,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	}
 
 	// never restrict normal weapons
-	if (!(IS_HEAVY_WEAPON(weapon) || IS_RIFLE_AND_NADE_WEAPON(weapon)))
+	if (!(IS_HEAVY_WEAPON(weapon) || IS_RIFLE_WEAPON(weapon)))
 	{
 		return qfalse;
 	}
@@ -3475,12 +3491,20 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		break;
 	case WP_MOBILE_MG42:
 		// add alt weapons
-		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_MG42);
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_MG42_SET);
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
 		{
 			return qtrue;
 		}
 		break;
+    case WP_MOBILE_MG42_SET:
+        // add alt weapons
+        wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_MG42);
+        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
+        {
+            return qtrue;
+        }
+        break;
 	case WP_MOBILE_BROWNING:
 		// add alt weapons
 		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_BROWNING_SET);
@@ -3489,6 +3513,14 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 			return qtrue;
 		}
 		break;
+    case WP_MOBILE_BROWNING_SET:
+        // add alt weapons
+        wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_BROWNING);
+        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
+        {
+            return qtrue;
+        }
+        break;
 	case WP_FLAMETHROWER:
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxFlamers))
 		{
@@ -3511,24 +3543,22 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 			return qtrue;
 		}
 		break;
-	/* FIXME: add alt & SET weapons
-	        case WP_GPG40:
-	            // add alt weapons
-	            wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
-	            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
-	            {
-	                return qtrue;
-	            }
-	            break;
-	        case WP_M7:
-	            // add alt weapons
-	            wcount = wcount + CG_LimboPanel_TeamCount(WP_CARBINE);
-	            if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
-	            {
-	                return qtrue;
-	            }
-	            break;
-	*/
+    case WP_GPG40:
+        // add alt weapons
+        wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
+        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+        {
+            return qtrue;
+        }
+        break;
+    case WP_M7:
+        // add alt weapons
+        wcount = wcount + CG_LimboPanel_TeamCount(WP_CARBINE);
+        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+        {
+            return qtrue;
+        }
+        break;
 	default:
 		break;
 	}

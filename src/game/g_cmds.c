@@ -1392,6 +1392,7 @@ void StopFollowing(gentity_t *ent)
 	}
 }
 
+/* unused
 int G_NumPlayersWithWeapon(weapon_t weap, team_t team)
 {
 	int i, j, cnt = 0;
@@ -1420,6 +1421,7 @@ int G_NumPlayersWithWeapon(weapon_t weap, team_t team)
 
 	return cnt;
 }
+*/
 
 int G_NumPlayersOnTeam(team_t team)
 {
@@ -1500,7 +1502,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		return qtrue;
 	}
 
-	if (!(IS_HEAVY_WEAPON(weapon) || IS_RIFLE_AND_NADE_WEAPON(weapon)))
+	if (!(IS_HEAVY_WEAPON(weapon) || IS_RIFLE_WEAPON(weapon)))
 	{
 		return qfalse;
 	}
@@ -2690,7 +2692,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 {
 	int      color;
 	char     *cmd;
-	qboolean disguise = 0;
+	qboolean disguise = qfalse;
 
 	if (!other)
 	{
@@ -2712,7 +2714,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		    (!Q_stricmp(id, "Medic") || !Q_stricmp(id, "NeedAmmo") || !Q_stricmp(id, "FTHealMe") || !Q_stricmp(id, "FTResupplyMe"))
 		    )
 		{
-			disguise = 1;
+			disguise = qtrue;
 		}
 		else
 		{
