@@ -72,6 +72,9 @@ void G_CalculateSkillRatings(void)
 		break;
 	}
 
+	// log
+	G_Printf("SKILL_RATING: Map: %s, Winner: %d, Time: %d, Timelimit: %d\n",
+			level.rawmapname, winner, level.timeCurrent - level.startTime, g_timelimit.integer * 60000);
 	G_UpdateSkillRating(winner);
 }
 
