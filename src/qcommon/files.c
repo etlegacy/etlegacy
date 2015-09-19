@@ -4922,7 +4922,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
  * @param[in] quiet whether to inform if unzipping fails
  * @retval qtrue    if successfully extracted
  * @retval qfalse   if extraction failed
- * unused
+ */
 qboolean FS_Unzip(char *filename, qboolean quiet)
 {
 	char newFilePath[MAX_OSPATH];
@@ -4930,4 +4930,3 @@ qboolean FS_Unzip(char *filename, qboolean quiet)
 	Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", fs_homepath->string, PATH_SEP, fs_gamedir);
 	return FS_UnzipTo(filename, newFilePath, quiet);
 }
-*/
