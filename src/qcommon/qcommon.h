@@ -852,7 +852,7 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath);
 qboolean FS_VerifyPak(const char *pak);
 
 qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet);
-qboolean FS_Unzip(char *filename, qboolean quiet);
+//qboolean FS_Unzip(char *filename, qboolean quiet);
 
 void FS_HomeRemove(const char *homePath);
 qboolean FS_FileInPathExists(const char *testpath);

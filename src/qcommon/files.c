@@ -4733,15 +4733,13 @@ qboolean FS_VerifyPak(const char *pak)
 }
 
 /**
-* @brief Extracts zipped file into the selected path
-* @param[in] filename to extract
-* @param[in] outpath the path where to write the extracted files
-* @param[in] quiet whether to inform if unzipping fails
-* @retval qtrue    if successfully extracted
-* @retval qfalse   if extraction failed
-*
-* @todo fix closing zip files and zip file itself when errors occure
-*/
+ * @brief Extracts zipped file into the selected path
+ * @param[in] filename to extract
+ * @param[in] outpath the path where to write the extracted files
+ * @param[in] quiet whether to inform if unzipping fails
+ * @retval qtrue    if successfully extracted
+ * @retval qfalse   if extraction failed
+ */
 qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 {
 	char            zipPath[MAX_OSPATH];
@@ -4757,7 +4755,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 	{
 		if (!quiet || fs_debug->integer)
 		{
-			Com_Printf(S_COLOR_RED "ERROR: not a zip file (%s).\n", zipPath);
+			Com_Printf(S_COLOR_RED "FS_UnzipTo ERROR: not a zip file (%s).\n", zipPath);
 		}
 		return qfalse;
 	}
@@ -4768,8 +4766,9 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 	{
 		if (!quiet || fs_debug->integer)
 		{
-			Com_Printf(S_COLOR_RED "FS_Unzip: unable to unzip file (%s).\n", zipPath);
+			Com_Printf(S_COLOR_RED "FS_UnzipTo: unable to unzip file (%s). ERROR %i\n", zipPath, err);
 		}
+		(void) unzClose(zipFile);
 		return qfalse;
 	}
 
@@ -4779,10 +4778,9 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 	{
 		if (!quiet || fs_debug->integer)
 		{
-			Com_Printf(S_COLOR_RED "FS_Unzip: unable to read first element of file (%s).\n", zipPath);
+			Com_Printf(S_COLOR_RED "FS_UnzipTo: unable to read first element of file (%s). ERROR %i\n", zipPath, err);
 		}
-		//(void) unzCloseCurrentFile(zipFile); // test this and close our zip file(s) properly
-		//(void) unzClose(zipFile);
+		(void) unzClose(zipFile);
 		return qfalse;
 	}
 
@@ -4799,31 +4797,30 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 
 		if (newFilePath[strlen(newFilePath) - 1] == PATH_SEP)
 		{
-			if (fs_debug->integer)
+			if (!quiet || fs_debug->integer)
 			{
-				Com_Printf("FS_Unzip: Creating directory %s...\n", newFilePath);
+				Com_Printf("FS_UnzipTo: Creating directory %s...\n", newFilePath);
 			}
 
 			if (FS_CreatePath(newFilePath))
 			{
-				Com_Printf(S_COLOR_RED "ERROR: Unable to create directory (%s).\n", newFilePath);
-				//(void) unzCloseCurrentFile(zipFile);
-				//(void) unzClose(zipFile);
+				Com_Printf(S_COLOR_RED "FS_UnzipTo ERROR: Unable to create directory (%s).\n", newFilePath);
+				(void) unzClose(zipFile);
 				return qfalse;
 			}
 		}
 		else
 		{
-			if (fs_debug->integer)
+			if (!quiet || fs_debug->integer)
 			{
-				Com_Printf("FS_Unzip: Extracting %s...\n", newFilePath);
+				Com_Printf("FS_UnzipTo: Extracting %s...\n", newFilePath);
 			}
 
 			newFile = Sys_FOpen(newFilePath, "wb");
 			if (!newFile)
 			{
-				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't open file %s\n", newFilePath);
-				break; // FIXME: close buf and return qfalse?
+				Com_Printf(S_COLOR_YELLOW "FS_UnzipTo WARNING: Can't open file '%s'.\n", newFilePath);
+				break;
 			}
 
 			if (buf)
@@ -4835,47 +4832,80 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 
 			if (!buf)
 			{
-				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't create buffer\n");
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't create buffer for output file.\n");
 				fclose(newFile);
-				break; // FIXME: close buf and return qfalse?
+				break;
 			}
 
 			err = unzOpenCurrentFile(zipFile);
 			if (err)
 			{
-				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't open current file\n");
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't open current file. ERROR %i\n", err);
 				fclose(newFile);
-				break; // FIXME: close buf and return qfalse?
+				break;
 			}
 
 			err = unzReadCurrentFile(zipFile, buf, file_info.uncompressed_size);
 			if ((err < 0) || (err != file_info.uncompressed_size))
 			{
-				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't read current file\n");
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't read current file. ERROR %i\n", err);
+				(void) unzCloseCurrentFile(zipFile);
 				fclose(newFile);
-				break; // FIXME: close buf and return qfalse?
+				break;
 			}
 
 			err = fwrite(buf, file_info.uncompressed_size, 1, newFile);
 			if (err != 1)
 			{
-				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't write file\n");
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't write file.\n");
+				(void) unzCloseCurrentFile(zipFile);
 				fclose(newFile);
-				break; // FIXME: close buf and return qfalse?
+				break;
 			}
 
 			fclose(newFile);
 
 			(void) unzCloseCurrentFile(zipFile);
-			//(void) unzClose(zipFile);
 		}
 
 		err = unzGoToNextFile(zipFile);
-		if (err)
+		if (err) // UNZ_OK and UNZ_EOF are both 0 - deal with errors and UNZ_END_OF_LIST_OF_FILE
 		{
-			Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file\n");
+			switch (err)
+			{
+				case UNZ_END_OF_LIST_OF_FILE: // if the actual file was the latest
+					if (!quiet || fs_debug->integer)
+					{
+						Com_Printf(S_COLOR_YELLOW "FS_Unzip: End of files in '%s'.\n", filename);
+					}
+				break;
+				case UNZ_PARAMERROR:
+					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [file is NULL].\n", newFilePath);
+				break;
+				case UNZ_BADZIPFILE:
+					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [bad zip file].\n", newFilePath);
+				break;
+				case UNZ_INTERNALERROR:
+					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [internal error].\n", newFilePath);
+				break;
+				case UNZ_CRCERROR:
+					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [crc error].\n", newFilePath);
+				break;
+
+				default:
+					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [unknown error %i].\n", newFilePath, err);
+				break;
+			}
+
 			break;
 		}
+	}
+
+	err = unzClose(zipFile);
+
+	if (err != UNZ_OK)
+	{
+		Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't close zip file '%s' [unknown error %i].\n", filename, err);
 	}
 
 	if (buf)
@@ -4892,7 +4922,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
  * @param[in] quiet whether to inform if unzipping fails
  * @retval qtrue    if successfully extracted
  * @retval qfalse   if extraction failed
- */
+ * unused
 qboolean FS_Unzip(char *filename, qboolean quiet)
 {
 	char newFilePath[MAX_OSPATH];
@@ -4900,3 +4930,4 @@ qboolean FS_Unzip(char *filename, qboolean quiet)
 	Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", fs_homepath->string, PATH_SEP, fs_gamedir);
 	return FS_UnzipTo(filename, newFilePath, quiet);
 }
+*/
