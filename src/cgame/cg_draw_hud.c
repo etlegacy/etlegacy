@@ -1884,15 +1884,13 @@ CG_DrawTimersAlt
 */
 static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime, rectDef_t *roundtimer)
 {
-	char    *s;
+	char    *s, *rt;
 	qtime_t time;
 	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int     tens;
-	char    *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
-	              va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
-	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
-	int seconds = msec / 1000;
-	int mins    = seconds / 60;
+	int     msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	int     seconds = msec / 1000;
+	int     mins    = seconds / 60;
 
 	seconds -= mins * 60;
 	tens     = seconds / 10;
@@ -1915,6 +1913,18 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 		{
 			CG_Text_Paint_Ext(roundtimer->x, roundtimer->y, 0.19f, 0.19f, color, va("^7%i:%i%i", mins, tens, seconds), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
+
+		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+		{
+			int reinfTime = CG_CalculateReinfTime(qfalse);
+
+			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+		}
+		else
+		{
+			rt = "";
+		}
+
 		s = va("%s", rt);
 	}
 	CG_Text_Paint_Ext(respawn->x, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
@@ -1981,16 +1991,14 @@ CG_DrawTimerNormal
 */
 static float CG_DrawTimerNormal(float y)
 {
-	char   *s;
+	char   *s, *rt;
 	int    w, w2;
 	vec4_t color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int    tens;
-	char   *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
-	             va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
-	int x;
-	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
-	int seconds = msec / 1000;
-	int mins    = seconds / 60;
+	int    x;
+	int    msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	int    seconds = msec / 1000;
+	int    mins    = seconds / 60;
 
 	seconds -= mins * 60;
 	tens     = seconds / 10;
@@ -2008,6 +2016,17 @@ static float CG_DrawTimerNormal(float y)
 	}
 	else
 	{
+		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+		{
+			int reinfTime = CG_CalculateReinfTime(qfalse);
+
+			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+		}
+		else
+		{
+			rt = "";
+		}
+
 		if (cgs.timelimit <= 0.0f)
 		{
 			s = va("%s", rt);

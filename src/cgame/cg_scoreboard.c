@@ -230,7 +230,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				}
 				else
 				{
-					s = va("%s   ^F%i", CG_TranslateString("REINFORCE TIME:"), seconds);
+					s = va("%s   %s%i", CG_TranslateString("REINFORCE TIME:"), (seconds <= 2 && cgs.clientinfo[cg.clientNum].health == 0) ? "^3" : "^F", seconds);
 				}
 				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			}
