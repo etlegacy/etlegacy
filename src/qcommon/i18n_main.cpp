@@ -207,7 +207,7 @@ void I18N_Init(void)
 	FL_FindLocale(&locale);
 
 	// Do not change the language if it is already set
-	if (cl_lang && !cl_lang->string[0])
+	if (!cl_lang->string[0])
 	{
 		// locale->country is also supported for 'en_US' format
 		if (locale->lang && locale->lang[0])
