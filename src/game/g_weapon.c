@@ -2668,7 +2668,9 @@ void weapon_callAirStrike(gentity_t *ent)
 	G_AddAirstrikeToCounters(ent->parent);
 
 	{
-		gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+		gentity_t *te;
+
+		te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
 		te->s.eventParm = GAMESOUND_WPN_AIRSTRIKE_PLANE;
 		te->r.svFlags  |= SVF_BROADCAST;
@@ -2855,9 +2857,9 @@ void artillerySpotterThink(gentity_t *ent)
 		bomb->s.teamNum         = ent->s.teamNum;
 		bomb->nextthink         = level.time + 1000 + random() * 300;
 		bomb->classname         = "WP";         // WP == White Phosphorous, so we can check for bounce noise in grenade bounce routine
-		bomb->damage            = 000;          // maybe should un-hard-code these?
-		bomb->splashDamage      = 000;
-		bomb->splashRadius      = 000;
+		bomb->damage            = 0;          // maybe should un-hard-code these?
+		bomb->splashDamage      = 0;
+		bomb->splashRadius      = 0;
 		bomb->s.weapon          = WP_SMOKETRAIL;
 		bomb->think             = artilleryGoAway;
 		bomb->s.eFlags         |= EF_BOUNCE;
@@ -2984,22 +2986,26 @@ void Weapon_Artillery(gentity_t *ent)
 
 	for (i = 0; i < count; i++)
 	{
-		bomb              = G_Spawn();
-		bomb->think       = G_AirStrikeExplode;
-		bomb->s.eType     = ET_MISSILE;
-		bomb->r.svFlags   = SVF_NOCLIENT;
-		bomb->s.weapon    = WP_ARTY;   // might wanna change this
-		bomb->r.ownerNum  = ent->s.number;
-		bomb->s.clientNum = ent->s.number;
-		bomb->parent      = ent;
-		bomb->s.teamNum   = ent->client->sess.sessionTeam;
+		bomb                      = G_Spawn();
+		bomb->s.eType             = ET_MISSILE;
+		bomb->s.weapon            = WP_ARTY;   // might wanna change this
+		bomb->r.ownerNum          = ent->s.number;
+		bomb->s.clientNum         = ent->s.number;
+		bomb->parent              = ent;
+		bomb->s.teamNum           = ent->client->sess.sessionTeam;
+		bomb->damage              = 0; // arty itself has no damage
+		bomb->methodOfDeath       = MOD_ARTY;
+		bomb->splashMethodOfDeath = MOD_ARTY;
+		bomb->clipmask            = MASK_MISSILESHOT;
+		bomb->s.pos.trType        = TR_STATIONARY;   // was TR_GRAVITY,  might wanna go back to this and drop from height
+		bomb->s.pos.trTime        = level.time;      // move a bit on the very first frame
 
 		if (i == 0)
 		{
+			bomb->think             = artillerySpotterThink;
 			bomb->nextthink         = level.time + 5000;
 			bomb->r.svFlags         = SVF_BROADCAST;
 			bomb->classname         = "props_explosion"; // was "air strike"
-			bomb->damage            = 0; // maybe should un-hard-code these?
 			bomb->splashDamage      = 90;
 			bomb->splashRadius      = 50;
 			bomb->count             = 7;
@@ -3007,35 +3013,26 @@ void Weapon_Artillery(gentity_t *ent)
 			bomb->delay             = 300;
 			bomb->s.otherEntityNum2 = 1; // first bomb
 
-			bomb->think = artillerySpotterThink;
-		}
-		else
-		{
-			bomb->nextthink = level.time + 8950 + 2000 * i + crandom() * 800;
-
-			// for explosion type
-			bomb->accuracy     = 2;
-			bomb->classname    = "air strike";
-			bomb->damage       = 0;
-			bomb->splashDamage = 400;
-			bomb->splashRadius = 400;
-		}
-		bomb->methodOfDeath       = MOD_ARTY;
-		bomb->splashMethodOfDeath = MOD_ARTY;
-		bomb->clipmask            = MASK_MISSILESHOT;
-		bomb->s.pos.trType        = TR_STATIONARY;   // was TR_GRAVITY,  might wanna go back to this and drop from height
-		bomb->s.pos.trTime        = level.time;      // move a bit on the very first frame
-		if (i)     // spotter round is always dead on (OK, unrealistic but more fun)
-		{
-			bomboffset[0] = crandom() * 250;
-			bomboffset[1] = crandom() * 250;
-		}
-		else
-		{
+			// spotter round is always dead on (OK, unrealistic but more fun)
 			bomboffset[0] = crandom() * 50; // was 0; changed per id request to prevent spotter round assassinations
 			bomboffset[1] = crandom() * 50; // was 0;
 		}
+		else
+		{
+			bomb->think     = G_AirStrikeExplode;
+			bomb->nextthink = level.time + 8950 + 2000 * i + crandom() * 800;
+			bomb->r.svFlags = SVF_NOCLIENT;
+			// for explosion type
+			bomb->accuracy     = 2;
+			bomb->classname    = "air strike";
+			bomb->splashDamage = 400;
+			bomb->splashRadius = 400;
+
+			bomboffset[0] = crandom() * 250;
+			bomboffset[1] = crandom() * 250;
+		}
 		bomboffset[2] = 0;
+
 		VectorAdd(pos, bomboffset, bomb->s.pos.trBase);
 
 		VectorCopy(bomb->s.pos.trBase, bomboffset);  // make sure bombs fall "on top of" nonuniform scenery
