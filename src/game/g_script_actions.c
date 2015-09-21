@@ -1967,7 +1967,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 	// might be used uninitialized
 	int      endtime = 0;
 	qboolean looping = qfalse, forever = qfalse;
-	int      startframe, endframe, idealframe;
+	int      startframe, endframe, idealframe, frametime;
 	int      rate = 20;
 
 	if ((ent->scriptStatus.scriptFlags & SCFL_ANIMATING) && (ent->scriptStatus.scriptStackChangeTime == level.time))
@@ -1992,6 +1992,12 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 
 	startframe = atoi(tokens[0]);
 	endframe   = atoi(tokens[1]);
+	frametime  = endframe - startframe;
+
+	if (frametime <= 0)
+	{
+		G_Error("G_ScriptAction_PlayAnim: (<endframe> - <startframe>) can't be negative or 0!\n");
+	}
 
 	// check for optional parameters
 	token = COM_ParseExt(&pString, qfalse);
@@ -2038,7 +2044,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 			token = COM_ParseExt(&pString, qfalse);
 			if (!token[0])
 			{
-				G_Error("G_ScriptAction_PlayAnim: playanim has RATE parameter without an actual rate specified\n");
+				G_Error("G_ScriptAction_PlayAnim: playanim has RATE parameter without an actual rate specified!\n");
 			}
 			rate = atoi(token);
 
@@ -2052,14 +2058,14 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 
 		if (!looping)
 		{
-			endtime = ent->scriptStatus.scriptStackChangeTime + ((endframe - startframe) * (1000 / 20));
+			endtime = ent->scriptStatus.scriptStackChangeTime + (frametime * 1000 / 20);
 		}
 	}
 
 	idealframe = startframe + (int)floor((float)(level.time - ent->scriptStatus.scriptStackChangeTime) / (1000.0 / (float)rate));
 	if (looping)
 	{
-		ent->s.frame = startframe + (idealframe - startframe) % (endframe - startframe);
+		ent->s.frame = startframe + (idealframe - startframe) % frametime;
 	}
 	else
 	{
